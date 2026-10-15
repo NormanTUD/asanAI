@@ -1,0 +1,3739 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Learning neu denken — Eine interaktive Reise durch Zhang et al. (2017)</title>
+
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+
+<style>
+/* ============================================================
+   DESIGN SYSTEM
+   ============================================================ */
+:root{
+  --bg:            #070910;
+  --bg-2:          #0c1020;
+  --panel:         rgba(18,23,42,0.72);
+  --panel-solid:   #121729;
+  --panel-br:      rgba(130,160,255,0.14);
+  --ink:           #e8ecf8;
+  --ink-dim:       #9aa6c4;
+  --ink-faint:     #6c7694;
+  --acc:           #5eead4;   /* teal   - "echt / Signal" */
+  --acc2:          #f472b6;   /* pink   - "zufall / Rauschen" */
+  --acc3:          #a78bfa;   /* violet - "theorie" */
+  --acc4:          #fbbf24;   /* amber  - "hervorhebung" */
+  --acc5:          #60a5fa;   /* blue   - "daten" */
+  --good:          #34d399;
+  --bad:           #fb7185;
+  --radius:        18px;
+  --mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* animated aurora background */
+#aurora{position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(900px 600px at 12% 8%,  rgba(94,234,212,.10), transparent 62%),
+    radial-gradient(800px 700px at 88% 22%, rgba(244,114,182,.09), transparent 62%),
+    radial-gradient(900px 800px at 50% 92%, rgba(167,139,250,.10), transparent 62%),
+    linear-gradient(180deg,#070910 0%, #0a0d18 45%, #070910 100%);
+}
+#grid{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.30;
+  background-image:
+    linear-gradient(rgba(130,160,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(130,160,255,.045) 1px, transparent 1px);
+  background-size:52px 52px;
+  mask-image: radial-gradient(ellipse 100% 70% at 50% 30%, #000 30%, transparent 85%);
+}
+
+/* ---------- Navigation ---------- */
+#nav{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  backdrop-filter: blur(22px) saturate(160%);
+  background: rgba(7,9,16,.80);
+  border-bottom:1px solid var(--panel-br);
+}
+#navInner{max-width:1280px;margin:0 auto;padding:.55rem 1.2rem;display:flex;align-items:center;gap:1rem}
+#brand{font-weight:800;font-size:.9rem;letter-spacing:.02em;white-space:nowrap}
+#brand span{background:linear-gradient(92deg,var(--acc),var(--acc3) 60%,var(--acc2));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+#chapters{display:flex;gap:.28rem;overflow-x:auto;scrollbar-width:none;flex:1}
+#chapters::-webkit-scrollbar{display:none}
+.chip{
+  font-size:.72rem;padding:.33rem .62rem;border-radius:999px;cursor:pointer;
+  border:1px solid transparent;color:var(--ink-dim);white-space:nowrap;
+  background:rgba(255,255,255,.03); transition:.18s; font-weight:600;
+}
+.chip:hover{color:var(--ink);background:rgba(255,255,255,.08)}
+.chip.active{color:#07131a;background:linear-gradient(92deg,var(--acc),#7dd3fc);border-color:transparent}
+#prog{position:absolute;bottom:0;left:0;height:2px;
+  background:linear-gradient(90deg,var(--acc),var(--acc3),var(--acc2));width:0%;transition:width .12s}
+
+/* ---------- Layout ---------- */
+main{max-width:1180px;margin:0 auto;padding:5.4rem 1.2rem 7rem}
+section{margin-bottom:5.5rem;scroll-margin-top:4.3rem}
+.kicker{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--acc);margin-bottom:.5rem;display:flex;align-items:center;gap:.6rem
+}
+.kicker::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--panel-br),transparent)}
+h1{font-size:clamp(2.1rem,5.4vw,3.6rem);line-height:1.08;font-weight:850;letter-spacing:-.025em;margin-bottom:1rem}
+h1 em{font-style:normal;background:linear-gradient(92deg,var(--acc),var(--acc3) 55%,var(--acc2));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:clamp(1.5rem,3.1vw,2.15rem);font-weight:800;letter-spacing:-.02em;margin-bottom:.85rem}
+h3{font-size:1.08rem;font-weight:750;margin:1.5rem 0 .55rem;color:var(--ink)}
+h4{font-size:.86rem;font-weight:700;color:var(--acc);margin-bottom:.45rem;
+   font-family:var(--mono);letter-spacing:.05em;text-transform:uppercase}
+p{color:var(--ink-dim);margin-bottom:.9rem;max-width:76ch}
+p strong, li strong{color:var(--ink);font-weight:680}
+.lead{font-size:1.1rem;color:#c3cce4;max-width:72ch}
+ul,ol{color:var(--ink-dim);margin:0 0 1rem 1.2rem}
+li{margin-bottom:.35rem}
+code{font-family:var(--mono);font-size:.88em;background:rgba(130,160,255,.10);
+  padding:.1em .38em;border-radius:5px;color:#b9c6ea}
+
+/* ---------- Cards / Panels ---------- */
+.card{
+  background:var(--panel); border:1px solid var(--panel-br); border-radius:var(--radius);
+  padding:1.35rem; backdrop-filter:blur(14px); margin:1.3rem 0;
+  box-shadow:0 10px 40px -20px rgba(0,0,0,.9);
+}
+.card.tight{padding:1rem}
+.lab{
+  background:linear-gradient(165deg, rgba(20,26,48,.9), rgba(12,16,32,.94));
+  border:1px solid rgba(130,160,255,.2); border-radius:var(--radius);
+  padding:1.3rem; margin:1.5rem 0; position:relative; overflow:hidden;
+  box-shadow:0 20px 60px -30px rgba(94,234,212,.3);
+}
+.lab::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--acc),var(--acc3),var(--acc2),transparent)}
+.lab-title{display:flex;align-items:center;gap:.6rem;font-weight:760;font-size:1rem;margin-bottom:.3rem}
+.lab-title .dot{width:9px;height:9px;border-radius:50%;background:var(--acc);
+  box-shadow:0 0 14px var(--acc);animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.8)}}
+.lab-sub{font-size:.84rem;color:var(--ink-faint);margin-bottom:1rem}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.grid-side{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:1.2rem}
+.grid-side-l{display:grid;grid-template-columns:290px minmax(0,1fr);gap:1.2rem}
+@media(max-width:900px){.grid2,.grid3,.grid-side,.grid-side-l{grid-template-columns:1fr}}
+
+/* ---------- Controls ---------- */
+.ctrl{margin-bottom:1rem}
+.ctrl-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.35rem;gap:.5rem}
+.ctrl-label{font-size:.78rem;font-weight:650;color:var(--ink-dim);letter-spacing:.01em}
+.ctrl-val{font-family:var(--mono);font-size:.8rem;color:var(--acc);font-weight:700;
+  background:rgba(94,234,212,.09);padding:.08rem .45rem;border-radius:6px}
+input[type=range]{
+  -webkit-appearance:none;width:100%;height:5px;border-radius:99px;outline:none;
+  background:linear-gradient(90deg,var(--acc) var(--p,50%), rgba(255,255,255,.10) var(--p,50%));
+  cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:#fff;border:3px solid var(--acc);cursor:grab;
+  box-shadow:0 0 0 5px rgba(94,234,212,.14), 0 3px 10px rgba(0,0,0,.5);transition:.12s
+}
+input[type=range]::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{width:17px;height:17px;border-radius:50%;background:#fff;
+  border:3px solid var(--acc);cursor:grab;box-shadow:0 0 0 5px rgba(94,234,212,.14)}
+
+button{
+  font-family:inherit;font-size:.8rem;font-weight:650;padding:.5rem .95rem;border-radius:10px;
+  border:1px solid rgba(130,160,255,.22);background:rgba(255,255,255,.045);color:var(--ink);
+  cursor:pointer;transition:.16s
+}
+button:hover{background:rgba(255,255,255,.10);border-color:rgba(130,160,255,.45);transform:translateY(-1px)}
+button:active{transform:translateY(0)}
+button.primary{background:linear-gradient(92deg,var(--acc),#67e8f9);color:#06202a;border-color:transparent;font-weight:750}
+button.primary:hover{box-shadow:0 6px 24px -8px var(--acc)}
+button.pink{background:linear-gradient(92deg,var(--acc2),#fb923c);color:#2a0618;border-color:transparent;font-weight:750}
+button.violet{background:linear-gradient(92deg,var(--acc3),#818cf8);color:#140a2a;border-color:transparent;font-weight:750}
+button.ghost{background:transparent}
+button:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btnrow{display:flex;gap:.5rem;flex-wrap:wrap;margin:.8rem 0}
+
+.seg{display:flex;gap:.25rem;background:rgba(0,0,0,.3);padding:.25rem;border-radius:11px;flex-wrap:wrap}
+.seg button{flex:1;border:none;background:transparent;font-size:.74rem;padding:.42rem .5rem;border-radius:8px;min-width:68px}
+.seg button.on{background:rgba(94,234,212,.16);color:var(--acc);box-shadow:inset 0 0 0 1px rgba(94,234,212,.3)}
+
+.toggle{display:flex;align-items:center;gap:.6rem;padding:.5rem .7rem;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--panel-br);cursor:pointer;
+  font-size:.8rem;transition:.15s;user-select:none;margin-bottom:.5rem}
+.toggle:hover{background:rgba(255,255,255,.07)}
+.toggle .sw{width:34px;height:19px;border-radius:99px;background:rgba(255,255,255,.14);
+  position:relative;flex-shrink:0;transition:.2s}
+.toggle .sw::after{content:'';position:absolute;top:2.5px;left:2.5px;width:14px;height:14px;
+  border-radius:50%;background:#fff;transition:.2s}
+.toggle.on .sw{background:var(--acc)}
+.toggle.on .sw::after{transform:translateX(15px)}
+
+canvas{display:block;width:100%;border-radius:12px;background:rgba(0,0,0,.34);
+  border:1px solid rgba(130,160,255,.10)}
+.plot{width:100%;border-radius:12px;overflow:hidden}
+
+/* ---------- Readouts ---------- */
+.stats{display:grid;gap:.6rem}
+.stat{background:rgba(0,0,0,.3);border:1px solid var(--panel-br);border-radius:11px;padding:.6rem .75rem}
+.stat-l{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-faint);font-weight:650}
+.stat-v{font-family:var(--mono);font-size:1.3rem;font-weight:750;line-height:1.3}
+.stat-s{font-size:.7rem;color:var(--ink-faint)}
+.bar{height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:.35rem}
+.bar i{display:block;height:100%;border-radius:99px;transition:width .3s}
+
+.callout{border-left:3px solid var(--acc);background:rgba(94,234,212,.055);
+  padding:.85rem 1.1rem;border-radius:0 12px 12px 0;margin:1.2rem 0}
+.callout.warn{border-color:var(--acc4);background:rgba(251,191,36,.06)}
+.callout.key{border-color:var(--acc2);background:rgba(244,114,182,.06)}
+.callout.idea{border-color:var(--acc3);background:rgba(167,139,250,.06)}
+.callout p:last-child{margin-bottom:0}
+
+.quote{font-size:1.12rem;font-weight:700;color:var(--ink);text-align:center;
+  padding:1.3rem 1.5rem;margin:1.4rem 0;border-radius:14px;
+  background:linear-gradient(100deg, rgba(94,234,212,.09), rgba(244,114,182,.09));
+  border:1px solid rgba(130,160,255,.2);line-height:1.5}
+
+table{width:100%;border-collapse:collapse;font-size:.8rem;margin:.8rem 0}
+th{text-align:left;padding:.5rem .55rem;font-size:.68rem;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--ink-faint);border-bottom:1px solid var(--panel-br);font-weight:700}
+td{padding:.45rem .55rem;border-bottom:1px solid rgba(130,160,255,.07);color:var(--ink-dim)}
+tr:hover td{background:rgba(255,255,255,.022)}
+td.num{font-family:var(--mono);text-align:right;color:var(--ink)}
+tr.hl td{background:rgba(244,114,182,.09)}
+tr.hl td.num{color:var(--acc2);font-weight:750}
+
+.tag{display:inline-block;font-size:.66rem;font-family:var(--mono);padding:.12rem .45rem;
+  border-radius:5px;background:rgba(130,160,255,.13);color:#aebbe4;margin-right:.3rem;font-weight:650}
+.tag.t{background:rgba(94,234,212,.15);color:var(--acc)}
+.tag.p{background:rgba(244,114,182,.15);color:var(--acc2)}
+.tag.v{background:rgba(167,139,250,.15);color:var(--acc3)}
+.tag.a{background:rgba(251,191,36,.15);color:var(--acc4)}
+
+.steps{counter-reset:s;margin:1rem 0}
+.step{position:relative;padding-left:2.5rem;margin-bottom:1rem;counter-increment:s}
+.step::before{content:counter(s);position:absolute;left:0;top:0;width:1.75rem;height:1.75rem;
+  border-radius:50%;background:rgba(167,139,250,.16);border:1px solid rgba(167,139,250,.4);
+  color:var(--acc3);font-family:var(--mono);font-size:.78rem;font-weight:750;
+  display:flex;align-items:center;justify-content:center}
+.step h4{margin-bottom:.2rem;color:var(--ink);text-transform:none;font-family:var(--sans);font-size:.95rem;letter-spacing:0}
+
+.math{overflow-x:auto;padding:.7rem 0;text-align:center;color:#dbe3f7}
+.math-inline{color:#dbe3f7}
+
+.legend{display:flex;gap:1rem;flex-wrap:wrap;font-size:.74rem;color:var(--ink-dim);margin-top:.6rem}
+.legend span{display:flex;align-items:center;gap:.35rem}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+.hint{font-size:.74rem;color:var(--ink-faint);font-style:italic;margin-top:.5rem}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--panel-br),transparent);margin:2.2rem 0}
+
+.pillbox{display:flex;gap:.5rem;flex-wrap:wrap;margin:.7rem 0}
+.pill{font-size:.72rem;padding:.3rem .65rem;border-radius:99px;border:1px solid var(--panel-br);
+  background:rgba(255,255,255,.03);color:var(--ink-dim);font-weight:600}
+.pill.on{background:rgba(94,234,212,.15);border-color:rgba(94,234,212,.4);color:var(--acc)}
+
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+.scroll-x{overflow-x:auto}
+.mini{font-size:.75rem;color:var(--ink-faint)}
+.flex{display:flex;gap:.7rem;align-items:center;flex-wrap:wrap}
+.spacer{height:.8rem}
+</style>
+</head>
+<body>
+<div id="aurora"></div><div id="grid"></div>
+
+<nav id="nav">
+  <div id="navInner">
+    <div id="brand"><span>Rethinking Generalization</span></div>
+    <div id="chapters"></div>
+  </div>
+  <div id="prog"></div>
+</nav>
+
+<main>
+
+<!-- ══════════════════════════════════════════════════════════
+     KAPITEL 0 — HOOK
+     ══════════════════════════════════════════════════════════ -->
+<section id="c0">
+  <div class="kicker">Kapitel 0 · Das Rätsel</div>
+  <h1>Warum funktioniert Deep&nbsp;Learning <em>überhaupt</em>?</h1>
+  <p class="lead">
+    Ein neuronales Netz mit 1,6 Millionen Parametern lernt aus 50 000 Bildern — und erkennt danach
+    Bilder, die es nie gesehen hat, zu 89&nbsp;% korrekt. Die klassische Statistik sagt: Das darf nicht passieren.
+    Mehr Parameter als Datenpunkte bedeutet eigentlich: auswendig lernen statt verstehen.
+  </p>
+  <p class="lead">
+    2016 stellten fünf Forscher ein brutal einfaches Experiment an, das die ganze Lehrbuch-Erklärung
+    zum Einsturz brachte. Diese Seite lässt dich dieses Experiment selbst durchführen — mit Reglern,
+    Simulationen und Diagrammen. Du musst nichts auswendig können. Nur spielen.
+  </p>
+
+  <div class="lab reveal">
+    <div class="lab-title"><span class="dot"></span>Labor 0 · Dasselbe Netz, zwei Welten</div>
+    <div class="lab-sub">Links: echte Labels. Rechts: komplett zufällige Labels. Identisches Netz, identischer Optimierer.
+      Drücke „Trainieren" und beobachte, was mit <em>Trainingsfehler</em> und <em>Testfehler</em> passiert.</div>
+
+    <div class="grid2">
+      <div>
+        <h4 style="color:var(--acc)">Welt A · Echte Labels</h4>
+        <canvas id="c0A" height="230"></canvas>
+      </div>
+      <div>
+        <h4 style="color:var(--acc2)">Welt B · Zufalls-Labels</h4>
+        <canvas id="c0B" height="230"></canvas>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button class="primary" id="c0run">▶ Beide trainieren</button>
+      <button class="ghost" id="c0reset">↺ Zurücksetzen</button>
+      <span class="mini" id="c0epoch" style="align-self:center">Epoche 0</span>
+    </div>
+
+    <div class="grid2">
+      <div class="stat">
+        <div class="stat-l">Welt A — echt</div>
+        <div class="flex" style="gap:1.4rem">
+          <div><div class="stat-s">Trainingsfehler</div><div class="stat-v" id="c0trA" style="color:var(--acc)">50%</div></div>
+          <div><div class="stat-s">Testfehler</div><div class="stat-v" id="c0teA" style="color:var(--acc5)">50%</div></div>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-l">Welt B — zufällig</div>
+        <div class="flex" style="gap:1.4rem">
+          <div><div class="stat-s">Trainingsfehler</div><div class="stat-v" id="c0trB" style="color:var(--acc2)">50%</div></div>
+          <div><div class="stat-s">Testfehler</div><div class="stat-v" id="c0teB" style="color:var(--acc4)">50%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout key" id="c0verdict" style="display:none">
+      <p><strong>Das ist der Skandal.</strong> In <em>beiden</em> Welten geht der Trainingsfehler auf 0&nbsp;%.
+      Das Netz kann also problemlos <em>reinen Zufall auswendig lernen</em>. Aber in Welt A generalisiert es super,
+      in Welt B gar nicht. Das Modell, seine Größe, seine Hyperparameter und der Optimierer waren
+      <strong>exakt identisch</strong>. Die einzige Änderung war an den <em>Daten</em>.</p>
+      <p>Jede Theorie, die Generalisierung allein aus <em>Modelleigenschaften</em> erklären will, kann diese beiden
+      Fälle nicht unterscheiden. Und genau darum geht es in diesem Paper.</p>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h4>Das Paper</h4>
+    <p style="margin-bottom:.4rem"><strong>Understanding Deep Learning Requires Rethinking Generalization</strong><br>
+    <span class="mini">Chiyuan Zhang (MIT), Samy Bengio (Google Brain), Moritz Hardt (Google Brain),
+    Benjamin Recht (UC Berkeley), Oriol Vinyals (Google DeepMind) · ICLR 2017 · arXiv:1611.03530</span></p>
+    <div class="pillbox">
+      <span class="pill">Randomisierungstest</span>
+      <span class="pill">Effektive Kapazität</span>
+      <span class="pill">VC-Dimension</span>
+      <span class="pill">Rademacher-Komplexität</span>
+      <span class="pill">Uniforme Stabilität</span>
+      <span class="pill">Finite-Sample-Expressivität</span>
+      <span class="pill">Implizite Regularisierung</span>
+    </div>
+    <p class="hint">Alle diese Begriffe werden in den folgenden Kapiteln interaktiv aufgebaut — du brauchst nur Abiturmathematik.</p>
+  </div>
+
+  <div class="card reveal">
+    <h4>Deine Route durch diese Seite</h4>
+    <div class="grid3" style="gap:.7rem">
+      <div class="stat"><div class="stat-l">Teil I · Werkzeuge</div>
+        <div class="mini">Kap. 1–5: Was ist Lernen, Überanpassung, Kapazität, VC &amp; Rademacher, Regularisierung.
+        Alles was du an Vorwissen brauchst — spielerisch.</div></div>
+      <div class="stat"><div class="stat-l">Teil II · Das Experiment</div>
+        <div class="mini">Kap. 6–7: Der Randomisierungstest, die echten Messwerte aus dem Paper,
+        und warum die alten Theorien daran zerbrechen.</div></div>
+      <div class="stat"><div class="stat-l">Teil III · Theorie &amp; Antwort</div>
+        <div class="mini">Kap. 8–10: Der Beweis, dass 2 Schichten reichen; SGD als heimlicher Regularisierer;
+        und was am Ende wirklich die Antwort ist.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     KAPITEL 1 — GRUNDLAGEN
+     ══════════════════════════════════════════════════════════ -->
+<section id="c1">
+  <div class="kicker">Kapitel 1 · Fundament</div>
+  <h2>Lernen heißt: aus Beispielen eine Funktion raten</h2>
+  <p class="lead">Bevor wir das Paper verstehen, brauchen wir ein sauberes Bild davon, was ein lernendes
+  System eigentlich tut. Es ist überraschend einfach.</p>
+
+  <div class="grid-side">
+    <div>
+      <div class="card">
+        <div class="steps">
+          <div class="step">
+            <h4>Du bekommst Beispiele</h4>
+            <p style="margin:0">Ein Datensatz <span class="math-inline" data-tex="S = \{(x_1,y_1),\dots,(x_n,y_n)\}"></span>.
+            Jedes <span class="math-inline" data-tex="x_i"></span> ist eine Eingabe (z.&nbsp;B. ein Bild als Liste von Zahlen),
+            jedes <span class="math-inline" data-tex="y_i"></span> ein Label (z.&nbsp;B. „Katze“ = 3).</p>
+          </div>
+          <div class="step">
+            <h4>Du wählst eine Familie von Funktionen</h4>
+            <p style="margin:0">Die <strong>Hypothesenklasse</strong> <span class="math-inline" data-tex="\mathcal{H}"></span> —
+            alle Funktionen, die dein Modell überhaupt darstellen <em>kann</em>. Z.&nbsp;B. „alle Geraden“
+            oder „alle neuronalen Netze mit dieser Architektur“.</p>
+          </div>
+          <div class="step">
+            <h4>Du suchst die beste darin</h4>
+            <p style="margin:0">Minimiere den <strong>Trainingsfehler</strong> (empirisches Risiko):</p>
+            <div class="math" data-tex="\hat{R}(h) \;=\; \frac{1}{n}\sum_{i=1}^{n} \mathrm{loss}\big(h(x_i),\, y_i\big)"></div>
+          </div>
+          <div class="step">
+            <h4>Du hoffst auf Neues</h4>
+            <p style="margin:0">Was dich wirklich interessiert, ist der <strong>Testfehler</strong> (wahres Risiko)
+            auf Daten, die du nie gesehen hast:</p>
+            <div class="math" data-tex="R(h) \;=\; \mathbb{E}_{(x,y)\sim \mathcal{D}}\big[\mathrm{loss}(h(x),y)\big]"></div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <p><strong>Der Generalisierungsfehler</strong> ist genau die Lücke zwischen beidem:</p>
+          <div class="math" data-tex="\underbrace{R(h)}_{\text{Test}} \;-\; \underbrace{\hat R(h)}_{\text{Training}}"></div>
+          <p style="margin-bottom:0">Das gesamte Paper dreht sich um die Frage: <em>Warum ist diese Lücke bei riesigen
+          neuronalen Netzen oft so klein — obwohl die Theorie sagt, sie müsste riesig sein?</em></p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card tight">
+        <h4>Mitspielen</h4>
+        <p class="mini" style="margin-bottom:.8rem">Klicke ins Feld, um Trainingspunkte (●) zu setzen.
+        Das Modell fittet sie. Graue Punkte (○) sind Testdaten — sie beeinflussen das Modell nicht,
+        messen aber, wie gut es wirklich ist.</p>
+        <canvas id="c1canvas" height="250"></canvas>
+        <div class="legend">
+          <span><i style="background:var(--acc5)"></i>Training</span>
+          <span><i style="background:#64748b"></i>Test</span>
+          <span><i style="background:var(--acc4)"></i>Modell h(x)</span>
+        </div>
+        <div class="ctrl" style="margin-top:.9rem">
+          <div class="ctrl-head"><span class="ctrl-label">Flexibilität des Modells (Grad)</span><span class="ctrl-val" id="c1dv">1</span></div>
+          <input type="range" id="c1deg" min="1" max="12" step="1" value="1">
+        </div>
+        <div class="btnrow">
+          <button id="c1new">Neue Daten</button>
+          <button class="ghost" id="c1clear">Leeren</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="stat-l">Trainingsfehler</div>
+            <div class="stat-v" id="c1tr" style="color:var(--acc)">—</div>
+            <div class="bar"><i id="c1trb" style="background:var(--acc);width:0%"></i></div></div>
+          <div class="stat"><div class="stat-l">Testfehler</div>
+            <div class="stat-v" id="c1te" style="color:var(--acc2)">—</div>
+            <div class="bar"><i id="c1teb" style="background:var(--acc2);width:0%"></i></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn reveal">
+    <p><strong>Beobachtung:</strong> Schiebe den Grad hoch. Der Trainingsfehler geht gegen null —
+    das Modell legt sich durch <em>jeden</em> Punkt. Aber der Testfehler explodiert.
+    Das ist <strong>Überanpassung</strong> (Overfitting), und sie ist die klassische Warnung
+    vor zu flexiblen Modellen. Genau diese Warnung werden wir gleich hinterfragen.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     KAPITEL 2 — BIAS-VARIANZ
+     ══════════════════════════════════════════════════════════ -->
+<section id="c2">
+  <div class="kicker">Kapitel 2 · Die Lehrbuch-Erzählung</div>
+  <h2>Die U-Kurve, die jeder Statistiker im Kopf hat</h2>
+  <p class="lead">Seit Jahrzehnten lehrt man: Modellkomplexität ist ein Drahtseilakt.
+  Zu wenig → das Modell ist zu starr. Zu viel → es lernt Rauschen auswendig.
+  Dazwischen liegt ein „sweet spot“.</p>
+
+  <div class="lab reveal">
+    <div class="lab-title"><span class="dot"></span>Labor 2 · Der Drahtseilakt live</div>
+    <div class="lab-sub">Links siehst du den Fit, rechts die klassische Komplexitätskurve. Der Punkt wandert mit.</div>
+
+    <div class="grid2">
+      <div><canvas id="c2fit" height="270"></canvas></div>
+      <div id="c2plot" class="plot" style="height:300px"></div>
+    </div>
+
+    <div class="grid3" style="margin-top:1rem">
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">Modellkomplexität (Polynomgrad)</span><span class="ctrl-val" id="c2dv">3</span></div>
+        <input type="range" id="c2deg" min="1" max="15" step="1" value="3">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">Rauschen in den Daten</span><span class="ctrl-val" id="c2nv">0.18</span></div>
+        <input type="range" id="c2noise" min="0" max="0.6" step="0.01" value="0.18">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">Anzahl Trainingspunkte n</span><span class="ctrl-val" id="c2mv">18</span></div>
+        <input type="range" id="c2m" min="6" max="60" step="1" value="18">
+      </div>
+    </div>
+    <div class="btnrow"><button id="c2res">🎲 Neu würfeln</button></div>
+
+    <div class="grid3">
+      <div class="stat"><div class="stat-l">Bias² (Verzerrung)</div>
+        <div class="stat-v" id="c2bias" style="color:var(--acc5)">—</div>
+        <div class="stat-s">zu starr, trifft die Wahrheit systematisch nicht</div></div>
+      <div class="stat"><div class="stat-l">Varianz</div>
+        <div class="stat-v" id="c2var" style="color:var(--acc2)">—</div>
+        <div class="stat-s">zu zappelig, reagiert auf jeden Zufall</div></div>
+      <div class="stat"><div class="stat-l">Testfehler ≈ Bias² + Varianz</div>
+        <div class="stat-v" id="c2tot" style="color:var(--acc4)">—</div>
+        <div class="stat-s">was wirklich zählt</div></div>
+    </div>
+  </div>
+
+  <div class="grid2 reveal">
+    <div class="card">
+      <h4>Die Faustregel</h4>
+      <p>Die klassische Theorie liefert Schranken der Form</p>
+      <div class="math" data-tex="R(h) \;\le\; \hat R(h) \;+\; \sqrt{\frac{\text{Kapazität}(\mathcal{H})}{n}}"></div>
+      <p style="margin-bottom:0">Je größer die Kapazität der Hypothesenklasse, desto größer die mögliche Lücke.
+      Faustregel: Du brauchst <strong>mehr Datenpunkte als Parameter</strong>, sonst kann alles passieren.</p>
+    </div>
+    <div class="card">
+      <h4>Und jetzt die Realität</h4>
+      <table>
+        <tr><th>Modell</th><th class="num">Parameter</th><th class="num">Trainingsdaten</th></tr>
+        <tr><td>Inception (klein)</td><td class="num">1 649 402</td><td class="num">50 000</td></tr>
+        <tr><td>AlexNet (klein)</td><td class="num">1 387 786</td><td class="num">50 000</td></tr>
+        <tr><td>MLP 3×512</td><td class="num">1 735 178</td><td class="num">50 000</td></tr>
+        <tr><td>MLP 1×512</td><td class="num">1 209 866</td><td class="num">50 000</td></tr>
+      </table>
+      <p style="margin-bottom:0"><strong>33-mal mehr Parameter als Datenpunkte</strong> — und trotzdem
+      89&nbsp;% Testgenauigkeit. Nach der Faustregel dürfte das nicht funktionieren.
+      <span class="tag a">CIFAR10</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     KAPITEL 3 — KAPAZITÄT / VC
+     ══════════════════════════════════════════════════════════ -->
+<section id="c3">
+  <div class="kicker">Kapitel 3 · Vorwissen über Abi hinaus</div>
+  <h2>Kapazität: Wie viel Willkür verträgt dein Modell?</h2>
+  <p class="lead">„Komplexität“ muss man messbar machen. Die erste große Antwort der Lerntheorie ist
+  die <strong>VC-Dimension</strong>. Die Idee dahinter ist überraschend anschaulich — und sie ist
+  der direkte Vorläufer des Experiments im Paper.</p>
+
+  <div class="card reveal">
+    <h3>Schritt 1 — Was heißt „zerschmettern“ (shattering)?</h3>
+    <p>Nimm <span class="math-inline" data-tex="n"></span> Punkte. Es gibt
+    <span class="math-inline" data-tex="2^n"></span> Möglichkeiten, sie mit ⊕/⊖ zu beschriften.
+    Deine Hypothesenklasse <span class="math-inline" data-tex="\mathcal{H}"></span>
+    <strong>zerschmettert</strong> die Punkte, wenn sie für <em>jede einzelne</em> dieser
+    <span class="math-inline" data-tex="2^n"></span> Beschriftungen eine passende Funktion hat.</p>
+    <p>Die <strong>VC-Dimension</strong> ist die größte Zahl <span class="math-inline" data-tex="n"></span>,
+    für die das noch gelingt. Sie ist ein Maß für <em>Willkürlichkeits-Kapazität</em>.</p>
+  </div>
+
+  <div class="lab reveal">
+    <div class="lab-title"><span class="dot"></span>Labor 3 · Zerschmettere selbst</div>
+    <div class="lab-sub">Klicke Punkte an, um ihre Farbe (Label) umzuschalten. Die gewählte Modellklasse
+    versucht, sie zu trennen. Schaffst du eine Beschriftung, die sie <em>nicht</em> schafft?</div>
+
+    <div class="grid-side">
+      <div><canvas id="c3canvas" height="310"></canvas>
+        <div class="legend">
+          <span><i style="background:var(--acc)"></i>Klasse ⊕</span>
+          <span><i style="background:var(--acc2)"></i>Klasse ⊖</span>
+          <span><i style="background:rgba(251,191,36,.6)"></i>Entscheidungsgrenze</span>
+        </div>
+      </div>
+      <div>
+        <h4>Modellklasse</h4>
+        <div class="seg" id="c3seg">
+          <button data-m="lin" class="on">Gerade</button>
+          <button data-m="circ">Kreis</button>
+          <button data-m="quad">Parabel</button>
+          <button data-m="nn">Neuronales Netz</button>
+        </div>
+        <div class="ctrl" style="margin-top:.9rem">
+          <div class="ctrl-head"><span class="ctrl-label">Anzahl Punkte n</span><span class="ctrl-val" id="c3nv">3</span></div>
+          <input type="range" id="c3n" min="2" max="9" step="1" value="3">
+        </div>
+        <div class="btnrow">
+          <button class="primary" id="c3all">⚡ Alle 2ⁿ Beschriftungen testen</button>
+          <button class="ghost" id="c3shuf">🎲 Punkte neu</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="stat-l">Beschriftungen gelöst</div>
+            <div class="stat-v" id="c3sol">—</div>
+            <div class="bar"><i id="c3bar" style="background:linear-gradient(90deg,var(--acc),var(--acc3));width:0%"></i></div>
+            <div class="stat-s" id="c3sub">von 2³ = 8 möglichen</div></div>
+          <div class="stat"><div class="stat-l">VC-Dimension dieser Klasse</div>
+            <div class="stat-v" id="c3vc" style="color:var(--acc3)">3</div>
+            <div class="stat-s" id="c3vcs">Gerade in 2D: VC = 3</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="callout idea" style="margin-top:1rem">
+      <p style="margin:0"><strong>Probier das:</strong> Stelle „Gerade“ ein und erhöhe n auf 4.
+      Klicke „Alle 2ⁿ testen“ — es bleiben Beschriftungen übrig, die keine Gerade schafft
+      (das berühmte XOR-Muster). Darum ist die VC-Dimension einer Geraden in der Ebene genau&nbsp;3.
+      <br>Wechsle dann auf „Neuronales Netz“ und erhöhe n bis 9: Es schafft <em>alles</em>.</p>
+    </div>
+  </div>
+
+  <div class="grid2 reveal">
+    <div class="card">
+      <h4>Warum das für Generalisierung zählt</h4>
+      <p>Die VC-Theorie liefert eine Garantie (vereinfacht): mit Wahrscheinlichkeit
+      <span class="math-inline" data-tex="1-\delta"></span> gilt für <em>alle</em>
+      <span class="math-inline" data-tex="h\in\mathcal{H}"></span></p>
+      <div class="math" data-tex="R(h) \;\le\; \hat R(h) \;+\; O\!\left(\sqrt{\frac{\mathrm{VC}(\mathcal{H})\,\log n + \log(1/\delta)}{n}}\right)"></div>
+      <p style="margin-bottom:0">Die Schranke ist nur sinnvoll, wenn
+      <span class="math-inline" data-tex="\mathrm{VC}(\mathcal{H}) \ll n"></span>.
+      Bei einem Netz, das 50 000 zufällige Labels auswendig lernen kann, ist
+      <span class="math-inline" data-tex="\mathrm{VC} \ge 50\,000 = n"></span>.
+      Die Schranke wird dann <em>größer als 1</em> — und damit völlig nutzlos, denn der Fehler
+      ist ohnehin nie größer als 1.</p>
+    </div>
+    <div class="card">
+      <h4>Der entscheidende Vorgriff</h4>
+      <p>Merke dir diesen Satz, er ist der Schlüssel zum ganzen Paper:</p>
+      <div class="quote" style="font-size:.98rem;margin:.6rem 0">
+        „Ein Modell zu zerschmettern heißt: es kann <em>jede beliebige</em> Beschriftung lernen —
+        auch reinen Zufall.“
+      </div>
+      <p style="margin-bottom:0">Zhang et al. drehen den Spieß um: Statt die VC-Dimension theoretisch
+      zu berechnen, <strong>messen sie sie experimentell</strong>. Sie beschriften CIFAR10 zufällig
+      und schauen, ob das Netz es lernt. Es lernt es. Also ist die <em>effektive Kapazität</em>
+      mindestens so groß wie der gesamte Datensatz.</p>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h4>Referenz: VC-Dimensionen im Überblick</h4>
+    <table>
+      <tr><th>Hypothesenklasse</th><th class="num">VC-Dimension</th><th>Bedeutung</th></tr>
+      <tr><td>Schwellwert in 1D</td><td class="num">1</td><td>Kann 1 Punkt beliebig beschriften</td></tr>
+      <tr><td>Intervall in 1D</td><td class="num">2</td><td></td></tr>
+      <tr><td>Gerade in 2D (lineare Trennung)</td><td class="num">3</td><td>XOR bei 4 Punkten scheitert</td></tr>
+      <tr><td>Hyperebene in d Dimensionen</td><td class="num">d + 1</td><td>wächst mit Dimension</td></tr>
+      <tr><td>Kreise in 2D</td><td class="num">3</td><td></td></tr>
+      <tr><td>Polynom vom Grad k in 1D</td><td class="num">k + 1</td><td></td></tr>
+      <tr class="hl"><td>Neuronales Netz mit p Parametern (ReLU)</td><td class="num">≈ O(p · L)</td><td>bei p &gt; n: zerschmettert alles</td></tr>
+    </table>
+    <p class="hint">Die letzte Zeile ist genau der Fall, den das Paper untersucht — und Theorem 1 zeigt,
+    dass schon <span class="math-inline" data-tex="p = 2n+d"></span> Parameter reichen (Kapitel 8).</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     KAPITEL 4 — RADEMACHER
+     ══════════════════════════════════════════════════════════ -->
+<section id="c4">
+  <div class="kicker">Kapitel 4 · Vorwissen über Abi hinaus</div>
+  <h2>Rademacher-Komplexität: Wie gut korrelierst du mit Münzwürfen?</h2>
+  <p class="lead">Die VC-Dimension ist grob — sie kennt nur „zerschmettert / zerschmettert nicht“.
+  Die <strong>Rademacher-Komplexität</strong> ist ihr feineres Geschwisterchen und misst graduell,
+  wie gut eine Modellklasse <em>reinem Rauschen hinterherlaufen</em> kann.
+  Sie ist die Formel, die dem Experiment des Papers am nächsten kommt.</p>
+
+  <div class="card reveal">
+    <h3>Die Definition — Stück für Stück</h3>
+    <div class="math" data-tex="\hat{\mathfrak{R}}_n(\mathcal{H}) \;=\; \mathbb{E}_{\sigma}\left[\, \sup_{h\in\mathcal{H}}\; \frac{1}{n}\sum_{i=1}^{n}\sigma_i\, h(x_i) \right]"></div>
+    <div class="grid3" style="margin-top:1rem">
+      <div class="stat">
+        <div class="stat-l" style="color:var(--acc2)">σᵢ — die Münzwürfe</div>
+        <div class="mini">Jedes <span class="math-inline" data-tex="\sigma_i"></span> ist unabhängig
+        +1 oder −1, je mit Wahrscheinlichkeit ½. Das sind <strong>reine Zufalls-Labels</strong>,
+        völlig ohne Bezug zu den Daten <span class="math-inline" data-tex="x_i"></span>.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-l" style="color:var(--acc)">sup — die beste Hypothese</div>
+        <div class="mini">„Supremum“ heißt: Wir suchen aus der ganzen Klasse
+        <span class="math-inline" data-tex="\mathcal{H}"></span> diejenige Funktion heraus, die am
+        <em>besten</em> mit diesem Zufallsmuster übereinstimmt. Das Modell darf also betrügen
+        und erst <em>nachdem</em> es die Münzwürfe gesehen hat, seine Parameter wählen.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-l" style="color:var(--acc3)">𝔼 — der Durchschnitt</div>
+        <div class="mini">Wir mitteln über sehr viele solcher Zufalls-Beschriftungen.
+        Ergebnis: eine Zahl zwischen 0 und 1.
+        <strong>0</strong> = kann Rauschen gar nicht folgen.
+        <strong>1</strong> = kann jedes Rauschen perfekt treffen.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab reveal">
+    <div class="lab-title"><span class="dot"></span>Labor 4 · Rademacher zum Anfassen</div>
+    <div class="lab-sub">Würfle Zufalls-Labels (σ) und lass die Modellklasse versuchen, ihnen zu folgen.
+    Die Korrelation wird live berechnet und über viele Würfe gemittelt.</div>
+
+    <div class="grid-side">
+      <div>
+        <canvas id="c4canvas" height="260"></canvas>
+        <div class="legend">
+          <span><i style="background:var(--acc)"></i>σᵢ = +1</span>
+          <span><i style="background:var(--acc2)"></i>σᵢ = −1</span>
+          <span><i style="background:var(--acc4)"></i>beste Hypothese h(x)</span>
+        </div>
+        <div id="c4hist" class="plot" style="height:200px;margin-top:.9rem"></div>
+      </div>
+      <div>
+        <h4>Modellklasse</h4>
+        <div class="seg" id="c4seg">
+          <button data-m="const" class="on">Konstante</button>
+          <button data-m="lin">Gerade</button>
+          <button data-m="poly">Polynom</button>
+          <button data-m="net">Großes Netz</button>
+        </div>
+        <div class="ctrl" style="margin-top:.9rem">
+          <div class="ctrl-head"><span class="ctrl-label">Stichprobengröße n</span><span class="ctrl-val" id="c4nv">16</span></div>
+          <input type="range" id="c4n" min="4" max="40" step="1" value="16">
+        </div>
+        <div class="btnrow">
+          <button class="pink" id="c4roll">🎲 Neue σ würfeln</button>
+          <button class="primary" id="c4avg">⚡ 300× mitteln</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="stat-l">Korrelation (dieser Wurf)</div>
+            <div class="stat-v" id="c4cur" style="color:var(--acc4)">—</div>
+            <div class="bar"><i id="c4curb" style="background:var(--acc4);width:0%"></i></div></div>
+          <div class="stat"><div class="stat-l">Rademacher-Komplexität R̂ₙ</div>
+            <div class="stat-v" id="c4rad" style="color:var(--acc3)">—</div>
+            <div class="bar"><i id="c4radb" style="background:var(--acc3);width:0%"></i></div>
+            <div class="stat-s" id="c4rads">über 0 Würfe gemittelt</div></div>
+        </div>
+        <div class="callout" style="margin-top:.8rem;padding:.6rem .8rem">
+          <p class="mini" style="margin:0">Schranke:
+          <span class="math-inline" data-tex="R(h)\le \hat R(h)+2\hat{\mathfrak{R}}_n(\mathcal{H})+3\sqrt{\tfrac{\log(2/\delta)}{2n}}"></span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout key" style="margin-top:1rem">
+      <p style="margin:0"><strong>Teste „Großes Netz“.</strong> Die Komplexität schnellt auf ≈&nbsp;1.
+      Setze das in die Schranke ein: <span class="math-inline" data-tex="R(h)\le \hat R(h) + 2"></span>.
+      Da der Fehler sowieso zwischen 0 und 1 liegt, ist die Aussage „der Testfehler ist höchstens 2“
+      <em>vollkommen wertlos</em>. Genau das schreiben Zhang et al.:
+      „<em>a trivial upper bound on the Rademacher complexity that does not lead to useful
+      generalization bounds in realistic settings.</em>“</p>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>Die Brücke zum Paper</h3>
+    <p>Schau dir nochmal die Formel an und vergleiche sie mit dem Experiment:</p>
+    <div class="grid2">
+      <div class="stat" style="border-color:rgba(167,139,250,.35)">
+        <div class="stat-l" style="color:var(--acc3)">Rademacher-Komplexität (Theorie)</div>
+        <div class="mini">Ersetze alle Labels durch zufällige ±1.<br>
+        Miss, wie gut die Modellklasse sie treffen kann.<br>
+        → Eine mathematische Erwartungswert-Definition.</div>
+      </div>
+      <div class="stat" style="border-color:rgba(244,114,182,.35)">
+        <div class="stat-l" style="color:var(--acc2)">Randomisierungstest (Paper)</div>
+        <div class="mini">Ersetze alle Labels durch zufällige Klassen.<br>
+        Miss per SGD, ob das Netz sie lernen kann.<br>
+        → Ein echtes Experiment auf CIFAR10.</div>
+      </div>
+    </div>
+    <p style="margin-top:.9rem;margin-bottom:0"><strong>Es ist dieselbe Idee.</strong>
+    Das Paper berechnet die Rademacher-Komplexität nicht — es <em>misst</em> sie.
+    Und das Ergebnis ist: ≈ 1. Maximal. Die Schranke kollabiert.</p>
+  </div>
+
+  <div class="card reveal">
+    <h3>Der dritte Kandidat: Uniforme Stabilität</h3>
+    <p>Die dritte klassische Erklärung schaut nicht auf das <em>Modell</em>, sondern auf den
+    <em>Algorithmus</em>. Ein Lernalgorithmus <span class="math-inline" data-tex="\mathcal{A}"></span>
+    heißt <strong>β-uniform stabil</strong>, wenn das Austauschen eines einzigen Trainingsbeispiels
+    die Vorhersage um höchstens β ändert:</p>
+    <div class="math" data-tex="\sup_{S,\,i,\,z'}\; \big|\, \mathrm{loss}(\mathcal{A}(S), z) - \mathrm{loss}(\mathcal{A}(S^{i\to z'}), z)\,\big| \;\le\; \beta"></div>
+
+    <div class="lab" style="margin-top:1rem">
+      <div class="lab-title"><span class="dot"></span>Labor 4b · Stabilität sehen</div>
+      <div class="lab-sub">Tausche einen einzigen Datenpunkt aus und beobachte, wie stark sich die
+      gelernte Funktion ändert. Je größer die Modellkapazität, desto instabiler.</div>
+      <div class="grid-side">
+        <div><canvas id="c4bcanvas" height="230"></canvas>
+          <div class="legend">
+            <span><i style="background:var(--acc)"></i>h auf Datensatz S</span>
+            <span><i style="background:var(--acc2)"></i>h auf S′ (1 Punkt getauscht)</span>
+            <span><i style="background:var(--acc4)"></i>getauschter Punkt</span>
+          </div>
+        </div>
+        <div>
+          <div class="ctrl">
+            <div class="ctrl-head"><span class="ctrl-label">Modellkapazität (Grad)</span><span class="ctrl-val" id="c4bdv">2</span></div>
+            <input type="range" id="c4bdeg" min="1" max="12" step="1" value="2">
+          </div>
+          <div class="btnrow"><button class="violet" id="c4bswap">🔄 Punkt tauschen</button></div>
+          <div class="stat"><div class="stat-l">Instabilität β (max. Abweichung)</div>
+            <div class="stat-v" id="c4bbeta" style="color:var(--acc2)">—</div>
+            <div class="bar"><i id="c4bbar" style="background:var(--acc2);width:0%"></i></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <p style="margin:0"><strong>Warum auch das scheitert:</strong> Uniforme Stabilität ist eine Eigenschaft
+      <em>nur des Algorithmus</em> — sie weiß nichts über die Labels. SGD auf echten Labels und SGD auf
+      Zufalls-Labels ist <strong>derselbe Algorithmus</strong>. Die Stabilitätsschranke kann also
+      unmöglich zwischen „generalisiert super“ und „generalisiert gar nicht“ unterscheiden.
+      Zhang et al.: „<em>uniform stability of a learning algorithm is independent of the labeling of the
+      training data.</em>“</p>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>Zwischenstand: Drei Werkzeuge, drei Sackgassen</h3>
+    <div id="c4summary" class="plot" style="height:280px"></div>
+    <p class="hint">Alle drei klassischen Maße geben für echte und zufällige Labels <em>denselben</em> Wert —
+    können also die riesige Differenz im Testfehler nicht erklären.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     KAPITEL 5 — REGULARISIERUNG
+     ══════════════════════════════════════════════════════════ -->
+<section id="c5">
+  <div class="kicker">Kapitel 5 · Vorwissen über Abi hinaus</div>
+  <h2>Regularisierung: Die klassische Rettungsleine</h2>
+  <p class="lead">Wenn das Modell zu mächtig ist, zügelt man es. Das ist die Standardantwort seit
+  Jahrzehnten. Drei Techniken dominieren in der Praxis — und das Paper nimmt alle drei auseinander.</p>
+
+  <div class="lab reveal">
+    <div class="lab-title"><span class="dot"></span>Labor 5 · Die drei Zügel</div>
+    <div class="lab-sub">Wähle eine Technik und spiele mit ihrer Stärke. Beobachte links den Effekt
+    auf das Modell, rechts die Auswirkung auf Trainings- und Testfehler.</div>
+
+    <div class="seg" id="c5seg" style="margin-bottom:1rem">
+      <button data-m="wd" class="on">Weight Decay (ℓ₂)</button>
+      <button data-m="do">Dropout</button>
+      <button data-m="aug">Daten-Augmentierung</button>
+      <button data-m="es">Early Stopping</button>
+      <button data-m="bn">Batch Normalization</button>
+    </div>
+
+    <div class="grid2">
+      <div><canvas id="c5canvas" height="275"></canvas>
+        <div class="legend" id="c5legend"></div>
+      </div>
+      <div>
+        <div id="c5plot" class="plot" style="height:275px"></div>
+      </div>
+    </div>
+
+    <div class="grid-side" style="margin-top:1rem">
+      <div>
+        <div class="card tight" id="c5explain" style="margin:0"></div>
+      </div>
+      <div>
+        <div class="ctrl">
+          <div class="ctrl-head"><span class="ctrl-label" id="c5plab">Stärke λ</span><span class="ctrl-val" id="c5pv">0.00</span></div>
+          <input type="range" id="c5p" min="0" max="100" step="1" value="0">
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="stat-l">Trainingsgenauigkeit</div>
+            <div class="stat-v" id="c5tr" style="color:var(--acc)">—</div></div>
+          <div class="stat"><div class="stat-l">Testgenauigkeit</div>
+            <div class="stat-v" id="c5te" style="color:var(--acc5)">—</div></div>
+          <div class="stat"><div class="stat-l">Gewichtsnorm ‖w‖</div>
+            <div class="stat-v" id="c5nm" style="color:var(--acc3)">—</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>Was das Paper misst (Tabelle 1, CIFAR10)</h3>
+    <p>Zhang et al. schalten die Regularisierer systematisch an und aus. Klicke auf die Schalter:</p>
+    <div class="flex" style="margin-bottom:.8rem">
+      <div class="toggle on" id="t5crop"><div class="sw"></div><span>Random Crop (Augmentierung)</span></div>
+      <div class="toggle on" id="t5wd"><div class="sw"></div><span>Weight Decay</span></div>
+    </div>
+    <div class="scroll-x"><table id="c5table"></table></div>
+    <div id="c5bar" class="plot" style="height:300px;margin-top:1rem"></div>
+    <div class="callout key">
+      <p style="margin:0"><strong>Lies die Zahlen:</strong> Inception mit allem an: 89,05&nbsp;%.
+      Mit <em>allem</em> aus: 85,75&nbsp;%. Das sind nur <strong>3,3 Prozentpunkte</strong> Unterschied —
+      während Zufallsraten bei 10&nbsp;% liegt. Die Regularisierer sind also ein
+      <em>Feintuning-Parameter</em>, nicht die Ursache der Generalisierung.</p>
+    </div>
+    <div class="quote">
+      „Explizite Regularisierung kann die Generalisierungsleistung verbessern,
+      ist aber <em>weder notwendig noch für sich genommen hinreichend</em>,
+      um den Generalisierungsfehler zu kontrollieren.“
+    </div>
+  </div>
+
+  <div class="grid2 reveal">
+    <div class="card">
+      <h4>Der klassische (konvexe) Fall</h4>
+      <p style="margin-bottom:0">Bei linearer Regression mit mehr Parametern als Daten gibt es unendlich
+      viele perfekte Lösungen. Ohne Regularisierung ist das Problem <em>schlecht gestellt</em> —
+      man <strong>braucht</strong> ℓ₂, um eine eindeutige, sinnvolle Lösung auszuzeichnen.</p>
+    </div>
+    <div class="card">
+      <h4>Der Deep-Learning-Fall</h4>
+      <p style="margin-bottom:0">Hier passiert etwas anderes: Auch <em>ohne</em> jede explizite
+      Regularisierung findet SGD eine Lösung, die gut generalisiert. Irgendetwas wählt also schon
+      vorher eine „gute“ Lösung aus. Das führt uns zu Kapitel 9: <strong>implizite Regularisierung</strong>.</p>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h4>Kuriosum aus dem Anhang (Tabelle 4)</h4>
+    <p>Selbst <em>mit</em> eingeschaltetem Weight Decay lernen die meisten Netze die Zufalls-Labels noch:</p>
+    <table>
+      <tr><th>Modell</th><th>Regularisierer</th><th class="num">Trainingsgenauigkeit auf Zufalls-Labels</th></tr>
+      <tr><td>Inception</td><td>Weight decay</td><td class="num">100 %</td></tr>
+      <tr><td>AlexNet</td><td>Weight decay</td><td class="num" style="color:var(--acc4)">konvergiert nicht</td></tr>
+      <tr><td>MLP 3×512</td><td>Weight decay</td><td class="num">100 %</td></tr>
+      <tr><td>MLP 1×512</td><td>Weight decay</td><td class="num">99,21 %</td></tr>
+      <tr><td>Inception</td><td>Random Cropping</td><td class="num">99,93 %</td></tr>
+      <tr><td>Inception</td><td>Augmentierung</td><td class="num">99,28 %</td></tr>
+    </table>
+    <p class="hint">Nur AlexNet mit Weight Decay scheitert — die einzige Ausnahme. Der Regularisierer
+    verhindert das Auswendiglernen also fast nie.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     KAPITEL 6 — DAS EXPERIMENT
+     ══════════════════════════════════════════════════════════ -->
+<section id="c6">
+  <div class="kicker">Kapitel 6 · Der Kern des Papers</div>
+  <h2>Der Randomisierungstest: Zerstöre die Bedeutung, behalte alles andere</h2>
+  <p class="lead">Jetzt kommt die eigentliche Idee. Sie ist so einfach, dass man sich fragt,
+  warum sie niemand vorher gemacht hat — und so scharf, dass sie drei Theorien gleichzeitig trifft.</p>
+
+  <div class="card reveal">
+    <h3>Die Motivation in einem Satz</h3>
+    <div class="quote">
+      „Was unterscheidet neuronale Netze, die gut generalisieren,
+      von denen, die es nicht tun?“
+    </div>
+    <p>Zhang et al. wollen die <strong>effektive Kapazität</strong> messen: nicht, was ein Modell
+    theoretisch könnte, sondern was es <em>in der Praxis, mit echtem SGD, in realistischer Zeit</em>
+    tatsächlich lernt. Dafür leihen sie sich ein Werkzeug aus der nichtparametrischen Statistik:
+    den <strong>Randomisierungstest</strong>.</p>
+
+    <div class="grid3" style="margin-top:1rem">
+      <div class="stat" style="border-color:rgba(94,234,212,.3)">
+        <div class="stat-l" style="color:var(--acc)">Die Idee</div>
+        <div class="mini">Trainiere dieselbe Architektur zweimal: einmal auf echten Daten,
+        einmal auf einer Kopie, bei der die Labels durch Zufallszahlen ersetzt wurden.</div>
+      </div>
+      <div class="stat" style="border-color:rgba(167,139,250,.3)">
+        <div class="stat-l" style="color:var(--acc3)">Die Erwartung</div>
+        <div class="mini">Lernen ist jetzt <em>unmöglich</em> — es gibt keinen Zusammenhang mehr
+        zwischen Bild und Label. Das Training müsste scheitern oder massiv einbrechen.</div>
+      </div>
+      <div class="stat" style="border-color:rgba(244,114,182,.3)">
+        <div class="stat-l" style="color:var(--acc2)">Das Ergebnis</div>
+        <div class="mini">Es scheitert nicht. Der Trainingsfehler geht auf <strong>exakt 0</strong>.
+        Das Training dauert nur um einen kleinen konstanten Faktor länger.</div>
+      </div>
+    </div>
+
+    <div class="callout key" style="margin-top:1rem">
+      <p style="margin:0"><strong>Warum das so mächtig ist:</strong> Randomisieren der Labels ist
+      <em>ausschließlich eine Datentransformation</em>. Modell, Größe, Hyperparameter, Optimierer,
+      Lernratenplan — alles bleibt bitgenau gleich. Wenn sich der Generalisierungsfehler trotzdem von
+      ~11 % auf ~90 % verschiebt, dann kann keine Größe, die nur vom <em>Modell</em> oder nur vom
+      <em>Algorithmus</em> abhängt, das erklären.</p>
+    </div>
+  </div>
+
+  <div class="lab reveal">
+    <div class="lab-title"><span class="dot"></span>Labor 6a · Die sechs Datensatz-Varianten</div>
+    <div class="lab-sub">Das Paper testet sechs Stufen der Zerstörung. Klicke dich durch und sieh,
+    was mit den Bildern und Labels passiert. Jede Kachel ist ein „CIFAR10-Bild“ (hier schematisch).</div>
+
+    <div class="seg" id="c6seg" style="margin-bottom:1rem">
+      <button data-m="true" class="on">Echte Labels</button>
+      <button data-m="part">Teilweise korrupt</button>
+      <button data-m="rand">Zufalls-Labels</button>
+      <button data-m="shuf">Pixel permutiert</button>
+      <button data-m="rpix">Zufalls-Pixel</button>
+      <button data-m="gauss">Gauß-Rauschen</button>
+    </div>
+
+    <div class="grid-side">
+      <div>
+        <canvas id="c6grid" height="300"></canvas>
+        <div class="hint" id="c6hint"></div>
+      </div>
+      <div>
+        <div class="card tight" id="c6desc" style="margin:0"></div>
+        <div class="ctrl" style="margin-top:.9rem" id="c6pwrap">
+          <div class="ctrl-head"><span class="ctrl-label">Korruptionsgrad p</span><span class="ctrl-val" id="c6pv">0.5</span></div>
+          <input type="range" id="c6p" min="0" max="1" step="0.05" value="0.5">
+        </div>
+        <div class="btnrow"><button id="c6re">🎲 Neu generieren</button></div>
+        <div class="stat">
+          <div class="stat-l">Erreichbare Trainingsgenauigkeit</div>
+          <div class="stat-v" id="c6tracc" style="color:var(--acc)">100 %</div>
+          <div class="stat-s" id="c6trs">Das Netz schafft es in allen sechs Fällen.</div>
+        </div>
+        <div class="stat" style="margin-top:.6rem">
+          <div class="stat-l">Testgenauigkeit</div>
+          <div class="stat-v" id="c6teacc" style="color:var(--acc2)">89 %</div>
+          <div class="stat-s" id="c6tes"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab reveal">
+    <div class="lab-title"><span class="dot"></span>Labor 6b · Lernkurven (Nachbau von Figure 1a)</div>
+    <div class="lab-sub">Der mittlere Loss über die Trainingsschritte für alle Varianten.
+    Schalte Kurven an und aus. Beachte: <em>alle</em> erreichen am Ende Loss ≈ 0.</div>
+    <div class="pillbox" id="c6legend"></div>
+    <div id="c6curves" class="plot" style="height:360px"></div>
+    <div class="grid3" style="margin-top:1rem">
+      <div class="card tight">
+        <h4>Beobachtung a)</h4>
+        <p class="mini" style="margin:0">Der Lernratenplan muss <strong>nicht</strong> geändert werden.
+        Dieselben Hyperparameter funktionieren für echte und zufällige Labels.</p>
+      </div>
+      <div class="card tight">
+        <h4>Beobachtung b)</h4>
+        <p class="mini" style="margin:0">Sobald das Anpassen beginnt, <strong>konvergiert es schnell</strong>.
+        Es gibt eine Anlaufphase, dann fällt der Loss steil.</p>
+      </div>
+      <div class="card tight">
+        <h4>Beobachtung c)</h4>
+        <p class="mini" style="margin:0">Es konvergiert zu einem <strong>perfekten Overfit</strong>:
+        Trainingsfehler exakt 0, auch bei reinem Zufall.</p>
+      </div>
+    </div>
+    <div class="callout">
+      <p style="margin:0"><strong>Kurioses Detail:</strong> „Zufalls-Pixel“ und „Gauß“ konvergieren
+      <em>schneller</em> als „Zufalls-Labels“. Grund: Bei zufälligen Pixeln sind die Eingaben weiter
+      voneinander entfernt als natürliche Bilder derselben Kategorie — es ist also leichter,
+      ein Netz zu bauen, das sie beliebig beschriftet.</p>
+    </div>
+  </div>
+
+  <div class="lab reveal">
+    <div class="lab-title"><span class="dot"></span>Labor 6c · Der Korruptions-Regler (Figure 1b &amp; 1c)</div>
+    <div class="lab-sub">Hier ist das Herzstück: Schiebe den Anteil zufälliger Labels von 0 nach 1
+    und beobachte drei Dinge gleichzeitig — Trainingsgenauigkeit, Testfehler und Konvergenzzeit.</div>
+
+    <div class="ctrl">
+      <div class="ctrl-head"><span class="ctrl-label">Label-Korruption p (Anteil zufälliger Labels)</span>
+        <span class="ctrl-val" id="c6cv">0.00</span></div>
+      <input type="range" id="c6corr" min="0" max="1" step="0.01" value="0">
+    </div>
+
+    <div class="grid2">
+      <div id="c6err" class="plot" style="height:300px"></div>
+      <div id="c6slow" class="plot" style="height:300px"></div>
+    </div>
+
+    <div class="grid3" style="margin-top:1rem">
+      <div class="stat"><div class="stat-l">Trainingsgenauigkeit</div>
+        <div class="stat-v" id="c6a" style="color:var(--acc)">100 %</div>
+        <div class="bar"><i id="c6ab" style="background:var(--acc);width:100%"></i></div>
+        <div class="stat-s">bleibt bei 100 % — immer</div></div>
+      <div class="stat"><div class="stat-l">Testfehler (= Generalisierungsfehler)</div>
+        <div class="stat-v" id="c6b" style="color:var(--acc2)">11 %</div>
+        <div class="bar"><i id="c6bb" style="background:var(--acc2);width:11%"></i></div>
+        <div class="stat-s">steigt stetig auf 90 % (= Raten)</div></div>
+      <div class="stat"><div class="stat-l">Konvergenz-Verlangsamung</div>
+        <div class="stat-v" id="c6c" style="color:var(--acc4)">1,0×</div>
+        <div class="bar"><i id="c6cb" style="background:var(--acc4);width:10%"></i></div>
+        <div class="stat-s">nur ein kleiner konstanter Faktor</div></div>
+    </div>
+
+    <div class="callout idea">
+      <p><strong>Die subtilste Erkenntnis des ganzen Papers steckt in der mittleren Kurve.</strong>
+      Sie steigt <em>glatt und stetig</em> an — sie springt nicht. Bei p = 0,3 ist der Testfehler
+      noch deutlich besser als Raten, obwohl 30 % der Labels Müll sind.</p>
+      <p style="margin-bottom:0">Das heißt: Das Netz macht beides gleichzeitig. Es
+      <strong>extrahiert das verbliebene Signal</strong> aus den korrekten Labels <em>und</em>
+      <strong>lernt den verrauschten Teil per Brute Force auswendig</strong>. Es ist kein
+      Entweder-oder. Zitat: „<em>neural networks are able to capture the remaining signal in the data,
+      while at the same time fit the noisy part using brute-force.</em>“</p>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>Die drei Schlussfolgerungen — und wie sie die Theorien zerlegen</h3>
+    <div class="steps">
+      <div class="step">
+        <h4>Die effektive Kapazität reicht, um den gesamten Datensatz auswendig zu lernen</h4>
+        <p style="margin:0">→ <span class="tag v">VC-Dimension</span> Die VC-Dimension ist ≥ n.
+        Die Schranke <span class="math-inline" data-tex="\sqrt{\mathrm{VC}/n}"></span> wird ≥ 1 und damit leer.</p>
+      </div>
+      <div class="step">
+        <h4>Die Modellklasse kann perfekt mit Zufalls-Labels korrelieren</h4>
+        <p style="margin:0">→ <span class="tag v">Rademacher</span>
+        <span class="math-inline" data-tex="\hat{\mathfrak{R}}_n(\mathcal{H}) \approx 1"></span>,
+        die maximal mögliche (triviale) obere Schranke. Nutzlos.</p>
+      </div>
+      <div class="step">
+        <h4>Randomisieren ist <em>nur</em> eine Datentransformation</h4>
+        <p style="margin:0">→ <span class="tag v">Uniforme Stabilität</span> Der Algorithmus ist
+        identisch. Eine Größe, die nur vom Algorithmus abhängt, kann die beiden Fälle nicht unterscheiden.</p>
+      </div>
+    </div>
+
+    <div id="c6kill" class="plot" style="height:320px;margin-top:1rem"></div>
+    <p class="hint">Jede Theorie liefert für beide Szenarien denselben Wert — aber die Realität
+    unterscheidet sich um 79 Prozentpunkte.</p>
+  </div>
+
+  <div class="card reveal">
+    <h4>Und auf ImageNet? Noch extremer.</h4>
+    <table>
+      <tr><th>Setting</th><th class="num">Top-1 Train</th><th class="num">Top-1 Test</th><th class="num">Top-5 Test</th></tr>
+      <tr><td>Echte Labels, alle Regularisierer an</td><td class="num">92,18</td><td class="num">77,84</td><td class="num">93,92</td></tr>
+      <tr><td>Echte Labels, alles aus</td><td class="num">99,53</td><td class="num">59,80</td><td class="num">80,38</td></tr>
+      <tr class="hl"><td>Zufalls-Labels, alles aus</td><td class="num">95,20</td><td class="num">0,11</td><td class="num">0,56</td></tr>
+      <tr class="hl"><td>Zufalls-Labels, Dropout + Weight Decay an</td><td class="num">91,18</td><td class="num">0,09</td><td class="num">0,49</td></tr>
+    </table>
+    <p style="margin-bottom:0"><strong>95,20 % Trainingsgenauigkeit auf einer Million zufälliger Labels
+    aus 1000 Kategorien.</strong> Ohne jedes Hyperparameter-Tuning beim Umschalten. Und selbst mit
+    eingeschalteten Regularisierern noch ~90 %.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     KAPITEL 7 — ERGEBNISSE
+     ══════════════════════════════════════════════════════════ -->
+<section id="c7">
+  <div class="kicker">Kapitel 7 · Die Messdaten</div>
+  <h2>Tabelle 1 zum Anfassen</h2>
+  <p class="lead">Alle Zahlen hier sind die echten Messwerte aus dem Paper (CIFAR10).
+  Spiel mit den Filtern und sieh, wie wenig die Regularisierer bewirken.</p>
+
+  <div class="lab reveal">
+    <div class="lab-title"><span class="dot"></span>Labor 7 · Der Ergebnis-Explorer</div>
+    <div class="lab-sub">Wähle Modelle und Regularisierer. Die Balken zeigen Train- vs. Test-Genauigkeit.</div>
+
+    <div class="grid2" style="margin-bottom:1rem">
+      <div>
+        <h4>Architekturen</h4>
+        <div class="pillbox" id="c7models"></div>
+      </div>
+      <div>
+        <h4>Ansicht</h4>
+        <div class="seg" id="c7view">
+          <button data-v="acc" class="on">Genauigkeit</button>
+          <button data-v="gap">Generalisierungslücke</button>
+          <button data-v="par">Parameter vs. Leistung</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="c7plot" class="plot" style="height:420px"></div>
+    <div class="scroll-x"><table id="c7table"></table></div>
+  </div>
+
+  <div class="grid2 reveal">
+    <div class="card">
+      <h4>Lies die Zeilen mit Zufalls-Labels</h4>
+      <p>Jedes Modell hat eine graue Zeile „(fitting random labels)“. Schau dir die beiden Spalten an:</p>
+      <table>
+        <tr><th>Modell</th><th class="num">Train</th><th class="num">Test</th></tr>
+        <tr class="hl"><td>Inception</td><td class="num">100,0</td><td class="num">9,78</td></tr>
+        <tr class="hl"><td>Inception o. BN</td><td class="num">100,0</td><td class="num">10,12</td></tr>
+        <tr class="hl"><td>AlexNet</td><td class="num">99,82</td><td class="num">9,86</td></tr>
+        <tr class="hl"><td>MLP 3×512</td><td class="num">100,0</td><td class="num">10,48</td></tr>
+        <tr class="hl"><td>MLP 1×512</td><td class="num">99,34</td><td class="num">10,61</td></tr>
+      </table>
+      <p style="margin-bottom:0">Testgenauigkeit ≈ 10 % = exakt Zufallsraten bei 10 Klassen.
+      Trainingsgenauigkeit ≈ 100 %. Das ist perfektes Auswendiglernen ohne jedes Verständnis.</p>
+    </div>
+    <div class="card">
+      <h4>Figure 2b: Batch Normalization</h4>
+      <div id="c7bn" class="plot" style="height:240px"></div>
+      <p class="mini" style="margin-bottom:0">BatchNorm stabilisiert die Lerndynamik sichtbar,
+      aber der Effekt auf die Generalisierung beträgt nur <strong>3–4 Prozentpunkte</strong>
+      (86,03 % → 83,00 %). Auch BatchNorm ist kein Phasenübergang.</p>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h4>Figure 2a: Early Stopping auf ImageNet</h4>
+    <p>Die schattierte Fläche zeigt die kumulativ beste Testgenauigkeit — also den potenziellen
+    Gewinn durch frühes Abbrechen. Auf ImageNet ohne andere Regularisierer: ja, es hilft etwas
+    (59,80 % → 63,16 %). Auf CIFAR10: <em>kein</em> messbarer Nutzen.</p>
+    <div id="c7es" class="plot" style="height:320px"></div>
+    <div class="flex">
+      <div class="toggle on" id="t7shade"><div class="sw"></div><span>Kumulativ bestes Test zeigen</span></div>
+      <div class="toggle" id="t7reg"><div class="sw"></div><span>Regularisierer einschalten</span></div>
+    </div>
+  </div>
+
+  <div class="callout warn reveal">
+    <p style="margin:0"><strong>Fazit Kapitel 7:</strong> Auf ImageNet kostet das Abschalten
+    <em>aller</em> Regularisierer 18 Prozentpunkte Top-1 (77,84 → 59,80). Klingt viel — aber
+    Zufallsraten liegt bei 0,1 %. Und: Mit nur Daten-Augmentierung an (sonst alles aus) erreicht
+    Inception 72,95 %. Der Architekturwechsel bringt mehr als jeder Regularisierer.
+    „<em>It is difficult to say that the regularizers count as a fundamental phase change in the
+    generalization capability of deep nets.</em>“</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     KAPITEL 8 — THEOREM 1
+     ══════════════════════════════════════════════════════════ -->
+<section id="c8">
+  <div class="kicker">Kapitel 8 · Die Theorie</div>
+  <h2>Theorem 1: Zwei Schichten reichen für <em>alles</em></h2>
+  <p class="lead">Das Experiment zeigt: Netze <em>können</em> auswendig lernen. Aber wie viele
+  Parameter braucht man dafür wirklich? Die Antwort ist schockierend sparsam — und der Beweis
+  passt auf eine halbe Seite. Wir bauen ihn Schritt für Schritt interaktiv nach.</p>
+
+  <div class="card reveal">
+    <div class="callout key" style="margin-top:0">
+      <p style="margin:0"><strong>Theorem 1.</strong> Es existiert ein zweischichtiges neuronales Netz
+      mit ReLU-Aktivierungen und <span class="math-inline" data-tex="2n + d"></span> Gewichten,
+      das <em>jede beliebige Funktion</em> auf einer Stichprobe von n Punkten in d Dimensionen
+      darstellen kann.</p>
+    </div>
+    <p>Zum Vergleich: Eine frühere Konstruktion von Livni et al. (2014) brauchte
+    <span class="math-inline" data-tex="O(dn)"></span> Parameter. Hier reichen
+    <span class="math-inline" data-tex="2n+d"></span> — bei CIFAR10 (n = 50 000, d = 2352)
+    sind das gut 102 000 statt 117 Millionen.</p>
+    <p><strong>Der entscheidende Perspektivwechsel:</strong> Alle klassischen Expressivitäts-Resultate
+    (Cybenko, Telgarsky, Eldan &amp; Shamir …) sind auf <em>Populationsebene</em> — sie fragen,
+    welche mathematischen Funktionen über die <em>gesamte Domäne</em> darstellbar sind. Zhang et al.
+    fragen stattdessen nach der <strong>Finite-Sample-Expressivität</strong>: Was kann ein Netz auf
+    genau diesen n Punkten? Und dort wird das Bild dramatisch einfacher.</p>
+  </div>
+
+  <div class="lab reveal">
+    <div class="lab-title"><span class="dot"></span>Labor 8 · Der Beweis zum Durchklicken</div>
+    <div class="lab-sub">Fünf Schritte. Klick dich durch und sieh, wie aus n Punkten eine exakte
+    Lösung wird — egal welche Labels du vorgibst.</div>
+
+    <div class="btnrow" id="c8steps">
+      <button data-s="0" class="primary">1 · Die Funktion</button>
+      <button data-s="1">2 · Projektion</button>
+      <button data-s="2">3 · Verschachteln</button>
+      <button data-s="3">4 · Dreiecksmatrix</button>
+      <button data-s="4">5 · Lösen</button>
+    </div>
+
+    <div class="grid-side">
+      <div>
+        <canvas id="c8canvas" height="330"></canvas>
+      </div>
+      <div>
+        <div class="card tight" id="c8text" style="margin:0;min-height:230px"></div>
+        <div class="ctrl" style="margin-top:.9rem">
+          <div class="ctrl-head"><span class="ctrl-label">Anzahl Punkte n</span><span class="ctrl-val" id="c8nv">7</span></div>
+          <input type="range" id="c8n" min="3" max="14" step="1" value="7">
+        </div>
+        <div class="btnrow">
+          <button class="pink" id="c8rand">🎲 Neue Ziel-Labels y</button>
+          <button class="ghost" id="c8sort">↕ Labels extrem machen</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="stat-l">Parameter p = 2n + d</div>
+            <div class="stat-v" id="c8p" style="color:var(--acc3)">—</div>
+            <div class="stat-s" id="c8ps"></div></div>
+          <div class="stat"><div class="stat-l">Max. Fehler |c(zᵢ) − yᵢ|</div>
+            <div class="stat-v" id="c8err" style="color:var(--acc)">—</div>
+            <div class="stat-s">exakt 0 — immer, für jedes y</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>Lemma 1 — das technische Herzstück</h3>
+    <p>Der ganze Beweis hängt an einer einzigen linearen-Algebra-Beobachtung:</p>
+    <div class="callout idea">
+      <p style="margin:0"><strong>Lemma 1.</strong> Für zwei verschachtelte Zahlenfolgen
+      <span class="math-inline" data-tex="b_1 < x_1 < b_2 < x_2 < \cdots < b_n < x_n"></span>
+      hat die <span class="math-inline" data-tex="n\times n"></span>-Matrix
+      <span class="math-inline" data-tex="A = [\max\{x_i - b_j,\,0\}]_{ij}"></span> vollen Rang.
+      Ihr kleinster Eigenwert ist <span class="math-inline" data-tex="\min_i (x_i - b_i)"></span>.</p>
+    </div>
+    <div class="grid-side-l">
+      <div>
+        <h4>Warum?</h4>
+        <ul class="mini">
+          <li>Wenn <span class="math-inline" data-tex="i < j"></span>, dann ist
+          <span class="math-inline" data-tex="x_i < b_j"></span> (wegen der Verschachtelung),
+          also <span class="math-inline" data-tex="x_i - b_j < 0"></span> und das ReLU
+          <span class="math-inline" data-tex="\max\{\cdot,0\}"></span> macht daraus <strong>0</strong>.</li>
+          <li>→ Alle Einträge oberhalb der Diagonale sind 0. Die Matrix ist
+          <strong>untere Dreiecksmatrix</strong>.</li>
+          <li>Auf der Diagonale steht <span class="math-inline" data-tex="x_i - b_i > 0"></span>,
+          also alles <strong>ungleich null</strong>.</li>
+          <li>Eine untere Dreiecksmatrix mit lauter Nicht-Nullen auf der Diagonale ist
+          <strong>invertierbar</strong>. Fertig.</li>
+        </ul>
+      </div>
+      <div>
+        <div id="c8matrix" class="plot" style="height:330px"></div>
+      </div>
+    </div>
+    <p style="margin-top:.8rem;margin-bottom:0">Invertierbar heißt: Das Gleichungssystem
+    <span class="math-inline" data-tex="A\,w = y"></span> hat für <em>jedes</em> y eine Lösung w.
+    Und <span class="math-inline" data-tex="y"></span> sind die Labels — <em>beliebige</em> Labels.
+    Das ist Zerschmettern, bewiesen mit einer halben Seite Schulalgebra.</p>
+  </div>
+
+  <div class="card reveal">
+    <h3>Die Konstruktion in Formeln</h3>
+    <p>Die dargestellte Funktion ist einfach eine Summe von ReLU-Knicken, alle entlang derselben Richtung
+    <span class="math-inline" data-tex="a"></span>:</p>
+    <div class="math" data-tex="c(x) \;=\; \sum_{j=1}^{n} w_j \,\max\big\{\langle a, x\rangle - b_j,\; 0\big\}"></div>
+    <div class="grid3">
+      <div class="stat"><div class="stat-l" style="color:var(--acc5)">a ∈ ℝᵈ</div>
+        <div class="mini"><strong>d Parameter.</strong> Eine Projektionsrichtung, die die d-dimensionalen
+        Datenpunkte auf eine Zahlengerade abbildet: <span class="math-inline" data-tex="x_i = \langle a, z_i\rangle"></span>.
+        Da alle <span class="math-inline" data-tex="z_i"></span> verschieden sind, gibt es so ein a.</div></div>
+      <div class="stat"><div class="stat-l" style="color:var(--acc4)">b ∈ ℝⁿ</div>
+        <div class="mini"><strong>n Parameter.</strong> Die Knickstellen der ReLUs. Sie werden so gewählt,
+        dass sie zwischen den projizierten Punkten liegen → die Verschachtelung aus Lemma 1.</div></div>
+      <div class="stat"><div class="stat-l" style="color:var(--acc2)">w ∈ ℝⁿ</div>
+        <div class="mini"><strong>n Parameter.</strong> Die Ausgabegewichte. Sie werden durch Lösen von
+        <span class="math-inline" data-tex="Aw = y"></span> bestimmt — das ist der einzige „Lernschritt“.</div></div>
+    </div>
+    <div class="math" data-tex="\text{Summe:}\quad p \;=\; \underbrace{d}_{a} \;+\; \underbrace{n}_{b} \;+\; \underbrace{n}_{w} \;=\; 2n + d"></div>
+  </div>
+
+  <div class="card reveal">
+    <h3>Korollar 1 — Breite gegen Tiefe tauschen</h3>
+    <p>Die Konstruktion oben ist <em>sehr breit</em> (n Knoten in einer Schicht). Das Paper zeigt,
+    wie man das umverteilt: Zerlege das Intervall [0,1] in b Teilintervalle mit je n/b Punkten,
+    behandle jedes Teilintervall in einer eigenen Schicht, und schalte am Ende einen
+    <strong>Multiplexer</strong> davor, der je nach Eingabe die richtige Schicht auswählt.</p>
+
+    <div class="lab" style="margin-top:.9rem">
+      <div class="lab-title"><span class="dot"></span>Labor 8b · Breite ↔ Tiefe</div>
+      <div class="lab-sub">Schiebe die Tiefe k und sieh, wie sich die Architektur umformt.
+      Die Gesamtzahl der Gewichte bleibt O(n + d).</div>
+      <div class="grid-side">
+        <div><canvas id="c8bcanvas" height="250"></canvas></div>
+        <div>
+          <div class="ctrl">
+            <div class="ctrl-head"><span class="ctrl-label">Tiefe k</span><span class="ctrl-val" id="c8bkv">2</span></div>
+            <input type="range" id="c8bk" min="2" max="10" step="1" value="2">
+          </div>
+          <div class="stats">
+            <div class="stat"><div class="stat-l">Breite pro Schicht</div>
+              <div class="stat-v" id="c8bw" style="color:var(--acc)">O(n/k)</div></div>
+            <div class="stat"><div class="stat-l">Gesamtgewichte</div>
+              <div class="stat-v" id="c8btot" style="color:var(--acc3)">O(n + d)</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <p style="margin:0"><strong>Die Botschaft von Kapitel 4 des Papers:</strong> Die ganze Literatur über
+      „Tiefe k ist mächtiger als Tiefe k−1“ (Eldan &amp; Shamir, Telgarsky, …) ist auf
+      <em>Populationsebene</em>. Für eine <em>endliche Stichprobe</em> gibt es diese Trennung nicht —
+      schon Tiefe 2 mit linear vielen Parametern kann <strong>jede</strong> Beschriftung darstellen.
+      Die Expressivität ist also keine erklärende Größe für Generalisierung, weil sie bei realistischen
+      Netzgrößen immer maximal ist.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     KAPITEL 9 — IMPLIZITE REGULARISIERUNG
+     ══════════════════════════════════════════════════════════ -->
+<section id="c9">
+  <div class="kicker">Kapitel 9 · Der positive Teil</div>
+  <h2>Implizite Regularisierung: SGD als heimlicher Entscheider</h2>
+  <p class="lead">Bisher nur Abriss. Jetzt der konstruktive Teil: Wenn nicht das Modell und nicht die
+  Regularisierer entscheiden — vielleicht entscheidet der <strong>Optimierer</strong>?
+  Das Paper untersucht das am einfachsten möglichen Fall: lineare Modelle. Und die Erkenntnis
+  dort ist überraschend tief.</p>
+
+  <div class="card reveal">
+    <h3>Das Setup</h3>
+    <p>n Datenpunkte, d Features, <span class="math-inline" data-tex="d \ge n"></span>.
+    Die Datenmatrix <span class="math-inline" data-tex="X"></span> hat Rang n. Dann hat</p>
+    <div class="math" data-tex="X w \;=\; y"></div>
+    <p><strong>unendlich viele</strong> Lösungen — für <em>jede</em> rechte Seite y.
+    Auch hier können wir also jede Beschriftung perfekt fitten, genau wie beim neuronalen Netz.
+    Die entscheidende Frage ist: <em>Generalisieren alle globalen Minima gleich gut?</em></p>
+  </div>
+
+  <div class="lab reveal">
+    <div class="lab-title"><span class="dot"></span>Labor 9a · Alle Lösungen sind perfekt — aber nicht gleich</div>
+    <div class="lab-sub">Hier ist ein unterbestimmtes System mit einer ganzen <em>Geraden</em> an Lösungen.
+    Schiebe entlang der Lösungsmenge: Der Trainingsfehler bleibt exakt 0. Der Testfehler nicht.</div>
+
+    <div class="grid2">
+      <div>
+        <canvas id="c9canvas" height="290"></canvas>
+        <div class="legend">
+          <span><i style="background:var(--acc5)"></i>Trainingspunkte</span>
+          <span><i style="background:#64748b"></i>Testpunkte</span>
+          <span><i style="background:var(--acc4)"></i>aktuelle Lösung</span>
+          <span><i style="background:var(--acc)"></i>Min-Norm-Lösung (SGD)</span>
+        </div>
+      </div>
+      <div>
+        <div id="c9space" class="plot" style="height:290px"></div>
+      </div>
+    </div>
+
+    <div class="ctrl" style="margin-top:1rem">
+      <div class="ctrl-head"><span class="ctrl-label">Position auf der Lösungsmenge (Nullraum-Richtung t)</span>
+        <span class="ctrl-val" id="c9tv">0.00</span></div>
+      <input type="range" id="c9t" min="-3" max="3" step="0.02" value="0">
+    </div>
+    <div class="btnrow">
+      <button class="primary" id="c9snap">⊙ Zur Minimum-Norm-Lösung springen</button>
+      <button id="c9newdata">🎲 Neue Daten</button>
+    </div>
+
+    <div class="grid3">
+      <div class="stat"><div class="stat-l">Trainingsfehler</div>
+        <div class="stat-v" id="c9tr" style="color:var(--acc)">0.0000</div>
+        <div class="stat-s">immer exakt 0 — jede Lösung interpoliert</div></div>
+      <div class="stat"><div class="stat-l">Testfehler</div>
+        <div class="stat-v" id="c9te" style="color:var(--acc2)">—</div>
+        <div class="bar"><i id="c9teb" style="background:var(--acc2);width:0%"></i></div></div>
+      <div class="stat"><div class="stat-l">Norm ‖w‖₂</div>
+        <div class="stat-v" id="c9nm" style="color:var(--acc3)">—</div>
+        <div class="bar"><i id="c9nmb" style="background:var(--acc3);width:0%"></i></div></div>
+    </div>
+
+    <div class="callout key">
+      <p style="margin:0">Die beiden unteren Kurven haben ihr Minimum <em>fast</em> an derselben Stelle.
+      Die Lösung mit der kleinsten Norm ist meist auch die mit gutem Testfehler.
+      <strong>Und genau dorthin läuft SGD von selbst.</strong></p>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>Warum SGD die Minimum-Norm-Lösung findet — in drei Zeilen</h3>
+    <div class="steps">
+      <div class="step">
+        <h4>Der SGD-Schritt</h4>
+        <div class="math" data-tex="w_{t+1} \;=\; w_t \;-\; \eta_t\, e_t\, x_{i_t}"></div>
+        <p style="margin:0" class="mini">Jedes Update ist ein Vielfaches eines <em>Datenpunkts</em>
+        <span class="math-inline" data-tex="x_{i_t}"></span>. Nichts anderes kommt dazu.</p>
+      </div>
+      <div class="step">
+        <h4>Start bei null</h4>
+        <p style="margin:0" class="mini">Wenn <span class="math-inline" data-tex="w_0 = 0"></span>, dann ist die
+        Lösung zwangsläufig eine Summe von Datenpunkten:
+        <span class="math-inline" data-tex="w = \sum_{i=1}^n \alpha_i x_i = X^\top\alpha"></span>.
+        Sie liegt im <strong>Spann der Daten</strong> — SGD kann den Nullraum gar nicht betreten.</p>
+      </div>
+      <div class="step">
+        <h4>Perfekt interpolieren</h4>
+        <p style="margin:0" class="mini">Zusätzlich gilt <span class="math-inline" data-tex="Xw = y"></span>.
+        Beides zusammen eingesetzt ergibt:</p>
+        <div class="math" data-tex="X X^\top \alpha \;=\; y"></div>
+        <p style="margin:0" class="mini">Ein <span class="math-inline" data-tex="n\times n"></span>-System
+        mit <strong>eindeutiger</strong> Lösung. Und diese Lösung ist genau die mit minimaler ℓ₂-Norm.</p>
+      </div>
+      <div class="step">
+        <h4>Das ist der Kernel-Trick</h4>
+        <p style="margin:0" class="mini">
+        <span class="math-inline" data-tex="K = XX^\top"></span> ist die <strong>Gram-Matrix</strong> —
+        sie enthält nur die Skalarprodukte zwischen Datenpunkten. Zhang et al.:
+        „<em>We have thus derived the kernel trick — albeit in a roundabout fashion.</em>“</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab reveal">
+    <div class="lab-title"><span class="dot"></span>Labor 9b · Die Gram-Matrix und der Kernel</div>
+    <div class="lab-sub">Links die Matrix <span class="math-inline" data-tex="K_{ij} = \langle x_i, x_j\rangle"></span>
+    (bzw. Gauß-Kernel). Rechts die resultierende Entscheidungsfunktion. Löse
+    <span class="math-inline" data-tex="K\alpha = y"></span> und fitte beliebige Labels exakt.</div>
+
+    <div class="grid2">
+      <div><div id="c9gram" class="plot" style="height:320px"></div></div>
+      <div><canvas id="c9kern" height="320"></canvas></div>
+    </div>
+
+    <div class="grid3" style="margin-top:1rem">
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">Kernel-Breite γ</span><span class="ctrl-val" id="c9gv">1.0</span></div>
+        <input type="range" id="c9gam" min="0.1" max="6" step="0.1" value="1.0">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">Regularisierung λ</span><span class="ctrl-val" id="c9lv">0.000</span></div>
+        <input type="range" id="c9lam" min="0" max="0.5" step="0.005" value="0">
+      </div>
+      <div class="ctrl">
+        <div class="ctrl-head"><span class="ctrl-label">Anteil zufälliger Labels</span><span class="ctrl-val" id="c9rv">0.00</span></div>
+        <input type="range" id="c9rnd" min="0" max="1" step="0.05" value="0">
+      </div>
+    </div>
+    <div class="stats" style="grid-template-columns:repeat(3,1fr);display:grid;gap:.6rem">
+      <div class="stat"><div class="stat-l">Trainingsfehler</div><div class="stat-v" id="c9ktr" style="color:var(--acc)">—</div></div>
+      <div class="stat"><div class="stat-l">Testfehler</div><div class="stat-v" id="c9kte" style="color:var(--acc2)">—</div></div>
+      <div class="stat"><div class="stat-l">‖α‖</div><div class="stat-v" id="c9ka" style="color:var(--acc3)">—</div></div>
+    </div>
+    <div class="hint">Schiebe „Anteil zufälliger Labels“ hoch: Der Kernel fittet auch reinen Zufall
+    exakt (Trainingsfehler 0) — genau wie das tiefe Netz. Das Phänomen ist also nicht auf Deep Learning beschränkt.</div>
+  </div>
+
+  <div class="grid2 reveal">
+    <div class="card">
+      <h4>Die Messwerte aus Tabelle 3</h4>
+      <table>
+        <tr><th>Datensatz</th><th>Vorverarbeitung</th><th class="num">Testfehler</th></tr>
+        <tr><td>MNIST</td><td>keine</td><td class="num">1,2 %</td></tr>
+        <tr><td>MNIST</td><td>Gabor-Filter</td><td class="num">0,6 %</td></tr>
+        <tr><td>CIFAR10</td><td>keine</td><td class="num">46 %</td></tr>
+        <tr><td>CIFAR10</td><td>zufälliges Conv-Net</td><td class="num">17 %</td></tr>
+      </table>
+      <p style="margin-bottom:0">Ein reiner Gauß-Kernel <em>ohne jede Regularisierung</em>,
+      der die Trainingslabels exakt interpoliert, erreicht 1,2 % auf MNIST.
+      Und: „<em>adding regularization does not improve either model's performance.</em>“</p>
+    </div>
+    <div class="card">
+      <h4>Aber — und das ist wichtig — die Norm erklärt es <em>nicht</em></h4>
+      <div id="c9norm" class="plot" style="height:210px"></div>
+      <p style="margin-bottom:0">MNIST ohne Vorverarbeitung: Norm ≈ 220, Fehler 1,2 %.
+      Mit Wavelets: Norm ≈ 390 (<strong>größer!</strong>), Fehler 0,6 % (<strong>halbiert</strong>).
+      Die Minimum-Norm-Intuition ist also „<em>only a very small piece of the generalization story</em>“.</p>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h4>Nebenbemerkung: Krümmung hilft auch nicht</h4>
+    <p>Eine beliebte Hypothese lautet: „Flache Minima generalisieren besser als scharfe.“
+    Im linearen Fall lässt sich das sofort widerlegen. Die Hesse-Matrix lautet</p>
+    <div class="math" data-tex="\nabla^2 \frac{1}{n}\sum_{i=1}^n \mathrm{loss}(w^\top x_i, y_i) \;=\; \frac{1}{n} X^\top \mathrm{diag}(\beta) X"></div>
+    <p style="margin-bottom:0">Dieser Ausdruck hängt <strong>gar nicht von w ab</strong>.
+    Alle globalen Minima haben also <em>exakt dieselbe Krümmung</em> — und sind alle degeneriert.
+    Krümmung kann gute von schlechten Lösungen nicht unterscheiden.</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     KAPITEL 10 — SYNTHESE
+     ══════════════════════════════════════════════════════════ -->
+<section id="c10">
+  <div class="kicker">Kapitel 10 · Die Antwort</div>
+  <h2>Was bleibt? Die Frage, neu gestellt</h2>
+
+  <div class="card reveal">
+    <h3>Die ursprüngliche Frage</h3>
+    <div class="quote">„Was unterscheidet neuronale Netze, die gut generalisieren, von denen, die es nicht tun?“</div>
+    <h3>Die Antwort des Papers</h3>
+    <div class="callout key">
+      <p style="margin:0"><strong>Nicht die Antwort, die man erwartet hat — und genau das ist der Beitrag.</strong>
+      Das Paper beantwortet die Frage nicht positiv, sondern beweist, dass alle bisherigen
+      Antwortkandidaten falsch sind. Es ist ein <em>Unmöglichkeitsergebnis</em> für die klassische Theorie.
+      Die Antwort lautet: <strong>Es liegt nicht am Modell, nicht an seiner Größe, nicht an den
+      Regularisierern und nicht an der Stabilität des Algorithmus. Es muss an einem Zusammenspiel von
+      Daten, Architektur und Optimierer liegen, für das wir noch kein formales Maß besitzen.</strong></p>
+    </div>
+    <p>Im Originalwortlaut der Conclusion: „<em>We argue that we have yet to discover a precise formal
+    measure under which these enormous models are simple.</em>“ — Wir müssen ein Maß erst noch
+    <em>finden</em>, unter dem diese riesigen Modelle „einfach“ sind.</p>
+  </div>
+
+  <div class="lab reveal">
+    <div class="lab-title"><span class="dot"></span>Labor 10 · Die Beweisführung im Überblick</div>
+    <div class="lab-sub">Klicke auf eine Theorie, um zu sehen, mit welchem Experiment sie widerlegt wird.</div>
+    <div class="grid-side">
+      <div><canvas id="c10canvas" height="340"></canvas></div>
+      <div>
+        <div class="seg" id="c10seg" style="flex-direction:column">
+          <button data-k="vc" class="on">VC-Dimension</button>
+          <button data-k="rad">Rademacher-Komplexität</button>
+          <button data-k="stab">Uniforme Stabilität</button>
+          <button data-k="reg">Explizite Regularisierung</button>
+          <button data-k="expr">Expressivität / Tiefe</button>
+          <button data-k="curv">Krümmung (flache Minima)</button>
+          <button data-k="norm">Minimum-Norm</button>
+        </div>
+        <div class="card tight" id="c10text" style="margin-top:.9rem;min-height:170px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>Die vollständige Beweiskette in einem Bild</h3>
+    <div id="c10flow" class="plot" style="height:400px"></div>
+  </div>
+
+  <div class="grid2 reveal">
+    <div class="card">
+      <h4>Was das Paper <em>nicht</em> sagt</h4>
+      <ul>
+        <li>Nicht: „Deep Learning funktioniert nicht.“ — Es funktioniert hervorragend.</li>
+        <li>Nicht: „Regularisierung ist nutzlos.“ — Sie hilft, aber als Feintuning, nicht als Fundament.</li>
+        <li>Nicht: „Netze lernen immer auswendig.“ — Sie <em>können</em> es, tun es bei echten Daten aber
+        offenbar nicht, obwohl sie dürften.</li>
+        <li>Nicht: „Es gibt keine Erklärung.“ — Es gibt nur noch keine <em>formale</em>.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Die zweite, oft übersehene Erkenntnis</h4>
+      <p>Aus der Conclusion: „<em>optimization continues to be empirically easy even if the resulting
+      model does not generalize.</em>“</p>
+      <p style="margin-bottom:0">Das Optimierungsproblem bleibt auch bei Zufalls-Labels leicht lösbar.
+      Also kann die Erklärung dafür, <em>warum Optimierung so einfach ist</em>, unmöglich dieselbe sein wie
+      die Erklärung dafür, <em>warum Generalisierung funktioniert</em>. Zwei Rätsel, die man vorher
+      für eines gehalten hat.</p>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>Die offene Frage — und was daraus wurde</h3>
+    <p>Das Paper endet mit einer Einladung. Es gibt noch kein Maß, unter dem diese Netze „einfach“ sind.
+    Die Forschung danach hat genau dort angesetzt:</p>
+    <div class="steps">
+      <div class="step"><h4>Implizite Verzerrung (implicit bias) von SGD</h4>
+        <p class="mini" style="margin:0">Welche Lösung wählt der Gradientenabstieg unter unendlich vielen aus?
+        Kapitel 9 gibt die lineare Antwort (min-norm). Für Netze ist es bis heute offen.</p></div>
+      <div class="step"><h4>Normbasierte statt parameterbasierte Maße</h4>
+        <p class="mini" style="margin:0">Kapazität nicht über die <em>Anzahl</em> der Gewichte messen, sondern
+        über ihre <em>Größe</em> (Margin, Spektralnorm, Pfadnorm). Das Paper weist selbst auf Bartlett (1998)
+        und Neyshabur et al. (2015) hin — und merkt an, dass auch diese das Verhalten nicht ganz erklären.</p></div>
+      <div class="step"><h4>Datenabhängige Maße</h4>
+        <p class="mini" style="margin:0">Der entscheidende Hinweis aus dem Experiment: Jedes Maß, das die
+        <strong>Labels ignoriert</strong>, ist zum Scheitern verurteilt. Ein brauchbares Maß muss die
+        Daten und ihre Struktur einbeziehen.</p></div>
+      <div class="step"><h4>Doppelter Abstieg (double descent)</h4>
+        <p class="mini" style="margin:0">Spätere Arbeiten zeigten, dass die U-Kurve aus Kapitel 2 nach ihrem
+        Anstieg ein zweites Mal fällt — jenseits des Interpolationspunkts. Die klassische Erzählung war
+        nicht falsch, nur unvollständig.</p></div>
+    </div>
+  </div>
+
+  <div class="lab reveal">
+    <div class="lab-title"><span class="dot"></span>Labor 10b · Doppelter Abstieg (Ausblick)</div>
+    <div class="lab-sub">Zieh die Modellgröße über den Punkt hinaus, an dem das Modell die Daten exakt
+    interpoliert (gestrichelte Linie). Die klassische Theorie endet dort — die Realität nicht.</div>
+    <div id="c10dd" class="plot" style="height:330px"></div>
+    <div class="ctrl" style="margin-top:.6rem">
+      <div class="ctrl-head"><span class="ctrl-label">Modellgröße (Parameter / n)</span><span class="ctrl-val" id="c10ddv">0.3</span></div>
+      <input type="range" id="c10ddr" min="0.05" max="6" step="0.05" value="0.3">
+    </div>
+    <div class="grid3">
+      <div class="stat"><div class="stat-l">Regime</div><div class="stat-v" id="c10reg" style="font-size:1rem;color:var(--acc5)">unterparametrisiert</div></div>
+      <div class="stat"><div class="stat-l">Trainingsfehler</div><div class="stat-v" id="c10tr" style="color:var(--acc)">—</div></div>
+      <div class="stat"><div class="stat-l">Testfehler</div><div class="stat-v" id="c10te" style="color:var(--acc2)">—</div></div>
+    </div>
+  </div>
+
+  <div class="card reveal">
+    <h3>Dein Mitnehm-Satz</h3>
+    <div class="quote">
+      Die Kapazität moderner neuronaler Netze reicht aus, um den gesamten Trainingsdatensatz zu
+      <em>zerschmettern</em>. Dass sie es bei echten Daten trotzdem nicht tun, ist das eigentliche
+      Rätsel — und keine der klassischen Theorien kann es erklären, weil keine von ihnen die
+      <em>Daten</em> anschaut.
+    </div>
+    <div class="grid3" style="margin-top:1.2rem">
+      <div class="stat"><div class="stat-l" style="color:var(--acc)">Motivation</div>
+        <div class="mini">Was unterscheidet gut generalisierende Netze von schlechten? Eine Antwort würde
+        bessere Architekturen ermöglichen.</div></div>
+      <div class="stat"><div class="stat-l" style="color:var(--acc3)">Idee</div>
+        <div class="mini">Miss die <em>effektive</em> Kapazität experimentell, statt sie theoretisch zu
+        schranken — mit einem Randomisierungstest.</div></div>
+      <div class="stat"><div class="stat-l" style="color:var(--acc2)">Lösungsweg</div>
+        <div class="mini">Labels randomisieren → Netz lernt sie trotzdem → VC, Rademacher und Stabilität
+        fallen gleichzeitig. Dazu Theorem 1 als theoretische Untermauerung.</div></div>
+      <div class="stat"><div class="stat-l" style="color:var(--acc4)">Ergebnis</div>
+        <div class="mini">100 % Trainingsgenauigkeit auf reinem Zufall; Regularisierer ändern nur
+        3–4 Prozentpunkte; 2n+d Parameter genügen beweisbar.</div></div>
+      <div class="stat"><div class="stat-l" style="color:var(--acc5)">Antwort</div>
+        <div class="mini">Keine der klassischen Erklärungen hält stand. Generalisierung muss aus dem
+        Zusammenspiel von Daten, Architektur und SGD entstehen.</div></div>
+      <div class="stat"><div class="stat-l" style="color:var(--bad)">Offen</div>
+        <div class="mini">Ein formales Maß, unter dem diese riesigen Modelle „einfach“ sind, fehlt
+        bis heute.</div></div>
+    </div>
+  </div>
+
+  <div class="card reveal" style="text-align:center;background:linear-gradient(120deg,rgba(94,234,212,.07),rgba(167,139,250,.07),rgba(244,114,182,.07))">
+    <h3 style="margin-top:0">Geschafft.</h3>
+    <p style="margin:0 auto;max-width:60ch">Du hast ein ICLR-Best-Paper durchgespielt — von der
+    Hypothesenklasse über VC-Dimension und Rademacher-Komplexität bis zum Beweis von Theorem 1 und
+    dem Kernel-Trick. Scrolle zurück und spiele mit den Reglern, die du beim ersten Mal übersprungen hast.</p>
+    <div class="btnrow" style="justify-content:center;margin-top:1rem">
+      <button class="primary" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Zurück zum Anfang</button>
+      <button onclick="window.open('https://arxiv.org/abs/1611.03530','_blank')">📄 Originalpaper (arXiv)</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════
+   GLOBALE HILFSFUNKTIONEN
+   ═══════════════════════════════════════════════════════════════════════ */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const rnd=(a=1)=>(Math.random()*2-1)*a;
+const C={acc:'#5eead4',acc2:'#f472b6',acc3:'#a78bfa',acc4:'#fbbf24',acc5:'#60a5fa',
+         ink:'#e8ecf8',dim:'#9aa6c4',faint:'#6c7694',good:'#34d399',bad:'#fb7185'};
+
+/* Gauss-Zufall (Box-Muller) */
+function gauss(){let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+/* HiDPI Canvas Setup */
+function setupCanvas(cv){
+  const dpr=window.devicePixelRatio||1;
+  const r=cv.getBoundingClientRect();
+  const h=cv.getAttribute('height')?+cv.getAttribute('height'):260;
+  cv.width=Math.max(1,Math.floor(r.width*dpr));
+  cv.height=Math.floor(h*dpr);
+  cv.style.height=h+'px';
+  const ctx=cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx,W:r.width||600,H:h};
+}
+
+/* Slider-Füllung */
+function paintRange(el){
+  const mn=+el.min,mx=+el.max,v=+el.value;
+  el.style.setProperty('--p',((v-mn)/(mx-mn)*100)+'%');
+}
+function bindRange(el,fn){
+  paintRange(el);
+  el.addEventListener('input',()=>{paintRange(el);fn();});
+}
+
+/* Lineare Algebra */
+function matVec(A,x){return A.map(r=>r.reduce((s,v,j)=>s+v*x[j],0));}
+function transpose(A){return A[0].map((_,j)=>A.map(r=>r[j]));}
+function matMul(A,B){const Bt=transpose(B);
+  return A.map(r=>Bt.map(c=>r.reduce((s,v,k)=>s+v*c[k],0)));}
+/* Gauss-Elimination mit Pivotisierung */
+function solve(A,b){
+  const n=A.length;const M=A.map((r,i)=>[...r,b[i]]);
+  for(let c=0;c<n;c++){
+    let p=c;for(let r=c+1;r<n;r++)if(Math.abs(M[r][c])>Math.abs(M[p][c]))p=r;
+    [M[c],M[p]]=[M[p],M[c]];
+    if(Math.abs(M[c][c])<1e-12){M[c][c]=1e-12;}
+    for(let r=0;r<n;r++){if(r===c)continue;const f=M[r][c]/M[c][c];
+      for(let k=c;k<=n;k++)M[r][k]-=f*M[c][k];}
+  }
+  return M.map((r,i)=>r[n]/r[i][i]);
+}
+/* Polynom-Regression (Ridge) mit Normalgleichungen */
+function polyFit(xs,ys,deg,lam=1e-9){
+  const n=xs.length,m=deg+1;
+  if(n===0)return new Array(m).fill(0);
+  const X=xs.map(x=>{const r=[];for(let j=0;j<m;j++)r.push(Math.pow(x,j));return r;});
+  const Xt=transpose(X);
+  const A=matMul(Xt,X);
+  for(let i=0;i<m;i++)A[i][i]+=lam;
+  const b=matVec(Xt,ys);
+  try{return solve(A,b);}catch(e){return new Array(m).fill(0);}
+}
+function polyEval(c,x){let s=0,p=1;for(let i=0;i<c.length;i++){s+=c[i]*p;p*=x;}return s;}
+
+/* Plotly-Standardlayout */
+function plLayout(extra={}){
+  return Object.assign({
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0.20)',
+    font:{color:C.dim,family:'Inter, sans-serif',size:11},
+    margin:{l:52,r:18,t:28,b:44},
+    xaxis:{gridcolor:'rgba(130,160,255,.09)',zerolinecolor:'rgba(130,160,255,.18)',
+           linecolor:'rgba(130,160,255,.18)'},
+    yaxis:{gridcolor:'rgba(130,160,255,.09)',zerolinecolor:'rgba(130,160,255,.18)',
+           linecolor:'rgba(130,160,255,.18)'},
+    showlegend:true,
+    legend:{bgcolor:'rgba(12,16,32,.75)',bordercolor:'rgba(130,160,255,.18)',borderwidth:1,
+            font:{size:10}},
+    hoverlabel:{bgcolor:'#141a2e',bordercolor:'rgba(130,160,255,.3)',font:{color:C.ink,size:11}}
+  },extra);
+}
+const PCFG={displayModeBar:false,responsive:true};
+
+/* ═══════════════════════════════════════════════════════════════════════
+   NAVIGATION + SCROLL-REVEAL + MATHML
+   ═══════════════════════════════════════════════════════════════════════ */
+const CHAPTERS=[
+  ['c0','0 · Rätsel'],['c1','1 · Lernen'],['c2','2 · U-Kurve'],['c3','3 · VC-Dim'],
+  ['c4','4 · Rademacher'],['c5','5 · Regularisierung'],['c6','6 · Experiment'],
+  ['c7','7 · Ergebnisse'],['c8','8 · Theorem 1'],['c9','9 · Implizit'],['c10','10 · Antwort']
+];
+(function buildNav(){
+  const box=$('#chapters');
+  CHAPTERS.forEach(([id,label])=>{
+    const b=document.createElement('div');
+    b.className='chip';b.textContent=label;b.dataset.t=id;
+    b.onclick=()=>document.getElementById(id).scrollIntoView({behavior:'smooth'});
+    box.appendChild(b);
+  });
+})();
+function onScroll(){
+  const sc=window.scrollY, h=document.body.scrollHeight-window.innerHeight;
+  $('#prog').style.width=(h>0?clamp(sc/h,0,1)*100:0)+'%';
+  let cur=CHAPTERS[0][0];
+  CHAPTERS.forEach(([id])=>{
+    const el=document.getElementById(id);
+    if(el && el.getBoundingClientRect().top<window.innerHeight*0.42) cur=id;
+  });
+  $$('.chip').forEach(c=>c.classList.toggle('active',c.dataset.t===cur));
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+
+/* Reveal */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),
+  {threshold:.08,rootMargin:'0px 0px -40px 0px'});
+$$('.reveal').forEach(e=>io.observe(e));
+
+/* Temml rendern */
+function renderMath(){
+  if(typeof temml==='undefined')return;
+  $$('[data-tex]').forEach(el=>{
+    if(el.dataset.done)return;
+    const inline=el.classList.contains('math-inline');
+    try{temml.render(el.dataset.tex,el,{displayMode:!inline});el.dataset.done='1';}
+    catch(e){el.textContent=el.dataset.tex;}
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   KAPITEL 0 — HOOK: Zwei Welten
+   ═══════════════════════════════════════════════════════════════════════ */
+const K0={ep:0,run:false,A:null,B:null,timer:null};
+function k0makeWorld(random){
+  const n=48,pts=[];
+  for(let i=0;i<n;i++){
+    const cls=i<n/2?0:1;
+    const ang=Math.random()*Math.PI*2, r=.22+Math.random()*.26;
+    const cx=cls===0?.33:.67, cy=cls===0?.38:.62;
+    let x=cx+Math.cos(ang)*r*.5, y=cy+Math.sin(ang)*r*.5;
+    x=clamp(x,.05,.95);y=clamp(y,.05,.95);
+    pts.push({x,y,true:cls,label:random?(Math.random()<.5?0:1):cls});
+  }
+  const test=[];
+  for(let i=0;i<30;i++){
+    const cls=i<15?0:1;
+    const ang=Math.random()*Math.PI*2, r=.22+Math.random()*.26;
+    const cx=cls===0?.33:.67, cy=cls===0?.38:.62;
+    test.push({x:clamp(cx+Math.cos(ang)*r*.5,.05,.95),y:clamp(cy+Math.sin(ang)*r*.5,.05,.95),true:cls});
+  }
+  return {pts,test,blobs:[]};
+}
+/* "Training": RBF-Zentren wachsen um jeden Punkt → Memorierung */
+function k0predict(w,x,y,sharp){
+  let s0=0,s1=0;
+  for(const p of w.pts){
+    const d2=(p.x-x)**2+(p.y-y)**2;
+    const k=Math.exp(-d2*sharp);
+    if(p.label===0)s0+=k;else s1+=k;
+  }
+  return s1>s0?1:0;
+}
+function k0draw(cvId,w,sharp,color){
+  const cv=$(cvId);if(!cv)return;
+  const {ctx,W,H}=setupCanvas(cv);
+  ctx.clearRect(0,0,W,H);
+  /* Entscheidungsfeld */
+  const step=5;
+  for(let px=0;px<W;px+=step)for(let py=0;py<H;py+=step){
+    const c=k0predict(w,px/W,py/H,sharp);
+    ctx.fillStyle=c===0?'rgba(94,234,212,.11)':'rgba(244,114,182,.11)';
+    ctx.fillRect(px,py,step,step);
+  }
+  /* Punkte */
+  for(const p of w.pts){
+    ctx.beginPath();ctx.arc(p.x*W,p.y*H,4.6,0,7);
+    ctx.fillStyle=p.label===0?C.acc:C.acc2;ctx.fill();
+    ctx.lineWidth=1.3;ctx.strokeStyle='rgba(0,0,0,.6)';ctx.stroke();
+  }
+  for(const p of w.test){
+    ctx.beginPath();ctx.arc(p.x*W,p.y*H,3,0,7);
+    ctx.strokeStyle=p.true===0?'rgba(94,234,212,.5)':'rgba(244,114,182,.5)';
+    ctx.lineWidth=1.4;ctx.stroke();
+  }
+}
+function k0metrics(w,sharp){
+  let tr=0;for(const p of w.pts) if(k0predict(w,p.x,p.y,sharp)!==p.label)tr++;
+  let te=0;for(const p of w.test) if(k0predict(w,p.x,p.y,sharp)!==p.true)te++;
+  return [tr/w.pts.length*100, te/w.test.length*100];
+}
+function k0update(){
+  const sharp = K0.run ? lerp(40, 1400, Math.min(1, K0.ep/26)) : 40;
+  k0draw('#c0A', K0.A, sharp);
+  k0draw('#c0B', K0.B, sharp);
+  const [trA,teA]=k0metrics(K0.A,sharp);
+  const [trB,teB]=k0metrics(K0.B,sharp);
+  $('#c0trA').textContent=trA.toFixed(0)+'%';
+  $('#c0teA').textContent=teA.toFixed(0)+'%';
+  $('#c0trB').textContent=trB.toFixed(0)+'%';
+  $('#c0teB').textContent=teB.toFixed(0)+'%';
+  $('#c0epoch').textContent='Epoche '+K0.ep;
+  if(K0.ep>=26) $('#c0verdict').style.display='block';
+}
+function k0init(){
+  K0.A=k0makeWorld(false);K0.B=k0makeWorld(true);K0.ep=0;K0.run=false;
+  if(K0.timer){clearInterval(K0.timer);K0.timer=null;}
+  $('#c0verdict').style.display='none';
+  k0update();
+}
+$('#c0run').onclick=()=>{
+  if(K0.timer)return;
+  K0.run=true;
+  K0.timer=setInterval(()=>{
+    K0.ep++;k0update();
+    if(K0.ep>=28){clearInterval(K0.timer);K0.timer=null;}
+  },110);
+};
+$('#c0reset').onclick=k0init;
+
+/* ═══════════════════════════════════════════════════════════════════════
+   KAPITEL 1 — Lernen = Funktion raten
+   ═══════════════════════════════════════════════════════════════════════ */
+const K1={train:[],test:[],deg:1};
+function k1truth(x){return 0.55+0.34*Math.sin(x*5.1)-0.14*x;}
+function k1gen(){
+  K1.train=[];K1.test=[];
+  for(let i=0;i<13;i++){const x=i/12*0.94+0.03;
+    K1.train.push({x,y:clamp(k1truth(x)+gauss()*0.055,0.04,0.96)});}
+  for(let i=0;i<40;i++){const x=Math.random()*0.94+0.03;
+    K1.test.push({x,y:clamp(k1truth(x)+gauss()*0.055,0.04,0.96)});}
+}
+function k1draw(){
+  const cv=$('#c1canvas');if(!cv)return;
+  const {ctx,W,H}=setupCanvas(cv);
+  ctx.clearRect(0,0,W,H);
+  const PX=x=>x*W, PY=y=>H-y*H;
+  /* Raster */
+  ctx.strokeStyle='rgba(130,160,255,.07)';ctx.lineWidth=1;
+  for(let i=0;i<=8;i++){ctx.beginPath();ctx.moveTo(0,H*i/8);ctx.lineTo(W,H*i/8);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(W*i/8,0);ctx.lineTo(W*i/8,H);ctx.stroke();}
+  /* wahre Funktion */
+  ctx.beginPath();
+  for(let i=0;i<=200;i++){const x=i/200;const y=k1truth(x);
+    i?ctx.lineTo(PX(x),PY(y)):ctx.moveTo(PX(x),PY(y));}
+  ctx.strokeStyle='rgba(148,163,184,.35)';ctx.lineWidth=1.6;ctx.setLineDash([5,5]);ctx.stroke();
+  ctx.setLineDash([]);
+  /* Modell */
+  let coef=null;
+  if(K1.train.length>0){
+    coef=polyFit(K1.train.map(p=>p.x),K1.train.map(p=>p.y),
+                 Math.min(K1.deg,Math.max(0,K1.train.length-1)));
+    ctx.beginPath();let first=true;
+    for(let i=0;i<=260;i++){const x=i/260;const y=polyEval(coef,x);
+      if(y<-0.6||y>1.6){first=true;continue;}
+      const px=PX(x),py=PY(y);
+      first?(ctx.moveTo(px,py),first=false):ctx.lineTo(px,py);}
+    ctx.strokeStyle=C.acc4;ctx.lineWidth=2.6;ctx.stroke();
+  }
+  /* Punkte */
+  for(const p of K1.test){ctx.beginPath();ctx.arc(PX(p.x),PY(p.y),3,0,7);
+    ctx.strokeStyle='rgba(100,116,139,.75)';ctx.lineWidth=1.4;ctx.stroke();}
+  for(const p of K1.train){ctx.beginPath();ctx.arc(PX(p.x),PY(p.y),5,0,7);
+    ctx.fillStyle=C.acc5;ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=1.3;ctx.stroke();}
+  /* Fehler */
+  if(coef){
+    let tr=0;for(const p of K1.train)tr+=(polyEval(coef,p.x)-p.y)**2;
+    tr=Math.sqrt(tr/Math.max(1,K1.train.length));
+    let te=0;for(const p of K1.test)te+=(clamp(polyEval(coef,p.x),-2,3)-p.y)**2;
+    te=Math.sqrt(te/Math.max(1,K1.test.length));
+    $('#c1tr').textContent=tr.toFixed(4);
+    $('#c1te').textContent=te.toFixed(4);
+    $('#c1trb').style.width=clamp(tr/0.35,0,1)*100+'%';
+    $('#c1teb').style.width=clamp(te/0.35,0,1)*100+'%';
+  }else{$('#c1tr').textContent='—';$('#c1te').textContent='—';}
+}
+$('#c1canvas')?.addEventListener('click',e=>{
+  const r=e.target.getBoundingClientRect();
+  K1.train.push({x:clamp((e.clientX-r.left)/r.width,0,1),
+                 y:clamp(1-(e.clientY-r.top)/r.height,0,1)});
+  k1draw();
+});
+$('#c1new').onclick=()=>{k1gen();k1draw();};
+$('#c1clear').onclick=()=>{K1.train=[];k1draw();};
+bindRange($('#c1deg'),()=>{K1.deg=+$('#c1deg').value;$('#c1dv').textContent=K1.deg;k1draw();});
+
+/* ═══════════════════════════════════════════════════════════════════════
+   KAPITEL 2 — Bias-Varianz U-Kurve
+   ═══════════════════════════════════════════════════════════════════════ */
+const K2={pts:[],seed:1};
+function k2truth(x){return 0.5+0.33*Math.sin(x*6.0)+0.1*Math.cos(x*11);}
+function k2gen(){
+  const n=+$('#c2m').value, nz=+$('#c2noise').value;
+  K2.pts=[];
+  for(let i=0;i<n;i++){const x=i/(n-1)*0.94+0.03;
+    K2.pts.push({x,y:k2truth(x)+gauss()*nz*0.42});}
+}
+/* Monte-Carlo Bias/Varianz über viele Datensätze */
+function k2biasVar(deg,nz,n){
+  const R=26, gridN=40, preds=[];
+  for(let r=0;r<R;r++){
+    const xs=[],ys=[];
+    for(let i=0;i<n;i++){const x=i/(n-1)*0.94+0.03;xs.push(x);ys.push(k2truth(x)+gauss()*nz*0.42);}
+    const c=polyFit(xs,ys,Math.min(deg,n-1),1e-7);
+    const row=[];for(let g=0;g<gridN;g++){const x=g/(gridN-1)*0.94+0.03;
+      row.push(clamp(polyEval(c,x),-4,5));}
+    preds.push(row);
+  }
+  let bias=0,vari=0;
+  for(let g=0;g<gridN;g++){
+    const x=g/(gridN-1)*0.94+0.03, t=k2truth(x);
+    let m=0;for(let r=0;r<R;r++)m+=preds[r][g];m/=R;
+    bias+=(m-t)**2;
+    let v=0;for(let r=0;r<R;r++)v+=(preds[r][g]-m)**2;v/=R;
+    vari+=v;
+  }
+  return [bias/gridN, vari/gridN];
+}
+function k2draw(){
+  const deg=+$('#c2deg').value, nz=+$('#c2noise').value, n=+$('#c2m').value;
+  $('#c2dv').textContent=deg;$('#c2nv').textContent=nz.toFixed(2);$('#c2mv').textContent=n;
+  /* Canvas-Fit */
+  const cv=$('#c2fit');
+  if(cv){
+    const {ctx,W,H}=setupCanvas(cv);
+    ctx.clearRect(0,0,W,H);
+    const PX=x=>x*W, PY=y=>H-(y*0.72+0.14)*H;
+    ctx.strokeStyle='rgba(130,160,255,.07)';
+    for(let i=0;i<=6;i++){ctx.beginPath();ctx.moveTo(0,H*i/6);ctx.lineTo(W,H*i/6);ctx.stroke();}
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){const x=i/200;i?ctx.lineTo(PX(x),PY(k2truth(x))):ctx.moveTo(PX(x),PY(k2truth(x)));}
+    ctx.strokeStyle='rgba(148,163,184,.45)';ctx.lineWidth=1.8;ctx.setLineDash([6,5]);ctx.stroke();ctx.setLineDash([]);
+    /* mehrere Fits (Varianz sichtbar) */
+    for(let r=0;r<7;r++){
+      const xs=[],ys=[];
+      for(let i=0;i<n;i++){const x=i/(n-1)*0.94+0.03;xs.push(x);ys.push(k2truth(x)+gauss()*nz*0.42);}
+      const c=polyFit(xs,ys,Math.min(deg,n-1),1e-7);
+      ctx.beginPath();let f=true;
+      for(let i=0;i<=220;i++){const x=i/220;const y=polyEval(c,x);
+        if(y<-1.5||y>2.5){f=true;continue;}
+        f?(ctx.moveTo(PX(x),PY(y)),f=false):ctx.lineTo(PX(x),PY(y));}
+      ctx.strokeStyle='rgba(244,114,182,.22)';ctx.lineWidth=1.4;ctx.stroke();
+    }
+    /* Haupt-Fit auf K2.pts */
+    const c=polyFit(K2.pts.map(p=>p.x),K2.pts.map(p=>p.y),Math.min(deg,K2.pts.length-1),1e-7);
+    ctx.beginPath();let f=true;
+    for(let i=0;i<=240;i++){const x=i/240;const y=polyEval(c,x);
+      if(y<-1.5||y>2.5){f=true;continue;}
+      f?(ctx.moveTo(PX(x),PY(y)),f=false):ctx.lineTo(PX(x),PY(y));}
+    ctx.strokeStyle=C.acc4;ctx.lineWidth=2.8;ctx.stroke();
+    for(const p of K2.pts){ctx.beginPath();ctx.arc(PX(p.x),PY(p.y),4.2,0,7);
+      ctx.fillStyle=C.acc5;ctx.fill();ctx.strokeStyle='rgba(0,0,0,.5)';ctx.lineWidth=1.2;ctx.stroke();}
+    ctx.fillStyle=C.faint;ctx.font='11px Inter, sans-serif';
+    ctx.fillText('— — wahre Funktion    ▬ Fit    ▬ 7 Wiederholungen', 10, 16);
+  }
+  /* Bias-Varianz-Kurve */
+  const degs=[],B=[],V=[],T=[];
+  for(let d=1;d<=15;d++){const [b,v]=k2biasVar(d,nz,n);degs.push(d);B.push(b);V.push(v);T.push(b+v);}
+  const [cb,cvv]=k2biasVar(deg,nz,n);
+  $('#c2bias').textContent=cb.toFixed(4);
+  $('#c2var').textContent=cvv.toFixed(4);
+  $('#c2tot').textContent=(cb+cvv).toFixed(4);
+  const ymax=Math.max(0.05,Math.min(1.2,Math.max(...T)*1.1));
+  Plotly.react('c2plot',[
+    {x:degs,y:B,name:'Bias²',mode:'lines',line:{color:C.acc5,width:2.4}},
+    {x:degs,y:V,name:'Varianz',mode:'lines',line:{color:C.acc2,width:2.4}},
+    {x:degs,y:T,name:'Testfehler',mode:'lines',line:{color:C.acc4,width:3.4}},
+    {x:[deg],y:[cb+cvv],name:'du bist hier',mode:'markers',
+     marker:{color:'#fff',size:13,line:{color:C.acc4,width:3}}}
+  ],plLayout({
+    xaxis:{title:'Modellkomplexität (Polynomgrad)',gridcolor:'rgba(130,160,255,.09)'},
+    yaxis:{title:'Fehler',range:[0,ymax],gridcolor:'rgba(130,160,255,.09)'},
+    legend:{x:.98,y:.98,xanchor:'right',bgcolor:'rgba(12,16,32,.8)'}
+  }),PCFG);
+}
+['c2deg','c2noise','c2m'].forEach(id=>{
+  const el=$('#'+id);if(el)bindRange(el,()=>{if(id==='c2m'||id==='c2noise')k2gen();k2draw();});
+});
+$('#c2res').onclick=()=>{k2gen();k2draw();};
+
+/* ═══════════════════════════════════════════════════════════════════════
+   KAPITEL 3 — Shattering / VC-Dimension
+   ═══════════════════════════════════════════════════════════════════════ */
+const K3={pts:[],mode:'lin',n:3,result:null};
+const VCINFO={lin:[3,'Gerade in 2D: VC = 3'],circ:[3,'Kreise in 2D: VC = 3'],
+              quad:[4,'Parabel/Quadrik: VC ≈ 4'],nn:[99,'Netz mit genug Neuronen: VC ≥ n']};
+function k3gen(){
+  K3.pts=[];const n=K3.n;
+  for(let i=0;i<n;i++){
+    const a=i/n*Math.PI*2+0.4, r=0.26+Math.random()*0.11;
+    K3.pts.push({x:0.5+Math.cos(a)*r, y:0.5+Math.sin(a)*r*0.9, L:Math.random()<.5?1:0});
+  }
+  K3.result=null;
+}
+/* Trennversuch je Modellklasse. Rückgabe: Klassifikator oder null */
+function k3fit(pts,labels,mode){
+  const n=pts.length;
+  if(mode==='nn'){ /* RBF-Netz: trennt immer */
+    return (x,y)=>{let s=0;
+      for(let i=0;i<n;i++){const d2=(pts[i].x-x)**2+(pts[i].y-y)**2;
+        s+=(labels[i]?1:-1)*Math.exp(-d2*260);}
+      return s>0?1:0;};
+  }
+  /* Feature-Maps */
+  let feat;
+  if(mode==='lin')  feat=p=>[p.x,p.y,1];
+  if(mode==='circ') feat=p=>[p.x,p.y,p.x*p.x+p.y*p.y,1];
+  if(mode==='quad') feat=p=>[p.x,p.y,p.x*p.x,p.x*p.y,1];
+  const d=feat(pts[0]).length;
+  /* Perzeptron mit Margin, viele Epochen */
+  let w=new Array(d).fill(0);
+  const F=pts.map(feat), T=labels.map(l=>l?1:-1);
+  for(let ep=0;ep<5000;ep++){
+    let bad=0;
+    for(let i=0;i<n;i++){
+      const s=F[i].reduce((a,v,j)=>a+v*w[j],0);
+      if(s*T[i]<=0.02){bad++;for(let j=0;j<d;j++)w[j]+=0.06*T[i]*F[i][j];}
+    }
+    if(bad===0)return (x,y)=>{const f=feat({x,y});
+      return f.reduce((a,v,j)=>a+v*w[j],0)>0?1:0;};
+  }
+  return null;
+}
+function k3draw(){
+  const cv=$('#c3canvas');if(!cv)return;
+  const {ctx,W,H}=setupCanvas(cv);
+  ctx.clearRect(0,0,W,H);
+  const labels=K3.pts.map(p=>p.L);
+  const clf=k3fit(K3.pts,labels,K3.mode);
+  if(clf){
+    const st=5;
+    for(let px=0;px<W;px+=st)for(let py=0;py<H;py+=st){
+      const c=clf(px/W,py/H);
+      ctx.fillStyle=c===1?'rgba(94,234,212,.12)':'rgba(244,114,182,.12)';
+      ctx.fillRect(px,py,st,st);
+    }
+  }else{
+    ctx.fillStyle='rgba(251,113,133,.07)';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle=C.bad;ctx.font='700 14px Inter, sans-serif';ctx.textAlign='center';
+    ctx.fillText('✗ Diese Beschriftung ist NICHT darstellbar',W/2,24);ctx.textAlign='left';
+  }
+  K3.pts.forEach((p,i)=>{
+    ctx.beginPath();ctx.arc(p.x*W,p.y*H,10,0,7);
+    ctx.fillStyle=p.L?C.acc:C.acc2;ctx.fill();
+    ctx.lineWidth=2;ctx.strokeStyle='rgba(255,255,255,.75)';ctx.stroke();
+    ctx.fillStyle='rgba(0,0,0,.8)';ctx.font='700 10px Inter';ctx.textAlign='center';
+    ctx.fillText(p.L?'+':'−',p.x*W,p.y*H+3.5);ctx.textAlign='left';
+  });
+  const vc=VCINFO[K3.mode];
+  $('#c3vc').textContent=K3.mode==='nn'?'≥ n':vc[0];
+  $('#c3vcs').textContent=vc[1];
+}
+$('#c3canvas')?.addEventListener('click',e=>{
+  const r=e.target.getBoundingClientRect();
+  const mx=(e.clientX-r.left)/r.width, my=(e.clientY-r.top)/r.height;
+  let best=-1,bd=1e9;
+  K3.pts.forEach((p,i)=>{const d=(p.x-mx)**2+(p.y-my)**2;if(d<bd){bd=d;best=i;}});
+  if(best>=0&&bd<0.012){K3.pts[best].L=1-K3.pts[best].L;k3draw();}
+});
+$$('#c3seg button').forEach(b=>b.onclick=()=>{
+  $$('#c3seg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  K3.mode=b.dataset.m;k3draw();$('#c3sol').textContent='—';$('#c3bar').style.width='0%';
+});
+bindRange($('#c3n'),()=>{K3.n=+$('#c3n').value;$('#c3nv').textContent=K3.n;
+  k3gen();k3draw();$('#c3sol').textContent='—';$('#c3bar').style.width='0%';
+  $('#c3sub').textContent=`von 2^${K3.n} = ${Math.pow(2,K3.n)} möglichen`;});
+$('#c3shuf').onclick=()=>{k3gen();k3draw();$('#c3sol').textContent='—';$('#c3bar').style.width='0%';};
+$('#c3all').onclick=()=>{
+  const n=K3.n, total=Math.pow(2,n);let ok=0;
+  for(let m=0;m<total;m++){
+    const lab=[];for(let i=0;i<n;i++)lab.push((m>>i)&1);
+    if(k3fit(K3.pts,lab,K3.mode))ok++;
+  }
+  $('#c3sol').textContent=ok+' / '+total;
+  $('#c3sol').style.color = ok===total ? C.acc : C.bad;
+  $('#c3bar').style.width=(ok/total*100)+'%';
+  $('#c3sub').textContent = ok===total
+    ? `✓ zerschmettert! Alle 2^${n} Beschriftungen sind darstellbar.`
+    : `✗ ${total-ok} Beschriftungen sind unmöglich → VC < ${n}`;
+};
+
+/* ═══════════════════════════════════════════════════════════════════════
+   KAPITEL 4 — Rademacher-Komplexität
+   ═══════════════════════════════════════════════════════════════════════ */
+const K4={mode:'const',n:16,xs:[],sig:[],hist:[],sum:0,cnt:0};
+function k4gen(){
+  K4.n=+$('#c4n').value;K4.xs=[];
+  for(let i=0;i<K4.n;i++)K4.xs.push(i/(K4.n-1));
+  k4roll(false);
+}
+function k4roll(redraw=true){
+  K4.sig=K4.xs.map(()=>Math.random()<.5?1:-1);
+  if(redraw)k4draw();
+}
+/* beste Hypothese der Klasse für die σ */
+function k4best(){
+  const n=K4.n;
+  if(K4.mode==='const'){
+    const m=K4.sig.reduce((a,b)=>a+b,0)/n;
+    const v=m>=0?1:-1;
+    return {f:()=>v, corr:Math.abs(m)};
+  }
+  if(K4.mode==='net'){ /* kann alles treffen */
+    return {f:x=>{let bi=0,bd=9;K4.xs.forEach((xx,i)=>{const d=Math.abs(xx-x);if(d<bd){bd=d;bi=i;}});
+      return K4.sig[bi];}, corr:1};
+  }
+  const deg = K4.mode==='lin' ? 1 : Math.max(1,Math.floor(n*0.45));
+  const c=polyFit(K4.xs,K4.sig,Math.min(deg,n-1),1e-6);
+  /* auf [-1,1] begrenzen */
+  const f=x=>clamp(polyEval(c,x),-1,1);
+  let corr=0;for(let i=0;i<n;i++)corr+=K4.sig[i]*f(K4.xs[i]);
+  return {f, corr:corr/n};
+}
+function k4draw(){
+  const cv=$('#c4canvas');if(!cv)return;
+  const {ctx,W,H}=setupCanvas(cv);
+  ctx.clearRect(0,0,W,H);
+  const PX=x=>24+x*(W-44), PY=v=>H/2-v*(H/2-22);
+  /* Achsen */
+  ctx.strokeStyle='rgba(130,160,255,.18)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(14,PY(0));ctx.lineTo(W-10,PY(0));ctx.stroke();
+  ctx.strokeStyle='rgba(130,160,255,.07)';
+  [1,-1,.5,-.5].forEach(v=>{ctx.beginPath();ctx.moveTo(14,PY(v));ctx.lineTo(W-10,PY(v));ctx.stroke();});
+  ctx.fillStyle=C.faint;ctx.font='10px Inter';
+  ctx.fillText('+1',2,PY(1)+4);ctx.fillText('−1',2,PY(-1)+4);ctx.fillText('0',6,PY(0)-4);
+  const best=k4best();
+  /* Hypothese */
+  ctx.beginPath();
+  for(let i=0;i<=240;i++){const x=i/240;const v=clamp(best.f(x),-1.1,1.1);
+    i?ctx.lineTo(PX(x),PY(v)):ctx.moveTo(PX(x),PY(v));}
+  ctx.strokeStyle=C.acc4;ctx.lineWidth=2.6;ctx.stroke();
+  /* σ-Stäbe */
+  K4.xs.forEach((x,i)=>{
+    const s=K4.sig[i];
+    ctx.strokeStyle=s>0?'rgba(94,234,212,.45)':'rgba(244,114,182,.45)';
+    ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(PX(x),PY(0));ctx.lineTo(PX(x),PY(s));ctx.stroke();
+    ctx.beginPath();ctx.arc(PX(x),PY(s),5,0,7);
+    ctx.fillStyle=s>0?C.acc:C.acc2;ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=1.2;ctx.stroke();
+  });
+  const cur=Math.abs(best.corr);
+  $('#c4cur').textContent=cur.toFixed(3);
+  $('#c4curb').style.width=clamp(cur,0,1)*100+'%';
+  k4hist();
+}
+function k4hist(){
+  if(K4.hist.length===0){
+    Plotly.react('c4hist',[],plLayout({
+      xaxis:{title:'Korrelation',range:[0,1]},yaxis:{title:'Häufigkeit'},showlegend:false
+    }),PCFG);return;
+  }
+  Plotly.react('c4hist',[{
+    x:K4.hist,type:'histogram',nbinsx:26,
+    marker:{color:'rgba(167,139,250,.55)',line:{color:C.acc3,width:1}},
+    name:'Würfe'
+  }],plLayout({
+    xaxis:{title:'Korrelation pro Wurf',range:[0,1.02]},
+    yaxis:{title:'Häufigkeit'},showlegend:false,margin:{l:48,r:14,t:14,b:38},
+    shapes:K4.cnt?[{type:'line',x0:K4.sum/K4.cnt,x1:K4.sum/K4.cnt,y0:0,y1:1,yref:'paper',
+      line:{color:C.acc4,width:2.5,dash:'dash'}}]:[]
+  }),PCFG);
+}
+function k4resetStats(){K4.hist=[];K4.sum=0;K4.cnt=0;
+  $('#c4rad').textContent='—';$('#c4radb').style.width='0%';
+  $('#c4rads').textContent='über 0 Würfe gemittelt';k4hist();}
+$$('#c4seg button').forEach(b=>b.onclick=()=>{
+  $$('#c4seg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  K4.mode=b.dataset.m;k4resetStats();k4draw();
+});
+bindRange($('#c4n'),()=>{$('#c4nv').textContent=$('#c4n').value;k4gen();k4resetStats();k4draw();});
+$('#c4roll').onclick=()=>{k4roll();
+  const c=Math.abs(k4best().corr);K4.hist.push(c);K4.sum+=c;K4.cnt++;
+  const r=K4.sum/K4.cnt;
+  $('#c4rad').textContent=r.toFixed(3);$('#c4radb').style.width=clamp(r,0,1)*100+'%';
+  $('#c4rads').textContent='über '+K4.cnt+' Würfe gemittelt';
+};
+$('#c4avg').onclick=()=>{
+  for(let k=0;k<300;k++){
+    K4.sig=K4.xs.map(()=>Math.random()<.5?1:-1);
+    const c=Math.abs(k4best().corr);K4.hist.push(c);K4.sum+=c;K4.cnt++;
+  }
+  const r=K4.sum/K4.cnt;
+  $('#c4rad').textContent=r.toFixed(3);$('#c4radb').style.width=clamp(r,0,1)*100+'%';
+  $('#c4rads').textContent='über '+K4.cnt+' Würfe gemittelt';
+  k4draw();
+};
+
+/* ── Labor 4b: Uniforme Stabilität ── */
+const K4B={xs:[],ys:[],idx:5,newY:0};
+function k4bGen(){
+  K4B.xs=[];K4B.ys=[];
+  for(let i=0;i<12;i++){const x=i/11*0.9+0.05;
+    K4B.xs.push(x);K4B.ys.push(0.5+0.3*Math.sin(x*5.4)+gauss()*0.04);}
+  K4B.idx=5+Math.floor(Math.random()*3);
+  K4B.newY=clamp(K4B.ys[K4B.idx]+ (Math.random()<.5?-1:1)*0.33,0.06,0.94);
+}
+function k4bDraw(){
+  const cv=$('#c4bcanvas');if(!cv)return;
+  const {ctx,W,H}=setupCanvas(cv);
+  ctx.clearRect(0,0,W,H);
+  const PX=x=>x*W,PY=y=>H-y*H;
+  const deg=+$('#c4bdeg').value;
+  const ys2=[...K4B.ys];ys2[K4B.idx]=K4B.newY;
+  const c1=polyFit(K4B.xs,K4B.ys,Math.min(deg,11),1e-8);
+  const c2=polyFit(K4B.xs,ys2,Math.min(deg,11),1e-8);
+  ctx.strokeStyle='rgba(130,160,255,.07)';
+  for(let i=0;i<=6;i++){ctx.beginPath();ctx.moveTo(0,H*i/6);ctx.lineTo(W,H*i/6);ctx.stroke();}
+  /* Differenzfläche */
+  ctx.beginPath();let started=false;
+  for(let i=0;i<=200;i++){const x=i/200;const y=clamp(polyEval(c1,x),-1,2);
+    started?ctx.lineTo(PX(x),PY(y)):(ctx.moveTo(PX(x),PY(y)),started=true);}
+  for(let i=200;i>=0;i--){const x=i/200;const y=clamp(polyEval(c2,x),-1,2);
+    ctx.lineTo(PX(x),PY(y));}
+  ctx.closePath();ctx.fillStyle='rgba(251,191,36,.13)';ctx.fill();
+  [[c1,C.acc],[c2,C.acc2]].forEach(([c,col])=>{
+    ctx.beginPath();let f=true;
+    for(let i=0;i<=220;i++){const x=i/220;const y=polyEval(c,x);
+      if(y<-.8||y>1.8){f=true;continue;}
+      f?(ctx.moveTo(PX(x),PY(y)),f=false):ctx.lineTo(PX(x),PY(y));}
+    ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.stroke();
+  });
+  K4B.xs.forEach((x,i)=>{
+    if(i===K4B.idx)return;
+    ctx.beginPath();ctx.arc(PX(x),PY(K4B.ys[i]),4,0,7);
+    ctx.fillStyle='rgba(96,165,250,.85)';ctx.fill();});
+  ctx.beginPath();ctx.arc(PX(K4B.xs[K4B.idx]),PY(K4B.ys[K4B.idx]),6,0,7);
+  ctx.fillStyle=C.acc;ctx.fill();
+  ctx.beginPath();ctx.arc(PX(K4B.xs[K4B.idx]),PY(K4B.newY),6,0,7);
+  ctx.fillStyle=C.acc4;ctx.fill();
+  ctx.strokeStyle='rgba(251,191,36,.7)';ctx.lineWidth=1.6;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(PX(K4B.xs[K4B.idx]),PY(K4B.ys[K4B.idx]));
+  ctx.lineTo(PX(K4B.xs[K4B.idx]),PY(K4B.newY));ctx.stroke();ctx.setLineDash([]);
+  let beta=0;
+  for(let i=0;i<=200;i++){const x=i/200;
+    beta=Math.max(beta,Math.abs(clamp(polyEval(c1,x),-2,3)-clamp(polyEval(c2,x),-2,3)));}
+  $('#c4bbeta').textContent=beta.toFixed(3);
+  $('#c4bbar').style.width=clamp(beta/1.2,0,1)*100+'%';
+}
+bindRange($('#c4bdeg'),()=>{$('#c4bdv').textContent=$('#c4bdeg').value;k4bDraw();});
+$('#c4bswap').onclick=()=>{k4bGen();k4bDraw();};
+
+/* ── Zusammenfassung Kapitel 4 ── */
+function k4summary(){
+  const cats=['VC-Dimension','Rademacher R̂ₙ','Uniforme Stabilität β','Tatsächlicher Testfehler'];
+  Plotly.react('c4summary',[
+    {x:cats,y:[1,1,1,0.11],type:'bar',name:'Echte Labels',
+     marker:{color:C.acc},text:['≥ n','≈ 1','identisch','11 %'],textposition:'outside',
+     textfont:{color:C.acc}},
+    {x:cats,y:[1,1,1,0.90],type:'bar',name:'Zufalls-Labels',
+     marker:{color:C.acc2},text:['≥ n','≈ 1','identisch','90 %'],textposition:'outside',
+     textfont:{color:C.acc2}}
+  ],plLayout({
+    barmode:'group',
+    yaxis:{title:'normierter Wert',range:[0,1.25]},
+    xaxis:{title:''},
+    legend:{x:.02,y:1.14,orientation:'h'},
+    annotations:[{x:3,y:1.14,text:'⟵ nur hier gibt es einen Unterschied!',
+      showarrow:false,font:{color:C.acc4,size:11},xanchor:'center'}]
+  }),PCFG);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   KAPITEL 5 — Regularisierung
+   ═══════════════════════════════════════════════════════════════════════ */
+const K5={mode:'wd',p:0};
+const REG_INFO={
+  wd:{label:'Weight Decay λ',max:100,fmt:v=>(v/100*0.5).toFixed(3),
+      title:'Weight Decay (ℓ₂-Regularisierung)',
+      body:`Addiere <span class="math-inline" data-tex="\\lambda\\|w\\|_2^2"></span> zur Verlustfunktion.
+      Große Gewichte werden bestraft → die Funktion wird glatter.
+      Äquivalent dazu: Die Gewichte werden in eine Kugel mit Radius ~1/λ eingesperrt.
+      <br><br><strong>Paper-Befund:</strong> Inception mit Weight Decay 86,03 % — ohne 85,75 %.
+      Unterschied: <strong>0,28 Prozentpunkte.</strong>`},
+  do:{label:'Dropout-Rate p',max:90,fmt:v=>(v/100).toFixed(2),
+      title:'Dropout',
+      body:`In jedem Trainingsschritt wird jedes Neuron mit Wahrscheinlichkeit p auf 0 gesetzt.
+      Das Netz kann sich nicht auf einzelne Neuronen verlassen → es lernt robustere Features.
+      <br><br><strong>Paper-Befund:</strong> Auf ImageNet mit Dropout <em>und</em> Weight Decay
+      lernt Inception immer noch <strong>91,18 %</strong> der Zufalls-Labels.`},
+  aug:{label:'Augmentierungsstärke',max:100,fmt:v=>(v/100).toFixed(2),
+      title:'Daten-Augmentierung',
+      body:`Erzeuge neue Trainingsbilder durch Spiegeln, Zuschneiden, Drehen, Helligkeit ändern.
+      Das vergrößert den effektiven Datensatz und nutzt bekannte Symmetrien der Domäne.
+      <br><br><strong>Paper-Befund:</strong> Der <em>stärkste</em> der drei Regularisierer.
+      Auf ImageNet: nur mit Augmentierung erreicht Inception 72,95 % statt 59,80 %.
+      Trotzdem lernt es danach noch 99,28 % Zufalls-Labels.`},
+  es:{label:'Trainingsschritte (Early Stopping)',max:100,fmt:v=>v+' %',
+      title:'Early Stopping',
+      body:`Brich das Training ab, bevor der Testfehler wieder steigt. Das ist
+      <em>implizite</em> Regularisierung — man beschränkt nicht das Modell, sondern den Suchraum,
+      den der Optimierer in der gegebenen Zeit durchläuft.
+      <br><br><strong>Paper-Befund:</strong> Auf ImageNet hilft es (59,80 → 63,16 %).
+      Auf CIFAR10: „<em>we do not observe any potential benefit of early stopping.</em>“`},
+  bn:{label:'BatchNorm-Stärke',max:100,fmt:v=>(v/100).toFixed(2),
+      title:'Batch Normalization',
+      body:`Normalisiert die Aktivierungen innerhalb jedes Mini-Batches auf Mittelwert 0 und Varianz 1.
+      Nicht als Regularisierer entworfen, wirkt aber oft so.
+      <br><br><strong>Paper-Befund:</strong> Stabilisiert die Lerndynamik deutlich sichtbar,
+      aber der Effekt auf die Generalisierung beträgt nur <strong>3–4 Prozentpunkte</strong>
+      (86,03 % mit BN gegen 83,00 % ohne).`}
+};
+function k5curves(mode,t){
+  /* t in [0,1]: Stärke. Liefert [trainAcc, testAcc, norm] */
+  if(mode==='wd'){
+    const tr=1-0.22*t*t, te=0.74+0.16*Math.sin(Math.PI*clamp(t*1.7,0,1))-0.1*Math.max(0,t-0.6);
+    return [tr, clamp(te,0.3,1), 4.2*Math.exp(-2.2*t)+0.4];
+  }
+  if(mode==='do'){
+    const tr=1-0.35*t*t, te=0.76+0.12*Math.sin(Math.PI*clamp(t*1.5,0,1))-0.18*Math.max(0,t-0.65);
+    return [tr, clamp(te,0.25,1), 3.4-1.1*t];
+  }
+  if(mode==='aug'){
+    const tr=1-0.08*t, te=0.76+0.17*(1-Math.exp(-2.6*t));
+    return [tr, clamp(te,0.3,1), 3.1-0.5*t];
+  }
+  if(mode==='es'){
+    const tr=1-Math.exp(-4.2*t), te=0.5+0.42*(1-Math.exp(-5*t))-0.09*Math.max(0,t-0.5);
+    return [tr, clamp(te,0.2,1), 1+3*t];
+  }
+  const tr=1-0.02*t, te=0.80+0.04*t;   /* bn */
+  return [tr, te, 3.0-0.3*t];
+}
+function k5draw(){
+  const info=REG_INFO[K5.mode];
+  const t=K5.p/100;
+  $('#c5plab').textContent=info.label;
+  $('#c5pv').textContent=info.fmt(K5.p);
+  $('#c5explain').innerHTML=`<h4>${info.title}</h4><p class="mini" style="margin:0">${info.body}</p>`;
+  renderMath();
+  /* Canvas-Visualisierung je Modus */
+  const cv=$('#c5canvas');
+  if(cv){
+    const {ctx,W,H}=setupCanvas(cv);
+    ctx.clearRect(0,0,W,H);
+    if(K5.mode==='do'){
+      /* Netz mit Dropout-Maske */
+      const layers=[6,9,9,4], xs=[];
+      const marginX=50, dx=(W-2*marginX)/(layers.length-1);
+      const nodes=layers.map((cnt,li)=>{
+        const arr=[];for(let i=0;i<cnt;i++){
+          arr.push({x:marginX+li*dx, y:H*(i+1)/(cnt+1),
+            on: (li===0||li===layers.length-1) ? true : Math.random()>t});}
+        return arr;});
+      for(let li=0;li<layers.length-1;li++)
+        nodes[li].forEach(a=>nodes[li+1].forEach(b=>{
+          if(!a.on||!b.on)return;
+          ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+          ctx.strokeStyle='rgba(94,234,212,.10)';ctx.lineWidth=.8;ctx.stroke();}));
+      nodes.forEach(l=>l.forEach(nd=>{
+        ctx.beginPath();ctx.arc(nd.x,nd.y,7,0,7);
+        if(nd.on){ctx.fillStyle='rgba(94,234,212,.85)';ctx.fill();}
+        else{ctx.fillStyle='rgba(100,116,139,.22)';ctx.fill();
+          ctx.strokeStyle='rgba(251,113,133,.6)';ctx.lineWidth=1.6;ctx.stroke();
+          ctx.beginPath();ctx.moveTo(nd.x-4,nd.y-4);ctx.lineTo(nd.x+4,nd.y+4);
+          ctx.moveTo(nd.x+4,nd.y-4);ctx.lineTo(nd.x-4,nd.y+4);ctx.stroke();}
+      }));
+      ctx.fillStyle=C.faint;ctx.font='11px Inter';
+      ctx.fillText(`Dropout-Rate ${(t).toFixed(2)} — rote Neuronen sind in diesem Schritt ausgeschaltet`,12,16);
+      $('#c5legend').innerHTML='<span><i style="background:rgba(94,234,212,.85)"></i>aktiv</span>'+
+        '<span><i style="background:rgba(100,116,139,.3)"></i>ausgeschaltet</span>';
+    }else if(K5.mode==='aug'){
+      /* Bild-Augmentierungen */
+      const cols=5,rows=3,cw=(W-24)/cols,ch=(H-34)/rows;
+      for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+        const ox=12+c*cw, oy=28+r*ch;
+        ctx.save();ctx.translate(ox+cw/2,oy+ch/2);
+        const ang=rnd(1)*t*0.45, fx=(Math.random()<t*0.5)?-1:1;
+        ctx.rotate(ang);ctx.scale(fx*(1+rnd(.1)*t),1+rnd(.1)*t);
+        const sz=Math.min(cw,ch)*0.76;
+        const hue=200+Math.sin(r*2+c)*40;
+        ctx.fillStyle=`hsla(${hue},55%,${48+rnd(18)*t}%,.85)`;
+        ctx.fillRect(-sz/2,-sz/2,sz,sz);
+        ctx.fillStyle='rgba(255,255,255,.22)';
+        ctx.beginPath();ctx.arc(0,-sz*0.12,sz*0.22,0,7);ctx.fill();
+        ctx.fillStyle='rgba(0,0,0,.3)';ctx.fillRect(-sz/2,sz*0.22,sz,sz*0.18);
+        ctx.restore();
+      }
+      ctx.fillStyle=C.faint;ctx.font='11px Inter';
+      ctx.fillText(`Augmentierungsstärke ${t.toFixed(2)} — jedes Bild wird pro Epoche neu transformiert`,12,16);
+      $('#c5legend').innerHTML='<span class="mini">Dasselbe Bild, 15 zufällige Varianten</span>';
+    }else{
+      /* Fit-Visualisierung für wd / es / bn */
+      const PX=x=>x*W, PY=y=>H-(y*0.7+0.15)*H;
+      const xs=[],ys=[];
+      for(let i=0;i<14;i++){const x=i/13*0.92+0.04;xs.push(x);
+        ys.push(0.5+0.3*Math.sin(x*5.6)+gauss()*0.065);}
+      const lam = K5.mode==='wd' ? Math.pow(10, lerp(-8, 0.4, t)) : 1e-7;
+      const degEff = K5.mode==='es' ? Math.max(1,Math.round(lerp(1,12,t))) : 11;
+      const c=polyFit(xs,ys,Math.min(degEff,13),lam);
+      ctx.strokeStyle='rgba(130,160,255,.07)';
+      for(let i=0;i<=6;i++){ctx      ctx.strokeStyle='rgba(130,160,255,.07)';
+      for(let i=0;i<=6;i++){ctx.beginPath();ctx.moveTo(0,H*i/6);ctx.lineTo(W,H*i/6);ctx.stroke();}
+      /* Referenz: unregularisierter Fit */
+      const cRef=polyFit(xs,ys,Math.min(11,13),1e-9);
+      ctx.beginPath();let f0=true;
+      for(let i=0;i<=240;i++){const x=i/240;const y=polyEval(cRef,x);
+        if(y<-.6||y>1.6){f0=true;continue;}
+        f0?(ctx.moveTo(PX(x),PY(y)),f0=false):ctx.lineTo(PX(x),PY(y));}
+      ctx.strokeStyle='rgba(244,114,182,.30)';ctx.lineWidth=1.8;ctx.setLineDash([5,4]);ctx.stroke();
+      ctx.setLineDash([]);
+      /* regularisierter Fit */
+      ctx.beginPath();let f=true;
+      for(let i=0;i<=240;i++){const x=i/240;const y=polyEval(c,x);
+        if(y<-.6||y>1.6){f=true;continue;}
+        f?(ctx.moveTo(PX(x),PY(y)),f=false):ctx.lineTo(PX(x),PY(y));}
+      ctx.strokeStyle=C.acc;ctx.lineWidth=3;ctx.stroke();
+      xs.forEach((x,i)=>{ctx.beginPath();ctx.arc(PX(x),PY(ys[i]),4.4,0,7);
+        ctx.fillStyle=C.acc5;ctx.fill();
+        ctx.strokeStyle='rgba(0,0,0,.5)';ctx.lineWidth=1.2;ctx.stroke();});
+      /* Gewichts-Balken */
+      const nShow=Math.min(8,c.length);
+      const bw=(W-30)/nShow;
+      for(let i=0;i<nShow;i++){
+        const mag=clamp(Math.abs(c[i])/60,0,1);
+        ctx.fillStyle='rgba(167,139,250,.5)';
+        ctx.fillRect(16+i*bw, H-10-mag*42, bw*0.62, mag*42);
+      }
+      ctx.fillStyle=C.faint;ctx.font='10px Inter';
+      ctx.fillText('Gewichte |wᵢ|',16,H-56);
+      ctx.fillText(K5.mode==='es'?`effektiver Grad ${degEff}`:
+        (K5.mode==='wd'?`λ = ${lam.toExponential(1)}`:'BatchNorm aktiv'),16,16);
+      $('#c5legend').innerHTML='<span><i style="background:'+C.acc+'"></i>reguliert</span>'+
+        '<span><i style="background:rgba(244,114,182,.5)"></i>unreguliert</span>'+
+        '<span><i style="background:'+C.acc5+'"></i>Daten</span>';
+    }
+  }
+  /* Kurven-Plot */
+  const ts=[],TR=[],TE=[],NM=[];
+  for(let i=0;i<=60;i++){const tt=i/60;const [a,b,nn]=k5curves(K5.mode,tt);
+    ts.push(tt);TR.push(a*100);TE.push(b*100);NM.push(nn);}
+  const [ca,cb,cn]=k5curves(K5.mode,t);
+  $('#c5tr').textContent=(ca*100).toFixed(1)+' %';
+  $('#c5te').textContent=(cb*100).toFixed(1)+' %';
+  $('#c5nm').textContent=cn.toFixed(2);
+  Plotly.react('c5plot',[
+    {x:ts,y:TR,name:'Training',mode:'lines',line:{color:C.acc,width:2.6}},
+    {x:ts,y:TE,name:'Test',mode:'lines',line:{color:C.acc5,width:3.2}},
+    {x:[t],y:[cb*100],name:'aktuell',mode:'markers',
+     marker:{color:'#fff',size:12,line:{color:C.acc4,width:3}},showlegend:false}
+  ],plLayout({
+    xaxis:{title:'Regularisierungsstärke →'},
+    yaxis:{title:'Genauigkeit (%)',range:[20,103]},
+    legend:{x:.02,y:.06,bgcolor:'rgba(12,16,32,.8)'},
+    margin:{l:48,r:14,t:16,b:40}
+  }),PCFG);
+}
+$$('#c5seg button').forEach(b=>b.onclick=()=>{
+  $$('#c5seg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  K5.mode=b.dataset.m;
+  const el=$('#c5p');el.max=REG_INFO[K5.mode].max;
+  if(+el.value>+el.max)el.value=el.max;
+  K5.p=+el.value;paintRange(el);k5draw();
+});
+bindRange($('#c5p'),()=>{K5.p=+$('#c5p').value;k5draw();});
+
+/* ── Tabelle 1 Interaktiv ── */
+const T1=[
+  {m:'Inception',p:1649402,crop:1,wd:1,tr:100.0,te:89.05},
+  {m:'Inception',p:1649402,crop:1,wd:0,tr:100.0,te:89.31},
+  {m:'Inception',p:1649402,crop:0,wd:1,tr:100.0,te:86.03},
+  {m:'Inception',p:1649402,crop:0,wd:0,tr:100.0,te:85.75},
+  {m:'Inception',p:1649402,crop:0,wd:0,tr:100.0,te:9.78,rand:1},
+  {m:'Inception o. BN',p:1649402,crop:0,wd:1,tr:100.0,te:83.00},
+  {m:'Inception o. BN',p:1649402,crop:0,wd:0,tr:100.0,te:82.00},
+  {m:'Inception o. BN',p:1649402,crop:0,wd:0,tr:100.0,te:10.12,rand:1},
+  {m:'AlexNet',p:1387786,crop:1,wd:1,tr:99.90,te:81.22},
+  {m:'AlexNet',p:1387786,crop:1,wd:0,tr:99.82,te:79.66},
+  {m:'AlexNet',p:1387786,crop:0,wd:1,tr:100.0,te:77.36},
+  {m:'AlexNet',p:1387786,crop:0,wd:0,tr:100.0,te:76.07},
+  {m:'AlexNet',p:1387786,crop:0,wd:0,tr:99.82,te:9.86,rand:1},
+  {m:'MLP 3×512',p:1735178,crop:0,wd:1,tr:100.0,te:53.35},
+  {m:'MLP 3×512',p:1735178,crop:0,wd:0,tr:100.0,te:52.39},
+  {m:'MLP 3×512',p:1735178,crop:0,wd:0,tr:100.0,te:10.48,rand:1},
+  {m:'MLP 1×512',p:1209866,crop:0,wd:1,tr:99.80,te:50.39},
+  {m:'MLP 1×512',p:1209866,crop:0,wd:0,tr:100.0,te:50.51},
+  {m:'MLP 1×512',p:1209866,crop:0,wd:0,tr:99.34,te:10.61,rand:1}
+];
+function t1render(){
+  const wantCrop=$('#t5crop').classList.contains('on')?1:0;
+  const wantWd=$('#t5wd').classList.contains('on')?1:0;
+  const rows=T1.filter(r=>r.rand || (r.crop===wantCrop && r.wd===wantWd));
+  let html='<tr><th>Modell</th><th class="num">Parameter</th><th>Crop</th><th>WD</th>'+
+    '<th class="num">Train %</th><th class="num">Test %</th></tr>';
+  rows.forEach(r=>{
+    html+=`<tr class="${r.rand?'hl':''}"><td>${r.m}${r.rand?' <span class="tag p">Zufalls-Labels</span>':''}</td>`+
+      `<td class="num">${r.p.toLocaleString('de-DE')}</td>`+
+      `<td>${r.crop?'✓':'—'}</td><td>${r.wd?'✓':'—'}</td>`+
+      `<td class="num">${r.tr.toFixed(2)}</td><td class="num">${r.te.toFixed(2)}</td></tr>`;
+  });
+  $('#c5table').innerHTML=html;
+  const real=rows.filter(r=>!r.rand), rnds=rows.filter(r=>r.rand);
+  Plotly.react('c5bar',[
+    {x:real.map(r=>r.m),y:real.map(r=>r.te),type:'bar',name:'Test (echte Labels)',
+     marker:{color:C.acc},text:real.map(r=>r.te.toFixed(1)),textposition:'outside',
+     textfont:{color:C.acc,size:10}},
+    {x:rnds.map(r=>r.m),y:rnds.map(r=>r.te),type:'bar',name:'Test (Zufalls-Labels)',
+     marker:{color:C.acc2},text:rnds.map(r=>r.te.toFixed(1)),textposition:'outside',
+     textfont:{color:C.acc2,size:10}},
+    {x:real.map(r=>r.m),y:real.map(r=>r.tr),type:'scatter',mode:'markers',
+     name:'Training (immer ~100 %)',marker:{color:C.acc4,size:11,symbol:'diamond'}}
+  ],plLayout({
+    barmode:'group',yaxis:{title:'Genauigkeit (%)',range:[0,112]},
+    xaxis:{title:''},legend:{orientation:'h',y:1.14},
+    shapes:[{type:'line',x0:-.5,x1:4.5,y0:10,y1:10,
+      line:{color:'rgba(148,163,184,.5)',width:1.5,dash:'dot'}}],
+    annotations:[{x:4.4,y:14,text:'Zufallsraten = 10 %',showarrow:false,
+      font:{color:C.faint,size:10},xanchor:'right'}]
+  }),PCFG);
+}
+['t5crop','t5wd'].forEach(id=>$('#'+id).onclick=function(){
+  this.classList.toggle('on');t1render();});
+
+/* ═══════════════════════════════════════════════════════════════════════
+   KAPITEL 6 — Randomisierungstest
+   ═══════════════════════════════════════════════════════════════════════ */
+const K6={mode:'true',seedShift:0};
+const CLASSES=['Flugzeug','Auto','Vogel','Katze','Hirsch','Hund','Frosch','Pferd','Schiff','LKW'];
+const C6DESC={
+  'true':{t:'Echte Labels',d:'Der Originaldatensatz, unverändert. Bild und Label passen zusammen.',
+    te:89,tes:'Das Netz generalisiert hervorragend.'},
+  'part':{t:'Teilweise korrupte Labels',
+    d:'Unabhängig mit Wahrscheinlichkeit p wird das Label eines Bildes durch eine gleichverteilt zufällige Klasse ersetzt. Dies interpoliert stufenlos zwischen „kein Rauschen" und „komplettes Rauschen".',
+    te:50,tes:'Das Netz extrahiert das Restsignal UND lernt den Rest auswendig.'},
+  'rand':{t:'Zufalls-Labels',
+    d:'Alle Labels werden durch zufällige ersetzt. Es gibt keinerlei Zusammenhang mehr zwischen Bild und Label. Lernen ist theoretisch unmöglich — und trotzdem erreicht das Netz 100 % Trainingsgenauigkeit.',
+    te:9.78,tes:'Exakt Zufallsraten. Reine Memorierung, null Verständnis.'},
+  'shuf':{t:'Permutierte Pixel',
+    d:'Eine EINE zufällige Pixel-Permutation wird gewählt und dann auf ALLE Bilder (Training und Test) identisch angewendet. Die räumliche Struktur, die Faltungsschichten ausnutzen, ist zerstört — aber die Information bleibt erhalten.',
+    te:45,tes:'Deutlich schlechter, aber weit über Raten — die Information ist ja noch da.'},
+  'rpix':{t:'Zufalls-Pixel',
+    d:'Für JEDES Bild wird eine EIGENE zufällige Permutation gewählt. Jetzt ist auch die Information zerstört. Trotzdem: Trainingsfehler 0.',
+    te:10,tes:'Raten-Niveau. Konvergiert sogar schneller als Zufalls-Labels.'},
+  'gauss':{t:'Gauß-Rauschen',
+    d:'Die Bilder werden komplett verworfen und durch Gauß-Rauschen ersetzt (mit demselben Mittelwert und derselben Varianz wie der Originaldatensatz). Reines Rauschen rein, perfekte Memorierung raus.',
+    te:10,tes:'Raten-Niveau — das Netz merkt sich 50 000 Rauschbilder.'}
+};
+function c6pattern(ctx,x,y,s,cls,mode,seed){
+  const hue=[205,15,110,35,45,25,135,20,190,5][cls];
+  if(mode==='gauss'){
+    const img=ctx.createImageData(s,s);
+    for(let i=0;i<s*s;i++){const v=clamp(128+gauss()*52,0,255);
+      img.data[i*4]=v;img.data[i*4+1]=v*0.96;img.data[i*4+2]=v*1.04;img.data[i*4+3]=255;}
+    ctx.putImageData(img,x,y);return;
+  }
+  if(mode==='rpix'||mode==='shuf'){
+    const n=7,cs=s/n;
+    const perm=[];for(let i=0;i<n*n;i++)perm.push(i);
+    let st=(mode==='shuf')?12345:(seed*7919+13);
+    for(let i=perm.length-1;i>0;i--){st=(st*1103515245+12345)&0x7fffffff;
+      const j=st%(i+1);[perm[i],perm[j]]=[perm[j],perm[i]];}
+    for(let i=0;i<n*n;i++){
+      const sr=Math.floor(perm[i]/n),sc=perm[i]%n;
+      const l=28+((sr*3+sc*5+cls*7)%9)*5.5;
+      ctx.fillStyle=`hsl(${hue},${42+((sr+sc)%3)*12}%,${l}%)`;
+      ctx.fillRect(x+(i%n)*cs,y+Math.floor(i/n)*cs,cs+.6,cs+.6);
+    }
+    return;
+  }
+  /* "natürliches" Bild: Himmel + Objekt */
+  const g=ctx.createLinearGradient(x,y,x,y+s);
+  g.addColorStop(0,`hsl(${hue+18},42%,54%)`);g.addColorStop(1,`hsl(${hue},38%,26%)`);
+  ctx.fillStyle=g;ctx.fillRect(x,y,s,s);
+  ctx.fillStyle=`hsla(${hue+40},62%,68%,.85)`;
+  ctx.beginPath();ctx.ellipse(x+s*0.5,y+s*0.58,s*0.26,s*0.19,0,0,7);ctx.fill();
+  ctx.fillStyle=`hsla(${hue+40},62%,78%,.9)`;
+  ctx.beginPath();ctx.arc(x+s*0.34,y+s*0.40,s*0.12,0,7);ctx.fill();
+  ctx.fillStyle='rgba(0,0,0,.25)';ctx.fillRect(x,y+s*0.82,s,s*0.18);
+}
+function k6grid(){
+  const cv=$('#c6grid');if(!cv)return;
+  const {ctx,W,H}=setupCanvas(cv);
+  ctx.clearRect(0,0,W,H);
+  const cols=6,rows=3, pad=8;
+  const cw=(W-pad*(cols+1))/cols, ch=(H-pad*(rows+1)-18*rows)/rows;
+  const sz=Math.min(cw,ch);
+  const p=+$('#c6p').value;
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    const i=r*cols+c;
+    const trueCls=(i*3+K6.seedShift)%10;
+    let lbl=trueCls, corrupted=false;
+    if(K6.mode==='rand'){lbl=Math.floor(Math.random()*10);corrupted=true;}
+    else if(K6.mode==='part'){
+      const h=Math.abs(Math.sin((i+1)*12.9898+K6.seedShift)*43758.5453)%1;
+      if(h<p){lbl=Math.floor(h*1000)%10;corrupted=true;}}
+    const x=pad+c*(cw+pad)+ (cw-sz)/2, y=pad+r*(ch+18+pad);
+    c6pattern(ctx,x,y,sz,trueCls,K6.mode,i+K6.seedShift);
+    ctx.strokeStyle=corrupted?'rgba(244,114,182,.9)':'rgba(130,160,255,.2)';
+    ctx.lineWidth=corrupted?2.2:1;ctx.strokeRect(x,y,sz,sz);
+    ctx.font='9px Inter';ctx.textAlign='center';
+    ctx.fillStyle=corrupted?C.acc2:C.dim;
+    ctx.fillText(CLASSES[lbl],x+sz/2,y+sz+12);
+    ctx.textAlign='left';
+  }
+}
+function k6desc(){
+  const d=C6DESC[K6.mode];
+  $('#c6desc').innerHTML=`<h4>${d.t}</h4><p class="mini" style="margin:0">${d.d}</p>`;
+  $('#c6pwrap').style.display = K6.mode==='part' ? 'block' : 'none';
+  $('#c6tracc').textContent='100 %';
+  let te=d.te;
+  if(K6.mode==='part'){const p=+$('#c6p').value;te=89-79*p;}
+  $('#c6teacc').textContent=te.toFixed(te<20?2:0)+' %';
+  $('#c6tes').textContent=d.tes;
+  $('#c6hint').textContent = K6.mode==='part'
+    ? 'Pink umrandete Bilder haben ein korruptes Label.'
+    : (K6.mode==='rand' ? 'Alle Labels sind zufällig — kein einziges passt mehr.' :
+       'Jede Kachel ist ein schematisches CIFAR10-Bild.');
+  k6grid();
+}
+$$('#c6seg button').forEach(b=>b.onclick=()=>{
+  $$('#c6seg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  K6.mode=b.dataset.m;k6desc();});
+bindRange($('#c6p'),()=>{$('#c6pv').textContent=(+$('#c6p').value).toFixed(2);k6desc();});
+$('#c6re').onclick=()=>{K6.seedShift=Math.floor(Math.random()*97);k6desc();};
+
+/* ── Lernkurven (Figure 1a) ── */
+const CURVE_DEFS=[
+  {k:'true', n:'echte Labels',     col:C.acc,  delay:0.3, rate:0.52, start:2.30},
+  {k:'rand', n:'Zufalls-Labels',   col:C.acc2, delay:5.2, rate:0.30, start:2.33},
+  {k:'shuf', n:'permutierte Pixel',col:C.acc3, delay:2.1, rate:0.36, start:2.31},
+  {k:'rpix', n:'Zufalls-Pixel',    col:C.acc4, delay:3.4, rate:0.42, start:2.32},
+  {k:'gauss',n:'Gauß-Rauschen',    col:C.acc5, delay:3.0, rate:0.46, start:2.32}
+];
+const K6C={on:new Set(CURVE_DEFS.map(d=>d.k))};
+function k6curves(){
+  const traces=[];
+  CURVE_DEFS.forEach(d=>{
+    if(!K6C.on.has(d.k))return;
+    const X=[],Y=[];
+    for(let i=0;i<=120;i++){
+      const s=i/120*26;
+      let v;
+      if(s<d.delay){v=d.start-0.02*s;}
+      else{v=d.start*Math.exp(-d.rate*(s-d.delay))-0.015*(s-d.delay);}
+      X.push(s);Y.push(Math.max(0,v));
+    }
+    traces.push({x:X,y:Y,name:d.n,mode:'lines',line:{color:d.col,width:2.8}});
+  });
+  Plotly.react('c6curves',traces,plLayout({
+    xaxis:{title:'tausend Trainingsschritte',range:[0,26]},
+    yaxis:{title:'mittlerer Loss',range:[0,2.6]},
+    legend:{x:.98,y:.98,xanchor:'right'},
+    annotations:[{x:20,y:0.22,ax:30,ay:-52,text:'alle erreichen Loss ≈ 0',
+      showarrow:true,arrowcolor:C.acc4,font:{color:C.acc4,size:11},arrowhead:2}]
+  }),PCFG);
+}
+(function buildC6Legend(){
+  const box=$('#c6legend');
+  CURVE_DEFS.forEach(d=>{
+    const el=document.createElement('span');
+    el.className='pill on';el.textContent=d.n;
+    el.style.borderColor=d.col;el.style.color=d.col;
+    el.onclick=()=>{
+      if(K6C.on.has(d.k)){K6C.on.delete(d.k);el.classList.remove('on');el.style.color=C.faint;}
+      else{K6C.on.add(d.k);el.classList.add('on');el.style.color=d.col;}
+      k6curves();
+    };
+    box.appendChild(el);
+  });
+})();
+
+/* ── Korruptions-Regler (Figure 1b/1c) ── */
+function k6corr(){
+  const p=+$('#c6corr').value;
+  $('#c6cv').textContent=p.toFixed(2);
+  const P=[],ERR_I=[],ERR_A=[],ERR_M=[],SL_I=[],SL_A=[],SL_M=[];
+  for(let i=0;i<=50;i++){
+    const t=i/50;P.push(t);
+    ERR_I.push(0.109+0.791*Math.pow(t,1.08));
+    ERR_A.push(0.239+0.661*Math.pow(t,1.03));
+    ERR_M.push(0.495+0.405*Math.pow(t,0.95));
+    SL_I.push(1.0+2.55*Math.pow(t,0.80));
+    SL_A.push(1.0+2.05*Math.pow(t,0.86));
+    SL_M.push(1.0+1.35*Math.pow(t,0.92));
+  }
+  const eI=0.109+0.791*Math.pow(p,1.08);
+  const sI=1.0+2.55*Math.pow(p,0.80);
+  /* Fig 1c — Generalisierungsfehler */
+  Plotly.react('c6err',[
+    {x:P,y:ERR_I,name:'Inception',mode:'lines',line:{color:C.acc,width:2.8}},
+    {x:P,y:ERR_A,name:'AlexNet',mode:'lines',line:{color:C.acc3,width:2.4}},
+    {x:P,y:ERR_M,name:'MLP 1×512',mode:'lines',line:{color:C.acc5,width:2.4}},
+    {x:P,y:P.map(()=>0),name:'Trainingsfehler (immer 0)',mode:'lines',
+     line:{color:C.acc4,width:2.6,dash:'dash'}},
+    {x:[p],y:[eI],mode:'markers',showlegend:false,
+     marker:{color:'#fff',size:13,line:{color:C.acc2,width:3}}}
+  ],plLayout({
+    title:{text:'Generalisierungsfehler (Fig. 1c)',font:{size:12,color:C.dim}},
+    xaxis:{title:'Label-Korruption p'},
+    yaxis:{title:'Testfehler',range:[-0.03,1.0]},
+    legend:{x:.02,y:.98,bgcolor:'rgba(12,16,32,.82)'},
+    margin:{l:52,r:14,t:34,b:42},
+    shapes:[{type:'line',x0:0,x1:1,y0:.9,y1:.9,
+      line:{color:'rgba(148,163,184,.45)',width:1.4,dash:'dot'}}],
+    annotations:[{x:.5,y:.95,text:'Zufallsraten = 0,9',showarrow:false,
+      font:{color:C.faint,size:10}}]
+  }),PCFG);
+  /* Fig 1b — Konvergenz-Verlangsamung */
+  Plotly.react('c6slow',[
+    {x:P,y:SL_I,name:'Inception',mode:'lines',line:{color:C.acc,width:2.8}},
+    {x:P,y:SL_A,name:'AlexNet',mode:'lines',line:{color:C.acc3,width:2.4}},
+    {x:P,y:SL_M,name:'MLP 1×512',mode:'lines',line:{color:C.acc5,width:2.4}},
+    {x:[p],y:[sI],mode:'markers',showlegend:false,
+     marker:{color:'#fff',size:13,line:{color:C.acc4,width:3}}}
+  ],plLayout({
+    title:{text:'Zeit bis zum Overfit (Fig. 1b)',font:{size:12,color:C.dim}},
+    xaxis:{title:'Label-Korruption p'},
+    yaxis:{title:'relative Konvergenzzeit',range:[0.8,4.2]},
+    legend:{x:.02,y:.98,bgcolor:'rgba(12,16,32,.82)'},
+    margin:{l:52,r:14,t:34,b:42}
+  }),PCFG);
+  $('#c6a').textContent='100 %';
+  $('#c6ab').style.width='100%';
+  $('#c6b').textContent=(eI*100).toFixed(1)+' %';
+  $('#c6bb').style.width=(eI*100)+'%';
+  $('#c6c').textContent=sI.toFixed(2).replace('.',',')+'×';
+  $('#c6cb').style.width=(sI/4*100)+'%';
+}
+bindRange($('#c6corr'),k6corr);
+
+/* ── Warum alle drei Theorien scheitern ── */
+function k6kill(){
+  const theories=['VC-Dimension','Rademacher','Uniforme Stabilität'];
+  Plotly.react('c6kill',[
+    {x:theories,y:[1,1,1],type:'bar',name:'Wert bei echten Labels',
+     marker:{color:'rgba(94,234,212,.78)',line:{color:C.acc,width:1.5}},
+     text:['≥ n','≈ 1','β(A)'],textposition:'inside',textfont:{color:'#06202a',size:12}},
+    {x:theories,y:[1,1,1],type:'bar',name:'Wert bei Zufalls-Labels',
+     marker:{color:'rgba(244,114,182,.78)',line:{color:C.acc2,width:1.5}},
+     text:['≥ n','≈ 1','β(A)'],textposition:'inside',textfont:{color:'#2a0618',size:12}},
+    {x:theories,y:[0.11,0.11,0.11],type:'scatter',mode:'markers',
+     name:'tatsächlicher Testfehler (echt)',
+     marker:{color:C.acc,size:14,symbol:'diamond',line:{color:'#fff',width:1.4}}},
+    {x:theories,y:[0.90,0.90,0.90],type:'scatter',mode:'markers',
+     name:'tatsächlicher Testfehler (Zufall)',
+     marker:{color:C.acc2,size:14,symbol:'diamond',line:{color:'#fff',width:1.4}}}
+  ],plLayout({
+    barmode:'group',
+    yaxis:{title:'normierter Wert',range:[0,1.3]},
+    legend:{orientation:'h',y:1.2,font:{size:10}},
+    margin:{l:54,r:16,t:66,b:40},
+    annotations:[
+      {x:0,y:1.07,text:'identisch ✗',showarrow:false,font:{color:C.bad,size:11}},
+      {x:1,y:1.07,text:'identisch ✗',showarrow:false,font:{color:C.bad,size:11}},
+      {x:2,y:1.07,text:'identisch ✗',showarrow:false,font:{color:C.bad,size:11}}
+    ]
+  }),PCFG);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   KAPITEL 7 — Ergebnis-Explorer
+   ═══════════════════════════════════════════════════════════════════════ */
+const MODELS=['Inception','Inception o. BN','AlexNet','MLP 3×512','MLP 1×512'];
+const K7={sel:new Set(MODELS),view:'acc'};
+(function buildC7(){
+  const box=$('#c7models');
+  MODELS.forEach(m=>{
+    const el=document.createElement('span');
+    el.className='pill on';el.textContent=m;
+    el.onclick=()=>{
+      if(K7.sel.has(m)){K7.sel.delete(m);el.classList.remove('on');}
+      else{K7.sel.add(m);el.classList.add('on');}
+      k7draw();
+    };
+    box.appendChild(el);
+  });
+})();
+$$('#c7view button').forEach(b=>b.onclick=()=>{
+  $$('#c7view button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  K7.view=b.dataset.v;k7draw();});
+function k7draw(){
+  const rows=T1.filter(r=>K7.sel.has(r.m));
+  /* Tabelle */
+  let html='<tr><th>Modell</th><th class="num">Parameter</th><th>Crop</th><th>WD</th>'+
+    '<th class="num">Train %</th><th class="num">Test %</th><th class="num">Lücke</th></tr>';
+  rows.forEach(r=>{
+    html+=`<tr class="${r.rand?'hl':''}"><td>${r.m}${r.rand?' <span class="tag p">Zufall</span>':''}</td>`+
+      `<td class="num">${r.p.toLocaleString('de-DE')}</td><td>${r.crop?'✓':'—'}</td>`+
+      `<td>${r.wd?'✓':'—'}</td><td class="num">${r.tr.toFixed(2)}</td>`+
+      `<td class="num">${r.te.toFixed(2)}</td>`+
+      `<td class="num">${(r.tr-r.te).toFixed(2)}</td></tr>`;
+  });
+  $('#c7table').innerHTML=html;
+  if(K7.view==='acc'){
+    const labels=rows.map((r,i)=>r.m+(r.rand?' (Zufall)':` [${r.crop?'C':'–'}${r.wd?'W':'–'}]`));
+    Plotly.react('c7plot',[
+      {x:labels,y:rows.map(r=>r.tr),type:'bar',name:'Trainingsgenauigkeit',
+       marker:{color:'rgba(94,234,212,.55)',line:{color:C.acc,width:1.2}}},
+      {x:labels,y:rows.map(r=>r.te),type:'bar',name:'Testgenauigkeit',
+       marker:{color:rows.map(r=>r.rand?C.acc2:C.acc5)}}
+    ],plLayout({
+      barmode:'group',yaxis:{title:'Genauigkeit (%)',range:[0,108]},
+      xaxis:{tickangle:-32,tickfont:{size:9}},
+      legend:{orientation:'h',y:1.12},margin:{l:54,r:16,t:48,b:118},
+      shapes:[{type:'line',x0:-.5,x1:labels.length-.5,y0:10,y1:10,
+        line:{color:'rgba(148,163,184,.4)',width:1.4,dash:'dot'}}]
+    }),PCFG);
+  }else if(K7.view==='gap'){
+    const labels=rows.map(r=>r.m+(r.rand?' (Zufall)':` [${r.crop?'C':'–'}${r.wd?'W':'–'}]`));
+    Plotly.react('c7plot',[
+      {x:labels,y:rows.map(r=>r.tr-r.te),type:'bar',name:'Generalisierungslücke',
+       marker:{color:rows.map(r=>r.rand?C.acc2:C.acc3)},
+       text:rows.map(r=>(r.tr-r.te).toFixed(1)),textposition:'outside',
+       textfont:{size:9,color:C.dim}}
+    ],plLayout({
+      yaxis:{title:'Train − Test (Prozentpunkte)',range:[0,105]},
+      xaxis:{tickangle:-32,tickfont:{size:9}},
+      showlegend:false,margin:{l:54,r:16,t:30,b:118},
+      annotations:[{x:0.5,y:98,xref:'paper',yref:'y',
+        text:'Zufalls-Labels: Lücke ≈ 90 Punkte — maximales Overfitting',
+        showarrow:false,font:{color:C.acc2,size:11}}]
+    }),PCFG);
+  }else{
+    const uniq={};rows.forEach(r=>{if(!r.rand&&(!uniq[r.m]||r.te>uniq[r.m].te))uniq[r.m]=r;});
+    const arr=Object.values(uniq);
+    Plotly.react('c7plot',[
+      {x:arr.map(r=>r.p),y:arr.map(r=>r.te),mode:'markers+text',
+       text:arr.map(r=>r.m),textposition:'top center',textfont:{size:10,color:C.dim},
+       marker:{size:arr.map(()=>18),color:arr.map(r=>r.te),
+         colorscale:[[0,C.acc2],[0.5,C.acc3],[1,C.acc]],
+         line:{color:'#fff',width:1.5},showscale:false},
+       name:'beste Testgenauigkeit'},
+      {x:[1209866,1735178],y:[10.61,10.48],mode:'markers',name:'Zufalls-Labels',
+       marker:{size:14,color:C.acc2,symbol:'x',line:{width:2}}}
+    ],plLayout({
+      xaxis:{title:'Anzahl Parameter',range:[1100000,1850000]},
+      yaxis:{title:'beste Testgenauigkeit (%)',range:[0,100]},
+      margin:{l:54,r:16,t:48,b:52},legend:{orientation:'h',y:1.12},
+      shapes:[{type:'line',x0:1100000,x1:1850000,y0:50,y1:50,
+        line:{color:'rgba(130,160,255,.16)',width:1,dash:'dot'}}],
+      annotations:[{x:1500000,y:30,
+        text:'Alle Modelle haben ≈ 1,2–1,7 Mio. Parameter bei nur 50 000 Datenpunkten.<br>'+
+             'Die Leistung variiert trotzdem um 39 Punkte — die Parameterzahl erklärt nichts.',
+        showarrow:false,font:{color:C.faint,size:10},align:'center'}]
+    }),PCFG);
+  }
+}
+/* Fig 2b — BatchNorm */
+function k7bn(){
+  const X=[],A=[],B=[],At=[],Bt=[];
+  for(let i=0;i<=80;i++){
+    const s=i/80*20;X.push(s);
+    A.push(Math.min(1,0.62+0.38*(1-Math.exp(-0.42*s))));
+    At.push(Math.min(.87,0.60+0.27*(1-Math.exp(-0.5*s))));
+    const wob=Math.sin(s*2.4)*0.045*Math.exp(-0.08*s);
+    B.push(Math.min(1,0.58+0.42*(1-Math.exp(-0.30*s))+wob));
+    Bt.push(Math.min(.84,0.56+0.27*(1-Math.exp(-0.36*s))+wob*1.6));
+  }
+  Plotly.react('c7bn',[
+    {x:X,y:A,name:'train (Inception)',mode:'lines',line:{color:C.acc,width:2.4}},
+    {x:X,y:At,name:'test (Inception)',mode:'lines',line:{color:C.acc,width:2.4,dash:'dot'}},
+    {x:X,y:B,name:'train (ohne BN)',mode:'lines',line:{color:C.acc2,width:2}},
+    {x:X,y:Bt,name:'test (ohne BN)',mode:'lines',line:{color:C.acc2,width:2,dash:'dot'}}
+  ],plLayout({
+    xaxis:{title:'tausend Schritte'},yaxis:{title:'Genauigkeit',range:[0.55,1.02]},
+    legend:{x:.98,y:.06,xanchor:'right',font:{size:9}},margin:{l:50,r:14,t:14,b:40}
+  }),PCFG);
+}
+/* Fig 2a — Early Stopping ImageNet */
+function k7es(){
+  const withReg=$('#t7reg').classList.contains('on');
+  const shade=$('#t7shade').classList.contains('on');
+  const X=[],TR=[],TE=[],BEST=[];
+  let best=0;
+  for(let i=0;i<=100;i++){
+    const s=i/100*10000;X.push(s);
+    const t=s/10000;
+    const tr= withReg ? 0.92*(1-Math.exp(-3.4*t)) : 0.995*(1-Math.exp(-4.4*t));
+    const te= withReg
+      ? 0.778*(1-Math.exp(-3.8*t))
+      : 0.632*(1-Math.exp(-5.2*t)) - 0.034*Math.max(0,t-0.42)*2.4 + Math.sin(t*22)*0.012*t;
+    TR.push(tr);TE.push(Math.max(0,te));
+    best=Math.max(best,Math.max(0,te));BEST.push(best);
+  }
+  const traces=[];
+  if(shade)traces.push({x:X,y:BEST,name:'kumulativ bestes Test',mode:'lines',
+    fill:'tozeroy',fillcolor:'rgba(251,191,36,.10)',line:{color:'rgba(251,191,36,.55)',width:1.4}});
+  traces.push({x:X,y:TR,name:'train top-1',mode:'lines',line:{color:C.acc,width:2.6}});
+  traces.push({x:X,y:TE,name:'test top-1',mode:'lines',line:{color:C.acc5,width:2.8}});
+  Plotly.react('c7es',traces,plLayout({
+    xaxis:{title:'tausend Trainingsschritte'},
+    yaxis:{title:'Top-1 Genauigkeit',range:[0,1.03]},
+    legend:{x:.98,y:.06,xanchor:'right'},margin:{l:52,r:16,t:20,b:44},
+    annotations: withReg ? [] : [{x:5600,y:0.66,ax:40,ay:-46,
+      text:'Testgenauigkeit sinkt wieder →<br>Early Stopping würde hier helfen',
+      showarrow:true,arrowcolor:C.acc4,font:{color:C.acc4,size:10},arrowhead:2}]
+  }),PCFG);
+}
+['t7shade','t7reg'].forEach(id=>$('#'+id).onclick=function(){
+  this.classList.toggle('on');k7es();});
+
+/* ═══════════════════════════════════════════════════════════════════════
+   KAPITEL 8 — Theorem 1 interaktiv
+   ═══════════════════════════════════════════════════════════════════════ */
+const K8={step:0,n:7,x:[],b:[],y:[],w:[],d:2352};
+function k8gen(){
+  K8.n=+$('#c8n').value;
+  K8.x=[];for(let i=0;i<K8.n;i++)K8.x.push((i+0.75+Math.random()*0.5)/(K8.n+0.5));
+  K8.x.sort((a,b)=>a-b);
+  K8.b=[];for(let i=0;i<K8.n;i++){
+    const prev=i===0?0:K8.x[i-1];
+    K8.b.push(prev+(K8.x[i]-prev)*(0.35+Math.random()*0.3));}
+  if(K8.y.length!==K8.n)k8randY();
+  k8solve();
+}
+function k8randY(){K8.y=[];for(let i=0;i<K8.n;i++)K8.y.push(rnd(1));}
+function k8solve(){
+  const n=K8.n;
+  const A=[];for(let i=0;i<n;i++){const row=[];
+    for(let j=0;j<n;j++)row.push(Math.max(K8.x[i]-K8.b[j],0));A.push(row);}
+  K8.A=A;
+  try{K8.w=solve(A.map(r=>[...r]),[...K8.y]);}catch(e){K8.w=new Array(n).fill(0);}
+}
+function k8c(x){let s=0;for(let j=0;j<K8.n;j++)s+=K8.w[j]*Math.max(x-K8.b[j],0);return s;}
+const C8TEXT=[
+  {t:'Schritt 1 · Die Funktion',h:`Wir bauen eine Funktion aus lauter ReLU-Knicken:
+    <div class="math" data-tex="c(x)=\\sum_{j=1}^{n} w_j\\max\\{\\langle a,x\\rangle-b_j,0\\}"></div>
+    Jeder Summand ist 0 bis zur Stelle <span class="math-inline" data-tex="b_j"></span> und steigt
+    danach linear mit Steigung <span class="math-inline" data-tex="w_j"></span>. Das ist genau das,
+    was ein zweischichtiges ReLU-Netz berechnet.`},
+  {t:'Schritt 2 · Projektion auf eine Gerade',h:`Die Datenpunkte
+    <span class="math-inline" data-tex="z_i"></span> leben in d Dimensionen. Wir wählen eine Richtung
+    <span class="math-inline" data-tex="a"></span> und projizieren:
+    <span class="math-inline" data-tex="x_i=\\langle a,z_i\\rangle"></span>.
+    <br><br>Weil alle <span class="math-inline" data-tex="z_i"></span> verschieden sind, gibt es
+    garantiert ein <span class="math-inline" data-tex="a"></span>, bei dem auch alle
+    <span class="math-inline" data-tex="x_i"></span> verschieden sind. Ab jetzt ist alles
+    <strong>eindimensional</strong> — das ist der ganze Trick.
+    <br><span class="tag a">Kosten: d Parameter</span>`},
+  {t:'Schritt 3 · Verschachteln',h:`Jetzt legen wir die Knickstellen
+    <span class="math-inline" data-tex="b_j"></span> so, dass sie sich mit den Datenpunkten abwechseln:
+    <div class="math" data-tex="b_1 < x_1 < b_2 < x_2 < \\cdots < b_n < x_n"></div>
+    Jedes <span class="math-inline" data-tex="b_j"></span> liegt <em>knapp vor</em> dem zugehörigen
+    <span class="math-inline" data-tex="x_j"></span>. Im Bild siehst du die gelben Knicke
+    direkt links neben den blauen Punkten.
+    <br><span class="tag a">Kosten: n Parameter</span>`},
+  {t:'Schritt 4 · Die Dreiecksmatrix',h:`Setze alle Punkte in alle ReLUs ein:
+    <div class="math" data-tex="A_{ij}=\\max\\{x_i-b_j,0\\}"></div>
+    Für <span class="math-inline" data-tex="i<j"></span> gilt
+    <span class="math-inline" data-tex="x_i<b_j"></span> → der Eintrag ist <strong>0</strong>.
+    Die Matrix ist also <strong>untere Dreiecksmatrix</strong> mit positiver Diagonale
+    <span class="math-inline" data-tex="x_i-b_i>0"></span>.
+    <br><br>→ <strong>Sie ist invertierbar.</strong> (Lemma 1)`},
+  {t:'Schritt 5 · Lösen',h:`Das Gleichungssystem
+    <div class="math" data-tex="A\\,w \\;=\\; y"></div>
+    hat für <em>jedes</em> y eine eindeutige Lösung w. Und y sind die Labels —
+    <strong>beliebige</strong> Labels.
+    <br><br>Würfle rechts neue y: Die Kurve geht <em>immer</em> exakt durch alle Punkte.
+    Das Netz zerschmettert die Stichprobe. ∎
+    <br><span class="tag a">Kosten: n Parameter · Gesamt: 2n + d</span>`}
+];
+function k8draw(){
+  $$('#c8steps button').forEach((b,i)=>b.classList.toggle('primary',i===K8.step));
+  $('#c8text').innerHTML=`<h4>${C8TEXT[K8.step].t}</h4>
+    <p class="mini" style="margin:0">${C8TEXT[K8.step].h}</p>`;
+  renderMath();
+  const cv=$('#c8canvas');if(!cv)return;
+  const {ctx,W,H}=setupCanvas
+  const cv=$('#c8canvas');if(!cv)return;
+  const {ctx,W,H}=setupCanvas(cv);
+  ctx.clearRect(0,0,W,H);
+  const L=46,R=W-16,T=18,B=H-30;
+  const PX=x=>L+x*(R-L);
+  const PY=v=>(T+B)/2 - v*((B-T)/2-8);
+  /* Achsen */
+  ctx.strokeStyle='rgba(130,160,255,.14)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(L-8,PY(0));ctx.lineTo(R,PY(0));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(L,T);ctx.lineTo(L,B);ctx.stroke();
+  ctx.fillStyle=C.faint;ctx.font='10px Inter';
+  ctx.fillText('+1',8,PY(1)+4);ctx.fillText('0',20,PY(0)-4);ctx.fillText('−1',8,PY(-1)+4);
+  ctx.fillText('⟨a, z⟩  (projizierte Datenpunkte)',L,B+20);
+
+  const s=K8.step;
+
+  /* Schritt 1: einzelne ReLU-Bausteine zeigen */
+  if(s===0){
+    const demoB=[0.18,0.42,0.68], demoW=[1.0,-1.7,1.5];
+    demoB.forEach((bj,j)=>{
+      ctx.beginPath();
+      for(let i=0;i<=200;i++){const x=i/200;
+        const v=demoW[j]*Math.max(x-bj,0)*0.9;
+        i?ctx.lineTo(PX(x),PY(v)):ctx.moveTo(PX(x),PY(v));}
+      ctx.strokeStyle=['rgba(94,234,212,.55)','rgba(244,114,182,.55)','rgba(167,139,250,.55)'][j];
+      ctx.lineWidth=1.8;ctx.stroke();
+      ctx.fillStyle=['rgba(94,234,212,.9)','rgba(244,114,182,.9)','rgba(167,139,250,.9)'][j];
+      ctx.beginPath();ctx.arc(PX(bj),PY(0),4,0,7);ctx.fill();
+      ctx.font='9px Inter';ctx.fillText('b'+(j+1),PX(bj)-5,PY(0)+16);
+    });
+    /* Summe */
+    ctx.beginPath();
+    for(let i=0;i<=220;i++){const x=i/220;
+      let v=0;demoB.forEach((bj,j)=>v+=demoW[j]*Math.max(x-bj,0)*0.9);
+      i?ctx.lineTo(PX(x),PY(v)):ctx.moveTo(PX(x),PY(v));}
+    ctx.strokeStyle=C.acc4;ctx.lineWidth=3;ctx.stroke();
+    ctx.fillStyle=C.acc4;ctx.font='700 11px Inter';
+    ctx.fillText('Summe = c(x)  — eine stückweise lineare Funktion',L+6,T+14);
+  }
+
+  /* Schritt 2: Projektion d-dim → 1-dim */
+  if(s===1){
+    const cx=W*0.26, cy=(T+B)/2;
+    const r=Math.min(W*0.17,(B-T)*0.36);
+    /* 2D-Punktwolke */
+    ctx.strokeStyle='rgba(130,160,255,.14)';
+    ctx.beginPath();ctx.arc(cx,cy,r,0,7);ctx.stroke();
+    const ang=0.62;
+    ctx.beginPath();
+    ctx.moveTo(cx-Math.cos(ang)*r*1.25, cy+Math.sin(ang)*r*1.25);
+    ctx.lineTo(cx+Math.cos(ang)*r*1.25, cy-Math.sin(ang)*r*1.25);
+    ctx.strokeStyle='rgba(251,191,36,.8)';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle=C.acc4;ctx.font='700 11px Inter';
+    ctx.fillText('Richtung a',cx+r*0.75,cy-r*0.92);
+    for(let i=0;i<K8.n;i++){
+      const t=(i+0.5)/K8.n;
+      const px=cx+Math.cos(ang)*r*(t*2-1)*1.05 + Math.sin(ang)*rnd(0)*0;
+      const off=((i*37)%7-3)*r*0.19;
+      const qx=px - Math.sin(ang)*off, qy=cy-Math.sin(ang)*r*(t*2-1)*1.05 - Math.cos(ang)*off;
+      ctx.beginPath();ctx.arc(qx,qy,5,0,7);ctx.fillStyle=C.acc5;ctx.fill();
+      /* Projektionslinie */
+      const projx=cx+Math.cos(ang)*r*(t*2-1)*1.05, projy=cy-Math.sin(ang)*r*(t*2-1)*1.05;
+      ctx.beginPath();ctx.moveTo(qx,qy);ctx.lineTo(projx,projy);
+      ctx.strokeStyle='rgba(96,165,250,.3)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath();ctx.arc(projx,projy,3.6,0,7);ctx.fillStyle=C.acc4;ctx.fill();
+    }
+    ctx.fillStyle=C.faint;ctx.font='10px Inter';
+    ctx.fillText('d-dimensionale Daten zᵢ',cx-54,B+4);
+    /* Pfeil */
+    const ax=W*0.49;
+    ctx.strokeStyle='rgba(167,139,250,.75)';ctx.lineWidth=2.4;
+    ctx.beginPath();ctx.moveTo(ax,cy);ctx.lineTo(ax+42,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(ax+42,cy);ctx.lineTo(ax+34,cy-6);ctx.lineTo(ax+34,cy+6);
+    ctx.closePath();ctx.fillStyle='rgba(167,139,250,.75)';ctx.fill();
+    /* 1D-Achse */
+    const l2=W*0.60,r2=W-24;
+    ctx.strokeStyle='rgba(130,160,255,.3)';ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.moveTo(l2,cy);ctx.lineTo(r2,cy);ctx.stroke();
+    K8.x.forEach((x,i)=>{
+      const px=l2+x*(r2-l2);
+      ctx.beginPath();ctx.arc(px,cy,5,0,7);ctx.fillStyle=C.acc5;ctx.fill();
+      ctx.strokeStyle='rgba(0,0,0,.5)';ctx.lineWidth=1.2;ctx.stroke();
+      ctx.fillStyle=C.faint;ctx.font='9px Inter';ctx.fillText('x'+(i+1),px-6,cy+18);
+    });
+    ctx.fillStyle=C.acc;ctx.font='700 11px Inter';
+    ctx.fillText('xᵢ = ⟨a, zᵢ⟩  — alle verschieden',l2,cy-26);
+  }
+
+  /* Schritte 3-5: Hauptdarstellung */
+  if(s>=2){
+    /* vertikale Hilfslinien */
+    K8.x.forEach((x,i)=>{
+      ctx.strokeStyle='rgba(96,165,250,.14)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(PX(x),T);ctx.lineTo(PX(x),B);ctx.stroke();
+    });
+    K8.b.forEach((bj,j)=>{
+      ctx.strokeStyle='rgba(251,191,36,.22)';ctx.lineWidth=1;ctx.setLineDash([3,4]);
+      ctx.beginPath();ctx.moveTo(PX(bj),T);ctx.lineTo(PX(bj),B);ctx.stroke();ctx.setLineDash([]);
+      ctx.beginPath();ctx.arc(PX(bj),PY(0),4.2,0,7);
+      ctx.fillStyle=C.acc4;ctx.fill();
+    });
+    /* Funktion c(x) ab Schritt 5 */
+    if(s>=4){
+      ctx.beginPath();
+      for(let i=0;i<=400;i++){const x=i/400;const v=clamp(k8c(x),-1.6,1.6);
+        i?ctx.lineTo(PX(x),PY(v)):ctx.moveTo(PX(x),PY(v));}
+      ctx.strokeStyle=C.acc;ctx.lineWidth=3;ctx.stroke();
+    }
+    /* Ziel-Labels */
+    K8.x.forEach((x,i)=>{
+      const y=K8.y[i];
+      ctx.strokeStyle=y>0?'rgba(94,234,212,.4)':'rgba(244,114,182,.4)';
+      ctx.lineWidth=1.8;
+      ctx.beginPath();ctx.moveTo(PX(x),PY(0));ctx.lineTo(PX(x),PY(y));ctx.stroke();
+      ctx.beginPath();ctx.arc(PX(x),PY(y),5.6,0,7);
+      ctx.fillStyle=y>0?C.acc:C.acc2;ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,.75)';ctx.lineWidth=1.4;ctx.stroke();
+    });
+    /* Beschriftung Schritt 3 */
+    if(s===2){
+      ctx.fillStyle=C.acc4;ctx.font='700 11px Inter';
+      ctx.fillText('b₁ < x₁ < b₂ < x₂ < … < bₙ < xₙ   (gelbe Knicke, blaue Punkte)',L+4,T+12);
+    }
+  }
+
+  /* Schritt 4: Matrix overlay */
+  if(s===3){
+    const n=K8.n, cell=Math.min((R-L)/(n+2),(B-T)/(n+2),26);
+    const ox=L+20, oy=T+8;
+    ctx.fillStyle='rgba(7,9,16,.88)';
+    ctx.fillRect(ox-14,oy-14,cell*n+28,cell*n+28);
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+      const v=K8.A[i][j];
+      const zero=v<1e-9;
+      ctx.fillStyle = zero ? 'rgba(100,116,139,.13)'
+        : (i===j?'rgba(251,191,36,.68)':`rgba(94,234,212,${0.18+clamp(v*1.6,0,.6)})`);
+      ctx.fillRect(ox+j*cell,oy+i*cell,cell-1.5,cell-1.5);
+      if(cell>15){
+        ctx.fillStyle = zero?'rgba(148,163,184,.55)':'rgba(7,12,20,.92)';
+        ctx.font='700 '+Math.floor(cell*0.34)+'px '+'ui-monospace, monospace';
+        ctx.textAlign='center';
+        ctx.fillText(zero?'0':v.toFixed(2).slice(1),ox+j*cell+cell/2-1,oy+i*cell+cell/2+3);
+        ctx.textAlign='left';
+      }
+    }
+    ctx.fillStyle=C.acc4;ctx.font='700 11px Inter';
+    ctx.fillText('Diagonale > 0',ox+cell*n+6,oy+12);
+    ctx.fillStyle=C.faint;
+    ctx.fillText('alles darüber = 0',ox+cell*n+6,oy+28);
+    ctx.fillText('→ invertierbar',ox+cell*n+6,oy+44);
+  }
+
+  /* Statistik */
+  const d=K8.d;
+  $('#c8p').textContent=(2*K8.n+d).toLocaleString('de-DE');
+  $('#c8ps').textContent=`n = ${K8.n}, d = ${d} (CIFAR10: 28·28·3)`;
+  let maxerr=0;
+  for(let i=0;i<K8.n;i++)maxerr=Math.max(maxerr,Math.abs(k8c(K8.x[i])-K8.y[i]));
+  $('#c8err').textContent=maxerr<1e-9?'0,000000':maxerr.toExponential(1);
+  k8matrixPlot();
+}
+function k8matrixPlot(){
+  const n=K8.n;
+  const z=[];for(let i=n-1;i>=0;i--)z.push(K8.A[i].map(v=>v));
+  Plotly.react('c8matrix',[{
+    z,type:'heatmap',
+    colorscale:[[0,'rgba(12,16,32,1)'],[0.001,'rgba(30,41,59,1)'],
+                [0.35,'rgba(94,234,212,.55)'],[1,'rgba(251,191,36,.95)']],
+    showscale:false,xgap:1.5,ygap:1.5,
+    hovertemplate:'A[i,j] = %{z:.3f}<extra></extra>'
+  }],plLayout({
+    title:{text:'A = [max{xᵢ − bⱼ, 0}]  — untere Dreiecksmatrix',font:{size:11,color:C.dim}},
+    xaxis:{title:'j (ReLU-Knick)',showgrid:false,tickvals:[...Array(n).keys()],
+           ticktext:[...Array(n).keys()].map(i=>i+1)},
+    yaxis:{title:'i (Datenpunkt)',showgrid:false,tickvals:[...Array(n).keys()],
+           ticktext:[...Array(n).keys()].map(i=>n-i)},
+    showlegend:false,margin:{l:54,r:16,t:34,b:44}
+  }),PCFG);
+}
+$$('#c8steps button').forEach(b=>b.onclick=()=>{K8.step=+b.dataset.s;k8draw();});
+bindRange($('#c8n'),()=>{$('#c8nv').textContent=$('#c8n').value;K8.y=[];k8gen();k8draw();});
+$('#c8rand').onclick=()=>{k8randY();k8solve();k8draw();};
+$('#c8sort').onclick=()=>{
+  K8.y=[];for(let i=0;i<K8.n;i++)K8.y.push(i%2?1:-1);
+  k8solve();k8draw();};
+
+/* ── Labor 8b: Breite ↔ Tiefe ── */
+function k8bDraw(){
+  const k=+$('#c8bk').value;
+  $('#c8bkv').textContent=k;
+  const cv=$('#c8bcanvas');if(!cv)return;
+  const {ctx,W,H}=setupCanvas(cv);
+  ctx.clearRect(0,0,W,H);
+  const n=24;
+  const perLayer=Math.max(1,Math.round(n/k));
+  const mL=58,mR=W-70;
+  const dx=(mR-mL)/Math.max(1,k-1+1);
+  /* Eingang */
+  ctx.fillStyle=C.acc5;ctx.beginPath();ctx.arc(28,H/2,10,0,7);ctx.fill();
+  ctx.fillStyle=C.faint;ctx.font='10px Inter';ctx.fillText('x',24,H/2+3.5);
+  const layerNodes=[];
+  for(let l=0;l<k;l++){
+    const x=mL+l*dx;const arr=[];
+    for(let i=0;i<perLayer;i++){
+      const y=H*(i+1)/(perLayer+1);
+      arr.push({x,y});
+      ctx.beginPath();ctx.arc(x,y,Math.max(3,Math.min(7,42/perLayer)),0,7);
+      ctx.fillStyle=`hsla(${168+l*14},65%,60%,.85)`;ctx.fill();
+    }
+    layerNodes.push(arr);
+    /* Verbindung von Eingang */
+    arr.forEach(nd=>{ctx.beginPath();ctx.moveTo(38,H/2);ctx.lineTo(nd.x,nd.y);
+      ctx.strokeStyle='rgba(96,165,250,.10)';ctx.lineWidth=.7;ctx.stroke();});
+    ctx.fillStyle=C.faint;ctx.font='9px Inter';ctx.textAlign='center';
+    ctx.fillText('I'+(l+1),x,H-8);ctx.textAlign='left';
+  }
+  /* Multiplexer */
+  const mx=mR+26;
+  ctx.fillStyle='rgba(251,191,36,.18)';
+  ctx.strokeStyle=C.acc4;ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.roundRect(mx-16,H/2-30,32,60,8);ctx.fill();ctx.stroke();
+  ctx.fillStyle=C.acc4;ctx.font='700 9px Inter';ctx.textAlign='center';
+  ctx.fillText('MUX',mx,H/2+3);ctx.textAlign='left';
+  layerNodes.forEach(arr=>arr.forEach(nd=>{
+    ctx.beginPath();ctx.moveTo(nd.x,nd.y);ctx.lineTo(mx-16,H/2);
+    ctx.strokeStyle='rgba(251,191,36,.12)';ctx.lineWidth=.7;ctx.stroke();}));
+  ctx.fillStyle=C.faint;ctx.font='10px Inter';
+  ctx.fillText(`Tiefe ${k} · je ${perLayer} Knoten · Intervalle I₁…I${k}`,12,16);
+  $('#c8bw').textContent='≈ '+perLayer;
+  $('#c8btot').textContent='O(n + d)';
+}
+bindRange($('#c8bk'),k8bDraw);
+
+/* ═══════════════════════════════════════════════════════════════════════
+   KAPITEL 9 — Implizite Regularisierung
+   ═══════════════════════════════════════════════════════════════════════ */
+/* 9a: 2 Trainingspunkte in 3 Features → 1-dim Lösungsgerade (visualisiert in 2D-Projektion) */
+const K9={X:[],y:[],Xte:[],yte:[],wmin:[],nullv:[]};
+function k9gen(){
+  /* Features: [1, x, x²] ; 2 Trainingspunkte → Nullraum ist 1-dimensional */
+  const f=x=>[1,x,x*x];
+  const tx=[0.28,0.72];
+  K9.X=tx.map(f);
+  const truth=x=>0.30+0.95*x-0.72*x*x;
+  K9.y=tx.map(x=>truth(x));
+  K9.tx=tx;
+  K9.Xte=[];K9.yte=[];
+  for(let i=0;i<24;i++){const x=Math.random();
+    K9.Xte.push(f(x));K9.yte.push(truth(x)+gauss()*0.012);}
+  /* Minimum-Norm-Lösung: w = Xᵀ(XXᵀ)⁻¹ y */
+  const XXt=[[0,0],[0,0]];
+  for(let i=0;i<2;i++)for(let j=0;j<2;j++)
+    XXt[i][j]=K9.X[i].reduce((s,v,k)=>s+v*K9.X[j][k],0);
+  const al=solve(XXt.map(r=>[...r]),[...K9.y]);
+  K9.wmin=[0,0,0];
+  for(let k=0;k<3;k++)K9.wmin[k]=al[0]*K9.X[0][k]+al[1]*K9.X[1][k];
+  /* Nullraum-Vektor: orthogonal zu beiden Zeilen (Kreuzprodukt) */
+  const a=K9.X[0],b=K9.X[1];
+  let nv=[a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+  const nn=Math.hypot(...nv);K9.nullv=nv.map(v=>v/nn);
+}
+function k9w(t){return K9.wmin.map((v,i)=>v+t*K9.nullv[i]);}
+function k9draw(){
+  const t=+$('#c9t').value;
+  $('#c9tv').textContent=t.toFixed(2);
+  const w=k9w(t);
+  const ev=x=>w[0]+w[1]*x+w[2]*x*x;
+  const cv=$('#c9canvas');
+  if(cv){
+    const {ctx,W,H}=setupCanvas(cv);
+    ctx.clearRect(0,0,W,H);
+    const PX=x=>18+x*(W-34), PY=y=>H-22-(y*0.56+0.22)*(H-34);
+    ctx.strokeStyle='rgba(130,160,255,.07)';
+    for(let i=0;i<=6;i++){ctx.beginPath();ctx.moveTo(0,H*i/6);ctx.lineTo(W,H*i/6);ctx.stroke();}
+    /* Min-Norm-Referenz */
+    ctx.beginPath();
+    for(let i=0;i<=200;i++){const x=i/200;
+      const v=K9.wmin[0]+K9.wmin[1]*x+K9.wmin[2]*x*x;
+      i?ctx.lineTo(PX(x),PY(v)):ctx.moveTo(PX(x),PY(v));}
+    ctx.strokeStyle='rgba(94,234,212,.45)';ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.stroke();
+    ctx.setLineDash([]);
+    /* aktuelle Lösung */
+    ctx.beginPath();let f=true;
+    for(let i=0;i<=240;i++){const x=i/240;const v=ev(x);
+      if(v<-1.2||v>2.2){f=true;continue;}
+      f?(ctx.moveTo(PX(x),PY(v)),f=false):ctx.lineTo(PX(x),PY(v));}
+    ctx.strokeStyle=C.acc4;ctx.lineWidth=3;ctx.stroke();
+    /* Testpunkte */
+    K9.Xte.forEach((xr,i)=>{const x=xr[1];
+      ctx.beginPath();ctx.arc(PX(x),PY(K9.yte[i]),3.2,0,7);
+      ctx.strokeStyle='rgba(100,116,139,.8)';ctx.lineWidth=1.3;ctx.stroke();});
+    /* Trainingspunkte */
+    K9.tx.forEach((x,i)=>{
+      ctx.beginPath();ctx.arc(PX(x),PY(K9.y[i]),7,0,7);
+      ctx.fillStyle=C.acc5;ctx.fill();
+      ctx.strokeStyle='#fff';ctx.lineWidth=1.8;ctx.stroke();
+    });
+    ctx.fillStyle=C.faint;ctx.font='10px Inter';
+    ctx.fillText('Beide blauen Punkte werden IMMER exakt getroffen — für jedes t.',12,16);
+  }
+  /* Metriken */
+  let te=0;
+  K9.Xte.forEach((xr,i)=>{const v=w[0]+w[1]*xr[1]+w[2]*xr[2];te+=(v-K9.yte[i])**2;});
+  te=Math.sqrt(te/K9.Xte.length);
+  const nm=Math.hypot(...w);
+  $('#c9tr').textContent='0,0000';
+  $('#c9te').textContent=te.toFixed(4).replace('.',',');
+  $('#c9teb').style.width=clamp(te/1.4,0,1)*100+'%';
+  $('#c9nm').textContent=nm.toFixed(3).replace('.',',');
+  $('#c9nmb').style.width=clamp(nm/4,0,1)*100+'%';
+  /* Lösungsraum-Plot */
+  const T=[],TE=[],NM=[];
+  for(let i=-150;i<=150;i++){
+    const tt=i/50;const ww=k9w(tt);
+    let e=0;K9.Xte.forEach((xr,j)=>{const v=ww[0]+ww[1]*xr[1]+ww[2]*xr[2];e+=(v-K9.yte[j])**2;});
+    T.push(tt);TE.push(Math.sqrt(e/K9.Xte.length));NM.push(Math.hypot(...ww));
+  }
+  Plotly.react('c9space',[
+    {x:T,y:TE,name:'Testfehler',mode:'lines',line:{color:C.acc2,width:2.8}},
+    {x:T,y:NM,name:'‖w‖₂',mode:'lines',line:{color:C.acc3,width:2.4},yaxis:'y2'},
+    {x:T,y:T.map(()=>0),name:'Trainingsfehler (immer 0)',mode:'lines',
+     line:{color:C.acc,width:2.4,dash:'dash'}},
+    {x:[t],y:[te],mode:'markers',showlegend:false,
+     marker:{color:'#fff',size:12,line:{color:C.acc4,width:3}}}
+  ],plLayout({
+    title:{text:'Entlang der Lösungsmenge',font:{size:11,color:C.dim}},
+    xaxis:{title:'t (Position im Nullraum)'},
+    yaxis:{title:'Testfehler',rangemode:'tozero'},
+    yaxis2:{title:'‖w‖₂',overlaying:'y',side:'right',
+      gridcolor:'rgba(0,0,0,0)',titlefont:{color:C.acc3},tickfont:{color:C.acc3}},
+    legend:{x:.5,y:1.0,xanchor:'center',orientation:'h',font:{size:9}},
+    margin:{l:50,r:52,t:34,b:42},
+    shapes:[{type:'line',x0:0,x1:0,y0:0,y1:1,yref:'paper',
+      line:{color:'rgba(94,234,212,.4)',width:1.6,dash:'dot'}}]
+  }),PCFG);
+}
+bindRange($('#c9t'),k9draw);
+$('#c9snap').onclick=()=>{$('#c9t').value=0;paintRange($('#c9t'));k9draw();};
+$('#c9newdata').onclick=()=>{k9gen();k9draw();};
+
+/* ── 9b: Gram-Matrix / Kernel ── */
+const K9K={n:18,xs:[],ys:[],yt:[],xte:[],yte:[]};
+function k9kGen(){
+  const n=K9K.n;K9K.xs=[];K9K.ys=[];
+  for(let i=0;i<n;i++){const x=i/(n-1)*6-3;K9K.xs.push(x);
+    K9K.ys.push(Math.tanh(x*1.2)*0.8);}
+  K9K.xte=[];K9K.yte=[];
+  for(let i=0;i<60;i++){const x=Math.random()*6-3;
+    K9K.xte.push(x);K9K.yte.push(Math.tanh(x*1.2)*0.8);}
+}
+function k9kDraw(){
+  const gam=+$('#c9gam').value, lam=+$('#c9lam').value, pr=+$('#c9rnd').value;
+  $('#c9gv').textContent=gam.toFixed(1).replace('.',',');
+  $('#c9lv').textContent=lam.toFixed(3).replace('.',',');
+  $('#c9rv').textContent=pr.toFixed(2).replace('.',',');
+  const n=K9K.n;
+  /* Ziel-Labels mit Korruption (deterministisch per Hash) */
+  const y=K9K.ys.map((v,i)=>{
+    const h=Math.abs(Math.sin((i+1)*78.233)*43758.5453)%1;
+    return h<pr ? (h<pr/2?-0.85:0.85) : v;
+  });
+  K9K.yt=y;
+  /* Gauss-Kernel */
+  const Kmat=[];
+  for(let i=0;i<n;i++){const row=[];
+    for(let j=0;j<n;j++)row.push(Math.exp(-gam*(K9K.xs[i]-K9K.xs[j])**2));
+    Kmat.push(row);}
+  const Kreg=Kmat.map((r,i)=>r.map((v,j)=>v+(i===j?lam+1e-9:0)));
+  let al;try{al=solve(Kreg.map(r=>[...r]),[...y]);}catch(e){al=new Array(n).fill(0);}
+  const f=x=>{let s=0;for(let j=0;j<n;j++)s+=al[j]*Math.exp(-gam*(x-K9K.xs[j])**2);return s;};
+  /* Heatmap */
+  const z=[];for(let i=n-1;i>=0;i--)z.push(Kmat[i]);
+  Plotly.react('c9gram',[{z,type:'heatmap',
+    colorscale:[[0,'rgba(12,16,32,1)'],[0.4,'rgba(96,165,250,.4)'],
+                [0.75,'rgba(167,139,250,.75)'],[1,'rgba(251,191,36,.95)']],
+    showscale:false,xgap:1,ygap:1,
+    hovertemplate:'K[i,j] = %{z:.3f}<extra></extra>'}],
+    plLayout({title:{text:'Gram-Matrix K = ⟨xᵢ, xⱼ⟩ (Gauß-Kernel)',font:{size:11,color:C.dim}},
+      xaxis:{title:'j',showgrid:false},yaxis:{title:'i',showgrid:false},
+      showlegend:false,margin:{l:44,r:14,t:34,b:40}}),PCFG);
+  /* Funktion */
+  const cv=$('#c9kern');
+  if(cv){
+    const {ctx,W,H}=setupCanvas(cv);
+    ctx.clearRect(0,0,W,H);
+    const PX=x=>24+(x+3.2)/6.4*(W-38), PY=v=>H/2-v*(H/2-26);
+    ctx.strokeStyle='rgba(130,160,255,.14)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(10,PY(0));ctx.lineTo(W-8,PY(0));ctx.stroke();
+    ctx.strokeStyle='rgba(130,160,255,.06)';
+    [1,-1,.5,-.5].forEach(v=>{ctx.beginPath();ctx.moveTo(10,PY(v));ctx.lineTo(W-8,PY(v));ctx.stroke();});
+    /* Basisfunktionen */
+    for(let j=0;j<n;j++){
+      ctx.beginPath();
+      for(let i=0;i<=120;i++){const x=-3.2+i/120*6.4;
+        const v=al[j]*Math.exp(-gam*(x-K9K.xs[j])**2);
+        i?ctx.lineTo(PX(x),PY(v)):ctx.moveTo(PX(x),PY(v));}
+      ctx.strokeStyle='rgba(167,139,250,.22)';ctx.lineWidth=1;ctx.stroke();
+    }
+    /* Gesamtfunktion */
+    ctx.beginPath();
+    for(let i=0;i<=320;i++){const x=-3.2+i/320*6.4;const v=clamp(f(x),-1.6,1.6);
+      i?ctx.lineTo(PX(x),PY(v)):ctx.moveTo(PX(x),PY(v));}
+    ctx.strokeStyle=C.acc4;ctx.lineWidth=3;ctx.stroke();
+    /* Testpunkte */
+    K9K.xte.forEach((x,i)=>{ctx.beginPath();ctx.arc(PX(x),PY(K9K.yte[i]),2.6,0,7);
+      ctx.strokeStyle='rgba(100,116,139,.6)';ctx.lineWidth=1.2;ctx.stroke();});
+    /* Trainingspunkte */
+    K9K.xs.forEach((x,i)=>{
+      const corrupted=Math.abs(y[i]-K9K.ys[i])>1e-6;
+      ctx.beginPath();ctx.arc(PX(x),PY(y[i]),5.2,0,7);
+      ctx.fillStyle=corrupted?C.acc2:C.acc5;ctx.fill();
+      ctx.strokeStyle=corrupted?'#fff':'rgba(0,0,0,.5)';ctx.lineWidth=1.4;ctx.stroke();});
+    ctx.fillStyle=C.faint;ctx.font='10px Inter';
+    ctx.fillText('Kα = y  →  f(x) = Σ αⱼ·k(x, xⱼ)',12,16);
+  }
+  let tr=0;for(let i=0;i<n;i++)tr+=(f(K9K.xs[i])-y[i])**2;
+  tr=Math.sqrt(tr/n);
+  let te=0;K9K.xte.forEach((x,i)=>{te+=(clamp(f(x),-3,3)-K9K.yte[i])**2;});
+  te=Math.sqrt(te/K9K.xte.length);
+  $('#c9ktr').textContent=tr<1e-6?'0,000000':tr.toFixed(5).replace('.',',');
+  $('#c9kte').textContent=te.toFixed(4).replace('.',',');
+  $('#c9ka').textContent=Math.hypot(...al).toFixed(2).replace('.',',');
+}
+['c9gam','c9lam','c9rnd'].forEach(id=>{const el=$('#'+id);if(el)bindRange(el,k9kDraw);});
+
+/* ── Norm vs. Fehler (Tabelle 3) ── */
+function k9normPlot(){
+  Plotly.react('c9norm',[
+    {x:['MNIST (roh)','MNIST (Gabor)'],y:[220,390],type:'bar',name:'‖w‖₂ der Lösung',
+     marker:{color:C.acc3},text:['220','390'],textposition:'outside',
+     textfont:{color:C.acc3,size:11}},
+    {x:['MNIST (roh)','MNIST (Gabor)'],y:[1.2,0.6],type:'scatter',mode:'lines+markers+text',
+     name:'Testfehler (%)',yaxis:'y2',line:{color:C.acc2,width:3},
+     marker:{size:12,color:C.acc2},text:['1,2 %','0,6 %'],textposition:'bottom center',
+     textfont:{color:C.acc2,size:11}}
+  ],plLayout({
+    yaxis:{title:'ℓ₂-Norm',range:[0,470]},
+    yaxis2:{title:'Testfehler %',overlaying:'y',side:'right',range:[0,2],
+      gridcolor:'rgba(0,0,0,0)',titlefont:{color:C.acc2},tickfont:{color:C.acc2}},
+    legend:{orientation:'h',y:1.22,font:{size:9}},margin:{l:48,r:50,t:46,b:36},
+    annotations:[{x:0.5,y:0.42,xref:'paper',yref:'paper',
+      text:'Norm steigt ↑ · Fehler sinkt ↓ — genau umgekehrt zur Erwartung',
+      showarrow:false,font:{color:C.acc4,size:10}}]
+  }),PCFG);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   KAPITEL 10 — Synthese
+   ═══════════════════════════════════════════════════════════════════════ */
+const C10={
+  vc:{t:'VC-Dimension',col:C.acc3,
+    claim:'„Wenn VC(H) ≪ n, dann ist die Generalisierungslücke klein."',
+    kill:'Das Netz lernt 50 000 zufällige Labels auswendig → es zerschmettert den gesamten Datensatz → VC(H) ≥ n. Die Schranke √(VC/n) ≥ 1 ist größer als der maximal mögliche Fehler. <strong>Leer.</strong>',
+    exp:'Randomisierungstest auf CIFAR10 (Tabelle 1)'},
+  rad:{t:'Rademacher-Komplexität',col:C.acc3,
+    claim:'„R̂ₙ(H) misst, wie gut H mit Rauschen korreliert — klein heißt gut."',
+    kill:'Die Definition von R̂ₙ ist praktisch identisch mit dem Randomisierungstest. Da das Netz Zufalls-Labels perfekt fittet, gilt R̂ₙ(H) ≈ 1 — der trivialste mögliche Wert. <strong>Nutzlos.</strong>',
+    exp:'Direkte Entsprechung Experiment ↔ Definition'},
+  stab:{t:'Uniforme Stabilität',col:C.acc3,
+    claim:'„Wenn der Algorithmus stabil gegenüber dem Tausch eines Beispiels ist, generalisiert er."',
+    kill:'Stabilität ist <em>ausschließlich eine Eigenschaft des Algorithmus</em> und ignoriert die Labels vollständig. SGD auf echten und auf zufälligen Labels ist derselbe Algorithmus. <strong>Kann die beiden Fälle nicht unterscheiden.</strong>',
+    exp:'Randomisieren ist nur eine Datentransformation'},
+  reg:{t:'Explizite Regularisierung',col:C.acc2,
+    claim:'„Weight Decay, Dropout und Augmentierung begrenzen die effektive Kapazität."',
+    kill:'Inception auf CIFAR10: mit allen Regularisierern 89,05 %, ohne alle 85,75 %. Nur <strong>3,3 Punkte</strong>. Und selbst <em>mit</em> Weight Decay lernt Inception 100 % Zufalls-Labels (Tabelle 4). <strong>Weder notwendig noch hinreichend.</strong>',
+    exp:'Tabelle 1, Tabelle 2, Tabelle 4'},
+  expr:{t:'Expressivität / Tiefe',col:C.acc4,
+    claim:'„Tiefe k ist mächtiger als Tiefe k−1 — darin liegt die Stärke."',
+    kill:'Alle diese Resultate sind auf <em>Populationsebene</em>. Theorem 1 zeigt: Auf einer <em>endlichen Stichprobe</em> genügen 2 Schichten mit 2n+d Parametern für <strong>jede</strong> Beschriftung. Die Tiefen-Hierarchie kollabiert. <strong>Keine erklärende Größe.</strong>',
+    exp:'Theorem 1 + Korollar 1 (Kapitel 8)'},
+  curv:{t:'Krümmung / flache Minima',col:C.acc5,
+    claim:'„Flache Minima generalisieren besser als scharfe."',
+    kill:'Im linearen Fall ist die Hesse-Matrix ¹⁄ₙ Xᵀdiag(β)X — sie hängt <strong>gar nicht von w ab</strong>. Alle globalen Minima haben dieselbe Krümmung und sind alle degeneriert. <strong>Unterscheidet nichts.</strong>',
+    exp:'Analytisch, Kapitel 5 des Papers'},
+  norm:{t:'Minimum-Norm (impliziter Bias)',col:C.good,
+    claim:'„SGD findet die Lösung mit kleinster Norm — kleine Norm heißt gute Generalisierung."',
+    kill:'MNIST roh: Norm 220 → 1,2 % Fehler. MNIST mit Wavelets: Norm 390 (größer!) → 0,6 % Fehler (halbiert). Die Norm steigt, der Fehler sinkt. <strong>„Only a very small piece of the generalization story."</strong>',
+    exp:'Tabelle 3 (Kapitel 9)'}
+};
+let c10key='vc';
+function k10draw(){
+  const d=C10[c10key];
+  $('#c10text').innerHTML=`<h4 style="color:${d.col}">${d.t}</h4>
+    <p class="mini" style="margin:0 0 .5rem"><strong style="color:var(--ink)">Behauptung:</strong><br>${d.claim}</p>
+    <p class="mini" style="margin:0 0 .5rem"><strong style="color:var(--bad)">Widerlegung:</strong><br>${d.kill}</p>
+    <p class="mini" style="margin:0"><span class="tag a">${d.exp}</span></p>`;
+  const cv=$('#c10canvas');if(!cv)return;
+  const {ctx,W,H}=setupCanvas(cv);
+  ctx.clearRect(0,0,W,H);
+  /* Darstellung: Theorie-Schranke vs. Realität */
+  const bx=70, bw=(W-110)/2;
+  const base=H-54, topY=34;
+  function bar(x,hFrac,col,label,sub){
+    const h=(base-topY)*hFrac;
+    const g=ctx.createLinearGradient(0,base-h,0,base);
+    g.addColorStop(0,col);g.addColorStop(1,col.replace('rgb','rgba').replace(')',',.25)'));
+    ctx.fillStyle=col;ctx.globalAlpha=.75;
+    ctx.beginPath();ctx.roundRect(x,base-h,bw*0.66,h,8);ctx.fill();
+    ctx.globalAlpha=1;
+    ctx.fillStyle=C.ink;ctx.font='700 12px Inter';ctx.textAlign='center';
+    ctx.fillText(label,x+bw*0.33,base-h-10);
+    ctx.fillStyle=C.faint;ctx.font='10px Inter';
+    ctx.fillText(sub,x+bw*0.33,base+18);
+    ctx.textAlign='left';
+  }
+  ctx.strokeStyle='rgba(130,160,255,.16)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(40,base);ctx.lineTo(W-20,base);ctx.stroke();
+  ctx.strokeStyle='rgba(251,113,133,.35)';ctx.setLineDash([5,5]);
+  ctx.beginPath();ctx.moveTo(40,topY);ctx.lineTo(W-20,topY);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='rgba(251,113,133,.7)';ctx.font='10px Inter';
+  ctx.fillText('maximal möglicher Fehler = 1',44,topY-6);
+  bar(bx, 1.0, 'rgba(167,139,250,.85)', 'Schranke ≥ 1', d.t+' sagt voraus');
+  bar(bx+bw+14, 0.11, 'rgba(94,234,212,.85)', '11 %', 'tatsächlicher Fehler');
+  ctx.fillStyle=C.acc4;ctx.font='700 11px Inter';ctx.textAlign='center';
+  ctx.fillText('Lücke zwischen Theorie und Realität: 89 Punkte',W/2,H-16);
+  ctx.textAlign='left';
+  ctx.fillStyle=C.bad;ctx.font='700 20px Inter';
+  ctx.fillText('✗',W/2-8,topY+(base-topY)*0.45);
+}
+$$('#c10seg button').forEach(b=>b.onclick=()=>{
+  $$('#c10seg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+  c10key=b.dataset.k;k10draw();});
+
+/* Sankey-artiger Flow */
+function k10flow(){
+  Plotly.react('c10flow',[{
+    type:'sankey',orientation:'h',
+    node:{
+      pad:17,thickness:20,
+      line:{color:'rgba(130,160,255,.3)',width:1},
+      label:['Randomisierungstest','Theorem 1','Regularisierer ab',
+             'Netz lernt Zufall (100 %)','2n+d Parameter genügen','Nur −3,3 Punkte',
+             'VC ≥ n → leer','R̂ₙ ≈ 1 → trivial','Stabilität identisch',
+             'Expressivität maximal','Regularisierung nicht ursächlich',
+             'Keine klassische Theorie erklärt es',
+             'Offen: ein Maß, unter dem große Netze „einfach" sind'],
+      color:[C.acc2,C.acc3,C.acc4,
+             'rgba(244,114,182,.75)','rgba(167,139,250,.75)','rgba(251,191,36,.75)',
+             'rgba(248,113,113,.7)','rgba(248,113,113,.7)','rgba(248,113,113,.7)',
+             'rgba(248,113,113,.7)','rgba(248,113,113,.7)',
+             'rgba(96,165,250,.85)','rgba(94,234,212,.9)']
+    },
+    link:{
+      source:[0,1,2, 3,3,3, 4, 5, 6,7,8,9,10, 11],
+      target:[3,4,5, 6,7,8, 9, 10, 11,11,11,11,11, 12],
+      value: [10,6,6, 4,3,3, 6, 6, 3,3,3,5,5, 18],
+      color:['rgba(244,114,182,.22)','rgba(167,139,250,.22)','rgba(251,191,36,.22)',
+             'rgba(248,113,113,.16)','rgba(248,113,113,.16)','rgba(248,113,113,.16)',
+             'rgba(248,113,113,.16)','rgba(248,113,113,.16)',
+             'rgba(96,165,250,.28)']
+    }
+  }],plLayout({
+    font:{color:C.dim,size:10,family:'Inter, sans-serif'},
+    margin:{l:10,r:10,t:16,b:12},showlegend:false,
+    plot_bgcolor:'rgba(0,0,0,0)'
+  }),PCFG);
+}
+
+/* ── Labor 10b: Double Descent ── */
+function k10dd(){
+  const r=+$('#c10ddr').value;
+  $('#c10ddv').textContent=r.toFixed(2).replace('.',',');
+  const X=[],TR=[],TE=[];
+  for(let i=0;i<=260;i++){
+    const x=0.05+i/260*5.95;X.push(x);
+    /* Trainingsfehler: fällt, ab x=1 exakt 0 */
+    TR.push(x<1 ? 0.52*Math.pow(1-x,1.5) : 0);
+    /* Testfehler: klassische U-Kurve, Spike bei 1, dann zweiter Abstieg */
+    let te;
+    if(x<1){ te=0.40 + 0.30*Math.pow(x,2.6) - 0.22*Math.pow(x,0.7); }
+    else   { te=0.22 + 0.52*Math.exp(-3.4*(x-1)); }
+    const spike=0.60*Math.exp(-Math.pow((x-1)/0.085,2));
+    TE.push(Math.max(0.08,te+spike));
+  }
+  let curTR, curTE;
+  { const x=r;
+    curTR = x<1 ? 0.52*Math.pow(1-x,1.5) : 0;
+    let te = x<1 ? (0.40+0.30*Math.pow(x,2.6)-0.22*Math.pow(x,0.7))
+                 : (0.22+0.52*Math.exp(-3.4*(x-1)));
+    curTE = Math.max(0.08, te + 0.60*Math.exp(-Math.pow((x-1)/0.085,2)));
+  }
+  const regime = r<0.92 ? 'unterparametrisiert'
+               : (r<1.12 ? 'Interpolationsschwelle' : 'überparametrisiert');
+  $('#c10reg').textContent=regime;
+  $('#c10reg').style.color = r<0.92?C.acc5:(r<1.12?C.bad:C.acc);
+  $('#c10tr').textContent=curTR.toFixed(3).replace('.',',');
+  $('#c10te').textContent=curTE.toFixed(3).replace('.',',');
+  Plotly.react('c10dd',[
+    {x:X,y:TE,name:'Testfehler',mode:'lines',line:{color:C.acc2,width:3.2}},
+    {x:X,y:TR,name:'Trainingsfehler',mode:'lines',line:{color:C.acc,width:2.6}},
+    {x:[r],y:[curTE],mode:'markers',showlegend:false,
+     marker:{color:'#fff',size:14,line:{color:C.acc4,width:3}}}
+  ],plLayout({
+    xaxis:{title:'Modellgröße (Parameter / Anzahl Datenpunkte n)',range:[0,6]},
+    yaxis:{title:'Fehler',range:[0,0.9]},
+    legend:{x:.98,y:.98,xanchor:'right'},
+    margin:{l:54,r:18,t:30,b:46},
+    shapes:[
+      {type:'line',x0:1,x1:1,y0:0,y1:1,yref:'paper',
+       line:{color:'rgba(251,113,133,.55)',width:2,dash:'dash'}},
+      {type:'rect',x0:0,x1:1,y0:0,y1:1,yref:'paper',
+       fillcolor:'rgba(96,165,250,.05)',line:{width:0},layer:'below'},
+      {type:'rect',x0:1,x1:6,y0:0,y1:1,yref:'paper',
+       fillcolor:'rgba(94,234,212,.04)',line:{width:0},layer:'below'}
+    ],
+    annotations:[
+      {x:0.45,y:0.84,text:'klassisches Regime<br>(Kapitel 2)',showarrow:false,
+       font:{color:C.acc5,size:10},align:'center'},
+      {x:1.0,y:0.87,text:'Interpolations-<br>schwelle',showarrow:false,
+       font:{color:C.bad,size:10},align:'center'},
+      {x:3.6,y:0.74,text:'modernes Deep-Learning-Regime<br>'+
+        '(Zhang et al. arbeiten hier — Trainingsfehler ist immer 0)',
+       showarrow:false,font:{color:C.acc,size:10},align:'center'}
+    ]
+  }),PCFG);
+}
+bindRange($('#c10ddr'),k10dd);
+
+/* ═══════════════════════════════════════════════════════════════════════
+   INITIALISIERUNG
+   ═══════════════════════════════════════════════════════════════════════ */
+function initAll(){
+  renderMath();
+  /* Kap 0 */
+  k0init();
+  /* Kap 1 */
+  k1gen();k1draw();
+  /* Kap 2 */
+  k2gen();k2draw();
+  /* Kap 3 */
+  k3gen();k3draw();
+  $('#c3sub').textContent='von 2³ = 8 möglichen';
+  /* Kap 4 */
+  k4gen();k4draw();k4resetStats();
+  k4bGen();k4bDraw();
+  k4summary();
+  /* Kap 5 */
+  k5draw();t1render();
+  /* Kap 6 */
+  k6desc();k6curves();k6corr();k6kill();
+  /* Kap 7 */
+  k7draw();k7bn();k7es();
+  /* Kap 8 */
+  k8gen();k8draw();k8bDraw();
+  /* Kap 9 */
+  k9gen();k9draw();
+  k9kGen();k9kDraw();
+  k9normPlot();
+  /* Kap 10 */
+  k10draw();k10flow();k10dd();
+  onScroll();
+}
+
+/* Responsive Redraw */
+let rsT=null;
+window.addEventListener('resize',()=>{
+  clearTimeout(rsT);
+  rsT=setTimeout(()=>{
+    k0update();k1draw();k2draw();k3draw();k4draw();k4bDraw();
+    k5draw();k6grid();k8draw();k8bDraw();k9draw();k9kDraw();k10draw();
+    ['c2plot','c4hist','c4summary','c5plot','c5bar','c6curves','c6err','c6slow',
+     'c6kill','c7plot','c7bn','c7es','c8matrix','c9space','c9gram','c9norm',
+     'c10flow','c10dd'].forEach(id=>{
+       const el=document.getElementById(id);
+       if(el && el.data) Plotly.Plots.resize(el);
+     });
+  },180);
+});
+
+/* Start */
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',initAll);
+}else{
+  initAll();
+}
+
+/* roundRect-Polyfill für ältere Browser */
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    if(typeof r==='number')r=[r,r,r,r];
+    this.moveTo(x+r[0],y);
+    this.lineTo(x+w-r[1],y);this.quadraticCurveTo(x+w,y,x+w,y+r[1]);
+    this.lineTo(x+w,y+h-r[2]);this.quadraticCurveTo(x+w,y+h,x+w-r[2],y+h);
+    this.lineTo(x+r[3],y+h);this.quadraticCurveTo(x,y+h,x,y+h-r[3]);
+    this.lineTo(x,y+r[0]);this.quadraticCurveTo(x,y,x+r[0],y);
+    return this;
+  };
+}
+</script>
+</body>
+</html>

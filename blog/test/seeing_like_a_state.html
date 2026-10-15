@@ -6,9 +6,9 @@
 <title>Seeing Like a State — Interaktiv</title>
 
 <!-- ============ EXTERNAL LIBS ============ -->
-<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.27.0/plotly.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.26/dist/Temml-Local.css">
-<script src="https://cdn.jsdelivr.net/npm/temml@0.10.26/dist/temml.min.js"></script>
+<script src="../plotly-2.24.1.min.js"></script>
+<link rel="stylesheet" href="paper/vendor/temml/Temml-Local.css">
+<script src="paper/vendor/temml/temml.min.js"></script>
 
 <style>
 /* ============ DESIGN TOKENS ============ */
@@ -3311,7 +3311,19 @@ const DEATH_DATA=[
         : '<b>Umgefallen.</b> Aber im erfahrungsbasierten Modus hältst du es typischerweise viel länger. Kontinuierliche, feinfühlige Anpassung schlägt starre Intervalle.';
       draw(); return;
     }
-    raf=requestAnim
+    raf=requestAnimationFrame(loop);
+  }
+  function start(){
+    angle=0.05; av=0; last=0; t0=performance.now(); lastCorr=performance.now(); running=true;
+    raf=requestAnimationFrame(loop);
+  }
+  $('#balRules').addEventListener('click',()=>{ mode='rules'; $('#balMode').textContent='Regeln'; });
+  $('#balFeel').addEventListener('click',()=>{ mode='feel'; $('#balMode').textContent='Erfahrung'; });
+  $('#balReset').addEventListener('click',start);
+  draw();
+})();
+</script>
+
       <p style="font-size:.78rem">Interaktive Aufbereitung · Alle Visualisierungen basieren auf den im Buch geschilderten Fällen und Argumenten</p>
       <p style="font-size:.75rem;margin-top:14px;color:var(--txt-faint)">
         „Es ist schwerer zu begreifen, warum so viele gut gemeinte Pläne zur Verbesserung der menschlichen Lage so tragisch schiefgegangen sind."
