@@ -3246,8 +3246,8 @@ tex($('#mathSearch'),
     bts.appendChild(b);
   });
   const cv=$('#invCanvas');
-  const C=registerCanvas(cv,draw);
   let t=0;
+  const C=registerCanvas(cv,draw);
   function draw(ctx,W,H){
     ctx.clearRect(0,0,W,H);
     t+=0.02;
