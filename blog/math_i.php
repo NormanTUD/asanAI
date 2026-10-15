@@ -374,6 +374,8 @@ A logarithm is the inverse operation of exponentiation (\cite[Lang, Basic Mathem
 For example, if we ask “To what power must we raise 2 to get 8?” ($\log_2(8) = ?$), the answer is 3.
 
 Abstractly, a logarithm transforms a scale of growth (multiplicative) into a scale of steps (additive) (\cite[Lang, Basic Mathematics, Ch. 13, §5, p. 339]{lang2005basicmath}). It tells you the “size” or “order of magnitude” of a number rather than just its value.
+
+For the logarithm to be well-defined, the base must satisfy **$b > 0$ and $b \neq 1$**. The case $b = 1$ is degenerate: $1^y = 1$ for every exponent $y$, so the equation $1^? = x$ only has a solution when $x = 1$ — and even then, *any* exponent "works". Bases $b \leq 0$ are excluded because the real exponential $b^y$ is not a well-defined continuous function there. Bases $b \in (0, 1)$ are perfectly valid (e.g., $\log_{0.5}(4) = -2$, because $0.5^{-2} = 4$), but the slider below is restricted to $b \in (1, 10]$ to keep the picture readable.
 </div>
 
 <div class="optional md" data-headline="The Historical Problem: Calculation Fatigue">
