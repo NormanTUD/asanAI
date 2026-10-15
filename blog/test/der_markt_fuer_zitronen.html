@@ -135,6 +135,7 @@ code{font-family:'JetBrains Mono',monospace;font-size:.88em;background:rgba(126,
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
 .gridSide{display:grid;grid-template-columns:330px 1fr;gap:24px;align-items:start;}
 .gridSideR{display:grid;grid-template-columns:1fr 330px;gap:24px;align-items:start;}
+.grid2>*,.grid3>*,.gridSide>*,.gridSideR>*{min-width:0;}
 @media(max-width:900px){.grid2,.grid3,.gridSide,.gridSideR{grid-template-columns:1fr;}}
 
 /* ---------- Controls ---------- */
@@ -1468,8 +1469,10 @@ document.querySelectorAll('input[type=range]').forEach(el=>{
 /* Hi-DPI Canvas */
 function hidpi(cv){
   const r=window.devicePixelRatio||1;
-  const w=cv.clientWidth, h=parseInt(cv.getAttribute('height'));
-  cv.width=w*r; cv.height=h*r;
+  const w=cv.clientWidth, h=parseInt(cv.getAttribute('height'))||0;
+  const MAX=32767;
+  cv.width=Math.max(1,Math.min(Math.round(w*r),MAX));
+  cv.height=Math.max(1,Math.min(Math.round(h*r),MAX));
   const ctx=cv.getContext('2d'); ctx.setTransform(r,0,0,r,0,0);
   return {ctx,w,h};
 }
