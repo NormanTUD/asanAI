@@ -1,0 +1,3363 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Markt für Zitronen — Akerlof 1970, interaktiv erklärt</title>
+
+<!-- ============ CDNs ============ -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ===================================================================
+   DESIGN TOKENS
+   =================================================================== */
+:root{
+  --bg:            #070a12;
+  --bg-2:          #0c111d;
+  --panel:         rgba(18,25,42,0.72);
+  --panel-solid:   #121a2a;
+  --panel-brd:     rgba(126,168,255,0.14);
+  --ink:           #e9eefb;
+  --ink-dim:       #a4b2d0;
+  --ink-faint:     #6f7f A3;
+  --ink-faint:     #6f7fa3;
+  --gold:          #ffc94d;
+  --gold-2:        #ffe6a8;
+  --lemon:         #f5e14b;
+  --peach:         #ff9f6e;
+  --cherry:        #ff6b8a;
+  --mint:          #4ff0c0;
+  --sky:           #5fb8ff;
+  --violet:        #b58cff;
+  --grid:          rgba(255,255,255,0.055);
+  --shadow:        0 24px 70px rgba(0,0,0,0.55);
+  --r-lg: 22px; --r-md: 14px; --r-sm: 9px;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif; font-size:16.5px; line-height:1.68;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+body::before{
+  content:''; position:fixed; inset:0; z-index:-2; pointer-events:none;
+  background:
+    radial-gradient(1200px 700px at 12% -8%, rgba(255,201,77,0.10), transparent 62%),
+    radial-gradient(1000px 650px at 92% 4%,  rgba(95,184,255,0.10), transparent 60%),
+    radial-gradient(1100px 800px at 50% 108%,rgba(181,140,255,0.09), transparent 62%),
+    linear-gradient(175deg,#070a12 0%,#0a0f1b 45%,#070a12 100%);
+}
+body::after{
+  content:''; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.35;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:58px 58px;
+  mask-image:radial-gradient(ellipse 95% 70% at 50% 35%,#000 35%,transparent 100%);
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar{width:11px;height:11px;}
+::-webkit-scrollbar-track{background:#070a12;}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#2b3650,#1a2236);border-radius:8px;border:2px solid #070a12;}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#3d4a6a,#232c45);}
+
+/* ===================================================================
+   PROGRESS + NAV
+   =================================================================== */
+#progressbar{
+  position:fixed;top:0;left:0;height:3px;width:0%;z-index:999;
+  background:linear-gradient(90deg,var(--lemon),var(--gold),var(--peach),var(--cherry));
+  box-shadow:0 0 18px rgba(255,201,77,.6);transition:width .12s linear;
+}
+#topnav{
+  position:fixed; top:0; left:0; right:0; z-index:998; height:58px;
+  display:flex; align-items:center; gap:18px; padding:0 22px;
+  background:rgba(7,10,18,.74); backdrop-filter:blur(16px) saturate(140%);
+  border-bottom:1px solid rgba(126,168,255,.10);
+}
+#topnav .brand{
+  font-family:'Fraunces',serif;font-weight:800;font-size:17px;letter-spacing:.2px;
+  background:linear-gradient(92deg,var(--lemon),var(--gold),var(--peach));
+  -webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap;
+}
+#topnav .links{display:flex;gap:4px;overflow-x:auto;flex:1;scrollbar-width:none;}
+#topnav .links::-webkit-scrollbar{display:none;}
+#topnav a{
+  color:var(--ink-dim);text-decoration:none;font-size:12.5px;font-weight:600;
+  padding:7px 11px;border-radius:999px;white-space:nowrap;transition:all .18s;
+  border:1px solid transparent;
+}
+#topnav a:hover{color:var(--ink);background:rgba(126,168,255,.09);}
+#topnav a.active{color:#0a0d16;background:linear-gradient(92deg,var(--gold),var(--lemon));border-color:transparent;}
+
+/* ===================================================================
+   LAYOUT
+   =================================================================== */
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+section{padding:86px 0 30px;position:relative;}
+section:first-of-type{padding-top:0;}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  font-size:11.5px;font-weight:800;letter-spacing:.19em;text-transform:uppercase;
+  color:var(--gold); margin-bottom:14px;
+}
+.eyebrow::before{content:'';width:30px;height:2px;background:linear-gradient(90deg,var(--gold),transparent);border-radius:2px;}
+h1{font-family:'Fraunces',serif;font-size:clamp(40px,7.2vw,78px);line-height:1.02;margin:.1em 0 .25em;font-weight:800;letter-spacing:-.025em;}
+h2{font-family:'Fraunces',serif;font-size:clamp(27px,3.9vw,42px);line-height:1.12;margin:0 0 .4em;font-weight:700;letter-spacing:-.018em;}
+h3{font-size:19.5px;font-weight:700;margin:1.8em 0 .5em;color:var(--gold-2);letter-spacing:-.01em;}
+h4{font-size:15px;font-weight:700;margin:1.3em 0 .4em;color:var(--sky);text-transform:uppercase;letter-spacing:.09em;}
+p{color:var(--ink-dim);margin:0 0 1.05em;max-width:72ch;}
+p.lead{font-size:19px;color:#cfd9ef;max-width:66ch;}
+strong{color:var(--ink);font-weight:650;}
+em{color:var(--gold-2);font-style:normal;font-weight:600;}
+a.inline{color:var(--sky);text-decoration:none;border-bottom:1px dotted var(--sky);}
+code{font-family:'JetBrains Mono',monospace;font-size:.88em;background:rgba(126,168,255,.1);padding:1px 6px;border-radius:5px;color:var(--gold-2);}
+
+/* ---------- Cards / panels ---------- */
+.card{
+  background:var(--panel); border:1px solid var(--panel-brd); border-radius:var(--r-lg);
+  padding:26px 28px; backdrop-filter:blur(14px); box-shadow:var(--shadow); margin:26px 0;
+  position:relative; overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;inset:0 0 auto 0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,201,77,.45),transparent);
+}
+.card.plain::before{display:none;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.gridSide{display:grid;grid-template-columns:330px 1fr;gap:24px;align-items:start;}
+.gridSideR{display:grid;grid-template-columns:1fr 330px;gap:24px;align-items:start;}
+@media(max-width:900px){.grid2,.grid3,.gridSide,.gridSideR{grid-template-columns:1fr;}}
+
+/* ---------- Controls ---------- */
+.ctrl{margin:15px 0;}
+.ctrl label{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-size:13px;font-weight:600;color:var(--ink-dim);margin-bottom:7px;gap:10px;
+}
+.ctrl label .val{
+  font-family:'JetBrains Mono',monospace;font-size:13.5px;font-weight:600;color:var(--gold);
+  background:rgba(255,201,77,.1);padding:2px 9px;border-radius:6px;border:1px solid rgba(255,201,77,.22);
+}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;outline:none;
+  background:linear-gradient(90deg,var(--gold) 0%,var(--gold) var(--pct,50%),rgba(255,255,255,.11) var(--pct,50%),rgba(255,255,255,.11) 100%);
+  cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:19px;height:19px;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#fff,var(--gold) 62%);
+  border:2px solid #070a12;box-shadow:0 0 0 3px rgba(255,201,77,.25),0 3px 11px rgba(0,0,0,.6);
+  transition:transform .13s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18);}
+input[type=range]::-moz-range-thumb{
+  width:19px;height:19px;border-radius:50%;background:var(--gold);
+  border:2px solid #070a12;box-shadow:0 0 0 3px rgba(255,201,77,.25);
+}
+
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,rgba(255,201,77,.17),rgba(255,159,110,.12));
+  border:1px solid rgba(255,201,77,.34);color:var(--gold-2);
+  padding:9px 17px;border-radius:999px;font-size:13.5px;font-weight:650;cursor:pointer;
+  font-family:inherit;transition:all .18s;
+}
+.btn:hover{background:linear-gradient(135deg,rgba(255,201,77,.3),rgba(255,159,110,.2));transform:translateY(-1.5px);box-shadow:0 7px 20px rgba(255,201,77,.2);}
+.btn:active{transform:translateY(0);}
+.btn.ghost{background:rgba(126,168,255,.07);border-color:rgba(126,168,255,.26);color:var(--sky);}
+.btn.ghost:hover{background:rgba(126,168,255,.16);box-shadow:0 7px 20px rgba(95,184,255,.16);}
+.btn.sm{padding:6px 13px;font-size:12px;}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 4px;}
+
+.toggle{display:flex;gap:0;background:rgba(0,0,0,.3);border:1px solid var(--panel-brd);border-radius:999px;padding:3px;}
+.toggle button{
+  flex:1;background:transparent;border:none;color:var(--ink-dim);font-family:inherit;
+  font-size:12.5px;font-weight:650;padding:8px 14px;border-radius:999px;cursor:pointer;transition:all .18s;white-space:nowrap;
+}
+.toggle button.on{background:linear-gradient(135deg,var(--gold),#ffb833);color:#0a0d16;box-shadow:0 3px 12px rgba(255,201,77,.3);}
+
+/* ---------- Chart holders ---------- */
+.plot{width:100%;height:340px;border-radius:var(--r-md);overflow:hidden;background:rgba(0,0,0,.2);}
+canvas.cv{width:100%;display:block;border-radius:var(--r-md);background:rgba(4,7,13,.55);border:1px solid rgba(126,168,255,.09);}
+
+/* ---------- Readouts / stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:11px;margin:16px 0;}
+.stat{
+  background:rgba(0,0,0,.3);border:1px solid var(--panel-brd);border-radius:var(--r-sm);
+  padding:11px 13px;text-align:center;
+}
+.stat .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.11em;color:var(--ink-faint);font-weight:700;}
+.stat .v{font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:600;color:var(--gold);margin-top:3px;line-height:1.2;}
+.stat.good .v{color:var(--mint);} .stat.bad .v{color:var(--cherry);} .stat.blue .v{color:var(--sky);}
+
+.callout{
+  border-left:3px solid var(--gold);background:linear-gradient(90deg,rgba(255,201,77,.09),transparent 72%);
+  padding:14px 18px;border-radius:0 var(--r-sm) var(--r-sm) 0;margin:18px 0;
+}
+.callout.blue{border-color:var(--sky);background:linear-gradient(90deg,rgba(95,184,255,.09),transparent 72%);}
+.callout.mint{border-color:var(--mint);background:linear-gradient(90deg,rgba(79,240,192,.09),transparent 72%);}
+.callout.red{border-color:var(--cherry);background:linear-gradient(90deg,rgba(255,107,138,.09),transparent 72%);}
+.callout p:last-child{margin-bottom:0;}
+.callout .tag{display:block;font-size:11px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:5px;}
+.callout.blue .tag{color:var(--sky);} .callout.mint .tag{color:var(--mint);} .callout.red .tag{color:var(--cherry);}
+
+.quote{
+  font-family:'Fraunces',serif;font-size:17.5px;line-height:1.56;color:#d8e2f5;font-style:italic;
+  border-left:2px solid rgba(255,201,77,.4);padding-left:20px;margin:22px 0;
+}
+.quote cite{display:block;font-family:'Inter',sans-serif;font-style:normal;font-size:12.5px;color:var(--ink-faint);margin-top:9px;letter-spacing:.04em;}
+
+.mathbox{
+  background:rgba(0,0,0,.33);border:1px solid var(--panel-brd);border-radius:var(--r-md);
+  padding:16px 18px;margin:16px 0;overflow-x:auto;
+}
+.mathbox .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.13em;color:var(--ink-faint);font-weight:700;margin-bottom:9px;}
+
+/* ---------- Step flow ---------- */
+.steps{display:flex;flex-direction:column;gap:0;margin:24px 0;}
+.step{display:grid;grid-template-columns:46px 1fr;gap:18px;padding-bottom:26px;position:relative;}
+.step:not(:last-child)::before{
+  content:'';position:absolute;left:22px;top:46px;bottom:0;width:2px;
+  background:linear-gradient(180deg,rgba(255,201,77,.45),rgba(255,201,77,.07));
+}
+.step .num{
+  width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
+  font-family:'Fraunces',serif;font-weight:800;font-size:18px;color:#0a0d16;
+  background:linear-gradient(135deg,var(--gold),#ffb833);box-shadow:0 5px 18px rgba(255,201,77,.3);
+}
+.step .bd h4{margin-top:4px;color:var(--gold-2);text-transform:none;letter-spacing:0;font-size:17px;}
+.step .bd p{margin-bottom:.4em;}
+
+/* ---------- Tabs ---------- */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;border-bottom:1px solid var(--panel-brd);padding-bottom:10px;}
+.tabs button{
+  background:rgba(126,168,255,.06);border:1px solid transparent;color:var(--ink-dim);
+  font-family:inherit;font-size:13px;font-weight:650;padding:8px 15px;border-radius:999px;cursor:pointer;transition:all .18s;
+}
+.tabs button:hover{color:var(--ink);background:rgba(126,168,255,.13);}
+.tabs button.on{background:linear-gradient(135deg,var(--sky),#3f9fe8);color:#071018;box-shadow:0 4px 14px rgba(95,184,255,.3);}
+.tabpanel{display:none;animation:fade .3s ease;}
+.tabpanel.on{display:block;}
+@keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+/* ---------- Tables ---------- */
+table.t{width:100%;border-collapse:collapse;font-size:13.8px;margin:14px 0;}
+table.t th{
+  text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-faint);
+  font-weight:800;padding:9px 11px;border-bottom:1px solid var(--panel-brd);
+}
+table.t td{padding:9px 11px;border-bottom:1px solid rgba(255,255,255,.045);color:var(--ink-dim);}
+table.t tr:hover td{background:rgba(126,168,255,.04);}
+table.t td.hl{color:var(--gold);font-weight:600;}
+
+/* ---------- Hero ---------- */
+#hero{min-height:100vh;display:flex;align-items:center;padding-top:58px;position:relative;}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.6;}
+#hero .wrap{position:relative;z-index:1;}
+.herotag{
+  display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-faint);
+  border:1px solid var(--panel-brd);border-radius:999px;padding:5px 14px;margin-bottom:22px;letter-spacing:.05em;
+}
+.heroq{
+  font-family:'Fraunces',serif;font-size:clamp(19px,2.6vw,25px);line-height:1.45;color:var(--gold-2);
+  max-width:28ch;margin:28px 0 0;
+}
+.scrollhint{
+  position:absolute;bottom:34px;left:50%;transform:translateX(-50%);z-index:2;
+  font-size:11.5px;letter-spacing:.17em;text-transform:uppercase;color:var(--ink-faint);
+  display:flex;flex-direction:column;align-items:center;gap:8px;animation:bob 2.4s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translate(-50%,0);}50%{transform:translate(-50%,9px);}}
+.scrollhint .arrow{width:1px;height:26px;background:linear-gradient(180deg,var(--gold),transparent);}
+
+/* ---------- Car sprite legend ---------- */
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-dim);margin:10px 0;}
+.legend span{display:inline-flex;align-items:center;gap:7px;}
+.swatch{width:13px;height:13px;border-radius:3.5px;display:inline-block;}
+
+/* ---------- Quiz ---------- */
+.quiz{background:rgba(0,0,0,.26);border:1px solid var(--panel-brd);border-radius:var(--r-md);padding:18px 20px;margin:18px 0;}
+.quiz .q{font-weight:650;color:var(--ink);margin-bottom:12px;}
+.quiz .opt{
+  display:block;width:100%;text-align:left;background:rgba(126,168,255,.05);border:1px solid var(--panel-brd);
+  color:var(--ink-dim);padding:10px 14px;border-radius:var(--r-sm);margin-bottom:8px;cursor:pointer;
+  font-family:inherit;font-size:14px;transition:all .16s;
+}
+.quiz .opt:hover{background:rgba(126,168,255,.12);color:var(--ink);}
+.quiz .opt.right{background:rgba(79,240,192,.14);border-color:var(--mint);color:var(--mint);}
+.quiz .opt.wrong{background:rgba(255,107,138,.12);border-color:var(--cherry);color:var(--cherry);}
+.quiz .fb{font-size:13.5px;color:var(--ink-dim);margin-top:10px;display:none;padding-left:12px;border-left:2px solid var(--gold);}
+.quiz .fb.show{display:block;}
+
+/* ---------- Footer ---------- */
+footer{padding:70px 0 90px;border-top:1px solid var(--panel-brd);margin-top:70px;text-align:center;}
+footer p{margin:0 auto .6em;font-size:13.5px;color:var(--ink-faint);}
+
+.katex{font-size:1.04em;}
+.katex-display{margin:.7em 0 !important;}
+
+/* tiny helper */
+.muted{color:var(--ink-faint);font-size:12.5px;}
+.center{text-align:center;}
+.spacer{height:28px;}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.pill.gold{background:rgba(255,201,77,.14);color:var(--gold);border:1px solid rgba(255,201,77,.3);}
+.pill.sky{background:rgba(95,184,255,.14);color:var(--sky);border:1px solid rgba(95,184,255,.3);}
+.pill.mint{background:rgba(79,240,192,.14);color:var(--mint);border:1px solid rgba(79,240,192,.3);}
+.pill.red{background:rgba(255,107,138,.14);color:var(--cherry);border:1px solid rgba(255,107,138,.3);}
+
+/* chapter divider */
+.divider{display:flex;align-items:center;gap:16px;margin:60px 0 10px;}
+.divider .line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(126,168,255,.25),transparent);}
+.divider .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 14px var(--gold);}
+
+/* sticky sub-panel */
+.sticky{position:sticky;top:76px;}
+@media(max-width:900px){.sticky{position:static;}}
+
+/* number line / distribution strip */
+.strip{position:relative;height:46px;border-radius:9px;overflow:hidden;border:1px solid var(--panel-brd);margin:10px 0;}
+
+ul.clean{list-style:none;padding:0;margin:.5em 0;}
+ul.clean li{position:relative;padding-left:22px;margin-bottom:.5em;color:var(--ink-dim);}
+ul.clean li::before{content:'▸';position:absolute;left:0;color:var(--gold);font-size:13px;}
+
+.kbd{font-family:'JetBrains Mono',monospace;font-size:11.5px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--ink);}
+</style>
+</head>
+<body>
+
+<div id="progressbar"></div>
+
+<nav id="topnav">
+  <div class="brand">🍋 The Market for Lemons</div>
+  <div class="links">
+    <a href="#hero">Start</a>
+    <a href="#motivation">1 · Motivation</a>
+    <a href="#tools">2 · Werkzeugkasten</a>
+    <a href="#idee">3 · Die Idee</a>
+    <a href="#modell">4 · Das Modell</a>
+    <a href="#rechnung">5 · Die Rechnung</a>
+    <a href="#kollaps">6 · Der Kollaps</a>
+    <a href="#symmetrie">7 · Gegenprobe</a>
+    <a href="#kosten">8 · Wohlfahrt</a>
+    <a href="#anwendungen">9 · Anwendungen</a>
+    <a href="#institutionen">10 · Gegenmittel</a>
+    <a href="#antwort">11 · Die Antwort</a>
+  </div>
+</nav>
+
+<!-- ============================================================= -->
+<!-- HERO                                                           -->
+<!-- ============================================================= -->
+<section id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="wrap">
+    <div class="herotag">George A. Akerlof · Quarterly Journal of Economics · Vol. 84, Nr. 3 · August 1970 · S. 488–500</div>
+    <h1>Der Markt<br>für Zitronen</h1>
+    <p class="lead">Warum ein Markt, auf dem es Käufer <em>und</em> Verkäufer gibt, die sich einig werden könnten, trotzdem komplett verschwinden kann. Und warum das etwas über Gebrauchtwagen, Krankenversicherungen, Kreditzinsen in Dörfern und Markennamen erklärt.</p>
+    <p class="heroq">„Qualitätsunsicherheit und der Marktmechanismus“ — ein Aufsatz, der 2001 den Wirtschaftsnobelpreis bekam.</p>
+    <div class="btnrow" style="margin-top:30px">
+      <button class="btn" onclick="document.getElementById('motivation').scrollIntoView()">▶ Los geht's</button>
+      <button class="btn ghost" onclick="document.getElementById('antwort').scrollIntoView()">Direkt zur Antwort</button>
+    </div>
+  </div>
+  <div class="scrollhint"><span>Scrollen</span><div class="arrow"></div></div>
+</section>
+
+<!-- ============================================================= -->
+<!-- 1 · MOTIVATION                                                 -->
+<!-- ============================================================= -->
+<section id="motivation">
+<div class="wrap">
+  <div class="eyebrow">Teil 1 — Die Beobachtung</div>
+  <h2>Ein Auto verliert in 10 Minuten 20 % seines Werts</h2>
+  <p class="lead">Du kaufst ein fabrikneues Auto. Du fährst vom Hof. Du willst es sofort wieder verkaufen. Du bekommst deutlich weniger, als du bezahlt hast — obwohl das Auto physisch <strong>identisch</strong> ist.</p>
+
+  <div class="callout">
+    <span class="tag">Akerlofs Startfrage</span>
+    <p>„From time to time one hears either mention of or surprise at the large price difference between new cars and those which have just left the showroom.“ Die übliche Erklärung am Mittagstisch: die pure Freude, ein <em>neues</em> Auto zu besitzen. Akerlof sagt: Nein. Es gibt eine völlig andere Erklärung — und die hat mit <strong>Information</strong> zu tun.</p>
+  </div>
+
+  <div class="card">
+    <h3>Spiel damit: Was passiert beim Verlassen des Autohauses?</h3>
+    <p class="muted">Schiebe den Regler und beobachte, wie sich der Preis entwickelt — unter beiden Erklärungen.</p>
+    <div class="gridSide">
+      <div>
+        <div class="ctrl">
+          <label>Zeit seit Kauf <span class="val" id="m1tVal">0 Min</span></label>
+          <input type="range" id="m1t" min="0" max="100" value="0" step="1">
+        </div>
+        <div class="toggle" style="margin-top:18px">
+          <button id="m1-joy" class="on" onclick="m1Mode('joy')">Erklärung A: „Freude am Neuen“</button>
+        </div>
+        <div class="toggle" style="margin-top:8px">
+          <button id="m1-info" onclick="m1Mode('info')">Erklärung B: Information</button>
+        </div>
+        <div class="stats" style="margin-top:20px">
+          <div class="stat"><div class="k">Neupreis</div><div class="v">30 000 €</div></div>
+          <div class="stat bad"><div class="k">Wiederverkauf</div><div class="v" id="m1price">30 000 €</div></div>
+        </div>
+        <div id="m1expl" class="callout blue" style="margin-top:14px;font-size:14px"></div>
+      </div>
+      <div>
+        <div id="m1plot" class="plot" style="height:400px"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Das Problem ist allgemeiner als Autos</h3>
+  <p>Akerlof schreibt in der Einleitung, dass es „viele Märkte gibt, auf denen Käufer eine <strong>Marktstatistik</strong> benutzen, um die Qualität eines möglichen Kaufs einzuschätzen“. Also: einen Durchschnitt, einen Ruf, einen Mittelwert. Und genau da entsteht der Fehler.</p>
+
+  <div class="grid3">
+    <div class="card plain" style="margin:8px 0">
+      <div class="pill gold">Markt 1</div>
+      <h4 style="margin-top:10px">Gebrauchtwagen</h4>
+      <p class="muted" style="margin:0">Verkäufer weiß, ob das Auto eine „Zitrone“ ist. Käufer nicht.</p>
+    </div>
+    <div class="card plain" style="margin:8px 0">
+      <div class="pill sky">Markt 2</div>
+      <h4 style="margin-top:10px">Krankenversicherung</h4>
+      <p class="muted" style="margin:0">Versicherter kennt seinen Gesundheitszustand besser als die Versicherung.</p>
+    </div>
+    <div class="card plain" style="margin:8px 0">
+      <div class="pill mint">Markt 3</div>
+      <h4 style="margin-top:10px">Kredite im Dorf</h4>
+      <p class="muted" style="margin:0">Der Kreditnehmer weiß, ob er zurückzahlen wird. Die Bank aus der Stadt nicht.</p>
+    </div>
+  </div>
+
+  <div class="callout red">
+    <span class="tag">Der Kern in einem Satz</span>
+    <p>Wenn Käufer nur den <strong>Durchschnitt</strong> bezahlen können, lohnt es sich für Verkäufer, Schrott anzubieten — denn der Gewinn aus guter Qualität fällt der <em>ganzen Gruppe</em> zu, nicht dem einzelnen Verkäufer. Folge: Die Durchschnittsqualität sinkt. Und der Markt schrumpft.</p>
+  </div>
+</div>
+</section>
+
+<!-- ============================================================= -->
+<!-- 2 · WERKZEUGKASTEN                                             -->
+<!-- ============================================================= -->
+<section id="tools">
+<div class="wrap">
+  <div class="eyebrow">Teil 2 — Alles, was über Abi-Mathe hinausgeht</div>
+  <h2>Der Werkzeugkasten</h2>
+  <p class="lead">Fünf Konzepte. Jedes bekommt ein Spielzeug. Danach verstehst du jede Formel im Paper.</p>
+
+  <div class="tabs" id="toolTabs">
+    <button class="on" data-t="t1">① Gleichverteilung</button>
+    <button data-t="t2">② Erwartungswert</button>
+    <button data-t="t3">③ Bedingter Erwartungswert</button>
+    <button data-t="t4">④ Nutzenfunktion</button>
+    <button data-t="t5">⑤ Angebot, Nachfrage, Gleichgewicht</button>
+  </div>
+
+  <!-- TOOL 1 -->
+  <div class="tabpanel on" id="t1">
+    <div class="card">
+      <h3>① Gleichverteilung: „jede Qualität ist gleich wahrscheinlich“</h3>
+      <p>Akerlof nimmt an: Die Qualität <span id="k_x"></span> der Autos ist <strong>gleichverteilt</strong> zwischen 0 und 2. Das heißt: Ein Auto mit Qualität 0,3 ist genauso wahrscheinlich wie eines mit Qualität 1,7. Kein Wert ist bevorzugt.</p>
+      <div class="gridSide">
+        <div class="sticky">
+          <div class="ctrl"><label>Anzahl Autos <span class="val" id="t1nVal">200</span></label>
+            <input type="range" id="t1n" min="20" max="2000" value="200" step="20"></div>
+          <div class="ctrl"><label>Obergrenze der Qualität <span class="val" id="t1maxVal">2.0</span></label>
+            <input type="range" id="t1max" min="1" max="4" value="2" step="0.1"></div>
+          <div class="btnrow"><button class="btn sm" onclick="t1Resample()">🎲 Neu würfeln</button></div>
+          <div class="stats">
+            <div class="stat"><div class="k">Mittelwert</div><div class="v" id="t1mean">1.00</div></div>
+            <div class="stat blue"><div class="k">Theorie</div><div class="v" id="t1theo">1.00</div></div>
+          </div>
+          <div class="callout blue" style="font-size:13.5px">
+            <p>Bei Gleichverteilung auf <span id="k_0bis2"></span> liegt der Mittelwert <strong>exakt in der Mitte</strong>. Je mehr Autos, desto näher kommt der echte Mittelwert an die Theorie. Probier das mit dem Regler aus!</p>
+          </div>
+        </div>
+        <div>
+          <canvas id="t1cv" class="cv" height="300"></canvas>
+          <div id="t1hist" class="plot" style="height:260px;margin-top:14px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOL 2 -->
+  <div class="tabpanel" id="t2">
+    <div class="card">
+      <h3>② Erwartungswert: Was bekommst du „im Schnitt“?</h3>
+      <p>Wenn ein Auto mit Wahrscheinlichkeit <span id="k_q"></span> gut ist (Wert <span id="k_vg"></span>) und mit Wahrscheinlichkeit <span id="k_1q"></span> eine Zitrone (Wert <span id="k_vb"></span>), dann ist dein <strong>Erwartungswert</strong>:</p>
+      <div class="mathbox"><div class="lbl">Erwartungswert eines Neuwagens</div><div id="k_ev"></div></div>
+      <div class="gridSide">
+        <div class="sticky">
+          <div class="ctrl"><label>Anteil guter Autos <span class="val" id="t2qVal">0.50</span></label>
+            <input type="range" id="t2q" min="0" max="1" value="0.5" step="0.01"></div>
+          <div class="ctrl"><label>Wert gutes Auto <span class="val" id="t2gVal">20 000 €</span></label>
+            <input type="range" id="t2g" min="5000" max="40000" value="20000" step="500"></div>
+          <div class="ctrl"><label>Wert Zitrone <span class="val" id="t2bVal">4 000 €</span></label>
+            <input type="range" id="t2b" min="0" max="15000" value="4000" step="250"></div>
+          <div class="stats">
+            <div class="stat"><div class="k">Erwartungswert</div><div class="v" id="t2ev">12 000 €</div></div>
+          </div>
+          <div class="btnrow"><button class="btn sm" onclick="t2Draw(1)">🎲 1 Auto ziehen</button>
+          <button class="btn sm ghost" onclick="t2Draw(50)">🎲 50 ziehen</button>
+          <button class="btn sm ghost" onclick="t2Reset()">↺ Reset</button></div>
+          <div class="stats">
+            <div class="stat good"><div class="k">Gezogen</div><div class="v" id="t2n">0</div></div>
+            <div class="stat blue"><div class="k">Ø real</div><div class="v" id="t2avg">—</div></div>
+          </div>
+        </div>
+        <div>
+          <canvas id="t2cv" class="cv" height="200"></canvas>
+          <div id="t2plot" class="plot" style="height:300px;margin-top:14px"></div>
+        </div>
+      </div>
+      <div class="callout mint" style="font-size:14px">
+        <span class="tag">Merksatz</span>
+        <p>Der Erwartungswert ist, was du bezahlen würdest, wenn du <strong>nichts</strong> über das konkrete Auto weißt — nur die Statistik. Genau das ist die Situation des Käufers im Lemons-Markt.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOL 3 -->
+  <div class="tabpanel" id="t3">
+    <div class="card">
+      <h3>③ Bedingter Erwartungswert — das Herzstück</h3>
+      <p>Jetzt wird es spannend. Der Käufer bezahlt nicht einfach den Durchschnitt <em>aller</em> Autos. Er bekommt nur den Durchschnitt derjenigen Autos, die <strong>tatsächlich angeboten werden</strong>. Und welche werden angeboten? Nur die, deren Besitzer beim Preis <span id="k_p"></span> verkaufen <em>wollen</em>.</p>
+
+      <div class="mathbox">
+        <div class="lbl">Akerlofs Gleichung (2)</div>
+        <div id="k_mu"></div>
+        <p class="muted" style="margin:10px 0 0">In Worten: Bei Preis <span id="k_p2"></span> verkaufen alle Besitzer mit Qualität unter <span id="k_p3"></span>. Deren Durchschnitt ist die Hälfte davon.</p>
+      </div>
+
+      <div class="gridSide">
+        <div class="sticky">
+          <div class="ctrl"><label>Marktpreis p <span class="val" id="t3pVal">1.00</span></label>
+            <input type="range" id="t3p" min="0.05" max="2" value="1" step="0.01"></div>
+          <div class="stats">
+            <div class="stat"><div class="k">Angeboten</div><div class="v" id="t3frac">50 %</div></div>
+            <div class="stat bad"><div class="k">Ø Qualität μ</div><div class="v" id="t3mu">0.50</div></div>
+          </div>
+          <div class="callout red" style="font-size:13.5px">
+            <span class="tag">Die Falle</span>
+            <p>Der Käufer zahlt <span id="k_pp"></span>, bekommt aber im Schnitt nur Qualität <span id="k_ph"></span>. Die <strong>Auswahl</strong> der Verkäufer ist nicht zufällig — sie ist <em>gegen</em> den Käufer gerichtet. Das nennt man <strong>Adverse Selection</strong> (Negativauslese).</p>
+          </div>
+        </div>
+        <div>
+          <canvas id="t3cv" class="cv" height="330"></canvas>
+          <div class="legend">
+            <span><i class="swatch" style="background:var(--mint)"></i> behalten (Qualität &gt; p)</span>
+            <span><i class="swatch" style="background:var(--cherry)"></i> verkauft (Qualität &lt; p)</span>
+            <span><i class="swatch" style="background:var(--gold)"></i> Ø der Verkauften = μ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOL 4 -->
+  <div class="tabpanel" id="t4">
+    <div class="card">
+      <h3>④ Nutzenfunktion: Wie misst man „Zufriedenheit“?</h3>
+      <p>Akerlof gibt jeder Gruppe eine <strong>Nutzenfunktion</strong>. Das ist einfach eine Formel, die sagt: „So glücklich macht mich diese Kombination aus Geld und Autos.“</p>
+
+      <div class="grid2">
+        <div class="mathbox"><div class="lbl">Gruppe 1 — die Besitzer</div><div id="k_u1"></div>
+          <p class="muted" style="margin-top:9px">Ein Auto der Qualität <span id="k_xi"></span> ist ihnen genau <span id="k_xi2"></span> wert.</p></div>
+        <div class="mathbox"><div class="lbl">Gruppe 2 — die Käufer</div><div id="k_u2"></div>
+          <p class="muted" style="margin-top:9px">Dasselbe Auto ist ihnen <strong>50 % mehr</strong> wert: <span id="k_32xi"></span>.</p></div>
+      </div>
+
+      <div class="callout">
+        <span class="tag">Warum 3/2?</span>
+        <p>Weil es <strong>Handelsgewinne</strong> geben soll! Gruppe 2 schätzt jedes Auto höher ein als Gruppe 1. In einer perfekten Welt müssten also <em>alle</em> Autos den Besitzer wechseln. Genau das macht das Ergebnis des Papers so schockierend.</p>
+      </div>
+
+      <div class="gridSide">
+        <div class="sticky">
+          <div class="ctrl"><label>Geld M <span class="val" id="t4mVal">10</span></label>
+            <input type="range" id="t4m" min="0" max="20" value="10" step="0.5"></div>
+          <div class="ctrl"><label>Qualität des Autos x <span class="val" id="t4xVal">1.0</span></label>
+            <input type="range" id="t4x" min="0" max="2" value="1" step="0.05"></div>
+          <div class="ctrl"><label>Anzahl Autos n <span class="val" id="t4nVal">1</span></label>
+            <input type="range" id="t4n" min="0" max="5" value="1" step="1"></div>
+          <div class="stats">
+            <div class="stat"><div class="k">Nutzen Gruppe 1</div><div class="v" id="t4u1">11.0</div></div>
+            <div class="stat good"><div class="k">Nutzen Gruppe 2</div><div class="v" id="t4u2">11.5</div></div>
+            <div class="stat blue"><div class="k">Differenz</div><div class="v" id="t4diff">0.5</div></div>
+          </div>
+        </div>
+        <div><div id="t4plot" class="plot" style="height:380px"></div></div>
+      </div>
+
+      <h4>Drei Eigenheiten, die Akerlof selbst erklärt</h4>
+      <ul class="clean">
+        <li><strong>Linear statt logarithmisch:</strong> „without linear utility … one gets needlessly mired in algebraic complication“ — man versinkt sonst in Algebra.</li>
+        <li><strong>Keine Risikoaversion:</strong> Lineare Nutzen bedeuten: die Leute sind <em>risikoneutral</em>. So isoliert Akerlof den Informations-Effekt von den üblichen Risiko-Effekten.</li>
+        <li><strong>Das 5. Auto bringt so viel wie das erste:</strong> Unrealistisch, aber es vermeidet „eine Ablenkung vom eigentlichen Fokus“.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- TOOL 5 -->
+  <div class="tabpanel" id="t5">
+    <div class="card">
+      <h3>⑤ Angebot, Nachfrage und Gleichgewicht</h3>
+      <p>Ein <strong>Gleichgewicht</strong> ist ein Preis, bei dem Angebot = Nachfrage. Normalerweise: Preis hoch → mehr Angebot, weniger Nachfrage → es gibt einen Schnittpunkt.</p>
+      <div class="gridSide">
+        <div class="sticky">
+          <div class="toggle" style="margin-bottom:14px">
+            <button class="on" id="t5-normal" onclick="t5Mode('normal')">Normaler Markt</button>
+            <button id="t5-lemon" onclick="t5Mode('lemon')">Lemons-Markt</button>
+          </div>
+          <div class="ctrl"><label>Preis p <span class="val" id="t5pVal">1.00</span></label>
+            <input type="range" id="t5p" min="0.05" max="2.5" value="1" step="0.01"></div>
+          <div class="ctrl"><label>Anzahl Autos N <span class="val" id="t5NVal">50</span></label>
+            <input type="range" id="t5N" min="10" max="200" value="50" step="5"></div>
+          <div class="ctrl"><label>Einkommen Käufer Y₂ <span class="val" id="t5YVal">100</span></label>
+            <input type="range" id="t5Y" min="20" max="300" value="100" step="5"></div>
+          <div class="stats">
+            <div class="stat blue"><div class="k">Angebot S(p)</div><div class="v" id="t5S">0</div></div>
+            <div class="stat good"><div class="k">Nachfrage D</div><div class="v" id="t5D">0</div></div>
+          </div>
+          <div id="t5msg" class="callout" style="font-size:13.5px"></div>
+        </div>
+        <div><div id="t5plot" class="plot" style="height:420px"></div></div>
+      </div>
+      <div class="callout blue" style="font-size:14px">
+        <span class="tag">Der entscheidende Unterschied</span>
+        <p>Im normalen Markt gilt: Preis runter → Angebot runter, Nachfrage hoch → <strong>Schnittpunkt existiert</strong>. Im Lemons-Markt hängt die Nachfrage zusätzlich von der Qualität <span id="k_mu2"></span> ab — und die fällt <em>mit</em> dem Preis. Die Nachfragekurve „flieht“ vor dem Angebot. Genau das lässt den Schnittpunkt verschwinden.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">Check: Bei Preis p = 1,2 — welche Durchschnittsqualität bekommt der Käufer (Akerlofs Annahme: x gleichverteilt auf [0, 2])?</div>
+    <button class="opt" data-ok="0">1,2 — der Preis entspricht der Qualität</button>
+    <button class="opt" data-ok="1">0,6 — die Hälfte des Preises</button>
+    <button class="opt" data-ok="0">1,0 — der Gesamtdurchschnitt</button>
+    <div class="fb">Richtig: Nur Besitzer mit Qualität unter 1,2 verkaufen. Deren Durchschnitt ist 1,2 / 2 = 0,6. Das ist Akerlofs Gleichung (2): μ = p/2.</div>
+  </div>
+</div>
+</section>
+
+<!-- ============================================================= -->
+<!-- 3 · DIE IDEE                                                   -->
+<!-- ============================================================= -->
+<section id="idee">
+<div class="wrap">
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+  <div class="eyebrow">Teil 3 — Die Idee</div>
+  <h2>Vier Sorten Autos und eine Asymmetrie</h2>
+  <p class="lead">Akerlof baut sein Argument in vier Schritten auf. Jeder Schritt ist für sich harmlos. Zusammen ergeben sie eine Katastrophe.</p>
+
+  <div class="steps">
+    <div class="step"><div class="num">1</div><div class="bd">
+      <h4>Es gibt vier Sorten Autos</h4>
+      <p>Neu oder gebraucht × gut oder „Zitrone“ (im amerikanischen Englisch heißt ein Montagsauto <em>lemon</em>). „Suppose (for the sake of clarity rather than reality) that there are just four kinds of cars.“</p>
+    </div></div>
+    <div class="step"><div class="num">2</div><div class="bd">
+      <h4>Beim Neukauf weiß niemand etwas</h4>
+      <p>Käufer kennen nur die Wahrscheinlichkeit <span id="k_q2"></span>, dass das Auto gut ist. Das gilt für <strong>alle gleichermaßen</strong> — <em>symmetrische</em> Unsicherheit. Hier ist noch alles in Ordnung.</p>
+    </div></div>
+    <div class="step"><div class="num">3</div><div class="bd">
+      <h4>Nach einiger Zeit weiß der Besitzer mehr</h4>
+      <p>„After owning a specific car … the car owner can form a good idea of the quality of this machine.“ Der Besitzer aktualisiert seine Einschätzung. Der potenzielle Käufer nicht. <strong>Jetzt ist die Information asymmetrisch.</strong></p>
+    </div></div>
+    <div class="step"><div class="num">4</div><div class="bd">
+      <h4>Gute und schlechte Gebrauchtwagen kosten dasselbe</h4>
+      <p>„But good cars and bad cars must still sell at the same price — since it is impossible for a buyer to tell the difference.“ Und genau daraus folgt alles Weitere.</p>
+    </div></div>
+  </div>
+
+  <div class="card">
+    <h3>Interaktiv: Wann entsteht die Asymmetrie?</h3>
+    <p class="muted">Schiebe die Zeit. Links siehst du, was der Besitzer weiß — rechts, was der Käufer weiß.</p>
+    <div class="ctrl" style="max-width:520px">
+      <label>Besitzdauer <span class="val" id="asyTVal">0 Monate</span></label>
+      <input type="range" id="asyT" min="0" max="36" value="0" step="1">
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div>
+        <h4 style="color:var(--mint)">👤 Was der Besitzer glaubt</h4>
+        <div id="asyOwner" class="plot" style="height:260px"></div>
+      </div>
+      <div>
+        <h4 style="color:var(--cherry)">🛒 Was der Käufer glaubt</h4>
+        <div id="asyBuyer" class="plot" style="height:260px"></div>
+      </div>
+    </div>
+    <div id="asyMsg" class="callout" style="font-size:14px"></div>
+  </div>
+
+  <h3>Die Lock-in-Falle des ehrlichen Besitzers</h3>
+  <div class="card plain">
+    <p>Akerlof macht hier ein feines Argument, das man leicht überliest. Warum kann ein Gebrauchtwagen <em>niemals</em> so viel wert sein wie ein Neuwagen — selbst wenn er objektiv gleich gut ist?</p>
+    <div class="mathbox">
+      <div class="lbl">Das Arbitrage-Argument</div>
+      <p class="muted" style="margin:0">Wäre der Gebrauchtpreis = Neupreis, dann würde jeder Besitzer einer Zitrone sie zum Neuwagenpreis verkaufen und sich einen Neuwagen kaufen — mit höherer Wahrscheinlichkeit <span id="k_q3"></span> gut zu sein. Ein garantierter Gewinn. Also kann das kein Gleichgewicht sein.</p>
+    </div>
+    <div class="callout red">
+      <span class="tag">Die Folge</span>
+      <p>„Thus the owner of a good machine must be <strong>locked in</strong>. Not only is it true that he cannot receive the true value of his car, but he cannot even obtain the expected value of a new car.“ — Der Besitzer eines <em>guten</em> Autos sitzt fest. Er wird bestraft dafür, dass er ein gutes Auto hat.</p>
+    </div>
+    <div class="btnrow"><button class="btn sm ghost" onclick="lockinRun()">▶ Arbitrage-Schleife simulieren</button></div>
+    <canvas id="lockinCv" class="cv" height="220"></canvas>
+  </div>
+
+  <h3>Greshams Gesetz — die Analogie (und wo sie hinkt)</h3>
+  <div class="gridSideR">
+    <div>
+      <p>Greshams Gesetz aus der Geldtheorie sagt: <em>„Schlechtes Geld verdrängt gutes.“</em> Wenn abgenutzte und volle Goldmünzen zum selben Nennwert zirkulieren, behält jeder die guten und gibt die schlechten aus.</p>
+      <p>Akerlof: „Gresham's law has made a <strong>modified</strong> reappearance.“ Bei Autos verdrängen die schlechten die guten. Aber:</p>
+      <div class="callout blue">
+        <span class="tag">Der feine Unterschied</span>
+        <p>Bei Geld <strong>sehen beide Seiten</strong> den Unterschied — die schlechte Münze zirkuliert trotzdem, weil der <em>Kurs</em> gesetzlich gleich ist. Bei Autos verkaufen sich schlechte zum Preis guter, weil der Käufer den Unterschied <strong>nicht sehen kann</strong>. „So the analogy is instructive, but not complete.“</p>
+      </div>
+    </div>
+    <div>
+      <canvas id="greshamCv" class="cv" height="330"></canvas>
+      <div class="btnrow"><button class="btn sm" onclick="greshamStart()">▶ Abspielen</button>
+      <button class="btn sm ghost" onclick="greshamReset()">↺</button></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============================================================= -->
+<!-- 4 · DAS MODELL                                                 -->
+<!-- ============================================================= -->
+<section id="modell">
+<div class="wrap">
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+  <div class="eyebrow">Teil 4 — Das formale Modell</div>
+  <h2>Zwei Gruppen, N Autos, eine Annahme zu viel</h2>
+  <p class="lead">Akerlof baut die kleinstmögliche Welt, in der das Problem auftaucht. Hier ist jede Zutat — anfassbar.</p>
+
+  <div class="card">
+    <h3>Die Bauteile der Modellwelt</h3>
+    <table class="t">
+      <tr><th>Symbol</th><th>Bedeutung</th><th>Annahme bei Akerlof</th></tr>
+      <tr><td class="hl">x</td><td>Qualität eines Autos</td><td>gleichverteilt, 0 ≤ x ≤ 2</td></tr>
+      <tr><td class="hl">N</td><td>Anzahl Autos</td><td>alle bei Gruppe 1; Gruppe 2 hat keine</td></tr>
+      <tr><td class="hl">M</td><td>Konsum aller anderen Güter</td><td>Preis = 1 („Numéraire“)</td></tr>
+      <tr><td class="hl">U₁</td><td>Nutzen Gruppe 1 (Besitzer)</td><td>M + Σ xᵢ</td></tr>
+      <tr><td class="hl">U₂</td><td>Nutzen Gruppe 2 (Käufer)</td><td>M + Σ (3/2)·xᵢ</td></tr>
+      <tr><td class="hl">Y₁, Y₂</td><td>Einkommen beider Gruppen</td><td>gegeben</td></tr>
+      <tr><td class="hl">p</td><td>Preis pro Gebrauchtwagen</td><td>einheitlich (Käufer sieht ja keinen Unterschied)</td></tr>
+      <tr><td class="hl">μ</td><td>Durchschnittsqualität der <em>gehandelten</em> Autos</td><td>hängt von p ab: μ(p)</td></tr>
+    </table>
+    <p class="muted">„Both type one traders and type two traders are <strong>von Neumann-Morgenstern maximizers of expected utility</strong>“ — heißt einfach: Sie maximieren den <em>Erwartungswert</em> ihres Nutzens. Bei linearem Nutzen ist das identisch mit „rechne mit der Durchschnittsqualität“.</p>
+  </div>
+
+  <div class="card">
+    <h3>Der Modellbaukasten — bau dir deine Welt</h3>
+    <div class="gridSide">
+      <div class="sticky">
+        <div class="ctrl"><label>Steigung Gruppe 2 (Akerlof: 3/2) <span class="val" id="mdKVal">1.50</span></label>
+          <input type="range" id="mdK" min="1" max="2.5" value="1.5" step="0.05"></div>
+        <div class="ctrl"><label>Obergrenze Qualität (Akerlof: 2) <span class="val" id="mdMaxVal">2.0</span></label>
+          <input type="range" id="mdMax" min="1" max="4" value="2" step="0.1"></div>
+        <div class="ctrl"><label>Anzahl Autos N <span class="val" id="mdNVal">60</span></label>
+          <input type="range" id="mdN" min="10" max="160" value="60" step="5"></div>
+        <div class="ctrl"><label>Preis p <span class="val" id="mdPVal">1.00</span></label>
+          <input type="range" id="mdP" min="0" max="4" value="1" step="0.02"></div>
+        <div class="stats">
+          <div class="stat"><div class="k">Verkäufer</div><div class="v" id="mdSell">30</div></div>
+          <div class="stat bad"><div class="k">μ(p)</div><div class="v" id="mdMu">0.50</div></div>
+          <div class="stat good"><div class="k">Zahlungsbereitschaft</div><div class="v" id="mdWtp">0.75</div></div>
+        </div>
+        <div id="mdVerdict" class="callout" style="font-size:13.5px"></div>
+      </div>
+      <div>
+        <canvas id="mdCv" class="cv" height="380"></canvas>
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--mint)"></i> Besitzer behält</span>
+          <span><i class="swatch" style="background:var(--cherry)"></i> Besitzer verkauft</span>
+          <span><i class="swatch" style="background:var(--gold)"></i> Preislinie p</span>
+          <span><i class="swatch" style="background:var(--sky)"></i> μ(p) · k = Zahlungsbereitschaft</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Die vier Gleichungen des Papers</h3>
+  <div class="grid2">
+    <div class="mathbox"><div class="lbl">Nachfrage Gruppe 1 (Besitzer kaufen dazu?)</div><div id="k_D1"></div>
+      <p class="muted" style="margin-top:8px">Sie kaufen nur, wenn die Qualität pro Euro ≥ 1 ist.</p></div>
+    <div class="mathbox"><div class="lbl">Angebot Gruppe 1 — Gleichung (1)</div><div id="k_S"></div>
+      <p class="muted" style="margin-top:8px">Bei Preis p verkauft der Anteil p/2 aller N Autos.</p></div>
+    <div class="mathbox"><div class="lbl">Durchschnittsqualität — Gleichung (2)</div><div id="k_mu3"></div>
+      <p class="muted" style="margin-top:8px">Der Mittelwert einer Gleichverteilung auf [0, p].</p></div>
+    <div class="mathbox"><div class="lbl">Nachfrage Gruppe 2</div><div id="k_D2"></div>
+      <p class="muted" style="margin-top:8px">Sie kaufen nur, wenn 3μ/2 &gt; p — also wenn ihr Wert den Preis übersteigt.</p></div>
+  </div>
+
+  <div class="card">
+    <h3>Woher kommen S(p) = pN/2 und μ = p/2? — Schritt für Schritt</h3>
+    <p class="muted">Klick dich durch die Herleitung. Kein Schritt braucht mehr als Abi-Mathe.</p>
+    <div class="btnrow">
+      <button class="btn sm" onclick="derivStep(-1)">◀ Zurück</button>
+      <button class="btn sm" onclick="derivStep(1)">Weiter ▶</button>
+      <span class="muted" id="derivCount" style="align-self:center">Schritt 1 / 6</span>
+    </div>
+    <div class="gridSideR">
+      <div id="derivText" style="min-height:190px"></div>
+      <div><canvas id="derivCv" class="cv" height="300"></canvas></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============================================================= -->
+<!-- 5 · DIE RECHNUNG                                               -->
+<!-- ============================================================= -->
+<section id="rechnung">
+<div class="wrap">
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+  <div class="eyebrow">Teil 5 — Der Lösungsweg</div>
+  <h2>Die Gesamtnachfrage in drei Fällen</h2>
+  <p class="lead">Jetzt setzt Akerlof die Teile zusammen. Das Ergebnis passt in drei Zeilen — und sprengt den Markt.</p>
+
+  <div class="card">
+    <div class="mathbox">
+      <div class="lbl">Die Gesamtnachfrage D(p, μ)</div>
+      <div id="k_Dtot"></div>
+    </div>
+    <p>Lies das als Entscheidungsbaum: Ist der Preis <em>unter</em> der Durchschnittsqualität, kaufen beide Gruppen. Liegt er dazwischen, kauft nur Gruppe 2. Ist er über 3μ/2, kauft <strong>niemand</strong>.</p>
+
+    <div class="gridSide">
+      <div class="sticky">
+        <div class="ctrl"><label>Preis p <span class="val" id="rcPVal">1.00</span></label>
+          <input type="range" id="rcP" min="0.02" max="2.6" value="1" step="0.02"></div>
+        <div class="stats">
+          <div class="stat bad"><div class="k">μ = p/2</div><div class="v" id="rcMu">0.50</div></div>
+          <div class="stat blue"><div class="k">3μ/2</div><div class="v" id="rcW">0.75</div></div>
+        </div>
+        <div id="rcCase" class="callout red" style="font-size:14px"></div>
+        <div class="callout" style="font-size:13.5px">
+          <span class="tag">Der Knackpunkt</span>
+          <p>Setze <span id="k_mup2"></span> in die Bedingung <span id="k_cond"></span> ein:</p>
+          <div id="k_proof" style="margin:8px 0"></div>
+          <p style="margin:0">Das ist <strong>für kein p &gt; 0 erfüllbar</strong>. Die Zahlungsbereitschaft liegt <em>immer</em> unter dem Preis.</p>
+        </div>
+      </div>
+      <div>
+        <div id="rcPlot" class="plot" style="height:420px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Die „Preis-vs-Zahlungsbereitschaft“-Schere</h3>
+    <p class="muted">Die blaue Linie (was Käufer zahlen wollen) liegt überall unter der goldenen (was sie zahlen müssten). Sie treffen sich nur im Ursprung — bei Preis null, Markt null.</p>
+    <div id="scherePlot" class="plot" style="height:400px"></div>
+    <div class="callout red">
+      <span class="tag">Akerlofs eigener Satz</span>
+      <p>„However, with price p, average quality is p/2 and therefore <strong>at no price will any trade take place at all</strong>: in spite of the fact that at any given price between 0 and 3 there are traders of type one who are willing to sell their automobiles at a price which traders of type two are willing to pay.“</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="q">Check: Warum ist es so paradox, dass gar kein Handel stattfindet?</div>
+    <button class="opt" data-ok="0">Weil die Käufer kein Geld haben</button>
+    <button class="opt" data-ok="0">Weil die Autos alle schlecht sind</button>
+    <button class="opt" data-ok="1">Weil Gruppe 2 jedes einzelne Auto um 50 % höher bewertet als Gruppe 1 — es gäbe also für JEDES Auto einen Preis, bei dem beide gewinnen</button>
+    <div class="fb">Genau. Die Handelsgewinne existieren real und vollständig. Nur die <em>Information</em> fehlt. Das ist Akerlofs Pointe.</div>
+  </div>
+</div>
+</section>
+
+<!-- ============================================================= -->
+<!-- 6 · DER KOLLAPS                                                -->
+<!-- ============================================================= -->
+<section id="kollaps">
+<div class="wrap">
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+  <div class="eyebrow">Teil 6 — Die Todesspirale</div>
+  <h2>Live: wie sich ein Markt selbst auffrisst</h2>
+  <p class="lead">„The bad driving out the not-so-bad driving out the medium driving out the not-so-good driving out the good — in such a sequence of events that no market exists at all.“</p>
+
+  <div class="card">
+    <h3>Die Spirale — Runde für Runde</h3>
+    <div class="gridSideR">
+      <div>
+        <canvas id="spiralCv" class="cv" height="400"></canvas>
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--mint)"></i> noch im Markt</span>
+          <span><i class="swatch" style="background:#334055"></i> ausgestiegen</span>
+          <span><i class="swatch" style="background:var(--gold)"></i> aktueller Preis</span>
+        </div>
+      </div>
+      <div class="sticky">
+        <div class="btnrow">
+          <button class="btn" onclick="spiralPlay()">▶ Abspielen</button>
+          <button class="btn ghost sm" onclick="spiralStep()">Ein Schritt</button>
+          <button class="btn ghost sm" onclick="spiralReset()">↺ Reset</button>
+        </div>
+        <div class="ctrl"><label>Startpreis <span class="val" id="spP0Val">1.80</span></label>
+          <input type="range" id="spP0" min="0.4" max="2" value="1.8" step="0.05"></div>
+        <div class="ctrl"><label>Tempo <span class="val" id="spSpeedVal">normal</span></label>
+          <input type="range" id="spSpeed" min="1" max="5" value="3" step="1"></div>
+        <div class="stats">
+          <div class="stat"><div class="k">Runde</div><div class="v" id="spRound">0</div></div>
+          <div class="stat bad"><div class="k">Preis</div><div class="v" id="spPrice">1.80</div></div>
+          
+          <div class="stat good"><div class="k">Ø Qualität</div><div class="v" id="spQual">0.90</div></div>
+          <div class="stat blue"><div class="k">Noch im Markt</div><div class="v" id="spAlive">100 %</div></div>
+        </div>
+        <div id="spNarr" class="callout" style="font-size:13.5px">
+          <span class="tag">Runde 0</span>
+          <p>Der Markt startet. Käufer bieten einen Preis, weil sie hoffen, gute Autos zu bekommen.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Dieselbe Spirale als Zahlenreihe</h3>
+    <p class="muted">Der Preis ist immer <span id="k_32mu"></span> — die Zahlungsbereitschaft der Käufer bei der <em>aktuell</em> erwarteten Qualität. Und μ ist immer die Hälfte des Preises. Daraus wird eine Kette, die gegen null läuft.</p>
+    <div class="mathbox">
+      <div class="lbl">Die Iteration</div>
+      <div id="k_iter"></div>
+      <p class="muted" style="margin:10px 0 0">Jede Runde schrumpft der Preis auf <strong>drei Viertel</strong>. 0,75ⁿ → 0. Der Markt stirbt geometrisch.</p>
+    </div>
+    <div id="iterPlot" class="plot" style="height:340px"></div>
+    <table class="t" id="iterTable"></table>
+  </div>
+
+  <div class="callout blue">
+    <span class="tag">Wichtige Feinheit</span>
+    <p>Akerlof selbst rechnet die Spirale nicht iterativ durch — er zeigt direkt, dass die Gleichgewichtsbedingung <strong>für kein p erfüllbar</strong> ist. Die Spirale hier ist eine <em>didaktische</em> Veranschaulichung derselben Tatsache: Egal wo du anfängst, du landest bei null. Der Text beschreibt sie als „the bad driving out the not-so-bad driving out the medium …“.</p>
+  </div>
+</div>
+</section>
+
+<!-- ============================================================= -->
+<!-- 7 · GEGENPROBE: SYMMETRISCHE INFORMATION                       -->
+<!-- ============================================================= -->
+<section id="symmetrie">
+<div class="wrap">
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+  <div class="eyebrow">Teil 7 — Die Kontrollgruppe</div>
+  <h2>Was passiert, wenn <em>beide</em> gleich viel wissen?</h2>
+  <p class="lead">Akerlof macht das Gegenexperiment. Gleiche Welt, gleiche Autos, gleiche Nutzenfunktionen — nur: Jeder sieht die Qualität. Jetzt funktioniert alles perfekt.</p>
+
+  <div class="grid2">
+    <div class="mathbox"><div class="lbl">Angebot bei symmetrischer Information</div><div id="k_Ssym"></div>
+      <p class="muted" style="margin-top:9px">Ab p = 1 verkaufen <strong>alle</strong> N Autos — denn jedes Auto wird zu seinem eigenen Wert gehandelt, pro Qualitätseinheit.</p></div>
+    <div class="mathbox"><div class="lbl">Nachfrage bei symmetrischer Information</div><div id="k_Dsym"></div>
+      <p class="muted" style="margin-top:9px">Zwischen 1 und 3/2 kauft Gruppe 2 so viel sie kann.</p></div>
+  </div>
+
+  <div class="card">
+    <h3>Das Gleichgewicht — die Gleichungen (3), (4), (5)</h3>
+    <p>Hier gibt es tatsächlich einen Schnittpunkt. Welcher der drei Fälle eintritt, hängt davon ab, wie reich Gruppe 2 ist (<span id="k_Y2"></span>) relativ zur Zahl der Autos (<span id="k_N"></span>).</p>
+    <div class="gridSide">
+      <div class="sticky">
+        <div class="ctrl"><label>Anzahl Autos N <span class="val" id="syNVal">100</span></label>
+          <input type="range" id="syN" min="10" max="400" value="100" step="5"></div>
+        <div class="ctrl"><label>Einkommen Gruppe 2 · Y₂ <span class="val" id="syYVal">150</span></label>
+          <input type="range" id="syY" min="10" max="400" value="150" step="5"></div>
+        <div class="stats">
+          <div class="stat good"><div class="k">Preis p*</div><div class="v" id="syP">1.50</div></div>
+          <div class="stat blue"><div class="k">Gehandelt</div><div class="v" id="syQ">100</div></div>
+          <div class="stat"><div class="k">Fall</div><div class="v" id="syCase">(5)</div></div>
+        </div>
+        <div id="syMsg" class="callout mint" style="font-size:13.5px"></div>
+      </div>
+      <div><div id="syPlot" class="plot" style="height:420px"></div></div>
+    </div>
+    <table class="t">
+      <tr><th>Bedingung</th><th>Gleichgewichtspreis</th><th>Interpretation</th></tr>
+      <tr><td>Y₂ &lt; N</td><td class="hl">p = 1</td><td>Zu viele Autos, zu wenig Kaufkraft → Preis am unteren Rand</td></tr>
+      <tr><td>2Y₂/3 &lt; N &lt; Y₂</td><td class="hl">p = Y₂/N</td><td>Mittelfall: Gruppe 2 gibt ihr ganzes Einkommen aus</td></tr>
+      <tr><td>N &lt; 2Y₂/3</td><td class="hl">p = 3/2</td><td>Wenige Autos, viel Geld → Preis am oberen Rand</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Der direkte Vergleich — der Preis der Unwissenheit</h3>
+    <p class="muted">Links: symmetrische Information. Rechts: asymmetrische. Gleiche Welt. Völlig anderes Ergebnis.</p>
+    <div id="comparePlot" class="plot" style="height:400px"></div>
+    <div class="stats">
+      <div class="stat good"><div class="k">Symmetrisch: Handel</div><div class="v">N Autos</div></div>
+      <div class="stat bad"><div class="k">Asymmetrisch: Handel</div><div class="v">0 Autos</div></div>
+      <div class="stat blue"><div class="k">Wohlfahrtsverlust</div><div class="v">N / 2</div></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============================================================= -->
+<!-- 8 · WOHLFAHRT / KOSTEN DER UNEHRLICHKEIT                       -->
+<!-- ============================================================= -->
+<section id="kosten">
+<div class="wrap">
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+  <div class="eyebrow">Teil 8 — Was es kostet</div>
+  <h2>Eine halbe Nutzeneinheit pro Auto</h2>
+  <p class="lead">Akerlof beziffert den Schaden exakt: „dishonesty, or the misrepresentation of the quality of automobiles, costs 1/2 unit of utility per automobile; furthermore, it reduces the size of the used car market from N to 0.“</p>
+
+  <div class="card">
+    <h3>Woher kommt die 1/2?</h3>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div class="bd">
+        <h4>Ein Auto der Qualität x wechselt den Besitzer</h4>
+        <p>Gruppe 1 verliert Nutzen <span id="k_x_loss"></span>. Gruppe 2 gewinnt <span id="k_x_gain"></span>. Der Preis ist nur eine Umverteilung von Geld — er hebt sich in der Gesamtsumme auf.</p>
+      </div></div>
+      <div class="step"><div class="num">2</div><div class="bd">
+        <h4>Netto-Gewinn pro Auto</h4>
+        <p><span id="k_netgain"></span> — also die Hälfte der Qualität.</p>
+      </div></div>
+      <div class="step"><div class="num">3</div><div class="bd">
+        <h4>Über alle N Autos mitteln</h4>
+        <p>Die durchschnittliche Qualität ist 1 (Mitte von [0,2]). Also beträgt der Gesamtgewinn <span id="k_total"></span>. Wird nicht gehandelt, ist genau das <strong>verloren</strong>.</p>
+      </div></div>
+    </div>
+    <div class="callout blue" style="font-size:13.5px">
+      <p>Akerlof fügt hinzu: „If N &gt; Y₂, in which case the income of type two traders is insufficient to buy all N automobiles, there is a gain in utility of Y₂/2 units.“ — Wenn Gruppe 2 zu arm ist, um alle Autos zu kaufen, ist der Verlust entsprechend kleiner.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Der Wohlfahrtsrechner</h3>
+    <div class="gridSide">
+      <div class="sticky">
+        <div class="ctrl"><label>Anzahl Autos N <span class="val" id="wfNVal">100</span></label>
+          <input type="range" id="wfN" min="10" max="400" value="100" step="5"></div>
+        <div class="ctrl"><label>Einkommen Y₂ <span class="val" id="wfYVal">300</span></label>
+          <input type="range" id="wfY" min="10" max="500" value="300" step="10"></div>
+        <div class="ctrl"><label>Anteil ehrlicher Händler <span class="val" id="wfHVal">0 %</span></label>
+          <input type="range" id="wfH" min="0" max="100" value="0" step="1"></div>
+        <div class="stats">
+          <div class="stat bad"><div class="k">Verlorene Wohlfahrt</div><div class="v" id="wfLoss">50.0</div></div>
+          <div class="stat good"><div class="k">Realisierte Gewinne</div><div class="v" id="wfGain">0.0</div></div>
+          <div class="stat blue"><div class="k">Marktgröße</div><div class="v" id="wfSize">0</div></div>
+        </div>
+        <div id="wfMsg" class="callout" style="font-size:13.5px"></div>
+      </div>
+      <div><div id="wfPlot" class="plot" style="height:400px"></div></div>
+    </div>
+  </div>
+
+  <div class="callout red">
+    <span class="tag">Akerlofs tiefere Pointe</span>
+    <p>„The cost of dishonesty, therefore, lies <strong>not only in the amount by which the purchaser is cheated</strong>; the cost also must include the loss incurred from driving legitimate business out of existence.“ — Betrug ist nicht nur eine Umverteilung vom Opfer zum Täter. Er zerstört <em>zusätzlich</em> alle Geschäfte, die nie zustande kommen.</p>
+  </div>
+</div>
+</section>
+
+<!-- ============================================================= -->
+<!-- 9 · ANWENDUNGEN                                                -->
+<!-- ============================================================= -->
+<section id="anwendungen">
+<div class="wrap">
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+  <div class="eyebrow">Teil 9 — Welche Probleme löst das?</div>
+  <h2>Vier Rätsel, ein Mechanismus</h2>
+  <p class="lead">Jetzt kommt die Ernte. Akerlof nimmt vier reale, scheinbar unverbundene Phänomene — und zeigt, dass alle dieselbe Struktur haben.</p>
+
+  <div class="tabs" id="appTabs">
+    <button class="on" data-t="a1">🏥 Krankenversicherung ab 65</button>
+    <button data-t="a2">👔 Minderheiten am Arbeitsmarkt</button>
+    <button data-t="a3">🤝 Kosten der Unehrlichkeit</button>
+    <button data-t="a4">💰 Kredite im Dorf</button>
+  </div>
+
+  <!-- A1 -->
+  <div class="tabpanel on" id="a1">
+    <div class="card">
+      <h3>Das Rätsel: Warum steigt der Preis nicht einfach, bis es passt?</h3>
+      <p>„It is a well-known fact that people over 65 have great difficulty in buying medical insurance. The natural question arises: <strong>why doesn't the price rise to match the risk?</strong>“</p>
+      <div class="callout">
+        <span class="tag">Akerlofs Antwort</span>
+        <p>Weil der Preis selbst die Zusammensetzung verändert. „As the price level rises the people who insure themselves will be those who are <strong>increasingly certain that they will need the insurance</strong>.“ — Die Gesunden steigen aus. Der Pool wird kränker. Die Kosten steigen. Der nötige Preis steigt. Noch mehr steigen aus.</p>
+      </div>
+      <div class="gridSide">
+        <div class="sticky">
+          <div class="ctrl"><label>Prämie (€/Jahr) <span class="val" id="insPVal">2000</span></label>
+            <input type="range" id="insP" min="200" max="12000" value="2000" step="100"></div>
+          <div class="stats">
+            <div class="stat blue"><div class="k">Versichert</div><div class="v" id="insN">—</div></div>
+            <div class="stat bad"><div class="k">Ø Kosten im Pool</div><div class="v" id="insC">—</div></div>
+            <div class="stat"><div class="k">Bilanz</div><div class="v" id="insB">—</div></div>
+          </div>
+          <div id="insMsg" class="callout red" style="font-size:13.5px"></div>
+          <div class="btnrow"><button class="btn sm" onclick="insSpiral()">▶ Todesspirale zeigen</button></div>
+        </div>
+        <div>
+          <canvas id="insCv" class="cv" height="300"></canvas>
+          <div id="insPlot" class="plot" style="height:280px;margin-top:14px"></div>
+        </div>
+      </div>
+      <h4>Was die Daten sagen (Akerlofs Zahlen von 1956)</h4>
+      <table class="t">
+        <tr><th>Altersgruppe</th><th>Mit Krankenhausversicherung</th><th>Ø medizinische Ausgaben</th><th>davon versichert</th></tr>
+        <tr><td>45–54</td><td class="hl">63 %</td><td>88 $ (Männer 55–64)</td><td>105 $</td></tr>
+        <tr><td>über 65</td><td class="hl">31 %</td><td>77 $</td><td>70 $</td></tr>
+      </table>
+      <p class="muted">Paradox: Die Älteren geben im Schnitt <em>weniger</em> aus — nicht, weil sie gesünder sind, sondern weil sie keine Versicherung bekommen. Nicht-versicherte Ausgaben steigen von 66 $ auf 80 $.</p>
+      <div class="callout mint">
+        <span class="tag">Die politische Konsequenz</span>
+        <p>„This adds one major argument in favor of <strong>medicare</strong>. … it is quite possible that every individual in the market would be willing to pay the expected cost of his medicare and buy insurance, yet no insurance company can afford to sell him a policy — for at any price it will attract too many 'lemons'.“ Pflichtversicherung löst das Problem, weil sie die Auswahl abschafft.</p>
+      </div>
+      <h4>Pflichtversicherung vs. Freiwilligkeit — probier es aus</h4>
+      <div class="ctrl" style="max-width:480px">
+        <label>Versicherungspflicht <span class="val" id="mandVal">aus</span></label>
+        <input type="range" id="mand" min="0" max="1" value="0" step="1">
+      </div>
+      <div id="mandPlot" class="plot" style="height:300px"></div>
+    </div>
+  </div>
+
+  <!-- A2 -->
+  <div class="tabpanel" id="a2">
+    <div class="card">
+      <h3>Statistische Diskriminierung</h3>
+      <p>„Employers may refuse to hire members of minority groups for certain types of jobs. This decision <strong>may not reflect irrationality or prejudice — but profit maximization</strong>. For race may serve as a good statistic for the applicant's social background, quality of schooling, and general job capabilities.“</p>
+      <div class="callout red">
+        <span class="tag">Unbequem, aber wichtig</span>
+        <p>Akerlof sagt nicht, dass das in Ordnung ist. Er sagt: Das Problem verschwindet nicht, wenn man Vorurteile abschafft — weil es auch ohne Vorurteile entsteht, solange <strong>keine individuelle Information</strong> verfügbar ist. Die Lösung liegt deshalb im <em>Signal</em>, nicht in der Gesinnung.</p>
+      </div>
+      <div class="gridSide">
+        <div class="sticky">
+          <div class="ctrl"><label>Qualität der Zertifizierung <span class="val" id="sigVal">0 %</span></label>
+            <input type="range" id="sig" min="0" max="100" value="0" step="1"></div>
+          <div class="ctrl"><label>Streuung der Fähigkeiten <span class="val" id="spreadVal">1.0</span></label>
+            <input type="range" id="spread" min="0.3" max="2" value="1" step="0.05"></div>
+          <div class="stats">
+            <div class="stat good"><div class="k">Richtig eingestellt</div><div class="v" id="sigHit">—</div></div>
+            <div class="stat bad"><div class="k">Talent verschwendet</div><div class="v" id="sigMiss">—</div></div>
+          </div>
+          <div class="quote" style="font-size:15px">„In a regime of ignorance Enrico Fermi would have been a gardener, Von Neumann a checkout clerk at a drugstore.“<cite>George Stigler, zitiert von Akerlof</cite></div>
+        </div>
+        <div><canvas id="sigCv" class="cv" height="370"></canvas>
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--mint)"></i> eingestellt &amp; geeignet</span>
+          <span><i class="swatch" style="background:var(--cherry)"></i> abgelehnt, obwohl geeignet</span>
+          <span><i class="swatch" style="background:#4a5570"></i> zu Recht abgelehnt</span>
+        </div></div>
+      </div>
+      <div class="callout blue">
+        <span class="tag">Das Externalitäts-Problem</span>
+        <p>„The rewards for work in slum schools tend to accrue <strong>to the group as a whole</strong> — in raising its average quality — rather than to the individual.“ Wenn ein Einzelner sich anstrengt, hebt er nur minimal den Gruppendurchschnitt. Der Anreiz zur Ausbildung bricht weg, solange nur die Gruppenstatistik zählt. Nur <em>individuelle</em> Information (Zeugnisse, Zertifikate, glaubwürdige Schulen) stellt ihn wieder her.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- A3 -->
+  <div class="tabpanel" id="a3">
+    <div class="card">
+      <h3>„Business in underdeveloped countries is difficult“</h3>
+      <p>Akerlof nennt sein Paper selbst „a struggling attempt to give structure to the statement“. Die Struktur ist: Unehrlichkeit verdrängt Ehrlichkeit — genau wie Zitronen gute Autos.</p>
+      <div class="gridSideR">
+        <div>
+          <div class="ctrl"><label>Anteil unehrlicher Händler <span class="val" id="dhVal">10 %</span></label>
+            <input type="range" id="dh" min="0" max="100" value="10" step="1"></div>
+          <div class="ctrl"><label>Qualitätsstreuung im Markt <span class="val" id="dvVal">0.5</span></label>
+            <input type="range" id="dv" min="0.05" max="1" value="0.5" step="0.05"></div>
+          <div class="stats">
+            <div class="stat blue"><div class="k">Käufer-Vertrauen</div><div class="v" id="dhTrust">—</div></div>
+            <div class="stat bad"><div class="k">Verdrängte Ehrliche</div><div class="v" id="dhOut">—</div></div>
+            <div class="stat good"><div class="k">Handelsvolumen</div><div class="v" id="dhVol">—</div></div>
+          </div>
+          <div id="dhMsg" class="callout" style="font-size:13.5px"></div>
+        </div>
+        <div><canvas id="dhCv" class="cv" height="330"></canvas></div>
+      </div>
+      <h4>Belege, die Akerlof anführt</h4>
+      <ul class="clean">
+        <li><strong>Indien 1963:</strong> Unter dem Export Quality Control and Inspection Act sind „about 85 per cent of Indian exports … covered under one or the other type of quality control“.</li>
+        <li><strong>Der Reis-Test:</strong> „Indian housewives must carefully glean the rice of the local bazaar to sort out <em>stones of the same color and shape</em> which have been intentionally added to the rice.“</li>
+        <li><strong>Supermarkt vs. Straßenmarkt:</strong> Die Qualitätsstreuung ist im Osten größer als im Westen.</li>
+      </ul>
+      <div class="callout">
+        <span class="tag">Die Entwicklungs-Pointe</span>
+        <p>Wer Qualität <em>erkennen</em> kann, verdient die Differenz zwischen Kauf- und Verkaufspreis — er wird Händler. Deshalb werden in der Entwicklungsgeschichte (Japan, Großbritannien, USA) aus Kaufleuten die ersten Unternehmer. Aber: Unternehmertalent ist knapp. Qualitätsstreuung schadet doppelt — sie <strong>zieht Talente in den Handel statt in die Produktion</strong>, und sie erhöht den Zeitaufwand pro Produkteinheit.</p>
+      </div>
+      <div id="entrePlot" class="plot" style="height:320px"></div>
+    </div>
+  </div>
+
+  <!-- A4 -->
+  <div class="tabpanel" id="a4">
+    <div class="card">
+      <h3>Das Zins-Paradox</h3>
+      <p>Großbanken in Indiens Städten: 6, 8, 10 % Zinsen. Der Geldverleiher im Dorf: 15, 25, teils 50 % [[11]]. Warum geht niemand dazwischen und verdient die Differenz? Das wäre doch ein risikoloser Gewinn.</p>
+
+      <div class="callout red">
+        <span class="tag">Akerlofs Auflösung</span>
+        <p>„The middleman who tries to <strong>arbitrage</strong> between the rates of the moneylender and the central bank is apt to attract all the 'lemons' and thereby make a loss.“ [[11]] — Wer billiger anbietet als der lokale Geldverleiher, zieht genau <em>die</em> Kreditnehmer an, die der Geldverleiher abgelehnt hat. Und der hat sie abgelehnt, weil er sie kennt.</p>
+      </div>
+
+      <h4>Die beiden Bedingungen für Kredit</h4>
+      <p>Kredit wird laut Akerlof nur gewährt, wenn der Kreditgeber entweder <strong>(1)</strong> den Vertrag leicht durchsetzen kann oder <strong>(2)</strong> den Charakter des Kreditnehmers persönlich kennt [[11]]. Der Zinssatz ist also kein Preis für Risiko — er ist ein Preis für <em>Information</em>.</p>
+
+      <div class="gridSide">
+        <div class="sticky">
+          <div class="ctrl"><label>Dein Zinssatz als Mittelsmann <span class="val" id="crRVal">12 %</span></label>
+            <input type="range" id="crR" min="4" max="60" value="12" step="1"></div>
+          <div class="ctrl"><label>Lokales Wissen des Geldverleihers <span class="val" id="crKVal">95 %</span></label>
+            <input type="range" id="crK" min="0" max="100" value="95" step="1"></div>
+          <div class="ctrl"><label>Dein lokales Wissen <span class="val" id="crMVal">0 %</span></label>
+            <input type="range" id="crM" min="0" max="100" value="0" step="1"></div>
+          <div class="stats">
+            <div class="stat blue"><div class="k">Kunden</div><div class="v" id="crN">—</div></div>
+            <div class="stat bad"><div class="k">Ausfallquote</div><div class="v" id="crD">—</div></div>
+            <div class="stat"><div class="k">Deine Rendite</div><div class="v" id="crP">—</div></div>
+          </div>
+          <div id="crMsg" class="callout" style="font-size:13.5px"></div>
+        </div>
+        <div><canvas id="crCv" class="cv" height="340"></canvas>
+          <div class="legend">
+            <span><i class="swatch" style="background:var(--mint)"></i> zahlt zurück</span>
+            <span><i class="swatch" style="background:var(--cherry)"></i> fällt aus</span>
+            <span><i class="swatch" style="background:#3c4760"></i> bleibt beim Geldverleiher</span>
+          </div>
+        </div>
+      </div>
+
+      <h4>Darlings Beschreibung des Dorf-Geldverleihers (1932)</h4>
+      <div class="quote">„With his <em>intimate knowledge of those around him</em> he is able, without serious risk, to finance those who would otherwise get no loan at all.“<cite>Sir Malcolm Darling, Punjabi Peasant in Prosperity and Debt — von Akerlof zitiert [[11]]</cite></div>
+      <div class="quote">„I give credit to anyone who anchors regularly in our bay; but if it is someone I don't know well, then I think twice about it unless I can find out all about him.“<cite>Ladenbesitzer in einem Fischerdorf in Hongkong, zitiert nach Barbara Ward [[11]]</cite></div>
+
+      <h4>Die historischen Zinssätze, die Akerlof abdruckt</h4>
+      <table class="t">
+        <tr><th>Region</th><th>Besicherte Kredite</th><th>Unbesicherte Kredite</th><th>Getreidekredite</th></tr>
+        <tr><td>Punjab</td><td>6–12 %</td><td class="hl">12–24 % (18¾ üblich)</td><td>25 %</td></tr>
+        <tr><td>United Provinces</td><td>9–12 %</td><td class="hl">24–37½ % (50 in Oudh)</td><td>25 %</td></tr>
+        <tr><td>Bihar</td><td>—</td><td class="hl">18¾ %</td><td>50 %</td></tr>
+        <tr><td>Orissa</td><td>12–18¾ %</td><td class="hl">25 %</td><td>25 %</td></tr>
+        <tr><td>Bombay</td><td>9–12 %</td><td class="hl">12–25 % (18 üblich)</td><td>—</td></tr>
+        <tr><td>Sind</td><td>—</td><td class="hl">36 %</td><td>—</td></tr>
+        <tr><td>Madras</td><td>12 %</td><td class="hl">15–18 % (unsichere Gegenden 24)</td><td>20–50 %</td></tr>
+      </table>
+      <p class="muted">Quelle: Darling, 3. Auflage 1932, S. 190 — abgedruckt in Akerlofs Fußnote 7 [[11]].</p>
+
+      <h4>Der zweite Kreditmarkt-Fall: die „Managing Agencies“</h4>
+      <p>In Indien kontrollierten „Managing Agencies“ laut der von Akerlof zitierten Erhebung <strong>65,7 %</strong> des Nettovermögens börsennotierter Gesellschaften und <strong>66 %</strong> der Gesamtaktiva [[11]]. Warum? Weil Gründer sich an eine etablierte Agentur wandten — „because of its <em>reputation</em>, which would encourage confidence in the venture and stimulate investment“ [[11]].</p>
+      <div class="callout blue">
+        <span class="tag">Die Kastenstruktur als Informationssystem</span>
+        <p>Diese Agenturen waren nach Gemeinschaften organisiert (Briten, Parsen, Gujaratis, Marwaris …). In einer Welt, in der externe Investoren um ihr Geld gebracht werden können, bleiben nur zwei Wege: Entweder eine Firma baut einen <strong>Ruf für Ehrlichkeit</strong> auf — der ihr dann eine Monopolrente einbringt — oder die Finanzierung beschränkt sich auf die eigene Gemeinschaft, in der familiäre Bindungen Ehrlichkeit erzwingen [[11]].</p>
+      </div>
+      <div id="agencyPlot" class="plot" style="height:330px"></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============================================================= -->
+<!-- 10 · GEGENINSTITUTIONEN                                        -->
+<!-- ============================================================= -->
+<section id="institutionen">
+<div class="wrap">
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+  <div class="eyebrow">Teil 10 — Gegenmittel</div>
+  <h2>Wie die Wirtschaft zurückschlägt</h2>
+  <p class="lead">„Numerous institutions arise to counteract the effects of quality uncertainty.“ [[11]] — Jede dieser Institutionen ist eine Maschine, die Information in den Markt zurückpumpt. Klick sie an und sieh, was sie mit der Todesspirale macht.</p>
+
+  <div class="card">
+    <h3>Das Reparatur-Labor</h3>
+    <p class="muted">Schalte Institutionen zu. Links: der Markt. Rechts: Handelsvolumen und Wohlfahrt in Echtzeit.</p>
+    <div class="gridSide">
+      <div class="sticky">
+        <div id="instList"></div>
+        <div class="stats" style="margin-top:16px">
+          <div class="stat good"><div class="k">Gehandelt</div><div class="v" id="instTrade">0 %</div></div>
+          <div class="stat blue"><div class="k">Wohlfahrt</div><div class="v" id="instWelf">0 %</div></div>
+          <div class="stat"><div class="k">Info-Niveau</div><div class="v" id="instInfo">0 %</div></div>
+        </div>
+        <div class="btnrow"><button class="btn sm ghost" onclick="instAll(true)">Alle an</button>
+          <button class="btn sm ghost" onclick="instAll(false)">Alle aus</button></div>
+      </div>
+      <div>
+        <canvas id="instCv" class="cv" height="300"></canvas>
+        <div id="instPlot" class="plot" style="height:280px;margin-top:14px"></div>
+      </div>
+    </div>
+    <div id="instDesc" class="callout" style="font-size:14px"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card plain">
+      <div class="pill gold">Institution 1</div>
+      <h4 style="margin-top:10px;text-transform:none;letter-spacing:0;color:var(--gold-2);font-size:17px">Garantien</h4>
+      <p>„Most consumer durables carry guarantees to ensure the buyer of some normal expected quality. One natural result of our model is that <strong>the risk is borne by the seller rather than by the buyer</strong>.“ [[11]]</p>
+      <p class="muted">Die Logik: Der Verkäufer weiß mehr. Also soll er auch das Risiko tragen. Wer eine lange Garantie gibt, <em>signalisiert</em> damit, dass er an sein Produkt glaubt — eine Zitrone zu garantieren wäre teuer.</p>
+    </div>
+    <div class="card plain">
+      <div class="pill sky">Institution 2</div>
+      <h4 style="margin-top:10px;text-transform:none;letter-spacing:0;color:var(--gold-2);font-size:17px">Markennamen</h4>
+      <p>„Brand names not only indicate quality but also give the consumer a <strong>means of retaliation</strong> if the quality does not meet expectations. For the consumer will then curtail future purchases.“ [[11]]</p>
+      <p class="muted">Eine Marke ist ein Pfand. Sie macht aus einem einmaligen Spiel ein wiederholtes — und dann lohnt sich Betrug nicht mehr. Deshalb werden neue Produkte an alte Markennamen gehängt.</p>
+    </div>
+    <div class="card plain">
+      <div class="pill mint">Institution 3</div>
+      <h4 style="margin-top:10px;text-transform:none;letter-spacing:0;color:var(--gold-2);font-size:17px">Ketten</h4>
+      <p>„These restaurants, at least in the United States, most often appear on <strong>interurban highways</strong>. The customers are seldom local.“ [[11]]</p>
+      <p class="muted">Eine brillante empirische Vorhersage: Ketten blühen genau dort, wo Kunden <em>keine</em> lokale Information haben. Der Einheimische kennt seine Gegend und wählt lieber selbst — er braucht die Kette nicht.</p>
+    </div>
+    <div class="card plain">
+      <div class="pill red">Institution 4</div>
+      <h4 style="margin-top:10px;text-transform:none;letter-spacing:0;color:var(--gold-2);font-size:17px">Lizenzen &amp; Abschlüsse</h4>
+      <p>„Licensing practices also reduce quality uncertainty. … The high school diploma, the baccalaureate degree, the Ph.D., <strong>even the Nobel Prize</strong>, to some degree, serve this function of certification.“ [[11]]</p>
+      <p class="muted">Ärzte, Anwälte, Friseure. Und: „education and labor markets themselves have their own brand names“ [[11]] — Universitätsnamen sind Marken.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Die Autobahn-Hypothese — teste sie</h3>
+    <p class="muted">Schiebe den Anteil ortsfremder Kunden. Beobachte, welcher Restauranttyp überlebt.</p>
+    <div class="ctrl" style="max-width:520px">
+      <label>Anteil ortsfremder Kunden <span class="val" id="chVal">50 %</span></label>
+      <input type="range" id="ch" min="0" max="100" value="50" step="1">
+    </div>
+    <div class="grid2">
+      <div><canvas id="chCv" class="cv" height="260"></canvas></div>
+      <div><div id="chPlot" class="plot" style="height:280px"></div></div>
+    </div>
+    <div id="chMsg" class="callout blue" style="font-size:14px"></div>
+  </div>
+
+  <div class="callout red">
+    <span class="tag">Akerlofs Warnung</span>
+    <p>Schon in der Einleitung: „By nature, however, these institutions are <strong>nonatomistic</strong>, and therefore concentrations of power — with ill consequences of their own — can develop.“ [[11]] — Das Heilmittel hat eine Nebenwirkung: Marken, Ketten und Lizenzen erzeugen Marktmacht. Wer Vertrauen besitzt, besitzt eine Monopolrente.</p>
+  </div>
+</div>
+</section>
+
+<!-- ============================================================= -->
+<!-- 11 · DIE ANTWORT                                               -->
+<!-- ============================================================= -->
+<section id="antwort">
+<div class="wrap">
+  <div class="divider"><div class="line"></div><div class="dot"></div><div class="line"></div></div>
+  <div class="eyebrow">Teil 11 — Die Antwort auf die Frage</div>
+  <h2>Was Akerlof herausgefunden hat</h2>
+
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <h4>Die Frage war</h4>
+        <p style="font-size:18px;color:var(--ink)">Warum verliert ein Auto sofort an Wert? Allgemeiner: Was passiert mit einem Markt, wenn Verkäufer mehr über die Qualität wissen als Käufer?</p>
+      </div>
+      <div>
+        <h4 style="color:var(--gold)">Die Antwort ist</h4>
+        <p style="font-size:18px;color:var(--gold-2)">Der Markt kann <strong>vollständig verschwinden</strong> — obwohl bei jedem Preis zwischen 0 und 3 Verkäufer existieren, die zu einem Preis verkaufen würden, den Käufer zu zahlen bereit wären.</p>
+      </div>
+    </div>
+
+    <div class="mathbox" style="margin-top:22px">
+      <div class="lbl">Der Beweis in drei Zeilen</div>
+      <div id="k_final"></div>
+    </div>
+
+    <div class="stats" style="margin-top:20px">
+      <div class="stat bad"><div class="k">Marktgröße</div><div class="v">N → 0</div></div>
+      <div class="stat bad"><div class="k">Kosten pro Auto</div><div class="v">½ Nutzen</div></div>
+      <div class="stat good"><div class="k">Bei Symmetrie</div><div class="v">N gehandelt</div></div>
+      <div class="stat blue"><div class="k">Ursache</div><div class="v">nur Info</div></div>
+    </div>
+  </div>
+
+  <h3>Der ganze Bogen in einem Bild</h3>
+  <div class="card">
+    <canvas id="arcCv" class="cv" height="430"></canvas>
+    <p class="muted center">Klicke auf die Knoten, um zum jeweiligen Abschnitt zu springen.</p>
+  </div>
+
+  <h3>Die fünf Thesen, in Akerlofs eigenen Worten</h3>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><div class="bd">
+      <h4>Käufer nutzen eine Marktstatistik</h4>
+      <p>„There are many markets in which buyers use some <em>market statistic</em> to judge the quality of prospective purchases.“ [[11]]</p>
+    </div></div>
+    <div class="step"><div class="num">2</div><div class="bd">
+      <h4>Daraus entsteht ein Anreiz zum Schrott</h4>
+      <p>„In this case there is incentive for sellers to market poor quality merchandise, since the returns for good quality accrue mainly <em>to the entire group</em> whose statistic is affected rather than to the individual seller.“ [[11]]</p>
+    </div></div>
+    <div class="step"><div class="num">3</div><div class="bd">
+      <h4>Folge: weniger Qualität UND weniger Markt</h4>
+      <p>„As a result there tends to be a reduction in the average quality of goods and <em>also in the size of the market</em>.“ [[11]]</p>
+    </div></div>
+    <div class="step"><div class="num">4</div><div class="bd">
+      <h4>Soziale und private Erträge klaffen auseinander</h4>
+      <p>„Social and private returns differ, and therefore, in some cases, <em>governmental intervention may increase the welfare of all parties</em>.“ [[11]] — Das ist die Medicare-Begründung.</p>
+    </div></div>
+    <div class="step"><div class="num">5</div><div class="bd">
+      <h4>Vertrauen ist eine Vorbedingung für Wirtschaft</h4>
+      <p>„We have been discussing economic models in which <em>trust</em> is important. Informal unwritten guarantees are preconditions for trade and production. Where these guarantees are indefinite, business will suffer.“ [[11]]</p>
+    </div></div>
+  </div>
+
+  <div class="callout mint">
+    <span class="tag">Der Schlusssatz des Papers</span>
+    <p>„But the difficulty of distinguishing good quality from bad is <strong>inherent in the business world</strong>; this may indeed explain many economic institutions and may in fact be one of the more important aspects of uncertainty.“ [[11]]</p>
+  </div>
+
+  <div class="card">
+    <h3>Abschlusstest — hast du alles?</h3>
+    <div id="finalQuiz"></div>
+    <div id="finalScore" class="stats" style="display:none">
+      <div class="stat good"><div class="k">Richtig</div><div class="v" id="fqScore">0 / 6</div></div>
+    </div>
+  </div>
+
+  <div class="callout blue">
+    <span class="tag">Was danach geschah</span>
+    <p>Akerlofs Aufsatz wurde zunächst von drei Fachzeitschriften abgelehnt — unter anderem mit der Begründung, er sei trivial bzw. wenn er stimme, breche die ganze Ökonomie zusammen. 2001 erhielt Akerlof gemeinsam mit Michael Spence (Signaling) und Joseph Stiglitz (Screening) den Wirtschaftsnobelpreis „für ihre Analysen von Märkten mit asymmetrischer Information“. Das Feld heißt heute <em>Informationsökonomik</em>.</p>
+  </div>
+</div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p style="font-family:'Fraunces',serif;font-size:19px;color:var(--gold-2)">🍋 George A. Akerlof — <em>The Market for „Lemons“: Quality Uncertainty and the Market Mechanism</em></p>
+    <p>The Quarterly Journal of Economics, Vol. 84, Nr. 3 (August 1970), S. 488–500 [[11]]</p>
+    <p class="muted">Interaktive Lernumgebung · Alle Zitate stammen aus dem Originaltext · Alle Simulationen basieren auf Akerlofs Modellannahmen</p>
+  </div>
+</footer>
+
+<script>
+/* ===================================================================
+   GLOBALE HELFER
+   =================================================================== */
+const $  = id => document.getElementById(id);
+const C  = {
+  gold:'#ffc94d', gold2:'#ffe6a8', lemon:'#f5e14b', peach:'#ff9f6e',
+  cherry:'#ff6b8a', mint:'#4ff0c0', sky:'#5fb8ff', violet:'#b58cff',
+  ink:'#e9eefb', dim:'#a4b2d0', faint:'#6f7fa3', grid:'rgba(255,255,255,.07)',
+  panel:'#121a2a', dark:'#070a12'
+};
+const lerp=(a,b,t)=>a+(b-a)*t;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const fmt=(v,d=2)=>v.toFixed(d);
+const eur=v=>Math.round(v).toLocaleString('de-DE')+' €';
+const pct=v=>Math.round(v*100)+' %';
+
+/* Plotly-Grundlayout */
+const PL = {
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)',
+  font:{family:'Inter, sans-serif', color:C.dim, size:12},
+  margin:{l:56,r:22,t:34,b:48},
+  xaxis:{gridcolor:C.grid, zerolinecolor:'rgba(255,255,255,.14)', linecolor:'rgba(255,255,255,.16)'},
+  yaxis:{gridcolor:C.grid, zerolinecolor:'rgba(255,255,255,.14)', linecolor:'rgba(255,255,255,.16)'},
+  legend:{bgcolor:'rgba(0,0,0,.35)', bordercolor:'rgba(255,255,255,.1)', borderwidth:1, font:{size:11}},
+  hoverlabel:{bgcolor:'#121a2a', bordercolor:C.gold, font:{family:'Inter', color:C.ink}}
+};
+const PCFG={displayModeBar:false, responsive:true};
+function lay(o={}){ return JSON.parse(JSON.stringify(Object.assign({},PL,o))); }
+
+/* Slider-Fill */
+function paintRange(el){
+  const min=+el.min, max=+el.max, v=+el.value;
+  el.style.setProperty('--pct', ((v-min)/(max-min)*100)+'%');
+}
+document.querySelectorAll('input[type=range]').forEach(el=>{
+  paintRange(el); el.addEventListener('input',()=>paintRange(el));
+});
+
+/* Hi-DPI Canvas */
+function hidpi(cv){
+  const r=window.devicePixelRatio||1;
+  const w=cv.clientWidth, h=parseInt(cv.getAttribute('height'));
+  cv.width=w*r; cv.height=h*r;
+  const ctx=cv.getContext('2d'); ctx.setTransform(r,0,0,r,0,0);
+  return {ctx,w,h};
+}
+
+/* Textumbruch auf Canvas */
+function wrapText(ctx,text,x,y,maxW,lh){
+  const words=text.split(' '); let line='', yy=y;
+  for(const w of words){
+    const t=line?line+' '+w:w;
+    if(ctx.measureText(t).width>maxW && line){ ctx.fillText(line,x,yy); line=w; yy+=lh; }
+    else line=t;
+  }
+  if(line) ctx.fillText(line,x,yy);
+  return yy;
+}
+
+/* abgerundetes Rechteck */
+function rrect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+
+/* Achsenkreuz zeichnen */
+function axes(ctx,P,xlab,ylab){
+  ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(P.l,P.t); ctx.lineTo(P.l,P.b); ctx.lineTo(P.r,P.b); ctx.stroke();
+  ctx.fillStyle=C.faint; ctx.font='11px Inter';
+  ctx.textAlign='center'; ctx.fillText(xlab,(P.l+P.r)/2,P.b+32);
+  ctx.save(); ctx.translate(P.l-40,(P.t+P.b)/2); ctx.rotate(-Math.PI/2);
+  ctx.textAlign='center'; ctx.fillText(ylab,0,0); ctx.restore();
+}
+
+/* Zitronen-Icon */
+function drawLemon(ctx,x,y,r,col,alpha=1){
+  ctx.save(); ctx.globalAlpha=alpha;
+  const g=ctx.createRadialGradient(x-r*.3,y-r*.35,r*.1,x,y,r*1.25);
+  g.addColorStop(0,'#fff8d0'); g.addColorStop(.45,col); g.addColorStop(1,col);
+  ctx.fillStyle=g;
+  ctx.beginPath(); ctx.ellipse(x,y,r*1.22,r,0,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,.28)'; ctx.lineWidth=.8; ctx.stroke();
+  ctx.restore();
+}
+
+/* Auto-Icon */
+function drawCar(ctx,x,y,s,col,alpha=1){
+  ctx.save(); ctx.globalAlpha=alpha; ctx.translate(x,y); ctx.scale(s,s);
+  ctx.fillStyle=col;
+  ctx.beginPath();
+  ctx.moveTo(-10,2); ctx.lineTo(-8,-2); ctx.lineTo(-4,-6); ctx.lineTo(4,-6);
+  ctx.lineTo(8,-2); ctx.lineTo(10,2); ctx.lineTo(10,4); ctx.lineTo(-10,4); ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle='rgba(0,0,0,.45)';
+  ctx.beginPath(); ctx.arc(-5.5,4.5,2,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(5.5,4.5,2,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+
+/* ===================================================================
+   SCROLL / NAV / PROGRESS
+   =================================================================== */
+const sections=[...document.querySelectorAll('section')];
+const navLinks=[...document.querySelectorAll('#topnav a')];
+function onScroll(){
+  const h=document.documentElement;
+  $('progressbar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+  let cur=sections[0].id;
+  for(const s of sections){ if(s.getBoundingClientRect().top<140) cur=s.id; }
+  navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+
+/* Reveal-Animation */
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.style.opacity=1; e.target.style.transform='none'; io.unobserve(e.target);} });
+},{threshold:.08});
+document.querySelectorAll('.card,.steps,.quiz,table.t,.callout').forEach(el=>{
+  el.style.opacity=0; el.style.transform='translateY(18px)';
+  el.style.transition='opacity .6s cubic-bezier(.2,.7,.3,1), transform .6s cubic-bezier(.2,.7,.3,1)';
+  io.observe(el);
+});
+
+/* ===================================================================
+   KATEX RENDERING
+   =================================================================== */
+function K(id,tex,display=false){
+  const el=$(id); if(!el) return;
+  try{ katex.render(tex,el,{displayMode:display,throwOnError:false}); }
+  catch(e){ el.textContent=tex; }
+}
+function renderAllMath(){
+  K('k_x','x'); K('k_0bis2','[0,\\,2]'); K('k_q','q'); K('k_1q','1-q');
+  K('k_vg','V_{\\text{gut}}'); K('k_vb','V_{\\text{Zitrone}}');
+  K('k_ev','\\mathbb{E}[V] \\;=\\; q\\cdot V_{\\text{gut}} \\;+\\; (1-q)\\cdot V_{\\text{Zitrone}}',true);
+  K('k_p','p'); K('k_p2','p'); K('k_p3','p'); K('k_pp','p'); K('k_ph','p/2');
+  K('k_mu','\\mu(p)\\;=\\;\\mathbb{E}\\!\\left[x \\mid x \\le p\\right]\\;=\\;\\frac{p}{2}',true);
+  K('k_u1','U_1 \\;=\\; M \\;+\\; \\sum_{i=1}^{n} x_i',true);
+  K('k_u2','U_2 \\;=\\; M \\;+\\; \\sum_{i=1}^{n} \\tfrac{3}{2}\\,x_i',true);
+  K('k_xi','x_i'); K('k_xi2','x_i'); K('k_32xi','\\tfrac{3}{2}x_i');
+  K('k_q2','q'); K('k_q3','q');
+  K('k_mu2','\\mu');
+  K('k_D1','D_1=\\dfrac{Y_1}{p}\\;\\;\\text{falls}\\;\\;\\dfrac{\\mu}{p}>1,\\qquad D_1=0\\;\\;\\text{falls}\\;\\;\\dfrac{\\mu}{p}<1',true);
+  K('k_S','S(p)\\;=\\;\\frac{pN}{2}\\qquad (p\\le 2)',true);
+  K('k_mu3','\\mu\\;=\\;\\frac{p}{2}',true);
+  K('k_D2','D_2=\\dfrac{Y_2}{p}\\;\\;\\text{falls}\\;\\;\\tfrac{3}{2}\\mu>p,\\qquad D_2=0\\;\\;\\text{falls}\\;\\;\\tfrac{3}{2}\\mu<p',true);
+  K('k_Dtot','D(p,\\mu)=\\begin{cases} \\dfrac{Y_1+Y_2}{p} & \\text{falls } p<\\mu\\\\[8pt] \\dfrac{Y_2}{p} & \\text{falls } \\mu<p<\\tfrac{3}{2}\\mu\\\\[8pt] 0 & \\text{falls } p>\\tfrac{3}{2}\\mu \\end{cases}',true);
+  K('k_mup2','\\mu=\\tfrac{p}{2}'); K('k_cond','\\tfrac{3}{2}\\mu>p');
+  K('k_proof','\\tfrac{3}{2}\\cdot\\tfrac{p}{2}\\;=\\;\\tfrac{3}{4}p\\;\\;>\\;\\;p \\quad\\Longleftrightarrow\\quad \\tfrac{3}{4}>1 \\;\\;\\text{\\textbf{(falsch!)}}',true);
+  K('k_32mu','\\tfrac{3}{2}\\mu');
+  K('k_iter','p_{n+1}=\\tfrac{3}{2}\\,\\mu_n=\\tfrac{3}{2}\\cdot\\tfrac{p_n}{2}=\\tfrac{3}{4}\\,p_n \\quad\\Longrightarrow\\quad p_n=\\left(\\tfrac{3}{4}\\right)^{\\!n} p_0 \\;\\longrightarrow\\; 0',true);
+  K('k_Ssym','S(p)=N \\;\\;\\text{für}\\;\\; p>1,\\qquad S(p)=0 \\;\\;\\text{für}\\;\\; p<1',true);
+  K('k_Dsym','D(p)=\\begin{cases}\\dfrac{Y_1+Y_2}{p} & p<1\\\\[6pt] \\dfrac{Y_2}{p} & 1<p<\\tfrac{3}{2}\\\\[6pt] 0 & p>\\tfrac{3}{2}\\end{cases}',true);
+  K('k_Y2','Y_2'); K('k_N','N');
+  K('k_x_loss','x'); K('k_x_gain','\\tfrac{3}{2}x');
+  K('k_netgain','\\tfrac{3}{2}x-x=\\tfrac{1}{2}x',true);
+  K('k_total','N\\cdot\\tfrac{1}{2}\\cdot 1=\\tfrac{N}{2}',true);
+  K('k_final','\\underbrace{\\mu(p)=\\tfrac{p}{2}}_{\\text{(2) Negativauslese}}\\;\\Longrightarrow\\;\\underbrace{\\tfrac{3}{2}\\mu=\\tfrac{3}{4}p<p}_{\\text{Zahlungsbereitschaft}<\\text{Preis}}\\;\\Longrightarrow\\;\\underbrace{D(p,\\mu)=0\\;\\;\\forall\\,p>0}_{\\text{kein Handel}}',true);
+}
+window.addEventListener('DOMContentLoaded',()=>{ if(window.katex) renderAllMath(); });
+
+/* ===================================================================
+   HERO CANVAS — fallende Zitronen + Autos
+   =================================================================== */
+(function heroAnim(){
+  const cv=$('heroCanvas'); const ctx=cv.getContext('2d');
+  let W,H,parts=[];
+  function resize(){
+    const r=window.devicePixelRatio||1;
+    W=cv.clientWidth; H=cv.clientHeight;
+    cv.width=W*r; cv.height=H*r; ctx.setTransform(r,0,0,r,0,0);
+    parts=[];
+    const n=Math.round(W*H/22000);
+    for(let i=0;i<n;i++) parts.push({
+      x:Math.random()*W, y:Math.random()*H,
+      r:3+Math.random()*9, vy:.12+Math.random()*.45, vx:(Math.random()-.5)*.14,
+      q:Math.random(), rot:Math.random()*Math.PI, vr:(Math.random()-.5)*.01
+    });
+  }
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    for(const p of parts){
+      p.y+=p.vy; p.x+=p.vx; p.rot+=p.vr;
+      if(p.y>H+20){ p.y=-20; p.x=Math.random()*W; }
+      const good=p.q>.5;
+      const col=good?'rgba(255,201,77,':'rgba(245,225,75,';
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.globalAlpha=.10+p.q*.26;
+      const g=ctx.createRadialGradient(-p.r*.3,-p.r*.3,p.r*.1,0,0,p.r*1.3);
+      g.addColorStop(0,col+'0.9)'); g.addColorStop(1,col+'0.05)');
+      ctx.fillStyle=g;
+      ctx.beginPath(); ctx.ellipse(0,0,p.r*1.2,p.r,0,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+    requestAnimationFrame(frame);
+  }
+  window.addEventListener('resize',resize); resize(); frame();
+})();
+
+/* ===================================================================
+   TABS (generisch)
+   =================================================================== */
+function initTabs(container){
+  const box=$(container); if(!box) return;
+  box.querySelectorAll('button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      box.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      const ids=[...box.querySelectorAll('button')].map(x=>x.dataset.t);
+      ids.forEach(id=>$(id).classList.remove('on'));
+      $(b.dataset.t).classList.add('on');
+      window.dispatchEvent(new Event('resize'));
+      setTimeout(()=>{ tabRefresh(b.dataset.t); },60);
+    });
+  });
+}
+initTabs('toolTabs'); initTabs('appTabs');
+function tabRefresh(id){
+  const map={t1:t1Update,t2:t2Update,t3:t3Update,t4:t4Update,t5:t5Update,
+             a1:insUpdate,a2:sigUpdate,a3:dhUpdate,a4:crUpdate};
+  if(map[id]) map[id]();
+  ['t1hist','t2plot','t4plot','t5plot','insPlot','mandPlot','entrePlot','agencyPlot'].forEach(p=>{
+    const el=$(p); if(el && el.data) Plotly.Plots.resize(el);
+  });
+}
+
+/* ===================================================================
+   QUIZ (generisch)
+   =================================================================== */
+document.querySelectorAll('.quiz').forEach(q=>{
+  const fb=q.querySelector('.fb');
+  q.querySelectorAll('.opt').forEach(o=>{
+    o.addEventListener('click',()=>{
+      q.querySelectorAll('.opt').forEach(x=>{ x.disabled=true;
+        if(x.dataset.ok==='1') x.classList.add('right');
+      });
+      if(o.dataset.ok!=='1') o.classList.add('wrong');
+      if(fb) fb.classList.add('show');
+    });
+  });
+});
+
+/* ===================================================================
+   1 · MOTIVATION — Preisverfall
+   =================================================================== */
+let m1mode='joy';
+function m1Mode(m){
+  m1mode=m;
+  $('m1-joy').classList.toggle('on',m==='joy');
+  $('m1-info').classList.toggle('on',m==='info');
+  m1Update();
+}
+function m1Update(){
+  const t=+$('m1t').value;
+  $('m1tVal').textContent = t===0?'0 Min':(t<20? (t*3)+' Min' : (t/20).toFixed(1)+' Jahre');
+  const base=30000;
+  // Erklärung A: stetiger Werteverfall durch Abnutzung ("Freude am Neuen")
+  const joy = base*(1-0.004*t);
+  // Erklärung B: sofortiger Sprung durch Informationsasymmetrie
+  const info = t===0? base : base*0.78*(1-0.0032*t);
+  const price = m1mode==='joy'? joy : info;
+  $('m1price').textContent=eur(price);
+
+  const xs=[],ys1=[],ys2=[];
+  for(let i=0;i<=100;i++){ xs.push(i);
+    ys1.push(base*(1-0.004*i));
+    ys2.push(i===0? base : base*0.78*(1-0.0032*i));
+  }
+  const traces=[
+    {x:xs,y:ys1,name:'A: „Freude am Neuen“',mode:'lines',
+     line:{color:C.sky,width:m1mode==='joy'?4:2,dash:m1mode==='joy'?'solid':'dot'}},
+    {x:xs,y:ys2,name:'B: Informationsasymmetrie',mode:'lines',
+     line:{color:C.gold,width:m1mode==='info'?4:2,dash:m1mode==='info'?'solid':'dot'}},
+    {x:[t],y:[price],mode:'markers',name:'jetzt',showlegend:false,
+     marker:{size:15,color:C.cherry,line:{color:'#fff',width:2}}}
+  ];
+  Plotly.react('m1plot',traces,lay({
+    xaxis:{title:'Zeit seit Kauf →',gridcolor:C.grid,showticklabels:false},
+    yaxis:{title:'Wiederverkaufswert (€)',gridcolor:C.grid,range:[14000,32000]},
+    shapes:[{type:'line',x0:0,x1:0,y0:14000,y1:32000,line:{color:'rgba(255,107,138,.35)',dash:'dot'}}],
+    annotations: m1mode==='info'?[{x:4,y:24500,text:'Sprung!<br>−22 % in Minuten',showarrow:true,arrowcolor:C.cherry,
+      font:{color:C.cherry,size:11},ax:60,ay:-40}]:[],
+    legend:{x:.5,y:1.14,xanchor:'center',orientation:'h',bgcolor:'rgba(0,0,0,0)'}
+  }),PCFG);
+
+  $('m1expl').innerHTML = m1mode==='joy'
+    ? '<strong>Erklärung A:</strong> Der Wert sinkt langsam und stetig — Abnutzung plus die „pure joy of owning a new car“. Aber: Das erklärt <em>nicht</em>, warum schon beim Verlassen des Hofs ein Sprung passiert.'
+    : '<strong>Erklärung B (Akerlof):</strong> In der Sekunde, in der du Besitzer wirst, denkt der nächste Käufer: „Warum will er es loswerden? Vielleicht ist es eine Zitrone.“ Der Preis <em>springt</em> sofort — auch wenn das Auto perfekt ist.';
+}
+$('m1t').addEventListener('input',m1Update);
+
+/* ===================================================================
+   2 · TOOL 1 — Gleichverteilung
+   =================================================================== */
+let t1data=[];
+function t1Resample(){
+  const n=+$('t1n').value, mx=+$('t1max').value;
+  t1data=Array.from({length:n},()=>Math.random()*mx);
+  t1Update();
+}
+function t1Update(){
+  const n=+$('t1n').value, mx=+$('t1max').value;
+  $('t1nVal').textContent=n; $('t1maxVal').textContent=fmt(mx,1);
+  if(t1data.length!==n) t1data=Array.from({length:n},()=>Math.random()*mx);
+  // skaliere falls max verändert
+  const cur=Math.max(...t1data,0.0001);
+  const mean=t1data.reduce((a,b)=>a+b,0)/t1data.length;
+  $('t1mean').textContent=fmt(mean,3);
+  $('t1theo').textContent=fmt(mx/2,3);
+
+  // Canvas: Punkte auf Zahlenstrahl
+  const {ctx,w,h}=hidpi($('t1cv'));
+  ctx.clearRect(0,0,w,h);
+  const P={l:50,r:w-24,t:28,b:h-44};
+  const X=v=>P.l+(v/mx)*(P.r-P.l);
+  // Hintergrundband
+  const grad=ctx.createLinearGradient(P.l,0,P.r,0);
+  grad.addColorStop(0,'rgba(255,107,138,.14)'); grad.addColorStop(1,'rgba(79,240,192,.14)');
+  ctx.fillStyle=grad; rrect(ctx,P.l,P.t,P.r-P.l,P.b-P.t,10); ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,.1)'; ctx.stroke();
+  // Punkte
+  t1data.forEach((v,i)=>{
+    const x=X(v);
+    const y=P.t+12+((i*37)%(P.b-P.t-24));
+    const tcol=v/mx;
+    ctx.fillStyle=`rgba(${Math.round(lerp(255,79,tcol))},${Math.round(lerp(107,240,tcol))},${Math.round(lerp(138,192,tcol))},.75)`;
+    ctx.beginPath(); ctx.arc(x,y,2.6,0,Math.PI*2); ctx.fill();
+  });
+  // Mittelwertlinie
+  ctx.strokeStyle=C.gold; ctx.lineWidth=2.5; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(X(mean),P.t-6); ctx.lineTo(X(mean),P.b+6); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=C.gold; ctx.font='600 12px Inter'; ctx.textAlign='center';
+  ctx.fillText('Ø '+fmt(mean,3),X(mean),P.t-12);
+  // Achse
+  ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(P.l,P.b+14); ctx.lineTo(P.r,P.b+14); ctx.stroke();
+  ctx.fillStyle=C.faint; ctx.font='11px Inter';
+  for(let i=0;i<=4;i++){ const v=mx*i/4;
+    ctx.fillText(fmt(v,1),X(v),P.b+30);
+    ctx.beginPath(); ctx.moveTo(X(v),P.b+14); ctx.lineTo(X(v),P.b+19); ctx.stroke();
+  }
+  ctx.textAlign='left'; ctx.fillStyle=C.faint;
+  ctx.fillText('Qualität x',P.l,P.t-12);
+
+  // Histogramm
+  Plotly.react('t1hist',[{
+    x:t1data,type:'histogram',nbinsx:24,
+    marker:{color:'rgba(255,201,77,.55)',line:{color:'rgba(255,201,77,.9)',width:1}},
+    name:'Beobachtet'
+  }],lay({
+    xaxis:{title:'Qualität x',range:[0,mx],gridcolor:C.grid},
+    yaxis:{title:'Häufigkeit',gridcolor:C.grid},
+    shapes:[{type:'line',x0:0,x1:mx,y0:n/24,y1:n/24,
+             line:{color:C.sky,width:2,dash:'dash'}}],
+    annotations:[{x:mx*0.82,y:n/24,text:'theoretische Dichte (flach!)',
+                  showarrow:false,yshift:16,font:{color:C.sky,size:11}}],
+    showlegend:false, margin:{l:50,r:20,t:14,b:44}
+  }),PCFG);
+}
+$('t1n').addEventListener('input',()=>{t1data=[];t1Update();});
+$('t1max').addEventListener('input',()=>{t1data=[];t1Update();});
+
+/* ===================================================================
+   TOOL 2 — Erwartungswert
+   =================================================================== */
+let t2draws=[];
+function t2Reset(){ t2draws=[]; t2Update(); }
+function t2Draw(k){
+  const q=+$('t2q').value, g=+$('t2g').value, b=+$('t2b').value;
+  for(let i=0;i<k;i++) t2draws.push(Math.random()<q?g:b);
+  if(t2draws.length>400) t2draws=t2draws.slice(-400);
+  t2Update();
+}
+function t2Update(){
+  const q=+$('t2q').value, g=+$('t2g').value, b=+$('t2b').value;
+  $('t2qVal').textContent=fmt(q,2);
+  $('t2gVal').textContent=eur(g); $('t2bVal').textContent=eur(b);
+  const ev=q*g+(1-q)*b;
+  $('t2ev').textContent=eur(ev);
+  $('t2n').textContent=t2draws.length;
+  const avg=t2draws.length? t2draws.reduce((a,x)=>a+x,0)/t2draws.length : null;
+  $('t2avg').textContent = avg===null?'—':eur(avg);
+
+  // Canvas: Balkenwaage Gut vs Zitrone
+  const {ctx,w,h}=hidpi($('t2cv'));
+  ctx.clearRect(0,0,w,h);
+  const padL=24, padR=w-24, y0=40, bh=52;
+  const totalW=padR-padL;
+  const wg=totalW*q, wb=totalW*(1-q);
+  // guter Anteil
+  let gr=ctx.createLinearGradient(padL,0,padL+wg,0);
+  gr.addColorStop(0,'rgba(79,240,192,.65)'); gr.addColorStop(1,'rgba(79,240,192,.3)');
+  ctx.fillStyle=gr; rrect(ctx,padL,y0,Math.max(wg,1),bh,7); ctx.fill();
+  // Zitronenanteil
+  gr=ctx.createLinearGradient(padL+wg,0,padR,0);
+  gr.addColorStop(0,'rgba(255,107,138,.3)'); gr.addColorStop(1,'rgba(255,107,138,.65)');
+  ctx.fillStyle=gr; rrect(ctx,padL+wg,y0,Math.max(wb,1),bh,7); ctx.fill();
+
+  ctx.font='600 12px Inter'; ctx.textAlign='center'; ctx.fillStyle='#071018';
+  if(wg>60) ctx.fillText('gut · '+Math.round(q*100)+'%',padL+wg/2,y0+bh/2+4);
+  if(wb>60) ctx.fillText('Zitrone · '+Math.round((1-q)*100)+'%',padL+wg+wb/2,y0+bh/2+4);
+
+  ctx.fillStyle=C.faint; ctx.font='11px Inter'; ctx.textAlign='left';
+  ctx.fillText('Zusammensetzung aller Neuwagen',padL,y0-12);
+
+  // Erwartungswert-Skala
+  const sy=y0+bh+42;
+  const minV=Math.min(b,g), maxV=Math.max(b,g);
+  const X=v=>padL+ (v-minV)/(maxV-minV||1) * totalW;
+  ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(padL,sy); ctx.lineTo(padR,sy); ctx.stroke();
+  [[b,C.cherry,'Zitrone'],[g,C.mint,'gut']].forEach(([v,col,lab])=>{
+    ctx.fillStyle=col; ctx.beginPath(); ctx.arc(X(v),sy,6,0,Math.PI*2); ctx.fill();
+    ctx.font='11px Inter'; ctx.textAlign='center';
+    ctx.fillText(lab,X(v),sy+22);
+  });
+  ctx.strokeStyle=C.gold; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(X(ev),sy-18); ctx.lineTo(X(ev),sy+10); ctx.stroke();
+  ctx.fillStyle=C.gold; ctx.font='600 12px Inter'; ctx.textAlign='center';
+  ctx.fillText('E[V] = '+eur(ev),X(ev),sy-26);
+  if(avg!==null){
+    ctx.strokeStyle=C.sky; ctx.lineWidth=2; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(X(avg),sy-14); ctx.lineTo(X(avg),sy+6); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=C.sky; ctx.font='11px Inter';
+    ctx.fillText('Ø real',X(avg),sy+38);
+  }
+
+  // Konvergenz-Plot
+  const run=[]; let s=0;
+  t2draws.forEach((v,i)=>{ s+=v; run.push(s/(i+1)); });
+  Plotly.react('t2plot',[
+    {y:run,x:run.map((_,i)=>i+1),mode:'lines',name:'laufender Ø',
+     line:{color:C.sky,width:2}},
+    {y:[ev,ev],x:[1,Math.max(run.length,10)],mode:'lines',name:'Erwartungswert',
+     line:{color:C.gold,width:2,dash:'dash'}}
+  ],lay({
+    xaxis:{title:'Anzahl Ziehungen',gridcolor:C.grid},
+    yaxis:{title:'€',gridcolor:C.grid},
+    legend:{x:.6,y:1.12,orientation:'h',bgcolor:'rgba(0,0,0,0)'},
+    margin:{l:62,r:20,t:30,b:44}
+  }),PCFG);
+}
+['t2q','t2g','t2b'].forEach(id=>$(id).addEventListener('input',t2Update));
+
+/* ===================================================================
+   TOOL 3 — Bedingter Erwartungswert (Kern von Gleichung 2)
+   =================================================================== */
+const T3N=260;
+const t3cars=Array.from({length:T3N},(_,i)=>({
+  x: Math.random()*2,
+  ry: Math.random()
+}));
+function t3Update(){
+  const p=+$('t3p').value;
+  $('t3pVal').textContent=fmt(p,2);
+  const sell=t3cars.filter(c=>c.x<p);
+  const mu=p/2;
+  $('t3frac').textContent=Math.round(Math.min(p/2,1)*100)+' %';
+  $('t3mu').textContent=fmt(mu,2);
+  K('k_pp','p='+fmt(p,2)); K('k_ph','\\mu='+fmt(mu,2));
+
+  const {ctx,w,h}=hidpi($('t3cv'));
+  ctx.clearRect(0,0,w,h);
+  const P={l:52,r:w-22,t:26,b:h-52};
+  const X=v=>P.l+(v/2)*(P.r-P.l);
+  // Band
+  ctx.fillStyle='rgba(255,255,255,.025)';
+  rrect(ctx,P.l,P.t,P.r-P.l,P.b-P.t,10); ctx.fill();
+  // verkaufte Zone
+  const gz=ctx.createLinearGradient(P.l,0,X(p),0);
+  gz.addColorStop(0,'rgba(255,107,138,.22)'); gz.addColorStop(1,'rgba(255,107,138,.07)');
+  ctx.fillStyle=gz; ctx.fillRect(P.l,P.t,Math.max(X(p)-P.l,0),P.b-P.t);
+
+  // Autos
+  t3cars.forEach(c=>{
+    const x=X(c.x), y=P.t+14+c.ry*(P.b-P.t-28);
+    const sold=c.x<p;
+    drawCar(ctx,x,y,0.62,sold?C.cherry:C.mint,sold?0.95:0.5);
+  });
+  // Preislinie
+  ctx.strokeStyle=C.gold; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.moveTo(X(p),P.t-8); ctx.lineTo(X(p),P.b+8); ctx.stroke();
+  ctx.fillStyle=C.gold; ctx.font='600 12px Inter'; ctx.textAlign='center';
+  ctx.fillText('Preis p = '+fmt(p,2),X(p),P.t-14);
+  // mu-Linie
+  ctx.strokeStyle=C.sky; ctx.lineWidth=2.5; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(X(mu),P.t); ctx.lineTo(X(mu),P.b); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=C.sky; ctx.textAlign='center';
+  ctx.fillText('μ = p/2 = '+fmt(mu,2),X(mu),P.b+34);
+  // Pfeil mu -> p
+  ctx.strokeStyle='rgba(255,201,77,.5)'; ctx.lineWidth=1.5;
+  const ay=P.b+16;
+  ctx.beginPath(); ctx.moveTo(X(mu),ay); ctx.lineTo(X(p),ay); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(X(p),ay); ctx.lineTo(X(p)-6,ay-4); ctx.lineTo(X(p)-6,ay+4); ctx.closePath();
+  ctx.fillStyle='rgba(255,201,77,.5)'; ctx.fill();
+  ctx.fillStyle='rgba(255,201,77,.75)'; ctx.font='10.5px Inter';
+  ctx.fillText('du zahlst mehr, als du bekommst',(X(mu)+X(p))/2,ay-7);
+  // Achse
+  ctx.strokeStyle='rgba(255,255,255,.16)'; ctx.lineWidth=1;
+  ctx.fillStyle=C.faint; ctx.font='11px Inter';
+  for(let i=0;i<=4;i++){ const v=i/2;
+    ctx.fillText(fmt(v,1),X(v),P.b+48);
+  }
+  ctx.textAlign='left';
+  ctx.fillText('Qualität x  (gleichverteilt auf [0, 2])',P.l,P.t-14);
+}
+$('t3p').addEventListener('input',t3Update);
+
+/* ===================================================================
+   TOOL 4 — Nutzenfunktionen
+   =================================================================== */
+function t4Update(){
+  const M=+$('t4m').value, x=+$('t4x').value, n=+$('t4n').value;
+  $('t4mVal').textContent=fmt(M,1);
+  $('t4xVal').textContent=fmt(x,2);
+  $('t4nVal').textContent=n;
+  const u1=M+n*x, u2=M+n*1.5*x;
+  $('t4u1').textContent=fmt(u1,2);
+  $('t4u2').textContent=fmt(u2,2);
+  $('t4diff').textContent=fmt(u2-u1,2);
+
+  const xs=[]; for(let i=0;i<=40;i++) xs.push(i*0.05);
+  Plotly.react('t4plot',[
+    {x:xs,y:xs.map(v=>M+n*v),name:'U₁ = M + n·x  (Besitzer)',mode:'lines',
+     line:{color:C.mint,width:3}},
+    {x:xs,y:xs.map(v=>M+n*1.5*v),name:'U₂ = M + n·(3/2)x  (Käufer)',mode:'lines',
+     line:{color:C.gold,width:3}},
+    {x:xs,y:xs.map(v=>M+n*1.5*v),name:'Handelsgewinn',mode:'lines',
+     fill:'tonexty',fillcolor:'rgba(255,201,77,.13)',line:{width:0},showlegend:true,
+     hoverinfo:'skip'},
+    {x:[x],y:[u1],mode:'markers',showlegend:false,marker:{size:13,color:C.mint,line:{color:'#fff',width:2}}},
+    {x:[x],y:[u2],mode:'markers',showlegend:false,marker:{size:13,color:C.gold,line:{color:'#fff',width:2}}}
+  ],lay({
+    xaxis:{title:'Qualität x eines Autos',gridcolor:C.grid},
+    yaxis:{title:'Nutzen U',gridcolor:C.grid},
+    legend:{x:.02,y:1.16,orientation:'h',bgcolor:'rgba(0,0,0,0)',font:{size:10.5}},
+    shapes:[{type:'line',x0:x,x1:x,y0:u1,y1:u2,line:{color:C.sky,width:2,dash:'dot'}}],
+    annotations:[{x:x,y:(u1+u2)/2,text:'Δ = '+fmt(u2-u1,2),showarrow:false,
+                  xshift:38,font:{color:C.sky,size:11}}],
+    margin:{l:58,r:22,t:56,b:46}
+  }),PCFG);
+}
+['t4m','t4x','t4n'].forEach(id=>$(id).addEventListener('input',t4Update));
+
+/* ===================================================================
+   TOOL 5 — Angebot/Nachfrage, normal vs. Lemons
+   =================================================================== */
+let t5mode='normal';
+function t5Mode(m){
+  t5mode=m;
+  $('t5-normal').classList.toggle('on',m==='normal');
+  $('t5-lemon').classList.toggle('on',m==='lemon');
+  t5Update();
+}
+function t5Update(){
+  const p=+$('t5p').value, N=+$('t5N').value, Y=+$('t5Y').value;
+  $('t5pVal').textContent=fmt(p,2);
+  $('t5NVal').textContent=N; $('t5YVal').textContent=Y;
+
+  const ps=[]; for(let i=1;i<=130;i++) ps.push(i*0.02);
+  let S,D,Scur,Dcur;
+  if(t5mode==='normal'){
+    // symmetrische Info: S=N für p>1, D=Y/p (solange p<3/2)
+    S  = ps.map(v=> v>1? N : 0);
+    D  = ps.map(v=> v<1? (Y*1.6)/v : (v<1.5? Y/v : 0));
+    Scur = p>1? N:0;
+    Dcur = p<1? (Y*1.6)/p : (p<1.5? Y/p : 0);
+  } else {
+    // Lemons: S=pN/2, D=Y/p nur falls 3μ/2>p, also nie
+    S  = ps.map(v=> Math.min(v,2)*N/2);
+    D  = ps.map(v=> (1.5*(v/2) > v)? Y/v : 0);
+    Scur = Math.min(p,2)*N/2;
+    Dcur = (1.5*(p/2) > p)? Y/p : 0;
+  }
+  $('t5S').textContent=Math.round(Scur);
+  $('t5D').textContent=Math.round(Dcur);
+
+  const traces=[
+    {x:ps,y:S,name:'Angebot S(p)',mode:'lines',line:{color:C.sky,width:3}},
+    {x:ps,y:D,name:'Nachfrage D(p)',mode:'lines',line:{color:C.mint,width:3}},
+    {x:[p],y:[Scur],mode:'markers',showlegend:false,marker:{size:12,color:C.sky,line:{color:'#fff',width:2}}},
+    {x:[p],y:[Dcur],mode:'markers',showlegend:false,marker:{size:12,color:C.mint,line:{color:'#fff',width:2}}}
+  ];
+  Plotly.react('t5plot',traces,lay({
+    xaxis:{title:'Preis p',gridcolor:C.grid,range:[0,2.6]},
+    yaxis:{title:'Menge Autos',gridcolor:C.grid,range:[0,Math.max(N*1.35,60)]},
+    shapes:[{type:'line',x0:p,x1:p,y0:0,y1:Math.max(N*1.35,60),
+             line:{color:'rgba(255,201,77,.45)',dash:'dot',width:2}}],
+    legend:{x:.5,y:1.13,xanchor:'center',orientation:'h',bgcolor:'rgba(0,0,0,0)'},
+    margin:{l:58,r:22,t:48,b:48}
+  }),PCFG);
+
+  $('t5msg').className='callout '+(t5mode==='normal'?'mint':'red');
+  $('t5msg').innerHTML = t5mode==='normal'
+    ? '<span class="tag">Gleichgewicht existiert</span><p>Angebot und Nachfrage schneiden sich. Bei <strong>p = '+fmt(Math.min(Math.max(Y/N,1),1.5),2)+'</strong> ist der Markt geräumt. Alles normal.</p>'
+    : '<span class="tag">Nachfrage ist überall null</span><p>Die grüne Kurve liegt flach auf der Achse. Denn 3μ/2 = ¾p ist <em>immer</em> kleiner als p. Es gibt <strong>keinen</strong> Schnittpunkt außer im Ursprung.</p>';
+}
+['t5p','t5N','t5Y'].forEach(id=>$(id).addEventListener('input',t5Update));
+
+/* ===================================================================
+   3 · ASYMMETRIE ÜBER DIE ZEIT
+   =================================================================== */
+function normPdf(x,m,s){ return Math.exp(-((x-m)**2)/(2*s*s))/(s*Math.sqrt(2*Math.PI)); }
+const asyTrue = 1.55; // wahre Qualität des Autos
+function asyUpdate(){
+  const t=+$('asyT').value;
+  $('asyTVal').textContent = t+' Monate';
+  const xs=[]; for(let i=0;i<=120;i++) xs.push(i*2/120);
+  // Besitzer: Streuung schrumpft, Zentrum wandert zur Wahrheit
+  const sO = Math.max(0.055, 0.62*Math.exp(-t/9));
+  const mO = lerp(1.0, asyTrue, 1-Math.exp(-t/7));
+  const yO = xs.map(v=>normPdf(v,mO,sO));
+  // Käufer: bleibt bei der Marktstatistik
+  const sB = 0.62, mB=1.0;
+  const yB = xs.map(v=>normPdf(v,mB,sB));
+  const mxY = Math.max(...yO,...yB)*1.12;
+
+  Plotly.react('asyOwner',[
+    {x:xs,y:yO,mode:'lines',fill:'tozeroy',fillcolor:'rgba(79,240,192,.2)',
+     line:{color:C.mint,width:2.5},name:'Überzeugung'}
+  ],lay({
+    xaxis:{title:'Qualität x',gridcolor:C.grid,range:[0,2]},
+    yaxis:{title:'Glaubwürdigkeit',gridcolor:C.grid,range:[0,mxY],showticklabels:false},
+    shapes:[{type:'line',x0:asyTrue,x1:asyTrue,y0:0,y1:mxY,line:{color:C.gold,dash:'dash',width:2}}],
+    annotations:[{x:asyTrue,y:mxY*.92,text:'wahre Qualität',showarrow:false,
+                  font:{color:C.gold,size:10},xshift:-46}],
+    showlegend:false,margin:{l:44,r:18,t:16,b:42}
+  }),PCFG);
+
+  Plotly.react('asyBuyer',[
+    {x:xs,y:yB,mode:'lines',fill:'tozeroy',fillcolor:'rgba(255,107,138,.17)',
+     line:{color:C.cherry,width:2.5}}
+  ],lay({
+    xaxis:{title:'Qualität x',gridcolor:C.grid,range:[0,2]},
+    yaxis:{title:'Glaubwürdigkeit',gridcolor:C.grid,range:[0,mxY],showticklabels:false},
+    shapes:[{type:'line',x0:asyTrue,x1:asyTrue,y0:0,y1:mxY,line:{color:C.gold,dash:'dash',width:2}}],
+    showlegend:false,margin:{l:44,r:18,t:16,b:42}
+  }),PCFG);
+
+  const gap = sB/sO;
+  $('asyMsg').className='callout '+(t<3?'blue':(t<12?'':'red'));
+  $('asyMsg').innerHTML = t===0
+    ? '<span class="tag">Monat 0 — symmetrische Unsicherheit</span><p>Beide wissen gleich wenig. Beide glauben an die Marktstatistik q. <strong>Hier funktioniert der Markt noch.</strong> Akerlof: „The individuals in this market buy a new automobile without knowing whether the car they buy will be good or a lemon.“ [[11]]</p>'
+    : t<10
+    ? '<span class="tag">Monat '+t+' — die Schere öffnet sich</span><p>Der Besitzer lernt. „After owning a specific car … the car owner can form a good idea of the quality of this machine. … This estimate is more accurate than the original estimate.“ [[11]] Der Käufer lernt <em>nichts</em>. Informationsvorsprung: <strong>'+fmt(gap,1)+'×</strong> schärfer.</p>'
+    : '<span class="tag">Monat '+t+' — volle Asymmetrie</span><p>Der Besitzer weiß praktisch genau, was er hat. Der Käufer steht noch immer bei der Marktstatistik. „An asymmetry in available information has developed: for the sellers now have more knowledge about the quality of a car than the buyers.“ [[11]] <strong>Jetzt beginnt das Problem.</strong></p>';
+}
+$('asyT').addEventListener('input',asyUpdate);
+
+/* ===================================================================
+   3 · LOCK-IN /
+/* ===================================================================
+   3 · LOCK-IN / ARBITRAGE-SCHLEIFE
+   =================================================================== */
+let lockinT=0, lockinAnim=null;
+function lockinDraw(){
+  const {ctx,w,h}=hidpi($('lockinCv'));
+  ctx.clearRect(0,0,w,h);
+  const cy=h/2;
+  const boxes=[
+    {x:w*0.10,lab:'Zitrone besitzen',sub:'Wert: niedrig',col:C.cherry},
+    {x:w*0.37,lab:'zum Neuwagenpreis\nverkaufen',sub:'Käufer merkt nichts',col:C.gold},
+    {x:w*0.64,lab:'Neuwagen kaufen',sub:'Chance q auf gut',col:C.mint},
+    {x:w*0.90,lab:'Gewinn!',sub:'risikolos',col:C.sky}
+  ];
+  const bw=Math.min(w*0.19,150), bh=64;
+  // Pfeile
+  for(let i=0;i<boxes.length-1;i++){
+    const x0=boxes[i].x+bw/2, x1=boxes[i+1].x-bw/2;
+    const active = lockinT> i*0.25;
+    ctx.strokeStyle = active? 'rgba(255,201,77,.8)':'rgba(255,255,255,.12)';
+    ctx.lineWidth= active?2.5:1.5;
+    ctx.beginPath(); ctx.moveTo(x0,cy); ctx.lineTo(x1,cy); ctx.stroke();
+    ctx.fillStyle=ctx.strokeStyle;
+    ctx.beginPath(); ctx.moveTo(x1,cy); ctx.lineTo(x1-8,cy-5); ctx.lineTo(x1-8,cy+5); ctx.closePath(); ctx.fill();
+  }
+  // Rückfluss-Pfeil (Schleife)
+  if(lockinT>0.85){
+    ctx.strokeStyle='rgba(255,107,138,.6)'; ctx.lineWidth=2; ctx.setLineDash([5,4]);
+    ctx.beginPath();
+    ctx.moveTo(boxes[3].x,cy+bh/2+6);
+    ctx.bezierCurveTo(boxes[3].x,cy+66, boxes[0].x,cy+66, boxes[0].x,cy+bh/2+6);
+    ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='rgba(255,107,138,.85)'; ctx.font='600 11.5px Inter'; ctx.textAlign='center';
+    ctx.fillText('… und wieder von vorn: unendlicher Gewinn → unmöglich!',w/2,cy+82);
+  }
+  // Boxen
+  boxes.forEach((b,i)=>{
+    const active = lockinT > i*0.25 - 0.1;
+    ctx.globalAlpha = active?1:0.28;
+    ctx.fillStyle='rgba(12,17,29,.92)';
+    rrect(ctx,b.x-bw/2,cy-bh/2,bw,bh,10); ctx.fill();
+    ctx.strokeStyle=b.col; ctx.lineWidth=1.6; ctx.stroke();
+    ctx.fillStyle=b.col; ctx.font='600 12.5px Inter'; ctx.textAlign='center';
+    const lines=b.lab.split('\n');
+    lines.forEach((l,j)=>ctx.fillText(l,b.x,cy-6+j*15));
+    ctx.fillStyle=C.faint; ctx.font='10.5px Inter';
+    ctx.fillText(b.sub,b.x,cy+bh/2-9);
+    ctx.globalAlpha=1;
+  });
+  ctx.fillStyle=C.faint; ctx.font='11px Inter'; ctx.textAlign='left';
+  ctx.fillText('Warum der Gebrauchtpreis NIE gleich dem Neupreis sein kann:',14,20);
+}
+function lockinRun(){
+  lockinT=0; if(lockinAnim) cancelAnimationFrame(lockinAnim);
+  const step=()=>{ lockinT=Math.min(lockinT+0.014,1.1); lockinDraw();
+    if(lockinT<1.1) lockinAnim=requestAnimationFrame(step); };
+  step();
+}
+
+/* ===================================================================
+   3 · GRESHAM — gute vs. schlechte Münzen/Autos
+   =================================================================== */
+let gresh={t:0,run:false,items:[]};
+function greshamInit(){
+  gresh.items=Array.from({length:34},(_,i)=>({
+    good: i%2===0, x:0, y:0, prog:0, delay:Math.random()*0.5
+  }));
+  gresh.t=0; gresh.run=false; greshamDraw();
+}
+function greshamReset(){ greshamInit(); }
+function greshamStart(){ gresh.run=true; greshStep(); }
+function greshStep(){
+  if(!gresh.run) return;
+  gresh.t=Math.min(gresh.t+0.008,1);
+  greshamDraw();
+  if(gresh.t<1) requestAnimationFrame(greshStep); else gresh.run=false;
+}
+function greshamDraw(){
+  const {ctx,w,h}=hidpi($('greshamCv'));
+  ctx.clearRect(0,0,w,h);
+  const topY=52, botY=h-58;
+  // Zonen
+  ctx.fillStyle='rgba(79,240,192,.06)'; rrect(ctx,12,topY-26,w-24,78,10); ctx.fill();
+  ctx.fillStyle='rgba(255,107,138,.06)'; rrect(ctx,12,botY-30,w-24,78,10); ctx.fill();
+  ctx.fillStyle=C.mint; ctx.font='600 12px Inter'; ctx.textAlign='left';
+  ctx.fillText('🏠 Zuhause behalten (gute Ware)',18,topY-32);
+  ctx.fillStyle=C.cherry;
+  ctx.fillText('🏪 Auf den Markt (schlechte Ware)',18,botY-36);
+  ctx.fillStyle=C.faint; ctx.font='11px Inter'; ctx.textAlign='center';
+  ctx.fillText('Startpool: alles gemischt',w/2,h/2+4);
+
+  gresh.items.forEach((it,i)=>{
+    const p=clamp((gresh.t-it.delay)/0.5,0,1);
+    const ease=p<0.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+    const startY=h/2-22, targetY = it.good? topY : botY;
+    const y=lerp(startY,targetY,ease);
+    const col = it.good? C.mint : C.cherry;
+    const idx=Math.floor(i/2);
+    const cols=17;
+    const x = 34 + (idx%cols)*((w-70)/cols) + (it.good?0:10);
+    drawLemon(ctx,x,y,8,col, 0.55+ease*0.45);
+  });
+  ctx.fillStyle=C.faint; ctx.font='11px Inter'; ctx.textAlign='left';
+  ctx.fillText('„The bad cars tend to drive out the good.“ — Akerlof',16,h-14);
+}
+greshamInit();
+
+/* ===================================================================
+   4 · MODELLBAUKASTEN
+   =================================================================== */
+const MDN=200;
+const mdCars=Array.from({length:MDN},()=>({u:Math.random(), ry:Math.random()}));
+function mdUpdate(){
+  const k=+$('mdK').value, mx=+$('mdMax').value, N=+$('mdN').value, p=+$('mdP').value;
+  $('mdKVal').textContent=fmt(k,2); $('mdMaxVal').textContent=fmt(mx,1);
+  $('mdNVal').textContent=N; $('mdPVal').textContent=fmt(p,2);
+
+  const cars=mdCars.slice(0,N).map(c=>({x:c.u*mx, ry:c.ry}));
+  const sold=cars.filter(c=>c.x<p);
+  const mu = p<=mx ? p/2 : mx/2;
+  const wtp = k*mu;
+  $('mdSell').textContent=sold.length;
+  $('mdMu').textContent=fmt(mu,2);
+  $('mdWtp').textContent=fmt(wtp,2);
+
+  const trade = wtp>p;
+  $('mdVerdict').className='callout '+(trade?'mint':'red');
+  $('mdVerdict').innerHTML = trade
+    ? '<span class="tag">Handel möglich ✓</span><p>Die Zahlungsbereitschaft <strong>'+fmt(wtp,2)+'</strong> liegt über dem Preis <strong>'+fmt(p,2)+'</strong>. Mit k = '+fmt(k,2)+' &gt; 2 hebelt die Käuferbewertung die Negativauslese aus.</p>'
+    : '<span class="tag">Kein Handel ✗</span><p>Zahlungsbereitschaft <strong>'+fmt(wtp,2)+'</strong> &lt; Preis <strong>'+fmt(p,2)+'</strong>. Bei Akerlofs k = 3/2 gilt k·p/2 = 0,75p — <em>immer</em> kleiner als p. Erst ab k &gt; 2 kippt es.</p>';
+
+  const {ctx,w,h}=hidpi($('mdCv'));
+  ctx.clearRect(0,0,w,h);
+  const P={l:56,r:w-26,t:34,b:h-58};
+  const X=v=>P.l+(v/mx)*(P.r-P.l);
+  ctx.fillStyle='rgba(255,255,255,.022)'; rrect(ctx,P.l,P.t,P.r-P.l,P.b-P.t,10); ctx.fill();
+  const gz=ctx.createLinearGradient(P.l,0,X(Math.min(p,mx)),0);
+  gz.addColorStop(0,'rgba(255,107,138,.2)'); gz.addColorStop(1,'rgba(255,107,138,.05)');
+  ctx.fillStyle=gz; ctx.fillRect(P.l,P.t,Math.max(X(Math.min(p,mx))-P.l,0),P.b-P.t);
+
+  cars.forEach(c=>{
+    const x=X(c.x), y=P.t+16+c.ry*(P.b-P.t-32);
+    const s=c.x<p;
+    drawCar(ctx,x,y,0.66,s?C.cherry:C.mint,s?0.95:0.45);
+  });
+  // Linien
+  const vline=(v,col,lab,up)=>{
+    if(v>mx) return;
+    ctx.strokeStyle=col; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(X(v),P.t-6); ctx.lineTo(X(v),P.b+6); ctx.stroke();
+    ctx.fillStyle=col; ctx.font='600 11.5px Inter'; ctx.textAlign='center';
+    ctx.fillText(lab,X(v),up?P.t-12:P.b+24);
+  };
+  vline(p,C.gold,'p = '+fmt(p,2),true);
+  ctx.setLineDash([5,4]); vline(mu,'rgba(95,184,255,.85)','μ = '+fmt(mu,2),false); ctx.setLineDash([]);
+  vline(wtp,C.sky,'k·μ = '+fmt(wtp,2),false);
+  // Achse
+  ctx.fillStyle=C.faint; ctx.font='11px Inter'; ctx.textAlign='center';
+  for(let i=0;i<=4;i++){ const v=mx*i/4; ctx.fillText(fmt(v,1),X(v),P.b+44); }
+  ctx.textAlign='left'; ctx.fillText('Qualität x',P.l,P.t-16);
+  ctx.textAlign='right'; ctx.fillText(sold.length+' von '+N+' angeboten',P.r,P.t-16);
+}
+['mdK','mdMax','mdN','mdP'].forEach(id=>$(id).addEventListener('input',mdUpdate));
+
+/* ===================================================================
+   4 · HERLEITUNG SCHRITT FÜR SCHRITT
+   =================================================================== */
+const DERIV=[
+  {t:'Ausgangspunkt: N Autos, Qualität gleichverteilt',
+   h:'Gruppe 1 besitzt N Autos. Die Qualität x ist gleichverteilt auf [0, 2]. Das heißt: In jedem gleich großen Qualitätsintervall liegen gleich viele Autos.',
+   m:'x \\sim \\mathcal{U}[0,\\,2]', mode:'uniform'},
+  {t:'Wann verkauft ein Besitzer?',
+   h:'Besitzer i hat Nutzen U₁ = M + x. Behält er das Auto, hat er Nutzen x. Verkauft er, bekommt er p. Er verkauft also genau dann, wenn p ≥ x.',
+   m:'\\text{verkaufen} \\iff p \\ge x_i', mode:'rule'},
+  {t:'Wie viele verkaufen?',
+   h:'Der Anteil der Autos mit x ≤ p ist bei Gleichverteilung auf [0,2] genau p/2. Beispiel: Bei p = 1 ist das die Hälfte.',
+   m:'P(x \\le p) = \\frac{p-0}{2-0} = \\frac{p}{2}', mode:'frac'},
+  {t:'Gleichung (1): das Angebot',
+   h:'Anteil mal Anzahl ergibt die Angebotsmenge. Das ist Akerlofs Gleichung (1).',
+   m:'S(p) = \\frac{p}{2}\\cdot N = \\frac{pN}{2}', mode:'supply'},
+  {t:'Gleichung (2): die Durchschnittsqualität',
+   h:'Die angebotenen Autos sind gleichverteilt auf [0, p]. Der Mittelwert einer Gleichverteilung ist die Mitte des Intervalls — also p/2.',
+   m:'\\mu(p) = \\mathbb{E}[x \\mid x \\le p] = \\frac{0+p}{2} = \\frac{p}{2}', mode:'mu'},
+  {t:'Der Schlag: Zahlungsbereitschaft < Preis',
+   h:'Gruppe 2 zahlt höchstens 3/2 · μ. Einsetzen von μ = p/2 ergibt 3/4 · p. Das ist IMMER kleiner als p. Also kauft bei keinem Preis jemand.',
+   m:'\\tfrac{3}{2}\\mu = \\tfrac{3}{2}\\cdot\\tfrac{p}{2} = \\tfrac{3}{4}p \\;<\\; p \\quad \\forall\\, p>0', mode:'final'}
+];
+let derivI=0;
+function derivStep(d){
+  derivI=clamp(derivI+d,0,DERIV.length-1);
+  derivRender();
+}
+function derivRender(){
+  const s=DERIV[derivI];
+  $('derivCount').textContent='Schritt '+(derivI+1)+' / '+DERIV.length;
+  $('derivText').innerHTML =
+    '<div class="pill gold">Schritt '+(derivI+1)+'</div>'+
+    '<h4 style="text-transform:none;letter-spacing:0;color:var(--gold-2);font-size:18px;margin-top:12px">'+s.t+'</h4>'+
+    '<p>'+s.h+'</p><div class="mathbox"><div id="derivMath"></div></div>';
+  K('derivMath',s.m,true);
+  derivCanvas(s.mode);
+}
+function derivCanvas(mode){
+  const {ctx,w,h}=hidpi($('derivCv'));
+  ctx.clearRect(0,0,w,h);
+  const P={l:46,r:w-22,t:36,b:h-48};
+  const X=v=>P.l+(v/2)*(P.r-P.l);
+  const Y=v=>P.b-v*(P.b-P.t);
+  const p=1.3;
+
+  ctx.strokeStyle='rgba(255,255,255,.16)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(P.l,P.t-10); ctx.lineTo(P.l,P.b); ctx.lineTo(P.r,P.b); ctx.stroke();
+  ctx.fillStyle=C.faint; ctx.font='11px Inter'; ctx.textAlign='center';
+  for(let i=0;i<=4;i++) ctx.fillText(fmt(2*i/4,1),X(2*i/4),P.b+20);
+  ctx.textAlign='left'; ctx.fillText('x',P.r-8,P.b+20);
+
+  if(mode==='uniform'||mode==='rule'||mode==='frac'||mode==='supply'||mode==='mu'||mode==='final'){
+    // Dichte-Rechteck
+    ctx.fillStyle='rgba(95,184,255,.16)';
+    ctx.fillRect(P.l,Y(0.5),P.r-P.l,P.b-Y(0.5));
+    ctx.strokeStyle=C.sky; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(P.l,Y(0.5)); ctx.lineTo(P.r,Y(0.5)); ctx.stroke();
+    ctx.fillStyle=C.sky; ctx.font='11px Inter'; ctx.textAlign='left';
+    ctx.fillText('Dichte = 1/2 (konstant)',P.l+8,Y(0.5)-9);
+  }
+  if(mode==='rule'||mode==='frac'||mode==='supply'||mode==='mu'||mode==='final'){
+    ctx.fillStyle='rgba(255,107,138,.3)';
+    ctx.fillRect(P.l,Y(0.5),X(p)-P.l,P.b-Y(0.5));
+    ctx.strokeStyle=C.gold; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(X(p),P.t-10); ctx.lineTo(X(p),P.b); ctx.stroke();
+    ctx.fillStyle=C.gold; ctx.textAlign='center'; ctx.font='600 12px Inter';
+    ctx.fillText('p',X(p),P.t-16);
+    ctx.fillStyle=C.cherry; ctx.font='11.5px Inter';
+    ctx.fillText('verkaufen',(P.l+X(p))/2,Y(0.25));
+    ctx.fillStyle=C.mint;
+    ctx.fillText('behalten',(X(p)+P.r)/2,Y(0.25));
+  }
+  if(mode==='frac'||mode==='supply'){
+    ctx.fillStyle=C.cherry; ctx.font='600 13px Inter'; ctx.textAlign='center';
+    ctx.fillText('Fläche = p/2 = '+fmt(p/2,2),(P.l+X(p))/2,Y(0.62));
+  }
+  if(mode==='mu'||mode==='final'){
+    ctx.strokeStyle=C.violet; ctx.lineWidth=2.5; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(X(p/2),P.t-6); ctx.lineTo(X(p/2),P.b); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=C.violet; ctx.font='600 12px Inter'; ctx.textAlign='center';
+    ctx.fillText('μ = p/2',X(p/2),P.t-14);
+  }
+  if(mode==='final'){
+    const wtp=0.75*p;
+    ctx.strokeStyle=C.mint; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(X(wtp),Y(0.05)); ctx.lineTo(X(wtp),P.b); ctx.stroke();
+    ctx.fillStyle=C.mint; ctx.font='600 11.5px Inter'; ctx.textAlign='center';
+    ctx.fillText('3μ/2 = ¾p',X(wtp),Y(0.05)-8);
+    // Lücke
+    ctx.strokeStyle='rgba(255,107,138,.8)'; ctx.lineWidth=2;
+    const gy=Y(0.78);
+    ctx.beginPath(); ctx.moveTo(X(wtp),gy); ctx.lineTo(X(p),gy); ctx.stroke();
+    ctx.fillStyle=C.cherry; ctx.font='600 11.5px Inter';
+    ctx.fillText('Lücke → kein Handel',(X(wtp)+X(p))/2,gy-8);
+  }
+}
+
+/* ===================================================================
+   5 · DIE RECHNUNG
+   =================================================================== */
+function rcUpdate(){
+  const p=+$('rcP').value;
+  $('rcPVal').textContent=fmt(p,2);
+  const mu=p/2, wtp=1.5*mu;
+  $('rcMu').textContent=fmt(mu,2);
+  $('rcW').textContent=fmt(wtp,2);
+
+  let caseTxt;
+  if(p<mu) caseTxt='<span class="tag">Fall 1: p &lt; μ</span><p>Beide Gruppen kaufen: D = (Y₁+Y₂)/p. Aber: p &lt; p/2 ist nie erfüllt!</p>';
+  else if(p<wtp) caseTxt='<span class="tag">Fall 2: μ &lt; p &lt; 3μ/2</span><p>Nur Gruppe 2 kauft: D = Y₂/p. Aber p &lt; ¾p ist nie erfüllt!</p>';
+  else caseTxt='<span class="tag">Fall 3: p &gt; 3μ/2 — IMMER</span><p>Niemand kauft. <strong>D(p, μ) = 0.</strong> Und dieser Fall tritt bei <em>jedem</em> positiven Preis ein, weil ¾p &lt; p gilt.</p>';
+  $('rcCase').innerHTML=caseTxt;
+
+  const ps=[]; for(let i=1;i<=130;i++) ps.push(i*0.02);
+  Plotly.react('rcPlot',[
+    {x:ps,y:ps,name:'Preis p (was du zahlst)',mode:'lines',line:{color:C.gold,width:3}},
+    {x:ps,y:ps.map(v=>v/2),name:'μ = p/2 (was du bekommst)',mode:'lines',line:{color:C.cherry,width:3}},
+    {x:ps,y:ps.map(v=>0.75*v),name:'3μ/2 (was es dir wert ist)',mode:'lines',line:{color:C.sky,width:3}},
+    {x:ps,y:ps.map(v=>0.75*v),mode:'lines',line:{width:0},showlegend:false,hoverinfo:'skip'},
+    {x:ps,y:ps,mode:'lines',fill:'tonexty',fillcolor:'rgba(255,107,138,.12)',
+     line:{width:0},name:'Lücke: hier stirbt der Markt',hoverinfo:'skip'},
+    {x:[p],y:[p],mode:'markers',showlegend:false,marker:{size:12,color:C.gold,line:{color:'#fff',width:2}}},
+    {x:[p],y:[wtp],mode:'markers',showlegend:false,marker:{size:12,color:C.sky,line:{color:'#fff',width:2}}},
+    {x:[p],y:[mu],mode:'markers',showlegend:false,marker:{size:12,color:C.cherry,line:{color:'#fff',width:2}}}
+  ],lay({
+    xaxis:{title:'Preis p',gridcolor:C.grid,range:[0,2.6]},
+    yaxis:{title:'Wert in Qualitätseinheiten',gridcolor:C.grid,range:[0,2.6]},
+    legend:{x:.02,y:1.16,orientation:'h',bgcolor:'rgba(0,0,0,0)',font:{size:10.5}},
+    shapes:[{type:'line',x0:p,x1:p,y0:0,y1:2.6,line:{color:'rgba(255,255,255,.2)',dash:'dot'}}],
+    margin:{l:58,r:22,t:56,b:46}
+  }),PCFG);
+}
+$('rcP').addEventListener('input',rcUpdate);
+
+function schereInit(){
+  const ps=[]; for(let i=0;i<=130;i++) ps.push(i*0.02);
+  Plotly.react('scherePlot',[
+    {x:ps,y:ps,name:'Preis p',mode:'lines',line:{color:C.gold,width:3.5}},
+    {x:ps,y:ps.map(v=>0.75*v),name:'Zahlungsbereitschaft 3μ/2 = ¾p',mode:'lines',
+     line:{color:C.sky,width:3.5},fill:'tonexty',fillcolor:'rgba(255,107,138,.13)'},
+    {x:[0],y:[0],mode:'markers+text',name:'einziger "Schnittpunkt"',
+     marker:{size:16,color:C.cherry,symbol:'x',line:{width:3}},
+     text:['p = 0 → Markt = 0'],textposition:'top right',
+     textfont:{color:C.cherry,size:12}}
+  ],lay({
+    xaxis:{title:'Preis p',gridcolor:C.grid,range:[0,2.6]},
+    yaxis:{title:'Wert',gridcolor:C.grid,range:[0,2.6]},
+    legend:{x:.02,y:1.14,orientation:'h',bgcolor:'rgba(0,0,0,0)',font:{size:11}},
+    annotations:[{x:1.7,y:1.1,ax:40,ay:30,text:'Diese Fläche ist der<br>nie realisierte Handel',
+                  showarrow:true,arrowcolor:C.cherry,font:{color:C.cherry,size:11.5}}],
+    margin:{l:58,r:22,t:52,b:46}
+  }),PCFG);
+}
+
+/* ===================================================================
+   6 · DIE TODESSPIRALE
+   =================================================================== */
+const SPN=240;
+let spCars=[], spRound=0, spPrice=1.8, spTimer=null;
+function spiralReset(){
+  if(spTimer){ clearInterval(spTimer); spTimer=null; }
+  spRound=0; spPrice=+$('spP0').value;
+  spCars=Array.from({length:SPN},()=>({x:Math.random()*2,ry:Math.random(),alive:true}));
+  spiralDraw(); spiralStats('Der Markt startet. Käufer bieten einen Preis, weil sie hoffen, gute Autos zu bekommen.');
+}
+function spiralStep(){
+  // Alle mit Qualität > Preis steigen aus (lock-in), Preis = 3/2 * mu der Verbleibenden
+  spCars.forEach(c=>{ if(c.x>spPrice) c.alive=false; });
+  const alive=spCars.filter(c=>c.alive);
+  const mu = alive.length? alive.reduce((a,c)=>a+c.x,0)/alive.length : 0;
+  spPrice = 1.5*mu;
+  spRound++;
+  let narr;
+  if(spRound===1) narr='Die besten Autos ziehen sich zurück — ihre Besitzer bekommen nicht, was sie wert sind („locked in“). Die Ø-Qualität fällt sofort.';
+  else if(spRound<4) narr='Käufer bemerken die schlechtere Qualität und senken ihr Gebot. Daraufhin steigen die <em>nächstbesten</em> Autos aus. „The bad driving out the not-so-bad…“';
+  else if(spPrice>0.08) narr='Die Spirale beschleunigt. Jede Runde schrumpft der Preis auf ¾ — nur gute Autos verlassen den Markt, nie die schlechten.';
+  else narr='<strong>Markt tot.</strong> Preis → 0, Handel → 0. Genau Akerlofs Ergebnis: „at no price will any trade take place at all“.';
+  spiralDraw(); spiralStats(narr);
+  return spPrice>0.02;
+}
+function spiralPlay(){
+  if(spTimer){ clearInterval(spTimer); spTimer=null; return; }
+  const sp=+$('spSpeed').value;
+  const iv=[1100,800,520,320,170][sp-1];
+  spTimer=setInterval(()=>{ if(!spiralStep()){ clearInterval(spTimer); spTimer=null; } },iv);
+}
+function spiralStats(n){
+  const alive=spCars.filter(c=>c.alive);
+  const mu = alive.length? alive.reduce((a,c)=>a+c.x,0)/alive.length : 0;
+  $('spRound').textContent=spRound;
+  $('spPrice').textContent=fmt(spPrice,2);
+  $('spQual').textContent=fmt(mu,2);
+  $('spAlive').textContent=Math.round(alive.length/SPN*100)+' %';
+  $('spNarr').className='callout '+(spRound===0?'blue':(spPrice>0.1?'':'red'));
+  $('spNarr').innerHTML='<span class="tag">Runde '+spRound+'</span><p>'+n+'</p>';
+}
+function spiralDraw(){
+  const {ctx,w,h}=hidpi($('spiralCv'));
+  ctx.clearRect(0,0,w,h);
+  const P={l:54,r:w-24,t:40,b:h-54};
+  const X=v=>P.l+(v/2)*(P.r-P.l);
+  ctx.fillStyle='rgba(255,255,255,.02)'; rrect(ctx,P.l,P.t,P.r-P.l,P.b-P.t,10); ctx.fill();
+  // aktive Zone
+  const gz=ctx.createLinearGradient(P.l,0,X(Math.min(spPrice,2)),0);
+  gz.addColorStop(0,'rgba(79,240,192,.14)'); gz.addColorStop(1,'rgba(79,240,192,.03)');
+  ctx.fillStyle=gz; ctx.fillRect(P.l,P.t,Math.max(X(Math.min(spPrice,2))-P.l,0),P.b-P.t);
+
+  spCars.forEach(c=>{
+    const x=X(c.x), y=P.t+16+c.ry*(P.b-P.t-32);
+    drawCar(ctx,x,y,0.62,c.alive?C.mint:'#334055',c.alive?0.95:0.3);
+  });
+  // Preislinie
+  if(spPrice<=2){
+    ctx.strokeStyle=C.gold; ctx.lineWidth=2.5;
+    ctx.beginPath(); ctx.moveTo(X(spPrice),P.t-8); ctx.lineTo(X(spPrice),P.b+8); ctx.stroke();
+    ctx.fillStyle=C.gold; ctx.font='600 12px Inter'; ctx.textAlign='center';
+    ctx.fillText('p = '+fmt(spPrice,2),X(spPrice),P.t-14);
+    // Pfeil nach links
+    if(spRound>0){
+      ctx.strokeStyle='rgba(255,107,138,.7)'; ctx.lineWidth=2;
+      const ay=P.b+26, x1=X(spPrice), x0=Math.max(X(spPrice*0.75),P.l);
+      ctx.beginPath(); ctx.moveTo(x1,ay); ctx.lineTo(x0,ay); ctx.stroke();
+      ctx.fillStyle='rgba(255,107,138,.7)';
+      ctx.beginPath(); ctx.moveTo(x0,ay); ctx.lineTo(x0+7,ay-4); ctx.lineTo(x0+7,ay+4); ctx.closePath(); ctx.fill();
+      ctx.font='10.5px Inter'; ctx.fillText('nächste Runde',(x0+x1)/2,ay-7);
+    }
+  }
+  ctx.fillStyle=C.faint; ctx.font='11px Inter'; ctx.textAlign='center';
+  for(let i=0;i<=4;i++) ctx.fillText(fmt(2*i/4,1),X(2*i/4),P.b+44);
+  ctx.textAlign='left'; ctx.fillText('Qualität x →',P.l,P.t-16);
+  ctx.textAlign='right'; ctx.fillStyle=C.mint;
+  ctx.fillText(spCars.filter(c=>c.alive).length+' Autos noch im Markt',P.r,P.t-16);
+}
+$('spP0').addEventListener('input',()=>{ $('spP0Val').textContent=fmt(+$('spP0').value,2); spiralReset(); });
+$('spSpeed').addEventListener('input',()=>{
+  $('spSpeedVal').textContent=['sehr langsam','langsam','normal','schnell','turbo'][+$('spSpeed').value-1];
+  if(spTimer){ clearInterval(spTimer); spTimer=null; spiralPlay(); }
+});
+
+function iterInit(){
+  const p0=1.8, rows=[]; const xs=[],ys=[],ms=[];
+  let p=p0;
+  for(let n=0;n<=12;n++){
+    const mu=p/2;
+    rows.push([n,p,mu,1.5*mu]);
+    xs.push(n); ys.push(p); ms.push(mu);
+    p=0.75*p;
+  }
+  Plotly.react('iterPlot',[
+    {x:xs,y:ys,name:'Preis pₙ',mode:'lines+markers',line:{color:C.gold,width:3},marker:{size:7}},
+    {x:xs,y:ms,name:'Ø-Qualität μₙ',mode:'lines+markers',line:{color:C.cherry,width:3},marker:{size:7}}
+  ],lay({
+    xaxis:{title:'Runde n',gridcolor:C.grid},
+    yaxis:{title:'Wert',gridcolor:C.grid},
+    legend:{x:.6,y:1.12,orientation:'h',bgcolor:'rgba(0,0,0,0)'},
+    margin:{l:56,r:22,t:40,b:46}
+  }),PCFG);
+  let html='<tr><th>Runde</th><th>Preis pₙ</th><th>Ø-Qualität μₙ = pₙ/2</th><th>Zahlungsbereitschaft 3μₙ/2</th><th>→ neuer Preis</th></tr>';
+  rows.slice(0,9).forEach(r=>{
+    html+='<tr><td>'+r[0]+'</td><td class="hl">'+fmt(r[1],3)+'</td><td>'+fmt(r[2],3)+'</td><td>'+fmt(r[3],3)+'</td><td style="color:var(--cherry)">'+fmt(r[3],3)+' &lt; '+fmt(r[1],3)+' ✗</td></tr>';
+  });
+  html+='<tr><td>…</td><td class="hl">→ 0</td><td>→ 0</td><td>→ 0</td><td style="color:var(--cherry)">Markt tot</td></tr>';
+  $('iterTable').innerHTML=html;
+}
+
+/* ===================================================================
+   7 · SYMMETRISCHE INFORMATION
+   =================================================================== */
+function syUpdate(){
+  const N=+$('syN').value, Y=+$('syY').value;
+  $('syNVal').textContent=N; $('syYVal').textContent=Y;
+  let p,cs,msg;
+  if(Y<N){ p=1; cs='(3)'; msg='<span class="tag">Fall (3): Y₂ &lt; N</span><p>Es gibt mehr Autos als Kaufkraft. Der Preis fällt auf die <strong>Untergrenze p = 1</strong> — darunter würde kein Besitzer verkaufen. Akerlof: „p = 1 if Y₂ &lt; N“ [[11]]</p>'; }
+  else if(N > 2*Y/3){ p=Y/N; cs='(4)'; msg='<span class="tag">Fall (4): 2Y₂/3 &lt; N &lt; Y₂</span><p>Der Mittelfall. Gruppe 2 gibt ihr komplettes Einkommen aus: <strong>p = Y₂/N = '+fmt(Y/N,2)+'</strong>. Akerlof: „p = Y₂/N“ [[11]]</p>'; }
+  else { p=1.5; cs='(5)'; msg='<span class="tag">Fall (5): N &lt; 2Y₂/3</span><p>Wenige Autos, viel Geld. Der Preis stößt an die <strong>Obergrenze p = 3/2</strong> — mehr würde Gruppe 2 nie zahlen. Akerlof: „p = 3/2 if N &lt; 2Y₂/3“ [[11]]</p>'; }
+  $('syP').textContent=fmt(p,2);
+  $('syQ').textContent=Math.min(N,Math.round(Y/p));
+  $('syCase').textContent=cs;
+  $('syMsg').innerHTML=msg;
+
+  const ps=[]; for(let i=1;i<=140;i++) ps.push(i*0.015);
+  Plotly.react('syPlot',[
+    {x:ps,y:ps.map(v=>v>1?N:0),name:'Angebot S(p)',mode:'lines',line:{color:C.sky,width:3,shape:'hv'}},
+    {x:ps,y:ps.map(v=> v<1? (Y*2)/v : (v<1.5? Y/v : 0)),name:'Nachfrage D(p)',mode:'lines',line:{color:C.mint,width:3}},
+    {x:[p],y:[Math.min(N,Y/p)],mode:'markers+text',name:'Gleichgewicht',
+     marker:{size:16,color:C.gold,line:{color:'#fff',width:2}},
+     text:['p* = '+fmt(p,2)],textposition:'top center',textfont:{color:C.gold,size:12}}
+  ],lay({
+    xaxis:{title:'Preis p (pro Qualitätseinheit)',gridcolor:C.grid,range:[0,2.2]},
+    yaxis:{title:'Menge',gridcolor:C.grid,range:[0,N*1.6]},
+    shapes:[
+      {type:'line',x0:1,x1:1,y0:0,y1:N*1.6,line:{color:'rgba(255,255,255,.16)',dash:'dot'}},
+      {type:'line',x0:1.5,x1:1.5,y0:0,y1:N*1.6,line:{color:'rgba(255,255,255,.16)',dash:'dot'}}
+    ],
+    annotations:[
+      {x:1,y:N*1.52,text:'p = 1',showarrow:false,font:{color:C.faint,size:10}},
+      {x:1.5,y:N*1.52,text:'p = 3/2',showarrow:false,font:{color:C.faint,size:10}}
+    ],
+    legend:{x:.5,y:1.13,xanchor:'center',orientation:'h',bgcolor:'rgba(0,0,0,0)'},
+    margin:{l:58,r:22,t:48,b:48}
+  }),PCFG);
+}
+['syN','syY'].forEach(id=>$(id).addEventListener('input',syUpdate));
+
+function compareInit(){
+  const ps=[]; for(let i=1;i<=130;i++) ps.push(i*0.02);
+  const N=100;
+  Plotly.react('comparePlot',[
+    {x:ps,y:ps.map(v=>v>1?N:0),name:'SYM: Angebot',mode:'lines',
+     line:{color:'rgba(95,184,255,.9)',width:3,shape:'hv'},xaxis:'x',yaxis:'y'},
+    {x:ps,y:ps.map(v=>v<1.5?Math.min(150/v,N*1.5):0),name:'SYM: Nachfrage',mode:'lines',
+     line:{color:'rgba(79,240,192,.9)',width:3},xaxis:'x',yaxis:'y'},
+    {x:[1.5],y:[N],mode:'markers',name:'Handel findet statt',
+     marker:{size:15,color:C.gold,line:{color:'#fff',width:2}},xaxis:'x',yaxis:'y'},
+    {x:ps,y:ps.map(v=>Math.min(v,2)*N/2),name:'ASYM: Angebot',mode:'lines',
+     line:{color:'rgba(95,184,255,.9)',width:3},xaxis:'x2',yaxis:'y2'},
+    {x:ps,y:ps.map(()=>0),name:'ASYM: Nachfrage ≡ 0',mode:'lines',
+     line:{color:C.cherry,width:4},xaxis:'x2',yaxis:'y2'},
+    {x:[0],y:[0],mode:'markers',name:'kein Handel',
+     marker:{size:15,color:C.cherry,symbol:'x',line:{width:3}},xaxis:'x2',yaxis:'y2'}
+  ],lay({
+    grid:{rows:1,columns:2,pattern:'independent'},
+    xaxis:{title:'Preis p',domain:[0,.46],gridcolor:C.grid,range:[0,2.6]},
+    yaxis:{title:'Menge',gridcolor:C.grid,range:[0,160]},
+    xaxis2:{title:'Preis p',domain:[.56,1],gridcolor:C.grid,range:[0,2.6]},
+    yaxis2:{gridcolor:C.grid,range:[0,160],anchor:'x2'},
+    legend:{x:.5,y:-.22,xanchor:'center',orientation:'h',bgcolor:'rgba(0,0,0,0)',font:{size:10.5}},
+    annotations:[
+      {x:.22,y:1.08,xref:'paper',yref:'paper',text:'<b>Symmetrische Information</b>',
+       showarrow:false,font:{color:C.mint,size:13}},
+      {x:.79,y:1.08,xref:'paper',yref:'paper',text:'<b>Asymmetrische Information</b>',
+       showarrow:false,font:{color:C.cherry,size:13}}
+    ],
+    margin:{l:56,r:22,t:50,b:86}
+  }),PCFG);
+}
+
+/* ===================================================================
+   8 · WOHLFAHRT
+   =================================================================== */
+function wfUpdate(){
+  const N=+$('wfN').value, Y=+$('wfY').value, hShare=+$('wfH').value/100;
+  $('wfNVal').textContent=N; $('wfYVal').textContent=Y; $('wfHVal').textContent=Math.round(hShare*100)+' %';
+  // Akerlof: Gewinn bei symmetrischer Info = N/2 falls N<Y2, sonst Y2/2
+  const maxGain = N<Y ? N/2 : Y/2;
+  const realized = maxGain*hShare;
+  const lost = maxGain-realized;
+  const size = Math.round(Math.min(N,Y)*hShare);
+  $('wfLoss').textContent=fmt(lost,1);
+  $('wfGain').textContent=fmt(realized,1);
+  $('wfSize').textContent=size;
+  $('wfMsg').className='callout '+(hShare<0.15?'red':(hShare<0.7?'':'mint'));
+  $('wfMsg').innerHTML = hShare<0.02
+    ? '<span class="tag">Akerlofs Fall</span><p>Reine Unehrlichkeit: „dishonesty … costs 1/2 unit of utility per automobile; furthermore, it reduces the size of the used car market <strong>from N to 0</strong>.“ [[11]] Verlust: <strong>'+fmt(lost,1)+'</strong> Nutzeneinheiten.</p>'
+    : hShare<0.99
+    ? '<span class="tag">Teilweise Vertrauen</span><p>Mit '+Math.round(hShare*100)+' % glaubwürdigen Händlern werden '+size+' Autos gehandelt. Realisiert: <strong>'+fmt(realized,1)+'</strong>. Noch verloren: <strong>'+fmt(lost,1)+'</strong>.</p>'
+    : '<span class="tag">Volles Vertrauen</span><p>Alle Handelsgewinne werden realisiert: <strong>'+fmt(maxGain,1)+'</strong> Nutzeneinheiten. Das ist Akerlofs symmetrischer Fall — „a gain in utility over the case of asymmetrical information of N/2“ [[11]].</p>';
+
+  const xs=[]; for(let i=0;i<=50;i++) xs.push(i/50);
+  Plotly.react('wfPlot',[
+    {x:xs.map(v=>v*100),y:xs.map(v=>maxGain*v),name:'realisierte Wohlfahrt',
+     mode:'lines',line:{color:C.mint,width:3},fill:'tozeroy',fillcolor:'rgba(79,240,192,.14)'},
+    {x:xs.map(v=>v*100),y:xs.map(()=>maxGain),name:'maximal möglich (N/2)',
+     mode:'lines',line:{color:C.gold,width:2,dash:'dash'}},
+    {x:[hShare*100],y:[realized],mode:'markers',showlegend:false,
+     marker:{size:14,color:C.gold,line:{color:'#fff',width:2}}}
+  ],lay({
+    xaxis:{title:'Anteil ehrlicher / verifizierbarer Händler (%)',gridcolor:C.grid},
+    yaxis:{title:'Nutzeneinheiten',gridcolor:C.grid,range:[0,maxGain*1.2]},
+    shapes:[{type:'rect',x0:hShare*100,x1:100,y0:realized,y1:maxGain,
+             fillcolor:'rgba(255,107,138,.14)',line:{width:0}}],    annotations:[{x:Math.min(hShare*100+28,92),y:maxGain*0.96,
+                  text:'verlorene Wohlfahrt',showarrow:false,
+                  font:{color:C.cherry,size:11.5}}],
+    legend:{x:.02,y:1.14,orientation:'h',bgcolor:'rgba(0,0,0,0)',font:{size:11}},
+    margin:{l:58,r:22,t:50,b:50}
+  }),PCFG);
+}
+['wfN','wfY','wfH'].forEach(id=>$(id).addEventListener('input',wfUpdate));
+
+/* ===================================================================
+   9A · KRANKENVERSICHERUNG — adverse selection
+   =================================================================== */
+const INS_N=300;
+// jede Person: erwartete Krankheitskosten (gleichverteilt), kauft wenn Prämie <= Kosten*Bereitschaft
+const insPeople=Array.from({length:INS_N},()=>({
+  cost: 200+Math.random()*11000,   // erwartete medizinische Kosten
+  ry: Math.random()
+}));
+function insEval(prem){
+  // Person versichert sich, wenn ihre erwarteten Kosten >= Prämie (risikoneutral, Akerlofs Logik:
+  // "people who insure themselves will be those who are increasingly certain that they will need it")
+  const ins=insPeople.filter(p=>p.cost>=prem*0.85);
+  const avg=ins.length? ins.reduce((a,p)=>a+p.cost,0)/ins.length : 0;
+  return {ins,avg,balance:(prem-avg)*ins.length};
+}
+function insUpdate(){
+  const prem=+$('insP').value;
+  $('insPVal').textContent=eur(prem);
+  const {ins,avg,balance}=insEval(prem);
+  $('insN').textContent=ins.length+' / '+INS_N;
+  $('insC').textContent= ins.length? eur(avg) : '—';
+  $('insB').textContent= ins.length? (balance>0?'+':'')+eur(balance/1000)+'k' : '0 €';
+  $('insB').parentElement.className='stat '+(balance>=0?'good':'bad');
+
+  $('insMsg').className='callout '+(balance>=0?'mint':'red');
+  $('insMsg').innerHTML = ins.length===0
+    ? '<span class="tag">Niemand versichert sich</span><p>Die Prämie ist so hoch, dass selbst die Kränkesten absagen. „no insurance sales may take place at any price“ [[11]]</p>'
+    : balance<0
+    ? '<span class="tag">Versicherung macht Verlust</span><p>Der Pool kostet im Schnitt '+eur(avg)+', die Prämie bringt nur '+eur(prem)+'. Die Versicherung <strong>muss</strong> den Preis erhöhen — und löst damit die nächste Runde Abwanderung aus. „The average medical condition of insurance applicants deteriorates as the price level rises“ [[11]]</p>'
+    : '<span class="tag">Tragfähig — vorerst</span><p>Bei dieser Prämie deckt der Beitrag die Kosten des Pools. Beobachte, was beim Hochschieben passiert.</p>';
+
+  // Canvas: wer bleibt im Pool?
+  const {ctx,w,h}=hidpi($('insCv'));
+  ctx.clearRect(0,0,w,h);
+  const P={l:52,r:w-22,t:34,b:h-48};
+  const X=v=>P.l+((v-200)/11000)*(P.r-P.l);
+  ctx.fillStyle='rgba(255,255,255,.02)'; rrect(ctx,P.l,P.t,P.r-P.l,P.b-P.t,10); ctx.fill();
+  const thr=prem*0.85;
+  const gz=ctx.createLinearGradient(X(thr),0,P.r,0);
+  gz.addColorStop(0,'rgba(255,107,138,.06)'); gz.addColorStop(1,'rgba(255,107,138,.2)');
+  ctx.fillStyle=gz; ctx.fillRect(Math.max(X(thr),P.l),P.t,Math.max(P.r-Math.max(X(thr),P.l),0),P.b-P.t);
+
+  insPeople.forEach(p=>{
+    const x=clamp(X(p.cost),P.l+3,P.r-3), y=P.t+14+p.ry*(P.b-P.t-28);
+    const inPool=p.cost>=thr;
+    ctx.fillStyle=inPool?'rgba(255,107,138,.9)':'rgba(79,240,192,.4)';
+    ctx.beginPath(); ctx.arc(x,y,3.1,0,Math.PI*2); ctx.fill();
+  });
+  ctx.strokeStyle=C.gold; ctx.lineWidth=2.5;
+  const tx=clamp(X(thr),P.l,P.r);
+  ctx.beginPath(); ctx.moveTo(tx,P.t-8); ctx.lineTo(tx,P.b+8); ctx.stroke();
+  ctx.fillStyle=C.gold; ctx.font='600 12px Inter'; ctx.textAlign='center';
+  ctx.fillText('Prämie '+eur(prem),tx,P.t-14);
+  ctx.fillStyle=C.mint; ctx.font='11px Inter'; ctx.textAlign='center';
+  if(tx-P.l>90) ctx.fillText('Gesunde steigen aus',(P.l+tx)/2,P.b+22);
+  ctx.fillStyle=C.cherry;
+  if(P.r-tx>90) ctx.fillText('nur noch Kranke im Pool',(tx+P.r)/2,P.b+22);
+  ctx.fillStyle=C.faint; ctx.font='11px Inter'; ctx.textAlign='left';
+  ctx.fillText('erwartete medizinische Kosten pro Person →',P.l,P.t-14);
+
+  // Plot: Prämie vs. Poolkosten
+  const prem_s=[],cost_s=[];
+  for(let v=300;v<=12000;v+=150){
+    prem_s.push(v); const r=insEval(v); cost_s.push(r.ins.length? r.avg : null);
+  }
+  Plotly.react('insPlot',[
+    {x:prem_s,y:prem_s,name:'Prämie (Einnahme)',mode:'lines',line:{color:C.gold,width:3}},
+    {x:prem_s,y:cost_s,name:'Ø Kosten des Pools',mode:'lines',line:{color:C.cherry,width:3}},
+    {x:[prem],y:[avg],mode:'markers',showlegend:false,
+     marker:{size:13,color:C.sky,line:{color:'#fff',width:2}}}
+  ],lay({
+    xaxis:{title:'Prämie (€)',gridcolor:C.grid},
+    yaxis:{title:'€',gridcolor:C.grid},
+    legend:{x:.02,y:1.16,orientation:'h',bgcolor:'rgba(0,0,0,0)',font:{size:10.5}},
+    margin:{l:62,r:20,t:48,b:46}
+  }),PCFG);
+}
+$('insP').addEventListener('input',insUpdate);
+function insSpiral(){
+  let v=1500, i=0;
+  const t=setInterval(()=>{
+    const r=insEval(v);
+    if(r.ins.length===0 || v>11800){ clearInterval(t); return; }
+    v = Math.min(r.avg*1.05, 12000);
+    $('insP').value=Math.round(v); paintRange($('insP')); insUpdate();
+    if(++i>26) clearInterval(t);
+  },420);
+}
+function mandUpdate(){
+  const on=+$('mand').value;
+  $('mandVal').textContent= on?'an (Medicare)':'aus (freiwillig)';
+  const prem_s=[],poolFree=[],poolMand=[];
+  const allAvg=insPeople.reduce((a,p)=>a+p.cost,0)/INS_N;
+  for(let v=300;v<=12000;v+=200){
+    prem_s.push(v);
+    const r=insEval(v);
+    poolFree.push(r.ins.length? r.avg:null);
+    poolMand.push(allAvg);
+  }
+  Plotly.react('mandPlot',[
+    {x:prem_s,y:prem_s,name:'Prämie',mode:'lines',line:{color:C.gold,width:2.5,dash:'dot'}},
+    {x:prem_s,y:on?poolMand:poolFree,name: on?'Ø Kosten bei Pflicht (alle im Pool)':'Ø Kosten bei Freiwilligkeit',
+     mode:'lines',line:{color:on?C.mint:C.cherry,width:3.5}}
+  ],lay({
+    xaxis:{title:'Prämie (€)',gridcolor:C.grid},
+    yaxis:{title:'€',gridcolor:C.grid,range:[0,12500]},
+    legend:{x:.02,y:1.15,orientation:'h',bgcolor:'rgba(0,0,0,0)',font:{size:10.5}},
+    annotations:[{x:7000,y: on? allAvg+900 : 9800,
+      text: on? '✓ Kosten konstant — Schnittpunkt existiert!<br>Jeder zahlt seine erwarteten Kosten.'
+              : '✗ Kosten laufen der Prämie davon —<br>kein tragfähiger Preis',
+      showarrow:false,font:{color: on?C.mint:C.cherry,size:11.5},align:'left'}],
+    margin:{l:62,r:20,t:46,b:46}
+  }),PCFG);
+}
+$('mand').addEventListener('input',mandUpdate);
+
+/* ===================================================================
+   9B · MINDERHEITEN / STATISTISCHE DISKRIMINIERUNG
+   =================================================================== */
+const SIG_N=320;
+const sigPeople=Array.from({length:SIG_N},()=>({
+  talent: Math.random(), noise:(Math.random()-0.5), ry:Math.random(), rx:Math.random()
+}));
+function sigUpdate(){
+  const s=+$('sig').value/100, spread=+$('spread').value;
+  $('sigVal').textContent=Math.round(s*100)+' %';
+  $('spreadVal').textContent=fmt(spread,2);
+  // wahrgenommenes Signal: Mischung aus Gruppenstatistik (0.5) und echtem Talent
+  const thr=0.55;
+  let hit=0, miss=0, correctReject=0;
+  const marks=sigPeople.map(p=>{
+    const perceived = lerp(0.5 + p.noise*0.08, p.talent, s);
+    const hired = perceived>thr*(1-0.0*spread);
+    const qualified = p.talent>thr;
+    if(hired&&qualified) hit++;
+    else if(!hired&&qualified) miss++;
+    else if(!hired&&!qualified) correctReject++;
+    return {p,perceived,hired,qualified};
+  });
+  $('sigHit').textContent=hit;
+  $('sigMiss').textContent=miss;
+
+  const {ctx,w,h}=hidpi($('sigCv'));
+  ctx.clearRect(0,0,w,h);
+  const P={l:56,r:w-24,t:40,b:h-56};
+  const X=v=>P.l+v*(P.r-P.l);
+  const Y=v=>P.b-v*(P.b-P.t);
+  ctx.fillStyle='rgba(255,255,255,.02)'; rrect(ctx,P.l,P.t,P.r-P.l,P.b-P.t,10); ctx.fill();
+  // Einstellungsschwelle (horizontal auf wahrgenommenem Signal)
+  ctx.fillStyle='rgba(79,240,192,.05)';
+  ctx.fillRect(P.l,P.t,P.r-P.l,Y(thr)-P.t);
+  ctx.strokeStyle='rgba(255,201,77,.6)'; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(P.l,Y(thr)); ctx.lineTo(P.r,Y(thr)); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=C.gold; ctx.font='11px Inter'; ctx.textAlign='left';
+  ctx.fillText('Einstellungsschwelle des Arbeitgebers',P.l+8,Y(thr)-7);
+  // vertikale Linie: echte Eignung
+  ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.setLineDash([4,4]); ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(X(thr),P.t); ctx.lineTo(X(thr),P.b); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=C.faint; ctx.textAlign='center';
+  ctx.fillText('tatsächlich geeignet →',X(thr)+80,P.t+14);
+
+  marks.forEach(m=>{
+    const x=X(m.p.talent), y=Y(clamp(m.perceived,0,1));
+    let col;
+    if(m.hired&&m.qualified) col='rgba(79,240,192,.9)';
+    else if(!m.hired&&m.qualified) col='rgba(255,107,138,.9)';
+    else if(m.hired&&!m.qualified) col='rgba(255,159,110,.75)';
+    else col='rgba(74,85,112,.6)';
+    ctx.fillStyle=col;
+    ctx.beginPath(); ctx.arc(x,y,3.4,0,Math.PI*2); ctx.fill();
+  });
+  ctx.fillStyle=C.faint; ctx.font='11px Inter'; ctx.textAlign='center';
+  ctx.fillText('tatsächliche Fähigkeit →',(P.l+P.r)/2,P.b+32);
+  ctx.save(); ctx.translate(P.l-38,(P.t+P.b)/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('vom Arbeitgeber wahrgenommen',0,0); ctx.restore();
+  ctx.textAlign='right'; ctx.fillStyle= s<0.2?C.cherry:C.mint; ctx.font='600 12px Inter';
+  ctx.fillText(s<0.2?'Regime der Unwissenheit':'Information wirkt',P.r,P.t-14);
+}
+['sig','spread'].forEach(id=>$(id).addEventListener('input',sigUpdate));
+
+/* ===================================================================
+   9C · KOSTEN DER UNEHRLICHKEIT
+   =================================================================== */
+const DH_N=240;
+const dhAgents=Array.from({length:DH_N},()=>({u:Math.random(),ry:Math.random(),rx:Math.random()}));
+function dhUpdate(){
+  const d=+$('dh').value/100, v=+$('dv').value;
+  $('dhVal').textContent=Math.round(d*100)+' %';
+  $('dvVal').textContent=fmt(v,2);
+  // Käufervertrauen fällt mit Anteil unehrlicher UND mit Qualitätsstreuung
+  const trust = Math.max(0, (1-d) * (1-0.55*v));
+  // Ehrliche Händler verlassen den Markt, wenn das Vertrauen ihren Preis unter ihre Kosten drückt
+  const honestTotal = Math.round(DH_N*(1-d));
+  const driveOut = Math.round(honestTotal*(1-trust));
+  const volume = Math.max(0, trust*100);
+  $('dhTrust').textContent=Math.round(trust*100)+' %';
+  $('dhOut').textContent=driveOut;
+  $('dhVol').textContent=Math.round(volume)+' %';
+  $('dhMsg').className='callout '+(trust>0.6?'mint':(trust>0.25?'':'red'));
+  $('dhMsg').innerHTML = trust>0.6
+    ? '<span class="tag">Markt funktioniert</span><p>Genug Vertrauen. Ehrliche Händler können ihre Qualität in Preisen realisieren.</p>'
+    : trust>0.25
+    ? '<span class="tag">Verdrängung läuft</span><p><strong>'+driveOut+'</strong> ehrliche Händler werden hinausgedrängt. „dishonest dealings tend to drive honest dealings out of the market“ [[11]]</p>'
+    : '<span class="tag">Markt kollabiert</span><p>„The cost of dishonesty … must include the loss incurred from driving legitimate business out of existence.“ [[11]] Fast kein ehrlicher Handel bleibt übrig.</p>';
+
+  const {ctx,w,h}=hidpi($('dhCv'));
+  ctx.clearRect(0,0,w,h);
+  const P={l:26,r:w-26,t:52,b:h-44};
+  ctx.fillStyle='rgba(255,255,255,.02)'; rrect(ctx,P.l,P.t,P.r-P.l,P.b-P.t,10); ctx.fill();
+  const cols=20, rows=Math.ceil(DH_N/cols);
+  const cw=(P.r-P.l)/cols, chh=(P.b-P.t)/rows;
+  dhAgents.forEach((a,i)=>{
+    const cx=P.l+(i%cols)*cw+cw/2, cy=P.t+Math.floor(i/cols)*chh+chh/2;
+    const dishonest = a.u < d;
+    const isHonest = !dishonest;
+    const pushedOut = isHonest && (a.rx > trust);
+    let col, alpha=1;
+    if(dishonest){ col=C.cherry; }
+    else if(pushedOut){ col='#3a4356'; alpha=0.55; }
+    else { col=C.mint; }
+    drawLemon(ctx,cx,cy,Math.min(cw,chh)*0.32,col,alpha);
+  });
+  ctx.fillStyle=C.faint; ctx.font='11px Inter'; ctx.textAlign='left';
+  ctx.fillText('Händler im Markt:',P.l,28);
+  ctx.textAlign='right';
+  ctx.fillStyle=C.cherry; ctx.fillText('● unehrlich',P.r-150,28);
+  ctx.fillStyle='#5a657c'; ctx.fillText('● verdrängt',P.r-72,28);
+  ctx.fillStyle=C.mint; ctx.fillText('● ehrlich',P.r,28);
+  ctx.textAlign='center'; ctx.fillStyle=trust>0.4?C.mint:C.cherry; ctx.font='600 12px Inter';
+  ctx.fillText('Handelsvolumen: '+Math.round(volume)+' % des Potenzials',(P.l+P.r)/2,h-14);
+
+  // Unternehmer-Allokation (Akerlof: Talente wandern in den Handel statt in die Produktion)
+  const vs=[]; for(let i=0;i<=20;i++) vs.push(i/20);
+  Plotly.react('entrePlot',[
+    {x:vs,y:vs.map(q=>100*(1-0.75*q)),name:'Talente in der Produktion',mode:'lines',
+     stackgroup:'one',line:{color:C.mint,width:0},fillcolor:'rgba(79,240,192,.4)'},
+    {x:vs,y:vs.map(q=>100*0.75*q),name:'Talente im Handel (Qualitätsprüfung)',mode:'lines',
+     stackgroup:'one',line:{color:C.gold,width:0},fillcolor:'rgba(255,201,77,.4)'},
+    {x:[v],y:[100],mode:'markers',showlegend:false,
+     marker:{size:0},hoverinfo:'skip'}
+  ],lay({
+    xaxis:{title:'Qualitätsstreuung im Markt →',gridcolor:C.grid,range:[0,1]},
+    yaxis:{title:'Verteilung der Unternehmertalente (%)',gridcolor:C.grid,range:[0,100]},
+    shapes:[{type:'line',x0:v,x1:v,y0:0,y1:100,line:{color:'#fff',width:2,dash:'dot'}}],
+    legend:{x:.02,y:1.15,orientation:'h',bgcolor:'rgba(0,0,0,0)',font:{size:10.5}},
+    annotations:[{x:0.72,y:88,text:'„the pay-off to trade is great for would-be<br>entrepreneurs, and hence they are diverted<br>from production“ — Akerlof',
+                  showarrow:false,font:{color:C.gold2||C.gold,size:10.5},align:'left'}],
+    margin:{l:62,r:20,t:48,b:48}
+  }),PCFG);
+}
+['dh','dv'].forEach(id=>$(id).addEventListener('input',dhUpdate));
+
+/* ===================================================================
+   9D · KREDITMÄRKTE
+   =================================================================== */
+const CR_N=260;
+const crBorrowers=Array.from({length:CR_N},()=>({
+  repay: Math.random(),            // Rückzahlwahrscheinlichkeit (nur lokal beobachtbar)
+  need: Math.random(),             // Dringlichkeit
+  ry: Math.random()
+}));
+function crUpdate(){
+  const r=+$('crR').value/100, kLocal=+$('crK').value/100, kMe=+$('crM').value/100;
+  $('crRVal').textContent=Math.round(r*100)+' %';
+  $('crKVal').textContent=Math.round(kLocal*100)+' %';
+  $('crMVal').textContent=Math.round(kMe*100)+' %';
+  const moneylenderRate=0.25;
+  // Der Geldverleiher kennt die Leute: er lehnt schlechte Risiken ab (mit Genauigkeit kLocal)
+  // Wer von ihm abgelehnt wird oder wem dein Zins günstiger ist, kommt zu dir.
+  let customers=[], defaults=0;
+  crBorrowers.forEach(b=>{
+    const rejectedLocally = (b.repay < 0.5) && (Math.random() < kLocal);
+    const cheaperWithMe = r < moneylenderRate;
+    // Du selbst screenst mit Genauigkeit kMe
+    const youReject = (b.repay<0.5) && (Math.random() < kMe);
+    const comes = (rejectedLocally || cheaperWithMe) && !youReject;
+    b.mine = comes;
+    b.rejectedLocally = rejectedLocally;
+    if(comes){ customers.push(b); if(b.repay<0.5) defaults++; }
+  });
+  const dRate = customers.length? defaults/customers.length : 0;
+  // Rendite: (1-Ausfall)*(1+r) - 1
+  const ret = customers.length? ((1-dRate)*(1+r)-1) : 0;
+  $('crN').textContent=customers.length;
+  $('crD').textContent=Math.round(dRate*100)+' %';
+  $('crP').textContent=(ret>=0?'+':'')+Math.round(ret*100)+' %';
+  $('crP').parentElement.className='stat '+(ret>=0?'good':'bad');
+
+  $('crMsg').className='callout '+(ret>=0?'mint':'red');
+  $('crMsg').innerHTML = customers.length===0
+    ? '<span class="tag">Keine Kundschaft</span><p>Dein Zins liegt über dem des Geldverleihers und du screenst hart — also kommt niemand.</p>'
+    : (kMe<0.2 && r<moneylenderRate)
+    ? '<span class="tag">Du hast alle Zitronen eingesammelt</span><p>Du bietest '+Math.round(r*100)+' % statt 25 % — aber genau die Kreditnehmer, die der Geldverleiher <em>kennt und ablehnt</em>, kommen zu dir. Ausfallquote: <strong>'+Math.round(dRate*100)+' %</strong>. „The middleman who tries to arbitrage between the rates of the moneylender and the central bank is apt to attract all the ‚lemons‘ and thereby make a loss.“ [[11]]</p>'
+    : kMe>0.6
+    ? '<span class="tag">Du hast lokales Wissen aufgebaut</span><p>Mit '+Math.round(kMe*100)+' % Kenntnis der Leute kannst du selbst screenen — genau das ist Darlings Punkt: „With his <em>intimate knowledge of those around him</em> he is able, without serious risk, to finance those who would otherwise get no loan at all.“ [[11]]</p>'
+    : '<span class="tag">Grenzfall</span><p>Dein Zins deckt die Ausfälle gerade so. Der Zinssatz ist hier kein Preis für Risiko — er ist ein <strong>Preis für Information</strong>.</p>';
+
+  const {ctx,w,h}=hidpi($('crCv'));
+  ctx.clearRect(0,0,w,h);
+  const P={l:56,r:w-24,t:46,b:h-54};
+  const X=v=>P.l+v*(P.r-P.l);
+  ctx.fillStyle='rgba(255,255,255,.02)'; rrect(ctx,P.l,P.t,P.r-P.l,P.b-P.t,10); ctx.fill();
+  // Zone schlechter Risiken
+  const gz=ctx.createLinearGradient(P.l,0,X(0.5),0);
+  gz.addColorStop(0,'rgba(255,107,138,.2)'); gz.addColorStop(1,'rgba(255,107,138,.04)');
+  ctx.fillStyle=gz; ctx.fillRect(P.l,P.t,X(0.5)-P.l,P.b-P.t);
+
+  crBorrowers.forEach(b=>{
+    const x=X(b.repay), y=P.t+14+b.ry*(P.b-P.t-28);
+    let col,al;
+    if(!b.mine){ col='#3c4760'; al=0.45; }
+    else if(b.repay<0.5){ col=C.cherry; al=0.95; }
+    else { col=C.mint; al=0.9; }
+    ctx.fillStyle=col; ctx.globalAlpha=al;
+    ctx.beginPath(); ctx.arc(x,y,3.4,0,Math.PI*2); ctx.fill();
+    ctx.globalAlpha=1;
+  });
+  ctx.strokeStyle='rgba(255,201,77,.7)'; ctx.lineWidth=2; ctx.setLineDash([5,4]);
+  ctx.beginPath(); ctx.moveTo(X(0.5),P.t-6); ctx.lineTo(X(0.5),P.b+6); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle=C.gold; ctx.font='600 11.5px Inter'; ctx.textAlign='center';
+  ctx.fillText('Grenze: zahlt zurück?',X(0.5),P.t-12);
+  ctx.fillStyle=C.faint; ctx.font='11px Inter';
+  ctx.fillText('Rückzahlwahrscheinlichkeit (nur lokal beobachtbar) →',(P.l+P.r)/2,P.b+34);
+  ctx.textAlign='left'; ctx.fillStyle=C.faint;
+  ctx.fillText('Geldverleiher: 25 %  ·  Großbank in der Stadt: 6–10 %  ·  du: '+Math.round(r*100)+' %',P.l,22);
+}
+['crR','crK','crM'].forEach(id=>$(id).addEventListener('input',crUpdate));
+
+function agencyInit(){
+  Plotly.react('agencyPlot',[
+    {values:[65.7,34.3],labels:['Managing Agencies','übrige Gesellschaften'],type:'pie',hole:.58,
+     marker:{colors:['rgba(255,201,77,.85)','rgba(60,71,96,.7)'],line:{color:'rgba(7,10,18,.9)',width:2}},
+     textinfo:'label+percent',textfont:{color:'#0a0d16',size:12},
+     domain:{x:[0,.45]},name:'Nettovermögen'},
+    {values:[66,34],labels:['Managing Agencies','übrige Gesellschaften'],type:'pie',hole:.58,
+     marker:{colors:['rgba(95,184,255,.85)','rgba(60,71,96,.7)'],line:{color:'rgba(7,10,18,.9)',width:2}},
+     textinfo:'label+percent',textfont:{color:'#0a0d16',size:12},
+     domain:{x:[.55,1]},name:'Gesamtaktiva'}
+  ],lay({
+    showlegend:false,
+    annotations:[
+      {x:.21,y:.5,text:'<b>65,7 %</b><br><span style="font-size:10px">Nettovermögen</span>',
+       showarrow:false,font:{color:C.gold,size:15}},
+      {x:.79,y:.5,text:'<b>66 %</b><br><span style="font-size:10px">Gesamtaktiva</span>',
+       showarrow:false,font:{color:C.sky,size:15}},
+      {x:.5,y:-.1,xref:'paper',yref:'paper',showarrow:false,
+       text:'Vertrauen als Kapital: Wer einen Ruf für Ehrlichkeit hat, kontrolliert den Kapitalmarkt.',
+       font:{color:C.faint,size:11}}
+    ],
+    margin:{l:20,r:20,t:26,b:46}
+  }),PCFG);
+}
+
+/* ===================================================================
+   10 · GEGENINSTITUTIONEN
+   =================================================================== */
+const INSTS=[
+  {id:'guar', name:'Garantien', icon:'🛡️', info:0.30,
+   q:'„Most consumer durables carry guarantees to ensure the buyer of some normal expected quality. One natural result of our model is that the risk is borne by the seller rather than by the buyer.“ [[11]]',
+   how:'Die Garantie verschiebt das Risiko dorthin, wo die Information liegt — zum Verkäufer. Eine Zitrone zu garantieren wäre für ihn teuer, also garantiert nur, wer gute Ware hat.'},
+  {id:'brand', name:'Markennamen', icon:'🏷️', info:0.22,
+   q:'„Brand names not only indicate quality but also give the consumer a means of retaliation if the quality does not meet expectations.“ [[11]]',
+   how:'Eine Marke ist ein Pfand auf die Zukunft. Betrug zerstört den Markenwert — also lohnt er sich nicht mehr. Aus einem einmaligen Spiel wird ein wiederholtes.'},
+  {id:'chain', name:'Ketten', icon:'🍔', info:0.18,
+   q:'„These restaurants, at least in the United States, most often appear on interurban highways. The customers are seldom local.“ [[11]]',
+   how:'Ketten ersetzen lokale Information durch überregionale Reputation. Deshalb stehen sie an der Autobahn — dort, wo niemand die Gegend kennt.'},
+  {id:'lic', name:'Lizenzen & Abschlüsse', icon:'🎓', info:0.26,
+   q:'„Licensing practices also reduce quality uncertainty. … The high school diploma, the baccalaureate degree, the Ph.D., even the Nobel Prize, to some degree, serve this function of certification.“ [[11]]',
+   how:'Zertifikate machen individuelle Qualität sichtbar. Damit endet die statistische Diskriminierung — der Einzelne wird aus der Gruppenstatistik herausgelöst.'},
+  {id:'local', name:'Persönliche Kenntnis', icon:'🤝', info:0.24,
+   q:'„Credit is granted only where the granter has (1) easy means of enforcing his contract or (2) personal knowledge of the character of the borrower.“ [[11]]',
+   how:'Der Dorf-Geldverleiher und der Ladenbesitzer in der Bucht. Information durch Nähe — teuer skalierbar, aber hochwirksam.'},
+  {id:'gov', name:'Staatliche Intervention', icon:'🏛️', info:0.34,
+   q:'„Social and private returns differ, and therefore, in some cases, governmental intervention may increase the welfare of all parties.“ [[11]]',
+   how:'Medicare, Qualitätskontrolle (Indiens Export Quality Control Act 1963), Pflichtversicherung. Der Staat schafft die Auswahlmöglichkeit ab — und damit die Negativauslese.'}
+];
+let instOn={};
+INSTS.forEach(i=>instOn[i.id]=false);
+let instFocus=INSTS[0];
+function instRender(){
+  $('instList').innerHTML = INSTS.map(i=>
+    `<button class="opt" style="display:flex;align-items:center;gap:10px;${instOn[i.id]?'background:rgba(79,240,192,.14);border-color:var(--mint);color:var(--mint);':''}"
+      onclick="instToggle('${i.id}')">
+      <span style="font-size:19px">${i.icon}</span>
+      <span style="flex:1">${i.name}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;opacity:.75">+${Math.round(i.info*100)}%</span>
+    </button>`).join('');
+}
+function instToggle(id){
+  instOn[id]=!instOn[id];
+  instFocus=INSTS.find(i=>i.id===id);
+  instRender(); instUpdateView();
+}
+function instAll(v){ INSTS.forEach(i=>instOn[i.id]=v); instRender(); instUpdateView(); }
+function instInfoLevel(){
+  // Informationsgewinne kombinieren sich multiplikativ (abnehmender Grenzertrag)
+  let rem=1;
+  INSTS.forEach(i=>{ if(instOn[i.id]) rem*=(1-i.info); });
+  return 1-rem;
+}
+function instUpdateView(){
+  const info=instInfoLevel();
+  // Effektives k: bei voller Info gilt Akerlofs symmetrischer Fall (Handel = N)
+  // Zahlungsbereitschaft = 3/2 * (info*x + (1-info)*mu)
+  const tradeShare = clamp((info-0.0)/0.62,0,1);   // ab ~62% Info ist der Markt praktisch geheilt
+  const welfare = tradeShare;
+  $('instTrade').textContent=Math.round(tradeShare*100)+' %';
+  $('instWelf').textContent=Math.round(welfare*100)+' %';
+  $('instInfo').textContent=Math.round(info*100)+' %';
+
+  $('instDesc').className='callout '+(info>0.5?'mint':(info>0.2?'blue':''));
+  $('instDesc').innerHTML = `<span class="tag">${instFocus.icon} ${instFocus.name}</span>
+    <p style="font-family:'Fraunces',serif;font-style:italic;color:#d8e2f5">${instFocus.q}</p>
+    <p style="margin-bottom:0">${instFocus.how}</p>`;
+
+  // Canvas: Markt heilt
+  const {ctx,w,h}=hidpi($('instCv'));
+  ctx.clearRect(0,0,w,h);
+  const P={l:50,r:w-24,t:40,b:h-46};
+  const X=v=>P.l+(v/2)*(P.r-P.l);
+  ctx.fillStyle='rgba(255,255,255,.02)'; rrect(ctx,P.l,P.t,P.r-P.l,P.b-P.t,10); ctx.fill();
+  const cut=2*(1-tradeShare);  // alles über cut ist "zurück im Markt"
+  const gz=ctx.createLinearGradient(P.l,0,P.r,0);
+  gz.addColorStop(0,'rgba(255,107,138,.14)'); gz.addColorStop(1,'rgba(79,240,192,.16)');
+  ctx.fillStyle=gz; ctx.fillRect(P.l,P.t,P.r-P.l,P.b-P.t);
+  mdCars.slice(0,180).forEach(c=>{
+    const x=X(c.u*2), y=P.t+14+c.ry*(P.b-P.t-28);
+    const back = c.u*2 < 2*tradeShare + 0.0001 ? true : false;
+    drawCar(ctx,x,y,0.62,back?C.mint:'#3a4356',back?0.95:0.32);
+  });
+  ctx.fillStyle=C.faint; ctx.font='11px Inter'; ctx.textAlign='left';
+  ctx.fillText('Qualität x →',P.l,P.t-16);
+  ctx.textAlign='right'; ctx.fillStyle= tradeShare>0.5?C.mint:C.cherry; ctx.font='600 12px Inter';
+  ctx.fillText(tradeShare>0.95?'Markt vollständig wiederhergestellt':Math.round(tradeShare*100)+' % des Marktes zurück',P.r,P.t-16);
+  ctx.textAlign='center'; ctx.fillStyle=C.faint; ctx.font='11px Inter';
+  for(let i=0;i<=4;i++) ctx.fillText(fmt(2*i/4,1),X(2*i/4),P.b+28);
+
+  // Balkenplot: Beitrag jeder Institution
+  Plotly.react('instPlot',[{
+    x:INSTS.map(i=>i.name), y:INSTS.map(i=>instOn[i.id]? i.info*100:0),
+    type:'bar', name:'aktiv',
+    marker:{color:INSTS.map(i=>instOn[i.id]?'rgba(79,240,192,.8)':'rgba(60,71,96,.4)'),
+            line:{color:'rgba(255,255,255,.14)',width:1}}
+  },{
+    x:INSTS.map(i=>i.name), y:INSTS.map(i=>instOn[i.id]? 0 : i.info*100),
+    type:'bar', name:'ungenutztes Potenzial',
+    marker:{color:'rgba(255,107,138,.25)',line:{color:'rgba(255,107,138,.4)',width:1}}
+  }],lay({
+    barmode:'stack',
+    xaxis:{gridcolor:'rgba(0,0,0,0)',tickfont:{size:10}},
+    yaxis:{title:'Informationsgewinn (%)',gridcolor:C.grid,range:[0,40]},
+    legend:{x:.5,y:1.18,xanchor:'center',orientation:'h',bgcolor:'rgba(0,0,0,0)',font:{size:10.5}},
+    margin:{l:58,r:18,t:48,b:68}
+  }),PCFG);
+}
+
+/* ===================================================================
+   10 · AUTOBAHN-HYPOTHESE
+   =================================================================== */
+function chUpdate(){
+  const s=+$('ch').value/100;
+  $('chVal').textContent=Math.round(s*100)+' %';
+  // Kette gewinnt bei Fremden, lokales Restaurant bei Einheimischen
+  const chainShare = s;          // Fremde wählen Kette (bekannte Qualität)
+  const localShare = 1-s;        // Einheimische kennen das gute lokale Lokal
+
+  const {ctx,w,h}=hidpi($('chCv'));
+  ctx.clearRect(0,0,w,h);
+  // Straße
+  const roadY=h*0.52;
+  ctx.fillStyle='rgba(30,38,56,.85)'; ctx.fillRect(0,roadY-26,w,52);
+  ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=2; ctx.setLineDash([14,12]);
+  ctx.beginPath(); ctx.moveTo(0,roadY); ctx.lineTo(w,roadY); ctx.stroke(); ctx.setLineDash([]);
+  // Kette links, lokal rechts
+  const drawShop=(x,label,icon,share,col)=>{
+    const bw=108, bh=62;
+    ctx.fillStyle='rgba(12,17,29,.92)'; rrect(ctx,x-bw/2,roadY-120,bw,bh,10); ctx.fill();
+    ctx.strokeStyle=col; ctx.lineWidth=1.6; ctx.stroke();
+    ctx.font='22px Inter'; ctx.textAlign='center'; ctx.fillStyle=col;
+    ctx.fillText(icon,x,roadY-92);
+    ctx.font='600 11.5px Inter'; ctx.fillText(label,x,roadY-72);
+    // Auslastungsbalken
+    ctx.fillStyle='rgba(255,255,255,.08)'; rrect(ctx,x-bw/2,roadY-50,bw,10,5); ctx.fill();
+    ctx.fillStyle=col; rrect(ctx,x-bw/2,roadY-50,Math.max(bw*share,3),10,5); ctx.fill();
+    ctx.fillStyle=col; ctx.font='600 12px Inter';
+    ctx.fillText(Math.round(share*100)+' % der Gäste',x,roadY-32);
+  };
+  drawShop(w*0.27,'Kette','🍔',chainShare,C.gold);
+  drawShop(w*0.73,'Lokales Lokal','🥘',localShare,C.mint);
+  // Autos auf der Straße
+  for(let i=0;i<10;i++){
+    const x=(i+0.5)*(w/10);
+    const stranger = (i/10) < s;
+    drawCar(ctx,x,roadY+2,1.05,stranger?C.gold:C.mint,0.9);
+  }
+  ctx.fillStyle=C.faint; ctx.font='11px Inter'; ctx.textAlign='center';
+  ctx.fillText('🟡 ortsfremd (hat keine lokale Information)   ·   🟢 einheimisch (kennt die Gegend)',w/2,h-14);
+
+  const xs=[]; for(let i=0;i<=20;i++) xs.push(i*5);
+  Plotly.react('chPlot',[
+    {x:xs,y:xs.map(v=>v),name:'Marktanteil Kette',mode:'lines',
+     line:{color:C.gold,width:3.5}},
+    {x:xs,y:xs.map(v=>100-v),name:'Marktanteil lokales Lokal',mode:'lines',
+     line:{color:C.mint,width:3.5}},
+    {x:[s*100],y:[s*100],mode:'markers',showlegend:false,
+     marker:{size:13,color:C.gold,line:{color:'#fff',width:2}}},
+    {x:[s*100],y:[100-s*100],mode:'markers',showlegend:false,
+     marker:{size:13,color:C.mint,line:{color:'#fff',width:2}}}
+  ],lay({
+    xaxis:{title:'Anteil ortsfremder Kunden (%)',gridcolor:C.grid},
+    yaxis:{title:'Marktanteil (%)',gridcolor:C.grid,range:[0,100]},
+    legend:{x:.5,y:1.15,xanchor:'center',orientation:'h',bgcolor:'rgba(0,0,0,0)',font:{size:10.5}},
+    annotations:[
+      {x:85,y:22,text:'Autobahn',showarrow:false,font:{color:C.gold,size:11}},
+      {x:15,y:22,text:'Dorfzentrum',showarrow:false,font:{color:C.mint,size:11}}
+    ],
+    margin:{l:58,r:20,t:46,b:48}
+  }),PCFG);
+
+  $('chMsg').innerHTML = s>0.6
+    ? '<span class="tag">Autobahn-Regime</span><p>Fast alle Gäste sind ortsfremd. Sie haben <strong>keine Information</strong> über lokale Lokale — also wählen sie die Kette, deren Qualität sie kennen. Genau Akerlofs Beobachtung: Ketten „most often appear on interurban highways. The customers are seldom local.“ [[11]]</p>'
+    : s<0.4
+    ? '<span class="tag">Dorf-Regime</span><p>Die Gäste sind Einheimische. Sie <em>haben</em> die Information. „the local customer, who knows his area, can usually choose a place he prefers.“ [[11]] Die Kette hat keinen Vorteil mehr.</p>'
+    : '<span class="tag">Gemischt</span><p>Beide Typen koexistieren. Der Marktanteil der Kette ist ein direktes Maß für den <strong>Informationsmangel</strong> der Kundschaft.</p>';
+}
+$('ch').addEventListener('input',chUpdate);
+
+/* ===================================================================
+   11 · DER BOGEN (Übersichtsgrafik)
+   =================================================================== */
+const ARC=[
+  {x:.09,y:.22,t:'Beobachtung',s:'Neuwagen → Gebraucht:\nsofortiger Preissturz',c:C.peach,go:'motivation'},
+  {x:.27,y:.58,t:'Idee',s:'Besitzer lernt,\nKäufer nicht',c:C.sky,go:'idee'},
+  {x:.45,y:.24,t:'Modell',s:'U₁ = M+Σx\nU₂ = M+Σ(3/2)x',c:C.violet,go:'modell'},
+  {x:.62,y:.60,t:'Rechnung',s:'μ = p/2 →\n3μ/2 = ¾p < p',c:C.gold,go:'rechnung'},
+  {x:.79,y:.26,t:'Ergebnis',s:'Kein Handel\nbei keinem Preis',c:C.cherry,go:'kollaps'},
+  {x:.93,y:.62,t:'Gegenmittel',s:'Garantien, Marken,\nLizenzen, Staat',c:C.mint,go:'institutionen'}
+];
+let arcHit=[];
+function arcDraw(){
+  const {ctx,w,h}=hidpi($('arcCv'));
+  ctx.clearRect(0,0,w,h);
+  const P={l:40,r:w-40,t:50,b:h-50};
+  const X=v=>P.l+v*(P.r-P.l);
+  const Y=v=>P.t+v*(P.b-P.t);
+
+  // Verbindungslinien (geschwungen)
+  ctx.lineWidth=2.5;
+  for(let i=0;i<ARC.length-1;i++){
+    const a=ARC[i], b=ARC[i+1];
+    const g=ctx.createLinearGradient(X(a.x),Y(a.y),X(b.x),Y(b.y));
+    g.addColorStop(0,a.c); g.addColorStop(1,b.c);
+    ctx.strokeStyle=g; ctx.globalAlpha=.45;
+    ctx.beginPath();
+    ctx.moveTo(X(a.x),Y(a.y));
+    ctx.bezierCurveTo(X(lerp(a.x,b.x,.5)),Y(a.y), X(lerp(a.x,b.x,.5)),Y(b.y), X(b.x),Y(b.y));
+    ctx.stroke(); ctx.globalAlpha=1;
+  }
+
+  arcHit=[];
+  ARC.forEach((n,i)=>{
+    const cx=X(n.x), cy=Y(n.y), r=27;
+    // Glow
+    const gg=ctx.createRadialGradient(cx,cy,2,cx,cy,r*2.3);
+    gg.addColorStop(0,n.c+'55'); gg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(cx,cy,r*2.3,0,Math.PI*2); ctx.fill();
+    // Kreis
+    ctx.fillStyle='rgba(12,17,29,.95)';
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=n.c; ctx.lineWidth=2.2; ctx.stroke();
+    ctx.fillStyle=n.c; ctx.font='800 15px Fraunces, serif'; ctx.textAlign='center';
+    ctx.fillText(String(i+1),cx,cy+5);
+    // Label
+    ctx.fillStyle=n.c; ctx.font='700 13px Inter';
+    const above = n.y<.45;
+    ctx.fillText(n.t,cx, above? cy-r-16 : cy+r+22);
+    ctx.fillStyle=C.dim; ctx.font='11px Inter';
+    n.s.split('\n').forEach((l,j)=>{
+      ctx.fillText(l,cx, above? cy-r-2+j*13 : cy+r+38+j*13);
+    });
+    arcHit.push({cx,cy,r:r+8,go:n.go});
+  });
+  ctx.fillStyle=C.faint; ctx.font='11.5px Inter'; ctx.textAlign='left';
+  ctx.fillText('Von der Alltagsbeobachtung zur Nobelpreis-Theorie — der rote Faden des Papers',16,24);
+}
+$('arcCv').addEventListener('click',e=>{
+  const r=$('arcCv').getBoundingClientRect();
+  const mx=e.clientX-r.left, my=e.clientY-r.top;
+  for(const hdot of arcHit){
+    if(Math.hypot(mx-hdot.cx,my-hdot.cy)<hdot.r){ $(hdot.go).scrollIntoView(); return; }
+  }
+});
+$('arcCv').addEventListener('mousemove',e=>{
+  const r=$('arcCv').getBoundingClientRect();
+  const mx=e.clientX-r.left, my=e.clientY-r.top;
+  let hit=false;
+  for(const hdot of arcHit) if(Math.hypot(mx-hdot.cx,my-hdot.cy)<hdot.r) hit=true;
+  $('arcCv').style.cursor=hit?'pointer':'default';
+});
+
+/* ===================================================================
+   11 · ABSCHLUSSTEST
+   =================================================================== */
+const FQ=[
+  {q:'Warum sinkt bei Akerlof die Durchschnittsqualität μ, wenn der Preis p sinkt?',
+   o:['Weil die Autos physisch schlechter werden',
+      'Weil nur Besitzer mit Qualität unter p verkaufen — bei niedrigerem p also nur noch die schlechteren',
+      'Weil Käufer weniger Geld haben'],
+   a:1,
+   f:'Genau: μ(p) = E[x | x ≤ p] = p/2. Die Selbstselektion der Verkäufer, nicht die Physik, senkt die Qualität.'},
+  {q:'Was genau zeigt die Ungleichung 3/2 · (p/2) = 3/4 · p < p?',
+   o:['Dass der Preis zu hoch angesetzt wurde',
+      'Dass Gruppe 2 reicher sein müsste',
+      'Dass die Zahlungsbereitschaft der Käufer bei JEDEM positiven Preis unter dem Preis liegt — also nie gehandelt wird'],
+   a:2,
+   f:'Richtig. Akerlof: „at no price will any trade take place at all“. Der Faktor 3/4 < 1 ist der gesamte Beweis.'},
+  {q:'Warum ist der Besitzer eines GUTEN Autos „locked in“?',
+   o:['Weil er sein Auto zu sehr liebt',
+      'Weil er nicht einmal den Erwartungswert eines Neuwagens erhalten kann — gute und schlechte Gebrauchtwagen kosten dasselbe',
+      'Weil ihm der Verkauf gesetzlich verboten ist'],
+   a:1,
+   f:'Akerlof: „Not only is it true that he cannot receive the true value of his car, but he cannot even obtain the expected value of a new car.“'},
+  {q:'Warum hinkt die Analogie zu Greshams Gesetz?',
+   o:['Weil Geld keinen Wert hat',
+      'Bei Geld erkennen BEIDE Seiten den Unterschied (der Kurs ist gesetzlich gleich) — bei Autos nur der Verkäufer',
+      'Weil Gresham sich geirrt hat'],
+   a:1,
+   f:'„In Gresham\'s law, however, presumably both buyer and seller can tell the difference between good and bad money. So the analogy is instructive, but not complete.“'},
+  {q:'Warum ist Medicare (Pflichtversicherung) laut Akerlof ökonomisch sinnvoll?',
+   o:['Weil der Staat billiger arbeitet als Private',
+      'Weil Ärzte dann weniger verdienen',
+      'Weil jeder bereit wäre, seine erwarteten Kosten zu zahlen — aber kein Privatversicherer eine Police anbieten kann, da jeder Preis „too many lemons“ anzieht'],
+   a:2,
+   f:'Exakt Akerlofs Formulierung. Die Pflicht schafft die Wahlmöglichkeit ab — und damit die Negativauslese.'},
+  {q:'Was haben Garantien, Markennamen, Ketten und Doktortitel gemeinsam?',
+   o:['Sie sind alle staatlich reguliert',
+      'Sie sind Institutionen, die Qualitätsunsicherheit reduzieren — sie pumpen Information in den Markt zurück',
+      'Sie machen Produkte teurer'],
+   a:1,
+   f:'„Numerous institutions arise to counteract the effects of quality uncertainty.“ Und: Sie sind „nonatomistic“ — sie erzeugen Marktmacht als Nebenwirkung.'}
+];
+let fqAnswered=0, fqRight=0;
+function fqRender(){
+  $('finalQuiz').innerHTML = FQ.map((item,i)=>
+    `<div class="quiz" data-i="${i}" style="opacity:1;transform:none">
+       <div class="q">${i+1}. ${item.q}</div>
+       ${item.o.map((o,j)=>`<button class="opt" onclick="fqPick(${i},${j})" id="fq${i}_${j}">${o}</button>`).join('')}
+       <div class="fb" id="fqfb${i}">${item.f}</div>
+     </div>`).join('');
+}
+function fqPick(i,j){
+  const item=FQ[i];
+  if($('fq'+i+'_0').disabled) return;
+  item.o.forEach((_,k)=>{
+    const b=$('fq'+i+'_'+k); b.disabled=true;
+    if(k===item.a) b.classList.add('right');
+  });
+  if(j!==item.a) $('fq'+i+'_'+j).classList.add('wrong'); else fqRight++;
+  $('fqfb'+i).classList.add('show');
+  fqAnswered++;
+  if(fqAnswered===FQ.length){
+    $('finalScore').style.display='grid';
+    $('fqScore').textContent=fqRight+' / '+FQ.length;
+  }
+}
+
+/* ===================================================================
+   INIT
+   =================================================================== */
+function initAll(){
+  m1Update();
+  t1Resample();
+  t2Update();
+  t3Update();
+  t4Update();
+  t5Update();
+  asyUpdate();
+  lockinDraw();
+  greshamDraw();
+  mdUpdate();
+  derivRender();
+  rcUpdate();
+  schereInit();
+  spiralReset();
+  iterInit();
+  syUpdate();
+  compareInit();
+  wfUpdate();
+  insUpdate();
+  mandUpdate();
+  sigUpdate();
+  dhUpdate();
+  crUpdate();
+  agencyInit();
+  instRender(); instUpdateView();
+  chUpdate();
+  arcDraw();
+  fqRender();
+  onScroll();
+}
+window.addEventListener('load',()=>{
+  if(window.renderMathInElement){
+    renderMathInElement(document.body,{
+      delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+      throwOnError:false
+    });
+  }
+  renderAllMath();
+  initAll();
+});
+
+/* Redraw aller Canvasses bei Resize */
+let rsz;
+window.addEventListener('resize',()=>{
+  clearTimeout(rsz);
+  rsz=setTimeout(()=>{
+    t1Update(); t2Update(); t3Update(); mdUpdate(); derivRender();
+    spiralDraw(); lockinDraw(); greshamDraw(); insUpdate(); sigUpdate();
+    dhUpdate(); crUpdate(); instUpdateView(); chUpdate(); arcDraw();
+  },180);
+});
+
+/* Tastatursteuerung für die Herleitung */
+window.addEventListener('keydown',e=>{
+  const sec=$('modell').getBoundingClientRect();
+  if(sec.top<300 && sec.bottom>300){
+    if(e.key==='ArrowRight') derivStep(1);
+    if(e.key==='ArrowLeft') derivStep(-1);
+  }
+});
+</script>
+</body>
+</html>
