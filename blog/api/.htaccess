@@ -1,0 +1,16 @@
+# /blog/api/ — block direct browser access to internal endpoints + config.
+# Same idea as the top-level blog/.htaccess: anything that starts with
+# an underscore or "config" is server-internal, never web-served.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(\w+\.php|config\.php)$ - [F,L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    <FilesMatch "^(_[A-Za-z0-9_]+\.php|config\.php)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+
+Options -Indexes

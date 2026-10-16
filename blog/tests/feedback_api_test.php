@@ -212,7 +212,11 @@ assert_contains('SQLite',   $r['body'], 'setup.php shows sqlite path');
 $r = api('GET', '/api/feedback/list.php?lesson=intro');
 assert_eq(200, $r['status'], 'list.php returns 200');
 assert_eq(0, count($r['json']['feedback'] ?? []), 'empty list returns 0 items');
-assert_eq('master', $r['json']['git']['branch'] ?? null, 'git info branch is master');
+// Branch name is environment-dependent (master in prod, feature/feedback-system
+// in dev). Accept anything that looks like a branch refname.
+$branch = $r['json']['git']['branch'] ?? '';
+assert_true(!empty($branch) && preg_match('#^[A-Za-z0-9._/-]+$#', $branch),
+	'git info branch is non-empty (' . var_export($branch, true) . ')');
 assert_eq(false, $r['json']['admin'] ?? null, 'admin=false when no session');
 
 // ── git_info ──────────────────────────────────────────────────────────

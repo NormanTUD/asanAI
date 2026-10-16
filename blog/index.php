@@ -109,11 +109,15 @@ foreach ($parts as $partNum => $modules):
 	<div class="course-tiles">
 		<?php foreach ($modules as $m) render_course_tile($m); ?>
 	</div>
-</div>
-<?php endforeach; ?>
+ </div>
+ <?php endforeach; ?>
 
 </div>
 
 </div>
+<?php
+	feedback_health_banner();
+	render_feedback_toggle();
+?>
 </body>
 </html>

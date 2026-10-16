@@ -753,10 +753,11 @@ function feedback_health_banner(): void {
 
 function isCli(): bool
 {
-    if (strpos(php_sapi_name(), 'cli') !== false) {
-        return true;
-    }
-    return false;
+    // Match exact 'cli' SAPI. Don't match 'cli-server' (the PHP built-in
+    // dev server) — that one is an HTTP request from the user's POV,
+    // not a CLI command. Without this guard, intro.php's end-callout
+    // block is hidden during automated tests.
+    return php_sapi_name() === 'cli';
 }
 
 function get_theme_class(): string {

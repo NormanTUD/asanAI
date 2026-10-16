@@ -109,10 +109,10 @@ This interactive textbook was built with the help of Google Gemini, Claude, Chat
 <?php
 	if(!isCli()) {
 ?>
-<div class="md">
+<div class="md fb-end-callout">
 ## Please report Errors!
 
-Please report errors to <a href="mailto:<?php echo hide_email('norman.koch@tu-dresden.de'); ?>">my email</a>. I try my best to keep this site as factually correct as possible, but I may get things wrong or incomplete — so I am happy to get any feedback.
+Please report errors to <a href="mailto:<?php echo hide_email('norman.koch@tu-dresden.de'); ?>">my email</a>, or — even easier — click the <span class="fb-inline-btn">🐛</span> bug icon at the top of every page and leave a comment right where you spot the problem. I try my best to keep this site as factually correct as possible, but I may get things wrong or incomplete — so I am happy to get any feedback.
 </div>
 <?php
 	}
