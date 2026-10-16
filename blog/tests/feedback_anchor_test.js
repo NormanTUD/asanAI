@@ -293,13 +293,15 @@ function relocateAnchor(it, dom) {
 	return best;
 }
 
+const FRESH_OFFSET_TOL = 200;
+
 function tryExactAnchor(text, quote, prefix, suffix, origOffset) {
 	let idx;
 	if (prefix || suffix) {
 		idx = text.indexOf(prefix + quote + suffix);
 		if (idx >= 0) {
 			idx += prefix.length;
-			const isFresh = origOffset !== null && origOffset !== undefined && Math.abs(idx - origOffset) <= 4;
+			const isFresh = origOffset !== null && origOffset !== undefined && Math.abs(idx - origOffset) <= FRESH_OFFSET_TOL;
 			return { offset: idx, offsetEnd: idx + quote.length,
 				status: isFresh ? 'fresh' : 'moved',
 				confidence: isFresh ? 1.0 : 0.85 };
@@ -307,7 +309,7 @@ function tryExactAnchor(text, quote, prefix, suffix, origOffset) {
 	}
 	idx = text.indexOf(quote);
 	if (idx < 0) return null;
-	const isFresh = origOffset !== null && origOffset !== undefined && Math.abs(idx - origOffset) <= 4;
+	const isFresh = origOffset !== null && origOffset !== undefined && Math.abs(idx - origOffset) <= FRESH_OFFSET_TOL;
 	return { offset: idx, offsetEnd: idx + quote.length,
 		status: isFresh ? 'fresh' : 'moved',
 		confidence: isFresh ? 0.95 : 0.6 };

@@ -511,13 +511,23 @@
 	}
 
 	/* ── Anchor-search strategies (called per candidate element) ── */
+	/* How many characters of offset drift still count as "fresh". The
+	   page can legitimately shift the offset by hundreds of chars
+	   (whitespace normalization, smart quotes, sibling paragraphs
+	   added) without the user-meaning changing. The user's intuition
+	   is: "if the highlighted text is the exact same words I selected,
+	   it's still right where I clicked it". So we use a generous
+	   tolerance — anything within 200 chars of the original offset is
+	   considered fresh. */
+	const FRESH_OFFSET_TOL = 200;
+
 	function tryExactAnchor(text, quote, prefix, suffix, origOffset) {
 		let idx;
 		if (prefix || suffix) {
 			idx = text.indexOf(prefix + quote + suffix);
 			if (idx >= 0) {
 				idx += prefix.length;
-				const isFresh = origOffset !== null && origOffset !== undefined && Math.abs(idx - origOffset) <= 4;
+				const isFresh = origOffset !== null && origOffset !== undefined && Math.abs(idx - origOffset) <= FRESH_OFFSET_TOL;
 				return { offset: idx, offsetEnd: idx + quote.length,
 					status: isFresh ? 'fresh' : 'moved',
 					confidence: isFresh ? 1.0 : 0.85 };
@@ -525,7 +535,7 @@
 		}
 		idx = text.indexOf(quote);
 		if (idx < 0) return null;
-		const isFresh = origOffset !== null && origOffset !== undefined && Math.abs(idx - origOffset) <= 4;
+		const isFresh = origOffset !== null && origOffset !== undefined && Math.abs(idx - origOffset) <= FRESH_OFFSET_TOL;
 		return { offset: idx, offsetEnd: idx + quote.length,
 			status: isFresh ? 'fresh' : 'moved',
 			confidence: isFresh ? 0.95 : 0.6 };
@@ -598,7 +608,36 @@
 		const r = document.createRange();
 		try { r.setStart(startNode, startOff); r.setEnd(endNode, endOff); }
 		catch (_) { return null; }
+		// The range must be inside the container, otherwise surroundContents
+		// will throw DOMException. Some browsers return a range that crosses
+		// element boundaries when the container has nested elements.
+		if (!container.contains(startNode) || !container.contains(endNode)) return null;
 		return r;
+	}
+
+	/* Insert a marker at the text offset without using surroundContents
+	   (which fails when the range crosses element boundaries — a common
+	   case in markdown-rendered HTML where headings, lists, and links
+	   sit inside the same .md container). We split the text node at the
+	   offset and insert the marker right after. */
+	function insertMarkerAtOffset(container, offset, marker) {
+		const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+		let cur = walker.nextNode();
+		let pos = 0;
+		while (cur) {
+			const len = cur.nodeValue.length;
+			if (pos + len >= offset) {
+				const splitAt = Math.max(0, Math.min(len, offset - pos));
+				try {
+					const tail = cur.splitText(splitAt);
+					cur.parentNode.insertBefore(marker, tail);
+					return true;
+				} catch (_) { return false; }
+			}
+			pos += len;
+			cur = walker.nextNode();
+		}
+		return false;
 	}
 
 	/* ─────────────────────────────────────────────────────────────────
@@ -622,7 +661,10 @@
 		marker.dataset.id = it.id;
 		marker.dataset.uuid = it.uuid;
 		marker.dataset.cat = it.category || 'bug';
-		marker.dataset.stale = (status !== 'fresh' || it.status === 'resolved' || it.status === 'wontfix') ? '1' : '0';
+		// marker shows the ⚠ chip only when the text was truly orphaned.
+		// offset drift with a matching quote is not "stale" from the
+		// user's POV — the right words are still highlighted.
+		marker.dataset.stale = (status === 'orphan' || it.status === 'resolved' || it.status === 'wontfix' || it.status === 'spam') ? '1' : '0';
 		if (it._pending) marker.dataset.pending = '1';
 		if (it._failed)  marker.dataset.failed = '1';
 		if (it.aha_count > 0) marker.classList.add('is-aha');
@@ -635,27 +677,63 @@
 
 		if (loc && loc.el) {
 			const range = createRangeFromOffsets(loc.el, loc.offset, loc.offsetEnd);
+			let mounted = false;
 			if (range) {
 				const span = document.createElement('span');
 				span.className = 'fb-highlight';
 				span.dataset.fbId = it.id;
 				try {
 					range.surroundContents(span);
-					marker.style.top = '2px';
 					span.appendChild(marker);
+					mounted = true;
 				} catch (_) {
-					loc.el.appendChild(marker);
+					// Range crossed an element boundary (headings, links,
+					// lists in markdown-rendered HTML). Fall back to
+					// splitting at the start offset and dropping the marker
+					// right at the text — never at the end of the element.
+					if (insertMarkerAtOffset(loc.el, loc.offset, marker)) {
+						// Wrap the surrounding text node with a thin
+						// highlight so the user can still see which
+						// passage was annotated.
+						try {
+							const walker = document.createTreeWalker(loc.el, NodeFilter.SHOW_TEXT);
+							const tn = walker.nextNode();
+							if (tn) {
+								const span2 = document.createElement('span');
+								span2.className = 'fb-highlight';
+								span2.dataset.fbId = it.id;
+								const range2 = document.createRange();
+								range2.selectNodeContents(tn);
+								range2.surroundContents(span2);
+							}
+						} catch (__) {}
+						mounted = true;
+					}
 				}
-				if (status !== 'fresh') span.title = 'This feedback was filed when the text was at a different position. The post-it may be slightly outdated.';
-			} else {
+				if (status !== 'fresh') {
+					span.title = 'This feedback was filed when the text was at a different position. The post-it may be slightly outdated.';
+				}
+			} else if (insertMarkerAtOffset(loc.el, loc.offset, marker)) {
+				mounted = true;
+			}
+			if (!mounted) {
+				// Last-resort fallback: append to the element so the user
+				// can still find the annotation, but mark it visibly
+				// displaced.
 				loc.el.appendChild(marker);
+				marker.classList.add('fb-marker-displaced');
 			}
 		} else {
+			// Anchor could not be re-located at all (text deleted / heavily
+			// edited). Show the marker as a small footer chip in the
+			// post-it itself rather than gluing it to the left edge.
 			$('#contents') ? $('#contents').appendChild(marker)
 				: document.body.appendChild(marker);
 			marker.style.position = 'fixed';
-			marker.style.left = '20px';
+			marker.style.right = '20px';
 			marker.style.bottom = (60 + (Math.abs(it.id) % 5) * 32) + 'px';
+			marker.classList.add('fb-marker-displaced');
+			marker.title = '⚠ Annotation orphaned — the anchored text was edited away. The original quote: "' + (it.anchor.quote || '').slice(0, 120) + '"';
 		}
 
 		marker.addEventListener('click', e => {
@@ -771,11 +849,26 @@
 		document.body.appendChild(el);
 		positionPostit(el, anchor);
 		bindPostitEvents(el, it);
+		// Scroll the highlighted passage into view (if any) so the user
+		// sees exactly which text the annotation is attached to, plus a
+		// brief pulse on the highlight.
+		const hl = anchor && anchor.classList && anchor.classList.contains('fb-highlight')
+			? anchor
+			: document.querySelector('.fb-highlight[data-fb-id="' + it.id + '"]');
+		if (hl && hl.scrollIntoView) {
+			hl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			hl.classList.add('fb-highlight-pulse');
+			setTimeout(() => hl.classList.remove('fb-highlight-pulse'), 1400);
+		}
 	}
 
 	function renderPostitHTML(it) {
 		const loc = it.anchor_type !== 'general' ? relocateAnchor(it) : null;
-		const stale = !loc || loc.status !== 'fresh';
+		// Show the "may be stale" badge only when the anchor truly lost
+		// the original text — not when it merely drifted by a few hundred
+		// characters in offset. If the exact quote text is still findable
+		// anywhere, the highlight is still pointing at the user's words.
+		const stale = !loc || loc.status === 'orphan';
 		const adminExtras = state.admin ? `
 			<div class="fb-postit-author">
 				${it.author_handle ? 'by <b>' + escHtml(it.author_handle) + '</b>' : 'Anonymous'}
@@ -825,7 +918,7 @@
 				${ownBadge}
 				${pendingBadge}
 				${failedBadge}
-				${stale ? '<span class="fb-postit-stale" title="The anchored text may have moved or changed since this feedback was filed.">⚠ may be stale</span>' : ''}
+				${stale ? '<span class="fb-postit-stale" title="The anchored text was edited away — this annotation is orphaned.">⚠ orphaned</span>' : ''}
 			</div>
 			${adminExtras}
 			${context}
