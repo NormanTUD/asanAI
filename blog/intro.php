@@ -23,7 +23,21 @@ tags: interested-layman
 </div>
 
 <div class="md">
-Most discussions of Artificial Intelligence start with what the systems can do today — or with the jobs they might take. This one starts earlier: with the **intellectual history** and the specific technicalities that made these systems possible. It is a journey through the evolution of human thought, in which every technical milestone stays attached to the historical and philosophical soil it grew in.
+## This is an experiment
+</div>
+
+<div class="smart-quote" data-cite="processandreality">
+The universe is a process of reaching out into the multi-colored world, and drawing it together into a single, new unity.
+</div>
+
+<div class="md">
+We're trying here to understand AI using AI. We tried to follow every question I could possibly think of regarding AI to it's source, trying to find original publications and put everything in place, so one has a complete mental model of where AI came from and how it works. We go into many different, unrelated fields, but we're Whiteheadians, assuming that Reality is One, and everything is connected to everything else. 
+
+We tried our best to fact-check every claim, but since this project also our personal learning curve of a diverse set of very different, very complex sciences like Astronomy, Mathematics, Computer Science, Material Science, Cultural History, Cosmology, Chemistry, Physics and so on, and we ourselves are not polymaths, we may have introduced errors here and there, as to err is human.
+
+What we're trying to do here is to paint a more-or-less complete picture of how AI came to be, and how many threads 
+
+Similiar to the [unfinishable map](https://unfinishablemap.org/), this is a never-to-be-finished task, since the Universe is constantly changing, and so is AI. Our goal is to, as clearly and deeply as possible, draw the current state of what lead to AI systems like chatGPT. We go into the [history](history), starting with the invention of counting itself, and the prehistory, starting with the question [why anything at all exists and the Big Bang](untold_history), and many things inbetween.
 
 ## What This Course Is — and What It Isn't
 
