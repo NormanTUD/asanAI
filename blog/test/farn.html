@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Der Samen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070806; --ink:#efeae0; --dim:#6f6a5e;
+  --mint:#9fe3bd; --gold:#e8c078; --rose:#e39a9a;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:"Cormorant Garamond",Georgia,serif;color:var(--ink);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+#glow{position:fixed;inset:-20%;z-index:1;pointer-events:none;
+  background:radial-gradient(58% 52% at 70% 62%,rgba(90,160,120,.14),transparent 70%),
+             radial-gradient(44% 38% at 24% 30%,rgba(220,170,100,.07),transparent 70%);
+  filter:blur(44px);transition:transform 2.6s var(--ease),opacity 2.6s var(--ease)}
+#vig{position:fixed;inset:0;z-index:40;pointer-events:none;
+  background:radial-gradient(ellipse 88% 78% at 50% 50%,transparent 32%,rgba(4,5,4,.84) 100%)}
+#grain{position:fixed;inset:-50%;z-index:41;pointer-events:none;opacity:.024;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+  animation:grain 1.6s steps(4) infinite}
+@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-2%,1%)}
+  50%{transform:translate(1%,-2%)}75%{transform:translate(-1%,-1%)}100%{transform:translate(0,0)}}
+
+#stage{position:fixed;inset:0;z-index:5}
+canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* ───── text column ───── */
+#textcol{position:fixed;z-index:20;left:0;top:0;bottom:0;width:46vw;
+  display:grid;place-items:center;padding:0 clamp(24px,4vw,72px);pointer-events:none}
+#textcol.center{width:100vw}
+.slide{position:absolute;opacity:0;pointer-events:none;width:100%;
+  transition:opacity 1.25s var(--ease)}
+.slide.on{opacity:1}
+.line{font-size:clamp(25px,3.3vw,54px);font-weight:300;line-height:1.3;
+  text-shadow:0 2px 60px rgba(0,0,0,.95)}
+.line em{font-style:normal;color:var(--mint)}
+.line b{font-weight:400;color:var(--gold)}
+.kicker{font-family:"Inter",sans-serif;font-size:clamp(9px,.95vw,12px);font-weight:500;
+  letter-spacing:.5em;text-transform:uppercase;color:var(--dim);margin-bottom:1.3em}
+.sub{font-family:"Inter",sans-serif;font-size:clamp(12px,1.05vw,15px);font-weight:300;
+  line-height:1.8;color:#8e8878;margin-top:1.5em;max-width:32ch}
+.w{display:inline-block;opacity:0;transform:translateY(.38em);filter:blur(12px);
+  transition:opacity 1.3s var(--ease),transform 1.3s var(--ease),filter 1.3s var(--ease)}
+.slide.on .w{opacity:1;transform:none;filter:blur(0)}
+
+/* ───── alphabet ───── */
+.alpha{display:flex;flex-direction:column;gap:.8em}
+.arow{display:flex;align-items:center;gap:1em;opacity:.24;transform:translateX(-6px);
+  transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.arow.lit{opacity:1;transform:none}
+.asym{font-family:"JetBrains Mono",monospace;font-size:clamp(18px,2.2vw,31px);
+  font-weight:500;width:2.5em;text-align:center;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:.16em 0}
+.arow.lit .asym{box-shadow:0 0 26px -4px currentColor}
+.adesc{font-family:"Inter",sans-serif;font-weight:300;
+  font-size:clamp(11px,1.1vw,16px);color:#a8a295}
+.s-F{color:var(--mint)} .s-T{color:var(--gold)} .s-B{color:var(--rose)}
+
+/* ═════ PERSISTENT RULE PANEL — always on during growth ═════ */
+#rulepanel{
+  position:fixed;z-index:34;left:50%;transform:translateX(-50%) translateY(14px);
+  bottom:clamp(58px,8vh,96px);width:min(880px,92vw);
+  font-family:"JetBrains Mono",monospace;
+  background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.012));
+  border:1px solid rgba(255,255,255,.085);border-radius:16px;
+  padding:1.05em 1.35em 1.15em;
+  backdrop-filter:blur(26px) saturate(1.3);-webkit-backdrop-filter:blur(26px) saturate(1.3);
+  box-shadow:0 40px 100px -28px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.06);
+  opacity:0;pointer-events:none;
+  transition:opacity 1.1s var(--ease),transform 1.1s var(--ease);
+}
+#rulepanel.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.rlbl{font-family:"Inter",sans-serif;font-size:8.5px;letter-spacing:.34em;
+  text-transform:uppercase;color:#56514a;display:block;margin-bottom:.55em}
+.rline{font-size:clamp(12px,1.25vw,18px);line-height:2;white-space:nowrap;
+  color:#cfc9bd;font-weight:400;overflow:hidden;text-overflow:clip}
+.rline + .rlbl{margin-top:.85em}
+
+/* character tokens — the live coupling */
+.ch{display:inline-block;border-radius:4px;padding:0 1.5px;
+  transition:color .22s linear,background-color .22s linear,
+             text-shadow .22s linear,transform .22s var(--ease);
+  will-change:transform,color}
+.ch.X{color:var(--gold)} .ch.F{color:var(--mint)}
+.ch.br{color:var(--rose);opacity:.8} .ch.tn{color:#857f74} .ch.ar{color:#4e4a42}
+.ch.live{
+  background:rgba(255,236,190,.26);color:#fff3d4;
+  text-shadow:0 0 18px rgba(255,220,150,.95),0 0 38px rgba(255,200,110,.5);
+  transform:translateY(-2px) scale(1.3);
+}
+.ch.echo{
+  background:rgba(255,236,190,.10);color:#f0dcb0;
+  text-shadow:0 0 10px rgba(255,220,150,.45);transform:scale(1.1);
+}
+
+/* ───── string strip ───── */
+#strip{position:fixed;left:0;right:0;bottom:0;z-index:30;
+  font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.07em;
+  padding:11px clamp(18px,3vw,44px) 14px;color:#4f4a41;white-space:nowrap;overflow:hidden;
+  background:linear-gradient(0deg,rgba(7,8,6,.97),rgba(7,8,6,0));
+  opacity:0;transition:opacity 1.1s var(--ease)}
+#strip.on{opacity:1}
+#strip .cur{color:#fff3d4;background:rgba(255,236,190,.3);border-radius:3px}
+#strip .done{color:#6f8276}
+
+/* ───── chrome ───── */
+#bar{position:fixed;left:0;top:0;height:1px;z-index:60;width:0;
+  background:linear-gradient(90deg,var(--gold),var(--mint));
+  transition:width 1.25s var(--ease);opacity:.5}
+#dots{position:fixed;right:clamp(14px,2vw,28px);top:50%;transform:translateY(-50%);
+  z-index:60;display:flex;flex-direction:column;gap:9px}
+.dot{width:4px;height:4px;border-radius:50%;background:#3b382f;cursor:pointer;
+  transition:all .85s var(--ease)}
+.dot.on{background:var(--mint);transform:scale(1.9);box-shadow:0 0 12px rgba(159,227,189,.5)}
+#hint{position:fixed;bottom:clamp(20px,2.6vh,30px);left:50%;transform:translateX(-50%);
+  font-family:"Inter",sans-serif;font-size:9px;letter-spacing:.4em;text-transform:uppercase;
+  color:#4a463e;z-index:60;transition:opacity 1.1s var(--ease);
+  animation:breathe 4.5s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.2}50%{opacity:.7}}
+
+@media (max-width:900px){
+  #textcol{width:100vw;place-items:start center;padding-top:7vh}
+  .slide{text-align:center}
+  .alpha{align-items:center} .arow{width:min(350px,90vw)}
+  .line{font-size:clamp(22px,6vw,34px)}
+  .sub{margin-left:auto;margin-right:auto}
+  #dots{display:none}
+  #rulepanel{bottom:clamp(44px,6vh,70px);padding:.85em 1em}
+  .rline{font-size:11px;line-height:1.9}
+}
+@media (prefers-reduced-motion:reduce){
+  #grain{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="glow"></div>
+<div id="stage"><canvas id="c"></canvas></div>
+<div id="vig"></div>
+<div id="grain"></div>
+<div id="bar"></div>
+<div id="dots"></div>
+
+<!-- PERSISTENT RULE PANEL -->
+<div id="rulepanel">
+  <span class="rlbl" id="lblX">ersetze &nbsp;X&nbsp; durch</span>
+  <div class="rline" id="ruleX"></div>
+  <span class="rlbl" id="lblF">ersetze &nbsp;F&nbsp; durch</span>
+  <div class="rline" id="ruleF"></div>
+</div>
+
+<div id="strip"></div>
+<div id="hint">weiter</div>
+
+<div id="textcol">
+  <section class="slide" data-l="center" data-m="seed"></section>
+
+  <section class="slide" data-l="center" data-m="seed">
+    <div class="line" style="text-align:center">
+      <span class="w">Ein</span> <span class="w"><b>Samen</b>.</span></div></section>
+
+  <section class="slide" data-l="center" data-m="seed">
+    <div class="line" style="text-align:center">
+      <span class="w">Darin</span> <span class="w">liegt</span> <span class="w"><em>alles</em>.</span></div></section>
+
+  <section class="slide" data-l="split" data-m="alpha">
+    <div class="kicker"><span class="w">vier&nbsp;zeichen</span></div>
+    <div class="alpha">
+      <div class="arow"><span class="asym s-F">F</span><span class="adesc">geh&nbsp;vorwärts, zieh&nbsp;eine&nbsp;Linie</span></div>
+      <div class="arow"><span class="asym s-T">+</span><span class="adesc">dreh&nbsp;dich&nbsp;nach&nbsp;links</span></div>
+      <div class="arow"><span class="asym s-T">−</span><span class="adesc">dreh&nbsp;dich&nbsp;nach&nbsp;rechts</span></div>
+      <div class="arow"><span class="asym s-B">[&nbsp;]</span><span class="adesc">merk&nbsp;dir&nbsp;hier&nbsp;·&nbsp;komm&nbsp;zurück</span></div>
+    </div></section>
+
+  <section class="slide" data-l="split" data-m="alpha" data-demo="F">
+    <div class="kicker"><span class="w">zeichne</span></div>
+    <div class="alpha">
+      <div class="arow lit"><span class="asym s-F">F</span><span class="adesc">geh&nbsp;vorwärts, zieh&nbsp;eine&nbsp;Linie</span></div>
+      <div class="arow"><span class="asym s-T">+</span><span class="adesc">dreh&nbsp;dich&nbsp;nach&nbsp;links</span></div>
+      <div class="arow"><span class="asym s-T">−</span><span class="adesc">dreh&nbsp;dich&nbsp;nach&nbsp;rechts</span></div>
+      <div class="arow"><span class="asym s-B">[&nbsp;]</span><span class="adesc">merk&nbsp;dir&nbsp;hier&nbsp;·&nbsp;komm&nbsp;zurück</span></div>
+    </div></section>
+
+  <section class="slide" data-l="split" data-m="alpha" data-demo="T">
+    <div class="kicker"><span class="w">drehe</span></div>
+    <div class="alpha">
+      <div class="arow"><span class="asym s-F">F</span><span class="adesc">geh&nbsp;vorwärts, zieh&nbsp;eine&nbsp;Linie</span></div>
+      <div class="arow lit"><span class="asym s-T">+</span><span class="adesc">dreh&nbsp;dich&nbsp;nach&nbsp;links</span></div>
+      <div class="arow lit"><span class="asym s-T">−</span><span class="adesc">dreh&nbsp;dich&nbsp;nach&nbsp;rechts</span></div>
+      <div class="arow"><span class="asym s-B">[&nbsp;]</span><span class="adesc">merk&nbsp;dir&nbsp;hier&nbsp;·&nbsp;komm&nbsp;zurück</span></div>
+    </div></section>
+
+  <section class="slide" data-l="split" data-m="alpha" data-demo="B">
+    <div class="kicker"><span class="w">verzweige</span></div>
+    <div class="alpha">
+      <div class="arow"><span class="asym s-F">F</span><span class="adesc">geh&nbsp;vorwärts, zieh&nbsp;eine&nbsp;Linie</span></div>
+      <div class="arow"><span class="asym s-T">+</span><span class="adesc">dreh&nbsp;dich&nbsp;nach&nbsp;links</span></div>
+      <div class="arow"><span class="asym s-T">−</span><span class="adesc">dreh&nbsp;dich&nbsp;nach&nbsp;rechts</span></div>
+      <div class="arow lit"><span class="asym s-B">[&nbsp;]</span><span class="adesc">merk&nbsp;dir&nbsp;hier&nbsp;·&nbsp;komm&nbsp;zurück</span></div>
+    </div></section>
+
+  <section class="slide" data-l="split" data-m="rule">
+    <div class="kicker"><span class="w">die&nbsp;ganze&nbsp;regel</span></div>
+    <div class="line"><span class="w">Zwei</span> <span class="w">Zeilen.</span></div>
+    <div class="sub"><span class="w">X ist kein Strich. X ist ein Versprechen, dass hier noch etwas wächst.</span></div></section>
+
+  <section class="slide" data-l="split" data-m="gen" data-gen="0">
+    <div class="kicker"><span class="w">schritt&nbsp;1</span></div>
+    <div class="line"><span class="w">Ein</span> <span class="w">Halm.</span></div></section>
+
+  <section class="slide" data-l="split" data-m="gen" data-gen="1">
+    <div class="kicker"><span class="w">schritt&nbsp;2</span></div>
+    <div class="line"><span class="w">Er</span> <span class="w">teilt</span> <span class="w">sich.</span></div></section>
+
+  <section class="slide" data-l="split" data-m="gen" data-gen="2">
+    <div class="kicker"><span class="w">schritt&nbsp;3</span></div>
+    <div class="line"><span class="w">Jede</span> <span class="w">Spitze</span><br><span class="w">tut</span> <span class="w"><em>dasselbe</em>.</span></div></section>
+
+  <section class="slide" data-l="split" data-m="gen" data-gen="3">
+    <div class="kicker"><span class="w">schritt&nbsp;4</span></div>
+    <div class="line"><span class="w">Nichts</span> <span class="w">Neues.</span><br><span class="w">Nur</span> <span class="w">mehr.</span></div></section>
+
+  <section class="slide" data-l="split" data-m="gen" data-gen="4">
+    <div class="kicker"><span class="w">schritt&nbsp;5</span></div>
+    <div class="line"><span class="w">Immer</span> <span class="w">noch</span><br><span class="w">dieselbe</span> <span class="w"><em>Regel</em>.</span></div></section>
+
+  <section class="slide" data-l="split" data-m="gen" data-gen="5">
+    <div class="kicker"><span class="w">schritt&nbsp;6</span></div>
+    <div class="line"><span class="w">Ein</span> <span class="w"><em>Farn</em>.</span></div></section>
+
+  <section class="slide" data-l="split" data-m="gen" data-gen="5">
+    <div class="line"><span class="w">Zwei</span> <span class="w">Zeilen</span> <span class="w">Regel.</span><br>
+      <span class="w"><b>Hunderttausend</b></span> <span class="w"><b>Striche</b>.</span></div></section>
+
+  <section class="slide" data-l="split" data-m="gen" data-gen="5">
+    <div class="line"><span class="w">Die</span> <span class="w">Welt</span> <span class="w">ist</span><br>
+      <span class="w"><b>komprimierbar</b>.</span></div>
+    <div class="sub"><span class="w">Vererbt wird nicht die Form, sondern die Vorschrift, sie zu bauen.</span></div></section>
+
+  <section class="slide" data-l="center" data-m="final">
+    <div class="line" style="text-align:center">
+      <span class="w">Du</span> <span class="w">auch</span><span class="w">.</span></div></section>
+</div>
+<script>
+/* ═══════════ L-SYSTEM ═══════════ */
+const AXIOM="X", RULES={X:"F+[[X]-X]-F[-FX]+X", F:"FF"};
+const ANG=25*Math.PI/180, MAXGEN=6;
+
+function expand(n){let s=AXIOM;for(let i=0;i<n;i++){let o="";for(const c of s)o+=RULES[c]||c;s=o;}return s;}
+
+/* Build each generation. Crucially we also record, for every drawn
+   stroke, WHICH CHARACTER in the rule-template produced it. That is
+   what lets the rule panel light up in sync with the drawing.        */
+const RULE_X = "F+[[X]-X]-F[-FX]+X";
+const RULE_F = "FF";
+
+function buildGen(g){
+  const str = expand(g+1);
+  const step = 1/Math.pow(2,g);
+  const segs=[];
+  let x=0,y=0,a=-Math.PI/2,d=0,t=0;
+  const st=[];
+  for(let i=0;i<str.length;i++){
+    const c=str[i];
+    if(c==="F"){
+      const nx=x+Math.cos(a)*step, ny=y+Math.sin(a)*step;
+      segs.push({x1:x,y1:y,x2:nx,y2:ny,d,t,ci:i});
+      x=nx;y=ny;t+=step;
+    }
+    else if(c==="+") a+=ANG;
+    else if(c==="-") a-=ANG;
+    else if(c==="["){ st.push([x,y,a,d,t]); d++; }
+    else if(c==="]"){ [x,y,a,d,t]=st.pop(); }
+  }
+  segs.str=str;
+  return segs;
+}
+
+const GENS=[];
+for(let g=0; g<MAXGEN; g++) GENS.push(buildGen(g));
+
+/* shared normalisation → identical substructures land on identical pixels */
+(function(){
+  const ref=GENS[MAXGEN-1];
+  let mnx=1e9,mxx=-1e9,mny=1e9,mxy=-1e9;
+  for(const s of ref){
+    mnx=Math.min(mnx,s.x1,s.x2); mxx=Math.max(mxx,s.x1,s.x2);
+    mny=Math.min(mny,s.y1,s.y2); mxy=Math.max(mxy,s.y1,s.y2);
+  }
+  const w=mxx-mnx, h=mxy-mny, sc=1/Math.max(w,h);
+  for(const segs of GENS){
+    let maxT=0,maxD=0;
+    for(const s of segs){
+      s.x1=(s.x1-mnx-w/2)*sc; s.x2=(s.x2-mnx-w/2)*sc;
+      s.y1=(s.y1-mny-h)*sc;   s.y2=(s.y2-mny-h)*sc;
+      maxT=Math.max(maxT,s.t); maxD=Math.max(maxD,s.d);
+    }
+    for(const s of segs) s.t = maxT ? s.t/maxT : 0;
+    segs.maxD = maxD || 1;
+  }
+})();
+
+/* ═══════════ WHICH STROKES ARE NEW? ═══════════
+   Inherited strokes keep their exact pixel position, so a hash of the
+   endpoints identifies them. They stay on screen; only new ones grow. */
+const KEY = s => Math.round(s.x1*4096)+"|"+Math.round(s.y1*4096)+"|"+
+                 Math.round(s.x2*4096)+"|"+Math.round(s.y2*4096);
+
+for(let g=0; g<MAXGEN; g++){
+  const segs=GENS[g];
+  if(g===0){ for(const s of segs) s.isNew=true; }
+  else{
+    const prev=new Set(GENS[g-1].map(KEY));
+    for(const s of segs) s.isNew = !prev.has(KEY(s));
+  }
+  // order the new wave by distance from the base so it sweeps outward
+  const news=segs.filter(s=>s.isNew);
+  let mn=1e9,mx=-1e9;
+  for(const s of news){ mn=Math.min(mn,s.t); mx=Math.max(mx,s.t); }
+  const span=(mx-mn)||1;
+  for(const s of news) s.nt=(s.t-mn)/span;
+  segs.news=news.sort((a,b)=>a.nt-b.nt);
+}
+
+/* ═══════════ RULE-CHARACTER MAPPING ═══════════
+   For every stroke we need to know which character OF THE RULE it came
+   from. We re-derive it by expanding once more while tracking, for each
+   output character, its index inside the replacement template.        */
+function deriveOrigin(g){
+  // origin[i] = index within RULE_X (or -1 for F-rule chars)
+  let s=AXIOM;
+  let origin=[-1];
+  let fromF=[false];
+  for(let step=0; step<=g; step++){
+    let ns="", no=[], nf=[];
+    for(let i=0;i<s.length;i++){
+      const c=s[i];
+      if(c==="X"){
+        for(let k=0;k<RULE_X.length;k++){ ns+=RULE_X[k]; no.push(k); nf.push(false); }
+      } else if(c==="F"){
+        for(let k=0;k<RULE_F.length;k++){ ns+=RULE_F[k]; no.push(k); nf.push(true); }
+      } else {
+        ns+=c; no.push(origin[i]); nf.push(fromF[i]);
+      }
+    }
+    s=ns; origin=no; fromF=nf;
+  }
+  return {origin, fromF};
+}
+
+for(let g=0; g<MAXGEN; g++){
+  const {origin,fromF}=deriveOrigin(g);
+  for(const s of GENS[g]){
+    s.ruleIdx = origin[s.ci] ?? -1;   // position inside the template
+    s.ruleF   = fromF[s.ci] ?? false; // came from the F-rule?
+  }
+}
+
+/* ═══════════ CANVAS ═══════════ */
+const cv=document.getElementById("c"), ctx=cv.getContext("2d",{alpha:true});
+let W,H,DPR;
+function resize(){
+  DPR=Math.min(devicePixelRatio||1,2);
+  W=innerWidth; H=innerHeight;
+  cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+addEventListener("resize",resize,{passive:true}); resize();
+
+const MOTES=Array.from({length:40},()=>({
+  x:Math.random(), y:Math.random(), r:Math.random()*2.4+.5,
+  sp:Math.random()*.055+.012, ph:Math.random()*6.283,
+  a:Math.random()*.2+.04
+}));
+
+/* ═══════════ TIME-BASED EASING ═══════════
+   Framerate-independent: the same motion on 60Hz and 144Hz.          */
+function approach(cur, target, speed, dt){
+  return target + (cur-target)*Math.exp(-speed*dt);
+}
+const easeOut  = t => 1-Math.pow(1-t,3);
+const easeInOut= t => t<.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+const clamp01  = t => t<0?0:t>1?1:t;
+
+/* ═══════════ STATE ═══════════ */
+const slides=[...document.querySelectorAll(".slide")];
+const N=slides.length;
+let idx=0;
+
+const S={
+  gen:0,   genT:0,
+  wave:0,  waveT:0,
+  fade:0,  fadeT:0,
+  scale:.55, scaleT:.55,
+  fx:.5,   fxT:.5,
+  seed:0,  seedT:0,
+  demo:0,  demoT:0,
+  panel:0, panelT:0
+};
+let demoMode=null;
+let genIdxInt=0;           // integer front generation (no blending — avoids mush)
+
+/* ═══════════ FERN ═══════════ */
+function drawFern(cx,cy,Sz,alpha,time){
+  if(alpha<.004) return;
+  const segs=GENS[genIdxInt];
+  const maxD=segs.maxD;
+  const w=easeOut(clamp01(S.wave));
+  const lwBase=Sz/700;
+
+  ctx.lineCap="round"; ctx.lineJoin="round";
+
+  for(let pass=0; pass<2; pass++){
+    for(let i=0;i<segs.length;i++){
+      const s=segs[i];
+
+      let vis=1, emerging=0;
+      if(s.isNew){
+        // wave front with a soft trailing edge
+        vis = clamp01((w - s.nt*0.82) * 5.5);
+        if(vis<=0) continue;
+        emerging = 1-vis;
+      }
+
+      const dn=s.d/maxD;
+      const h=-s.y1;
+      const sway=Math.sin(time*.00040 + s.y1*5.2 + s.d*.8)*.0040*h*h;
+
+      const x1=cx+(s.x1+sway)*Sz, y1=cy+s.y1*Sz;
+      const x2=cx+(s.x2+sway)*Sz, y2=cy+s.y2*Sz;
+
+      if(pass===0){
+        const r=118-48*dn|0, g=206+28*dn|0, b=152+48*dn|0;
+        ctx.strokeStyle=`rgba(${r},${g},${b},${alpha*vis*.075})`;
+        ctx.lineWidth=Math.max(2,(9-6*dn)*lwBase);
+      } else {
+        const r=228-118*dn|0, g=192+36*dn|0, b=120+64*dn|0;
+        let a=alpha*vis*(.30+.60*(1-dn));
+        ctx.strokeStyle=`rgba(${r},${g},${b},${a})`;
+        ctx.lineWidth=Math.max(.45,(2.7-2.25*dn)*lwBase);
+        if(emerging>.02){
+          ctx.strokeStyle=`rgba(${(r+40)|0},255,${(b+60)|0},${a+emerging*.45*alpha})`;
+          ctx.lineWidth*=1+emerging*.7;
+        }
+      }
+      ctx.beginPath();
+      ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+      ctx.stroke();
+    }
+  }
+
+  /* the glowing tip that travels with the wave */
+  if(S.wave<1 && segs.news.length){
+    const k=Math.min(segs.news.length-1, Math.floor(w*segs.news.length));
+    const s=segs.news[k];
+    const h=-s.y2;
+    const sway=Math.sin(time*.00040+s.y2*5.2+s.d*.8)*.0040*h*h;
+    const tx=cx+(s.x2+sway)*Sz, ty=cy+s.y2*Sz;
+    const g=ctx.createRadialGradient(tx,ty,0,tx,ty,Sz*.05);
+    g.addColorStop(0,`rgba(255,250,220,${.55*alpha})`);
+    g.addColorStop(.35,`rgba(190,255,215,${.22*alpha})`);
+    g.addColorStop(1,"rgba(190,255,215,0)");
+    ctx.fillStyle=g;
+    ctx.beginPath(); ctx.arc(tx,ty,Sz*.05,0,6.283); ctx.fill();
+  }
+}
+
+/* ═══════════ ALPHABET DEMOS ═══════════ */
+function drawDemo(mode,alpha,time){
+  if(alpha<.012) return;
+  const cx=W*.72, cy=H*.54, L=Math.min(W,H)*.13;
+  ctx.lineCap="round"; ctx.lineWidth=Math.max(2,L*.038);
+
+  const seg=(x1,y1,x2,y2,r,g,b,a)=>{
+    ctx.strokeStyle=`rgba(${r},${g},${b},${a*alpha})`;
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  };
+
+  if(mode==="F"){
+    const p=easeInOut(clamp01(((time*.00032)%1)*1.9));
+    seg(cx,cy+L, cx,cy+L-L*2*p, 159,227,189, .9);
+    ctx.fillStyle=`rgba(255,245,210,${alpha*.95})`;
+    ctx.beginPath(); ctx.arc(cx,cy+L-L*2*p, L*.058, 0,6.283); ctx.fill();
+  }
+
+  if(mode==="T"){
+    const a=Math.sin(time*.00075)*ANG*2.4;
+    seg(cx,cy+L, cx,cy-L*.25, 110,120,110, .28);
+    seg(cx,cy+L, cx+Math.sin(a)*L*1.25, cy+L-Math.cos(a)*L*1.25, 232,192,120, .95);
+    ctx.strokeStyle=`rgba(232,192,120,${alpha*.25})`;
+    ctx.lineWidth=1.2;
+    ctx.beginPath(); ctx.arc(cx,cy+L,L*.6,-Math.PI/2-ANG*2.4,-Math.PI/2+ANG*2.4); ctx.stroke();
+  }
+
+  if(mode==="B"){
+    const p=easeInOut(clamp01(((time*.00026)%1)*1.8));
+    const mx=cx, my=cy+L-L*1.0;
+    seg(cx,cy+L, mx,my, 159,227,189, .85);
+    const pulse=.5+.5*Math.sin(time*.0028);
+    ctx.fillStyle=`rgba(227,154,154,${alpha*(.32+.5*pulse)})`;
+    ctx.beginPath(); ctx.arc(mx,my,L*.075,0,6.283); ctx.fill();
+    const a1=-Math.PI/2+ANG*1.7, a2=-Math.PI/2-ANG*1.7;
+    seg(mx,my, mx+Math.cos(a1)*L*.85*p, my+Math.sin(a1)*L*.85*p, 227,154,154,.75);
+    seg(mx,my, mx+Math.cos(a2)*L*.85*p, my+Math.sin(a2)*L*.85*p, 227,154,154,.75);
+    seg(mx,my, mx,my-L*.95, 159,227,189, .45);
+  }
+}
+
+/* ═══════════ RULE PANEL ═══════════ */
+const panel=document.getElementById("rulepanel");
+const ruleXEl=document.getElementById("ruleX");
+const ruleFEl=document.getElementById("ruleF");
+
+function renderRule(el, prefix, body, offset){
+  el.innerHTML="";
+  [...prefix].forEach(c=>{
+    const sp=document.createElement("span");
+    sp.className="ch ar"; sp.textContent=c;
+    el.appendChild(sp);
+  });
+  [...body].forEach((c,i)=>{
+    const sp=document.createElement("span");
+    sp.className="ch "+(c==="X"?"X":c==="F"?"F":(c==="["||c==="]")?"br":"tn");
+    sp.dataset.i=i+offset;
+    sp.textContent = c==="-" ? "−" : c;
+    el.appendChild(sp);
+  });
+}
+renderRule(ruleXEl, "X  →  ", RULE_X, 0);
+renderRule(ruleFEl, "F  →  ", RULE_F, 0);
+
+const tokX=[...ruleXEl.querySelectorAll(".ch[data-i]")];
+const tokF=[...ruleFEl.querySelectorAll(".ch[data-i]")];
+
+let lastLive=-2, lastLiveF=false;
+function updateRuleHighlight(){
+  if(S.panel<.2){ 
+    if(lastLive!==-2){ clearHL(); lastLive=-2; }
+    return;
+  }
+  const segs=GENS[genIdxInt];
+  const news=segs.news.length?segs.news:segs;
+  const w=easeOut(clamp01(S.wave));
+  const k=Math.min(news.length-1, Math.floor(w*news.length));
+  const s=news[k];
+  if(!s) return;
+  const ri=s.ruleIdx, rf=s.ruleF;
+  if(ri===lastLive && rf===lastLiveF) return;
+  lastLive=ri; lastLiveF=rf;
+
+  clearHL();
+  const toks = rf ? tokF : tokX;
+  // live char + soft echo on neighbours → reads as motion, not blinking
+  toks.forEach(t=>{
+    const i=+t.dataset.i;
+    if(i===ri) t.classList.add("live");
+    else if(Math.abs(i-ri)===1) t.classList.add("echo");
+  });
+  // the other line dims slightly so the eye knows which rule is firing
+  (rf?ruleXEl:ruleFEl).style.opacity=".42";
+  (rf?ruleFEl:ruleXEl).style.opacity="1";
+}
+function clearHL(){
+  for(const t of tokX){ t.classList.remove("live","echo"); }
+  for(const t of tokF){ t.classList.remove("live","echo"); }
+}
+
+/* ═══════════ STRING STRIP ═══════════ */
+const strip=document.getElementById("strip");
+function updateStrip(){
+  const show = S.panel>.25;
+  strip.classList.toggle("on", show);
+  if(!show) return;
+  const segs=GENS[genIdxInt];
+  const str=segs.str;
+  const news=segs.news.length?segs.news:segs;
+  const w=easeOut(clamp01(S.wave));
+  const k=Math.min(news.length-1, Math.floor(w*news.length));
+  const cur=news[k] ? news[k].ci : 0;
+
+  const MAXCH=Math.max(20, Math.floor(W/6.8));
+  const half=MAXCH>>1;
+  const from=Math.max(0, Math.min(str.length-MAXCH, cur-half));
+  const to=Math.min(str.length, from+MAXCH);
+
+  let html="";
+  for(let i=from;i<to;i++){
+    const c = str[i]==="-" ? "−" : str[i];
+    if(i===cur) html+='<span class="cur">'+c+'</span>';
+    else if(i<cur) html+='<span class="done">'+c+'</span>';
+    else html+=c;
+  }
+  strip.innerHTML=html;
+}
+
+/* ═══════════ FRAME LOOP ═══════════ */
+let prevT=performance.now();
+function frame(now){
+  let dt=(now-prevT)/1000; prevT=now;
+  if(dt>.1) dt=.1;                    // tab-switch guard
+  const time=now;
+
+  ctx.clearRect(0,0,W,H);
+
+  S.gen   = approach(S.gen,  S.genT,  4.2, dt);
+  S.wave  = approach(S.wave, S.waveT, 1.15, dt);   // slow, readable growth
+  S.fade  = approach(S.fade, S.fadeT, 3.2, dt);
+  S.scale = approach(S.scale,S.scaleT,3.4, dt);
+  S.fx    = approach(S.fx,   S.fxT,   3.6, dt);
+  S.seed  = approach(S.seed, S.seedT, 4.4, dt);
+  S.demo  = approach(S.demo, S.demoT, 4.4, dt);
+  S.panel = approach(S.panel,S.panelT,3.0, dt);
+
+  panel.classList.toggle("on", S.panelT>.5);
+
+  ctx.globalCompositeOperation="lighter";
+
+  for(const m of MOTES){
+    m.ph += dt*m.sp*2.4;
+    let y=(m.y - time*m.sp*.00001)%1; if(y<0)y+=1;
+    const yy=y*H, xx=m.x*W+Math.sin(m.ph)*26;
+    const a=m.a*(.35+.65*Math.sin(m.ph*.7)**2)*(.25+.75*Math.max(S.fade,S.demo));
+    const g=ctx.createRadialGradient(xx,yy,0,xx,yy,m.r*7);
+    g.addColorStop(0,`rgba(190,225,200,${a})`);
+    g.addColorStop(1,"rgba(190,225,200,0)");
+    ctx.fillStyle=g;
+    ctx.beginPath(); ctx.arc(xx,yy,m.r*7,0,6.283); ctx.fill();
+  }
+
+  if(S.seed>.005){
+    const cx=W/2, cy=H*.46, pulse=1+Math.sin(time*.0012)*.15;
+    for(const [rad,al] of [[150,.05],[60,.12],[20,.40],[7,.95]]){
+      const g=ctx.createRadialGradient(cx,cy,0,cx,cy,rad*pulse);
+      g.addColorStop(0,`rgba(240,200,120,${al*S.seed})`);
+      g.addColorStop(1,"rgba(240,200,120,0)");
+      ctx.fillStyle=g;
+      ctx.beginPath(); ctx.arc(cx,cy,rad*pulse,0,6.283); ctx.fill();
+    }
+  }
+
+  if(S.demo>.012 && demoMode) drawDemo(demoMode, S.demo, time);
+  if(S.fade>.005) drawFern(W*S.fx, H*.90, Math.min(W,H)*.74*S.scale, S.fade, time);
+
+  ctx.globalCompositeOperation="source-over";
+
+  updateRuleHighlight();
+  updateStrip();
+
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* ═══════════ SLIDES ═══════════ */
+const textcol=document.getElementById("textcol");
+const dots=document.getElementById("dots");
+const bar=document.getElementById("bar");
+const hint=document.getElementById("hint");
+const glow=document.getElementById("glow");
+
+slides.forEach(()=>{ const d=document.createElement("div"); d.className="dot"; dots.appendChild(d); });
+const dotEls=[...dots.children];
+
+function applyState(i, dir){
+  const el=slides[i];
+  const layout=el.dataset.l||"split";
+  const mode=el.dataset.m;
+
+  textcol.classList.toggle("center", layout==="center");
+
+  S.seedT = (mode==="seed") ? (i===0?1:(i===1?.9:.5)) : 0;
+  demoMode = el.dataset.demo || null;
+  S.demoT  = demoMode ? 1 : 0;
+
+  /* panel is visible from the rule slide onwards, through ALL growth */
+  S.panelT = (mode==="rule"||mode==="gen") ? 1 : 0;
+
+  if(mode==="rule"){
+    S.fadeT=0; S.scaleT=.55; S.fxT=.5;
+    genIdxInt=0; S.genT=0; S.wave=0; S.waveT=0;
+  }
+  else if(mode==="gen"){
+    const g=parseInt(el.dataset.gen,10);
+    S.fadeT=1; S.scaleT=1;
+    S.fxT = (layout==="center") ? .5 : .74;
+    if(g!==genIdxInt || (dir>0 && S.wave>=.999)){
+      genIdxInt=g;
+      S.genT=g;
+      S.wave = dir>=0 ? 0 : 1;        // forward: regrow the new wave
+      S.waveT = 1;
+      lastLive=-2;
+    } else {
+      S.waveT=1;
+    }
+  }
+  else if(mode==="final"){
+    S.fadeT=.62; S.scaleT=1.12; S.fxT=.5;
+    genIdxInt=MAXGEN-1; S.genT=MAXGEN-1; S.waveT=1;
+  }
+  else{
+    S.fadeT=0; S.scaleT=.55; S.fxT=.5;
+    genIdxInt=0; S.genT=0; S.wave=0; S.waveT=0;
+  }
+
+  const p=i/(N-1);
+  glow.style.transform=`translate(${(p-.5)*-9}%,${(p-.5)*6}%) scale(${1+p*.22})`;
+  glow.style.opacity=.55+p*.45;
+}
+
+function show(i, dir){
+  i=Math.max(0,Math.min(N-1,i));
+  if(dir===undefined) dir = i>=idx ? 1 : -1;
+  idx=i;
+
+  slides.forEach((s,k)=>{
+    const on = k===idx;
+    s.classList.toggle("on", on);
+    s.querySelectorAll(".w").forEach((w,j)=>{
+      w.style.transitionDelay = on ? (220+j*170)+"ms" : "0ms";
+    });
+  });
+
+  dotEls.forEach((d,k)=>d.classList.toggle("on", k===idx));
+  bar.style.width=(idx/(N-1))*100+"%";
+  hint.style.opacity = idx===0 ? "" : (idx===N-1 ? 0 : .28);
+
+  applyState(idx, dir);
+}
+show(0,1);
+
+/* ═══════════ NAV ═══════════ */
+let lock=false;
+function go(d){
+  if(lock) return;
+  lock=true; setTimeout(()=>lock=false, 600);
+  show(idx+d, d);
+}
+addEventListener("keydown",e=>{
+  if(["ArrowRight","ArrowDown"," ","Enter","PageDown"].includes(e.key)){e.preventDefault();go(1);}
+  else if(["ArrowLeft","ArrowUp","PageUp"].includes(e.key)){e.preventDefault();go(-1);}
+  else if(e.key==="Home") show(0,-1);
+  else if(e.key==="End")  show(N-1,1);
+});
+addEventListener("click",e=>{
+  const d=e.target.closest(".dot");
+  if(d){ show(dotEls.indexOf(d)); return; }
+  go(1);
+});
+let acc=0, wt=null;
+addEventListener("wheel", e=>{
+  acc += e.deltaY;
+  clearTimeout(wt);
+  if(Math.abs(acc) > 70){ go(acc>0 ? 1 : -1); acc=0; }
+  wt = setTimeout(()=>acc=0, 200);
+}, {passive:true});
+
+let ty=0, tx=0;
+addEventListener("touchstart", e=>{
+  ty=e.touches[0].clientY; tx=e.touches[0].clientX;
+}, {passive:true});
+addEventListener("touchend", e=>{
+  const dy = ty - e.changedTouches[0].clientY;
+  const dx = tx - e.changedTouches[0].clientX;
+  if(Math.abs(dy) > 45 || Math.abs(dx) > 45){
+    go((Math.abs(dy) > Math.abs(dx) ? dy : dx) > 0 ? 1 : -1);
+  }
+}, {passive:true});
+
+/* pause the wave when the tab is hidden so nothing jumps on return */
+document.addEventListener("visibilitychange", ()=>{
+  if(!document.hidden) prevT = performance.now();
+});
+</script>
+</body>
+</html>
