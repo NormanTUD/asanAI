@@ -10,10 +10,29 @@ RewriteEngine On
     </IfModule>
 </FilesMatch>
 
+# Feedback data dir holds the SQLite DB + admin password hash + patches.
+# Must never be served directly — only the PHP API endpoints access it.
+RedirectMatch 403 ^/.*/feedback_data/.*$
+<IfModule mod_authz_core.c>
+    <FilesMatch "^(adminpw|feedback\.sqlite.*|.*\.patch)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+<IfModule !mod_authz_core.c>
+    <FilesMatch "^(adminpw|feedback\.sqlite.*|.*\.patch)$">
+        Deny from all
+    </FilesMatch>
+</IfModule>
+
 
 # 1. Externer Redirect: .php entfernen (dynamisch und ohne Pfad-Verdopplung)
+# Use 308 (Permanent Redirect, method-preserving) instead of 301.
+# Browsers convert POST→GET on 301 per RFC 7231 §6.4.2, which breaks
+# JSON API POSTs to /api/feedback/submit.php (the browser would GET
+# the help page instead of submitting). 308 preserves the method.
+RewriteCond %{REQUEST_METHOD} !^(POST|PUT|PATCH|DELETE)$ [NC]
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^.]+)\.php [NC]
-RewriteRule ^ %1 [R=301,L]
+RewriteRule ^ %1 [R=308,L]
 
 # 2. Internes Umschreiben: Im Hintergrund die .php Datei laden
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -24,20 +43,17 @@ RewriteRule ^(.*)$ %{REQUEST_URI}.php [L]
 #    PHP response so mobile.css + mobile.js load on every page,
 #    including standalone module pages that go through functions.php's
 #    auto-render path (which we don't touch).
-#    The prepended file (mobile-prepend.php) starts output buffering
-#    with a callback that injects <link>/<script> tags into </head>.
-#    It's defensive: it no-ops on non-HTML responses and skips
-#    injection if mobile.css is already present in the buffer (so
-#    explicit includes in index.php / index_full.php won't double-load).
-<IfModule mod_php8.c>
-    php_value auto_prepend_file "mobile-prepend.php"
-</IfModule>
-<IfModule mod_php.c>
-    php_value auto_prepend_file "mobile-prepend.php"
-</IfModule>
-<IfModule mod_php7.c>
-    php_value auto_prepend_file "mobile-prepend.php"
-</IfModule>
+#    The prepended file (mobile-prepend.php, see .user.ini) starts
+#    output buffering with a callback that injects <link>/<script>
+#    tags into </head>. It's defensive: it no-ops on non-HTML responses
+#    and skips injection if mobile.css is already present in the
+#    buffer (so explicit includes in index.php / index_full.php won't
+#    double-load).
+#    NOTE: the prepend is configured via .user.ini (path-relative to
+#    this directory, so it resolves correctly). The php_value directives
+#    below were intentionally removed — they resolve relative to the
+#    Apache DocumentRoot, which is one level up, and produced "Failed
+#    to open stream: No such file or directory" warnings.
 
 # Pages (including the rewritten .php URLs) must never be served from
 # an unvalidated cache. They carry ?v=filemtime cache-busters on every
