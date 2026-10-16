@@ -460,16 +460,23 @@ function feedback_admin_authed(): bool {
 }
 
 function feedback_admin_log(string $action, ?int $feedbackId, ?string $from, ?string $to, ?string $note = null): void {
-	$pdo = feedback_bootstrap();
-	$pdo->prepare('INSERT INTO feedback_history (feedback_id, action, actor, from_value, to_value, note) VALUES (?, ?, ?, ?, ?, ?)')
-		->execute([
-			$feedbackId,
-			$action,
-			'admin',
-			$from,
-			$to,
-			$note,
-		]);
+	try {
+		$pdo = feedback_bootstrap();
+		$pdo->prepare('INSERT INTO feedback_history (feedback_id, action, actor, from_value, to_value, note) VALUES (?, ?, ?, ?, ?, ?)')
+			->execute([
+				$feedbackId,
+				$action,
+				'admin',
+				$from,
+				$to,
+				$note,
+			]);
+	} catch (PDOException $e) {
+		// The history log is best-effort — never let a logging failure
+		// kill the main action. (In particular a FK violation when the
+		// parent row was just deleted would 500 the whole request.)
+		error_log('[feedback_admin_log] ' . $e->getMessage() . ' — action=' . $action . ' feedback_id=' . ($feedbackId ?? 'null'));
+	}
 }
 
 function feedback_log($action, ?int $feedbackId, ?string $from, ?string $to, ?string $note = null): void {

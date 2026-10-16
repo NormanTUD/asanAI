@@ -26,16 +26,15 @@ if ($isAdmin) {
 	$stmt = $pdo->prepare('SELECT * FROM feedback WHERE lesson_slug = ? ORDER BY created_at DESC LIMIT 500');
 	$stmt->execute([$lesson]);
 } elseif ($visitorId) {
-	$stmt = $pdo->prepare('
-		SELECT * FROM feedback
-		WHERE lesson_slug = ? AND (
-			(approved = 1 AND status != \'wontfix\') OR visitor_id = ?
-		)
-		ORDER BY created_at DESC LIMIT 500
-	');
+		$stmt = $pdo->prepare('
+			SELECT * FROM feedback
+			WHERE lesson_slug = ?
+			AND ((approved = 1 AND status NOT IN (\'wontfix\',\'spam\')) OR visitor_id = ?)
+			ORDER BY created_at DESC LIMIT 500
+		');
 	$stmt->execute([$lesson, $visitorId]);
 } else {
-	$stmt = $pdo->prepare('SELECT * FROM feedback WHERE lesson_slug = ? AND approved = 1 AND status != \'wontfix\' ORDER BY created_at DESC LIMIT 500');
+	$stmt = $pdo->prepare('SELECT * FROM feedback WHERE lesson_slug = ? AND approved = 1 AND status NOT IN (\'wontfix\',\'spam\') ORDER BY created_at DESC LIMIT 500');
 	$stmt->execute([$lesson]);
 }
 

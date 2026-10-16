@@ -228,6 +228,8 @@ function load_base_js ($defer = false) {
 	js("keypoint", null, $defer);
 	js("progress_tracker", null, $defer);
 	js("organic-network", null, $defer);
+	css("feedback/feedback");
+	js("feedback/feedback", null, $defer);
 
 	$files = glob(__DIR__ . "/modules/*.js");
 
@@ -676,13 +678,15 @@ if(!server_php_self_ends_with_index_php()) {
 ?>
 	</head>
 	<body>
+		<?php feedback_health_banner(); ?>
 		<a class="cl-skip" href="#contents">Skip to content</a>
 		<button id="drawer-toggle" aria-label="Menu" title="Course modules">&#9776;</button>
 		<button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></button>
-		<?php render_theme_toggle(); ?>
-		<?php render_topics_toggle(); ?>
-		<?php render_reader_toggle(); ?>
-		<?php render_drawer(); ?>
+<?php render_theme_toggle(); ?>
+<?php render_topics_toggle(); ?>
+<?php render_reader_toggle(); ?>
+<?php render_feedback_toggle(); ?>
+<?php render_drawer(); ?>
 		<div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
 			<div class="spinner" aria-hidden="true"></div>
 			<p id="loader-status">Initializing AI Course...</p>
@@ -702,6 +706,49 @@ if(!server_php_self_ends_with_index_php()) {
 function hide_email($email) {
 	$character_set = '&#' . implode(';&#', array_map('ord', str_split($email))) . ';';
 	return $character_set;
+}
+
+/**
+ * 🩺 Feedback-system health check + banner.
+ * Runs on every page load; renders a hard-to-miss banner if any of
+ * the feedback storage locations are unreadable / unwritable. The
+ * banner shows the exact chmod/chown command for each issue so the
+ * operator can fix it without grep'ing through the codebase.
+ */
+function feedback_health_banner(): void {
+	$healthFile = __DIR__ . '/api/feedback/_health.php';
+	if (!file_exists($healthFile)) return;
+	require_once($healthFile);
+	$issues = feedback_check_setup();
+	if (!$issues) return;
+
+	$critical = false;
+	foreach ($issues as $i) if ($i['severity'] === 'critical') { $critical = true; break; }
+
+	echo '<div class="fb-health fb-health-' . ($critical ? 'critical' : 'warning') . '" role="alert" data-fb-health>';
+	echo '<div class="fb-health-inner">';
+	echo '<div class="fb-health-head">';
+	echo '<span class="fb-health-icon">' . ($critical ? '🛑' : '⚠️') . '</span>';
+	echo '<strong>Feedback system needs attention</strong>';
+	echo '<span class="fb-health-count">' . count($issues) . ' issue' . (count($issues) === 1 ? '' : 's') . '</span>';
+	echo '</div>';
+	echo '<ol class="fb-health-list">';
+	foreach ($issues as $i) {
+		$sev  = $i['severity'];
+		$path = htmlspecialchars($i['path']);
+		$what = htmlspecialchars($i['what']);
+		$fix  = htmlspecialchars($i['fix']);
+		$note = $i['note'] ? '<div class="fb-health-note">' . htmlspecialchars($i['note']) . '</div>' : '';
+		echo '<li class="fb-health-item fb-health-' . $sev . '">';
+		echo '<div class="fb-health-what">' . $what . '</div>';
+		echo '<code class="fb-health-path">' . $path . '</code>';
+		echo '<pre class="fb-health-fix">' . $fix . '</pre>';
+		echo $note;
+		echo '</li>';
+	}
+	echo '</ol>';
+	echo '<div class="fb-health-foot">After running the command, refresh this page — the banner disappears automatically. Setup helper: <a href="api/feedback/setup.php">api/feedback/setup.php</a></div>';
+	echo '</div></div>';
 }
 
 function isCli(): bool
@@ -848,6 +895,27 @@ function render_reader_toggle(): void {
 	echo '<path d="M22 4h-7a4 4 0 0 0-4 4v12"/>';
 	echo '<path d="M2 4v16h7a4 4 0 0 0 4-4"/>';
 	echo '<path d="M22 4v16h-7a4 4 0 0 1-4-4"/>';
+	echo '</svg></span>';
+	echo '</button>';
+}
+
+/**
+ * 🐛 Feedback / bug-report toggle — sits left of the reader-toggle
+ * in the top-right chrome bar. Toggling it activates bug mode on the
+ * current lesson; clicking 🐛 again deactivates. The actual widget
+ * (popovers, post-its, anchor relocation) is wired up by feedback.js.
+ * Keyboard shortcut: B (bug), Esc to exit bug mode.
+ */
+function render_feedback_toggle(): void {
+	echo '<button id="fb-toggle" type="button" aria-label="Feedback &amp; bug reports" title="Click to leave feedback (B)">';
+	echo '<span class="ti-bug" aria-hidden="true">';
+	echo '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
+	echo '<path d="M8 2l1.5 1.5M16 2l-1.5 1.5M9 7h6"/>';
+	echo '<rect x="7" y="7" width="10" height="11" rx="5"/>';
+	echo '<path d="M3 12h4M3 8h3M3 16h3M21 12h-4M21 8h-3M21 16h-3M12 7v-3M9 4l3-2 3 2"/>';
+	echo '<circle cx="10" cy="11" r="0.6" fill="currentColor"/>';
+	echo '<circle cx="14" cy="11" r="0.6" fill="currentColor"/>';
+	echo '<path d="M10 14c.5.6 1 1 2 1s1.5-.4 2-1"/>';
 	echo '</svg></span>';
 	echo '</button>';
 }

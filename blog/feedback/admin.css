@@ -852,6 +852,17 @@ body.fb-admin {
 	border-color: var(--fb-a-rose);
 	color: var(--fb-a-rose);
 }
+.fb-item-actions button.danger.is-armed {
+	background: var(--fb-a-rose);
+	color: white;
+	border-color: var(--fb-a-rose);
+	animation: fb-arm-pulse 0.8s ease-in-out infinite;
+	font-weight: 700;
+}
+@keyframes fb-arm-pulse {
+	0%, 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.5); }
+	50%      { box-shadow: 0 0 0 6px rgba(225, 29, 72, 0); }
+}
 .fb-item-actions button.primary {
 	background: var(--fb-a-grad-2);
 	color: white;

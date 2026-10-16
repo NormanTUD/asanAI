@@ -58,24 +58,7 @@ html.atlas-overlap #fb-toggle { opacity: 0 !important; visibility: hidden !impor
 	#fb-toggle { top: 10px; right: 232px; width: 36px; height: 36px; }
 }
 
-#fb-toggle-count {
-	position: absolute;
-	top: -6px;
-	right: -6px;
-	min-width: 18px;
-	height: 18px;
-	padding: 0 5px;
-	border-radius: 9px;
-	background: var(--mn-coral, var(--mn-accent));
-	color: white;
-	font-size: 11px;
-	line-height: 18px;
-	font-weight: 700;
-	text-align: center;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-	display: none;
-}
-#fb-toggle-count.is-visible { display: block; }
+#fb-toggle-count { display: none !important; }
 
 /* ── Bug-mode: subtle full-page cue that feedback is active ── */
 html.fb-mode {

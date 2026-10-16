@@ -56,6 +56,25 @@ function login(password) {
 	}));
 }
 
+	/* ─────────────────────────────────────────────────────────────────
+	   Network helpers — every response is parsed safely, so an empty
+	   body or non-JSON never crashes the admin with a SyntaxError.
+	   ───────────────────────────────────────────────────────────────── */
+	async function safeJson(r) {
+		const text = await r.text();
+		if (!text) return { ok: r.ok, status: r.status, j: null, empty: true };
+		const ct = (r.headers.get('Content-Type') || '').toLowerCase();
+		if (ct.indexOf('application/json') < 0) {
+			return { ok: r.ok, status: r.status, j: null,
+				error: 'Server returned non-JSON (status ' + r.status + '): ' + text.slice(0, 200) };
+		}
+		try { return { ok: r.ok, status: r.status, j: JSON.parse(text) }; }
+		catch (_) {
+			return { ok: r.ok, status: r.status, j: null,
+				error: 'Server returned invalid JSON: ' + text.slice(0, 200) };
+		}
+	}
+
 	function loadList() {
 		const f = state.filters;
 		const q = new URLSearchParams();
@@ -66,16 +85,48 @@ function login(password) {
 		if (f.q)        q.set('q', f.q);
 		if (f.sort)     q.set('sort', f.sort);
 		return fetch(API_BASE + '/list.php?' + q.toString(), { credentials: 'same-origin' })
-			.then(r => r.json())
-			.then(j => { state.data = j; render(); });
+			.then(safeJson)
+			.then(({ ok, status, j, error }) => {
+				if (error || !ok) {
+					console.error('[loadList] failed:', error || ('HTTP ' + status));
+					showError(error || ('HTTP ' + status));
+					return;
+				}
+				state.data = j;
+				render();
+			});
 	}
+
+	function showError(msg) {
+		const wrap = $('#fb-admin-list');
+		if (!wrap) { alert('Feedback admin error: ' + msg); return; }
+		wrap.innerHTML = '<div class="fb-admin-error">' +
+			'<strong>⚠ Could not load admin data.</strong><br>' +
+			escHtml(msg) + '<br>' +
+			'<small>Check the browser dev-tools network tab for the failing request.</small>' +
+			'</div>';
+	}
+
+	/* Network helpers (safeJson, adminAction, adminApply) live at the top
+	   of this IIFE so every helper below can use them. */
 
 	function adminAction(action, id, extra) {
 		return fetch(API_BASE + '/update.php', {
 			method: 'POST', credentials: 'same-origin',
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify(Object.assign({ action, id }, extra || {})),
-		}).then(r => r.json());
+		}).then(safeJson).then(({ ok, status, j, error }) => {
+			if (error) {
+				console.error('[adminAction]', action, id, 'failed:', error);
+				return { ok: false, error, status };
+			}
+			if (!ok) {
+				const msg = (j && j.error) ? j.error : ('HTTP ' + status);
+				console.error('[adminAction]', action, id, 'rejected:', msg);
+				return { ok: false, error: msg, status, j };
+			}
+			return { ok: true, j, status };
+		});
 	}
 
 	function adminApply(id) {
@@ -83,7 +134,11 @@ function login(password) {
 			method: 'POST', credentials: 'same-origin',
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify({ id }),
-		}).then(r => r.json());
+		}).then(safeJson).then(({ ok, status, j, error }) => {
+			if (error) return { ok: false, error, status };
+			if (!ok)   return { ok: false, error: (j && j.error) || ('HTTP ' + status), status, j };
+			return { ok: true, j, status };
+		});
 	}
 
 	function render() {
@@ -209,10 +264,12 @@ function login(password) {
 		if (it.status !== 'resolved')    actions.push(`<button class="success" data-act="resolve">✓ Resolve</button>`);
 		if (it.status === 'resolved')    actions.push(`<button data-act="unresolve">↺ Reopen</button>`);
 		if (it.status !== 'wontfix')     actions.push(`<button data-act="status" data-status="wontfix">✗ Won't fix</button>`);
+		if (it.status !== 'spam')        actions.push(`<button data-act="status" data-status="spam" title="Soft-delete: hide from public but keep in DB for audit">🚫 Spam</button>`);
+		if (it.status === 'spam')        actions.push(`<button data-act="status" data-status="open" title="Restore to public view">↺ Unspam</button>`);
 		if (it.anchor_type === 'suggestion' && it.suggestion_original && it.suggestion_replacement) {
 			actions.push(`<button class="primary" data-act="apply">⚙ Copy as patch</button>`);
 		}
-		actions.push(`<button class="danger" data-act="delete">🗑 Delete</button>`);
+		actions.push(`<button class="danger" data-act="delete" data-confirm="1" title="Hard-delete: removes this item from the database. There is no undo.">🗑 Delete…</button>`);
 
 		return `
 			<div class="${cls.join(' ')}" data-id="${it.id}">
@@ -245,6 +302,13 @@ function login(password) {
 					e.preventDefault();
 					const act = btn.dataset.act;
 					const stat = btn.dataset.status;
+					// Inline two-click confirmation for destructive actions.
+					// First click: button labels itself "Click again to confirm"
+					// within a 4-second window. Second click fires.
+					if (btn.dataset.confirm === '1' && btn.dataset.armed !== '1') {
+						armForConfirm(btn);
+						return;
+					}
 					if (act === 'resolve') {
 						const note = prompt('Resolution note (optional, shown publicly):', '');
 						if (note === null) return;
@@ -255,8 +319,13 @@ function login(password) {
 							showPatchModal(j);
 						}).catch(e => alert('Network error: ' + e.message));
 					} else if (act === 'delete') {
-						if (!confirm('Delete this feedback permanently?')) return;
-						adminAction('delete', id).then(loadList);
+						adminAction('delete', id).then(res => {
+							if (!res.ok) {
+								alert('Delete failed: ' + (res.error || ('HTTP ' + res.status)));
+								return;
+							}
+							loadList();
+						});
 					} else if (act === 'status') {
 						adminAction('status', id, { status: stat }).then(loadList);
 					} else {
@@ -273,6 +342,25 @@ function login(password) {
 				adminAction('reply', id, { body }).then(loadList);
 			});
 		});
+	}
+
+	/* Inline two-click confirm. First click labels the button "Click again
+	   to confirm" within a 4-second window. Second click fires; timeout
+	   reverts the label. This is faster + less jarring than a modal
+	   confirm() and impossible to fat-finger through. */
+	const ARM_TIMEOUT = 4000;
+	function armForConfirm(btn) {
+		const original = btn.dataset.originalLabel || btn.textContent;
+		btn.dataset.originalLabel = original;
+		btn.dataset.armed = '1';
+		btn.classList.add('is-armed');
+		btn.textContent = '⚠ Click again to ' + original.replace(/^[^\w]+/, '');
+		clearTimeout(btn._armTimer);
+		btn._armTimer = setTimeout(() => {
+			btn.classList.remove('is-armed');
+			btn.dataset.armed = '';
+			btn.textContent = original;
+		}, ARM_TIMEOUT);
 	}
 
 	function showPatchModal(j) {

@@ -608,10 +608,6 @@
 		$$('.fb-postit, .fb-marker, .fb-general-marker').forEach(el => el.remove());
 		state.items.forEach(it => renderOne(it));
 		renderAdminBar();
-		if (state.items.length) {
-			const btn = $('#fb-toggle-count');
-			if (btn) { btn.textContent = state.items.length; btn.classList.add('is-visible'); }
-		}
 	}
 
 	function renderOne(it) {
@@ -841,9 +837,9 @@
 				<span class="fb-meta-item">· ${escHtml(it.anchor_type || 'text')}</span>
 			</div>
 			<div class="fb-postit-actions">
-				<button class="fb-vote ${myUp ? 'is-mine' : ''}" data-vote="up" title="I see this too / agree">▲ <span class="fb-vote-count">${it.upvotes || 0}</span></button>
-				<button class="fb-vote ${myDown ? 'is-mine' : ''}" data-vote="down" title="I disagree / not helpful">▼ <span class="fb-vote-count">${it.downvotes || 0}</span></button>
-				${myAhaKey ? `<button class="fb-aha-btn ${myAha ? 'is-on' : ''}" data-aha="1" title="This passage was illuminating">${myAha ? '★' : '☆'} illuminating</button>` : ''}
+				<button class="fb-vote ${myUp ? 'is-mine' : ''}" data-vote="up" title="I see this too / agree (U)">▲ <span class="fb-vote-count">${it.upvotes || 0}</span></button>
+				<button class="fb-vote ${myDown ? 'is-mine' : ''}" data-vote="down" title="I disagree / not helpful (D)">▼ <span class="fb-vote-count">${it.downvotes || 0}</span></button>
+				${myAhaKey ? `<button class="fb-aha-btn ${myAha ? 'is-on' : ''}" data-aha="1" title="This passage was illuminating (A)">${myAha ? '★' : '☆'} illuminating</button>` : ''}
 				${(it.is_own && !it.approved && it.status !== 'resolved' && it.status !== 'wontfix') ? '<button class="fb-edit-btn" data-edit="1" title="Edit your feedback (only while pending admin approval)">✏️ Edit</button>' : ''}
 			</div>
 			<div class="fb-comments">
@@ -1475,6 +1471,22 @@
 		if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
 		if (e.key === 'b' || e.key === 'B') { e.preventDefault(); toggleMode(); }
 		if (e.key === 'Escape' && state.mode) { setMode(false); }
+		// Keyboard shortcuts when a post-it is open: U = up-vote,
+		// D = down-vote, A = toggle aha. Acts on the most recently
+		// expanded post-it.
+		if (state.expanded && state.expanded.size) {
+			const lastId = [...state.expanded].pop();
+			const it = state.items.find(x => x.id === lastId);
+			if (it) {
+				if (e.key === 'u' || e.key === 'U') { e.preventDefault(); vote(it.id, 'up'); }
+				else if (e.key === 'd' || e.key === 'D') { e.preventDefault(); vote(it.id, 'down'); }
+				else if (e.key === 'a' || e.key === 'A') {
+					const k = it.anchor.quote ? (LESSON + '|' + (it.anchor.prefix || '') + '|' + it.anchor.quote + '|' + (it.anchor.suffix || '')) : '';
+					if (k) { e.preventDefault(); toggleAha(it, k); }
+				}
+				else if (e.key === 'x' || e.key === 'X') { e.preventDefault(); closePostit(lastId); }
+			}
+		}
 	}
 
 	function mountNudgeDismiss() {

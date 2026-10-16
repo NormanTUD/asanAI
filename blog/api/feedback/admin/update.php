@@ -45,11 +45,11 @@ switch ($action) {
 
 	case 'status':
 		$new = $in['status'] ?? '';
-		if (!in_array($new, ['open', 'in_progress', 'resolved', 'wontfix'], true)) {
+		if (!in_array($new, ['open', 'in_progress', 'resolved', 'wontfix', 'spam'], true)) {
 			feedback_json_error('Invalid status', 400);
 		}
 		$old = $fb['status'];
-		$resolvedAt = ($new === 'resolved' || $new === 'wontfix') ? ', resolved_at = datetime("now")' : '';
+		$resolvedAt = ($new === 'resolved' || $new === 'wontfix' || $new === 'spam') ? ', resolved_at = datetime("now")' : '';
 		$pdo->prepare("UPDATE feedback SET status = ? $resolvedAt, updated_at = datetime('now') WHERE id = ?")
 			->execute([$new, $id]);
 		feedback_admin_log('status_change', $id, $old, $new, null);
@@ -88,8 +88,11 @@ switch ($action) {
 		break;
 
 	case 'delete':
-		$pdo->prepare('DELETE FROM feedback WHERE id = ?')->execute([$id]);
+		// Log BEFORE deleting — feedback_history.feedback_id has a FK to
+		// feedback.id, so inserting after the DELETE would violate the
+		// constraint and 500 the whole request.
 		feedback_admin_log('deleted', $id, $fb['status'], null, null);
+		$pdo->prepare('DELETE FROM feedback WHERE id = ?')->execute([$id]);
 		break;
 
 	case 'reanchor':
