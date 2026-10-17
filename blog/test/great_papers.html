@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Library of Minds — 93 Papers in Two Waves that Built the Modern World</title>
+<title>The Library of Minds — 143 Papers in Three Waves that Built the Modern World</title>
 <style>
 :root{
   --bg:#0a0d12;
@@ -482,7 +482,7 @@ html.light .controls{
       <div class="mark" aria-hidden="true"></div>
       <div>
         <div class="title">The Library of Minds</div>
-        <div class="sub">93 papers in two waves that built the modern world</div>
+        <div class="sub">143 papers in three waves that built the modern world</div>
       </div>
     </div>
     <div class="topnav">
@@ -498,16 +498,15 @@ html.light .controls{
   <div class="wrap">
     <h1>The papers that <em>made</em> the modern mind.</h1>
     <p class="lede">
-      Ninety-three works — <b>spanning twenty-six centuries</b> and every continent of thought — that changed how we understand reality, the mind, society, art and ourselves.
+      One hundred forty-three works — <b>spanning twenty-six centuries</b> and every continent of thought. Wave 3 is the most general: ideas so fundamental that understanding one sentence unlocks thousands of others.
       Each entry is given in four voices: the version a curious child can hold, the counter-intuitive flash that connects to today, the version a sharp A-level student deserves, and the version a doctoral examiner would accept.
-      Read, filter, and follow the original sources.
     </p>
     <div class="meta">
-      <div><b>440 BC → 2021</b><span>TEMPORAL SPAN</span></div>
-      <div><b>93</b><span>LANDMARK WORKS</span></div>
-      <div><b>25</b><span>DISCIPLINES</span></div>
+      <div><b>300 BC → 2021</b><span>TEMPORAL SPAN</span></div>
+      <div><b>143</b><span>WORKS</span></div>
+      <div><b>3</b><span>WAVES</span></div>
+      <div><b>28</b><span>DISCIPLINES</span></div>
       <div><b>4</b><span>READING LEVELS</span></div>
-      <div><b>2</b><span>WAVES</span></div>
     </div>
   </div>
 </section>
@@ -571,6 +570,7 @@ html.light .controls{
     <div class="legend">
       <h3>About the four layers</h3>
       <p>Every paper carries four layers, written so that the same idea reaches you at whatever altitude you're standing on today.</p>
+      <p style="margin-top:8px;font-size:13px;color:var(--ink-3)">Wave 1 (31): foundational papers in AI-adjacent fields. Wave 2 (62): broader categories — ancient studies, theology, anthropology, architecture, music, film, astronomy, geology, chemistry, medicine. Wave 3 (50): truly universal ideas — one sentence unlocks thousands. Default: Wave 3.</p>
       <ul>
         <li><code>Elementary</code> — one vivid sentence, no jargon, true to the heart of the idea.</li>
         <li><code>⚡ Aha</code> — the counter-intuitive flash that connects the paper to your life today.</li>
@@ -580,10 +580,10 @@ html.light .controls{
       <p style="font-size:13px;color:var(--ink-3)">Curated to <em>complement</em> (not duplicate) the asanAI course. PDFs link to public archives where possible; some links point to publisher pages where the original is paywalled.</p>
     </div>
     <div class="meta-col">
-      <div><b>93 works</b> · <b>25 disciplines</b> · <b>2 waves</b></div>
-      <div>From <b>~440 BC</b> (Herodotus) to <b>2021</b> (AlphaFold)</div>
-      <div>Earliest: <b>~440 BC</b> · Latest: <b>2021</b></div>
-      <div style="margin-top:10px;color:var(--ink-4)">Wave 1: the original 31. Wave 2: 62 more, far afield.</div>
+      <div><b>143 works</b> · <b>28 disciplines</b> · <b>3 waves</b></div>
+      <div>From <b>300 BC</b> (Euclid) to <b>2021</b> (AlphaFold)</div>
+      <div>Earliest: <b>300 BC</b> · Latest: <b>2021</b></div>
+      <div style="margin-top:10px;color:var(--ink-4)">Wave 3 — the universal ideas.</div>
     </div>
   </div>
 </footer>
@@ -2231,7 +2231,7 @@ const ERAS = ["Ancient", "1500s", "1600s", "1700s", "1800s", "1900s", "1950s", "
 
 const state = {
   q: "",
-  wave: "2",
+  wave: "3",
   field: "all",
   era: "all",
   sort: "default",
@@ -2281,21 +2281,24 @@ function rebuildFilterChips(){
 }
 
 function initFilters(){
-  // Wave chips
+  // Wave chips — generated from PAPERS data so adding more waves doesn't break things
   const waveRow = $("#wave-filters");
-  const waveDefs = [
-    { v: "2", label: "Wave 2 — the new 62" },
-    { v: "1", label: "Wave 1 — the original 31" },
-    { v: "all", label: "All" }
-  ];
-  waveDefs.forEach(({v, label}, i) => {
+  const wavesPresent = [...new Set(PAPERS.map(p => p.wave))].sort((a,b) => b-a);
+  wavesPresent.forEach(w => {
+    const cnt = PAPERS.filter(p => p.wave === w).length;
+    const label = w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
     const c = document.createElement("button");
-    c.className = "chip" + (state.wave === v ? " active" : "");
-    c.dataset.filter = "wave"; c.dataset.value = v;
-    const cnt = (v === "all") ? PAPERS.length : PAPERS.filter(p => p.wave === Number(v)).length;
+    c.className = "chip" + (state.wave === String(w) ? " active" : "");
+    c.dataset.filter = "wave"; c.dataset.value = String(w);
     c.innerHTML = `${label}<span class="count">${cnt}</span>`;
     waveRow.appendChild(c);
   });
+  // "All" chip
+  const allC = document.createElement("button");
+  allC.className = "chip" + (state.wave === "all" ? " active" : "");
+  allC.dataset.filter = "wave"; allC.dataset.value = "all";
+  allC.innerHTML = `All<span class="count">${PAPERS.length}</span>`;
+  waveRow.appendChild(allC);
 
   // Field chips — show only fields that have entries in the current wave
   const inWave = PAPERS.filter(p => state.wave === "all" || p.wave === Number(state.wave));
