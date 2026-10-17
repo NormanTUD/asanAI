@@ -1207,7 +1207,7 @@ const FIELDS = [
   "political-theory", "architecture", "music", "art-history",
   "film", "geology", "chemistry", "medicine", "astronomy"
 ];
-const ERAS = ["Ancient", "1700s", "1800s", "1900s", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"];
+const ERAS = ["Ancient", "1500s", "1600s", "1700s", "1800s", "1900s", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"];
 
 const state = {
   q: "",
@@ -1366,7 +1366,7 @@ function renderCards(){
       <article class="card ${open ? "open" : ""}" data-id="${escape(p.id)}">
         <div class="card-head">
           <span class="card-index">№ ${String(idx).padStart(2,"0")}</span>
-          <span class="card-year">${p.year}</span>
+          <span class="card-year">${p.year < 0 ? Math.abs(p.year) + ' BC' : p.year}</span>
         </div>
         <div class="card-tags">${tags}</div>
         <h2>${escape(p.titleShort)}</h2>
