@@ -23,7 +23,7 @@ tags: interested-layman
 </div>
 
 <div class="md">
-## This is an experiment
+## A personal note: This is an experiment
 </div>
 
 <div class="smart-quote" data-cite="processandreality">
@@ -31,13 +31,13 @@ The universe is a process of reaching out into the multi-colored world, and draw
 </div>
 
 <div class="md">
-We're trying here to understand AI using AI. We tried to follow every question I could possibly think of regarding AI to it's source, trying to find original publications and put everything in place, so one has a complete mental model of where AI came from and how it works. We go into many different, unrelated fields, but we're Whiteheadians, assuming that Reality is One, and everything is connected to everything else. 
+What I was trying here is to understand AI using AI. I tried to follow every question I could possibly think of regarding AI to it's source, trying to find original publications and put everything in place, so one has a complete mental model of where AI came from and how it works. I go into many different, unrelated fields, but I am a Whiteheadian, assuming that Reality is One, and everything is connected to everything else. 
 
-We tried our best to fact-check every claim, but since this project also our personal learning curve of a diverse set of very different, very complex sciences like Astronomy, Mathematics, Computer Science, Material Science, Cultural History, Cosmology, Chemistry, Physics and so on, and we ourselves are not polymaths, we may have introduced errors here and there, as to err is human.
+I tried my best to fact-check every claim, but since this project also my personal learning curve of a diverse set of very different, very complex sciences like Astronomy, Mathematics, Computer Science, Material Science, Cultural History, Cosmology, Chemistry, Physics and so on, and I myself am not a polymath, I may have introduced errors here and there, as to err is human.
 
-What we're trying to do here is to paint a more-or-less complete picture of how AI came to be, and how many threads 
+What I'm trying to do here is to paint a more-or-less complete picture of how AI came to be, and how many threads 
 
-Similiar to the [unfinishable map](https://unfinishablemap.org/), this is a never-to-be-finished task, since the Universe is constantly changing, and so is AI. Our goal is to, as clearly and deeply as possible, draw the current state of what lead to AI systems like chatGPT. We go into the [history](history), starting with the invention of counting itself, and the prehistory, starting with the question [why anything at all exists and the Big Bang](untold_history), and many things inbetween.
+Similiar to the [unfinishable map](https://unfinishablemap.org/), this is a never-to-be-finished task, since the Universe is constantly changing, and so is AI. My goal is to, as clearly and deeply as possible, draw the current state of what lead to AI systems like chatGPT. I go into the [history](history), starting with the invention of counting itself, and the prehistory, starting with the question [why anything at all exists and the Big Bang](untold_history), and many things inbetween.
 
 ## What This Course Is — and What It Isn't
 
@@ -50,12 +50,12 @@ Similiar to the [unfinishable map](https://unfinishablemap.org/), this is a neve
 To understand a Neural Network is to understand a tapestry of ideas that kept sidetracking into unexpected fields — and the tapestry is wide: its threads begin at the **Big Bang**, pass through the forging of the elements, the first cells, and the first numbers, and run on to the first looms and the first chips. Two pages carry that history: [The Brief History of AI](history.php) is the entry into the history of AI — the direct intellectual lineage from the first tools to the first neural models. [The Untold History of AI](untold_history.php) starts at the very beginning: the question of why there is anything at all, the Big Bang, the forging of the elements, and the development of life. The most consequential sidetracks:
 
 * **Astronomy and Precision:** Astronomers from the fourth century onward, mapping the stars with imperfect data, developed the very optimization tools that let modern LLMs learn from the internet.
-* **The Technical and The Philosophical:** We do not just look at code. Concepts of logic, language, and "Geist" migrate from philosophical debates into billions of trainable parameters — and we follow them the whole way.
-* **AI in Society:** We treat the technology as a cultural mirror, looking at how these systems meet human values, the risks of hallucinations, and the ethical responsibility of building intelligent tools.
+* **The Technical and The Philosophical:** I do not just look at code. Concepts of logic, language, and "Geist" migrate from philosophical debates into billions of trainable parameters — and I follow them the whole way.
+* **AI in Society:** I treat the technology as a cultural mirror, looking at how these systems meet human values, the risks of hallucinations, and the ethical responsibility of building intelligent tools.
 
-* **The Number and the Token:** We follow the number itself — from the Babylonians' place value and the Indian zero, through the Chinese minus sign and Leibniz's binary, to the token vocabularies modern models actually read. The "token" a Transformer predicts is a direct descendant of the first numerals, and every integer in the code you write inherits the same chain.
+* **The Number and the Token:** I follow the number itself — from the Babylonians' place value and the Indian zero, through the Chinese minus sign and Leibniz's binary, to the token vocabularies modern models actually read. The "token" a Transformer predicts is a direct descendant of the first numerals, and every integer in the code you write inherits the same chain.
 
-For most of the last century, the sciences and the humanities have drifted into two separate worlds whose methods, vocabulary, and values are largely opaque to each other — a split \cite[Charles Percy Snow (1959)]{twocultures} memorably named the "two cultures" problem. We believe reality is one, and different sciences are different ways of looking at the same world — so this course needs both ways of looking at it.
+For most of the last century, the sciences and the humanities have drifted into two separate worlds whose methods, vocabulary, and values are largely opaque to each other — a split \cite[Charles Percy Snow (1959)]{twocultures} memorably named the "two cultures" problem. I believe reality is one, and different sciences are different ways of looking at the same world — so this course needs both ways of looking at it.
 
 ## An Interactive Playground
 
@@ -65,7 +65,7 @@ This is not a book to be read passively. It is a playground for exploration:
 * **Navigating Complexity:** At times the mathematics gets heavy. You do not need to master every equation on the first pass: skip it, play with the interactive models, and return to the theory once the numbers have an intuitive feel.
 * **Pick and Skip:** Use the *table of contents* to navigate and skip all sections that are of no interest to you.
 * **The Atlas:** Every person, place, institution, author, and event named in this course is a dot on [The Atlas](atlas.php) — an interactive 3D globe you can zoom from Earth, past the Moon, all the way to the Big Bang.
-* **The Starting Point:** We assume no prior knowledge beyond good English reading capability, the practical knowledge of a Stone Ager, and the willingness to put in effort. That said, the climb is steep: we start from nothing but quickly ascend into dense mathematics and complex architectures. You will not grasp everything on the first read, and that is fine. Use the interactive demos to build intuition, skip what feels too heavy, and come back later. Expect to re-read, tinker, and take your time.
+* **The Starting Point:** I assume no prior knowledge beyond good English reading capability, the practical knowledge of a Stone Ager, and the willingness to put in effort. That said, the climb is steep: I start from nothing but quickly ascend into dense mathematics and complex architectures. You will not grasp everything on the first read, and that is fine. Use the interactive demos to build intuition, skip what feels too heavy, and come back later. Expect to re-read, tinker, and take your time.
 </div>
 
 <div class="md">
@@ -93,17 +93,17 @@ You will see that AI is not a sudden magic invention, but the technical and phil
 
 ## Navigating the Ladder of Abstraction
 
-To truly grasp the nature of Artificial Intelligence, we will move through various levels of abstraction, much like the framework described by \citeauthor{hayakawa} — and we will train ourselves to climb up and down this "ladder" fluently:
+To truly grasp the nature of Artificial Intelligence, I will move through various levels of abstraction, much like the framework described by \citeauthor{hayakawa} — and I will train myself to climb up and down this "ladder" fluently:
 
-* **The Concrete Base:** At the lowest rungs we deal with the "process level" — the raw, physical bits of data and the specific numerical weights in a matrix.
-* **The Intermediate Technicalities:** As we ascend, we group these specifics into functional concepts like Backpropagation or Gradient Descent — the tools that organize raw data into recognizable patterns.
-* **The High-Level Abstract:** At the top of the ladder we reach broad terms like "Topology", "Fiber Bundles", "Intelligence", "Logic", and "Ethics". They let us discuss the impact of AI on society, and they stay grounded in the mathematical rungs beneath them.
+* **The Concrete Base:** At the lowest rungs I deal with the "process level" — the raw, physical bits of data and the specific numerical weights in a matrix.
+* **The Intermediate Technicalities:** As I ascend, I group these specifics into functional concepts like Backpropagation or Gradient Descent — the tools that organize raw data into recognizable patterns.
+* **The High-Level Abstract:** At the top of the ladder I reach broad terms like "Topology", "Fiber Bundles", "Intelligence", "Logic", and "Ethics". They let me discuss the impact of AI on society, and they stay grounded in the mathematical rungs beneath them.
 
-This text is designed to carry you through those shifts: we constantly move from a philosophical "why" down to a mathematical "how", keeping even the most abstract concepts tied to concrete reality.
+This text is designed to carry you through those shifts: I constantly move from a philosophical "why" down to a mathematical "how", keeping even the most abstract concepts tied to concrete reality.
 
 ## Disclaimer
 
-This interactive textbook was built with the help of Google Gemini, Claude, ChatGPT and other LLM systems. We've done our best to verify the code and info, but please double-check before using it in production.
+This interactive textbook was built with the help of Google Gemini, Claude, ChatGPT and other LLM systems. I've done my best to verify the code and info, but please double-check before using it in production.
 </div>
 
 <?php
