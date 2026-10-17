@@ -179,122 +179,12 @@ html.dark #embedding-demo #embedding-arithmetic-result {
 #embedding-demo .emb-hint b { color: var(--mn-text); }
 html.dark #embedding-demo .emb-hint {
 	background: rgba(15,23,42,.4);
-	color: #cbd5e1;
+		color: #cbd5e1;
 	border-color: rgba(148,163,184,.3);
 }
 
-/* === Manifold view (English + other languages as parallel planes) === */
-#manifold-demo {
-	background: var(--mn-surface);
-	border: 1px solid var(--mn-border);
-	border-radius: 16px;
-	padding: 20px 22px 18px;
-	margin: 18px auto;
-	max-width: 880px;
-	box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 14px 38px -20px rgba(0,0,0,.22);
-	transition: background .3s ease, border-color .3s ease;
-}
-html.dark #manifold-demo {
-	background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-	border-color: #334155;
-	box-shadow: 0 1px 0 rgba(255,255,255,.04), 0 18px 48px -16px rgba(0,0,0,.7);
-}
-#manifold-demo .emb-head {
-	text-align: center;
-	font-size: 1.05rem;
-	font-weight: 700;
-	color: var(--mn-text);
-	margin-bottom: 14px;
-	letter-spacing: .01em;
-}
-#manifold-demo .manifold-stage {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: 14px;
-}
-@media (min-width: 860px) {
-	#manifold-demo .manifold-stage { grid-template-columns: 1.7fr 1fr; }
-}
-#manifold-demo #manifold-viz-plot {
-	height: 480px;
-	background: var(--mn-bg);
-	border-radius: 12px;
-	border: 1px solid var(--mn-border-light);
-	transition: background .3s ease, border-color .3s ease;
-}
-html.dark #manifold-demo #manifold-viz-plot {
-	background: rgba(15,23,42,.55);
-	border-color: rgba(148,163,184,.18);
-}
-#manifold-demo .manifold-controls {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-#manifold-demo .manifold-pair {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-	padding: 10px 12px;
-	border-radius: 8px;
-	background: var(--mn-bg-subtle);
-	border: 1px solid var(--mn-border-light);
-}
-#manifold-demo .manifold-lbl {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	font-size: .9em;
-	color: var(--mn-text-secondary);
-	cursor: pointer;
-	font-weight: 600;
-	transition: color .15s;
-}
-#manifold-demo .manifold-lbl:hover { color: #6366f1; }
-#manifold-demo .manifold-lbl input { accent-color: #6366f1; cursor: pointer; }
-#manifold-demo .manifold-actions {
-	display: flex;
-	gap: 8px;
-}
-#manifold-demo .manifold-btn {
-	flex: 1;
-	padding: 8px 12px;
-	border-radius: 8px;
-	background: var(--mn-bg);
-	border: 1px solid var(--mn-border);
-	color: var(--mn-text);
-	font-size: .88em;
-	font-weight: 600;
-	cursor: pointer;
-	transition: all .15s ease;
-}
-#manifold-demo .manifold-btn:hover {
-	border-color: #6366f1;
-	color: #6366f1;
-	background: var(--mn-bg-subtle);
-	transform: translateY(-1px);
-}
-html.dark #manifold-demo .manifold-btn:hover {
-	background: rgba(99,102,241,.15);
-	color: #c7d2fe;
-}
-#manifold-demo .manifold-caption {
-	padding: 10px 12px;
-	border-radius: 8px;
-	background: var(--mn-bg);
-	border: 1px dashed var(--mn-border);
-	color: var(--mn-text-secondary);
-	font-size: .88em;
-	line-height: 1.55;
-	transition: background .3s, color .3s, border-color .3s;
-}
-#manifold-demo .manifold-caption b { color: var(--mn-text); }
-html.dark #manifold-demo .manifold-caption {
-	background: rgba(15,23,42,.4);
-	color: #cbd5e1;
-	border-color: rgba(148,163,184,.3);
-}
-html.dark #manifold-demo .manifold-caption b { color: #f1f5f9; }
+
+
 
 /* === Attention bank/river/money demo (lndw style) === */
 #attn-demo {
@@ -697,33 +587,6 @@ Real networks don't just use 2 dimensions, but **thousands**. Too many to visual
 	and so does <i>Man → Prince</i>.
 	The model was never taught this — it emerged from the texts themselves.
     </p>
-</div>
-
-<!-- ============================================================ -->
-<!-- STEP 2b: MANIFOLD VIEW (translation between parallel spaces) -->
-<!-- ============================================================ -->
-<div id="manifold-demo">
-    <div class="emb-head">🌐 The Manifold View — Every Language Learns the Same Shape</div>
-
-    <div class="manifold-stage">
-	<div id="manifold-viz-plot" data-plot-theme="self"></div>
-	<div class="manifold-controls">
-	    <div class="manifold-pair">
-		<label class="manifold-lbl"><input type="checkbox" class="manifold-cb" data-pair="en-es" checked> English ↔ Spanish</label>
-		<label class="manifold-lbl"><input type="checkbox" class="manifold-cb" data-pair="en-de" checked> English ↔ German</label>
-		<label class="manifold-lbl"><input type="checkbox" class="manifold-cb" data-pair="en-fr"> English ↔ French</label>
-	    </div>
-	    <div class="manifold-actions">
-		<button id="manifold-rotate" type="button" class="manifold-btn">↻ Rotate view</button>
-		<button id="manifold-align" type="button" class="manifold-btn">⇄ Align manifolds</button>
-	    </div>
-	    <div class="manifold-caption" id="manifold-caption">
-		Each language sits on its own <b>manifold</b> — a sheet in the high-dimensional space.
-		The internal structure (Power, Gender) is the same; the manifold's <b>rotation</b> in the
-		embedding space is what differs. Translation = finding the corresponding point on the other manifold.
-	    </div>
-	</div>
-    </div>
 </div>
 
 <div class="md">
