@@ -2250,6 +2250,24 @@ PAPERS.forEach(p => { if (p.wave === undefined) p.wave = 1; });
 
 function rebuildFilterChips(){
   const inWave = PAPERS.filter(p => state.wave === "all" || p.wave === Number(state.wave));
+  // also rebuild wave chips in case wave changed
+  const waveRow = $("#wave-filters");
+  waveRow.innerHTML = "";
+  const wavesPresent = [...new Set(PAPERS.map(p => p.wave))].sort((a,b) => b-a);
+  wavesPresent.forEach(w => {
+    const cnt = PAPERS.filter(p => p.wave === w).length;
+    const label = w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
+    const c = document.createElement("button");
+    c.className = "chip" + (state.wave === String(w) ? " active" : "");
+    c.dataset.filter = "wave"; c.dataset.value = String(w);
+    c.innerHTML = `${label}<span class="count">${cnt}</span>`;
+    waveRow.appendChild(c);
+  });
+  const allC = document.createElement("button");
+  allC.className = "chip" + (state.wave === "all" ? " active" : "");
+  allC.dataset.filter = "wave"; allC.dataset.value = "all";
+  allC.innerHTML = `All<span class="count">${PAPERS.length}</span>`;
+  waveRow.appendChild(allC);
   // field chips
   const fieldRow = $("#field-filters");
   // remove all dynamic chips (keep the "All" button)
@@ -2502,7 +2520,7 @@ function bindEvents(){
 
   // reset
   $("#reset").addEventListener("click", () => {
-    state.q = ""; state.wave = "2"; state.field = "all"; state.era = "all"; state.sort = "default"; state.open.clear();
+    state.q = ""; state.wave = "3"; state.field = "all"; state.era = "all"; state.sort = "default"; state.open.clear();
     q.value = ""; clear.hidden = true;
     $("#sort").value = "default";
     fExp.classList.remove("open"); fTog.classList.remove("open"); fTog.setAttribute("aria-expanded", "false");
