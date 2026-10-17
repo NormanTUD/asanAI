@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Library of Minds — 31 Papers that Built the Modern World</title>
+<title>The Library of Minds — 93 Papers in Two Waves that Built the Modern World</title>
 <style>
 :root{
   --bg:#0a0d12;
@@ -463,7 +463,7 @@ html.light .controls{
       <div class="mark" aria-hidden="true"></div>
       <div>
         <div class="title">The Library of Minds</div>
-        <div class="sub">31 papers that built the modern world</div>
+        <div class="sub">93 papers in two waves that built the modern world</div>
       </div>
     </div>
     <div class="topnav">
@@ -479,15 +479,16 @@ html.light .controls{
   <div class="wrap">
     <h1>The papers that <em>made</em> the modern mind.</h1>
     <p class="lede">
-      Thirty-one works — <b>spanning two and a half centuries</b> and every continent of thought — that changed how we understand reality, the mind, society, and ourselves.
-      Each entry is given in three voices: the version a curious child can hold, the version a sharp A-level student deserves, and the version a doctoral examiner would accept.
+      Ninety-three works — <b>spanning twenty-six centuries</b> and every continent of thought — that changed how we understand reality, the mind, society, art and ourselves.
+      Each entry is given in four voices: the version a curious child can hold, the counter-intuitive flash that connects to today, the version a sharp A-level student deserves, and the version a doctoral examiner would accept.
       Read, filter, and follow the original sources.
     </p>
     <div class="meta">
-      <div><b>1763 → 2021</b><span>TEMPORAL SPAN</span></div>
-      <div><b>31</b><span>LANDMARK WORKS</span></div>
-      <div><b>11</b><span>DISCIPLINES</span></div>
+      <div><b>440 BC → 2021</b><span>TEMPORAL SPAN</span></div>
+      <div><b>93</b><span>LANDMARK WORKS</span></div>
+      <div><b>25</b><span>DISCIPLINES</span></div>
       <div><b>4</b><span>READING LEVELS</span></div>
+      <div><b>2</b><span>WAVES</span></div>
     </div>
   </div>
 </section>
@@ -512,9 +513,13 @@ html.light .controls{
       </div>
     </div>
 
-    <div class="filter-row" id="field-filters">
+    <div class="filter-row" id="wave-filters">
+      <span class="filter-label">Wave</span>
+      <button class="chip" data-filter="wave" data-value="all">All<span class="count">93</span></button>
+    </div>
+    <div class="filter-row" style="margin-top:10px" id="field-filters">
       <span class="filter-label">Field</span>
-      <button class="chip active" data-filter="field" data-value="all">All<span class="count">30</span></button>
+      <button class="chip active" data-filter="field" data-value="all">All<span class="count">62</span></button>
     </div>
     <div class="filter-row" style="margin-top:10px" id="era-filters">
       <span class="filter-label">Era</span>
@@ -552,10 +557,10 @@ html.light .controls{
       <p style="font-size:13px;color:var(--ink-3)">Curated to <em>complement</em> (not duplicate) the asanAI course. PDFs link to public archives where possible; some links point to publisher pages where the original is paywalled.</p>
     </div>
     <div class="meta-col">
-      <div><b>31 works</b> · <b>11 disciplines</b></div>
-      <div>From <b>1763</b> (Bayes) to <b>2021</b> (AlphaFold)</div>
-      <div>Earliest: <b>1763</b> · Latest: <b>2021</b></div>
-      <div style="margin-top:10px;color:var(--ink-4)">A reading list, not a canon.</div>
+      <div><b>93 works</b> · <b>25 disciplines</b> · <b>2 waves</b></div>
+      <div>From <b>~440 BC</b> (Herodotus) to <b>2021</b> (AlphaFold)</div>
+      <div>Earliest: <b>~440 BC</b> · Latest: <b>2021</b></div>
+      <div style="margin-top:10px;color:var(--ink-4)">Wave 1: the original 31. Wave 2: 62 more, far afield.</div>
     </div>
   </div>
 </footer>
@@ -1196,12 +1201,17 @@ const PAPERS = [
 const FIELDS = [
   "mathematics", "physics", "biology", "neuroscience",
   "psychology", "economics", "philosophy", "history",
-  "linguistics", "computer-science", "statistics"
+  "linguistics", "computer-science", "statistics",
+  // Wave 2 additions:
+  "ancient-studies", "theology", "anthropology", "sociology",
+  "political-theory", "architecture", "music", "art-history",
+  "film", "geology", "chemistry", "medicine", "astronomy"
 ];
-const ERAS = ["1700s", "1800s", "1900s", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"];
+const ERAS = ["Ancient", "1700s", "1800s", "1900s", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"];
 
 const state = {
   q: "",
+  wave: "2",
   field: "all",
   era: "all",
   sort: "default",
@@ -1215,18 +1225,76 @@ function uniq(arr){return [...new Set(arr)]}
 
 function fieldOf(p){ return p.fields[0] }
 
-function initFilters(){
-  const counts = {};
-  FIELDS.forEach(f => counts[f] = PAPERS.filter(p => p.fields.includes(f)).length);
+// Migration: any paper without an explicit wave is Wave 1 (the original set)
+PAPERS.forEach(p => { if (p.wave === undefined) p.wave = 1; });
+
+function rebuildFilterChips(){
+  const inWave = PAPERS.filter(p => state.wave === "all" || p.wave === Number(state.wave));
+  // field chips
   const fieldRow = $("#field-filters");
-  FIELDS.forEach(f => {
+  // remove all dynamic chips (keep the "All" button)
+  Array.from(fieldRow.querySelectorAll(".chip")).forEach((c, i) => { if(i > 0) c.remove(); });
+  const counts = {};
+  FIELDS.forEach(f => counts[f] = inWave.filter(p => p.fields.includes(f)).length);
+  FIELDS.filter(f => counts[f] > 0).forEach(f => {
     const c = document.createElement("button");
     c.className = "chip"; c.dataset.filter = "field"; c.dataset.value = f;
     c.innerHTML = `${f.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase())}<span class="count">${counts[f]}</span>`;
     fieldRow.appendChild(c);
   });
+  const allFieldBtn = fieldRow.querySelector(".chip[data-value='all'] .count");
+  if(allFieldBtn) allFieldBtn.textContent = inWave.length;
+
+  // era chips
+  const eraRow = $("#era-filters");
+  Array.from(eraRow.querySelectorAll(".chip")).forEach((c, i) => { if(i > 0) c.remove(); });
   const eraCounts = {};
-  ERAS.forEach(e => eraCounts[e] = PAPERS.filter(p => p.era === e).length);
+  ERAS.forEach(e => eraCounts[e] = inWave.filter(p => p.era === e).length);
+  ERAS.filter(e => eraCounts[e] > 0).forEach(e => {
+    const c = document.createElement("button");
+    c.className = "chip"; c.dataset.filter = "era"; c.dataset.value = e;
+    c.innerHTML = `${e}<span class="count">${eraCounts[e]}</span>`;
+    eraRow.appendChild(c);
+  });
+  const allEraBtn = eraRow.querySelector(".chip[data-value='all'] .count");
+  if(allEraBtn) allEraBtn.textContent = inWave.length;
+}
+
+function initFilters(){
+  // Wave chips
+  const waveRow = $("#wave-filters");
+  const waveDefs = [
+    { v: "2", label: "Wave 2 — the new 62" },
+    { v: "1", label: "Wave 1 — the original 31" },
+    { v: "all", label: "All" }
+  ];
+  waveDefs.forEach(({v, label}, i) => {
+    const c = document.createElement("button");
+    c.className = "chip" + (state.wave === v ? " active" : "");
+    c.dataset.filter = "wave"; c.dataset.value = v;
+    const cnt = (v === "all") ? PAPERS.length : PAPERS.filter(p => p.wave === Number(v)).length;
+    c.innerHTML = `${label}<span class="count">${cnt}</span>`;
+    waveRow.appendChild(c);
+  });
+
+  // Field chips — show only fields that have entries in the current wave
+  const inWave = PAPERS.filter(p => state.wave === "all" || p.wave === Number(state.wave));
+  const counts = {};
+  FIELDS.forEach(f => counts[f] = inWave.filter(p => p.fields.includes(f)).length);
+  const fieldRow = $("#field-filters");
+  const visibleFields = FIELDS.filter(f => counts[f] > 0);
+  visibleFields.forEach(f => {
+    const c = document.createElement("button");
+    c.className = "chip"; c.dataset.filter = "field"; c.dataset.value = f;
+    c.innerHTML = `${f.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase())}<span class="count">${counts[f]}</span>`;
+    fieldRow.appendChild(c);
+  });
+  const allFieldBtn = fieldRow.querySelector(".chip[data-value='all'] .count");
+  if(allFieldBtn) allFieldBtn.textContent = inWave.length;
+
+  // Era chips — same wave restriction
+  const eraCounts = {};
+  ERAS.forEach(e => eraCounts[e] = inWave.filter(p => p.era === e).length);
   const eraRow = $("#era-filters");
   ERAS.forEach(e => {
     if(eraCounts[e] === 0) return;
@@ -1235,18 +1303,23 @@ function initFilters(){
     c.innerHTML = `${e}<span class="count">${eraCounts[e]}</span>`;
     eraRow.appendChild(c);
   });
+  const allEraBtn = eraRow.querySelector(".chip[data-value='all'] .count");
+  if(allEraBtn) allEraBtn.textContent = inWave.length;
 }
 
 function fieldChipsUpdate(){
+  const inWave = PAPERS.filter(p => state.wave === "all" || p.wave === Number(state.wave));
   const c = $("#field-filters .chip[data-value='all'] .count");
-  if(c) c.textContent = PAPERS.filter(p => matchFilters(p, "all", "all", "")).length;
+  if(c) c.textContent = inWave.length;
 }
 function eraChipsUpdate(){
+  const inWave = PAPERS.filter(p => state.wave === "all" || p.wave === Number(state.wave));
   const c = $("#era-filters .chip[data-value='all'] .count");
-  if(c) c.textContent = PAPERS.filter(p => matchFilters(p, "all", "all", "")).length;
+  if(c) c.textContent = inWave.length;
 }
 
-function matchFilters(p, field, era, q){
+function matchFilters(p, wave, field, era, q){
+  if(wave !== "all" && p.wave !== Number(wave)) return false;
   if(field !== "all" && !p.fields.includes(field)) return false;
   if(era !== "all" && p.era !== era) return false;
   if(q){
@@ -1273,7 +1346,7 @@ function escape(s){return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">
 function renderCards(){
   const root = $("#cards");
   const empty = $("#empty");
-  const filtered = PAPERS.filter(p => matchFilters(p, state.field, state.era, state.q));
+  const filtered = PAPERS.filter(p => matchFilters(p, state.wave, state.field, state.era, state.q));
   const sorted = sortPapers(filtered, state.sort);
 
   $("#visible-count").textContent = sorted.length;
@@ -1374,7 +1447,13 @@ function bindEvents(){
     const c = e.target.closest(".chip");
     if(!c) return;
     const which = c.dataset.filter;
-    if(which === "field" || which === "era"){
+    if(which === "wave"){
+      state.wave = c.dataset.value;
+      // refresh field/era chip counts because the wave changed which papers are visible
+      rebuildFilterChips();
+      $$(`#wave-filters .chip`).forEach(x => x.classList.toggle("active", x.dataset.value === c.dataset.value));
+      renderCards();
+    } else if(which === "field" || which === "era"){
       state[which] = c.dataset.value;
       $$(`#${which}-filters .chip`).forEach(x => x.classList.toggle("active", x.dataset.value === c.dataset.value));
       renderCards();
@@ -1386,10 +1465,10 @@ function bindEvents(){
 
   // reset
   $("#reset").addEventListener("click", () => {
-    state.q = ""; state.field = "all"; state.era = "all"; state.sort = "default"; state.open.clear();
+    state.q = ""; state.wave = "2"; state.field = "all"; state.era = "all"; state.sort = "default"; state.open.clear();
     q.value = ""; clear.hidden = true;
     $("#sort").value = "default";
-    $$(".chip").forEach(x => x.classList.toggle("active", x.dataset.value === "all"));
+    rebuildFilterChips();
     renderCards();
   });
 
