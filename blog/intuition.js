@@ -148,208 +148,464 @@ const TokenizerViz = {
 
 
 // ============================================================
-// STEP 2: EMBEDDING VISUALIZER
+// STEP 2: EMBEDDING VISUALIZER (lndw style — Macht / Geschlecht)
 // ============================================================
 
-const EmbeddingViz = {
-    // Simplified 2D embedding positions for common words
-    embeddings: {
-        'once': [2, 5], 'upon': [3, 5.5], 'a': [0, 0.5], 'time': [4, 3],
-        'the': [0.5, 0.2], 'king': [8, -3], 'queen': [8, 3],
-        'man': [3, -3], 'woman': [3, 3], 'prince': [6, -3], 'princess': [6, 3],
-	'power': [5, 0], 'baby': [6, 0],
-        'boy': [-1, -3], 'girl': [-1, 3],
-        'cat': [-5, -6], 'dog': [-5, -4], 'dragon': [-3, -8],
-        'happy': [6, 6], 'sad': [-6, 6], 'love': [7, 7],
-        'was': [1, 1], 'there': [2.5, 2], 'is': [0.8, 0.8],
-        'good': [5, 5], 'great': [6, 5.5], 'big': [4, -1], 'small': [-4, -1],
-    },
+const EmbeddingViz = (() => {
+    // Two semantic axes that an LLM might plausibly discover.
+    // (X) Macht = "power"   (Y) Geschlecht = "gender"
+    // Positions chosen so directions encode meaning:
+    //   Mann → Frau  (gender)   und   Mann → Prinz → König  (power)
+    // are the SAME vector applied at different points.
+    const space = {
+        vocab: {
+            'Mann':       [ 5, -10],
+            'Frau':       [ 5,  10],
+            'männlich':   [ 0, -20],
+            'weiblich':   [ 0,  20],
+            'Prinz':      [15, -10],
+            'Prinzessin': [15,  10],
+            'König':      [25, -10],
+            'Königin':    [25,  10],
+            'Macht':      [10,   0]
+        },
+        axes:  { x: 'Macht', y: 'Geschlecht' },
+        rangeX: [-5, 40],
+        rangeY: [-30, 30]
+    };
 
-    currentDemo: 'basic',
-    arithmeticResult: null,
+    let result = null;        // { pos, nearest, steps }
 
-    render: function() {
-        const plotDiv = document.getElementById('embedding-viz-plot');
-        if (!plotDiv) return;
+    // Theme helpers (resolved each render so they react to dark-mode toggles)
+    const theme = () => {
+        const dark = isDarkMode();
+        return {
+            dark,
+            grid:     themeColor('#e2e8f0'),
+            axis:     themeColor('#475569'),
+            axisTitle:dark ? '#cbd5e1' : '#334155',
+            bg:       themeColor('#fff'),
+            textMuted:themeColor('#94a3b8'),
+            labelIdle:'#94a3b8'
+        };
+    };
 
-        const input = document.getElementById('embedding-viz-input');
-        const text = (input ? input.value : 'king queen man woman').toLowerCase();
-        const words = text.split(/\s+/).filter(w => this.embeddings[w]);
+    // Tokenize "König - Mann + Frau", "Frau + 2*Macht" etc.
+    function tokenize(expr) {
+        return expr.match(/[a-zA-ZäöüÄÖÜß]+|\d+|[+\-*/()]/g) || [];
+    }
 
+    function calc(parts) {
+        // parts = array of (word|k|num) with optional preceding sign
+        // We use a tiny recursive-descent so "Frau + 2*Macht" and "(Mann+Frau)/2" work.
+        let i = 0;
+        function parseFactor() {
+            const t = parts[i++];
+            if (t === '(') {
+                const v = parseExpr();
+                if (parts[i] === ')') i++;
+                return v;
+            }
+            if (/^\d+$/.test(t)) return { kind: 'num', n: parseInt(t, 10), sign: 1 };
+            const lc = t.toLowerCase();
+            const norm = Object.keys(space.vocab).find(w => w.toLowerCase() === lc);
+            if (norm) return { kind: 'vec', w: norm, sign: 1 };
+            return { kind: 'num', n: 0, sign: 1 };
+        }
+        function parseTerm(sign) {
+            let left = parseFactor();
+            left.sign *= sign;
+            while (i < parts.length && (parts[i] === '*' || parts[i] === '/')) {
+                const op = parts[i++];
+                const right = parseFactor();
+                right.sign = 1;
+                if (op === '*') {
+                    if (left.kind === 'num' && right.kind === 'num') { left.n *= right.n; }
+                    else if (left.kind === 'vec' && right.kind === 'num') { left = { kind: 'vec', w: left.w, scale: right.n, sign: left.sign }; }
+                    else if (left.kind === 'num' && right.kind === 'vec') { left = { kind: 'vec', w: right.w, scale: left.n, sign: 1 }; }
+                    else if (left.kind === 'vec' && right.kind === 'vec') {
+                        // dot product — uncommon, return scalar
+                        const a = space.vocab[left.w], b = space.vocab[right.w];
+                        left = { kind: 'num', n: a[0]*b[0] + a[1]*b[1], sign: left.sign };
+                    }
+                } else {
+                    if (right.kind === 'num' && right.n !== 0) {
+                        if (left.kind === 'num') left.n /= right.n;
+                        else left = { kind: 'vec', w: left.w, scale: 1/right.n, sign: left.sign };
+                    }
+                }
+            }
+            return left;
+        }
+        function parseExpr() {
+            let sign = 1;
+            if (parts[i] === '+') { i++; sign = 1; }
+            else if (parts[i] === '-') { i++; sign = -1; }
+            let left = parseTerm(sign);
+            while (i < parts.length && (parts[i] === '+' || parts[i] === '-')) {
+                const op = parts[i++];
+                const right = parseTerm(op === '-' ? -1 : 1);
+                // combine
+                if (left.kind === 'num' && right.kind === 'num') {
+                    left.n += right.n * right.sign;
+                } else if (left.kind === 'vec' && right.kind === 'vec') {
+                    const lScale = left.scale || 1;
+                    const rScale = right.scale || 1;
+                    left = {
+                        kind: 'vec',
+                        w: '__sum__',
+                        components: [
+                            space.vocab[left.w][0] * lScale * left.sign + space.vocab[right.w][0] * rScale * right.sign,
+                            space.vocab[left.w][1] * lScale * left.sign + space.vocab[right.w][1] * rScale * right.sign
+                        ]
+                    };
+                } else if (left.kind === 'vec' && right.kind === 'num') {
+                    const lScale = left.scale || 1;
+                    left = {
+                        kind: 'vec',
+                        w: '__sum__',
+                        components: [
+                            space.vocab[left.w][0] * lScale * left.sign + right.n * right.sign,
+                            space.vocab[left.w][1] * lScale * left.sign
+                        ]
+                    };
+                } else if (left.kind === 'num' && right.kind === 'vec') {
+                    const rScale = right.scale || 1;
+                    left = {
+                        kind: 'vec',
+                        w: '__sum__',
+                        components: [
+                            left.n * left.sign + space.vocab[right.w][0] * rScale * right.sign,
+                            space.vocab[right.w][1] * rScale * right.sign
+                        ]
+                    };
+                }
+            }
+            return left;
+        }
+        return parseExpr();
+    }
+
+    function evaluate(expr) {
+        const parts = tokenize(expr);
+        if (!parts.length) return null;
+        try {
+            const r = calc(parts);
+            if (!r) return null;
+            if (r.kind === 'num') return { kind: 'num', n: r.n * r.sign };
+            if (r.kind === 'vec') {
+                if (r.w === '__sum__') return { kind: 'vec', pos: r.components };
+                const v = space.vocab[r.w];
+                const s = (r.scale || 1) * r.sign;
+                return { kind: 'vec', pos: [v[0] * s, v[1] * s] };
+            }
+            return null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function nearest(pos) {
+        let best = null, bd = Infinity;
+        Object.entries(space.vocab).forEach(([w, v]) => {
+            const d = Math.hypot(pos[0] - v[0], pos[1] - v[1]);
+            if (d < bd) { bd = d; best = w; }
+        });
+        return { word: best, dist: bd };
+    }
+
+    // ── Drawing modes ──
+
+    function renderNormal(highlightWords) {
+        const t = theme();
         const traces = [];
         const annotations = [];
 
-        // ── Background vocabulary (greyed out but visible) ──
-        const bgWords = Object.keys(this.embeddings).filter(w => !words.includes(w));
-        if (bgWords.length > 0) {
-            traces.push({
-                x: bgWords.map(w => this.embeddings[w][0]),
-                y: bgWords.map(w => this.embeddings[w][1]),
-                text: bgWords,
-                mode: 'markers+text',
-                textposition: 'top center',
-                textfont: { size: 9, color: themeColor('#cbd5e1') },
-                marker: { size: 5, color: themeColor('#e2e8f0'), opacity: 0.5 },
-                showlegend: false,
-                hovertemplate: '<b>%{text}</b><br>(%{x:.1f}, %{y:.1f})<extra></extra>'
-            });
-        }
+        // Background vocabulary (greyed out but visible)
+        const bg = Object.keys(space.vocab).filter(w => w !== 'Macht' && !highlightWords.includes(w));
+        traces.push({
+            x: bg.map(w => space.vocab[w][0]),
+            y: bg.map(w => space.vocab[w][1]),
+            text: bg,
+            mode: 'markers+text',
+            textposition: 'top center',
+            textfont: { size: 11, color: t.textMuted, family: 'system-ui, sans-serif' },
+            marker: { size: 7, color: t.labelIdle, opacity: 0.4 },
+            showlegend: false,
+            hovertemplate: '<b>%{text}</b><br>(%{x:.1f}, %{y:.1f})<extra></extra>'
+        });
 
-        // ── Active (typed) words ──
-        const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
-        words.forEach((word, i) => {
-            const pos = this.embeddings[word];
+        // Highlighted words
+        const palette = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
+        highlightWords.forEach((w, i) => {
+            if (!(w in space.vocab)) return;
+            const pos = space.vocab[w];
+            const c = palette[i % palette.length];
             traces.push({
                 x: [pos[0]], y: [pos[1]],
-                text: [word],
+                text: [w],
                 mode: 'markers+text',
                 textposition: 'top center',
-                textfont: { size: 13, color: colors[i % colors.length], weight: 'bold' },
-                marker: { size: 14, color: colors[i % colors.length], line: { width: 2, color: themeColor('#fff') } },
+                textfont: { size: 14, color: c, family: 'system-ui, sans-serif' },
+                marker: { size: 14, color: c, line: { width: 2, color: t.bg } },
                 showlegend: false,
-                hovertemplate: `<b>${word}</b><br>Vector: (${pos[0]}, ${pos[1]})<extra></extra>`
+                hovertemplate: `<b>${w}</b><br>(${pos[0]}, ${pos[1]})<extra></extra>`
             });
         });
 
-        // ── Vector arithmetic: draw arrows for each calculation step ──
-        if (this.arithmeticResult) {
-            const r = this.arithmeticResult;
-
-            if (r.steps && r.steps.length > 0) {
-                r.steps.forEach((step, idx) => {
-                    // 1. Plotly annotation arrow (from → to) with arrowhead
-                    annotations.push({
-                        ax: step.from[0],
-                        ay: step.from[1],
-                        axref: 'x',
-                        ayref: 'y',
-                        x: step.to[0],
-                        y: step.to[1],
-                        xref: 'x',
-                        yref: 'y',
-                        showarrow: true,
-                        arrowhead: 2,
-                        arrowsize: 1.5,
-                        arrowwidth: 3,
-                        arrowcolor: '#3b82f6'
-                    });
-
-                    // 2. Invisible midpoint marker for hover label on the arrow
-                    const midX = (step.from[0] + step.to[0]) / 2;
-                    const midY = (step.from[1] + step.to[1]) / 2;
-                    traces.push({
-                        x: [midX],
-                        y: [midY],
-                        mode: 'markers',
-                        marker: { size: 14, color: 'rgba(59,130,246,0.01)' },
-                        text: [step.label],
-                        hovertemplate: '<b>%{text}</b><extra></extra>',
-                        showlegend: false,
-                        cliponaxis: false
-                    });
-
-                    // 3. Visible text label next to the arrow midpoint
-                    annotations.push({
-                        x: midX,
-                        y: midY + 0.7,
-                        xref: 'x',
-                        yref: 'y',
-                        text: `<b>${step.label}</b>`,
-                        showarrow: false,
-                        font: { size: 11, color: '#3b82f6' },
-                        bgcolor: isDarkMode() ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.85)',
-                        borderpad: 3
-                    });
+        // Vector-arithmetic steps + result diamond
+        if (result && result.steps) {
+            result.steps.forEach(step => {
+                annotations.push({
+                    ax: step.from[0], ay: step.from[1], axref: 'x', ayref: 'y',
+                    x: step.to[0], y: step.to[1], xref: 'x', yref: 'y',
+                    showarrow: true, arrowhead: 3, arrowsize: 1.4, arrowwidth: 2.5,
+                    arrowcolor: '#3b82f6'
                 });
-            }
+                annotations.push({
+                    x: (step.from[0] + step.to[0]) / 2,
+                    y: (step.from[1] + step.to[1]) / 2 + 1.4,
+                    xref: 'x', yref: 'y',
+                    text: `<b>${step.label}</b>`,
+                    showarrow: false,
+                    font: { size: 11, color: '#3b82f6', family: 'system-ui, sans-serif' },
+                    bgcolor: t.dark ? 'rgba(15,23,42,0.9)' : 'rgba(255,255,255,0.92)',
+                    borderpad: 3
+                });
+            });
+        }
 
-            // ── Result point (diamond) ──
+        if (result && result.pos) {
             traces.push({
-                x: [r.pos[0]], y: [r.pos[1]],
-                text: ['≈ ' + r.nearest],
+                x: [result.pos[0]], y: [result.pos[1]],
+                text: ['≈ ' + result.nearest],
                 mode: 'markers+text',
                 textposition: 'bottom center',
-                textfont: { size: 14, color: '#ef4444', weight: 'bold' },
-                marker: { size: 18, color: '#ef4444', symbol: 'diamond', line: { width: 2, color: themeColor('#fff') } },
+                textfont: { size: 13, color: '#ef4444', family: 'system-ui, sans-serif' },
+                marker: { size: 16, color: '#ef4444', symbol: 'diamond', line: { width: 2, color: t.bg } },
                 showlegend: false,
-                hovertemplate: `<b>Result ≈ ${r.nearest}</b><br>(${r.pos[0].toFixed(1)}, ${r.pos[1].toFixed(1)})<extra></extra>`
+                hovertemplate: `<b>≈ ${result.nearest}</b><br>(${result.pos[0].toFixed(1)}, ${result.pos[1].toFixed(1)})<extra></extra>`
             });
         }
 
-        const layout = {
-            margin: { l: 40, r: 40, b: 40, t: 20 },
+        Plotly.react('embedding-viz-plot', traces, {
+            margin: { l: 50, r: 30, b: 50, t: 10 },
             showlegend: false,
-            xaxis: { title: 'Dimension 1', range: [-10, 12], gridcolor: themeColor('#f1f5f9'), zeroline: true, zerolinecolor: themeColor('#e2e8f0') },
-            yaxis: { title: 'Dimension 2', range: [-10, 10], gridcolor: themeColor('#f1f5f9'), zeroline: true, zerolinecolor: themeColor('#e2e8f0'), scaleanchor: 'x' },
-            annotations: annotations,
-            plot_bgcolor: themeColor('#fff'),
-            paper_bgcolor: themeColor('#fff'),
-        };
+            xaxis: {
+                title: { text: '⟶ ' + space.axes.x, font: { size: 13, color: t.axisTitle, family: 'system-ui, sans-serif' } },
+                range: space.rangeX,
+                gridcolor: t.grid, zeroline: true, zerolinecolor: t.grid,
+                tickfont: { size: 10, color: t.axis }
+            },
+            yaxis: {
+                title: { text: '⟶ ' + space.axes.y, font: { size: 13, color: t.axisTitle, family: 'system-ui, sans-serif' } },
+                range: space.rangeY,
+                gridcolor: t.grid, zeroline: true, zerolinecolor: t.grid,
+                scaleanchor: 'x', tickfont: { size: 10, color: t.axis }
+            },
+            annotations,
+            plot_bgcolor: t.bg,
+            paper_bgcolor: t.bg
+        }, { displayModeBar: false, responsive: true });
+    }
 
-        Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
-    },
+    function renderDirections(stage) {
+        const t = theme();
+        const traces = [];
+        const annotations = [];
 
-    doArithmetic: function() {
-        const input = document.getElementById('embedding-arithmetic-input');
-        if (!input) return;
-
-        const expr = input.value.toLowerCase().trim();
-        // Parse simple "king - man + woman" style expressions
-        const tokens = expr.match(/[a-z]+|[+\-]/g);
-        if (!tokens) return;
-
-        let result = null;
-        let op = '+';
-        const steps = [];
-
-        tokens.forEach(token => {
-            if (token === '+' || token === '-') {
-                op = token;
-            } else if (this.embeddings[token]) {
-                const vec = this.embeddings[token];
-                if (result === null) {
-                    result = [...vec];
-                } else {
-                    const prev = [...result];
-                    if (op === '+') {
-                        result[0] += vec[0];
-                        result[1] += vec[1];
-                    } else {
-                        result[0] -= vec[0];
-                        result[1] -= vec[1];
-                    }
-                    steps.push({
-                        from: prev,
-                        to: [...result],
-                        label: `${op === '+' ? '+' : '−'}${token}`
-                    });
-                }
-            }
+        // Background vocabulary (subdued)
+        Object.keys(space.vocab).forEach(w => {
+            const v = space.vocab[w];
+            traces.push({
+                x: [v[0]], y: [v[1]],
+                mode: 'markers+text',
+                text: [w], textposition: 'top center',
+                textfont: { size: 12, color: t.textMuted, family: 'system-ui, sans-serif' },
+                marker: { size: 8, color: t.labelIdle, opacity: 0.45 },
+                showlegend: false, cliponaxis: false
+            });
         });
 
-        if (result) {
-            // Find nearest word
-            let nearest = '';
-            let minDist = Infinity;
-            Object.entries(this.embeddings).forEach(([word, vec]) => {
-                const d = Math.sqrt(Math.pow(vec[0] - result[0], 2) + Math.pow(vec[1] - result[1], 2));
-                if (d < minDist) { minDist = d; nearest = word; }
+        const GREEN = '#10b981';
+        const ORANGE = '#f59e0b';
+
+        function addArrow(x0, y0, x1, y1, color, dashed) {
+            annotations.push({
+                ax: x0, ay: y0, axref: 'x', ayref: 'y',
+                x: x1, y: y1, xref: 'x', yref: 'y',
+                showarrow: true, arrowhead: 3, arrowsize: 1.6,
+                arrowwidth: 2.2, arrowcolor: color,
+                arrowdash: dashed ? 'dash' : 'solid'
             });
-
-            this.arithmeticResult = { pos: result, nearest, steps };
-
-            const resultDiv = document.getElementById('embedding-arithmetic-result');
-            if (resultDiv) {
-                resultDiv.innerHTML = `
-                    <span style="font-size:1.1em;">Result: <b style="color:#ef4444;">(${result[0].toFixed(1)}, ${result[1].toFixed(1)})</b>
-                    ≈ <b style="color:#10b981;">"${nearest}"</b>
-                    <span style="color:#94a3b8; font-size:0.85em;">(distance: ${minDist.toFixed(2)})</span></span>`;
-            }
         }
 
-        this.render();
+        // Geschlechts-Richtung: dieselbe Richtung überall
+        addArrow( 5, -10,  5, 10, GREEN);   // Mann → Frau
+        addArrow(25, -10, 25, 10, GREEN);   // König → Königin
+        annotations.push({
+            x: 15, y: 25, xref: 'x', yref: 'y',
+            text: '<b>„Geschlecht"</b> — dieselbe Richtung überall',
+            showarrow: false,
+            font: { size: 13, color: GREEN, family: 'system-ui, sans-serif' },
+            align: 'center'
+        });
+
+        if (stage === 'power') {
+            addArrow( 5, -10, 15, -10, ORANGE);  // Mann → Prinz
+            addArrow(15, -10, 25, -10, ORANGE);  // Prinz → König
+            addArrow( 5,  10, 15,  10, ORANGE);  // Frau → Prinzessin
+            addArrow(15,  10, 25,  10, ORANGE);  // Prinzessin → Königin
+            annotations.push({
+                x: 15, y: -25, xref: 'x', yref: 'y',
+                text: '<b>„Macht"</b> — auch hier dieselbe Richtung',
+                showarrow: false,
+                font: { size: 13, color: ORANGE, family: 'system-ui, sans-serif' },
+                align: 'center'
+            });
+        }
+
+        Plotly.react('embedding-viz-plot', traces, {
+            margin: { l: 50, r: 30, b: 50, t: 10 },
+            showlegend: false,
+            xaxis: {
+                title: { text: '⟶ ' + space.axes.x, font: { size: 13, color: t.axisTitle, family: 'system-ui, sans-serif' } },
+                range: space.rangeX,
+                gridcolor: t.grid, zeroline: true, zerolinecolor: t.grid,
+                tickfont: { size: 10, color: t.axis }
+            },
+            yaxis: {
+                title: { text: '⟶ ' + space.axes.y, font: { size: 13, color: t.axisTitle, family: 'system-ui, sans-serif' } },
+                range: space.rangeY,
+                gridcolor: t.grid, zeroline: true, zerolinecolor: t.grid,
+                scaleanchor: 'x', tickfont: { size: 10, color: t.axis }
+            },
+            annotations,
+            plot_bgcolor: t.bg,
+            paper_bgcolor: t.bg
+        }, { displayModeBar: false, responsive: true });
+
+        // Update the result line with an explanatory sentence
+        const r = document.getElementById('embedding-arithmetic-result');
+        if (r) {
+            if (stage === 'power') {
+                r.innerHTML = 'Die Richtung <b style="color:#f59e0b">Mann → Prinz → König</b> ist dieselbe wie <b style="color:#f59e0b">Frau → Prinzessin → Königin</b>. Bedeutung steckt also nicht nur in der <b>Position</b>, sondern auch in der <b>Richtung</b> zwischen Wörtern.';
+            } else {
+                r.innerHTML = 'Die Vektorrichtung <b style="color:#10b981">Mann → Frau</b> zeigt genau so wie <b style="color:#10b981">König → Königin</b>: „Geschlecht" ist eine <b>Richtung</b> im Raum — und zwar dieselbe, egal wo man sie ansetzt.';
+            }
+        }
     }
-};
+
+    // ── Public surface ──
+
+    function render() {
+        const t = theme();
+        const input = document.getElementById('embedding-viz-input');
+        if (!input) return;
+        const text = input.value || '';
+        const words = text.split(/[\s,]+/).filter(w => w in space.vocab);
+        renderNormal(words);
+    }
+
+    function doArithmetic() {
+        const inp = document.getElementById('embedding-arithmetic-input');
+        const r = document.getElementById('embedding-arithmetic-result');
+        if (!inp || !r) return;
+
+        const expr = inp.value.trim();
+        const ev = evaluate(expr);
+        if (!ev) { r.innerHTML = '<span class="res-dim">Ungültiger Ausdruck</span>'; result = null; render(); return; }
+
+        if (ev.kind === 'num') {
+            r.innerHTML = `Ergebnis: <b>${ev.n.toFixed(2)}</b> <span class="res-dim">(Skalar)</span>`;
+            result = null;
+        } else {
+            const near = nearest(ev.pos);
+            result = { pos: ev.pos, nearest: near.word, steps: [] };
+            r.innerHTML = `→ <b>(${ev.pos[0].toFixed(1)}, ${ev.pos[1].toFixed(1)})</b> · ähnlichster Punkt: <b style="color:#ef4444">${near.word}</b> <span class="res-dim">(d=${near.dist.toFixed(2)})</span>`;
+        }
+        render();
+    }
+
+    // Pre-compute step-by-step arrows so the user sees how the expression builds up.
+    function doArithmeticWithSteps(expr) {
+        const inp = document.getElementById('embedding-arithmetic-input');
+        const r = document.getElementById('embedding-arithmetic-result');
+        if (!inp || !r) return;
+        inp.value = expr;
+
+        const parts = tokenize(expr);
+        if (!parts.length) return;
+
+        // Walk the expression left-to-right, computing partial position + emitting a step arrow
+        let pos = null;
+        const steps = [];
+        let sign = 1;
+        for (let i = 0; i < parts.length; i++) {
+            const t = parts[i];
+            if (t === '+') { sign = 1; continue; }
+            if (t === '-') { sign = -1; continue; }
+            if (t === '*' || t === '/' || t === '(' || t === ')') continue;
+            if (/^\d+$/.test(t)) continue;
+            const norm = Object.keys(space.vocab).find(w => w.toLowerCase() === t.toLowerCase());
+            if (!norm) continue;
+            const v = space.vocab[norm];
+            const next = pos ? [pos[0] + sign * v[0], pos[1] + sign * v[1]] : [v[0] * sign, v[1] * sign];
+            if (pos) {
+                steps.push({ from: [...pos], to: [...next], label: (sign === 1 ? '+ ' : '− ') + norm });
+            }
+            pos = next;
+            sign = 1;
+        }
+
+        if (!pos) { doArithmetic(); return; }
+        const near = nearest(pos);
+        result = { pos, nearest: near.word, steps };
+        r.innerHTML = `→ <b>(${pos[0].toFixed(1)}, ${pos[1].toFixed(1)})</b> · ähnlichster Punkt: <b style="color:#ef4444">${near.word}</b> <span class="res-dim">(d=${near.dist.toFixed(2)})</span>`;
+        render();
+    }
+
+    function bind() {
+        const inp = document.getElementById('embedding-viz-input');
+        if (inp) inp.addEventListener('input', render);
+
+        const arith = document.getElementById('embedding-arithmetic-input');
+        if (arith) {
+            arith.addEventListener('keyup', e => {
+                if (e.key === 'Enter') doArithmeticWithSteps(arith.value);
+            });
+            arith.addEventListener('input', () => {
+                // Live update — but without the elaborate steps (debounce via rAF)
+                if (arith._raf) cancelAnimationFrame(arith._raf);
+                arith._raf = requestAnimationFrame(() => doArithmeticWithSteps(arith.value));
+            });
+        }
+
+        // Quick-chips
+        document.querySelectorAll('#embedding-demo .emb-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const ex = btn.getAttribute('data-ex');
+                document.querySelectorAll('#embedding-demo .emb-chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                if (ex === 'directions') {
+                    renderDirections('gender');
+                    setTimeout(() => renderDirections('power'), 2200);
+                } else {
+                    doArithmeticWithSteps(ex);
+                }
+            });
+        });
+    }
+
+    function init() {
+        bind();
+        // Activate the first chip automatically
+        const firstChip = document.querySelector('#embedding-demo .emb-chip');
+        if (firstChip) firstChip.click();
+    }
+
+    return { render, bind, init, doArithmetic, doArithmeticWithSteps, renderDirections };
+})();
 
 // ============================================================
 // STEP 3: POSITIONAL ENCODING VISUALIZER
@@ -1655,6 +1911,12 @@ const AutoregressiveViz = {
 // ============================================================
 
 function loadIntuitionVizModule() {
+	// Bind attention stepper buttons eagerly so the very first click
+	// (before the lazy observer fires) still works.
+	if (typeof AttentionDemo !== 'undefined') {
+		AttentionDemo.bind();
+	}
+
 	// Step 1: Tokenizer
 	const tokInput = document.getElementById('tokenizer-input');
 	if (tokInput) {
@@ -1667,19 +1929,9 @@ function loadIntuitionVizModule() {
 		TokenizerViz.render();
 	}
 
-	// Step 2: Embedding
-	const embInput = document.getElementById('embedding-viz-input');
-	if (embInput) {
-		embInput.addEventListener('input', () => EmbeddingViz.render());
-	}
-	const embArithInput = document.getElementById('embedding-arithmetic-input');
-	if (embArithInput) {
-		embArithInput.addEventListener('keyup', (e) => {
-			if (e.key === 'Enter') EmbeddingViz.doArithmetic();
-		});
-	}
-	EmbeddingViz.render();
-	EmbeddingViz.doArithmetic()
+	// Step 2: Embedding is initialised lazily via loadIntuitionModule
+	// (see _lazyRegister('embedding-viz-plot', ...)) so the bind()
+	// happens only after the plot is scrolled into view.
 
 	// Step 3: Positional Encoding
 	const peSlider = document.getElementById('pe-num-dims');
@@ -1714,125 +1966,204 @@ function loadIntuitionVizModule() {
 
 	// Autoregressive loop
 	AutoregressiveViz.render();
-}
 
-const contextVocab = {
-	'bank':  { base: [5, 5], color: '#3b82f6' },
-	'river': { base: [1, 9], color: '#10b981' },
-	'money': { base: [9, 1], color: '#f59e0b' }
-};
-
-function runAttention() {
-	const inputField = document.getElementById('trans-input');
-	const container = 'transformer-plot';
-
-	if (!inputField || !document.getElementById(container)) return;
-
-	const input = inputField.value.toLowerCase();
-	const words = input.split(/\s+/).filter(w => contextVocab[w]);
-
-	let traces = [];
-
-	// 1. Static Vocabulary (Background)
-	Object.keys(contextVocab).forEach(word => {
-		const pos = contextVocab[word].base;
-		traces.push({
-			x: [pos[0]], y: [pos[1]],
-			mode: 'markers+text',
-			name: word,
-			text: word,
-			textposition: 'bottom center',
-			marker: { size: 12, opacity: 0.6, color: contextVocab[word].color },
-			type: 'scatter' // Changed from scatter3d
-		});
-	});
-
-	// 2. Attention Logic
-	if (words.includes('bank')) {
-		const bankBase = contextVocab['bank'].base;
-		// Start at the base position
-		let currentPos = [...bankBase]; 
-
-		words.forEach(other => {
-			if (other !== 'bank') {
-				const otherBase = contextVocab[other].base;
-
-				// Move 50% of the remaining distance to the "other" word
-				// Formula: Current + (Target - Current) * 0.5
-				currentPos = currentPos.map((coord, i) => coord + (otherBase[i] - coord) * 0.5);
-
-				// Draw attention line (the "Handshake") from the original bank base
-				traces.push({
-					x: [bankBase[0], otherBase[0]],
-					y: [bankBase[1], otherBase[1]],
-					mode: 'lines',
-					line: { color: '#f97316', width: 3, dash: 'dot' },
-					hoverinfo: 'none',
-					showlegend: false,
-					type: 'scatter'
-				});
-			}
-		});
-
-		// The Resulting Contextual Embedding (now using the iteratively shifted position)
-		traces.push({
-			x: [currentPos[0]], y: [currentPos[1]],
-			mode: 'markers+text',
-			text: 'Contextualized Embedding for "Bank"',
-			textposition: 'top center',
-			marker: { 
-				size: 16, 
-				color: '#3b82f6', 
-				symbol: 'diamond', 
-				line: {color:'black', width:2} 
-			},
-			type: 'scatter'
-		});
+	// Hand off to the lazy-init version so the attention stepper buttons
+	// get their event listeners wired (loadIntuitionModule is otherwise
+	// never queued because PHP's preg_match only picks the first match).
+	if (typeof loadIntuitionModule === 'function') {
+		loadIntuitionModule();
 	}
-
-	const layout = {
-		margin: { l: 40, r: 40, b: 40, t: 40 },
-		hovermode: 'closest',
-		xaxis: { range: [0, 10], title: 'Semantic Dim A', gridcolor: themeColor('#e2e8f0') },
-		yaxis: { range: [0, 10], title: 'Semantic Dim B', gridcolor: themeColor('#e2e8f0') },
-		showlegend: false,
-		plot_bgcolor: themeColor('#fff'),
-		paper_bgcolor: themeColor('#fff'),
-	};
-
-	Plotly.react(container, traces, layout);
 }
 
 // ============================================================
-// STEP 4b: FFN VISUALIZER
+// STEP 4a: ATTENTION DEMO (lndw style — diamond leaps to context)
+// ============================================================
+
+const AttentionDemo = {
+	currentExample: 0,
+
+	examples: [
+		{
+			sentenceHTML: 'I walk to the <span class="attn-word-bank">bank</span>.',
+			contextWords: [],
+			bankShift: [5, 5],
+			label: 'No context',
+			caption: 'No context word — <b>Bank</b> stays in the middle, ambiguous.'
+		},
+		{
+			sentenceHTML: 'I sit by the <span class="attn-word-river">river</span> on the <span class="attn-word-bank">bank</span>.',
+			contextWords: ['river'],
+			bankShift: [2.5, 7.5],
+			label: '<span class="em">river</span> nearby',
+			caption: '<b>River</b> is the neighbor → the contextualized <b>Bank</b> leaps toward <i>river bank</i> (the seat by the water).'
+		},
+		{
+			sentenceHTML: 'I bring my <span class="attn-word-money">money</span> to the <span class="attn-word-bank">bank</span>.',
+			contextWords: ['money'],
+			bankShift: [7.5, 2.5],
+			label: '<span class="em">money</span> nearby',
+			caption: '<b>Money</b> is the neighbor → <b>Bank</b> leaps toward the financial meaning.'
+		},
+		{
+			sentenceHTML: 'After the walk by the <span class="attn-word-river">river</span> I go to the <span class="attn-word-bank">bank</span> to deposit my <span class="attn-word-money">money</span>.',
+			contextWords: ['river', 'money'],
+			bankShift: [6.6, 3.4],
+			label: '<span class="em">both</span> nearby',
+			caption: 'Both neighbors compete — <b>money</b> wins by a hair, so <b>Bank</b> still tilts toward the financial side.'
+		}
+	],
+
+	vocabPositions: {
+		'bank':  { base: [5, 5],   color: '#3b82f6', label: 'Bank' },
+		'river': { base: [1, 9],   color: '#10b981', label: 'River' },
+		'money': { base: [9, 1],   color: '#f59e0b', label: 'Money' }
+	},
+
+	render: function() {
+		const plotDiv = document.getElementById('transformer-plot');
+		if (!plotDiv) return;
+
+		const sentenceEl = document.getElementById('attn-sentence');
+		const labelEl = document.getElementById('attn-step-label');
+		const captionEl = document.getElementById('attn-caption');
+		const prevBtn = document.getElementById('attn-prev');
+		const nextBtn = document.getElementById('attn-next');
+		const example = this.examples[this.currentExample];
+
+		if (sentenceEl) sentenceEl.innerHTML = example.sentenceHTML;
+		if (labelEl) labelEl.innerHTML = (this.currentExample + 1) + ' / ' + this.examples.length + ' · ' + example.label;
+		if (captionEl) captionEl.innerHTML = example.caption;
+		if (prevBtn) prevBtn.disabled = this.currentExample === 0;
+		if (nextBtn) nextBtn.disabled = this.currentExample === this.examples.length - 1;
+
+		const traces = [];
+		const isDark = isDarkMode();
+		const textColor = themeColor('#1e293b');
+		const gridColor = themeColor('#e2e8f0');
+
+		// 1. Static vocabulary points (background)
+		Object.keys(this.vocabPositions).forEach(word => {
+			const v = this.vocabPositions[word];
+			traces.push({
+				x: [v.base[0]], y: [v.base[1]],
+				mode: 'markers+text',
+				name: v.label,
+				text: [v.label],
+				textposition: 'bottom center',
+				textfont: { size: 13, color: v.color, family: 'system-ui, sans-serif' },
+				marker: { size: 14, opacity: 0.55, color: v.color, line: { width: 0 } },
+				type: 'scatter',
+				showlegend: false,
+				hovertemplate: `<b>${v.label}</b><br>base embedding<br>[${v.base[0]}, ${v.base[1]}]<extra></extra>`
+			});
+		});
+
+		// 2. Attention lines from Bank to context words (dotted orange "handshake")
+		const bankBase = this.vocabPositions['bank'].base;
+		example.contextWords.forEach(word => {
+			const v = this.vocabPositions[word];
+			if (!v) return;
+			traces.push({
+				x: [bankBase[0], v.base[0]],
+				y: [bankBase[1], v.base[1]],
+				mode: 'lines',
+				line: { color: isDark ? 'rgba(249,115,22,0.55)' : 'rgba(249,115,22,0.7)', width: 2.5, dash: 'dot' },
+				hoverinfo: 'skip',
+				showlegend: false,
+				type: 'scatter'
+			});
+		});
+
+		// 3. The contextualized Bank (the diamond — its movement is the whole point)
+		traces.push({
+			x: [example.bankShift[0]], y: [example.bankShift[1]],
+			mode: 'markers+text',
+			text: ['"Bank" in context'],
+			textposition: 'top center',
+			textfont: { size: 12, color: textColor, family: 'system-ui, sans-serif' },
+			marker: {
+				size: 18,
+				color: '#3b82f6',
+				symbol: 'diamond',
+				line: { color: isDark ? '#f1f5f9' : '#1e293b', width: 2 }
+			},
+			type: 'scatter',
+			showlegend: false,
+			hovertemplate: `<b>"Bank" in context</b><br>contextualized embedding<br>[${example.bankShift[0].toFixed(2)}, ${example.bankShift[1].toFixed(2)}]<extra></extra>`
+		});
+
+		// 4. Trajectory arrow from Bank base → shifted position (only if it moved)
+		const moved = Math.hypot(example.bankShift[0] - bankBase[0], example.bankShift[1] - bankBase[1]) > 0.05;
+		if (moved) {
+			traces.push({
+				x: [bankBase[0], example.bankShift[0]],
+				y: [bankBase[1], example.bankShift[1]],
+				mode: 'lines',
+				line: { color: '#3b82f6', width: 2 },
+				hoverinfo: 'skip',
+				showlegend: false,
+				type: 'scatter'
+			});
+		}
+
+		const layout = {
+			margin: { l: 40, r: 30, b: 40, t: 30 },
+			hovermode: 'closest',
+			xaxis: { range: [0, 10], title: { text: 'Semantic dimension A', font: { size: 11, color: textColor } }, gridcolor: gridColor, zeroline: false, tickfont: { color: textColor } },
+			yaxis: { range: [0, 10], title: { text: 'Semantic dimension B', font: { size: 11, color: textColor } }, gridcolor: gridColor, zeroline: false, scaleanchor: 'x', tickfont: { color: textColor } },
+			showlegend: false,
+			plot_bgcolor: themeColor('#fff'),
+			paper_bgcolor: themeColor('#fff'),
+			annotations: []
+		};
+
+		Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+	},
+
+	next: function() { if (this.currentExample < this.examples.length - 1) { this.currentExample++; this.render(); } },
+	prev: function() { if (this.currentExample > 0)                  { this.currentExample--; this.render(); } },
+
+	bind: function() {
+		const prev = document.getElementById('attn-prev');
+		const next = document.getElementById('attn-next');
+		if (prev) prev.addEventListener('click', () => this.prev());
+		if (next) next.addEventListener('click', () => this.next());
+	}
+};
+
+// Backwards-compatible alias used by older call sites
+function runAttention() { AttentionDemo.render(); }
+
+// ============================================================
+// STEP 4b: FFN VISUALIZER (gorgeous dark mode via CSS classes)
 // ============================================================
 
 const FFNViz = {
     scenarios: {
         apple_fruit: {
-            desc: "Because the context is 'eating', the FFN detects the <b>Food</b> and <b>Nature</b> patterns. It zeroes out the Tech pattern. It then adds fruit-related vocabulary concepts to the residual stream.",
+            desc: "Because the context is <b>eating</b>, the FFN detects the <b>Food</b> and <b>Nature</b> patterns. It zeroes out the Tech pattern (ReLU), then adds fruit-related vocabulary concepts back into the residual stream.",
             detectors: [
-                { id: 'd1', label: 'Tech Company?', active: false },
-                { id: 'd2', label: 'Edible Fruit?', active: true },
-                { id: 'd3', label: 'Nature/Tree?', active: true }
+                { id: 'd1', label: 'Tech Company?', active: false, fireClass: 'idle' },
+                { id: 'd2', label: 'Edible Fruit?', active: true,  fireClass: 'fire' },
+                { id: 'd3', label: 'Nature/Tree?',   active: true,  fireClass: 'fire' }
             ],
             facts: [
-                { id: 'f1', label: 'Add: "Juice", "Pie"', active: true, from: ['d2'] },
-                { id: 'f2', label: 'Add: "Mac", "Phone"', active: false, from: [] },
-                { id: 'f3', label: 'Add: "Orchard", "Green"', active: true, from: ['d3'] }
+                { id: 'f1', label: 'Add: “Juice”, “Pie”',        active: true,  fireClass: 'fire',      from: ['d2'] },
+                { id: 'f2', label: 'Add: “Mac”, “Phone”',        active: false, fireClass: 'idle',      from: [] },
+                { id: 'f3', label: 'Add: “Orchard”, “Green”',    active: true,  fireClass: 'fire',      from: ['d3'] }
             ]
         },
         apple_tech: {
-            desc: "Because the context is 'buying', the FFN detects the <b>Tech Company</b> pattern. The fruit patterns remain dormant. It retrieves hardware-related knowledge to predict the next word.",
+            desc: "Because the context is <b>buying</b>, the FFN detects the <b>Tech Company</b> pattern. The fruit patterns remain dormant. It retrieves hardware-related knowledge to predict the next word.",
             detectors: [
-                { id: 'd1', label: 'Tech Company?', active: true },
-                { id: 'd2', label: 'Edible Fruit?', active: false },
-                { id: 'd3', label: 'Nature/Tree?', active: false }
+                { id: 'd1', label: 'Tech Company?', active: true,  fireClass: 'fire-tech' },
+                { id: 'd2', label: 'Edible Fruit?', active: false, fireClass: 'idle' },
+                { id: 'd3', label: 'Nature/Tree?',   active: false, fireClass: 'idle' }
             ],
             facts: [
-                { id: 'f1', label: 'Add: "Juice", "Pie"', active: false, from: [] },
-                { id: 'f2', label: 'Add: "Mac", "Phone"', active: true, from: ['d1'] },
-                { id: 'f3', label: 'Add: "Orchard", "Green"', active: false, from: [] }
+                { id: 'f1', label: 'Add: “Juice”, “Pie”',        active: false, fireClass: 'idle',      from: [] },
+                { id: 'f2', label: 'Add: “Mac”, “Phone”',        active: true,  fireClass: 'fire-tech', from: ['d1'] },
+                { id: 'f3', label: 'Add: “Orchard”, “Green”',    active: false, fireClass: 'idle',      from: [] }
             ]
         }
     },
@@ -1841,46 +2172,12 @@ const FFNViz = {
 
     setScenario: function(scenarioKey) {
         this.currentScenario = scenarioKey;
-        
-        // Update Buttons
-        document.getElementById('btn-ffn-fruit').style.background = themeColor(scenarioKey === 'apple_fruit' ? '#fee2e2' : '#fff');
-        document.getElementById('btn-ffn-fruit').style.borderColor = themeColor(scenarioKey === 'apple_fruit' ? '#ef4444' : '#cbd5e1');
-        
-        document.getElementById('btn-ffn-tech').style.background = themeColor(scenarioKey === 'apple_tech' ? '#e0e7ff' : '#fff');
-        document.getElementById('btn-ffn-tech').style.borderColor = themeColor(scenarioKey === 'apple_tech' ? '#6366f1' : '#cbd5e1');
 
-        // Update static container/box colors for dark mode
-        const container = document.getElementById('ffn-viz-container');
-        if (container) {
-            container.style.background = themeColor('#ffffff');
-            container.style.borderColor = themeColor('#e2e8f0');
-        }
-        const inputBox = document.getElementById('ffn-input-box');
-        if (inputBox) {
-            inputBox.style.background = themeColor('#e0e7ff');
-            inputBox.style.borderColor = themeColor('#818cf8');
-            inputBox.style.color = themeColor('#312e81');
-        }
-        const outputBox = document.getElementById('ffn-output-box');
-        if (outputBox) {
-            outputBox.style.background = themeColor('#dcfce7');
-            outputBox.style.borderColor = themeColor('#34d399');
-            outputBox.style.color = themeColor('#065f46');
-        }
-        // Update column label colors
-        document.querySelectorAll('#ffn-viz-container > div > div[style*="color:"]').forEach(el => {
-            const current = el.style.color;
-            if (current && current.startsWith('#')) {
-                el.style.color = themeColor(current);
-            }
-        });
-        // Update explanation box
-        const expl = document.getElementById('ffn-explanation');
-        if (expl) {
-            expl.style.background = themeColor('#ffffff');
-            expl.style.borderColor = themeColor('#cbd5e1');
-            expl.style.color = themeColor('#475569');
-        }
+        // Toggle the active class on the buttons — the CSS handles every color
+        const fruitBtn = document.getElementById('btn-ffn-fruit');
+        const techBtn  = document.getElementById('btn-ffn-tech');
+        if (fruitBtn) fruitBtn.classList.toggle('active-fruit', scenarioKey === 'apple_fruit');
+        if (techBtn)  techBtn.classList.toggle('active-tech',  scenarioKey === 'apple_tech');
 
         this.render();
     },
@@ -1889,95 +2186,74 @@ const FFNViz = {
         if (!this.currentScenario) return;
         const data = this.scenarios[this.currentScenario];
 
-        // 1. Render Detectors
+        // 1. Detectors
         const detContainer = document.getElementById('ffn-detectors');
         detContainer.innerHTML = data.detectors.map(d => `
-            <div id="node-${d.id}" style="
-                padding: 10px; border-radius: 8px; font-size: 0.85em; font-weight: bold; transition: all 0.4s ease;
-                background: ${themeColor(d.active ? '#fef3c7' : '#f1f5f9')};
-                border: 2px solid ${themeColor(d.active ? '#f59e0b' : '#cbd5e1')};
-                color: ${themeColor(d.active ? '#92400e' : '#94a3b8')};
-                box-shadow: ${d.active ? '0 0 10px rgba(245,158,11,0.4)' : 'none'};
-            ">
-                ${d.label}<br>
-                <span style="font-size: 0.8em; color: ${themeColor(d.active ? '#d97706' : '#cbd5e1')};">
-                    ${d.active ? '🔥 FIRES' : '❌ ZEROED (ReLU)'}
-                </span>
+            <div id="node-${d.id}" class="ffn-pill ${d.fireClass}">
+                ${d.label}
+                <div class="ffn-sub">${d.active ? '🔥 FIRES' : '✕ ZEROED (ReLU)'}</div>
             </div>
         `).join('');
 
-        // 2. Render Facts
+        // 2. Facts
         const factsContainer = document.getElementById('ffn-facts');
         factsContainer.innerHTML = data.facts.map(f => `
-            <div id="node-${f.id}" style="
-                padding: 10px; border-radius: 8px; font-size: 0.85em; font-weight: bold; transition: all 0.4s ease;
-                background: ${themeColor(f.active ? '#dcfce7' : '#f1f5f9')};
-                border: 2px solid ${themeColor(f.active ? '#10b981' : '#cbd5e1')};
-                color: ${themeColor(f.active ? '#065f46' : '#94a3b8')};
-            ">
+            <div id="node-${f.id}" class="ffn-pill ${f.fireClass}">
                 ${f.label}
             </div>
         `).join('');
 
-        // 3. Update Explanation
-        document.getElementById('ffn-explanation').innerHTML = data.desc;
+        // 3. Explanation
+        const expl = document.getElementById('ffn-explanation');
+        if (expl) expl.innerHTML = data.desc;
 
-        // 4. Draw Lines (Wait a tiny bit for DOM to position elements)
+        // 4. Lines (wait one frame for layout)
         setTimeout(() => this.drawLines(data), 50);
     },
 
     drawLines: function(data) {
         const svg = document.getElementById('ffn-lines');
-        const container = document.getElementById('ffn-viz-container').getBoundingClientRect();
+        const container = document.getElementById('ffn-viz-container');
+        if (!svg || !container) return;
+        const cRect = container.getBoundingClientRect();
         svg.innerHTML = '';
+
+        const isDark = isDarkMode();
+        const activeColor = isDark ? '#f59e0b' : '#f59e0b';
+        const idleColor   = isDark ? 'rgba(148,163,184,0.35)' : 'rgba(148,163,184,0.55)';
 
         const drawCurve = (el1, el2, active) => {
             if (!el1 || !el2) return;
-            const rect1 = el1.getBoundingClientRect();
-            const rect2 = el2.getBoundingClientRect();
-
-            // Calculate positions relative to container
-            const x1 = rect1.right - container.left;
-            const y1 = rect1.top + (rect1.height / 2) - container.top;
-            const x2 = rect2.left - container.left;
-            const y2 = rect2.top + (rect2.height / 2) - container.top;
-
-            // Bezier curve control points
+            const r1 = el1.getBoundingClientRect();
+            const r2 = el2.getBoundingClientRect();
+            const x1 = r1.right  - cRect.left;
+            const y1 = r1.top + r1.height / 2 - cRect.top;
+            const x2 = r2.left   - cRect.left;
+            const y2 = r2.top + r2.height / 2 - cRect.top;
             const cx1 = x1 + 40;
             const cx2 = x2 - 40;
-
-            const color = themeColor(active ? '#f59e0b' : '#e2e8f0');
-            const width = active ? 3 : 1;
+            const color = active ? activeColor : idleColor;
+            const width = active ? 2.5 : 1.2;
             const dash = active ? '' : 'stroke-dasharray="4 4"';
-
-            svg.innerHTML += `<path d="M ${x1} ${y1} C ${cx1} ${y1}, ${cx2} ${y2}, ${x2} ${y2}" 
-                                stroke="${color}" stroke-width="${width}" fill="transparent" ${dash} 
-                                style="transition: all 0.4s ease;"/>`;
+            svg.innerHTML += `<path d="M ${x1} ${y1} C ${cx1} ${y1}, ${cx2} ${y2}, ${x2} ${y2}" stroke="${color}" stroke-width="${width}" fill="transparent" ${dash} />`;
         };
 
-        const inputBox = document.getElementById('ffn-input-box');
+        const inputBox  = document.getElementById('ffn-input-box');
         const outputBox = document.getElementById('ffn-output-box');
 
-        // Input -> Detectors
-        data.detectors.forEach(d => {
-            const detNode = document.getElementById(`node-${d.id}`);
-            drawCurve(inputBox, detNode, d.active);
-        });
+        // Input → Detectors
+        data.detectors.forEach(d => drawCurve(inputBox, document.getElementById(`node-${d.id}`), d.active));
 
-        // Detectors -> Facts
+        // Detectors → Facts → Output
         data.facts.forEach(f => {
             const factNode = document.getElementById(`node-${f.id}`);
-            f.from.forEach(sourceId => {
-                const sourceNode = document.getElementById(`node-${sourceId}`);
-                drawCurve(sourceNode, factNode, true);
-            });
-            // If fact is inactive, just draw a faint line from a random inactive detector for visual completeness
-            if (!f.active) {
-                const inactiveDet = document.getElementById(`node-d2`); // arbitrary
-                drawCurve(inactiveDet, factNode, false);
+            if (f.from.length) {
+                f.from.forEach(srcId => drawCurve(document.getElementById(`node-${srcId}`), factNode, true));
+            } else if (!f.active) {
+                // Faint hint-line from any detector so the column doesn't look disconnected
+                const anyDet = document.getElementById(`node-d2`);
+                drawCurve(anyDet, factNode, false);
             }
-            
-            // Facts -> Output
             drawCurve(factNode, outputBox, f.active);
         });
     }
@@ -2056,20 +2332,9 @@ function loadIntuitionModule() {
         TokenizerViz.render();
     });
 
-    // Step 2: Embedding
+    // Step 2: Embedding (lndw-style Macht/Geschlecht demo)
     _lazyRegister('embedding-viz-plot', () => {
-        const embInput = document.getElementById('embedding-viz-input');
-        if (embInput) {
-            embInput.addEventListener('input', () => EmbeddingViz.render());
-        }
-        const embArithInput = document.getElementById('embedding-arithmetic-input');
-        if (embArithInput) {
-            embArithInput.addEventListener('keyup', (e) => {
-                if (e.key === 'Enter') EmbeddingViz.doArithmetic();
-            });
-        }
-        EmbeddingViz.render();
-        EmbeddingViz.doArithmetic();
+        EmbeddingViz.init();
     });
 
     // Step 3: Positional Encoding
@@ -2087,9 +2352,10 @@ function loadIntuitionModule() {
         });
     });
 
-    // Step 4a: Attention (bank/river/money plot)
+    // Step 4a: Attention (bank/river/money stepper)
     _lazyRegister('transformer-plot', () => {
-        runAttention();
+        AttentionDemo.bind();
+        AttentionDemo.render();
     });
 
     // Step 4b: FFN
