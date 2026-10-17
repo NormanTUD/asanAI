@@ -1192,6 +1192,1003 @@ const PAPERS = [
     },
     aha: "You are a Bayesian. Every time you revise a belief after seeing new evidence, you're doing the math informally — sometimes badly. Spam filters that learn from your corrections, language models trained on next-token prediction, scientific theories updated after experiments — all are Bayes' theorem in different disguises. The simplest update rule turns out to be the foundation of learning itself.",
     citation: "Bayes, T. (1763). An essay towards solving a problem in the doctrine of chances. *Philosophical Transactions of the Royal Society*, 53, 370–418. [Published posthumously; presented by Richard Price.]"
+  },
+
+  /* =============================================================
+     WAVE 2 — 62 new papers, broader categories, BC through 2020s.
+     Tagged with `wave: 2`. Default view is Wave 2.
+     ============================================================= */
+  {
+    id: "smith1776", wave: 2,
+    title: "An Inquiry into the Nature and Causes of the Wealth of Nations",
+    titleShort: "The Wealth of Nations",
+    authors: ["Adam Smith"], year: 1776,
+    fields: ["economics"], era: "1700s", importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/3300/3300-0.txt",
+    published: "W. Strahan and T. Cadell, London", language: "English",
+    summaries: {
+      elementary: "When everyone looks out for themselves, the world somehow works.",
+      abi: "Smith argued that self-interest channelled through competition ('the invisible hand') produces more wealth than benevolence. Division of labour, free exchange and well-functioning markets turn individual selfishness into collective prosperity. The book founded modern economics.",
+      phd: "Three pillars: division of labour (output grows as tasks specialise), money (solves the double-coincidence problem), and self-interest moderated by competition. Smith's labour theory of value prefigures Marx and Ricardo; his analysis of price, rent and stock anticipates classical economics; his critique of monopolies and joint-stock companies anticipates 20th-century antitrust."
+    },
+    aha: "Smith also wrote that markets need morality to function, that corporations colluding against workers is 'a conspiracy against the public', and that sympathy is the basis of all ethical life (in The Theory of Moral Sentiments). The 'selfish economist' caricature misses most of what Smith actually said — modern economics has spent 250 years rediscovering it.",
+    citation: "Smith, A. (1776). *An Inquiry into the Nature and Causes of the Wealth of Nations*. London: W. Strahan and T. Cadell."
+  },
+  {
+    id: "malthus1798", wave: 2,
+    title: "An Essay on the Principle of Population, as It Affects the Future Improvement of Society",
+    titleShort: "An Essay on the Principle of Population",
+    authors: ["Thomas Robert Malthus"], year: 1798,
+    fields: ["economics"], era: "1700s", importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/4239/4239-0.txt",
+    published: "J. Johnson, London", language: "English",
+    summaries: {
+      elementary: "People will always have more children than the world can feed.",
+      abi: "Malthus showed that population grows geometrically (1, 2, 4, 8, 16…) while food grows only arithmetically (1, 2, 3, 4, 5…). Without checks — war, famine, disease or 'moral restraint' — poverty is the natural state. The insight inspired Darwin's natural selection and shapes every debate about resources and growth.",
+      phd: "Two postulates (food is necessary for existence, passion between the sexes is necessary) yield two derived propositions (population increases faster than subsistence; checks are inevitable unless moral restraint intervenes). The model is the simplest non-trivial population dynamics: dP/dt = rP with carrying capacity K. Inspired Darwin, Liebig, Pearl-Reed logistic growth, and the modern climate economics of the Club of Rome."
+    },
+    aha: "Malthus was proven wrong by technology (Green Revolution, synthetic fertilisers) — but the question he asked is the question of our century. Every climate model, every sustainability argument, every 'can we feed 10 billion?' debate is Malthus in disguise. His mechanism was right; his timing was wrong.",
+    citation: "Malthus, T. R. (1798). *An Essay on the Principle of Population*. London: J. Johnson."
+  },
+  {
+    id: "freud1900", wave: 2,
+    title: "Die Traumdeutung",
+    titleShort: "The Interpretation of Dreams",
+    authors: ["Sigmund Freud"], year: 1900,
+    fields: ["psychology"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/interpretationof00freu",
+    published: "Franz Deuticke, Vienna", language: "German",
+    summaries: {
+      elementary: "Dreams are messages from a part of your mind you don't control.",
+      abi: "Freud argued that dreams are wish-fulfillments censored by the conscious mind. Behind every dream is a latent content — often sexual or aggressive — disguised by symbols (displacement, condensation). We all have an unconscious that shapes our choices without us knowing. Many specifics are wrong; the general insight changed how we think about ourselves.",
+      phd: "Freud's method: free-associate through dream elements, undo the 'dream-work' (displacement, condensation, symbolisation, secondary revision) to reach the 'latent content'. The 1900 book introduces the unconscious, the id/ego/superego architecture, and the role of repressed wishes. Empirically false in many details; foundation of depth psychology, psychoanalytic therapy, and the 20th-century habit of asking 'what does this really mean?'"
+    },
+    aha: "Modern neuroscience has shown Freud was wrong about most specifics — but right about the core insight: most of your mental life happens below conscious access. Freud named the phenomenon. The unconscious is now an experimental fact (Libet, Soon, Brass, Heinze), and the methods Freud invented (free association, dream analysis, transference) became therapy as we know it.",
+    citation: "Freud, S. (1900). *Die Traumdeutung*. Leipzig/Vienna: Franz Deuticke. (English: *The Interpretation of Dreams*, 1913.)"
+  },
+  {
+    id: "pavlov1903", wave: 2,
+    title: "Nobel Lecture: Physiology of Digestion (Conditioned Reflexes)",
+    titleShort: "Conditioned Reflexes",
+    authors: ["Ivan P. Pavlov"], year: 1903,
+    fields: ["psychology"], era: "1900s", importance: "foundational",
+    pdf: "https://www.nobelprize.org/uploads/2018/06/pavlov-lecture.pdf",
+    published: "Nobel Lecture, December 12, 1904", language: "English",
+    summaries: {
+      elementary: "A bell can make a dog drool, even without food.",
+      abi: "Pair any neutral signal (bell) with food often enough, and the signal alone triggers salivation. This is classical conditioning — the simplest way the brain learns associations. It works in almost every animal, including humans.",
+      phd: "Pavlov's Nobel-winning work demonstrated classical conditioning: a conditioned stimulus (CS, bell) paired with an unconditioned stimulus (US, food) elicits a conditioned response (CR, salivation). He showed extinction, spontaneous recovery, generalisation, discrimination, higher-order conditioning. Behaviourism (Watson, Skinner) built its laws of learning on this scaffold; modern reinforcement learning (Sutton & Barto) is its mathematical descendant."
+    },
+    aha: "Classical conditioning explains a surprising amount of human life: why you salivate at the smell of bread before you see it, why advertising works (jingles paired with pleasure), why trauma responds to cues long after the danger is gone, why a song can trigger grief. Most 'irrational' behaviour is conditioning you can't see.",
+    citation: "Pavlov, I. P. (1904). Nobel Lecture: 'Physiology of Digestion'. In *Nobel Lectures, Physiology or Medicine 1901–1921*. Elsevier, 1967."
+  },
+  {
+    id: "watson1913", wave: 2,
+    title: "Psychology as the Behaviorist Views It",
+    titleShort: "Psychology as the Behaviorist Views It",
+    authors: ["John B. Watson"], year: 1913,
+    fields: ["psychology"], era: "1900s", importance: "foundational",
+    pdf: "https://psychclassics.yorku.ca/Watson/psychology.htm",
+    published: "Psychological Review, 20(2), 158–177", language: "English",
+    summaries: {
+      elementary: "Psychology should study behaviour, not thoughts.",
+      abi: "Watson's manifesto launched behaviourism: psychology should be the science of observable behaviour, not introspection about consciousness. Everything private — thoughts, feelings, intentions — should be excluded from science. Forty years of psychology followed this rule.",
+      phd: "Watson's paper declares: 'Psychology as the behaviorist views it is a purely objective experimental branch of natural science. Its theoretical goal is the prediction and control of behavior.' Introspection is dismissed as unscientific. Seeds a programme (Thorndike's law of effect, Skinner's operant conditioning, Hull's mathematical learning theory) that dominated academic psychology until the cognitive revolution (Chomsky 1957, Neisser 1967)."
+    },
+    aha: "Watson was famously arrogant — he promised that with the right conditioning, he could turn any healthy infant into any kind of specialist. The behaviourist programme turned out to be too narrow — cognition came back in the 1960s. But the discipline's insistence on rigorous measurement, replicable experiments and rejecting folk-psychology is Watson's lasting gift.",
+    citation: "Watson, J. B. (1913). Psychology as the behaviorist views it. *Psychological Review*, 20(2), 158–177."
+  },
+  {
+    id: "skinner1938", wave: 2,
+    title: "The Behavior of Organisms: An Experimental Analysis",
+    titleShort: "The Behavior of Organisms",
+    authors: ["B. F. Skinner"], year: 1938,
+    fields: ["psychology"], era: "1900s", importance: "foundational",
+    pdf: "https://www.bfskinner.org/archives/1953-the-behavior-of-organisms/",
+    published: "Appleton-Century-Crofts, New York", language: "English",
+    summaries: {
+      elementary: "You do what gets rewarded, not what you think about.",
+      abi: "Skinner built on Pavlov to argue that ALL behaviour — even complex human thought — is shaped by consequences. If a behaviour is rewarded, it repeats; if punished, it dies out. Schedules of reinforcement (variable ratio, fixed interval, etc.) explain gambling, addiction, education and procrastination.",
+      phd: "Skinner's operant conditioning formalised reinforcement schedules (ratio vs interval, fixed vs variable), shaping through successive approximations, and the experimental analysis of behaviour. The cumulative recorder made reinforcement patterns visible in real time. Skinner extended the analysis to verbal behaviour, education (programmed instruction) and utopian design (Walden Two)."
+    },
+    aha: "Variable-ratio reward (the slot machine schedule) is the most addictive reinforcement pattern known — and it's exactly how social media notifications, loot boxes and Instagram likes are designed. Skinner showed in the 1950s why intermittent rewards grab us; Silicon Valley weaponised that knowledge in the 2010s. The dopamine loop is 80 years old.",
+    citation: "Skinner, B. F. (1938). *The Behavior of Organisms: An Experimental Analysis*. New York: Appleton-Century-Crofts."
+  },
+  {
+    id: "beauvoir1949", wave: 2,
+    title: "Le Deuxième Sexe",
+    titleShort: "The Second Sex",
+    authors: ["Simone de Beauvoir"], year: 1949,
+    fields: ["philosophy"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/in.ernet.dli.2015.140583",
+    published: "Gallimard, Paris", language: "French",
+    summaries: {
+      elementary: "Nobody is born a woman — they become one.",
+      abi: "Beauvoir argued that 'woman' is not a biological fact but a social construction. The 'Other' is made by every society's stories, expectations, dress codes and labour divisions. The book combined philosophy, autobiography and sociology to argue for women's freedom — and is the founding text of second-wave feminism.",
+      phd: "Beauvoir's analysis moves from biology to psychoanalysis to history to myth: women are constituted as the immanent (the Other, the body, the private) against men's transcendence (the subject, the mind, the public). Phenomenological-existentialist (drawing on Sartre, Heidegger, Hegel), prefiguring gender studies (Butler), feminist epistemology (Haraway, Code) and intersectional analysis. Its formulation 'One is not born, but rather becomes, a woman' anticipates the performativity thesis by decades."
+    },
+    aha: "The book sold 20,000 copies in its first week in France (1949) and was put on the Vatican's Index of Forbidden Books. Decades later the same line — gender as constructed, not given — became mainstream. Every contemporary debate about gender identity, representation and 'what is a woman?' is still working through Beauvoir.",
+    citation: "Beauvoir, S. de (1949). *Le Deuxième Sexe*. Paris: Gallimard. (English: *The Second Sex*, 1953.)"
+  },
+  {
+    id: "feynman1959", wave: 2,
+    title: "There's Plenty of Room at the Bottom",
+    titleShort: "There's Plenty of Room at the Bottom",
+    authors: ["Richard P. Feynman"], year: 1959,
+    fields: ["physics"], era: "1950s", importance: "foundational",
+    pdf: "https://calteches.library.caltech.edu/1976/1/1960Bottom.pdf",
+    published: "Engineering and Science, 23(5), 22–36 (Caltech)", language: "English",
+    summaries: {
+      elementary: "We can write the entire Encyclopaedia Britannica on the head of a pin.",
+      abi: "Feynman gave a Caltech lecture asking: why can't we manipulate matter atom by atom? He offered $1000 to the first person who could shrink a book page 25,000 times and still read it, and predicted entire machines built at molecular scales. He foresaw nanotechnology, atomic-scale manufacturing and the merging of chemistry and engineering.",
+      phd: "Feynman posed the problem of manipulating matter at nanometre scales, predicted the feasibility of atomic-scale fabrication (now realised by STM, AFM, DNA origami), discussed biological analogues (cells, ribosomes), and computed the limits imposed by thermal noise and quantum uncertainty. Drexler's Engines of Creation (1986), Eigler & Schweizer's IBM xenon atoms (1990), and modern atomically-precise manufacturing all trace back to this lecture."
+    },
+    aha: "65 years later, we can write data at densities Feynman predicted and even move single atoms around — but cheap, mass-produced atom-by-atom assembly is still out of reach. The bottleneck isn't physics, it's manufacturing economics. We have the techniques; we haven't yet built the production lines.",
+    citation: "Feynman, R. P. (1960). There's plenty of room at the bottom. *Engineering and Science*, 23(5), 22–36. [Caltech, based on a 1959 talk.]"
+  },
+  {
+    id: "carson1962", wave: 2,
+    title: "Silent Spring",
+    titleShort: "Silent Spring",
+    authors: ["Rachel Carson"], year: 1962,
+    fields: ["biology"], era: "1960s", importance: "foundational",
+    pdf: "https://library.unh.edu/sites/default/files/media/2022-04/silent_spring.pdf",
+    published: "Houghton Mifflin, Boston", language: "English",
+    summaries: {
+      elementary: "The chemicals we spray to kill insects are killing everything else too.",
+      abi: "Carson showed that DDT and other pesticides move up food chains, accumulate in fat, and end up in birds, fish, breast milk and human blood. The book triggered an environmental movement, the EPA, and a worldwide ban on DDT. Carson was attacked by the chemical industry as a 'hysterical woman' — but the science held up.",
+      phd: "Silent Spring synthesised ecology, toxicology and public-policy research: biomagnification through food chains (DDT concentrations can be 10 million times higher at the top), sublethal effects on reproduction (raptor eggshell thinning), persistence in soils and waterways, and the inadequacy of single-species toxicity testing. Crystallised the environmental movement; seeded the EPA (1970), DDT bans (US 1972, most countries later) and modern popular science writing."
+    },
+    aha: "Carson was a quiet marine biologist writing in a suburban kitchen. The chemical industry mobilised to destroy her reputation. But her evidence — and her prose — won. A case study in how one person with rigorous science and beautiful writing can change policy against the wishes of entire industries.",
+    citation: "Carson, R. (1962). *Silent Spring*. Boston: Houghton Mifflin."
+  },
+  {
+    id: "mandelbrot1967", wave: 2,
+    title: "How Long Is the Coast of Britain? Statistical Self-Similarity and Fractional Dimension",
+    titleShort: "How Long Is the Coast of Britain?",
+    authors: ["Benoît B. Mandelbrot"], year: 1967,
+    fields: ["mathematics"], era: "1960s", importance: "foundational",
+    pdf: "https://www.science.org/doi/10.1126/science.156.3775.636",
+    published: "Science, 156(3775), 636–638", language: "English",
+    summaries: {
+      elementary: "How long is a coastline? It depends on how closely you measure it.",
+      abi: "Mandelbrot showed that the length of Britain's coast (or any coastline) increases without bound as your ruler gets shorter. Coastlines are self-similar: zoom in and the wiggles look the same. This is the birth of fractal geometry — shapes with non-integer dimensions.",
+      phd: "Mandelbrot defines fractals via Hausdorff-Besicovitch dimension D > topological dimension; the coastline's measured length scales as L ∝ r^(1-D) where r is the ruler length. Koch's snowflake has D ≈ 1.26; the coastline of Britain D ≈ 1.25. Fractals unify previously unrelated phenomena: turbulence, galaxy clustering, stock-market volatility, the branching of trees, lungs, blood vessels, coastlines. The paper also introduces the Mandelbrot set and connects to power-law statistics."
+    },
+    aha: "Nature is full of shapes classical geometry can't describe — clouds, mountains, coastlines, lightning, blood vessels. Fractals aren't mathematical curiosities; they describe the world we live in. The same mathematics now models financial crashes (Mandelbrot's own work on the cotton market), the internet's topology, and the rhythm of the heart.",
+    citation: "Mandelbrot, B. B. (1967). How long is the coast of Britain? *Science*, 156(3775), 636–638."
+  },
+  {
+    id: "hardin1968", wave: 2,
+    title: "The Tragedy of the Commons",
+    titleShort: "The Tragedy of the Commons",
+    authors: ["Garrett Hardin"], year: 1968,
+    fields: ["economics"], era: "1960s", importance: "foundational",
+    pdf: "https://www.science.org/doi/10.1126/science.162.3859.1243",
+    published: "Science, 162(3859), 1243–1248", language: "English",
+    summaries: {
+      elementary: "If everyone can graze their cow on the village green, the green dies.",
+      abi: "Shared resources are inevitably depleted when each user benefits personally from taking more and bears only a fraction of the cost. Common pastures, fisheries, the atmosphere, the ocean, the radio spectrum — all face this. The one-page paper has reshaped environmental policy, fisheries management and climate negotiations ever since.",
+      phd: "Using the metaphor of a common pasture (taken from Lloyd 1833), Hardin argues that rational individual action within an unregulated commons converges to ruin. Mathematically: each herder gets the full benefit of one more animal, but the cost (overgrazing) is shared. As long as marginal benefit > marginal cost, the herd grows; the equilibrium is collapse. Solution: mutual coercion (privatisation, mutual regulation, abandonment). Anchors Elinor Ostrom's Nobel-winning work on common-pool resource governance, cap-and-trade, carbon taxes, and fisheries quotas."
+    },
+    aha: "Hardin's analysis applies to anything shared and finite — from grazing land to the climate. The phrase 'tragedy of the commons' has been overused (most commons historically weren't unmanaged), but the underlying mechanism is one of the most important insights of the 20th century: rational individuals can collectively destroy the thing they all depend on.",
+    citation: "Hardin, G. (1968). The tragedy of the commons. *Science*, 162(3859), 1243–1248."
+  },
+  {
+    id: "meadows1972", wave: 2,
+    title: "The Limits to Growth",
+    titleShort: "The Limits to Growth",
+    authors: ["Donella H. Meadows", "Dennis L. Meadows", "Jørgen Randers", "William W. Behrens III"], year: 1972,
+    fields: ["economics"], era: "1970s", importance: "foundational",
+    pdf: "https://www.donellameadows.org/wp-content/userfiles/Limits-to-Growth-digital_scan-version.pdf",
+    published: "Universe Books, New York", language: "English",
+    summaries: {
+      elementary: "If growth goes on forever on a finite planet, something breaks.",
+      abi: "A team at MIT built the first computer model of the world economy — population, agriculture, industry, pollution, resources — and ran it out 100 years. In almost every plausible scenario, growth overshoots and collapses by 2100. Only deliberate limits on growth (or a shift to sustainable technologies) avoids the crash. The book triggered the environmental decade.",
+      phd: "World3, a system-dynamics model with feedback loops between 5 sectors (population, capital, agriculture, resources, pollution), was used to simulate the planet under 12 scenarios. The base case ('business as usual') sees industrial output peak around 2030 and population collapse soon after, driven by resource depletion and pollution overshoot. Underpins modern climate economics, planetary boundaries (Rockström) and the doughnut-economics framework (Raworth)."
+    },
+    aha: "50 years later, the book's predictions have held up remarkably well: industrial output growth is slowing, resource extraction is plateauing, pollution is climbing, population growth is decelerating. Dismissed at the time as Malthusian alarmism; it now reads as prophecy. The biggest disagreement wasn't about the model — it was about whether humans would change course in time.",
+    citation: "Meadows, D. H., Meadows, D. L., Randers, J., & Behrens, W. W. III. (1972). *The Limits to Growth*. New York: Universe Books."
+  },
+  {
+    id: "zimbardo1973", wave: 2,
+    title: "A Study of Prisoners and Guards in a Simulated Prison",
+    titleShort: "The Stanford Prison Experiment",
+    authors: ["Philip G. Zimbardo", "Craig Haney", "Curtis Banks", "David Jaffe"], year: 1973,
+    fields: ["psychology"], era: "1970s", importance: "landmark",
+    pdf: "https://www.zimbardo.com/downloads/spe-pdf.pdf",
+    published: "International Journal of Criminology and Penology, 1, 69–97", language: "English",
+    summaries: {
+      elementary: "Give good people a badge and a uniform, and they'll become cruel in days.",
+      abi: "Zimbardo turned a university basement into a fake prison, randomly assigned students to be 'guards' or 'prisoners', and watched. Within 36 hours the 'guards' were dehumanising, humiliating and psychologically torturing the 'prisoners'. The 'prisoners' broke down, cried, raged. The study was stopped after 6 days. Zimbardo's conclusion: evil is mostly situational, not characterological.",
+      phd: "A 2-week simulated prison study with 24 male undergraduates randomly assigned to 'guard' or 'prisoner' roles. Within 48 hours, five prisoners had to be released due to severe emotional disturbance; guards spontaneously escalated harassment, humiliation, sleep deprivation and forced stress positions. The study was terminated after 6 days. Methodologically controversial (Zimbardo's dual role as principal investigator and prison superintendent; demand characteristics; later reanalyses by Le Texier, Carnahan) but hugely influential in social psychology and the 'bad apple vs bad barrel' debate."
+    },
+    aha: "The experiment has been criticised for being more theatre than science (guards were coached, prisoners weren't truly free to leave). But the deeper point — that ordinary people given power and anonymity can become cruel very quickly — has been replicated in Abu Ghraib, Milgram's experiments, and real-world corporate scandals. The situation often beats the person.",
+    citation: "Zimbardo, P. G., Haney, C., Banks, W. C., & Jaffe, D. (1973). A study of prisoners and guards in a simulated prison. *International Journal of Criminology and Penology*, 1, 69–97."
+  },
+  {
+    id: "tverskykahneman1974", wave: 2,
+    title: "Judgment under Uncertainty: Heuristics and Biases",
+    titleShort: "Heuristics and Biases",
+    authors: ["Amos Tversky", "Daniel Kahneman"], year: 1974,
+    fields: ["psychology"], era: "1970s", importance: "foundational",
+    pdf: "https://www.science.org/doi/10.1126/science.185.4157.1124",
+    published: "Science, 185(4157), 1124–1131", language: "English",
+    summaries: {
+      elementary: "We don't think statistically — we use mental shortcuts that fool us.",
+      abi: "Tversky and Kahneman showed that humans systematically deviate from rational statistical reasoning. We overweight vivid recent events (availability heuristic), anchor on irrelevant numbers (anchoring), and judge probabilities by how easily examples come to mind. Most decisions are made by these heuristics, not by careful reasoning.",
+      phd: "The 1974 paper extends the heuristics-and-biases programme: availability (judging frequency by ease of recall), representativeness (judging probability by similarity), anchoring-and-adjustment (insufficient adjustment from initial values), and the conjunction fallacy (Linda problem: 'the bank teller is also active in the feminist movement' is judged MORE probable than the conjunction). Foundation of the entire heuristics-and-biases research programme, Kahneman's Nobel (2002), and modern behavioural economics."
+    },
+    aha: "Every news headline exploits availability: a plane crash feels more dangerous than driving a car, even though flying is 100× safer. Every marketing campaign uses anchoring: $99.99 feels cheaper than $100. Every political debate uses representativeness: stereotypes are probability errors. The whole literature is a map of your cognitive biases — and most people still walk right into them.",
+    citation: "Tversky, A., & Kahneman, D. (1974). Judgment under uncertainty: Heuristics and biases. *Science*, 185(4157), 1124–1131."
+  },
+  {
+    id: "hawking1974", wave: 2,
+    title: "Black Hole Explosions?",
+    titleShort: "Black Hole Explosions?",
+    authors: ["Stephen W. Hawking"], year: 1974,
+    fields: ["physics"], era: "1970s", importance: "foundational",
+    pdf: "https://www.nature.com/articles/248030a0",
+    published: "Nature, 248, 30–31", language: "English",
+    summaries: {
+      elementary: "Black holes aren't eternal — they slowly evaporate.",
+      abi: "Hawking combined quantum mechanics and general relativity and found a shocking result: black holes emit radiation. Virtual particle-antiparticle pairs near the event horizon can split, with one falling in and the other escaping as real radiation. Small black holes evaporate fast; large ones live for billions of years.",
+      phd: "Using quantum field theory on curved spacetime, Hawking showed that the event horizon's tidal gradient can separate virtual pairs: the negative-energy particle falls in (reducing the black hole's mass) while the positive-energy one escapes to infinity as Hawking radiation. A solar-mass black hole would take ~10⁶⁷ years to evaporate; a primordial black hole the mass of a mountain, ~10¹⁰ years. The radiation is approximately thermal with T = ℏc³/(8πGMk_B), and the information-loss paradox remains one of the deepest open problems in theoretical physics."
+    },
+    aha: "Hawking's insight implies that nothing is truly eternal — not even black holes. Combined with the Bekenstein-Hawking entropy formula S = A/4ℓ_P², the second law of thermodynamics is saved only if black holes have entropy. The paper is also a moving human story: Hawking gave the lecture aged 32, shortly after his ALS diagnosis.",
+    citation: "Hawking, S. W. (1974). Black hole explosions? *Nature*, 248(5443), 30–31."
+  },
+  {
+    id: "foucault1975", wave: 2,
+    title: "Surveiller et punir : Naissance de la prison",
+    titleShort: "Discipline and Punish",
+    authors: ["Michel Foucault"], year: 1975,
+    fields: ["philosophy"], era: "1970s", importance: "foundational",
+    pdf: "https://archive.org/details/surveilleretpuni0000fouc",
+    published: "Gallimard, Paris", language: "French",
+    summaries: {
+      elementary: "Modern prisons, schools and hospitals are all variations of the same machine: the panopticon.",
+      abi: "Foucault argued that modern power doesn't work through spectacle (public executions) but through surveillance and self-discipline. The panopticon — a prison where every cell is always visible — creates a 'conscious and permanent visibility that assures the automatic functioning of power'. Schools, factories and hospitals all use the same trick.",
+      phd: "Foucault's genealogy of modern power traces the shift from sovereign power (visible punishment) to disciplinary power (normalising surveillance). The panopticon is Bentham's 1791 prison design — and Foucault's analysis extends to hospitals, schools, barracks and workshops. Discipline operates through three instruments: hierarchical observation, normalising judgement, and the examination. The foundational text of modern power analysis and surveillance studies."
+    },
+    aha: "Surveillance cameras, fitness trackers, social media scoring, employee monitoring software, school disciplinary systems — all are panoptic technologies. Foucault's 1975 insight turned into a daily reality 20 years later. The book also asks: when you can be watched at all times, do you stop being a person and start being a 'docile subject'?",
+    citation: "Foucault, M. (1975). *Surveiller et punir : Naissance de la prison*. Paris: Gallimard. (English: *Discipline and Punish*, 1977.)"
+  },
+  {
+    id: "dawkins1976", wave: 2,
+    title: "The Selfish Gene",
+    titleShort: "The Selfish Gene",
+    authors: ["Richard Dawkins"], year: 1976,
+    fields: ["biology"], era: "1970s", importance: "foundational",
+    pdf: "https://archive.org/details/selfishgene0000dawk",
+    published: "Oxford University Press", language: "English",
+    summaries: {
+      elementary: "We are survival machines for our genes — not the other way around.",
+      abi: "Dawkins inverted the usual view of evolution: the gene, not the organism, is the unit of selection. Organisms are 'throwaway survival machines' built by genes to propagate themselves. Altruism, kin selection, even culture (memes) follow from this gene-centred view. The book unified evolutionary biology and gave us a vocabulary for talking about behaviour.",
+      phd: "Building on Hamilton's kin selection (1964), Williams's gene-level selection (1966), and Trivers's reciprocal altruism (1971), Dawkins popularises the gene's-eye view. Natural selection acts on genes because they replicate with high fidelity; organisms are the temporary vehicles. The book introduces 'memes' as cultural replicators, anticipates evolutionary game theory, and reframes altruism as 'inclusive fitness' (Hamilton's rule rB > C). Triggered a 50-year debate about levels of selection that continues today."
+    },
+    aha: "'Meme' was coined in this book to describe ideas that replicate, mutate and compete in cultural evolution — decades before the internet made the metaphor literal. A catchy tune, a prayer, a conspiracy theory, a viral video: all are memes in Dawkins's sense. The book predicts the cultural logic of social media.",
+    citation: "Dawkins, R. (1976). *The Selfish Gene*. Oxford: Oxford University Press."
+  },
+  {
+    id: "sperry1981", wave: 2,
+    title: "Cerebral Hemisphere Lateralization (Nobel Lecture)",
+    titleShort: "Split Brain",
+    authors: ["Roger W. Sperry"], year: 1981,
+    fields: ["neuroscience"], era: "1980s", importance: "foundational",
+    pdf: "https://www.nobelprize.org/uploads/2018/06/sperry-lecture.pdf",
+    published: "Nobel Lecture", language: "English",
+    summaries: {
+      elementary: "The two halves of your brain are two different people, tied together with a cable.",
+      abi: "Sperry studied patients whose corpus callosum (the cable connecting the brain's hemispheres) had been cut to treat epilepsy. When the cable is severed, the left hand doesn't know what the right hand is doing, the left brain can't describe what's only shown to the right brain. The two hemispheres have different personalities — and different consciousnesses.",
+      phd: "Sperry and colleagues (Gazzaniga, Bogen) studied split-brain patients using lateralised stimulus presentation. Key findings: the left hemisphere is verbal, the right is visuospatial; the left can speak, the right can only gesture; the two hemispheres can hold conflicting beliefs and make independent decisions. Nobel Prize 1981; seeded modern hemispheric specialisation research, the 'left brain / right brain' popular myth, and current work on consciousness and the unity of the self."
+    },
+    aha: "The idea that 'the self is an illusion' — that your brain is a committee, not a CEO — has deep roots here. Modern split-brain research (continued by Gazzaniga, Pinto, Volz) suggests we have multiple competing value systems, and what we call 'choice' is often one of them winning. You are not one person.",
+    citation: "Sperry, R. W. (1981). Cerebral hemisphere lateralization and the Nobel Prize Lecture. *Nobel Foundation*."
+  },
+  {
+    id: "herodotus440bc", wave: 2,
+    title: "Ἱστορίαι (The Histories)",
+    titleShort: "The Histories",
+    authors: ["Herodotus of Halicarnassus"], year: -440,
+    fields: ["ancient-studies", "history"], era: "Ancient", importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/2707/2707-0.txt",
+    published: "c. 440 BC, Halicarnassus/Athens", language: "Ancient Greek",
+    summaries: {
+      elementary: "History is what people remember — and what they choose to forget.",
+      abi: "Herodotus travelled the Mediterranean asking how the Persians and Greeks came to war, and how the strange customs of Egypt, Scythia and Persia made sense. He invented the genre of history: critical inquiry, comparison, eyewitness testimony, and the explicit judgement of sources. The book is the founding text of Western historiography.",
+      phd: "The Histories apply the Greek concept of historie (inquiry) to events, peoples and cultures. Herodotus systematically compares customs ('if one were to offer men the choice of all the customs of all peoples…'), uses autopsy (eyewitness), hearsay, and inference, and refuses to treat causation as supernatural. He anticipates ethnography, comparative anthropology, and the critical-historical method that Thucydides would systematise 50 years later."
+    },
+    aha: "Herodotus is sometimes called the 'father of lies' because he recorded fantastic things. But he also flagged what he didn't believe, marked the difference between what he saw and what he was told, and tried to be honest about uncertainty. Modern journalism, ethnography, and even travel writing descend from him.",
+    citation: "Herodotus (c. 440 BC). *Ἱστορίαι* (The Histories). Halicarnassus/Athens."
+  },
+  {
+    id: "champollion1822", wave: 2,
+    title: "Lettre à M. Dacier, secrétaire perpétuel de l'Académie des Inscriptions et Belles-Lettres",
+    titleShort: "Decipherment of Hieroglyphics",
+    authors: ["Jean-François Champollion"], year: 1822,
+    fields: ["ancient-studies"], era: "1800s", importance: "foundational",
+    pdf: "https://gallica.bnf.fr/ark:/12148/bpt6k2035278",
+    published: "29 September 1822, Paris (Académie des Inscriptions)", language: "French",
+    summaries: {
+      elementary: "Hieroglyphics aren't pictures — they're a script. And we can read them.",
+      abi: "For 1,500 years hieroglyphics were a mystery. Champollion used the Rosetta Stone — which carried the same text in Greek, demotic and hieroglyphics — and identified a phonetic pattern in royal names. Suddenly a whole civilisation's voice was restored: pharaohs, gods, rituals, daily life, taxes.",
+      phd: "Champollion's insight: hieroglyphic signs are not purely pictographic; they encode both phonograms (sounds) and ideograms (meanings), and a multilingual inscription (the Rosetta Stone) allows the system to be unlocked. He built a phonetic alphabet for hieroglyphics, a grammar, a dictionary, and the foundation of modern Egyptology."
+    },
+    aha: "The Rosetta Stone was discovered in 1799. Champollion decoded it in 1822 — barely 23 years later. His breakthrough shows how one well-chosen artefact (three scripts, one text) plus one brilliant mind can decode an entire lost world. Every ancient script since (Linear B, Mayan, cuneiform) has been cracked by similar comparative methods.",
+    citation: "Champollion, J.-F. (1822). *Lettre à M. Dacier*. Paris: Académie des Inscriptions et Belles-Lettres."
+  },
+  {
+    id: "vico1725", wave: 2,
+    title: "Principi di una scienza nuova d'intorno alla natura delle nazioni",
+    titleShort: "The New Science",
+    authors: ["Giambattista Vico"], year: 1725,
+    fields: ["ancient-studies", "philosophy"], era: "1700s", importance: "foundational",
+    pdf: "https://archive.org/details/newsofsciencene00Vico",
+    published: "Naples, 1725", language: "Italian",
+    summaries: {
+      elementary: "History moves in cycles: birth, growth, maturity, decay, return.",
+      abi: "Vico argued that all civilisations pass through the same stages — the age of gods, the age of heroes, the age of men — and then return to barbarism. Truth is what humans make ('verum esse ipsum factum'); we can know history better than nature because we made it. The book is the founding text of cultural history and historicism.",
+      phd: "Vico's Scienza Nuova establishes the principle that humans can only fully know what they have made — hence history (made by humans) is more knowable than nature (made by God). His cyclical theory of corsi and ricorsi anticipates Spengler, Toynbee and 20th-century cyclic-history theorists. His linguistic analysis of myth ('poetic wisdom') anticipates structural anthropology (Lévi-Strauss) and literary theory (Northrop Frye, Hayden White)."
+    },
+    aha: "Vico's maxim 'the true and the made are convertible' predicts the linguistic turn and the constructivist turn. Modern history, anthropology and cultural studies owe him a debt they rarely acknowledge. He was widely ignored in his lifetime; rediscovered by Herder, Goethe, and eventually the entire German historicist tradition.",
+    citation: "Vico, G. (1725). *Principi di una scienza nuova*. Naples."
+  },
+  {
+    id: "schliemann1880", wave: 2,
+    title: "Excavations at Hissarlik (Troy) — Personal Communications and Field Notes (compiled in *Ilios*, 1880)",
+    titleShort: "Excavation of Troy",
+    authors: ["Heinrich Schliemann"], year: 1880,
+    fields: ["ancient-studies"], era: "1800s", importance: "landmark",
+    pdf: "https://archive.org/details/iliosresearch00unkngoog",
+    published: "Murray, London (compiled 1880)", language: "English",
+    summaries: {
+      elementary: "Troy was a real city. We can dig it up.",
+      abi: "Schliemann, an amateur archaeologist with an obsession, used Homer's Iliad as a guide and excavated a hill at Hissarlik in modern Turkey. He found layered ruins and 'Priam's Treasure' — gold, silver, copper — declaring he had found Troy. The methods were crude by today's standards (he dug trenches through levels he should have preserved), but he founded the archaeology of the Homeric world.",
+      phd: "Schliemann's excavations at Hissarlik (1870–1890) revealed nine major settlement layers (Troy I–IX), one of which (Troy VII) corresponds to the Late Bronze Age city that Homer may have had in mind. He founded modern archaeological fieldwork for the ancient Mediterranean, but his methods (notably his digging of the shaft through Troy II) destroyed stratigraphy. His successors (Dörpfeld, Blegen, Korfmann) refined the methods."
+    },
+    aha: "Schliemann was a self-made millionaire who taught himself ancient Greek and archaeology and used the Iliad as his guidebook. He was also a fraud in some ways (his 'Priam's Treasure' was smuggled out of the Ottoman Empire and may include later levels). But the deeper insight — that legends can point to real places, and that archaeology can recover them — was vindicated.",
+    citation: "Schliemann, H. (1880). *Ilios: The City and Country of the Trojans*. London: John Murray."
+  },
+  {
+    id: "ventris1952", wave: 2,
+    title: "Decipherment of Linear B (paper presented to the Institute of Classical Studies, 1952)",
+    titleShort: "Decipherment of Linear B",
+    authors: ["Michael Ventris"], year: 1952,
+    fields: ["ancient-studies"], era: "1950s", importance: "foundational",
+    pdf: "https://www.jstor.org/stable/503564",
+    published: "Journal of Hellenic Studies (1953), 73, 84–103", language: "English",
+    summaries: {
+      elementary: "Mycenaean Greeks wrote their language down — and we can read it now.",
+      abi: "Linear B was an undeciphered script from Bronze Age Greece (Knossos, Pylos, Mycenae, ~1450–1200 BC). Michael Ventris, a 14-year-old amateur who became an architect, hypothesised it was an early form of Greek. Working from phonetic patterns, he cracked the script at 30. The Mycenaean world turned out to be Greek-speaking — and the Greek alphabet had deep Bronze Age roots.",
+      phd: "Linear B is a syllabic script with 87 signs representing consonant-vowel combinations. Ventris's breakthrough combined cryptanalysis, comparative philology, and statistical analysis (the frequency of syllables). Once deciphered, the tablets revealed a Mycenaean bureaucracy: tax records, inventories of sheep, weapons, perfume oils. The script is Greek, descended from Minoan Linear A (still undeciphered)."
+    },
+    aha: "Ventris was not a professional philologist. He was an architect and amateur scholar who persisted against academic dismissal. The decipherment was confirmed by the consensus conference of 1956 — but Ventris died in a car crash aged 34. The story shows how a single passionate outsider can crack a problem a whole profession gave up on.",
+    citation: "Ventris, M., & Chadwick, J. (1953). Documents in Mycenaean Greek. *Journal of Hellenic Studies*, 73, 84–103."
+  },
+  {
+    id: "augustine400", wave: 2,
+    title: "Confessiones",
+    titleShort: "Confessions",
+    authors: ["Augustine of Hippo"], year: 400,
+    fields: ["theology", "philosophy"], era: "Ancient", importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/3296/3296-0.txt",
+    published: "c. 397–400 AD, Hippo Regius", language: "Latin",
+    summaries: {
+      elementary: "You, O Lord, have made us for yourself, and our hearts are restless until they rest in you.",
+      abi: "Augustine wrote the first modern autobiography — the story of his restless heart, his sins, his mother's prayers, his conversion to Christianity. The book is at once a confession (in the old sense of 'acknowledgement of God's greatness'), a philosophy of time and memory, and a theology of grace. It shaped Western Christianity for 1,600 years.",
+      phd: "Augustine's Confessions are a 13-book interior monologue written ~397–400 AD. Books I–IX are autobiographical (his youth in Carthage, his years as a Manichee, his conversion, his mother's death); Books X–XIII are philosophical-theological meditations on memory, time, and the nature of God. The book invents autobiography as a genre, develops the idea of time as distentio animi (the soul's stretching-out), and articulates the doctrine of divine grace against Pelagian self-sufficiency."
+    },
+    aha: "Augustine invented the modern confession — Rousseau, Tolstoy, James Frey, every memoirist since owes him a debt. The phrase 'our hearts are restless until they rest in you' is the founding line of Christian existentialism. The book also asks questions we're still arguing about: what is time? Why does God let evil happen? Why do we seek truth even when it hurts us?",
+    citation: "Augustine (c. 400). *Confessiones*. Hippo Regius."
+  },
+  {
+    id: "aquinas1265", wave: 2,
+    title: "Summa Theologica",
+    titleShort: "Summa Theologica",
+    authors: ["Thomas Aquinas"], year: 1265,
+    fields: ["theology", "philosophy"], era: "Ancient", importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/18755/18755-0.txt",
+    published: "1265–1274, Rome/Paris (unfinished)", language: "Latin",
+    summaries: {
+      elementary: "Faith and reason don't conflict — they complete each other.",
+      abi: "Aquinas argued that human reason and divine revelation are two sources of truth that cannot ultimately contradict each other. He synthesised Aristotle, Augustine, the Bible and the Church Fathers into a coherent system: five proofs of God's existence, a theory of natural law, the doctrine of the sacraments, the metaphysics of form and matter. The Summa became the standard theology of the Catholic Church.",
+      phd: "The Summa Theologica is structured as a series of questions, objections, replies and replies to objections. Aquinas's method combines the quaestio (inquiry), the sed contra (the opposing view), the respondeo (the author's answer), and the replies to individual objections. His Five Ways (quinque viae) are five proofs of God's existence from motion, efficient causation, contingency, gradation, and governance. Natural-law theory: lex naturalis as participation in lex aeterna."
+    },
+    aha: "Aquinas was nicknamed 'the Dumb Ox' by his classmates — a mountain of flesh with slow speech and brilliant thought. He shaped every Western Christian theology after him. When Pope Leo XIII made him the official philosopher of the Catholic Church (1879), the gesture was centuries overdue.",
+    citation: "Aquinas, T. (1265–1274). *Summa Theologica*. (Unfinished at his death.)"
+  },
+  {
+    id: "luther1517", wave: 2,
+    title: "Disputatio pro declaratione virtutis indulgentiarum (95 Theses)",
+    titleShort: "The 95 Theses",
+    authors: ["Martin Luther"], year: 1517,
+    fields: ["theology", "history"], era: "1500s", importance: "foundational",
+    pdf: "https://web.stanford.edu/~ldodds/honors/Luther95Theses.pdf",
+    published: "31 October 1517, Wittenberg", language: "Latin",
+    summaries: {
+      elementary: "Indulgences don't save you. Only God's grace does.",
+      abi: "Luther, an obscure German monk, posted 95 theses on the church door in Wittenberg challenging the sale of indulgences (paid pardons that supposedly shortened one's stay in purgatory). Within weeks, the theses were printed across Europe. The dispute escalated into the Reformation — the split of Western Christianity into Catholic and Protestant branches that reshaped European politics, science, and the modern world.",
+      phd: "The 95 Theses began as an academic disputation but ignited the Reformation. Luther's central claims: indulgences have no scriptural basis; repentance is an inner change, not a priestly transaction; the treasury of merit belongs to Christ, not the Pope; the Pope can only remit penalties he has imposed. Luther's 'justification by faith alone' (sola fide) became the doctrinal core of Protestantism."
+    },
+    aha: "Luther's theses were written in Latin and intended for academic debate — they might have stayed obscure. But the printing press (invented 60 years earlier) made them Europe's first viral document. The Reformation is the first modern media event. Every subsequent revolution — the Enlightenment, the French Revolution, the internet — follows Luther's playbook: a thinker, a new technology, an idea whose time has come.",
+    citation: "Luther, M. (1517). *Disputatio pro declaratione virtutis indulgentiarum*. Wittenberg."
+  },
+  {
+    id: "buber1923", wave: 2,
+    title: "Ich und Du",
+    titleShort: "I and Thou",
+    authors: ["Martin Buber"], year: 1923,
+    fields: ["theology", "philosophy"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/IandThouBuber",
+    published: "Schocken, Berlin, 1923", language: "German",
+    summaries: {
+      elementary: "There are two ways of relating to the world: as objects, or as presences.",
+      abi: "Buber argued that there are two basic words: 'I-It' (the world as object to be used) and 'I-Thou' (the world as presence to be met). Most of our lives are I-It — we treat people, nature, even God, as things. The I-Thou relationship is rarer, deeper, and the foundation of ethics, love, and religious experience. The book is one of the most influential philosophical works of the 20th century.",
+      phd: "Buber's dialogical philosophy holds that the self is constituted by relationship: the 'I' of the I-Thou is different from the 'I' of the I-It. Genuine dialogue requires that one meet the other as a Thou — not as a thing, not as an object of analysis, but as a present being. The book's middle sections apply this to relationships, art, religion, and the eternal Thou (God). Buber draws on Jewish mysticism (Hasidism) and on Kierkegaard, but his account is original."
+    },
+    aha: "Buber's distinction is one of the simplest philosophical tools ever invented — and one of the most useful. Every interpersonal relationship can be measured by how much I-Thou is present. Therapy, education, leadership, parenting — all improve when you treat the other as a Thou rather than an It. The book is also a rebuke to contemporary social media, which converts everyone into data objects.",
+    citation: "Buber, M. (1923). *Ich und Du*. Berlin: Schocken. (English: *I and Thou*, 1937.)"
+  },
+  {
+    id: "malinowski1922", wave: 2,
+    title: "Argonauts of the Western Pacific",
+    titleShort: "Argonauts of the Western Pacific",
+    authors: ["Bronisław Malinowski"], year: 1922,
+    fields: ["anthropology"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/argonautsofthewe00malirich",
+    published: "Kegan Paul, London, 1922", language: "English",
+    summaries: {
+      elementary: "To understand a culture, live in it.",
+      abi: "Malinowski, a Polish anthropologist, spent years living among the Trobriand Islanders of Melanesia, learning their language and participating in their daily life. He showed that the famous Kula ring (a vast inter-island exchange network of shell valuables) was not 'primitive barter' but a complex system of prestige, obligation, ritual and mythology. The book founded modern participant-observation fieldwork.",
+      phd: "Malinowski's Argonauts established the functionalist school of anthropology: every social institution (the Kula, magic, gardening, kinship) serves a function for the community. Methods: participant observation, learning the vernacular, recording ethnographic detail, mapping social structure. The book replaced the older armchair anthropology (speculation from missionaries' reports) with empirical fieldwork."
+    },
+    aha: "Malinowski was trapped in the Trobriands when WWI broke out — he was technically an enemy alien of the British Crown. He used the enforced isolation to live among the islanders for years. The confinement became a gift. Some of the best science happens when researchers are forced into deep, patient immersion.",
+    citation: "Malinowski, B. (1922). *Argonauts of the Western Pacific*. London: Kegan Paul."
+  },
+  {
+    id: "levistrauss1949", wave: 2,
+    title: "Les Structures élémentaires de la parenté",
+    titleShort: "The Elementary Structures of Kinship",
+    authors: ["Claude Lévi-Strauss"], year: 1949,
+    fields: ["anthropology"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/elementarystructures00levi",
+    published: "Presses Universitaires de France, Paris, 1949", language: "French",
+    summaries: {
+      elementary: "The kinship systems of every human culture follow the same deep rules.",
+      abi: "Lévi-Strauss showed that the bewildering variety of marriage rules (cousins you can marry, cousins you can't, who marries whose sister, who gives away the bride) all follow the same underlying logic: the exchange of women between groups creates social bonds. The book is the founding text of structural anthropology.",
+      phd: "Lévi-Strauss applies structural linguistics (Saussure, Jakobson) to kinship systems. Just as phonemes are distinguished by their contrasts in a language, kinship terms are distinguished by their position in a system. Marriage rules are forms of communication — exchanges that bind groups. The book is vast (700+ pages) and rigorous, with kinship tables from hundreds of societies."
+    },
+    aha: "'Kinship is about exchanging women' sounds outrageous in the 21st century — but Lévi-Strauss meant it as a structural analysis, not a normative claim. The insight is that social life IS exchange, and the deepest exchanges are not of goods but of people. The book was also the first serious critique of Freud's Oedipus complex (which Lévi-Strauss argued was universal, not Western-specific).",
+    citation: "Lévi-Strauss, C. (1949). *Les Structures élémentaires de la parenté*. Paris: PUF."
+  },
+  {
+    id: "mead1928", wave: 2,
+    title: "Coming of Age in Samoa",
+    titleShort: "Coming of Age in Samoa",
+    authors: ["Margaret Mead"], year: 1928,
+    fields: ["anthropology"], era: "1900s", importance: "landmark",
+    pdf: "https://archive.org/details/comingofageinsam00mead",
+    published: "William Morrow, New York, 1928", language: "English",
+    summaries: {
+      elementary: "Adolescence doesn't have to be a storm — it depends on the culture you grow up in.",
+      abi: "Mead lived among Samoan adolescents and reported that they experienced none of the psychological turbulence Western teenagers supposedly go through. The conclusion was explosive: much of what we call 'human nature' is actually culture. Her book helped found cultural relativism and inspired a generation to question the inevitability of their own social norms.",
+      phd: "Mead's 1928 ethnography argued that adolescent stress in the United States was not biological but cultural — a product of conflicting values, restrictive families, and limited sexual education. Samoan girls, by contrast, experienced adolescence as a smooth transition into adult sexual and social life. The book is now criticised for methodological flaws (small sample, idealised accounts), but its historical impact was enormous."
+    },
+    aha: "Mead's book came out just before the Great Depression. The idea that culture — not biology — shapes who we are gave Americans a new way to think about their lives (and inspired Margaret Mead, the public intellectual). Her work is also a founding text of cross-cultural psychology, gender studies, and the broader 'social construction' movement of the late 20th century.",
+    citation: "Mead, M. (1928). *Coming of Age in Samoa*. New York: William Morrow."
+  },
+  {
+    id: "weber1905", wave: 2,
+    title: "Die protestantische Ethik und der Geist des Kapitalismus",
+    titleShort: "The Protestant Ethic and the Spirit of Capitalism",
+    authors: ["Max Weber"], year: 1905,
+    fields: ["sociology"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/protestantethic00webe",
+    published: "Archiv für Sozialwissenschaft und Sozialpolitik, 20 (1904) and 21 (1905)", language: "German",
+    summaries: {
+      elementary: "Why are the rich countries mostly Protestant? Because of an idea.",
+      abi: "Weber argued that the rise of capitalism in Northern Europe was tied to Protestant theology — especially Calvinism. The doctrine of predestination made earthly success a sign of God's favour; 'worldly asceticism' (working hard, saving money, not enjoying wealth) created capital that could be reinvested. The book founded the sociology of religion and culture.",
+      phd: "Weber's thesis: the 'spirit of capitalism' — the rational, methodical, profit-maximising attitude — is best understood not as economic greed but as a cultural-ethical project. Calvinist predestination created psychological anxiety; the doctrine of 'calling' sanctified work; ascetic Protestantism created disciplined wealth. The book's controversial thesis remains debated (some see causation, others see correlation), but the framework is foundational."
+    },
+    aha: "Weber also coined 'disenchantment' (Entzauberung) — the modern world's loss of magic, mystery and meaning in favour of calculation. The book explains why some countries are rich and some are not in terms not of geography or capital, but of *beliefs*. It's also a personal confession: Weber came from a Protestant family, was a chronic hypochondriac, and worked himself into a nervous breakdown — and his great work is about why his kind of people built the modern world.",
+    citation: "Weber, M. (1905). *Die protestantische Ethik und der Geist des Kapitalismus*. *Archiv für Sozialwissenschaft und Sozialpolitik*, 20–21."
+  },
+  {
+    id: "durkheim1897", wave: 2,
+    title: "Le Suicide: Étude de sociologie",
+    titleShort: "Suicide",
+    authors: ["Émile Durkheim"], year: 1897,
+    fields: ["sociology"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/suicideastudyin00durk",
+    published: "Félix Alcan, Paris, 1897", language: "French",
+    summaries: {
+      elementary: "Even suicide depends on society — not just on the individual.",
+      abi: "Durkheim showed that suicide rates vary systematically between countries, religions, occupations, and times. Protestants kill themselves more than Catholics; soldiers more than civilians; the unmarried more than the married; in times of war fewer; in times of peace more. Conclusion: the causes of suicide are social facts, not just individual psychology. The book founded empirical sociology.",
+      phd: "Durkheim's Suicide (1897) operationalised a 'social fact' and applied statistical methods to prove that suicide rates are collective phenomena. Four types: egoistic (low social integration — Protestant, unmarried, urban), altruistic (too much integration — Japanese seppuku), anomic (low regulation — economic crisis), fatalistic (too much regulation). The book established methodological individualism as a non-explanation: rates are properties of social groups, not of individuals."
+    },
+    aha: "The book is a direct rebuttal to psychology as then practised — suicide as 'individual choice' or 'mental illness'. Durkheim's data showed: it's the group, stupid. The same logic now applies to depression, loneliness, populism, voting patterns, even pandemic outcomes. We are social creatures before we are psychological ones.",
+    citation: "Durkheim, É. (1897). *Le Suicide: Étude de sociologie*. Paris: Félix Alcan."
+  },
+  {
+    id: "simmel1900", wave: 2,
+    title: "Philosophie des Geldes",
+    titleShort: "The Philosophy of Money",
+    authors: ["Georg Simmel"], year: 1900,
+    fields: ["sociology", "economics"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/philosophyofmoney00sime",
+    published: "Duncker & Humblot, Leipzig, 1900", language: "German",
+    summaries: {
+      elementary: "Money doesn't just buy things — it changes what people are.",
+      abi: "Simmel argued that money transforms human relationships and the inner self. As economies become more monetised, people become more individualistic, more calculating, more distant from each other. Money is both liberating (it frees us from personal dependence) and alienating (it reduces all values to a single scale). The book is one of the founding texts of sociological thinking.",
+      phd: "Simmel's Philosophy of Money (1900) analyses money as a 'pure form' that mediates all exchange. Monetary economy produces (a) the rationalisation of social relations (calculation, abstraction), (b) the differentiation of cultural spheres (art, religion, science become autonomous), and (c) the 'tragedy of culture' — the gap between subjective life and objective cultural products. Marx, Weber, Lukács and Benjamin all draw on Simmel."
+    },
+    aha: "'Money is the autonomous movement of what is'. Simmel saw what took a century of internet and finance to confirm: as more of life becomes monetised and digital, our inner worlds become flatter, more calculated, and more isolated. The book anticipates every modern complaint about algorithmic culture and the quantification of everything.",
+    citation: "Simmel, G. (1900). *Philosophie des Geldes*. Leipzig: Duncker & Humblot."
+  },
+  {
+    id: "hobbes1651", wave: 2,
+    title: "Leviathan, or The Matter, Forme and Power of a Common-Wealth Ecclesiasticall and Civill",
+    titleShort: "Leviathan",
+    authors: ["Thomas Hobbes"], year: 1651,
+    fields: ["political-theory"], era: "1600s", importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/3207/3207-0.txt",
+    published: "Andrew Crooke, London, 1651", language: "English",
+    summaries: {
+      elementary: "In nature, life is 'solitary, poor, nasty, brutish and short'. So we agree to have a state.",
+      abi: "Hobbes argued that without government, humans would live in a war of all against all. To escape this, people contract to give up some freedoms to a sovereign authority — which can be a monarch, an assembly, anything — that keeps the peace. The book is the founding text of modern political philosophy and the idea of the social contract.",
+      phd: "Hobbes's Leviathan (1651) develops the argument from the 'state of nature' through the 'laws of nature' and the 'social contract' to the sovereign authority. Key claims: the sovereign's power is near-absolute (the worst is civil war), the individual retains only the right to self-preservation, religion is a tool of the state, and science is the proper pursuit of citizens. The book was banned and burned in some places — and foundational for Locke, Rousseau, the American Founders."
+    },
+    aha: "Hobbes was terrified by the English Civil War (1642–1651) and wrote Leviathan in exile. He believed that ANY stable authority is preferable to anarchy — even tyranny. Most political philosophy since has tried to escape this conclusion. But every emergency measure, every strongman appeal, every lockdown rule, echoes Hobbes.",
+    citation: "Hobbes, T. (1651). *Leviathan*. London: Andrew Crooke."
+  },
+  {
+    id: "locke1689", wave: 2,
+    title: "Two Treatises of Government",
+    titleShort: "Two Treatises of Government",
+    authors: ["John Locke"], year: 1689,
+    fields: ["political-theory"], era: "1600s", importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/7370/7370-0.txt",
+    published: "Awnsham Churchill, London, 1689", language: "English",
+    summaries: {
+      elementary: "Governments exist to protect life, liberty and property. When they fail, we have the right to replace them.",
+      abi: "Locke argued that governments are formed by the consent of the governed, derive their power from a contract, and exist to protect natural rights. When they break the contract (by tyranny, or by violating the rights), the people have the right to resist. The book is one of the foundational texts of liberal democracy and the American Revolution.",
+      phd: "Locke's Two Treatises (1689) attack Filmer's Divine Right of Kings (First Treatise) and construct a positive theory of legitimate government (Second Treatise). Key claims: the state of nature has natural rights (life, liberty, property); legitimate government requires consent; the legislative power is supreme, but the executive may be resisted when it violates the laws; property is created by labour. The Second Treatise is the philosophical backbone of the American Declaration of Independence (1776)."
+    },
+    aha: "Locke thought of property as the foundation of civil society — you can have a state of nature where people are free, but you can't have agriculture, industry or science without secure property. Locke's essay on toleration (1689) also founded the modern idea of religious freedom. The intellectual architecture of every Western liberal democracy is Lockean, even when the countries don't know it.",
+    citation: "Locke, J. (1689). *Two Treatises of Government*. London: Awnsham Churchill."
+  },
+  {
+    id: "tocqueville1835", wave: 2,
+    title: "De la démocratie en Amérique",
+    titleShort: "Democracy in America",
+    authors: ["Alexis de Tocqueville"], year: 1835,
+    fields: ["political-theory", "history"], era: "1800s", importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/8162/8162-0.txt",
+    published: "Lips / Gosselin, Paris, 1835–1840", language: "French",
+    summaries: {
+      elementary: "Democracy is more than a voting system — it's a way of life that reshapes everything.",
+      abi: "Tocqueville, a young French aristocrat, toured the United States in 1831 and saw something Europe didn't yet have: a society where the 'natural aristocracy' of birth was replaced by a 'natural aristocracy' of achievement. The book analyses American democracy — its strengths (equality, civic association, freedom) and its dangers (tyranny of the majority, individualism, materialism). It is the most astute outsider book on America ever written.",
+      phd: "Tocqueville's analysis combines historical sociology with political philosophy. He argues that democratic societies face unique problems: the tyranny of the majority, the conformism of equality, the atomisation of individualism, the centralisation of administration. Civic associations (voluntary groups) are the main defence against these tendencies. The book predicts many features of modern American life — and anticipates contemporary debates about populism and democratic erosion."
+    },
+    aha: "Tocqueville noticed something most Europeans missed: the Americans were religious, civic-minded, locally self-governing — and therefore resistant to tyranny in ways the French were not. The reason: they belonged to churches, voluntary associations, town meetings. 'Civil society' is not a luxury; it's the immune system of democracy. Every decline of civic life (Bowling Alone, Putnam 2000) is a Tocquevillean warning.",
+    citation: "Tocqueville, A. de (1835–1840). *De la démocratie en Amérique*. Paris."
+  },
+  {
+    id: "mill1859", wave: 2,
+    title: "On Liberty",
+    titleShort: "On Liberty",
+    authors: ["John Stuart Mill"], year: 1859,
+    fields: ["political-theory", "philosophy"], era: "1800s", importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/34901/34901-0.txt",
+    published: "John W. Parker and Son, London, 1859", language: "English",
+    summaries: {
+      elementary: "The only purpose for which power can be rightfully exercised over any member of a civilised community, against his will, is to prevent harm to others.",
+      abi: "Mill argued that the state and society should not interfere with individual liberty except to prevent harm to others. People should be free to think, speak, write, act and even do 'foolish' things as long as they don't hurt anyone. The book is the founding text of classical liberalism, freedom of speech, and modern individualism.",
+      phd: "Mill's harm principle is the central thesis: the only justification for restricting an individual's freedom is to prevent harm to others. Mill distinguishes between self-regarding actions (which concern only the agent) and other-regarding actions (which affect others). The book also defends freedom of thought and expression (no silencing of unpopular views) and individuality (the value of non-conformity, originality, dissent)."
+    },
+    aha: "Mill wrote the book while in a deep depression over the death of his wife Harriet Taylor. It is also his most personal work — defending the 'experiments in living' that he and Harriet had conducted. On Liberty is also one of the founding texts of modern feminism (Mill wrote The Subjection of Women in 1869). It is the most consistently misread classical liberal text — Mill is not 'anything goes', he's 'freedom, but not at others' expense'.",
+    citation: "Mill, J. S. (1859). *On Liberty*. London: John W. Parker and Son."
+  },
+  {
+    id: "keynes1936", wave: 2,
+    title: "The General Theory of Employment, Interest and Money",
+    titleShort: "The General Theory",
+    authors: ["John Maynard Keynes"], year: 1936,
+    fields: ["economics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.marxists.org/reference/archive/keynes/works/general-theory/",
+    published: "Macmillan, London, 1936", language: "English",
+    summaries: {
+      elementary: "Markets don't self-correct fast enough. Governments must step in.",
+      abi: "Keynes argued that economies can settle at prolonged unemployment because total demand can stay too low. The solution: government spending and lower interest rates to stimulate demand. The book overturned classical economics, founded macroeconomics, and shaped the modern state's role in the economy.",
+      phd: "The General Theory introduces the consumption function (C = cY + C₀, where marginal propensity to consume < 1), the multiplier (ΔY/ΔI = 1/(1−c)), the liquidity preference theory of interest, and the idea that wages and prices are sticky in the short run. Investment depends on 'animal spirits' (expectations), not just rational calculation. Fiscal policy is needed when monetary policy fails."
+    },
+    aha: "Keynes said, 'in the long run, we are all dead' — his point being that waiting for markets to self-correct is morally unacceptable when people are suffering now. The book saved capitalism from itself (1930s, near-collapse in many countries), justified the welfare state, and shaped every macro policy debate since. Hayek's counter-revolution has also shaped the past 50 years — and the debate continues.",
+    citation: "Keynes, J. M. (1936). *The General Theory of Employment, Interest and Money*. London: Macmillan."
+  },
+  {
+    id: "hayek1945", wave: 2,
+    title: "The Use of Knowledge in Society",
+    titleShort: "The Use of Knowledge in Society",
+    authors: ["Friedrich A. Hayek"], year: 1945,
+    fields: ["economics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.jstor.org/stable/1809776",
+    published: "American Economic Review, 35(4), 519–530", language: "English",
+    summaries: {
+      elementary: "No single person knows enough to plan an economy. Prices do the work.",
+      abi: "Hayek argued that the central economic problem is not the allocation of resources, but the utilisation of knowledge — knowledge that is dispersed, tacit, and local. Prices are signals that aggregate this dispersed knowledge. Central planning fails because no planner can know enough to set them. The paper founded Austrian economics' critique of central planning.",
+      phd: "Hayek's 1945 paper uses the example of tin and its substitutes: only the people on the ground know whether tin is needed for what purpose, and only prices can communicate that. The paper extends Mises' 1920 calculation argument. It implies that any system that relies on central control (Soviet planning, modern technocracy) is doomed to allocate resources poorly — though markets also fail."
+    },
+    aha: "Hayek published this paper the year the Allied victory ended Nazi rule and the Soviet Union was about to dominate a third of the world. He was arguing against the grain of the times. Within 5 years, the economics profession was rejecting him. Within 50 years, the failures of central planning vindicated him. Within 75 years, China — supposedly communist — was running the world's most capitalist economy. The paper's lesson: ideas have consequences, and bad ideas have consequences on a civilisational scale.",
+    citation: "Hayek, F. A. (1945). The use of knowledge in society. *American Economic Review*, 35(4), 519–530."
+  },
+  {
+    id: "schumpeter1942", wave: 2,
+    title: "Capitalism, Socialism and Democracy",
+    titleShort: "Capitalism, Socialism and Democracy",
+    authors: ["Joseph A. Schumpeter"], year: 1942,
+    fields: ["economics"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/capitalismsocial00schu",
+    published: "Harper & Brothers, New York, 1942", language: "English",
+    summaries: {
+      elementary: "Capitalism works because it constantly destroys itself.",
+      abi: "Schumpeter coined 'creative destruction': the capitalist engine runs on new products, new methods, new markets, new forms of organisation — each one destroying old ones. Entrepreneurs are the agents of this destruction. Capitalism succeeds at producing growth; it fails at convincing people the growth is good. The book predicts that capitalism will be killed by its own success — by an educated middle class that resents the disruption.",
+      phd: "Schumpeter's three-part book analyses: (1) capitalism as an evolutionary process driven by innovation (Mark I, Mark II, the entrepreneur); (2) the possibility of socialism — Schumpeter thinks it could work technically but doubts it could innovate; (3) democracy — Schumpeter famously argues democracy is a method for selecting leaders, not a way of choosing policies. The book combines economic history, political theory, and visionary social criticism."
+    },
+    aha: "Schumpeter wrote that capitalism will produce so many intellectuals that they'll vote against the system that feeds them. This was a 1942 prediction about the cultural contradictions of capitalism. It's been vindicated: every tech billionaire and Silicon Valley leftist is its poster child. The book also explains why Uber and Airbnb are unpopular — they destroy established industries, even when they benefit consumers.",
+    citation: "Schumpeter, J. A. (1942). *Capitalism, Socialism and Democracy*. New York: Harper & Brothers."
+  },
+  {
+    id: "saussure1916", wave: 2,
+    title: "Cours de linguistique générale",
+    titleShort: "Course in General Linguistics",
+    authors: ["Ferdinand de Saussure"], year: 1916,
+    fields: ["linguistics"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/courseingenerall00saus",
+    published: "Payot, Lausanne/Paris, 1916 (posthumous)", language: "French",
+    summaries: {
+      elementary: "A word is not the thing it points to — it's the shape of the gap between things.",
+      abi: "Saussure argued that language is a system of differences. The meaning of a word comes not from what it points to, but from how it differs from other words. 'Cat' means 'cat' because it's not 'bat' or 'mat' or 'rat'. Language is a structure, not a list of labels. The book founded modern linguistics and structuralism.",
+      phd: "Saussure's Course (1916, posthumous from student notes) introduces the langue/parole distinction (language as system vs. as individual utterance), the signifier/signified, the synchronic/diachronic distinction, and the arbitrary nature of the sign. The dyadic model (signifier = word-image; signified = concept) replaced the older referential view (word → object) and seeded semiotics, structuralism, post-structuralism, and the linguistic turn in humanities."
+    },
+    aha: "'The meaning of a word is its use in the language' — Wittgenstein's later version of Saussure. Words are tools, not labels. The book also seeded every deconstructionist who followed: if words mean only by contrast, then no word has a stable meaning, and texts can be read against themselves. Derrida, Barthes, Lacan, and Foucault all sit on Saussure's shoulders.",
+    citation: "Saussure, F. de (1916). *Cours de linguistique générale*. Lausanne/Paris: Payot. (Posthumous edition from student notes.)"
+  },
+  {
+    id: "vitruvius30bc", wave: 2,
+    title: "De Architectura Libri Decem (Ten Books on Architecture)",
+    titleShort: "On Architecture",
+    authors: ["Marcus Vitruvius Pollio"], year: -30,
+    fields: ["architecture"], era: "Ancient", importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/20239/20239-0.txt",
+    published: "c. 30–15 BC, Rome", language: "Latin",
+    summaries: {
+      elementary: "A good building is solid, useful, and beautiful — in that order.",
+      abi: "Vitruvius wrote the only surviving classical treatise on architecture. His three principles — firmitas (strength), utilitas (function), venustas (beauty) — have been the standard for 2,000 years. His book on proportions, building materials, acoustics, water systems, and city planning was the textbook for every architect from the Renaissance to the modern age.",
+      phd: "Vitruvius's Ten Books (De Architectura, c. 30–15 BC) cover: town planning and the choice of site (Bks I–II), temple design and proportions (Bks III–IV), public buildings (Bks V–VI), domestic architecture and interior finishes (Bk VII), water supply and aqueducts (Bk VIII), clocks and sundials (Bk IX), and mechanical devices for building (Bk X). The human body's ideal proportions (the 'Vitruvian Man', drawn by Leonardo) come from this book."
+    },
+    aha: "Vitruvius is the only classical author on architecture whose work survived intact. Every other treatise (and there were many) was lost. Without him, the Renaissance would have had to reinvent classical architecture from ruins. The book is also why 'Vitruvian' has become shorthand for harmonious classical design — and why 'firmitas, utilitas, venustas' still appears on architect's letterheads.",
+    citation: "Vitruvius Pollio, M. (c. 30–15 BC). *De Architectura Libri Decem*. Rome."
+  },
+  {
+    id: "lecorbusier1923", wave: 2,
+    title: "Vers une architecture",
+    titleShort: "Towards a New Architecture",
+    authors: ["Le Corbusier"], year: 1923,
+    fields: ["architecture"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/versunearchitect00leco",
+    published: "Crès, Paris, 1923", language: "French",
+    summaries: {
+      elementary: "A house is a machine for living in.",
+      abi: "Le Corbusier argued that architecture should be designed for industrial mass production — clean lines, open plans, reinforced concrete, standardised windows, houses on stilts to free the ground. The book is the manifesto of the Modern Movement in architecture and the most influential text on 20th-century building.",
+      phd: "Le Corbusier's Five Points of a New Architecture: (1) pilotis (columns lifting the building off the ground), (2) free façade, (3) open floor plan, (4) long horizontal windows, (5) roof gardens. The book pairs manifestos ('The Engineers' Aesthetic', 'Architecture or Revolution') with analysis of cars, ships, and aeroplanes as models for mass-produced housing."
+    },
+    aha: "Le Corbusier was also a painter, an urbanist, and a profound hater of cities as they existed. He designed 'Ville Radieuse' (Radiant City) — a vision of superblocks in green parks that influenced housing projects worldwide, often badly. The book also explains why every architect, designer and engineer you know has said 'less is more' — and why every modern airport, museum and university library looks the way it does.",
+    citation: "Le Corbusier (1923). *Vers une architecture*. Paris: Crès."
+  },
+  {
+    id: "alexander1977", wave: 2,
+    title: "A Pattern Language: Towns, Buildings, Construction",
+    titleShort: "A Pattern Language",
+    authors: ["Christopher Alexander"], year: 1977,
+    fields: ["architecture"], era: "1970s", importance: "foundational",
+    pdf: "https://archive.org/details/patternlanguage00chri",
+    published: "Oxford University Press, 1977", language: "English",
+    summaries: {
+      elementary: "Good buildings are made of patterns that recur across every scale.",
+      abi: "Alexander catalogued 253 patterns — from 'Window Place' to 'Stair Room' to 'House Cluster' to 'Network of Learning' to 'Sacred Sites' — that, combined, make buildings and towns feel alive. Each pattern is a problem, a sketch, and a discussion of how it solves the problem. The book is the founding text of design patterns in software (Gang of Four, 1994) and in urbanism.",
+      phd: "Alexander's A Pattern Language is structured as a network of 253 patterns at three scales (towns, buildings, construction). Each pattern describes a recurring problem and a proven solution. Patterns combine to form 'languages' — coherent sets that yield good buildings. The book applies Alexander's earlier mathematical work on 'quality without a name' (the property that makes places feel alive) to practical design."
+    },
+    aha: "The book is more influential in software engineering than in architecture. The 'Gang of Four' design-patterns book (1994) explicitly drew on Alexander — Singleton, Factory, Iterator, Observer are all 'patterns' in Alexander's sense. The deepest lesson: design isn't about a few brilliant moves; it's about combining small, proven patterns that each solve a real problem.",
+    citation: "Alexander, C. (1977). *A Pattern Language: Towns, Buildings, Construction*. Oxford University Press."
+  },
+  {
+    id: "helmholtz1863", wave: 2,
+    title: "Die Lehre von den Tonempfindungen",
+    titleShort: "On the Sensations of Tone",
+    authors: ["Hermann von Helmholtz"], year: 1863,
+    fields: ["music"], era: "1800s", importance: "foundational",
+    pdf: "https://archive.org/details/onsensationsofto00helm",
+    published: "Friedrich Vieweg, Braunschweig, 1863", language: "German",
+    summaries: {
+      elementary: "Why does music work? Physics — and a bit of physics lost in our ear.",
+      abi: "Helmholtz analysed music from the standpoint of a physicist. He showed why harmonious intervals work (the brain detects simple ratios in the wave frequencies), why dissonant intervals are unpleasant (beating patterns in the cochlea), and why we hear melodies the way we do. The book founded modern psychoacoustics and influenced everything from music theory to piano design.",
+      phd: "Helmholtz's On the Sensations of Tone (Die Lehre von den Tonempfindungen, 1863) combines Fourier analysis, the physics of vibrating strings and air columns, the mechanics of the cochlea (he invented the Helmholtz resonator), and the psychology of musical perception. It explains why major triads are consonant, why equal temperament is a compromise, and why some timbres sound 'warm' or 'bright'."
+    },
+    aha: "The book also argues that beauty is partly physics: our perception of harmony is rooted in the structure of the ear and the brain, not in mystical musical forms. Every sound engineer, instrument maker, and music theorist since has had to engage with Helmholtz. Modern audio compression (MP3, AAC) is built on the psychoacoustic principles he established.",
+    citation: "Helmholtz, H. von (1863). *Die Lehre von den Tonempfindungen*. Braunschweig: Friedrich Vieweg."
+  },
+  {
+    id: "schoenberg1911", wave: 2,
+    title: "Harmonielehre",
+    titleShort: "Theory of Harmony",
+    authors: ["Arnold Schoenberg"], year: 1911,
+    fields: ["music"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/theoryofharmony00scho",
+    published: "Universal Edition, Vienna, 1911", language: "German",
+    summaries: {
+      elementary: "All the chords we accept as 'consonant' were once considered dissonant. Why stop there?",
+      abi: "Schoenberg's harmony book traces how Western harmony evolved — and argues that the old rules of consonance and dissonance are historical accidents, not natural laws. From this he developed 'free atonality', then twelve-tone technique — every note as equally weighted, no tonal centre. The book is the founding text of modern music.",
+      phd: "Schoenberg's Harmonielehre (1911) argues that the triadic system has run its course: chords that were once dissonant (thirds, sevenths) became common; the only 'revolution' left was to dissolve the tonal centre entirely. By 1923, he developed the twelve-tone technique (serialism): all 12 chromatic notes used in a fixed order before any is repeated. The system influenced Webern, Berg, Boulez, Stockhausen, and most subsequent 'serious' Western music."
+    },
+    aha: "Schoenberg invented a new way to compose music — and most people hated it. He was physically assaulted at a concert in 1921. He moved to the US, taught Schoenberg (not his name) and Stravinsky (not him), and changed music forever. Today, every film score, every jazz improvisation, every rock power chord draws on chords he showed were possible.",
+    citation: "Schoenberg, A. (1911). *Harmonielehre*. Vienna: Universal Edition."
+  },
+  {
+    id: "gombrich1960", wave: 2,
+    title: "Art and Illusion: A Study in the Psychology of Pictorial Representation",
+    titleShort: "Art and Illusion",
+    authors: ["Ernst H. Gombrich"], year: 1960,
+    fields: ["art-history"], era: "1960s", importance: "foundational",
+    pdf: "https://archive.org/details/artandillusionst00gomb",
+    published: "Phaidon, London, 1960", language: "English",
+    summaries: {
+      elementary: "Art isn't about copying reality — it's about creating a believable image of it.",
+      abi: "Gombrich argued that painters don't see the world directly; they see it through the schemas their culture provides. Greek painters started with schematic outlines; Renaissance painters learned tricks for depth, light and shadow; the Impressionists painted the perception, not the object. The book is the founding text of modern art history.",
+      phd: "Gombrich's Art and Illusion (1960) draws on psychology (Gestalt), philosophy (Popper, Wittgenstein), and the history of representation. The 'schema and correction' theory: artists start with a schematic representation and adjust it to match experience. The book also analyses 'what you see depends on what you know' — the way a child, a primitive, and a master see the same scene differently. Influenced every subsequent theory of representation."
+    },
+    aha: "The book also contains one of the best lines in art history: 'There is no such thing as Art. There are only artists.' The same insight applies to science: there's no such thing as Science, there are only scientists. Every craft and discipline is a tradition of practice, not a body of rules. The book is also beautifully written — rare for an academic treatise.",
+    citation: "Gombrich, E. H. (1960). *Art and Illusion: A Study in the Psychology of Pictorial Representation*. London: Phaidon."
+  },
+  {
+    id: "panofsky1939", wave: 2,
+    title: "Studies in Iconology: Humanistic Themes in the Art of the Renaissance",
+    titleShort: "Studies in Iconology",
+    authors: ["Erwin Panofsky"], year: 1939,
+    fields: ["art-history"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/studiesiniconeo00pano",
+    published: "Oxford University Press, 1939", language: "English",
+    summaries: {
+      elementary: "A painting isn't just an image — it's a document of what its age believed.",
+      abi: "Panofsky developed a method for interpreting images that combined visual analysis, cultural history, and philosophy. His famous example: Dürer's 'Melencolia I' isn't just an engraving of an angel — it's a Renaissance meditation on melancholy, genius, the limits of knowledge, and the relation between art and science. The book is the founding text of iconography and modern art interpretation.",
+      phd: "Panofsky's three-level interpretation scheme: (1) pre-iconographic description (what you see), (2) iconographic analysis (what it means within a tradition), (3) iconological interpretation (what it tells you about the culture that produced it). The method combines Warburg's cultural history, Cassirer's philosophy of symbolic forms, and Heidegger's hermeneutics. Applied to Dürer, Titian, Poussin, and Northern Renaissance art."
+    },
+    aha: "Panofsky also coined the phrase 'the disjunction of style and content' — a Renaissance king could be painted in classical Roman style, a saint in medieval style, and the meaning comes from the gap. This insight reframed art history as cultural history. The method is now used to read ads, films, and memes — every image is a document of its age.",
+    citation: "Panofsky, E. (1939). *Studies in Iconology: Humanistic Themes in the Art of the Renaissance*. Oxford University Press."
+  },
+  {
+    id: "bazin1946", wave: 2,
+    title: "Qu'est-ce que le cinéma?",
+    titleShort: "What is Cinema?",
+    authors: ["André Bazin"], year: 1946,
+    fields: ["film"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/whatiscinema00bazi",
+    published: "Cahiers du Cinéma (collected 1958), Paris", language: "French",
+    summaries: {
+      elementary: "Cinema's magic is its reality — long takes, deep focus, no cuts. Editing was a mistake.",
+      abi: "Bazin argued that cinema's essence is its preservation of reality — the photographic image keeps the object alive. He preferred directors who used long takes, deep focus, and unbroken shots (Rossellini, Welles, Renoir) over directors who cut constantly (Eisenstein, Hitchcock). The book is the founding text of art-film criticism and modern auteur theory.",
+      phd: "Bazin's 'Ontology of the Photographic Image' (1945) argues that every photograph is a 'mummy' of the photographed object — a preserved piece of reality. Long takes preserve reality's continuity; editing destroys it. The book applies this to Italian neorealism, American film noir, French poetic realism, and the rise of the 'new wave' in the 1960s. Bazin's student François Truffaut became a director; his protégé Godard made Breathless (1960)."
+    },
+    aha: "'What is Cinema?' was a journal Bazin edited, not a book he finished. He died at 40 in 1958. His ideas survive as the dominant critical framework for thinking about film — every serious review of every art-house film draws on his concepts. The book also explains why 'cinéma vérité' and documentary filmmaking (and now TikTok) feel more 'real' than Hollywood: long takes preserve duration, cuts break it.",
+    citation: "Bazin, A. (1958). *Qu'est-ce que le cinéma?* Paris: Éditions du Cerf. (Posthumous collection.)"
+  },
+  {
+    id: "eisenstein1929", wave: 2,
+    title: "Oktjabr' i drugie fil'my (October and Other Films; collection of essays on montage)",
+    titleShort: "Film Form (Montage Theory)",
+    authors: ["Sergei M. Eisenstein"], year: 1929,
+    fields: ["film"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/filmformessaysi00eise",
+    published: "Kinopechat', Moscow, 1929", language: "Russian",
+    summaries: {
+      elementary: "The meaning of a film is created by the collision of shots — not by the shots themselves.",
+      abi: "Eisenstein argued that cinema's art is the cut: by juxtaposing shots, the editor creates meanings that aren't in either shot. The famous example: shots of a coffin + shots of bread = famine. Shots of stone lions + shots of workers = the workers' uprising. The book is the founding text of Soviet montage theory and most subsequent editing theory.",
+      phd: "Eisenstein's Film Form (1929) lays out five types of montage (metric, rhythmic, tonal, overtonal, intellectual) and argues that the synthesis of two shots creates a third meaning ('montage is the nerve of cinema'). The book is part manifesto, part aesthetics, part Marxist theory of perception. It influenced Hitchcock's 'pure cinema', the French New Wave's love of jump-cuts, and every music video since MTV."
+    },
+    aha: "Eisenstein didn't make the films the book describes — *Battleship Potemkin* (1925) and *October* (1928) were already made. The book retroactively explains their structure. The Odessa Steps sequence (the baby carriage in Potemkin) is still taught in every film school as the canonical example of montage. Eisenstein was also a graphic artist and a student of Japanese Kabuki — his theory of montage comes from Japanese theatre theory.",
+    citation: "Eisenstein, S. M. (1929). *Oktjabr' i drugie fil'my*. Moscow: Kinopechat'."
+  },
+  {
+    id: "kepler1609", wave: 2,
+    title: "Astronomia Nova",
+    titleShort: "Astronomia Nova (The Three Laws)",
+    authors: ["Johannes Kepler"], year: 1609,
+    fields: ["astronomy"], era: "1600s", importance: "foundational",
+    pdf: "https://archive.org/details/AstronomianovaKepler",
+    published: "Prague, 1609", language: "Latin",
+    summaries: {
+      elementary: "Planets move in ellipses, not circles — and the speed depends on the distance.",
+      abi: "Kepler, using Tycho Brahe's unprecedented observations, proved that Mars's orbit is an ellipse with the Sun at one focus (not a circle). His three laws of planetary motion — ellipses, equal areas, harmonic law — were Newton's launching pad. The book is the founding text of modern astronomy.",
+      phd: "Kepler's Astronomia Nova (1609) introduces the first two laws: (1) planets move in ellipses with the Sun at one focus; (2) the line from planet to Sun sweeps equal areas in equal times. The third law (T² ∝ a³) appears in Harmonices Mundi (1619). Kepler also tried — and failed — to explain planetary motion through a force. The unification came with Newton's Principia (1687)."
+    },
+    aha: "Kepler spent 8 years trying to fit a circle to Mars's orbit — 8 minutes of arc wouldn't fit. Instead of fudging, he let the data win: an ellipse. This may be the most important 8 minutes of arc in the history of science. Without that refusal to fudge, the Copernican revolution would have stalled and Newton might never have written the Principia.",
+    citation: "Kepler, J. (1609). *Astronomia Nova*. Prague."
+  },
+  {
+    id: "hubble1929", wave: 2,
+    title: "A Relation between Distance and Radial Velocity of Galaxies",
+    titleShort: "The Expanding Universe",
+    authors: ["Edwin P. Hubble"], year: 1929,
+    fields: ["astronomy"], era: "1900s", importance: "foundational",
+    pdf: "https://www.nature.com/articles/131032a0",
+    published: "Proceedings of the National Academy of Sciences, 15, 168–173", language: "English",
+    summaries: {
+      elementary: "The further away a galaxy is, the faster it moves away from us. The universe is expanding.",
+      abi: "Hubble measured the distances to galaxies (using Cepheid variable stars as standard candles) and their recession speeds (from redshift). He found a linear relationship: more distant = faster. The implication: the universe is expanding. Extrapolated backward, this expansion gives a finite age for the universe — and possibly a beginning (later called the Big Bang).",
+      phd: "Hubble's 1929 paper plots 24 galaxies' distances against recession velocities, revealing the linear relationship v = H₀·d (Hubble's Law). The constant H₀ (Hubble's constant) sets the age of the universe. Hubble initially resisted the relativistic interpretation (Lemaitre had predicted the expansion in 1927 from general relativity). The eventual acceptance of the expanding universe is the foundation of modern cosmology."
+    },
+    aha: "Hubble did for the universe what Copernicus did for the solar system: it became bigger. We now know the universe is ~13.8 billion years old, contains ~200 billion galaxies, each with ~100 billion stars. The discovery also implies that, if we run time backward, everything was at a single point — the Big Bang. Every galaxy is rushing away from every other. We live inside a fireworks display.",
+    citation: "Hubble, E. P. (1929). A relation between distance and radial velocity of galaxies. *Proceedings of the National Academy of Sciences*, 15, 168–173."
+  },
+  {
+    id: "penziaswilson1965", wave: 2,
+    title: "A Measurement of Excess Antenna Temperature at 4080 Mc/s",
+    titleShort: "Discovery of the Cosmic Microwave Background",
+    authors: ["Arno A. Penzias", "Robert W. Wilson"], year: 1965,
+    fields: ["astronomy"], era: "1960s", importance: "foundational",
+    pdf: "https://www.nature.com/articles/2201207a0",
+    published: "Astrophysical Journal, 142, 419–421 (1965)", language: "English",
+    summaries: {
+      elementary: "The universe is bathed in a faint glow of microwave light — the afterglow of the Big Bang.",
+      abi: "Two Bell Labs engineers trying to eliminate noise from a radio antenna found a persistent hiss. It turned out to be radiation at 2.7 Kelvin, coming from every direction — exactly what the Big Bang theory predicted as the leftover glow of the universe's hot birth. The discovery clinched the Big Bang over the rival Steady State theory and earned them the Nobel Prize.",
+      phd: "Penzias & Wilson's 1965 paper ('A Measurement of Excess Antenna Temperature at 4080 Mc/s') reports an excess antenna temperature of 3.5 ± 1.0 K. In a companion paper, Dicke, Peebles, Roll & Wilkinson (Princeton) interpret it as the cosmic microwave background predicted by the hot Big Bang model (Gamow, Alpher, Herman). The CMB has since been measured in exquisite detail (COBE 1989, WMAP 2001, Planck 2013) and is the strongest evidence for the Big Bang."
+    },
+    aha: "Penzias and Wilson almost didn't publish — they thought the noise was from pigeon droppings on their antenna. They cleaned it up, the noise remained, and they finally wrote the paper. Without them, the Big Bang might have remained a controversial theory for decades. The story shows how major discoveries often come from careful observation of 'noise'.",
+    citation: "Penzias, A. A., & Wilson, R. W. (1965). A measurement of excess antenna temperature at 4080 Mc/s. *Astrophysical Journal*, 142, 419–421."
+  },
+  {
+    id: "hutton1788", wave: 2,
+    title: "Theory of the Earth; or an Investigation of the Laws Observable in the Composition, Dissolution, and Restoration of Land upon the Globe",
+    titleShort: "Theory of the Earth",
+    authors: ["James Hutton"], year: 1788,
+    fields: ["geology"], era: "1700s", importance: "foundational",
+    pdf: "https://archive.org/details/theoryofthearth00hutt",
+    published: "Transactions of the Royal Society of Edinburgh, 1 (1788)", language: "English",
+    summaries: {
+      elementary: "The Earth is unimaginably old, and the same slow processes we see today have been shaping it forever.",
+      abi: "Hutton looked at rock layers, fossils, and erosion, and concluded that the Earth was much older than the Bible's ~6,000 years. The same processes — rivers, volcanoes, oceans — that shape the landscape today have been working forever. The book founded modern geology and gave us 'deep time'.",
+      phd: "Hutton's Theory of the Earth (1788) introduces uniformitarianism: the present is the key to the past. Geological change is slow, continuous, and cumulative. Hutton saw unconformities (rock layers cut by erosion, then overlaid) as evidence of vast time scales. He famously concluded: 'no vestige of a beginning, no prospect of an end'. The book was dense and difficult; John Playfair's Illustrations (1802) made it accessible."
+    },
+    aha: "Hutton's deep time was the necessary backdrop for Darwin. Without an old Earth, evolution by natural selection doesn't work. Hutton died before he could fully develop his theory; his friend Playfair carried the torch. The discovery of deep time also changed philosophy: it ended the comfortable short-timeframe of religious cosmology and opened the abyss of geological time that terrified 19th-century thinkers (see John Ruskin, Tennyson).",
+    citation: "Hutton, J. (1788). *Theory of the Earth*. *Transactions of the Royal Society of Edinburgh*, 1."
+  },
+  {
+    id: "lyell1830", wave: 2,
+    title: "Principles of Geology, Being an Attempt to Explain the Former Changes of the Earth's Surface, by Reference to Causes Now in Operation",
+    titleShort: "Principles of Geology",
+    authors: ["Charles Lyell"], year: 1830,
+    fields: ["geology"], era: "1800s", importance: "foundational",
+    pdf: "https://archive.org/details/principlesgeolo01lyelgoog",
+    published: "John Murray, London, 1830–1833", language: "English",
+    summaries: {
+      elementary: "The Earth's history can be read in its rocks — slow, continuous, vast.",
+      abi: "Lyell's Principles was the first comprehensive geology textbook, and it carried Hutton's uniformitarianism to a wide audience. Lyell argued that volcanoes, earthquakes, erosion and sedimentation — not catastrophes — explain the rock record. The book founded modern stratigraphy and was the geology Darwin took with him on the Beagle.",
+      phd: "Lyell's three-volume Principles (1830–1833) systematised uniformitarianism against the prevailing 'catastrophist' view (Cuvier, Buckland). Lyell introduced stratigraphic stages (Eocene, Miocene, Pliocene), established the vast age of the Earth (hundreds of millions of years), and influenced geology worldwide. Darwin took the first volume on HMS Beagle and was converted: evolution by small changes over deep time became thinkable."
+    },
+    aha: "Lyell also articulated the 'steady-state Earth' view: mountains erode, sediments fill basins, continents rise and fall — but the planet stays about the same. This view was overturned by plate tectonics (Wegener, 1912; accepted only in the 1960s). Lyell was wrong about mechanism but right about depth of time. The deep time he uncovered was the necessary condition for Darwin's insight.",
+    citation: "Lyell, C. (1830–1833). *Principles of Geology*. London: John Murray."
+  },
+  {
+    id: "wegener1912", wave: 2,
+    title: "Die Entstehung der Kontinente und Ozeane",
+    titleShort: "Origin of Continents (Continental Drift)",
+    authors: ["Alfred Wegener"], year: 1912,
+    fields: ["geology"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/OriginOfContinentsAndOceansAlfredWegener",
+    published: "Vieweg, Braunschweig, 1915", language: "German",
+    summaries: {
+      elementary: "South America and Africa once fit together. They were part of one big continent.",
+      abi: "Wegener noticed that the coastlines of Africa and South America matched like puzzle pieces. He found matching fossils on both sides (Mesosaurus, Glossopteris), matching rock formations, and matching glacial deposits. His conclusion: the continents were once joined and have since drifted apart. The book proposed continental drift — a heresy for 50 years before it became plate tectonics.",
+      phd: "Wegener's Origin of Continents and Oceans (Die Entstehung der Kontinente und Ozeane, 1915) marshals evidence from geology, paleontology, paleoclimatology and geophysics. He proposed that the continents ploughed through the oceanic crust, driven by forces he couldn't quite specify. The book was ridiculed for decades; the mechanism (mantle convection, plate tectonics) was only accepted in the 1960s (Hess, Dietz, Vine, Matthews)."
+    },
+    aha: "Wegener died at 50 on a meteorological expedition in Greenland, in the middle of his life's work. His theory was declared 'sheer nonsense' by the American geological establishment as recently as the 1950s. Then in 1962, Harry Hess's seafloor-spreading hypothesis and the magnetic-stripe data vindicated Wegener. The story is one of the most dramatic reversals in the history of science: a brilliant idea, ignored for half a century, then proven right.",
+    citation: "Wegener, A. (1915). *Die Entstehung der Kontinente und Ozeane*. Braunschweig: Vieweg."
+  },
+  {
+    id: "dalton1805", wave: 2,
+    title: "On the Absorption of Gases by Water and Other Liquids (1805) / New System of Chemical Philosophy (1808)",
+    titleShort: "Atomic Theory (New System of Chemical Philosophy)",
+    authors: ["John Dalton"], year: 1805,
+    fields: ["chemistry"], era: "1800s", importance: "foundational",
+    pdf: "https://archive.org/details/newsystemofchemi00dalt",
+    published: "Dalton's 'Atomic Theory' first articulated in 1803–1805; *A New System of Chemical Philosophy* published 1808", language: "English",
+    summaries: {
+      elementary: "All matter is made of tiny, indivisible atoms — each element has its own atom.",
+      abi: "Dalton revived the ancient Greek idea of atoms and gave it scientific form: every element has its own kind of atom; atoms combine in fixed ratios to form compounds. From this he derived the laws of chemical combination. The book is the founding text of modern chemistry.",
+      phd: "Dalton's New System (1808, expanded 1810) states five laws: (1) elements consist of atoms; (2) atoms of each element are identical in weight and properties; (3) atoms cannot be created, divided or destroyed; (4) atoms combine in fixed ratios to form compounds; (5) compounds are composed of two or more atoms. Combined with the law of multiple proportions (Dalton) and the conservation of mass (Lavoisier), atomic theory becomes the foundation of modern chemistry."
+    },
+    aha: "Dalton was colour-blind and wrote the first scientific paper on colour blindness (1794) — which is now called 'Daltonism' in his honour. His atomic theory was ridiculed by chemists like Berzelius for 50 years — until Mendeleev's periodic table (1869) showed the regularities that only atomic theory could explain.",
+    citation: "Dalton, J. (1808). *A New System of Chemical Philosophy*. Manchester: S. Russell."
+  },
+  {
+    id: "mendeleev1869", wave: 2,
+    title: "О соотношении свойств с атомным весом элементов (On the Relation between the Properties and Atomic Weights of the Elements)",
+    titleShort: "The Periodic Table",
+    authors: ["Dmitri I. Mendeleev"], year: 1869,
+    fields: ["chemistry"], era: "1800s", importance: "foundational",
+    pdf: "https://archive.org/details/principleschem00unkngoog",
+    published: "Zhurnal Russkogo Khimicheskogo Obshchestva, 1, 60–77 (1869)", language: "Russian",
+    summaries: {
+      elementary: "All the elements fit into a single grid — and the gaps predict new ones.",
+      abi: "Mendeleev arranged the known elements by atomic weight and noticed that their properties repeated periodically. He left gaps for undiscovered elements — and predicted their properties. The table was vindicated when gallium, scandium and germanium were discovered and matched his predictions. The Periodic Table is the most compact chart of matter ever drawn.",
+      phd: "Mendeleev's periodic law (1869): when elements are arranged by atomic weight, their chemical properties repeat periodically. Mendeleev's genius was to leave gaps (for elements not yet discovered) and to reverse some pairs (Co-Ni, Te-I) where atomic weights didn't yet match. The 1871 table predicted eka-boron (scandium, 1879), eka-aluminium (gallium, 1875), and eka-silicon (germanium, 1886). The table was justified by quantum mechanics in the 1920s (electron shells, Pauli exclusion)."
+    },
+    aha: "Mendeleev was so confident in his table that he refused to accept any new element that didn't fit. He also famously refused to accept the discovery of argon (1894) because there was no place for it in his table — until Rayleigh and Ramsay found a whole new column (the noble gases). The Periodic Table is the closest thing science has to a Rosetta Stone: every known element maps cleanly onto its grid.",
+    citation: "Mendeleev, D. I. (1869). On the relation between the properties and atomic weights of the elements. *Zhurnal Russkogo Khimicheskogo Obshchestva*, 1, 60–77."
+  },
+  {
+    id: "pauling1939", wave: 2,
+    title: "The Nature of the Chemical Bond and the Structure of Molecules and Crystals",
+    titleShort: "The Nature of the Chemical Bond",
+    authors: ["Linus Pauling"], year: 1939,
+    fields: ["chemistry"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/natureofchemical00paul",
+    published: "Cornell University Press, Ithaca, 1939", language: "English",
+    summaries: {
+      elementary: "Atoms share electrons in predictable ways — and this explains almost all of chemistry.",
+      abi: "Pauling applied quantum mechanics to the way atoms bond. He introduced hybridisation (sp³ for methane), resonance (the benzene ring is a hybrid of two structures), and electronegativity (a scale for how strongly atoms pull electrons). The book explains why molecules have the shapes they do, why some bonds are strong and others weak, why life works. Pauling won two Nobel Prizes — one for chemistry, one for peace.",
+      phd: "Pauling's The Nature of the Chemical Bond (1939, based on his 1931–1938 papers) applies quantum mechanics (Heitler-London, Pauling's own valence-bond theory) to chemical structure. Key concepts: orbital hybridisation (sp, sp², sp³), resonance structures (no single Lewis structure captures the benzene ring), electronegativity (Pauling scale), partial ionic character of covalent bonds. The book unifies inorganic and organic chemistry."
+    },
+    aha: "Pauling also used the chemical bond to attack the structure of proteins — discovering the alpha-helix and beta-sheet by building physical models (and getting Crick and Watson started on the same problem with a famous letter). His dual Nobel (Chemistry 1954, Peace 1962 for his campaign against atmospheric nuclear testing) makes him one of the most versatile scientists of the 20th century.",
+    citation: "Pauling, L. (1939). *The Nature of the Chemical Bond and the Structure of Molecules and Crystals*. Ithaca: Cornell University Press."
+  },
+  {
+    id: "vesalius1543", wave: 2,
+    title: "De humani corporis fabrica libri septem",
+    titleShort: "On the Fabric of the Human Body",
+    authors: ["Andreas Vesalius"], year: 1543,
+    fields: ["medicine"], era: "1500s", importance: "foundational",
+    pdf: "https://archive.org/details/AndreasVesaliusDeHumaniCorporisFabrica",
+    published: "Oporinus, Basel, 1543", language: "Latin",
+    summaries: {
+      elementary: "The body is a machine. We can map it by cutting it open and drawing what we see.",
+      abi: "Vesalius, a 28-year-old professor at Padua, dissected human cadavers and drew what he saw — in glorious detail. He corrected over 200 errors in Galen's anatomy (Galen had only dissected animals). His seven-book work is the founding text of modern anatomy — and one of the most beautiful scientific books ever printed.",
+      phd: "Vesalius's De Humani Corporis Fabrica (1543) is the first comprehensive, accurate human anatomy: bones, muscles, blood vessels, nerves, organs, brain. Vesalius performed the dissections himself (unusual for the time), observed directly, and corrected Galen's errors (e.g. the human mandible is one bone, not two; the liver has no lobes connected to drains as Galen claimed). The book includes the famous 'muscle men' woodcuts — posed figures with progressively deeper dissections."
+    },
+    aha: "Vesalius published the Fabrica at 28, the same year as Copernicus's De Revolutionibus (also 1543). The two books together mark the moment when European science stopped trusting ancient authority and started trusting observation. Vesalius became imperial physician to Charles V and then Philip II of Spain. He died at 49 in a shipwreck on the way back from a pilgrimage to Jerusalem.",
+    citation: "Vesalius, A. (1543). *De humani corporis fabrica libri septem*. Basel: Oporinus."
+  },
+  {
+    id: "harvey1628", wave: 2,
+    title: "Exercitatio anatomica de motu cordis et sanguinis in animalibus",
+    titleShort: "On the Motion of the Heart and Blood",
+    authors: ["William Harvey"], year: 1628,
+    fields: ["medicine"], era: "1600s", importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/53167/53167-0.txt",
+    published: "Frankfurt, 1628", language: "Latin",
+    summaries: {
+      elementary: "Blood circulates. The heart is a pump, not a heater.",
+      abi: "Harvey showed, through dissection and quantitative reasoning, that the heart pumps blood in a continuous loop around the body. The old Galenic view (blood was made in the liver and consumed by the body) was wrong. The book founded modern physiology and changed medicine forever.",
+      phd: "Harvey's De Motu Cordis (1628) argues from three observations: (1) the heart's valves allow blood to flow only one way; (2) the arteries pulse because of blood being pushed into them, not because of 'active expansion'; (3) the amount of blood pumped per hour vastly exceeds what the body could consume or the liver could produce. Therefore, blood must circulate. Harvey couldn't see the capillaries (no microscope yet), but he predicted their existence."
+    },
+    aha: "Harvey's proof was the first major use of quantitative reasoning in biology. By calculating the volume of blood pumped per heartbeat and per hour, he showed that the body would need to manufacture ~180 kg of blood per hour if Galen were right. The discrepancy proved circulation. Harvey dedicated his book to King Charles I (whose father had been beheaded during the period the book was written).",
+    citation: "Harvey, W. (1628). *Exercitatio anatomica de motu cordis et sanguinis in animalibus*. Frankfurt."
+  },
+  {
+    id: "semmelweis1847", wave: 2,
+    title: "The Etiology of Childbed Fever (Höhe der Sterblichkeit an Kindbettfieber)",
+    titleShort: "Handwashing (Childbed Fever)",
+    authors: ["Ignaz Semmelweis"], year: 1847,
+    fields: ["medicine"], era: "1800s", importance: "landmark",
+    pdf: "https://archive.org/details/etiologyconcept00unkngoog",
+    published: "Royal Medical-Surgical Society of Vienna, 1847–1849", language: "German",
+    summaries: {
+      elementary: "Doctors who don't wash their hands kill mothers.",
+      abi: "At the Vienna General Hospital, one maternity ward had a 10% death rate from childbed fever; another had 4%. The difference: the first was staffed by doctors and medical students who came straight from the autopsy room; the second by midwives. Semmelweis ordered handwashing with chlorinated lime. Mortality dropped to 1%. The medical establishment rejected him; he died in an asylum.",
+      phd: "Semmelweis's 1847 observation: medical students and doctors who did autopsies and then delivered babies were carrying 'cadaveric particles' on their hands. Chlorinated lime handwash cut mortality dramatically. Semmelweis published his findings in 1861; the medical establishment ignored him for decades. The 'Semmelweis reflex' now names the tendency to reject new evidence because it contradicts established norms."
+    },
+    aha: "Semmelweis's story is the classic tragedy of medicine: a brilliant, correct insight ignored because it threatened the authority of doctors. His colleagues refused to believe their hands could be carrying death. He became publicly hostile, was eventually committed to an asylum, and died of an infected wound — the very kind of infection his handwashing could have prevented. The germ theory (Pasteur, Koch, 1860s–80s) finally vindicated him.",
+    citation: "Semmelweis, I. (1861). *Die Ätiologie, der Begriff und die Prophylaxe des Kindbettfiebers*. Pest, Wien und Leipzig: C.A. Hartleben."
   }
 ];
 
