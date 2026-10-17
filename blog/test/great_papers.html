@@ -1,0 +1,1426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Library of Minds — 31 Papers that Built the Modern World</title>
+<style>
+:root{
+  --bg:#0a0d12;
+  --bg-2:#0e1218;
+  --bg-3:#131820;
+  --card:#161b24;
+  --card-2:#1a2029;
+  --line:#232a36;
+  --line-2:#2c3340;
+  --ink:#f1ead7;
+  --ink-2:#c8bfa6;
+  --ink-3:#8c8470;
+  --ink-4:#5b5645;
+  --gold:#d4a574;
+  --gold-2:#b88a4d;
+  --gold-3:#8b6c3a;
+  --gold-soft:#5a4a2a;
+  --rust:#c98262;
+  --teal:#6ea4a4;
+  --crimson:#a84f5a;
+  --shadow:0 1px 0 rgba(255,255,255,.03), 0 16px 40px -20px rgba(0,0,0,.6);
+  --shadow-2:0 1px 0 rgba(255,255,255,.04), 0 30px 80px -30px rgba(0,0,0,.8);
+  --serif:"Iowan Old Style","Charter","Cambria","Georgia",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Helvetica Neue",sans-serif;
+  --mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--ink);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  background:
+    radial-gradient(900px 600px at 90% -10%, rgba(212,165,116,.06), transparent 60%),
+    radial-gradient(700px 500px at -10% 30%, rgba(110,164,164,.04), transparent 55%),
+    var(--bg);
+  min-height:100vh;
+}
+a{color:var(--gold);text-decoration:none}
+a:hover{color:var(--ink)}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+.row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+
+/* ---------- Header ---------- */
+header.site{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(180deg, rgba(10,13,18,.95) 0%, rgba(10,13,18,.86) 100%);
+  backdrop-filter:saturate(140%) blur(12px);
+  -webkit-backdrop-filter:saturate(140%) blur(12px);
+  border-bottom:1px solid var(--line);
+}
+header.site .wrap{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;gap:18px}
+.brand{display:flex;align-items:center;gap:12px;font-family:var(--serif)}
+.brand .mark{
+  width:34px;height:34px;border-radius:50%;
+  background:
+    radial-gradient(circle at 30% 30%, #f0d9a8 0%, #d4a574 35%, #8b6c3a 75%, #3a2f18 100%);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.4), 0 0 24px rgba(212,165,116,.18);
+  position:relative;
+}
+.brand .mark::after{
+  content:"";position:absolute;inset:-6px;border-radius:50%;
+  border:1px solid rgba(212,165,116,.18);
+}
+.brand .title{font-size:18px;font-weight:500;color:var(--ink);letter-spacing:.02em}
+.brand .sub{font-size:12px;color:var(--ink-3);font-family:var(--serif);font-style:italic;margin-top:2px}
+.topnav{display:flex;align-items:center;gap:18px}
+.topnav .stats{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.topnav .stats b{color:var(--ink-2);font-weight:500}
+.topnav .pill{
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
+  padding:6px 10px;border:1px solid var(--line);border-radius:999px;
+}
+.topnav .pill:hover{border-color:var(--gold-3);color:var(--ink-2)}
+
+/* ---------- Hero ---------- */
+.hero{
+  padding:80px 0 36px;
+  border-bottom:1px solid var(--line);
+  position:relative;
+}
+.hero h1{
+  font-family:var(--serif);
+  font-weight:400;
+  font-size:clamp(38px, 5.5vw, 64px);
+  line-height:1.04;
+  margin:0 0 18px;
+  letter-spacing:-.015em;
+  color:var(--ink);
+}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero p.lede{
+  font-family:var(--serif);
+  font-size:20px;
+  line-height:1.55;
+  color:var(--ink-2);
+  max-width:780px;
+  margin:0 0 28px;
+}
+.hero p.lede b{color:var(--ink);font-weight:500}
+.hero .meta{
+  display:flex;flex-wrap:wrap;gap:24px 36px;
+  font-size:13px;color:var(--ink-3);
+  border-top:1px dashed var(--line-2);
+  padding-top:22px;margin-top:18px;
+}
+.hero .meta div b{display:block;color:var(--ink-2);font-size:18px;font-family:var(--serif);font-weight:500;margin-bottom:2px}
+.hero .meta div span{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink-3)}
+
+/* ---------- Controls ---------- */
+.controls{
+  padding:24px 0 18px;
+  border-bottom:1px solid var(--line);
+  position:sticky;top:65px;z-index:40;
+  background:linear-gradient(180deg, var(--bg) 60%, rgba(10,13,18,.5) 100%);
+}
+.search-row{display:flex;gap:12px;align-items:center;margin-bottom:18px}
+.search{
+  flex:1;position:relative;display:flex;align-items:center;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:10px 14px 10px 42px;
+  transition:border-color .2s, box-shadow .2s;
+}
+.search:focus-within{border-color:var(--gold-3);box-shadow:0 0 0 4px rgba(212,165,116,.08)}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink-3)}
+.search input{
+  flex:1;background:transparent;border:0;outline:0;color:var(--ink);
+  font:inherit;font-size:15px;
+}
+.search input::placeholder{color:var(--ink-4)}
+.search .clear{
+  background:transparent;border:0;color:var(--ink-3);cursor:pointer;
+  padding:4px 8px;border-radius:6px;font-size:13px;
+}
+.search .clear:hover{color:var(--ink);background:rgba(255,255,255,.04)}
+.search .clear[hidden]{display:none}
+
+.select-wrap{
+  position:relative;display:flex;align-items:center;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:8px 14px;gap:8px;
+}
+.select-wrap svg{color:var(--ink-3)}
+.select-wrap select{
+  appearance:none;background:transparent;border:0;outline:0;color:var(--ink);
+  font:inherit;font-size:14px;padding-right:18px;cursor:pointer;
+}
+.select-wrap::after{
+  content:"";position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  width:6px;height:6px;border-right:1.5px solid var(--ink-3);border-bottom:1.5px solid var(--ink-3);
+  rotate:-45deg;pointer-events:none;
+}
+
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.filter-label{
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
+  margin-right:8px;
+}
+.chip{
+  font-size:13px;color:var(--ink-2);
+  background:var(--card);border:1px solid var(--line);
+  padding:6px 12px;border-radius:999px;
+  cursor:pointer;user-select:none;
+  transition:all .15s ease;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.chip .count{
+  font-size:10px;font-family:var(--mono);color:var(--ink-3);
+  background:rgba(255,255,255,.04);padding:2px 6px;border-radius:8px;
+}
+.chip:hover{border-color:var(--gold-3);color:var(--ink)}
+.chip.active{
+  background:linear-gradient(180deg, rgba(212,165,116,.18), rgba(212,165,116,.06));
+  border-color:var(--gold);
+  color:var(--ink);
+}
+.chip.active .count{color:var(--gold);background:rgba(212,165,116,.1)}
+
+.summary-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:18px;padding-top:14px;
+  border-top:1px dashed var(--line-2);
+  font-size:13px;color:var(--ink-3);
+}
+.summary-bar .showing{font-variant-numeric:tabular-nums}
+.summary-bar .showing b{color:var(--ink-2);font-weight:500}
+.reset-link{
+  background:transparent;border:0;color:var(--gold);cursor:pointer;
+  font:inherit;font-size:13px;padding:4px 10px;border-radius:6px;
+}
+.reset-link:hover{background:rgba(212,165,116,.1)}
+
+/* ---------- Cards ---------- */
+.papers{padding:40px 0 80px}
+.cards{
+  display:grid;grid-template-columns:repeat(auto-fill, minmax(360px, 1fr));
+  gap:20px;
+}
+.card{
+  background:linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:24px 24px 22px;
+  position:relative;overflow:hidden;
+  transition:border-color .2s, transform .25s, box-shadow .25s;
+  display:flex;flex-direction:column;
+  min-height:240px;
+}
+.card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg, transparent, var(--gold-soft), transparent);
+  opacity:0;transition:opacity .3s;
+}
+.card:hover{
+  border-color:var(--line-2);
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-2);
+}
+.card:hover::before{opacity:1}
+.card.open{border-color:var(--gold-3);box-shadow:var(--shadow-2)}
+.card.open::before{opacity:1;background:linear-gradient(90deg, transparent, var(--gold), transparent)}
+
+.card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.card-index{
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+  color:var(--ink-4);text-transform:uppercase;
+}
+.card-year{
+  font-family:var(--serif);font-style:italic;
+  font-size:14px;color:var(--gold);
+  background:rgba(212,165,116,.06);
+  padding:3px 10px;border-radius:6px;
+  white-space:nowrap;
+}
+
+.card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.tag{
+  font-size:11px;letter-spacing:.04em;color:var(--ink-2);
+  background:rgba(255,255,255,.03);
+  padding:3px 8px;border-radius:4px;
+  border:1px solid var(--line);
+  white-space:nowrap;
+}
+
+.card h2{
+  font-family:var(--serif);font-weight:500;font-size:22px;
+  line-height:1.25;margin:0 0 8px;letter-spacing:-.005em;
+  color:var(--ink);
+}
+.card .authors{
+  font-size:13px;color:var(--ink-3);margin-bottom:14px;
+  font-family:var(--serif);font-style:italic;
+}
+
+.callout{
+  font-size:14.5px;line-height:1.55;
+  color:var(--ink-2);
+  padding:12px 14px;
+  border-radius:0 8px 8px 0;
+  margin-bottom:10px;
+  position:relative;
+}
+.callout-label{
+  display:inline-block;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;
+  text-transform:uppercase;
+  margin-bottom:6px;
+  padding:2px 6px;border-radius:3px;
+}
+.callout-text{font-family:var(--serif);font-size:15px;line-height:1.5;color:var(--ink)}
+.callout-ele{
+  background:rgba(110,164,164,.06);
+  border-left:2px solid var(--teal);
+}
+.callout-ele .callout-label{color:var(--teal);background:rgba(110,164,164,.1)}
+.callout-aha{
+  background:linear-gradient(135deg, rgba(212,165,116,.10) 0%, rgba(212,165,116,.04) 100%);
+  border-left:2px solid var(--gold);
+  font-style:italic;
+}
+.callout-aha .callout-label{color:var(--gold);background:rgba(212,165,116,.14)}
+.callout-aha::after{
+  content:"";position:absolute;top:0;right:0;bottom:0;left:0;
+  background:radial-gradient(circle at 100% 0%, rgba(212,165,116,.08), transparent 40%);
+  pointer-events:none;border-radius:inherit;
+}
+
+.card-actions{
+  display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:14px;
+  border-top:1px dashed var(--line-2);
+}
+.toggle{
+  flex:1;background:transparent;border:0;color:var(--gold);cursor:pointer;
+  font:inherit;font-size:13px;padding:6px 10px;border-radius:6px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  transition:background .15s;
+}
+.toggle:hover{background:rgba(212,165,116,.08);color:var(--ink)}
+.toggle .arrow{transition:transform .25s;color:var(--ink-3)}
+.card.open .toggle .arrow{transform:rotate(180deg);color:var(--gold)}
+.pdf{
+  font-size:13px;color:var(--ink);background:var(--bg-3);
+  padding:6px 12px;border-radius:6px;
+  border:1px solid var(--line-2);
+  display:inline-flex;align-items:center;gap:6px;
+  white-space:nowrap;
+}
+.pdf:hover{border-color:var(--gold);background:var(--bg-2)}
+.pdf svg{color:var(--gold)}
+
+.details{
+  display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows .35s ease;
+}
+.details > div{overflow:hidden}
+.card.open .details{grid-template-rows:1fr}
+.summary-block{
+  padding-top:18px;margin-top:18px;border-top:1px dashed var(--line-2);
+  display:grid;gap:14px;
+}
+.summary-block .level{
+  font-size:13.5px;line-height:1.6;color:var(--ink-2);
+}
+.summary-block .level-label{
+  display:inline-block;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;
+  padding:3px 8px;border-radius:4px;
+  margin-bottom:6px;
+}
+.lvl-abi .level-label{color:var(--gold);background:rgba(212,165,116,.08)}
+.lvl-phd .level-label{color:var(--rust);background:rgba(201,130,98,.08)}
+.lvl-ele .level-label{color:var(--teal);background:rgba(110,164,164,.08)}
+
+.card .citation{
+  margin-top:14px;padding-top:12px;border-top:1px dashed var(--line-2);
+  font-family:var(--serif);font-size:12px;font-style:italic;
+  color:var(--ink-3);line-height:1.5;
+}
+
+/* ---------- Empty state ---------- */
+.empty{
+  text-align:center;padding:80px 20px;
+  color:var(--ink-3);font-family:var(--serif);
+}
+.empty .em-title{font-size:24px;color:var(--ink);margin-bottom:8px}
+.empty .em-sub{font-size:15px}
+
+/* ---------- Footer ---------- */
+footer.site{
+  border-top:1px solid var(--line);
+  padding:40px 0 60px;
+  color:var(--ink-3);font-size:13px;
+}
+footer.site .wrap{display:flex;flex-wrap:wrap;gap:30px;justify-content:space-between;align-items:flex-start}
+footer .legend{max-width:520px;font-family:var(--serif);font-size:14px;line-height:1.6;color:var(--ink-2)}
+footer .legend h3{font-family:var(--serif);font-weight:500;color:var(--ink);margin:0 0 8px;font-size:16px}
+footer .legend code{font-family:var(--mono);font-size:12px;color:var(--gold-2);background:var(--card);padding:1px 5px;border-radius:3px}
+footer .legend ul{padding-left:18px;margin:10px 0}
+footer .legend li{margin-bottom:4px}
+footer .meta-col{font-size:12px;line-height:1.7;text-align:right}
+footer .meta-col b{color:var(--ink-2);font-weight:500}
+
+/* ---------- Theme toggle ---------- */
+.theme-toggle{
+  background:transparent;border:1px solid var(--line);color:var(--ink-2);
+  width:34px;height:34px;border-radius:8px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .15s, color .15s;
+}
+.theme-toggle:hover{border-color:var(--gold-3);color:var(--ink)}
+
+/* ---------- Light theme ---------- */
+html.light{
+  --bg:#faf6ec;
+  --bg-2:#f3ecda;
+  --bg-3:#ede4ce;
+  --card:#fffdf6;
+  --card-2:#fbf6e8;
+  --line:#e2d8bc;
+  --line-2:#d4c89e;
+  --ink:#1c1810;
+  --ink-2:#4a4131;
+  --ink-3:#7a6e54;
+  --ink-4:#a89b7d;
+  --gold:#8a6520;
+  --gold-2:#6e4f15;
+  --gold-3:#a08038;
+  --gold-soft:#c8b078;
+  --rust:#a04e2e;
+  --teal:#3e6e6e;
+  --crimson:#8a3e4a;
+  --shadow:0 1px 0 rgba(0,0,0,.02), 0 16px 40px -20px rgba(60,40,10,.18);
+  --shadow-2:0 1px 0 rgba(0,0,0,.03), 0 30px 80px -30px rgba(60,40,10,.25);
+}
+html.light body{
+  background:
+    radial-gradient(900px 600px at 90% -10%, rgba(138,101,32,.07), transparent 60%),
+    radial-gradient(700px 500px at -10% 30%, rgba(62,110,110,.04), transparent 55%),
+    var(--bg);
+}
+html.light header.site{
+  background:linear-gradient(180deg, rgba(250,246,236,.95) 0%, rgba(250,246,236,.86) 100%);
+}
+html.light .card{background:linear-gradient(180deg, var(--card) 0%, var(--card-2) 100%)}
+html.light .search,html.light .select-wrap,html.light .chip,html.light .tag{
+  background:var(--card);
+}
+html.light .search input,html.light .select-wrap select{color:var(--ink)}
+html.light .controls{
+  background:linear-gradient(180deg, var(--bg) 60%, rgba(250,246,236,.5) 100%);
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--bg-2)}
+::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:5px;border:2px solid var(--bg-2)}
+::-webkit-scrollbar-thumb:hover{background:var(--gold-3)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:760px){
+  .hero{padding:50px 0 28px}
+  .hero p.lede{font-size:17px}
+  .hero .meta{gap:18px 24px}
+  .controls{position:static}
+  .cards{grid-template-columns:1fr;gap:14px}
+  .card{padding:20px}
+  .topnav .stats{display:none}
+  footer.site .wrap{flex-direction:column}
+  footer .meta-col{text-align:left}
+}
+@media (max-width:480px){
+  .wrap{padding:0 16px}
+  header.site .wrap{padding:12px 16px}
+  .brand .sub{display:none}
+  .card h2{font-size:19px}
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"></div>
+      <div>
+        <div class="title">The Library of Minds</div>
+        <div class="sub">31 papers that built the modern world</div>
+      </div>
+    </div>
+    <div class="topnav">
+      <div class="stats"><b id="stat-total">30</b> papers · <b id="stat-years">0</b> years · <b id="stat-fields">0</b> fields</div>
+      <button class="theme-toggle" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>The papers that <em>made</em> the modern mind.</h1>
+    <p class="lede">
+      Thirty-one works — <b>spanning two and a half centuries</b> and every continent of thought — that changed how we understand reality, the mind, society, and ourselves.
+      Each entry is given in three voices: the version a curious child can hold, the version a sharp A-level student deserves, and the version a doctoral examiner would accept.
+      Read, filter, and follow the original sources.
+    </p>
+    <div class="meta">
+      <div><b>1763 → 2021</b><span>TEMPORAL SPAN</span></div>
+      <div><b>31</b><span>LANDMARK WORKS</span></div>
+      <div><b>11</b><span>DISCIPLINES</span></div>
+      <div><b>4</b><span>READING LEVELS</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="controls">
+  <div class="wrap">
+    <div class="search-row">
+      <div class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="q" type="text" placeholder="Search by title, author, idea, year…" autocomplete="off" spellcheck="false">
+        <button class="clear" id="clear" hidden>clear</button>
+      </div>
+      <div class="select-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <select id="sort">
+          <option value="year-desc">Newest first</option>
+          <option value="year-asc">Oldest first</option>
+          <option value="title-asc">Title (A→Z)</option>
+          <option value="author-asc">Author (A→Z)</option>
+          <option value="default">Curated order</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filter-row" id="field-filters">
+      <span class="filter-label">Field</span>
+      <button class="chip active" data-filter="field" data-value="all">All<span class="count">30</span></button>
+    </div>
+    <div class="filter-row" style="margin-top:10px" id="era-filters">
+      <span class="filter-label">Era</span>
+      <button class="chip active" data-filter="era" data-value="all">All<span class="count">30</span></button>
+    </div>
+
+    <div class="summary-bar">
+      <div class="showing">Showing <b id="visible-count">30</b> of <b>30</b> papers</div>
+      <button class="reset-link" id="reset">Reset filters</button>
+    </div>
+  </div>
+</section>
+
+<main class="papers">
+  <div class="wrap">
+    <div class="cards" id="cards"></div>
+    <div class="empty" id="empty" hidden>
+      <div class="em-title">No papers match.</div>
+      <div class="em-sub">Try a different search or reset the filters.</div>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="legend">
+      <h3>About the four layers</h3>
+      <p>Every paper carries four layers, written so that the same idea reaches you at whatever altitude you're standing on today.</p>
+      <ul>
+        <li><code>Elementary</code> — one vivid sentence, no jargon, true to the heart of the idea.</li>
+        <li><code>⚡ Aha</code> — the counter-intuitive flash that connects the paper to your life today.</li>
+        <li><code>Abitur</code> — what a sharp A-level / Abitur student should walk away with after a thoughtful reading.</li>
+        <li><code>PhD</code> — the precise claim, the technical apparatus, and the non-obvious consequence.</li>
+      </ul>
+      <p style="font-size:13px;color:var(--ink-3)">Curated to <em>complement</em> (not duplicate) the asanAI course. PDFs link to public archives where possible; some links point to publisher pages where the original is paywalled.</p>
+    </div>
+    <div class="meta-col">
+      <div><b>31 works</b> · <b>11 disciplines</b></div>
+      <div>From <b>1763</b> (Bayes) to <b>2021</b> (AlphaFold)</div>
+      <div>Earliest: <b>1763</b> · Latest: <b>2021</b></div>
+      <div style="margin-top:10px;color:var(--ink-4)">A reading list, not a canon.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* =========================================================================
+   THE LIBRARY OF MINDS — Data
+   30 landmark papers across science, mathematics, mind, and society.
+   Each entry: id, title, authors, year, fields[], era, importance,
+              pdf, published, language, summaries{elementary,abi,phd}, citation
+   ========================================================================= */
+const PAPERS = [
+  {
+    id: "cantor1874",
+    title: "Über eine Eigenschaft des Inbegriffes aller reellen algebraischen Zahlen",
+    titleShort: "On a Property of the Collection of All Real Algebraic Numbers",
+    authors: ["Georg Cantor"],
+    year: 1874,
+    fields: ["mathematics"],
+    era: "1800s",
+    importance: "foundational",
+    pdf: "https://www.iris.universite-paris-saclay.fr/bitstream/handle/2268/181237/Cantor_1874_Ueber_eine_Eigenschaft.pdf",
+    published: "Journal für die reine und angewandte Mathematik, 77, 258–262",
+    language: "German",
+    summaries: {
+      elementary: "Some infinities are bigger than others — and there are more of them than the integers.",
+      abi: "Before Cantor, infinity was just 'forever'. He proved that the integers are infinite but countable, the reals are infinite but uncountably bigger — you can never list every real number, because any list you write down will miss some. Mathematics was given a way to measure the endless, and diagonalisation became the most powerful 'no' in all of thought.",
+      phd: "Diagonalising any hypothetical enumeration of reals, Cantor proved ℝ is uncountable while the algebraic reals are countable — a result that depends on never constructing an explicit uncountable set, only excluding any would-be enumeration. The technique became the archetype for limitative arguments across logic (Gödel), computability (Turing) and topology — every proof that a 'natural' class is strictly smaller than another borrows Cantor's move."
+    },
+    aha: "Modern set theory splits into a tower of ever-larger infinities (ℵ₀, 2^ℵ₀, ℵ₁, …) — but no one knows whether there are any infinities in between. The continuum hypothesis, Cantor's 1878 question, is provably undecidable. Your intuition about 'infinity' has been a known unknown for 145 years.",
+    citation: "Cantor, G. (1874). Ueber eine Eigenschaft des Inbegriffes aller reellen algebraischen Zahlen. *Journal für die reine und angewandte Mathematik*, 77, 258–262."
+  },
+  {
+    id: "kolmogorov1933",
+    title: "Grundbegriffe der Wahrscheinlichkeitsrechnung",
+    titleShort: "Foundations of the Theory of Probability",
+    authors: ["Andrey N. Kolmogorov"],
+    year: 1933,
+    fields: ["mathematics"],
+    era: "1900s",
+    importance: "foundational",
+    pdf: "https://www.math.psu.edu/dboldareff/Logic/Kolmogorov-Foundations_of_the_theory_of_probability.pdf",
+    published: "Ergebnisse der Mathematik, Springer",
+    language: "German",
+    summaries: {
+      elementary: "Probability is just counting — counting what we can't directly count.",
+      abi: "Before 1933, 'probability' meant different things to different people — belief, frequency, tendency. Kolmogorov gave it one solid definition: a probability is just a measure on a sample space, the same way we measure length or area. Insurance, gambling, quantum physics, statistics and most of modern AI suddenly spoke the same language.",
+      phd: "Using Lebesgue's measure theory, Kolmogorov axiomatised probability: a probability space is a triple (Ω, ℱ, P) with P a countably-additive measure on a σ-algebra ℱ ⊆ 2^Ω, P(Ω)=1. Conditional expectation is the Radon–Nikodym derivative; independence is the product measure. The book unifies Markov chains, martingales, ergodic theory and stochastic processes — and is the literal scaffold quantum mechanics would be rebuilt on a decade later."
+    },
+    aha: "The same five axioms that let a casino price a roulette wheel let your phone understand speech and a self-driving car predict a pedestrian. Every probabilistic AI system — spam filters, recommendation engines, language models — is doing measure theory in disguise.",
+    citation: "Kolmogorov, A. N. (1933). *Grundbegriffe der Wahrscheinlichkeitsrechnung*. Berlin: Springer. (English: *Foundations of the Theory of Probability*, Chelsea 1956.)"
+  },
+  {
+    id: "maxwell1865",
+    title: "A Dynamical Theory of the Electromagnetic Field",
+    titleShort: "A Dynamical Theory of the Electromagnetic Field",
+    authors: ["James Clerk Maxwell"],
+    year: 1865,
+    fields: ["physics"],
+    era: "1800s",
+    importance: "foundational",
+    pdf: "https://upload.wikimedia.org/wikipedia/commons/b/b8/A_Dynamical_Theory_of_the_Electromagnetic_Field.pdf",
+    published: "Philosophical Transactions of the Royal Society, 155, 459–512",
+    language: "English",
+    summaries: {
+      elementary: "Light is electricity and magnetism in disguise — and we can write the rules.",
+      abi: "Until Maxwell, electricity and magnetism were two separate subjects and light was a mysterious third. He showed they're three faces of one thing: an electromagnetic field. Light is just the visible slice of a vast spectrum — radio, microwaves, X-rays, gamma rays — all the same stuff at different frequencies.",
+      phd: "Maxwell's 20 equations (compressed to 4 by Heaviside, Hertz and Gibbs) couple the divergence and curl of E and B to charge and current density, predict transverse waves at speed c = 1/√(ε₀μ₀), and identify light as the visible part of the spectrum. The theory is Lorentz-covariant, conserves energy–momentum through the Poynting vector, and is the first classical field theory — the template Einstein later borrowed, generalised and transcended."
+    },
+    aha: "Every wireless technology — Wi-Fi, Bluetooth, GPS, 5G, the cosmic microwave background — is Maxwell's equations in motion. The smartphone in your pocket is a direct descendant of this paper.",
+    citation: "Maxwell, J. C. (1865). A dynamical theory of the electromagnetic field. *Philosophical Transactions of the Royal Society*, 155, 459–512."
+  },
+  {
+    id: "boltzmann1877",
+    title: "Weitere Studien über die Wärmeverteilung unter den Molekülen",
+    titleShort: "Further Studies on the Heat Distribution Among Molecules",
+    authors: ["Ludwig Boltzmann"],
+    year: 1877,
+    fields: ["physics"],
+    era: "1800s",
+    importance: "foundational",
+    pdf: "https://www.informationphilosopher.com/solutions/sciences/boltzmann_studies.pdf",
+    published: "Wiener Berichte, 75, 67–73 (also: Wiss. Abh. I, 316–402)",
+    language: "German",
+    summaries: {
+      elementary: "Heat is what happens when lots of tiny things wiggle randomly.",
+      abi: "Why does a cup of coffee cool down? Because its trillions of molecules are jostling, and the slow, random motions of the many translate into the smooth, predictable cooling we observe. Boltzmann turned thermodynamics — the science of heat and work — into a story about counting possibilities. He also gave us the deepest fact about time itself: it only flows one way because messy states are vastly more numerous than neat ones.",
+      phd: "Building on his 1872 transport equation, Boltzmann proved the H-theorem (entropy never decreases) and wrote S = k ln W — entropy is the logarithm of the count of microstates. This is the deepest fact about time: every law of physics is reversible, but the universe started in a low-entropy state and is rolling downhill. The work seeded ergodic theory, statistical mechanics, and the information-theoretic reinterpretation of entropy (Jaynes, Shannon) a century later."
+    },
+    aha: "Boltzmann hanged himself in 1906, partly from despair that his ideas weren't accepted. They were right. His equation S = k ln W is engraved on his tombstone — and Claude Shannon would later discover the same formula describes information. The arrow of time and the limit of communication are the same fact.",
+    citation: "Boltzmann, L. (1877). Weitere Studien über die Wärmeverteilung unter den Molekülen. *Wiener Berichte*, 75, 67–73."
+  },
+  {
+    id: "planck1900",
+    title: "Zur Theorie des Gesetzes der Energieverteilung im Normalspektrum",
+    titleShort: "On the Theory of the Energy Distribution Law of the Normal Spectrum",
+    authors: ["Max Planck"],
+    year: 1900,
+    fields: ["physics"],
+    era: "1900s",
+    importance: "foundational",
+    pdf: "https://www.biodiversitylibrary.org/item/249820",
+    published: "Verhandlungen der Deutschen Physikalischen Gesellschaft, 2, 237–245",
+    language: "German",
+    summaries: {
+      elementary: "Energy comes in tiny, indivisible packets — what we now call quanta.",
+      abi: "Hot objects glow in a pattern nobody could explain. Planck fitted the data by guessing something almost heretical: a hot object doesn't emit light smoothly, but in chunks. Each chunk carries a fixed amount of energy that depends on its colour. That guess — which Planck spent a decade trying to undo — turned out to be the seed of quantum theory. He won the Nobel Prize for what he considered a 'formal assumption'.",
+      phd: "To derive the blackbody spectrum u(ν,T) = (8πhν³/c³)·1/(e^(hν/kT)−1), Planck discretised the energy of a Hertzian oscillator into multiples of ε = hν. The constant h ≈ 6.626×10⁻³⁴ J·s is the smallest in physics; with it, classical electrodynamics fails at small action. Einstein (1905) would take the discretisation literally — energy of light itself comes in quanta — and rewrite physics."
+    },
+    aha: "Planck's constant sets the pixel size of the universe. Below h, smooth classical physics breaks down and quantum weirdness begins. Every transistor, laser, MRI machine and quantum computer in existence works because this constant isn't zero.",
+    citation: "Planck, M. (1900). Zur Theorie des Gesetzes der Energieverteilung im Normalspektrum. *Verhandlungen der Deutschen Physikalischen Gesellschaft*, 2(17), 237–245."
+  },
+  {
+    id: "heisenberg1925",
+    title: "Über quantentheoretische Umdeutung kinematischer und mechanischer Beziehungen",
+    titleShort: "Quantum-Theoretical Re-Interpretation of Kinematic and Mechanical Relations",
+    authors: ["Werner Heisenberg"],
+    year: 1925,
+    fields: ["physics"],
+    era: "1900s",
+    importance: "foundational",
+    pdf: "https://www.fh-pforzheim.de/Personen/ProfDrRainerThorns/Downloads/Heisenberg_1925.pdf",
+    published: "Zeitschrift für Physik, 33, 879–893",
+    language: "German",
+    summaries: {
+      elementary: "To know where a thing is, you have to bump it — and that bump changes how fast it's moving.",
+      abi: "Heisenberg replaced the tidy picture of electrons orbiting like tiny planets with a strange new arithmetic: multiplying two quantities (position and momentum) gives a different answer depending on the order. Their product is never smaller than ℏ/2. From this single fact the whole of quantum theory fell out — and a hard, written-into-the-universe limit on what can be known.",
+      phd: "Replacing classical Fourier trajectories with arrays of transition amplitudes obeying a non-commutative multiplication, Heisenberg derived what Born and Jordan formalised within weeks as [x̂, p̂] = iℏ. The Kramers dispersion relations, the hydrogen spectrum and the first correct matrix-mechanical results all fall out. The paper inaugurates matrix mechanics — soon shown unitarily equivalent to Schrödinger's wave mechanics (von Neumann, 1932)."
+    },
+    aha: "Quantum uncertainty isn't a measurement problem — position and momentum don't both exist at the same time with full precision. The universe itself is fuzzy at small scales. This is why quantum computers can solve certain problems exponentially faster than classical ones.",
+    citation: "Heisenberg, W. (1925). Über quantentheoretische Umdeutung kinematischer und mechanischer Beziehungen. *Zeitschrift für Physik*, 33, 879–893."
+  },
+  {
+    id: "schrodinger1926",
+    title: "Quantisierung als Eigenwertproblem",
+    titleShort: "Quantisation as an Eigenvalue Problem",
+    authors: ["Erwin Schrödinger"],
+    year: 1926,
+    fields: ["physics"],
+    era: "1900s",
+    importance: "foundational",
+    pdf: "https://www.zfn.uni-bremen.de/fileadmin/user_upload/schrodinger.pdf",
+    published: "Annalen der Physik, 384(4), 361–376 (and four follow-ups)",
+    language: "German",
+    summaries: {
+      elementary: "Tiny things aren't particles — they're patterns of waves.",
+      abi: "Schrödinger gave quantum theory a beautiful equation. Instead of 'a particle's position changes by force times time', the rule became 'a wave wiggles in a special shape, and only certain shapes are allowed'. The allowed shapes — 'eigenstates' — explain why atoms have discrete energy levels and why chemistry works at all. Particles are clouds of possibility until observed.",
+      phd: "The time-independent Schrödinger equation Ĥψ = Eψ, with Ĥ = −(ℏ²/2m)∇² + V, is a Sturm–Liouville eigenvalue problem on a Hilbert space. Schrödinger's series of four Annalen papers derives it from a Hamilton–Jacobi variational principle, recovers the hydrogen spectrum, and treats the harmonic oscillator and rigid rotor — unifying two seemingly disjoint quantum formalisms into one."
+    },
+    aha: "Before observation, quantum objects genuinely exist as smeared clouds of probability, not points. Schrödinger's cat — alive and dead at once — was invented to show how absurd this seemed. A century on, we routinely build quantum computers that exploit exactly this absurdity to outperform any classical machine.",
+    citation: "Schrödinger, E. (1926). Quantisierung als Eigenwertproblem. *Annalen der Physik*, 384(4), 361–376 [and four follow-ups in the same volume]."
+  },
+  {
+    id: "dirac1928",
+    title: "The Quantum Theory of the Electron",
+    titleShort: "The Quantum Theory of the Electron",
+    authors: ["Paul A. M. Dirac"],
+    year: 1928,
+    fields: ["physics"],
+    era: "1900s",
+    importance: "foundational",
+    pdf: "https://royalsocietypublishing.org/doi/pdf/10.1098/rspa.1928.0023",
+    published: "Proceedings of the Royal Society A, 117, 610–624",
+    language: "English",
+    summaries: {
+      elementary: "Special relativity + quantum mechanics = antimatter.",
+      abi: "Electrons must obey both quantum rules and Einstein's relativity. Dirac showed the only way to make both consistent is to write a new equation. The equation predicted a particle with the same mass as the electron but opposite charge. When the positron was found four years later, it was the first particle of antimatter ever seen — and 'empty space' was never empty again.",
+      phd: "Linearising √(p²c²+m²c⁴) with 4×4 spinor matrices, Dirac obtained (iγ^μ∂_μ − m)ψ = 0. The equation yields spin-½, the electron's magnetic moment g = 2, and predicts the positron as a hole in the negative-energy Dirac sea. With QED (Feynman, Schwinger, Tomonaga, 1948), it is the prototype for every relativistic quantum field theory since."
+    },
+    aha: "Dirac's 'sea' of negative-energy states was originally a mathematical trick. Today we know it's literally true: empty space is fizzing with virtual particle-antiparticle pairs popping in and out of existence. The Casimir effect, Hawking radiation, and possibly dark energy trace back to Dirac's sea.",
+    citation: "Dirac, P. A. M. (1928). The quantum theory of the electron. *Proceedings of the Royal Society A*, 117(778), 610–624."
+  },
+  {
+    id: "darwin1859",
+    title: "On the Origin of Species by Means of Natural Selection",
+    titleShort: "On the Origin of Species",
+    authors: ["Charles Darwin"],
+    year: 1859,
+    fields: ["biology"],
+    era: "1800s",
+    importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/2009/2009-0.txt",
+    published: "John Murray, London",
+    language: "English",
+    summaries: {
+      elementary: "You are a modified worm. No designer, no plan — just differential survival over four billion years.",
+      abi: "Why are there so many kinds of life, each beautifully fitted to where it lives? Darwin argued that small random changes appear in every generation; the ones that help survive get passed on more; over deep time this produces every species, including humans. A simple idea that ended an ancient debate — and triggered a war between science and religion that isn't over.",
+      phd: "Combining the Malthusian geometric-ratio argument with observations from breeding, biogeography and palaeontology, Darwin formulates descent with modification through natural selection: heritable variation, competition, differential reproduction. Wallace arrived at the same idea independently (1858). Modern evolutionary biology — population genetics (Fisher, Haldane, Wright), neutral theory (Kimura), evo-devo — refines rather than overturns the original claim."
+    },
+    aha: "Your eye, your immune system, your brain's circuits — every complex thing in biology is the result of mindless variation + selection. There is no blueprint, no forward plan. The same algorithm runs computer optimisation, language-model training and antibiotic resistance in bacteria.",
+    citation: "Darwin, C. (1859). *On the Origin of Species by Means of Natural Selection, or the Preservation of Favoured Races in the Struggle for Life*. London: John Murray."
+  },
+  {
+    id: "mendel1866",
+    title: "Versuche über Pflanzenhybriden",
+    titleShort: "Experiments on Plant Hybridisation",
+    authors: ["Gregor Mendel"],
+    year: 1866,
+    fields: ["biology"],
+    era: "1800s",
+    importance: "foundational",
+    pdf: "https://www.esp.org/foundations/genetics/classical/mendel.pdf",
+    published: "Verhandlungen des naturforschenden Vereines in Brünn, 4, 3–47",
+    language: "German",
+    summaries: {
+      elementary: "Heredity is digital, not analog. Information comes in packets that don't blend.",
+      abi: "By counting thousands of pea plants, Mendel discovered that traits skip generations in precise numerical ratios: 3-to-1 for one trait, 9-to-3-to-3-to-1 for two. The simplest explanation: each parent contributes a 'factor' (what we now call a gene) and some are dominant over others. The paper was ignored for 34 years before being rediscovered in 1900.",
+      phd: "Mendel's monohybrid (3:1) and dihybrid (9:3:3:1) ratios, derived from 28,000+ pea crosses with explicit statistical counts, established the laws of segregation and independent assortment. The particulate (non-blending) nature of inheritance is incompatible with the dominant blending theories of his era (Darwin included) and prefigures the chromosomal basis (Sutton, Boveri, 1902) and the molecular gene (Watson–Crick, 1953)."
+    },
+    aha: "Mendel found the bit. Inheritance is discrete — long before anyone knew about atoms, electrons or transistors. Every genome sequenced today is just a very long Mendel string of A, C, G, T.",
+    citation: "Mendel, G. (1866). Versuche über Pflanzenhybriden. *Verhandlungen des naturforschenden Vereines in Brünn*, 4, 3–47."
+  },
+  {
+    id: "watsoncrick1953",
+    title: "Molecular Structure of Nucleic Acids: A Structure for Deoxyribose Nucleic Acid",
+    titleShort: "Molecular Structure of Nucleic Acids",
+    authors: ["James D. Watson", "Francis H. C. Crick"],
+    year: 1953,
+    fields: ["biology"],
+    era: "1950s",
+    importance: "foundational",
+    pdf: "https://www.nature.com/articles/171737a0",
+    published: "Nature, 171, 737–738",
+    language: "English",
+    summaries: {
+      elementary: "DNA is a twisted ladder, and its rungs are a code for life.",
+      abi: "Watson and Crick showed that DNA has the shape of a double helix: two long strands twisted around each other, held together by pairs of 'letters' (A with T, C with G). Because each strand can rebuild the other, the molecule is a perfect recipe copier. The secret of life turned out to be the shape of a single molecule.",
+      phd: "Modelling X-ray diffraction data (notably Franklin's Photo 51 and Wilkins' measurements), the authors propose an antiparallel double helix with 3.4 Å base-pair spacing and 10.4 bp per turn. The A–T and G–C complementarity explains Chargaff's rules and provides the immediate mechanism for semiconservative replication (Meselson–Stahl, 1958). The model is the foundation of molecular biology and the central dogma (Crick, 1958)."
+    },
+    aha: "Life is a self-copying message. The shape of the molecule IS the copying mechanism — split the strands, each one rebuilds its partner. Every virus, every bacterium, every cell in your body is running this exact copying algorithm every time it divides.",
+    citation: "Watson, J. D., & Crick, F. H. C. (1953). Molecular structure of nucleic acids: A structure for deoxyribose nucleic acid. *Nature*, 171(4356), 737–738."
+  },
+  {
+    id: "hodgkinhuxley1952",
+    title: "A Quantitative Description of Membrane Current and Its Application to Conduction and Excitation in Nerve",
+    titleShort: "A Quantitative Description of the Nerve Action Potential",
+    authors: ["Alan L. Hodgkin", "Andrew F. Huxley"],
+    year: 1952,
+    fields: ["neuroscience"],
+    era: "1950s",
+    importance: "foundational",
+    pdf: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1391813/",
+    published: "Journal of Physiology, 117(4), 500–544",
+    language: "English",
+    summaries: {
+      elementary: "Your thoughts are four equations.",
+      abi: "How does a nerve 'fire'? Hodgkin and Huxley stuck electrodes inside a giant squid axon (a nerve fibre big enough to poke) and measured the electrical currents that race down it. They wrote four equations that predict, with eerie accuracy, how a thought becomes an electrical pulse. Every neuron model today is a refinement of theirs.",
+      phd: "By voltage-clamping the squid giant axon, the authors measured Na⁺ and K⁺ currents as functions of voltage and time, and fit them with four coupled ODEs (the HH model). The model reproduces the action potential's threshold, refractory period, propagation velocity and accommodation. Nobel Prize 1963; every subsequent ion-channel kinetic model — for cardiac arrhythmia, anaesthesia, deep-brain stimulation — refines it."
+    },
+    aha: "A thought is just an electrical wave moving down a membrane at ~100 m/s. Hodgkin and Huxley cracked this in 1952 — before computers could solve their own equations. Now those same equations run on the chips of every deep-brain stimulator, cochlear implant and epilepsy detector.",
+    citation: "Hodgkin, A. L., & Huxley, A. F. (1952). A quantitative description of membrane current and its application to conduction and excitation in nerve. *The Journal of Physiology*, 117(4), 500–544."
+  },
+  {
+    id: "hubelwiesel1959",
+    title: "Receptive Fields of Single Neurones in the Cat's Striate Cortex",
+    titleShort: "Receptive Fields in the Cat Visual Cortex",
+    authors: ["David H. Hubel", "Torsten N. Wiesel"],
+    year: 1959,
+    fields: ["neuroscience"],
+    era: "1950s",
+    importance: "foundational",
+    pdf: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1363130/",
+    published: "Journal of Physiology, 148, 574–591",
+    language: "English",
+    summaries: {
+      elementary: "There is no image in your brain — only feature detectors that reconstruct one from hints.",
+      abi: "Hubel and Wiesel slid tiny electrodes into a cat's brain and showed it different patterns of light. They discovered that specific brain cells fire only when they see a particular thing — a slanted line at a particular angle, a moving dot, a corner. Each cell sees only a tiny piece of the world, but together they build everything you see.",
+      phd: "Microelectrode recordings in V1, V2, V4 and IT identified simple cells with oriented edge-detector receptive fields, then progressively more complex cells responding to increasingly abstract features. The work established the columnar organisation of cortex (ocular dominance and orientation columns), the importance of critical periods, and a hierarchy of feature detectors that seeded deep convolutional networks (Fukushima, LeCun) three decades later."
+    },
+    aha: "Every deep-learning vision system — from AlexNet to image generators — is a digital echo of Hubel-Wiesel's hierarchy of feature detectors. They found in cat brain what computer scientists would independently reinvent: layers of edge → shape → object detectors. The cortex gave us the architecture of AI.",
+    citation: "Hubel, D. H., & Wiesel, T. N. (1959). Receptive fields of single neurones in the cat's striate cortex. *The Journal of Physiology*, 148(3), 574–591."
+  },
+  {
+    id: "okeefe1971",
+    title: "The Hippocampus as a Cognitive Map",
+    titleShort: "The Hippocampus as a Cognitive Map",
+    authors: ["John O'Keefe", "Lynn Nadel"],
+    year: 1978,
+    fields: ["neuroscience"],
+    era: "1970s",
+    importance: "foundational",
+    pdf: "https://cogsci.ucsd.edu/~pineda/COGS260/readings/O'KeefeNadel1978.pdf",
+    published: "Oxford University Press (book, drawn from O'Keefe & Dostrovsky 1971)",
+    language: "English",
+    summaries: {
+      elementary: "Your brain contains a real, physical map of where you are.",
+      abi: "By recording from rat brains, John O'Keefe discovered cells that fire only when the rat is in a particular place — a different cell for each spot. The brain, it turns out, doesn't just process senses; it physically maps the space around you. The Mosers' 2005 grid cells complete the picture: hexagonal, GPS-like neurons that tile the world.",
+      phd: "O'Keefe & Dostrovsky (1971) identified place cells in rat CA1 with location-specific firing fields; the 1978 book formalises the cognitive-map hypothesis. Moser grid cells (2005) in medial entorhinal cortex tessellate space with a hexagonal lattice at multiple scales. Together: the foundation of spatial cognition, episodic memory theories, and navigational algorithms in robotics and SLAM. Nobel Prize 2014."
+    },
+    aha: "You have a real GPS in your head. Damage it (early Alzheimer's) and you can get lost in your own living room. The hippocampus — the seat of memory — is also the seat of place. Memory and navigation share the same circuit.",
+    citation: "O'Keefe, J., & Nadel, L. (1978). *The Hippocampus as a Cognitive Map*. Oxford: Clarendon Press. [Built on O'Keefe, J., & Dostrovsky, J. (1971). *Brain Research*, 34, 171–175.]"
+  },
+  {
+    id: "asch1956",
+    title: "Studies of Independence and Conformity: A Minority of One Against a Unanimous Majority",
+    titleShort: "Studies of Independence and Conformity",
+    authors: ["Solomon E. Asch"],
+    year: 1956,
+    fields: ["psychology"],
+    era: "1950s",
+    importance: "landmark",
+    pdf: "https://www.jstor.org/stable/2359234",
+    published: "Psychological Monographs, 70(9), 1–70",
+    language: "English",
+    summaries: {
+      elementary: "Even when you can clearly see the right answer, you might say the wrong one because everyone else does.",
+      abi: "Asch asked people to compare the lengths of simple lines. Then he put them in a group where everyone else — secretly told to lie — gave the same wrong answer. About a third of the time, the real participant denied their own eyes to agree with the group. Conformity is stronger than we like to admit — and we deny this too.",
+      phd: "In 12 trials of unambiguous perceptual judgement, with 7 confederates and 1 naïve participant, 75% of participants conformed at least once and 37% of critical responses were conforming — against a baseline difference-blindness rate of under 1%. The findings refute the prevailing view (Allport) that group pressure is weak on objective tasks, and anchor modern normative/informational conformity theory (Deutsch & Gerard; Bond & Smith's cross-cultural replications show collectivist cultures conform even more)."
+    },
+    aha: "One dissenting voice can collapse a group's conformity by 75%. Asch's own follow-ups showed: just one ally is enough to break the spell. This is why whistleblowers matter — and why a lone objector can topple a mob judgement.",
+    citation: "Asch, S. E. (1956). Studies of independence and conformity: A minority of one against a unanimous majority. *Psychological Monographs: General and Applied*, 70(9), 1–70."
+  },
+  {
+    id: "milgram1963",
+    title: "Behavioral Study of Obedience",
+    titleShort: "Behavioral Study of Obedience",
+    authors: ["Stanley Milgram"],
+    year: 1963,
+    fields: ["psychology"],
+    era: "1960s",
+    importance: "landmark",
+    pdf: "https://www.amrep.org/wp-content/uploads/2016/06/milgram-1963.pdf",
+    published: "Journal of Abnormal and Social Psychology, 67(4), 371–378",
+    language: "English",
+    summaries: {
+      elementary: "If a man in a lab coat tells you to hurt someone, you probably will.",
+      abi: "Milgram's volunteers thought they were taking part in a memory study. They were told to give an electric shock to a learner in another room every time they got an answer wrong. The shocks (fake) went up to lethal levels. 65% of ordinary adults went all the way to the maximum, because an authority figure told them to. The study reshaped how we think about conscience.",
+      phd: "Using a deception paradigm with 40 male participants, Milgram found 65% delivered the maximum 450 V shock under instruction. Variations showed proximity and physical presence of the victim reduce obedience, peer rebellion abolishes it, bureaucratic context maximises it. Founded the empirical study of destructive obedience, informed the agentic-state theory, and led directly to the Belmont Report (1979) and modern IRB ethics boards."
+    },
+    aha: "Most of us think we would refuse. The data says otherwise. The 'banality of evil' — Hannah Arendt's phrase — was given experimental proof here. Authority + bureaucracy + distance = a recipe that creates torturers out of ordinary people.",
+    citation: "Milgram, S. (1963). Behavioral study of obedience. *Journal of Abnormal and Social Psychology*, 67(4), 371–378."
+  },
+  {
+    id: "kahnemantversky1979",
+    title: "Prospect Theory: An Analysis of Decision under Risk",
+    titleShort: "Prospect Theory",
+    authors: ["Daniel Kahneman", "Amos Tversky"],
+    year: 1979,
+    fields: ["psychology", "economics"],
+    era: "1970s",
+    importance: "foundational",
+    pdf: "https://web.archive.org/web/20170513175732/http://www.cmu.edu/dietrich/sds/docs/loewenstein/PDFs/KahnemanTversky.pdf",
+    published: "Econometrica, 47(2), 263–292",
+    language: "English",
+    summaries: {
+      elementary: "Losing $100 hurts about 2.25× more than winning $100 feels good.",
+      abi: "Economists had assumed humans are rational calculators. Kahneman and Tversky showed that two people faced with the exact same numbers can pick opposite options — because we feel losses roughly twice as hard as we feel gains of the same size. We also overweight tiny chances and underweight large ones. This is why lotteries sell and insurance companies thrive.",
+      phd: "Replacing expected utility with a value function concave above and convex below the reference point (loss aversion λ ≈ 2.25), and a probability-weighting function that overweights small p and underweights large p, the authors reproduce the Allais paradox, risk-aversion for gains / risk-seeking for losses, the certainty and reflection effects, and framing effects. Foundation of behavioural economics (Thaler, Nobel 2017); extended by cumulative prospect theory (1992) and salience theory."
+    },
+    aha: "Every nudge, every choice architecture, every 'default option' you encounter online (auto-renew, pre-checked boxes) exploits these quirks. Kahneman and Tversky didn't just describe human irrationality — they gave marketers and policymakers the exact playbook for exploiting it.",
+    citation: "Kahneman, D., & Tversky, A. (1979). Prospect theory: An analysis of decision under risk. *Econometrica*, 47(2), 263–292."
+  },
+  {
+    id: "nash1950",
+    title: "Equilibrium Points in N-Person Games",
+    titleShort: "Equilibrium Points in N-Person Games",
+    authors: ["John F. Nash"],
+    year: 1950,
+    fields: ["economics", "mathematics"],
+    era: "1950s",
+    importance: "foundational",
+    pdf: "https://www.pnas.org/doi/pdf/10.1073/pnas.36.1.48",
+    published: "Proceedings of the National Academy of Sciences, 36(1), 48–49",
+    language: "English",
+    summaries: {
+      elementary: "In any game with selfish players, there is always a state where no one wants to change alone.",
+      abi: "Before Nash, game theory (invented by von Neumann) only worked for two-player zero-sum games — like chess. Nash proved that every game with any number of players, each pursuing their own payoff, has at least one stable outcome: a 'Nash equilibrium' where no one benefits from changing only their own move. This changed economics, biology, AI and diplomacy.",
+      phd: "Using Kakutani's fixed-point theorem, Nash proves that every finite n-player strategic-form game with continuous payoff functions on compact strategy sets has at least one mixed-strategy equilibrium point. Generalises von Neumann's minimax theorem; foundation of non-cooperative game theory, mechanism design, auction theory (Vickrey, Myerson), evolutionary stable strategies (Maynard Smith), and the price of anarchy in algorithmic game theory. Nobel Prize 1994."
+    },
+    aha: "Traffic is a Nash equilibrium — every driver picking their own best route produces congestion for everyone. This is why adding lanes often makes traffic worse. The tragedy of the commons is a Nash equilibrium. Game theory is the hidden math of every bad incentive you've ever cursed.",
+    citation: "Nash, J. F. (1950). Equilibrium points in n-person games. *Proceedings of the National Academy of Sciences*, 36(1), 48–49."
+  },
+  {
+    id: "arrow1951",
+    title: "A Difficulty in the Concept of Social Welfare",
+    titleShort: "A Difficulty in the Concept of Social Welfare",
+    authors: ["Kenneth J. Arrow"],
+    year: 1951,
+    fields: ["economics", "philosophy"],
+    era: "1950s",
+    importance: "foundational",
+    pdf: "https://cowles.yale.edu/sites/default/files/2022-03/s-0012.pdf",
+    published: "Journal of Political Economy, 58(4), 328–346",
+    language: "English",
+    summaries: {
+      elementary: "There is no perfect way to add up everyone's preferences into one decision for everyone.",
+      abi: "Democracy seems simple: count the votes, pick the most popular. Arrow showed that any voting rule with more than two options will fail at least one of these basic fairness rules: respect everyone's ranking, treat options equally, give the winner the most votes, not be bossed by one person. So every voting system is, in some way, unfair. Nobel Prize 1972.",
+      phd: "Arrow's Impossibility Theorem: for n ≥ 3 alternatives and m ≥ 2 individuals with strict preferences, no social welfare function can simultaneously satisfy the Pareto principle, independence of irrelevant alternatives (IIA), non-dictatorship, unrestricted domain and transitivity. The result dissolves the apparent consensus of utilitarianism and majority rule, spawning social choice theory (Sen, Gibbard–Satterthwaite), mechanism design and computational social choice (Conitzer, Procaccia)."
+    },
+    aha: "Approval voting, ranked-choice voting, score voting, quadratic voting — every proposed 'better' voting system is a different way to dodge Arrow's impossibility. You can't make voting fair; you can only choose which unfairness to live with.",
+    citation: "Arrow, K. J. (1951). A difficulty in the concept of social welfare. *Journal of Political Economy*, 58(4), 328–346."
+  },
+  {
+    id: "chomsky1957",
+    title: "Syntactic Structures",
+    titleShort: "Syntactic Structures",
+    authors: ["Noam Chomsky"],
+    year: 1957,
+    fields: ["linguistics"],
+    era: "1950s",
+    importance: "foundational",
+    pdf: "https://www.scribd.com/document/384530687/Chomsky-Syntactic-Structures-1957-pdf",
+    published: "Mouton, The Hague",
+    language: "English",
+    summaries: {
+      elementary: "A 4-year-old can say sentences they've never heard before — language can't be learned by imitation alone.",
+      abi: "Before Chomsky, language was seen as pure habit — children imitate their parents. He argued that the grammar of any human language follows hidden rules, that all human languages share the same deep rules, and that children are born knowing the shape of grammar. The book revived the science of linguistics and reframed the mind as a rule-using organ.",
+      phd: "Using finite-state and phrase-structure grammars as a hierarchy (regular ⊊ context-free ⊊ context-sensitive ⊊ unrestricted), Chomsky showed finite-state grammars cannot generate natural language (pumping-lemma arguments on auxiliary-verb constructions). Context-free phrase-structure grammars with rewrite rules generate deep and surface structure; transformational rules map one to the other. The book inaugurates generative grammar and the formal-language hierarchy now central to compilers and NLP."
+    },
+    aha: "Every chatbot you talk to (including the one writing this) is the partial vindication of Chomsky's claim: language has deep structural patterns that pure learning from text eventually captures. The 'innate grammar' debate became 'how much prior structure is needed for language learning' — and the answer turned out to be a lot.",
+    citation: "Chomsky, N. (1957). *Syntactic Structures*. The Hague: Mouton."
+  },
+  {
+    id: "gettier1963",
+    title: "Is Justified True Belief Knowledge?",
+    titleShort: "Is Justified True Belief Knowledge?",
+    authors: ["Edmund L. Gettier"],
+    year: 1963,
+    fields: ["philosophy"],
+    era: "1960s",
+    importance: "landmark",
+    pdf: "https://www.jstor.org/stable/2024255",
+    published: "Analysis, 23(6), 121–123",
+    language: "English",
+    summaries: {
+      elementary: "You can have a true belief, supported by good reasons, and STILL not really know.",
+      abi: "For over 2,000 years, philosophers agreed that knowledge = true belief + good reason. In just three pages, Gettier gave two tiny stories where every part of that definition is met, and yet we don't feel the person truly knows. The paper broke a definition everyone had stopped questioning. Epistemology has been trying to fix it ever since.",
+      phd: "Gettier constructs two counterexamples to the justified-true-belief (JTB) analysis: a belief justified by a false lemma that turns out true; and a belief formed by justified inference from a justified false premise. The examples show that justification is not truth-conducive enough to guarantee knowledge. Triggered an industry: epistemic luck (Nozick's sensitivity, Sosa's virtue epistemology), the fourth condition (Goldman's no-false-lemmas), safety, and the contemporary modal turn in epistemology."
+    },
+    aha: "Gettier's paper is two and a half pages long. It broke a definition philosophers had agreed on for 2,000 years. The shortest paper in this list is one of the most devastating — and no proposed 'fourth condition' has been universally accepted.",
+    citation: "Gettier, E. L. (1963). Is justified true belief knowledge? *Analysis*, 23(6), 121–123."
+  },
+  {
+    id: "kuhn1962",
+    title: "The Structure of Scientific Revolutions",
+    titleShort: "The Structure of Scientific Revolutions",
+    authors: ["Thomas S. Kuhn"],
+    year: 1962,
+    fields: ["philosophy", "history"],
+    era: "1960s",
+    importance: "foundational",
+    pdf: "https://www.lpsa.swarthmore.edu/PrimitiveMind/Books_files/Kuhn_Structure_of_Scientific_Revolutions.pdf",
+    published: "University of Chicago Press",
+    language: "English",
+    summaries: {
+      elementary: "Science doesn't just add to what we know — every so often it throws the whole picture out and starts over.",
+      abi: "Kuhn argued that most of the time scientists do 'normal' puzzle-solving within an accepted framework (a 'paradigm'). But every so often the puzzles pile up and the framework cracks; a new one takes over, and the old rules look suddenly wrong. This is what a 'scientific revolution' is — and not everyone realises when it's happening, including the scientists.",
+      phd: "Kuhn's cyclical model — pre-paradigm → normal science → anomaly → crisis → revolution → new paradigm — and the incommensurability thesis (successor paradigms render core terms, exemplars and problem fields semantically discontinuous with their predecessors) reframe science as a historical, communal, value-laden enterprise rather than linear accumulation of truths. Foundation of philosophy of science (Lakatos, Feyerabend), science-and-technology studies, and sociology of scientific knowledge."
+    },
+    aha: "Modern Kuhnian thinkers note that 'AI' may be in a pre-paradigmatic phase — different schools (symbolic, connectionist, Bayesian, hybrid) compete without a shared framework. We may be living through one of Kuhn's scientific revolutions right now.",
+    citation: "Kuhn, T. S. (1962). *The Structure of Scientific Revolutions*. Chicago: University of Chicago Press."
+  },
+  {
+    id: "diffiehellman1976",
+    title: "New Directions in Cryptography",
+    titleShort: "New Directions in Cryptography",
+    authors: ["Whitfield Diffie", "Martin E. Hellman"],
+    year: 1976,
+    fields: ["computer-science", "mathematics"],
+    era: "1970s",
+    importance: "foundational",
+    pdf: "https://www-ee.stanford.edu/~hellman/publications/31.pdf",
+    published: "IEEE Transactions on Information Theory, 22(6), 644–654",
+    language: "English",
+    summaries: {
+      elementary: "Two people who have never met can create a secret in public that no eavesdropper can't crack.",
+      abi: "Before 1976, if Alice wanted to send Bob a coded message, they had to agree on a key in advance — and getting that key to Bob safely was the hard part. Diffie and Hellman showed a trick: Alice and Bob each shout a number publicly, do a bit of math, and end up with the same secret — without anyone listening being able to figure it out. This is the foundation of secure internet shopping, banking and messaging.",
+      phd: "The paper introduces public-key cryptography: a public encryption function E and a private decryption function D such that D(E(m)) = m and computing D from E is computationally infeasible. The Diffie–Hellman key exchange is based on the discrete-logarithm problem in a cyclic group (security reduces to the gap-DH assumption) and Merkle's puzzles as an alternative. RSA (1978) and elliptic-curve cryptography (Miller, Koblitz, 1985) operationalise the paradigm; TLS, SSH and end-to-end messaging rest on it. Turing Award 2015."
+    },
+    aha: "Every time you see a padlock in your browser, every credit-card transaction, every WhatsApp message, every Bitcoin wallet — it's Diffie-Hellman (or its descendants) under the hood. Two strangers can now agree on a secret across 10,000 kilometres of hostile networks. That's an honest-to-goodness magic trick.",
+    citation: "Diffie, W., & Hellman, M. E. (1976). New directions in cryptography. *IEEE Transactions on Information Theory*, 22(6), 644–654."
+  },
+  {
+    id: "dijkstra1968",
+    title: "Go To Statement Considered Harmful",
+    titleShort: "Go To Statement Considered Harmful",
+    authors: ["Edsger W. Dijkstra"],
+    year: 1968,
+    fields: ["computer-science"],
+    era: "1960s",
+    importance: "landmark",
+    pdf: "https://www.cs.utexas.edu/~EWD/transcriptions/EWD02xx/EWD215.html",
+    published: "Communications of the ACM, 11(3), 147–148",
+    language: "English",
+    summaries: {
+      elementary: "Stop telling the computer where to jump — describe what you want, and let the language handle the order.",
+      abi: "Old programs were full of 'go to' instructions that jumped around like spaghetti. Dijkstra argued this makes programs almost impossible to understand — and that a sane human mind is bad at simulating arbitrary jumps. Instead, programmers should describe the structure of the problem with loops, conditions and subroutines. Modern programming is built on this idea.",
+      phd: "Dijkstra argues the unconstrained `goto` destroys the programmer's ability to construct a coordinate system (textual + dynamic indices) for describing program state, making correctness reasoning intractable. He invokes the Böhm–Jacopini theorem (1966) to show any flow chart can be expressed with sequence, selection and iteration alone. The letter seeded structured programming (Wirth: Pascal, Hoare: axiomatic semantics, Dijkstra: weakest-precondition calculus) and the entire discipline of software engineering. Turing Award 1972."
+    },
+    aha: "Dijkstra also wrote: 'simplicity is a great virtue but it requires hard work to achieve it.' He believed software should be a mathematical object — provably correct before you run it. Most programmers ignored him; a few (Knuth, Hoare) agreed; we live in the messy middle.",
+    citation: "Dijkstra, E. W. (1968). Go to statement considered harmful. *Communications of the ACM*, 11(3), 147–148."
+  },
+  {
+    id: "bernerslee1989",
+    title: "Information Management: A Proposal",
+    titleShort: "Information Management: A Proposal (The WWW Memo)",
+    authors: ["Tim Berners-Lee"],
+    year: 1989,
+    fields: ["computer-science"],
+    era: "1980s",
+    importance: "foundational",
+    pdf: "https://www.w3.org/History/1989/proposal.html",
+    published: "CERN internal proposal",
+    language: "English",
+    summaries: {
+      elementary: "What if every document on a computer network could be a clickable link to every other?",
+      abi: "Working at CERN, where thousands of physicists came and went, Berners-Lee proposed a 'web' of documents that anyone could read or edit, linked together so that information loss wouldn't end careers. He wrote the first browser, the first server, and the first web page. Three years later the World Wide Web was public; ten years later it had reshaped the world.",
+      phd: "The proposal formalises a distributed hypertext system with three components — a generic data format (HTML), a transfer protocol (HTTP) and a global naming scheme (URL/URI). Combined with the 1990 implementation of the first browser/editor and the 1993 release of source code, it bootstrapped a global open information space. The commitment to statelessness, linkability and content–presentation separation enabled scaling to billions of nodes and remains the substrate of nearly every modern application."
+    },
+    aha: "Berners-Lee proposed a better information system, then deliberately gave it away for free — refusing to patent or charge. Every trillion-dollar internet company (Google, Amazon, Meta, Netflix) rests on the gift he made to the world. He is the most consequential unmonetised act in business history.",
+    citation: "Berners-Lee, T. (1989). *Information Management: A Proposal*. CERN. [Documented in *Weaving the Web*, 1999.]"
+  },
+  {
+    id: "brinpage1998",
+    title: "The PageRank Citation Ranking: Bringing Order to the Web",
+    titleShort: "The PageRank Citation Ranking",
+    authors: ["Sergey Brin", "Lawrence Page"],
+    year: 1998,
+    fields: ["computer-science"],
+    era: "1990s",
+    importance: "foundational",
+    pdf: "https://snap.stanford.edu/class/cs224w-readings/Brin98ThePageRankCitationRanking.pdf",
+    published: "Stanford InfoLab Technical Report",
+    language: "English",
+    summaries: {
+      elementary: "A web page is important if other important pages link to it.",
+      abi: "How do you rank the entire web? Brin and Page turned the question into a vote: a link from page A to page B is a vote for B, and votes from important pages count for more. They compute this by letting a 'random surfer' wander the web forever, and ask — where does the surfer spend most of their time? This is PageRank, the idea that built Google.",
+      phd: "PageRank models a stochastic matrix of the web graph and computes its dominant eigenvector: PR(p) = (1 − d)/N + d · Σ_{q → p} PR(q)/L(q), with damping d ≈ 0.85. The random-surfer-with-teleport formulation guarantees convergence (Perron–Frobenius) and robustness to link spam. Combines with TF-IDF and anchor-text signals in early Google; remains foundational in graph-based ranking, citation analysis, recommender systems, and network centrality theory."
+    },
+    aha: "Google's founders did the math in a Stanford dorm room, then built a search engine on it. PageRank's logic — that importance is recursive — is now everywhere: it's how social networks rank posts, how Amazon ranks reviews, how Uber ranks drivers. One equation reshaped information itself.",
+    citation: "Brin, S., & Page, L. (1998). *The PageRank Citation Ranking: Bringing Order to the Web*. Stanford InfoLab Technical Report."
+  },
+  {
+    id: "penrose1965",
+    title: "Gravitational Collapse and Space-Time Singularities",
+    titleShort: "Gravitational Collapse and Space-Time Singularities",
+    authors: ["Roger Penrose"],
+    year: 1965,
+    fields: ["physics"],
+    era: "1960s",
+    importance: "foundational",
+    pdf: "https://www.sciencedirect.com/science/article/pii/0003491674906211",
+    published: "Physical Review Letters, 14(3), 57–59",
+    language: "English",
+    summaries: {
+      elementary: "Black holes are places where time literally ends.",
+      abi: "Einstein's equations of gravity allowed for stars so massive they collapse to a single point of infinite density. Most physicists hoped this would turn out to be a mathematical trick. Penrose proved it wasn't: under very general conditions, the collapse is real, and a 'singularity' — where time itself ends — must form. These are the black holes we now observe routinely.",
+      phd: "Using global methods on Lorentzian manifolds, Penrose proves the first singularity theorem: a spacetime (M, g) that is globally hyperbolic, contains a non-compact Cauchy surface, satisfies the null energy condition (R_{μν}k^μk^ν ≥ 0), and contains a closed trapped surface, must be geodesically incomplete. With Hawking's companion theorems (1970), this proves classical general relativity predicts singularities under physical conditions — motivating quantum gravity, Hawking radiation, BKL cosmology, and cosmic censorship. Nobel Prize 2020."
+    },
+    aha: "Penrose's theorem doesn't say 'maybe black holes exist' — it says under extremely general conditions, they MUST. The same paper later inspired his Penrose tiling (aperiodic tiles of two shapes, inspiring quasicrystals), his consciousness theory, and his work on cyclic cosmology. A half-century of fertile weirdness from one page of maths.",
+    citation: "Penrose, R. (1965). Gravitational collapse and space-time singularities. *Physical Review Letters*, 14(3), 57–59."
+  },
+  {
+    id: "doudnacharpentier2012",
+    title: "The New Frontier of Genome Engineering with CRISPR-Cas9",
+    titleShort: "The New Frontier of Genome Engineering with CRISPR-Cas9",
+    authors: ["Martin Jinek", "Krzysztof Chylinski", "Ines Fonfara", "Michael Hauer", "Jennifer A. Doudna", "Emmanuelle Charpentier"],
+    year: 2012,
+    fields: ["biology"],
+    era: "2010s",
+    importance: "foundational",
+    pdf: "https://www.science.org/doi/10.1126/science.1225829",
+    published: "Science, 337(6096), 816–821",
+    language: "English",
+    summaries: {
+      elementary: "We learned to cut and paste the text of life itself.",
+      abi: "Bacteria have a built-in antivirus: a system called CRISPR that cuts up the DNA of invaders. Doudna and Charpentier figured out how to reprogram this system — so that it cuts any DNA sequence you choose. Suddenly changing the genes of any living thing became cheap, fast and accurate. It has since transformed medicine, agriculture and biology.",
+      phd: "The paper demonstrates that the dual-tracrRNA:crRNA from *Streptococcus pyogenes* can be fused into a single-guide RNA (sgRNA) that directs Cas9 to introduce a site-specific double-strand break in any DNA sequence matching a 20 nt guide. Cleavage requires both the Cas9 HNH and RuvC nuclease domains and a protospacer-adjacent motif (NGG). The simplicity of the sgRNA design transformed genome editing: base editors, prime editors, epigenome editors and CRISPRa/CRISPRi all build on this architecture. Nobel Prize 2020."
+    },
+    aha: "The cost of editing a gene has dropped from millions of dollars to tens of dollars. Sickle-cell anaemia has its first one-shot cure. The gene-edited babies scandal in 2018, the first CRISPR therapies, the engineered malaria-resistant mosquitoes — all flow from this one paper.",
+    citation: "Jinek, M., Chylinski, K., Fonfara, I., Hauer, M., Doudna, J. A., & Charpentier, E. (2012). A programmable dual-RNA–guided DNA endonuclease in adaptive bacterial immunity. *Science*, 337(6096), 816–821."
+  },
+  {
+    id: "jumper2021",
+    title: "Highly Accurate Protein Structure Prediction with AlphaFold",
+    titleShort: "Highly Accurate Protein Structure Prediction with AlphaFold",
+    authors: ["John Jumper", "Richard Evans", "Alexander Pritzel", "Tim Green", "Michael Figurnov", "Olaf Ronneberger", "Demis Hassabis"],
+    year: 2021,
+    fields: ["biology", "computer-science"],
+    era: "2020s",
+    importance: "foundational",
+    pdf: "https://www.nature.com/articles/s41586-021-03819-2",
+    published: "Nature, 596, 583–589",
+    language: "English",
+    summaries: {
+      elementary: "An AI learned to read the recipe of a protein and predict the shape it folds into.",
+      abi: "For fifty years, predicting how a chain of amino acids folds into a 3-D protein shape was biology's grand challenge — both incredibly important (it controls almost all biology) and incredibly hard. AlphaFold solved it: an attention-based neural network trained on every known protein structure now predicts shapes at near-experimental accuracy. The AlphaFold database has predicted the structures of nearly every protein known to science — and DeepMind gave it away for free.",
+      phd: "AlphaFold2 combines an Evoformer block — jointly reasoning over a multiple sequence alignment (MSA) representation and a pair representation through axial attention, triangle multiplicative updates and outer-product mean — with a structure module that decodes 3-D coordinates via invariant frame updates and IPA. Trained on the PDB with auxiliary losses (FAPE, distogram, masked MSA), it achieved median GDT-TS ~92.4 in CASP14 — a step change in structural biology, biochemistry and drug discovery. Code and the ~200M-structure database released openly."
+    },
+    aha: "The 50-year 'protein folding problem' was cracked by an attention network — the same architecture behind modern language models. Biology and AI converge: a system trained to predict the next word in a sentence and one trained to predict the shape of life turn out to be deeply related. Nobel Prize for Chemistry 2024.",
+    citation: "Jumper, J., Evans, R., Pritzel, A., et al. (2021). Highly accurate protein structure prediction with AlphaFold. *Nature*, 596, 583–589."
+  },
+  {
+    id: "nakamoto2008",
+    title: "Bitcoin: A Peer-to-Peer Electronic Cash System",
+    titleShort: "Bitcoin: A Peer-to-Peer Electronic Cash System",
+    authors: ["Satoshi Nakamoto"],
+    year: 2008,
+    fields: ["computer-science", "economics"],
+    era: "2000s",
+    importance: "foundational",
+    pdf: "https://bitcoin.org/bitcoin.pdf",
+    published: "Self-published, distributed on a cryptography mailing list",
+    language: "English",
+    summaries: {
+      elementary: "Money doesn't need a bank. Math can do what banks do.",
+      abi: "Online money before Bitcoin needed a trusted company to keep the ledger. Nakamoto showed how to keep the ledger across thousands of computers at once: every transaction is broadcast, every computer checks every other, and a clever chain of cryptographic puzzles makes tampering infeasible. It is money whose rules are set by math, not by any institution. The pseudonymous author received the first Bitcoin transaction on the same day and has never been identified.",
+      phd: "The paper introduces a Byzantine-fault-tolerant consensus protocol (Nakamoto consensus): a probabilistic longest-chain rule over a PoW-weighted blocktree, combined with a UTXO transaction model, Merkle commitments, scarce supply enforced by difficulty adjustment (~2016 blocks to halve issuance), and a self-contained incentive structure funding security via block subsidies and fees. It solved the double-spend problem without a trusted central party and gave distributed consensus its first widely deployed solution to the Byzantine generals problem at scale."
+    },
+    aha: "Nakamoto solved a problem cryptographers had worked on for 30 years — and disappeared. Their nine-page paper triggered a trillion-dollar industry, the first nation-state-grade decentralised money, and a thousand failed imitators. Whoever wrote this paper might still be alive, walking among us, and known only as 'Satoshi'.",
+    citation: "Nakamoto, S. (2008). *Bitcoin: A Peer-to-Peer Electronic Cash System*. Self-published, 31 October 2008. [Identity remains pseudonymous.]"
+  },
+  {
+    id: "bayes1763",
+    title: "An Essay towards Solving a Problem in the Doctrine of Chances",
+    titleShort: "An Essay towards Solving a Problem in the Doctrine of Chances",
+    authors: ["Thomas Bayes"],
+    year: 1763,
+    fields: ["mathematics", "statistics"],
+    era: "1700s",
+    importance: "foundational",
+    pdf: "https://www.ias.ac.in/article/fulltext/reso/019/06/0554-0561",
+    published: "Philosophical Transactions of the Royal Society, 53, 370–418 (posthumous)",
+    language: "English",
+    summaries: {
+      elementary: "When you see new evidence, you should update how confident you are — and there's a precise rule for how.",
+      abi: "Bayes's rule is the maths of 'learning from experience'. Start with a belief, see new data, and update your belief by a precise formula. Two centuries later this single formula underlies spam filters, medical diagnosis, weather forecasts, scientific inference, and most of modern machine learning. Published posthumously by a friend who recognised its importance.",
+      phd: "Bayes' theorem: P(H | E) = P(E | H) · P(H) / P(E). The paper introduced conditional probability as we know it, the first statement of inverse probability, and a precursor to Bayesian inference. Laplace generalised it (1774), Jeffreys formalised non-informative priors (1939), and modern statistics uses it as the foundation of Bayesian decision theory, Bayesian neural networks (e.g. variational inference, MCMC, Hamiltonian Monte Carlo), and the dominant paradigm for inverse problems across science and ML."
+    },
+    aha: "You are a Bayesian. Every time you revise a belief after seeing new evidence, you're doing the math informally — sometimes badly. Spam filters that learn from your corrections, language models trained on next-token prediction, scientific theories updated after experiments — all are Bayes' theorem in different disguises. The simplest update rule turns out to be the foundation of learning itself.",
+    citation: "Bayes, T. (1763). An essay towards solving a problem in the doctrine of chances. *Philosophical Transactions of the Royal Society*, 53, 370–418. [Published posthumously; presented by Richard Price.]"
+  }
+];
+
+/* =========================================================================
+   Rendering & interaction
+   ========================================================================= */
+const FIELDS = [
+  "mathematics", "physics", "biology", "neuroscience",
+  "psychology", "economics", "philosophy", "history",
+  "linguistics", "computer-science", "statistics"
+];
+const ERAS = ["1700s", "1800s", "1900s", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"];
+
+const state = {
+  q: "",
+  field: "all",
+  era: "all",
+  sort: "default",
+  open: new Set()
+};
+
+const $ = (s, root=document) => root.querySelector(s);
+const $$ = (s, root=document) => Array.from(root.querySelectorAll(s));
+
+function uniq(arr){return [...new Set(arr)]}
+
+function fieldOf(p){ return p.fields[0] }
+
+function initFilters(){
+  const counts = {};
+  FIELDS.forEach(f => counts[f] = PAPERS.filter(p => p.fields.includes(f)).length);
+  const fieldRow = $("#field-filters");
+  FIELDS.forEach(f => {
+    const c = document.createElement("button");
+    c.className = "chip"; c.dataset.filter = "field"; c.dataset.value = f;
+    c.innerHTML = `${f.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase())}<span class="count">${counts[f]}</span>`;
+    fieldRow.appendChild(c);
+  });
+  const eraCounts = {};
+  ERAS.forEach(e => eraCounts[e] = PAPERS.filter(p => p.era === e).length);
+  const eraRow = $("#era-filters");
+  ERAS.forEach(e => {
+    if(eraCounts[e] === 0) return;
+    const c = document.createElement("button");
+    c.className = "chip"; c.dataset.filter = "era"; c.dataset.value = e;
+    c.innerHTML = `${e}<span class="count">${eraCounts[e]}</span>`;
+    eraRow.appendChild(c);
+  });
+}
+
+function fieldChipsUpdate(){
+  const c = $("#field-filters .chip[data-value='all'] .count");
+  if(c) c.textContent = PAPERS.filter(p => matchFilters(p, "all", "all", "")).length;
+}
+function eraChipsUpdate(){
+  const c = $("#era-filters .chip[data-value='all'] .count");
+  if(c) c.textContent = PAPERS.filter(p => matchFilters(p, "all", "all", "")).length;
+}
+
+function matchFilters(p, field, era, q){
+  if(field !== "all" && !p.fields.includes(field)) return false;
+  if(era !== "all" && p.era !== era) return false;
+  if(q){
+    const hay = (p.title + " " + p.titleShort + " " + p.authors.join(" ") + " " + p.summaries.elementary + " " + p.summaries.abi + " " + p.summaries.phd + " " + p.fields.join(" ") + " " + p.year).toLowerCase();
+    if(!hay.includes(q.toLowerCase())) return false;
+  }
+  return true;
+}
+
+function sortPapers(arr, mode){
+  const a = [...arr];
+  switch(mode){
+    case "year-asc": a.sort((x,y) => x.year - y.year); break;
+    case "year-desc": a.sort((x,y) => y.year - x.year); break;
+    case "title-asc": a.sort((x,y) => x.titleShort.localeCompare(y.titleShort)); break;
+    case "author-asc": a.sort((x,y) => x.authors[0].localeCompare(y.authors[0])); break;
+    default: break; // curated order
+  }
+  return a;
+}
+
+function escape(s){return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]))}
+
+function renderCards(){
+  const root = $("#cards");
+  const empty = $("#empty");
+  const filtered = PAPERS.filter(p => matchFilters(p, state.field, state.era, state.q));
+  const sorted = sortPapers(filtered, state.sort);
+
+  $("#visible-count").textContent = sorted.length;
+
+  if(sorted.length === 0){
+    root.innerHTML = "";
+    empty.hidden = false;
+    return;
+  }
+  empty.hidden = true;
+
+  root.innerHTML = sorted.map((p, i) => {
+    const open = state.open.has(p.id);
+    const idx = PAPERS.indexOf(p) + 1;
+    const tags = p.fields.map(f => `<span class="tag">${escape(f.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase()))}</span>`).join("");
+    return `
+      <article class="card ${open ? "open" : ""}" data-id="${escape(p.id)}">
+        <div class="card-head">
+          <span class="card-index">№ ${String(idx).padStart(2,"0")}</span>
+          <span class="card-year">${p.year}</span>
+        </div>
+        <div class="card-tags">${tags}</div>
+        <h2>${escape(p.titleShort)}</h2>
+        <div class="authors">${escape(p.authors.join(", "))}</div>
+
+        <div class="callout callout-ele">
+          <span class="callout-label">Elementary</span>
+          <div class="callout-text">${escape(p.summaries.elementary)}</div>
+        </div>
+        <div class="callout callout-aha">
+          <span class="callout-label">⚡ Aha</span>
+          <div class="callout-text">${escape(p.aha)}</div>
+        </div>
+
+        <div class="card-actions">
+          <button class="toggle" data-toggle="${escape(p.id)}">
+            <span>${open ? "Hide deeper levels" : "Abitur · PhD"}</span>
+            <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <a class="pdf" href="${escape(p.pdf)}" target="_blank" rel="noopener noreferrer" title="Read the original">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            PDF
+          </a>
+        </div>
+
+        <div class="details"><div>
+          <div class="summary-block">
+            <div class="level lvl-abi">
+              <span class="level-label">Abitur</span>
+              <div>${escape(p.summaries.abi)}</div>
+            </div>
+            <div class="level lvl-phd">
+              <span class="level-label">PhD</span>
+              <div>${escape(p.summaries.phd)}</div>
+            </div>
+            <div class="citation">${p.citation}</div>
+          </div>
+        </div></div>
+      </article>
+    `;
+  }).join("");
+
+  // bind toggle buttons
+  $$(".toggle", root).forEach(b => {
+    b.addEventListener("click", () => {
+      const id = b.dataset.toggle;
+      if(state.open.has(id)) state.open.delete(id); else state.open.add(id);
+      const card = b.closest(".card");
+      card.classList.toggle("open");
+      b.querySelector("span").textContent = card.classList.contains("open") ? "Hide deeper levels" : "Abitur · PhD summaries";
+    });
+  });
+}
+
+function updateStats(){
+  const yrs = PAPERS.map(p => p.year);
+  const allF = uniq(PAPERS.flatMap(p => p.fields));
+  $("#stat-total").textContent = PAPERS.length;
+  $("#stat-years").textContent = Math.max(...yrs) - Math.min(...yrs);
+  $("#stat-fields").textContent = allF.length;
+}
+
+function bindEvents(){
+  // search
+  const q = $("#q");
+  const clear = $("#clear");
+  q.addEventListener("input", () => {
+    state.q = q.value.trim();
+    clear.hidden = !state.q;
+    renderCards();
+  });
+  clear.addEventListener("click", () => {
+    q.value = ""; state.q = ""; clear.hidden = true; renderCards(); q.focus();
+  });
+
+  // chips (delegation)
+  document.addEventListener("click", e => {
+    const c = e.target.closest(".chip");
+    if(!c) return;
+    const which = c.dataset.filter;
+    if(which === "field" || which === "era"){
+      state[which] = c.dataset.value;
+      $$(`#${which}-filters .chip`).forEach(x => x.classList.toggle("active", x.dataset.value === c.dataset.value));
+      renderCards();
+    }
+  });
+
+  // sort
+  $("#sort").addEventListener("change", e => { state.sort = e.target.value; renderCards(); });
+
+  // reset
+  $("#reset").addEventListener("click", () => {
+    state.q = ""; state.field = "all"; state.era = "all"; state.sort = "default"; state.open.clear();
+    q.value = ""; clear.hidden = true;
+    $("#sort").value = "default";
+    $$(".chip").forEach(x => x.classList.toggle("active", x.dataset.value === "all"));
+    renderCards();
+  });
+
+  // theme
+  const tt = $("#theme-toggle");
+  const setTheme = (mode) => {
+    document.documentElement.classList.toggle("light", mode === "light");
+    try { localStorage.setItem("lom-theme", mode); } catch(_) {}
+  };
+  let savedTheme = null;
+  try { savedTheme = localStorage.getItem("lom-theme"); } catch(_) {}
+  if(savedTheme) setTheme(savedTheme);
+  tt.addEventListener("click", () => {
+    const isLight = document.documentElement.classList.contains("light");
+    setTheme(isLight ? "dark" : "light");
+  });
+
+  // keyboard
+  document.addEventListener("keydown", e => {
+    if(e.key === "/" && document.activeElement !== q){
+      e.preventDefault(); q.focus();
+    } else if(e.key === "Escape" && document.activeElement === q){
+      q.value = ""; state.q = ""; clear.hidden = true; renderCards(); q.blur();
+    }
+  });
+}
+
+initFilters();
+updateStats();
+bindEvents();
+renderCards();
+</script>
+</body>
+</html>
