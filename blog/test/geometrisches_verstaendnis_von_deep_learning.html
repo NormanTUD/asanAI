@@ -1,0 +1,2233 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geometrisches Verständnis von Deep Learning — Interaktiv</title>
+
+<!-- Plotly für 3D-Flächen und Statistik-Plots -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<!-- Temml für LaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.18/dist/temml.min.js"></script>
+
+<style>
+:root{
+  --bg:#070a12;
+  --bg2:#0d1222;
+  --panel:rgba(18,24,42,.72);
+  --panel2:rgba(26,33,56,.6);
+  --line:rgba(120,160,255,.18);
+  --txt:#dde6ff;
+  --dim:#8d9bc4;
+  --acc:#5ad1ff;
+  --acc2:#ff6ec7;
+  --acc3:#8affc1;
+  --warn:#ffd36e;
+  --bad:#ff6b6b;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 700px at 12% -5%, #16224a 0%, transparent 60%),
+    radial-gradient(1000px 600px at 95% 5%, #3a1140 0%, transparent 55%),
+    radial-gradient(900px 900px at 50% 110%, #07283a 0%, transparent 60%),
+    var(--bg);
+  color:var(--txt);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px 140px;position:relative;z-index:2}
+
+/* ---------- HERO ---------- */
+header.hero{padding:90px 0 40px;text-align:center}
+.kicker{letter-spacing:.42em;text-transform:uppercase;font-size:11px;color:var(--acc);opacity:.85}
+h1{font-size:clamp(34px,6vw,62px);line-height:1.05;margin:16px 0 10px;font-weight:800;
+  background:linear-gradient(100deg,#ffffff 10%,var(--acc) 42%,var(--acc2) 72%,var(--acc3) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--dim);max-width:760px;margin:0 auto;font-size:17px}
+.authors{margin-top:18px;font-size:13px;color:var(--dim);opacity:.8}
+
+/* ---------- PROGRESS ---------- */
+#progbar{position:fixed;top:0;left:0;height:3px;width:0%;z-index:50;
+  background:linear-gradient(90deg,var(--acc),var(--acc2),var(--acc3));box-shadow:0 0 14px var(--acc)}
+
+/* ---------- NAV ---------- */
+nav.toc{position:sticky;top:0;z-index:40;backdrop-filter:blur(14px);
+  background:rgba(7,10,18,.78);border-bottom:1px solid var(--line);margin:0 -22px 0;padding:10px 22px;
+  display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+nav.toc a{font-size:12px;color:var(--dim);text-decoration:none;padding:6px 11px;border-radius:99px;
+  border:1px solid transparent;transition:.2s;white-space:nowrap}
+nav.toc a:hover{color:#fff;border-color:var(--line);background:var(--panel2)}
+
+/* ---------- SECTION ---------- */
+section{margin:76px 0 0;scroll-margin-top:70px}
+.secnum{font-size:11px;letter-spacing:.3em;color:var(--acc2);text-transform:uppercase;margin-bottom:8px}
+h2{font-size:clamp(24px,3.6vw,36px);margin:0 0 14px;font-weight:750;letter-spacing:-.01em}
+h3{font-size:19px;margin:30px 0 10px;color:#fff;font-weight:650}
+p{color:#c3cde8;max-width:900px}
+.lead{font-size:17.5px;color:#d8e2ff}
+small.note{color:var(--dim);font-size:12.5px;display:block;margin-top:8px}
+
+/* ---------- CARD ---------- */
+.card{background:linear-gradient(160deg,var(--panel),rgba(12,16,30,.7));
+  border:1px solid var(--line);border-radius:20px;padding:22px;margin:22px 0;
+  box-shadow:0 24px 60px -26px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.05)}
+.card h4{margin:0 0 4px;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--acc)}
+.cardsub{color:var(--dim);font-size:13.5px;margin:0 0 16px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* ---------- CONTROLS ---------- */
+.ctrl{margin:12px 0}
+.ctrl label{display:flex;justify-content:space-between;font-size:12.5px;color:var(--dim);margin-bottom:5px}
+.ctrl label b{color:var(--acc);font-variant-numeric:tabular-nums;font-weight:600}
+input[type=range]{width:100%;-webkit-appearance:none;height:4px;border-radius:99px;
+  background:linear-gradient(90deg,var(--acc),var(--acc2));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:#fff;box-shadow:0 0 0 4px rgba(90,209,255,.22),0 2px 8px rgba(0,0,0,.6);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;background:#fff;
+  box-shadow:0 0 0 4px rgba(90,209,255,.22)}
+.btn{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:7px 14px;
+  border-radius:10px;font-size:12.5px;cursor:pointer;transition:.18s;font-family:inherit}
+.btn:hover{background:rgba(90,209,255,.16);border-color:var(--acc);color:#fff}
+.btn.on{background:linear-gradient(135deg,var(--acc),#2b8fd0);color:#041018;border-color:transparent;font-weight:650}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+canvas{display:block;width:100%;border-radius:14px;background:#060912;border:1px solid var(--line)}
+.readout{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12.5px;color:var(--acc3);
+  background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:10px;padding:10px 13px;margin-top:10px;
+  white-space:pre-wrap}
+.pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;letter-spacing:.05em;
+  border:1px solid var(--line);color:var(--dim);margin:3px 5px 3px 0}
+.pill.ok{color:#041a10;background:var(--acc3);border-color:transparent;font-weight:650}
+.pill.no{color:#1a0404;background:var(--bad);border-color:transparent;font-weight:650}
+.math{background:rgba(0,0,0,.28);border-left:2px solid var(--acc2);padding:12px 16px;border-radius:0 12px 12px 0;
+  margin:14px 0;overflow-x:auto}
+.keyidea{border-left:3px solid var(--acc3);background:linear-gradient(90deg,rgba(138,255,193,.09),transparent);
+  padding:14px 18px;border-radius:0 14px 14px 0;margin:18px 0}
+.keyidea b{color:var(--acc3)}
+.story{border-left:3px solid var(--warn);background:linear-gradient(90deg,rgba(255,211,110,.08),transparent);
+  padding:14px 18px;border-radius:0 14px 14px 0;margin:18px 0;font-size:15.5px}
+.story b{color:var(--warn)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--acc);font-weight:600;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase}
+td{color:#c3cde8;font-variant-numeric:tabular-nums}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin-top:10px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+footer{margin-top:90px;padding-top:26px;border-top:1px solid var(--line);color:var(--dim);font-size:12.5px;text-align:center}
+.flowchain{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin:16px 0}
+.flowbox{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:9px 14px;font-size:13px}
+.flowbox b{color:var(--acc)}
+.arrow{color:var(--acc2);font-size:18px}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div id="progbar"></div>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">Lei · Luo · Yau · Gu &nbsp;·&nbsp; arXiv:1805.10451</div>
+  <h1>Geometrisches Verständnis<br>von Deep Learning</h1>
+  <p class="sub">Warum funktioniert Deep Learning überhaupt? Dieses Paper gibt eine geometrische Antwort —
+  und zeigt zugleich eine harte Grenze: <i>Zu jedem Netz gibt es eine Form, die es niemals lernen kann.</i>
+  Alles hier ist zum Anfassen. Schieb die Regler, und die Mathematik erklärt sich selbst.</p>
+  <div class="authors">Interaktive Aufbereitung · nur Schulmathematik nötig · ca. 25 Min. Spielzeit</div>
+</header>
+
+<nav class="toc">
+  <a href="#motiv">0 · Die Frage</a>
+  <a href="#mani">1 · Mannigfaltigkeit</a>
+  <a href="#ae">2 · Autoencoder</a>
+  <a href="#apps">3 · Wozu?</a>
+  <a href="#relu">4 · ReLU = Faltkunst</a>
+  <a href="#cap">5 · Kapazität N(N)</a>
+  <a href="#diff">6 · Schwierigkeit N(ℝⁿ,Σ)</a>
+  <a href="#spiral">7 · Die Spirale</a>
+  <a href="#peano">8 · Der Satz</a>
+  <a href="#omt">9 · Transport</a>
+  <a href="#answer">10 · Die Antwort</a>
+</nav>
+
+<!-- ============================================================ 0 MOTIVATION -->
+<section id="motiv">
+  <div class="secnum">Teil 0 — Motivation</div>
+  <h2>Deep Learning funktioniert. Niemand weiß so recht, warum.</h2>
+  <p class="lead">Ein neuronales Netz sieht ein Bild mit 64×64 Pixeln. Das sind 4096 Zahlen — ein Punkt in einem
+  4096-dimensionalen Raum. Die Zahl der möglichen Bilder ist absurd groß: mehr als Atome im Universum, potenziert.
+  Trotzdem lernt ein Netz aus ein paar hunderttausend Beispielen zuverlässig, was ein Gesicht ist.
+  <b>Das sollte unmöglich sein.</b></p>
+
+  <div class="card">
+    <h4>Das Paradox zum Anfassen</h4>
+    <p class="cardsub">Links: zufällige Punkte im Bildraum. Rechts: echte Daten. Starte die Simulation.</p>
+    <canvas id="cvParadox" height="300"></canvas>
+    <div class="btnrow">
+      <button class="btn on" id="pMode0">Zufällige Bilder würfeln</button>
+      <button class="btn" id="pMode1">Echte Gesichter sammeln</button>
+    </div>
+    <div class="readout" id="paradoxOut"></div>
+    <small class="note">Zufälliges Rauschen füllt den Raum gleichmäßig. Echte Daten tun das nie — sie kleben an einer
+    dünnen, gekrümmten Fläche. Genau <i>diese</i> Beobachtung ist der Schlüssel des Papers.</small>
+  </div>
+
+  <div class="story">
+    <b>Die Mannigfaltigkeits-Annahme (manifold assumption).</b> Natürliche hochdimensionale Daten konzentrieren sich
+    nahe einer <i>niedrigdimensionalen, gekrümmten Fläche</i> im Datenraum. Ein Gesichtsfoto hat zwar 4096 Zahlen,
+    aber es wird nur von wenigen Dingen bestimmt: Gesichtsform (Gene), Blickwinkel, Beleuchtung, Ausdruck.
+    Das sind vielleicht 50 echte Freiheitsgrade — nicht 4096.
+  </div>
+
+  <div class="keyidea">
+    <b>Die These des Papers in einem Satz:</b> Deep Learning ist erfolgreich, weil es diese versteckte Fläche
+    (die <i>Mannigfaltigkeit</i>) findet, sie parametrisiert — und zusätzlich die Wahrscheinlichkeitsverteilung
+    darauf lernt. Alles andere ist Technik.
+  </div>
+
+  <h3>Was wir am Ende beantwortet haben werden</h3>
+  <div class="grid3">
+    <div class="card" style="margin:0">
+      <h4>Frage 1</h4>
+      <p style="font-size:14px;margin:0">Wie viel <b>kann</b> ein Netz mit fester Architektur überhaupt darstellen?
+      → Begriff <i>Rectified Linear Complexity</i> des Netzes, <span id="m-q1"></span>.</p>
+    </div>
+    <div class="card" style="margin:0">
+      <h4>Frage 2</h4>
+      <p style="font-size:14px;margin:0">Wie <b>schwer</b> ist eine gegebene Fläche zu lernen?
+      → Komplexität der Mannigfaltigkeit, <span id="m-q2"></span>.</p>
+    </div>
+    <div class="card" style="margin:0">
+      <h4>Frage 3</h4>
+      <p style="font-size:14px;margin:0">Wie <b>prüft</b> man, ob ein Netz eine Fläche lernen kann?
+      → Vergleich der beiden Zahlen. Und: es gibt immer ein Gegenbeispiel.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 1 MANIFOLD -->
+<section id="mani">
+  <div class="secnum">Teil 1 — Voraussetzung</div>
+  <h2>Was ist eine Mannigfaltigkeit?</h2>
+  <p class="lead">Eine Mannigfaltigkeit ist eine Form, die <i>von nahem</i> flach aussieht, auch wenn sie
+  global gekrümmt ist. Die Erdoberfläche ist 2-dimensional (Länge/Breite), liegt aber im 3D-Raum.
+  Eine Landkarte ist genau das, was das Paper eine <b>Karte (chart)</b> nennt.</p>
+
+  <div class="card">
+    <h4>Spiel 1 · Karte ↔ Fläche</h4>
+    <p class="cardsub">Ziehe die Regler. Links der flache <b>Parameterraum</b> (latent space, 2D),
+    rechts die daraus gebaute <b>Fläche</b> im 3D-Raum. Der rote Punkt zeigt die Entsprechung.</p>
+    <div class="grid2">
+      <div>
+        <canvas id="cvChart2D" height="320"></canvas>
+        <div class="legend"><span><i style="background:#5ad1ff"></i>Parameterraum ℱ (u,v)</span>
+        <span><i style="background:#ff6ec7"></i>aktueller Punkt</span></div>
+      </div>
+      <div id="plotSurf" style="height:320px;border-radius:14px;overflow:hidden;border:1px solid var(--line)"></div>
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div>
+        <div class="ctrl"><label>Parameter u <b id="lblU">0.50</b></label><input type="range" id="sU" min="0" max="1" step="0.01" value="0.5"></div>
+        <div class="ctrl"><label>Parameter v <b id="lblV">0.50</b></label><input type="range" id="sV" min="0" max="1" step="0.01" value="0.5"></div>
+      </div>
+      <div>
+        <div class="ctrl"><label>Krümmung der Fläche <b id="lblK">1.00</b></label><input type="range" id="sK" min="0" max="2.5" step="0.02" value="1"></div>
+        <div class="btnrow">
+          <button class="btn on" id="surfA">Beule (Disk-Topologie)</button>
+          <button class="btn" id="surfB">Welle</button>
+          <button class="btn" id="surfC">Sattel</button>
+        </div>
+      </div>
+    </div>
+    <div class="readout" id="chartOut"></div>
+  </div>
+
+  <h3>Die Formelsprache des Papers — entschlüsselt</h3>
+  <div class="math" id="m-chart"></div>
+  <p style="font-size:14.5px">Mehr steckt nicht dahinter: <span id="m-phi"></span> ist die <b>Kodierung</b>
+  (Fläche → flache Karte), <span id="m-psi"></span> die <b>Dekodierung</b> (Karte → Fläche).
+  <b>Homöomorph</b> heißt: stetig hin, stetig zurück, nichts wird zerrissen oder verklebt — Gummituch-Verformung.</p>
+
+  <div class="card">
+    <h4>Spiel 2 · Was heißt „homöomorph"?</h4>
+    <p class="cardsub">Eine Abbildung darf dehnen und stauchen — aber nicht falten. Erhöhe die Faltung und
+    beobachte, wann die Abbildung kaputtgeht.</p>
+    <canvas id="cvHomeo" height="260"></canvas>
+    <div class="ctrl"><label>Faltungsstärke <b id="lblFold">0.00</b></label><input type="range" id="sFold" min="0" max="1.6" step="0.01" value="0"></div>
+    <div class="readout" id="homeoOut"></div>
+  </div>
+
+  <div class="keyidea">
+    <b>Wichtige Konsequenz (Paper, Thm 4.12 Diskussion):</b> Weil der Encoder homöomorph sein <i>muss</i>,
+    kann ein Autoencoder nur Flächen lernen, die topologisch einer Scheibe entsprechen — also keine Kugel,
+    kein Donut, kein Henkel. Sonst nur <i>eine Karte</i> davon.
+  </div>
+</section>
+
+<!-- ============================================================ 2 AUTOENCODER -->
+<section id="ae">
+  <div class="secnum">Teil 2 — Die Maschine</div>
+  <h2>Der Autoencoder: Komprimieren und wiederherstellen</h2>
+  <p class="lead">Ein Autoencoder ist ein Netz, das seinen eigenen Input rekonstruieren soll — durch einen
+  <b>Flaschenhals</b> hindurch. Genau dieser Zwang erzeugt die Landkarte.</p>
+
+  <div class="flowchain">
+    <div class="flowbox">Eingabe <b>x ∈ 𝒳</b><br><small>hochdim.</small></div>
+    <span class="arrow">→</span>
+    <div class="flowbox">Encoder <b>φ<sub>θ</sub></b></div>
+    <span class="arrow">→</span>
+    <div class="flowbox">Code <b>z ∈ ℱ</b><br><small>niedrigdim.</small></div>
+    <span class="arrow">→</span>
+    <div class="flowbox">Decoder <b>ψ<sub>θ</sub></b></div>
+    <span class="arrow">→</span>
+    <div class="flowbox">Rekonstruktion <b>x̃</b></div>
+  </div>
+
+  <div class="math" id="m-loss"></div>
+
+  <div class="card">
+    <h4>Spiel 3 · Live-Autoencoder (3D-Kurve → 1D-Code → 3D)</h4>
+    <p class="cardsub">Hier trainiert ein echtes, kleines Netz im Browser. Die Daten liegen auf einer
+    gekrümmten Kurve im Raum. Drücke „Trainieren" und schau zu, wie die Rekonstruktion die Form findet.</p>
+    <div class="grid2">
+      <div>
+        <canvas id="cvAE" height="310"></canvas>
+        <div class="legend">
+          <span><i style="background:#5ad1ff"></i>Original Σ</span>
+          <span><i style="background:#ff6ec7"></i>Rekonstruktion Σ̃</span>
+          <span><i style="background:#8affc1"></i>Fehlerstrecken</span>
+        </div>
+      </div>
+      <div>
+        <canvas id="cvAEloss" height="140"></canvas>
+        <div class="ctrl"><label>Lernrate <b id="lblLR">0.030</b></label><input type="range" id="sLR" min="0.002" max="0.12" step="0.002" value="0.03"></div>
+        <div class="ctrl"><label>Breite der versteckten Schicht <b id="lblW">12</b></label><input type="range" id="sW" min="2" max="40" step="1" value="12"></div>
+        <div class="btnrow">
+          <button class="btn on" id="aeRun">▶ Trainieren</button>
+          <button class="btn" id="aeReset">↻ Neu initialisieren</button>
+          <button class="btn" id="aeShowCells">Zell-Zerlegung zeigen</button>
+        </div>
+        <div class="readout" id="aeOut"></div>
+      </div>
+    </div>
+    <small class="note">Beobachte: mit zu wenigen Neuronen bleibt die Rekonstruktion eine grobe, kantige Näherung —
+    das ist exakt die „stückweise lineare" Natur, die das ganze Paper durchzieht. Mit mehr Neuronen wird die
+    Zerlegung feiner und die Kurve glatter.</small>
+  </div>
+
+  <div class="keyidea">
+    <b>Die drei Bilder aus dem Paper (Abb. 2).</b> (a) Eingabe-Mannigfaltigkeit <span id="m-ea"></span>,
+    (b) latente Darstellung <span id="m-eb"></span>, (c) Rekonstruktion <span id="m-ec"></span>.
+    Im Idealfall ist <span id="m-id"></span> die Identität. In Wirklichkeit ist die Rekonstruktion immer nur
+    eine <i>stückweise lineare Approximation</i> — ein Polyeder statt einer glatten Fläche.
+  </div>
+
+  <h3>Warum ReLU-Netze immer Polyeder bauen</h3>
+  <p>Ein ReLU-Netz ist eine Verkettung aus affinen Abbildungen und der Funktion <span id="m-relu"></span>.
+  Jedes Neuron knickt den Raum entlang <i>einer Hyperebene</i>. Mehrere Neuronen zerschneiden den Raum in
+  <b>Zellen</b>; in jeder Zelle ist die Gesamtabbildung schlicht <i>linear</i>. Deshalb ist der Output immer
+  ein Polyeder — nie eine perfekt glatte Fläche.</p>
+</section>
+
+<!-- ============================================================ 3 APPLICATIONS -->
+<section id="apps">
+  <div class="secnum">Teil 3 — Welche Probleme werden gelöst?</div>
+  <h2>Was man mit einer gelernten Fläche anstellt</h2>
+  <p class="lead">Sobald das Netz die Mannigfaltigkeit kennt, werden zwei klassische Aufgaben plötzlich zu
+  reiner Geometrie.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h4>A · Entrauschen = Projektion</h4>
+      <p class="cardsub">Ein verrauschtes Bild <span id="m-pt"></span> liegt <i>neben</i> der Fläche.
+      Der nächstgelegene Punkt <b>p</b> auf der Fläche ist das saubere Bild. (Paper, Abb. 4)</p>
+      <canvas id="cvDenoise" height="300"></canvas>
+      <div class="ctrl"><label>Rauschstärke <b id="lblNoise">0.30</b></label><input type="range" id="sNoise" min="0" max="1" step="0.01" value="0.3"></div>
+      <div class="btnrow">
+        <button class="btn on" id="dnMan0">Gesichter-Fläche</button>
+        <button class="btn" id="dnMan1">Katzen-Fläche (falsch!)</button>
+        <button class="btn" id="dnProject">Projizieren ▶</button>
+      </div>
+      <div class="readout" id="dnOut"></div>
+      <small class="note">Das Paper zeigt (Abb. 6): projiziert man ein Gesicht auf die <i>Katzen</i>-Fläche,
+      kommt Unsinn heraus. Deep Learning ist also <b>nicht</b> universell — es hängt komplett an der
+      richtigen Mannigfaltigkeit.</small>
+    </div>
+
+    <div class="card">
+      <h4>B · Generieren = Sampeln + Dekodieren</h4>
+      <p class="cardsub">Würfle einen Code <b>z</b> im latenten Raum, schiebe ihn durch den Decoder —
+      fertig ist ein neues, nie gesehenes Beispiel.</p>
+      <canvas id="cvGen" height="300"></canvas>
+      <div class="ctrl"><label>Anzahl Stichproben <b id="lblGenN">60</b></label><input type="range" id="sGenN" min="5" max="400" step="5" value="60"></div>
+      <div class="btnrow">
+        <button class="btn on" id="genUni">Gleichverteilt würfeln</button>
+        <button class="btn" id="genGauss">Gauß würfeln</button>
+      </div>
+      <div class="readout" id="genOut"></div>
+      <small class="note">Problem, das in Teil 9 gelöst wird: Gleichverteilung im <i>Code</i>-Raum heißt
+      <b>nicht</b> Gleichverteilung auf der <i>Fläche</i>. Der Decoder verzerrt die Dichte.</small>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 4 RELU -->
+<section id="relu">
+  <div class="secnum">Teil 4 — Voraussetzung</div>
+  <h2>ReLU-Netze zerschneiden den Raum</h2>
+  <p class="lead">Um die Hauptaussage zu verstehen, brauchst du genau eine Idee: <b>jedes Neuron ist eine
+  Hyperebene, die den Raum in zwei Teile schneidet.</b> Danach ist alles Zählen.</p>
+
+  <div class="card">
+    <h4>Spiel 4 · Ein Neuron, eine Linie</h4>
+    <p class="cardsub">Ein ReLU-Neuron rechnet <span id="m-neuron"></span>. Links: die Funktion über der Ebene
+    (Farbe = Wert). Die weiße Linie ist dort, wo das Neuron „anspringt".</p>
+    <div class="grid2">
+      <div>
+        <canvas id="cvNeuron" height="280"></canvas>
+      </div>
+      <div>
+        <canvas id="cvNeuron1D" height="280"></canvas>
+        <div class="legend"><span><i style="background:#5ad1ff"></i>1D-Schnitt durch das Neuron</span></div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <div class="ctrl"><label>Gewicht w₁ <b id="lblW1">1.00</b></label><input type="range" id="sW1" min="-2" max="2" step="0.02" value="1"></div>
+        <div class="ctrl"><label>Gewicht w₂ <b id="lblW2">0.60</b></label><input type="range" id="sW2" min="-2" max="2" step="0.02" value="0.6"></div>
+      </div>
+      <div>
+        <div class="ctrl"><label>Bias b <b id="lblB">0.00</b></label><input type="range" id="sB" min="-2" max="2" step="0.02" value="0"></div>
+        <div class="readout" id="neuronOut"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Spiel 5 · Viele Neuronen = Zell-Zerlegung</h4>
+    <p class="cardsub">Jede Linie ist ein Neuron. Die Farbflächen sind die <b>Zellen</b> — Bereiche, in denen
+    exakt dieselben Neuronen aktiv sind. Das Paper nennt das den <i>aktivierten Pfad</i> (Def. 4.6).</p>
+    <canvas id="cvCells" height="400"></canvas>
+    <div class="grid2">
+      <div>
+        <div class="ctrl"><label>Neuronen in Schicht 1 <b id="lblN1">4</b></label><input type="range" id="sN1" min="1" max="14" step="1" value="4"></div>
+        <div class="ctrl"><label>Neuronen in Schicht 2 <b id="lblN2">0</b></label><input type="range" id="sN2" min="0" max="10" step="1" value="0"></div>
+      </div>
+      <div>
+        <div class="btnrow">
+          <button class="btn" id="cellShuffle">↻ Gewichte neu würfeln</button>
+          <button class="btn on" id="cellColor">Zellen einfärben</button>
+        </div>
+        <div class="readout" id="cellsOut"></div>
+      </div>
+    </div>
+    <small class="note">Zwei Punkte liegen in derselben Zelle ⟺ sie haben denselben aktivierten Pfad.
+    In jeder Zelle ist die Netzfunktion exakt affin-linear.</small>
+  </div>
+
+  <h3>Lemma 4.4 — wie viele Stücke ergeben n Schnitte?</h3>
+  <p>Das ist reine Kombinatorik und mit Schulwissen machbar: n Hyperebenen zerteilen den
+  <span id="m-Rd"></span> in höchstens</p>
+  <div class="math" id="m-lemma"></div>
+
+  <div class="card">
+    <h4>Spiel 6 · Die Zählformel begreifen</h4>
+    <p class="cardsub">Ziehe die Regler und sieh zu, wie C(d,n) explodiert. In 1D wächst es linear, ab 2D
+    polynomiell — und zwar vom Grad d.</p>
+    <div class="grid2">
+      <div><div id="plotC" style="height:300px;border-radius:14px;overflow:hidden;border:1px solid var(--line)"></div></div>
+      <div>
+        <canvas id="cvCut" height="300"></canvas>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <div class="ctrl"><label>Dimension d <b id="lblD">2</b></label><input type="range" id="sD" min="1" max="6" step="1" value="2"></div>
+        <div class="ctrl"><label>Anzahl Hyperebenen n <b id="lblNh">5</b></label><input type="range" id="sNh" min="0" max="20" step="1" value="5"></div>
+      </div>
+      <div><div class="readout" id="cOut"></div></div>
+    </div>
+    <small class="note">Die Herleitung im Paper ist ein Induktionsargument: die (n+1)-te Ebene wird von den
+    ersten n Ebenen in C(d−1,n) Stücke zerlegt, und jedes dieser Stücke halbiert genau eine bestehende Zelle.
+    Daraus folgt C(d,n+1)=C(d,n)+C(d−1,n).</small>
+  </div>
+</section>
+
+<!-- ============================================================ 5 CAPACITY -->
+<section id="cap">
+  <div class="secnum">Teil 5 — Beitrag 1 des Papers</div>
+  <h2>Kapazität: Wie viel kann ein Netz überhaupt?</h2>
+  <p class="lead">Jetzt kommt die erste Hauptdefinition. Die <b>rectified linear complexity</b> eines Netzes
+  ist die maximale Stückzahl, die irgendeine Einstellung der Gewichte erzeugen kann.</p>
+
+  <div class="math" id="m-defN"></div>
+
+  <h3>Satz 4.5 — die obere Schranke</h3>
+  <div class="math" id="m-thm45"></div>
+  <p style="font-size:14.5px">Lesart: Schicht 1 zerschneidet den Eingaberaum in C(w₀,w₁) Zellen. Schicht 2
+  zerschneidet <i>jede dieser Zellen</i> noch einmal in bis zu C(w₁,w₂) Teile. Und so weiter — die Stückzahlen
+  <b>multiplizieren</b> sich. Darum ist <i>Tiefe</i> so viel mächtiger als Breite.</p>
+
+  <div class="card">
+    <h4>Spiel 7 · Architektur-Labor</h4>
+    <p class="cardsub">Baue ein Netz und sieh die Kapazitätsschranke live. Vergleiche: „breit und flach"
+    gegen „schmal und tief" bei gleicher Neuronenzahl.</p>
+    <div class="grid2">
+      <div>
+        <canvas id="cvArch" height="250"></canvas>
+        <div class="legend"><span><i style="background:#5ad1ff"></i>Schichtbreite</span>
+        <span><i style="background:#ff6ec7"></i>Faktor C(wᵢ₋₁,wᵢ)</span></div>
+      </div>
+      <div>
+        <div class="ctrl"><label>Eingabedimension w₀ <b id="lblA0">2</b></label><input type="range" id="sA0" min="1" max="8" step="1" value="2"></div>
+        <div class="ctrl"><label>Anzahl versteckter Schichten k <b id="lblAk">3</b></label><input type="range" id="sAk" min="1" max="6" step="1" value="3"></div>
+        <div class="ctrl"><label>Breite jeder versteckten Schicht <b id="lblAw">8</b></label><input type="range" id="sAw" min="1" max="24" step="1" value="8"></div>
+        <div class="ctrl"><label>Ausgabedimension <b id="lblAout">1</b></label><input type="range" id="sAout" min="1" max="4" step="1" value="1"></div>
+        <div class="readout" id="archOut"></div>
+      </div>
+    </div>
+    <div id="plotDepth" style="height:290px;margin-top:14px;border-radius:14px;overflow:hidden;border:1px solid var(--line)"></div>
+    <small class="note">Der Plot vergleicht bei <b>konstantem Neuronenbudget</b> verschiedene Aufteilungen in
+    Tiefe × Breite. Achte auf die logarithmische Achse — Tiefe gewinnt dramatisch.</small>
+  </div>
+</section>
+
+<!-- ============================================================ 6 DIFFICULTY -->
+<section id="diff">
+  <div class="secnum">Teil 6 — Beitrag 2 des Papers</div>
+  <h2>Schwierigkeit: Wie sperrig ist eine Form?</h2>
+  <p class="lead">Die Gegenseite der Medaille. Eine Fläche heißt <b>linear rektifizierbar</b>, wenn <i>eine
+  einzige</i> affine Abbildung sie ohne Überlappung platt auf den Parameterraum drücken kann.</p>
+
+  <div class="math" id="m-rect"></div>
+
+  <div class="card">
+    <h4>Spiel 8 · Rektifizierbar oder nicht?</h4>
+    <p class="cardsub">Wir projizieren eine Kurve auf eine Gerade (die Projektionsrichtung kannst du drehen).
+    <b>Rektifizierbar</b> heißt: jeder Punkt der Geraden wird höchstens einmal getroffen — die Projektion ist
+    umkehrbar. Finde heraus, bei welchen Kurven das für <i>keine</i> Richtung klappt.</p>
+    <canvas id="cvRect" height="340"></canvas>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <div class="ctrl"><label>Projektionsrichtung (Winkel) <b id="lblAng">0°</b></label><input type="range" id="sAng" min="0" max="180" step="1" value="0"></div>
+        <div class="btnrow">
+          <button class="btn on" id="rcA">Flacher Bogen</button>
+          <button class="btn" id="rcB">Starke Welle</button>
+          <button class="btn" id="rcC">Spirale</button>
+        </div>
+      </div>
+      <div>
+        <div class="readout" id="rectOut"></div>
+        <div id="rectVerdict" style="margin-top:8px"></div>
+      </div>
+    </div>
+    <small class="note">Der flache Bogen ist für fast jede Richtung rektifizierbar — eine Karte genügt.
+    Die Spirale ist für <b>keine</b> Richtung rektifizierbar: man braucht viele Karten, also viele Zellen.</small>
+  </div>
+
+  <h3>Lemma 4.13 — das Gauß-Abbildungs-Kriterium</h3>
+  <p>Das Paper gibt ein elegantes Kriterium: Betrachte für jeden Punkt der Kurve/Fläche die
+  <b>Normalenrichtung</b> (bzw. äquivalent die Tangentenrichtung). Wenn diese Richtungen <i>alle</i>
+  möglichen Richtungen durchlaufen, dann gibt es keine einzige Projektionsrichtung, die funktioniert —
+  die Form ist nicht rektifizierbar.</p>
+
+  <div class="card">
+    <h4>Spiel 9 · Die Gauß-Abbildung sehen</h4>
+    <p class="cardsub">Links die Kurve, rechts: alle ihre Tangentenrichtungen auf den Einheitskreis gelegt.
+    Füllt sich der Kreis ganz? Dann ist Schluss mit einer Karte.</p>
+    <div class="grid2">
+      <div><canvas id="cvGaussCurve" height="300"></canvas></div>
+      <div><canvas id="cvGaussCircle" height="300"></canvas></div>
+    </div>
+    <div class="ctrl" style="margin-top:12px"><label>Anteil der gezeichneten Kurve <b id="lblGP">100%</b></label><input type="range" id="sGP" min="5" max="100" step="1" value="100"></div>
+    <div class="btnrow">
+      <button class="btn on" id="gcA">Flacher Bogen</button>
+      <button class="btn" id="gcB">Welle</button>
+      <button class="btn" id="gcC">Spirale (lang)</button>
+    </div>
+    <div class="readout" id="gaussOut"></div>
+  </div>
+
+  <div class="math" id="m-defcomp"></div>
+  <p style="font-size:14.5px">In Worten: die <b>Komplexität einer eingebetteten Mannigfaltigkeit</b> ist
+  die <i>kleinstmögliche</i> Anzahl von Karten, mit denen man sie überdecken kann, wenn jede Karte eine
+  affine Projektion sein muss.</p>
+</section>
+
+<!-- ============================================================ 7 SPIRAL -->
+<section id="spiral">
+  <div class="secnum">Teil 7 — Das konkrete Experiment</div>
+  <h2>Die Spirale: wo das Netz kapituliert</h2>
+  <p class="lead">Das Paper macht ein sehr konkretes Experiment (Abb. 7): eine archimedische Spirale
+  <span id="m-spiral"></span>, die schrittweise verlängert wird. Bei kleinem T klappt alles.
+  Ab einer Schwelle versagt dasselbe Netz schlagartig.</p>
+
+  <div class="card">
+    <h4>Spiel 10 · Das Hauptexperiment nachstellen</h4>
+    <p class="cardsub">Verlängere die Spirale mit T und beobachte gleichzeitig: benötigte Karten (Schwierigkeit)
+    gegen Kapazität des Netzes. Der Moment, in dem sich die Balken kreuzen, ist genau die Schwelle aus dem Paper.</p>
+    <div class="grid2">
+      <div>
+        <canvas id="cvSpiral" height="330"></canvas>
+        <div class="legend"><span><i style="background:#5ad1ff"></i>Spirale Σ</span>
+        <span><i style="background:#ff6ec7"></i>Rekonstruktion</span>
+        <span><i style="background:#ffd36e"></i>Kartengrenzen</span></div>
+      </div>
+      <div>
+        <canvas id="cvLatent" height="150"></canvas>
+        <small class="note" style="margin-bottom:10px">Latente Darstellung: die Spirale soll zu einer
+        <b>geraden Strecke</b> werden. Rot = Überlappung, d. h. der Homöomorphismus ist kaputt.</small>
+        <canvas id="cvBars" height="160"></canvas>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div>
+        <div class="ctrl"><label>Spirallänge T (Umdrehungen) <b id="lblT">1.50</b></label><input type="range" id="sT" min="0.3" max="6" step="0.05" value="1.5"></div>
+        <div class="ctrl"><label>Steigung b <b id="lblBb">0.30</b></label><input type="range" id="sBb" min="0.08" max="0.6" step="0.01" value="0.3"></div>
+      </div>
+      <div>
+        <div class="ctrl"><label>Netzkapazität (Zellen) <b id="lblCap">24</b></label><input type="range" id="sCap" min="3" max="80" step="1" value="24"></div>
+        <div class="readout" id="spiralOut"></div>
+      </div>
+    </div>
+    <div id="verdictBox" style="margin-top:12px"></div>
+  </div>
+
+  <div class="keyidea">
+    <b>Die Antwort auf Frage 3 des Papers (Satz 4.12):</b>
+    <div class="math" id="m-thm412" style="margin:10px 0 0"></div>
+    Ist die Kapazität des Netzes <i>kleiner</i> als die Komplexität der Fläche, kann das Netz sie
+    <b>prinzipiell nicht</b> kodieren — egal wie lange man trainiert, egal mit welchem Optimierer.
+  </div>
+</section>
+
+<!-- ============================================================ 8 PEANO -->
+<section id="peano">
+  <div class="secnum">Teil 8 — Das Hauptresultat</div>
+  <h2>Satz 4.14: Für jedes Netz gibt es eine unlernbare Form</h2>
+  <p class="lead">Jetzt der Knaller. Der Beweis ist eine Konstruktion: <b>Peano-artige, raumfüllende Kurven.</b>
+  Man nimmt ein Grundmuster C₁, macht vier verkleinerte Kopien, verbindet sie — das ergibt C₂. Und so weiter.</p>
+
+  <div class="card">
+    <h4>Spiel 11 · Die Peano-Konstruktion</h4>
+    <p class="cardsub">Erhöhe die Rekursionstiefe n. Die Zahl der nicht-rektifizierbaren Einheiten wächst wie
+    4<sup>n+1</sup> — exponentiell. Die Netzkapazität ist dagegen <i>fest</i>.</p>
+    <div class="grid2">
+      <div><canvas id="cvPeano" height="380"></canvas></div>
+      <div>
+        <div id="plotPeano" style="height:380px;border-radius:14px;overflow:hidden;border:1px solid var(--line)"></div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:14px">
+      <div>
+        <div class="ctrl"><label>Rekursionstiefe n <b id="lblPn">1</b></label><input type="range" id="sPn" min="0" max="3" step="1" value="1"></div>
+        <div class="ctrl"><label>Kapazität des Netzes 𝒩(N) <b id="lblPcap">400</b></label><input type="range" id="sPcap" min="10" max="5000" step="10" value="400"></div>
+      </div>
+      <div>
+        <div class="btnrow">
+          <button class="btn on" id="peUnits">Einheiten (rote Quadrate) zeigen</button>
+          <button class="btn" id="peAnim">▶ Zeichnen animieren</button>
+        </div>
+        <div class="readout" id="peanoOut"></div>
+      </div>
+    </div>
+    <div id="peanoVerdict" style="margin-top:12px"></div>
+  </div>
+
+  <div class="story">
+    <b>Der Beweis in vier Sätzen (Satz 4.14).</b>
+    (1) Nimm das Grundmuster C₁ — es besteht aus 16 kleinen „Einheiten", und <i>jede einzelne</i> ist
+    nicht linear rektifizierbar (sie windet sich in alle Richtungen).
+    (2) Baue C<sub>n</sub> aus vier skalierten Kopien von C<sub>n−1</sub> → C<sub>n</sub> hat 4<sup>n+1</sup> Einheiten.
+    (3) Jede Einheit braucht mindestens eine eigene Karte, also <span id="m-peano"></span>.
+    (4) Wähle n so groß, dass 4<sup>n+1</sup> &gt; 𝒩(N). Fertig — dieses C<sub>n</sub> kann das Netz nicht kodieren. ∎
+  </div>
+
+  <div class="keyidea">
+    <b>Warum das wichtig ist.</b> Es gibt <i>kein</i> „universelles" Netz. Die bekannte
+    Universal-Approximations-Eigenschaft sagt nur: mit <b>beliebig vielen</b> Neuronen geht alles.
+    Dieses Paper sagt: bei <b>fester Architektur</b> existiert garantiert eine Mannigfaltigkeit, die
+    prinzipiell außer Reichweite liegt — kein Trainingstrick hilft.
+  </div>
+</section>
+
+<!-- ============================================================ 9 OMT -->
+<section id="omt">
+  <div class="secnum">Teil 9 — Beitrag 3 des Papers</div>
+  <h2>Die Verteilung kontrollieren: optimaler Transport</h2>
+  <p class="lead">Zweite Hälfte des Lernproblems: nicht nur <i>wo</i> die Fläche liegt, sondern <i>wie dicht</i>
+  die Daten darauf verteilt sind. Der Encoder schiebt die Verteilung μ in den latenten Raum —
+  das Ergebnis <span id="m-push"></span> ist meist hässlich verzerrt.</p>
+
+  <div class="card">
+    <h4>Spiel 12 · Das Problem: Gleichverteilung ≠ Gleichverteilung</h4>
+    <p class="cardsub">Links gleichmäßige Punkte im Parameterraum. Rechts dieselben Punkte auf der Fläche.
+    Wo die Abbildung streckt, werden die Punkte dünn — wo sie staucht, klumpen sie.</p>
+    <div class="grid2">
+      <div><canvas id="cvOmtA" height="300"></canvas>
+        <div class="legend"><span><i style="background:#5ad1ff"></i>Parameterraum (gleichverteilt)</span></div></div>
+      <div><canvas id="cvOmtB" height="300"></canvas>
+        <div class="legend"><span><i style="background:#ff6ec7"></i>auf der Fläche (verzerrt!)</span></div></div>
+    </div>
+    <div class="ctrl" style="margin-top:12px"><label>Verzerrungsstärke der Abbildung <b id="lblDist">1.00</b></label><input type="range" id="sDist" min="0" max="2.2" step="0.02" value="1"></div>
+    <div class="btnrow">
+      <button class="btn" id="omtFix">⚡ Optimalen Transport anwenden</button>
+      <button class="btn" id="omtReset">↻ Zurücksetzen</button>
+    </div>
+    <div class="readout" id="omtOut"></div>
+    <small class="note">Das Paper (Abb. 9) macht genau das mit der Buddha-Fläche: konforme Abbildung ergibt
+    eine ungleichmäßige Dichte; nach dem optimalen Transport ist sie flächenerhaltend und die Stichproben
+    sind gleichmäßig über die Fläche verteilt.</small>
+  </div>
+
+  <h3>Was „optimaler Transport" bedeutet</h3>
+  <p>Du hast einen Sandhaufen (Verteilung ν) und willst ihn in eine andere Form (Verteilung ζ) umschichten.
+  Jedes Sandkorn, das du um die Strecke <i>d</i> bewegst, kostet <i>d²</i>. Gesucht: der <b>billigste</b> Plan.
+  Die minimalen Gesamtkosten heißen <b>Wasserstein-Distanz</b>.</p>
+
+  <div class="card">
+    <h4>Spiel 13 · Optimaler Transport in 1D</h4>
+    <p class="cardsub">Zwei Verteilungen, blau und rosa. Die grauen Linien sind der Transportplan. Schiebe die
+    Regler und vergleiche: wirklich optimal vs. absichtlich schlecht (gekreuzte Wege kosten immer mehr).</p>
+    <canvas id="cvOT" height="330"></canvas>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <div class="ctrl"><label>Abstand der Mittelwerte <b id="lblOTmu">1.20</b></label><input type="range" id="sOTmu" min="0" max="3" step="0.05" value="1.2"></div>
+        <div class="ctrl"><label>Breite der Zielverteilung <b id="lblOTs">0.50</b></label><input type="range" id="sOTs" min="0.15" max="1.2" step="0.01" value="0.5"></div>
+      </div>
+      <div>
+        <div class="btnrow">
+          <button class="btn on" id="otOpt">Optimaler Plan</button>
+          <button class="btn" id="otBad">Gekreuzter Plan</button>
+        </div>
+        <div class="readout" id="otOut"></div>
+      </div>
+    </div>
+    <small class="note">Beobachtung: der optimale Plan kreuzt nie. In 1D heißt das einfach „sortiere beide
+    Mengen und verbinde der Reihe nach" — das ist die monotone Umordnung.</small>
+  </div>
+
+  <h3>Brenier: der Transport ist ein Gradient</h3>
+  <p>Hier das mathematische Juwel, das das Paper benutzt. Bei quadratischen Kosten gibt es immer eine
+  <b>konvexe Funktion</b> u (das Brenier-Potential), deren Gradient exakt der optimale Transport ist:</p>
+  <div class="math" id="m-brenier"></div>
+
+  <div class="card">
+    <h4>Spiel 14 · Brenier-Potential ansehen</h4>
+    <p class="cardsub">Ein konvexes Potential u (die Schüssel). Die Pfeile sind sein Gradient ∇u — das ist
+    der Transportplan. Konvex heißt: die Pfeile kreuzen sich nie.</p>
+    <div class="grid2">
+      <div id="plotBrenier" style="height:320px;border-radius:14px;overflow:hidden;border:1px solid var(--line)"></div>
+      <div><canvas id="cvGrad" height="320"></canvas>
+        <div class="legend"><span><i style="background:#ffd36e"></i>∇u = Transportrichtung</span></div></div>
+    </div>
+    <div class="grid2" style="margin-top:12px">
+      <div><div class="ctrl"><label>Asymmetrie a <b id="lblBa">0.30</b></label><input type="range" id="sBa" min="-1" max="1" step="0.02" value="0.3"></div></div>
+      <div><div class="ctrl"><label>Krümmung c <b id="lblBc">1.00</b></label><input type="range" id="sBc" min="0.3" max="2.5" step="0.02" value="1"></div></div>
+    </div>
+    <div class="readout" id="brenOut"></div>
+  </div>
+
+  <div class="keyidea">
+    <b>Die WGAN-Pointe des Papers.</b> Im WGAN berechnet der Diskriminator das Kantorovich-Potential f,
+    der Generator den Transport. Aber Brenier- und Kantorovich-Potential hängen durch
+    <span id="m-ufrel"></span> zusammen — man kann das eine aus dem anderen ausrechnen!
+    Damit ist der <b>Wettkampf zwischen Generator und Diskriminator überflüssig</b>. Das Paper ersetzt die
+    Blackbox durch eine explizite Konstruktion: das <b>AE-OMT-Modell</b>.
+  </div>
+
+  <div class="card">
+    <h4>Die Pipeline des Papers (Abb. 10)</h4>
+    <div class="flowchain">
+      <div class="flowbox">ζ<br><small>einfach (Gauß/uniform)</small></div>
+      <span class="arrow">—T→</span>
+      <div class="flowbox"><b>OMT</b><br><small>explizit, kein GAN</small></div>
+      <span class="arrow">→</span>
+      <div class="flowbox">ν=(φ<sub>θ</sub>)<sub>*</sub>μ<br><small>echte latente Verteilung</small></div>
+      <span class="arrow">—ψ<sub>θ</sub>→</span>
+      <div class="flowbox"><b>neues Sample</b><br><small>auf Σ̃</small></div>
+    </div>
+    <p style="font-size:14px;margin-top:6px">Ergebnis im Paper: auf MNIST und CelebA erzeugt AE-OMT
+    sichtbar bessere Bilder als VAE und WGAN — bei einfacherer, stabilerer Mathematik.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 10 ANSWER -->
+<section id="answer">
+  <div class="secnum">Teil 10 — Die Antwort</div>
+  <h2>Alles zusammen</h2>
+
+  <div class="card">
+    <h4>Das große Dashboard</h4>
+    <p class="cardsub">Alle Fäden an einem Ort: Architektur ⟶ Kapazität, Form ⟶ Schwierigkeit, Urteil.
+    Spiel damit, bis das Urteil kippt.</p>
+    <div class="grid2">
+      <div>
+        <div class="ctrl"><label>Versteckte Schichten k <b id="lblFk">3</b></label><input type="range" id="sFk" min="1" max="6" step="1" value="3"></div>
+        <div class="ctrl"><label>Breite pro Schicht <b id="lblFw">6</b></label><input type="range" id="sFw" min="1" max="20" step="1" value="6"></div>
+        <div class="ctrl"><label>Komplexität der Fläche 𝒩(ℝⁿ,Σ) <b id="lblFm">64</b></label><input type="range" id="sFm" min="2" max="3000" step="2" value="64"></div>
+      </div>
+      <div><canvas id="cvFinal" height="260"></canvas></div>
+    </div>
+    <div class="readout" id="finalOut"></div>
+    <div id="finalVerdict" style="margin-top:10px"></div>
+  </div>
+
+  <h3>Die vier Antworten des Papers</h3>
+  <table>
+    <tr><th>Frage</th><th>Antwort des Papers</th></tr>
+    <tr><td><b>Warum funktioniert Deep Learning?</b></td>
+        <td>Weil natürliche Daten auf einer niedrigdimensionalen Mannigfaltigkeit liegen. Das Netz lernt
+        diese Fläche <i>und</i> die Verteilung darauf. Der Rest ist Approximation durch Polyeder.</td></tr>
+    <tr><td><b>Wie viel kann ein Netz?</b></td>
+        <td>𝒩(N) ≤ Π<sub>i</sub> C(w<sub>i−1</sub>,w<sub>i</sub>) — die Zellzahlen der Schichten
+        multiplizieren sich. Tiefe schlägt Breite (Satz 4.5).</td></tr>
+    <tr><td><b>Wie schwer ist eine Form?</b></td>
+        <td>𝒩(ℝⁿ,Σ) = minimale Anzahl linear rektifizierbarer Karten. Kriterium über die Gauß-Abbildung
+        (Lemma 4.13).</td></tr>
+    <tr><td><b>Kann dieses Netz diese Form?</b></td>
+        <td>Nur wenn 𝒩(ℝⁿ,Σ) ≤ 𝒩(N) (Satz 4.12). Und: zu jedem festen Netz existiert eine Peano-artige
+        Fläche, die es nicht schafft (Satz 4.14).</td></tr>
+    <tr><td><b>Und die Verteilung?</b></td>
+        <td>Mit optimalem Transport im latenten Raum explizit kontrollieren — statt mit einem
+        GAN-Wettkampf. Brenier macht den Diskriminator überflüssig.</td></tr>
+  </table>
+
+  <div class="story" style="margin-top:24px">
+    <b>Die ehrliche Schlusspointe.</b> Deep Learning ist <i>nicht</i> universell. Es ist ein
+    Werkzeug zur Approximation einer ganz bestimmten, in den Daten versteckten Geometrie. Ändert sich die
+    Geometrie (Gesichter → Katzen), ist das gelernte Wissen wertlos. Und wenn die Geometrie zu verwickelt
+    ist, hilft keine Trainingsdauer der Welt — nur eine größere Architektur.
+  </div>
+</section>
+
+<footer>
+  Interaktive Erklärung zu <b>„Geometric Understanding of Deep Learning"</b> ·
+  Na Lei, Zhongxuan Luo, Shing-Tung Yau, David Xianfeng Gu · arXiv:1805.10451v2<br>
+  Alle Simulationen laufen live im Browser. Plotly · Temml · Canvas 2D.
+</footer>
+
+</div>
+
+<script>
+/* ============================================================
+   HILFSFUNKTIONEN
+   ============================================================ */
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const fmt=(x,n=2)=>Number(x).toFixed(n);
+function bignum(x){
+  if(!isFinite(x))return "∞";
+  if(x<1e6)return Math.round(x).toLocaleString('de-DE');
+  return x.toExponential(2).replace('e+','·10^');
+}
+function tex(id,s,disp=true){
+  const el=$(id); if(!el)return;
+  try{ el.innerHTML=temml.renderToString(s,{displayMode:disp}); }
+  catch(e){ el.textContent=s; }
+}
+function dpr(cv){
+  const r=cv.getBoundingClientRect();
+  const d=window.devicePixelRatio||1;
+  cv.width=Math.max(1,Math.round(r.width*d));
+  cv.height=Math.max(1,Math.round((cv.getAttribute('height')||300)*d));
+  const ctx=cv.getContext('2d');
+  ctx.setTransform(d,0,0,d,0,0);
+  return {ctx,W:r.width,H:+(cv.getAttribute('height')||300)};
+}
+function bg(ctx,W,H,g1='#070c18',g2='#0b1326'){
+  const g=ctx.createLinearGradient(0,0,W,H);
+  g.addColorStop(0,g1);g.addColorStop(1,g2);
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+}
+function grid(ctx,W,H,step=36){
+  ctx.strokeStyle='rgba(120,160,255,.07)';ctx.lineWidth=1;
+  for(let x=0;x<W;x+=step){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=step){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+}
+function glowLine(ctx,pts,color,w=2,glow=12){
+  if(pts.length<2)return;
+  ctx.save();ctx.shadowBlur=glow;ctx.shadowColor=color;
+  ctx.strokeStyle=color;ctx.lineWidth=w;ctx.lineJoin='round';ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+  for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);
+  ctx.stroke();ctx.restore();
+}
+function dot(ctx,x,y,r,c,glow=8){
+  ctx.save();ctx.shadowBlur=glow;ctx.shadowColor=c;ctx.fillStyle=c;
+  ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.restore();
+}
+function txt(ctx,s,x,y,c='#8d9bc4',size=12,align='left',bold=false){
+  ctx.fillStyle=c;ctx.font=`${bold?'600 ':''}${size}px Inter,system-ui,sans-serif`;
+  ctx.textAlign=align;ctx.fillText(s,x,y);
+}
+function verdict(el,ok,msgOk,msgNo){
+  el.innerHTML = ok
+   ? `<span class="pill ok">✓ LERNBAR</span> <span style="font-size:13.5px;color:#c3cde8">${msgOk}</span>`
+   : `<span class="pill no">✗ UNMÖGLICH</span> <span style="font-size:13.5px;color:#c3cde8">${msgNo}</span>`;
+}
+// Binomialkoeffizient + C(d,n)
+function binom(n,k){ if(k<0||k>n)return 0; let r=1; for(let i=0;i<k;i++)r=r*(n-i)/(i+1); return r; }
+function Cdn(d,n){ let s=0; for(let i=0;i<=d;i++)s+=binom(n,i); return s; }
+// deterministischer PRNG
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+function gauss(rnd){let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+
+const PLOT_LAYOUT={
+  paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+  font:{color:'#8d9bc4',family:'Inter,system-ui',size:11},
+  margin:{l:46,r:14,t:26,b:40}
+};
+const PLOT_CFG={displayModeBar:false,responsive:true};
+
+/* ============================================================
+   LATEX RENDERN
+   ============================================================ */
+function renderMath(){
+  tex('m-q1','\\mathcal{N}(N)',false);
+  tex('m-q2','\\mathcal{N}(\\mathbb{R}^n,\\Sigma)',false);
+  tex('m-chart','(U_\\alpha,\\varphi_\\alpha),\\qquad \\varphi_\\alpha:U_\\alpha\\to\\mathcal{F}\\subset\\mathbb{R}^m,\\qquad \\psi_\\alpha=\\varphi_\\alpha^{-1}:\\mathcal{F}\\to\\Sigma');
+  tex('m-phi','\\varphi_\\alpha',false);
+  tex('m-psi','\\psi_\\alpha',false);
+  tex('m-loss','\\min_\\theta\\; L(\\theta)=\\min_\\theta\\;\\frac1k\\sum_{i=1}^{k}\\bigl\\lVert x^{(i)}-\\psi_\\theta\\circ\\varphi_\\theta(x^{(i)})\\bigr\\rVert^2');
+  tex('m-ea','\\Sigma\\subset\\mathcal{X}',false);
+  tex('m-eb','D=\\varphi_\\theta(\\Sigma)',false);
+  tex('m-ec','\\tilde\\Sigma=\\psi_\\theta(D)',false);
+  tex('m-id','\\psi_\\theta\\circ\\varphi_\\theta\\approx\\mathrm{id}',false);
+  tex('m-relu','\\sigma(x)=\\max\\{0,x\\}',false);
+  tex('m-pt','\\tilde p',false);
+  tex('m-neuron','\\sigma(w_1x_1+w_2x_2+b)',false);
+  tex('m-Rd','\\mathbb{R}^d',false);
+  tex('m-lemma','C(d,n)=\\binom{n}{0}+\\binom{n}{1}+\\binom{n}{2}+\\cdots+\\binom{n}{d}\\qquad\\text{mit}\\qquad C(d,n{+}1)=C(d,n)+C(d{-}1,n)');
+  tex('m-defN','\\mathcal{N}(N):=\\max_\\theta\\;\\mathcal{N}(\\varphi_\\theta)\\qquad\\text{(maximale Stückzahl über alle Gewichte)}');
+  tex('m-thm45','\\mathcal{N}(N)\\;\\le\\;\\prod_{i=1}^{k+1}C(w_{i-1},w_i)');
+  tex('m-rect','\\exists\\ \\text{affine }\\varphi:\\mathbb{R}^n\\to\\mathbb{R}^m\\ \\text{mit}\\ \\varphi|_\\Sigma:\\Sigma\\to\\varphi(\\Sigma)\\ \\text{homöomorph}');
+  tex('m-defcomp','\\mathcal{N}(\\mathbb{R}^n,\\Sigma):=\\min\\bigl\\{|\\mathcal{A}|\\ \\big|\\ \\mathcal{A}\\ \\text{ist ein linear rektifizierbarer Atlas von }\\Sigma\\bigr\\}');
+  tex('m-spiral','\\rho(\\theta)=(a+b\\theta)e^{i\\omega\\theta},\\quad \\theta\\in(0,T]',false);
+  tex('m-thm412','\\mathcal{N}(\\mathbb{R}^n,\\Sigma)\\;\\le\\;\\mathcal{N}(\\varphi_\\theta)\\;\\le\\;\\mathcal{N}(N)');
+  tex('m-peano','\\mathcal{N}(\\mathbb{R}^2,C_n)\\ \\ge\\ 4^{\\,n+1}',false);
+  tex('m-push','\\nu=(\\varphi_\\theta)_*\\mu',false);
+  tex('m-brenier','T=\\nabla u,\\qquad \\det\\!\\left(\\frac{\\partial^2u}{\\partial x_i\\partial x_j}\\right)=\\frac{\\nu(x)}{\\zeta(\\nabla u(x))}');
+  tex('m-ufrel','u(x)=\\tfrac12|x|^2-f(x)',false);
+}
+renderMath();
+
+/* ============================================================
+   0 · PARADOX
+   ============================================================ */
+(function(){
+  const cv=$('cvParadox'); let mode=0, pts=[], t=0, raf=null;
+  const rnd=mulberry(7);
+  function manifoldPoint(u){ // a curved "data manifold"
+    return [0.5+0.33*Math.cos(u*2.2)*Math.cos(u*0.7), 0.5+0.30*Math.sin(u*1.7)*0.9+0.08*Math.sin(u*5)];
+  }
+  function step(){
+    const {ctx,W,H}=dpr(cv); bg(ctx,W,H); grid(ctx,W,H,34);
+    // add points gradually
+    if(pts.length<900){
+      for(let i=0;i<6;i++){
+        if(mode===0) pts.push([rnd(),rnd()]);
+        else{ const u=rnd()*12; const p=manifoldPoint(u);
+          pts.push([clamp(p[0]+gauss(rnd)*0.012,0,1),clamp(p[1]+gauss(rnd)*0.012,0,1)]); }
+      }
+    }
+    const pad=26, w=W-2*pad, h=H-2*pad;
+    // density heat (coarse)
+    const G=26, cells=new Float32Array(G*G);
+    pts.forEach(p=>{const gx=Math.min(G-1,Math.floor(p[0]*G)),gy=Math.min(G-1,Math.floor(p[1]*G));cells[gy*G+gx]++;});
+    let maxc=1; for(let i=0;i<cells.length;i++)maxc=Math.max(maxc,cells[i]);
+    for(let gy=0;gy<G;gy++)for(let gx=0;gx<G;gx++){
+      const c=cells[gy*G+gx]/maxc; if(c<=0)continue;
+      ctx.fillStyle=`rgba(${mode?255:90},${mode?110:209},${mode?199:255},${0.06+0.4*c})`;
+      ctx.fillRect(pad+gx/G*w,pad+gy/G*h,w/G+0.6,h/G+0.6);
+    }
+    pts.forEach(p=>dot(ctx,pad+p[0]*w,pad+p[1]*h,1.6,mode?'#ff6ec7':'#5ad1ff',4));
+    ctx.strokeStyle='rgba(120,160,255,.25)';ctx.strokeRect(pad,pad,w,h);
+    txt(ctx,mode?'Echte Daten → dünne Fläche (Mannigfaltigkeit)':'Zufall → füllt den ganzen Raum',pad,18,mode?'#ff6ec7':'#5ad1ff',12.5,'left',true);
+    // occupancy
+    let occ=0; for(let i=0;i<cells.length;i++) if(cells[i]>0)occ++;
+    $('paradoxOut').textContent =
+      `Punkte: ${pts.length}\n`+
+      `belegte Raumzellen: ${occ} von ${G*G}  (${fmt(100*occ/(G*G),1)} %)\n`+
+      (mode? 'Die Daten belegen nur einen schmalen Streifen. Genau das macht Lernen möglich:\ndas Netz muss nur diese dünne Fläche treffen, nicht den ganzen Raum.'
+           : 'Zufallsdaten füllen alles gleichmäßig. Hier wäre Lernen hoffnungslos –\nman bräuchte exponentiell viele Beispiele.');
+    raf=requestAnimationFrame(step);
+  }
+  function setMode(m){ mode=m; pts=[];
+    $('pMode0').classList.toggle('on',m===0); $('pMode1').classList.toggle('on',m===1); }
+  $('pMode0').onclick=()=>setMode(0); $('pMode1').onclick=()=>setMode(1);
+  step();
+})();
+
+/* ============================================================
+   1 · CHART ↔ SURFACE
+   ============================================================ */
+(function(){
+  let surfType=0, K=1, U=.5, V=.5;
+  function f(u,v){ // u,v in [0,1] → z
+    const x=(u-.5)*2, y=(v-.5)*2;
+    if(surfType===0) return K*Math.exp(-(x*x+y*y)*1.6);
+    if(surfType===1) return K*0.45*Math.sin(3.2*x)*Math.cos(2.6*y);
+    return K*0.5*(x*x-y*y);
+  }
+  function drawChart(){
+    const cv=$('cvChart2D'); const {ctx,W,H}=dpr(cv); bg(ctx,W,H);
+    const pad=30,w=W-2*pad,h=H-2*pad;
+    // iso-color of z over parameter domain
+    const N=40;
+    for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+      const u=i/N,v=j/N,z=f(u+0.5/N,v+0.5/N);
+      const t=clamp((z+1.2)/2.4,0,1);
+      ctx.fillStyle=`hsl(${210-110*t},75%,${22+34*t}%)`;
+      ctx.fillRect(pad+u*w,pad+v*h,w/N+.7,h/N+.7);
+    }
+    ctx.strokeStyle='rgba(255,255,255,.14)';ctx.lineWidth=1;
+    for(let i=0;i<=10;i++){
+      ctx.beginPath();ctx.moveTo(pad+i/10*w,pad);ctx.lineTo(pad+i/10*w,pad+h);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(pad,pad+i/10*h);ctx.lineTo(pad+w,pad+i/10*h);ctx.stroke();
+    }
+    ctx.strokeStyle='#5ad1ff';ctx.lineWidth=1.6;ctx.strokeRect(pad,pad,w,h);
+    dot(ctx,pad+U*w,pad+V*h,7,'#ff6ec7',16);
+    txt(ctx,'Parameterraum ℱ ⊂ ℝ²  (die „Landkarte")',pad,18,'#8d9bc4',12);
+    txt(ctx,'u →',pad+w/2,H-8,'#8d9bc4',11,'center');
+  }
+  function drawSurf(){
+    const N=42, x=[],y=[],z=[];
+    for(let j=0;j<N;j++){ const row=[];
+      for(let i=0;i<N;i++) row.push(f(i/(N-1),j/(N-1)));
+      z.push(row); }
+    for(let i=0;i<N;i++){x.push(i/(N-1));y.push(i/(N-1));}
+    const data=[
+      {type:'surface',x:x,y:y,z:z,colorscale:[[0,'#13203f'],[.5,'#2b7fb8'],[1,'#8affc1']],
+       showscale:false,opacity:.96,
+       contours:{z:{show:true,usecolormap:true,project:{z:true}}}},
+      {type:'scatter3d',mode:'markers',x:[U],y:[V],z:[f(U,V)],
+       marker:{size:7,color:'#ff6ec7'},showlegend:false}
+    ];
+    Plotly.react('plotSurf',data,Object.assign({},PLOT_LAYOUT,{
+      scene:{xaxis:{title:'u',color:'#8d9bc4',gridcolor:'rgba(120,160,255,.15)',backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+             yaxis:{title:'v',color:'#8d9bc4',gridcolor:'rgba(120,160,255,.15)',backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+             zaxis:{title:'z',color:'#8d9bc4',gridcolor:'rgba(120,160,255,.15)',backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+             camera:{eye:{x:1.5,y:-1.5,z:1.0}},aspectratio:{x:1,y:1,z:.6}},
+      margin:{l:0,r:0,t:0,b:0}}),PLOT_CFG);
+  }
+  function out(){
+    const names=['Beule — topologisch eine Scheibe, eine Karte genügt',
+                 'Welle — gekrümmt, aber noch eine Karte',
+                 'Sattel — negative Krümmung, immer noch eine Scheibe'];
+    $('chartOut').textContent=
+      `ψ(u,v) = (u, v, z)   mit  z = ${fmt(f(U,V),3)}\n`+
+      `aktueller Punkt:  Karte (${fmt(U)}, ${fmt(V)})  ⟷  Fläche (${fmt(U)}, ${fmt(V)}, ${fmt(f(U,V),3)})\n`+
+      `${names[surfType]}\n`+
+      `Komplexität 𝒩(ℝ³,Σ) = 1 — eine einzige affine Projektion reicht.`;
+  }
+  function all(){ drawChart(); drawSurf(); out(); }
+  $('sU').oninput=e=>{U=+e.target.value;$('lblU').textContent=fmt(U);all();};
+  $('sV').oninput=e=>{V=+e.target.value;$('lblV').textContent=fmt(V);all();};
+  $('sK').oninput=e=>{K=+e.target.value;$('lblK').textContent=fmt(K);all();};
+  ['surfA','surfB','surfC'].forEach((id,i)=>$(id).onclick=()=>{
+    surfType=i;['surfA','surfB','surfC'].forEach((q,j)=>$(q).classList.toggle('on',i===j));all();});
+  all();
+})();
+
+/* ============================================================
+   1b · HOMEOMORPHISM
+   ============================================================ */
+(function(){
+  const cv=$('cvHomeo'); let fold=0;
+  function draw(){
+    const {ctx,W,H}=dpr(cv); bg(ctx,W,H); grid(ctx,W,H,30);
+    const pad=34,w=(W-3*pad)/2,h=H-2*pad;
+    // left: source grid
+    const N=13;
+    function map(u,v){ // deform: fold in x
+      const x=u-.5;
+      return [ .5 + x*(1-fold) + fold*1.9*x*x*x*2.2, v ];
+    }
+    // draw source
+    ctx.save();
+    for(let i=0;i<=N;i++){
+      const pts=[];for(let j=0;j<=N*3;j++){const u=i/N,v=j/(N*3);pts.push([pad+u*w,pad+v*h]);}
+      glowLine(ctx,pts,'rgba(90,209,255,.5)',1,0);
+      const pts2=[];for(let j=0;j<=N*3;j++){const v=i/N,u=j/(N*3);pts2.push([pad+u*w,pad+v*h]);}
+      glowLine(ctx,pts2,'rgba(90,209,255,.5)',1,0);
+    }
+    ctx.restore();
+    txt(ctx,'Original (Fläche Σ)',pad,20,'#5ad1ff',12,'left',true);
+    // right: mapped
+    const ox=2*pad+w;
+    let overlap=false, minJ=1e9;
+    for(let i=0;i<=N;i++){
+      const pts=[];for(let j=0;j<=N*3;j++){const m=map(i/N,j/(N*3));pts.push([ox+m[0]*w,pad+m[1]*h]);}
+      glowLine(ctx,pts,fold>0.72?'rgba(255,107,107,.65)':'rgba(255,110,199,.6)',1,0);
+      const pts2=[];for(let j=0;j<=N*3;j++){const m=map(j/(N*3),i/N);pts2.push([ox+m[0]*w,pad+m[1]*h]);}
+      glowLine(ctx,pts2,fold>0.72?'rgba(255,107,107,.65)':'rgba(255,110,199,.6)',1,0);
+    }
+    // jacobian d/du of x-component
+    for(let k=0;k<=60;k++){ const u=k/60,x=u-.5;
+      const J=(1-fold)+fold*2.2*3*x*x*2; minJ=Math.min(minJ,J); }
+    overlap=minJ<0;
+    txt(ctx,'Bild φ(Σ)',ox,20,overlap?'#ff6b6b':'#ff6ec7',12,'left',true);
+    if(overlap){ txt(ctx,'⚠ Überlappung — nicht mehr umkehrbar!',ox,H-10,'#ff6b6b',12,'left',true); }
+    $('homeoOut').textContent=
+      `kleinste lokale Streckung (Jacobi-Determinante): ${fmt(minJ,3)}\n`+
+      (overlap
+        ? '✗ NICHT homöomorph — zwei verschiedene Punkte landen aufeinander.\n   Der Encoder könnte sie nie wieder auseinanderhalten.'
+        : '✓ homöomorph — gedehnt und gestaucht, aber nie gefaltet.\n   Jeder Punkt hat genau ein Urbild, die Umkehrung existiert.');
+  }
+  $('sFold').oninput=e=>{fold=+e.target.value;$('lblFold').textContent=fmt(fold);draw();};
+  draw();
+})();
+
+/* ============================================================
+   2 · LIVE AUTOENCODER (3D curve → 1D → 3D)
+   ============================================================ */
+(function(){
+  let W1,b1,W2,b2,W3,b3,W4,b4; // enc: 3->h->1 ; dec: 1->h->3
+  let h=12, lr=0.03, running=true, hist=[], iter=0, showCells=false;
+  const rnd=mulberry(11);
+  const M=160, data=[];
+  function buildData(){ data.length=0;
+    for(let i=0;i<M;i++){ const t=i/(M-1)*2.0;
+      data.push([Math.cos(3.2*t)*(0.4+0.25*t), Math.sin(3.2*t)*(0.4+0.25*t), 0.55*t-0.55]); } }
+  buildData();
+  function initNet(){
+    const r=()=>gauss(rnd)*0.7;
+    W1=Array.from({length:h},()=>[r(),r(),r()]); b1=Array.from({length:h},()=>0);
+    W2=Array.from({length:1},()=>Array.from({length:h},r)); b2=[0];
+    W3=Array.from({length:h},()=>[r()]); b3=Array.from({length:h},()=>0);
+    W4=Array.from({length:3},()=>Array.from({length:h},r)); b4=[0,0,0];
+    hist=[];iter=0;
+  }
+  initNet();
+  const relu=x=>x>0?x:0;
+  function fwd(x){
+    const a1=W1.map((w,i)=>relu(w[0]*x[0]+w[1]*x[1]+w[2]*x[2]+b1[i]));
+    const z=[W2[0].reduce((s,w,i)=>s+w*a1[i],0)+b2[0]];
+    const a3=W3.map((w,i)=>relu(w[0]*z[0]+b3[i]));
+    const y=W4.map((w,i)=>w.reduce((s,q,j)=>s+q*a3[j],0)+b4[i]);
+    return {a1,z,a3,y};
+  }
+  function trainStep(){
+    const g1=W1.map(w=>[0,0,0]),gb1=b1.map(()=>0);
+    const g2=[W2[0].map(()=>0)],gb2=[0];
+    const g3=W3.map(()=>[0]),gb3=b3.map(()=>0);
+    const g4=W4.map(w=>w.map(()=>0)),gb4=[0,0,0];
+    let loss=0;
+    for(const x of data){
+      const {a1,z,a3,y}=fwd(x);
+      const dy=[2*(y[0]-x[0])/data.length,2*(y[1]-x[1])/data.length,2*(y[2]-x[2])/data.length];
+      loss+=((y[0]-x[0])**2+(y[1]-x[1])**2+(y[2]-x[2])**2)/data.length;
+      for(let i=0;i<3;i++){ gb4[i]+=dy[i]; for(let j=0;j<h;j++) g4[i][j]+=dy[i]*a3[j]; }
+      const da3=Array.from({length:h},(_,j)=>dy.reduce((s,d,i)=>s+d*W4[i][j],0));
+      const dz3=da3.map((d,j)=>a3[j]>0?d:0);
+      let dz=0;
+      for(let j=0;j<h;j++){ gb3[j]+=dz3[j]; g3[j][0]+=dz3[j]*z[0]; dz+=dz3[j]*W3[j][0]; }
+      gb2[0]+=dz;
+      for(let j=0;j<h;j++) g2[0][j]+=dz*a1[j];
+      const da1=Array.from({length:h},(_,j)=>dz*W2[0][j]);
+      for(let j=0;j<h;j++){ if(a1[j]<=0)continue;
+        gb1[j]+=da1[j]; for(let k=0;k<3;k++) g1[j][k]+=da1[j]*x[k]; }
+    }
+    const cl=g=>clamp(g,-2,2);
+    for(let j=0;j<h;j++){for(let k=0;k<3;k++)W1[j][k]-=lr*cl(g1[j][k]);b1[j]-=lr*cl(gb1[j]);}
+    for(let j=0;j<h;j++)W2[0][j]-=lr*cl(g2[0][j]); b2[0]-=lr*cl(gb2[0]);
+    for(let j=0;j<h;j++){W3[j][0]-=lr*cl(g3[j][0]);b3[j]-=lr*cl(gb3[j]);}
+    for(let i=0;i<3;i++){for(let j=0;j<h;j++)W4[i][j]-=lr*cl(g4[i][j]);b4[i]-=lr*cl(gb4[i]);}
+    iter++; hist.push(loss); if(hist.length>420)hist.shift();
+    return loss;
+  }
+  function proj(p,W,H){ // simple isometric
+    const a=0.6,s=Math.min(W,H)*0.33;
+    return [W/2+(p[0]-p[1])*Math.cos(a)*s, H/2+((p[0]+p[1])*Math.sin(a)-p[2]*1.5)*s*0.72];
+  }
+  function draw(){
+    const cv=$('cvAE');const {ctx,W,H}=dpr(cv);bg(ctx,W,H);grid(ctx,W,H,32);
+    const recs=data.map(x=>fwd(x));
+    // error lines
+    data.forEach((x,i)=>{
+      const A=proj(x,W,H),B=proj(recs[i].y,W,H);
+      ctx.strokeStyle='rgba(138,255,193,.28)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();
+    });
+    glowLine(ctx,data.map(x=>proj(x,W,H)),'#5ad1ff',2.4,10);
+    glowLine(ctx,recs.map(r=>proj(r.y,W,H)),'#ff6ec7',2.2,10);
+    if(showCells){
+      // mark where latent code z crosses a kink → cell boundary
+      for(let i=1;i<recs.length;i++){
+        const dz=recs[i].z[0]-recs[i-1].z[0];
+        if(i>1){ const dz0=recs[i-1].z[0]-recs[i-2].z[0];
+          if(Math.sign(dz)!==Math.sign(dz0)){ const P=proj(recs[i].y,W,H); dot(ctx,P[0],P[1],4,'#ffd36e',10);} }
+      }
+      txt(ctx,'● Zellgrenzen (Knicke des PL-Netzes)',12,H-10,'#ffd36e',11.5);
+    }
+    txt(ctx,'3D-Ansicht: Σ (blau) vs. Σ̃ = ψ∘φ(Σ) (rosa)',12,18,'#8d9bc4',12);
+    // loss plot
+    const cv2=$('cvAEloss');const c2=dpr(cv2);const x2=c2.ctx,W2c=c2.W,H2=c2.H;
+    bg(x2,W2c,H2,'#060a14','#0a1020');
+    if(hist.length>1){
+      const mx=Math.max(...hist),mn=Math.min(...hist);
+      const pts=hist.map((v,i)=>[10+i/(hist.length-1)*(W2c-20), H2-16-(Math.log(v+1e-6)-Math.log(mn+1e-6))/(Math.log(mx+1e-6)-Math.log(mn+1e-6)+1e-9)*(H2-34)]);
+      glowLine(x2,pts,'#8affc1',2,8);
+      txt(x2,'Verlust L(θ)  (log)',10,14,'#8d9bc4',11);
+      txt(x2,fmt(hist[hist.length-1],5),W2c-10,14,'#8affc1',11,'right');
+    }
+    const L=hist.length?hist[hist.length-1]:0;
+    $('aeOut').textContent=
+      `Iteration: ${iter}\nVerlust L(θ): ${fmt(L,5)}\n`+
+      `Architektur: 3 → ${h} → 1 → ${h} → 3   (Flaschenhals = 1D Code)\n`+      `Kapazität dieser Architektur: höchstens ${bignum(Cdn(3,h)*Cdn(h,1)*Cdn(1,h)*Cdn(h,3))} Zellen\n`+
+      `${running?'▶ läuft …':'⏸ pausiert'}\n`+
+      `Beobachtung: Die rosa Kurve ist stückweise linear (ein Polygonzug).\n`+
+      `Genau das meint das Paper mit „polyhedral manifold".`;
+  }
+  function loop(){ if(running){for(let i=0;i<4;i++)trainStep();} draw(); requestAnimationFrame(loop); }
+  $('sLR').oninput=e=>{lr=+e.target.value;$('lblLR').textContent=fmt(lr,3);};
+  $('sW').oninput=e=>{h=+e.target.value;$('lblW').textContent=h;initNet();};
+  $('aeRun').onclick=e=>{running=!running;e.target.classList.toggle('on',running);e.target.textContent=running?'▶ Trainieren':'⏸ Pause';};
+  $('aeReset').onclick=()=>initNet();
+  $('aeShowCells').onclick=e=>{showCells=!showCells;e.target.classList.toggle('on',showCells);};
+  loop();
+})();
+
+/* ============================================================
+   3A · DENOISING = PROJECTION
+   ============================================================ */
+(function(){
+  const cv=$('cvDenoise'); let noise=0.3, manType=0, anim=0, rafOn=false;
+  const rnd=mulberry(23);
+  let samples=[];
+  function curve(t,type){ // t in [0,1] → point in [0,1]^2
+    if(type===0) return [0.12+0.76*t, 0.52+0.26*Math.sin(t*4.2)-0.12*t];
+    return [0.5+0.30*Math.cos(t*6.283)*(0.7+0.3*Math.cos(t*12.6)), 0.5+0.30*Math.sin(t*6.283)];
+  }
+  function regen(){ samples=[];
+    for(let i=0;i<7;i++){ const t=0.08+0.84*rnd();
+      const p=curve(t,0);
+      samples.push({t0:t,x:p[0]+gauss(rnd)*noise*0.22,y:p[1]+gauss(rnd)*noise*0.22}); }
+    anim=0;
+  }
+  regen();
+  function nearest(px,py,type){
+    let best=1e9,bt=0;
+    for(let i=0;i<=400;i++){ const t=i/400,c=curve(t,type);
+      const d=(c[0]-px)**2+(c[1]-py)**2; if(d<best){best=d;bt=t;} }
+    return {t:bt,p:curve(bt,type),d:Math.sqrt(best)};
+  }
+  function draw(){
+    const {ctx,W,H}=dpr(cv); bg(ctx,W,H); grid(ctx,W,H,30);
+    const pad=24,w=W-2*pad,h=H-2*pad;
+    const X=p=>pad+p[0]*w, Y=p=>pad+p[1]*h;
+    // manifold
+    const pts=[];for(let i=0;i<=300;i++){const c=curve(i/300,manType);pts.push([X(c),Y(c)]);}
+    glowLine(ctx,pts,manType?'#ffd36e':'#5ad1ff',2.6,14);
+    txt(ctx,manType?'Σ = Katzen-Fläche (falsche Mannigfaltigkeit!)':'Σ = Gesichter-Fläche',pad,18,manType?'#ffd36e':'#5ad1ff',12,'left',true);
+    let sumd=0;
+    samples.forEach(s=>{
+      const n=nearest(s.x,s.y,manType); sumd+=n.d;
+      const cx=lerp(s.x,n.p[0],anim), cy=lerp(s.y,n.p[1],anim);
+      ctx.strokeStyle='rgba(255,110,199,.35)';ctx.setLineDash([3,3]);ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(X([s.x]),Y([0,s.y])+0);ctx.stroke();ctx.setLineDash([]);
+      // dashed projection line
+      ctx.strokeStyle='rgba(255,110,199,.4)';ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.moveTo(pad+s.x*w,pad+s.y*h);ctx.lineTo(pad+n.p[0]*w,pad+n.p[1]*h);ctx.stroke();ctx.setLineDash([]);
+      dot(ctx,pad+s.x*w,pad+s.y*h,4.5,'#ff6ec7',10);           // noisy p̃
+      dot(ctx,pad+cx*w,pad+cy*h,4,'#8affc1',12);               // projected p
+    });
+    txt(ctx,'● verrauscht p̃      ● projiziert p',pad,H-10,'#8d9bc4',11.5);
+    $('dnOut').textContent=
+      `Rauschstärke: ${fmt(noise)}\n`+
+      `mittlerer Abstand zur Fläche: ${fmt(sumd/samples.length,4)}\n`+
+      (manType
+        ? '✗ Falsche Mannigfaltigkeit: die Projektion liefert zwar\n   einen Punkt — aber inhaltlich Unsinn (Paper, Abb. 6b).'
+        : '✓ Entrauschen = Projektion auf Σ. Der nächstgelegene Punkt\n   ist das saubere Bild (Paper, Abb. 4).');
+  }
+  function animate(){ if(anim<1){anim=Math.min(1,anim+0.03);draw();requestAnimationFrame(animate);} else rafOn=false; }
+  $('sNoise').oninput=e=>{noise=+e.target.value;$('lblNoise').textContent=fmt(noise);regen();draw();};
+  $('dnMan0').onclick=()=>{manType=0;$('dnMan0').classList.add('on');$('dnMan1').classList.remove('on');anim=0;draw();};
+  $('dnMan1').onclick=()=>{manType=1;$('dnMan1').classList.add('on');$('dnMan0').classList.remove('on');anim=0;draw();};
+  $('dnProject').onclick=()=>{anim=0;if(!rafOn){rafOn=true;animate();}};
+  draw();
+})();
+
+/* ============================================================
+   3B · GENERATIVE SAMPLING
+   ============================================================ */
+(function(){
+  const cv=$('cvGen'); let n=60, mode=0; const rnd=mulberry(31);
+  function dec(z){ // decoder: 1D code → curve in 2D (non-uniform speed!)
+    const t=clamp(z,0,1);
+    const s=t*t*(3-2*t); // strong distortion
+    return [0.1+0.8*s, 0.5+0.3*Math.sin(s*5.5)];
+  }
+  function draw(){
+    const {ctx,W,H}=dpr(cv); bg(ctx,W,H); grid(ctx,W,H,30);
+    const pad=26,w=W-2*pad,h=H-2*pad;
+    const pts=[];for(let i=0;i<=300;i++){const c=dec(i/300);pts.push([pad+c[0]*w,pad+c[1]*h]);}
+    glowLine(ctx,pts,'rgba(90,209,255,.5)',2,8);
+    // latent axis
+    const ly=H-26;
+    ctx.strokeStyle='rgba(120,160,255,.35)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(pad,ly);ctx.lineTo(pad+w,ly);ctx.stroke();
+    txt(ctx,'latenter Raum ℱ (1D)',pad,ly-8,'#8d9bc4',11);
+    const rr=mulberry(mode===0?77:99);
+    const zs=[];
+    for(let i=0;i<n;i++){ let z = mode===0? rr() : clamp(0.5+gauss(rr)*0.18,0,1); zs.push(z); }
+    zs.forEach(z=>{
+      dot(ctx,pad+z*w,ly,2.6,'#ffd36e',6);
+      const c=dec(z);
+      ctx.strokeStyle='rgba(255,211,110,.14)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(pad+z*w,ly);ctx.lineTo(pad+c[0]*w,pad+c[1]*h);ctx.stroke();
+      dot(ctx,pad+c[0]*w,pad+c[1]*h,3.2,'#ff6ec7',8);
+    });
+    // density along curve
+    const B=22,bins=new Array(B).fill(0);
+    zs.forEach(z=>{const c=dec(z);bins[Math.min(B-1,Math.floor(c[0]*B))]++;});
+    const mx=Math.max(1,...bins);
+    for(let i=0;i<B;i++){ const hh=bins[i]/mx*34;
+      ctx.fillStyle='rgba(255,110,199,.3)';ctx.fillRect(pad+i/B*w,pad+2,w/B-1.5,hh); }
+    txt(ctx,'Dichte auf der Fläche (ungleichmäßig!)',pad,pad-6,'#ff6ec7',11);
+    const cv2=bins.filter(b=>b>0);
+    const mean=cv2.reduce((a,b)=>a+b,0)/Math.max(1,cv2.length);
+    const sd=Math.sqrt(cv2.reduce((a,b)=>a+(b-mean)**2,0)/Math.max(1,cv2.length));
+    $('genOut').textContent=
+      `Stichproben: ${n}   Verteilung im Code: ${mode?'Gauß N(0.5, 0.18²)':'gleichverteilt U[0,1]'}\n`+
+      `Ungleichmäßigkeit auf der Fläche (Variationskoeffizient): ${fmt(sd/Math.max(1e-9,mean),3)}\n`+
+      `Gleichmäßig im Code ⇏ gleichmäßig auf der Fläche.\n`+
+      `Der Decoder streckt und staucht — genau dieses Problem löst Teil 9.`;
+  }
+  $('sGenN').oninput=e=>{n=+e.target.value;$('lblGenN').textContent=n;draw();};
+  $('genUni').onclick=()=>{mode=0;$('genUni').classList.add('on');$('genGauss').classList.remove('on');draw();};
+  $('genGauss').onclick=()=>{mode=1;$('genGauss').classList.add('on');$('genUni').classList.remove('on');draw();};
+  draw();
+})();
+
+/* ============================================================
+   4A · SINGLE NEURON
+   ============================================================ */
+(function(){
+  let w1=1,w2=.6,b=0;
+  function draw(){
+    const cv=$('cvNeuron');const {ctx,W,H}=dpr(cv);bg(ctx,W,H);
+    const pad=20,w=W-2*pad,h=H-2*pad;
+    const N=56;
+    let mx=0.0001;
+    const vals=[];
+    for(let j=0;j<N;j++){const row=[];
+      for(let i=0;i<N;i++){ const x=(i/N-0.5)*4,y=(0.5-j/N)*4;
+        const v=Math.max(0,w1*x+w2*y+b); row.push(v); mx=Math.max(mx,v);}
+      vals.push(row);}
+    for(let j=0;j<N;j++)for(let i=0;i<N;i++){
+      const t=vals[j][i]/mx;
+      ctx.fillStyle = t<=0 ? 'rgba(12,18,34,1)' : `hsl(${205-100*t},80%,${18+40*t}%)`;
+      ctx.fillRect(pad+i/N*w,pad+j/N*h,w/N+.8,h/N+.8);
+    }
+    // activation line w1 x + w2 y + b = 0
+    const toPx=(x,y)=>[pad+(x/4+0.5)*w, pad+(0.5-y/4)*h];
+    const seg=[];
+    for(let k=-200;k<=200;k++){ const x=k/50;
+      if(Math.abs(w2)>1e-6){ const y=-(w1*x+b)/w2; if(Math.abs(y)<=2.2) seg.push(toPx(x,y)); }
+    }
+    if(Math.abs(w2)<=1e-6 && Math.abs(w1)>1e-6){ const x=-b/w1; seg.push(toPx(x,-2.2));seg.push(toPx(x,2.2)); }
+    glowLine(ctx,seg,'#ffffff',2,12);
+    txt(ctx,'σ(w₁x₁+w₂x₂+b) über der Ebene',pad,14,'#8d9bc4',11.5);
+    txt(ctx,'weiß: Schaltgrenze (Hyperebene)',pad,H-8,'#fff',11);
+    // 1D slice
+    const cv2=$('cvNeuron1D');const c2=dpr(cv2);const x2=c2.ctx,W2=c2.W,H2=c2.H;
+    bg(x2,W2,H2);grid(x2,W2,H2,30);
+    const p2=[];
+    for(let i=0;i<=200;i++){ const x=(i/200-0.5)*4;
+      const v=Math.max(0,w1*x+w2*0+b);
+      p2.push([30+ (i/200)*(W2-45), H2-30 - clamp(v/Math.max(1,mx),0,1)*(H2-60)]); }
+    x2.strokeStyle='rgba(120,160,255,.4)';x2.beginPath();x2.moveTo(30,H2-30);x2.lineTo(W2-15,H2-30);x2.stroke();
+    glowLine(x2,p2,'#5ad1ff',2.4,10);
+    txt(x2,'Schnitt bei x₂=0: der Knick macht alles aus',30,18,'#8d9bc4',11.5);
+    txt(x2,'x₁',W2-18,H2-12,'#8d9bc4',11,'right');
+    $('neuronOut').textContent=
+      `Gerade: ${fmt(w1)}·x₁ + ${fmt(w2)}·x₂ + ${fmt(b)} = 0\n`+
+      `Links davon: Neuron aus (Ausgabe 0, völlig flach).\n`+
+      `Rechts davon: Neuron an, Ausgabe wächst linear.\n`+
+      `→ Ein Neuron = eine Schnittlinie durch den Raum.`;
+  }
+  $('sW1').oninput=e=>{w1=+e.target.value;$('lblW1').textContent=fmt(w1);draw();};
+  $('sW2').oninput=e=>{w2=+e.target.value;$('lblW2').textContent=fmt(w2);draw();};
+  $('sB').oninput=e=>{b=+e.target.value;$('lblB').textContent=fmt(b);draw();};
+  draw();
+})();
+
+/* ============================================================
+   4B · CELL DECOMPOSITION
+   ============================================================ */
+(function(){
+  const cv=$('cvCells'); let n1=4,n2=0,seed=5,colorOn=true;
+  function nets(){
+    const r=mulberry(seed);
+    const L1=Array.from({length:n1},()=>({w1:gauss(r),w2:gauss(r),b:gauss(r)*0.9}));
+    const L2=Array.from({length:n2},()=>({w:Array.from({length:n1},()=>gauss(r)),b:gauss(r)*0.6}));
+    return {L1,L2};
+  }
+  function draw(){
+    const {ctx,W,H}=dpr(cv);bg(ctx,W,H);
+    const {L1,L2}=nets();
+    const R=2.4;
+    const toXY=(i,j,N)=>[ (i/N-0.5)*2*R, (0.5-j/N)*2*R ];
+    const N=Math.min(320,Math.floor(W));
+    const img=ctx.createImageData(Math.floor(W),Math.floor(H));
+    const pix=img.data;
+    const hash=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0);};
+    const cellSet=new Set();
+    for(let py=0;py<Math.floor(H);py++)for(let px=0;px<Math.floor(W);px++){
+      const x=(px/W-0.5)*2*R, y=(0.5-py/H)*2*R;
+      const a1=L1.map(nn=>nn.w1*x+nn.w2*y+nn.b);
+      let code='';
+      a1.forEach(v=>code+= v>0?'1':'0');
+      const h1=a1.map(v=>Math.max(0,v));
+      L2.forEach(nn=>{ const v=nn.w.reduce((s,q,i)=>s+q*h1[i],0)+nn.b; code+= v>0?'1':'0'; });
+      cellSet.add(code);
+      const hh=hash(code);
+      const hue=(hh%360), sat=colorOn?52:0, lig=colorOn?(22+ (hh>>9)%18):18;
+      // hsl→rgb quick
+      const C=(1-Math.abs(2*lig/100-1))*sat/100, Hp=hue/60, Xc=C*(1-Math.abs(Hp%2-1));
+      let r1=0,g1=0,b1=0;
+      if(Hp<1){r1=C;g1=Xc;}else if(Hp<2){r1=Xc;g1=C;}else if(Hp<3){g1=C;b1=Xc;}
+      else if(Hp<4){g1=Xc;b1=C;}else if(Hp<5){r1=Xc;b1=C;}else{r1=C;b1=Xc;}
+      const m=lig/100-C/2;
+      const idx=(py*Math.floor(W)+px)*4;
+      pix[idx]=(r1+m)*255;pix[idx+1]=(g1+m)*255;pix[idx+2]=(b1+m)*255;pix[idx+3]=255;
+    }
+    ctx.putImageData(img,0,0);
+    // draw layer-1 lines on top
+    L1.forEach(nn=>{
+      const seg=[];
+      for(let k=-300;k<=300;k++){const x=k/60;
+        if(Math.abs(nn.w2)>1e-6){const y=-(nn.w1*x+nn.b)/nn.w2;
+          if(Math.abs(y)<=R)seg.push([ (x/(2*R)+0.5)*W, (0.5-y/(2*R))*H ]);}}
+      glowLine(ctx,seg,'rgba(255,255,255,.55)',1.4,6);
+    });
+    txt(ctx,`Zell-Zerlegung 𝒟(φ_θ) — jede Farbe = ein aktivierter Pfad`,12,20,'#fff',12.5,'left',true);
+    const total=n1+n2;
+    const bound = n2>0 ? Cdn(2,n1)*Cdn(n1,n2) : Cdn(2,n1);
+    $('cellsOut').textContent=
+      `Neuronen gesamt: ${total}  (Schicht 1: ${n1}, Schicht 2: ${n2})\n`+
+      `gezählte Zellen (Bildausschnitt): ${cellSet.size}\n`+
+      `theoretische Schranke Π C(wᵢ₋₁,wᵢ) = ${bignum(bound)}\n`+
+      `Die zweite Schicht unterteilt JEDE Zelle der ersten nochmal → Multiplikation.`;
+  }
+  $('sN1').oninput=e=>{n1=+e.target.value;$('lblN1').textContent=n1;draw();};
+  $('sN2').oninput=e=>{n2=+e.target.value;$('lblN2').textContent=n2;draw();};
+  $('cellShuffle').onclick=()=>{seed=Math.floor(Math.random()*9999);draw();};
+  $('cellColor').onclick=e=>{colorOn=!colorOn;e.target.classList.toggle('on',colorOn);draw();};
+  draw();
+})();
+
+/* ============================================================
+   4C · COUNTING FORMULA
+   ============================================================ */
+(function(){
+  let d=2,nh=5;
+  function drawCut(){
+    const cv=$('cvCut');const {ctx,W,H}=dpr(cv);bg(ctx,W,H);
+    const r=mulberry(1234);
+    const lines=[];
+    for(let i=0;i<nh;i++){ const a=r()*Math.PI, c=(r()-0.5)*0.75;
+      lines.push({a,c}); }
+    // shade regions by sign vector
+    const S=Math.floor(W), T=Math.floor(H);
+    const img=ctx.createImageData(S,T);
+    const seen=new Set();
+    for(let py=0;py<T;py++)for(let px=0;px<S;px++){
+      const x=(px/S-0.5)*2,y=(0.5-py/T)*2;
+      let code='';
+      lines.forEach(l=>{ const v=Math.cos(l.a)*x+Math.sin(l.a)*y - l.c; code+= v>0?'1':'0'; });
+      seen.add(code);
+      let h=0;for(let i=0;i<code.length;i++)h=(h*31+code.charCodeAt(i))>>>0;
+      const idx=(py*S+px)*4;
+      pix_set(img.data,idx,h);
+    }
+    function pix_set(p,i,h){
+      p[i]=24+(h%70); p[i+1]=34+((h>>7)%90); p[i+2]=60+((h>>13)%120); p[i+3]=255;
+    }
+    ctx.putImageData(img,0,0);
+    lines.forEach(l=>{
+      const seg=[];
+      for(let k=-200;k<=200;k++){const t=k/100;
+        const x=l.c*Math.cos(l.a) - t*Math.sin(l.a), y=l.c*Math.sin(l.a)+t*Math.cos(l.a);
+        if(Math.abs(x)<=1&&Math.abs(y)<=1) seg.push([ (x/2+0.5)*W, (0.5-y/2)*H ]);}
+      glowLine(ctx,seg,'rgba(255,211,110,.85)',1.5,7);
+    });
+    txt(ctx,`${nh} Geraden in der Ebene → ${seen.size} sichtbare Stücke`,12,20,'#ffd36e',12.5,'left',true);
+    txt(ctx,`(im unbeschränkten ℝ²: C(2,${nh}) = ${Cdn(2,nh)})`,12,H-10,'#8d9bc4',11.5);
+  }
+  function drawPlot(){
+    const traces=[];
+    for(let dd=1;dd<=6;dd++){
+      const xs=[],ys=[];
+      for(let n=0;n<=20;n++){xs.push(n);ys.push(Cdn(dd,n));}
+      traces.push({x:xs,y:ys,mode:'lines+markers',name:'d='+dd,
+        
+        line:{width:2},marker:{size:4},
+        visible: dd===d ? true : 'legendonly'});
+    }
+    Plotly.react('plotC',traces,Object.assign({},PLOT_LAYOUT,{
+      title:{text:'C(d,n) — Anzahl Stücke bei n Hyperebenen',font:{size:12.5,color:'#dde6ff'}},
+      xaxis:{title:'Anzahl Hyperebenen n',gridcolor:'rgba(120,160,255,.12)',zerolinecolor:'rgba(120,160,255,.25)'},
+      yaxis:{title:'C(d,n)',type:'log',gridcolor:'rgba(120,160,255,.12)',zerolinecolor:'rgba(120,160,255,.25)'},
+      showlegend:true,legend:{orientation:'h',y:-0.22,font:{size:10}}
+    }),PLOT_CFG);
+  }
+  function out(){
+    const terms=[];
+    for(let i=0;i<=d;i++) terms.push(`C(${nh},${i})=${Math.round(binom(nh,i))}`);
+    $('cOut').textContent=
+      `C(${d}, ${nh}) = ${terms.join(' + ')}\n`+
+      `            = ${bignum(Cdn(d,nh))}\n\n`+
+      `Rekursion:  C(${d},${nh}) = C(${d},${nh-1}) + C(${d-1},${nh-1})\n`+
+      `            ${Cdn(d,nh)} = ${Cdn(d,Math.max(0,nh-1))} + ${Cdn(Math.max(0,d-1),Math.max(0,nh-1))}\n\n`+
+      `In ℝ^${d} wächst die Stückzahl höchstens wie n^${d} — polynomiell,\n`+
+      `nicht exponentiell. Darum reicht Breite allein nicht aus.`;
+  }
+  function all(){drawCut();drawPlot();out();}
+  $('sD').oninput=e=>{d=+e.target.value;$('lblD').textContent=d;all();};
+  $('sNh').oninput=e=>{nh=+e.target.value;$('lblNh').textContent=nh;all();};
+  all();
+})();
+
+/* ============================================================
+   5 · ARCHITECTURE CAPACITY LAB
+   ============================================================ */
+(function(){
+  let w0=2,k=3,wid=8,wout=1;
+  function widths(){ const a=[w0]; for(let i=0;i<k;i++)a.push(wid); a.push(wout); return a; }
+  function capacity(ws){ let p=1; for(let i=1;i<ws.length;i++) p*=Cdn(ws[i-1],ws[i]); return p; }
+  function drawArch(){
+    const cv=$('cvArch');const {ctx,W,H}=dpr(cv);bg(ctx,W,H);grid(ctx,W,H,30);
+    const ws=widths(); const n=ws.length;
+    const pad=40, gap=(W-2*pad)/(n-1);
+    const maxw=Math.max(...ws);
+    // connections
+    for(let i=0;i<n-1;i++){
+      const x1=pad+i*gap,x2=pad+(i+1)*gap;
+      const f=Cdn(ws[i],ws[i+1]);
+      ctx.strokeStyle=`rgba(255,110,199,${clamp(0.12+Math.log(f+1)/14,0.1,0.75)})`;
+      ctx.lineWidth=clamp(Math.log(f+1)*0.9,1,7);
+      ctx.beginPath();ctx.moveTo(x1,H/2);ctx.lineTo(x2,H/2);ctx.stroke();
+      txt(ctx,'×'+bignum(f),(x1+x2)/2,H/2-12,'#ff6ec7',10.5,'center',true);
+    }
+    ws.forEach((w,i)=>{
+      const x=pad+i*gap, hgt=clamp(w/maxw*(H-110),10,H-110);
+      ctx.save();ctx.shadowBlur=14;ctx.shadowColor='#5ad1ff';
+      const g=ctx.createLinearGradient(0,H/2-hgt/2,0,H/2+hgt/2);
+      g.addColorStop(0,'#8affc1');g.addColorStop(1,'#2b7fb8');
+      ctx.fillStyle=g;
+      ctx.beginPath();ctx.roundRect(x-11,H/2-hgt/2,22,hgt,7);ctx.fill();ctx.restore();
+      txt(ctx,String(w),x,H/2+hgt/2+16,'#dde6ff',11.5,'center',true);
+      txt(ctx,i===0?'Eingabe':(i===n-1?'Code':'h'+i),x,H/2-hgt/2-9,'#8d9bc4',10,'center');
+    });
+    txt(ctx,'Architektur N(' + ws.join(', ') + ')',12,20,'#5ad1ff',12,'left',true);
+  }
+  function drawDepth(){
+    const budget=24;
+    const xs=[],ys=[],texts=[];
+    for(let kk=1;kk<=8;kk++){
+      const ww=Math.max(1,Math.floor(budget/kk));
+      const ws=[w0]; for(let i=0;i<kk;i++)ws.push(ww); ws.push(wout);
+      xs.push(kk); ys.push(capacity(ws)); texts.push(`k=${kk}, Breite=${ww}`);
+    }
+    Plotly.react('plotDepth',[{
+      x:xs,y:ys,type:'bar',text:texts,hoverinfo:'text+y',
+      marker:{color:ys,colorscale:[[0,'#1b3a66'],[0.5,'#2b8fd0'],[1,'#ff6ec7']],line:{width:0}}
+    }],Object.assign({},PLOT_LAYOUT,{
+      title:{text:`Gleiches Budget (24 Neuronen), verschiedene Tiefen — Kapazitätsschranke`,font:{size:12.5,color:'#dde6ff'}},
+      xaxis:{title:'Anzahl versteckter Schichten k',gridcolor:'rgba(120,160,255,.12)'},
+      yaxis:{title:'Π C(wᵢ₋₁,wᵢ)',type:'log',gridcolor:'rgba(120,160,255,.12)'}
+    }),PLOT_CFG);
+  }
+  function out(){
+    const ws=widths();
+    const parts=[];
+    for(let i=1;i<ws.length;i++) parts.push(`C(${ws[i-1]},${ws[i]})=${bignum(Cdn(ws[i-1],ws[i]))}`);
+    $('archOut').textContent=
+      `𝒩(N) ≤ ${parts.join('  ·  ')}\n`+
+      `     ≤ ${bignum(capacity(ws))} Zellen\n\n`+
+      `Gesamtneuronen: ${k*wid}\n`+
+      `Diese Zahl ist die absolute Obergrenze dessen, was das Netz\n`+
+      `an Stücken je erzeugen kann — über ALLE Gewichte hinweg.`;
+  }
+  function all(){drawArch();drawDepth();out();}
+  $('sA0').oninput=e=>{w0=+e.target.value;$('lblA0').textContent=w0;all();};
+  $('sAk').oninput=e=>{k=+e.target.value;$('lblAk').textContent=k;all();};
+  $('sAw').oninput=e=>{wid=+e.target.value;$('lblAw').textContent=wid;all();};
+  $('sAout').oninput=e=>{wout=+e.target.value;$('lblAout').textContent=wout;all();};
+  all();
+})();
+
+/* ============================================================
+   6A · RECTIFIABILITY
+   ============================================================ */
+(function(){
+  const cv=$('cvRect'); let ang=0, type=0;
+  function curve(t,ty){ // t in [0,1] → [-1,1]^2
+    if(ty===0) return [ -0.85+1.7*t, -0.25+0.5*Math.sin(t*2.4) ];
+    if(ty===1) return [ -0.85+1.7*t, 0.55*Math.sin(t*9.0) ];
+    const th=t*5.2*Math.PI, r=0.08+0.16*th/Math.PI*0.9;
+    return [ r*Math.cos(th)*0.95, r*Math.sin(th)*0.95 ];
+  }
+  function draw(){
+    const {ctx,W,H}=dpr(cv);bg(ctx,W,H);grid(ctx,W,H,32);
+    const S=Math.min(W,H)*0.42, cx=W*0.33, cy=H*0.5;
+    const P=p=>[cx+p[0]*S, cy-p[1]*S];
+    const a=ang*Math.PI/180;
+    const dir=[Math.cos(a),Math.sin(a)];        // projection line direction
+    const nor=[-Math.sin(a),Math.cos(a)];
+    // projection line
+    const L=[[cx-dir[0]*S*1.5,cy+dir[1]*S*1.5],[cx+dir[0]*S*1.5,cy-dir[1]*S*1.5]];
+    glowLine(ctx,L,'rgba(255,211,110,.5)',2,8);
+    // curve
+    const N=420, pts=[], projs=[];
+    for(let i=0;i<=N;i++){ const c=curve(i/N,type); pts.push(P(c));
+      projs.push(c[0]*dir[0]+c[1]*dir[1]); }
+    glowLine(ctx,pts,'#5ad1ff',2.6,12);
+    // projection rays + footpoints
+    for(let i=0;i<=N;i+=7){ const c=curve(i/N,type);
+      const s=projs[i]; const f=[s*dir[0],s*dir[1]];
+      ctx.strokeStyle='rgba(255,255,255,.07)';ctx.lineWidth=1;
+      const A=P(c),B=P(f); ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();
+    }
+    // detect non-monotonic → overlap
+    let turns=0;
+    for(let i=1;i<N;i++){ const d1=projs[i]-projs[i-1], d0=projs[i]-projs[i-1];
+      if(i>1 && Math.sign(projs[i]-projs[i-1])!==Math.sign(projs[i-1]-projs[i-2])
+         && Math.abs(projs[i]-projs[i-1])>1e-7) turns++; }
+    // count overlaps via histogram
+    const B=260, hist=new Array(B).fill(0);
+    const mn=Math.min(...projs),mx=Math.max(...projs);
+    projs.forEach(s=>{const b=Math.min(B-1,Math.floor((s-mn)/(mx-mn+1e-9)*B));hist[b]++;});
+    const expect=(N+1)/B;
+    let multi=0; hist.forEach(h=>{ if(h>expect*2.4)multi++; });
+    const ok = turns<=1 && multi<B*0.12;
+    // draw footpoint density on the line
+    for(let b=0;b<B;b++){ const s=mn+(b+.5)/B*(mx-mn);
+      const f=P([s*dir[0],s*dir[1]]);
+      const d=hist[b]/Math.max(1,Math.max(...hist));
+      if(hist[b]===0)continue;
+      dot(ctx,f[0],f[1],1.5+2.5*d, hist[b]>expect*2.4?'#ff6b6b':'#8affc1',5);
+    }
+    // latent line (right panel)
+    const lx=W*0.70, ly0=H*0.16, ly1=H*0.86;
+    ctx.strokeStyle='rgba(120,160,255,.3)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(lx,ly0);ctx.lineTo(lx,ly1);ctx.stroke();
+    txt(ctx,'Bild φ(Σ) auf ℝ¹',lx+12,ly0-8,'#8d9bc4',11.5);
+    for(let i=0;i<=N;i+=3){
+      const y=ly0+(projs[i]-mn)/(mx-mn+1e-9)*(ly1-ly0);
+      const b=Math.min(B-1,Math.floor((projs[i]-mn)/(mx-mn+1e-9)*B));
+      dot(ctx,lx,y,hist[b]>expect*2.4?2.6:1.6, hist[b]>expect*2.4?'#ff6b6b':'#5ad1ff',4);
+    }
+    // parameter t vs projection graph
+    const gx0=W*0.78,gx1=W*0.96;
+    const gpts=[];
+    for(let i=0;i<=N;i++){ gpts.push([gx0+(i/N)*(gx1-gx0), ly0+(projs[i]-mn)/(mx-mn+1e-9)*(ly1-ly0)]); }
+    glowLine(ctx,gpts,ok?'#8affc1':'#ff6b6b',1.8,8);
+    txt(ctx,'t ↦ φ(t)',gx0,ly1+16,'#8d9bc4',10.5);
+    txt(ctx,ok?'monoton ✓':'nicht monoton ✗',gx0,ly0-8,ok?'#8affc1':'#ff6b6b',10.5,'left',true);
+    $('rectOut').textContent=
+      `Projektionsrichtung: ${ang}°\n`+
+      `Richtungswechsel der Projektion: ${turns}\n`+
+      `mehrfach getroffene Stellen: ${multi} von ${B}\n`+
+      (ok?'Die Projektion ist umkehrbar → EINE Karte genügt.'
+         :'Mehrere Kurvenpunkte landen aufeinander → die Projektion\nist nicht umkehrbar, diese Richtung funktioniert nicht.');
+    verdict($('rectVerdict'),ok,
+      'Diese Richtung rektifiziert die Kurve — ein affines φ reicht.',
+      'Diese Richtung versagt. Bei der Spirale versagt JEDE Richtung.');
+  }
+  $('sAng').oninput=e=>{ang=+e.target.value;$('lblAng').textContent=ang+'°';draw();};
+  ['rcA','rcB','rcC'].forEach((id,i)=>$(id).onclick=()=>{
+    type=i;['rcA','rcB','rcC'].forEach((q,j)=>$(q).classList.toggle('on',i===j));draw();});
+  draw();
+})();
+
+/* ============================================================
+   6B · GAUSS MAP
+   ============================================================ */
+(function(){
+  let type=0, frac=1.0;
+  function curve(t,ty){
+    if(ty===0) return [ -0.85+1.7*t, -0.2+0.45*Math.sin(t*2.2) ];
+    if(ty===1) return [ -0.85+1.7*t, 0.5*Math.sin(t*8.5) ];
+    const th=t*7.5*Math.PI, r=0.06+0.12*th/Math.PI*0.8;
+    return [ r*Math.cos(th), r*Math.sin(th) ];
+  }
+  function draw(){
+    const N=600, M=Math.max(4,Math.floor(N*frac));
+    const cv=$('cvGaussCurve');const {ctx,W,H}=dpr(cv);bg(ctx,W,H);grid(ctx,W,H,30);
+    const S=Math.min(W,H)*0.40,cx=W/2,cy=H/2;
+    const P=p=>[cx+p[0]*S,cy-p[1]*S];
+    const pts=[];for(let i=0;i<=M;i++)pts.push(P(curve(i/N,type)));
+    glowLine(ctx,pts,'#5ad1ff',2.4,12);
+    // tangent arrows
+    const dirs=[];
+    for(let i=1;i<=M;i++){
+      const a=curve((i-1)/N,type),b=curve(i/N,type);
+      let dx=b[0]-a[0],dy=b[1]-a[1];const L=Math.hypot(dx,dy)||1;dx/=L;dy/=L;
+      dirs.push([dx,dy]);
+      if(i%40===0){ const Q=P(b);
+        ctx.strokeStyle='rgba(255,211,110,.75)';ctx.lineWidth=1.4;
+        ctx.beginPath();ctx.moveTo(Q[0],Q[1]);ctx.lineTo(Q[0]+dx*16,Q[1]-dy*16);ctx.stroke();
+        dot(ctx,Q[0]+dx*16,Q[1]-dy*16,2,'#ffd36e',5);}
+    }
+    txt(ctx,'Kurve Σ mit Tangentenrichtungen',12,20,'#5ad1ff',12,'left',true);
+    // circle panel
+    const cv2=$('cvGaussCircle');const c2=dpr(cv2);const x2=c2.ctx,W2=c2.W,H2=c2.H;
+    bg(x2,W2,H2);
+    const R=Math.min(W2,H2)*0.36, ox=W2/2, oy=H2/2;
+    x2.strokeStyle='rgba(120,160,255,.3)';x2.lineWidth=1.5;
+    x2.beginPath();x2.arc(ox,oy,R,0,7);x2.stroke();
+    // bins over RP^1 (angle mod 180°)
+    const B=180, bins=new Array(B).fill(0);
+    dirs.forEach(d=>{ let a=Math.atan2(d[1],d[0]); if(a<0)a+=Math.PI; if(a>=Math.PI)a-=Math.PI;
+      bins[Math.min(B-1,Math.floor(a/Math.PI*B))]++; });
+    for(let b=0;b<B;b++){
+      if(!bins[b])continue;
+      const a=(b+.5)/B*Math.PI;
+      const alpha=clamp(0.25+bins[b]/Math.max(1,Math.max(...bins))*0.75,0,1);
+      x2.strokeStyle=`rgba(255,211,110,${alpha})`;x2.lineWidth=2.2;
+      x2.beginPath();
+      x2.moveTo(ox+Math.cos(a)*R*0.92,oy-Math.sin(a)*R*0.92);
+      x2.lineTo(ox+Math.cos(a)*R*1.06,oy-Math.sin(a)*R*1.06);
+      x2.stroke();
+      // antipodal (RP^1: identified)
+      x2.beginPath();
+      x2.moveTo(ox-Math.cos(a)*R*0.92,oy+Math.sin(a)*R*0.92);
+      x2.lineTo(ox-Math.cos(a)*R*1.06,oy+Math.sin(a)*R*1.06);
+      x2.stroke();
+    }
+    const cover=bins.filter(b=>b>0).length/B;
+    // arc of covered directions as filled wedge
+    x2.fillStyle='rgba(255,211,110,.08)';
+    for(let b=0;b<B;b++){ if(!bins[b])continue;
+      const a0=b/B*Math.PI,a1=(b+1)/B*Math.PI;
+      x2.beginPath();x2.moveTo(ox,oy);x2.arc(ox,oy,R*0.9,-a1,-a0);x2.closePath();x2.fill();
+      x2.beginPath();x2.moveTo(ox,oy);x2.arc(ox,oy,R*0.9,Math.PI-a1,Math.PI-a0);x2.closePath();x2.fill();
+    }
+    txt(x2,'Gauß-Bild p∘G(Σ) ⊂ ℝP¹',12,20,'#ffd36e',12,'left',true);
+    txt(x2,`Abdeckung: ${fmt(cover*100,1)} %`,12,H2-12,cover>0.97?'#ff6b6b':'#8affc1',12,'left',true);
+    const full=cover>0.97;
+    $('gaussOut').textContent=
+      `gezeichneter Anteil: ${Math.round(frac*100)} %\n`+
+      `abgedeckte Richtungen in ℝP¹: ${fmt(cover*100,1)} %\n\n`+
+      (full
+       ? '✗ Das Gauß-Bild deckt ALLE Richtungen ab.\n   Lemma 4.13 ⇒ Σ ist NICHT linear rektifizierbar.\n   Man braucht mehrere Karten — die Komplexität steigt.'
+       : '✓ Es bleiben Richtungen übrig, die keine Tangente trifft.\n   In einer solchen Richtung kann man projizieren\n   ⇒ eine affine Karte genügt.');
+  }
+  $('sGP').oninput=e=>{frac=+e.target.value/100;$('lblGP').textContent=e.target.value+'%';draw();};
+  ['gcA','gcB','gcC'].forEach((id,i)=>$(id).onclick=()=>{
+    type=i;['gcA','gcB','gcC'].forEach((q,j)=>$(q).classList.toggle('on',i===j));draw();});
+  draw();
+})();
+
+/* ============================================================
+   7 · SPIRAL EXPERIMENT
+   ============================================================ */
+(function(){
+  let T=1.5, bb=0.30, cap=24;
+  function spiral(t){ // t in [0,1] -> angle in [0, T*2π]
+    const th=t*T*2*Math.PI;
+    const r=0.10+bb*th/(2*Math.PI);
+    return [r*Math.cos(th), r*Math.sin(th)];
+  }
+  // needed charts ≈ number of monotone pieces of the best linear projection
+  function neededCharts(){
+    let best=1e9;
+    for(let a=0;a<180;a+=3){
+      const d=[Math.cos(a*Math.PI/180),Math.sin(a*Math.PI/180)];
+      let prev=null,sgn=0,pieces=1;
+      for(let i=0;i<=400;i++){ const p=spiral(i/400); const s=p[0]*d[0]+p[1]*d[1];
+        if(prev!==null){ const ns=Math.sign(s-prev);
+          if(ns!==0){ if(sgn!==0&&ns!==sgn)pieces++; sgn=ns; } }
+        prev=s; }
+      best=Math.min(best,pieces);
+    }
+    return best;
+  }
+  function draw(){
+    const need=neededCharts();
+    const ok = need<=cap;
+    // main canvas
+    const cv=$('cvSpiral');const {ctx,W,H}=dpr(cv);bg(ctx,W,H);grid(ctx,W,H,30);
+    const S=Math.min(W,H)*0.40, cx=W/2, cy=H/2;
+    const P=p=>[cx+p[0]*S*1.6,cy-p[1]*S*1.6];
+    const N=500, pts=[];
+    for(let i=0;i<=N;i++)pts.push(P(spiral(i/N)));
+    glowLine(ctx,pts,'#5ad1ff',2.6,12);
+    // PL reconstruction with 'cap' linear pieces
+    const seg=Math.max(2,Math.min(cap,220));
+    const rec=[];
+    for(let i=0;i<=seg;i++) rec.push(P(spiral(i/seg)));
+    glowLine(ctx,rec,ok?'#ff6ec7':'#ff6b6b',1.8,8);
+    // chart boundaries (where projection turns)
+    {
+      const d=[1,0];
+      let prev=null,sgn=0;
+      for(let i=0;i<=300;i++){ const p=spiral(i/300); const s=p[0]*d[0]+p[1]*d[1];
+        if(prev!==null){ const ns=Math.sign(s-prev);
+          if(ns!==0){ if(sgn!==0&&ns!==sgn){ const Q=P(p); dot(ctx,Q[0],Q[1],4,'#ffd36e',12);} sgn=ns; } }
+        prev=s; }
+    }
+    txt(ctx,`Spirale ρ(θ)=(a+bθ)e^{iωθ},  θ∈(0, ${fmt(T,2)}·2π]`,12,20,'#5ad1ff',12,'left',true);
+    txt(ctx,'● Kartengrenzen (Wendepunkte der besten Projektion)',12,H-10,'#ffd36e',11);
+
+    // latent canvas
+    const cl=$('cvLatent');const c1=dpr(cl);const xc=c1.ctx,W1=c1.W,H1=c1.H;
+    bg(xc,W1,H1,'#060a14','#0a1020');
+    const y0=H1*0.58;
+    xc.strokeStyle='rgba(120,160,255,.3)';xc.lineWidth=1.4;
+    xc.beginPath();xc.moveTo(20,y0);xc.lineTo(W1-20,y0);xc.stroke();
+    // best projection coordinate
+    let bestA=0,bestPieces=1e9;
+    for(let a=0;a<180;a+=3){
+      const d=[Math.cos(a*Math.PI/180),Math.sin(a*Math.PI/180)];
+      let prev=null,sgn=0,pieces=1;
+      for(let i=0;i<=200;i++){const p=spiral(i/200);const s=p[0]*d[0]+p[1]*d[1];
+        if(prev!==null){const ns=Math.sign(s-prev);
+          if(ns!==0){if(sgn!==0&&ns!==sgn)pieces++;sgn=ns;}}
+        prev=s;}
+      if(pieces<bestPieces){bestPieces=pieces;bestA=a;}
+    }
+    const d=[Math.cos(bestA*Math.PI/180),Math.sin(bestA*Math.PI/180)];
+    const ss=[];for(let i=0;i<=300;i++){const p=spiral(i/300);ss.push(p[0]*d[0]+p[1]*d[1]);}
+    const smn=Math.min(...ss),smx=Math.max(...ss);
+    const B=200,hist=new Array(B).fill(0);
+    ss.forEach(s=>hist[Math.min(B-1,Math.floor((s-smn)/(smx-smn+1e-9)*B))]++);
+    const exp=301/B;
+    for(let i=0;i<=300;i+=1){
+      const x=20+(ss[i]-smn)/(smx-smn+1e-9)*(W1-40);
+      const b=Math.min(B-1,Math.floor((ss[i]-smn)/(smx-smn+1e-9)*B));
+      const bad=hist[b]>exp*2.2;
+      const yy=y0 - 14 + (i/300)*28;
+      dot(xc,x,yy,bad?2.4:1.4,bad?'#ff6b6b':'#5ad1ff',bad?6:3);
+    }
+    txt(xc,`beste Projektionsrichtung: ${bestA}°  → ${bestPieces} monotone Stücke`,20,18,'#8d9bc4',11);
+    txt(xc,ok?'latente Darstellung konsistent':'Überlappungen: Homöomorphismus unmöglich',20,H1-10,ok?'#8affc1':'#ff6b6b',11.5,'left',true);
+
+    // bars
+    const cb=$('cvBars');const cB=dpr(cb);const xb=cB.ctx,Wb=cB.W,Hb=cB.H;
+    bg(xb,Wb,Hb,'#060a14','#0a1020');
+    const mxv=Math.max(need,cap)*1.25;
+    const barW=(Wb-80)/2;
+    function bar(i,val,label,color){
+      const x=40+i*(barW+8), hgt=val/mxv*(Hb-56);
+      const g=xb.createLinearGradient(0,Hb-28-hgt,0,Hb-28);
+      g.addColorStop(0,color);g.addColorStop(1,'rgba(255,255,255,.08)');
+      xb.fillStyle=g;xb.beginPath();xb.roundRect(x,Hb-28-hgt,barW,hgt,6);xb.fill();
+      txt(xb,label,x+barW/2,Hb-10,'#8d9bc4',10.5,'center');
+      txt(xb,String(val),x+barW/2,Hb-34-hgt,color,12,'center',true);
+    }
+    bar(0,need,'𝒩(ℝ²,Σ) nötig','#ffd36e');
+    bar(1,cap,'𝒩(N) verfügbar','#5ad1ff');
+    txt(xb,'Schwierigkeit vs. Kapazität',12,18,'#dde6ff',12,'left',true);
+
+    $('spiralOut').textContent=
+      `T = ${fmt(T,2)} Umdrehungen,  Steigung b = ${fmt(bb)}\n`+
+      `benötigte Karten 𝒩(ℝ²,Σ) ≈ ${need}\n`+
+      `Netzkapazität  𝒩(N) = ${cap}\n`+
+      `Reserve: ${cap-need}\n\n`+
+      (ok?'Die Rekonstruktion folgt der Spirale sauber.'
+         :'Zu wenige Stücke: die Rekonstruktion schneidet Windungen ab\nund die latente Darstellung überlappt sich.');
+    verdict($('verdictBox'),ok,
+      `𝒩(ℝ²,Σ)=${need} ≤ 𝒩(N)=${cap} — Satz 4.12 erfüllt, das Netz kann die Spirale kodieren.`,
+      `𝒩(ℝ²,Σ)=${need} > 𝒩(N)=${cap} — Satz 4.12 verletzt. Kein Training der Welt hilft hier.`);
+  }
+  $('sT').oninput=e=>{T=+e.target.value;$('lblT').textContent=fmt(T,2);draw();};
+  $('sBb').oninput=e=>{bb=+e.target.value;$('lblBb').textContent=fmt(bb);draw();};
+  $('sCap').oninput=e=>{cap=+e.target.value;$('lblCap').textContent=cap;draw();};
+  draw();
+})();
+
+/* ============================================================
+   8 · PEANO CONSTRUCTION
+   ============================================================ */
+(function(){
+  let n=1, pcap=400, showUnits=true, animT=1, animOn=false;
+  // Hilbert-style space filling curve as a stand-in for the Peano construction C_n
+  function hilbert(order){
+    let pts=[[0,0],[0,1],[1,1],[1,0]];
+    for(let o=1;o<order;o++){
+      const np=[];
+      const n2=Math.pow(2,o);
+      // four transformed copies
+      const A=pts.map(p=>[p[1]/2, p[0]/2]);                 // rotate
+      const B=pts.map(p=>[p[0]/2, p[1]/2+0.5]);
+      const C=pts.map(p=>[p[0]/2+0.5, p[1]/2+0.5]);
+      const D=pts.map(p=>[1-p[1]/2, 0.5-p[0]/2]);
+      np.push(...A,...B,...C,...D);
+      pts=np;
+    }
+    return pts;
+  }
+  function draw(){
+    const order=n+1;
+    const pts=hilbert(order);
+    const units=Math.pow(4,n+1);
+    const cv=$('cvPeano');const {ctx,W,H}=dpr(cv);bg(ctx,W,H);
+    const pad=26,S=Math.min(W,H)-2*pad, ox=(W-S)/2, oy=(H-S)/2;
+    // background cells
+    const g=Math.pow(2,order);
+    ctx.strokeStyle='rgba(120,160,255,.08)';ctx.lineWidth=1;
+    for(let i=0;i<=g;i++){
+      ctx.beginPath();ctx.moveTo(ox+i/g*S,oy);ctx.lineTo(ox+i/g*S,oy+S);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(ox,oy+i/g*S);ctx.lineTo(ox+S,oy+i/g*S);ctx.stroke();
+    }
+    const mapP=p=>[ox+(p[0]+0.5)/g*S*1 + 0, oy+S-(p[1]+0.5)/g*S];
+    // normalize points: they live in [0,1]
+    const pp=pts.map(p=>[ox+p[0]*S*(g/(g))*1, oy+S-p[1]*S]);
+    const m=Math.max(2,Math.floor(pp.length*animT));
+    glowLine(ctx,pp.slice(0,m),'#5ad1ff',Math.max(1,3-order*0.35),10);
+    if(showUnits){
+      // highlight a few "non-rectifiable units"
+      const step=Math.max(1,Math.floor(pp.length/Math.min(units,120)));
+      for(let i=0;i<pp.length-step;i+=step){
+        const a=pp[i],b=pp[Math.min(pp.length-1,i+step)];
+        const x=Math.min(a[0],b[0])-3,y=Math.min(a[1],b[1])-3;
+        const w=Math.abs(b[0]-a[0])+6,h=Math.abs(b[1]-a[1])+6;
+        ctx.strokeStyle='rgba(255,107,107,.45)';ctx.lineWidth=1;
+        ctx.strokeRect(x,y,w,h);
+      }
+    }
+    txt(ctx,`C${n}  —  ${bignum(units)} nicht-rektifizierbare Einheiten`,12,20,'#5ad1ff',12.5,'left',true);
+    txt(ctx,'jede rote Box braucht eine eigene Karte',12,H-10,'#ff6b6b',11);
+
+    // plot growth
+    const xs=[],ys=[],caps=[];
+    for(let k=0;k<=6;k++){xs.push(k);ys.push(Math.pow(4,k+1));caps.push(pcap);}
+    Plotly.react('plotPeano',[
+      {x:xs,y:ys,type:'scatter',mode:'lines+markers',name:'𝒩(ℝ²,Cₙ) ≥ 4ⁿ⁺¹',
+       line:{color:'#ff6ec7',width:3},marker:{size:7}},
+      {x:xs,y:caps,type:'scatter',mode:'lines',name:'𝒩(N) (fest)',
+       line:{color:'#5ad1ff',width:2.5,dash:'dash'}},
+      {x:[n],y:[Math.pow(4,n+1)],type:'scatter',mode:'markers',name:'aktuell',
+       marker:{size:14,color:'#ffd36e',line:{width:2,color:'#fff'}}}
+    ],Object.assign({},PLOT_LAYOUT,{
+      title:{text:'Exponentielles Wachstum schlägt jede feste Kapazität',font:{size:12.5,color:'#dde6ff'}},
+      xaxis:{title:'Rekursionstiefe n',gridcolor:'rgba(120,160,255,.12)'},
+      yaxis:{title:'Anzahl nötiger Karten',type:'log',gridcolor:'rgba(120,160,255,.12)'},
+      legend:{orientation:'h',y:-0.2,font:{size:10}}
+    }),PLOT_CFG);
+
+    const ok = units<=pcap;
+    let nStar=0; while(Math.pow(4,nStar+1)<=pcap) nStar++;
+    $('peanoOut').textContent=
+      `Rekursionstiefe n = ${n}\n`+
+      `Einheiten von Cₙ:  4^${n+1} = ${bignum(units)}\n`+
+      `⇒ 𝒩(ℝ², Cₙ) ≥ ${bignum(units)}\n`+
+      `Netzkapazität 𝒩(N) = ${bignum(pcap)}\n\n`+
+      `Kleinstes n mit 4ⁿ⁺¹ > 𝒩(N):  n = ${nStar}\n`+
+      `Dieses C_${nStar} ist das Gegenbeispiel aus Satz 4.14.`;
+    verdict($('peanoVerdict'),ok,
+      `4^${n+1} = ${bignum(units)} ≤ 𝒩(N) = ${bignum(pcap)} — noch im Rahmen. Erhöhe n weiter!`,
+      `4^${n+1} = ${bignum(units)} > 𝒩(N) = ${bignum(pcap)} — diese Kurve ist für dieses Netz prinzipiell unlernbar. ∎`);
+  }
+  function anim(){ if(animT<1){animT=Math.min(1,animT+0.012);draw();requestAnimationFrame(anim);} else animOn=false; }
+  $('sPn').oninput=e=>{n=+e.target.value;$('lblPn').textContent=n;animT=1;draw();};
+  $('sPcap').oninput=e=>{pcap=+e.target.value;$('lblPcap').textContent=bignum(pcap);draw();};
+  $('peUnits').onclick=e=>{showUnits=!showUnits;e.target.classList.toggle('on',showUnits);draw();};
+  $('peAnim').onclick=()=>{animT=0;if(!animOn){animOn=true;anim();}};
+  draw();
+})();
+
+/* ============================================================
+   9A · DENSITY DISTORTION + OMT FIX
+   ============================================================ */
+(function(){
+  let dist=1.0, fixed=false;
+  const rnd=mulberry(55);
+  let base=[];
+  function regen(){ base=[]; for(let i=0;i<420;i++) base.push([rnd(),rnd()]); }
+  regen();
+  function warp(p){ // distortion of the decoder
+    const u=p[0],v=p[1];
+    const s=u + dist*0.33*Math.sin(Math.PI*u)*Math.sin(Math.PI*v);
+    const t=v + dist*0.22*Math.sin(2*Math.PI*u);
+    return [clamp(s,0,1),clamp(t,0,1)];
+  }
+  // approximate inverse-density correction (the "OMT" step)
+  function omt(p){
+    // pre-compensate by pulling samples toward where warp stretches
+    const u=p[0],v=p[1];
+    const h=1e-3;
+    const a=warp([u,v]),b=warp([Math.min(1,u+h),v]),c=warp([u,Math.min(1,v+h)]);
+    const J=Math.abs(((b[0]-a[0])/h)*((c[1]-a[1])/h)-((b[1]-a[1])/h)*((c[0]-a[0])/h))+1e-6;
+    // simple relaxation: move sample opposite to density gradient
+    const k=0.16*(1/Math.sqrt(J)-1);
+    return [clamp(u+k*(u-0.5)*1.4,0,1), clamp(v+k*(v-0.5)*1.4,0,1)];
+  }
+  function panel(cvid,pts,color,title,showDensity){
+    const cv=$(cvid);const {ctx,W,H}=dpr(cv);bg(ctx,W,H);grid(ctx,W,H,30);
+    const pad=24,w=W-2*pad,h=H-2*pad;
+    if(showDensity){
+      const G=16,cells=new Float32Array(G*G);
+      pts.forEach(p=>{const gx=Math.min(G-1,Math.floor(p[0]*G)),gy=Math.min(G-1,Math.floor(p[1]*G));cells[gy*G+gx]++;});
+      const mx=Math.max(1,...cells);
+      for(let gy=0;gy<G;gy++)for(let gx=0;gx<G;gx++){
+        const c=cells[gy*G+gx]/mx;
+        ctx.fillStyle=`rgba(255,110,199,${0.05+0.5*c})`;
+        ctx.fillRect(pad+gx/G*w,pad+gy/G*h,w/G+.6,h/G+.6);
+      }
+    }
+    pts.forEach(p=>dot(ctx,pad+p[0]*w,pad+p[1]*h,1.9,color,4));
+    ctx.strokeStyle='rgba(120,160,255,.25)';ctx.strokeRect(pad,pad,w,h);
+    txt(ctx,title,pad,18,color,12,'left',true);
+  }
+  function cvOf(pts){
+    const G=14,cells=new Float32Array(G*G);
+    pts.forEach(p=>{const gx=Math.min(G-1,Math.floor(p[0]*G)),gy=Math.min(G-1,Math.floor(p[1]*G));cells[gy*G+gx]++;});
+    const arr=Array.from(cells);
+    const m=arr.reduce((a,b)=>a+b,0)/arr.length;
+    const sd=Math.sqrt(arr.reduce((a,b)=>a+(b-m)**2,0)/arr.length);
+    return sd/Math.max(1e-9,m);
+  }
+  function draw(){
+    const src=fixed?base.map(omt):base;
+    const img=src.map(warp);
+    panel('cvOmtA',src,'#5ad1ff','Parameterraum ℱ'+(fixed?' (nach OMT vorverzerrt)':' (gleichverteilt)'),false);
+    panel('cvOmtB',img,'#ff6ec7','Bild auf der Fläche ψ(ℱ)',true);
+    const before=cvOf(base.map(warp)), after=cvOf(img);
+    $('omtOut').textContent=
+      `Verzerrungsstärke der Abbildung: ${fmt(dist)}\n`+
+      `Ungleichmäßigkeit auf der Fläche: ${fmt(after,3)}`+
+      (fixed?`   (vorher ${fmt(before,3)})`:'')+`\n\n`+
+      (fixed
+        ? '✓ Der optimale Transport T verschiebt die Stichproben im\n  latenten Raum so, dass das Bild flächentreu wird.\n  T∗ζ = (φθ)∗μ — genau die Gleichung des Papers.'
+        : '✗ Wo ψ streckt, werden die Punkte dünn; wo es staucht, klumpen sie.\n  Die rosa Dichte ist sichtbar ungleichmäßig.');
+  }
+  $('sDist').oninput=e=>{dist=+e.target.value;$('lblDist').textContent=fmt(dist);draw();};
+  $('omtFix').onclick=e=>{fixed=true;e.target.classList.add('on');draw();};
+  $('omtReset').onclick=()=>{fixed=false;$('omtFix').classList.remove('on');draw();};
+  draw();
+})();
+
+/* ============================================================
+   9B · 1D OPTIMAL TRANSPORT
+   ============================================================ */
+(function(){
+  let mu=1.2, sg=0.5, plan=0;
+  const N=16;
+  function draw(){
+    const cv=$('cvOT');const {ctx,W,H}=dpr(cv);bg(ctx,W,H);grid(ctx,W,H,30);
+    const pad=50, w=W-2*pad;
+    const yA=H*0.30, yB=H*0.74;
+    const X=x=>pad+(x+2)/5*w;
+    // densities
+    function gaussD(x,m,s){return Math.exp(-((x-m)**2)/(2*s*s))/(s*Math.sqrt(2*Math.PI));}
+    const curveA=[],curveB=[];
+    for(let i=0;i<=240;i++){const x=-2+i/240*5;
+      curveA.push([X(x),yA-gaussD(x,0,0.45)*52]);
+      curveB.push([X(x),yB-gaussD(x,mu,sg)*52]);}
+    glowLine(ctx,curveA,'rgba(90,209,255,.75)',2,8);
+    glowLine(ctx,curveB,'rgba(255,110,199,.75)',2,8);
+    ctx.strokeStyle='rgba(120,160,255,.25)';
+    ctx.beginPath();ctx.moveTo(pad,yA);ctx.lineTo(W-pad,yA);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(pad,yB);ctx.lineTo(W-pad,yB);ctx.stroke();
+    // quantile samples
+    const src=[],tgt=[];
+    for(let i=0;i<N;i++){
+      const q=(i+0.5)/N;
+      // inverse CDF via bisection on gaussian
+      const inv=(p,m,s)=>{let lo=-8,hi=8;for(let k=0;k<60;k++){const mid=(lo+hi)/2;
+        let c=0;for(let j=0;j<=200;j++){const x=-8+j/200*16;c+=gaussD(x,m,s)*(16/200);if(x>mid)break;}
+        if(c<p)lo=mid;else hi=mid;}return (lo+hi)/2;};
+      src.push(inv(q,0,0.45)); tgt.push(inv(q,mu,sg));
+    }
+    const order = plan===0 ? src.map((_,i)=>i) : src.map((_,i)=>N-1-i);
+    let cost=0;
+    src.forEach((s,i)=>{
+      const t=tgt[order[i]];
+      cost+=(s-t)*(s-t)/N;
+      ctx.strokeStyle= plan===0?'rgba(138,255,193,.35)':'rgba(255,107,107,.35)';
+      ctx.lineWidth=1.3;
+      ctx.beginPath();ctx.moveTo(X(s),yA);ctx.lineTo(X(t),yB);ctx.stroke();
+      dot(ctx,X(s),yA,3.2,'#5ad1ff',6);
+      dot(ctx,X(t),yB,3.2,'#ff6ec7',6);
+    });
+    txt(ctx,'Quelle ν (blau)',pad,yA-66,'#5ad1ff',12,'left',true);
+    txt(ctx,'Ziel ζ (rosa)',pad,yB+22,'#ff6ec7',12,'left',true);
+    // optimal cost for comparison
+    let optCost=0; src.forEach((s,i)=>{optCost+=(s-tgt[i])**2/N;});
+    $('otOut').textContent=      `Plan: ${plan===0?'optimale (monotone) Umordnung':'absichtlich gekreuzt'}\n`+
+      `Transportkosten E(T) = Σ |x − T(x)|² / N = ${fmt(cost,4)}\n`+
+      `optimale Kosten (Wasserstein-Distanz W₂²) = ${fmt(optCost,4)}\n`+
+      `Mehrkosten: ${fmt(cost-optCost,4)}\n\n`+
+      (plan===0
+        ? '✓ Keine Linie kreuzt eine andere. In 1D ist der optimale\n  Transport genau die monotone Umordnung.'
+        : '✗ Jede Kreuzung kostet extra. Tauscht man zwei gekreuzte\n  Paare zurück, sinken die Kosten immer — darum ist\n  der optimale Plan nie gekreuzt.');
+  }
+  $('sOTmu').oninput=e=>{mu=+e.target.value;$('lblOTmu').textContent=fmt(mu);draw();};
+  $('sOTs').oninput=e=>{sg=+e.target.value;$('lblOTs').textContent=fmt(sg);draw();};
+  $('otOpt').onclick=()=>{plan=0;$('otOpt').classList.add('on');$('otBad').classList.remove('on');draw();};
+  $('otBad').onclick=()=>{plan=1;$('otBad').classList.add('on');$('otOpt').classList.remove('on');draw();};
+  draw();
+})();
+
+/* ============================================================
+   9C · BRENIER POTENTIAL
+   ============================================================ */
+(function(){
+  let a=0.3, c=1.0;
+  function u(x,y){ return 0.5*c*(x*x+y*y) + a*(0.33*x*x*x*0.5 + 0.25*x*y*y) + 0.15*a*x*x*y; }
+  function grad(x,y){
+    const h=1e-4;
+    return [ (u(x+h,y)-u(x-h,y))/(2*h), (u(x,y+h)-u(x,y-h))/(2*h) ];
+  }
+  function drawSurface(){
+    const N=36,xs=[],ys=[],z=[];
+    for(let i=0;i<N;i++){xs.push(-1+2*i/(N-1));ys.push(-1+2*i/(N-1));}
+    for(let j=0;j<N;j++){const row=[];
+      for(let i=0;i<N;i++)row.push(u(xs[i],ys[j]));
+      z.push(row);}
+    Plotly.react('plotBrenier',[{
+      type:'surface',x:xs,y:ys,z:z,showscale:false,
+      colorscale:[[0,'#13203f'],[.5,'#2b7fb8'],[1,'#ffd36e']],opacity:.95,
+      contours:{z:{show:true,usecolormap:true,project:{z:true}}}
+    }],Object.assign({},PLOT_LAYOUT,{
+      scene:{xaxis:{title:'x',color:'#8d9bc4',gridcolor:'rgba(120,160,255,.15)',backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+             yaxis:{title:'y',color:'#8d9bc4',gridcolor:'rgba(120,160,255,.15)',backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+             zaxis:{title:'u(x,y)',color:'#8d9bc4',gridcolor:'rgba(120,160,255,.15)',backgroundcolor:'rgba(0,0,0,0)',showbackground:true},
+             camera:{eye:{x:1.6,y:-1.5,z:0.9}},aspectratio:{x:1,y:1,z:.65}},
+      margin:{l:0,r:0,t:0,b:0}}),PLOT_CFG);
+  }
+  function drawGrad(){
+    const cv=$('cvGrad');const {ctx,W,H}=dpr(cv);bg(ctx,W,H);grid(ctx,W,H,30);
+    const S=Math.min(W,H)*0.40, cx=W/2, cy=H/2;
+    const P=(x,y)=>[cx+x*S,cy-y*S];
+    // contour lines of u
+    for(let lv=0;lv<9;lv++){
+      const val=0.08+lv*0.22;
+      const pts=[];
+      for(let k=0;k<=220;k++){
+        const th=k/220*2*Math.PI;
+        let lo=0,hi=2.2;
+        for(let it=0;it<28;it++){const m=(lo+hi)/2;
+          if(u(m*Math.cos(th),m*Math.sin(th))<val)lo=m;else hi=m;}
+        const r=(lo+hi)/2; if(r>2.1)continue;
+        pts.push(P(r*Math.cos(th),r*Math.sin(th)));
+      }
+      if(pts.length>4) glowLine(ctx,pts.concat([pts[0]]),'rgba(90,209,255,.28)',1,0);
+    }
+    // gradient arrows
+    const G=11;
+    let minDet=1e9;
+    for(let i=0;i<G;i++)for(let j=0;j<G;j++){
+      const x=-0.95+1.9*i/(G-1), y=-0.95+1.9*j/(G-1);
+      const g=grad(x,y);
+      const L=Math.hypot(g[0],g[1])||1;
+      const sc=0.17;
+      const A=P(x,y), B=P(x+g[0]*sc,y+g[1]*sc);
+      ctx.strokeStyle='rgba(255,211,110,.7)';ctx.lineWidth=1.3;
+      ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.stroke();
+      dot(ctx,B[0],B[1],2,'#ffd36e',5);
+      // hessian determinant (Monge-Ampère left side)
+      const h=1e-3;
+      const uxx=(u(x+h,y)-2*u(x,y)+u(x-h,y))/(h*h);
+      const uyy=(u(x,y+h)-2*u(x,y)+u(x,y-h))/(h*h);
+      const uxy=(u(x+h,y+h)-u(x+h,y-h)-u(x-h,y+h)+u(x-h,y-h))/(4*h*h);
+      minDet=Math.min(minDet,uxx*uyy-uxy*uxy);
+    }
+    txt(ctx,'∇u — der optimale Transportplan',12,20,'#ffd36e',12,'left',true);
+    txt(ctx,'blaue Linien: Niveaulinien von u',12,H-10,'#5ad1ff',11);
+    const convex=minDet>-1e-6;
+    $('brenOut').textContent=
+      `u(x,y) = ½·${fmt(c)}·(x²+y²) + ${fmt(a)}·(…)  — Brenier-Potential\n`+
+      `kleinste Hesse-Determinante det(∂²u) = ${fmt(minDet,3)}\n`+
+      (convex
+        ? '✓ u ist konvex ⇒ ∇u ist ein gültiger Transport.\n  Die Pfeile kreuzen sich nicht — genau wie in 1D.'
+        : '✗ u verliert die Konvexität ⇒ ∇u faltet den Raum,\n  der Transport wäre nicht mehr eindeutig umkehrbar.')+
+      `\n\nMonge-Ampère:  det(∂²u/∂xᵢ∂xⱼ) = ν(x) / ζ(∇u(x))\n`+
+      `Links die Krümmung des Potentials, rechts das Dichteverhältnis.`;
+  }
+  function all(){drawSurface();drawGrad();}
+  $('sBa').oninput=e=>{a=+e.target.value;$('lblBa').textContent=fmt(a);all();};
+  $('sBc').oninput=e=>{c=+e.target.value;$('lblBc').textContent=fmt(c);all();};
+  all();
+})();
+
+/* ============================================================
+   10 · FINAL DASHBOARD
+   ============================================================ */
+(function(){
+  let k=3, wid=6, mcomp=64;
+  function capacity(){
+    const ws=[2]; for(let i=0;i<k;i++)ws.push(wid); ws.push(1);
+    let p=1; for(let i=1;i<ws.length;i++)p*=Cdn(ws[i-1],ws[i]);
+    return {p,ws};
+  }
+  function draw(){
+    const {p,ws}=capacity();
+    const ok = mcomp<=p;
+    const cv=$('cvFinal');const {ctx,W,H}=dpr(cv);bg(ctx,W,H);grid(ctx,W,H,30);
+    // two scales, log
+    const L=v=>Math.log10(Math.max(1,v));
+    const mx=Math.max(L(p),L(mcomp))*1.2+0.5;
+    const pad=46, bw=(W-2*pad-20)/2;
+    function bar(i,val,label,color){
+      const hgt=L(val)/mx*(H-70);
+      const g=ctx.createLinearGradient(0,H-36-hgt,0,H-36);
+      g.addColorStop(0,color);g.addColorStop(1,'rgba(255,255,255,.07)');
+      ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(pad+i*(bw+20),H-36-hgt,bw,hgt,8);ctx.fill();
+      txt(ctx,label,pad+i*(bw+20)+bw/2,H-16,'#8d9bc4',11,'center');
+      txt(ctx,bignum(val),pad+i*(bw+20)+bw/2,H-44-hgt,color,13,'center',true);
+    }
+    bar(0,mcomp,'𝒩(ℝⁿ,Σ) — Schwierigkeit','#ffd36e');
+    bar(1,p,'𝒩(N) — Kapazität','#5ad1ff');
+    txt(ctx,'logarithmischer Vergleich',12,20,'#dde6ff',12,'left',true);
+    $('finalOut').textContent=
+      `Architektur N(${ws.join(', ')})\n`+
+      `Kapazität 𝒩(N) ≤ ${bignum(p)}\n`+
+      `Komplexität der Fläche 𝒩(ℝⁿ,Σ) = ${bignum(mcomp)}\n\n`+
+      `Satz 4.12:  𝒩(ℝⁿ,Σ) ≤ 𝒩(φθ) ≤ 𝒩(N)   ${ok?'✓ erfüllt':'✗ verletzt'}\n`+
+      `Satz 4.14:  ein C_n mit 4ⁿ⁺¹ > ${bignum(p)} existiert immer\n`+
+      `            → kleinstes solches n ist ${(()=>{let q=0;while(Math.pow(4,q+1)<=p)q++;return q;})()}`;
+    verdict($('finalVerdict'),ok,
+      'Dieses Netz kann diese Fläche prinzipiell kodieren. Jetzt ist es „nur noch" ein Optimierungsproblem.',
+      'Dieses Netz kann diese Fläche prinzipiell NICHT kodieren. Mehr Daten oder längeres Training ändern daran nichts — nur eine größere Architektur.');
+  }
+  $('sFk').oninput=e=>{k=+e.target.value;$('lblFk').textContent=k;draw();};
+  $('sFw').oninput=e=>{wid=+e.target.value;$('lblFw').textContent=wid;draw();};
+  $('sFm').oninput=e=>{mcomp=+e.target.value;$('lblFm').textContent=bignum(mcomp);draw();};
+  draw();
+})();
+
+/* ============================================================
+   SCROLL PROGRESS + RESIZE
+   ============================================================ */
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  const p=h.scrollTop/(h.scrollHeight-h.clientHeight)*100;
+  $('progbar').style.width=clamp(p,0,100)+'%';
+});
+let rt=null;
+window.addEventListener('resize',()=>{
+  clearTimeout(rt);
+  rt=setTimeout(()=>{ window.dispatchEvent(new Event('redrawAll')); },160);
+});
+// nudge all sliders once so every canvas redraws at correct DPR after layout
+window.addEventListener('redrawAll',()=>{
+  document.querySelectorAll('input[type=range]').forEach(s=>s.dispatchEvent(new Event('input')));
+});
+window.addEventListener('load',()=>{
+  setTimeout(()=>window.dispatchEvent(new Event('redrawAll')),120);
+});
+// roundRect polyfill for older browsers
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    r=Math.min(r,w/2,h/2);
+    this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);
+    this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);this.closePath();return this;};
+}
+</script>
+</body>
+</html>

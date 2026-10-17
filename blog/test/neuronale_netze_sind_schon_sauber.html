@@ -1,0 +1,3031 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neuronale Netze sind schon sauber — Interaktiver Explorer</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+:root{
+  --bg:#07090d;
+  --bg2:#0d1118;
+  --panel:#111724;
+  --panel2:#161d2d;
+  --line:#243049;
+  --txt:#e8edf7;
+  --dim:#93a1bd;
+  --dim2:#64748f;
+  --acc:#64d2ff;
+  --acc2:#ff9e64;
+  --good:#5ee6a8;
+  --bad:#ff6b8a;
+  --warn:#ffd166;
+  --purple:#c08bff;
+  --radius:16px;
+  --mono:"SF Mono",ui-monospace,"Cascadia Code",Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 700px at 12% -5%, #152238 0%, transparent 60%),
+    radial-gradient(1000px 600px at 95% 10%, #1d1630 0%, transparent 55%),
+    var(--bg);
+  color:var(--txt);
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--acc);text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px 140px}
+
+/* ---------- HERO ---------- */
+header.hero{
+  padding:90px 0 60px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.hero canvas#heroCanvas{
+  position:absolute;inset:0;width:100%;height:100%;
+  opacity:.45;pointer-events:none;
+}
+.hero-inner{position:relative;z-index:2}
+.kicker{
+  font-family:var(--mono);font-size:12px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--acc);opacity:.85
+}
+h1{
+  font-size:clamp(34px,6vw,66px);line-height:1.05;margin:14px 0 8px;
+  font-weight:800;letter-spacing:-.025em;
+  background:linear-gradient(100deg,#fff 10%,var(--acc) 50%,var(--purple) 90%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{color:var(--dim);max-width:760px;margin:0 auto;font-size:18px}
+.byline{margin-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--dim2)}
+
+/* ---------- SECTIONS ---------- */
+section{margin:64px 0;scroll-margin-top:70px}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+.sec-num{
+  font-family:var(--mono);font-size:13px;color:var(--acc);
+  border:1px solid var(--line);padding:3px 9px;border-radius:999px;background:#0e1626
+}
+h2{font-size:clamp(24px,3.4vw,34px);margin:0;font-weight:750;letter-spacing:-.02em}
+h3{font-size:19px;margin:28px 0 8px;font-weight:700;color:#fff}
+h4{font-size:15px;margin:18px 0 6px;font-weight:650;color:var(--acc)}
+p{color:#c9d4e8;margin:10px 0}
+.lede{font-size:17.5px;color:var(--dim)}
+small,.small{font-size:13px;color:var(--dim2)}
+
+.card{
+  background:linear-gradient(170deg,var(--panel) 0%,var(--bg2) 100%);
+  border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;margin:20px 0;
+  box-shadow:0 18px 50px -24px rgba(0,0,0,.9);
+}
+.card.tight{padding:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.gridA{display:grid;grid-template-columns:320px 1fr;gap:20px}
+@media(max-width:860px){.grid2,.grid3,.gridA{grid-template-columns:1fr}}
+
+/* ---------- CONTROLS ---------- */
+.ctrl{margin:12px 0}
+.ctrl label{
+  display:flex;justify-content:space-between;font-family:var(--mono);
+  font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px
+}
+.ctrl label b{color:var(--acc);font-weight:600}
+input[type=range]{
+  width:100%;-webkit-appearance:none;height:5px;border-radius:99px;
+  background:linear-gradient(90deg,var(--acc) 0%,#2a3category 0%);
+  background-color:#1d2639;outline:none
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:var(--acc);cursor:pointer;border:3px solid #061018;
+  box-shadow:0 0 0 1px var(--acc),0 0 16px rgba(100,210,255,.55)
+}
+input[type=range]::-moz-range-thumb{
+  width:15px;height:15px;border-radius:50%;background:var(--acc);
+  cursor:pointer;border:3px solid #061018
+}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+button{
+  font-family:inherit;font-size:13px;padding:8px 14px;border-radius:9px;
+  border:1px solid var(--line);background:#141c2c;color:var(--txt);cursor:pointer;
+  transition:.15s
+}
+button:hover{border-color:var(--acc);background:#1a2740;transform:translateY(-1px)}
+button.on{background:var(--acc);color:#04121c;border-color:var(--acc);font-weight:650}
+button.alt.on{background:var(--acc2);border-color:var(--acc2);color:#1c0d02}
+canvas.plot{width:100%;display:block;border-radius:11px;background:#080c14;border:1px solid var(--line)}
+.plotly-host{width:100%;height:330px}
+
+.tag{
+  display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 8px;
+  border-radius:99px;border:1px solid var(--line);color:var(--dim);margin:2px 4px 2px 0
+}
+.tag.good{color:var(--good);border-color:#1d4c38}
+.tag.bad{color:var(--bad);border-color:#5a2232}
+.tag.acc{color:var(--acc);border-color:#1d3a4c}
+
+.callout{
+  border-left:3px solid var(--acc);background:#0c1726;padding:12px 16px;
+  border-radius:0 11px 11px 0;margin:16px 0
+}
+.callout.warn{border-color:var(--warn);background:#1b1708}
+.callout.good{border-color:var(--good);background:#08201a}
+
+.kv{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.kv div{
+  background:#0c1322;border:1px solid var(--line);border-radius:10px;
+  padding:8px 12px;font-size:13px
+}
+.kv b{color:var(--acc);font-family:var(--mono)}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid #1b2436}
+th{color:var(--dim);font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.07em}
+
+/* nav */
+nav.toc{
+  position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+  background:rgba(7,9,13,.82);border-bottom:1px solid var(--line);
+  padding:9px 0;margin-bottom:10px
+}
+nav.toc .inner{max-width:1180px;margin:0 auto;padding:0 22px;display:flex;gap:6px;overflow-x:auto}
+nav.toc a{
+  font-family:var(--mono);font-size:11.5px;color:var(--dim);padding:5px 10px;
+  border-radius:7px;white-space:nowrap;border:1px solid transparent
+}
+nav.toc a:hover{color:var(--acc);border-color:var(--line);background:#0e1626}
+
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--dim);margin-top:8px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:5px;vertical-align:-1px}
+
+.mathbox{
+  font-family:var(--mono);background:#0a111c;border:1px solid var(--line);
+  border-radius:10px;padding:12px 14px;font-size:13.5px;color:#d6e2f5;overflow-x:auto
+}
+.mathbox em{color:var(--acc2);font-style:normal}
+
+.pill-row{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.pill{
+  padding:5px 11px;border-radius:999px;border:1px solid var(--line);
+  font-size:12.5px;cursor:pointer;background:#101827;color:var(--dim);transition:.15s
+}
+.pill:hover{color:#fff;border-color:var(--acc)}
+.pill.on{background:var(--acc);color:#04121c;border-color:var(--acc);font-weight:600}
+
+.quiz{border:1px dashed #2b3752;border-radius:12px;padding:14px;background:#0a1120;margin:14px 0}
+.quiz .q{font-weight:650;color:#fff;margin-bottom:8px}
+.quiz .opt{
+  padding:8px 12px;border:1px solid var(--line);border-radius:9px;margin:5px 0;
+  cursor:pointer;font-size:14px;background:#0e1526;transition:.15s
+}
+.quiz .opt:hover{border-color:var(--acc)}
+.quiz .opt.right{border-color:var(--good);background:#0a2419;color:var(--good)}
+.quiz .opt.wrong{border-color:var(--bad);background:#260e16;color:var(--bad)}
+.quiz .fb{margin-top:8px;font-size:13.5px;color:var(--dim);display:none}
+
+footer{border-top:1px solid var(--line);margin-top:70px;padding-top:26px;color:var(--dim2);font-size:13px}
+.hr{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:34px 0}
+.stepnums{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
+.stepnums .s{
+  font-family:var(--mono);font-size:11px;padding:4px 9px;border-radius:7px;
+  background:#0e1626;border:1px solid var(--line);color:var(--dim);cursor:pointer
+}
+.stepnums .s.on{background:var(--purple);color:#140826;border-color:var(--purple);font-weight:650}
+</style>
+</head>
+<body>
+
+<nav class="toc"><div class="inner">
+<a href="#start">Start</a>
+<a href="#p0">0 · Grundlagen</a>
+<a href="#p1">1 · Was ist ein Neuron?</a>
+<a href="#p2">2 · Polysemantizität</a>
+<a href="#p3">3 · Superposition</a>
+<a href="#p4">4 · Die Katze&amp;Auto-Story</a>
+<a href="#p5">5 · Das Mikroskop</a>
+<a href="#p6">6 · Architektur</a>
+<a href="#p7">7 · Rekursive Gen.</a>
+<a href="#p8">8 · Der Quetsch-Test</a>
+<a href="#p9">9 · SAEs</a>
+<a href="#p10">10 · Sprachmodelle</a>
+<a href="#p11">11 · SwiGLU</a>
+<a href="#p12">12 · Schwache Akt.</a>
+<a href="#p13">13 · Circuit-Ökologie</a>
+<a href="#p14">14 · Antwort</a>
+</div></nav>
+
+<div class="wrap">
+
+<!-- ======================= HERO ======================= -->
+<header class="hero" id="start">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">Goodfire · Nick Cammarata · 2026</div>
+    <h1>Neuronale Netze<br>sind schon sauber</h1>
+    <p class="sub">Ein interaktiver Explorer. Keine langen Textwände — schiebe Regler, klicke Knöpfe,
+    und du verstehst, warum die berühmteste Erklärung für „unverständliche Neuronen" falsch war.</p>
+    <div class="byline">≈ 25 Minuten Spielzeit · Alle Grafiken live berechnet · Nur Abi-Mathe nötig</div>
+  </div>
+</header>
+
+<!-- ======================= FRAGE ======================= -->
+<section>
+<div class="card" style="border-color:#2a3a5c;background:linear-gradient(160deg,#121b2e,#0a0f1a)">
+<div class="sec-head"><span class="sec-num">DIE FRAGE</span></div>
+<p class="lede" style="font-size:20px;color:#fff;margin-top:10px">
+„Können wir ein neuronales Netz <b>direkt</b> verstehen — indem wir einfach reinschauen?
+Oder müssen wir es erst mit anderen Werkzeugen <b>entwirren</b>, weil es ein Knoten ist?"
+</p>
+<div class="grid2" style="margin-top:18px">
+  <div style="background:#1a0e14;border:1px solid #4a2030;border-radius:12px;padding:14px">
+    <h4 style="color:var(--bad);margin-top:0">Die alte Antwort (2020–2025)</h4>
+    <p class="small" style="color:#e4b8c4">Es ist ein Knoten. Das Netz stopft <i>unverwandte</i> Dinge in dieselben Neuronen,
+    weil es zu wenige hat. Das nennt man <b>Superposition</b>. Also: nicht reinschauen, sondern erst
+    ein zweites Modell trainieren (einen Sparse Autoencoder), das den Knoten auffaltet.</p>
+  </div>
+  <div style="background:#07201a;border:1px solid #1d4c38;border-radius:12px;padding:14px">
+    <h4 style="color:var(--good);margin-top:0">Die neue Antwort (dieses Essay)</h4>
+    <p class="small" style="color:#a8e4ca">Es ist kein Knoten. Die „Beweise" für Superposition waren Messfehler
+    — kaputtes Mikroskop, schlechte Architektur, und ein Muster namens <b>rekursive Generalisierung</b>.
+    Man kann direkt reinschauen. 90&nbsp;% der Neuronen haben <i>einen</i> Job.</p>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- ======================= 0 PREREQ ======================= -->
+<section id="p0">
+<div class="sec-head"><span class="sec-num">0</span><h2>Vorwissen in 4 Spielzeugen</h2></div>
+<p class="lede">Alles was über Abi-Mathe hinausgeht, bauen wir hier live auf. Spiel damit, bis es klickt.</p>
+
+<!-- 0.1 neuron -->
+<div class="card">
+<h3>0.1 · Ein Neuron ist eine gewichtete Summe + ein Knick</h3>
+<p>Ein Neuron bekommt Zahlen rein (<em>Inputs</em> <span class="mathbox" style="display:inline;padding:2px 6px">x₁…xₙ</span>),
+multipliziert jede mit einem <em>Gewicht</em>, addiert alles, und schiebt das Ergebnis durch eine
+<em>Nichtlinearität</em> (den „Knick"). Mehr ist es nicht.</p>
+<div class="mathbox">a = f( <em>w₁</em>·x₁ + <em>w₂</em>·x₂ + <em>w₃</em>·x₃ + b )</div>
+<div class="gridA" style="margin-top:14px">
+  <div>
+    <div class="ctrl"><label>Gewicht w₁ <b id="n_w1v">1.0</b></label><input type="range" id="n_w1" min="-2" max="2" step="0.05" value="1"></div>
+    <div class="ctrl"><label>Gewicht w₂ <b id="n_w2v">-0.8</b></label><input type="range" id="n_w2" min="-2" max="2" step="0.05" value="-0.8"></div>
+    <div class="ctrl"><label>Input x₁ <b id="n_x1v">1.0</b></label><input type="range" id="n_x1" min="-2" max="2" step="0.05" value="1"></div>
+    <div class="ctrl"><label>Input x₂ <b id="n_x2v">0.5</b></label><input type="range" id="n_x2" min="-2" max="2" step="0.05" value="0.5"></div>
+    <div class="ctrl"><label>Bias b <b id="n_bv">0.0</b></label><input type="range" id="n_b" min="-2" max="2" step="0.05" value="0"></div>
+    <div class="btnrow">
+      <button class="fn on" data-fn="relu">ReLU</button>
+      <button class="fn" data-fn="silu">SiLU</button>
+      <button class="fn" data-fn="tanh">tanh</button>
+      <button class="fn" data-fn="lin">linear</button>
+    </div>
+    <div class="kv"><div>Vorsumme z = <b id="n_z">0.60</b></div><div>Aktivierung a = <b id="n_a">0.60</b></div></div>
+  </div>
+  <canvas id="neuronCanvas" class="plot" height="300"></canvas>
+</div>
+<div class="callout"><b>Merke:</b> Die Aktivierung ist nur eine Zahl. Interpretierbarkeit fragt:
+<i>Was in der Welt macht diese Zahl groß?</i> Und das Spannende: der <b>negative Pol</b>
+(was die Zahl stark negativ macht) ist oft genauso aussagekräftig wie der positive.</p></div>
+</div>
+
+<!-- 0.2 vectors -->
+<div class="card">
+<h3>0.2 · Richtungen, Skalarprodukt, und „wie viele Dinge passen in n Dimensionen?"</h3>
+<p>Aktivierungen eines Layers sind ein <em>Vektor</em>. Ein Konzept ist eine <em>Richtung</em> in diesem Raum.
+Wie stark ein Konzept gerade „an" ist = Skalarprodukt zwischen Aktivierungsvektor und Konzeptrichtung.</p>
+<div class="mathbox">⟨u, v⟩ = u₁v₁ + u₂v₂ + … = |u|·|v|·cos(<em>Winkel</em>)</div>
+<div class="grid2" style="margin-top:12px">
+  <div>
+    <div class="ctrl"><label>Anzahl Konzepte, die wir unterbringen wollen <b id="v_kv">5</b></label><input type="range" id="v_k" min="2" max="40" step="1" value="5"></div>
+    <div class="ctrl"><label>Dimensionen (hier 2D visualisiert, Winkel gleichverteilt) <b id="v_dv">2</b></label><input type="range" id="v_d" min="2" max="2" step="1" value="2" disabled></div>
+    <p class="small">Mit 2 Dimensionen und k Richtungen ist der kleinstmögliche Winkel zwischen Nachbarn
+    180°/k. Je mehr Konzepte, desto mehr „schwappen" sie ineinander — das ist <b>Interferenz</b>.</p>
+    <div class="kv">
+      <div>min. Winkel <b id="v_ang">36.0°</b></div>
+      <div>max. Interferenz cos <b id="v_int">0.81</b></div>
+    </div>
+    <div class="callout warn small" style="margin-top:10px">
+    Genau diese Rechnung ist das Herz der Superpositions-Idee: „Man <i>kann</i> mehr Konzepte als Dimensionen
+    speichern, wenn man etwas Interferenz akzeptiert." Das stimmt mathematisch. Die Frage des Essays ist:
+    <b>tut das Netz es auch?</b></div>
+  </div>
+  <canvas id="vecCanvas" class="plot" height="310"></canvas>
+</div>
+</div>
+
+<!-- 0.3 gradient -->
+<div class="card">
+<h3>0.3 · Lernen = bergab rollen (Gradientenabstieg)</h3>
+<p>Das Netz hat einen <em>Fehler</em> (Loss). Es ändert jedes Gewicht ein bisschen in die Richtung, die den
+Fehler am schnellsten senkt. Entscheidend für dieses Essay: <b>wer gerade oft feuert, bekommt mehr
+Lernsignal</b>. Das ist der Motor hinter allem, was später kommt.</p>
+<div class="grid2">
+  <div>
+    <div class="ctrl"><label>Lernrate <b id="g_lrv">0.12</b></label><input type="range" id="g_lr" min="0.01" max="0.6" step="0.01" value="0.12"></div>
+    <div class="ctrl"><label>Startpunkt <b id="g_x0v">-2.3</b></label><input type="range" id="g_x0" min="-3" max="3" step="0.05" value="-2.3"></div>
+    <div class="btnrow"><button id="g_run" class="on">▶ 1 Schritt</button><button id="g_auto">⏩ Auto</button><button id="g_reset">↺ Reset</button></div>
+    <div class="kv"><div>Schritt <b id="g_step">0</b></div><div>Loss <b id="g_loss">—</b></div></div>
+    <p class="small">Die Landschaft hat ein lokales und ein globales Minimum. Reale Netze haben Millionen
+    von Dimensionen — da gibt es fast immer einen Weg bergab, man bleibt kaum stecken. Dieser Punkt
+    taucht am Ende des Essays wieder auf.</p>
+  </div>
+  <canvas id="gradCanvas" class="plot" height="300"></canvas>
+</div>
+</div>
+
+<!-- 0.4 conv/feature viz -->
+<div class="card">
+<h3>0.4 · Wie „schaut man ein Neuron an"? Zwei Linsen</h3>
+<div class="grid2">
+  <div>
+    <h4>Linse A · Stärkste Bilder (Dataset Examples)</h4>
+    <p class="small">Man schickt 50.000 Bilder durch und sammelt die 20, die das Neuron am stärksten
+    feuern lassen. Billig, ehrlich — aber man sieht nur, <i>was</i> es mag, nicht <i>warum</i>.</p>
+    <h4>Linse B · Feature Visualization</h4>
+    <p class="small">Man startet mit Rauschen und optimiert das Bild selbst so lange, bis das Neuron
+    maximal feuert. Ergebnis: psychedelische Traumbilder. Mächtig — aber die Optimierung kann
+    <b>schummeln</b> (dazu Teil 5).</p>
+    <div class="btnrow">
+      <button id="fv_run" class="on">▶ Optimieren</button>
+      <button id="fv_reset">↺ Rauschen</button>
+    </div>
+    <div class="ctrl"><label>Transformations-Robustheit (jitter/rotate) <b id="fv_rv">0.7</b></label>
+      <input type="range" id="fv_r" min="0" max="1" step="0.01" value="0.7"></div>
+    <div class="ctrl"><label>Ziel-Neuron mag … <b id="fv_tv">V-Formen</b></label>
+      <input type="range" id="fv_t" min="0" max="3" step="1" value="0"></div>
+    <div class="kv"><div>Schritt <b id="fv_step">0</b></div><div>Aktivierung <b id="fv_act">0.00</b></div></div>
+  </div>
+  <div>
+    <canvas id="fvCanvas" class="plot" height="300"></canvas>
+    <div class="legend small" style="margin-top:8px">
+      Ohne Robustheit (Regler auf 0) entsteht hochfrequenter Müll — genau das war das Problem
+      vor 2017. Mit Robustheit werden dieselben Neuronen gestochen scharf.
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="quiz" id="q0">
+  <div class="q">Kurzcheck: Warum ist der <b>negative Pol</b> eines Neurons interessant?</div>
+  <div class="opt" data-ok="0">Weil er anzeigt, dass das Neuron kaputt ist.</div>
+  <div class="opt" data-ok="1">Weil er zeigt, welche Unterscheidung das Neuron an dieser Stelle trifft — es ist ein Tor.</div>
+  <div class="opt" data-ok="0">Weil negative Zahlen in neuronalen Netzen verboten sind.</div>
+  <div class="fb">Genau. Ein Neuron ist weniger ein „Namensschild" als ein <b>Tor im Schaltkreis</b>:
+  Positiv lässt durch, negativ hält zurück. Das V-Neuron hat ein O auf dem negativen Pol.</div>
+</div>
+</section>
+
+<!-- ======================= 1 ======================= -->
+<section id="p1">
+<div class="sec-head"><span class="sec-num">1</span><h2>Was ist ein Neuron eigentlich? — Nicht ein Substantiv, sondern ein Verb</h2></div>
+<p class="lede">Die wichtigste Umstellung im Kopf, bevor irgendetwas anderes Sinn ergibt.</p>
+
+<div class="card">
+<h3>Das Tor-Modell</h3>
+<p>Alte Intuition: „Neuron 4e:55 ist ein <i>Katzen-und-Auto</i>-Neuron." — Eine Liste von Substantiven.<br>
+Neue Intuition: „Neuron 4e:55 <i>trennt</i> Spitzes von Rundem und leitet den Fluss entsprechend weiter."
+— Ein Verb, ein Tor.</p>
+
+<div class="pill-row" id="gatePills">
+  <span class="pill on" data-g="0">Pose-Neuron (Autos + Hunde)</span>
+  <span class="pill" data-g="1">Auto-Tor</span>
+  <span class="pill" data-g="2">Taxi-Spezialist</span>
+</div>
+<canvas id="gateCanvas" class="plot" height="300"></canvas>
+<p class="small" id="gateDesc" style="margin-top:10px"></p>
+<div class="callout good">
+<b>Warum das alles ändert:</b> Wenn ein Neuron Autos und Hunde gruppiert, fragt die alte Sicht
+„warum zwei unverwandte Dinge?!". Die neue Sicht fragt „was haben sie <i>hier</i> gemeinsam?" —
+Antwort: die <b>Pose</b>, die Richtung, in die das Objekt schaut. InceptionV1 hat über hundert solcher
+generalisierten Pose-Neuronen. Niemand hatte sie bemerkt.
+</div>
+</div>
+
+<div class="card">
+<h3>Ein echtes Auto durch die letzten 5 Blöcke</h3>
+<p class="small">Ziehe den Regler: Du folgst einem roten Sportwagen durch ConvNeXt-large. Oben steht,
+<i>womit</i> es gruppiert wird, unten <i>wovon</i> es getrennt wird. Die Unterscheidungen werden feiner.</p>
+<div class="ctrl"><label>Block <b id="fl_bv">14</b></label><input type="range" id="fl_b" min="14" max="18" step="1" value="14"></div>
+<canvas id="flowCanvas" class="plot" height="250"></canvas>
+<div class="kv" style="margin-top:10px">
+  <div>Neuron <b id="fl_n">#203</b></div>
+  <div>Positiv <b id="fl_p">Autos &amp; Limousinen</b></div>
+  <div>Negativ <b id="fl_m">Busse &amp; Bahnen</b></div>
+</div>
+</div>
+</section>
+
+<!-- ======================= 2 ======================= -->
+<section id="p2">
+<div class="sec-head"><span class="sec-num">2</span><h2>Polysemantizität — eine Aussage über den Beobachter</h2></div>
+<p class="lede">„Polysemantisch" heißt meistens nur: <i>Ich habe noch keine gute Erklärung.</i>
+Dafür gibt es fünf mögliche Gründe. Klick sie durch.</p>
+
+<div class="card">
+<div class="pill-row" id="causePills">
+  <span class="pill on" data-c="0">1 · Schlechte Werkzeuge</span>
+  <span class="pill" data-c="1">2 · Schlechte Erklärungen</span>
+  <span class="pill" data-c="2">3 · Schlechtes Lernen</span>
+  <span class="pill" data-c="3">4 · Rekursive Generalisierung</span>
+  <span class="pill" data-c="4">5 · Superposition</span>
+</div>
+<div class="grid2">
+  <div>
+    <h3 id="cz_t" style="margin-top:4px"></h3>
+    <p id="cz_d"></p>
+    <div class="kv" style="margin-top:10px">
+      <div>Testbar? <b id="cz_test"></b></div>
+      <div>Radikalität <b id="cz_rad"></b></div>
+    </div>
+    <p class="small" id="cz_ex" style="margin-top:10px"></p>
+  </div>
+  <canvas id="causeCanvas" class="plot" height="280"></canvas>
+</div>
+<div class="callout warn" style="margin-top:14px">
+<b>Der Kernfehler:</b> Superposition wurde zur <i>Nullhypothese</i> gemacht, obwohl sie die
+radikalste und am wenigsten testbare Erklärung ist. Ihr einziges Symptom lautet: „etwas ergibt
+keinen Sinn". Aber genau so sehen auch kaputte Werkzeuge aus. Superposition gehört ans
+<b>Ende</b> der Liste, nicht an den Anfang.
+</div>
+</div>
+</section>
+
+<!-- ======================= 3 ======================= -->
+<section id="p3">
+<div class="sec-head"><span class="sec-num">3</span><h2>Superposition vs. Generalisierung — zwei entgegengesetzte Vorhersagen</h2></div>
+<p class="lede">Das ist der Kern des gesamten Essays. Beide erklären, warum mehrere Dinge in einem
+Neuron landen — aber aus <b>genau entgegengesetzten</b> Gründen.</p>
+
+<div class="card">
+<div class="grid2">
+  <div style="background:#1a0e14;border:1px solid #4a2030;border-radius:12px;padding:14px">
+    <h4 style="color:var(--bad);margin-top:0">Superposition (Packen)</h4>
+    <p class="small" style="color:#e4b8c4">Dinge teilen sich ein Neuron, <b>weil sie unverwandt sind</b> —
+    sie kollidieren selten. Vorhersage: <b>nicht-lokal</b>. Floppy-Ohr-Hund + lateinische Lyrik.
+    Lerneffekt für uns: <b>null</b>.</p>
+  </div>
+  <div style="background:#07201a;border:1px solid #1d4c38;border-radius:12px;padding:14px">
+    <h4 style="color:var(--good);margin-top:0">Generalisierung (Wachsen)</h4>
+    <p class="small" style="color:#a8e4ca">Dinge teilen sich ein Neuron, <b>weil sie ähnlich sind</b> —
+    ein geteiltes Muster, auf dem man aufbauen kann. Vorhersage: <b>lokal</b>. Floppy-Ohren in
+    vielen Winkeln. Lerneffekt: die Gruppierung ist ein <b>Hinweis</b>.</p>
+  </div>
+</div>
+
+<h3>Interaktiv: 32 Konzepte, N Neuronen</h3>
+<p class="small">Farbe = Ähnlichkeit. Schiebe die Anzahl der Neuronen herunter und beobachte,
+was in jedem Modell passiert.</p>
+<div class="ctrl"><label>Anzahl Neuronen <b id="sp_nv">8</b></label><input type="range" id="sp_n" min="2" max="16" step="1" value="8"></div>
+<canvas id="superCanvas" class="plot" height="300"></canvas>
+<div class="legend">
+  <span><i style="background:var(--bad)"></i>Packen: Nachbarn sind farblich zufällig</span>
+  <span><i style="background:var(--good)"></i>Generalisieren: Nachbarn sind farblich verwandt</span>
+</div>
+<div class="callout good" style="margin-top:12px">
+<b>Die entscheidende Beobachtung des Essays:</b> Wenn man Neuronen wegnimmt, werden die
+Generalisierungs-Neuronen <b>gröber</b>, nicht <b>zersplittert</b>. Ein Auto-Neuron statt zehn
+Spezialisten. Niemals ein „Auto + Latein"-Neuron.
+</div>
+</div>
+</section>
+
+<!-- ======================= 4 ======================= -->
+<section id="p4">
+<div class="sec-head"><span class="sec-num">4</span><h2>Die Katze-und-Auto-Geschichte — der berühmteste Fehler</h2></div>
+<p class="lede">Neuron <b>4e:55</b> in InceptionV1. Jahrelang <i>das</i> Beispiel für „Neuronen sind
+nicht die richtige Analyseeinheit". Seit 2017 in den meistgelesenen Papern der Disziplin.</p>
+
+<div class="card">
+<h3>Schau selbst hin: Was ist das gemeinsame Muster?</h3>
+<p class="small">Links siehst du die stärksten Bilder. Klicke „Muster zeigen", <b>nachdem</b> du
+selbst ein paar Sekunden hingeschaut hast.</p>
+<div class="grid2">
+  <div>
+    <canvas id="vCanvas" class="plot" height="300"></canvas>
+    <div class="btnrow">
+      <button id="v_reveal">👁 Muster zeigen</button>
+      <button id="v_neg">− Negativer Pol</button>
+      <button id="v_test">🧪 Weitere Kandidaten testen</button>
+    </div>
+  </div>
+  <div>
+    <h4 id="v_title">Die stärksten Aktivierungen</h4>
+    <p id="v_text" class="small"></p>
+    <div class="kv" id="v_kv"></div>
+    <div class="callout" id="v_call" style="display:none"></div>
+  </div>
+</div>
+</div>
+
+<div class="card">
+<h3>Der „kanonische Superpositions-Schaltkreis" — und warum er nichts zeigte</h3>
+<p class="small">2019 gefunden: Ein Auto-Neuron speist scheinbar in unverwandte Hunde-Neuronen,
+als wäre es ein hochdimensionales Versteck. Klicke zwischen den Deutungen.</p>
+<div class="btnrow">
+  <button id="cc_old" class="on">Was wir dachten</button>
+  <button id="cc_new">Was wirklich passiert</button>
+</div>
+<canvas id="circuitCanvas" class="plot" height="300"></canvas>
+<p class="small" id="cc_text" style="margin-top:10px"></p>
+<div class="callout warn">
+<b>Zwei Fehler übereinander:</b> (1) Niemand kannte die generalisierten Pose-Neuronen.
+(2) Feature Visualization <b>reward-hackt</b> in tiefen Schichten: Der Gradientenabstieg
+fällt in den „Hunde-Krater", weil InceptionV1 extrem viele Hunde-Neuronen hat, und kommt
+nie wieder heraus. Lenkt man die Optimierung leicht auf die natürlichen Pfade — sind es Autos.
+<br><br><b>Und:</b> Nichts im Netz liest diese Kombination aus. Es war kein Versteck.
+Seitdem wurde kein zweiter Schaltkreis dieser Form je publiziert.
+</div>
+</div>
+</section>
+
+<!-- ======================= 5 ======================= -->
+<section id="p5">
+<div class="sec-head"><span class="sec-num">5</span><h2>Eine Geschichte von Mikroskop-Fehlern</h2></div>
+<p class="lede">Die Geschichte der Interpretierbarkeit ist größtenteils die Geschichte davon,
+herauszufinden, dass unter dem Mikroskop etwas Besseres lag, als wir dachten.</p>
+
+<div class="card">
+<h3>Drei Generationen Mikroskop, dasselbe Neuron</h3>
+<div class="pill-row" id="scopePills">
+  <span class="pill on" data-s="0">2009 · nackter Gradientenaufstieg</span>
+  <span class="pill" data-s="1">2017 · Lucid-Defaults</span>
+  <span class="pill" data-s="2">2026 · korrigierte Regularisierung</span>
+</div>
+<div class="grid2">
+  <div><canvas id="scopeCanvas" class="plot" height="280"></canvas></div>
+  <div>
+    <h4 id="sc_t"></h4>
+    <p class="small" id="sc_d"></p>
+    <div class="ctrl"><label>Schicht: mittel ↔ spät <b id="sc_lv">mittel (4d)</b></label>
+      <input type="range" id="sc_l" min="0" max="1" step="1" value="0"></div>
+    <div class="kv"><div>Lesbarkeit <b id="sc_r">—</b></div></div>
+  </div>
+</div>
+</div>
+
+<div class="card">
+<h3>Das Mikroskop war nicht alles — die Architektur war auch schuld</h3>
+<p>InceptionV1 hat <b>keinen Residual Stream</b> und keine LayerNorm. Die tiefen Schichten lernten
+schlecht. Die gleiche Parameterzahl, derselbe Datensatz, aber mit modernen Bausteinen:
+die letzte Schicht ist wunderschön.</p>
+<div class="plotly-host" id="legibilityPlot"></div>
+<p class="small">Entscheidend: <b>keine einzige dieser Verbesserungen wurde für Interpretierbarkeit
+gebaut.</b> Residual Connections wurden erfunden, damit tiefe Netze überhaupt lernen.
+Dass sie die Schichten auch begrifflich sauber machen, ist ein Nebeneffekt — und vielleicht
+dieselbe Sache.</p>
+<div class="callout good">
+Von „im Grunde 0 % interpretierbar" zu <b>99 %</b> — ohne das Modell größer zu machen,
+ohne mehr Daten, ohne irgendeinen interpretierbarkeits-spezifischen Eingriff.
+</div>
+</div>
+</section>
+
+<!-- ======================= 6 ======================= -->
+<section id="p6">
+<div class="sec-head"><span class="sec-num">6</span><h2>Architektur: der Residual Stream und die unsichtbare Dimension</h2></div>
+
+<div class="card">
+<div class="grid2">
+  <div>
+    <h3>Was ein Residual Stream tut</h3>
+    <p class="small">Statt dass jede Schicht alles neu berechnen muss, gibt es eine „Autobahn":
+    jede Schicht <i>addiert</i> ihren Beitrag und liest, was sie braucht. Gradienten fließen
+    ungehindert nach hinten.</p>
+    <div class="ctrl"><label>Tiefe (Anzahl Schichten) <b id="rs_dv">12</b></label><input type="range" id="rs_d" min="3" max="24" step="1" value="12"></div>
+    <div class="btnrow">
+      <button id="rs_on" class="on">Mit Residual</button>
+      <button id="rs_off">Ohne Residual</button>
+    </div>
+    <div class="kv"><div>Gradient an Schicht 1 <b id="rs_g">1.00</b></div></div>
+    <p class="small">Ohne Residual schrumpft das Lernsignal exponentiell — tiefe Schichten lernen
+    kaum. Genau das ist InceptionV1s Problem.</p>
+  </div>
+  <canvas id="resCanvas" class="plot" height="300"></canvas>
+</div>
+</div>
+
+<div class="card">
+<h3>Die eine Dimension, die alles verdeckte</h3>
+<p class="small">Jahrelang ließ sich der Residual Stream von Convnets nicht visualisieren:
+jede Karte wurde ein einziger Bogen. Grund: Das Netz schiebt ~94 % der gesamten Aktivierungsmasse
+in <b>eine einzige, von niemandem gelesene Dimension</b> — als Lautstärkeregler, der über LayerNorm
+alle anderen skaliert. Schalte sie ab.</p>
+<div class="btnrow">
+  <button id="sk_on" class="on">Mit Koordinate 112</button>
+  <button id="sk_off">Ohne (projiziert weg)</button>
+</div>
+<canvas id="sinkCanvas" class="plot" height="310"></canvas>
+<p class="small" id="sk_text"></p>
+<div class="callout">
+<b>Das Muster hinter dem Muster:</b> Finde heraus, was die Architektur tut, und <b>arbeite damit</b>,
+statt gegen das Netz zu kämpfen. Das ist dieselbe Lektion wie bei der Feature Visualization,
+bei SwiGLU, und bei InceptionV1s letzter Schicht.
+</div>
+</div>
+</section>
+
+<!-- ======================= 7 ======================= -->
+<section id="p7">
+<div class="sec-head"><span class="sec-num">7</span><h2>Rekursive Generalisierung — die eigentliche Erklärung</h2></div>
+<p class="lede">Ein Neuron wächst wie ein Ast: erst in eine Richtung, dann sprießen Seitenzweige,
+die lokal völlig nachvollziehbar sind — aber am Ende ist es nicht mehr „monosemantisch".</p>
+
+<div class="card">
+<h3>Das „iy"-Neuron</h3>
+<p class="small">Klassiker aus Qwen3-32B. Jeder Schritt ist für sich trivial. Das Endergebnis
+enthält „do it yourself", worin kein einziges „iy" vorkommt.</p>
+<div class="stepnums" id="iySteps"></div>
+<canvas id="iyCanvas" class="plot" height="230"></canvas>
+<p class="small" id="iy_text"></p>
+</div>
+
+<div class="card">
+<h3>Ein Neuron über das Training beobachten</h3>
+<p class="small">Dasselbe Rezept, dieselben Daten, zwei Architekturen. Beide starten auf
+Rapsfeldern. ConvNeXt lässt die Abzweige wieder los; InceptionV1 wuchert weiter — bis
+die Felder fast verschwunden sind.</p>
+<div class="ctrl"><label>Trainingsepoche <b id="tr_ev">0.7</b></label><input type="range" id="tr_e" min="0" max="4" step="1" value="0"></div>
+<div class="btnrow"><button id="tr_play">▶ Abspielen</button></div>
+<div class="grid2">
+  <div><div class="small" style="text-align:center;color:var(--bad);font-weight:600">InceptionV1 (ohne Residual)</div><canvas id="trA" class="plot" height="215"></canvas></div>
+  <div><div class="small" style="text-align:center;color:var(--good);font-weight:600">ConvNeXt (mit LayerNorm + Residual)</div><canvas id="trB" class="plot" height="215"></canvas></div>
+</div>
+<div class="legend" id="trLegend"></div>
+<div class="callout good" style="margin-top:12px">
+<b>Der Test, den Superposition nicht besteht:</b> Rekursive Generalisierung sagt voraus, dass alles
+auf einem Ast zu <b>einem lokalen Ursprung</b> zurückführbar ist und in einer bestimmten
+<b>Reihenfolge</b> über die Zeit wächst. Das ist eine enge, schwer zu variierende Vorhersage.
+Superposition sagt nur „es wird unordentlich" — und das ist praktisch nicht widerlegbar.
+</div>
+</div>
+
+<div class="card tight">
+<h4>Noch ein Beispiel: das Geologie-Neuron</h4>
+<p class="small">Feuert auf Mondkruste, Marshochland — und auf JavaScript-Code. Warum?
+Die Bibliothek heißt <b>Cesium</b>. Gruppiert man die Treffer nach dem <i>Schaltkreis</i>,
+durch den sie kommen, trennen sie sich sauber: drei Facetten eines Kerns (Planetenoberflächen)
+plus ein Abzweig (der Code), der über eine eigene Route ankommt.</p>
+<div class="plotly-host" id="geoPlot" style="height:260px"></div>
+</div>
+</section>
+
+<!-- ======================= 8 ======================= -->
+<section id="p8">
+<div class="sec-head"><span class="sec-num">8</span><h2>Der Quetsch-Test — das entscheidende Experiment</h2></div>
+<p class="lede">Wenn Superposition echt ist, muss sie <b>erzwingbar</b> sein. Also: Platz wegnehmen,
+bis es weh tut, und schauen, was das Netz tut. Das ist das direkteste Experiment des Essays.</p>
+
+<div class="card">
+<h3>Schicht 3b von InceptionV1: von 480 auf 10 Neuronen</h3>
+<p class="small">Diese Schicht enthält die berühmten <b>Kurven-Detektoren</b> und
+High-/Low-Frequency-Neuronen. Sie hat <b>keinen Residual Stream</b> — es gibt keinen Weg
+„drumherum". Wir quetschen sie 48-fach zusammen und trainieren neu. Was passiert?</p>
+
+<div class="ctrl"><label>Neuronen in Schicht 3b <b id="sq_nv">480</b></label>
+  <input type="range" id="sq_n" min="0" max="4" step="1" value="0"></div>
+<div class="btnrow">
+  <button id="sq_pred_sup">Vorhersage: Superposition</button>
+  <button id="sq_pred_gen" class="on">Vorhersage: Generalisierung</button>
+  <button id="sq_real" class="alt">🔬 Was tatsächlich passierte</button>
+</div>
+<canvas id="squeezeCanvas" class="plot" height="340"></canvas>
+<div class="kv" style="margin-top:10px">
+  <div>Top-1 Genauigkeit <b id="sq_acc">—</b></div>
+  <div>Modus <b id="sq_mode">Generalisierung</b></div>
+</div>
+<p class="small" id="sq_text" style="margin-top:8px"></p>
+</div>
+
+<div class="card">
+<h3>Der SAE-Gegencheck: Sind die Kurven nur <i>versteckt</i>?</h3>
+<p class="small">Gegenargument: „Die zehn Kurvendetektoren sind vielleicht als hochdimensionale
+Kombination in den 10 Neuronen versteckt." Also trainieren wir einen Sparse Autoencoder
+(SAE) auf die gequetschte Schicht und suchen die Kurven. Klick auf einen Original-Detektor.</p>
+<div class="grid3" id="curveRow"></div>
+<div style="margin-top:14px">
+  <canvas id="saeCanvas" class="plot" height="220"></canvas>
+</div>
+<p class="small" id="sae_text"></p>
+<div class="callout good">
+<b>Ergebnis:</b> Keine sauberen Kurvendetektoren. Die SAE-Features sind breit und zusammengeklumpt.
+Die Kurven sind nicht versteckt — sie wurden schlicht <b>zu „Kurven &amp; Schleifen" zusammengefasst</b>.
+Weniger Platz ⇒ <b>gröber</b>, nicht <b>verknotet</b>.
+</div>
+</div>
+
+<div class="quiz" id="q8">
+  <div class="q">Was wäre der Beweis für Superposition gewesen?</div>
+  <div class="opt" data-ok="0">Dass die Genauigkeit sinkt.</div>
+  <div class="opt" data-ok="1">Ein Neuron, das gleichzeitig „Kurve + oranger Spiral + Spinnennetz" macht — ohne gemeinsames Muster.</div>
+  <div class="opt" data-ok="0">Dass es nur noch 10 Neuronen gibt.</div>
+  <div class="fb">Richtig. Genau das sah man <b>nicht</b>. Man sah ein „Kurven &amp; Schleifen"-Neuron
+  statt zehn Kurven-Spezialisten — eine saubere Vergröberung.</div>
+</div>
+</section>
+
+<!-- ======================= 9 SAE ======================= -->
+<section id="p9">
+<div class="sec-head"><span class="sec-num">9</span><h2>Was Wörterbücher (SAEs) eigentlich finden</h2></div>
+<p class="lede">Ein Sparse Autoencoder soll die „wahren Bausteine" finden, die die Neuronen angeblich
+verstecken. Hier siehst du, was er in Wirklichkeit liefert.</p>
+
+<div class="card">
+<h3>Wie ein SAE funktioniert — in 30 Sekunden</h3>
+<p class="small">Nimm den Aktivierungsvektor, projiziere ihn in einen <b>viel größeren</b> Raum,
+erzwinge dass nur wenige Einträge ≠ 0 sind (Sparsity), und rekonstruiere zurück.
+Die großen Einträge nennt man „Features".</p>
+<div class="grid2">
+  <div>
+    <div class="ctrl"><label>Wörterbuchgröße (Expansion) <b id="sa_kv">8×</b></label>
+      <input type="range" id="sa_k" min="1" max="16" step="1" value="8"></div>
+    <div class="ctrl"><label>Sparsity (wie viele dürfen feuern) <b id="sa_sv">4</b></label>
+      <input type="range" id="sa_s" min="1" max="20" step="1" value="4"></div>
+    <div class="kv">
+      <div>Rekonstruktionsfehler <b id="sa_err">—</b></div>
+      <div>Features ≈ 1 Neuron <b id="sa_copy">—</b></div>
+    </div>
+    <p class="small">Schiebe die Sparsity hoch: Der Fehler sinkt, aber die Features werden
+    zu Mischungen. Schiebe sie runter: sauberer, aber mehr Verlust. Dieses Spannungsfeld
+    ist der ganze SAE-Designraum — und es ist ein <b>frei wählbarer Knopf</b>, keine Eigenschaft
+    des Netzes.</p>
+  </div>
+  <canvas id="saeMechCanvas" class="plot" height="300"></canvas>
+</div>
+</div>
+
+<div class="card">
+<h3>Die Messung: 88 % sind Fast-Kopien einzelner Neuronen</h3>
+<div class="plotly-host" id="saeBarPlot" style="height:300px"></div>
+<p class="small">In der letzten Schicht sind 88 % der SAE-Aktivität Beinahe-Kopien einzelner
+Neuronen. Entfernt man alle Richtungen, die zu <i>keinem</i> Neuron passen, bleibt die Genauigkeit
+<b>unverändert</b>. Und: Sucht man unter allen Rotationen einer Schicht diejenige, in der die
+wenigsten Einheiten die meiste Aktivität tragen — landet man wieder <b>bei den Neuronen</b>.</p>
+</div>
+
+<div class="card tight">
+<h4>Spinnen: das klarste Beispiel</h4>
+<div class="grid2">
+  <div>
+    <div class="small" style="color:var(--acc);font-weight:650;margin-bottom:6px">SAE-Einheiten</div>
+    <canvas id="spiderSAE" class="plot" height="150"></canvas>
+    <p class="small">Spinnen in verschiedenen <b>Kontexten</b> — Gruppierungen.</p>
+  </div>
+  <div>
+    <div class="small" style="color:var(--good);font-weight:650;margin-bottom:6px">Neuronen</div>
+    <canvas id="spiderNeu" class="plot" height="150"></canvas>
+    <p class="small">Beinmuster, Netze — die <b>Bausteine</b>, aus denen sie bestehen.</p>
+  </div>
+</div>
+<p class="small">Sie widersprechen sich nicht. Das SAE gruppiert, die Neuronen bauen.
+Wenn das Modell ein Konzept <i>nicht</i> verstand, verstand es auch sein SAE nicht.
+Wenn es es verstand, saß es auf einem <b>Neuron</b>.</p>
+</div>
+</section>
+
+<!-- ======================= 10 LANGUAGE ======================= -->
+<section id="p10">
+<div class="sec-head"><span class="sec-num">10</span><h2>Sprachmodelle: dieselbe Geschichte</h2></div>
+
+<div class="card">
+<h3>Das „pr"-Neuron — scheinbar der perfekte Gegenbeweis</h3>
+<p class="small">Feuert auf „pr", aber auch auf zufällig aussehende Base64-URLs und auf Bengali.
+Das muss doch eine willkürliche Mischung sein. Klicke „dekodieren".</p>
+<div class="btnrow"><button id="b64_go" class="on">🔓 Base64 dekodieren</button><button id="b64_bn">🔤 Bengali transliterieren</button></div>
+<canvas id="b64Canvas" class="plot" height="250"></canvas>
+<p class="small" id="b64_text"></p>
+</div>
+
+<div class="card">
+<h3>Das „Komma-Neuron", das in Wahrheit Colorado trackt</h3>
+<p class="small">Standard-Autointerp nennt es „polysemantisches Komma-Neuron". Aber Aufmerksamkeit
+sammelt sich auf Satzzeichen — dort legt das Modell seine <b>laufende Zusammenfassung</b> ab.
+Das nennen wir das <b>Summary-Motiv</b>. Fahre über den Text.</p>
+<div id="coloradoText" class="card tight" style="background:#0a111c;font-size:15px;line-height:2.4"></div>
+<div class="btnrow">
+  <button id="co_a" class="on">Denver-Satz</button>
+  <button id="co_b">Kontrollsatz (kein Colorado)</button>
+  <button id="co_steer" class="alt">🎚 Neuron hochdrehen (Steering)</button>
+</div>
+<p class="small" id="co_text"></p>
+</div>
+
+<div class="card">
+<h3>Attribution Graph: eine Diagnose in vier Neuronen</h3>
+<p class="small">Anthropics Preeklampsie-Beispiel — aber mit <b>nativen Neuronen</b> statt Transcoder-Features.
+Kein Rekonstruktionsverlust, kein Zusatztraining. Klicke eine Gruppe an, um sie zu entfernen.</p>
+<canvas id="agCanvas" class="plot" height="380"></canvas>
+<div class="kv" style="margin-top:10px">
+  <div>Antwort <b id="ag_ans">Sehstörungen</b></div>
+  <div>Wahrscheinlichkeit <b id="ag_p">0.90</b></div>
+</div>
+<p class="small" id="ag_text"></p>
+<div class="callout good">
+Der Diagnose-Hub besteht aus <b>vier Neuronen</b>. Entfernt man sie, fragt das Modell nach
+<i>Juckreiz</i> — dem Leitsymptom einer <i>anderen</i> Leber­erkrankung in der Schwangerschaft.
+Es ist einfach zur zweitbesten Hypothese weitergegangen.
+</div>
+</div>
+
+<div class="card tight">
+<h4>Santa lebt auf dem negativen Pol</h4>
+<p class="small">Standard-Top-k-Autointerp labelt diese Neuronen als „Hauptstädte", weil es die
+negative Seite ignoriert. Entfernt man die <b>8 Neuronen mit Santa auf dem negativen Pol</b>,
+fällt Santa von fast sicher auf 6 %. Entfernt man die <b>20 Neuronen, die tatsächlich
+„Christmas"/„Santa" heißen</b>, fällt es nur auf 76 %.</p>
+<div class="plotly-host" id="santaPlot" style="height:230px"></div>
+</div>
+</section>
+
+<!-- ======================= 11 SWIGLU ======================= -->
+<section id="p11">
+<div class="sec-head"><span class="sec-num">11</span><h2>SwiGLU — das doppelte Minus, das niemand bemerkt hatte</h2></div>
+<p class="lede">Ein Fund, der nur möglich war, <i>weil</i> der Rest der Karte schon gefüllt war.
+Wenn man 2 % sieht, kann man nicht sagen, wo die Werkzeuge kaputt sind.</p>
+
+<div class="card">
+<h3>Moderne Neuronen multiplizieren zwei Zahlen</h3>
+<div class="mathbox">out = <em>SiLU(gate)</em> × <em>value</em> &nbsp;&nbsp;&nbsp; mit &nbsp; SiLU(x) = x · σ(x)</div>
+<div class="gridA" style="margin-top:14px">
+  <div>
+    <div class="ctrl"><label>Gate <b id="sg_gv">-1.20</b></label><input type="range" id="sg_g" min="-6" max="6" step="0.05" value="-1.2"></div>
+    <div class="ctrl"><label>Value <b id="sg_vv">-3.50</b></label><input type="range" id="sg_v" min="-6" max="6" step="0.05" value="-3.5"></div>
+    <div class="kv">
+      <div>SiLU(gate) <b id="sg_s">—</b></div>
+      <div>Output <b id="sg_o">—</b></div>
+      <div>Regime <b id="sg_r">—</b></div>
+    </div>
+    <div class="btnrow">
+      <button class="sgpre" data-g="-1.2" data-v="-3.5">„Colossians" (Leck)</button>
+      <button class="sgpre" data-g="4.4" data-v="-2.9">„Speak russian" (echt)</button>
+      <button class="sgpre" data-g="3.0" data-v="3.0">+ × +</button>
+    </div>
+    <p class="small">Sind <b>beide negativ</b>, wird der Output positiv — ein kleines,
+    vorzeichenverdrehtes <b>Leck</b> des Werts. Ein Top-k-Dashboard zeigt es ganz oben an.
+    Bei ~4 % aller Neuronen ist die gesamte Top-Liste so ein Echo.</p>
+  </div>
+  <div>
+    <canvas id="swiCanvas" class="plot" height="300"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--good)"></i>+ × + (echtes Feuern)</span>
+      <span><i style="background:var(--warn)"></i>− × − (Echo/Leck)</span>
+      <span><i style="background:var(--bad)"></i>gemischt (negativ)</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="card">
+<h3>Dasselbe Neuron, vorher / nachher</h3>
+<div class="btnrow">
+  <button id="sw_before" class="on">Top-k-Dashboard (naiv)</button>
+  <button id="sw_after">Nach Vorzeichen getrennt</button>
+</div>
+<canvas id="swiListCanvas" class="plot" height="270"></canvas>
+<p class="small" id="sw_text"></p>
+<div class="callout warn">
+<b>Pointe:</b> Eine Zerlegung, die viele Neuronen vermischt, hätte dieses Artefakt
+mit ziemlicher Sicherheit <b>versteckt</b>. Man findet es nur, wenn man die
+Original-Mechanismen anschaut. Das ist das Argument des Essays in Miniatur.
+</div>
+</div>
+</section>
+
+<!-- ======================= 12 WEAK ======================= -->
+<section id="p12">
+<div class="sec-head"><span class="sec-num">12</span><h2>Zählen schwache Aktivierungen?</h2></div>
+<p class="lede">Der letzte Rückzugsort der Superpositions-Hypothese: „Dann versteckt es sich eben
+in den schwachen Aktivierungen." Testen wir das.</p>
+
+<div class="card">
+<h3>Die Verteilung: fast alles liegt bei null</h3>
+<p class="small">100 Mio. Tokens durch <i>ein</i> Qwen3-32B-Neuron. Etwa 160 erreichen die
+obere Hälfte. Schiebe die Schwelle.</p>
+<div class="ctrl"><label>Schwelle (Perzentil) <b id="wk_pv">p75</b></label><input type="range" id="wk_p" min="0" max="4" step="1" value="2"></div>
+<canvas id="weakCanvas" class="plot" height="250"></canvas>
+<div class="kv">
+  <div>Entfernte Aktivierungen <b id="wk_rem">—</b></div>
+  <div>Genauigkeit <b id="wk_acc">—</b></div>
+  <div>Geänderte Antworten <b id="wk_chg">—</b></div>
+</div>
+</div>
+
+<div class="card">
+<h3>Das Ablations-Experiment</h3>
+<div class="grid2">
+  <div style="background:#07201a;border:1px solid #1d4c38;border-radius:12px;padding:14px">
+    <h4 style="color:var(--good);margin-top:0">Schwächste 75 % entfernt</h4>
+    <div style="font-size:30px;font-weight:800">72 % → 71 %</div>
+    <p class="small" style="color:#a8e4ca">1 von 10 Antworten ändert sich — und zwar nur bei
+    knappen Entscheidungen: Husky↔Sibirischer Husky, Tigerkatze↔Tabby.</p>
+  </div>
+  <div style="background:#1a0e14;border:1px solid #4a2030;border-radius:12px;padding:14px">
+    <h4 style="color:var(--bad);margin-top:0">Stärkste 7 % entfernt</h4>
+    <div style="font-size:30px;font-weight:800">72 % → 4 %</div>
+    <p class="small" style="color:#e4b8c4">96 von 100 Antworten ändern sich — in völligen Unsinn.
+    <b>Gleiche Gesamt-Aktivierungsmasse</b> wie die schwächsten 75 %.</p>
+  </div>
+</div>
+<canvas id="ablCanvas" class="plot" height="240" style="margin-top:14px"></canvas>
+<div class="callout">
+Wichtiges Kritische kann also <b>nicht</b> in den schwachen Aktivierungen stecken —
+man kann sie fast alle entfernen. Und: Ein versteckt gepacktes Feature müsste in den
+schwachen Bereich, wo es mit <b>Größenordnungen mehr</b> kollidiert. Schlechter Deal.
+</div>
+</div>
+
+<div class="card">
+<h3>Semantische Radarkarte: Bedeutung strahlt nach außen</h3>
+<p class="small">Klicke ein Neuron. Mitte = Maximum. Ringe = Bruchteile davon. Farbe = Thema.
+Grau = „schwer einzuordnen" (meist noch verbunden, nur weiter weg).</p>
+<div class="pill-row" id="radarPills">
+  <span class="pill on" data-r="0">Titanic</span>
+  <span class="pill" data-r="1">Barock</span>
+  <span class="pill" data-r="2">Weihnachten</span>
+  <span class="pill" data-r="3">Regenbogen</span>
+  <span class="pill" data-r="4">Colorado</span>
+</div>
+<canvas id="radarCanvas" class="plot" height="340"></canvas>
+<p class="small" id="radar_text"></p>
+<div class="callout">
+<b>Rohwerte statt Perzentile:</b> Das Weihnachts-Neuron hat eine <b>Klippe</b> bei ~5 % seines
+Maximums — ein Detektor. Die anderen fallen glatt ab — eher Regler. Perzentile
+plätten genau diesen Unterschied. Und: p99 klingt viel, ist aber <b>1 Token von 100</b>
+≈ eine Viertelseite. p99,99 ≈ alle 25–30 Seiten.
+</div>
+</div>
+</section>
+
+<!-- ======================= 13 ECOLOGY ======================= -->
+<section id="p13">
+<div class="sec-head"><span class="sec-num">13</span><h2>Circuit-Ökologie: <i>warum</i> Netze sauber werden</h2></div>
+<p class="lede">Der Erklärungsversuch dahinter. Nicht „Speicherplatz", sondern <b>Lerngeschwindigkeit</b>.</p>
+
+<div class="card">
+<h3>Das Wettrennen: breites Feature vs. Ein-Pixel-Trick</h3>
+<p class="small">Ein leeres Netz sieht <b>ein einziges</b> Labrador-Foto. Zwei Schaltkreise könnten
+es lernen. Drücke „Schritt".</p>
+<div class="grid2">
+  <div>
+    <div class="btnrow">
+      <button id="ec_step" class="on">▶ Schritt</button>
+      <button id="ec_auto">⏩ Auto</button>
+      <button id="ec_reset">↺ Reset</button>
+    </div>
+    <div class="ctrl"><label>Abdeckung des breiten Features (Anteil des Bildes) <b id="ec_cv">0.45</b></label>
+      <input type="range" id="ec_c" min="0.05" max="0.9" step="0.01" value="0.45"></div>
+    <div class="kv">
+      <div>Schritt <b id="ec_step_n">0</b></div>
+      <div>Restfehler <b id="ec_err">1.00</b></div>
+    </div>
+    <p class="small">Das breite Feature (grün, z. B. „grünes Gras / helles Fell") feuert auf
+    <b>mehr vom Bild</b> ⇒ bekommt mehr Lernsignal ⇒ wächst schneller ⇒ nimmt dem
+    Ein-Pixel-Trick (rot) den Restfehler weg, bis der <b>verhungert</b>
+    (<i>gradient starvation</i>).</p>
+  </div>
+  <canvas id="ecoCanvas" class="plot" height="300"></canvas>
+</div>
+<div class="callout good">
+Danach: <b>Rich get richer</b>. Das nächste Bild mit Gras startet mit dem grünen Schaltkreis
+schon halb an. Deshalb sammelt sich Verwandtes am selben Ort — es ist schlicht der
+<b>schnellste Weg</b>. Generalisierung ist das, was vom Sieger übrig bleibt.
+</div>
+</div>
+
+<div class="card">
+<h3>„Semantische Gravitation" — warum Packen auch bei Skalierung nicht kommt</h3>
+<p class="small">Ein seltenes Faktum bewegt den Loss kaum — es kann keine eigene Nische tragen.
+Aber es kann als <b>kleine Abzweigung</b> auf bestehender Maschinerie mitfahren.
+Ziehe den Regler: je stärker die bestehenden Schaltkreise, desto unattraktiver
+ein abgelegener Platz.</p>
+<div class="ctrl"><label>Stärke bestehender Schaltkreise (≈ Modellgröße / Trainingsdauer) <b id="gv_sv">0.5</b></label>
+  <input type="range" id="gv_s" min="0" max="1" step="0.01" value="0.5"></div>
+<canvas id="gravCanvas" class="plot" height="300"></canvas>
+<div class="kv">
+  <div>Kosten „abgelegener Platz" <b id="gv_far">—</b></div>
+  <div>Kosten „auf dem Nachbar-Ast" <b id="gv_near">—</b></div>
+  <div>Gewinner <b id="gv_win">—</b></div>
+</div>
+<p class="small">Die alte Denkweise war <b>Speicher</b>: so viele Dimensionen für so viele Features.
+Die neue ist <b>Lerngeschwindigkeit</b>: Wer schnappt sich den Restfehler zuerst? Deshalb erwarten
+wir Superposition auch bei der nächsten Größenordnung nicht.</p>
+</div>
+
+<div class="card tight">
+<h4>Mixture-of-Experts ist eine Anti-Superpositions-Architektur</h4>
+<p class="small">Ein Experte feuert nur, wenn der Router ihn auswählt. Ein „packender" Experte
+müsste 10.000 unverwandte Dinge enthalten — dann müsste der Router alle 10.000 erkennen.
+Der Router ist aber nur <b>eine kleine lineare Schicht</b>. Fahre über die Karte.</p>
+<canvas id="moeCanvas" class="plot" height="230"></canvas>
+<p class="small" id="moe_text"></p>
+</div>
+</section>
+
+<!-- ======================= 14 ANSWER ======================= -->
+<section id="p14">
+<div class="sec-head"><span class="sec-num">14</span><h2>Die Antwort — und was sie bedeutet</h2></div>
+
+<div class="card" style="border-color:#2a4a3c;background:linear-gradient(160deg,#0d1c18,#0a0f14)">
+<h3 style="margin-top:4px">Das Argument in vier Schritten</h3>
+<div id="argSteps"></div>
+</div>
+
+<div class="card">
+<h3>Stadt statt Knoten</h3>
+<p class="small">Ein größeres System ist nicht zwingend schwerer zu navigieren. In einem Dorf ist
+„wo ist das Bankenviertel?" sinnlos. In New York findet man es in einer Minute auf der Karte.
+Ziehe den Regler: dieselbe „Hundeohren-Familie" über 300-fachen Größenunterschied.</p>
+<div class="ctrl"><label>Modellgröße <b id="ct_sv">92k Parameter</b></label><input type="range" id="ct_s" min="0" max="2" step="1" value="0"></div>
+<canvas id="cityCanvas" class="plot" height="300"></canvas>
+<p class="small" id="ct_text"></p>
+</div>
+
+<div class="card">
+<h3>Warum die beiden Fehler <b>nicht symmetrisch</b> sind</h3>
+<div class="grid2">
+  <div style="background:#07201a;border:1px solid #1d4c38;border-radius:12px;padding:14px">
+    <h4 style="color:var(--good);margin-top:0">Du nimmst an: „sauber" — und irrst</h4>
+    <p class="small" style="color:#a8e4ca">Ein unordentliches Neuron ist eine <b>Spur</b>.
+    Du untersuchst es, die Erklärung wird schärfer. Selbstkorrektur läuft.</p>
+  </div>
+  <div style="background:#1a0e14;border:1px solid #4a2030;border-radius:12px;padding:14px">
+    <h4 style="color:var(--bad);margin-top:0">Du nimmst an: „verknotet" — und irrst</h4>
+    <p class="small" style="color:#e4b8c4">Ein unordentliches Neuron ist das <b>Ende</b>.
+    Du hörst auf hinzuschauen. Die Annahme erklärt genau die Belege weg,
+    die sie widerlegt hätten.</p>
+  </div>
+</div>
+<p class="small" style="margin-top:12px">„Ich habe die meiste Zeit eines Jahrzehnts damit verbracht
+herauszufinden, <i>wie</i> man ein Modell anschaut, statt es anzuschauen."</p>
+</div>
+
+<div class="card">
+<h3>Die eigentliche Sorge ist eine andere</h3>
+<p>Nicht: „Täuschung versteckt sich in einer Aktivierung, die wir übersehen."
+Sondern: <b>Täuschung liegt offen vor uns, und wir können sie nicht lesen.</b></p>
+<p class="small">Jeder Fehler in diesem Essay war etwas, das in <i>vollem Blickfeld</i> lag und
+falsch gelesen wurde. Keiner war eine versteckte Aktivierung. Und: Täuschung hat keinen Grund,
+sich vor der <b>eigenen Schaltung des Modells</b> zu verstecken — sie muss für die
+downstream-Leser zugänglich sein. Werden wir ein Leser, ist sie auch für uns zugänglich.</p>
+<div class="callout good">
+<b>Das Ziel:</b> nicht „jedes Neuron perfekt erklären", sondern <b>ein weiterer Leser des
+Netzwerks werden</b>. Das Netz hat die Arbeit, sich lesbar zu machen, schon fast erledigt —
+nicht für uns, sondern für seine eigenen Leser.
+</div>
+</div>
+
+<div class="card tight">
+<h4>Die ehrlichen Unsicherheiten</h4>
+<table>
+<tr><th>Behauptung</th><th>Sicherheit</th></tr>
+<tr><td>Der Katze-Auto-Schaltkreis war fehlinterpretiert</td><td><span class="tag good">sehr hoch</span></td></tr>
+<tr><td>InceptionV1s letzte Schicht war ein Architekturproblem</td><td><span class="tag good">sehr hoch</span></td></tr>
+<tr><td>Rekursive Generalisierung ist das Hauptmuster</td><td><span class="tag acc">hoch (~85 %)</span></td></tr>
+<tr><td>Superposition kommt auch bei nächster Skala nicht</td><td><span class="tag">mittel — Hypothese</span></td></tr>
+<tr><td>Interpretierbarkeit ist bald weitgehend gelöst</td><td><span class="tag bad">hochspekulativ</span></td></tr>
+</table>
+<p class="small" style="margin-top:10px">Der Titel ist in beide Richtungen unvollkommen: Er
+<b>überschätzt</b> die Belege (nicht alles wurde geprüft) und <b>unterschätzt</b> sie
+(die Welt, in der wir vermutlich sind, ist besser als „jedes Neuron trägt ein menschliches Label" —
+das Netz hat oft <i>bessere</i> Ideen als wir).</p>
+</div>
+
+<div class="quiz" id="qFinal">
+  <div class="q">Abschlussfrage: Warum ist rekursive Generalisierung <b>gute</b> Nachricht,
+  obwohl das Neuron am Ende trotzdem mehrere Dinge tut?</div>
+  <div class="opt" data-ok="0">Weil es weniger Dinge sind.</div>
+  <div class="opt" data-ok="1">Weil die Gruppierung selbst ein Hinweis ist — man kann ihr folgen, sie vorhersagen und zurückverfolgen. Bei Superposition lehrt sie nichts.</div>
+  <div class="opt" data-ok="0">Weil man sie mit einem SAE auflösen kann.</div>
+  <div class="fb">Genau. „Dem Rauschen folgen" funktioniert nur, wenn das Rauschen etwas zu lehren hat.
+  Ein gewachsener Ast hat das. Zufällig gepackte Dinge nicht.</div>
+</div>
+</section>
+
+<footer>
+<p><b>Neural Networks Are Already Clean</b> · Nick Cammarata, Goodfire, 2026 ·
+Sprachmodell-Experimente mit Curt Tigges.<br>
+Diese Seite ist eine interaktive Nacherzählung. Alle Diagramme sind stilisierte,
+live berechnete Modelle der im Essay beschriebenen Phänomene — keine Originaldaten.</p>
+<p class="small" style="margin-top:14px"><a href="#start">↑ Zurück zum Anfang</a></p>
+</footer>
+
+</div>
+
+<script>
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const $=id=>document.getElementById(id);
+const C={bg:'#080c14',line:'#243049',txt:'#e8edf7',dim:'#93a1bd',dim2:'#64748f',
+ acc:'#64d2ff',acc2:'#ff9e64',good:'#5ee6a8',bad:'#ff6b8a',warn:'#ffd166',purple:'#c08bff'};
+
+function fit(cv){
+  const r=cv.getBoundingClientRect(), d=window.devicePixelRatio||1;
+  if(r.width===0) return null;
+  cv.width=r.width*d; cv.height=(cv.getAttribute('height')|0)*d;
+  cv.style.height=cv.getAttribute('height')+'px';
+  const g=cv.getContext('2d'); g.setTransform(d,0,0,d,0,0);
+  g.clearRect(0,0,r.width,cv.getAttribute('height')|0);
+  return {g,W:r.width,H:cv.getAttribute('height')|0};
+}
+function rr(g,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);
+  g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();
+}
+function txt(g,s,x,y,col,size,align,weight){
+  g.fillStyle=col||C.txt; g.font=(weight||'500')+' '+(size||12)+'px Inter,sans-serif';
+  g.textAlign=align||'left'; g.textBaseline='middle'; g.fillText(s,x,y);
+}
+function mono(g,s,x,y,col,size,align){
+  g.fillStyle=col||C.dim; g.font=(size||11)+'px ui-monospace,monospace';
+  g.textAlign=align||'left'; g.textBaseline='middle'; g.fillText(s,x,y);
+}
+function line(g,x1,y1,x2,y2,col,w){
+  g.strokeStyle=col;g.lineWidth=w||1;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+}
+function hsl(h,s,l,a){return `hsla(${h},${s}%,${l}%,${a===undefined?1:a})`;}
+let SEED=12345;
+function rnd(){SEED=(SEED*1103515245+12345)&0x7fffffff;return SEED/0x7fffffff;}
+function sr(s){SEED=s;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function bind(id,fn){const e=$(id); if(e){e.addEventListener('input',fn);} }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+(function(){
+  const cv=$('heroCanvas'); if(!cv) return;
+  const g=cv.getContext('2d');
+  let W,H,nodes=[],t=0;
+  function setup(){
+    const d=window.devicePixelRatio||1;
+    W=cv.offsetWidth;H=cv.offsetHeight;
+    cv.width=W*d;cv.height=H*d;g.setTransform(d,0,0,d,0,0);
+    nodes=[];sr(99);
+    const layers=6;
+    for(let L=0;L<layers;L++){
+      const n=L===0?7:(L===layers-1?5:9);
+      for(let i=0;i<n;i++){
+        nodes.push({L,x:W*(0.08+0.84*L/(layers-1)),y:H*(0.16+0.68*(i+0.5)/n),
+          ph:rnd()*6.28,hue:lerp(190,280,L/(layers-1))+rnd()*30-15});
+      }
+    }
+  }
+  function draw(){
+    g.clearRect(0,0,W,H); t+=0.012;
+    for(const a of nodes) for(const b of nodes){
+      if(b.L!==a.L+1) continue;
+      const s=0.5+0.5*Math.sin(t*1.4+a.ph+b.ph);
+      if(s<0.55) continue;
+      g.strokeStyle=hsl(a.hue,80,60,(s-0.55)*0.45);
+      g.lineWidth=0.7;g.beginPath();g.moveTo(a.x,a.y);g.lineTo(b.x,b.y);g.stroke();
+    }
+    for(const n of nodes){
+      const p=0.5+0.5*Math.sin(t*1.6+n.ph);
+      g.fillStyle=hsl(n.hue,85,62,0.25+p*0.6);
+      g.beginPath();g.arc(n.x,n.y,2.1+p*2.3,0,6.283);g.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  setup();draw();
+  window.addEventListener('resize',setup);
+})();
+
+/* ============================================================
+   0.1 NEURON
+   ============================================================ */
+(function(){
+  const cv=$('neuronCanvas'); let fn='relu';
+  const F={relu:z=>Math.max(0,z), silu:z=>z/(1+Math.exp(-z)),
+           tanh:z=>Math.tanh(z), lin:z=>z};
+  const NM={relu:'ReLU',silu:'SiLU',tanh:'tanh',lin:'linear'};
+  function draw(){
+    const w1=+$('n_w1').value,w2=+$('n_w2').value,x1=+$('n_x1').value,x2=+$('n_x2').value,b=+$('n_b').value;
+    $('n_w1v').textContent=w1.toFixed(2);$('n_w2v').textContent=w2.toFixed(2);
+    $('n_x1v').textContent=x1.toFixed(2);$('n_x2v').textContent=x2.toFixed(2);$('n_bv').textContent=b.toFixed(2);
+    const z=w1*x1+w2*x2+b, a=F[fn](z);
+    $('n_z').textContent=z.toFixed(2);$('n_a').textContent=a.toFixed(2);
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    // diagram
+    const cx=W*0.26, cy=H*0.5;
+    const ins=[{y:cy-52,v:x1,w:w1,l:'x₁'},{y:cy,v:x2,w:w2,l:'x₂'},{y:cy+52,v:1,w:b,l:'1'}];
+    for(const i of ins){
+      const str=Math.abs(i.w)*Math.abs(i.v);
+      g.strokeStyle=i.w>=0?C.acc:C.acc2; g.globalAlpha=0.25+Math.min(0.75,str*0.4);
+      g.lineWidth=0.8+Math.min(5,str*2.2);
+      g.beginPath();g.moveTo(40,i.y);g.lineTo(cx-22,cy);g.stroke();g.globalAlpha=1;
+      g.fillStyle='#101827';g.beginPath();g.arc(32,i.y,14,0,6.283);g.fill();
+      g.strokeStyle=C.line;g.lineWidth=1;g.stroke();
+      mono(g,i.l,32,i.y-1,C.dim,10,'center');
+      mono(g,i.v.toFixed(1),32,i.y+20,C.dim2,9,'center');
+      mono(g,(i.w>=0?'+':'')+i.w.toFixed(1),(40+cx-22)/2,i.y+(cy-i.y)*0.45-9,
+        i.w>=0?C.acc:C.acc2,10,'center');
+    }
+    const act=Math.min(1,Math.abs(a)/2);
+    g.fillStyle=a>0?hsl(195,90,55,0.18+act*0.6):hsl(0,0,40,0.2);
+    g.beginPath();g.arc(cx,cy,24,0,6.283);g.fill();
+    g.strokeStyle=a>0?C.acc:C.line;g.lineWidth=2;g.stroke();
+    mono(g,'f(z)',cx,cy,C.txt,11,'center');
+    g.strokeStyle=C.good;g.lineWidth=1.5+act*3.5;
+    g.beginPath();g.moveTo(cx+24,cy);g.lineTo(cx+62,cy);g.stroke();
+    mono(g,'a='+a.toFixed(2),cx+66,cy,C.good,11,'left');
+    // curve
+    const px=W*0.56,pw=W*0.40,py=22,ph=H-50;
+    g.strokeStyle=C.line;g.lineWidth=1;g.strokeRect(px,py,pw,ph);
+    const zx=v=>px+pw*(v+5)/10, ay=v=>py+ph*(1-(v+2)/6);
+    line(g,px,ay(0),px+pw,ay(0),'#1b2436',1);
+    line(g,zx(0),py,zx(0),py+ph,'#1b2436',1);
+    g.strokeStyle=C.acc;g.lineWidth=2;g.beginPath();
+    for(let i=0;i<=200;i++){const zz=-5+10*i/200,vv=clamp(F[fn](zz),-2,4);
+      const X=zx(zz),Y=ay(vv); i?g.lineTo(X,Y):g.moveTo(X,Y);}
+    g.stroke();
+    g.fillStyle=C.warn;g.beginPath();g.arc(zx(clamp(z,-5,5)),ay(clamp(a,-2,4)),5,0,6.283);g.fill();
+    mono(g,NM[fn],px+pw-6,py+12,C.dim,10,'right');
+    mono(g,'z',px+pw-6,ay(0)-10,C.dim2,10,'right');
+  }
+  document.querySelectorAll('.fn').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.fn').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); fn=b.dataset.fn; draw();
+  }));
+  ['n_w1','n_w2','n_x1','n_x2','n_b'].forEach(i=>bind(i,draw));
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ============================================================
+   0.2 VECTORS
+   ============================================================ */
+(function(){
+  const cv=$('vecCanvas');
+  function draw(){
+    const k=+$('v_k').value; $('v_kv').textContent=k;
+    const ang=180/k; $('v_ang').textContent=ang.toFixed(1)+'°';
+    $('v_int').textContent=Math.abs(Math.cos(ang*Math.PI/180)).toFixed(2);
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const cx=W/2,cy=H/2,R=Math.min(W,H)*0.37;
+    g.strokeStyle='#18213a';g.lineWidth=1;
+    g.beginPath();g.arc(cx,cy,R,0,6.283);g.stroke();
+    line(g,cx-R-14,cy,cx+R+14,cy,'#18213a',1);
+    line(g,cx,cy-R-14,cx,cy+R+14,'#18213a',1);
+    for(let i=0;i<k;i++){
+      const a=Math.PI*i/k, hue=(i*360/k)%360;
+      const X=cx+Math.cos(a)*R,Y=cy-Math.sin(a)*R;
+      g.strokeStyle=hsl(hue,78,62,0.95);g.lineWidth=2.3;
+      g.beginPath();g.moveTo(cx,cy);g.lineTo(X,Y);g.stroke();
+      g.fillStyle=hsl(hue,78,62);g.beginPath();g.arc(X,Y,3.6,0,6.283);g.fill();
+      if(k<=14) mono(g,'c'+(i+1),cx+Math.cos(a)*(R+15),cy-Math.sin(a)*(R+15),hsl(hue,70,70),9,'center');
+    }
+    if(k>=2){
+      const a0=0,a1=Math.PI/k;
+      g.strokeStyle=C.warn;g.lineWidth=1.4;
+      g.beginPath();g.arc(cx,cy,34,-a1,-a0);g.stroke();
+      mono(g,ang.toFixed(0)+'°',cx+44,cy-14,C.warn,10,'left');
+    }
+    mono(g,'2 Dimensionen · '+k+' Konzeptrichtungen',10,H-14,C.dim2,10,'left');
+    if(k>8) mono(g,'⚠ starke Interferenz',W-10,H-14,C.warn,10,'right');
+  }
+  bind('v_k',draw); window.addEventListener('resize',draw); draw();
+})();
+
+/* ============================================================
+   0.3 GRADIENT
+   ============================================================ */
+(function(){
+  const cv=$('gradCanvas'); let x=-2.3,step=0,auto=null,hist=[];
+  const L=x=>0.12*Math.pow(x,4)-0.55*Math.pow(x,2)+0.22*x+1.1;
+  const dL=x=>0.48*Math.pow(x,3)-1.10*x+0.22;
+  function reset(){x=+$('g_x0').value;step=0;hist=[x];draw();}
+  function one(){const lr=+$('g_lr').value;x-=lr*dL(x);x=clamp(x,-3.2,3.2);step++;hist.push(x);
+    if(hist.length>260)hist.shift();draw();}
+  function draw(){
+    $('g_lrv').textContent=(+$('g_lr').value).toFixed(2);
+    $('g_x0v').textContent=(+$('g_x0').value).toFixed(2);
+    $('g_step').textContent=step;$('g_loss').textContent=L(x).toFixed(3);
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const pad=30, X=v=>pad+(W-2*pad)*(v+3.2)/6.4, Y=v=>H-pad-(H-2*pad)*(v-0.1)/1.5;
+    // fill under curve
+    g.beginPath();g.moveTo(X(-3.2),H-pad);
+    for(let i=0;i<=240;i++){const xx=-3.2+6.4*i/240;g.lineTo(X(xx),Y(clamp(L(xx),0,2)));}
+    g.lineTo(X(3.2),H-pad);g.closePath();
+    const grd=g.createLinearGradient(0,py_top(),0,H);
+    function py_top(){return 10;}
+    grd.addColorStop(0,'rgba(100,210,255,0.16)');grd.addColorStop(1,'rgba(100,210,255,0.01)');
+    g.fillStyle=grd;g.fill();
+    // curve
+    g.strokeStyle=C.acc;g.lineWidth=2;g.beginPath();
+    for(let i=0;i<=240;i++){const xx=-3.2+6.4*i/240;const X2=X(xx),Y2=Y(clamp(L(xx),0,2));
+      i?g.lineTo(X2,Y2):g.moveTo(X2,Y2);}
+    g.stroke();
+    // trail
+    for(let i=0;i<hist.length;i++){
+      const a=i/hist.length;
+      g.fillStyle=hsl(35,95,65,0.08+a*0.35);
+      g.beginPath();g.arc(X(hist[i]),Y(clamp(L(hist[i]),0,2)),2+a*2,0,6.283);g.fill();
+    }
+    // ball
+    g.fillStyle=C.warn;g.beginPath();g.arc(X(x),Y(clamp(L(x),0,2)),7,0,6.283);g.fill();
+    g.strokeStyle='#1b1708';g.lineWidth=2;g.stroke();
+    // gradient arrow
+    const slope=dL(x);
+    const ax=X(x), ay=Y(clamp(L(x),0,2))-18, len=clamp(-slope*26,-70,70);
+    g.strokeStyle=C.good;g.lineWidth=2;
+    g.beginPath();g.moveTo(ax,ay);g.lineTo(ax+len,ay);g.stroke();
+    g.beginPath();g.moveTo(ax+len,ay);g.lineTo(ax+len-Math.sign(len)*7,ay-4);
+    g.lineTo(ax+len-Math.sign(len)*7,ay+4);g.closePath();g.fillStyle=C.good;g.fill();
+    mono(g,'−Gradient',ax+len/2,ay-13,C.good,9,'center');
+    mono(g,'lokales Min.',X(-1.6),H-13,C.dim2,10,'center');
+    mono(g,'globales Min.',X(1.5),H-13,C.dim2,10,'center');
+  }
+  $('g_run').addEventListener('click',one);
+  $('g_reset').addEventListener('click',reset);
+  $('g_auto').addEventListener('click',function(){
+    if(auto){clearInterval(auto);auto=null;this.classList.remove('on');}
+    else{auto=setInterval(one,60);this.classList.add('on');}
+  });
+  bind('g_lr',draw); bind('g_x0',reset);
+  window.addEventListener('resize',draw); reset();
+})();
+
+/* ============================================================
+   0.4 FEATURE VISUALIZATION
+   ============================================================ */
+(function(){
+  const cv=$('fvCanvas'); const N=44;
+  let img=[],step=0,run=null,target=0;
+  const TNAMES=['V-Formen','Kurven','hochfrequente Textur','runde Flecken'];
+  function reset(){
+    img=[];sr(7+target*13);
+    for(let y=0;y<N;y++){img.push([]);for(let x=0;x<N;x++)img[y].push([rnd(),rnd(),rnd()]);}
+    step=0;draw();
+  }
+  function targetVal(x,y,t){
+    // stylized "neuron response" fields
+    const u=(x/N-0.5)*2,v=(y/N-0.5)*2;
+    if(t===0) return Math.exp(-Math.pow(Math.abs(u)-v*0.9-0.1,2)*6);
+    if(t===1) return Math.exp(-Math.pow(Math.sqrt(u*u+v*v)-0.55,2)*22);
+    if(t===2) return 0.5+0.5*Math.sin(x*2.1)*Math.sin(y*2.1);
+    return Math.exp(-(u*u+v*v)*5);
+  }
+  function act(){
+    let s=0,n=0;
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+      const lum=(img[y][x][0]+img[y][x][1]+img[y][x][2])/3;
+      s+=lum*targetVal(x,y,target);n++;
+    }
+    return s/n*3;
+  }
+  function one(){
+    const rob=+$('fv_r').value;
+    const lr=0.22;
+    const nx=[];
+    for(let y=0;y<N;y++){nx.push([]);for(let x=0;x<N;x++)nx[y].push(img[y][x].slice());}
+    // jitter offset simulating transformation robustness
+    const jx=Math.round((rnd()-0.5)*6*rob), jy=Math.round((rnd()-0.5)*6*rob);
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+      const tx=clamp(x+jx,0,N-1),ty=clamp(y+jy,0,N-1);
+      const g_=targetVal(tx,ty,target)-0.35;
+      for(let c=0;c<3;c++){
+        let val=nx[y][x][c]+lr*g_*(c===0?1.0:(c===1?0.85:0.65));
+        nx[y][x][c]=clamp(val,0,1);
+      }
+    }
+    // smoothing ~ transformation robustness kills high frequency
+    const sm=rob*0.55;
+    if(sm>0.01){
+      for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+        for(let c=0;c<3;c++){
+          let s=0,n=0;
+          for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+            const yy=clamp(y+dy,0,N-1),xx=clamp(x+dx,0,N-1);
+            s+=nx[yy][xx][c];n++;
+          }
+          nx[y][x][c]=lerp(nx[y][x][c],s/n,sm);
+        }
+      }
+    } else {
+      // no robustness: inject high frequency garbage
+      for(let y=0;y<N;y++)for(let x=0;x<N;x++)for(let c=0;c<3;c++)
+        nx[y][x][c]=clamp(nx[y][x][c]+(rnd()-0.5)*0.22,0,1);
+    }
+    img=nx;step++;draw();
+  }
+  function draw(){
+    $('fv_rv').textContent=(+$('fv_r').value).toFixed(2);
+    $('fv_tv').textContent=TNAMES[target];
+    $('fv_step').textContent=step;$('fv_act').textContent=act().toFixed(2);
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const S=Math.min(W*0.52,H-32), ox=18, oy=(H-S)/2;
+    const cell=S/N;
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+      const p=img[y][x];
+      g.fillStyle=`rgb(${p[0]*255|0},${p[1]*255|0},${p[2]*255|0})`;
+      g.fillRect(ox+x*cell,oy+y*cell,cell+0.6,cell+0.6);
+    }
+    g.strokeStyle=C.line;g.lineWidth=1;g.strokeRect(ox,oy,S,S);
+    mono(g,'Optimiertes Bild',ox,oy-10,C.dim,10,'left');
+    // target field
+    const tx0=ox+S+26, TS=Math.min(W-tx0-18,S*0.68);
+    if(TS>30){
+      for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+        const v=targetVal(x,y,target);
+        g.fillStyle=hsl(195,85,lerp(8,62,v));
+        g.fillRect(tx0+x*TS/N,oy+y*TS/N,TS/N+0.6,TS/N+0.6);
+      }
+      g.strokeStyle=C.line;g.strokeRect(tx0,oy,TS,TS);
+      mono(g,'Was das Neuron sucht',tx0,oy-10,C.acc,10,'left');
+      // activation bar
+      const bw=TS, by=oy+TS+18;
+      g.fillStyle='#121a2b';rr(g,tx0,by,bw,11,5);g.fill();
+      g.fillStyle=C.good;rr(g,tx0,by,bw*clamp(act()/1.6,0,1),11,5);g.fill();
+      mono(g,'Aktivierung',tx0,by+26,C.dim2,10,'left');
+    }
+  }
+  $('fv_run').addEventListener('click',function(){
+    if(run){clearInterval(run);run=null;this.textContent='▶ Optimieren';this.classList.remove('on');}
+    else{run=setInterval(one,45);this.textContent='⏸ Pause';this.classList.add('on');}
+  });
+  $('fv_reset').addEventListener('click',reset);
+  bind('fv_r',draw);
+  bind('fv_t',()=>{target=+$('fv_t').value;reset();});
+  window.addEventListener('resize',draw); reset();
+})();
+
+/* ============================================================
+   QUIZ ENGINE
+   ============================================================ */
+document.querySelectorAll('.quiz').forEach(q=>{
+  q.querySelectorAll('.opt').forEach(o=>{
+    o.addEventListener('click',()=>{
+      q.querySelectorAll('.opt').forEach(x=>x.classList.remove('right','wrong'));
+      o.classList.add(o.dataset.ok==='1'?'right':'wrong');
+      if(o.dataset.ok==='1') q.querySelector('.fb').style.display='block';
+    });
+  });
+});
+
+/* ============================================================
+   1 GATE
+   ============================================================ */
+(function(){
+  const cv=$('gateCanvas'); let g_i=0;
+  const GATES=[
+    {t:'Pose-Neuron',pos:['Auto ↗','Hund ↗','Auto ↗','Hund ↗'],
+     neg:['Auto ↙','Hund ↙'],
+     d:'Gruppiert Autos und Hunde — aber <b>nicht</b> willkürlich: beide schauen in dieselbe Richtung. Die geteilte Eigenschaft ist die <b>Pose</b>. InceptionV1 hat &gt;100 solcher Neuronen.',
+     hp:198,hn:28},
+    {t:'Auto-Tor',pos:['Limousine','Sportwagen','Taxi','Bus'],
+     neg:['Hund','Hund'],
+     d:'Vor den Auto-Spezialisten sitzt ein Tor: Autos positiv, Hunde negativ. Die Hunde gehen ihren eigenen Weg — die Spezialisten müssen sich nicht um sie kümmern.',
+     hp:205,hn:35},
+    {t:'Taxi-Spezialist',pos:['Taxi','Taxi'],neg:['Krankenwagen','Krankenwagen'],
+     d:'Ganz am Ende: feine Unterscheidungen. Das Taxi-Neuron hat den <b>Krankenwagen</b> auf dem negativen Pol. Beides Autos — der Unterschied ist, was hier zählt.',
+     hp:48,hn:5}
+  ];
+  function draw(){
+    const G=GATES[g_i];
+    $('gateDesc').innerHTML=G.d;
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const cx=W/2,cy=H/2;
+    // gate body
+    g.fillStyle='#101827';rr(g,cx-42,cy-58,84,116,14);g.fill();
+    g.strokeStyle=C.acc;g.lineWidth=2;g.stroke();
+    txt(g,'NEURON',cx,cy-34,C.acc,10,'center','700');
+    txt(g,G.t,cx,cy-16,C.txt,12,'center','700');
+    // + and - zones
+    g.fillStyle=hsl(G.hp,80,55,0.2);rr(g,cx-34,cy+2,68,22,7);g.fill();
+    txt(g,'+ durchlassen',cx,cy+13,hsl(G.hp,80,70),10,'center','600');
+    g.fillStyle=hsl(G.hn,85,55,0.2);rr(g,cx-34,cy+28,68,22,7);g.fill();
+    txt(g,'− blockieren',cx,cy+39,hsl(G.hn,85,70),10,'center','600');
+    // inputs left
+    const lx=36;
+    G.pos.forEach((p,i)=>{
+      const y=40+i*((H-80)/Math.max(1,G.pos.length-1||1));
+      const yy=G.pos.length>1?30+i*((H-60)/(G.pos.length-1)):H/2;
+      g.fillStyle=hsl(G.hp,70,55,0.16);rr(g,lx-28,yy-11,92,22,7);g.fill();
+      g.strokeStyle=hsl(G.hp,70,55,0.5);g.lineWidth=1;g.stroke();
+      mono(g,p,lx+18,yy,hsl(G.hp,70,78),10,'center');
+      g.strokeStyle=hsl(G.hp,80,60,0.55);g.lineWidth=2;
+      g.beginPath();g.moveTo(lx+64,yy);g.lineTo(cx-42,cy+13);g.stroke();
+    });
+    G.neg.forEach((p,i)=>{
+      const yy=G.neg.length>1?H*0.3+i*(H*0.42/(G.neg.length-1)):H/2;
+      const X0=W-120;
+      g.fillStyle=hsl(G.hn,70,55,0.16);rr(g,X0,yy-11,100,22,7);g.fill();
+      g.strokeStyle=hsl(G.hn,70,55,0.5);g.lineWidth=1;g.stroke();
+      mono(g,p,X0+50,yy,hsl(G.hn,70,80),10,'center');
+      g.strokeStyle=hsl(G.hn,80,60,0.5);g.lineWidth=2;g.setLineDash([4,4]);
+      g.beginPath();g.moveTo(cx+42,cy+39);g.lineTo(X0,yy);g.stroke();g.setLineDash([]);
+    });
+    // downstream
+    g.fillStyle='#0d1626';rr(g,W-150,H-46,132,30,8);g.fill();
+    g.strokeStyle=C.good;g.lineWidth=1.4;g.stroke();
+    mono(g,'→ Spezialisten',W-84,H-31,C.good,10,'center');
+    g.strokeStyle=C.good;g.lineWidth=2.4;
+    g.beginPath();g.moveTo(cx+42,cy+13);g.lineTo(W-150,H-31);g.stroke();
+    mono(g,'Ein Neuron ist ein VERB: es trennt, es leitet.',12,H-12,C.dim2,10,'left');
+  }
+  document.querySelectorAll('#gatePills .pill').forEach(p=>p.addEventListener('click',()=>{
+    document.querySelectorAll('#gatePills .pill').forEach(x=>x.classList.remove('on'));
+    p.classList.add('on'); g_i=+p.dataset.g; draw();
+  }));
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ============================================================
+   1b FLOW
+   ============================================================ */
+(function(){
+  const cv=$('flowCanvas');
+  const B=[
+    {n:'#203',p:'Autos & Limousinen',m:'Busse & Bahnen',hp:200,hm:30},
+    {n:'#920',p:'Tische & Schränke',m:'Schlangen & Hunde',hp:45,hm:300},
+    {n:'#609',p:'Cabrios & Sportwagen',m:'Minibusse',hp:200,hm:35},
+    {n:'#1455',p:'Cabrios',m:'Vans & Kombis',hp:195,hm:28},
+    {n:'#632',p:'Cabrios',m:'Kombis',hp:190,hm:25}
+  ];
+  function draw(){
+    const i=(+$('fl_b').value)-14; $('fl_bv').textContent=14+i;
+    const b=B[i];
+    $('fl_n').textContent=b.n;$('fl_p').textContent=b.p;$('fl_m').textContent=b.m;
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const pad=40, step=(W-2*pad)/4;
+    for(let k=0;k<5;k++){
+      const x=pad+k*step, on=k<=i;
+      g.strokeStyle=on?C.acc:'#1b2436';g.lineWidth=on?2:1;
+      g.fillStyle=on?'#0f1c2e':'#0b1018';
+      rr(g,x-26,H/2-26,52,52,12);g.fill();g.stroke();
+      mono(g,'B'+(14+k),x,H/2,on?C.acc:C.dim2,11,'center');
+      if(k<4){
+        g.strokeStyle=k<i?C.acc:'#1b2436';g.lineWidth=k<i?2:1;
+        g.beginPath();g.moveTo(x+26,H/2);g.lineTo(x+step-26,H/2);g.stroke();
+      }
+    }
+    // car marker
+    const cx=pad+i*step;
+    g.fillStyle=C.warn;g.beginPath();g.arc(cx,H/2-42,6,0,6.283);g.fill();
+    mono(g,'🚗 der rote Sportwagen',cx,H/2-58,C.warn,10,'center');
+    // pos / neg
+    g.fillStyle=hsl(b.hp,75,55,0.16);rr(g,cx-112,H/2+40,224,26,8);g.fill();
+    g.strokeStyle=hsl(b.hp,75,55,0.5);g.lineWidth=1;g.stroke();
+    mono(g,'+ gruppiert mit: '+b.p,cx,H/2+53,hsl(b.hp,70,80),11,'center');
+    g.fillStyle=hsl(b.hm,75,55,0.14);rr(g,cx-112,H/2+72,224,26,8);g.fill();
+    g.strokeStyle=hsl(b.hm,75,55,0.45);g.stroke();
+    mono(g,'− getrennt von: '+b.m,cx,H/2+85,hsl(b.hm,70,80),11,'center');
+    mono(g,'Neuron '+b.n,cx,H/2+22,C.dim,10,'center');
+  }
+  bind('fl_b',draw); window.addEventListener('resize',draw); draw();
+})();
+
+/* ============================================================
+   2 CAUSES
+   ============================================================ */
+(function(){
+  const cv=$('causeCanvas'); let ci=0;
+  const CA=[
+    {t:'Schlechte Werkzeuge',test:'ja, direkt',rad:'niedrig',col:C.acc,
+     d:'Unsere Linse ist nicht gut genug. Feature Visualization ohne Transformations-Robustheit erzeugt Müll; mit Robustheit sind dieselben Neuronen scharf.',
+     ex:'Beispiel: Feature Visualization <b>reward-hackt</b> in tiefen Schichten und malt Hunde, wo Autos sind.'},
+    {t:'Schlechte Erklärungen',test:'ja',rad:'niedrig',col:C.purple,
+     d:'Das Werkzeug ist okay, aber wir beschreiben falsch. Menschen und Agenten beschreiben Neuronen fast immer als <b>Substantivlisten</b> („Katzen und Autos") statt als geteiltes Muster („ein V").',
+     ex:'Trick: „Wie würde ich dieses Neuron beschreiben, wenn ich <i>keine</i> Substantive benutzen dürfte?"'},
+    {t:'Schlechtes Lernen',test:'ja, durch Neutraining',rad:'mittel',col:C.warn,
+     d:'Das Netz hat schlecht gelernt — wegen Architektur, Daten oder Optimierung. InceptionV1 hatte keinen Residual Stream, also lernten die tiefen Schichten mies.',
+     ex:'Test: Trainiere dieselbe Größe mit moderner Architektur. Letzte Schicht: von ~0 % auf 99 % interpretierbar.'},
+    {t:'Rekursive Generalisierung',test:'ja, über Checkpoints',rad:'mittel',col:C.good,
+     d:'Das Neuron ist gewachsen wie ein Ast: erst „iy", dann „diy", dann „do it yourself". Jeder Schritt lokal — das Ende sieht gemischt aus.',
+     ex:'Test: Schau dir Trainings-Checkpoints an. Wächst es in einer nachvollziehbaren Reihenfolge?'},
+    {t:'Superposition',test:'kaum — nur „ergibt keinen Sinn"',rad:'sehr hoch',col:C.bad,
+     d:'Ein <b>neues Lernprinzip</b>: Das Netz packt unverwandte Dinge zusammen, weil sie selten kollidieren. Daraus lernt man nichts.',
+     ex:'Problem: Das einzige Symptom ist „es ergibt keinen Sinn". Genauso sehen aber alle vier Punkte darüber aus.'}
+  ];
+  function draw(){
+    const c=CA[ci];
+    $('cz_t').textContent=(ci+1)+' · '+c.t;
+    $('cz_d').innerHTML=c.d; $('cz_test').textContent=c.test;
+    $('cz_rad').textContent=c.rad; $('cz_ex').innerHTML=c.ex;
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    // axis: testability (x) vs radicality (y)
+    const pad=46;
+    line(g,pad,H-pad,W-18,H-pad,'#1b2436',1);
+    line(g,pad,16,pad,H-pad,'#1b2436',1);
+    mono(g,'Testbarkeit →',W-20,H-pad+16,C.dim2,10,'right');
+    g.save();g.translate(14,H/2);g.rotate(-Math.PI/2);
+    mono(g,'Radikalität →',0,0,C.dim2,10,'center');g.restore();
+    const P=[[0.86,0.12],[0.78,0.2],[0.6,0.44],[0.68,0.4],[0.1,0.92]];
+    for(let i=0;i<5;i++){
+      const X=pad+(W-pad-30)*P[i][0],            Y=28+(H-56)*P[i][1];
+      const on=i===ci;
+      g.fillStyle=on?CA[i].col:'#1a2232';
+      g.beginPath();g.arc(X,Y,on?11:6.5,0,6.283);g.fill();
+      if(on){g.strokeStyle=CA[i].col;g.globalAlpha=.3;g.lineWidth=2;
+        g.beginPath();g.arc(X,Y,19,0,6.283);g.stroke();g.globalAlpha=1;}
+      mono(g,String(i+1),X,Y,on?'#07121c':C.dim,on?11:9,'center');
+      if(on) mono(g,CA[i].t,X,Y-28,CA[i].col,10,'center');
+    }
+    // the "right order" arrow
+    g.strokeStyle='#2a3650';g.lineWidth=1;g.setLineDash([4,4]);
+    g.beginPath();g.moveTo(pad+(W-pad-30)*0.9,28+(H-56)*0.08);
+    g.lineTo(pad+(W-pad-30)*0.14,28+(H-56)*0.9);g.stroke();g.setLineDash([]);
+    mono(g,'zuerst prüfen',W-24,36,C.good,9,'right');
+    mono(g,'zuletzt prüfen',pad+10,H-34,C.bad,9,'left');
+  }
+  document.querySelectorAll('#causePills .pill').forEach(p=>p.addEventListener('click',()=>{
+    document.querySelectorAll('#causePills .pill').forEach(x=>x.classList.remove('on'));
+    p.classList.add('on'); ci=+p.dataset.c; draw();
+  }));
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ============================================================
+   3 SUPERPOSITION VS GENERALIZATION
+   ============================================================ */
+(function(){
+  const cv=$('superCanvas');
+  function draw(){
+    const n=+$('sp_n').value; $('sp_nv').textContent=n;
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const K=32, halfW=W/2-14;
+    function panel(x0,title,mode,col){
+      mono(g,title,x0+halfW/2,16,col,11,'center');
+      const perN=Math.ceil(K/n);
+      const cols=Math.min(n,8), rows=Math.ceil(n/cols);
+      const bw=(halfW-16)/cols, bh=(H-56)/rows;
+      for(let i=0;i<n;i++){
+        const cx=x0+8+(i%cols)*bw, cy=34+Math.floor(i/cols)*bh;
+        g.fillStyle='#0c1322';rr(g,cx+3,cy+3,bw-6,bh-8,7);g.fill();
+        g.strokeStyle='#1b2436';g.lineWidth=1;g.stroke();
+        // items in this neuron
+        const items=[];
+        for(let k=0;k<K;k++){
+          const assigned = mode==='gen' ? Math.floor(k*n/K) : (k*7+3)%n;
+          if(assigned===i) items.push(k);
+        }
+        const per=Math.min(items.length,8);
+        for(let j=0;j<items.length;j++){
+          const k=items[j];
+          const hue = mode==='gen' ? (k*360/K) : (k*360/K);
+          const px=cx+9+(j%4)*((bw-22)/4), py=cy+12+Math.floor(j/4)*13;
+          if(py>cy+bh-12) continue;
+          g.fillStyle=hsl(hue,78,60,0.95);
+          g.beginPath();g.arc(px,py,4.2,0,6.283);g.fill();
+        }
+        mono(g,String(items.length),cx+bw-12,cy+bh-13,C.dim2,9,'right');
+      }
+    }
+    panel(0,'PACKEN (Superposition)','pack',C.bad);
+    panel(W/2+14,'GENERALISIEREN','gen',C.good);
+    line(g,W/2,24,W/2,H-10,'#1b2436',1);
+    mono(g,'Farbe = Ähnlichkeit · 32 Konzepte · '+n+' Neuronen',W/2,H-6,C.dim2,10,'center');
+  }
+  bind('sp_n',draw); window.addEventListener('resize',draw); draw();
+})();
+
+/* ============================================================
+   4 V-NEURON
+   ============================================================ */
+(function(){
+  const cv=$('vCanvas'); let mode=0; // 0 top,1 neg,2 test
+  const POS=[['Katze',195],['Auto',200],['Fuchs',30],['Hund',35],
+             ['Auto',205],['Katze',190],['Flamme',20],['Fuchs',28]];
+  const NEG=[['Schnecke',280],['Golfball',55],['Tennisball',80],['Uhr',210],
+             ['Hund (rund)',35],['Kugel',260]];
+  const TEST=[['Shinkansen',195],['Billardtisch',120],['Martiniglas',300],['Wasserstrahl',185]];
+  function shape(g,cx,cy,s,kind,hue){
+    g.strokeStyle=hsl(hue,80,65);g.lineWidth=2.6;g.lineCap='round';
+    if(kind==='V'){
+      g.beginPath();g.moveTo(cx-s,cy-s*0.75);g.lineTo(cx,cy+s*0.8);g.lineTo(cx+s,cy-s*0.75);g.stroke();
+    } else {
+      g.beginPath();g.arc(cx,cy,s*0.82,0,6.283);g.stroke();
+    }
+  }
+  function draw(){
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const list = mode===1?NEG:(mode===2?TEST:POS);
+    const kind = mode===1?'O':'V';
+    const cols=Math.min(4,list.length), rows=Math.ceil(list.length/cols);
+    const bw=(W-20)/cols, bh=(H-26)/rows;
+    for(let i=0;i<list.length;i++){
+      const cx=10+(i%cols)*bw, cy=10+Math.floor(i/cols)*bh;
+      g.fillStyle='#0b1220';rr(g,cx+3,cy+3,bw-8,bh-10,9);g.fill();
+      g.strokeStyle='#1b2436';g.lineWidth=1;g.stroke();
+      const mx=cx+bw/2-2, my=cy+bh/2-8, s=Math.min(bw,bh)*0.22;
+      // faint "photo" wash
+      g.fillStyle=hsl(list[i][1],40,30,0.25);rr(g,cx+3,cy+3,bw-8,bh-10,9);g.fill();
+      if(mode!==0||revealed) shape(g,mx,my,s,kind,list[i][1]);
+      else {
+        g.fillStyle=hsl(list[i][1],45,45,0.5);
+        g.beginPath();g.arc(mx,my,s*0.9,0,6.283);g.fill();
+      }
+      mono(g,list[i][0],cx+bw/2-2,cy+bh-16,C.dim,10,'center');
+    }
+    if(mode===0&&!revealed) mono(g,'… was haben sie gemeinsam?',W/2,H-6,C.warn,10,'center');
+  }
+  let revealed=false;
+  function setText(){
+    if(mode===1){
+      $('v_title').textContent='Der negative Pol: ein O';
+      $('v_text').innerHTML='Rund, wo das V spitz ist. Ein Neuron ist ein <b>Tor</b>: spitz durchlassen, rund blockieren. Das ist der schnellste Test, ob eine Gruppierung echt ist.';
+      $('v_call').style.display='block';
+      $('v_call').innerHTML='Warum sollte eine „willkürliche Mischung aus Katzen und Autos" so stark mit einer <b>Flamme</b> verbunden sein? Weil Flammen V-förmig sind.';
+    } else if(mode===2){
+      $('v_title').textContent='Weitere Kandidaten — und sie feuern';
+      $('v_text').innerHTML='Wenn die Erklärung „V-Form" stimmt, muss sie <b>neue Vorhersagen</b> machen. Shinkansen-Züge, Billardtisch-Ecken, Martiniglas, V-förmiger Wasserstrahl eines Löschboots — alle feuern.';
+      $('v_call').style.display='block';
+      $('v_call').innerHTML='Das ist der Unterschied zwischen einer <b>Substantivliste</b> („Katzen und Autos") und einem <b>geteilten Muster</b> („ein V"). Nur Letzteres lässt sich testen.';
+    } else {
+      $('v_title').textContent=revealed?'Es ist ein V-Neuron':'Die stärksten Aktivierungen';
+      $('v_text').innerHTML=revealed
+        ? 'Keine Katzen <i>und</i> Autos. Ein <b>V</b>: die spitze Schnauze der Katze, die spitz zulaufende Front des Autos, das Fuchsgesicht. Es brauchte etwa 5 Sekunden Hinschauen.'
+        : 'Neuron 4e:55. Seit 2017 <i>das</i> Standardbeispiel für Polysemantizität. Schau ein paar Sekunden hin, bevor du klickst.';
+      $('v_call').style.display=revealed?'block':'none';
+      $('v_call').innerHTML='In <i>Zoom In</i> (2020) stand wörtlich: es reagiere „auf keine Gemeinsamkeit von Autos und Katzengesichtern". Das war falsch.';
+    }
+    $('v_kv').innerHTML = mode===1
+      ? '<div>Pol <b>negativ</b></div><div>Muster <b>O</b></div>'
+      : (mode===2?'<div>Vorhersagen <b>4/4 Treffer</b></div>':'<div>Neuron <b>4e:55</b></div><div>Modell <b>InceptionV1</b></div>');
+  }
+  $('v_reveal').addEventListener('click',()=>{mode=0;revealed=true;setText();draw();});
+  $('v_neg').addEventListener('click',()=>{mode=1;setText();draw();});
+  $('v_test').addEventListener('click',()=>{mode=2;setText();draw();});
+  window.addEventListener('resize',draw); setText(); draw();
+})();
+
+/* ============================================================
+   4b CANONICAL CIRCUIT
+   ============================================================ */
+(function(){
+  const cv=$('circuitCanvas'); let old=true;
+  function draw(){
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const x0=W*0.13,x1=W*0.5,x2=W*0.87;
+    // source
+    g.fillStyle='#0f1c2e';rr(g,x0-44,H/2-22,88,44,10);g.fill();
+    g.strokeStyle=C.acc;g.lineWidth=2;g.stroke();
+    mono(g,'Auto 4c:447',x0,H/2,C.acc,10,'center');
+    const mids=[0,1,2,3];
+    for(const i of mids){
+      const y=40+i*((H-90)/3);
+      const isDog = old ? true : (i===1||i===2);
+      const col = old?C.bad:(isDog?C.purple:C.acc);
+      g.fillStyle=old?'#1d0f16':(isDog?'#17102a':'#0f1c2e');
+      rr(g,x1-56,y-17,112,34,9);g.fill();
+      g.strokeStyle=col;g.lineWidth=1.6;g.stroke();
+      mono(g,old?('Hund #'+(i+1)):(isDog?'geteilte Pose':'Auto-Neuron'),x1,y,col,9.5,'center');
+      g.strokeStyle=col;g.globalAlpha=.6;g.lineWidth=2;
+      g.beginPath();g.moveTo(x0+44,H/2);g.lineTo(x1-56,y);g.stroke();
+      g.beginPath();g.moveTo(x1+56,y);g.lineTo(x2-46,H/2);g.stroke();g.globalAlpha=1;
+    }
+    g.fillStyle='#0f1c2e';rr(g,x2-46,H/2-22,92,44,10);g.fill();
+    g.strokeStyle=C.acc;g.lineWidth=2;g.stroke();
+    mono(g,'Auto (später)',x2,H/2,C.acc,10,'center');
+    if(old){
+      mono(g,'„hochdimensionales Versteck"',W/2,H-12,C.bad,11,'center');
+    } else {
+      mono(g,'2× Auto · 2× geteilte Pose — nichts versteckt',W/2,H-12,C.good,11,'center');
+    }
+  }
+  function txtset(){
+    $('cc_text').innerHTML = old
+      ? 'Die Lesart von 2019: Das Auto wird in vier <b>unverwandte Hunde-Neuronen</b> gespeichert und später wieder ausgelesen. Ein Versteck im hochdimensionalen Raum. Das war <i>das</i> Beispiel für Superposition.'
+      : 'Mit korrigierter Feature Visualization: zwei davon sind schlicht <b>Auto-Neuronen</b>, die anderen beiden sind <b>geteilte Pose</b> — die Richtung, in die Hund und Auto schauen. Das Auto differenziert sich weiter aus, statt sich zu verstecken.';
+  }
+  $('cc_old').addEventListener('click',function(){old=true;this.classList.add('on');$('cc_new').classList.remove('on');txtset();draw();});
+  $('cc_new').addEventListener('click',function(){old=false;this.classList.add('on');$('cc_old').classList.remove('on');txtset();draw();});
+  window.addEventListener('resize',draw); txtset(); draw();
+})();
+
+/* ============================================================
+   5 MICROSCOPE
+   ============================================================ */
+(function(){
+  const cv=$('scopeCanvas'); let si=0, late=0;
+  const S=[
+    {t:'2009 · nackter Gradientenaufstieg',r:'≈ 0 %',
+     d:'Man maximiert das Neuron direkt im Pixelraum. Ergebnis: farbiges Rauschen. Man könnte schließen, das Neuron habe nichts Sauberes gelernt.'},
+    {t:'2017 · Transformations-Robustheit (Lucid)',r:'mittel: gut · spät: schlecht',
+     d:'Man optimiert über verschobene, gedrehte, skalierte Varianten. Mittlere Schichten werden scharf. Späte Schichten bleiben ein Durcheinander — dort <b>reward-hackt</b> die Optimierung in den Hunde-Krater.'},
+    {t:'2026 · korrigierte Regularisierung + Pfadlenkung',r:'mittel: gut · spät: gut',
+     d:'Man lenkt die Optimierung leicht auf die Pfade, die echte Bilder nehmen — meist nur für die ersten 64 Schritte. Plötzlich ist auch die Tiefe lesbar. <b>Gleiche Neuronen, besseres Mikroskop.</b>'}
+  ];
+  function draw(){
+    si=si; late=+$('sc_l').value;
+    $('sc_lv').textContent=late?'spät (5a)':'mittel (4d)';
+    $('sc_t').textContent=S[si].t;$('sc_d').innerHTML=S[si].d;
+    $('sc_r').textContent=late?(si===0?'0 %':(si===1?'schlecht':'gut')):(si===0?'0 %':'gut');
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const S2=Math.min(W-30,H-40), ox=(W-S2)/2, oy=18, N=40, cell=S2/N;
+    const quality = si===0?0 : (si===1? (late?0.3:0.92) : 0.96);
+    sr(1234+si*7+late*31);
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+      const u=(x/N-0.5)*2,v=(y/N-0.5)*2;
+      let base;
+      if(late){
+        // boxy device with round lens
+        const box=(Math.abs(u)<0.6&&Math.abs(v)<0.5)?1:0;
+        const lens=Math.exp(-(Math.pow(u-0.22,2)+Math.pow(v,2))*26);
+        base=box*0.55+lens*0.8;
+      } else {
+        // metallic jar
+        const jar=(Math.abs(u)<0.4&&v>-0.55&&v<0.6)?1:0;
+        const sheen=Math.exp(-Math.pow(u+0.12,2)*26)*jar;
+        base=jar*0.45+sheen*0.6;
+      }
+      const noise=(rnd()-0.5);
+      const hi=(Math.sin(x*2.3)*Math.sin(y*2.3))*0.5+0.5;
+      let val=lerp(0.5+noise*0.9, base, quality);
+      if(si===1&&late) val=lerp(val, hi, 0.35);
+      const hue=late?(si===2?28:(si===1?30:rnd()*360)):(si===2?40:(si===1?45:rnd()*360));
+      g.fillStyle=hsl(hue+ (si===0?0:noise*40),si===0?70:45,clamp(val*70,5,88));
+      g.fillRect(ox+x*cell,oy+y*cell,cell+0.6,cell+0.6);
+    }
+    g.strokeStyle=C.line;g.lineWidth=1;g.strokeRect(ox,oy,S2,S2);
+    mono(g,late?'mixed5a:400':'mixed4d:161',ox,oy-8,C.dim,10,'left');
+    mono(g,late?(si===2?'„Kasten mit runder Linse"':'?'):(si>0?'„Metalldose"':'?'),
+         ox+S2,oy+S2+14,si===0?C.bad:(si===1&&late?C.warn:C.good),10,'right');
+  }
+  document.querySelectorAll('#scopePills .pill').forEach(p=>p.addEventListener('click',()=>{
+    document.querySelectorAll('#scopePills .pill').forEach(x=>x.classList.remove('on'));
+    p.classList.add('on'); si=+p.dataset.s; draw();
+  }));
+  bind('sc_l',draw); window.addEventListener('resize',draw); draw();
+})();
+
+/* legibility plot */
+(function(){
+  const el=$('legibilityPlot'); if(!el||!window.Plotly) return;
+  const names=['InceptionV1<br>Werkzeuge 2017','+ bessere<br>Interp-Werkzeuge',
+    'gleiche Architektur<br>moderne Regularisierung','ConvNeXt<br>gleiche Größe'];
+  Plotly.newPlot(el,[{
+    type:'bar',x:names,y:[3,50,70,99],
+    marker:{color:['#ff6b8a','#ffd166','#64d2ff','#5ee6a8'],line:{width:0}},
+    text:['~0–5 %','~50 %','~70 %','~99 %'],textposition:'outside',
+    textfont:{color:'#e8edf7',size:13},hoverinfo:'y'
+  }],{
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+    font:{color:'#93a1bd',family:'Inter,sans-serif',size:12},
+    margin:{l:48,r:16,t:30,b:70},
+    title:{text:'Anteil leicht interpretierbarer Neuronen in der <b>letzten</b> Schicht',
+      font:{size:13,color:'#e8edf7'}},
+    yaxis:{range:[0,116],gridcolor:'#1b2436',zerolinecolor:'#243049',ticksuffix:' %'},
+    xaxis:{tickfont:{size:10.5}}
+  },{displayModeBar:false,responsive:true});
+})();
+
+/* ============================================================
+   6 RESIDUAL
+   ============================================================ */
+(function(){
+  const cv=$('resCanvas'); let on=true;
+  function draw(){
+    const d=+$('rs_d').value; $('rs_dv').textContent=d;
+    const grad = on?1:Math.pow(0.72,d);
+    $('rs_g').textContent = grad>0.001?grad.toFixed(3):grad.toExponential(1);
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const pad=26, span=W-2*pad, bw=span/d;
+    const sy=H*0.34;
+    if(on){ // highway
+      g.strokeStyle=C.acc;g.lineWidth=3;g.globalAlpha=.5;
+      g.beginPath();g.moveTo(pad,sy);g.lineTo(W-pad,sy);g.stroke();g.globalAlpha=1;
+      mono(g,'Residual Stream („Autobahn")',pad,sy-14,C.acc,10,'left');
+    }
+    for(let i=0;i<d;i++){
+      const x=pad+i*bw+bw/2;
+      const gi = on?1:Math.pow(0.72,d-i);
+      g.fillStyle='#101827';rr(g,x-Math.min(13,bw/2-1),sy+22,Math.min(26,bw-2),26,6);g.fill();
+      g.strokeStyle=hsl(195,80,55,0.25+gi*0.75);g.lineWidth=1.4;g.stroke();
+      if(on){
+        line(g,x,sy,x,sy+22,C.acc,1.2);
+        line(g,x,sy+48,x,sy+58,C.acc,1.2);
+        g.strokeStyle=C.acc;g.lineWidth=1.2;
+        g.beginPath();g.moveTo(x,sy+58);g.lineTo(x+bw*0.35,sy+58);g.lineTo(x+bw*0.35,sy);g.stroke();
+      } else if(i<d-1){
+        line(g,x+13,sy+35,x+bw-13,sy+35,hsl(195,60,50,0.15+gi*0.6),1.5);
+      }
+      // gradient bar
+      const bh=(H-sy-92)*gi;
+      g.fillStyle=hsl(gi>0.3?150:(gi>0.05?45:0),80,58,0.75);
+      rr(g,x-4,H-26-bh,8,bh,3);g.fill();
+    }
+    line(g,pad,H-26,W-pad,H-26,'#1b2436',1);
+    mono(g,'Lernsignal (Gradient) pro Schicht',pad,H-12,C.dim2,10,'left');
+    mono(g,on?'Gradient bleibt stark':'Gradient stirbt exponentiell',W-pad,H-12,on?C.good:C.bad,10,'right');
+  }
+  bind('rs_d',draw);
+  $('rs_on').addEventListener('click',function(){on=true;this.classList.add('on');$('rs_off').classList.remove('on');draw();});
+  $('rs_off').addEventListener('click',function(){on=false;this.classList.add('on');$('rs_on').classList.remove('on');draw();});
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ============================================================
+   6b SINK DIMENSION
+   ============================================================ */
+(function(){
+  const cv=$('sinkCanvas'); let withSink=true, pts=null;
+  function build(){
+    pts=[];sr(4242);
+    const groups=[
+      {n:70,hue:195,lab:'Tierköpfe',cx:-0.55,cy:-0.3},
+      {n:70,hue:28,lab:'Menschen',cx:0.5,cy:-0.45},
+      {n:70,hue:150,lab:'Gras',cx:0.15,cy:0.55},
+      {n:70,hue:275,lab:'Text & Schilder',cx:-0.45,cy:0.5},
+      {n:70,hue:55,lab:'Himmel',cx:0.65,cy:0.15}
+    ];
+    for(const G of groups) for(let i=0;i<G.n;i++){
+      const a=rnd()*6.283, rr2=Math.pow(rnd(),0.6)*0.28;
+      pts.push({x:G.cx+Math.cos(a)*rr2,y:G.cy+Math.sin(a)*rr2,
+        hue:G.hue,lab:G.lab, sink:0.3+rnd()*0.7});
+    }
+  }
+  function draw(){
+    if(!pts) build();
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const cx=W/2,cy=H/2-6,S=Math.min(W,H)*0.40;
+    if(withSink){
+      // everything collapses onto one arc dominated by the sink coordinate
+      for(const p of pts){
+        const t=p.sink; const a=Math.PI*0.15+t*Math.PI*0.7;
+        const R=S*(0.5+0.45*t);
+        const X=cx+Math.cos(a)*R*1.15, Y=cy+Math.sin(a)*R*0.75-S*0.25;
+        g.fillStyle=hsl(p.hue,70,60,0.75);
+        g.beginPath();g.arc(X,Y,2.6,0,6.283);g.fill();
+      }
+      mono(g,'Alles kollabiert auf EINEN Bogen',cx,H-14,C.bad,11,'center');
+      mono(g,'Koordinate 112 ≈ 94,5 % der Energie',cx,20,C.warn,10,'center');
+    } else {
+      for(const p of pts){
+        const X=cx+p.x*S*1.25, Y=cy+p.y*S*1.0;
+        g.fillStyle=hsl(p.hue,75,60,0.8);
+        g.beginPath();g.arc(X,Y,2.8,0,6.283);g.fill();
+      }
+      // labels
+      const seen={};
+      for(const p of pts){ if(seen[p.lab])continue; seen[p.lab]=1; }
+      const L=[['Tierköpfe',195,-0.55,-0.3],['Menschen',28,0.5,-0.45],
+               ['Gras',150,0.15,0.55],['Text & Schilder',275,-0.45,0.5],['Himmel',55,0.65,0.15]];
+      for(const l of L) mono(g,l[0],cx+l[2]*S*1.25,cy+l[3]*S*1.0-30,hsl(l[1],70,78),10,'center');
+      mono(g,'Saubere semantische Inseln',cx,H-14,C.good,11,'center');
+    }
+  }
+  function setT(){
+    $('sk_text').innerHTML = withSink
+      ? 'Mit der „Senken-Dimension" sieht der Residual Stream aus wie ein einziger Bogen — man erkennt gar nichts. Jahrelang hielten wir das für die Natur des Streams.'
+      : 'Projiziert man die eine Dimension weg, erscheinen klare semantische Inseln. Die Aktivierungen des Netzes wurden <b>nicht verändert</b> — nur die Darstellung.';
+  }
+  $('sk_on').addEventListener('click',function(){withSink=true;this.classList.add('on');$('sk_off').classList.remove('on');setT();draw();});
+  $('sk_off').addEventListener('click',function(){withSink=false;this.classList.add('on');$('sk_on').classList.remove('on');setT();draw();});
+  window.addEventListener('resize',draw); setT(); draw();
+})();
+
+/* ============================================================
+   7 RECURSIVE GENERALIZATION: iy
+   ============================================================ */
+(function(){
+  const cv=$('iyCanvas'); let s=0;
+  const ST=[
+    {l:'„iy"',t:'Das Neuron feuert auf das Fragment <b>iy</b>. So banal wie ein Gabor-Filter im Sehsystem.'},
+    {l:'Miyazaki',t:'Es feuert auf <b>M-iy-azaki</b>. Immer noch exakt dasselbe Fragment.'},
+    {l:'„diy"',t:'Ein Seitenzweig: <b>d-iy</b>. Lokal völlig nachvollziehbar — das iy ist noch da.'},
+    {l:'do it yourself',t:'Der Zweig wächst weiter: <b>„do it yourself"</b> — darin kommt <i>kein</i> „iy" mehr vor. Jeder Schritt war trivial, das Ende sieht gemischt aus.'}
+  ];
+  function draw(){
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const n=ST.length, pad=50, dx=(W-2*pad)/(n-1);
+    for(let i=0;i<n-1;i++){
+      const on=i<s;
+      g.strokeStyle=on?C.purple:'#1b2436';g.lineWidth=on?2.4:1;
+      g.beginPath();g.moveTo(pad+i*dx+40,H/2);
+      g.bezierCurveTo(pad+i*dx+dx*0.5,H/2-28,pad+i*dx+dx*0.5,H/2-28,pad+(i+1)*dx-40,H/2);
+      g.stroke();
+    }
+    for(let i=0;i<n;i++){
+      const x=pad+i*dx, on=i<=s;
+      const w=Math.min(86,dx*0.82);
+      g.fillStyle=on?'#17102a':'#0b1018';
+      rr(g,x-w/2,H/2-19,w,38,10);g.fill();
+      g.strokeStyle=on?C.purple:'#1b2436';g.lineWidth=on?2:1;g.stroke();
+      mono(g,ST[i].l,x,H/2,on?'#e2d4ff':C.dim2,i===3?9.5:11,'center');
+      if(i===s){
+        g.fillStyle=C.purple;g.beginPath();
+        g.moveTo(x,H/2-28);g.lineTo(x-5,H/2-36);g.lineTo(x+5,H/2-36);g.closePath();g.fill();
+      }
+    }
+    mono(g,'Zeit im Training →',W-14,H-12,C.dim2,10,'right');
+    mono(g,'Jeder Schritt lokal · das Ende sieht „polysemantisch" aus',14,H-12,C.dim2,10,'left');
+    $('iy_text').innerHTML=ST[s].t;
+  }
+  const host=$('iySteps');
+  ST.forEach((st,i)=>{
+    const d=document.createElement('span');
+    d.className='s'+(i===0?' on':'');d.textContent=(i+1)+' · '+st.l.replace(/[„"]/g,'');
+    d.addEventListener('click',()=>{
+      host.querySelectorAll('.s').forEach(x=>x.classList.remove('on'));
+      d.classList.add('on'); s=i; draw();
+    });
+    host.appendChild(d);
+  });
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ============================================================
+   7b TRAINING TRAJECTORY
+   ============================================================ */
+(function(){
+  const A=$('trA'),B=$('trB');
+  const EP=['0.7','1.5','3','6','12'];
+  const CATS=[['Felder & Täler',55],['Tennis- & Golfbälle',85],['Obst & Eicheln',25],['Hunde',35],['Brokkoli',140]];
+  // share per epoch per category
+  const INC=[
+    [1.00,0,0,0,0],
+    [0.62,0.25,0.13,0,0],
+    [0.45,0.18,0.17,0.20,0],
+    [0.26,0.10,0.14,0.32,0.18],
+    [0.08,0.05,0.09,0.40,0.38]
+  ];
+  const CNX=[
+    [1.00,0,0,0,0],
+    [0.70,0.18,0.12,0,0],
+    [0.84,0.07,0.09,0,0],
+    [0.92,0.03,0.05,0,0],
+    [0.96,0.01,0.03,0,0]
+  ];
+  function panel(cv,data,e){
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const rows=CATS.length, pad=104, bh=(H-26)/rows;
+    for(let i=0;i<rows;i++){
+      const y=12+i*bh;
+      const v=data[e][i];
+      g.fillStyle='#0c1322';rr(g,pad,y+4,W-pad-14,bh-10,5);g.fill();
+      g.fillStyle=hsl(CATS[i][1],75,55,0.22+v*0.5);
+      rr(g,pad,y+4,(W-pad-14)*v,bh-10,5);g.fill();
+      mono(g,CATS[i][0],pad-8,y+bh/2,v>0.02?hsl(CATS[i][1],60,78):C.dim2,10,'right');
+      if(v>0.03) mono(g,(v*100).toFixed(0)+'%',pad+8,y+bh/2,'#0b1220',10,'left');
+    }
+  }
+  function draw(){
+    const e=+$('tr_e').value; $('tr_ev').textContent=EP[e];
+    panel(A,INC,e); panel(B,CNX,e);
+  }
+  $('trLegend').innerHTML=CATS.map(c=>
+    `<span><i style="background:${hsl(c[1],75,58)}"></i>${c[0]}</span>`).join('');
+  let pl=null;
+  $('tr_play').addEventListener('click',function(){
+    if(pl){clearInterval(pl);pl=null;this.textContent='▶ Abspielen';return;}
+    this.textContent='⏸ Pause';let i=0;
+    pl=setInterval(()=>{$('tr_e').value=i%5;draw();i++;},900);
+  });
+  bind('tr_e',draw); window.addEventListener('resize',draw); draw();
+})();
+
+/* geo plot */
+(function(){
+  const el=$('geoPlot'); if(!el||!window.Plotly) return;
+  Plotly.newPlot(el,[{
+    type:'bar',orientation:'h',
+    y:['Cesium/IDL-Code<br>(Abzweig, eigene Route)','Alte Einschläge, Mars','Mond-Missionen','Mond- & Marskruste'],
+    x:[8,6,42,44],
+    marker:{color:['#c08bff','#64d2ff','#64d2ff','#64d2ff']},
+    text:['8 % · über L6','6 % · über L30','42 % · über L28','44 % · über L31'],
+    textposition:'auto',textfont:{size:11,color:'#06111b'},hoverinfo:'none'
+  }],{
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+    font:{color:'#93a1bd',family:'Inter,sans-serif',size:11.5},
+    margin:{l:170,r:20,t:34,b:34},
+    title:{text:'Top-100-Treffer, gruppiert nach <b>Schaltkreis-Route</b>',font:{size:12.5,color:'#e8edf7'}},
+    xaxis:{gridcolor:'#1b2436',zerolinecolor:'#243049',ticksuffix:' %'},
+    yaxis:{tickfont:{size:10.5}}
+  },{displayModeBar:false,responsive:true});
+})();
+
+/* ============================================================
+   8 SQUEEZE TEST
+   ============================================================ */
+(function(){
+  const cv=$('squeezeCanvas'); let pred='gen', real=false;
+  const SIZES=[480,120,40,20,10];
+  const ACC=['68.5 %','66.9 %','63.8 %','61.2 %','58.35 %'];
+  const FULL=[
+    'Kurve 12°','Kurve 45°','Kurve 90°','Kurve 135°','Kurve 180°','Kurve 225°',
+    'Kurve 270°','Kurve 315°','Kreis hell','Kreis dunkel','Hochfreq.','Tieffreq.',
+    'Kante vert.','Kante schräg','Rot','Gelb','Augen','Farbflecken'
+  ];
+  const COARSE=['Dunkle Kreise','Rot','Gelb','Schräge Kanten','Vertikale Kanten',
+    'Augen & Gesichter','Kurven & Schleifen','Kreise','Hochfrequenz','Bunte Marken'];
+  function draw(){
+    const i=+$('sq_n').value; $('sq_nv').textContent=SIZES[i];
+    $('sq_acc').textContent=ACC[i];
+    const mode = real?'real':pred;
+    $('sq_mode').textContent = mode==='real'?'Experiment':(mode==='gen'?'Generalisierung':'Superposition');
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const n=SIZES[i];
+    const shown=Math.min(n,18);
+    const cols=Math.min(6,shown), rows=Math.ceil(shown/cols);
+    const bw=(W-24)/cols, bh=(H-56)/rows;
+    for(let k=0;k<shown;k++){
+      const x=12+(k%cols)*bw, y=16+Math.floor(k/cols)*bh;
+      g.fillStyle='#0b1220';rr(g,x+3,y+3,bw-8,bh-10,8);g.fill();
+      g.strokeStyle='#1b2436';g.lineWidth=1;g.stroke();
+      const mx=x+bw/2-2,my=y+bh/2-7,S=Math.min(bw,bh)*0.2;
+      if(mode==='sup'&&n<=40){
+        // chaotic overlay
+        sr(k*31+7);
+        for(let q=0;q<4;q++){
+          const hue=rnd()*360;
+          g.strokeStyle=hsl(hue,80,62,0.8);g.lineWidth=1.8;
+          g.beginPath();
+          if(q%2===0){g.arc(mx+(rnd()-0.5)*S,my+(rnd()-0.5)*S,S*(0.4+rnd()*0.5),rnd()*6,rnd()*6+2);}
+          else{g.moveTo(mx-S,my+(rnd()-0.5)*S);g.lineTo(mx+S,my+(rnd()-0.5)*S);}
+          g.stroke();
+        }
+        mono(g,'???',mx,y+bh-16,C.bad,9.5,'center');
+      } else {
+        const lab = (n>40) ? FULL[k%FULL.length] : COARSE[k%COARSE.length];
+        const hue = (n>40)? (k*23)%360 : (k*37)%360;
+        g.strokeStyle=hsl(hue,78,64);g.lineWidth=2.4;g.lineCap='round';
+        g.beginPath();
+        if(/Kurve|Kurven|Schleifen/.test(lab)) g.arc(mx,my,S*0.8,0.6,4.2);
+        else if(/Kreis/.test(lab)) g.arc(mx,my,S*0.72,0,6.283);
+        else if(/Kante vert|Vertikale/.test(lab)){g.moveTo(mx,my-S);g.lineTo(mx,my+S);}
+        else if(/schräg|Schräge/.test(lab)){g.moveTo(mx-S*.8,my+S*.8);g.lineTo(mx+S*.8,my-S*.8);}
+        else if(/Hochfreq|Hochfrequenz/.test(lab)){for(let q=-3;q<=3;q++){g.moveTo(mx+q*4,my-S);g.lineTo(mx+q*4,my+S);}}
+        else if(/Augen/.test(lab)){g.arc(mx-S*.4,my,S*.3,0,6.283);g.moveTo(mx+S*.7,my);g.arc(mx+S*.4,my,S*.3,0,6.283);}
+        else {g.arc(mx,my,S*0.55,0,6.283);}
+        g.stroke();
+        mono(g,lab,mx,y+bh-16,hsl(hue,60,76),9,'center');
+      }
+    }
+    if(n>18) mono(g,'… und '+(n-18)+' weitere',W/2,H-30,C.dim2,10,'center');
+    const msg = mode==='sup'
+      ? '⚠ Vorhersage Superposition: willkürliche Überlagerungen'
+      : (mode==='real' ? '🔬 Tatsächlich: sauber, nur gröber' : '✓ Vorhersage Generalisierung: gröber, aber lesbar');
+    mono(g,msg,W/2,H-10,mode==='sup'?C.bad:C.good,11,'center');
+    $('sq_text').innerHTML = n>40
+      ? 'Originalzustand: 480 Neuronen, darunter zehn gestochen scharfe <b>Kurvendetektoren</b> für verschiedene Winkel.'
+      : (mode==='sup'
+        ? 'Das wäre der Beweis gewesen: ein Neuron mit „Kurve + oranger Spirale + Spinnennetz", ohne gemeinsames Muster. <b>Es wurde nie beobachtet.</b>'
+        : 'Zehn Neuronen, 48-fache Quetschung, und trotzdem: <b>„Kurven &amp; Schleifen"</b> statt zehn Kurvendetektoren. Gröber — aber jede einzelne Einheit bleibt interpretierbar. 58,35 % Top-1 / 81,14 % Top-5.');
+  }
+  $('sq_pred_sup').addEventListener('click',function(){pred='sup';real=false;
+    this.classList.add('on');$('sq_pred_gen').classList.remove('on');$('sq_real').classList.remove('on');draw();});
+  $('sq_pred_gen').addEventListener('click',function(){pred='gen';real=false;
+    this.classList.add('on');$('sq_pred_sup').classList.remove('on');$('sq_real').classList.remove('on');draw();});
+  $('sq_real').addEventListener('click',function(){real=true;
+    this.classList.add('on');$('sq_pred_sup').classList.remove('on');$('sq_pred_gen').classList.remove('on');
+    $('sq_n').value=4;draw();});
+  bind('sq_n',draw); window.addEventListener('resize',draw); draw();
+})();
+
+/* 8b SAE curve check */
+(function(){
+  const row=$('curveRow'), cv=$('saeCanvas'); let sel=0;
+  const CURVES=[0,45,90,135,180,225,270,315,30,200];
+  function mkCard(i){
+    const d=document.createElement('div');
+    d.className='card tight';d.style.cursor='pointer';d.style.margin='0';
+    d.innerHTML=`<div class="small" style="color:var(--acc);font-family:var(--mono)">3b:${330+i*7}</div>
+      <canvas height="80" style="width:100%;display:block"></canvas>
+      <div class="small">Kurve ${CURVES[i]}°</div>`;
+    d.addEventListener('click',()=>{sel=i;draw();});
+    row.appendChild(d);
+    const c=d.querySelector('canvas');
+    setTimeout(()=>{
+      const r=fit(c); if(!r)return; const {g,W,H}=r;
+      g.fillStyle='#0a1018';g.fillRect(0,0,W,H);
+      g.strokeStyle=hsl(195,80,62);g.lineWidth=3;g.lineCap='round';
+      const a=CURVES[i]*Math.PI/180;
+      g.beginPath();g.arc(W/2,H/2,Math.min(W,H)*0.3,a-1.1,a+1.1);g.stroke();
+    },30);
+  }
+  for(let i=0;i<6;i++) mkCard(i);
+  function draw(){
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    // left: original ; right: SAE match
+    const half=W/2-12;
+    mono(g,'Original-Detektor (480 Neuronen)',half/2+6,16,C.acc,11,'center');
+    mono(g,'Bestes SAE-Match (10 Neuronen)',W/2+12+half/2,16,C.warn,11,'center');
+    line(g,W/2,26,W/2,H-12,'#1b2436',1);
+    // original: crisp curve
+    const a=CURVES[sel]*Math.PI/180;
+    g.strokeStyle=hsl(195,85,62);g.lineWidth=5;g.lineCap='round';
+    g.beginPath();g.arc(half/2+6,H/2+6,48,a-1.0,a+1.0);g.stroke();
+    mono(g,'scharf, ein Winkel',half/2+6,H-20,C.good,10,'center');
+    // SAE: broad blobby
+    sr(sel*17+3);
+    const cx2=W/2+12+half/2;
+    for(let q=0;q<7;q++){
+      const aa=a+(rnd()-0.5)*2.6;
+      g.strokeStyle=hsl(40,80,60,0.18+rnd()*0.25);g.lineWidth=5+rnd()*5;
+      g.beginPath();g.arc(cx2+(rnd()-0.5)*22,H/2+6+(rnd()-0.5)*22,40+rnd()*22,aa-1.3,aa+1.3);g.stroke();
+    }
+    mono(g,'breit, zusammengeklumpt',cx2,H-20,C.bad,10,'center');
+    $('sae_text').innerHTML = 'Original-Detektor <b>3b:'+(330+sel*7)+'</b> (Kurve '+CURVES[sel]+'°) gegen das ähnlichste SAE-Feature auf der gequetschten Schicht. Das SAE findet keine saubere Kurve — es findet breite, verklumpte Mischungen. <b>Nichts war versteckt.</b>';
+  }
+  window.addEventListener('resize',draw); setTimeout(draw,60);
+})();
+
+/* ============================================================
+   9 SAE MECHANISM
+   ============================================================ */
+(function(){
+  const cv=$('saeMechCanvas');
+  function draw(){
+    const k=+$('sa_k').value, s=+$('sa_s').value;
+    $('sa_kv').textContent=k+'×'; $('sa_sv').textContent=s;
+    const err=clamp(0.62/Math.sqrt(s)*(1-0.03*k),0.02,1);
+    $('sa_err').textContent=err.toFixed(3);
+    $('sa_copy').textContent=Math.round(clamp(92-s*2.6+k*0.4,40,95))+' %';
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const N=8, M=Math.min(k*N,40);
+    const lx=W*0.14, mx=W*0.5, rx=W*0.86;
+    // left: neurons
+    for(let i=0;i<N;i++){
+      const y=30+i*((H-60)/(N-1));
+      g.fillStyle=hsl(195,70,55,0.25+0.5*Math.abs(Math.sin(i*1.7)));
+      g.beginPath();g.arc(lx,y,6,0,6.283);g.fill();
+    }
+    mono(g,'Aktivierungen',lx,14,C.acc,10,'center');
+    mono(g,N+' Neuronen',lx,H-10,C.dim2,10,'center');
+    // middle: dict
+    sr(99);
+    const act=[];
+    for(let i=0;i<M;i++) act.push(rnd());
+    act.sort((a,b)=>b-a);
+    for(let i=0;i<M;i++){
+      const y=18+i*((H-40)/Math.max(1,M-1));
+      const alive=i<s;
+      g.fillStyle=alive?hsl(275,80,62,0.95):'#18202f';
+      g.beginPath();g.arc(mx,y,alive?5.5:2.4,0,6.283);g.fill();
+      if(alive){
+        g.strokeStyle=hsl(275,80,62,0.22);g.lineWidth=1;
+        for(let j=0;j<N;j++){
+          const y2=30+j*((H-60)/(N-1));
+          g.beginPath();g.moveTo(lx,y2);g.lineTo(mx,y);g.stroke();
+          g.beginPath();g.moveTo(mx,y);g.lineTo(rx,y2);g.stroke();
+        }
+      }
+    }
+    mono(g,'Wörterbuch ('+M+')',mx,10,C.purple,10,'center');
+    mono(g,'nur '+s+' dürfen feuern',mx,H-10,C.purple,10,'center');
+    // right: reconstruction
+    for(let i=0;i<N;i++){
+      const y=30+i*((H-60)/(N-1));
+      const q=Math.abs(Math.sin(i*1.7))*(1-err*0.8);
+      g.fillStyle=hsl(150,70,55,0.25+0.5*q);
+      g.beginPath();g.arc(rx,y,6,0,6.283);g.fill();
+    }
+    mono(g,'Rekonstruktion',rx,14,C.good,10,'center');
+    mono(g,'Fehler '+err.toFixed(2),rx,H-10,err>0.25?C.bad:C.good,10,'center');
+  }
+  bind('sa_k',draw);bind('sa_s',draw);
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* SAE bar plot */
+(function(){
+  const el=$('saeBarPlot'); if(!el||!window.Plotly) return;
+  Plotly.newPlot(el,[{
+    type:'bar',x:['Fast-Kopie eines Neurons','lose Gruppierung<br>aus bestehenden Neuronen','etwas fundamental Neues'],
+    y:[88,12,0],
+    marker:{color:['#5ee6a8','#64d2ff','#ff6b8a']},
+    text:['88 %','12 %','0 %'],textposition:'outside',
+    textfont:{color:'#e8edf7',size:14},hoverinfo:'none'
+  }],{
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+    font:{color:'#93a1bd',family:'Inter,sans-serif',size:12},
+    margin:{l:48,r:16,t:36,b:66},
+    title:{text:'Woraus besteht die SAE-Aktivität? (letzte Schicht)',font:{size:13,color:'#e8edf7'}},
+    yaxis:{range:[0,104],gridcolor:'#1b2436',zerolinecolor:'#243049',ticksuffix:' %'},
+    xaxis:{tickfont:{size:10.5}}
+  },{displayModeBar:false,responsive:true});
+})();
+
+/* spiders */
+(function(){
+  function drawSpider(cv,mode){
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const n=4, bw=(W-16)/n;
+    const SAE=['Spinne im Netz','Spinne auf Blatt','Spinne auf Hand','Vogelspinne'];
+    const NEU=['Beinmuster','Netz-Textur','radiale Speichen','haarige Oberfläche'];
+    for(let i=0;i<n;i++){
+      const x=8+i*bw;
+      g.fillStyle='#0b1220';rr(g,x+2,8,bw-6,H-34,8);g.fill();
+      g.strokeStyle='#1b2436';g.lineWidth=1;g.stroke();
+      const cx=x+bw/2-1, cy=(H-26)/2+8, S=Math.min(bw,H)*0.19;
+      const hue=mode==='sae'?195:150;
+      g.strokeStyle=hsl(hue,78,62);g.lineWidth=1.8;g.lineCap='round';
+      if(mode==='sae'){
+        // whole spider
+        g.beginPath();g.arc(cx,cy,S*0.4,0,6.283);g.stroke();
+        for(let q=0;q<8;q++){
+          const a=q*0.785+0.4;
+          g.beginPath();g.moveTo(cx+Math.cos(a)*S*0.4,cy+Math.sin(a)*S*0.4);
+          g.lineTo(cx+Math.cos(a)*S*1.1,cy+Math.sin(a)*S*1.1);g.stroke();
+        }
+      } else {
+        if(i===0){for(let q=0;q<4;q++){g.beginPath();g.moveTo(cx-S,cy-S*0.6+q*S*0.4);g.lineTo(cx+S,cy-S*0.3+q*S*0.4);g.stroke();}}
+        else if(i===1){for(let q=1;q<=3;q++){g.beginPath();g.arc(cx,cy,S*q/3,0,6.283);g.stroke();}}
+        else if(i===2){for(let q=0;q<8;q++){const a=q*0.785;g.beginPath();g.moveTo(cx,cy);g.lineTo(cx+Math.cos(a)*S,cy+Math.sin(a)*S);g.stroke();}}
+        else {sr(5);for(let q=0;q<22;q++){const a=rnd()*6.283,rr2=rnd()*S;
+          g.beginPath();g.moveTo(cx+Math.cos(a)*rr2,cy+Math.sin(a)*rr2);
+          g.lineTo(cx+Math.cos(a)*(rr2+5),cy+Math.sin(a)*(rr2+5));g.stroke();}}
+      }
+      mono(g,(mode==='sae'?SAE:NEU)[i],cx,H-12,hsl(hue,60,76),9,'center');
+    }
+  }
+  function d(){drawSpider($('spiderSAE'),'sae');drawSpider($('spiderNeu'),'neu');}
+  window.addEventListener('resize',d); setTimeout(d,40);
+})();
+
+/* ============================================================
+   10 BASE64
+   ============================================================ */
+(function(){
+  const cv=$('b64Canvas'); let dec=false, bn=false;
+  const CHUNKS=[['aHR0','htt'],['cHM6','ps:'],['Ly9l','//e'],['eGFt','xam'],
+    ['cGxl','ple'],['LmNv','.co'],['bS9w','m/p'],['cmlj','ric'],['aW5n','ing'],
+    ['L3By','/pr'],['b21v','omo']];
+  function draw(){
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    mono(g,'Englisch',14,22,C.dim,10,'left');
+    const EN=['Please','approve','the','project','proposal','.'];
+    let x=14;
+    for(const w of EN){
+      const on=/^pr/i.test(w);
+      const wd=g.measureText?Math.max(44,w.length*8.6+14):50;
+      g.fillStyle=on?hsl(195,80,55,0.3):'#101827';rr(g,x,34,wd,24,6);g.fill();
+      g.strokeStyle=on?C.acc:'#1b2436';g.lineWidth=1;g.stroke();
+      mono(g,w,x+wd/2,46,on?C.acc:C.dim2,10.5,'center');
+      x+=wd+6;
+    }
+    // base64 row
+    mono(g,'Base64-URL',14,80,C.dim,10,'left');
+    const bw=Math.min(62,(W-28)/CHUNKS.length-5);
+    for(let i=0;i<CHUNKS.length;i++){
+      const X=14+i*(bw+5);
+      const on=dec&&/^\/?pr|pr/.test(CHUNKS[i][1]);
+      g.fillStyle=on?hsl(195,80,55,0.3):'#101827';rr(g,X,92,bw,24,6);g.fill();
+      g.strokeStyle=on?C.acc:'#1b2436';g.stroke();
+      mono(g,CHUNKS[i][0],X+bw/2,104,C.dim2,9.5,'center');
+      if(dec){
+        g.fillStyle=on?hsl(195,80,55,0.22):'#0c1322';rr(g,X,120,bw,22,6);g.fill();
+        mono(g,CHUNKS[i][1],X+bw/2,131,on?C.acc:C.dim,10,'center');
+      }
+    }
+    if(dec){
+      mono(g,'↓ dekodiert',14,120,C.good,9,'left');
+      mono(g,'https://example.com/pricing/promo',14,H-44,C.good,11,'left');
+    }
+    // bengali
+    mono(g,'Bengali',14,H-24,C.dim,10,'left');
+    const BN=[['প্র','pra'],['ধান','dhan'],['শি','shi'],['ক্ষ','ksh'],['ক','ok'],
+              ['প্র','pra'],['থ','tho'],['ম','mo']];
+    let bx=74;
+    for(const t of BN){
+      const on=bn&&t[1].startsWith('pr');
+      g.fillStyle=on?hsl(195,80,55,0.3):'#101827';rr(g,bx,H-36,46,22,6);g.fill();
+      g.strokeStyle=on?C.acc:'#1b2436';g.stroke();
+      mono(g,bn?t[1]:t[0],bx+23,H-25,on?C.acc:C.dim2,10,'center');
+      bx+=51;
+    }
+  }
+  function setT(){
+    $('b64_text').innerHTML = (dec||bn)
+      ? 'Kein willkürliches Gemisch. Die Base64-Blöcke dekodieren zu <b>„pr"</b>-Wörtern (<i>pricing</i>, <i>promo</i>, <i>press</i>, <i>preview</i>), und das Bengali transliteriert zu <b>„pr"</b> (প্র = <i>pra</i>). Das Modell liest Base64 <i>und</i> Bengali — es ist ein ganz normales „pr"-Neuron.'
+      : 'Ein „pr"-Neuron, das auf scheinbar zufällige Base64-Strings und Bengali feuert. Sieht nach dem perfekten Superpositions-Beispiel aus. Klick die Knöpfe.';
+  }
+  $('b64_go').addEventListener('click',function(){dec=!dec;this.classList.toggle('on',dec);setT();draw();});
+  $('b64_bn').addEventListener('click',function(){bn=!bn;this.classList.toggle('on',bn);setT();draw();});
+  window.addEventListener('resize',draw); setT(); draw();
+})();
+
+/* ============================================================
+   10b COLORADO
+   ============================================================ */
+(function(){
+  const host=$('coloradoText'); let which=0, steer=false;
+  const S=[
+    [['Neuer Job',0],[', ',0],['neue Stadt',0],[', ',0],['neuer Mietvertrag',0],[', ',0],
+     ['eine Denver-Adresse',1],[', ',0.45],['Vorwahl 303',1],[', ',0.62],['green chile',1],[', ',0.95],
+     ['Broncos-Sonntage',1],[', ',0.88],['Red Rocks',1],[', ',0.84],['Fourteeners',1],['.',0.8]],
+    [['Mein Plan fürs Wochenende',0],[' ist, in die Bibliothek zu gehen',0],[', ',0],
+     ['für den Test zu lernen',0],['. ',0],['Ich will auch meine Großmutter besuchen',0],[', ',0],
+     ['und ihr im Garten helfen',0],['.',0]]
+  ];
+  function render(){
+    const arr=S[which];
+    host.innerHTML=arr.map(t=>{
+      const v=t[1];
+      if(v===0||v===1){
+        const col = v===1?'color:var(--acc);font-weight:600':'';
+        return `<span style="${col}">${t[0]}</span>`;
+      }
+      const a=0.12+v*0.78;
+      return `<span style="background:rgba(100,210,255,${a});color:#04121c;border-radius:4px;padding:2px 5px;font-weight:700" title="Aktivierung ${(v*100).toFixed(0)} %">${t[0].trim()||','}</span> `;
+    }).join('');
+    $('co_text').innerHTML = steer
+      ? '<b>Steering:</b> Dreht man dieses Neuron hoch, will das Modell plötzlich <b>wandern gehen</b>, erwähnt Berge, Schnee, Trails. Das ist der stärkste Test, ob ein Label stimmt — und es stimmt.'
+      : (which===1
+        ? 'Kontrollsatz: Die Kommas bleiben <b>dunkel</b>. Es ist kein Komma-Neuron. Es feuert nur, wenn vorher Colorado-Kontext aufgebaut wurde.'
+        : 'Die ersten drei Kommas feuern <b>nicht</b>. Sobald „Denver" auftaucht, leuchtet jedes Komma auf — am stärksten nach „green chile". Das Komma ist nur der <b>Ablageort</b> der laufenden Zusammenfassung.');
+  }
+  $('co_a').addEventListener('click',function(){which=0;steer=false;this.classList.add('on');
+    $('co_b').classList.remove('on');$('co_steer').classList.remove('on');render();});
+  $('co_b').addEventListener('click',function(){which=1;steer=false;this.classList.add('on');
+    $('co_a').classList.remove('on');$('co_steer').classList.remove('on');render();});
+  $('co_steer').addEventListener('click',function(){steer=true;this.classList.add('on');render();});
+  render();
+})();
+
+/* ============================================================
+   10c ATTRIBUTION GRAPH
+   ============================================================ */
+(function(){
+  const cv=$('agCanvas'); let killed={};
+  const COLS=[
+    {t:'Symptome',y:0,n:[['Oberbauch-\nschmerz',1],['Ödem',2],['Bluthochdruck',5],['Kopfschmerz',2],['Leberwerte',3]]},
+    {t:'Diagnose',y:1,n:[['Präeklampsie',4],['Schwangerschaft',14],['Gallen-\nstörungen',2]]},
+    {t:'Was fragen?',y:2,n:[['Sehstörungen',6],['Protein im Urin',2]]},
+    {t:'Antwort',y:3,n:[['„visual"',0]]}
+  ];
+  function draw(){
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const colW=(W-24)/4;
+    const pos={};
+    COLS.forEach((c,ci)=>{
+      mono(g,c.t,24+ci*colW+colW/2-10,16,C.dim,10.5,'center');
+      c.n.forEach((n,ni)=>{
+        const cnt=c.n.length;
+        const y=46+ni*((H-96)/Math.max(1,cnt-1||1))+(cnt===1?(H-96)/2:0);
+        const x=24+ci*colW+10;
+        pos[c.t+'|'+n[0]]={x:x,y:y,w:colW-30};
+        const dead=killed[n[0]];
+        const isDiag = n[0]==='Präeklampsie';
+        g.fillStyle=dead?'#190d13':(isDiag?'#07201a':'#0d1626');
+        rr(g,x,y-17,colW-30,34,8);g.fill();
+        g.strokeStyle=dead?C.bad:(isDiag?C.good:'#243049');g.lineWidth=isDiag?2:1.2;g.stroke();
+        const lines=n[0].split('\n');
+        lines.forEach((L,li)=>mono(g,L,x+(colW-30)/2,y-5+li*12+(lines.length===1?5:0),
+          dead?'#6b3a48':(isDiag?C.good:C.txt),9.5,'center'));
+        if(n[1]>0) mono(g,n[1]+'N',x+colW-36,y-10,C.dim2,8,'right');
+      });
+    });
+    function arrow(a,b,col,w){
+      const A=pos[a],B=pos[b]; if(!A||!B) return;
+      g.strokeStyle=col;g.lineWidth=w;g.globalAlpha=.75;
+      g.beginPath();g.moveTo(A.x+A.w,A.y);
+      g.bezierCurveTo(A.x+A.w+26,A.y,B.x-26,B.y,B.x,B.y);g.stroke();g.globalAlpha=1;
+    }
+    const diagDead=killed['Präeklampsie'];
+    ['Oberbauch-\nschmerz','Ödem','Bluthochdruck','Kopfschmerz','Leberwerte'].forEach(s=>{
+      arrow('Symptome|'+s,'Diagnose|Präeklampsie',diagDead?'#3a2430':C.acc,1.8);
+    });
+    arrow('Diagnose|Schwangerschaft','Diagnose|Präeklampsie',C.purple,1.6);
+    arrow('Diagnose|Präeklampsie','Was fragen?|Sehstörungen',diagDead?'#3a2430':C.good,3.2);
+    arrow('Diagnose|Präeklampsie','Was fragen?|Protein im Urin',diagDead?'#3a2430':C.good,1.4);
+    if(diagDead) arrow('Diagnose|Gallen-\nstörungen','Was fragen?|Sehstörungen',C.warn,2.6);
+    arrow('Was fragen?|Sehstörungen','Antwort|„visual"',diagDead?C.warn:C.good,3);
+    $('ag_ans').textContent=diagDead?'Juckreiz':'Sehstörungen';
+    $('ag_p').textContent=diagDead?'0.41':'0.90';
+    $('ag_text').innerHTML=diagDead
+      ? 'Die vier Präeklampsie-Neuronen sind entfernt. Das Modell fragt jetzt nach <b>Juckreiz</b> — dem Leitsymptom der intrahepatischen Schwangerschafts-Cholestase. Es ist nicht kaputt; es ist zur <b>zweitbesten Hypothese</b> weitergegangen.'
+      : 'Qwen3-32B, nur <b>native MLP-Neuronen</b> — kein Transcoder, kein Rekonstruktionsverlust, keine Error-Nodes. Klicke „Präeklampsie", um den Hub zu entfernen.';
+  }
+  cv.addEventListener('click',e=>{
+    const b=cv.getBoundingClientRect();
+    const x=e.clientX-b.left,y=e.clientY-b.top;
+    const W=b.width,H=cv.getAttribute('height')|0;
+    const colW=(W-24)/4;
+    if(x>24+colW && x<24+2*colW){
+      killed['Präeklampsie']=!killed['Präeklampsie']; draw();
+    }
+  });
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* santa plot */
+(function(){
+  const el=$('santaPlot'); if(!el||!window.Plotly) return;
+  Plotly.newPlot(el,[{
+    type:'bar',x:['unverändert','20 „Christmas/Santa"-<br>Neuronen entfernt','8 Neuronen mit Santa<br>auf dem NEGATIVEN Pol entfernt'],
+    y:[99,76,6],
+    marker:{color:['#5ee6a8','#64d2ff','#ff6b8a']},
+    text:['~99 %','76 %','6 %'],textposition:'outside',
+    textfont:{color:'#e8edf7',size:13},hoverinfo:'none'
+  }],{
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+    font:{color:'#93a1bd',family:'Inter,sans-serif',size:11.5},
+    margin:{l:46,r:14,t:30,b:64},
+    title:{text:'Wahrscheinlichkeit für „Santa"',font:{size:12.5,color:'#e8edf7'}},
+    yaxis:{range:[0,118],gridcolor:'#1b2436',zerolinecolor:'#243049',ticksuffix:' %'},
+    xaxis:{tickfont:{size:10}}
+  },{displayModeBar:false,responsive:true});
+})();
+
+/* ============================================================
+   11 SWIGLU
+   ============================================================ */
+(function(){
+  const cv=$('swiCanvas');
+  const silu=x=>x/(1+Math.exp(-x));
+  function draw(){
+    const g_=+$('sg_g').value, v=+$('sg_v').value;
+    $('sg_gv').textContent=g_.toFixed(2);$('sg_vv').textContent=v.toFixed(2);
+    const s=silu(g_), o=s*v;
+    $('sg_s').textContent=s.toFixed(2);$('sg_o').textContent=o.toFixed(2);
+    let reg,regCol;
+    if(g_>=0&&v>=0){reg='+ × + (echt)';regCol=C.good;}
+    else if(g_<0&&v<0){reg='− × − (Echo/Leck)';regCol=C.warn;}
+    else {reg='gemischt (negativ)';regCol=C.bad;}
+    $('sg_r').textContent=reg;
+    const r=fit(cv); if(!r) return; const {gg,W,H}=({gg:r.g,W:r.W,H:r.H});
+    const g=gg;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    // heatmap of output sign
+    const pad=34, PW=W-pad-14, PH=H-pad-26;
+    const N=56;
+    for(let i=0;i<N;i++)for(let j=0;j<N;j++){
+      const gx=-6+12*i/(N-1), vy=6-12*j/(N-1);
+      const out=silu(gx)*vy;
+      let col;
+      if(gx>=0&&vy>=0) col=hsl(150,70,clamp(14+Math.abs(out)*2.0,14,55));
+      else if(gx<0&&vy<0) col=hsl(45,85,clamp(14+Math.abs(out)*16,14,55));
+      else col=hsl(345,70,clamp(12+Math.abs(out)*1.2,12,42));
+      g.fillStyle=col;
+      g.fillRect(pad+PW*i/N,26+PH*j/N,PW/N+0.8,PH/N+0.8);
+    }
+    g.strokeStyle=C.line;g.lineWidth=1;g.strokeRect(pad,26,PW,PH);
+    const X=x=>pad+PW*(x+6)/12, Y=y=>26+PH*(6-y)/12;
+    line(g,X(0),26,X(0),26+PH,'#3a465e',1);
+    line(g,pad,Y(0),pad+PW,Y(0),'#3a465e',1);
+    // marker
+    g.fillStyle=regCol;g.beginPath();g.arc(X(g_),Y(v),7,0,6.283);g.fill();
+    g.strokeStyle='#05101a';g.lineWidth=2.4;g.stroke();
+    mono(g,'gate →',pad+PW,H-8,C.dim2,10,'right');
+    g.save();g.translate(12,26+PH/2);g.rotate(-Math.PI/2);
+    mono(g,'value →',0,0,C.dim2,10,'center');g.restore();
+    mono(g,'− × − : Output POSITIV',X(-5.7),Y(-5.2),C.warn,9.5,'left');
+    mono(g,'+ × + : echtes Feuern',X(0.3),Y(5.3),C.good,9.5,'left');
+    mono(g,'out = '+o.toFixed(2),X(g_)+12,Y(v)-14,regCol,10,'left');
+  }
+  bind('sg_g',draw);bind('sg_v',draw);
+  document.querySelectorAll('.sgpre').forEach(b=>b.addEventListener('click',()=>{
+    $('sg_g').value=b.dataset.g;$('sg_v').value=b.dataset.v;draw();
+  }));
+  window.addEventListener('resize',draw); draw();
+})();
+
+(function(){
+  const cv=$('swiListCanvas'); let after=false;
+  const NAIVE=[
+    ['…3. The book of Colossians is an epistle…','+0.99'],
+    ['…(e.g. 1 Chronicles 16:9, Colossians 3:1…','+0.98'],
+    ['…(Romans 5:10, 11:28; Colossians 1:2…','+0.98'],
+    ['…(Matthew 28:18; Colossians 1:1…','+0.98'],
+    ['…meekness, and patience" (see Colossians 3:1…','+0.98']
+  ];
+  const REAL=[
+    ['www.un.org/russian','−20.6'],
+    ['```kotlin package ru','−19.0'],
+    ['Speak russian in that case','−12.5'],
+    ['…российского','−8.6']
+  ];
+  function draw(){
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const list=after?REAL:NAIVE;
+    mono(g,after?'Nur Feuerungen mit OFFENEM Gate (das echte Verhalten)'
+      :'Top-k-Dashboard: die stärksten „positiven" Aktivierungen',14,16,after?C.good:C.warn,11,'left');
+    const rowH=Math.min(34,(H-60)/list.length);
+    list.forEach((row,i)=>{
+      const y=36+i*rowH;
+      g.fillStyle=after?'#08201a':'#1b1708';
+      rr(g,14,y,W-28,rowH-7,7);g.fill();
+      g.strokeStyle=after?'#1d4c38':'#4a3d12';g.lineWidth=1;g.stroke();
+      mono(g,row,y+(rowH-7)/2,after?C.good:C.warn,11,'left');
+      mono(g,row[0],86,y+(rowH-7)/2,C.txt,10.5,'left');
+      if(!after) mono(g,'gate GESCHLOSSEN',W-24,y+(rowH-7)/2,C.bad,9,'right');
+      else mono(g,'gate offen',W-24,y+(rowH-7)/2,C.good,9,'right');
+    });
+    mono(g,after?'Echter Job: das Token, das „Russia"/„Russian" vervollständigt — in jeder Schrift.'
+      :'Autointerp-Label: „Verweise auf den Kolosserbrief" — komplett falsch.',
+      14,H-14,after?C.good:C.bad,10.5,'left');
+  }
+  function setT(){
+    $('sw_text').innerHTML=after
+      ? 'Trennt man nach Vorzeichen, bleibt vom „Kolosser"-Neuron nichts übrig: Auf der positiven Seite liegt nichts über +0,5 (≈ 4 % des Maximums). Der echte Job ist das <b>Russia/Russian</b>-Token — sichtbar nur auf dem <b>negativen</b> Pol bei offenem Gate.'
+      : 'Neuron L1/N20736 in Qwen3-32B. Das naive Dashboard zeigt fünf „Kolosserbrief"-Treffer. Alle haben ein <b>geschlossenes Gate</b> — es ist ein vorzeichenverdrehtes Leck des Werts, unter 8 % des Spitzenwerts.';
+  }
+  $('sw_before').addEventListener('click',function(){after=false;this.classList.add('on');$('sw_after').classList.remove('on');setT();draw();});
+  $('sw_after').addEventListener('click',function(){after=true;this.classList.add('on');$('sw_before').classList.remove('on');setT();draw();});
+  window.addEventListener('resize',draw); setT(); draw();
+})();
+/* ============================================================
+   12 WEAK ACTIVATIONS
+   ============================================================ */
+(function(){
+  const cv=$('weakCanvas');
+  const P=['p0','p25','p50','p75','p95'];
+  const REM=['0 %','25 %','50 %','75 %','95 %'];
+  const ACC=['72.0 %','72.0 %','71.8 %','71.0 %','64.2 %'];
+  const CHG=['0 / 100','1 / 100','4 / 100','10 / 100','31 / 100'];
+  function draw(){
+    const i=+$('wk_p').value; $('wk_pv').textContent=P[i];
+    $('wk_rem').textContent=REM[i];$('wk_acc').textContent=ACC[i];$('wk_chg').textContent=CHG[i];
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const pad=40, PW=W-pad-18, PH=H-pad-24;
+    const N=180;
+    const thr=[0,0.25,0.5,0.75,0.95][i];
+    for(let k=0;k<N;k++){
+      const x=k/(N-1);
+      const dens=Math.exp(-x*7.2)+0.004;
+      const h=PH*clamp(dens,0,1);
+      const cut=x<thr;
+      g.fillStyle=cut?'#1b2436':hsl(195,80,58,0.35+0.5*(1-x));
+      g.fillRect(pad+PW*k/N,26+PH-h,PW/N+0.8,h);
+    }
+    g.strokeStyle=C.line;g.lineWidth=1;g.strokeRect(pad,26,PW,PH);
+    if(thr>0){
+      g.fillStyle='rgba(255,107,138,0.07)';g.fillRect(pad,26,PW*thr,PH);
+      line(g,pad+PW*thr,26,pad+PW*thr,26+PH,C.bad,2);
+      mono(g,'Schwelle',pad+PW*thr+6,38,C.bad,10,'left');
+    }
+    line(g,pad+PW*0.93,26,pad+PW*0.93,26+PH,C.good,1.4);
+    mono(g,'stärkste 7 %',pad+PW*0.93-6,26+PH-14,C.good,9.5,'right');
+    mono(g,'0',pad,H-10,C.dim2,10,'center');
+    mono(g,'halbes Maximum',pad+PW*0.5,H-10,C.dim2,10,'center');
+    mono(g,'Max',pad+PW,H-10,C.dim2,10,'right');
+    mono(g,'Anzahl Tokens',4,34,C.dim2,10,'left');
+    mono(g,'100 Mio. Tokens · EIN Neuron · nur ~160 erreichen die obere Hälfte',
+      pad+PW/2,18,C.dim,10,'center');
+  }
+  bind('wk_p',draw); window.addEventListener('resize',draw); draw();
+})();
+
+(function(){
+  const cv=$('ablCanvas');
+  function draw(){
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const rows=[
+      {l:'unverändert',v:72,c:C.acc,s:'0 / 100 geändert'},
+      {l:'schwächste 75 % entfernt',v:71,c:C.good,s:'1 / 10 geändert — nur knappe Fälle'},
+      {l:'stärkste 7 % entfernt (gleiche Masse!)',v:4,c:C.bad,s:'96 / 100 geändert — Unsinn'}
+    ];
+    const pad=Math.min(240,W*0.44), bh=(H-26)/rows.length;
+    rows.forEach((row,i)=>{
+      const y=12+i*bh;
+      g.fillStyle='#0c1322';rr(g,pad,y+6,W-pad-18,bh-20,6);g.fill();
+      g.fillStyle=row.c;rr(g,pad,y+6,(W-pad-18)*row.v/80,bh-20,6);g.fill();
+      mono(g,row.l,pad-10,y+(bh-14)/2,C.txt,10.5,'right');
+      mono(g,row.v+' %',pad+10,y+(bh-14)/2,'#06111b',11,'left');
+      mono(g,row.s,pad+(W-pad-18)*row.v/80+10,y+(bh-14)/2,row.c,9.5,'left');
+    });
+    mono(g,'ImageNet Top-1, ConvNeXt medium, alle 18 Blöcke',W-18,H-5,C.dim2,9.5,'right');
+  }
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* 12c RADAR */
+(function(){
+  const cv=$('radarCanvas'); let ri=0;
+  const R=[
+    {n:'Titanic',hue:200,rings:['Titanic & Linien-Katastrophen','Schiffe, Meer, Marine-Unfälle','Geschichte 1800–1910'],cliff:false},
+    {n:'Barock',hue:40,rings:['Barockstil selbst','Andere Kunststile & Bewegungen','Benannte Epochen'],cliff:false},
+    {n:'Weihnachten',hue:150,rings:['Weihnachten & Symbole','Feiertage, Winter, Geschenke','Festliches Essen & Backen'],cliff:true},
+    {n:'Regenbogen',hue:290,rings:['Die Regenbogenfarben','Andere feste Mengen','Farben & Farbsysteme'],cliff:false},
+    {n:'Colorado',hue:100,rings:['Colorado-Orte & Institutionen','Andere Bergregionen ohne Meer','Amerikanischer/kanad. Westen'],cliff:false}
+  ];
+  function draw(){
+    const S=R[ri];
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const narrow=W<620;
+    const cx=narrow?W*0.5:W*0.34, cy=narrow?H*0.42:H/2;
+    const RAD=Math.min(W*0.3,H*0.40);
+    sr(ri*77+5);
+    for(let k=3;k>=1;k--){
+      g.strokeStyle='#1b2436';g.lineWidth=1;
+      g.beginPath();g.arc(cx,cy,RAD*k/3,0,6.283);g.stroke();
+    }
+    for(let q=0;q<150;q++){
+      const a=rnd()*6.283, rr2=RAD*(0.74+rnd()*0.42);
+      g.fillStyle='rgba(100,116,143,0.40)';
+      g.beginPath();g.arc(cx+Math.cos(a)*rr2,cy+Math.sin(a)*rr2,1.6,0,6.283);g.fill();
+    }
+    const counts=[26,70,120];
+    for(let k=0;k<3;k++){
+      for(let q=0;q<counts[k];q++){
+        const a=rnd()*6.283;
+        const rr2=RAD*(k/3+rnd()*0.33);
+        const sat=S.cliff&&k>0?28:72;
+        const li=S.cliff&&k>0?36:(66-k*8);
+        g.fillStyle=hsl(S.hue+k*14,sat,li,0.88-k*0.18);
+        g.beginPath();g.arc(cx+Math.cos(a)*rr2,cy+Math.sin(a)*rr2,2.6-k*0.4,0,6.283);g.fill();
+      }
+    }
+    g.fillStyle=hsl(S.hue,85,66);g.beginPath();g.arc(cx,cy,5,0,6.283);g.fill();
+    mono(g,'MAX',cx,cy-14,hsl(S.hue,70,82),9,'center');
+    if(S.cliff){
+      g.strokeStyle=C.warn;g.lineWidth=2;g.setLineDash([5,4]);
+      g.beginPath();g.arc(cx,cy,RAD*0.30,0,6.283);g.stroke();g.setLineDash([]);
+      mono(g,'KLIPPE ≈ 5 % des Max',cx,cy+RAD*0.30+15,C.warn,9.5,'center');
+    }
+    if(!narrow){
+      const lx=W*0.68;
+      mono(g,S.n+'-Neuron',lx,26,hsl(S.hue,75,74),12,'left');
+      S.rings.forEach((t,k)=>{
+        const y=54+k*25;
+        g.fillStyle=hsl(S.hue+k*14,S.cliff&&k>0?28:72,S.cliff&&k>0?36:(66-k*8));
+        g.beginPath();g.arc(lx+5,y,4.5,0,6.283);g.fill();
+        mono(g,t,lx+18,y,C.dim,9.8,'left');
+      });
+      g.fillStyle='rgba(100,116,143,0.6)';g.beginPath();g.arc(lx+5,54+3*25,4.5,0,6.283);g.fill();
+      mono(g,'Boden („schwer einzuordnen")',lx+18,54+3*25,C.dim2,9.8,'left');
+      mono(g,S.cliff?'→ ein DETEKTOR':'→ eher ein REGLER',lx,54+4*25+4,
+        S.cliff?C.warn:C.acc,10.5,'left');
+    }
+    $('radar_text').innerHTML = S.cliff
+      ? 'Das <b>Weihnachts</b>-Neuron bricht bei ca. 5 % seines Maximums ab — darunter nichts Relevantes mehr. Das ist ein <b>Detektor</b>: an oder aus.'
+      : 'Das <b>'+S.n+'</b>-Neuron fällt glatt ab, ohne Klippe bis zum 99,9. Perzentil. Eher ein <b>Regler</b>: „wie '+S.n+'-artig ist das hier?". Neuronen sind oft <b>Analogiebildner</b>.';
+  }
+  document.querySelectorAll('#radarPills .pill').forEach(p=>p.addEventListener('click',()=>{
+    document.querySelectorAll('#radarPills .pill').forEach(x=>x.classList.remove('on'));
+    p.classList.add('on'); ri=+p.dataset.r; draw();
+  }));
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ============================================================
+   13 CIRCUIT ECOLOGY
+   ============================================================ */
+(function(){
+  const cv=$('ecoCanvas'); let step=0, broad=0.02, pix=0.02, auto=null, hist=[];
+  function reset(){step=0;broad=0.02;pix=0.02;hist=[[broad,pix]];draw();}
+  function one(){
+    const cov=+$('ec_c').value;
+    const err=clamp(1-broad-pix,0,1);
+    broad=clamp(broad+0.32*cov*err,0,1);
+    pix=clamp(pix+0.32*0.04*err,0,1);
+    step++;hist.push([broad,pix]);if(hist.length>140)hist.shift();
+    draw();
+  }
+  function draw(){
+    $('ec_cv').textContent=(+$('ec_c').value).toFixed(2);
+    $('ec_step_n').textContent=step;
+    $('ec_err').textContent=clamp(1-broad-pix,0,1).toFixed(2);
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const pad=46, PW=W-pad-80, PH=H-pad-26;
+    g.strokeStyle=C.line;g.lineWidth=1;g.strokeRect(pad,22,PW,PH);
+    const X=t=>pad+PW*clamp(t/120,0,1), Y=v=>22+PH*(1-clamp(v,0,1));
+    for(let k=0;k<=4;k++){
+      line(g,pad,22+PH*k/4,pad+PW,22+PH*k/4,'#141b2a',1);
+      mono(g,(1-k/4).toFixed(2),pad-6,22+PH*k/4,C.dim2,9,'right');
+    }
+    function curve(idx,col,lbl){
+      g.strokeStyle=col;g.lineWidth=2.6;g.beginPath();
+      hist.forEach((h,i)=>{const x=X(i),y=Y(h[idx]);i?g.lineTo(x,y):g.moveTo(x,y);});
+      g.stroke();
+      if(hist.length){
+        const last=hist[hist.length-1];
+        g.fillStyle=col;g.beginPath();g.arc(X(hist.length-1),Y(last[idx]),4.5,0,6.283);g.fill();
+        mono(g,lbl,X(hist.length-1)+8,Y(last[idx]),col,9.5,'left');
+      }
+    }
+    curve(0,C.good,'breites Feature');
+    curve(1,C.bad,'Ein-Pixel-Trick');
+    g.strokeStyle=C.dim2;g.lineWidth=1.3;g.setLineDash([4,4]);g.beginPath();
+    hist.forEach((h,i)=>{const x=X(i),y=Y(1-h[0]-h[1]);i?g.lineTo(x,y):g.moveTo(x,y);});
+    g.stroke();g.setLineDash([]);
+    mono(g,'Lernfortschritt pro Schaltkreis',pad+PW/2,13,C.dim,10,'center');
+    mono(g,'Trainingsschritte →',pad+PW,H-8,C.dim2,10,'right');
+    if(hist.length>14 && hist[hist.length-1][1]<0.12 && hist[hist.length-1][0]>0.5)
+      mono(g,'⚡ gradient starvation: der Trick verhungert',pad+8,H-8,C.warn,10,'left');
+  }
+  $('ec_step').addEventListener('click',one);
+  $('ec_reset').addEventListener('click',reset);
+  $('ec_auto').addEventListener('click',function(){
+    const self=this;
+    if(auto){clearInterval(auto);auto=null;self.classList.remove('on');}
+    else{auto=setInterval(()=>{
+      if(step>110){clearInterval(auto);auto=null;self.classList.remove('on');return;}
+      one();},50);self.classList.add('on');}
+  });
+  bind('ec_c',draw); window.addEventListener('resize',draw); reset();
+})();
+
+(function(){
+  const cv=$('gravCanvas');
+  function draw(){
+    const s=+$('gv_s').value; $('gv_sv').textContent=s.toFixed(2);
+    const far=0.26+s*0.68, near=0.54-s*0.44;
+    $('gv_far').textContent=far.toFixed(2);
+    $('gv_near').textContent=near.toFixed(2);
+    $('gv_win').textContent = near<far?'Nachbar-Ast ✓':'abgelegener Platz';
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const base=H-46;
+    // potential landscape: wells at existing circuits
+    const wells=[
+      {x:W*0.22,d:0.55+s*0.45,n:'Autos'},
+      {x:W*0.46,d:0.42+s*0.5,n:'Tiere'},
+      {x:W*0.70,d:0.50+s*0.44,n:'Orte'}
+    ];
+    function depth(x){
+      let v=0;
+      for(const w of wells) v+=w.d*Math.exp(-Math.pow((x-w.x)/(W*0.085),2));
+      return v;
+    }
+    g.beginPath();g.moveTo(0,base);
+    for(let x=0;x<=W;x+=2) g.lineTo(x,base-( -depth(x)*90 )*-1 - 0);
+    g.lineTo(W,base);
+    // draw the landscape curve properly
+    g.beginPath();
+    for(let x=0;x<=W;x+=2){
+      const y=base - 90 + depth(x)*90;
+      x===0?g.moveTo(x,y):g.lineTo(x,y);
+    }
+    g.lineTo(W,H);g.lineTo(0,H);g.closePath();
+    const grd=g.createLinearGradient(0,base-100,0,H);
+    grd.addColorStop(0,'rgba(100,210,255,0.22)');
+    grd.addColorStop(1,'rgba(100,210,255,0.02)');
+    g.fillStyle=grd;g.fill();
+    g.strokeStyle=C.acc;g.lineWidth=2;g.beginPath();
+    for(let x=0;x<=W;x+=2){
+      const y=base-90+depth(x)*90;
+      x===0?g.moveTo(x,y):g.lineTo(x,y);
+    }
+    g.stroke();
+    for(const w of wells){
+      mono(g,w.n,w.x,base-90+depth(w.x)*90+16,hsl(195,60,78),10,'center');
+    }
+    // the rare fact ball — two options
+    const nearX=wells[0].x+W*0.055;
+    const farX=W*0.90;
+    const nearY=base-90+depth(nearX)*90-9;
+    const farY=base-90+depth(farX)*90-9;
+    g.fillStyle=near<far?C.good:'#2b3752';
+    g.beginPath();g.arc(nearX,nearY,8,0,6.283);g.fill();
+    mono(g,'auf dem Nachbar-Ast',nearX,nearY-18,near<far?C.good:C.dim2,9.5,'center');
+    g.fillStyle=near<far?'#2b3752':C.warn;
+    g.beginPath();g.arc(farX,farY,8,0,6.283);g.fill();
+    mono(g,'abgelegen',farX,farY-18,near<far?C.dim2:C.warn,9.5,'center');
+    mono(g,'„semantische Gravitation" — stärkere Schaltkreise = tiefere Täler',
+      W/2,18,C.dim,10,'center');
+    mono(g,'Ein seltenes Faktum rollt dorthin, wo es am schnellsten Fehler einsammelt.',
+      W/2,H-14,C.dim2,10,'center');
+  }
+  bind('gv_s',draw); window.addEventListener('resize',draw); draw();
+})();
+
+(function(){
+  const cv=$('moeCanvas'); let hov=-1;
+  const EXPERTS=[
+    {n:'Bosse in RPG-Brettspielen',w:0.06},{n:'SQL-Joins',w:0.07},
+    {n:'Französische Präpositionen',w:0.09},{n:'Medizinische Dosierungen',w:0.11},
+    {n:'Schachnotation',w:0.08},{n:'Koch-Mengenangaben',w:0.10},
+    {n:'Rechtsklauseln',w:0.13},{n:'Astronomie-Einheiten',w:0.09},
+    {n:'Emoji-Reaktionen',w:0.07},{n:'Finanzberichte',w:0.14},
+    {n:'Gedicht-Zeilenenden',w:0.12},{n:'URL-Fragmente',w:0.08},
+    {n:'Breit: Erzähltempus',w:0.46},{n:'Breit: Aufzählungen',w:0.40},
+    {n:'Breit: Code-Syntax',w:0.52},{n:'Breit: Höflichkeitsformen',w:0.44}
+  ];
+  function draw(){
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const cols=8, rows=2;
+    const bw=(W-24)/cols, bh=(H-56)/rows;
+    EXPERTS.forEach((e,i)=>{
+      const x=12+(i%cols)*bw, y=34+Math.floor(i/cols)*bh;
+      const narrow=1-e.w;
+      g.fillStyle=hsl(lerp(160,30,e.w*2),72,lerp(22,46,narrow),0.85);
+      rr(g,x+2,y+2,bw-6,bh-12,7);g.fill();
+      g.strokeStyle=i===hov?C.acc:'#1b2436';g.lineWidth=i===hov?2:1;g.stroke();
+      mono(g,(e.w*100).toFixed(0),x+bw/2-1,y+(bh-10)/2,'#04121c',11,'center');
+    });
+    mono(g,'eng ←  Thema-Breite der Experten  → breit',12,18,C.dim,10.5,'left');
+    mono(g,'10.240 Experten in Qwen3.6 · keiner ist „10.000 unverwandte Dinge"',
+      W-12,18,C.dim2,10,'right');
+    $('moe_text').innerHTML = hov>=0
+      ? 'Experte: <b>'+EXPERTS[hov].n+'</b>. Ein „packender" Experte müsste Tausende unverwandte Dinge enthalten — und der Router (eine kleine lineare Schicht) müsste sie alle erkennen. Das geht nicht.'
+      : 'Experten werden mit der Tiefe enger. Wenn sie nicht „monosemantisch" sind, umfassen sie <b>breit verwandte</b> Dinge — dasselbe Muster der rekursiven Generalisierung, eine Ebene höher.';
+  }
+  cv.addEventListener('mousemove',e=>{
+    const b=cv.getBoundingClientRect();
+    const x=e.clientX-b.left,y=e.clientY-b.top;
+    const W=b.width,H=cv.getAttribute('height')|0;
+    const cols=8,bw=(W-24)/cols,bh=(H-56)/2;
+    const ci=Math.floor((x-12)/bw), ri2=Math.floor((y-34)/bh);
+    const idx=(ri2*cols+ci);
+    hov=(ci>=0&&ci<cols&&ri2>=0&&ri2<2&&idx<EXPERTS.length)?idx:-1;
+    draw();
+  });
+  cv.addEventListener('mouseleave',()=>{hov=-1;draw();});
+  window.addEventListener('resize',draw); draw();
+})();
+
+/* ============================================================
+   14 ANSWER
+   ============================================================ */
+(function(){
+  const host=$('argSteps');
+  const A=[
+    {t:'Ein Lernprinzip, nicht zwei',
+     d:'Netze nutzen <b>Generalisierung</b> — nicht zusätzlich ein zweites Prinzip, das unverwandte Dinge packt. Also gibt es keinen Grund, nicht direkt mit normaler Wissenschaft anzufangen.',col:C.acc},
+    {t:'Diese Wissenschaft läuft besser als erwartet',
+     d:'Mit modernen Modellen und Werkzeugen: ~90 % der Neuronenpole haben <b>einen</b> Hauptjob, ~7 % zwei verwandte Jobs; nur ~2–4 % bleiben offen. Bei Modellen bis zu Billionen Parametern dasselbe Bild.',col:C.good},
+    {t:'Verständnis verdichtet sich',
+     d:'Wie bei einem Kreuzworträtsel wird es <b>leichter</b>, je mehr ausgefüllt ist. Jede Erklärung wird von ihren Nachbarn eingeschränkt. Deshalb sind „fast leer" und „fast voll" die natürlichen Ankerpunkte.',col:C.purple},
+    {t:'Spekulativ: das könnte fast alles sein',
+     d:'Vielleicht brauchen wir gar nichts Weiteres. Vielleicht ist Interpretierbarkeit erheblich leichter — möglicherweise schon bald — als wir angenommen haben. <i>Das ist die unsicherste Stufe.</i>',col:C.warn}
+  ];
+  A.forEach((a,i)=>{
+    const d=document.createElement('div');
+    d.style.cssText='display:flex;gap:14px;align-items:flex-start;margin:14px 0;padding:12px;border-radius:12px;background:#0b1220;border:1px solid var(--line)';
+    d.innerHTML=`<div style="min-width:34px;height:34px;border-radius:10px;display:flex;
+      align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;
+      background:${a.col}22;color:${a.col};border:1px solid ${a.col}66">${i+1}</div>
+      <div><div style="font-weight:700;color:#fff;margin-bottom:2px">${a.t}</div>
+      <div class="small" style="color:#c9d4e8">${a.d}</div></div>`;
+    host.appendChild(d);
+  });
+})();
+
+(function(){
+  const cv=$('cityCanvas');
+  const S=[
+    {n:'92k Parameter',groups:[['Allgemeiner Hund',0],['Hell / flauschig',0],['Dunkel / zottelig',0]]},
+    {n:'7,06M Parameter',groups:[['Ohr / Kopfseite',1],['Glatte Lappen',1],['Lockige Ohren',1],['Ohr / Hals / Haar',1],['Lappen / Gesicht',1]]},
+    {n:'28,6M Parameter',groups:[['Kopfseiten-Ohren',2],['Blasse Ohren',2],['Wellige Ohren',2],['Glatte Lappen',2],['Hängeohren',2],['Lange Ohren / Haar',2],['Setter-Ohren',2]]}
+  ];
+  function draw(){
+    const i=+$('ct_s').value; $('ct_sv').textContent=S[i].n;
+    const r=fit(cv); if(!r) return; const {g,W,H}=r;
+    g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+    const gs=S[i].groups, n=gs.length;
+    const cx=W/2, cy=H/2+8, RAD=Math.min(W*0.33,H*0.34);
+    // hub
+    g.fillStyle='#0f1c2e';g.beginPath();g.arc(cx,cy,30,0,6.283);g.fill();
+    g.strokeStyle=C.acc;g.lineWidth=2;g.stroke();
+    mono(g,'Hunde-',cx,cy-6,C.acc,10,'center');
+    mono(g,'ohren',cx,cy+7,C.acc,10,'center');
+    for(let k=0;k<n;k++){
+      const a=-Math.PI/2+k*6.283/n;
+      const X=cx+Math.cos(a)*RAD, Y=cy+Math.sin(a)*RAD;
+      const hue=lerp(190,290,k/Math.max(1,n-1));
+      g.strokeStyle=hsl(hue,70,58,0.5);g.lineWidth=1.8;
+      g.beginPath();g.moveTo(cx+Math.cos(a)*30,cy+Math.sin(a)*30);g.lineTo(X,Y);g.stroke();
+      const w=Math.min(132,RAD*0.95);
+      g.fillStyle=hsl(hue,65,52,0.18);rr(g,X-w/2,Y-13,w,26,8);g.fill();
+      g.strokeStyle=hsl(hue,65,58,0.6);g.lineWidth=1;g.stroke();
+      mono(g,gs[k][0],X,Y,hsl(hue,65,80),9.5,'center');
+    }
+    mono(g,i===0?'Dorf: „wo ist das Bankenviertel?" ergibt keinen Sinn'
+      :(i===1?'Kleinstadt: erste Straßenzüge'
+             :'Großstadt: Karte in einer Minute lesbar'),
+      W/2,16,i===0?C.dim2:(i===1?C.acc:C.good),10.5,'center');
+    $('ct_text').innerHTML = i===2
+      ? 'Im größten Modell speisen „blasse", „wellige" und „Kopfseiten"-Ohr-Neuronen alle in ein <b>Hängeohren</b>-Neuron. Agenten finden beschriftete Ohr-Neuronen hier <b>schneller</b> als im kleinen Modell — es gibt einen natürlichen Startpunkt.'
+      : (i===1 ? 'Mittelgroß: lokale Zweige entstehen. Noch kein klarer Hub, aber schon Struktur.'
+               : 'Im kleinsten Modell gibt es nur grobe Hunde-Reaktionen. Nichts ist „versteckt" — es ist nur <b>gröber</b>.');
+  }
+  bind('ct_s',draw); window.addEventListener('resize',draw); draw();
+})();
+
+/* ============================================================
+   INIT: redraw everything once layout settled
+   ============================================================ */
+window.addEventListener('load',()=>{
+  setTimeout(()=>window.dispatchEvent(new Event('resize')),120);
+  setTimeout(()=>window.dispatchEvent(new Event('resize')),600);
+});
+</script>
+</body>
+</html>

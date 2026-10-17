@@ -35,7 +35,7 @@ What I was trying here is to understand AI using AI. I tried to follow every que
 
 I tried my best to fact-check every claim, but since this project also my personal learning curve of a diverse set of very different, very complex sciences like Astronomy, Mathematics, Computer Science, Material Science, Cultural History, Cosmology, Chemistry, Physics and so on, and I myself am not a polymath, I may have introduced errors here and there, as to err is human.
 
-What I'm trying to do here is to paint a more-or-less complete picture of how AI came to be, and how many threads 
+What I'm trying to do here is to paint a more-or-less complete picture of how AI came to be, and how many threads were neccessary for it to come into existance.
 
 Similiar to the [unfinishable map](https://unfinishablemap.org/), this is a never-to-be-finished task, since the Universe is constantly changing, and so is AI. My goal is to, as clearly and deeply as possible, draw the current state of what lead to AI systems like chatGPT. I go into the [history](history), starting with the invention of counting itself, and the prehistory, starting with the question [why anything at all exists and the Big Bang](untold_history), and many things inbetween.
 
