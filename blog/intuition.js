@@ -153,23 +153,23 @@ const TokenizerViz = {
 
 const EmbeddingViz = (() => {
     // Two semantic axes that an LLM might plausibly discover.
-    // (X) Macht = "power"   (Y) Geschlecht = "gender"
+    // (X) Power   (Y) Gender
     // Positions chosen so directions encode meaning:
-    //   Mann → Frau  (gender)   und   Mann → Prinz → König  (power)
+    //   Man → Woman  (gender)   and   Man → Prince → King  (power)
     // are the SAME vector applied at different points.
     const space = {
         vocab: {
-            'Mann':       [ 5, -10],
-            'Frau':       [ 5,  10],
-            'männlich':   [ 0, -20],
-            'weiblich':   [ 0,  20],
-            'Prinz':      [15, -10],
-            'Prinzessin': [15,  10],
-            'König':      [25, -10],
-            'Königin':    [25,  10],
-            'Macht':      [10,   0]
+            'Man':       [ 5, -10],
+            'Woman':     [ 5,  10],
+            'Male':      [ 0, -20],
+            'Female':    [ 0,  20],
+            'Prince':    [15, -10],
+            'Princess':  [15,  10],
+            'King':      [25, -10],
+            'Queen':     [25,  10],
+            'Power':     [10,   0]
         },
-        axes:  { x: 'Macht', y: 'Geschlecht' },
+        axes:  { x: 'Power', y: 'Gender' },
         rangeX: [-5, 40],
         rangeY: [-30, 30]
     };
@@ -489,9 +489,9 @@ const EmbeddingViz = (() => {
         const r = document.getElementById('embedding-arithmetic-result');
         if (r) {
             if (stage === 'power') {
-                r.innerHTML = 'Die Richtung <b style="color:#f59e0b">Mann → Prinz → König</b> ist dieselbe wie <b style="color:#f59e0b">Frau → Prinzessin → Königin</b>. Bedeutung steckt also nicht nur in der <b>Position</b>, sondern auch in der <b>Richtung</b> zwischen Wörtern.';
+                r.innerHTML = 'The direction <b style="color:#f59e0b">Man → Prince → King</b> is the same as <b style="color:#f59e0b">Woman → Princess → Queen</b>. Meaning lives not just in <b>position</b> but also in the <b>direction</b> between words.';
             } else {
-                r.innerHTML = 'Die Vektorrichtung <b style="color:#10b981">Mann → Frau</b> zeigt genau so wie <b style="color:#10b981">König → Königin</b>: „Geschlecht" ist eine <b>Richtung</b> im Raum — und zwar dieselbe, egal wo man sie ansetzt.';
+                r.innerHTML = 'The vector <b style="color:#10b981">Man → Woman</b> points the same way as <b style="color:#10b981">King → Queen</b>: “Gender" is a <b>direction</b> in space — the same direction, no matter where you anchor it.';
             }
         }
     }
@@ -605,6 +605,357 @@ const EmbeddingViz = (() => {
     }
 
     return { render, bind, init, doArithmetic, doArithmeticWithSteps, renderDirections };
+})();
+
+
+// ============================================================
+// STEP 2b: MANIFOLD VIEW (parallel language spaces)
+// ============================================================
+
+const ManifoldViz = (() => {
+    // Each language has the same Power/Gender structure, but
+    // its manifold is rotated + offset in the embedding space.
+    // Translation = finding the corresponding point on the other manifold.
+
+    // English is the reference (Z = 0). Other languages sit on parallel planes.
+    const PAIRS = {
+        'en-es': {
+            label: 'English ↔ Spanish',
+            srcLabel: 'English',
+            dstLabel: 'Spanish',
+            planeZ: 1,
+            color: '#10b981',
+            vocab: {
+                'Man':      'Hombre',
+                'Woman':    'Mujer',
+                'Male':     'Masculino',
+                'Female':   'Femenino',
+                'Prince':   'Príncipe',
+                'Princess': 'Princesa',
+                'King':     'Rey',
+                'Queen':    'Reina'
+            }
+        },
+        'en-de': {
+            label: 'English ↔ German',
+            srcLabel: 'English',
+            dstLabel: 'German',
+            planeZ: 2,
+            color: '#8b5cf6',
+            vocab: {
+                'Man':      'Mann',
+                'Woman':    'Frau',
+                'Male':     'Männlich',
+                'Female':   'Weiblich',
+                'Prince':   'Prinz',
+                'Princess': 'Prinzessin',
+                'King':     'König',
+                'Queen':    'Königin'
+            }
+        },
+        'en-fr': {
+            label: 'English ↔ French',
+            srcLabel: 'English',
+            dstLabel: 'French',
+            planeZ: 3,
+            color: '#f59e0b',
+            vocab: {
+                'Man':      'Homme',
+                'Woman':    'Femme',
+                'Male':     'Masculin',
+                'Female':   'Féminin',
+                'Prince':   'Prince',
+                'Princess': 'Princesse',
+                'King':     'Roi',
+                'Queen':    'Reine'
+            }
+        }
+    };
+
+    const EN_POS = {
+        'Man':      [ 5, -10],
+        'Woman':    [ 5,  10],
+        'Male':     [ 0, -20],
+        'Female':   [ 0,  20],
+        'Prince':   [15, -10],
+        'Princess': [15,  10],
+        'King':     [25, -10],
+        'Queen':    [25,  10]
+    };
+
+    // Each pair is shown rotated slightly on its plane to make
+    // the parallel-but-different geometry visible.
+    const PAIR_ROTATIONS = {
+        'en-es':  15,
+        'en-de': -10,
+        'en-fr':   5
+    };
+
+    const activePairs = new Set(['en-es', 'en-de']);
+
+    function rotate2D(p, deg) {
+        const r = deg * Math.PI / 180;
+        const c = Math.cos(r), s = Math.sin(r);
+        return [p[0] * c - p[1] * s, p[0] * s + p[1] * c];
+    }
+
+    // ── Pringle-chip manifold (hyperbolic paraboloid) ──
+    // z = baseZ + scale * (u² − v²) + ripple * sin(u*2) * cos(v*2)
+    // (u, v) are normalised to [−1, 1] from the raw (x, y) embedding coords.
+    const PRINGLE_BASE = {
+        uCenter: 12.5, uRange: 17.5,
+        vCenter:   0,  vRange: 22
+    };
+
+    function pringleZ(x, y, baseZ, scale, ripple) {
+        const u = (x - PRINGLE_BASE.uCenter) / PRINGLE_BASE.uRange;
+        const v = (y - PRINGLE_BASE.vCenter) / PRINGLE_BASE.vRange;
+        return baseZ
+             + scale  * (u * u - v * v)
+             + ripple * Math.sin(u * 2) * Math.cos(v * 2);
+    }
+
+    // Each language has its own pringle "personality" — slightly different
+    // saddle height and ripple wavelength. When aligned, these collapse to
+    // match English's values exactly.
+    const PERSONALITY = {
+        English: { scale: 0.55, ripple: 0.10 },
+        Spanish: { scale: 0.50, ripple: 0.12 },
+        German:  { scale: 0.60, ripple: 0.08 },
+        French:  { scale: 0.45, ripple: 0.14 }
+    };
+
+    // Grid resolution per curved manifold. 18×18 is plenty (and small
+    // enough that the GPU compiles one frame in <50ms).
+    const GRID = 18;
+
+    // Build a curved surface mesh for a given language.
+    // baseZ is the vertical level; personality governs the saddle shape.
+    function buildManifoldSurface(baseZ, lang) {
+        const pers = PERSONALITY[lang] || PERSONALITY.English;
+        const xs = [], ys = [], zs = [];
+        for (let i = 0; i <= GRID; i++) {
+            for (let j = 0; j <= GRID; j++) {
+                const x = -7 + (39 * i / GRID);
+                const y = -24 + (48 * j / GRID);
+                xs.push(x);
+                ys.push(y);
+                zs.push(pringleZ(x, y, baseZ, pers.scale, pers.ripple));
+            }
+        }
+        return { x: xs, y: ys, z: zs };
+    }
+
+    function render(rotation, alignment) {
+        const plotDiv = document.getElementById('manifold-viz-plot');
+        if (!plotDiv) return;
+
+        const dark = isDarkMode();
+        const axisColor = dark ? '#cbd5e1' : '#475569';
+        const gridColor = dark ? '#1e293b' : '#e2e8f0';
+        const bg = dark ? 'rgba(15,23,42,0.85)' : '#ffffff';
+        const paperBg = dark ? 'rgba(15,23,42,0.55)' : '#ffffff';
+
+        // Bucket words per language so we get ONE marker trace each.
+        // Bridges: one line trace per colour, null-separated segments.
+        const wordsByLang = { English: { x: [], y: [], z: [], text: [], color: '#3b82f6', symbol: 'circle' } };
+        const bridgesByColor = {};
+
+        // English words — sit on the base manifold (z = 0)
+        const enPers = PERSONALITY.English;
+        Object.entries(EN_POS).forEach(([w, pos]) => {
+            wordsByLang.English.x.push(pos[0]);
+            wordsByLang.English.y.push(pos[1]);
+            wordsByLang.English.z.push(pringleZ(pos[0], pos[1], 0, enPers.scale, enPers.ripple));
+            wordsByLang.English.text.push(w);
+        });
+
+        const traces = [];
+
+        // ── Surfaces — one GPU surface per language, in the language's colour ──
+        // English manifold at z=0
+        const enSurface = buildManifoldSurface(0, '#3b82f6');
+        traces.push({
+            type: 'surface',
+            x: enSurface.x, y: enSurface.y, z: enSurface.z,
+            colorscale: [[0, 'rgba(59,130,246,0.18)'], [1, 'rgba(59,130,246,0.55)']],
+            showscale: false,
+            opacity: 0.55,
+            hoverinfo: 'skip',
+            name: 'English manifold',
+            contours: {
+                x: { show: true, color: 'rgba(59,130,246,0.18)', width: 1 },
+                y: { show: true, color: 'rgba(59,130,246,0.18)', width: 1 },
+                z: { show: false }
+            }
+        });
+
+        // Other-language words + their curved manifolds + bridges
+        // Alignment = real transformation: undo rotation, drop to z=0,
+        // force personality to match English's exactly.
+        const zSpacing = 2.4;
+        activePairs.forEach((pairKey, idx) => {
+            const pair = PAIRS[pairKey];
+            if (!pair) return;
+
+            const baseRot = PAIR_ROTATIONS[pairKey] || 0;
+            const rot = alignment ? 0 : baseRot;
+            const baseZ = alignment ? 0 : (idx + 1) * zSpacing;
+            const pers  = alignment ? PERSONALITY.English : (PERSONALITY[pair.dstLabel] || PERSONALITY.English);
+
+            // The manifold surface for this language (curved, in its colour)
+            const surface = buildManifoldSurface(baseZ, alignment ? 'English' : pair.dstLabel);
+            const surfaceAlpha  = alignment ? 0.18 : 0.6;
+            const contourAlpha  = alignment ? '15'  : '30';
+            traces.push({
+                type: 'surface',
+                x: surface.x, y: surface.y, z: surface.z,
+                colorscale: [
+                    [0, pair.color + '22'],
+                    [1, pair.color + 'AA']
+                ],
+                showscale: false,
+                opacity: surfaceAlpha,
+                hoverinfo: 'skip',
+                name: pair.dstLabel + ' manifold',
+                contours: {
+                    x: { show: true, color: pair.color + contourAlpha, width: 1 },
+                    y: { show: true, color: pair.color + contourAlpha, width: 1 },
+                    z: { show: false }
+                }
+            });
+
+            if (!wordsByLang[pair.dstLabel]) {
+                wordsByLang[pair.dstLabel] = {
+                    x: [], y: [], z: [], text: [], color: pair.color, symbol: 'diamond'
+                };
+            }
+            const bucket = wordsByLang[pair.dstLabel];
+
+            Object.entries(pair.vocab).forEach(([en, other]) => {
+                const basePos = EN_POS[en];
+                if (!basePos) return;
+                const p = rotate2D(basePos, rot);
+                const zOnSurface = pringleZ(p[0], p[1], baseZ, pers.scale, pers.ripple);
+                bucket.x.push(p[0]);
+                bucket.y.push(p[1]);
+                bucket.z.push(zOnSurface);
+                bucket.text.push(other);
+
+                if (!bridgesByColor[pair.color]) {
+                    bridgesByColor[pair.color] = { x: [], y: [], z: [], color: pair.color };
+                }
+                const b = bridgesByColor[pair.color];
+                b.x.push(basePos[0], p[0], null);
+                b.y.push(basePos[1], p[1], null);
+                // English word is at z = pringleZ(x, y, 0); bridge starts there.
+                const zEnglish = pringleZ(basePos[0], basePos[1], 0, enPers.scale, enPers.ripple);
+                b.z.push(zEnglish, zOnSurface, null);
+            });
+        });
+
+        // ── Word traces (one per language, batched) ──
+        Object.entries(wordsByLang).forEach(([lang, b]) => {
+            if (!b.x.length) return;
+            traces.push({
+                type: 'scatter3d',
+                mode: 'markers+text',
+                x: b.x, y: b.y, z: b.z,
+                text: b.text,
+                textposition: 'top center',
+                textfont: { size: 11, color: b.color, family: 'system-ui, sans-serif' },
+                marker: {
+                    size: 7,
+                    color: b.color,
+                    opacity: 0.95,
+                    symbol: b.symbol,
+                    line: { width: 1, color: '#fff' }
+                },
+                name: lang,
+                hovertemplate: `<b>%{text}</b> (${lang})<extra></extra>`,
+                showlegend: false
+            });
+        });
+
+        // ── Bridge traces (one per colour, batched with null separators) ──
+        Object.values(bridgesByColor).forEach(b => {
+            if (!b.x.length) return;
+            traces.push({
+                type: 'scatter3d',
+                mode: 'lines',
+                x: b.x, y: b.y, z: b.z,
+                line: { color: b.color, width: 1.5, dash: 'dot' },
+                opacity: alignment ? 0.18 : 0.5,
+                hoverinfo: 'skip',
+                showlegend: false
+            });
+        });
+
+        const zMax = alignment ? 1.8 : (activePairs.size + 1) * zSpacing + 1.5;
+
+        const layout = {
+            margin: { l: 0, r: 0, b: 0, t: 0 },
+            showlegend: false,
+            paper_bgcolor: paperBg,
+            scene: {
+                xaxis: { title: 'Power →', gridcolor: gridColor, zerolinecolor: gridColor, color: axisColor, range: [-7, 32] },
+                yaxis: { title: 'Gender →', gridcolor: gridColor, zerolinecolor: gridColor, color: axisColor, range: [-24, 24] },
+                zaxis: { gridcolor: gridColor, zerolinecolor: gridColor, color: axisColor, range: [-1.5, zMax] },
+                camera: rotation,
+                bgcolor: bg,
+                aspectmode: 'manual',
+                aspectratio: { x: 1.2, y: 1, z: 0.95 }
+            },
+            annotations: [
+                { x: 30, y: 22, z: 0,                  text: 'English', showarrow: false, font: { size: 13, color: '#3b82f6', family: 'system-ui, sans-serif' } },
+                { x: 30, y: 22, z: zSpacing,           text: 'Spanish', showarrow: false, font: { size: 13, color: '#10b981', family: 'system-ui, sans-serif' } },
+                { x: 30, y: 22, z: zSpacing * 2,       text: 'German',  showarrow: false, font: { size: 13, color: '#8b5cf6', family: 'system-ui, sans-serif' } },
+                { x: 30, y: 22, z: zSpacing * 3,       text: 'French',  showarrow: false, font: { size: 13, color: '#f59e0b', family: 'system-ui, sans-serif' } }
+            ]
+        };
+
+        Plotly.react(plotDiv, traces, layout, { displayModeBar: false, responsive: true });
+    }
+
+    let alignMode = false;
+
+    function defaultRotation() {
+        return { eye: { x: 1.6, y: 1.4, z: 1.2 } };
+    }
+
+    function rotate() {
+        const r = { eye: { x: -1.5 + Math.random() * 3, y: -1.5 + Math.random() * 3, z: 0.8 + Math.random() * 1.4 } };
+        render(r, alignMode);
+    }
+
+    function toggleAlign() {
+        alignMode = !alignMode;
+        render(defaultRotation(), alignMode);
+    }
+
+    function bind() {
+        document.querySelectorAll('#manifold-demo .manifold-cb').forEach(cb => {
+            cb.addEventListener('change', () => {
+                const pair = cb.getAttribute('data-pair');
+                if (cb.checked) activePairs.add(pair);
+                else activePairs.delete(pair);
+                render(defaultRotation(), alignMode);
+            });
+        });
+
+        const rotateBtn = document.getElementById('manifold-rotate');
+        if (rotateBtn) rotateBtn.addEventListener('click', rotate);
+
+        const alignBtn = document.getElementById('manifold-align');
+        if (alignBtn) alignBtn.addEventListener('click', toggleAlign);
+    }
+
+    function init() {
+        bind();
+        render(defaultRotation(), false);
+    }
+
+    return { init, render, rotate, toggleAlign };
 })();
 
 // ============================================================
@@ -1993,30 +2344,30 @@ const AttentionDemo = {
 		{
 			sentenceHTML: 'I sit by the <span class="attn-word-river">river</span> on the <span class="attn-word-bank">bank</span>.',
 			contextWords: ['river'],
-			bankShift: [2.5, 7.5],
+			bankShift: [3.2, 6.8],
 			label: '<span class="em">river</span> nearby',
 			caption: '<b>River</b> is the neighbor → the contextualized <b>Bank</b> leaps toward <i>river bank</i> (the seat by the water).'
 		},
 		{
 			sentenceHTML: 'I bring my <span class="attn-word-money">money</span> to the <span class="attn-word-bank">bank</span>.',
 			contextWords: ['money'],
-			bankShift: [7.5, 2.5],
+			bankShift: [7.2, 3.2],
 			label: '<span class="em">money</span> nearby',
 			caption: '<b>Money</b> is the neighbor → <b>Bank</b> leaps toward the financial meaning.'
 		},
 		{
 			sentenceHTML: 'After the walk by the <span class="attn-word-river">river</span> I go to the <span class="attn-word-bank">bank</span> to deposit my <span class="attn-word-money">money</span>.',
 			contextWords: ['river', 'money'],
-			bankShift: [6.6, 3.4],
+			bankShift: [6.6, 3.9],
 			label: '<span class="em">both</span> nearby',
 			caption: 'Both neighbors compete — <b>money</b> wins by a hair, so <b>Bank</b> still tilts toward the financial side.'
 		}
 	],
 
 	vocabPositions: {
-		'bank':  { base: [5, 5],   color: '#3b82f6', label: 'Bank' },
-		'river': { base: [1, 9],   color: '#10b981', label: 'River' },
-		'money': { base: [9, 1],   color: '#f59e0b', label: 'Money' }
+		'bank':  { base: [5,   5],  color: '#3b82f6', label: 'Bank' },
+		'river': { base: [0.5, 9.5], color: '#10b981', label: 'River' },
+		'money': { base: [10.5, 0.5], color: '#f59e0b', label: 'Money' }
 	},
 
 	render: function() {
@@ -2109,8 +2460,8 @@ const AttentionDemo = {
 		const layout = {
 			margin: { l: 40, r: 30, b: 40, t: 30 },
 			hovermode: 'closest',
-			xaxis: { range: [0, 10], title: { text: 'Semantic dimension A', font: { size: 11, color: textColor } }, gridcolor: gridColor, zeroline: false, tickfont: { color: textColor } },
-			yaxis: { range: [0, 10], title: { text: 'Semantic dimension B', font: { size: 11, color: textColor } }, gridcolor: gridColor, zeroline: false, scaleanchor: 'x', tickfont: { color: textColor } },
+			xaxis: { range: [-1, 12], title: { text: 'Semantic dimension A', font: { size: 11, color: textColor } }, gridcolor: gridColor, zeroline: false, tickfont: { color: textColor } },
+			yaxis: { range: [-1, 11], title: { text: 'Semantic dimension B', font: { size: 11, color: textColor } }, gridcolor: gridColor, zeroline: false, scaleanchor: 'x', tickfont: { color: textColor } },
 			showlegend: false,
 			plot_bgcolor: themeColor('#fff'),
 			paper_bgcolor: themeColor('#fff'),
@@ -2126,8 +2477,16 @@ const AttentionDemo = {
 	bind: function() {
 		const prev = document.getElementById('attn-prev');
 		const next = document.getElementById('attn-next');
-		if (prev) prev.addEventListener('click', () => this.prev());
-		if (next) next.addEventListener('click', () => this.next());
+		// Idempotent — bind() may be called twice (once eagerly, once via lazy observer).
+		// Guard with a flag so each click only fires once.
+		if (next && !next._attnBoundNext) {
+			next._attnBoundNext = true;
+			next.addEventListener('click', () => this.next());
+		}
+		if (prev && !prev._attnBoundPrev) {
+			prev._attnBoundPrev = true;
+			prev.addEventListener('click', () => this.prev());
+		}
 	}
 };
 
@@ -2332,9 +2691,14 @@ function loadIntuitionModule() {
         TokenizerViz.render();
     });
 
-    // Step 2: Embedding (lndw-style Macht/Geschlecht demo)
+    // Step 2: Embedding (lndw-style Power/Gender demo)
     _lazyRegister('embedding-viz-plot', () => {
         EmbeddingViz.init();
+    });
+
+    // Step 2b: Manifold view (parallel language spaces)
+    _lazyRegister('manifold-viz-plot', () => {
+        ManifoldViz.init();
     });
 
     // Step 3: Positional Encoding
