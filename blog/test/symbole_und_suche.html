@@ -2193,7 +2193,6 @@ function gtPlot(){
   if(typeof Plotly==='undefined')return;
   const xs=gtState.hist.map(h=>h.t),ys=gtState.hist.map(h=>100*h.r);
   Plotly.react('gtPlot',[{x:xs,y:ys,type:'scatter',mode:'lines',
-    line:{color:'#54e8a8',width:2.4},fill:'tozeroy',fillcolor:'rgba(84,  Plotly.react('gtPlot',[{x:xs,y:ys,type:'scatter',mode:'lines',
     line:{color:'#54e8a8',width:2.4},fill:'tozeroy',fillcolor:'rgba(84,232,168,.12)',
     name:'Trefferquote'}],{
     paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
