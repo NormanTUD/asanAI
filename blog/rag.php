@@ -288,3 +288,30 @@ The through-line: RAG is not a feature you add; it is a **pipeline with two fail
 | RAG vs. long context? | RAG searches millions of docs cheaply. Long context holds ~1 book expensively. Best used together |
 | Are the LLM's weights changed? | **No.** RAG only changes the *input*. The model itself is untouched |
 </div>
+
+<div class="md">
+## Bush 1945: The Memex, Hypertext, and Personal Information Retrieval
+
+The RAG pipeline described in this chapter has a longer ancestry than 2020. Its conceptual blueprint — a personal, queryable store of human knowledge with associative links between documents, retrieved at the moment of use to augment a human's thinking — was drawn in 1945 by \citeauthor{bush1945aswemaythink} (\citeyear{bush1945aswemaythink}) in *The Atlantic Monthly*, in an essay so influential that the first personal-computer vision in modern culture is usually dated to it. \citeauthor{bush1945aswemaythink} named the device the **memex** ("memory extender") and described it as a desk-sized electromechanical console that would store a personal library of microfilmed books and records, let the user consult them on translucent screens at will, and — this is the part the field remembered — allow the user to build **associative trails** between documents by stringing them together with named links, so that consulting one document would automatically pull up the next.
+
+<div class="smart-quote" data-cite="bush1945aswemaythink">
+The human mind operates by association. With one item in its grasp, it snaps instantly to the next that is suggested by the association of thoughts, in accordance with some intricate web of trails carried by the cells of the brain. [...] Selection by association, rather than indexing, may yet be mechanized.
+</div>
+
+Bush's diagnosis of why such a device was needed has aged remarkably well. He calls the problem the *crisis of selection*: the volume of published knowledge had grown past any human's ability to keep up with, and the existing tools for finding it — Dewey indices, the Library of Congress catalog, professional abstracting services — were optimised for *retrieval by metadata* (title, author, subject) and were useless for the question the working scholar actually asks, which is *what do I already have in my head that connects to this*. Bush's answer was to mechanise a different operation: not "search by keyword", but **"follow a trail of associated items"**, where each item can name the next. The trail is the user's private graph of "this reminds me of that", which the memex stores and lets the user replay, share, and accumulate.
+
+Read against the present chapter, the mapping to RAG is exact:
+
+| Memex (1945) | Modern RAG |
+|---|---|
+| Personal library of microfilmed documents | A vector index of an organisation's documents |
+| "Selection by association" | Embedding-based semantic search (or hybrid BM25 + dense) |
+| Stored, named **trails** linking documents | Stored, retrieved **chunks** injected into an LLM prompt |
+| "The human mind snaps instantly to the next item" | The LLM attends over retrieved context to produce the next token |
+| Consulting a doc on the translucent screen | Reading a chunk out of a vector DB at query time |
+| The memex user's associative memory | The LLM's context window |
+
+Three differences matter. First, Bush's "association" was *human-defined* — the user built the trails — whereas modern dense retrieval learns associations from co-occurrence statistics; this is Bush in spirit (associative access) but not in mechanism (machine-learned similarity). Second, Bush's device **augmented a human reader**, not an LLM; the LLM is the new reader, and the augmentation has been upgraded from "the user's cognition" to "the model's prompt". Third, and most strikingly, Bush's essay did **not** anticipate the cheapness constraint that defines modern RAG: he imagined dedicated microfilm hardware in every office, while contemporary RAG assumes the documents already live somewhere (the web, a wiki, an email archive) and only the *index* and the *retriever* are new. In every other respect — personal library, associative access, named links, retrieved at the moment of use to support the user's train of thought — \citeauthor{bush1945aswemaythink}'s memex is the engineering plan a modern RAG system executes eighty years later.
+
+Two things did not have to wait eighty years. \citeauthor{bush1945aswemaythink}'s central *technical* prediction — that information would be retrieved by **associative** rather than by **alphabetical or categorical** links — is now the standard practice in retrieval: dense vectors retrieve by learned similarity, not by category. And his central *cultural* prediction — that the volume of human knowledge was about to outrun any individual's ability to navigate it without mechanical aid — is now the universal assumption of every knowledge-worker's morning.
+</div>
