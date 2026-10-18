@@ -16036,6 +16036,13 @@ window.bibData = {
 		url: "https://web.archive.org/web/2024/https://en.wikipedia.org/wiki/Vapnik%E2%80%93Chervonenkis_dimension",
 		alternativetitle: "Vapnik & Chervonenkis, VC Theory (1964)"
 	},
+	"lorentedeno1938cortex": {
+		title: "Architectonics and Structure of the Cerebral Cortex (Chapter XV in Fulton's Physiology of the Nervous System)",
+		author: "Rafael Lorente de Nó",
+		year: 1938,
+		url: "https://bsd.neuroinf.jp/w/images/9/9e/Lorente_De_No_1938.pdf",
+		alternativetitle: "Lorente de Nó, Cerebral Cortex: Architecture and Closed Loops (1938)"
+	},
 	"sutton2019bitterlesson": {
 		title: "The Bitter Lesson",
 		author: "Richard S. Sutton",
