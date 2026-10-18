@@ -15952,6 +15952,34 @@ window.bibData = {
 		url: "https://www.cis.upenn.edu/~cis6280/lectures/lecture-02/media/lecture02/history/craik_1943_the_nature_of_explanation.pdf",
 		alternativetitle: "Craik, The Nature of Explanation (1943)"
 	},
+	"bush1945aswemaythink": {
+		title: "As We May Think",
+		author: "Vannevar Bush",
+		year: 1945,
+		url: "https://web.archive.org/web/2024/https://www.theatlantic.com/magazine/archive/1945/07/as-we-may-think/303881/",
+		alternativetitle: "Bush, As We May Think (1945)"
+	},
+	"licklider1960symbiosis": {
+		title: "Man-Computer Symbiosis",
+		author: "J. C. R. Licklider",
+		year: 1960,
+		url: "https://groups.csail.mit.edu/medg/people/psz/Licklider.html",
+		alternativetitle: "Licklider, Man-Computer Symbiosis (1960)"
+	},
+	"maturana1980autopoiesis": {
+		title: "Autopoiesis and Cognition: The Realization of the Living",
+		author: "Humberto R. Maturana, Francisco J. Varela",
+		year: 1980,
+		url: "https://link.springer.com/book/10.1007/978-94-009-8947-4",
+		alternativetitle: "Maturana & Varela, Autopoiesis and Cognition (1980)"
+	},
+	"newell1976empirical": {
+		title: "Computer Science as Empirical Inquiry: Symbols and Search",
+		author: "Allen Newell, Herbert A. Simon",
+		year: 1976,
+		url: "https://web.archive.org/web/2024/https://dl.acm.org/doi/10.1145/360018.360022",
+		alternativetitle: "Newell & Simon, Computer Science as Empirical Inquiry (1976)"
+	},
 	"sutton2019bitterlesson": {
 		title: "The Bitter Lesson",
 		author: "Richard S. Sutton",
