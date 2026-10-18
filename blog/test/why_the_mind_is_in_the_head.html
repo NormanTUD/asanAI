@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Why the Mind Is in the Head — McCulloch, 1948</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:#05060a;color:#e8e6f0;
+    font-family:"Georgia","Iowan Old Style",serif;-webkit-font-smoothing:antialiased}
+  canvas{position:fixed;inset:0;display:block}
+  #ui{position:fixed;inset:0;pointer-events:none;display:flex;flex-direction:column;
+    justify-content:space-between;padding:4vh 5vw}
+  #title{font-size:clamp(14px,2.2vw,26px);letter-spacing:.14em;opacity:.55;
+    text-transform:uppercase;font-variant:small-caps}
+  #caption{font-size:clamp(20px,4.4vw,64px);line-height:1.05;max-width:16ch;
+    letter-spacing:-.02em;text-shadow:0 0 40px rgba(0,0,0,.9);
+    transition:opacity .7s ease, transform .7s ease}
+  #sub{margin-top:1.2rem;font-size:clamp(12px,1.3vw,17px);opacity:.5;max-width:40ch;
+    font-style:italic;line-height:1.5}
+  #dots{display:flex;gap:10px;pointer-events:auto}
+  .dot{width:9px;height:9px;border-radius:50%;border:1px solid #6f6a8d;cursor:pointer;
+    transition:all .35s}
+  .dot.on{background:#d9d4ff;border-color:#d9d4ff;box-shadow:0 0 14px #9d8cff;transform:scale(1.25)}
+  #hint{font-size:11px;letter-spacing:.3em;opacity:.3;text-transform:uppercase}
+  .fade{opacity:0;transform:translateY(14px)}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="ui">
+  <div id="title">Why the Mind Is in the Head</div>
+  <div>
+    <div id="caption">—</div>
+    <div id="sub"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end">
+    <div id="dots"></div>
+    <div id="hint">scroll · ← →</div>
+  </div>
+</div>
+<script>
+const cv=document.getElementById('c'),x=cv.getContext('2d');
+let W,H,DPR,T=0,mx=.5,my=.5,tmx=.5,tmy=.5;
+function fit(){DPR=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;
+ cv.width=W*DPR;cv.height=H*DPR;cv.style.width=W+'px';cv.style.height=H+'px';
+ x.setTransform(DPR,0,0,DPR,0,0);}
+addEventListener('resize',fit);fit();
+addEventListener('pointermove',e=>{tmx=e.clientX/W;tmy=e.clientY/H;});
+
+/* ---------- scenes ---------- */
+const S=[
+ {t:"Zwei Zustände.",s:"Das Neuron ist bivalent: Feuern oder nicht. Ein Bit. Wiener's Informationseinheit.",hue:200},
+ {t:"Koinzidenz kauft Gewissheit.",s:"Hundert parallele Wege, Gleichzeitigkeit gefordert. Das Auge leitet ein Hundertstel weiter — der Rest ist der Preis für Sicherheit.",hue:28},
+ {t:"Der Kreis hält die Form,\nnicht die Zeit.",s:"Reverberation: die Idee, aus der Zeit gerissen.",hue:285},
+ {t:"Der Fehler definiert\ndas Ziel.",s:"Inverse feedback. Der Zustand, zu dem es zurückkehrt, ist der Zweck.",hue:150},
+ {t:"Form, gleich welcher Größe.",s:"Scansion durch die Schichten: alle Dilatationen eines Musters. Zehn pro Sekunde — der Alpha-Rhythmus.",hue:48},
+ {t:"Ein Band Enzyklopädie.",s:"Die Chromosomen fassen 10 000 Neuronen. Wir haben 10 000 000 000. Den Rest überlässt man dem Zufall.",hue:330},
+ {t:"Der Rest ist Erfahrung.",s:"Das Wachsen neuer Verbindungen. Jede bereitet die Bühne für die nächste.",hue:175},
+ {t:"Darum, und nur dort.",s:"Because there, and only there, are hosts of possible connections to be formed as time and circumstance demand.",hue:255}
+];
+let cur=0,prog=0,trans=1;
+const dots=document.getElementById('dots');
+S.forEach((_,i)=>{const d=document.createElement('div');d.className='dot';
+ d.onclick=()=>go(i);dots.appendChild(d);});
+const cap=document.getElementById('caption'),sub=document.getElementById('sub');
+function go(i){if(i===cur||i<0||i>=S.length)return;cur=i;trans=0;paint();}
+function paint(){
+ cap.classList.add('fade');sub.classList.add('fade');
+ setTimeout(()=>{cap.innerText=S[cur].t;sub.innerText=S[cur].s;
+  cap.classList.remove('fade');sub.classList.remove('fade');},380);
+ [...dots.children].forEach((d,i)=>d.classList.toggle('on',i===cur));
+}
+paint();
+let lock=0;
+addEventListener('wheel',e=>{if(Date.now()-lock<650)return;lock=Date.now();
+ go(cur+(e.deltaY>0?1:-1));},{passive:true});
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' ')go(cur+1);
+ if(e.key==='ArrowLeft')go(cur-1);});
+let ts=0;
+addEventListener('touchstart',e=>ts=e.touches[0].clientY,{passive:true});
+addEventListener('touchend',e=>{const d=ts-e.changedTouches[0].clientY;
+ if(Math.abs(d)>40)go(cur+(d>0?1:-1));},{passive:true});
+
+/* ---------- helpers ---------- */
+const R=(a,b)=>a+Math.random()*(b-a);
+function glow(cx,cy,r,h,a){const g=x.createRadialGradient(cx,cy,0,cx,cy,r);
+ g.addColorStop(0,`hsla(${h},90%,70%,${a})`);g.addColorStop(1,`hsla(${h},90%,60%,0)`);
+ x.fillStyle=g;x.beginPath();x.arc(cx,cy,r,0,7);x.fill();}
+
+/* ---------- scene data ---------- */
+// 0: bivalent grid
+const G=[];for(let i=0;i<460;i++)G.push({p:Math.random()*7,sp:R(.4,1.6),o:Math.random()});
+// 1: funnel particles
+const P=[];for(let i=0;i<900;i++)P.push({a:Math.random()*7,r:Math.random(),v:R(.0016,.007),s:R(.6,2.2),k:Math.random()<.012});
+// 2: reverberating ring
+const RG=[];for(let i=0;i<9;i++)RG.push({n:6+i*2,ph:Math.random()*7,sp:R(.3,.9)*(i%2?1:-1),rr:.16+i*.055});
+// 4: scansion sheets
+const SH=8;
+// 5/6: neurons
+const NO=[],ED=[];
+for(let i=0;i<120;i++)NO.push({x:Math.random(),y:Math.random(),ph:Math.random()*7});
+for(let i=0;i<NO.length;i++)for(let j=i+1;j<NO.length;j++){
+ const d=Math.hypot(NO[i].x-NO[j].x,NO[i].y-NO[j].y);
+ if(d<.13)ED.push({a:i,b:j,d,born:Math.random()});}
+
+/* ---------- draw ---------- */
+function frame(){
+ T+=.016;trans=Math.min(1,trans+.022);
+ mx+=(tmx-mx)*.07;my+=(tmy-my)*.07;
+ const h=S[cur].hue,e=trans*trans*(3-2*trans);
+ x.fillStyle='#05060a';x.fillRect(0,0,W,H);
+ // ambient
+ glow(mx*W,my*H,Math.min(W,H)*.75,h,.055*e);
+ glow(W*.5,H*.5,Math.min(W,H)*.9,(h+40)%360,.03);
+ x.save();x.globalAlpha=e;x.translate(W/2,H/2);
+ const s=Math.min(W,H);
+ [sc0,sc1,sc2,sc3,sc4,sc5,sc6,sc7][cur](s,h);
+ x.restore();
+ // vignette
+ const v=x.createRadialGradient(W/2,H/2,s*.25,W/2,H/2,s*.95);
+ v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.78)');
+ x.fillStyle=v;x.fillRect(0,0,W,H);
+ requestAnimationFrame(frame);
+}
+
+function sc0(s,h){ // bivalent lattice
+ const n=24,gap=s*.034,o=-(n-1)*gap/2;
+ G.length=0;
+ for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+  const px=o+i*gap,py=o+j*gap;
+  const d=Math.hypot(px-(mx-.5)*s*1.1,py-(my-.5)*s*1.1)/s;
+  const f=Math.sin(T*2.4-d*14+i*.3+j*.21);
+  const on=f>.35;
+  if(on){glow(px,py,gap*1.5,h,.5);
+   x.fillStyle=`hsla(${h},95%,82%,${.55+f*.45})`;}
+  else x.fillStyle=`hsla(${h},40%,60%,.12)`;
+  x.beginPath();x.arc(px,py,on?gap*.26:gap*.11,0,7);x.fill();
+ }
+}
+
+function sc1(s,h){ // funnel: 100 in, 1 out
+ const Rr=s*.42;
+ x.lineWidth=1;
+ for(const p of P){
+  p.r-=p.v*(1+(1-p.r)*2);
+  if(p.r<.02){p.r=1;p.a=Math.random()*7;p.k=Math.random()<.012;}
+  const a=p.a+ (1-p.r)*1.4 + (mx-.5)*.9;
+  const rr=p.r*Rr;
+  const px=Math.cos(a)*rr,py=Math.sin(a)*rr*.72;
+  const alive=p.k||p.r>.34;
+  const al=alive? (p.k?.95:.22*p.r+.08) : Math.max(0,.3*(p.r*3));
+  x.fillStyle=p.k?`hsla(${h+20},100%,78%,${al})`:`hsla(${h},70%,62%,${al})`;
+  x.beginPath();x.arc(px,py,p.s*(p.k?1.4:1),0,7);x.fill();
+  if(p.k&&p.r<.35)glow(px,py,s*.03,h+20,.25);
+ }
+ glow(0,0,s*.13,h+25,.55*(.6+.4*Math.sin(T*3)));
+ x.strokeStyle=`hsla(${h},60%,70%,.14)`;
+ for(let i=0;i<5;i++){x.beginPath();x.ellipse(0,0,Rr*(i+1)/5,Rr*.72*(i+1)/5,0,0,7);x.stroke();}
+}
+
+function sc2(s,h){ // reverberation
+ for(const r of RG){
+  const rad=s*r.rr;
+  x.strokeStyle=`hsla(${h},70%,70%,.09)`;x.lineWidth=1;
+  x.beginPath();x.arc(0,0,rad,0,7);x.stroke();
+  for(let i=0;i<r.n;i++){
+   const a=r.ph+T*r.sp*1.1+i*7/r.n*(1/1)+i*(Math.PI*2/r.n);
+   const px=Math.cos(a)*rad,py=Math.sin(a)*rad;
+   glow(px,py,s*.028,h+i*4,.4);
+   x.fillStyle=`hsla(${h+i*4},95%,85%,.9)`;
+   x.beginPath();x.arc(px,py,2.1,0,7);x.fill();
+   const a2=a+(Math.PI*2/r.n);
+   x.strokeStyle=`hsla(${h},85%,75%,.25)`;
+   x.beginPath();x.arc(0,0,rad,a,a2);x.stroke();
+  }
+ }
+ const pul=.5+.5*Math.sin(T*1.6);
+ glow(0,0,s*.1*(1+pul*.3),h+30,.35);
+}
+
+function sc3(s,h){ // negative feedback → target
+ const tx=(mx-.5)*s*.8,ty=(my-.5)*s*.8;
+ // target
+ x.strokeStyle=`hsla(${h},80%,70%,.3)`;x.lineWidth=1;
+ for(let i=1;i<=3;i++){x.beginPath();x.arc(tx,ty,s*.02*i*(1+.08*Math.sin(T*3-i)),0,7);x.stroke();}
+ glow(tx,ty,s*.09,h,.4);
+ if(!sc3.ag){sc3.ag=[];for(let i=0;i<60;i++)sc3.ag.push({x:R(-1,1)*s*.4,y:R(-1,1)*s*.4,vx:0,vy:0,tr:[],hu:R(-25,25)});}
+ for(const a of sc3.ag){
+  const dx=tx-a.x,dy=ty-a.y,d=Math.hypot(dx,dy)+.001;
+  a.vx+=dx/d*Math.min(d*.004,1.2);a.vy+=dy/d*Math.min(d*.004,1.2);
+  a.vx*=.93;a.vy*=.93;a.x+=a.vx;a.y+=a.vy;
+  a.tr.push([a.x,a.y]);if(a.tr.length>26)a.tr.shift();
+  x.beginPath();
+  for(let i=0;i<a.tr.length;i++){const t=i/a.tr.length;
+   x.strokeStyle=`hsla(${h+a.hu},80%,70%,${t*.5})`;
+   if(i)x.lineTo(a.tr[i][0],a.tr[i][1]);else x.moveTo(a.tr[i][0],a.tr[i][1]);}
+  x.lineWidth=1.3;x.stroke();
+  x.fillStyle=`hsla(${h+a.hu},95%,85%,.9)`;
+  x.beginPath();x.arc(a.x,a.y,1.8,0,7);x.fill();
+ }
+}
+
+function sc4(s,h){ // scansion: shape at all sizes
+ const k=(T*1.0)%1;
+ const pts=[[-1,-1],[1,-1],[1,1],[-1,1]];
+ for(let i=0;i<SH;i++){
+  const t=(i/SH+k)%1;
+  const sc=.08+t*.46, al=Math.sin(t*Math.PI)*.9;
+  x.save();x.rotate((mx-.5)*.5+t*.25);
+  x.strokeStyle=`hsla(${h+t*70},90%,70%,${al*.85})`;
+  x.lineWidth=1.6;x.beginPath();
+  pts.forEach((p,j)=>{const px=p[0]*s*sc,py=p[1]*s*sc;j?x.lineTo(px,py):x.moveTo(px,py);});
+  x.closePath();x.stroke();
+  pts.forEach(p=>{const px=p[0]*s*sc,py=p[1]*s*sc;glow(px,py,s*.03,h+t*70,al*.3);});
+  x.restore();
+ }
+ // scan line
+ const sy=(((T*1.0)%1)-.5)*s*1.1;
+ x.strokeStyle=`hsla(${h+60},100%,80%,.35)`;x.lineWidth=1;
+ x.beginPath();x.moveTo(-s*.5,sy);x.lineTo(s*.5,sy);x.stroke();
+}
+
+function sc5(s,h){ // one volume vs 10^10
+ const specified=40;
+ for(let i=0;i<1400;i++){
+  const a=i*2.399963,r=Math.sqrt(i/1400)*s*.45;
+  const px=Math.cos(a+T*.05)*r,py=Math.sin(a+T*.05)*r;
+  const spec=i<specified;
+  if(spec){glow(px,py,s*.022,h,.45);
+   x.fillStyle=`hsla(${h},95%,85%,.95)`;x.beginPath();x.arc(px,py,2.4,0,7);x.fill();}
+  else{const tw=.05+.09*(.5+.5*Math.sin(T*2+i));
+   x.fillStyle=`hsla(${h+180},50%,70%,${tw})`;
+   x.beginPath();x.arc(px,py,1.1,0,7);x.fill();}
+ }
+ glow(0,0,s*.08,h,.3);
+}
+
+function sc6(s,h){ // growing connections
+ const P=((T*.12)%1);
+ x.lineWidth=1;
+ for(const e of ED){
+  const g=Math.max(0,Math.min(1,(P-e.born)*4));
+  if(g<=0)continue;
+  const A=NO[e.a],B=NO[e.b];
+  const ax=(A.x-.5)*s*.9,ay=(A.y-.5)*s*.9,bx=(B.x-.5)*s*.9,by=(B.y-.5)*s*.9;
+  x.strokeStyle=`hsla(${h+e.d*300},80%,68%,${.1+g*.3})`;
+  x.beginPath();x.moveTo(ax,ay);x.lineTo(ax+(bx-ax)*g,ay+(by-ay)*g);x.stroke();
+ }
+ for(const n of NO){
+  const px=(n.x-.5)*s*.9,py=(n.y-.5)*s*.9;
+  const f=.5+.5*Math.sin(T*2+n.ph);
+  glow(px,py,s*.016,h,.18*f);
+  x.fillStyle=`hsla(${h},90%,${65+f*25}%,.85)`;
+  x.beginPath();x.arc(px,py,1.9,0,7);x.fill();
+ }
+}
+
+function sc7(s,h){ // the head / cortex
+ const n=160;
+ x.lineWidth=1.1;
+ for(let i=0;i<n;i++){
+  const a=i/n*Math.PI*2;
+  const w=.33+.045*Math.sin(a*3+T*.6)+.03*Math.sin(a*7-T*.9);
+  const r1=s*w, r2=s*(w-.085-.02*Math.sin(a*5+T));
+  const px=Math.cos(a)*r1,py=Math.sin(a)*r1*1.08;
+  const qx=Math.cos(a)*r2,qy=Math.sin(a)*r2*1.08;
+  const f=.5+.5*Math.sin(T*2.2-a*4+i*.1);
+  x.strokeStyle=`hsla(${h+a*18},85%,${55+f*25}%,${.12+f*.35})`;
+  x.beginPath();x.moveTo(px,py);x.lineTo(qx,qy);x.stroke();
+  if(f>.93){glow(px,py,s*.035,h+60,.4);}
+ }
+ // inner web
+ for(let i=0;i<70;i++){
+  const a=T*.08+i*2.399963, r=Math.sqrt(i/70)*s*.22;
+  const px=Math.cos(a)*r,py=Math.sin(a)*r;
+  const f=.5+.5*Math.sin(T*1.7+i*.6);
+  x.fillStyle=`hsla(${h+50},90%,85%,${.15+f*.5})`;
+  x.beginPath();x.arc(px,py,1.6,0,7);x.fill();
+  if(i>0){const a2=T*.08+(i-1)*2.399963,r2=Math.sqrt((i-1)/70)*s*.22;
+   x.strokeStyle=`hsla(${h+50},90%,80%,${.05+f*.12})`;
+   x.beginPath();x.moveTo(px,py);x.lineTo(Math.cos(a2)*r2,Math.sin(a2)*r2);x.stroke();}
+ }
+ glow(0,0,s*.16,h+40,.22+.08*Math.sin(T*1.3));
+}
+frame();
+</script>
+</body>
+</html>
