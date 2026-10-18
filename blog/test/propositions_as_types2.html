@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Propositions as Types — seen, not said</title>
+<style>
+  :root{
+    --bg:#07070c;
+    --ink:#f2f0ff;
+    --dim:#6f6a8d;
+    --a:#6ee7ff;   /* cyan  - types / spaces */
+    --b:#ff7ab6;   /* pink  - terms / points */
+    --c:#ffd36e;   /* gold  - paths / proofs */
+    --d:#9d7bff;   /* violet- higher structure */
+    --e:#7dffa8;   /* green - truth / yes */
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(1200px 800px at 20% -10%, #171034 0%, transparent 60%),
+      radial-gradient(1000px 700px at 90% 110%, #0b2530 0%, transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  #stage{position:fixed;inset:0;display:grid;place-items:center}
+  .slide{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:28px;
+    opacity:0;transform:scale(.985) translateY(14px);
+    transition:opacity .6s cubic-bezier(.2,.7,.2,1), transform .6s cubic-bezier(.2,.7,.2,1);
+    pointer-events:none;
+    padding:40px;
+  }
+  .slide.on{opacity:1;transform:none;pointer-events:auto}
+  canvas{display:block;border-radius:18px}
+  .cap{
+    font-size:clamp(14px,1.5vw,20px);
+    letter-spacing:.14em;text-transform:uppercase;
+    color:var(--dim);
+    text-align:center;
+    min-height:1.4em;
+  }
+  .big{
+    font-size:clamp(22px,3.4vw,46px);
+    font-weight:600;letter-spacing:-.01em;text-align:center;
+    line-height:1.15;
+  }
+  .glyphrow{display:flex;align-items:center;justify-content:center;gap:clamp(18px,4vw,64px);flex-wrap:wrap}
+  .tok{font-size:clamp(28px,4.4vw,64px);font-weight:300;line-height:1}
+  .a{color:var(--a)} .b{color:var(--b)} .c{color:var(--c)} .d{color:var(--d)} .e{color:var(--e)}
+  .muted{color:var(--dim)}
+  /* progress */
+  #bar{position:fixed;left:0;top:0;height:2px;background:linear-gradient(90deg,var(--a),var(--d),var(--b));width:0;transition:width .5s ease;z-index:50}
+  #dots{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:50}
+  .dot{width:7px;height:7px;border-radius:50%;background:#2a2740;transition:.3s;cursor:pointer}
+  .dot.on{background:var(--c);transform:scale(1.35)}
+  #hint{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);color:#3b3756;font-size:12px;letter-spacing:.2em;text-transform:uppercase;z-index:50}
+  .fadeup{animation:fu .8s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes fu{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  .d1{animation-delay:.15s}.d2{animation-delay:.3s}.d3{animation-delay:.45s}.d4{animation-delay:.6s}.d5{animation-delay:.75s}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+<div id="stage"></div>
+<div id="dots"></div>
+<div id="hint">← →</div>
+
+<script>
+/* ============================================================
+   tiny canvas helpers
+   ============================================================ */
+const DPR = Math.min(window.devicePixelRatio||1, 2);
+function mkCanvas(w,h){
+  const c=document.createElement('canvas');
+  c.width=w*DPR; c.height=h*DPR;
+  c.style.width=w+'px'; c.style.height=h+'px';
+  const x=c.getContext('2d'); x.scale(DPR,DPR);
+  c._w=w; c._h=h;
+  return c;
+}
+const COL={a:'#6ee7ff',b:'#ff7ab6',c:'#ffd36e',d:'#9d7bff',e:'#7dffa8',dim:'#6f6a8d',ink:'#f2f0ff'};
+function glow(x,col,blur=18){x.shadowColor=col;x.shadowBlur=blur;}
+function noglow(x){x.shadowBlur=0;}
+function dot(x,px,py,r,col,g=16){x.save();glow(x,col,g);x.fillStyle=col;x.beginPath();x.arc(px,py,r,0,7);x.fill();x.restore();}
+function lerp(a,b,t){return a+(b-a)*t}
+function ease(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2}
+
+/* blob / space outline — an organic closed curve */
+function blob(x,cx,cy,rx,ry,seed,wob,t,col,fill,lw=2.5){
+  x.save();
+  x.beginPath();
+  const N=160;
+  for(let i=0;i<=N;i++){
+    const th=i/N*Math.PI*2;
+    const r1=rx*(1+wob*Math.sin(3*th+seed+t*.5)+wob*.6*Math.sin(5*th+seed*2-t*.3));
+    const r2=ry*(1+wob*Math.cos(4*th-seed+t*.4)+wob*.5*Math.sin(2*th+seed));
+    const px=cx+Math.cos(th)*r1, py=cy+Math.sin(th)*r2;
+    i?x.lineTo(px,py):x.moveTo(px,py);
+  }
+  x.closePath();
+  if(fill){x.fillStyle=fill;x.fill();}
+  glow(x,col,14);
+  x.strokeStyle=col;x.lineWidth=lw;x.stroke();
+  x.restore();
+}
+function blobPointAt(cx,cy,rx,ry,seed,wob,t,th){
+  const r1=rx*(1+wob*Math.sin(3*th+seed+t*.5)+wob*.6*Math.sin(5*th+seed*2-t*.3));
+  const r2=ry*(1+wob*Math.cos(4*th-seed+t*.4)+wob*.5*Math.sin(2*th+seed));
+  return [cx+Math.cos(th)*r1, cy+Math.sin(th)*r2];
+}
+function bez(x,p0,p1,p2,p3,col,lw,prog=1,dash=null){
+  x.save();
+  if(dash)x.setLineDash(dash);
+  x.beginPath();
+  const N=Math.max(2,Math.floor(80*prog));
+  for(let i=0;i<=N;i++){
+    const t=(i/80);
+    if(t>prog)break;
+    const u=1-t;
+    const px=u*u*u*p0[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0];
+    const py=u*u*u*p0[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1];
+    i?x.lineTo(px,py):x.moveTo(px,py);
+  }
+  glow(x,col,12); x.strokeStyle=col; x.lineWidth=lw; x.stroke();
+  x.restore();
+}
+function arrow(x,x1,y1,x2,y2,col,lw=2,head=9,curve=0){
+  const mx=(x1+x2)/2 - (y2-y1)*curve, my=(y1+y2)/2 + (x2-x1)*curve;
+  x.save();glow(x,col,10);x.strokeStyle=col;x.lineWidth=lw;
+  x.beginPath();x.moveTo(x1,y1);x.quadraticCurveTo(mx,my,x2,y2);x.stroke();
+  const ang=Math.atan2(y2-my,x2-mx);
+  x.beginPath();x.moveTo(x2,y2);
+  x.lineTo(x2-head*Math.cos(ang-.4),y2-head*Math.sin(ang-.4));
+  x.lineTo(x2-head*Math.cos(ang+.4),y2-head*Math.sin(ang+.4));
+  x.closePath();x.fillStyle=col;x.fill();
+  x.restore();
+}
+function label(x,s,px,py,col,size=15,align='center'){
+  x.save();x.fillStyle=col;x.font=`300 ${size}px Inter, system-ui, sans-serif`;
+  x.textAlign=align;x.textBaseline='middle';
+  glow(x,col,8);x.fillText(s,px,py);x.restore();
+}
+
+/* ============================================================
+   slide registry
+   ============================================================ */
+const slides=[];
+function slide(builder){slides.push(builder)}
+
+const stage=document.getElementById('stage');
+
+/* ---------- helper to build a standard slide shell ---------- */
+function shell(capTop, capBottom, canvasW, canvasH, draw){
+  const el=document.createElement('div'); el.className='slide';
+  if(capTop){const t=document.createElement('div');t.className='cap fadeup';t.innerHTML=capTop;el.appendChild(t);}
+  const cv=mkCanvas(canvasW,canvasH); el.appendChild(cv);
+  if(capBottom){const b=document.createElement('div');b.className='big fadeup d2';b.innerHTML=capBottom;el.appendChild(b);}
+  el._draw=draw; el._cv=cv;
+  return el;
+}
+const W=Math.min(980, window.innerWidth-80);
+const H=Math.min(480, window.innerHeight-300);
+
+/* ============================================================
+   SLIDE 1 — title: a shape breathing
+   ============================================================ */
+slide(()=>{
+  const el=shell(null,null,W,H,(x,t,c)=>{
+    x.clearRect(0,0,c._w,c._h);
+    const cx=c._w/2, cy=c._h/2;
+    for(let k=0;k<3;k++){
+      blob(x,cx,cy,120+k*46,88+k*34,k*2.1,0.07,t*(1+k*.2),[COL.a,COL.d,COL.b][k],null,1.4+(2-k)*.5);
+    }
+    const n=7;
+    for(let i=0;i<n;i++){
+      const th=t*.35+i/n*Math.PI*2;
+      const [px,py]=blobPointAt(cx,cy,120,88,0,0.07,t,th);
+      dot(x,px,py,4,COL.c,14);
+    }
+  });
+  const h=document.createElement('div');
+  h.className='big fadeup d2';
+  h.innerHTML=`<span class="a">TYPE</span> <span class="muted">=</span> <span class="d">SPACE</span>`;
+  const h2=document.createElement('div');
+  h2.className='cap fadeup d3';
+  h2.innerHTML=`homotopy type theory · a picture book`;
+  el.appendChild(h); el.appendChild(h2);
+  return el;
+});
+
+/* ============================================================
+   SLIDE 2 — a type is a bag of points (terms)
+   ============================================================ */
+slide(()=>{
+  const pts=[[-70,-30],[20,-60],[80,10],[-30,50],[50,60],[-90,25]];
+  const el=shell('a type', `<span class="a">A</span> &nbsp;<span class="muted">is a space.</span>&nbsp; its <span class="b">points</span> are its terms.`, W,H,(x,t,c)=>{
+    x.clearRect(0,0,c._w,c._h);
+    const cx=c._w/2, cy=c._h/2;
+    blob(x,cx,cy,160,110,1.2,0.05,t*.6,COL.a,'rgba(110,231,255,.05)');
+    label(x,'A',cx-190,cy-100,COL.a,30);
+    pts.forEach((p,i)=>{
+      const w=Math.sin(t*.8+i)*3;
+      dot(x,cx+p[0]+w,cy+p[1]+w*.6,7,COL.b,20);
+      label(x,['a','b','c','d','e','f'][i],cx+p[0]+16,cy+p[1]-14,COL.b,15);
+    });
+  });
+  return el;
+});
+
+/* ============================================================
+   SLIDE 3 — the dictionary (the core pun)
+   ============================================================ */
+slide(()=>{
+  const el=document.createElement('div'); el.className='slide';
+  const rows=[
+    ['proposition','P','type','A'],
+    ['proof of P','⊢ P','point of A','a : A'],
+    ['P is true','','A is <span class="e">inhabited</span>','●'],
+    ['P is false','','A is <span class="muted">empty</span>','∅'],
+  ];
+  const wrap=document.createElement('div');
+  wrap.style.cssText='display:grid;grid-template-columns:auto 60px auto;gap:18px 34px;align-items:center;font-size:clamp(16px,2.2vw,30px);font-weight:300';
+  rows.forEach((r,i)=>{
+    const L=document.createElement('div');
+    L.className='fadeup d'+(i+1);
+    L.style.cssText='text-align:right;color:#f2f0ff';
+    L.innerHTML=`${r[0]} ${r[1]?`<span class="muted" style="font-size:.8em"> ${r[1]}</span>`:''}`;
+    const M=document.createElement('div');
+    M.className='fadeup d'+(i+1);
+    M.style.cssText='text-align:center;color:#ffd36e;font-size:1.1em';
+    M.textContent='≡';
+    const R=document.createElement('div');
+    R.className='fadeup d'+(i+1);
+    R.style.cssText='text-align:left;color:#6ee7ff';
+    R.innerHTML=`${r[2]} ${r[3]?`<span class="muted" style="font-size:.8em"> ${r[3]}</span>`:''}`;
+    wrap.append(L,M,R);
+  });
+  const cap=document.createElement('div');
+  cap.className='cap fadeup'; cap.textContent='one dictionary. that is the whole trick.';
+  el.append(cap,wrap);
+  return el;
+});
+
+/* ============================================================
+   SLIDE 4 — AND = product (pairs)
+   ============================================================ */
+slide(()=>{
+  const el=shell('P <span style="color:#ffd36e">AND</span> Q',
+    `<span class="a">A</span> <span class="c">×</span> <span class="b">B</span> &nbsp;<span class="muted">— a proof is a</span> <span class="e">pair</span>`,
+    W,H,(x,t,c)=>{
+    x.clearRect(0,0,c._w,c._h);
+    const cy=c._h/2;
+    const ax=c._w*0.18, bx=c._w*0.5, px=c._w*0.82;
+    blob(x,ax,cy,70,70,0.4,0.05,t*.5,COL.a,'rgba(110,231,255,.05)');
+    blob(x,bx,cy,70,70,2.4,0.05,t*.5,COL.b,'rgba(255,122,182,.05)');
+    label(x,'A',ax,cy-95,COL.a,22); label(x,'B',bx,cy-95,COL.b,22);
+    label(x,'A × B',px,cy-95,COL.e,22);
+    // grid of pairs
+    x.save();
+    glow(x,COL.e,8); x.strokeStyle='rgba(125,255,168,.35)'; x.lineWidth=1;
+    for(let i=0;i<4;i++){
+      x.beginPath();x.moveTo(px-52+i*35,cy-52);x.lineTo(px-52+i*35,cy+52);x.stroke();
+      x.beginPath();x.moveTo(px-52,cy-52+i*35);x.lineTo(px+52,cy-52+i*35);x.stroke();
+    }
+    x.restore();
+    const ap=[[-30,-20],[25,15],[0,40]], bp=[[-25,25],[30,-25],[-5,-40]];
+    ap.forEach(p=>dot(x,ax+p[0],cy+p[1],6,COL.a,16));
+    bp.forEach(p=>dot(x,bx+p[0],cy+p[1],6,COL.b,16));
+    // animated chosen pair
+    const i=Math.floor(t*.6)%3, j=Math.floor(t*.6*1.37)%3;
+    const u=(t*.6)%1;
+    dot(x,ax+ap[i][0],cy+ap[i][1],10,COL.c,24);
+    dot(x,bx+bp[j][0],cy+bp[j][1],10,COL.c,24);
+    const tx=px-52+(i+.5)*(104/3), ty=cy-52+(j+.5)*(104/3);
+    arrow(x,ax+ap[i][0],cy+ap[i][1],tx,ty,'rgba(255,211,110,.45)',1.5,7,-.12);
+    arrow(x,bx+bp[j][0],cy+bp[j][1],tx,ty,'rgba(255,211,110,.45)',1.5,7,.12);
+    dot(x,tx,ty,7+Math.sin(u*6.28)*1.5,COL.e,20);
+    label(x,'(a , b)',tx,ty+28,COL.e,14);
+  });
+  return el;
+});
+
+/* ============================================================
+   SLIDE 5 — OR = sum (disjoint union)
+   ============================================================ */
+slide(()=>{
+  const el=shell('P <span style="color:#ffd36e">OR</span> Q',
+    `<span class="a">A</span> <span class="c">+</span> <span class="b">B</span> &nbsp;<span class="muted">— two islands, side by side, tagged</span>`,
+    W,H,(x,t,c)=>{
+    x.clearRect(0,0,c._w,c._h);
+    const cy=c._h/2;
+    const ax=c._w*0.20, bx=c._w*0.46, px=c._w*0.78;
+    blob(x,ax,cy,58,58,0.4,0.05,t*.5,COL.a,'rgba(110,231,255,.05)');
+    blob(x,bx,cy,58,58,2.4,0.05,t*.5,COL.b,'rgba(255,122,182,.05)');
+    label(x,'A',ax,cy-82,COL.a,20); label(x,'B',bx,cy-82,COL.b,20);
+    label(x,'A + B',px,cy-110,COL.e,22);
+    // the union: two blobs sitting in one dashed boundary, NOT merged
+    x.save(); x.setLineDash([6,8]);
+    blob(x,px,cy,140,86,1.1,0.03,t*.3,'rgba(125,255,168,.5)',null,1.6);
+    x.restore();
+    const o=Math.sin(t*.7)*6;
+    blob(x,px-62,cy+o,46,46,0.4,0.05,t*.5,COL.a,'rgba(110,231,255,.07)');
+    blob(x,px+62,cy-o,46,46,2.4,0.05,t*.5,COL.b,'rgba(255,122,182,.07)');
+    label(x,'inl',px-62,cy+o,'rgba(110,231,255,.7)',14);
+    label(x,'inr',px+62,cy-o,'rgba(255,122,182,.7)',14);
+    arrow(x,ax+62,cy-30,px-104,cy-16,'rgba(110,231,255,.35)',1.5,7,-.1);
+    arrow(x,bx+62,cy+30,px+20,cy+34,'rgba(255,122,182,.35)',1.5,7,.1);
+  });
+  return el;
+});
+
+/* ============================================================
+   SLIDE 6 — IMPLIES = function (a machine / arrows)
+   ============================================================ */
+slide(()=>{
+  const el=shell('P <span style="color:#ffd36e">IMPLIES</span> Q',
+    `<span class="a">A</span> <span class="c">→</span> <span class="b">B</span> &nbsp;<span class="muted">— a machine turning every</span> <span class="a">a</span> <span class="muted">into some</span> <span class="b">b</span>`,
+    W,H,(x,t,c)=>{
+    x.clearRect(0,0,c._w,c._h);
+    const cy=c._h/2;
+    const ax=c._w*0.25, bx=c._w*0.75;
+    blob(x,ax,cy,92,118,0.4,0.05,t*.5,COL.a,'rgba(110,231,255,.05)');
+    blob(x,bx,cy,92,118,2.4,0.05,t*.5,COL.b,'rgba(255,122,182,.05)');
+    label(x,'A',ax,cy-146,COL.a,22); label(x,'B',bx,cy-146,COL.b,22);
+    const src=[[-20,-70],[25,-30],[-30,10],[15,50],[-10,88]];
+    const dst=[[-10,-60],[20,-10],[20,-10],[-15,45],[10,80]];
+    src.forEach((p,i)=>{
+      const x1=ax+p[0], y1=cy+p[1], x2=bx+dst[i][0], y2=cy+dst[i][1];
+      const phase=(t*.5+i*.18)%1;
+      arrow(x,x1,y1,x2,y2,'rgba(255,211,110,.25)',1.4,7,-.06);
+      dot(x,x1,y1,6,COL.a,14);
+      dot(x,x2,y2,6,COL.b,14);
+      // travelling particle
+      const mx=(x1+x2)/2+(y2-y1)*.06, my=(y1+y2)/2-(x2-x1)*.06;
+      const u=ease(phase), v=1-u;
+      const tx=v*v*x1+2*v*u*mx+u*u*x2, ty=v*v*y1+2*v*u*my+u*u*y2;
+      dot(x,tx,ty,4.5,COL.c,16);
+    });
+    label(x,'f',c._w/2,cy-146,COL.c,24);
+  });
+  return el;
+});
+
+/* ============================================================
+   SLIDE 7 — FALSE = empty type;  NOT P = P -> 0
+   ============================================================ */
+slide(()=>{
+  const el=shell('<span style="color:#ffd36e">FALSE</span> &nbsp;·&nbsp; <span style="color:#ffd36e">NOT</span>',
+    `<span class="muted">nothing inside.</span> <span class="b">¬A</span> <span class="muted">= a machine</span> <span class="a">A</span> <span class="c">→</span> <span class="muted">∅</span>`,
+    
+    W,H,(x,t,c)=>{
+    x.clearRect(0,0,c._w,c._h);
+    const cy=c._h/2;
+    const ax=c._w*0.26, bx=c._w*0.72;
+
+    // left: an inhabited type A
+    blob(x,ax,cy,88,100,0.4,0.05,t*.5,COL.a,'rgba(110,231,255,.05)');
+    label(x,'A',ax,cy-128,COL.a,22);
+    const src=[[-30,-50],[20,-10],[-15,40],[30,65]];
+    src.forEach((p,i)=>dot(x,ax+p[0],cy+p[1],6,COL.b,16));
+
+    // right: the EMPTY type — a hollow dashed ring with a slow void swirl
+    x.save(); x.setLineDash([5,9]); x.lineDashOffset=-t*18;
+    blob(x,bx,cy,88,100,2.0,0.04,t*.35,'rgba(111,106,141,.85)',null,1.8);
+    x.restore();
+    label(x,'∅',bx,cy,'rgba(111,106,141,.6)',54);
+    label(x,'0',bx,cy-128,COL.dim,22);
+
+    // arrows that start, reach the boundary, and dissolve — nothing lands
+    src.forEach((p,i)=>{
+      const x1=ax+p[0], y1=cy+p[1];
+      const th=(i/src.length)*Math.PI*2+t*.2;
+      const [ex,ey]=blobPointAt(bx,cy,88,100,2.0,0.04,t*.35,th);
+      const phase=(t*.45+i*.25)%1;
+      const u=ease(Math.min(1,phase*1.35));
+      const fade=1-Math.max(0,(phase-0.74)/0.26);
+      bez(x,[x1,y1],[x1+90,y1-30],[ex-90,ey+20],[ex,ey],
+          `rgba(255,211,110,${0.22*fade})`,1.4,u);
+      if(fade>0.05){
+        const mxp=[x1,y1],m1=[x1+90,y1-30],m2=[ex-90,ey+20],m3=[ex,ey];
+        const v=1-u;
+        const px=v*v*v*mxp[0]+3*v*v*u*m1[0]+3*v*u*u*m2[0]+u*u*u*m3[0];
+        const py=v*v*v*mxp[1]+3*v*v*u*m1[1]+3*v*u*u*m2[1]+u*u*u*m3[1];
+        dot(x,px,py,4.5*fade,COL.c,16);
+      }
+    });
+    label(x,'¬A  =  A → 0',c._w/2,c._h-24,COL.dim,15);
+  });
+  return el;
+});
+
+/* ============================================================
+   SLIDE 8 — FOR ALL = dependent function (Π): a varying fiber
+   ============================================================ */
+slide(()=>{
+  const el=shell('<span style="color:#ffd36e">FOR ALL</span> x <span class="muted">in</span> A',
+    `<span class="d">Π</span> <span class="muted">— for</span> <span class="b">each</span> <span class="muted">point of</span> <span class="a">A</span><span class="muted">, a point of its own</span> <span class="d">B(x)</span>`,
+    W,H,(x,t,c)=>{
+    x.clearRect(0,0,c._w,c._h);
+    const baseY=c._h-70, x0=c._w*0.14, x1=c._w*0.86;
+
+    // base line = the type A
+    x.save(); glow(x,COL.a,14); x.strokeStyle=COL.a; x.lineWidth=3;
+    x.beginPath(); x.moveTo(x0,baseY); x.lineTo(x1,baseY); x.stroke(); x.restore();
+    label(x,'A',x1+22,baseY,COL.a,22);
+
+    // fibers of varying size sitting over each point
+    const N=9;
+    for(let i=0;i<N;i++){
+      const u=i/(N-1);
+      const px=lerp(x0,x1,u);
+      const hgt=70+55*Math.sin(u*3.1+ t*.35)+28*Math.sin(u*7.3-t*.2);
+      const cyF=baseY-20-hgt/2;
+      // the fiber B(x) as a thin vertical lens
+      blob(x,px,cyF,15,hgt/2,u*5+1,0.12,t*.6,'rgba(157,123,255,.75)','rgba(157,123,255,.07)',1.4);
+      dot(x,px,baseY,5,COL.a,14);
+      // the chosen point in that fiber = the value of the dependent function
+      const sel=cyF+Math.sin(t*.9+u*4.2)*(hgt/2-10);
+      dot(x,px,sel,6,COL.c,18);
+    }
+    // the section curve threading all chosen points
+    x.save(); glow(x,COL.c,12); x.strokeStyle='rgba(255,211,110,.55)'; x.lineWidth=2;
+    x.beginPath();
+    for(let i=0;i<=120;i++){
+      const u=i/120, px=lerp(x0,x1,u);
+      const hgt=70+55*Math.sin(u*3.1+t*.35)+28*Math.sin(u*7.3-t*.2);
+      const cyF=baseY-20-hgt/2;
+      const sel=cyF+Math.sin(t*.9+u*4.2)*(hgt/2-10);
+      i?x.lineTo(px,sel):x.moveTo(px,sel);
+    }
+    x.stroke(); x.restore();
+    label(x,'B(x)',x0-10,baseY-150,COL.d,18,'right');
+    label(x,'a proof = one unbroken thread',c._w/2,26,COL.dim,14);
+  });
+  return el;
+});
+
+/* ============================================================
+   SLIDE 9 — THERE EXISTS = dependent pair (Σ): one point, one fiber
+   ============================================================ */
+slide(()=>{
+  const el=shell('<span style="color:#ffd36e">THERE EXISTS</span> x <span class="muted">in</span> A',
+    `<span class="e">Σ</span> <span class="muted">— one</span> <span class="a">witness</span><span class="muted">, plus a point above it</span>`,
+    W,H,(x,t,c)=>{
+    x.clearRect(0,0,c._w,c._h);
+    const baseY=c._h-70, x0=c._w*0.14, x1=c._w*0.86;
+    x.save(); glow(x,COL.a,14); x.strokeStyle=COL.a; x.lineWidth=3;
+    x.beginPath(); x.moveTo(x0,baseY); x.lineTo(x1,baseY); x.stroke(); x.restore();
+    label(x,'A',x1+22,baseY,COL.a,22);
+
+    const pick=(Math.sin(t*.35)*0.5+0.5);
+    const N=9;
+    for(let i=0;i<N;i++){
+      const u=i/(N-1), px=lerp(x0,x1,u);
+      const hgt=70+55*Math.sin(u*3.1+t*.35)+28*Math.sin(u*7.3-t*.2);
+      const cyF=baseY-20-hgt/2;
+      const near=1-Math.min(1,Math.abs(u-pick)*5.2);
+      const alpha=0.12+0.65*Math.max(0,near);
+      blob(x,px,cyF,15,hgt/2,u*5+1,0.12,t*.6,`rgba(157,123,255,${alpha})`,
+           `rgba(157,123,255,${0.04+0.09*Math.max(0,near)})`,1.4);
+      dot(x,px,baseY,4.5,`rgba(110,231,255,${0.25+0.7*Math.max(0,near)})`,12);
+    }
+    // the single chosen witness + its point
+    const px=lerp(x0,x1,pick);
+    const hgt=70+55*Math.sin(pick*3.1+t*.35)+28*Math.sin(pick*7.3-t*.2);
+    const cyF=baseY-20-hgt/2;
+    const sel=cyF+Math.sin(t*1.1)*(hgt/2-12);
+    dot(x,px,baseY,8,COL.a,22);
+    dot(x,px,sel,8,COL.e,24);
+    x.save(); x.setLineDash([3,5]); glow(x,COL.e,10);
+    x.strokeStyle='rgba(125,255,168,.5)'; x.lineWidth=1.5;
+    x.beginPath(); x.moveTo(px,baseY); x.lineTo(px,sel); x.stroke(); x.restore();
+    label(x,'( a , proof )',px,sel-26,COL.e,16);
+    label(x,'just one is enough',c._w/2,26,COL.dim,14);
+  });
+  return el;
+});
+
+/* ============================================================
+   SLIDE 10 — THIS is a fibration: the whole bundle, tilted
+   ============================================================ */
+slide(()=>{
+  const el=shell('<span style="color:#ffd36e">THE BUNDLE</span>',
+    `<span class="muted">all fibers at once =</span> <span class="d">total space</span><span class="muted">, projecting</span> <span class="c">down</span> <span class="muted">to</span> <span class="a">A</span>`,
+    W,H,(x,t,c)=>{
+    x.clearRect(0,0,c._w,c._h);
+    const baseY=c._h-58, x0=c._w*0.16, x1=c._w*0.84;
+
+    // total space: an envelope wrapping all fibers
+    x.save();
+    x.beginPath();
+    for(let i=0;i<=120;i++){
+      const u=i/120, px=lerp(x0,x1,u);
+      const hgt=78+50*Math.sin(u*3.1+t*.3);
+      i?x.lineTo(px,baseY-26-hgt):x.moveTo(px,baseY-26-hgt);
+    }
+    for(let i=120;i>=0;i--){
+      const u=i/120, px=lerp(x0,x1,u);
+      x.lineTo(px,baseY-26);
+    }
+    x.closePath();
+    x.fillStyle='rgba(157,123,255,.07)'; x.fill();
+    glow(x,COL.d,14); x.strokeStyle='rgba(157,123,255,.75)'; x.lineWidth=2; x.stroke();
+    x.restore();
+    label(x,'E',x0-18,baseY-120,COL.d,24,'right');
+
+    // fibers
+    const N=13;
+    for(let i=0;i<N;i++){
+      const u=i/(N-1), px=lerp(x0,x1,u);
+      const hgt=78+50*Math.sin(u*3.1+t*.3);
+      x.save(); glow(x,COL.d,8);
+      x.strokeStyle='rgba(157,123,255,.4)'; x.lineWidth=1.2;
+      x.beginPath(); x.moveTo(px,baseY-26); x.lineTo(px,baseY-26-hgt); x.stroke(); x.restore();
+      dot(x,px,baseY,4,COL.a,12);
+      // falling particles: everything upstairs lands on its own point downstairs
+      for(let k=0;k<2;k++){
+        const ph=(t*.5+i*.11+k*.5)%1;
+        const yy=lerp(baseY-26-hgt,baseY,ease(ph));
+        dot(x,px,yy,3.2,COL.c,12);
+      }
+    }
+    // base
+    x.save(); glow(x,COL.a,16); x.strokeStyle=COL.a; x.lineWidth=3.5;
+    x.beginPath(); x.moveTo(x0,baseY); x.lineTo(x1,baseY); x.stroke(); x.restore();
+    label(x,'A',x1+22,baseY,COL.a,24);
+    arrow(x,c._w/2+150,baseY-110,c._w/2+150,baseY-14,COL.c,2,10,0);
+    label(x,'π',c._w/2+168,baseY-62,COL.c,22);
+    label(x,'a fibration — nothing more than this picture',c._w/2,24,COL.dim,14);
+  });
+  return el;
+});
+
+/* ============================================================
+   SLIDE 11 — EQUALITY = a PATH
+   ============================================================ */
+slide(()=>{
+  const el=shell('<span style="color:#ffd36e">a = b</span>',
+    `<span class="muted">a proof of equality is a</span> <span class="c">path</span> <span class="muted">from</span> <span class="b">a</span> <span class="muted">to</span> <span class="b">b</span>`,
+    W,H,(x,t,c)=>{
+    x.clearRect(0,0,c._w,c._h);
+    const cx=c._w/2, cy=c._h/2;
+    blob(x,cx,cy,230,130,1.2,0.04,t*.4,COL.a,'rgba(110,231,255,.04)');
+    label(x,'A',cx-268,cy-96,COL.a,24);
+    const A=[cx-140,cy+30], B=[cx+140,cy-20];
+    dot(x,A[0],A[1],9,COL.b,22); label(x,'a',A[0],A[1]+28,COL.b,18);
+    dot(x,B[0],B[1],9,COL.b,22); label(x,'b',B[0],B[1]-28,COL.b,18);
+    const sw=Math.sin(t*.6)*40;
+    bez(x,A,[cx-60,cy-70+sw],[cx+50,cy+60-sw],B,COL.c,2.6,1);
+    const u=(t*.4)%1, v=1-u;
+    const P=[A,[cx-60,cy-70+sw],[cx+50,cy+60-sw],B];
+    const px=v*v*v*P[0][0]+3*v*v*u*P[1][0]+3*v*u*u*P[2][0]+u*u*u*P[3][0];
+    const py=v*v*v*P[0][1]+3*v*v*u*P[1][1]+3*v*u*u*P[2][1]+u*u*u*P[3][1];
+    dot(x,px,py,6,COL.e,20);
+    label(x,'p : a = b',cx,cy+118,COL.c,20);
+  });
+  return el;
+});
+
+/* ============================================================
+   SLIDE 12 — PATHS BETWEEN PATHS: homotopy, the higher floor
+   ============================================================ */
+slide(()=>{
+  const el=shell('<span style="color:#ffd36e">p = q</span>',
+    `<span class="muted">two paths can themselves be joined by a</span> <span class="d">surface</span>`,
+    W,H,(x,t,c)=>{
+    x.clearRect(0,0,c._w,c._h);
+    const cx=c._w/2, cy=c._h/2;
+    const A=[cx-180,cy+10], B=[cx+180,cy+10];
+    const up=[cx-70,cy-110],[/*unused*/];
+    const c1=[cx-70,cy-110], c2=[cx+70,cy-110];
+    const d1=[cx-70,cy+130], d2=[cx+70,cy+130];
+    // the filling surface: interpolated curves
+    for(let i=0;i<=16;i++){
+      const s=i/16;
+      const m1=[lerp(c1[0],d1[0],s),lerp(c1[1],d1[1],s)];
+      const m2=[lerp(c2[0],d2[0],s),lerp(c2[1],d2[1],s)];
+      const glowAmt=0.10+0.30*Math.max(0,Math.sin(t*1.1 - s*3.4));
+      bez(x,A,m1,m2,B,`rgba(157,123,255,${glowAmt})`,1.2,1);
+    }
+    bez(x,A,c1,c2,B,COL.c,2.8,1);
+    bez(x,A,d1,d2,B,COL.b,2.8,1);
+    dot(x,A[0],A[1],9,COL.a,22); dot(x,B[0],B[1],9,COL.a,22);
+    label(x,'a',A[0]-24,A[1],COL.a,18); label(x,'b',B[0]+24,B[1],COL.a,18);
+    label(x,'p',cx,cy-96,COL.c,20); label(x,'q',cx,cy+116,COL.b,20);
+    label(x,'h : p = q',cx+8,cy+6,COL.d,18);
+    label(x,'…and surfaces between surfaces. forever.',cx,24,COL.dim,14);
+  });
+  return el;
+});
+
+/* ============================================================
+   SLIDE 13 — the tower of levels (-2 … ∞)
+   ============================================================ */
+slide(()=>{
+  const el=shell('<span style="color:#ffd36e">HOW MUCH SPACE?</span>',
+    `<span class="muted">a type with no paths of its own is just</span> <span class="e">true</span> <span class="muted">or</span> <span class="muted">false</span>`,
+    W,H,(x,t,c)=>{
+    x.clearRect(0,0,c._w,c._h);
+    const cy=c._h/2;
+    const cols=[
+      ['∅','empty',COL.dim],
+      ['●','a point',COL.e],
+      ['● ●','a set',COL.b],
+      ['◍','a circle',COL.c],
+      ['◉','higher',COL.d],
+    ];
+    cols.forEach((col,i)=>{
+      const px=lerp(c._w*0.12,c._w*0.88,i/(cols.length-1));
+      const pulse=1+0.06*Math.sin(t*1.3+i);
+      x.save(); x.translate(px,cy-10); x.scale(pulse,pulse);
+      if(i===0){ x.setLineDash([4,7]); blob(x,0,0,44,44,1,0.04,t*.4,'rgba(111,106,141,.8)',null,1.6); }
+      if(i===1){ blob(x,0,0,44,44,2,0.04,t*.4,'rgba(125,255,168,.4)','rgba(125,255,168,.05)',1.4); dot(x,0,0,9,COL.e,22); }
+      if(i===2){ blob(x,0,0,52,44,3,0.05,t*.4,'rgba(255,122,182,.4)','rgba(255,122,182,.04)',1.4);
+                 [-24,0,24].forEach(o=>dot(x,o,Math.sin(t+o)*6,7,COL.b,18)); }
+      if(i===3){ blob(x,0,0,46,46,4,0.03,t*.4,COL.c,null,2.4);
+                 const th=t*.9; dot(x,Math.cos(th)*46,Math.sin(th)*46,6,COL.e,18); }
+      if(i===4){ for(let k=0;k<3;k++) blob(x,0,0,30+k*10,30+k*10,k*2,0.05,t*(.4+k*.2),
+                   `rgba(157,123,255,${.8-k*.2})`,null,1.8); }
+      x.restore();
+      label(x,col[1],px,cy+78,col[2],15);
+      label(x,['−2','−1','0','1','…'][i],px,cy+104,COL.dim,13);
+    });
+    x.save(); glow(x,COL.dim,8); x.strokeStyle='rgba(111,106,141,.35)'; x.lineWidth=1;
+    x.beginPath(); x.moveTo(c._w*0.08,cy+130); x.lineTo(c._w*0.92,cy+130); x.stroke(); x.restore();
+    label(x,'propositions live here',c._w*0.21,cy+154,COL.e,13);
+    label(x,'real spaces live here',c._w*0.78,cy+154,COL.d,13);
+  });
+  return el;
+});
+
+/* ============================================================
+   SLIDE 14 — finale: everything folds into one shape
+   ============================================================ */
+slide(()=>{
+  const el=shell(null,null,W,H,(x,t,c)=>{
+    x.clearRect(0,0,c._w,c._h);
+    const cx=c._w/2, cy=c._h/2;
+    for(let k=0;k<4;k++){
+      blob(x,cx,cy,70+k*48,52+k*34,k*1.7,0.06,t*(.4+k*.15),
+        ['rgba(125,255,168,.8)','rgba(255,211,110,.7)','rgba(157,123,255,.6)','rgba(110,231,255,.5)'][k],null,2.2-k*.35);
+    }
+    const n=12;
+    for(let i=0;i<n;i++){
+      const th=t*.3+i/n*Math.PI*2;
+      const [px,py]=blobPointAt(cx,cy,118,86,1.7,0.06,t*.55,th);
+      dot(x,px,py,4,COL.b,14);
+    }
+    dot(x,cx,cy,7,COL.ink,24);
+  });
+  const h=document.createElement('div');
+  h.className='big fadeup d2';
+  h.innerHTML=`<span class="muted">to prove is to</span> <span class="c">point</span><span class="muted">.</span>`;
+  const h2=document.createElement('div');
+  h2.className='cap fadeup d3';
+  h2.innerHTML='logic was geometry all along';
+  el.append(h,h2);
+  return el;
+});
+
+/* ============================================================
+   boot: mount, navigate, animate
+   ============================================================ */
+const els=slides.map(f=>{const e=f();stage.appendChild(e);return e;});
+let cur=0;
+const dotsEl=document.getElementById('dots');
+els.forEach((_,i)=>{
+  const d=document.createElement('div'); d.className='dot';
+  d.onclick=()=>go(i); dotsEl.appendChild(d);
+});
+function go(i){
+  cur=Math.max(0,Math.min(els.length-1,i));
+  els.forEach((e,k)=>{
+    e.classList.toggle('on',k===cur);
+    if(k===cur){
+      e.querySelectorAll('.fadeup').forEach(n=>{
+        n.style.animation='none'; void n.offsetWidth; n.style.animation='';
+      });
+    }
+  });
+  [...dotsEl.children].forEach((d,k)=>d.classList.toggle('on',k===cur));
+  document.getElementById('bar').style.width=((cur+1)/els.length*100)+'%';
+  document.getElementById('hint').style.opacity = cur===0?1:0;
+}
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown')go(cur+1);
+  if(e.key==='ArrowLeft'||e.key==='PageUp')go(cur-1);
+  if(e.key==='Home')go(0);
+  if(e.key==='End')go(els.length-1);
+});
+addEventListener('click',e=>{ if(e.target.classList.contains('dot'))return; go(cur+(e.clientX<innerWidth*0.28?-1:1)); });
+let touchX=0;
+addEventListener('touchstart',e=>touchX=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-touchX;
+  if(Math.abs(dx)>45) go(cur+(dx<0?1:-1));
+},{passive:true});
+
+let t0=performance.now();
+(function loop(now){
+  const t=(now-t0)/1000;
+  const e=els[cur];
+  if(e&&e._draw&&e._cv) e._draw(e._cv.getContext('2d'), t, e._cv);
+  requestAnimationFrame(loop);
+})(t0);
+
+/* responsive: rebuild canvas backing store on resize */
+let resizeTimer=null;
+addEventListener('resize',()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(()=>{
+    const nw=Math.min(980, window.innerWidth-80);
+    const nh=Math.min(480, window.innerHeight-300);
+    els.forEach(e=>{
+      const c=e._cv; if(!c) return;
+      c.width=nw*DPR; c.height=nh*DPR;
+      c.style.width=nw+'px'; c.style.height=nh+'px';
+      const x=c.getContext('2d');
+      x.setTransform(1,0,0,1,0,0);
+      x.scale(DPR,DPR);
+      c._w=nw; c._h=nh;
+    });
+  },120);
+});
+
+go(0);
+</script>
+</body>
+</html>
