@@ -538,12 +538,11 @@ const DICT=[
 const S0={A:[],one:[],
   clear(){this.A=[];this.one=[];draw();},
   demo(){this.A=[[.3,.4],[.62,.62],[.45,.26]];this.one=[[.5,.5]];draw();}};
-S0.demo();
 
 function drawS0(){
   const s=setup('c0a',300); if(!s)return; const{x,w,h}=s;
   x.clearRect(0,0,w,h);
-  const bw=Math.min(190,(w-100)/3), gap=(w-3*bw)/4, by=68, bh=150;
+  const bw=Math.max(20,Math.min(190,(w-100)/3)), gap=Math.max(4,(w-3*bw)/4), by=68, bh=150;
   const defs=[['𝟘 — unbewohnbar','R'],['𝟙 — ein Punkt','G'],['A — beliebig','A']];
   defs.forEach(([t,cc],i)=>{
     const bx=gap+(bw+gap)*i;
@@ -587,7 +586,7 @@ const S1={items:[],sp:false,
 function drawS1(){
   const s=setup('c1',340); if(!s)return; const{x,w,h}=s;
   x.clearRect(0,0,w,h);
-  const bw=Math.min(140,(w-140)/3), g=28;
+  const bw=Math.max(20,Math.min(140,(w-140)/3)), g=28;
   const Ax=g, Bx=w-g-bw, by=40, bh=100;
   const cw=bw*1.7, Cx=w/2-cw/2, cy=215, ch=92;
 
@@ -697,14 +696,12 @@ function drawS2(){
 }
 
 /* ═══════════════ 4: Σ = ∃ ═══════════════ */
-const S3={pts:[],proj:true,
+const S3={pts:[],p:true,
   clear(){this.pts=[];draw();},
   proj(){this.p=!this.p;draw();},
   scatter(){this.pts=[];
     for(let i=0;i<7;i++) this.pts.push([Math.random()*.84+.08,Math.random()*.8+.1]);
     draw();}};
-S3.p=true;
-S3.scatter();
 
 function drawS3(){
   const s=setup('c3',400); if(!s)return; const{x,w,h}=s;
@@ -833,7 +830,7 @@ const S5={n:0,set(n){this.n=n;draw();
 function drawS5(){
   const s=setup('c5',320); if(!s)return; const{x,w,h}=s;
   x.clearRect(0,0,w,h);
-  const bw=Math.min(170,(w-180)/2), g=(w-2*bw-70)/2;
+  const bw=Math.max(20,Math.min(170,(w-180)/2)), g=Math.max(4,(w-2*bw-70)/2);
   const Ax=g, Zx=g+bw+70, by=72, bh=150;
 
   box(x,Ax,by,bw,bh,col('A'),'#0b1420');
@@ -945,7 +942,7 @@ function drawS7(){
   x.clearRect(0,0,w,h);
   const t=S7.t;
 
-  const cx=w/2, cy=150, R=Math.min(118,(w-180)/2);
+  const cx=w/2, cy=150, R=Math.max(20,Math.min(118,(w-180)/2));
 
   // the type 2 as two points
   const a=[cx-R,cy], b=[cx+R,cy];
@@ -998,7 +995,7 @@ addEventListener('resize',()=>{clearTimeout(window.__rt);
   window.__rt=setTimeout(draw,120);});
 
 show(0);
-draw();
+S0.demo();
 </script>
 </body>
 </html>
