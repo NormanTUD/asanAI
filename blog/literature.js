@@ -15931,6 +15931,20 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Moravec%27s_paradox",
 		alternativetitle: "Moravec's paradox (1988)"
 	},
+	"brooks1990elephants": {
+		title: "Elephants Don't Play Chess",
+		author: "Rodney A. Brooks",
+		year: 1990,
+		url: "https://people.csail.mit.edu/brooks/papers/elephants.pdf",
+		alternativetitle: "Brooks, Elephants Don't Play Chess (1990)"
+	},
+	"brooks1986layered": {
+		title: "A Robust Layered Control System for a Mobile Robot",
+		author: "Rodney A. Brooks",
+		year: 1986,
+		url: "https://people.csail.mit.edu/brooks/papers/AIM-864.pdf",
+		alternativetitle: "Brooks, A Robust Layered Control System (1986)"
+	},
 	"sutton2019bitterlesson": {
 		title: "The Bitter Lesson",
 		author: "Richard S. Sutton",
