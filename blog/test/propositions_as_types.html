@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Propositions as Types — visuell</title>
+<style>
+:root{
+  --bg:#07080c; --bg2:#0d1017; --panel:#121724;
+  --ink:#e8ecf5; --dim:#8b94ab; --faint:#4a5268;
+  --A:#5ec8ff; --B:#ff7fb0; --C:#ffd166; --G:#6ee7a0;
+  --V:#c08cff; --O:#ff9d5c; --R:#ff5f6d;
+  --line:#1d2434;
+  --mono:'SF Mono','Fira Code','JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);
+  font:15px/1.65 -apple-system,BlinkMacSystemFont,'Inter','Segoe UI',sans-serif;
+  -webkit-font-smoothing:antialiased}
+body{background:
+  radial-gradient(1200px 700px at 15% -10%, #16203a 0%, transparent 55%),
+  radial-gradient(1000px 600px at 90% 110%, #1f1430 0%, transparent 55%),
+  var(--bg);
+  min-height:100vh}
+
+header{max-width:1180px;margin:0 auto;padding:56px 28px 20px}
+h1{font-size:clamp(26px,4.2vw,42px);font-weight:800;letter-spacing:-.025em;line-height:1.1;
+  background:linear-gradient(100deg,#fff 0%,var(--A) 38%,var(--V) 72%,var(--B) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--dim);margin-top:14px;max-width:70ch;font-size:16px}
+.sub b{color:var(--ink);font-weight:600}
+
+nav{max-width:1180px;margin:28px auto 0;padding:0 28px;
+  display:flex;gap:7px;flex-wrap:wrap}
+nav button{background:#141a28;border:1px solid var(--line);color:var(--dim);
+  padding:8px 15px;border-radius:999px;cursor:pointer;font-size:13px;
+  transition:.18s;font-weight:500}
+nav button:hover{color:var(--ink);border-color:#2c3a56;background:#1a2234}
+nav button.on{background:linear-gradient(135deg,var(--A),var(--V));
+  color:#061018;border-color:transparent;font-weight:700}
+
+main{max-width:1180px;margin:0 auto;padding:26px 28px 140px}
+section{display:none;animation:fade .45s ease}
+section.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+.card{background:linear-gradient(170deg,#121724,#0d1119);
+  border:1px solid var(--line);border-radius:20px;overflow:hidden;
+  box-shadow:0 26px 60px -24px #000;margin-bottom:26px}
+.ch{padding:22px 26px 14px;border-bottom:1px solid var(--line)}
+.ch h2{font-size:21px;font-weight:700;letter-spacing:-.015em;display:flex;
+  align-items:baseline;gap:11px;flex-wrap:wrap}
+.tag{font:600 11px var(--mono);padding:3px 9px;border-radius:6px;
+  background:#1c2538;color:var(--A);border:1px solid #2a3category}
+.ch p{color:var(--dim);margin-top:9px;font-size:14.5px;max-width:78ch}
+.cb{padding:22px 26px 26px}
+
+canvas{width:100%;display:block;border-radius:14px;background:#090c13;
+  border:1px solid #171e2d;cursor:crosshair}
+
+.ctl{display:flex;gap:9px;flex-wrap:wrap;margin:16px 0 0;align-items:center}
+.ctl button{background:#1a2132;border:1px solid #2a3348;color:var(--ink);
+  padding:8px 15px;border-radius:10px;cursor:pointer;font-size:13px;
+  font-weight:500;transition:.15s}
+.ctl button:hover{background:#243049;border-color:#3b4a6b;transform:translateY(-1px)}
+.ctl button.act{background:var(--A);color:#061018;border-color:transparent;font-weight:700}
+.ctl label{color:var(--dim);font-size:12.5px;display:flex;align-items:center;gap:7px}
+.ctl input[type=range]{accent-color:var(--A);width:130px}
+
+.note{margin-top:17px;padding:15px 18px;background:#0e1420;
+  border-left:3px solid var(--A);border-radius:0 11px 11px 0;
+  color:var(--dim);font-size:14px;line-height:1.7}
+.note b{color:var(--ink)}
+.note.g{border-left-color:var(--G)}
+.note.o{border-left-color:var(--O)}
+.note.v{border-left-color:var(--V)}
+.note.r{border-left-color:var(--R)}
+
+code{font:13px var(--mono);background:#1a2232;padding:2px 7px;
+  border-radius:5px;color:var(--C);border:1px solid #242e42}
+.blk{font:13.5px/1.9 var(--mono);background:#0b0f18;border:1px solid #1a2130;
+  border-radius:12px;padding:16px 19px;margin:15px 0;overflow-x:auto;color:#c9d4e8}
+.blk .k{color:var(--V)}.blk .t{color:var(--A)}.blk .c{color:var(--faint)}
+.blk .s{color:var(--G)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13.5px}
+th,td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--A);font-weight:600;font-size:12px;text-transform:uppercase;
+  letter-spacing:.07em}
+td{color:var(--dim)}td:first-child{font-family:var(--mono);color:var(--C)}
+tr:hover td{background:#0f1420;color:var(--ink)}
+
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:13px;font-size:12.5px;
+  color:var(--dim)}
+.legend span{display:flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+.rdot{display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--G);margin-right:7px;vertical-align:middle;
+  box-shadow:0 0 8px var(--G)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Propositions als Typen — zum Anfassen</h1>
+  <p class="sub">
+    Ein Typ ist ein <b>Raum</b>. Ein Beweis ist ein <b>Punkt</b>.
+    Eine Typfamilie ist eine <b>Faserung</b>. <code>Σ</code> ist der Totalraum,
+    <code>Π</code> der Raum der Sektionen. Klick dich durch — alles ist interaktiv.
+  </p>
+</header>
+
+<nav id="nav"></nav>
+
+<main>
+
+<!-- ============ 1 ============ -->
+<section id="s0">
+  <div class="card">
+    <div class="ch">
+      <h2>Das Wörterbuch <span class="tag">Table 1, HoTT Book</span></h2>
+      <p>Drei Lesarten derselben Syntax. Fahr über eine Zeile — die Spalten
+         leuchten synchron.</p>
+    </div>
+    <div class="cb">
+      <table id="dict"></table>
+      <div class="note v">
+        <b>Die drei interessanten Zeilen:</b> <code>B(x)</code> = Faserung,
+        <code>Σ</code> = Totalraum, <code>Π</code> = Raum der Sektionen.
+        Daraus folgt alles andere — besonders, warum <code>∀</code> stärker ist
+        als „für jedes gibt's einen".
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ch">
+      <h2>Ein Typ ist ein Raum <span class="tag">Punkte = Beweise</span></h2>
+      <p>Klick in die Boxen, um Punkte zu setzen. <code>𝟘</code> lässt sich
+         nicht befüllen — es hat keine Konstruktoren.</p>
+    </div>
+    <div class="cb">
+      <canvas id="c0a" height="300"></canvas>
+      <div class="ctl">
+        <button onclick="S0.clear()">Leeren</button>
+        <button onclick="S0.demo()">Beispielpunkte</button>
+      </div>
+      <div class="note">
+        <span class="rdot"></span>
+        <b>𝟘</b> ist unbewohnbar → <code>⊥</code>. <b>𝟙</b> hat genau einen Punkt
+        → <code>⊤</code>. <b>Alles andere</b> ist eine Proposition, die *mehrere*
+        Beweise haben kann — und genau das ist der Bruch mit klassischer Logik.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s1">
+  <div class="card">
+    <div class="ch">
+      <h2>A + B ist das „oder" <span class="tag">coproduct</span></h2>
+      <p>Zwei disjunkte Kopien, nebeneinander. Die Konstruktoren
+         <code>inl</code> und <code>inr</code> schieben Punkte hinein.
+         Nichts vermischt sich.</p>
+    </div>
+    <div class="cb">
+      <canvas id="c1" height="340"></canvas>
+      <div class="ctl">
+        <button onclick="S1.inl()">inl(a) — wähle links</button>
+        <button onclick="S1.inr()">inr(b) — wähle rechts</button>
+        <button onclick="S1.split()" class="act">Fallunterscheidung</button>
+        <button onclick="S1.clear()">Reset</button>
+      </div>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--A)"></i>A</span>
+        <span><i class="dot" style="background:var(--B)"></i>B</span>
+        <span><i class="dot" style="background:var(--G)"></i>A+B</span>
+      </div>
+      <div class="note">
+        <b>Warum das „oder" ist:</b> Um <code>A+B</code> zu *benutzen*, musst du
+        eine Fallunterscheidung machen — genau die ∨-Eliminationsregel.
+        Um es zu *bauen*, brauchst du einen von beiden — die ∨-Introduktionsregel.
+        <br><br>
+        <b>Aber:</b> Das Induktionsprinzip ist „proof by case analysis, which
+        characterizes the disjoint union" [[11]]. Ein Element von <code>A+B</code>
+        weiß, <i>welcher</i> Zweig es war. Klassisches „oder" vergisst das.
+      </div>
+      <div class="note o">
+        <b>Darum gibt's die Truncation.</b> <code>‖A+B‖</code> vergisst den Zweig.
+        Das Buch: <code>P ∨ Q :≡ ‖P+Q‖</code> [[11]].
+        <code>𝟙+𝟙 = 𝟐</code> ist keine Proposition — es hat zwei *unterscheidbare*
+        Punkte [[11]].
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s2">
+  <div class="card">
+    <div class="ch">
+      <h2>Typfamilien sind Faserungen <span class="tag">B : A → 𝒰</span></h2>
+      <p>Zieh die Maus über die Basis <code>A</code>. Die Faser <code>B(x)</code>
+         wandert mit. Jede Faser ist ein eigener Raum.</p>
+    </div>
+    <div class="cb">
+      <canvas id="c2" height="400"></canvas>
+      <div class="ctl">
+        <button onclick="S2.mode('sin')" class="act">glatte Faserung</button>
+        <button onclick="S2.mode('jump')">springende Faserung</button>
+        <button onclick="S2.mode('empty')">teilweise leer</button>
+        <button onclick="S2.mode('const')">konstant (= A→B)</button>
+      </div>
+      <div class="note">
+        <b>Zentrale Pointe:</b> Eine Typfamilie ist ein <i>Prädikat</i>
+        <code>P(x)</code> *und* gleichzeitig eine <i>Faserung</i> über <code>A</code>.
+        Faser bewohnt ⟺ Prädikat gilt.
+        <br><br>
+        Bei „teilweise leer" siehst du: wo die Faser verschwindet, gilt
+        <code>P(x)</code> nicht. Darum kann es dort keine durchgehende
+        <code>∀</code>-Sektion geben.
+      </div>
+      <div class="note g">
+        <b>Transport.</b> Ein Pfad <code>p : x = y</code> in der Basis liefert
+        <code>p<sub>*</sub> : P(x) → P(y)</code> [[11]].
+        Das ist der Satz „equals may be substituted for equals" —
+        aber jetzt als <i>stetige Bewegung entlang der Faserung</i>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s3">
+  <div class="card">
+    <div class="ch">
+      <h2>Σ ist der Totalraum = Existenz <span class="tag">∃</span></h2>
+      <p>Klick in die Fasern. Jeder Punkt ist ein Paar <code>(a, p)</code>:
+         Zeuge + Beweis. Rechts siehst du den Totalraum als eigenen Raum.</p>
+    </div>
+    <div class="cb">
+      <canvas id="c3" height="400"></canvas>
+      <div class="ctl">
+        <button onclick="S3.clear()">Leeren</button>
+        <button onclick="S3.proj()" class="act">pr₁ projizieren</button>
+        <button onclick="S3.scatter()">zufällige Paare</button>
+      </div>
+      <div class="note">
+        <b>Das Buch:</b> „we think of a type family <code>P : A → 𝒰</code> as a
+        fibration with base space <code>A</code>, with <code>P(x)</code> being
+        the fiber over <code>x</code>, and with <code>Σ(x:A) P(x)</code> being the
+        total space of the fibration" [[11]].
+        <br><br>
+        Ein Punkt im Totalraum = <b>Position in A</b> + <b>Höhe in der Faser darüber</b>.
+        Das ist exakt die konstruktive Lesart von „es gibt ein x mit P(x)":
+        du musst den Zeugen <i>mitliefern</i>.
+      </div>
+      <div class="note o">
+        <b>Achtung — dasselbe Truncation-Problem.</b> Σ erinnert sich an den Zeugen.
+        Das Buch: „if we have an inhabitant of <code>Σ(x:A) P(x)</code>, regarded as
+        a witness of 'there exists x:A such that P(x)', then we know what the element
+        x is (it is the first projection of the given inhabitant)" [[11]].
+        <br><br>
+        Deshalb ist das propositionale ∃ die Truncation:
+        <code>∃(x:A).P(x) :≡ ‖Σ(x:A) P(x)‖</code> [[11]].
+      </div>
+      <div class="note g">
+        <b>Und genau deshalb ist das Auswahlaxiom „trivial wahr".</b>
+        Theorem 2.15.7 [[11]] sagt:
+        <div class="blk">Π(x:X) Σ(a:A(x)) P(x,a) ≃ Σ(g:Π(x:X) A(x)) Π(x:X) P(x,g(x))</div>
+        Links: „für alle x existiert a mit P(x,a)". Rechts: „es gibt eine
+        Auswahlfunktion g". Diese sind <i>äquivalent</i> — kein Axiom nötig!
+        Denn die Wahl war schon in den Daten enthalten; wir packen sie nur um.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s4">
+  <div class="card">
+    <div class="ch">
+      <h2>Π ist der Raum der Sektionen = ∀ <span class="tag">∀</span></h2>
+      <p>Eine Sektion wählt <i>stetig</i> einen Punkt in jeder Faser. Zieh am
+         Slider — die Sektion bleibt immer durchgehend. Bei einer Lücke reißt sie ab.</p>
+    </div>
+    <div class="cb">
+      <canvas id="c4" height="400"></canvas>
+      <div class="ctl">
+        <button onclick="S4.mode('smooth')" class="act">Sektion existiert</button>
+        <button onclick="S4.mode('gap')">Lücke → keine Sektion</button>
+        <button onclick="S4.randomize()">Neu würfeln</button>
+      </div>
+      <div class="note">
+        <b>Das Buch:</b> „we may refer to a dependent function
+        <code>f : Π(x:A) P(x)</code> as a <i>section</i> of the fibration
+        <code>P</code>" [[11]].
+        <br><br>
+        <b>Warum ist das stärker als „für jedes x gibt's ein Element"?</b>
+        Weil die Zuordnung eine <i>Funktion</i> sein muss — und Funktionen in der
+        Typentheorie sind automatisch „stetig": sie respektieren Pfade. Wenn zwei
+        Basispunkte durch einen Pfad verbunden sind, müssen die zugeordneten
+        Faserelemente durch einen dependent path verbunden sein.
+      </div>
+      <div class="note v">
+        <b>Π bewahrt mere propositions</b> (Example 3.6.2 [[11]]):
+        <div class="blk">isProp(P(x)) für alle x  ⟹  isProp(Π(x:A) P(x))</div>
+        Deshalb ist <code>∀</code> „harmlos": keine Truncation nötig.
+        <br><br>
+        Daraus folgt sofort: <code>¬A :≡ (A → 𝟘)</code> ist stets eine mere
+        proposition, da 𝟘 eine ist.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s5">
+  <div class="card">
+    <div class="ch">
+      <h2>Negation: A → 𝟘 <span class="tag">¬A</span></h2>
+      <p>Links ein bewohnter Typ A, rechts der leere Typ 𝟘. Versuch, eine totale
+         Funktion zu bauen — es scheitert, solange A Punkte hat.</p>
+    </div>
+    <div class="cb">
+      <canvas id="c5" height="320"></canvas>
+      <div class="ctl">
+        <button onclick="S5.set(3)">A hat 3 Punkte</button>
+        <button onclick="S5.set(1)">A hat 1 Punkt</button>
+        <button onclick="S5.set(0)" class="act">A ist leer</button>
+      </div>
+      <div class="note r">
+        <b>Deine Frage, präzisiert.</b> Du schreibst „jeder Funktor a : A → 0 ist
+        äquivalent zu der Aussage dass ¬a". Zwei Korrekturen:
+        <br><br>
+        (1) Es ist eine <b>Funktion</b>, kein Funktor. Funktoren sind in Kapitel 9
+        des Buches etwas anderes (zwischen Präkategorien) [[11]].
+        <br><br>
+        (2) Es ist nicht „äquivalent zu" — es <b>ist</b> die Definition:
+        <code>¬A :≡ A → 𝟘</code> [[11]]. Es gibt keine separate Negation in der
+        Typentheorie.
+      </div>
+      <div class="note">
+        <b>Warum kann es keine solche Funktion geben, wenn A bewohnt ist?</b>
+        Hättest du <code>a : A</code> und <code>f : A → 𝟘</code>, so wäre
+        <code>f(a) : 𝟘</code>. Aber 𝟘 hat keine Konstruktoren — es ist unbewohnbar.
+        Widerspruch.
+        <br><br>
+        Das Buch formuliert die Konstruktionsrichtung: „a witness of <code>¬A</code>
+        is a function <code>A → 𝟘</code>, which we may construct by assuming
+        <code>x : A</code> and deriving an element of <code>𝟘</code>" [[11]].
+      </div>
+      <div class="note g">
+        <b>Konstruktiver Widerspruchsbeweis ist okay!</b> Das Buch betont:
+        „this sort of 'proof by contradiction' (assume A and derive a contradiction,
+        concluding ¬A) is perfectly valid constructively: it is simply invoking the
+        <i>meaning</i> of 'negation'" [[11]].
+        <br><br>
+        <b>Nicht</b> erlaubt: ¬A annehmen, Widerspruch herleiten, A folgern.
+        Das liefert nur <code>¬¬A</code>, und es gibt „no obvious way to get from
+        ¬¬A (that is, from (A → 𝟘) → 𝟘) to A" [[11]].
+      </div>
+      <div class="note o">
+        <b>Aber ¬¬¬A → ¬A gilt!</b> (Exercise 1.11 [[11]].)
+        Negation ist auf Negationen „stabil".
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s6">
+  <div class="card">
+    <div class="ch">
+      <h2>Die Truncation-Leiter <span class="tag">n-Typen</span></h2>
+      <p>Jede Stufe hat weniger Struktur als die darüber. Klick auf eine Stufe.</p>
+    </div>
+    <div class="cb">
+      <canvas id="c6" height="360"></canvas>
+      <div class="ctl" id="ladderCtl"></div>
+      <div class="note" id="ladderNote"></div>
+      <div class="note v">
+        <b>Definition (rekursiv), Definition 7.1.1 [[11]]:</b>
+        <div class="blk"><span class="k">is-n-type</span>(X) :≡
+  <span class="c">│</span> isContr(X)                        <span class="c">// n = −2</span>
+  <span class="c">│</span> Π(x,y:X). is-(n−1)-type(x =ₓ y)   <span class="c">// n = n′+1</span></div>
+        Die Leiter ist <b>aufwärts geschlossen</b>: „if X is an n-type then X is
+        also an (n+1)-type" (Theorem 7.1.7 [[11]]).
+      </div>
+      <div class="note r">
+        <b>Die Leiter ist nicht degeneriert.</b> Das Universum <code>𝒰</code> ist
+        <i>keine</i> Menge (Example 3.1.9 [[11]]). Der Beweis: die
+        Nichtidentitäts-Äquivalenz <code>f : 𝟐 ≃ 𝟐</code> liefert via Univalenz
+        einen Pfad <code>p : 𝟐 = 𝟐</code>. Wäre <code>p = refl</code>, so wäre
+        <code>f = id</code>, also <code>0₂ = 1₂</code> — Widerspruch [[11]].
+        <br><br>
+        Und <code>Sⁿ⁺¹</code> ist kein n-Typ (Corollary 8.6.18 [[11]]).
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s7">
+  <div class="card">
+    <div class="ch">
+      <h2>Warum naives „propositions as types" scheitert <span class="tag">Thm 3.2.2</span></h2>
+      <p>Die naive Form von LEM ist <i>inkonsistent</i> mit Univalenz. Hier der
+         Mechanismus, animiert.</p>
+    </div>
+    <div class="cb">
+      <canvas id="c7" height="340"></canvas>
+      <div class="ctl">
+        <button onclick="S7.play()" class="act">▶ Widerspruch abspielen</button>
+        <button onclick="S7.reset()">Zurücksetzen</button>
+      </div>
+      <div class="note r">
+        <b>Theorem 3.2.2 [[11]]:</b> „It is not the case that for all
+        <code>A : 𝒰</code> we have <code>¬(¬A) → A</code>."
+        <br><br>
+        <b>Beweisidee:</b> Angenommen <code>f : Π(A:𝒰) (¬¬A → A)</code>. Jede Funktion
+        in der Typentheorie ist „stetig", also natürlich bzgl. Äquivalenzen. Nimm
+        <code>e : 𝟐 ≃ 𝟐</code> die Vertauschung, <code>p :≡ ua(e)</code>. Transport
+        von <code>f(𝟐)</code> entlang <code>p</code> liefert
+        <code>e(f(𝟐)(u)) = f(𝟐)(u)</code>. Aber
+        <code>Π(x:𝟐) ¬(e(x) = x)</code> — Widerspruch [[11]].
+      </div>
+      <div class="note o">
+        <b>Corollary 3.2.7 [[11]]:</b> Also auch nicht
+        <code>Π(A:𝒰) (A + ¬A)</code>.
+        <br><br>
+        <b>Remark 3.2.5 [[11]]:</b> „there can be no Hilbert-style 'choice operator'
+        which selects an element of every nonempty type. The point is that no such
+        operator can be <i>natural</i>, and under the univalence axiom, all functions
+        acting on types must be natural with respect to equivalences."
+      </div>
+      <div class="note g">
+        <b>Die Lösung:</b> beschränke auf mere propositions (3.4.1 [[11]]):
+        <div class="blk"><span class="k">LEM</span> :≡ Π(A:𝒰) (isProp(A) → (A + ¬A))</div>
+        Das ist konsistent. Der Unterschied: <code>𝟐</code> ist keine mere
+        proposition, also betrifft LEM es nicht.
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ═══════════════ utilities ═══════════════ */
+const dpr = Math.min(devicePixelRatio || 1, 2);
+function setup(id, h){
+  const c = document.getElementById(id);
+  if(!c) return null;
+  const w = c.parentElement.clientWidth;
+  c.width = w * dpr; c.height = h * dpr;
+  c.style.height = h + 'px';
+  const x = c.getContext('2d');
+  x.setTransform(dpr,0,0,dpr,0,0);
+  return {c, x, w, h};
+}
+const CS = getComputedStyle(document.documentElement);
+const col = n => CS.getPropertyValue('--'+n).trim();
+
+function dot(x,cx,cy,r,c,glow){
+  if(glow){ x.save(); x.shadowColor=c; x.shadowBlur=glow; }
+  x.beginPath(); x.arc(cx,cy,r,0,7); x.fillStyle=c; x.fill();
+  if(glow) x.restore();
+}
+function label(x,t,cx,cy,c,s,align){
+  x.fillStyle=c||col('dim'); x.font=(s||12)+'px ui-sans-serif,system-ui';
+  x.textAlign=align||'center'; x.textBaseline='middle';
+  x.fillText(t,cx,cy);
+}
+function arrow(x,x1,y1,x2,y2,c,w,dash){
+  x.save(); x.strokeStyle=c; x.lineWidth=w||1.6;
+  if(dash) x.setLineDash(dash);
+  x.beginPath(); x.moveTo(x1,y1); x.lineTo(x2,y2); x.stroke();
+  const a=Math.atan2(y2-y1,x2-x1), s=7;
+  x.setLineDash([]);
+  x.beginPath(); x.moveTo(x2,y2);
+  x.lineTo(x2-s*Math.cos(a-.4), y2-s*Math.sin(a-.4));
+  x.lineTo(x2-s*Math.cos(a+.4), y2-s*Math.sin(a+.4));
+  x.closePath(); x.fillStyle=c; x.fill(); x.restore();
+}
+function box(x,bx,by,bw,bh,c,fill,dash){
+  x.save();
+  if(fill){ x.fillStyle=fill; x.beginPath(); x.roundRect(bx,by,bw,bh,10); x.fill(); }
+  x.strokeStyle=c; x.lineWidth=1.8;
+  if(dash) x.setLineDash(dash);
+  x.beginPath(); x.roundRect(bx,by,bw,bh,10); x.stroke();
+  x.restore();
+}
+
+/* ═══════════════ nav ═══════════════ */
+const SECS=[
+  ['Wörterbuch','s0'],['A+B = oder','s1'],['Faserungen','s2'],
+  ['Σ = ∃','s3'],['Π = ∀','s4'],['Negation','s5'],
+  ['n-Typen','s6'],['LEM scheitert','s7']
+];
+const nav=document.getElementById('nav');
+SECS.forEach(([t],i)=>{
+  const b=document.createElement('button');
+  b.textContent=t; b.onclick=()=>show(i); nav.appendChild(b);
+});
+function show(i){
+  [...nav.children].forEach((b,j)=>b.classList.toggle('on',i===j));
+  SECS.forEach(([,id],j)=>
+    document.getElementById(id).classList.toggle('on',i===j));
+  setTimeout(draw,30);
+}
+
+/* ═══════════════ 1: dictionary ═══════════════ */
+const DICT=[
+  ['A','Proposition','Menge','Raum'],
+  ['a : A','Beweis','Element','Punkt'],
+  ['B(x)','Prädikat','Mengenfamilie','<b>Faserung</b>'],
+  ['𝟘, 𝟙','⊥, ⊤','∅, {∅}','∅, ∗'],
+  ['A + B','A ∨ B','disjunkte Vereinigung','Koprodukt'],
+  ['A × B','A ∧ B','Paarmenge','Produktraum'],
+  ['A → B','A ⇒ B','Funktionenmenge','Funktionenraum'],
+  ['Σ(x:A) B(x)','∃x:A. B(x)','disjunkte Summe','<b>Totalraum</b>'],
+  ['Π(x:A) B(x)','∀x:A. B(x)','Produkt','<b>Raum der Sektionen</b>'],
+  ['Id<sub>A</sub>','Gleichheit =','{(x,x)}','Pfadraum A<sup>I</sup>']
+];
+(function(){
+  const t=document.getElementById('dict');
+  t.innerHTML='<tr><th>Typ</th><th>Logik</th><th>Mengen</th><th>Homotopie</th></tr>'
+    + DICT.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('');
+})();
+
+/* ═══════════════ 1b: types as spaces ═══════════════ */
+const S0={A:[],one:[],
+  clear(){this.A=[];this.one=[];draw();},
+  demo(){this.A=[[.3,.4],[.62,.62],[.45,.26]];this.one=[[.5,.5]];draw();}};
+S0.demo();
+
+function drawS0(){
+  const s=setup('c0a',300); if(!s)return; const{x,w,h}=s;
+  x.clearRect(0,0,w,h);
+  const bw=Math.min(190,(w-100)/3), gap=(w-3*bw)/4, by=68, bh=150;
+  const defs=[['𝟘 — unbewohnbar','R'],['𝟙 — ein Punkt','G'],['A — beliebig','A']];
+  defs.forEach(([t,cc],i)=>{
+    const bx=gap+(bw+gap)*i;
+    box(x,bx,by,bw,bh,col(cc),'#0b0f18');
+    label(x,t,bx+bw/2,by-18,col(cc),13);
+    if(i===0){
+      x.save(); x.strokeStyle=col('R'); x.lineWidth=2; x.globalAlpha=.4;
+      x.beginPath(); x.moveTo(bx+22,by+22); x.lineTo(bx+bw-22,by+bh-22);
+      x.moveTo(bx+bw-22,by+22); x.lineTo(bx+22,by+bh-22); x.stroke(); x.restore();
+      label(x,'keine Konstruktoren',bx+bw/2,by+bh+22,col('faint'),11);
+    } else if(i===1){
+      S0.one.forEach(p=>dot(x,bx+p[0]*bw,by+p[1]*bh,6,col('G'),12));
+      label(x,'alle Punkte gleich',bx+bw/2,by+bh+22,col('faint'),11);
+    } else {
+      S0.A.forEach(p=>dot(x,bx+p[0]*bw,by+p[1]*bh,6,col('A'),12));
+      label(x,S0.A.length+' Punkt(e) = '+S0.A.length+' Beweis(e)',
+            bx+bw/2,by+bh+22,col('faint'),11);
+    }
+  });
+  label(x,'Ein Typ ist ein Raum · ein Beweis ist ein Punkt',w/2,h-18,col('dim'),13);
+  s.c.onclick=e=>{
+    const r=s.c.getBoundingClientRect(), mx=e.clientX-r.left, my=e.clientY-r.top;
+    for(let i=1;i<3;i++){
+      const bx=gap+(bw+gap)*i;
+      if(mx>bx&&mx<bx+bw&&my>by&&my<by+bh){
+        if(i===2) S0.A.push([(mx-bx)/bw,(my-by)/bh]);
+        if(i===1&&S0.one.length===0) S0.one.push([.5,.5]);
+        draw();
+      }
+    }
+  };
+}
+
+/* ═══════════════ 2: coproduct ═══════════════ */
+const S1={items:[],sp:false,
+  inl(){this.items.push('l');draw();},
+  inr(){this.items.push('r');draw();},
+  split(){this.sp=!this.sp;draw();},
+  clear(){this.items=[];this.sp=false;draw();}};
+
+function drawS1(){
+  const s=setup('c1',340); if(!s)return; const{x,w,h}=s;
+  x.clearRect(0,0,w,h);
+  const bw=Math.min(140,(w-140)/3), g=28;
+  const Ax=g, Bx=w-g-bw, by=40, bh=100;
+  const cw=bw*1.7, Cx=w/2-cw/2, cy=215, ch=92;
+
+  box(x,Ax,by,bw,bh,col('A'),'#0b1420');
+  label(x,'A',Ax+bw/2,by-15,col('A'),15);
+  box(x,Bx,by,bw,bh,col('B'),'#1a0f16');
+  label(x,'B',Bx+bw/2,by-15,col('B'),15);
+
+  box(x,Cx,cy,cw,ch,col('G'),'#0b1a14');
+  label(x,'A + B',w/2,cy-15,col('G'),15);
+  x.save(); x.strokeStyle=col('line'); x.setLineDash([4,4]);
+  x.beginPath(); x.moveTo(w/2,cy); x.lineTo(w/2,cy+ch); x.stroke(); x.restore();
+  label(x,'inl',Cx+cw/4,cy+ch+17,col('A'),11);
+  label(x,'inr',Cx+3*cw/4,cy+ch+17,col('B'),11);
+
+  const L=S1.items.filter(v=>v==='l').length;
+  const R=S1.items.filter(v=>v==='r').length;
+  for(let i=0;i<L;i++){
+    const px=Ax+bw*(.3+.4*(i%2)), py=by+bh*(.28+.5*(i/Math.max(L,2)));
+    dot(x,px,py,6,col('A'),10);
+    const tx=Cx+cw/4+(i-(L-1)/2)*16, ty=cy+ch*.5;
+    arrow(x,px,py,tx,ty,col('A'),1.2,[3,3]);
+    dot(x,tx,ty,5,col('A'),8);
+  }
+  for(let i=0;i<R;i++){
+    const px=Bx+bw*(.3+.4*(i%2)), py=by+bh*(.28+.5*(i/Math.max(R,2)));
+    dot(x,px,py,6,col('B'),10);
+    const tx=Cx+3*cw/4+(i-(R-1)/2)*16, ty=cy+ch*.5;
+    arrow(x,px,py,tx,ty,col('B'),1.2,[3,3]);
+    dot(x,tx,ty,5,col('B'),8);
+  }
+
+  if(S1.sp){
+    x.save(); x.globalAlpha=.85;
+    label(x,'Fallunterscheidung: jedes Element ist inl(a) ODER inr(b)',
+          w/2,h-14,col('G'),12.5);
+    x.strokeStyle=col('G'); x.lineWidth=1.4; x.setLineDash([5,4]);
+    x.beginPath(); x.moveTo(w/2,cy-6); x.lineTo(w/2,cy+ch+6); x.stroke();
+    x.restore();
+  } else {
+    label(x,'inl : A → A+B      ·      inr : B → A+B',w/2,h-14,col('faint'),12);
+  }
+}
+
+/* ═══════════════ 3: fibrations ═══════════════ */
+const S2={mode:'sin',t:.45,
+  mode(m){this.m=m;draw();
+    [...document.querySelectorAll('#s2 .ctl button')]
+      .forEach(b=>b.classList.remove('act'));
+    event.target.classList.add('act');}};
+S2.m='sin';
+
+function fiberH(m,t){
+  if(m==='sin')   return 52+30*Math.sin(t*7.2);
+  if(m==='jump')  return t<.5?34:76;
+  if(m==='empty') return (t>.42&&t<.58)?0:58;
+  return 56;
+}
+
+function drawS2(){
+  const s=setup('c2',400); if(!s)return; const{x,w,h}=s;
+  x.clearRect(0,0,w,h);
+  const bx=60, bw=w-120, by=h-62, top=58;
+
+  // base line A
+  x.strokeStyle=col('A'); x.lineWidth=2.5;
+  x.beginPath(); x.moveTo(bx,by); x.lineTo(bx+bw,by); x.stroke();
+  label(x,'A  (Basis)',bx+bw+34,by,col('A'),13);
+
+  // total space sheet
+  x.save(); x.globalAlpha=.16; x.fillStyle=col('V');
+  x.beginPath(); x.moveTo(bx,by);
+  for(let i=0;i<=80;i++){
+    const t=i/80, px=bx+t*bw, hh=fiberH(S2.m,t);
+    x.lineTo(px,by-hh);
+  }
+  x.lineTo(bx+bw,by); x.closePath(); x.fill(); x.restore();
+
+  // fibers
+  for(let i=0;i<=22;i++){
+    const t=i/22, px=bx+t*bw, hh=fiberH(S2.m,t);
+    x.save(); x.globalAlpha=hh>0?.42:.12;
+    x.strokeStyle=col('V'); x.lineWidth=1.3;
+    x.beginPath(); x.moveTo(px,by); x.lineTo(px,by-Math.max(hh,2)); x.stroke();
+    x.restore();
+    if(hh===0){ dot(x,px,by,3,col('R'),6); }
+  }
+
+  // highlighted fiber
+  const t=S2.t, px=bx+t*bw, hh=fiberH(S2.m,t);
+  x.strokeStyle=col('C'); x.lineWidth=3;
+  x.beginPath(); x.moveTo(px,by); x.lineTo(px,by-Math.max(hh,3)); x.stroke();
+  dot(x,px,by,6,col('C'),14);
+  label(x,'x',px,by+20,col('C'),13);
+  if(hh>8) label(x,'B(x)',px+34,by-hh/2,col('C'),12);
+  else     label(x,'B(x) = 0',px+46,by-16,col('R'),12);
+
+  label(x,'Σ(x:A) B(x)   (Totalraum)',w/2,top-22,col('V'),13);
+  label(x,'Faser = Wert des Prädikats · leer ⇔ Prädikat falsch',
+        w/2,h-18,col('dim'),12.5);
+
+  s.c.onmousemove=e=>{
+    const r=s.c.getBoundingClientRect();
+    S2.t=Math.max(0,Math.min(1,(e.clientX-r.left-bx)/bw));
+    draw();
+  };
+}
+
+/* ═══════════════ 4: Σ = ∃ ═══════════════ */
+const S3={pts:[],proj:true,
+  clear(){this.pts=[];draw();},
+  proj(){this.p=!this.p;draw();},
+  scatter(){this.pts=[];
+    for(let i=0;i<7;i++) this.pts.push([Math.random()*.84+.08,Math.random()*.8+.1]);
+    draw();}};
+S3.p=true;
+S3.scatter();
+
+function drawS3(){
+  const s=setup('c3',400); if(!s)return; const{x,w,h}=s;
+  x.clearRect(0,0,w,h);
+  const bx=60, bw=w-130, by=h-62;
+
+  const H=t=>50+26*Math.sin(t*6.4+.4);
+
+  // sheet
+  x.save(); x.globalAlpha=.14; x.fillStyle=col('G');
+  x.beginPath(); x.moveTo(bx,by);
+  for(let i=0;i<=80;i++){const t=i/80;x.lineTo(bx+t*bw,by-H(t));}
+  x.lineTo(bx+bw,by); x.closePath(); x.fill(); x.restore();
+
+  // fibers
+  for(let i=0;i<=24;i++){
+    const t=i/24, px=bx+t*bw;
+    x.save(); x.globalAlpha=.32; x.strokeStyle=col('G'); x.lineWidth=1.2;
+    x.beginPath(); x.moveTo(px,by); x.lineTo(px,by-H(t)); x.stroke(); x.restore();
+  }
+
+  // base
+  x.strokeStyle=col('A'); x.lineWidth=2.5;
+  x.beginPath(); x.moveTo(bx,by); x.lineTo(bx+bw,by); x.stroke();
+  label(x,'A',bx+bw+26,by,col('A'),14);
+
+  // points (a, p)
+  S3.pts.forEach(([t,u])=>{
+    const px=bx+t*bw, hh=H(t), py=by-u*hh;
+    if(S3.p){
+      arrow(x,px,py,px,by-5,col('O'),1.1,[3,3]);
+      dot(x,px,by,4.5,col('O'),8);
+    }
+    dot(x,px,py,6,col('C'),12);
+  });
+
+  label(x,'Σ(x:A) P(x)   —   jeder Punkt ist ein Paar (a, p)',
+        w/2,30,col('C'),13.5);
+  label(x,S3.p?'pr₁ : vergisst den Beweis, behält den Zeugen'
+              :'(klicke „pr₁ projizieren“)',
+        w/2,h-18,col('dim'),12.5);
+
+  s.c.onclick=e=>{
+    const r=s.c.getBoundingClientRect();
+    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    const t=(mx-bx)/bw; if(t<0||t>1) return;
+    const hh=H(t), u=(by-my)/hh;
+    if(u>0&&u<1) S3.pts.push([t,u]);
+    draw();
+  };
+}
+
+/* ═══════════════ 5: Π = ∀ ═══════════════ */
+const S4={m:'smooth',seed:[.4,.7,.3,.65,.45],
+  mode(m){this.m=m;draw();
+    [...document.querySelectorAll('#s4 .ctl button')]
+      .forEach(b=>b.classList.remove('act'));
+    event.target.classList.add('act');},
+  randomize(){this.seed=this.seed.map(()=>Math.random()*.7+.15);draw();}};
+
+function drawS4(){
+  const s=setup('c4',400); if(!s)return; const{x,w,h}=s;
+  x.clearRect(0,0,w,h);
+  const bx=60, bw=w-130, by=h-62;
+
+  const H=t=>{
+    if(S4.m==='gap'&&t>.44&&t<.56) return 0;
+    return 54+24*Math.sin(t*6.1);
+  };
+  const sec=t=>{
+    const n=S4.seed.length-1, i=Math.min(Math.floor(t*n),n-1);
+    const u=(t*n)-i, a=S4.seed[i], b=S4.seed[i+1];
+    return a+(b-a)*(u*u*(3-2*u));
+  };
+
+  // sheet
+  x.save(); x.globalAlpha=.13; x.fillStyle=col('V');
+  x.beginPath(); x.moveTo(bx,by);
+  for(let i=0;i<=90;i++){const t=i/90;x.lineTo(bx+t*bw,by-H(t));}
+  x.lineTo(bx+bw,by); x.closePath(); x.fill(); x.restore();
+
+  for(let i=0;i<=26;i++){
+    const t=i/26, px=bx+t*bw, hh=H(t);
+    x.save(); x.globalAlpha=hh>0?.3:.1;
+    x.strokeStyle=col('V'); x.lineWidth=1.2;
+    x.beginPath(); x.moveTo(px,by); x.lineTo(px,by-Math.max(hh,2)); x.stroke();
+    x.restore();
+    if(hh===0) dot(x,px,by,3,col('R'),6);
+  }
+
+  x.strokeStyle=col('A'); x.lineWidth=2.5;
+  x.beginPath(); x.moveTo(bx,by); x.lineTo(bx+bw,by); x.stroke();
+  label(x,'A',bx+bw+26,by,col('A'),14);
+
+  // the section
+  x.save();
+  x.strokeStyle=col('C'); x.lineWidth=3; x.shadowColor=col('C'); x.shadowBlur=10;
+  let started=false, broke=false;
+  x.beginPath();
+  for(let i=0;i<=120;i++){
+    const t=i/120, hh=H(t);
+    if(hh<=0){ if(started){x.stroke();started=false;broke=true;} continue; }
+    const px=bx+t*bw, py=by-sec(t)*hh;
+    if(!started){x.beginPath();x.moveTo(px,py);started=true;}
+    else x.lineTo(px,py);
+  }
+  if(started) x.stroke();
+  x.restore();
+
+  if(broke){
+    label(x,'✗ keine durchgehende Sektion — ∀ scheitert',
+          w/2,h-18,col('R'),13);
+  } else {
+    label(x,'✓ Sektion: wählt stetig einen Punkt in JEDER Faser',
+          w/2,h-18,col('G'),13);
+  }
+  label(x,'Π(x:A) P(x)   —   der Raum der Sektionen',w/2,30,col('C'),13.5);
+}
+
+/* ═══════════════ 6: ¬A = A → 𝟘 ═══════════════ */
+const S5={n:0,set(n){this.n=n;draw();
+  [...document.querySelectorAll('#s5 .ctl button')]
+    .forEach(b=>b.classList.remove('act'));
+  event.target.classList.add('act');}};
+
+function drawS5(){
+  const s=setup('c5',320); if(!s)return; const{x,w,h}=s;
+  x.clearRect(0,0,w,h);
+  const bw=Math.min(170,(w-180)/2), g=(w-2*bw-70)/2;
+  const Ax=g, Zx=g+bw+70, by=72, bh=150;
+
+  box(x,Ax,by,bw,bh,col('A'),'#0b1420');
+  label(x,'A',Ax+bw/2,by-18,col('A'),15);
+  box(x,Zx,by,bw,bh,col('R'),'#1a0d10',[6,5]);
+  label(x,'𝟘',Zx+bw/2,by-18,col('R'),15);
+
+  // 0 is empty
+  x.save(); x.strokeStyle=col('R'); x.lineWidth=2; x.globalAlpha=.35;
+  x.beginPath(); x.moveTo(Zx+22,by+22); x.lineTo(Zx+bw-22,by+bh-22);
+  x.moveTo(Zx+bw-22,by+22); x.lineTo(Zx+22,by+bh-22); x.stroke(); x.restore();
+
+  const pts=[];
+  for(let i=0;i<S5.n;i++) pts.push([.3+.4*(i%2), .25+.5*(i/Math.max(S5.n-1,1))]);
+
+  pts.forEach(([u,v],i)=>{
+    const px=Ax+u*bw, py=by+v*bh;
+    dot(x,px,py,6,col('A'),10);
+    // failed arrow
+    x.save(); x.globalAlpha=.55;
+    arrow(x,px,py,Zx+bw/2-14,by+bh/2,col('R'),1.3,[4,4]);
+    x.restore();
+    label(x,'✗',Zx+bw/2+6,by+bh/2-18-i*4,col('R'),15);
+  });
+
+  if(S5.n===0){
+    label(x,'A ist leer  →  es gibt (genau) eine Funktion A → 𝟘',
+          w/2,h-26,col('G'),13);
+    arrow(x,Ax+bw,by+bh/2,Zx,by+bh/2,col('G'),2);
+    label(x,'!',(Ax+bw+Zx)/2,by+bh/2-16,col('G'),15);
+  } else {
+    label(x,`A hat ${S5.n} Punkt(e)  →  f(a) : 𝟘  wäre nötig  →  Widerspruch`,
+          w/2,h-26,col('R'),13);
+  }
+
+  label(x,'¬A  :≡  A → 𝟘',w/2,36,col('ink'),15);
+}
+
+/* ═══════════════ 7: n-types ladder ═══════════════ */
+const LADDER=[
+  {n:'−2',name:'kontraktibel',
+   desc:'Genau ein Punkt, bis auf Homotopie. isContr(X) :≡ Σ(a:X) Π(x:X) (a = x). Beispiel: <b>𝟙</b>.'},
+  {n:'−1',name:'mere proposition',
+   desc:'Höchstens ein Punkt. isProp(P) :≡ Π(x,y:P) (x = y). Das ist <b>Logik</b>. Beispiele: <b>𝟘</b>, <b>𝟙</b>, jedes ¬A.'},
+  {n:'0',name:'Menge (set)',
+   desc:'Alle parallelen Pfade sind gleich. isSet(A) :≡ Π(x,y:A) Π(p,q:x=y) (p = q). Beispiele: <b>𝟚</b>, <b>ℕ</b>, <b>ℤ</b>.'},
+  {n:'1',name:'1-Typ (Gruppoid)',
+   desc:'Pfade bilden eine Menge, aber nicht trivial. Beispiel: <b>S¹</b> — es gibt loop ≠ refl, aber keine interessanten 2-Pfade.'},
+  {n:'2',name:'2-Typ',
+   desc:'Nichttriviale 2-Pfade. Beispiel: <b>S²</b> mit surf : refl = refl, und daraus folgt sogar ein 3-Pfad (Hopf!).'},
+  {n:'∞',name:'kein n-Typ',
+   desc:'Das Universum <b>𝒰</b> ist für kein endliches n ein n-Typ. Ebenso Sⁿ⁺¹ ist kein n-Typ (Cor. 8.6.18).'}
+];
+let ladderSel=2;
+(function(){
+  const c=document.getElementById('ladderCtl'); if(!c)return;
+  LADDER.forEach((L,i)=>{
+    const b=document.createElement('button');
+    b.textContent=L.n;
+    b.onclick=()=>{ladderSel=i;
+      [...c.children].forEach(z=>z.classList.remove('act'));
+      b.classList.add('act'); draw();};
+    if(i===2) b.classList.add('act');
+    c.appendChild(b);
+  });
+})();
+
+function drawS6(){
+  const s=setup('c6',360); if(!s)return; const{x,w,h}=s;
+  x.clearRect(0,0,w,h);
+  const n=LADDER.length, pad=56;
+  const stepY=(h-2*pad)/(n-1);
+
+  // rail
+  x.save(); x.strokeStyle=col('line'); x.lineWidth=2;
+  x.beginPath(); x.moveTo(w/2,pad); x.lineTo(w/2,h-pad); x.stroke(); x.restore();
+
+  LADDER.forEach((L,i)=>{
+    const y=h-pad-i*stepY;
+    const on=(i===ladderSel);
+    const c1=on?col('C'):col('faint');
+    dot(x,w/2,y,on?9:5,c1,on?16:0);
+    label(x,L.n,w/2-28,y,c1,on?15:12,'right');
+    label(x,L.name,w/2+28,y,on?col('ink'):col('dim'),on?14:12.5,'left');
+  });
+
+  label(x,'jede Stufe ist auch in der nächsten enthalten  (Thm 7.1.7)',
+        w/2,h-18,col('faint'),11.5);
+
+  const note=document.getElementById('ladderNote');
+  if(note) note.innerHTML='<b>'+LADDER[ladderSel].name+'</b> ('+LADDER[ladderSel].n+'-Typ): '
+    + LADDER[ladderSel].desc;
+}
+
+/* ═══════════════ 8: LEM contradiction ═══════════════ */
+const S7={t:0,playing:false,
+  play(){this.t=0;this.playing=true;tick();},
+  reset(){this.t=0;this.playing=false;draw();}};
+function tick(){
+  if(!S7.playing)return;
+  S7.t+=0.011;
+  if(S7.t>1){S7.t=1;S7.playing=false;}
+  draw();
+  if(S7.playing) requestAnimationFrame(tick);
+}
+
+function drawS7(){
+  const s=setup('c7',340); if(!s)return; const{x,w,h}=s;
+  x.clearRect(0,0,w,h);
+  const t=S7.t;
+
+  const cx=w/2, cy=150, R=Math.min(118,(w-180)/2);
+
+  // the type 2 as two points
+  const a=[cx-R,cy], b=[cx+R,cy];
+
+  // ua(e) path in U
+  x.save(); x.strokeStyle=col('V'); x.lineWidth=2.5; x.setLineDash([7,6]);
+  x.beginPath(); x.arc(cx,cy-20,R,Math.PI*0.08,Math.PI*0.92); x.stroke(); x.restore();
+  label(x,'p ≡ ua(e) : 𝟚 = 𝟚',cx,cy-R-6,col('V'),13);
+
+  dot(x,a[0],a[1],9,col('A'),14);
+  dot(x,b[0],b[1],9,col('B'),14);
+  label(x,'0₂',a[0],a[1]+26,col('A'),13);
+  label(x,'1₂',b[0],b[1]+26,col('B'),13);
+
+  // f(2)(u) travelling
+  const fx=a[0]+(b[0]-a[0])*Math.min(t*2,1);
+  if(t>0){
+    dot(x,fx,cy,7,col('C'),14);
+    label(x,'f(𝟚)(u)',fx,cy-24,col('C'),12);
+  }
+
+  // e swaps
+  if(t>0.5){
+    const al=Math.min((t-0.5)*4,1);
+    x.save(); x.globalAlpha=al;
+    arrow(x,b[0]-18,cy+40,a[0]+18,cy+40,col('O'),2);
+    arrow(x,a[0]+18,cy+58,b[0]-18,cy+58,col('O'),2);
+    label(x,'e : 𝟚 ≃ 𝟚   vertauscht 0₂ ↔ 1₂',cx,cy+82,col('O'),13);
+    x.restore();
+  }
+
+  if(t>0.85){
+    const al=Math.min((t-0.85)*7,1);
+    x.save(); x.globalAlpha=al;
+    label(x,'Transport ⟹  e(f(𝟚)(u)) = f(𝟚)(u)',cx,h-54,col('R'),14);
+    label(x,'aber Π(x:𝟚) ¬(e(x) = x)   ⟹   𝟘',cx,h-28,col('R'),14);
+    x.restore();
+  } else if(t===0){
+    label(x,'▶ drücke „Widerspruch abspielen“',cx,h-34,col('faint'),12.5);
+  }
+}
+
+/* ═══════════════ master draw ═══════════════ */
+function draw(){
+  drawS0(); drawS1(); drawS2(); drawS3();
+  drawS4(); drawS5(); drawS6(); drawS7();
+}
+
+addEventListener('resize',()=>{clearTimeout(window.__rt);
+  window.__rt=setTimeout(draw,120);});
+
+show(0);
+draw();
+</script>
+</body>
+</html>
