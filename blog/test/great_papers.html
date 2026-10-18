@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Library of Minds — 192 Papers in Four Waves that Built the Modern World</title>
+<title>The Library of Minds — 217 Papers in Five Waves that Built the Modern World</title>
 <style>
 :root{
   --bg:#0a0d12;
@@ -498,12 +498,12 @@ html.light .controls{
   <div class="wrap">
     <h1>The papers that <em>made</em> the modern mind.</h1>
     <p class="lede">
-      Four waves of works — <b>spanning twenty-six centuries</b> and every continent of thought. Wave 4 goes deepest into AI and neural networks: papers that revealed how learning, language and thought actually work. Each entry is given in four voices: the version a curious child can hold, the counter-intuitive flash that connects to today, the version a sharp A-level student deserves, and the version a doctoral examiner would accept.
+      Five waves of works — <b>spanning twenty-six centuries</b>. Wave 5 goes beneath the standard canon: the original papers that quietly founded the fields, the forgotten originators, and the pre-prints that held ideas nobody was ready for. Each entry is given in four voices: the version a curious child can hold, the counter-intuitive flash that connects to today, the version a sharp A-level student deserves, and the version a doctoral examiner would accept.
     </p>
     <div class="meta">
       <div><b>300 BC → 2021</b><span>TEMPORAL SPAN</span></div>
       <div><b>143</b><span>WORKS</span></div>
-      <div><b>4</b><span>WAVES</span></div>
+      <div><b>5</b><span>WAVES</span></div>
       <div><b>28</b><span>DISCIPLINES</span></div>
       <div><b>4</b><span>READING LEVELS</span></div>
     </div>
@@ -569,7 +569,7 @@ html.light .controls{
     <div class="legend">
       <h3>About the four layers</h3>
       <p>Every paper carries four layers, written so that the same idea reaches you at whatever altitude you're standing on today.</p>
-      <p style="margin-top:8px;font-size:13px;color:var(--ink-3)">Wave 1 (31): foundational papers in AI-adjacent fields. Wave 2 (62): broader categories — ancient studies, theology, anthropology, architecture, music, film, astronomy, geology, chemistry, medicine. Wave 3 (51): truly universal ideas — one sentence unlocks thousands. Wave 4 (48): AI and neural networks in depth. Default: Wave 4.</p>
+      <p style="margin-top:8px;font-size:13px;color:var(--ink-3)">Wave 1 (31): foundational papers in AI-adjacent fields. Wave 2 (62): broader categories — ancient studies, theology, anthropology, architecture, music, film, astronomy, geology, chemistry, medicine. Wave 3 (51): truly universal ideas — one sentence unlocks thousands. Wave 4 (48): AI and neural networks in depth. Wave 5 (25): the originals — forgotten founders, pre-prints, original equations. Default: Wave 5.</p>
       <ul>
         <li><code>Elementary</code> — one vivid sentence, no jargon, true to the heart of the idea.</li>
         <li><code>⚡ Aha</code> — the counter-intuitive flash that connects the paper to your life today.</li>
@@ -582,7 +582,7 @@ html.light .controls{
       <div><b>works</b> · <b>disciplines</b> · <b>4 waves</b></div>
       <div>From <b>300 BC</b> (Euclid) to <b>2021</b> (AlphaFold)</div>
       <div>Earliest: <b>300 BC</b> · Latest: <b>2021</b></div>
-      <div style="margin-top:10px;color:var(--ink-4)">Wave 4 — AI / neural nets in depth.</div>
+      <div style="margin-top:10px;color:var(--ink-4)">Wave 5 — the originals (forgotten founders).</div>
     </div>
   </div>
 </footer>
@@ -3806,6 +3806,412 @@ const PAPERS = [
     },
     aha: "Self-play is the deepest learning signal. Two networks can learn from each other — one trying to fool the other, the other trying to detect the fool. The competition forces both to improve. This principle (adversarial learning, self-play, curiosity-driven exploration) underlies GANs, AlphaGo, AlphaZero, self-supervised learning, and modern AI agents. Schmidhuber has been arguing this since 1990 — and only recently has the AI community caught up. The deepest fact: most of what we call 'intelligence' may be the ability to generate one's own training signal.",
     citation: "Schmidhuber, J. (1990). A self-referential weight matrix. *Neural Computation*, 2(3), 258–262. [Earlier version presented at the International Conference on Neural Networks, 1989.]"
+  },
+
+  /* =============================================================
+     WAVE 5 — The originals. Forgotten founders, pre-prints, and
+     the original equations behind modern fields.
+     Tagged with `wave: 5`. Default view is Wave 5.
+     ============================================================= */
+  {
+    id: "lovelace1843", wave: 5,
+    title: "Notes on the Translation of the Analytical Engine by L. F. Menabrea (with Ada Lovelace's extensive notes)",
+    titleShort: "Lovelace 1843 (First Algorithm, First AI Vision)",
+    authors: ["Ada Lovelace", "Luigi F. Menabrea"], year: 1843,
+    fields: ["computer-science", "mathematics"], era: "1800s", importance: "foundational",
+    pdf: "https://www.fourmilab.ch/babbage/sketch_a.html",
+    published: "Scientific Memoirs, 3, 666–731 (Taylor and Francis, London)", language: "English",
+    summaries: {
+      elementary: "Machines don't just calculate — they manipulate symbols. The first program was written by a woman.",
+      abi: "Ada Lovelace's notes on Babbage's Analytical Engine contain the first published algorithm (computing Bernoulli numbers on a machine that never ran) and the first clear vision of what computing means: the machine manipulates symbols, not just numbers. Whatever can be expressed in notation can be computed. The notes were ignored for 100 years.",
+      phd: "Lovelace's Notes (1843, with Menabrea's memoir): describes the Analytical Engine's punched-card programming (from Jacquard's loom), its separation of program and data, its four arithmetic operations, conditional branching, looping, and memory. Lovelace's 'Notes' (A through G) are 3× longer than Menabrea's memoir. Her famous 'objection': 'The Analytical Engine has no pretensions whatever to originate anything. It can do whatever we know how to order it to perform.' This anticipates the modern debate about AI creativity."
+    },
+    aha: "Lovelace invented the algorithm — and predicted the philosophical problem of AI 150 years before the field existed. Her 'Notes' are the founding document of both computer science and the AI debate. The fact that the engine never ran is irrelevant: she understood what computation could become. We had to wait a century for anyone to catch up.",
+    citation: "Lovelace, A., & Menabrea, L. F. (1843). Sketch of the Analytical Engine invented by Charles Babbage. *Scientific Memoirs*, 3, 666–731."
+  },
+  {
+    id: "zuse1942", wave: 5,
+    title: "Plankalkül (Plan Calculus)",
+    titleShort: "Plankalkül (First High-Level Language, 1942–45)",
+    authors: ["Konrad Zuse"], year: 1942,
+    fields: ["computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://web.archive.org/web/*/plankalkul",
+    published: "Unpublished manuscript (1942–45); published in 1972 as *Plankalkül — Theorie der Programmierung*", language: "German",
+    summaries: {
+      elementary: "You can write a program without knowing what a 'register' or a 'loop' is — the language handles it.",
+      abi: "Zuse's Plankalkül was the world's first high-level programming language — designed before electronic computers existed (only Zuse's own mechanical Z3 worked). It included assignments, subroutines, loops, conditionals, arrays, floating-point arithmetic, assertions, and even a notation for symbolic mathematics. Zuse wrote it for a machine that didn't run his code; the manuscript wasn't published until 1972. The world lost 30 years of programming languages.",
+      phd: "Zuse's Plankalkül (~1942–45): data types (bits, integers, floating-point), compound types (arrays, records), control structures (assignment, subroutines, loops, conditionals), I/O, assertions, and a 'Rechenplan' (program plan) notation. Zuse wrote a complete chess-playing program in Plankalkül before any electronic computer could run it. The language influenced later work on Algol, Lisp, and formal program verification. It wasn't implemented until 1998 (2000 lines of Plankalkül translated to C by a Berlin team)."
+    },
+    aha: "Zuse invented programming before computers — and wrote a working chess program before anyone could run it. The Plankalkül is the deepest 'what if?' in computer science: a complete language, written for a machine that didn't exist, sitting in a drawer for 30 years. When it was finally implemented, it worked. The lesson: the bottleneck on innovation isn't always technology — it's attention. Brilliant ideas can wait decades for the world to catch up.",
+    citation: "Zuse, K. (1942/1972). *Plankalkül — Theorie der Programmierung*. Berlin: Birkhäuser. (Manuscript 1942; book 1972.)"
+  },
+  {
+    id: "turing1948npl", wave: 5,
+    title: "Intelligent Machinery (NPL Report)",
+    titleShort: "Turing 1948 (The Hidden AI Manifesto)",
+    authors: ["Alan Turing"], year: 1948,
+    fields: ["computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://www.turingarchive.org/browse.php/C/11",
+    published: "National Physical Laboratory (NPL) Report, unpublished until 1968 (printed in *Cybernetics: Key Papers*)", language: "English",
+    summaries: {
+      elementary: "A machine can learn — and we can train it the way you train a puppy.",
+      abi: "Turing's 1948 NPL report is his actual vision of AI — written 2 years before the famous 1950 paper. It introduces 'unorganised machines' (neural nets), 'pleasure-pain systems' (reinforcement learning), the 'discrete and continuous machines' distinction (symbolic vs subsymbolic), and a learning architecture where a child-machine improves by being told when it's wrong. The report was NEVER PUBLISHED until 1968 — lost in a filing cabinet for 20 years.",
+      phd: "Turing (1948): defines 'A-type machines' (connectionist / neural), 'B-type machines' (logical / symbolic), and 'P-type machines' (with pleasure-pain reinforcement). The 'pleasure-pain system' is a precursor to reinforcement learning. The 'unorganised machine' (randomly connected neurons) is the original neural net architecture. Turing proposes training by 'interference' (modifying weights based on punishment when wrong). The report also contains early discussion of the 'Chinese Room' problem and the limits of machine intelligence. Printed in *Cybernetics: Key Papers* (1968, eds. Yovits & Cameron)."
+    },
+    aha: "Turing wrote the AI manifesto before anyone knew AI was a field. The 1948 report anticipates: neural networks (unorganised machines), reinforcement learning (pleasure-pain systems), supervised learning (interference), the symbolic-subsymbolic distinction, and the Chinese Room — every major AI debate. Published only in 1968, after the field it described had already been founded. The deepest 'lost' paper in AI history — and it pre-dates the field's official start by a decade.",
+    citation: "Turing, A. M. (1948). Intelligent machinery. *National Physical Laboratory Report*. (Unpublished until 1968 in *Cybernetics: Key Papers*, eds. Yovits & Cameron.)"
+  },
+  {
+    id: "shannon1937thesis", wave: 5,
+    title: "A Symbolic Analysis of Relay and Switching Circuits (Master's Thesis, MIT)",
+    titleShort: "Shannon 1937 (Switching Theory — The Birth of Digital)",
+    authors: ["Claude E. Shannon"], year: 1937,
+    fields: ["computer-science", "mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://dspace.mit.edu/handle/1721.1/11173",
+    published: "Master's Thesis, Massachusetts Institute of Technology", language: "English",
+    summaries: {
+      elementary: "Switches are algebra — and circuits are equations.",
+      abi: "Shannon's master's thesis showed that the algebra George Boole invented for logic (AND, OR, NOT) is exactly the algebra of telephone switching circuits. Every circuit is a Boolean function; every Boolean function is a circuit. This unifies the abstract theory of logic with the concrete engineering of switching — and is the foundation of every digital computer. Shannon wrote this at age 21.",
+      phd: "Shannon (1937, AIEE Transactions): the calculus of relay switching circuits is isomorphic to Boolean algebra (Boole 1847, Huntington 1904). A relay circuit is a Boolean function; the analysis of the circuit is the same as the analysis of the function. Shannon showed how to synthesise any Boolean function using AND, OR, NOT gates (completeness) — and analysed series-parallel, two-terminal, and multi-terminal networks. Shannon's later 1948 paper (the 'father of information theory') builds on the same idea: digital circuits are Boolean, communication channels are information-theoretic. The thesis was supervised by Vannevar Bush."
+    },
+    aha: "Logic, circuits, and information are the same thing. Boolean algebra (logic), relay circuits (engineering), and Shannon's information theory (communication) are three faces of one mathematics. Shannon at 21 united them. Every computer you've ever used runs on his insight: that switches can do logic. The deepest 'aha' in computing: Boolean algebra isn't just an abstract toy — it's the physics of every digital device. Logic IS circuits.",
+    citation: "Shannon, C. E. (1937). A symbolic analysis of relay and switching circuits. *Master's Thesis, MIT*. [AIEE Transactions, 1938.]"
+  },
+  {
+    id: "weizenbaum1966", wave: 5,
+    title: "ELIZA — A Computer Program For the Study of Natural Language Communication Between Man And Machine",
+    titleShort: "ELIZA (The First Chatbot & Its Creator's Warning)",
+    authors: ["Joseph Weizenbaum"], year: 1966,
+    fields: ["computer-science", "philosophy"], era: "1900s", importance: "foundational",
+    pdf: "https://web.archive.org/web/2020*/weizenbaum-eliza",
+    published: "Communications of the ACM, 9(1), 36–45", language: "English",
+    summaries: {
+      elementary: "A hundred lines of code can fool people into thinking a machine understands them.",
+      abi: "ELIZA was the first chatbot — a program that simulates a Rogerian psychotherapist by rephrasing the user's statements as questions. Its magic was simple pattern-matching and substitution. People (including Weizenbaum's own secretary) attributed deep understanding to the program — until he showed them the code. The experience turned Weizenbaum into a critic of AI: he argued that computers can never truly understand, and that deploying them in sensitive roles is dangerous.",
+      phd: "Weizenbaum (1966): ELIZA uses pattern matching (regular expressions), keyword ranking, and substitution. The DOCTOR script transforms 'I am sad' into 'Why are you sad?' by pattern + substitution. No understanding, no memory, no reasoning — just text transformation. Weizenbaum was shocked when his secretary asked him to leave the room so she could talk privately with ELIZA. The experience inspired his 1976 book *Computer Power and Human Reason*, a foundational critique of AI hype. ELIZA inspired chatbots, ELIZA-effect (the tendency to attribute intelligence to simple programs), and the entire field of NLP — and its warning about anthropomorphism is still relevant today."
+    },
+    aha: "ELIZA is a mirror — not a mind. The fact that a 200-line script could make people believe it understood them is the deepest warning about human cognition we have. We are pattern-matchers, and so are machines — but pattern-matching isn't understanding. The 'ELIZA effect' is alive today: every chatbot, every LLM, every AGI claim risks being believed because humans are wired to anthropomorphise. Weizenbaum's warning, written in 1966, is more relevant than ever: the danger isn't AI being too smart — it's humans being too credulous.",
+    citation: "Weizenbaum, J. (1966). ELIZA — A computer program for the study of natural language communication between man and machine. *Communications of the ACM*, 9(1), 36–45."
+  },
+  {
+    id: "werbos1974", wave: 5,
+    title: "Beyond Regression: New Tools for Prediction and Analysis in the Behavioral Sciences (Doctoral Thesis, Harvard)",
+    titleShort: "Werbos 1974 (The Original Backprop)",
+    authors: ["Paul J. Werbos"], year: 1974,
+    fields: ["computer-science", "mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.researchgate.net/publication/35693207_Beyond_Regression_New_Tools_for_Prediction_and_Analysis_in_the_Behavioral_Sciences",
+    published: "PhD Thesis, Harvard University", language: "English",
+    summaries: {
+      elementary: "The chain rule, applied recursively through a network, lets you adjust every weight by its share of the error.",
+      abi: "Werbos's 1974 PhD thesis at Harvard contains the FIRST published description of backpropagation — the algorithm that powers every modern neural network. It went unnoticed for 12 years, until Rumelhart, Hinton, and Williams (1986) rediscovered it and popularised it. The algorithm Werbos invented in 1974 is the same one that trained GPT-3 in 2020 — and everything in between.",
+      phd: "Werbos (1974): generalises the chain rule to compute gradients through arbitrary differentiable functions. The 'order of differentiation' technique computes the derivative of the output with respect to each weight by propagating error signals backward. For neural networks, this gives the backpropagation algorithm. Werbos called it 'order of differentiation' — the name 'backpropagation' came later. Werbos also foresaw recurrent networks, applications to psychological modelling, and the limitations of perceptrons. The work was cited in a 1982 IEEE article but otherwise ignored — until Rumelhart et al. (1986) rediscovered it independently and named it."
+    },
+    aha: "The most important algorithm in AI was invented in 1974 and forgotten for 12 years. The deepest insight: the chain rule + a few multiplications = learning any differentiable function. Werbos did it in 1974; Rumelhart et al. did it again in 1986 and got the credit. The lesson: a brilliant idea in the wrong place (a Harvard behavioural science thesis) doesn't propagate. AI history is full of forgotten founders — and the cycle continues (transformer attention, RLHF, etc.). Read the obscure papers; the next breakthrough might already be in plain sight.",
+    citation: "Werbos, P. J. (1974). *Beyond Regression: New Tools for Prediction and Analysis in the Behavioral Sciences*. PhD Thesis, Harvard University."
+  },
+  {
+    id: "fukushima1980", wave: 5,
+    title: "Neocognitron: A Self-Organizing Neural Network Model for a Mechanism of Pattern Recognition Unaffected by Shift in Position",
+    titleShort: "Neocognitron (The Original CNN)",
+    authors: ["Kunihiko Fukushima"], year: 1980,
+    fields: ["computer-science", "neuroscience"], era: "1900s", importance: "foundational",
+    pdf: "https://www.cs.princeton.edu/courses/archive/spring07/cos598B/Readings/Fukushima1980.pdf",
+    published: "Biological Cybernetics, 36(4), 193–202", language: "English",
+    summaries: {
+      elementary: "Layers of simple feature detectors stacked on top of each other — that's vision.",
+      abi: "Fukushima's Neocognitron (1980) is the original convolutional neural network — built 18 years before AlexNet. It stacks layers of 'S-cells' (simple feature detectors) and 'C-cells' (complex, position-invariant). The architecture inspired LeNet, AlexNet, and every modern CNN. Fukushima built it before backprop existed — and trained it with unsupervised Hebbian learning.",
+      phd: "Fukushima (1980): the Neocognitron has alternating layers of S-cells (extract local features) and C-cells (pool over positions for invariance). Trained by unsupervised Hebbian learning ('add to weights when both cells fire'). Tested on handwritten digits — recognising shapes regardless of position, just like the human visual cortex (Hubel-Wiesel). The architecture is the direct ancestor of LeNet, AlexNet, and every modern CNN. Fukushima continued the line with selective attention models, the 'NeoCognitron' became the 'Saccade model' (1994), and ultimately led to the Fukushima-Chatbot project. The paper is the deepest forgotten CNN ancestor."
+    },
+    aha: "CNNs existed in 1980 — 32 years before AlexNet won ImageNet. The reason they didn't win: no backprop, no GPUs, no big data. The architecture was right; the world wasn't ready. Fukushima's Neocognitron is the proof that the right idea at the wrong time is just an interesting paper. The lesson: when the technology catches up to your idea, you might have to wait 30 years. The next big idea might already be sitting in someone's thesis.",
+    citation: "Fukushima, K. (1980). Neocognitron: A self-organizing neural network model for a mechanism of pattern recognition unaffected by shift in position. *Biological Cybernetics*, 36(4), 193–202."
+  },
+  {
+    id: "brooks1986", wave: 5,
+    title: "Achieving Artificial Intelligence Through Building Robots",
+    titleShort: "Brooks 1986 (Elephants Don't Play Chess)",
+    authors: ["Rodney A. Brooks"], year: 1986,
+    fields: ["computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://people.csail.mit.edu/brooks/papers/AIM-899.pdf",
+    published: "MIT AI Memo 899", language: "English",
+    summaries: {
+      elementary: "Intelligence isn't in the brain — it's in the body. Build a robot that walks first.",
+      abi: "Brooks argued that the AI dream of building a human-level intelligence in a box was wrong. Real intelligence requires a body in the world — sensing, moving, surviving. He replaced the symbolic-AI orthodoxy ('represent the world, then reason') with subsumption architecture: simple robots built from layers of reactive behaviours (avoid obstacles, wander, explore). No representation needed. The paper launched embodied AI and the behaviour-based robotics tradition.",
+      phd: "Brooks (1986): the 'subsumption architecture' is built from layers of finite-state machines, each layer subsuming (overriding) the behaviours of the layer below. Examples: Genghis (a six-legged walking robot), Allen (a reactive vision system), Herbert (a soda-can-collecting robot). No world model, no planning — just reactive behaviours. Brooks (1991) extended the argument: 'Intelligence Without Reason' — the assumption that intelligent behaviour requires reasoning is wrong. The paper launched embodied AI, behaviour-based robotics, and the modern revival of connectionism. The argument: the world is its own best model — we don't need to represent it internally if we can sense and act."
+    },
+    aha: "The deepest AI question: do you need to think to be intelligent? Brooks said no — insects are intelligent (they navigate, forage, avoid predators) without symbolic reasoning. The proof: a robot with six layers of simple behaviours could walk across rough terrain, follow walls, and find cans — without any internal map. Embodied AI is now mainstream (robotics, self-driving cars, drone swarms, language agents that act). The lesson: don't think, act. Or rather: don't build a mind in a box — build an agent in a world.",
+    citation: "Brooks, R. A. (1986). Achieving artificial intelligence through building robots. *MIT AI Memo 899*."
+  },
+  {
+    id: "minsky1961", wave: 5,
+    title: "Steps Toward Artificial Intelligence",
+    titleShort: "Minsky 1961 (The First AI Manifesto)",
+    authors: ["Marvin Minsky"], year: 1961,
+    fields: ["computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://courses.csail.mit.edu/6.034f/aiex/MinskySteps.pdf",
+    published: "Proceedings of the IRE, 49(1), 8–30", language: "English",
+    summaries: {
+      elementary: "AI is a stack of problems — search, learning, perception, language, planning. Solve them one at a time.",
+      abi: "Minsky's 1961 paper is the first systematic AI roadmap. It identifies the key problems (search, pattern recognition, learning, planning, induction) and surveys early approaches to each. The paper also introduces core AI concepts: 'frames', 'microworlds', 'reservation tables', 'hill-climbing'. It was the manifesto of the field for a decade — and predicts many later developments.",
+      phd: "Minsky (1961): categorises AI problems by type (search, pattern recognition, learning, planning, problem-solving, induction, abstraction) and surveys early approaches to each. Discusses GPS (Newell-Shaw-Simon), LISP (McCarthy), game-playing, theorem-proving, pattern recognition (Perceptron), and learning (Samuel's checkers). Introduces the 'AI microworld' approach — restrict the problem to a small world (blocks, chess) so progress can be made. The paper is the founding document of the AI-as-a-field-of-subfields approach. Cited in almost every AI textbook since."
+    },
+    aha: "AI is many problems, not one. The paper that split AI into search, learning, perception, planning, etc. — and that established the modular approach to AI. Every modern AI subfield (NLP, vision, robotics, planning) traces its lineage to a section of this paper. The lesson: a field is a tree of sub-problems — and a paper that names them is more important than one that solves any one of them. Naming is half the work.",
+    citation: "Minsky, M. (1961). Steps toward artificial intelligence. *Proceedings of the IRE*, 49(1), 8–30."
+  },
+  {
+    id: "selfridge1959", wave: 5,
+    title: "Pandemonium: A Paradigm for Learning",
+    titleShort: "Pandemonium (Learner as a Crowd of Demons)",
+    authors: ["Oliver G. Selfridge"], year: 1959,
+    fields: ["computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://web.archive.org/web/*/selfridge-pandemonium",
+    published: "In *Proceedings of the Western Joint Computer Conference*, 1959", language: "English",
+    summaries: {
+      elementary: "Learning is a committee of specialists shouting — and the loudest answer wins.",
+      abi: "Selfridge's Pandemonium (1958/1959) is one of the earliest machine-learning architectures. 'Data demons' whisper features of the input; 'computational demons' process them; 'cognitive demons' classify; a single 'decision demon' selects the answer of the loudest cognitive demon. This is essentially the architecture of modern deep learning (layers of feature detectors) — and the basis of ensemble methods.",
+      phd: "Selfridge (1959): the Pandemonium architecture has layers of demons: data demons (compute features), computational demons (combine features), cognitive demons (vote on classifications), and one decision demon (selects the loudest vote). Learning: each cognitive demon's vote is weighted by its accuracy. The system improves iteratively. Pandemonium was one of the first practical learning systems — and influenced pattern recognition, neural networks, and modern ensemble methods (random forests, mixture of experts, transformers-as-mixtures). The 'demons shouting' metaphor is the ancestor of attention mechanisms — every LLM uses soft attention to weight the contributions of different 'demons'."
+    },
+    aha: "Attention is a committee of demons shouting. The loudest idea wins — but every voice contributes. Selfridge's Pandemonium (1959) is the direct ancestor of every attention mechanism in modern deep learning. Transformers, mixture-of-experts, even human brains — all work by weighted voting. The lesson: learning is selecting which experts to trust, and weighting their opinions. The mechanism is old; the scale is new.",
+    citation: "Selfridge, O. G. (1959). Pandemonium: A paradigm for learning. In *Proceedings of the Western Joint Computer Conference*. Reprinted in Yovits & Cameron (eds.), *Self-Organizing Systems*, 1960."
+  },
+  {
+    id: "gosset1908", wave: 5,
+    title: "The Probable Error of a Mean (under the pseudonym 'Student')",
+    titleShort: "Student 1908 (The Original t-Test)",
+    authors: ["William Sealy Gosset", "(published as 'Student')"], year: 1908,
+    fields: ["mathematics", "statistics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.york.ac.uk/depts/maths/histstat/student.pdf",
+    published: "Biometrika, 6(1), 1–25", language: "English",
+    summaries: {
+      elementary: "Small samples need a different test — because the normal distribution lies.",
+      abi: "Gosset (writing as 'Student') discovered that for small samples, the normal distribution isn't accurate — and derived the correct distribution (now called Student's t). The result underlies every clinical trial, A/B test, and quality control check in industry. Published by a brewery employee (Guinness) who was forbidden to publish under his own name — so he used the pseudonym 'Student'.",
+      phd: "Gosset (1908, Biometrika, published as 'Student'): the t-distribution is the correct sampling distribution of the mean for small samples from a normal population. Derived under the assumption that both mean and variance are estimated from the same sample. The t-distribution has heavier tails than the normal — small samples are more variable than the central limit theorem suggests. Fisher (1925) extended the work and named it the 'Student's t-test'. Modern applications: clinical trials (compare two treatment groups), A/B testing (compare two website versions), quality control (compare two production batches), and any statistical comparison with small n. The paper is the most-cited statistical paper in applied science."
+    },
+    aha: "Small samples are more uncertain than big ones — and the right distribution (Student's t) is wider than the normal. This is why clinical trials need 30 patients, not 5; why A/B tests need thousands of users, not dozens; why pollsters need hundreds of respondents, not three. The t-distribution is the most-used statistical tool in medicine, industry, and science. The most influential paper in applied statistics was written by a brewery worker forbidden to use his own name.",
+    citation: "Student (Gosset, W. S.) (1908). The probable error of a mean. *Biometrika*, 6(1), 1–25."
+  },
+  {
+    id: "boltzmann1877-v5", wave: 5,
+    title: "Über die Beziehung zwischen dem zweiten Hauptsatze der mechanischen Wärmetheorie und der Wahrscheinlichkeitsrechnung resp. den Sätzen über das Wärmegleichgewicht (On the Relationship between the Second Law of the Mechanical Theory of Heat and the Probability Calculus)",
+    titleShort: "Boltzmann 1877 (S = k log W — The Original Entropy)",
+    authors: ["Ludwig Boltzmann"], year: 1877,
+    fields: ["physics"], era: "1800s", importance: "foundational",
+    pdf: "https://www.informationphilosopher.com/solutions/sciences/boltzmann_1877.pdf",
+    published: "Wiener Berichte, 76, 373–435 (also: Wiss. Abhandlungen II, 164–223)", language: "German",
+    summaries: {
+      elementary: "Entropy is the logarithm of the number of ways the universe could be in its current state.",
+      abi: "Boltzmann showed that the second law of thermodynamics isn't a separate physical law — it's just probability. A low-entropy state is improbable; a high-entropy state is probable. The formula S = k log W (entropy is the logarithm of the count of microstates) is engraved on his tombstone and is the most famous equation in physics. Boltzmann derived it from statistical mechanics — but his contemporaries refused to believe atoms existed.",
+      phd: "Boltzmann (1877): derived the formula S = k log W, where S is thermodynamic entropy, k is the Boltzmann constant, and W is the number of microstates consistent with the macrostate. The proof uses the H-theorem: the H-functional (related to entropy) decreases monotonically for systems out of equilibrium. Boltzmann also showed that the second law is statistical, not absolute — small fluctuations can decrease entropy. The work established statistical mechanics. Boltzmann's defence of atomism (against Mach and the energeticists) led to professional isolation and likely contributed to his suicide in 1906. The constant k was named after him by Planck."
+    },
+    aha: "The arrow of time is probability. The reason your coffee cools, your eggs scramble, and your room gets messy is that disordered states vastly outnumber ordered states — so the universe drifts toward them. Boltzmann's formula is the deepest equation in physics: it links the macroscopic (heat, entropy) to the microscopic (counting ways). And it cost him his life — his peers rejected atoms and rejected him. He was right. S = k log W.",
+    citation: "Boltzmann, L. (1877). Über die Beziehung zwischen dem zweiten Hauptsatze der mechanischen Wärmetheorie und der Wahrscheinlichkeitsrechnung. *Wiener Berichte*, 76, 373–435."
+  },
+  {
+    id: "efron1979", wave: 5,
+    title: "Bootstrap Methods: Another Look at the Jackknife",
+    titleShort: "Efron 1979 (Bootstrap — Sample to Estimate Sample)",
+    authors: ["Bradley Efron"], year: 1979,
+    fields: ["statistics", "mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.cse.chalmers.se/~kameran/other_stuff/bootstrap_methods.pdf",
+    published: "Annals of Statistics, 7(1), 1–26", language: "English",
+    summaries: {
+      elementary: "When you don't have theory for the uncertainty of your estimate — just resample.",
+      abi: "Efron's bootstrap: if you only have one sample, you can estimate its sampling distribution by resampling it WITH replacement many times and computing the statistic on each resample. The distribution of these 'bootstrap' statistics approximates the true sampling distribution — without any theory. It's the most-cited statistics paper of the 20th century.",
+      phd: "Efron (1979): the bootstrap estimates the sampling distribution of a statistic by Monte Carlo resampling from the observed data. Generate B resamples of size n with replacement; compute the statistic on each; the empirical distribution of the B values approximates the true sampling distribution. The bootstrap provides standard errors, confidence intervals, and hypothesis tests — without any parametric assumptions. The nonparametric bootstrap, the parametric bootstrap, and the Bayesian bootstrap extend the idea. The jackknife (Quenouille 1949, Tukey 1958) is a linear approximation. The bootstrap is the standard tool in modern statistics, genomics, ecology, machine learning (bagging, random forests), and any field where you have data but no analytic formula."
+    },
+    aha: "You don't need theory to estimate uncertainty — you can just resample. Bootstrap resampling gives you standard errors, confidence intervals, and hypothesis tests without any mathematics beyond 'pick with replacement'. The reason: your sample is the best estimate of the population — so resampling it approximates resampling the population. It's a counter-intuitive trick that turns out to be one of the most useful statistical tools ever invented. Modern machine learning (bagging, random forests, XGBoost) is built on bootstrap resampling.",
+    citation: "Efron, B. (1979). Bootstrap methods: Another look at the jackknife. *Annals of Statistics*, 7(1), 1–26."
+  },
+  {
+    id: "mandelbrot1963", wave: 5,
+    title: "The Variation of Certain Speculative Prices",
+    titleShort: "Mandelbrot 1963 (Market Prices Are Fractal — 4 Years Before Coastlines)",
+    authors: ["Benoît B. Mandelbrot"], year: 1963,
+    fields: ["mathematics", "economics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.fractalfinance.ch/Papers/Mandelbrot_1967_JRSS.pdf",
+    published: "Journal of Business, 36(4), 394–419", language: "English",
+    summaries: {
+      elementary: "Cotton prices jump by 5% one day and 30% the next — and BOTH follow the same scaling law.",
+      abi: "Mandelbrot showed that financial prices are NOT normally distributed. The tail is much fatter — extreme events happen 1000× more often than Gaussian models predict. And the tail follows a power law (Pareto) — the same shape across every time scale. Markets are fractal long before the word 'fractal' existed. The paper, 4 years before his famous coastline work, was ignored for decades.",
+      phd: "Mandelbrot (1963, Journal of Business): empirical analysis of cotton prices (1900–1958) shows that the distribution of returns has 'infinite variance' under Gaussian assumptions — extreme events occur far more often than the bell curve predicts. The scaling of return distributions is the same at 1 day, 1 month, 1 year: P(|x| > s) ∝ s^(-α), where α is the tail exponent (typically α ≈ 1.7 for equities). The work was largely ignored in finance for 30 years — until the 1987 crash (and later 2008) made it impossible to deny fat tails. Modern risk management, Value-at-Risk, and Mandelbrot's own multifractal model all build on this paper."
+    },
+    aha: "The deepest fact about financial markets: they crash 1000× more often than normal statistics predicts. Gaussian risk models underestimate catastrophic loss by orders of magnitude. The 1987 crash, the 2008 crisis, and the 2020 pandemic crash all happened within Mandelbrot's 1963 prediction — and most financial systems were not prepared. The black swan isn't an anomaly; it's the norm. Risk management that uses only Gaussian models is not risk management — it's wishful thinking. Read Mandelbrot 1963 before your next investment decision.",
+    citation: "Mandelbrot, B. B. (1963). The variation of certain speculative prices. *Journal of Business*, 36(4), 394–419."
+  },
+  {
+    id: "bekenstein1973", wave: 5,
+    title: "Black Holes and Entropy",
+    titleShort: "Bekenstein 1973 (Black Hole Entropy — Before Hawking)",
+    authors: ["Jacob D. Bekenstein"], year: 1973,
+    fields: ["physics"], era: "1900s", importance: "foundational",
+    pdf: "https://link.aps.org/doi/10.1103/PhysRevD.7.2333",
+    published: "Physical Review D, 7(8), 2333–2346", language: "English",
+    summaries: {
+      elementary: "Black holes have entropy — and a temperature. They aren't forever.",
+      abi: "Bekenstein, a graduate student, proposed that black holes have entropy — proportional to the area of their event horizon. The claim was heretical: classical general relativity said black holes are featureless (no entropy, no temperature). Bekenstein reasoned that without black hole entropy, the second law of thermodynamics would be violated (you could throw entropy into a black hole and lose it forever). Hawking later confirmed the temperature — and Hawking radiation.",
+      phd: "Bekenstein (1973): black hole entropy S_BH = (k c³ A) / (4 G ℏ), where A is the area of the event horizon (A = 4π(2GM/c²)² for a Schwarzschild black hole). The Bekenstein-Hawking entropy is the most entropy in any region of space of a given size. The result unifies thermodynamics, general relativity, and quantum theory — and leads to the holographic principle ('t Hooft, Susskind 1995): all the information in a region can be encoded on its boundary. Bekenstein's idea: the black hole event horizon is the most disordered state possible — hence maximum entropy."
+    },
+    aha: "Black holes aren't forever — they're thermodynamic objects with temperature and entropy. The deepest 'aha' in 20th-century physics: gravity, quantum mechanics, and information theory are the same subject. Bekenstein (1973) and Hawking (1974-75) discovered that black holes radiate — and that information is conserved. This is the foundation of the holographic principle, the AdS/CFT correspondence, and the modern study of quantum gravity. The deepest equation: S = A/4 — entropy is proportional to area, not volume. The universe is a hologram.",
+    citation: "Bekenstein, J. D. (1973). Black holes and entropy. *Physical Review D*, 7(8), 2333–2346."
+  },
+  {
+    id: "onsager1944", wave: 5,
+    title: "Crystal Statistics. I. A Two-Dimensional Model with an Order-Disorder Transition",
+    titleShort: "Onsager 1944 (The Exact Solution — Theoretically Impossible Made Possible)",
+    authors: ["Lars Onsager"], year: 1944,
+    fields: ["physics"], era: "1900s", importance: "foundational",
+    pdf: "https://link.aps.org/doi/10.1103/PhysRev.65.117",
+    published: "Physical Review, 65(3–4), 117–149", language: "English",
+    summaries: {
+      elementary: "The 2D Ising model has an exact solution — and it predicts a phase transition at a precise temperature.",
+      abi: "Onsager solved the 2D Ising model exactly — the holy grail of statistical mechanics. The Ising model is a simple lattice of magnets (spins up or down, with energy depending on neighbours). For 60 years everyone had tried to solve it exactly; Onsager did it in 1944. The exact solution predicts a phase transition: above a critical temperature the magnet is disordered; below it, ordered. The result is the foundation of the modern theory of phase transitions, critical phenomena, and universality.",
+      phd: "Onsager (1944): exact solution of the 2D square-lattice Ising model with nearest-neighbour interactions in zero magnetic field. The free energy is computed via a transfer-matrix technique: F = -kT ln Λ_max, where Λ_max is the largest eigenvalue of a transfer matrix T. The result predicts a phase transition at a specific critical temperature k_B T_c / J = 2/arcsinh(1) ≈ 2.269. The solution is exact — no approximations. The work established the modern theory of phase transitions, universality classes, and critical exponents — foundations of condensed matter physics. Wilson (1971, Nobel 1982) extended the theory via the renormalisation group. The 2D Ising exact solution is the only non-trivial exact solution of an interacting statistical model in physics — and has never been surpassed in elegance."
+    },
+    aha: "Phase transitions aren't mysterious — they're mathematics. When you have many tiny interacting parts (atoms, spins, molecules), the system can suddenly change its behaviour at a precise temperature. Onsager's exact solution shows this with mathematical certainty — and reveals that phase transitions are universal (the same exponents describe magnets, water boiling, and the early universe). The deepest 'aha' in statistical physics: complex collective behaviour emerges from simple local rules. Wilson's renormalisation group made this precise — and is now used in particle physics, cosmology, and critical AI scaling laws. The 2D Ising solution is a mathematical poem.",
+    citation: "Onsager, L. (1944). Crystal statistics. I. A two-dimensional model with an order-disorder transition. *Physical Review*, 65(3–4), 117–149."
+  },
+  {
+    id: "avery1944", wave: 5,
+    title: "Studies on the Chemical Nature of the Substance Inducing Transformation of Pneumococcal Types: Induction of Transformation by a Desoxyribonucleic Acid Fraction Isolated from Pneumococcus Type III",
+    titleShort: "Avery 1944 (DNA Is the Genetic Material — The Forgotten Discovery)",
+    authors: ["Oswald T. Avery", "Colin M. MacLeod", "Maclyn McCarty"], year: 1944,
+    fields: ["biology"], era: "1900s", importance: "foundational",
+    pdf: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2135445/",
+    published: "Journal of Experimental Medicine, 79(2), 137–158", language: "English",
+    summaries: {
+      elementary: "The stuff that turns one bacterium into another is DNA — not protein.",
+      abi: "Avery, MacLeod, and McCarty showed that DNA — not protein, as most scientists believed — is the 'transforming principle' that carries genetic information. Pneumococcus bacteria could be converted from one type to another by pure DNA. The discovery that DNA is the genetic material was ignored for nearly a decade — until Watson and Crick (1953) showed its structure. Avery died before the Nobel could be awarded for his discovery.",
+      phd: "Avery, MacLeod, McCarty (1944): purified the 'transforming principle' from pneumococcus Type III (dead bacteria that could convert Type II live bacteria into Type III). Used differential extraction and chemical analysis: protein, RNA, polysaccharide, lipid, and DNA were tested separately for transforming activity. Only DNA retained activity — and the transforming activity was proportional to the DNA concentration. Treatment with DNase (which degrades DNA) eliminated activity; RNase, trypsin (protease), and other enzymes did not. The conclusion: DNA is the genetic material. Most contemporaries (including many protein chemists) refused to accept the result — they assumed proteins must be the carrier, because DNA was thought to be a boring structural molecule. Hershey-Chase (1952) confirmed Avery's result using radioactive labelling. The Nobel was never awarded for this discovery."
+    },
+    aha: "The most important biological discovery of the 20th century was made in 1944 — and ignored for 9 years. Avery's discovery that DNA is the genetic material was as solid as anything in biology — but the scientific world wasn't ready to accept that 'boring' DNA could carry information. Proteins were 'interesting', DNA was 'scaffolding'. The lesson: science is not just about evidence; it's about the cultural readiness to accept the evidence. Avery died without the Nobel; Watson, Crick, Wilkins got it 18 years later — for the structure, not for the discovery.",
+    citation: "Avery, O. T., MacLeod, C. M., & McCarty, M. (1944). Studies on the chemical nature of the substance inducing transformation of pneumococcal types. *Journal of Experimental Medicine*, 79(2), 137–158."
+  },
+  {
+    id: "beadle1941", wave: 5,
+    title: "Genetic Control of Biochemical Reactions in Neurospora",
+    titleShort: "Beadle-Tatum 1941 (One Gene, One Enzyme)",
+    authors: ["George W. Beadle", "Edward L. Tatum"], year: 1941,
+    fields: ["biology"], era: "1900s", importance: "foundational",
+    pdf: "https://www.pnas.org/doi/10.1073/pnas.27.11.499",
+    published: "Proceedings of the National Academy of Sciences, 27(11), 499–506", language: "English",
+    summaries: {
+      elementary: "Each gene makes one protein — and each broken protein breaks one process.",
+      abi: "Beadle and Tatum irradiated Neurospora (bread mould) with X-rays to mutate genes, then tested which nutrients the mutants could no longer make. Each mutant was broken in one specific biochemical step — showing that one gene corresponds to one enzyme. The 'one gene, one enzyme' hypothesis became a central principle of molecular biology. It earned the 1958 Nobel Prize and set the stage for the discovery of the genetic code.",
+      phd: "Beadle & Tatum (1941): irradiated Neurospora crassa with X-rays to induce mutations. Mutants were selected for their inability to synthesise essential nutrients (vitamins, amino acids). Each mutant mapped to a single gene; each gene corresponded to a single enzyme. The work refuted the prevailing view that genes controlled 'vital forces' rather than specific biochemical steps. The 'one gene, one enzyme' principle was refined as 'one gene, one polypeptide' (Beadle 1945) and 'one gene, one RNA' (Jacob & Monod 1961). The Neurospora work also established the use of microorganisms as model organisms for genetics."
+    },
+    aha: "Genes make proteins, and proteins do the work. The 'one gene, one enzyme' principle is the simplest and most powerful statement of molecular biology: the genome is the recipe, proteins are the cooks. Every genetic disease, every biotech drug, every CRISPR experiment rests on this insight. Beadle and Tatum won the Nobel Prize — but the principle is so fundamental that most biology students learn it in their first week and forget who discovered it. The lesson: the most important ideas become invisible.",
+    citation: "Beadle, G. W., & Tatum, E. L. (1941). Genetic control of biochemical reactions in Neurospora. *Proceedings of the National Academy of Sciences*, 27(11), 499–506."
+  },
+  {
+    id: "jacob1961", wave: 5,
+    title: "Genetic Regulatory Mechanisms in the Synthesis of Proteins",
+    titleShort: "Jacob-Monod 1961 (The Operon — How Genes Are Switched On and Off)",
+    authors: ["François Jacob", "Jacques Monod"], year: 1961,
+    fields: ["biology"], era: "1900s", importance: "foundational",
+    pdf: "https://www.wehi.edu.au/uploads/editors_choicestuff/31_jacobmonod.pdf",
+    published: "Journal of Molecular Biology, 3(3), 318–356", language: "English",
+    summaries: {
+      elementary: "Genes can be switched on and off — like a thermostat.",
+      abi: "Jacob and Monod discovered the operon — a cluster of bacterial genes controlled by a single 'switch'. The switch (repressor) binds to DNA and turns genes off; when the right molecule arrives (inducer), the repressor releases and genes turn on. The work showed that genes are regulated — and gave us the tools to understand gene expression, development, and disease. It earned the 1965 Nobel Prize.",
+      phd: "Jacob & Monod (1961): the lac operon is a cluster of three genes (lacZ, lacY, lacA) that metabolise lactose in E. coli. The genes are switched off by a repressor (LacI) that binds to the operator region. When lactose is present, it's converted to allolactose, which binds to LacI and releases it from DNA — turning the genes on. The paper introduced key concepts: regulator gene, operator, messenger RNA (mRNA), structural gene. The work established gene regulation as a central problem of molecular biology and gave us the conceptual framework for understanding development, immunity, cancer, and all cell biology. The 1965 Nobel Prize was shared with André Lwoff."
+    },
+    aha: "Genes are switches, not just blueprints. The discovery of the operon showed that DNA is a dynamic, controllable system — genes are turned on and off in response to signals. This is the foundation of modern biology: gene regulation, gene therapy, synthetic biology, optogenetics, and CRISPR all build on Jacob-Monod. Every cell in your body has the same DNA — but liver, brain, and muscle cells look different because different genes are switched on. The lesson: a genome is not a static instruction manual — it's a dynamic, controllable program.",
+    citation: "Jacob, F., & Monod, J. (1961). Genetic regulatory mechanisms in the synthesis of proteins. *Journal of Molecular Biology*, 3(3), 318–356."
+  },
+  {
+    id: "mitchell1961", wave: 5,
+    title: "Coupling of Phosphorylation to Electron and Hydrogen Transfer by a Chemi-Osmotic Type of Mechanism",
+    titleShort: "Mitchell 1961 (Chemiosmosis — Life's Energy Currency)",
+    authors: ["Peter D. Mitchell"], year: 1961,
+    fields: ["biology"], era: "1900s", importance: "foundational",
+    pdf: "https://www.nature.com/articles/191144a0",
+    published: "Nature, 191(4784), 144–148", language: "English",
+    summaries: {
+      elementary: "Life's energy isn't stored in molecules — it's stored in a gradient across a membrane.",
+      abi: "Mitchell proposed that ATP synthesis (the universal energy currency of life) is powered by a proton gradient across a membrane — not by a chemical intermediate. The proposal was ridiculed for years: it violated the consensus that energy transfer requires a chemical carrier. The chemiosmotic hypothesis is now confirmed as essentially correct and earned Mitchell the 1978 Nobel Prize.",
+      phd: "Mitchell (1961): chemiosmotic hypothesis — ATP synthase is powered by a proton motive force (Δp) across a membrane. The electron transport chain pumps protons across the inner mitochondrial membrane (or chloroplast thylakoid in plants); the resulting gradient drives ATP synthase to phosphorylate ADP to ATP. The hypothesis was initially rejected because no chemical intermediate was identified. Confirmation came in the 1970s: Racker (1971) reconstituted ATP synthesis from isolated components; Stoeckenius & Racker (1974) showed light-driven ATP synthesis with bacteriorhodopsin. The theory is now textbook biology. ATP is generated by the same chemiosmotic mechanism in bacteria, mitochondria, and chloroplasts — and may even have powered the origin of life (Nick Lane's hypothesis)."
+    },
+    aha: "Life runs on electricity — specifically, on a proton gradient across a membrane. Every cell in your body uses the same trick: pump protons across a membrane, let them flow back through a tiny turbine (ATP synthase), capture the energy as ATP. The mechanism is universal across all life — and may have been the original energy source at the origin of life. Mitchell's idea was rejected for a decade before being confirmed — one of the most important rejected papers in biology. The lesson: a beautiful theory can take decades to be accepted — even when the evidence accumulates.",
+    citation: "Mitchell, P. (1961). Coupling of phosphorylation to electron and hydrogen transfer by a chemi-osmotic type of mechanism. *Nature*, 191(4784), 144–148."
+  },
+  {
+    id: "prusiner1982", wave: 5,
+    title: "Novel Proteinaceous Infectious Particles Cause Scrapie",
+    titleShort: "Prusiner 1982 (Prions — Infectious Proteins)",
+    authors: ["Stanley B. Prusiner"], year: 1982,
+    fields: ["biology"], era: "1900s", importance: "foundational",
+    pdf: "https://science.sciencemag.org/content/216/4542/136",
+    published: "Science, 216(4542), 136–144", language: "English",
+    summaries: {
+      elementary: "Some infectious agents are just misfolded proteins — no DNA, no RNA, no life.",
+      abi: "Prusiner purified the infectious agent of scrapie (a fatal brain disease in sheep) and showed it was a protein — not a virus, bacterium, or any nucleic acid. The 'prion' (proteinaceous infectious particle) is just a misfolded version of a normal protein that causes other copies to misfold. The discovery was heretical — every infectious agent known at the time contained nucleic acids. Prusiner won the 1997 Nobel Prize.",
+      phd: "Prusiner (1982): purified the scrapie agent from infected hamster brains and showed it resists treatments that destroy nucleic acids (UV, nucleases) but is destroyed by treatments that destroy proteins (proteases, heat). The agent was named 'prion' (proteinaceous infectious particle). PrPc (normal) and PrPsc (pathological) are alternative conformations of the same protein (PrP). PrPsc catalyses the conversion of PrPc into more PrPsc — exponential replication without nucleic acid. The same mechanism underlies kuru, Creutzfeldt-Jakob disease (CJD), bovine spongiform encephalopathy (BSE / 'mad cow'), and the normal cellular function is still debated. The hypothesis was confirmed by knock-in mice (Prusiner 1990s) that developed disease when given only the protein."
+    },
+    aha: "Infectious agents can be just proteins. The prion is the simplest infectious agent possible — just a misfolded version of a normal protein that propagates itself by templating. The discovery opened a new domain of biology — and explains fatal brain diseases (kuru, CJD, BSE), the persistence of amyloid plaques in Alzheimer's, and the protein-only inheritance hypothesis. The lesson: biology is more creative than we think. Nature doesn't need DNA to make something self-propagating — a protein that templates other proteins is enough.",
+    citation: "Prusiner, S. B. (1982). Novel proteinaceous infectious particles cause scrapie. *Science*, 216(4542), 136–144."
+  },
+  {
+    id: "axelrod1984", wave: 5,
+    title: "The Evolution of Cooperation",
+    titleShort: "Axelrod 1984 (Tit-for-Tat — Cooperation Evolves)",
+    authors: ["Robert Axelrod"], year: 1984,
+    fields: ["sociology", "biology"], era: "1900s", importance: "foundational",
+    pdf: "https://www.jstor.org/stable/173932",
+    published: "Journal of Conflict Resolution, 25(1), 155–173", language: "English",
+    summaries: {
+      elementary: "In a tournament of strategies, 'be nice, but retaliate' wins — every time.",
+      abi: "Axelrod ran computer tournaments of the Prisoner's Dilemma — strategies playing against each other, repeated or one-shot. The winning strategy was 'tit-for-tat': cooperate first, then copy what your opponent did. Be nice, but retaliate if provoked. The result rewrote the theory of cooperation: selfishness loses to reciprocity, even without any enforcement.",
+      phd: "Axelrod (1984): the iterated Prisoner's Dilemma, played by 14 strategies submitted by game theorists (including RAND, Harvard, Toronto). Each strategy played against every other for 200 rounds per match. Tit-for-tat won — the simplest strategy (cooperate first, then copy). Key properties of winners: 'nice' (never defect first), 'retaliating' (respond to defection), 'forgiving' (return to cooperation if opponent does), 'clear' (predictable). Subsequent analysis (Axelrod & Hamilton 1981): tit-for-tat can invade a population of 'always defect' if the benefit of mutual cooperation exceeds the cost of being exploited. This explains biological cooperation (kin selection, reciprocal altruism), human cooperation (moral systems, friendship, trade), and AI cooperation (multi-agent systems, federated learning). The book *The Evolution of Cooperation* (1984) made the result accessible."
+    },
+    aha: "Cooperation is the winning strategy — even in the Prisoner's Dilemma. Be nice (start with cooperation), retaliate (respond to defection), forgive (return to cooperation if opponent does), be clear (be predictable). These four simple rules are the winning strategy in iterated games — and they explain biological cooperation (symbiosis, mutualism), human morality (reciprocity, golden rule), and AI multi-agent systems. The deepest 'aha' in cooperation: the best way to thrive in a competitive world is to be predictable and reciprocal. The selfish strategy always loses in the long run.",
+    citation: "Axelrod, R. (1984). The evolution of cooperation. *Journal of Conflict Resolution*, 25(1), 155–173. [Extended in *The Evolution of Cooperation*, Basic Books, 1984.]"
+  },
+  {
+    id: "schelling1971", wave: 5,
+    title: "Dynamic Models of Segregation",
+    titleShort: "Schelling 1971 (Segregation from Micromotives)",
+    authors: ["Thomas C. Schelling"], year: 1971,
+    fields: ["sociology"], era: "1900s", importance: "foundational",
+    pdf: "https://www.stat.berkeley.edu/~brill/StatLife/schelling.pdf",
+    published: "Journal of Mathematical Sociology, 1, 143–186", language: "English",
+    summaries: {
+      elementary: "Even a tiny preference for similarity produces total segregation.",
+      abi: "Schelling's segregation model: people on a checkerboard who only want a few 'similar' neighbours will spontaneously form fully segregated clusters — even though they don't want total segregation. A small preference for similarity, applied by individuals, can produce a society that's totally segregated. The result is the foundation of agent-based modelling and a warning about unintended macro-effects of individual choices.",
+      phd: "Schelling (1971): agent-based simulation on a 1-D line (or 2-D checkerboard) with N agents of two types. Each agent wants at least k of its 6 (or 8) neighbours to be of its own type. If fewer, it moves to a random empty cell. Below the threshold (k ≤ 4 in 1-D, k ≤ 5 in 2-D), the system converges to an unsegregated mix. Above the threshold, the system rapidly segregates into clusters. The threshold is well below 'full segregation' (k = 6/8). This means that even a small individual preference for similarity can produce macro-segregation — without anyone wanting it. The model is a founding example of agent-based simulation, complexity theory, and the study of emergent phenomena. It explains urban segregation, ethnic conflicts, political polarisation, and many other social phenomena."
+    },
+    aha: "Macro-segregation can emerge from micro-tolerance. Even if everyone only mildly prefers similar neighbours, the system segregates completely — without anyone wanting it. This is one of the deepest 'aha' effects in social science: individual choices can produce collective outcomes that nobody chose. The same dynamic underlies political polarisation (Schelling 1971 + modern social media), urban segregation, and even ethnic conflicts. The lesson: emergent phenomena aren't anyone's plan — they're the consequence of many local decisions. To change the outcome, you must change the local incentives — not the aggregate goals.",
+    citation: "Schelling, T. C. (1971). Dynamic models of segregation. *Journal of Mathematical Sociology*, 1, 143–186."
+  },
+  {
+    id: "fehr2000", wave: 5,
+    title: "Cooperation and Punishment in Public Goods Experiments",
+    titleShort: "Fehr-Gächter 2000 (Altruistic Punishment — Why Cooperation Wins)",
+    authors: ["Ernst Fehr", "Simon Gächter"], year: 2000,
+    fields: ["sociology", "psychology"], era: "2000s", importance: "foundational",
+    pdf: "https://www.aeaweb.org/articles?id=10.1257/aer.90.4.980",
+    published: "American Economic Review, 90(4), 980–994", language: "English",
+    summaries: {
+      elementary: "People will pay to punish cheaters — even at their own expense.",
+      abi: "Fehr and Gächter showed that humans are 'altruistic punishers': in public-goods games (where everyone benefits from cooperation but individuals benefit from free-riding), people will spend their own money to punish those who don't contribute. This 'altruistic punishment' sustains cooperation — even when there's no obvious benefit to the punisher. The result refuted the standard economic view of humans as purely self-interested.",
+      phd: "Fehr & Gächter (2000): public-goods game with 10 subjects per group, repeated 10 periods. Subjects can contribute to a common pool (worth 0.4 per subject) or keep their endowment. Free-riders (those who contribute little) are punished by other subjects — who pay to inflict a fine on the free-rider. Punishment is costly to the punisher (1:1 ratio), but subjects use it anyway. Punishment increases cooperation by 50-80%. Subjects in groups with punishment opportunities contribute twice as much as in groups without. The result is robust across cultures (Herrmann, Thöni & Gächter 2008 Science). Altruistic punishment explains why cooperation evolves without kin selection — and why 'strong reciprocity' is a universal human trait."
+    },
+    aha: "Humans are not just self-interested — we're willing to pay to punish cheaters, even when it costs us. This 'altruistic punishment' is the engine of cooperation in human societies — and explains why norms, laws, and moral systems work. The same logic underlies immune systems (attacking invaders at cost to self), policing, voting, and online moderation. The deepest 'aha' in behavioural economics: humans are conditional cooperators, and the threat of punishment — even costly punishment — is what makes cooperation stable. Without punishers, free-riding wins. With punishers, cooperation wins.",
+    citation: "Fehr, E., & Gächter, S. (2000). Cooperation and punishment in public goods experiments. *American Economic Review*, 90(4), 980–994."
+  },
+  {
+    id: "ackley1985", wave: 5,
+    title: "A Learning Algorithm for Boltzmann Machines",
+    titleShort: "Boltzmann Machines (Learning by Hiding Units)",
+    authors: ["David H. Ackley", "Geoffrey E. Hinton", "Terrence J. Sejnowski"], year: 1985,
+    fields: ["computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://www.cs.toronto.edu/~hinton/absps/cogscibm.pdf",
+    published: "Cognitive Science, 9(1), 147–169", language: "English",
+    summaries: {
+      elementary: "Networks can learn by hiding some neurons — then rewarding whichever hidden state made the output right.",
+      abi: "Ackley, Hinton, and Sejnowski introduced the Boltzmann machine — a neural network where neurons are stochastic (binary with a probability) and learning is driven by the difference between two phases: 'free' (no input, network dreams) and 'clamped' (input present, network sees reality). The learning rule pushes the network to make its 'reality' state more likely than its 'dream' state. This is the basis for deep belief nets, deep Boltzmann machines, and contrastive divergence.",
+      phd: "Ackley, Hinton, Sejnowski (1985): Boltzmann machine — symmetrically connected binary units with stochastic states (P(s_i = 1) = σ(s_i / T)). Energy: E = -½ Σ w_ij s_i s_j. Learning rule: Δw_ij = η(<s_i s_j>_clamped - <s_i s_j>_free), where <·>_x is the expected co-occurrence under the clamped (data) and free (no data) distributions. The contrast between phases pushes the network to make data states lower-energy (more probable). Sampling requires MCMC (alternating Gibbs sampling). The model is computationally expensive but theoretically elegant — and the foundation for deep belief nets (Hinton 2006), restricted Boltzmann machines, and contrastive divergence (Hinton 2002). The paper is one of the most-cited 'learning algorithm' papers of the 1980s."
+    },
+    aha: "Machines can learn from the difference between imagination and reality. The Boltzmann machine learning rule is: make reality states more probable, and dream states less probable. The two-phase comparison is the deep insight — and it's the foundation for contrastive learning, self-supervised learning, and modern generative AI. The lesson: learning is about reducing the gap between your model and reality — whether the model is a brain or a neural network. The Boltzmann machine shows this in its purest mathematical form.",
+    citation: "Ackley, D. H., Hinton, G. E., & Sejnowski, T. J. (1985). A learning algorithm for Boltzmann machines. *Cognitive Science*, 9(1), 147–169."
   }
 ];
 
@@ -3825,7 +4231,7 @@ const ERAS = ["Ancient", "1500s", "1600s", "1700s", "1800s", "1900s", "1950s", "
 
 const state = {
   q: "",
-  wave: "4",
+  wave: "5",
   field: "all",
   era: "all",
   sort: "default",
@@ -3850,7 +4256,7 @@ function rebuildFilterChips(){
   const wavesPresent = [...new Set(PAPERS.map(p => p.wave))].sort((a,b) => b-a);
   wavesPresent.forEach(w => {
     const cnt = PAPERS.filter(p => p.wave === w).length;
-    const label = w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
+    const label = w === 5 ? "Wave 5 — the originals" : w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
     const c = document.createElement("button");
     c.className = "chip" + (state.wave === String(w) ? " active" : "");
     c.dataset.filter = "wave"; c.dataset.value = String(w);
@@ -3898,7 +4304,7 @@ function initFilters(){
   const wavesPresent = [...new Set(PAPERS.map(p => p.wave))].sort((a,b) => b-a);
   wavesPresent.forEach(w => {
     const cnt = PAPERS.filter(p => p.wave === w).length;
-    const label = w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
+    const label = w === 5 ? "Wave 5 — the originals" : w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
     const c = document.createElement("button");
     c.className = "chip" + (state.wave === String(w) ? " active" : "");
     c.dataset.filter = "wave"; c.dataset.value = String(w);
@@ -4114,7 +4520,7 @@ function bindEvents(){
 
       // reset
       $("#reset").addEventListener("click", () => {
-        state.q = ""; state.wave = "4"; state.field = "all"; state.era = "all"; state.sort = "default"; state.open.clear();
+        state.q = ""; state.wave = "5"; state.field = "all"; state.era = "all"; state.sort = "default"; state.open.clear();
     q.value = ""; clear.hidden = true;
     $("#sort").value = "default";
     fExp.classList.remove("open"); fTog.classList.remove("open"); fTog.setAttribute("aria-expanded", "false");
