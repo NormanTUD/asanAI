@@ -15945,6 +15945,13 @@ window.bibData = {
 		url: "https://people.csail.mit.edu/brooks/papers/AIM-864.pdf",
 		alternativetitle: "Brooks, A Robust Layered Control System (1986)"
 	},
+	"craik1943nature": {
+		title: "The Nature of Explanation",
+		author: "Kenneth J. W. Craik",
+		year: 1943,
+		url: "https://www.cis.upenn.edu/~cis6280/lectures/lecture-02/media/lecture02/history/craik_1943_the_nature_of_explanation.pdf",
+		alternativetitle: "Craik, The Nature of Explanation (1943)"
+	},
 	"sutton2019bitterlesson": {
 		title: "The Bitter Lesson",
 		author: "Richard S. Sutton",
