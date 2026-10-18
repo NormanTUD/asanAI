@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Embodiments of Mind — McCulloch Explorer</title>
+<style>
+:root{
+  --bg:#07080c;
+  --bg2:#0d1017;
+  --ink:#e8e4da;
+  --dim:#8a8778;
+  --accent:#ff6b35;
+  --accent2:#4ecdc4;
+  --accent3:#ffd23f;
+  --accent4:#c77dff;
+  --line:rgba(232,228,218,.12);
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--serif);
+  line-height:1.6;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+#grain{
+  position:fixed;inset:0;pointer-events:none;z-index:9999;
+  opacity:.035;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ===== HERO ===== */
+header.hero{
+  min-height:100vh;display:grid;place-items:center;position:relative;
+  padding:4rem 1.5rem;text-align:center;overflow:hidden;
+}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+.hero-inner{position:relative;z-index:2;max-width:900px}
+.eyebrow{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.35em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:2rem;
+}
+h1{
+  font-size:clamp(2.8rem,9vw,7rem);line-height:.95;font-weight:400;
+  letter-spacing:-.03em;margin-bottom:1.5rem;
+}
+h1 em{font-style:italic;color:var(--accent3)}
+.hero-q{
+  font-size:clamp(1rem,2.4vw,1.5rem);font-style:italic;color:var(--dim);
+  max-width:620px;margin:0 auto 2.5rem;line-height:1.5;
+}
+.hero-q strong{color:var(--accent2);font-weight:400}
+.meta{font-family:var(--mono);font-size:.78rem;color:var(--dim);letter-spacing:.1em}
+.scroll-hint{
+  position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.3em;color:var(--dim);
+  animation:bob 2.4s ease-in-out infinite;z-index:2;
+}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);opacity:.5}50%{transform:translateX(-50%) translateY(10px);opacity:1}}
+
+/* ===== NAV ===== */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(7,8,12,.82);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);
+}
+.nav-in{
+  max-width:1180px;margin:0 auto;padding:.85rem 1.5rem;
+  display:flex;gap:.4rem;flex-wrap:wrap;align-items:center;
+}
+.nav-in .brand{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;
+  color:var(--accent);margin-right:auto;text-transform:uppercase;
+}
+nav button{
+  background:none;border:1px solid transparent;color:var(--dim);
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;
+  padding:.4rem .75rem;border-radius:3px;cursor:pointer;transition:.18s;
+}
+nav button:hover{color:var(--ink);border-color:var(--line)}
+nav button.on{color:var(--bg);background:var(--accent3);border-color:var(--accent3)}
+
+/* ===== SECTIONS ===== */
+section{max-width:1180px;margin:0 auto;padding:5rem 1.5rem;scroll-margin-top:70px}
+.sec-head{margin-bottom:2.5rem;max-width:780px}
+.sec-num{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.3em;
+  color:var(--accent);margin-bottom:.7rem;
+}
+h2{font-size:clamp(1.9rem,4.5vw,3rem);font-weight:400;letter-spacing:-.02em;margin-bottom:1rem;line-height:1.1}
+.lede{font-size:1.1rem;color:var(--dim);line-height:1.65}
+.lede b{color:var(--ink);font-weight:400}
+
+/* ===== PANELS ===== */
+.panel{
+  background:linear-gradient(160deg,var(--bg2),rgba(13,16,23,.4));
+  border:1px solid var(--line);border-radius:10px;
+  padding:1.6rem;position:relative;overflow:hidden;
+}
+.panel::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  opacity:.4;
+}
+.grid2{display:grid;grid-template-columns:1fr 340px;gap:1.5rem;align-items:start}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+
+canvas.stage{
+  width:100%;display:block;border-radius:6px;background:#04050a;
+  border:1px solid rgba(255,255,255,.05);
+}
+
+/* ===== CONTROLS ===== */
+.ctl{margin-bottom:1.1rem}
+.ctl label{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;
+  color:var(--dim);margin-bottom:.45rem;text-transform:uppercase;
+}
+.ctl label span{color:var(--accent3);font-size:.85rem}
+input[type=range]{
+  width:100%;height:3px;-webkit-appearance:none;appearance:none;
+  background:rgba(255,255,255,.14);border-radius:2px;outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:15px;height:15px;border-radius:50%;
+  background:var(--accent3);cursor:pointer;box-shadow:0 0 12px rgba(255,210,63,.6);
+}
+input[type=range]::-moz-range-thumb{
+  width:15px;height:15px;border-radius:50%;background:var(--accent3);
+  cursor:pointer;border:none;box-shadow:0 0 12px rgba(255,210,63,.6);
+}
+.btnrow{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.btn{
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  color:var(--ink);font-family:var(--mono);font-size:.72rem;
+  padding:.5rem .85rem;border-radius:4px;cursor:pointer;transition:.18s;
+  letter-spacing:.05em;
+}
+.btn:hover{background:rgba(255,255,255,.1);border-color:var(--accent2)}
+.btn.active{background:var(--accent2);color:var(--bg);border-color:var(--accent2)}
+.btn.warn{border-color:rgba(255,107,53,.4)}
+.btn.warn:hover{background:var(--accent);color:var(--bg)}
+
+.readout{
+  font-family:var(--mono);font-size:.78rem;line-height:1.8;
+  background:#04050a;border:1px solid var(--line);
+  border-radius:6px;padding:.9rem 1rem;color:var(--dim);
+}
+.readout b{color:var(--accent2);font-weight:400}
+.readout .hi{color:var(--accent3)}
+.readout .fire{color:var(--accent)}
+
+.note{
+  font-size:.88rem;color:var(--dim);line-height:1.65;
+  border-left:2px solid var(--accent);padding-left:.9rem;margin-top:1.2rem;
+}
+.note b{color:var(--ink);font-weight:400}
+
+/* truth table */
+table.tt{
+  width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.76rem;
+  margin-top:.8rem;
+}
+table.tt th,table.tt td{
+  padding:.38rem .5rem;text-align:center;border:1px solid var(--line);
+}
+table.tt th{color:var(--dim);font-weight:400;letter-spacing:.08em;background:rgba(255,255,255,.03)}
+table.tt td.y{color:var(--accent);background:rgba(255,107,53,.1)}
+table.tt td.n{color:#44423c}
+
+/* pill tags */
+.tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:1rem}
+.tag{
+  font-family:var(--mono);font-size:.65rem;letter-spacing:.08em;
+  padding:.25rem .6rem;border-radius:99px;border:1px solid var(--line);
+  color:var(--dim);text-transform:uppercase;
+}
+.tag.a{border-color:rgba(255,107,53,.4);color:var(--accent)}
+.tag.b{border-color:rgba(78,205,196,.4);color:var(--accent2)}
+.tag.c{border-color:rgba(255,210,63,.4);color:var(--accent3)}
+.tag.d{border-color:rgba(199,125,255,.4);color:var(--accent4)}
+
+/* channel cards */
+.chgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.7rem;margin-top:1rem}
+.chcard{
+  background:#04050a;border:1px solid var(--line);border-radius:6px;
+  padding:.8rem;font-family:var(--mono);font-size:.72rem;transition:.2s;
+}
+.chcard.live{border-color:var(--accent);box-shadow:0 0 22px rgba(255,107,53,.22)}
+.chcard .cn{font-size:.62rem;letter-spacing:.2em;color:var(--dim);margin-bottom:.35rem}
+.chcard .ct{color:var(--ink);font-size:.82rem;margin-bottom:.4rem;font-family:var(--serif)}
+.chcard .cv{color:var(--accent3);font-size:1.3rem}
+.chcard .cb{height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin-top:.5rem;overflow:hidden}
+.chcard .cb i{display:block;height:100%;background:var(--accent);width:0;transition:width .1s}
+
+/* verdict cards */
+.verdict{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-top:1.5rem}
+.vcard{
+  background:var(--bg2);border:1px solid var(--line);border-left:3px solid var(--accent2);
+  border-radius:6px;padding:1.2rem;
+}
+.vcard.skip{border-left-color:#555}
+.vcard.gold{border-left-color:var(--accent3)}
+.vcard h4{font-size:.95rem;font-weight:400;margin-bottom:.5rem;color:var(--ink)}
+.vcard p{font-size:.86rem;color:var(--dim);line-height:1.6}
+.vcard .pg{font-family:var(--mono);font-size:.66rem;color:var(--accent);letter-spacing:.1em;margin-bottom:.4rem}
+
+blockquote{
+  font-size:clamp(1.1rem,2.5vw,1.5rem);font-style:italic;line-height:1.5;
+  border-left:3px solid var(--accent3);padding:.4rem 0 .4rem 1.5rem;
+  margin:2rem 0;color:var(--ink);
+}
+blockquote cite{
+  display:block;font-style:normal;font-family:var(--mono);
+  font-size:.7rem;letter-spacing:.15em;color:var(--dim);margin-top:.8rem;
+}
+footer{
+  border-top:1px solid var(--line);padding:3rem 1.5rem;text-align:center;
+  font-family:var(--mono);font-size:.72rem;color:var(--dim);letter-spacing:.1em;
+}
+.kbd{
+  font-family:var(--mono);font-size:.68rem;background:rgba(255,255,255,.07);
+  padding:.12rem .4rem;border-radius:3px;border:1px solid var(--line);
+}
+</style>
+</head>
+<body>
+<div id="grain"></div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-inner">
+    <div class="eyebrow">Warren S. McCulloch · MIT Press 1965</div>
+    <h1>Embodiments<br>of <em>Mind</em></h1>
+    <p class="hero-q">
+      „What is a number, that a man may know it,<br>
+      and a man, that he may <strong>know</strong> a number?"
+    </p>
+    <div class="meta">21 Essays · 1943–1964 · Experimental Epistemology</div>
+  </div>
+  <div class="scroll-hint">↓ SCROLL</div>
+</header>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <div class="nav-in">
+    <span class="brand">McCulloch</span>
+    <button data-go="s1" class="on">01 Neuron</button>
+    <button data-go="s2">02 Heterarchie</button>
+    <button data-go="s3">03 Froschauge</button>
+    <button data-go="s4">04 Scanning</button>
+    <button data-go="s5">05 Urteil</button>
+  </div>
+</nav>
+
+<!-- ============ 01 NEURON ============ -->
+<section id="s1">
+  <div class="sec-head">
+    <div class="sec-num">01 — A Logical Calculus (1943)</div>
+    <h2>Das Neuron rechnet Logik</h2>
+    <p class="lede">
+      Weil Neuronen <b>all-or-none</b> feuern, lässt sich ihre Aktivität als
+      Aussagenlogik behandeln. Jeder Impuls ist eine <b>atomare Proposition</b>.
+      Zieh den Schwellwert — und beobachte, wie dieselbe Verdrahtung
+      <b>AND</b>, <b>OR</b> oder <b>Tautologie</b> wird.
+    </p>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <canvas id="neuronCv" class="stage" height="340"></canvas>
+      <div class="btnrow" style="margin-top:1rem">
+        <button class="btn" id="inA">Input A</button>
+        <button class="btn" id="inB">Input B</button>
+        <button class="btn warn" id="inI">Inhibitor</button>
+        <button class="btn" id="autoFire">Auto-Puls</button>
+      </div>
+      <p class="note">
+        <b>Die Pointe:</b> McCulloch &amp; Pitts haben nicht „bewiesen, dass das
+        Gehirn eine Maschine ist". Sie liefern eine <b>Definition von „Rechenmaschine"</b>,
+        die es erlaubt, das Gehirn in präziserem Sinn als Maschine zu denken.
+        Der Fortschritt ist konzeptuell.
+      </p>
+    </div>
+
+    <div>
+      <div class="panel" style="margin-bottom:1rem">
+        <div class="ctl">
+          <label>Schwellwert θ <span id="thVal">2</span></label>
+          <input type="range" id="th" min="0" max="3" step="1" value="2">
+        </div>
+        <div class="readout" id="nRead"></div>
+      </div>
+      <div class="panel">
+        <div style="font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;color:var(--dim);margin-bottom:.3rem">WAHRHEITSTAFEL</div>
+        <table class="tt" id="ttab"></table>
+        <div class="tags">
+          <span class="tag a">all-or-none</span>
+          <span class="tag b">spatial summation</span>
+          <span class="tag c">synaptic delay</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 HETERARCHIE ============ -->
+<section id="s2">
+  <div class="sec-head">
+    <div class="sec-num">02 — A Heterarchy of Values (1945)</div>
+    <h2>Warum es kein <em>summum bonum</em> gibt</h2>
+    <p class="lede">
+      Wenn A über B dominiert, B über C — und <b>C über A</b>, dann ist die Präferenz
+      zirkulär. Es existiert <b>keine gemeinsame Werteskala</b>. McCullochs Pointe gegen
+      Platon: Das ist keine Inkonsistenz, sondern „consistency of an order too high
+      to permit construction of a scale of values."
+    </p>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <canvas id="hetCv" class="stage" height="400"></canvas>
+      <div class="btnrow" style="margin-top:1rem">
+        <button class="btn active" id="modeHier">Hierarchie (A&gt;B&gt;C)</button>
+        <button class="btn" id="modeHet">Heterarchie (zirkulär)</button>
+        <button class="btn" id="torusBtn">Torus-Mapping</button>
+      </div>
+      <p class="note">
+        <b>Topologisch:</b> Hierarchien mappen diallel-frei in die Ebene.
+        Heterarchien brauchen mindestens <b>einen Diallel</b> (Crossover) —
+        oder einen <b>Torus</b>. Schon sechs Neuronen genügen.
+      </p>
+    </div>
+
+    <div>
+      <div class="panel" style="margin-bottom:1rem">
+        <div class="readout" id="hetRead"></div>
+      </div>
+      <div class="panel">
+        <blockquote style="font-size:1rem;margin:0;border-left-color:var(--accent4)">
+          „An organism possessed of this nervous system — six neurons — is
+          sufficiently endowed to be unpredictable from any theory founded on
+          a scale of values."
+          <cite>S. 44</cite>
+        </blockquote>
+        <div class="tags">
+          <span class="tag d">diadrome</span>
+          <span class="tag d">diallel</span>
+          <span class="tag c">value anomaly</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 FROSCHAUGE ============ -->
+<section id="s3">
+  <div class="sec-head">
+    <div class="sec-num">03 — What the Frog's Eye Tells the Frog's Brain (1959)</div>
+    <h2>Die Retina schickt keine Pixel</h2>
+    <p class="lede">
+      Vier Operationen, die das Froschauge <b>selbst</b> ausführt — unabhängig von der
+      Helligkeit. Bewege die Maus über das Sichtfeld. Jeder Kanal reagiert anders.
+      <b>Kanal 2</b> ist der berühmte „bug perceiver".
+    </p>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <canvas id="frogCv" class="stage" height="340" style="cursor:crosshair"></canvas>
+      <div class="btnrow" style="margin-top:1rem">
+        <button class="btn active" id="objSmall">Kleines Objekt (Fliege)</button>
+        <button class="btn" id="objEdge">Große Kante</button>
+        <button class="btn warn" id="dimBtn">Verdunkeln</button>
+      </div>
+      <div class="chgrid" id="chans"></div>
+    </div>
+
+    <div>
+      <div class="panel" style="margin-bottom:1rem">
+        <div class="readout" id="frogRead"></div>
+      </div>
+      <div class="panel">
+        <blockquote style="font-size:1rem;margin:0">
+          „The eye speaks to the brain in a language already highly organized
+          and interpreted, instead of transmitting some more or less accurate
+          copy of the distribution of light on the receptors."
+          <cite>S. 251</cite>
+        </blockquote>
+        <p class="note" style="margin-top:1rem">
+          <b>Caveat der Autoren:</b> „This work has been done on the frog,
+          and our interpretation applies only to the frog."
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 SCANNING ============ -->
+<section id="s4">
+  <div class="sec-head">
+    <div class="sec-num">04 — How We Know Universals (1947)</div>
+    <h2>Größeninvarianz durch Mittelung</h2>
+    <p class="lede">
+      Wie erkennt man ein Quadrat unabhängig von der Größe? Das Netz bildet
+      <b>alle Transformationen</b> einer Gruppe (hier: Dilatationen) und
+      <b>mittelt</b> darüber. Der Alpha-Rhythmus liefert den Scanning-Takt.
+      Das Ergebnis muss dem Wahrgenommenen <b>in keiner Weise ähneln</b>.
+    </p>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <canvas id="scanCv" class="stage" height="360"></canvas>
+      <div class="btnrow" style="margin-top:1rem">
+        <button class="btn active" id="shSq">Quadrat</button>
+        <button class="btn" id="shTri">Dreieck</button>
+        <button class="btn" id="shCir">Kreis</button>
+      </div>
+      <p class="note">
+        <b>Exchangeability of time and space:</b> Jede Dimension lässt sich gegen
+        Verzögerung tauschen. Der Alpha-Rhythmus (~10 Hz) kauft dem Cortex
+        eine zusätzliche räumliche Dimension — bezahlt in Zeit.
+      </p>
+    </div>
+
+    <div>
+      <div class="panel" style="margin-bottom:1rem">
+        <div class="ctl">
+          <label>Objektgröße <span id="szVal">1.0×</span></label>
+          <input type="range" id="sz" min="40" max="160" value="100">
+        </div>
+        <div class="ctl">
+          <label>Scan-Rate (α-Rhythmus) <span id="alVal">10 Hz</span></label>
+          <input type="range" id="al" min="2" max="24" value="10">
+        </div>
+        <div class="readout" id="scanRead"></div>
+      </div>
+      <div class="panel">
+        <blockquote style="font-size:1rem;margin:0;border-left-color:var(--accent2)">
+          „A man's name written or spoken neither looks nor sounds like the man."
+          <cite>Pitts &amp; McCulloch, S. 65</cite>
+        </blockquote>
+        <div class="tags">
+          <span class="tag b">group averaging</span>
+          <span class="tag c">α-scansion</span>
+          <span class="tag a">canonical position</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 URTEIL ============ -->
+<section id="s5">
+  <div class="sec-head">
+    <div class="sec-num">05 — Lohnt sich das Komplettlesen?</div>
+    <h2>Mein Urteil: <em>selektiv ja</em></h2>
+    <p class="lede">
+      Das Buch ist extrem ungleichmäßig. 21 Essays aus zwei Jahrzehnten,
+      für völlig verschiedene Publika geschrieben. Hier die Triage.
+    </p>
+  </div>
+
+  <div class="verdict">
+    <div class="vcard gold">
+      <div class="pg">UNBEDINGT · S. XIII–XX</div>
+      <h4>Paperts Einleitung</h4>
+      <p>Der beste Kompass. Erklärt, warum McCulloch „nicht bewiesen hat, dass
+      das Gehirn eine Maschine ist" — sondern eine <b>Definition</b> lieferte.
+      Lies das zuerst.</p>
+    </div>
+    <div class="vcard gold">
+      <div class="pg">UNBEDINGT · S. 1–18</div>
+      <h4>What Is a Number…</h4>
+      <p>Autobiographisch + programmatisch. Von Rufus Jones' Frage über Duns
+      Scotus und Peirce bis zur probabilistischen Logik. Das Buch im Kleinen.</p>
+    </div>
+    <div class="vcard">
+      <div class="pg">PFLICHT · S. 19–39</div>
+      <h4>A Logical Calculus…</h4>
+      <p>Historisch unverzichtbar. Aber die Carnap-Notation ist laut Papert
+      „unfortunate". Lies Kleenes Neufassung parallel, sonst leidest du.</p>
+    </div>
+    <div class="vcard gold">
+      <div class="pg">UNBEDINGT · S. 40–45</div>
+      <h4>A Heterarchy of Values</h4>
+      <p>Fünf Seiten. Maximale Dichte. Zerstört Platons <em>summum bonum</em>
+      mit sechs Neuronen und einem Torus. Die eleganteste Idee des Buchs.</p>
+    </div>
+    <div class="vcard">
+      <div class="pg">HÖHEPUNKT · S. 230–255</div>
+      <h4>What the Frog's Eye Tells…</h4>
+      <p>Mit Lettvin, Maturana, Pitts. Bis heute Standardreferenz der
+      Sinnesphysiologie. Vier Kanäle, keine Pixel. Nach Nervendurchtrennung
+      wachsen die Fasern in die <b>korrekten</b> vier Schichten zurück.</p>
+    </div>
+    <div class="vcard gold">
+      <div class="pg">GOLD · S. 72–141</div>
+      <h4>Why the Mind Is in the Head</h4>
+      <p>Der Vortrag plus <b>70 Seiten Hixon-Diskussion</b> mit von Neumann,
+      Lashley, Köhler, Pauling, Lorente de Nó, Weiss. Ein Who's-Who-Streitgespräch
+      über Gedächtnis, Feldtheorie vs. Digitalismus, Molekülstruktur.
+      Das beste Stück Wissenschaftsgeschichte im Band.</p>
+    </div>
+    <div class="vcard skip">
+      <div class="pg">QUERLESEN · S. 165–193</div>
+      <h4>Strychnin / Dorsal Root</h4>
+      <p>Zwei rein technische Fachpapers. Methodisch sauber (Mikroelektroden-Grids,
+      Quellen-Senken-Berechnung), aber für den Ideengang entbehrlich.</p>
+    </div>
+    <div class="vcard skip">
+      <div class="pg">POLEMIK · S. 276–306</div>
+      <h4>The Past of a Delusion</h4>
+      <p>30 Seiten Philippika gegen die Psychoanalyse. Polemisch bis unfair
+      („Psychoanalyse ist die Krankheit, für deren Heilung sie sich hält").
+      Kulturhistorisch interessant, wissenschaftlich wertlos.</p>
+    </div>
+    <div class="vcard skip">
+      <div class="pg">KURIOSUM · S. 319–358</div>
+      <h4>The Natural Fit</h4>
+      <p>Seine Gedichte. Ja, wirklich. Sonette, Hokus, ein „Sophomoric Fit".
+      Manches ist gar nicht übel. Nichts davon ist Wissenschaft.</p>
+    </div>
+  </div>
+
+  <blockquote style="margin-top:3rem">
+    „They are almost certainly wrong at some point. Because they have already
+    had to fit many disparate data, they are of little a priori probability.
+    They prophesy the outcome of an infinite number of experiments, some of
+    which are almost certain to refute them."
+    <cite>McCulloch über seine eigenen Hypothesen · S. 83</cite>
+  </blockquote>
+
+  <div class="panel" style="margin-top:2rem">
+    <h4 style="font-weight:400;font-size:1.2rem;margin-bottom:.8rem">Das Fazit in einem Satz</h4>
+    <p style="color:var(--dim);line-height:1.7">
+      Es ist ein <b style="color:var(--ink);font-weight:400">Ideenbuch, kein Lehrbuch</b>.
+      Lies es wegen der Fragestellungen, nicht wegen der Antworten. Die Antworten
+      sind teils überholt — die Fragen (Wie verkörpert Materie Bedeutung? Warum
+      sind Werte nicht kommensurabel? Wie entstehen einfache Hypothesen?) sind offen.
+      McCulloch selbst wusste das und wollte widerlegt werden.
+    </p>
+    <p class="note" style="margin-top:1.5rem">
+      <b>Lese-Reihenfolge, die ich empfehle:</b><br>
+      Papert → „What Is a Number" → „Heterarchy of Values" → „Frog's Eye" →
+      „Why the Mind Is in the Head" (inkl. Diskussion) → „A Logical Calculus"
+      → Rest nach Lust. Das sind ~180 von 400 Seiten.
+    </p>
+  </div>
+
+  <div class="panel" style="margin-top:1.5rem;text-align:center">
+    <div style="font-family:var(--mono);font-size:.7rem;letter-spacing:.3em;color:var(--dim);margin-bottom:1rem">SEIN MOTTO</div>
+    <div style="font-size:clamp(1.3rem,3.5vw,2.2rem);font-style:italic;color:var(--accent3);line-height:1.3">
+      „Don't bite my finger,<br>look where I am pointing."
+    </div>
+  </div>
+</section>
+
+<footer>
+  WARREN S. McCULLOCH · EMBODIMENTS OF MIND · MIT PRESS 1965 · EXPERIMENTAL EPISTEMOLOGY<br>
+  <span style="opacity:.6">Interaktive Demo — Tastatur: <span class="kbd">1</span>–<span class="kbd">5</span> springt zu den Sektionen</span>
+</footer>
+
+<script>
+/* ===================================================================
+   UTILS
+   =================================================================== */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const TAU = Math.PI * 2;
+const lerp = (a,b,t) => a + (b-a)*t;
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+
+function fitHiDPI(cv, h){
+  const dpr = window.devicePixelRatio || 1;
+  const w = cv.clientWidth;
+  cv.width = w * dpr;
+  cv.height = h * dpr;
+  cv.style.height = h + 'px';
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx, w, h};
+}
+
+/* ===================================================================
+   NAV
+   =================================================================== */
+$$('nav button').forEach(b=>{
+  b.onclick = ()=>{
+    document.getElementById(b.dataset.go).scrollIntoView({behavior:'smooth'});
+  };
+});
+const secs = ['s1','s2','s3','s4','s5'];
+const navBtns = $$('nav button');
+window.addEventListener('scroll', ()=>{
+  let cur = 0;
+  secs.forEach((id,i)=>{
+    const el = document.getElementById(id);
+    if(el.getBoundingClientRect().top < 160) cur = i;
+  });
+  navBtns.forEach((b,i)=> b.classList.toggle('on', i===cur));
+});
+window.addEventListener('keydown', e=>{
+  const n = parseInt(e.key);
+  if(n>=1 && n<=5) document.getElementById('s'+n).scrollIntoView({behavior:'smooth'});
+});
+
+/* ===================================================================
+   HERO — fließendes Neuronennetz
+   =================================================================== */
+(function heroNet(){
+  const cv = $('#heroCanvas');
+  let ctx, W, H, nodes=[], edges=[];
+
+  function build(){
+    const r = fitHiDPI(cv, cv.parentElement.offsetHeight);
+    ctx = r.ctx; W = r.w; H = r.h;
+    const n = Math.round(clamp(W*H/16000, 50, 190));
+    nodes = Array.from({length:n}, ()=>({
+      x: Math.random()*W, y: Math.random()*H,
+      vx: (Math.random()-.5)*.22, vy: (Math.random()-.5)*.22,
+      r: 1 + Math.random()*1.9,
+      ph: Math.random()*TAU,
+      fire: 0
+    }));
+    edges = [];
+    for(let i=0;i<n;i++){
+      const cand = [];
+      for(let j=0;j<n;j++){
+        if(i===j) continue;
+        const d = Math.hypot(nodes[i].x-nodes[j].x, nodes[i].y-nodes[j].y);
+        if(d<160) cand.push({j,d});
+      }
+      cand.sort((a,b)=>a.d-b.d);
+      cand.slice(0, 2 + (Math.random()*2|0)).forEach(c=> edges.push({a:i, b:c.j, t:-1}));
+    }
+  }
+  build();
+  window.addEventListener('resize', build);
+
+  let t = 0;
+  (function loop(){
+    t += .016;
+    ctx.clearRect(0,0,W,H);
+
+    // Kanten
+    edges.forEach(e=>{
+      const A = nodes[e.a], B = nodes[e.b];
+      const d = Math.hypot(A.x-B.x, A.y-B.y);
+      if(d>200) return;
+      const al = (1 - d/200) * .22;
+      ctx.strokeStyle = `rgba(78,205,196,${al})`;
+      ctx.lineWidth = .55;
+      ctx.beginPath(); ctx.moveTo(A.x,A.y); ctx.lineTo(B.x,B.y); ctx.stroke();
+
+      // Spike-Propagation
+      if(e.t >= 0){
+        e.t += .035;
+        if(e.t > 1){ e.t = -1; B.fire = 1; }
+        else {
+          const px = lerp(A.x,B.x,e.t), py = lerp(A.y,B.y,e.t);
+          const g = ctx.createRadialGradient(px,py,0,px,py,7);
+          g.addColorStop(0,'rgba(255,210,63,.95)');
+          g.addColorStop(1,'rgba(255,210,63,0)');
+          ctx.fillStyle = g;
+          ctx.beginPath(); ctx.arc(px,py,7,0,TAU); ctx.fill();
+        }
+      }
+    });
+
+    // Knoten
+    nodes.forEach((p,i)=>{
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0||p.x>W) p.vx*=-1;
+      if(p.y<0||p.y>H) p.vy*=-1;
+      p.fire *= .93;
+
+      const pulse = .5 + .5*Math.sin(t*1.4 + p.ph);
+      const R = p.r * (1 + pulse*.35 + p.fire*2.4);
+      const bright = .2 + pulse*.25 + p.fire*.75;
+      ctx.fillStyle = p.fire>.1
+        ? `rgba(255,107,53,${clamp(bright,0,1)})`
+        : `rgba(232,228,218,${clamp(bright*.55,0,1)})`;
+      ctx.beginPath(); ctx.arc(p.x,p.y,R,0,TAU); ctx.fill();
+
+      if(p.fire > .25){
+        ctx.strokeStyle = `rgba(255,107,53,${p.fire*.45})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(p.x,p.y,R*3.2,0,TAU); ctx.stroke();
+      }
+    });
+
+    // spontane Spikes
+    if(Math.random() < .055 && edges.length){
+      const e = edges[Math.random()*edges.length|0];
+      if(e.t < 0){ e.t = 0; nodes[e.a].fire = 1; }
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ===================================================================
+   01 — MP-NEURON
+   =================================================================== */
+(function neuron(){
+  const cv = $('#neuronCv');
+  let ctx, W, H;
+  function resize(){ const r = fitHiDPI(cv, 340); ctx=r.ctx; W=r.w; H=r.h; }
+  resize(); window.addEventListener('resize', resize);
+
+  const S = { A:false, B:false, I:false, th:2, auto:false, pulse:[] };
+
+  const btnA = $('#inA'), btnB = $('#inB'), btnI = $('#inI'), btnAuto = $('#autoFire');
+  btnA.onclick = ()=>{ S.A=!S.A; btnA.classList.toggle('active',S.A); upd(); };
+  btnB.onclick = ()=>{ S.B=!S.B; btnB.classList.toggle('active',S.B); upd(); };
+  btnI.onclick = ()=>{ S.I=!S.I; btnI.classList.toggle('active',S.I); upd(); };
+  btnAuto.onclick= ()=>{ S.auto=!S.auto; btnAuto.classList.toggle('active',S.auto); };
+  $('#th').oninput = e=>{ S.th=+e.target.value; $('#thVal').textContent=S.th; upd(); };
+
+  // Jeder exzitatorische Input liefert 1; Inhibitor blockiert absolut (McCulloch-Pitts Postulat 4)
+  function out(a,b,i,th){
+    if(i) return false;               // absolute Inhibition
+    return ((a?1:0)+(b?1:0)) >= th;
+  }
+  function fname(th){
+    return ({0:'TAUTOLOGIE', 1:'A ∨ B  (OR)', 2:'A · B  (AND)', 3:'KONTRADIKTION'})[th];
+  }
+
+  function upd(){
+    const O = out(S.A,S.B,S.I,S.th);
+    $('#nRead').innerHTML =
+      `A = <b>${S.A?1:0}</b>   B = <b>${S.B?1:0}</b>   INH = <b>${S.I?1:0}</b><br>`+
+      `Σ exzitatorisch = <span class="hi">${(S.A?1:0)+(S.B?1:0)}</span><br>`+
+      `θ = <span class="hi">${S.th}</span><br>`+
+      `Funktion: <span class="hi">${fname(S.th)}</span><br>`+
+      `Output t+1 = <span class="${O?'fire':''}">${O?'IMPULS':'—'}</span>`;
+
+    // Wahrheitstafel
+    const rows = [[0,0],[1,0],[0,1],[1,1]];
+    let html = '<tr><th>A</th><th>B</th><th>→</th></tr>';
+    rows.forEach(([a,b])=>{
+      const o = out(!!a,!!b,S.I,S.th);
+      const on = (S.A===!!a && S.B===!!b);
+      html += `<tr style="${on?'outline:1px solid var(--accent3)':''}">`+
+              `<td>${a}</td><td>${b}</td><td class="${o?'y':'n'}">${o?'1':'0'}</td></tr>`;
+    });
+    $('#ttab').innerHTML = html;
+  }
+  upd();
+
+  let tick = 0, lastAuto = 0;
+  (function loop(ts){
+    tick += .016;
+    if(S.auto && ts-lastAuto > 1100){
+      lastAuto = ts;
+      S.A = Math.random()>.45; S.B = Math.random()>.45;
+      btnA.classList.toggle('active',S.A);
+      btnB.classList.toggle('active',S.B);
+      upd();
+      S.pulse.push({t:0, from:'A', on:S.A},{t:0, from:'B', on:S.B});
+    }
+
+    ctx.clearRect(0,0,W,H);
+    const cx = W*.63, cy = H*.5;
+    const aY = H*.26, bY = H*.52, iY = H*.80;
+    const inX = W*.13;
+    const O = out(S.A,S.B,S.I,S.th);
+
+    // Dendriten
+    const draw = (y, on, col)=>{
+      ctx.strokeStyle = on ? col : 'rgba(255,255,255,.14)';
+      ctx.lineWidth = on ? 2.2 : 1.1;
+      ctx.beginPath();
+      ctx.moveTo(inX+18, y);
+      ctx.bezierCurveTo(W*.36, y, W*.44, cy, cx-34, cy);
+      ctx.stroke();
+      if(on){
+        ctx.shadowColor = col; ctx.shadowBlur = 12;
+        ctx.stroke(); ctx.shadowBlur = 0;
+      }
+    };
+    draw(aY, S.A, '#4ecdc4');
+    draw(bY, S.B, '#4ecdc4');
+    draw(iY, S.I, '#ff6b35');
+
+    // Input-Knoten
+    const node = (y,on,label,col)=>{
+      ctx.fillStyle = on ? col : '#1c2029';
+      ctx.beginPath(); ctx.arc(inX, y, 15, 0, TAU); ctx.fill();
+      ctx.strokeStyle = on ? col : 'rgba(255,255,255,.2)';
+      ctx.lineWidth = 1.6; ctx.stroke();
+      if(on){ ctx.shadowColor=col; ctx.shadowBlur=18; ctx.stroke(); ctx.shadowBlur=0; }
+      ctx.fillStyle = on ? '#07080c' : '#8a8778';
+      ctx.font='600 12px ui-monospace,monospace';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(label, inX, y);
+    };
+    node(aY, S.A, 'A', '#4ecdc4');
+    node(bY, S.B, 'B', '#4ecdc4');
+    node(iY, S.I, 'I', '#ff6b35');
+
+    // Inhibitorischer Endknopf (McCulloch zeichnet Schleife)
+    if(S.I){
+      ctx.strokeStyle='#ff6b35'; ctx.lineWidth=2.4;
+      ctx.beginPath(); ctx.arc(cx-34, cy+16, 9, 0, TAU); ctx.stroke();
+      ctx.shadowColor='#ff6b35'; ctx.shadowBlur=14; ctx.stroke(); ctx.shadowBlur=0;
+    }
+
+    // Soma
+    const R = 36 + (O ? 4*Math.sin(tick*11) : 0);
+    const grd = ctx.createRadialGradient(cx,cy,2,cx,cy,R);
+    if(O){
+      grd.addColorStop(0,'rgba(255,107,53,.95)');
+      grd.addColorStop(.55,'rgba(255,107,53,.42)');
+      grd.addColorStop(1,'rgba(255,107,53,0)');
+    } else {
+      grd.addColorStop(0,'rgba(78,205,196,.25)');
+      grd.addColorStop(1,'rgba(78,205,196,0)');
+    }
+    ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(cx,cy,R,0,TAU); ctx.fill();
+
+    ctx.fillStyle = O ? '#ff6b35' : '#141821';
+    ctx.beginPath(); ctx.arc(cx,cy,25,0,TAU); ctx.fill();
+    ctx.strokeStyle = O ? '#ffd23f' : 'rgba(255,255,255,.22)';
+    ctx.lineWidth = 2; ctx.stroke();
+
+    ctx.fillStyle = O ? '#07080c' : '#8a8778';
+    ctx.font='700 14px ui-monospace,monospace';
+    ctx.fillText('θ'+S.th, cx, cy);
+
+    // Axon
+    ctx.strokeStyle = O ? '#ffd23f' : 'rgba(255,255,255,.14)';
+    ctx.lineWidth = O ? 3 : 1.4;
+    ctx.beginPath(); ctx.moveTo(cx+25, cy); ctx.lineTo(W-46, cy); ctx.stroke();
+    if(O){
+      ctx.shadowColor='#ffd23f'; ctx.shadowBlur=16; ctx.stroke(); ctx.shadowBlur=0;
+      const px = cx+25 + ((tick*190)%(W-72-cx));
+      ctx.fillStyle='#ffd23f';
+      ctx.beginPath(); ctx.arc(px,cy,4.5,0,TAU); ctx.fill();
+    }
+    // Terminal
+    ctx.fillStyle = O ? '#ffd23f' : '#1c2029';
+    ctx.beginPath(); ctx.arc(W-38, cy, 10, 0, TAU); ctx.fill();
+
+    // Labels
+    ctx.fillStyle = '#5a5850';
+    ctx.font = '10px ui-monospace,monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('EXZITATORISCH', inX-28, aY-26);
+    ctx.fillStyle = S.I ? '#ff6b35' : '#5a5850';
+    ctx.fillText('ABSOLUTE INHIBITION', inX-28, iY+30);
+    ctx.fillStyle = '#5a5850';
+    ctx.textAlign = 'right';
+    ctx.fillText('AXON → t+1', W-20, cy-22);
+    ctx.textAlign = 'center';
+    ctx.fillText('SOMA', cx, cy+46);
+
+    requestAnimationFrame(loop);
+  })(0);
+})();
+
+/* ===================================================================
+   02 — HETERARCHIE
+   =================================================================== */
+(function heterarchy(){
+  const cv = $('#hetCv');
+  let ctx, W, H;
+  function resize(){ const r = fitHiDPI(cv, 400); ctx=r.ctx; W=r.w; H=r.h; }
+  resize(); window.addEventListener('resize', resize);
+
+  let mode = 'hier';     // 'hier' | 'het'
+  let torus = false;
+  let t = 0;
+  let pulse = 0;         // Position des Dominanz-Pulses
+
+  const bH = $('#modeHier'), bT = $('#modeHet'), bTor = $('#torusBtn');
+  bH.onclick = ()=>{ mode='hier'; bH.classList.add('active'); bT.classList.remove('active'); };
+  bT.onclick = ()=>{ mode='het';  bT.classList.add('active'); bH.classList.remove('active'); };
+  bTor.onclick = ()=>{ torus=!torus; bTor.classList.toggle('active', torus); };
+
+  const LBL = ['A','B','C'];
+  const COL = ['#ff6b35','#4ecdc4','#ffd23f'];
+
+  function nodePos(i, R, cx, cy, twist){
+    const a = -Math.PI/2 + i*TAU/3 + twist;
+    return { x: cx + Math.cos(a)*R, y: cy + Math.sin(a)*R };
+  }
+
+  function arrow(A, B, col, glow, label){
+    const dx = B.x-A.x, dy = B.y-A.y;
+    const d = Math.hypot(dx,dy);
+    const ux = dx/d, uy = dy/d;
+    const r = 30;
+    const x1 = A.x + ux*r, y1 = A.y + uy*r;
+    const x2 = B.x - ux*r, y2 = B.y - uy*r;
+
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 2 + glow*2;
+    if(glow>.1){ ctx.shadowColor = col; ctx.shadowBlur = 14*glow; }
+    ctx.beginPath();
+    // leicht gebogen
+    const mx = (x1+x2)/2 - uy*18, my = (y1+y2)/2 + ux*18;
+    ctx.moveTo(x1,y1); ctx.quadraticCurveTo(mx,my,x2,y2); ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Pfeilspitze
+    const ang = Math.atan2(y2-my, x2-mx);
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-10*Math.cos(ang-.4), y2-10*Math.sin(ang-.4));
+    ctx.lineTo(x2-10*Math.cos(ang+.4), y2-10*Math.sin(ang+.4));
+    ctx.fill();
+
+    if(label){
+      ctx.fillStyle = col;
+      ctx.font = '9px ui-monospace,monospace';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(label, mx - uy*10, my + ux*10);
+    }
+  }
+
+  (function loop(){
+    t += .016;
+    pulse = (pulse + .006) % 1;
+    ctx.clearRect(0,0,W,H);
+
+    const cx = W/2, cy = H/2 - 10;
+    const R = Math.min(W,H)*.26;
+
+    // Torus-Hintergrund
+    if(torus){
+      ctx.strokeStyle = 'rgba(199,125,255,.18)';
+      ctx.lineWidth = 1;
+      for(let i=0;i<9;i++){
+        const rr = R*1.55, rt = R*.42;
+        const ph = t*.25 + i*TAU/9;
+        ctx.beginPath();
+        for(let j=0;j<=48;j++){
+          const u = j/48*TAU;
+          const X = cx + (rr + rt*Math.cos(u))*Math.cos(ph);
+          const Y = cy + rt*Math.sin(u)*.55 + (rr + rt*Math.cos(u))*Math.sin(ph)*.32;
+          j ? ctx.lineTo(X,Y) : ctx.moveTo(X,Y);
+        }
+        ctx.stroke();
+      }
+      ctx.fillStyle='rgba(199,125,255,.55)';
+      ctx.font='9px ui-monospace,monospace';
+      ctx.textAlign='left';
+      ctx.fillText('TORUS — diallel-freie Einbettung', 14, H-14);
+    }
+
+    const P = [0,1,2].map(i => nodePos(i, R, cx, cy, 0));
+
+    // Kanten
+    if(mode==='hier'){
+      // A>B, B>C, A>C  (keine Rückkante → mappt planar)
+      arrow(P[0],P[1], 'rgba(255,107,53,.85)', .5+.5*Math.sin(t*3), 'A>B');
+      arrow(P[1],P[2], 'rgba(78,205,196,.85)', .5+.5*Math.sin(t*3-1), 'B>C');
+      arrow(P[0],P[2], 'rgba(255,210,63,.6)',  .3, 'A>C');
+    } else {
+      const ph = pulse*3;
+      arrow(P[0],P[1], '#ff6b35', clamp(1-Math.abs(ph-0),0,1), 'A>B');
+      arrow(P[1],P[2], '#4ecdc4', clamp(1-Math.abs(ph-1),0,1), 'B>C');
+      arrow(P[2],P[0], '#ffd23f', clamp(1-Math.abs(ph-2),0,1), 'C>A');
+    }
+
+    // Knoten
+    P.forEach((p,i)=>{
+      const act = mode==='het'
+        ? clamp(1-Math.abs(pulse*3 - i)*1.4, 0, 1)
+        : (i===0 ? .9 : i===1 ? .5 : .2);
+
+      const g = ctx.createRadialGradient(p.x,p.y,2,p.x,p.y,42);
+      g.addColorStop(0, COL[i] + 'cc');
+      g.addColorStop(1, COL[i] + '00');
+      ctx.globalAlpha = .25 + act*.6;
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(p.x,p.y,42,0,TAU); ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = '#0a0c12';
+      ctx.beginPath(); ctx.arc(p.x,p.y,26,0,TAU); ctx.fill();
+      ctx.strokeStyle = COL[i];
+      ctx.lineWidth = 1.5 + act*2;
+      ctx.stroke();
+
+      ctx.fillStyle = COL[i];
+      ctx.font = '600 16px ui-monospace,monospace';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(LBL[i], p.x, p.y);
+    });
+
+    // Diallel-Marker
+    if(mode==='het' && !torus){
+      ctx.fillStyle = 'rgba(255,107,53,.9)';
+      ctx.font = '10px ui-monospace,monospace';
+      ctx.textAlign='center';
+      ctx.fillText('⚡ DIALLEL erforderlich', cx, H-26);
+      ctx.fillStyle = 'rgba(138,135,120,.8)';
+      ctx.fillText('kein summum bonum möglich', cx, H-12);
+    }
+
+    $('#hetRead').innerHTML = mode==='hier'
+      ? `Modus: <b>HIERARCHIE</b><br>`+
+        `A ≻ B ≻ C, A ≻ C<br>`+
+        `Transitiv: <span class="hi">ja</span><br>`+
+        `Diallele nötig: <span class="hi">0</span><br>`+
+        `Gemeinsame Skala: <span class="hi">existiert</span><br>`+
+        `→ Werte sind Größen <b>einer</b> Art`
+      : `Modus: <b>HETERARCHIE</b><br>`+
+        `A ≻ B ≻ C ≻ <span class="fire">A</span><br>`+
+        `Transitiv: <span class="fire">NEIN</span><br>`+
+        `Diallele nötig: <span class="hi">1</span><br>`+
+        `Diadrome: <span class="hi">1</span><br>`+
+        `Minimale Neuronen: <span class="hi">6</span><br>`+
+        `Gemeinsame Skala: <span class="fire">unmöglich</span><br>`+
+        `→ „consistency of an order too high"`;
+
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ===================================================================
+   03 — FROSCHAUGE
+   =================================================================== */
+(function frogEye(){
+  const cv = $('#frogCv');
+  let ctx, W, H;
+  function resize(){ const r = fitHiDPI(cv, 340); ctx=r.ctx; W=r.w; H=r.h; }
+  resize(); window.addEventListener('resize', resize);
+
+  const CH = [
+    {n:'KANAL 1', t:'Lokale scharfe Kanten', f:'unmyelinisiert', v:0},
+    {n:'KANAL 2', t:'Konvexitäts-Detektor', f:'unmyelinisiert · „bug perceiver"', v:0},
+    {n:'KANAL 3', t:'Bewegte Kanten', f:'myelinisiert', v:0},
+    {n:'KANAL 4', t:'Netto-Verdunkelung', f:'myelinisiert', v:0}
+  ];
+  $('#chans').innerHTML = CH.map((c,i)=>
+    `<div class="chcard" id="ch${i}">
+       <div class="cn">${c.n}</div>
+       <div class="ct">${c.t}</div>
+       <div class="cv" id="cvv${i}">0</div>
+       <div class="cb"><i id="cbb${i}"></i></div>
+     </div>`).join('');
+
+  const S = { x:W/2, y:170, px:W/2, py:170, big:false, dim:0, tgt:'small', hist:[] };
+
+  cv.addEventListener('mousemove', e=>{
+    const r = cv.getBoundingClientRect();
+    S.x = e.clientX - r.left;
+    S.y = e.clientY - r.top;
+  });
+  cv.addEventListener('mouseleave', ()=>{ S.x = W/2; S.y = 170; });
+
+  const bS=$('#objSmall'), bE=$('#objEdge'), bD=$('#dimBtn');
+  bS.onclick=()=>{ S.tgt='small'; bS.classList.add('active'); bE.classList.remove('active'); };
+  bE.onclick=()=>{ S.tgt='edge';  bE.classList.add('active'); bS.classList.remove('active'); };
+  bD.onmousedown=()=>{ S.dim=1; bD.classList.add('active'); };
+  window.addEventListener('mouseup', ()=>{ S.dim=0; bD.classList.remove('active'); });
+
+  let t = 0;
+  (function loop(){
+    t += .016;
+    ctx.clearRect(0,0,W,H);
+
+    const bg = S.dim ? 10 : 22;
+    ctx.fillStyle = `rgb(${bg},${bg+2},${bg+6})`;
+    ctx.fillRect(0,0,W,H);
+
+    // Retina-Raster
+    ctx.strokeStyle = 'rgba(255,255,255,.035)';
+    ctx.lineWidth = 1;
+    for(let x=0;x<W;x+=22){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for(let y=0;y<H;y+=22){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    // Bewegung berechnen
+    const vx = S.x - S.px, vy = S.y - S.py;
+    const speed = Math.hypot(vx,vy);
+    S.px = S.x; S.py = S.y;
+
+    // Objekt zeichnen
+    ctx.fillStyle = '#05060a';
+    if(S.tgt==='small'){
+      ctx.beginPath(); ctx.arc(S.x, S.y, 13, 0, TAU); ctx.fill();
+      ctx.strokeStyle='rgba(255,107,53,.35)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(S.x, S.y, 13, 0, TAU); ctx.stroke();
+    } else {
+      ctx.fillRect(S.x-90, S.y-28, 180, 56);
+      ctx.strokeStyle='rgba(78,205,196,.3)'; ctx.lineWidth=1;
+      ctx.strokeRect(S.x-90, S.y-28, 180, 56);
+    }
+
+    // Kanal-Antworten
+    const isSmall = S.tgt==='small';
+    CH[0].v = lerp(CH[0].v, 70 + (isSmall?20:35), .18);
+    CH[1].v = lerp(CH[1].v, isSmall ? (62 + Math.min(speed*4, 36)) : 6, .16);
+    CH[2].v = lerp(CH[2].v, Math.min(speed*9, 100), .25);
+    CH[3].v = lerp(CH[3].v, S.dim ? 96 : Math.min(speed*2.4, 22), .22);
+
+    CH.forEach((c,i)=>{
+      const vv = Math.round(c.v);
+      $('#cvv'+i).textContent = vv;
+      $('#cbb'+i).style.width = vv + '%';
+      $('#ch'+i).classList.toggle('live', vv > 45);
+    });
+
+    // Spike-Visualisierung der 4 Kanäle
+    const colors = ['#4ecdc4','#ff6b35','#ffd23f','#c77dff'];
+    CH.forEach((c,i)=>{
+      const y = 16 + i*16;
+      ctx.strokeStyle = colors[i] + '55';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(12,y); ctx.lineTo(W-12,y); ctx.stroke();
+
+      const rate = c.v/100;
+      const n = Math.round(rate * 34);
+      ctx.strokeStyle = colors[i];
+      ctx.lineWidth = 1.6;
+      for(let k=0;k<n;k++){
+        const px = 14 + ((k*26 + t*180*(0.4+rate)) % (W-28));
+        ctx.beginPath(); ctx.moveTo(px, y-5); ctx.lineTo(px, y+5); ctx.stroke();
+      }
+      ctx.fillStyle = colors[i];
+      ctx.font = '8px ui-monospace,monospace';
+      ctx.textAlign='left'; ctx.textBaseline='middle';
+      ctx.fillText(String(i+1), 4, y);
+    });
+
+    $('#frogRead').innerHTML =
+      `Objekt: <b>${isSmall?'klein (≈3° Fliege)':'große Kante (15°)'}</b><br>`+
+      `Geschwindigkeit: <span class="hi">${speed.toFixed(1)}</span> px/f<br>`+
+      `Beleuchtung: <span class="${S.dim?'fire':'hi'}">${S.dim?'VERDUNKELT':'normal'}</span><br>`+
+      `<br>`+
+      `K1 Kontrast: <span class="hi">${Math.round(CH[0].v)}</span><br>`+
+      `K2 Konvexität: <span class="${CH[1].v>45?'fire':''}">${Math.round(CH[1].v)}</span><br>`+
+      `K3 Bewegung: <span class="hi">${Math.round(CH[2].v)}</span><br>`+
+      `K4 Dimming: <span class="${CH[3].v>45?'fire':''}">${Math.round(CH[3].v)}</span><br>`+
+      `<br>`+
+      `<b>Unabhängig von der Helligkeit.</b>`;
+
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ===================================================================
+   04 — SCANNING / GRÖSSENINVARIANZ
+   =================================================================== */
+(function scanning(){
+  const cv = $('#scanCv');
+  let ctx, W, H;
+  function resize(){ const r = fitHiDPI(cv, 360); ctx=r.ctx; W=r.w; H=r.h; }
+  resize(); window.addEventListener('resize', resize);
+
+  let shape = 'sq', size = 1.0, alpha = 10, t = 0;
+
+  const bq=$('#shSq'), bt=$('#shTri'), bc=$('#shCir');
+  const setShape = (s, btn)=>{
+    shape = s;
+    [bq,bt,bc].forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  };
+  bq.onclick=()=>setShape('sq', bq);
+  bt.onclick=()=>setShape('tri', bt);
+  bc.onclick=()=>setShape('cir', bc);
+
+  $('#sz').oninput = e=>{ size = +e.target.value/100; $('#szVal').textContent = size.toFixed(2)+'×'; };
+  $('#al').oninput = e=>{ alpha = +e.target.value;    $('#alVal').textContent = alpha + ' Hz'; };
+
+  function drawShape(cx, cy, r, col, lw){
+    ctx.strokeStyle = col;
+    ctx.lineWidth = lw;
+    ctx.beginPath();
+    if(shape==='sq'){
+      ctx.rect(cx-r, cy-r, r*2, r*2);
+    } else if(shape==='tri'){
+      ctx.moveTo(cx, cy-r*1.15);
+      ctx.lineTo(cx+r, cy+r*0.75);
+      ctx.lineTo(cx-r, cy+r*0.75);
+      ctx.closePath();
+    } else {
+      ctx.arc(cx, cy, r, 0, TAU);
+    }
+    ctx.stroke();
+  }
+
+  (function loop(){
+    t += .016;
+    ctx.clearRect(0,0,W,H);
+
+    const cx = W/2, cy = H/2;
+    const base = 44 * size;
+
+    // Scan-Phase
+    const ph = (t * alpha) % 1;          // 0..1 pro Zyklus
+    const N = 9;                          // Anzahl Dilatations-Schichten
+
+    // Alle Transformationen (Gruppe der Dilatationen) halbtransparent
+    for(let i=0;i<N;i++){
+      const k = 0.45 + (i/(N-1))*1.35;
+      const sweepHit = Math.abs(ph - i/(N-1)) < .06;
+      ctx.globalAlpha = sweepHit ? .95 : .14;
+      drawShape(cx, cy, base*k, sweepHit ? '#ffd23f' : '#4ecdc4', sweepHit ? 2.4 : 1);
+      ctx.globalAlpha = 1;
+    }
+
+    // Scan-Ebene (α-Rhythmus als horizontale Welle)
+    const sy = 40 + ph*(H-80);
+    const grd = ctx.createLinearGradient(0, sy-18, 0, sy+18);
+    grd.addColorStop(0,'rgba(255,210,63,0)');
+    grd.addColorStop(.5,'rgba(255,210,63,.22)');
+    grd.addColorStop(1,'rgba(255,210,63,0)');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, sy-18, W, 36);
+    ctx.strokeStyle='rgba(255,210,63,.7)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,sy); ctx.lineTo(W,sy); ctx.stroke();
+
+    // Original hervorheben
+    drawShape(cx, cy, base, '#ff6b35', 2.6);
+
+    // Invariante (Output) — Mittelwert über die Gruppe: immer gleich groß
+    const ox = W - 76, oy = H - 76;
+    ctx.fillStyle='rgba(0,0,0,.4)';
+    ctx.fillRect(ox-50, oy-50, 100, 100);
+    ctx.strokeStyle='rgba(199,125,255,.4)';
+    ctx.lineWidth=1;
+    ctx.strokeRect(ox-50, oy-50, 100, 100);
+
+    ctx.save();
+    ctx.translate(ox, oy);
+    drawShape(0, 0, 28, '#c77dff', 2.2);
+    ctx.restore();
+
+    ctx.fillStyle='#c77dff';
+    ctx.font='9px ui-monospace,monospace';
+    ctx.textAlign='center';
+    ctx.fillText('INVARIANTE', ox, oy+62);
+    ctx.fillStyle='rgba(138,135,120,.8)';
+    ctx.fillText('größenunabhängig', ox, oy+74);
+
+    // Labels
+    ctx.fillStyle='rgba(255,107,53,.9)';
+    ctx.font='10px ui-monospace,monospace';
+    ctx.textAlign='left';
+    ctx.fillText('APPARITION φ(x)', 14, 22);
+    ctx.fillStyle='rgba(78,205,196,.7)';
+    ctx.fillText('ALLE TRANSFORMATIONEN Tφ', 14, 36);
+    ctx.fillStyle='rgba(255,210,63,.85)';
+    ctx.fillText('α-SCANSION', 14, 50);
+
+    const shn = shape==='sq'?'Quadrat':shape==='tri'?'Dreieck':'Kreis';
+    $('#scanRead').innerHTML =
+      `Figur: <b>${shn}</b><br>`+
+      `Größe Input: <span class="hi">${size.toFixed(2)}×</span><br>`+
+      `Scan-Rate: <span class="hi">${alpha} Hz</span><br>`+
+      `Transformationen N: <span class="hi">${N}</span><br>`+
+      `Zyklusdauer: <span class="hi">${(1000/alpha).toFixed(0)} ms</span><br>`+
+      `<br>`+
+      `Output: <span class="fire">INVARIANT</span><br>`+
+      `→ unabhängig von Größe<br>`+
+      `<br>`+
+      `<span style="color:#5a5850">a<sub>i</sub> = 1/N · Σ<sub>T∈G</sub> f<sub>i</sub>[Tφ]</span>`;
+
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ===================================================================
+   READY
+   =================================================================== */
+console.log('%cEmbodiments of Mind','font:700 20px serif;color:#ffd23f');
+console.log('%c"Don\'t bite my finger, look where I am pointing."','font:italic 13px serif;color:#8a8778');
+</script>
+</body>
+</html>
