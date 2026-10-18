@@ -755,12 +755,15 @@ const lerp=(a,b,t)=>a+(b-a)*t, clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 function setup(cv){
   const dpr=window.devicePixelRatio||1;
-  const r=cv.getBoundingClientRect();
+  const w=(cv.parentElement&&cv.parentElement.clientWidth)||900;
   const h=parseInt(cv.getAttribute('height'))||300;
-  cv.width=Math.max(1,r.width*dpr); cv.height=h*dpr;
+  cv.style.width=w+'px';
   cv.style.height=h+'px';
-  const x=cv.getContext('2d'); x.setTransform(dpr,0,0,dpr,0,0);
-  return {x,W:r.width||900,H:h};
+  cv.width=Math.max(1,w*dpr);
+  cv.height=h*dpr;
+  const x=cv.getContext('2d');
+  x.setTransform(dpr,0,0,dpr,0,0);
+  return {x,W:w,H:h};
 }
 function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();}
 function txt(x,s,a,b,size,col,align='left',weight='400',fam="'Inter',sans-serif"){
