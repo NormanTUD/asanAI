@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Mills' Konstante – visuell</title>
+<style>
+  :root{
+    --bg:#0b1020; --fg:#eaf0ff; --dim:#7c89b0;
+    --p:#5ad1ff;      /* Primzahl */
+    --cube:#ffd166;   /* Kuben */
+    --u:#4ade80;      /* u_n (unten) */
+    --v:#fb7185;      /* v_n (oben) */
+    --A:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:radial-gradient(1200px 800px at 50% 0%,#141c38,var(--bg));
+    color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    overflow:hidden;
+  }
+  #stage{position:relative;width:100vw;height:100vh}
+  .slide{
+    position:absolute;inset:0;display:none;
+    flex-direction:column;align-items:center;justify-content:center;
+    padding:4vh 5vw;gap:2.2vh;
+  }
+  .slide.on{display:flex;animation:fade .5s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  h1{font-size:clamp(28px,5.5vw,70px);font-weight:800;letter-spacing:-.02em;text-align:center}
+  .sub{color:var(--dim);font-size:clamp(14px,1.7vw,22px);text-align:center;max-width:70ch}
+  .big{font-size:clamp(26px,4.4vw,56px);font-weight:700;font-variant-numeric:tabular-nums}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+  svg{width:min(92vw,1150px);height:auto;overflow:visible}
+  .lbl{font:600 15px ui-monospace,monospace;fill:var(--dim)}
+  .num{font:700 17px ui-monospace,monospace;fill:var(--fg)}
+  /* Navigation */
+  #nav{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+       display:flex;gap:10px;align-items:center;z-index:50}
+  button{
+    background:#1c2648;color:var(--fg);border:1px solid #2e3c6e;border-radius:999px;
+    padding:9px 18px;font-size:15px;cursor:pointer;transition:.15s
+  }
+  button:hover{background:#27356a}
+  #dots{display:flex;gap:7px}
+  .dot{width:9px;height:9px;border-radius:50%;background:#2e3c6e;transition:.2s}
+  .dot.on{background:var(--p);transform:scale(1.35)}
+  .legend{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;font-size:15px;color:var(--dim)}
+  .legend i{display:inline-block;width:13px;height:13px;border-radius:3px;margin-right:7px;vertical-align:-2px}
+  .cards{display:flex;gap:2vw;flex-wrap:wrap;justify-content:center}
+  .card{background:#141d3c;border:1px solid #27345f;border-radius:16px;padding:18px 24px;
+        text-align:center;min-width:170px}
+  .card b{display:block;font-size:clamp(20px,2.8vw,34px)}
+  .card span{color:var(--dim);font-size:14px}
+  .pulse{animation:pulse 1.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .zoomtag{font:700 16px ui-monospace,monospace;fill:var(--A)}
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- 1 -->
+<section class="slide">
+  <h1>Warum gibt es <span style="color:var(--A)">A</span>?</h1>
+  <div class="big mono" style="color:var(--p)">⌊ A<sup>3ˣ</sup> ⌋ = Primzahl</div>
+  <p class="sub">Eine einzige Zahl A erzeugt unendlich viele Primzahlen. Klingt unmöglich — ist es nicht. Hier der Beweis, ohne Formeln.</p>
+  <div class="sub pulse">→</div>
+</section>
+
+<!-- 2: Primzahlen auf dem Strahl -->
+<section class="slide">
+  <h1 style="font-size:clamp(22px,3.4vw,42px)">Primzahlen liegen überall</h1>
+  <svg id="s2" viewBox="0 0 1100 170"></svg>
+  <p class="sub">Je weiter rechts, desto dünner — aber nie zu dünn.</p>
+</section>
+
+<!-- 3: Ingham - Lücken sind klein -->
+<section class="slide">
+  <h1 style="font-size:clamp(22px,3.4vw,42px)">Lücken bleiben klein</h1>
+  <svg id="s3" viewBox="0 0 1100 230"></svg>
+  <div class="big mono" style="color:var(--p)">Lücke &lt; K · p<sup>5/8</sup></div>
+  <p class="sub">Ingham 1937: Der Abstand zweier benachbarter Primzahlen wächst viel langsamer als die Zahlen selbst.</p>
+</section>
+
+<!-- 4: Kuben wachsen schneller -->
+<section class="slide">
+  <h1 style="font-size:clamp(22px,3.4vw,42px)">Kuben wachsen schneller als Lücken</h1>
+  <svg id="s4" viewBox="0 0 1100 330"></svg>
+  <div class="legend">
+    <span><i style="background:var(--cube)"></i>Abstand N³ → (N+1)³</span>
+    <span><i style="background:var(--p)"></i>größte Primzahl-Lücke dort</span>
+  </div>
+</section>
+
+<!-- 5: Lemma -->
+<section class="slide">
+  <h1 style="font-size:clamp(22px,3.4vw,42px)">⇒ In jedem Kuben-Fenster steckt eine Primzahl</h1>
+  <svg id="s5" viewBox="0 0 1100 220"></svg>
+  <div class="big mono"><span style="color:var(--cube)">N³</span> &lt; <span style="color:var(--p)">p</span> &lt; <span style="color:var(--cube)">(N+1)³−1</span></div>
+</section>
+
+<!-- 6: Kette -->
+<section class="slide">
+  <h1 style="font-size:clamp(22px,3.4vw,42px)">Eine unendliche Kette</h1>
+  <svg id="s6" viewBox="0 0 1100 300"></svg>
+  <p class="sub mono" style="color:var(--p)">P₀ → P₁ → P₂ → P₃ → … immer: P<sub>n</sub>³ &lt; P<sub>n+1</sub> &lt; (P<sub>n</sub>+1)³−1</p>
+</section>
+
+<!-- 7: Wurzel ziehen -->
+<section class="slide">
+  <h1 style="font-size:clamp(22px,3.4vw,42px)">Riesige Zahlen → winziges Fenster</h1>
+  <svg id="s7" viewBox="0 0 1100 300"></svg>
+  <div class="legend">
+    <span><i style="background:var(--u)"></i>u<sub>n</sub> = P<sub>n</sub><sup>1/3ⁿ</sup> steigt</span>
+    <span><i style="background:var(--v)"></i>v<sub>n</sub> = (P<sub>n</sub>+1)<sup>1/3ⁿ</sup> fällt</span>
+  </div>
+</section>
+
+<!-- 8: Schachtelung / Zoom -->
+<section class="slide">
+  <h1 style="font-size:clamp(22px,3.4vw,42px)">Die Zange schließt sich</h1>
+  <svg id="s8" viewBox="0 0 1100 260"></svg>
+  <div id="s8num" class="big mono"></div>
+  <div class="sub">Jedes Fenster liegt im vorherigen und wird kleiner. Übrig bleibt genau ein Punkt.</div>
+</section>
+
+<!-- 9: A existiert -->
+<section class="slide">
+  <h1>Dieser Punkt ist <span style="color:var(--A)">A</span></h1>
+  <div class="big mono" style="color:var(--A)">A ≈ 1.3063778838630806…</div>
+  <svg id="s9" viewBox="0 0 1100 130"></svg>
+  <p class="sub">A existiert, weil ineinander geschachtelte, schrumpfende Intervalle immer genau eine Zahl einsperren.</p>
+</section>
+
+<!-- 10: Maschine -->
+<section class="slide">
+  <h1 style="font-size:clamp(22px,3.4vw,42px)">Die Maschine läuft</h1>
+  <div class="cards" id="s10"></div>
+  <div class="sub mono" style="color:var(--p)">⌊A<sup>3ⁿ</sup>⌋ = P<sub>n</sub> &nbsp;— jedes Mal eine Primzahl</div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <h1 style="font-size:clamp(24px,3.6vw,46px)">Kleine Lücken → Primzahl in jedem Kubus-Fenster → geschachtelte Intervalle → <span style="color:var(--A)">A</span></h1>
+  <svg id="s11" viewBox="0 0 1100 120"></svg>
+</section>
+
+</div>
+
+<div id="nav">
+  <button id="prev">◀</button><div id="dots"></div><button id="next">▶</button>
+</div>
+
+<script>
+/* ---------- Navigation ---------- */
+const slides=[...document.querySelectorAll('.slide')];
+const dots=document.getElementById('dots');
+slides.forEach((_,i)=>{const d=document.createElement('div');d.className='dot';d.onclick=()=>go(i);dots.appendChild(d)});
+let cur=-1;
+function go(i){
+  if(i<0||i>=slides.length)return;
+  slides.forEach(s=>s.classList.remove('on'));
+  [...dots.children].forEach(d=>d.classList.remove('on'));
+  slides[i].classList.add('on');dots.children[i].classList.add('on');cur=i;
+  if(draw[i])draw[i]();
+}
+document.getElementById('next').onclick=()=>go(cur+1);
+document.getElementById('prev').onclick=()=>go(cur-1);
+addEventListener('keydown',e=>{if(['ArrowRight',' ','PageDown'].includes(e.key))go(cur+1);
+  if(['ArrowLeft','PageUp'].includes(e.key))go(cur-1)});
+addEventListener('click',e=>{if(e.target.tagName!=='BUTTON'&&!e.target.classList.contains('dot'))go(cur+1)});
+
+/* ---------- Helpers ---------- */
+const NS='http://www.w3.org/2000/svg';
+function el(t,a={}){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e}
+function clear(id){const s=document.getElementById(id);while(s.firstChild)s.removeChild(s.firstChild);return s}
+function isPrime(n){if(n<2)return false;if(n%2===0)return n===2;for(let i=3;i*i<=n;i+=2)if(n%i===0)return false;return true}
+function anim(node,attr,from,to,ms,delay=0,ease=t=>1-Math.pow(1-t,3)){
+  const a=el('animate',{attributeName:attr,from,to,dur:ms+'ms',begin:delay+'ms',fill:'freeze'});
+  node.appendChild(a);return node;
+}
+function fadeIn(node,ms=500,delay=0){node.setAttribute('opacity',0);
+  node.appendChild(el('animate',{attributeName:'opacity',from:0,to:1,dur:ms+'ms',begin:delay+'ms',fill:'freeze'}));return node}
+
+/* ---------- Slide drawings ---------- */
+const draw={};
+
+/* 2 – Primzahlen auf dem Strahl */
+draw[1]=()=>{
+  const s=clear('s2'),W=1040,X0=30,y=95,MAX=140;
+  s.appendChild(el('line',{x1:X0,y1:y,x2:X0+W,y2:y,stroke:'#2e3c6e','stroke-width':3}));
+  let k=0;
+  for(let n=2;n<=MAX;n++){
+    const x=X0+W*(n/MAX);
+    if(isPrime(n)){
+      const c=el('circle',{cx:x,cy:y,r:7,fill:'var(--p)'});
+      fadeIn(c,260,k*28);s.appendChild(c);
+      const b=el('line',{x1:x,y1:y-22,x2:x,y2:y,stroke:'var(--p)','stroke-width':2,opacity:.45});
+      fadeIn(b,260,k*28);s.appendChild(b);k++;
+    }else{
+      s.appendChild(el('circle',{cx:x,cy:y,r:2.5,fill:'#2a3763'}));
+    }
+  }
+  [2,50,100,140].forEach(n=>{
+    const t=el('text',{x:X0+W*(n/MAX),y:y+34,'text-anchor':'middle',class:'num'});t.textContent=n;s.appendChild(t)});
+};
+
+/* 3 – Lücken schrumpfen relativ */
+draw[2]=()=>{
+  const s=clear('s3'),X0=60,Y=150,W=980;
+  const data=[[10,4],[100,8],[1000,14],[10000,20],[100000,26]];
+  const maxBar=110;
+  data.forEach((d,i)=>{
+    const x=X0+i*(W/5)+60, hp=maxBar, hg=Math.max(4,maxBar*(d[1]/d[0])*6);
+    const r1=el('rect',{x:x-40,y:Y-hp,width:34,height:hp,rx:5,fill:'#2a3763'});
+    const r2=el('rect',{x:x+4,y:Y,width:34,height:0,rx:5,fill:'var(--p)'});
+    s.appendChild(fadeIn(r1,300,i*180));s.appendChild(r2);
+    anim(r2,'height',0,hg,600,i*180+120);anim(r2,'y',Y,Y-hg,600,i*180+120);
+    const t=el('text',{x:x,y:Y+28,'text-anchor':'middle',class:'num'});t.textContent='p≈'+d[0].toLocaleString('de');
+    s.appendChild(fadeIn(t,300,i*180));
+  });
+  const l1=el('text',{x:X0,y:28,class:'lbl'});l1.textContent='Primzahl p (grau)  vs.  Lücke (blau, relativ)';
+  s.appendChild(l1);
+};
+
+/* 4 – Kuben vs Lücken */
+draw[3]=()=>{
+  const s=clear('s4'),X0=70,Y=270,W=960,H=210;
+  const Ns=[2,3,4,5,6,7,8,9,10];
+  const f=n=>3*n*n;           // Kubenabstand ~3N²
+  const g=n=>Math.pow(n,15/8)*0.9; // K·p^{5/8} mit p≈N³
+  const maxV=f(Ns[Ns.length-1]);
+  const sc=v=>H*Math.min(1,v/maxV);
+  s.appendChild(el('line',{x1:X0,y1:Y,x2:X0+W,y2:Y,stroke:'#2e3c6e','stroke-width':2}));
+  Ns.forEach((n,i)=>{
+    const x=X0+(i+.5)*(W/Ns.length);
+    const a=sc(f(n)),b=sc(g(n));
+    const r1=el('rect',{x:x-30,y:Y,width:26,height:0,rx:4,fill:'var(--cube)'});
+    const r2=el('rect',{x:x+4,y:Y,width:26,height:0,rx:4,fill:'var(--p)'});
+    s.appendChild(r1);s.appendChild(r2);
+    anim(r1,'height',0,a,700,i*120);anim(r1,'y',Y,Y-a,700,i*120);
+    anim(r2,'height',0,b,700,i*120+80);anim(r2,'y',Y,Y-b,700,i*120+80);
+    const t=el('text',{x:x,y:Y+26,'text-anchor':'middle',class:'num'});t.textContent='N='+n;
+    s.appendChild(fadeIn(t,300,i*120));
+  });
+  const t=el('text',{x:X0,y:26,class:'lbl'});
+  t.textContent='gelb zieht davon ⇒ das Fenster ist größer als jede Lücke';
+  s.appendChild(fadeIn(t,500,1200));
+};
+
+/* 5 – Lemma: Primzahl im Fenster */
+draw[4]=()=>{
+  const s=clear('s5'),X0=60,W=980,y=120;
+  const Ns=[5,6,7,8,9];
+  Ns.forEach((N,i)=>{
+    const lo=N**3,hi=(N+1)**3-1;
+    let p=null;for(let q=lo+1;q<hi;q++)if(isPrime(q)){p=q;break}
+    const x=X0+i*(W/5),w=W/5-26;
+    const r=el('rect',{x,y:y-26,width:w,height:52,rx:9,fill:'none',stroke:'var(--cube)','stroke-width':3});
+    s.appendChild(fadeIn(r,400,i*300));
+    const t1=el('text',{x:x+w/2,y:y-40,'text-anchor':'middle',class:'lbl'});
+    t1.textContent=lo+' … '+hi;s.appendChild(fadeIn(t1,400,i*300));
+    const px=x+w*((p-lo)/(hi-lo));
+    const c=el('circle',{cx:px,cy:y,r:0,fill:'var(--p)'});s.appendChild(c);
+    anim(c,'r',0,11,450,i*300+320,);
+    const t2=el('text',{x:px,y:y+42,'text-anchor':'middle',class:'num',fill:'var(--p)'});
+    t2.textContent=p;s.appendChild(fadeIn(t2,400,i*300+420));
+  });
+};
+
+/* 6 – Kette */
+draw[5]=()=>{
+  const s=clear('s6'),X0=90,y0=60,dy=58;
+  const P=[2,11,1361,2521008887];
+  P.forEach((p,i)=>{
+    const y=y0+i*dy;
+    const box=el('rect',{x:X0,y:y-22,width:330,height:44,rx:10,fill:'#16224a',stroke:'var(--p)','stroke-width':2});
+    s.appendChild(fadeIn(box,400,i*420));
+    const t=el('text',{x:X0+165,y:y+7,'text-anchor':'middle',class:'num',fill:'var(--p)'});
+    t.textContent='P'+i+' = '+p;s.appendChild(fadeIn(t,400,i*420));
+    if(i<P.length-1){
+      const a=el('path',{d:`M${X0+165},${y+22} L${X0+165},${y+dy-22}`,stroke:'var(--cube)','stroke-width':3,fill:'none','marker-end':''});
+      s.appendChild(fadeIn(a,400,i*420+260));
+      const lt=el('text',{x:X0+185,y:y+dy-30,class:'lbl'});
+      lt.textContent='↓  nimm eine Primzahl zwischen P'+i+'³ und (P'+i+'+1)³−1';
+      s.appendChild(fadeIn(lt,400,i*420+300));
+    }
+  });
+  const inf=el('text',{x:X0+165,y:y0+P.length*dy-6,'text-anchor':'middle',class:'num',fill:'var(--dim)'});
+  inf.textContent='⋮  unendlich weiter';s.appendChild(fadeIn(inf,500,1900));
+};
+
+/* 7 – Wurzel ziehen */
+draw[6]=()=>{
+  const s=clear('s7'),X0=80,W=940;
+  const rows=[
+    ['P₀ = 2',  '2 … 3',            '2.000000','3.000000'],
+    ['P₁ = 11', '11 … 26',          '2.223980','2.962496'],
+    ['P₂ = 1361','1361 … 1727',     '2.360251','2.413565'],
+    ['P₃ = 2521008887','… 2529·10⁶','2.356291','2.356368']
+  ];
+  rows.forEach((r,i)=>{
+    const y=60+i*62;
+    const t0=el('text',{x:X0,y:y+5,class:'num'});t0.textContent=r[0];
+    const t1=el('text',{x:X0+230,y:y+5,class:'lbl'});t1.textContent=r[1];
+    const a=el('text',{x:X0+520,y:y+5,class:'num'});a.textContent='⟶  ∛…∛';
+    const u=el('text',{x:X0+660,y:y+5,class:'num',fill:'var(--u)'});u.textContent=r[2];
+    const v=el('text',{x:X0+790,y:y+5,class:'num',fill:'var(--v)'});v.textContent=r[3];
+    [t0,t1,a,u,v].forEach(n=>s.appendChild(fadeIn(n,400,i*380)));
+    const bar=el('rect',{x:X0+660,y:y+14,width:0,height:5,rx:2,fill:'#3b4a7d'});
+    s.appendChild(bar);
+    const wds=[240,170,60,8];
+    anim(bar,'width',0,wds[i],600,i*380+200);
+  });
+};
+
+/* 8 – Zange / Schachtelung */
+draw[7]=()=>{
+  
+  const s=clear('s8'),X0=70,W=960,yTop=40,rowH=48;
+  // Intervalle [u_n, v_n] aus der Mills-Konstruktion P0=2,11,1361,2521008887
+  const P=[2,11,1361,2521008887];
+  const u=[],v=[];
+  P.forEach((p,n)=>{u.push(Math.pow(p,Math.pow(3,-n)));v.push(Math.pow(p+1,Math.pow(3,-n)))});
+  // alles relativ zum ersten Intervall darstellen
+  const lo0=u[0],hi0=v[0];
+  const sx=val=>X0+W*((val-lo0)/(hi0-lo0));
+  P.forEach((p,i)=>{
+    const y=yTop+i*rowH;
+    // Hintergrundlinie
+    s.appendChild(el('line',{x1:X0,y1:y,x2:X0+W,y2:y,stroke:'#1e294f','stroke-width':2}));
+    const a=sx(u[i]),b=sx(v[i]);
+    const bar=el('rect',{x:a,y:y-11,width:Math.max(2.5,b-a),height:22,rx:5,
+                         fill:'#2b3a6e',stroke:'var(--cube)','stroke-width':2});
+    s.appendChild(fadeIn(bar,450,i*520));
+    // Backen der Zange
+    const lU=el('rect',{x:a-3,y:y-15,width:3,height:30,fill:'var(--u)'});
+    const lV=el('rect',{x:b,y:y-15,width:3,height:30,fill:'var(--v)'});
+    s.appendChild(fadeIn(lU,450,i*520));s.appendChild(fadeIn(lV,450,i*520));
+    // Beschriftung der Breite
+    const t=el('text',{x:X0+W+14,y:y+5,class:'lbl'});
+    const wdt=v[i]-u[i];
+    t.textContent='Breite ≈ '+(wdt<0.001?wdt.toExponential(1):wdt.toFixed(4));
+    s.appendChild(fadeIn(t,450,i*520+200));
+    // Verbindung zum nächsten Intervall (zeigt: liegt darin)
+    if(i<P.length-1){
+      const a2=sx(u[i+1]),b2=sx(v[i+1]);
+      const g=el('path',{d:`M${a},${y+11} L${a2},${y+rowH-11} M${b},${y+11} L${b2},${y+rowH-11}`,
+                         stroke:'#3f518f','stroke-width':1.5,fill:'none','stroke-dasharray':'4 4'});
+      s.appendChild(fadeIn(g,450,i*520+320));
+    }
+  });
+  // A-Marke
+  const A=1.3063778838630806;
+  // A liegt NICHT im gezeichneten Fenster (das zeigt u_n, v_n) -> markiere Grenzwert der u_n
+  const lim=u[u.length-1];
+  const ax=sx(lim);
+  const aline=el('line',{x1:ax,y1:yTop-26,x2:ax,y2:yTop+(P.length-1)*rowH+26,
+                         stroke:'var(--A)','stroke-width':2,'stroke-dasharray':'6 5'});
+  s.appendChild(fadeIn(aline,600,2300));
+  const at=el('text',{x:ax,y:yTop-34,'text-anchor':'middle',class:'zoomtag'});
+  at.textContent='← hier bleibt genau 1 Zahl übrig';
+  s.appendChild(fadeIn(at,600,2300));
+  // Live-Zahlen unter der Grafik
+  const out=document.getElementById('s8num');
+  out.textContent='';
+  let i=0;
+  const tick=()=>{
+    if(i>=P.length||cur!==7)return;
+    out.innerHTML='<span style="color:var(--u)">'+u[i].toFixed(8)+'</span>'+
+                  ' &nbsp;&lt;&nbsp; A &nbsp;&lt;&nbsp; '+
+                  '<span style="color:var(--v)">'+v[i].toFixed(8)+'</span>';
+    i++;setTimeout(tick,900);
+  };
+  setTimeout(tick,400);
+};
+
+/* 9 – A auf dem Zahlenstrahl, Zoomstufen */
+draw[8]=()=>{
+  const s=clear('s9'),X0=60,W=980,y=70;
+  const A=1.3063778838630806;
+  const zooms=[[1,2],[1.3,1.31],[1.306,1.3064],[1.30637,1.306378]];
+  zooms.forEach((z,i)=>{
+    const yy=y+0; // eine Achse, nacheinander neu skaliert
+  });
+  // statt vieler Achsen: eine Achse, die hineinzoomt
+  const axis=el('line',{x1:X0,y1:y,x2:X0+W,y2:y,stroke:'#2e3c6e','stroke-width':3});
+  s.appendChild(axis);
+  const dot=el('circle',{cx:X0+W*((A-1)/1),cy:y,r:9,fill:'var(--A)'});
+  s.appendChild(dot);
+  const lblL=el('text',{x:X0,y:y+32,class:'num'});
+  const lblR=el('text',{x:X0+W,y:y+32,'text-anchor':'end',class:'num'});
+  s.appendChild(lblL);s.appendChild(lblR);
+  const tag=el('text',{x:0,y:y-22,'text-anchor':'middle',class:'zoomtag'});
+  tag.textContent='A';s.appendChild(tag);
+  let k=0;
+  const step=()=>{
+    if(k>=zooms.length||cur!==8)return;
+    const [lo,hi]=zooms[k];
+    lblL.textContent=lo;lblR.textContent=hi;
+    const x=X0+W*((A-lo)/(hi-lo));
+    dot.setAttribute('cx',x);tag.setAttribute('x',x);
+    k++;setTimeout(step,1100);
+  };
+  step();
+};
+
+/* 10 – Maschine: A^(3^n) */
+draw[9]=()=>{
+  const box=document.getElementById('s10');
+  box.innerHTML='';
+  const P=['2','11','1361','2 521 008 887'];
+  P.forEach((p,n)=>{
+    const c=document.createElement('div');
+    c.className='card';c.style.opacity=0;
+    c.innerHTML='<span class="mono">⌊A<sup>3<sup>'+n+'</sup></sup>⌋</span>'+
+                '<b class="mono" style="color:var(--p)">'+p+'</b>'+
+                '<span>prim ✓</span>';
+    box.appendChild(c);
+    setTimeout(()=>{c.style.transition='.5s';c.style.opacity=1},n*450+200);
+  });
+};
+
+/* 11 – Kette der Argumente */
+draw[10]=()=>{
+  const s=clear('s11'),X0=40,W=1020,y=60;
+  const steps=['Ingham','Kuben-Fenster','Primzahl-Kette','Schachtelung','A'];
+  const colors=['var(--p)','var(--cube)','var(--p)','var(--v)','var(--A)'];
+  steps.forEach((t,i)=>{
+    const w=W/steps.length-18,x=X0+i*(W/steps.length);
+    const r=el('rect',{x,y:y-24,width:w,height:48,rx:12,fill:'#16224a',
+                       stroke:colors[i],'stroke-width':2});
+    s.appendChild(fadeIn(r,400,i*350));
+    const tx=el('text',{x:x+w/2,y:y+6,'text-anchor':'middle',class:'num',fill:colors[i]});
+    tx.textContent=t;s.appendChild(fadeIn(tx,400,i*350+120));
+    if(i<steps.length-1){
+      const ar=el('text',{x:x+w+9,y:y+7,'text-anchor':'middle',class:'num',fill:'var(--dim)'});
+      ar.textContent='→';s.appendChild(fadeIn(ar,400,i*350+260));
+    }
+  });
+};
+
+/* Start */
+go(0);
+</script>
+</body>
+</html>
