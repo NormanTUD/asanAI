@@ -5430,7 +5430,7 @@ function rebuildFilterChips(){
   const wavesPresent = [...new Set(PAPERS.map(p => p.wave))].sort((a,b) => b-a);
   wavesPresent.forEach(w => {
     const cnt = PAPERS.filter(p => p.wave === w).length;
-    const label = w === 7 ? "Wave 7 — forgotten first authors" : w === 6 ? "Wave 6 — hidden foundations" : w === 5 ? "Wave 5 — the originals" : w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
+    const label = w === 8 ? "Wave 8 — untranslated originals" : w === 7 ? "Wave 7 — forgotten first authors" : w === 6 ? "Wave 6 — hidden foundations" : w === 5 ? "Wave 5 — the originals" : w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
     const c = document.createElement("button");
     c.className = "chip" + (state.wave === String(w) ? " active" : "");
     c.dataset.filter = "wave"; c.dataset.value = String(w);
@@ -5478,7 +5478,7 @@ function initFilters(){
   const wavesPresent = [...new Set(PAPERS.map(p => p.wave))].sort((a,b) => b-a);
   wavesPresent.forEach(w => {
     const cnt = PAPERS.filter(p => p.wave === w).length;
-    const label = w === 7 ? "Wave 7 — forgotten first authors" : w === 6 ? "Wave 6 — hidden foundations" : w === 5 ? "Wave 5 — the originals" : w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
+    const label = w === 8 ? "Wave 8 — untranslated originals" : w === 7 ? "Wave 7 — forgotten first authors" : w === 6 ? "Wave 6 — hidden foundations" : w === 5 ? "Wave 5 — the originals" : w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
     const c = document.createElement("button");
     c.className = "chip" + (state.wave === String(w) ? " active" : "");
     c.dataset.filter = "wave"; c.dataset.value = String(w);
