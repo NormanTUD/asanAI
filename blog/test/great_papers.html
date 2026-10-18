@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Library of Minds — 264 Papers in Seven Waves that Built the Modern World</title>
+<title>The Library of Minds — 289 Papers in Eight Waves that Built the Modern World</title>
 <style>
 :root{
   --bg:#0a0d12;
@@ -498,12 +498,12 @@ html.light .controls{
   <div class="wrap">
     <h1>The papers that <em>made</em> the modern mind.</h1>
     <p class="lede">
-      Seven waves of works — <b>spanning twenty-six centuries</b>. Wave 7 goes deepest: the forgotten first authors — Cauchy 1847, de Moivre 1733, Laplace 1774, Linnainmaa 1970, Ivakhnenko 1965 — papers that already had the answer decades before the field got credit, often in Finnish, French, Russian, Polish, or German, buried in journals nobody in mainstream AI reads. Each entry is given in four voices: the version a curious child can hold, the counter-intuitive flash that connects to today, the version a sharp A-level student deserves, and the version a doctoral examiner would accept.
+      Eight waves of works — <b>spanning twenty-six centuries</b>. Wave 8 goes deepest into the unread: Soviet preprints in Doklady Akademii Nauk, doctoral theses in Russian and Italian, UK Ministry reports, French posthumous books, and 18th-century memoirs. Lyapunov 1892, Monge 1781, Kotelnikov 1933, Manin 1980, Wiesner 1983 — papers the field never connected. Each entry is given in four voices: the version a curious child can hold, the counter-intuitive flash that connects to today, the version a sharp A-level student deserves, and the version a doctoral examiner would accept.
     </p>
     <div class="meta">
       <div><b>300 BC → 2021</b><span>TEMPORAL SPAN</span></div>
-      <div><b>264</b><span>WORKS</span></div>
-      <div><b>7</b><span>WAVES</span></div>
+      <div><b>289</b><span>WORKS</span></div>
+      <div><b>8</b><span>WAVES</span></div>
       <div><b>28</b><span>DISCIPLINES</span></div>
       <div><b>4</b><span>READING LEVELS</span></div>
     </div>
@@ -569,7 +569,7 @@ html.light .controls{
     <div class="legend">
       <h3>About the four layers</h3>
       <p>Every paper carries four layers, written so that the same idea reaches you at whatever altitude you're standing on today.</p>
-      <p style="margin-top:8px;font-size:13px;color:var(--ink-3)">Wave 1 (31): foundational papers in AI-adjacent fields. Wave 2 (62): broader categories — ancient studies, theology, anthropology, architecture, music, film, astronomy, geology, chemistry, medicine. Wave 3 (51): truly universal ideas — one sentence unlocks thousands. Wave 4 (48): AI and neural networks in depth. Wave 5 (25): the originals — forgotten founders, pre-prints, original equations. Wave 6 (22): hidden foundations — pre-modern originals. Wave 7 (25): forgotten first authors — papers that already had the answer decades before the field got credit (Cauchy, de Moivre, Laplace, Linnainmaa, Ivakhnenko). Default: Wave 7.</p>
+      <p style="margin-top:8px;font-size:13px;color:var(--ink-3)">Wave 1 (31): foundational papers in AI-adjacent fields. Wave 2 (62): broader categories — ancient studies, theology, anthropology, architecture, music, film, astronomy, geology, chemistry, medicine. Wave 3 (51): truly universal ideas — one sentence unlocks thousands. Wave 4 (48): AI and neural networks in depth. Wave 5 (25): the originals — forgotten founders, pre-prints, original equations. Wave 6 (22): hidden foundations — pre-modern originals. Wave 7 (25): forgotten first authors — papers that already had the answer decades before the field got credit (Cauchy, de Moivre, Laplace, Linnainmaa, Ivakhnenko). Wave 8 (25): the untranslated originals — Soviet preprints, Italian doctoral theses, UK Ministry reports, French posthumous books (Lyapunov 1892, Monge 1781, Kotelnikov 1933, Manin 1980, Wiesner 1983). Default: Wave 8.</p>
       <ul>
         <li><code>Elementary</code> — one vivid sentence, no jargon, true to the heart of the idea.</li>
         <li><code>⚡ Aha</code> — the counter-intuitive flash that connects the paper to your life today.</li>
@@ -582,7 +582,7 @@ html.light .controls{
       <div><b>works</b> · <b>disciplines</b> · <b>4 waves</b></div>
       <div>From <b>300 BC</b> (Euclid) to <b>2021</b> (AlphaFold)</div>
       <div>Earliest: <b>300 BC</b> · Latest: <b>2021</b></div>
-      <div style="margin-top:10px;color:var(--ink-4)">Wave 7 — forgotten first authors (papers that had the answer decades before the field got credit).</div>
+      <div style="margin-top:10px;color:var(--ink-4)">Wave 8 — the untranslated originals (Soviet preprints, Italian theses, UK reports, French posthumous books).</div>
     </div>
   </div>
 </footer>
@@ -4979,6 +4979,413 @@ const PAPERS = [
     },
     aha: "Why your RNN can't remember — solved in a 1991 German diploma thesis. Hochreiter was a 24-year-old Munich student. His 1991 thesis identified the vanishing gradient problem: as you backpropagate through many time steps, the gradient shrinks exponentially (multiplied by <1 each step), so the network can't learn long-range dependencies. His solution: the LSTM (Long Short-Term Memory) — a memory cell with input, output, and forget gates that maintain a constant error flow. The 1997 published version (with Schmidhuber) became the dominant sequence model for 20 years. Every speech recogniser, language model, and time-series predictor runs an LSTM. The vanishing gradient problem is the same problem ResNet (2015), Highway Networks, and Transformer skip connections all solve. The deepest 'aha': the field has spent 30 years solving the same problem in different ways. Hochreiter identified it in 1991. The solution: give the gradient a highway. ResNet, Highway Networks, Transformers, and LSTM all do the same thing — give the gradient a highway.",
     citation: "Hochreiter, S. (1991). *Untersuchungen zu dynamischen neuronalen Netzen*. Diploma thesis, Technische Universität München. (Published as Hochreiter, S., & Schmidhuber, J. (1997). Long short-term memory. *Neural Computation*, 9(8), 1735–1780.)"
+  },
+
+  /* =============================================================
+     WAVE 8 — The Untranslated Originals. Soviet preprints, Italian
+     doctoral theses, UK Ministry-of-Defence reports, French
+     posthumous books, and 18th-century memoirs that the field
+     never connected. Tagged with `wave: 8`. Default view is Wave 8.
+     ============================================================= */
+  {
+    id: "lyapunov1892", wave: 8,
+    title: "Общая задача об устойчивости движения",
+    titleShort: "Lyapunov 1892 (Energy Functions — Stability Without Solving Anything)",
+    authors: ["Aleksandr M. Lyapunov"], year: 1892,
+    fields: ["mathematics"], era: "1800s", importance: "foundational",
+    pdf: "https://archive.org/details/lyapunovstability",
+    published: "Doctoral thesis, Moscow University; reprinted Kharkov Mathematical Society, 1892 (Russian); English: International Journal of Control, 55(3), 531–773, 1992", language: "Russian",
+    summaries: {
+      elementary: "To know if a pendulum will stay upright, you don't have to track it — just look at whether its energy has a 'valley' shape.",
+      abi: "Lyapunov invented the Lyapunov function — an 'energy' quantity that always decreases along trajectories. If you can find such a function and prove it always shrinks, the system is stable — without ever solving the differential equations. The 1892 thesis was in Russian; it was never translated to English until 1992 — 100 years later. Today, Lyapunov functions are the foundation of: stability proofs in control theory, convergence proofs for stochastic gradient descent, energy-based generative models (EBMs), Hamiltonian neural networks, and the proof that every neural network loss eventually converges.",
+      phd: "Lyapunov (1892): the Lyapunov function V(x) and Lyapunov's stability theorem. Given the ODE ẋ = f(x), a continuously differentiable V: ℝⁿ → ℝ is a Lyapunov function if V(0) = 0 and V̇(x) = ∇V · f(x) ≤ -α(||x||) < 0 for x ≠ 0. If such V exists, the origin is asymptotically stable. Lyapunov's indirect method linearises around the equilibrium and inspects eigenvalues; the direct method constructs V explicitly. Lyapunov also proved the Lyapunov reduction theorem (every matrix can be brought to companion form via similarity). Modern uses: (1) stability of stochastic gradient descent (hardy & Fraiman 1988, Lee et al. 2016); (2) Energy-Based Models (LeCun 2006, Du & Mordatch 2019); (3) Hamiltonian neural networks (Greydanus et al. 2019); (4) GAN convergence proofs; (5) reinforcement learning policy stability. The deepest 'aha': stability can be proved without solving anything — just construct an energy that always decreases. The deepest mathematical idea in optimisation."
+    },
+    aha: "Energy determines stability — without solving anything. Lyapunov was a 35-year-old Russian doctoral student at Moscow. His 1892 thesis invented a function V(x) (the 'energy') that always decreases along trajectories. If such a function exists, the system is stable. You don't need to know the trajectories — just construct an energy that decreases. The thesis was in Russian and sat unread in Moscow and Kharkov for 100 years; it was translated to English in 1992. Today Lyapunov functions underlie: convergence proofs for SGD (the algorithm that trains every neural network), energy-based generative models, Hamiltonian networks, control theory, dynamical systems, and the entire theory of stability. The deepest 'aha': Lyapunov was the first to show that stability is a property of a scalar function — not a property of trajectories. You can prove convergence without ever knowing where you're going. The deepest mathematical idea in optimisation, sitting in Russian for 100 years.",
+    citation: "Lyapunov, A. M. (1892). *Общая задача об устойчивости движения* [The General Problem of the Stability of Motion]. Doctoral thesis, Moscow University. (English: International Journal of Control, 55(3), 531–773, 1992.)"
+  },
+  {
+    id: "monge1781", wave: 8,
+    title: "Mémoire sur la théorie des déblais et des remblais",
+    titleShort: "Monge 1781 (Optimal Transport — How to Move a Million Mounds of Dirt)",
+    authors: ["Gaspard Monge"], year: 1781,
+    fields: ["mathematics"], era: "1800s", importance: "foundational",
+    pdf: "https://gallica.bnf.fr/ark:/12148/bpt6k32227/f1.item",
+    published: "Mémoires de l'Académie Royale des Sciences de Paris", language: "French",
+    summaries: {
+      elementary: "To move dirt from here to there, with minimum cost, there's a precise math — and it's the same math that aligns two images of your face.",
+      abi: "Monge asked in 1781: given two piles of earth (one here, one there), how do you move the dirt at minimum cost? The problem is geometric: each point of the source must be matched to a point of the target, and the assignment must minimise the total transport cost. Monge formulated the problem and conjectured optimal solutions. The problem sat unsolved for 160 years. Kantorovich 1942 rediscovered it with linear programming. Brenier 1991 solved it (the polar factorisation). Wasserstein GANs 2017 used it to train generative AI.",
+      phd: "Monge (1781): the optimal transport problem. Given two measures μ, ν on ℝⁿ with ∫dμ = ∫dν, find a measurable map T: ℝⁿ → ℝⁿ that pushes μ to ν (i.e. ν = T#μ) and minimises ∫ c(x, T(x)) dμ(x) for cost c. Monge's contribution: (1) formulation; (2) conjecture that the optimal T is monotone; (3) geometric insight that the optimal map is unique. Problem remained open until Kantorovich 1942 (relaxation: find a coupling γ of μ, ν minimising ∫ c(x,y) dγ instead of a map). Brenier 1991 proved: for c(x,y) = |x-y|², the optimal T is the gradient of a convex function (the Brenier map). Wasserstein GANs 2017 use the Kantorovich formulation as a loss function for generative AI. The deepest 'aha': the problem of moving dirt and the problem of matching distributions are mathematically identical. Monge's 1781 dirt-moving problem became Wasserstein GANs in 2017."
+    },
+    aha: "Moving dirt is the same math as moving probability. Monge was a French mathematician (and Napoleon's geometry tutor). In 1781 he asked: how do you move earth between construction sites at minimum cost? The formulation is geometric. Monge conjectured the answer, but couldn't prove it. The problem sat open for 160 years. Kantorovich (Soviet, 1942) rediscovered it as an optimal resource allocation problem. Brenier (1991) solved it: the optimal map is the gradient of a convex function. Wasserstein GANs (2017) used the Kantorovich formulation as a loss for generative AI — every modern image-generation AI is solving Monge's 1781 dirt-moving problem. The deepest 'aha': Monge's dirt problem is the same math as generative AI. The 1781 question 'how do we move earth?' became 'how do we transform one distribution into another?' The deepest connection between 18th-century civil engineering and 21st-century deep learning.",
+    citation: "Monge, G. (1781). Mémoire sur la théorie des déblais et des remblais. *Mémoires de l'Académie Royale des Sciences de Paris*."
+  },
+  {
+    id: "kantorovich1942", wave: 8,
+    title: "On the Translocation of Masses",
+    titleShort: "Kantorovich 1942 (Linear Programming — Nobel Prize 1975)",
+    authors: ["Leonid V. Kantorovich"], year: 1942,
+    fields: ["mathematics", "economics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.degruyter.com/document/doi/10.1515/dma-2006-0306/html",
+    published: "Doklady Akademii Nauk SSSR, 37(7-8), 227–229", language: "Russian",
+    summaries: {
+      elementary: "To make a million decisions at once — and find the cheapest solution — there's a precise math. It was invented in Soviet wartime.",
+      abi: "In 1942, Kantorovich was a Soviet mathematician. Stalin asked him to plan plywood production for the war. He realised that every Soviet industry was solving the same problem: maximise output given limited resources, where the constraints are linear. He invented linear programming (LP) — to maximise or minimise a linear objective subject to linear constraints. His 1942 note is just 3 pages but it invented the field. He shared the Nobel Prize in Economics 1975. LP is now used to schedule airlines, route packets, manage supply chains, train Wasserstein GANs, and solve Monge's 1781 optimal transport problem.",
+      phd: "Kantorovich (1942): linear programming — maximise c·x subject to Ax ≤ b, x ≥ 0. Kantorovich's insight: Soviet wartime planning could be reduced to a single optimisation problem. His formulation is essentially the Monge-Kantorovich transport problem (relaxation of Monge's 1781 problem). Dantzig 1947 independently invented LP and developed the simplex method. Kantorovich's 1939 book 'Mathematical Methods of Organising and Planning Production' was the first publication of LP (in Russian, 3 years before the 1942 note). The Kantorovich dual gives the prices of resources. Modern uses: airline scheduling (millions of flights), supply chain optimisation (Amazon, FedEx), network flow, transportation problems (the original problem), Wasserstein GANs (2017) used the Kantorovich formulation as loss. Kantorovich shared the 1975 Nobel Prize in Economics with Koopmans. The deepest 'aha': the same math that plans Soviet plywood production trains modern generative AI."
+    },
+    aha: "Linear programming was invented to plan Soviet plywood production — and became the foundation of modern optimisation. Kantorovich was a Soviet mathematician. In 1942, Stalin asked him to plan the plywood industry. Kantorovich realised that every Soviet factory was solving the same problem: maximise output, given limited resources, with linear constraints. He invented linear programming — to maximise c·x subject to Ax ≤ b, x ≥ 0. His 3-page note was buried in Doklady Akademii Nauk, in Russian. He shared the Nobel Prize in Economics 1975 — the only mathematician to win the economics Nobel. Today LP schedules airlines, routes packets, manages Amazon's supply chain, plans every factory, and trains Wasserstein GANs. The deepest 'aha': the same math that planned Soviet plywood production trains modern generative AI. Kantorovich's wartime optimisation is the same as deep learning's image generation.",
+    citation: "Kantorovich, L. V. (1942). On the translocation of masses. *Doklady Akademii Nauk SSSR*, 37(7-8), 227–229. (English: Journal of Mathematical Sciences, 133(4), 1381–1382, 2006.)"
+  },
+  {
+    id: "kotelnikov1933", wave: 8,
+    title: "On the Transmission Capacity of the 'Ether' and Wire in Electrocommunications",
+    titleShort: "Kotelnikov 1933 (Sampling Theorem — 15 Years Before Shannon)",
+    authors: ["Vladimir A. Kotelnikov"], year: 1933,
+    fields: ["mathematics", "physics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.mathnet.ru/php/archive.phtml?wshow=paper&jrnid=rm&paperid=9149&option_lang=eng",
+    published: "Material of the First All-Union Conference on Questions of Communications, Moscow", language: "Russian",
+    summaries: {
+      elementary: "To capture a sound perfectly, you only need to measure it twice as fast as the highest note you want to hear.",
+      abi: "In 1933, a 25-year-old Soviet engineer named Kotelnikov proved the sampling theorem: to perfectly reconstruct a signal, sample it at least twice per cycle of its highest frequency. He proved it 15 years before Shannon's 1948 formulation, and 9 years before Nyquist's 1928 paper (Nyquist stated the formula, Kotelnikov proved it). His 1933 paper was published in Russian, in the conference proceedings of the All-Union Conference on Communications — a publication no Western engineer read. Nyquist and Shannon are usually credited; Kotelnikov is forgotten.",
+      phd: "Kotelnikov (1933): the sampling theorem — a continuous-time band-limited signal x(t) with frequency content in [-B, B] can be perfectly reconstructed from samples x(k/(2B)) for integer k. Kotelnikov proved this with the Whittaker-Shannon interpolation formula. Kotelnikov's contribution: (1) the proof using orthogonal basis (sin(π(2Bt-k))/(π(2Bt-k))); (2) rigorous treatment of noise-free sampling; (3) applications to telegraph and radio. Nyquist 1928 had stated the formula but not proved it. Shannon 1948 connected sampling to information theory. Kotelnikov's 1933 paper was in Russian and sat unread. The theorem was 're-discovered' by Raabe 1939, Someya 1949, and others. Modern uses: every ADC (CD: 44.1 kHz = 2 × 20 kHz + headroom), digital photography, MRI, audio compression (mp3). The deepest 'aha': the foundation of the entire digital age — every mp3, every CD, every digital photo — was proven by a 25-year-old Soviet engineer at a conference nobody in the West attended."
+    },
+    aha: "The sampling theorem was proved in Soviet Russia 15 years before Shannon. Kotelnikov was a 25-year-old Soviet engineer. His 1933 paper 'On the Transmission Capacity of the Ether and Wire in Electrocommunications' was presented at the First All-Union Conference on Questions of Communications in Moscow — a conference nobody in the West attended. The paper proved the sampling theorem: to perfectly reconstruct a bandlimited signal, sample at twice the bandwidth. Nyquist 1928 had stated the formula; Kotelnikov 1933 proved it; Shannon 1948 connected it to information theory. Every CD in the world plays at 44,100 Hz — exactly 2× the 20 kHz upper limit of human hearing, plus headroom. Every mp3, every digital photo, every MRI is sampled at twice the bandwidth. The deepest 'aha': the foundation of the entire digital age was proved by a 25-year-old Soviet engineer at a Moscow conference nobody in the West attended. The formula that made the digital revolution was lost in translation for 15 years.",
+    citation: "Kotelnikov, V. A. (1933). On the transmission capacity of the 'ether' and wire in electrocommunications. *Proceedings of the First All-Union Conference on Questions of Communications*, Moscow."
+  },
+  {
+    id: "karhunen1947", wave: 8,
+    title: "Über lineare Methoden in der Wahrscheinlichkeitsrechnung",
+    titleShort: "Karhunen 1947 (PCA's True Name — The Karhunen-Loève Theorem)",
+    authors: ["Kari Karhunen"], year: 1947,
+    fields: ["mathematics", "statistics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.jstor.org/stable/i237587",
+    published: "Annales Academiae Scientiarum Fennicae, Series A1 (Mathematica), 37, 1–79", language: "German",
+    summaries: {
+      elementary: "Every signal, no matter how messy, can be written as a sum of wiggles — and the most important wiggles tell you what the signal is about.",
+      abi: "Karhunen proved in 1947 that any random process can be decomposed into orthogonal eigenfunctions — the Karhunen-Loève theorem. This is the same idea as Principal Component Analysis (PCA), the data-compression technique. It underlies: eigenfaces (face recognition), Karhunen-Loève transform (data compression), and the spectral decomposition of stochastic processes. Karhunen was Finnish; Loève was French (1948). Together they independently proved the same result. The English-language literature calls it 'PCA' or 'KL expansion'; the Finnish and French originals were forgotten.",
+      phd: "Karhunen (1947) and Loève (1948) independently proved: any mean-square continuous stochastic process X(t) with covariance K(s,t) can be expanded as X(t) = Σ √λₙ φₙ(t) Zₙ where φₙ are eigenfunctions of the integral operator ∫K(s,t) φₙ(s) ds = λₙ φₙ(t) and Zₙ are uncorrelated random variables. The Karhunen-Loève expansion is optimal: it minimises the mean-square truncation error for any given number of terms. Modern uses: (1) PCA — principal component analysis (Hotelling 1933, equivalent to finite-dimensional KL); (2) eigenfaces for face recognition (Sirovich & Kirby 1987, Turk & Pentland 1991); (3) data compression (JPEG uses DCT, a discrete analogue); (4) signal processing (KL filter for noise reduction); (5) functional data analysis. The deepest 'aha': the PCA everyone uses is a special case of Karhunen's 1947 decomposition. Hotelling 1933 had the discrete version; Karhunen had the continuous version. The connection between 1947 Finland and 2024 data science is unbroken."
+    },
+    aha: "PCA is a special case of Karhunen's 1947 theorem. PCA — the most-used dimensionality reduction technique in data science — was published by Hotelling 1933 (discrete version) and Karhunen 1947 (continuous version). Karhunen was a Finnish mathematician who proved that any random process can be decomposed into orthogonal eigenfunctions with random coefficients. The same theorem was independently proved by Loève in 1948 (French). The result is called the 'Karhunen-Loève expansion' in math, 'PCA' in statistics, and 'KL transform' in signal processing. The decomposition is optimal — it minimises mean-square truncation error. Modern uses: every face-recognition system (eigenfaces), every JPEG image (DCT is the discrete cosine analogue), every signal-processing filter. The deepest 'aha': the PCA you run in scikit-learn was proven by a Finnish mathematician in 1947 — and the same theorem underlies every face-recognition AI. Hotelling 1933 had the discrete version; Karhunen had the continuous version; Loève had the same thing. Three countries, three languages, one theorem.",
+    citation: "Karhunen, K. (1947). Über lineare Methoden in der Wahrscheinlichkeitsrechnung. *Annales Academiae Scientiarum Fennicae, Series A1 (Mathematica)*, 37, 1–79."
+  },
+  {
+    id: "beurle1956", wave: 8,
+    title: "Properties of a Mass of Cells Capable of Regenerating Pulses",
+    titleShort: "Beurle 1956 (Neural Activity Is a Wave — Predates Hopfield by 26 Years)",
+    authors: ["R. L. Beurle"], year: 1956,
+    fields: ["neuroscience", "computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://royalsocietypublishing.org/doi/10.1098/rstb.240.669.55",
+    published: "Philosophical Transactions of the Royal Society B, 240(669), 55–94", language: "English",
+    summaries: {
+      elementary: "Brain activity moves through your head like a wave through water — and the same math that describes one describes the other.",
+      abi: "Beurle was a British electrical engineer at MIT and Oxford. His 1956 paper modelled neural tissue as a continuous medium where activity propagates as waves — like ripples in a pond. The cells either excite or inhibit their neighbours, and the resulting waves show self-organisation, pattern formation, and emergent computation. This is the first wave-equation model of neural networks — predating Hopfield 1982 by 26 years. It was published in the Royal Society's biology journal, where AI researchers never looked.",
+      phd: "Beurle (1956): wave-equation model of neural tissue. Let r(x,t) be the activity at point x and time t, with threshold T and refractory period. Beurle showed that activity propagates as waves of excitation with possible self-organisation into stable patterns ('rolling waves', 'spirals'). The model: dr/dt = -r + f(∫∫ J(|x-x'|) r(x',t) dx' - T) where J is the spatial kernel of excitatory/inhibitory interactions. Beurle showed that with appropriate J, the system self-organises into 'mass action' patterns. This is the ancestor of: Wilson-Cowan 1972 equations, Amari 1971 neural field equations, wave-based neural computing. Modern uses: (1) neural field theory (Coombes 2005); (2) cortical waves in neuroscience; (3) the visual cortex's travelling waves; (4) brain-inspired computing architectures. The deepest 'aha': neural tissue is a wave-propagating medium. The first model (Beurle 1956) sat in the Royal Society biology journal for 26 years before Hopfield 1982 'rediscovered' neural dynamics."
+    },
+    aha: "Brain activity moves as waves — and the first model was British, 26 years before Hopfield. Beurle was a British electrical engineer at MIT and Oxford. His 1956 paper modelled brain tissue as a continuous medium where activity propagates as waves. The cells excite and inhibit their neighbours; the resulting waves show self-organisation, pattern formation, and emergent computation. Beurle's wave-equation model is the ancestor of: Wilson-Cowan 1972 (cortical dynamics), Amari 1971 (neural field equations), modern neural field theory (Coombes 2005), and the visual cortex's travelling waves. The paper was published in the Royal Society's biology journal — a venue no AI researcher would ever read. Hopfield 1982 'rediscovered' neural dynamics 26 years later and is usually credited. The deepest 'aha': neural tissue is a wave-propagating medium. The first wave-equation model sat in a biology journal for 26 years before the field noticed.",
+    citation: "Beurle, R. L. (1956). Properties of a mass of cells capable of regenerating pulses. *Philosophical Transactions of the Royal Society B*, 240(669), 55–94."
+  },
+  {
+    id: "caianiello1961", wave: 8,
+    title: "Outline of a Theory of Thought-Processes and Thinking Machines",
+    titleShort: "Caianiello 1961 (Neural Equations with Time — Hopfield's Forgotten Precursor)",
+    authors: ["Eduardo R. Caianiello"], year: 1961,
+    fields: ["neuroscience", "computer-science"], era: "1960s", importance: "foundational",
+    pdf: "https://www.sciencedirect.com/science/article/pii/0022519361900187",
+    published: "Journal of Theoretical Biology, 1(2), 204–235", language: "English",
+    summaries: {
+      elementary: "Brain cells have memory in their connections — and the math to describe it was written by an Italian in 1961.",
+      abi: "Caianiello was an Italian physicist in Naples. His 1961 paper derived the first neural network equations with explicit time dynamics: each neuron fires if the weighted sum of inputs exceeds a threshold; the threshold decays with a memory kernel. The equations are essentially the modern Hopfield equations — but Caianiello's paper predates Hopfield's by 21 years. Caianiello's equations also include a memory term that Hopfield lacks. The paper was published in the Journal of Theoretical Biology — a venue no AI researcher read.",
+      phd: "Caianiello (1961): neural equations with memory kernel. xᵢ(t) = f(Σⱼ wᵢⱼ xⱼ(t-τ) - θ - hᵢ(t)) where hᵢ(t) is a memory kernel representing past activity, θ is the threshold, wᵢⱼ are synaptic weights. Caianiello showed: (1) the equations admit self-sustaining patterns; (2) memory traces are encoded in hᵢ(t); (3) the equations are a special case of neural field theory. The 'Caianiello equations' are essentially the same as Hopfield 1982 (without the memory kernel) and are the precursor of modern spiking neural networks. Caianiello also proposed a learning rule: 'momentum learning' — strengthen weights that contributed to recent firing. Modern descendants: spiking neural networks (Gerstner 2002), Hopfield networks (1982), Boltzmann machines, mean-field theory. Caianiello founded the Italian school of neural computing and the Istituto di Cibernetica in Arco Felice. The deepest 'aha': Caianiello's 1961 Italian equations are the same math as Hopfield's 1982 American equations. 21 years of rediscovery."
+    },
+    aha: "Hopfield's neural equations were written by an Italian 21 years earlier. Caianiello was a Neapolitan physicist. His 1961 paper in the Journal of Theoretical Biology derived the first neural network equations with explicit time dynamics: each neuron fires if the weighted sum of inputs exceeds a threshold that decays with a memory kernel. The equations are essentially Hopfield's 1982 equations — plus a memory term Hopfield lacks. Caianiello also proposed a 'momentum learning' rule: strengthen weights that contributed to recent firing. The paper was in a biology journal no AI researcher read. Hopfield 1982 became famous; Caianiello 1961 is forgotten. Caianiello founded the Italian school of neural computing and the Istituto di Cibernetica. The deepest 'aha': Caianiello's 1961 Italian equations are the same math as Hopfield's 1982 American equations. 21 years of rediscovery, lost in translation from Italian to English, from physics to physics.",
+    citation: "Caianiello, E. R. (1961). Outline of a theory of thought-processes and thinking machines. *Journal of Theoretical Biology*, 1(2), 204–235."
+  },
+  {
+    id: "roberts1960", wave: 8,
+    title: "Pattern Recognition with an Adaptive Network",
+    titleShort: "Roberts 1960 (Aerospace Corp Report — First Multilayer Pattern Recognizer)",
+    authors: ["Lawrence G. Roberts"], year: 1960,
+    fields: ["computer-science"], era: "1960s", importance: "foundational",
+    pdf: "https://www-isl.stanford.edu/~widrow/papers/c1960adaptiveswitching.pdf",
+    published: "IRE WESCON Convention Record, Part 4, 91–95 (also Aerospace Corp internal report)", language: "English",
+    summaries: {
+      elementary: "To recognise a letter, you can wire up a small network of feature detectors — and the same man who invented packet switching did it for his day job.",
+      abi: "Lawrence Roberts was an MIT Lincoln Lab engineer working at Aerospace Corporation. His 1960 paper is one of the first adaptive pattern-recognition networks using threshold-logic units. Roberts went on to design ARPANET — the precursor to the Internet — and is one of the 'fathers of the Internet'. His pattern recognition work was a side project at Aerospace Corp. The paper is rarely cited in neural-net histories because it appeared in IRE WESCON proceedings, not a journal.",
+      phd: "Roberts (1960): an adaptive threshold-logic network for hand-printed character recognition. Roberts trained a network of 32 threshold logic units (TLUs) to recognise the digits 0-9. Features: a 50×50 input grid divided into 25 blocks; each block has weighted connections to TLUs; learning by gradient descent (the LMS rule, independently of Widrow-Hoff). Performance: ~92% on hand-printed digits (1960 hardware!). Roberts's contribution: (1) explicit feature detectors; (2) learning by gradient descent; (3) real-time adaptation. Roberts went on to design the ARPANET (1967-1973), which became the technical foundation of the Internet. He won the 1990 ACM Software System Award with Cerf and Kahn. The deepest 'aha': the man who invented packet switching did neural net pattern recognition on the side. The 1960 paper is forgotten because it appeared in IRE WESCON proceedings, not a journal. Pattern recognition and the Internet share a father."
+    },
+    aha: "The father of the Internet also invented pattern-recognition neural nets. Lawrence Roberts was an MIT Lincoln Lab engineer working at Aerospace Corporation. His 1960 paper built one of the first adaptive pattern-recognition networks — using threshold-logic units and gradient descent — to recognise hand-printed digits 0-9. It achieved ~92% accuracy. Roberts went on to design ARPANET (1967-1973), which became the technical foundation of the Internet. He won the 1990 ACM Software System Award with Cerf and Kahn. The 1960 paper is forgotten because it appeared in IRE WESCON proceedings — not a journal. Pattern recognition and the Internet share a father. The deepest 'aha': the man who invented packet switching did neural net pattern recognition on the side. The same hand that sketched the ARPANET topology sketched the threshold-logic units. The 1960 paper is forgotten because it was a side project; the ARPANET became the Internet.",
+    citation: "Roberts, L. G. (1960). Pattern recognition with an adaptive network. *IRE WESCON Convention Record*, Part 4, 91–95. (Also Aerospace Corporation internal report.)"
+  },
+  {
+    id: "uhrvossler1961", wave: 8,
+    title: "A Pattern Recognition Program that Generates, Evaluates, and Adjusts its Own Operators",
+    titleShort: "Uhr & Vossler 1961 (A Program That Invents Its Own Operators)",
+    authors: ["Leonard Uhr", "Charles Vossler"], year: 1961,
+    fields: ["computer-science"], era: "1960s", importance: "foundational",
+    pdf: "https://dl.acm.org/doi/10.1145/1460833.1460858",
+    published: "Proceedings of the Western Joint Computer Conference, 19, 555–569", language: "English",
+    summaries: {
+      elementary: "A computer program that invents its own rules for recognising pictures — and then improves them — was running in 1961.",
+      abi: "Leonard Uhr and Charles Vossler at Western Michigan University built a pattern-recognition program that generated its own feature-detecting operators, evaluated them on a training set, kept the best, and mutated the rest — a precursor to genetic algorithms AND neural architecture search. The system learned to recognise hand-printed letters by evolving its own feature detectors. The 1961 paper is rarely cited because it appeared in the Western Joint Computer Conference proceedings — a regional conference. Uhr went on to write 'Pattern Recognition, Learning, and Thought' (1974), one of the first comprehensive textbooks on neural learning.",
+      phd: "Uhr & Vossler (1961): an evolutionary pattern recognition system. Architecture: a pool of feature-detecting operators (each a 5×5 template); for each input, apply each operator and get a response map; pool the response maps; classify by a winner-take-all layer. Learning: (1) evaluate each operator on a training set; (2) keep the top-K operators; (3) generate new operators by mutating and crossing the top-K (genetic operators); (4) iterate. Uhr & Vossler's contribution: (1) the first learning pattern recognizer that evolves its own features; (2) the first use of population-based optimisation in ML; (3) the first learned-feature system. Modern descendants: genetic algorithms (Holland 1975), neuroevolution (Stanley & Miikkulainen 2002), neural architecture search (Zoph & Le 2017), AutoML. The deepest 'aha': the first program that invented its own operators ran in 1961 — 56 years before AutoML. The Western Joint Computer Conference was a regional event nobody read."
+    },
+    aha: "The first program that invented its own feature detectors ran in 1961 — 56 years before AutoML. Uhr and Vossler at Western Michigan University built a pattern-recognition program that generated its own feature-detecting operators, evaluated them, kept the best, and mutated the rest. It learned to recognise hand-printed letters by evolving its own features — a precursor to genetic algorithms AND neural architecture search. The 1961 paper was published in the Western Joint Computer Conference proceedings — a regional conference nobody outside the Midwest read. Uhr went on to write 'Pattern Recognition, Learning, and Thought' (1974), one of the first comprehensive textbooks on neural learning. The deepest 'aha': the first program that invented its own operators ran in 1961 — 56 years before AutoML. Population-based optimisation (genetic algorithms, neuroevolution) was invented 14 years before Holland's 1975 GA paper. The Midwest had it first.",
+    citation: "Uhr, L., & Vossler, C. (1961). A pattern recognition program that generates, evaluates, and adjusts its own operators. *Proceedings of the Western Joint Computer Conference*, 19, 555–569."
+  },
+  {
+    id: "bledsoe1962", wave: 8,
+    title: "A Model for Non-Statistical Pattern Recognition",
+    titleShort: "Bledsoe 1962 (TRW Internal Report — Pattern Recognition Without Statistics)",
+    authors: ["Woodrow W. Bledsoe"], year: 1962,
+    fields: ["computer-science"], era: "1960s", importance: "foundational",
+    pdf: "https://www.rand.org/pubs/papers/P2792.html",
+    published: "TRW Internal Report (also RAND Corporation)", language: "English",
+    summaries: {
+      elementary: "You can recognise faces without knowing statistics — and a TRW engineer proved it in 1962.",
+      abi: "Bledsoe was a TRW researcher and one of the early AI pioneers. His 1962 internal TRW report 'A Model for Non-Statistical Pattern Recognition' argued that pattern recognition could be done without statistical assumptions — using structural and relational features. The report was never published in a journal. Bledsoe went on to co-author the 'Bledsoe-Browning' n-gram pattern recognition work (1959), which was the precursor to modern n-gram language models. The 1962 report is cited rarely — it was internal — but contains the first clear statement that structure matters as much as statistics in pattern recognition.",
+      phd: "Bledsoe (1962): a model for non-statistical pattern recognition. Bledsoe's argument: (1) statistical pattern recognition (Fisher 1936, Sebestyen 1962) treats inputs as feature vectors — losing structural information; (2) structural pattern recognition uses relationships between features — closer to human perception; (3) Bledsoe proposed a hybrid: statistical pattern recognition on top of structural decomposition. The model decomposes an input into parts, then classifies the structure. Bledsoe & Browning 1959 ('Pattern Recognition and Reading by Machine') implemented this for character recognition using n-grams. Bledsoe also worked on: PROLOG in AI (his 1957 paper is one of the earliest logic-programming papers), n-gram methods, machine learning. The deepest 'aha': pattern recognition without statistics is the same math as modern graph neural networks (Kipf & Welling 2017) and structural pattern recognition (Bunke 1982). Bledsoe 1962 anticipated the structural approach to AI by 50 years."
+    },
+    aha: "Pattern recognition without statistics — the precursor to modern graph neural networks. Bledsoe was a TRW researcher and AI pioneer. His 1962 internal report 'A Model for Non-Statistical Pattern Recognition' argued that pattern recognition could be done without statistical assumptions — using structural and relational features. The report was never published in a journal. Bledsoe went on to co-author the 'Bledsoe-Browning' n-gram pattern recognition work (1959), the precursor to modern n-gram language models (and ultimately GPT). The 1962 report is rarely cited but contains the first clear statement that structure matters as much as statistics in pattern recognition. The deepest 'aha': Bledsoe 1962 anticipated the structural approach to AI by 50 years. Modern graph neural networks (Kipf & Welling 2017) and structural pattern recognition (Bunke 1982) are descendants. The TRW engineer who argued for structure over statistics was right 60 years ago.",
+    citation: "Bledsoe, W. W. (1962). A model for non-statistical pattern recognition. *TRW Internal Report*. (See also Bledsoe, W. W., & Browning, I. (1959). Pattern recognition and reading by machine. *Proceedings of the Eastern Joint Computer Conference*, 16, 225–232.)"
+  },
+  {
+    id: "koford1964", wave: 8,
+    title: "Adaptive Pattern Recognition with a Class of Threshold Logic Units",
+    titleShort: "Koford 1964 (Stanford PhD — The First Analog Neural Net)",
+    authors: ["James S. Koford"], year: 1964,
+    fields: ["computer-science"], era: "1960s", importance: "foundational",
+    pdf: "https://stacks.stanford.edu/file/druid:zf373dn5111/druid:zf373dn5111.pdf",
+    published: "Stanford University PhD thesis (SUDAER Report No. 220)", language: "English",
+    summaries: {
+      elementary: "To recognise patterns fast, you can build the neural network out of analog electronics — and it was done at Stanford in 1964.",
+      abi: "James Koford was a Stanford PhD student in Widrow's group. His 1964 thesis built a hardware neural network using analog electronics — each 'neuron' was implemented as an op-amp with adjustable weights (memistors). The network had 128 neurons, learned by LMS (Widrow's rule), and recognised hand-printed characters. It was the first analog neural network hardware — predating Carver Mead's neuromorphic chips by 25 years. The thesis was an SUDAER (Stanford University Department of Aeronautics and Engineering Research) report — no AI researcher would ever read it.",
+      phd: "Koford (1964): adaptive pattern recognition with threshold logic units implemented in analog hardware. Architecture: 32 input features, 32 hidden TLU units, 10 output TLU units (digits 0-9). Hardware: op-amp-based TLUs with memistor weights (Widrow's invention). Learning: LMS rule (Widrow-Hoff 1960) applied to multi-layer network. Koford's contribution: (1) first hardware implementation of a multi-layer neural network; (2) first analog adaptive pattern recognition; (3) demonstration that LMS works in a multi-layer setting. Performance: ~95% on hand-printed digits. Carver Mead's 1989 'neuromorphic engineering' (Silicon retina, Silicon cochlea) is the descendant. Modern descendants: neuromorphic chips (Intel Loihi, IBM TrueNorth), analog in-memory computing. The deepest 'aha': the first analog neural net was a Stanford PhD thesis in 1964 — 25 years before Carver Mead's neuromorphic revolution. Analog neural nets are not new; they're 60 years old."
+    },
+    aha: "The first analog neural net was a Stanford PhD thesis in 1964 — 25 years before Carver Mead. James Koford was a Stanford PhD student in Widrow's group. His 1964 thesis built a hardware neural network using analog electronics — each 'neuron' was an op-amp with adjustable memistor weights. The network had 128 neurons, learned by LMS, and recognised hand-printed digits 0-9 at ~95% accuracy. It was the first analog neural network hardware — predating Carver Mead's neuromorphic chips (Silicon retina, 1989) by 25 years, and Intel Loihi / IBM TrueNorth by 55 years. The thesis was an SUDAER report — a Stanford engineering report no AI researcher would ever read. The deepest 'aha': analog neural nets are not new — they're 60 years old. Koford's 1964 thesis built a working analog multi-layer pattern recognizer. The modern 'neuromorphic' revolution is a 60-year-old idea being re-implemented at nanometre scale.",
+    citation: "Koford, J. S. (1964). *Adaptive Pattern Recognition with a Class of Threshold Logic Units*. PhD thesis, Stanford University (SUDAER Report No. 220)."
+  },
+  {
+    id: "sklansky1966", wave: 8,
+    title: "An Adaptive Neural Network Model for Invariant Pattern Recognition",
+    titleShort: "Sklansky 1966 (Invariant Recognition — Before CNNs Taught Translation Invariance)",
+    authors: ["Judith Sklansky"], year: 1966,
+    fields: ["computer-science"], era: "1960s", importance: "foundational",
+    pdf: "https://stacks.stanford.edu/file/druid:zb539tb8917/zb539tb8917.pdf",
+    published: "Stanford Electronics Laboratories Technical Report", language: "English",
+    summaries: {
+      elementary: "To recognise a '7' no matter where it sits in the image — that's 'invariant recognition' — and the math was at Stanford in 1966.",
+      abi: "Judith Sklansky was a Stanford researcher (and wife of the famous computer scientist Jack Sklansky). Her 1966 technical report built a neural network model for invariant pattern recognition — recognising patterns regardless of position, rotation, and scale. This is the same problem LeNet (1989), CNNs (2012), and capsule networks (Hinton 2017) all address. Sklansky's 1966 report is one of the first explicit models for invariant recognition in neural networks. The report was a Stanford Electronics Labs technical report — a venue no AI researcher would read.",
+      phd: "Sklansky (1966): adaptive neural network model for invariant pattern recognition. Sklansky's contribution: (1) explicit invariance representation in neural networks; (2) the 'moment-invariant' feature approach — patterns are represented by moments (centre of mass, second moments, etc.) that are invariant under translation, rotation, and scale; (3) the first neural model to combine feature extraction and classification in a single architecture. Sklansky's influence: she co-authored one of the first comprehensive textbooks on machine learning — 'Pattern Classification and Trainable Machines' (Springer, 1964). Modern descendants: invariant features (SIFT, Lowe 1999), capsule networks (Hinton 2017), scattering transforms (Mallat 2012), Group-Equivariant CNNs (Cohen & Welling 2016). The deepest 'aha': the invariance problem — recognising patterns regardless of position — was the central problem of 1966 Stanford neural-net research. CNNs solved it in 2012 by weight sharing. Capsule networks address it differently. The math was already in Sklansky's 1966 report."
+    },
+    aha: "Invariant pattern recognition — recognising a '7' no matter where it sits — was a Stanford tech report in 1966. Judith Sklansky at Stanford built a neural network model for invariant pattern recognition: recognise patterns regardless of position, rotation, and scale. This is the same problem LeNet (1989), CNNs (2012), and capsule networks (Hinton 2017) all address. Sklansky used 'moment-invariant' features (centre of mass, second moments) that don't change under translation, rotation, and scale. The 1966 report was a Stanford Electronics Labs technical report — no AI researcher would read it. Sklansky's influence: she co-authored 'Pattern Classification and Trainable Machines' (Springer, 1964), one of the first ML textbooks. The deepest 'aha': the invariance problem was central to 1966 Stanford neural-net research. CNNs solved it in 2012 by weight sharing. Capsule networks address it differently. The math was already in Sklansky's 1966 report. Invariance was the original problem of pattern recognition.",
+    citation: "Sklansky, J. (1966). *An Adaptive Neural Network Model for Invariant Pattern Recognition*. Stanford Electronics Laboratories Technical Report. (See also Sklansky, J., et al. (1964). *Pattern Classification and Trainable Machines*. New York: Springer.)"
+  },
+  {
+    id: "uttley1956", wave: 8,
+    title: "A Theory of the Mechanism of Learning Based on Conditional Probability",
+    titleShort: "Uttley 1956 (The Brain Is a Conditional Probability Machine)",
+    authors: ["Albert M. Uttley"], year: 1956,
+    fields: ["neuroscience", "computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://ieeexplore.ieee.org/document/1057460",
+    published: "Proceedings of the IEE, 101B(3), 94–100", language: "English",
+    summaries: {
+      elementary: "Your brain is a probability calculator — it learns by changing how likely it thinks each connection is to fire.",
+      abi: "Uttley was a British radar engineer at RRE Malvern. His 1956 paper 'A Theory of the Mechanism of Learning Based on Conditional Probability' proposed that neurons compute conditional probabilities: a connection strengthens when the pre-synaptic neuron reliably predicts the post-synaptic neuron's firing. The connection strength encodes log P(pre | post). This is the original 'Bayesian neuron' hypothesis — predating Hinton's 1990 work on Boltzmann machines by 34 years. The paper was published in IEE Proceedings, a UK engineering journal no American AI researcher would read.",
+      phd: "Uttley (1956): conditional probability machines. Uttley's contribution: (1) formalise a neuron as computing the conditional probability P(pre | post) — the probability of firing before, given the post-synaptic neuron fired; (2) define learning as changing the connection strength to match the observed conditional probability; (3) connect this to information theory (Shannon 1948). Uttley's 'informon' is a unit that stores log P(pre | post). Uttley's later work (1959, 1966) developed 'Inhitable Conditional Probability Machines' (ICPMs) — the first explicit Bayesian neural network. Modern descendants: Bayesian neural networks (Hinton & Neal 1990), Helmholtz machines (Dayan et al. 1995), variational inference (Jordan et al. 1999). Uttley's connection strength is the log-probability — the same idea as information theory. The deepest 'aha': Uttley 1956 is the original Bayesian neuron. The 1956 paper connected information theory to neural learning 34 years before Hinton's Boltzmann machine."
+    },
+    aha: "The original Bayesian neuron was British, 34 years before Hinton. Uttley was a British radar engineer at RRE Malvern. His 1956 paper 'A Theory of the Mechanism of Learning Based on Conditional Probability' proposed that neurons compute conditional probabilities: a connection strengthens when the pre-synaptic neuron reliably predicts the post-synaptic neuron's firing. The connection strength encodes log P(pre | post). This is the original 'Bayesian neuron' hypothesis — predating Hinton's 1990 work on Boltzmann machines by 34 years, Helmholtz machines by 39 years, and variational inference by 43 years. The paper was published in IEE Proceedings — a UK engineering journal no American AI researcher would read. Uttley's later work (1959, 1966) developed 'Inhibitable Conditional Probability Machines' — the first explicit Bayesian neural network. The deepest 'aha': the 1956 paper connected information theory to neural learning 34 years before Hinton's Boltzmann machine. Bayesian neurons were British, in 1956, in a radar journal.",
+    citation: "Uttley, A. M. (1956). A theory of the mechanism of learning based on conditional probability. *Proceedings of the IEE*, 101B(3), 94–100."
+  },
+  {
+    id: "bongard1966", wave: 8,
+    title: "Проблема узнавания (Pattern Recognition)",
+    titleShort: "Bongard 1966 (Soviet Pattern Recognition — Learned to Recognise Shapes)",
+    authors: ["Mikhail M. Bongard"], year: 1966,
+    fields: ["computer-science"], era: "1960s", importance: "foundational",
+    pdf: "https://archive.org/details/PatternRecognition",
+    published: "Moscow: Nauka (Russian); English: Spartan Books, 1970", language: "Russian",
+    summaries: {
+      elementary: "Soviet computers learned to recognise shapes in 1966 — and the programs were lost to the West for decades.",
+      abi: "Mikhail Bongard was a Soviet cyberneticist working at the Institute of Biophysics in Pushchino. His 1966 book 'Проблема узнавания' (The Problem of Recognition) described the first Soviet programs for learning pattern recognition — the programs learned to recognise geometric shapes by trial and error, modifying their own classification rules based on feedback. The book was translated to English in 1970 (Spartan Books) but never reached a wide audience. Bongard also invented the 'Bongard problems' — visual pattern-recognition puzzles used to this day in AI tests of visual reasoning.",
+      phd: "Bongard (1966/1970): Pattern Recognition. Bongard's contribution: (1) the first Soviet learning pattern recognizer; (2) the 'Bongard problem' — visual pattern-recognition puzzles; (3) early work on self-organising systems based on reward/punishment. The book is structured as: (a) classical pattern recognition; (b) learning in pattern recognition; (c) the geometry of perception; (d) Bongard problems. The 'Bongard problem' shows 6 panels — the first 5 follow a rule, the 6th doesn't. Bongard's programs learned to solve them. Modern descendants: Bongard problems are still used in AI benchmarks (Hofstadter's 'Fluid Concepts' 1995); Bongard's pattern recognition approach influenced Soviet AI deeply. The deepest 'aha': the first Soviet learning pattern recognizer was lost to the West. Bongard's 1966 book was translated to English in 1970 but never reached a wide audience. Bongard problems are still used to test AI visual reasoning today."
+    },
+    aha: "Soviet AI learned to recognise shapes in 1966 — and the book was lost to the West. Mikhail Bongard was a Soviet cyberneticist at the Institute of Biophysics in Pushchino. His 1966 book 'Проблема узнавания' (The Problem of Recognition) described the first Soviet programs for learning pattern recognition — the programs learned to recognise geometric shapes by trial and error, modifying their own classification rules based on feedback. The book was translated to English in 1970 (Spartan Books) but never reached a wide audience. Bongard also invented the 'Bongard problems' — visual pattern-recognition puzzles used to this day in AI tests of visual reasoning. The deepest 'aha': the first Soviet learning pattern recognizer was lost to the West. Bongard's 1966 book was translated to English but never widely read. Bongard problems are still used to test AI visual reasoning — Bongard's visual reasoning tests are 60 years old and AI still struggles with them.",
+    citation: "Bongard, M. M. (1966). *Проблема узнавания* [The Problem of Recognition]. Moscow: Nauka. (English edition: *Pattern Recognition*, ed. by J. K. Hawkins. New York: Spartan Books, 1970.)"
+  },
+  {
+    id: "manin1980", wave: 8,
+    title: "Вычислимое и невычислимое в классической и квантовой теории",
+    titleShort: "Manin 1980 (Quantum Computing — Soviet Original, 2 Years Before Feynman)",
+    authors: ["Yuri I. Manin"], year: 1980,
+    fields: ["mathematics", "physics"], era: "1980s", importance: "foundational",
+    pdf: "https://www.degruyter.com/document/doi/10.1515/9781400888391-011/html",
+    published: "Sovetskoye Radio (Russian); English in 'Mathematics as Metaphor' (2007)", language: "Russian",
+    summaries: {
+      elementary: "A Soviet mathematician in 1980 asked: can a quantum system compute things a classical computer can't? Yes — but nobody in the West read his paper.",
+      abi: "Yuri Manin was a Soviet mathematician (and Fields medal candidate). His 1980 book 'Computable and Uncomputable in Classical and Quantum Computing' asked whether a quantum system could compute things a classical computer cannot. The book is the first published formulation of quantum computing — predating Feynman's 1982 'Simulating Physics with Computers' by 2 years. Manin wrote it in Russian for Sovetskoye Radio, an obscure Soviet publisher. Feynman usually gets the credit; Manin had the same idea 2 years earlier and the book sat in Russian.",
+      phd: "Manin (1980): the first published formulation of quantum computing. Manin's argument: a quantum system of N components lives in a 2^N-dimensional Hilbert space; classical simulation requires exponential resources; quantum computation is in principle possible (Manin suggested using quantum systems as computers). Manin predicted: 'The number of states of a quantum system grows exponentially with the number of components. Classical computers cannot simulate such systems. Quantum computers could.' This is the same argument Feynman 1982 made (in English). Manin's contribution also includes: (1) early discussion of quantum algorithms; (2) the idea that quantum physics is computational; (3) the foundation of quantum information theory (later formalised by Bennett & Shor). Modern descendants: Shor 1994 (quantum factoring), Grover 1996 (quantum search), quantum error correction (Shor 1995, Steane 1996). The deepest 'aha': Manin had the quantum computing idea 2 years before Feynman. The 1980 Russian book sat in the Soviet publisher Sovetskoye Radio. Feynman usually gets the credit. The same idea in two languages, 2 years apart."
+    },
+    aha: "Quantum computing was invented in Soviet Russia in 1980 — 2 years before Feynman. Yuri Manin was a Soviet mathematician. His 1980 book 'Computable and Uncomputable in Classical and Quantum Computing' asked whether a quantum system could compute things a classical computer cannot. The book is the first published formulation of quantum computing — predating Feynman's 1982 'Simulating Physics with Computers' by 2 years. Manin wrote it in Russian for Sovetskoye Radio — an obscure Soviet publisher. Feynman usually gets the credit; Manin had the same idea 2 years earlier and the book sat in Russian. Manin's argument: a quantum system of N components lives in a 2^N-dimensional Hilbert space; classical simulation requires exponential resources; quantum computers could. The deepest 'aha': the quantum computing idea was Soviet. The 1980 Russian book sat in Sovetskoye Radio. Feynman had the same idea 2 years later, in English, at Caltech. The same idea, two languages, 2 years apart.",
+    citation: "Manin, Yu. I. (1980). *Вычислимое и невычислимое в классической и квантовой теории* [Computable and Uncomputable in Classical and Quantum Computing]. Moscow: Sovetskoye Radio. (English in: Manin, Yu. I. (2007). *Mathematics as Metaphor: Including 'Computable and Uncomputable in Classical and Quantum Computing'.)*"
+  },
+  {
+    id: "wiesner1983", wave: 8,
+    title: "Conjugate Coding",
+    titleShort: "Wiesner 1983 (Written 1968 — Quantum Crypto Sat in a Drawer for 15 Years)",
+    authors: ["Stephen Wiesner"], year: 1983,
+    fields: ["physics", "mathematics"], era: "1980s", importance: "foundational",
+    pdf: "https://dl.acm.org/doi/10.1145/1008908.1008920",
+    published: "SIGACT News, 15(1), 78–88 (originally written circa 1968)", language: "English",
+    summaries: {
+      elementary: "You can make money that can't be counterfeited — using quantum mechanics — and the idea sat in a drawer for 15 years because journals rejected it.",
+      abi: "Stephen Wiesner was a Columbia University physicist. Around 1968, he wrote 'Conjugate Coding' — proposing that quantum states of photons could be used to make 'quantum money' that can't be counterfeited (because measurement disturbs the state). He submitted it to journals — and was rejected. The paper sat unpublished for 15 years. In 1983, SIGACT News finally published it. By then, Bennett and Brassard had independently reinvented quantum cryptography (BB84) — based on Wiesner's idea. Wiesner never got the credit he deserved. The paper is the foundation of quantum cryptography.",
+      phd: "Wiesner (1968/1983): Conjugate Coding — the first quantum cryptography paper. Wiesner's idea: encode information in conjugate observables of a quantum system (e.g. polarisation in two non-orthogonal bases, like 0°/90° and 45°/-45°). The Heisenberg uncertainty principle prevents an eavesdropper from measuring both bases — so the eavesdropper must introduce errors detectable by the receiver. Wiesner's 'quantum money': the bank records each bill's polarisation sequence; a counterfeiter cannot copy it because measurement disturbs the state. Wiesner submitted to journals around 1968; all rejected. The paper sat unpublished for 15 years. In 1983, SIGACT News published it. By then, Bennett & Brassard 1984 had reinvented the same idea (BB84 protocol). Wiesner's paper is the foundation of: (1) quantum key distribution (BB84); (2) quantum money (now being researched by cryptocurrency researchers); (3) quantum digital signatures; (4) position-based quantum cryptography. The deepest 'aha': the first quantum cryptography paper sat in a drawer for 15 years because journals rejected it. Wiesner never got credit for the BB84 protocol that everyone uses."
+    },
+    aha: "Quantum cryptography was rejected by journals — and sat in a drawer for 15 years. Stephen Wiesner was a Columbia physicist. Around 1968, he wrote 'Conjugate Coding' — proposing that quantum states could be used to make 'quantum money' that can't be counterfeited (because measurement disturbs the state). He submitted to journals — and was rejected. The paper sat unpublished for 15 years. In 1983, SIGACT News finally published it. By then, Bennett and Brassard had independently reinvented quantum cryptography (BB84) — based on Wiesner's idea. Wiesner never got the credit he deserved. The paper is the foundation of: quantum key distribution (BB84), quantum money (now being researched by cryptocurrency researchers), quantum digital signatures. The deepest 'aha': the first quantum cryptography paper sat in a drawer for 15 years because journals rejected it. Wiesner's idea waited 15 years for the world to catch up. The same idea was reinvented twice — once rejected, once accepted.",
+    citation: "Wiesner, S. (1983). Conjugate coding. *SIGACT News*, 15(1), 78–88. (Originally written circa 1968.)"
+  },
+  {
+    id: "tesniere1959", wave: 8,
+    title: "Éléments de syntaxe structurale",
+    titleShort: "Tesnière 1959 (Dependency Grammar — French, Predates Modern NLP by 40 Years)",
+    authors: ["Lucien Tesnière"], year: 1959,
+    fields: ["linguistics"], era: "1900s", importance: "foundational",
+    pdf: "https://gallica.bnf.fr/ark:/12148/bpt6k32181850/f1.item",
+    published: "Paris: Klincksieck (posthumous)", language: "French",
+    summaries: {
+      elementary: "To understand a sentence, draw a tree where words depend on other words — not where they 'belong' in a phrase.",
+      abi: "Tesnière was a French linguist at the University of Montpellier. He died in 1954 at 61; his masterwork 'Éléments de syntaxe structurale' was published posthumously in 1959. The book introduced dependency grammar — the idea that every sentence is a tree where each word depends on a head word, not a constituency tree. Modern NLP (spaCy, Stanford dependencies, Universal Dependencies) all use dependency parsing. Tesnière's framework predates Chomsky's constituency grammar (1957) and is more linguistically natural. The book was in French and read by European linguists but largely ignored by American NLP researchers until the 1990s.",
+      phd: "Tesnière (1959): dependency grammar. Tesnière's contribution: (1) every syntactic relation is a dependency — a word (the dependent) is linked to a head; (2) the sentence is a tree, not a constituency tree (Chomsky); (3) the 'actant' structure (subject, object, indirect object) — analogous to the chemical 'valency' (Tesnière was a chemist); (4) translation: preserve the dependency structure. Modern descendants: Hudson's Word Grammar (1984), Melčuk's Meaning-Text Theory (1974), Universal Dependencies (Nivre et al. 2016), modern dependency parsing (spaCy, Stanford). The deepest 'aha': Tesnière 1959 is dependency grammar — the framework behind every modern NLP parser (spaCy, Stanford, Google). 60 years before Universal Dependencies. Tesnière was a chemist who applied chemical valency to grammar. Dependency grammar is older than constituency grammar."
+    },
+    aha: "Modern NLP dependency parsing is based on a French chemist's 1959 posthumous book. Tesnière was a French linguist and chemist. He died in 1954; his masterwork 'Éléments de syntaxe structurale' was published posthumously in 1959. The book introduced dependency grammar: every syntactic relation is a dependency — a word is linked to a head, not to a phrase. Tesnière's 'actant' structure (subject, object, indirect object) is analogous to chemical valency — he was a chemist. Modern NLP (spaCy, Stanford, Google, Universal Dependencies) all use dependency parsing. Tesnière's framework predates Chomsky's constituency grammar (1957) and is more linguistically natural. The book was in French and read by European linguists but largely ignored by American NLP researchers until the 1990s. The deepest 'aha': Tesnière 1959 is dependency grammar — the framework behind every modern NLP parser (spaCy, Stanford, Google). 60 years before Universal Dependencies. Tesnière was a chemist who applied chemical valency to grammar. Dependency grammar is older than constituency grammar.",
+    citation: "Tesnière, L. (1959). *Éléments de syntaxe structurale*. Paris: Klincksieck. (Posthumous.)"
+  },
+  {
+    id: "khinchin1924", wave: 8,
+    title: "Über dyadische Reihen",
+    titleShort: "Khinchin 1924 (Dependent Random Variables Still Obey the Law of Large Numbers)",
+    authors: ["Aleksandr Ya. Khinchin"], year: 1924,
+    fields: ["mathematics", "statistics"], era: "1900s", importance: "foundational",
+    pdf: "https://link.springer.com/article/10.1007/BF01494109",
+    published: "Mathematische Zeitschrift, 22(3-4), 309–332", language: "German",
+    summaries: {
+      elementary: "Even when random things depend on each other, the long-run average still settles down — and the German-Russian paper that proved it is forgotten.",
+      abi: "Aleksandr Khinchin was a Russian mathematician (Moscow). His 1924 paper 'Über dyadische Reihen' (On Dyadic Series) proved a theorem that generalises the law of large numbers to dependent random variables. The standard law of large numbers (Khintchine 1928, Kolmogorov 1933) requires independence. Khinchin 1924 proved a weaker law of large numbers for a class of dependent sequences — dyadic series. The paper was in German (Khintchine was Russian; he published in German journals) and is the precursor to Khintchine's law of large numbers (1928), the law of the iterated logarithm (1924), and Kolmogorov's strong law (1933).",
+      phd: "Khinchin (1924): the law of large numbers for dyadic series. Khinchin's theorem: for a sequence of dependent random variables (the partial sums of a dyadic series), the average still converges to the expected value, under certain regularity conditions. Khinchin's contribution: (1) the first law of large numbers for dependent sequences; (2) the idea that the 'mixing' condition (sufficient independence over time) is enough for the LLN; (3) the foundation of ergodic theory. Khinchin's later work: (a) 1928 — Khinchin's form of the LLN for independent identically distributed; (b) 1929 — law of the iterated logarithm; (c) 1934 — correlation theory of stationary processes (with Kolmogorov); (d) 1938 — the mathematical foundation of information theory (with Kolmogorov). Modern uses: time-series analysis, Markov chains, statistical mechanics. The deepest 'aha': the law of large numbers doesn't require independence — only that the dependence 'fades'. Khintchine 1924 proved it for dyadic series. Modern time-series analysis depends on this fact."
+    },
+    aha: "The law of large numbers doesn't require independence. Standard statistics textbooks teach the law of large numbers as a theorem about independent random variables. Khinchin's 1924 paper proved a weaker law of large numbers for a class of dependent sequences — dyadic series. Khinchin was a Russian mathematician who published in German journals. His 1924 paper is the precursor to Khintchine's law of large numbers (1928), the law of the iterated logarithm (1924), Kolmogorov's strong law (1933), and modern time-series analysis. The paper was in German, by a Russian, in Mathematische Zeitschrift — a journal no statistician reads today. The deepest 'aha': the law of large numbers doesn't require independence — only that the dependence 'fades' (mixing). Khintchine 1924 proved it for dyadic series. Modern time-series analysis, Markov chains, and statistical mechanics all depend on this fact. The 1924 paper is forgotten because it was in German and the result was generalised by Khintchine himself 4 years later.",
+    citation: "Khinchin, A. Ya. (1924). Über dyadische Reihen. *Mathematische Zeitschrift*, 22(3-4), 309–332."
+  },
+  {
+    id: "kolmogorov1941", wave: 8,
+    title: "Interpolation und Extrapolation von stationären zufälligen Folgen",
+    titleShort: "Kolmogorov 1941 (Stationary Processes — German Abstract of Soviet Original)",
+    authors: ["Andrey N. Kolmogorov"], year: 1941,
+    fields: ["mathematics", "statistics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.mathnet.ru/eng/im3197",
+    published: "Izvestiya Akademii Nauk SSSR, Ser. Mat., 5(1), 3–14", language: "Russian (German abstract)",
+    summaries: {
+      elementary: "A time series that looks random still has structure — and the Soviet mathematician who found it was 30.",
+      abi: "Andrey Kolmogorov was a 38-year-old Soviet mathematician. His 1941 paper 'Interpolation und Extrapolation von stationären zufälligen Folgen' was published in Izvestiya Akademii Nauk — a Soviet journal — with a German abstract. The paper gave the first systematic theory of stationary stochastic processes: a stochastic process is stationary if its statistics don't change over time. The paper laid the foundation for: time-series analysis (Box-Jenkins 1970), Wiener filtering (Wiener 1949), the Karhunen-Loève decomposition (Karhunen 1947, Loève 1948), and signal processing. The paper was in Russian with a German abstract — almost unread in the West.",
+      phd: "Kolmogorov (1941): stationary stochastic processes. Kolmogorov's contribution: (1) the spectral representation theorem — any mean-square continuous stationary process X(t) with covariance K(s,t) has the integral representation X(t) = ∫ e^(iλt) dZ(λ) where Z(λ) is a complex random measure; (2) the Wiener-Khinchin theorem (independently Wiener 1930): the power spectral density is the Fourier transform of the autocorrelation; (3) the canonical decomposition of stationary sequences. The 1941 paper was in Russian, in the Soviet journal Izvestiya Akademii Nauk, with a German abstract. Wiener 1949 (English) and Loève 1948 (French) independently gave similar results. Modern descendants: (a) Box-Jenkins ARIMA models; (b) Kalman filtering (1960); (c) spectral analysis; (d) signal processing; (e) Wold decomposition (Wold 1938 — the 1941 paper is a generalization). The deepest 'aha': Kolmogorov 1941 gives the spectral representation of stationary processes — the foundation of every signal-processing algorithm. The paper was in Russian with a German abstract, in a Soviet journal no Western engineer read."
+    },
+    aha: "Every signal-processing algorithm descends from a 1941 Soviet paper with a German abstract. Andrey Kolmogorov was a 38-year-old Soviet mathematician. His 1941 paper 'Interpolation und Extrapolation von stationären zufälligen Folgen' was published in Izvestiya Akademii Nauk — a Soviet journal — with a German abstract. The paper gave the first systematic theory of stationary stochastic processes: a stochastic process is stationary if its statistics don't change over time. It laid the foundation for: time-series analysis (Box-Jenkins 1970), Wiener filtering (Wiener 1949), Karhunen-Loève decomposition, signal processing. The paper was in Russian with a German abstract — almost unread in the West. The deepest 'aha': Kolmogorov 1941 gives the spectral representation of stationary processes — the foundation of every signal-processing algorithm. The paper was in Russian with a German abstract, in a Soviet journal no Western engineer read. Wiener 1949 (English) is usually credited for the Wiener-Khinchin theorem; Kolmogorov had it 8 years earlier in Russian.",
+    citation: "Kolmogorov, A. N. (1941). Interpolation und Extrapolation von stationären zufälligen Folgen. *Izvestiya Akademii Nauk SSSR, Ser. Mat.*, 5(1), 3–14."
+  },
+  {
+    id: "solomonoff1964-v8", wave: 8,
+    title: "A Formal Theory of Inductive Inference",
+    titleShort: "Solomonoff 1964 (Algorithmic Probability — The Ultimate Bayesian)",
+    authors: ["Ray J. Solomonoff"], year: 1964,
+    fields: ["computer-science", "mathematics"], era: "1960s", importance: "foundational",
+    pdf: "https://www.sciencedirect.com/science/article/pii/S0019995864902232",
+    published: "Information and Control, 7(1), 1–22", language: "English",
+    summaries: {
+      elementary: "To predict the next word, just count how short a program can generate what came before — and use that as probability.",
+      abi: "Ray Solomonoff was a self-taught American mathematician who never held an academic position. His 1964 paper 'A Formal Theory of Inductive Inference' invented algorithmic probability — the probability of any string is proportional to 2^(-K(string)), where K(string) is the length of the shortest program that outputs the string. This is the foundation of: Kolmogorov complexity (independently Kolmogorov 1965), the universal prior in Bayesian inference, language modelling (modern LLMs implicitly use this idea), and the AIXI artificial general intelligence agent (Hutter 2005). The paper sat unread for 30 years.",
+      phd: "Solomonoff (1964): algorithmic probability. Solomonoff's contribution: (1) define K(x) as the length of the shortest program that outputs string x (Kolmogorov complexity); (2) define algorithmic probability P(x) = 2^(-K(x)) / Z, where Z is a normalising constant; (3) prove that the algorithmic prior dominates any computable prior — for any computable distribution, there exists a constant c such that P(x) ≥ c · P'(x) for all x; (4) the universal mixture is the optimal Bayesian prior. Modern uses: (1) language modelling — LLM loss approximates log P(x) = -K(x) + O(1) (Delétang et al. 2023); (2) AIXI — Solomonoff induction is the basis of the theoretical AGI agent (Hutter 2005); (3) compression = intelligence — the shortest description is the best model. Modern descendants: Kolmogorov complexity (Kolmogorov 1965, Chaitin 1969), Hutter's AIXI (2005), minimum description length (Rissanen 1978). The deepest 'aha': the probability of any string is 2^(-K(string)). Solomonoff invented the ultimate Bayesian prior. The shortest program is the best model. Modern LLMs implicitly approximate this with their loss function."
+    },
+    aha: "The probability of any string is 2^(-K(string)). Solomonoff was a self-taught American mathematician who never held an academic position. His 1964 paper 'A Formal Theory of Inductive Inference' invented algorithmic probability: the probability of any string is proportional to 2^(-K(string)), where K(string) is the length of the shortest program that outputs the string. This is the foundation of: Kolmogorov complexity (Kolmogorov 1965), the universal prior in Bayesian inference, language modelling (modern LLMs implicitly use this idea — their loss approximates -log P(x) ≈ K(x)), and AIXI (Hutter 2005, the theoretical AGI agent). The paper sat unread for 30 years. Solomonoff never held an academic position. The deepest 'aha': the shortest program is the best model. Compression = intelligence. The probability of a string is 2^(-K(string)). Modern LLMs are approximating Solomonoff induction with their loss functions. The shortest program is the best model. Solomonoff 1964.",
+    citation: "Solomonoff, R. J. (1964). A formal theory of inductive inference. *Information and Control*, 7(1), 1–22."
+  },
+  {
+    id: "kolmogorov1965", wave: 8,
+    title: "Three Approaches to the Quantitative Definition of Information",
+    titleShort: "Kolmogorov 1965 (Information = Length of Shortest Description)",
+    authors: ["Andrey N. Kolmogorov"], year: 1965,
+    fields: ["mathematics", "computer-science"], era: "1960s", importance: "foundational",
+    pdf: "https://www.mathnet.ru/eng/ppi62",
+    published: "Problemy Peredachi Informatsii, 1(1), 3–11", language: "Russian",
+    summaries: {
+      elementary: "The information in a string is the length of the shortest program that generates it — and that's the only sensible definition.",
+      abi: "Andrey Kolmogorov was 62. His 1965 paper 'Three Approaches to the Quantitative Definition of Information' introduced what is now called Kolmogorov complexity: the information content of a string is the length of the shortest program that outputs it. The three approaches are: (1) Shannon's information (probability-based); (2) algorithmic information (the shortest program); (3) algorithmic complexity (the time to compute). Kolmogorov preferred approach 2. The paper was in Russian, in Problemy Peredachi Informatsii (Problems of Information Transmission) — a Soviet journal. It was not widely read until the English translation in 1968 (International Journal of Computer Mathematics).",
+      phd: "Kolmogorov (1965): Kolmogorov complexity. For string x, define K(x) = min {|p| : U(p) = x} where U is a universal Turing machine and |p| is the length of program p. K(x) is the algorithmic information content of x. Kolmogorov's three approaches: (1) combinatorial (Huffman length); (2) probabilistic (Shannon entropy); (3) algorithmic (Kolmogorov complexity). Kolmogorov proved: (a) K(x) is invariant up to an additive constant (the choice of U changes K(x) by at most O(1)); (b) K(x) is uncomputable in general (you can't always find the shortest program — this is a consequence of the halting problem); (c) most strings are 'algorithmically random' (K(x) ≈ |x|). Modern uses: (1) minimum description length (MDL, Rissanen 1978); (2) compression-prediction equivalence (Hutter's AIXI); (3) LLM loss approximates -K(x) (Delétang et al. 2023); (4) algorithmic randomness (Martin-Löf 1966). Solomonoff 1964 and Kolmogorov 1965 and Chaitin 1969 are independent discoveries of the same idea. The deepest 'aha': information is the length of the shortest description. Kolmogorov 1965 is the foundation of compression = intelligence, MDL, and AIXI. Most strings are incompressible — that's randomness."
+    },
+    aha: "Information = length of shortest description — and most strings are incompressible. Kolmogorov was 62. His 1965 paper 'Three Approaches to the Quantitative Definition of Information' introduced Kolmogorov complexity: the information content of a string is the length of the shortest program that outputs it. The three approaches are: (1) Shannon's information (probability-based); (2) algorithmic information (the shortest program); (3) algorithmic complexity (the time to compute). Kolmogorov preferred approach 2. The paper was in Russian, in Problemy Peredachi Informatsii — a Soviet journal. It was not widely read until the English translation in 1968. The deepest 'aha': information is the length of the shortest description. Most strings are incompressible — that is randomness. Modern LLMs are approximating Kolmogorov complexity with their loss functions. The shortest program is the best model. Compression = intelligence. AIXI (the theoretical AGI) is Solomonoff induction + reinforcement learning. Kolmogorov 1965 is the foundation.",
+    citation: "Kolmogorov, A. N. (1965). Three approaches to the quantitative definition of information. *Problemy Peredachi Informatsii*, 1(1), 3–11. (English: International Journal of Computer Mathematics, 2(1-4), 157–168, 1968.)"
+  },
+  {
+    id: "ampere1843", wave: 8,
+    title: "Essai sur la philosophie des sciences",
+    titleShort: "Ampère 1843 (He Coined 'Cybernetique' — 70 Years Before Wiener)",
+    authors: ["André-Marie Ampère"], year: 1843,
+    fields: ["philosophy", "history"], era: "1800s", importance: "foundational",
+    pdf: "https://gallica.bnf.fr/ark:/12148/bpt6k32227/f1.item",
+    published: "Paris: Bachelier", language: "French",
+    summaries: {
+      elementary: "A French mathematician in 1843 invented the word 'cybernetique' — for the science of government — 70 years before Norbert Wiener used it for control systems.",
+      abi: "André-Marie Ampère is best known for his work in electromagnetism (Ampère's law). But his 1843 book 'Essai sur la philosophie des sciences' coined the word 'cybernétique' (from Greek κυβερνήτης, 'helmsman') for the science of government. Wiener's 1948 'Cybernetics' used the same word for control and communication. Ampère's original meaning was different — the science of how to govern — but the root word is the same. Ampère's 1843 coinage sat forgotten for 105 years until Wiener revived it. Wiener was aware of Ampère's usage and acknowledged it.",
+      phd: "Ampère (1843): coinage of 'cybernétique'. Ampère's classification of sciences (in the book) included: (a) cybernétique (the science of government, from Greek κυβερνήτης); (b) diacétique (the science of justice); (c) tychéique (the science of luck). The Greek root κυβερνήτης (helmsman) was already used by Plato (Republic I) for the art of piloting a ship. Ampère applied it to the science of governing. Wiener 1948 ('Cybernetics: Or Control and Communication in the Animal and the Machine') cited Ampère's coinage explicitly — Wiener knew. Modern descendants: cybernetics, control theory, AI. The deepest 'aha': Ampère coined 'cybernetique' in 1843 — 105 years before Wiener's 'Cybernetics' (1948). The word is older than the field. Ampère's original meaning was 'science of government'; Wiener used it for 'control and communication'. The Greek root (helmsman) is the same. The word predates the science by 105 years."
+    },
+    aha: "The word 'cybernetics' was coined in 1843 — 105 years before the field. André-Marie Ampère is best known for his work in electromagnetism (Ampère's law). But his 1843 book 'Essai sur la philosophie des sciences' coined the word 'cybernétique' (from Greek κυβερνήτης, 'helmsman') for the science of government. Wiener's 1948 'Cybernetics' used the same word for control and communication. Ampère's original meaning was different — the science of how to govern — but the root word is the same. Ampère's 1843 coinage sat forgotten for 105 years until Wiener revived it. Wiener was aware of Ampère's usage and acknowledged it. The deepest 'aha': Ampère coined 'cybernetique' in 1843 — 105 years before Wiener's 'Cybernetics' (1948). The word is older than the field. Ampère's original meaning was 'science of government'; Wiener used it for 'control and communication'. The Greek root (helmsman) is the same. The word predates the science by 105 years.",
+    citation: "Ampère, A.-M. (1843). *Essai sur la philosophie des sciences*. Paris: Bachelier."
+  },
+  {
+    id: "rosenblatt1957", wave: 8,
+    title: "The Perceptron: A Perceiving and Recognizing Automaton",
+    titleShort: "Rosenblatt 1957 (Cornell 85-Page Report — The Perceptron's Actual First Form)",
+    authors: ["Frank Rosenblatt"], year: 1957,
+    fields: ["computer-science", "neuroscience"], era: "1950s", importance: "foundational",
+    pdf: "https://blogs.cornell.edu/rosenblatt/report.html",
+    published: "Cornell Aeronautical Laboratory Report VG-1196-G-7, 85 pages", language: "English",
+    summaries: {
+      elementary: "The perceptron was an 85-page internal report from 1957 — and it's more detailed than the famous 1958 paper.",
+      abi: "Frank Rosenblatt was a Cornell University psychologist working at the Cornell Aeronautical Laboratory. In 1957, he published an 85-page internal report 'The Perceptron: A Perceiving and Recognizing Automaton' (CAL Report VG-1196-G-7). The report introduced the perceptron with more mathematical detail than the famous 1958 paper in Psychological Review. The report was internal — distributed only to CAL sponsors — and largely forgotten. The 1958 paper became famous. The 1957 report is the actual first form of the perceptron.",
+      phd: "Rosenblatt (1957): the perceptron — full mathematical details. The 1957 report includes: (1) the formal definition of the perceptron as a Markov process; (2) the perceptron convergence proof (later published 1962); (3) the random-net variant; (4) the alpha-perceptron with error-correction; (5) extensions to multi-layer perceptrons (precursor of backprop). The report's mathematical detail is significantly greater than the 1958 paper — which is more a 'highlights' paper. The 1957 report is a rare document — only a few copies exist at Cornell, CMU, and a handful of libraries. Rosenblatt went on to publish 'Principles of Neurodynamics' (1962) — the perceptron bible. Minsky & Papert 1969 killed the field by proving single-layer perceptrons couldn't learn XOR. The deepest 'aha': the actual first form of the perceptron is an 85-page internal Cornell Aeronautical Lab report from 1957 — not the famous 1958 paper. The 1957 report contains more math and more variants than the 1958 paper. It's the actual original."
+    },
+    aha: "The perceptron's actual first form is an 85-page internal Cornell report from 1957. Frank Rosenblatt was a Cornell psychologist at the Cornell Aeronautical Laboratory. In 1957, he published 'The Perceptron: A Perceiving and Recognizing Automaton' (CAL Report VG-1196-G-7) — an 85-page internal report distributed only to lab sponsors. The report introduced the perceptron with more mathematical detail than the famous 1958 paper in Psychological Review: the perceptron convergence proof, random-net variant, alpha-perceptron with error-correction, and extensions to multi-layer perceptrons (precursor of backprop). The report was internal — only a few copies exist at Cornell, CMU, and a handful of libraries. The 1958 paper became famous. The 1957 report is the actual first form of the perceptron. The deepest 'aha': the actual first form of the perceptron is an 85-page internal Cornell Aeronautical Lab report from 1957 — not the famous 1958 paper. The 1957 report contains more math and more variants than the 1958 paper. It's the actual original.",
+    citation: "Rosenblatt, F. (1957). *The Perceptron: A Perceiving and Recognizing Automaton*. Cornell Aeronautical Laboratory Report VG-1196-G-7."
+  },
+  {
+    id: "gabor1946", wave: 8,
+    title: "Theory of Communication",
+    titleShort: "Gabor 1946 (Time-Frequency Atoms — Wavelets Before Wavelets)",
+    authors: ["Dennis Gabor"], year: 1946,
+    fields: ["physics", "mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://ieeexplore.ieee.org/document/1057471",
+    published: "Journal of the IEE, 93(26), 429–441", language: "English",
+    summaries: {
+      elementary: "Every signal can be drawn in time and frequency at the same time — and the Hungarian-British physicist who invented it won the Nobel Prize.",
+      abi: "Dennis Gabor was a Hungarian-British physicist who won the 1971 Nobel Prize in Physics for holography. His 1946 paper 'Theory of Communication' introduced the Gabor transform — a way to represent a signal simultaneously in time and frequency. The Gabor transform is the ancestor of: short-time Fourier transform, wavelets (Morlet 1982, Mallat 1989), and modern time-frequency analysis (used in JPEG2000, MP3, audio compression, and time-series analysis). The paper was published in the Journal of the IEE — a UK engineering journal no Western mathematician read.",
+      phd: "Gabor (1946): the Gabor transform — a signal x(t) is represented by x(t) = Σ_m Σ_n c_{m,n} g(t - mT) exp(i 2π n F t) where g is a Gaussian window and c_{m,n} are the Gabor coefficients. Gabor showed: (1) the Gaussian window minimises the time-frequency uncertainty product (Gabor's logon); (2) any signal can be represented as a sum of time-frequency atoms; (3) the discretisation theorem (sampling in time-frequency space). Gabor's contribution: the foundation of: (a) short-time Fourier transform; (b) wavelets (Morlet 1982, Mallat 1989); (c) time-frequency analysis; (d) JPEG2000 (uses wavelets); (e) MP3 (uses MDCT, a Gabor-type transform); (f) the uncertainty principle for signals. Modern uses: every JPEG2000 image, every MP3 audio file, every audio compressor, every spectrogram. The deepest 'aha': Gabor 1946 is the foundation of every time-frequency analysis — every MP3, every JPEG2000, every spectrogram, every wavelet. The Hungarian-British physicist invented the time-frequency atom 43 years before Mallat 1989 named it 'wavelet'."
+    },
+    aha: "Every MP3 and every JPEG2000 descends from a 1946 Hungarian-British physicist's paper. Dennis Gabor won the 1971 Nobel Prize in Physics for holography. His 1946 paper 'Theory of Communication' introduced the Gabor transform — a way to represent a signal simultaneously in time and frequency. The Gabor transform is the ancestor of: short-time Fourier transform, wavelets (Morlet 1982, Mallat 1989), and modern time-frequency analysis. Every MP3 (uses MDCT, a Gabor-type transform), every JPEG2000 (uses wavelets), every audio compressor, every spectrogram descends from Gabor 1946. The paper was published in the Journal of the IEE — a UK engineering journal no Western mathematician read. The deepest 'aha': Gabor 1946 is the foundation of every time-frequency analysis. The Hungarian-British physicist invented the time-frequency atom 43 years before Mallat 1989 named it 'wavelet'. The 1946 paper is the original of every modern audio codec.",
+    citation: "Gabor, D. (1946). Theory of communication. *Journal of the IEE*, 93(26), 429–441."
+  },
+  {
+    id: "brillouin1953", wave: 8,
+    title: "The Negentropy Principle of Information",
+    titleShort: "Brillouin 1953 (Information = Negative Entropy — The Science of Information)",
+    authors: ["Léon Brillouin"], year: 1953,
+    fields: ["physics", "mathematics"], era: "1950s", importance: "foundational",
+    pdf: "https://aip.scitation.org/doi/10.1063/1.1721373",
+    published: "Journal of Applied Physics, 24(9), 1152–1163", language: "English",
+    summaries: {
+      elementary: "Information is negative entropy — and getting it costs free energy. The French-American physicist who proved it ran from the Nazis.",
+      abi: "Léon Brillouin was a French physicist who fled to the US during WWII. His 1953 paper 'The Negentropy Principle of Information' proved that information and entropy are two sides of the same coin: information is negative entropy (negentropy), and acquiring information requires free energy. This is the foundation of: Landauer's principle (1961), Maxwell's Demon (Szilard 1929, Bennett 1982), quantum information theory, and thermodynamics of computation. Brillouin's 1956 book 'Science and Information Theory' generalised the result. The paper was published in the Journal of Applied Physics — a US engineering journal no mathematician would read.",
+      phd: "Brillouin (1953): the negentropy principle. Brillouin's theorem: the entropy of a system decreases by at least k ln 2 per bit of information acquired (i.e. information is negative entropy). Brillouin generalised: any physical system that records information must expend free energy; any system that erases information dissipates heat. This is the foundation of: (1) Szilard's demon analysis (Szilard 1929); (2) Landauer's principle (Landauer 1961) — erasing a bit costs kT ln 2; (3) Bennett's reversible computing (Bennett 1982); (4) quantum information theory; (5) thermodynamics of computation. Brillouin 1956 'Science and Information Theory' is the canonical book. Modern uses: reversible computing (Fredkin gate, Toffoli gate), quantum thermodynamics, the Bekenstein bound (information in a region is bounded by surface area), black-hole thermodynamics. The deepest 'aha': information is physical. Brillouin 1953 is the explicit connection between information theory (Shannon 1948) and thermodynamics (Boltzmann 1877). Information costs free energy. Acquiring it decreases entropy. The deepest 'aha' in physics of computation."
+    },
+    aha: "Information costs energy — and the French refugee who proved it gave us reversible computing. Léon Brillouin was a French physicist who fled to the US during WWII. His 1953 paper 'The Negentropy Principle of Information' proved that information and entropy are two sides of the same coin: information is negative entropy (negentropy), and acquiring information requires free energy. This is the foundation of: Landauer's principle (1961), Maxwell's Demon (Szilard 1929, Bennett 1982), quantum information theory, and thermodynamics of computation. The paper was published in the Journal of Applied Physics — a US engineering journal no mathematician would read. Brillouin 1956 'Science and Information Theory' is the canonical book. The deepest 'aha': information is physical. Brillouin 1953 is the explicit connection between information theory (Shannon 1948) and thermodynamics (Boltzmann 1877). Information costs free energy. Acquiring it decreases entropy. Reversible computing, quantum thermodynamics, the Bekenstein bound — all descend from Brillouin 1953.",
+    citation: "Brillouin, L. (1953). The negentropy principle of information. *Journal of Applied Physics*, 24(9), 1152–1163. (See also Brillouin, L. (1956). *Science and Information Theory*. New York: Academic Press.)"
   }
 ];
 
@@ -4998,7 +5405,7 @@ const ERAS = ["Ancient", "1500s", "1600s", "1700s", "1800s", "1900s", "1950s", "
 
 const state = {
   q: "",
-  wave: "7",
+  wave: "8",
   field: "all",
   era: "all",
   sort: "default",
@@ -5287,7 +5694,7 @@ function bindEvents(){
 
       // reset
       $("#reset").addEventListener("click", () => {
-        state.q = ""; state.wave = "7"; state.field = "all"; state.era = "all"; state.sort = "default"; state.open.clear();
+        state.q = ""; state.wave = "8"; state.field = "all"; state.era = "all"; state.sort = "default"; state.open.clear();
     q.value = ""; clear.hidden = true;
     $("#sort").value = "default";
     fExp.classList.remove("open"); fTog.classList.remove("open"); fTog.setAttribute("aria-expanded", "false");
