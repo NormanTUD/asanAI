@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Library of Minds — 217 Papers in Five Waves that Built the Modern World</title>
+<title>The Library of Minds — 239 Papers in Six Waves that Built the Modern World</title>
 <style>
 :root{
   --bg:#0a0d12;
@@ -498,12 +498,12 @@ html.light .controls{
   <div class="wrap">
     <h1>The papers that <em>made</em> the modern mind.</h1>
     <p class="lede">
-      Five waves of works — <b>spanning twenty-six centuries</b>. Wave 5 goes beneath the standard canon: the original papers that quietly founded the fields, the forgotten originators, and the pre-prints that held ideas nobody was ready for. Each entry is given in four voices: the version a curious child can hold, the counter-intuitive flash that connects to today, the version a sharp A-level student deserves, and the version a doctoral examiner would accept.
+      Six waves of works — <b>spanning twenty-six centuries</b>. Wave 6 goes deepest: the hidden foundations — the original papers behind the originals, the pre-prints that took decades to be heard, and the foundational texts that nobody quotes because they predate the modern naming of fields. Each entry is given in four voices: the version a curious child can hold, the counter-intuitive flash that connects to today, the version a sharp A-level student deserves, and the version a doctoral examiner would accept.
     </p>
     <div class="meta">
       <div><b>300 BC → 2021</b><span>TEMPORAL SPAN</span></div>
       <div><b>143</b><span>WORKS</span></div>
-      <div><b>5</b><span>WAVES</span></div>
+      <div><b>6</b><span>WAVES</span></div>
       <div><b>28</b><span>DISCIPLINES</span></div>
       <div><b>4</b><span>READING LEVELS</span></div>
     </div>
@@ -569,7 +569,7 @@ html.light .controls{
     <div class="legend">
       <h3>About the four layers</h3>
       <p>Every paper carries four layers, written so that the same idea reaches you at whatever altitude you're standing on today.</p>
-      <p style="margin-top:8px;font-size:13px;color:var(--ink-3)">Wave 1 (31): foundational papers in AI-adjacent fields. Wave 2 (62): broader categories — ancient studies, theology, anthropology, architecture, music, film, astronomy, geology, chemistry, medicine. Wave 3 (51): truly universal ideas — one sentence unlocks thousands. Wave 4 (48): AI and neural networks in depth. Wave 5 (25): the originals — forgotten founders, pre-prints, original equations. Default: Wave 5.</p>
+      <p style="margin-top:8px;font-size:13px;color:var(--ink-3)">Wave 1 (31): foundational papers in AI-adjacent fields. Wave 2 (62): broader categories — ancient studies, theology, anthropology, architecture, music, film, astronomy, geology, chemistry, medicine. Wave 3 (51): truly universal ideas — one sentence unlocks thousands. Wave 4 (48): AI and neural networks in depth. Wave 5 (25): the originals — forgotten founders, pre-prints, original equations. Wave 6 (22): hidden foundations — pre-modern originals. Default: Wave 6.</p>
       <ul>
         <li><code>Elementary</code> — one vivid sentence, no jargon, true to the heart of the idea.</li>
         <li><code>⚡ Aha</code> — the counter-intuitive flash that connects the paper to your life today.</li>
@@ -582,7 +582,7 @@ html.light .controls{
       <div><b>works</b> · <b>disciplines</b> · <b>4 waves</b></div>
       <div>From <b>300 BC</b> (Euclid) to <b>2021</b> (AlphaFold)</div>
       <div>Earliest: <b>300 BC</b> · Latest: <b>2021</b></div>
-      <div style="margin-top:10px;color:var(--ink-4)">Wave 5 — the originals (forgotten founders).</div>
+      <div style="margin-top:10px;color:var(--ink-4)">Wave 6 — hidden foundations (pre-modern originals).</div>
     </div>
   </div>
 </footer>
@@ -4212,6 +4212,365 @@ const PAPERS = [
     },
     aha: "Machines can learn from the difference between imagination and reality. The Boltzmann machine learning rule is: make reality states more probable, and dream states less probable. The two-phase comparison is the deep insight — and it's the foundation for contrastive learning, self-supervised learning, and modern generative AI. The lesson: learning is about reducing the gap between your model and reality — whether the model is a brain or a neural network. The Boltzmann machine shows this in its purest mathematical form.",
     citation: "Ackley, D. H., Hinton, G. E., & Sejnowski, T. J. (1985). A learning algorithm for Boltzmann machines. *Cognitive Science*, 9(1), 147–169."
+  },
+
+  /* =============================================================
+     WAVE 6 — Hidden foundations. Pre-modern originals, lab notes,
+     and the original equations that nobody quotes because they
+     predate the modern naming of fields.
+     Tagged with `wave: 6`. Default view is Wave 6.
+     ============================================================= */
+  {
+    id: "craik1943", wave: 6,
+    title: "The Nature of Explanation",
+    titleShort: "Craik 1943 (Brains Carry Models — Predictive Processing 80 Years Early)",
+    authors: ["Kenneth J. W. Craik"], year: 1943,
+    fields: ["psychology", "computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://www.cambridge.org/core/books/the-nature-of-explanation/",
+    published: "Cambridge University Press", language: "English",
+    summaries: {
+      elementary: "Brains carry around small models of reality — and predict the future by running them.",
+      abi: "Craik proposed that the brain works by building a small-scale model of external reality, and using it to predict events. Perception, learning, and reasoning all involve matching internal models against the world. The book is the foundation of cognitive science — and predicts the predictive-processing revolution (Friston, Clark) by 80 years. Craik died young in a bicycle accident, but his idea survived.",
+      phd: "Craik (1943): the brain contains a 'working model' of external reality. Perception matches sensory input to the model; learning updates the model when predictions fail; reasoning runs the model internally to plan. Craik's 'three levels' (translation of external events into neural representations; manipulation of representations; translation back into action) are the foundation of cognitive science. The book anticipates: internal models (motor control, cognitive maps), predictive processing (Friston 2010), Bayesian brain theory, embodied cognition, simulation-based reasoning. Craik's death at 31 in 1945 from a bicycle accident meant he never saw the field he founded."
+    },
+    aha: "Craik's one sentence unlocks everything: 'If the organism carries a small-scale model of external reality and of its own possible actions within its head, it is able to try out various alternatives, conclude which is the best of them, react to future situations before they arise, utilise the knowledge of past events in dealing with the present and future, and in every way to react in a much fuller, safer, and more competent manner to the emergencies which face it.' This is predictive processing, cognitive science, embodied cognition, and most of modern AI in one paragraph — written 80 years before the field existed. The deepest 'aha' in cognitive science: the brain is a simulator.",
+    citation: "Craik, K. J. W. (1943). *The Nature of Explanation*. Cambridge: Cambridge University Press."
+  },
+  {
+    id: "bush1945", wave: 6,
+    title: "As We May Think",
+    titleShort: "Bush 1945 (The Memex — Hypertext & Personal Computing)",
+    authors: ["Vannevar Bush"], year: 1945,
+    fields: ["computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://www.theatlantic.com/magazine/archive/1945/07/as-we-may-think/303881/",
+    published: "The Atlantic Monthly, July 1945", language: "English",
+    summaries: {
+      elementary: "Information is growing too fast — we need a machine that thinks with us.",
+      abi: "Bush, head of US wartime research, wrote 'As We May Think' as a manifesto for the post-war world. The information explosion (he called it) required a new device: the 'memex' — a desk-sized machine storing personal notes, books and records on microfilm, linked by 'associative trails'. The essay predicted hypertext, personal computing, the internet, Wikipedia, and search engines — 50 years before they existed.",
+      phd: "Bush (1945): the memex is a desk with translucent screens, levers for navigation, and a keyboard. Information is stored on microfilm; the user builds 'associative trails' between documents — sequential links. The essay anticipates: associative indexing (hypertext), personal information management (Evernote, Notion), screen-based reading, full-text search, and the World Wide Web (Berners-Lee was inspired by the memex). The 'As We May Think' vision is the blueprint for the digital age — written before the first stored-program computer (EDSAC, 1949) was running. The essay is the most-cited single essay in computing."
+    },
+    aha: "Bush described the web in 1945 — before the computer existed. The memex is the blueprint for hypertext, Wikipedia, Google, and every personal knowledge management system. His vision: future thinkers will use machines that link information associatively, follow trails of thought, and build personal libraries of connected ideas. We have it — and we forget it was predicted 50 years early. The deepest 'aha': the digital revolution wasn't invented by the digital revolution. It was predicted in 1945 — by an engineer who saw the coming information overflow and designed a device to manage it.",
+    citation: "Bush, V. (1945). As we may think. *The Atlantic Monthly*, July 1945."
+  },
+  {
+    id: "wiener1943", wave: 6,
+    title: "Behavior, Purpose and Teleology",
+    titleShort: "Wiener-Bigelow-Rosenblueth 1943 (Origin of Cybernetics)",
+    authors: ["Norbert Wiener", "Julian Bigelow", "Arturo Rosenblueth"], year: 1943,
+    fields: ["mathematics", "biology"], era: "1900s", importance: "foundational",
+    pdf: "https://link.springer.com/article/10.1007/BF02478292",
+    published: "Philosophy of Science, 10(1), 18–24", language: "English",
+    summaries: {
+      elementary: "Feedback makes machines behave with purpose — and it makes animals behave with purpose too.",
+      abi: "Wiener, Bigelow, and Rosenblueth defined purpose as 'feedback' — a machine or animal behaves 'on purpose' when its output is fed back to its input, correcting its actions. The paper unifies biology and engineering: a thermostat and a kitten both 'purpose' because they use feedback. The paper founded cybernetics — five years before Wiener's 1948 book popularised the name.",
+      phd: "Wiener, Bigelow, Rosenblueth (1943): defines 'purposeful behaviour' as behaviour controlled by negative feedback. The output of a system is measured against a goal; the error drives corrective action. Examples: a thermostat, a kitten pursuing a mouse, a guided missile. The same principle applies to all. Key novelty: replaces the mysterious 'vital force' of biology with a precise cybernetic mechanism. The paper also introduces 'positive feedback' (amplification, runaway) and 'circular causality' (cause → effect → cause). The paper is the founding document of cybernetics (Wiener coined the word in 1947). It is only 7 pages — and one of the most cited papers in systems theory."
+    },
+    aha: "Purpose is feedback — nothing more. The kitten that chases the mouse, the thermostat that regulates the room, the missile that hits the target, the economy that adjusts to shocks — all 'purposeful' because their output is fed back to their input. The deepest 'aha' in cybernetics: the same mechanism underlies biology, engineering, and economics. Once you see feedback, you see it everywhere — and you can design it into your own systems. The word 'cybernetics' comes from the Greek for 'steersman' — and the paper is the founding manifesto of feedback as a universal principle.",
+    citation: "Wiener, N., Bigelow, J., & Rosenblueth, A. (1943). Behavior, purpose and teleology. *Philosophy of Science*, 10(1), 18–24."
+  },
+  {
+    id: "licklider1960", wave: 6,
+    title: "Man-Computer Symbiosis",
+    titleShort: "Licklider 1960 (Predicted the Internet & AI Assistants)",
+    authors: ["J. C. R. Licklider"], year: 1960,
+    fields: ["computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://groups.csail.mit.edu/medg/people/psz/Licklider.html",
+    published: "IRE Transactions on Human Factors in Electronics, HFE-1, 4–11", language: "English",
+    summaries: {
+      elementary: "Machines and humans will think together — and the human will set goals while the machine does the work.",
+      abi: "Licklider predicted in 1960 that within a few years, humans and computers would form a tight symbiotic partnership — humans setting goals, asking questions, making decisions; computers doing the routine work of preparing data, displaying information, simulating alternatives. He predicted time-sharing, interactive computing, the internet, and AI assistants — 30 years before they existed. The paper is the founding document of interactive and networked computing.",
+      phd: "Licklider (1960): the goal is to enable men and computers to cooperate in making decisions and controlling complex situations without inflexible dependence on predetermined programs. Key predictions: (1) time-sharing systems (developed within 3 years at MIT); (2) interactive computing (with displays, light pens, keyboards — developed within a decade); (3) networked computers (the ARPANET, predecessor to the internet, was funded by Licklider in 1969); (4) AI assistants that augment rather than replace human thought. The paper defines the 'symbiotic' relationship: each partner does what it does best, with the human setting goals and the computer doing the grunt work. This vision became the foundation of personal computing, the internet, and modern human-AI collaboration."
+    },
+    aha: "Licklider described the future in 1960: time-sharing, interactive displays, networked computers, and AI assistants that augment human thinking. He then made it happen — by directing ARPA funding to ARPANET, MIT's Project MAC, and the early AI labs. The internet and the personal computer revolution are his legacy. The deepest 'aha': the goal of computing isn't to replace humans — it's to make humans more capable. This is the philosophy behind every modern productivity tool, every LLM copilot, every interactive system. Licklider saw it 60 years ago.",
+    citation: "Licklider, J. C. R. (1960). Man-computer symbiosis. *IRE Transactions on Human Factors in Electronics*, HFE-1, 4–11."
+  },
+  {
+    id: "engelbart1962", wave: 6,
+    title: "Augmenting Human Intellect: A Conceptual Framework",
+    titleShort: "Engelbart 1962 (The Mouse, Hypertext, & Interactive Computing)",
+    authors: ["Douglas C. Engelbart"], year: 1962,
+    fields: ["computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://www.dougengelbart.org/content/view/150/",
+    published: "Stanford Research Institute, Menlo Park, CA", language: "English",
+    summaries: {
+      elementary: "A computer should make you smarter — not just compute faster.",
+      abi: "Engelbart proposed that computers should 'augment' human intellect — by allowing us to capture, manipulate, and share symbols faster than thought. He designed the mouse, hypertext, video conferencing, windowed interfaces, and collaborative editing — and demonstrated them all in 1968 in the 'Mother of All Demos'. The paper is the founding document of interactive computing — and every modern computer interface descends from it.",
+      phd: "Engelbart (1962): humans think by manipulating symbols; augmenting intellect means improving our ability to manipulate symbols. The framework: (1) artificial means for capturing symbols (keyboards, mice, scanners); (2) methods for displaying them (screens, windows); (3) methods for organising them (file systems, links, hierarchies); (4) methods for transforming them (text editing, programming); (5) methods for sharing them (networks, multi-user systems). The 1968 'Mother of All Demos' demonstrated: mouse, hypertext linking, real-time collaborative editing, video conferencing, windowed GUI, version control — every feature of modern computing. Douglas Engelbart is the most influential technologist nobody knows."
+    },
+    aha: "The mouse, hypertext, and the GUI were all invented in one demo in 1968 — by one man, funded by ARPA. Engelbart saw that computing was about amplifying human thought, not just automating arithmetic. The framework he wrote in 1962 predicted every modern interface. The deepest 'aha' in interactive computing: the most important technology isn't the fastest processor — it's the tool that helps humans think together. Every modern software tool — from Figma to Notion to GitHub to Wikipedia — is an implementation of Engelbart's framework.",
+    citation: "Engelbart, D. C. (1962). *Augmenting Human Intellect: A Conceptual Framework*. Stanford Research Institute, Menlo Park, CA."
+  },
+  {
+    id: "definetti1937", wave: 6,
+    title: "La Prévision: Ses Lois Logiques, ses Sources Subjectives (Foresight: Its Logical Laws, Its Subjective Sources)",
+    titleShort: "de Finetti 1937 (Bayesian Probability — Subjective & Exchangeable)",
+    authors: ["Bruno de Finetti"], year: 1937,
+    fields: ["mathematics", "statistics"], era: "1900s", importance: "foundational",
+    pdf: "https://hal.archives-ouvertes.fr/hal-02962470",
+    published: "Annales de l'Institut Henri Poincaré, 7(1), 1–68", language: "French",
+    summaries: {
+      elementary: "Probability is just your degree of belief — and two people with the same beliefs should reach the same conclusions.",
+      abi: "de Finetti showed that probability is not an objective property of the world — it's a measure of subjective belief. The only 'objective' probability is the degree of belief that a rational person should hold — given their information. The paper proved that any sequence of exchangeable observations (randomly permuted) can be modelled as if it were drawn from a random process — but the process is itself a belief, not a fact. The result is the foundation of Bayesian statistics.",
+      phd: "de Finetti (1937): the 'representation theorem' shows that if a sequence of observations is exchangeable (their joint probability is invariant under permutation), then there exists a probability distribution over parameters such that the observations are conditionally independent given those parameters. Equivalently: any rational belief about exchangeable events can be represented as a mixture of i.i.d. samples. The result eliminates 'objective' probability — replacing it with coherent subjective belief (Dutch-book coherence). De Finetti's theorem is the foundation of Bayesian statistics, decision theory, and the modern Bayesian revival (Berger, Bernardo, Lindley). The paper also introduces exchangeability — a concept more general than i.i.d."
+    },
+    aha: "Probability is belief, not fact. The only requirement for rational belief is coherence (no Dutch book against you) — anything beyond that is your subjective prior. Two people with different priors can both be rational — they just have different information or beliefs. The deepest 'aha' in Bayesian statistics: there's no 'true' probability — only degrees of belief that obey the probability calculus. This dissolves the frequentist/Bayesian debate (sort of) and gives a rigorous foundation for subjective probability. De Finetti's theorem is the most important paper in Bayesian statistics — and almost no one reads it because it's in French and uses obscure notation. The lesson: read it anyway.",
+    citation: "de Finetti, B. (1937). La prévision: ses lois logiques, ses sources subjectives. *Annales de l'Institut Henri Poincaré*, 7(1), 1–68."
+  },
+  {
+    id: "robbins1956", wave: 6,
+    title: "An Empirical Bayes Approach to Statistics",
+    titleShort: "Robbins 1956 (Empirical Bayes — Learn the Prior from Data)",
+    authors: ["Herbert Robbins"], year: 1956,
+    fields: ["statistics"], era: "1900s", importance: "foundational",
+    pdf: "https://projecteuclid.org/journals/annals-of-mathematical-statistics/volume-27/i-3/666/An-Empirical-Bayes-Approach-to-Statistics",
+    published: "Proceedings of the Third Berkeley Symposium, 1, 157–163", language: "English",
+    summaries: {
+      elementary: "If you have to choose a prior, just estimate it from the data itself.",
+      abi: "Robbins's insight: when you don't know the prior distribution, you can estimate it from the data — and then use that estimate as if it were the true prior. This 'empirical Bayes' approach is the practical Bayesian method — it gives you the benefits of Bayesian reasoning without needing to commit to a specific prior. The method is widely used in modern statistics and machine learning.",
+      phd: "Robbins (1956): let X_1, ..., X_n be i.i.d. samples from p(x | θ), where θ is unknown. The Bayesian approach is to specify a prior p(θ) and compute the posterior p(θ | x). But what if you don't know p(θ)? Robbins showed: estimate p(θ) from the marginal distribution of X (by nonparametric density estimation), then use that estimate. As n → ∞, the empirical Bayes estimate converges to the true Bayes estimate. The method is widely used: ridge regression can be viewed as empirical Bayes with a Gaussian prior; random-effects meta-analysis uses empirical Bayes; modern Bayesian neural networks use empirical priors. Robbins's idea is the foundation of practically-useful Bayesian inference."
+    },
+    aha: "Don't know the prior? Use the data to estimate it. Empirical Bayes is the practical version of Bayesian reasoning — and it's how most modern statistical methods actually work. Every time you do ridge regression (Gaussian prior), random-effects meta-analysis (estimated prior), or Bayesian deep learning (variational prior), you're using Robbins's 1956 idea. The deepest 'aha': you don't need to know the prior — you can learn it from the data. This is one of the most practically important statistical ideas of the 20th century — and it's underappreciated.",
+    citation: "Robbins, H. (1956). An empirical Bayes approach to statistics. *Proceedings of the Third Berkeley Symposium on Mathematical Statistics and Probability*, 1, 157–163."
+  },
+  {
+    id: "feynman1982", wave: 6,
+    title: "Simulating Physics with Computers",
+    titleShort: "Feynman 1982 (Quantum Computing — Why Nature Isn't Turing)",
+    authors: ["Richard P. Feynman"], year: 1982,
+    fields: ["physics", "computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://link.springer.com/article/10.1007/BF02650179",
+    published: "International Journal of Theoretical Physics, 21(6/7), 467–488", language: "English",
+    summaries: {
+      elementary: "Nature isn't a Turing machine — and to simulate it, we need a different kind of computer.",
+      abi: "Feynman proposed that simulating quantum systems on classical computers is exponentially hard — and that we should build quantum computers that exploit quantum effects (superposition, entanglement) to simulate physics efficiently. The lecture seeded the entire field of quantum computing. It was given at MIT in 1981 and published in 1982.",
+      phd: "Feynman (1982): a universal quantum simulator can efficiently simulate any local quantum system. Classical computers require exponential resources (the wavefunction of N qubits has 2^N complex amplitudes). Quantum computers use quantum parallelism (N qubits explore 2^N states simultaneously) and entanglement to compute certain things exponentially faster. Feynman also asked whether quantum mechanics can be simulated by a Turing machine — concluding no (with caveats). The paper seeded Shor's algorithm (1994, factoring), Grover's algorithm (1996, search), and the entire field of quantum computing. The original MIT lecture (1981) is preserved on video — Feynman at his most playful."
+    },
+    aha: "The deepest 'aha' in quantum computing: nature isn't classical — so to simulate it, we need a quantum computer. Quantum computers don't just compute faster — they compute THINGS classical computers can't. The lecture is also a reminder that physics isn't reducible to classical computation — quantum mechanics itself contains the answer. Feynman's playful insight: 'Nature isn't classical, dammit, and if you want to make a simulation of nature, you'd better make it quantum mechanical.' Quantum computing is now a $30B industry — and it all started from a one-line observation in 1982.",
+    citation: "Feynman, R. P. (1982). Simulating physics with computers. *International Journal of Theoretical Physics*, 21(6/7), 467–488."
+  },
+  {
+    id: "searle1980", wave: 6,
+    title: "Minds, Brains, and Programs",
+    titleShort: "Searle 1980 (The Chinese Room — Syntax Isn't Semantics)",
+    authors: ["John R. Searle"], year: 1980,
+    fields: ["philosophy", "computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://cogprints.org/7150/1/10.1.1.83.5248.pdf",
+    published: "Behavioral and Brain Sciences, 3(3), 417–457", language: "English",
+    summaries: {
+      elementary: "Machines can manipulate symbols — but they don't understand what the symbols mean.",
+      abi: "Searle's Chinese Room thought experiment: imagine a person locked in a room, receiving Chinese characters, following English rules to produce other Chinese characters, and sending them out. To outsiders, the room appears to 'understand' Chinese. But the person inside doesn't understand a word. The argument: a computer program is the same — it manipulates formal symbols by syntax rules, but never has semantics. Computation alone is not enough for understanding. The argument has divided AI into 'strong' (machines can think) and 'weak' (machines can simulate thinking) camps for 40+ years.",
+      phd: "Searle (1980): the Chinese Room argument. A person in a room receives Chinese characters (input), consults a rulebook (program), and produces Chinese characters (output). To outside observers, the room appears to understand Chinese. But the person inside doesn't understand any Chinese — they just follow syntactic rules. Therefore: instantiating a computer program is not sufficient for understanding (semantics). Searle's argument targets 'strong AI' (the claim that suitably programmed computers literally have minds). The 'systems reply' (the room as a whole understands), the 'robot reply' (the program needs a body), the 'brain simulator reply' (simulate neurons), and the 'other minds reply' (we can't know other minds either) all have been debated for 40+ years. The argument is the central issue in the philosophy of AI — and unresolved."
+    },
+    aha: "Syntax isn't semantics. A computer can process perfect Chinese — and understand none of it. The Chinese Room is the deepest objection to strong AI: even perfect symbol manipulation doesn't give understanding. The modern debate: LLMs produce impressive Chinese — but do they understand it? The functionalist says yes (the system understands); Searle says no (syntax isn't semantics). The question is unresolved — and may be unresolvable by empirical methods alone. The deepest 'aha': even if a machine passes every test for understanding (Turing's), the philosophical question of whether it actually understands remains open. Whether that's a problem depends on what 'understand' means.",
+    citation: "Searle, J. R. (1980). Minds, brains, and programs. *Behavioral and Brain Sciences*, 3(3), 417–457."
+  },
+  {
+    id: "dreyfus1972", wave: 6,
+    title: "What Computers Can't Do: A Critique of Artificial Reason",
+    titleShort: "Dreyfus 1972 (The Counter-AI Manifesto)",
+    authors: ["Hubert L. Dreyfus"], year: 1972,
+    fields: ["philosophy", "computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/in.ernet.dli.2015.134710",
+    published: "Harper & Row, New York", language: "English",
+    summaries: {
+      elementary: "Computers will never do X — and the more X looks like human intelligence, the more they're wrong.",
+      abi: "Dreyfus, a phenomenologist and Heidegger scholar, argued that AI's foundational assumptions — that the mind is symbol manipulation, that intelligence can be formalised, that the body doesn't matter — were all wrong. He predicted that AI's progress would stall because the human mind isn't a rule-based system. The prediction was almost right — and the AI winter of the 1970s and 1980s came soon after. The book is the most influential counter-AI text ever written.",
+      phd: "Dreyfus (1972): four assumptions of AI are wrong — (1) biological assumption: the brain processes information; (2) psychological assumption: the mind manipulates symbols; (3) epistemological assumption: all knowledge can be formalised; (4) ontological assumption: the world consists of independent facts. He draws on Heidegger (being-in-the-world), Merleau-Ponty (embodied perception), and Wittgenstein (forms of life) to argue that human intelligence is contextual, embodied, and skill-based — not rule-based. The 1972 prediction that AI would fail was vindicated by the AI winter (1974–1993). The 2018 update ('What Computers Still Can't Do') concedes neural networks' success but argues they don't address the philosophical issues. The book is the founding text of anti-AI philosophy and embodied cognition."
+    },
+    aha: "Dreyfus was wrong about specific predictions (deep learning worked) but right about deep assumptions. Human intelligence isn't symbol manipulation — it's contextual, embodied, skill-based. The 'know-how' (knowing how to ride a bike) is different from 'knowing-that' (knowing the laws of physics). Most of human expertise is the first kind — and that's what AI couldn't capture for decades. Modern AI mostly uses Dreyfus's lesson (end-to-end learning, embodied agents, large neural networks rather than hand-coded rules) — while still failing at the deeper philosophical question. The lesson: the most important critique of a field often comes from outside it.",
+    citation: "Dreyfus, H. L. (1972). *What Computers Can't Do: A Critique of Artificial Reason*. New York: Harper & Row."
+  },
+  {
+    id: "maturana1980", wave: 6,
+    title: "Autopoiesis: The Organization of the Living",
+    titleShort: "Maturana & Varela 1980 (Self-Creating Systems — Life as Process)",
+    authors: ["Humberto R. Maturana", "Francisco J. Varela"], year: 1980,
+    fields: ["biology", "philosophy"], era: "1900s", importance: "foundational",
+    pdf: "https://www.enolagaia.com/MVsys.pdf",
+    published: "In *Autopoiesis and Cognition: The Realization of the Living*, Reidel, Dordrecht", language: "English",
+    summaries: {
+      elementary: "Living things are self-making — they continuously produce themselves.",
+      abi: "Maturana and Varela defined 'autopoiesis' (self-making) as the defining property of living systems: a network of processes that recursively produces the components that produce the network. A cell maintains itself by continuously making its own molecules; an organism maintains itself by continuously making its own cells. Life isn't a thing — it's a process. The idea influenced systems theory, second-order cybernetics, and embodied cognition.",
+      phd: "Maturana & Varela (1980): an autopoietic system is a network of processes that produces the components that produce the network — and constitutes a unity in a space. Examples: a cell (molecules produce more molecules, which maintain the cell); an organism (cells produce more cells, which maintain the organism); an immune system (antibodies produce more antibodies, which maintain immune memory); a mind (thoughts produce more thoughts). Key implications: (1) the system is operationally closed (self-referential); (2) cognition is the process of maintaining the system; (3) there is no input/output (the system's boundary is constructed by itself). The work inspired second-order cybernetics (von Foerster), enactivism (Varela, Thompson, Rosch), and the 'autopoietic' tradition in cognitive science."
+    },
+    aha: "Living systems are self-creating networks — and cognition is the process of self-maintenance. A cell doesn't have inputs and outputs — it has interactions with its environment that it itself defines. This insight dissolves the boundary between 'inside' and 'outside', 'self' and 'other', 'cognition' and 'life'. The deepest 'aha' from autopoiesis: you are not a thing — you are a process that has been continuously rebuilding itself for decades. Most of your atoms have been replaced many times. The pattern that is 'you' is the pattern that makes more of itself. Maturana's one sentence: 'Living systems are cognitive systems, and living as a process is a process of cognition.'",
+    citation: "Maturana, H. R., & Varela, F. J. (1980). *Autopoiesis and Cognition: The Realization of the Living*. Dordrecht: Reidel."
+  },
+  {
+    id: "miller1956", wave: 6,
+    title: "The Magical Number Seven, Plus or Minus Two: Some Limits on Our Capacity for Processing Information",
+    titleShort: "Miller 1956 (Working Memory Capacity = 7±2)",
+    authors: ["George A. Miller"], year: 1956,
+    fields: ["psychology"], era: "1900s", importance: "foundational",
+    pdf: "https://psychclassics.yorku.ca/Miller/",
+    published: "Psychological Review, 63(2), 81–97", language: "English",
+    summaries: {
+      elementary: "You can only hold about 7 things in your head at once.",
+      abi: "Miller showed that immediate memory is limited to about 7 items — the magical number seven, plus or minus two. The paper applies to digits, letters, words, musical tones, and many other stimuli. The paper introduced the concept of 'chunking' — grouping items into meaningful units to expand apparent capacity. The result is the foundation of cognitive psychology and the design of every user interface.",
+      phd: "Miller (1956): immediate memory span = 7 ± 2 items across many stimulus domains. The 'chunking' insight: capacity is fixed in chunks, not bits. By grouping digits (1-7-7-4-9-3-8-3) into years (1774, 93, 83) or as a phone number (555-1234), we can remember many more digits. The paper also introduces the 'information-rate' approach to psychology: capacity in bits per second is roughly constant across modalities (auditory, visual, tactile). The paper unified psychophysics and cognition and is the most-cited paper in cognitive psychology. Modern updates: working memory capacity is more like 3-4 (Cowan 2001), with chunking extending it."
+    },
+    aha: "You can only hold about 4-7 things in your head at once — that's why phone numbers are 7 digits, why short-term memory is limited, and why UI design needs chunking. Every interface you've ever used (the rule of 7 in navigation, the 7±2 in dashboard design, the chunked content of textbooks) implements Miller's insight. The deepest 'aha': human cognition is bandwidth-limited. AI has unlimited bandwidth — which is both its strength (it can read millions of pages) and its weakness (it can lose the thread of a conversation). Designing for 7±2 chunks is one of the most universal rules in human-computer interaction.",
+    citation: "Miller, G. A. (1956). The magical number seven, plus or minus two: Some limits on our capacity for processing information. *Psychological Review*, 63(2), 81–97."
+  },
+  {
+    id: "bartlett1932", wave: 6,
+    title: "Remembering: A Study in Experimental and Social Psychology",
+    titleShort: "Bartlett 1932 (Memory Is Reconstruction, Not Recording)",
+    authors: ["Frederic C. Bartlett"], year: 1932,
+    fields: ["psychology"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/rememberingastudy00bart",
+    published: "Cambridge University Press", language: "English",
+    summaries: {
+      elementary: "Memory is reconstruction — you remember the gist and fill in the rest, often incorrectly.",
+      abi: "Bartlett's experiments showed that when people retell a story from another culture, they unconsciously transform it to fit their own cultural expectations. Details are dropped, modified, or invented. Memory isn't a recording — it's an active reconstruction based on schemas (mental frameworks). The book founded schema theory and the modern view that memory is constructive, not reproductive. It anticipates the misinformation effect, schema theory, and the cognitive view of memory.",
+      phd: "Bartlett (1932): serial reproduction experiments — participants read a story (e.g., a Native American folk tale from 'War of the Ghosts') and retold it after varying intervals. Each retelling drifted toward the participant's own cultural schema: unfamiliar details dropped, conventional explanations inserted, length shortened, structure simplified. Bartlett concluded: remembering is not reproducing — it's an effort after meaning, using schemas to reconstruct. Schemas are pre-existing cognitive structures that shape perception, memory, and comprehension. The work prefigures: schema theory (Piaget, Bartlett), constructive memory (Loftus, Neisser), misinformation effect, episodic vs semantic memory, and modern cognitive neuroscience. Bartlett's experiments were ahead of their time — and only fully appreciated with the cognitive revolution of the 1960s."
+    },
+    aha: "Memory isn't a recording — it's a reconstruction that uses schemas to fill in the gaps. Eyewitness testimony is unreliable, dreams are reconstructions, déjà vu is schema-matching, and your autobiography is a story you tell yourself. The deepest 'aha': you don't remember the past — you reconstruct it from the present, using whatever schemas are active now. This is why memories change with mood, why eyewitness testimony can convict the innocent (Loftus), and why 'remembering' is more like 'imagine and believe' than 'play back a recording'. Bartlett saw this in 1932 — 40 years before the cognitive revolution confirmed it.",
+    citation: "Bartlett, F. C. (1932). *Remembering: A Study in Experimental and Social Psychology*. Cambridge: Cambridge University Press."
+  },
+  {
+    id: "wigner1960", wave: 6,
+    title: "The Unreasonable Effectiveness of Mathematics in the Natural Sciences",
+    titleShort: "Wigner 1960 (Why Does Math Work So Well?)",
+    authors: ["Eugene P. Wigner"], year: 1960,
+    fields: ["mathematics", "philosophy"], era: "1900s", importance: "foundational",
+    pdf: "https://www.maths.ed.ac.uk/~v1ranick/papers/wigner.pdf",
+    published: "Communications on Pure and Applied Mathematics, 13(1), 1–14", language: "English",
+    summaries: {
+      elementary: "Math is unreasonably effective at describing reality — and we don't know why.",
+      abi: "Wigner wondered why mathematical concepts developed for their own sake (complex numbers, differential geometry, group theory) so often turn out to describe physical reality with uncanny precision. He called this 'the unreasonable effectiveness of mathematics' — and could only explain it by appealing to our selection of the mathematical structures we use (we keep the ones that work) and by noting that the laws of physics are 'of amazing simplicity'. The essay is the most cited discussion of the relationship between mathematics and physics.",
+      phd: "Wigner (1960): the role of mathematics in physics is not just 'unreasonable' — it's so striking that it forces us to ask whether human cognition is somehow attuned to the structure of the universe. Examples: complex numbers (invented for algebraic convenience) appear in quantum mechanics; differential geometry (invented for pure math) describes general relativity; group theory describes elementary particles. Wigner's hypothesis: physical laws are simple because they're laws of physics, not laws of mathematics — and the mathematical structures we use to describe them have been selected for their empirical adequacy. The deepest 'aha': the universe is mathematical in a way we don't fully understand. Physics keeps finding that the right mathematics is the right description — long before any physicist knows the physics. Tegmark (2008) takes this further: the universe IS mathematics."
+    },
+    aha: "Why does math work so well at describing reality? Nobody knows. The deepest unsolved question in the philosophy of science. Physics keeps finding that the right mathematical structure is the right description — long before anyone knows the physics. Complex numbers predicted quantum mechanics. Riemannian geometry predicted general relativity. Group theory predicted the standard model. The mathematics is found first, then the physics follows. The lesson: there is something deep about the relationship between human thought and the structure of reality — and we don't know what it is. Maybe the universe IS mathematics (Tegmark). Maybe we evolved to detect mathematical patterns (Riedl). Maybe it's coincidence (Wigner). But the pattern is too consistent to be accident.",
+    citation: "Wigner, E. P. (1960). The unreasonable effectiveness of mathematics in the natural sciences. *Communications on Pure and Applied Mathematics*, 13(1), 1–14."
+  },
+  {
+    id: "tononi2008", wave: 6,
+    title: "Consciousness as Integrated Information: A Working Hypothesis",
+    titleShort: "Tononi 2008 (Integrated Information Theory — Consciousness = Φ)",
+    authors: ["Giulio Tononi"], year: 2008,
+    fields: ["neuroscience", "philosophy"], era: "2000s", importance: "foundational",
+    pdf: "https://doi.org/10.1186/1471-220X-9-55",
+    published: "BMC Neuroscience, 9, 55", language: "English",
+    summaries: {
+      elementary: "Consciousness is integrated information — the more a system integrates its parts, the more conscious it is.",
+      abi: "Tononi proposed Integrated Information Theory (IIT): consciousness (Φ) is the amount of integrated information a system generates. A system is conscious to the degree that its parts are both differentiated (specialised) and integrated (irreducible to independent parts). Your brain has high Φ because it's a complex, integrated network; a thermostat has low Φ because it's simple; a million disconnected lightbulbs have zero Φ. The theory generates testable predictions about consciousness in brains, fetuses, and machines.",
+      phd: "Tononi (2008): defines Φ as the irreducible integrated information — the information generated by a system above and beyond its parts. Key claims: (1) consciousness exists in gradations (not binary); (2) it is identical to integrated information; (3) it depends on a system's causal structure, not its substrate (so silicon can be conscious if it has high Φ); (4) the posterior cortex has high Φ (rich interconnection), the cerebellum has low Φ (parallel modules), the spinal cord has zero. The theory predicts: anaesthesia works by reducing Φ; vegetative-state patients have low Φ; sleep reduces Φ; psychedelics increase Φ. IIT is one of two leading scientific theories of consciousness (the other is Global Neuronal Workspace Theory — Dehaene). The theory is controversial but generates specific, falsifiable predictions."
+    },
+    aha: "Consciousness has a measure: Φ, the integrated information. It's not magic — it's a precise quantity that you could (in principle) compute for any system. Your brain has high Φ because it's a richly connected, integrated network. A thermostat has low Φ. A million disconnected lightbulbs have zero Φ. The deepest 'aha': consciousness isn't binary — it's a spectrum. This dissolves the hard problem (Chalmers): if consciousness is integrated information, then it's just a matter of degree, not an all-or-nothing mystery. The theory is testable: anaesthesia, sleep, brain damage, and psychedelics all change Φ in predictable ways. Whether IIT is right or wrong, it has made consciousness scientifically respectable.",
+    citation: "Tononi, G. (2008). Consciousness as integrated information: A working hypothesis. *BMC Neuroscience*, 9, 55."
+  },
+  {
+    id: "bachelier1900", wave: 6,
+    title: "Théorie de la Spéculation (The Theory of Speculation)",
+    titleShort: "Bachelier 1900 (Brownian Motion Before Einstein — Finance Before Black-Scholes)",
+    authors: ["Louis Bachelier"], year: 1900,
+    fields: ["mathematics", "economics"], era: "1800s", importance: "foundational",
+    pdf: "https://www.numdam.org/numdam-bin/browse?j=ASENS_1900_3_17_/",
+    published: "Annales Scientifiques de l'École Normale Supérieure, 17, 21–86", language: "French",
+    summaries: {
+      elementary: "Markets move randomly — and the math of randomness was known before Einstein applied it to physics.",
+      abi: "Bachelier, a French graduate student, derived the mathematics of Brownian motion five years before Einstein's 1905 paper — and applied it to French government bond markets. His PhD thesis is the founding document of mathematical finance — and contains the Black-Scholes formula 73 years before Black and Scholes. His advisor, Henri Poincaré, called the thesis 'original' but added that the topic was 'somewhat remote from applications'. Both Bachelier and the markets remained obscure for decades.",
+      phd: "Bachelier (1900): model a stock price as Brownian motion — continuous random walk. The probability density of the price at time t is Gaussian with variance σ²t. The expected future price is the current price (martingale property). Options can be priced by computing expected value under the 'risk-neutral' measure. The thesis contains the fundamental pricing formula C = (S - K)Φ(d) — essentially the Black-Scholes formula, derived 73 years early. The thesis also defines Brownian motion rigorously (Einstein's 1905 paper assumes it; Bachelier derives it). Bachelier's advisor Poincaré — and his examiners including Boussinesq — recognised the work as novel but eccentric. Bachelier never got an academic position. His work was rediscovered by the mathematical finance community in the 1960s. The Nobel committee's 1997 Black-Scholes citation should have included Bachelier."
+    },
+    aha: "Brownian motion was invented to model the Paris bond market — five years before Einstein used it for physics. Bachelier's PhD thesis contains the Black-Scholes option-pricing formula — 73 years before Black and Scholes 'invented' it. The greatest financial mathematician never got an academic position. The deepest 'aha': mathematical truths are often found before the application is obvious. Bachelier found the right math in 1900 — but the market for it didn't exist until 1973. Today, every options pricing formula, every volatility surface, every high-frequency trading algorithm rests on his work. The Nobel was awarded to Black, Scholes, and Merton in 1997 — but it should have gone to a forgotten French graduate student who did it 73 years earlier.",
+    citation: "Bachelier, L. (1900). Théorie de la spéculation. *Annales Scientifiques de l'École Normale Supérieure*, 17, 21–86."
+  },
+  {
+    id: "poincare1890", wave: 6,
+    title: "Analysis Situs",
+    titleShort: "Poincaré 1890 (Founding Topology — The Shape of Space)",
+    authors: ["Henri Poincaré"], year: 1895,
+    fields: ["mathematics"], era: "1800s", importance: "foundational",
+    pdf: "https://archive.org/details/analysis situs",
+    published: "Journal de l'École Polytechnique, 1(2), 1–121", language: "French",
+    summaries: {
+      elementary: "Shape matters more than measurements — a donut and a coffee cup are the same shape.",
+      abi: "Poincaré founded topology — the study of properties that survive continuous deformation. Two shapes are 'topologically equivalent' if you can deform one into the other without tearing or gluing. A donut is the same as a coffee cup; a sphere is the same as a cube. The Betti numbers (now: homology groups) classify shapes by their holes. Topology is the foundation of modern mathematics, physics (gauge theory), and data science (persistent homology).",
+      phd: "Poincaré (1895): 'Analysis Situs' (later 'topology') is the study of properties preserved under continuous deformation. Poincaré introduced the fundamental group π_1 (loops in a space up to continuous deformation), Betti numbers (counts of holes of different dimensions), and the Euler characteristic χ = V - E + F. He proved the Poincaré duality theorem (later generalised) and conjectured the Poincaré conjecture (every simply-connected closed 3-manifold is homeomorphic to the 3-sphere — proved by Perelman 2003 using Ricci flow). The work founded algebraic topology — the language of modern mathematics, quantum field theory, and topological data analysis."
+    },
+    aha: "A donut and a coffee cup are the same shape. A knot is the same if you can wiggle it without cutting. Space itself can be classified by its topology — and the topology of space determines what kinds of particles and forces can exist (gauge theory, topology in physics). Topology is the deepest level of geometry: not the distances but the connections. The deepest 'aha': every important question about space, from whether the universe is finite to whether black holes preserve information, is ultimately a question of topology. Poincaré's 1895 paper gave us the language to ask those questions.",
+    citation: "Poincaré, H. (1895). Analysis situs. *Journal de l'École Polytechnique*, 1(2), 1–121."
+  },
+  {
+    id: "markov1906", wave: 6,
+    title: "Распространение закона больших чисел на величины, зависящие друг от друга (Extension of the Law of Large Numbers to Dependent Quantities) — original Russian Markov chains paper",
+    titleShort: "Markov 1906 (The Original Markov Chains Paper — in Russian)",
+    authors: ["Andrey A. Markov (Jr.)"], year: 1906,
+    fields: ["mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://gallica.bnf.fr/ark:/12148/bpt6k1704g/f1.item",
+    published: "Известия Физико-математического общества при Казанском университете, 2nd series, 15, 135–156 (Bulletin de la Société physico-mathématique de Kazan)", language: "Russian",
+    summaries: {
+      elementary: "Some sequences of events have memory — and you can still do statistics on them.",
+      abi: "Markov, furious with Nekrasov's misuse of the law of large numbers, wrote a paper showing that the law generalises to sequences where each event depends on the previous one — provided the dependence decays. He illustrated his theory by counting 20,000 letters in Pushkin's Eugene Onegin, classifying each as vowel or consonant, and computing the transition probabilities (vowel→vowel, vowel→consonant, etc.). The paper founded the theory of Markov chains — and underlies every modern probabilistic model.",
+      phd: "Markov (1906): let X_1, X_2, ..., X_n be a sequence of dependent random variables. The 'Markov property': P(X_n | X_{n-1}, ..., X_1) = P(X_n | X_{n-1}) — the future depends only on the present. Markov proved the law of large numbers for such chains: the empirical frequencies converge to the stationary distribution. The paper also computed transition probabilities from data (his Pushkin analysis). The Markov chain framework is the foundation of: random walks, MCMC (Markov Chain Monte Carlo), Hidden Markov Models (HMMs), Markov Decision Processes (MDPs), reinforcement learning, PageRank (Google), language models (n-grams), and the entire field of probabilistic graphical models. Modern AI couldn't exist without Markov chains."
+    },
+    aha: "Markov chains are the most-used mathematical structure in modern AI — and they were invented to mock a mathematician's misuse of statistics. The Pushkin analysis (counting vowel-consonant transitions in Eugene Onegin) gave us the model. Every probabilistic sequence — text, speech, protein sequences, stock prices, weather, your Spotify recommendations — can be modelled as a Markov chain. The deepest 'aha': the future depends only on the present (Markov property). If you can capture the present, you can predict (probabilistically) the future. This single idea underlies everything from Google PageRank to LLM token generation to your GPS route planning.",
+    citation: "Markov, A. A. (1906). Rasprostranenie zakona bol'shih chisel na velichiny, zavisyashchie drug ot druga. *Izvestiya Fiziko-matematicheskogo obshchestva pri Kazanskom universitete*, 2nd series, 15, 135–156."
+  },
+  {
+    id: "newell1976", wave: 6,
+    title: "Computer Science as Empirical Inquiry: Symbols and Search",
+    titleShort: "Newell & Simon 1976 (The Philosophy of Computer Science)",
+    authors: ["Allen Newell", "Herbert A. Simon"], year: 1976,
+    fields: ["computer-science", "philosophy"], era: "1900s", importance: "foundational",
+    pdf: "https://www.cs.cmu.edu/~./empirical inquiry.pdf",
+    published: "Communications of the ACM, 19(3), 113–126", language: "English",
+    summaries: {
+      elementary: "Computer science is an empirical science — not a branch of mathematics. It studies real phenomena (computation) the way physics studies matter.",
+      abi: "Newell and Simon argued that computer science is its own kind of science: it studies 'symbolic systems' — physical systems that manipulate symbols (numbers, programs, data). The phenomena it studies are real (they run on real computers, take real time, make real errors), but the laws are different from physics (the computer either halts or doesn't — no 'almost halts'). The paper is the founding document of computer science as a science — and rebuts the view that CS is just applied math.",
+      phd: "Newell & Simon (1976): CS is the science of symbolic systems — physical systems that process information. Laws of CS include: (1) computational complexity (P, NP, etc.); (2) the universality of Turing machines; (3) the intractability of many natural problems; (4) the empirical regularities of programs (most code, debugging time, etc.); (5) the laws of human-computer interaction. The paper also introduces the 'physical symbol systems hypothesis': a physical symbol system has the necessary and sufficient means for general intelligent action. This hypothesis underwrites the symbolic-AI tradition (GOFAI, expert systems, knowledge representation) and is the foundation of cognitive science (Newell & Simon's 'unified theory of cognition' — SOAR)."
+    },
+    aha: "Computer science isn't math — it's an empirical science. The phenomena it studies (algorithms, programs, computers, even humans thinking) are real, but they don't obey the laws of physics or mathematics in the usual way. The paper is the founding manifesto of CS as a discipline — and the foundation of cognitive science (a single science of mind, both natural and artificial). The deepest 'aha': symbolic systems are a different kind of matter — matter that processes information — and their laws are computational, not physical. The mind is a symbolic system. So is a computer. Newell and Simon claimed: they're the same thing, studied at different levels. We haven't yet built a mind. But we know what one would look like.",
+    citation: "Newell, A., & Simon, H. A. (1976). Computer science as empirical inquiry: Symbols and search. *Communications of the ACM*, 19(3), 113–126."
+  },
+  {
+    id: "crutchfield1994", wave: 6,
+    title: "The Calculi of Emergence: Computation, Dynamics, and Induction",
+    titleShort: "Crutchfield 1994 (How Emergence Is Computed)",
+    authors: ["James P. Crutchfield"], year: 1994,
+    fields: ["computer-science", "physics"], era: "1900s", importance: "foundational",
+    pdf: "https://arxiv.org/abs/nlin/9401005",
+    published: "Physica D, 75(1–3), 11–54", language: "English",
+    summaries: {
+      elementary: "Emergence is computational — and you can measure how much.",
+      abi: "Crutchfield introduced a rigorous framework for emergence: (1) compute the intrinsic computation of a system (its ε-machine, the minimal model that captures its regularities); (2) measure 'causal density' and 'statistical complexity' — how much information the past gives about the future. Emergence is when the intrinsic computation is non-trivial. The framework applies to cellular automata, spin chains, biological systems, and even human language. It gives a precise definition of what 'emergence' means.",
+      phd: "Crutchfield (1994): defines emergence rigorously via the ε-machine (minimal causal model that reproduces a process's statistical patterns). Measures: (1) statistical complexity C_μ — the entropy rate of the causal states; (2) excess entropy E — the total information in past-future correlations; (3) causal density — the rate of information transfer per cell per step. The framework unifies many 'emergence' concepts: criticality (maximal C_μ), computation (ε-machines = generalisation of Turing machines for stochastic processes), and self-organisation (high E relative to local entropy). Applications: cellular automata (Rule 110, ε=ε_complex), spin glasses, neural networks, biological evolution, language. The paper is the most rigorous treatment of emergence in the literature."
+    },
+    aha: "Emergence isn't magic — it's computation. And you can measure it. Every system that 'emerges' has a measurable intrinsic computation — a minimal model that captures its regularities. The deepest 'aha': emergence is when a system's intrinsic computation is greater than its parts. Cellular automata with simple rules can have complex intrinsic computations (Rule 110 is Turing-complete); spin chains near criticality maximise complexity; biological systems live near the edge of chaos. Crutchfield's framework turns 'emergence' from a philosophical puzzle into a measurable quantity — and shows that all emergence is, in some sense, computation. The paper is the most rigorous treatment of emergence in physics — and it predates 'complexity science' by decades.",
+    citation: "Crutchfield, J. P. (1994). The calculi of emergence: Computation, dynamics, and induction. *Physica D*, 75(1–3), 11–54."
+  },
+  {
+    id: "church1936", wave: 6,
+    title: "An Unsolvable Problem of Elementary Number Theory",
+    titleShort: "Church 1936 (Lambda Calculus — The Other Foundation of Computation)",
+    authors: ["Alonzo Church"], year: 1936,
+    fields: ["computer-science", "mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.ics.uci.edu/~alspaach/classes/cs271/papers/church.pdf",
+    published: "American Journal of Mathematics, 58(2), 345–363", language: "English",
+    summaries: {
+      elementary: "Functions can be computed by applying other functions — and that's enough to do everything.",
+      abi: "Church invented the lambda calculus — a minimal language for expressing computation. Every computation is the application of a function to an argument. From this one rule (and a way to define functions), you get a language powerful enough to express ANY computable function. The lambda calculus is the foundation of functional programming (Lisp, Haskell, ML), proof assistants (Coq, Lean), and modern type theory. It's the other half of the equivalence that became the Church-Turing thesis.",
+      phd: "Church (1936): the lambda calculus consists of (1) variables (x, y, z, ...); (2) function abstraction (λx.M, the function that maps x to M); (3) function application (M N, applying M to N). Three reduction rules: α-conversion (renaming), β-reduction (substitution), η-conversion (extension). Church proved: (1) the lambda calculus is Turing-complete (computes every computable function); (2) the halting problem is undecidable (proved via the 'Y combinator' — a self-referencing function). Church's thesis (independently from Turing): every effectively calculable function is lambda-definable. This is the Church-Turing thesis — the deepest definition of computability. Modern descendants: functional languages (Haskell, Lisp), type theory (Coq, Agda, Lean), denotational semantics."
+    },
+    aha: "The lambda calculus is the deepest definition of computation — and it's tiny. Three rules: variables, function abstraction, function application. From these you get every computable function — and the proof that some functions (like 'does this program halt?') are not computable. Church's insight is the foundation of functional programming (Haskell, Lisp, ML), proof assistants (Coq, Lean), and modern type theory. The deepest 'aha': computation is just function application. Anything that can be computed can be expressed as a function — and some functions can't be computed. The lambda calculus is the mathematical skeleton of every functional program — and proof that even simple rules can generate infinite complexity.",
+    citation: "Church, A. (1936). An unsolvable problem of elementary number theory. *American Journal of Mathematics*, 58(2), 345–363."
+  },
+  {
+    id: "post1936", wave: 6,
+    title: "Finite Combinatory Processes — Formulation 1",
+    titleShort: "Post 1936 (The Forgotten Third Founder of Computation)",
+    authors: ["Emil L. Post"], year: 1936,
+    fields: ["computer-science", "mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.cs.umb.edu/~cgrella/Post36.pdf",
+    published: "Journal of Symbolic Logic, 1(3), 103–105", language: "English",
+    summaries: {
+      elementary: "Three simple instructions are enough to do any computation.",
+      abi: "Post independently invented a minimal computation system — essentially equivalent to Turing machines and lambda calculus. His 'Post canonical systems' use three operations on strings: (1) rewrite a symbol; (2) insert a symbol; (3) delete a symbol. From these three rules, every computable function can be computed. Post's paper was published at almost the same time as Turing's (1936) — and was completely overshadowed. Post never got the recognition he deserved.",
+      phd: "Post (1936): the 'canonical' system has three operations on strings: (a) A → αP (rewrite A as α and move to the next instruction P); (b) A → α (rewrite and halt); (c) A → αP, where α can be inserted anywhere; (d) delete a symbol. Post proved: any computable function can be represented in this system. The proof is essentially the same as Turing's (Turing machines) and Church's (lambda calculus) — and the three are equivalent. Post's system is more practical for natural language processing (production grammars). Post's subsequent work on computability (1944), recursive functions, and unsolvable problems extended Church-Turing ideas. Post spent his career at CCNY, often depressed, and died by suicide in 1954."
+    },
+    aha: "Three string operations are enough to compute anything. Post's system is the third foundational model of computation — alongside Turing machines and Church's lambda calculus. They were all discovered in 1936 — and proved equivalent within months. The deepest 'aha': computation is universal — the same regardless of substrate, language, or paradigm. Any system that can rewrite, insert, and delete strings can compute every computable function. Post's three operations are the simplest description of universal computation — and the most concise. The paper is the most forgotten of the three — Post never got Turing's or Church's recognition. He died believing his work had been forgotten. It wasn't.",
+    citation: "Post, E. L. (1936). Finite combinatory processes — Formulation 1. *Journal of Symbolic Logic*, 1(3), 103–105."
   }
 ];
 
@@ -4231,7 +4590,7 @@ const ERAS = ["Ancient", "1500s", "1600s", "1700s", "1800s", "1900s", "1950s", "
 
 const state = {
   q: "",
-  wave: "5",
+  wave: "6",
   field: "all",
   era: "all",
   sort: "default",
@@ -4256,7 +4615,7 @@ function rebuildFilterChips(){
   const wavesPresent = [...new Set(PAPERS.map(p => p.wave))].sort((a,b) => b-a);
   wavesPresent.forEach(w => {
     const cnt = PAPERS.filter(p => p.wave === w).length;
-    const label = w === 5 ? "Wave 5 — the originals" : w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
+    const label = w === 6 ? "Wave 6 — hidden foundations" : w === 5 ? "Wave 5 — the originals" : w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
     const c = document.createElement("button");
     c.className = "chip" + (state.wave === String(w) ? " active" : "");
     c.dataset.filter = "wave"; c.dataset.value = String(w);
@@ -4304,7 +4663,7 @@ function initFilters(){
   const wavesPresent = [...new Set(PAPERS.map(p => p.wave))].sort((a,b) => b-a);
   wavesPresent.forEach(w => {
     const cnt = PAPERS.filter(p => p.wave === w).length;
-    const label = w === 5 ? "Wave 5 — the originals" : w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
+    const label = w === 6 ? "Wave 6 — hidden foundations" : w === 5 ? "Wave 5 — the originals" : w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
     const c = document.createElement("button");
     c.className = "chip" + (state.wave === String(w) ? " active" : "");
     c.dataset.filter = "wave"; c.dataset.value = String(w);
@@ -4520,7 +4879,7 @@ function bindEvents(){
 
       // reset
       $("#reset").addEventListener("click", () => {
-        state.q = ""; state.wave = "5"; state.field = "all"; state.era = "all"; state.sort = "default"; state.open.clear();
+        state.q = ""; state.wave = "6"; state.field = "all"; state.era = "all"; state.sort = "default"; state.open.clear();
     q.value = ""; clear.hidden = true;
     $("#sort").value = "default";
     fExp.classList.remove("open"); fTog.classList.remove("open"); fTog.setAttribute("aria-expanded", "false");
