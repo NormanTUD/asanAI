@@ -946,8 +946,9 @@ function $(id){return document.getElementById(id)}
 function dpi(cv){
   const r = window.devicePixelRatio||1;
   const w = cv.clientWidth;
-  const h = parseInt(cv.getAttribute('height'));
+  const h = parseInt(cv.getAttribute('height'))||300;
   if(cv.width!==w*r||cv.height!==h*r){cv.width=w*r;cv.height=h*r;}
+  cv.style.height=h+'px';
   const ctx=cv.getContext('2d');
   ctx.setTransform(r,0,0,r,0,0);
   return {ctx,w,h};
