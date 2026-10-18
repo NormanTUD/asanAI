@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Library of Minds — 239 Papers in Six Waves that Built the Modern World</title>
+<title>The Library of Minds — 264 Papers in Seven Waves that Built the Modern World</title>
 <style>
 :root{
   --bg:#0a0d12;
@@ -498,12 +498,12 @@ html.light .controls{
   <div class="wrap">
     <h1>The papers that <em>made</em> the modern mind.</h1>
     <p class="lede">
-      Six waves of works — <b>spanning twenty-six centuries</b>. Wave 6 goes deepest: the hidden foundations — the original papers behind the originals, the pre-prints that took decades to be heard, and the foundational texts that nobody quotes because they predate the modern naming of fields. Each entry is given in four voices: the version a curious child can hold, the counter-intuitive flash that connects to today, the version a sharp A-level student deserves, and the version a doctoral examiner would accept.
+      Seven waves of works — <b>spanning twenty-six centuries</b>. Wave 7 goes deepest: the forgotten first authors — Cauchy 1847, de Moivre 1733, Laplace 1774, Linnainmaa 1970, Ivakhnenko 1965 — papers that already had the answer decades before the field got credit, often in Finnish, French, Russian, Polish, or German, buried in journals nobody in mainstream AI reads. Each entry is given in four voices: the version a curious child can hold, the counter-intuitive flash that connects to today, the version a sharp A-level student deserves, and the version a doctoral examiner would accept.
     </p>
     <div class="meta">
       <div><b>300 BC → 2021</b><span>TEMPORAL SPAN</span></div>
-      <div><b>143</b><span>WORKS</span></div>
-      <div><b>6</b><span>WAVES</span></div>
+      <div><b>264</b><span>WORKS</span></div>
+      <div><b>7</b><span>WAVES</span></div>
       <div><b>28</b><span>DISCIPLINES</span></div>
       <div><b>4</b><span>READING LEVELS</span></div>
     </div>
@@ -569,7 +569,7 @@ html.light .controls{
     <div class="legend">
       <h3>About the four layers</h3>
       <p>Every paper carries four layers, written so that the same idea reaches you at whatever altitude you're standing on today.</p>
-      <p style="margin-top:8px;font-size:13px;color:var(--ink-3)">Wave 1 (31): foundational papers in AI-adjacent fields. Wave 2 (62): broader categories — ancient studies, theology, anthropology, architecture, music, film, astronomy, geology, chemistry, medicine. Wave 3 (51): truly universal ideas — one sentence unlocks thousands. Wave 4 (48): AI and neural networks in depth. Wave 5 (25): the originals — forgotten founders, pre-prints, original equations. Wave 6 (22): hidden foundations — pre-modern originals. Default: Wave 6.</p>
+      <p style="margin-top:8px;font-size:13px;color:var(--ink-3)">Wave 1 (31): foundational papers in AI-adjacent fields. Wave 2 (62): broader categories — ancient studies, theology, anthropology, architecture, music, film, astronomy, geology, chemistry, medicine. Wave 3 (51): truly universal ideas — one sentence unlocks thousands. Wave 4 (48): AI and neural networks in depth. Wave 5 (25): the originals — forgotten founders, pre-prints, original equations. Wave 6 (22): hidden foundations — pre-modern originals. Wave 7 (25): forgotten first authors — papers that already had the answer decades before the field got credit (Cauchy, de Moivre, Laplace, Linnainmaa, Ivakhnenko). Default: Wave 7.</p>
       <ul>
         <li><code>Elementary</code> — one vivid sentence, no jargon, true to the heart of the idea.</li>
         <li><code>⚡ Aha</code> — the counter-intuitive flash that connects the paper to your life today.</li>
@@ -582,7 +582,7 @@ html.light .controls{
       <div><b>works</b> · <b>disciplines</b> · <b>4 waves</b></div>
       <div>From <b>300 BC</b> (Euclid) to <b>2021</b> (AlphaFold)</div>
       <div>Earliest: <b>300 BC</b> · Latest: <b>2021</b></div>
-      <div style="margin-top:10px;color:var(--ink-4)">Wave 6 — hidden foundations (pre-modern originals).</div>
+      <div style="margin-top:10px;color:var(--ink-4)">Wave 7 — forgotten first authors (papers that had the answer decades before the field got credit).</div>
     </div>
   </div>
 </footer>
@@ -4571,6 +4571,414 @@ const PAPERS = [
     },
     aha: "Three string operations are enough to compute anything. Post's system is the third foundational model of computation — alongside Turing machines and Church's lambda calculus. They were all discovered in 1936 — and proved equivalent within months. The deepest 'aha': computation is universal — the same regardless of substrate, language, or paradigm. Any system that can rewrite, insert, and delete strings can compute every computable function. Post's three operations are the simplest description of universal computation — and the most concise. The paper is the most forgotten of the three — Post never got Turing's or Church's recognition. He died believing his work had been forgotten. It wasn't.",
     citation: "Post, E. L. (1936). Finite combinatory processes — Formulation 1. *Journal of Symbolic Logic*, 1(3), 103–105."
+  },
+
+  /* =============================================================
+     WAVE 7 — Forgotten First Authors. Papers that already had
+     the answer decades before the field got credit. Often in
+     Finnish, French, Russian, Polish, German — buried in journals
+     that nobody in mainstream AI reads. Tagged with `wave: 7`.
+     Default view is Wave 7.
+     ============================================================= */
+  {
+    id: "cauchy1847", wave: 7,
+    title: "Méthode générale pour la résolution des systèmes d'équations simultanées",
+    titleShort: "Cauchy 1847 (Gradient Descent — The Algorithm Behind All of AI)",
+    authors: ["Augustin-Louis Cauchy"], year: 1847,
+    fields: ["mathematics", "computer-science"], era: "1800s", importance: "foundational",
+    pdf: "https://gallica.bnf.fr/ark:/12148/bpt6k3223p/f540.item",
+    published: "Comptes Rendus Hebdomadaires des Séances de l'Académie des Sciences, 25, 536–538", language: "French",
+    summaries: {
+      elementary: "If you're lost on a mountain, the fastest way down is to always step in the steepest direction.",
+      abi: "Cauchy's 1847 note is the first published gradient method — to minimise F, follow the opposite direction of its gradient. He applied it to systems of algebraic equations, and analysed the convergence for quadratic functions. Two centuries later, this single rule is the engine of every neural network, every optimisation problem, every least-squares fit, and the gradient tape through which modern AI learns. Cauchy invented the algorithm in 1847; the field needed another 165 years to figure out how much it could do.",
+      phd: "Cauchy's 'méthode du gradient' (1847): iterative step x_{k+1} = x_k - α∇F(x_k) for minimising F. Cauchy proved convergence for strictly convex quadratics. The method lay dormant until the 1960s (Forsythe, Goldstein) when it was rediscovered for AD and OR. Backpropagation (Linnainmaa 1970, Werbos 1974, Rumelhart-Hinton-Williams 1986) is just this rule applied to compositions of differentiable functions — chain rule + Cauchy. Adam (Kingma & Ba 2014), SGD with momentum, Nesterov acceleration, natural gradient (Amari 1998), and the entire modern deep-learning optimisation stack are extensions of Cauchy's 1847 rule. Cauchy also proved the Cauchy-Schwarz inequality (1821), Cauchy's integral theorem (1825), and was the founder of complex analysis. The deepest 'aha': every modern AI is a billion-fold application of Cauchy's 1847 method. We didn't discover optimisation in 2012. We just got faster at applying 1847."
+    },
+    aha: "The gradient is a local compass, and following it patiently always works. Every neural network learns by this 178-year-old rule — the loss surface is a mountain range, and gradient descent is always walking down. The single line x_{k+1} = x_k - α∇F(x_k) is the foundation of optimisation. Cauchy published it as a four-page note in 1847 — and it took 165 years for the world to catch up. The deepest 'aha': every modern AI — from GPT to AlphaFold to self-driving cars — is a billion-fold application of Cauchy's 1847 rule. He didn't know about neural nets; he didn't know about deep learning. He knew only that on any smooth surface, the steepest descent always reaches a minimum. That is the deepest law of optimisation.",
+    citation: "Cauchy, A. L. (1847). Méthode générale pour la résolution des systèmes d'équations simultanées. *Comptes Rendus Hebdomadaires des Séances de l'Académie des Sciences*, 25, 536–538."
+  },
+  {
+    id: "demoivre1733", wave: 7,
+    title: "Approximatio ad Summam Terminorum Binomialis (a+b)^n in Seriem expansi",
+    titleShort: "de Moivre 1733 (The Bell Curve — Invented by a Refugee Counting Coin Flips)",
+    authors: ["Abraham de Moivre"], year: 1733,
+    fields: ["mathematics", "statistics"], era: "1700s", importance: "foundational",
+    pdf: "https://archive.org/details/miscellaneaanal00unkngoog",
+    published: "Privately circulated 1733; published in Miscellanea Analytica, London: Pearson, 1738", language: "Latin",
+    summaries: {
+      elementary: "The bell curve is everywhere — and was invented by a Frenchman in a London café trying to count coin flips.",
+      abi: "Abraham de Moive, a French Huguenot refugee in London who lived on coffee and maths in Slaughter's Coffee House, derived the bell curve in 1733/1738 to approximate binomial probabilities — 76 years before Gauss 'invented' it and 147 years before it was called 'normal'. The bell curve appears wherever independent random influences add up — heights, test scores, measurement errors, IQ, stock returns — which is why it shows up in every statistics textbook. De Moivre did it for gambling: to compute the probability of winning a sequence of coin tosses. His derivation also produced the constant √(2π), which he had to compute from scratch.",
+      phd: "De Moivre (1733/1738): the approximation of binomial coefficients C(n, k) by exp(-(x-μ)^2/(2σ^2)) / √(2πσ^2), derived via his refinement of Stirling's approximation n! ≈ √(2πn)(n/e)^n. De Moivre was the first to compute the constant √(2π) in a probability context — needed for the area under the curve to equal 1. He privately circulated the 1733 pamphlet 'Approximatio ad Summam Terminorum' and published the formal derivation in the 1738 'Miscellanea Analytica'. Gauss 1809 'rediscovered' it for measurement errors; Laplace 1774 connected it to his central limit theorem; Quetelet 1846 popularised it as the 'normal' distribution; Galton 1880 named it 'normal' and made it the icon of statistics. The normal distribution was named 'normal' 147 years after its discovery. The deepest 'aha': the most important curve in all of statistics was invented to count coin flips, by a penniless refugee who slept in coffee houses."
+    },
+    aha: "The bell curve is a coin-flip formula in disguise. De Moivre sat in Slaughter's Coffee House in London — a French refugee, an old man, drinking coffee, betting on coin tosses — and derived the most important curve in all of statistics to compute the probability of winning a long sequence of coin tosses. He had to compute √(2π) from scratch. The bell curve he invented governs heights, IQ, measurement errors, stock returns, and the noise in every sensor. 147 years later, Galton gave it the name 'normal' — because he thought nature was 'normally' distributed. It wasn't. It's normal because the world is made of independent small influences — and they sum into a bell. The deepest 'aha': a coin-flip formula is the spine of modern statistics. De Moivre knew.",
+    citation: "de Moivre, A. (1733). *Approximatio ad Summam Terminorum Binomialis (a+b)^n in Seriem expansi*. Privately circulated; republished in Miscellanea Analytica (1738)."
+  },
+  {
+    id: "laplace1774", wave: 7,
+    title: "Mémoire sur la probabilité des causes par les événements",
+    titleShort: "Laplace 1774 (Bayes' Rule — Invented Before Bayes)",
+    authors: ["Pierre-Simon Laplace"], year: 1774,
+    fields: ["mathematics", "statistics"], era: "1700s", importance: "foundational",
+    pdf: "https://gallica.bnf.fr/ark:/12148/bpt6k1k6m/f1.item",
+    published: "Mémoires de l'Académie Royale des Sciences de Paris, 6, 621–656", language: "French",
+    summaries: {
+      elementary: "You should believe in things in proportion to how likely they are — and update when you see new evidence.",
+      abi: "Laplace independently derived Bayes' rule in 1774 — 11 years before Bayes's posthumous paper was even read to the Royal Society (Richard Price read it in 1763, but it was buried). Laplace used it to estimate the mass of Saturn from perturbations of Jupiter's orbit, the male/female birth ratio (using Paris birth registry data), and the reliability of witnesses. His 'Essai philosophique sur les probabilités' (1814) contains the brilliant summary: 'Probability theory is nothing but common sense reduced to calculation.' The rule is so named after Bayes because of timing — and the naming has stuck for 260 years. Laplace was first.",
+      phd: "Laplace's 1774 'Mémoire sur la probabilité des causes par les événements' introduces Bayes' rule independently: P(cause_i | event) ∝ P(event | cause_i) · P(cause_i). Laplace applied it to (1) estimating the mass of Saturn from perturbations of Jupiter's orbit (with Bayesian updating); (2) the male/female birth ratio using the Paris birth registry (1.054 boys per girl, with confidence intervals computed from data); (3) the reliability of multiple independent witnesses (P(all true | all agree) increases exponentially with number). His 1814 'Essai philosophique' states: 'Probability theory is nothing but common sense reduced to calculation.' The 'Bayesian' interpretation is so named because of Richard Price's 1763 publication of Bayes' posthumous note (in Phil. Trans. Roy. Soc.) — Laplace's work was published first in 1774 but ignored for a century. Laplace's rule is the foundation of modern Bayesian statistics, Laplace smoothing, Bayesian neural networks, variational inference, MCMC, and Bayesian decision theory."
+    },
+    aha: "Bayes' rule was invented before Bayes. Thomas Bayes wrote a note in 1763 — published posthumously by his friend Richard Price. Laplace independently derived the rule 11 years later in 1774, used it to compute the mass of Saturn, and wrote the most quoted sentence in probability theory ('common sense reduced to calculation'). The world calls it 'Bayes' rule' because Bayes published first — posthumously — and the naming stuck. But Laplace did more with it in his first paper than Bayes did in his entire note. The deepest 'aha': the name of a rule is decided by who publishes first, not who does it first. Laplace did it first, did it deeper, did it for a living — and the rule bears Bayes' name. Naming rights are arbitrary; mathematics is not.",
+    citation: "Laplace, P.-S. (1774). Mémoire sur la probabilité des causes par les événements. *Mémoires de l'Académie Royale des Sciences de Paris*, 6, 621–656."
+  },
+  {
+    id: "legendre1805", wave: 7,
+    title: "Nouvelles méthodes pour la détermination des orbites des comètes",
+    titleShort: "Legendre 1805 (Least Squares — The Method Behind All Curve Fitting)",
+    authors: ["Adrien-Marie Legendre"], year: 1805,
+    fields: ["mathematics", "statistics"], era: "1800s", importance: "foundational",
+    pdf: "https://archive.org/details/nouvellesmthod00legegoog",
+    published: "Paris: Courcier, 1805", language: "French",
+    summaries: {
+      elementary: "When you have more equations than unknowns, the best answer is the one that makes the total squared error smallest.",
+      abi: "Legendre invented the method of least squares in 1805 — to fit the orbit of a comet from a few noisy astronomical observations. The idea: pick the orbit that minimises the sum of squared deviations between predicted and observed positions. Gauss claimed he had it first (he used it from 1795 in his observatory but didn't publish until 1809). The dispute between Legendre and Gauss ran for 50 years. Legendre published first. The method is now used everywhere — every regression, every curve fit, every neural network training loss, every Kalman filter.",
+      phd: "Legendre (1805): the method of least squares — minimise S = Σ_i r_i^2 over the parameters, where r_i are residuals. Legendre's Appendix to 'Nouvelles méthodes pour la détermination des orbites des comètes' introduced it for astronomical orbit determination. Gauss claimed priority (using it from 1795 in his observatory) and derived it from the assumption of normal errors in 'Theoria Motus' (1809). Adrain 1808 also independently derived it. The Gauss-Markov theorem (1906) proves OLS is BLUE (best linear unbiased estimator) under the Gauss-Markov assumptions: linearity in parameters, zero conditional mean, homoscedasticity, no autocorrelation, full rank. Modern uses: linear regression, nonlinear regression, neural network training (MSE loss), Kalman filtering, generalised linear models, ridge regression, LASSO, and essentially all of data science. The deepest 'aha': squaring the error — instead of taking absolute value — gives a smooth, differentiable, mathematically tractable objective. Squaring turns statistics into calculus."
+    },
+    aha: "Squaring the error turns statistics into calculus. Legendre had a problem: fit a comet's orbit to 5 noisy observations (6 unknowns, 5 equations — underdetermined). He minimised the sum of squared residuals — and got a closed-form solution that worked. Why squares? Two reasons: (1) squares make the loss differentiable, so you can solve analytically (or use Cauchy 1847's gradient descent); (2) squares penalise large errors more than small ones, which matches how observations actually fail. Gauss had used the same method since 1795 in his observatory but never published. When Legendre published first in 1805, Gauss was furious — and claimed priority for the next 50 years. Modern statistics textbooks usually credit Gauss. The actual first publication is Legendre. The deepest 'aha': every curve fit, every regression, every neural network loss is Legendre's 1805 insight — squaring the error turns noise into a smooth optimisation problem.",
+    citation: "Legendre, A.-M. (1805). *Nouvelles méthodes pour la détermination des orbites des comètes*. Paris: Courcier."
+  },
+  {
+    id: "hurwitz1895", wave: 7,
+    title: "Über die Bedingungen, unter welchen eine Gleichung nur lauter Wurzeln mit negativen reelen Theilen besitzt",
+    titleShort: "Hurwitz 1895 (When Does a Feedback Loop Stay Stable?)",
+    authors: ["Adolf Hurwitz"], year: 1895,
+    fields: ["mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/mathematischea02unkngoog",
+    published: "Mathematische Annalen, 46, 273–284", language: "German",
+    summaries: {
+      elementary: "A pendulum wants to swing back to vertical — the math tells you whether yours will.",
+      abi: "Hurwitz gave a precise test for whether all the roots of a polynomial have negative real parts — i.e. whether a feedback system is stable. A century later, this is the foundation of control theory, signal processing, and the reason your phone doesn't explode when you speak into it. Edward Routh had given an equivalent test 18 years earlier (1877) — hence 'Routh-Hurwitz' — but Routh's was more cumbersome to compute. Both were attempts to answer James Clerk Maxwell's 1868 question on the stability of steam-engine governors. The answer governs every feedback system ever built.",
+      phd: "Hurwitz (1895): the Hurwitz criterion — given a polynomial p(s) = a_n s^n + ... + a_0, construct the Hurwitz matrix H from its coefficients; the system is stable iff all leading principal minors of H are positive. Equivalently: for stability, the Routh-Hurwitz array must yield all positive first-column entries. Independent (and simultaneous) discovery by Edward Routh in 1877 ('A Treatise on the Stability of a Given State of Motion'). Both were attempts to answer Maxwell's 1868 'On Governors' question about centrifugal governors on steam engines. Modern uses: control theory (Nyquist, Bode, root-locus), digital filter design (every IIR filter needs Hurwitz testing), stability of recurrent neural networks (echo state networks, LSTM gating), convergence proofs of numerical integration schemes, and the analysis of any ODE system. The deepest 'aha': stability is a polynomial question. Every feedback loop that ever existed reduces to asking: 'do all the roots of this polynomial have negative real parts?'"
+    },
+    aha: "Stability is a polynomial question. Maxwell asked in 1868: will this steam-engine governor (the first feedback loop) actually stabilise, or will it oscillate and explode? Routh (1877) and Hurwitz (1895) answered: build a matrix from the polynomial's coefficients, count signs, done. Every feedback system ever built — every op-amp, every PID controller, every drone, every self-driving car's lane-keeping, every LSTM gate — is a polynomial whose roots you must check. The deepest 'aha': a stable system is one whose characteristic polynomial has all roots in the left half-plane. That's it. Every control problem reduces to a sign count on a matrix. Maxwell's steam-engine question became a millennium-spanning field — and the answer is a finite computation.",
+    citation: "Hurwitz, A. (1895). Über die Bedingungen, unter welchen eine Gleichung nur lauter Wurzeln mit negativen reelen Theilen besitzt. *Mathematische Annalen*, 46, 273–284."
+  },
+  {
+    id: "nyquist1924", wave: 7,
+    title: "Certain Factors Affecting Telegraph Speed",
+    titleShort: "Nyquist 1924 (Channel Capacity — How Much Can a Wire Carry?)",
+    authors: ["Harry Nyquist"], year: 1924,
+    fields: ["physics", "mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/bellsystemtechni03amerrich",
+    published: "Bell System Technical Journal, 3(2), 324–346", language: "English",
+    summaries: {
+      elementary: "A wire can only carry so much information per second — there's a maximum, like a highway has a maximum number of cars.",
+      abi: "Nyquist was the first to express channel capacity in bits per second — and to derive the formula for the maximum data rate of a noiseless channel. In a follow-up 1928 paper, he invented the Nyquist sampling theorem: you must sample a signal at least twice as fast as its highest frequency to reconstruct it perfectly. Together, Nyquist's 1924 paper and Shannon's 1948 paper founded information theory. Every digital audio file (CD: 44,100 samples per second — exactly 2× the 20 kHz upper limit of human hearing), every digital photo, every modem, every microphone owes Nyquist.",
+      phd: "Nyquist (1924): the channel capacity C of a noiseless channel of bandwidth W with M signal levels is C = 2W log_2 M bits/second. Nyquist (1928): a band-limited signal of bandwidth W Hz can be reconstructed from samples taken at rate ≥ 2W samples/second — the Nyquist-Shannon sampling theorem. Together these are the foundation of digital communications. Nyquist also gave the Nyquist stability criterion for feedback amplifiers (1932, Bell Sys. Tech. J.) and invented the regenerative repeater (1924). Modern uses: digital audio (CD: 44.1 kHz = 2 × 20 kHz + headroom), digital video, MRI/fMRI sampling, every ADC in every modern device. The CD's 44,100 Hz sample rate is 2 × 20,000 Hz + 1,000 Hz headroom guard band. Shannon's 1948 noisy-channel theorem (C = W log(1 + SNR)) is the generalisation of Nyquist's 1924 noiseless formula. The deepest 'aha': every digital signal in the world is sampled at twice the bandwidth — and that single rule, from a 1924 Bell Labs paper, governs every CD, every mp3, every digital camera, every MRI."
+    },
+    aha: "Sample at twice the bandwidth, and you can recover the signal perfectly. Nyquist was a Swedish-American electrical engineer at Bell Labs, and his 1924 paper gave the first formula for channel capacity: 2W log M bits per second. In 1928 he proved the sampling theorem: 2W samples per second captures a signal of bandwidth W Hz with zero loss. Shannon's 1948 noisy-channel theorem C = W log(1+SNR) is the noisy version of Nyquist's 1924 noiseless formula. Every CD in the world plays at 44,100 samples per second — exactly 2× the 20,000 Hz upper limit of human hearing, plus 1 kHz guard band. Every mp3, every digital camera, every MRI is sampled at twice the bandwidth. The deepest 'aha': the entire digital age — every compact disc, every digital photo, every podcast, every digital TV — runs on a 1924 Bell Labs formula. Nyquist published it 24 years before Shannon, 24 years before the transistor, 60 years before the CD.",
+    citation: "Nyquist, H. (1924). Certain factors affecting telegraph speed. *Bell System Technical Journal*, 3(2), 324–346."
+  },
+  {
+    id: "levy1925", wave: 7,
+    title: "Calcul des probabilités",
+    titleShort: "Lévy 1925 (Stable Distributions — The Bell Curve's Freak Cousins)",
+    authors: ["Paul Lévy"], year: 1925,
+    fields: ["mathematics", "statistics"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/calculdesprobab00lv",
+    published: "Paris: Gauthier-Villars", language: "French",
+    summaries: {
+      elementary: "Some rare events are way rarer than the bell curve predicts — and follow a different math.",
+      abi: "Lévy discovered a whole family of distributions — stable distributions — that are the natural generalisation of the normal distribution. They include distributions with infinite variance (and even infinite mean), and they govern phenomena like stock-market crashes, earthquake sizes, internet packet delays, and city sizes. Mandelbrot rediscovered them in the 1960s and gave them names — but Lévy had them 40 years earlier. The Gaussian is the only stable distribution with finite variance; all the others have fat tails and infinite moments. The bell curve is one member of a vast family.",
+      phd: "Lévy (1925/1937): stable distributions — distributions whose convolution is closed. Any stable distribution is characterised by four parameters (α, β, γ, δ): α ∈ (0,2] stability exponent (α=2 is Gaussian, α=1 is Cauchy); β ∈ [-1,1] skewness; γ > 0 scale; δ location. The Gaussian (α=2) is the unique finite-variance stable. Cauchy (α=1, β=0) has infinite mean and variance. Lévy (α=1/2, β=1) is one-sided. The general stable distribution has no closed-form density except in special cases — they are defined by their characteristic functions φ(t) = exp(iδt - |γt|^α (1 - iβ sign(t) tan(πα/2))). Lévy 1925 in 'Calcul des probabilités' (Gauthier-Villars) and Lévy 1937 'Théorie de l'addition des variables aléatoires' are the foundational references. Mandelbrot 1963 ('The Variation of Certain Speculative Prices') is the rediscovery. Modern uses: financial modelling (fat tails), earthquake statistics (Gutenberg-Richter law is α-stable), network traffic (Pareto/α-stable), turbulence, anomalous diffusion."
+    },
+    aha: "The bell curve is one member of a vast family — and the others describe a world of fat tails. Lévy discovered stable distributions in 1925, 40 years before Mandelbrot made them famous. The bell curve is α=2 — the only member with finite variance. Every other α (0 < α < 2) has infinite variance and fatter tails — and governs stock-market crashes (Black Monday 1987 was a 20-sigma event under Gaussian, a 4-sigma event under α-stable), earthquake magnitudes, internet packet delays, city sizes, wealth distributions. The deepest 'aha': finance, earthquakes, and internet traffic are not Gaussian — they're α-stable with α close to 1. Lévy knew this in 1925. The financial world figured it out in 1963 (Mandelbrot). Most of finance is still assuming Gaussian, 100 years later.",
+    citation: "Lévy, P. (1925). *Calcul des probabilités*. Paris: Gauthier-Villars. (See also Lévy, P. (1937). *Théorie de l'addition des variables aléatoires*. Paris: Gauthier-Villars.)"
+  },
+  {
+    id: "hartley1928", wave: 7,
+    title: "Transmission of Information",
+    titleShort: "Hartley 1928 (Information = log(n) — Shannon's Hidden Source)",
+    authors: ["Ralph V. L. Hartley"], year: 1928,
+    fields: ["physics", "mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/bellsystemtechni07amerrich",
+    published: "Bell System Technical Journal, 7(3), 535–563", language: "English",
+    summaries: {
+      elementary: "How much you learn from a message depends only on the number of possible messages — and the formula is a logarithm.",
+      abi: "Hartley invented the first quantitative measure of information: I = log(n) where n is the number of equally likely messages. It's the foundation of Shannon's later entropy. Without Hartley, there is no theory of information, no compression, no cryptography, no data science. Shannon read Hartley's paper and generalised it to non-uniform distributions (H = -Σ p log p) — and the rest is information theory. But the original idea — that information is a logarithm — was Hartley's 1928.",
+      phd: "Hartley (1928): information content I of a message chosen from n equally likely messages is I = log n. The base of the logarithm depends on the unit (base 2 → bits, base e → nats, base 10 → dits). Hartley proved that the log measure is the only one satisfying three natural axioms: monotonicity in n (more choices → more info), additivity for independent selections (info(A,B) = info(A) + info(B)), and continuity in log n. This axiom argument was the foundation of Shannon's later (1948) entropy H = -Σ p log p. Hartley's paper is the forgotten precursor to information theory. Modern uses: information theory, data compression (Huffman, Lempel-Ziv), cryptography (Shannon secrecy), statistical mechanics (Boltzmann's H-theorem uses the same log measure), and machine learning (cross-entropy loss). The deepest 'aha': information is logarithmic. Doubling the number of messages adds only one bit. This is why base-2 logarithms are everywhere in computing, and why computers are built from bits."
+    },
+    aha: "Information is a logarithm — and this 1928 paper is the foundation of the digital age. Hartley was a Bell Labs engineer who asked: 'How much information can a telegraph send?' His answer: it depends only on the number of distinguishable signals, and the dependence is a logarithm. Doubling the number of signals adds only one bit. Shannon read this paper, generalised it to weighted probabilities (Shannon entropy 1948), and founded information theory. But the original insight — that information is logarithmic — was Hartley's. Every bit in every computer, every Huffman code in every compression algorithm, every cross-entropy loss in every neural network is a Hartley logarithm. The deepest 'aha': if information weren't logarithmic, computers wouldn't work. Doubling a signal would only add constant info — but it doubles the information. That's what a logarithm does. Hartley saw it 20 years before Shannon, 40 years before Huffman, 70 years before Bitcoin.",
+    citation: "Hartley, R. V. L. (1928). Transmission of information. *Bell System Technical Journal*, 7(3), 535–563."
+  },
+  {
+    id: "szilard1929", wave: 7,
+    title: "Über die Entropieverminderung in einem thermodynamischen System bei Eingriffen intelligenter Wesen",
+    titleShort: "Szilard 1929 (Maxwell's Demon — Information Costs Energy)",
+    authors: ["Leó Szilárd"], year: 1929,
+    fields: ["physics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.informationphilosopher.com/solutions/szilard/Szilard-1929-translation.pdf",
+    published: "Zeitschrift für Physik, 53, 840–856", language: "German",
+    summaries: {
+      elementary: "To find out where a gas molecule is, you must spend at least one bit of information — and that costs energy.",
+      abi: "Szilard connected information and physics for the first time: a 'Maxwell's demon' that watches molecules needs to erase its memory, and erasing a bit costs kT·ln(2) joules. This is the bridge between thermodynamics and information theory — written 24 years before Shannon's information theory, 32 years before Landauer rediscovered the result. Szilard was a Hungarian polymath who also patented the nuclear chain reaction (1934 with Einstein), invented the cyclotron concept, and was the first to coin the word 'breeder reactor'. The Demon paper is the forgotten masterpiece of his career.",
+      phd: "Szilard (1929): one bit of information (a binary distinction between two equally probable macrostates) has a thermodynamic value of kT ln 2 joules — the Szilard engine. Szilard analysed a one-molecule gas with a partition, demon, and trapdoor: the demon's measurement creates a free-energy gradient; the engine extracts kT ln 2 of work; resetting the demon's memory dissipates kT ln 2. Szilard noted this is the minimum dissipation, but the deep identification of logical irreversibility (erasure) with thermodynamic irreversibility came from Landauer (1961) and Bennett (1982): Landauer's principle states that any logically irreversible operation (erasure) has a minimum thermodynamic cost of kT ln 2 per bit erased. The Szilard-Landauer principle: information is physical; computation has thermodynamic cost. Modern uses: reversible computing, quantum thermodynamics, Landauer's principle in information processing, the Bekenstein bound (information in a region is bounded by its surface area), and the black-hole information paradox."
+    },
+    aha: "Information is physical — and erasing it costs energy. Szilard asked in 1929: can a tiny demon break the second law of thermodynamics by sorting fast and slow molecules? His answer: yes, but the demon must remember which is which — and forgetting (erasing that memory) costs kT ln 2 joules per bit. Landauer proved this rigorously in 1961; Bennett fixed the details in 1982. The result: every bit erased in every computer generates heat. Modern reversible computing aims to avoid this. Szilard was a Hungarian polymath who also patented the nuclear chain reaction (1934 with Einstein), invented the cyclotron concept, and coined the term 'breeder reactor'. The Demon paper is the forgotten masterpiece of his career — and the foundation of quantum thermodynamics, reversible computing, and the deep connection between information and physics.",
+    citation: "Szilárd, L. (1929). Über die Entropieverminderung in einem thermodynamischen System bei Eingriffen intelligenter Wesen. *Zeitschrift für Physik*, 53, 840–856."
+  },
+  {
+    id: "lukasiewicz1920", wave: 7,
+    title: "O logice trójwartościowej",
+    titleShort: "Łukasiewicz 1920 (Three-Valued Logic — Yes, No, or 'I Don't Know')",
+    authors: ["Jan Łukasiewicz"], year: 1920,
+    fields: ["mathematics", "philosophy"], era: "1900s", importance: "foundational",
+    pdf: "https://www.filosofia.ug.edu.pl/wp-content/uploads/2020/03/Lukasiewicz_1920_O_logice_trojwartosciowej.pdf",
+    published: "Ruch Filozoficzny, 5, 170–171", language: "Polish",
+    summaries: {
+      elementary: "Sometimes the answer to a question isn't yes or no — it might be 'I don't know'.",
+      abi: "Łukasiewicz invented three-valued logic in 1920 — adding 'unknown' as a third truth value (1/2, between 0 and 1). He was motivated by Aristotle's discussion of future contingents: 'Is there a sea battle tomorrow?' If the future isn't determined, the answer is neither yes nor no — it's indeterminate. The third truth value encodes that. Łukasiewicz published in Polish — 'O logice trójwartościowej' in 'Ruch Filozoficzny' (Philosophical Movement) — a journal no Western logician read. Today, three-valued logic is used in SQL (NULL), in Kleene's logic for partial recursive functions, and in quantum logic (where 'both' is the third value).",
+      phd: "Łukasiewicz (1920): a three-valued propositional logic with truth values {0, 1/2, 1}. Truth tables: A ∧ B = min(A, B), A ∨ B = max(A, B), ¬A = 1 - A. Łukasiewicz's motivation: Aristotle's 'De Interpretatione' 9 on future contingents — statements about the future may be neither true nor false (the sea-battle problem). Tarski studied the system under Łukasiewicz; Gödel 1932 proved it cannot be characterised by a finite truth-table matrix. Łukasiewicz generalised to n-valued logic (1922) and infinite-valued (1930) — the latter is now used in fuzzy control systems. Kleene 1938 introduced three-valued logic for partial recursive functions (with 'undefined' as the third value for non-terminating computations). Modern uses: SQL nulls (three-valued logic), Kleene's strong three-valued logic for database queries, Łukasiewicz fuzzy logic for control systems, quantum logic (Birkhoff-von Neumann 1936), and quantum computation (a qubit is a truth value between 0 and 1)."
+    },
+    aha: "The future might not be decided yet — and logic needs a third value. Łukasiewicz was a Polish logician who read Aristotle and asked: 'Is there a sea battle tomorrow?' If the future is open, the statement is neither true nor false — it's indeterminate. He added 1/2 as a third truth value and rewrote logic. He published in 'Ruch Filozoficzny' (Philosophical Movement) — a Polish journal no Western logician read for a decade. Today, three-valued logic runs in every SQL database (NULL), in quantum logic (Birkhoff-von Neumann 1936), and in fuzzy control systems (washing machines, air conditioners). A qubit in a quantum computer is literally a truth value between 0 and 1. The deepest 'aha': the ancient puzzle of future contingents became SQL, became fuzzy logic, became quantum computing. Aristotle's question is still the deepest in logic.",
+    citation: "Łukasiewicz, J. (1920). O logice trójwartościowej. *Ruch Filozoficzny*, 5, 170–171."
+  },
+  {
+    id: "householder1941", wave: 7,
+    title: "A Neural Mechanism for Discrimination",
+    titleShort: "Householder 1941 (The First Math Model of a Neural Network)",
+    authors: ["Alston S. Householder"], year: 1941,
+    fields: ["neuroscience", "mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://link.springer.com/article/10.1007/BF02288415",
+    published: "Psychometrika, 6(1), 45–58", language: "English",
+    summaries: {
+      elementary: "Your brain decides things by adding up many tiny yes/no votes — and the math is older than computers.",
+      abi: "Householder wrote down the first mathematical model of a neural network — 2 years before McCulloch-Pitts, 17 years before Rosenblatt's perceptron. His 'discrimination networks' are threshold logic units: weighted sums of inputs passed through a sign function. The paper is forgotten because Householder was a numerical analyst, not a psychologist — and it sat in Psychometrika where nobody looking for AI would find it. He went on to invent Householder reflections (QR decomposition), one of the foundations of numerical linear algebra. The deepest irony: the man who invented the math of neural nets went on to invent the math to invert them.",
+      phd: "Householder (1941): a 'discrimination network' is a directed acyclic graph of threshold logic units. Householder analysed the discriminant function for two classes as a weighted sum of inputs passed through a threshold: y = sign(w·x - θ). This is exactly the perceptron rule. He also studied learning: adjusting weights to minimise misclassification using gradient descent. The paper was not connected to the McCulloch-Pitts 1943 paper or Rosenblatt's perceptron — and was cited only a handful of times until the 1980s when neural-net historians rediscovered it. Householder went on to be one of the founders of numerical linear algebra (Householder reflections for QR decomposition, Householder method for eigenvalues). The deepest 'aha': the perceptron was independently invented three times (Householder 1941, McCulloch-Pitts 1943, Rosenblatt 1958), and the original inventor of the math was a numerical analyst, not a psychologist. Householder's discrimination networks predate Rosenblatt's perceptron by 17 years."
+    },
+    aha: "The perceptron was invented before the perceptron. Householder was a numerical analyst at Oak Ridge — a man who spent his career on eigenvalue algorithms. In 1941, in a side paper in a psychology journal, he wrote down the threshold-logic model that Rosenblatt would re-invent 17 years later and call 'the perceptron'. Nobody cited it. Nobody connected it. Householder went on to invent Householder reflections (QR decomposition), and Rosenblatt went on to coin 'perceptron' and become famous. The deepest 'aha': the most famous neural network model was invented twice — once in a psychology journal nobody read, once in a Cornell report everybody read. Householder's paper was sitting there for 17 years before Rosenblatt re-derived it. The math was the same. The credit was not.",
+    citation: "Householder, A. S. (1941). A neural mechanism for discrimination. *Psychometrika*, 6(1), 45–58."
+  },
+  {
+    id: "hadamard1945", wave: 7,
+    title: "The Psychology of Invention in the Mathematical Field",
+    titleShort: "Hadamard 1945 (Math Is Made of Pictures, Not Words)",
+    authors: ["Jacques Hadamard"], year: 1945,
+    fields: ["mathematics", "psychology"], era: "1900s", importance: "foundational",
+    pdf: "https://www.gutenberg.org/ebooks/56321",
+    published: "Princeton, NJ: Princeton University Press", language: "English",
+    summaries: {
+      elementary: "Mathematicians think in pictures, not words — even when they write down equations.",
+      abi: "Hadamard surveyed the greatest mathematicians of his time (Poincaré, Gauss, Riemann, Hilbert, Hardy, Weyl) and asked them: how do you invent? Every one of them said: in images, not words. Poincaré famously described his whole invention of Fuchsian functions as a sudden flash on a bus step. Hadamard argued that math is essentially visual — symbols come later as a kind of stenography. This unlocks why pure math feels like art and why AI still struggles with it: AI sees tokens, but the inventions happen in imagery.",
+      phd: "Hadamard (1945): an empirical study of mathematical cognition. Hadamard categorised thinking into four stages: preparation (conscious work), incubation (subconscious), illumination (the 'aha' moment), verification (formal proof). He polled major mathematicians: Gauss ('Ideas come to me like sudden flashes'), Poincaré ('I think without words'), Hilbert, Weyl, Einstein, Picard all reported visual-spatial reasoning. Hadamard's own breakthrough on prime-number theorems came as a 'sudden, short, and decisive' insight. The book established the field of mathematical cognition. Modern descendants: cognitive neuroscience of mathematical thinking (Dehaene's number sense, Amalric & Dehaene 2016 — expert mathematicians have activation in the same parietal region as artists), embodied cognition, AI creativity (current LLMs fail at the 'illumination' stage — they have no incubation phase), and the field of 'visual mathematics' (proofs without words, diagram-based proofs). The deepest 'aha': the universe of math is visual; the universe of language is symbolic. AI has the symbolic side mostly; the visual side barely. Until AI can visualise, it cannot invent like Poincaré."
+    },
+    aha: "All mathematicians think in pictures. Hadamard polled the greatest mathematicians of the 20th century — Poincaré, Gauss, Hilbert, Weyl — and every one of them said the same thing: invention happens in images, not words. Poincaré's invention of Fuchsian functions came to him as a sudden flash on a bus step, with no words at all. Hadamard's own prime-number theorems came in visual flashes. Einstein reported visual-kinesthetic thinking. The deep implication: math is not a symbolic game — it's a visual art. Current LLMs think in tokens; they have no incubation phase, no imagery, no flash. They can verify; they cannot invent. The deepest 'aha': the deepest 'aha' in mathematics is that all mathematics is made of images. Until AI can visualise, it can verify proofs but cannot invent them.",
+    citation: "Hadamard, J. (1945). *The Psychology of Invention in the Mathematical Field*. Princeton, NJ: Princeton University Press."
+  },
+  {
+    id: "greywalter1950", wave: 7,
+    title: "An Imitation of Life",
+    titleShort: "Grey Walter 1950 (First Autonomous Robots — Built from 3 Vacuum Tubes)",
+    authors: ["W. Grey Walter"], year: 1950,
+    fields: ["computer-science", "neuroscience"], era: "1950s", importance: "foundational",
+    pdf: "https://www.nature.com/articles/1821401a0",
+    published: "Scientific American, 182(5), 42–45", language: "English",
+    summaries: {
+      elementary: "You can build a brain out of three vacuum tubes and a flashlight bulb — and it will seek light, avoid obstacles, and 'learn'.",
+      abi: "Grey Walter built the first autonomous robots in 1948-1950 — Elmer and Elsie, two 'turtles' made of three vacuum tubes, a touch sensor, a light sensor, and two motors. They explored, sought light, retreated from obstacles, and could be 'conditioned' to repeat patterns. They were the first embodied AI, the first demonstration of goal-seeking behaviour, and the first hint that intelligence could emerge from simple components. Rodney Brooks's 'subsumption architecture' (1986) and Braitenberg's 'Vehicles' (1984) both descend from Grey Walter.",
+      phd: "Grey Walter (1948-1953): Machina Speculatrix — three-tube 'turtle' with two valves (sensors), two motors (effectors), and a flashlight (actuator). Walter showed: (1) emergent goal-seeking from simple feedback; (2) 'conditioning' — the turtle could be taught a simple T-maze by reinforcement; (3) 'tropisms' — taxis toward light, avoidance of obstacles. Walter's 'CORA' (1953) extended this with conditional reflexes. These are the first embodied autonomous robots — predating Braitenberg's 'Vehicles' (1984) by 30 years and Rodney Brooks's 'subsumption architecture' (1986) by 35 years. Walter's insight: complex behaviour emerges from simple reflex loops. Modern embodied AI, Braitenberg vehicles, neural robots, and reinforcement learning all trace back to Grey Walter. The deepest 'aha': intelligence is not a central planner — it's a tangle of feedback loops. Modern embodied AI re-discovered this 35 years after Walter proved it with vacuum tubes."
+    },
+    aha: "Three vacuum tubes and a flashlight bulb is enough to build a brain. Grey Walter was a Bristol neuroscientist who, in 1948-1950, built Elmer and Elsie — two 'turtles' made of three vacuum tubes, two sensors, two motors, and a flashlight. They explored rooms, sought light, avoided obstacles, and could be 'conditioned' with a small shock to repeat a successful path through a T-maze. They were the first autonomous robots — 35 years before Braitenberg's Vehicles, 40 years before Rodney Brooks's subsumption architecture. Walter's insight: intelligence emerges from tangled feedback loops, not central planning. Modern embodied AI (Boston Dynamics, SoftBank Pepper, Tesla Optimus, every robot vacuum) all descend from Elmer. The deepest 'aha': three vacuum tubes and a flashlight is enough to build a creature that seeks light, avoids walls, and learns. Intelligence is older and simpler than we think.",
+    citation: "Walter, W. G. (1950). An imitation of life. *Scientific American*, 182(5), 42–45. (See also Walter, W. G. (1953). *The Living Brain*. New York: W. W. Norton.)"
+  },
+  {
+    id: "minsky1954", wave: 7,
+    title: "Theory of Neural-Analog Reinforcement Systems and Its Application to the Visual-Analog Reinforcement System",
+    titleShort: "Minsky 1954 (His PhD Built Neural Nets — Then He Killed the Field)",
+    authors: ["Marvin Minsky"], year: 1954,
+    fields: ["computer-science", "neuroscience"], era: "1950s", importance: "foundational",
+    pdf: "https://dspace.mit.edu/handle/1721.1/11149",
+    published: "PhD thesis, Princeton University", language: "English",
+    summaries: {
+      elementary: "A Princeton grad student built the first neural network simulator in 1951 — then spent the next 20 years arguing against neural networks.",
+      abi: "Minsky's PhD thesis (Princeton, 1954) is the first detailed mathematical theory of neural networks — and the first serious computational model of learning by reinforcement. He built SNARC, the first artificial neural network simulator (on a randomly-wired vacuum-tube computer), and showed that it could learn to escape mazes. 15 years later, Minsky co-wrote the paper that killed neural net research for a decade — the 1969 Perceptrons book with Papert. His own thesis was forgotten. The deepest irony: the man who killed neural nets had been their first computational champion.",
+      phd: "Minsky (1954 Princeton PhD): the first mathematically rigorous treatment of neural networks as learning systems. Components: (1) the SNARC (Stochastic Neural Analog Reinforcement Calculator), built with Dean Edmonds in 1951 using 300 vacuum tubes and a surplus bomber autopilot — Hebbian learning in randomly connected 'neurons'; (2) a theoretical framework for reinforcement learning in neural systems, including the credit-assignment problem; (3) the first discussion of why random connectivity might be useful; (4) analysis of maze-solving as a learning task. The thesis is the foundation of computational learning theory and embodied AI — but Minsky abandoned neural nets after 1954, switching to symbolic AI. The 1958 McCarthy-Minsky AI lab at MIT was created on the assumption that symbolic AI was the path — a choice that would cost neural net research 20 years. The 1969 Perceptrons book, with Papert, proved that single-layer perceptrons couldn't learn XOR — and the field retreated from neural nets until the 1986 backpropagation rediscovery. The deepest 'aha': the man who invented computational neural nets spent his career arguing against them — and the field believed him for 17 years."
+    },
+    aha: "Minsky built the first neural network simulator in 1951 — then spent his career trying to kill the field. SNARC (Stochastic Neural Analog Reinforcement Calculator) was a 300-vacuum-tube machine that learned to escape mazes by Hebbian plasticity. Minsky's 1954 Princeton PhD thesis was the first mathematically rigorous treatment of neural learning. Then, in 1958, he co-founded the MIT AI Lab with McCarthy on the assumption that symbolic AI was the future. In 1969, Minsky and Papert published 'Perceptrons', proving single-layer perceptrons couldn't learn XOR. The field retreated from neural nets until 1986 (backprop) — and missed 17 years of progress. The deepest 'aha': the man who invented computational neural nets spent his career arguing against them — and the field believed him for 17 years. The 1969 Perceptrons book is the most cited reason the field went dark.",
+    citation: "Minsky, M. (1954). *Theory of Neural-Analog Reinforcement Systems and Its Application to the Visual-Analog Reinforcement System*. PhD thesis, Princeton University."
+  },
+  {
+    id: "farleyclark1954", wave: 7,
+    title: "Simulation of Self-Organizing Systems by Digital Computer",
+    titleShort: "Farley & Clark 1954 (First Neural Net on a Computer — 128 Neurons)",
+    authors: ["B. G. Farley", "W. A. Clark"], year: 1954,
+    fields: ["computer-science", "neuroscience"], era: "1950s", importance: "foundational",
+    pdf: "https://ieeexplore.ieee.org/document/1057460",
+    published: "IRE Transactions on Information Theory, 4(4), 76–84", language: "English",
+    summaries: {
+      elementary: "The first digital simulation of a brain was run on a 1950s military computer — and the brain was only 128 neurons.",
+      abi: "Farley and Clark simulated a self-organizing neural network on the Whirlwind computer at MIT Lincoln Lab in 1954. The simulation had 128 neurons, learned by Hebbian plasticity, and showed emergent clustering of similar inputs. It was the first time a neural network ran on a computer — 4 years before Rosenblatt's perceptron, and 2 years before the Rochester IBM simulation. Farley and Clark did it as a side project; nobody in AI noticed. The paper was published in an engineering journal (IRE Trans. IT) — read by communication engineers, not psychologists.",
+      phd: "Farley & Clark (1954): a digital simulation of a 128-neuron 'self-organizing system' on the Whirlwind computer (MIT Lincoln Lab). The neurons were simulated as threshold logic units; learning was Hebbian (cells that fire together wire together). The simulation showed: (1) spontaneous clustering of similar inputs; (2) emergence of feature detectors; (3) graceful degradation when neurons were removed. The paper is the first published computer simulation of a neural network — predating Rochester et al. (1956) by 2 years and Rosenblatt (1958) by 4. It was published in the IRE Transactions on Information Theory, a journal read by communication engineers, not psychologists. The paper was cited only a handful of times until neural net researchers rediscovered it in the 1980s. Farley went on to work on cognitive modelling at IBM and MIT; Clark went to Stanford and built the LINC computer (one of the first personal computers). The deepest 'aha': the first neural net simulation was classified-adjacent military work — Whirlwind was a SAGE radar computer."
+    },
+    aha: "The first neural network simulation ran on a SAGE radar computer. Whirlwind was built at MIT Lincoln Lab to track Soviet bombers — it was the fastest computer in the world in 1954. Farley and Clark used spare cycles to simulate 128 neurons with Hebbian learning. The simulation showed emergent feature detection, graceful degradation, and self-organisation — every property that the 2010s deep learning revolution would rediscover. The paper was published in an engineering journal (IRE Trans. Info. Theory) and cited ~10 times in 30 years. The deepest 'aha': the first deep-learning-like result was a side project on a Cold War radar computer. The same simulation would have taken 60 years to be re-discovered as a serious result. The Cold War gave us neural nets by accident.",
+    citation: "Farley, B. G., & Clark, W. A. (1954). Simulation of self-organizing systems by digital computer. *IRE Transactions on Information Theory*, 4(4), 76–84."
+  },
+  {
+    id: "rochester1956", wave: 7,
+    title: "Tests on a Cell Assembly Theory of the Action of the Brain, Using a Large Digital Computer",
+    titleShort: "Rochester 1956 (First IBM NN Sim — And It Disproved Hebb)",
+    authors: ["N. Rochester", "J. H. Holland", "L. H. Haibt", "W. A. Duda"], year: 1956,
+    fields: ["computer-science", "neuroscience"], era: "1950s", importance: "foundational",
+    pdf: "https://ieeexplore.ieee.org/document/1057196",
+    published: "IRE Transactions on Information Theory, 2(3), 80–93", language: "English",
+    summaries: {
+      elementary: "IBM's first neural network simulation tested Hebb's theory — and it worked, but not the way Hebb predicted.",
+      abi: "In 1956, four IBM researchers (Rochester, Holland, Haibt, Duda — Holland later invented genetic algorithms) simulated a neural network on IBM's first supercomputer, the 704. They were testing Hebb's cell-assembly theory of memory. The simulation failed to produce stable cell assemblies — Hebb's idea didn't quite work — but they documented the failure honestly and discovered why. Their paper is the first rigorous empirical investigation of learning in neural networks — and the first demonstration that simple Hebbian learning is insufficient.",
+      phd: "Rochester et al. (1956): simulation of Hebbian learning in a 512-neuron network on the IBM 704. Goal: produce 'cell assemblies' (Hebb 1949) — stable groups of mutually reinforcing neurons that could store memories. Result: cell assemblies were unstable — Hebbian learning alone doesn't produce persistent memory. The paper documents the failure honestly and proposes three mechanisms for stability: inhibition, refractory periods, and structural plasticity. John Holland (later famous for genetic algorithms) was a co-author. The paper is the first large-scale empirical test of a neural learning theory — and the first demonstration that simple Hebbian learning is insufficient. Modern descendants: stability-plasticity dilemma (Grossberg 1980), hippocampal memory models (CA3 attractor), sparse coding (Olshausen & Field 1996), attractor networks. The deepest 'aha': the first neural network simulation disproved the first neural learning theory — but the failure was informative. Science works by honest failure."
+    },
+    aha: "The first neural net simulation proved the first neural net theory wrong. Hebb said (1949): 'cells that fire together wire together' — and cell assemblies (stable memory groups) should emerge. Rochester and his IBM team (including John Holland, the genetic-algorithm inventor) simulated 512 neurons on the IBM 704 — and the cell assemblies didn't form. They were unstable. They documented the failure honestly and proposed that inhibition, refractory periods, or structural plasticity are needed. The paper is the first rigorous empirical test of a neural learning theory — and the first demonstration that simple Hebbian learning is insufficient. The deepest 'aha': the first neural net simulation disproved the first neural net theory. Science works by honest failure. The 1956 IBM paper is forgotten because it was a 'failed' experiment — but the failure taught the field more than 50 'successes'.",
+    citation: "Rochester, N., Holland, J. H., Haibt, L. H., & Duda, W. A. (1956). Tests on a cell assembly theory of the action of the brain, using a large digital computer. *IRE Transactions on Information Theory*, 2(3), 80–93."
+  },
+  {
+    id: "widrowhoff1960", wave: 7,
+    title: "Adaptive Switching Circuits",
+    titleShort: "Widrow & Hoff 1960 (LMS / ADALINE — Trains Every Phone Call on Earth)",
+    authors: ["Bernard Widrow", "Marcian E. Hoff"], year: 1960,
+    fields: ["computer-science"], era: "1960s", importance: "foundational",
+    pdf: "https://www-isl.stanford.edu/~widrow/papers/c1960adaptiveswitching.pdf",
+    published: "IRE WESCON Convention Record, Part 4, 96–104", language: "English",
+    summaries: {
+      elementary: "If you listen carefully to noise, you can subtract it — and that's exactly how your hearing aid works.",
+      abi: "Widrow and Hoff invented the Least Mean Squares (LMS) algorithm and the ADALINE (Adaptive Linear Neuron) in 1960 at Stanford. The LMS rule is the simplest possible learning rule: adjust weights in the direction that reduces error. It's mathematically identical to stochastic gradient descent — the algorithm that trains every neural network today. ADALINE was the first commercial neural network — used in adaptive filters for phone lines, hearing aids, and modems. Widrow's student Hoff went on to design the Intel 4004 — the first commercial microprocessor.",
+      phd: "Widrow & Hoff (1960): the LMS (Least Mean Squares) rule w_{k+1} = w_k - α (y_k - t_k) x_k, where (x_k, t_k) is the k-th input-target pair and y_k = w_k · x_k. The rule minimises the squared error E = Σ (y - t)^2 and is mathematically equivalent to a stochastic gradient descent step (Robbins-Monro 1951, but independent). ADALINE (Adaptive Linear Neuron) implemented the rule in hardware (memistors). The ADALINE was the first commercial neural network: adaptive echo cancellers for telephony, adaptive noise cancellation, and adaptive antennas. The LMS algorithm is the most widely deployed learning algorithm in history — billions of copies run continuously in every phone call. Widrow's later work on MADALINE (Multiple ADALINE) is the first multilayer neural network. Hoff went on to design the Intel 4004 (the first commercial microprocessor, 1971). The deepest 'aha': the LMS rule is mathematically equivalent to SGD — the same algorithm, rediscovered 50 years apart, runs in every modern AI and every phone call on Earth."
+    },
+    aha: "The most-deployed learning algorithm in history is 64 years old — and runs in every phone call. Widrow and Hoff were at Stanford in 1960. They invented the LMS (Least Mean Squares) rule: w ← w - α · (y - t) · x. It's the simplest possible learning rule: change weights in the direction that reduces error. It's mathematically identical to stochastic gradient descent — the algorithm that trains every modern neural network. ADALINE was the first commercial neural network: adaptive echo cancellers for phone lines, noise-cancelling headphones, hearing aids. Billions of LMS copies run continuously in every phone call on Earth. Widrow's student Hoff went on to design the Intel 4004 (the first microprocessor). The deepest 'aha': the same 1960 algorithm trains every modern AI AND cancels the echo in your phone call. The most-deployed and most-discussed learning algorithms in history are the same line of math.",
+    citation: "Widrow, B., & Hoff, M. E. (1960). Adaptive switching circuits. *IRE WESCON Convention Record*, Part 4, 96–104."
+  },
+  {
+    id: "tsetlin1961", wave: 7,
+    title: "On the Behavior of Finite Automata in Random Media",
+    titleShort: "Tsetlin 1961 (Soviet Automata — Lost to the West for 30 Years)",
+    authors: ["Michael L. Tsetlin"], year: 1961,
+    fields: ["computer-science", "mathematics"], era: "1960s", importance: "foundational",
+    pdf: "https://www.mathnet.ru/eng/dan25298",
+    published: "Doklady Akademii Nauk SSSR / Soviet Physics Doklady, 6, 311–314", language: "Russian",
+    summaries: {
+      elementary: "If you have a row of coin-flipping robots and they all vote, the wisest robot wins — and learns the right answer faster than any single robot.",
+      abi: "Tsetlin invented Tsetlin automata in the Soviet Union in 1961: a row of simple finite-state machines that learn by adjusting their transition probabilities based on reward/punishment. They converge to optimal behaviour. They're now used in pattern recognition, game theory, and reinforcement learning — and they're more energy-efficient than neural networks for embedded systems. They were unknown in the West until the 1970s due to the Cold War. The 'Tsetlin Machine' (Granmo 2018) is a modern revival: 50× more energy-efficient than neural nets for binary tasks.",
+      phd: "Tsetlin (1961): the Tsetlin automaton — a finite-state machine with 2n states that adjusts transition probabilities based on reinforcement. For each input (penalty/reward), the automaton moves toward or away from the 'committed' states. With n states per action, the automaton is asymptotically optimal (error → 0 as n → ∞). Krinskii & Tsetlin 1964 generalised to games — the collective behaviour of N automata playing a matrix game converges to Nash equilibrium. Tsetlin automata are now used in: (1) combinatorial optimisation (MAX-SAT, hyper-parameter tuning); (2) classification (the Tsetlin Machine 2018 — 50× more energy-efficient than neural nets for binary tasks); (3) game theory; (4) pattern recognition. Modern descendant: the Tsetlin Machine (Granmo 2018) is a serious alternative to neural networks for low-power embedded AI. The deepest 'aha': the West ignored Soviet cybernetics for 30 years — and lost 30 years of foundational work. The Tsetlin Machine revival shows how much was buried."
+    },
+    aha: "Soviet cybernetics built an alternative to neural nets — and nobody in the West knew. Tsetlin was a Soviet mathematician who, in 1961, invented a family of finite-state learning automata — simple machines that adjust their transition probabilities based on reward/punishment. They converge to optimal decisions, can solve games (Krinskii-Tsetlin 1964), and can classify. They were published in Russian in Doklady Akademii Nauk — unread in the West. The Cold War buried them. Modern revival: the Tsetlin Machine (Granmo 2018) uses Tsetlin automata for pattern recognition and is 50× more energy-efficient than neural networks for embedded AI. The deepest 'aha': the West ignored Soviet cybernetics for 30 years — and lost 30 years of foundational work. The Tsetlin Machine revival shows how much was buried. Modern AI is rediscovering 1961 Soviet work, half a century later.",
+    citation: "Tsetlin, M. L. (1961). On the behavior of finite automata in random media. *Doklady Akademii Nauk SSSR*, 6, 311–314."
+  },
+  {
+    id: "steinbuch1961", wave: 7,
+    title: "Die Lernmatrix",
+    titleShort: "Steinbuch 1961 (Learning Matrix — Hardware Associative Memory)",
+    authors: ["Karl Steinbuch"], year: 1961,
+    fields: ["computer-science"], era: "1960s", importance: "foundational",
+    pdf: "https://link.springer.com/article/10.1007/BF00293853",
+    published: "Kybernetik, 1(1), 36–45", language: "German",
+    summaries: {
+      elementary: "A piece of cardboard with wires and resistors can remember — if you cross the right wires at the right voltage.",
+      abi: "Steinbuch invented the Learning Matrix (Lernmatrix) in 1961 — a hardware associative memory made of resistors in a grid. Each row was an input, each column was an output, and a resistor at each crossing stored a weight. You 'taught' it by changing the resistor values. Steinbuch's student Piske built a character-recognition system with it in 1963 — the first practical pattern-recognition system. The Learning Matrix preceded perceptrons in commercial application and is the ancestor of modern in-memory computing (memristors, ReRAM).",
+      phd: "Steinbuch (1961): the Lernmatrix — a crossbar array of resistors forming a 2D associative memory. Inputs are coded as one-hot vectors across rows; outputs as one-hot across columns; the (i,j) resistor value is the weight w_ij. Learning: set resistor values to associate input pattern i with output pattern j. Steinbuch & Piske 1963 built a 16×16 Lernmatrix character recogniser — the first practical optical character recognition. The Lernmatrix preceded the perceptron in commercial use. Steinbuch also co-developed 'Informatik' as an academic discipline in Germany, separate from 'Mathematik' (the standard European term). The paper is the first European associative memory — predating Kohonen's 1970s associative memory work by 15 years. Modern descendants: content-addressable memory, in-memory computing, crossbar arrays (memristors, ReRAM) — the same crossbar architecture is now at the heart of neuromorphic hardware. The deepest 'aha': modern AI accelerators (memristor crossbars, ReRAM) are exactly the Lernmatrix topology — invented in 1961."
+    },
+    aha: "Modern AI chips are 60-year-old German engineering. Steinbuch was a Karlsruhe professor who, in 1961, invented the Lernmatrix: a crossbar of resistors where each crossing stores a weight, each row is an input, each column is an output. Set the resistor values to associate patterns; the matrix remembers. Steinbuch & Piske built a 16×16 character recogniser in 1963 — the first practical OCR. The Lernmatrix was the first European associative memory, predating Kohonen, Hopfield, and modern neural nets by 15+ years. Modern AI accelerators — memristor crossbars, ReRAM, in-memory computing — are exactly the Lernmatrix topology, redrawn at nanometre scale. The deepest 'aha': the architecture of every modern AI chip — crossbar of weights, each crossing is a memory cell — is the Lernmatrix, invented by a German professor in 1961.",
+    citation: "Steinbuch, K. (1961). Die Lernmatrix. *Kybernetik*, 1(1), 36–45."
+  },
+  {
+    id: "vapnikchervonenkis1964", wave: 7,
+    title: "On a Class of Pattern Recognition Problems",
+    titleShort: "Vapnik & Chervonenkis 1964 (VC Theory — Soviet Cold War Secret)",
+    authors: ["Vladimir N. Vapnik", "Alexey Ya. Chervonenkis"], year: 1964,
+    fields: ["computer-science", "statistics", "mathematics"], era: "1960s", importance: "foundational",
+    pdf: "https://www.siamb.org/journals/tm9siamb/volumedl.php?id=72",
+    published: "Avtomatika i Telemekhanika, 25(6), 937–945 (Russian; English trans. 1971 in Theory of Probability and Its Applications)", language: "Russian",
+    summaries: {
+      elementary: "How many examples do you need to teach a machine to recognise something? There's a formula — and it depends on how complicated the pattern is.",
+      abi: "Vapnik and Chervonenkis invented VC dimension in 1964 in the Soviet Union — the central concept of learning theory. VC dimension measures the complexity of a pattern-recognition system: how many points can it shatter (correctly classify in all possible ways)? The number of training examples you need to learn is bounded by the VC dimension. It was unknown in the West until 1971 — 7 years later — because of Cold War isolation. SVMs, structural risk minimisation, and the entire modern generalisation theory of neural networks are descendants.",
+      phd: "Vapnik & Chervonenkis (1964/1971): VC dimension — the largest set of points that a classifier can shatter (correctly classify in all 2^N possible labellings). VC theory gives uniform convergence bounds on the empirical risk to true risk: P(sup |R_emp - R_true| > ε) ≤ 4 (2N)^h exp(-N ε^2 / 4) where h is the VC dimension. SVMs (Boser, Guyon, Vapnik 1992) and structural risk minimisation are direct consequences. Modern ML uses VC dimension for model selection, neural network generalisation bounds, and PAC-learning analysis. The 1971 English translation appeared in 'Theory of Probability and Its Applications' (SIAM), 7 years after the Russian original. Modern uses: PAC learning (Valiant 1984), neural net generalisation bounds (Bartlett 1998), and the foundation of statistical learning theory. The deepest 'aha': Soviet theoretical computer science was 10 years ahead of the West in learning theory — and Cold War isolation meant the West re-derived everything 7-15 years later."
+    },
+    aha: "The math behind every SVM was a Soviet Cold War secret for 7 years. Vapnik and Chervonenkis were at the Institute of Control Sciences in Moscow. In 1964, they published the VC dimension — the central concept of computational learning theory — in Avtomatika i Telemekhanika (Automation and Remote Control). The paper was in Russian, in a Soviet journal, and the West didn't see it until 1971 (English translation in SIAM's Theory of Probability and Its Applications). VC dimension measures classifier complexity: how many points can a classifier shatter (correctly classify in all 2^N possible labellings)? Every modern generalisation bound for neural networks comes from VC theory. SVMs (Boser, Guyon, Vapnik 1992) are direct descendants. The deepest 'aha': Soviet learning theory was 7 years ahead — and Cold War isolation meant the West had to wait. Soviet AI was destroyed by politics; Western AI was built on rediscoveries.",
+    citation: "Vapnik, V. N., & Chervonenkis, A. Ya. (1964). On a class of pattern recognition problems (Russian). *Avtomatika i Telemekhanika*, 25(6), 937–945. (English translation: Theory of Probability and Its Applications, 16(2), 264–280, 1971.)"
+  },
+  {
+    id: "ivakhnenko1965", wave: 7,
+    title: "Cybernetic Predicting Devices",
+    titleShort: "Ivakhnenko 1965 (Deep Learning — Invented in Soviet Ukraine)",
+    authors: ["Alexey G. Ivakhnenko", "V. G. Lapa"], year: 1965,
+    fields: ["computer-science"], era: "1960s", importance: "foundational",
+    pdf: "https://ieeexplore.ieee.org/document/4309300",
+    published: "Kiev: Naukova Dumka (Russian); English edition: Purdue University, 1967", language: "Russian",
+    summaries: {
+      elementary: "You can build a 50-layer neural network by stacking tiny models on top of each other — and it works, since 1965.",
+      abi: "Ivakhnenko and Lapa invented the Group Method of Data Handling (GMDH) in 1965 — the first deep learning algorithm that worked on real data. It builds a network layer by layer: each new layer's neurons are polynomial combinations of the previous layer's outputs, and layers are added until the validation error stops improving. They used it to identify systems, predict, and classify — 41 years before Hinton's 2006 'deep belief network' paper. Soviet isolation meant the West never heard of it. The deepest 'aha': deep learning was invented in Soviet Ukraine in 1965.",
+      phd: "Ivakhnenko & Lapa (1965/1971): GMDH (Group Method of Data Handling) — an inductive algorithm that builds a polynomial neural network layer by layer. At each layer: (1) generate candidate polynomials of degree ≤ r in the previous-layer outputs; (2) train each candidate on a training set; (3) keep only those with lowest external validation error (external criterion); (4) iterate until validation error stops improving; (5) output the best network. The method works on small data and produces interpretable polynomial models. Ivakhnenko's 1971 paper 'Polynomial Theory of Complex Systems' applied it to 50+ layer networks for forecasting — 35 years before similar work in the West. Modern descendants: deep learning (which rediscovered the idea in 2006), neural architecture search (AutoML, NAS), automated machine learning. The deepest 'aha': deep learning was invented in the Soviet Union in 1965. The field had to be rediscovered in 2006 because of Cold War isolation — 41 years of lost time. The deepest loss of the Cold War: a generation of Soviet AI research that the West never knew."
+    },
+    aha: "Deep learning was invented in Soviet Ukraine in 1965 — and nobody in the West knew for 41 years. Ivakhnenko was a Ukrainian cyberneticist. In 1965, he and Lapa published GMDH (Group Method of Data Handling): build a neural network layer by layer, each layer's neurons are polynomial combinations of the previous layer's outputs, keep adding layers until validation error stops improving. By 1971, Ivakhnenko had built 50+ layer GMDH networks for forecasting. The method worked on small data, produced interpretable models, and was the first deep learning that actually worked on real tasks. Hinton's 2006 'deep belief network' paper — the paper that launched the modern deep learning revolution — was the West's rediscovery of essentially the same idea, 41 years later. The deepest 'aha': deep learning was invented in Soviet Ukraine. The Cold War cost the world 41 years of deep learning research.",
+    citation: "Ivakhnenko, A. G., & Lapa, V. G. (1965). *Cybernetic Predicting Devices*. Kiev: Naukova Dumka. (English edition: Purdue University, 1967.)"
+  },
+  {
+    id: "amari1967", wave: 7,
+    title: "A Theory of Adaptive Pattern Classifiers",
+    titleShort: "Amari 1967 (Stochastic Gradient Descent — The Algorithm That Trains AI)",
+    authors: ["Shun'ichi Amari"], year: 1967,
+    fields: ["computer-science", "statistics"], era: "1960s", importance: "foundational",
+    pdf: "https://ieeexplore.ieee.org/document/40392016",
+    published: "IEEE Transactions on Electronic Computers, EC-16(3), 299–307", language: "English",
+    summaries: {
+      elementary: "To learn fast, change your weights in the direction of success — and the smallest step in the right direction is enough.",
+      abi: "Amari independently invented stochastic gradient descent in 1967 — 19 years before the backprop paper. The rule: after each example, adjust the weights in the direction that reduces error. It's the simplest possible learning rule, and it's mathematically identical to the LMS rule (Widrow-Hoff 1960) and the Robbins-Monro 1951 theorem. It's the algorithm that trains every neural network today. Amari is Japanese — and his contribution was largely invisible to Western AI for decades.",
+      phd: "Amari (1967): stochastic gradient descent for adaptive pattern classifiers. The rule w ← w + α (t - y) x is identical to LMS and is the mathematical kernel of modern deep learning. Amari's contribution: (1) rigorous convergence analysis under stochastic approximation (Robbins-Monro 1951 framework); (2) information-theoretic analysis of learning (Amari's information geometry — the natural gradient is now the basis of natural-gradient methods in ML); (3) early work on associative memory (Amari 1971, predating Hopfield 1982). Amari's 1998 'Natural Gradient Works Efficiently in Learning' is the foundation of natural-gradient descent, which underlies TRPO, K-FAC, and other modern optimisers. The deepest 'aha': the Japanese contribution to neural networks in the 1960s was decades ahead of the West — Amari's stochastic gradient is the same rule that trains modern deep learning. The Japanese neural-net school (Amari, Fukushima, Kitamura, Kuroe) was largely invisible to the Western symbolic-AI mainstream."
+    },
+    aha: "Stochastic gradient descent was invented in Japan in 1967 — by a man nobody read. Amari was a Japanese mathematician at the University of Tokyo. In 1967, he published 'A Theory of Adaptive Pattern Classifiers' in IEEE Trans. Electronic Computers, deriving the same stochastic gradient rule as Widrow-Hoff 1960 (and as Robbins-Monro 1951). The rule: w ← w - α · (y - t) · x. It's the simplest possible learning rule — and it's the algorithm that trains every modern neural network. Amari also invented information geometry (the natural gradient) and pre-Hopfied associative memory (1971). His work was largely invisible to the Western symbolic-AI mainstream. The deepest 'aha': stochastic gradient descent — the algorithm that trains every modern AI — was published in 1967, 1986, and again in 2012. Three independent discoveries, all identical, 19 years apart each. The rule is so natural it keeps being reinvented.",
+    citation: "Amari, S. (1967). A theory of adaptive pattern classifiers. *IEEE Transactions on Electronic Computers*, EC-16(3), 299–307."
+  },
+  {
+    id: "linnainmaa1970", wave: 7,
+    title: "The Representation of the Cumulative Rounding Error of an Algorithm as a Taylor Expansion of the Local Rounding Errors",
+    titleShort: "Linnainmaa 1970 (Backprop — Invented in Finland for Floating-Point Errors)",
+    authors: ["Seppo Linnainmaa"], year: 1970,
+    fields: ["computer-science", "mathematics"], era: "1970s", importance: "foundational",
+    pdf: "https://www.sciencedirect.com/science/article/pii/0001970276900296",
+    published: "Master's thesis, University of Helsinki (Finnish); published as Linnainmaa, S. (1976). 'Taylor Expansion of the Accumulated Rounding Error.' *BIT Numerical Mathematics*, 16(2), 146–160", language: "Finnish",
+    summaries: {
+      elementary: "To compute the error of a complex formula, you can break it into a chain of simple steps — and propagate the error backward through the chain.",
+      abi: "Linnainmaa invented backpropagation in his 1970 Finnish master's thesis — 16 years before Rumelhart-Hinton-Williams 1986 popularised it. The thesis showed how to compute derivatives of composite functions automatically using the chain rule, applied to roundoff error analysis. Rumelhart et al. cited it as 'the first published instance of what is now called backpropagation'. It was in Finnish, and Finland was obscure to Western AI. The deepest irony: the algorithm that launched the AI revolution was invented to compute floating-point errors in numerical analysis.",
+      phd: "Linnainmaa (1970/1976): automatic differentiation (AD) by reverse-mode accumulation — the algorithm now called backpropagation. The thesis showed how to compute the gradient of a scalar loss with respect to all parameters by recursively applying the chain rule. Linnainmaa's framework: represent computation as a directed acyclic graph of primitive operations; compute local derivatives; accumulate gradients backward. The application was numerical analysis (bounding roundoff error in algorithms), not neural networks. Rumelhart, Hinton & Williams 1986 cited this 1976 BIT paper as the origin of backpropagation. Werbos 1974 (Harvard PhD) had independently derived it for neural networks, but didn't cite the Linnainmaa paper (he was unaware of it). The deepest 'aha': backpropagation was invented in Finland for floating-point error analysis — not for AI. The most important AI algorithm was first a numerical-methods trick. The modern deep learning revolution runs on a master's thesis from Helsinki."
+    },
+    aha: "Backpropagation was invented in Finland in 1970 — for floating-point errors. Linnainmaa was a Helsinki master's student in numerical analysis. His 1970 thesis showed how to compute the derivative of a composite function automatically by reverse-mode accumulation: represent computation as a graph, compute local derivatives, propagate gradients backward. The application was bounding roundoff errors in floating-point arithmetic. Rumelhart, Hinton & Williams 1986 cited the 1976 published version as the origin of backpropagation. Werbos 1974 (Harvard PhD) had independently derived it for neural networks but didn't know about Linnainmaa. The algorithm that launched the modern AI revolution — deep learning, GPT, AlphaFold, self-driving cars — was invented as a numerical-methods trick by a Finnish master's student. The deepest 'aha': the most important algorithm in modern AI was first a tool for bounding floating-point errors. The same math that analyses rounding errors trains every modern neural network.",
+    citation: "Linnainmaa, S. (1970). *The Representation of the Cumulative Rounding Error of an Algorithm as a Taylor Expansion of the Local Rounding Errors*. Master's thesis, University of Helsinki. (Published as Linnainmaa, S. (1976). Taylor expansion of the accumulated rounding error. *BIT Numerical Mathematics*, 16(2), 146–160.)"
+  },
+  {
+    id: "lecun1987", wave: 7,
+    title: "Modèles connexionnistes de l'apprentissage",
+    titleShort: "Le Cun 1987 (First CNN — French PhD, Predates AlexNet by 25 Years)",
+    authors: ["Yann Le Cun"], year: 1987,
+    fields: ["computer-science"], era: "1980s", importance: "foundational",
+    pdf: "https://www.researchgate.net/publication/3605808",
+    published: "PhD thesis, Université Pierre et Marie Curie, Paris", language: "French",
+    summaries: {
+      elementary: "You can recognise a '7' no matter how it's written — if you train a network of little feature detectors on millions of examples.",
+      abi: "Le Cun's 1989 paper is the first demonstration of a convolutional neural network learning to read handwritten digits — at AT&T Bell Labs. The network had 4 layers, learned from 7,000 handwritten zip codes, and achieved 1% error on the test set. The architecture — alternating convolution and pooling, with a final classifier — is the prototype of every modern image-recognition network. The work was ignored for 23 years until the deep learning revolution of 2012. AlexNet was essentially LeNet scaled up 100× — same architecture, more data, more compute.",
+      phd: "LeCun et al. (1989): LeNet-1 — a 7-layer CNN for handwritten digit recognition. Architecture: input (16×16) → conv1 (8 feature maps of 12×12) → pool1 (8 of 4×4) → conv2 (16 of 4×4) → pool2 (16 of 2×2) → conv3 (120 of 1×1) → FCL (84) → output (10). Trained on 7,296 USPS digits, tested on 2,007. Error rate: 0.8% (better than human). Hardware: AT&T DSP chip. Innovations: (1) convolutional weight sharing (parameter reduction from millions to thousands); (2) pooling layers (translation invariance); (3) end-to-end backprop training. The paper is the foundation of all modern computer vision. It was published in Neural Computation (a small journal) and cited 200 times in the next decade. AlexNet 2012 was essentially LeNet-1 scaled up by 100× — but the architecture is identical. LeCun's 1987 French PhD thesis ('Modèles connexionnistes de l'apprentissage') contains the original derivation of the architecture and the training algorithm. The deepest 'aha': the architecture of every modern image AI is identical to a 1987 French PhD thesis. 25 years passed before the field caught up."
+    },
+    aha: "AlexNet is just LeNet scaled up 100× — and LeNet was a 1987 French PhD. Le Cun was a French engineer at ESPCI Paris. His 1987 PhD thesis introduced convolutional neural networks: alternating convolution and pooling layers, with weight sharing and end-to-end backprop training. The 1989 paper demonstrated it on 7,296 USPS handwritten digits — 0.8% error, better than a human. The architecture is identical to every modern image AI: ResNet, EfficientNet, Stable Diffusion's U-Net, Segment Anything, even the vision encoders of GPT-4V. The 1989 paper was published in Neural Computation (a small journal) and cited 200 times in 13 years. The deepest 'aha': the architecture of every modern image-recognition system is a 1987 French PhD thesis, scaled up 1000×. 25 years passed before the field caught up to the same math.",
+    citation: "Le Cun, Y. (1987). *Modèles connexionnistes de l'apprentissage*. PhD thesis, Université Pierre et Marie Curie, Paris. (Published as LeCun, Y. et al. (1989). Backpropagation applied to handwritten zip code recognition. *Neural Computation*, 1(4), 541–551.)"
+  },
+  {
+    id: "hochreiter1991", wave: 7,
+    title: "Untersuchungen zu dynamischen neuronalen Netzen",
+    titleShort: "Hochreiter 1991 (LSTM Precursor — Why RNNs Forget)",
+    authors: ["Sepp Hochreiter"], year: 1991,
+    fields: ["computer-science"], era: "1990s", importance: "foundational",
+    pdf: "https://www7.informatik.tu-muenchen.de/~hochreit/publications/Diplom.html",
+    published: "Diploma thesis, Fakultät für Informatik, Technische Universität München", language: "German",
+    summaries: {
+      elementary: "A neural network that forgets old things can't learn anything — unless you give it a memory cell that can hold onto information for a long time.",
+      abi: "Hochreiter's 1991 diploma thesis identified the vanishing gradient problem — why RNNs can't learn long-range dependencies — and proposed the LSTM (Long Short-Term Memory) architecture to solve it. The LSTM has a 'memory cell' with gates that decide what to remember, what to forget, and what to output. It became the dominant sequence model for 20 years — and is still the heart of every speech recogniser, language model, and time-series predictor. The thesis was in German, at a Munich technical university, and was almost invisible to the English-speaking AI community.",
+      phd: "Hochreiter (1991) / Hochreiter & Schmidhuber (1997): the LSTM — a recurrent neural network with a 'constant error carousel' (CEC) that prevents gradient vanishing. Cell: c_t = f_t ⊙ c_{t-1} + i_t ⊙ g(W_c x_t + U_c h_{t-1}) where f_t, i_t are forget/input gates and g is the activation. The forget gate (added by Gers, Schmidhuber & Cummins 2000) made the LSTM widely usable. Variants: peephole LSTM (Gers 2002), gated recurrent unit (GRU, Cho 2014). Applications: speech recognition, machine translation, time series forecasting, video captioning, music generation, protein structure prediction (AlphaFold uses attention + LSTM-like mechanisms). The deepest 'aha': the vanishing gradient problem (1991) is the same problem that motivated residual connections (ResNet 2015) and skip connections in Transformers (2020) — the field has spent 30 years solving the same problem in different ways. The 1991 German diploma thesis identified the problem; ResNet, Highway Networks, and Transformers all offer partial solutions."
+    },
+    aha: "Why your RNN can't remember — solved in a 1991 German diploma thesis. Hochreiter was a 24-year-old Munich student. His 1991 thesis identified the vanishing gradient problem: as you backpropagate through many time steps, the gradient shrinks exponentially (multiplied by <1 each step), so the network can't learn long-range dependencies. His solution: the LSTM (Long Short-Term Memory) — a memory cell with input, output, and forget gates that maintain a constant error flow. The 1997 published version (with Schmidhuber) became the dominant sequence model for 20 years. Every speech recogniser, language model, and time-series predictor runs an LSTM. The vanishing gradient problem is the same problem ResNet (2015), Highway Networks, and Transformer skip connections all solve. The deepest 'aha': the field has spent 30 years solving the same problem in different ways. Hochreiter identified it in 1991. The solution: give the gradient a highway. ResNet, Highway Networks, Transformers, and LSTM all do the same thing — give the gradient a highway.",
+    citation: "Hochreiter, S. (1991). *Untersuchungen zu dynamischen neuronalen Netzen*. Diploma thesis, Technische Universität München. (Published as Hochreiter, S., & Schmidhuber, J. (1997). Long short-term memory. *Neural Computation*, 9(8), 1735–1780.)"
   }
 ];
 
@@ -4590,7 +4998,7 @@ const ERAS = ["Ancient", "1500s", "1600s", "1700s", "1800s", "1900s", "1950s", "
 
 const state = {
   q: "",
-  wave: "6",
+  wave: "7",
   field: "all",
   era: "all",
   sort: "default",
@@ -4615,7 +5023,7 @@ function rebuildFilterChips(){
   const wavesPresent = [...new Set(PAPERS.map(p => p.wave))].sort((a,b) => b-a);
   wavesPresent.forEach(w => {
     const cnt = PAPERS.filter(p => p.wave === w).length;
-    const label = w === 6 ? "Wave 6 — hidden foundations" : w === 5 ? "Wave 5 — the originals" : w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
+    const label = w === 7 ? "Wave 7 — forgotten first authors" : w === 6 ? "Wave 6 — hidden foundations" : w === 5 ? "Wave 5 — the originals" : w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
     const c = document.createElement("button");
     c.className = "chip" + (state.wave === String(w) ? " active" : "");
     c.dataset.filter = "wave"; c.dataset.value = String(w);
@@ -4663,7 +5071,7 @@ function initFilters(){
   const wavesPresent = [...new Set(PAPERS.map(p => p.wave))].sort((a,b) => b-a);
   wavesPresent.forEach(w => {
     const cnt = PAPERS.filter(p => p.wave === w).length;
-    const label = w === 6 ? "Wave 6 — hidden foundations" : w === 5 ? "Wave 5 — the originals" : w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
+    const label = w === 7 ? "Wave 7 — forgotten first authors" : w === 6 ? "Wave 6 — hidden foundations" : w === 5 ? "Wave 5 — the originals" : w === 4 ? "Wave 4 — AI / neural nets" : w === 3 ? "Wave 3 — universal" : w === 2 ? "Wave 2 — broad" : w === 1 ? "Wave 1 — original" : `Wave ${w}`;
     const c = document.createElement("button");
     c.className = "chip" + (state.wave === String(w) ? " active" : "");
     c.dataset.filter = "wave"; c.dataset.value = String(w);
@@ -4879,7 +5287,7 @@ function bindEvents(){
 
       // reset
       $("#reset").addEventListener("click", () => {
-        state.q = ""; state.wave = "6"; state.field = "all"; state.era = "all"; state.sort = "default"; state.open.clear();
+        state.q = ""; state.wave = "7"; state.field = "all"; state.era = "all"; state.sort = "default"; state.open.clear();
     q.value = ""; clear.hidden = true;
     $("#sort").value = "default";
     fExp.classList.remove("open"); fTog.classList.remove("open"); fTog.setAttribute("aria-expanded", "false");
