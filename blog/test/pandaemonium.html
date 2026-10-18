@@ -1,0 +1,2829 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PANDEMONIUM — Selfridge 1958, interaktiv erklärt</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+<style>
+:root{
+  --bg:#07090f;
+  --bg2:#0d111c;
+  --panel:rgba(18,23,38,.78);
+  --line:rgba(140,170,255,.16);
+  --txt:#dfe6f5;
+  --dim:#8d9ab8;
+  --acc:#ff8a3d;
+  --acc2:#45d4ff;
+  --acc3:#b06bff;
+  --good:#45e8a0;
+  --bad:#ff5f6d;
+  --mono:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 700px at 12% -5%, #1a2140 0%, transparent 60%),
+    radial-gradient(900px 600px at 95% 10%, #2a1434 0%, transparent 55%),
+    radial-gradient(1000px 900px at 50% 110%, #06212b 0%, transparent 60%),
+    var(--bg);
+  color:var(--txt);
+  font-family:ui-sans-serif,system-ui,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.62;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(120,160,255,.045) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(120,160,255,.045) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse at 50% 0%, #000 0%, transparent 78%);
+}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 20px 140px}
+
+/* ---------- Hero ---------- */
+header.hero{padding:86px 0 40px;text-align:center;position:relative}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.34em;color:var(--acc);text-transform:uppercase}
+h1{
+  font-size:clamp(44px,8.4vw,104px);margin:14px 0 6px;line-height:.93;font-weight:800;
+  background:linear-gradient(100deg,#fff 5%,var(--acc) 38%,var(--acc3) 62%,var(--acc2) 92%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.03em;
+}
+.sub{color:var(--dim);max-width:720px;margin:12px auto 0;font-size:17px}
+.tag{display:inline-flex;gap:8px;align-items:center;font-family:var(--mono);font-size:11.5px;color:var(--dim);
+  border:1px solid var(--line);border-radius:999px;padding:5px 14px;margin:18px 6px 0;background:rgba(255,255,255,.02)}
+
+/* ---------- Sections ---------- */
+section{margin:74px 0;scroll-margin-top:70px}
+.sec-head{display:flex;align-items:baseline;gap:16px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:26px}
+.sec-num{font-family:var(--mono);font-size:13px;color:var(--acc);letter-spacing:.2em}
+h2{font-size:clamp(25px,3.6vw,38px);margin:0;font-weight:700;letter-spacing:-.02em}
+h3{font-size:18px;margin:26px 0 10px;color:#fff;font-weight:650}
+p{margin:11px 0}
+.lead{font-size:16.5px}
+.dim{color:var(--dim)}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px 24px;
+  backdrop-filter:blur(12px);box-shadow:0 18px 60px rgba(0,0,0,.42);margin:20px 0;
+}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+canvas{display:block;width:100%;border-radius:12px;background:#070a12;border:1px solid var(--line);max-height:100vh;min-height:50px}
+.ctl{display:flex;flex-direction:column;gap:5px;margin:12px 0}
+.ctl label{font-family:var(--mono);font-size:11.5px;color:var(--dim);display:flex;justify-content:space-between;letter-spacing:.04em}
+.ctl label b{color:var(--acc2);font-weight:600}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:5px;background:rgba(255,255,255,.1);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:linear-gradient(140deg,var(--acc),var(--acc3));cursor:pointer;box-shadow:0 0 12px rgba(255,138,61,.55)}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:0;border-radius:50%;background:var(--acc);cursor:pointer}
+button{
+  font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:#0a0d16;cursor:pointer;
+  background:linear-gradient(140deg,var(--acc2),#7fe3ff);border:0;border-radius:9px;padding:9px 15px;
+  transition:transform .12s, filter .12s;
+}
+button:hover{transform:translateY(-1px);filter:brightness(1.12)}
+button.alt{background:linear-gradient(140deg,var(--acc3),#d79bff)}
+button.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+.btnrow{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}
+.badge{font-family:var(--mono);font-size:10.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--dim)}
+.note{border-left:3px solid var(--acc);padding:4px 0 4px 14px;color:var(--dim);font-size:14.5px;margin:14px 0}
+.q{border-left:3px solid var(--acc3);padding:6px 0 6px 14px;font-style:italic;color:#c8d2ea}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-family:var(--mono)}
+td,th{border:1px solid var(--line);padding:7px 10px;text-align:left}
+th{color:var(--acc2);font-weight:600}
+.statline{font-family:var(--mono);font-size:12.5px;color:var(--dim);margin-top:8px}
+.statline b{color:var(--good)}
+.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--dim)}
+.flow span.node{border:1px solid var(--line);border-radius:8px;padding:6px 11px;background:rgba(255,255,255,.03);color:var(--txt)}
+nav.toc{position:sticky;top:0;z-index:50;background:rgba(7,9,15,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);padding:9px 0;margin-bottom:0}
+nav.toc .inner{max-width:1180px;margin:0 auto;padding:0 20px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+nav.toc .inner::-webkit-scrollbar{display:none}
+nav.toc a{font-family:var(--mono);font-size:11px;color:var(--dim);text-decoration:none;padding:5px 10px;border-radius:7px;white-space:nowrap}
+nav.toc a:hover{color:var(--acc);background:rgba(255,138,61,.08)}
+.plot{width:100%;height:330px}
+footer{text-align:center;color:var(--dim);font-size:13px;padding:50px 0 0;border-top:1px solid var(--line);margin-top:70px}
+math{font-size:1.02em}
+.bigq{font-size:20px;color:#fff;font-weight:600;margin:6px 0 2px}
+</style>
+</head>
+<body>
+
+<nav class="toc"><div class="inner">
+  <a href="#p0">0 · Problem</a>
+  <a href="#p1">1 · Morse</a>
+  <a href="#p2">2 · Idee</a>
+  <a href="#p3">3 · Features</a>
+  <a href="#p4">4 · Gewichte</a>
+  <a href="#p5">5 · Hill-Climbing</a>
+  <a href="#p6">6 · Falsche Gipfel</a>
+  <a href="#p7">7 · Rauschen</a>
+  <a href="#p8">8 · Evolution</a>
+  <a href="#p9">9 · Konjugation</a>
+  <a href="#p10">10 · Selbstkontrolle</a>
+  <a href="#p11">11 · Antwort</a>
+  <a href="#p12">12 · Erbe</a>
+</div></nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">National Physical Laboratory · Symposium 10 · 1958 · Paper 6</div>
+  <h1>PANDEMONIUM</h1>
+  <div class="sub">Oliver G. Selfridges „Paradigma des Lernens“ — die Geburtsurkunde des neuronalen Netzes,
+  der Feature-Detektoren und der evolutionären Suche. Hier zum Anfassen, Schieben und Ausprobieren.</div>
+  <div>
+    <span class="tag">⌁ Nur Abi-Mathe nötig</span>
+    <span class="tag">⌁ Alles interaktiv</span>
+    <span class="tag">⌁ Dämonen schreien</span>
+  </div>
+</header>
+
+<!-- ============ 0 ============ -->
+<section id="p0">
+  <div class="sec-head"><span class="sec-num">00</span><h2>Die Motivation: Probleme, die niemand aufschreiben kann</h2></div>
+
+  <p class="lead">1958. Computer können rechnen. Sie können keine Buchstaben erkennen. Warum nicht?
+  Weil man einem Computer sagen muss, <i>wie</i> er es tun soll — und niemand kann aufschreiben, was ein „A“ ausmacht.</p>
+
+  <div class="q">„Für eine große Klasse von Mustererkennungs-Aufgaben hat es nie eine adäquate schriftliche
+  oder formulierbare Beschreibung der Unterschiede zwischen den Mustern gegeben.“ — Selfridge</div>
+
+  <p>Selfridges radikale Umdeutung: Statt die Regel zu <b>definieren</b>, zeigt man der Maschine <b>Beispiele</b> und sagt
+  jedes Mal, was es war. Irgendwann rät sie richtig, <i>bevor</i> man es ihr sagt. Das ist überwachtes Lernen —
+  hier zum ersten Mal als allgemeines Maschinen-Paradigma formuliert.</p>
+
+  <div class="card">
+    <h3>Probiere es selbst: Schreibe die Regel für „A“</h3>
+    <p class="dim" style="font-size:14px">Unten siehst du handgeschriebene Zeichen. Klicke durch sie und versuche,
+    eine Regel zu formulieren, die <i>alle</i> A erfasst und <i>kein</i> anderes Zeichen. Jeder Versuch scheitert — genau das ist der Punkt.</p>
+    <canvas id="cvAness" height="260"></canvas>
+    <div class="btnrow">
+      <button onclick="anessNext()">Nächstes Beispiel ▸</button>
+      <button class="ghost" onclick="anessRule(0)">Regel: „zwei schräge Striche + Querbalken“</button>
+      <button class="ghost" onclick="anessRule(1)">Regel: „spitz oben, offen unten“</button>
+      <button class="ghost" onclick="anessRule(2)">Regel: „geschlossene Schleife oben“</button>
+    </div>
+    <div class="statline" id="anessOut">Wähle eine Regel und blättere durch die Beispiele.</div>
+  </div>
+
+  <div class="note">Selfridges Antwort auf dieses Dilemma ist kein cleverer Trick, sondern eine <b>Architektur</b>:
+  viele dumme, parallele Einheiten, deren Zusammenspiel gelernt wird. Das ist Pandemonium.</div>
+</section>
+
+<!-- ============ 1 ============ -->
+<section id="p1">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Das konkrete Problem: handgetasteter Morsecode</h2></div>
+
+  <p class="lead">Selfridge wählt bewusst kein Spielzeugproblem. Er nimmt <b>manuell getasteten Morsecode</b> —
+  echte Funker, echte Hände, echtes Timing-Chaos.</p>
+
+  <p>Lehrbuch-Morse ist trivial: Ein Strich ist genau 3× so lang wie ein Punkt. Punktpause = 1, Buchstabenpause = 3,
+  Wortpause = 7. Ein Computer mit einer einzigen Schwelle löst das in zwei Zeilen Code.
+  <b>Echter</b> Morse von Menschenhand sieht völlig anders aus. Schiebe den Regler:</p>
+
+  <div class="card">
+    <canvas id="cvMorse" height="240"></canvas>
+    <div class="grid2">
+      <div>
+        <div class="ctl"><label>Menschlichkeit (Timing-Streuung) <b id="vHum">0%</b></label>
+          <input type="range" id="sHum" min="0" max="100" value="0"></div>
+        <div class="ctl"><label>Sendetempo-Drift (der Funker wird müde) <b id="vDrift">0%</b></label>
+          <input type="range" id="sDrift" min="0" max="100" value="0"></div>
+      </div>
+      <div>
+        <div class="ctl"><label>Feste Schwelle des naiven Erkenners <b id="vThr">2.00</b> Einheiten</label>
+          <input type="range" id="sThr" min="60" max="400" value="200"></div>
+        <div class="btnrow"><button onclick="morseNew()">Neue Nachricht senden</button></div>
+      </div>
+    </div>
+    <div class="statline" id="morseStat"></div>
+  </div>
+
+  <h3>Warum die Histogramme verschmelzen</h3>
+  <p>Links: Dauern von Punkten und Strichen als Verteilung. Bei 0 % Menschlichkeit zwei saubere Balken —
+  eine Schwelle genügt. Bei realistischen Werten überlappen sie sich massiv. <b>Keine</b> Schwelle auf der
+  Einzeldauer kann das trennen. Rechts: die Fehlerrate der besten möglichen Schwelle.</p>
+
+  <div class="grid2">
+    <div class="card"><div id="plHist" class="plot"></div></div>
+    <div class="card"><div id="plErr" class="plot"></div></div>
+  </div>
+
+  <div class="q">„Morsecode, manuell empfangen, ist nicht so einfach. Der nötige Kontext erstreckt sich
+  offenbar über mindestens 10 Buchstaben zu jeder Seite — nicht nur zu einer, zu beiden.“ — Selfridge in der Diskussion</div>
+
+  <p>Das ist der Kern: Die Information steckt nicht in der Dauer, sondern im <b>Verhältnis zum Umfeld</b>.
+  Eine 180-ms-Dauer ist ein Strich, wenn die Nachbarn 60 ms haben — und ein Punkt, wenn die Nachbarn 500 ms haben.</p>
+
+  <div class="card">
+    <h3>Kontext ist alles</h3>
+    <p class="dim" style="font-size:14px">Dieselbe Dauer (orange markiert), zwei verschiedene Umgebungen. Schiebe den Kontext.</p>
+    <canvas id="cvCtx" height="190"></canvas>
+    <div class="ctl"><label>Tempo der Nachbarschaft <b id="vCtx">1.0×</b></label>
+      <input type="range" id="sCtx" min="40" max="260" value="100"></div>
+    <div class="statline" id="ctxStat"></div>
+  </div>
+
+  <div class="note">Selfridge rechnet in der Diskussion vor, warum man das nicht brute-force lösen kann:
+  10 Buchstaben × 2 Seiten × 3 Zeichen = 60 Dauern. Jede auf 1/32 genau = 5 Bit → <b>300 Bit</b>.
+  Die Zahl der Binärfunktionen auf 300 Bit ist 2<sup>2<sup>300</sup></sup>. „Binärfunktionen auf 300 Bit kann man nicht zufällig auswählen.“</div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="p2">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Die Idee: ein Höllenlärm aus Dämonen</h2></div>
+
+  <p class="lead">Selfridges Bild: Jede Kategorie bekommt einen <b>Dämon</b>, der das Bild anschaut und <b>schreit</b> —
+  umso lauter, je ähnlicher es seiner Kategorie ist. Ganz oben sitzt ein Entscheidungs-Dämon und wählt einfach den lautesten.
+  „Pandemonium“ = Milton’s Hauptstadt der Hölle, wörtlich „Ort aller Dämonen“.</p>
+
+  <h3>Stufe 1 — das idealisierte Pandemonium (Abb. 1 im Paper)</h3>
+  <div class="card">
+    <canvas id="cvIdeal" height="330"></canvas>
+    <div class="ctl"><label>Bild verzerren (Rauschen auf dem Eingang) <b id="vIdN">0%</b></label>
+      <input type="range" id="sIdN" min="0" max="100" value="12"></div>
+    <div class="btnrow">
+      <button onclick="idealSet('A')">Zeige A</button>
+      <button onclick="idealSet('B')">Zeige B</button>
+      <button onclick="idealSet('C')">Zeige C</button>
+      <button class="alt" onclick="idealSet('?')">Zeige etwas Mehrdeutiges</button>
+    </div>
+    <div class="statline" id="idealStat"></div>
+  </div>
+
+  <p>Das funktioniert — aber es ist <b>verschwenderisch</b>. Selfridge bemerkt: Der A-Dämon und der R-Dämon
+  rechnen fast dasselbe. Beide suchen Schrägstriche, Querbalken, Ecken. Jeder Dämon baut seinen eigenen Apparat neu.</p>
+
+  <div class="q">„In vielen Fällen ist ein Muster nahezu äquivalent zu einer logischen Funktion einer Menge von Merkmalen,
+  deren jedes einzeln mehreren Mustern gemein ist.“</div>
+
+  <h3>Stufe 2 — das abgeänderte Pandemonium (Abb. 3): vier Ebenen</h3>
+  <p>Die gemeinsamen Rechnungen werden herausgezogen und an eine Schar von <b>Unterdämonen</b> übergeben.
+  Übrig bleibt eine vierstöckige Hierarchie:</p>
+
+  <div class="card">
+    <canvas id="cvArch" height="420"></canvas>
+    <div class="btnrow">
+      <button onclick="archStep()">▸ Signal einen Schritt weiterreichen</button>
+      <button class="ghost" onclick="archReset()">Zurücksetzen</button>
+      <button class="alt" onclick="archAuto()">Auto-Durchlauf</button>
+    </div>
+    <div class="statline" id="archStat">Ebene 1: Daten-Dämonen halten das rohe Bild.</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card"><h3 style="margin-top:0">Die vier Ebenen</h3>
+      <table>
+        <tr><th>Ebene</th><th>Dämon</th><th>Aufgabe</th></tr>
+        <tr><td>4</td><td>Entscheidung</td><td>wählt den lautesten Schrei</td></tr>
+        <tr><td>3</td><td>Kognitiv</td><td>gewichtete Summe der Merkmale</td></tr>
+        <tr><td>2</td><td>Rechnend (Sub)</td><td>misst je ein Merkmal</td></tr>
+        <tr><td>1</td><td>Daten</td><td>speichert, reicht weiter</td></tr>
+      </table>
+      <p class="dim" style="font-size:14px;margin-top:12px">Drei der vier Ebenen sind durch die Aufgabe festgelegt.
+      Nur Ebene 2 ist frei — und genau dort findet das Lernen statt.</p>
+    </div>
+    <div class="card"><h3 style="margin-top:0">Das ist ein neuronales Netz</h3>
+      <p style="font-size:14.5px">Daten → Features → gewichtete Summe → argmax.
+      Das ist Zeile für Zeile die Architektur eines modernen Klassifikators mit einer versteckten Schicht.
+      1958 geschrieben, neun Jahre bevor „Perceptrons“ erschien, 28 Jahre vor Backpropagation.</p>
+      <div class="flow" style="margin-top:14px">
+        <span class="node">Pixel</span>→<span class="node">Conv-Filter</span>→<span class="node">Dense</span>→<span class="node">argmax</span>
+      </div>
+      <div class="flow" style="margin-top:8px;color:var(--acc)">
+        <span class="node">Daten-D.</span>→<span class="node">Sub-D.</span>→<span class="node">Kognitiv-D.</span>→<span class="node">Entscheid.-D.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="p3">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Prerequisite: Was ist ein „Feature“ — und warum rechnen Dämonen nicht binär?</h2></div>
+
+  <p class="lead">Ein <b>Merkmal</b> (Feature) ist eine Zahl, die man aus den Rohdaten ausrechnet und die etwas
+  Nützliches zusammenfasst. Selfridges Subdämonen sind genau das: kleine Funktionen, die eine Zahl ausspucken.</p>
+
+  <p>Entscheidend — und 1958 keineswegs selbstverständlich — ist dieser Satz aus dem Paper:</p>
+  <div class="q">„Die rechnenden Subdämonen sind aus sehr wenigen Operationsfunktionen gebaut,
+  die <b>sorgfältig nicht-binär</b> sind.“</div>
+
+  <p>Ein binärer Detektor antwortet ja/nein. Ein nicht-binärer antwortet <i>„zu 0,73 ja“</i>.
+  Das ist der Unterschied zwischen einer Treppe und einer Rampe — und nur auf einer Rampe kann man bergauf laufen.
+  Ohne diese Weichheit gäbe es keinen Gradienten, an dem sich das Lernen entlanghangeln könnte.</p>
+
+  <div class="card">
+    <h3>Abbildung 8 des Papers, lebendig: die Operatoren „=“ und „&gt;“</h3>
+    <p class="dim" style="font-size:14px">Selfridge zeichnet den Output der Subdämonen <math><mi>d</mi><mn>0</mn></math>=<math><mi>d</mi><mn>2</mn></math>
+    und <math><mi>d</mi><mn>0</mn></math>&gt;<math><mi>d</mi><mn>2</mn></math> über dem Verhältnis d₀/d₂. Schiebe die Schärfe von „hart binär“ zu „weich“.</p>
+    <div id="plSoft" class="plot" style="height:300px"></div>
+    <div class="grid2">
+      <div class="ctl"><label>Weichheit (0 = binäre Treppe) <b id="vSoft">0.18</b></label>
+        <input type="range" id="sSoft" min="1" max="100" value="18"></div>
+      <div class="ctl"><label>Aktuelles Verhältnis d₀/d₂ <b id="vRat">1.00</b></label>
+        <input type="range" id="sRat" min="20" max="250" value="100"></div>
+    </div>
+    <div class="statline" id="softStat"></div>
+  </div>
+
+  <h3>Selfridges Werkzeugkasten (Abschnitt „A real-life example“)</h3>
+  <p>Sieben Operationsfunktionen, aus denen sich alle ~150 Subdämonen zusammensetzen lassen.
+  Klicke einen an, um zu sehen, was er auf einem echten Morse-Strom misst.</p>
+
+  <div class="card">
+    <div class="btnrow" id="opBtns"></div>
+    <canvas id="cvOps" height="250"></canvas>
+    <div class="statline" id="opStat"></div>
+  </div>
+
+  <div class="note"><b>Syntax der Dämonen:</b> „Wir wählen einfach eine Menge von Operationsfunktionen und
+  lassen ihnen die Nummern bestimmter Daten-Dämonen folgen.“ Ein Subdämon ist also buchstäblich
+  ein kurzer Ausdruck wie <span class="badge">max(d₋₃ … d₃)</span> oder <span class="badge">d₀ &gt; Av(d₋₅ … d₅)</span>.
+  Das ist eine winzige Programmiersprache — und das Lernen durchsucht ihren Raum.</div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="p4">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Prerequisite: Gewichtete Summen — die Rechnung der kognitiven Dämonen</h2></div>
+
+  <p class="lead">Jeder kognitive Dämon macht nur <b>eine</b> Sache: Er addiert die Schreie der Subdämonen,
+  jeden mit seinem eigenen Gewicht.</p>
+
+  <div class="card" style="text-align:center">
+    <div id="eqMain"></div>
+    <p class="dim" style="font-size:14px;margin-top:10px">
+      <math><msub><mi>d</mi><mi>j</mi></msub></math> = Output von Subdämon <i>j</i> &nbsp;·&nbsp;
+      <math><msubsup><mi>λ</mi><mi>j</mi><mi>i</mi></msubsup></math> = Gewicht, das Dämon <i>i</i> dem Subdämon <i>j</i> gibt
+    </p>
+  </div>
+
+  <p>Mehr ist es nicht. Positives Gewicht = „dieses Merkmal spricht <b>für</b> mich“.
+  Negatives Gewicht = „spricht <b>gegen</b> mich“. Null = „interessiert mich nicht“.
+  Das ist exakt ein künstliches Neuron, 1958.</p>
+
+  <div class="card">
+    <h3>Der Punkt-Dämon und der Strich-Dämon streiten sich</h3>
+    <p class="dim" style="font-size:14px">Drei Subdämonen messen das aktuelle Zeichen. Drehe die sechs Gewichte und
+    beobachte, wer lauter schreit. Der Entscheidungs-Dämon nimmt kommentarlos den Lauteren.</p>
+    <canvas id="cvWeights" height="300"></canvas>
+    <div class="grid2">
+      <div>
+        <div class="badge" style="color:var(--acc2)">PUNKT-DÄMON · λ⁰</div>
+        <div class="ctl"><label>λ für „d₀ &lt; Mittelwert“ <b id="vW0">0.80</b></label><input type="range" id="sW0" min="-100" max="100" value="80"></div>
+        <div class="ctl"><label>λ für „d₀ ist Maximum“ <b id="vW1">-0.60</b></label><input type="range" id="sW1" min="-100" max="100" value="-60"></div>
+        <div class="ctl"><label>λ für „d₀ = d₋₂“ <b id="vW2">0.20</b></label><input type="range" id="sW2" min="-100" max="100" value="20"></div>
+      </div>
+      <div>
+        <div class="badge" style="color:var(--acc)">STRICH-DÄMON · λ¹</div>
+        <div class="ctl"><label>λ für „d₀ &lt; Mittelwert“ <b id="vW3">-0.70</b></label><input type="range" id="sW3" min="-100" max="100" value="-70"></div>
+        <div class="ctl"><label>λ für „d₀ ist Maximum“ <b id="vW4">0.90</b></label><input type="range" id="sW4" min="-100" max="100" value="90"></div>
+        <div class="ctl"><label>λ für „d₀ = d₋₂“ <b id="vW5">0.10</b></label><input type="range" id="sW5" min="-100" max="100" value="10"></div>
+      </div>
+    </div>
+    <div class="btnrow">
+      <button onclick="wNext()">Nächstes Zeichen ▸</button>
+      <button class="ghost" onclick="wBest()">Gute Gewichte einsetzen</button>
+      <button class="ghost" onclick="wZero()">Alles auf null</button>
+    </div>
+    <div class="statline" id="wStat"></div>
+  </div>
+
+  <h3>Alle Gewichte zusammen: der Vektor Λ</h3>
+  <p>Selfridge fasst sämtliche Gewichte aller kognitiven Dämonen zu <b>einem einzigen langen Vektor</b> zusammen:</p>
+  <div class="card" style="text-align:center"><div id="eqLambda"></div></div>
+  <p>Bei 2 Dämonen × 150 Subdämonen sind das 300 Zahlen. Ein Punkt in einem 300-dimensionalen Raum.
+  <b>Jede</b> Einstellung der Maschine ist ein Punkt in diesem Raum. Genau ein Punkt (oder einige wenige) ist optimal.
+  Das Lernproblem lautet: <i>finde ihn</i>.</p>
+
+  <div class="card">
+    <h3>Warum man nicht einfach alles durchprobieren kann</h3>
+    <p class="dim" style="font-size:14px">Wenn man jede Gewichtskoordinate nur auf 10 Stufen rastert, gibt es 10^(Dimension) Möglichkeiten.</p>
+    <div id="plCurse" class="plot" style="height:280px"></div>
+    <div class="ctl"><label>Anzahl der Gewichte (Dimension von Λ) <b id="vDim">8</b></label>
+      <input type="range" id="sDim" min="1" max="40" value="8"></div>
+    <div class="statline" id="curseStat"></div>
+  </div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="p5">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Die Lösung, Teil 1: Hill-Climbing (Abb. 4 &amp; 5)</h2></div>
+
+  <p class="lead">Selfridges Bild: Die Punktzahl ist eine <b>Höhe</b> über der Gewichtslandschaft.
+  Lernen heißt: bergauf gehen. Der Haken — man ist blind. Man sieht nur die Höhe dort, wo man gerade steht.</p>
+
+  <div class="q">„Das ist der Fall eines blinden Mannes, der versucht, einen Hügel zu erklimmen.“</div>
+
+  <h3>Die Landschaft</h3>
+  <p>Hier ist eine zweidimensionale Version (statt 300 D, damit man sie sehen kann). Höhe = Punktzahl der Maschine.
+  Drehe sie, schau sie dir an. Rot = gut, dunkel = schlecht.</p>
+
+  <div class="card">
+    <div id="plLand3d" class="plot" style="height:430px"></div>
+    <div class="grid3">
+      <div class="ctl"><label>Zerklüftung <b id="vRug">0.35</b></label><input type="range" id="sRug" min="0" max="100" value="35"></div>
+      <div class="ctl"><label>Falsche Gipfel <b id="vFp">2</b></label><input type="range" id="sFp" min="0" max="5" value="2"></div>
+      <div class="ctl"><label>Breite der Ausläufer <b id="vFoot">0.55</b></label><input type="range" id="sFoot" min="10" max="100" value="55"></div>
+    </div>
+  </div>
+
+  <h3>Technik 1 (Abb. 4): einfach raten</h3>
+  <p>„Wähle Gewichtsvektoren zufällig, bewerte sie und nimm am Ende den besten.“ Simpel. Und in hohen Dimensionen hoffnungslos.</p>
+
+  <div class="card">
+    <canvas id="cvHC1" height="400"></canvas>
+    <div class="grid2">
+      <div class="ctl"><label>Anzahl der Zufallsproben <b id="vN1">40</b></label><input type="range" id="sN1" min="5" max="400" value="40"></div>
+      <div class="btnrow"><button onclick="hc1run()">▸ Zufallssuche starten</button>
+        <button class="ghost" onclick="hc1clear()">Löschen</button></div>
+    </div>
+    <div class="statline" id="hc1Stat"></div>
+  </div>
+
+  <h3>Technik 2 (Abb. 5): raten, dann tasten</h3>
+  <p>Selfridges eigentlicher Vorschlag, wörtlich:</p>
+  <div class="q">„Wähle Vektoren zufällig, bis einer merklich besser abschneidet als die anderen. Von diesem Punkt
+  aus mache kleine zufällige Schritte in alle Richtungen, bis du eine Richtung findest, die deine Punktzahl verbessert.
+  Wenn du so einen Schritt findest, nimm ihn und wiederhole.“</div>
+
+  <div class="card">
+    <canvas id="cvHC2" height="420"></canvas>
+    <div class="grid3">
+      <div class="ctl"><label>Vorproben (Startpunktsuche) <b id="vSeed">12</b></label><input type="range" id="sSeed" min="1" max="60" value="12"></div>
+      <div class="ctl"><label>Schrittweite <b id="vStep">0.045</b></label><input type="range" id="sStep" min="5" max="200" value="45"></div>
+      <div class="ctl"><label>Geschwindigkeit <b id="vSpd">6</b></label><input type="range" id="sSpd" min="1" max="30" value="6"></div>
+    </div>
+    <div class="btnrow">
+      <button onclick="hc2run()">▸ Blinden Bergsteiger loslassen</button>
+      <button class="alt" onclick="hc2many(12)">12 Bergsteiger gleichzeitig</button>
+      <button class="ghost" onclick="hc2clear()">Löschen</button>
+    </div>
+    <div class="statline" id="hc2Stat"></div>
+    <div id="plHC2" class="plot" style="height:220px;margin-top:14px"></div>
+  </div>
+
+  <div class="note">Beachte, was passiert, wenn du 12 Bergsteiger loslässt: Manche landen auf dem Hauptgipfel,
+  manche kleben auf einem Nebengipfel fest. <b>Der Startpunkt entscheidet.</b> Genau das sagt Selfridge:
+  „Es stellt sich heraus, dass bei Hill-Climbing-Situationen die Wahl des Startpunkts oft sehr wichtig ist.“</div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="p6">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Das Problem dabei: falsche Gipfel (Abb. 6)</h2></div>
+
+  <div class="grid2">
+    <div>
+      <p class="lead">Ein Nebengipfel ist ein Punkt, an dem <i>jeder</i> kleine Schritt nach unten führt —
+      obwohl anderswo ein viel höherer Berg steht. Der blinde Bergsteiger kann das prinzipiell nicht merken.</p>
+      <p>Selfridges Hoffnung — und sie ist bemerkenswert modern:</p>
+      <div class="q">„Im Allgemeinen darf man hoffen, dass in Räumen sehr hoher Dimensionalität die
+      wechselseitige Abhängigkeit der Komponenten so groß ist, dass die Existenz falscher Gipfel,
+      die vollständig vom Hauptgipfel isoliert sind, sehr unwahrscheinlich wird.“</div>
+      <p>Mit anderen Worten: In 300 Dimensionen gibt es immer irgendeine Richtung, in die es weitergeht.
+      Ein Gefängnis muss in <i>allen</i> Richtungen geschlossen sein — und je mehr Richtungen es gibt,
+      desto unwahrscheinlicher wird das. Das ist genau das Argument, mit dem man heute erklärt,
+      warum tiefe neuronale Netze trainierbar sind.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Die Flucht-Wahrscheinlichkeit</h3>
+      <p class="dim" style="font-size:14px">Ein kritischer Punkt ist nur dann eine echte Falle, wenn er in allen
+      <i>n</i> Richtungen nach unten geht. Modell: jede Richtung unabhängig mit Wahrscheinlichkeit <i>p</i> abwärts.</p>
+      <div id="plTrap" class="plot" style="height:300px"></div>
+      <div class="ctl"><label>p (Chance, dass eine Richtung abwärts geht) <b id="vP">0.85</b></label>
+        <input type="range" id="sP" min="50" max="99" value="85"></div>
+      <div class="statline" id="trapStat"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Hügel oder Spitze? Das Plateau-Argument</h3>
+    <p class="dim" style="font-size:14px">Selfridge: „Oft ist der Hauptgipfel eher ein Plateau als eine isolierte Spitze.
+    Das heißt: Optimales Verhalten ist, einmal erreicht, gegen Änderungen mancher Parameter ziemlich unempfindlich.“
+    Schiebe zwischen Nadel und Plateau — und schau, wie viele Bergsteiger ankommen.</p>
+    <canvas id="cvPlateau" height="330"></canvas>
+    <div class="grid2">
+      <div class="ctl"><label>Nadel ⟷ Plateau <b id="vPlat">0.50</b></label><input type="range" id="sPlat" min="0" max="100" value="50"></div>
+      <div class="btnrow"><button onclick="platRun()">▸ 60 Bergsteiger starten</button></div>
+    </div>
+    <div class="statline" id="platStat"></div>
+  </div>
+
+  <h3>Das Einrad- und das Schach-Problem</h3>
+  <p>Selfridge unterscheidet zwei Arten von Lernkurven. Schiebe zwischen ihnen hin und her:</p>
+  <div class="card">
+    <div id="plLearn" class="plot" style="height:300px"></div>
+    <div class="ctl"><label>Einrad ⟷ Schach <b id="vUni">0.50</b></label><input type="range" id="sUni" min="0" max="100" value="50"></div>
+    <div class="statline" id="uniStat"></div>
+  </div>
+  <div class="note"><b>Einrad:</b> „Es dauert länger, eine Sekunde oben zu bleiben, als diese Sekunde auf eine Minute
+  zu verlängern.“ Der Fuß des Berges ist flach — der schwere Teil ist das Loskommen.
+  <b>Schach:</b> „Es ist leicht, ein bisschen gut zu sein, und sehr schwer, sehr gut zu sein.“ Der Berg wird oben immer steiler.
+  Die Aufgabe des Trainings: die Maschine auf die Ausläufer bringen, wo kleine Änderungen noch etwas bewirken.</div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="p7">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Der Einwand aus dem Publikum: die Landschaft wackelt</h2></div>
+
+  <p class="lead">Dr. P. C. Price schreibt nach dem Vortrag einen Kommentar, der direkt ins Mark trifft:
+  Selfridge rechnet, als sei die Höhe fest messbar. Ist sie aber nicht.</p>
+
+  <div class="q">„Bei einem deterministischen Problem ist der Hügel durch eine einzige Funktion vieler Variablen definiert,
+  bei einem stochastischen Problem durch den <b>Mittelwert</b> einer Anzahl von Funktionen … Die interessanteren
+  Mustererkennungsprobleme sind im Wesentlichen stochastisch.“ — P. C. Price</div>
+
+  <p>Konkret: Die Punktzahl misst man an einer <i>Stichprobe</i> von Nachrichten. Eine andere Stichprobe ergibt
+  eine andere Zahl. Der Bergsteiger tastet also nicht auf festem Fels, sondern auf einem zuckenden Wackelpudding.
+  Schiebe das Rauschen hoch — und sieh zu, wie der Aufstieg zusammenbricht.</p>
+
+  <div class="card">
+    <canvas id="cvNoise" height="420"></canvas>
+    <div class="grid3">
+      <div class="ctl"><label>Messrauschen σ <b id="vNo">0.06</b></label><input type="range" id="sNo" min="0" max="100" value="22"></div>
+      <div class="ctl"><label>Stichprobengröße <b id="vSamp">1</b></label><input type="range" id="sSamp" min="1" max="60" value="1"></div>
+      <div class="ctl"><label>Schrittweite <b id="vNStep">0.04</b></label><input type="range" id="sNStep" min="5" max="150" value="40"></div>
+    </div>
+    <div class="btnrow"><button onclick="noiseRun()">▸ Im Nebel klettern</button>
+      <button class="ghost" onclick="noiseClear()">Löschen</button></div>
+    <div class="statline" id="noiseStat"></div>
+  </div>
+
+  <div class="card">
+    <h3>Prices Frage (i): Wie groß muss die Stichprobe sein?</h3>
+    <p class="dim" style="font-size:14px">Das Rauschen des Mittelwerts schrumpft mit <math><mn>1</mn><mo>/</mo><msqrt><mi>N</mi></msqrt></math>.
+    Will man einen echten Höhenunterschied Δ zuverlässig erkennen, braucht man genug Proben — und das kostet Zeit.</p>
+    <div id="plSample" class="plot" style="height:300px"></div>
+    <div class="grid2">
+      <div class="ctl"><label>Wahrer Höhenunterschied Δ <b id="vDelta">0.030</b></label><input type="range" id="sDelta" min="1" max="100" value="30"></div>
+      <div class="ctl"><label>Einzelmess-Rauschen σ <b id="vSig">0.20</b></label><input type="range" id="sSig" min="2" max="80" value="20"></div>
+    </div>
+    <div class="statline" id="sampStat"></div>
+  </div>
+
+  <div class="note"><b>Prices Frage (ii)</b> lautete: Wird stochastisches Hill-Climbing so viel langsamer,
+  dass die Evolution des Pandemoniums praktisch nicht mehr stattfinden kann? — Die Antwort der folgenden
+  Jahrzehnte: Man hat genau deshalb Gradienten (Backpropagation) und <i>Mini-Batches</i> erfunden.
+  Letzteres ist buchstäblich Prices Kompromiss zwischen „eine Probe“ und „alle Proben“.</div>
+
+  <div class="card">
+    <h3>MacKays Einwand: Information pro Tritt</h3>
+    <p class="dim" style="font-size:14px">D. M. MacKay merkt an: Wenn Erfolg selten ist, enthält jedes Feedback
+    fast keine Information. Der Informationsgehalt ist maximal, wenn Erfolg und Misserfolg gleich wahrscheinlich sind
+    — ein direkter Shannon-Entropie-Punkt.</p>
+    <div id="plEntropy" class="plot" style="height:270px"></div>
+    <div class="ctl"><label>Erfolgswahrscheinlichkeit p <b id="vPs">0.50</b></label>
+      <input type="range" id="sPs" min="1" max="99" value="50"></div>
+    <div class="statline" id="entStat"></div>
+  </div>
+
+  <div class="note"><b>MacKays Lösungsvorschlag</b> — und er ist verblüffend modern: „Kopple anfangs große
+  Mengen von Elementen zusammen, um die Vielfalt der Antwortmöglichkeiten zu reduzieren. Eine Hand hätte
+  anfangs nicht jeden Finger einzeln steuerbar, sondern arbeitete unbeholfen als Ganzes.“ Erst wenn die Maschine
+  etwas kann, löst man die Kopplungen. Das ist <i>Curriculum Learning</i> plus <i>Parameter Tying</i>, 1958 formuliert.</div>
+
+  <div class="card">
+    <h3>MacKays Kopplungs-Trick, ausprobiert</h3>
+    <p class="dim" style="font-size:14px">Links: alle Freiheitsgrade sofort frei. Rechts: anfangs gekoppelt,
+    dann stufenweise entkoppelt. Beobachte die ersten Erfolge.</p>
+    <canvas id="cvMacKay" height="300"></canvas>
+    <div class="grid2">
+      <div class="ctl"><label>Freiheitsgrade der Aufgabe <b id="vDof">10</b></label><input type="range" id="sDof" min="2" max="24" value="10"></div>
+      <div class="btnrow"><button onclick="mkRun()">▸ Beide Strategien lernen lassen</button></div>
+    </div>
+    <div class="statline" id="mkStat"></div>
+  </div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="p8">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Die Lösung, Teil 2: Subdämon-Auswahl — Evolution im Rechner</h2></div>
+
+  <p class="lead">Gewichte zu optimieren hilft nur, wenn die Merkmale überhaupt etwas taugen. Selfridge hat sie
+  anfangs „ziemlich willkürlich“ gesammelt. Also braucht er einen zweiten Mechanismus: <b>schlechte Merkmale töten,
+  neue erzeugen.</b></p>
+
+  <h3>Schritt 1: Der Wert eines Dämons</h3>
+  <p>Selfridge definiert den Wert <math><msub><mi>W</mi><mi>i</mi></msub></math> eines Subdämons als Summe der Beträge
+  aller Gewichte, die er bekommt:</p>
+  <div class="card" style="text-align:center"><div id="eqWorth"></div>
+    <p class="dim" style="font-size:14px;margin-top:8px">„Die wertvollen Dämonen sind die, deren Outputs
+    die Entscheidungen am stärksten beeinflussen.“</p>
+  </div>
+
+  <p class="dim">Beachte den Betragsstrich: Ein Merkmal mit stark <i>negativem</i> Gewicht ist genauso wertvoll
+  wie eines mit positivem. Es geht um Einfluss, nicht um Zustimmung. Ein Merkmal mit Gewicht ≈ 0 wird nie benutzt — es stirbt.</p>
+
+  <h3>Schritt 2 &amp; 3: Mutierte Teilung und Konjugation</h3>
+
+  <div class="card">
+    <h3 style="margin-top:0">Die Dämonen-Population, live</h3>
+    <p class="dim" style="font-size:14px">Jeder Balken ist ein Subdämon; Höhe = Wert W. Klicke dich durch die
+    Generationen. Rot umrandete sterben, aus den Überlebenden entstehen Mutanten (gelb) und Konjugate (violett).</p>
+    <canvas id="cvEvo" height="340"></canvas>
+    <div class="grid3">
+      <div class="ctl"><label>Sterberate (unterste x %) <b id="vKill">30%</b></label><input type="range" id="sKill" min="5" max="60" value="30"></div>
+      <div class="ctl"><label>Mutationsstärke <b id="vMut">0.35</b></label><input type="range" id="sMut" min="2" max="100" value="35"></div>
+      <div class="ctl"><label>Anteil Konjugation <b id="vConj">40%</b></label><input type="range" id="sConj" min="0" max="100" value="40"></div>
+    </div>
+    <div class="btnrow">
+      <button onclick="evoStep()">▸ Eine Generation</button>
+      <button class="alt" onclick="evoRun(25)">25 Generationen</button>
+      <button class="ghost" onclick="evoReset()">Neu beginnen</button>
+    </div>
+    <div class="statline" id="evoStat"></div>
+    <div id="plEvo" class="plot" style="height:240px;margin-top:14px"></div>
+  </div>
+
+  <div class="note"><b>Selfridges Vorsichtsmaßnahme</b>, wörtlich: „Dies wird meist erfordern, dass wir den
+  Subdämon selbst auf eine kanonische Form reduzieren, damit die zufälligen Änderungen nicht das Programm so
+  umschreiben, dass es nicht läuft oder in eine Endlosschleife ohne Ausweg gerät.“
+  Das ist 1958 die exakte Beschreibung des zentralen Problems der <i>genetischen Programmierung</i> —
+  und die Standardlösung (typisierte, geschlossene Grammatik) gleich mit dazu.</div>
+
+  <h3>Populationen von Pandemonien</h3>
+  <p>Selfridge geht noch eine Ebene höher: „Statt nur eines Pandemoniums könnten wir eine ganze Schar von ihnen
+  haben und natürliche Selektion auf die Schar anwenden. Eliminiere die relativ schlechten und ermutige den Rest,
+  neue Maschinen nach ihrem Bilde zu erzeugen.“ Das ist, 1958, die Beschreibung von
+  <i>Population-Based Training</i> und <i>Neural Architecture Search</i>.</p>
+
+  <div class="card">
+    <canvas id="cvPop" height="300"></canvas>
+    <div class="grid2">
+      <div class="ctl"><label>Populationsgröße <b id="vPop">16</b></label><input type="range" id="sPop" min="4" max="48" value="16"></div>
+      <div class="ctl"><label>Selektionsdruck <b id="vSel">0.45</b></label><input type="range" id="sSel" min="5" max="95" value="45"></div>
+    </div>
+    <div class="btnrow"><button onclick="popRun()">▸ Maschinen-Evolution laufen lassen</button>
+      <button class="ghost" onclick="popReset()">Zurücksetzen</button></div>
+    <div class="statline" id="popStat"></div>
+  </div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="p9">
+  <div class="sec-head"><span class="sec-num">09</span><h2>Konjugation im Detail: die zehn nicht-trivialen Funktionen (Tabelle 1)</h2></div>
+
+  <p class="lead">Zwei Merkmale einzeln können schwach sein und ihre <b>Kombination</b> trotzdem stark.
+  Selfridge listet alle zehn nicht-trivialen binären Funktionen zweier Variablen auf — und benutzt deren
+  <b>stetige Analoga</b>, damit alles differenzierbar weich bleibt.</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Tabelle 1, anklickbar</h3>
+    <p class="dim" style="font-size:14px">Klicke eine Funktion. Links: ihre Wahrheitstafel. Mitte: das stetige
+    Analogon als Fläche über (A,B). Rechts: was sie auf den Daten trennt.</p>
+    <div class="btnrow" id="conjBtns"></div>
+    <div class="grid2" style="margin-top:4px">
+      <div><canvas id="cvConjT" height="240"></canvas></div>
+      <div><div id="plConj" class="plot" style="height:240px"></div></div>
+    </div>
+    <div class="statline" id="conjStat"></div>
+  </div>
+
+  <div class="card">
+    <h3>Warum Konjugation nötig ist: das XOR-Problem</h3>
+    <p class="dim" style="font-size:14px">Zwei Merkmale A und B. Die zu trennenden Klassen liegen <i>über Kreuz</i>.
+    Keine gewichtete Summe <math><mi>w</mi><mi>A</mi><mo>+</mo><mi>w</mi><mi>B</mi></math> kann das trennen —
+    egal welche Gewichte. Dreh an den Gewichten und überzeuge dich.</p>
+    <canvas id="cvXor" height="320"></canvas>
+    <div class="grid3">
+      <div class="ctl"><label>Gewicht auf A <b id="vXa">0.70</b></label><input type="range" id="sXa" min="-100" max="100" value="70"></div>
+      <div class="ctl"><label>Gewicht auf B <b id="vXb">-0.50</b></label><input type="range" id="sXb" min="-100" max="100" value="-50"></div>
+      <div class="ctl"><label>Konjugat A·B¬ ∨ A¬·B dazuschalten <b id="vXc">0%</b></label><input type="range" id="sXc" min="0" max="100" value="0"></div>
+    </div>
+    <div class="statline" id="xorStat"></div>
+  </div>
+
+  <div class="note">Das ist die Antwort auf das Problem, an dem Minsky &amp; Papert 1969 das einfache Perceptron
+  zerlegten — und Selfridge hat den Mechanismus elf Jahre vorher eingebaut:
+  <b>Wenn die lineare Schicht nicht reicht, erzeuge nichtlineare Merkmale.</b>
+  Heute heißt das „eine weitere versteckte Schicht“.</div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="p10">
+  <div class="sec-head"><span class="sec-num">10</span><h2>Ohne Aufsicht: Kann sich die Maschine selbst benoten?</h2></div>
+
+  <p class="lead">Bisher sagt ein Mensch nach jedem Zeichen, ob es richtig war. Selfridge fragt:
+  Kann die Maschine sich eine eigene Meinung bilden?</p>
+
+  <div class="q">„Ein Kriterium für korrekte Entscheidungen ist, dass sie ziemlich eindeutig sind — dass es genau
+  einen kognitiven Dämon gibt, dessen Output die übrigen weit überstrahlt. Ein laufender Mittelwert dieses
+  Grades würde vermutlich die Punktzahl der Maschine einigermaßen widerspiegeln.“</div>
+
+  <p>Mit anderen Worten: <b>Selbstvertrauen als Ersatz für Wahrheit.</b> Je größer der Abstand zwischen dem
+  lautesten und dem zweitlautesten Schrei, desto wahrscheinlicher ist die Entscheidung richtig.</p>
+
+  <div class="card">
+    <h3>Stimmt das? Eindeutigkeit gegen Korrektheit</h3>
+    <p class="dim" style="font-size:14px">Jeder Punkt ist eine Entscheidung. x = Vorsprung des Siegers,
+    y = war sie richtig? Die orange Kurve ist Selfridges Selbst-Score. Schiebe die Qualität der Maschine.</p>
+    <div id="plConf" class="plot" style="height:320px"></div>
+    <div class="grid2">
+      <div class="ctl"><label>Güte der Maschine <b id="vQual">0.70</b></label><input type="range" id="sQual" min="30" max="99" value="70"></div>
+      <div class="ctl"><label>Entscheidungen <b id="vNdec">300</b></label><input type="range" id="sNdec" min="40" max="900" value="300"></div>
+    </div>
+    <div class="statline" id="confStat"></div>
+  </div>
+
+  <div class="card">
+    <h3>Die Falle: Wenn die Maschine sich selbst belügt</h3>
+    <p class="dim" style="font-size:14px">Selfridges Warnung: „Es wäre entscheidend, dass die Maschine zuerst
+    gut genug trainiert wird, bevor sie sich selbst überlassen wird.“ Teste es: Ab welchem Trainingsstand
+    hilft Selbstüberwachung — und ab wann verstärkt sie nur eigene Fehler?</p>
+    <canvas id="cvSelf" height="320"></canvas>
+    <div class="ctl"><label>Güte beim Übergang zur Selbstaufsicht <b id="vHand">0.70</b></label>
+      <input type="range" id="sHand" min="30" max="98" value="70"></div>
+    <div class="btnrow"><button onclick="selfRun()">▸ Übergabe simulieren</button></div>
+    <div class="statline" id="selfStat"></div>
+  </div>
+
+  <div class="note">Dieser Abschnitt ist die Keimzelle dessen, was heute <b>Self-Training</b>,
+  <b>Pseudo-Labeling</b> und <b>Confidence-based Semi-Supervised Learning</b> heißt — inklusive
+  des bekanntesten Fehlermodus, der <i>Confirmation Bias</i>: Eine zu früh sich selbst überlassene
+  Maschine zementiert ihre Irrtümer.</div>
+</section>
+
+<!-- ============ 11 ============ -->
+<section id="p11">
+  <div class="sec-head"><span class="sec-num">11</span><h2>Die Antwort: Was kam tatsächlich heraus?</h2></div>
+
+  <p class="lead">Das Paper endet mit einem Cliffhanger: „Was ich beim Treffen im November präsentieren werde,
+  sind die Details des Fortschritts von Pand…“ — der Satz bricht mitten im Wort ab. Die Antwort steht in der
+  <b>Diskussion</b>, in Selfridges mündlicher Erwiderung. Hier ist sie, Punkt für Punkt.</p>
+
+  <div class="grid3">
+    <div class="card"><div class="badge" style="color:var(--good)">ERGEBNIS 1 ✓</div>
+      <h3 style="margin-top:8px">Hill-Climbing funktioniert</h3>
+      <p style="font-size:14.5px">„Improvement does take place; the hill-climbing does work.“
+      Die Gewichtsoptimierung — der Kern des Papers — war erfolgreich.</p></div>
+    <div class="card"><div class="badge" style="color:var(--bad)">ERGEBNIS 2 ✗</div>
+      <h3 style="margin-top:8px">Subdämon-Auswahl scheiterte</h3>
+      <p style="font-size:14.5px">„The sub-demon selection in the programmes that we have did not do what we hoped.“
+      Die Evolution der Merkmale tat nicht, was er sich erhofft hatte.</p></div>
+    <div class="card"><div class="badge" style="color:var(--acc)">ERGEBNIS 3 ⚠</div>
+      <h3 style="margin-top:8px">Aber sie räumte auf</h3>
+      <p style="font-size:14.5px">Die Subdämonen „wurden effektiv hinausgeworfen“, und die überlebenden
+      konzentrierten sich auf die <b>nahe gelegenen</b> Dauern — die Maschine entdeckte selbst, wo der Kontext sitzt.</p></div>
+  </div>
+
+  <h3>Der Sieger-Dämon: 90 % allein</h3>
+  <div class="q">„Der wirksamste Dämon für sich allein, der in 90 % der Fälle funktionierte — was sehr überraschend
+  war — war, ob eine Markierung das Maximum war, oder innerhalb eines gerade noch wahrnehmbaren Unterschieds
+  vom Maximum von sechs Dämonen um die Null herum, von minus 3 bis plus 3.“ — Selfridge</div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Der Gewinner-Dämon, nachgebaut</h3>
+    <p class="dim" style="font-size:14px">Hier ist er: <span class="badge">ˡmax(d₋₃ … d₃)</span> mit einer
+    „gerade noch wahrnehmbaren“ Toleranz. Der orange Rahmen ist das Fenster von −3 bis +3, die orange Linie
+    die aktuelle Dauer d₀. Er fragt nur: <i>Ist d₀ (fast) das Längste in seiner Nachbarschaft?</i></p>
+    <canvas id="cvWinner" height="300"></canvas>
+    <div class="grid3">
+      <div class="ctl"><label>JND-Toleranz (gerade noch wahrnehmbar) <b id="vJnd">0.12</b></label><input type="range" id="sJnd" min="0" max="50" value="12"></div>
+      <div class="ctl"><label>Fensterbreite ± <b id="vWin">3</b></label><input type="range" id="sWin" min="1" max="10" value="3"></div>
+      <div class="ctl"><label>Menschlichkeit <b id="vWHum">35%</b></label><input type="range" id="sWHum" min="0" max="100" value="35"></div>
+    </div>
+    <div class="btnrow"><button onclick="winNext()">▸ Nächstes Zeichen</button>
+      <button class="alt" onclick="winBench()">1000 Zeichen testen</button></div>
+    <div class="statline" id="winStat"></div>
+    <div id="plWin" class="plot" style="height:270px;margin-top:14px"></div>
+  </div>
+
+  <div class="note">Die <b>Überraschung</b> ist der Punkt. Selfridge hat nicht vorhergesagt, welches Merkmal gewinnt —
+  er hat eine Maschine gebaut, die es <i>herausfand</i>. Und das Ergebnis ist genau das, was die Theorie
+  vorhersagte, ohne es ausrechnen zu können: ein <b>relatives, lokales, kontextabhängiges</b> Merkmal.
+  Keine feste Schwelle. Ein Vergleich mit der Nachbarschaft.</div>
+
+  <h3>Selfridges Antwort an Dr. Bray</h3>
+  <div class="card">
+    <p>Dr. Bray schlug vor, einfach ein Polynom <math><mi>y</mi><mo>=</mo><msub><mi>A</mi><mn>0</mn></msub><mo>+</mo><msub><mi>A</mi><mn>1</mn></msub><mi>x</mi><mo>+</mo><msub><mi>A</mi><mn>2</mn></msub><msup><mi>x</mi><mn>2</mn></msup><mo>+</mo><mo>…</mo></math>
+    an die Dauern anzupassen. Selfridges Antwort: <i>„Lassen Sie mich Ihnen versichern, dass es nicht funktionieren wird; wir haben es versucht.“</i></p>
+    <p class="dim" style="font-size:14px">Warum nicht? Weil ein Polynom in der <b>absoluten</b> Dauer x rechnet —
+    und die Information steckt im Verhältnis zur Umgebung. Probiere es aus:</p>
+    <div id="plBray" class="plot" style="height:300px"></div>
+    <div class="grid2">
+      <div class="ctl"><label>Polynomgrad <b id="vDeg">3</b></label><input type="range" id="sDeg" min="1" max="9" value="3"></div>
+      <div class="ctl"><label>Menschlichkeit der Daten <b id="vBHum">40%</b></label><input type="range" id="sBHum" min="0" max="100" value="40"></div>
+    </div>
+    <div class="statline" id="brayStat"></div>
+  </div>
+
+  <h3>Das Gesamtbild: Abbildung 7 des Papers, vollständig</h3>
+  <p>Jetzt, wo alle Teile da sind, ergibt das Morse-Pandemonium ein geschlossenes Bild.
+  Klicke durch einen vollständigen Lernzyklus.</p>
+
+  <div class="card">
+    <canvas id="cvFig7" height="480"></canvas>
+    <div class="btnrow">
+      <button onclick="f7Step()">▸ Nächster Schritt des Zyklus</button>
+      <button class="alt" onclick="f7Auto()">Zyklus automatisch</button>
+      <button class="ghost" onclick="f7Reset()">Zurücksetzen</button>
+    </div>
+    <div class="statline" id="f7Stat"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">„To Lethe“ — der Fluss des Vergessens</h3>
+    <p style="font-size:14.5px">In Abbildung 7 steht neben dem ältesten Daten-Dämon <span class="badge">d₋₂₀</span>
+    der Pfeil <b>„TO LETHE“</b>. Lethe ist in der griechischen Mythologie der Fluss des Vergessens in der Unterwelt —
+    passend zum Höllenthema. Daten, die älter als 20 Dauern sind, fallen hinein und sind weg.
+    Das ist ein <b>gleitendes Fenster</b> endlicher Länge: genau die ±10 Buchstaben Kontext, die Selfridge
+    in der Diskussion als nötig bezeichnet.</p>
+  </div>
+</section>
+
+<!-- ============ 12 ============ -->
+<section id="p12">
+  <div class="sec-head"><span class="sec-num">12</span><h2>Was davon geblieben ist</h2></div>
+
+  <p class="lead">Pandemonium hat keine Morse-Schreibmaschine hervorgebracht. Es hat etwas anderes hervorgebracht:
+  die Form, in der wir seitdem über lernende Maschinen denken.</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">Zeitstrahl — klicke die Punkte</h3>
+    <canvas id="cvTime" height="260"></canvas>
+    <div class="statline" id="timeStat">Klicke einen Punkt auf dem Zeitstrahl.</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card"><h3 style="margin-top:0">Selfridge 1958 sagt…</h3>
+      <table>
+        <tr><th>im Paper</th><th>heißt heute</th></tr>
+        <tr><td>Daten → Sub → Kognitiv → Entscheid.</td><td>Feedforward-Netz</td></tr>
+        <tr><td>Subdämonen</td><td>Feature-Detektoren / Filter</td></tr>
+<tr><td>„sorgfältig nicht-binär“</td><td>weiche Aktivierungsfunktionen</td></tr>
+        <tr><td>λ-Gewichte</td><td>Gewichtsmatrix / Parameter</td></tr>
+        <tr><td>Λ als ein Vektor</td><td>Parametervektor θ</td></tr>
+        <tr><td>Score, Hügel, Höhe</td><td>Zielfunktion / Loss-Landschaft</td></tr>
+        <tr><td>Hill-Climbing</td><td>Optimierung / Gradientenaufstieg</td></tr>
+        <tr><td>Kleine Zufallsschritte</td><td>Random Search / SPSA</td></tr>
+        <tr><td>Falsche Gipfel</td><td>lokale Optima</td></tr>
+        <tr><td>Wahl des Startpunkts</td><td>Initialisierung</td></tr>
+        <tr><td>Ausläufer / Plateau</td><td>trainierbare Landschaft</td></tr>
+        <tr><td>Wert W<sub>i</sub> = Σ|λ|</td><td>Feature Importance / Pruning</td></tr>
+        <tr><td>Mutierte Teilung</td><td>genetische Programmierung</td></tr>
+        <tr><td>Konjugation</td><td>Feature-Kreuzung / 2. Schicht</td></tr>
+        <tr><td>Schar von Pandemonien</td><td>Population-Based Training, NAS</td></tr>
+        <tr><td>Unüberwachter Betrieb</td><td>Self-Training, Pseudo-Labeling</td></tr>
+        <tr><td>Kontrolladaption</td><td>Meta-Learning / Learned Optimizer</td></tr>
+        <tr><td>„To Lethe“</td><td>gleitendes Kontextfenster</td></tr>
+      </table>
+    </div>
+    <div class="card"><h3 style="margin-top:0">Was er <i>nicht</i> hatte</h3>
+      <p style="font-size:14.5px">Selfridge tastet blind. Er misst die Höhe an einem Punkt, geht einen zufälligen
+      Schritt, misst wieder. In <i>n</i> Dimensionen braucht das grob <i>n</i>-mal so viele Versuche wie
+      ein Verfahren, das die <b>Richtung</b> des Anstiegs direkt berechnen kann.</p>
+      <p style="font-size:14.5px">Genau das liefert <b>Backpropagation</b> (1986): eine Ableitung statt eines Tastversuchs.
+      Derselbe Berg, dieselbe Landschaft — nur sieht der Bergsteiger plötzlich, wo es hochgeht.</p>
+      <div id="plBlind" class="plot" style="height:270px;margin-top:10px"></div>
+      <div class="ctl"><label>Dimension n <b id="vBd">10</b></label><input type="range" id="sBd" min="2" max="300" value="10"></div>
+      <div class="statline" id="blindStat"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">McCarthys Bemerkung: Pandemonium als Modell des Bewusstseins</h3>
+    <p style="font-size:14.5px">John McCarthy — derselbe, der zwei Jahre zuvor das Wort „Künstliche Intelligenz“
+    geprägt hatte — steht auf und sagt: „Was innerhalb der Dämonen vor sich geht, könnte man als den
+    <b>unbewussten</b> Teil des Denkens ansehen, und das, was die Dämonen einander öffentlich zuschreien,
+    als den <b>bewussten</b> Teil.“</p>
+    <p class="dim" style="font-size:14px">Das ist, 1958, die Keimform der <i>Global Workspace Theory</i> (Baars, 1988):
+    viele parallele unbewusste Prozesse konkurrieren, und nur der Sieger wird „öffentlich“ — also bewusst.
+    Klicke auf die Dämonen, um zwischen „privat“ und „öffentlich“ umzuschalten.</p>
+    <canvas id="cvMcC" height="300"></canvas>
+    <div class="ctl"><label>Konkurrenzdruck (wie sehr dominiert der Sieger?) <b id="vMc">0.55</b></label>
+      <input type="range" id="sMc" min="0" max="100" value="55"></div>
+    <div class="statline" id="mcStat">Klicke einen Dämon an.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Selfridges letztes Wort über Parallelität</h3>
+    <p style="font-size:14.5px">„Ich würde gern viele Operationen, die man sich parallel vorstellen könnte,
+    sequentiell ausgeführt sehen, weil das die einzige Maschine ist, die wir haben — und dann hoffe ich,
+    dass die Leute Maschinen haben werden, die parallel arbeiten, sodass ich, wenn ich ein doppelt so
+    schweres Problem lösen will, einfach eine <b>doppelt so große Maschine</b> baue, statt eine Maschine
+    doppelt so lange rechnen zu lassen.“</p>
+    <p class="dim" style="font-size:14px">Das ist, wortwörtlich, die Beschreibung einer GPU.
+    Er schrieb es auf einer IBM 704 mit etwa 12 000 Rechenoperationen pro Sekunde.</p>
+    <div id="plScale" class="plot" style="height:280px"></div>
+    <div class="ctl"><label>Problemgröße <b id="vScl">4×</b></label><input type="range" id="sScl" min="1" max="64" value="4"></div>
+    <div class="statline" id="sclStat"></div>
+  </div>
+
+  <div class="note" style="border-color:var(--acc3)">
+    <b>Das Fazit in einem Satz:</b> Selfridge stellte die Frage „Kann eine Maschine Muster lernen,
+    die niemand beschreiben kann?“ — und beantwortete sie 1958 mit einem halben Ja:
+    Die Gewichte lernten sich selbst, die Merkmale noch nicht.
+    Die andere Hälfte brauchte 28 weitere Jahre und heißt Backpropagation.
+  </div>
+</section>
+
+<footer>
+  <div style="font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--acc)">ENDE DES DURCHGANGS</div>
+  <p>O. G. Selfridge, „Pandemonium: A Paradigm for Learning“,<br>
+  Mechanisation of Thought Processes, NPL Symposium No. 10, London, HMSO, 1959, S. 513–531.<br>
+  <span class="dim">Alle Zitate stammen aus dem Paper und der anschließenden Diskussion
+  (Bray, Strachey, McCarthy, MacKay, Price, Selfridge).</span></p>
+</footer>
+
+</div>
+
+<script>
+/* =======================================================================
+   GLOBALE HELFER
+   ======================================================================= */
+const TAU = Math.PI*2;
+const C = {
+  bg:'#070a12', line:'rgba(140,170,255,.16)', txt:'#dfe6f5', dim:'#8d9ab8',
+  acc:'#ff8a3d', acc2:'#45d4ff', acc3:'#b06bff', good:'#45e8a0', bad:'#ff5f6d'
+};
+function $(id){return document.getElementById(id)}
+function dpi(cv){
+  const r = window.devicePixelRatio||1;
+  const h = parseInt(cv.getAttribute('height'))||300;
+  const w = cv.parentElement?cv.parentElement.clientWidth:cv.clientWidth||900;
+  lockCanvas(cv, h, r);
+  cv.width = w*r;
+  const ctx=cv.getContext('2d');
+  ctx.setTransform(r,0,0,r,0,0);
+  return {ctx,w,h};
+}
+
+/* Height is the only thing that ever grew — lock it. Width is free to follow
+   CSS `width:100%` so the canvas stays responsive on window resize. */
+function lockCanvas(cv, h, dpr){
+  if(cv.__lockedH) return;
+  cv.__lockedH = true;
+  const maxH = h * dpr;
+  let _h = maxH;
+  Object.defineProperty(cv, 'height', {
+    get(){return _h;},
+    set(v){_h = Math.min(Math.max(0,v|0), maxH);},
+    configurable:true
+  });
+  cv.height = maxH;
+  const pin = ()=>{
+    cv.style.setProperty('height',h+'px','important');
+    cv.style.setProperty('min-height',h+'px','important');
+    cv.style.setProperty('max-height',h+'px','important');
+    if(cv.height > maxH) cv.height = maxH;
+  };
+  pin();
+  const mo = new MutationObserver(pin);
+  mo.observe(cv, {attributes:true, attributeFilter:['style','height','class']});
+  const tick = ()=>{ if(cv.isConnected){ pin(); requestAnimationFrame(tick); } };
+  requestAnimationFrame(tick);
+}
+function clear(ctx,w,h){ctx.clearRect(0,0,w,h);ctx.fillStyle=C.bg;ctx.fillRect(0,0,w,h);}
+function rnd(a=1){return (Math.random()*2-1)*a}
+function gauss(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v);}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
+function lerp(a,b,t){return a+(b-a)*t}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+}
+function txt(ctx,s,x,y,col,size,align,font){
+  ctx.fillStyle=col||C.txt;
+  ctx.font=(size||12)+'px '+(font||"ui-monospace,Menlo,Consolas,monospace");
+  ctx.textAlign=align||'left';ctx.textBaseline='middle';ctx.fillText(s,x,y);
+}
+const PL_LAYOUT = {
+  paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(7,10,18,.6)',
+  font:{color:C.dim,family:'ui-monospace,Menlo,monospace',size:11},
+  margin:{l:52,r:22,t:30,b:44},
+  xaxis:{gridcolor:'rgba(140,170,255,.10)',zerolinecolor:'rgba(140,170,255,.22)'},
+  yaxis:{gridcolor:'rgba(140,170,255,.10)',zerolinecolor:'rgba(140,170,255,.22)'},
+  showlegend:true, legend:{bgcolor:'rgba(0,0,0,0)',font:{size:10}}
+};
+function L(extra){return Object.assign({},JSON.parse(JSON.stringify(PL_LAYOUT)),extra||{})}
+const PCFG={displayModeBar:false,responsive:true};
+
+/* TeMML Formeln */
+function renderTeX(){
+  const put=(id,tex)=>{const e=$(id);if(e)e.innerHTML=temml.renderToString(tex,{displayMode:true});};
+  put('eqMain', '\\text{Schrei}_i \\;=\\; \\sum_j \\lambda^i_j \\, d_j');
+  put('eqLambda','\\Lambda \\;=\\; \\{\\lambda^1_1,\\ \\lambda^1_2,\\ \\dots,\\ \\lambda^2_1,\\ \\dots,\\ \\lambda^n_m\\}');
+  put('eqWorth', 'W_i \\;=\\; \\sum_j \\left| \\lambda^j_i \\right|');
+}
+
+/* =======================================================================
+   0 — A-NESS
+   ======================================================================= */
+const A_SHAPES = [
+  {n:'A (Druck)',  cls:1, s:[[0,1,.5,0],[.5,0,1,1],[.22,.55,.78,.55]]},
+  {n:'A (schräg)', cls:1, s:[[.08,1,.58,0],[.58,0,.95,1],[.28,.58,.8,.58]]},
+  {n:'a (rund)',   cls:1, s:[[.72,.3,.72,1]], arc:[[.45,.62,.27,0,TAU]]},
+  {n:'A (eilig)',  cls:1, s:[[0,1,.48,.02],[.48,.02,.98,.98],[.18,.72,.7,.62]]},
+  {n:'Λ',          cls:0, s:[[0,1,.5,0],[.5,0,1,1]]},
+  {n:'R',          cls:0, s:[[.15,0,.15,1],[.15,0,.75,.18],[.75,.18,.15,.5],[.15,.5,.85,1]]},
+  {n:'H',          cls:0, s:[[.15,0,.15,1],[.85,0,.85,1],[.15,.5,.85,.5]]},
+  {n:'4',          cls:0, s:[[.62,0,.15,.66],[.15,.66,.9,.66],[.62,0,.62,1]]},
+  {n:'A (fett)',   cls:1, s:[[.05,1,.5,.05],[.5,.05,.95,1],[.25,.6,.75,.6]]},
+  {n:'Δ',          cls:0, s:[[.05,1,.5,.05],[.5,.05,.95,1],[.05,1,.95,1]]}
+];
+let anessI=0, anessR=-1;
+const RULES=[
+  {t:'zwei schräge Striche + Querbalken', f:g=>g.n[0]==='A'||g.n==='Λ'||g.n==='Δ'||g.n==='4'},
+  {t:'spitz oben, offen unten',           f:g=>g.n==='Λ'||g.n[0]==='A'&&g.n!=='A (fett)'},
+  {t:'geschlossene Schleife oben',        f:g=>g.n==='a (rund)'||g.n==='R'||g.n[0]==='A'&&g.n!=='A (schräg)'}
+];
+function drawAness(){
+  const {ctx,w,h}=dpi($('cvAness'));clear(ctx,w,h);
+  const g=A_SHAPES[anessI];
+  const S=Math.min(h-70,150), ox=(w-S)/2, oy=26;
+  ctx.strokeStyle='rgba(140,170,255,.12)';ctx.lineWidth=1;
+  ctx.strokeRect(ox-16,oy-14,S+32,S+28);
+  ctx.strokeStyle=g.cls?C.acc:C.acc3; ctx.lineWidth=7; ctx.lineCap='round';
+  (g.s||[]).forEach(l=>{ctx.beginPath();ctx.moveTo(ox+l[0]*S,oy+l[1]*S);ctx.lineTo(ox+l[2]*S,oy+l[3]*S);ctx.stroke();});
+  (g.arc||[]).forEach(a=>{ctx.beginPath();ctx.arc(ox+a[0]*S,oy+a[1]*S,a[2]*S,a[3],a[4]);ctx.stroke();});
+  txt(ctx,g.n,w/2,oy+S+32,g.cls?C.acc:C.dim,14,'center');
+  txt(ctx,g.cls?'WAHRHEIT: ist ein A':'WAHRHEIT: ist kein A',w/2,oy+S+52,g.cls?C.good:C.bad,11,'center');
+  txt(ctx,(anessI+1)+' / '+A_SHAPES.length,w-16,16,C.dim,11,'right');
+  if(anessR>=0){
+    const pred=RULES[anessR].f(g), ok = pred===!!g.cls;
+    roundRect(ctx,14,14,230,24,7);
+    ctx.fillStyle = ok?'rgba(69,232,160,.14)':'rgba(255,95,109,.16)';ctx.fill();
+    txt(ctx,(pred?'Regel sagt: A':'Regel sagt: kein A')+(ok?'  ✓':'  ✗'),24,26,ok?C.good:C.bad,11.5);
+  }
+}
+function anessNext(){anessI=(anessI+1)%A_SHAPES.length;drawAness();anessScore();}
+function anessRule(i){anessR=i;drawAness();anessScore();}
+function anessScore(){
+  if(anessR<0){$('anessOut').textContent='Wähle eine Regel und blättere durch die Beispiele.';return;}
+  let ok=0;A_SHAPES.forEach(g=>{if(RULES[anessR].f(g)===!!g.cls)ok++;});
+  $('anessOut').innerHTML='Regel „'+RULES[anessR].t+'“ → <b>'+ok+' / '+A_SHAPES.length+
+    '</b> richtig. '+(ok===A_SHAPES.length?'':'Es gibt immer ein Gegenbeispiel — <span style="color:'+C.acc+'">genau Selfridges Punkt.</span>');
+}
+
+/* =======================================================================
+   1 — MORSE
+   ======================================================================= */
+let morseSeq=[];
+function genMorse(n,hum,drift){
+  const out=[];let t=0;
+  for(let i=0;i<n;i++){
+    const isDash=Math.random()<0.42;
+    const sp = 1 + drift*0.9*Math.sin(i/9) + drift*0.5*(i/n);
+    let base=isDash?3:1;
+    let d = base*sp*(1+hum*0.55*gauss());
+    if(hum>0 && Math.random()<hum*0.18) d*= isDash?0.62:1.55;
+    d=Math.max(0.18,d);
+    out.push({d,dash:isDash,t});t+=d+ (0.9+hum*0.4*Math.abs(gauss()));
+  }
+  return out;
+}
+function morseNew(){
+  const hum=+$('sHum').value/100, dr=+$('sDrift').value/100;
+  morseSeq=genMorse(26,hum,dr);
+  drawMorse();morsePlots();
+}
+function drawMorse(){
+  const {ctx,w,h}=dpi($('cvMorse'));clear(ctx,w,h);
+  const thr=+$('sThr').value/100;
+  const total=morseSeq.length?morseSeq[morseSeq.length-1].t+morseSeq[morseSeq.length-1].d:1;
+  const sc=(w-40)/total, y0=h*0.44, bh=36;
+  let err=0;
+  morseSeq.forEach(m=>{
+    const x=20+m.t*sc, ww=Math.max(1.5,m.d*sc);
+    const pred=m.d>thr;
+    const ok=pred===m.dash; if(!ok)err++;
+    const grd=ctx.createLinearGradient(x,y0-bh/2,x,y0+bh/2);
+    if(m.dash){grd.addColorStop(0,'#ffb06a');grd.addColorStop(1,'#ff7a26');}
+    else{grd.addColorStop(0,'#7fe6ff');grd.addColorStop(1,'#19b6e8');}
+    ctx.fillStyle=grd;roundRect(ctx,x,y0-bh/2,ww,bh,3);ctx.fill();
+    if(!ok){ctx.strokeStyle=C.bad;ctx.lineWidth=2.2;roundRect(ctx,x-2,y0-bh/2-3,ww+4,bh+6,4);ctx.stroke();}
+  });
+  // Dauerprofil
+  const yb=h-34, hh=h*0.3;
+  ctx.strokeStyle='rgba(140,170,255,.25)';ctx.beginPath();ctx.moveTo(20,yb);ctx.lineTo(w-20,yb);ctx.stroke();
+  const maxd=Math.max(...morseSeq.map(m=>m.d),4);
+  morseSeq.forEach(m=>{
+    const x=20+m.t*sc, ww=Math.max(1.5,m.d*sc);
+    const bh2=(m.d/maxd)*hh;
+    ctx.fillStyle=m.dash?'rgba(255,138,61,.5)':'rgba(69,212,255,.5)';
+    ctx.fillRect(x,yb-bh2,ww,bh2);
+  });
+  const ty=yb-(thr/maxd)*hh;
+  ctx.strokeStyle=C.bad;ctx.setLineDash([5,4]);ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(20,ty);ctx.lineTo(w-20,ty);ctx.stroke();ctx.setLineDash([]);
+  txt(ctx,'Schwelle '+thr.toFixed(2),w-24,ty-10,C.bad,10.5,'right');
+  txt(ctx,'● Punkt',20,16,C.acc2,11);txt(ctx,'▬ Strich',88,16,C.acc,11);
+  txt(ctx,'rot umrandet = Fehlentscheidung',w-20,16,C.bad,10.5,'right');
+  const rate=100*err/Math.max(1,morseSeq.length);
+  $('morseStat').innerHTML='Fehler dieser Schwelle: <b style="color:'+(rate<5?C.good:C.bad)+'">'+
+    err+' von '+morseSeq.length+'</b> ('+rate.toFixed(1)+' %). '+
+    (rate<1?'Lehrbuch-Morse — zwei Zeilen Code genügen.':'Menschliches Timing: eine feste Schwelle reicht nicht mehr.');
+}
+function morsePlots(){
+  const dots=morseSeq.filter(m=>!m.dash).map(m=>m.d), dashes=morseSeq.filter(m=>m.dash).map(m=>m.d);
+  const hum=+$('sHum').value/100, dr=+$('sDrift').value/100;
+  const big=genMorse(3000,hum,dr);
+  const bd=big.filter(m=>!m.dash).map(m=>m.d), bs=big.filter(m=>m.dash).map(m=>m.d);
+  Plotly.react('plHist',[
+    {x:bd,type:'histogram',name:'Punkte',marker:{color:'rgba(69,212,255,.62)'},nbinsx:60},
+    {x:bs,type:'histogram',name:'Striche',marker:{color:'rgba(255,138,61,.62)'},nbinsx:60}
+  ],L({barmode:'overlay',title:{text:'Verteilung der Dauern',font:{size:13,color:C.txt}},
+      xaxis:{title:'Dauer',range:[0,8],gridcolor:'rgba(140,170,255,.10)'},yaxis:{title:'Anzahl'}}),PCFG);
+  const ts=[],es=[];let best=1,bt=0;
+  for(let t=0.2;t<=6;t+=0.05){
+    let e=0;big.forEach(m=>{if((m.d>t)!==m.dash)e++;});
+    const r=e/big.length;ts.push(t);es.push(r*100);
+    if(r<best){best=r;bt=t;}
+  }
+  Plotly.react('plErr',[
+    {x:ts,y:es,type:'scatter',mode:'lines',line:{color:C.acc,width:2.4},name:'Fehlerrate',fill:'tozeroy',
+     fillcolor:'rgba(255,138,61,.12)'},
+    {x:[bt],y:[best*100],mode:'markers',name:'bestmöglich',marker:{color:C.good,size:11,symbol:'diamond'}}
+  ],L({title:{text:'Fehlerrate jeder möglichen Schwelle',font:{size:13,color:C.txt}},
+      xaxis:{title:'Schwelle'},yaxis:{title:'Fehler in %'}}),PCFG);
+}
+
+/* Kontext-Demo */
+function drawCtx(){
+  const {ctx,w,h}=dpi($('cvCtx'));clear(ctx,w,h);
+  const k=+$('sCtx').value/100;
+  const neigh=[1,3,1,1,3,1], target=2.0;
+  const seqA=[neigh[0]*k,neigh[1]*k,neigh[2]*k, target, neigh[3]*k,neigh[4]*k,neigh[5]*k];
+  const total=seqA.reduce((a,b)=>a+b,0)+seqA.length*0.7;
+  const sc=(w-44)/total, y0=h*0.46, bh=40;
+  let x=22;
+  seqA.forEach((d,i)=>{
+    const ww=d*sc, isT=(i===3);
+    ctx.fillStyle = isT?'#ff8a3d':'rgba(120,150,210,.55)';
+    roundRect(ctx,x,y0-bh/2,Math.max(2,ww),bh,3);ctx.fill();
+    if(isT){ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();}
+    x+=ww+0.7*sc;
+  });
+  const mean=(seqA.reduce((a,b)=>a+b,0)-target)/6;
+  const verdict = target>mean*1.7 ? 'STRICH' : (target<mean*0.75?'PUNKT':'UNKLAR');
+  txt(ctx,'Dauer der orangen Markierung: 2.00 (konstant!)',22,22,C.dim,11.5);
+  txt(ctx,'Mittel der Nachbarn: '+mean.toFixed(2),22,h-50,C.dim,11.5);
+  txt(ctx,'Verhältnis d₀ / Nachbarn: '+(target/mean).toFixed(2),22,h-32,C.acc2,11.5);
+  const col = verdict==='STRICH'?C.acc:(verdict==='PUNKT'?C.acc2:C.dim);
+  txt(ctx,'→ im Kontext ein '+verdict, w-22,h-40,col,15,'right');
+  $('ctxStat').innerHTML='Dieselbe physikalische Dauer. Nur der Kontext ändert sich — und mit ihm die Bedeutung. '+
+    '<b style="color:'+col+'">Das ist der Grund, warum eine feste Schwelle prinzipiell scheitern muss.</b>';
+}
+
+/* =======================================================================
+   2 — IDEALISIERTES PANDEMONIUM
+   ======================================================================= */
+const GLYPH={
+  A:[[.1,1,.5,.05],[.5,.05,.9,1],[.26,.6,.74,.6]],
+  B:[[.22,.05,.22,1],[.22,.05,.68,.2],[.68,.2,.22,.5],[.22,.5,.72,.72],[.72,.72,.22,1]],
+  C:[[.8,.2,.4,.06],[.4,.06,.2,.5],[.2,.5,.4,.94],[.4,.94,.8,.8]],
+  '?':[[.12,1,.5,.1],[.5,.1,.86,1],[.3,.62,.7,.62],[.3,.3,.66,.3]]
+};
+let idealCur='A';
+function idealScores(ch,noise){
+  const base={A:{A:.92,B:.34,C:.28,D:.30,E:.22,R:.70},
+              B:{A:.33,B:.90,C:.46,D:.72,E:.40,R:.52},
+              C:{A:.26,B:.44,C:.91,D:.55,E:.48,R:.30},
+              '?':{A:.62,B:.44,C:.30,D:.36,E:.28,R:.58}}[ch];
+  const o={};for(const k in base)o[k]=clamp(base[k]+noise*0.42*gauss(),0.02,1.3);
+  return o;
+}
+let idealCache=null;
+function idealSet(c){idealCur=c;idealCache=null;drawIdeal();}
+function drawIdeal(){
+  const {ctx,w,h}=dpi($('cvIdeal'));clear(ctx,w,h);
+  const noise=+$('sIdN').value/100;
+  if(!idealCache||idealCache.n!==noise||idealCache.c!==idealCur)
+    idealCache={n:noise,c:idealCur,s:idealScores(idealCur,noise)};
+  const sc=idealCache.s;
+  // Bild links
+  const S=112, ox=26, oy=h/2-S/2+14;
+  ctx.strokeStyle='rgba(140,170,255,.18)';ctx.strokeRect(ox-12,oy-12,S+24,S+24);
+  txt(ctx,'BILD',ox-12,oy-24,C.dim,10.5);
+  ctx.strokeStyle='#e9f0ff';ctx.lineWidth=5;ctx.lineCap='round';
+  GLYPH[idealCur].forEach(l=>{
+    const j=()=>noise*9*rnd(1);
+    ctx.beginPath();ctx.moveTo(ox+l[0]*S+j(),oy+l[1]*S+j());ctx.lineTo(ox+l[2]*S+j(),oy+l[3]*S+j());ctx.stroke();
+  });
+  // Dämonen
+  const keys=Object.keys(sc);
+  const bx=ox+S+58, bw=w-bx-150, n=keys.length;
+  const rowH=Math.min(34,(h-70)/n);
+  let maxK=keys[0];keys.forEach(k=>{if(sc[k]>sc[maxK])maxK=k;});
+  keys.forEach((k,i)=>{
+    const y=36+i*rowH;
+    const isW=k===maxK;
+    txt(ctx,k+'-Dämon',bx-10,y+rowH/2-4,isW?C.acc:C.dim,12,'right');
+    const bl=clamp(sc[k],0,1.2)/1.2*bw;
+    const g=ctx.createLinearGradient(bx,0,bx+bl,0);
+    g.addColorStop(0,isW?'rgba(255,138,61,.95)':'rgba(80,110,170,.5)');
+    g.addColorStop(1,isW?'rgba(176,107,255,.9)':'rgba(60,85,135,.4)');
+    ctx.fillStyle=g;roundRect(ctx,bx,y,bl,rowH-10,4);ctx.fill();
+    txt(ctx,sc[k].toFixed(2),bx+bl+8,y+(rowH-10)/2,isW?C.acc:C.dim,11);
+    // Schrei-Wellen
+    if(isW){
+      ctx.strokeStyle='rgba(255,138,61,.35)';ctx.lineWidth=1.2;
+      for(let r=1;r<=3;r++){ctx.beginPath();
+        ctx.arc(bx+bl+34,y+(rowH-10)/2,6+r*6,-0.7,0.7);ctx.stroke();}
+    }
+  });
+  // Entscheidungsdämon
+  const dx=w-108, dy=h/2-34;
+  ctx.fillStyle='rgba(176,107,255,.14)';ctx.strokeStyle=C.acc3;ctx.lineWidth=1.5;
+  roundRect(ctx,dx,dy,92,70,10);ctx.fill();ctx.stroke();
+  txt(ctx,'ENTSCHEIDUNG',dx+46,dy+18,C.acc3,9.5,'center');
+  txt(ctx,maxK,dx+46,dy+44,'#fff',26,'center');
+  const sorted=keys.map(k=>sc[k]).sort((a,b)=>b-a);
+  const marg=sorted[0]-sorted[1];
+  $('idealStat').innerHTML='Lautester Schrei: <b>'+maxK+'</b> ('+sorted[0].toFixed(2)+
+    '), zweitlautester '+sorted[1].toFixed(2)+' → Vorsprung <b style="color:'+(marg>.2?C.good:C.bad)+'">'+marg.toFixed(2)+'</b>. '+
+    (marg>.2?'Eindeutige Entscheidung.':'Knapp — genau hier wird es später um Selbstvertrauen gehen.');
+}
+
+/* =======================================================================
+   2b — ARCHITEKTUR (4 Ebenen)
+   ======================================================================= */
+let archLvl=0, archTimer=null;
+const ARCH_TXT=[
+  'Ebene 1: Daten-Dämonen halten das rohe Bild (hier: 9 Dauern des Morse-Stroms).',
+  'Ebene 2: Rechnende Subdämonen messen je ein Merkmal — „ist d₀ das Maximum?“, „ist d₀ = d₋₂?“ …',
+  'Ebene 3: Kognitive Dämonen bilden gewichtete Summen der Merkmale und schreien.',
+  'Ebene 4: Der Entscheidungs-Dämon nimmt kommentarlos den lautesten Schrei. Fertig.'
+];
+let archData=[];
+function archReset(){
+  archLvl=0;if(archTimer){clearInterval(archTimer);archTimer=null;}
+  archData=Array.from({length:9},()=>0.6+Math.random()*2.6);
+  archData[4]= Math.random()<0.5? 0.8+Math.random()*0.5 : 2.4+Math.random()*0.9;
+  drawArch();
+}
+function archStep(){archLvl=Math.min(3,archLvl+1);drawArch();}
+function archAuto(){
+  if(archTimer)clearInterval(archTimer);
+  archLvl=0;drawArch();
+  archTimer=setInterval(()=>{archLvl++;if(archLvl>3){clearInterval(archTimer);archTimer=null;archLvl=3;}drawArch();},850);
+}
+function drawArch(){
+  const {ctx,w,h}=dpi($('cvArch'));clear(ctx,w,h);
+  const rows=[h-54, h-152, h-258, 48];
+  const act=archLvl;
+  // Ebene 1: Daten
+  const n=archData.length, dw=Math.min(52,(w-80)/n), gx=(w-n*dw-(n-1)*8)/2;
+  const mean=archData.reduce((a,b)=>a+b,0)/n, maxv=Math.max(...archData);
+  for(let i=0;i<n;i++){
+    const x=gx+i*(dw+8);
+    const on=act>=0;
+    ctx.fillStyle=on?(i===4?'rgba(255,138,61,.8)':'rgba(69,212,255,.45)'):'rgba(255,255,255,.07)';
+    roundRect(ctx,x,rows[0]-24,dw,30,5);ctx.fill();
+    txt(ctx,archData[i].toFixed(1),x+dw/2,rows[0]-9,'#06101c',11,'center');
+    txt(ctx,'d'+(i-4),x+dw/2,rows[0]+18,i===4?C.acc:C.dim,10,'center');
+  }
+  txt(ctx,'① DATEN-DÄMONEN',16,rows[0]-44,act>=0?C.acc2:'rgba(140,170,255,.3)',11);
+  // Ebene 2: Subdämonen
+  const subs=[
+    {n:'ˡmax(d₋₃…d₃)', v: clamp((archData[4]-Math.max(...archData.slice(1,8).filter((_,k)=>k!==3)))*0.9+0.5,0,1)},
+    {n:'d₀ > Av(alle)', v: clamp((archData[4]-mean)/2+0.5,0,1)},
+    {n:'d₀ = d₋₂',      v: clamp(1-Math.abs(archData[4]-archData[2])/2,0,1)},
+    {n:'d₀ / max',      v: clamp(archData[4]/maxv,0,1)},
+    {n:'Av(d₋₂…d₂)',    v: clamp(mean/3.2,0,1)}
+  ];
+  const sw=Math.min(118,(w-60)/subs.length-10), sgx=(w-subs.length*(sw+12)+12)/2;
+  subs.forEach((s,i)=>{
+    const x=sgx+i*(sw+12), on=act>=1;
+    ctx.fillStyle=on?'rgba(176,107,255,.14)':'rgba(255,255,255,.03)';
+    ctx.strokeStyle=on?'rgba(176,107,255,.6)':'rgba(140,170,255,.16)';ctx.lineWidth=1.3;
+    roundRect(ctx,x,rows[1]-26,sw,44,8);ctx.fill();ctx.stroke();
+    txt(ctx,s.n,x+sw/2,rows[1]-12,on?'#e6daff':'rgba(200,210,235,.35)',10.5,'center');
+    if(on){
+      ctx.fillStyle='rgba(176,107,255,.75)';
+      ctx.fillRect(x+8,rows[1]+6,(sw-16)*s.v,6);
+      ctx.strokeStyle='rgba(176,107,255,.3)';ctx.strokeRect(x+8,rows[1]+6,sw-16,6);
+      txt(ctx,s.v.toFixed(2),x+sw/2,rows[1]+26,C.acc3,9.5,'center');
+    }
+    if(act>=1){ // Linien nach unten
+      ctx.strokeStyle='rgba(176,107,255,.16)';ctx.lineWidth=1;
+      for(let k=0;k<n;k+=2){
+        ctx.beginPath();ctx.moveTo(x+sw/2,rows[1]+18);
+        ctx.lineTo(gx+k*(dw+8)+dw/2,rows[0]-24);ctx.stroke();
+      }
+    }
+  });
+  txt(ctx,'② RECHNENDE SUBDÄMONEN',16,rows[1]-44,act>=1?C.acc3:'rgba(140,170,255,.3)',11);
+  // Ebene 3: Kognitive
+  const W0=[0.9,0.85,0.15,0.9,-0.4], W1=[-0.85,-0.8,0.1,-0.85,0.45];
+  const shDot=subs.reduce((a,s,i)=>a+W0[i]*s.v,0)+0.9;
+  const shDash=subs.reduce((a,s,i)=>a+W1[i]*s.v,0)+0.9;
+  const cg=[{n:'PUNKT',v:shDot,c:C.acc2},{n:'STRICH',v:shDash,c:C.acc}];
+  const cw=150, cgx=(w-2*cw-40)/2;
+  cg.forEach((c,i)=>{
+    const x=cgx+i*(cw+40), on=act>=2;
+    const win = act>=3 && c.v===Math.max(shDot,shDash);
+    ctx.fillStyle=on?(win?'rgba(255,138,61,.18)':'rgba(255,255,255,.04)'):'rgba(255,255,255,.03)';
+    ctx.strokeStyle=on?(win?C.acc:'rgba(140,170,255,.35)'):'rgba(140,170,255,.14)';ctx.lineWidth=win?2:1.3;
+    roundRect(ctx,x,rows[2]-28,cw,52,9);ctx.fill();ctx.stroke();
+    txt(ctx,c.n+'-DÄMON',x+cw/2,rows[2]-12,on?c.c:'rgba(200,210,235,.3)',11,'center');
+    if(on){
+      txt(ctx,'Schrei = '+c.v.toFixed(2),x+cw/2,rows[2]+8,on?'#fff':C.dim,12,'center');
+      ctx.fillStyle=c.c+'';ctx.globalAlpha=.55;
+      ctx.fillRect(x+10,rows[2]+18,(cw-20)*clamp(c.v/2.4,0,1),4);ctx.globalAlpha=1;
+      ctx.strokeStyle='rgba(140,170,255,.12)';ctx.lineWidth=1;
+      subs.forEach((s,k)=>{ctx.beginPath();ctx.moveTo(x+cw/2,rows[2]+24);
+        ctx.lineTo(sgx+k*(sw+12)+sw/2,rows[1]-26);ctx.stroke();});
+    }
+  });
+  txt(ctx,'③ KOGNITIVE DÄMONEN',16,rows[2]-46,act>=2?C.acc:'rgba(140,170,255,.3)',11);
+  // Ebene 4
+  const on3=act>=3, dxx=w/2-80;
+  ctx.fillStyle=on3?'rgba(69,232,160,.14)':'rgba(255,255,255,.03)';
+  ctx.strokeStyle=on3?C.good:'rgba(140,170,255,.16)';ctx.lineWidth=1.5;
+  roundRect(ctx,dxx,rows[3]-22,160,46,10);ctx.fill();ctx.stroke();
+  txt(ctx,'④ ENTSCHEIDUNGS-DÄMON',dxx+80,rows[3]-6,on3?C.good:'rgba(200,210,235,.3)',10,'center');
+  if(on3){
+    const r=shDot>shDash?'PUNKT':'STRICH';
+    txt(ctx,'→ '+r,dxx+80,rows[3]+13,'#fff',15,'center');
+    ctx.strokeStyle='rgba(69,232,160,.3)';ctx.lineWidth=1.2;
+    cg.forEach((c,i)=>{ctx.beginPath();ctx.moveTo(dxx+80,rows[3]+24);
+      ctx.lineTo(cgx+i*(cw+40)+cw/2,rows[2]-28);ctx.stroke();});
+  }
+  $('archStat').innerHTML=ARCH_TXT[act];
+}
+
+/* =======================================================================
+   3 — WEICHE OPERATOREN
+   ======================================================================= */
+function softEq(r,s){return Math.exp(-Math.pow((r-1)/Math.max(.02,s),2))}
+function softGt(r,s){return 1/(1+Math.exp(-(r-1)/Math.max(.02,s)*2.2))}
+function drawSoft(){
+  const s=+$('sSoft').value/100, r0=+$('sRat').value/100;
+  $('vSoft').textContent=s.toFixed(2);$('vRat').textContent=r0.toFixed(2);
+  const xs=[],e=[],g=[],eh=[],gh=[];
+  for(let x=0.2;x<=2.5;x+=0.01){
+    xs.push(x);e.push(softEq(x,s));g.push(softGt(x,s));
+    eh.push(Math.abs(x-1)<0.03?1:0); gh.push(x>1?1:0);
+  }
+  Plotly.react('plSoft',[
+    {x:xs,y:eh,mode:'lines',name:'hart: d₀ = d₂',line:{color:'rgba(140,170,255,.35)',width:1.4,dash:'dot'}},
+    {x:xs,y:gh,mode:'lines',name:'hart: d₀ > d₂',line:{color:'rgba(255,138,61,.3)',width:1.4,dash:'dot'}},
+    {x:xs,y:e,mode:'lines',name:'weich: d₀ = d₂',line:{color:C.acc2,width:3}},
+    {x:xs,y:g,mode:'lines',name:'weich: d₀ > d₂',line:{color:C.acc,width:3}},
+    {x:[r0,r0],y:[0,1.05],mode:'lines',name:'aktuell',line:{color:'#fff',width:1.2,dash:'dash'}},
+    {x:[r0,r0],y:[softEq(r0,s),softGt(r0,s)],mode:'markers',showlegend:false,
+     marker:{color:[C.acc2,C.acc],size:11}}
+  ],L({title:{text:'Abbildung 8: Output der Subdämonen über d₀/d₂',font:{size:13,color:C.txt}},
+      xaxis:{title:'d₀ / d₂'},yaxis:{title:'Output',range:[-.05,1.1]}}),PCFG);
+  $('softStat').innerHTML='Bei d₀/d₂ = <b>'+r0.toFixed(2)+'</b>: „=“ liefert <b style="color:'+C.acc2+'">'+
+    softEq(r0,s).toFixed(3)+'</b>, „&gt;“ liefert <b style="color:'+C.acc+'">'+softGt(r0,s).toFixed(3)+'</b>. '+
+    (s<0.08?'<span style="color:'+C.bad+'">Fast binär: Die Kurve ist flach — ein kleiner Gewichtsschritt ändert nichts. Kein Gradient, kein Lernen.</span>'
+           :'Die Rampe liefert für jede kleine Änderung eine kleine Antwort — darauf kann Hill-Climbing aufsetzen.');
+}
+
+/* 3b — Operatoren auf echtem Strom */
+const OPS=[
+  {k:'=',  n:'„=“ Grad der Gleichheit', d:'Wie gleich sind d₀ und d₋₂?',
+   f:(a,i)=>clamp(1-Math.abs(a[i]-a[i-2>=0?i-2:0])/2,0,1)},
+  {k:'>',  n:'„&gt;“ Grad des Größerseins', d:'Wie stark ist d₀ größer als d₋₁?',
+   f:(a,i)=>1/(1+Math.exp(-(a[i]-a[Math.max(0,i-1)])*1.6))},
+  {k:'max',n:'„ˡmax“ lokales Maximum', d:'Ist d₀ das Größte von d₋₃ … d₃?',
+   f:(a,i)=>{const lo=Math.max(0,i-3),hi=Math.min(a.length-1,i+3);let m=-1e9;
+     for(let k=lo;k<=hi;k++)if(k!==i)m=Math.max(m,a[k]);return clamp((a[i]-m)/1.5+0.5,0,1)}},
+  {k:'Av', n:'„Av“ Mittelwert', d:'Mittel von d₋₅ … d₅ (normiert)',
+   f:(a,i)=>{const lo=Math.max(0,i-5),hi=Math.min(a.length-1,i+5);let s=0,c=0;
+     for(let k=lo;k<=hi;k++){s+=a[k];c++}return clamp(s/c/3.2,0,1)}},
+  {k:'M',  n:'„M“ Tracking-Mittel', d:'Exponentiell geglättet: αM + (1−α)d',
+   f:(a,i)=>{let m=a[0];for(let k=1;k<=i;k++)m=0.82*m+0.18*a[k];return clamp(m/3.2,0,1)}},
+  {k:'O/A',n:'„Oᵢ/Aᵢ“ bisherige Urteile', d:'Wurde die i-te Dauer als Punkt erkannt?',
+   f:(a,i)=>clamp(1-(a[i
+]-1)/2,0,1)},
+  {k:'Ox', n:'„Ox/Ax“ letzter Punkt/Strich', d:'Dauer des zuletzt als Punkt erkannten Zeichens',
+   f:(a,i)=>{for(let k=i-1;k>=0;k--){if(a[k]<2)return clamp(a[k]/2,0,1)}return .5}}
+];
+let opSel=2, opData=[];
+function buildOpBtns(){
+  const c=$('opBtns');c.innerHTML='';
+  OPS.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className = i===opSel?'':'ghost';
+    b.innerHTML=o.k;
+    b.onclick=()=>{opSel=i;buildOpBtns();drawOps();};
+    c.appendChild(b);
+  });
+}
+function newOpData(){opData=Array.from({length:22},()=>Math.random()<0.45?0.7+Math.random()*0.8:2.2+Math.random()*1.4);}
+function drawOps(){
+  const {ctx,w,h}=dpi($('cvOps'));clear(ctx,w,h);
+  const op=OPS[opSel], n=opData.length;
+  const bw=(w-50)/n, y0=h*0.44, maxv=Math.max(...opData);
+  txt(ctx,op.n.replace('&gt;','>'),20,18,C.acc,12.5);
+  txt(ctx,op.d,20,36,C.dim,11);
+  const vals=opData.map((_,i)=>op.f(opData,i));
+  for(let i=0;i<n;i++){
+    const x=24+i*bw, bh=(opData[i]/maxv)*62;
+    ctx.fillStyle=opData[i]>2?'rgba(255,138,61,.42)':'rgba(69,212,255,.42)';
+    ctx.fillRect(x,y0-bh,bw-3,bh);
+    const v=vals[i], vh=v*58;
+    const g=ctx.createLinearGradient(0,y0+6,0,y0+6+vh);
+    g.addColorStop(0,'rgba(176,107,255,.95)');g.addColorStop(1,'rgba(176,107,255,.25)');
+    ctx.fillStyle=g;ctx.fillRect(x,y0+6,bw-3,vh);
+  }
+  ctx.strokeStyle='rgba(140,170,255,.3)';ctx.beginPath();ctx.moveTo(20,y0+2);ctx.lineTo(w-20,y0+2);ctx.stroke();
+  txt(ctx,'↑ Eingangsdauern (Daten-Dämonen)',24,y0-72,C.dim,10);
+  txt(ctx,'↓ Output dieses Subdämons, 0…1 — weich, nie nur 0/1',24,h-16,C.acc3,10);
+  const mn=Math.min(...vals),mx=Math.max(...vals);
+  $('opStat').innerHTML='Output-Spanne dieses Subdämons: <b>'+mn.toFixed(2)+' … '+mx.toFixed(2)+'</b>. '+
+    'Er gibt nie bloß „ja“ oder „nein“ — <span style="color:'+C.acc3+'">jede Zwischenstufe trägt Information.</span>';
+}
+
+/* =======================================================================
+   4 — GEWICHTE
+   ======================================================================= */
+let wData=[];
+function wNew(){wData=Array.from({length:9},()=>Math.random()<0.45?0.7+Math.random()*0.7:2.3+Math.random()*1.2);}
+function wFeat(){
+  const a=wData, i=4;
+  const mean=a.reduce((x,y)=>x+y,0)/a.length;
+  const others=a.filter((_,k)=>k!==i);
+  return [
+    {n:'d₀ < Mittelwert', v:clamp(1-(a[i]-mean)/2.4-0.0,0,1)},
+    {n:'d₀ ist Maximum',  v:clamp((a[i]-Math.max(...others))/1.6+0.5,0,1)},
+    {n:'d₀ = d₋₂',        v:clamp(1-Math.abs(a[i]-a[2])/2.2,0,1)}
+  ];
+}
+function wNext(){wNew();drawW();}
+function wBest(){[80,-60,20,-70,90,10].forEach((v,i)=>$('sW'+i).value=v);drawW();}
+function wZero(){for(let i=0;i<6;i++)$('sW'+i).value=0;drawW();}
+function drawW(){
+  const {ctx,w,h}=dpi($('cvWeights'));clear(ctx,w,h);
+  const W=[];for(let i=0;i<6;i++){W.push(+$('sW'+i).value/100);$('vW'+i).textContent=W[i].toFixed(2);}
+  const F=wFeat();
+  const truth = wData[4]>2 ? 'STRICH':'PUNKT';
+  // Merkmalsspalte
+  const fx=24, fw=180;
+  txt(ctx,'SUBDÄMONEN',fx,20,C.acc3,10.5);
+  F.forEach((f,i)=>{
+    const y=44+i*58;
+    txt(ctx,f.n,fx,y,C.txt,12);
+    ctx.fillStyle='rgba(255,255,255,.06)';roundRect(ctx,fx,y+10,fw,10,5);ctx.fill();
+    ctx.fillStyle='rgba(176,107,255,.85)';roundRect(ctx,fx,y+10,fw*f.v,10,5);ctx.fill();
+    txt(ctx,f.v.toFixed(2),fx+fw+10,y+15,C.acc3,11);
+  });
+  // Zwei Dämonen
+  const dot=F.reduce((a,f,i)=>a+W[i]*f.v,0);
+  const dash=F.reduce((a,f,i)=>a+W[i+3]*f.v,0);
+  const cx=w*0.63, cw=w-cx-30;
+  [['PUNKT',dot,C.acc2],['STRICH',dash,C.acc]].forEach((d,i)=>{
+    const y=50+i*86;
+    const win = (d[1]===Math.max(dot,dash));
+    txt(ctx,d[0]+'-DÄMON',cx,y-16,d[2],11);
+    const mid=cx+cw/2;
+    ctx.strokeStyle='rgba(140,170,255,.2)';ctx.beginPath();ctx.moveTo(mid,y-4);ctx.lineTo(mid,y+30);ctx.stroke();
+    const len=clamp(d[1],-1.6,1.6)/1.6*(cw/2);
+    ctx.fillStyle=d[2];ctx.globalAlpha=win?.9:.4;
+    roundRect(ctx,len>=0?mid:mid+len,y+6,Math.abs(len),18,4);ctx.fill();ctx.globalAlpha=1;
+    txt(ctx,'Schrei = '+d[1].toFixed(2),cx,y+44,win?'#fff':C.dim,12);
+    if(win){ctx.strokeStyle=d[2];ctx.lineWidth=1.4;
+      roundRect(ctx,cx-8,y-26,cw+14,76,8);ctx.stroke();}
+  });
+  // Ergebnis
+  const pred=dot>dash?'PUNKT':'STRICH';
+  const ok=pred===truth;
+  txt(ctx,'Entscheidung: '+pred,cx,h-34,ok?C.good:C.bad,15);
+  txt(ctx,'Wahrheit: '+truth+(ok?'  ✓':'  ✗'),cx,h-14,ok?C.good:C.bad,11.5);
+  // kleine Dauernanzeige
+  const sx=24,sy=h-54, sw2=(fw+40)/wData.length;
+  wData.forEach((d,i)=>{
+    ctx.fillStyle=i===4?C.acc:'rgba(120,150,210,.4)';
+    ctx.fillRect(sx+i*sw2,sy+28-(d/3.6)*28,sw2-2,(d/3.6)*28);
+  });
+  txt(ctx,'aktuelles Zeichen d₀ (orange) im Kontext',sx,sy-6,C.dim,10);
+  // Bewertung vieler Zeichen
+  let score=0,N=400;
+  for(let t=0;t<N;t++){
+    const a=Array.from({length:9},()=>Math.random()<0.45?0.7+Math.random()*0.7:2.3+Math.random()*1.2);
+    const save=wData;wData=a;const f=wFeat();wData=save;
+    const dt=f.reduce((x,y,k)=>x+W[k]*y.v,0), ds=f.reduce((x,y,k)=>x+W[k+3]*y.v,0);
+    if(((dt>ds)?'PUNKT':'STRICH')===(a[4]>2?'STRICH':'PUNKT'))score++;
+  }
+  const pc=100*score/N;
+  $('wStat').innerHTML='Diese Gewichte über 400 Zeichen: <b style="color:'+
+    (pc>80?C.good:pc>60?C.acc:C.bad)+'">'+pc.toFixed(1)+' % richtig</b>. '+
+    'Das ist die „Höhe“ auf dem Hügel — die Zahl, die Hill-Climbing gleich maximieren wird.';
+}
+
+/* 4b — Fluch der Dimension */
+function drawCurse(){
+  const d=+$('sDim').value;$('vDim').textContent=d;
+  const xs=[],ys=[];
+  for(let k=1;k<=40;k++){xs.push(k);ys.push(k);}
+  Plotly.react('plCurse',[
+    {x:xs,y:ys.map(k=>k),type:'scatter',mode:'lines',name:'log₁₀(Möglichkeiten)',
+     line:{color:C.acc,width:3},fill:'tozeroy',fillcolor:'rgba(255,138,61,.09)'},
+    {x:[d],y:[d],mode:'markers',name:'aktuell',marker:{color:C.good,size:12,symbol:'diamond'}},
+    {x:xs,y:xs.map(()=>Math.log10(1e18)),mode:'lines',name:'Atome in einem Tropfen Wasser',
+     line:{color:C.bad,width:1.4,dash:'dot'}}
+  ],L({title:{text:'Größe des Suchraums (10 Stufen pro Gewicht)',font:{size:13,color:C.txt}},
+      xaxis:{title:'Dimension'},yaxis:{title:'log₁₀ der Anzahl'}}),PCFG);
+  const ms = Math.pow(10,d)/1e9;
+  let t = ms<60?ms.toFixed(1)+' Sekunden' : ms<3.15e7? (ms/86400).toFixed(1)+' Tage'
+        : (ms/3.15e7).toExponential(2)+' Jahre';
+  $('curseStat').innerHTML='Bei '+d+' Gewichten: <b>10<sup>'+d+'</sup></b> Kombinationen. '+
+    'Mit 1 Milliarde Tests pro Sekunde: <b style="color:'+(d>12?C.bad:C.good)+'">'+t+'</b>. '+
+    (d>=12?'Bei Selfridges 300 Gewichten ist Durchprobieren endgültig tot — <span style="color:'+C.acc+'">deshalb klettert er.</span>':'');
+}
+
+/* =======================================================================
+   5 — LANDSCHAFT & HILL-CLIMBING
+   ======================================================================= */
+let LAND={rug:.35,fp:2,foot:.55};
+function score(x,y){
+  const r=LAND.rug, f=LAND.foot, nfp=LAND.fp;
+  let s = Math.exp(-((x-0.22)**2+(y-0.12)**2)/(2*f*f))*1.0;          // Hauptgipfel
+  const peaks=[[-0.75,0.68,.62],[0.8,-0.72,.58],[-0.62,-0.78,.52],[0.86,0.76,.5],[-0.05,-0.95,.48]];
+  for(let i=0;i<nfp;i++){const p=peaks[i];
+    s += Math.exp(-((x-p[0])**2+(y-p[1])**2)/(2*0.12))*p[2];}
+  s += r*0.09*(Math.sin(5.1*x+1.3)*Math.cos(4.7*y-0.6)+Math.sin(8.3*y)*Math.cos(7.1*x));
+  return s;
+}
+function drawLand3d(){
+  LAND.rug=+$('sRug').value/100; LAND.fp=+$('sFp').value; LAND.foot=+$('sFoot').value/100;
+  $('vRug').textContent=LAND.rug.toFixed(2);$('vFp').textContent=LAND.fp;$('vFoot').textContent=LAND.foot.toFixed(2);
+  const N=58, xs=[],ys=[],z=[];
+  for(let i=0;i<N;i++){xs.push(-1.4+2.8*i/(N-1));ys.push(-1.4+2.8*i/(N-1));}
+  for(let j=0;j<N;j++){const row=[];for(let i=0;i<N;i++)row.push(score(xs[i],ys[j]));z.push(row);}
+  Plotly.react('plLand3d',[{z,x:xs,y:ys,type:'surface',
+    colorscale:[[0,'#0a1020'],[.35,'#2b2f66'],[.6,'#8c3fa0'],[.82,'#ff8a3d'],[1,'#ffe6a0']],
+    showscale:false,contours:{z:{show:true,usecolormap:true,project:{z:true}}}}],
+    L({title:{text:'Die Score-Landschaft über den Gewichten',font:{size:13,color:C.txt}},
+      scene:{xaxis:{title:'λ₁',color:C.dim,gridcolor:'rgba(140,170,255,.12)'},
+             yaxis:{title:'λ₂',color:C.dim,gridcolor:'rgba(140,170,255,.12)'},
+             zaxis:{title:'Score',color:C.dim,gridcolor:'rgba(140,170,255,.12)'},
+             bgcolor:'rgba(0,0,0,0)',
+             camera:{eye:{x:1.5,y:-1.6,z:1.0}}},
+      margin:{l:0,r:0,t:30,b:0},showlegend:false}),PCFG);
+  drawHC1();drawHC2();drawNoise();drawPlateau();
+}
+/* Konturzeichner für 2D-Canvas */
+function paintField(ctx,w,h,fn,lo,hi){
+  const img=ctx.createImageData(w,h);
+  for(let py=0;py<h;py++)for(let px=0;px<w;px++){
+    const x=-1.4+2.8*px/w, y=1.4-2.8*py/h;
+    const v=clamp((fn(x,y)-lo)/(hi-lo),0,1);
+    const i=(py*w+px)*4;
+    // Farbrampe
+    let r,g,b;
+    if(v<.35){const t=v/.35;r=10+t*33;g=16+t*31;b=32+t*70;}
+    else if(v<.62){const t=(v-.35)/.27;r=43+t*97;g=47+t*16;b=102+t*58;}
+    else if(v<.85){const t=(v-.62)/.23;r=140+t*115;g=63+t*75;b=160-t*99;}
+    else {const t=(v-.85)/.15;r=255;g=138+t*110;b=61+t*100;}
+    img.data[i]=r;img.data[i+1]=g;img.data[i+2]=b;img.data[i+3]=255;
+  }
+  ctx.putImageData(img,0,0);
+  // Konturlinien
+  ctx.strokeStyle='rgba(255,255,255,.08)';ctx.lineWidth=1;
+  for(let L0=lo;L0<hi;L0+=(hi-lo)/11){
+    ctx.beginPath();
+    for(let py=1;py<h;py+=2)for(let px=1;px<w;px+=2){
+      const x=-1.4+2.8*px/w,y=1.4-2.8*py/h;
+      const v=fn(x,y), v2=fn(-1.4+2.8*(px+2)/w,y);
+      if((v-L0)*(v2-L0)<0){ctx.moveTo(px,py);ctx.lineTo(px+1,py);}
+    }
+    ctx.stroke();
+  }
+}
+function toPx(x,y,w,h){return [ (x+1.4)/2.8*w, (1.4-y)/2.8*h ];}
+let hc1pts=[];
+function hc1clear(){hc1pts=[];drawHC1();}
+function hc1run(){
+  const n=+$('sN1').value;
+  hc1pts=[];let best=-9,bi=0;
+  for(let i=0;i<n;i++){
+    const x=rnd(1.35),y=rnd(1.35),s=score(x,y);
+    hc1pts.push({x,y,s});if(s>best){best=s;bi=i;}
+  }
+  hc1pts.forEach((p,i)=>p.best=(i===bi));
+  drawHC1();
+}
+function drawHC1(){
+  const {ctx,w,h}=dpi($('cvHC1'));
+  $('vN1').textContent=$('sN1').value;
+  paintField(ctx,w,h,score,-.25,1.35);
+  hc1pts.forEach(p=>{
+    const [px,py]=toPx(p.x,p.y,w,h);
+    ctx.strokeStyle=p.best?C.good:'rgba(255,255,255,.75)';
+    ctx.lineWidth=p.best?2.4:1.3;
+    ctx.beginPath();ctx.moveTo(px-5,py-5);ctx.lineTo(px+5,py+5);
+    ctx.moveTo(px+5,py-5);ctx.lineTo(px-5,py+5);ctx.stroke();
+  });
+  const b=hc1pts.find(p=>p.best);
+  if(b){const [px,py]=toPx(b.x,b.y,w,h);
+    ctx.strokeStyle=C.good;ctx.lineWidth=2;ctx.beginPath();ctx.arc(px,py,13,0,TAU);ctx.stroke();
+    txt(ctx,'bester Treffer: '+b.s.toFixed(3),px+18,py,C.good,11.5);}
+  txt(ctx,'Abb. 4 — reine Zufallssuche',14,18,'#fff',12);
+  const trueMax=score(.22,.12);
+  if(b)$('hc1Stat').innerHTML=hc1pts.length+' Proben, bester Wert <b>'+b.s.toFixed(3)+
+    '</b> von maximal '+trueMax.toFixed(3)+' → <b style="color:'+(b.s/trueMax>.9?C.good:C.bad)+'">'+
+    (100*b.s/trueMax).toFixed(0)+' % des Optimums</b>. In 2D geht das noch. In 300D ist jeder Zufallspunkt praktisch wertlos.';
+  else $('hc1Stat').textContent='Starte die Zufallssuche.';
+}
+/* Technik 2 */
+let hc2paths=[], hc2anim=null;
+function hc2clear(){hc2paths=[];if(hc2anim){cancelAnimationFrame(hc2anim);hc2anim=null;}drawHC2();Plotly.purge('plHC2');}
+function makeClimber(){
+  const seeds=+$('sSeed').value;
+  let best={x:0,y:0,s:-9}, probes=[];
+  for(let i=0;i<seeds;i++){
+    const x=rnd(1.3),y=rnd(1.3),s=score(x,y);
+    probes.push({x,y,s});if(s>best.s)best={x,y,s};
+  }
+  return {x:best.x,y:best.y,s:best.s,path:[[best.x,best.y]],hist:[best.s],probes,stuck:0,done:false};
+}
+function hc2run(){hc2paths=[makeClimber()];animHC2();}
+function hc2many(n){hc2paths=[];for(let i=0;i<n;i++)hc2paths.push(makeClimber());animHC2();}
+function animHC2(){
+  if(hc2anim)cancelAnimationFrame(hc2anim);
+  const stepFn=()=>{
+    const st=+$('sStep').value/1000, spd=+$('sSpd').value;
+    let alive=false;
+    for(let k=0;k<spd;k++){
+      hc2paths.forEach(c=>{
+        if(c.done)return;alive=true;
+        let moved=false;
+        for(let tr=0;tr<8;tr++){
+          const nx=clamp(c.x+gauss()*st,-1.4,1.4), ny=clamp(c.y+gauss()*st,-1.4,1.4);
+          const s=score(nx,ny);
+          if(s>c.s){c.x=nx;c.y=ny;c.s=s;c.path.push([nx,ny]);c.hist.push(s);moved=true;c.stuck=0;break;}
+        }
+        if(!moved){c.stuck++;if(c.stuck>26)c.done=true;}
+      });
+    }
+    drawHC2();
+    if(alive)hc2anim=requestAnimationFrame(stepFn);else {hc2anim=null;hc2plot();}
+  };
+  stepFn();
+}
+function drawHC2(){
+  const {ctx,w,h}=dpi($('cvHC2'));
+  $('vSeed').textContent=$('sSeed').value;
+  $('vStep').textContent=(+$('sStep').value/1000).toFixed(3);
+  $('vSpd').textContent=$('sSpd').value;
+  paintField(ctx,w,h,score,-.25,1.35);
+  const cols=[C.acc2,C.acc,C.acc3,C.good,'#ffd166','#ff6fae','#7cf7c4','#9fb4ff','#ff9f68','#6fe3ff','#c8a2ff','#ffe28a'];
+  hc2paths.forEach((c,ci)=>{
+    const col=cols[ci%cols.length];
+    if(hc2paths.length===1) c.probes.forEach(p=>{
+      const [px,py]=toPx(p.x,p.y,w,h);
+      ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(px-4,py-4);ctx.lineTo(px+4,py+4);
+      ctx.moveTo(px+4,py-4);ctx.lineTo(px-4,py+4);ctx.stroke();
+    });
+    ctx.strokeStyle=col;ctx.lineWidth=1.9;ctx.beginPath();
+    c.path.forEach((p,i)=>{const [px,py]=toPx(p[0],p[1],w,h);i?ctx.lineTo(px,py):ctx.moveTo(px,py);});
+    ctx.stroke();
+    const [sx,sy]=toPx(c.path[0][0],c.path[0][1],w,h);
+    ctx.fillStyle='rgba(255,255,255,.9)';ctx.beginPath();ctx.arc(sx,sy,4.5,0,TAU);ctx.fill();
+    const [ex,ey]=toPx(c.x,c.y,w,h);
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(ex,ey,c.done?6:4.5,0,TAU);ctx.fill();
+    if(c.done){ctx.strokeStyle=col;ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(ex,ey,11,0,TAU);ctx.stroke();}
+  });
+  txt(ctx,'Abb. 5 — raten, dann tasten (× = Vorproben, Linie = Aufstieg)',14,18,'#fff',12);
+  const trueMax=score(.22,.12);
+  if(hc2paths.length){
+    const fin=hc2paths.filter(c=>c.done).length;
+    const best=Math.max(...hc2paths.map(c=>c.s));
+    const onTop=hc2paths.filter(c=>c.s>0.92*trueMax).length;
+    $('hc2Stat').innerHTML='Bergsteiger: '+hc2paths.length+', angekommen: '+fin+
+      '. Bester Wert <b>'+best.toFixed(3)+'</b> / '+trueMax.toFixed(3)+'. '+
+      '<b style="color:'+(onTop===hc2paths.length?C.good:C.acc)+'">'+onTop+' von '+hc2paths.length+
+      ' auf dem Hauptgipfel</b>'+(onTop<hc2paths.length?' — der Rest klebt auf falschen Gipfeln.':' — alle oben.');
+  }
+}
+function hc2plot(){
+  const tr=hc2paths.map((c,i)=>({y:c.hist,mode:'lines',name:'Bergsteiger '+(i+1),
+    line:{width:2}}));
+  Plotly.react('plHC2',tr,L({title:{text:'Score über die Schritte („Lernkurve“)',font:{size:12,color:C.txt}},
+    xaxis:{title:'akzeptierte Schritte'},yaxis:{title:'Score'},showlegend:hc2paths.length<5}),PCFG);
+}
+
+/* =======================================================================
+   6 — FALSCHE GIPFEL
+   ======================================================================= */
+function drawTrap(){
+  const p=+$('sP').value/100;$('vP').textContent=p.toFixed(2);
+  const xs=[],ys=[];
+  for(let n=1;n<=300;n++){xs.push(n);ys.push(Math.pow(p,n)*100);}
+  Plotly.react('plTrap',[
+    {x:xs,y:ys,mode:'lines',name:'Chance, echt gefangen zu sein',line:{color:C.bad,width:3},
+     fill:'tozeroy',fillcolor:'rgba(255,95,109,.10)'},
+    {x:[2,300],y:[Math.pow(p,2)*100,Math.pow(p,300)*100],mode:'markers',
+     name:'n=2 (Bild) / n=300 (Selfridge)',marker:{color:[C.acc,C.good],size:11,symbol:'diamond'}}
+  ],L({title:{text:'Wahrscheinlichkeit eines echten lokalen Maximums',font:{size:12.5,color:C.txt}},
+      xaxis:{title:'Dimension n',type:'log'},yaxis:{title:'% Fallen',type:'log'}}),PCFG);
+  const p2=Math.pow(p,2)*100, p300=Math.pow(p,300);
+  $('trapStat').innerHTML='In 2 Dimensionen: <b style="color:'+C.bad+'">'+p2.toFixed(1)+
+    ' %</b> der kritischen Punkte sind Fallen. In 300 Dimensionen: <b style="color:'+C.good+'">'+
+    (p300<1e-6? p300.toExponential(1): (p300*100).toFixed(6)+' %')+'</b>. '+
+    'Das ist Selfridges Hoffnung — und der Grund, warum hochdimensionale Netze trainierbar sind.';
+}
+let platPts=[];
+function platRun(){
+  platPts=[];
+  const st=0.05;
+  for(let i=0;i<60;i++){
+    let x=rnd(1.3),y=rnd(1.3),s=platScore(x,y),stuck=0;
+    for(let t=0;t<900;t++){
+      let moved=false;
+      for(let k=0;k<6;k++){
+        const nx=clamp(x+gauss()*st,-1.4,1.4),ny=clamp(y+gauss()*st,-1.4,1.4),ns=platScore(nx,ny);
+        if(ns>s){x=nx;y=ny;s=ns;moved=true;break;}
+      }
+      if(!moved){stuck++;if(stuck>18)break;}else stuck=0;
+    }
+    platPts.push({x,y,s});
+  }
+  drawPlateau();
+}
+function platScore(x,y){
+  const t=+$('sPlat').value/100;
+  const w=lerp(0.055,0.62,t);           // Nadel → Plateau
+  const amp=lerp(1.35,1.0,t);
+  let s=amp*Math.exp(-((x-0.15)**2+(y-0.05)**2)/(2*w*w));
+  s+=0.52*Math.exp(-((x+0.85)**2+(y-0.8)**2)/0.1);
+  s+=0.48*Math.exp(-((x-0.9)**2+(y+0.85)**2)/0.1);
+  s+=0.04*(Math.sin(6*x)*Math.cos(5*y));
+  return s;
+}
+function drawPlateau(){
+  const {ctx,w,h}=dpi($('cvPlateau'));
+  $('vPlat').textContent=(+$('sPlat').value/100).toFixed(2);
+  paintField(ctx,w,h,platScore,-.1,1.4);
+  platPts.forEach(p=>{
+    const [px,py]=toPx(p.x,p.y,w,h);
+    const top=p.s>0.75*platScore(.15,.05);
+    ctx.fillStyle=top?C.good:'rgba(255,95,109,.9)';
+    ctx.beginPath();ctx.arc(px,py,3.6,0,TAU);ctx.fill();
+  });
+  const t=+$('sPlat').value/100;
+  txt(ctx,t<0.3?'NADEL: steiler, schmaler Gipfel':t>0.7?'PLATEAU: breite Ausläufer':'dazwischen',14,18,'#fff',12);
+  if(platPts.length){
+    const top=platPts.filter(p=>p.s>0.75*platScore(.15,.05)).length;
+    $('platStat').innerHTML='<b style="color:'+(top>40?C.good:C.bad)+'">'+top+' von 60</b> Bergsteigern '+
+      'haben den Hauptgipfel gefunden. '+(t>0.6?
+      'Breite Ausläufer = fast jeder findet hinauf. <span style="color:'+C.acc+'">„Der Hauptgipfel ist oft ein Plateau statt einer isolierten Spitze.“</span>':
+      'Eine schmale Nadel findet fast niemand — „unless it has wide-spread foot-hills it may take a very long time before we ever begin to gain altitude.“');
+  } else $('platStat').textContent='Starte die 60 Bergsteiger.';
+}
+function drawLearn(){
+  const t=+$('sUni').value/100;$('vUni').textContent=t.toFixed(2);
+  const xs=[],uni=[],chess=[],mix=[];
+  for(let i=0;i<=100;i++){
+    const x=i/100;xs.push(x*100);
+    uni.push(100*(1/(1+Math.exp(-(x-0.62)*16))));              // lange Flaute, dann Sprung
+    chess.push(100*(1-Math.pow(1-x,0.42))*0.97);               // schneller Start, zähes Ende
+    mix.push(lerp(uni[i],chess[i],t));
+  }
+  Plotly.react('plLearn',[
+    {x:xs,y:uni,mode:'lines',name:'Einrad',line:{color:'rgba(69,212,255,.35)',width:2,dash:'dot'}},
+    {x:xs,y:chess,mode:'lines',name:'Schach',line:{color:'rgba(255,138,61,.35)',width:2,dash:'dot'}},
+    {x:xs,y:mix,mode:'lines',name:'aktuell',line:{color:C.acc3,width:3.6},fill:'tozeroy',
+     fillcolor:'rgba(176,107,255,.10)'}
+  ],L({title:{text:'Zwei Formen von Lernkurven',font:{size:12.5,color:C.txt}},
+      xaxis:{title:'Trainingsaufwand %'},yaxis:{title:'Können %'}}),PCFG);
+  $('uniStat').innerHTML = t<0.35?
+    '<b style="color:'+C.acc2+'">Einrad-Typ:</b> Lange passiert gar nichts, dann plötzlich alles. Der Fuß des Berges ist flach — <i>Training heißt hier: überhaupt auf die Ausläufer kommen.</i>'
+    : t>0.65?
+    '<b style="color:'+C.acc+'">Schach-Typ:</b> Schnelle erste Erfolge, dann wird jeder Prozentpunkt teurer. Der Gipfel ist eine Spitze.'
+    : 'Mischform — beide Phänomene treten in echten Lernproblemen gemeinsam auf.';
+}
+
+/* =======================================================================
+   7 — STOCHASTISCHES HILL-CLIMBING (PRICE)
+   ======================================================================= */
+let noisePath=null,noiseAnim=null;
+function noiseClear(){noisePath=null;if(noiseAnim)cancelAnimationFrame(noiseAnim);noiseAnim=null;drawNoise();}
+function noisyScore(x,y){
+  const sg=+$('sNo').value/100*0.28, N=+$('sSamp').value;
+  let s=0;for(let i=0;i<N;i++)s+=score(x,y)+gauss()*sg;
+  return s/N;
+}
+function noiseRun(){
+  if(noiseAnim)cancelAnimationFrame(noiseAnim);
+  let x=-0.95,y=-0.55;
+  noisePath={x,y,s:noisyScore(x,y),path:[[x,y]],hist:[],t:0};
+  const st=()=>{
+    const step=+$('sNStep').value/1000;
+    for(let k=0;k<5;k++){
+      const c=noisePath;
+      const nx=clamp(c.x+gauss()*step,-1.4,1.4),ny=clamp(c.y+gauss()*step,-1.4,1.4);
+      if(noisyScore(nx,ny)>noisyScore(c.x,c.y)){c.x=nx;c.y=ny;c.path.push([nx,ny]);}
+      c.hist.push(score(c.x,c.y));c.t++;
+    }
+    drawNoise();
+    if(noisePath.t<700)noiseAnim=requestAnimationFrame(st);else noiseAnim=null;
+  };
+  st();
+}
+function drawNoise(){
+  const {ctx,w,h}=dpi($('cvNoise'));
+  $('vNo').textContent=(+$('sNo').value/100*0.28).toFixed(3);
+  $('vSamp').textContent=$('sSamp').value;
+  $('vNStep').textContent=(+$('sNStep').value/1000).toFixed(3);
+  const sg=+$('sNo').value/100*0.28, N=+$('sSamp').value;
+  const eff=sg/Math.sqrt(N);
+  // Landschaft mit sichtbarem Rauschnebel
+  paintField(ctx,w,h,(x,y)=>score(x,y)+ (eff>0.002? eff*1.9*Math.sin(37*x)*Math.cos(41*y):0),-.25,1.35);
+  if(eff>0.01){
+    ctx.fillStyle='rgba(255,255,255,'+Math.min(.14,eff*0.45)+')';
+    for(let i=0;i<900;i++)ctx.fillRect(Math.random()*w,Math.random()*h,2,2);
+  }
+  if(noisePath){
+    ctx.strokeStyle=C.acc2;ctx.lineWidth=1.8;ctx.beginPath();
+    noisePath.path.forEach((p,i)=>{const [px,py]=toPx(p[0],p[1],w,h);i?ctx.lineTo(px,py):ctx.moveTo(px,py);});
+    ctx.stroke();
+    const [ex,ey]=toPx(noisePath.x,noisePath.y,w,h);
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(ex,ey,5,0,TAU);ctx.fill();
+  }
+  const [tx,ty]=toPx(.22,.12,w,h);
+  ctx.strokeStyle=C.good;ctx.lineWidth=1.5;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.arc(tx,ty,16,0,TAU);ctx.stroke();ctx.setLineDash([]);
+  txt(ctx,'Ziel',tx+21,ty,C.good,11);
+  txt(ctx,'Effektives Rauschen σ/√N = '+eff.toFixed(4),14,18,'#fff',12);
+  if(noisePath){
+    const fin=score(noisePath.x,noisePath.y), best=score(.22,.12);
+    $('noiseStat').innerHTML='Erreichte <i>wahre</i> Höhe: <b>'+fin.toFixed(3)+'</b> / '+best.toFixed(3)+
+      ' = <b style="color:'+(fin/best>.9?C.good:C.bad)+'">'+(100*fin/best).toFixed(0)+' %</b>. '+
+      (eff>0.08?'<span style="color:'+C.bad+'">Bei diesem Rauschen akzeptiert der Bergsteiger Schritte, die in Wahrheit abwärts führen — er irrt umher. Prices Einwand, live.</span>'
+               :'Mit genug Proben wird die Landschaft wieder fest — und der Aufstieg funktioniert.');
+  } else $('noiseStat').innerHTML='Erhöhe σ und starte: Bei kleinem Rauschen klettert er sauber, bei großem taumelt er. Mehr Stichproben mitteln das Rauschen weg — kosten aber Zeit.';
+}
+function drawSample(){
+  const D=+$('sDelta').value/1000, sg=+$('sSig').value/100;
+  $('vDelta').textContent=D.toFixed(3);$('vSig').textContent=sg.toFixed(2);
+  const xs=[],ys=[];
+  for(let n=1;n<=600;n+=2){
+    const z=D/(sg*Math.sqrt(2/n));
+    ys.push(100*0.5*(1+erf(z/Math.SQRT2)));xs.push(n);
+  }
+  const need=Math.ceil(2*Math.pow(1.645*sg/D,2));
+  Plotly.react('plSample',[
+    {x:xs,y:ys,mode:'lines',name:'Chance, den Unterschied korrekt zu sehen',
+     line:{color:C.acc2,width:3},fill:'tozeroy',fillcolor:'rgba(69,212,255,.10)'},
+    {x:[1,600],y:[95,95],mode:'lines',name:'95 %',line:{color:C.good,width:1.4,dash:'dot'}},
+    {x:[Math.min(600,need)],y:[95],mode:'markers',name:'nötige Stichprobe',
+     marker:{color:C.acc,size:12,symbol:'diamond'}}
+  ],L({title:{text:'Wie viele Proben braucht ein Vergleich zweier Punkte?',font:{size:12.5,color:C.txt}},
+      xaxis:{title:'Stichprobengröße N pro Punkt'},yaxis:{title:'Trefferchance %',range:[40,102]}}),PCFG);
+  $('sampStat').innerHTML='Für 95 % Sicherheit braucht man ca. <b style="color:'+
+    (need>200?C.bad:C.good)+'">'+need+' Proben pro Punkt</b>. Bei tausenden Tastschritten summiert sich das — '+
+    '<i>genau Prices Frage (ii): Wird Evolution dadurch praktisch unmöglich?</i>';
+}
+function erf(x){ // Abramowitz-Stegun
+  const s=x<0?-1:1;x=Math.abs(x);
+  const t=1/(1+0.3275911*x);
+  const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);
+  return s*y;
+}
+function drawEntropy(){
+  const p=+$('sPs').value/100;$('vPs').textContent=p.toFixed(2);
+  const xs=[],ys=[];
+  for(let i=1;i<=99;i++){const q=i/100;xs.push(q);
+    ys.push(-(q*Math.log2(q)+(1-q)*Math.log2(1-q)));}
+  const H=-(p*Math.log2(p)+(1-p)*Math.log2(1-p));
+  Plotly.react('plEntropy',[
+    {x:xs,y:ys,mode:'lines',name:'Information pro Rückmeldung (Bit)',
+     line:{color:C.acc3,width:3},fill:'tozeroy',fillcolor:'rgba(176,107,255,.10)'},
+    {x:[p],y:[H],mode:'markers',name:'aktuell',marker:{color:C.acc,size:13,symbol:'diamond'}}
+  ],L({title:{text:'Shannon-Entropie: Information pro „kick“',font:{size:12.5,color:C.txt}},
+      xaxis:{title:'Erfolgswahrscheinlichkeit p'},yaxis:{title:'Bit',range:[0,1.08]}}),PCFG);
+  $('entStat').innerHTML='Bei p = '+p.toFixed(2)+' trägt jede Rückmeldung <b style="color:'+
+    (H>0.8?C.good:C.bad)+'">'+H.toFixed(3)+' Bit</b>. '+
+    (p<0.15?'„Der Informationsgehalt pro Tritt ist sehr klein, wenn Erfolg und Misserfolg nicht gleich wahrscheinlich sind.“ — MacKay':
+     p>0.5?'Ein zu leichtes Problem lehrt ebenso wenig wie ein zu schweres.':
+     'Maximal lehrreich ist das Problem, bei dem man etwa die Hälfte der Zeit scheitert.');
+}
+/* MacKay-Kopplung */
+function mkRun(){
+  const dof=+$('sDof').value;
+  const T=320;
+  const runs={free:[],coupled:[]};
+  // frei: alle dof Parameter müssen gleichzeitig stimmen
+  let okF=0,hF=[];
+  for(let t=0;t<T;t++){
+    const p=Math.pow(0.55,dof);         // Trefferchance pro Versuch
+    if(Math.random()<p+0.0015*t*p*40)okF++;
+    hF.push(okF/(t+1));
+  }
+  // gekoppelt: Gruppen, die sich allmählich lösen
+  let okC=0,hC=[];
+  for(let t=0;t<T;t++){
+    const frac=Math.min(1,t/T*1.25);
+    const eff=Math.max(1,Math.round(1+ (dof-1)*frac));  // wirksame Freiheitsgrade
+    const skill=Math.min(0.92,0.55+0.42*(t/T));
+    const p=Math.pow(skill,eff);
+    if(Math.random()<p)okC++;
+    hC.push(okC/(t+1));
+  }
+  Plotly.react('plEvo2',[],{});
+  mkDraw(hF,hC,dof);
+}
+let mkCache=null;
+function mkDraw(hF,hC,dof){
+  mkCache={hF,hC,dof};
+  const {ctx,w,h}=dpi($('cvMacKay'));clear(ctx,w,h);
+  const pad=46, pw=w-pad-20, ph=h-pad-34;
+  ctx.strokeStyle='rgba(140,170,255,.2)';
+  ctx.beginPath();ctx.moveTo(pad,16);ctx.lineTo(pad,16+ph);ctx.lineTo(pad+pw,16+ph);ctx.stroke();
+  const mx=Math.max(0.05,Math.max(...hC,...hF));
+  const line=(arr,col,wd)=>{
+    ctx.strokeStyle=col;ctx.lineWidth=wd;ctx.beginPath();
+    arr.forEach((v,i)=>{const x=pad+pw*i/(arr.length-1),y=16+ph-ph*(v/mx);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+    ctx.stroke();
+  };
+  line(hF,'rgba(255,95,109,.9)',2.2);
+  line(hC,C.good,2.6);
+  txt(ctx,'alles sofort frei',pad+8,26,C.bad,11.5);
+  txt(ctx,'anfangs gekoppelt (MacKay)',pad+8,44,C.good,11.5);
+  txt(ctx,'Versuche →',pad+pw,16+ph+20,C.dim,10.5,'right');
+  txt(ctx,'Erfolgsrate',6,20,C.dim,10.5);
+  txt(ctx,'max '+(mx*100).toFixed(1)+' %',pad+pw,14,C.dim,10,'right');
+  const fF=hF[hF.length-1],fC=hC[hC.length-1];
+  $('mkStat').innerHTML='Bei '+dof+' Freiheitsgraden: frei <b style="color:'+C.bad+'">'+
+    (fF*100).toFixed(1)+' %</b> gegen gekoppelt <b style="color:'+C.good+'">'+(fC*100).toFixed(1)+' %</b>. '+
+    (dof>8?'Je mehr Freiheitsgrade, desto hoffnungsloser ist blindes Tasten — und desto größer MacKays Vorsprung.':'');
+}
+
+/* =======================================================================
+   8 — EVOLUTION DER SUBDÄMONEN
+   ======================================================================= */
+const OPNAMES=['=','>','<','max','ˡmax','Av','M','O','A'];
+let evoPop=[], evoGen=0, evoHist=[];
+function mkDemon(){
+  const op=OPNAMES[Math.floor(Math.random()*OPNAMES.length)];
+  const a=Math.floor(rnd(9)), b=Math.floor(rnd(9));
+  return {op,a,b,conj:null,
+          q: quality(op,a,b), W:0, age:0, born:evoGen, kind:'orig'};
+}
+function quality(op,a,b){
+  // „Wahrheit“ der Simulation:
+  // sinnvolle Nachbarschaft (a,b nahe 0) und starke Operatoren sind besser
+  const near = 1/(1+0.35*(Math.abs(a)+Math.abs(b)));
+  const opw = {'=':0.45,'>':0.55,'<':0.55,'max':0.75,'ˡmax':0.95,'Av':0.6,'M':0.5,'O':0.4,'A':0.4}[op];
+  return clamp(opw*near*(0.75+0.5*Math.random()),0.02,1);
+}
+function demonLabel(d){
+  if(d.conj) return d.conj.t;
+  if(d.op==='ˡmax'||d.op==='max') return d.op+'(d'+d.a+'…d'+d.b+')';
+  if(d.op==='Av')  return 'Av(d'+d.a+'…d'+d.b+')';
+  if(d.op==='M')   return 'M(d'+d.a+')';
+  if(d.op==='O'||d.op==='A') return d.op+(Math.abs(d.a)||1);
+  return 'd'+d.a+' '+d.op+' d'+d.b;
+}
+function evoReset(){
+  evoGen=0;evoHist=[];
+  evoPop=Array.from({length:28},()=>mkDemon());
+  assignWeights();drawEvo();evoPlot();
+}
+function assignWeights(){
+  // "Feature weighting" (vereinfacht): Gewicht ∝ Qualität + Rauschen, W = Σ|λ|
+  evoPop.forEach(d=>{
+    const l0=(d.q*1.6-0.35)*(0.7+0.6*Math.random());
+    const l1=-(d.q*1.6-0.35)*(0.7+0.6*Math.random());
+    d.W=Math.abs(l0)+Math.abs(l1);
+  });
+}
+function evoStep(){
+  const kill=+$('sKill').value/100, mut=+$('sMut').value/100, cj=+$('sConj').value/100;
+  evoGen++;
+  assignWeights();
+  evoPop.sort((a,b)=>b.W-a.W);
+  const nk=Math.max(1,Math.round(evoPop.length*kill));
+  const dead=evoPop.slice(evoPop.length-nk);
+  dead.forEach(d=>d.dying=true);
+  drawEvo();                                   // zeigt die Sterbenden markiert
+  const survivors=evoPop.slice(0,evoPop.length-nk);
+  const kids=[];
+  for(let i=0;i<nk;i++){
+    const p=survivors[Math.floor(Math.random()*Math.min(10,survivors.length))];
+    if(Math.random()<cj && survivors.length>1){
+      // Konjugation
+      let q=survivors[Math.floor(Math.random()*Math.min(10,survivors.length))];
+      const fn=['A·B','A·~B','~A·B','~A·~B','A∨B','A·B ∨ ~A·~B','A·~B ∨ ~A·B'][Math.floor(Math.random()*7)];
+      const k=mkDemon();
+      k.conj={t:fn.replace('A','['+demonLabel(p)+']').replace('B','['+demonLabel(q)+']')};
+      k.q=clamp((p.q+q.q)/2*(0.85+0.5*Math.random()),0.02,1);
+      k.kind='conj';k.born=evoGen;kids.push(k);
+    }else{
+      const k={op:p.op,a:p.a,b:p.b,conj:null,kind:'mut',born:evoGen};
+      if(Math.random()<0.5) k.op=OPNAMES[Math.floor(Math.random()*OPNAMES.length)];
+      k.a=clamp(Math.round(p.a+gauss()*mut*4),-9,9);
+      k.b=clamp(Math.round(p.b+gauss()*mut*4),-9,9);
+      k.q=clamp(p.q+gauss()*mut*0.35,0.02,1);
+      kids.push(k);
+    }
+  }
+  setTimeout(()=>{
+    evoPop=survivors.concat(kids);
+    evoPop.forEach(d=>{d.dying=false;d.age=(d.age||0)+1;});
+    assignWeights();
+    const avg=evoPop.reduce((a,d)=>a+d.q,0)/evoPop.length;
+    const best=Math.max(...evoPop.map(d=>d.q));
+    evoHist.push({g:evoGen,avg,best});
+    drawEvo();evoPlot();
+  },260);
+}
+function evoRun(n){
+  let i=0;
+  const go=()=>{evoStep();i++;if(i<n)setTimeout(go,340);};
+  go();
+}
+function drawEvo(){
+  $('vKill').textContent=$('sKill').value+'%';
+  $('vMut').textContent=(+$('sMut').value/100).toFixed(2);
+  $('vConj').textContent=$('sConj').value+'%';
+  const {ctx,w,h}=dpi($('cvEvo'));clear(ctx,w,h);
+  const n=evoPop.length, bw=(w-44)/n, base=h-58, maxW=Math.max(0.3,...evoPop.map(d=>d.W));
+  evoPop.forEach((d,i)=>{
+    const x=22+i*bw, bh=(d.W/maxW)*(h-110);
+    let col;
+    if(d.kind==='conj')col='rgba(176,107,255,.85)';
+    else if(d.kind==='mut')col='rgba(255,209,102,.85)';
+    else col='rgba(69,212,255,.7)';
+    if(d.born===evoGen&&evoGen>0)ctx.globalAlpha=.95;else ctx.globalAlpha=.75;
+    ctx.fillStyle=col;roundRect(ctx,x,base-bh,bw-3,bh,3);ctx.fill();ctx.globalAlpha=1;
+    if(d.dying){ctx.strokeStyle=C.bad;ctx.lineWidth=2;roundRect(ctx,x-1.5,base-bh-3,bw,bh+6,4);ctx.stroke();
+      txt(ctx,'✕',x+bw/2-2,base-bh-14,C.bad,11,'center');}
+  });
+  ctx.strokeStyle='rgba(140,170,255,.25)';ctx.beginPath();ctx.moveTo(18,base);ctx.lineTo(w-18,base);ctx.stroke();
+  txt(ctx,'Generation '+evoGen+' · '+evoPop.length+' Subdämonen · Höhe = Wert Wᵢ = Σ|λ|',22,20,'#fff',12);
+  txt(ctx,'■ Original',22,h-34,C.acc2,10.5);
+  txt(ctx,'■ Mutante',110,h-34,'#ffd166',10.5);
+  txt(ctx,'■ Konjugat',198,h-34,C.acc3,10.5);
+  txt(ctx,'■ stirbt',292,h-34,C.bad,10.5);
+  // bester Dämon ausgeschrieben
+  if(evoPop.length){
+    const b=evoPop.reduce((x,y)=>y.W>x.W?y:x);
+    txt(ctx,'Bester: '+demonLabel(b).slice(0,74)+'   (W='+b.W.toFixed(2)+')',22,h-14,C.good,11);
+  }
+  const avg=evoPop.length?evoPop.reduce((a,d)=>a+d.q,0)/evoPop.length:0;
+  $('evoStat').innerHTML='Mittlere Qualität der Population: <b>'+(avg*100).toFixed(1)+' %</b>. '+
+    'Selfridges Regel: <i>erst Gewichte optimieren, dann die Schwachen entfernen, dann neue aus den Starken erzeugen.</i>';
+}
+function evoPlot(){
+  Plotly.react('plEvo',[
+    {x:evoHist.map(d=>d.g),y:evoHist.map(d=>d.best*100),mode:'lines',name:'bester Subdämon',
+     line:{color:C.acc,width:3}},
+    {x:evoHist.map(d=>d.g),y:evoHist.map(d=>d.avg*100),mode:'lines',name:'Durchschnitt',
+     line:{color:C.acc2,width:2.4},fill:'tozeroy',fillcolor:'rgba(69,212,255,.08)'}
+  ],L({title:{text:'Qualität über die Generationen',font:{size:12.5,color:C.txt}},
+      xaxis:{title:'Generation'},yaxis:{title:'Qualität %',range:[0,105]}}),PCFG);
+}
+/* Populationen von Pandemonien */
+let popM=[],popGen=0;
+function popReset(){
+  popGen=0;
+  popM=Array.from({length:+$('sPop').value},()=>({s:0.3+Math.random()*0.25,hue:Math.random()}));
+  drawPop();
+}
+function popRun(){
+  const sel=+$('sSel').value/100;
+  let i=0;
+  const go=()=>{
+    popGen++;
+    popM.sort((a,b)=>b.s-a.s);
+    const keep=Math.max(2,Math.round(popM.length*(1-sel)));
+    const surv=popM.slice(0,keep);
+    const kids=[];
+    while(surv.length+kids.length<popM.length){
+      const p=surv[Math.floor(Math.random()*surv.length)];
+      kids.push({s:clamp(p.s+gauss()*0.06+0.004,0,0.995),hue:p.hue+rnd(0.05)});
+    }
+    popM=surv.concat(kids);
+    drawPop();
+    i++;if(i<30)setTimeout(go,120);
+  };
+  go();
+}
+function drawPop(){
+  $('vPop').textContent=$('sPop').value;
+  $('vSel').textContent=(+$('sSel').value/100).toFixed(2);
+  const {ctx,w,h}=dpi($('cvPop'));clear(ctx,w,h);
+  if(!popM.length)popM=Array.from({length:+$('sPop').value},()=>({s:0.3+Math.random()*0.25,hue:Math.random()}));
+  const n=popM.length, cols=Math.ceil(Math.sqrt(n)), rows=Math.ceil(n/cols);
+  const cw=(w-40)/cols, ch=(h-74)/rows;
+  popM.forEach((m,i)=>{
+    const cx=20+(i%cols)*cw, cy=40+Math.floor(i/cols)*ch;
+    const s=m.s;
+    ctx.fillStyle='rgba(255,255,255,.04)';roundRect(ctx,cx+3,cy+3,cw-10,ch-12,8);ctx.fill();
+    const g=ctx.createLinearGradient(cx,cy,cx+cw,cy+ch);
+    g.addColorStop(0,'hsla('+(200+m.hue*120)+',90%,62%,'+(0.25+s*0.6)+')');
+    g.addColorStop(1,'hsla('+(280+m.hue*90)+',85%,58%,'+(0.15+s*0.5)+')');
+    ctx.fillStyle=g;roundRect(ctx,cx+3,cy+3+(ch-12)*(1-s),cw-10,(ch-12)*s,8);ctx.fill();
+    // kleine Dämonengesichter
+    ctx.fillStyle='rgba(255,255,255,'+(0.3+s*0.6)+')';
+    ctx.beginPath();ctx.arc(cx+cw/2-7,cy+ch/2,2.4,0,TAU);ctx.arc(cx+cw/2+7,cy+ch/2,2.4,0,TAU);ctx.fill();
+    txt(ctx,(s*100).toFixed(0),cx+cw/2,cy+ch-16,'#fff',10,'center');
+  });
+  const best=Math.max(...popM.map(m=>m.s)), avg=popM.reduce((a,m)=>a+m.s,0)/popM.length;
+  txt(ctx,'Schar von Pandemonien · Generation '+popGen,20,20,'#fff',12);
+  $('popStat').innerHTML='Bestes Pandemonium: <b style="color:'+C.good+'">'+(best*100).toFixed(1)+
+    ' %</b>, Durchschnitt '+(avg*100).toFixed(1)+' %. '+
+    '„Eliminiere die relativ schlechten und ermutige den Rest, neue Maschinen nach ihrem Bilde zu erzeugen.“';
+}
+
+/* =======================================================================
+   9 — KONJUGATION / TABELLE 1
+   ======================================================================= */
+const CONJ=[
+  {t:'A · B',            f:(a,b)=>a*b,            d:'beide Merkmale gleichzeitig vorhanden'},
+  {t:'A · ~B',           f:(a,b)=>a*(1-b),        d:'A vorhanden, B fehlt'},
+  {t:'~A · B',           f:(a,b)=>(1-a)*b,        d:'B vorhanden, A fehlt'},
+  {t:'~A · ~B',          f:(a,b)=>(1-a)*(1-b),    d:'beide fehlen'},
+  {t:'A ∨ B',            f:(a,b)=>a+b-a*b,        d:'mindestens eines vorhanden'},
+  {t:'A ∨ ~B',           f:(a,b)=>a+(1-b)-a*(1-b),d:'A vorhanden oder B fehlt'},
+  {t:'~A ∨ B',           f:(a,b)=>(1-a)+b-(1-a)*b,d:'A fehlt oder B vorhanden'},
+  {t:'~A ∨ ~B',          f:(a,b)=>1-a*b,          d:'nicht beide zugleich'},
+  {t:'A·B ∨ ~A·~B',      f:(a,b)=>a*b+(1-a)*(1-b),d:'Gleichheit (XNOR) — beide gleich'},
+  {t:'A·~B ∨ ~A·B',      f:(a,b)=>a*(1-b)+(1-a)*b,d:'Verschiedenheit (XOR) — genau eines'}
+];
+let conjSel=0;
+function buildConjBtns(){
+  const c=$('conjBtns');c.innerHTML='';
+  CONJ.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className=i===conjSel?'alt':'ghost';b.textContent=o.t;
+    b.onclick=()=>{conjSel=i;buildConjBtns();drawConj();};
+    c.appendChild(b);
+  });
+}
+function drawConj(){
+  const o=CONJ[conjSel];
+  const {ctx,w,h}=dpi($('cvConjT'));clear(ctx,w,h);
+  txt(ctx,o.t,18,22,C.acc3,16);
+  txt(ctx,o.d,18,44,C.dim,11.5);
+  // Wahrheitstafel
+  const rows=[[0,0],[0,1],[1,0],[1,1]];
+  const x0=18,y0=70,cw=56,rh=36;
+  ['A','B','Ergebnis'].forEach((s,i)=>txt(ctx,s,x0+i*cw+ (i===2?10:0),y0-12,C.acc2,11));
+  rows.forEach((r,i)=>{
+    const y=y0+i*rh;
+    const v=o.f(r[0],r[1]);
+    [r[0],r[1]].forEach((b,k)=>{
+      ctx.fillStyle=b?'rgba(69,212,255,.3)':'rgba(255,255,255,.05)';
+      roundRect(ctx,x0+k*cw,y,cw-8,rh-8,5);ctx.fill();
+      txt(ctx,b?'1':'0',x0+k*cw+(cw-8)/2,y+(rh-8)/2,b?'#fff':C.dim,13,'center');
+    });
+    ctx.fillStyle=v>0.5?'rgba(255,138,61,.55)':'rgba(255,255,255,.05)';
+    roundRect(ctx,x0+2*cw+10,y,cw+16,rh-8,5);ctx.fill();
+    txt(ctx,v.toFixed(0),x0+2*cw+10+(cw+16)/2,y+(rh-8)/2,v>0.5?'#fff':C.dim,13,'center');
+  });
+  txt(ctx,'stetiges Analogon, nicht nur 0/1',18,h-16,C.acc3,10.5);
+  // 3D-ähnliche Heatmap in Plotly
+  const N=42,z=[],ax=[];
+  for(let i=0;i<N;i++)ax.push(i/(N-1));
+  for(let j=0;j<N;j++){const row=[];for(let i=0;i<N;i++)row.push(o.f(ax[i],ax[j]));z.push(row);}
+  Plotly.react('plConj',[{z,x:ax,y:ax,type:'heatmap',
+    colorscale:[[0,'#0a1020'],[.5,'#6c3fa0'],[1,'#ffb06a']],showscale:false}],
+    L({title:{text:'Stetiges Analogon über (A,B)',font:{size:12,color:C.txt}},
+       xaxis:{title:'Output A'},yaxis:{title:'Output B'},margin:{l:48,r:14,t:28,b:40}}),PCFG);
+  $('conjStat').innerHTML='„<b>'+o.t+'</b>“ — '+o.d+
+    '. Selfridge nutzt nicht die harte Logik, sondern ihr <span style="color:'+C.acc3+
+    '">stetiges Analogon</span> (z. B. Produkt statt UND) — damit bleibt alles weich und optimierbar.';
+}
+/* XOR-Demo */
+function drawXor(){
+  const a=+$('sXa').value/100,b=+$('sXb').value/100,c=+$('sXc').value/100;
+  $('vXa').textContent=a.toFixed(2);$('vXb').textContent=b.toFixed(2);$('vXc').textContent=(c*100).toFixed(0)+'%';
+  const {ctx,w,h}=dpi($('cvXor'));clear(ctx,w,h);
+  const pad=48, S=Math.min(w-pad-200,h-pad-30), ox=pad, oy=18;
+  // Entscheidungsfläche
+  const img=ctx.createImageData(S,S);
+  for(let py=0;py<S;py++)for(let px=0;px<S;px++){
+    const A=px/S, B=1-py/S;
+    const xorf=A*(1-B)+(1-A)*B;
+    const v=a*A+b*B+c*2.0*(xorf-0.5)+ (1-c)*0.0 - (a+b)/2*0 - 0.1;
+    const i=(py*S+px)*4;
+    const t=clamp(v*2+0.5,0,1);
+    img.data[i]=Math.round(lerp(20,255,t));
+    img.data[i+1]=Math.round(lerp(40,138,t));
+    img.data[i+2]=Math.round(lerp(90,61,t));
+    img.data[i+3]=255;
+  }
+  ctx.putImageData(img,ox,oy);
+  // Datenpunkte: XOR
+  const pts=[];
+  for(let k=0;k<70;k++){
+    const q=k%4;
+    const A=(q===1||q===3?0.82:0.18)+rnd(0.11);
+    const B=(q===2||q===3?0.82:0.18)+rnd(0.11);
+    const cls=((A>0.5)!==(B>0.5))?1:0;
+    pts.push({A:clamp(A,0,1),B:clamp(B,0,1),cls});
+  }
+  let ok=0;
+  pts.forEach(p=>{
+    const xorf=p.A*(1-p.B)+(1-p.A)*p.B;
+    const v=a*p.A+b*p.B+c*2.0*(xorf-0.5)-0.1;
+    const pred=v>0?1:0;if(pred===p.cls)ok++;
+    const px=ox+p.A*S, py=oy+(1-p.B)*S;
+    ctx.fillStyle=p.cls?C.acc2:'#ffd166';
+    ctx.beginPath();ctx.arc(px,py,4.6,0,TAU);ctx.fill();
+    ctx.strokeStyle=pred===p.cls?'rgba(255,255,255,.55)':C.bad;
+    ctx.lineWidth=pred===p.cls?1:2;ctx.stroke();
+  });
+  ctx.strokeStyle='rgba(140,170,255,.25)';ctx.strokeRect(ox,oy,S,S);
+  txt(ctx,'Merkmal A →',ox+S/2,oy+S+18,C.dim,11,'center');
+  ctx.save();ctx.translate(16,oy+S/2);ctx.rotate(-Math.PI/2);
+  txt(ctx,'Merkmal B →',0,0,C.dim,11,'center');ctx.restore();
+  const tx=ox+S+24;
+  txt(ctx,'● Klasse 1 (über Kreuz)',tx,oy+20,C.acc2,11);
+  txt(ctx,'● Klasse 0',tx,oy+40,'#ffd166',11);
+  txt(ctx,'rot umrandet = Fehler',tx,oy+60,C.bad,10.5);
+  const pc=100*ok/pts.length;
+  txt(ctx,(pc).toFixed(0)+' % richtig',tx,oy+96,pc>90?C.good:C.bad,19);
+  $('xorStat').innerHTML= c<0.1 ?
+    '<b style="color:'+C.bad+'">Ohne Konjugat: maximal ca. 50–75 %.</b> Probiere alle Gewichte — eine gerade Trennlinie schafft es nie. '+
+    'Genau dieses Problem machte 1969 das einfache Perceptron berühmt-berüchtigt.'
+    : 'Mit dem Konjugat <b style="color:'+C.acc3+'">A·~B ∨ ~A·B</b> (Tabelle 1, letzte Zeile) bei '+(c*100).toFixed(0)+
+      ' %: <b style="color:'+(pc>90?C.good:C.acc)+'">'+pc.toFixed(0)+' % richtig</b>. '+
+      'Das neue Merkmal macht das Unlösbare linear lösbar.';
+}
+
+/* =======================================================================
+   10 — UNÜBERWACHTER BETRIEB
+   ======================================================================= */
+function drawConf(){
+  const q=+$('sQual').value/100, N=+$('sNdec').value;
+  $('vQual').textContent=q.toFixed(2);$('vNdec').textContent=N;
+  const xs=[],ys=[],cx=[],cy=[];
+  const bins=Array.from({length:12},()=>({n:0,ok:0}));
+  for(let i=0;i<N;i++){
+    const correct=Math.random()<q;
+    // Vorsprung: korrekte Entscheidungen haben systematisch größeren Margin
+    let m=correct? Math.abs(gauss())*0.33+0.12 : Math.abs(gauss())*0.17+0.01;
+    m=clamp(m,0,1.2);
+    xs.push(m);ys.push(correct?1+0:0);
+    const bi=Math.min(11,Math.floor(m/1.2*12));
+    bins[bi].n++;if(correct)bins[bi].ok++;
+  }
+  bins.forEach((b,i)=>{if(b.n>2){cx.push((i+0.5)/12*1.2);cy.push(100*b.ok/b.n);}});
+  Plotly.react('plConf',[
+    {x:xs,y:ys.map(v=>v+rnd(0.06)),mode:'markers',name:'einzelne Entscheidung',
+     marker:{color:ys.map(v=>v>0.5?C.good:C.bad),size:6,opacity:.55}},
+    {x:cx,y:cy.map(v=>v/100),mode:'lines+markers',name:'Anteil richtig (gebinnt)',
+     line:{color:C.acc,width:3},marker:{size:7,color:C.acc},yaxis:'y'}
+  ],L({title:{text:'Vorsprung des Siegers gegen Korrektheit',font:{size:12.5,color:C.txt}},
+      xaxis:{title:'Vorsprung (lautester − zweitlautester Schrei)'},
+      yaxis:{title:'falsch (0) … richtig (1)',range:[-0.15,1.15]}}),PCFG);
+  // Korrelation
+  let n=xs.length,sx=0,sy=0,sxy=0,sxx=0,syy=0;
+  for(let i=0;i<n;i++){sx+=xs[i];sy+=ys[i];sxy+=xs[i]*ys[i];sxx+=xs[i]*xs[i];syy+=ys[i]*ys[i];}
+  const r=(n*sxy-sx*sy)/Math.sqrt((n*sxx-sx*sx)*(n*syy-sy*sy));
+  $('confStat').innerHTML='Korrelation zwischen Eindeutigkeit und Korrektheit: <b style="color:'+
+    (r>0.4?C.good:C.acc)+'">r = '+r.toFixed(2)+'</b>. '+
+    'Die Kurve steigt — <i>„ein Kriterium für korrekte Entscheidungen ist, dass sie ziemlich eindeutig sind.“</i> '+
+    'Die Maschine kann sich also wirklich selbst benoten, ohne die Wahrheit zu kennen.';
+}
+let selfRuns=null;
+function selfRun(){
+  const q0=+$('sHand').value/100;
+  const T=260;
+  const sup=[],uns=[];
+  let a=q0,b=q0;
+  for(let t=0;t<T;t++){
+    // überwacht: steigt zuverlässig
+    a=clamp(a+(0.985-a)*0.012,0,0.99);
+    // selbstüberwacht: verstärkt eigene Fehler, Richtung hängt von Startgüte ab
+    const bias=(b-0.78);                       // Kipppunkt
+    b=clamp(b+bias*0.016+gauss()*0.004,0.02,0.995);
+    sup.push(a);uns.push(b);
+  }
+  selfRuns={sup,uns,q0};drawSelf();
+}
+function drawSelf(){
+  $('vHand').textContent=(+$('sHand').value/100).toFixed(2);
+  const {ctx,w,h}=dpi($('cvSelf'));clear(ctx,w,h);
+  const pad=52,pw=w-pad-24,ph=h-pad-36;
+  ctx.strokeStyle='rgba(140,170,255,.2)';
+  ctx.beginPath();ctx.moveTo(pad,18);ctx.lineTo(pad,18+ph);ctx.lineTo(pad+pw,18+ph);ctx.stroke();
+  // Kipppunkt-Linie
+  const yk=18+ph-ph*0.78;
+  ctx.strokeStyle='rgba(255,209,102,.55)';ctx.setLineDash([5,4]);
+  ctx.beginPath();ctx.moveTo(pad,yk);ctx.lineTo(pad+pw,yk);ctx.stroke();ctx.setLineDash([]);
+  txt(ctx,'Kipppunkt ≈ 78 %',pad+pw-6,yk-10,'#ffd166',10.5,'right');
+  for(let i=0;i<=4;i++){
+    const y=18+ph-ph*i/4;txt(ctx,(i*25)+'%',pad-10,y,C.dim,10,'right');
+  }
+  if(selfRuns){
+    const line=(arr,col,wd)=>{ctx.strokeStyle=col;ctx.lineWidth=wd;ctx.beginPath();
+      arr.forEach((v,i)=>{const x=pad+pw*i/(arr.length-1),y=18+ph-ph*v;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+      ctx.stroke();};
+    line(selfRuns.sup,'rgba(140,170,255,.45)',2);
+    line(selfRuns.uns, selfRuns.uns[selfRuns.uns.length-1]>selfRuns.q0?C.good:C.bad,3);
+    txt(ctx,'weiter überwacht (Referenz)',pad+10,30,'rgba(160,185,235,.8)',11);
+    txt(ctx,'ab jetzt selbstüberwacht',pad+10,48,
+      selfRuns.uns[selfRuns.uns.length-1]>selfRuns.q0?C.good:C.bad,11.5);
+    const f=selfRuns.uns[selfRuns.uns.length-1];
+    $('selfStat').innerHTML='Übergabe bei '+(selfRuns.q0*100).toFixed(0)+' % → endet bei <b style="color:'+
+      (f>selfRuns.q0?C.good:C.bad)+'">'+(f*100).toFixed(1)+' %</b>. '+
+      (selfRuns.q0<0.78?
+        '<span style="color:'+C.bad+'">Zu früh losgelassen: Die Maschine hält ihre Irrtümer für Erfolge und wird schlechter. Genau davor warnt Selfridge.</span>':
+        '<span style="color:'+C.good+'">Gut genug vortrainiert: Selbstvertrauen ist jetzt ein brauchbarer Ersatz für Wahrheit — die Maschine verbessert sich allein weiter.</span>');
+  } else {
+    txt(ctx,'Starte die Simulation.',pad+10,30,C.dim,12);
+    $('selfStat').textContent='Wähle einen Übergabepunkt und starte.';
+  }
+  txt(ctx,'Zeit nach der Übergabe →',pad+pw,18+ph+22,C.dim,10.5,'right');
+}
+
+/* =======================================================================
+   11 — DER GEWINNER-DÄMON
+   ======================================================================= */
+let winData=[],winIdx=4;
+function winNew(){
+  const hum=+$('sWHum').value/100;
+  const n=21;
+  winData=Array.from({length:n},()=>{
+    const dash=Math.random()<0.42;
+    let d=(dash?3:1)*(1+hum*0.6*gauss());
+    return {d:Math.max(0.2,d),dash};
+  });
+  winIdx=10;
+}
+function winNext(){winNew();drawWinner();}
+function winnerFires(arr,i,win,jnd){
+  const lo=Math.max(0,i-win),hi=Math.min(arr.length-1,i+win);
+  let m=-1e9;for(let k=lo;k<=hi;k++)m=Math.max(m,arr[k].d);
+  return arr[i].d >= m*(1-jnd);
+}
+function drawWinner(){
+  const jnd=+$('sJnd').value/100, win=+$('sWin').value, hum=+$('sWHum').value/100;
+  $('vJnd').textContent=jnd.toFixed(2);$('vWin').textContent=win;$('vWHum').textContent=(hum*100).toFixed(0)+'%';
+  if(!winData.length)winNew();
+  const {ctx,w,h}=dpi($('cvWinner'));clear(ctx,w,h);
+  const n=winData.length, bw=(w-48)/n, base=h-70;
+  const maxd=Math.max(...winData.map(x=>x.d));
+  const lo=Math.max(0,winIdx-win),hi=Math.min(n-1,winIdx+win);
+  // Fenster
+  ctx.fillStyle='rgba(255,138,61,.08)';
+  ctx.fillRect(24+lo*bw-3,24,(hi-lo+1)*bw+6,base-24+10);
+  ctx.strokeStyle='rgba(255,138,61,.5)';ctx.lineWidth=1.4;
+  ctx.strokeRect(24+lo*bw-3,24,(hi-lo+1)*bw+6,base-24+10);
+  txt(ctx,'Fenster d₋'+win+' … d₊'+win,24+lo*bw,16,C.acc,10.5);
+  // Schwelle (JND)
+  let m=-1e9;for(let k=lo;k<=hi;k++)m=Math.max(m,winData[k].d);
+  const thrY=base-(m*(1-jnd)/maxd)*(base-40);
+  ctx.strokeStyle='rgba(69,232,160,.75)';ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(24+lo*bw-3,thrY);ctx.lineTo(24+(hi+1)*bw+3,thrY);ctx.stroke();ctx.setLineDash([]);
+  txt(ctx,'Maximum − JND',24+(hi+1)*bw+8,thrY,C.good,10);
+  winData.forEach((x,i)=>{
+    const bh=(x.d/maxd)*(base-40), px=24+i*bw;
+    const sel=i===winIdx;
+    ctx.fillStyle= sel? C.acc : (i>=lo&&i<=hi? 'rgba(120,160,230,.55)':'rgba(90,110,150,.3)');
+    roundRect(ctx,px,base-bh,bw-3,bh,3);ctx.fill();
+    if(sel){ctx.strokeStyle='#fff';ctx.lineWidth=1.6;ctx.stroke();}
+  });
+  ctx.strokeStyle='rgba(140,170,255,.25)';ctx.beginPath();ctx.moveTo(18,base);ctx.lineTo(w-18,base);ctx.stroke();
+  const fires=winnerFires(winData,winIdx,win,jnd);
+  const truth=winData[winIdx].dash;
+  const ok=fires===truth;
+  txt(ctx,'Subdämon feuert: '+(fires?'JA → STRICH':'NEIN → PUNKT'),24,base+26,fires?C.acc:C.acc2,14);
+  txt(ctx,'Wahrheit: '+(truth?'STRICH':'PUNKT')+(ok?'  ✓':'  ✗'),24,base+48,ok?C.good:C.bad,12);
+  txt(ctx,'ˡmax(d₋'+win+'…d₊'+win+') mit JND '+jnd.toFixed(2),w-24,base+26,C.dim,11,'right');
+  $('winStat').innerHTML='Dieser eine Dämon trifft seine Entscheidung <b>allein aus dem Vergleich mit der Nachbarschaft</b> — '+
+    'keine absolute Schwelle, kein Vorwissen über das Sendetempo. '+
+    'Genau deshalb überlebt er die Evolution als einziger wirklich starker.';
+}
+function winBench(){
+  const jnd=+$('sJnd').value/100, win=+$('sWin').value;
+  const hums=[0,.1,.2,.3,.4,.5,.6,.7,.8];
+  const demonAcc=[],thrAcc=[];
+  hums.forEach(hum=>{
+    let okD=0,okT=0,N=0;
+    for(let rep=0;rep<40;rep++){
+      const arr=Array.from({length:25},()=>{
+        const dash=Math.random()<0.42;
+        return {d:Math.max(0.2,(dash?3:1)*(1+hum*0.6*gauss())),dash};
+      });
+      for(let i=3;i<22;i++){
+        N++;
+        if(winnerFires(arr,i,win,jnd)===arr[i].dash)okD++;
+        if((arr[i].d>2)===arr[i].dash)okT++;
+      }
+    }
+    demonAcc.push(100*okD/N);thrAcc.push(100*okT/N);
+  });
+  Plotly.react('plWin',[
+    {x:hums.map(x=>x*100),y:demonAcc,mode:'lines+markers',name:'Gewinner-Dämon ˡmax ± JND',
+     line:{color:C.acc,width:3.4},marker:{size:8}},
+    {x:hums.map(x=>x*100),y:thrAcc,mode:'lines+markers',name:'feste Schwelle (Lehrbuch)',
+     line:{color:C.acc2,width:2.6,dash:'dash'},marker:{size:7}},
+    {x:[0,80],y:[90,90],mode:'lines',name:'Selfridges berichtete 90 %',
+     line:{color:C.good,width:1.5,dash:'dot'}}
+  ],L({title:{text:'Relatives Merkmal gegen absolute Schwelle',font:{size:12.5,color:C.txt}},
+      xaxis:{title:'Menschlichkeit der Daten %'},yaxis:{title:'Trefferquote %',range:[40,102]}}),PCFG);
+  const mid=demonAcc[5],midT=thrAcc[5];
+  $('winStat').innerHTML='Bei 50 % Menschlichkeit: Dämon <b style="color:'+C.acc+'">'+mid.toFixed(1)+
+    ' %</b> gegen feste Schwelle <b style="color:'+C.acc2+'">'+midT.toFixed(1)+' %</b>. '+
+    'Der relative Vergleich bricht nicht zusammen, wenn das Tempo schwankt — die absolute Schwelle schon. '+
+    '<i>„Der wirksamste Dämon für sich allein, der in 90 % der Fälle funktionierte — was sehr überraschend war.“</i>';
+}
+/* Bray-Polynom */
+function drawBray(){
+  const deg=+$('sDeg').value, hum=+$('sBHum').value/100;
+  $('vDeg').textContent=deg;$('vBHum').textContent=(hum*100).toFixed(0)+'%';
+  const N=420, X=[],Y=[];
+  for(let i=0;i<N;i++){
+    const drift=1+0.55*Math.sin(i/37);
+    const dash=Math.random()<0.42;
+    const d=Math.max(0.15,(dash?3:1)*drift*(1+hum*0.55*gauss()));
+    X.push(d);Y.push(dash?2:1);
+  }
+  // Polynomregression (Normalgleichungen, klein genug)
+  const M=deg+1;
+  const A=Array.from({length:M},()=>new Array(M).fill(0)), b=new Array(M).fill(0);
+  for(let k=0;k<N;k++){
+    const pw=[];let p=1;for(let j=0;j<M;j++){pw.push(p);p*=X[k];}
+    for(let i=0;i<M;i++){b[i]+=pw[i]*Y[k];for(let j=0;j<M;j++)A[i][j]+=pw[i]*pw[j];}
+  }
+  // Gauss
+  const c=new Array(M).fill(0);
+  for(let i=0;i<M;i++){
+    let piv=i;for(let r=i+1;r<M;r++)if(Math.abs(A[r][i])>Math.abs(A[piv][i]))piv=r;
+    [A[i],A[piv]]=[A[piv],A[i]];[b[i],b[piv]]=[b[piv],b[i]];
+    if(Math.abs(A[i][i])<1e-12)continue;
+    for(let r=i+1;r<M;r++){const f=A[r][i]/A[i][i];for(let j=i;j<M;j++)A[r][j]-=f*A[i][j];b[r]-=f*b[i];}
+  }
+  for(let i=M-1;i>=0;i--){let s=b[i];for(let j=i+1;j<M;j++)s-=A[i][j]*c[j];c[i]=Math.abs(A[i][i])<1e-12?0:s/A[i][i];}
+  const ev=x=>{let s=0,p=1;for(let j=0;j<M;j++){s+=c[j]*p;p*=x;}return s;};
+  let ok=0;for(let k=0;k<N;k++){if((ev(X[k])>1.5?2:1)===Y[k])ok++;}
+  const xs=[];for(let x=0.1;x<=7;x+=0.05)xs.push(x);
+  Plotly.react('plBray',[
+    {x:X.filter((_,i)=>Y[i]===1),y:X.filter((_,i)=>Y[i]===1).map(()=>1+rnd(0.07)),mode:'markers',
+     name:'Punkte',marker:{color:'rgba(69,212,255,.55)',size:6}},
+    {x:X.filter((_,i)=>Y[i]===2),y:X.filter((_,i)=>Y[i]===2).map(()=>2+rnd(0.07)),mode:'markers',
+     name:'Striche',marker:{color:'rgba(255,138,61,.55)',size:6}},
+    {x:xs,y:xs.map(ev),mode:'lines',name:'Polynom Grad '+deg,line:{color:C.acc3,width:3}},
+    {x:[0.1,7],y:[1.5,1.5],mode:'lines',name:'Entscheidungsschwelle',line:{color:C.bad,width:1.4,dash:'dot'}}
+  ],L({title:{text:'Dr. Brays Vorschlag: y = A₀ + A₁x + A₂x² + …',font:{size:12.5,color:C.txt}},
+      xaxis:{title:'Dauer x',range:[0,7]},yaxis:{title:'y (1 = Punkt, 2 = Strich)',range:[0.4,2.6]}}),PCFG);
+  const pc=100*ok/N;
+  $('brayStat').innerHTML='Trefferquote dieses Polynoms: <b style="color:'+(pc>88?C.good:C.bad)+'">'+
+    pc.toFixed(1)+' %</b>. '+(hum>0.25?
+    '<span style="color:'+C.bad+'">Egal welcher Grad — das Polynom kennt nur die absolute Dauer x. Bei schwankendem Tempo überlappen sich die Wolken, und keine Kurve der Welt trennt sie.</span> '+
+    '<i>„Lassen Sie mich Ihnen versichern, dass es nicht funktionieren wird; wir haben es versucht.“</i>'
+    :'Bei sauberem Timing funktioniert es — aber das ist Lehrbuch-Morse, nicht die Realität. Schiebe die Menschlichkeit hoch.');
+}
+/* Abb. 7 Gesamtzyklus */
+let f7Step_=0,f7Timer=null;
+const F7=[
+  'Neue Daten kommen herein: Dauern von Zeichen und Pausen wandern durch die Kette der Daten-Dämonen d₋₂₀ … d₊₂₀.',
+  'Die rechnenden Subdämonen lesen das Fenster und berechnen je ein weiches Merkmal.',
+  'Punkt- und Strich-Dämon bilden ihre gewichteten Summen Λ⁰ und Λ¹ und schreien.',
+  'Der Entscheidungs-Dämon nimmt den lauteren Schrei — die Ausgabe der Maschine.',
+  'Ein Mensch liefert die korrekte Antwort („CORRECT DECISION — FROM ME“). Der Score-Rechner vergleicht.',
+  'Der Hill-Climber ändert die Gewichte Λ ein winziges Stück und behält die Änderung nur, wenn der Score steigt.',
+  'Nach langem Klettern greift der Subdämon-Selektor ein: schwache Dämonen raus, Mutanten und Konjugate rein.',
+  'Die ältesten Daten fallen in LETHE — vergessen. Der Zyklus beginnt von vorn, mit besserer Maschine.'
+];
+function f7Reset(){f7Step_=0;if(f7Timer){clearInterval(f7Timer);f7Timer=null;}drawF7();}
+function f7Step(){f7Step_=(f7Step_+1)%F7.length;drawF7();}
+function f7Auto(){if(f7Timer)clearInterval(f7Timer);f7Step_=0;drawF7();
+  f7Timer=setInterval(()=>{f7Step_++;if(f7Step_>=F7.length){clearInterval(f7Timer);f7Timer=null;f7Step_=F7.length-1;}drawF7();},1500);}
+function drawF7(){
+  const {ctx,w,h}=dpi($('cvFig7'));clear(ctx,w,h);
+  const S=f7Step_;
+  const box=(x,y,bw,bh,label,on,col,sub)=>{
+    ctx.fillStyle=on?col.replace('rgb','rgba').replace(')',',.16)'):'rgba(255,255,255,.03)';
+    if(on){ctx.fillStyle='rgba('+col+',.17)';}else ctx.fillStyle='rgba(255,255,255,.03)';
+    ctx.strokeStyle=on?'rgb('+col+')':'rgba(140,170,255,.16)';ctx.lineWidth=on?2:1.2;
+    roundRect(ctx,x,y,bw,bh,9);ctx.fill();ctx.stroke();
+    txt(ctx,label,x+bw/2,y+(sub?bh/2-8:bh/2),on?'#fff':'rgba(200,210,235,.4)',11.5,'center');
+    if(sub)txt(ctx,sub,x+bw/2,y+bh/2+10,on?'rgba(255,255,255,.65)':'rgba(200,210,235,.25)',9.5,'center');
+  };
+  const arrow=(x1,y1,x2,y2,on,col)=>{
+    ctx.strokeStyle=on?'rgb('+col+')':'rgba(140,170,255,.14)';ctx.lineWidth=on?2.2:1;
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    const a=Math.atan2(y2-y1,x2-x1);
+    ctx.fillStyle=on?'rgb('+col+')':'rgba(140,170,255,.14)';
+    ctx.beginPath();ctx.moveTo(x2,y2);
+    ctx.lineTo(x2-9*Math.cos(a-0.4),y2-9*Math.sin(a-0.4));
+    ctx.lineTo(x2-9*Math.cos(a+0.4),y2-9*Math.sin(a+0.4));ctx.closePath();ctx.fill();
+  };
+  const CB='69,212,255', CO='255,138,61', CP='176,107,255', CG='69,232,160';
+  // --- Datenband (Ebene 1) ---
+  const by=h-62, n=17, bw=(w-120)/n;
+  txt(ctx,'NEUE DATEN →',16,by-30,S===0?'rgb('+CB+')':'rgba(140,170,255,.3)',10.5);
+  for(let i=0;i<n;i++){
+    const x=54+i*bw, on=(S>=0);
+    const isCenter=(i===8);
+    ctx.fillStyle= on? (isCenter?'rgba(255,138,61,.75)':'rgba(69,212,255,'+(S===0?.5:.28)+')') : 'rgba(255,255,255,.05)';
+    roundRect(ctx,x,by,bw-3,24,4);ctx.fill();
+    txt(ctx,'d'+(i-8),x+(bw-3)/2,by+12,'#06101c',9,'center');
+  }
+  txt(ctx,'gerade Nummern = Zeichen, ungerade = Pausen',54,by+38,C.dim,9.5);
+  // Lethe
+  const lon=(S===7);
+  ctx.fillStyle=lon?'rgba(176,107,255,.2)':'rgba(255,255,255,.03)';
+  ctx.strokeStyle=lon?'rgb('+CP+')':'rgba(140,170,255,.16)';ctx.lineWidth=lon?2:1;
+  roundRect(ctx,w-58,by-2,48,28,8);ctx.fill();ctx.stroke();
+  txt(ctx,'LETHE',w-34,by+12,lon?'#fff':'rgba(200,210,235,.4)',9.5,'center');
+  if(lon)arrow(54+ (n)*bw-6,by+12,w-62,by+12,true,CP);
+  // --- Subdämonen (Ebene 2) ---
+  const sy=by-96;
+  box(60,sy,w-130,46,'RECHNENDE SUBDÄMONEN',S>=1,CP,'ˡmax(d₋₃…d₃) · d₀>Av · d₀=d₋₂ · M(α) · Ox1 · … (≈150 Stück)');
+  arrow(w/2-180,by-4,w/2-180,sy+46+4,S>=1,CP);
+  // --- Kognitive Dämonen (Ebene 3) ---
+  const cy=sy-92;
+  box(90,cy,180,50,'PUNKT-DÄMON',S>=2,CB,'Λ⁰ · gewichtete Summe');
+  box(w-270,cy,180,50,'STRICH-DÄMON',S>=2,CO,'Λ¹ · gewichtete Summe');
+  arrow(180,sy-2,180,cy+50+4,S>=2,CB);
+  arrow(w-180,sy-2,w-180,cy+50+4,S>=2,CO);
+  // --- Entscheidung (Ebene 4) ---
+  const dy=cy-78;
+  box(w/2-85,dy,170,44,'ENTSCHEIDUNGS-DÄMON',S>=3,CG,'nimmt den lauteren Schrei');
+  arrow(180,cy-2,w/2-70,dy+44+4,S>=3,CG);
+  arrow(w-180,cy-2,w/2+70,dy+44+4,S>=3,CG);
+  // --- Score / Lehrer ---
+  box(16,dy+6,150,44,'KORREKTE ANTWORT',S>=4,CO,'„FROM ME“ — der Mensch');
+  box(16,dy+62,150,40,'SCORE-RECHNER',S>=4,CO,'vergleicht & zählt');
+  arrow(w/2-85,dy+22,172,dy+28,S>=4,CO);
+  arrow(91,dy+50,91,dy+60,S>=4,CO);
+  // --- Hill-Climber ---
+  box(16,dy+112,150,42,'HILL-CLIMBER',S>=5,CG,'ändert Λ ein Stück');
+  arrow(91,dy+102,91,dy+110,S>=5,CG);
+  arrow(166,dy+133,112,cy+14,S>=5,CG);
+  // --- Subdämon-Selektor ---
+  box(w-166,dy+62,150,56,'SUBDÄMON-SELEKTOR',S>=6,CP,'tötet · mutiert · konjugiert');
+  arrow(w-91,dy+62-2,w-91,dy+24,S>=6,CP);
+  arrow(w-91,dy+118,w-200,sy-4,S>=6,CP);
+  // Kopf
+  txt(ctx,'Abbildung 7 — Das erste Morse-Pandemonium',16,20,'#fff',13);
+  txt(ctx,'Schritt '+(S+1)+' von '+F7.length,w-16,20,C.acc,11,'right');
+  $('f7Stat').innerHTML='<b style="color:'+C.acc+'">'+(S+1)+'/'+F7.length+'</b> &nbsp;'+F7[S];
+}
+
+/* =======================================================================
+   12 — ZEITSTRAHL, BLIND VS GRADIENT, McCARTHY, SKALIERUNG
+   ======================================================================= */
+const TIME=[
+  {y:1943,t:'McCulloch & Pitts',d:'Das formale Neuron: Nervenzellen als Logikbausteine.'},
+  {y:1949,t:'Hebb',d:'„Zellen, die zusammen feuern, verdrahten sich.“ — Lernen als Gewichtsänderung.'},
+  {y:1956,t:'Dartmouth',d:'McCarthy prägt den Begriff „Artificial Intelligence“. Selfridge ist dabei.'},
+  {y:1958,t:'PANDEMONIUM',d:'Selfridge: vierstufige Hierarchie, Feature-Detektoren, Hill-Climbing, Evolution — auf einer IBM 704.'},
+  {y:1958,t:'Rosenblatt',d:'Das Perceptron: eine einzige lernende Schicht. Berühmter, aber architektonisch ärmer.'},
+  {y:1959,t:'Hubel & Wiesel',d:'Echte Feature-Detektoren im Katzenhirn — Selfridges Subdämonen, biologisch bestätigt.'},
+  {y:1969,t:'Minsky & Papert',d:'„Perceptrons“: Einschichtige Netze können XOR nicht. Selfridges Konjugation hätte geholfen.'},
+  {y:1986,t:'Backpropagation',d:'Rumelhart, Hinton, Williams: der Gradient ersetzt das blinde Tasten. Derselbe Hügel, sehende Augen.'},
+  {y:2012,t:'AlexNet',d:'Gelernte Feature-Detektoren auf GPUs. Selfridges „doppelt so große Maschine“ ist da.'},
+  {y:2017,t:'Transformer',d:'Viele parallele Köpfe schreien um Aufmerksamkeit; eine Softmax wählt den lautesten. Pandemonium in Reinform.'}
+];
+let timeSel=3;
+function drawTime(){
+  const {ctx,w,h}=dpi($('cvTime'));clear(ctx,w,h);
+  const y0=h/2+10, x0=50, x1=w-40;
+  ctx.strokeStyle='rgba(140,170,255,.25)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y0);ctx.stroke();
+  const yr=[1940,2030];
+  const px=y=>x0+(x1-x0)*(y-yr[0])/(yr[1]-yr[0]);
+  TIME.forEach((e,i)=>{
+    const x=px(e.y)+(i===4?12:0);
+    const sel=i===timeSel, key=(e.t==='PANDEMONIUM');
+    ctx.fillStyle= key? C.acc : sel? C.acc2:'rgba(140,170,255,.55)';
+    ctx.beginPath();ctx.arc(x,y0,sel?8:(key?7:4.5),0,TAU);ctx.fill();
+    if(key){ctx.strokeStyle=C.acc;ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.arc(x,y0,13,0,TAU);ctx.stroke();}
+    ctx.save();ctx.translate(x,y0+(i%2?22:-22));ctx.rotate(-0.42);
+    txt(ctx,e.y+'',0,0,sel?'#fff':C.dim,10,'center');ctx.restore();
+    e._x=x;
+  });
+  const e=TIME[timeSel];
+  roundRect(ctx,16,12,w-32,52,10);
+  ctx.fillStyle='rgba(255,138,61,.08)';ctx.fill();
+  ctx.strokeStyle='rgba(255,138,61,.3)';ctx.lineWidth=1;ctx.stroke();
+  txt(ctx,e.y+' · '+e.t,30,30,C.acc,13);
+  // Umbruch
+  const words=e.d.split(' ');let line='',ly=48;
+  words.forEach(wd=>{
+    if((line+wd).length>96){txt(ctx,line,30,ly,C.txt,11.5);line=wd+' ';ly+=15;}
+    else line+=wd+' ';
+  });
+  txt(ctx,line,30,ly,C.txt,11.5);
+  $('timeStat').innerHTML='<b style="color:'+C.acc+'">'+e.y+' — '+e.t+'</b>: '+e.d;
+}
+function timeClick(ev){
+  const cv=$('cvTime'), r=cv.getBoundingClientRect();
+  const x=ev.clientX-r.left;
+  let best=0,bd=1e9;
+  TIME.forEach((e,i)=>{const d=Math.abs(e._x-x);if(d<bd){bd=d;best=i;}});
+  timeSel=best;drawTime();
+}
+function drawBlind(){
+  const n=+$('sBd').value;$('vBd').textContent=n;
+  const xs=[],blind=[],grad=[];
+  for(let k=2;k<=300;k+=4){xs.push(k);blind.push(k*8);grad.push(2*Math.log(k)*6+10);}
+  Plotly.react('plBlind',[
+    {x:xs,y:blind,mode:'lines',name:'blindes Tasten (Selfridge)',line:{color:C.bad,width:3},
+     fill:'tozeroy',fillcolor:'rgba(255,95,109,.08)'},
+    {x:xs,y:grad,mode:'lines',name:'Gradient (Backprop)',line:{color:C.good,width:3}},
+    {x:[n,n],y:[n*8,2*Math.log(n)*6+10],mode:'markers',name:'aktuell',
+     marker:{color:[C.bad,C.good],size:11,symbol:'diamond'}}
+  ],L({title:{text:'Funktionsauswertungen pro Verbesserungsschritt',font:{size:12,color:C.txt}},
+      xaxis:{title:'Dimension n'},yaxis:{title:'Aufwand (relativ)'},margin:{l:48,r:14,t:28,b:40}}),PCFG);
+  const ratio=(n*8)/(2*Math.log(n)*6+10);
+  $('blindStat').innerHTML='Bei n = '+n+': blindes Tasten braucht ca. <b style="color:'+C.bad+'">'+
+    ratio.toFixed(1)+'×</b> so viele Auswertungen. Bei Selfridges 300 Gewichten rund '+
+    ((300*8)/(2*Math.log(300)*6+10)).toFixed(0)+'×. <i>Deshalb dauerte es 28 Jahre.</i>';
+}
+/* McCarthy — bewusst/unbewusst */
+let mcSel=-1, mcDem=[];
+function mcInit(){
+  mcDem=['A','E','R','S','T','N','O','I'].map((n,i)=>({n,v:Math.random()}));
+}
+function drawMcC(){
+  const k=+$('sMc').value/100;$('vMc').textContent=k.toFixed(2);
+  const {ctx,w,h}=dpi($('cvMcC'));clear(ctx,w,h);
+  if(!mcDem.length)mcInit();
+  // Softmax-artige Dominanz
+  const T=lerp(2.5,0.22,k);
+  const ex=mcDem.map(d=>Math.exp(d.v/T));
+  const Z=ex.reduce((a,b)=>a+b,0);
+  const p=ex.map(e=>e/Z);
+  const n=mcDem.length, cw=(w-40)/n;
+  const base=h-78;
+  let wi=0;p.forEach((v,i)=>{if(v>p[wi])wi=i;});
+  mcDem.forEach((d,i)=>{
+    const x=20+i*cw, cx2=x+cw/2;
+    const isSel=i===mcSel, isWin=i===wi;
+    // "unbewusster" Innenraum
+    ctx.fillStyle='rgba(255,255,255,.035)';
+    roundRect(ctx,x+4,base-86,cw-10,86,10);ctx.fill();
+    ctx.strokeStyle=isSel?C.acc3:'rgba(140,170,255,.16)';ctx.lineWidth=isSel?2:1;
+    roundRect(ctx,x+4,base-86,cw-10,86,10);ctx.stroke();
+    if(isSel){ // Innenleben zeigen
+      for(let j=0;j<16;j++){
+        ctx.fillStyle='rgba(176,107,255,'+(0.2+0.5*Math.random())+')';
+        ctx.beginPath();ctx.arc(x+12+Math.random()*(cw-28),base-78+Math.random()*70,1.8,0,TAU);ctx.fill();
+      }
+      txt(ctx,'unbewusst',cx2,base-10,C.acc3,9,'center');
+    }
+    // Gesicht
+    ctx.fillStyle=isWin?'rgba(255,138,61,.9)':'rgba(120,150,210,.5)';
+    ctx.beginPath();ctx.arc(cx2-7,base-56,2.6,0,TAU);ctx.arc(cx2+7,base-56,2.6,0,TAU);ctx.fill();
+    ctx.strokeStyle=isWin?C.acc:'rgba(120,150,210,.5)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.arc(cx2,base-44,7,0.15*Math.PI,0.85*Math.PI);ctx.stroke();
+    txt(ctx,d.n,cx2,base-74,isWin?'#fff':C.dim,13,'center');
+    // Schrei (öffentlich)
+    const bh=p[i]*(h-160)*1.9;
+    const g=ctx.createLinearGradient(0,base-86-bh,0,base-86);
+    g.addColorStop(0,isWin?'rgba(255,138,61,.9)':'rgba(69,212,255,.5)');
+    g.addColorStop(1,'rgba(69,212,255,.05)');
+    ctx.fillStyle=g;roundRect(ctx,x+14,base-86-bh,cw-30,bh,4);ctx.fill();
+    txt(ctx,(p[i]*100).toFixed(0)+'%',cx2,base-92-bh-8,isWin?C.acc:C.dim,10,'center');
+  });
+  ctx.strokeStyle='rgba(255,255,255,.1)';ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(14,base-88);ctx.lineTo(w-14,base-88);ctx.stroke();ctx.setLineDash([]);
+  txt(ctx,'↑ ÖFFENTLICH — was die Dämonen einander zuschreien = bewusst',18,20,C.acc2,11);
+  txt(ctx,'↓ PRIVAT — was in den Dämonen vorgeht = unbewusst',18,base-100,C.acc3,10.5);
+  if(mcSel<0)$('mcStat').innerHTML='Klicke einen Dämon an, um in sein „Inneres“ zu schauen. '+
+    'Schiebe den Konkurrenzdruck: Bei hohem Druck dominiert ein einziger Inhalt das Bewusstsein.';
+  else $('mcStat').innerHTML='Der <b>'+mcDem[mcSel].n+'</b>-Dämon rechnet privat (violette Punkte) — '+
+    'niemand sieht das. Nach außen dringt nur seine <b>eine Zahl</b>, der Schrei. '+
+    '<i>„Was in den Dämonen vorgeht, ist der unbewusste Teil des Denkens; was sie einander zuschreien, der bewusste.“ — McCarthy</i>';
+}
+function mcClick(ev){
+  const cv=$('cvMcC'), r=cv.getBoundingClientRect();
+  const x=ev.clientX-r.left, n=mcDem.length, cw=(cv.clientWidth-40)/n;
+  const i=Math.floor((x-20)/cw);
+  mcSel = (i>=0&&i<n && i!==mcSel) ? i : -1;
+  drawMcC();
+}
+function drawScale(){
+  const s=+$('sScl').value;$('vScl').textContent=s+'×';
+  const xs=[],seq=[],par=[];
+  for(let k=1;k<=64;k++){xs.push(k);seq.push(k);par.push(1);}
+  Plotly.react('plScale',[
+    {x:xs,y:seq,mode:'lines',name:'eine Maschine, k-mal so lange',line:{color:C.bad,width:3},
+     fill:'tozeroy',fillcolor:'rgba(255,95,109,.08)'},
+    {x:xs,y:par,mode:'lines',name:'k-mal so große Maschine, parallel',line:{color:C.good,width:3}},
+    {x:[s,s],y:[s,1],mode:'markers',name:'aktuell',marker:{color:[C.bad,C.good],size:11,symbol:'diamond'}}
+  ],L({title:{text:'Selfridges Wunsch: Zeit gegen Hardware tauschen',font:{size:12.5,color:C.txt}},
+      xaxis:{title:'Problemgröße (× )'},yaxis:{title:'benötigte Zeit (relativ)'}}),PCFG);
+  $('sclStat').innerHTML='Bei '+s+'× größerem Problem: sequentiell <b style="color:'+C.bad+'">'+s+
+    '× länger</b>, parallel <b style="color:'+C.good+'">gleich schnell</b> — nur mit '+s+
+    '× mehr Hardware. <i>„… so dass ich, wenn ich ein doppelt so schweres Problem lösen will, einfach eine doppelt so große Maschine baue.“</i>';
+}
+
+/* =======================================================================
+   INIT & BINDINGS
+   ======================================================================= */
+function bind(id,fn){const e=$(id);if(e)e.addEventListener('input',fn);}
+function initAll(){
+  renderTeX();
+
+  // 0
+  drawAness();
+
+  // 1
+  bind('sHum',()=>{$('vHum').textContent=$('sHum').value+'%';morseNew();});
+  bind('sDrift',()=>{$('vDrift').textContent=$('sDrift').value+'%';morseNew();});
+  bind('sThr',()=>{$('vThr').textContent=(+$('sThr').value/100).toFixed(2);drawMorse();});
+  morseNew();
+  bind('sCtx',()=>{$('vCtx').textContent=(+$('sCtx').value/100).toFixed(1)+'×';drawCtx();});
+  drawCtx();
+
+  // 2
+  bind('sIdN',()=>{$('vIdN').textContent=$('sIdN').value+'%';idealCache=null;drawIdeal();});
+  drawIdeal();
+  archReset();
+
+  // 3
+  bind('sSoft',drawSoft);bind('sRat',drawSoft);drawSoft();
+  buildOpBtns();newOpData();drawOps();
+
+  // 4
+  for(let i=0;i<6;i++)bind('sW'+i,drawW);
+  wNew();drawW();
+  bind('sDim',drawCurse);drawCurse();
+
+  // 5
+  ['sRug','sFp','sFoot'].forEach(id=>bind(id,drawLand3d));
+  bind('sN1',drawHC1);
+  ['sSeed','sStep','sSpd'].forEach(id=>bind(id,drawHC2));
+  drawLand3d();
+
+  // 6
+  bind('sP',drawTrap);drawTrap();
+  bind('sPlat',drawPlateau);
+  bind('sUni',drawLearn);drawLearn();
+
+  // 7
+  ['sNo','sSamp','sNStep'].forEach(id=>bind(id,drawNoise));
+  bind('sDelta',drawSample);bind('sSig',drawSample);drawSample();
+  bind('sPs',drawEntropy);drawEntropy();
+  bind('sDof',()=>{$('vDof').textContent=$('sDof').value;});
+  $('vDof').textContent=$('sDof').value;
+  mkDraw(Array.from({length:320},()=>0),Array.from({length:320},()=>0),+$('sDof').value);
+
+  // 8
+  ['sKill','sMut','sConj'].forEach(id=>bind(id,drawEvo));
+  evoReset();
+  bind('sPop',popReset);bind('sSel',drawPop);popReset();
+
+  // 9
+  buildConjBtns();drawConj();
+  ['sXa','sXb','sXc'].forEach(id=>bind(id,drawXor));drawXor();
+
+  // 10
+  bind('sQual',drawConf);bind('sNdec',drawConf);drawConf();
+  bind('sHand',drawSelf);drawSelf();
+
+  // 11
+  ['sJnd','sWin'].forEach(id=>bind(id,drawWinner));
+  bind('sWHum',()=>{winNew();drawWinner();});
+  winNew();drawWinner();winBench();
+  bind('sDeg',drawBray);bind('sBHum',drawBray);drawBray();
+  f7Reset();
+
+  // 12
+  drawTime();
+  $('cvTime').addEventListener('click',timeClick);
+  bind('sBd',drawBlind);drawBlind();
+  mcInit();drawMcC();
+  $('cvMcC').addEventListener('click',mcClick);
+  bind('sMc',drawMcC);
+  bind('sScl',drawScale);drawScale();
+
+  // Resize
+  let rt=null;
+  window.addEventListener('resize',()=>{
+    clearTimeout(rt);
+    rt=setTimeout(()=>{
+      drawAness();drawMorse();drawCtx();drawIdeal();drawArch();drawOps();drawW();
+      drawHC1();drawHC2();drawPlateau();drawNoise();drawEvo();drawPop();drawConj();
+      drawXor();drawSelf();drawWinner();drawF7();drawTime();drawMcC();
+      drawScale();drawBlind();drawSample();drawConf();drawLearn();
+      drawTrap();drawEntropy();drawSoft();drawCurse();
+      if(mkCache)mkDraw(mkCache.hF,mkCache.hC,mkCache.dof);
+      if(hc2paths.length)hc2plot();
+    },180);
+  });
+}
+
+/* Pre-pin all canvases so they cannot grow on click */
+(function pinAll(){
+  document.querySelectorAll('canvas').forEach(cv=>{
+    const h=parseInt(cv.getAttribute('height'))||300;
+    if(typeof lockCanvas==='function') lockCanvas(cv,h,window.devicePixelRatio||1);
+    cv.style.setProperty('height',h+'px','important');
+    cv.style.setProperty('min-height',h+'px','important');
+    cv.style.setProperty('max-height',h+'px','important');
+  });
+})();
+
+/* Start */
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initAll);
+else initAll();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kolmogorov — Grundbegriffe</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:#07080c;font-family:'Georgia',serif}
+  #stage{position:fixed;inset:0}
+  canvas{position:absolute;inset:0;width:100%;height:100%}
+  .overlay{position:fixed;inset:0;pointer-events:none;display:flex;flex-direction:column;
+    justify-content:flex-end;padding:0 8vw 14vh;}
+  .kicker{font:600 12px/1 'Helvetica Neue',sans-serif;letter-spacing:.42em;
+    text-transform:uppercase;color:#6f7fa8;margin-bottom:18px;opacity:0;}
+  h1{font:400 clamp(30px,5.2vw,70px)/1.05 Georgia,serif;color:#f2f5ff;
+    letter-spacing:-.02em;margin-bottom:16px;opacity:0;}
+  h1 em{font-style:italic;color:#8fd8ff}
+  p.sub{font:300 clamp(15px,1.6vw,21px)/1.5 'Helvetica Neue',sans-serif;
+    color:#9aa7c4;max-width:46ch;opacity:0;}
+  .formula{font:italic 300 clamp(17px,2.1vw,27px)/1.4 Georgia,serif;
+    color:#ffd98a;margin-top:18px;opacity:0;letter-spacing:.01em}
+  .fade{animation:f .9s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes f{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  #rail{position:fixed;right:3vw;top:50%;transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:11px;z-index:9}
+  #rail b{width:7px;height:7px;border-radius:50%;background:#2a3147;
+    cursor:pointer;transition:.45s;display:block}
+  #rail b.on{background:#8fd8ff;transform:scale(1.7);box-shadow:0 0 14px #8fd8ff}
+  #nav{position:fixed;left:0;right:0;bottom:4vh;display:flex;justify-content:center;
+    gap:28px;z-index:9;font:500 12px/1 'Helvetica Neue',sans-serif;letter-spacing:.2em}
+  #nav button{background:none;border:1px solid #2c3450;color:#7f8db0;padding:11px 24px;
+    border-radius:40px;cursor:pointer;letter-spacing:.2em;text-transform:uppercase;
+    transition:.3s;font-family:inherit}
+  #nav button:hover{border-color:#8fd8ff;color:#d8ecff;background:rgba(143,216,255,.07)}
+  #prog{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,#8fd8ff,#ffd98a);
+    z-index:10;transition:width .6s cubic-bezier(.2,.7,.2,1)}
+  #count{position:fixed;left:3vw;bottom:4vh;color:#3f4a6a;
+    font:500 12px/1 'Helvetica Neue',sans-serif;letter-spacing:.3em;z-index:9}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<div id="stage"><canvas id="c"></canvas></div>
+<div class="overlay">
+  <div class="kicker" id="k"></div>
+  <h1 id="t"></h1>
+  <p class="sub" id="s"></p>
+  <div class="formula" id="fx"></div>
+</div>
+<div id="rail"></div>
+<div id="count"></div>
+<div id="nav">
+  <button onclick="go(-1)">← Zurück</button>
+  <button onclick="go(1)">Weiter →</button>
+</div>
+
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d');
+let W,H,DPR;
+function resize(){DPR=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;
+  C.width=W*DPR;C.height=H*DPR;X.setTransform(DPR,0,0,DPR,0,0);}
+addEventListener('resize',resize);resize();
+
+let t=0, i=0, tIn=0;
+const R=(a,b)=>a+Math.random()*(b-a);
+const ease=x=>x<0?0:x>1?1:1-Math.pow(1-x,3);
+
+/* ---------- Szenen ---------- */
+const scenes=[
+{
+ k:'Kapitel I · §1',
+ t:'Der <em>Grundraum</em> E',
+ s:'Alle denkbaren Ausgänge eines Versuchs. Einzelne Punkte: Elementarereignisse.',
+ fx:'E = { ξ₁, ξ₂, ξ₃, … }',
+ init(){this.p=[...Array(260)].map(()=>({a:R(0,6.28),r:R(0,1),sp:R(.1,.5),ph:R(0,6.28),s:R(1,2.6)}))},
+ draw(p){
+  const cx=W*.5,cy=H*.4,RAD=Math.min(W,H)*.3;
+  X.strokeStyle='rgba(143,216,255,'+(.07+.03*Math.sin(t*.6))+')';X.lineWidth=1;
+  for(let k=1;k<=3;k++){X.beginPath();X.arc(cx,cy,RAD*k/3*(1+.012*Math.sin(t+k)),0,6.28);X.stroke();}
+  this.p.forEach((o,n)=>{
+   const g=ease((p-n/this.p.length*.5)*1.6);
+   const r=o.r*RAD*g, a=o.a+t*o.sp*.12;
+   const x=cx+Math.cos(a)*r, y=cy+Math.sin(a)*r*.85;
+   const al=(.25+.5*Math.abs(Math.sin(t*.9+o.ph)))*g;
+   X.beginPath();X.arc(x,y,o.s,0,6.28);
+   X.fillStyle='rgba(200,225,255,'+al+')';X.fill();
+   if(o.s>2.2){X.beginPath();X.arc(x,y,o.s*4,0,6.28);
+    X.fillStyle='rgba(143,216,255,'+al*.08+')';X.fill();}
+  });}
+},
+{
+ k:'Kapitel I · §1',
+ t:'Ereignisse sind <em>Mengen</em>',
+ s:'Ein Ereignis A ist eine Teilmenge von E. Das System 𝔉 ist abgeschlossen unter ∪, ∩, −.',
+ fx:'A ⊂ E ,   A ∈ 𝔉',
+ init(){this.p=[...Array(230)].map(()=>({x:R(0,1),y:R(0,1),s:R(1,2.4),ph:R(0,6.28)}))},
+ draw(p){
+  const cx=W*.5,cy=H*.4,RAD=Math.min(W,H)*.29;
+  const ax=cx-RAD*.34,bx=cx+RAD*.34,rr=RAD*.55;
+  X.strokeStyle='rgba(143,216,255,.14)';X.lineWidth=1;
+  X.beginPath();X.arc(cx,cy,RAD,0,6.28);X.stroke();
+  const g=ease(p*1.4);
+  [[ax,'143,216,255','A'],[bx,'255,217,138','B']].forEach(([x,col,lab],n)=>{
+   const rz=rr*g*(1+.02*Math.sin(t*1.1+n*2));
+   X.beginPath();X.arc(x,cy,rz,0,6.28);
+   const grd=X.createRadialGradient(x,cy,0,x,cy,rz);
+   grd.addColorStop(0,'rgba('+col+',.14)');grd.addColorStop(1,'rgba('+col+',.02)');
+   X.fillStyle=grd;X.fill();
+   X.strokeStyle='rgba('+col+',.55)';X.lineWidth=1.4;X.stroke();
+   X.font='italic 300 24px Georgia';X.fillStyle='rgba('+col+',.85)';
+   X.fillText(lab,x-(n?-rz*.55:rz*.75),cy-rz-14);
+  });
+  this.p.forEach(o=>{
+   const x=cx+(o.x*2-1)*RAD,y=cy+(o.y*2-1)*RAD;
+   if(Math.hypot(x-cx,y-cy)>RAD)return;
+   const inA=Math.hypot(x-ax,y-cy)<rr*g, inB=Math.hypot(x-bx,y-cy)<rr*g;
+   const al=(.2+.4*Math.abs(Math.sin(t+o.ph)));
+   X.beginPath();X.arc(x,y,o.s,0,6.28);
+   X.fillStyle=inA&&inB?'rgba(255,255,255,'+al+')'
+     :inA?'rgba(143,216,255,'+al+')':inB?'rgba(255,217,138,'+al+')'
+     :'rgba(120,135,170,'+al*.5+')';X.fill();
+  });}
+},
+{
+ k:'Kapitel I · §1',
+ t:'Die <em>Axiome</em> I – V',
+ s:'𝔉 ist ein Körper. P ist nicht-negativ. Das Ganze hat Maß eins. Und sie addiert sich.',
+ fx:'P(E) = 1 ,   P(A+B) = P(A) + P(B)',
+ init(){this.bars=[.34,.21,.17,.16,.12]},
+ draw(p){
+  const cy=H*.42, bw=Math.min(W*.56,620), x0=W*.5-bw/2, hgt=46;
+  X.strokeStyle='rgba(255,255,255,.22)';X.lineWidth=1;
+  X.strokeRect(x0,cy-hgt/2,bw,hgt);
+  let acc=0;
+  const cols=['143,216,255','255,217,138','160,255,210','210,170,255','255,160,190'];
+  this.bars.forEach((b,n)=>{
+   const g=ease((p-n*.1)*2.2); if(g<=0)return;
+   const w=b*bw*g;
+   const grd=X.createLinearGradient(x0+acc,0,x0+acc+w,0);
+   grd.addColorStop(0,'rgba('+cols[n]+',.5)');grd.addColorStop(1,'rgba('+cols[n]+',.16)');
+   X.fillStyle=grd;X.fillRect(x0+acc,cy-hgt/2,w,hgt);
+   X.strokeStyle='rgba('+cols[n]+',.7)';X.strokeRect(x0+acc,cy-hgt/2,w,hgt);
+   acc+=b*bw*g;
+  });
+  const pulse=.5+.5*Math.sin(t*1.4);
+  X.font='300 14px Helvetica Neue';X.fillStyle='rgba(143,216,255,'+(.4+.4*pulse)+')';
+  X.textAlign='center';X.fillText('Σ P(Aᵢ)  =  1',W*.5,cy+hgt/2+40);
+  X.textAlign='left';
+  // Maßband
+  X.strokeStyle='rgba(255,255,255,.12)';
+  X.beginPath();X.moveTo(x0,cy+hgt/2+12);X.lineTo(x0+bw,cy+hgt/2+12);X.stroke();
+  [0,1].forEach(v=>{const x=x0+v*bw;
+   X.beginPath();X.moveTo(x,cy+hgt/2+6);X.lineTo(x,cy+hgt/2+18);X.stroke();
+   X.font='300 12px Helvetica Neue';X.fillStyle='rgba(255,255,255,.35)';
+   X.fillText(v,x-3,cy+hgt/2+36);});
+ }
+},
+{
+ k:'Kapitel I · §2',
+ t:'Die Brücke zur <em>Erfahrung</em>',
+ s:'Wiederhole die Bedingungen 𝕮 sehr oft. Die relative Häufigkeit m/n nähert sich P(A).',
+ fx:'m / n  →  P(A)',
+ init(){this.hits=0;this.n=0;this.path=[];this.target=.37},
+ draw(p){
+  const cx=W*.5,cy=H*.38;
+  if(p>.05&&this.n<900&&t%.02<.02){
+   for(let q=0;q<2;q++){this.n++;if(Math.random()<this.target)this.hits++;
+    this.path.push(this.hits/this.n);}
+  }
+  const gw=Math.min(W*.6,660),gh=H*.22,gx=W*.5-gw/2,gy=cy-gh/2;
+  X.strokeStyle='rgba(255,255,255,.1)';X.lineWidth=1;
+  X.strokeRect(gx,gy,gw,gh);
+  // Zielliniie
+  const ty=gy+gh*(1-this.target);
+  X.setLineDash([4,6]);X.strokeStyle='rgba(255,217,138,.55)';
+  X.beginPath();X.moveTo(gx,ty);X.lineTo(gx+gw,ty);X.stroke();X.setLineDash([]);
+  X.font='italic 300 17px Georgia';X.fillStyle='rgba(255,217,138,.8)';
+  X.fillText('P(A)',gx+gw+12,ty+6);
+  // Pfad
+  X.beginPath();
+  this.path.forEach((v,n)=>{const x=gx+n/900*gw,y=gy+gh*(1-v);
+   n?X.lineTo(x,y):X.moveTo(x,y);});
+  X.strokeStyle='rgba(143,216,255,.85)';X.lineWidth=1.6;X.stroke();
+  // Head glow
+  if(this.path.length){
+   const n=this.path.length-1,x=gx+n/900*gw,y=gy+gh*(1-this.path[n]);
+   X.beginPath();X.arc(x,y,4,0,6.28);X.fillStyle='#8fd8ff';X.fill();
+   X.beginPath();X.arc(x,y,16,0,6.28);X.fillStyle='rgba(143,216,255,.14)';X.fill();}
+  X.font='300 13px Helvetica Neue';X.fillStyle='rgba(255,255,255,.3)';
+  X.fillText('n = '+this.n,gx,gy-14);
+ }
+},
+{
+ k:'Kapitel I · §3–4',
+ t:'<em>Unvereinbar</em> heißt addieren',
+ s:'Schneiden sich zwei Ereignisse nicht, so addieren sich ihre Wahrscheinlichkeiten. Sonst nicht.',
+ fx:'AB = 0  ⟹  P(A+B) = P(A) + P(B)',
+ init(){},
+ draw(p){
+  const cy=H*.4,r=Math.min(W,H)*.14;
+  const sep=1-.5*(.5+.5*Math.sin(t*.55));
+  const d=r*(.35+1.75*sep);
+  const ax=W*.5-d/2, bx=W*.5+d/2;
+  const overlap=Math.max(0,2*r-d);
+  [[ax,'143,216,255'],[bx,'255,217,138']].forEach(([x,col])=>{
+   const grd=X.createRadialGradient(x,cy,0,x,cy,r);
+   grd.addColorStop(0,'rgba('+col+',.2)');grd.addColorStop(1,'rgba('+col+',.03)');
+   X.beginPath();X.arc(x,cy,r,0,6.28);X.fillStyle=grd;X.fill();
+   X.strokeStyle='rgba('+col+',.6)';X.lineWidth=1.5;X.stroke();});
+  // Schnittmenge markieren
+  X.save();
+  X.beginPath();X.arc(ax,cy,r,0,6.28);X.clip();
+  X.beginPath();X.arc(bx,cy,r,0,6.28);
+  X.fillStyle='rgba(255,90,120,'+(.1+.3*(overlap/(2*r)))+')';X.fill();
+  X.restore();
+  const good=overlap<1;
+  X.textAlign='center';X.font='300 15px Helvetica Neue';
+  X.fillStyle=good?'rgba(160,255,210,.9)':'rgba(255,120,150,.9)';
+  X.fillText(good?'AB = 0   ·   Addition erlaubt':'AB ≠ 0   ·   Addition verboten',W*.5,cy+r+48);
+  X.textAlign='left';
+ }
+},
+{
+ k:'Kapitel I · §4',
+ t:'<em>Bedingte</em> Wahrscheinlichkeit',
+ s:'A wird zur neuen Welt. Alles wird in A neu normiert — und bleibt dort ein Wahrscheinlichkeitsfeld.',
+ fx:'P_A(B) = P(AB) / P(A)',
+ init(){},
+ draw(p){
+  const cy=H*.4, z=ease(Math.min(1,p*1.3))*(.5+.5*Math.sin(t*.4));
+  const RAD=Math.min(W,H)*.26;
+  const scale=1+z*1.6;
+  const cx=W*.5 - z*RAD*.3;
+  X.save();
+  X.globalAlpha=1-z*.75;
+  X.beginPath();X.arc(W*.5,cy,RAD,0,6.28);
+  X.strokeStyle='rgba(255,255,255,.16)';X.lineWidth=1;X.stroke();
+  X.font='italic 300 20px Georgia';X.fillStyle='rgba(255,255,255,.3)';
+  X.fillText('E',W*.5+RAD+14,cy);
+  X.restore();
+  // A wächst
+  const ar=RAD*.5*scale;
+  const grd=X.createRadialGradient(cx,cy,0,cx,cy,ar);
+  grd.addColorStop(0,'rgba(143,216,255,.16)');grd.addColorStop(1,'rgba(143,216,255,.03)');
+  X.beginPath();X.arc(cx,cy,ar,0,6.28);X.fillStyle=grd;X.fill();
+  X.strokeStyle='rgba(143,216,255,'+(.5+.4*z)+')';X.lineWidth=1.6;X.stroke();
+  X.font='italic 300 22px Georgia';X.fillStyle='rgba(143,216,255,.9)';
+  X.fillText('A',cx-ar-28,cy);
+  // B ∩ A
+  X.save();X.beginPath();X.arc(cx,cy,ar,0,6.28);X.clip();
+  const bx=cx+ar*.3,br=ar*.62;
+  const g2=X.createRadialGradient(bx,cy,0,bx,cy,br);
+  g2.addColorStop(0,'rgba(255,217,138,.3)');g2.addColorStop(1,'rgba(255,217,138,.06)');
+  X.beginPath();X.arc(bx,cy,br,0,6.28);X.fillStyle=g2;X.fill();
+  X.strokeStyle='rgba(255,217,138,.75)';X.lineWidth=1.4;X.stroke();
+  X.restore();
+  X.font='italic 300 20px Georgia';X.fillStyle='rgba(255,217,138,.85)';
+  X.fillText('AB',bx-14,cy+br+26);
+ }
+},
+{
+ k:'Kapitel I · §5',
+ t:'<em>Unabhängigkeit</em>',
+ s:'Das Herzstück der Wahrscheinlichkeitstheorie. Wissen über A verändert B nicht.',
+ fx:'P(AB) = P(A) · P(B)',
+ init(){this.pts=[...Array(420)].map(()=>({x:Math.random(),y:Math.random(),ph:R(0,6.28)}))},
+ draw(p){
+  const sz=Math.min(W*.42,H*.44), gx=W*.5-sz/2, gy=H*.4-sz/2;
+  const a=.52,b=.4;
+  X.strokeStyle='rgba(255,255,255,.12)';X.lineWidth=1;X.strokeRect(gx,gy,sz,sz);
+  const g=ease(p*1.5);
+  // Streifen A (vertikal), B (horizontal)
+  X.fillStyle='rgba(143,216,255,.09)';X.fillRect(gx,gy,sz*a*g,sz);
+  X.fillStyle='rgba(255,217,138,.09)';X.fillRect(gx,gy,sz,sz*b*g);
+  X.fillStyle='rgba(255,255,255,.11)';X.fillRect(gx,gy,sz*a*g,sz*b*g);
+  X.strokeStyle='rgba(143,216,255,.5)';
+  X.beginPath();X.moveTo(gx+sz*a*g,gy);X.lineTo(gx+sz*a*g,gy+sz);X.stroke();
+  X.strokeStyle='rgba(255,217,138,.5)';
+  X.beginPath();X.moveTo(gx,gy+sz*b*g);X.lineTo(gx+sz,gy+sz*b*g);X.stroke();
+  this.pts.forEach(o=>{
+   const x=gx+o.x*sz,y=gy+o.y*sz;
+   const inA=o.x<a*g,inB=o.y<b*g;
+   const al=.22+.35*Math.abs(Math.sin(t*.8+o.ph));
+   X.beginPath();X.arc(x,y,inA&&inB?2.1:1.4,0,6.28);
+   X.fillStyle=inA&&inB?'rgba(255,255,255,'+al*1.5+')'    :inA?'rgba(143,216,255,'+al+')':inB?'rgba(255,217,138,'+al+')'
+    :'rgba(110,125,160,'+al*.45+')';X.fill();
+  });
+  X.textAlign='center';X.font='300 14px Helvetica Neue';
+  X.fillStyle='rgba(255,255,255,.4)';
+  X.fillText('Fläche(A∩B) = Fläche(A) · Fläche(B)',W*.5,gy+sz+40);
+  X.textAlign='left';
+ }
+},
+{
+ k:'Kapitel II · §1',
+ t:'Das <em>Stetigkeits­axiom</em>',
+ s:'Schrumpft eine Kette von Ereignissen ins Nichts, so schrumpft auch ihr Maß ins Nichts.',
+ fx:'Aₙ ↓ 0  ⟹  P(Aₙ) → 0',
+ init(){this.ph=0},
+ draw(p){
+  const cx=W*.5,cy=H*.4,RAD=Math.min(W,H)*.27;
+  const cyc=(t*.35)%1;
+  for(let n=0;n<9;n++){
+   const u=(n/9+cyc)%1;
+   const r=RAD*Math.pow(1-u,1.9);
+   if(r<1)continue;
+   const al=(.55*(1-u)+.05)*ease(p*1.6);
+   X.beginPath();X.arc(cx,cy,r,0,6.28);
+   X.strokeStyle='rgba(143,216,255,'+al+')';X.lineWidth=1.3;X.stroke();
+   const grd=X.createRadialGradient(cx,cy,r*.6,cx,cy,r);
+   grd.addColorStop(0,'rgba(143,216,255,0)');
+   grd.addColorStop(1,'rgba(143,216,255,'+al*.14+')');
+   X.fillStyle=grd;X.fill();
+  }
+  X.beginPath();X.arc(cx,cy,2.5,0,6.28);
+  X.fillStyle='rgba(255,217,138,'+(.5+.5*Math.sin(t*2))+')';X.fill();
+  // Maßbalken rechts
+  const bx=cx+RAD+70,by0=cy-RAD*.7,bh=RAD*1.4;
+  if(bx+26<W){
+   X.strokeStyle='rgba(255,255,255,.12)';X.strokeRect(bx,by0,16,bh);
+   const lvl=Math.pow(1-((t*.35)%1),1.9);
+   X.fillStyle='rgba(143,216,255,.4)';
+   X.fillRect(bx,by0+bh*(1-lvl),16,bh*lvl);
+   X.font='italic 300 15px Georgia';X.fillStyle='rgba(143,216,255,.7)';
+   X.fillText('P',bx+24,by0+bh);
+  }
+ }
+},
+{
+ k:'Kapitel III · §2',
+ t:'<em>Zufallsvariable</em>',
+ s:'Eine messbare Abbildung ξ ↦ x. Ihre Verteilungsfunktion F(a) sammelt alle Wahrscheinlichkeit links von a.',
+ fx:'F(a) = P{ x < a }',
+ init(){this.pts=[...Array(70)].map((_,n)=>({v:0,tg:0,set:false}))},
+ draw(p){
+  const lx=W*.5-Math.min(W*.3,330), rx=W*.5+Math.min(W*.3,330);
+  const ey=H*.3, ax=H*.52;
+  const g=ease(p*1.4);
+  // linke Wolke E
+  X.beginPath();X.ellipse(lx,ey,Math.min(W*.1,110),Math.min(H*.08,78),0,0,6.28);
+  X.strokeStyle='rgba(255,255,255,.14)';X.lineWidth=1;X.stroke();
+  X.font='italic 300 19px Georgia';X.fillStyle='rgba(255,255,255,.3)';
+  X.fillText('E',lx-6,ey-Math.min(H*.08,78)-16);
+  // Achse
+  X.strokeStyle='rgba(255,255,255,.18)';
+  X.beginPath();X.moveTo(W*.5-Math.min(W*.32,360),ax);
+  X.lineTo(W*.5+Math.min(W*.32,360),ax);X.stroke();
+  X.font='italic 300 17px Georgia';X.fillStyle='rgba(255,255,255,.3)';
+  X.fillText('ℝ',W*.5+Math.min(W*.32,360)+12,ax+6);
+  // Pfeile ξ → x
+  this.pts.forEach((o,n)=>{
+   if(!o.set){o.a=R(0,6.28);o.rr=Math.sqrt(Math.random());
+    o.x=W*.5+(R(-1,1)+R(-1,1)+R(-1,1))/3*Math.min(W*.3,330);o.set=true;o.d=R(0,1);}
+   const sx=lx+Math.cos(o.a)*o.rr*Math.min(W*.1,110);
+   const sy=ey+Math.sin(o.a)*o.rr*Math.min(H*.08,78);
+   const k=ease((g*1.4-o.d)*1.6);
+   if(k<=0)return;
+   const tx=sx+(o.x-sx)*k, ty=sy+(ax-sy)*k;
+   X.beginPath();X.moveTo(sx,sy);X.lineTo(tx,ty);
+   X.strokeStyle='rgba(143,216,255,'+.07*k+')';X.lineWidth=1;X.stroke();
+   X.beginPath();X.arc(tx,ty,1.8,0,6.28);
+   X.fillStyle='rgba(143,216,255,'+(.3+.4*k)+')';X.fill();
+  });
+  // Verteilungsfunktion F
+  const fy0=H*.76, fh=Math.min(H*.16,130);
+  const a0=W*.5-Math.min(W*.32,360), aw=Math.min(W*.64,720);
+  X.beginPath();
+  for(let q=0;q<=180;q++){
+   const u=q/180, xx=a0+u*aw;
+   const z=(u-.5)*5.4;
+   const F=.5*(1+Math.tanh(z*.9));
+   const yy=fy0-F*fh*g;
+   q?X.lineTo(xx,yy):X.moveTo(xx,yy);
+  }
+  X.strokeStyle='rgba(255,217,138,.85)';X.lineWidth=2;X.stroke();
+  X.setLineDash([3,6]);X.strokeStyle='rgba(255,255,255,.12)';
+  X.beginPath();X.moveTo(a0,fy0-fh*g);X.lineTo(a0+aw,fy0-fh*g);X.stroke();
+  X.setLineDash([]);
+  X.font='300 12px Helvetica Neue';X.fillStyle='rgba(255,255,255,.3)';
+  X.fillText('1',a0-16,fy0-fh*g+5);X.fillText('0',a0-16,fy0+5);
+ }
+},
+{
+ k:'Kapitel IV · §2',
+ t:'<em>Erwartungswert</em>',
+ s:'Das abstrakte Lebesgue-Integral. Nicht die x-Achse wird zerlegt, sondern die Höhe.',
+ fx:'E(x) = ∫ x P(dξ)',
+ init(){},
+ draw(p){
+  const a0=W*.5-Math.min(W*.3,340), aw=Math.min(W*.6,680);
+  const base=H*.58, hh=Math.min(H*.26,220);
+  const f=u=>Math.exp(-Math.pow((u-.42)*3.1,2))*.85
+           +Math.exp(-Math.pow((u-.72)*5.2,2))*.45;
+  // Kurve
+  X.beginPath();
+  for(let q=0;q<=200;q++){const u=q/200;
+   const xx=a0+u*aw,yy=base-f(u)*hh;q?X.lineTo(xx,yy):X.moveTo(xx,yy);}
+  X.strokeStyle='rgba(143,216,255,.55)';X.lineWidth=1.6;X.stroke();
+  // horizontale Schichten (Lebesgue)
+  const N=16, g=ease(p*1.3);
+  for(let k=0;k<N;k++){
+   const lv=(k+1)/N, ap=ease((g*1.7-k/N*.9)*2); if(ap<=0)continue;
+   let x1=null,x2=null;
+   for(let q=0;q<=240;q++){const u=q/240;
+    if(f(u)>=lv){if(x1===null)x1=u;x2=u;}}
+   if(x1===null)continue;
+   const y=base-lv*hh, hgt=hh/N;
+   const glow=.5+.5*Math.sin(t*1.6-k*.42);
+   X.fillStyle='rgba(255,217,138,'+(.06+.09*glow)*ap+')';
+   X.fillRect(a0+x1*aw,y,(x2-x1)*aw,hgt);
+   X.strokeStyle='rgba(255,217,138,'+(.18+.22*glow)*ap+')';X.lineWidth=.8;
+   X.strokeRect(a0+x1*aw,y,(x2-x1)*aw,hgt);
+  }
+  X.strokeStyle='rgba(255,255,255,.15)';X.lineWidth=1;
+  X.beginPath();X.moveTo(a0-20,base);X.lineTo(a0+aw+20,base);X.stroke();
+  // Schwerpunkt
+  let num=0,den=0;
+  for(let q=0;q<=300;q++){const u=q/300;num+=u*f(u);den+=f(u);}
+  const mx=a0+num/den*aw;
+  X.setLineDash([2,5]);X.strokeStyle='rgba(255,217,138,'+(.3+.3*Math.sin(t*1.8))+')';
+  X.beginPath();X.moveTo(mx,base+16);X.lineTo(mx,base-hh*.95);X.stroke();X.setLineDash([]);
+  X.beginPath();X.moveTo(mx,base+16);X.lineTo(mx-7,base+30);X.lineTo(mx+7,base+30);
+  X.closePath();X.fillStyle='rgba(255,217,138,.8)';X.fill();
+  X.font='italic 300 17px Georgia';X.fillStyle='rgba(255,217,138,.8)';
+  X.textAlign='center';X.fillText('E(x)',mx,base+52);X.textAlign='left';
+ }
+},
+{
+ k:'Kapitel VI · §3',
+ t:'Das <em>Gesetz der großen Zahlen</em>',
+ s:'Unabhängige Summanden mitteln sich. Die Streuung des Mittels zerfällt — Ordnung aus Zufall.',
+ fx:'P{ | sₙ − E(sₙ) | > ε } → 0',
+ init(){this.rows=[]},
+ draw(p){
+  const cx=W*.5, top=H*.16, bot=H*.68;
+  const NR=9;
+  const g=ease(p*1.2);
+  const wmax=Math.min(W*.34,380);
+  for(let k=0;k<NR;k++){
+   const kk=ease((g*1.9-k/NR*.85)*2); if(kk<=0)continue;
+   const y=top+(bot-top)*k/(NR-1);
+   const w=wmax/Math.sqrt(k+1);
+   // Glockenkurve der Breite w
+   X.beginPath();
+   for(let q=0;q<=120;q++){
+    const u=q/120, xx=cx+(u*2-1)*w;
+    const yy=y-Math.exp(-Math.pow((u*2-1)*2.2,2))*26*kk;
+    q?X.lineTo(xx,yy):X.moveTo(xx,yy);}
+   const al=(.18+.55*(k/NR))*kk;
+   X.strokeStyle='rgba(143,216,255,'+al+')';X.lineWidth=1.3;X.stroke();
+   X.lineTo(cx+w,y);X.lineTo(cx-w,y);X.closePath();
+   X.fillStyle='rgba(143,216,255,'+al*.14+')';X.fill();
+   // Streupunkte
+   for(let j=0;j<10;j++){
+    const u=(Math.random()+Math.random()+Math.random()+Math.random())/4;
+    const xx=cx+(u*2-1)*w*1.5;
+    X.beginPath();X.arc(xx,y-R(0,5),1.2,0,6.28);
+    X.fillStyle='rgba(200,225,255,'+(.12+.2*kk)+')';X.fill();}
+   X.font='300 11px Helvetica Neue';X.fillStyle='rgba(255,255,255,.2)';
+   X.fillText('n='+Math.pow(2,k),cx+wmax+26,y+4);
+  }
+  // ε-Korridor
+  const eps=26;
+  X.setLineDash([3,7]);X.strokeStyle='rgba(255,217,138,.35)';X.lineWidth=1;
+  [-1,1].forEach(s=>{X.beginPath();X.moveTo(cx+s*eps,top-16);
+   X.lineTo(cx+s*eps,bot+30);X.stroke();});
+  X.setLineDash([]);
+  X.font='italic 300 16px Georgia';X.fillStyle='rgba(255,217,138,.7)';
+  X.textAlign='center';X.fillText('ε',cx+eps+16,bot+50);
+  X.fillText('−ε',cx-eps-18,bot+50);X.textAlign='left';
+  // Zentrumslinie
+  X.strokeStyle='rgba(255,255,255,.14)';
+  X.beginPath();X.moveTo(cx,top-24);X.lineTo(cx,bot+30);X.stroke();
+ }
+},
+{
+ k:'Kolmogorov · 1933',
+ t:'Zufall ist ein <em>Maß</em>',
+ s:'Wahrscheinlichkeit ist nichts Fremdes mehr. Sie ist Geometrie auf Mengen — vollständig additiv, auf eins normiert.',
+ fx:'P : 𝔉 → [0,1]',
+ init(){this.st=[...Array(420)].map(()=>({a:R(0,6.28),r:R(.05,1),sp:R(.2,.9),s:R(.6,2),ph:R(0,6.28)}))},
+ draw(p){
+  const cx=W*.5,cy=H*.4,RAD=Math.min(W,H)*.33;
+  const g=ease(p);
+  this.st.forEach(o=>{
+   const a=o.a+t*o.sp*.07;
+   const r=o.r*RAD;
+   const x=cx+Math.cos(a)*r, y=cy+Math.sin(a)*r*.8;
+   const al=(.15+.55*Math.abs(Math.sin(t*.7+o.ph)))*g;
+   X.beginPath();X.arc(x,y,o.s,0,6.28);
+   X.fillStyle='rgba(200,225,255,'+al+')';X.fill();
+  });
+  for(let k=0;k<4;k++){
+   const rr=RAD*(.35+k*.22)*(1+.015*Math.sin(t*.8+k));
+   X.beginPath();X.arc(cx,cy,rr,0,6.28);
+   X.strokeStyle='rgba(143,216,255,'+(.05+.04*Math.sin(t*.6+k))*g+')';
+   X.lineWidth=1;X.stroke();
+  }
+  const pr=.5+.5*Math.sin(t*1.2);
+  X.beginPath();X.arc(cx,cy,RAD*.08*(1+.2*pr),0,6.28);
+  const grd=X.createRadialGradient(cx,cy,0,cx,cy,RAD*.3);
+  grd.addColorStop(0,'rgba(255,217,138,'+(.5*g)+')');
+  grd.addColorStop(1,'rgba(255,217,138,0)');
+  X.fillStyle=grd;X.fill();
+ }
+}
+];
+
+/* ---------- Hintergrund ---------- */
+const dust=[...Array(110)].map(()=>({x:Math.random(),y:Math.random(),
+  s:R(.4,1.4),v:R(.004,.02),ph:R(0,6.28)}));
+function bg(){
+  const grd=X.createRadialGradient(W*.5,H*.36,0,W*.5,H*.36,Math.max(W,H)*.85);
+  grd.addColorStop(0,'#0d1119');grd.addColorStop(1,'#05060a');
+  X.fillStyle=grd;X.fillRect(0,0,W,H);
+  dust.forEach(d=>{
+   d.y-=d.v*.004; if(d.y<-.02)d.y=1.02;
+   X.beginPath();X.arc(d.x*W,d.y*H,d.s,0,6.28);
+   X.fillStyle='rgba(160,185,230,'+(.05+.08*Math.abs(Math.sin(t*.4+d.ph)))+')';
+   X.fill();});
+}
+
+/* ---------- Loop ---------- */
+let last=performance.now();
+function loop(now){
+  const dt=Math.min((now-last)/1000,.05);last=now;t+=dt;tIn+=dt;
+  bg();
+  const sc=scenes[i];
+  X.save();sc.draw(Math.min(1,tIn/1.6));X.restore();
+  requestAnimationFrame(loop);
+}
+
+/* ---------- Navigation ---------- */
+const E=id=>document.getElementById(id);
+function render(){
+  const s=scenes[i];
+  if(!s._init){s.init();s._init=true;}
+  tIn=0;
+  ['k','t','s','fx'].forEach((id,n)=>{
+    const el=E(id);el.classList.remove('fade');void el.offsetWidth;
+    el.innerHTML=s[id]||'';
+    el.style.animationDelay=(n*.1)+'s';
+    el.classList.add('fade');
+  });
+  [...document.querySelectorAll('#rail b')].forEach((b,n)=>
+    b.classList.toggle('on',n===i));
+  E('prog').style.width=((i+1)/scenes.length*100)+'%';
+  E('count').textContent=String(i+1).padStart(2,'0')+' / '+
+    String(scenes.length).padStart(2,'0');
+}
+function go(d){i=(i+d+scenes.length)%scenes.length;render();}
+scenes.forEach((_,n)=>{const b=document.createElement('b');
+  b.onclick=()=>{i=n;render();};E('rail').appendChild(b);});
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ')go(1);
+  if(e.key==='ArrowLeft')go(-1);});
+let tx=0;
+addEventListener('touchstart',e=>tx=e.touches[0].clientX);
+addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;
+  if(Math.abs(d)>60)go(d<0?1:-1);});
+
+render();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

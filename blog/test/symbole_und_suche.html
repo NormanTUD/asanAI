@@ -1,0 +1,3061 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symbole & Suche — Newell & Simon (1976) interaktiv</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+<style>
+:root{
+  --bg:#070a12;
+  --bg2:#0c1120;
+  --panel:rgba(18,25,45,.72);
+  --panel2:rgba(26,35,60,.6);
+  --line:rgba(120,160,255,.16);
+  --txt:#dfe7ff;
+  --dim:#95a3c8;
+  --acc:#59e0ff;
+  --acc2:#b68cff;
+  --acc3:#ffcf6b;
+  --good:#54e8a8;
+  --bad:#ff6b8b;
+  --mono:'SFMono-Regular',Consolas,'Liberation Mono',monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 700px at 12% -5%,rgba(89,224,255,.10),transparent 60%),
+    radial-gradient(1000px 800px at 95% 10%,rgba(182,140,255,.10),transparent 55%),
+    radial-gradient(900px 600px at 50% 110%,rgba(255,207,107,.07),transparent 60%),
+    var(--bg);
+  color:var(--txt);
+  font-family:'Inter','Segoe UI',system-ui,sans-serif;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 22px 140px}
+
+/* ---------- HEADER ---------- */
+header.hero{
+  padding:90px 0 50px;text-align:center;position:relative;
+}
+header.hero .kicker{
+  letter-spacing:.42em;font-size:.68rem;color:var(--acc);text-transform:uppercase;
+  margin-bottom:18px;font-weight:600;
+}
+header.hero h1{
+  font-size:clamp(2.3rem,6.2vw,4.3rem);margin:0 0 6px;line-height:1.04;font-weight:800;
+  background:linear-gradient(100deg,#fff 10%,var(--acc) 45%,var(--acc2) 78%,var(--acc3));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  letter-spacing:-.02em;
+}
+header.hero h2{
+  font-size:clamp(.95rem,2vw,1.2rem);font-weight:400;color:var(--dim);margin:14px 0 0;
+}
+header.hero .meta{margin-top:26px;font-size:.82rem;color:#6f7ea6;letter-spacing:.08em}
+.scrolldown{margin-top:48px;font-size:1.5rem;color:var(--acc);animation:bob 2.2s infinite}
+@keyframes bob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(9px);opacity:1}}
+
+/* ---------- NAV ---------- */
+nav.toc{
+  position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+  background:rgba(7,10,18,.84);border-bottom:1px solid var(--line);
+  margin:0 -22px 0;padding:9px 22px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:thin;
+}
+nav.toc a{
+  color:var(--dim);text-decoration:none;font-size:.73rem;padding:6px 11px;border-radius:999px;
+  white-space:nowrap;border:1px solid transparent;transition:.2s;font-weight:500;
+}
+nav.toc a:hover{color:var(--txt);background:rgba(89,224,255,.08);border-color:var(--line)}
+nav.toc a.on{color:#06111a;background:linear-gradient(90deg,var(--acc),var(--acc2));font-weight:700}
+
+/* ---------- SECTIONS ---------- */
+section{padding:72px 0 10px;scroll-margin-top:62px}
+.sect-num{
+  font-family:var(--mono);font-size:.72rem;color:var(--acc);letter-spacing:.3em;
+  text-transform:uppercase;margin-bottom:10px;
+}
+h2.sh{font-size:clamp(1.6rem,3.6vw,2.5rem);margin:0 0 10px;font-weight:750;letter-spacing:-.015em}
+h3{font-size:1.14rem;margin:34px 0 10px;color:#fff;font-weight:650}
+h4{font-size:.98rem;margin:20px 0 8px;color:var(--acc);font-weight:650}
+p{color:#c3cde8;margin:11px 0}
+.lead{font-size:1.07rem;color:#d6deff}
+small,.small{font-size:.83rem;color:var(--dim)}
+
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:18px;
+  padding:24px;margin:22px 0;backdrop-filter:blur(8px);
+  box-shadow:0 18px 50px -24px rgba(0,0,0,.85);
+}
+.card.tight{padding:17px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+
+.pill{
+  display:inline-block;padding:3px 10px;border-radius:999px;font-size:.7rem;
+  background:rgba(89,224,255,.12);color:var(--acc);border:1px solid rgba(89,224,255,.25);
+  font-family:var(--mono);letter-spacing:.05em;
+}
+.pill.v{background:rgba(182,140,255,.12);color:var(--acc2);border-color:rgba(182,140,255,.25)}
+.pill.g{background:rgba(84,232,168,.12);color:var(--good);border-color:rgba(84,232,168,.25)}
+.pill.o{background:rgba(255,207,107,.12);color:var(--acc3);border-color:rgba(255,207,107,.25)}
+
+.quote{
+  border-left:3px solid var(--acc2);padding:4px 0 4px 18px;margin:20px 0;
+  font-style:italic;color:#cfd8f5;
+}
+.quote cite{display:block;font-style:normal;font-size:.8rem;color:var(--dim);margin-top:8px}
+
+/* ---------- CONTROLS ---------- */
+.ctrl{margin:13px 0}
+.ctrl label{display:flex;justify-content:space-between;font-size:.82rem;color:var(--dim);margin-bottom:5px}
+.ctrl label b{color:var(--acc);font-family:var(--mono);font-weight:600}
+input[type=range]{
+  width:100%;height:5px;-webkit-appearance:none;appearance:none;border-radius:4px;
+  background:linear-gradient(90deg,var(--acc),var(--acc2));outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:#fff;
+  border:3px solid var(--acc);box-shadow:0 0 14px rgba(89,224,255,.65);cursor:pointer;
+}
+input[type=range]::-moz-range-thumb{
+  width:17px;height:17px;border-radius:50%;background:#fff;border:3px solid var(--acc);cursor:pointer;
+}
+button{
+  background:rgba(89,224,255,.1);color:var(--acc);border:1px solid rgba(89,224,255,.3);
+  padding:8px 15px;border-radius:9px;font-size:.82rem;cursor:pointer;font-family:inherit;
+  transition:.18s;font-weight:560;margin:3px 4px 3px 0;
+}
+button:hover{background:rgba(89,224,255,.2);transform:translateY(-1px)}
+button:active{transform:translateY(0)}
+button.pri{background:linear-gradient(90deg,var(--acc),var(--acc2));color:#06111a;border:none;font-weight:700}
+button.alt{background:rgba(182,140,255,.1);color:var(--acc2);border-color:rgba(182,140,255,.3)}
+button.alt:hover{background:rgba(182,140,255,.2)}
+button:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btnrow{display:flex;flex-wrap:wrap;gap:4px;margin:12px 0}
+
+canvas{display:block;max-width:100%;border-radius:12px;background:rgba(5,8,16,.65)}
+.cwrap{display:flex;justify-content:center;margin:14px 0}
+
+.readout{
+  font-family:var(--mono);font-size:.84rem;background:rgba(5,8,16,.6);
+  border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin:12px 0;color:#b9c6ea;
+}
+.readout b{color:var(--acc3)}
+
+table{width:100%;border-collapse:collapse;font-size:.85rem;margin:14px 0}
+th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--acc);font-weight:600;font-size:.76rem;letter-spacing:.06em;text-transform:uppercase}
+td{color:#c3cde8}
+tr:hover td{background:rgba(89,224,255,.04)}
+
+.stepbar{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+.stepbar .st{
+  flex:1;min-width:78px;text-align:center;padding:8px 5px;border-radius:9px;font-size:.73rem;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--dim);transition:.2s;
+}
+.stepbar .st.on{background:linear-gradient(90deg,rgba(89,224,255,.22),rgba(182,140,255,.22));color:#fff;border-color:var(--acc)}
+.stepbar .st.done{color:var(--good);border-color:rgba(84,232,168,.3)}
+
+.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin:18px 0}
+.flow .node{
+  padding:11px 15px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);
+  font-size:.83rem;text-align:center;min-width:112px;
+}
+.flow .node b{display:block;color:var(--acc);font-size:.72rem;letter-spacing:.08em;margin-bottom:3px}
+.flow .arr{color:var(--acc2);font-size:1.25rem}
+
+.codebox{
+  font-family:var(--mono);font-size:.8rem;background:rgba(3,6,14,.8);border:1px solid var(--line);
+  border-radius:10px;padding:14px;overflow-x:auto;color:#a9ffd8;white-space:pre;line-height:1.55;
+}
+.hl{color:var(--acc3)}
+.cm{color:#6b7b9e}
+
+.tag{display:inline-block;font-family:var(--mono);font-size:.7rem;color:var(--dim);
+  border:1px solid var(--line);border-radius:6px;padding:1px 6px;margin-right:5px}
+
+.kv{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:.86rem;margin:10px 0}
+.kv dt{color:var(--acc);font-weight:600}
+.kv dd{margin:0;color:#c3cde8}
+
+.answerbox{
+  background:linear-gradient(135deg,rgba(84,232,168,.1),rgba(89,224,255,.06));
+  border:1px solid rgba(84,232,168,.3);border-radius:16px;padding:22px;margin:22px 0;
+}
+.answerbox h4{color:var(--good)}
+
+.warn{
+  background:linear-gradient(135deg,rgba(255,107,139,.1),rgba(255,207,107,.05));
+  border:1px solid rgba(255,107,139,.28);border-radius:14px;padding:16px 18px;margin:16px 0;
+}
+.warn h4{color:var(--bad)}
+
+.plot{width:100%;height:330px}
+.chk{display:flex;align-items:center;gap:8px;font-size:.84rem;color:var(--dim);margin:7px 0;cursor:pointer}
+.chk input{accent-color:var(--acc);width:15px;height:15px;cursor:pointer}
+
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.78rem;color:var(--dim);margin:9px 0}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+footer{
+  text-align:center;padding:70px 20px 40px;color:#5d6b92;font-size:.82rem;
+  border-top:1px solid var(--line);margin-top:70px;
+}
+.math{color:#e6ecff}
+hr.soft{border:none;border-top:1px solid var(--line);margin:34px 0}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="kicker">Turing Award Lecture · 1976</div>
+  <h1>Symbole &amp; Suche</h1>
+  <h2>Allen Newell &amp; Herbert A. Simon:<br>„Computer Science as Empirical Inquiry"<br>
+  <span style="color:#7d8bb5">— zum Spielen, nicht zum Lesen —</span></h2>
+  <div class="meta">Alles interaktiv · Nur Schulmathematik nötig · Ziehe an jedem Regler</div>
+  <div class="scrolldown">↓</div>
+</header>
+
+<nav class="toc" id="toc">
+  <a href="#frage" class="on">0 · Die Frage</a>
+  <a href="#qual">1 · Qualitative Gesetze</a>
+  <a href="#sym">2 · Was ist ein Symbol?</a>
+  <a href="#desig">3 · Designation</a>
+  <a href="#turing">4 · Turingmaschine</a>
+  <a href="#liste">5 · Listen &amp; LISP</a>
+  <a href="#hypo">6 · Hypothese 1</a>
+  <a href="#meno">7 · Menons Paradox</a>
+  <a href="#gentest">8 · Generieren &amp; Testen</a>
+  <a href="#algebra">9 · Algebra-Beispiel</a>
+  <a href="#baum">10 · Explosion</a>
+  <a href="#heur">11 · Heuristische Suche</a>
+  <a href="#schach">12 · Schach</a>
+  <a href="#ohne">13 · Ohne Suche</a>
+  <a href="#brett">14 · Das Brett</a>
+  <a href="#antwort">15 · Die Antwort</a>
+</nav>
+
+<!-- ============================================================ 0 ============ -->
+<section id="frage">
+  <div class="sect-num">Teil 0 · Motivation</div>
+  <h2 class="sh">Welche Frage stellen die beiden eigentlich?</h2>
+
+  <p class="lead">1975 bekommen Allen Newell und Herbert Simon den Turing Award. In ihrer Dankesrede
+  stellen sie <b>eine einzige große Frage</b> — formuliert als Abwandlung eines Titels von Warren McCulloch:</p>
+
+  <div class="card" style="text-align:center;background:linear-gradient(135deg,rgba(89,224,255,.08),rgba(182,140,255,.06))">
+    <div style="font-size:clamp(1.05rem,2.6vw,1.5rem);line-height:1.5;color:#fff;font-weight:600">
+      „Was ist ein <span style="color:var(--acc)">Symbol</span>, dass Intelligenz es benutzen kann —<br>
+      und was ist <span style="color:var(--acc2)">Intelligenz</span>, dass sie ein Symbol benutzen kann?"
+    </div>
+    <div class="small" style="margin-top:14px">Newell &amp; Simon 1976, nach McCulloch 1961</div>
+  </div>
+
+  <p>Die Rede zerfällt in zwei Behauptungen, die beide die Form eines <b>Naturgesetzes</b> haben sollen —
+  empirisch, widerlegbar, nicht bewiesen:</p>
+
+  <div class="grid2">
+    <div class="card tight">
+      <span class="pill">Hypothese 1</span>
+      <h4 style="margin-top:12px">Physical Symbol System</h4>
+      <p class="small">Ein physikalisches Symbolsystem besitzt die <b>notwendigen und hinreichenden</b>
+      Mittel für allgemeine intelligente Handlung. <br><br>→ Antwort auf „<i>Woraus</i> besteht Intelligenz?"</p>
+    </div>
+    <div class="card tight">
+      <span class="pill v">Hypothese 2</span>
+      <h4 style="margin-top:12px">Heuristic Search</h4>
+      <p class="small">Ein Symbolsystem löst Probleme durch <b>Suche</b>: es erzeugt und verändert
+      Symbolstrukturen, bis eine Lösung entsteht.<br><br>→ Antwort auf „<i>Wie</i> funktioniert Intelligenz?"</p>
+    </div>
+  </div>
+
+  <h3>Die Landkarte dieser Seite</h3>
+  <p>Jeder Punkt unten ist eine spielbare Station. Klicke, um zu springen.</p>
+  <div class="cwrap"><canvas id="mapC" width="1080" height="260"></canvas></div>
+  <div class="small" style="text-align:center">Blau = Symbole · Violett = Suche · Gold = die Antwort</div>
+</section>
+
+<!-- ============================================================ 1 ============ -->
+<section id="qual">
+  <div class="sect-num">Teil 1 · Prerequisite</div>
+  <h2 class="sh">Was ist ein „Gesetz qualitativer Struktur"?</h2>
+
+  <p class="lead">Bevor man die beiden Hypothesen versteht, muss man verstehen, <b>welche Art</b> von
+  Aussage sie sind. Newell &amp; Simon sagen: es sind keine Formeln, sondern <i>laws of qualitative structure</i> —
+  Aussagen der Form „Alles X besteht im Kern aus Y".</p>
+
+  <p>Solche Gesetze sind kurz, vage, haben Ausnahmen — und verändern trotzdem eine ganze Wissenschaft,
+  weil sie festlegen, <b>wonach man überhaupt sucht</b>. Klicke die Karten an:</p>
+
+  <div class="cwrap"><canvas id="qualC" width="1080" height="400"></canvas></div>
+  <div class="readout" id="qualOut">Klicke auf eine Karte …</div>
+
+  <div class="card">
+    <h4>Warum das wichtig ist</h4>
+    <p>Die Zellenlehre sagt nicht, wie eine Zelle funktioniert. Die Keimtheorie sagt nicht, welcher
+    Keim welche Krankheit macht. Sie sagen nur: <b>„Such dort."</b> Genau diesen Status beanspruchen
+    Newell &amp; Simon für ihre Symbol-Hypothese.</p>
+    <p class="small">Interessanter Kontrast im Paper: die <b>Atomlehre</b>. Sie war anfangs auch ein
+    qualitatives Gesetz — aber weil Atome so einfach und wenig vielfältig sind, wurde sie schnell von
+    quantitativen Theorien vollständig aufgesogen. Bei Zellen, Platten, Keimen (und Symbolen) ist die
+    Vielfalt so groß, dass das qualitative Prinzip eigenständig bleibt.</p>
+  </div>
+
+  <div class="warn">
+    <h4>Konsequenz: Widerlegbarkeit</h4>
+    <p class="small">Weil es ein empirisches Gesetz ist, <b>kann</b> die Symbol-Hypothese falsch sein.
+    Man kann sie nur durch Evidenz stützen oder angreifen — nicht beweisen. Das ist der Kern des
+    Titels: <i>Computer Science as Empirical Inquiry</i>. Jede gebaute Maschine, jedes geschriebene
+    Programm ist ein <b>Experiment</b>, das der Natur eine Frage stellt.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 2 ============ -->
+<section id="sym">
+  <div class="sect-num">Teil 2 · Der Kernbegriff</div>
+  <h2 class="sh">Was ist ein Symbolsystem — zum Anfassen</h2>
+
+  <p class="lead">Ein <b>physikalisches Symbolsystem</b> hat nur zwei Zutaten:
+  <span class="pill">Muster</span> und <span class="pill v">Prozesse</span>.
+  Muster heißen <b>Symbole</b>; Symbole zusammengesetzt heißen <b>Ausdrücke</b> (Symbolstrukturen);
+  Prozesse erzeugen, verändern, kopieren und löschen Ausdrücke.</p>
+
+  <p>Unten lebt so ein System. Die farbigen Kästchen sind Symbol-Tokens, die Reihen sind Ausdrücke.
+  Wende Prozesse an und sieh zu, wie sich der Speicher über die Zeit entwickelt — <b>genau das</b> meint
+  das Paper mit „eine Maschine, die durch die Zeit eine sich entwickelnde Sammlung von Symbolstrukturen erzeugt".</p>
+
+  <div class="card">
+    <div class="cwrap"><canvas id="symC" width="1080" height="380"></canvas></div>
+    <div class="btnrow">
+      <button class="pri" onclick="symProc('create')">⊕ Erzeugen</button>
+      <button onclick="symProc('modify')">✎ Verändern</button>
+      <button onclick="symProc('copy')">⧉ Kopieren</button>
+      <button onclick="symProc('delete')">⊘ Löschen</button>
+      <button class="alt" onclick="symProc('compose')">⚯ Verschachteln</button>
+      <button onclick="symReset()">↺ Zurücksetzen</button>
+    </div>
+    <div class="readout" id="symOut">Speicher bereit. Drücke einen Prozess-Knopf.</div>
+    <div class="legend">
+      <span><i style="background:#59e0ff"></i>Symbol-Token</span>
+      <span><i style="background:#b68cff"></i>verschachtelter Ausdruck</span>
+      <span><i style="background:#54e8a8"></i>gerade verändert</span>
+      <span><i style="background:#ff6b8b"></i>gelöscht</span>
+    </div>
+  </div>
+
+  <h3>Die fünf Zusatzforderungen</h3>
+  <p>Damit das System wirklich mächtig wird, verlangen Newell &amp; Simon fünf Abschluss-Eigenschaften.
+  Schalte sie einzeln aus und sieh, was kaputtgeht:</p>
+
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <label class="chk"><input type="checkbox" id="r1" checked onchange="reqDraw()"> <span><b>(1)</b> Jedes Symbol darf <i>jeden</i> Ausdruck bezeichnen (Willkürlichkeit)</span></label>
+        <label class="chk"><input type="checkbox" id="r2" checked onchange="reqDraw()"> <span><b>(2)</b> Für <i>jeden</i> Prozess gibt es einen Ausdruck, der ihn bezeichnet</span></label>
+        <label class="chk"><input type="checkbox" id="r3" checked onchange="reqDraw()"> <span><b>(3)</b> Es gibt Prozesse, die <i>jeden</i> Ausdruck erzeugen &amp; beliebig ändern</span></label>
+        <label class="chk"><input type="checkbox" id="r4" checked onchange="reqDraw()"> <span><b>(4)</b> Ausdrücke sind <i>stabil</i> — bleiben, bis man sie ändert/löscht</span></label>
+        <label class="chk"><input type="checkbox" id="r5" checked onchange="reqDraw()"> <span><b>(5)</b> Die Zahl der Ausdrücke ist praktisch <i>unbegrenzt</i></span></label>
+      </div>
+      <div>
+        <canvas id="reqC" width="520" height="300"></canvas>
+      </div>
+    </div>
+    <div class="readout" id="reqOut"></div>
+  </div>
+</section>
+
+<!-- ============================================================ 3 ============ -->
+<section id="desig">
+  <div class="sect-num">Teil 3 · Der entscheidende Trick</div>
+  <h2 class="sh">Designation &amp; Interpretation</h2>
+
+  <p class="lead">Hier liegt das Herz des ganzen Papers. Zwei Definitionen — und beide sind
+  <b>rein operational</b>, also an Verhalten gebunden, nicht an Bedeutung im philosophischen Sinn.</p>
+
+  <div class="grid2">
+    <div class="card tight">
+      <span class="pill">Designation</span>
+      <p style="margin-top:10px">Ein Ausdruck <b>bezeichnet</b> ein Objekt, wenn das System —
+      gegeben den Ausdruck — entweder <i>auf das Objekt einwirken</i> kann oder sich
+      <i>abhängig vom Objekt</i> verhalten kann.</p>
+      <p class="small">Kurz: Der Ausdruck verschafft <b>Zugriff</b>. Das ist alles. Keine Magie.</p>
+    </div>
+    <div class="card tight">
+      <span class="pill v">Interpretation</span>
+      <p style="margin-top:10px">Das System kann einen Ausdruck <b>interpretieren</b>, wenn der
+      Ausdruck einen <i>Prozess</i> bezeichnet und das System diesen Prozess daraufhin
+      <i>ausführen</i> kann.</p>
+      <p class="small">Kurz: Daten werden zu Programm. Das System ruft eigene Prozesse aus Ausdrücken auf.</p>
+    </div>
+  </div>
+
+  <h3>Spiel: der Zeiger-Speicher</h3>
+  <p>Unten ist ein Speicher mit Zellen. Jede Zelle kann einen <b>Wert</b> oder eine <b>Adresse</b>
+  enthalten. Klicke eine Zelle an, um ihr zu folgen — genau das ist Designation. Klicke auf eine
+  Zelle mit einem <b>Prozess-Symbol</b> (gold), um Interpretation auszulösen.</p>
+
+  <div class="card">
+    <div class="cwrap"><canvas id="desC" width="1080" height="420"></canvas></div>
+    <div class="btnrow">
+      <button class="pri" onclick="desReset()">↺ Neuer Speicher</button>
+      <button onclick="desAuto()">▶ Kette automatisch verfolgen</button>
+      <button class="alt" onclick="desMode()">⇄ Modus: <span id="desModeLbl">Designation</span></button>
+    </div>
+    <div class="readout" id="desOut">Klicke eine Zelle an.</div>
+  </div>
+
+  <div class="warn">
+    <h4>Wichtige Fußnote des Herausgebers</h4>
+    <p class="small">Haugeland merkt an: Diese Bedeutung von „Designation" und „Interpretation" ist
+    <b>spezifisch für die Informatik</b> — sie betrifft nur Beziehungen <i>innerhalb</i> eines Computers.
+    In Linguistik und Philosophie meint man damit normalerweise Beziehungen <i>zwischen</i> einem
+    System und seiner <b>Umwelt</b>. Das ist genau die Bruchstelle, an der später die große
+    Debatte („Chinesisches Zimmer", Symbol Grounding) ansetzt.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 4 ============ -->
+<section id="turing">
+  <div class="sect-num">Teil 4 · Prerequisite</div>
+  <h2 class="sh">Die Turingmaschine — in 60 Sekunden verstanden</h2>
+
+  <p class="lead">Newell &amp; Simon benutzen Turings Modell, weil es „die Merkmale gut zeigt".
+  Eine Turingmaschine hat genau <b>zwei Speicher</b>: ein unbegrenztes <b>Band</b> (die Daten,
+  die berühmten Nullen und Einsen) und eine <b>endliche Zustandssteuerung</b>.</p>
+
+  <p>Die Operationen sind winzig: <b>lesen</b>, <b>schreiben</b>, <b>bewegen</b>. Das Lesen ist
+  keine Datenoperation — es ist ein <b>bedingter Sprung</b> in einen Steuerzustand, abhängig von
+  dem, was unter dem Lesekopf steht.</p>
+
+  <div class="card">
+    <div class="cwrap"><canvas id="tmC" width="1080" height="330"></canvas></div>
+    <div class="grid2">
+      <div>
+        <div class="btnrow">
+          <button class="pri" onclick="tmStep()">▶ Ein Schritt</button>
+          <button onclick="tmRun()">⏩ Laufen lassen</button>
+          <button onclick="tmStop()">⏸ Stopp</button>
+          <button class="alt" onclick="tmReset()">↺ Reset</button>
+        </div>
+        <div class="ctrl">
+          <label>Geschwindigkeit <b><span id="tmSpdV">6</span>/s</b></label>
+          <input type="range" id="tmSpd" min="1" max="30" value="6" oninput="tmSpdV.textContent=this.value">
+        </div>
+        <div class="ctrl">
+          <label>Programm</label>
+          <div class="btnrow">
+            <button onclick="tmLoad('bin')">Binär +1</button>
+            <button onclick="tmLoad('dup')">Verdoppeln</button>
+            <button onclick="tmLoad('busy')">Fleißiger Biber</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="readout" id="tmOut"></div>
+        <div class="codebox" id="tmTable" style="max-height:150px;overflow:auto"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card tight">
+    <h4>Was hier <i>fehlt</i> — und genau darum geht es</h4>
+    <p class="small">In keinem dieser Systeme gibt es an der Oberfläche einen Begriff von
+    <b>Symbol als etwas, das bezeichnet</b>. Die Daten sind nur Ketten aus Nullen und Einsen —
+    und dass sie <i>träge</i> sind, ist sogar wesentlich, um Berechnung auf physikalischen Prozess
+    zurückzuführen.</p>
+    <p class="small">Die endliche Steuerung wurde immer als <b>kleiner Controller</b> gesehen.
+    Man spielte Spielchen, wie <i>wenige</i> Zustände man braucht. Niemand spielte das Spiel,
+    dynamisch <b>neue Zustände hinzuzufügen</b> — die Steuerung als Ort des Wissens zu denken.</p>
+    <p class="small">Erreicht wurde damit die <b>halbe</b> Interpretation: eine Maschine kann aus
+    einer Beschreibung heraus laufen. Das ist die Stufe der <b>automatischen formalen
+    Symbolmanipulation</b>.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 5 ============ -->
+<section id="liste">
+  <div class="sect-num">Teil 5 · Die Entwicklungsgeschichte</div>
+  <h2 class="sh">Von der Logik zu LISP — fünf Stufen</h2>
+
+  <p class="lead">Das Paper erzählt die Hypothese als <b>Geschichte</b>. Jede Stufe liefert ein
+  notwendiges Stück. Ziehe den Zeitregler:</p>
+
+  <div class="card">
+    <div class="ctrl">
+      <label>Jahr <b><span id="histY">1879</span></b></label>
+      <input type="range" id="histR" min="0" max="4" value="0" step="1" oninput="histDraw(+this.value)">
+    </div>
+    <div class="stepbar" id="histBar"></div>
+    <div class="cwrap"><canvas id="histC" width="1080" height="340"></canvas></div>
+    <div class="readout" id="histOut"></div>
+  </div>
+
+  <h3>Listenverarbeitung: wo das Symbol „bezeichnen" lernt</h3>
+  <p>1956. Jetzt enthalten Datenstrukturen <b>Symbole im eigentlichen Sinn</b>: Muster, die
+  Referenten haben. Listen halten <b>Adressen</b>, die Zugriff auf andere Listen erlauben.
+  Newell &amp; Simon erzählen die schöne Anekdote:</p>
+
+  <div class="quote">
+    Kollegen fragten uns damals oft, <i>wo denn die Daten seien</i> — welche Liste denn endlich
+    die Sammlung von Bits enthalte, die der Inhalt des Systems sind. Sie fanden es seltsam,
+    dass es solche Bits nicht gab; es gab nur Symbole, die wieder andere Symbolstrukturen bezeichneten.
+    <cite>Newell &amp; Simon 1976</cite>
+  </div>
+
+  <p>Baue selbst eine Listenstruktur. Jede Zelle ist ein <b>Cons</b>: links ein Element (CAR),
+  rechts ein Zeiger auf den Rest (CDR). Beachte: nirgends liegen „die Daten" — nur Verweise.</p>
+
+  <div class="card">
+    <div class="cwrap"><canvas id="lispC" width="1080" height="400"></canvas></div>
+    <div class="btnrow">
+      <button class="pri" onclick="lispEx(0)">(A B C)</button>
+      <button onclick="lispEx(1)">((A B) C)</button>
+      <button onclick="lispEx(2)">(A (B (C D)) E)</button>
+      <button class="alt" onclick="lispEx(3)">Zyklus! (A B . ↺)</button>
+      <button onclick="lispShared()">Geteilte Struktur</button>
+    </div>
+    <div class="readout" id="lispOut"></div>
+    <p class="small">LISP (McCarthy 1959–60) „vollendete den Akt der Abstraktion": es hob
+    Listenstrukturen aus ihrer Einbettung in konkrete Maschinen heraus und schuf ein neues formales
+    System mit <b>S-Ausdrücken</b>, äquivalent zu den anderen universellen Berechnungsschemata.</p>
+  </div>
+
+  <h3>Was die drei Dinge sind, die Listenverarbeitung gleichzeitig ist</h3>
+  <table>
+    <tr><th>#</th><th>Leistung</th><th>Warum es zählt</th></tr>
+    <tr><td>1</td><td>Echte <b>dynamische</b> Speicherstruktur</td><td>Die Maschine hatte vorher feste Struktur. Jetzt gibt es Operationen, die Struktur <i>bauen</i> und <i>ändern</i>, nicht nur Inhalt ersetzen.</td></tr>
+    <tr><td>2</td><td>Abstraktion <b>Datentypen + Operationen</b></td><td>Ein Rechensystem soll die Datentypen nutzen, die zur Anwendung passen — <i>unabhängig</i> von der darunterliegenden Maschine.</td></tr>
+    <tr><td>3</td><td>Ein Modell von <b>Designation</b></td><td>Erst hier entsteht „Symbolmanipulation" in dem Sinn, in dem die Informatik den Begriff heute benutzt.</td></tr>
+  </table>
+</section>
+
+<!-- ============================================================ 6 ============ -->
+<section id="hypo">
+  <div class="sect-num">Teil 6 · Die erste Hypothese</div>
+  <h2 class="sh">Physical Symbol System Hypothesis</h2>
+
+  <div class="card" style="text-align:center;background:linear-gradient(135deg,rgba(89,224,255,.09),rgba(182,140,255,.06))">
+    <div style="font-size:clamp(1rem,2.4vw,1.42rem);color:#fff;font-weight:650;line-height:1.5">
+      „Ein physikalisches Symbolsystem besitzt die <span style="color:var(--acc)">notwendigen</span>
+      und <span style="color:var(--acc2)">hinreichenden</span> Mittel<br>für allgemeine intelligente Handlung."
+    </div>
+  </div>
+
+  <p class="lead">Zwei Richtungen — und jede hat ihr eigenes Forschungsprogramm.
+  Klicke die Pfeile im Diagramm an:</p>
+
+  <div class="card">
+    <div class="cwrap"><canvas id="hypC" width="1080" height="400"></canvas></div>
+    <div class="readout" id="hypOut">Klicke auf „notwendig" oder „hinreichend".</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card tight">
+      <h4>„Notwendig" heißt …</h4>
+      <p class="small">Jedes System, das allgemeine Intelligenz zeigt, wird sich bei Analyse
+      <b>als physikalisches Symbolsystem erweisen</b>.<br><br>
+      <span class="tag">Evidenzquelle</span> Kognitionspsychologie: Man startet beim Menschen —
+      dem am besten bekannten intelligenten System — und untersucht, ob seine kognitive Aktivität als
+      Arbeit eines Symbolsystems erklärt werden kann.</p>
+    </div>
+    <div class="card tight">
+      <h4>„Hinreichend" heißt …</h4>
+      <p class="small">Jedes physikalische Symbolsystem <b>ausreichender Größe</b> kann so weiter
+      organisiert werden, dass es allgemeine Intelligenz zeigt.<br><br>
+      <span class="tag">Evidenzquelle</span> Künstliche Intelligenz: Man identifiziert eine Aufgabe,
+      die Intelligenz erfordert, und baut ein Programm, das sie bewältigt. „Identifiziere eine
+      Krankheit, dann suche den Keim."</p>
+    </div>
+  </div>
+
+  <h3>Evidenz-Waage</h3>
+  <p>Füge Evidenzstücke aus dem Paper hinzu und sieh, wie sich die Waage neigt. Beachte:
+  die Hypothese <b>könnte falsch sein</b> — sie ist eine empirische Verallgemeinerung, kein Theorem.</p>
+
+  <div class="card">
+    <div class="cwrap"><canvas id="evC" width="1080" height="300"></canvas></div>
+    <div class="btnrow" id="evBtns"></div>
+    <div class="readout" id="evOut"></div>
+  </div>
+
+  <div class="card tight">
+    <h4>Die „andere" Evidenz: negative Evidenz</h4>
+    <p class="small">Der wichtigste verbleibende Beleg ist laut Paper <b>negativ</b>: das <i>Fehlen</i>
+    konkurrierender Hypothesen. Behaviorismus und Gestalttheorie seien keine echten Konkurrenten,
+    aus zwei Gründen: (a) keine von beiden hat gezeigt — oder auch nur gezeigt, <i>wie</i> man zeigen
+    würde —, dass ihre Mechanismen für komplexes intelligentes Verhalten <b>hinreichend</b> sind;
+    (b) keine ist annähernd so <b>spezifisch</b> formuliert wie ein Programm. Sie seien sogar so vage,
+    dass man ihnen leicht informationsverarbeitende Interpretationen geben und sie so der
+    Symbol-Hypothese <b>einverleiben</b> kann.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 7 ============ -->
+<section id="meno">
+  <div class="sect-num">Teil 7 · Das konkrete Problem</div>
+  <h2 class="sh">Menons Paradox — die 2400 Jahre alte Frage</h2>
+
+  <p class="lead">Jetzt wechselt das Paper zur zweiten Hypothese. Und es beginnt mit dem Rätsel,
+  das Platon im <i>Menon</i> stellt — der konkreten Frage, auf die dieser ganze Teil eine Antwort gibt.</p>
+
+  <div class="quote" style="font-size:1.05rem">
+    Menon: Und wie willst du, Sokrates, das erforschen, was du nicht weißt? Was willst du als
+    Gegenstand der Untersuchung hinstellen? Und wenn du findest, was du willst — wie willst du je
+    wissen, dass <i>dies</i> das ist, was du nicht wusstest?
+    <cite>Platon, Menon — zitiert bei Newell &amp; Simon</cite>
+  </div>
+
+  <div class="card">
+    <div class="cwrap"><canvas id="menoC" width="1080" height="380"></canvas></div>
+    <div class="btnrow">
+      <button class="pri" onclick="menoStep(1)">① Das Paradox</button>
+      <button onclick="menoStep(2)">② Platons Lösung: Wiedererinnerung</button>
+      <button class="alt" onclick="menoStep(3)">③ Die moderne Lösung</button>
+    </div>
+    <div class="readout" id="menoOut"></div>
+  </div>
+
+  <div class="answerbox">
+    <h4>Die Auflösung des Paradoxons — in einem Satz</h4>
+    <p style="font-size:1.02rem">Ein Problem zu <b>stellen</b> heißt, zu bezeichnen:
+    <b>(a)</b> einen <span class="pill g">Test</span> für eine Klasse von Symbolstrukturen (die Lösungen) und
+    <b>(b)</b> einen <span class="pill">Generator</span> von Symbolstrukturen (potenzielle Lösungen).<br>
+    Ein Problem zu <b>lösen</b> heißt, mit (b) eine Struktur zu erzeugen, die den Test (a) besteht.</p>
+    <p class="small">Damit verschwindet das Rätsel: Man <i>kann</i> nach etwas suchen, das man nicht
+    kennt, weil man den <b>Test</b> kennt, auch ohne den <b>Generator</b> zu kennen. Und man erkennt
+    den Fund, weil der Test ihn erkennt. Keine Seelenwanderung nötig.</p>
+  </div>
+
+  <h3>Test ≠ Generator — der ganze Witz</h3>
+  <p>„Wenn Wünsche Pferde wären, würden Bettler reiten." Im Traum erzeugt man einfach sofort
+  die Lösung. In der Wirklichkeit geht das nicht: <b>Zu wissen, wie man etwas testet, heißt nicht,
+  zu wissen, wie man es baut.</b></p>
+
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <h4>Schach als Beispiel</h4>
+        <p class="small">Der Test für „Gewinnstellung" ist trivial: <b>Schachmatt</b> des gegnerischen
+        Königs. Im Traum erzeugt man einfach eine Strategie, die gegen alle Gegenstrategien zum Matt
+        führt. Aber: <b>Zuggeneratoren gibt es; Gewinnzug-Generatoren gibt es nicht.</b></p>
+        <p class="small">Stattdessen: Alternativen erzeugen und mühsam mit näherungsweisen, oft
+        fehlerhaften Maßen bewerten.</p>
+      </div>
+      <div>
+        <canvas id="tgC" width="520" height="280"></canvas>
+      </div>
+    </div>
+    <div class="ctrl">
+      <label>Wie viel vom Test steckt schon im Generator? <b><span id="tgV">0</span>%</b></label>
+      <input type="range" id="tgR" min="0" max="100" value="0" oninput="tgDraw(+this.value)">
+    </div>
+    <div class="readout" id="tgOut"></div>
+  </div>
+
+  <div class="card tight">
+    <h4>Prerequisite: der Problemraum</h4>
+    <p class="small">Bevor es einen Zuggenerator geben kann, muss es einen <b>Problemraum</b> geben:
+    einen Raum von Symbolstrukturen, in dem Problemsituationen — einschließlich Anfangs- und
+    Zielsituation — repräsentiert werden können. <b>Zuggeneratoren</b> sind Prozesse, die eine
+    Situation im Problemraum in eine andere überführen.</p>
+    <p class="small">Die Grundeigenschaften physikalischer Symbolsysteme <b>garantieren</b>, dass sie    Problemräume repräsentieren und dass sie Zuggeneratoren besitzen können. <b>Wie</b> sie in einer
+    konkreten Situation einen passenden Problemraum und passende Zuggeneratoren synthetisieren,
+    ist laut Paper „immer noch sehr an der Front der KI-Forschung" [[11]].</p>
+  </div>
+
+  <h3>Problemraum-Spielplatz</h3>
+  <p>Hier siehst du einen abstrakten Problemraum. Jeder Punkt ist eine Symbolstruktur. Die grünen
+  Punkte bestehen den Test. Ziehe an der <b>Ordnung</b>: Liegen die Lösungen zufällig verstreut, kann
+  <i>kein</i> System intelligenter sein als ein anderes — es hat nur mehr Glück [[11]].</p>
+
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <div class="ctrl">
+          <label>Ordnung / Struktur im Raum <b><span id="psOV">0</span>%</b></label>
+          <input type="range" id="psO" min="0" max="100" value="0" oninput="psDraw()">
+        </div>
+        <div class="ctrl">
+          <label>Erkennbarkeit des Musters <b><span id="psDV">50</span>%</b></label>
+          <input type="range" id="psD" min="0" max="100" value="50" oninput="psDraw()">
+        </div>
+        <div class="ctrl">
+          <label>Generator reagiert differenziert <b><span id="psGV">0</span>%</b></label>
+          <input type="range" id="psG" min="0" max="100" value="0" oninput="psDraw()">
+        </div>
+        <div class="btnrow">
+          <button class="pri" onclick="psRun()">▶ Suche starten</button>
+          <button onclick="psDraw()">↺ Neu würfeln</button>
+        </div>
+      </div>
+      <div><canvas id="psC" width="520" height="340"></canvas></div>
+    </div>
+    <div class="readout" id="psOut"></div>
+    <p class="small">Die drei Bedingungen aus dem Paper: (1) Die Lösungen dürfen <b>nicht völlig zufällig</b>
+    verteilt sein. (2) Das Muster muss <b>mehr oder weniger erkennbar</b> sein. (3) Der Generator muss sich
+    <b>abhängig vom erkannten Muster unterschiedlich verhalten</b> können. Es muss Information im
+    Problemraum sein — <i>und</i> das Symbolsystem muss sie extrahieren und nutzen können [[11]].</p>
+  </div>
+</section>
+
+<!-- ============================================================ 8 ============ -->
+<section id="gentest">
+  <div class="sect-num">Teil 8 · Die zweite Hypothese</div>
+  <h2 class="sh">Generieren &amp; Testen — die Heuristic-Search-Hypothese</h2>
+
+  <div class="card" style="text-align:center;background:linear-gradient(135deg,rgba(182,140,255,.1),rgba(89,224,255,.05))">
+    <div style="font-size:clamp(.98rem,2.3vw,1.3rem);color:#fff;font-weight:620;line-height:1.55">
+      „Die Lösungen von Problemen werden als <span style="color:var(--acc)">Symbolstrukturen</span> repräsentiert.
+      Ein physikalisches Symbolsystem übt seine Intelligenz beim Problemlösen durch
+      <span style="color:var(--acc2)">Suche</span> aus — indem es Symbolstrukturen erzeugt und fortschreitend
+      verändert, bis es eine Lösungsstruktur hervorbringt."
+    </div>
+  </div>
+
+  <p class="lead">Warum <i>muss</i> es Suche sein? Weil Symbolsysteme <b>begrenzte Verarbeitungsressourcen</b>
+  haben. In endlich vielen Schritten und endlicher Zeit können sie nur endlich viele Prozesse ausführen —
+  und zwar <i>praktisch</i> begrenzt, nicht nur theoretisch [[11]].</p>
+
+  <div class="card tight">
+    <h4>Die Konsequenz: seriell ≈ ressourcenbegrenzt</h4>
+    <p class="small">Man kann sich Systeme vorstellen, die nicht praktisch begrenzt sind — die z.B. die
+    Knoten eines exponentiell wachsenden Baums <b>parallel</b> mit konstanter Rate pro Tiefeneinheit
+    absuchen. Darum geht es hier nicht. Wenn ein System in einem kurzen Zeitintervall nur wenig
+    verarbeiten kann, kann man es genauso gut als <b>ein Ding nach dem anderen</b> tuend betrachten.
+    „Ressourcenbegrenztes Symbolsystem" und „serielles Symbolsystem" sind praktisch Synonyme [[11]].</p>
+  </div>
+
+  <h3>Der Generate-and-Test-Zyklus live</h3>
+  <p>Die Maschine erzeugt Kandidaten und testet sie. Stelle ein, wie viel vom Test schon im
+  <b>Generator eingebaut</b> ist — und beobachte, wie aus blindem Raten Intelligenz wird.</p>
+
+  <div class="card">
+    <div class="cwrap"><canvas id="gtC" width="1080" height="400"></canvas></div>
+    <div class="grid2">
+      <div>
+        <div class="ctrl">
+          <label>Selektivität des Generators <b><span id="gtSV">0</span>%</b></label>
+          <input type="range" id="gtS" min="0" max="95" value="0" oninput="gtSV.textContent=this.value">
+        </div>
+        <div class="ctrl">
+          <label>Tempo <b><span id="gtRV">8</span>/s</b></label>
+          <input type="range" id="gtR" min="1" max="30" value="8" oninput="gtRV.textContent=this.value">
+        </div>
+      </div>
+      <div>
+        <div class="btnrow">
+          <button class="pri" onclick="gtRun()">▶ Start</button>
+          <button onclick="gtStop()">⏸ Stopp</button>
+          <button class="alt" onclick="gtReset()">↺ Reset</button>
+        </div>
+        <div class="readout" id="gtOut">Bereit.</div>
+      </div>
+    </div>
+    <div id="gtPlot" class="plot"></div>
+  </div>
+</section>
+
+<!-- ============================================================ 9 ============ -->
+<section id="algebra">
+  <div class="sect-num">Teil 9 · Das konkrete Beispiel aus dem Paper</div>
+  <h2 class="sh">Die Gleichung <span class="math">ax + b = cx + d</span></h2>
+
+  <p class="lead">Dies ist <b>das</b> Beispiel, an dem Newell &amp; Simon zeigen, wie Intelligenz entsteht.
+  Es ist mit Absicht winzig — und enthält trotzdem fast alle Mechanismen intelligenten Problemlösens [[11]].</p>
+
+  <div class="card">
+    <h4>Das Problem formal gestellt</h4>
+    <div id="algDef" style="font-size:1.05rem;text-align:center;margin:16px 0"></div>
+    <p class="small">Der <b>Test</b> definiert als Lösung jeden Ausdruck der Form <i>x = e</i>, für den gilt:
+    <i>ae + b = ce + d</i>. Jetzt kommt die Frage: Welchen <b>Generator</b> nimmt man?</p>
+  </div>
+
+  <h3>Drei Generatoren im Vergleich</h3>
+  <p>Wähle einen Generator und sieh zu, wie er arbeitet. Beachte, wie dramatisch sich die Zahl der
+  erzeugten Ausdrücke unterscheidet.</p>
+
+  <div class="card">
+    <div class="btnrow">
+      <button class="pri" onclick="algSet(0)">① Zahlen raten</button>
+      <button onclick="algSet(1)">② Zulässige Umformungen</button>
+      <button class="alt" onclick="algSet(2)">③ Mittel-Ziel-Analyse</button>
+    </div>
+    <div class="grid2">
+      <div>
+        <div class="ctrl"><label>a <b><span id="aAv">3</span></b></label><input type="range" id="aA" min="-8" max="8" value="3" oninput="algReset()"></div>
+        <div class="ctrl"><label>b <b><span id="aBv">5</span></b></label><input type="range" id="aB" min="-12" max="12" value="5" oninput="algReset()"></div>
+        <div class="ctrl"><label>c <b><span id="aCv">1</span></b></label><input type="range" id="aC" min="-8" max="8" value="1" oninput="algReset()"></div>
+        <div class="ctrl"><label>d <b><span id="aDv">-3" </span></b></label><input type="range" id="aD" min="-12" max="12" value="-3" oninput="algReset()"></div>
+        <div class="btnrow">
+          <button class="pri" onclick="algStep()">▶ Nächster Schritt</button>
+          <button onclick="algAuto()">⏩ Automatisch</button>
+          <button onclick="algReset()">↺ Reset</button>
+        </div>
+      </div>
+      <div>
+        <canvas id="algC" width="520" height="340"></canvas>
+      </div>
+    </div>
+    <div class="readout" id="algOut"></div>
+    <div id="algTrace" class="codebox" style="max-height:190px;overflow:auto"></div>
+  </div>
+
+  <div class="answerbox">
+    <h4>Was dieses Mini-Beispiel schon alles zeigt</h4>
+    <p><b>①</b> Jeder neue Ausdruck wird <b>nicht unabhängig</b> erzeugt, sondern durch
+    <b>Verändern</b> eines vorherigen.</p>
+    <p><b>②</b> Die Veränderungen sind nicht willkürlich, sondern hängen von <b>zwei Arten</b> von Information ab:</p>
+    <div class="kv">
+      <dt>Konstant</dt><dd>Information, die über die <i>ganze Problemklasse</i> gilt und <b>in den Generator eingebaut</b> ist: Jede Umformung muss die Lösungsmenge erhalten.</dd>
+      <dt>Variabel</dt><dd>Information, die sich bei <i>jedem Schritt ändert</i>: die erkannten <b>Unterschiede</b> zwischen aktueller Form und Zielform.</dd>
+    </div>
+    <p><b>③</b> Der Generator <b>enthält also einen Teil des Tests</b>. Ausdrücke, die diese Tests nicht
+    bestehen, werden <b>nie erzeugt</b>. Die erste Informationsart garantiert, dass nur ein winziger
+    Teil aller möglichen Ausdrücke tatsächlich erzeugt wird — <b>ohne</b> die Lösung zu verlieren.
+    Die zweite Art erreicht die Lösung durch <b>sukzessive Annäherung</b>: eine einfache Form von
+    <b>Mittel-Ziel-Analyse</b> (means-ends analysis) [[11]].</p>
+    <p class="small"><b>Und damit ist Menons Paradox erledigt:</b> Es ist kein Geheimnis, woher die
+    Information kam, die die Suche gelenkt hat. Wir müssen Platon nicht folgen und dem Symbolsystem
+    eine frühere Existenz andichten, in der es die Lösung schon wusste. Ein <i>mäßig raffiniertes</i>
+    Generate-and-Test-System hat den Trick ohne Seelenwanderung geschafft [[11]].</p>
+  </div>
+
+  <div class="card tight">
+    <h4>Verzweigungsfaktor B = 1</h4>
+    <p class="small">Das Algebra-Beispiel ist „kein Trial-and-Error": Es gab ein paar Versuche, aber
+    <b>keinen Fehler</b>. Der erzeugte Suchbaum hatte die Besonderheit, dass seine Verzweigung
+    <b>B = 1</b> war — ein gerader Pfad statt eines Baums [[11]]. Genau das ist der Übergang
+    zum nächsten Abschnitt.</p>
+  </div>
+</section>
+
+<!-- ============================================================ 10 =========== -->
+<section id="baum">
+  <div class="sect-num">Teil 10 · Prerequisite + Kernproblem</div>
+  <h2 class="sh">Suchbäume und die kombinatorische Explosion</h2>
+
+  <p class="lead">Normalerweise ist Suche kein gerader Pfad, sondern ein <b>üppig verzweigender Baum</b>
+  von Teillösungen, der auf Tausende oder Millionen Äste anwachsen kann, bevor er eine Lösung liefert [[11]].</p>
+
+  <div class="card">
+    <h4>Das einzige Stück Mathematik, das du brauchst</h4>
+    <div id="bFormel" style="text-align:center;font-size:1.25rem;margin:14px 0"></div>
+    <p class="small">Wenn der Generator aus <i>jedem</i> erzeugten Ausdruck <b>B</b> neue Äste macht,
+    wächst der Baum wie <b>B<sup>D</sup></b>, wobei <b>D</b> die Tiefe ist. Das ist exponentielles
+    Wachstum — und das ist die Dauerbedrohung jedes Suchverfahrens.</p>
+  </div>
+
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <div class="ctrl">
+          <label>Verzweigungsfaktor B <b><span id="bBv">3</span></b></label>
+          <input type="range" id="bB" min="1" max="12" value="3" oninput="bDraw()">
+        </div>
+        <div class="ctrl">
+          <label>Tiefe D <b><span id="bDv">5</span></b></label>
+          <input type="range" id="bD" min="1" max="14" value="5" oninput="bDraw()">
+        </div>
+        <div class="readout" id="bOut"></div>
+        <p class="small">Setze <b>B = 1</b> — das ist das Algebra-Beispiel. Setze <b>B = 35</b>
+        und <b>D = 6</b> — das ist ungefähr Schach.</p>
+      </div>
+      <div><canvas id="bTreeC" width="520" height="330"></canvas></div>
+    </div>
+    <div id="bPlot" class="plot" style="height:360px"></div>
+  </div>
+
+  <div class="warn">
+    <h4>Das paradox klingende Fazit des Papers</h4>
+    <p>Suche ist ein <b>fundamentaler Aspekt</b> dessen, wie ein Symbolsystem Intelligenz beim
+    Problemlösen ausübt — aber <b>die Menge an Suche ist kein Maß für die Menge an Intelligenz</b>,
+    die gezeigt wird [[11]].</p>
+    <p class="small">„Was ein Problem zu einem Problem macht, ist nicht, dass viel Suche zu seiner
+    Lösung <i>nötig ist</i>, sondern dass viel Suche nötig <b>wäre</b>, wenn nicht ein erforderliches
+    Maß an Intelligenz angewandt würde." Wenn das System genug weiß, geht es <b>direkt</b> auf sein
+    Ziel zu; sobald sein Wissen unzureichend wird — wenn es <i>terra incognita</i> betritt — droht ihm
+    sehr viel Suche [[11]].</p>
+  </div>
+
+  <div class="card">
+    <h4>Spiel: Wissen ↔ Suche</h4>
+    <p class="small">Ziehe den Regler. Links: Unwissenheit, riesiger Baum. Rechts: Wissen, direkter Pfad.
+    Die gezeigte Intelligenz ist in <b>beiden</b> Fällen die gleiche Aufgabe — nur das Wissen unterscheidet sich.</p>
+    <div class="ctrl">
+      <label>Wissen des Systems <b><span id="kwV">10</span>%</b></label>
+      <input type="range" id="kw" min="0" max="100" value="10" oninput="kwDraw()">
+    </div>
+    <div class="cwrap"><canvas id="kwC" width="1080" height="330"></canvas></div>
+    <div class="readout" id="kwOut"></div>
+  </div>
+</section>
+
+<!-- ============================================================ 11 =========== -->
+<section id="heur">
+  <div class="sect-num">Teil 11 · Der Werkzeugkasten</div>
+  <h2 class="sh">Die „schwachen Methoden" — wie man die Explosion bändigt</h2>
+
+  <p class="lead">In serieller heuristischer Suche lautet die Grundfrage immer: <b>Was als Nächstes?</b>
+  Bei Baumsuche zerfällt sie in zwei Teilfragen [[11]]:</p>
+
+  <div class="flow">
+    <div class="node"><b>Frage 1</b>Von <i>welchem Knoten</i> aus weitersuchen?</div>
+    <div class="arr">→</div>
+    <div class="node" style="border-color:rgba(89,224,255,.4)"><b>Antwort</b>Best-First-Suche<br><span class="small">Maß für Nähe zum Ziel</span></div>
+  </div>
+  <div class="flow">
+    <div class="node"><b>Frage 2</b>In <i>welche Richtung</i> von dort?</div>
+    <div class="arr">→</div>
+    <div class="node" style="border-color:rgba(182,140,255,.4)"><b>Antwort</b>Mittel-Ziel-Analyse<br><span class="small">Unterschiede erkennen &amp; reduzieren</span></div>
+  </div>
+
+  <h3>Vier Suchstrategien im direkten Vergleich</h3>
+  <p>Dasselbe Labyrinth, vier Methoden. Beobachte, wie viele Knoten jede expandiert.</p>
+
+  <div class="card">
+    <div class="btnrow">
+      <button class="pri" onclick="srSet('bfs')">Breitensuche</button>
+      <button onclick="srSet('dfs')">Tiefensuche</button>
+      <button class="alt" onclick="srSet('best')">Best-First</button>
+      <button onclick="srSet('me')">Mittel-Ziel (A*)</button>
+      <button onclick="srNewMaze()">↺ Neues Labyrinth</button>
+    </div>
+    <div class="cwrap"><canvas id="srC" width="1080" height="400"></canvas></div>
+    <div class="grid3">
+      <div class="readout" id="srOut1">—</div>
+      <div class="readout" id="srOut2">—</div>
+      <div class="readout" id="srOut3">—</div>
+    </div>
+    <div class="ctrl">
+      <label>Tempo <b><span id="srSpV">30</span>/s</b></label>
+      <input type="range" id="srSp" min="1" max="120" value="30" oninput="srSpV.textContent=this.value">
+    </div>
+    <div class="legend">
+      <span><i style="background:#2a3550"></i>unbesucht</span>
+      <span><i style="background:#59e0ff"></i>expandiert</span>
+      <span><i style="background:#b68cff"></i>Rand (Frontier)</span>
+      <span><i style="background:#ffcf6b"></i>Lösungspfad</span>
+      <span><i style="background:#54e8a8"></i>Ziel</span>
+    </div>
+    <div id="srBar" class="plot" style="height:260px"></div>
+  </div>
+
+  <div class="card tight">
+    <h4>Warum „schwache" Methoden?</h4>
+    <p class="small">Diese Techniken dienen der <b>Kontrolle</b> der exponentiellen Expansion, nicht
+    ihrer <b>Verhinderung</b>. Darum heißen sie zu Recht „weak methods" — Methoden für den Fall, dass
+    das Wissen des Symbolsystems oder die tatsächliche Struktur im Problemraum nicht ausreichen, um
+    Suche ganz zu vermeiden [[11]].</p>
+    <p class="small">Kontrast im Paper: Ein <b>lineares Programm</b> ist hochstrukturiert — es braucht
+    viel Rechnung, aber die Suche <b>verzweigt nicht</b>; jeder Schritt ist ein Schritt zur Lösung.
+    Bei kombinatorischen Problemen (Handlungsreisender, Scheduling) oder beim Beweisen von Theoremen
+    ist Baumsuche kaum vermeidbar [[11]].</p>
+  </div>
+
+  <h3>Historische Ironie: Theorembeweiser</h3>
+  <div class="card tight">
+    <p class="small">Bei Theorembeweisern hatten Ideen aus Mathematik und Logik starken Einfluss.
+    Heuristiken wurden <b>abgelehnt</b>, solange man keine <b>Vollständigkeit</b> beweisen konnte —
+    laut Paper „ein bisschen ironisch, da die meisten interessanten mathematischen Systeme bekanntlich
+    unentscheidbar sind". Da Vollständigkeit bei Best-First-Heuristiken selten beweisbar ist, wirkte
+    diese Forderung ziemlich hemmend. Erst als die Programme dauernd an der kombinatorischen Explosion
+    scheiterten, dachte man über selektive Heuristiken nach — die sich oft als Analoga zu
+    Heuristiken allgemeiner Problemlöser entpuppten (die <b>Set-of-Support</b>-Heuristik ist eine Form
+    des Rückwärtsarbeitens) [[11]].</p>
+  </div>
+</section>
+
+<!-- ============================================================ 12 =========== -->
+<section id="schach">
+  <div class="sect-num">Teil 12 · Die empirische Entdeckung</div>
+  <h2 class="sh">Schach: Programm gegen Großmeister</h2>
+
+  <p class="lead">Schachprogramme bauen typischerweise <b>breite</b> Suchbäume — in manchen Fällen eine
+  Million Äste oder mehr. Aber es gibt gute empirische Belege, dass die stärksten menschlichen Spieler,
+  die <b>Großmeister</b>, selten Bäume von mehr als <b>hundert</b> Ästen erkunden [[11]].</p>
+
+  <div class="card">
+    <div class="cwrap"><canvas id="chC" width="1080" height="380"></canvas></div>
+    <div class="grid2">
+      <div>
+        <div class="ctrl">
+          <label>Programm: Verzweigung pro Knoten <b><span id="chPBv">20</span></b></label>
+          <input type="range" id="chPB" min="2" max="35" value="20" oninput="chDraw()">
+        </div>
+        <div class="ctrl">
+          <label>Programm: Suchtiefe <b><span id="chPDv">5</span></b></label>
+          <input type="range" id="chPD" min="1" max="9" value="5" oninput="chDraw()">
+        </div>
+        <div class="ctrl">
+          <label>Großmeister: erkannte Muster im Gedächtnis <b><span id="chGPv">50000</span></b></label>
+          <input type="range" id="chGP" min="100" max="60000" value="50000" step="100" oninput="chDraw()">
+        </div>
+      </div>
+      <div>
+        <div class="readout" id="chOut"></div>
+        <div class="legend">
+          <span><i style="background:#ff6b8b"></i>Programm: Äste</span>
+          <span><i style="background:#54e8a8"></i>Großmeister: Äste</span>
+        </div>
+        <p class="small">Die Ersparnis des Großmeisters kommt <b>nicht</b> daher, dass er flacher
+        sucht. Sie kommt daher, dass er an jedem Knoten <b>sehr spärlich und selektiv</b> verzweigt.
+        Das geht nur ohne Qualitätsverlust, wenn mehr Selektivität <b>im Generator selbst</b> steckt [[11]].</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Woher kommt die Selektivität? — Mustererkennung statt Suche</h4>
+    <p class="small">Empirische Forschung zur Fähigkeit von Schachmeistern zeigt: Eine
+    Hauptquelle der Meisterschaft ist <b>gespeichertes Wissen</b>, das ihn eine große Zahl
+    spezifischer Merkmale und Muster auf dem Brett <b>wiedererkennen</b> lässt — plus Wissen, das
+    aus dieser Wiedererkennung passende <b>Handlungen</b> vorschlägt. Das Neue ist nicht die Idee
+    selbst (sie steckt fast seit Beginn in Schachprogrammen), sondern die <b>Größenordnung</b>:
+    etwa <b>50 000</b> Muster für Meisterspiel [[11]].</p>
+    <div class="cwrap"><canvas id="patC" width="1080" height="300"></canvas></div>
+    <div class="ctrl">
+      <label>Gespeicherte Muster <b><span id="patNv">0</span></b></label>
+      <input type="range" id="patN" min="0" max="50000" value="0" step="250" oninput="patDraw()">
+    </div>
+    <div class="readout" id="patOut"></div>
+    <p class="small">Warum Wiedererkennung Suche ersetzen <i>kann</i>: Ein bestimmtes — und
+    besonders ein <b>seltenes</b> — Muster kann enorm viel Information enthalten, <b>sofern</b> es
+    eng an die Struktur des Problemraums gekoppelt ist. Wenn diese Struktur „unregelmäßig" und
+    nicht einfach mathematisch beschreibbar ist, ist die Kenntnis vieler relevanter Muster
+    womöglich <b>der Schlüssel</b> zu intelligentem Verhalten [[11]].</p>
+  </div>
+
+  <div class="warn">
+    <h4>Die wichtige empirische Entdeckung</h4>
+    <p class="small">Immer wieder entflammt die Hoffnung, man finde einen Computer, der
+    <i>schnell genug</i> ist und <i>clever genug</i> programmiert, um gutes Schach durch reine
+    <b>Brute-Force-Suche</b> zu spielen. Theoretisch ist nichts über Schach bekannt, was das
+    ausschließt. Aber die empirischen Studien zum Management von Suche in großen Bäumen mit nur
+    bescheidenen Ergebnissen machen diese Richtung <b>viel weniger vielversprechend</b>, als sie
+    war, als Schach zur KI-Aufgabe erkoren wurde. „Das müssen wir als eine der wichtigen
+    empirischen Erkenntnisse der Schachprogrammforschung betrachten" [[11]].</p>
+    <p class="small" style="color:var(--acc3)">Historische Fußnote von heute aus: 1997 schlug Deep Blue
+    Kasparow — mit sehr viel Brute Force. 2017 gewann AlphaZero gegen alle Brute-Force-Programme —
+    mit sehr viel <b>gelernter Mustererkennung</b> und nur ~80 000 Positionen pro Sekunde statt
+    70 Millionen. Newell &amp; Simons Instinkt war also doppelt interessant.</p>
+  </div>
+
+  <h3>Wie gut war der Stand 1976? Die ehrliche Bilanz des Papers</h3>
+  <table>
+    <tr><th>Niveau</th><th>Domänen</th><th>Beispiele</th></tr>
+    <tr><td><span class="pill g">Experten-Niveau</span></td><td>Wenige Programme</td><td>Samuels Dame-Programm; Feigenbaum &amp; Lederbergs DENDRAL; einige Heuristik-Programme für Scheduling und ganzzahlige Programmierung</td></tr>
+    <tr><td><span class="pill o">Kompetenter Amateur</span></td><td>Mehrere Domänen</td><td>Schach, einige Theorembeweis-Domänen, viele Spiele und Puzzles</td></tr>
+    <tr><td><span class="pill" style="background:rgba(255,107,139,.12);color:var(--bad);border-color:rgba(255,107,139,.25)">Weit unter Mensch</td><td>Komplexes „perzeptuelles Frontend"</td><td>Visuelle Szenenerkennung, Sprachverstehen, Roboter in echtem Raum und echter Zeit</td></tr>
+  </table>
+  <p class="small">Zwei Schlüsse zogen sie auf empirischer Basis: <b>(1)</b> Jedes System, das
+  menschliche Experten-Leistung erreichen will, wird in seinen Speichern Zugriff auf <b>sehr große
+  Mengen semantischer Information</b> brauchen. <b>(2)</b> Ein Teil der menschlichen Überlegenheit
+  bei perzeptuellen Aufgaben ist auf die <b>spezialisierte, eingebaute Parallelverarbeitungsstruktur</b>
+  von Auge und Ohr zurückzuführen [[11]].</p>
+</section>
+
+<!-- ============================================================ 13 =========== -->
+<section id="ohne">
+  <div class="sect-num">Teil 13 · Die Zukunftsrichtungen</div>
+  <h2 class="sh">Intelligenz ohne viel Suche — drei Wege</h2>
+
+  <p class="lead">Wenn Intelligenz = „Information über die Struktur des Problemraums extrahieren und
+  nutzen", dann sind neue Richtungen zur Verbesserung gleichbedeutend mit <b>neuen Arten, Information
+  zu extrahieren und zu nutzen</b>. Das Paper identifiziert drei [[11]].</p>
+
+  <div class="card">
+    <div class="btnrow">
+      <button class="pri" onclick="noSet(0)">① Nichtlokale Nutzung</button>
+      <button onclick="noSet(1)">② Semantische Erkennung</button>
+      <button class="alt" onclick="noSet(2)">③ Repräsentationswahl</button>
+    </div>
+    <div class="cwrap"><canvas id="noC" width="1080" height="380"></canvas></div>
+    <div class="readout" id="noOut"></div>
+  </div>
+
+  <div class="card tight">
+    <h4>Weg ① nichtlokale Nutzung — im Detail</h4>
+    <p class="small">Information, die bei der Baumsuche gewonnen wird, wird meist nur <b>lokal</b>
+    benutzt: nur an genau dem Knoten, an dem sie entstand. Information über eine Schachstellung,
+    gewonnen durch dynamische Analyse eines Teilbaums, bewertet meist nur <i>diese</i> Stellung —
+    nicht andere Stellungen, die viele derselben Merkmale enthalten. Folge: <b>Dieselben Fakten
+    müssen an verschiedenen Knoten immer wieder neu entdeckt werden</b> [[11]].</p>
+    <p class="small">Die Information einfach aus ihrem Entstehungskontext herauszunehmen und
+    allgemein zu benutzen, löst das Problem <b>nicht</b> — denn sie ist womöglich nur in einem
+    begrenzten Kontextbereich gültig. <b>Berliners</b> Ansatz: <b>Kausalanalyse</b>, um den
+    Gültigkeitsbereich zu bestimmen. Lässt sich eine Schwäche in einer Stellung auf den Zug
+    zurückverfolgen, der sie erzeugte, dann ist dieselbe Schwäche in allen anderen Stellungen zu
+    erwarten, die von demselben Zug abstammen [[11]].</p>
+    <p class="small"><b>HEARSAY</b> (Spracherkennung) ging einen anderen Weg: parallele Suche auf
+    mehreren Ebenen — <b>phonemisch, lexikalisch, syntaktisch, semantisch</b>. Jede Suche liefert
+    Hypothesen an eine gemeinsame <b>„Blackboard"</b>-Tafel, die alle Quellen lesen können. So lassen
+    sich Hypothesen — oder ganze Hypothesenklassen — eliminieren, die sonst durchsucht werden
+    müssten [[11]].</p>
+  </div>
+
+  <h3>HEARSAY-Blackboard live</h3>
+  <p>Vier Wissensquellen schreiben auf eine gemeinsame Tafel. Schalte einzelne ab und sieh,
+  wie die Zahl der zu prüfenden Hypothesen explodiert.</p>
+
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <label class="chk"><input type="checkbox" id="hsP" checked onchange="hsDraw()"> Phonemische Ebene</label>
+        <label class="chk"><input type="checkbox" id="hsL" checked onchange="hsDraw()"> Lexikalische Ebene</label>
+        <label class="chk"><input type="checkbox" id="hsS" checked onchange="hsDraw()"> Syntaktische Ebene</label>
+        <label class="chk"><input type="checkbox" id="hsM" checked onchange="hsDraw()"> Semantische Ebene</label>
+        <div class="readout" id="hsOut"></div>
+      </div>
+      <div><canvas id="hsC" width="520" height="320"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 14 =========== -->
+<section id="brett">
+  <div class="sect-num">Teil 14 · Das Paradebeispiel</div>
+  <h2 class="sh">Das verstümmelte Schachbrett</h2>
+
+  <p class="lead">Dies ist <b>das</b> Standardbeispiel des Papers für Weg ③: Suche reduzieren oder
+  vermeiden, indem man den <b>Problemraum</b> wechselt. Spiel es selbst durch.</p>
+
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <h4>Die Aufgabe</h4>
+        <p class="small">Ein normales 8×8-Brett (64 Felder) lässt sich exakt mit <b>32 Dominosteinen</b>
+        (je 1×2 Felder) bedecken. Schneidet man nun <b>zwei diagonal gegenüberliegende Ecken</b> ab —
+        es bleiben <b>62</b> Felder — lässt sich dieses verstümmelte Brett exakt mit <b>31</b>
+        Dominosteinen bedecken? [[11]]</p>
+        <div class="btnrow">
+          <button class="pri" onclick="mcMode('try')">① Suche: selbst versuchen</button>
+          <button onclick="mcMode('brute')">⏩ Brute Force ansehen</button>
+          <button class="alt" onclick="mcMode('insight')">② Repräsentationswechsel!</button>
+          <button onclick="mcReset()">↺ Reset</button>
+        </div>
+        <div class="readout" id="mcOut"></div>
+      </div>
+      <div class="cwrap"><canvas id="mcC" width="520" height="520"></canvas></div>
+    </div>
+    <div id="mcPlot" class="plot" style="height:280px"></div>
+  </div>
+
+  <div class="answerbox">
+    <h4>Die Einsicht in zwei Sätzen</h4>
+    <p>Die beiden diagonal gegenüberliegenden Ecken haben <b>dieselbe Farbe</b>. Das verstümmelte
+    Brett hat also <b>zwei Felder der einen Farbe weniger</b> als der anderen (30 vs. 32).
+    Aber jeder Dominostein bedeckt <b>genau ein Feld jeder Farbe</b> — jede Menge von Steinen bedeckt
+    also <b>gleich viele</b> Felder beider Farben. Folglich: <b>Es gibt keine Lösung</b> [[11]].</p>
+    <p class="small">„Mit (buchstäblich) himmlischer Geduld" kann man die Unmöglichkeit durch
+    Ausprobieren aller Anordnungen zeigen. Die Alternative für die mit weniger Geduld und <b>mehr
+    Intelligenz</b> ist die obige Beobachtung. <b>Wie</b> ein Symbolsystem dieses einfache induktive
+    Argument als Alternative zu einem hoffnungslosen Suchversuch entdecken soll — „einem System, das
+    diese Lösung findet, würden wir hohe Intelligenz-Noten geben" [[11]].</p>
+  </div>
+
+  <div class="warn">
+    <h4>Der ehrliche Vorbehalt der Autoren</h4>
+    <p class="small">„Vielleicht entkommen wir aber mit dieser Problemstellung den Suchprozessen gar
+    nicht. Wir haben die Suche bloß <b>verlagert</b> — von einem Raum möglicher Problemlösungen in
+    einen Raum möglicher <b>Repräsentationen</b>." Der ganze Prozess, von einer Repräsentation zu
+    einer anderen zu wechseln, Repräsentationen zu entdecken und zu bewerten, sei „weitgehend
+    unerforschtes Gebiet". <b>Die Gesetze qualitativer Struktur für Repräsentationen müssen erst noch
+    entdeckt werden</b> [[11]].</p>
+  </div>
+
+  <div class="card">
+    <h4>Die Suche verlagert sich — visualisiert</h4>
+    <div class="cwrap"><canvas id="shiftC" width="1080" height="260"></canvas></div>
+    <div class="ctrl">
+      <label>Blick auf die Ebene <b><span id="shV">Lösungsraum</span></b></label>
+      <input type="range" id="sh" min="0" max="100" value="0" oninput="shiftDraw()">
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 15 =========== -->
+<section id="antwort">
+  <div class="sect-num">Teil 15 · Das Fazit</div>
+  <h2 class="sh">Die Antwort auf die Frage</h2>
+
+  <p class="lead">Erinnerung an die Frage vom Anfang: <i>„Was ist ein Symbol, dass Intelligenz es
+  benutzen kann — und was ist Intelligenz, dass sie ein Symbol benutzen kann?"</i>
+  Hier ist die Antwort des Papers, Stück für Stück.</p>
+
+  <div class="card">
+    <div class="cwrap"><canvas id="finC" width="1080" height="420"></canvas></div>
+    <div class="btnrow" id="finBtns"></div>
+    <div class="readout" id="finOut">Klicke die Teile der Antwort an.</div>
+  </div>
+
+  <div class="grid2">
+    <div class="answerbox">
+      <h4>Antwort Teil A — Was ist ein Symbol?</h4>
+      <p>Symbolsysteme sind <b>Sammlungen von Mustern und Prozessen</b>, wobei die Prozesse die
+      Muster erzeugen, zerstören und verändern können. Die wichtigste Eigenschaft von Mustern ist,
+      dass sie <b>Objekte, Prozesse oder andere Muster bezeichnen</b> können — und dass sie, wenn
+      sie Prozesse bezeichnen, <b>interpretiert</b> werden können. Interpretation heißt: den
+      bezeichneten Prozess ausführen [[11]].</p>
+      <p class="small">Die zwei bedeutendsten uns bekannten Klassen von Symbolsystemen sind
+      <b>Menschen</b> und <b>Computer</b>. Das Studium von Logik und Computern hat uns gezeigt, dass
+      Intelligenz <b>in physikalischen Symbolsystemen wohnt</b>. Das ist das grundlegendste Gesetz
+      qualitativer Struktur der Informatik [[11]].</p>
+    </div>
+    <div class="answerbox">
+      <h4>Antwort Teil B — Was ist Intelligenz?</h4>
+      <p>Symbolsysteme lösen Probleme, indem sie mögliche Lösungen <b>erzeugen und testen</b> —
+      also durch <b>Suche</b>. Weil ihre Ressourcen endlich sind, kann die Suche nicht auf einmal
+      erfolgen, sondern muss <b>sequentiell</b> sein. Sie hinterlässt entweder einen einzelnen Pfad
+      vom Start zum Ziel oder — wenn Korrektur und Backtracking nötig sind — einen ganzen <b>Baum</b>
+      solcher Pfade [[11]].</p>
+      <p class="small">Symbolsysteme können <b>nicht intelligent erscheinen, wenn sie von reinem
+      Chaos umgeben sind</b>. Sie üben Intelligenz aus, indem sie Information aus einer Problemdomäne
+      extrahieren und damit ihre Suche lenken — falsche Abzweigungen und Umwege vermeidend. Die
+      Problemdomäne <b>muss</b> Information enthalten, also einen gewissen Grad an Ordnung und
+      Struktur, damit die Methode funktioniert [[11]].</p>
+    </div>
+  </div>
+
+  <div class="card" style="background:linear-gradient(135deg,rgba(255,207,107,.1),rgba(182,140,255,.06));border-color:rgba(255,207,107,.3)">
+    <h4 style="color:var(--acc3)">Und die Auflösung von Menons Paradox — endgültig</h4>
+    <p style="font-size:1.03rem">„Das Paradox des <i>Menon</i> wird durch die Beobachtung gelöst,
+    dass Information <b>erinnert</b> werden kann — dass aber auch <b>neue Information aus der Domäne
+    extrahiert werden kann, die die Symbole bezeichnen</b>. In beiden Fällen ist die letzte Quelle
+    der Information die <b>Aufgabendomäne</b>." [[11]]</p>
+    <p class="small">Platon brauchte eine unsterbliche Seele, die alles schon wusste. Newell &amp;
+    Simon brauchen nur: einen Test, einen Generator, und <b>Struktur in der Welt</b>.</p>
+  </div>
+
+  <h3>Die Entwicklungsstufen — Zusammenfassung</h3>
+  <div class="cwrap"><canvas id="sumC" width="1080" height="230"></canvas></div>
+  <p class="small" style="text-align:center">Formale Logik → Turingmaschine → Gespeichertes Programm →
+  Listenverarbeitung → LISP. „Jeder Schritt lieferte einen wesentlichen Teil des Ganzen." [[11]]
+  Der erste Schritt (Turing) ist theoretisch motiviert; alle anderen haben <b>tiefe empirische
+  Wurzeln</b>. „Wir wurden von der Evolution des Computers selbst geführt." [[11]]</p>
+
+  <div class="card tight">
+    <h4>Der letzte Satz des Papers</h4>
+    <div class="quote" style="font-size:1.05rem;border-color:var(--acc3)">
+      Turing schloss sein berühmtes Paper mit den Worten: „Wir können nur ein kurzes Stück
+      vorausschauen, aber wir sehen dort eine Menge, was getan werden muss."<br><br>
+      Vielleicht lesen wir zu viel in diesen schlichten Satz hinein, aber wir denken gern, dass Turing
+      darin die fundamentale Wahrheit erkannte, die alle Informatiker instinktiv kennen. Für alle
+      physikalischen Symbolsysteme, verdammt wie wir sind zur seriellen Suche der Problemumgebung,
+      lautet die kritische Frage immer:
+      <b style="color:var(--acc3);font-size:1.2rem">Was als Nächstes?</b>
+      <cite>Newell &amp; Simon 1976, Schlusssatz [[11]]</cite>
+    </div>
+  </div>
+
+  <h3>Selbsttest — hast du alles?</h3>
+  <div class="card">
+    <div id="quiz"></div>
+    <div class="readout" id="quizOut">0 / 8 beantwortet</div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  Interaktive Aufbereitung von Allen Newell &amp; Herbert A. Simon,
+  „Computer Science as Empirical Inquiry: Symbols and Search" (Turing Award Lecture 1975,
+  publiziert 1976), in: John Haugeland (Hg.), <i>Mind Design II</i>, MIT Press [[11]].<br>
+  Alle Zitate und inhaltlichen Aussagen stammen aus dem Originaltext.
+</footer>
+
+<script>
+/* =========================================================================
+   GLOBALE HELFER
+   ========================================================================= */
+const C={acc:'#59e0ff',acc2:'#b68cff',acc3:'#ffcf6b',good:'#54e8a8',bad:'#ff6b8b',
+         dim:'#95a3c8',txt:'#dfe7ff',panel:'#121930',line:'rgba(120,160,255,.18)'};
+const $=id=>document.getElementById(id);
+function ctx(id){const c=$(id);if(!c)return null;const g=c.getContext('2d');return g;}
+function clr(g,c){g.clearRect(0,0,c.width,c.height);}
+function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);
+  g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+function txt(g,s,x,y,col,size,align,weight){g.fillStyle=col||C.txt;
+  g.font=(weight||'500')+' '+(size||13)+'px Inter,system-ui,sans-serif';
+  g.textAlign=align||'left';g.fillText(s,x,y);}
+function line(g,x1,y1,x2,y2,col,w,dash){g.save();if(dash)g.setLineDash(dash);
+  g.strokeStyle=col||C.line;g.lineWidth=w||1;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();g.restore();}
+function circ(g,x,y,r,col){g.fillStyle=col;g.beginPath();g.arc(x,y,r,0,7);g.fill();}
+function arrow(g,x1,y1,x2,y2,col,w){
+  g.strokeStyle=col;g.fillStyle=col;g.lineWidth=w||2;
+  g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+  const a=Math.atan2(y2-y1,x2-x1),s=8;
+  g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-s*Math.cos(a-.4),y2-s*Math.sin(a-.4));
+  g.lineTo(x2-s*Math.cos(a+.4),y2-s*Math.sin(a+.4));g.closePath();g.fill();}
+function wrapTxt(g,s,x,y,maxw,lh,col,size){
+  g.fillStyle=col||C.dim;g.font='400 '+(size||12)+'px Inter,sans-serif';g.textAlign='left';
+  const w=s.split(' ');let l='',yy=y;
+  for(const word of w){const t=l+word+' ';
+    if(g.measureText(t).width>maxw&&l){g.fillText(l,x,yy);l=word+' ';yy+=lh;}else l=t;}
+  g.fillText(l,x,yy);return yy;}
+function glow(g,col,b){g.shadowColor=col;g.shadowBlur=b||14;}
+function noglow(g){g.shadowBlur=0;}
+const lerp=(a,b,t)=>a+(b-a)*t;
+const fmt=n=>n>=1e9?(n/1e9).toFixed(1)+' Mrd.':n>=1e6?(n/1e6).toFixed(1)+' Mio.':
+  n>=1e3?Math.round(n).toLocaleString('de-DE'):Math.round(n).toString();
+
+/* Temml rendering */
+function mathIn(el,tex,disp){try{el.innerHTML=temml.renderToString(tex,{displayMode:!!disp});}
+  catch(e){el.textContent=tex;}}
+
+/* =========================================================================
+   STERNENHIMMEL
+   ========================================================================= */
+(function(){const c=$('stars'),g=c.getContext('2d');let st=[];
+ function rs(){c.width=innerWidth;c.height=innerHeight;st=[];
+   for(let i=0;i<150;i++)st.push({x:Math.random()*c.width,y:Math.random()*c.height,
+     r:Math.random()*1.3+.2,p:Math.random()*7,s:.4+Math.random()*1.3});}
+ rs();addEventListener('resize',rs);
+ let t=0;(function an(){t+=.014;g.clearRect(0,0,c.width,c.height);
+   st.forEach(s=>{const a=.25+.45*Math.abs(Math.sin(t*s.s+s.p));
+     g.fillStyle='rgba(150,200,255,'+a+')';g.beginPath();g.arc(s.x,s.y,s.r,0,7);g.fill();});
+   requestAnimationFrame(an);})();})();
+
+/* =========================================================================
+   NAV SCROLLSPY
+   ========================================================================= */
+(function(){const ls=[...document.querySelectorAll('nav.toc a')];
+ const ss=ls.map(a=>$(a.getAttribute('href').slice(1)));
+ addEventListener('scroll',()=>{let i=0;
+   ss.forEach((s,k)=>{if(s&&s.getBoundingClientRect().top<160)i=k;});
+   ls.forEach((a,k)=>a.classList.toggle('on',k===i));
+   const act=ls[i];if(act){const n=$('toc');
+     const l=act.offsetLeft-n.clientWidth/2+act.clientWidth/2;
+     n.scrollTo({left:l,behavior:'smooth'});}},{passive:true});})();
+
+/* =========================================================================
+   0 — LANDKARTE
+   ========================================================================= */
+const MAP=[
+ {x:60, t:'Frage',s:'frage',c:C.acc3},
+ {x:148,t:'Qual.Gesetz',s:'qual',c:C.acc},
+ {x:248,t:'Symbol',s:'sym',c:C.acc},
+ {x:340,t:'Designation',s:'desig',c:C.acc},
+ {x:440,t:'Turing',s:'turing',c:C.acc},
+ {x:526,t:'LISP',s:'liste',c:C.acc},
+ {x:612,t:'Hypothese 1',s:'hypo',c:C.acc},
+ {x:700,t:'Menon',s:'meno',c:C.acc2},
+ {x:780,t:'Gen&Test',s:'gentest',c:C.acc2},
+ {x:856,t:'Algebra',s:'algebra',c:C.acc2},
+ {x:926,t:'B^D',s:'baum',c:C.acc2},
+ {x:986,t:'Heuristik',s:'heur',c:C.acc2},
+ {x:1030,t:'Brett',s:'brett',c:C.acc3}];
+(function(){const g=ctx('mapC'),c=$('mapC');if(!g)return;
+ let hov=-1;
+ function d(){clr(g,c);
+   // Verbindungslinie
+   g.strokeStyle='rgba(120,160,255,.25)';g.lineWidth=2;g.beginPath();
+   MAP.forEach((m,i)=>{const y=130+28*Math.sin(i*.9);i?g.lineTo(m.x,y):g.moveTo(m.x,y);});g.stroke();
+   MAP.forEach((m,i)=>{const y=130+28*Math.sin(i*.9);
+     if(i===hov){glow(g,m.c,20);}
+     circ(g,m.x,y,i===hov?11:7,m.c);noglow(g);
+     g.save();g.translate(m.x,y);g.rotate(-Math.PI/3.4);
+     txt(g,m.t,14,4,i===hov?'#fff':C.dim,11,'left','600');g.restore();});
+   txt(g,'SYMBOLE',250,40,C.acc,14,'center','700');
+   txt(g,'SUCHE',840,40,C.acc2,14,'center','700');
+   txt(g,'Teil 1 — Woraus besteht Intelligenz?',250,58,C.dim,10,'center');
+   txt(g,'Teil 2 — Wie funktioniert sie?',840,58,C.dim,10,'center');
+   txt(g,'→ klicken zum Springen',540,240,C.dim,11,'center');}
+ c.onmousemove=e=>{const r=c.getBoundingClientRect(),sx=c.width/r.width;
+   const mx=(e.clientX-r.left)*sx,my=(e.clientY-r.top)*sx;hov=-1;
+   MAP.forEach((m,i)=>{const y=130+28*Math.sin(i*.9);
+     if(Math.hypot(mx-m.x,my-y)<18)hov=i;});c.style.cursor=hov>=0?'pointer':'default';d();};
+ c.onmouseleave=()=>{hov=-1;d();};
+ c.onclick=()=>{if(hov>=0)$(MAP[hov].s).scrollIntoView({behavior:'smooth'});};
+ d();})();
+
+/* =========================================================================
+   1 — GESETZE QUALITATIVER STRUKTUR
+   ========================================================================= */
+const QUAL=[
+ {n:'Zellenlehre',f:'Biologie',y:'~1839',c:C.good,
+  s:'Der Grundbaustein aller Lebewesen ist die Zelle.',
+  d:'Zellen gibt es in vielen Formen, aber alle haben einen Kern, umgeben von Protoplasma, umschlossen von einer Membran. Diese innere Struktur war historisch NICHT Teil der Lehre — sie kam erst durch intensive Forschung dazu. Die Wirkung auf die Biologie war enorm; der Leerlauf davor beträchtlich.'},
+ {n:'Plattentektonik',f:'Geologie',y:'~1965',c:C.acc,
+  s:'Die Erdoberfläche ist eine Sammlung riesiger Platten.',
+  d:'Ein paar Dutzend Platten bewegen sich (in geologischem Tempo) gegen-, über- und untereinander ins Erdinnere, wo sie ihre Identität verlieren. Erklärt Kontinentformen, Vulkan- und Erdbebenzonen, Tiefseegräben. Jetzt, da sie akzeptiert ist, scheint die ganze Erde überall Belege zu liefern — denn wir sehen die Welt in ihren Begriffen.'},
+ {n:'Keimtheorie',f:'Medizin',y:'~1870',c:C.acc2,
+  s:'Die meisten Krankheiten werden durch winzige Organismen verursacht.',
+  d:'Pasteur. Ansteckung = Übertragung dieser Organismen von einem Wirt zum nächsten. Dass das Gesetz viele Ausnahmen hat (nicht alle Krankheiten kommen von Keimen), schmälert seine Bedeutung nicht. Das Gesetz sagt uns, nach WELCHER ART von Ursache wir suchen sollen — es behauptet nicht, dass wir sie immer finden.'},
+ {n:'Atomlehre',f:'Chemie',y:'~1808',c:C.bad,
+  s:'Die Elemente bestehen aus kleinen, gleichartigen Teilchen.',
+  d:'GEGENBEISPIEL! Weil die zugrundeliegenden Atomarten so einfach und wenig vielfältig sind, wurden bald quantitative Theorien formuliert, die die ganze allgemeine Struktur der ursprünglichen qualitativen Hypothese AUFSOGEN. Bei Zellen, Platten und Keimen ist die Strukturvielfalt so groß, dass das qualitative Prinzip eigenständig bleibt.'},
+ {n:'Symbolsystem',f:'Informatik',y:'1956',c:C.acc3,
+  s:'Ein physikalisches Symbolsystem hat die nötigen und hinreichenden Mittel für allgemeine intelligente Handlung.',
+  d:'DIE HYPOTHESE DIESES PAPERS. Sie hat exakt dieselbe Form wie die drei funktionierenden Beispiele oben: kurz, qualitativ, widerlegbar, und sie legt fest, in welcher Klasse von Systemen man suchen soll. Newell & Simon nennen sie "das grundlegendste Gesetz qualitativer Struktur der Informatik".'}];
+let qualSel=-1;
+(function(){const g=ctx('qualC'),c=$('qualC');if(!g)return;
+ const W=196,H=140,Y=70;
+ function pos(i){return {x:30+i*(W+16),y:Y};}
+ function d(){clr(g,c);
+   txt(g,'Fünf Beispiele — vier aus anderen Wissenschaften, eines aus der Informatik',540,32,C.dim,13,'center');
+   QUAL.forEach((q,i)=>{const p=pos(i),on=i===qualSel;
+     if(on)glow(g,q.c,22);
+     g.fillStyle=on?'rgba(255,255,255,.07)':'rgba(18,25,45,.8)';
+     rr(g,p.x,p.y,W,H,14);g.fill();noglow(g);
+     g.strokeStyle=on?q.c:'rgba(120,160,255,.22)';g.lineWidth=on?2:1;g.stroke();
+     g.fillStyle=q.c;rr(g,p.x,p.y,W,4,2);g.fill();
+     txt(g,q.f.toUpperCase(),p.x+14,p.y+28,q.c,10,'left','700');
+     txt(g,q.n,p.x+14,p.y+50,'#fff',15,'left','700');
+     txt(g,q.y,p.x+W-14,p.y+28,C.dim,10,'right');
+     wrapTxt(g,q.s,p.x+14,p.y+72,W-28,15,C.dim,11.5);
+     if(i===3){txt(g,'⚠ Kontrast',p.x+14,p.y+H-12,C.bad,10,'left','700');}
+     if(i===4){txt(g,'★ unser Thema',p.x+14,p.y+H-12,C.acc3,10,'left','700');}
+   });
+   if(qualSel>=0){const q=QUAL[qualSel];
+     g.fillStyle='rgba(8,12,24,.85)';rr(g,30,230,1020,145,14);g.fill();
+     g.strokeStyle=q.c;g.lineWidth=1;g.stroke();
+     txt(g,q.n+' — '+q.f,48,262,q.c,15,'left','700');
+     wrapTxt(g,q.d,48,288,980,20,'#c3cde8',13);}
+   else txt(g,'↑ Klicke eine Karte an',540,300,C.dim,13,'center');}
+ c.onclick=e=>{const r=c.getBoundingClientRect(),s=c.width/r.width;
+   const mx=(e.clientX-r.left)*s,my=(e.clientY-r.top)*s;
+   QUAL.forEach((q,i)=>{const p=pos(i);
+     if(mx>p.x&&mx<p.x+W&&my>p.y&&my<p.y+H){qualSel=i;
+       $('qualOut').innerHTML='<b>'+q.n+'</b> ('+q.f+', '+q.y+'): '+q.s;}});d();};
+ c.onmousemove=e=>{const r=c.getBoundingClientRect(),s=c.width/r.width;
+   const mx=(e.clientX-r.left)*s,my=(e.clientY-r.top)*s;let h=false;
+   QUAL.forEach((q,i)=>{const p=pos(i);if(mx>p.x&&mx<p.x+W&&my>p.y&&my<p.y+H)h=true;});
+   c.style.cursor=h?'pointer':'default';};
+ d();})();
+
+/* =========================================================================
+   2 — SYMBOLSYSTEM
+   ========================================================================= */
+let symMem=[],symLog=[],symT=0,symId=0;
+function symInit(){symMem=[
+  {id:++symId,toks:['A','B'],nest:false,hl:0},
+  {id:++symId,toks:['C'],nest:false,hl:0}];symLog=[];symT=0;}
+symInit();
+function symProc(kind){
+  symT++;
+  const pick=()=>symMem[Math.floor(Math.random()*symMem.length)];
+  const L='DEFGHJKMNPQRSTUVWXYZ';
+  if(kind==='create'){
+    const n=1+Math.floor(Math.random()*2),t=[];
+    for(let i=0;i<n;i++)t.push(L[Math.floor(Math.random()*L.length)]);
+    symMem.push({id:++symId,toks:t,nest:false,hl:2});
+    symLog.push('Prozess ERZEUGEN → neuer Ausdruck E'+symId+' = ('+t.join(' ')+')');
+  } else if(kind==='modify'){
+    if(!symMem.length)return;const e=pick();
+    e.toks[Math.floor(Math.random()*e.toks.length)]=L[Math.floor(Math.random()*L.length)];
+    e.hl=2;symLog.push('Prozess VERÄNDERN → E'+e.id+' wurde umgeschrieben zu ('+e.toks.join(' ')+')');
+  } else if(kind==='copy'){
+    if(!symMem.length)return;const e=pick();
+    symMem.push({id:++symId,toks:[...e.toks],nest:e.nest,hl:2});
+    symLog.push('Prozess KOPIEREN → E'+symId+' ist eine Reproduktion von E'+e.id);
+  } else if(kind==='delete'){
+    if(symMem.length<2)return;const i=Math.floor(Math.random()*symMem.length);
+    symLog.push('Prozess LÖSCHEN → E'+symMem[i].id+' wurde zerstört');
+    symMem[i].hl=-1;setTimeout(()=>{symMem=symMem.filter(x=>x.hl!==-1);symDraw();},420);
+  } else if(kind==='compose'){
+    if(symMem.length<2)return;
+    const a=symMem[Math.floor(Math.random()*symMem.length)];
+    let b=symMem[Math.floor(Math.random()*symMem.length)];
+    if(a===b)b=symMem[(symMem.indexOf(a)+1)%symMem.length];
+    symMem.push({id:++symId,toks:['⟨E'+a.id+'⟩','⟨E'+b.id+'⟩'],nest:true,hl:2});
+    symLog.push('VERSCHACHTELN → E'+symId+' enthält E'+a.id+' und E'+b.id+' als Komponenten');
+  }
+  if(symMem.length>7)symMem.shift();
+  symMem.forEach(e=>{if(e.hl>0)e.hl--;});
+  $('symOut').innerHTML='<b>t = '+symT+'</b> · '+symLog.slice(-1)[0]+
+    '<br><span style="color:#95a3c8">Speicher enthält '+symMem.length+
+    ' Ausdrücke. Das System ist „eine Maschine, die durch die Zeit eine sich entwickelnde Sammlung von Symbolstrukturen erzeugt".</span>';
+  symDraw();}
+function symReset(){symInit();$('symOut').textContent='Speicher zurückgesetzt.';symDraw();}
+function symDraw(){const g=ctx('symC'),c=$('symC');if(!g)return;clr(g,c);
+  txt(g,'SPEICHER DES SYMBOLSYSTEMS  ·  t = '+symT,30,30,C.acc,12,'left','700');
+  const y0=58,rh=44;
+  symMem.forEach((e,i)=>{
+    const y=y0+i*rh;
+    g.fillStyle=e.hl===-1?'rgba(255,107,139,.14)':e.hl>0?'rgba(84,232,168,.1)':'rgba(255,255,255,.03)';
+    rr(g,30,y,640,36,9);g.fill();
+    g.strokeStyle=e.hl===-1?C.bad:e.hl>0?C.good:'rgba(120,160,255,.15)';g.lineWidth=1;g.stroke();
+    txt(g,'E'+e.id,44,y+23,C.dim,12,'left','600');
+    let x=90;
+    e.toks.forEach(t=>{
+      const w=Math.max(34,g.measureText(t).width+26);
+      const col=e.nest?C.acc2:C.acc;
+      g.fillStyle=e.nest?'rgba(182,140,255,.2)':'rgba(89,224,255,.18)';
+      rr(g,x,y+7,w,22,6);g.fill();
+      g.strokeStyle=col;g.lineWidth=1;g.stroke();
+      txt(g,t,x+w/2,y+22,col,12,'center','700');x+=w+7;});
+    txt(g,e.nest?'verschachtelter Ausdruck':'Ausdruck aus Symbol-Tokens',x+14,y+22,C.dim,10.5,'left');
+  });
+  // Prozess-Panel rechts
+  g.fillStyle='rgba(182,140,255,.07)';rr(g,710,50,340,290,14);g.fill();
+  g.strokeStyle='rgba(182,140,255,.3)';g.lineWidth=1;g.stroke();
+  txt(g,'PROZESSE',730,78,C.acc2,12,'left','700');
+  const PR=[['⊕ Erzeugen','create: baut neue Ausdrücke'],
+            ['✎ Verändern','modify: schreibt Tokens um'],
+            ['⧉ Kopieren','reproduction: dupliziert'],
+            ['⊘ Löschen','destruction: entfernt'],
+            ['⚯ Verschachteln','Ausdruck als Komponente']];
+  PR.forEach((p,i)=>{const y=108+i*44;
+    txt(g,p[0],730,y,'#fff',13,'left','650');
+    txt(g,p[1],730,y+16,C.dim,10.5,'left');});
+  txt(g,'„… Prozesse der Erzeugung, Veränderung,',730,322,C.dim,10,'left');
+  txt(g,'Reproduktion und Zerstörung."',730,336,C.dim,10,'left');
+  // Zeitachse
+  txt(g,'Zeit →',30,y0+7*rh+20,C.dim,11,'left');
+  for(let i=0;i<=Math.min(symT,40);i++){
+    circ(g,36+i*15,y0+7*rh+34,i===Math.min(symT,40)?4:2.2,i===Math.min(symT,40)?C.acc3:'rgba(120,160,255,.35)');}
+}
+symDraw();
+
+/* Fünf Anforderungen */
+function reqDraw(){const g=ctx('reqC'),c=$('reqC');if(!g)return;clr(g,c);
+  const on=[1,2,3,4,5].map(i=>$('r'+i).checked);
+  const NM=['Willkürlichkeit','Prozess-Ausdrücke','Vollständige Operationen','Stabilität','Unbegrenztheit'];
+  const FAIL=['Symbole könnten nur festgelegte Dinge bezeichnen → keine neuen Begriffe bildbar.',
+    'Das System könnte nicht alle eigenen Fähigkeiten aufrufen → keine volle Interpretation.',
+    'Manche Strukturen wären prinzipiell unerreichbar → der Lösungsraum hat Löcher.',
+    'Ausdrücke zerfallen von selbst → kein Gedächtnis, kein Zwischenergebnis.',
+    'Nur endlich viele Ausdrücke → die Universalität geht verloren.'];
+  const cx=260,cy=140,R=92;
+  g.strokeStyle='rgba(120,160,255,.2)';g.beginPath();g.arc(cx,cy,R,0,7);g.stroke();
+  const allOn=on.every(x=>x);
+  if(allOn)glow(g,C.good,26);
+  g.fillStyle=allOn?'rgba(84,232,168,.14)':'rgba(255,107,139,.09)';
+  g.beginPath();g.arc(cx,cy,52,0,7);g.fill();noglow(g);
+  g.strokeStyle=allOn?C.good:C.bad;g.lineWidth=2;g.stroke();
+  txt(g,allOn?'VOLL':'DEFEKT',cx,cy+5,allOn?C.good:C.bad,13,'center','700');
+  on.forEach((o,i)=>{
+    const a=-Math.PI/2+i*2*Math.PI/5;
+    const px=cx+R*Math.cos(a),py=cy+R*Math.sin(a);
+    line(g,cx+52*Math.cos(a),cy+52*Math.sin(a),px-16*Math.cos(a),py-16*Math.sin(a),
+      o?'rgba(84,232,168,.55)':'rgba(255,107,139,.4)',o?2:1,o?null:[4,4]);
+    if(o)glow(g,C.good,12);
+    circ(g,px,py,15,o?'rgba(84,232,168,.2)':'rgba(255,107,139,.12)');noglow(g);
+    g.strokeStyle=o?C.good:C.bad;g.lineWidth=1.4;g.beginPath();g.arc(px,py,15,0,7);g.stroke();
+    txt(g,o?(i+1):'✕',px,py+5,o?C.good:C.bad,13,'center','700');
+    const lx=cx+(R+30)*Math.cos(a),ly=cy+(R+30)*Math.sin(a);
+    g.textAlign=Math.cos(a)>.3?'left':Math.cos(a)<-.3?'right':'center';
+    g.fillStyle=o?C.dim:C.bad;g.font='600 10.5px Inter,sans-serif';
+    g.fillText(NM[i],lx,ly+4);});
+  const off=on.map((o,i)=>o?null:i).filter(x=>x!==null);
+  $('reqOut').innerHTML=off.length===0
+    ? '<b style="color:#54e8a8">Alle fünf Abschluss-Eigenschaften erfüllt.</b> Das System ist ein vollwertiges physikalisches Symbolsystem — „es hat eine starke Familienähnlichkeit zu allen Allzweckcomputern. Nimmt man eine Symbolmanipulationssprache wie LISP als Definition einer Maschine, wird die Verwandtschaft wahrhaft brüderlich." [11]'
+    : off.map(i=>'<b>'+NM[i]+' fehlt:</b> '+FAIL[i]).join('<br>');}
+reqDraw();
+
+/* =========================================================================
+   3 — DESIGNATION & INTERPRETATION
+   ========================================================================= */
+let desCells=[],desSel=-1,desChain=[],desIsInterp=false,desTimer=null;
+const DESPROC=['DRUCKE','VERDOPPLE','ZÄHLE','VERGLEICHE'];
+function desReset(){
+  clearInterval(desTimer);desChain=[];desSel=-1;desCells=[];
+  const N=20;
+  for(let i=0;i<N;i++){
+    const r=Math.random();
+    if(r<.42)desCells.push({t:'ptr',v:0});
+    else if(r<.78)desCells.push({t:'val',v:'OBJ-'+String.fromCharCode(65+i)});
+    else desCells.push({t:'proc',v:DESPROC[i%4]});}
+  desCells.forEach((c,i)=>{if(c.t==='ptr'){let j;do{j=Math.floor(Math.random()*N);}while(j===i);c.v=j;}});
+  $('desOut').innerHTML='Neuer Speicher. Klicke eine Zelle — blaue Zellen <b>bezeichnen</b> andere Zellen (Zeiger), graue sind Objekte, goldene bezeichnen <b>Prozesse</b>.';
+  desDraw();}
+function desMode(){desIsInterp=!desIsInterp;
+  $('desModeLbl').textContent=desIsInterp?'Interpretation':'Designation';desDraw();}
+function desAuto(){
+  clearInterval(desTimer);
+  if(desSel<0)desSel=desCells.findIndex(c=>c.t==='ptr');
+  desChain=[desSel];
+  desTimer=setInterval(()=>{
+    const last=desChain[desChain.length-1],c=desCells[last];
+    if(c.t!=='ptr'||desChain.length>9){clearInterval(desTimer);desFinish();return;}
+    if(desChain.includes(c.v)){desChain.push(c.v);clearInterval(desTimer);
+      $('desOut').innerHTML='<b style="color:#ffcf6b">Zyklus!</b> Die Zeigerkette läuft im Kreis — Symbolstrukturen dürfen sich selbst bezeichnen.';desDraw();return;}
+    desChain.push(c.v);desDraw();},520);}
+function desFinish(){
+  const end=desCells[desChain[desChain.length-1]];
+  if(end.t==='proc'){
+    $('desOut').innerHTML='<b style="color:#ffcf6b">INTERPRETATION.</b> Die Kette endet bei einem Ausdruck, der den Prozess <b>'+end.v+'</b> bezeichnet. Weil das System diesen Prozess <i>ausführen</i> kann, hat es den Ausdruck <b>interpretiert</b>. „Interpretation bedeutet: den bezeichneten Prozess ausführen." [11]';
+  } else {
+    $('desOut').innerHTML='<b style="color:#54e8a8">DESIGNATION.</b> Über '+(desChain.length-1)+' Zeiger hinweg hat das System Zugriff auf <b>'+end.v+'</b> bekommen. „Ein Ausdruck bezeichnet ein Objekt, wenn das System — gegeben den Ausdruck — auf das Objekt einwirken oder sich abhängig von ihm verhalten kann. Zugriff über den Ausdruck zu erlangen ist das Wesen der Designation." [11]';}
+  desDraw();}
+function desDraw(){const g=ctx('desC'),c=$('desC');if(!g)return;clr(g,c);
+  const cols=5,cw=150,ch=56,x0=40,y0=70;
+  txt(g,'SPEICHER — jede Zelle ist ein Symbol-Token',40,34,C.acc,12,'left','700');
+  txt(g,desIsInterp?'Modus: INTERPRETATION (goldene Zellen ausführen)':'Modus: DESIGNATION (Zeigern folgen)',
+    1040,34,desIsInterp?C.acc3:C.good,11.5,'right','600');
+  // Pfeile zuerst
+  desCells.forEach((cell,i)=>{
+    if(cell.t!=='ptr')return;
+    const inChain=desChain.indexOf(i)>=0&&desChain.indexOf(cell.v)===desChain.indexOf(i)+1;
+    const a={x:x0+(i%cols)*(cw+14)+cw/2,y:y0+Math.floor(i/cols)*(ch+22)+ch};
+    const b={x:x0+(cell.v%cols)*(cw+14)+cw/2,y:y0+Math.floor(cell.v/cols)*(ch+22)};
+    g.save();g.globalAlpha=inChain?1:.17;
+    g.strokeStyle=inChain?C.acc3:C.acc;g.lineWidth=inChain?2.4:1;
+    g.beginPath();g.moveTo(a.x,a.y);
+    g.bezierCurveTo(a.x,a.y+30,b.x,b.y-30,b.x,b.y);g.stroke();
+    if(inChain){g.fillStyle=C.acc3;g.beginPath();
+      g.arc(b.x,b.y,4,0,7);g.fill();}
+    g.restore();});
+  desCells.forEach((cell,i)=>{
+    const x=x0+(i%cols)*(cw+14),y=y0+Math.floor(i/cols)*(ch+22);
+    const ci=desChain.indexOf(i),inC=ci>=0;
+    const col=cell.t==='ptr'?C.acc:cell.t==='proc'?C.acc3:C.dim;
+    if(inC)glow(g,col,18);
+    g.fillStyle=inC?'rgba(255,255,255,.09)':'rgba(18,25,45,.82)';
+    rr(g,x,y,cw,ch,10);g.fill();noglow(g);
+    g.strokeStyle=inC?col:'rgba(120,160,255,.2)';g.lineWidth=inC?2:1;g.stroke();
+    txt(g,'#'+i,x+10,y+17,C.dim,9.5,'left','600');
+    if(cell.t==='ptr')txt(g,'→ #'+cell.v,x+cw/2,y+39,C.acc,15,'center','700');
+    else if(cell.t==='proc')txt(g,'⚙ '+cell.v,x+cw/2,y+39,C.acc3,13,'center','700');
+    else txt(g,cell.v,x+cw/2,y+39,'#c3cde8',13,'center','600');
+    if(inC){g.fillStyle=C.acc3;g.beginPath();g.arc(x+cw-13,y+14,8,0,7);g.fill();
+      txt(g,ci+1,x+cw-13,y+18,'#06111a',10,'center','700');}});
+  // Legende unten
+  const LY=390;
+  txt(g,'Designation = Zugriff.  Interpretation = Zugriff auf einen ausführbaren Prozess.',540,LY,C.dim,12,'center');}
+desReset();
+(function(){const c=$('desC');if(!c)return;
+ c.onclick=e=>{const r=c.getBoundingClientRect(),s=c.width/r.width;
+   const mx=(e.clientX-r.left)*s,my=(e.clientY-r.top)*s;
+   const cols=5,cw=150,ch=56,x0=40,y0=70;
+   desCells.forEach((cell,i)=>{
+     const x=x0+(i%cols)*(cw+14),y=y0+Math.floor(i/cols)*(ch+22);
+     if(mx>x&&mx<x+cw&&my>y&&my<y+ch){
+       clearInterval(desTimer);desSel=i;desChain=[i];
+       if(cell.t==='ptr'){$('desOut').innerHTML='Zelle #'+i+' <b>bezeichnet</b> Zelle #'+cell.v+
+         '. Drücke „Kette automatisch verfolgen", um dem Zugriffspfad zu folgen.';}
+       else if(cell.t==='proc'){$('desOut').innerHTML='<b style="color:#ffcf6b">Prozess-Ausdruck.</b> Diese Zelle bezeichnet den Prozess <b>'+cell.v+
+         '</b>. Weil das System ihn ausführen kann, <b>interpretiert</b> es den Ausdruck. Das ist die zweite Hälfte des Interpretationsprinzips — genau das, was das gespeicherte Programm 1945 lieferte. [11]';}
+       else {$('desOut').innerHTML='Zelle #'+i+' ist ein <b>Objekt</b> ('+cell.v+') — das Ende einer Designationskette.';}
+       desDraw();}});};
+ c.onmousemove=e=>{const r=c.getBoundingClientRect(),s=c.width/r.width;
+   const mx=(e.clientX-r.left)*s,my=(e.clientY-r.top)*s;
+   const cols=5,cw=150,ch=56,x0=40,y0=70;let h=false;
+   desCells.forEach((cell,i)=>{const x=x0+(i%cols)*(cw+14),y=y0+Math.floor(i/cols)*(ch+22);
+     if(mx>x&&mx<x+cw&&my>y&&my<y+ch)h=true;});
+   c.style.cursor=h?'pointer':'default';};})();
+
+/* =========================================================================
+   4 — TURINGMASCHINE
+   ========================================================================= */
+const TMP={
+ bin:{name:'Binär +1',tape:'1011',start:'r',
+   rules:{'r,1':['1','R','r'],'r,0':['0','R','r'],'r,_':['_','L','c'],
+          'c,1':['0','L','c'],'c,0':['1','L','h'],'c,_':['1','L','h']}},
+ dup:{name:'Verdoppeln',tape:'111',start:'s',
+   rules:{'s,1':['X','R','f'],'f,1':['1','R','f'],'f,_':['_','R','g'],
+          'g,1':['1','R','g'],'g,_':['1','L','b'],'b,1':['1','L','b'],
+          'b,_':['_','L','e'],'e,1':['1','L','e'],'e,X':['1','R','s'],
+          's,_':['_','R','h'],'s,X':['X','R','s']}},
+ busy:{name:'Fleißiger Biber (3 Zustände)',tape:'_____',start:'A',
+   rules:{'A,_':['1','R','B'],'A,1':['1','L','C'],
+          'B,_':['1','L','A'],'B,1':['1','R','B'],
+          'C,_':['1','L','B'],'C,1':['1','R','h']}}};
+let tm={tape:[],head:0,state:'r',prog:'bin',steps:0,halted:false},tmTimer=null;
+function tmLoad(p){tmStop();tm.prog=p;const P=TMP[p];
+  tm.tape=('___'+P.tape+'______').split('');tm.head=3;tm.state=P.start;tm.steps=0;tm.halted=false;
+  let s='<span class="cm">// Zustandstabelle: Zustand,Lesen → Schreiben,Bewegen,Neuer Zustand</span>\n';
+  for(const k in P.rules){const r=P.rules[k];
+    s+='<span class="hl">'+k.padEnd(6)+'</span>→  '+r[0]+' , '+r[1]+' , '+r[2]+'\n';}
+  $('tmTable').innerHTML=s;tmDraw();}
+function tmReset(){tmLoad(tm.prog);}
+function tmStep(){
+  if(tm.halted)return;
+  const sym=tm.tape[tm.head]||'_';
+  const r=TMP[tm.prog].rules[tm.state+','+sym];
+  if(!r||tm.state==='h'){tm.halted=true;tmStop();tmDraw();return;}
+  tm.tape[tm.head]=r[0];
+  tm.head+=r[1]==='R'?1:-1;
+  if(tm.head<0){tm.tape.unshift('_');tm.head=0;}
+  if(tm.head>=tm.tape.length)tm.tape.push('_');
+  tm.state=r[2];tm.steps++;
+  if(tm.state==='h')tm.halted=true;
+  tmDraw();}
+function tmRun(){tmStop();tmTimer=setInterval(tmStep,1000/(+$('tmSpd').value));}
+function tmStop(){clearInterval(tmTimer);tmTimer=null;}
+function tmDraw(){const g=ctx('tmC'),c=$('tmC');if(!g)return;clr(g,c);
+  txt(g,'SPEICHER 1 — DAS BAND (unbegrenzt, hält Daten: „die berühmten Nullen und Einsen")',40,30,C.acc,11.5,'left','700');
+  const cw=52,n=tm.tape.length,x0=540-n*cw/2;
+  tm.tape.forEach((s,i)=>{
+    const x=x0+i*cw,y=60,on=i===tm.head;
+    if(on)glow(g,C.acc3,20);
+    g.fillStyle=on?'rgba(255,207,107,.17)':'rgba(18,25,45,.8)';
+    rr(g,x,y,cw-5,cw-5,7);g.fill();noglow(g);
+    g.strokeStyle=on?C.acc3:'rgba(120,160,255,.2)';g.lineWidth=on?2.2:1;g.stroke();
+    txt(g,s==='_'?'·':s,x+(cw-5)/2,y+32,s==='_'?C.dim:'#fff',19,'center','700');});
+  // Kopf
+  const hx=x0+tm.head*cw+(cw-5)/2;
+  arrow(g,hx,150,hx,112,C.acc3,2.4);
+  g.fillStyle='rgba(255,207,107,.12)';rr(g,hx-62,152,124,34,9);g.fill();
+  g.strokeStyle=C.acc3;g.lineWidth=1;g.stroke();
+  txt(g,'LESE / SCHREIBE',hx,173,C.acc3,11,'center','700');
+  // Steuerung
+  txt(g,'SPEICHER 2 — DIE ENDLICHE ZUSTANDSSTEUERUNG',40,222,C.acc2,11.5,'left','700');
+  const states=[...new Set(Object.keys(TMP[tm.prog].rules).map(k=>k.split(',')[0]))].concat(['h']);
+  states.forEach((s,i)=>{
+    const x=60+i*96,y=240,on=s===tm.state;
+    if(on)glow(g,C.acc2,18);
+    circ(g,x+30,y+28,on?26:21,on?'rgba(182,140,255,.26)':'rgba(18,25,45,.85)');noglow(g);
+    g.strokeStyle=on?C.acc2:'rgba(120,160,255,.2)';g.lineWidth=on?2.2:1;
+    g.beginPath();g.arc(x+30,y+28,on?26:21,0,7);g.stroke();
+    txt(g,s==='h'?'HALT':s,x+30,y+33,on?'#fff':C.dim,s==='h'?11:15,'center','700');});
+  txt(g,'Das Lesen ist KEINE Datenoperation — es ist ein bedingter Sprung in einen Steuerzustand,',600,254,C.dim,11,'left');
+  txt(g,'abhängig von dem, was unter dem Lesekopf steht. [11]',600,270,C.dim,11,'left');
+  txt(g,'„Niemand spielte das Spiel, dynamisch neue Zustände hinzuzufügen —',600,294,'#7d8bb5',10.5,'left');
+  txt(g,'die Steuerung als Ort des Wissens zu denken." [11]',600,308,'#7d8bb5',10.5,'left');
+  $('tmOut').innerHTML='Schritte: <b>'+tm.steps+'</b> · Zustand: <b>'+tm.state+'</b> · gelesen: <b>'+
+    (tm.tape[tm.head]==='_'?'leer':tm.tape[tm.head])+'</b>'+
+    (tm.halted?' · <span style="color:#54e8a8">ANGEHALTEN</span>':'')+
+    '<br><span style="color:#95a3c8">Band: '+tm.tape.join('').replace(/_/g,'·')+'</span>';}
+tmLoad('bin');
+
+/* =========================================================================
+   5 — HISTORIE
+   ========================================================================= */
+const HIST=[
+ {y:'1879–1913',n:'Formale Logik',c:C.acc2,
+  s:'Frege, Whitehead & Russell. „Das Symbolspiel": Logik und Mathematik als Spiel mit <b>bedeutungslosen Tokens</b> nach rein syntaktischen Regeln. Alle Bedeutung war ausgetrieben.',
+  gain:'Symbole als Rohstoff des Denkens, syntaktisch behandelt',
+  stage:'Stufe der formalen Symbolmanipulation'},
+ {y:'1936',n:'Turingmaschine',c:C.acc,
+  s:'Turing, Post, Church — unabhängig, und bald als <b>äquivalent</b> erwiesen. Unentscheidbarkeit und Universalität. „Zwei unserer tiefsten Einsichten in Informationsverarbeitung, erreicht in den Dreißigern, vor den modernen Computern."',
+  gain:'Universalität + maschinelle Syntaxverarbeitung',
+  stage:'Stufe der automatischen formalen Symbolmanipulation — die halbe Interpretation'},
+ {y:'~1945',n:'Gespeichertes Programm',c:C.good,
+  s:'Nach dem Eniac (der nur <b>20 Register</b> hatte!). Programme können jetzt Daten sein und als Daten bearbeitet werden. Bei Turing schon implizit — die Beschreibungen stehen auf demselben Band.',
+  gain:'Die zweite Hälfte des Interpretationsprinzips',
+  stage:'Aber: noch immer KEINE Designation'},
+ {y:'1956',n:'Listenverarbeitung',c:C.acc3,
+  s:'Newell, Shaw, Simon. Jetzt sind die Inhalte der Datenstrukturen <b>Symbole im eigentlichen Sinn</b>: Muster, die bezeichnen, die Referenten haben. Listen halten Adressen, die Zugriff auf andere Listen erlauben.',
+  gain:'DESIGNATION + dynamische Struktur + Datentyp-Abstraktion',
+  stage:'Nahm Anregung aus Random-Access-Speichern: die Adresse ist die physikalische Realisierung eines bezeichnenden Symbols'},
+ {y:'1959–60',n:'LISP',c:C.bad,
+  s:'McCarthy. „Vollendete den Akt der Abstraktion": hob Listenstrukturen aus ihrer Einbettung in konkrete Maschinen heraus, schuf ein neues formales System mit <b>S-Ausdrücken</b>, äquivalent zu den anderen universellen Berechnungsschemata.',
+  gain:'Symbolsystem als eigenständiges formales System',
+  stage:'1956 waren alle Konzepte da — und Hardware, um sie zu bauen. Die KI konnte beginnen.'}];
+function histDraw(i){
+  $('histY').textContent=HIST[i].y;
+  $('histBar').innerHTML=HIST.map((h,k)=>
+    '<div class="st '+(k===i?'on':k<i?'done':'')+'">'+h.n+'</div>').join('');
+  const g=ctx('histC'),c=$('histC');if(!g)return;clr(g,c);
+  const X=90,W=(1080-180)/4;
+  // Achse
+  line(g,60,250,1020,250,'rgba(120,160,255,.25)',2);
+  HIST.forEach((h,k)=>{
+    const x=X+k*W,on=k===i,done=k<i;
+    line(g,x,250,x,250-(on?150:done?90:55),on?h.c:done?'rgba(84,232,168,.4)':'rgba(120,160,255,.2)',on?3:1.5);
+    if(on)glow(g,h.c,22);
+    circ(g,x,250-(on?150:done?90:55),on?12:done?7:5,on?h.c:done?C.good:'rgba(120,160,255,.35)');noglow(g);
+    txt(g,h.y,x,274,on?h.c:C.dim,on?12:10,'center',on?'700':'500');
+    txt(g,h.n,x,292,on?'#fff':'#6f7ea6',on?13:10.5,'center',on?'700':'500');
+  });
+  // Aktive Karte
+  const h=HIST[i];
+  g.fillStyle='rgba(8,12,24,.88)';rr(g,60,24,960,62,12);g.fill();
+  g.strokeStyle=h.c;g.lineWidth=1.4;g.stroke();
+  g.fillStyle=h.c;rr(g,60,24,5,62,3);g.fill();
+  txt(g,h.n.toUpperCase()+'  —  '+h.y,80,46,h.c,13,'left','700');
+  const plain=h.s.replace(/<\/?b>/g,'');
+  wrapTxt(g,plain,80,64,920,16,'#c3cde8',12);
+  // Gewinn-Box
+  g.fillStyle='rgba(84,232,168,.08)';rr(g,60,112,440,58,10);g.fill();
+  g.strokeStyle='rgba(84,232,168,.3)';g.lineWidth=1;g.stroke();
+  txt(g,'NEU HINZUGEWONNEN',76,132,C.good,10,'left','700');
+  wrapTxt(g,h.gain,76,150,410,15,'#c3cde8',12);
+  g.fillStyle='rgba(255,207,107,.07)';rr(g,520,112,500,58,10);g.fill();
+  g.strokeStyle='rgba(255,207,107,.28)';g.lineWidth=1;g.stroke();
+  txt(g,'STATUS',536,132,C.acc3,10,'left','700');
+  wrapTxt(g,h.stage,536,150,470,15,'#c3cde8',11.5);
+  $('histOut').innerHTML='<b>'+h.n+'</b> ('+h.y+'): '+h.s+
+    '<br><span style="color:#54e8a8">Gewinn: '+h.gain+'</span>';}
+histDraw(0);
+
+/* =========================================================================
+   5b — LISP-ZELLEN
+   ========================================================================= */
+const LISPEX=[
+ {n:'(A B C)',cells:[{car:'A',cdr:1},{car:'B',cdr:2},{car:'C',cdr:null}],
+  d:'Eine flache Liste. Jede Zelle hält links ein Element (CAR) und rechts einen <b>Zeiger</b> auf den Rest (CDR). Nirgends liegt „der Inhalt" — nur Symbole, die andere Symbolstrukturen bezeichnen.'},
+ {n:'((A B) C)',cells:[{car:'→',cdr:1,sub:0},{car:'C',cdr:null}],sub:[[{car:'A',cdr:1},{car:'B',cdr:null}]],
+  d:'Verschachtelung. Das CAR der ersten Zelle ist selbst ein <b>Zeiger auf eine Liste</b>. Genau hier entsteht „Listenstruktur": Listen, die Adressen halten, die Zugriff auf andere Listen erlauben. [11]'},
+ {n:'(A (B (C D)) E)',cells:[{car:'A',cdr:1},{car:'→',cdr:2,sub:0},{car:'E',cdr:null}],
+  sub:[[{car:'B',cdr:1},{car:'→',cdr:null,sub:1}],[{car:'C',cdr:1},{car:'D',cdr:null}]],
+  d:'Beliebig tiefe Verschachtelung. Die Struktur ist <b>dynamisch</b> — die Maschine hatte vorher feste Struktur; jetzt gibt es Operationen, die Struktur bauen und verändern. [11]'},
+ {n:'(A B . ↺)',cells:[{car:'A',cdr:1},{car:'B',cdr:0}],cyc:true,
+  d:'<b>Zyklus!</b> Die letzte Zelle zeigt zurück auf die erste. Weil Symbole frei bezeichnen dürfen (Anforderung 1), kann eine Struktur sich selbst enthalten. Kein Widerspruch — nur ein Zeiger.'}];
+let lispCur=0,lispSharedF=false;
+function lispEx(i){lispCur=i;lispSharedF=false;lispDraw();}
+function lispShared(){lispSharedF=true;lispDraw();}
+function lispDraw(){const g=ctx('lispC'),c=$('lispC');if(!g)return;clr(g,c);
+  const CW=112,CH=46;
+  function cell(x,y,car,hl){
+    g.fillStyle='rgba(18,25,45,.9)';rr(g,x,y,CW,CH,8);g.fill();
+    g.strokeStyle=hl||'rgba(120,160,255,.3)';g.lineWidth=1.3;g.stroke();
+    line(g,x+CW/2,y,x+CW/2,y+CH,'rgba(120,160,255,.3)',1);
+    txt(g,car,x+CW/4,y+29,car==='→'?C.acc2:'#fff',car==='→'?17:15,'center','700');
+    txt(g,'•',x+3*CW/4,y+30,C.acc,18,'center','700');
+    txt(g,'CAR',x+CW/4,y-6,C.dim,8.5,'center');
+    txt(g,'CDR',x+3*CW/4,y-6,C.dim,8.5,'center');}
+  function chain(cells,x0,y0,subs,depth){
+    cells.forEach((cl,i)=>{
+      const x=x0+i*(CW+42),y=y0;
+      cell(x,y,cl.car,depth?'rgba(182,140,255,.45)':null);
+      if(cl.cdr!==null&&cl.cdr!==undefined&&cl.cdr<cells.length&&cl.cdr>i)
+        arrow(g,x+3*CW/4+8,y+CH/2,x+CW+36,y+CH/2,C.acc,1.8);
+      else if(cl.cdr===null)
+        {line(g,x+3*CW/4-8,y+CH-8,x+3*CW/4+8,y+8,C.dim,1.6);
+         txt(g,'NIL',x+CW+14,y+CH/2+4,C.dim,10,'center');}
+      else if(cl.cdr!==null&&cl.cdr<=i){
+        g.strokeStyle=C.acc3;g.lineWidth=2;g.beginPath();
+        g.moveTo(x+3*CW/4,y+CH);g.bezierCurveTo(x+3*CW/4,y+CH+36,
+          x0+cl.cdr*(CW+42)+CW/2,y+CH+36,x0+cl.cdr*(CW+42)+CW/2,y+CH);g.stroke();
+        txt(g,'↺ Zyklus',x+10,y+CH+54,C.acc3,11,'center','700');}
+      if(cl.sub!==undefined&&subs&&subs[cl.sub]){
+        arrow(g,x+CW/4,y+CH+4,x+CW/4,y+CH+44,C.acc2,1.8);
+        chain(subs[cl.sub],x+CW/4-CW/2,y+CH+50,subs,(depth||0)+1);}});}
+  const E=LISPEX[lispCur];
+  txt(g,'S-Ausdruck:  '+E.n,40,34,C.acc3,16,'left','700');
+  if(lispSharedF){
+    txt(g,'Geteilte Struktur: zwei Listen zeigen auf DIESELBE Teilliste',40,58,C.acc2,12,'left','600');
+    const shared=[{car:'X',cdr:1},{car:'Y',cdr:null}];
+    cell(120,100,'A');arrow(g,120+3*CW/4+8,123,198,123,C.acc,1.8);
+    cell(194,100,'→');
+    cell(120,190,'B');arrow(g,120+3*CW/4+8,213,198,213,C.acc,1.8);
+    cell(194,190,'→');
+    chain(shared,470,145,null,1);
+    arrow(g,194+CW/4,146,462,160,C.acc2,1.8);
+    arrow(g,194+CW/4,190,462,180,C.acc2,1.8);
+    txt(g,'Beide Listen BEZEICHNEN dieselbe Struktur.',470,250,C.acc2,12,'left','600');
+    txt(g,'Änderungen dort sind von beiden aus sichtbar —',470,268,C.dim,11.5,'left');
+    txt(g,'das ist Designation im wörtlichen Sinn des Papers.',470,285,C.dim,11.5,'left');
+    $('lispOut').innerHTML='<b>Geteilte Struktur.</b> „Kollegen fragten uns, <i>wo denn die Daten seien</i> — welche Liste endlich die Sammlung von Bits enthalte. Sie fanden es seltsam, dass es solche Bits nicht gab; es gab nur Symbole, die wieder andere Symbolstrukturen bezeichneten." [11]';
+    return;}
+  chain(E.cells,70,110,E.sub,0);
+  $('lispOut').innerHTML=E.d;}
+lispDraw();
+
+/* =========================================================================
+   6 — HYPOTHESE 1
+   ========================================================================= */
+let hypSel=null;
+(function(){const g=ctx('hypC'),c=$('hypC');if(!g)return;
+ const BX={x:70,y:150,w:330,h:110},BY={x:680,y:150,w:330,h:110};
+ function d(){clr(g,c);
+   // Boxen
+   glow(g,C.acc,hypSel?10:16);
+   g.fillStyle='rgba(89,224,255,.1)';rr(g,BX.x,BX.y,BX.w,BX.h,16);g.fill();noglow(g);
+   g.strokeStyle=C.acc;g.lineWidth=1.6;g.stroke();
+   txt(g,'PHYSIKALISCHES',BX.x+BX.w/2,BX.y+36,C.acc,13,'center','700');
+   txt(g,'SYMBOLSYSTEM',BX.x+BX.w/2,BX.y+58,'#fff',21,'center','800');
+   txt(g,'Muster + Prozesse + Designation',BX.x+BX.w/2,BX.y+84,C.dim,11,'center');
+   glow(g,C.acc2,hypSel?10:16);
+   g.fillStyle='rgba(182,140,255,.1)';rr(g,BY.x,BY.y,BY.w,BY.h,16);g.fill();noglow(g);
+   g.strokeStyle=C.acc2;g.lineWidth=1.6;g.stroke();
+   txt(g,'ALLGEMEINE',BY.x+BY.w/2,BY.y+36,C.acc2,13,'center','700');
+   txt(g,'INTELLIGENTE HANDLUNG',BY.x+BY.w/2,BY.y+58,'#fff',17,'center','800');
+   txt(g,'„derselbe Umfang wie menschliches Handeln"',BY.x+BY.w/2,BY.y+84,C.dim,10.5,'center');
+   // Pfeil hinreichend (links→rechts, oben)
+   const suf=hypSel==='suf';
+   g.save();g.globalAlpha=hypSel&&!suf?.25:1;
+   g.strokeStyle=C.acc;g.lineWidth=suf?3.4:2.2;g.beginPath();
+   g.moveTo(BX.x+BX.w,BX.y+34);g.bezierCurveTo(500,70,580,70,BY.x,BY.y+34);g.stroke();
+   g.fillStyle=C.acc;const a1=Math.atan2(BY.y+34-70,BY.x-580);
+   g.beginPath();g.moveTo(BY.x,BY.y+34);
+   g.lineTo(BY.x-13,BY.y+24);g.lineTo(BY.x-13,BY.y+44);g.closePath();g.fill();
+   g.fillStyle='rgba(8,12,24,.9)';rr(g,455,48,170,36,9);g.fill();
+   g.strokeStyle=C.acc;g.lineWidth=suf?2:1;g.stroke();
+   txt(g,'HINREICHEND →',540,71,C.acc,13,'center','700');g.restore();
+   // Pfeil notwendig (rechts→links, unten)
+   const nec=hypSel==='nec';
+   g.save();g.globalAlpha=hypSel&&!nec?.25:1;
+   g.strokeStyle=C.acc2;g.lineWidth=nec?3.4:2.2;g.beginPath();
+   g.moveTo(BY.x,BY.y+86);g.bezierCurveTo(580,350,500,350,BX.x+BX.w,BX.y+86);g.stroke();
+   g.fillStyle=C.acc2;
+   g.beginPath();g.moveTo(BX.x+BX.w,BX.y+86);
+   g.lineTo(BX.x+BX.w+13,BX.y+76);g.lineTo(BX.x+BX.w+13,BX.y+96);g.closePath();g.fill();
+   g.fillStyle='rgba(8,12,24,.9)';rr(g,455,330,170,36,9);g.fill();
+   g.strokeStyle=C.acc2;g.lineWidth=nec?2:1;g.stroke();
+   txt(g,'← NOTWENDIG',540,353,C.acc2,13,'center','700');g.restore();
+   txt(g,'Klicke auf einen der beiden Pfeile',540,28,C.dim,12,'center');
+   // Forschungsprogramme
+   txt(g,'Forschungsprogramm:',BX.x+10,BX.y+150,C.dim,10.5,'left','600');
+   txt(g,'Künstliche Intelligenz',BX.x+10,BX.y+168,C.acc,12,'left','700');
+   txt(g,'Forschungsprogramm:',BY.x+10,BY.y+150,C.dim,10.5,'left','600');
+   txt(g,'Kognitionspsychologie',BY.x+10,BY.y+168,C.acc2,12,'left','700');}
+ c.onclick=e=>{const r=c.getBoundingClientRect(),s=c.width/r.width;
+   const mx=(e.clientX-r.left)*s,my=(e.clientY-r.top)*s;
+   if(my<190){hypSel='suf';
+     $('hypOut').innerHTML='<b style="color:#59e0ff">HINREICHEND.</b> „Jedes physikalische Symbolsystem ausreichender Größe kann so weiter organisiert werden, dass es allgemeine Intelligenz zeigt." [11]<br>Belegt wird das durch <b>Konstruieren</b>: „Identifiziere eine Aufgabendomäne, die Intelligenz erfordert, dann konstruiere ein Programm, das Aufgaben dieser Domäne bewältigen kann." — genau analog zum Paradigma der Keimtheorie: identifiziere eine Krankheit, dann suche den Keim. [11]';}
+   else if(my>300){hypSel='nec';
+     $('hypOut').innerHTML='<b style="color:#b68cff">NOTWENDIG.</b> „Jedes System, das allgemeine Intelligenz zeigt, wird sich bei Analyse als physikalisches Symbolsystem erweisen." [11]<br>Belegt wird das durch <b>Modellieren</b>: Man startet bei <i>man, the intelligent system best known to us</i>, und untersucht, ob seine kognitive Aktivität als Arbeit eines Symbolsystems erklärbar ist. Besonders in Problemlösen, Begriffsbildung und Langzeitgedächtnis dominieren Symbolmanipulations-Modelle heute die Kognitionspsychologie. [11]';}
+   d();};
+ c.onmousemove=e=>{const r=c.getBoundingClientRect(),s=c.width/r.width;
+   const my=(e.clientY-r.top)*s;c.style.cursor=(my<190||my>300)?'pointer':'default';};
+ d();})();
+
+/* Evidenz-Waage */
+const EV=[
+ {n:'Dame-Programm (Samuel)',w:3,side:1,t:'Experten-Niveau. Eines der wenigen Programme, die auf professionellem Expertenniveau spielen. [11]'},
+ {n:'DENDRAL',w:3,side:1,t:'Feigenbaum & Lederberg. Chemische Strukturanalyse auf Expertenniveau. [11]'},
+ {n:'Schachprogramme',w:2,side:1,t:'„Frühe Schachprogramme galten als Erfolg, wenn sie legal und mit erkennbarer Absicht spielten; etwas später erreichten sie Anfängerniveau; binnen 10–15 Jahren begannen sie mit ernsthaften Amateuren zu konkurrieren." [11]'},
+ {n:'GPS — General Problem Solver',w:3,side:1,t:'Trennte allgemeine Problemlösemechanismen von den Anforderungen spezifischer Domänen. Viele Ideen stammten aus der Analyse von <i>Protokollen lauten Denkens</i> menschlicher Versuchspersonen. [11]'},
+ {n:'Kognitionspsychologie',w:4,side:1,t:'Informationsverarbeitungstheorie ist der führende zeitgenössische Standpunkt in der Kognitionspsychologie. [11]'},
+ {n:'Fehlen von Konkurrenten',w:3,side:1,t:'Negative Evidenz: Weder Behaviorismus noch Gestalttheorie haben gezeigt (oder gezeigt wie man zeigen würde), dass ihre Mechanismen <i>hinreichend</i> sind — und keine ist so spezifisch formuliert wie ein Programm. [11]'},
+ {n:'Szenenerkennung schwach',w:3,side:-1,t:'Menschliches Niveau wurde noch lange nicht erreicht bei Programmen mit komplexem perzeptuellem „Frontend": Szenenerkennung, Sprachverstehen, Roboter in echter Zeit. [11]'},
+ {n:'Kombinatorische Explosion',w:2,side:-1,t:'„Wir müssen nicht 100 Kopien eines Theorembeweisers bauen, um statistisch zu zeigen, dass er die kombinatorische Explosion der Suche nicht so überwunden hat, wie erhofft." [11]'},
+ {n:'Philosophische Einwände',w:2,side:-1,t:'„Es gibt Menschen, deren Analysen sie zu dem Schluss führen, auf philosophischen oder wissenschaftlichen Gründen, dass die Hypothese falsch ist." [11]'}];
+let evOn=EV.map(()=>false);
+(function(){
+ $('evBtns').innerHTML=EV.map((e,i)=>
+   '<button class="'+(e.side>0?'pri':'alt')+'" onclick="evTog('+i+')" id="evb'+i+'">'+
+   (e.side>0?'+ ':'− ')+e.n+'</button>').join('')+
+   '<button onclick="evAll()">Alle</button><button onclick="evNone()">↺</button>';})();
+function evTog(i){evOn[i]=!evOn[i];$('evb'+i).style.opacity=evOn[i]?1:.45;
+  $('evOut').innerHTML='<b>'+EV[i].n+':</b> '+EV[i].t;evDraw();}
+function evAll(){evOn=EV.map(()=>true);EV.forEach((e,i)=>$('evb'+i).style.opacity=1);evDraw();
+  $('evOut').innerHTML='Alle Evidenzstücke aus dem Paper. Die Waage neigt sich klar — aber sie ist nie <i>bewiesen</i>: „Die Hypothese ist eine empirische Verallgemeinerung und kein Theorem. Wir kennen keinen Weg, die Verbindung zwischen Symbolsystemen und Intelligenz auf rein logischen Gründen zu zeigen." [11]';}
+function evNone(){evOn=EV.map(()=>false);EV.forEach((e,i)=>$('evb'+i).style.opacity=.45);evDraw();}
+function evDraw(){const g=ctx('evC'),c=$('evC');if(!g)return;clr(g,c);
+  let L=0,R=0;EV.forEach((e,i)=>{if(evOn[i]){if(e.side>0)R+=e.w;else L+=e.w;}});
+  const tilt=Math.max(-.26,Math.min(.26,(R-L)*.03));
+  const cx=540,cy=170;
+  // Ständer
+  g.fillStyle='rgba(120,160,255,.25)';
+  g.beginPath();g.moveTo(cx-26,260);g.lineTo(cx+26,260);g.lineTo(cx+7,cy);g.lineTo(cx-7,cy);g.closePath();g.fill();
+  g.save();g.translate(cx,cy);g.rotate(tilt);
+  line(g,-300,0,300,0,'rgba(200,220,255,.6)',5);
+  // Schalen
+  [[-300,'FÜR (pro)',C.good,R],[300,'DAGEGEN (contra)',C.bad,L]].forEach(([x,lbl,col,val],k)=>{
+    const sx=k===0?-300:300,v=k===0?R:L;
+    line(g,sx,0,sx,56,'rgba(200,220,255,.4)',1.6);
+    g.fillStyle=k===0?'rgba(84,232,168,.14)':'rgba(255,107,139,.12)';
+    rr(g,sx-78,56,156,38,9);g.fill();
+    g.strokeStyle=k===0?C.good:C.bad;g.lineWidth=1.3;g.stroke();
+    txt(g,(k===0?'FÜR':'DAGEGEN')+'  '+v,sx,80,k===0?C.good:C.bad,13,'center','700');});
+  g.restore();
+  circ(g,cx,cy,9,C.acc3);
+  // Gewichte als Stapel
+  let yl=0,yr=0;
+  EV.forEach((e,i)=>{if(!evOn[i])return;
+    const pro=e.side>0;
+    const x=pro?cx-300:cx+300;
+    const yy=cy+Math.sin(tilt)*(pro?-300:300)+100+(pro?yl:yr);
+    g.fillStyle=pro?'rgba(84,232,168,.2)':'rgba(255,107,139,.18)';
+    rr(g,x-90,yy,180,19,5);g.fill();
+    g.strokeStyle=pro?C.good:C.bad;g.lineWidth=1;g.stroke();
+    txt(g,e.n,x,yy+14,pro?C.good:C.bad,10,'center','600');
+    if(pro)yl+=22;else yr+=22;});
+  txt(g,'Die Evidenz-Waage der Physical Symbol System Hypothesis',540,28,C.dim,12,'center');
+  if(!evOn.some(x=>x))$('evOut').innerHTML='Klicke Evidenzstücke an — grün = für die Hypothese, violett = dagegen.';}
+evNone();
+
+/* =========================================================================
+   7 — MENONS PARADOX
+   ========================================================================= */
+let menoStage=1;
+function menoStep(s){menoStage=s;menoDraw();}
+function menoDraw(){const g=ctx('menoC'),c=$('menoC');if(!g)return;clr(g,c);
+  const cx=540;
+  if(menoStage===1){
+    txt(g,'DAS PARADOX',cx,34,C.bad,14,'center','700');
+    // Kreis der Unmöglichkeit
+    const R=108,cy=200;
+    g.strokeStyle='rgba(255,107,139,.35)';g.lineWidth=2;g.setLineDash([6,5]);
+    g.beginPath();g.arc(cx,cy,R,0,7);g.stroke();g.setLineDash([]);
+    const P=[['Du weißt nicht,\nwas du suchst',-Math.PI/2],
+             ['Also kannst du\nnicht suchen',Math.PI/6],
+             ['Und fändest du es,\nerkenntest du es nicht',5*Math.PI/6]];
+    P.forEach(([t,a])=>{
+      const x=cx+R*Math.cos(a),y=cy+R*Math.sin(a);
+      glow(g,C.bad,14);circ(g,x,y,11,'rgba(255,107,139,.3)');noglow(g);
+      g.strokeStyle=C.bad;g.lineWidth=1.5;g.beginPath();g.arc(x,y,11,0,7);g.stroke();
+      const lx=cx+(R+30)*Math.cos(a),ly=cy+(R+30)*Math.sin(a);
+      g.textAlign=Math.cos(a)>.3?'left':Math.cos(a)<-.3?'right':'center';
+      t.split('\n').forEach((l,k)=>{g.fillStyle='#e3c6d4';g.font='600 12.5px Inter,sans-serif';
+        g.fillText(l,lx,ly+k*16+(Math.sin(a)<0?-6:12));});});
+    for(let i=0;i<3;i++){const a1=[-Math.PI/2,Math.PI/6,5*Math.PI/6][i],
+      a2=[Math.PI/6,5*Math.PI/6,-Math.PI/2][i];
+      const x1=cx+R*Math.cos(a1),y1=cy+R*Math.sin(a1),x2=cx+R*Math.cos(a2),y2=cy+R*Math.sin(a2);
+      const mx=(x1+x2)/2,my=(y1+y2)/2;
+      arrow(g,lerp(x1,mx,.25),lerp(y1,my,.25),lerp(mx,x2,.6),lerp(my,y2,.6),'rgba(255,107,139,.6)',2);}
+    txt(g,'Ein geschlossener Teufelskreis — zwei Jahrtausende lang.',cx,352,C.dim,12.5,'center');
+    $('menoOut').innerHTML='<b style="color:#ff6b8b">Menons Frage.</b> „Und wie willst du, Sokrates, das erforschen, was du nicht weißt? Was willst du als Gegenstand der Untersuchung hinstellen? Und wenn du findest, was du willst — wie willst du je wissen, dass dies das ist, was du nicht wusstest?" [11]';
+  } else if(menoStage===2){
+    txt(g,'PLATONS LÖSUNG: ANAMNESIS (WIEDERERINNERUNG)',cx,34,C.acc2,14,'center','700');
+    // Früheres Leben
+    g.fillStyle='rgba(182,140,255,.09)';rr(g,80,80,380,200,16);g.fill();
+    g.strokeStyle='rgba(182,140,255,.35)';g.lineWidth=1.4;g.setLineDash([5,4]);g.stroke();g.setLineDash([]);
+    txt(g,'FRÜHERE EXISTENZ',270,112,C.acc2,12,'center','700');
+    txt(g,'Die Seele wusste alles bereits',270,140,'#c9bfe8',13,'center');
+    for(let i=0;i<10;i++){circ(g,130+i*33,180,7,'rgba(182,140,255,'+(.3+.05*i)+')');}
+    txt(g,'alle Wahrheiten gespeichert',270,214,C.dim,11,'center');
+    txt(g,'„Lernen ist nur Erinnern."',270,246,C.acc2,13,'center','600');
+    arrow(g,470,180,610,180,C.acc2,3);
+    txt(g,'Wiedererinnerung',540,166,C.acc2,11,'center','600');
+    g.fillStyle='rgba(255,255,255,.04)';rr(g,620,80,380,200,16);g.fill();
+    g.strokeStyle='rgba(120,160,255,.25)';g.lineWidth=1;g.stroke();
+    txt(g,'DIESES LEBEN',810,112,C.dim,12,'center','700');
+    txt(g,'„Entdecken" = Abrufen',810,140,'#c3cde8',13,'center');
+    circ(g,810,186,22,'rgba(182,140,255,.25)');
+    txt(g,'✓',810,193,C.acc2,22,'center','700');
+    txt(g,'Preis: eine unsterbliche Seele.',cx,322,C.dim,12.5,'center');
+    txt(g,'Newell & Simon: „Wenn du diese Erklärung absurd findest —',cx,346,C.acc3,12.5,'center','600');
+    txt(g,'heute gibt es eine viel einfachere."',cx,366,C.acc3,12.5,'center','600');
+    $('menoOut').innerHTML='<b style="color:#b68cff">Platons Theorie der Wiedererinnerung.</b> „Wenn du denkst, du entdeckst oder lernst etwas, erinnerst du dich in Wirklichkeit nur an das, was du in einer früheren Existenz schon wusstest." [11]';
+  } else {
+    txt(g,'DIE MODERNE LÖSUNG: TEST + GENERATOR',cx,34,C.good,14,'center','700');
+    // Zwei Boxen
+    g.fillStyle='rgba(84,232,168,.1)';rr(g,80,80,380,150,16);g.fill();
+    g.strokeStyle=C.good;g.lineWidth=1.6;g.stroke();
+    txt(g,'(a) DER TEST',270,112,C.good,13,'center','700');
+    txt(g,'Du kennst die Bedingung,',270,142,'#c3cde8',13,'center');
+    txt(g,'die eine Lösung erfüllen muss.',270,162,'#c3cde8',13,'center');
+    txt(g,'Beispiel: „Schachmatt" erkennen',270,194,C.dim,11.5,'center');
+    txt(g,'→ Du erkennst die Lösung!',270,216,C.good,12,'center','700');
+    g.fillStyle='rgba(89,224,255,.1)';rr(g,620,80,380,150,16);g.fill();
+    g.strokeStyle=C.acc;g.lineWidth=1.6;g.stroke();
+    txt(g,'(b) DER GENERATOR',810,112,C.acc,13,'center','700');
+    txt(g,'Er erzeugt Kandidaten —',810,142,'#c3cde8',13,'center');
+    txt(g,'potenzielle Lösungen.',810,162,'#c3cde8',13,'center');
+    txt(g,'Beispiel: Zuggenerator',810,194,C.dim,11.5,'center');
+    txt(g,'→ Du kannst überhaupt suchen!',810,216,C.acc,12,'center','700');
+    arrow(g,460,155,614,155,C.acc3,2.5);
+    arrow(g,614,175,466,175,C.acc3,2.5);
+    g.fillStyle='rgba(255,207,107,.1)';rr(g,300,262,480,70,14);g.fill();
+    g.strokeStyle=C.acc3;g.lineWidth=1.4;g.stroke();
+    txt(g,'„Wir haben ein Problem, wenn wir wissen, WAS wir tun wollen (der Test),',540,288,C.acc3,12.5,'center','600');
+    txt(g,'und nicht sofort wissen, WIE (der Generator liefert nicht sofort',540,306,C.acc3,12.5,'center','600');
+    txt(g,'eine Struktur, die den Test erfüllt)." [11]',540,324,C.acc3,12.5,'center','600');
+    $('menoOut').innerHTML='<b style="color:#54e8a8">Die Auflösung.</b> „Ein Problem zu stellen heißt zu bezeichnen: (a) einen Test für eine Klasse von Symbolstrukturen (Lösungen des Problems) und (b) einen Generator von Symbolstrukturen (potenzielle Lösungen). Ein Problem zu lösen heißt, mit (b) eine Struktur zu erzeugen, die den Test (a) erfüllt. Ein Symbolsystem kann Probleme stellen und lösen, weil es erzeugen und testen kann." [11]';}}
+menoDraw();
+
+/* Test vs Generator */
+function tgDraw(v){
+  $('tgV').textContent=v;
+  const g=ctx('tgC'),c=$('tgC');if(!g)return;clr(g,c);
+  const cx=260,cy=130,R=74;
+  const d=lerp(150,16,v/100);
+  // Generator-Kreis
+  g.fillStyle='rgba(89,224,255,.14)';g.beginPath();g.arc(cx-d/2,cy,R,0,7);g.fill();
+  g.strokeStyle=C.acc;g.lineWidth=1.5;g.stroke();
+  g.fillStyle='rgba(84,232,168,.14)';g.beginPath();g.arc(cx+d/2,cy,R,0,7);g.fill();
+  g.strokeStyle=C.good;g.lineWidth=1.5;g.stroke();
+  txt(g,'GENERATOR',cx-d/2,cy-R-12,C.acc,11.5,'center','700');
+  txt(g,'TEST',cx+d/2,cy-R-12,C.good,11.5,'center','700');
+  txt(g,'erzeugt',cx-d/2-(v>60?22:0),cy+5,C.acc,12,'center','600');
+  txt(g,'prüft',cx+d/2+(v>60?22:0),cy+5,C.good,12,'center','600');
+  // Kandidatenpunkte
+  for(let i=0;i<60;i++){
+    const a=i*2.4,r=R*Math.sqrt((i%17)/17);
+    const x=cx-d/2+r*Math.cos(a),y=cy+r*Math.sin(a);
+    const inT=Math.hypot(x-(cx+d/2),y-cy)<R;
+    circ(g,x,y,2.2,inT?'rgba(84,232,168,.85)':'rgba(89,224,255,.4)');}
+  const eff=Math.round(lerp(2,88,v/100));
+  txt(g,'Treffer-Quote des Generators: '+eff+'%',cx,250,C.acc3,13,'center','700');
+  $('tgOut').innerHTML = v<20
+    ? '<b>Blinder Generator.</b> Er erzeugt irgendwelche Zahlen und lässt den Test aussortieren. „Das würden wir keinen intelligenten Generator nennen." [11]'
+    : v<65
+    ? '<b>Teilweise informierter Generator.</b> Ein Teil des Tests steckt schon im Generator: er erzeugt nur Ausdrücke, die zulässige Umformungen sind. Trefferquote steigt stark.'
+    : '<b style="color:#54e8a8">Intelligenter Generator.</b> „Der Generator enthält einige der Tests, die die Lösung erfüllen muss, sodass Ausdrücke, die diese Tests nicht bestehen, nie erzeugt werden." [11] Genau das ist Intelligenz im Sinne des Papers.';}
+tgDraw(0);
+
+/* Problemraum */
+let psPts=[],psAnim=null;
+function psDraw(){
+  const ord=+$('psO').value,det=+$('psD').value,gen=+$('psG').value;
+  $('psOV').textContent=ord;$('psDV').textContent=det;$('psGV').textContent=gen;
+  const g=ctx('psC'),c=$('psC');if(!g)return;clr(g,c);
+  if(psAnim){clearInterval(psAnim);psAnim=null;}
+  psPts=[];
+  const N=320;
+  for(let i=0;i<N;i++){
+    const rx=Math.random()*480+20,ry=Math.random()*260+40;
+    // Geordnete Position: Lösungen in einer Ecke
+    const ox=20+Math.random()*120,oy=40+Math.random()*80;
+    const isSol=i<22;
+    const t=ord/100;
+    psPts.push({x:isSol?lerp(rx,ox,t):rx,y:isSol?lerp(ry,oy,t):ry,sol:isSol,seen:false});}
+  // Hintergrund-Gradient falls Ordnung
+  if(ord>10){
+    const gr=g.createRadialGradient(80,80,10,80,80,340);
+    gr.addColorStop(0,'rgba(84,232,168,'+(.1*ord/100*det/100)+')');
+    gr.addColorStop(1,'rgba(84,232,168,0)');
+    g.fillStyle=gr;g.fillRect(0,0,520,340);}
+  psPts.forEach(p=>circ(g,p.x,p.y,p.sol?4:2,p.sol?C.good:'rgba(120,160,255,.3)'));
+  txt(g,'Problemraum — jeder Punkt ist eine Symbolstruktur',260,22,C.dim,11,'center');
+  txt(g,'grün = besteht den Test',260,322,C.good,11,'center');
+  const can=ord>25&&det>25&&gen>25;
+  $('psOut').innerHTML = can
+    ? '<b style="color:#54e8a8">Intelligenz ist möglich.</b> Es gibt Ordnung, sie ist erkennbar, und der Generator kann darauf reagieren. „Es muss Information im Problemraum sein, und das Symbolsystem muss fähig sein, sie zu extrahieren und zu nutzen." [11]'
+    : ord<=25
+    ? '<b style="color:#ff6b8b">Zufällige Verteilung.</b> „Dann könnte kein Symbolsystem mehr (oder weniger) Intelligenz zeigen als ein anderes beim Lösen des Problems — obwohl eines mehr Glück haben könnte als ein anderes." [11]'
+    : det<=25
+    ? '<b style="color:#ffcf6b">Muster nicht erkennbar.</b> Die Ordnung ist da, aber das System sieht sie nicht. Zweite Bedingung verletzt.'
+    : '<b style="color:#ffcf6b">Generator reagiert nicht differenziert.</b> Das System erkennt das Muster, kann aber nicht entsprechend handeln. Dritte Bedingung verletzt.';}
+function psRun(){
+  const g=ctx('psC'),c=$('psC');if(!g)return;
+  const ord=+$('psO').value,det=+$('psD').value,gen=+$('psG').value;
+  const smart=(ord/100)*(det/100)*(gen/100);
+  if(psAnim)clearInterval(psAnim);
+  let i=0,found=0,tried=0;
+  const order=[...psPts.keys()];
+  if(smart>.05)order.sort((a,b)=>{
+    const sa=psPts[a].sol?-Math.random()*smart*3:0,sb=psPts[b].sol?-Math.random()*smart*3:0;
+    return (sa+Math.random()*(1-smart))-(sb+Math.random()*(1-smart));});
+  else order.sort(()=>Math.random()-.5);
+  psAnim=setInterval(()=>{
+    for(let k=0;k<3;k++){
+      if(i>=order.length){clearInterval(psAnim);psAnim=null;return;}
+      const p=psPts[order[i++]];tried++;
+      if(p.sol){found++;glow(g,C.acc3,14);circ(g,p.x,p.y,6,C.acc3);noglow(g);}
+      else circ(g,p.x,p.y,2.4,'rgba(255,255,255,.25)');}
+    $('psOut').innerHTML='Geprüft: <b>'+tried+'</b> · Lösungen gefunden: <b style="color:#54e8a8">'+found+
+      '</b> · Trefferrate: <b>'+(100*found/tried).toFixed(1)+'%</b> (Zufall wäre 6,9%)';},40);}
+psDraw();
+
+/* =========================================================================
+   8 — GENERATE & TEST
+   ========================================================================= */
+let gtState={tried:0,hit:0,hist:[],run:null,cands:[]};
+function gtReset(){gtStop();gtState={tried:0,hit:0,hist:[],run:null,cands:[]};
+  $('gtOut').textContent='Bereit.';gtDraw();gtPlot();}
+function gtStop(){if(gtState.run){clearInterval(gtState.run);gtState.run=null;}}
+function gtRun(){gtStop();
+  gtState.run=setInterval(()=>{
+    const sel=+$('gtS').value/100;
+    const pBase=.05,p=pBase+(.85-pBase)*sel;
+    const hit=Math.random()<p;
+    gtState.tried++;if(hit)gtState.hit++;
+    gtState.cands.unshift({hit:hit,v:Math.round(Math.random()*99)});
+    if(gtState.cands.length>14)gtState.cands.pop();
+    gtState.hist.push({t:gtState.tried,r:gtState.hit/gtState.tried});
+    if(gtState.hist.length>400)gtState.hist.shift();
+    $('gtOut').innerHTML='Erzeugt: <b>'+gtState.tried+'</b> · Bestanden: <b style="color:#54e8a8">'+
+      gtState.hit+'</b> · Quote: <b>'+(100*gtState.hit/gtState.tried).toFixed(1)+'%</b>';
+    gtDraw();
+    if(gtState.tried%10===0)gtPlot();
+  },1000/(+$('gtR').value));}
+function gtDraw(){const g=ctx('gtC'),c=$('gtC');if(!g)return;clr(g,c);
+  const sel=+$('gtS').value/100;
+  // Generator-Box
+  g.fillStyle='rgba(89,224,255,.08)';rr(g,50,90,210,180,14);g.fill();
+  g.strokeStyle=C.acc;g.lineWidth=1.5;g.stroke();
+  txt(g,'GENERATOR',155,122,C.acc,13,'center','700');
+  txt(g,'erzeugt Kandidaten',155,144,C.dim,11,'center');
+  // Eingebaute Testschicht
+  const h=Math.round(sel*110);
+  if(h>4){g.fillStyle='rgba(84,232,168,.2)';rr(g,66,258-h,178,h,8);g.fill();
+    g.strokeStyle=C.good;g.lineWidth=1;g.stroke();
+    txt(g,'eingebauter Test',155,258-h/2+4,C.good,11,'center','700');}
+  txt(g,Math.round(sel*100)+'% Selektivität',155,288,C.acc3,12,'center','600');
+  // Pfeil
+  arrow(g,265,180,375,180,C.acc,2.5);
+  // Kandidatenstrom
+  g.fillStyle='rgba(255,255,255,.03)';rr(g,385,90,290,180,14);g.fill();
+  g.strokeStyle='rgba(120,160,255,.2)';g.lineWidth=1;g.stroke();
+  txt(g,'KANDIDATEN-STROM',530,112,C.dim,11.5,'center','700');
+  gtState.cands.forEach((cd,i)=>{
+    const x=400+(i%7)*40,y=128+Math.floor(i/7)*48;
+    g.fillStyle=cd.hit?'rgba(84,232,168,.22)':'rgba(255,107,139,.16)';
+    rr(g,x,y,34,34,7);g.fill();
+    g.strokeStyle=cd.hit?C.good:C.bad;g.lineWidth=1;g.stroke();
+    txt(g,cd.v,x+17,y+22,cd.hit?C.good:C.bad,12,'center','700');});
+  arrow(g,680,180,790,180,C.acc2,2.5);
+  // Test-Box
+  g.fillStyle='rgba(84,232,168,.08)';rr(g,800,90,230,180,14);g.fill();
+  g.strokeStyle=C.good;g.lineWidth=1.5;g.stroke();
+  txt(g,'TEST',915,122,C.good,13,'center','700');
+  txt(g,'prüft auf Lösung',915,144,C.dim,11,'center');
+  const q=gtState.tried?gtState.hit/gtState.tried:0;
+  // Balken
+  g.fillStyle='rgba(255,255,255,.06)';rr(g,830,170,170,22,6);g.fill();
+  g.fillStyle=C.good;rr(g,830,170,170*q,22,6);g.fill();
+  txt(g,(100*q).toFixed(0)+'% bestehen',915,210,C.good,12,'center','700');
+  txt(g,'Bestandene → Lösung gefunden',915,240,C.dim,10.5,'center');
+  // Rückkopplung
+  g.strokeStyle='rgba(182,140,255,.4)';g.lineWidth=1.6;g.setLineDash([5,4]);
+  g.beginPath();g.moveTo(915,275);g.bezierCurveTo(915,330,155,330,155,275);g.stroke();g.setLineDash([]);
+  txt(g,'Rückkopplung: Testwissen wandert in den Generator → Intelligenz',535,348,C.acc2,12,'center','600');
+  txt(g,'GENERIEREN  &  TESTEN  —  der Grundzyklus jedes KI-Programms [11]',540,38,C.acc3,13,'center','700');
+  txt(g,'„Ein Symbolsystem kann Probleme stellen und lösen, weil es erzeugen und testen kann."',540,62,C.dim,11.5,'center');}
+function gtPlot(){
+  if(typeof Plotly==='undefined')return;
+  const xs=gtState.hist.map(h=>h.t),ys=gtState.hist.map(h=>100*h.r);
+  Plotly.react('gtPlot',[{x:xs,y:ys,type:'scatter',mode:'lines',
+    line:{color:'#54e8a8',width:2.4},fill:'tozeroy',fillcolor:'rgba(84,232,168,.12)',
+    name:'Trefferquote'}],{
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+    font:{color:'#95a3c8',family:'Inter,sans-serif',size:11},
+    margin:{l:52,r:20,t:34,b:42},
+    title:{text:'Anteil bestandener Kandidaten über die Zeit',font:{size:13,color:'#dfe7ff'}},
+    xaxis:{title:'erzeugte Kandidaten',gridcolor:'rgba(120,160,255,.1)',zeroline:false},
+    yaxis:{title:'% bestanden',range:[0,100],gridcolor:'rgba(120,160,255,.1)',zeroline:false},
+    showlegend:false},{displayModeBar:false,responsive:true});}
+gtReset();
+
+/* =========================================================================
+   9 — ALGEBRA ax + b = cx + d
+   ========================================================================= */
+let algMode=0,algSteps=[],algIdx=0,algTimer=null,algGenCount=0;
+(function(){const e=$('algDef');if(e&&typeof temml!=='undefined'){
+  e.innerHTML=temml.renderToString('ax + b = cx + d',{displayMode:true})+
+    '<div style="font-size:.84rem;color:#95a3c8;margin-top:10px">Gesucht: ein Ausdruck der Form '+
+    temml.renderToString('x = e')+' mit '+temml.renderToString('ae + b = ce + d')+'</div>';}})();
+(function(){const e=$('bFormel');if(e&&typeof temml!=='undefined')
+  e.innerHTML=temml.renderToString('\\text{Knoten} \\;=\\; B^{D}',{displayMode:true});})();
+
+function algABCD(){return {a:+$('aA').value,b:+$('aB').value,c:+$('aC').value,d:+$('aD').value};}
+function algSet(m){algMode=m;algReset();}
+function algReset(){
+  clearInterval(algTimer);
+  const p=algABCD();
+  $('aAv').textContent=p.a;$('aBv').textContent=p.b;$('aCv').textContent=p.c;$('aDv').textContent=p.d;
+  algIdx=0;algGenCount=0;algSteps=[];
+  if(p.a===p.c){$('algOut').innerHTML='<b style="color:#ff6b8b">a = c</b> — dann hat die Gleichung keine eindeutige Lösung. Verschiebe a oder c.';
+    $('algTrace').textContent='';algDrawC();return;}
+  const sol=(p.d-p.b)/(p.a-p.c);
+  if(algMode===0){
+    // Zahlen raten
+    const cands=[];
+    for(let i=0;i<90;i++){
+      const g=Math.round((Math.random()*40-20)*2)/2;
+      cands.push(g);
+      if(Math.abs(g-sol)<1e-9)break;}
+    if(!cands.some(g=>Math.abs(g-sol)<1e-9))cands.push(sol);
+    algSteps=cands.map((g,i)=>({
+      expr:'x = '+g,
+      test:Math.abs(p.a*g+p.b-(p.c*g+p.d))<1e-9,
+      note:'Generator erzeugt Zahl '+g+'; Test: '+(p.a*g+p.b).toFixed(1)+' = '+(p.c*g+p.d).toFixed(1)+'?'}));
+  } else if(algMode===1){
+    // Zulässige Umformungen (blind, aber lösungserhaltend)
+    const ops=['+1 beidseits','−1 beidseits','×2 beidseits','÷2 beidseits','cx subtrahieren','b subtrahieren','durch (a−c) teilen'];
+    let st={a:p.a,b:p.b,c:p.c,d:p.d},hist=[];
+    for(let i=0;i<34;i++){
+      const o=ops[Math.floor(Math.random()*ops.length)];
+      if(o==='+1 beidseits'){st.b+=1;st.d+=1;}
+      else if(o==='−1 beidseits'){st.b-=1;st.d-=1;}
+      else if(o==='×2 beidseits'){st.a*=2;st.b*=2;st.c*=2;st.d*=2;}
+      else if(o==='÷2 beidseits'){st.a/=2;st.b/=2;st.c/=2;st.d/=2;}
+      else if(o==='cx subtrahieren'){st.a-=st.c;st.c=0;}
+      else if(o==='b subtrahieren'){st.d-=st.b;st.b=0;}
+      else if(o==='durch (a−c) teilen'&&st.a-st.c!==0){const k=st.a-st.c;
+        st.a/=k;st.b/=k;st.c/=k;st.d/=k;}
+      const solved=(st.c===0&&st.b===0&&Math.abs(st.a-1)<1e-9);
+      hist.push({expr:algFmt(st),test:solved,note:'Umformung: '+o+' (lösungserhaltend ✓)'});
+      if(solved)break;}
+    algSteps=hist;
+  } else {
+    // Mittel-Ziel-Analyse — exakt der Weg aus dem Paper
+    let st={a:p.a,b:p.b,c:p.c,d:p.d};
+    algSteps=[{expr:algFmt(st),test:false,note:'Ausgangsform. Ziel-Form ist x = e. Unterschiede erkennen …'}];
+    st={a:p.a-p.c,b:p.b,c:0,d:p.d};
+    algSteps.push({expr:algFmt(st),test:false,
+      note:'UNTERSCHIED 1: unerwünschtes cx auf der rechten Seite → von beiden Seiten subtrahieren, Terme sammeln.'});
+    st={a:st.a,b:0,c:0,d:p.d-p.b};
+    algSteps.push({expr:algFmt(st),test:false,
+      note:'UNTERSCHIED 2: unerwünschtes b auf der linken Seite → von beiden Seiten subtrahieren.'});
+    const k=st.a;
+    st={a:1,b:0,c:0,d:st.d/k};
+    algSteps.push({expr:algFmt(st),test:true,
+      note:'UNTERSCHIED 3: unerwünschter Koeffizient (a−c) links → durch (a−c) teilen. ZIELFORM ERREICHT.'});}
+  algRender();algDrawC();}
+function algFmt(s){
+  const L=(s.a===0?'':(s.a===1?'x':s.a===-1?'−x':fmtN(s.a)+'x'))+
+          (s.b===0?'':(s.b>0?(s.a!==0?' + ':'')+fmtN(s.b):' − '+fmtN(-s.b)))||'0';
+  const R=(s.c===0?'':(s.c===1?'x':s.c===-1?'−x':fmtN(s.c)+'x'))+
+          (s.d===0?(s.c===0?'0':''):(s.d>0?(s.c!==0?' + ':'')+fmtN(s.d):' − '+fmtN(-s.d)))||'0';
+  return L+' = '+R;}
+function fmtN(n){return Number.isInteger(n)?n:(+n.toFixed(3));}
+function algStep(){
+  if(algIdx<algSteps.length-1)algIdx++;
+  algGenCount=algIdx+1;algRender();algDrawC();
+  if(algSteps[algIdx]&&algSteps[algIdx].test)clearInterval(algTimer);}
+function algAuto(){clearInterval(algTimer);
+  algTimer=setInterval(()=>{if(algIdx>=algSteps.length-1){clearInterval(algTimer);return;}algStep();},
+    algMode===2?1100:120);}
+function algRender(){
+  const NM=['① Zahlen raten (blinder Generator)','② Zulässige Umformungen (halb-informiert)','③ Mittel-Ziel-Analyse (intelligent)'];
+  const s=algSteps[algIdx];if(!s)return;
+  $('algOut').innerHTML='<b>'+NM[algMode]+'</b><br>Erzeugte Ausdrücke: <b>'+(algIdx+1)+
+    '</b> von insgesamt '+algSteps.length+'<br><span style="color:#95a3c8">'+s.note+'</span>'+
+    (s.test?'<br><b style="color:#54e8a8">✓ TEST BESTANDEN — Lösung gefunden!</b>':'');
+  let out='';
+  algSteps.slice(0,algIdx+1).forEach((st,i)=>{
+    out+='<span class="cm">'+String(i+1).padStart(3)+'</span>  '+
+      (st.test?'<span style="color:#54e8a8">':'')+st.expr+(st.test?'  ✓</span>':'')+'\n';});
+  const t=$('algTrace');t.innerHTML=out;t.scrollTop=t.scrollHeight;}
+function algDrawC(){const g=ctx('algC'),c=$('algC');if(!g)return;clr(g,c);
+  const COSTS=[algMode===0?algSteps.length:0,0,0];
+  // Vergleichsbalken: wie viele Ausdrücke braucht jede Methode?
+  const p=algABCD();
+  const est=[90,34,4];
+  txt(g,'Wie viele Ausdrücke muss der Generator erzeugen?',260,24,C.dim,11.5,'center');
+  const names=['① Raten','② Umformen','③ Mittel-Ziel'];
+  const cols=[C.bad,C.acc3,C.good];
+  est.forEach((v,i)=>{
+    const y=56+i*52,w=(v/90)*300;
+    txt(g,names[i],12,y+22,i===algMode?'#fff':C.dim,12,'left',i===algMode?'700':'500');
+    g.fillStyle='rgba(255,255,255,.05)';rr(g,120,y,330,26,6);g.fill();
+    if(i===algMode)glow(g,cols[i],14);
+    g.fillStyle=cols[i];rr(g,120,y,Math.max(8,w),26,6);g.fill();noglow(g);
+    txt(g,'≈ '+v,460,y+19,cols[i],12,'left','700');});
+  // Konvergenz-Visualisierung
+  txt(g,'Annäherung an die Zielform  x = e',260,232,C.dim,11.5,'center');
+  const sol=p.a!==p.c?(p.d-p.b)/(p.a-p.c):0;
+  line(g,30,300,490,300,'rgba(120,160,255,.2)',1);
+  const solX=260;
+  glow(g,C.good,16);circ(g,solX,300,7,C.good);noglow(g);
+  txt(g,'x = '+fmtN(sol),solX,324,C.good,12,'center','700');
+  algSteps.slice(0,algIdx+1).forEach((st,i)=>{
+    let dist;
+    if(algMode===0){const m=st.expr.match(/x = (-?[\d.]+)/);
+      dist=m?Math.min(1,Math.abs(+m[1]-sol)/20):1;}
+    else dist=Math.max(0,1-(i/(algSteps.length-1||1)));
+    const x=solX+dist*180*(i%2?1:-1);
+    const alpha=.2+.8*(i/(algIdx+1));
+    circ(g,x,300-((algIdx-i)*2.2),st.test?6:3,st.test?C.acc3:'rgba(89,224,255,'+alpha+')');});
+  txt(g,'jeder Punkt = ein erzeugter Ausdruck',260,278,'#6f7ea6',10,'center');}
+algReset();
+
+/* =========================================================================
+   10 — SUCHBAUM / EXPLOSION
+   ========================================================================= */
+function bDraw(){
+  const B=+$('bB').value,D=+$('bD').value;
+  $('bBv').textContent=B;$('bDv').textContent=D;
+  const g=ctx('bTreeC'),c=$('bTreeC');if(!g)return;clr(g,c);
+  const maxShow=Math.min(D,6);
+  const W=500,levelH=(300)/(maxShow+1);
+  function node(x,y,d,w){
+    if(d>maxShow)return;
+    circ(g,x,y,d===0?6:Math.max(1.4,5-d*.7),
+      d===0?C.acc3:'rgba(89,224,255,'+Math.max(.12,.9-d*.14)+')');
+    if(d===maxShow)return;
+    const bb=Math.min(B,d>=2?Math.min(B,5):B);
+    for(let i=0;i<bb;i++){
+      const nx=x+(i-(bb-1)/2)*w/Math.max(1,bb),ny=y+levelH;
+      line(g,x,y,nx,ny,'rgba(120,160,255,'+Math.max(.06,.3-d*.04)+')',1);
+      node(nx,ny,d+1,w/Math.max(1.6,bb*.85));}}
+  node(260,22,0,W);
+  let total=0;for(let i=0;i<=D;i++)total+=Math.pow(B,i);
+  txt(g,'gezeigt: Tiefe ≤ '+maxShow+(D>6?' (von '+D+')':''),260,326,'#6f7ea6',10,'center');
+  const leaves=Math.pow(B,D);
+  $('bOut').innerHTML='Blätter auf Tiefe D: <b>B<sup>D</sup> = '+B+'<sup>'+D+'</sup> = '+fmt(leaves)+
+    '</b><br>Gesamtknoten: <b>'+fmt(total)+'</b>'+
+    '<br><span style="color:#95a3c8">Bei 1 Mio. Knoten/Sekunde: '+
+    (leaves/1e6<1?'< 1 Sekunde':leaves/1e6<3600?(leaves/1e6).toFixed(1)+' Sekunden':
+     leaves/1e6<86400*365?(leaves/1e6/3600).toFixed(1)+' Stunden':
+     fmt(leaves/1e6/3600/24/365)+' Jahre')+'</span>'+
+    (B===1?'<br><b style="color:#54e8a8">B = 1 — das ist das Algebra-Beispiel: ein gerader Pfad, kein Baum. „Es gab ein paar Versuche, aber keinen Fehler." [11]</b>':'')+
+    (B>=30&&D>=6?'<br><b style="color:#ff6b8b">Das ist ungefähr Schach. Die kombinatorische Explosion in Reinform.</b>':'');
+  bPlot(B,D);}
+function bPlot(B,D){
+  if(typeof Plotly==='undefined')return;
+  const ds=[];for(let i=0;i<=14;i++)ds.push(i);
+  const series=[1,2,3,5,10,20,35].map(b=>({
+    x:ds,y:ds.map(d=>Math.pow(b,d)),type:'scatter',mode:'lines',
+    name:'B = '+b,line:{width:b===B?3.6:1.4,
+      color:b===B?'#ffcf6b':'rgba(120,160,255,.45)'}}));
+  series.push({x:[D],y:[Math.pow(B,D)],type:'scatter',mode:'markers',
+    name:'dein Punkt',marker:{color:'#54e8a8',size:13,symbol:'circle',
+      line:{color:'#fff',width:1.5}}});
+  Plotly.react('bPlot',series,{
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+    font:{color:'#95a3c8',family:'Inter,sans-serif',size:11},
+    margin:{l:62,r:20,t:40,b:46},
+    title:{text:'Kombinatorische Explosion: Knoten = B^D (logarithmische Achse)',
+      font:{size:13,color:'#dfe7ff'}},
+    xaxis:{title:'Suchtiefe D',gridcolor:'rgba(120,160,255,.1)',zeroline:false},
+    yaxis:{title:'Zahl der Blätter',type:'log',gridcolor:'rgba(120,160,255,.1)',zeroline:false},
+    legend:{bgcolor:'rgba(0,0,0,0)',font:{size:10}}},
+    {displayModeBar:false,responsive:true});}
+bDraw();
+
+/* Wissen ↔ Suche */
+function kwDraw(){
+  const k=+$('kw').value;$('kwV').textContent=k;
+  const g=ctx('kwC'),c=$('kwC');if(!g)return;clr(g,c);
+  const t=k/100;
+  const B=Math.max(1,Math.round(lerp(6,1,t)));
+  const spread=lerp(1,.08,t);
+  const levelH=52;
+  function node(x,y,d){
+    if(d>5)return;
+    const col=d===0?C.acc3:(k>70?'rgba(84,232,168,.85)':'rgba(89,224,255,'+(.8-d*.1)+')');
+    circ(g,x,y,d===0?7:Math.max(2,5-d*.6),col);
+    if(d===5)return;
+    const bb=d===0?B:Math.max(1,Math.round(B*Math.pow(.9,d)));
+    for(let i=0;i<bb;i++){
+      const nx=x+(i-(bb-1)/2)*(420/Math.max(1,bb))*spread*Math.pow(.62,d)*(bb>1?1:0),
+            ny=y+levelH;
+      line(g,x,y,nx,ny,k>70?'rgba(84,232,168,.5)':'rgba(120,160,255,.22)',k>70?2:1);
+      node(nx,ny,d+1);}}
+  node(540,26,0);
+  // Ziel
+  glow(g,C.good,18);circ(g,540,296,11,C.good);noglow(g);
+  txt(g,'ZIEL',540,322,C.good,12,'center','700');
+  let total=0;for(let i=0;i<=5;i++)total+=Math.pow(B,i);
+  $('kwOut').innerHTML = k<30
+    ? '<b style="color:#ff6b8b">Wenig Wissen → riesiger Baum.</b> Etwa '+fmt(total)+' Knoten. „Sobald sein Wissen unzureichend wird — wenn es terra incognita betritt — droht ihm sehr viel Suche." [11]'
+    : k<70
+    ? '<b style="color:#ffcf6b">Mittleres Wissen.</b> Etwa '+fmt(total)+' Knoten. Die Selektivität im Generator verringert die Verzweigungsrate — die exponentielle Explosion wird nicht verhindert, nur <i>verschoben</i>. [11]'
+    : '<b style="color:#54e8a8">Viel Wissen → direkter Pfad (B ≈ 1).</b> Nur '+fmt(total)+' Knoten. „Wenn das System genug weiß, geht es direkt auf sein Ziel zu." [11] Die Aufgabe ist dieselbe — die gezeigte Intelligenz ist höher, die Suche geringer.';}
+kwDraw();
+
+/* =========================================================================
+   11 — SUCHSTRATEGIEN IM LABYRINTH
+   ========================================================================= */
+const SR={W:44,H:16,cell:24,grid:[],start:[1,1],goal:[42,14],
+  method:'bfs',timer:null,stats:{bfs:null,dfs:null,best:null,me:null}};
+function srNewMaze(){
+  const {W,H}=SR;
+  SR.grid=[];
+  for(let y=0;y<H;y++){const row=[];for(let x=0;x<W;x++){
+    let wall=Math.random()<.27;
+    if(x<2&&y<2)wall=false;if(x>W-3&&y>H-3)wall=false;
+    row.push(wall?1:0);}SR.grid.push(row);}
+  SR.stats={bfs:null,dfs:null,best:null,me:null};
+  srSet(SR.method);}
+function srSet(m){
+  SR.method=m;clearInterval(SR.timer);
+  const {W,H,grid,start,goal}=SR;
+  const key=(x,y)=>y*W+x;
+  const h=(x,y)=>Math.abs(x-goal[0])+Math.abs(y-goal[1]);
+  let frontier,visited=new Set(),came=new Map(),gsc=new Map(),order=[],found=false;
+  gsc.set(key(...start),0);
+  frontier=[{x:start[0],y:start[1],p:0}];
+  const pop=()=>{
+    if(m==='dfs')return frontier.pop();
+    if(m==='bfs')return frontier.shift();
+    let bi=0;for(let i=1;i<frontier.length;i++)if(frontier[i].p<frontier[bi].p)bi=i;
+    return frontier.splice(bi,1)[0];};
+  let guard=0;
+  while(frontier.length&&guard++<20000){
+    const cur=pop();const k=key(cur.x,cur.y);
+    if(visited.has(k))continue;
+    visited.add(k);order.push({x:cur.x,y:cur.y,front:[...frontier]});
+    if(cur.x===goal[0]&&cur.y===goal[1]){found=true;break;}
+    [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{
+      const nx=cur.x+dx,ny=cur.y+dy;
+      if(nx<0||ny<0||nx>=W||ny>=H||grid[ny][nx])return;
+      const nk=key(nx,ny);
+      const ng=(gsc.get(k)||0)+1;
+      if(visited.has(nk))return;
+      if(gsc.has(nk)&&gsc.get(nk)<=ng&&(m==='me'))return;
+      gsc.set(nk,ng);came.set(nk,k);
+      let p=0;
+      if(m==='best')p=h(nx,ny);
+      else if(m==='me')p=ng+h(nx,ny);
+      frontier.push({x:nx,y:ny,p:p});});}
+  // Pfad
+  let path=[];
+  if(found){let k=key(...goal);
+    while(k!==undefined&&k!==key(...start)){path.push([k%W,Math.floor(k/W)]);k=came.get(k);}
+    path.push(start);}
+  SR.stats[m]={exp:order.length,path:path.length};
+  // Animation
+  let i=0;const g=ctx('srC');
+  SR.timer=setInterval(()=>{
+    const n=Math.max(1,Math.round(+$('srSp').value/12));
+    for(let q=0;q<n;q++){if(i<order.length)i++;}
+    srRender(order.slice(0,i),i<order.length?[]:path,order[Math.min(i,order.length-1)]);
+    const NM={bfs:'Breitensuche',dfs:'Tiefensuche',best:'Best-First',me:'Mittel-Ziel-Analyse (A*)'};
+    const EXPL={
+      bfs:'<b>Breitensuche.</b> Expandiert Ebene für Ebene — völlig <i>uninformiert</i>. Sie findet den kürzesten Pfad, zahlt dafür aber mit maximaler Knotenzahl. Verzweigungsfaktor B wirkt hier voll: B^D. [11]',
+      dfs:'<b>Tiefensuche.</b> Rennt erst so tief wie möglich. Speicherschonend — „Schachprogramme waren aus Gründen der Speicherökonomie generell mit Tiefensuche verheiratet, ab etwa 1958 ergänzt durch das mächtige Alpha-Beta-Pruning." [11] Aber: oft lange Umwege.',
+      best:'<b>Best-First-Suche.</b> Antwort auf Frage 1 („von welchem Knoten weiter?"). „Information, die bei der Beantwortung der ersten Frage hilft, lässt sich als Maß für die relative Entfernung verschiedener Knoten vom Ziel interpretieren. Best-First-Suche verlangt, als Nächstes von dem Knoten aus zu suchen, der dem Ziel am nächsten erscheint." [11] Rudimente davon steckten schon 1955 im <i>Logic Theorist</i>. [11]',
+      me:'<b>Mittel-Ziel-Analyse.</b> Antwort auf Frage 2 („in welche Richtung?"). Man erkennt <i>spezifische Unterschiede</i> zwischen aktueller Struktur und Zielstruktur und wählt Handlungen, die genau diese Unterschiede reduzieren. „Diese Technik spielt eine zentrale Rolle in der Struktur des General Problem Solver." [11] GPS erschien ~1957.'};
+    $('srOut1').innerHTML='<b>'+NM[SR.method]+'</b><br>expandierte Knoten: <b style="color:#59e0ff">'+
+      Math.min(i,order.length)+'</b> / '+order.length;
+    $('srOut2').innerHTML=found?('Pfadlänge: <b style="color:#ffcf6b">'+path.length+
+      '</b><br>Effizienz: <b>'+(100*path.length/Math.max(1,order.length)).toFixed(1)+'%</b>'):
+      '<b style="color:#ff6b8b">Kein Pfad gefunden</b>';
+    $('srOut3').innerHTML='Labyrinth: '+SR.W+'×'+SR.H+'<br>B ≈ 3 (vier Richtungen minus Rückweg)';
+    if(i>=order.length){clearInterval(SR.timer);
+      $('srOut1').innerHTML+='<br><span style="color:#54e8a8">fertig</span>';
+      srBar();}
+    if(i<=1)$('srOut3').innerHTML=EXPL[SR.method];
+  },1000/60);
+  $('srOut3').innerHTML=EXPL_STATIC(m);}
+function EXPL_STATIC(m){
+  const E={bfs:'Uninformiert — gleichmäßige Expansion in alle Richtungen.',
+    dfs:'Uninformiert — erst in die Tiefe, dann zurück (Backtracking).',
+    best:'Informiert — Frage 1: Von welchem Knoten aus weiter?',
+    me:'Informiert — Frage 2: In welche Richtung von dort? (Unterschiede reduzieren)'};
+  return E[m];}
+function srRender(visited,path,cur){
+  const g=ctx('srC'),c=$('srC');if(!g)return;clr(g,c);
+  const cs=SR.cell,ox=(1080-SR.W*cs)/2,oy=36;
+  // Gitter
+  for(let y=0;y<SR.H;y++)for(let x=0;x<SR.W;x++){
+    g.fillStyle=SR.grid[y][x]?'rgba(10,14,26,.95)':'rgba(42,53,80,.42)';
+    rr(g,ox+x*cs+1,oy+y*cs+1,cs-2,cs-2,3);g.fill();}
+  // Besuchte
+  visited.forEach((v,i)=>{
+    const t=i/Math.max(1,visited.length);
+    g.fillStyle='rgba(89,224,255,'+(.18+.5*t)+')';
+    rr(g,ox+v.x*cs+1,oy+v.y*cs+1,cs-2,cs-2,3);g.fill();});
+  // Frontier
+  if(cur&&cur.front)cur.front.slice(0,400).forEach(f=>{
+    g.fillStyle='rgba(182,140,255,.55)';
+    rr(g,ox+f.x*cs+3,oy+f.y*cs+3,cs-6,cs-6,3);g.fill();});
+  // Pfad
+  path.forEach(p=>{
+    glow(g,C.acc3,10);g.fillStyle=C.acc3;
+    rr(g,ox+p[0]*cs+4,oy+p[1]*cs+4,cs-8,cs-8,3);g.fill();noglow(g);});
+  // Start/Ziel
+  glow(g,C.good,14);g.fillStyle=C.good;
+  rr(g,ox+SR.goal[0]*cs+1,oy+SR.goal[1]*cs+1,cs-2,cs-2,4);g.fill();noglow(g);
+  g.fillStyle='#fff';rr(g,ox+SR.start[0]*cs+5,oy+SR.start[1]*cs+5,cs-10,cs-10,3);g.fill();
+  const NM={bfs:'BREITENSUCHE (uninformiert)',dfs:'TIEFENSUCHE (uninformiert)',
+    best:'BEST-FIRST (informiert: Nähe zum Ziel)',me:'MITTEL-ZIEL-ANALYSE / A* (informiert: Unterschiede)'};
+  txt(g,NM[SR.method],540,24,SR.method==='bfs'||SR.method==='dfs'?C.dim:C.acc3,13,'center','700');
+  txt(g,'weiß = Start · grün = Ziel · „Was als Nächstes?" ist immer die Grundfrage. [11]',540,392,'#6f7ea6',11,'center');}
+function srBar(){
+  if(typeof Plotly==='undefined')return;
+  const keys=['bfs','dfs','best','me'],
+    NM=['Breitensuche','Tiefensuche','Best-First','Mittel-Ziel (A*)'],
+    cols=['#95a3c8','#7d8bb5','#b68cff','#54e8a8'];
+  const vals=keys.map(k=>SR.stats[k]?SR.stats[k].exp:0);
+  Plotly.react('srBar',[{x:NM,y:vals,type:'bar',
+    marker:{color:cols.map((c,i)=>SR.stats[keys[i]]?c:'rgba(120,160,255,.15)')},
+    text:vals.map(v=>v||'—'),textposition:'outside',
+    textfont:{color:'#dfe7ff',size:12}}],{
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+    font:{color:'#95a3c8',family:'Inter,sans-serif',size:11},
+    margin:{l:56,r:20,t:42,b:50},
+    title:{text:'Expandierte Knoten pro Methode (probiere alle vier!)',font:{size:13,color:'#dfe7ff'}},
+    yaxis:{title:'Knoten',gridcolor:'rgba(120,160,255,.1)'},
+    xaxis:{gridcolor:'rgba(0,0,0,0)'}},{displayModeBar:false,responsive:true});}
+srNewMaze();
+
+/* =========================================================================
+   12 — SCHACH
+   ========================================================================= */
+function chDraw(){
+  const B=+$('chPB').value,D=+$('chPD').value,GP=+$('chGP').value;
+  $('chPBv').textContent=B;$('chPDv').textContent=D;$('chGPv').textContent=GP.toLocaleString('de-DE');
+  const prog=Math.pow(B,D);
+  // Großmeister: je mehr Muster, desto schmaler die Verzweigung
+  const gmB=lerp(6,1.6,Math.min(1,GP/50000));
+  const gm=Math.pow(gmB,D);
+  const g=ctx('chC'),c=$('chC');if(!g)return;clr(g,c);
+  txt(g,'PROGRAMM  (1976)',280,34,C.bad,13,'center','700');
+  txt(g,'GROSSMEISTER',800,34,C.good,13,'center','700');
+  // Zwei Bäume
+  function tree(cx,bb,col,maxd,maxw){
+    function nd(x,y,d,w){
+      if(d>maxd)return;
+      circ(g,x,y,d===0?5:Math.max(1,3.6-d*.5),col);
+      if(d===maxd)return;
+      const k=Math.min(Math.round(bb),d>=2?Math.min(Math.round(bb),6):Math.round(bb));
+      for(let i=0;i<Math.max(1,k);i++){
+        const nx=x+(i-(Math.max(1,k)-1)/2)*w/Math.max(1,k),ny=y+40;
+        line(g,x,y,nx,ny,col.replace('rgb','rgba').replace(')',',.18)'),1);
+        nd(nx,ny,d+1,w/Math.max(1.5,k*.8));}}
+    nd(cx,60,0,maxw);}
+  g.save();g.globalAlpha=.85;
+  tree(280,B,'rgba(255,107,139,.85)',Math.min(D,5),420);
+  tree(800,gmB,'rgba(84,232,168,.9)',Math.min(D,5),200);
+  g.restore();
+  // Balken
+  const scale=v=>Math.max(6,Math.min(400,Math.log10(Math.max(1,v))*60));
+  g.fillStyle='rgba(255,107,139,.22)';rr(g,80,300,scale(prog),26,6);g.fill();
+  g.strokeStyle=C.bad;g.lineWidth=1;g.stroke();
+  txt(g,fmt(prog)+' Äste',88+scale(prog),318,C.bad,12,'left','700');
+  g.fillStyle='rgba(84,232,168,.22)';rr(g,80,336,scale(gm),26,6);g.fill();
+  g.strokeStyle=C.good;g.lineWidth=1;g.stroke();
+  txt(g,fmt(gm)+' Äste  (effektiver Verzweigungsfaktor ≈ '+gmB.toFixed(1)+')',88+scale(gm),354,C.good,12,'left','700');
+  txt(g,'logarithmische Balkenlänge',700,318,'#6f7ea6',10,'left');
+  const ratio=prog/Math.max(1,gm);
+  $('chOut').innerHTML='Programm: <b style="color:#ff6b8b">'+fmt(prog)+'</b> Äste<br>'+
+    'Großmeister: <b style="color:#54e8a8">'+fmt(gm)+'</b> Äste<br>'+
+    'Verhältnis: <b style="color:#ffcf6b">'+fmt(ratio)+' : 1</b><br>'+
+    '<span style="color:#95a3c8">„Schachprogramme bauen typischerweise breite Suchbäume, in manchen Fällen eine Million Äste oder mehr. … Es gibt gute empirische Belege, dass die stärksten menschlichen Spieler, die Großmeister, selten Bäume von mehr als hundert Ästen erkunden." [11]</span>';}
+chDraw();
+
+/* Mustererkennung */
+function patDraw(){
+  const n=+$('patN').value;$('patNv').textContent=n.toLocaleString('de-DE');
+  const g=ctx('patC'),c=$('patC');if(!g)return;clr(g,c);
+  const t=Math.min(1,n/50000);
+  txt(g,'Gespeicherte Muster ersetzen Suche',540,26,C.acc3,13,'center','700');
+  // Mini-Schachbretter als Muster
+  const N=Math.min(60,Math.round(t*60));
+  for(let i=0;i<60;i++){
+    const x=70+(i%20)*48,y=56+Math.floor(i/20)*54;
+    const on=i<N;
+    g.globalAlpha=on?1:.13;
+    g.fillStyle=on?'rgba(84,232,168,.14)':'rgba(255,255,255,.04)';
+    rr(g,x,y,38,38,5);g.fill();
+    g.strokeStyle=on?'rgba(84,232,168,.6)':'rgba(120,160,255,.18)';g.lineWidth=1;g.stroke();
+    // kleines Muster
+    for(let k=0;k<4;k++){
+      const px=x+6+(k%2)*14,py=y+6+Math.floor(k/2)*14;
+      if((i+k)%3===0){g.fillStyle=on?'rgba(84,232,168,.8)':'rgba(120,160,255,.3)';
+        rr(g,px,py,10,10,2);g.fill();}}
+    g.globalAlpha=1;}
+  // Suchbedarf
+  const search=Math.round(lerp(1000000,100,t));
+  txt(g,'nötige Suche: '+fmt(search)+' Äste',540,286,
+    t>.8?C.good:t>.3?C.acc3:C.bad,13,'center','700');
+  $('patOut').innerHTML = n<2000
+    ? '<b style="color:#ff6b8b">Anfänger.</b> Fast keine Muster → alles muss durchsucht werden. Riesiger Baum.'
+    : n<25000
+    ? '<b style="color:#ffcf6b">Fortgeschritten.</b> '+n.toLocaleString('de-DE')+' Muster. Die Verzweigung wird schmaler, aber noch nicht meisterhaft.'
+    : '<b style="color:#54e8a8">Meisterniveau.</b> „Was neu ist, ist die Erkenntnis, wie viele solcher Muster und zugehöriger Informationen für Meisterspiel gespeichert sein müssen: etwa <b>50 000</b>." [11] Wiedererkennung ersetzt Suche, weil ein seltenes Muster enorm viel Information tragen kann — sofern es eng an die Struktur des Problemraums gekoppelt ist. [11]';}
+patDraw();
+
+/* =========================================================================
+   13 — INTELLIGENZ OHNE VIEL SUCHE
+   ========================================================================= */
+let noCur=0;
+function noSet(i){noCur=i;noDraw();}
+function noDraw(){const g=ctx('noC'),c=$('noC');if(!g)return;clr(g,c);
+  if(noCur===0){
+    txt(g,'① NICHTLOKALE NUTZUNG VON INFORMATION',540,32,C.acc,14,'center','700');
+    // Links: lokal
+    txt(g,'HEUTE: lokal',270,64,C.bad,12,'center','700');
+    txt(g,'SO GEHT ES BESSER: global',810,64,C.good,12,'center','700');
+    function minitree(cx,global){
+      const pos=[];
+      function nd(x,y,d,w,idx){
+        pos.push({x,y,d,idx});
+        if(d>=3)return;
+        for(let i=0;i<2;i++)nd(x+(i-.5)*w,y+60,d+1,w*.55,idx*2+i);}
+      nd(cx,100,0,260,0);
+      pos.forEach(p=>{
+        const par=pos.find(q=>q.d===p.d-1&&Math.abs(q.x-p.x)<160&&q.y===p.y-60);
+        if(par)line(g,par.x,par.y,p.x,p.y,'rgba(120,160,255,.25)',1);});
+      pos.forEach(p=>{
+        const disc=p.d===3&&(p.idx%2===0);
+        circ(g,p.x,p.y,disc?8:5,disc?C.acc3:'rgba(89,224,255,.6)');
+        if(disc)txt(g,'!',p.x,p.y+4,'#06111a',11,'center','700');});
+      return pos;}
+    const L=minitree(270,false),R=minitree(810,true);
+    // Lokal: isolierte Blitze
+    L.filter(p=>p.d===3&&p.idx%2===0).forEach(p=>{
+      g.strokeStyle='rgba(255,107,139,.5)';g.lineWidth=1;g.setLineDash([3,3]);
+      g.beginPath();g.arc(p.x,p.y,16,0,7);g.stroke();g.setLineDash([]);});
+    txt(g,'Dieselben Fakten müssen an',270,320,C.bad,11.5,'center');
+    txt(g,'verschiedenen Knoten immer wieder',270,336,C.bad,11.5,'center');
+    txt(g,'neu entdeckt werden. [11]',270,352,C.bad,11.5,'center');
+    // Global: Verbindungen
+    const marked=R.filter(p=>p.d===3&&p.idx%2===0);
+    marked.forEach((p,i)=>{if(i===0)return;
+      g.strokeStyle='rgba(84,232,168,.55)';g.lineWidth=1.6;g.setLineDash([4,3]);
+      g.beginPath();g.moveTo(marked[0].x,marked[0].y);
+      g.bezierCurveTo(marked[0].x,marked[0].y+40,p.x,p.y+40,p.x,p.y);g.stroke();g.setLineDash([]);});
+    txt(g,'Berliners Kausalanalyse: lässt sich eine',810,320,C.good,11.5,'center');
+    txt(g,'Schwäche auf den erzeugenden Zug zurückführen,',810,336,C.good,11.5,'center');
+    txt(g,'gilt sie in allen Nachfahren dieses Zuges. [11]',810,352,C.good,11.5,'center');
+    $('noOut').innerHTML='<b>Nichtlokale Nutzung.</b> „Information über eine Schachstellung, gewonnen durch dynamische Analyse eines Teilbaums, wird meist nur zur Bewertung genau dieser Stellung benutzt — nicht anderer Stellungen, die viele derselben Merkmale enthalten. Daher müssen dieselben Fakten an verschiedenen Knoten des Suchbaums immer wieder neu entdeckt werden." [11] <br>Die Information einfach aus ihrem Kontext zu nehmen reicht nicht — sie ist womöglich nur in einem begrenzten Kontextbereich gültig. [11]';
+  } else if(noCur===1){
+    txt(g,'② SEMANTISCHE ERKENNUNGSSYSTEME',540,32,C.acc2,14,'center','700');
+    // Suche vs Erkennung
+    g.fillStyle='rgba(255,107,139,.08)';rr(g,80,70,400,240,14);g.fill();
+    g.strokeStyle='rgba(255,107,139,.3)';g.lineWidth=1;g.stroke();
+    txt(g,'SUCHEN',280,100,C.bad,13,'center','700');
+    for(let i=0;i<80;i++){
+      const a=i*.6,r=20+i*1.1;
+      circ(g,280+r*Math.cos(a)*.9,195+r*Math.sin(a)*.55,2,'rgba(255,107,139,'+(.6-i*.006)+')');}
+    txt(g,'viele Schritte, viel Zeit',280,296,C.bad,11,'center');
+    arrow(g,500,190,580,190,C.acc3,2.5);
+    txt(g,'ersetzt durch',540,176,C.acc3,10.5,'center');
+    g.fillStyle='rgba(84,232,168,.08)';rr(g,600,70,400,240,14);g.fill();
+    g.strokeStyle='rgba(84,232,168,.3)';g.lineWidth=1;g.stroke();
+    txt(g,'WIEDERERKENNEN',800,100,C.good,13,'center','700');
+    // Musterspeicher
+    for(let i=0;i<24;i++){const x=640+(i%8)*42,y=130+Math.floor(i/8)*42;
+      g.fillStyle='rgba(84,232,168,.16)';rr(g,x,y,32,32,4);g.fill();
+      g.strokeStyle='rgba(84,232,168,.4)';g.lineWidth=1;g.stroke();}
+    glow(g,C.good,16);circ(g,800,270,13,C.good);noglow(g);
+    txt(g,'✓',800,276,'#06111a',15,'center','700');
+    txt(g,'ein Schritt — ≈ 50 000 Muster',800,300,C.good,11,'center','700');
+    $('noOut').innerHTML='<b>Semantische Erkennung.</b> „Eine Hauptquelle der Fähigkeit des Meisters ist gespeicherte Information, die ihn eine große Zahl spezifischer Merkmale und Muster auf dem Schachbrett erkennen lässt — und Information, die diese Erkennung nutzt, um passende Handlungen vorzuschlagen." [11]<br>„Die Möglichkeit, Suche durch Wiedererkennung zu ersetzen, entsteht, weil ein bestimmtes — und besonders ein seltenes — Muster eine enorme Menge Information enthalten kann, sofern es eng an die Struktur des Problemraums gekoppelt ist." [11]';
+  } else {
+    txt(g,'③ WAHL DER PASSENDEN REPRÄSENTATION',540,32,C.acc3,14,'center','700');
+    // Zwei Räume
+    g.fillStyle='rgba(255,107,139,.07)';rr(g,70,70,420,250,14);g.fill();
+    g.strokeStyle='rgba(255,107,139,.3)';g.lineWidth=1;g.stroke();
+    txt(g,'REPRÄSENTATION A',280,100,C.bad,12,'center','700');
+    txt(g,'„alle Dominoanordnungen"',280,120,C.dim,11,'center');
+    for(let i=0;i<220;i++){
+      circ(g,100+Math.random()*360,140+Math.random()*160,1.6,'rgba(255,107,139,.4)');}
+    txt(g,'hoffnungslos großer Suchraum',280,314,C.bad,11,'center','600');
+    g.fillStyle='rgba(84,232,168,.07)';rr(g,590,70,420,250,14);g.fill();
+    g.strokeStyle='rgba(84,232,168,.3)';g.lineWidth=1;g.stroke();
+    txt(g,'REPRÄSENTATION B',800,100,C.good,12,'center','700');
+    txt(g,'„Felderfarben zählen"',800,120,C.dim,11,'center');
+    circ(g,740,190,16,'rgba(84,232,168,.5)');
+    circ(g,800,190,16,'rgba(255,255,255,.75)');
+    circ(g,860,190,16,'rgba(84,232,168,.5)');
+    txt(g,'30 ≠ 32',800,230,C.good,16,'center','700');
+    txt(g,'ein einziges Argument — fertig',800,314,C.good,11,'center','600');
+    arrow(g,500,195,580,195,C.acc3,2.5);
+    txt(g,'Wechsel',540,182,C.acc3,10.5,'center');
+    $('noOut').innerHTML='<b>Wahl der Repräsentation.</b> „Eine dritte Untersuchungsrichtung betrifft die Möglichkeit, Suche zu reduzieren oder zu vermeiden, indem man einen passenden Problemraum wählt. Ein Standardbeispiel, das diese Möglichkeit dramatisch illustriert, ist das Problem des verstümmelten Schachbretts." [11] — siehe nächster Abschnitt zum Selberspielen.';
+  }}
+noDraw();
+
+/* HEARSAY */
+function hsDraw(){
+  const lv=[['hsP','Phonemisch',C.acc],['hsL','Lexikalisch',C.acc2],
+            ['hsS','Syntaktisch',C.acc3],['hsM','Semantisch',C.good]];
+  const on=lv.map(l=>$(l[0]).checked);
+  const g=ctx('hsC'),c=$('hsC');if(!g)return;clr(g,c);
+  // Blackboard
+  g.fillStyle='rgba(255,255,255,.05)';rr(g,120,120,280,80,12);g.fill();
+  g.strokeStyle='rgba(255,207,107,.45)';g.lineWidth=1.5;g.stroke();
+  txt(g,'BLACKBOARD',260,150,C.acc3,13,'center','700');
+  txt(g,'gemeinsame Tafel aller Quellen',260,172,C.dim,10.5,'center');
+  lv.forEach((l,i)=>{
+    const a=-Math.PI/2+i*Math.PI/2;
+    const x=260+150*Math.cos(a),y=160+112*Math.sin(a);
+    g.globalAlpha=on[i]?1:.22;
+    g.fillStyle=on[i]?'rgba(255,255,255,.07)':'rgba(255,255,255,.02)';
+    rr(g,x-62,y-19,124,38,9);g.fill();
+    g.strokeStyle=l[2];g.lineWidth=on[i]?1.5:.8;g.stroke();
+    txt(g,l[1],x,y+5,l[2],11.5,'center','700');
+    if(on[i]){
+      g.strokeStyle=l[2];g.lineWidth=1.2;g.setLineDash([4,3]);
+      g.beginPath();g.moveTo(x,y+(Math.sin(a)<0?19:-19));
+      g.lineTo(260+(x-260)*.3,160+(y-160)*.25);g.stroke();g.setLineDash([]);}
+    g.globalAlpha=1;});
+  const k=on.filter(x=>x).length;
+  const hyp=Math.round(Math.pow(14,4-k)*12+6);
+  txt(g,'zu durchsuchende Hypothesen: '+fmt(hyp),260,268,
+    k===4?C.good:k>=2?C.acc3:C.bad,13,'center','700');
+  txt(g,'parallele Suche auf mehreren Ebenen',260,296,C.dim,10.5,'center');
+  $('hsOut').innerHTML = k===4
+    ? '<b style="color:#54e8a8">Alle vier Ebenen aktiv.</b> „Jede dieser Suchen liefert und bewertet Hypothesen und schreibt die gewonnene Information auf ein gemeinsames Blackboard, das von allen Quellen gelesen werden kann. Diese geteilte Information kann z.B. Hypothesen — oder sogar ganze Hypothesenklassen — eliminieren, die sonst von einem der Prozesse durchsucht werden müssten." [11]'
+    : '<b style="color:#ffcf6b">'+(4-k)+' Ebene(n) abgeschaltet.</b> Die fehlende Information kann keine Hypothesen mehr eliminieren → die Zahl der zu prüfenden Hypothesen steigt exponentiell. Genau deshalb erhöht nichtlokale Informationsnutzung die Intelligenz des Systems. [11]';}
+hsDraw();
+
+/* =========================================================================
+   14 — VERSTÜMMELTES SCHACHBRETT
+   ========================================================================= */
+const MC={N:8,tiles:[],mode:'try',hover:null,drag:null,bruteT:null,bruteN:0,maxT:0};
+function mcCut(x,y){return (x===0&&y===0)||(x===7&&y===7);}
+function mcReset(){
+  clearInterval(MC.bruteT);MC.tiles=[];MC.bruteN=0;MC.maxT=0;MC.mode='try';
+  $('mcOut').innerHTML='Klicke zwei <b>benachbarte</b> freie Felder, um einen Dominostein zu legen. Versuche, alle 62 Felder zu bedecken. (Spoiler: du wirst scheitern — aber <i>warum</i>?)';
+  mcDraw();mcPlot();}
+function mcMode(m){
+  clearInterval(MC.bruteT);MC.mode=m;
+  if(m==='try'){MC.tiles=[];$('mcOut').innerHTML='<b>Modus: Suche.</b> Lege Steine per Klick auf zwei benachbarte Felder. Das ist der Weg „mit (buchstäblich) himmlischer Geduld". [11]';}
+  else if(m==='brute'){mcBrute();}
+  else {$('mcOut').innerHTML='<b style="color:#54e8a8">Modus: Repräsentationswechsel.</b> Vergiss die Dominosteine. Zähle einfach die <b>Farben</b>.';}
+  mcDraw();}
+function mcBrute(){
+  MC.tiles=[];MC.bruteN=0;MC.maxT=0;
+  MC.bruteT=setInterval(()=>{
+    // Greedy-Zufallslegung
+    let t=[],occ={};
+    const free=(x,y)=>x>=0&&y>=0&&x<8&&y<8&&!mcCut(x,y)&&!occ[x+','+y];
+    for(let it=0;it<400;it++){
+      const x=Math.floor(Math.random()*8),y=Math.floor(Math.random()*8);
+      const dirs=[[1,0],[0,1],[-1,0],[0,-1]].sort(()=>Math.random()-.5);
+      for(const [dx,dy] of dirs){
+        if(free(x,y)&&free(x+dx,y+dy)){
+          occ[x+','+y]=1;occ[(x+dx)+','+(y+dy)]=1;
+          t.push([x,y,x+dx,y+dy]);break;}}}
+    MC.tiles=t;MC.bruteN++;
+    if(t.length>MC.maxT)MC.maxT=t.length;
+    $('mcOut').innerHTML='<b>Brute-Force-Versuch Nr. '+MC.bruteN+'</b><br>Gelegte Steine: <b>'+t.length+
+      '</b> / 31 · Bester Versuch bisher: <b style="color:#ffcf6b">'+MC.maxT+'</b><br>'+
+      '<span style="color:#95a3c8">Es bleiben immer mindestens 2 Felder frei. Immer. Ohne Ausnahme.</span>';
+    mcDraw();
+    if(MC.bruteN%5===0)mcPlot();
+    if(MC.bruteN>=60){clearInterval(MC.bruteT);
+      $('mcOut').innerHTML+='<br><b style="color:#ff6b8b">60 Versuche — nie mehr als 30 Steine. Die Suche sagt dir NICHT, warum.</b> Drücke jetzt „Repräsentationswechsel".';}
+  },280);}
+function mcDraw(){
+  const g=ctx('mcC'),c=$('mcC');if(!g)return;clr(g,c);
+  const cs=58,ox=28,oy=28;
+  const insight=MC.mode==='insight';
+  for(let y=0;y<8;y++)for(let x=0;x<8;x++){
+    const cut=mcCut(x,y);
+    const dark=(x+y)%2===1;
+    if(cut){
+      g.fillStyle='rgba(255,107,139,.1)';
+      rr(g,ox+x*cs+2,oy+y*cs+2,cs-4,cs-4,5);g.fill();
+      g.strokeStyle='rgba(255,107,139,.5)';g.lineWidth=1.3;g.setLineDash([4,3]);g.stroke();g.setLineDash([]);
+      txt(g,'✕',ox+x*cs+cs/2,oy+y*cs+cs/2+7,C.bad,20,'center','700');
+      continue;}
+    if(insight){
+      g.fillStyle=dark?'rgba(84,232,168,.42)':'rgba(230,240,255,.78)';
+    } else {
+      g.fillStyle=dark?'rgba(36,47,74,.95)':'rgba(96,114,152,.6)';}
+    rr(g,ox+x*cs+1,oy+y*cs+1,cs-2,cs-2,4);g.fill();
+    if(MC.hover&&MC.hover[0]===x&&MC.hover[1]===y){
+      g.strokeStyle=C.acc3;g.lineWidth=2.4;g.stroke();}}
+  // Dominosteine
+  MC.tiles.forEach((t,i)=>{
+    const [x1,y1,x2,y2]=t;
+    const x=Math.min(x1,x2),y=Math.min(y1,y2);
+    const w=(x1===x2?cs:2*cs)-10,h=(y1===y2?cs:2*cs)-10;
+    g.fillStyle='rgba(255,207,107,.82)';
+    rr(g,ox+x*cs+5,oy+y*cs+5,w,h,7);g.fill();
+    g.strokeStyle='rgba(255,207,107,1)';g.lineWidth=1.4;g.stroke();
+    g.fillStyle='rgba(10,14,26,.45)';
+    circ(g,ox+x1*cs+cs/2,oy+y1*cs+cs/2,4,'rgba(10,14,26,.5)');
+    circ(g,ox+x2*cs+cs/2,oy+y2*cs+cs/2,4,'rgba(10,14,26,.5)');});
+  if(insight){
+    // Zählung
+    let dark=0,light=0;
+    for(let y=0;y<8;y++)for(let x=0;x<8;x++){
+      if(mcCut(x,y))continue;
+      if((x+y)%2===1)dark++;else light++;}
+    g.fillStyle='rgba(5,8,16,.9)';rr(g,40,180,440,150,14);g.fill();
+    g.strokeStyle=C.good;g.lineWidth=1.6;g.stroke();
+    txt(g,'DIE EINSICHT',260,210,C.good,14,'center','700');
+    circ(g,150,248,15,'rgba(84,232,168,.55)');
+    txt(g,dark+' dunkle',185,254,C.good,15,'left','700');
+    circ(g,150,288,15,'rgba(230,240,255,.85)');
+    txt(g,light+' helle',185,294,'#fff',15,'left','700');
+    txt(g,'Jeder Dominostein bedeckt',340,246,'#c3cde8',12,'center');
+    txt(g,'GENAU 1 dunkles + 1 helles Feld.',340,264,C.acc3,12,'center','700');
+    txt(g,'31 Steine → 31 dunkle + 31 helle.',340,286,'#c3cde8',12,'center');
+    txt(g,'Aber wir haben '+dark+' und '+light+'.',340,304,C.bad,12.5,'center','700');
+    txt(g,'⇒ KEINE LÖSUNG MÖGLICH.',260,324,C.good,14,'center','800');
+    $('mcOut').innerHTML='<b style="color:#54e8a8">Gelöst — ohne eine einzige Suche.</b> „Die Alternative, für die mit weniger Geduld und mehr Intelligenz, ist zu beobachten, dass die zwei diagonal gegenüberliegenden Ecken eines Schachbretts <b>dieselbe Farbe</b> haben. Also hat das verstümmelte Brett zwei Felder der einen Farbe weniger als der anderen. Aber jeder Stein bedeckt ein Feld jeder Farbe, und jede Menge von Steinen muss gleich viele Felder jeder Farbe bedecken. Also gibt es keine Lösung." [11]<br><span style="color:#ffcf6b">„Einem System, das diese Lösung findet, würden wir hohe Intelligenz-Noten geben." [11]</span>';
+  } else {
+    txt(g,'62 Felder · 31 Dominosteine gesucht',260,500,C.dim,12,'center');}}
+function mcPlot(){
+  if(typeof Plotly==='undefined')return;
+  const xs=[],ys=[];
+  for(let i=0;i<=31;i++){xs.push(i);ys.push(i<=30?Math.pow(2,i*.42):0);}
+  Plotly.react('mcPlot',[
+    {x:['Suche (Repräsentation A)','Einsicht (Repräsentation B)'],
+     y:[Math.pow(10,13),1],type:'bar',
+     marker:{color:['#ff6b8b','#54e8a8']},
+     text:['≈ 10¹³ Anordnungen','1 Argument'],textposition:'outside',
+     textfont:{color:'#dfe7ff',size:12}}],{
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',
+    font:{color:'#95a3c8',family:'Inter,sans-serif',size:11},
+    margin:{l:62,r:20,t:44,b:54},
+    title:{text:'Aufwand: zwei Repräsentationen desselben Problems (log-Skala)',
+      font:{size:13,color:'#dfe7ff'}},
+    yaxis:{type:'log',title:'Schritte',gridcolor:'rgba(120,160,255,.1)'},
+    xaxis:{gridcolor:'rgba(0,0,0,0)'}},{displayModeBar:false,responsive:true});}
+(function(){const c=$('mcC');if(!c)return;
+ let pending=null;
+ c.onmousemove=e=>{const r=c.getBoundingClientRect(),s=c.width/r.width;
+   const x=Math.floor(((e.clientX-r.left)*s-28)/58),y=Math.floor(((e.clientY-r.top)*s-28)/58);
+   MC.hover=(x>=0&&y>=0&&x<8&&y<8)?[x,y]:null;
+   c.style.cursor=MC.hover?'pointer':'default';
+   if(MC.mode==='try')mcDraw();};
+ c.onmouseleave=()=>{MC.hover=null;if(MC.mode==='try')mcDraw();};
+ c.onclick=()=>{
+   if(MC.mode!=='try'||!MC.hover)return;
+   const [x,y]=MC.hover;
+   if(mcCut(x,y))return;
+   const occ=new Set();MC.tiles.forEach(t=>{occ.add(t[0]+','+t[1]);occ.add(t[2]+','+t[3]);});
+   if(occ.has(x+','+y))return;
+   if(!pending){pending=[x,y];MC.hover=[x,y];mcDraw();
+     const g=ctx('mcC');g.strokeStyle=C.acc3;g.lineWidth=3;
+     g.strokeRect(28+x*58+2,28+y*58+2,54,54);
+     $('mcOut').innerHTML='Erstes Feld gewählt — klicke jetzt ein <b>benachbartes</b> Feld.';return;}
+   const dx=Math.abs(pending[0]-x),dy=Math.abs(pending[1]-y);
+   if(dx+dy===1){MC.tiles.push([pending[0],pending[1],x,y]);
+     const left=62-MC.tiles.length*2;
+     $('mcOut').innerHTML='Steine: <b>'+MC.tiles.length+'</b> / 31 · freie Felder: <b>'+left+'</b>'+
+       (MC.tiles.length>=29?'<br><span style="color:#ff6b8b">Merkst du etwas? Es bleiben immer zwei Felder übrig …</span>':'');}
+   else $('mcOut').innerHTML='Die Felder müssen <b>benachbart</b> sein. Nochmal.';
+   pending=null;mcDraw();};})();
+mcReset();
+
+/* Suche verlagert sich */
+function shiftDraw(){
+  const v=+$('sh').value;
+  $('shV').textContent=v<50?'Lösungsraum':'Repräsentationsraum';
+  const g=ctx('shiftC'),c=$('shiftC');if(!g)return;clr(g,c);
+  const t=v/100;
+  // Ebene 1
+  g.save();g.globalAlpha=1-t*.75;
+  g.fillStyle='rgba(255,107,139,.07)';rr(g,120,70+t*40,840,120,14);g.fill();
+  g.strokeStyle='rgba(255,107,139,.35)';g.lineWidth=1.2;g.stroke();
+  txt(g,'EBENE 1 — Raum möglicher LÖSUNGEN',540,96+t*40,C.bad,12.5,'center','700');
+  for(let i=0;i<180;i++)
+    circ(g,150+Math.random()*780,112+t*40+Math.random()*62,1.5,'rgba(255,107,139,.45)');
+  g.restore();
+  // Ebene 2
+  g.save();g.globalAlpha=.25+t*.75;
+  g.fillStyle='rgba(84,232,168,.07)';rr(g,220,200-t*60,640,60,12);g.fill();
+  g.strokeStyle='rgba(84,232,168,.4)';g.lineWidth=1.2;g.stroke();
+  txt(g,'EBENE 2 — Raum möglicher REPRÄSENTATIONEN',540,226-t*60,C.good,12.5,'center','700');
+  ['Felder','Farben','Graphen','Paritäten','Gruppen'].forEach((s,i)=>{
+    const x=300+i*130;
+    circ(g,x,246-t*60,i===1?7:4,i===1?C.acc3:'rgba(84,232,168,.6)');
+    txt(g,s,x,246-t*60+22,i===1?C.acc3:C.dim,10,'center',i===1?'700':'500');});
+  g.restore();
+  txt(g,'„Wir haben die Suche bloß verlagert — von einem Raum möglicher Problemlösungen',540,36,C.dim,11.5,'center');
+  txt(g,'in einen Raum möglicher Repräsentationen." [11]',540,52,C.dim,11.5,'center');}
+shiftDraw();
+
+/* =========================================================================
+   15 — FINALE
+   ========================================================================= */
+const FIN=[
+ {k:'Symbol',c:C.acc,t:'<b>Was ist ein Symbol?</b> Ein physikalisches Muster, das als Komponente eines Ausdrucks auftreten kann. „Die wichtigste Eigenschaft von Mustern ist, dass sie Objekte, Prozesse oder andere Muster bezeichnen können, und dass sie, wenn sie Prozesse bezeichnen, interpretiert werden können." [11]'},
+ {k:'System',c:C.acc,t:'<b>Symbolsystem.</b> „Sammlungen von Mustern und Prozessen, wobei letztere die ersteren erzeugen, zerstören und verändern können." Die zwei bedeutendsten uns bekannten Klassen: <b>Menschen</b> und <b>Computer</b>. [11]'},
+ {k:'Designation',c:C.acc,t:'<b>Designation.</b> Ein Ausdruck bezeichnet ein Objekt, wenn das System dadurch auf das Objekt einwirken oder sich abhängig von ihm verhalten kann. <i>Zugriff</i> über den Ausdruck ist das Wesen der Designation. [11]'},
+ {k:'Intelligenz',c:C.acc2,t:'<b>Was ist Intelligenz?</b> „Das Studium von Logik und Computern hat uns offenbart, dass Intelligenz in physikalischen Symbolsystemen wohnt. Das ist das grundlegendste Gesetz qualitativer Struktur der Informatik." [11]'},
+ {k:'Suche',c:C.acc2,t:'<b>Suche.</b> „Symbolsysteme lösen Probleme, indem sie potenzielle Lösungen erzeugen und testen — also durch Suche. Da ihre Ressourcen endlich sind, kann die Suche nicht auf einmal erfolgen, sondern muss sequentiell sein." [11]'},
+ {k:'Ordnung',c:C.acc2,t:'<b>Ordnung.</b> „Symbolsysteme können nicht intelligent erscheinen, wenn sie von reinem Chaos umgeben sind. Sie üben Intelligenz aus, indem sie Information aus einer Problemdomäne extrahieren und sie zur Lenkung ihrer Suche nutzen." [11]'},
+ {k:'Menon',c:C.acc3,t:'<b>Menons Paradox gelöst.</b> „Das Paradox des Menon wird durch die Beobachtung gelöst, dass Information erinnert werden kann — dass aber auch neue Information aus der Domäne extrahiert werden kann, die die Symbole bezeichnen. In beiden Fällen ist die letzte Quelle der Information die Aufgabendomäne." [11]'},
+ {k:'Was nun?',c:C.acc3,t:'<b>Der Schlusssatz.</b> „Für alle physikalischen Symbolsysteme, verdammt wie wir sind zur seriellen Suche der Problemumgebung, lautet die kritische Frage immer: <b>Was als Nächstes?</b>" [11]'}];
+let finSel=-1;
+(function(){
+  $('finBtns').innerHTML=FIN.map((f,i)=>
+    '<button onclick="finPick('+i+')" id="fb'+i+'">'+f.k+'</button>').join('');})();
+function finPick(i){finSel=i;$('finOut').innerHTML=FIN[i].t;
+  FIN.forEach((f,k)=>$('fb'+k).style.opacity=k===i?1:.5);finDraw();}
+function finDraw(){const g=ctx('finC'),c=$('finC');if(!g)return;clr(g,c);
+  const cx=540;
+  // Die Frage oben
+  g.fillStyle='rgba(255,207,107,.07)';rr(g,120,20,840,54,13);g.fill();
+  g.strokeStyle='rgba(255,207,107,.3)';g.lineWidth=1.2;g.stroke();
+  txt(g,'„Was ist ein Symbol, dass Intelligenz es benutzen kann —',cx,44,C.acc3,13.5,'center','700');
+  txt(g,'und was ist Intelligenz, dass sie ein Symbol benutzen kann?"  (McCulloch / Newell & Simon)',cx,64,C.dim,11.5,'center');
+  // Zwei Säulen + Brücke
+  const COLS=[
+   {x:200,t:'SYMBOL',c:C.acc,items:['Muster','Ausdrücke','Prozesse','Designation','Interpretation'],idx:[0,1,2]},
+   {x:880,t:'INTELLIGENZ',c:C.acc2,items:['Problem = Test + Generator','Generieren & Testen','Suchbaum B^D','Heuristiken','Wissen statt Suche'],idx:[3,4,5]}];
+  COLS.forEach(col=>{
+    const act=col.idx.includes(finSel);
+    if(act)glow(g,col.c,20);
+    g.fillStyle=act?'rgba(255,255,255,.07)':'rgba(18,25,45,.78)';
+    rr(g,col.x-150,100,300,196,15);g.fill();noglow(g);
+    g.strokeStyle=act?col.c:'rgba(120,160,255,.2)';g.lineWidth=act?2:1;g.stroke();
+    g.fillStyle=col.c;rr(g,col.x-150,100,300,4,2);g.fill();
+    txt(g,col.t,col.x,130,col.c,15,'center','800');
+    col.items.forEach((it,k)=>{
+      const y=158+k*27;
+      circ(g,col.x-122,y-4,3.4,col.c);
+      txt(g,it,col.x-110,y,'#c3cde8',12,'left','500');});});
+  // Brücke
+  const bridgeAct=finSel===6||finSel===7;
+  if(bridgeAct)glow(g,C.acc3,18);
+  g.strokeStyle=bridgeAct?C.acc3:'rgba(120,160,255,.3)';g.lineWidth=bridgeAct?3:1.6;
+  g.beginPath();g.moveTo(350,198);g.lineTo(730,198);g.stroke();noglow(g);
+  g.fillStyle='rgba(8,12,24,.93)';rr(g,420,178,240,42,10);g.fill();
+  g.strokeStyle=bridgeAct?C.acc3:'rgba(120,160,255,.3)';g.lineWidth=1.3;g.stroke();
+  txt(g,'SUCHE',cx,196,bridgeAct?C.acc3:C.dim,13,'center','700');
+  txt(g,'in einem geordneten Problemraum',cx,212,C.dim,10,'center');
+  // Quelle der Information
+  g.fillStyle='rgba(84,232,168,.08)';rr(g,300,318,480,66,13);g.fill();
+  g.strokeStyle='rgba(84,232,168,.35)';g.lineWidth=1.2;g.stroke();
+  txt(g,'DIE LETZTE QUELLE DER INFORMATION',cx,342,C.good,11.5,'center','700');
+  txt(g,'ist die AUFGABENDOMÄNE — nicht eine frühere Existenz der Seele.',cx,364,'#c3cde8',12.5,'center');
+  arrow(g,cx,316,cx,228,C.good,2);
+  arrow(g,250,318,215,302,C.good,1.4);
+  arrow(g,830,318,866,302,C.good,1.4);}
+finDraw();
+
+/* Zusammenfassung Stufen */
+(function(){const g=ctx('sumC'),c=$('sumC');if(!g)return;
+ const S=[['Formale Logik','Symbole als\nbedeutungslose Tokens',C.acc2],
+          ['Turingmaschine','Universalität +\nmaschinelle Syntax',C.acc],
+          ['Gespeichertes\nProgramm','Interpretierbarkeit',C.good],
+          ['Listen-\nverarbeitung','DESIGNATION',C.acc3],
+          ['LISP','formales System\nder S-Ausdrücke',C.bad]];
+ clr(g,c);
+ line(g,70,120,1010,120,'rgba(120,160,255,.22)',2);
+ S.forEach((s,i)=>{
+   const x=110+i*205;
+   glow(g,s[2],14);circ(g,x,120,9,s[2]);noglow(g);
+   if(i<4)arrow(g,x+18,120,x+186,120,'rgba(120,160,255,.4)',1.6);
+   s[0].split('\n').forEach((l,k)=>txt(g,l,x,62+k*16,'#fff',13,'center','700'));
+   s[1].split('\n').forEach((l,k)=>txt(g,l,x,152+k*15,C.dim,11,'center'));});
+ txt(g,'„Jeder dieser Schritte lieferte einen wesentlichen Teil des Ganzen." [11]',540,208,C.acc3,12,'center','600');})();
+
+/* =========================================================================
+   QUIZ
+   ========================================================================= */
+const QZ=[
+ {q:'Was ist ein „Gesetz qualitativer Struktur"?',
+  a:['Eine exakte Formel mit Zahlenwerten',
+     'Eine kurze, qualitative Aussage darüber, aus welcher Art Bausteinen etwas besteht',
+     'Ein mathematisch bewiesener Satz'],ok:1,
+  e:'Richtig. Zellenlehre, Plattentektonik, Keimtheorie — und die Symbolsystem-Hypothese. „Das Gesetz sagt uns, nach einer bestimmten Art von Ursache zu suchen; es behauptet nicht, dass wir sie immer finden." [11]'},
+ {q:'Was bedeutet „Designation" im Sinne des Papers?',
+  a:['Ein Symbol hat eine Bedeutung im philosophischen Sinn',
+     'Das System kann über den Ausdruck auf das Objekt zugreifen oder sich abhängig von ihm verhalten',
+     'Ein Symbol wird von Menschen interpretiert'],ok:1,
+  e:'Richtig. „Zugriff auf das Objekt über den Ausdruck zu erlangen — das ist das Wesen der Designation." [11] Rein operational definiert.'},
+ {q:'Welcher Schritt brachte erstmals echte Designation?',
+  a:['Die Turingmaschine (1936)','Das gespeicherte Programm (~1945)','Die Listenverarbeitung (1956)'],ok:2,
+  e:'Richtig. „Der nächste Schritt, 1956, war die Listenverarbeitung. Die Inhalte der Datenstrukturen waren nun Symbole im Sinne unseres physikalischen Symbolsystems: Muster, die bezeichneten, die Referenten hatten." [11]'},
+ {q:'Wie löst das Paper Menons Paradox?',
+  a:['Durch Platons Theorie der Wiedererinnerung',
+     'Ein Problem stellen = einen Test UND einen Generator bezeichnen',
+     'Durch unendlich schnelle Computer'],ok:1,
+  e:'Richtig. Man kennt den Test, auch ohne den Generator zu kennen — deshalb kann man suchen und das Gefundene erkennen. „Ein mäßig raffiniertes Generate-and-Test-System hat den Trick geschafft, ohne Reinkarnation zu bemühen." [11]'},
+ {q:'Warum MUSS ein Symbolsystem suchen?',
+  a:['Weil Suchen schneller ist als Rechnen',
+     'Weil seine Verarbeitungsressourcen praktisch begrenzt sind',
+     'Weil Turingmaschinen nur sequentiell arbeiten können'],ok:1,
+  e:'Richtig. „Physikalische Symbolsysteme müssen heuristische Suche benutzen, weil solche Systeme begrenzte Verarbeitungsressourcen haben." Gemeint ist <i>praktisch</i> begrenzt. [11]'},
+ {q:'Ist viel Suche ein Zeichen von viel Intelligenz?',
+  a:['Ja, je mehr Knoten, desto intelligenter',
+     'Nein — Intelligenz zeigt sich darin, Suche zu VERMEIDEN',
+     'Das hängt vom Verzweigungsfaktor ab'],ok:1,
+  e:'Richtig. „Suche ist ein fundamentaler Aspekt … aber die Menge an Suche ist kein Maß für die Menge an Intelligenz. Was ein Problem zu einem Problem macht, ist nicht, dass viel Suche nötig IST, sondern dass viel Suche nötig WÄRE, wenn nicht ein erforderliches Maß an Intelligenz angewandt würde." [11]'},
+ {q:'Wie viele Muster braucht ein Schachmeister laut Paper etwa?',
+  a:['etwa 500','etwa 5 000','etwa 50 000'],ok:2,
+  e:'Richtig. „Was neu ist, ist die Erkenntnis, wie viele solcher Muster und zugehöriger Informationen für Meisterspiel gespeichert sein müssen: etwa 50 000." [11]'},
+ {q:'Was zeigt das verstümmelte Schachbrett?',
+  a:['Dass Brute Force immer funktioniert, wenn man geduldig genug ist',
+     'Dass ein Wechsel der Repräsentation Suche ganz vermeiden kann',
+     'Dass Dominosteine mathematisch uninteressant sind'],ok:1,
+  e:'Richtig — mit Vorbehalt. „Vielleicht entkommen wir mit dieser Problemstellung den Suchprozessen gar nicht. Wir haben die Suche bloß verlagert — von einem Raum möglicher Problemlösungen in einen Raum möglicher Repräsentationen." [11]'}];
+let qzAns=QZ.map(()=>-1);
+(function(){
+ $('quiz').innerHTML=QZ.map((q,i)=>
+  '<div style="margin:18px 0;padding-bottom:14px;border-bottom:1px solid rgba(120,160,255,.14)">'+
+  '<div style="font-weight:650;color:#fff;margin-bottom:9px;font-size:.95rem">'+(i+1)+'. '+q.q+'</div>'+
+  q.a.map((a,k)=>'<div class="chk" style="margin:4px 0"><button id="q'+i+'_'+k+
+    '" onclick="qzPick('+i+','+k+')" style="text-align:left;width:100%;margin:0">'+a+'</button></div>').join('')+
+  '<div id="qe'+i+'" class="small" style="margin-top:7px;min-height:4px"></div></div>').join('');})();
+function qzPick(i,k){
+  qzAns[i]=k;
+  QZ[i].a.forEach((a,m)=>{const b=$('q'+i+'_'+m);
+    b.style.background=m===QZ[i].ok?'rgba(84,232,168,.18)':(m===k?'rgba(255,107,139,.16)':'');
+    b.style.borderColor=m===QZ[i].ok?'rgba(84,232,168,.5)':(m===k?'rgba(255,107,139,.45)':'');
+    b.style.color=m===QZ[i].ok?'#54e8a8':(m===k?'#ff6b8b':'');});
+  $('qe'+i).innerHTML=(k===QZ[i].ok?'<span style="color:#54e8a8">✓ </span>':'<span style="color:#ff6b8b">✗ </span>')+QZ[i].e;
+  const done=qzAns.filter(x=>x>=0).length;
+  const right=qzAns.filter((x,m)=>x===QZ[m].ok).length;
+  $('quizOut').innerHTML=done+' / 8 beantwortet · <b style="color:#54e8a8">'+right+' richtig</b>'+
+    (done===8?(right===8?' — <b style="color:#ffcf6b">Perfekt. Du hast das ganze Paper verstanden.</b>':
+      ' — scrolle zu den Stellen zurück, die noch wackeln.'):'');}
+
+/* =========================================================================
+   INIT ALLES
+   ========================================================================= */
+window.addEventListener('load',()=>{
+  bDraw();gtPlot();srBar();mcPlot();
+  if(typeof temml!=='undefined'){
+    document.querySelectorAll('[data-tex]').forEach(e=>mathIn(e,e.dataset.tex,false));}
+});
+addEventListener('resize',()=>{
+  if(typeof Plotly!=='undefined'){
+    ['gtPlot','bPlot','srBar','mcPlot'].forEach(id=>{
+      const el=$(id);if(el&&el.data)Plotly.Plots.resize(el);});}
+});
+</script>
+</body>
+</html>
