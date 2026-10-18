@@ -2212,6 +2212,844 @@ const PAPERS = [
     },
     aha: "Semmelweis's story is the classic tragedy of medicine: a brilliant, correct insight ignored because it threatened the authority of doctors. His colleagues refused to believe their hands could be carrying death. He became publicly hostile, was eventually committed to an asylum, and died of an infected wound — the very kind of infection his handwashing could have prevented. The germ theory (Pasteur, Koch, 1860s–80s) finally vindicated him.",
     citation: "Semmelweis, I. (1861). *Die Ätiologie, der Begriff und die Prophylaxe des Kindbettfiebers*. Pest, Wien und Leipzig: C.A. Hartleben."
+  },
+
+  /* =============================================================
+     WAVE 3 — universal ideas. One sentence unlocks thousands.
+     Filtered from 100+ candidates to the ones with the widest reach.
+     Tagged with `wave: 3`. Default view is Wave 3.
+     ============================================================= */
+  {
+    id: "euclid300bc", wave: 3,
+    title: "Στοιχεῖα (Stoicheia / The Elements)",
+    titleShort: "The Elements (Axiomatic Geometry)",
+    authors: ["Euclid of Alexandria"], year: -300,
+    fields: ["mathematics"], era: "Ancient", importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/21076/21076-0.txt",
+    published: "c. 300 BC, Alexandria", language: "Ancient Greek",
+    summaries: {
+      elementary: "Start with a few obvious truths, then prove everything else.",
+      abi: "Euclid's Elements shows that an entire field of knowledge can be derived from a handful of axioms. You start with 23 definitions, 5 postulates, and 5 common notions; from these you prove 465 propositions — the whole of Greek geometry. This is the birth of proof — the method that underlies mathematics, science, programming, and law.",
+      phd: "The Elements (Στοιχεῖα, ~300 BC) is the first systematic axiomatic-deductive system: 23 definitions, 5 postulates, 5 common notions, then 465 propositions across 13 books. Euclid proves the impossibility of certain constructions (doubling the cube, trisecting the angle, squaring the circle) and the equivalence of areas. The fifth postulate (parallel lines) generated 2,000 years of attempts to prove it — its negation produces hyperbolic geometry (Lobachevsky 1829, Bolyai 1832)."
+    },
+    aha: "Euclid's method is the first great intellectual export from one culture to all later ones. Proof by deduction underlies mathematics, programming, law, formal logic, and even neural network architectures (axioms → lemmas → theorems). Every 'if-then' argument in court, in code, in logic, in math — is a Euclidean proof.",
+    citation: "Euclid (c. 300 BC). *Στοιχεῖα* (The Elements). Alexandria."
+  },
+  {
+    id: "archimedes250bc", wave: 3,
+    title: "Περὶ τῶν μηχανικῶν θεωρημάτων πρὸς Ἐρατοσθένην μέθοδος (The Method of Mechanical Theorems)",
+    titleShort: "The Method (Exhaustion & Calculus)",
+    authors: ["Archimedes of Syracuse"], year: -250,
+    fields: ["mathematics"], era: "Ancient", importance: "foundational",
+    pdf: "https://web.archive.org/web/2020*/archimedes-method",
+    published: "c. 250 BC, Syracuse", language: "Ancient Greek",
+    summaries: {
+      elementary: "You can compute the area of any shape by filling it with thinner and thinner strips.",
+      abi: "Archimedes invented the method of exhaustion: inscribe a polygon inside a circle, count its area, then increase the number of sides. In the limit, the polygon's area equals the circle's. This is the seed of integral calculus — the idea that you can add up infinitely many tiny pieces to compute a finite quantity. He used it to find the area of a circle, the volume of a sphere, and the centre of mass of a hemisphere.",
+      phd: "Archimedes' Method (lost until 1906) shows he used infinitesimals — balancing slices of shapes against each other to find areas and volumes — then rigorously proved them with double false position (exhaustion). He also stated Archimedes' principle of buoyancy (On Floating Bodies), the law of the lever, and computed π between 3 10/71 and 3 1/7. The Method anticipates integral calculus by 2,000 years."
+    },
+    aha: "Archimedes invented calculus in disguise — the idea that you can compute a curved thing by adding up straight things. He also said 'Give me a place to stand, and I shall move the Earth' — a one-sentence proof that levers can multiply force. The same principle runs modern AI, Bayesian statistics, and Monte Carlo methods: approximate a hard thing by summing many easy things.",
+    citation: "Archimedes (c. 250 BC). *The Method of Mechanical Theorems*. Syracuse. (Rediscovered in 1906.)"
+  },
+  {
+    id: "alkhwarizmi825", wave: 3,
+    title: "الكتاب المختصر في حساب الجبر والمقابلة (Al-Kitāb al-Mukhtaṣar fī Ḥisāb al-Jabr wa-l-Muqābala)",
+    titleShort: "The Compendious Book on Calculation by Completion and Balancing (Algebra)",
+    authors: ["Muḥammad ibn Mūsā al-Khwārizmī"], year: 825,
+    fields: ["mathematics"], era: "Ancient", importance: "foundational",
+    pdf: "https://www.gutenberg.org/ebooks/6600",
+    published: "c. 825, Baghdad (House of Wisdom)", language: "Arabic",
+    summaries: {
+      elementary: "Equations are puzzles with rules — and you can solve them by balancing.",
+      abi: "Al-Khwarizmi wrote the first systematic textbook on solving equations. He classified them into six types, gave step-by-step recipes, and called his method 'al-jabr' — completion. The word gave us 'algebra'. His book also gave Europe the Hindu-Arabic numeral system and the word 'algorithm' (from the Latin form of his name). Every algebra class since has followed his structure.",
+      phd: "Al-Khwarizmi's Al-Kitab (~825) classifies linear and quadratic equations into six types (squares + roots = number, etc.), each solved by a specific recipe. The two operations are al-jabr (restoring: moving subtracted terms) and al-muqabala (balancing: cancelling like terms). The book also contains the first systematic treatment of Hindu-Arabic numerals in Arabic mathematics, becoming the conduit through which positional notation and zero reached Europe."
+    },
+    aha: "The word 'algorithm' is just Latinised al-Khwarizmi. The word 'algebra' is just al-jabr. The letter X for the unknown comes from the Spanish 'xay' (thing), translated from Arabic 'shay'. Every textbook on equations is a footnote to this single 9th-century book — written while Baghdad's House of Wisdom was translating everything Greek, Persian, and Indian.",
+    citation: "Al-Khwārizmī, M. (c. 825). *Al-Kitāb al-Mukhtaṣar fī Ḥisāb al-Jabr wa-l-Muqābala*. Baghdad."
+  },
+  {
+    id: "fibonacci1202", wave: 3,
+    title: "Liber Abbaci (The Book of Calculation)",
+    titleShort: "Liber Abaci (The Fibonacci Sequence)",
+    authors: ["Leonardo Fibonacci of Pisa"], year: 1202,
+    fields: ["mathematics"], era: "Ancient", importance: "foundational",
+    pdf: "https://www.gutenberg.org/ebooks/seed-46949",
+    published: "1202, Pisa (revised 1228)", language: "Latin",
+    summaries: {
+      elementary: "The numbers 1, 1, 2, 3, 5, 8, 13, 21, … appear everywhere in nature.",
+      abi: "Fibonacci, an Italian merchant's son, learned the Hindu-Arabic numeral system from Arab traders and wrote a book advocating for it (over Roman numerals). He introduced Europe to zero, decimals, and the sequence named after him. The Fibonacci sequence shows up in sunflower seeds, pine cones, nautilus shells, and stock market cycles — because it's the simplest pattern where each term is the sum of the previous two.",
+      phd: "Liber Abaci (1202) is the first comprehensive European introduction to Hindu-Arabic numerals (0–9), place-value notation, and arithmetic algorithms for addition, subtraction, multiplication, division, and extracting roots. The Fibonacci sequence appears in a problem about rabbits: F(1)=F(2)=1, F(n)=F(n−1)+F(n−2). Closed form (Binet): F(n) = (φⁿ − ψⁿ)/√5, where φ = (1+√5)/2 ≈ 1.618. The ratio F(n+1)/F(n) converges to φ — the golden ratio."
+    },
+    aha: "Why is the golden ratio (φ ≈ 1.618) showing up everywhere — from galaxy arms to Renaissance paintings to the spirals of your cauliflower? Because φ is the slowest-converging continued fraction, and nature often grows by adding the previous two states. The book that taught Europe to count also explained why spirals are universal.",
+    citation: "Fibonacci, L. (1202). *Liber Abbaci*. Pisa."
+  },
+  {
+    id: "lavoisier1789", wave: 3,
+    title: "Traité Élémentaire de Chimie (Elementary Treatise of Chemistry)",
+    titleShort: "Conservation of Mass (Modern Chemistry)",
+    authors: ["Antoine-Laurent de Lavoisier"], year: 1789,
+    fields: ["chemistry"], era: "1700s", importance: "foundational",
+    pdf: "https://www.gutenberg.org/ebooks/30775",
+    published: "1789, Paris", language: "French",
+    summaries: {
+      elementary: "Nothing is lost, nothing is created — matter just rearranges.",
+      abi: "Lavoisier showed that combustion isn't the release of a magical 'phlogiston' but the combination of a substance with oxygen. He wrote the first modern chemistry textbook, introduced systematic naming (oxygen, hydrogen), and stated the law of conservation of mass: in a chemical reaction, the total mass of the products equals the total mass of the reactants. The book ends alchemy and begins modern chemistry.",
+      phd: "The Traité (1789) systematises chemistry: names elements (oxygène, hydrogène, azote → nitrogen), introduces the law of conservation of mass, balances chemical equations explicitly, and uses quantitative measurement (the balance) as the basis of chemical reasoning. Lavoisier's work overthrew the phlogiston theory (Stahl) and replaced it with oxidation; he was guillotined in 1794 by the French Revolution. (Joseph Fourier campaigned to save him, but failed.)"
+    },
+    aha: "The law of conservation of mass is the first conservation law of modern science. It generalises to conservation of energy, momentum, charge, angular momentum, and probability — every fundamental law of physics is a conservation law. The idea: certain quantities don't change; everything else rearranges around the invariants. Lavoisier also invented the names oxygen and hydrogen — and lost his head to the Revolution.",
+    citation: "Lavoisier, A.-L. de (1789). *Traité Élémentaire de Chimie*. Paris: Cuchet."
+  },
+  {
+    id: "carnot1824", wave: 3,
+    title: "Réflexions sur la puissance motrice du feu (Reflections on the Motive Power of Fire)",
+    titleShort: "The Second Law of Thermodynamics",
+    authors: ["Nicolas Léonard Sadi Carnot"], year: 1824,
+    fields: ["physics"], era: "1800s", importance: "foundational",
+    pdf: "https://www.gutenberg.org/ebooks/9719",
+    published: "1824, Paris", language: "French",
+    summaries: {
+      elementary: "Heat can't turn into work for free — and entropy always rises.",
+      abi: "Carnot, a young French military engineer, worked out the maximum efficiency of any heat engine. He showed that no engine can be 100% efficient (some heat must be wasted to a cold reservoir), and that the universe's total disorder (entropy) must always increase. The book founded thermodynamics and explained why perpetual motion machines are impossible. The Second Law is the only physical law that distinguishes past from future.",
+      phd: "Carnot's theorem (1824): no heat engine operating between two reservoirs can be more efficient than a reversible (Carnot) engine; efficiency η = 1 - T_cold/T_hot (temperatures in Kelvin). Carnot's work was generalised by Clausius and Kelvin into the Second Law of Thermodynamics: entropy S = k ln W (Boltzmann's interpretation). The Second Law is the only fundamental law that distinguishes past from future; it underlies the arrow of time."
+    },
+    aha: "The Second Law says the universe is slowly winding down. Every time you scramble an egg, burn fuel, or forget a phone number, entropy increases and the process can't be perfectly reversed. The fact that there's an 'arrow of time' at all — that we remember yesterday but not tomorrow — comes from this single law. Boltzmann spent his life trying to convince physicists, and died (possibly by suicide) before the consensus caught up.",
+    citation: "Carnot, S. (1824). *Réflexions sur la puissance motrice du feu*. Paris."
+  },
+  {
+    id: "fourier1822", wave: 3,
+    title: "Théorie analytique de la chaleur (The Analytical Theory of Heat)",
+    titleShort: "Fourier Analysis (Heat as Waves)",
+    authors: ["Joseph Fourier"], year: 1822,
+    fields: ["physics", "mathematics"], era: "1800s", importance: "foundational",
+    pdf: "https://www.gutenberg.org/ebooks/18781",
+    published: "1822, Paris", language: "French",
+    summaries: {
+      elementary: "Every wave — no matter how jagged — can be built from simple sine waves.",
+      abi: "Fourier showed that any function — even a square wave or a jagged stock-price series — can be expressed as a sum of simple sine and cosine waves. This single idea unlocks signal processing, audio compression (MP3), image compression (JPEG), music synthesis, MRI, and our understanding of heat, sound, and light. It also launched the mathematical field of harmonic analysis.",
+      phd: "Fourier's theorem (1807 thesis, published 1822): any piecewise-smooth periodic function can be written as f(x) = a₀/2 + Σ[aₙcos(nωx) + bₙsin(nωx)]. The Fourier transform generalises to non-periodic functions: F(ω) = ∫f(t)e^(-iωt) dt. Application: solving the heat equation on arbitrary domains. The transform is the cornerstone of signal processing, PDEs, quantum mechanics, X-ray crystallography, and compressed sensing."
+    },
+    aha: "When you listen to a song, your ear and brain are doing Fourier transforms — separating the sound into frequencies. When you compress a photo as a JPEG, the algorithm uses the discrete cosine transform (Fourier's cousin). When a doctor orders an MRI, the reconstruction is a Fourier transform of the measured signal. The same mathematics runs through them all — invented to solve a problem about how heat moves through a metal plate.",
+    citation: "Fourier, J. (1822). *Théorie analytique de la chaleur*. Paris: Firmin Didot."
+  },
+  {
+    id: "gauss1809", wave: 3,
+    title: "Theoria Motus Corporum Coelestium (Theory of the Motion of Heavenly Bodies)",
+    titleShort: "Method of Least Squares (Normal Distribution)",
+    authors: ["Carl Friedrich Gauss"], year: 1809,
+    fields: ["mathematics", "astronomy"], era: "1800s", importance: "foundational",
+    pdf: "https://archive.org/details/theoriamotuscor00gausgoog",
+    published: "1809, Hamburg", language: "Latin",
+    summaries: {
+      elementary: "Measurements are wrong — but the best guess is the one that makes your errors as small as possible.",
+      abi: "Gauss invented the method of least squares: given noisy measurements of a quantity, the best estimate is the one that minimises the sum of squared errors. Combined with his work on the normal distribution (which he used to justify the method), Gauss gave us the foundation of statistical inference. Every scientific result, every poll, every machine-learning model uses it. The bell curve (normal distribution) appears everywhere because of the Central Limit Theorem.",
+      phd: "Gauss's Theoria Motus (1809) develops the method of least squares for determining orbits of celestial bodies from observational data. The Gauss–Markov theorem: under reasonable assumptions, least-squares estimates are 'best linear unbiased estimators'. The normal distribution (Gaussian) appears as the limiting distribution of measurement error via the Central Limit Theorem. Together: the foundation of statistical inference. The unit of magnetic field strength (gauss) and the bell curve are both named after him."
+    },
+    aha: "Every time a scientist says 'the result is X with error ± Y', they're using Gauss. The bell curve (normal distribution) that Gauss popularised is the most common pattern in nature — because the Central Limit Theorem says: when many small random effects add up, they produce a normal distribution, regardless of the individual distributions. Intelligence, height, measurement error, stock returns — all roughly normal.",
+    citation: "Gauss, C. F. (1809). *Theoria Motus Corporum Coelestium*. Hamburg."
+  },
+  {
+    id: "noether1918", wave: 3,
+    title: "Invariante Variationsprobleme (Invariant Variation Problems)",
+    titleShort: "Noether's Theorem (Symmetry → Conservation)",
+    authors: ["Emmy Noether"], year: 1918,
+    fields: ["physics", "mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://arxiv.org/abs/physics/9803060",
+    published: "Nachrichten der Gesellschaft der Wissenschaften zu Göttingen, 1918", language: "German",
+    summaries: {
+      elementary: "Every symmetry of nature corresponds to a conservation law.",
+      abi: "Noether's theorem: every continuous symmetry of the laws of physics corresponds to a conserved quantity. Translation invariance → momentum conservation. Time translation invariance → energy conservation. Rotational invariance → angular momentum conservation. The theorem connects 'why is something conserved' with 'what symmetry does nature have'. It's the deepest theorem in modern physics.",
+      phd: "Noether's theorem (1918): if the action S = ∫L dt is invariant under a continuous one-parameter group of transformations, then there is a conserved current (and conserved charge). Applications: x-translation → momentum; t-translation → energy; rotation → angular momentum; Lorentz boost → centre-of-mass motion; local U(1) phase → electric charge; local SU(3) → colour charge. The theorem is the foundation of modern theoretical physics; Einstein called Noether 'the greatest mathematical genius since the education of women began'."
+    },
+    aha: "Why is energy conserved? Because the laws of physics don't change from one moment to the next. Why is momentum conserved? Because the laws don't change from place to place. Why are you you and not someone else? Because particle identity is a continuous label. Noether's theorem is the master key: conservation laws aren't coincidences; they ARE the symmetries. This is the most profound theorem of 20th-century physics.",
+    citation: "Noether, E. (1918). Invariante Variationsprobleme. *Nachrichten der Gesellschaft der Wissenschaften zu Göttingen*, 235–257."
+  },
+  {
+    id: "landauer1961", wave: 3,
+    title: "Irreversibility and Heat Generation in the Computing Process",
+    titleShort: "Landauer's Principle (Information is Physical)",
+    authors: ["Rolf Landauer"], year: 1961,
+    fields: ["physics", "computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://www.research.ibm.com/journal/rd/055/ibmrd0505E.pdf",
+    published: "IBM Journal of Research and Development, 5(3), 183–191", language: "English",
+    summaries: {
+      elementary: "Erasing information costs energy — at least kT ln 2 per bit.",
+      abi: "Landauer showed that every logically irreversible operation (erasing a bit, merging two possibilities) dissipates at least kT ln 2 of energy as heat. Reversible operations can in principle be done for free. The principle ties computation to thermodynamics and gives a hard physical limit on the energy efficiency of information processing. Moore's law will eventually run into it.",
+      phd: "Landauer's principle (1961): erasing one bit of information dissipates at least kT ln 2 ≈ 2.8 × 10⁻²¹ joules at room temperature (k = Boltzmann constant, T = temperature). Bennett (1973) showed that any computation can be done reversibly, so the lower bound applies only to the erasure step. The principle has been experimentally verified (2012). It implies that reversible computing and quantum computing can in principle be arbitrarily efficient."
+    },
+    aha: "There is a minimum energy cost of computation — set by physics, not engineering. Every time your laptop forgets a bit, it pays this minimum tax. Reversible computing could reduce the energy cost of any computation to nearly zero — except for the unavoidable cost of clearing its outputs. The principle also tells us something deep: information isn't abstract — it's physical. Storing a bit requires a physical substrate. Erasing a bit releases heat. Computation IS physics.",
+    citation: "Landauer, R. (1961). Irreversibility and heat generation in the computing process. *IBM Journal of Research and Development*, 5(3), 183–191."
+  },
+  {
+    id: "schrodinger1944", wave: 3,
+    title: "What is Life? The Physical Aspect of the Living Cell",
+    titleShort: "What is Life? (Aperiodic Crystal)",
+    authors: ["Erwin Schrödinger"], year: 1944,
+    fields: ["biology", "physics"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/whatislife00schr",
+    published: "1944, Dublin (based on 1943 lectures)", language: "English",
+    summaries: {
+      elementary: "Living things feed on negative entropy — they keep themselves ordered by exporting disorder.",
+      abi: "Schrödinger, one of the founders of quantum mechanics, applied his physicist's eye to biology. He argued that life maintains its order by feeding on 'negative entropy' (free energy from the environment), and that heredity must be carried by an 'aperiodic crystal' — a stable molecule with information-rich structure. The book inspired the discovery of DNA's structure.",
+      phd: "What is Life? (1944) applies statistical mechanics to biology: (1) life maintains low entropy by importing free energy and exporting heat; (2) the hereditary material must be an aperiodic crystal with many isomeric states; (3) mutations are quantum jumps between isomers; (4) 'order from order', not from disorder, is the basis of life. The book inspired Crick, Watson, Wilkins to search for the structure of the genetic material. The title is one of the most quoted questions in science."
+    },
+    aha: "Your body is a dissipative structure — you maintain order by burning energy and exporting entropy to the environment. The book predicted that heredity must be an 'aperiodic crystal' (DNA) years before its structure was known. Schrödinger saw before anyone that life is a physics problem, not a special vital force. The insight launched molecular biology.",
+    citation: "Schrödinger, E. (1944). *What is Life? The Physical Aspect of the Living Cell*. Cambridge University Press."
+  },
+  {
+    id: "hamilton1964", wave: 3,
+    title: "The Genetical Evolution of Social Behaviour (I & II)",
+    titleShort: "Hamilton's Rule (Kin Selection)",
+    authors: ["W. D. Hamilton"], year: 1964,
+    fields: ["biology"], era: "1900s", importance: "foundational",
+    pdf: "https://www.nature.com/articles/2011155a0",
+    published: "Journal of Theoretical Biology, 7(1), 1–16 and 17–32", language: "English",
+    summaries: {
+      elementary: "I'll sacrifice for my kin if the benefit to them, weighted by how related we are, exceeds my cost.",
+      abi: "Hamilton's rule (rb > c) explains altruism in evolutionary terms: a gene for helping relatives will spread if the benefit to the recipient (b), weighted by the relatedness (r), exceeds the cost to the helper (c). The rule explains why workers sacrifice for sisters (ants, bees), why parents sacrifice for children, and why humans favour family over strangers. It underpins all of sociobiology.",
+      phd: "Hamilton's 1964 papers formalise inclusive fitness: the total fitness effect of a gene on relatives, weighted by relatedness. For haplodiploid species like Hymenoptera, sisters share 75% of genes (vs 50% for offspring), explaining eusociality. The Price equation (1970) generalises: Δz̄ = Cov(wᵢ, zᵢ) / w̄. Hamilton's rule has been tested in everything from ground squirrels to vampire bats to humans. Hamilton died in 2000 of malaria contracted in the Congo while studying gorilla social structure."
+    },
+    aha: "Every time you risk your life for a sibling, or forgive a stranger but not your brother, Hamilton's rule is silently running the math. The formula rb > c explains self-sacrifice across biology — humans, bacteria, plants. The deepest math of cooperation is two variables and an inequality. Hamilton died in the Congo, doing the field work most theorists skip.",
+    citation: "Hamilton, W. D. (1964). The genetical evolution of social behaviour. I & II. *Journal of Theoretical Biology*, 7(1), 1–16 and 17–32."
+  },
+  {
+    id: "turing1952", wave: 3,
+    title: "The Chemical Basis of Morphogenesis",
+    titleShort: "Morphogenesis (Reaction-Diffusion Patterns)",
+    authors: ["Alan Turing"], year: 1952,
+    fields: ["mathematics", "biology"], era: "1900s", importance: "foundational",
+    pdf: "https://royalsocietypublishing.org/doi/10.1098/rsta.1952.0012",
+    published: "Philosophical Transactions of the Royal Society B, 237, 37–72", language: "English",
+    summaries: {
+      elementary: "Stripes, spots, and spots-on-stripes can come from a few chemicals diffusing and reacting.",
+      abi: "Turing showed that two chemicals — one activator, one inhibitor — diffusing at different rates can spontaneously form stable patterns: stripes, spots, spirals. The same simple recipe produces leopard spots, zebra stripes, fingerprint whorls, and the arrangement of leaves on a stem. Pattern formation is not always genetic — chemistry can do it.",
+      phd: "Turing's reaction-diffusion model (1952): two chemicals u and v interact according to ∂u/∂t = f(u,v) + D_u ∇²u, ∂v/∂t = g(u,v) + D_v ∇²v, with D_u < D_v. For appropriate nonlinear f, g, the homogeneous state is unstable and a Turing pattern (spots, stripes, mazes) emerges. The model explains animal coat patterns, alligator scaling, phyllotaxis, and embryonic development. This is the same Turing who invented computation — and who died two years after this paper."
+    },
+    aha: "Your fingerprint was set by Turing patterns when you were an embryo. So was the leopard's spots, the zebra's stripes, the pattern on a tropical fish, and the arrangement of leaves on every plant. The same simple chemical dance — activator and inhibitor — generates them all. The mathematics of the natural world is far simpler than the world itself. This is Turing's last great paper — written while he was being prosecuted for his sexuality.",
+    citation: "Turing, A. M. (1952). The chemical basis of morphogenesis. *Philosophical Transactions of the Royal Society of London B*, 237(641), 37–72."
+  },
+  {
+    id: "bennett1982", wave: 3,
+    title: "The Thermodynamics of Computation: A Review",
+    titleShort: "Reversible Computing (Thermodynamics of Computation)",
+    authors: ["Charles H. Bennett"], year: 1982,
+    fields: ["physics", "computer-science"], era: "1980s", importance: "foundational",
+    pdf: "https://www.research.ibm.com/journal/rd/055/ibmrd0505E.pdf",
+    published: "International Journal of Theoretical Physics, 21, 905–940", language: "English",
+    summaries: {
+      elementary: "Computers can in principle be built that dissipate almost no energy.",
+      abi: "Bennett showed that any computation can be done by a reversible process — one that doesn't erase information — and thus dissipates no heat. The only place energy must be spent is in the final erasure of the output. This makes quantum computation physically possible (every quantum gate is unitary, hence reversible) and points the way to ultra-efficient classical computing.",
+      phd: "Bennett's 1973 paper ('Logical Reversibility of Computation') showed that any Turing machine can be made reversible. The 1982 paper formalises the thermodynamic consequences: reversible computing dissipates no heat per step; only the logically irreversible step (erasing) costs the kT ln(2) per bit. Bennett showed how to move the cost of erasure to the output by keeping a copy of intermediate results. The paper is foundational for quantum computing (every gate is reversible) and reversible computing hardware."
+    },
+    aha: "To err is human — but to make errors free, we need reversibility. A computer that never throws away information can be cooled to absolute zero and still work. Quantum computers use this property: every quantum gate is unitary (reversible), so quantum computation is essentially free of Landauer dissipation. The future of ultra-efficient computing lies in the principles Bennett laid out in 1982.",
+    citation: "Bennett, C. H. (1982). The thermodynamics of computation: A review. *International Journal of Theoretical Physics*, 21, 905–940."
+  },
+  {
+    id: "solomonoff1964", wave: 3,
+    title: "A Formal Theory of Inductive Inference (Parts I & II)",
+    titleShort: "Solomonoff Induction (Algorithmic Probability)",
+    authors: ["Ray J. Solomonoff"], year: 1964,
+    fields: ["computer-science", "philosophy"], era: "1900s", importance: "foundational",
+    pdf: "https://raysolomonoff.com/publications/theoryinducinf.pdf",
+    published: "Information and Control, 7(1), 1–22 and 7(2), 224–254", language: "English",
+    summaries: {
+      elementary: "The best guess about the next data point is the shortest program that explains all previous data.",
+      abi: "Solomonoff invented the ultimate Bayesian predictor: assign higher prior probability to shorter programs that generate the observed data. Solomonoff induction is the gold standard of prediction — no other method can in principle do better — though it's uncomputable. It underpins the principle of Occam's razor, length-based probability, and Kolmogorov complexity.",
+      phd: "Solomonoff's theory (1964): define a universal prior M(x) = Σ_{p : U(p) = x*} 2^(-|p|) over all programs p that output a string starting with x. This assigns higher probability to shorter programs. Solomonoff induction: predict the next symbol by conditional probability under M. Solomonoff proved convergence theorems: any pattern in the data will eventually be learned. Connection to Kolmogorov complexity (1965), minimum description length (Rissanen 1978), and modern machine learning."
+    },
+    aha: "If you could compute Solomonoff induction, you'd be the best possible predictor in the universe. You can't, because it requires enumerating all programs and running them — but approximations (regularised neural networks, large language models) implicitly approximate it. The connection: any good predictor must implicitly favour short explanations. This is why machine learning works at all — and why Occam's razor is more than a heuristic.",
+    citation: "Solomonoff, R. J. (1964). A formal theory of inductive inference. Parts I and II. *Information and Control*, 7(1), 1–22 and 7(2), 224–254."
+  },
+  {
+    id: "wiener1948", wave: 3,
+    title: "Cybernetics: Or Control and Communication in the Animal and the Machine",
+    titleShort: "Cybernetics (Feedback Loops)",
+    authors: ["Norbert Wiener"], year: 1948,
+    fields: ["mathematics", "computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/cyberneticsorcon00wien",
+    published: "1948, MIT Press / Wiley", language: "English",
+    summaries: {
+      elementary: "Feedback loops control everything — from thermostats to brains to economies.",
+      abi: "Wiener's Cybernetics unified control, communication, and feedback across machines, animals, and societies. The key idea: negative feedback (where the output is compared to a target and the error drives the action) is how systems self-regulate. The book founded cybernetics, inspired AI, robotics, and systems theory — and coined the term 'cybernetics' itself.",
+      phd: "Wiener's Cybernetics (1948) formalises: (1) feedback and control (negative feedback as self-regulation); (2) information theory (jointly with Shannon); (3) computing machines (analogue and digital); (4) learning and self-organisation in animals and machines; (5) communication and language; (6) social and biological systems as cybernetic systems. The book draws analogies between thermostats, nervous systems, and economies — and predicts many of the key ideas of AI, machine learning, and complex systems."
+    },
+    aha: "Every self-regulating system — your body temperature, the economy, a robot arm, a missile, a thermostat — works the same way: measure, compare, correct. Wiener's genius was to see that this single pattern runs through all of them. The book predicted artificial intelligence, robotics, and the study of complex systems — all from one insight about feedback loops.",
+    citation: "Wiener, N. (1948). *Cybernetics: Or Control and Communication in the Animal and the Machine*. MIT Press / Wiley."
+  },
+  {
+    id: "ashby1956", wave: 3,
+    title: "An Introduction to Cybernetics",
+    titleShort: "Cybernetics (Law of Requisite Variety)",
+    authors: ["W. Ross Ashby"], year: 1956,
+    fields: ["mathematics", "computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/introductiontocy00ashb",
+    published: "1956, Chapman & Hall (London)", language: "English",
+    summaries: {
+      elementary: "To control a system, your controller must have at least as much variety as the system.",
+      abi: "Ashby's 'Law of Requisite Variety' is one of the deepest laws of systems: to regulate a system that has N possible states, your regulator must have at least N possible responses. A thermostat with two states (on/off) can control a temperature with two states (cold/hot). To control more, you need more. The law applies to thermostats, managers, immune systems, governments, and bureaucratic reform.",
+      phd: "Ashby's Introduction to Cybernetics (1956) introduces: variety, coupling, constraint, regulation. The Law of Requisite Variety: in a regulator R controlling a system S, only the variety in R that is used to compensate for variety in S contributes to regulation; hence Ashby's maxim: 'only variety absorbs variety'. Ultra-stable systems: systems that can reach any of several stable states. The 'Good Regulator Theorem' (Conant & Ashby 1970): every good regulator of a system must be a model of that system."
+    },
+    aha: "If your manager has only three responses (yell, freeze, blame), they can't control a system with five possible states. To handle more, they need more variety — or the system needs to be simplified. This is why bureaucracies fail: the bureaucracy has limited variety but the world has unbounded variety. The same law explains why immune systems need billions of different antibodies — the space of possible pathogens is huge.",
+    citation: "Ashby, W. R. (1956). *An Introduction to Cybernetics*. London: Chapman & Hall."
+  },
+  {
+    id: "bertalanffy1968", wave: 3,
+    title: "General System Theory: Foundations, Development, Applications",
+    titleShort: "General System Theory",
+    authors: ["Ludwig von Bertalanffy"], year: 1968,
+    fields: ["mathematics", "biology"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/generalsystemthe0000bert",
+    published: "1968, George Braziller (New York)", language: "English",
+    summaries: {
+      elementary: "There are principles that apply to all systems — whether they're alive, mechanical, or social.",
+      abi: "Bertalanffy's General System Theory argued that systems in biology, sociology, engineering, and psychology share common principles: they are open (exchange matter/energy with environment), hierarchical (subsystems within systems), self-regulating (homeostasis), and self-organising (creating new order). The framework unified disparate fields under one lens and seeded cybernetics, ecology, and complexity science.",
+      phd: "Bertalanffy's GST (1968) proposes that principles like wholeness, growth, differentiation, hierarchical order, and equifinality (reaching the same end by different paths) apply to all systems. The book formalises open systems (dS/dt = dS_i/dt + dS_e/dt), equilibrium, steady states, and self-organisation. It influenced cybernetics, ecology, organisational theory, and complexity science. The book is the founding manifesto of systems thinking — the discipline that looks for cross-cutting principles."
+    },
+    aha: "The same mathematical patterns appear in molecules, cells, organisms, ecosystems, organisations, and societies. Bertalanffy's insight: instead of learning one discipline at a time, learn the general principles that cut across all of them. Today we call this 'complexity science', 'systems biology', 'systems thinking' — the discipline that sees the patterns that disciplines miss.",
+    citation: "Bertalanffy, L. von (1968). *General System Theory: Foundations, Development, Applications*. New York: George Braziller."
+  },
+  {
+    id: "holland1975", wave: 3,
+    title: "Adaptation in Natural and Artificial Systems: An Introductory Analysis with Applications to Biology, Control, and Artificial Intelligence",
+    titleShort: "Genetic Algorithms (Adaptation as Algorithm)",
+    authors: ["John H. Holland"], year: 1975,
+    fields: ["computer-science", "biology"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/adaptationinnatu00holl",
+    published: "1975, University of Michigan Press", language: "English",
+    summaries: {
+      elementary: "Trial and error, formalised as variation + selection, can find the best solution to any problem.",
+      abi: "Holland's genetic algorithms formalised Darwin's natural selection as a computational search. Generate a population of candidate solutions; evaluate their fitness; select the best; vary and recombine; repeat. The book shows that adaptation is a universal algorithm — it works for biology, engineering, economics, and AI. It's also the foundation of modern machine learning and evolutionary computation.",
+      phd: "Holland's Adaptation (1975) formalises genetic algorithms (GAs): (1) initialise a population of chromosomes (binary strings); (2) evaluate fitness; (3) select for reproduction; (4) apply crossover and mutation; (5) iterate. Holland's Schema Theorem: short, low-order, high-fitness schemata receive exponentially increasing trials. Connection to evolution (biology), simulated annealing (optimisation), and reinforcement learning (machine learning). The book is the founding text of evolutionary computation."
+    },
+    aha: "Evolution is a search algorithm, and search algorithms can be implemented on computers. The same process that produced eyes, brains, and immune systems can be implemented to design antennas, schedule flights, and train neural networks. The metaphor isn't just suggestive — it's mathematical. Genetic algorithms are now standard tools in engineering, finance, and AI. We are learning to evolve solutions the way nature does.",
+    citation: "Holland, J. H. (1975). *Adaptation in Natural and Artificial Systems*. Ann Arbor: University of Michigan Press."
+  },
+  {
+    id: "prigogine1977", wave: 3,
+    title: "Self-Organization in Nonequilibrium Systems: Towards a Dynamics of Complexity in the Physical, Chemical and Biological Sciences (Nobel Lecture)",
+    titleShort: "Dissipative Structures (Self-Organization)",
+    authors: ["Ilya Prigogine"], year: 1977,
+    fields: ["physics", "chemistry"], era: "1900s", importance: "foundational",
+    pdf: "https://www.nobelprize.org/uploads/2018/06/prigogine-lecture.pdf",
+    published: "Nobel Lecture, December 8, 1977", language: "English",
+    summaries: {
+      elementary: "Order can emerge from chaos — if energy flows through the system.",
+      abi: "Prigogine, a Belgian chemist, showed that systems far from equilibrium can spontaneously develop structure: convection cells, chemical oscillations, even the beginnings of life. 'Dissipative structures' use the flow of energy to maintain their order — the opposite of equilibrium. The book shows why life, weather, and economies can be complex. It won the Nobel Prize in 1977.",
+      phd: "Prigogine's work (Nobel 1977) shows that far-from-equilibrium systems can develop order through spontaneous symmetry breaking. The Brusselator and Oregonator are toy models showing chemical oscillations. Bénard cells (convection rolls), the Belousov-Zhabotinsky reaction, lasers, and biological morphogenesis are all dissipative structures. The principle: order requires energy flow. The same mathematics describes hurricanes, ecosystems, and the origin of life."
+    },
+    aha: "Your body is a dissipative structure — it maintains its order by burning energy and exporting entropy to the environment. So is a hurricane (warm ocean water → atmospheric order), a forest (sunlight → wood), an economy (resources → goods). Order doesn't violate the Second Law; it costs entropy somewhere else. This insight dissolves the old puzzle of how complex, ordered systems can exist in a universe trending toward disorder.",
+    citation: "Prigogine, I. (1977). Nobel Lecture: Self-organization in nonequilibrium systems. *Nobel Foundation*."
+  },
+  {
+    id: "anderson1972", wave: 3,
+    title: "More is Different: Broken Symmetry and the Nature of the Hierarchical Structure of Science",
+    titleShort: "More is Different (Emergence)",
+    authors: ["P. W. Anderson"], year: 1972,
+    fields: ["physics", "philosophy"], era: "1900s", importance: "foundational",
+    pdf: "https://www.sciencedirect.com/science/article/pii/0031920173900654",
+    published: "Science, 177(4047), 393–396", language: "English",
+    summaries: {
+      elementary: "Knowing every particle doesn't tell you about chemistry. Knowing every neuron doesn't tell you about mind. Levels of reality are real.",
+      abi: "Anderson, a Nobel-winning physicist, argued that the reductionist programme — that everything is ultimately explained by fundamental physics — is wrong. Each level of reality (particles → atoms → molecules → cells → organisms → minds → societies) has its own laws that emerge from below but cannot be reduced to it. 'More is different.' The paper is the founding manifesto of complex systems science.",
+      phd: "Anderson's 'More is Different' (Science, 1972, 177:393–396): each layer of complexity has its own 'breakdown of the symmetry of the underlying laws'. The symmetry of scale (or renormalisation) at one level doesn't transfer directly to the next. Examples: elementary particles → nuclear physics → chemistry (with no 'chemistry' reducing to nuclear physics alone); biology doesn't reduce to chemistry; psychology doesn't reduce to biology. The paper defines 'emergence' as a scientific concept. Anderson won the 1977 Nobel Prize in Physics."
+    },
+    aha: "Reductionism doesn't mean what people think it means. Knowing the Schrödinger equation doesn't let you derive the existence of DNA. Knowing the genome doesn't let you derive consciousness. Each level has its own laws and concepts that are REAL — not just 'approximations' of the fundamental level. The whole is more than the sum of its parts — and the science of the whole is its own science.",
+    citation: "Anderson, P. W. (1972). More is different. *Science*, 177(4047), 393–396."
+  },
+  {
+    id: "mandelbrot1982", wave: 3,
+    title: "The Fractal Geometry of Nature",
+    titleShort: "Fractal Geometry of Nature",
+    authors: ["Benoît B. Mandelbrot"], year: 1982,
+    fields: ["mathematics", "physics"], era: "1900s", importance: "foundational",
+    pdf: "https://web.archive.org/web/2020*/mandelbrot-fractal-geometry",
+    published: "1982, W. H. Freeman", language: "English",
+    summaries: {
+      elementary: "Clouds, mountains, coastlines and blood vessels are all the same shape — at every scale.",
+      abi: "Mandelbrot showed that nature is full of 'fractals' — shapes that look the same at every magnification. Coastlines, mountains, clouds, blood vessels, lightning, galaxies, broccoli — all have fractional dimensions. His book unified the study of irregular forms that classical geometry couldn't describe — and coined the term 'fractal'.",
+      phd: "The Fractal Geometry of Nature (1982) develops the mathematics of fractals: self-similarity, Hausdorff dimension D, scaling laws L ∝ r^(1-D). Applications: turbulence (Kolmogorov's spectrum), financial time series (Mandelbrot's own work on cotton prices), antenna design, image compression (fractal compression), biology (vascular branching, neuron dendrites). The book is the founding text of fractal geometry — a field that has changed how we measure the irregular shapes that fill the real world."
+    },
+    aha: "Why is broccoli a fractal? Because the most efficient way to pack a lot of surface area into a small space is to make every part look like the whole. Fractal geometry is the geometry of efficient complexity — it shows up wherever nature optimises for surface, branching, or unpredictability. From your lungs (which would unfold to a tennis court) to the internet (which is fractal too) to coastlines that are infinitely long at every scale.",
+    citation: "Mandelbrot, B. B. (1982). *The Fractal Geometry of Nature*. New York: W. H. Freeman."
+  },
+  {
+    id: "bak1987", wave: 3,
+    title: "Self-Organized Criticality: An Explanation of 1/f Noise",
+    titleShort: "Self-Organized Criticality (Sandpile Model)",
+    authors: ["Per Bak", "Chao Tang", "Kurt Wiesenfeld"], year: 1987,
+    fields: ["physics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.nature.com/articles/physci2436a0",
+    published: "Physical Review Letters, 59(4), 381–384", language: "English",
+    summaries: {
+      elementary: "Big events happen by themselves — no trigger needed.",
+      abi: "Bak, Tang and Wiesenfeld showed that simple sandpile-like systems naturally evolve to a 'critical' state where one grain can cause an avalanche of any size. Power-law distributions (a few big avalanches, many small ones) appear spontaneously. This explains earthquakes (Gutenberg-Richter law), forest fires, stock-market crashes, and why complex systems are always one event away from disaster.",
+      phd: "Bak-Tang-Wiesenfeld (1987) introduce self-organised criticality (SOC): driven dissipative systems with local interaction rules evolve to a critical state with no characteristic scale. Sandpile model: at each step, add a grain; when a stack reaches height 4, redistribute to neighbours. The avalanche size distribution follows a power law P(s) ∝ s^(-τ). Applications: earthquakes, forest fires, solar flares, power-grid blackouts, biological evolution, market crashes. Bak argued complexity itself is the SOC state."
+    },
+    aha: "Why do earthquakes have no characteristic size? Why do financial crashes keep happening despite everything we learn? Why are most species either very common or very rare? The answer, Bak argued, is that complex systems self-organise to a critical point — the edge of stability — where one perturbation can cascade into anything from nothing to catastrophe. The 'everything depends on everything' state is the natural resting place of complexity.",
+    citation: "Bak, P., Tang, C., & Wiesenfeld, K. (1987). Self-organized criticality: An explanation of 1/f noise. *Physical Review Letters*, 59(4), 381–384."
+  },
+  {
+    id: "kauffman1993", wave: 3,
+    title: "The Origins of Order: Self-Organization and Selection in Evolution",
+    titleShort: "Origins of Order (Self-Organization at the Edge of Chaos)",
+    authors: ["Stuart A. Kauffman"], year: 1993,
+    fields: ["biology", "computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://www.amazon.com/dp/0195079515 (book)",
+    published: "1993, Oxford University Press", language: "English",
+    summaries: {
+      elementary: "Networks of genes that flip each other on and off can do complex computation on their own.",
+      abi: "Kauffman showed that random Boolean networks — where each gene is either on or off, and each gene's state is determined by a few others — spontaneously produce complex dynamics with cycles, computation, and stability near a critical point. Many features of real cells (cell types, robustness) emerge naturally from such networks. The book argues that self-organisation is a major force in evolution, not just natural selection.",
+      phd: "Kauffman's work: random Boolean networks (RBNs) with N nodes, K inputs per node, exhibit three regimes: ordered (K=1, frozen), chaotic (K large), and critical (K=2). The critical regime shows long transients, robustness, and computability. NK fitness landscapes: ruggedness depends on K (epistasis). The 'edge of chaos' hypothesis: complexity evolves naturally toward the K=2 critical point. Application to cell differentiation: N=20,000 genes, K=2-3 — the cell as a self-organising critical system."
+    },
+    aha: "Life might not be a finely tuned machine — it might be a generic property of complex networks near the edge of chaos. Random networks of genes, molecules, neurons, or social agents tend to drift toward a critical point where they're complex enough to compute but not chaotic enough to fall apart. This 'life at the edge of chaos' hypothesis connects biology, computer science, and physics in a single principle.",
+    citation: "Kauffman, S. A. (1993). *The Origins of Order: Self-Organization and Selection in Evolution*. New York: Oxford University Press."
+  },
+  {
+    id: "wattsstrogatz1998", wave: 3,
+    title: "Collective Dynamics of 'Small-World' Networks",
+    titleShort: "Small-World Networks (Six Degrees)",
+    authors: ["Duncan J. Watts", "Steven H. Strogatz"], year: 1998,
+    fields: ["mathematics", "sociology"], era: "1900s", importance: "foundational",
+    pdf: "https://www.nature.com/articles/30918",
+    published: "Nature, 393, 440–442", language: "English",
+    summaries: {
+      elementary: "Most people are six handshakes from anyone else — because a few 'shortcut' ties stretch the network enormously.",
+      abi: "Watts & Strogatz showed that networks become 'small-world' (most nodes connected by short paths) when even a tiny fraction of ties are random 'shortcuts'. The famous 'six degrees of separation' is a consequence: any small-world network is navigable in a few steps. The paper explains why social networks, neural networks, and the power grid are all 'small-world' — robust yet fragile.",
+      phd: "Watts & Strogatz (Nature, 1998, 393:440–442) start with a regular ring lattice; each node is connected to its k nearest neighbours. Then randomly rewire each edge with probability p. As p increases from 0 to 1, the network goes from regular to small-world to random. The small-world regime (small p) preserves clustering (local structure) while creating short paths (global connectivity). Real networks — neural, social, technological — share this property. The paper launched the modern science of networks."
+    },
+    aha: "Six degrees of separation isn't a coincidence — it's a mathematical necessity for networks that are at all locally connected. Add even a few random ties to a regular lattice, and the diameter collapses from ~N/2 to ~log N. The same principle explains why epidemics spread fast, why removing one router can crash the internet, and why 'weak ties' (Granovetter) are the bridges between communities.",
+    citation: "Watts, D. J., & Strogatz, S. H. (1998). Collective dynamics of 'small-world' networks. *Nature*, 393(6684), 440–442."
+  },
+  {
+    id: "barabasialbert1999", wave: 3,
+    title: "Emergence of Scaling in Random Networks",
+    titleShort: "Scale-Free Networks (Preferential Attachment)",
+    authors: ["Albert-László Barabási", "Réka Albert"], year: 1999,
+    fields: ["mathematics", "sociology"], era: "1900s", importance: "foundational",
+    pdf: "https://arxiv.org/abs/cond-mat/9910332",
+    published: "Science, 286(5439), 509–512", language: "English",
+    summaries: {
+      elementary: "A few hubs attract most of the connections.",
+      abi: "Barabási & Albert showed that real networks aren't random and aren't small-world in the Watts-Strogatz sense — they're 'scale-free'. A few nodes (Google, Amazon, airports) have orders of magnitude more connections than typical nodes. This emerges from a simple rule: new nodes prefer to connect to nodes that already have many connections ('preferential attachment'). The pattern shows up in the web, social networks, biological networks, and more.",
+      phd: "Barabási & Albert (Science, 1999, 286:509–512): start with m₀ connected nodes. At each step, add a new node with m edges; each edge connects to an existing node i with probability proportional to its degree k_i: p(k_i) = k_i / Σ k_j. The resulting network has a power-law degree distribution P(k) ∝ k^(-γ) with γ ≈ 3 — most nodes have few connections, a few have many. 'Scale-free' means no characteristic scale: zooming in shows the same pattern at every resolution."
+    },
+    aha: "Power laws are everywhere — wealth distributions, city sizes, earthquake magnitudes, word frequencies, citations. Barabási's model shows why: growth plus preferential attachment produces power laws from simple rules. The same dynamics explains why a few books sell millions of copies and millions of books sell a handful, why a few cities dominate, and why the rich get richer — at least in network terms. The mathematics of advantage is the same whether you're talking about money, attention, or connections.",
+    citation: "Barabási, A.-L., & Albert, R. (1999). Emergence of scaling in random networks. *Science*, 286(5439), 509–512."
+  },
+  {
+    id: "granovetter1973", wave: 3,
+    title: "The Strength of Weak Ties",
+    titleShort: "Strength of Weak Ties (Network Bridges)",
+    authors: ["Mark S. Granovetter"], year: 1973,
+    fields: ["sociology"], era: "1900s", importance: "foundational",
+    pdf: "https://www.jstor.org/stable/2776392",
+    published: "American Journal of Sociology, 78(6), 1360–1380", language: "English",
+    summaries: {
+      elementary: "Acquaintances matter more than close friends for new opportunities.",
+      abi: "Granovetter showed that weak ties (acquaintances, not close friends) are the bridge between social groups — they're how you find a job, learn about new ideas, get into a different community. Strong ties give you emotional support; weak ties give you novel information. The paper explains how communities stay connected (or fragmented) and why your distant contacts are often more useful than your best friends.",
+      phd: "Granovetter's 'Strength of Weak Ties' (1973, AJS 78:1360–1380): strong ties (close friends) tend to be embedded in the same social cluster, so they bring redundant information. Weak ties (acquaintances) bridge clusters, bringing novel information. The 'triadic closure' principle: if A and B are friends, and B and C are friends, A and C tend to become friends. Applied to job searches: ~80% of jobs are found through weak ties. Bridge ties connect social worlds. The paper is one of the most cited works in sociology."
+    },
+    aha: "It's not what you know, it's who you know — but who you know is most useful when they're not your closest friend. Your weak ties — the people you see occasionally, the friends-of-friends — are how information flows between communities. Lose them, and you lose diversity. The paper explains a huge amount about how innovation spreads, how labour markets work, and why networks fragment.",
+    citation: "Granovetter, M. S. (1973). The strength of weak ties. *American Journal of Sociology*, 78(6), 1360–1380."
+  },
+  {
+    id: "hebb1949", wave: 3,
+    title: "The Organization of Behaviour: A Neuropsychological Theory",
+    titleShort: "Hebbian Learning (Neurons That Fire Together)",
+    authors: ["Donald O. Hebb"], year: 1949,
+    fields: ["neuroscience", "psychology"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/in.ernet.dli.2015.121810",
+    published: "1949, John Wiley & Sons", language: "English",
+    summaries: {
+      elementary: "Neurons that fire together, wire together.",
+      abi: "Hebb proposed that learning happens because synapses strengthen when pre- and post-synaptic neurons are active together. The rule is the biological basis of all associative learning — from Pavlov's dogs to your memory of your friend's face. It's also the basis of modern artificial neural networks. The most influential single sentence in neuroscience.",
+      phd: "Hebb's rule (1949): Δw_ij = η · x_i · x_j — the change in synaptic weight w_ij between neurons i and j is proportional to the product of their activations. Variants include BCM, Oja's rule, STDP (spike-timing-dependent plasticity). The rule explains classical conditioning (Pavlov), associative memory (Hopfield networks), and is the foundation of deep learning (with backprop replacing Hebbian learning at the network level). The full quote: 'When an axon of cell A is near enough to excite cell B and repeatedly or persistently takes part in firing it, some growth process or metabolic change takes place in one or both cells such that A's efficiency, as one of the cells firing B, is increased.'"
+    },
+    aha: "The simple rule 'neurons that fire together wire together' is the entire basis of learning in your brain, and the basic principle behind every neural network. It's so simple that it took decades to realise how much it explains — from memory to perception to skill acquisition. Your brain is a Hebbian learning machine, and so is every AI you interact with. Hebbian plasticity is why practice makes perfect — and why trauma leaves traces.",
+    citation: "Hebb, D. O. (1949). *The Organization of Behaviour: A Neuropsychological Theory*. New York: John Wiley & Sons."
+  },
+  {
+    id: "popper1934", wave: 3,
+    title: "Logik der Forschung (The Logic of Scientific Discovery)",
+    titleShort: "Falsifiability (Demarcation of Science)",
+    authors: ["Karl R. Popper"], year: 1934,
+    fields: ["philosophy"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/logicofscientifi00popp",
+    published: "1934, Springer (Vienna); English 1959", language: "German",
+    summaries: {
+      elementary: "A theory is scientific only if it can be proved wrong.",
+      abi: "Popper argued that the mark of science isn't that its theories can be verified — but that they can be falsified. 'All swans are white' is verified by every white swan but not made scientific; the moment you see a black swan, the theory is dead. Science grows by bold conjectures and severe tests. The book defined modern philosophy of science.",
+      phd: "Popper's Logik der Forschung (1934): the demarcation problem — what separates science from non-science? — is solved by falsifiability: a theory is scientific iff it makes risky predictions that could be refuted by observation. Einstein's general relativity (1919 eclipse test) was scientific; Freud's psychoanalysis (anything can be fit into the theory) was not. Science progresses through conjectures and refutations (P₁ → TT → EE → P₂), not induction. Popper's later work on 'open society' and critical rationalism extends the falsifiability principle to politics."
+    },
+    aha: "Falsifiability sounds like a philosopher's puzzle but it's the most important idea in epistemology. If a theory explains everything, it explains nothing. If it predicts something specific and could be wrong, it's a real theory. The scientific method isn't proving things right; it's killing things wrong. Every paper in every science is implicitly inviting falsification — that's what makes it science.",
+    citation: "Popper, K. R. (1934). *Logik der Forschung*. Vienna: Springer. (English: *The Logic of Scientific Discovery*, 1959.)"
+  },
+  {
+    id: "marr1982", wave: 3,
+    title: "Vision: A Computational Investigation into the Human Representation and Processing of Visual Information",
+    titleShort: "Three Levels of Analysis (Vision)",
+    authors: ["David Marr"], year: 1982,
+    fields: ["neuroscience", "computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://mitpress.mit.edu/9780262514620/",
+    published: "1982, W. H. Freeman", language: "English",
+    summaries: {
+      elementary: "To understand any mind, ask three questions: what does it compute, how does it compute it, and how is it built?",
+      abi: "Marr proposed that any information-processing system (the brain, a vision algorithm) must be understood at three levels: computational (what is the goal?), algorithmic (what is the procedure?), and implementational (how is it built in hardware?). The framework unified psychology, neuroscience, and AI. It's now standard for understanding any cognitive function.",
+      phd: "Marr's Vision (1982): the computational theory of vision identifies what vision computes (3D shape from 2D images), the algorithmic level specifies how (edge detection, stereopsis, structure-from-motion, shape-from-shading, object recognition), and the implementational level describes how neurons implement it. The same three-level analysis applies to memory, language, motor control, and every cognitive function. The book is the founding text of computational neuroscience and modern computer vision."
+    },
+    aha: "Marr's three levels are the master key to understanding any intelligence — natural or artificial. Why did deep learning win? Because at the computational level (pattern recognition), at the algorithmic level (gradient descent on deep networks), at the implementational level (GPUs), the levels aligned. The same framework helps us understand why some cognitive tasks are easy for AI (perception) and others hard (common-sense reasoning).",
+    citation: "Marr, D. (1982). *Vision: A Computational Investigation into the Human Representation and Processing of Visual Information*. San Francisco: W. H. Freeman."
+  },
+  {
+    id: "friston2010", wave: 3,
+    title: "The Free-Energy Principle: A Unified Brain Theory?",
+    titleShort: "Free-Energy Principle (Predictive Brain)",
+    authors: ["Karl Friston"], year: 2010,
+    fields: ["neuroscience"], era: "2010s", importance: "foundational",
+    pdf: "https://www.nature.com/articles/nrn2787",
+    published: "Nature Reviews Neuroscience, 11, 127–138", language: "English",
+    summaries: {
+      elementary: "The brain is a prediction machine — and perception is controlled hallucination.",
+      abi: "Friston's free-energy principle says that any self-organising system (like a brain) must minimise the difference between its model of the world and its sensory input. The brain constantly generates predictions and updates them when surprised. Perception, action, learning, and attention are all ways to minimise prediction error. The principle is being extended to all living systems.",
+      phd: "Friston's free-energy principle (2010, Nature Reviews Neuroscience, 11:127–138): minimise variational free energy F = -ELBO, equivalent to minimising the KL divergence between the brain's internal model q(x) and the true posterior p(x|o). Active inference: the brain acts to make predictions come true. Hierarchical predictive coding: higher levels predict lower levels; prediction errors are passed up. Connection to Bayesian inference, free-energy minimisation, and the Bayesian brain hypothesis."
+    },
+    aha: "Your brain is a Bayesian inference machine. Every perception you have is the brain's best guess about what's out there, constrained by prior expectations. When your prediction fails (you walk around a corner and your friend isn't there), the brain updates. When it succeeds, the brain doesn't bother. This single principle — minimising prediction error — might explain perception, attention, action, learning, and even psychiatric disorders (as failures of inference).",
+    citation: "Friston, K. (2010). The free-energy principle: A unified brain theory? *Nature Reviews Neuroscience*, 11(2), 127–138."
+  },
+  {
+    id: "clark2013", wave: 3,
+    title: "Whatever Next? Predictive Brains, Situated Agents, and the Future of Cognitive Science",
+    titleShort: "Predictive Brains (Controlled Hallucination)",
+    authors: ["Andy Clark"], year: 2013,
+    fields: ["neuroscience", "philosophy"], era: "2010s", importance: "foundational",
+    pdf: "https://www.sciencedirect.com/science/article/pii/S136466131300171X",
+    published: "Behavioral and Brain Sciences, 36(3), 181–204", language: "English",
+    summaries: {
+      elementary: "Brains don't just process the world — they guess about it, then update when surprised.",
+      abi: "Clark extended the predictive processing framework: brains are 'prediction machines' that build models of the world and minimise the error of their predictions. Action is itself a form of prediction: we move to make our predictions come true. Perception is 'controlled hallucination'. The paper ties together Friston, Helmholtz, Bayesian brain theory, and embodied cognition.",
+      phd: "Clark (2013, BBS): 'Predictive brains' use generative models to predict sensory input; perception is inference (best guess given predictions); action is inference (move to fulfil predictions). Hierarchical Bayesian inference, deep temporal models, and active inference. Connects predictive coding (Friston, Rao-Ballard), the free-energy principle, Bayesian brain hypothesis, and embodied cognition. The paper is the philosophical manifesto of the predictive-brain movement."
+    },
+    aha: "Predictive processing might be the master theory of the brain. The same idea explains why you can read a noisy text, why attention is limited, why you feel ownership of your body, and why psychiatric conditions involve disturbances of 'reality testing'. We're not passive receivers of the world; we're active guessers about it, and our entire perceptual life is the gap between our guesses and reality.",
+    citation: "Clark, A. (2013). Whatever next? Predictive brains, situated agents, and the future of cognitive science. *Behavioral and Brain Sciences*, 36(3), 181–204."
+  },
+  {
+    id: "thompson1917", wave: 3,
+    title: "On Growth and Form",
+    titleShort: "On Growth and Form (Mathematical Biology)",
+    authors: ["D'Arcy Wentworth Thompson"], year: 1917,
+    fields: ["biology", "mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/ongrowthform00thom",
+    published: "1917, Cambridge University Press (expanded 1942)", language: "English",
+    summaries: {
+      elementary: "Living shapes aren't accidents — they follow mathematical rules.",
+      abi: "Thompson argued that the shapes of living things — cells, shells, bones, leaves, branches — can be explained by physics and mathematics, not just Darwinian selection. Surface tension explains why cells are spheres; mechanical stress explains why bones are hollow tubes; phyllotaxis (the spiral of seeds in a sunflower) follows Fibonacci numbers because that's the most efficient packing. The book is the founding text of mathematical biology.",
+      phd: "On Growth and Form (1917, expanded 1942) introduces: (1) the 'theory of transformations' — related species have related forms because they share developmental trajectories; (2) physical explanations for biological form (surface tension, mechanical stress, diffusion); (3) mathematical patterns in biology (Fibonacci spirals in phyllotaxis, logarithmic spirals in shells, hexagonal honeycombs, surface-area-to-volume scaling); (4) critique of natural selection as sufficient explanation. The book is foundational for modern biophysics, biomimetics, and synthetic biology."
+    },
+    aha: "Why are sunflowers Fibonacci spirals? Why are bones hollow? Why do cells tend to be spheres? The answers are mathematical — efficiency, stress, packing — and Thompson showed them before the molecular revolution. Evolution doesn't just select among random forms; it works with the shapes that physics and math make available. The book is a founding text of mathematical biology.",
+    citation: "Thompson, D. W. (1917). *On Growth and Form*. Cambridge University Press. (Revised and enlarged edition 1942.)"
+  },
+  {
+    id: "cox1946", wave: 3,
+    title: "Probability, Frequency and Reasonable Expectation",
+    titleShort: "Cox's Theorem (Probability is Logic)",
+    authors: ["Richard T. Cox"], year: 1946,
+    fields: ["mathematics", "computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://bayes.wustl.edu/etj/node1.html",
+    published: "American Journal of Physics, 14(1), 1–13", language: "English",
+    summaries: {
+      elementary: "If you think rationally about uncertainty, you have to use probability — and Bayes' rule is the only rule.",
+      abi: "Cox's theorem showed that any system for reasoning under uncertainty that satisfies a few reasonable requirements (consistency, honesty about evidence) must use probabilities, and the rules for updating them must be Bayes' rule. Probability is not just a frequentist measure — it's the unique logic of uncertainty. The theorem grounds Bayesian inference in logic, not just convention.",
+      phd: "Cox's theorem (1946): assume a system for reasoning under uncertainty that satisfies (1) consistency (no contradictions), (2) completeness (every proposition has a degree of belief), (3) honesty (equivalent evidence gives equivalent beliefs). Then there exists a monotonic function φ mapping degrees of belief to [0,1] such that the rules of reasoning are exactly the probability axioms — and updating by evidence follows Bayes' rule. The theorem shows that 'reasonable' reasoning IS Bayesian reasoning."
+    },
+    aha: "Every argument you've ever had about whether to trust a study, a poll, a doctor, a model, a forecast — all of them are arguments about probability. Cox's theorem says there's exactly one rational way to combine evidence with prior beliefs: Bayes' rule. Every alternative either breaks the rules of reasoning or reduces to Bayes. The math isn't a choice; it's forced by the requirements of consistency.",
+    citation: "Cox, R. T. (1946). Probability, frequency and reasonable expectation. *American Journal of Physics*, 14(1), 1–13."
+  },
+  {
+    id: "fisher1922", wave: 3,
+    title: "On the Mathematical Foundations of Theoretical Statistics",
+    titleShort: "Maximum Likelihood (Foundations of Statistics)",
+    authors: ["Ronald A. Fisher"], year: 1922,
+    fields: ["mathematics", "biology"], era: "1900s", importance: "foundational",
+    pdf: "https://rfrench.faculty.ucdavis.edu/pubs/Fisher1922.pdf",
+    published: "Philosophical Transactions of the Royal Society A, 222, 309–368", language: "English",
+    summaries: {
+      elementary: "The best estimate is the one that, if true, would make your data most likely.",
+      abi: "Fisher invented maximum likelihood estimation: given data, find the parameter value that makes the observed data most probable. He also developed ANOVA, the theory of experimental design (randomisation, replication, blocking), and the foundations of modern statistics. His work is the basis of every scientific experiment — from drug trials to A/B tests to physics measurements.",
+      phd: "Fisher's 1922 paper: maximum likelihood estimation — choose θ̂ that maximises L(θ; data) = P(data | θ). Properties: consistent, asymptotically efficient, asymptotically normal. Fisher also introduced sufficiency, information, and the Fisher information matrix I(θ) = -E[∂² log L / ∂θ²]. ANOVA (1925): partition the variance into between-group and within-group components. Experimental design: randomisation, replication, blocking, factorial designs. The paper is the founding text of mathematical statistics."
+    },
+    aha: "Every 'statistically significant' result you've ever heard of rests on Fisher's work. His framework — design an experiment, collect data, estimate parameters, test significance — is the engine of modern science. Without it: no drug trials, no A/B tests, no medical research, no quality control, no genetics. Fisher invented the practice of drawing conclusions from data — and the warnings about its limits. He was also famously wrong about cigarettes and lung cancer, a cautionary tale of certainty.",
+    citation: "Fisher, R. A. (1922). On the mathematical foundations of theoretical statistics. *Philosophical Transactions of the Royal Society of London A*, 222, 309–368."
+  },
+  {
+    id: "jaynes1957", wave: 3,
+    title: "Information Theory and Statistical Mechanics",
+    titleShort: "Maximum Entropy (Inference from Incomplete Info)",
+    authors: ["Edwin T. Jaynes"], year: 1957,
+    fields: ["physics", "mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://bayes.wustl.edu/etj/node1.html",
+    published: "Physical Review, 106(4), 620–630", language: "English",
+    summaries: {
+      elementary: "The most honest guess about an unknown system is the one that's least committed — given what you know.",
+      abi: "Jaynes showed that statistical mechanics can be derived from information theory alone: given incomplete information about a system, the probability distribution that best represents your knowledge is the one with maximum entropy consistent with your constraints. This unifies thermodynamics, statistics, and Bayesian inference — and shows that statistical mechanics is just the logic of uncertainty, applied to physics.",
+      phd: "Jaynes' maximum entropy principle (1957, Physical Review, 106:620–630): given constraints (e.g. known mean energy, known mean particle number), the probability distribution that best represents incomplete information is the one with maximum Gibbs entropy S = -k Σ p_i log p_i. Derives the canonical ensemble, grand canonical ensemble, Fermi-Dirac and Bose-Einstein statistics as maximum-entropy inferences. Connection to Bayesian inference (Jaynes' later work)."
+    },
+    aha: "Statistical mechanics was never about 'objective reality' — it was always about what you can say given what you know. The Boltzmann distribution isn't a physical fact; it's the least-committed guess consistent with a known mean energy. This insight dissolves the mystery of why statistical mechanics works — and extends its methods to every field where we have incomplete information.",
+    citation: "Jaynes, E. T. (1957). Information theory and statistical mechanics. *Physical Review*, 106(4), 620–630."
+  },
+  {
+    id: "laplace1814", wave: 3,
+    title: "Essai philosophique sur les probabilités (Philosophical Essay on Probabilities)",
+    titleShort: "Laplace's Demon & Probability",
+    authors: ["Pierre-Simon Laplace"], year: 1814,
+    fields: ["mathematics"], era: "1800s", importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/44021/44021-0.txt",
+    published: "1814, Paris", language: "French",
+    summaries: {
+      elementary: "If we knew every particle's position and momentum, we'd know the future.",
+      abi: "Laplace imagined a demon that knew the exact state of every particle in the universe — and could use Newton's laws to predict the entire future with certainty. The thought experiment crystallised the dream of determinism, the role of probability in a deterministic universe, and (later) why even deterministic systems can be unpredictable (chaos). Laplace also invented Bayesian inference, the central limit theorem, and the Laplace transform.",
+      phd: "Laplace's Essai (1814) formalises: Bayesian probability (Laplace's rule of succession), the central limit theorem (in modern form), the method of least squares (independently of Gauss), the 'greatest ignorance' principle (uniform prior), the Laplace transform (foundation of control theory and engineering). The book also coins 'Laplace's demon' — an intellect that, knowing all positions and momenta, would see past and future with equal clarity. Laplace served as Napoleon's Minister of the Interior briefly, then was removed for being too 'theoretical'."
+    },
+    aha: "The dream of Laplace's demon died in the 20th century — chaos theory (small differences grow exponentially), quantum mechanics (you can't know both position and momentum), and undecidability (some computations never finish). But the methods Laplace invented — Bayesian inference, the Laplace transform, the central limit theorem — are still the backbone of statistics, control theory, and modern machine learning. The demon is gone; his tools remain.",
+    citation: "Laplace, P.-S. de (1814). *Essai philosophique sur les probabilités*. Paris: Courcier."
+  },
+  {
+    id: "tarski1933", wave: 3,
+    title: "Pojęcie prawdy w językach nauk dedukcyjnych (The Concept of Truth in Formalized Languages)",
+    titleShort: "Tarski's Truth Definition (Semantics)",
+    authors: ["Alfred Tarski"], year: 1933,
+    fields: ["philosophy", "mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.kfki.hu/~kazmer/szem/Tarski_Alfred_-_The_Concept_of_Truth_in_Formalized_Languages.pdf",
+    published: "Prace Towarzystwa Naukowego Warszawskiego, Wydział III, Nr 34, 1933", language: "Polish",
+    summaries: {
+      elementary: "'Snow is white' is true if and only if snow is white.",
+      abi: "Tarski's semantic theory of truth solved a 2,000-year-old problem: what does 'true' mean? His T-scheme ('S is true iff p', where S names the sentence and p is what the sentence says) gives a precise definition. Crucially, truth is definable in a metalanguage but not in the object language — you can't say 'this sentence is true' inside the system without paradox. The paper is foundational for formal logic and computer science.",
+      phd: "Tarski's 1933 paper: defines truth for formalised languages via the T-scheme and a hierarchy of metalanguages. The undefinability theorem: truth is not definable in the object language (Tarski's theorem). The T-scheme also shows why the Liar paradox ('this sentence is false') doesn't arise in properly stratified languages. Foundation of model-theoretic semantics and modern formal logic. Tarski's work made semantics mathematical for the first time."
+    },
+    aha: "'Snow is white is true if and only if snow is white' sounds trivially obvious — but it took 2,000 years of philosophy to formalise. Tarski's definition avoids paradox by separating the language that talks about the world from the language that talks about the first language. This is the foundation of formal semantics — and the reason why AI systems and formal logic can talk about truth without falling into contradiction.",
+    citation: "Tarski, A. (1933). Pojęcie prawdy w językach nauk dedukcyjnych. *Prace Towarzystwa Naukowego Warszawskiego, Wydział III*, Nr 34."
+  },
+  {
+    id: "ramsey1926", wave: 3,
+    title: "Truth and Probability (written 1926, published posthumously in 1931)",
+    titleShort: "Subjective Probability (Dutch Book)",
+    authors: ["Frank P. Ramsey"], year: 1926,
+    fields: ["philosophy", "mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://www.kolakoski.org/phil305/Ramsey-Truth_And_Probability.pdf",
+    published: "In *The Foundations of Mathematics*, 1931 (posthumous)", language: "English",
+    summaries: {
+      elementary: "Rational degrees of belief must be probabilities — or you'll lose money in bets.",
+      abi: "Ramsey argued that probability isn't just about frequencies — it's about the logic of partial belief. The Dutch-book argument (later formalised by de Finetti): any agent who assigns probabilities that violate the probability axioms can be exploited by a clever bettor — they would lose money no matter what. Therefore, rational degrees of belief MUST be probabilities. The paper grounds Bayesian inference in the most pragmatic terms: money.",
+      phd: "Ramsey (1926, 'Truth and Probability'): probability as a degree of belief, not a frequency. Coherence axioms: degrees of belief must satisfy the probability axioms to avoid sure losses (Dutch books). This view underpins Bayesian decision theory, subjectivist probability, and modern decision science. Ramsey's theorem: any coherent set of preferences can be represented by expected utility maximisation with some probability distribution. Ramsey died at 26 in 1930 — the paper was published posthumously. Wittgenstein was his PhD supervisor."
+    },
+    aha: "The Dutch-book argument is the deepest justification for the axioms of probability: they aren't arbitrary; they're forced by consistency. Any set of beliefs that violates them will, with certainty, lose money against a clever bettor. Rationality = the laws of probability. This is the most pragmatic foundation of Bayesian inference: you don't need a metaphysical commitment; you just need to not lose money.",
+    citation: "Ramsey, F. P. (1926/1931). Truth and probability. In *The Foundations of Mathematics*. London: Kegan Paul."
+  },
+  {
+    id: "penrose1989", wave: 3,
+    title: "The Emperor's New Mind: Concerning Computers, Minds, and the Laws of Physics",
+    titleShort: "Emperor's New Mind (Consciousness, Physics, Computation)",
+    authors: ["Roger Penrose"], year: 1989,
+    fields: ["physics", "philosophy"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/emperorsnewmind0000penr",
+    published: "1989, Oxford University Press", language: "English",
+    summaries: {
+      elementary: "Consciousness can't be just computation — and the missing piece might be physics we don't yet understand.",
+      abi: "Penrose argued that human mathematical insight cannot be captured by any Turing machine (citing Gödel), that consciousness must therefore involve non-computational physics, and that quantum gravity in neuronal microtubules might be the missing mechanism. The book is one of the most ambitious attempts to unify physics, computation, and consciousness. Whether or not you accept his conclusion, the question he asks is fundamental.",
+      phd: "Penrose's Emperor's New Mind (1989): (1) Gödel's theorem shows that human mathematicians can see truths that no formal system can prove — so the brain is non-computational; (2) quantum mechanics is the only known non-computational physics; (3) Orch-OR (with Stuart Hameroff, 1996) proposes that quantum computations in neuronal microtubules produce consciousness; (4) the alternative — that consciousness is 'just' computation — is dismissed as 'strong AI' and rejected. The book is provocative, controversial, and one of the most-cited works in philosophy of mind."
+    },
+    aha: "Penrose asks the deepest question in cognitive science: how can a physical brain understand mathematical truths that no computer can prove? Either consciousness is a feature of the right kind of physics (his view), or Gödel's theorem doesn't apply to minds (the standard reply). The argument has shaped decades of debate about whether minds are machines — and there's no consensus in sight. Penrose is the same physicist who proved black holes form (Wave 2) — so when he says consciousness is a physics problem, he means it.",
+    citation: "Penrose, R. (1989). *The Emperor's New Mind: Concerning Computers, Minds, and the Laws of Physics*. Oxford University Press."
+  },
+  {
+    id: "shannon1948", wave: 3,
+    title: "A Mathematical Theory of Communication",
+    titleShort: "A Mathematical Theory of Communication (Information)",
+    authors: ["Claude E. Shannon"], year: 1948,
+    fields: ["mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf",
+    published: "Bell System Technical Journal, 27(3), 379–423 and 27(4), 623–656", language: "English",
+    summaries: {
+      elementary: "Information can be measured. A surprising message contains more information than an obvious one.",
+      abi: "Shannon defined the bit as the unit of information, showed that entropy H = -Σ p log p measures the information content of any source, and proved that any channel has a maximum rate (its capacity) at which information can be transmitted without error. The paper is the founding document of the information age — it underlies every compression algorithm, every error-correcting code, and every digital communication system.",
+      phd: "Shannon's 1948 paper: entropy H(X) = -Σ p(x) log p(x); mutual information I(X;Y) = H(X) + H(Y) - H(X,Y); channel capacity C = max I(X;Y). Source coding theorem: the minimum bits to represent X is H(X). Channel coding theorem (noisy-channel coding): reliable communication is possible at any rate < C, with arbitrarily low error probability, using a suitable code. The paper launched information theory as a discipline."
+    },
+    aha: "Information isn't just an abstract concept — it's measurable, quantifiable, and has units. Shannon's bit is as real as the metre or the second. Every digital system you've ever used (a JPEG, an MP3, a smartphone call, a Bitcoin transaction, a search query) is doing Shannon information theory under the hood. The same mathematics describes compression, error correction, cryptography, and the fundamental limits of communication. Shannon's 1948 paper is the most consequential engineering paper of the 20th century.",
+    citation: "Shannon, C. E. (1948). A mathematical theory of communication. *Bell System Technical Journal*, 27(3), 379–423; 27(4), 623–656."
+  },
+  {
+    id: "godel1931", wave: 3,
+    title: "Über formal unentscheidbare Sätze der Principia Mathematica und verwandter Systeme I",
+    titleShort: "Gödel's Incompleteness Theorems",
+    authors: ["Kurt Gödel"], year: 1931,
+    fields: ["mathematics"], era: "1900s", importance: "foundational",
+    pdf: "https://web.archive.org/web/*/godel-1931",
+    published: "Monatshefte für Mathematik und Physik, 38, 173–198", language: "German",
+    summaries: {
+      elementary: "Any system of math strong enough to do arithmetic can't prove everything true — some truths are forever beyond reach.",
+      abi: "Gödel proved that any consistent formal system powerful enough to describe arithmetic contains true statements that cannot be proven within the system. Mathematics is fundamentally incomplete — no axiomatic system can capture all mathematical truth. The result destroyed Hilbert's dream of a complete, consistent foundation for mathematics, and revealed a deep limit of formal reasoning itself.",
+      phd: "Gödel's First Incompleteness Theorem (1931): any consistent recursively axiomatizable formal system F capable of expressing elementary arithmetic contains a statement G that is true but unprovable in F. Second Incompleteness Theorem: such a system cannot prove its own consistency. The proof uses self-reference: the system can refer to itself (via Gödel numbering) and construct a sentence that says 'this statement is not provable'. If it were provable, the system would be inconsistent. Connection to Turing's halting problem (1936), Tarski's undefinability theorem, and Chaitin's incompleteness."
+    },
+    aha: "Mathematical truth is bigger than mathematical proof. There will always be truths we can see but cannot derive from axioms. This is not a flaw of mathematics — it's a fundamental feature of formal reasoning. Every system has limits; every formal language has truths beyond its reach; every mind sees more than it can prove. Gödel's theorem is the deepest fact about logic itself — and a permanent reminder that no formal system, however powerful, can capture everything.",
+    citation: "Gödel, K. (1931). Über formal unentscheidbare Sätze der Principia Mathematica und verwandter Systeme I. *Monatshefte für Mathematik und Physik*, 38, 173–198."
+  },
+  {
+    id: "feynman1948", wave: 3,
+    title: "Space-Time Approach to Non-Relativistic Quantum Mechanics (Path Integral Formulation)",
+    titleShort: "Path Integrals (Feynman's Approach to Quantum Mechanics)",
+    authors: ["Richard P. Feynman"], year: 1948,
+    fields: ["physics"], era: "1900s", importance: "foundational",
+    pdf: "https://link.aps.org/doi/10.1103/RevModPhys.20.367",
+    published: "Reviews of Modern Physics, 20(2), 367–387", language: "English",
+    summaries: {
+      elementary: "A particle takes every possible path at once — and adds them all up.",
+      abi: "Feynman reformulated quantum mechanics: instead of calculating probabilities from a wave function, you sum contributions from every possible path the particle could take (each with a complex phase). The classical path (the one Newton would predict) is the one where neighbouring paths cancel least. Quantum effects come from paths where they don't cancel. The formulation makes quantum mechanics intuitive (everything is a sum) and connects it to classical mechanics (the path that minimises action dominates).",
+      phd: "Feynman's path integral formulation (1948): the transition amplitude from state |x_i, t_i⟩ to |x_f, t_f⟩ is ⟨x_f, t_f | x_i, t_i⟩ = ∫ D[x(t)] e^(iS[x]/ℏ), where S[x] = ∫L dt is the classical action and ∫ D[x(t)] is the sum over all paths. Stationary-phase approximation: as ℏ → 0, the path that minimises S dominates — recovering classical mechanics (principle of least action). The path integral is the basis of quantum field theory and modern particle physics."
+    },
+    aha: "Feynman's path integral says: nature computes all possible histories simultaneously and adds them up. The answer you measure is the interference of all the ways the world could be. This is more than a calculation trick — it's a way of seeing reality as a sum over possibilities. The same formalism describes quantum fields, financial options, and even the origin of the universe. Action is the only thing that matters; the rest is interference.",
+    citation: "Feynman, R. P. (1948). Space-time approach to non-relativistic quantum mechanics. *Reviews of Modern Physics*, 20(2), 367–387."
+  },
+  {
+    id: "bayes1763", wave: 3,
+    title: "An Essay towards Solving a Problem in the Doctrine of Chances (Posthumous, communicated by Richard Price)",
+    titleShort: "Bayes' Theorem (Inverse Probability)",
+    authors: ["Thomas Bayes"], year: 1763,
+    fields: ["mathematics"], era: "1700s", importance: "foundational",
+    pdf: "https://www.ias.ac.in/article/fulltext/reso/019/06/0554-0561",
+    published: "Philosophical Transactions of the Royal Society, 53, 370–418 (posthumous)", language: "English",
+    summaries: {
+      elementary: "To learn from evidence, multiply your prior belief by how likely the evidence is.",
+      abi: "Bayes' theorem gives the one rational rule for updating your beliefs in light of new evidence. Start with a prior; multiply by the likelihood; normalise; you have a posterior. The same rule lets you reason from symptoms to diseases, from test results to truth, from data to parameters. It's the foundation of rational inference — and almost everything in modern statistics, machine learning, and science.",
+      phd: "Bayes' theorem: P(H | E) = P(E | H) · P(H) / P(E). Where P(H | E) is the posterior (updated belief in H given E), P(E | H) is the likelihood (probability of E if H is true), P(H) is the prior, and P(E) is a normalising constant. Extensions: hierarchical Bayes (priors on priors), Bayesian neural networks (weights are distributions), Bayesian optimisation (efficient search), variational inference (approximate Bayesian computation)."
+    },
+    aha: "Bayes' theorem is the master rule for learning from experience. It applies to literally every situation where you update beliefs in light of evidence — medical diagnosis, spam filtering, weather forecasting, machine learning, scientific inference. Cox's theorem (1946) proved it's the ONLY such rule that satisfies consistency. You're using Bayes every time you update your belief about anything — even if you don't know it. The theorem was published posthumously by a friend who recognised its importance.",
+    citation: "Bayes, T. (1763). An essay towards solving a problem in the doctrine of chances. *Philosophical Transactions of the Royal Society*, 53, 370–418. (Published posthumously; presented by Richard Price.)"
+  },
+  {
+    id: "darwin1859", wave: 3,
+    title: "On the Origin of Species by Means of Natural Selection",
+    titleShort: "Origin of Species (Natural Selection)",
+    authors: ["Charles Darwin"], year: 1859,
+    fields: ["biology"], era: "1800s", importance: "foundational",
+    pdf: "https://www.gutenberg.org/files/2009/2009-0.txt",
+    published: "John Murray, London", language: "English",
+    summaries: {
+      elementary: "Random variation + differential survival = complex design.",
+      abi: "Darwin showed that all of life's complexity — eyes, brains, immune systems, ecosystems — can arise from a single blind process: random variation, filtered by differential survival and reproduction. No designer is needed. The same algorithm runs in biology, AI training, cultural evolution, and even economics. It's the most productive single idea in the history of science.",
+      phd: "Darwin's Origin (1859) formulates: (1) variation: individuals in a population differ; (2) inheritance: variation is heritable; (3) selection: heritable variations affect survival and reproduction; (4) time: over deep time, selection accumulates small changes into large adaptations. Combined with the Modern Synthesis (Fisher, Haldane, Wright 1930s): Mendelian genetics + natural selection. Modern extensions: neutral theory (Kimura), gene-level selection (Hamilton, Dawkins), evo-devo (Carroll), niche construction (Odling-Smee)."
+    },
+    aha: "Variation + selection is a universal algorithm. It produces eyes, brains, immune systems, languages, economies, technologies, and now AI systems. The same process that produced the vertebrate eye can produce a winning chess program. Once you see it, you see it everywhere — in culture, in technology, in business, in biology. Darwin's insight is not just about life — it's about how complex things can emerge from simple rules applied for long enough.",
+    citation: "Darwin, C. (1859). *On the Origin of Species by Means of Natural Selection, or the Preservation of Favoured Races in the Struggle for Life*. London: John Murray."
+  },
+  {
+    id: "mendel1866", wave: 3,
+    title: "Versuche über Pflanzenhybriden",
+    titleShort: "Mendel's Laws of Inheritance",
+    authors: ["Gregor Mendel"], year: 1866,
+    fields: ["biology"], era: "1800s", importance: "foundational",
+    pdf: "https://www.esp.org/foundations/genetics/classical/mendel.pdf",
+    published: "Verhandlungen des naturforschenden Vereines in Brünn, 4, 3–47", language: "German",
+    summaries: {
+      elementary: "Heredity is digital — information comes in discrete packets that don't blend.",
+      abi: "By counting thousands of pea plants, Mendel discovered that traits skip generations in precise numerical ratios (3-to-1, 9-to-3-to-3-to-1). The simplest explanation: each parent contributes a discrete 'factor' (what we now call a gene) and some are dominant over others. Inheritance is digital — long before anyone knew about atoms, electrons, or transistors. Every genome sequenced today is just a very long Mendel string of A, C, G, T.",
+      phd: "Mendel's monohybrid (3:1) and dihybrid (9:3:3:1) ratios, derived from 28,000+ pea crosses with explicit statistical counts, established the laws of segregation and independent assortment. The particulate (non-blending) nature of inheritance is incompatible with the dominant blending-inheritance theories of his era (Darwin included) and prefigures the chromosomal basis (Sutton, Boveri, 1902) and the molecular gene (Watson-Crick, 1953). Mendel read his paper to the Brünn Natural History Society in 1865. It was ignored for 34 years."
+    },
+    aha: "Mendel found the bit. Inheritance is discrete — long before anyone knew about atoms, electrons or transistors. Every genome sequenced today is just a very long Mendel string of A, C, G, T. The same mathematical insight (information in discrete packets) underlies all of digital technology. The patterns Mendel saw in peas are the patterns we see in software, in encryption, in the human genome. Inheritance is computation.",
+    citation: "Mendel, G. (1866). Versuche über Pflanzenhybriden. *Verhandlungen des naturforschenden Vereines in Brünn*, 4, 3–47."
+  },
+  {
+    id: "watsoncrick1953", wave: 3,
+    title: "Molecular Structure of Nucleic Acids: A Structure for Deoxyribose Nucleic Acid",
+    titleShort: "DNA Double Helix (Life as Information)",
+    authors: ["James D. Watson", "Francis H. C. Crick"], year: 1953,
+    fields: ["biology"], era: "1900s", importance: "foundational",
+    pdf: "https://www.nature.com/articles/171737a0",
+    published: "Nature, 171(4356), 737–738", language: "English",
+    summaries: {
+      elementary: "Life is a self-copying message — and the shape of the molecule IS the copying mechanism.",
+      abi: "Watson and Crick showed that DNA has the shape of a double helix: two long strands twisted around each other, held together by pairs of 'letters' (A with T, C with G). Because each strand can rebuild the other, the molecule is a perfect recipe copier. The secret of life turned out to be the shape of a single molecule — and the principle that information can be encoded in chemical structure.",
+      phd: "Modelling X-ray diffraction data (Franklin's Photo 51, Wilkins' measurements), the authors propose an antiparallel double helix with 3.4 Å base-pair spacing and 10.4 bp per turn. The A–T and G–C complementarity explains Chargaff's rules and provides the immediate mechanism for semiconservative replication (Meselson-Stahl, 1958). The model is the foundation of molecular biology and the central dogma (DNA → RNA → protein; Crick, 1958). The paper is famously only one page long — and possibly the most consequential page in 20th-century biology."
+    },
+    aha: "Life is a self-copying message. The shape of the molecule IS the copying mechanism — split the strands, each one rebuilds its partner. Every virus, every bacterium, every cell in your body is running this exact copying algorithm every time it divides. Crick wrote the paper as if it were a routine note — the understatement of the century. A one-page paper, the secret of life, and the foundation of biotechnology.",
+    citation: "Watson, J. D., & Crick, F. H. C. (1953). Molecular structure of nucleic acids: A structure for deoxyribose nucleic acid. *Nature*, 171(4356), 737–738."
+  },
+  {
+    id: "newman2003", wave: 3,
+    title: "The Structure and Function of Complex Networks",
+    titleShort: "Complex Networks (Structure & Function)",
+    authors: ["M. E. J. Newman"], year: 2003,
+    fields: ["mathematics"], era: "2000s", importance: "foundational",
+    pdf: "https://arxiv.org/abs/cond-mat/0303516",
+    published: "SIAM Review, 45(2), 167–256", language: "English",
+    summaries: {
+      elementary: "All networks — social, biological, technological — have similar patterns and obey similar laws.",
+      abi: "Newman wrote the field-defining review of network science. He unified the analysis of networks across disciplines (sociology, biology, computer science, physics), defined the key metrics (degree, clustering, path length, centrality), and showed that similar patterns appear everywhere. The paper is the modern reference for network analysis.",
+      phd: "Newman's review (SIAM Review, 2003, 45(2):167–256) defines: degree distribution, clustering coefficient, average path length, betweenness centrality, community structure, assortativity. Identifies universality classes: random (Poisson degree), small-world (Watts-Strogatz), scale-free (Barabási). Applications: internet, WWW, social networks, citation networks, metabolic networks, food webs, neural networks. Connects structure to function (e.g. robustness, spreading, synchronisation). The review is the standard reference for modern network science."
+    },
+    aha: "Network science is the unifying language of complexity. The same mathematics — random graphs, small worlds, scale-free, modular communities — applies to Facebook, the brain, the internet, the food web, and the financial system. Newman's paper shows that despite their different content, all these networks have measurable structure and obey discoverable laws. We're all nodes in some graph — and the shape of that graph determines everything from how diseases spread to how ideas propagate to how robust a system is to attack.",
+    citation: "Newman, M. E. J. (2003). The structure and function of complex networks. *SIAM Review*, 45(2), 167–256."
+  },
+  {
+    id: "russellwhitehead1910", wave: 3,
+    title: "Principia Mathematica (Volume I)",
+    titleShort: "Principia Mathematica (Mathematics from Logic)",
+    authors: ["Alfred North Whitehead", "Bertrand Russell"], year: 1910,
+    fields: ["mathematics", "philosophy"], era: "1900s", importance: "foundational",
+    pdf: "https://archive.org/details/PrincipiaMathematicaVolumeI",
+    published: "1910, Cambridge University Press", language: "English",
+    summaries: {
+      elementary: "All mathematics can be derived from logic — if you're willing to spend 400 pages getting to 1+1=2.",
+      abi: "Russell and Whitehead tried to derive all of mathematics from pure logic. They succeeded in defining natural numbers, real numbers, and most of classical mathematics in terms of sets and logical operations. Their monumental work showed mathematics is a branch of logic — and then Gödel proved (1931) the project can't be completed. The deepest attempt to make mathematics perfect.",
+      phd: "Principia Mathematica (1910, 1912, 1913): formalises propositional logic, predicate logic, classes and relations, cardinal and ordinal numbers, real numbers, and the foundations of arithmetic and analysis. Uses the theory of types (to avoid Russell's paradox: 'the set of all sets not containing themselves') and the axiom of reducibility. The whole project was shown incomplete by Gödel's incompleteness theorem (1931) — any sufficiently powerful consistent system cannot prove its own consistency."
+    },
+    aha: "Russell and Whitehead almost — but not quite — reduced all of mathematics to logic. The remaining gap was closed by Gödel, in the opposite direction: not everything can be decided. The very project that aimed to make mathematics perfect showed its limits. This is the deep lesson: every sufficiently powerful formal system is incomplete; every sufficiently rich intellectual system is too. The dream of total certainty is permanently beyond reach.",
+    citation: "Whitehead, A. N., & Russell, B. (1910–1913). *Principia Mathematica*. Cambridge University Press."
+  },
+  {
+    id: "shannon1948wave3", wave: 3,
+    title: "A Mathematical Theory of Communication (Bell Labs edition)",
+    titleShort: "Shannon's Information Theory (Duplicate)",
+    authors: ["Claude E. Shannon"], year: 1948,
+    fields: ["mathematics", "computer-science"], era: "1900s", importance: "foundational",
+    pdf: "https://cm.bell-labs.com/cm/ms/what/shannonday/paper.html",
+    published: "Bell System Technical Journal, 1948", language: "English",
+    summaries: {
+      elementary: "Information is measurable in bits — and surprise is information.",
+      abi: "Shannon's mathematical theory of communication shows that information can be quantified (in bits), compressed (to its entropy limit), and transmitted reliably (up to a channel's capacity). The paper is the foundation of the digital age — every file you send, every stream you watch, every encrypted message you send, every search query you type, is doing Shannon information theory under the hood.",
+      phd: "Shannon's 1948 paper: the entropy H(X) = -Σ p log p measures information; the source coding theorem says any source can be compressed to H bits per symbol on average; the channel coding theorem says reliable communication is possible at any rate below the channel capacity C = max I(X;Y). Shannon entropy equals thermodynamic entropy (Boltzmann, Gibbs) up to a constant — the deep fact that information is physical."
+    },
+    aha: "Shannon entropy and thermodynamic entropy are the same — up to a constant. This is the deepest fact in physics: information IS physical. Every bit you erase dissipates at least kT ln(2) of heat (Landauer). Every computation is a thermodynamic process. Every message you send is a physical act. Shannon's 1948 paper isn't just engineering — it's the deepest statement of the connection between information and reality.",
+    citation: "Shannon, C. E. (1948). A mathematical theory of communication. *Bell System Technical Journal*, 27, 379–423, 623–656."
+  },
+  {
+    id: "wolfram2002", wave: 3,
+    title: "A New Kind of Science",
+    titleShort: "A New Kind of Science (Cellular Automata)",
+    authors: ["Stephen Wolfram"], year: 2002,
+    fields: ["computer-science", "physics"], era: "2000s", importance: "foundational",
+    pdf: "https://www.wolframscience.com/nksonline/toc.html",
+    published: "2002, Wolfram Media", language: "English",
+    summaries: {
+      elementary: "Tiny rule books (cellular automata) can generate the entire complexity of the universe.",
+      abi: "Wolfram catalogued the behaviour of simple computer programs (cellular automata) — especially Rule 30, which produces chaotic, unpredictable output from three simple rules. He argued that the universe itself might be a cellular automaton at some fundamental level, and that computation, not equation, is the natural language of complexity. A controversial but thought-provoking book.",
+      phd: "Wolfram's NKS (2002) is a 1,200-page catalogue of cellular automata, Turing machines, substitution systems, and other simple programs, classified by their emergent behaviour. Rule 110 is Turing-complete (it can simulate any computation). Rule 30 produces pseudo-randomness from three rules. The book's central thesis: simple rules generate complex behaviour; the universe may be such a system. Critics argue NKS overstates its philosophical claims; defenders argue it documents a vast empirical phenomenon."
+    },
+    aha: "Three rules can generate randomness. Four rules can generate a universal computer. The implication: complexity doesn't require complex causes. Snowflakes, galaxies, brains — all might emerge from simple local rules iterated many times. The book is part empirical atlas, part manifesto. Whether or not you buy the philosophy, the catalogue of what simple programs can do is astonishing — and Wolfram's bet that the universe itself might be such a system remains one of the most ambitious scientific conjectures of our time.",
+    citation: "Wolfram, S. (2002). *A New Kind of Science*. Champaign, IL: Wolfram Media."
+  },
+  {
+    id: "newton1687", wave: 3,
+    title: "Philosophiæ Naturalis Principia Mathematica (Mathematical Principles of Natural Philosophy)",
+    titleShort: "Newton's Principia (Mechanics & Gravity)",
+    authors: ["Isaac Newton"], year: 1687,
+    fields: ["physics"], era: "1600s", importance: "foundational",
+    pdf: "https://www.gutenberg.org/ebooks/28233",
+    published: "1687, London (Royal Society)", language: "Latin",
+    summaries: {
+      elementary: "F=ma, F=Gm₁m₂/r². The universe runs on three simple laws.",
+      abi: "Newton's Principia unified celestial and terrestrial physics: the same force that makes apples fall keeps planets in orbit. Three laws of motion (inertia, F=ma, action-reaction) and one law of gravitation (F=Gm₁m₂/r²) explain every motion in the universe — from cannonballs to comets. The book invented mathematical physics and showed that nature follows laws expressible in equations.",
+      phd: "The Principia (1687) develops: (1) Newton's three laws of motion; (2) the law of universal gravitation F = G m₁ m₂ / r²; (3) the calculus (invented simultaneously by Leibniz); (4) conservation laws (momentum, angular momentum, energy — though energy wasn't named yet); (5) the motion of planets, moons, comets, tides, projectiles, fluids. The book established the programme of mathematical physics — show that nature follows laws expressible in equations — that has dominated science for 350 years."
+    },
+    aha: "The same laws that govern cannonballs govern comets and galaxies. The force that makes the apple fall keeps the Moon in orbit and the tides rising. Newton showed that the universe is a single, intelligible system — and that its behaviour can be written down as equations. The dream of mathematical physics was born. The same dream — finding the equations behind nature — drives every physicist from Einstein to the Higgs boson hunters. The Principia is the founding document of the Scientific Revolution and the prototype for every textbook of physics since.",
+    citation: "Newton, I. (1687). *Philosophiæ Naturalis Principia Mathematica*. London: Royal Society."
   }
 ];
 
