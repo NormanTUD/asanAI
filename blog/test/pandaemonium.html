@@ -74,7 +74,7 @@ p{margin:11px 0}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 @media(max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
-canvas{display:block;width:100%;border-radius:12px;background:#070a12;border:1px solid var(--line)}
+canvas{display:block;width:100%;border-radius:12px;background:#070a12;border:1px solid var(--line);max-height:100vh;min-height:50px}
 .ctl{display:flex;flex-direction:column;gap:5px;margin:12px 0}
 .ctl label{font-family:var(--mono);font-size:11.5px;color:var(--dim);display:flex;justify-content:space-between;letter-spacing:.04em}
 .ctl label b{color:var(--acc2);font-weight:600}
@@ -947,11 +947,37 @@ function dpi(cv){
   const r = window.devicePixelRatio||1;
   const h = parseInt(cv.getAttribute('height'))||300;
   const w = cv.parentElement?cv.parentElement.clientWidth:cv.clientWidth||900;
-  cv.style.setProperty('height', h+'px', 'important');
-  if(cv.width!==w*r||cv.height!==h*r){cv.width=w*r;cv.height=h*r;}
+  lockCanvas(cv, h, r);
+  cv.width = w*r;
   const ctx=cv.getContext('2d');
   ctx.setTransform(r,0,0,r,0,0);
   return {ctx,w,h};
+}
+
+/* Height is the only thing that ever grew — lock it. Width is free to follow
+   CSS `width:100%` so the canvas stays responsive on window resize. */
+function lockCanvas(cv, h, dpr){
+  if(cv.__lockedH) return;
+  cv.__lockedH = true;
+  const maxH = h * dpr;
+  let _h = maxH;
+  Object.defineProperty(cv, 'height', {
+    get(){return _h;},
+    set(v){_h = Math.min(Math.max(0,v|0), maxH);},
+    configurable:true
+  });
+  cv.height = maxH;
+  const pin = ()=>{
+    cv.style.setProperty('height',h+'px','important');
+    cv.style.setProperty('min-height',h+'px','important');
+    cv.style.setProperty('max-height',h+'px','important');
+    if(cv.height > maxH) cv.height = maxH;
+  };
+  pin();
+  const mo = new MutationObserver(pin);
+  mo.observe(cv, {attributes:true, attributeFilter:['style','height','class']});
+  const tick = ()=>{ if(cv.isConnected){ pin(); requestAnimationFrame(tick); } };
+  requestAnimationFrame(tick);
 }
 function clear(ctx,w,h){ctx.clearRect(0,0,w,h);ctx.fillStyle=C.bg;ctx.fillRect(0,0,w,h);}
 function rnd(a=1){return (Math.random()*2-1)*a}
@@ -2782,6 +2808,17 @@ function initAll(){
     },180);
   });
 }
+
+/* Pre-pin all canvases so they cannot grow on click */
+(function pinAll(){
+  document.querySelectorAll('canvas').forEach(cv=>{
+    const h=parseInt(cv.getAttribute('height'))||300;
+    if(typeof lockCanvas==='function') lockCanvas(cv,h,window.devicePixelRatio||1);
+    cv.style.setProperty('height',h+'px','important');
+    cv.style.setProperty('min-height',h+'px','important');
+    cv.style.setProperty('max-height',h+'px','important');
+  });
+})();
 
 /* Start */
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initAll);

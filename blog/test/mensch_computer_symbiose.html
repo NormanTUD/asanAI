@@ -130,7 +130,7 @@ input[type=text]{font-family:var(--mono);font-size:13px;padding:9px 13px;border-
   background:rgba(0,0,0,.34);color:var(--ink);outline:none;letter-spacing:.06em}
 input[type=text]:focus{border-color:var(--cyan);box-shadow:var(--glow-c)}
 
-canvas.art{width:100%;display:block;border-radius:14px;background:rgba(0,0,0,.28);border:1px solid var(--line)}
+canvas.art{width:100%;display:block;border-radius:14px;background:rgba(0,0,0,.28);border:1px solid var(--line);max-height:100vh;min-height:50px}
 .plot{width:100%;height:330px}
 .cap{font-size:12.5px;color:var(--ink-faint);font-style:italic;margin-top:10px;text-align:center}
 
@@ -757,13 +757,37 @@ function setup(cv){
   const dpr=window.devicePixelRatio||1;
   const w=(cv.parentElement&&cv.parentElement.clientWidth)||900;
   const h=parseInt(cv.getAttribute('height'))||300;
-  cv.style.width=w+'px';
-  cv.style.height=h+'px';
+  lockCanvas(cv, h, dpr);
   cv.width=Math.max(1,w*dpr);
-  cv.height=h*dpr;
   const x=cv.getContext('2d');
   x.setTransform(dpr,0,0,dpr,0,0);
   return {x,W:w,H:h};
+}
+
+/* Height is the only thing that ever grew — lock it. Width is free to follow
+   CSS `width:100%` so the canvas stays responsive on window resize. */
+function lockCanvas(cv, h, dpr){
+  if(cv.__lockedH) return;
+  cv.__lockedH = true;
+  const maxH = h * dpr;
+  let _h = maxH;
+  Object.defineProperty(cv, 'height', {
+    get(){return _h;},
+    set(v){_h = Math.min(Math.max(0,v|0), maxH);},
+    configurable:true
+  });
+  cv.height = maxH;
+  const pin = ()=>{
+    cv.style.setProperty('height',h+'px','important');
+    cv.style.setProperty('min-height',h+'px','important');
+    cv.style.setProperty('max-height',h+'px','important');
+    if(cv.height > maxH) cv.height = maxH;
+  };
+  pin();
+  const mo = new MutationObserver(pin);
+  mo.observe(cv, {attributes:true, attributeFilter:['style','height','class']});
+  const tick = ()=>{ if(cv.isConnected){ pin(); requestAnimationFrame(tick); } };
+  requestAnimationFrame(tick);
 }
 function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();}
 function txt(x,s,a,b,size,col,align='left',weight='400',fam="'Inter',sans-serif"){
@@ -2607,6 +2631,18 @@ addEventListener('load',()=>{
     });
   }
 });
+
+/* Pre-pin all canvases so they cannot grow on click */
+(function pinAll(){
+  document.querySelectorAll('canvas').forEach(cv=>{
+    if(!cv.id||cv.id==='stars'||cv.id==='figcanvas') return;
+    const h=parseInt(cv.getAttribute('height'))||300;
+    if(typeof lockCanvas==='function') lockCanvas(cv,h,window.devicePixelRatio||1);
+    cv.style.setProperty('height',h+'px','important');
+    cv.style.setProperty('min-height',h+'px','important');
+    cv.style.setProperty('max-height',h+'px','important');
+  });
+})();
 </script>
 </body>
 </html>
