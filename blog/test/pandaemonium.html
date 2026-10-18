@@ -945,10 +945,9 @@ const C = {
 function $(id){return document.getElementById(id)}
 function dpi(cv){
   const r = window.devicePixelRatio||1;
-  const w = (cv.parentElement&&cv.parentElement.clientWidth)||cv.clientWidth||900;
   const h = parseInt(cv.getAttribute('height'))||300;
-  cv.style.width=w+'px';
-  cv.style.height=h+'px';
+  const w = cv.parentElement?cv.parentElement.clientWidth:cv.clientWidth||900;
+  cv.style.setProperty('height', h+'px', 'important');
   if(cv.width!==w*r||cv.height!==h*r){cv.width=w*r;cv.height=h*r;}
   const ctx=cv.getContext('2d');
   ctx.setTransform(r,0,0,r,0,0);
