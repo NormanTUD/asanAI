@@ -15931,6 +15931,118 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Moravec%27s_paradox",
 		alternativetitle: "Moravec's paradox (1988)"
 	},
+	"brooks1990elephants": {
+		title: "Elephants Don't Play Chess",
+		author: "Rodney A. Brooks",
+		year: 1990,
+		url: "https://people.csail.mit.edu/brooks/papers/elephants.pdf",
+		alternativetitle: "Brooks, Elephants Don't Play Chess (1990)"
+	},
+	"brooks1986layered": {
+		title: "A Robust Layered Control System for a Mobile Robot",
+		author: "Rodney A. Brooks",
+		year: 1986,
+		url: "https://people.csail.mit.edu/brooks/papers/AIM-864.pdf",
+		alternativetitle: "Brooks, A Robust Layered Control System (1986)"
+	},
+	"craik1943nature": {
+		title: "The Nature of Explanation",
+		author: "Kenneth J. W. Craik",
+		year: 1943,
+		url: "https://www.cis.upenn.edu/~cis6280/lectures/lecture-02/media/lecture02/history/craik_1943_the_nature_of_explanation.pdf",
+		alternativetitle: "Craik, The Nature of Explanation (1943)"
+	},
+	"bush1945aswemaythink": {
+		title: "As We May Think",
+		author: "Vannevar Bush",
+		year: 1945,
+		url: "https://web.archive.org/web/2024/https://www.theatlantic.com/magazine/archive/1945/07/as-we-may-think/303881/",
+		alternativetitle: "Bush, As We May Think (1945)"
+	},
+	"licklider1960symbiosis": {
+		title: "Man-Computer Symbiosis",
+		author: "J. C. R. Licklider",
+		year: 1960,
+		url: "https://groups.csail.mit.edu/medg/people/psz/Licklider.html",
+		alternativetitle: "Licklider, Man-Computer Symbiosis (1960)"
+	},
+	"maturana1980autopoiesis": {
+		title: "Autopoiesis and Cognition: The Realization of the Living",
+		author: "Humberto R. Maturana, Francisco J. Varela",
+		year: 1980,
+		url: "https://link.springer.com/book/10.1007/978-94-009-8947-4",
+		alternativetitle: "Maturana & Varela, Autopoiesis and Cognition (1980)"
+	},
+	"newell1976empirical": {
+		title: "Computer Science as Empirical Inquiry: Symbols and Search",
+		author: "Allen Newell, Herbert A. Simon",
+		year: 1976,
+		url: "https://web.archive.org/web/2024/https://dl.acm.org/doi/10.1145/360018.360022",
+		alternativetitle: "Newell & Simon, Computer Science as Empirical Inquiry (1976)"
+	},
+	"ampere1843cybernetique": {
+		title: "Essai sur la philosophie des sciences",
+		author: "André-Marie Ampère",
+		year: 1843,
+		url: "https://web.archive.org/web/2024/https://en.wikipedia.org/wiki/Amp%C3%A8re",
+		alternativetitle: "Ampère, 'Cybernetique' (1843)"
+	},
+	"tesniere1959deps": {
+		title: "Éléments de syntaxe structurale",
+		author: "Lucien Tesnière",
+		year: 1959,
+		url: "https://web.archive.org/web/2024/https://en.wikipedia.org/wiki/Lucien_Tesni%C3%A8re",
+		alternativetitle: "Tesnière, Dependency Grammar (1959)"
+	},
+	"beurle1956wave": {
+		title: "Activities in Populations of Neuronally Interconnected Elements",
+		author: "Raymond L. Beurle",
+		year: 1956,
+		url: "https://web.archive.org/web/2024/https://royalsocietypublishing.org/doi/10.1098/rstb.1956.0007",
+		alternativetitle: "Beurle, Neural Activity as a Wave (1956)"
+	},
+	"steinbuch1961matrix": {
+		title: "Die Lernmatrix (The Learning Matrix)",
+		author: "Karl Steinbuch",
+		year: 1961,
+		url: "https://web.archive.org/web/2024/https://en.wikipedia.org/wiki/Karl_Steinbuch",
+		alternativetitle: "Steinbuch, The Learning Matrix (1961)"
+	},
+	"roberts1960perceptron": {
+		title: "Pattern Recognition with an Adaptive Network",
+		author: "Lawrence G. Roberts",
+		year: 1960,
+		url: "https://web.archive.org/web/2024/https://en.wikipedia.org/wiki/Lawrence_Roberts_(scientist)",
+		alternativetitle: "Roberts, Adaptive Multilayer Pattern Recognizer (1960)"
+	},
+	"uhrvossler1961operators": {
+		title: "A Pattern Recognition Program That Generates, Evaluates, and Adjusts Its Own Operators",
+		author: "Leonard Uhr, Charles Vossler",
+		year: 1961,
+		url: "https://web.archive.org/web/2024/https://en.wikipedia.org/wiki/Leonard_Uhr",
+		alternativetitle: "Uhr & Vossler, Pattern Recognition That Invents Its Own Operators (1961)"
+	},
+	"bongard1966pattern": {
+		title: "The Recognition Problem (Pattern Recognition)",
+		author: "Mikhail M. Bongard",
+		year: 1966,
+		url: "https://web.archive.org/web/2024/https://en.wikipedia.org/wiki/Bongard_problem",
+		alternativetitle: "Bongard, Pattern Recognition (1966)"
+	},
+	"vapnik1964vc": {
+		title: "On the Uniform Convergence of Relative Frequencies of Events to Their Probabilities",
+		author: "Vladimir N. Vapnik, Alexey Ya. Chervonenkis",
+		year: 1964,
+		url: "https://web.archive.org/web/2024/https://en.wikipedia.org/wiki/Vapnik%E2%80%93Chervonenkis_dimension",
+		alternativetitle: "Vapnik & Chervonenkis, VC Theory (1964)"
+	},
+	"lorentedeno1938cortex": {
+		title: "Architectonics and Structure of the Cerebral Cortex (Chapter XV in Fulton's Physiology of the Nervous System)",
+		author: "Rafael Lorente de Nó",
+		year: 1938,
+		url: "https://bsd.neuroinf.jp/w/images/9/9e/Lorente_De_No_1938.pdf",
+		alternativetitle: "Lorente de Nó, Cerebral Cortex: Architecture and Closed Loops (1938)"
+	},
 	"sutton2019bitterlesson": {
 		title: "The Bitter Lesson",
 		author: "Richard S. Sutton",

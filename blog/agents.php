@@ -46,6 +46,25 @@ The “Re” in **ReAct** is the reasoning loop from the <a href="reasoning">Rea
 
 The concept of an autonomous reasoning agent long predates LLMs. Understanding the lineage helps explain why modern agents work the way they do.
 
+### 0. Man-Computer Symbiosis (1960) — the Vision Before the Tech
+
+The deepest historical root of the modern AI agent is not from AI research at all but from a *psychology*-oriented network engineer asking what computers were actually *for*. \citeauthor{licklider1960symbiosis} (\citeyear{licklider1960symbiosis}) published "Man-Computer Symbiosis" in the IRE Transactions on Human Factors in Electronics while at Bolt, Beranek and Newman, twelve years before he would go on to fund ARPANET at ARPA and shape what became the internet. The paper argues, against the prevailing orthodoxy of the day (which held that computers would automate human decision-making by replacing humans), that the right relation between human and computer is not *replacement* but *symbiosis* — a tight, real-time, two-way coupling in which each partner does what it does best.
+
+<div class="smart-quote" data-cite="licklider1960symbiosis">
+The hope is that, in not too many years, human brains and computing machines will be coupled together very tightly, and that the resulting partnership will think as no human brain has ever thought and process data in a way not approached by the information-handling machines we know today.
+</div>
+
+The paper's bet is that *men* and *computers* are complementary, not competing: humans set the goals, anticipate, evaluate, and supply the ethical and aesthetic frame; computers do the routinizable clerical, bookkeeping, and search work. The interaction is **time-sharing** (one computer, many simultaneous human partners), **interactive** (the computer responds within seconds to the human's query), and **cooperative** (the human and the computer iterate toward a goal). The paper even names four classes of "men-computer problem" that the symbiosis should address, each of which a modern LLM agent solves today:
+
+* **Routine clerical and bookkeeping work** — exactly what an LLM agent with a `read_file` / `write_file` tool handles.
+* **Decision making and planning** — exactly what an LLM agent does inside its ReAct loop.
+* **Helping the human to formulate the problem, ask the right question, etc.** — exactly what an LLM agent does when it scaffolds a vague user request into a concrete plan before acting.
+* **Searching, retrieving, and visualising information** — exactly what an LLM agent with RAG tools does.
+
+Read sixty-five years later, \citeauthor{licklider1960symbiosis}'s *man-computer symbiosis* is a one-paragraph specification for the modern AI agent. He even predicts the cooperative architecture from first principles: the human handles "the creative thinking" — goals, evaluation, judgement; the machine handles "the routine work" — bookkeeping, search, mechanical inference; the partnership iterates in real time. The only thing \citeauthor{licklider1960symbiosis} got wrong was timing — he predicted it would happen "in not too many years" from 1960, and it actually happened in roughly 2022, once the LLM that could *reason about which tool to call* arrived. The LLM is the long-expected *seam* between the human's question and the computer's action that Licklider's essay was describing.
+
+The historical line from Licklider to the present agent loop runs through three pieces of infrastructure he personally pushed into existence: time-sharing operating systems (which made interactive computer use possible at all, beginning at MIT's Project MAC in the early 1960s), packet-switched networks (which became ARPANET in 1969, then the internet, and gave the symbiosis its *distributed* substrate), and finally the natural-language interface (the missing piece — for sixty years after Licklider, the computer side of the symbiosis still could not understand English). When the LLM arrived, every precondition for the symbiosis was already in place; all that was missing was the *natural-language seam*, and the seam is the agent.
+
 ### 1. Classical AI: Symbolic Agents (1950s–1990s)
 
 The earliest AI agents were purely symbolic. \cite[McCarthy and Hayes (1969)]{mccarthy1969some} formalized the **frame problem**, how an agent reasons about what changes and what stays the same when it acts. The dominant paradigm was **GOFAI** (Good Old-Fashioned AI): hand-coded rules, planning algorithms, and explicit world models.
