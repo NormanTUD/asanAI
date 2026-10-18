@@ -794,10 +794,8 @@ addEventListener('scroll',()=>{
   $$('section').forEach(s=>{const r=s.getBoundingClientRect();if(r.top<innerHeight*0.45)cur=s.id;});
   $$('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.s===cur));
 });
-new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.08})
-  .observe&&$$('.reveal').forEach(el=>{
-    new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.08}).observe(el);
-  });
+const revealObs = new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.08});
+$$('.reveal').forEach(el=>revealObs.observe(el));
 
 /* Sterne */
 (function(){
