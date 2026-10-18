@@ -49,11 +49,15 @@ function readTextIf(string $abs, string $ext, int $size): ?string {
 }
 
 function htmlToText(string $c): string {
-    $c = preg_replace('/<(script|style|noscript)[^>]*>.*?<\/\1>/is', ' ', $c);
-    $c = preg_replace('/<head.*?<\/head>/is', ' ', $c);
-    $c = preg_replace('/<[^>]+>/', ' ', $c);
+    $r = preg_replace('/<(script|style|noscript)[^>]*>.*?<\/\1>/is', ' ', $c);
+    $c = $r ?? $c;
+    $r = preg_replace('/<head.*?<\/head>/is', ' ', $c);
+    $c = $r ?? $c;
+    $r = preg_replace('/<[^>]+>/', ' ', $c);
+    $c = $r ?? $c;
     $c = html_entity_decode($c, ENT_QUOTES, 'UTF-8');
-    $c = preg_replace('/\s+/', ' ', trim($c));
+    $r = preg_replace('/\s+/', ' ', trim($c));
+    $c = $r ?? $c;
     return $c;
 }
 
