@@ -564,7 +564,7 @@ function drawS0(){
   });
   label(x,'Ein Typ ist ein Raum · ein Beweis ist ein Punkt',w/2,h-18,col('dim'),13);
   s.c.onclick=e=>{
-    const r=s.c.getBoundingClientRect(), mx=e.clientX-r.left, my=e.clientY-r.top;
+    const mx=e.offsetX, my=e.offsetY;
     for(let i=1;i<3;i++){
       const bx=gap+(bw+gap)*i;
       if(mx>bx&&mx<bx+bw&&my>by&&my<by+bh){
@@ -745,8 +745,7 @@ function drawS3(){
         w/2,h-18,col('dim'),12.5);
 
   s.c.onclick=e=>{
-    const r=s.c.getBoundingClientRect();
-    const mx=e.clientX-r.left, my=e.clientY-r.top;
+    const mx=e.offsetX, my=e.offsetY;
     const t=(mx-bx)/bw; if(t<0||t>1) return;
     const hh=H(t), u=(by-my)/hh;
     if(u>0&&u<1) S3.pts.push([t,u]);
