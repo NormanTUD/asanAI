@@ -87,6 +87,30 @@ $$ \text{Perception/Mobility} \approx \text{High Computation} $$
 This is why we have AI that can pass the Bar Exam but we don't have a robot that can reliably clear a dinner table. Evolution has “encoded” millions of years of sensorimotor optimization into our biology, making it feel “easy” to us, whereas abstract logic is a recent, thin veneer that is computationally easier to simulate with silicon.
 </div>
 
+<div class="md">
+### Brooks' Manifesto: "Elephants Don't Play Chess"
+
+In 1990 — building on his 1986 subsumption-architecture paper \citeauthorlastnameand{brooks1986layered} (\citeyear{brooks1986layered}) — roboticist \citeauthor{brooks1990elephants} (\citeyear{brooks1990elephants}) sharpened Moravec's empirical observation into a programmatic thesis. Where Moravec noted that sensorimotor skills are computationally hard, \citeauthor{brooks1990elephants} argued that the discipline's whole research agenda had been pointed at the wrong end of the problem.
+
+<div class="smart-quote" data-cite="brooks1990elephants">
+When we examine very simple level intelligence we find that explicit representations and models of the world simply get in the way. It is better to use the world as its own model.
+</div>
+
+The title is the argument in miniature: elephants have huge brains, display sophisticated behaviour in their environment, and *do not play chess*. Yet for thirty years the field's flagship goal had been a chess grandmaster. \citeauthor{brooks1990elephants}' diagnosis was that classical, *symbolic* AI — what he called "Good Old-Fashioned AI" (GOFAI) — was solving the wrong problem. It tried to build intelligence by stacking ever more elaborate symbolic representations and inference engines on top of one another, in the hope that reasoning alone would bootstrap its way to generality. \citeauthor{brooks1990elephants}' counter-thesis, the seed of what became *nouvelle AI*, was that real-world competence comes from a creature's continuous sensorimotor coupling with its environment, not from detached symbol manipulation. He summarised the programme as eight claims, the most quoted of which read:
+
+* "The world is its own best model. [...] The trick is to sense it appropriately and often enough."
+* "Intelligence is in the eye of the observer."
+* "Intelligence has to do with finding a way to satisfy many competing constraints."
+* "Intelligence requires a body."
+* "We need to be able to make complete intelligent systems, not fragments thereof."
+
+The architectural consequence was the *subsumption architecture*: a layered stack of independently running, perception–action loops in which higher layers can subsume (override) the outputs of lower ones, without any central world model. Each layer is a thin, embodied competence (avoid obstacles, wander, explore, build maps, plan), wired directly from sensors to motors. There is no global representation, no explicit reasoning module, no place where a "central plan" lives. Brooks' robots — *Allen*, *Herbert*, *Genghis* — were built this way in the late 1980s and early 1990s, and they did navigate cluttered, dynamic environments. Crucially, they did so with what looked like no reasoning at all.
+
+The deeper point is *methodological*. \citeauthor{brooks1990elephants}' complaint was that symbolic AI was building systems that only worked in carefully constrained, sanitised worlds and failed the moment a camera frame shifted by one pixel. His alternative was to *build systems that work in the real world, with brittleness*, the right way to find out what we do not yet understand. The implicit wager was that progress comes from being forced to face the full mess of embodied reality, not from retreating into more abstract reasoning about an increasingly idealised one.
+
+**Implications for AI today.** Brooks' manifesto sits at the root of three live debates that this chapter has already touched. First, it is the founding argument of *embodied cognition* and *4E cognition* — the claim that cognition cannot be studied in disembodied form, a claim modern LLMs sit awkwardly against: their competence is total in the world of tokens and zero in the world of physics. Second, it is the original critique of *symbolic representation*, which is now the standard objection to any theory of mind that posits explicit internal "language of thought." Third, it is the spiritual ancestor of every modern claim that *scale alone* will not give us general intelligence: \citeauthor{brooks1990elephants}' bet was that a system missing the right interfaces to the world cannot acquire general intelligence no matter how much it scaled within its symbolic silo. From today's vantage, the LLM is the final triumph of the chess program — every abstract competence, no sensorimotor grounding — and the question Brooks posed is exactly the question \citeauthor{moravec1988mindchildren}'s paradox raises: how do you give the elephant a chess-board, when the elephant is the thing you skipped?
+</div>
+
 <div class="md" data-mathlevel="40" data-optionaltitle="The Winograd Schema: Common Sense as a Test of Intelligence">
 ### The Winograd Schema: Common Sense as a Test of Intelligence
 
