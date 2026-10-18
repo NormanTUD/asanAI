@@ -1,0 +1,2611 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mensch-Computer-Symbiose — Licklider 1960, interaktiv</title>
+
+<!-- Plotly für Diagramme -->
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.32.0/plotly.min.js"></script>
+<!-- Temml für Formelsatz -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/Temml-Local.css">
+<script src="https://cdn.jsdelivr.net/npm/temml@0.10.29/dist/temml.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Fraunces:opsz,wght@9..144,400;9..144,700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#070a12;
+  --bg2:#0b1020;
+  --panel:rgba(18,24,43,.72);
+  --panel-solid:#121a2b;
+  --ink:#e8edf7;
+  --ink-dim:#9aa7c2;
+  --ink-faint:#6b7897;
+  --amber:#ffb347;
+  --amber2:#ff8c42;
+  --cyan:#49e8df;
+  --cyan2:#2ab7c8;
+  --violet:#9b7bff;
+  --pink:#ff6fb5;
+  --green:#5ddc8a;
+  --red:#ff5f6d;
+  --line:rgba(255,255,255,.09);
+  --glow-c:0 0 24px rgba(73,232,223,.25);
+  --glow-a:0 0 24px rgba(255,179,71,.25);
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(1200px 700px at 12% -5%, rgba(155,123,255,.16), transparent 60%),
+    radial-gradient(1000px 600px at 92% 8%, rgba(73,232,223,.12), transparent 55%),
+    radial-gradient(900px 900px at 50% 110%, rgba(255,140,66,.10), transparent 60%),
+    var(--bg);
+  color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif;
+  line-height:1.65;
+  overflow-x:hidden;
+}
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.6}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 26px 160px}
+
+/* ---------- Progress ---------- */
+#progress{position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,var(--cyan),var(--violet),var(--amber));
+  z-index:1000;box-shadow:0 0 14px rgba(155,123,255,.7)}
+
+/* ---------- Nav ---------- */
+#nav{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:900;display:flex;flex-direction:column;gap:9px}
+#nav a{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);
+  transition:.3s;position:relative;display:block}
+#nav a:hover,#nav a.on{background:var(--cyan);box-shadow:0 0 14px var(--cyan);transform:scale(1.35)}
+#nav a span{position:absolute;right:20px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:11px;
+  color:var(--ink-dim);background:rgba(10,14,26,.92);padding:3px 9px;border-radius:6px;opacity:0;pointer-events:none;
+  transition:.25s;border:1px solid var(--line)}
+#nav a:hover span{opacity:1}
+@media(max-width:1000px){#nav{display:none}}
+
+/* ---------- Hero ---------- */
+header{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative}
+#figcanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.55}
+header .inner{position:relative;z-index:2;max-width:860px}
+.kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--cyan);margin-bottom:22px}
+h1{font-family:'Fraunces',serif;font-size:clamp(44px,8vw,96px);line-height:1.02;font-weight:700;letter-spacing:-.02em;
+  background:linear-gradient(104deg,#fff 10%,var(--cyan) 42%,var(--violet) 70%,var(--amber) 96%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:18px}
+.sub{font-size:19px;color:var(--ink-dim);max-width:640px;margin:0 auto 10px;font-weight:300}
+.meta{font-family:var(--mono);font-size:12px;color:var(--ink-faint);margin-top:28px;letter-spacing:.08em}
+.scrollhint{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);font-size:11px;font-family:var(--mono);
+  color:var(--ink-faint);letter-spacing:.2em;animation:bob 2.4s ease-in-out infinite;z-index:3}
+@keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,10px);opacity:1}}
+
+/* ---------- Sections ---------- */
+section{padding:96px 0 40px;scroll-margin-top:40px}
+.secnum{font-family:var(--mono);font-size:12px;color:var(--amber);letter-spacing:.24em;text-transform:uppercase;margin-bottom:12px}
+h2{font-family:'Fraunces',serif;font-size:clamp(30px,4.4vw,48px);line-height:1.12;font-weight:700;margin-bottom:16px;letter-spacing:-.015em}
+h3{font-size:20px;font-weight:600;margin:30px 0 10px;color:#fff}
+h4{font-size:15px;font-weight:600;margin:16px 0 6px;color:var(--cyan)}
+p{color:var(--ink-dim);max-width:76ch;margin-bottom:14px;font-weight:300}
+p strong,li strong{color:var(--ink);font-weight:600}
+.lead{font-size:18.5px;color:#cdd7ea}
+em.hl{color:var(--amber);font-style:normal;font-weight:500}
+ul{margin:10px 0 16px 22px;color:var(--ink-dim);font-weight:300}
+li{margin-bottom:7px;max-width:74ch}
+
+/* ---------- Cards / Panels ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:26px;margin:26px 0;
+  backdrop-filter:blur(14px);box-shadow:0 18px 50px rgba(0,0,0,.42)}
+.card.tight{padding:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:860px){.grid2,.grid3{grid-template-columns:1fr}}
+
+.quote{border-left:3px solid var(--amber);padding:14px 0 14px 20px;margin:24px 0;
+  font-family:'Fraunces',serif;font-size:20px;color:#e7ecf8;font-style:italic;line-height:1.5}
+.quote cite{display:block;font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);font-style:normal;margin-top:10px;letter-spacing:.06em}
+
+.pill{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  padding:4px 11px;border-radius:999px;border:1px solid var(--line);color:var(--ink-dim);margin:0 6px 6px 0}
+.pill.c{color:var(--cyan);border-color:rgba(73,232,223,.35);background:rgba(73,232,223,.07)}
+.pill.a{color:var(--amber);border-color:rgba(255,179,71,.35);background:rgba(255,179,71,.07)}
+.pill.v{color:var(--violet);border-color:rgba(155,123,255,.35);background:rgba(155,123,255,.07)}
+
+/* ---------- Controls ---------- */
+.ctrl{display:flex;align-items:center;gap:14px;margin:12px 0;flex-wrap:wrap}
+.ctrl label{font-family:var(--mono);font-size:11.5px;color:var(--ink-dim);min-width:168px;letter-spacing:.04em}
+.ctrl output{font-family:var(--mono);font-size:12.5px;color:var(--cyan);min-width:76px;text-align:right;font-weight:600}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;min-width:140px;height:4px;border-radius:3px;
+  background:linear-gradient(90deg,var(--cyan),var(--violet));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;
+  background:#fff;box-shadow:0 0 12px rgba(73,232,223,.9);cursor:pointer;border:2px solid var(--bg2)}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:#fff;border:2px solid var(--bg2);cursor:pointer}
+button{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;padding:9px 16px;border-radius:10px;
+  border:1px solid rgba(73,232,223,.34);background:rgba(73,232,223,.08);color:var(--cyan);cursor:pointer;transition:.22s}
+button:hover{background:rgba(73,232,223,.2);box-shadow:var(--glow-c);transform:translateY(-1px)}
+button.amb{border-color:rgba(255,179,71,.34);background:rgba(255,179,71,.08);color:var(--amber)}
+button.amb:hover{background:rgba(255,179,71,.2);box-shadow:var(--glow-a)}
+button.on{background:var(--cyan);color:#06202a;font-weight:700}
+input[type=text]{font-family:var(--mono);font-size:13px;padding:9px 13px;border-radius:9px;border:1px solid var(--line);
+  background:rgba(0,0,0,.34);color:var(--ink);outline:none;letter-spacing:.06em}
+input[type=text]:focus{border-color:var(--cyan);box-shadow:var(--glow-c)}
+
+canvas.art{width:100%;display:block;border-radius:14px;background:rgba(0,0,0,.28);border:1px solid var(--line)}
+.plot{width:100%;height:330px}
+.cap{font-size:12.5px;color:var(--ink-faint);font-style:italic;margin-top:10px;text-align:center}
+
+.stat{text-align:center;padding:16px 10px;border-radius:14px;background:rgba(0,0,0,.26);border:1px solid var(--line)}
+.stat .big{font-family:'Fraunces',serif;font-size:40px;font-weight:700;line-height:1;
+  background:linear-gradient(135deg,var(--amber),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat .lbl{font-family:var(--mono);font-size:10.5px;color:var(--ink-faint);letter-spacing:.14em;text-transform:uppercase;margin-top:8px}
+
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);
+  border-top:1px solid var(--line);padding-top:10px;margin-top:18px}
+
+table{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint)}
+td{color:var(--ink-dim);font-weight:300}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1;transform:none}
+
+.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0}
+.flow .node{flex:1;min-width:130px;padding:13px;border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.25);
+  font-size:13px;text-align:center;color:var(--ink-dim);transition:.3s}
+.flow .node.act{border-color:var(--cyan);color:#fff;box-shadow:var(--glow-c);background:rgba(73,232,223,.1)}
+.flow .arrow{color:var(--ink-faint);font-size:17px}
+
+footer{text-align:center;padding:70px 20px;color:var(--ink-faint);font-size:13px;border-top:1px solid var(--line);margin-top:70px}
+.math{color:var(--ink);font-size:16px;text-align:center;margin:14px 0}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<canvas id="stars"></canvas>
+
+<nav id="nav">
+  <a href="#s1" data-s="s1"><span>Symbiose</span></a>
+  <a href="#s2" data-s="s2"><span>Abgrenzung</span></a>
+  <a href="#s3" data-s="s3"><span>Ziele</span></a>
+  <a href="#s4" data-s="s4"><span>Die 85 %</span></a>
+  <a href="#s5" data-s="s5"><span>Wer kann was</span></a>
+  <a href="#s6" data-s="s6"><span>Arbeitsteilung</span></a>
+  <a href="#s7" data-s="s7"><span>Time-Sharing</span></a>
+  <a href="#s8" data-s="s8"><span>Speicher</span></a>
+  <a href="#s9" data-s="s9"><span>Trie-Memory</span></a>
+  <a href="#s10" data-s="s10"><span>Sprache</span></a>
+  <a href="#s11" data-s="s11"><span>Ein/Ausgabe</span></a>
+  <a href="#s12" data-s="s12"><span>Antwort</span></a>
+</nav>
+
+<header>
+  <canvas id="figcanvas"></canvas>
+  <div class="inner">
+    <div class="kicker">J. C. R. Licklider · IRE Transactions · März 1960</div>
+    <h1>Mensch-Computer-<br>Symbiose</h1>
+    <p class="sub">Ein Aufsatz von 1960, der das Internet, den Personal Computer und die grafische Oberfläche vorwegnahm — und dabei nie eine einzige Gleichung benutzte.</p>
+    <p class="sub" style="font-size:15px;color:var(--ink-faint)">Diese Seite erklärt ihn vollständig durch Spielen. Zieh an Reglern, klick auf Dinge, beobachte.</p>
+    <div class="meta">Bolt Beranek and Newman Inc., Cambridge, Mass. · 7 Seiten · 0 Formeln</div>
+  </div>
+  <div class="scrollhint">↓ SCROLLEN</div>
+</header>
+
+<div class="wrap">
+
+<!-- ============ 1 SYMBIOSE ============ -->
+<section id="s1" class="reveal">
+  <div class="secnum">Teil I · Die Metapher</div>
+  <h2>Zwei Wesen, die allein nicht leben können</h2>
+  <p class="lead">Licklider beginnt nicht mit Technik. Er beginnt mit einer Feige.</p>
+  <p>Der Feigenbaum wird <em class="hl">ausschließlich</em> von der Feigenwespe <span class="pill">Blastophaga grossorum</span> bestäubt. Die Larve der Wespe lebt im Fruchtknoten des Feigenbaums und frisst dort. Der Baum kann sich ohne das Insekt nicht fortpflanzen; das Insekt kann ohne den Baum nicht fressen. Zusammen sind sie nicht nur lebensfähig, sondern <em class="hl">produktiv</em>.</p>
+  <p>Dieses „Zusammenleben in inniger Verbindung zweier unähnlicher Organismen" heißt <strong>Symbiose</strong>. Lickliders These: Mensch und Computer sollen genau so zusammenwachsen.</p>
+
+  <div class="card">
+    <h3>Spiel: Trenne sie</h3>
+    <p style="margin-bottom:8px">Der Schieberegler trennt Baum und Wespe. Beobachte, was mit beiden passiert.</p>
+    <div class="ctrl">
+      <label>Kopplung</label>
+      <input type="range" id="symSlider" min="0" max="100" value="100">
+      <output id="symOut">100 %</output>
+    </div>
+    <canvas id="symCanvas" class="art" height="360"></canvas>
+    <div class="grid3" style="margin-top:16px">
+      <div class="stat"><div class="big" id="symTree">100</div><div class="lbl">Feigen / Saison</div></div>
+      <div class="stat"><div class="big" id="symWasp">100</div><div class="lbl">Wespen-Population</div></div>
+      <div class="stat"><div class="big" id="symOut2">100</div><div class="lbl">Gemeinsamer Ertrag</div></div>
+    </div>
+    <p class="cap">Bei voller Kopplung übersteigt der gemeinsame Ertrag die Summe der Einzelteile. Bei Trennung: beide auf null.</p>
+    <div class="tag">Licklider, Abschnitt I-A</div>
+  </div>
+</section>
+
+<!-- ============ 2 ABGRENZUNG ============ -->
+<section id="s2" class="reveal">
+  <div class="secnum">Teil I-B · Was es NICHT ist</div>
+  <h2>Drei Zukünfte, von denen nur eine die seine ist</h2>
+  <p>Licklider grenzt seine Idee scharf gegen zwei Nachbarkonzepte ab. Klick dich durch die drei Modelle — achte darauf, <em class="hl">wo die Initiative liegt</em> und <em class="hl">wer wem hilft</em>.</p>
+
+  <div class="card">
+    <div class="ctrl" style="justify-content:center">
+      <button class="modeBtn on" data-m="0">Mechanisch verlängerter Mensch</button>
+      <button class="modeBtn" data-m="1">Symbiose</button>
+      <button class="modeBtn" data-m="2">Künstliche Intelligenz</button>
+    </div>
+    <canvas id="modeCanvas" class="art" height="330"></canvas>
+    <div id="modeText" style="margin-top:18px"></div>
+  </div>
+
+  <div class="quote">
+    „Es erscheint durchaus möglich, dass elektronische oder chemische Maschinen eines Tages das menschliche Gehirn in den meisten Funktionen übertreffen, die wir heute für ausschließlich unsere halten."
+    <cite>Licklider, 1960 — und trotzdem widmet er den Aufsatz der Zwischenzeit.</cite>
+  </div>
+
+  <div class="card tight">
+    <h3>Die Zeitrechnung, die alles begründet</h3>
+    <p>Eine interdisziplinäre Studiengruppe der Air Force schätzte: erst <strong>1980</strong> werde KI allein militärisch relevant denken können. Licklider rechnet daraus seine Mission:</p>
+    <canvas id="timelineCanvas" class="art" height="190"></canvas>
+    <p class="cap">„Das lässt uns sagen wir fünf Jahre, um die Symbiose zu entwickeln, und 15 Jahre, um sie zu nutzen. Die 15 mögen 10 sein oder 500 — aber jene Jahre sollten die intellektuell kreativsten und aufregendsten der Menschheitsgeschichte sein."</p>
+  </div>
+</section>
+
+<!-- ============ 3 ZIELE ============ -->
+<section id="s3" class="reveal">
+  <div class="secnum">Teil II · Die Ziele</div>
+  <h2>Zwei Ziele, ein Satz von Poincaré</h2>
+  <p>Computer von 1960 lösen <em class="hl">vorformulierte</em> Probleme. Jede Alternative muss im Voraus bedacht sein. Taucht eine unvorhergesehene auf, hält alles an und wartet auf die Programmerweiterung.</p>
+
+  <div class="quote">
+    „Die Frage ist nicht ‚Was ist die Antwort?'. Die Frage ist ‚Was ist die Frage?'"
+    <cite>Henri Poincaré, zitiert von Licklider</cite>
+  </div>
+
+  <div class="card">
+    <h3>Ziel 1 · Den Computer in die <em>formulative</em> Phase holen</h3>
+    <p style="margin-bottom:10px">Zieh den Regler: Wie viel vom Problem verstehst du, <strong>bevor</strong> du anfängst?</p>
+    <div class="ctrl">
+      <label>Vorwissen über das Problem</label>
+      <input type="range" id="formSlider" min="0" max="100" value="20">
+      <output id="formOut">20 %</output>
+    </div>
+    <canvas id="formCanvas" class="art" height="300"></canvas>
+    <div id="formVerdict" class="cap"></div>
+  </div>
+
+  <div class="card">
+    <h3>Ziel 2 · Denken in Echtzeit</h3>
+    <p style="margin-bottom:12px">Lickliders berühmtes Schreckensbeispiel: eine Schlacht mit dem Computer von 1960 leiten. Starte die Simulation.</p>
+    <div class="ctrl">
+      <button id="battleBtn" class="amb">▶ Zeitplan abspielen</button>
+      <button id="battleBtn2">▶ Mit Symbiose</button>
+    </div>
+    <canvas id="battleCanvas" class="art" height="260"></canvas>
+    <p class="cap">47 Sekunden Rechnen — eingebettet in Tage des Wartens. „Offensichtlich wäre die Schlacht vorbei, bevor der zweite Schritt ihrer Planung begonnen hätte."</p>
+    <div class="tag">Licklider, Abschnitt II</div>
+  </div>
+</section>
+
+<!-- ============ 4 DIE 85 % ============ -->
+<section id="s4" class="reveal">
+  <div class="secnum">Teil III-A · Die einzige Messung im ganzen Aufsatz</div>
+  <h2>Er hat sich selbst mit der Stoppuhr überwacht</h2>
+  <p class="lead">Frühjahr und Sommer 1957. Licklider braucht einen Beleg für seine Behauptung — und findet in der gesamten Literatur keine Zeit-und-Bewegungs-Studie geistiger Arbeit. Also macht er sie an sich selbst.</p>
+  <p>Er protokolliert, was er in den Stunden tut, die er als „Arbeit" betrachtet. Er weiß, dass die Stichprobe unzureichend ist. Er ist sein eigenes Versuchskaninchen. Und das Ergebnis erschreckt ihn: <em class="hl">„Perhaps my spectrum is not typical — I hope it is not, but I fear it is."</em></p>
+
+  <div class="card">
+    <h3>Das Ergebnis, interaktiv</h3>
+    <p style="margin-bottom:14px">Fahre mit der Maus über die Ringe. Der äußere Ring ist die Zeit, die er für „Denken" hielt.</p>
+    <canvas id="pieCanvas" class="art" height="420"></canvas>
+    <div id="pieInfo" style="min-height:66px;margin-top:12px;font-size:14.5px;color:var(--ink-dim)"></div>
+  </div>
+
+  <div class="grid3">
+    <div class="stat"><div class="big">85 %</div><div class="lbl">der „Denkzeit" war<br>Schreibkram</div></div>
+    <div class="stat"><div class="big">15 %</div><div class="lbl">tatsächliches<br>Denken</div></div>
+    <div class="stat"><div class="big">1</div><div class="lbl">Versuchsperson<br>(er selbst)</div></div>
+  </div>
+
+  <div class="card">
+    <h3>Die drei Anekdoten, die er erzählt</h3>
+    <p style="margin-bottom:10px">Klick auf eine Karte, um sie als Zeitstrahl zu sehen.</p>
+    <div class="ctrl" style="justify-content:flex-start">
+      <button class="anecBtn on" data-a="0">Die Graphen</button>
+      <button class="anecBtn" data-a="1">Die sechs Kurven</button>
+      <button class="anecBtn" data-a="2">Was er gar nicht erst versuchte</button>
+    </div>
+    <canvas id="anecCanvas" class="art" height="250"></canvas>
+    <div id="anecText" class="cap" style="text-align:left;font-style:normal;font-size:14px;color:var(--ink-dim);line-height:1.6"></div>
+  </div>
+
+  <div class="quote">
+    „Meine Wahl dessen, was ich zu versuchen und was ich nicht zu versuchen wagte, war in beschämend hohem Maße durch Erwägungen der <em>Schreibarbeits-Machbarkeit</em> bestimmt, nicht der intellektuellen Fähigkeit."
+    <cite>Licklider, Abschnitt III-A — der vielleicht bitterste Satz des Aufsatzes</cite>
+  </div>
+</section>
+
+<!-- ============ 5 WER KANN WAS ============ -->
+<section id="s5" class="reveal">
+  <div class="secnum">Teil III-B · Die Asymmetrie</div>
+  <h2>Laut, schmalbandig — und massiv parallel</h2>
+  <p>Lickliders Charakterisierung ist knapp und berühmt. Menschen sind <em class="hl">noisy, narrow-band devices</em> — aber ihr Nervensystem hat sehr viele parallele, gleichzeitig aktive Kanäle. Computer sind schnell und exakt, aber auf eine oder wenige Elementaroperationen zur Zeit beschränkt.</p>
+
+  <div class="card">
+    <h3>Das Fähigkeitsprofil</h3>
+    <p style="margin-bottom:12px">Schalte zwischen den Dimensionen um. Beachte: die Flächen überlappen fast nirgends — genau das ist Lickliders Punkt.</p>
+    <div class="ctrl" style="justify-content:center">
+      <button id="radarMan" class="on amb">Mensch</button>
+      <button id="radarMach" class="on">Maschine</button>
+      <button id="radarSym">Symbiose = Hülle</button>
+    </div>
+    <div id="radarPlot" class="plot" style="height:430px"></div>
+    <p class="cap">„Rechenmaschinen können vieles leicht, gut und schnell, was für Menschen schwierig oder unmöglich ist; und Menschen können vieles leicht und gut — wenn auch nicht schnell —, was für Computer schwierig oder unmöglich ist."</p>
+  </div>
+
+  <div class="card tight">
+    <h3>Der Bandbreiten-Vergleich</h3>
+    <p style="margin-bottom:10px">Zieh den Regler durch die Zeit. Die Lücke ist das eigentliche Problem — und zugleich die Chance.</p>
+    <div class="ctrl">
+      <label>Jahr</label>
+      <input type="range" id="bwSlider" min="1950" max="2025" value="1960">
+      <output id="bwOut">1960</output>
+    </div>
+    <canvas id="bwCanvas" class="art" height="260"></canvas>
+    <p class="cap">Logarithmische Achse. Die menschliche Ausgaberate bleibt konstant — die Maschine entfernt sich.</p>
+  </div>
+</section>
+
+<!-- ============ 6 ARBEITSTEILUNG ============ -->
+<section id="s6" class="reveal">
+  <div class="secnum">Teil IV · Die Lösung</div>
+  <h2>Wer macht was</h2>
+  <p class="lead">Hier steht die eigentliche Antwort des Aufsatzes. Nicht eine Formel, sondern eine <em class="hl">Zuständigkeitsverteilung</em>.</p>
+  <p>Licklider betont zuerst: In vielen Operationen werden die Beiträge so verschmelzen, dass man sie nicht sauber trennen kann. Aber in anderen sind sie trennbar — und dort sieht die Aufteilung so aus:</p>
+
+  <div class="card">
+    <h3>Sortier-Spiel: Wem gehört diese Aufgabe?</h3>
+    <p style="margin-bottom:12px">Klick auf eine Aufgabe, dann auf <strong>Mensch</strong> oder <strong>Maschine</strong>. Licklider verrät dir, ob du richtig lagst.</p>
+    <canvas id="sortCanvas" class="art" height="430"></canvas>
+    <div class="ctrl" style="justify-content:center;margin-top:14px">
+      <button id="sortMan" class="amb">◀ Mensch</button>
+      <span id="sortScore" style="font-family:var(--mono);font-size:13px;color:var(--ink-dim);min-width:120px;text-align:center">0 / 12</span>
+      <button id="sortMach">Maschine ▶</button>
+    </div>
+    <div id="sortFeedback" class="cap" style="min-height:44px;font-style:normal;font-size:14px"></div>
+    <div class="ctrl" style="justify-content:center"><button id="sortReset" style="opacity:.6">↺ Neu</button></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card tight">
+      <h4>Der Mensch</h4>
+      <ul style="font-size:14px">
+        <li>setzt die Ziele und liefert die Motivation</li>
+        <li>formuliert die Hypothesen</li>
+        <li>stellt die Fragen</li>
+        <li>denkt sich Mechanismen, Prozeduren, Modelle aus</li>
+        <li>erinnert sich, dass „so-und-so 1947 etwas Relevantes gemacht hat" — und ahnt, in welcher Zeitschrift</li>
+        <li>definiert Kriterien und bewertet</li>
+        <li><strong>behandelt die Situationen sehr geringer Wahrscheinlichkeit</strong></li>
+        <li>füllt die Lücken, wenn die Maschine keine passende Routine hat</li>
+      </ul>
+      <p style="font-size:13px;color:var(--ink-faint);margin-top:10px">„Im Allgemeinen werden sie annähernde und fehlbare, aber <em>führende</em> Beiträge leisten."</p>
+    </div>
+    <div class="card tight">
+      <h4>Die Maschine</h4>
+      <ul style="font-size:14px">
+        <li>verwandelt Hypothesen in testbare Modelle</li>
+        <li>testet die Modelle gegen Daten</li>
+        <li>beantwortet Fragen</li>
+        <li>simuliert Mechanismen und Modelle</li>
+        <li>transformiert Daten, zeichnet Graphen — „schneidet den Kuchen" so, wie der Mensch es will</li>
+        <li>interpoliert, extrapoliert, transformiert</li>
+        <li>macht aus statischen Gleichungen dynamische Modelle</li>
+        <li>dient als Statistik-, Entscheidungs- und Spieltheorie-Maschine</li>
+      </ul>
+      <p style="font-size:13px;color:var(--ink-faint);margin-top:10px">Mustererkennung und Relevanzbeurteilung macht sie, so gut sie kann — „aber sie akzeptiert dort einen klar untergeordneten Status."</p>
+    </div>
+  </div>
+
+  <div class="card tight">
+    <h3>Das Schlüsselargument: die seltenen Fälle</h3>
+    <p style="margin-bottom:10px">Warum kann man den Menschen nicht einfach weglassen? Weil die Summe vieler unwahrscheinlicher Alternativen keineswegs klein ist. Zieh den Regler.</p>
+    <div class="ctrl">
+      <label>Zahl seltener Fälle</label>
+      <input type="range" id="tailSlider" min="1" max="400" value="120">
+      <output id="tailOut">120</output>
+    </div>
+    <canvas id="tailCanvas" class="art" height="250"></canvas>
+    <p class="cap">„Die Summe der Wahrscheinlichkeiten von Alternativen sehr geringer Wahrscheinlichkeit ist oft viel zu groß, um sie zu vernachlässigen."</p>
+  </div>
+</section>
+
+<!-- ============ 7 TIME-SHARING ============ -->
+<section id="s7" class="reveal">
+  <div class="secnum">Teil V-A · Voraussetzung 1 von 5</div>
+  <h2>Die Geschwindigkeits-Fehlpaarung</h2>
+  <p>Jeder Großrechner von 1960 ist <em class="hl">zu schnell und zu teuer</em>, um mit einem einzelnen Menschen in Echtzeit zu denken. Die Lösung: Er teilt seine Zeit unter vielen Nutzern auf.</p>
+
+  <div class="card">
+    <h3>Spiele den Scheduler</h3>
+    <p style="margin-bottom:12px">Jeder Nutzer denkt, tippt, braucht dann kurz Rechenzeit, denkt wieder. Der Rechner springt zwischen ihnen. Füge Nutzer hinzu und beobachte zwei Dinge: die <strong>Auslastung</strong> steigt, die <strong>Antwortzeit</strong> auch.</p>
+    <div class="ctrl">
+      <label>Anzahl Nutzer</label>
+      <input type="range" id="tsUsers" min="1" max="24" value="6">
+      <output id="tsUsersOut">6</output>
+    </div>
+    <div class="ctrl">
+      <label>Rechenbedarf je Anfrage</label>
+      <input type="range" id="tsLoad" min="1" max="20" value="6">
+      <output id="tsLoadOut">6</output>
+    </div>
+    <canvas id="tsCanvas" class="art" height="420"></canvas>
+    <div class="grid3" style="margin-top:14px">
+      <div class="stat"><div class="big" id="tsUtil">—</div><div class="lbl">CPU-Auslastung</div></div>
+      <div class="stat"><div class="big" id="tsWait">—</div><div class="lbl">Ø Wartezeit</div></div>
+      <div class="stat"><div class="big" id="tsCost">—</div><div class="lbl">Kosten je Nutzer</div></div>
+    </div>
+    <p class="cap">Grün = rechnet. Grau = denkt/tippt. Rot = wartet. Genau dieser Kompromiss ist der Grund, warum Time-Sharing erfunden wurde.</p>
+    <div class="tag">Licklider: „Time-sharing systems are currently under active development."</div>
+  </div>
+
+  <div class="card">
+    <h3>Und dann der Satz, der das Internet vorhersagt</h3>
+    <p style="margin-bottom:14px">Licklider denkt weiter: Ein solches Zentrum allein genügt nicht. Klick auf den Knopf.</p>
+    <div class="ctrl" style="justify-content:center">
+      <button id="netBtn" class="amb">▶ Das Bild vergrößert sich</button>
+    </div>
+    <canvas id="netCanvas" class="art" height="400"></canvas>
+    <p class="cap">„Es erscheint vernünftig, sich für eine Zeit in 10 oder 15 Jahren ein ‚Denkzentrum' vorzustellen, das die Funktionen heutiger Bibliotheken mit erwarteten Fortschritten in Informationsspeicherung und -abruf und den symbiotischen Funktionen vereint. <strong>Das Bild erweitert sich bereitwillig zu einem Netzwerk solcher Zentren</strong>, miteinander verbunden durch Breitband-Kommunikationsleitungen und mit einzelnen Nutzern durch Mietleitungen."</p>
+    <p class="cap" style="color:var(--amber)">Geschrieben 1960. Das ARPANET ging 1969 in Betrieb — unter Lickliders eigener Vorarbeit bei der ARPA.</p>
+  </div>
+</section>
+
+<!-- ============ 8 SPEICHER ============ -->
+<section id="s8" class="reveal">
+  <div class="secnum">Teil V-B · Voraussetzung 2 von 5</div>
+  <h2>Milliarden Bits, Milliarden Dollar</h2>
+  <p>Sobald man daran denkt, einen nennenswerten Teil der Fachliteratur im Computerspeicher zu halten, landet man bei Milliarden von Bits — und, wenn sich nichts ändert, bei Milliarden von Dollar.</p>
+
+  <div class="card">
+    <h3>Was speichern wir überhaupt?</h3>
+    <p style="margin-bottom:12px">Lickliders Antwort ist pragmatisch: <em class="hl">nicht alles</em>. Nur die Teile, die sich am knappsten zusammenfassen lassen — die quantitativen Teile und die Literaturverweise. Zieh den Regler.</p>
+    <div class="ctrl">
+      <label>Anteil gespeichert</label>
+      <input type="range" id="memSlider" min="0" max="100" value="18">
+      <output id="memOut">18 %</output>
+    </div>
+    <canvas id="memCanvas" class="art" height="280"></canvas>
+    <div id="memVerdict" class="cap" style="font-style:normal"></div>
+  </div>
+
+  <div class="quote">
+    „Bücher gehören zu den am schönsten konstruierten und am besten menschengerecht gestalteten Bauteilen, die es gibt."
+    <cite>Licklider — der Computer soll Bücher finden, liefern und zurückbringen, nicht ersetzen.</cite>
+  </div>
+
+  <div class="card">
+    <h3>Die drei Speicherarten</h3>
+    <p style="margin-bottom:12px">Klick auf eine Speicherzelle und versuche, sie zu beschreiben oder zu löschen.</p>
+    <div class="ctrl" style="justify-content:center">
+      <button class="memBtn on" data-k="0">Normal</button>
+      <button class="memBtn" data-k="1">Unauslöschlich</button>
+      <button class="memBtn" data-k="2">Veröffentlicht</button>
+    </div>
+    <canvas id="mem3Canvas" class="art" height="300"></canvas>
+    <div class="ctrl" style="justify-content:center">
+      <button id="memWrite">Schreiben</button>
+      <button id="memErase" class="amb">Löschen</button>
+      <button id="memOver" class="amb">Überschreiben (alle 0→1)</button>
+    </div>
+    <div id="mem3Msg" class="cap" style="font-style:normal;min-height:30px"></div>
+    <p class="cap">Unauslöschlicher Speicher: einmal schreiben, beliebig oft lesen, nie löschen — aber überschreiben im Sinne von „alle Nullen zu Einsen machen", wie ein Durchstreichen. Veröffentlichter Speicher: kommt fertig strukturiert in den Rechner, nur-lesbar.</p>
+  </div>
+</section>
+
+<!-- ============ 9 TRIE ============ -->
+<section id="s9" class="reveal">
+  <div class="secnum">Teil V-C · Voraussetzung 3 von 5 · Das Herzstück</div>
+  <h2>Trie-Memory</h2>
+  <p class="lead">Dies ist die einzige konkrete technische Konstruktion im ganzen Aufsatz. Und sie ist schön.</p>
+  <p>Die Anforderung: Information muss <em class="hl">sowohl nach Namen als auch nach Muster</em> abrufbar sein — und zwar durch ein Verfahren, das viel schneller ist als serielles Durchsuchen. Edward Fredkin hat eine Idee dafür. Der Name kommt von <span class="pill c">re<strong style="color:var(--amber)">trie</strong>val</span> — und davon, dass die verzweigende Struktur wie ein Baum aussieht.</p>
+
+  <div class="card">
+    <h3>Das Problem zuerst: serielles Suchen</h3>
+    <p style="margin-bottom:12px">So funktioniert gewöhnlicher Speicher, wenn man nach einem Namen sucht statt nach einer Adresse. Drück auf Start.</p>
+    <div class="ctrl">
+      <button id="linBtn" class="amb">▶ Linear suchen</button>
+      <label style="min-width:auto">Einträge</label>
+      <input type="range" id="linN" min="8" max="400" value="60" style="max-width:200px">
+      <output id="linNOut">60</output>
+    </div>
+    <canvas id="linCanvas" class="art" height="200"></canvas>
+    <div class="grid2" style="margin-top:10px">
+      <div class="stat"><div class="big" id="linSteps">—</div><div class="lbl">Schritte linear</div></div>
+      <div class="stat"><div class="big" id="linTrie">—</div><div class="lbl">Schritte im Trie</div></div>
+    </div>
+    <p class="cap">Linear: im Mittel N/2 Schritte. Trie: so viele Schritte, wie das Wort Zeichen hat — <em>unabhängig davon, wie viel gespeichert ist</em>.</p>
+  </div>
+
+  <div class="card">
+    <h3>Jetzt bau einen Trie</h3>
+    <p style="margin-bottom:12px">Tippe ein Wort und drück Enter oder „Einfügen". Beobachte, wie gemeinsame Anfangsbuchstaben <em class="hl">denselben Speicherplatz teilen</em>.</p>
+    <div class="ctrl">
+      <input type="text" id="trieInput" placeholder="z.B. EGAN" maxlength="12" style="flex:1;min-width:180px">
+      <button id="trieAdd">Einfügen</button>
+      <button id="trieFind" class="amb">Suchen</button>
+      <button id="trieReset" style="opacity:.6">↺ Leeren</button>
+    </div>
+    <div class="ctrl">
+      <button class="trieEx" data-w="EGAN,JP">EGAN,JP</button>
+      <button class="trieEx" data-w="EGAN,JAMES">EGAN,JAMES</button>
+      <button class="trieEx" data-w="EGAL">EGAL</button>
+      <button class="trieEx" data-w="EIS">EIS</button>
+      <button class="trieEx" data-w="MATRIX">MATRIX</button>
+      <button class="trieEx" data-w="MATRIZE">MATRIZE</button>
+      <button class="trieEx" data-w="MAUS">MAUS</button>
+    </div>
+    <canvas id="trieCanvas" class="art" height="440"></canvas>
+    <div id="trieMsg" class="cap" style="font-style:normal;min-height:36px;font-size:14px"></div>
+    <div class="grid3" style="margin-top:8px">
+      <div class="stat"><div class="big" id="trieWords">0</div><div class="lbl">Wörter</div></div>
+      <div class="stat"><div class="big" id="trieNodes">0</div><div class="lbl">belegte Zellen</div></div>
+      <div class="stat"><div class="big" id="trieSaved">0</div><div class="lbl">gesparte Zellen</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Lickliders sechs Eigenschaften</h3>
+    <p style="margin-bottom:12px">Klick jede an — die Visualisierung oben hebt hervor, worum es geht.</p>
+    <div id="trieProps"></div>
+  </div>
+
+  <div class="card tight">
+    <h3>Der Effizienz-Haken</h3>
+    <p style="margin-bottom:10px">„Das Trie-Speicherschema ist ineffizient für kleine Speicher, aber es wird zunehmend effizienter in der Nutzung des verfügbaren Platzes, je größer der Speicher wird." Zieh den Regler durch.</p>
+    <div class="ctrl">
+      <label>Gespeicherte Wörter</label>
+      <input type="range" id="effSlider" min="1" max="100000" value="50">
+      <output id="effOut">50</output>
+    </div>
+    <div id="effPlot" class="plot"></div>
+    <div id="effVerdict" class="cap" style="font-style:normal"></div>
+  </div>
+
+  <div class="card tight">
+    <h3>Und der Rückwärtsgang: Egan, J. P. → Egan, James</h3>
+    <p style="margin-bottom:10px">Eigenschaft 6 ist Lickliders Lieblingsdetail: Wenn man den Trie auf einer Ebene betrachtet, sieht man alle ähnlichen Einträge auf einmal. Fehlt ein Eintrag, geht man ein, zwei Schritte zurück und findet die Spur.</p>
+    <div class="ctrl" style="justify-content:center">
+      <button id="egBtn" class="amb">▶ Suche „EGAN, J. P." — nicht vorhanden</button>
+    </div>
+    <canvas id="egCanvas" class="art" height="330"></canvas>
+    <div id="egMsg" class="cap" style="font-style:normal;min-height:30px;font-size:14px"></div>
+    <p class="cap">„Falls es keinen Eintrag für Egan, J. P. gibt, ist es nur ein Schritt oder zwei rückwärts, um die Spur von Egan, James aufzunehmen." — Genau so verhält sich menschliches Erinnern: man tastet sich zur ungefähren Stelle und schaut, was in der Nähe liegt.</p>
+    <div class="tag">Licklider zitiert hier unveröffentlichte Arbeit von Edward Fredkin</div>
+  </div>
+</section>
+
+<!-- ============ 10 SPRACHE ============ -->
+<section id="s10" class="reveal">
+  <div class="secnum">Teil V-D · Voraussetzung 4 von 5</div>
+  <h2>Das Sprachproblem</h2>
+  <p class="lead">„Die grundlegende Unähnlichkeit zwischen menschlichen Sprachen und Computersprachen mag das ernsteste Hindernis für echte Symbiose sein."</p>
+  <p>Lickliders Diagnose ist präzise und bis heute gültig: Anweisungen an Computer spezifizieren <em class="hl">Wege</em>. Anweisungen an Menschen spezifizieren <em class="hl">Ziele</em>.</p>
+
+  <div class="card">
+    <h3>Boston → Los Angeles</h3>
+    <p style="margin-bottom:12px">Lickliders eigenes Bild. Wer würde Boston mit einer detaillierten Routenspezifikation verlassen? Klick die beiden Modi.</p>
+    <div class="ctrl" style="justify-content:center">
+      <button id="laProc" class="on">Prozedur (Computer)</button>
+      <button id="laGoal" class="amb">Ziel (Mensch)</button>
+      <button id="laRun">▶ Losfahren</button>
+    </div>
+    <canvas id="laCanvas" class="art" height="360"></canvas>
+    <div id="laMsg" class="cap" style="font-style:normal;min-height:40px;font-size:14px"></div>
+    <p class="cap">„Um Wiener zu paraphrasieren: Menschen auf dem Weg nach Los Angeles versuchen fortwährend, den Betrag zu verringern, um den sie <em>noch nicht</em> im Smog sind."</p>
+  </div>
+
+  <div class="card tight">
+    <h3>Der Smog-Gradient: Hill-Climbing</h3>
+    <p style="margin-bottom:10px">Das ist keine Metapher, sondern ein Algorithmus. Setz einen Startpunkt per Klick — das Programm sucht sich selbst den Weg ins Ziel, ohne dass jemand die Route kennt.</p>
+    <div class="ctrl">
+      <label>Schrittweite</label>
+      <input type="range" id="hcStep" min="1" max="30" value="10">
+      <output id="hcStepOut">10</output>
+    </div>
+    <div class="ctrl">
+      <label>Störung (Rauschen)</label>
+      <input type="range" id="hcNoise" min="0" max="50" value="8">
+      <output id="hcNoiseOut">8</output>
+    </div>
+    <canvas id="hcCanvas" class="art" height="380"></canvas>
+    <p class="cap">Klick irgendwo hin, um neu zu starten. Dunkel = weit vom Ziel, hell = nah dran. Bei zu großer Schrittweite springt die Suche über das Ziel hinaus; bei zu viel Rauschen irrt sie umher. Das ist der „problem-solving, hill-climbing, self-organizing"-Pfad, den Licklider als Weg 1 beschreibt.</p>
+  </div>
+
+  <div class="card tight">
+    <h3>Weg 2: Bausteine zur Laufzeit zusammenstecken</h3>
+    <p style="margin-bottom:10px">Der zweite, einfachere Pfad: vorprogrammierte Segmente, die der Mensch per Namen aufruft und in Echtzeit verkettet — „wie die Wörter und Phrasen der Sprache". Zieh Bausteine in die Reihe.</p>
+    <canvas id="blockCanvas" class="art" height="300"></canvas>
+    <div id="blockMsg" class="cap" style="font-style:normal;min-height:34px;font-size:14px"></div>
+    <p class="cap">Fredkins Trie-Memory liefert dafür laut Licklider „ein vielversprechendes Paradigma" — weil man eine Funktion als Argument einer anderen Funktion speichern kann (Eigenschaft 5). Der Grund, warum das 1960 niemand baute: Es hätte nichts gebracht, solange keine Maschine sinnvoll darauf antworten konnte.</p>
+  </div>
+</section>
+
+<!-- ============ 11 I/O ============ -->
+<section id="s11" class="reveal">
+  <div class="secnum">Teil V-E · Voraussetzung 5 von 5</div>
+  <h2>Die am weitesten zurückliegende Abteilung</h2>
+  <p>In allgemein verfügbaren Computern gibt es 1960 „praktisch keine Vorkehrung für wirksamere, unmittelbare Mensch-Maschine-Kommunikation, als sie mit einer elektrischen Schreibmaschine erreichbar ist."</p>
+  <p>Nirgends, so Licklider, gibt es irgendetwas, das der Flexibilität und Bequemlichkeit von <em class="hl">Bleistift und Schmierblock</em> oder <em class="hl">Kreide und Tafel</em> nahekommt. Daraus leitet er drei Geräte ab.</p>
+
+  <div class="card">
+    <h3>1 · Desk-Surface Display and Control</h3>
+    <p style="margin-bottom:12px">Zeichne mit der Maus in das Feld. Die Maschine liest mit, erkennt Symbole und setzt sie sofort in sauberen Schriftsatz — „an der Stelle jedes handgezeichneten Symbols".</p>
+    <canvas id="deskCanvas" class="art" height="400" style="cursor:crosshair"></canvas>
+    <div class="ctrl" style="justify-content:center">
+      <button id="deskClear" style="opacity:.7">↺ Löschen</button>
+      <button id="deskRecog" class="amb">✓ Maschine liest mit</button>
+      <button id="deskGraph">∿ Als Funktion übergeben</button>
+    </div>
+    <div id="deskMsg" class="cap" style="font-style:normal;min-height:36px;font-size:14px"></div>
+    <p class="cap">1960 beschrieben. 1963 baute Ivan Sutherland <em>Sketchpad</em>. Die Maus kam 1968, der erste kommerzielle Grafiktablet-Rechner später. Licklider sah hier den Partner, der „ein präziser Zeichner, ein blitzschneller Rechner und ein Gedächtniszauberer in einem" ist.</p>
+  </div>
+
+  <div class="card">
+    <h3>2 · Computer-Posted Wall Display</h3>
+    <p style="margin-bottom:12px">Mehrere Menschen steuern Fahrzeuge, deren Verhalten sich wechselseitig beeinflusst. Manches muss <strong>alle</strong> gleichzeitig erreichen, manches nur ein oder zwei. Alles auf einen Schirm zu werfen ergäbe „nur eine Verwirrung uninterpretierbaren Durcheinanders".</p>
+    <div class="ctrl">
+      <label>Filterung je Operator</label>
+      <input type="range" id="wallFilter" min="0" max="100" value="0">
+      <output id="wallOut">0 %</output>
+    </div>
+    <canvas id="wallCanvas" class="art" height="400"></canvas>
+    <p class="cap">Links die gemeinsame Lagewand, rechts die individuellen Display-Control-Einheiten. Licklider berichtet von Laborexperimenten: informelle, <em>parallele</em> Anordnungen von Operatoren, die sich über eine große Lagedarstellung koordinieren, haben wichtige Vorteile gegenüber der verbreiteteren Anordnung mit Einzelkonsolen, die ein Computer korreliert.</p>
+  </div>
+
+  <div class="card">
+    <h3>3 · Automatische Spracherzeugung und -erkennung</h3>
+    <p style="margin-bottom:12px">Die Frage, die immer gestellt wird, wenn solche Systeme diskutiert werden. Lickliders Antwort ist eine Kosten-Nutzen-Rechnung — probiere die Vokabulargrößen durch.</p>
+    <div class="ctrl">
+      <label>Vokabulargröße</label>
+      <input type="range" id="vocSlider" min="0" max="4" value="0">
+      <output id="vocOut">10</output>
+    </div>
+    <canvas id="vocCanvas" class="art" height="330"></canvas>
+    <div id="vocMsg" style="margin-top:12px;font-size:14px;color:var(--ink-dim);min-height:72px"></div>
+  </div>
+
+  <div class="card tight">
+    <h3>Warum überhaupt sprechen? Lickliders Zielgruppenanalyse</h3>
+    <table>
+      <tr><th>Nutzer</th><th>Zeitdruck</th><th>Lickliders Urteil</th></tr>
+      <tr><td>Konzernpräsident</td><td>Geschäftliches bewegt sich langsam genug für Besprechungen</td><td>Symbiose nur „als Liebhaberei". Computerspezialisten sollen die Interaktion übernehmen.</td></tr>
+      <tr><td>Militärischer Befehlshaber</td><td>„Es ist leicht, den Zehn-Minuten-Krieg überzudramatisieren — aber es wäre gefährlich, damit zu rechnen, mehr als zehn Minuten zu haben."</td><td>Echter Bedarf. Hier wird Sprache gebraucht.</td></tr>
+    </table>
+    <p style="font-size:13.5px;color:var(--ink-faint);margin-top:10px">Der eigentliche Antrieb, sagt Licklider offen: „Man kann einen militärischen Befehlshaber oder einen Konzernpräsidenten kaum von seiner Arbeit wegholen, um ihm das Tippen beizubringen."</p>
+  </div>
+
+  <div class="card tight">
+    <h3>Die Schleife, die sich selbst beschleunigt</h3>
+    <p style="margin-bottom:10px">Lickliders letzter Gedanke im Aufsatz ist rekursiv — und drückt das Symbiose-Prinzip in Reinform aus. Drück auf Start.</p>
+    <div class="ctrl" style="justify-content:center"><button id="loopBtn" class="amb">▶ Schleife starten</button></div>
+    <canvas id="loopCanvas" class="art" height="330"></canvas>
+    <p class="cap">Vor zwei, drei Jahren schätzte man: Spracherkennung für große Vokabulare braucht 10–15 Jahre. Jetzt sehen viele die Aussicht, diesen Wissenserwerb <em>mit Hilfe von Computern</em> zu beschleunigen. Das bringt die Schätzung auf etwa fünf Jahre herunter — „die fünf Jahre, die eben erwähnt wurden."</p>
+  </div>
+</section>
+
+<!-- ============ 12 ANTWORT ============ -->
+<section id="s12" class="reveal">
+  <div class="secnum">Zusammenfassung · Die Antwort</div>
+  <h2>Was hat er gefragt, was hat er geantwortet?</h2>
+
+  <div class="card">
+    <h3>Die ganze Argumentationskette in einem Bild</h3>
+    <p style="margin-bottom:12px">Klick auf einen Knoten, um zum Abschnitt zu springen. Die Kette läuft von der Beobachtung bis zur Prognose.</p>
+    <canvas id="archCanvas" class="art" height="520" style="cursor:pointer"></canvas>
+    <div id="archMsg" class="cap" style="font-style:normal;min-height:52px;font-size:14px;text-align:left"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card tight">
+      <h4>Die Frage</h4>
+      <p style="font-size:14.5px">Wie kann Denken, das heute zu 85 % aus Schreibkram besteht und in dem die Wahl der Probleme durch <em>Machbarkeit der Fleißarbeit</em> statt durch intellektuelle Fähigkeit bestimmt wird, von Maschinen so unterstützt werden, dass der Mensch wieder <strong>formulieren</strong> und <strong>in Echtzeit</strong> denken kann?</p>
+    </div>
+    <div class="card tight">
+      <h4>Die Antwort</h4>
+      <p style="font-size:14.5px">Nicht durch Ersetzen (KI), nicht durch Verlängern (Werkzeug), sondern durch <strong>enge Kopplung</strong> mit klarer Arbeitsteilung: Mensch setzt Ziele, Hypothesen, Kriterien und behandelt die seltenen Fälle; Maschine macht alles Routinisierbare. Machbar, sobald fünf Voraussetzungen erfüllt sind.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Die fünf Voraussetzungen — und was daraus wurde</h3>
+    <p style="margin-bottom:12px">Lickliders Prognose war: fünf Jahre entwickeln, dann fünfzehn nutzen. Fahre über die Balken.</p>
+    <div id="prereqPlot" class="plot" style="height:360px"></div>
+    <div id="prereqMsg" class="cap" style="font-style:normal;min-height:56px;font-size:14px;text-align:left"></div>
+  </div>
+
+  <div class="quote" style="font-size:22px">
+    „Die 15 mögen 10 sein oder 500 — aber jene Jahre sollten intellektuell die kreativsten und aufregendsten in der Geschichte der Menschheit sein."
+    <cite>J. C. R. Licklider, Man-Computer Symbiosis, März 1960 — letzter Satz der Einleitung</cite>
+  </div>
+
+  <div class="card tight">
+    <h3>Nachtrag: Was Licklider selbst daraus machte</h3>
+    <p>1962 wurde er Leiter des Information Processing Techniques Office der ARPA. Von dort finanzierte er Time-Sharing, interaktive Grafik und das Netzwerk, das 1969 als ARPANET startete. Das <em>„Netzwerk solcher Zentren, verbunden durch Breitband-Kommunikationsleitungen"</em> aus Abschnitt V-A war keine Vorhersage. Es war ein Bauplan, den der Autor selbst beauftragt hat.</p>
+    <div style="margin-top:14px">
+      <span class="pill c">Time-Sharing</span><span class="pill c">CTSS 1961</span><span class="pill v">Sketchpad 1963</span><span class="pill v">Maus 1968</span><span class="pill a">ARPANET 1969</span><span class="pill a">Trie heute in jedem Autocomplete</span>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  Interaktive Darstellung von <strong>J. C. R. Licklider, „Man-Computer Symbiosis"</strong>, IRE Transactions on Human Factors in Electronics, HFE-1, S. 4–11, März 1960.<br>
+  Alle Zitate stammen aus dem Originaltext. Bolt Beranek and Newman Inc., Cambridge, Mass.
+</footer>
+
+<script>
+/* ============================================================
+   GRUNDLAGEN
+   ============================================================ */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const C={ink:'#e8edf7',dim:'#9aa7c2',faint:'#6b7897',amber:'#ffb347',amber2:'#ff8c42',
+  cyan:'#49e8df',cyan2:'#2ab7c8',violet:'#9b7bff',pink:'#ff6fb5',green:'#5ddc8a',red:'#ff5f6d',line:'rgba(255,255,255,.09)'};
+const lerp=(a,b,t)=>a+(b-a)*t, clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+function setup(cv){
+  const dpr=window.devicePixelRatio||1;
+  const r=cv.getBoundingClientRect();
+  const h=parseInt(cv.getAttribute('height'))||300;
+  cv.width=Math.max(1,r.width*dpr); cv.height=h*dpr;
+  cv.style.height=h+'px';
+  const x=cv.getContext('2d'); x.setTransform(dpr,0,0,dpr,0,0);
+  return {x,W:r.width||900,H:h};
+}
+function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath();}
+function txt(x,s,a,b,size,col,align='left',weight='400',fam="'Inter',sans-serif"){
+  x.font=weight+' '+size+"px "+fam; x.fillStyle=col; x.textAlign=align; x.textBaseline='middle'; x.fillText(s,a,b);
+}
+function mono(x,s,a,b,size,col,align='left',weight='400'){txt(x,s,a,b,size,col,align,weight,"'JetBrains Mono',monospace");}
+function glow(x,col,blur,fn){x.save();x.shadowColor=col;x.shadowBlur=blur;fn();x.restore();}
+function arrow(x,x1,y1,x2,y2,col,w=2){
+  x.strokeStyle=col;x.lineWidth=w;x.beginPath();x.moveTo(x1,y1);x.lineTo(x2,y2);x.stroke();
+  const a=Math.atan2(y2-y1,x2-x1),s=7;
+  x.fillStyle=col;x.beginPath();x.moveTo(x2,y2);
+  x.lineTo(x2-s*Math.cos(a-0.4),y2-s*Math.sin(a-0.4));
+  x.lineTo(x2-s*Math.cos(a+0.4),y2-s*Math.sin(a+0.4));x.closePath();x.fill();
+}
+function wrapText(x,s,a,b,maxW,lh,size,col){
+  x.font='300 '+size+"px 'Inter',sans-serif";x.fillStyle=col;x.textAlign='left';x.textBaseline='top';
+  const words=s.split(' ');let line='',y=b;
+  for(const w of words){
+    const t=line?line+' '+w:w;
+    if(x.measureText(t).width>maxW&&line){x.fillText(line,a,y);line=w;y+=lh;}
+    else line=t;
+  }
+  x.fillText(line,a,y);return y+lh;
+}
+
+/* Progress + Reveal + Nav */
+addEventListener('scroll',()=>{
+  const sc=scrollY,max=document.body.scrollHeight-innerHeight;
+  $('#progress').style.width=(sc/max*100)+'%';
+  let cur=null;
+  $$('section').forEach(s=>{const r=s.getBoundingClientRect();if(r.top<innerHeight*0.45)cur=s.id;});
+  $$('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.s===cur));
+});
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.08})
+  .observe&&$$('.reveal').forEach(el=>{
+    new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.08}).observe(el);
+  });
+
+/* Sterne */
+(function(){
+  const cv=$('#stars');
+  function draw(){
+    const dpr=devicePixelRatio||1;
+    cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;
+    cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px';
+    const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);
+    for(let i=0;i<220;i++){
+      const a=Math.random()*innerWidth,b=Math.random()*innerHeight,r=Math.random()*1.3;
+      x.fillStyle=`rgba(255,255,255,${Math.random()*.45+.05})`;
+      x.beginPath();x.arc(a,b,r,0,7);x.fill();
+    }
+  }
+  draw();addEventListener('resize',draw);
+})();
+
+/* ============================================================
+   HERO: Feige & Wespe
+   ============================================================ */
+(function(){
+  const cv=$('#figcanvas');let t=0;
+  function frame(){
+    const dpr=devicePixelRatio||1;
+    cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;
+    cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px';
+    const x=cv.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);
+    const W=innerWidth,H=innerHeight;
+    t+=0.006;
+    // zwei Knotenwolken die sich verweben
+    const n=70;
+    const pts=[];
+    for(let i=0;i<n;i++){
+      const ang=i/n*Math.PI*2;
+      const side=i%2;
+      const cx=side?W*0.5+Math.cos(t*0.6)*140:W*0.5-Math.cos(t*0.6)*140;
+      const r=150+Math.sin(ang*3+t*2)*60;
+      pts.push({x:cx+Math.cos(ang+t*(side?1:-1))*r*0.9,
+                y:H*0.5+Math.sin(ang+t*(side?1:-1))*r*0.55,side});
+    }
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+        const d=Math.hypot(dx,dy);
+        if(d<120){
+          const mixed = pts[i].side!==pts[j].side;
+          x.strokeStyle = mixed
+            ? `rgba(255,179,71,${(1-d/120)*0.32})`
+            : `rgba(73,232,223,${(1-d/120)*0.14})`;
+          x.lineWidth = mixed?1.2:0.7;
+          x.beginPath();x.moveTo(pts[i].x,pts[i].y);x.lineTo(pts[j].x,pts[j].y);x.stroke();
+        }
+      }
+    }
+    for(const p of pts){
+      x.fillStyle=p.side?'rgba(255,179,71,.85)':'rgba(73,232,223,.85)';
+      x.beginPath();x.arc(p.x,p.y,1.9,0,7);x.fill();
+    }
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ============================================================
+   1 · SYMBIOSE: Feigenbaum & Wespe
+   ============================================================ */
+(function(){
+  const cv=$('#symCanvas'), sl=$('#symSlider');
+  let wasps=[], t=0;
+  for(let i=0;i<26;i++) wasps.push({a:Math.random()*7, r:30+Math.random()*50, s:0.4+Math.random()*0.9, ph:Math.random()*7});
+
+  function draw(){
+    const {x,W,H}=setup(cv); t+=0.016;
+    const k=+sl.value/100;
+    const gap=(1-k)*(W*0.30);
+    const treeX=W*0.34-gap, waspX=W*0.66+gap;
+    const cyBase=H*0.55;
+
+    // Gesundheitswerte
+    const health=Math.pow(k,0.7);
+    const figs=Math.round(100*health);
+    const pop=Math.round(100*health);
+    const synergy=Math.round(100*health*(1+0.55*k));
+    $('#symOut').textContent=Math.round(k*100)+' %';
+    $('#symTree').textContent=figs;
+    $('#symWasp').textContent=pop;
+    $('#symOut2').textContent=synergy;
+
+    // --- Baum ---
+    const trunkH=110+health*40;
+    x.strokeStyle=`rgba(${lerp(90,140,health)|0},${lerp(80,100,health)|0},70,.9)`;
+    x.lineWidth=12; x.lineCap='round';
+    x.beginPath();x.moveTo(treeX,cyBase+90);x.lineTo(treeX,cyBase+90-trunkH);x.stroke();
+    // Äste
+    function branch(bx,by,ang,len,d){
+      if(d===0)return;
+      const ex=bx+Math.cos(ang)*len, ey=by+Math.sin(ang)*len;
+      x.lineWidth=d*1.9;
+      x.strokeStyle=`rgba(${lerp(80,150,health)|0},${lerp(70,110,health)|0},70,${.35+.5*health})`;
+      x.beginPath();x.moveTo(bx,by);x.lineTo(ex,ey);x.stroke();
+      branch(ex,ey,ang-0.45+Math.sin(t*0.6+d)*0.04,len*0.72,d-1);
+      branch(ex,ey,ang+0.45+Math.cos(t*0.5+d)*0.04,len*0.72,d-1);
+    }
+    branch(treeX,cyBase+90-trunkH,-Math.PI/2,62,5);
+    // Krone
+    const leafN=Math.round(70*health)+8;
+    for(let i=0;i<leafN;i++){
+      const a=i/leafN*7+t*0.1, r=20+((i*37)%70);
+      const lx=treeX+Math.cos(a)*r*1.25, ly=cyBase+90-trunkH-40+Math.sin(a)*r*0.75;
+      x.fillStyle=`rgba(${lerp(110,70,health)|0},${lerp(100,200,health)|0},${lerp(70,110,health)|0},${.25+.45*health})`;
+      x.beginPath();x.arc(lx,ly,5+((i*13)%5),0,7);x.fill();
+    }
+    // Feigen
+    const figN=Math.round(9*health);
+    for(let i=0;i<figN;i++){
+      const a=i/9*7+1.1, r=45+((i*29)%45);
+      const fx=treeX+Math.cos(a)*r*1.1, fy=cyBase+90-trunkH-40+Math.sin(a)*r*0.7;
+      glow(x,'#9b7bff',10,()=>{x.fillStyle='#9b7bff';x.beginPath();x.arc(fx,fy,6,0,7);x.fill();});
+    }
+
+    // --- Wespen ---
+    for(const w of wasps){
+      const alive = (w.s*0.8) < (health+0.15);
+      if(!alive) continue;
+      const a=w.a+t*w.s;
+      const wx=waspX+Math.cos(a)*w.r*1.4, wy=cyBase-20+Math.sin(a*1.3+w.ph)*w.r*0.6;
+      x.fillStyle='rgba(255,179,71,.95)';
+      x.beginPath();x.ellipse(wx,wy,4.5,2.6,a,0,7);x.fill();
+      // Flügel
+      x.strokeStyle='rgba(255,255,255,.35)';x.lineWidth=1;
+      const fl=Math.sin(t*22+w.ph)*3;
+      x.beginPath();x.moveTo(wx,wy);x.lineTo(wx-3,wy-5-fl);x.stroke();
+      x.beginPath();x.moveTo(wx,wy);x.lineTo(wx+3,wy-5+fl);x.stroke();
+    }
+
+    // Verbindungslinien
+    if(k>0.05){
+      x.setLineDash([4,6]);
+      for(let i=0;i<5;i++){
+        const yy=cyBase-60+i*28;
+        x.strokeStyle=`rgba(255,179,71,${k*0.3})`;x.lineWidth=1.3;
+        x.beginPath();x.moveTo(treeX+50,yy);
+        x.quadraticCurveTo((treeX+waspX)/2, yy+Math.sin(t*2+i)*18, waspX-50,yy);
+        x.stroke();
+      }
+      x.setLineDash([]);
+    }
+
+    // Labels
+    mono(x,'FICUS CARICA',treeX,H-26,11,health>0.3?C.cyan:C.faint,'center','600');
+    mono(x,'BLASTOPHAGA GROSSORUM',waspX,H-26,11,health>0.3?C.amber:C.faint,'center','600');
+    if(k<0.25){
+      glow(x,'#ff5f6d',18,()=>txt(x,'getrennt → beide sterben',W/2,H*0.14,17,C.red,'center','600'));
+    } else if(k>0.9){
+      glow(x,'#5ddc8a',18,()=>txt(x,'Symbiose: produktiv & gedeihend',W/2,H*0.14,17,C.green,'center','600'));
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============================================================
+   2 · DREI MODELLE
+   ============================================================ */
+(function(){
+  const cv=$('#modeCanvas'); let mode=0, t=0;
+  const DATA=[
+    {t:'Mechanisch verlängerter Mensch',c:C.violet,
+     d:'In den Mensch-Maschine-Systemen der Vergangenheit lieferte der <strong>menschliche Operator die Initiative, die Richtung, die Integration und das Kriterium</strong>. Die mechanischen Teile waren bloße Verlängerungen — zuerst des Arms, dann des Auges. Es gab nicht zwei unähnliche Organismen, die zusammenleben. Es gab nur eine Art Organismus: den Menschen. Der Rest war nur da, um zu helfen. <em style="color:var(--violet)">J. D. North nannte das 1954 „mechanically extended man".</em>'},
+    {t:'Symbiose',c:C.cyan,
+     d:'<strong>Zwei unähnliche Organismen in enger Kopplung.</strong> Beide bringen ein, was der andere nicht kann. Der Mensch gibt Ziele, Hypothesen, Kriterien — annähernd, fehlbar, aber führend. Die Maschine gibt Geschwindigkeit, Präzision, Gedächtnis. Keiner ist bloße Verlängerung des anderen. Licklider: „Hoffentlich werden in nicht allzu vielen Jahren menschliche Gehirne und Rechenmaschinen sehr eng gekoppelt sein, und die entstehende Partnerschaft wird denken, wie kein menschliches Gehirn je gedacht hat."'},
+    {t:'Künstliche Intelligenz',c:C.pink,
+     d:'„Mechanische Verlängerung" ist bereits dem <strong>Ersatz des Menschen</strong> gewichen, der Automatisierung. Die Menschen, die bleiben, sind mehr da um zu helfen als um geholfen zu bekommen. North hätte sie „humanly extended machines" genannt. Licklider nennt sie <em>halbautomatisch</em>: Systeme, die vollautomatisch werden sollten und das Ziel verfehlten. Er räumt ein: Eines Tages werden Maschinen das Gehirn übertreffen — aber „es wird dennoch eine ziemlich lange Zwischenzeit geben."'}
+  ];
+  function draw(){
+    const {x,W,H}=setup(cv); t+=0.02;
+    const cy=H/2, mx=W*0.28, cx2=W*0.72;
+    // Mensch
+    function human(px,py,sc,alpha){
+      x.save();x.globalAlpha=alpha;
+      x.strokeStyle=C.amber;x.lineWidth=2.4*sc;x.lineCap='round';
+      x.beginPath();x.arc(px,py-30*sc,13*sc,0,7);x.stroke();
+      x.beginPath();x.moveTo(px,py-17*sc);x.lineTo(px,py+20*sc);x.stroke();
+      x.beginPath();x.moveTo(px-18*sc,py-2*sc);x.lineTo(px,py-8*sc);x.lineTo(px+18*sc,py-2*sc);x.stroke();
+      x.beginPath();x.moveTo(px-13*sc,py+46*sc);x.lineTo(px,py+20*sc);x.lineTo(px+13*sc,py+46*sc);x.stroke();
+      x.restore();
+    }
+    function machine(px,py,sc,alpha){
+      x.save();x.globalAlpha=alpha;
+      x.strokeStyle=C.cyan;x.lineWidth=2*sc;
+      rr(x,px-34*sc,py-36*sc,68*sc,72*sc,9*sc);x.stroke();
+      x.fillStyle='rgba(73,232,223,.08)';x.fill();
+      for(let i=0;i<4;i++){
+        const bw=(14+((i*17)%34))*sc;
+        x.fillStyle=`rgba(73,232,223,${.35+0.3*Math.sin(t*3+i)})`;
+        x.fillRect(px-24*sc,py-24*sc+i*14*sc,bw,5*sc);
+      }
+      x.restore();
+    }
+    const d=DATA[mode];
+    if(mode===0){
+      human(mx,cy,1.5,1);
+      machine(cx2,cy,1,0.42);
+      arrow(x,mx+40,cy-10,cx2-48,cy-10,C.amber,2.5);
+      mono(x,'Initiative · Richtung · Integration · Kriterium',(mx+cx2)/2,cy-30,11,C.amber,'center','600');
+      mono(x,'bloße Verlängerung',(cx2),cy+72,11,C.faint,'center');
+      mono(x,'MENSCH',mx,cy+80,12,C.amber,'center','600');
+    } else if(mode===1){
+      const pulse=Math.sin(t*2)*0.06;
+      human(mx+30,cy,1.2+pulse,1);
+      machine(cx2-30,cy,1.2+pulse,1);
+      for(let i=0;i<6;i++){
+        const yy=cy-45+i*18;
+        const off=Math.sin(t*3+i*0.8)*14;
+        x.strokeStyle=i%2?`rgba(255,179,71,.6)`:`rgba(73,232,223,.6)`;
+        x.lineWidth=1.6;x.beginPath();x.moveTo(mx+62,yy);
+        x.quadraticCurveTo(W/2,yy+off,cx2-70,yy);x.stroke();
+        const p=((t*0.35+i*0.17)%1);
+        const px2=lerp(mx+62,cx2-70,i%2?p:1-p);
+        x.fillStyle=i%2?C.amber:C.cyan;x.beginPath();x.arc(px2,yy+off*Math.sin(Math.PI*(i%2?p:1-p)),3,0,7);x.fill();
+      }
+      glow(x,C.cyan,14,()=>mono(x,'↔ ENGE KOPPLUNG ↔',W/2,cy-92,13,C.cyan,'center','700'));
+      mono(x,'Ziele · Hypothesen · Kriterien',mx+30,cy+82,10.5,C.amber,'center','600');
+      mono(x,'Routine · Tempo · Gedächtnis',cx2-30,cy+82,10.5,C.cyan,'center','600');
+    } else {
+      machine(cx2-60,cy,1.7,1);
+      human(mx+60,cy,0.85,0.4);
+      arrow(x,cx2-130,cy+5,mx+100,cy+5,C.pink,2.5);
+      mono(x,'die Maschine leitet',(mx+cx2)/2,cy-16,11,C.pink,'center','600');
+      mono(x,'der Mensch füllt Lücken',(mx+60),cy+62,10.5,C.faint,'center');
+      mono(x,'„humanly extended machine"',W/2,H-24,11,C.pink,'center','600');
+    }
+    glow(x,d.c,12,()=>txt(x,d.t,W/2,24,18,d.c,'center','700'));
+    requestAnimationFrame(draw);
+  }
+  draw();
+  function upd(){
+    $$('.modeBtn').forEach((b,i)=>b.classList.toggle('on',i===mode));
+    $('#modeText').innerHTML='<p style="font-size:15px;max-width:none">'+DATA[mode].d+'</p>';
+  }
+  $$('.modeBtn').forEach(b=>b.onclick=()=>{mode=+b.dataset.m;upd();});
+  upd();
+})();
+
+/* ---- Zeitstrahl ---- */
+(function(){
+  const cv=$('#timelineCanvas');
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const x0=70,x1=W-60,y=H*0.55;
+    x.strokeStyle=C.line;x.lineWidth=2;
+    x.beginPath();x.moveTo(x0,y);x.lineTo(x1,y);x.stroke();
+    const years=[1960,1965,1980];
+    const px=yy=>x0+(yy-1960)/20*(x1-x0);
+    // Zone 1: entwickeln
+    const g1=x.createLinearGradient(px(1960),0,px(1965),0);
+    g1.addColorStop(0,'rgba(73,232,223,.5)');g1.addColorStop(1,'rgba(73,232,223,.15)');
+    x.fillStyle=g1;rr(x,px(1960),y-26,px(1965)-px(1960),22,5);x.fill();
+    const g2=x.createLinearGradient(px(1965),0,px(1980),0);
+    g2.addColorStop(0,'rgba(255,179,71,.5)');g2.addColorStop(1,'rgba(255,179,71,.12)');
+    x.fillStyle=g2;rr(x,px(1965),y-26,px(1980)-px(1965),22,5);x.fill();
+    mono(x,'5 J. Symbiose ENTWICKELN',(px(1960)+px(1965))/2,y-15,9.5,'#042b2b','center','700');
+    mono(x,'15 JAHRE SYMBIOSE NUTZEN',(px(1965)+px(1980))/2,y-15,10.5,'#2a1a00','center','700');
+    years.forEach(yy=>{
+      const p=px(yy);
+      x.strokeStyle=C.dim;x.lineWidth=1.5;x.beginPath();x.moveTo(p,y-4);x.lineTo(p,y+9);x.stroke();
+      mono(x,String(yy),p,y+24,12,C.ink,'center','600');
+    });
+    glow(x,C.pink,12,()=>{
+      x.fillStyle=C.pink;x.beginPath();x.arc(px(1980),y,7,0,7);x.fill();
+    });
+    txt(x,'KI allein denkt militärisch relevant',px(1980),y+48,12,C.pink,'right','600');
+    txt(x,'Schätzung einer Studiengruppe der Air Force',px(1980),y+66,11,C.faint,'right');
+    mono(x,'„Die 15 mögen 10 sein oder 500."',W/2,22,12.5,C.dim,'center');
+  }
+  draw();addEventListener('resize',draw);
+})();
+
+/* ============================================================
+   3 · ZIELE
+   ============================================================ */
+(function(){
+  const cv=$('#formCanvas'), sl=$('#formSlider');
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const k=+sl.value/100;
+    $('#formOut').textContent=Math.round(k*100)+' %';
+    const pad=50, w=W-pad*2, barY=H*0.30, barH=48;
+
+    // Problemraum: vorformuliert vs unbekannt
+    rr(x,pad,barY,w,barH,10);
+    x.fillStyle='rgba(255,255,255,.04)';x.fill();
+    x.strokeStyle=C.line;x.lineWidth=1;x.stroke();
+    const kw=w*k;
+    const g=x.createLinearGradient(pad,0,pad+kw,0);
+    g.addColorStop(0,'rgba(73,232,223,.6)');g.addColorStop(1,'rgba(73,232,223,.3)');
+    x.save();rr(x,pad,barY,w,barH,10);x.clip();
+    x.fillStyle=g;x.fillRect(pad,barY,kw,barH);
+    // unbekannter Bereich schraffiert
+    x.strokeStyle='rgba(255,95,109,.25)';x.lineWidth=1.5;
+    for(let i=0;i<60;i++){x.beginPath();x.moveTo(pad+kw+i*14-40,barY);x.lineTo(pad+kw+i*14-40-barH,barY+barH);x.stroke();}
+    x.restore();
+    mono(x,'VORFORMULIERT',pad+8,barY+barH/2,10.5,'#04282a','left','700');
+    mono(x,'UNVORHERGESEHENE ALTERNATIVEN',pad+w-8,barY+barH/2,10.5,'rgba(255,140,150,.9)','right','700');
+
+    // Ablauf
+    const steps=['Problem\nstellen','Programm\nschreiben','Rechnen','Unerwartete\nAlternative?'];
+    const sy=H*0.68;
+    for(let i=0;i<4;i++){
+      const sx=pad+ (i+0.5)*(w/4);
+      const act = (i<3) || k<0.95;
+      x.strokeStyle=i===3&&k<0.95?C.red:C.line;
+      x.lineWidth=i===3&&k<0.95?2:1;
+      rr(x,sx-62,sy-26,124,52,10);
+      x.fillStyle=i===3&&k<0.95?'rgba(255,95,109,.1)':'rgba(0,0,0,.25)';x.fill();x.stroke();
+      const lines=steps[i].split('\n');
+      lines.forEach((l,j)=>txt(x,l,sx,sy-8+j*16,12,i===3&&k<0.95?C.red:C.dim,'center','500'));
+      if(i<3)arrow(x,sx+64,sy,sx+ (w/4)-64,sy,C.faint,1.5);
+    }
+    // Rückkopplung
+    if(k<0.95){
+      const sx3=pad+3.5*(w/4), sx1=pad+1.5*(w/4);
+      x.strokeStyle=C.red;x.lineWidth=2;x.setLineDash([5,5]);
+      x.beginPath();x.moveTo(sx3,sy+28);x.bezierCurveTo(sx3,sy+66,sx1,sy+66,sx1,sy+28);x.stroke();
+      x.setLineDash([]);
+      arrow(x,sx1+1,sy+40,sx1,sy+30,C.red,2);
+      mono(x,'ALLES HÄLT AN · Programm muss erweitert werden',(sx1+sx3)/2,sy+58,10.5,C.red,'center','600');
+    } else {
+      mono(x,'läuft durch',pad+w/2,sy+52,11,C.green,'center','600');
+    }
+    mono(x,'Wie viel ist im Voraus bekannt?',W/2,20,12,C.dim,'center');
+    let v;
+    if(k<0.3) v='<span style="color:var(--red)">Der Normalfall.</span> „Andere Probleme können <em>ohne</em> Rechnerhilfe gar nicht erst formuliert werden." Genau hier soll die Maschine in die <strong>formulative</strong> Phase kommen — als Partner im intuitiv geführten Versuch-und-Irrtum.';
+    else if(k<0.7) v='Teilweise durchdacht. Es ginge auch allein — aber <em>schneller und leichter</em> durch ein intuitiv geleitetes Trial-and-Error-Verfahren, bei dem der Computer mitarbeitet, Denkfehler aufdeckt und unerwartete Wendungen zeigt.';
+    else if(k<0.95) v='Fast vollständig vorformuliert. Noch immer stoppt jede unvorhergesehene Alternative alles.';
+    else v='<span style="color:var(--green)">Vollständig vorformuliert.</span> Licklider ist ehrlich: „Wenn der Nutzer sein Problem vorher durchdenken kann, ist eine symbiotische Verbindung <em>nicht nötig</em>." Programmieren zwingt zum klaren Denken — das ist oft kein Nachteil.';
+    $('#formVerdict').innerHTML=v;
+  }
+  sl.oninput=draw; draw(); addEventListener('resize',draw);
+})();
+
+/* ---- Schlacht ---- */
+(function(){
+  const cv=$('#battleCanvas');
+  let anim=null, mode=0, p=0;
+  // Licklider's Zeitplan: Problem heute, Programmierer morgen, nächste Woche 5min assemblieren + 47s rechnen
+  const SLOW=[
+    {l:'Problem formulieren',d:1,u:'Tag 1',c:C.amber},
+    {l:'Tag beim Programmierer',d:1,u:'Tag 2',c:C.amber},
+    {l:'Warten auf Rechenzeit',d:5,u:'Tag 3–7',c:C.faint},
+    {l:'Assemblieren (5 min)',d:0.4,u:'',c:C.cyan},
+    {l:'Rechnen (47 s)',d:0.25,u:'',c:C.cyan},
+    {l:'20 Fuß Papier lesen',d:1.2,u:'',c:C.violet},
+    {l:'→ nur ein Taktik-Vorschlag',d:1.2,u:'',c:C.red}
+  ];
+  const FAST=[
+    {l:'denken',d:.5,c:C.amber},{l:'Maschine',d:.3,c:C.cyan},
+    {l:'denken',d:.5,c:C.amber},{l:'Maschine',d:.3,c:C.cyan},
+    {l:'denken',d:.5,c:C.amber},{l:'Maschine',d:.3,c:C.cyan},
+    {l:'Entscheidung',d:.5,c:C.green}
+  ];
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const pad=46, w=W-pad*2;
+    const seq = mode?FAST:SLOW;
+    const tot = seq.reduce((a,b)=>a+b.d,0);
+    const barY=H*0.36, barH=40;
+    // Zeitbalken
+    let cx=pad;
+    seq.forEach((s,i)=>{
+      const sw=s.d/tot*w;
+      const shown = clamp((p*tot - seq.slice(0,i).reduce((a,b)=>a+b.d,0))/s.d,0,1);
+      if(shown>0){
+        rr(x,cx,barY,sw*shown,barH,4);
+        x.fillStyle=s.c.replace(')',',.75)').replace('rgb','rgba');
+        x.fillStyle=s.c; x.globalAlpha=.75; x.fill(); x.globalAlpha=1;
+        x.strokeStyle='rgba(0,0,0,.4)';x.lineWidth=1;x.stroke();
+      }
+      if(sw>58&&shown>.5) mono(x,s.l.length>18?s.l.slice(0,16)+'…':s.l,cx+sw/2,barY+barH/2,9,'#06111c','center','700');
+      cx+=sw;
+    });
+    x.strokeStyle=C.line;x.lineWidth=1;x.strokeRect(pad,barY,w,barH);
+
+    // Schlacht-Status
+    const battleDur = mode?1.0:0.18; // Schlacht dauert begrenzt
+    const bY=barY+barH+54;
+    rr(x,pad,bY,w,22,4);x.fillStyle='rgba(255,95,109,.14)';x.fill();
+    const bw=w*Math.min(1,battleDur);
+    rr(x,pad,bY,bw,22,4);x.fillStyle='rgba(255,95,109,.45)';x.fill();
+    mono(x,'DAUER DER SCHLACHT',pad+6,bY+11,9.5,'#ffd7da','left','700');
+
+    if(!mode && p*tot > tot*0.18){
+      glow(x,C.red,16,()=>txt(x,'⚠ Die Schlacht ist längst vorbei.',W/2,bY+58,16,C.red,'center','700'));
+      txt(x,'„Obviously, the battle would be over before the second step in its planning was begun."',W/2,bY+82,12.5,C.faint,'center');
+    }
+    if(mode && p>=0.99){
+      glow(x,C.green,16,()=>txt(x,'✓ Entscheidung innerhalb der Schlacht.',W/2,bY+58,16,C.green,'center','700'));
+      txt(x,'Denken in Interaktion mit dem Computer — wie mit einem Kollegen.',W/2,bY+82,12.5,C.faint,'center');
+    }
+    // Achsenbeschriftung
+    let cx2=pad;
+    seq.forEach(s=>{const sw=s.d/tot*w;
+      if(s.u) mono(x,s.u,cx2+sw/2,barY-14,9.5,C.faint,'center');
+      cx2+=sw;});
+    mono(x, mode?'MIT SYMBIOSE':'COMPUTER VON 1960', pad, 18, 11.5, mode?C.green:C.amber,'left','700');
+  }
+  function run(m){
+    mode=m;p=0;
+    if(anim)cancelAnimationFrame(anim);
+    (function step(){p=Math.min(1,p+0.008);draw();if(p<1)anim=requestAnimationFrame(step);})();
+  }
+  $('#battleBtn').onclick=()=>run(0);
+  $('#battleBtn2').onclick=()=>run(1);
+  draw();addEventListener('resize',draw);
+})();
+
+/* ============================================================
+   4 · DIE 85 %
+   ============================================================ */
+(function(){
+  const cv=$('#pieCanvas');
+  // Lickliders Aufschlüsselung
+  const OUT=[
+    {l:'Suchen & Informationen beschaffen',v:34,c:'#ff8c42',
+     d:'„Viel mehr Zeit ging ins <strong>Finden oder Beschaffen</strong> von Information als ins Verdauen davon."'},
+    {l:'Plotten von Graphen',v:18,c:'#ffb347',
+     d:'„Stunden gingen ins Plotten von Graphen, und weitere Stunden ins Anweisen eines Assistenten, wie man plottet. Als die Graphen fertig waren, waren die Beziehungen sofort offensichtlich — <strong>aber das Plotten musste getan werden, damit sie es wurden.</strong>"'},
+    {l:'Rechnen & Transformieren',v:16,c:'#ff6fb5',
+     d:'Sechs experimentelle Bestimmungen einer Funktion Sprachverständlichkeit ↔ Signal-Rausch-Verhältnis. <strong>Keine zwei</strong> Experimentatoren hatten dieselbe Definition benutzt. Mehrere Stunden Rechnen, um die Daten vergleichbar zu machen — <em>dann wenige Sekunden</em>, um zu sehen, was er wissen musste.'},
+    {l:'Logische/dynamische Konsequenzen ableiten',v:17,c:'#b06ad8',
+     d:'„…das Bestimmen der logischen oder dynamischen Konsequenzen einer Menge von Annahmen oder Hypothesen, das Vorbereiten des Weges für eine Entscheidung oder eine Einsicht."'},
+    {l:'ECHTES DENKEN · Entscheiden · Einsicht',v:15,c:'#49e8df',
+     d:'Die verbleibenden <strong>15 %</strong>. Das, wofür man einen Menschen braucht. Lickliders Schluss: „Die Operationen, die den Großteil der angeblich dem technischen Denken gewidmeten Zeit füllen, sind Operationen, die <strong>von Maschinen wirksamer ausgeführt werden können als von Menschen</strong>."'}
+  ];
+  let hover=-1, t=0, mouse={x:-999,y:-999};
+  cv.addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;});
+  cv.addEventListener('mouseleave',()=>{mouse.x=-999;hover=-1;});
+  function draw(){
+    const {x,W,H}=setup(cv); t+=0.012;
+    const cxp=W/2, cyp=H/2-6, R=Math.min(W*0.3,H*0.40);
+    const dx=mouse.x-cxp, dy=mouse.y-cyp, dist=Math.hypot(dx,dy);
+    let ang=Math.atan2(dy,dx); if(ang<-Math.PI/2)ang+=Math.PI*2;
+    let acc=-Math.PI/2, found=-1;
+    OUT.forEach((s,i)=>{
+      const a2=acc+s.v/100*Math.PI*2;
+      if(dist>R*0.45&&dist<R*1.08&&ang>=acc&&ang<a2)found=i;
+      acc=a2;
+    });
+    hover=found;
+    // Ringe
+    acc=-Math.PI/2;
+    OUT.forEach((s,i)=>{
+      const a2=acc+s.v/100*Math.PI*2;
+      const on=hover===i;
+      const rOut=R*(on?1.07:1), rIn=R*0.46;
+      x.beginPath();
+      x.arc(cxp,cyp,rOut,acc,a2);x.arc(cxp,cyp,rIn,a2,acc,true);x.closePath();
+      x.fillStyle=s.c; x.globalAlpha=on?1:0.72; x.fill(); x.globalAlpha=1;
+      x.strokeStyle='rgba(7,10,18,.9)';x.lineWidth=2.5;x.stroke();
+      // Label
+      const mid=(acc+a2)/2, lr=R*1.22;
+      const lx=cxp+Math.cos(mid)*lr, ly=cyp+Math.sin(mid)*lr;
+      if(s.v>=14||on){
+        mono(x,s.v+'%',lx,ly,on?14:12,on?'#fff':s.c,Math.cos(mid)>0?'left':'right','700');
+      }
+      acc=a2;
+    });
+    // Zentrum
+    x.beginPath();x.arc(cxp,cyp,R*0.43,0,7);x.fillStyle='rgba(7,10,18,.92)';x.fill();
+    if(hover>=0){
+      txt(x,OUT[hover].v+' %',cxp,cyp-12,30,OUT[hover].c,'center','700',"'Fraunces',serif");
+      const words=OUT[hover].l.split(' ');
+      let line='',ly=cyp+16;x.font="500 10.5px 'JetBrains Mono',monospace";x.textAlign='center';
+      for(const w of words){const tst=line?line+' '+w:w;
+        if(x.measureText(tst).width>R*0.78&&line){x.fillStyle=C.dim;x.fillText(line,cxp,ly);line=w;ly+=13;}else line=tst;}
+      x.fillStyle=C.dim;x.fillText(line,cxp,ly);
+    } else {
+      txt(x,'85 %',cxp,cyp-16,40,C.amber,'center','700',"'Fraunces',serif");
+      mono(x,'CLERICAL / MECHANICAL',cxp,cyp+16,10,C.faint,'center','600');
+      mono(x,'↑ Ring überfahren',cxp,cyp+38,9.5,C.faint,'center');
+    }
+    // Außenbogen 85%
+    const a0=-Math.PI/2, a85=a0+0.85*Math.PI*2;
+    x.strokeStyle='rgba(255,179,71,.5)';x.lineWidth=3;x.setLineDash([3,5]);
+    x.beginPath();x.arc(cxp,cyp,R*1.34,a0,a85);x.stroke();x.setLineDash([]);
+    mono(x,'„85 % meiner Denkzeit"',cxp,16,12.5,C.amber,'center','700');
+    $('#pieInfo').innerHTML = hover>=0
+      ? '<strong style="color:'+OUT[hover].c+'">'+OUT[hover].l+'</strong><br>'+OUT[hover].d
+      : '<span style="color:var(--faint)">Fahre über die Segmente. Die Aufteilung innerhalb der 85 % folgt Lickliders eigener Aufzählung: suchen, rechnen, plotten, transformieren, Konsequenzen bestimmen.</span>';
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ---- Anekdoten ---- */
+(function(){
+  const cv=$('#anecCanvas'); let a=0;
+  const A=[
+    {t:'Die Graphen',
+     seq:[{l:'Assistent instruieren',d:2,c:C.amber},{l:'Plotten',d:5,c:C.amber2},{l:'Beziehungen ablesen',d:0.3,c:C.cyan}],
+     txt:'<strong>„Stunden gingen ins Plotten von Graphen, und weitere Stunden ins Anweisen eines Assistenten, wie man plottet. Als die Graphen fertig waren, waren die Beziehungen sofort offensichtlich — aber das Plotten musste getan werden, damit sie es wurden."</strong><br>Die Einsicht kostet Sekunden. Der Weg dorthin kostet Stunden. Genau diese Asymmetrie ist das Argument für die Symbiose.'},
+    {t:'Die sechs Kurven',
+     seq:[{l:'6 Quellen suchen',d:3,c:C.amber},{l:'Definitionen angleichen',d:4,c:C.pink},{l:'Rechnen',d:3,c:C.violet},{l:'Vergleichen',d:0.2,c:C.cyan}],
+     txt:'Sechs experimentelle Bestimmungen der Funktion <em>Sprachverständlichkeit ↔ Sprach-Rausch-Verhältnis</em>. <strong>Keine zwei Experimentatoren hatten dieselbe Definition oder dasselbe Maß benutzt.</strong> „Mehrere Stunden Rechnen waren nötig, um die Daten in vergleichbare Form zu bringen. Als sie in vergleichbarer Form waren, dauerte es nur wenige Sekunden, zu bestimmen, was ich wissen musste."'},
+    {t:'Was er gar nicht erst versuchte',
+     seq:[{l:'intellektuell möglich',d:9,c:'rgba(73,232,223,.35)'},{l:'tatsächlich versucht',d:2.5,c:C.red}],
+     txt:'Der bitterste Befund des Aufsatzes: <strong>„Meine Wahl dessen, was ich zu versuchen und was ich nicht zu versuchen wagte, war in beschämend hohem Maße durch Erwägungen der <em>Schreibarbeits-Machbarkeit</em> bestimmt, nicht der intellektuellen Fähigkeit."</strong><br>Nicht die Grenze des Denkens begrenzt die Forschung, sondern die Grenze des Abtippens, Ausrechnens, Abzeichnens. Die blaue Fläche ist das, was ein Mensch könnte. Die rote ist das, was er sich traut.'}
+  ];
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const pad=50,w=W-pad*2,d=A[a];
+    const tot=d.seq.reduce((s,b)=>s+b.d,0);
+    let cx=pad; const y=H*0.42, bh=46;
+    d.seq.forEach(s=>{
+      const sw=s.d/tot*w;
+      rr(x,cx,y,Math.max(2,sw-3),bh,5);x.fillStyle=s.c;x.fill();
+      if(sw>66) mono(x,s.l,cx+sw/2,y+bh/2,10,'#07111c','center','700');
+      else {
+        x.save();x.translate(cx+sw/2,y-12);x.rotate(-0.5);mono(x,s.l,0,0,9.5,s.c,'center','600');x.restore();
+      }
+      // Dauer
+      mono(x,s.d<1?(s.d*60|0)+' min':s.d+' h',cx+sw/2,y+bh+16,9.5,C.faint,'center');
+      cx+=sw;
+    });
+    x.strokeStyle=C.line;x.beginPath();x.moveTo(pad,y+bh+34);x.lineTo(pad+w,y+bh+34);x.stroke();
+    mono(x,d.t,W/2,22,14,C.amber,'center','700');
+    // Verhältnis
+    const last=d.seq[d.seq.length-1];
+    if(a<2){
+      const ratio=Math.round((tot-last.d)/last.d);
+      glow(x,C.cyan,10,()=>mono(x,ratio+'× so viel Vorbereitung wie Einsicht',W/2,H-24,12.5,C.cyan,'center','700'));
+    } else {
+      mono(x,'≈ 72 % des Möglichen wurde nie versucht',W/2,H-24,12.5,C.red,'center','700');
+    }
+    $('#anecText').innerHTML=d.txt;
+  }
+  $$('.anecBtn').forEach(b=>b.onclick=()=>{a=+b.dataset.a;$$('.anecBtn').forEach((q,i)=>q.classList.toggle('on',i===a));draw();});
+  draw();addEventListener('resize',draw);
+})();
+
+/* ============================================================
+   5 · RADAR + BANDBREITE
+   ============================================================ */
+(function(){
+  const DIMS=['Geschwindigkeit','Genauigkeit','Parallele Kanäle','Flexibilität /\nUmprogrammieren','Ziele setzen','Seltene Fälle\nbehandeln','Mustererkennung','Ausdauer /\nRoutine'];
+  const MAN=[2,2,9.2,9,10,9.5,8,2];
+  const MACH=[10,10,1.5,1.5,0.5,1,3.5,10];
+  const SYM=MAN.map((v,i)=>Math.max(v,MACH[i]));
+  let showMan=true, showMach=true, showSym=false;
+  function render(){
+    const tr=[];
+    const close=a=>a.concat([a[0]]);
+    const th=close(DIMS);
+    if(showSym) tr.push({type:'scatterpolar',r:close(SYM),theta:th,fill:'toself',name:'Symbiose',
+      fillcolor:'rgba(155,123,255,.22)',line:{color:'#9b7bff',width:2.5,dash:'dot'}});
+    if(showMach) tr.push({type:'scatterpolar',r:close(MACH),theta:th,fill:'toself',name:'Maschine',
+      fillcolor:'rgba(73,232,223,.22)',line:{color:'#49e8df',width:2.5}});
+    if(showMan) tr.push({type:'scatterpolar',r:close(MAN),theta:th,fill:'toself',name:'Mensch',
+      fillcolor:'rgba(255,179,71,.22)',line:{color:'#ffb347',width:2.5}});
+    Plotly.newPlot('radarPlot',tr,{
+      polar:{bgcolor:'rgba(0,0,0,.2)',
+        radialaxis:{visible:true,range:[0,10],gridcolor:'rgba(255,255,255,.08)',tickfont:{color:'#6b7897',size:9}},
+        angularaxis:{gridcolor:'rgba(255,255,255,.08)',tickfont:{color:'#9aa7c2',size:11}}},
+      paper_bgcolor:'rgba(0,0,0,0)',font:{family:'Inter',color:'#9aa7c2'},
+      showlegend:true,legend:{orientation:'h',y:-0.08,font:{size:12}},
+      margin:{t:30,b:60,l:60,r:60}
+    },{displayModeBar:false,responsive:true});
+  }
+  $('#radarMan').onclick=function(){showMan=!showMan;this.classList.toggle('on',showMan);render();};
+  $('#radarMach').onclick=function(){showMach=!showMach;this.classList.toggle('on',showMach);render();};
+  $('#radarSym').onclick=function(){showSym=!showSym;this.classList.toggle('on',showSym);render();};
+  render();
+})();
+
+(function(){
+  const cv=$('#bwCanvas'), sl=$('#bwSlider');
+  function machBits(y){ return Math.pow(10, 3 + (y-1950)*0.19); } // grob Moore
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const yr=+sl.value; $('#bwOut').textContent=yr;
+    const pad=62, w=W-pad*2, h=H-70, y0=H-40;
+    // Achsen (log 10^1 .. 10^18)
+    const lo=1, hi=18;
+    const py=v=>y0-(Math.log10(v)-lo)/(hi-lo)*h;
+    const px=y=>pad+(y-1950)/75*w;
+    x.strokeStyle=C.line;x.lineWidth=1;
+    for(let e=lo;e<=hi;e+=3){
+      const yy=py(Math.pow(10,e));
+      x.beginPath();x.moveTo(pad,yy);x.lineTo(pad+w,yy);x.stroke();
+      mono(x,'10^'+e,pad-8,yy,9,C.faint,'right');
+    }
+    // Maschine
+    x.strokeStyle=C.cyan;x.lineWidth=2.5;x.beginPath();
+    for(let y=1950;y<=2025;y++){const v=machBits(y);const xx=px(y),yy=py(v);y===1950?x.moveTo(xx,yy):x.lineTo(xx,yy);}
+    x.stroke();
+    // Mensch (konstant ~50 bit/s Ausgabe)
+    x.strokeStyle=C.amber;x.lineWidth=2.5;x.setLineDash([6,4]);
+    x.beginPath();x.moveTo(pad,py(50));x.lineTo(pad+w,py(50));x.stroke();x.setLineDash([]);
+    // Marker
+    const mx=px(yr), mv=machBits(yr);
+    x.strokeStyle='rgba(255,255,255,.25)';x.lineWidth=1;
+    x.beginPath();x.moveTo(mx,py(50)+6);x.lineTo(mx,py(mv));x.stroke();
+    glow(x,C.cyan,12,()=>{x.fillStyle=C.cyan;x.beginPath();x.arc(mx,py(mv),5,0,7);x.fill();});
+    x.fillStyle=C.amber;x.beginPath();x.arc(mx,py(50),5,0,7);x.fill();
+    const gap=Math.log10(mv/50);
+    mono(x,'Lücke: '+gap.toFixed(1)+' Größenordnungen',mx+10,(py(mv)+py(50))/2,11,C.violet,'left','700');
+    mono(x,'Maschine (Operationen/s)',pad+w,py(machBits(2025))-16,11,C.cyan,'right','600');
+    mono(x,'Mensch ≈ 50 bit/s — „noisy, narrow-band device"',pad+6,py(50)-14,11,C.amber,'left','600');
+    if(yr<=1962){
+      mono(x,'Lickliders Gegenwart',mx,36,11,C.violet,'center','700');
+      x.strokeStyle='rgba(155,123,255,.4)';x.setLineDash([3,4]);
+      x.beginPath();x.moveTo(mx,46);x.lineTo(mx,py(mv)-10);x.stroke();x.setLineDash([]);
+    }
+    mono(x,'Jahr',pad+w/2,H-12,10,C.faint,'center');
+  }
+  sl.oninput=draw; draw(); addEventListener('resize',draw);
+})();
+
+/* ============================================================
+   6 · ARBEITSTEILUNG — Sortierspiel
+   ============================================================ */
+(function(){
+  const cv=$('#sortCanvas');
+  const TASKS=[
+    {t:'Die Ziele setzen',a:0,e:'„Men will set the goals and supply the motivations, of course, at least in the early years."'},
+    {t:'Hypothesen formulieren',a:0,e:'„They will formulate hypotheses."'},
+    {t:'Die Fragen stellen',a:0,e:'„They will ask questions."'},
+    {t:'Sich erinnern: „jemand hat 1947 etwas Relevantes gemacht"',a:0,e:'Und eine Ahnung haben, in welcher Zeitschrift es stand. Fehlbar, annähernd — aber führend.'},
+    {t:'Kriterien definieren & bewerten',a:0,e:'„They will define criteria and serve as evaluators, judging the contributions of the equipment."'},
+    {t:'Situationen sehr geringer Wahrscheinlichkeit',a:0,e:'„In current man-machine systems, that is one of the human operator\'s most important functions."'},
+    {t:'Hypothesen in testbare Modelle verwandeln',a:1,e:'„The information-processing equipment will convert hypotheses into testable models and then test the models against data."'},
+    {t:'Graphen zeichnen, „den Kuchen schneiden"',a:1,e:'„It will transform data, plot graphs — cutting the cake in whatever way the human operator specifies."'},
+    {t:'Interpolieren, extrapolieren, transformieren',a:1,e:'Routinearbeit, die die Intervalle zwischen Entscheidungen füllt.'},
+    {t:'Statische Gleichungen in dynamische Modelle wandeln',a:1,e:'„…so the human operator can examine their behavior."'},
+    {t:'Statistik, Entscheidungs- & Spieltheorie',a:1,e:'„…whenever there is enough basis to support a formal statistical analysis."'},
+    {t:'Mustererkennung & Relevanzbeurteilung',a:1,e:'Trickfrage! Die Maschine macht es, „so viel sie gewinnbringend kann — aber sie akzeptiert dort einen klar untergeordneten Status."',tricky:true}
+  ];
+  let order=[], idx=0, score=0, placed=[], fb='';
+  function reset(){
+    order=TASKS.map((t,i)=>i).sort(()=>Math.random()-0.5);
+    idx=0;score=0;placed=[];fb='';draw();
+  }
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const colW=(W-60)/2;
+    // Spalten
+    ['MENSCH','MASCHINE'].forEach((lab,i)=>{
+      const cxx=20+i*(colW+20);
+      rr(x,cxx,54,colW,H-74,14);
+      x.fillStyle=i?'rgba(73,232,223,.045)':'rgba(255,179,71,.045)';x.fill();
+      x.strokeStyle=i?'rgba(73,232,223,.2)':'rgba(255,179,71,.2)';x.lineWidth=1;x.stroke();
+      mono(x,lab,cxx+colW/2,38,11.5,i?C.cyan:C.amber,'center','700');
+    });
+    // platzierte Karten
+    const cnt=[0,0];
+    placed.forEach(p=>{
+      const side=p.side, cxx=20+side*(colW+20);
+      const yy=68+cnt[side]*31;
+      rr(x,cxx+8,yy,colW-16,26,6);
+      x.fillStyle=p.ok?'rgba(93,220,138,.16)':'rgba(255,95,109,.16)';x.fill();
+      x.strokeStyle=p.ok?'rgba(93,220,138,.45)':'rgba(255,95,109,.45)';x.stroke();
+      const t=TASKS[p.i].t;
+      txt(x,(p.ok?'✓ ':'✗ ')+(t.length>36?t.slice(0,34)+'…':t),cxx+15,yy+13,11,p.ok?C.green:C.red,'left','500');
+      cnt[side]++;
+    });
+    // aktuelle Karte
+    if(idx<order.length){
+      const t=TASKS[order[idx]];
+      const bw=Math.min(430,W-70), bx=(W-bw)/2, by=H/2-38;
+      glow(x,C.violet,20,()=>{
+        rr(x,bx,by,bw,76,13);x.fillStyle='rgba(18,24,43,.97)';x.fill();
+        x.strokeStyle=C.violet;x.lineWidth=2;x.stroke();
+      });
+      mono(x,'AUFGABE '+(idx+1)+' / '+TASKS.length,bx+16,by+17,9.5,C.faint,'left','600');
+      wrapText(x,t.t,bx+16,by+28,bw-32,17,13.5,'#fff');
+      mono(x,'◀ Mensch        Maschine ▶',W/2,by+94,10.5,C.faint,'center');
+    } else {
+      glow(x,C.cyan,18,()=>txt(x,score+' von '+TASKS.length+' richtig',W/2,H/2-10,26,C.cyan,'center','700',"'Fraunces',serif"));
+      txt(x, score>=11?'Du denkst wie Licklider.':score>=8?'Nah dran — die Grenze ist feiner, als sie aussieht.':'Noch mal ansehen: Mensch führt, Maschine rechnet.',
+          W/2,H/2+24,14,C.dim,'center');
+    }
+    $('#sortScore').textContent=score+' / '+TASKS.length;
+    $('#sortFeedback').innerHTML=fb;
+  }
+  function pick(side){
+    if(idx>=order.length)return;
+    const i=order[idx], t=TASKS[i];
+    const ok=t.a===side;
+    if(ok)score++;
+    placed.push({i,side,ok});
+    fb=(ok?'<span style="color:var(--green)">✓ Richtig.</span> ':'<span style="color:var(--red)">✗ Licklider ordnet das der anderen Seite zu.</span> ')
+       +'<em style="color:var(--ink-dim)">'+t.e+'</em>';
+    idx++;draw();
+  }
+  $('#sortMan').onclick=()=>pick(0);
+  $('#sortMach').onclick=()=>pick(1);
+  $('#sortReset').onclick=reset;
+  reset();addEventListener('resize',draw);
+})();
+
+/* ---- Tail: seltene Fälle ---- */
+(function(){
+  const cv=$('#tailCanvas'), sl=$('#tailSlider');
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const n=+sl.value; $('#tailOut').textContent=n;
+    const pad=56, w=W-pad*2, h=H-80, y0=H-42;
+    // Verteilung: wenige häufige, viele seltene
+    const common=[0.30,0.18,0.11,0.07];
+    const rare=1-common.reduce((a,b)=>a+b,0);
+    const each=rare/400;
+    const bars=common.concat(Array.from({length:n},()=>each));
+    const total=bars.length;
+    const bw=Math.max(1.2,w/total-1);
+    const maxV=0.30;
+    let rareSum=0;
+    bars.forEach((v,i)=>{
+      const bx=pad+i*(w/total);
+      const bh=v/maxV*h;
+      x.fillStyle=i<4?'rgba(73,232,223,.75)':'rgba(255,95,109,.8)';
+      rr(x,bx,y0-Math.max(1.5,bh),bw,Math.max(1.5,bh),1.5);x.fill();
+      if(i>=4)rareSum+=v;
+    });
+    x.strokeStyle=C.line;x.beginPath();x.moveTo(pad,y0);x.lineTo(pad+w,y0);x.stroke();
+    mono(x,'häufige Fälle',pad+2,y0+18,10,C.cyan,'left','600');
+    mono(x,'„very-low-probability alternatives"',pad+w,y0+18,10,C.red,'right','600');
+    // Summe
+    const pct=(rareSum*100);
+    const barY=22;
+    rr(x,pad,barY,w,20,4);x.fillStyle='rgba(255,255,255,.05)';x.fill();
+    rr(x,pad,barY,w*rareSum,20,4);x.fillStyle='rgba(255,95,109,.6)';x.fill();
+    mono(x,'Summe der seltenen Fälle: '+pct.toFixed(1)+' %',pad+8,barY+10,11,'#fff','left','700');
+    if(pct>15) glow(x,C.red,12,()=>mono(x,'→ viel zu groß, um sie zu vernachlässigen',pad+w,barY+34,11,C.red,'right','700'));
+    else mono(x,'→ noch vernachlässigbar',pad+w,barY+34,11,C.faint,'right','600');
+  }
+  sl.oninput=draw;draw();addEventListener('resize',draw);
+})();
+
+/* ============================================================
+   7 · TIME-SHARING
+   ============================================================ */
+(function(){
+  const cv=$('#tsCanvas'), slU=$('#tsUsers'), slL=$('#tsLoad');
+  let users=[], t=0, cur=-1, queue=[], util=0, waitAcc=0, waitN=0;
+  function init(){
+    const n=+slU.value;
+    users=Array.from({length:n},(_,i)=>({id:i,state:'think',timer:Math.random()*120+40,need:0,wait:0}));
+    queue=[];cur=-1;util=0;waitAcc=0;waitN=0;
+  }
+  function draw(){
+    const {x,W,H}=setup(cv); t++;
+    const n=users.length, load=+slL.value;
+    $('#tsUsersOut').textContent=n; $('#tsLoadOut').textContent=load;
+    // Simulation
+    let busy=false;
+    users.forEach(u=>{
+      if(u.state==='think'){ u.timer--; if(u.timer<=0){u.state='wait';u.need=load*3;u.wait=0;queue.push(u.id);} }
+      else if(u.state==='wait'){ u.wait++; }
+    });
+    if(cur<0&&queue.length){cur=queue.shift();users[cur].state='run';waitAcc+=users[cur].wait;waitN++;}
+    if(cur>=0){
+      busy=true;
+      users[cur].need--;
+      if(users[cur].need<=0){users[cur].state='think';users[cur].timer=Math.random()*120+60;cur=-1;}
+    }
+    util=util*0.985+(busy?1:0)*0.015;
+    // Zeichnen
+    const pad=46, w=W-pad*2;
+    const rowH=Math.min(22,(H-110)/n);
+    users.forEach((u,i)=>{
+      const yy=56+i*rowH;
+      // Historie-Streifen
+      if(!u.hist)u.hist=[];
+      u.hist.push(u.state); if(u.hist.length>Math.floor(w-110))u.hist.shift();
+      mono(x,'U'+(i+1),pad-6,yy+rowH/2-2,9.5,C.faint,'right');
+      u.hist.forEach((s,j)=>{
+        x.fillStyle = s==='run'?'rgba(93,220,138,.9)' : s==='wait'?'rgba(255,95,109,.75)':'rgba(255,255,255,.09)';
+        x.fillRect(pad+j,yy,1.2,Math.max(5,rowH-5));
+      });
+    });
+    // CPU
+    const cpuY=H-34;
+    rr(x,pad,cpuY-16,w,22,5);x.fillStyle='rgba(0,0,0,.3)';x.fill();
+    rr(x,pad,cpuY-16,w*util,22,5);x.fillStyle='rgba(93,220,138,.45)';x.fill();
+    mono(x,'CPU '+(util*100).toFixed(0)+' %'+(cur>=0?'  ← bedient U'+(cur+1):'  ← LEERLAUF'),pad+8,cpuY-5,10.5,'#fff','left','700');
+    mono(x,'Zeit →',pad+w,34,10,C.faint,'right');
+    mono(x,'Ein Rechner, '+n+' Menschen',pad,34,11.5,C.cyan,'left','700');
+    // Stats
+    const avgWait=waitN?waitAcc/waitN:0;
+    $('#tsUtil').textContent=(util*100).toFixed(0)+'%';
+    $('#tsWait').textContent=avgWait<1?'0':(avgWait/60).toFixed(1)+'s';
+    $('#tsCost').textContent=(1000/n).toFixed(0)+'$';
+    requestAnimationFrame(draw);
+  }
+  slU.oninput=init; slL.oninput=()=>{};
+  init();draw();
+})();
+
+/* ---- Netzwerk ---- */
+(function(){
+  const cv=$('#netCanvas');
+  let phase=0, t=0, target=0;
+  const centers=[{x:.22,y:.34},{x:.52,y:.22},{x:.78,y:.40},{x:.34,y:.70},{x:.68,y:.74}];
+  $('#netBtn').onclick=()=>{target=target<2?target+1:0;
+    $('#netBtn').textContent=['▶ Das Bild vergrößert sich','▶ Netzwerk der Zentren','▶ Nutzer anschließen'][target];};
+  function draw(){
+    const {x,W,H}=setup(cv); t+=0.02;
+    phase+=(target-phase)*0.05;
+    const pts=centers.map(c=>({x:c.x*W,y:c.y*H}));
+    // Verbindungen zwischen Zentren (phase>=1)
+    const netA=clamp(phase,0,1);
+    if(netA>0.02){
+      for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){
+        x.strokeStyle=`rgba(73,232,223,${0.3*netA})`;x.lineWidth=1.6;
+        x.beginPath();x.moveTo(pts[i].x,pts[i].y);x.lineTo(pts[j].x,pts[j].y);x.stroke();
+        // Pakete
+        const p=((t*0.25+i*0.3+j*0.17)%1);
+        x.fillStyle=`rgba(255,179,71,${netA})`;
+        x.beginPath();x.arc(lerp(pts[i].x,pts[j].x,p),lerp(pts[i].y,pts[j].y,p),2.6,0,7);x.fill();
+      }
+    }
+    // Nutzer (phase>=2)
+    const uA=clamp(phase-1,0,1);
+    if(uA>0.02){
+      pts.forEach((p,i)=>{
+        for(let k=0;k<6;k++){
+          const a=k/6*7+i;
+          const ux=p.x+Math.cos(a)*(58+uA*18), uy=p.y+Math.sin(a)*(58+uA*18);
+          x.strokeStyle=`rgba(255,255,255,${0.14*uA})`;x.lineWidth=1;
+          x.beginPath();x.moveTo(p.x,p.y);x.lineTo(ux,uy);x.stroke();
+          x.fillStyle=`rgba(255,179,71,${0.8*uA})`;
+          x.beginPath();x.arc(ux,uy,3,0,7);x.fill();
+        }
+      });
+    }
+    // Zentren
+    const first=1-clamp(phase,0,1);
+    pts.forEach((p,i)=>{
+      const main = i===0;
+      const sc = main?1:clamp(phase,0,1);
+      if(sc<0.02)return;
+      const r=(main?20:15)*(main?1:sc)+Math.sin(t*2+i)*1.5;
+      glow(x,C.cyan,16,()=>{
+        x.fillStyle='rgba(73,232,223,.18)';x.beginPath();x.arc(p.x,p.y,r+10,0,7);x.fill();
+        x.strokeStyle=C.cyan;x.lineWidth=2;x.beginPath();x.arc(p.x,p.y,r,0,7);x.stroke();
+      });
+      // Buchsymbol
+      x.fillStyle=C.cyan;x.globalAlpha=.8;
+      x.fillRect(p.x-6,p.y-5,12,2.2);x.fillRect(p.x-6,p.y-1,12,2.2);x.fillRect(p.x-6,p.y+3,8,2.2);
+      x.globalAlpha=1;
+      if(main) mono(x,'„THINKING CENTER"',p.x,p.y-r-16,10.5,C.cyan,'center','700');
+    });
+    const labels=['Ein Denkzentrum: Bibliothek + Speicher + Symbiose','…erweitert sich zu einem Netzwerk, verbunden durch Breitbandleitungen','…und zu einzelnen Nutzern über Mietleitungen'];
+    mono(x,labels[Math.round(phase)]||labels[0],W/2,H-18,11.5,C.amber,'center','600');
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ============================================================
+   8 · SPEICHER
+   ============================================================ */
+(function(){
+  const cv=$('#memCanvas'), sl=$('#memSlider');
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const k=+sl.value/100; $('#memOut').textContent=Math.round(k*100)+' %';
+    // Bücherregal
+    const pad=50,w=W-pad*2, rows=4, perRow=26;
+    const bw=(w)/perRow;
+    let idx=0;
+    const total=rows*perRow;
+    const stored=Math.round(total*k);
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<perRow;c++){
+        const bx=pad+c*bw, by=46+r*42;
+        const hgt=24+((idx*17)%14);
+        const isStored = idx<stored;
+        x.fillStyle=isStored?'rgba(73,232,223,.7)':'rgba(255,255,255,.1)';
+        rr(x,bx+1.5,by+(38-hgt),bw-3,hgt,2);x.fill();
+        if(isStored){x.strokeStyle='rgba(73,232,223,.9)';x.lineWidth=.8;x.stroke();}
+        idx++;
+      }
+      x.strokeStyle=C.line;x.beginPath();x.moveTo(pad,46+r*42+38);x.lineTo(pad+w,46+r*42+38);x.stroke();
+    }
+    mono(x,'Die technische Literatur',pad,30,11.5,C.dim,'left','600');
+    mono(x,stored+' von '+total+' im Computerspeicher',pad+w,30,11,C.cyan,'right','700');
+    // Kosten
+    const bits=k*3e9;
+    const yy=H-26;
+    mono(x,'≈ '+(bits/1e9).toFixed(2)+' Mrd. Bits  →  ≈ '+(bits/1e9*1).toFixed(2)+' Mrd. Dollar (Preise 1960)',W/2,yy,11.5,k>0.5?C.red:C.amber,'center','700');
+    let v;
+    if(k<0.05) v='Zu wenig — der Computer kann beim Finden nicht helfen.';
+    else if(k<0.35) v='<span style="color:var(--green)">Lickliders Antwort.</span> „Das Erste, dem man sich stellen muss, ist: wir werden <strong>nicht alle</strong> technischen und wissenschaftlichen Arbeiten im Computerspeicher ablegen. Wir mögen die Teile speichern, die sich am knappsten zusammenfassen lassen — <strong>die quantitativen Teile und die Literaturverweise</strong> — aber nicht das Ganze."';
+    else if(k<0.8) v='Teuer. Erinnerung: „unless things change markedly, billions of dollars."';
+    else v='<span style="color:var(--red)">Alles speichern?</span> Milliarden von Bits, Milliarden von Dollar. Und unnötig: „Bücher gehören zu den am schönsten konstruierten und am besten menschengerecht gestalteten Bauteilen, die es gibt."';
+    $('#memVerdict').innerHTML=v;
+  }
+  sl.oninput=draw;draw();addEventListener('resize',draw);
+})();
+
+(function(){
+  const cv=$('#mem3Canvas');
+  let kind=0, cells=[], msg='';
+  function init(){
+    cells=Array.from({length:96},(_,i)=>({v: kind===2 ? (i*37%5<2?1:0) : 0, locked: kind===2}));
+    msg = ['Normaler Speicher: schreiben, lesen, löschen, beliebig oft.',
+           'Unauslöschlicher Speicher: einmal schreiben, unbegrenzt lesen — Löschen unmöglich.',
+           'Veröffentlichter Speicher: kommt bereits strukturiert in den Rechner. Nur lesen.'][kind];
+    draw();
+  }
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const cols=16, rows=6, pad=50;
+    const cw=(W-pad*2)/cols, ch=Math.min(26,(H-80)/rows);
+    cells.forEach((c,i)=>{
+      const r=Math.floor(i/cols), cc=i%cols;
+      const bx=pad+cc*cw, by=46+r*ch;
+      rr(x,bx+2,by+2,cw-4,ch-4,3);
+      x.fillStyle = c.v ? (kind===1?'rgba(255,179,71,.7)':kind===2?'rgba(155,123,255,.7)':'rgba(73,232,223,.7)') : 'rgba(255,255,255,.055)';
+      x.fill();
+      x.strokeStyle=c.locked?'rgba(155,123,255,.3)':C.line;x.lineWidth=1;x.stroke();
+      if(c.v) mono(x,'1',bx+cw/2,by+ch/2,9,'#06111c','center','700');
+    });
+    const names=['NORMAL (Kern, Dünnfilm, Band)','INDELIBLE MEMORY','PUBLISHED MEMORY'];
+    const cols2=[C.cyan,C.amber,C.violet];
+    mono(x,names[kind],pad,30,11.5,cols2[kind],'left','700');
+    const used=cells.filter(c=>c.v).length;
+    mono(x,used+' / '+cells.length+' Bits gesetzt',pad+(W-pad*2),30,10.5,C.faint,'right','600');
+    $('#mem3Msg').innerHTML=msg;
+  }
+  cv.addEventListener('click',e=>{
+    const r=cv.getBoundingClientRect(), W=r.width, H=parseInt(cv.getAttribute('height'));
+    const cols=16, rows=6, pad=50, cw=(W-pad*2)/cols, ch=Math.min(26,(H-80)/rows);
+    const cc=Math.floor((e.clientX-r.left-pad)/cw), rw=Math.floor((e.clientY-r.top-46)/ch);
+    if(cc<0||cc>=cols||rw<0||rw>=rows)return;
+    const i=rw*cols+cc, c=cells[i];
+    if(kind===2){msg='<span style="color:var(--red)">✗ Verweigert.</span> Veröffentlichter Speicher ist <strong>read-only</strong>. Er wird bereits strukturiert in den Computer eingebracht — der Rechner darf beliebig oft darauf verweisen, aber nichts ändern.';}
+    else if(kind===1&&c.v){msg='<span style="color:var(--red)">✗ Verweigert.</span> In unauslöschlichen Speicher kann <strong>genau einmal</strong> geschrieben werden. Danach: unbegrenzt lesen, aber nie löschen.';}
+    else {c.v=c.v?(kind===1?1:0):1; msg=kind===1?'<span style="color:var(--green)">✓ Einmal geschrieben.</span> Diese Zelle ist nun für immer fixiert.':'<span style="color:var(--green)">✓ Umgeschaltet.</span> Normaler Speicher lässt sich beliebig oft ändern.';}
+    draw();
+  });
+  $('#memWrite').onclick=()=>{
+    if(kind===2){msg='<span style="color:var(--red)">✗ Nur lesen.</span>';}
+    else{cells.forEach((c,i)=>{if(!(kind===1&&c.v)&&i%7===0)c.v=1;});msg='Einige Zellen beschrieben.';}
+    draw();
+  };
+  $('#memErase').onclick=()=>{
+    if(kind===0){cells.forEach(c=>c.v=0);msg='<span style="color:var(--green)">✓ Gelöscht.</span> Nur normaler Speicher kann das.';}
+    else msg='<span style="color:var(--red)">✗ Löschen unmöglich.</span> „…but the computer will not be able to erase indelible memory."';
+    draw();
+  };
+  $('#memOver').onclick=()=>{
+    if(kind===1){cells.forEach(c=>c.v=1);msg='<span style="color:var(--amber)">✓ Überschrieben.</span> „It may also over-write, turning all the 0\'s into 1\'s, <em>as though marking over what was written earlier</em>." — wie ein Durchstreichen, kein Löschen.';}
+    else if(kind===2) msg='<span style="color:var(--red)">✗ Nur lesen.</span>';
+    else msg='Bei normalem Speicher ist das einfach Schreiben.';
+    draw();
+  };
+  $$('.memBtn').forEach(b=>b.onclick=()=>{kind=+b.dataset.k;$$('.memBtn').forEach((q,i)=>q.classList.toggle('on',i===kind));init();});
+  init();addEventListener('resize',draw);
+})();
+
+/* ============================================================
+   9 · TRIE-MEMORY
+   ============================================================ */
+/* ---- Lineare Suche ---- */
+(function(){
+  const cv=$('#linCanvas'), slN=$('#linN');
+  let pos=-1, target=-1, anim=null;
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const n=+slN.value; $('#linNOut').textContent=n;
+    const pad=44, w=W-pad*2;
+    const cols=Math.min(n,60), cw=w/cols;
+    const rows=Math.ceil(n/cols), ch=Math.min(26,(H-70)/rows);
+    for(let i=0;i<n;i++){
+      const r=Math.floor(i/cols), c=i%cols;
+      const bx=pad+c*cw, by=44+r*ch;
+      const state = i===target ? 2 : (pos>=0&&i<pos ? 1 : 0);
+      x.fillStyle = state===2&&pos>=target ? 'rgba(93,220,138,.9)' : state===1 ? 'rgba(255,95,109,.45)' : 'rgba(255,255,255,.08)';
+      rr(x,bx+1,by+1,Math.max(1.5,cw-2),Math.max(4,ch-4),2);x.fill();
+      if(i===pos){glow(x,C.amber,10,()=>{x.strokeStyle=C.amber;x.lineWidth=2;rr(x,bx,by,cw,ch-2,2);x.stroke();});}
+    }
+    mono(x,'Serieller Speicher — jeder Eintrag muss einzeln geprüft werden',pad,26,11,C.dim,'left','600');
+    if(pos>=0){
+      mono(x,'Schritt '+(pos+1),pad+w,26,11,pos>=target?C.green:C.amber,'right','700');
+    }
+    $('#linSteps').textContent = pos>=0?(pos+1):Math.round(n/2);
+    $('#linTrie').textContent = 5;
+  }
+  function run(){
+    const n=+slN.value;
+    target=Math.floor(n*0.78); pos=0;
+    if(anim)clearInterval(anim);
+    anim=setInterval(()=>{ pos++; if(pos>=target){pos=target;clearInterval(anim);} draw(); },Math.max(8,400/n));
+    draw();
+  }
+  $('#linBtn').onclick=run;
+  slN.oninput=()=>{pos=-1;draw();};
+  draw();addEventListener('resize',draw);
+})();
+
+/* ---- Trie-Baum ---- */
+(function(){
+  const cv=$('#trieCanvas'), inp=$('#trieInput');
+  let root={ch:'',kids:{},end:false,x:0,y:0}, words=[], highlight=[], mode='', msg='';
+  let propHi=-1;
+
+  function insert(w){
+    w=w.toUpperCase().replace(/\s/g,'');
+    if(!w)return;
+    if(words.includes(w)){msg='<span style="color:var(--amber)">Bereits gespeichert.</span> Der Trie legt nichts doppelt an.';return;}
+    let node=root, created=0, shared=0;
+    for(const c of w){
+      if(!node.kids[c]){node.kids[c]={ch:c,kids:{},end:false};created++;}
+      else shared++;
+      node=node.kids[c];
+    }
+    node.end=true; words.push(w); highlight=w.split(''); mode='add';
+    msg='<span style="color:var(--green)">✓ „'+w+'" eingefügt.</span> '+created+' neue Zellen angelegt, <strong>'+shared+' Zellen mit anderen Wörtern geteilt</strong>. '
+      +'<em>Eigenschaft 2: „Wenn zwei Argumente Anfangszeichen gemeinsam haben, benutzen sie denselben Speicherplatz für diese Zeichen."</em>';
+  }
+  function find(w){
+    w=w.toUpperCase().replace(/\s/g,'');
+    let node=root, path=[], steps=0;
+    for(const c of w){
+      steps++;
+      if(!node.kids[c]){
+        highlight=path; mode='fail';
+        msg='<span style="color:var(--red)">✗ Nicht gefunden</span> nach '+steps+' Schritten bei „'+c+'". '
+          +'Aber: <em>Eigenschaft 6 — „Es ist nur ein Schritt oder zwei rückwärts, um die Spur ähnlicher Einträge aufzunehmen."</em> Schau, was an dieser Gabelung sonst liegt.';
+        return;
+      }
+      node=node.kids[c]; path.push(c);
+    }
+    highlight=path; mode=node.end?'ok':'partial';
+    msg=node.end
+      ? '<span style="color:var(--green)">✓ Gefunden in genau '+steps+' Schritten.</span> <strong>Unabhängig davon, wie viel sonst gespeichert ist.</strong> Linear hätte es im Mittel '+Math.round(words.length/2)+' Vergleiche gebraucht. <em>Eigenschaft 1: „Der Abrufvorgang ist äußerst einfach."</em>'
+      : '<span style="color:var(--amber)">Präfix existiert</span>, aber kein Wortende hier. <em>Eigenschaft 3: „Die Argumente müssen nicht gleich lang sein und müssen nicht im Voraus angegeben werden."</em>';
+  }
+  function layout(){
+    // Breitenbasiertes Layout
+    let leaf=0;
+    function rec(node,depth){
+      const ks=Object.keys(node.kids).sort();
+      if(!ks.length){node._x=leaf++;node._d=depth;return node._x;}
+      let sum=0;
+      ks.forEach(k=>sum+=rec(node.kids[k],depth+1));
+      node._x=sum/ks.length; node._d=depth; return node._x;
+    }
+    rec(root,0);
+    return leaf;
+  }
+  function countNodes(n=root){let c=0;for(const k in n.kids)c+=1+countNodes(n.kids[k]);return c;}
+
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const leaves=Math.max(1,layout());
+    const pad=46;
+    const depth=Math.max(1,words.reduce((a,w)=>Math.max(a,w.length),1));
+    const dy=Math.min(60,(H-80)/(depth+1));
+    const dx=(W-pad*2)/Math.max(1,leaves);
+    const px=n=>pad+(n._x+0.5)*dx;
+    const py=n=>42+n._d*dy;
+
+    function drawNode(node,path){
+      const ks=Object.keys(node.kids).sort();
+      ks.forEach(k=>{
+        const kid=node.kids[k];
+        const onPath = highlight.length>path.length && highlight[path.length]===k &&
+                       path.every((p,i)=>highlight[i]===p);
+        const hl = onPath;
+        x.strokeStyle = hl ? (mode==='fail'?C.red:C.cyan) : 'rgba(255,255,255,.14)';
+        x.lineWidth = hl?2.4:1.2;
+        x.beginPath();x.moveTo(px(node),py(node));
+        x.bezierCurveTo(px(node),py(node)+dy*0.5,px(kid),py(kid)-dy*0.5,px(kid),py(kid));
+        x.stroke();
+        drawNode(kid,path.concat(k));
+        // Zelle
+        const r=13;
+        const sharedKids=Object.keys(kid.kids).length>1;
+        if(hl)glow(x,mode==='fail'?C.red:C.cyan,14,()=>{
+          x.fillStyle=mode==='fail'?'rgba(255,95,109,.3)':'rgba(73,232,223,.3)';
+          x.beginPath();x.arc(px(kid),py(kid),r+4,0,7);x.fill();
+        });
+        x.beginPath();x.arc(px(kid),py(kid),r,0,7);
+        x.fillStyle = kid.end ? 'rgba(255,179,71,.85)' : sharedKids&&propHi===1 ? 'rgba(155,123,255,.5)' : 'rgba(18,26,43,.95)';
+        x.fill();
+        x.strokeStyle = kid.end ? C.amber : hl ? C.cyan : 'rgba(255,255,255,.22)';
+        x.lineWidth=kid.end?2:1.3; x.stroke();
+        mono(x,k,px(kid),py(kid),11.5,kid.end?'#2a1a00':'#fff','center','700');
+        if(kid.end){
+          x.fillStyle=C.amber;x.beginPath();x.arc(px(kid),py(kid)+r+7,2.6,0,7);x.fill();
+        }
+      });
+    }
+    // Wurzel
+    if(words.length){
+      x.strokeStyle='rgba(155,123,255,.6)';x.lineWidth=2;
+      x.beginPath();x.arc(px(root),py(root),11,0,7);x.stroke();
+      x.fillStyle='rgba(155,123,255,.2)';x.fill();
+      mono(x,'START',px(root),py(root)-24,9,C.violet,'center','700');
+      drawNode(root,[]);
+    } else {
+      mono(x,'Noch leer — tippe ein Wort oder klick ein Beispiel.',W/2,H/2,13,C.faint,'center');
+    }
+    mono(x,'Trie-Memory nach Fredkin',pad,22,11,C.violet,'left','700');
+    mono(x,'● Wortende',W-pad,22,10,C.amber,'right','600');
+    $('#trieWords').textContent=words.length;
+    const nodes=countNodes();
+    $('#trieNodes').textContent=nodes;
+    const naive=words.reduce((a,w)=>a+w.length,0);
+    $('#trieSaved').textContent=Math.max(0,naive-nodes);
+    $('#trieMsg').innerHTML=msg||'<span style="color:var(--ink-faint)">Jeder Kreis ist eine Speicherzelle. Jede Zelle enthält ein Zeichen <em>und die Adresse der nächsten Zelle</em>. „Das Argument wird gespeichert, indem eine Reihe von Adressen geschrieben wird, von denen jede sagt, wo die nächste zu finden ist."</span>';
+  }
+  $('#trieAdd').onclick=()=>{insert(inp.value);inp.value='';draw();};
+  $('#trieFind').onclick=()=>{find(inp.value);draw();};
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){insert(inp.value);inp.value='';draw();}});
+  $('#trieReset').onclick=()=>{root={ch:'',kids:{},end:false};words=[];highlight=[];msg='';draw();};
+  $$('.trieEx').forEach(b=>b.onclick=()=>{insert(b.dataset.w);draw();});
+  ['EGAN','EGAL','EIS'].forEach(w=>insert(w)); msg=''; draw();
+  addEventListener('resize',draw);
+
+  /* Eigenschaften-Liste */
+  const PROPS=[
+    ['Der Abrufvorgang ist äußerst einfach','Gegeben das Argument, betritt man das Standard-Startregister mit dem ersten Zeichen und holt sich die Adresse des zweiten. Dann zum zweiten Register, Adresse des dritten holen, usw.'],
+    ['Gemeinsame Anfangszeichen teilen sich den Platz','„Wenn zwei Argumente Anfangszeichen gemeinsam haben, benutzen sie denselben Speicherplatz für diese Zeichen." → Im Baum oben sind das die Gabelungen.'],
+    ['Argumente dürfen verschieden lang sein','„Die Längen der Argumente müssen nicht gleich sein und müssen nicht im Voraus spezifiziert werden." Kein festes Satzformat.'],
+    ['Kein Platz wird reserviert, der nicht gebraucht wird','„Kein Raum im Speicher wird für ein Argument reserviert oder benutzt, bis es tatsächlich gespeichert wird. Die Trie-Struktur entsteht, während die Einträge eingeführt werden."'],
+    ['Eine Funktion kann Argument einer anderen sein','„So könnte man z.B. mit dem Argument ‚Matrizenmultiplikation‘ das ganze Programm abrufen, das eine Matrizenmultiplikation auf dem Computer ausführt." — Hier verbindet sich der Speicher mit dem Sprachproblem.'],
+    ['Ähnliche Einträge liegen nebeneinander','„Durch Betrachten des Speichers auf einer gegebenen Ebene kann man feststellen, welche ähnlichen Einträge gespeichert wurden. Falls es keinen Eintrag für Egan, J. P. gibt, ist es nur ein Schritt oder zwei rückwärts, um die Spur von Egan, James aufzunehmen."']
+  ];
+  const cont=$('#trieProps');
+  cont.innerHTML=PROPS.map((p,i)=>
+    `<div class="propRow" data-i="${i}" style="cursor:pointer;padding:12px 14px;border-radius:11px;border:1px solid var(--line);margin-bottom:9px;transition:.25s;background:rgba(0,0,0,.2)">
+       <div style="display:flex;gap:12px;align-items:flex-start">
+         <span style="font-family:var(--mono);font-size:11px;color:var(--amber);font-weight:700;min-width:20px">${i+1}</span>
+         <div><strong style="font-size:14.5px;color:#fff">${p[0]}</strong>
+         <div class="pd" style="display:none;font-size:13.5px;color:var(--ink-dim);margin-top:7px;font-weight:300">${p[1]}</div></div>
+       </div></div>`).join('');
+  $$('.propRow').forEach(r=>r.onclick=()=>{
+    const open=r.querySelector('.pd').style.display==='block';
+    $$('.propRow').forEach(q=>{q.querySelector('.pd').style.display='none';q.style.borderColor='var(--line)';q.style.background='rgba(0,0,0,.2)';});
+    if(!open){r.querySelector('.pd').style.display='block';r.style.borderColor='rgba(255,179,71,.45)';r.style.background='rgba(255,179,71,.07)';}
+    propHi=open?-1:+r.dataset.i;
+    if(propHi===5){highlight=['E','G','A','N'];mode='ok';}
+    draw();
+  });
+})();
+
+/* ---- Effizienz-Plot ---- */
+(function(){
+  const sl=$('#effSlider');
+  function render(){
+    const n=+sl.value; $('#effOut').textContent=n.toLocaleString('de-DE');
+    const xs=[],trie=[],flat=[];
+    for(let e=0;e<=5;e+=0.1){
+      const N=Math.pow(10,e);
+      xs.push(N);
+      // flach: N * avgLen Zellen; trie: sublinear durch geteilte Präfixe
+      const L=8;
+      flat.push(N*L);
+      const sharing=1/(1+Math.log10(N+1)*0.55);
+      trie.push(N*L*sharing + 64);
+    }
+    const L=8, sharing=1/(1+Math.log10(n+1)*0.55);
+    const cT=n*L*sharing+64, cF=n*L;
+    Plotly.newPlot('effPlot',[
+      {x:xs,y:flat,name:'Flacher Speicher (N × 8 Zellen)',mode:'lines',line:{color:'#ff6fb5',width:2.5}},
+      {x:xs,y:trie,name:'Trie-Memory',mode:'lines',line:{color:'#49e8df',width:3}},
+      {x:[n],y:[cT],mode:'markers',name:'aktuell',marker:{color:'#ffb347',size:12,line:{color:'#fff',width:1.5}}}
+    ],{
+      xaxis:{type:'log',title:{text:'gespeicherte Wörter',font:{size:11}},gridcolor:'rgba(255,255,255,.06)',color:'#9aa7c2'},
+      yaxis:{type:'log',title:{text:'belegte Speicherzellen',font:{size:11}},gridcolor:'rgba(255,255,255,.06)',color:'#9aa7c2'},
+      paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,.2)',
+      font:{family:'Inter',color:'#9aa7c2',size:11},
+      legend:{orientation:'h',y:-0.22},margin:{t:18,r:20,b:66,l:66}
+    },{displayModeBar:false,responsive:true});
+    const ratio=cF/cT;
+    $('#effVerdict').innerHTML = n<200
+      ? '<span style="color:var(--red)">Bei kleinem Speicher verschwendet der Trie Platz</span> — jede Zelle muss zusätzlich eine Adresse mitführen. Vorteil: nur '+ratio.toFixed(2)+'×.'
+      : '<span style="color:var(--green)">Jetzt zahlt es sich aus:</span> '+ratio.toFixed(2)+'× weniger Zellen als flache Speicherung. „Es wird zunehmend effizienter in der Nutzung des verfügbaren Platzes, je größer der Speicher wird."';
+  }
+  sl.oninput=render; render();
+})();
+
+/* ---- Egan-Demo ---- */
+(function(){
+  const cv=$('#egCanvas');
+  const ENTRIES=['EGAN, JAMES','EGAN, J. R.','EGBERT, L.','EGGERS, M.'];
+  let step=0, anim=null;
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const query='EGAN, J. P.';
+    const pad=50;
+    // Ebenen
+    const levels=[['E'],['G'],['A','B','G'],['N',',','E']];
+    // Vereinfachte Darstellung: Pfad + Nachbarn
+    const path=['E','G','A','N',',',' ','J','.',' ','P'];
+    const dy=(H-110)/4;
+    const chars='EGAN, J. P.'.split('');
+    const n=chars.length;
+    const dx=(W-pad*2)/n;
+    // Pfadkette
+    chars.forEach((c,i)=>{
+      const bx=pad+i*dx+dx/2, by=H*0.40;
+      const reached = i<step;
+      const failAt = i===9;
+      const isFail = step>9 && i===9;
+      if(i>0){
+        x.strokeStyle=reached?C.cyan:'rgba(255,255,255,.12)';x.lineWidth=reached?2.2:1;
+        x.beginPath();x.moveTo(pad+(i-1)*dx+dx/2+16,by);x.lineTo(bx-16,by);x.stroke();
+      }
+      if(reached&&!isFail)glow(x,C.cyan,10,()=>{x.fillStyle='rgba(73,232,223,.22)';x.beginPath();x.arc(bx,by,20,0,7);x.fill();});
+      x.beginPath();x.arc(bx,by,15,0,7);
+      x.fillStyle=isFail?'rgba(255,95,109,.35)':reached?'rgba(73,232,223,.2)':'rgba(255,255,255,.05)';x.fill();
+      x.strokeStyle=isFail?C.red:reached?C.cyan:'rgba(255,255,255,.18)';
+      x.lineWidth=isFail?2.2:1.3;x.stroke();
+      mono(x,c===' '?'␣':c,bx,by,12,isFail?C.red:reached?'#fff':C.faint,'center','700');
+    });
+    mono(x,'Anfrage: „EGAN, J. P."',pad,24,12,C.violet,'left','700');
+
+    // Gefundene Nachbarn
+    if(step>9){
+      const boxY=H*0.62;
+      mono(x,'An dieser Gabelung liegen bereits:',pad,boxY-14,11,C.amber,'left','600');
+      ENTRIES.forEach((e,i)=>{
+        const bw=(W-pad*2)/ENTRIES.length;
+        const bx=pad+i*bw;
+        const near=i<2;
+        rr(x,bx+4,boxY+4,bw-10,34,7);
+        x.fillStyle=near?'rgba(93,220,138,.14)':'rgba(255,255,255,.04)';x.fill();
+        x.strokeStyle=near?'rgba(93,220,138,.5)':C.line;x.lineWidth=1;x.stroke();
+        mono(x,e,bx+bw/2-3,boxY+21,10.5,near?C.green:C.faint,'center','600');
+      });
+      glow(x,C.green,12,()=>mono(x,'✓ „Egan, James" liegt nur ein, zwei Schritte zurück.',W/2,H-22,12.5,C.green,'center','700'));
+      $('#egMsg').innerHTML='<span style="color:var(--red)">Treffer gescheitert bei „P".</span> Aber der Trie hat die Suche nicht verschwendet: Auf der Ebene der Gabelung „EGAN, J." liegen alle ähnlichen Einträge <strong>physisch nebeneinander</strong>. Der Mensch sieht sofort, was es stattdessen gibt — <em>genau so funktioniert menschliches Erinnern</em>.';
+    } else {
+      $('#egMsg').innerHTML='<span style="color:var(--ink-faint)">Die Suche folgt Zeichen für Zeichen den gespeicherten Adressen.</span>';
+    }
+  }
+  $('#egBtn').onclick=()=>{
+    step=0; if(anim)clearInterval(anim);
+    anim=setInterval(()=>{step++;if(step>11){clearInterval(anim);}draw();},230);
+    draw();
+  };
+  draw();addEventListener('resize',draw);
+})();
+
+/* ============================================================
+   10 · SPRACHPROBLEM
+   ============================================================ */
+(function(){
+  const cv=$('#laCanvas');
+  let mode=0, p=0, anim=null, failed=false;
+  // Route Boston -> LA
+  const ROUTE=[{x:.88,y:.22},{x:.74,y:.30},{x:.62,y:.44},{x:.48,y:.40},{x:.34,y:.56},{x:.20,y:.62},{x:.11,y:.70}];
+  function draw(){
+    const {x,W,H}=setup(cv);
+    // "Karte"
+    x.strokeStyle='rgba(255,255,255,.05)';x.lineWidth=1;
+    for(let i=0;i<14;i++){x.beginPath();x.moveTo(i*W/14,0);x.lineTo(i*W/14,H);x.stroke();}
+    for(let i=0;i<8;i++){x.beginPath();x.moveTo(0,i*H/8);x.lineTo(W,i*H/8);x.stroke();}
+    // Smog-Gradient um LA
+    const la={x:ROUTE[6].x*W,y:ROUTE[6].y*H};
+    const bos={x:ROUTE[0].x*W,y:ROUTE[0].y*H};
+    const g=x.createRadialGradient(la.x,la.y,5,la.x,la.y,W*0.55);
+    g.addColorStop(0,'rgba(255,179,71,.35)');g.addColorStop(1,'rgba(255,179,71,0)');
+    x.fillStyle=g;x.fillRect(0,0,W,H);
+
+    if(mode===0){
+      // explizite Route
+      x.strokeStyle='rgba(73,232,223,.5)';x.lineWidth=2;x.setLineDash([5,4]);
+      x.beginPath();ROUTE.forEach((r,i)=>i?x.lineTo(r.x*W,r.y*H):x.moveTo(r.x*W,r.y*H));x.stroke();x.setLineDash([]);
+      ROUTE.forEach((r,i)=>{
+        const rx=r.x*W, ry=r.y*H;
+        const done=p*6>=i;
+        x.fillStyle=done?'rgba(73,232,223,.9)':'rgba(255,255,255,.2)';
+        x.beginPath();x.arc(rx,ry,5,0,7);x.fill();
+        mono(x,'Schritt '+(i+1),rx,ry-14,9,done?C.cyan:C.faint,'center','600');
+      });
+      // Blockade bei Schritt 4
+      if(p>0.45){
+        const b=ROUTE[3];
+        glow(x,C.red,14,()=>{
+          x.strokeStyle=C.red;x.lineWidth=3;
+          x.beginPath();x.moveTo(b.x*W-12,b.y*H-12);x.lineTo(b.x*W+12,b.y*H+12);
+          x.moveTo(b.x*W+12,b.y*H-12);x.lineTo(b.x*W-12,b.y*H+12);x.stroke();
+        });
+        mono(x,'Straße gesperrt — nicht vorgesehen',b.x*W,b.y*H+28,10.5,C.red,'center','700');
+        failed=true;
+      }
+      const car=Math.min(p*6,failed&&p>0.45?3:6);
+      const i0=Math.floor(car), f=car-i0;
+      const cx1=lerp(ROUTE[i0].x,ROUTE[Math.min(6,i0+1)].x,f)*W;
+      const cy1=lerp(ROUTE[i0].y,ROUTE[Math.min(6,i0+1)].y,f)*H;
+      glow(x,C.cyan,12,()=>{x.fillStyle='#fff';x.beginPath();x.arc(cx1,cy1,7,0,7);x.fill();});
+    } else {
+      // Zielorientiert: Gradientenabstieg
+      if(!window._laPath)window._laPath=[{x:bos.x,y:bos.y}];
+      const path=window._laPath;
+      x.strokeStyle='rgba(255,179,71,.7)';x.lineWidth=2.4;
+      x.beginPath();path.forEach((q,i)=>i?x.lineTo(q.x,q.y):x.moveTo(q.x,q.y));x.stroke();
+      const last=path[path.length-1];
+      glow(x,C.amber,14,()=>{x.fillStyle='#fff';x.beginPath();x.arc(last.x,last.y,7,0,7);x.fill();});
+      const d=Math.hypot(last.x-la.x,last.y-la.y);
+      mono(x,'„Verringere den Betrag, um den du noch nicht im Smog bist" — Abstand: '+Math.round(d),W/2,H-20,11.5,C.amber,'center','600');
+    }
+    // Städte
+    [[bos,'BOSTON',C.cyan],[la,'LOS ANGELES',C.amber]].forEach(([q,n,c])=>{
+      glow(x,c,12,()=>{x.strokeStyle=c;x.lineWidth=2;x.beginPath();x.arc(q.x,q.y,11,0,7);x.stroke();});
+      mono(x,n,q.x,q.y+26,10.5,c,'center','700');
+    });
+    mono(x,mode?'ZIEL-SPEZIFIKATION (Mensch)':'PROZEDUR-SPEZIFIKATION (Computer)',W/2,22,12,mode?C.amber:C.cyan,'center','700');
+  }
+  function run(){
+    p=0;failed=false;window._laPath=null;
+    if(anim)cancelAnimationFrame(anim);
+    const r=cv.getBoundingClientRect(), W=r.width, H=parseInt(cv.getAttribute('height'));
+    const la={x:ROUTE[6].x*W,y:ROUTE[6].y*H};
+    (function step(){
+      p=Math.min(1,p+0.01);
+      if(mode===1){
+        if(!window._laPath)window._laPath=[{x:ROUTE[0].x*W,y:ROUTE[0].y*H}];
+        const path=window._laPath, last=path[path.length-1];
+        const d=Math.hypot(last.x-la.x,last.y-la.y);
+        if(d>8){
+          const a=Math.atan2(la.y-last.y,la.x-last.x)+(Math.random()-0.5)*0.9;
+          path.push({x:last.x+Math.cos(a)*9,y:last.y+Math.sin(a)*9});
+        }
+      }
+      draw();
+      if(p<1)anim=requestAnimationFrame(step);
+      else {
+        $('#laMsg').innerHTML = mode
+          ? '<span style="color:var(--green)">✓ Angekommen.</span> Niemand hat die Route vorgegeben. Jede Abweichung wird laufend korrigiert, weil ein <strong>Kriterium</strong> existiert, an dem der Fortschritt messbar ist. „Anweisungen an Menschen spezifizieren Ziele." <em>Wer würde Boston mit einer detaillierten Routenspezifikation verlassen?</em>'
+          : '<span style="color:var(--red)">✗ Abbruch.</span> Die Prozedur gibt Schritt für Schritt vor, was zu tun ist — und sobald eine unvorhergesehene Situation auftritt, bricht alles ab. „Anweisungen an Computer spezifizieren präzise die einzelnen Schritte und die Reihenfolge, in der sie zu tun sind."';
+      }
+    })();
+  }
+  $('#laProc').onclick=()=>{mode=0;$('#laProc').classList.add('on');$('#laGoal').classList.remove('on');draw();};
+  $('#laGoal').onclick=()=>{mode=1;$('#laGoal').classList.add('on');$('#laProc').classList.remove('on');draw();};
+  $('#laRun').onclick=run;
+  draw();addEventListener('resize',draw);
+})();
+
+/* ---- Hill Climbing ---- */
+(function(){
+  const cv=$('#hcCanvas'), slS=$('#hcStep'), slN=$('#hcNoise');
+  let start=null, path=[], anim=null, goal={x:.78,y:.34};
+  function field(nx,ny){
+    const d=Math.hypot(nx-goal.x,ny-goal.y);
+    return 1-clamp(d/0.9,0,1) + 0.12*Math.sin(nx*18)*Math.cos(ny*14);
+  }
+  function draw(){
+    const {x,W,H}=setup(cv);
+    // Feld
+    const res=5;
+    for(let a=0;a<W;a+=res)for(let b=0;b<H;b+=res){
+      const v=field(a/W,b/H);
+      const t=clamp(v,0,1);
+      x.fillStyle=`rgba(${lerp(20,255,t*t)|0},${lerp(28,179,t*t)|0},${lerp(50,71,t*t)|0},${0.35+0.45*t})`;
+      x.fillRect(a,b,res,res);
+    }
+    // Ziel
+    glow(x,C.amber,20,()=>{
+      x.strokeStyle='#fff';x.lineWidth=2;x.beginPath();x.arc(goal.x*W,goal.y*H,13,0,7);x.stroke();
+    });
+    mono(x,'ZIEL',goal.x*W,goal.y*H-24,10,'#fff','center','700');
+    // Pfad
+    if(path.length>1){
+      x.strokeStyle='rgba(73,232,223,.9)';x.lineWidth=2;
+      x.beginPath();path.forEach((q,i)=>i?x.lineTo(q.x*W,q.y*H):x.moveTo(q.x*W,q.y*H));x.stroke();
+      const l=path[path.length-1];
+      glow(x,C.cyan,12,()=>{x.fillStyle='#fff';x.beginPath();x.arc(l.x*W,l.y*H,6,0,7);x.fill();});
+      mono(x,'Schritt '+path.length,l.x*W,l.y*H-16,10,C.cyan,'center','700');
+    } else {
+      mono(x,'Klick irgendwo, um zu starten',W/2,H/2,13,'rgba(255,255,255,.65)','center','600');
+    }
+    mono(x,'hill-climbing / self-organizing',14,20,11,C.cyan,'left','700');
+  }
+  function step(){
+    if(!path.length)return;
+    const st=+slS.value/1200, nz=+slN.value/260;
+    const cur=path[path.length-1];
+    // Gradient per Sondierung in 8 Richtungen
+    let best=null,bv=field(cur.x,cur.y);
+    for(let i=0;i<8;i++){
+      const a=i/8*Math.PI*2;
+      const nx=clamp(cur.x+Math.cos(a)*st,0,1), ny=clamp(cur.y+Math.sin(a)*st,0,1);
+      const v=field(nx,ny)+(Math.random()-0.5)*nz;
+      if(v>bv){bv=v;best={x:nx,y:ny};}
+    }
+    if(best)path.push(best);
+    else if(Math.hypot(cur.x-goal.x,cur.y-goal.y)>0.03)
+      path.push({x:clamp(cur.x+(Math.random()-0.5)*st,0,1),y:clamp(cur.y+(Math.random()-0.5)*st,0,1)});
+    if(path.length>400)path.shift();
+    draw();
+  }
+  cv.addEventListener('click',e=>{
+    const r=cv.getBoundingClientRect();
+    path=[{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/parseInt(cv.getAttribute('height'))}];
+    if(anim)clearInterval(anim);
+    anim=setInterval(step,42);
+  });
+  slS.oninput=()=>$('#hcStepOut').textContent=slS.value;
+  slN.oninput=()=>$('#hcNoiseOut').textContent=slN.value;
+  draw();addEventListener('resize',draw);
+})();
+
+/* ---- Bausteine ---- */
+(function(){
+  const cv=$('#blockCanvas');
+  const LIB=[
+    {n:'MATRIXMULT',c:C.cyan},{n:'FOURIER',c:C.violet},{n:'PLOT',c:C.amber},
+    {n:'FILTER',c:C.pink},{n:'MITTELWERT',c:C.green},{n:'ABLEITEN',c:'#ffd27f'}
+  ];
+  let chain=[], hover=-1;
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const pad=40, bw=(W-pad*2)/LIB.length;
+    mono(x,'BIBLIOTHEK — klick, um anzuhängen',pad,24,10.5,C.faint,'left','600');
+    LIB.forEach((b,i)=>{
+      const bx=pad+i*bw, by=40;
+      rr(x,bx+4,by,bw-10,40,9);
+      x.fillStyle=hover===i?b.c:'rgba(0,0,0,.3)';x.globalAlpha=hover===i?.35:1;x.fill();x.globalAlpha=1;
+      x.strokeStyle=b.c;x.lineWidth=1.4;x.stroke();
+      mono(x,b.n,bx+bw/2-3,by+20,Math.min(10,bw/8),b.c,'center','700');
+    });
+    // Kette
+    mono(x,'ZUSAMMENGESETZTES PROGRAMM (in Echtzeit verkettet)',pad,H*0.47,10.5,C.violet,'left','700');
+    const cy=H*0.62;
+    if(!chain.length) mono(x,'— noch leer —',pad,cy,12,C.faint,'left');
+    let cx=pad;
+    chain.forEach((bi,i)=>{
+      const b=LIB[bi];
+      const w=Math.min(126,(W-pad*2)/Math.max(4,chain.length));
+      rr(x,cx,cy-20,w-8,40,9);
+      x.fillStyle=b.c;x.globalAlpha=.22;x.fill();x.globalAlpha=1;
+      x.strokeStyle=b.c;x.lineWidth=1.6;x.stroke();
+      mono(x,b.n,cx+(w-8)/2,cy,Math.min(9.5,w/10),b.c,'center','700');
+      if(i<chain.length-1)arrow(x,cx+w-6,cy,cx+w+4,cy,C.faint,1.5);
+      cx+=w;
+    });
+    mono(x,'„…connected together like the words and phrases of speech"',W/2,H-18,11.5,C.dim,'center');
+  }
+  cv.addEventListener('mousemove',e=>{
+    const r=cv.getBoundingClientRect(), W=r.width, pad=40, bw=(W-pad*2)/LIB.length;
+    const y=e.clientY-r.top;
+    hover = (y>40&&y<80) ? Math.floor((e.clientX-r.left-pad)/bw) : -1;
+    if(hover<0||hover>=LIB.length)hover=-1;
+    draw();
+  });
+  cv.addEventListener('click',()=>{
+    if(hover>=0){chain.push(hover);
+      $('#blockMsg').innerHTML='Kette: <strong style="color:var(--violet)">'+chain.map(i=>LIB[i].n).join(' → ')+'</strong><br><span style="font-size:13px">Der Mensch ruft Segmente <em>einfach beim Namen</em> auf — die Maschine verkettet sie zur Laufzeit. Kein neues Programm, kein Compiler-Lauf, keine Wartezeit.</span>';
+      if(chain.length>5)chain=[];
+      draw();}
+  });
+  draw();addEventListener('resize',draw);
+})();
+
+/* ============================================================
+   11 · I/O
+   ============================================================ */
+(function(){
+  const cv=$('#deskCanvas');
+  let strokes=[], cur=null, recognized=false, graphed=false;
+  function draw(){
+    const {x,W,H}=setup(cv);
+    // Papier-Raster
+    x.strokeStyle='rgba(255,255,255,.045)';x.lineWidth=1;
+    for(let i=0;i<W;i+=26){x.beginPath();x.moveTo(i,0);x.lineTo(i,H);x.stroke();}
+    for(let i=0;i<H;i+=26){x.beginPath();x.moveTo(0,i);x.lineTo(W,i);x.stroke();}
+    // Striche
+    strokes.forEach(s=>{
+      x.strokeStyle=recognized?'rgba(255,255,255,.18)':'rgba(255,179,71,.9)';
+      x.lineWidth=recognized?1.5:2.6;x.lineCap='round';x.lineJoin='round';
+      x.beginPath();s.forEach((q,i)=>i?x.lineTo(q.x,q.y):x.moveTo(q.x,q.y));x.stroke();
+    });
+    if(cur){
+      x.strokeStyle='rgba(255,179,71,.9)';x.lineWidth=2.6;
+      x.beginPath();cur.forEach((q,i)=>i?x.lineTo(q.x,q.y):x.moveTo(q.x,q.y));x.stroke();
+    }
+    // Erkennung: Bounding-Box je Strich → "gesetzter" Typ
+    if(recognized){
+      strokes.forEach((s,i)=>{
+        const xs=s.map(q=>q.x), ys=s.map(q=>q.y);
+        const x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);
+        const cxm=(x0+x1)/2, cym=(y0+y1)/2;
+        const sym='ABCXYZΣ∫λ=+'[i%11];
+        glow(x,C.cyan,10,()=>{
+          txt(x,sym,cxm,cym,Math.max(20,Math.min(46,(y1-y0)*1.1)),C.cyan,'center','700',"'Fraunces',serif");
+        });
+        x.strokeStyle='rgba(73,232,223,.22)';x.lineWidth=1;x.setLineDash([3,3]);
+        x.strokeRect(x0-4,y0-4,x1-x0+8,y1-y0+8);x.setLineDash([]);
+      });
+    }
+    if(graphed&&strokes.length){
+      // Letzten Strich als Funktion deuten
+      const s=strokes[strokes.length-1];
+      const pts=s.slice().sort((a,b)=>a.x-b.x);
+      x.strokeStyle=C.green;x.lineWidth=2.4;
+      x.beginPath();pts.forEach((q,i)=>i?x.lineTo(q.x,q.y):x.moveTo(q.x,q.y));x.stroke();
+      // Ableitung
+      x.strokeStyle='rgba(155,123,255,.8)';x.lineWidth=1.8;x.setLineDash([4,3]);
+      x.beginPath();
+      for(let i=1;i<pts.length;i++){
+        const d=(pts[i].y-pts[i-1].y)/Math.max(1,(pts[i].x-pts[i-1].x));
+        const yy=H*0.5+d*26;
+        i===1?x.moveTo(pts[i].x,yy):x.lineTo(pts[i].x,clamp(yy,10,H-10));
+      }
+      x.stroke();x.setLineDash([]);
+      mono(x,'— f(x) als Skizze   ·   -- f ′(x) sofort berechnet',W-16,H-18,11,C.green,'right','600');
+    }
+    mono(x,'Bleistift & Schmierblock — aber die Maschine liest mit',14,20,11,recognized?C.cyan:C.amber,'left','700');
+  }
+  function pos(e){const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};}
+  cv.addEventListener('mousedown',e=>{cur=[pos(e)];recognized=false;graphed=false;draw();});
+  cv.addEventListener('mousemove',e=>{if(cur){cur.push(pos(e));draw();}});
+  addEventListener('mouseup',()=>{if(cur&&cur.length>2)strokes.push(cur);cur=null;draw();});
+  $('#deskClear').onclick=()=>{strokes=[];recognized=false;graphed=false;$('#deskMsg').innerHTML='';draw();};
+  $('#deskRecog').onclick=()=>{
+    if(!strokes.length){$('#deskMsg').innerHTML='<span style="color:var(--amber)">Erst etwas zeichnen.</span>';return;}
+    recognized=true;graphed=false;
+    $('#deskMsg').innerHTML='<span style="color:var(--cyan)">✓ Erkannt und gesetzt.</span> „Der Computer sollte die Handschrift des Menschen lesen … und er sollte <strong>sofort an der Stelle jedes handgezeichneten Symbols das entsprechende Zeichen posten, interpretiert und in präziser Schrifttype</strong>." Der Nutzer lernt dabei schnell, maschinenlesbar zu schreiben.';
+    draw();
+  };
+  $('#deskGraph').onclick=()=>{
+    if(!strokes.length){$('#deskMsg').innerHTML='<span style="color:var(--amber)">Erst eine Kurve zeichnen.</span>';return;}
+    graphed=true;recognized=false;
+    $('#deskMsg').innerHTML='<span style="color:var(--green)">✓ Als Funktion übernommen.</span> „Der Mensch sollte dem Computer eine Funktion präsentieren können, <strong>grob aber schnell, indem er einen Graphen zeichnet</strong>." Die Maschine rechnet sofort weiter — hier die Ableitung. So wird aus der Skizze ein Modell, ohne ein einziges Programm zu schreiben.';
+    draw();
+  };
+  draw();addEventListener('resize',draw);
+})();
+
+/* ---- Wall Display ---- */
+(function(){
+  const cv=$('#wallCanvas'), sl=$('#wallFilter');
+  let veh=[], t=0;
+  for(let i=0;i<34;i++) veh.push({
+    x:Math.random(),y:Math.random(),a:Math.random()*7,v:0.0008+Math.random()*0.0016,
+    owner:i%4, crit:Math.random()<0.18
+  });
+  function draw(){
+    const {x,W,H}=setup(cv); t+=1;
+    const f=+sl.value/100; $('#wallOut').textContent=Math.round(f*100)+' %';
+    const wallW=W*0.60, gap=16;
+    // Lagewand
+    rr(x,10,36,wallW,H-72,12);
+    x.fillStyle='rgba(0,0,0,.34)';x.fill();
+    x.strokeStyle='rgba(73,232,223,.26)';x.lineWidth=1.4;x.stroke();
+    mono(x,'COMPUTER-POSTED WALL DISPLAY',10+wallW/2,22,10.5,C.cyan,'center','700');
+    // Gitter
+    x.strokeStyle='rgba(255,255,255,.05)';x.lineWidth=1;
+    for(let i=1;i<9;i++){x.beginPath();x.moveTo(10+i*wallW/9,38);x.lineTo(10+i*wallW/9,H-38);x.stroke();}
+    for(let i=1;i<6;i++){x.beginPath();x.moveTo(12,36+i*(H-72)/6);x.lineTo(10+wallW,36+i*(H-72)/6);x.stroke();}
+    // Fahrzeuge bewegen
+    const COL=[C.amber,C.cyan,C.violet,C.pink];
+    veh.forEach(v=>{
+      v.a+=(Math.random()-0.5)*0.12;
+      v.x=(v.x+Math.cos(v.a)*v.v+1)%1; v.y=(v.y+Math.sin(v.a)*v.v+1)%1;
+      // Auf der Wand: nur gemeinsame Info (kritische) wenn gefiltert
+      const show = f<0.05 ? true : v.crit;
+      if(!show)return;
+      const px=12+v.x*(wallW-4), py=38+v.y*(H-76);
+      x.fillStyle=v.crit?COL[v.owner]:'rgba(255,255,255,.42)';
+      x.save();x.translate(px,py);x.rotate(v.a);
+      x.beginPath();x.moveTo(5,0);x.lineTo(-4,3);x.lineTo(-4,-3);x.closePath();x.fill();
+      x.restore();
+      if(v.crit&&f>0.05){glow(x,COL[v.owner],8,()=>{x.strokeStyle=COL[v.owner];x.lineWidth=1;x.beginPath();x.arc(px,py,8,0,7);x.stroke();});}
+    });
+    if(f<0.05){
+      glow(x,C.red,14,()=>mono(x,'„a confusion of uninterpretable clutter"',10+wallW/2,H-52,11.5,C.red,'center','700'));
+    } else {
+      mono(x,'nur gemeinsam relevante Information',10+wallW/2,H-52,11,C.green,'center','600');
+    }
+    // Individuelle Konsolen
+    const cx0=10+wallW+gap, cw=W-cx0-12;
+    mono(x,'DISPLAY-CONTROL-EINHEITEN',cx0+cw/2,22,10,C.faint,'center','700');
+    for(let i=0;i<4;i++){
+      const r=Math.floor(i/2), c=i%2;
+      const bw=(cw-10)/2, bh=(H-80)/2-8;
+      const bx=cx0+c*(bw+10), by=40+r*(bh+12);
+      rr(x,bx,by,bw,bh,9);
+      x.fillStyle='rgba(0,0,0,.3)';x.fill();
+      x.strokeStyle=COL[i].replace(')',',.4)');x.strokeStyle=COL[i];x.globalAlpha=.45;x.stroke();x.globalAlpha=1;
+      mono(x,'OP '+(i+1),bx+6,by+12,9,COL[i],'left','700');
+      // nur eigene Fahrzeuge
+      veh.filter(v=>v.owner===i&&(f>0.05?true:v.crit)).forEach(v=>{
+        const px=bx+4+v.x*(bw-8), py=by+18+v.y*(bh-24);
+        x.fillStyle=COL[i];x.beginPath();x.arc(px,py,2.4,0,7);x.fill();
+      });
+      // Link zur Wand
+      x.strokeStyle=`rgba(255,255,255,${0.05+0.12*f})`;x.lineWidth=1;
+      x.beginPath();x.moveTo(bx,by+bh/2);x.lineTo(10+wallW,H/2);x.stroke();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ---- Spracherkennung ---- */
+(function(){
+  const cv=$('#vocCanvas'), sl=$('#vocSlider');
+  const V=[
+    {n:10,l:'10 gesprochene Ziffern',acc:98,feas:'erledigt',col:C.green,
+     d:'„<strong>98 Prozent korrekte Erkennung</strong> natürlich gesprochener Ziffern wurde vor mehreren Jahren bei den Bell Telephone Laboratories und beim Lincoln Laboratory demonstriert." — Also: bereits 1960 gelöst.'},
+    {n:46,l:'Alphabet + Ziffern + Satzzeichen',acc:92,feas:'jetzt machbar',col:C.cyan,
+     d:'„Ein automatischer Erkenner von klar gesprochenen alphanumerischen Zeichen kann fast sicher <strong>jetzt</strong> auf Basis des vorhandenen Wissens entwickelt werden." Aber: „Da Operatoren nicht annähernd so schnell lesen können, wie eine geübte Person tippt, wäre ein solches Gerät <strong>allenfalls eine Bequemlichkeit</strong>."'},
+    {n:500,l:'kleiner Fachwortschatz',acc:80,feas:'unklar',col:C.amber,
+     d:'Zwischen Bequemlichkeit und echter Symbiose. Zu klein für freie Arbeit, zu groß für die damalige Technik.'},
+    {n:2000,l:'1000 Basic English + 1000 Fachbegriffe',acc:70,feas:'5 Jahre',col:C.amber2,
+     d:'„Für Echtzeit-Interaktion auf einer wirklich symbiotischen Ebene wäre jedoch ein Vokabular von etwa <strong>2000 Wörtern</strong> erforderlich." Laut Konsens der Akustiker und Linguisten 1960 <em>nicht</em> machbar — aber mehrere Organisationen würden es auf Fünf-Jahres-Basis angehen, unter der Bedingung: klare Diktier-Sprache ohne ungewöhnlichen Akzent.'},
+    {n:20000,l:'freie natürliche Sprache',acc:40,feas:'fern',col:C.red,
+     d:'Jenseits dessen, was Licklider überhaupt für nötig hielt. Er wollte keine Konversation — er wollte, dass ein Befehlshaber in zehn Minuten entscheiden kann.'}
+  ];
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const i=+sl.value, v=V[i];
+    $('#vocOut').textContent=v.n.toLocaleString('de-DE');
+    const pad=56, w=W-pad*2, h=H-110, y0=H-54;
+    // Kurve Genauigkeit vs Vokabular
+    const px=n=>pad+(Math.log10(n)-1)/(Math.log10(20000)-1)*w;
+    const py=a=>y0-a/100*h;
+    x.strokeStyle='rgba(255,255,255,.07)';x.lineWidth=1;
+    [0,25,50,75,100].forEach(a=>{x.beginPath();x.moveTo(pad,py(a));x.lineTo(pad+w,py(a));x.stroke();
+      mono(x,a+'%',pad-8,py(a),9,C.faint,'right');});
+    x.strokeStyle=C.cyan;x.lineWidth=2.5;x.beginPath();
+    V.forEach((q,j)=>j?x.lineTo(px(q.n),py(q.acc)):x.moveTo(px(q.n),py(q.acc)));x.stroke();
+    V.forEach((q,j)=>{
+      const on=j===i;
+      if(on)glow(x,q.col,16,()=>{x.fillStyle=q.col;x.beginPath();x.arc(px(q.n),py(q.acc),9,0,7);x.fill();});
+      else {x.fillStyle='rgba(255,255,255,.3)';x.beginPath();x.arc(px(q.n),py(q.acc),4.5,0,7);x.fill();}
+      mono(x,q.n.toLocaleString('de-DE'),px(q.n),y0+18,9.5,on?q.col:C.faint,'center',on?'700':'400');
+    });
+    // Schwelle "symbiotisch"
+    x.strokeStyle='rgba(255,140,66,.4)';x.setLineDash([5,5]);x.lineWidth=1.5;
+    x.beginPath();x.moveTo(px(2000),38);x.lineTo(px(2000),y0);x.stroke();x.setLineDash([]);
+    mono(x,'Schwelle echter Symbiose',px(2000),30,10,C.amber2,'center','700');
+    mono(x,'Vokabulargröße (log) →',pad+w,y0+38,10,C.faint,'right');
+    mono(x,'Erkennungsrate',pad,26,10.5,C.cyan,'left','700');
+    // Status
+    glow(x,v.col,10,()=>mono(x,'['+v.feas.toUpperCase()+']',pad+w,26,11,v.col,'right','700'));
+    $('#vocMsg').innerHTML='<strong style="color:'+v.col+'">'+v.l+' — '+v.acc+' % Erkennung</strong><br>'+v.d;
+  }
+  sl.oninput=draw;draw();addEventListener('resize',draw);
+})();
+
+/* ---- Selbstbeschleunigende Schleife ---- */
+(function(){
+  const cv=$('#loopCanvas');
+  let p=0, anim=null;
+  const NODES=[
+    {l:'Wissen über\nSprachsignale',c:C.violet},
+    {l:'bessere\nComputerprogramme',c:C.cyan},
+    {l:'Computer verarbeiten\nSprachsignale',c:C.green},
+    {l:'schnellerer\nWissenserwerb',c:C.amber}
+  ];
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const cxp=W/2, cyp=H/2+6, R=Math.min(W*0.26,H*0.32);
+    // Ring
+    x.strokeStyle='rgba(255,255,255,.08)';x.lineWidth=2;
+    x.beginPath();x.arc(cxp,cyp,R,0,7);x.stroke();
+    // Fortschrittsbogen
+    x.strokeStyle=C.cyan;x.lineWidth=3;
+    x.beginPath();x.arc(cxp,cyp,R,-Math.PI/2,-Math.PI/2+p*Math.PI*2);x.stroke();
+    NODES.forEach((n,i)=>{
+      const a=-Math.PI/2+i/4*Math.PI*2;
+      const nx=cxp+Math.cos(a)*R, ny=cyp+Math.sin(a)*R;
+      const act = p*4 > i;
+      if(act)glow(x,n.c,16,()=>{x.fillStyle=n.c;x.globalAlpha=.25;x.beginPath();x.arc(nx,ny,30,0,7);x.fill();x.globalAlpha=1;});
+      x.beginPath();x.arc(nx,ny,22,0,7);
+      x.fillStyle=act?'rgba(10,16,30,.98)':'rgba(255,255,255,.04)';x.fill();
+      x.strokeStyle=act?n.c:'rgba(255,255,255,.18)';x.lineWidth=act?2.2:1.2;x.stroke();
+      n.l.split('\n').forEach((l,j)=>
+        txt(x,l,nx+Math.cos(a)*54,ny+Math.sin(a)*54-7+j*14,11,act?n.c:C.faint,
+            Math.abs(Math.cos(a))<0.3?'center':(Math.cos(a)>0?'left':'right'),'600'));
+    });
+    // Mitte: Schätzung
+    const est = 15 - p*10;
+    txt(x,est.toFixed(0),cxp,cyp-8,38,p>0.6?C.green:C.amber,'center','700',"'Fraunces',serif");
+    mono(x,'JAHRE BIS SPRACHERKENNUNG',cxp,cyp+20,9,C.faint,'center','700');
+    if(p>=1){
+      glow(x,C.green,12,()=>mono(x,'„…down to perhaps five years, the five years just mentioned."',cxp,H-16,11.5,C.green,'center','700'));
+    }
+  }
+  $('#loopBtn').onclick=()=>{
+    p=0;if(anim)cancelAnimationFrame(anim);
+    (function s(){p=Math.min(1,p+0.006);draw();if(p<1)anim=requestAnimationFrame(s);})();
+  };
+  draw();addEventListener('resize',draw);
+})();
+
+/* ============================================================
+   12 · ARGUMENTATIONSKETTE
+   ============================================================ */
+(function(){
+  const cv=$('#archCanvas');
+  const N=[
+    {id:'s4',y:0.07,l:'BEOBACHTUNG · 85 % Schreibkram',c:C.amber,
+     d:'Lickliders Selbstmessung 1957: 85 % der Zeit, die er für Denken hielt, waren Suchen, Rechnen, Plotten, Transformieren. Und schlimmer: Seine Themenwahl richtete sich nach der Machbarkeit der Fleißarbeit.'},
+    {id:'s3',y:0.21,l:'PROBLEM · formulativ + Echtzeit',c:C.pink,
+     d:'Computer lösen nur <em>vorformulierte</em> Probleme — jede unvorhergesehene Alternative hält alles an. Und sie sind zu langsam im Zyklus: 47 Sekunden Rechnen, eingebettet in Wochen des Wartens. „Die Frage ist nicht: Was ist die Antwort. Die Frage ist: Was ist die Frage?"'},
+    {id:'s2',y:0.35,l:'ABGRENZUNG · weder Werkzeug noch KI',c:C.violet,
+     d:'Nicht „mechanically extended man" (Mensch gibt alles vor, Maschine ist Verlängerung). Nicht KI (Maschine ersetzt den Menschen). Dazwischen liegt eine Zwischenzeit von geschätzt 20 Jahren — und die soll genutzt werden.'},
+    {id:'s5',y:0.49,l:'BEFUND · komplementäre Fähigkeiten',c:C.cyan,
+     d:'Menschen: laut, schmalbandig, aber massiv parallel, flexibel, selbstumprogrammierend, gut in seltenen Fällen. Maschinen: schnell, exakt, aber einspurig und starr. „Unähnlichkeit und daher potenzielle Ergänzung."'},
+    {id:'s6',y:0.63,l:'LÖSUNG · Arbeitsteilung in Symbiose',c:C.green,
+     d:'Mensch: Ziele, Motivation, Hypothesen, Fragen, Kriterien, Bewertung, seltene Fälle, Lücken füllen. Maschine: Hypothesen in Modelle wandeln, testen, simulieren, transformieren, plotten, interpolieren, Statistik — die routinisierbare Arbeit, die die Intervalle zwischen Entscheidungen füllt.'},
+    {id:'s7',y:0.77,l:'WEG · 5 Voraussetzungen',c:C.amber2,
+     d:'1) Time-Sharing gegen die Geschwindigkeits-Fehlpaarung. 2) Speicher-Hardware: indelible + published memory. 3) Speicher-Organisation: Trie-Memory nach Fredkin. 4) Sprachproblem: Ziele statt Prozeduren. 5) Ein-/Ausgabe: Zeichenfläche, Lagewand, Sprache.'},
+    {id:'s12',y:0.91,l:'PROGNOSE · 5 + 15 Jahre',c:'#fff',
+     d:'„Das lässt uns sagen fünf Jahre, um die Mensch-Computer-Symbiose zu entwickeln, und 15 Jahre, um sie zu nutzen. Die 15 mögen 10 sein oder 500 — aber jene Jahre sollten intellektuell die kreativsten und aufregendsten in der Geschichte der Menschheit sein."'}
+  ];
+  let hov=-1;
+  function draw(){
+    const {x,W,H}=setup(cv);
+    const bw=Math.min(560,W-60), bx=(W-bw)/2;
+    N.forEach((n,i)=>{
+      const by=n.y*H;
+      if(i<N.length-1){
+        arrow(x,W/2,by+30,W/2,N[i+1].y*H-6,'rgba(255,255,255,.16)',1.6);
+      }
+      const on=hov===i;
+      if(on)glow(x,n.c,18,()=>{rr(x,bx,by-16,bw,46,11);x.fillStyle='rgba(18,24,43,.98)';x.fill();});
+      else {rr(x,bx,by-16,bw,46,11);x.fillStyle='rgba(0,0,0,.3)';x.fill();}
+      x.strokeStyle=on?n.c:'rgba(255,255,255,.14)';x.lineWidth=on?2:1.2;x.stroke();
+      mono(x,String(i+1),bx+18,by+7,11,n.c,'center','700');
+      txt(x,n.l,bx+40,by+7,14,on?'#fff':C.dim,'left','600');
+      mono(x,'→',bx+bw-20,by+7,13,on?n.c:C.faint,'center','700');
+    });
+    $('#archMsg').innerHTML = hov>=0
+      ? '<strong style="color:'+N[hov].c+'">'+N[hov].l+'</strong><br>'+N[hov].d
+      : '<span style="color:var(--ink-faint)">Fahre über einen Schritt. Klick springt zum Abschnitt.</span>';
+  }
+  function hit(e){
+    const r=cv.getBoundingClientRect(), H=parseInt(cv.getAttribute('height'));
+    const my=e.clientY-r.top;
+    hov=-1;N.forEach((n,i)=>{if(my>n.y*H-16&&my<n.y*H+30)hov=i;});
+  }
+  cv.addEventListener('mousemove',e=>{hit(e);draw();});
+  cv.addEventListener('mouseleave',()=>{hov=-1;draw();});
+  cv.addEventListener('click',e=>{hit(e);if(hov>=0)document.getElementById(N[hov].id).scrollIntoView({behavior:'smooth'});});
+  draw();addEventListener('resize',draw);
+})();
+
+/* ---- Prerequisites-Plot ---- */
+(function(){
+  const P=[
+    {n:'Time-Sharing',pred:1965,real:1961,note:'CTSS am MIT, 1961 demonstriert. Licklider finanzierte ab 1962 als ARPA-Direktor Project MAC. <strong>Früher als vorhergesagt.</strong>'},
+    {n:'Speicher-Hardware',pred:1965,real:1971,note:'„Milliarden Bits, Milliarden Dollar." ROM/PROM — genau Lickliders „indelible memory" — ab Ende der 60er. Der Preisverfall kam, aber langsamer.'},
+    {n:'Trie / Speicherorganisation',pred:1965,real:1960,note:'Fredkins Idee war zum Zeitpunkt des Aufsatzes unveröffentlicht. Heute in jedem Autocomplete, jedem Router-Lookup, jeder Rechtschreibprüfung. <strong>Bereits erfunden, als Licklider schrieb.</strong>'},
+    {n:'Sprachproblem (Ziele statt Prozeduren)',pred:1965,real:2022,note:'Der härteste Punkt — Licklider nannte ihn selbst „das vielleicht ernsteste Hindernis". Zielorientierte Anweisung in natürlicher Sprache wurde erst mit großen Sprachmodellen praktisch. <strong>62 Jahre statt 5.</strong>'},
+    {n:'Ein-/Ausgabe (Zeichnen, Wand, Sprache)',pred:1965,real:1968,note:'Sutherlands Sketchpad 1963, Engelbarts „Mother of All Demos" 1968 — Maus, Fenster, gemeinsamer Bildschirm. Spracherkennung mit 2000 Wörtern brauchte allerdings bis in die 1990er statt der prognostizierten fünf Jahre.'}
+  ];
+  const cols=['#5ddc8a','#ffb347','#49e8df','#ff5f6d','#9b7bff'];
+  Plotly.newPlot('prereqPlot',[
+    {x:P.map(p=>p.real-1960),y:P.map(p=>p.n),type:'bar',orientation:'h',
+     marker:{color:cols,line:{color:'rgba(255,255,255,.2)',width:1}},
+     name:'tatsächlich',hovertemplate:'%{y}<br>%{x} Jahre<extra></extra>'},
+    {x:P.map(()=>5),y:P.map(p=>p.n),type:'scatter',mode:'markers',
+     marker:{symbol:'line-ns-open',size:26,color:'#fff',line:{width:2.5}},
+     name:"Lickliders Prognose (5 J.)",hoverinfo:'skip'}
+  ],{
+    barmode:'overlay',
+    xaxis:{type:'log',title:{text:'Jahre bis zur Realisierung (log, ab 1960)',font:{size:11}},
+      gridcolor:'rgba(255,255,255,.06)',color:'#9aa7c2'},
+    yaxis:{automargin:true,color:'#9aa7c2',tickfont:{size:11}},
+    paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,.2)',
+    font:{family:'Inter',color:'#9aa7c2',size:11},
+    legend:{orientation:'h',y:-0.2},margin:{t:16,r:24,b:62,l:10}
+  },{displayModeBar:false,responsive:true});
+
+  const el=document.getElementById('prereqPlot');
+  el.on('plotly_hover',e=>{
+    const i=e.points[0].pointIndex;
+    $('#prereqMsg').innerHTML='<strong style="color:'+cols[i]+'">'+P[i].n+' — realisiert '+P[i].real+'</strong><br>'+P[i].note;
+  });
+  el.on('plotly_unhover',()=>{
+    $('#prereqMsg').innerHTML='<span style="color:var(--ink-faint)">Die weißen Striche markieren Lickliders Fünf-Jahres-Prognose. Vier von fünf Voraussetzungen kamen innerhalb eines Jahrzehnts. Die fünfte — die Sprache — brauchte ein halbes Jahrhundert.</span>';
+  });
+  $('#prereqMsg').innerHTML='<span style="color:var(--ink-faint)">Die weißen Striche markieren Lickliders Fünf-Jahres-Prognose. Vier von fünf Voraussetzungen kamen innerhalb eines Jahrzehnts. Die fünfte — die Sprache — brauchte ein halbes Jahrhundert.</span>';
+})();
+
+/* ============================================================
+   RESIZE-SAMMLER für Plotly
+   ============================================================ */
+addEventListener('resize',()=>{
+  ['radarPlot','effPlot','prereqPlot'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&el.data)Plotly.Plots.resize(el);
+  });
+});
+
+/* ============================================================
+   TEMML — optionale Formelsetzung (nur dekorativ genutzt)
+   ============================================================ */
+addEventListener('load',()=>{
+  if(window.temml){
+    document.querySelectorAll('.math[data-tex]').forEach(el=>{
+      try{ el.innerHTML=temml.renderToString(el.dataset.tex,{displayMode:true}); }catch(e){}
+    });
+  }
+});
+</script>
+</body>
+</html>
