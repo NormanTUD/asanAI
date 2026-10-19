@@ -5,6 +5,7 @@ import argparse
 import tempfile
 import shutil
 import os
+import urllib.parse
 from typing import Optional
 from playwright.async_api import async_playwright, Error
 
@@ -49,6 +50,7 @@ def parse_args():
     parser.add_argument("--fake-video", default=None, help="Path to a Y4M video file to use as fake webcam (used when --enable-fake-media is set)")
 
     parser.add_argument("--run-chrome-on-firefox-failure", action="store_true", help="If Firefox fails, still run Chromium (default: don't).")
+    parser.add_argument("--from-test", default=None, help="Resume tests from the given test name (forward match against the test_equal description). Prepended as ?from_test=NAME on the URL.")
 
     return parser.parse_args()
 
@@ -163,6 +165,16 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
 async def main():
     args = parse_args()
 
+    # If --from-test is given, append it as a URL query string so tests.js
+    # can read it on load and skip every test_equal before the named one.
+    # We preserve any pre-existing query string on the --url value.
+    if args.from_test:
+        sep = "&" if "?" in args.url else "?"
+        url_with_from_test = f"{args.url}{sep}from_test={urllib.parse.quote(args.from_test, safe='')}"
+        logging.info(f"[main] Resuming tests from: {args.from_test}")
+    else:
+        url_with_from_test = args.url
+
     run_firefox = args.firefox or (not args.firefox and not args.chromium)
     run_chromium = args.chromium or (not args.firefox and not args.chromium)
 
@@ -171,7 +183,7 @@ async def main():
 
     if run_firefox:
         try:
-            r = await run("firefox", args.firefox_executable, args.url, args.wait, args)
+            r = await run("firefox", args.firefox_executable, url_with_from_test, args.wait, args)
             rc = to_int_exit(r)
             executed.append(("firefox", rc))
             if rc != 0:
@@ -190,7 +202,7 @@ async def main():
             failures.append(("chromium", 1))
         if not skip_chrome:
             try:
-                r = await run("chromium", args.chromium_executable, args.url, args.wait, args)
+                r = await run("chromium", args.chromium_executable, url_with_from_test, args.wait, args)
                 rc = to_int_exit(r)
                 executed.append(("chromium", rc))
                 if rc != 0:

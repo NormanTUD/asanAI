@@ -165,8 +165,33 @@ function test_not_equal (name, is, should_be) {
 	}
 }
 
+// Resume-from-test support: when --from-test NAME is given (added to the URL
+// as ?from_test=NAME by _run_tests.py), every test_equal before NAME is
+// counted but not run. Non-test_equal calls (test_initializer, test_add_layer,
+// test_shuffle, test_resize_time, …) still run unconditionally so that the
+// global state they mutate stays consistent for the tests we do run.
+var __test_from_test = (function () {
+	try {
+		var m = /[?&]from_test=([^&]+)/.exec(window.location.search);
+		return m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : null;
+	} catch (e) { return null; }
+})();
+var __test_resume_active = (__test_from_test !== null);
+var __test_resume_reached = !__test_resume_active; // not active → already "past" everything
+if (__test_resume_active) {
+	console.log("[from_test] will skip every test_equal before a substring match of: \"" + __test_from_test + "\"");
+}
 function test_equal (name, is, should_be) {
 	num_tests++;
+	if (__test_resume_active && !__test_resume_reached) {
+		if (name.indexOf(__test_from_test) !== -1) {
+			__test_resume_reached = true;
+			console.log("[from_test] reached \"" + name + "\" — resuming test execution");
+		} else {
+			show_num_tests_overlay("[skipped until resume] " + name);
+			return true;
+		}
+	}
 	show_num_tests_overlay(name);
 	if(is_equal(is, should_be)) {
 		//log("%c" + name + ": OK", "background: green; color: white");
@@ -4989,6 +5014,10 @@ async function run_tests (quick=0, disable_webcam=0) {
 	remove_overlay();
 
 	tf.engine().endScope();
+
+	if (__test_resume_active && !__test_resume_reached) {
+		console.warn("[from_test] \"" + __test_from_test + "\" did not match any test_equal name; every test was skipped");
+	}
 
 	test_summary();
 
