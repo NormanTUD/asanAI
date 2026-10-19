@@ -176,14 +176,44 @@ var __test_from_test = (function () {
 		return m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : null;
 	} catch (e) { return null; }
 })();
-var __test_resume_active = (__test_from_test !== null);
+// --only-test NAME (repeatable): only run test_equals whose name contains
+// one of the given substrings. Combined with --from-test this lets you run a
+// short slice like "test_custom_tensor through test_check_categorical_predictions".
+var __test_only_tests = (function () {
+	var out = [];
+	try {
+		var re = /[?&]only_test=([^&]+)/g;
+		var m;
+		while ((m = re.exec(window.location.search)) !== null) {
+			out.push(decodeURIComponent(m[1].replace(/\+/g, " ")));
+		}
+	} catch (e) {}
+	return out;
+})();
+// --only-test-count N: stop after N test_equal calls past the resume point.
+// Useful when you want a quick sanity-check slice without running the full
+// tail of the suite.
+var __test_only_count = (function () {
+	try {
+		var m = /[?&]only_test_count=(\d+)/.exec(window.location.search);
+		return m ? parseInt(m[1], 10) : 0;
+	} catch (e) { return 0; }
+})();
+var __test_only_count_used = 0;
+
+var __test_resume_active = (__test_from_test !== null) || __test_only_tests.length > 0 || __test_only_count > 0;
 var __test_resume_reached = !__test_resume_active; // not active → already "past" everything
 if (__test_resume_active) {
-	console.log("[from_test] will skip every test_equal before a substring match of: \"" + __test_from_test + "\"");
+	var parts = [];
+	if (__test_from_test)      parts.push("from_test=" + __test_from_test);
+	if (__test_only_tests.length) parts.push("only_test=" + __test_only_tests.join(","));
+	if (__test_only_count)      parts.push("only_test_count=" + __test_only_count);
+	console.log("[test_filter] active: " + parts.join(" "));
 }
 function test_equal (name, is, should_be) {
 	num_tests++;
-	if (__test_resume_active && !__test_resume_reached) {
+	// Pre-resume-point: skip if --from-test is set and we haven't reached it yet
+	if (__test_from_test && !__test_resume_reached) {
 		if (name.indexOf(__test_from_test) !== -1) {
 			__test_resume_reached = true;
 			console.log("[from_test] reached \"" + name + "\" — resuming test execution");
@@ -191,6 +221,24 @@ function test_equal (name, is, should_be) {
 			show_num_tests_overlay("[skipped until resume] " + name);
 			return true;
 		}
+	}
+	// Post-resume-point: skip if --only-test is set and this name doesn't match any allow-list
+	if (__test_resume_reached && __test_only_tests.length > 0) {
+		var allowed = false;
+		for (var i = 0; i < __test_only_tests.length; i++) {
+			if (name.indexOf(__test_only_tests[i]) !== -1) { allowed = true; break; }
+		}
+		if (!allowed) {
+			show_num_tests_overlay("[only-test filtered out] " + name);
+			return true;
+		}
+	}
+	// --only-test-count: stop the whole run after N executed test_equal calls
+	if (__test_resume_reached && __test_only_count > 0) {
+		if (__test_only_count_used >= __test_only_count) {
+			throw new Error("[only-test-count] limit of " + __test_only_count + " reached; stopping test suite");
+		}
+		__test_only_count_used++;
 	}
 	show_num_tests_overlay(name);
 	if(is_equal(is, should_be)) {

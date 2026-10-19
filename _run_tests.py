@@ -51,6 +51,8 @@ def parse_args():
 
     parser.add_argument("--run-chrome-on-firefox-failure", action="store_true", help="If Firefox fails, still run Chromium (default: don't).")
     parser.add_argument("--from-test", default=None, help="Resume tests from the given test name (forward match against the test_equal description). Prepended as ?from_test=NAME on the URL.")
+    parser.add_argument("--only-test", action="append", default=[], help="Run only this test_equal (substring match); can be given multiple times. Prepended as ?only_test=A&only_test=B on the URL.")
+    parser.add_argument("--only-test-count", type=int, default=0, help="Stop after this many test_equal calls (after the resume point). 0 means run all from --from-test onwards.")
 
     return parser.parse_args()
 
@@ -165,13 +167,22 @@ async def run(browser_name: str, executable_path: Optional[str], url: str, wait_
 async def main():
     args = parse_args()
 
-    # If --from-test is given, append it as a URL query string so tests.js
-    # can read it on load and skip every test_equal before the named one.
-    # We preserve any pre-existing query string on the --url value.
+    # If --from-test / --only-test are given, append them as URL query
+    # strings so tests.js can read them on load and skip/restrICT tests
+    # accordingly. We preserve any pre-existing query string on --url.
+    query_parts = []
     if args.from_test:
-        sep = "&" if "?" in args.url else "?"
-        url_with_from_test = f"{args.url}{sep}from_test={urllib.parse.quote(args.from_test, safe='')}"
+        query_parts.append("from_test=" + urllib.parse.quote(args.from_test, safe=''))
         logging.info(f"[main] Resuming tests from: {args.from_test}")
+    for ot in args.only_test:
+        query_parts.append("only_test=" + urllib.parse.quote(ot, safe=''))
+        logging.info(f"[main] Restricting to test: {ot}")
+    if args.only_test_count:
+        query_parts.append("only_test_count=" + str(args.only_test_count))
+        logging.info(f"[main] Will stop after {args.only_test_count} test_equal calls past resume point")
+    if query_parts:
+        sep = "&" if "?" in args.url else "?"
+        url_with_from_test = args.url + sep + "&".join(query_parts)
     else:
         url_with_from_test = args.url
 

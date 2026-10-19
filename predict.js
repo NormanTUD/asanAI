@@ -2196,7 +2196,7 @@ function _update_webcam_text(tr, probability, isHighest) {
 	var second_td = tr.find("td").eq(1);
 	if (!second_td.length) return;
 
-	let prob_text = (probability * 50);
+	let prob_text = (probability * 100);
 	if (get_last_layer_activation_function() == "softmax") {
 		prob_text += "%";
 	}
@@ -2267,7 +2267,7 @@ function _webcam_prediction_row(predictions_idx, predictions, max_i) {
 			var isHighest = predictions_idx == max_i;
 			content = _create_bar_html(w, isHighest, probability);
 		} else {
-			let prob_text = (probability * 50);
+			let prob_text = (probability * 100);
 			if (get_last_layer_activation_function() == "softmax") {
 				prob_text += "%";
 			}
