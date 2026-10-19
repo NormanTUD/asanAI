@@ -173,6 +173,10 @@ function init_tabs () {
 				window.__weight_surfaces_visible = true;
 			}
 
+			if (ui.newPanel.attr("id") == "gradient_flow") {
+				window.__gradient_flow_visible = true;
+			}
+
 			if (ui.newPanel.attr("id") == "weight_analysis" && typeof WeightAnalysis !== "undefined") {
 				WeightAnalysis.startAutoRefresh("weight_analysis", 5000);
 			}
@@ -201,6 +205,13 @@ function init_tabs () {
 			if (ui.panel.attr("id") == "weight_surfaces") {
 				window.__weight_surfaces_visible = false;
 				if (typeof destroy_weight_surfaces_resizers === "function") destroy_weight_surfaces_resizers();
+			}
+
+			// Leaving the gradient_flow tab: stop tf.variableGrads() (a full
+			// backward pass) from running on every epoch boundary while the
+			// heatmap is offscreen.
+			if (ui.panel.attr("id") == "gradient_flow") {
+				window.__gradient_flow_visible = false;
 			}
 		},
 		hide: { effect: "fade", duration: 0 },
