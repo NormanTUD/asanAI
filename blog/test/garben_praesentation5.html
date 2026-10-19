@@ -735,8 +735,6 @@ const dims=slides.map(()=>({c:null,w:0,h:0}));
 
 function resizeAll(){
   slides.forEach((s,i)=>{
-    const wasActive=s.classList.contains('active');
-    if(!wasActive){ s.style.opacity='0'; s.style.pointerEvents='none'; }
     const prev=s.style.display;
     s.style.display='grid';
     dims[i]=fit(canvases[i]);
