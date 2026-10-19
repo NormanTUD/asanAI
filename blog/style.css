@@ -11230,7 +11230,8 @@ html.reader-mode #course-status-box { display: none; }
 
 /* ── fully-seen tile (every segment filled) — glow + border tint */
 
-.course-tile.tile-visited > .tile-progress-bar .seg.filled {
+.course-tile.tile-visited > .tile-progress-bar .seg.filled,
+.course-tile.tile-visited > .tile-progress-bar.tile-progress-map {
 	box-shadow: 0 0 6px var(--cp-orange-glow);
 }
 
