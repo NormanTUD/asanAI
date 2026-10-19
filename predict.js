@@ -1727,6 +1727,14 @@ async function _print_example_predictions () {
 }
 
 async function _print_example_predictions_impl () {
+	var __pep_t0 = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+	function __pep_log(label) {
+		if (!window.__boot_profile) return;
+		var now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+		try { console.log("[BOOT/PREDICT +" + Math.round(now - __pep_t0) + "ms] " + label); } catch (e) {}
+	}
+	__pep_log("enter");
+
 	var count = 0;
 	var example_predictions = $("#example_predictions");
 	var dataset = $("#dataset").val();
@@ -1741,6 +1749,7 @@ async function _print_example_predictions_impl () {
 		&& _demo_batch_fingerprint_dataset === dataset
 		&& _demo_batch_fingerprint_weights === weights_generation
 		&& example_predictions.find(".example_images").length > 0) {
+		__pep_log("memo hit, skipping");
 		show_or_hide_predictions(_demo_batch_fingerprint_count);
 		return _demo_batch_fingerprint_count;
 	}
@@ -1749,12 +1758,14 @@ async function _print_example_predictions_impl () {
 	var dataset_url = "traindata/index.php?&dataset=" + dataset + "&examples=1";
 
 	var data_from_url = await get_cached_json(dataset_url);
+	__pep_log("get_cached_json done");
 
 	if(data_from_url && Object.keys(data_from_url).includes("example")) {
 		var examples = data_from_url["example"];
 
 		if(examples) {
 			var [str, count, existing_items, existing_indices] = await _get_example_string_image(examples, 0, full_dir);
+			__pep_log("_get_example_string_image done (count=" + count + ")");
 
 			var all_items = existing_items.slice();
 			var all_indices = existing_indices.slice();
@@ -1763,6 +1774,7 @@ async function _print_example_predictions_impl () {
 				example_predictions.html(str);
 
 				var loaded = await _wait_for_new_images(example_predictions);
+				__pep_log("_wait_for_new_images done (loaded=" + loaded.length + ")");
 				for(var i = 0; i < loaded.length; i++) {
 					all_items.push(loaded[i].img);
 					all_indices.push(loaded[i].idx);
@@ -1776,7 +1788,9 @@ async function _print_example_predictions_impl () {
 				await nextFrame();
 				await nextFrame();
 
+				__pep_log("predict_demo_batch starting (all_items=" + all_items.length + ")");
 				await predict_demo_batch(all_items, all_indices);
+				__pep_log("predict_demo_batch done");
 
 				_demo_batch_fingerprint_model = model;
 				_demo_batch_fingerprint_dataset = dataset;

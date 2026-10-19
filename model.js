@@ -383,6 +383,14 @@ async function _compile_model_do_compile(new_model_config_hash) {
 }
 
 async function compile_model(recursion_level=0) {
+	var __cm_t0 = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+	function __cm_log(label) {
+		if (!window.__boot_profile) return;
+		var now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+		try { console.log("[BOOT/COMPILE +" + Math.round(now - __cm_t0) + "ms] " + label); } catch (e) {}
+	}
+	__cm_log("enter (recursion=" + recursion_level + ")");
+
 	l(language[lang]["compiling_model"]);
 
 	if(recursion_level > 3) {
@@ -393,14 +401,36 @@ async function compile_model(recursion_level=0) {
 	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
 
 	var new_model_config_hash = await get_model_config_hash();
+	__cm_log("get_model_config_hash done");
 	assert(typeof(new_model_config_hash) == "string", "new model config has is not a string");
 
 	var config_changed = (model_config_hash != new_model_config_hash);
 
 	await _compile_model_ensure_exists();
+	__cm_log("_compile_model_ensure_exists done");
+
+	// Fast-path: if the model was already compiled with this exact config, the
+	// whole compile is a no-op. Without this, change_data_origin() (called
+	// once during _init_app_data_and_handlers, right after init_page_contents
+	// already compiled) would pay the full get_weights_as_json + recreate +
+	// get_model_data cost again — measured at ~7 s of the ~16 s total boot.
+	// The post-processing below (reset_background_color_for_all_layers,
+	// plot_model_plot, etc.) still runs because callers depend on it firing
+	// after every compile_model() call.
+	if (!config_changed && model && model.optimizer) {
+		__cm_log("FAST-PATH: model already compiled with this config; skipping save/restore + recompile");
+		reset_background_color_for_all_layers();
+		try_to_set_output_shape_from_model();
+		write_model_summary_wait();
+		await plot_model_plot(true);
+		return;
+	}
+
 	await _compile_model_save_restore_weights(config_changed, new_model_config_hash);
+	__cm_log("_compile_model_save_restore_weights done");
 
 	var compile_result = await _compile_model_do_compile(new_model_config_hash);
+	__cm_log("_compile_model_do_compile done");
 
 	if (compile_result === false) return;
 	if (compile_result !== true) {
