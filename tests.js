@@ -202,7 +202,10 @@ var __test_only_count = (function () {
 var __test_only_count_used = 0;
 
 var __test_resume_active = (__test_from_test !== null) || __test_only_tests.length > 0 || __test_only_count > 0;
-var __test_resume_reached = !__test_resume_active; // not active → already "past" everything
+// __test_resume_reached tracks "we are past the --from-test resume point" —
+// only relevant when --from-test is set. only-test/only-test-count filters
+// are independent and apply on their own.
+var __test_resume_reached = (__test_from_test === null);
 if (__test_resume_active) {
 	var parts = [];
 	if (__test_from_test)      parts.push("from_test=" + __test_from_test);
@@ -222,8 +225,12 @@ function test_equal (name, is, should_be) {
 			return true;
 		}
 	}
-	// Post-resume-point: skip if --only-test is set and this name doesn't match any allow-list
-	if (__test_resume_reached && __test_only_tests.length > 0) {
+	// Post-resume-point: skip if --only-test is set and this name doesn't match any allow-list.
+	// Independent of --from-test — if you pass --only-test alone, every test_equal
+	// must match to run; if you pass --from-test + --only-test, the from_test gate
+	// runs first (skipping everything before the resume point), then the only_test
+	// gate runs on everything from the resume point on.
+	if (__test_only_tests.length > 0) {
 		var allowed = false;
 		for (var i = 0; i < __test_only_tests.length; i++) {
 			if (name.indexOf(__test_only_tests[i]) !== -1) { allowed = true; break; }
@@ -233,8 +240,9 @@ function test_equal (name, is, should_be) {
 			return true;
 		}
 	}
-	// --only-test-count: stop the whole run after N executed test_equal calls
-	if (__test_resume_reached && __test_only_count > 0) {
+	// --only-test-count: stop the whole run after N executed test_equal calls past the resume point.
+	// Counts only tests that ACTUALLY ran (i.e. weren't filtered out above).
+	if (__test_only_count > 0) {
 		if (__test_only_count_used >= __test_only_count) {
 			throw new Error("[only-test-count] limit of " + __test_only_count + " reached; stopping test suite");
 		}
