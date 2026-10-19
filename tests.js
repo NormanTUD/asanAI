@@ -1843,7 +1843,18 @@ async function test_check_categorical_predictions () {
 
 	var all_predictions_are_floats_ok = 1;
 	$(".predict_table td").not(".label_element").each((i, e) => {
-		const got_text = ($(e).text());
+		// The cell text can be a raw float ("0.2218") when bars are off,
+		// OR a percentage tooltip ("22.18%") when bars are still on. The
+		// latter is what happens for softmax predictions because
+		// show_bars_instead_of_numbers() forces true for softmax regardless
+		// of the checkbox, and the click doesn't re-render already-built
+		// example prediction tables. Read data-raw when present (bar mode),
+		// otherwise fall back to text content (number mode). Strip a
+		// trailing "%" so percentages pass looks_like_number.
+		const $e = $(e);
+		const data_raw = $e.find(".bar").attr("data-raw");
+		let got_text = data_raw !== undefined ? data_raw : $e.text();
+		got_text = String(got_text).replace(/%$/, "").trim();
 		if(!looks_like_number(got_text)) {
 			console.error(`test_check_categorical_predictions: got text '${got_text}', which didn't look like a number`);
 			all_predictions_are_floats_ok = 0;
