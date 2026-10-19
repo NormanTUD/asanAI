@@ -734,7 +734,19 @@ function set_auto_intervals () {
 		if (Date.now() < _layout_stall_suspend_until) return;
 		repredict_if_not_image_but_image_is_shown(); // await not possible
 	}, 200);
-	setInterval(function () { if (Date.now() < _layout_stall_suspend_until) return; trigger_plot(); }, 500);
+	// trigger_plot() goes through should_skip_update -> get_weights_as_string(),
+	// which serializes every weight tensor of the model. On page load the
+	// predict tab is hidden, the plot is invisible, and the work is pure
+	// waste (~25 % of load time before this gate). Mirror the visibility
+	// gate plot_model_plot() already uses: skip the tick entirely while the
+	// plot is offscreen/hidden. plot_model_plot()'s 100 ms poll will fire
+	// trigger_plot(force) the moment the user opens the predict tab.
+	setInterval(function () {
+		if (Date.now() < _layout_stall_suspend_until) return;
+		var el = document.getElementById("plotly_predict");
+		if (!el || !check_visible(el)) return;
+		trigger_plot();
+	}, 500);
 	setInterval(function () { if (Date.now() < _layout_stall_suspend_until) return; write_descriptions(); }, 500); // await not possible here
 	setInterval(function () { if (Date.now() < _layout_stall_suspend_until) return; show_layer_description_when_layer_is_visible(); }, 500);
 }
