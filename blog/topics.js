@@ -1978,6 +1978,7 @@
 		} else {
 			block.classList.add('topic-block--clipped');
 		}
+		markTocTucked();
 	}
 
 	/** small "show the full math" affordance shown while a block is in
@@ -2084,6 +2085,7 @@
 		}
 		syncDemoTucking(block);
 		if (block._tbUserRevealed === true) ensureRecollapse(block);
+		markTocTucked();
 	}
 
 	function reapplyBlock(block) {
@@ -2099,6 +2101,38 @@
 	    block — because "the section" is the block plus its trailing demos, not
 	    just the block's div. The delegation-free per-button handler is enough
 	    here (no competing document-level handler targets this class). */
+	/** Inhaltsverzeichnis: Einträge, deren Überschrift in einer wegen Mathe /
+	    History-Tiefe eingeklappten Sektion liegt, dezent kennzeichnen.
+	    Gebündelt per requestAnimationFrame (wird bei jedem Zustandswechsel
+	    angestoßen; das TOC entsteht erst nach dem Markdown-Rendern). */
+	let _tocMarkQueued = false;
+	function markTocTucked() {
+		if (_tocMarkQueued) return;
+		_tocMarkQueued = true;
+		requestAnimationFrame(function () {
+			_tocMarkQueued = false;
+			const toc = document.getElementById('toc');
+			if (!toc) return;
+			toc.querySelectorAll('a[href^="#"]').forEach(function (a) {
+				const row = a.closest('.toc-row') || a.parentElement;
+				let target = null;
+				try { target = document.getElementById(decodeURIComponent(a.getAttribute('href').slice(1))); } catch (e) { /* bad id */ }
+				const block = target && target.closest ? target.closest('.topic-block') : null;
+				const why = block && block.classList.contains('topic-block-collapsed') ? block._tbWhy : null;
+				const tucked = why === 'math' || why === 'depth';
+				row.classList.toggle('toc-tucked', tucked);
+				if (tucked) {
+					a.title = why === 'math'
+						? 'Folded: your math level may not be high enough for this section.'
+						: 'Folded: this section may reach further back in history than you chose.';
+				} else if (a.title && a.title.indexOf('Folded:') === 0) {
+					a.removeAttribute('title');
+				}
+			});
+		});
+	}
+	window.addEventListener('blogPostLoadComplete', markTocTucked);
+
 	/** alle Leisten einer Sektion entfernen — auch Kopien, die beim
 	    Markdown-Rendern (innerHTML neu geschrieben) liegen geblieben sind. */
 	function removeBars(block) {
@@ -2758,6 +2792,7 @@
 		rebuildGroupBadges();
 		settleLearnedButton();
 		settleCourseStatusBox();
+		markTocTucked();
 	}
 
 	/* ── 6b. Math alternative text ──────────────────────────────

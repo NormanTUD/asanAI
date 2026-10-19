@@ -10226,6 +10226,14 @@ html.dark .topics-preset-fun {
 	font-weight: 500;
 	font-variant-numeric: tabular-nums;
 }
+/* Inhaltsverzeichnis: Eintrag liegt in einer eingeklappten Sektion (dezent) */
+#toc .toc-row.toc-tucked > a { opacity: 0.55; }
+#toc .toc-row.toc-tucked > a::after {
+	content: '\00a0◦';
+	color: var(--mn-text-muted);
+	font-size: 0.85em;
+}
+#toc .toc-row.toc-tucked:hover > a { opacity: 0.85; }
 .topic-block-fade-badge .tbf-toggle {
 	flex: 0 0 auto;
 	font-size: 0.72rem;
