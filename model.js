@@ -409,16 +409,17 @@ async function compile_model(recursion_level=0) {
 	await _compile_model_ensure_exists();
 	__cm_log("_compile_model_ensure_exists done");
 
-	// Fast-path: if the model was already compiled with this exact config, the
-	// whole compile is a no-op. Without this, change_data_origin() (called
-	// once during _init_app_data_and_handlers, right after init_page_contents
-	// already compiled) would pay the full get_weights_as_json + recreate +
-	// get_model_data cost again — measured at ~7 s of the ~16 s total boot.
-	// The post-processing below (reset_background_color_for_all_layers,
-	// plot_model_plot, etc.) still runs because callers depend on it firing
-	// after every compile_model() call.
-	if (!config_changed && model && model.optimizer) {
-		__cm_log("FAST-PATH: model already compiled with this config; skipping save/restore + recompile");
+	// Fast-path: if the model was already compiled with this exact config,
+	// the whole compile is a no-op. model_config_hash is only ever assigned
+	// in _compile_model_do_compile right after model.compile() succeeds, so
+	// a hash match is a sufficient signal — no need to also test
+	// model.optimizer. (model.optimizer was the previous condition; dropping
+	// it lets the fast-path fire for the redundant compile_model call that
+	// updated_page() issues right after the explicit one in set_config,
+	// even when the first compile hit a transient "model is null" early-out
+	// and left model_config_hash stale for the second call to rediscover.)
+	if (!config_changed) {
+		__cm_log("FAST-PATH: model_config_hash already matches; skipping save/restore + recompile");
 		reset_background_color_for_all_layers();
 		try_to_set_output_shape_from_model();
 		write_model_summary_wait();

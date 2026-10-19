@@ -153,7 +153,15 @@ async function repair_output_shape_or_show_error () {
 
 async function create_and_compile_model_or_show_error () {
 	try {
-		model = await _create_model();
+		// NOTE: previously we unconditionally called _create_model() here,
+		// which disposes the existing model and rebuilds it from scratch
+		// (~3 s of tensor disposal + creation + weights re-sync) on every
+		// change_data_origin() — including the boot call right after
+		// init_page_contents already built the model. compile_model()
+		// already routes through recreate_model_if_needed(), so it will
+		// recreate the model on its own if and only if the config hash
+		// actually changed. Letting it decide avoids the unconditional
+		// 3 s reset during boot.
 		await compile_model();
 	} catch (e) {
 		err(e);
