@@ -1557,8 +1557,10 @@ const fmt=(v,n=3)=>Number(v).toFixed(n);
 
 function fitHiDPI(cv){
   const r=window.devicePixelRatio||1;
-  const w=cv.clientWidth, h=parseInt(cv.getAttribute('height'))||300;
-  if(cv.width!==w*r||cv.height!==h*r){cv.width=w*r;cv.height=h*r;}
+  if(!cv._h0)cv._h0=parseInt(cv.getAttribute('height'))||300;
+  const w=cv.clientWidth||600, h=cv._h0;
+  const W=Math.round(w*r), H=Math.round(h*r);
+  if(cv.width!==W||cv.height!==H){cv.width=W;cv.height=H;}
   const ctx=cv.getContext('2d');
   ctx.setTransform(r,0,0,r,0,0);
   return {ctx,w,h};
