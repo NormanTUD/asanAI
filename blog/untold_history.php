@@ -371,7 +371,7 @@ Between the fall of the Western Roman Empire and the European Renaissance, the c
 **Ibn al-Haytham (Alhazen)** (965–1040 CE) wrote the \citetitle{ibnalhaytham1021optics} (\citeyear{ibnalhaytham1021optics}), a seven-volume work that established the **experimental method** as the foundation of optics and, by extension, of natural philosophy. Against the Greek emission and intromission theories of vision, Ibn al-Haytham argued, on the basis of controlled experiments, that vision occurs when light from an object enters the eye, and he designed the first controlled experiments in the history of science: varying one parameter at a time, recording the result, and drawing a general conclusion. The \citetitle{ibnalhaytham1021optics} also described the **camera obscura**, the direct optical ancestor of the photographic camera, the microscope, and the camera that will one day image a brain. The experimental method he codified, hypothesis, controlled experiment, quantitative measurement, general law, is the method that the Royal Society would formalize three centuries later and that the entire empirical science underlying AI depends on.
 </div>
 
-<div class="md" data-mathlevel="35" data-depth="40" data-optionaltitle="The Scientific Revolution: 1543–1687">
+<div class="md" data-mathlevel="35" data-depth="40">
 ### The Scientific Revolution: 1543–1687
 
 The Scientific Revolution was not a single event but a cascade of mutually reinforcing breakthroughs, each one displacing the last:
@@ -1585,7 +1585,7 @@ The first major formalization came with **FORTRAN**, designed by \cite[John Back
 The \cite[ALGOL 60 report]{algol60report}, edited by **Peter Naur**, introduced *explicit type declarations*. Programmers now wrote `integer x` or `real y`. ALGOL 60 also introduced the `Boolean` type, named after \cite[George Boole]{bool1854}, whose 1854 *An Investigation of the Laws of Thought* reduced logic to binary algebra. This was the first language to include `Boolean` as a named, first-class data type.
 </div>
 
-<div class="md" data-mathlevel="55" data-depth="20" data-optionaltitle="Floating-Point Standardization: IEEE 754 (1985)">
+<div class="md" data-mathlevel="55" data-depth="20">
 #### Floating-Point Standardization: IEEE 754 (1985)
 
 While floating-point arithmetic existed from the earliest computers, every manufacturer implemented it differently. The chaos was resolved by \cite[IEEE 754]{ieee754_1985}, primarily the work of **William Kahan** (UC Berkeley, Turing Award 1989). It defined:
@@ -1626,7 +1626,7 @@ The earliest computers (Zuse's Z3, ENIAC) operated on raw binary patterns with n
 - **C (1972)**, Dennis Ritchie's C language exposed arrays as contiguous blocks of memory with pointer arithmetic, giving programmers direct control over memory layout.
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Why Arrays Matter">
+<div class="md" data-mathlevel="45">
 #### Why Arrays Matter
 
 Arrays map directly to how computer memory works, sequential, indexed storage. Accessing element $i$ of an array takes constant time $O(1)$ because the memory address can be computed directly:
@@ -2173,7 +2173,7 @@ VisiCalc became the first **“killer application”**, software so compelling t
 The spreadsheet metaphor, a grid of cells, each containing either a value or a formula, proved so intuitive that it has survived essentially unchanged for over 45 years.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The Mathematical Model">
+<div class="md" data-mathlevel="55">
 #### The Mathematical Model
 
 A spreadsheet can be formalized as a **directed acyclic graph (DAG)** of cell dependencies. Each cell $C_{i,j}$ contains either a constant $v$ or a function $f$ of other cells:
@@ -2252,7 +2252,7 @@ $$f(x) = x^2 + 2x + 1, \quad f(5) = 36$$
 ### Beyond Spreadsheets: The Evolution of Data Usability
 </div>
 
-<div class="md" data-mathlevel="50" data-depth="20" data-optionaltitle="The Database Revolution: From Filing Cabinets to SQL">
+<div class="md" data-mathlevel="50" data-depth="20">
 #### The Database Revolution: From Filing Cabinets to SQL
 
 While spreadsheets handle ad-hoc analysis, **databases** manage structured storage at scale.

@@ -369,7 +369,8 @@
 		try {
 			const raw = localStorage.getItem(STORAGE_KEY);
 			if (raw) {
-				const parsed = JSON.parse(raw);
+				// writePref() speichert URI-kodiert (wie im Cookie) → erst dekodieren
+				const parsed = JSON.parse(raw.charAt(0) === '%' ? decodeURIComponent(raw) : raw);
 				if (parsed && typeof parsed === 'object') return parsed;
 			}
 		} catch (e) { /* private mode -> fall through to cookie */ }
@@ -1012,7 +1013,8 @@
 		//    depsMet() would return true, and the gate would be silently
 		//    suppressed for every tile (the slider's level never applied).
 		const lessonId = isIndexPage() ? null : getLessonId();
-		const depsOK = lessonId ? depsMet(lessonId) : false;
+		const deps = lessonId ? LESSON_DEPS[lessonId] : null;
+		const depsOK = (deps && deps.length) ? depsMet(lessonId) : false;
 		if (mathReq !== null && !depsOK && getMathLevel() < mathReq) {
 			state = 'off';
 			reason = 'needs ' + mathLevelLabel(mathReq) + ' math (you are at ' + mathLevelLabel(getMathLevel()) + ')';
@@ -1818,36 +1820,63 @@
 	    Content stays visible (faded); a small badge shows the gate reason. */
 	function setBanner(block, spec, score) {
 		score = score || {};
-		const old = block.querySelector(':scope > .topic-block-fade-badge');
-		if (old) old.remove();
+		removeBars(block);
 		const badge = document.createElement('button');
 		badge.type = 'button';
 		badge.className = 'topic-block-fade-badge';
 		badge.setAttribute('aria-label', 'Reveal this section');
-		const icon = score.why === 'math' ? '∫' : (score.why === 'category' ? '✦' : '◈');
+		// Kurzer, einfacher Hinweis ohne Zahlen
 		const label = score.why === 'math'
-			? score.reason || ''
-			: (score.reason || 'outside your interests');
-		// Section title: prefer the author's data-optionaltitle, else the first
-		// heading inside the block (available once Markdown has rendered).
-		let title = block.getAttribute('data-optionaltitle') || '';
-		if (!title) {
-			const h = block.querySelector('h1,h2,h3,h4,h5,h6');
-			if (h) title = (h.textContent || '').replace(/\s+/g, ' ').trim();
+			? 'Your math level may not be high enough for this section.'
+			: score.why === 'depth'
+				? 'This section may reach further back in history than you chose.'
+				: (score.reason || 'outside your interests');
+		// Titel = erste Überschrift der Sektion (nicht data-optionaltitle).
+		// Inhalt inkl. gerenderter Mathe übernehmen.
+		const titleH = barHeading(block);
+		let titleHtml = '';
+		if (titleH) {
+			const c = titleH.cloneNode(true);
+			c.querySelectorAll('.cl-h-anchor, annotation, .tb-fold-caret').forEach(function (x) { x.remove(); });
+			titleHtml = c.innerHTML.trim();
+		} else if (block.getAttribute('data-optionaltitle')) {
+			titleHtml = escAttr(block.getAttribute('data-optionaltitle'));
+		}
+		badge.setAttribute('aria-expanded', 'false');
+		// Nummer der Überschrift: die Leiste übernimmt deren CSS-Zähler (steht im
+		// Dokument direkt davor), die Überschrift zählt dann nicht nochmal. Geht
+		// nur, wenn es die erste Überschrift der Sektion ist.
+		const numbered = !!titleH && /^H[23]$/.test(titleH.tagName)
+			&& titleH === block.querySelector('h1, h2, h3, h4, h5, h6')
+			&& !titleH.matches('.no-num, [class*="skip-num"]') && !titleH.querySelector(':scope > .no-num');
+		if (numbered) {
+			badge.setAttribute('data-hlevel', titleH.tagName.toLowerCase());
+			titleH.classList.add('tb-num-moved');
 		}
 		badge.innerHTML =
-			'<span class="tbf-icon" aria-hidden="true">' + escAttr(icon) + '</span>'
-			+ (title ? '<span class="tbf-title">' + escAttr(title) + '</span>' : '')
-			+ '<span class="tbf-text">' + escAttr(label) + '</span>'
-			+ '<span class="tbf-action">tap to reveal ↓</span>';
+			(numbered ? '<span class="tbf-num" aria-hidden="true"></span>' : '')
+			+ (titleHtml ? '<span class="tbf-title">' + titleHtml + '</span>' : '')
+			+ '<span class="tbf-toggle">▸ expand</span>'
+			+ '<span class="tbf-text">' + escAttr(label) + '</span>';
+		// Leiste oben in der Sektion: auf- UND wieder zuklappbar
 		badge.addEventListener('click', function (ev) {
 			ev.preventDefault();
 			ev.stopPropagation();
-			block._tbUserRevealed = true; // reader chose to see it → keep it revealed
-			revealBlock(block, true);
+			if (block.classList.contains('topic-block-collapsed')) {
+				block._tbUserRevealed = true; // reader chose to see it → keep it revealed
+				revealBlock(block, true);
+			} else {
+				foldBlockAgain(block);
+			}
 		});
-		block.appendChild(badge);
+		block.insertBefore(badge, block.firstChild);
 		return badge;
+	}
+
+	/** Überschrift für die Leiste: die erste #-Überschrift im Sektions-div,
+	    egal welche Ebene (die, die dem Anfang der Sektion am nächsten ist). */
+	function barHeading(block) {
+		return block.querySelector('h1, h2, h3, h4, h5, h6');
 	}
 
 	function ensureInner(block) {
@@ -1939,7 +1968,13 @@
 		setBanner(block, spec, score);
 		if (animate && !prefersReducedMotion()) {
 			const fromH = block.getBoundingClientRect().height || block.scrollHeight;
-			animateClip(block, fromH, TUCK_H, true);
+			// Inhalt bleibt während der Animation sichtbar und schrumpft bis
+			// auf die Leiste zusammen (wie die "Not shown"-Box).
+			block.classList.add('topic-block-closing');
+			const bar = block.querySelector(':scope > .topic-block-fade-badge');
+			const toH = bar ? bar.offsetHeight + 16 : TUCK_H;
+			animateClip(block, fromH, toH, true);
+			setTimeout(function () { block.classList.remove('topic-block-closing'); }, 440);
 		} else {
 			block.classList.add('topic-block--clipped');
 		}
@@ -2017,20 +2052,23 @@
 			block.classList.remove('topic-block--clipped');
 			clearClipInline(block);
 			syncDemoTucking(block);
-			if (block._tbUserRevealed === true) ensureRecollapse(block);
+			if (block._tbUserRevealed === true) { setBadgeOpen(block, true); ensureRecollapse(block); }
 			return;
 		}
+		const startH = block.offsetHeight || 0;
 		const badge = block.querySelector(':scope > .topic-block-fade-badge');
-		if (badge) badge.remove();
+		// Vom Leser geöffnet → Leiste bleibt (zum Wieder-Zuklappen), sonst weg
+		if (badge && block._tbUserRevealed !== true) removeBars(block);
 		const altRev = block.querySelector(':scope > .topic-block-alt-reveal');
 		if (altRev) altRev.remove();
 		block.classList.remove('topic-block-collapsed');
 		block.classList.remove('topic-block-alt-active');
 		block.classList.add('topic-block-revealed');
+		setBadgeOpen(block, true);
 		const fullH = block.scrollHeight || block.offsetHeight || 0;
-		const canAnimate = animate && !prefersReducedMotion() && fullH > TUCK_H;
+		const canAnimate = animate && !prefersReducedMotion() && fullH > startH;
 		if (canAnimate) {
-			animateClip(block, TUCK_H, fullH, false);
+			animateClip(block, startH, fullH, false);
 			// Hard guarantee: a reveal must never leave the block stuck
 			// clipped — if the transitionend is missed (or the clip's
 			// `overflow:hidden !important` wins the fight), force the unclip.
@@ -2061,7 +2099,50 @@
 	    block — because "the section" is the block plus its trailing demos, not
 	    just the block's div. The delegation-free per-button handler is enough
 	    here (no competing document-level handler targets this class). */
+	/** alle Leisten einer Sektion entfernen — auch Kopien, die beim
+	    Markdown-Rendern (innerHTML neu geschrieben) liegen geblieben sind. */
+	function removeBars(block) {
+		removeStaleBars(block);
+		block.querySelectorAll(':scope > .topic-block-fade-badge').forEach(function (b) { b.remove(); });
+		block.querySelectorAll('.tb-num-moved').forEach(function (h) { h.classList.remove('tb-num-moved'); });
+	}
+
+	/** nur die liegen gebliebenen Kopien (nicht direkt im Block) entfernen */
+	function removeStaleBars(block) {
+		block.querySelectorAll('.topic-block-fade-badge').forEach(function (b) {
+			if (b.parentElement === block || b.closest('.topic-block') !== block) return;
+			const p = b.parentElement;
+			b.remove();
+			if (p && p.tagName === 'P' && !p.textContent.trim() && !p.children.length) p.remove();
+		});
+	}
+
+	function foldBlockAgain(block) {
+		block._tbUserRevealed = false;
+		block._tbState = 'off';
+		reapplyBlock(block);
+		// Re-tucking this block may have created a new run of
+		// consecutive tucked sections → regroup behind one badge.
+		rebuildGroupBadges();
+	}
+
+	/** open/closed look of the section's top bar (caret + action text). */
+	function setBadgeOpen(block, open) {
+		const badge = block.querySelector(':scope > .topic-block-fade-badge');
+		if (!badge) return;
+		// Leiste sieht offen genau gleich aus wie zu, nur der Zustand wechselt
+		badge.setAttribute('aria-expanded', open ? 'true' : 'false');
+		badge.setAttribute('aria-label', open ? 'Fold this section away' : 'Reveal this section');
+		const tg = badge.querySelector('.tbf-toggle');
+		if (tg) tg.textContent = open ? '▾ collapse' : '▸ expand';
+	}
+
 	function ensureRecollapse(block) {
+		// Die Leiste oben schließt die Sektion schon → kein zweiter Knopf unten
+		if (block.querySelector(':scope > .topic-block-fade-badge')) {
+			removeRecollapse(block);
+			return null;
+		}
 		try {
 			let btn = findRecollapse(block);
 			if (!btn) {
@@ -2072,12 +2153,7 @@
 				btn.textContent = '\u25B2 \u00A0Fold this section away';
 				btn.addEventListener('click', function (e) {
 					e.stopPropagation();
-					block._tbUserRevealed = false;
-					block._tbState = 'off';
-					reapplyBlock(block);
-					// Re-tucking this block may have created a new run of
-					// consecutive tucked sections → regroup behind one badge.
-					rebuildGroupBadges();
+					foldBlockAgain(block);
 				});
 			}
 			const parent = block.parentNode;
@@ -2112,8 +2188,7 @@
 				if (sib.classList && sib.classList.contains('topic-block-recollapse')) return sib;
 				if (sib.tagName === 'SECTION') break;
 				if (sib.id && TB_NO_TUCK_IDS[sib.id]) break;
-				if (sib.matches && sib.matches('[data-mathlevel], [data-math-level], [data-optionaltitle], [data-topic]')) break;
-				if (sib.matches && sib.matches('h1,h2,h3,h4,h5,h6')) break;
+				if (isSectionStart(sib)) break;
 				sib = sib.nextElementSibling;
 			}
 		} catch (e) {
@@ -2339,7 +2414,11 @@
 			// (revealGroupBadge) is the only valid path.
 			if (badge.classList.contains('topic-block-group-badge')) return;
 			const block = badge.closest('.topic-block') || badge.parentElement;
-			if (!block || !block.classList.contains('topic-block-collapsed')) return;
+			if (!block) return;
+			if (!block.classList.contains('topic-block-collapsed')) {
+				if (block._tbUserRevealed === true) foldBlockAgain(block);
+				return;
+			}
 			block._tbUserRevealed = true;
 			revealBlock(block, true);
 		}, false);
@@ -2368,6 +2447,21 @@
 	    the end of the parent. Used to place controls (recollapse button,
 	    grouped reveal badge) at the true end of a section rather than at the
 	    end of the block's own div — which, when demos follow, is mid-section. */
+	/** Beginnt `el` eine neue Sektion? Markierter Block (Mathe/Tiefe/Titel/
+	    Topic), eine nackte Überschrift oder ein .md-Block, der mit einer
+	    eigenen Überschrift anfängt (seit die Titel aus den ##/### kommen). */
+	function isSectionStart(el) {
+		if (!el.matches) return false;
+		if (el.matches('[data-mathlevel], [data-math-level], [data-depth], [data-depthlevel], [data-optionaltitle], [data-topic]')) return true;
+		if (el.matches('h1,h2,h3,h4,h5,h6')) return true;
+		if (el.classList.contains('md') && !el.classList.contains('optional')) {
+			const first = el.querySelector(':scope > .topic-block-inner > *, :scope > *');
+			if (first && first.matches('h1,h2,h3,h4,h5,h6')) return true;
+			if (!first && /^\s*#{1,6}\s/.test(el.textContent || '')) return true; // noch nicht gerendert
+		}
+		return false;
+	}
+
 	function sectionEndBefore(block) {
 		if (!block || !block.nextElementSibling) return null;
 		let sib = block.nextElementSibling;
@@ -2377,8 +2471,7 @@
 			}
 			if (sib.tagName === 'SECTION') return sib;
 			if (sib.id && TB_NO_TUCK_IDS[sib.id]) return sib;
-			if (sib.matches && sib.matches('[data-mathlevel], [data-math-level], [data-optionaltitle], [data-topic]')) return sib;
-			if (sib.matches && sib.matches('h1,h2,h3,h4,h5,h6')) return sib;
+			if (isSectionStart(sib)) return sib;
 			sib = sib.nextElementSibling;
 		}
 		return null;
@@ -2397,9 +2490,8 @@
 			// the block. Plain (ungated) .md prose and .optional boxes that sit
 			// between the demos belong to the current section and tuck with it —
 			// only a gated block starts a new section.
-			if (sib.matches && sib.matches('[data-mathlevel], [data-math-level], [data-optionaltitle], [data-topic]')) break;
-			// A bare heading that starts a new section.
-			if (sib.matches && sib.matches('h1,h2,h3,h4,h5,h6')) break;
+			// Also a bare heading or a .md block opening with its own heading.
+			if (isSectionStart(sib)) break;
 			// Skip non-rendered nodes without tucking them.
 			if (sib.tagName === 'SCRIPT' || sib.tagName === 'STYLE' || sib.tagName === 'TEMPLATE') {
 				sib = sib.nextElementSibling; continue;
@@ -2425,7 +2517,7 @@
 
 	function syncDemoTucking(block) {
 		const wasTucked = !!(block._tbTuckedDemos && block._tbTuckedDemos.length);
-		const shouldTuck = block.classList.contains('topic-block-collapsed') && block._tbWhy === 'math';
+		const shouldTuck = block.classList.contains('topic-block-collapsed') && (block._tbWhy === 'math' || block._tbWhy === 'depth');
 		if (shouldTuck) {
 			block._tbTuckedDemos = tuckFollowingDemos(block);
 		} else {
@@ -2441,16 +2533,17 @@
 		document.querySelectorAll('.topic-block.topic-block-collapsed .topic-block-fade-badge').forEach(function (badge) {
 			if (badge.querySelector('.tbf-title')) return;
 			const block = badge.parentElement;
-			let title = block.getAttribute('data-optionaltitle') || '';
-			if (!title) {
-				const h = block.querySelector('h1,h2,h3,h4,h5,h6');
-				if (h) title = (h.textContent || '').replace(/\s+/g, ' ').trim();
+			// Überschrift jetzt gerendert → Leiste mit Titel + Nummer neu bauen
+			if (barHeading(block) && block._tbScore) {
+				setBanner(block, block._tbSpec || blockSpec(block), block._tbScore);
+				return;
 			}
+			const title = block.getAttribute('data-optionaltitle') || '';
 			if (!title) return;
 			const span = document.createElement('span');
 			span.className = 'tbf-title';
 			span.textContent = title;
-			const icon = badge.querySelector('.tbf-icon');
+			const icon = badge.querySelector('.tbf-icon') || badge.querySelector('.tbf-num');
 			if (icon) badge.insertBefore(span, icon.nextSibling);
 			else badge.insertBefore(span, badge.firstChild);
 		});
@@ -2477,6 +2570,7 @@
 	    only when the state actually changed and `animate` is set. */
 	function applyBlockState(block, spec, score, animate) {
 		if (block._tbBusy) { block._tbDirty = true; block._tbScore = score; block._tbSpec = spec; block._tbWhy = score.why; return; }
+		removeStaleBars(block);
 		block._tbScore = score;
 		block._tbSpec = spec;
 		block._tbWhy = score.why;
@@ -2490,7 +2584,7 @@
 		// (`isFragile`) are never hard-clipped — clipping breaks their layout
 		// (math_iii's canvases). They dim instead, staying fully functional.
 		const fragile = isFragile(block);
-		const collapsible = !fragile && (!!spec.label || score.why === 'math');
+		const collapsible = !fragile && (!!spec.label || score.why === 'math' || score.why === 'depth');
 		const alt = block.querySelector(':scope > .topic-block-alt');
 
 		// A block the reader manually revealed stays revealed for the whole
@@ -2503,6 +2597,8 @@
 			block.classList.remove('topic-block-dimmed');
 			block.classList.remove('topic-block-alt-active');
 			block.classList.add('topic-block-revealed');
+			if (!block.querySelector(':scope > .topic-block-fade-badge')) setBanner(block, spec, score);
+			setBadgeOpen(block, true);
 			block._tbReason = 'user-revealed';
 			syncDemoTucking(block);
 			ensureRecollapse(block);
@@ -2553,6 +2649,8 @@
 		block.classList.remove('topic-block-dimmed');
 		block.classList.remove('topic-block--clipped');
 		if (wasCollapsed) revealBlock(block, !!animate);
+		// Passt jetzt zum Regler → keine Leiste mehr nötig
+		removeBars(block);
 		block.classList.toggle('topic-block-partial', score.state === 'partial');
 		ensurePartialChip(block, score);
 		block._tbReason = score.state;

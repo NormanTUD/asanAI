@@ -31,7 +31,7 @@ Now imagine the reverse: starting with grey water, learn to *remove* exactly the
 That is what a diffusion model does. The forward process (ink going in) is a hand-designed procedure with no learned parameters. The reverse process (ink coming out) is what a neural network has to learn.
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="The forward process: a controlled demolition">
+<div class="md" data-mathlevel="65">
 ## The forward process: a controlled demolition
 
 Concretely, the forward process takes a clean image $x_0$ and at each of $T$ small timesteps sprinkles in a little Gaussian noise. After $T = 1000$ steps nothing of the original picture survives.
@@ -81,7 +81,7 @@ That is the deep “why” of diffusion in one sentence. Two ways to make it mor
 Either view explains why “denoising” and “generation” are two sides of the same coin.
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Telling the model what to draw">
+<div class="md" data-mathlevel="60">
 ## Telling the model what to draw
 
 To make a model draw *what you want*, you have to feed it some signal. For text-to-image, that signal is a text prompt, first encoded into a vector by a separate text encoder (typically CLIP or T5).

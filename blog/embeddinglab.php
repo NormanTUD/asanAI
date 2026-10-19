@@ -129,7 +129,7 @@ This allows you to do calculations like $\underset{100}{\underbrace{\text{Boilin
     <div class="embedding-table-container" id="editor-1d" data-space="1d"></div>
 </section>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Two dimensions">
+<div class="md" data-mathlevel="45">
 ## Two dimensions
 
 Human language is far too nuanced for a single axis. To capture independent features such as gender, power, or biological species, we project tokens into a **vector space** with multiple dimensions. In this space, each dimension represents a latent semantic feature discovered by the model during training.
@@ -190,7 +190,7 @@ While **3 dimensions** are the maximum we can easily visualize in a graph, moder
     <div class="embedding-table-container" id="editor-3d" data-space="3d"></div>
 </section>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Quantifying Semantic Proximity">
+<div class="md" data-mathlevel="50">
 ## Quantifying Semantic Proximity
 In a vector space, “meaning” is a function of distance. If two words appear in similar linguistic environments, their vectors converge toward the same neighborhood.
 
@@ -225,7 +225,7 @@ The **red arc** below visualizes the **Cosine Distance**, the “conceptual shif
     </div>
 </section>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Similarity">
+<div class="md" data-mathlevel="45">
 ### Similarity
 To find the dot product of two vectors, you multiply the numbers in the same positions and then add all those results together. In general, the equation is:
 </div>
@@ -259,7 +259,7 @@ In a Transformer (like ChatGPT), this is the “Handshake.” When a word “loo
         </div>
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Scale Invariance: Direction Is Meaning, Magnitude Is Noise">
+<div class="md" data-mathlevel="45">
 ### Scale Invariance: Direction Is Meaning, Magnitude Is Noise
 
 There's a subtle but critical property that explains *why* cosine similarity is preferred over Euclidean distance in most embedding applications: **scale invariance**. Two vectors can point in exactly the same direction, encoding the same semantic content, but differ wildly in magnitude. Euclidean distance would call them “far apart.” Cosine similarity correctly identifies them as identical in meaning.
@@ -306,7 +306,7 @@ While the semantic manifold relies on “use” to define meaning, the system fa
 Even more disruptive are **Glitch Tokens** (described by Yuxi Li et al. in \citeyear{glitchtokens}), which reveal the cracks in the machine's geometric logic. These often arise from anomalies like the Reddit username `SolidGoldMagikarp`, a bot that appeared in thousands of entries within a specific counting thread. Because these strings appeared frequently enough to be assigned a dedicated token but lacked varied, human-semantic context, they do not possess a stable “positional relationship” in the space. When an LLM encounters these tokens, it often suffers a “hallucination of meaning” or total logic failure. In the geometry of meaning, these tokens act like “voids” or “gravity wells”, they are products of statistical co-occurrence that do not correlate with any human concept.
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Rotational Invariance and Translation">
+<div class="md" data-mathlevel="50">
 ## Rotational Invariance and Translation as Path-Finding
 
 A critical property of embedding spaces is their **rotational invariance**. If you take an entire embedding space and rotate it, spinning every single vector by the same angle, nothing changes semantically. “King” is still near “Queen,” “Cat” is still far from “Democracy.” This is because meaning in these spaces is not encoded in absolute coordinates, but in the **\cite[relational geometry]{smith2017orthogonal}** between points: their distances, angles, and cluster structures.
@@ -352,13 +352,13 @@ The real magic is in the **transformation itself**. You can watch Japanese's emb
 Click **“Align”** to animate the transformation. Notice how the internal structure, the distances between King/Queen, Man/Woman, is perfectly preserved. Only the orientation changes. This is rotational invariance made visible.
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="The Limits of Isomorphism">
+<div class="md" data-mathlevel="50">
 ### The Limits of Isomorphism
 
 While the cross-lingual alignment story is compelling, the isomorphism between language embedding spaces is not perfect. The alignment quality degrades significantly for typologically distant language pairs, English to Japanese, for instance, is far harder to align than \cite[English to Spanish]{sogaard2018limitations}. This suggests that the “universal geometric structure of human concepts” has real limits. Languages don't just rotate the same space; they can **warp** it. Cultures that carve up semantic space differently, languages with different color term boundaries, or kinship systems, produce embedding geometries that are locally similar but globally distorted. The rotation-plus-scaling model is a first-order approximation, not the full story.
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="The Manifold Hypothesis">
+<div class="md" data-mathlevel="50">
 ## The Manifold Hypothesis
 
 The deeper theoretical reason the path-finding framing works is the **\cite[Manifold Hypothesis]{bengio2013representation}**: the idea that high-dimensional data, like language, actually lies on or near a much lower-dimensional manifold embedded in the high-dimensional space. If sentences trace paths on a manifold, then translation is literally a mapping between two manifolds that share the same topology. The Transformer's attention layers can be seen as learning the **local coordinate charts** of these manifolds, the rules for how to navigate the surface at each point.
@@ -498,7 +498,7 @@ This hypothesis allows so-called **Brain-Swapping**: since models learn similar 
     </div>
 </section>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Anisotropy">
+<div class="md" data-mathlevel="50">
 ## Anisotropy
 
 Embedding spaces are typically **anisotropic**, the vectors are not uniformly distributed through the space but instead cluster in a narrow cone or occupy only a subregion of the available volume. \citeauthor{ethayarajh2019contextual} (\citeyear{ethayarajh2019contextual}) showed that in models like BERT and GPT-2, embeddings at later layers become increasingly anisotropic, meaning the average cosine similarity between random word pairs is surprisingly high (often 0.5–0.9). This is problematic because it compresses the effective range of cosine similarity, making it harder to distinguish genuinely similar words from merely average ones. Techniques like **whitening** or **isotropy calibration** are used to counteract this.
@@ -526,7 +526,7 @@ Below, drag the **anisotropy slider** from isotropic (vectors spread uniformly) 
     </div>
 </section>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Polysemanticity and the Superposition Hypothesis">
+<div class="md" data-mathlevel="50">
 ## Polysemanticity and the Superposition Hypothesis
 
 Modern research into Transformers reveals that the brain-inspired “one neuron, one concept” model, often critiqued as the **“Grandmother Neuron”** (coined by \cite[Jerome Lettvin]{grandmotherneuron} in 1969), is an illusion. Instead, models utilize two critical phenomena to represent information:
@@ -585,7 +585,7 @@ A vivid demonstration of these principles is \citetitle{goldengateclaude}, in wh
     </div>
 </section>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="The Geometry of In-Context Learning">
+<div class="md" data-mathlevel="50">
 ## The Geometry of In-Context Learning
 
 One of the most active research frontiers concerns what happens when you give a model a handful of examples directly in the prompt. Rather than updating any weights, the model appears to construct an implicit **task vector** in activation space on the fly. \citeauthor{hendel2023incontext} demonstrated in \citeyear{hendel2023incontext} that the function learned via in-context learning can be compressed into a single vector, extracted by computing the difference between the model's internal activations *with* the few-shot examples and *without* them, and then **injected** into a blank prompt to reproduce the same behavior.
@@ -646,7 +646,7 @@ Below, you can watch this process unfold. The **left panel** shows the geometric
     </div>
 </section>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The Manifold Hypothesis and Overfitting">
+<div class="md" data-mathlevel="55">
 ## The Manifold Hypothesis Explains Why High-Dimensional Models Don't Overfit
 
 Classical statistics tells us that fitting a model with $P$ parameters to $N$ data
@@ -684,7 +684,7 @@ $$
 This was first described by \citeauthorlastnameand{belkin2019}.
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="The Geometry of Negation">
+<div class="md" data-mathlevel="50">
 ## The Geometry of Negation
 
 One of the most counter-intuitive failures of embedding spaces is that **negation doesn't work geometrically** the way you'd expect. The vector for “not happy” is closer to “happy” than to “sad”, because “not” and “happy” co-occur in the same sentences, and distributional semantics encodes co-occurrence, not logical opposition. This is a deep structural limitation: embedding spaces capture **associative similarity**, not **logical relationships**.
@@ -741,7 +741,7 @@ Below, select any word (or type “not X”) and observe how “not X” drifts 
     </div>
 </section>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="Hyperbolic Embeddings">
+<div class="md" data-mathlevel="70">
 ## Hyperbolic Embeddings
 
 Standard embedding spaces use Euclidean geometry, but human language is rife with hierarchical structure, taxonomies (animal → mammal → dog → poodle), hypernymy chains, parse trees, organizational hierarchies. Euclidean space is fundamentally ill-suited for representing trees: the number of nodes at depth $d$ in a tree with branching factor $b$ grows as $\mathcal{O}(b^d)$, exponentially, but the volume of a Euclidean ball of radius $r$ in $n$ dimensions grows only polynomially as $\mathcal{O}(r^n)$. This mismatch means that as a tree grows deeper, a Euclidean embedding must either introduce severe distance distortion or consume prohibitively many dimensions to accommodate the exponential proliferation of leaf nodes.
@@ -782,7 +782,7 @@ Below, a taxonomy tree is embedded in the Poincaré disk. The **highlighted chai
     </div>
 </section>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Topology: Clumps and Branches">
+<div class="md" data-mathlevel="55">
 ## Topology: Clumps and Branches
 
 So far, we've treated the embedding space as a smooth, continuous manifold where words drift through a uniform fog of dimensions. But the actual *topology* of the feature space tells a different story. It is not a uniform fog at all, it is **highly structured**, full of empty voids and narrow corridors.
@@ -828,7 +828,7 @@ The visualization below gives you an intuition for this. In 2D, points can sprea
     </div>
 </section>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Semantic Folding & Fractal Self-Similarity">
+<div class="md" data-mathlevel="50">
 ## Semantic Folding & Fractal Self-Similarity
 
 How does a model that operates in a fixed-size vector space manage to encode hierarchies that are, in principle, arbitrarily deep? The answer appears to involve a form of **geometric folding**: the model reuses the same spatial logic at every level of abstraction, nesting finer distinctions inside coarser ones like a fractal.
@@ -893,7 +893,7 @@ Below, you can explore this fractal folding interactively. The visualization sho
     </div>
 </section>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Holographic Information Storage">
+<div class="md" data-mathlevel="50">
 ## Holographic Information Storage
 
 There is a deep analogy between how LLMs store information in their embedding spaces and how **holograms** store images. In a photograph, each pixel records a single point of the scene, scratch the photo and you lose that point forever. In a hologram, every part of the recording medium stores information about the **entire scene** from a slightly different angle. Cut a hologram in half and you don't lose half the image, you lose half the *resolution*. Both halves still contain the full picture, just blurrier.
@@ -959,7 +959,7 @@ Below, you can explore this holographic property directly. A set of concept vect
     </div>
 </section>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Voronoi Cells: The Territories of Meaning">
+<div class="md" data-mathlevel="55">
 ## Voronoi Cells: The Territories of Meaning
 
 Imagine the embedding space as a vast, empty continent. Each token the model knows, every word, subword, and symbol, plants a flag at its vector position. Now ask: **for every possible point in the space, which token's flag is closest?** The answer carves the entire space into territories, one per token, where every point inside a territory is closer to that territory's token than to any other. These territories are called **Voronoi cells**.
@@ -1041,7 +1041,7 @@ The same geometry, pushed further — the latent semantic manifold, the Voronoi 
     </div>
 </section>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="High-Dimensional Holes: The Swiss Cheese of Meaning">
+<div class="md" data-mathlevel="60">
 ## High-Dimensional Holes: The Swiss Cheese of Meaning
 
 The embedding space is not a solid block of uniformly packed vectors. It is more like **Swiss cheese**, riddled with holes, voids, and cavities where no token ever lives. These are not random gaps; they are structurally meaningful absences. Researchers use a technique from algebraic topology called **Persistent Homology** to detect and measure these holes systematically.
@@ -1136,7 +1136,7 @@ The visualization below lets you explore this. A 2D point cloud represents token
     </div>
 </section>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Polytope Hulls: The Boundaries of the Conceivable">
+<div class="md" data-mathlevel="55">
 ## Polytope Hulls: The Boundaries of the Conceivable
 
 In geometry, a **polytope** is the high-dimensional generalization of a polygon. In 2D, it's a polygon; in 3D, a polyhedron; in 768 dimensions, it's a shape with thousands of facets that no human can visualize directly. Formally, a polytope can be defined as the **convex hull** of a finite set of points, the smallest convex body that encloses all of them.
@@ -1221,7 +1221,7 @@ Below, you can explore this interactively. Two conceptual categories are represe
     </div>
 </section>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Vector Rotations as Grammar Operators">
+<div class="md" data-mathlevel="50">
 ## Vector Rotations as Grammar Operators
 
 One of the more elegant ways to *model* grammatical transformations in embedding spaces is to treat them not as **translations** (shifting a vector in a direction) but approximately as **rotations** (spinning a vector around an axis). Grammar, in this view, is not a push but a turn, an idealization that captures many inflections surprisingly well.
@@ -1318,7 +1318,7 @@ Below, you can explore this interactively. A cloud of verbs is shown in their pr
     </div>
 </section>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Why Geometry Works">
+<div class="md" data-mathlevel="50">
 ## Why Geometry Works
 
 When a language model stops treating a word like

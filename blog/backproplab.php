@@ -23,7 +23,7 @@ In the demo further down you can *watch* both flows as glowing pulses along the 
 
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="The Network You'll Play With">
+<div class="md" data-mathlevel="50">
 ## The Network You'll Play With
 
 Instead of a toy 2‑2‑2 net, the demo below runs a **4-layer network** with shape **3 → 4 → 4 → 2**. That's small enough to hand‑trace, deep enough to show how error signals *cascade* backward layer by layer — the exact behaviour that makes "deep" learning deep.
@@ -72,7 +72,7 @@ The $\tfrac{1}{2}$ is a convenience — it cancels when we differentiate. (The s
 
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The Chain Rule Is All You Need">
+<div class="md" data-mathlevel="60">
 ## The Chain Rule Is All You Need
 
 To learn, we need $\partial E / \partial w$ for every weight $w$ in the network. Instead of computing each one from scratch, backprop reuses work by pushing an **error signal** $\delta$ backward, layer by layer.

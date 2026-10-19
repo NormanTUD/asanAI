@@ -11,7 +11,7 @@ topics: math-i, programming
 tags: code-heavy
 -->
 
-<div class="md" data-mathlevel="45" data-optionaltitle="The Necessity of Activation Functions">
+<div class="md" data-mathlevel="45">
 ## The Necessity of Activation Functions
 
 Activation functions serve as the mathematical **“gates”** of a neural network. Without them, a network would be nothing more than a series of linear transformations, essentially collapsing into one giant linear equation.
@@ -72,7 +72,7 @@ The exact characterization: the set of all functions computed by ReLU neural net
     </div>
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="SoftMax: The Multi-Class Gate">
+<div class="md" data-mathlevel="50">
 ## SoftMax: The “Multi-Class” Gate
 
 While ReLU and Sigmoid deal with individual neurons, **SoftMax** (introduced in \citeyear{bridle1989probabilistic} by \citeauthor{bridle1989probabilistic}) is a team player. It is used when you want to have percentages instead of absolute numbers, especially in the **output layer** of a neural network designed for multi-class classification (e.g., identifying if an image is a cat, dog, or bird, or at the end of a Transformer module, which returns a list of words with a given probability).
@@ -187,7 +187,7 @@ This connects directly to the \cite[Lottery Ticket Hypothesis]{frankle2019lotter
 The “aha-moment”: ReLU doesn't just prevent vanishing gradients, it forces the network to use a different “team” of neurons for every input, creating **implicit specialization**. No neuron needs to be a generalist; each can become an expert on a narrow pattern because it only fires when that pattern appears.
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="GELU: The Smooth Transformer Gate">
+<div class="md" data-mathlevel="50">
 ### GELU: The Smooth Transformer Gate
 
 While ReLU became the workhorse of CNNs, the **Gaussian Error Linear Unit (GELU)**, introduced by \citeauthor{hendrycks2016gelu} (\citeyear{hendrycks2016gelu}), became the standard activation inside the **Transformer** and, in particular, the Feed-Forward Network (FFN) of GPT-style models. This is the activation used in the FFN of the nanoGPT model we train in this course:
@@ -199,7 +199,7 @@ Where $\Phi(x)$ is the standard normal cumulative distribution function and $\te
 GELU is often described as a “smooth ReLU”: it behaves approximately like $\max(0, x)$ but is **everywhere differentiable** and keeps a small non-zero gradient for negative inputs. This means no neuron ever “dies” completely, every detector contributes at least a tiny gradient signal during backpropagation. It is this smoothness, combined with its superior performance on language modeling, that made GELU the natural choice for the Transformer's FFN.
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="SiLU: The Diffusion Smooth Gate">
+<div class="md" data-mathlevel="50">
 ### SiLU: The Diffusion Smooth Gate
 
 The **Sigmoid Linear Unit (SiLU)**, also known as **Swish** \cite{ramachandran2017swish}, is the activation inside the **U-Net denoiser of Stable Diffusion** and most modern CNN-based vision models:

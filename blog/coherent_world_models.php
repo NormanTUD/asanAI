@@ -44,7 +44,7 @@ $$
 
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Traces">
+<div class="md" data-mathlevel="50">
 
 ### Traces
 
@@ -157,7 +157,7 @@ $$
 The distinction between channels and interpretation is in part the moral of \citeauthor{cartwright1983laws}'s (\citeyear{cartwright1983laws}) *How the Laws of Physics Lie*: the equations of fundamental physics are *true* of the highly idealized model setups in which they were derived — a frictionless plane, an isolated system, an exactly spherical earth — and *approximately* true of many real systems, but often false of the messy, multifactorial, *dappled* world in which we actually use them \cite{cartwright1983laws} \cite{cartwright1999dappled}. The right model is rarely the one whose equations are most elegant; it is the one that respects which factors actually matter for the phenomenon at hand and which are genuinely absent. Conflating "the law is true" (a statement about a clean laboratory model) with "the law applies here" (a statement about a real situation) is one of the most common forms of silent upgrade between world-level and channel-level difference.
 </div>
 
-<div class="md" data-mathlevel="80" data-optionaltitle="Notions of sameness">
+<div class="md" data-mathlevel="80">
 
 ### Notions of sameness
 
@@ -224,7 +224,7 @@ What "silent strengthening" means: passing from a witness of $\simeq$ to a claim
 
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="Transformation is the missing concept">
+<div class="md" data-mathlevel="70">
 
 ### Transformation is the missing concept
 
@@ -250,7 +250,7 @@ $$
 
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="Ologs: a diagram that pays its way">
+<div class="md" data-mathlevel="70">
 
 ### Ologs: a diagram that pays its way
 
@@ -280,7 +280,7 @@ For this chapter: every diagram so far is an olog in disguise. The master diagra
 
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="Admissible transitions">
+<div class="md" data-mathlevel="70">
 
 ### Admissible transitions
 
@@ -370,7 +370,7 @@ What the picture says. The four $R_i$ are deliberately heterogeneous — a senso
 
 </div>
 
-<div class="md" data-mathlevel="80" data-optionaltitle="The mathematics of coherence: sites and sheaves">
+<div class="md" data-mathlevel="80">
 
 ## The mathematics of coherence: sites and sheaves
 
@@ -425,7 +425,7 @@ $\mathcal{V}$ can be $\mathbf{Set}$, metric spaces, probability spaces, chain co
 
 </div>
 
-<div class="md" data-mathlevel="80" data-optionaltitle="Sheaves: coherence = descent">
+<div class="md" data-mathlevel="80">
 
 ### Sheaves: coherence = descent
 
@@ -503,7 +503,7 @@ It is the premise that makes local-to-global gluing *legitimate* rather than mer
 
 </div>
 
-<div class="md" data-mathlevel="75" data-optionaltitle="The running example (now that we have sheaves)">
+<div class="md" data-mathlevel="75">
 
 ### The running example (now that we have sheaves)
 
@@ -527,7 +527,7 @@ The same shape governs **mathematical data** — here genuinely as a flat cover,
 
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="Equalizers: where two maps agree">
+<div class="md" data-mathlevel="70">
 
 ### Equalizers: where two maps agree
 
@@ -551,7 +551,7 @@ Two thermometers report a temperature over time: the equalizer is the *times* at
 
 </div>
 
-<div class="md" data-mathlevel="75" data-optionaltitle="Pullbacks: agreement through a shared target">
+<div class="md" data-mathlevel="75">
 
 ### Pullbacks: agreement through a shared target
 
@@ -567,7 +567,7 @@ The pullback *is* the object of agreements. Visual and radar tracks pull back ov
 
 </div>
 
-<div class="md" data-mathlevel="85" data-optionaltitle="Higher coherence">
+<div class="md" data-mathlevel="85">
 
 ### Higher coherence
 
@@ -654,7 +654,7 @@ $$
 
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The model, assembled">
+<div class="md" data-mathlevel="60">
 
 ## The model, assembled
 
@@ -785,7 +785,7 @@ A representation is judged not by whether it *is* the subject matter but by *whi
 
 </div>
 
-<div class="md" data-mathlevel="75" data-optionaltitle="The hierarchy: never upgrade silently">
+<div class="md" data-mathlevel="75">
 
 ### The hierarchy: never upgrade silently
 
@@ -817,7 +817,7 @@ Correlation is not identity. A plausible transformation is not proof. Consistenc
 
 </div>
 
-<div class="md" data-mathlevel="80" data-optionaltitle="The one diagram">
+<div class="md" data-mathlevel="80">
 
 ### The one diagram
 
@@ -1067,7 +1067,7 @@ The answer has two names: *correspondence* (Tarski) and *coherence* (Bradley, Bl
 
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="Tarski's Convention T">
+<div class="md" data-mathlevel="70">
 
 ### Tarski's Convention T
 
@@ -1106,7 +1106,7 @@ This is correspondence, not as a metaphor, but as a precise, formally statable c
 
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="Why Tarski's correspondence is structural">
+<div class="md" data-mathlevel="70">
 
 ### Why Tarski's correspondence is structural
 
@@ -1221,7 +1221,7 @@ This is the precise statement of what it means to say that a coherent world mode
 
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="Contact points: where consistency stops being enough">
+<div class="md" data-mathlevel="70">
 
 ### Contact points: where consistency stops being enough
 
@@ -1330,7 +1330,7 @@ The converse is what makes the criterion asymmetric and usable. A *single* genui
 
 </div>
 
-<div class="md" data-mathlevel="75" data-optionaltitle="The diagram, completed">
+<div class="md" data-mathlevel="75">
 
 ### The diagram, completed
 
@@ -1366,7 +1366,7 @@ The model $G$ is true when the *two* truth conditions (coherence and corresponde
 
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="Five pathologies">
+<div class="md" data-mathlevel="70">
 
 ### Five pathologies
 
@@ -1704,7 +1704,7 @@ The procedure is the same for any model — scientific, mathematical, historical
 
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Where this framework reaches its limits">
+<div class="md" data-mathlevel="60">
 ### Where this framework reaches its limits
 
 A framework aware of its reach must be clear about where it stops helping. The chapter's machinery, applied to LLMs, runs out of steam in at least four directions:

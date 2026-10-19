@@ -11,7 +11,7 @@ topics: language, programming
 tags: code-heavy
 -->
 
-<div class="md" data-mathlevel="45" data-optionaltitle="The Art of Talking to a Stochastic Parrot">
+<div class="md" data-mathlevel="45">
 ## The Art of Talking to a Stochastic Parrot
 
 Prompt engineering is the practical craft of communicating with Large Language Models, not by hacking their weights, but by hacking their **input**. Since an LLM is fundamentally a next-token predictor wrapped in a chatbot interface, the way you phrase, structure, and constrain your input is the single most powerful lever you have.
@@ -199,7 +199,7 @@ The output format constraint doubles as a security measure: structured outputs a
 5. **Red-team regularly** -- use adversarial prompting against your own system
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="The Causal Mask: Why Order Matters">
+<div class="md" data-mathlevel="45">
 ## The Causal Mask: Why Order Matters
 
 There is a deep architectural reason that prompt structure matters: the **causal mask** in autoregressive Transformers.
@@ -252,7 +252,7 @@ Solve the same problem from multiple viewpoints. This produces a holistic analys
 * **Prompt:** “Analyze this UI from: (a) a senior engineer, (b) a first-time user, (c) a malicious attacker.”
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="Semantic Vector Steering: Targeting a Region, Not a Point">
+<div class="md" data-mathlevel="40">
 ## Semantic Vector Steering: Targeting a Region, Not a Point
 
 Everything in the chapter so far works on the **surface**: tokens in, tokens out. You describe what you want in words, the model interprets those words through its embedding space, and you get back a token sequence. You never see the space directly; you only see what comes out the other end.
@@ -305,7 +305,7 @@ The mechanism is the same one *latent steering* exploits: identify directions, t
 
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="The Spatial Picture: Distinction to Gluing">
+<div class="md" data-mathlevel="65">
 ### The Spatial Picture: Distinction, Locality, Coherence, Gluing
 
 There is a deep reason this works, and it is the same reason embeddings work at all. **Meaning is a sheaf over context** \cite[sheaf theory applied to embedding spaces, local-to-global gluing]{coherent_difference_chapter}: each context (an "open set" in the topology of usage) carries its own local data (the tokens that co-occur there), and the embedding space is the *global section* that falls out when all the local patches agree on their overlaps.

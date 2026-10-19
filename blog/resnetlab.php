@@ -12,7 +12,7 @@ tags: math-heavy
 math: 60
 -->
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The Vanishing Gradient Problem">
+<div class="md" data-mathlevel="60">
 
 ## The Vanishing Gradient Problem
 

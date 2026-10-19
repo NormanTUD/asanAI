@@ -104,7 +104,7 @@ That is the **Chinchilla** result, and it is the reason the field moved, in the 
     </div>
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="What the simulator is (and isn't)">
+<div class="md" data-mathlevel="60">
 ## What the simulator is, and isn't
 
 The curve above is a *stylized* run, not a real one — and being explicit about that is part of the point. The loss follows the power-law floor $L_{\min}(N, D)$ from the section above: it starts at the loss of an untrained model (roughly $\ln(\text{vocab})$, a constant independent of size) and decays toward the floor as the model sees more tokens. On top of that smooth decay it adds noise that scales as $1/\sqrt{\text{batch}}$ — which is why the small-batch curve is jagged and the large-batch curve is smooth — and it can be nudged to spike or diverge.
@@ -144,7 +144,7 @@ Training runs are *flaky* in a specific way, and you are expected to recognize t
 **The edge of stability.** Somewhere between "settles comfortably" and "diverges" is a sharp, studied regime. At a high learning rate gradient descent does *not* blow up — it **locks onto the rim of a sharp region and oscillates there** while the loss still drifts down, as \cite[Arora et al. (2022)]{arora2022edgeofstability} showed. So a loss that *oscillates but trends down* is not a bug to fix; it is the network running at the edge, and it is one of the reasons people run at the largest learning rate that "just barely" holds. **Gradient clipping** — capping the magnitude of each gradient before the update — is the standard tool that keeps a high-LR run on the edge instead of past it.
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="Making hyperparameters transfer: μP">
+<div class="md" data-mathlevel="65">
 ## Making hyperparameters transfer: μP
 
 All of the above is tuned per model — you pick a learning rate for *this* width, re-tune when you change it, and hope the answer transfers. \cite[Yang et al. (2022)]{yang2022mup} introduced **μP** (Maximal Update Parametrization), a way of *writing down* the network so that the optimal hyperparameters found on a *tiny* model transfer to a *huge* one essentially unchanged. The consequence is a new tuning paradigm — tune on a small net where experiments are cheap, then scale the width without re-tuning at all, and the same learning rate, warmup, and schedule keep working. For teams that train at frontier scale, that transfer is worth a lot: it turns "how do I set the learning rate for a model this size?" into "the answer I already have from the 0.1B model."

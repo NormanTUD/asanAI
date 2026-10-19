@@ -95,7 +95,7 @@ You can explore this visually below. Drag the slider to move the second point cl
     <div id="plot-secant-tangent" class="plot-container" style="width:100%; height:400px;"></div>
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Deriving x² from first principles">
+<div class="md" data-mathlevel="55">
 ### A Concrete Example: Deriving $f(x) = x^2$ from First Principles
 
 Let's apply the limit definition to $f(x) = x^2$ step by step:
@@ -113,7 +113,7 @@ $$= \lim_{h \to 0} (2x + h) = 2x$$
 So the derivative of $x^2$ is $2x$. At $x = 3$, the slope of the tangent line is $2 \cdot 3 = 6$. This means that at $x = 3$, the function is increasing at a rate of 6 units of $y$ per unit of $x$.
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="The derivative rules (product, quotient, chain)">
+<div class="md" data-mathlevel="40">
 ## Derivative Rules
 
 Computing derivatives from the limit definition every time would be tedious. Fortunately, mathematicians have derived a set of **rules** that let us differentiate most functions quickly. These rules were developed by Newton, Leibniz, and their successors (notably \citeauthor{euler1755} in \citetitle{euler1755}, \citeyear{euler1755}, who systematized much of the notation and theory).
@@ -173,7 +173,7 @@ You can explore the derivative rules interactively below. Choose a function and 
 </div>
 
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Special derivatives worth knowing">
+<div class="md" data-mathlevel="45">
 ### Special Derivatives Worth Knowing
 
 Some derivatives appear so frequently in AI and science that they are worth memorizing:
@@ -216,7 +216,7 @@ You can explore the tangent line interactively below. Move the point along the c
     <div id="plot-tangent-line" class="plot-container" style="width:100%; height:400px;"></div>
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The chain rule & backpropagation">
+<div class="md" data-mathlevel="60">
 ### The Chain Rule Visualized
 
 The chain rule is so important for AI that it deserves its own interactive demonstration. When we compose two functions $f(g(x))$, the chain rule tells us:
@@ -252,7 +252,7 @@ This is exactly what **backpropagation** computes, the chain rule applied layer 
     <div id="plot-chain-rule" class="plot-container" style="width:100%; height:400px;"></div>
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Why derivatives matter for AI (gradient descent, backprop)">
+<div class="md" data-mathlevel="55">
 ### Why Derivatives Matter for AI
 
 Derivatives are not just an abstract mathematical concept, they are the **engine** that drives all of modern machine learning. Here is why:
@@ -314,7 +314,7 @@ The symbol $\partial$ for partial derivatives was introduced by the Marquis de C
     <div id="plot-gradient-surface" class="plot-container" style="width:100%; height:450px;"></div>
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Summary of differentiation">
+<div class="md" data-mathlevel="55">
 ### Summary
 
 | Concept | Notation | Meaning |

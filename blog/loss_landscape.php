@@ -40,7 +40,7 @@ The phrase "loss landscape" was popularised by \citeauthor{li2018losslandscape} 
 </figcaption>
 </figure>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="The landscape is a function on a million-dimensional space">
+<div class="md" data-mathlevel="50">
 
 ### The landscape is a function on a million-dimensional space
 
@@ -525,7 +525,7 @@ Pick a target (try **Parabola**), tick one or two optimizers (SGD and Momentum a
 	<div id="ll-loss-plot" class="ll-loss" data-plot-theme="self"></div>
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Why naive plots of the landscape lie">
+<div class="md" data-mathlevel="50">
 
 ### Why naive plots of the landscape lie
 
@@ -539,7 +539,7 @@ The fix from \citeauthor{li2018losslandscape}: instead of a random Gaussian dire
 
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Non-convexity comes from the non-linearities, not from depth">
+<div class="md" data-mathlevel="55">
 
 ### Non-convexity comes from the non-linearities, not from depth
 
@@ -549,7 +549,7 @@ So where does the non-convexity of real networks come from? From the activation 
 
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Saddles outnumber minima in high dimensions">
+<div class="md" data-mathlevel="50">
 
 ### Saddles outnumber minima in high dimensions
 
@@ -571,7 +571,7 @@ The hyperbolic paraboloid $z = x^2 - y^2$: a surface that goes up in one directi
 
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Sharp minima, flat minima, and the oldest debate in deep learning">
+<div class="md" data-mathlevel="55">
 
 ### Sharp minima, flat minima, and the oldest debate in deep learning
 
@@ -583,7 +583,7 @@ The live descendants of this debate are **Sharpness-Aware Minimization** \cite{f
 
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Skip connections reshape the landscape">
+<div class="md" data-mathlevel="60">
 
 ### Skip connections reshape the landscape
 
@@ -599,7 +599,7 @@ so the *change* across the block is just $F_\ell(h_\ell)$, the small adjustment 
 
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Wide networks have flatter landscapes">
+<div class="md" data-mathlevel="55">
 
 ### Wide networks have flatter landscapes
 
@@ -607,7 +607,7 @@ In the same paper, doubling only the number of filters per layer of ResNet-56 ($
 
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Minima are connected by flat paths">
+<div class="md" data-mathlevel="60">
 
 ### Minima are connected by flat paths
 
@@ -631,7 +631,7 @@ This is why \citeauthor{garipov2018mode} (\citeyear{garipov2018mode}) had to ali
 
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="SGD travels in an almost one-dimensional subspace">
+<div class="md" data-mathlevel="60">
 
 ### SGD travels in an almost one-dimensional subspace
 

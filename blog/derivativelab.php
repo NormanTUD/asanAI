@@ -86,7 +86,7 @@ tags: math-heavy, code-heavy
 
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Partial derivatives and the gradient vector">
+<div class="md" data-mathlevel="45">
 ### Understanding the Partial Derivative ($\partial$)
 
 Above, we looked at a function with only one input ($x$). For that, we use the standard $d$ to represent a derivative. However, AI models usually have millions of inputs. When we deal with multiple variables, we use the **partial derivative** symbol: $\partial$.
@@ -133,7 +133,7 @@ This vector tells the AI exactly how much to adjust each “knob” (Size and Ag
 
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The backpropagation chain rule">
+<div class="md" data-mathlevel="60">
 ### The “Backpropagation” Bridge: The Chain Rule
 
 You've learned how to find the slope of one hill. But a Deep AI is like a **chain of hills**. When the AI makes a mistake at the very end (the output), it has to figure out which “knob” at the very beginning (the input) caused it.
