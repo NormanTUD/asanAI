@@ -17,7 +17,7 @@ Layer Normalization (LN), introduced by Jimmy Lei Ba et al in \citeyear{ba2016la
 
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="The Mathematical Process">
+<div class="md" data-mathlevel="50">
 ## The Mathematical Process
 For a specific layer input vector $x$ with $d$ dimensions, the normalization follows these four steps:
 

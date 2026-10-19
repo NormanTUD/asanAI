@@ -42,7 +42,7 @@ Each has failure modes:
 * Human preference is gold-standard but slow and expensive.
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="Multiple-choice benchmarks (MMLU accuracy)">
+<div class="md" data-mathlevel="40">
 ## Multiple-Choice Benchmarks
 
 ### MMLU: Massive Multitask Language Understanding
@@ -84,7 +84,7 @@ The model must produce a numerical answer after reasoning. **Exact-match accurac
 MATH (\cite[Hendrycks et al., 2021]{hendrycks2021math}) comprises 12,500 competition math problems from AMC, AIME, etc. Each has a step-by-step LaTeX solution. Models must produce the final answer; correctness is checked symbolically.
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="HumanEval (pass@k formula)">
+<div class="md" data-mathlevel="45">
 ### HumanEval
 
 HumanEval (\cite[Chen et al., 2021]{chen2021humaneval}) consists of 164 hand-written Python programming problems with unit tests. The model's code is executed; **pass@k** measures whether at least one of $k$ samples passes all tests:
@@ -108,7 +108,7 @@ BIG-Bench (\cite[Srivastava et al., 2022]{srivastava2022bigbench}) comprises 204
 
 <div id="mmlu-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="LLM-as-judge (preference and Elo)">
+<div class="md" data-mathlevel="45">
 ## Generative, LLM-as-Judge
 
 For open-ended tasks (summarization, dialogue, instruction-following), there's no single correct answer. The standard approach is **LLM-as-judge** (Zheng et al., LMSYS, 2023):

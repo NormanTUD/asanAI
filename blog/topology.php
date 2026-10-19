@@ -35,7 +35,7 @@ math: 60
 	@media (max-width: 700px) { .tp-grid2 { grid-template-columns: 1fr; } }
 </style>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Stretch, Squish — but Never Cut">
+<div class="md" data-mathlevel="60">
 ## Stretch, Squish — but Never Cut
 
 In the previous chapter we met feed-forward networks as **paper folders**: a ReLU layer
@@ -65,7 +65,7 @@ cut, tear, or fold** it. It preserves every topological property — a loop stay
 region that surrounds another still surrounds it, connected things stay connected (\cite[Morris, Topology Without Tears, Ch. 4, p. 89]{morris2007topology}).
 </div>
 
-<div class="optional md" data-headline="The homeomorphism theorem, proved" data-mathlevel="65" data-optionaltitle="The homeomorphism theorem, proved">
+<div class="optional md" data-headline="The homeomorphism theorem, proved" data-mathlevel="65">
 A feed-forward layer computes $\mathbf{h} = \underbrace{\Phi}_{\text{pointwise activation}}(\underbrace{W\,\mathbf{x}}_{\text{linear map}} + \underbrace{\mathbf{b}}_{\text{shift}})$: a linear
 map, a shift, then a pointwise activation. Olah's claim is that — with $N$ inputs and
 $N$ outputs — this is a **homeomorphism** whenever $W$ is non-singular. The proof is just
@@ -94,7 +94,7 @@ difference is the whole distance between this chapter and the last one — a ReL
 free to *fold*, a tanh layer is not.
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="A Straight Line Has a Topology Problem">
+<div class="md" data-mathlevel="70">
 ## A Straight Line Has a Topology Problem
 
 Now the consequence that makes this more than a curiosity. Take the **"2-D egg"**: one
@@ -155,7 +155,7 @@ the width, and only because a third dimension let the disk escape the ring.
 	<div class="tp-out" id="tp-egg-out"></div>
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The One-Dimensional Egg">
+<div class="md" data-mathlevel="55">
 ## The One-Dimensional Egg
 
 Strip the picture down to a single number and the mechanism becomes impossible to miss.
@@ -278,7 +278,7 @@ near-singular stretching. It pushes training back toward the honest isotopy. (In
 demo, a width-2 net that "almost" works by snaking a boundary is doing exactly this.)
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The Geometry of Thought">
+<div class="md" data-mathlevel="55">
 ## The Geometry of Thought
 
 Step back and the two chapters fit together into one picture of *what a hidden layer is for*.

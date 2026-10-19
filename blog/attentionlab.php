@@ -12,7 +12,7 @@ tags: math-heavy
 math: 65
 -->
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Long Distance Dependencies">
+<div class="md" data-mathlevel="60">
 ## Long Distance Dependencies
 
 RNNs propagate information **step by step**, a signal from token 1 to token 50 must survive 49 sequential multiplications. If the weight matrix has spectral radius $< 1$, the signal decays exponentially:
@@ -76,7 +76,7 @@ The **Self-Attention mechanism** acts as a semantic GPS. It looks at the surroun
 * **The Resulting Embedding:** The final position (represented by the **blue diamond** in the plot below) is the “contextualized” version of the word, informed by its neighbors.
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="Geometric Intuition: Why That Equation?">
+<div class="md" data-mathlevel="65">
 ## Geometric Intuition: Why *That* Equation?
 
 The attention equation looks deceptively simple:
@@ -1495,7 +1495,7 @@ html.dark .attn-anatomy-summary .attn-summary-eq:nth-child(3) span { color: #86e
      rebuilds the inner content on every hover. -->
 <div id="attn-vector-tooltip" class="attn-vector-tooltip"></div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="Summary: Why That Equation?">
+<div class="md" data-mathlevel="65">
 ### Summary: Why *That* Equation?
 
 $$\boxed{\text{Attention} = \underbrace{\text{softmax}}_{\text{normalize to convex weights}}\!\left(\frac{\overbrace{QK^T}^{\text{directional alignment}}}{\underbrace{\sqrt{d_k}}_{\text{variance control}}}\right) \underbrace{V}_{\text{information to blend}}}$$
@@ -1636,7 +1636,7 @@ render_gem_tabs($attentioncodetabs, "attention");
 Every row of the printed weights is one token's distribution over the whole sequence, summing to $1$. Watch the causal mask at work: token $0$ attends fully to itself (its row is $[1, 0, 0]$), while the later tokens split their attention across everything they can see — exactly the "weighted average of the values" described above.
 </div>
 
-<div class="topic-block" data-mathlevel="70" data-optionaltitle="Softmax is also a transport plan">
+<div class="topic-block" data-mathlevel="70">
 <div class="md">
 ## A hidden identity: the softmax is the Sinkhorn iteration
 

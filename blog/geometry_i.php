@@ -74,7 +74,7 @@ If the shell and the ochre mark the birth of *form*, the **Ishango bone** and th
 (We return to both artifacts in the [History of AI](history) chapter, where they matter as the first *external memory*; here we only need that the notches are themselves a two-dimensional arrangement — the earliest "database" was a pattern on a bone.)
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="Measuring the land: the surveyor's equations">
+<div class="md" data-mathlevel="40">
 ## II. Measuring the land: the surveyor's equations
 
 For most of its early history geometry was not a body of theorems but a *technique of state*: the discipline of measuring fields, dividing inheritances, and erecting temples that had to be square — and it appears almost simultaneously in the first great urban cultures (Egypt, Mesopotamia, the Indus Valley, China), each with its own tools and its own number system. The reason was a single, shared, unglamorous fact of land: **when the river rose, the boundaries vanished.**
@@ -172,7 +172,7 @@ The Chinese tradition is anchored in the **\citealternativetitle{jiuzhangsuanshu
 A fair summary of this whole section: by the first millennium BCE, three unrelated civilisations — Mesopotamia, India and China — had each invented, for the *practical* purpose of measuring the earth, the right-triangle relation, the area rules, and (in India and China) a working $\sqrt{2}$. Geometry had already travelled the world once, on the business of land, before anyone wrote a proof.
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="The Greek turn: from measuring to proving">
+<div class="md" data-mathlevel="45">
 ## III. The Greek turn: from measuring to proving
 
 The Greeks did not invent geometry; they made it demonstrative. The motive was not doubt but belief: the Pythagoreans held that *number* was the substance of reality ("all is number"), so a fact about number could not merely be *useful* — it had to be *necessary*, true in every possible world, not just in the field you are surveying today. A Babylonian scribe could give you the right answer and trust the recipe; a Greek wanted to know **why it must be so, and why it cannot fail**. That single demand — for *apodeixis*, proof — is what separates the *Elements* from everything before it, and it is the habit of mind that all of modern mathematics (and, in the end, all of the formal reasoning a computer performs) inherits.
@@ -241,7 +241,7 @@ The books are organised by theme: **Book I** is plane geometry (angles, triangle
 The anecdote (told by Proclus) is that when **Ptolemy** complained the *Elements* were too hard for beginners, Euclid replied that **there is no royal road to geometry**. The line captures the whole Greek shift: the *Elements* are not a shortcut to the right answers; they are the *long way around*, and it is precisely that long way — the insistence on proof — that makes the discipline permanent. Every theorem in this book, and every formal proof a machine checks, is a descendant of Euclid's first line: *"Let AB be a given finite straight line."*
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Beyond Euclid: Heron, Apollonius and Menelaus">
+<div class="md" data-mathlevel="50">
 ### Beyond Euclid: Heron, Apollonius and Menelaus
 
 Two threads push geometry past the plane and past the conic.
@@ -271,7 +271,7 @@ The *why* is partly optical and partly astronomical. The parabola is the only co
 **Menelaus of Alexandria** (c. 70–140 CE) wrote the **\citealternativetitle{menelaussphaerica}**, the first systematic treatise on **spherical geometry** — the geometry of the *surface* of a sphere, where the straight line is replaced by a great circle and the angles of a triangle sum to *more* than two right angles \cite{menelaussphaerica}. Menelaus' theorem is the spherical tool for astronomy (locating the stars), and it quietly plants the second seed of Section VII: *curved* space has its own, genuinely different, geometry.
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="Transmission: the Islamic Golden Age">
+<div class="md" data-mathlevel="40">
 ## IV. Transmission: the Islamic Golden Age
 
 <div style="display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:center; margin:0 0 1.5rem;">
@@ -296,7 +296,7 @@ The single most important geometric achievement of the period, however, is the w
 His **\citealternativetitle{alhazenoetic}** (completed c. 1021) is a *geometry of seeing*: it treats the eye, the mirror, and the path of light as objects of rigorous geometric analysis, and famously inverts the old "emission" theory of vision by arguing that we see by light *entering* the eye along straight rays \cite{alhazenoetic}. The law he formalises is the **law of reflection**, $\theta_{\text{incident}} = \theta_{\text{reflected}}$ (measured from the normal to the surface), and the **Alhazen problem** — finding the point on a mirror where a ray from an object reflects to the eye — is a genuinely hard geometric problem that he reduces to an algebraic (in fact quartic) equation. His treatment of the **camera obscura** is the direct ancestor of both the scientific camera and the mathematics of *perspective* \cite{alhazenoetic}. It is a pivot: geometry becomes the mathematics of *projection* — of how a three-dimensional world is faithfully laid down on a two-dimensional surface.
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="The geometry of the sky: angles, sines and functions">
+<div class="md" data-mathlevel="40">
 ## V. The geometry of the sky: angles, sines and the functions of a triangle
 
 Up to now geometry has been about the ground — fields to square, altars to convert, temples to raise. But the merchant and the sailor out of sight of land, and the priest keeping the calendar, all measured the sky by *angles* — the height of a star, the run of the sun, the turning of the year. The same right triangle that measured a field can be turned around and pointed at the sky, and the moment it does, something new is born: a **function of an angle**. This is the load-bearing idea of the second half of the chapter, because it is the bridge from *shapes in the plane* to *a number attached to a direction* — and a direction, in the modern language, is exactly what a vector (and therefore an embedding) is.
@@ -323,7 +323,7 @@ In the medieval Islamic world trigonometry was pulled out of astronomy and made 
 \marginfig{astrolabe.jpg}{A Persian astrolabe (made 1715). A model of the celestial sphere on a metal plate — swing it to a star and it reads the star's altitude, a portable protractor for the sky (\citealternativetitle{astrolabe_image}).}
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Calculating the functions: from tables to infinite series">
+<div class="md" data-mathlevel="60">
 ### Calculating the functions: from tables to infinite series
 
 For centuries the working method was the **trig table**: a list of sines at regular angles, with *interpolation* between the printed entries. **Bhāskara I** (7th c.) did something better — a *formula* for the sine of an acute angle with no table at all, $\sin x \approx \tfrac{16\,x(\pi - x)}{5\pi^{2} - 4x(\pi - x)}$, accurate to under two percent.
@@ -343,7 +343,7 @@ An angle is a *rotation*, so you measure it by comparing one direction to anothe
 \marginfig{sextant.jpg}{A sextant (this one made in London, 1773, and carried by Alexander von Humboldt). It measures the angle between a star and the horizon; that angle plus the time is your position at sea (\citealternativetitle{humboldtsextant}).}
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The payoff: dot product and cosine similarity">
+<div class="md" data-mathlevel="60">
 ### The payoff: dot product, cosine similarity, and how we measure spaces now
 
 Here the thread comes home. Place two vectors on the circle and the angle between them is read straight off their **dot product**:
@@ -355,7 +355,7 @@ That quotient, $\frac{\mathbf{a} \cdot \mathbf{b}}{\|\mathbf{a}\| \|\mathbf{b}\|
 Step back and the pattern is a single idea refined again and again. A **metric** is a rule $d(a, b)$ that says how far two points are, obeying three laws: $d(a, b) \ge 0$ with equality only for identical points, $d(a, b) = d(b, a)$ (symmetry), and the triangle inequality $d(a, c) \le d(a, b) + d(b, c)$. The **Euclidean** distance $\sqrt{\sum_{i} (a_{i} - b_{i})^{2}}$ is the straight-line case; the **cosine distance** $(1 - \cos\theta)$ measures orientation rather than size; Minkowski and Mahalanobis distances generalise it further. And as Section VII will show, the most general "distance" of all is Riemann's **metric tensor** $g_{\mu\nu}$ — the rule that tells a curved space how to measure infinitesimal separation. So the chain runs: the right triangle, then a ratio of a side to the hypotenuse, then an angle, then the dot product, then cosine similarity, and finally the metric on a manifold. Every link is the same question — *how do I measure the relation between two things?* — answered a little more deeply each time.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Space made visible: perspective and coordinates">
+<div class="md" data-mathlevel="55">
 ## VI. Space made visible: perspective, coordinates and projection
 
 Two needs forced geometry to leave the page — the painter who had to persuade an eye, and the navigator who had to find a harbour without landmarks — and both could only be served by *flattening the world honestly*. The mathematics of projection that Alhazen opened is taken up, on the *artistic* side, by the Renaissance, and on the *mathematical* side, by the 17th century; these two streams meet in a single, decisive idea: **space can be turned into numbers**.
@@ -388,7 +388,7 @@ and the single number $B^{2} - 4AC$ — the **discriminant** — tells you which
 Almost simultaneously, the French engineer **Gérard Desargues**, in his **\citealternativetitle{desarguesbrouillon}** (1639), asked a different question: *which* facts about a figure are preserved when it is projected onto another plane — facts that stay true no matter how the picture is distorted \cite{desarguesbrouillon}. His **Desargues' theorem** (two triangles are in perspective from a point iff their corresponding sides meet on a line) is one of the first clean statements of **projective geometry**, the geometry that later (with Pappus, Pascal, and then Möbius, Plücker and Klein) would be recast as the geometry of *lines, points and incidence* alone, with no length or angle at all. Perspective, algebra and projection — the three threads of the 17th century — were, in retrospect, all one subject: the geometry of *how space looks*.
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="Mercator: flattening the sphere">
+<div class="md" data-mathlevel="70">
 ### Mercator: flattening the sphere (1569)
 
 Projection was not only an art and a philosophy; it was a navigational *necessity*. In 1569 **Gerardus Mercator** published the world map that bears his name \cite{mercatoratlas}, solving a problem that had defeated cartographers: how to draw a flat chart on which a straight line is a *constant compass bearing* (a *rhumb line*), so a sailor could steer by a straight edge. His answer is a genuine piece of differential geometry, the **Mercator projection**, which stretches a latitude $\varphi$ to a vertical coordinate
@@ -403,7 +403,7 @@ The map is **conformal** — it preserves *angles* (so compass bearings are righ
 </figure>
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="When space bends: topology and non-Euclidean geometry">
+<div class="md" data-mathlevel="45">
 ## VII. When space bends: topology and non-Euclidean geometry
 
 For two thousand years "the" geometry was Euclid's, and everyone assumed that space *must* be flat — that the parallel postulate is a fact about the universe, not a convenient assumption. The first crack was technical: the postulate refused every attempt to be proved from Euclid's other four axioms — a proposition that cannot be proved is a question wearing the mask of a fact. The 18th and 19th centuries shattered the old certainty in two different directions at once: they found geometry *without metric* (topology), and geometry *without parallelism* (non-Euclidean space).
@@ -430,7 +430,7 @@ $$\underbrace{\chi}_{\text{the topological identity number}} \;=\; 2 - 2\,\under
 so $\chi$ never exceeds $2$, and equality holds *only* for the sphere: each handle you attach subtracts $2$ ($g=0$: sphere $\Rightarrow \chi=2$; $g=1$: donut $\Rightarrow \chi=0$; $g=2$: double-doughnut $\Rightarrow \chi=-2$) \cite{riemann1857genus}. That a shape's identity is captured by a single *integer* — not by its angles, not by its side lengths, but by something that cannot change under continuous deformation — is the founding intuition of topology \cite{eulersolids}.
 </div>
 
-<div class="md" data-mathlevel="85" data-optionaltitle="Gauss: curvature is intrinsic">
+<div class="md" data-mathlevel="85">
 ### Gauss: curvature is intrinsic
 
 \marginfig{gauss.jpg}{Carl Friedrich Gauss (1777–1855), who while surveying Hanover found that a surface can read its own curvature from the inside.}
@@ -463,7 +463,7 @@ $$\underbrace{\iint_{S} K\, dA}_{\substack{\text{add up ALL the bend}\\\text{on 
 \cite{docarmo}. In words: **no matter how you bend a surface, the total curvature you can accumulate on it is fixed by how many "holes" it has.** A sphere can hold exactly $4\pi$ of curvature, a torus exactly $0$. This single formula is the master key that ties the two halves of Section VII together — curvature (Gauss) and connectivity (Euler) are the same coin \cite{docarmo}.
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="Lobachevsky and Bolyai: the parallel postulate is a choice">
+<div class="md" data-mathlevel="65">
 ### Lobachevsky and Bolyai: the parallel postulate is a choice
 
 The parallel postulate had resisted proof for 2,000 years. The breakthrough was to stop trying to prove it and to *negate* it. **\citeauthor{lobachevskygeometry}** (1792–1856) and, independently, **\citeauthor{bolyaiappendix}** (1802–1860), each discovered that if you *replace* Euclid's fifth postulate with "through a point not on a line there pass *infinitely many* lines that never meet it", a perfectly consistent geometry results — **hyperbolic (or "non-Euclidean") geometry** \cite{lobachevskygeometry} \cite{bolyaiappendix}.
@@ -479,7 +479,7 @@ So a triangle's area is read directly from its *angular defect*, and there is no
 \marginfig{bolyai.jpg}{János Bolyai (1802–1860), son of Farkas, who worked out the same geometry in an 1837 appendix to his father's book.}
 </div>
 
-<div class="md" data-mathlevel="75" data-optionaltitle="Riemann: the general idea of 'space'">
+<div class="md" data-mathlevel="75">
 ### Riemann: the general idea of "space"
 
 <div class="smart-quote" data-cite="hypothesengeometrieenglish" data-after="translated by William Kingdon Clifford">
@@ -499,7 +499,7 @@ $$\underbrace{G_{\mu\nu}}_{\substack{\text{how spacetime}\\\text{curves}}}\; =\;
 the Einstein field equation: *the curvature of spacetime on the left equals the matter-and-energy on the right*. The *theorema egregium* of Gauss, generalised by Riemann, finally applied to the universe itself \cite{hypothesengeometrie} \cite{newtonprincipia}.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Möbius and Listing: the word 'topology'">
+<div class="md" data-mathlevel="55">
 ### Möbius and Listing: the word "topology"
 
 In the same decade the *metric-free* side was named. **\citeauthor{mobiusband}** (1790–1868) discovered the one-sided band that bears his name (1858) \cite{mobiusband}, and **\citeauthor{listingtopologie}** (1808–1882) coined the very word **"topology"** (from *topos*, "place") in his *Vorstudien zur Topologie* (1847) \cite{listingtopologie}.
@@ -514,7 +514,7 @@ In the same decade the *metric-free* side was named. **\citeauthor{mobiusband}**
 The message of Möbius and Listing is the message of Euler's bridges: some of the deepest facts about a space are not about how far apart things are, but about *how it is connected* — and those facts (the number of "holes", orientability, the Euler characteristic) are the *real* invariants of shape. A later, complete result — the **classification of surfaces** — says every closed surface is, up to deformation, a sphere with a certain number of handles and cross-caps attached, so the integers $g$ (handles) and $k$ (cross-caps) are the *entire* topological identity of a surface \cite{hatcher}.
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="The modern shape of space — and why it matters for AI">
+<div class="md" data-mathlevel="70">
 ## VIII. The modern shape of space — and why it matters for AI
 
 The last great reorganisation of the 19th century was **\citeauthor{poincareanalysissitus}**'s **\citetitle{poincareanalysissitus}** (1895), which turned topology from a collection of curiosities into a full theory \cite{poincareanalysissitus}. Its concern was the reverse of the coordinate turn: once coordinates had turned all of space into numbers, the question became whether two shapes could be told apart *without* measuring at all — by how they fit together at a boundary, stretch for stretch.
@@ -536,7 +536,7 @@ So where does this leave us, and why is a history of geometry a chapter in a cou
 The thread that runs from *Homo erectus* to the embedding space is the same thread: the conviction that the world is made of *relations between points in a space*, and that those relations can be written down, proved, and, in the end, *computed*.
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="Higher dimensions: the space the machine lives in">
+<div class="md" data-mathlevel="70">
 ## IX. Higher dimensions: the space the machine lives in
 
 A problem with *n* quantities is a point in an *n*-dimensional space, so the number of dimensions a question needs is exactly the number of things it is keeping track of — baskets of goods, a year of weather, the state of a machine. Thus if the 19th century discovered that space can *bend*, the 20th discovered that it can have *any number of dimensions* — including infinitely many — and that geometry survives the trip. This is not an academic curiosity: the machine in this course computes *inside* that geometry. An embedding vector is a point in $\mathbb{R}^{d}$, with $d$ in the hundreds or thousands; a training set is a cloud of such points; a neural network is a rule for moving those points around. Every tool built in this chapter — the dot product of Section V, the curvature of Section VII, the topology of Section VIII — is now applied to that high-dimensional space, and each of the modern insights below is a 20th- or 21st-century answer to the chapter's oldest question: *what space, and how do you measure distance in it?*
@@ -566,7 +566,7 @@ In an embedding space with $d \approx 2000$, that spread is about $0.02$: two ra
 Part of this is the famous **"curse of dimensionality"** of \citeauthor{bellman1957dynamic}, the price of living in more and more coordinates: raw Euclidean distance among random points stops carrying information \cite{bellman1957dynamic}. But the *near-orthogonality* half of the curse is also the opportunity. If thousands of directions are all mutually near-perpendicular, there is *room* for thousands of mutually distinct notions — which is precisely why a semantic space can park thousands of words in nearly separate directions, and why "meaning" must be read by **direction** (cosine similarity, Section V) rather than by raw distance. High dimensions do not ruin distance; they *retire it* in favour of angle.
 </div>
 
-<div class="md" data-mathlevel="75" data-optionaltitle="The manifold hypothesis: data does not fill space">
+<div class="md" data-mathlevel="75">
 ### The manifold hypothesis: data does not fill space
 
 The resolution of the curse is the most consequential bet in modern geometry-for-AI: **data does not fill the space it is written in.** A natural image is a vector in a pixel space of dimension
@@ -583,7 +583,7 @@ The hypothesis is what a dozen standard tools *assume*, and it explains why they
 * **Only the intrinsic dimension matters.** A million-pixel image is, for geometry, a point on a sheet of perhaps a few dozen intrinsic dimensions; all the "wasted" coordinates are directions *off the data*, which is why the models can confidently ignore the noise directions that dominate the ambient space.
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Geometric deep learning: shape dictates the machine">
+<div class="md" data-mathlevel="60">
 ### Geometric deep learning: the shape of the input dictates the machine (2021)
 
 The newest chapter folds the old question back onto the machine itself. **Geometric deep learning**, as systematised by \citeauthorlastnameand{bronstein2021geometric} (2021), observes that the *architecture* of every successful neural network is a footprint of the *symmetries of the space its data lives on* \cite{bronstein2021geometric}:
@@ -597,7 +597,7 @@ The three architectures of modern AI are therefore not arbitrary inventions: the
 And one recent, mildly startling data point closes the loop with Section III. \citeauthorlastnameand{huh2024platonic} (2024) found empirically that very different models, trained on different tasks, converge to **approximately the same internal representation** of the visual world \cite{huh2024platonic} — a shared latent "geometry of reality" that seems to be learned, not invented, by whichever learner is pressed against the same visual data. Whether that shared space is *the* true one is an open question — but it is hard to read the **Platonic representation hypothesis** as anything but the *Meno* argument, stated in 2024 computer science: there is a single latent geometry behind appearances, and "learning" is the process of *recovering* it.
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="A century that erased the points">
+<div class="md" data-mathlevel="70">
 ## X. A century that erased the points
 
 Section VIII ended with a proof of Poincaré's conjecture; the century between Poincaré's question (1895) and Perelman's answer (2003) is itself a history of geometry, and the shortest way to see what "space" came to mean. In the 20th century topology stopped being the study of rubber surfaces and became the mathematics of *relations*, driven by a strange unease: coordinates had turned space into bookkeeping without saying anything about what a space *means* — and the meaning only survived once the points themselves were allowed to go. In the hands of **\citeauthorlastnameand{grothedieck_res}** (1928–2014) the very notion of a space was rebuilt as the mathematics of *what a space can mean* \cite{grothedieck_res}. This history never appears in a forward pass of a machine, and that is precisely the point: it is where "space" stopped meaning "the room you live in" and came to mean "any world of points whose relationships can be written down" — which is exactly what an embedding space is.
@@ -611,7 +611,7 @@ The weirdly strong content is all on the left: the map on the whole ball could s
 The decisive step came when **Emmy Noether** — visiting Brouwer's home in Blaricum in December 1925 — pointed out that the Betti numbers were not numbers at all but the *ranks of groups*. A "hole of dimension $k$" is not a count; it is the group $H_{k}$, and two spaces differ when their hole-groups differ \cite{mclarty2006noether}. This one remark ("Betti numbers are the ranks of homology groups") turned topology into **algebraic topology**: shape, from then on, was to be studied by the algebra that summarises it — the same move the [Embeddings](embeddinglab) chapter makes when it replaces a word by a vector and studies the *numbers attached to it*.
 </div>
 
-<div class="md" data-mathlevel="85" data-optionaltitle="Morse: one function carries the whole shape (1929)">
+<div class="md" data-mathlevel="85">
 ### Morse: one function carries the whole shape (1929)
 
 Poincaré had counted the holes of a space; \citeauthorlastnameand{morse1929foundations} (1892–1977) turned the question inside out and gave geometry one of its most used tools. Instead of asking "what holes does this space have?", Morse asked the question this course keeps asking of every landscape, physical or learned: *if you may only watch a single function $f$ moving over an unfamiliar space — a height, an energy, a cost — what does that one function reveal about the whole shape?* His answer, the **calculus of variations in the large**, is that for any ordinary smooth function the **critical points** decide everything \cite{morse1929foundations}: the peaks, pits and saddles of $f$ (the places where its slope vanishes) are the only places where anything happens. Between two of them the level set $\{f = c\}$ drifts without changing its shape, and the moment the level crosses a critical point, exactly one **handle** is glued onto the space — a $k$-dimensional handle for a critical point with exactly $k$ independent downhill directions. The whole space is assembled, one handle per critical point:
@@ -643,7 +643,7 @@ $$\underbrace{\iint_{M}\;\underbrace{K}_{\substack{\text{Gaussian curvature}\\\t
 the integral of curvature of Section VII is a whole number fixed by the topology — is itself the statement that "the top characteristic class evaluates to the Euler characteristic" \cite{docarmo} \cite{chern1946}. Chern's 1944 paper gave an intrinsic proof of the general Gauss–Bonnet theorem (found independently by Allendoerfer and Weil in 1943) so natural that it became the standard; it is one of the few times the "why does this integer exist?" question has a genuinely topological answer.
 </div>
 
-<div class="md" data-mathlevel="90" data-optionaltitle="Milnor, Smale, and the shape of the penalty (1956–1963)">
+<div class="md" data-mathlevel="90">
 ### Milnor, Smale, and the shape of the penalty (1956–1963)
 
 Then came the shock that the 20th-century "counting of shapes" could not be an infinite ladder, and that the objects in it could be *more* numerous than the dimensions suggest. **\citeauthorlastnameand{milnor1956exotic}** exhibited a manifold homeomorphic to the 7-sphere but *not* diffeomorphic to it: topologically a sphere, differentiably *another object* — there are 28 such **exotic spheres** in dimension 7, and, farther out, thousands \cite{milnor1956exotic}. The consequence is central: "continuous" and "smooth" are not the same relation, and the difference is measured in whole numbers — the same counting that, in a high-dimensional embedding space, decides how many genuinely distinct directions the geometry has.

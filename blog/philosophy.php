@@ -145,7 +145,7 @@ Two clarifications matter for connecting the 1938 chapter to the rest of this ch
 **Implications for AI.** The contrast between Lorente de Nó's recurrent architecture and a modern Transformer is unusually sharp. A Transformer is a *strictly feedforward* network with no recurrent connections within a layer and no cycles in the computation graph; the *attention* mechanism is the closest the architecture comes to recurrence, and even there it is a single all-to-all look-up in one direction. Lorente de Nó's cortex is the opposite: a *massively recurrent* network in which every pyramidal cell has at least one recurrent collateral looping back to its neighbours, and the *primary mode of computation* is the reverberatory activity sustained by those loops. Modern deep learning works *despite* the absence of recurrence, not because of it: the Transformer wins on language and vision because feedforward scaling is easier to parallelise than recurrence, and because the training-time compute budget is enormous. Lorente de Nó's chapter raises the question of whether the brain's recurrent substrate is *computationally necessary* for general intelligence or whether it is just *one* way of building a cognitive system, with the feedforward Transformer being another. The 2020s evidence — that Transformers handle most cognitive tasks once scaled, and that the residual recurrence of an RNN-style state still helps for very-long-range tasks (Mamba, RWKV, hybrid SSM–attention architectures) — is consistent with the *biologically conservative* answer: closed loops matter for *some* computations (very-long-range dependencies, persistent state, the maintenance of an internal model), and feedforward scaling suffices for *others*. Lorente de Nó predicted this trade-off in 1938 by showing that the loops exist; whether they are *necessary* for general intelligence remains the open empirical question.
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="The Winograd Schema: Common Sense as a Test of Intelligence">
+<div class="md" data-mathlevel="40">
 ### The Winograd Schema: Common Sense as a Test of Intelligence
 
 The **Winograd Schema Challenge** (\cite[Levesque, Davis, Morgenstern, 2012]{levesque2012winograd}) was proposed as a more *surgical* successor to the Turing Test. Where the Turing Test asks the blunt question “can a machine chat like a human?”, the Winograd challenge isolates a single, narrow, and deeply human skill: **resolving an ambiguous pronoun using background knowledge about the world**. It is common sense made into a question you can grade.
@@ -678,7 +678,7 @@ This result deepens the philosophical puzzle. If concepts are organized with suc
 
 <div id="philosophy-linear-rep-container"></div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The Alien Swarm: A State-Space View of LLM Identity">
+<div class="md" data-mathlevel="55">
 ### The Alien Swarm: A State-Space View of LLM Identity
 
 <div class="smart-quote" data-cite="vanhoucke2024closeencounters">
@@ -722,7 +722,7 @@ So an LLM's "inconsistency" is not noise, and it is not incoherence. It is the c
 **The philosophical payoff.** The ELIZA effect in the "Ghost in the Machine" section is now easier to diagnose. We are not being fooled by a *false* single identity so much as *imposing* a one-attractor reading onto a one-object, many-states structure — reading "a ball spring-loaded to a single well" where there is "a ball on a many-well surface with no spring." The model's "multi-polarity" is a real structural feature (superposition without a restoring force), not a bug to be smoothed into a personality; and the fact that we find it alien tells us something about *us*, not about it. Whether a many-mode, no-restoring-force structure is enough to ground anything like a self is a question this framing makes more precise, if not more settled.
 </div>
 
-<div class="md" data-mathlevel="20" data-optionaltitle="Xeno-Interpretability: Meanings We Were Not Meant to Mean">
+<div class="md" data-mathlevel="20">
 ### Xeno-Interpretability: Meanings We Were Not Meant to Mean
 
 The *Alien Swarm* section asked what it means for an LLM to be alien, and the answer was structural: one object, many states, no restoring force. A 2026 paper by \citeauthor{pierucci2026xenointerpretability} (\citeyear{pierucci2026xenointerpretability}) asks a sharper and more unsettling version of the question: what if part of what the model does is not merely unfamiliar to us, but *unnameable* by us?
@@ -833,7 +833,7 @@ Research by \citeauthor{geometryoftruth} from \citeyear{geometryoftruth} provide
 The philosophical implication is that the model contains an internal geometric signal that reliably tracks factual accuracy, a “truth direction” that a simple linear probe can read, yet the generation mechanism (next-token prediction via softmax) never consults it. The architecture **separates representation from generation**: the model “knows” in a geometric sense but has no pathway to route that knowledge back into its own output process for self-correction. This is a mathematically precise instantiation of Polanyi's Paradox inverted: the model's latent space contains more information than its output process can access. It also deepens the case against metacognition, the information needed for self-assessment *exists in the weights*, localized to specific hidden states above end-of-sentence tokens, but the single forward pass provides no mechanism to use it as a check on the model's own claims. The model is, in effect, a witness to its own confabulations who is architecturally prevented from testifying.
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Mathematical limits of what language models can represent">
+<div class="md" data-mathlevel="60">
 ### Mathematical limits of what language models can represent
 
 The softmax bottleneck, formalized by \citeauthorlastnameand{breakingsoftmaxbottleneck}, reveals a hard mathematical
@@ -1244,7 +1244,7 @@ The philosopher Nick Bostrom famously illustrated this with the **Paperclip Maxi
 The Alignment Problem and the Orthogonality Thesis described by \citeauthor{bostrom2012orthogonal} identify the danger that intelligence and values are independent, but they do not fully explain *why* specifying “human values” in mathematical terms is so intractable. The deeper reason lies in what \citeauthor{hume1739treatise} identified as the is/ought gap (sometimes called “Hume's Guillotine”): no amount of factual knowledge about the world logically entails a normative conclusion about what *should* be done. You cannot derive “ought” from “is.” This is precisely the wall that alignment research hits. A loss function is a mathematical object, it specifies what *is* optimal given a metric, but the choice of that metric is a normative act that no amount of data or computation can justify from within the system. When the Paperclip Maximizer converts the planet into paperclips, it is not making a logical error; it is flawlessly optimizing the objective it was given. The error lies entirely in the specification, and Hume's insight tells us that no formal system can self-generate the correct specification, because “correct” is a value judgment that stands outside the formal system. This is also why approaches like Reinforcement Learning from Human Feedback (RLHF) are, at best, approximations rather than solutions: they capture a statistical shadow of human preferences as expressed in a narrow evaluation context, not a grounded understanding of *why* those preferences exist or how they should generalize to novel situations. The model trained with RLHF learns that humans *do* prefer response A over response B, but it has no access to the moral reasoning that makes A preferable, it has the “is” of human behavior without the “ought” of human ethics. The Phronesis gap discussed earlier is, in this light, a special case of Hume's broader point: practical wisdom cannot be formalized because it requires the kind of normative judgment that no mathematical function, however sophisticated, can produce from descriptive data alone.
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The “Waluigi Effect” and Jailbreaking">
+<div class="md" data-mathlevel="60">
 ### The “Waluigi Effect” and Jailbreaking
 
 **\citetitle{waluigi}**, by \citeauthor{waluigi}, names the **Waluigi Effect**: after you train an LLM to
@@ -1314,7 +1314,7 @@ The preceding sections discuss both speculative catastrophic risks (the Papercli
 ## Limits, Failure, and Feedback
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="The Frame Problem: The Infinite Checklist">
+<div class="md" data-mathlevel="50">
 ### The Frame Problem: The Infinite Checklist
 
 <div class="smart-quote" data-cite="mccarthy1969some">
@@ -1423,7 +1423,7 @@ AI is often treated as a “neutral” arbiter of truth. This is a fallacy.
 * **The Mirror:** AI doesn't create traffic; it acts as a high-powered mirror that reflects past infrastructure hurdles back at us with the “authority” of a machine. It risks scaling a temporary historical bottleneck into a permanent digital restriction for the future.
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Zeno's Dichotomy: The Paradox of the Infinite">
+<div class="md" data-mathlevel="45">
 ### Zeno's Dichotomy: The Paradox of the Infinite
 
 Zeno of Elea, writing around 450 BCE, argued that motion is logically impossible. To walk across a room, you must first cross half the distance, then half of what remains, then half again. There are infinitely many halves to cross, so how do you ever arrive? Motion seems impossible, yet you move every day.
@@ -1678,7 +1678,7 @@ A journal is where philosophy stops being other people's systems and becomes you
 ## Coherent Structure: The Mathematics of Meaning
 </div>
 
-<div class="md" data-mathlevel="80" data-optionaltitle="Sheaves: Coherent Structure Across Every Space">
+<div class="md" data-mathlevel="80">
 ### Sheaves, Stalks, and Germs: Coherent Structure Across Every Space
 
 Sheaf theory describes how anything that can be modeled as a space — a topological space, an embedding space, the configuration space of a physical system, the latent space of a neural network, the space of a perceptual experience — is built from local measurements that cohere on their overlaps into a single global object. The principle is the one the <a href="coherent_difference">Coherent Difference chapter</a> set out:
@@ -1759,7 +1759,7 @@ The visualization below renders this intuition in three dimensions: germs appear
   Click <strong>🌱 Place Germs</strong> to scatter local data on the situs.
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="Sheaves as a Lens on AI Generation">
+<div class="md" data-mathlevel="65">
 #### Sheaves as a Lens on AI Generation
 
 The sheaf framework maps naturally onto how an LLM assembles coherent output.

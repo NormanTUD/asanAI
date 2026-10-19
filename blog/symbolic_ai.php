@@ -55,7 +55,7 @@ The synthesis below happens naturally once you read three other chapters: <a hre
 Both have strengths the other lacks. **Neuro-symbolic AI** is the synthesis.
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Knowledge Representation: From Logic to RDF">
+<div class="md" data-mathlevel="50">
 ## Knowledge Representation: From Logic to RDF
 
 The classical symbolic AI stack rests on **first-order logic** and its extensions.
@@ -142,7 +142,7 @@ Reasoners (Pellet, HermiT, FaCT++) implement **tableau-based** algorithms that c
 For **rule-based reasoning** beyond OWL, **Datalog** and **Prolog** are used. Modern graph databases (Neo4j, Amazon Neptune, Stardog, TigerGraph) add **property graphs**: nodes and edges with arbitrary attributes.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Embedding-Based KG Reasoning">
+<div class="md" data-mathlevel="55">
 ### Embedding-Based KG Reasoning
 
 To bridge symbolic KGs with neural methods, several **KG embedding** methods learn vector representations of entities and relations:

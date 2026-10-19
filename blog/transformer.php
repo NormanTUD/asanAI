@@ -376,7 +376,7 @@ Here, we do **not** use the original Encoder-Decoder architecture from Vaswani e
 This is the architecture you are interacting with in every visualization here. When you see the attention heatmaps, the causal mask is the reason the upper-right triangle is always zero.
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="The Residual Stream">
+<div class="md" data-mathlevel="40">
 ### The Residual Stream
 
 <div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 12">
@@ -392,7 +392,7 @@ This architecture is governed by the \cite[Information Bottleneck principle]{tis
 
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="Attention: Letting Tokens Talk">
+<div class="md" data-mathlevel="65">
 ## Attention: Letting Tokens Talk
 
 Attention is the heart of the transformer — the one place where one token's information can flow into another. This part builds it up from a single head to the full multi-head mechanism.
@@ -421,7 +421,7 @@ This is also important for **prompt engineering**:
 
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The Single-Head Attention">
+<div class="md" data-mathlevel="60">
 #### The **Single-Head Attention**
 
 The job of a Single Attention Head is to find some form of relation between all the input tokens after they've been multiplied with the $Q$, $K$ and $V$-matrices. This could be, for example, to detect which part of a sentence is a verb and which object it attends to. In real transformers, it rarely is *that* interpretable, though.
@@ -430,7 +430,7 @@ $$\text{Attention}(Q, K, V) = \text{Softmax}\left(\frac{Q \cdot K^T}{\sqrt{d_k}}
 
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Concatenation Definition">
+<div class="md" data-mathlevel="45">
 ##### Concatenation Definition
 Instead of one massive attention operation, we use **Multi-Head Attention**. We split the hidden state's $d_{\text{model}}$ into $h$ different “heads.” Each head $i$ has its own set of projection matrices $\{W_i^Q, W_i^K, W_i^V\}$, allowing the model to focus on different aspects (e.g., syntax, or resolving long-distance dependencies, but also very abstract features, for which human language doesn't have any names) simultaneously.
 
@@ -699,7 +699,7 @@ parameters while keeping per-token compute roughly constant, since only
 a small fraction of parameters are active for any given input.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="From Vectors to Words">
+<div class="md" data-mathlevel="55">
 ## From Vectors to Words
 
 With the final hidden state in hand, all that remains is to read it back out as a probability distribution over the vocabulary.
@@ -721,7 +721,7 @@ We have arrived at the final vector $h_{\text{final}}$ for the last token. To co
 
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Step-by-Step Logit Calculation">
+<div class="md" data-mathlevel="45">
 ### Step-by-Step Logit Calculation
 
 To get the logit for each word, we calculate the dot product between the final hidden state vector $h_\text{last}$ and the word's learned embedding row $w_\text{row}$ from the Unembedding Matrix $W_\text{vocab}$. It really only uses the last row of the last calculation of the network, as that one is the last word the transformer has seen, and this one is used for the next word. The previous numbers in the last matrix are not used here per se, but they were needed to calculate this one in the attention and $W_\text{FFN}$ matrices. They are just ignored in the last step, yet calculated because that is required by the structure.
