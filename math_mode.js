@@ -403,6 +403,19 @@ function write_optimizer_to_math_tab() {
 			return;
 		}
 
+		// The body below syncs every optimizer state tensor from GPU to CPU
+		// (wo2mt_collect_value_for_key -> get_values_for_optimizer_array_from_array
+		// -> array_sync). Adam-class optimizers carry one m+v moment tensor per
+		// trainable variable, so on a non-trivial model this is by far the
+		// most expensive thing the 1 Hz periodic tick does during training —
+		// and its output (LaTeX inside #optimizer_variables_div) only matters
+		// while the math tab is on screen. is_math_tab_visible() already has
+		// a 250 ms TTL cache (invalidated by resize/visibilitychange) so this
+		// gate does not itself become a layout flush per tick. updated_page()
+		// and the periodic setInterval at the bottom of this file both call
+		// in here; the gate protects both paths.
+		if (!is_math_tab_visible()) return;
+
 
 		var values = {};
 		var _keys = Object.keys(model.optimizer);
