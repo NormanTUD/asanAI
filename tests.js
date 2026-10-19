@@ -1249,7 +1249,17 @@ async function test_clicking_on_example_images_for_prediction() {
 }
 
 function enable_or_disable_show_layer_data(_status) {
-	$("#show_layer_data").prop("checked", _status).trigger("change");
+	// The checkbox's onclick handler runs enable_disable_kernel_images() +
+	// add_layer_debuggers() — the latter is what hooks each layer's apply()
+	// so draw_internal_states() fires and the canvas inside #layer_0_input
+	// gets populated. prop().trigger("change") only fires the change event,
+	// NOT the onclick, so add_layer_debuggers never ran and the test
+	// saw "#layer_0_input: no canvas". Toggle via .click() instead — that
+	// runs both the browser's default action (toggle the checkbox) and the
+	// inline onclick handler.
+	if ($("#show_layer_data").is(":checked") !== _status) {
+		$("#show_layer_data").click();
+	}
 }
 
 async function set_first_kernel_initializer_to_constant (initializer_val) {

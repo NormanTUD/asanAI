@@ -393,6 +393,15 @@ function throttle(fn, limit = 1000) {
 
 function write_optimizer_to_math_tab() {
 	try {
+		// Gate BEFORE the model/optimizer checks: the 1 Hz periodic at the
+		// bottom of this file calls this every tick regardless of UI state,
+		// and "model not defined" / "model doesn't have optimizer key" used
+		// to spam the console every second during boot and whenever the math
+		// tab wasn't on screen. The math tab is the only consumer of the
+		// output of this function (#optimizer_variables_div), so if it's
+		// hidden we have nothing to do and nothing to complain about.
+		if (!is_math_tab_visible()) return;
+
 		if (!model) {
 			dbg("[write_optimizer_to_math_tab] model not defined");
 			return;
@@ -402,19 +411,6 @@ function write_optimizer_to_math_tab() {
 			dbg("[write_optimizer_to_math_tab] model doesn't have optimizer key");
 			return;
 		}
-
-		// The body below syncs every optimizer state tensor from GPU to CPU
-		// (wo2mt_collect_value_for_key -> get_values_for_optimizer_array_from_array
-		// -> array_sync). Adam-class optimizers carry one m+v moment tensor per
-		// trainable variable, so on a non-trivial model this is by far the
-		// most expensive thing the 1 Hz periodic tick does during training —
-		// and its output (LaTeX inside #optimizer_variables_div) only matters
-		// while the math tab is on screen. is_math_tab_visible() already has
-		// a 250 ms TTL cache (invalidated by resize/visibilitychange) so this
-		// gate does not itself become a layout flush per tick. updated_page()
-		// and the periodic setInterval at the bottom of this file both call
-		// in here; the gate protects both paths.
-		if (!is_math_tab_visible()) return;
 
 
 		var values = {};
