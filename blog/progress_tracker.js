@@ -27,8 +27,8 @@
    Older shapes (`bands: [{ms, dwelled}]`, `segments: [bool;10]`, raw
    `maxScrollPct`) are converted to slots on load.
 
-   Ctrl+F5 / Ctrl+Shift+R / Cmd+Shift+R wipe the whole progress. A
-   reset command is also logged to the console on every page load.
+   Reset only via the JS console: `CourseProgress.reset()` (the command
+   is logged to the console on every page load).
    ════════════════════════════════════════════════════════════════ */
 
 (function () {
@@ -94,55 +94,100 @@
 		return m ? (m.length / SLOT_COUNT) * 100 : 0;
 	}
 
-	let state     = defaultState();
-	let resetting = false;   // true nach Strg+F5 → nichts mehr speichern
+	let state = defaultState();
+	let lsWarned = false;
+	let storeReady = false;   // erst nach dem ersten IndexedDB-Lesen schreiben
 
+	function parseState(parsed) {
+		if (!parsed || typeof parsed !== 'object') return null;
+		const normalizedTiles = Object.create(null);
+		if (parsed.tiles && typeof parsed.tiles === 'object') {
+			for (const slug in parsed.tiles) {
+				if (Object.prototype.hasOwnProperty.call(parsed.tiles, slug)) {
+					normalizedTiles[slug] = normalizeTile(parsed.tiles[slug]);
+				}
+			}
+		}
+		return { tiles: normalizedTiles, updatedAt: Number(parsed.updatedAt) || 0 };
+	}
+
+	/* den neueren Stand übernehmen (Speicher vs. gelesener Stand) */
+	function adoptIfNewer(s) {
+		if (s && s.updatedAt >= state.updatedAt) { state = s; return true; }
+		return false;
+	}
+
+	/* localStorage lesen (synchron, schnell). Ist er voll oder blockiert,
+	   bleibt der Stand im Speicher bzw. kommt aus IndexedDB (idbLoad). */
 	function loadState() {
-		state = defaultState();
 		try {
 			if (typeof localStorage === 'undefined') return;
 			const raw = localStorage.getItem(STORAGE_KEY);
 			if (!raw) return;
-			const parsed = JSON.parse(raw);
-			if (!parsed || typeof parsed !== 'object') return;
-
-			const normalizedTiles = Object.create(null);
-			if (parsed.tiles && typeof parsed.tiles === 'object') {
-				for (const slug in parsed.tiles) {
-					if (Object.prototype.hasOwnProperty.call(parsed.tiles, slug)) {
-						normalizedTiles[slug] = normalizeTile(parsed.tiles[slug]);
-					}
-				}
-			}
-			state = {
-				tiles:     normalizedTiles,
-				updatedAt: Number(parsed.updatedAt) || 0
-			};
-		} catch (e) { /* disabled / corrupt — keep default */ }
+			adoptIfNewer(parseState(JSON.parse(raw)));
+		} catch (e) { /* disabled / corrupt — keep what we have */ }
 	}
 
-	/* sofort speichern — kein verzögertes Schreiben, das verloren gehen kann */
+	/* ── IndexedDB als zweiter, robuster Speicher ──────────────────
+	   localStorage ist pro Adresse auf ~5 MB begrenzt und wird auf
+	   localhost mit dem Toolkit geteilt (das dort ganze Modelle ablegt).
+	   Ist er voll, schlägt das Schreiben still fehl und der Fortschritt
+	   wäre nach F5 weg. IndexedDB hat viel mehr Platz. */
+	const IDB_NAME = 'asanai_blog';
+	const IDB_STORE = 'kv';
+	let idbPromise = null;
+
+	function idb() {
+		if (idbPromise) return idbPromise;
+		idbPromise = new Promise(function (resolve) {
+			try {
+				if (!window.indexedDB) { resolve(null); return; }
+				const req = indexedDB.open(IDB_NAME, 1);
+				req.onupgradeneeded = function () { req.result.createObjectStore(IDB_STORE); };
+				req.onsuccess = function () { resolve(req.result); };
+				req.onerror = function () { resolve(null); };
+				req.onblocked = function () { resolve(null); };
+			} catch (e) { resolve(null); }
+		});
+		return idbPromise;
+	}
+
+	function idbSave(json) {
+		idb().then(function (db) {
+			if (!db) return;
+			try { db.transaction(IDB_STORE, 'readwrite').objectStore(IDB_STORE).put(json, STORAGE_KEY); } catch (e) { /* ignore */ }
+		});
+	}
+
+	/* IndexedDB lesen und übernehmen, falls neuer → callback(changed) */
+	function idbLoad(cb) {
+		idb().then(function (db) {
+			if (!db) { cb(false); return; }
+			try {
+				const req = db.transaction(IDB_STORE, 'readonly').objectStore(IDB_STORE).get(STORAGE_KEY);
+				req.onsuccess = function () {
+					let s = null;
+					try { s = req.result ? parseState(JSON.parse(req.result)) : null; } catch (e) { s = null; }
+					cb(adoptIfNewer(s));
+				};
+				req.onerror = function () { cb(false); };
+			} catch (e) { cb(false); }
+		});
+	}
+
+	/* sofort speichern — in localStorage UND IndexedDB */
 	function saveState() {
-		if (resetting) return;
+		state.updatedAt = Date.now();
+		const json = JSON.stringify(state);
 		try {
-			state.updatedAt = Date.now();
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-		} catch (e) { /* quota / private mode */ }
-	}
-
-	/* Strg+F5 / Strg+Umschalt+R / Cmd+Umschalt+R (harter Reload) setzt den
-	   Lesefortschritt zurück. Nach dem Reload lässt sich das nicht mehr
-	   unterscheiden, deshalb wird die Tastenkombination selbst abgefangen. */
-	function installHardReloadReset() {
-		document.addEventListener('keydown', function (e) {
-			const key = e.key || '';
-			const hard = (key === 'F5' && e.ctrlKey)
-				|| ((e.ctrlKey || e.metaKey) && e.shiftKey && key.toLowerCase() === 'r');
-			if (!hard) return;
-			resetting = true;
-			state = defaultState();
-			try { localStorage.removeItem(STORAGE_KEY); } catch (err) {}
-		}, true);
+			localStorage.setItem(STORAGE_KEY, json);
+		} catch (e) {
+			if (!lsWarned) {
+				lsWarned = true;
+				try { console.warn('Course Progress: localStorage is full or blocked — saving to IndexedDB instead.'); } catch (e2) {}
+			}
+		}
+		idbSave(json);
 	}
 
 	function getTiles() {
@@ -228,7 +273,7 @@
 		/* sichtbaren Bereich als gelesen markieren und sofort speichern */
 		function markVisible() {
 			markTimer = null;
-			if (resetting || !pageReady || !contentShown() || document.visibilityState !== 'visible') return;
+			if (!storeReady || !pageReady || !contentShown() || document.visibilityState !== 'visible') return;
 			const doc = document.documentElement;
 			const total = Math.max(doc.scrollHeight, document.body ? document.body.scrollHeight : 0);
 			const view  = window.innerHeight || 0;
@@ -301,13 +346,13 @@
 
 	function logResetHint() {
 		const label    = '%c Course Progress %c';
-		const cmd      = 'reset →  localStorage.removeItem("' + STORAGE_KEY + '")';
+		const cmd      = 'reset →  CourseProgress.reset()';
 		const cssLabel = 'background:#f97316;color:#fff;font-weight:bold;padding:2px 6px;border-radius:3px 0 0 3px;';
 		const cssCmd   = 'background:#fff7ed;color:#f97316;font-family:ui-monospace,Menlo,monospace;padding:2px 6px;border-radius:0 3px 3px 0;border:1px solid #f97316;border-left:none;';
 		try {
 			console.log(label + ' ' + cmd, cssLabel, cssCmd);
 		} catch (e) {
-			try { console.warn('Course Progress: localStorage.removeItem("' + STORAGE_KEY + '")'); } catch (e2) {}
+			try { console.warn('Course Progress: reset with CourseProgress.reset()'); } catch (e2) {}
 		}
 	}
 
@@ -315,16 +360,21 @@
 		try {
 			loadState();
 			logResetHint();
-			installHardReloadReset();
 
 			// Kacheln (Startseite, aber auch Kacheln auf Lektionsseiten) malen
 			// und neu malen, sobald sich der Stand geändert haben kann:
 			// zurück zur Seite (bfcache), Tab wieder sichtbar, anderer Tab.
 			paintTiles();
+			// IndexedDB nachladen (asynchron) — falls dort ein neuerer Stand
+			// liegt, z. B. weil localStorage voll ist, neu malen
+			idbLoad(function (changed) {
+				storeReady = true;
+				if (changed) paintTiles();
+			});
 			const repaint = function () {
-				if (resetting) return;
 				loadState();
 				paintTiles();
+				idbLoad(function (changed) { if (changed) paintTiles(); });
 			};
 			window.addEventListener('pageshow', repaint);
 			document.addEventListener('visibilitychange', function () {
@@ -346,9 +396,13 @@
 
 	window.CourseProgress = {
 		reset: function () {
+			// leeren Stand mit neuem Zeitstempel in BEIDE Speicher schreiben,
+			// damit kein älterer Stand (localStorage / IndexedDB) zurückkommt
 			state = defaultState();
 			try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+			saveState();
 			paintTiles();
+			return 'Course progress reset.';
 		},
 		get: function () {
 			return JSON.parse(JSON.stringify(state));
