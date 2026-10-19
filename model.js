@@ -63,6 +63,22 @@ async function get_model_config_hash () {
 		}
 	});
 
+	// Include training config (loss / optimizer / metric / epochs) so that
+	// changing any of these triggers a real model.compile() instead of the
+	// compile_model() fast-path. Without this, set_loss/set_metric change
+	// model.optimizer's DOM inputs but not the hash — the fast-path skips
+	// the actual compile, model.optimizer stays stale, and the next
+	// training run dies with "Model or optimizer is null/undefined after
+	// await compile_model()".
+	var $loss = $("#loss");
+	var $optimizer = $("#optimizer");
+	var $metric = $("#metric");
+	var $epochs = $("#epochs");
+	if ($loss.length)     arr.push("loss=" + $loss.val());
+	if ($optimizer.length) arr.push("optimizer=" + $optimizer.val());
+	if ($metric.length)   arr.push("metric=" + $metric.val());
+	if ($epochs.length)   arr.push("epochs=" + $epochs.val());
+
 	var str = arr.join(";;;;;;;;;");
 
 	var res = await md5(str);
