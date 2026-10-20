@@ -263,7 +263,7 @@
 		}
 		toastWrap.appendChild(t);
 		requestAnimationFrame(() => t.classList.add("is-in"));
-		const life = kind === "ach" || kind === "level" ? 5200 : 2400;
+		const life = kind === "ach" || kind === "level" ? 4200 : 1500;
 		setTimeout(() => { t.classList.remove("is-in"); setTimeout(() => t.remove(), 450); }, life);
 		while (toastWrap.children.length > 4) toastWrap.firstChild.remove();
 	}
@@ -317,9 +317,11 @@
 		state.unlocked[id] = Date.now();
 		buildUI();
 		toast('<span class="mnq-t-icon">' + a.icon + '</span><span><small>Achievement unlocked</small><b>' + esc(a.name) + "</b><em>" + esc(a.desc) + "</em></span>", "ach");
-		const r = hud ? hud.getBoundingClientRect() : { left: 40, top: window.innerHeight - 40, width: 0, height: 0 };
-		burst(r.left + r.width / 2, r.top);
-		if (!silentSave) { save(); renderHud(true); }
+		if (Object.keys(state.unlocked).length >= Object.keys(ACHIEVEMENTS).length) {
+			const r = hud ? hud.getBoundingClientRect() : { left: 40, top: window.innerHeight - 40, width: 0, height: 0 };
+			burst(r.left + r.width / 2, r.top);
+		}
+		if (!silentSave) { save(); renderHud(false); }
 		renderPanel();
 		return true;
 	}
@@ -333,7 +335,7 @@
 		const before = levelOf(state.xp).n;
 		state.xp += amount;
 		buildUI();
-		toast('<b class="mnq-plus">+' + amount + " XP</b> " + esc(reason || ""), "xp");
+		if (amount >= 10) toast('<b class="mnq-plus">+' + amount + " XP</b> " + esc(reason || ""), "xp");
 		const after = levelOf(state.xp);
 		if (after.n > before) {
 			toast('<span class="mnq-t-icon">' + after.icon + '</span><span><small>Level up · Level ' + after.n + "</small><b>" + esc(after.name) + "</b><em>Click to see your progress.</em></span>", "level");
@@ -342,7 +344,7 @@
 		if (state.xp % 100 === 42) unlock("the-answer", true);
 		checkCounters();
 		save();
-		renderHud(true);
+		renderHud(after.n > before);
 		return true;
 	}
 
@@ -666,11 +668,6 @@
 		if (avail.length && avail.every((t) => state.keys[onceLessonKey(t.id)])) {
 			state.mastered[SLUG] = Date.now();
 			xp(30, "· lesson mastered!", "lq-" + SLUG + "-mastered");
-			const card = document.getElementById("mnq-lesson");
-			if (card) {
-				const r = card.getBoundingClientRect();
-				burst(r.left + r.width / 2, r.top + 30);
-			}
 			renderLessonCard();
 		}
 	}
@@ -694,15 +691,26 @@
 		const done = avail.filter((t) => state.keys[onceLessonKey(t.id)]).length;
 		const mastered = !!state.mastered[SLUG];
 		card.classList.toggle("is-mastered", mastered);
+		const open = card.classList.contains("is-open");
 		card.innerHTML =
-			'<div class="mnq-lesson-head"><div><div class="mnq-kicker">Lesson quests</div><div class="mnq-lesson-title">' + (mastered ? "🏆 Lesson mastered" : "Make this lesson yours") + "</div></div>" +
-			'<button type="button" class="mnq-lesson-open">View all progress →</button></div>' +
-			'<div class="mnq-lesson-bar"><i style="width:' + (done / avail.length * 100).toFixed(0) + '%"></i><span>' + done + " / " + avail.length + "</span></div>" +
+			'<button type="button" class="mnq-lesson-toggle" aria-expanded="' + open + '">' +
+			'<span class="mnq-lesson-ic" aria-hidden="true">' + (mastered ? "🏆" : "🎯") + "</span>" +
+			'<span class="mnq-lesson-head-main"><span class="mnq-kicker">Lesson quests</span><span class="mnq-lesson-title">' + (mastered ? "Lesson mastered" : "Make this lesson yours") + "</span></span>" +
+			'<span class="mnq-lesson-mini">' + (mastered ? "✓" : done + "/" + avail.length) + "</span>" +
+			'<svg class="mnq-lesson-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>' +
+			"</button>" +
+			'<div class="mnq-lesson-body">' +
 			'<ul class="mnq-lesson-tasks">' + avail.map((t) => {
 				const ok = !!state.keys[onceLessonKey(t.id)];
 				return '<li class="' + (ok ? "is-done" : "") + '"><span class="mnq-lt-ic">' + (ok ? "✓" : t.icon) + '</span><span class="mnq-lt-txt"><b>' + t.label + "</b><small>" + t.hint + '</small></span><em>+10</em></li>';
 			}).join("") + "</ul>" +
-			'<div class="mnq-lesson-foot">' + (mastered ? "All done — +30 XP bonus collected." : "Complete all of them for a <b>+30 XP</b> mastery bonus.") + "</div>";
+			'<div class="mnq-lesson-foot">' + (mastered ? "All done — +30 XP bonus collected." : "Complete all of them for a <b>+30 XP</b> mastery bonus.") + "</div>" +
+			'<button type="button" class="mnq-lesson-open">View all progress →</button>' +
+			"</div>";
+		card.querySelector(".mnq-lesson-toggle").addEventListener("click", () => {
+			const isOpen = card.classList.toggle("is-open");
+			card.querySelector(".mnq-lesson-toggle").setAttribute("aria-expanded", isOpen ? "true" : "false");
+		});
 		card.querySelector(".mnq-lesson-open").addEventListener("click", () => openPanel("lessons"));
 	}
 
@@ -854,7 +862,7 @@
 
 	function checkClock(silent) {
 		const now = new Date(), h = now.getHours(), m = now.getMinutes(), mon = now.getMonth() + 1, day = now.getDate();
-		const hit = (id) => { if (unlock(id, true) && !silent) { save(); renderHud(true); } };
+		const hit = (id) => { if (unlock(id, true) && !silent) { save(); renderHud(false); } };
 		if (h >= 0 && h < 4) hit("night-owl");
 		if (h >= 5 && h < 7) hit("early-bird");
 		if ((h % 12 === 3 && m === 14) || (mon === 3 && day === 14)) hit("pi-time");

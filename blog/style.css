@@ -11936,40 +11936,45 @@ math {
    ═══════════════════════════════════════════════════════════════ */
 .mnq-hud {
 	position: fixed; left: 24px; bottom: 20px; z-index: 9001;
-	display: inline-flex; align-items: center; gap: 8px;
-	padding: 5px 14px 5px 5px; border-radius: 999px;
+	display: inline-flex; align-items: center; gap: 0;
+	padding: 5px; border-radius: 999px;
 	border: 1px solid var(--mn-border);
 	background: var(--mn-bg-glass);
 	-webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
 	box-shadow: var(--mn-shadow-md);
 	color: var(--mn-text); font: 600 12px/1 var(--mn-font-body);
-	cursor: pointer; opacity: 0; visibility: hidden;
-	transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity .4s ease .2s, visibility .4s ease .2s;
+	cursor: pointer; --mnq-hud-rest: .5; opacity: var(--mnq-hud-rest); visibility: hidden;
+	transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity .3s ease, gap .3s ease, padding .3s ease, visibility .4s ease .2s;
 }
-html.is-ready .mnq-hud, html:not(:has(#loader)) .mnq-hud { opacity: 1; visibility: visible; }
-.mnq-hud:hover { transform: translateY(-2px); box-shadow: var(--mn-shadow-lg); border-color: var(--mn-accent); }
+html.is-ready .mnq-hud, html:not(:has(#loader)) .mnq-hud { visibility: visible; }
+html.reader-mode .mnq-hud { --mnq-hud-rest: .28; }
+.mnq-hud:hover, .mnq-hud:focus-visible { opacity: 1; gap: 8px; padding: 5px 14px 5px 5px; transform: translateY(-2px); box-shadow: var(--mn-shadow-lg); border-color: var(--mn-accent); }
 .mnq-hud:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 3px; }
 .mnq-hud.is-bump { animation: mnq-bump .6s cubic-bezier(.2, 1.6, .4, 1); }
-@keyframes mnq-bump { 30% { transform: scale(1.12); } 100% { transform: none; } }
+@keyframes mnq-bump { 35% { transform: scale(1.06); } 100% { transform: none; } }
 .mnq-ring { position: absolute; left: 5px; width: 34px; height: 34px; transform: rotate(-90deg); }
 .mnq-ring-bg { fill: none; stroke: color-mix(in srgb, var(--mn-text-muted) 25%, transparent); stroke-width: 3; }
 .mnq-ring-fg { fill: none; stroke: var(--mn-accent); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset .8s cubic-bezier(.2, .8, .2, 1); }
 .mnq-hud-icon { width: 34px; height: 34px; display: grid; place-items: center; font-size: 15px; }
-.mnq-hud-text { display: flex; flex-direction: column; gap: 3px; text-align: left; }
+.mnq-hud-text { display: flex; flex-direction: column; gap: 3px; text-align: left; max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transition: max-width .35s ease, opacity .25s ease; }
 .mnq-hud-lv { color: var(--mn-heading); font-size: 12px; }
 .mnq-hud-xp { color: var(--mn-text-muted); font: 500 10.5px var(--mn-font-mono); }
-.mnq-hud-streak { margin-left: 2px; padding: 3px 7px; border-radius: 99px; font: 700 11px var(--mn-font-mono); color: var(--mn-coral); background: color-mix(in srgb, var(--mn-coral) 15%, transparent); }
+.mnq-hud-streak { padding: 0; border-radius: 99px; font: 700 11px var(--mn-font-mono); color: var(--mn-coral); background: color-mix(in srgb, var(--mn-coral) 15%, transparent); max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transition: max-width .35s ease, opacity .25s ease, padding .35s ease, margin .35s ease; }
+.mnq-hud:hover .mnq-hud-text, .mnq-hud:focus-visible .mnq-hud-text { max-width: 170px; opacity: 1; }
+.mnq-hud:hover .mnq-hud-streak:not([hidden]), .mnq-hud:focus-visible .mnq-hud-streak:not([hidden]) { max-width: 64px; opacity: 1; padding: 3px 7px; margin-left: 2px; }
 /* the chapter switcher shares the bottom-left corner: lift it above the badge */
 html.mnq-on #chsw-dock { bottom: 72px; }
-html.reader-mode .mnq-hud { opacity: .55; }
 html.mnq-panel-open { overflow: hidden; }
 @media print { .mnq-hud, .mnq-toasts, #mnq-lesson { display: none !important; } }
 
 .mnq-toasts {
-	position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 9995;
-	display: flex; flex-direction: column; align-items: center; gap: 8px;
-	pointer-events: none; width: max-content; max-width: min(420px, calc(100vw - 32px));
+	position: fixed; left: 24px; bottom: var(--mnq-toasts-bottom, 78px); z-index: 9995;
+	display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+	pointer-events: none; width: max-content; max-width: min(420px, calc(100vw - 48px));
 }
+/* the chapter switcher lives in the same bottom-left column — keep the
+   toasts above it so both stay readable */
+html:has(#chsw-dock) .mnq-toasts { --mnq-toasts-bottom: 112px; }
 .mnq-toast {
 	display: flex; align-items: center; gap: 10px;
 	padding: 8px 16px; border-radius: 12px;
@@ -11982,14 +11987,8 @@ html.mnq-panel-open { overflow: hidden; }
 	transition: opacity .3s ease, transform .4s cubic-bezier(.2, 1.3, .4, 1);
 }
 .mnq-toast.is-in { opacity: 1; transform: none; }
-.mnq-toast--ach, .mnq-toast--level { pointer-events: auto; cursor: pointer; padding: 12px 18px; border-color: color-mix(in srgb, var(--mn-accent) 50%, transparent); background: linear-gradient(135deg, color-mix(in srgb, var(--mn-accent) 20%, var(--mn-surface)), var(--mn-surface)); position: relative; overflow: hidden; }
-.mnq-toast--level { border-color: color-mix(in srgb, var(--mn-coral) 55%, transparent); background: linear-gradient(135deg, color-mix(in srgb, var(--mn-coral) 20%, var(--mn-surface)), var(--mn-surface)); }
-.mnq-toast--ach::after, .mnq-toast--level::after {
-	content: ""; position: absolute; inset: 0; pointer-events: none;
-	background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, .22) 50%, transparent 65%);
-	transform: translateX(-100%); animation: mnq-shine 1.4s .35s ease-out 1 forwards;
-}
-@keyframes mnq-shine { to { transform: translateX(100%); } }
+.mnq-toast--ach, .mnq-toast--level { pointer-events: auto; cursor: pointer; padding: 10px 14px; border-color: color-mix(in srgb, var(--mn-accent) 38%, transparent); background: color-mix(in srgb, var(--mn-surface) 96%, transparent); }
+.mnq-toast--level { border-color: color-mix(in srgb, var(--mn-coral) 42%, transparent); }
 .mnq-plus { color: var(--mn-emerald); font-family: var(--mn-font-mono); }
 .mnq-t-icon { font-size: 28px; line-height: 1; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .25)); }
 .mnq-toast small { display: block; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mn-accent); }
@@ -12132,7 +12131,8 @@ html.mnq-panel-open { overflow: hidden; }
 .mnq-lesson-t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mnq-lesson-b { flex: none; font-size: 11px; }
 @media (max-width: 640px) {
-	.mnq-hud { left: 12px; bottom: 12px; padding-right: 10px; }
+	.mnq-hud { left: 12px; bottom: 12px; }
+	.mnq-toasts { bottom: 62px; }
 	html.mnq-on #chsw-dock { bottom: 62px; }
 	.mnq-panel-wrap { padding: 0; place-items: stretch; }
 	.mnq-panel { width: 100%; max-height: 100vh; height: 100%; border-radius: 0; }
@@ -12146,22 +12146,26 @@ html.mnq-panel-open { overflow: hidden; }
 
 /* lesson quest card (end of every lesson) */
 #mnq-lesson {
-	margin: var(--mn-space-xl) 0 var(--mn-space-l); padding: clamp(14px, 3vw, 22px);
+	margin: var(--mn-space-l) 0; padding: 0;
 	border-radius: var(--mn-radius-lg); border: 1px solid var(--mn-border);
-	background:
-		radial-gradient(100% 90% at 100% 0%, color-mix(in srgb, var(--mn-emerald) 10%, transparent), transparent 60%),
-		radial-gradient(90% 80% at 0% 100%, color-mix(in srgb, var(--mn-accent) 9%, transparent), transparent 60%),
-		var(--mn-surface);
-	box-shadow: var(--mn-shadow-md); font-family: var(--mn-font-body); color: var(--mn-text);
+	background: var(--mn-surface);
+	box-shadow: none; font-family: var(--mn-font-body); color: var(--mn-text);
+	overflow: hidden;
 }
-#mnq-lesson.is-mastered { border-color: color-mix(in srgb, var(--mn-emerald) 55%, transparent); }
-.mnq-lesson-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; }
-.mnq-lesson-title { font: 750 1.15rem/1.25 var(--mn-font-heading); color: var(--mn-heading); margin-top: 2px; }
-.mnq-lesson-open { appearance: none; border: 1px solid var(--mn-border); background: transparent; color: var(--mn-accent); border-radius: 99px; padding: 5px 12px; font: 600 12px var(--mn-font-body); cursor: pointer; }
+#mnq-lesson.is-mastered { border-color: color-mix(in srgb, var(--mn-emerald) 45%, transparent); }
+.mnq-lesson-toggle { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px 16px; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.mnq-lesson-toggle:hover { background: color-mix(in srgb, var(--mn-text-muted) 7%, transparent); }
+.mnq-lesson-toggle:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: -2px; }
+.mnq-lesson-ic { flex: none; font-size: 19px; }
+.mnq-lesson-head-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.mnq-lesson-title { font: 700 1rem/1.25 var(--mn-font-heading); color: var(--mn-heading); margin-top: 1px; }
+.mnq-lesson-mini { flex: none; font: 700 12px var(--mn-font-mono); color: var(--mn-text-muted); }
+.mnq-lesson-chev { flex: none; width: 16px; height: 16px; color: var(--mn-text-muted); transition: transform .25s ease; }
+#mnq-lesson.is-open .mnq-lesson-chev { transform: rotate(180deg); }
+.mnq-lesson-body { display: none; padding: 0 16px 16px; }
+#mnq-lesson.is-open .mnq-lesson-body { display: block; }
+.mnq-lesson-open { appearance: none; border: 1px solid var(--mn-border); background: transparent; color: var(--mn-accent); border-radius: 99px; padding: 5px 12px; font: 600 12px var(--mn-font-body); cursor: pointer; margin-top: 12px; }
 .mnq-lesson-open:hover { border-color: var(--mn-accent); }
-.mnq-lesson-bar { position: relative; height: 10px; border-radius: 99px; background: color-mix(in srgb, var(--mn-text-muted) 20%, transparent); margin-bottom: 14px; }
-.mnq-lesson-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--mn-emerald), var(--mn-sky)); transition: width .6s cubic-bezier(.2, .8, .2, 1); }
-.mnq-lesson-bar span { position: absolute; right: 0; top: -18px; font: 700 11px var(--mn-font-mono); color: var(--mn-text-muted); }
 .mnq-lesson-tasks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
 .mnq-lesson-tasks li { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--mn-border); background: color-mix(in srgb, var(--mn-bg) 40%, transparent); transition: background .3s ease, border-color .3s ease; }
 .mnq-lesson-tasks li.is-done { border-color: color-mix(in srgb, var(--mn-emerald) 50%, transparent); background: color-mix(in srgb, var(--mn-emerald) 10%, transparent); }
@@ -12240,5 +12244,5 @@ html.mnq-panel-open { overflow: hidden; }
 .mnc-item.is-new { animation: mnc-pop .7s cubic-bezier(.2, 1.5, .4, 1); }
 @keyframes mnc-pop { 30% { transform: scale(1.03); background: color-mix(in srgb, var(--mn-emerald) 28%, transparent); } }
 @media (prefers-reduced-motion: reduce) {
-	.mnq-hud, .mnq-toast, .mnq-toast::after, .mnq-panel, .mnz-opt, .mnc-item, .mnz-explain { animation: none !important; transition: none !important; }
+	.mnq-hud, .mnq-toast, .mnq-panel, .mnz-opt, .mnc-item, .mnz-explain { animation: none !important; transition: none !important; }
 }
