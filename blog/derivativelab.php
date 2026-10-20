@@ -36,53 +36,90 @@ tags: math-heavy, code-heavy
     $$x_{\text{new}} = x_{\text{old}} - (\text{Learning Rate} \times \text{Slope})$$
 </div>
 
-<div class="derivative-lab-container" style="padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; display: flex; flex-direction: column; gap: 20px; background: #fff;">
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee;">
-        <div>
-            <label><b>1. Pick a Landscape</b></label>
-            <select id="deriv-func-select" class="btn" style="width: 100%; margin-top: 5px; padding: 5px;">
-                <option value="x*x">Simple Valley (x²)</option>
-                <option value="Math.cos(x)">Waves (cos x)</option>
-                <option value="Math.pow(x,4)/4 - Math.pow(x,2)">Complex Hills (Non-Convex)</option>
-            </select>
-        </div>
-        
-        <div>
-            <label><b>2. Your Position ($x$)</b></label>
-            <input type="range" id="deriv-x-slider" min="-4" max="4" step="0.01" value="1.5" style="width: 100%;">
-            <div style="display:flex; justify-content: space-between; align-items: center; margin-top: 5px;">
-                <span id="deriv-x-value" style="font-family: monospace;">x = 1.50</span>
-                <button id="take-step" class="btn-primary" style="padding: 5px 12px; font-size: 0.85em; cursor: pointer; background: #10b981; color: white; border: none; border-radius: 4px;">Take 1 Step Down $\to$</button>
-            </div>
-        </div>
-        
-        <div>
-            <label><b>3. Look-ahead Distance ($h$)</b></label>
-            <input type="range" id="deriv-h-slider" min="0.0001" max="2" step="0.01" value="0.8" style="width: 100%;">
-            <span id="deriv-h-value" style="font-family: monospace;">h = 0.80</span>
-        </div>
-    </div>
+<style>
+#slope-lab { --lab-accent: var(--mn-accent); --lab-accent-2: var(--mn-emerald); }
+#slope-lab .sl-plot { height: 380px; width: 100%; }
+#slope-lab .mnlab-stat[data-tone="bad"] .v { color: var(--mn-rose); }
+#slope-lab .mnlab-stat[data-tone="good"] .v { color: var(--mn-emerald); }
+#slope-lab .sl-key { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+#slope-lab .sl-math { display: flex; flex-direction: column; gap: 10px; font-family: var(--mn-font-mono); font-size: .9rem; color: var(--mn-heading); font-variant-numeric: tabular-nums; }
+#slope-lab .sl-eq { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+#slope-lab .sl-lbl { color: var(--mn-text-secondary); min-width: 5.5ch; }
+#slope-lab .sl-frac { display: inline-flex; flex-direction: column; align-items: center; text-align: center; line-height: 1.25; }
+#slope-lab .sl-frac > span:first-child { border-bottom: 1.5px solid currentColor; padding: 0 4px 2px; }
+#slope-lab .sl-frac > span:last-child { padding: 2px 4px 0; }
+#slope-lab .sl-hi { color: var(--mn-accent); font-size: 1.05em; }
+@container mnlab (max-width: 620px) {
+	#slope-lab .sl-plot { height: 300px; }
+	#slope-lab .sl-math { font-size: .8rem; }
+}
+</style>
 
-    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-        <div id="plot-derivative" data-plot-theme="self" style="flex: 2; min-width: 300px; height: 450px;"></div>
-        
-        <div id="deriv-stats" style="flex: 1; min-width: 250px; padding: 15px; border-left: 4px solid #10b981; background: #f8fafc;">
-            <p>The Math Breakdown:</p>
-            <div id="math-output">
-                </div>
-            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #e2e8f0;">
-            <p>AI Decision</p>
-            <div id="ai-logic" style="font-size: 0.95em; line-height: 1.6;">
-                </div>
-        </div>
-    </div>
+<div class="mnlab" id="slope-lab" data-interactive>
+	<div class="mnlab-head">
+		<div>
+			<div class="mnlab-kicker">Interactive lab</div>
+			<div class="mnlab-title">Slope Explorer</div>
+			<p class="mnlab-sub">Measure the steepness with a look-ahead step, then let gradient descent walk downhill on that measurement. Click anywhere on the curve to drop the ball there.</p>
+		</div>
+		<div class="mnlab-chips" role="group" aria-label="Landscape">
+			<button type="button" class="mnlab-chip" data-land="valley" aria-pressed="true">Valley x²</button>
+			<button type="button" class="mnlab-chip" data-land="waves" aria-pressed="false">Waves cos x</button>
+			<button type="button" class="mnlab-chip" data-land="hills" aria-pressed="false">Two valleys</button>
+		</div>
+	</div>
+
+	<div class="mnlab-well" style="padding: 8px 6px 4px;">
+		<div class="sl-plot" data-sl="plot" data-plot-theme="self"></div>
+	</div>
+	<div class="mnlab-legend" style="margin: 8px 2px 0;">
+		<span><i style="background: var(--mn-accent);"></i>loss landscape f(x)</span>
+		<span><i style="background: var(--mn-coral);"></i>secant = your slope estimate</span>
+		<span><i style="background: repeating-linear-gradient(90deg, var(--mn-emerald) 0 5px, transparent 5px 8px);"></i>true tangent f′(x)</span>
+		<span><i style="background: var(--mn-sky);"></i>descent path</span>
+	</div>
+
+	<div class="mnlab-grid mnlab-grid--3" style="margin-top: 16px; gap: 6px 22px;">
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">Position</span><span class="mnlab-val" data-sl="xv">x = 0</span></span>
+			<input type="range" data-sl="x" min="-4" max="4" step="0.01" value="2.6" aria-label="Position x">
+			<span class="mnlab-hint">where the ball stands</span>
+		</label>
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">Look-ahead</span><span class="mnlab-val" data-sl="hv">h</span></span>
+			<input type="range" data-sl="h" min="0" max="100" step="0.5" value="88" aria-label="Look-ahead distance h (logarithmic)">
+			<span class="mnlab-hint">logarithmic: 0.0001 … 2</span>
+		</label>
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">Learning rate</span><span class="mnlab-val" data-sl="lrv">η</span></span>
+			<input type="range" data-sl="lr" min="0.01" max="1.1" step="0.01" value="0.15" aria-label="Learning rate">
+			<span class="mnlab-hint">step size per update</span>
+		</label>
+	</div>
+
+	<div class="mnlab-row" style="margin-top: 12px;">
+		<button type="button" class="mnlab-btn" data-sl="step">Take one step ↓</button>
+		<button type="button" class="mnlab-btn mnlab-btn--ghost" data-sl="run" aria-pressed="false">▶ Run descent</button>
+		<button type="button" class="mnlab-btn mnlab-btn--ghost" data-sl="reset" title="Back to the start position">↺ Reset</button>
+	</div>
+
+	<div class="mnlab-grid mnlab-grid--4" style="margin-top: 16px;">
+		<div class="mnlab-stat"><span class="k">Loss f(x)</span><span class="v" data-sl="fx">–</span></div>
+		<div class="mnlab-stat"><span class="k"><span class="sl-key" style="background: var(--mn-coral);"></span>Estimated slope</span><span class="v" data-sl="sec">–</span></div>
+		<div class="mnlab-stat"><span class="k"><span class="sl-key" style="background: var(--mn-emerald);"></span>True slope f′(x)</span><span class="v" data-sl="tru">–</span></div>
+		<div class="mnlab-stat"><span class="k">Estimate error</span><span class="v" data-sl="err">–</span></div>
+	</div>
+
+	<div class="mnlab-well sl-math mnlab-math" style="margin-top: 14px;" data-sl="math"></div>
+	<div class="mnlab-note" data-sl="note" aria-live="polite"></div>
 </div>
 
 <div class="md" style="margin-top: 30px;">
-    ### What to Watch For
-    1.  **The “Probe” Step:** Notice the red line. It shows the AI “looking ahead” by distance $h$. If you make $h$ very small, the AI gets a much more accurate sense of the slope exactly where it is standing.
-    2.  **Learning in Action:** Click **“Take 1 Step Down.”** The AI calculates the steepness and automatically moves the slider toward the bottom. This is how a self-driving car or a chatbot improves, it keeps moving “downhill” until its errors are as small as possible.
-    3.  **Getting Stuck:** Try the “Complex Hills” landscape. If you start the AI in the wrong place, it might find a valley and get stuck there, without ever noticing the other valley further away!
+### What to Watch For
+1.  **The “probe” step:** The orange secant is what the AI actually measures: it compares $f(x)$ with $f(x+h)$. With a big $h$ it averages the steepness over a wide stretch and misses the true slope (the green tangent). Drag the look-ahead slider to the left and watch the error shrink until the two lines coincide — that limit is the derivative.
+2.  **Learning in action:** Click **“Take one step”** or **“Run descent.”** Each update moves $x$ by $-\eta \cdot \text{slope}$, so the ball takes big steps where the ground is steep and tiny ones near the bottom.
+3.  **The learning rate matters:** On the valley $x^2$, push $\eta$ above $0.5$: the ball starts to zig-zag across the bottom. Above $1.0$ every step overshoots by more than it gains and the ball flies off — the same instability that makes real training runs “diverge.”
+4.  **Getting stuck:** Try **“Two valleys.”** Starting on the right, descent settles in the shallow valley and stops, because the slope there is zero — even though the valley on the left is deeper. The ball only feels the ground under its feet.
 
 </div>
 

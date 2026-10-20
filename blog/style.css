@@ -11730,3 +11730,195 @@ math {
 .topic-block-dimmed:hover {
 	opacity: 0.8;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   MN LAB KIT — shared look for the interactive lesson demos
+   (samplinglab, derivativelab, losslab, resnetlab). Token-only, so
+   light + dark work without overrides.
+   ═══════════════════════════════════════════════════════════════ */
+.mnlab {
+	--lab-accent: var(--mn-accent);
+	--lab-accent-2: var(--mn-sky);
+	--lab-good: var(--mn-emerald);
+	--lab-bad: var(--mn-rose);
+	--lab-warn: var(--mn-coral);
+	--lab-ink: var(--mn-heading);
+	--lab-muted: var(--mn-text-muted);
+	--lab-line: var(--mn-border);
+	--lab-card: var(--mn-surface);
+	--lab-well: color-mix(in srgb, var(--mn-bg) 70%, var(--mn-surface));
+	position: relative;
+	box-sizing: border-box;
+	max-width: 100%;
+	margin: var(--mn-space-l) 0;
+	padding: clamp(14px, 3vw, 26px);
+	border: 1px solid var(--lab-line);
+	border-radius: var(--mn-radius-lg);
+	background:
+		radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--lab-accent) 10%, transparent), transparent 62%),
+		radial-gradient(90% 70% at 100% 100%, color-mix(in srgb, var(--lab-accent-2) 9%, transparent), transparent 60%),
+		var(--lab-card);
+	box-shadow: var(--mn-shadow-lg);
+	color: var(--mn-text);
+	font-family: var(--mn-font-body);
+	line-height: 1.45;
+	overflow: hidden;
+	container-type: inline-size;
+	container-name: mnlab;
+}
+.mnlab *, .mnlab *::before, .mnlab *::after { box-sizing: border-box; }
+.mnlab-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 18px; margin-bottom: 18px; }
+.mnlab-kicker {
+	display: inline-flex; align-items: center; gap: 7px;
+	font-size: .7rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+	color: var(--lab-accent);
+}
+.mnlab-kicker::before {
+	content: ""; width: 8px; height: 8px; border-radius: 50%;
+	background: var(--lab-accent);
+	box-shadow: 0 0 0 4px color-mix(in srgb, var(--lab-accent) 22%, transparent);
+	animation: mnlab-pulse 2.4s ease-in-out infinite;
+}
+@keyframes mnlab-pulse { 50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--lab-accent) 6%, transparent); } }
+.mnlab-title { margin: 4px 0 0; font-family: var(--mn-font-heading); font-size: 1.28rem; font-weight: 750; line-height: 1.2; color: var(--lab-ink); }
+.mnlab-sub { margin: 4px 0 0; font-size: .9rem; color: var(--mn-text-secondary); max-width: 60ch; text-align: left; hyphens: manual; }
+.mnlab p { text-align: left; }
+
+.mnlab-well {
+	position: relative;
+	border: 1px solid var(--lab-line);
+	border-radius: var(--mn-radius-md);
+	background: var(--lab-well);
+	box-shadow: var(--mn-shadow-inner);
+	padding: 14px;
+	min-width: 0;
+}
+.mnlab-grid { display: grid; gap: 16px; }
+.mnlab-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mnlab-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mnlab-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.mnlab-grid--main { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); }
+@container mnlab (max-width: 620px) {
+	.mnlab-grid--2, .mnlab-grid--3, .mnlab-grid--main { grid-template-columns: minmax(0, 1fr); }
+	.mnlab-grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Controls */
+.mnlab-ctrl { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.mnlab-ctrl-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.mnlab-label { font-size: .8rem; font-weight: 650; color: var(--lab-ink); }
+.mnlab-hint { font-size: .74rem; color: var(--lab-muted); }
+.mnlab-val {
+	font-family: var(--mn-font-mono); font-size: .78rem; font-weight: 600;
+	padding: 1px 8px; border-radius: 999px;
+	color: var(--lab-accent);
+	background: color-mix(in srgb, var(--lab-accent) 13%, transparent);
+	white-space: nowrap;
+}
+.mnlab-val.is-off { color: var(--lab-muted); background: color-mix(in srgb, var(--lab-muted) 14%, transparent); }
+.mnlab input[type="range"] {
+	--fill: 50%;
+	-webkit-appearance: none; appearance: none;
+	width: 100%; height: 26px; margin: 2px 0; padding: 0;
+	background: transparent; cursor: pointer;
+}
+.mnlab input[type="range"]::-webkit-slider-runnable-track {
+	height: 6px; border-radius: 99px; box-shadow: none;
+	background: linear-gradient(90deg, var(--lab-accent), var(--lab-accent-2)) 0 / var(--fill) 100% no-repeat,
+		color-mix(in srgb, var(--lab-muted) 28%, transparent);
+}
+.mnlab input[type="range"]::-moz-range-track {
+	height: 6px; border-radius: 99px; box-shadow: none; border: none;
+	background: color-mix(in srgb, var(--lab-muted) 28%, transparent);
+}
+.mnlab input[type="range"]::-moz-range-progress {
+	height: 6px; border-radius: 99px;
+	background: linear-gradient(90deg, var(--lab-accent), var(--lab-accent-2));
+}
+.mnlab input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none; appearance: none;
+	width: 18px; height: 18px; margin-top: -6px; border-radius: 50%;
+	background: var(--mn-surface); border: 3px solid var(--lab-accent);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+	transition: transform .15s ease, box-shadow .15s ease;
+}
+.mnlab input[type="range"]::-moz-range-thumb {
+	width: 14px; height: 14px; border-radius: 50%;
+	background: var(--mn-surface); border: 3px solid var(--lab-accent);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+}
+.mnlab input[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.12); box-shadow: 0 0 0 6px color-mix(in srgb, var(--lab-accent) 18%, transparent); }
+.mnlab input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 5px color-mix(in srgb, var(--lab-accent) 35%, transparent); }
+.mnlab input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 5px color-mix(in srgb, var(--lab-accent) 35%, transparent); }
+
+/* Chips + buttons */
+.mnlab-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.mnlab-chip {
+	appearance: none; cursor: pointer;
+	font: inherit; font-size: .8rem; font-weight: 600;
+	padding: 5px 12px; border-radius: 999px;
+	border: 1px solid var(--lab-line);
+	background: color-mix(in srgb, var(--mn-surface) 80%, transparent);
+	color: var(--mn-text-secondary);
+	transition: background .2s ease, color .2s ease, border-color .2s ease, transform .15s ease;
+}
+.mnlab-chip:hover { border-color: var(--lab-accent); color: var(--lab-ink); transform: translateY(-1px); }
+.mnlab-chip[aria-pressed="true"] {
+	color: #fff; border-color: transparent;
+	background: linear-gradient(135deg, var(--lab-accent), color-mix(in srgb, var(--lab-accent) 55%, var(--lab-accent-2)));
+	box-shadow: 0 4px 14px -4px color-mix(in srgb, var(--lab-accent) 70%, transparent);
+}
+.mnlab-chip:focus-visible, .mnlab-btn:focus-visible { outline: 2px solid var(--lab-accent); outline-offset: 2px; }
+.mnlab-btn {
+	appearance: none; cursor: pointer;
+	display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+	font: inherit; font-size: .86rem; font-weight: 700;
+	padding: 8px 16px; border-radius: 10px; border: 1px solid transparent;
+	color: #fff;
+	background: linear-gradient(135deg, var(--lab-accent), color-mix(in srgb, var(--lab-accent) 50%, var(--lab-accent-2)));
+	box-shadow: 0 6px 18px -6px color-mix(in srgb, var(--lab-accent) 75%, transparent);
+	transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+}
+.mnlab-btn:hover { transform: translateY(-1px); filter: brightness(1.08); }
+.mnlab-btn:active { transform: translateY(1px); }
+.mnlab-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.mnlab-btn--ghost { color: var(--lab-ink); background: transparent; border-color: var(--lab-line); box-shadow: none; }
+.mnlab-btn--ghost:hover { border-color: var(--lab-accent); filter: none; }
+.mnlab-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+/* Stat tiles */
+.mnlab-stat {
+	border: 1px solid var(--lab-line); border-radius: var(--mn-radius-md);
+	background: color-mix(in srgb, var(--mn-surface) 75%, transparent);
+	padding: 9px 12px; min-width: 0;
+}
+.mnlab-stat .k { display: block; font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--lab-muted); }
+.mnlab-stat .v { display: block; margin-top: 2px; font-family: var(--mn-font-mono); font-size: 1.08rem; font-weight: 700; color: var(--lab-ink); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mnlab-stat .v small { font-size: .72rem; font-weight: 500; color: var(--lab-muted); }
+
+/* Narrating note */
+.mnlab-note {
+	--tone: var(--lab-accent);
+	margin-top: 14px; padding: 10px 14px;
+	border-radius: var(--mn-radius-md);
+	border: 1px solid color-mix(in srgb, var(--tone) 35%, transparent);
+	border-left: 4px solid var(--tone);
+	background: color-mix(in srgb, var(--tone) 9%, transparent);
+	font-size: .88rem; color: var(--mn-text);
+	transition: background .3s ease, border-color .3s ease;
+}
+.mnlab-note[data-tone="good"] { --tone: var(--lab-good); }
+.mnlab-note[data-tone="bad"] { --tone: var(--lab-bad); }
+.mnlab-note[data-tone="warn"] { --tone: var(--lab-warn); }
+.mnlab-note b { color: var(--lab-ink); }
+.mnlab-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .76rem; color: var(--lab-muted); }
+.mnlab-legend i { display: inline-block; width: 18px; height: 8px; border-radius: 4px; margin-right: 6px; vertical-align: middle; }
+.mnlab-mono { font-family: var(--mn-font-mono); font-variant-numeric: tabular-nums; }
+/* Plotly names its own inner wrapper .plot-container, which the global
+   .plot-container rule above caps at 600px — undo that inside labs. */
+.mnlab .js-plotly-plot .plot-container { max-width: none; margin: 0; border-radius: 0; }
+.mnlab-math { overflow-x: auto; overflow-y: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+	.mnlab *, .mnlab *::before { animation: none !important; transition: none !important; }
+}

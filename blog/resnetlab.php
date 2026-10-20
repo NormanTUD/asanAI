@@ -72,52 +72,86 @@ This allows the network to match the “shape” of the main path $F(x)$ so the 
 
 </div>
 
-<div class="lab-container" style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
-    
-    <div class="panel">
-        <i>Visual Graph</i>
-        <div id="network-viz" style="height:150px; width:100%; background: var(--mn-surface, white); border-radius:8px; margin-top:10px;"></div>
-    </div>
+<style>
+#gradient-highway { --lab-accent: var(--mn-emerald); --lab-accent-2: var(--mn-sky); }
+#gradient-highway .gh-plot { width: 100%; height: 320px; }
+#gradient-highway .gh-net svg { display: block; width: 100%; height: auto; overflow: visible; }
+#gradient-highway .gh-edge { stroke: var(--mn-text-muted); stroke-width: 2; opacity: .45; }
+#gradient-highway .gh-skip { fill: none; stroke: var(--mn-emerald); stroke-width: 1.8; stroke-dasharray: 4 3; opacity: .8; }
+#gradient-highway .gh-node { stroke: var(--mn-surface); stroke-width: 2; transition: opacity .35s ease; }
+#gradient-highway .gh-node.is-plain { fill: var(--mn-rose); }
+#gradient-highway .gh-node.is-res { fill: var(--mn-emerald); }
+#gradient-highway .gh-plus { fill: #fff; font: 700 10px var(--mn-font-mono); text-anchor: middle; pointer-events: none; }
+#gradient-highway .gh-lbl { fill: var(--mn-heading); font: 700 11px var(--mn-font-body); }
+#gradient-highway .gh-cap { fill: var(--mn-text-muted); font: 10px var(--mn-font-body); }
+#gradient-highway .mnlab-stat[data-tone="bad"] .v { color: var(--mn-rose); }
+#gradient-highway .mnlab-stat[data-tone="good"] .v { color: var(--mn-emerald); }
+#gradient-highway .gh-shape { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: .82rem; }
+#gradient-highway .gh-shape b { font-family: var(--mn-font-mono); text-align: right; color: var(--mn-heading); }
+#gradient-highway .gh-shape .is-sum { border-top: 1px solid var(--mn-border); padding-top: 4px; color: var(--mn-emerald); }
+#gradient-highway .gh-shape .is-in { color: var(--mn-coral); }
+#gradient-highway .gh-cardtitle { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mn-text-muted); margin-bottom: 8px; }
+@container mnlab (max-width: 620px) { #gradient-highway .gh-plot { height: 260px; } }
+</style>
 
-    <div class="panel">
-        <i>Gradient Propagation Plot:</i>
-        <div id="gradient-plot" style="height:300px; width:100%;"></div>
-    </div>
+<div class="mnlab" id="gradient-highway" data-interactive>
+	<div class="mnlab-head">
+		<div>
+			<div class="mnlab-kicker">Interactive lab</div>
+			<div class="mnlab-title">The Gradient Highway</div>
+			<p class="mnlab-sub">An error signal of size 1 starts at the loss and is sent back through every layer. A plain layer multiplies it by its local derivative; a residual block multiplies it by 1 + ∂F/∂x. Make the network deeper and see who still hears the signal.</p>
+		</div>
+	</div>
 
-    <div class="panel" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;">
-        <div>
-            <label><b>Network Depth:</b></label>
-            <input type="range" id="net-depth" min="2" max="100" value="20" 
-                   style="width:100%" oninput="document.getElementById('depth-val').innerText = this.value; ResNetLab.compare();">
-            <center><b id="depth-val">20</b> Layers</center>
-            
-            <hr>
-            <i>Tensor Shape Flow</i>
-            <div style="font-size: 0.8em; background: var(--mn-surface, #fff); padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0; margin-top:10px;">
-                <div style="display:flex; justify-content:space-between;"><span>Input $x$:</span> <b>[64, 64, 3]</b></div>
-                <div style="display:flex; justify-content:space-between;"><span>Conv Path:</span> <b>[64, 64, 3]</b></div>
-                <div style="display:flex; justify-content:space-between; color:#3b82f6; border-top: 1px solid #ddd; margin-top:5px; padding-top:5px;">
-                    <span>Output ($F(x)+x$):</span> <b>[64, 64, 3]</b>
-                </div>
-            </div>
-        </div>
+	<div class="mnlab-well gh-net" data-gh="net"></div>
 
-        <div>
-            <i>Handling Channel Mismatches</i>
-            <p style="font-size: 0.85em; line-height: 1.4; color: #334155; margin-bottom:10px;">
-                If Layer A has <b>4 filters</b> and Layer B has <b>2 filters</b>, we use a <b>$1 \times 1$ Convolution</b> ($W_s$) to project the shape:
-            </p>
+	<div class="mnlab-well" style="margin-top: 12px; padding: 6px 4px 2px;">
+		<div class="gh-plot" data-gh="plot" data-plot-theme="self"></div>
+	</div>
+	<div class="mnlab-legend" style="margin: 8px 2px 0;">
+		<span><i style="background: var(--mn-rose);"></i>plain network: ∏ a<sub>l</sub></span>
+		<span><i style="background: var(--mn-emerald);"></i>residual network: ∏ (1 + b<sub>l</sub>)</span>
+		<span>node brightness = gradient size at that layer</span>
+	</div>
 
-            <div style="font-size: 0.8em; background: #fff4ed; padding: 10px; border-radius: 4px; border: 1px solid #fb923c;">
-                <div style="display:flex; justify-content:space-between;"><span>Source $x$:</span> <b style="color:#e65100;">[H, W, 4]</b></div>
-                <div style="display:flex; justify-content:space-between;"><span>$1 \times 1$ Conv ($W_s$):</span> <b>[1, 1, 4, 2]</b></div>
-                <div style="display:flex; justify-content:space-between; border-top: 1px solid #fdba74; margin-top:5px; padding-top:5px;">
-                    <span>Projected $x$:</span> <b style="color:#22c55e;">[H, W, 2]</b>
-                </div>
-            </div>
-            <p style="font-size: 0.75em; color: #64748b; margin-top:10px;">
-                <b>The Math:</b> $y = F(x, \{W_i\}) + W_s x$
-            </p>
-        </div>
-    </div>
+	<div class="mnlab-grid mnlab-grid--2" style="margin-top: 14px; gap: 6px 24px;">
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">Network depth</span><span class="mnlab-val" data-gh="depthv">20</span></span>
+			<input type="range" data-gh="depth" min="2" max="100" step="1" value="20" aria-label="Network depth">
+		</label>
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">Local derivative per plain layer</span><span class="mnlab-val" data-gh="gainv">0.9</span></span>
+			<input type="range" data-gh="gain" min="0.5" max="1.3" step="0.01" value="0.8" aria-label="Local derivative per layer">
+		</label>
+	</div>
+	<div class="mnlab-row" style="margin-top: 8px;">
+		<button type="button" class="mnlab-btn mnlab-btn--ghost" data-gh="reseed">🎲 New random initialization</button>
+	</div>
+
+	<div class="mnlab-grid mnlab-grid--3" style="margin-top: 14px;">
+		<div class="mnlab-stat"><span class="k">Plain: gradient at layer 1</span><span class="v" data-gh="gp">–</span></div>
+		<div class="mnlab-stat"><span class="k">Residual: gradient at layer 1</span><span class="v" data-gh="gr">–</span></div>
+		<div class="mnlab-stat"><span class="k">Residual / plain</span><span class="v" data-gh="ratio">–</span></div>
+	</div>
+	<div class="mnlab-note" data-gh="note" aria-live="polite"></div>
+
+	<div class="mnlab-grid mnlab-grid--2" style="margin-top: 16px;">
+		<div class="mnlab-well">
+			<div class="gh-cardtitle">Identity shortcut — shapes match</div>
+			<div class="gh-shape">
+				<span>Input x</span><b>[64, 64, 3]</b>
+				<span>Conv path F(x)</span><b>[64, 64, 3]</b>
+				<span class="is-sum">Output F(x) + x</span><b class="is-sum">[64, 64, 3]</b>
+			</div>
+		</div>
+		<div class="mnlab-well">
+			<div class="gh-cardtitle">Projection shortcut — 4 → 2 channels</div>
+			<div class="gh-shape">
+				<span>Source x</span><b class="is-in">[H, W, 4]</b>
+				<span>1×1 conv W<sub>s</sub></span><b>[1, 1, 4, 2]</b>
+				<span class="is-sum">Projected W<sub>s</sub>x</span><b class="is-sum">[H, W, 2]</b>
+			</div>
+			<p class="mnlab-hint" style="margin: 8px 0 0;">y = F(x, {W<sub>i</sub>}) + W<sub>s</sub>x — the 1×1 kernel mixes channels at each pixel without looking at its neighbours.</p>
+		</div>
+	</div>
 </div>
