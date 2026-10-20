@@ -347,7 +347,7 @@ We can't start at $-\infty$, but the curve is essentially zero for $z < -4$, so 
 
 <div class="md" data-mathlevel="60">
 
-With our coarse $\Delta t = 0.5$ slices, we get $\Phi(1.0) \approx 0.78$. The true value is $0.8413$. The difference exists because the rectangles are too wide to follow the curve closely.
+With our coarse $\Delta t = 0.5$ slices, we get $\Phi(1.0) \approx 0.90$. The true value is $0.8413$. The difference exists because the rectangles are too wide to follow the curve closely.
 
 **Step C: Make the slices thinner**
 
@@ -462,7 +462,7 @@ P(\mu - 3\sigma \leq X \leq \mu + 3\sigma) &\approx 99.7\%
 \end{aligned}
 $$
 
-This is the probabilistic logic that made predictions like Gauß's 1801 recovery of the lost planet Ceres possible: a least-squares estimate comes with a quantified uncertainty, so the astronomers knew within a small region where to point their telescopes.
+This is the probabilistic logic that made predictions like Gauß's 1801 method of relocating the lost planet Ceres possible: a least-squares estimate comes with a quantified uncertainty, so the astronomers knew within a small region where to point their telescopes.
 
 ##### Comparison: Binomial vs. Gauß Calculation
 
@@ -527,9 +527,9 @@ For this, he developed the **Method of Least Squares**: instead of a line passin
 
 <div class="md" data-mathlevel="60">
 ### The Central Limit Theorem (CLT)
-The **Central Limit Theorem** is the bridge between randomness and order. It explains why, even when individual events are chaotic or “flat,” their collective averages inevitably form the **Normal Distribution** (the “Bell Curve”). De Moivre and Laplace first proved it for sums of independent trials; \citeauthor{laplace1810clt} generalized it in \citeyear{laplace1810clt}.
+The **Central Limit Theorem** is the bridge between randomness and order. It explains why, even when individual events are chaotic or “flat,” their collective averages inevitably form the **Normal Distribution** (the “Bell Curve”). De Moivre first proved the binomial case in the 1730s; \citeauthor{laplace1810clt} generalized it to sums of independent variables in \citeyear{laplace1810clt}.
 
-The origins of the CLT lie in the 18th-century struggle for precision in the physical sciences, where **\citeauthor{laplace1810clt}** formalized the theorem in \citeyear{laplace1810clt} to solve the “Problem of Errors.”
+The first version of the CLT came out of the eighteenth-century analysis of games of chance; **\citeauthor{laplace1810clt}** generalized it in \citeyear{laplace1810clt}, in the context of the “Problem of Errors” in astronomy.
 
 Astronomers of the era faced a dilemma: every measurement taken via telescope or pendulum was slightly “noisy” due to atmospheric disturbances or human imperfection. Laplace proved that the **average** of these independent errors follows a bell curve, regardless of the shape of the individual error distribution. By aggregating many imprecise data points, one can mathematically “filter” the noise to recover the true position of a celestial body — a method that remains the foundation for how machines learn from “imperfect” real-world data.
 
@@ -869,7 +869,7 @@ The pseudonym had a commercial reason: after one of the lab's papers revealed de
 
 Testing a difference is only half the discipline. The other half — the one that actually *creates* trustworthy evidence — is **designing an experiment** that produces a difference you can trust. That design was invented in three stages, and each is a direct ancestor of something you do in ML.
 
-The first stage was the **control group**. In 1747, the Royal Navy surgeon James Lind split twelve scorbutic sailors on the warship *Salisbury* into pairs, each pair given a different treatment — one pair took two oranges and a lemon a day. Within days, one of them was fit for duty and the other "almost recovered"; the other pairs, on less promising remedies, improved far more slowly \cite[Lind, *A Treatise of the Scurvy* (1753)]{lind1747scurvy}. Nobody *proved* citrus cured scurvy (the sample was tiny), but the **design** — pair the patients, give different treatments, compare — is the exact shape of a control group.
+The first stage was the **control group**. In 1747, the Royal Navy surgeon James Lind split twelve scorbutic sailors on the warship *Salisbury* into pairs, each pair given a different treatment — one pair took two oranges and a lemon a day. Within days, one of them was fit for duty and the other "almost recovered"; the pair on cider also improved, but the four pairs given vitriol, vinegar, and sea-water showed no improvement at all \cite[Lind, *A Treatise of the Scurvy* (1753)]{lind1747scurvy}. Nobody *proved* citrus cured scurvy (the sample was tiny), but the **design** — pair the patients, give different treatments, compare — is the exact shape of a control group.
 
 \marginfig{james_lind.jpg}{James Lind (1716–1794), whose 1747 scurvy trial was among the first controlled trials. Public domain (Chalmers, 1783).}
 
