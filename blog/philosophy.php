@@ -233,7 +233,6 @@ The Winograd Schema is one node in a much larger web of attempts to *test* wheth
 | **Dreyfus critique** (\cite[Dreyfus, 1972]{dreyfus1972what}) | 1972 | Background knowledge, context, the uncodiable | A philosophical warning, now largely vindicated |
 | **Chinese Room** (\cite[Searle, 1980]{searle1980minds}) | 1980 | Whether syntax can ground semantics | A thought experiment; still contested |
 | **Moravec's Paradox** (\cite[Moravec, 1988]{moravec1988mindchildren}) | 1988 | The common-sense / sensorimotor gap | Very much alive |
-| **Baby Benchmark** (\cite[Hinton, 2007]{hinton2007baby}) | 2007 | What a one-year-old learns in a week | Never seriously benchmarked |
 | **False-belief (theory of mind)** (\cite[Wimmer & Perner, 1983]{wimmer1983belief}) | 1983 | Modeling other minds' beliefs | Contested evidence for LLMs |
 | **bAbI** (\cite[Weston et al., 2015]{weston2015babi}) | 2015 | Multi-step logical deduction | Saturated; shown to leak answers |
 | **CLEVR** (\cite[Johnson et al., 2017]{johnson2017clevr}) | 2017 | Compositional + causal visual reasoning | Strong; physical causality still hard |

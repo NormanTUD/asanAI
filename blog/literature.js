@@ -998,9 +998,9 @@ window.bibData = {
 	},
 	"hatcher": {
 		title: "Algebraic Topology",
-		author: "John Hatcher",
+		author: "Allen Hatcher",
 		year: 2002,
-		url: "https://www.algebraic-topology.org/",
+		url: "https://pi.math.cornell.edu/~hatcher/AT/ATpage.html",
 		alternativetitle: "Hatcher, Algebraic Topology"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
@@ -5773,6 +5773,13 @@ window.bibData = {
 		year: "1980",
 		url: "https://www.cs.princeton.edu/courses/archive/spr08/cos598B/Readings/Fukushima1980.pdf",
 	},
+	"deng2009imagenet": {
+		title: "ImageNet: A Large-Scale Hierarchical Image Database",
+		author: "Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li, Li Fei-Fei",
+		year: 2009,
+		url: "https://doi.org/10.1109/cvpr.2009.5206848",
+		alternativetitle: "ImageNet (Deng et al., 2009)"
+	},
 	"sgd": {
 		title: "A Stochastic Approximation Method",
 		year: "1951",
@@ -6077,8 +6084,9 @@ window.bibData = {
 	"hinton2007baby": {
 		author: "Geoffrey E. Hinton",
 		year: "2007",
-		title: "The Baby Benchmark",
-		alternativetitle: "Hinton's Baby Benchmark"
+		title: "To Recognize Shapes, First Learn to Generate Images",
+		url: "https://www.cs.toronto.edu/~hinton/absps/shapesBR.pdf",
+		alternativetitle: "Hinton, To Recognize Shapes (2007)"
 	},
 	"wimmer1983belief": {
 		author: "Hannes Wimmer, Josef Perner",
@@ -9805,6 +9813,13 @@ window.bibData = {
 		publisher: "Springer Netherlands",
 		url: "https://en.wikipedia.org/wiki/Hermann_Schmitz_(philosopher)",
 		alternativetitle: "Schmitz's neo-phenomenology (Neue Phänomenologie)"
+	},
+	"whitehead_concept_nature": {
+		title: "The Concept of Nature",
+		author: "Alfred North Whitehead",
+		year: 1920,
+		url: "https://www.gutenberg.org/ebooks/18835",
+		alternativetitle: "Whitehead, The Concept of Nature (1920)"
 	},
 	"whitehead_process": {
 		title: "Process and Reality: An Essay in Cosmology",
@@ -15433,11 +15448,11 @@ window.bibData = {
 	 *  and where knowledge is stored (facts, world-state, circuits).
 	 * ───────────────────────────────────────────────────────────────────── */
 	"telgarsky2016wars": {
-		title: "Representation Wars: Simple Neuron Networks vs Deep Linear Networks",
-		author: "Maksym Telgarsky",
-		year: 2016,
-		url: "https://arxiv.org/abs/1506.08433",
-		alternativetitle: "Telgarsky, Representation Wars (2016)"
+		title: "Representation Benefits of Deep Feedforward Networks",
+		author: "Matus Telgarsky",
+		year: 2015,
+		url: "https://arxiv.org/abs/1509.08101",
+		alternativetitle: "Telgarsky, Representation Benefits of Depth (2015)"
 	},
 	"montufar2014regions": {
 		title: "On the Number of Linear Regions of Deep Neural Networks",
@@ -16762,10 +16777,10 @@ window.bibData = {
 	},
 	"keller2018canonical": {
 		title: "Predictive Processing: A Canonical Cortical Computation",
-		author: "Georg B. Keller, Thomas D. Mrsić-Flogel",
+		author: "Georg B. Keller, Thomas D. Mrsic-Flogel",
 		year: 2018,
 		url: "https://doi.org/10.1016/j.neuron.2018.10.003",
-		alternativetitle: "Keller & Mrsić-Flogel 2018, Neuron"
+		alternativetitle: "Keller & Mrsic-Flogel 2018, Neuron"
 	},
 	"bastos2012microcircuit": {
 		title: "Canonical Microcircuits for Predictive Coding",

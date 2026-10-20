@@ -18,7 +18,7 @@ This chapter is everything a vision model does and how it does it. First the **m
 <div class="md">
 ## Historical Context
 
-The idea of hierarchical visual feature detection was first introduced by \citeauthor{neocognitron} in \citeyear{neocognitron} in his landmark paper about the \cite[Neocognitron]{neocognitron}, which was directly inspired by \citeauthorlastnameand{hubelwiesel}'s Nobel Prize–winning research on the mammalian visual cortex. Years later, in \citeyear{lecun1989backpropagation}, LeCun et al. made the concept practical by combining convolutions with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service, the first commercially deployed convolutional neural network.
+The idea of hierarchical visual feature detection was pioneered by \citeauthor{neocognitron}: he published multilayered visual feature-extraction networks as early as 1969 and introduced the \cite[Neocognitron]{neocognitron} in 1979 (English 1980), directly inspired by \citeauthorlastnameand{hubelwiesel}'s Nobel Prize–winning research on the mammalian visual cortex. Years later, in \citeyear{lecun1989backpropagation}, LeCun et al. made the concept practical by combining convolutions with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service. That 1989 system was a research prototype; the first *commercially deployed* convolutional network was the later LeNet-5, built into NCR's check-reading systems and fielded in U.S. banks from about 1996.
 
 \citeauthorlastnameand{hubelwiesel}'s paper serves as the direct biological blueprint for Convolutional Neural Networks (CNNs):
 
@@ -227,7 +227,7 @@ Both versions train with `python3 tf.py --mode train --path dataset` (one subfol
 <div class="md">
 ## From classification to detection
 
-**Classification** asks one question of a whole image: *which of the labels?* ImageNet (\cite[Krizhevsky et al., 2012]{krizhevsky2012imagenet}) and the ResNet that dominated it (\cite[He et al., 2015]{he2015resnet}) are the reference points. **Detection** asks for *many* objects at once, each with a box and a label, measured by **mAP** across IoU thresholds. Two families emerged:
+**Classification** asks one question of a whole image: *which of the labels?* ImageNet (\cite[Deng et al., 2009]{deng2009imagenet}) and the ResNet that dominated it (\cite[He et al., 2015]{he2015resnet}) are the reference points. **Detection** asks for *many* objects at once, each with a box and a label, measured by **mAP** across IoU thresholds. Two families emerged:
 
 | Family | Idea | Method |
 |--------|------|--------|

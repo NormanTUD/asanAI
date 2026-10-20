@@ -22,7 +22,7 @@ $$\mathcal{L}(\theta) \;=\; \frac{1}{m}\sum_{i=1}^{m}\ell\!\left(f(x_i;\theta),\
 
 the average per-example error $\ell$ over the training set. Think of $\theta$ as one point in a $d$-dimensional space. The value $\mathcal{L}(\theta)$ is the *height* of a landscape above that point. Training is rolling a ball downhill on this landscape until it settles into a low valley. The whole question of "why does deep learning work?" reduces to the geometry of this landscape: how many valleys it has, how steep they are, how they connect, and which ones generalize.
 
-The phrase "loss landscape" was popularised by \citeauthor{li2018losslandscape} (\citeyear{li2018losslandscape}), who gave the field its first systematic visualizations. The underlying mathematics, non-convex optimization in $10^7$ dimensions, goes back further: \citeauthor{rumelhart1986learning} noted in \citeyear{rumelhart1986learning} that gradient descent on a non-convex loss works "surprisingly often", and \citeauthor{hochreiter1991vanishing} (\citeyear{hochreiter1991vanishing}) had already linked the geometry to trainability.
+The phrase "loss landscape" was popularised by \citeauthor{li2018losslandscape} (\citeyear{li2018losslandscape}), who gave the field its first systematic visualizations. The underlying mathematics, non-convex optimization in $10^7$ dimensions, goes back further: \citeauthor{rumelhart1986learning} noted in \citeyear{rumelhart1986learning} that although the error surface may contain local minima, experience showed the network "very rarely gets stuck in poor local minima", and \citeauthor{hochreiter1991vanishing} (\citeyear{hochreiter1991vanishing}) had already linked the geometry to trainability.
 
 </div>
 
@@ -543,7 +543,7 @@ The fix from \citeauthor{li2018losslandscape}: instead of a random Gaussian dire
 
 ### Non-convexity comes from the non-linearities, not from depth
 
-A purely linear deep network, just stacked matrices with no activation function between them, has a loss surface with no spurious local minima at all. Every critical point is either a global minimum or a saddle. \citeauthor{saxe2014deep} (\citeyear{saxe2014deep}) showed this analytically for deep linear networks; \citeauthor{kawaguchi2016deep} (\citeyear{kawaguchi2016deep}) and \citeauthor{telgarsky2016wars} (\citeyear{telgarsky2016wars}) extended the result.
+A purely linear deep network, just stacked matrices with no activation function between them, has a loss surface with no spurious local minima at all. Every critical point is either a global minimum or a saddle. \citeauthor{saxe2014deep} (\citeyear{saxe2014deep}) showed this analytically for deep linear networks; \citeauthor{kawaguchi2016deep} (\citeyear{kawaguchi2016deep}) extended the result to deep nonlinear networks.
 
 So where does the non-convexity of real networks come from? From the activation functions. ReLU, sigmoid, GELU: every nonlinearity bends the function and creates the possibility of bad local minima. Depth alone is harmless. This is why residual connections help so much: each residual block is asked to learn only a small adjustment to the running state, so the overall transformation stays close to linear, and the loss surface stays well-behaved. \citeauthor{lu2017expressive} (\citeyear{lu2017expressive}) reviews the broader picture.
 
@@ -577,7 +577,7 @@ The hyperbolic paraboloid $z = x^2 - y^2$: a surface that goes up in one directi
 
 The intuition goes back to \citeauthor{hochreiter1991vanishing}'s \citeyear{hochreiter1991vanishing} diploma thesis: a minimum inside a wide, flat basin should generalize, because small perturbations of $\theta$ keep the loss low. A narrow, sharp minimum memorizes the training set but blows up on test.
 
-\citetitle{keskar2016largebatch} (\citeyear{keskar2016largebatch}) sharpened this empirically: large-batch SGD finds sharper minima than small-batch SGD, and the sharp-minimum runs generalize *worse* on ImageNet. The story is not so clean once \citeauthor{dinh2017sharpness} (\citeyear{dinh2017sharpness}) is added. Because of the ReLU and BatchNorm rescaling symmetry above, every sharp minimum can be reparameterized into an equivalent flat one. "Sharp" was not a property of the minimum. It was an artifact of the parameterization. \citeauthor{smithle2018bayesian} (\citeyear{smithle2018bayesian}) reframed SGD as approximate Bayesian inference: small-batch noise is not a bug but a prior that biases the trajectory toward wide valleys.
+\citetitle{keskar2016largebatch} (\citeyear{keskar2016largebatch}) sharpened this empirically: large-batch SGD finds sharper minima than small-batch SGD, and the sharp-minimum runs generalize *worse* on CIFAR-10, CIFAR-100, MNIST, and TIMIT. The story is not so clean once \citeauthor{dinh2017sharpness} (\citeyear{dinh2017sharpness}) is added. Because of the ReLU and BatchNorm rescaling symmetry above, every sharp minimum can be reparameterized into an equivalent flat one. "Sharp" was not a property of the minimum. It was an artifact of the parameterization. \citeauthor{smithle2018bayesian} (\citeyear{smithle2018bayesian}) reframed SGD as approximate Bayesian inference: small-batch noise is not a bug but a prior that biases the trajectory toward wide valleys.
 
 The live descendants of this debate are **Sharpness-Aware Minimization** \cite{foret2021sam}, which explicitly adds a "be flat" penalty to the loss. Too flat, and the gradient signal vanishes; too sharp, and the optimizer oscillates. SAM works because the loss depends on the data and parameters; a step that is locally flat on the training set may not be flat on the test set, so SAM evaluates the loss at a small perturbation around the current point and descends from there.
 
@@ -595,7 +595,7 @@ $$h_{\ell+1} \;=\; h_\ell \;+\; F_\ell(h_\ell),$$
 
 so the *change* across the block is just $F_\ell(h_\ell)$, the small adjustment the layer learned. During backprop, the gradient signal has two paths back to the input: through $F_\ell$ and through the skip path. As long as the layer's learned adjustment stays bounded, the skip path keeps the gradient flowing even when the other path is near zero. \citeauthor{he2016identity} (\citeyear{he2016identity}) showed this empirically with a pre-activation analysis: a 1001-layer ResNet trains without difficulty because the skip path preserves the signal layer to layer.
 
-\citetitle{li2018losslandscape}'s contribution was to see the consequence on the landscape. A 110-layer ResNet and a 20-layer ResNet have nearly the same low-loss contour width when skip connections are present. Without skips, the 110-layer net has no usable basin at all. The skip connection does not just help optimization. It changes the geometry of the surface the optimizer walks on.
+\citetitle{li2018losslandscape}'s contribution was to see the consequence on the landscape. A 110-layer ResNet and a 20-layer ResNet have nearly the same low-loss contour width when skip connections are present. Without skips, the 110-layer net can still be trained (to ~16% test error on CIFAR-10), but its basin is far sharper and less usable — and a 156-layer net without skips does not train at all. The skip connection does not just help optimization. It changes the geometry of the surface the optimizer walks on.
 
 </div>
 
@@ -611,7 +611,7 @@ In the same paper, doubling only the number of filters per layer of ResNet-56 ($
 
 ### Minima are connected by flat paths
 
-Train two ResNets independently on CIFAR-10 from different random initializations. They land in *different* minima, with different test errors and different predictions on hard examples. Now draw a straight line between them in weight space and plot the loss along the line. \citeauthor{garipov2018mode} (\citeyear{garipov2018mode}) found that the loss along this line is almost flat. The two minima are not separated by a mountain pass. They are connected by a low-loss valley. With a small bend in the line (a "polygonal chain"), every point along the path has nearly training-set error.
+Train two ResNets independently on CIFAR-10 from different random initializations. They land in *different* minima, with different test errors and different predictions on hard examples. Now draw a straight line between them in weight space and plot the loss along the line. \citeauthor{garipov2018mode} (\citeyear{garipov2018mode}) showed that the loss along this straight line is *high* — the two minima are separated by a barrier — but that with a small bend in the line (a "polygonal chain"), every point along the curved path has nearly training-set error. The minima are *mode-connected*: not by a straight valley, but by a low-loss curved path.
 
 The set of well-performing weights is connected. The landscape is one big basin, full of curvature ripples and small ridges but without barriers. This is also why "model ensembling", averaging several independently-trained nets, works so well: every ensemble member is somewhere along this single low-loss manifold, and their disagreements are just different local orientations.
 
@@ -637,7 +637,7 @@ This is why \citeauthor{garipov2018mode} (\citeyear{garipov2018mode}) had to ali
 
 To plot an optimizer's trajectory, you would naturally project it onto a 2-D plane of random directions. \citeauthor{li2018losslandscape}'s section 7 shows this fails almost completely: the trajectory sits in a subspace that random directions do not span. Two random Gaussian vectors in $d$ dimensions are nearly orthogonal; their expected cosine similarity is $\sqrt{2/(\pi d)}$, roughly $10^{-4}$ for a 10-million-parameter model. Projecting onto them collapses the trajectory to a single dot.
 
-PCA on the iterates $\theta_0, \theta_1, \ldots, \theta_T$ recovers what is actually happening. For both SGD and Adam on VGG-9, the first PCA direction captures roughly **99%** of the motion; the second PCA direction captures a small orbit around it. Gradient descent is effectively one-dimensional. There is a single dominant direction in weight space that the optimizer follows, and the rest of the billion dimensions are nearly silent.
+PCA on the iterates $\theta_0, \theta_1, \ldots, \theta_T$ recovers what is actually happening. For both SGD and Adam on VGG-9, the first **two** PCA directions capture between **40% and 90%** of the variation in the descent path; the remaining directions are nearly silent. Gradient descent is effectively low-dimensional.
 
 </div>
 
@@ -658,5 +658,5 @@ The picture that survives the most careful empirical work \cite{li2018losslandsc
 </div>
 
 <div class="optional md" data-headline="Origins of the word 'landscape'">
-The metaphor "energy landscape" entered physics through \citeauthor{wales2003energy} (\citeyear{wales2003energy}) and was first applied to neural networks by \citeauthor{hopfield1982} (\citeyear{hopfield1982}), whose associative-memory networks literally used the energy of a physical spin system as the loss function. The systematic 2-D visualization that turned the metaphor into a diagnostic tool is \citeauthor{li2018losslandscape} (\citeyear{li2018losslandscape}); their `tomgoldstein/loss-landscape` GitHub repo is the de-facto standard for loss-landscape plots today.
+The energy-landscape concept in physics is much older — suggested by René Marcelin in 1913 and given its first quantitative potential-energy surface for H + H₂ by Eyring and Polanyi in 1931; \citeauthor{wales2003energy}'s \citeyear{wales2003energy} book is a modern synthesis. It was first applied to neural networks by \citeauthor{hopfield1982} (\citeyear{hopfield1982}), whose associative-memory networks literally used the energy of a physical spin system as the loss function. The systematic 2-D visualization that turned the metaphor into a diagnostic tool is \citeauthor{li2018losslandscape} (\citeyear{li2018losslandscape}); their `tomgoldstein/loss-landscape` GitHub repo is the de-facto standard for loss-landscape plots today.
 </div>
