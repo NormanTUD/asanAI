@@ -90,7 +90,7 @@ For a century the current ran one way — brain to machine. The last decade reve
 
 **The brain became the machine's teacher.** Schwartz and colleagues fine-tuned a transformer until its internal representations *predicted human brain activity* — and the model that best fit the brain got better at language too \cite{schwartz2019brainbias}. And the alignment runs deeper than a correlation: Hosseini and colleagues found that the *structure* of the representational space — not just its statistics — is shared between biological and artificial networks \cite{hosseini2024universality}.
 
-**The brain became the yardstick.** Even how a machine's intelligence is judged is set by the brain: \citeauthor{hinton2007baby} proposed measuring a machine not against a doctor but against a two-year-old, who learns from a trickle of unlabeled examples \cite{hinton2007baby}.
+**The brain became the yardstick.** Even how a machine's intelligence is judged is set by the brain: the field's benchmarks are increasingly framed not around beating an adult expert but around matching the flexible, data-efficient learning of a young child from a trickle of unlabeled examples.
 
 The aha: the machine is no longer just built *from* the brain — it is now the instrument the brain is measured **with**.
 </div>
