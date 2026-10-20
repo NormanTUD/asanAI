@@ -3357,7 +3357,7 @@ window.bibData = {
 		alternativetitle: "Sextant"
 	},
 	"achleuleanhandaxe_image": {
-		title: "Acheulean handaxes from the Kariandusi site, West Turkana, Kenya",
+		title: "Acheulean handaxes from the Kariandusi site, Kenya",
 		url: "https://commons.wikimedia.org/wiki/File:Kariandusi_Acheulean_Tools.jpg",
 		author: "Xmd5a",
 		license: "CC BY-SA 4.0",
@@ -10423,6 +10423,12 @@ window.bibData = {
 		url: "https://www.springer.com/gp/book/9780387987804",
 		alternativetitle: "Statistical Learning Theory"
 	},
+	"aizerman1964potential": {
+		title: "Theoretical Foundations of the Potential Function Method in Pattern Recognition Learning",
+		author: "M. A. Aizerman, E. M. Braverman, L. I. Rozonoer",
+		year: 1964,
+		alternativetitle: "Aizerman et al. (1964)"
+	},
 	"aitchison1972kernel": {
 		title: "A comparison of the C and Fortran languages as media for the implementation of a small statistical package",
 		author: "J. Aitchison",
@@ -11034,7 +11040,7 @@ window.bibData = {
 	"bertot2013coq": {
 		title: "Interactive Theorem Proving and Program Development: Coq'Art: The Calculus of Inductive Constructions",
 		author: "Yves Bertot, Pierre Castéran",
-		year: 2013,
+		year: 2004,
 		url: "https://www.springer.com/gp/book/9783540208549",
 		alternativetitle: "Coq Book"
 	},
@@ -11355,6 +11361,13 @@ window.bibData = {
 		year: 2008,
 		url: "https://www.jmlr.org/papers/v9/vandermaaten08a.html",
 		alternativetitle: "t-SNE"
+	},
+	"vandermaaten2008tsne": {
+		title: "Visualizing Data using t-SNE",
+		author: "Laurens van der Maaten and Geoffrey Hinton",
+		year: 2008,
+		url: "https://jmlr.org/papers/v9/vandermaaten08a.html",
+		alternativetitle: "Van der Maaten & Hinton, t-SNE (2008)"
 	},
 	"van2009dimensionality": {
 		title: "Dimensionality Reduction: A Comparative Review",

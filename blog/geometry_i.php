@@ -33,11 +33,11 @@ The oldest geometric objects we have are not calculations at all, and their purp
 
 ### The Acheulean handaxe (c. 1.76 million years ago)
 
-Before there were etched shells or tally bones, there was the **handaxe**. The Acheulean industry — the bifacial, almond- or pear-shaped handaxe — begins about **1.76 million years ago** at West Turkana in Kenya, where handaxes from the Kariandusi locality were dated by magnetostratigraphy to that age, pushing the start of the Acheulean back by roughly two hundred thousand years \cite{achleuleankariandusi}. That is about three and a half times older than the Trinil shell below, and the maker, almost certainly *Homo erectus* (or *H. ergaster*), was not scratching a pattern but *shaping a volume*.
+Before there were etched shells or tally bones, there was the **handaxe**. The Acheulean industry — the bifacial, almond- or pear-shaped handaxe — begins about **1.76 million years ago** at West Turkana in Kenya, where handaxes from the Kokiselei 4 site were dated by magnetostratigraphy to that age, pushing the start of the Acheulean back by roughly 350,000 years \cite{achleuleankariandusi}. That is about three and a half times older than the Trinil shell below, and the maker, almost certainly *Homo erectus* (or *H. ergaster*), was not scratching a pattern but *shaping a volume*.
 
 <figure>
-	<img style="width: 100%" src="acheulean_handaxe.jpg" alt="Acheulean handaxes from the Kariandusi site, West Turkana, Kenya" />
-	<figcaption class="md">Acheulean handaxes from the Kariandusi site, West Turkana, Kenya — the region that holds the oldest known examples (\citealternativetitle{achleuleanhandaxe_image}). Each one is a three-dimensional form worked to a template that existed in the maker's mind before the first blow.</figcaption>
+	<img style="width: 100%" src="acheulean_handaxe.jpg" alt="Acheulean handaxes from the Kariandusi site, Kenya" />
+	<figcaption class="md">Acheulean handaxes from the Kariandusi site, Kenya — a later Acheulean locality; the oldest known examples come from Kokiselei 4 in West Turkana (\citealternativetitle{achleuleanhandaxe_image}). Each one is a three-dimensional form worked to a template that existed in the maker's mind before the first blow.</figcaption>
 </figure>
 
 The geometry here is not trivial. A handaxe has **bilateral (mirror) symmetry**: two working faces flaked toward a shared central ridge, a pointed end and a rounded base, held in controlled proportion. To make one, the knapper must carry a *mental template* — the finished, ideal shape — and work both faces by reference to it over dozens of flake removals \cite{handaxementaltemplate}. The symmetry is not an accident and not merely cosmetic: it is actively maintained as the tool is made, and it is the most consistent feature of the whole industry across Africa, Asia and Europe \cite{handaxesymmetry}. In other words, well before any line was drawn, a hominin was already reasoning about **axial symmetry, proportion and the geometry of a surface in three dimensions** — a spatial understanding no two-dimensional mark can capture. The *why* is a cutting edge that works from either hand; the *capability* — a stable internal model of a 3-D form — is the oldest piece of geometry we have.
@@ -67,8 +67,8 @@ A second, independent thread runs through the Middle Stone Age of southern Afric
 If the shell and the ochre mark the birth of *form*, the **Ishango bone** and the earlier **Lebombo bone** mark the birth of *counting* as a spatial act: quantities are not held in the mind, they are laid out as marks in a row, and rows as *groupings* in the plane \cite{ishangobone} \cite{lebombobone}. Geometry and arithmetic are born in the same gesture — a number is a *shape* of marks, and a shape is a *count* of something.
 
 <figure>
-	<img style="width: 100%" src="lebombo.jpg" alt="The Lebombo bone, a tally bone from c. 43,000 BCE" />
-	<figcaption class="md">The <strong>Lebombo bone</strong> (c. 43,000 BCE, South Africa), a baboon fibula with 29 notches arranged in groups — a <em>spatial</em> record of quantity, and a strong candidate for the oldest known counting device \cite{lebombobone}.</figcaption>
+	<img style="width: 100%" src="lebombo.jpg" alt="The Lebombo bone, a tally bone from c. 41,000 BCE" />
+	<figcaption class="md">The <strong>Lebombo bone</strong> (c. 41,000 BCE, South Africa), a baboon fibula with 29 notches arranged in groups — a <em>spatial</em> record of quantity, and a strong candidate for the oldest known counting device \cite{lebombobone}.</figcaption>
 </figure>
 
 (We return to both artifacts in the [History of AI](history) chapter, where they matter as the first *external memory*; here we only need that the notches are themselves a two-dimensional arrangement — the earliest "database" was a pattern on a bone.)
@@ -181,7 +181,7 @@ The Greeks did not invent geometry; they made it demonstrative. The motive was n
 
 \marginfig{pythagoras.jpg}{Pythagoras of Samos (c. 570–495 BCE), founder of the school that gave its name to the most famous theorem in the world.}
 
-The tradition places the first proofs with **Thales of Miletus** (c. 624–546 BCE) — for example, that a circle is bisected by its diameter (Thales' theorem, *Elements* I.31) and that the angles of a triangle sum to two right angles (I.32) \cite{heathgreekmath}. Thales' theorem, in modern symbols: if $AC$ is a diameter of a circle and $B$ is any other point on it, then $\angle ABC = 90^{\circ}$. The Pythagoreans, the circle around **Pythagoras** (c. 570–495 BCE), are credited with the first *proof* of what is now named after them: in any right triangle the square on the hypotenuse equals the sum of the squares on the two legs,
+The tradition places the first proofs with **Thales of Miletus** (c. 624–546 BCE) — for example, that a circle is bisected by its diameter and that the angles of a triangle sum to two right angles (I.32) \cite{heathgreekmath}. Thales' theorem, in modern symbols: if $AC$ is a diameter of a circle and $B$ is any other point on it, then $\angle ABC = 90^{\circ}$. The Pythagoreans, the circle around **Pythagoras** (c. 570–495 BCE), are credited with the first *proof* of what is now named after them: in any right triangle the square on the hypotenuse equals the sum of the squares on the two legs,
 
 $$\underbrace{a^{2}}_{\substack{\text{the square on}\\\text{the shorter leg}}} + \underbrace{b^{2}}_{\substack{\text{the square on}\\\text{the longer leg}}} = \underbrace{c^{2}}_{\substack{\text{the square on the}\\\text{hypotenuse}}}$$
 
@@ -219,7 +219,7 @@ The tradition also preserves the legend that Plato had written above the door of
 
 \marginfig{euclid.jpg}{Euclid of Alexandria (c. 300 BCE) demonstrating a proposition to a student — the standard image of the man who set the template for every proof that followed.}
 
-Everything before Euclid was a collection of results; the **\citealternativetitle{euclidelements}** (composed c. 300 BCE in Alexandria, the standard edition edited and translated by \citeauthor{euclidelements_heath}) is the first *system* \cite{euclidelements} \cite{euclidelements_heath}. The *why* is institutional: Alexandria was the library of the ancient world, and Euclid's book was a textbook for the students who flocked there — a way to organise *all* the known geometry into one sequence in which each result depends only on the ones before it. Its structure is as famous as its content: a short list of definitions, **five postulates** (the working rules of compass and straightedge) and **five common notions** (self-evident truths about magnitudes) from which **465 propositions** follow, each ending with the little square — the *hysteron* — that marks "it has been proved". That architecture is the template for every proof-based subject that followed:
+Everything before Euclid was a collection of results; the **\citealternativetitle{euclidelements}** (composed c. 300 BCE in Alexandria, the standard edition edited and translated by \citeauthor{euclidelements_heath}) is the first *system* \cite{euclidelements} \cite{euclidelements_heath}. The *why* is institutional: Alexandria was the library of the ancient world, and Euclid's book was a textbook for the students who flocked there — a way to organise *all* the known geometry into one sequence in which each result depends only on the ones before it. Its structure is as famous as its content: a short list of definitions, **five postulates** (the working rules of compass and straightedge) and **five common notions** (self-evident truths about magnitudes) from which **465 propositions** follow, each ending with the little square — the *tombstone* (or *halmos*) — that marks "it has been proved". That architecture is the template for every proof-based subject that followed:
 
 * **Definitions** (point, line, circle, angle, …) — what the objects *are*.
 * **Postulates** (five) — what you are *allowed to do* with them. The first four are self-evident constructions; the **fifth** is the **parallel postulate**: through a point not on a line there passes *at most one* line that never meets the given line. For over two thousand years this fifth postulate was treated as slightly less obvious than the others, and every attempt to "fix" it is, in retrospect, the road to non-Euclidean geometry (Section VII).
@@ -578,7 +578,7 @@ $$\underbrace{M}_{\substack{\text{the manifold: a curved}\\\text{sheet of dimens
 The hypothesis is what a dozen standard tools *assume*, and it explains why they work:
 
 * **Autoencoders** bottle every sample through a few dozen numbers and rebuild it; the encoder is literally *computing coordinates on the manifold*, the decoder *evaluates the sheet at those coordinates* \cite{hinton1989autoencoder}.
-* **Dimensionality-reduction visualisations** — t-SNE (\citeauthorlastnameand{van2009dimensionality}, \citeyear{van2009dimensionality}) \cite{van2009dimensionality} and UMAP (\citeauthorlastnameand{mcinnes2018umap}, \citeyear{mcinnes2018umap}) — flatten the high-dimensional cloud onto the page while preserving neighbourhoods \cite{mcinnes2018umap}, the computational heir of Mercator's flattening of the sphere (Section VI), now for a surface whose dimension we must first *infer*.
+* **Dimensionality-reduction visualisations** — t-SNE (\citeauthorlastnameand{vandermaaten2008tsne}, \citeyear{vandermaaten2008tsne}) \cite{vandermaaten2008tsne} and UMAP (\citeauthorlastnameand{mcinnes2018umap}, \citeyear{mcinnes2018umap}) — flatten the high-dimensional cloud onto the page while preserving neighbourhoods \cite{mcinnes2018umap}, the computational heir of Mercator's flattening of the sphere (Section VI), now for a surface whose dimension we must first *infer*.
 * **Interpolation and vector arithmetic work.** On the (locally near-flat) sheet, a weighted average of two points remains on the sheet — which is why "king − man + woman ≈ queen" and why morphing two images through the manifold yields meaningful intermediates. If data filled its ambient space, every averaged point would be noise; that it does not is the entire reason "vector semantics" has a geometric meaning.
 * **Only the intrinsic dimension matters.** A million-pixel image is, for geometry, a point on a sheet of perhaps a few dozen intrinsic dimensions; all the "wasted" coordinates are directions *off the data*, which is why the models can confidently ignore the noise directions that dominate the ambient space.
 </div>
@@ -690,7 +690,7 @@ $$\lvert \underbrace{\alpha_{i}}_{\substack{\text{the eigenvalues of the}\\\text
 <div class="optional md" data-headline="A compact timeline">
 * **c. 1.76 Ma** — Acheulean handaxe: the first 3-D form, bilateral symmetry held in a mental template \cite{achleuleankariandusi}.
 * **c. 500,000 BCE** — Trinil shell: oldest deliberate geometric incision \cite{trinilshell}.
-* **c. 43,000 / 18,000 BCE** — Lebombo and Ishango bones: quantity as a spatial pattern \cite{lebombobone} \cite{ishangobone}.
+* **c. 41,000 / 18,000 BCE** — Lebombo and Ishango bones: quantity as a spatial pattern \cite{lebombobone} \cite{ishangobone}.
 * **c. 75,000 BCE** — Blombos ochre: abstract grid patterning \cite{emergenceofmodernhumanbehaviour}.
 * **c. 1850 BCE** — Moscow Papyrus: the frustum volume $V=\tfrac{h}{3}(a^{2}+ab+b^{2})$ \cite{moscowpapyrus}.
 * **c. 1650 BCE** — Rhind Papyrus: Egyptian areas and the circle rule $\pi\approx 256/81$ \cite{rhindpapyrus}.
@@ -734,7 +734,7 @@ $$\lvert \underbrace{\alpha_{i}}_{\substack{\text{the eigenvalues of the}\\\text
 * **1982 / 1983** — Thurston's geometrisation programme; Freedman's classification of topological 4-manifolds; Donaldson's gauge-theoretic theorem — and exotic $\mathbb{R}^{4}$s by the uncountably many \cite{thurston1982geometrization} \cite{freedman1982topology} \cite{donaldson1983gauge}.
 * **1957** — Bellman coins the "curse of dimensionality" \cite{bellman1957dynamic}.
 * **1963 / 1992 / 1995** — Vapnik–Chervonenkis, Boser–Guyon–Vapnik, Cortes–Vapnik: the kernel trick and support-vector machines — nonlinearity by climbing dimensions \cite{vapnik1963pattern} \cite{boser1992svm} \cite{vapnik1995book}.
-* **2006 / 2009 / 2018** — bottleneck autoencoders, t-SNE, UMAP: the manifold hypothesis turned into working tools \cite{hinton2006} \cite{van2009dimensionality} \cite{mcinnes2018umap}.
+* **2006 / 2008 / 2018** — bottleneck autoencoders, t-SNE, UMAP: the manifold hypothesis turned into working tools \cite{hinton2006} \cite{vandermaaten2008tsne} \cite{mcinnes2018umap}.
 * **2021** — Geometric Deep Learning: the data's symmetry space dictates the network architecture \cite{bronstein2021geometric}.
 * **2024** — Platonic Representation Hypothesis: unrelated models converge on a shared internal geometry of reality \cite{huh2024platonic}.
 </div>
