@@ -5,7 +5,7 @@ title: Inceptionism: What the Network Sees
 description: Turn the network around — tune the image instead of the weights, and watch neurons dream of bananas, dumbbells, and towers.
 icon: &#128065;
 part: 3
-order: 7
+order: 9
 color: accent
 topics: architecture, generative, interpretability, history
 -->

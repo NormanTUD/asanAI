@@ -5,7 +5,7 @@ title: What Machines See
 description: How a computer learns to see — the convolution, the feature hierarchy, the full CNN pipeline, then the task stack: detection, segmentation, SAM, Vision Transformers and 3D.
 icon: &#128065;
 part: 3
-order: 5
+order: 7
 color: emerald
 topics: vision, architecture, programming, multimodal
 tags: code-heavy

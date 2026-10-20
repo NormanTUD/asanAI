@@ -5,7 +5,7 @@ title: Pixels and Checkerboards
 description: When generative models upscale with “deconvolution”, the overlaps bake a checkerboard pattern into their images — and into their gradients.
 icon: &#10024;
 part: 3
-order: 6
+order: 8
 color: rose
 topics: architecture, generative, math-ii
 tags: math-heavy
