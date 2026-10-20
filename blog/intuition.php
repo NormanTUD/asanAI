@@ -443,6 +443,102 @@ html.dark #ffn-demo #ffn-explanation {
 }
 html.dark #ffn-demo #ffn-explanation b { color: #f1f5f9; }
 #ffn-demo svg#ffn-lines path { transition: stroke .35s ease, stroke-width .35s ease; }
+
+/* === Simplified isosurface ("truth tunnel") — ported from foam_of_meaning === */
+.mn-iso {
+	margin: 18px 0;
+	padding: clamp(12px, 2.5vw, 18px);
+	border-radius: var(--mn-radius-lg);
+	border: 1px solid var(--mn-border);
+	background: var(--mn-surface);
+	box-shadow: var(--mn-shadow-md);
+}
+.mn-iso-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 190px;
+	gap: 14px;
+	align-items: start;
+}
+@media (max-width: 640px) {
+	.mn-iso-grid { grid-template-columns: 1fr; }
+}
+#mn-iso-canvas {
+	display: block;
+	width: 100%;
+	height: clamp(340px, 46vw, 470px);
+	background: #0f172a;
+	border-radius: var(--mn-radius-md);
+	border: 1px solid #1e293b;
+}
+.mn-iso-side {
+	padding: 14px;
+	border-radius: var(--mn-radius-md);
+	border: 1px solid var(--mn-border);
+	background: var(--mn-bg-subtle);
+}
+.mn-iso-kicker {
+	font: 700 .62rem/1 var(--mn-font-mono);
+	letter-spacing: .14em;
+	text-transform: uppercase;
+	color: var(--mn-text-muted);
+}
+.mn-iso-next {
+	margin: .5em 0 .15em;
+	font: 700 clamp(1.35rem, 1rem + 1.2vw, 1.9rem)/1.1 var(--mn-font-heading);
+	color: var(--mn-heading);
+	word-break: break-word;
+}
+.mn-iso-next.is-end { font-size: 1.15rem; color: var(--mn-text-muted); }
+.mn-iso-meta {
+	margin-top: .6em;
+	font-size: .78rem;
+	line-height: 1.5;
+	color: var(--mn-text-secondary);
+}
+.mn-iso-meta b { color: var(--mn-text); font-family: var(--mn-font-mono); }
+.mn-iso-conf {
+	display: inline-block;
+	padding: .22em .6em;
+	border-radius: 999px;
+	font: 700 .66rem/1 var(--mn-font-mono);
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	border: 1px solid transparent;
+}
+.mn-iso-conf.is-certain { color: var(--mn-sky); background: color-mix(in srgb, var(--mn-sky) 14%, transparent); border-color: color-mix(in srgb, var(--mn-sky) 35%, transparent); }
+.mn-iso-conf.is-likely { color: var(--mn-emerald); background: color-mix(in srgb, var(--mn-emerald) 14%, transparent); border-color: color-mix(in srgb, var(--mn-emerald) 35%, transparent); }
+.mn-iso-conf.is-open { color: var(--mn-coral); background: color-mix(in srgb, var(--mn-coral) 14%, transparent); border-color: color-mix(in srgb, var(--mn-coral) 35%, transparent); }
+.mn-iso-conf.is-wide { color: var(--mn-rose); background: color-mix(in srgb, var(--mn-rose) 14%, transparent); border-color: color-mix(in srgb, var(--mn-rose) 35%, transparent); }
+.mn-iso-controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px 22px;
+	align-items: center;
+	margin-top: 14px;
+}
+.mn-iso-btn {
+	appearance: none;
+	cursor: pointer;
+	padding: .55em 1.05em;
+	border-radius: 10px;
+	border: 1px solid var(--mn-border);
+	background: var(--mn-bg-subtle);
+	color: var(--mn-text);
+	font: 700 .85rem var(--mn-font-body);
+	transition: border-color .15s ease, color .15s ease, transform .15s ease;
+}
+.mn-iso-btn:hover { border-color: var(--mn-accent); color: var(--mn-accent); transform: translateY(-1px); }
+.mn-iso-btn:active { transform: translateY(0); }
+.mn-iso-temp {
+	display: flex;
+	align-items: center;
+	gap: .6em;
+	font-size: .82rem;
+	font-weight: 600;
+	color: var(--mn-text-secondary);
+}
+.mn-iso-temp input[type="range"] { width: min(230px, 42vw); accent-color: var(--mn-coral); }
+.mn-iso-temp b { min-width: 2.6em; color: var(--mn-heading); font-family: var(--mn-font-mono); text-align: right; }
 </style>
 <div class="md mn-mathstack">
 We can think of LLMs as machines that predict the next most likely word, given a context — only one word at a time. That word is appended to the input and fed back in, and the loop repeats until a special `|endoftext|` token signals the end.
@@ -919,6 +1015,31 @@ Then it **picks a word** — usually one of the top candidates, but with a littl
 
 	<div class="mn-demo-hint">
 	💡 <b>Temperature</b> controls randomness. At T→0 the model always picks the top word (greedy); at high T the distribution flattens and rare words get a chance — that is where LLM “creativity” comes from. The model does not <b>know</b> the answer. It assigns probabilities and <b>samples</b>.
+	</div>
+</div>
+
+<div class="md">
+### The truth tunnel
+
+A single prediction is one slice through a tube of plausible continuations. Step through the sentence and watch the tube narrow as the context closes the options — then turn up the temperature and watch it inflate again.
+</div>
+
+<div class="mn-iso">
+	<div class="mn-iso-grid">
+		<canvas id="mn-iso-canvas" aria-label="A path through embedding space wrapped in a glowing probability isosurface"></canvas>
+		<aside class="mn-iso-side">
+			<div class="mn-iso-kicker">Next word</div>
+			<div class="mn-iso-next" id="mn-iso-next">capital</div>
+			<div class="mn-iso-meta" id="mn-iso-meta"></div>
+		</aside>
+	</div>
+	<div class="mn-iso-controls">
+		<button type="button" class="mn-iso-btn" id="mn-iso-advance">Next word →</button>
+		<label class="mn-iso-temp">
+			<span>Temperature</span>
+			<input type="range" id="mn-iso-temp" min="0.05" max="2.0" step="0.05" value="0.8">
+			<b id="mn-iso-temp-val">0.80</b>
+		</label>
 	</div>
 </div>
 

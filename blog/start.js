@@ -1400,7 +1400,7 @@ function initGlossary() {
 					// Skip the reading-flow devices (hook / aha / thread /
 					// detour): they are deliberate asides, and tooltips there
 					// clutter the pull-text instead of helping.
-					if (parent.closest('.mn-hook, .mn-aha, .mn-thread, .mn-psst')) {
+					if (parent.closest('.mn-hook, .mn-aha, .mn-thread, .mn-psst, .mn-iso')) {
 						return NodeFilter.FILTER_REJECT;
 					}
 					// Skip if inside math element or already has glossary-term

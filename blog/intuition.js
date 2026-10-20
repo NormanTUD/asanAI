@@ -2270,6 +2270,334 @@ const FFNViz = {
 };
 
 // ============================================================
+// SIMPLIFIED ISOSURFACE ("truth tunnel")
+// Ported from foam_of_meaning.js — same drawing, far less chrome:
+// just the canvas, a "next word" readout and a temperature slider.
+// ============================================================
+
+const MnIsoViz = {
+    canvas: null,
+    ctx: null,
+    width: 0,
+    height: 0,
+    temperature: 0.8,
+    step: 0,
+    sentence: {
+        tokens: ['The', 'capital', 'of', 'France', 'is', 'Paris', '.'],
+        entropy: [0.95, 0.55, 0.20, 0.60, 0.15, 0.05, 0.10],
+        path: [
+            { x: 0.08, y: 0.50 },
+            { x: 0.20, y: 0.42 },
+            { x: 0.32, y: 0.38 },
+            { x: 0.45, y: 0.35 },
+            { x: 0.58, y: 0.32 },
+            { x: 0.74, y: 0.30 },
+            { x: 0.88, y: 0.32 }
+        ],
+        branches: [
+            {
+                atStep: 3,
+                alternatives: [
+                    { token: 'Germany', path: { x: 0.45, y: 0.55 }, entropy: 0.55 },
+                    { token: 'Japan',   path: { x: 0.45, y: 0.22 }, entropy: 0.50 }
+                ]
+            },
+            {
+                atStep: 5,
+                alternatives: [
+                    { token: 'the', path: { x: 0.74, y: 0.40 }, entropy: 0.25 }
+                ]
+            }
+        ]
+    },
+
+    init: function () {
+        const canvas = document.getElementById('mn-iso-canvas');
+        if (!canvas) return;
+        this.canvas = canvas;
+
+        const temp = document.getElementById('mn-iso-temp');
+        if (temp) {
+            this.temperature = parseFloat(temp.value) || 0.8;
+            temp.addEventListener('input', () => {
+                this.temperature = parseFloat(temp.value);
+                this.render();
+            });
+        }
+
+        const advance = document.getElementById('mn-iso-advance');
+        if (advance) {
+            advance.addEventListener('click', () => {
+                this.step = (this.step + 1) % this.sentence.tokens.length;
+                this.render();
+            });
+        }
+
+        let rz;
+        window.addEventListener('resize', () => {
+            clearTimeout(rz);
+            rz = setTimeout(() => { this.resize(); this.render(); }, 150);
+        });
+
+        this.resize();
+        this.render();
+    },
+
+    resize: function () {
+        const c = this.canvas;
+        if (!c) return;
+        const rect = c.getBoundingClientRect();
+        if (rect.width < 10) return;
+        const dpr = window.devicePixelRatio || 1;
+        this.width = rect.width;
+        this.height = rect.height;
+        c.width = Math.round(rect.width * dpr);
+        c.height = Math.round(rect.height * dpr);
+        this.ctx = c.getContext('2d');
+        if (this.ctx) this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    },
+
+    render: function () {
+        const ctx = this.ctx;
+        if (!ctx) return;
+        const W = this.width, H = this.height;
+        if (!W || !H) return;
+        const sent = this.sentence;
+        const step = Math.min(this.step, sent.tokens.length - 1);
+        const temp = this.temperature;
+        const baseWidth = 80;
+        const toCanvas = p => ({ x: p.x * W, y: p.y * H });
+
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(0, 0, W, H);
+        ctx.strokeStyle = 'rgba(51,65,85,0.3)';
+        ctx.lineWidth = 0.5;
+        for (let gx = 0; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+        for (let gy = 0; gy < H; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+        // Faint guide of the whole path
+        ctx.beginPath();
+        sent.path.forEach((p, i) => { const q = toCanvas(p); if (i === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y); });
+        ctx.strokeStyle = 'rgba(96,165,250,0.10)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 8]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Isosurface envelope for completed steps
+        if (step >= 1) {
+            const upper = [], lower = [];
+            for (let i = 0; i <= step; i++) {
+                const q = toCanvas(sent.path[i]);
+                const env = sent.entropy[i] * temp * baseWidth;
+                let dx = 0, dy = -1;
+                if (i < sent.path.length - 1) {
+                    const n = toCanvas(sent.path[i + 1]);
+                    const tx = n.x - q.x, ty = n.y - q.y, len = Math.hypot(tx, ty);
+                    if (len > 0) { dx = -ty / len; dy = tx / len; }
+                } else if (i > 0) {
+                    const p = toCanvas(sent.path[i - 1]);
+                    const tx = q.x - p.x, ty = q.y - p.y, len = Math.hypot(tx, ty);
+                    if (len > 0) { dx = -ty / len; dy = tx / len; }
+                }
+                upper.push({ x: q.x + dx * env, y: q.y + dy * env });
+                lower.push({ x: q.x - dx * env, y: q.y - dy * env });
+            }
+
+            for (let layer = 3; layer >= 0; layer--) {
+                const scale = 1 + layer * 0.3;
+                const alpha = 0.03 + (3 - layer) * 0.03;
+                ctx.beginPath();
+                upper.forEach((p, i) => {
+                    const q = toCanvas(sent.path[i]);
+                    const x = q.x + (p.x - q.x) * scale, y = q.y + (p.y - q.y) * scale;
+                    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                });
+                for (let i = lower.length - 1; i >= 0; i--) {
+                    const q = toCanvas(sent.path[i]);
+                    const p = lower[i];
+                    ctx.lineTo(q.x + (p.x - q.x) * scale, q.y + (p.y - q.y) * scale);
+                }
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(139,92,246,' + alpha + ')';
+                ctx.fill();
+            }
+
+            ctx.beginPath();
+            upper.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+            for (let i = lower.length - 1; i >= 0; i--) ctx.lineTo(lower[i].x, lower[i].y);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(139,92,246,0.08)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(139,92,246,0.35)';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+
+        // Branches (forks) at visible steps
+        sent.branches.forEach(branch => {
+            if (step < branch.atStep) return;
+            const origin = toCanvas(sent.path[branch.atStep]);
+            branch.alternatives.forEach(alt => {
+                const target = toCanvas(alt.path);
+                const env = Math.max(6, alt.entropy * temp * baseWidth * 0.6);
+                ctx.beginPath();
+                ctx.moveTo(origin.x, origin.y);
+                ctx.lineTo(target.x, target.y);
+                ctx.strokeStyle = 'rgba(251,191,36,0.3)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([3, 5]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.beginPath();
+                ctx.arc(target.x, target.y, env, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(251,191,36,0.06)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(251,191,36,0.25)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.font = '11px system-ui, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = 'rgba(251,191,36,0.75)';
+                ctx.fillText(alt.token, target.x, target.y - env - 6);
+                ctx.beginPath();
+                ctx.arc(target.x, target.y, 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#fbbf24';
+                ctx.fill();
+            });
+        });
+
+        // Main trajectory
+        if (step >= 1) {
+            ctx.beginPath();
+            for (let i = 0; i <= step; i++) { const q = toCanvas(sent.path[i]); if (i === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y); }
+            ctx.strokeStyle = '#60a5fa';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+            ctx.strokeStyle = 'rgba(96,165,250,0.3)';
+            ctx.lineWidth = 8;
+            ctx.stroke();
+        }
+
+        // Token nodes up to the current step
+        for (let i = 0; i <= step; i++) {
+            const q = toCanvas(sent.path[i]);
+            const entropy = sent.entropy[i];
+            const radius = 5 + entropy * temp * 4;
+            ctx.beginPath();
+            ctx.arc(q.x, q.y, radius + 6, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(96,165,250,' + (0.1 + entropy * 0.1) + ')';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(q.x, q.y, radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'hsl(' + (220 - entropy * 180) + ',80%,60%)';
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.font = 'bold 12px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#f1f5f9';
+            ctx.fillText(sent.tokens[i], q.x, q.y - radius - 8);
+        }
+
+        // Future tokens (faint)
+        for (let i = step + 1; i < sent.tokens.length; i++) {
+            const q = toCanvas(sent.path[i]);
+            ctx.beginPath();
+            ctx.arc(q.x, q.y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(148,163,184,0.15)';
+            ctx.fill();
+            ctx.font = '10px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = 'rgba(148,163,184,0.18)';
+            ctx.fillText(sent.tokens[i], q.x, q.y - 10);
+        }
+
+        // Certainty bar
+        const barX = W - 50, barY = 40, barW = 16, barH = H - 80;
+        if (barH > 40) {
+            ctx.fillStyle = 'rgba(30,41,59,0.8)';
+            ctx.fillRect(barX - 4, barY - 4, barW + 8, barH + 8);
+            ctx.strokeStyle = 'rgba(71,85,105,0.5)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(barX - 4, barY - 4, barW + 8, barH + 8);
+            const grad = ctx.createLinearGradient(0, barY, 0, barY + barH);
+            grad.addColorStop(0, '#3b82f6');
+            grad.addColorStop(0.5, '#8b5cf6');
+            grad.addColorStop(1, '#f59e0b');
+            ctx.fillStyle = grad;
+            ctx.fillRect(barX, barY, barW, barH);
+            const eff = Math.min(1, sent.entropy[step] * temp);
+            const markerY = barY + (1 - eff) * barH;
+            ctx.beginPath();
+            ctx.moveTo(barX - 8, markerY);
+            ctx.lineTo(barX, markerY - 4);
+            ctx.lineTo(barX, markerY + 4);
+            ctx.closePath();
+            ctx.fillStyle = '#f1f5f9';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(barX, markerY);
+            ctx.lineTo(barX + barW, markerY);
+            ctx.strokeStyle = '#f1f5f9';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.font = '9px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillText('certain', barX + barW / 2, barY - 8);
+            ctx.fillText('open', barX + barW / 2, barY + barH + 14);
+            ctx.font = 'bold 10px system-ui, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#f1f5f9';
+            ctx.fillText('H=' + eff.toFixed(2), barX + barW + 6, markerY + 4);
+        }
+
+        ctx.font = '11px system-ui, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillStyle = 'rgba(148,163,184,0.65)';
+        ctx.fillText('T = ' + temp.toFixed(2), 12, 20);
+
+        this.updateSide();
+    },
+
+    updateSide: function () {
+        const sent = this.sentence;
+        const step = Math.min(this.step, sent.tokens.length - 1);
+        const nextEl = document.getElementById('mn-iso-next');
+        const metaEl = document.getElementById('mn-iso-meta');
+        const tempVal = document.getElementById('mn-iso-temp-val');
+        if (tempVal) tempVal.textContent = this.temperature.toFixed(2);
+        if (!nextEl || !metaEl) return;
+
+        const isEnd = step >= sent.tokens.length - 1;
+        const nextWord = isEnd ? '|endoftext|' : sent.tokens[step + 1];
+        const entropy = isEnd ? 0.02 : sent.entropy[step + 1];
+        const eff = Math.min(1, entropy * this.temperature);
+        nextEl.textContent = nextWord;
+        nextEl.classList.toggle('is-end', isEnd);
+
+        let label = 'near-certain', cls = 'is-certain';
+        if (!isEnd) {
+            if (eff >= 0.6) { label = 'wide open'; cls = 'is-wide'; }
+            else if (eff >= 0.35) { label = 'open'; cls = 'is-open'; }
+            else if (eff >= 0.12) { label = 'likely'; cls = 'is-likely'; }
+        }
+
+        metaEl.innerHTML = '';
+        const badge = document.createElement('span');
+        badge.className = 'mn-iso-conf ' + cls;
+        badge.textContent = label;
+        metaEl.appendChild(badge);
+        const line = document.createElement('div');
+        line.style.marginTop = '.55em';
+        line.innerHTML = 'tunnel width <b>' + eff.toFixed(2) + '</b>';
+        metaEl.appendChild(line);
+    }
+};
+
+// ============================================================
 // LAZY LOADING VIA INTERSECTION OBSERVER
 // ============================================================
 
@@ -2392,6 +2720,11 @@ function loadIntuitionModule() {
             tempSlider.addEventListener('input', () => PredictionViz.render());
         }
         PredictionViz.render();
+    });
+
+    // Step 5b: simplified truth-tunnel isosurface
+    _lazyRegister('mn-iso-canvas', () => {
+        MnIsoViz.init();
     });
 
     // Start observing everything
