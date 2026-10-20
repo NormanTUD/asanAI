@@ -5,7 +5,7 @@ title: Statistics I — Distributions and Inference
 description: The shape of data — Bernoulli, Binomial, Normal, CLT, Chi-Square, Z-scores, Zipf.
 icon: &#128200;
 part: 1
-order: 8
+order: 10
 color: accent
 topics: math-i, statistics-i
 math: 65
@@ -109,7 +109,7 @@ The first systematic treatment came from **Gerolamo Cardano**, a physician and a
 
 The context that solidified this into modern science was the **“Problem of Points.”** The **Chevalier de Méré** asked **Blaise Pascal** how to fairly split a prize pot if a game of dice is interrupted.
 
-Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considered the founding moment of probability theory. They moved beyond mere counting and used the **Binomial Coefficients** (Pascal's Triangle) to count the possible continuations of an interrupted game (\citetitle{oevresdeformat}, p. 288 ff.).
+Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considered the founding moment of probability theory. They moved beyond mere counting and used the **Binomial Coefficients** (Pascal's Triangle) to count the possible continuations of an interrupted game (\citetitle{oeuvresdeformat}, p. 288 ff.).
 </div>
 
     <div class="statlab-interactive-zone" style="display: block !important">
