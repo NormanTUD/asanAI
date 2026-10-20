@@ -292,8 +292,14 @@ async function recreate_model_if_needed (new_model_config_hash) {
 }
 
 async function _compile_model_ensure_exists() {
-	if (!model) {
-		if (finished_loading) {
+	// Recreate not only when the model is missing, but also when it is dead —
+	// its weight tensors were disposed by a rebuild while the config hash stayed
+	// the same. A disposed model with an unchanged hash would otherwise flow
+	// straight to _compile_model_do_compile, which would "compile" a model whose
+	// weights are gone, leaving predict/fit failing with
+	// "LayersVariable … is already disposed" / "model is undefined".
+	if (!model || model_has_disposed_weights()) {
+		if (!model && finished_loading) {
 			dbg("compile_model: " + language[lang]["model_not_given"]);
 		}
 
@@ -398,6 +404,51 @@ async function _compile_model_do_compile(new_model_config_hash) {
 	return true;
 }
 
+// Silent: true if the model exists but one of its weight tensors has been
+// disposed — i.e. the model was torn down by a rebuild. This is what makes a
+// model "dead" even though the object still exists and the config hash is
+// unchanged. Distinguishes "dead" from "merely uncompiled" (a freshly created
+// model has live weights). Never logs/throws — a dead model must read as dead,
+// not as an error, or the test suite's num_errs counter would trip.
+function model_has_disposed_weights () {
+	try {
+		if (!model || !model.layers) return false;
+		for (var layer_idx = 0; layer_idx < model.layers.length; layer_idx++) {
+			var layer = model.layers[layer_idx];
+			if (!layer) continue;
+			var weights = layer.weights || [];
+			for (var w = 0; w < weights.length; w++) {
+				var wt = weights[w];
+				var t = (wt && typeof wt.val !== "undefined") ? wt.val : wt;
+				if (t && t.isDisposedInternal) return true;
+			}
+		}
+		return false;
+	} catch (e) {
+		return false;
+	}
+}
+
+// Silent liveness check: true only if the global `model` is present,
+// structurally complete, compiled, and none of its weight tensors have been
+// disposed. A config-hash match alone is NOT a safe "already compiled" signal:
+// the model object can be replaced, or its tensors disposed, out from under
+// the hash (e.g. by a concurrent rebuild), which leaves a hash that still
+// matches but a model that is dead/uncompiled. The fast-path must fall through
+// to a real (re)compile in that case, so it ANDs its condition with this check.
+// Never logs/throws — a broken model must read as "not usable", not as an error.
+function model_is_usable () {
+	try {
+		if (!model) return false;
+		if (!model.layers || !model.layers.length) return false;
+		if (!model.input) return false;
+		if (!model.optimizer) return false;
+		return !model_has_disposed_weights();
+	} catch (e) {
+		return false;
+	}
+}
+
 async function compile_model(recursion_level=0) {
 	var __cm_t0 = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
 	function __cm_log(label) {
@@ -425,23 +476,30 @@ async function compile_model(recursion_level=0) {
 	await _compile_model_ensure_exists();
 	__cm_log("_compile_model_ensure_exists done");
 
-	// Fast-path: if the model was already compiled with this exact config,
-	// the whole compile is a no-op. model_config_hash is only ever assigned
-	// in _compile_model_do_compile right after model.compile() succeeds, so
-	// a hash match is a sufficient signal — no need to also test
-	// model.optimizer. (model.optimizer was the previous condition; dropping
-	// it lets the fast-path fire for the redundant compile_model call that
-	// updated_page() issues right after the explicit one in set_config,
-	// even when the first compile hit a transient "model is null" early-out
-	// and left model_config_hash stale for the second call to rediscover.)
-	if (!config_changed) {
-		__cm_log("FAST-PATH: model_config_hash already matches; skipping save/restore + recompile");
+	// Fast-path: if the config is unchanged AND the current model is actually
+	// usable (present, compiled, no disposed weights), the whole compile is a
+	// no-op and we skip save/restore + recompile.
+	//
+	// A config-hash match alone is NOT sufficient: model_config_hash is only
+	// written in _compile_model_do_compile, but the model object can still be
+	// replaced or its tensors disposed out from under that hash by a
+	// concurrent rebuild. In that case the "already compiled" assumption is
+	// false — the (fresh) model created by _compile_model_ensure_exists above
+	// has no optimizer yet, or the previous model's weights are disposed — and
+	// skipping here would leave a dead/uncompiled model that predict/fit then
+	// fail on ("LayersVariable … is already disposed" / "model is undefined").
+	// model_is_usable() is what catches that and forces the real recompile.
+	var __model_usable = model_is_usable();
+	var __fast_path = (!config_changed) && __model_usable;
+	if (__fast_path) {
+		__cm_log("FAST-PATH: config unchanged + model usable; skipping save/restore + recompile");
 		reset_background_color_for_all_layers();
 		try_to_set_output_shape_from_model();
 		write_model_summary_wait();
 		await plot_model_plot(true);
 		return;
 	}
+	__cm_log("slow path: config_changed=" + config_changed + " model_usable=" + __model_usable);
 
 	await _compile_model_save_restore_weights(config_changed, new_model_config_hash);
 	__cm_log("_compile_model_save_restore_weights done");
