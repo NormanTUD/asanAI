@@ -24,7 +24,7 @@
 
 	const LEVELS = [
 		{ xp: 0, name: "Pebble Counter", icon: "🪨" },
-		{ xp: 60, name: "Tally Carver", icon: "🪵" },
+		{ xp: 60, name: "Star Counter", icon: "✨" },
 		{ xp: 160, name: "Abacus Apprentice", icon: "🧮" },
 		{ xp: 320, name: "Logarithm Lover", icon: "📜" },
 		{ xp: 540, name: "Difference Engineer", icon: "⚙️" },
