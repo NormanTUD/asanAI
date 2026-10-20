@@ -102,7 +102,7 @@ A lawyer's friend of a friend got sanctioned after filing a brief whose cases, j
 
 ### The winning painting
 
-A man played with a new image tool, liked one of the four pictures it offered, and entered it — unannounced — in a county-fair art prize. It won \cite[the painting]{theatreopera_wiki} \cite[Midjourney]{midjourney_wiki}. The outrage that followed, "a prompt is not art," is the engine: every new model restarts it, because the true core keeps being true in new places.
+A man played with a new image tool, liked one of the four pictures it offered, and entered it in the **Colorado State Fair**'s art competition (disclosing that he had used Midjourney). It won \cite[the painting]{theatreopera_wiki} \cite[Midjourney]{midjourney_wiki}. The outrage that followed, "a prompt is not art," is the engine: every new model restarts it, because the true core keeps being true in new places.
 
 ### The song that was Drake
 
