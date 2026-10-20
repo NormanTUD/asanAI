@@ -5,7 +5,7 @@ title: Topology and the Geometry of Thought
 description: Why a layer can stretch and squish data but never cut or fold it, what that means for the minimum width of a network, and how to watch a net untangle data in real time.
 icon: &#128640;
 part: 3
-order: 3
+order: 5
 color: sky
 topics: architecture, math-iii, deep-learning, interpretability, topology
 tags: math-heavy, logic-heavy
