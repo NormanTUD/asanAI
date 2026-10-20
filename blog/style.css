@@ -11962,8 +11962,10 @@ html.reader-mode .mnq-hud { --mnq-hud-rest: .28; }
 .mnq-hud-streak { padding: 0; border-radius: 99px; font: 700 11px var(--mn-font-mono); color: var(--mn-coral); background: color-mix(in srgb, var(--mn-coral) 15%, transparent); max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transition: max-width .35s ease, opacity .25s ease, padding .35s ease, margin .35s ease; }
 .mnq-hud:hover .mnq-hud-text, .mnq-hud:focus-visible .mnq-hud-text { max-width: 170px; opacity: 1; }
 .mnq-hud:hover .mnq-hud-streak:not([hidden]), .mnq-hud:focus-visible .mnq-hud-streak:not([hidden]) { max-width: 64px; opacity: 1; padding: 3px 7px; margin-left: 2px; }
-/* the chapter switcher shares the bottom-left corner: lift it above the badge */
-html.mnq-on #chsw-dock { bottom: 72px; }
+/* the chapter switcher and the badge share the bottom-left corner: the
+   switcher sits at the very bottom, the badge above it */
+html:has(#chsw-dock) .mnq-hud { bottom: 76px; }
+html:has(#chsw-dock.is-open) .mnq-hud { opacity: 0; pointer-events: none; }
 html.mnq-panel-open { overflow: hidden; }
 @media print { .mnq-hud, .mnq-toasts, #mnq-lesson { display: none !important; } }
 
@@ -11972,9 +11974,9 @@ html.mnq-panel-open { overflow: hidden; }
 	display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
 	pointer-events: none; width: max-content; max-width: min(420px, calc(100vw - 48px));
 }
-/* the chapter switcher lives in the same bottom-left column — keep the
-   toasts above it so both stay readable */
-html:has(#chsw-dock) .mnq-toasts { --mnq-toasts-bottom: 112px; }
+/* the chapter switcher + badge stack in the same bottom-left column —
+   keep the toasts above the badge so everything stays readable */
+html:has(#chsw-dock) .mnq-toasts { --mnq-toasts-bottom: 132px; }
 .mnq-toast {
 	display: flex; align-items: center; gap: 10px;
 	padding: 8px 16px; border-radius: 12px;
@@ -12132,8 +12134,7 @@ html:has(#chsw-dock) .mnq-toasts { --mnq-toasts-bottom: 112px; }
 .mnq-lesson-b { flex: none; font-size: 11px; }
 @media (max-width: 640px) {
 	.mnq-hud { left: 12px; bottom: 12px; }
-	.mnq-toasts { bottom: 62px; }
-	html.mnq-on #chsw-dock { bottom: 62px; }
+	.mnq-toasts { --mnq-toasts-bottom: 62px; }
 	.mnq-panel-wrap { padding: 0; place-items: stretch; }
 	.mnq-panel { width: 100%; max-height: 100vh; height: 100%; border-radius: 0; }
 	.mnq-panel-head { padding: 18px 56px 12px 16px; }
