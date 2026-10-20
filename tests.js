@@ -165,8 +165,89 @@ function test_not_equal (name, is, should_be) {
 	}
 }
 
+// Resume-from-test support: when --from-test NAME is given (added to the URL
+// as ?from_test=NAME by _run_tests.py), every test_equal before NAME is
+// counted but not run. Non-test_equal calls (test_initializer, test_add_layer,
+// test_shuffle, test_resize_time, …) still run unconditionally so that the
+// global state they mutate stays consistent for the tests we do run.
+var __test_from_test = (function () {
+	try {
+		var m = /[?&]from_test=([^&]+)/.exec(window.location.search);
+		return m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : null;
+	} catch (e) { return null; }
+})();
+// --only-test NAME (repeatable): only run test_equals whose name contains
+// one of the given substrings. Combined with --from-test this lets you run a
+// short slice like "test_custom_tensor through test_check_categorical_predictions".
+var __test_only_tests = (function () {
+	var out = [];
+	try {
+		var re = /[?&]only_test=([^&]+)/g;
+		var m;
+		while ((m = re.exec(window.location.search)) !== null) {
+			out.push(decodeURIComponent(m[1].replace(/\+/g, " ")));
+		}
+	} catch (e) {}
+	return out;
+})();
+// --only-test-count N: stop after N test_equal calls past the resume point.
+// Useful when you want a quick sanity-check slice without running the full
+// tail of the suite.
+var __test_only_count = (function () {
+	try {
+		var m = /[?&]only_test_count=(\d+)/.exec(window.location.search);
+		return m ? parseInt(m[1], 10) : 0;
+	} catch (e) { return 0; }
+})();
+var __test_only_count_used = 0;
+
+var __test_resume_active = (__test_from_test !== null) || __test_only_tests.length > 0 || __test_only_count > 0;
+// __test_resume_reached tracks "we are past the --from-test resume point" —
+// only relevant when --from-test is set. only-test/only-test-count filters
+// are independent and apply on their own.
+var __test_resume_reached = (__test_from_test === null);
+if (__test_resume_active) {
+	var parts = [];
+	if (__test_from_test)      parts.push("from_test=" + __test_from_test);
+	if (__test_only_tests.length) parts.push("only_test=" + __test_only_tests.join(","));
+	if (__test_only_count)      parts.push("only_test_count=" + __test_only_count);
+	console.log("[test_filter] active: " + parts.join(" "));
+}
 function test_equal (name, is, should_be) {
 	num_tests++;
+	// Pre-resume-point: skip if --from-test is set and we haven't reached it yet
+	if (__test_from_test && !__test_resume_reached) {
+		if (name.indexOf(__test_from_test) !== -1) {
+			__test_resume_reached = true;
+			console.log("[from_test] reached \"" + name + "\" — resuming test execution");
+		} else {
+			show_num_tests_overlay("[skipped until resume] " + name);
+			return true;
+		}
+	}
+	// Post-resume-point: skip if --only-test is set and this name doesn't match any allow-list.
+	// Independent of --from-test — if you pass --only-test alone, every test_equal
+	// must match to run; if you pass --from-test + --only-test, the from_test gate
+	// runs first (skipping everything before the resume point), then the only_test
+	// gate runs on everything from the resume point on.
+	if (__test_only_tests.length > 0) {
+		var allowed = false;
+		for (var i = 0; i < __test_only_tests.length; i++) {
+			if (name.indexOf(__test_only_tests[i]) !== -1) { allowed = true; break; }
+		}
+		if (!allowed) {
+			show_num_tests_overlay("[only-test filtered out] " + name);
+			return true;
+		}
+	}
+	// --only-test-count: stop the whole run after N executed test_equal calls past the resume point.
+	// Counts only tests that ACTUALLY ran (i.e. weren't filtered out above).
+	if (__test_only_count > 0) {
+		if (__test_only_count_used >= __test_only_count) {
+			throw new Error("[only-test-count] limit of " + __test_only_count + " reached; stopping test suite");
+		}
+		__test_only_count_used++;
+	}
 	show_num_tests_overlay(name);
 	if(is_equal(is, should_be)) {
 		//log("%c" + name + ": OK", "background: green; color: white");
@@ -1249,7 +1330,17 @@ async function test_clicking_on_example_images_for_prediction() {
 }
 
 function enable_or_disable_show_layer_data(_status) {
-	$("#show_layer_data").prop("checked", _status).trigger("change");
+	// The checkbox's onclick handler runs enable_disable_kernel_images() +
+	// add_layer_debuggers() — the latter is what hooks each layer's apply()
+	// so draw_internal_states() fires and the canvas inside #layer_0_input
+	// gets populated. prop().trigger("change") only fires the change event,
+	// NOT the onclick, so add_layer_debuggers never ran and the test
+	// saw "#layer_0_input: no canvas". Toggle via .click() instead — that
+	// runs both the browser's default action (toggle the checkbox) and the
+	// inline onclick handler.
+	if ($("#show_layer_data").is(":checked") !== _status) {
+		$("#show_layer_data").click();
+	}
 }
 
 async function set_first_kernel_initializer_to_constant (initializer_val) {
@@ -1760,7 +1851,18 @@ async function test_check_categorical_predictions () {
 
 	var all_predictions_are_floats_ok = 1;
 	$(".predict_table td").not(".label_element").each((i, e) => {
-		const got_text = ($(e).text());
+		// The cell text can be a raw float ("0.2218") when bars are off,
+		// OR a percentage tooltip ("22.18%") when bars are still on. The
+		// latter is what happens for softmax predictions because
+		// show_bars_instead_of_numbers() forces true for softmax regardless
+		// of the checkbox, and the click doesn't re-render already-built
+		// example prediction tables. Read data-raw when present (bar mode),
+		// otherwise fall back to text content (number mode). Strip a
+		// trailing "%" so percentages pass looks_like_number.
+		const $e = $(e);
+		const data_raw = $e.find(".bar").attr("data-raw");
+		let got_text = data_raw !== undefined ? data_raw : $e.text();
+		got_text = String(got_text).replace(/%$/, "").trim();
 		if(!looks_like_number(got_text)) {
 			console.error(`test_check_categorical_predictions: got text '${got_text}', which didn't look like a number`);
 			all_predictions_are_floats_ok = 0;
@@ -4979,6 +5081,10 @@ async function run_tests (quick=0, disable_webcam=0) {
 	remove_overlay();
 
 	tf.engine().endScope();
+
+	if (__test_resume_active && !__test_resume_reached) {
+		console.warn("[from_test] \"" + __test_from_test + "\" did not match any test_equal name; every test was skipped");
+	}
 
 	test_summary();
 

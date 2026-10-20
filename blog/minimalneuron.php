@@ -158,7 +158,7 @@ If the output layer's dimensions do not match the target data's dimensions, the 
 
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The Statistical Nature of Learning">
+<div class="md" data-mathlevel="55">
 ## The Statistical Nature of Learning
 
 We often think of Neural Networks as “learning” in the way a human student learns: by understanding concepts. However, mathematically, a Neural Network is simply a statistical machine trying to fit a curve to a distribution.
@@ -195,7 +195,7 @@ This ensures that the “energy” (variance) of the data stays constant as it f
 
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Matrices as Parallel Processing">
+<div class="md" data-mathlevel="45">
 ## Matrices as Parallel Processing
 
 A single neuron computes $y = ax + b$: one input, one weight, one output. But a Transformer with $d_{\text{model}} = 4096$ processes 4096 numbers simultaneously at every step. The bridge between these two scales is the **matrix**.

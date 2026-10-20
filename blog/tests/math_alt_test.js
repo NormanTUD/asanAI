@@ -95,6 +95,11 @@ global.document = {
 	dispatchEvent() {}
 };
 global.window = global;
+// topics.js attaches module-level listeners (e.g. markTocTucked on
+// 'blogPostLoadComplete'); no-op stubs are enough — this harness never
+// fires the events.
+global.addEventListener = function () {};
+global.dispatchEvent = function () {};
 global.localStorage = { getItem() { return null; }, setItem() {} };
 global.CustomEvent = function (name) { this.name = name; };
 global.requestAnimationFrame = function () { return 0; };

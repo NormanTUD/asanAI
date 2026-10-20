@@ -2083,10 +2083,8 @@ async function highlight_code () {
 
 function show_hide_augment_tab () {
 	if($("#auto_augment").is(":checked")) {
-		dbg("[show_hide_augment_tab] " + language[lang]["showing_augmentation"]);
 		$("a[href*=\"tf_ribbon_augmentation\"]").show().parent().show();
 	} else {
-		dbg("[show_hide_augment_tab] " + language[lang]["hiding_augmentation"]);
 		$("a[href*=\"tf_ribbon_augmentation\"]").hide().parent().hide();
 	}
 

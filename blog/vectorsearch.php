@@ -32,7 +32,7 @@ Before diving into vector databases, it's essential to understand what they repl
 
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Keyword Search (Lexical / Sparse)">
+<div class="md" data-mathlevel="55">
 ### 1. Keyword Search (Lexical / Sparse)
 
 The oldest and most intuitive approach. You type words, the system finds documents containing those exact words.
@@ -55,7 +55,7 @@ Where:
 
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Semantic Search (Dense Vector Search)">
+<div class="md" data-mathlevel="50">
 ### 2. Semantic Search (Dense Vector Search)
 
 Instead of matching words, match **meanings**. Both the query and every document are converted to dense vectors by an embedding model. Search becomes geometric: find the vectors closest to the query vector.
@@ -72,7 +72,7 @@ $$
 
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Hybrid Search">
+<div class="md" data-mathlevel="50">
 ### 3. Hybrid Search
 
 The best modern systems combine both approaches:
@@ -92,7 +92,7 @@ Where $\alpha$ controls the balance. This ensures you get both exact keyword pre
 
 <div id="vslab-search-comparison"></div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="How Vector Databases Work">
+<div class="md" data-mathlevel="45">
 ## How Vector Databases Work
 
 A vector database is **not** a traditional relational database with an added vector column. It is a fundamentally different data structure, optimized for a fundamentally different operation: instead of `WHERE name = 'Alice'`, it answers `FIND 10 NEAREST TO [0.23, -0.87, 0.11, ...]`.
@@ -122,7 +122,7 @@ The solution: **Approximate Nearest Neighbor (ANN)** algorithms that sacrifice a
 
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="ANN Algorithms: How Billions of Vectors">
+<div class="md" data-mathlevel="45">
 ## ANN Algorithms: How Billions of Vectors Are Searched in Milliseconds
 
 ### HNSW (Hierarchical Navigable Small World)
@@ -149,7 +149,7 @@ $$
 **Result:** Searching 1 billion vectors takes ~100-200 “hops” instead of 1 billion comparisons.
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="IVF (Inverted File Index)">
+<div class="md" data-mathlevel="45">
 ### IVF (Inverted File Index)
 
 IVF takes a different approach: **pre-cluster** the vectors, then only search relevant clusters.

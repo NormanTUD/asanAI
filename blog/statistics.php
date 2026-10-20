@@ -35,7 +35,7 @@ Furthermore, these distributions are the backbone of the “scaling laws” that
 </div>
 
 <div class="statlab-section">
-    <div class="md" data-mathlevel="50" data-optionaltitle="The Bernoulli Distribution: The Atom of Probability">
+    <div class="md" data-mathlevel="50">
         ### The Bernoulli Distribution: The Atom of Probability
         In \citetitle{arsconjectandi} (\citeyear{arsconjectandi}), \citeauthor{arsconjectandi} defined the simplest possible random variable. It models a single experiment with two outcomes: Success ($1$) and Failure ($0$). It is the “atom” because all complex discrete distributions (like Binomial or Geometric) are just sequences of Bernoulli trials.
 
@@ -53,7 +53,7 @@ Furthermore, these distributions are the backbone of the “scaling laws” that
     </div>
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The Binomial Distribution">
+<div class="md" data-mathlevel="55">
 
 #### The Binomial Distribution
 
@@ -193,7 +193,7 @@ To find Ceres, Gauß didn't just look at the sky; he looked at the **errors** of
 
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="How to Calculate with the Normal Distribution">
+<div class="md" data-mathlevel="55">
 ### How to Calculate with the Normal Distribution
 
 Just as we learned to calculate exact probabilities with the Binomial formula $\binom{n}{k} p^k (1-p)^{n-k}$, we can calculate with the Gauß distribution. However, there is one crucial difference: the Normal Distribution is **continuous**, so we never ask “What is the probability of *exactly* $x$?” (that is always 0 for a continuous variable). Instead, we ask: **“What is the probability that $X$ falls within a range?”**
@@ -228,7 +228,7 @@ This is the same standardization Pearson used in his biometric work to make meas
     </div>
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Step 3: Use the Φ-Table (CDF)">
+<div class="md" data-mathlevel="60">
 #### Step 3: Use the $\Phi$-Table (CDF)
 
 The function $\Phi(z)$ answers one simple question: **“What percentage of all values fall to the LEFT of $z$ on the bell curve?”**
@@ -510,7 +510,7 @@ To bridge the gap between discovery and mathematical permanence, he developed th
     </div>
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The Central Limit Theorem (CLT)">
+<div class="md" data-mathlevel="60">
 ### The Central Limit Theorem (CLT)
 The **Central Limit Theorem** is the bridge between randomness and order. It explains why, even when individual events are chaotic or “flat,” their collective averages inevitably form the **Normal Distribution** (the “Bell Curve”). De Moivre and Laplace first proved it for sums of independent trials; \citeauthor{laplace1810clt} generalized it in \citeyear{laplace1810clt}.
 
@@ -605,7 +605,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 </div>
 
 <div class="statlab-section">
-    <div class="md" data-mathlevel="65" data-optionaltitle="The Gumbel Distribution: The Math of Disasters">
+    <div class="md" data-mathlevel="65">
         ### The Gumbel Distribution: The Math of Disasters
         While the Normal Distribution describes the “average” person, **Emil Gumbel** (1958) wanted to describe the “exceptional” event. If you record the maximum river level every year for 50 years, those maximums will not follow a Bell Curve; they follow a Gumbel Distribution.
 
@@ -643,7 +643,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 </div>
 
 <div class="statlab-section">
-    <div class="md" data-mathlevel="55" data-optionaltitle="The Poisson Distribution: The Law of Rare Events">
+    <div class="md" data-mathlevel="55">
         ### The Poisson Distribution: The Law of Rare Events
         In \citeyear{poisson}, **\citeauthor{poisson}** published \citetitle{poisson}, a broad work on judicial probability that included (in §§ 81–82, pp. 205–207) a derivation of the limit of the Binomial distribution when the number of trials is very large ($n \to \infty$) and the probability is very small ($p \to 0$).
 
@@ -671,7 +671,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 </div>
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Pearson's Biological Link: The Father-Son Study">
+<div class="md" data-mathlevel="50">
 ## Pearson's Biological Link: The Father-Son Study
 
 In 1801, \citeauthor{gauss1809} used least squares to find a planet; in 1895, \citeauthor{pearson1895correlation} used correlation to study human heredity. Building on data originally collected by \citeauthor{galton}, — heights of parents and children in some 200 families — Pearson answered a fundamental question: *How much does one variable actually tell us about another?*
@@ -738,7 +738,7 @@ This is structurally identical to Pearson's $r$: the dot product in the numerato
     </div>
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Bayesian Updating: The Logic of Science">
+<div class="md" data-mathlevel="50">
 ## Bayesian Updating: The Logic of Science
 
 While Gauß sought the “True Path” of planets among noisy observations, the Reverend **Thomas Bayes** was interested in a deeper philosophical question: how do we update our beliefs when we encounter new evidence?
@@ -803,7 +803,7 @@ This behavior can be pictured as **Bayesian inference**, the method named after 
     <div id="plot-bayesian-languages" style="width:100%; height:400px;"></div>
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Entropy (The Messiness Scale)">
+<div class="md" data-mathlevel="45">
 ## Entropy (The Messiness Scale)
 
 While Gauß sought to minimize error in orbits, **Claude Shannon** in \citeyear{shannon1948communication} aimed to find the mathematical limit of communication. His goal was to quantify “Information” itself. He realized that information isn't about what is said, but about how **surprising** the outcome is.
@@ -896,7 +896,7 @@ Pearson realized that to compare “variation” across different scales, he had
 Before a Transformer can “choose” a word, it must understand the landscape of human language. This landscape is not flat; it is a jagged mountain range of probabilities. LLMs are trained to mimic the **Natural Language Distribution** found in massive datasets like Common Crawl.
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Zipf's Law: The Physics of Language">
+<div class="md" data-mathlevel="45">
 ## Zipf's Law: The Physics of Language
 
 Why can an AI guess the next word so effectively? Because human language is not random; it follows a power law. Named after **George Kingsley Zipf**, the law states that the most frequent word occurs twice as often as the second most frequent, three times as often as the third, and so on.
@@ -921,7 +921,7 @@ Where $r$ is the rank of the word and $s$ is the exponent (typically close to 1)
     <div id="plot-zipf-zarathustra" style="width:100%; height:500px;"></div>
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="The Dirichlet Distribution">
+<div class="md" data-mathlevel="65">
 ## The Dirichlet Distribution: The Probability of Probabilities
 
 While Zipf's Law tells us how common words are, it doesn't explain how they “clump” together. To understand how an AI chooses a “topic” before it chooses a word, we need the **Dirichlet Distribution**.
@@ -999,7 +999,7 @@ In LLMs, this is why a prompt works. By typing “Import torch,” you are stati
     </div>
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="The Law of Large Numbers">
+<div class="md" data-mathlevel="50">
 ## The Law of Large Numbers
 
 In the real world, language is a **Non-Stationary Process**. If you only read the first page of \citetitle{nietzsche1883zarathustra}, your statistical “Prior” is heavily biased by the opening scene. 
@@ -1021,7 +1021,7 @@ $$ \bar{X}_n = \frac{1}{n} \sum_{i=1}^{n} X_i \xrightarrow{n \to \infty} \mu $$
 	<div id="plot-zarathustra-convergence"></div>
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Markovian Transitions">
+<div class="md" data-mathlevel="45">
 ## Markovian Transitions (The Probability of “Next”)
 
 An LLM is not just a list of word counts; it is a map of **Conditional Probabilities**. This is the logic of **Andrey Markov** (1906). He proposed that we can predict the future state of a system based solely on its current state.
@@ -1170,7 +1170,7 @@ Thus began Zarathustra's down-going.
 </div>
 
 <div class="statlab-section">
-    <div class="md" data-mathlevel="45" data-optionaltitle="The Chain Rule: Kolmogorov's Logic">
+    <div class="md" data-mathlevel="45">
         ## The Chain Rule: Kolmogorov's Logic
 
         The **Chain Rule of Probability** follows directly from the definition of conditional probability, and sits within the rigorous axiomatic foundation of probability theory established by **\citeauthor{kolmogorov1933}** in *\citetitle{kolmogorov1933}* (\citeyear{kolmogorov1933}). It solves the problem of **Sequential Dependencies**. It explains how to calculate the probability of a complex event by breaking it into a series of conditional steps.

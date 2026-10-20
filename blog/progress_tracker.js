@@ -1,67 +1,43 @@
 /* ════════════════════════════════════════════════════════════════
-   COURSE PROGRESS — segmented per-tile "where I've been" bar
-   (orange #f97316). Active on every page; on the homepage it just
-   paints the bars from saved state; on a subpage it watches scroll
-   in fixed-size PIXEL bands and only marks a band as "seen" once
-   the user has dwelled in it for 3 seconds. A page is therefore
-   "100% read" only when the user has spent ≥ 3 s in every band
-   from top to bottom (including the last one at the very end).
+   COURSE PROGRESS — per-tile "where I've read" bar (orange #f97316).
 
-   Each .course-tile on the homepage gets two children inserted by
-   this script:
+   Each .course-tile gets a 5 px column on its RIGHT edge
+   (.tile-progress-bar). The bar is a MAP of the whole chapter: top =
+   start of the chapter, bottom = end. Every part the reader has read
+   is coloured orange at its own position; everything else stays the
+   dim base colour. One colour only, no percentage.
 
-     • .tile-progress-bar  — 5 px column on the RIGHT edge with 10
-                              stacked segments. Each segment fills
-                              1/10 of the bar's height (no gap, no
-                              padding). Each segment's *own* fill is
-                              continuous — the orange fades smoothly
-                              from 0 → 100% inside the segment as
-                              dwell accumulates for the band that
-                              maps to that segment, instead of
-                              jumping in 10 % steps. Segments share
-                              edges so the orange flows without a
-                              visible seam. No transitions, no
-                              animation — state is rendered
-                              synchronously on load.
-
-     • .tile-progress-tip  — tiny "60 %" pill, bottom-right,
-                              appears on hover. Shows the deepest
-                              dwell-backed percentage reached.
+   Tracking (lesson pages): a chapter is split into SLOTS (100 slots of
+   1 % of the page length each — relative, so a page that grows or
+   shrinks keeps its marks in place). Everything that passes through
+   the visible window while scrolling counts as read (checked at most
+   every MARK_EVERY_MS; the stretch between two checks is filled in for
+   normal scrolling, but not for jumps via TOC/links). The state is
+   written to localStorage immediately.
 
    State lives in a single localStorage key `course_progress`:
       { tiles: {
           [slug]: {
-            maxScrollPct,                      // derived: dwelled/total
-            lastSeen,
-            numBands,                          // ceil(docHeight / BAND)
-            bands: [ { ms, dwelled }, ... ]    // one per 200 px band
+            slots,          // string of SLOT_COUNT chars, '1' = read
+            maxScrollPct,   // derived: read slots in %
+            lastSeen
           }
-      } }
+      }, updatedAt }
 
-   Older shapes (`segments: [bool;10]`, raw `maxScrollPct`) are
-   auto-migrated on load — old %-progress is distributed
-   proportionally across the new band array so users don't lose
-   what they already earned under the previous algorithm.
+   Older shapes (`bands: [{ms, dwelled}]`, `segments: [bool;10]`, raw
+   `maxScrollPct`) are converted to slots on load.
 
-   Dwell pauses while the tab is hidden (visibilitychange) and on
-   scroll/resize the active band switches but its accumulated dwell
-   is kept (cumulative across visits).
-
-   A reset command is logged to the console on every page load so
-   power-users can wipe history from devtools without grepping.
+   Reset only via the JS console: `CourseProgress.reset()` (the command
+   is logged to the console on every page load).
    ════════════════════════════════════════════════════════════════ */
 
 (function () {
 	'use strict';
 
-	const STORAGE_KEY        = 'course_progress';
-	const SAVE_DEBOUNCE_MS   = 300;
-	const SCROLL_THROTTLE_MS = 100;
-	const TOTAL_SEGMENTS     = 10;
-	const SEGMENT_HEIGHT_PCT = 100 / TOTAL_SEGMENTS;
-	const BAND_HEIGHT_PX     = 200;
-	const BAND_DWELL_MS      = 3000;
-	const DWELL_TICK_MS      = 250;
+	const STORAGE_KEY  = 'course_progress';
+	const SLOT_COUNT   = 100;
+	const MARK_EVERY_MS = 500;
+	const OLD_SEGMENTS = 10;
 
 	function defaultState() {
 		return {
@@ -70,85 +46,148 @@
 		};
 	}
 
+	function emptySlots() {
+		return new Array(SLOT_COUNT + 1).join('0');
+	}
+
+	/* Altdaten (Bänder / Segmente / Prozent) in Slots umrechnen */
 	function normalizeTile(raw) {
-		let maxScrollPct = 0;
-		let bands        = null;
-		let numBands     = 0;
+		let slots = null;
 
 		if (raw && typeof raw === 'object') {
-			if (Array.isArray(raw.bands) && raw.bands.length > 0) {
-				bands = new Array(raw.bands.length);
-				let dwelledCount = 0;
-				for (let i = 0; i < raw.bands.length; i++) {
-					const b = raw.bands[i];
-					const ms = (b && isFinite(Number(b.ms)))
-						? Math.max(0, Math.min(BAND_DWELL_MS, Number(b.ms)))
-						: 0;
-					const dwelled = !!(b && b.dwelled) || ms >= BAND_DWELL_MS;
-					bands[i] = { ms: dwelled ? BAND_DWELL_MS : ms, dwelled: dwelled };
-					if (dwelled) dwelledCount++;
+			if (typeof raw.slots === 'string' && raw.slots.length === SLOT_COUNT) {
+				slots = raw.slots.replace(/[^1]/g, '0');
+			} else if (Array.isArray(raw.bands) && raw.bands.length > 0) {
+				const n = raw.bands.length;
+				let s = '';
+				for (let j = 0; j < SLOT_COUNT; j++) {
+					const b = raw.bands[Math.min(n - 1, Math.floor(j * n / SLOT_COUNT))];
+					s += (b && (b.dwelled || Number(b.ms) >= 3000)) ? '1' : '0';
 				}
-				numBands     = bands.length;
-				maxScrollPct = (dwelledCount / numBands) * 100;
-			} else if (typeof raw.maxScrollPct === 'number' && isFinite(raw.maxScrollPct)) {
-				maxScrollPct = Math.min(100, Math.max(0, raw.maxScrollPct));
+				slots = s;
 			} else if (Array.isArray(raw.segments)) {
-				/* Older shape: segments[0..9] of booleans → maxScrollPct */
-				let trueCount = 0;
-				for (let i = 0; i < Math.min(raw.segments.length, TOTAL_SEGMENTS); i++) {
-					if (raw.segments[i] === true) trueCount++;
+				let s = '';
+				for (let j = 0; j < SLOT_COUNT; j++) {
+					s += raw.segments[Math.floor(j * OLD_SEGMENTS / SLOT_COUNT)] === true ? '1' : '0';
 				}
-				maxScrollPct = trueCount * SEGMENT_HEIGHT_PCT;
+				slots = s;
+			} else if (typeof raw.maxScrollPct === 'number' && isFinite(raw.maxScrollPct)) {
+				const k = Math.round(Math.min(100, Math.max(0, raw.maxScrollPct)) / 100 * SLOT_COUNT);
+				slots = new Array(k + 1).join('1') + new Array(SLOT_COUNT - k + 1).join('0');
 			}
 		}
+		if (!slots) slots = emptySlots();
 
 		const lastSeen = raw && isFinite(Number(raw.lastSeen)) && Number(raw.lastSeen) > 0
 			? Number(raw.lastSeen)
 			: 0;
 
 		return {
-			maxScrollPct: maxScrollPct,
-			lastSeen:     lastSeen,
-			numBands:     numBands,
-			bands:        bands
+			slots:        slots,
+			maxScrollPct: readPct(slots),
+			lastSeen:     lastSeen
 		};
 	}
 
-	let state     = defaultState();
-	let saveTimer = null;
+	function readPct(slots) {
+		const m = slots.match(/1/g);
+		return m ? (m.length / SLOT_COUNT) * 100 : 0;
+	}
 
+	let state = defaultState();
+	let lsWarned = false;
+	let storeReady = false;   // erst nach dem ersten IndexedDB-Lesen schreiben
+
+	function parseState(parsed) {
+		if (!parsed || typeof parsed !== 'object') return null;
+		const normalizedTiles = Object.create(null);
+		if (parsed.tiles && typeof parsed.tiles === 'object') {
+			for (const slug in parsed.tiles) {
+				if (Object.prototype.hasOwnProperty.call(parsed.tiles, slug)) {
+					normalizedTiles[slug] = normalizeTile(parsed.tiles[slug]);
+				}
+			}
+		}
+		return { tiles: normalizedTiles, updatedAt: Number(parsed.updatedAt) || 0 };
+	}
+
+	/* den neueren Stand übernehmen (Speicher vs. gelesener Stand) */
+	function adoptIfNewer(s) {
+		if (s && s.updatedAt >= state.updatedAt) { state = s; return true; }
+		return false;
+	}
+
+	/* localStorage lesen (synchron, schnell). Ist er voll oder blockiert,
+	   bleibt der Stand im Speicher bzw. kommt aus IndexedDB (idbLoad). */
 	function loadState() {
 		try {
 			if (typeof localStorage === 'undefined') return;
 			const raw = localStorage.getItem(STORAGE_KEY);
 			if (!raw) return;
-			const parsed = JSON.parse(raw);
-			if (!parsed || typeof parsed !== 'object') return;
-
-			const normalizedTiles = Object.create(null);
-			if (parsed.tiles && typeof parsed.tiles === 'object') {
-				for (const slug in parsed.tiles) {
-					if (Object.prototype.hasOwnProperty.call(parsed.tiles, slug)) {
-						normalizedTiles[slug] = normalizeTile(parsed.tiles[slug]);
-					}
-				}
-			}
-			state = {
-				tiles:     normalizedTiles,
-				updatedAt: Number(parsed.updatedAt) || 0
-			};
-		} catch (e) { /* disabled / corrupt — keep default */ }
+			adoptIfNewer(parseState(JSON.parse(raw)));
+		} catch (e) { /* disabled / corrupt — keep what we have */ }
 	}
 
-	function saveState() {
-		if (saveTimer) clearTimeout(saveTimer);
-		saveTimer = setTimeout(function () {
-			saveTimer = null;
+	/* ── IndexedDB als zweiter, robuster Speicher ──────────────────
+	   localStorage ist pro Adresse auf ~5 MB begrenzt und wird auf
+	   localhost mit dem Toolkit geteilt (das dort ganze Modelle ablegt).
+	   Ist er voll, schlägt das Schreiben still fehl und der Fortschritt
+	   wäre nach F5 weg. IndexedDB hat viel mehr Platz. */
+	const IDB_NAME = 'asanai_blog';
+	const IDB_STORE = 'kv';
+	let idbPromise = null;
+
+	function idb() {
+		if (idbPromise) return idbPromise;
+		idbPromise = new Promise(function (resolve) {
 			try {
-				state.updatedAt = Date.now();
-				localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-			} catch (e) { /* quota / private mode */ }
-		}, SAVE_DEBOUNCE_MS);
+				if (!window.indexedDB) { resolve(null); return; }
+				const req = indexedDB.open(IDB_NAME, 1);
+				req.onupgradeneeded = function () { req.result.createObjectStore(IDB_STORE); };
+				req.onsuccess = function () { resolve(req.result); };
+				req.onerror = function () { resolve(null); };
+				req.onblocked = function () { resolve(null); };
+			} catch (e) { resolve(null); }
+		});
+		return idbPromise;
+	}
+
+	function idbSave(json) {
+		idb().then(function (db) {
+			if (!db) return;
+			try { db.transaction(IDB_STORE, 'readwrite').objectStore(IDB_STORE).put(json, STORAGE_KEY); } catch (e) { /* ignore */ }
+		});
+	}
+
+	/* IndexedDB lesen und übernehmen, falls neuer → callback(changed) */
+	function idbLoad(cb) {
+		idb().then(function (db) {
+			if (!db) { cb(false); return; }
+			try {
+				const req = db.transaction(IDB_STORE, 'readonly').objectStore(IDB_STORE).get(STORAGE_KEY);
+				req.onsuccess = function () {
+					let s = null;
+					try { s = req.result ? parseState(JSON.parse(req.result)) : null; } catch (e) { s = null; }
+					cb(adoptIfNewer(s));
+				};
+				req.onerror = function () { cb(false); };
+			} catch (e) { cb(false); }
+		});
+	}
+
+	/* sofort speichern — in localStorage UND IndexedDB */
+	function saveState() {
+		state.updatedAt = Date.now();
+		const json = JSON.stringify(state);
+		try {
+			localStorage.setItem(STORAGE_KEY, json);
+		} catch (e) {
+			if (!lsWarned) {
+				lsWarned = true;
+				try { console.warn('Course Progress: localStorage is full or blocked — saving to IndexedDB instead.'); } catch (e2) {}
+			}
+		}
+		idbSave(json);
 	}
 
 	function getTiles() {
@@ -166,78 +205,42 @@
 		return getSlugFromHref(window.location.pathname);
 	}
 
-	function buildBar() {
-		const bar = document.createElement('div');
-		bar.className = 'tile-progress-bar';
-		bar.setAttribute('aria-hidden', 'true');
-		for (let i = 0; i < TOTAL_SEGMENTS; i++) {
-			const seg = document.createElement('span');
-			seg.className = 'seg';
-			seg.style.setProperty('--fill', '0%');
-			bar.appendChild(seg);
+	/* Der Balken steht für die ganze Länge des Kapitels: jede gelesene
+	   Stelle wird an ihrer Position orange (nur eine Farbe). */
+	function readMapGradient(ts) {
+		const slots = (ts && typeof ts.slots === 'string') ? ts.slots : emptySlots();
+		const stops = [];
+		let run = slots.charAt(0);
+		let start = 0;
+		for (let i = 1; i <= SLOT_COUNT; i++) {
+			const c = i < SLOT_COUNT ? slots.charAt(i) : null;
+			if (c !== run) {
+				const color = run === '1' ? 'var(--cp-orange)' : 'var(--cp-orange-dim)';
+				stops.push(color + ' ' + (start / SLOT_COUNT * 100).toFixed(2) + '% ' + (i / SLOT_COUNT * 100).toFixed(2) + '%');
+				run = c;
+				start = i;
+			}
 		}
-		return bar;
-	}
-
-	function buildTip() {
-		const tip = document.createElement('span');
-		tip.className = 'tile-progress-tip';
-		tip.setAttribute('aria-hidden', 'true');
-		tip.textContent = '0%';
-		return tip;
+		return 'linear-gradient(to bottom, ' + stops.join(', ') + ')';
 	}
 
 	function renderTile(tile, ts) {
 		let bar = tile.querySelector(':scope > .tile-progress-bar');
 		if (!bar) {
-			bar = buildBar();
+			bar = document.createElement('div');
+			bar.className = 'tile-progress-bar tile-progress-map';
+			bar.setAttribute('aria-hidden', 'true');
 			tile.appendChild(bar);
-		} else if (bar.children.length !== TOTAL_SEGMENTS) {
-			bar.innerHTML = '';
-			for (let i = 0; i < TOTAL_SEGMENTS; i++) {
-				const seg = document.createElement('span');
-				seg.className = 'seg';
-				seg.style.setProperty('--fill', '0%');
-				bar.appendChild(seg);
-			}
 		}
+		const tip = tile.querySelector(':scope > .tile-progress-tip');
+		if (tip) tip.remove();
+		bar.innerHTML = '';
+		bar.classList.add('tile-progress-map');
+		bar.style.background = readMapGradient(ts);
 
-		let tip = tile.querySelector(':scope > .tile-progress-tip');
-		if (!tip) {
-			tip = buildTip();
-			tile.appendChild(tip);
-		}
-
-		const maxScroll  = (ts && typeof ts.maxScrollPct === 'number') ? ts.maxScrollPct : 0;
-		const segElements = bar.children;
-		let fullyFilledCount = 0;
-
-		for (let i = 0; i < TOTAL_SEGMENTS; i++) {
-			const segStart = i * SEGMENT_HEIGHT_PCT;
-			const segEnd   = (i + 1) * SEGMENT_HEIGHT_PCT;
-
-			let fillPct;
-			if (maxScroll >= segEnd) {
-				fillPct = 100;
-				fullyFilledCount++;
-			} else if (maxScroll > segStart) {
-				fillPct = ((maxScroll - segStart) / SEGMENT_HEIGHT_PCT) * 100;
-			} else {
-				fillPct = 0;
-			}
-
-			const el = segElements[i];
-			if (el) {
-				el.style.setProperty('--fill', fillPct.toFixed(2) + '%');
-				if (fillPct >= 100) el.classList.add('filled');
-				else                el.classList.remove('filled');
-			}
-		}
-
-		tip.textContent = Math.round(maxScroll) + '%';
-
-		if (fullyFilledCount === TOTAL_SEGMENTS) tile.classList.add('tile-visited');
-		else                                     tile.classList.remove('tile-visited');
+		const allRead = !!(ts && typeof ts.slots === 'string' && ts.slots.indexOf('0') === -1);
+		if (allRead) tile.classList.add('tile-visited');
+		else         tile.classList.remove('tile-visited');
 	}
 
 	function setupTile(tile) {
@@ -245,213 +248,111 @@
 			tile.dataset.slug = getSlugFromHref(tile.getAttribute('href'));
 		}
 		const slug = tile.dataset.slug;
-		const ts   = slug ? state.tiles[slug] : null;
-		renderTile(tile, ts);
+		renderTile(tile, slug ? state.tiles[slug] : null);
+	}
+
+	function paintTiles() {
+		const tiles = getTiles();
+		for (let i = 0; i < tiles.length; i++) setupTile(tiles[i]);
+	}
+
+	/* Inhalt sichtbar? (Lade-Bildschirm weg, #contents eingeblendet) */
+	function contentShown() {
+		if (!document.documentElement.classList.contains('is-ready')) return false;
+		const c = document.getElementById('contents');
+		return !c || c.style.display !== 'none';
 	}
 
 	function trackSubpage(slug) {
 		if (!slug) return;
 
-		let ts = state.tiles[slug];
-		if (!ts) {
-			ts = {
-				maxScrollPct: 0,
-				lastSeen:     0,
-				numBands:     0,
-				bands:        []
-			};
+		let markTimer = null;
+		let lastTop   = null;   // Scrollposition beim letzten Markieren
+		let pageReady = false;
+
+		/* sichtbaren Bereich als gelesen markieren und sofort speichern */
+		function markVisible() {
+			markTimer = null;
+			if (!storeReady || !pageReady || !contentShown() || document.visibilityState !== 'visible') return;
+			const doc = document.documentElement;
+			const total = Math.max(doc.scrollHeight, document.body ? document.body.scrollHeight : 0);
+			const view  = window.innerHeight || 0;
+			if (total <= 0 || view <= 0) return;
+			const top = Math.max(0, window.scrollY || doc.scrollTop || 0);
+			// von der letzten bis zur aktuellen Position alles mitnehmen — aber
+			// nur bei normalem Scrollen, nicht bei Sprüngen (TOC, Links)
+			const fill = lastTop !== null && Math.abs(top - lastTop) <= 2 * view;
+			const lo = fill ? Math.min(lastTop, top) : top;
+			const hi = fill ? Math.max(lastTop, top) : top;
+			lastTop = top;
+			const from = Math.max(0, Math.floor(lo / total * SLOT_COUNT));
+			const to   = Math.min(SLOT_COUNT - 1, Math.ceil((hi + view) / total * SLOT_COUNT) - 1);			if (to < from) return;
+
+			// frisch laden: ein anderer Tab kann inzwischen geschrieben haben
+			loadState();
+			const ts = state.tiles[slug] || normalizeTile(null);
+			let slots = ts.slots;
+			let changed = false;
+			for (let i = from; i <= to; i++) {
+				if (slots.charAt(i) !== '1') {
+					slots = slots.slice(0, i) + '1' + slots.slice(i + 1);
+					changed = true;
+				}
+			}
+			if (!changed && state.tiles[slug]) return;
+			ts.slots        = slots;
+			ts.maxScrollPct = readPct(slots);
+			ts.lastSeen     = Date.now();
 			state.tiles[slug] = ts;
-		}
-		if (typeof ts.maxScrollPct !== 'number' || !isFinite(ts.maxScrollPct)) {
-			ts.maxScrollPct = 0;
-		}
-		if (!Array.isArray(ts.bands))                  ts.bands    = [];
-		if (typeof ts.numBands !== 'number')           ts.numBands = 0;
-
-		let dirty         = false;
-		let saveTmr       = null;
-		let activeBand    = -1;
-		let lastTickTime  = 0;
-		let dwellTickHndl = null;
-
-		function flush() {
-			saveTmr = null;
-			if (!dirty) return;
-			dirty = false;
-			ts.lastSeen = Date.now();
 			saveState();
+			paintTiles(); // Kacheln auf dieser Seite sofort mitziehen
 		}
 
-		function scheduleFlush() {
-			dirty = true;
-			if (saveTmr) clearTimeout(saveTmr);
-			saveTmr = setTimeout(flush, SAVE_DEBOUNCE_MS);
+		/* Alles, was beim Scrollen durchs Fenster läuft, zählt als gelesen.
+		   Gedrosselt: höchstens alle MARK_EVERY_MS ein Durchgang. Damit beim
+		   schnellen Scrollen keine Lücken entstehen, wird zusätzlich der
+		   Bereich zwischen letzter und aktueller Position mit markiert. */
+		function queueMark() {
+			if (markTimer) return;
+			markTimer = setTimeout(markVisible, MARK_EVERY_MS);
 		}
 
-		function recomputeMax() {
-			if (!ts.numBands) { ts.maxScrollPct = 0; return; }
-			let dwelled     = 0;
-			let partialFrac = 0;
-			for (let i = 0; i < ts.bands.length; i++) {
-				const b = ts.bands[i];
-				if (!b) continue;
-				if (b.dwelled) dwelled++;
-				else if (i === activeBand) {
-					partialFrac = Math.min(1, b.ms / BAND_DWELL_MS);
-				}
-			}
-			ts.maxScrollPct = ((dwelled + partialFrac) / ts.numBands) * 100;
+		window.addEventListener('scroll', queueMark, { passive: true });
+		window.addEventListener('resize', queueMark, { passive: true });
+		document.addEventListener('visibilitychange', function () {
+			if (document.visibilityState === 'visible') queueMark();
+		});
+		// Erst messen, wenn der Inhalt wirklich angezeigt wird (revealContent()
+		// setzt html.is-ready und blendet #contents ein) — solange der
+		// Lade-Bildschirm liegt, ist die Seite nur ein Fenster hoch und alles
+		// würde als gelesen gelten.
+		if (contentShown()) {
+			pageReady = true;
+		} else {
+			const mo = new MutationObserver(function () {
+				if (!contentShown()) return;
+				mo.disconnect();
+				pageReady = true;
+				lastTop = null;
+				queueMark();
+			});
+			mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 		}
+		// Beim Verlassen den letzten Stand noch mitnehmen
+		window.addEventListener('pagehide', markVisible);
 
-		function ensureBands(numBands) {
-			if (ts.numBands === numBands && ts.bands.length === numBands) return false;
-
-			const old = ts.bands;
-			const migrateFromPct = (old.length === 0 && ts.maxScrollPct > 0)
-				? ts.maxScrollPct
-				: null;
-
-			ts.bands = new Array(numBands);
-			for (let i = 0; i < numBands; i++) {
-				ts.bands[i] = old[i]
-					? { ms: old[i].ms || 0, dwelled: !!old[i].dwelled }
-					: { ms: 0, dwelled: false };
-			}
-
-			if (migrateFromPct !== null) {
-				const fully = Math.floor((migrateFromPct / 100) * numBands);
-				for (let i = 0; i < fully && i < numBands; i++) {
-					ts.bands[i].ms      = BAND_DWELL_MS;
-					ts.bands[i].dwelled = true;
-				}
-				const remainder = (migrateFromPct / 100) * numBands - fully;
-				if (fully < numBands && remainder > 0) {
-					ts.bands[fully].ms = Math.min(
-						BAND_DWELL_MS,
-						Math.floor(remainder * BAND_DWELL_MS)
-					);
-				}
-			}
-
-			ts.numBands = numBands;
-			if (activeBand >= numBands) activeBand = numBands - 1;
-			return true;
-		}
-
-		function dwellTick() {
-			if (activeBand < 0 || activeBand >= ts.bands.length) {
-				stopDwellTick();
-				return;
-			}
-			const band = ts.bands[activeBand];
-			if (!band || band.dwelled) {
-				stopDwellTick();
-				return;
-			}
-			if (document.visibilityState !== 'visible') {
-				lastTickTime = 0;
-				return;
-			}
-			const now = performance.now();
-			const dt  = lastTickTime
-				? Math.min(now - lastTickTime, DWELL_TICK_MS * 3)
-				: DWELL_TICK_MS;
-			lastTickTime = now;
-			band.ms = Math.min(BAND_DWELL_MS, band.ms + dt);
-			if (band.ms >= BAND_DWELL_MS) {
-				band.ms      = BAND_DWELL_MS;
-				band.dwelled = true;
-				stopDwellTick();
-			}
-			recomputeMax();
-			scheduleFlush();
-		}
-
-		function startDwellTick() {
-			if (dwellTickHndl) return;
-			lastTickTime  = 0;
-			dwellTickHndl = setInterval(dwellTick, DWELL_TICK_MS);
-		}
-
-		function stopDwellTick() {
-			if (dwellTickHndl) {
-				clearInterval(dwellTickHndl);
-				dwellTickHndl = null;
-			}
-		}
-
-		function updateScroll() {
-			const scrollHeight = document.documentElement.scrollHeight;
-			const innerHeight  = window.innerHeight || 0;
-			if (innerHeight <= 0 || scrollHeight <= innerHeight) {
-				/* Page fits in viewport, hasn't loaded yet, or is empty.
-				   Never auto-mark as fully seen — a page that just
-				   opened has not been "read" yet. We only respond to
-				   real scroll events. */
-				stopDwellTick();
-				activeBand = -1;
-				return;
-			}
-			const docHeight    = scrollHeight - innerHeight;
-			const numBands     = Math.max(1, Math.ceil(docHeight / BAND_HEIGHT_PX));
-			const bandsChanged = ensureBands(numBands);
-			if (bandsChanged) {
-				recomputeMax();
-				scheduleFlush();
-			}
-
-			const scrollFrac = Math.min(1, Math.max(0, window.scrollY / docHeight));
-			const newBand    = Math.min(numBands - 1, Math.floor(scrollFrac * numBands));
-
-			if (newBand !== activeBand) {
-				activeBand = newBand;
-				const band = ts.bands[activeBand];
-				if (band && !band.dwelled) {
-					stopDwellTick();
-					startDwellTick();
-				} else {
-					stopDwellTick();
-				}
-				recomputeMax();
-				scheduleFlush();
-			}
-		}
-
-		let scrollTickTimer = null;
-		function onScroll() {
-			if (scrollTickTimer) return;
-			scrollTickTimer = setTimeout(function () {
-				scrollTickTimer = null;
-				updateScroll();
-			}, SCROLL_THROTTLE_MS);
-		}
-
-		function onVisibility() {
-			if (document.visibilityState !== 'visible') {
-				stopDwellTick();
-			} else if (activeBand >= 0) {
-				const band = ts.bands[activeBand];
-				if (band && !band.dwelled) startDwellTick();
-			}
-		}
-
-		window.addEventListener('scroll', onScroll, { passive: true });
-		window.addEventListener('resize', onScroll, { passive: true });
-		document.addEventListener('visibilitychange', onVisibility, { passive: true });
-		window.addEventListener('beforeunload', flush);
-
-		updateScroll();
+		if (pageReady) queueMark();
 	}
 
 	function logResetHint() {
 		const label    = '%c Course Progress %c';
-		const cmd      = 'reset →  localStorage.removeItem("' + STORAGE_KEY + '")';
+		const cmd      = 'reset →  CourseProgress.reset()';
 		const cssLabel = 'background:#f97316;color:#fff;font-weight:bold;padding:2px 6px;border-radius:3px 0 0 3px;';
 		const cssCmd   = 'background:#fff7ed;color:#f97316;font-family:ui-monospace,Menlo,monospace;padding:2px 6px;border-radius:0 3px 3px 0;border:1px solid #f97316;border-left:none;';
 		try {
 			console.log(label + ' ' + cmd, cssLabel, cssCmd);
 		} catch (e) {
-			try { console.warn('Course Progress: localStorage.removeItem("' + STORAGE_KEY + '")'); } catch (e2) {}
+			try { console.warn('Course Progress: reset with CourseProgress.reset()'); } catch (e2) {}
 		}
 	}
 
@@ -460,14 +361,32 @@
 			loadState();
 			logResetHint();
 
-			const tiles = getTiles();
-			if (tiles.length > 0) {
-				for (let i = 0; i < tiles.length; i++) setupTile(tiles[i]);
-				return;
-			}
+			// Kacheln (Startseite, aber auch Kacheln auf Lektionsseiten) malen
+			// und neu malen, sobald sich der Stand geändert haben kann:
+			// zurück zur Seite (bfcache), Tab wieder sichtbar, anderer Tab.
+			paintTiles();
+			// IndexedDB nachladen (asynchron) — falls dort ein neuerer Stand
+			// liegt, z. B. weil localStorage voll ist, neu malen
+			idbLoad(function (changed) {
+				storeReady = true;
+				if (changed) paintTiles();
+			});
+			const repaint = function () {
+				loadState();
+				paintTiles();
+				idbLoad(function (changed) { if (changed) paintTiles(); });
+			};
+			window.addEventListener('pageshow', repaint);
+			document.addEventListener('visibilitychange', function () {
+				if (document.visibilityState === 'visible') repaint();
+			});
+			window.addEventListener('storage', function (e) {
+				if (!e.key || e.key === STORAGE_KEY) repaint();
+			});
 
+			// Lektionsseite → mitlesen (unabhängig davon, ob Kacheln da sind)
 			const slug = getCurrentSlug();
-			if (slug && slug !== 'index' && slug !== 'index_full') {
+			if (slug && slug !== 'index' && slug !== 'index_full' && slug !== 'blog' && !document.querySelector('.course-overview')) {
 				trackSubpage(slug);
 			}
 		} catch (e) {
@@ -477,22 +396,13 @@
 
 	window.CourseProgress = {
 		reset: function () {
+			// leeren Stand mit neuem Zeitstempel in BEIDE Speicher schreiben,
+			// damit kein älterer Stand (localStorage / IndexedDB) zurückkommt
 			state = defaultState();
 			try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
-			const tiles = getTiles();
-			for (let i = 0; i < tiles.length; i++) {
-				const tile = tiles[i];
-				tile.classList.remove('tile-visited');
-				const bar = tile.querySelector(':scope > .tile-progress-bar');
-				if (bar) {
-					for (let j = 0; j < bar.children.length; j++) {
-						bar.children[j].classList.remove('filled');
-						bar.children[j].style.setProperty('--fill', '0%');
-					}
-				}
-				const tip = tile.querySelector(':scope > .tile-progress-tip');
-				if (tip) tip.textContent = '0%';
-			}
+			saveState();
+			paintTiles();
+			return 'Course progress reset.';
 		},
 		get: function () {
 			return JSON.parse(JSON.stringify(state));

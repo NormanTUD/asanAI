@@ -24,7 +24,7 @@ This chapter covers how audio is represented, how it is encoded and decoded, and
 A raw audio waveform is a 1-D signal sampled at 16 kHz or 44.1 kHz, a sequence of 16,000 to 44,100 floats **per second**. That is too dense for any model to ingest directly. Modern systems compress audio through one of three representations:
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Spectrograms (and Mel-spectrograms)">
+<div class="md" data-mathlevel="50">
 ### 1. Spectrograms (and Mel-spectrograms)
 
 A spectrogram is a 2-D representation: **time on the x-axis, frequency on the y-axis, intensity as colour**. It is computed by Short-Time Fourier Transform (STFT): split the waveform into 20–40 ms windows, compute the magnitude of the FFT, stack them.

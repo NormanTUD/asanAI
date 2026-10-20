@@ -1106,7 +1106,7 @@ You don't need to memorise the eight axioms. What you need to remember is:
 
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Scalars and vectors">
+<div class="md" data-mathlevel="45">
 ## Scalars and Vectors
 
 ### Scalars
@@ -1181,7 +1181,7 @@ $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
 	</div>
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Arrays, vectors, matrices, and tensors">
+<div class="md" data-mathlevel="45">
 ### Arrays, vectors, matrices, and the word "tensor"
 
 You have seen scalars, vectors, and matrices. You can stack them in a grid of grids to get more structure. Python and PyTorch call these multidimensional arrays *tensors* — that is the meaning of the word in this course:
@@ -1425,7 +1425,7 @@ Try both below.
   <div class="tcalc-detail" id="tcalc-contr-detail"></div>
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="Where the words come from">
+<div class="md" data-mathlevel="40">
 ### Where the words come from
 Each word is old, and each was coined to solve a concrete problem.
 
@@ -1445,7 +1445,7 @@ Each word is old, and each was coined to solve a concrete problem.
   if (typeof initTcalcContraction === 'function') initTcalcContraction();
 </script>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="Chaining Functions (Composition)">
+<div class="md" data-mathlevel="40">
 ## Chaining Functions (Composition)
 
 In programming and math, we often want to take the result of one function and plug it directly into another. This is called **composition**. If we have a function $f$ and a function $g$, applying $f$ first and then $g$ is written as $(g \circ f)(x)$, which is just a shorthand for $g(f(x))$. A deep network is built exactly this way: each layer is a function acting on the previous layer's output, so the whole network is a **chain of composed functions**, and — in Olah's framing — the role that *types* play in programming is played by *representations*: two layers can be composed only when the output representation of one matches the input the next expects (\cite[Olah, 2015]{colah2015types}).
@@ -1482,7 +1482,7 @@ We can visualize these relationships using a triangle diagram. It shows that the
 </center>
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="The Hadamard Product">
+<div class="md" data-mathlevel="45">
 ## The Hadamard Product ($\odot$)
 
 The **Hadamard Product** ($\odot$) was introduced by \citeauthor{hadamardproduct} to study **singularities** in complex power series: it first appears in his \citeyear{hadamardproduct} paper \citetitle{hadamardproduct}, and the related **Hadamard multiplication theorem** dates from 1899. It is defined for vectors as $\vec{a} \odot \vec{b} = (a_1 b_1, \dots, a_n b_n)^T$ — the coefficients are multiplied term by term — which is exactly what lets one predict the analytic continuation and boundaries of functions derived from known ones.
@@ -1521,7 +1521,7 @@ Adjust the values in vectors $\vec{a}$ and $\vec{b}$ to see how the resulting ve
     </div>
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Matrix Transposition">
+<div class="md" data-mathlevel="45">
 ## Matrix Transposition
 
 Transposing a matrix means flipping it over its main diagonal, turning rows into columns and columns into rows. If $A$ is an $m \times n$ matrix with elements $a_{ij}$, then the transpose $A^T$ is an $n \times m$ matrix where $(A^T)_{ij} = A_{ji}$ (\cite[Boyd & Vandenberghe, Applied Linear Algebra, §6.3.1, p. 115]{boyd2018appliedlinearalgebra}).
@@ -1537,7 +1537,7 @@ A^T = \begin{pmatrix} 1 & 4 \\ 2 & 5 \\ 3 & 6 \end{pmatrix}$$
 The idea of matrix transposition was introduced in 1858 by the British mathematician \citeauthor{cayleymemoirmatrices} in his paper \citetitle{cayleymemoirmatrices}. It arose from the study of bilinear and quadratic forms, where swapping rows and columns was needed to express symmetry properties.
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="Softmax and cross-entropy">
+<div class="md" data-mathlevel="65">
 ## Softmax and Cross-Entropy
 
 Two vector operations appear so often in AI that they deserve explicit definitions here, even though they are first motivated in the Statistics and Loss chapters.

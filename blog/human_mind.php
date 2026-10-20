@@ -46,7 +46,7 @@ The single most important reframing for our purposes is that the brain is not a 
 This is not a metaphor that merely *rhymes* with machine learning. It is the same object. A neural network in training is a generative model whose parameters are updated to **minimize a loss function**, and the brain is a generative model whose synapses are updated to minimize a **prediction error**. The "loss" that gradient descent descends is, in the nervous system, the "surprise" that the nervous system is wired to drive toward zero. When you watch a Transformer's training curve fall, you are watching, in slow motion and on a different substrate, exactly the process a forager's brain runs to survive the next hour. The entire edifice of "learning from data" was invented by evolution before the word *data* existed.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Reward: The Reinforcement Learning That Was Already Running">
+<div class="md" data-mathlevel="55">
 ### Reward: The Reinforcement Learning That Was Already Running
 
 The connection is even more literal in the reward system. In a landmark series of experiments, \citeauthorlastnameand{schultz1997dopamine} showed that the dopamine neurons of the primate midbrain do not fire when a reward *arrives*, but when a reward is **better or worse than predicted** — their activity tracks the **prediction error** of the reward. The signal is, to a striking degree of quantitative agreement, the same temporal-difference error that reinforcement-learning algorithms compute:
@@ -273,7 +273,7 @@ That second move is not decoration. It is the key. A bland fact — "item three 
 So the memory palace is not "a picture of a house." It is a **data structure**: a pre-built, ordered set of slots (the loci), into which you have written transformed copies of your data (the images), to be read back by traversal (the walk).
 </div>
 
-<div class="md" data-mathlevel="20" data-optionaltitle="The payoff: a memory palace is a hand-built vector space">
+<div class="md" data-mathlevel="20">
 #### The payoff: a memory palace is a hand-built vector space
 
 Now the point of this whole chapter. Read the two structures side by side, and the resemblance stops being a metaphor.

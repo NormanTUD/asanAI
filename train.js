@@ -1735,6 +1735,14 @@ async function fit_model(x_and_y) {
 		try {
 			h = await model.fit(x, y, fit_data);
 		} catch (fitErr) {
+			// "n is undefined" / "backend" failures usually mean a tensor from
+			// the previous test was bound to a backend that's since been torn
+			// down, or the model's own layer state is stale. Recompiling is
+			// not enough on its own — the *tensors* we pass into fit must also
+			// be fresh from the source data, not whatever x/y happened to be.
+			// The previous code only re-tensor'd disposed inputs; that left
+			// the (apparently-valid but actually-broken) tensor in place and
+			// the retry failed with the same error. Always recreate.
 			if (("" + fitErr).includes("backend") && ("" + fitErr).includes("undefined")) {
 				wrn("[fit_model] Backend became invalid during fit, retrying once after reinitializing:", fitErr.message);
 				await tf.ready();
@@ -1742,9 +1750,16 @@ async function fit_model(x_and_y) {
 				if (!model || !model.optimizer) {
 					throw fitErr;
 				}
-				const x_retry = is_tensor(x) && !x.isDisposed ? x : tf.tensor(Array.isArray(x_and_y["x"]) ? x_and_y["x"] : array_sync(x_and_y["x"]));
-				const y_retry = is_tensor(y) && !y.isDisposed ? y : tf.tensor(Array.isArray(x_and_y["y"]) ? x_and_y["y"] : array_sync(x_and_y["y"]));
-				h = await model.fit(x_retry, y_retry, fit_data);
+				const x_source = Array.isArray(x_and_y["x"]) ? x_and_y["x"] : array_sync(x_and_y["x"]);
+				const y_source = Array.isArray(x_and_y["y"]) ? x_and_y["y"] : array_sync(x_and_y["y"]);
+				const x_retry = tf.tensor(x_source);
+				const y_retry = tf.tensor(y_source);
+				try {
+					h = await model.fit(x_retry, y_retry, fit_data);
+				} finally {
+					await dispose(x_retry);
+					await dispose(y_retry);
+				}
 			} else {
 				throw fitErr;
 			}

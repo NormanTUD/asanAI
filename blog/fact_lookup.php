@@ -18,7 +18,7 @@ Type the words **"The capital of France is "** into a chat model. Press enter. T
 The picture we sketch in this chapter is the best current answer that the mechanistic interpretability community has been able to put together. Each piece is backed by experiments on real models. Each piece is also incomplete. We will be honest about both. *Nobody* knows the full story, not the model authors, not the interpretability researchers, not the theorists. What we have is a stack of partial theories, each with published evidence, that together form a coherent working picture. The picture is, by the consensus of the field, *almost certainly not the whole picture*.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The question, re-framed">
+<div class="md" data-mathlevel="55">
 ## The question, re-framed
 
 First, the word "knows". It is doing a lot of work in the question "how does it know to reply Paris?", and most of that work is misleading. We do **not** mean:
@@ -42,7 +42,7 @@ A language model is trained to do one thing: predict the next token in a sequenc
 </div>
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="What the model actually computes, top to bottom">
+<div class="md" data-mathlevel="55">
 ## What the model actually computes, top to bottom
 
 The forward pass that turns "The capital of France is " into a distribution over next tokens is short. In a modern decoder-only Transformer like those behind GPT, Claude, and LLaMA, it looks like this:
@@ -62,7 +62,7 @@ That is the entire computation. There is no lookup table, no symbolic database, 
 This sounds too austere to be true. The next sections will fill in how it can nevertheless produce Paris.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The residual stream as a public scratchpad">
+<div class="md" data-mathlevel="55">
 ## The residual stream as a public scratchpad
 
 The single most important structural fact about a Transformer is the **residual stream**: a single vector $x_i^{(\ell)} \in \mathbb{R}^d$ at every layer $\ell$ and every position $i$, to which every component *adds* its output (\cite[Elhage et al., 2021]{elhage2021mathematical}). Concretely:
@@ -84,7 +84,7 @@ If you have ever tried to debug a neural network where one component *overwrites
 </div>
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle='Attention: routing "France" to the end'>
+<div class="md" data-mathlevel="60">
 ## Attention: routing "France" to the end
 
 For the prompt "The capital of France is ", the first thing the model has to do is *figure out which tokens matter*. The word "is" is a verb that wants an object. The object is a country. The country is "France", which appeared three tokens earlier. The mechanism for this routing is **self-attention** (\cite[Vaswani et al., 2017]{vaswani2017attention}).
@@ -106,7 +106,7 @@ For our prompt, in the early layers, attention is mostly doing *local* work — 
 A useful decomposition, due to (\cite[Elhage et al., 2021]{elhage2021mathematical}), is to split each head into its **QK circuit** ($W_Q^\top W_K$, the matrix that decides *where to look*) and its **OV circuit** ($W_O W_V$, the matrix that decides *what to write when looking*). For an "I want to read 'France'" head, the QK matrix makes the final position attend strongly to the "France" position, and the OV matrix is approximately the identity in the relevant subspace — it copies what it reads.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The MLP as a soft key-value memory">
+<div class="md" data-mathlevel="55">
 ## The MLP as a soft key-value memory
 
 If attention is the routing layer — the part that figures out *which* information matters — then the **MLP layers** are where the *content* of the model's knowledge actually lives. This is the most important conceptual claim in this chapter, and it has substantial experimental support.
@@ -165,7 +165,7 @@ Honest caveats. ROME is not a complete theory of fact storage. It is one experim
 </div>
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Facts as directions: the linear representation hypothesis">
+<div class="md" data-mathlevel="55">
 ## Facts as directions: the linear representation hypothesis
 
 The third piece of the picture is the most surprising, and the most contested.
@@ -191,7 +191,7 @@ The strongest evidence that this picture holds in *frontier-scale* production mo
 This same "direction with a fixed meaning" scales from *facts* to whole *behaviors*. The country→capital relation above is one kind of axis; the [Mechanistic Interpretability](mechanistic_interpretability.php) lesson catalogs others — the truth, refusal, and honesty directions, sentiment and tone axes, and even where-and-when (spatial and temporal) directions — each found and verified the same way.
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Watching the answer form: the logit lens">
+<div class="md" data-mathlevel="45">
 ## Watching the answer form: the logit lens
 
 All of the above is the result of careful *post-hoc* analysis: you run the model, find what mattered, edit it, see what changes. There is also a much simpler trick that lets you *watch the answer form in real time* as the forward pass progresses: the **logit lens**.
@@ -226,7 +226,7 @@ There is a tempting picture that goes like this. The residual stream starts some
 This picture is *suggestive* and *partially grounded*, but it is not, as of this writing, a theorem. Let us say what is and isn't known.
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="What is grounded">
+<div class="md" data-mathlevel="65">
 ### What is grounded
 
 The connection between Transformer attention and modern Hopfield networks is mathematically precise. (\cite[Ramsauer et al., 2020]{ramsauer2020hopfield}) showed that the attention update rule
@@ -318,7 +318,7 @@ A large part of what the model does is **binding**: tying a "filler" to a "gap" 
 The takeaway is a clean one: **binding works for short, unambiguous chains, and it fails exactly when the chain is long, nested, or interfered with** — because every hop costs a layer, and the model is handed only a fixed number. This is the same depth-as-budget idea that caps the arithmetic of the algorithms chapter, and it is why "the model lost track of the subject" is not a quirk but a structural limit.
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Putting it together">
+<div class="md" data-mathlevel="45">
 ## Putting it together
 
 Here is the picture in one breath, with citations:

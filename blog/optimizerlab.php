@@ -120,7 +120,7 @@ The three optimizers above are only a sample. \citeauthor{ruder2016overview}'s o
     </div>
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="What's Happening Under the Hood?">
+<div class="md" data-mathlevel="65">
 ### What's Happening Under the Hood?
 
 Each optimizer uses a different **update rule** to decide how to change the weight at each step. Here's the math:
@@ -151,7 +151,7 @@ This division is the key insight: parameters with large, consistent gradients ge
 
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="The Rest of the Optimizer Family">
+<div class="md" data-mathlevel="70">
 
 ### The Rest of the Optimizer Family
 
@@ -238,7 +238,7 @@ The pragmatic rule of thumb: **start with AdamW**. If you have the compute for a
 
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="History of Optimizers">
+<div class="md" data-mathlevel="55">
 ### History of Optimizers
 
 In \citeyear{sgd}, **Herbert Robbins** and **Sutton Monro** published their paper “\citetitle{sgd}”, introducing the **Robbins-Monro Process**. This was the first formalization of **Stochastic Approximation**, which allows finding roots or optima using noisy samples.

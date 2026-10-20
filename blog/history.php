@@ -108,7 +108,7 @@ Put together, these four moves are the entire arithmetic of the modern machine. 
 One more "first" belongs in this chain. The Indian prosodist **Pingala** (c. 3rd–1st century BCE), working out a system for counting Sanskrit poetic metres, used a device that corresponds exactly to a binary number system, and his combinatorics of metres is an elementary version of the binomial theorem \cite{historyofmath_wikipedia}. In other words, the alphabet of 0 and 1 was being written — literally, in the counting of Sanskrit poetic feet — some two millennia before \citeauthor{leibniz1686calculus} formalized binary notation for the digital age below.
 </div>
 
-<div class="md" data-mathlevel="30" data-optionaltitle="The Roots of Formal Logic">
+<div class="md" data-mathlevel="30">
 ## The Roots of Formal Logic
 
 <figure>
@@ -349,7 +349,7 @@ Above, we met the first *practical* chess machine (1914). A century and a half b
 The Turk matters for the history of AI for the opposite reason to its trick. It is the first machine the public was asked to *believe* could reason, and its test — can it hold its own in a real contest against a real person, over and over? — is the ancestor of the challenge-based test that would, a century and a half later, be formalized as the **Turing test**. The Turk could even *chat*: between games it answered questions from the crowd on a letterboard, in English, French, and German, on its age, its "life," and how it worked — a talking head, the direct descendant of Roger Bacon's brazen head. When the mechanism was finally explained in detail in 1857, the lesson stuck: *to tell a machine that thinks from a person hidden in a box, you need a test that is hard to fake* — the founding question of machine intelligence (\cite[Mechanical Turk, Wikipedia]{mechanicalturk}).
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="The formalization of Neurons">
+<div class="md" data-mathlevel="40">
 ### The formalization of Neurons
 
 <div class="optional md" data-headline="The First Mathematical Neuron: Lapicque's Integrate-and-Fire Model (1907)">
@@ -663,7 +663,7 @@ Rosenblatt's \cite[Mark I Perceptron]{perceptronresults} (p. 136) achieved up to
 While this system shared the structural logic of a modern neural network, it functioned strictly as a **linear transducer** by executing the affine transformation $f(x) = Ax + b$. Although it utilized tensors for weights ($A$) and biases ($b$), it lacked the **non-linear activation functions** and **backpropagation** required to be classified as a modern “Dense” network. Without non-linearity, any attempt at adding “depth” was mathematically redundant, as multiple linear layers simply collapse into a single equivalent matrix multiplication; furthermore, the system lacked the modern ecosystem of loss functions, regularization, and gradient-based optimization that allows for automated learning.
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="The Geometry of a Neuron: Planes and Hyperplanes">
+<div class="md" data-mathlevel="40">
 ### The Geometry of a Neuron: Planes and Hyperplanes
 
 A single neural element is, algebraically, a linear equation. Give the element inputs $x_1, x_2, x_3$ and weights $w_1, w_2, w_3$, and the boundary between firing (output 1) and staying silent (output 0) is exactly where the weighted sum equals the threshold $t$:
@@ -675,7 +675,7 @@ $$ w_1 x_1 + w_2 x_2 + w_3 x_3 = t $$
 In algebra, such an equation defines a **plane** — a linear boundary — in the three-dimensional space of possible inputs: every input vector on one side of the plane makes the element fire, every vector on the other side leaves it silent. Training a perceptron is nothing more than moving and rotating that plane until the inputs that should fire and the inputs that should not end up on opposite sides. Changing the weights *rotates* the plane; changing the threshold *slides* it sideways, parallel to itself. Every step of the learning rule is a small rotation or slide of that plane. In more than three dimensions the same object is called a **hyperplane**: impossible to draw, mathematically identical, which is why a network trained on 784 pixel inputs is doing exactly this, just 784 dimensions at a time (\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="Who got there first, and who made it rigorous">
+<div class="md" data-mathlevel="40">
 ### The device that came first: Farley and Clark (1954)
 
 Rosenblatt's perceptron gets the "first" in most histories of neural networks, but a 1961 doctoral thesis is unusually blunt about the real priority. Two researchers at the MIT Lincoln Laboratory, **\citeauthorlastnameand{farleyclark1954}** (\citeyear{farleyclark1954}), had already built a perceptron-like pattern-recognition device, and their small network, with its sensory input, non-linear decision elements and trial-and-error reinforcement, was the same basic skeleton that Rosenblatt later scaled up \cite{joseph1961perceptron}. Their names were forgotten for a simple reason: they ran a few experiments on a small machine and then stopped working on it, without a mathematical account of what the device could or could not do \cite{joseph1961perceptron}. Credit in this field went, as it often does, to whoever built the *theory* and kept going.
@@ -726,7 +726,7 @@ The deepest critique of the *hand-engineered feature* tradition in 1960s pattern
 The paper anticipates three things that would not be rediscovered for decades. First, it anticipates **AutoML** and **neural architecture search** — the modern recognition that the *operators* the model uses are themselves a variable to be optimised, and that a search over operator space can outperform hand-designed operators once compute is available. Second, it anticipates the **genetic-programming** line of Koza in the 1980s and 1990s, in which the program *text* itself is the chromosome; Uhr and Vossler's composite operators are a small step away from Koza's full LISP programs, and the evolutionary loop is essentially the same. Third, and most strikingly for this course, it anticipates the modern **LLM-tool-discovery** line: where a modern agent learns to *use* tools (a calculator, a search engine, a code interpreter) as primitive operations whose compositions the model learns to drive, Uhr and Vossler's system learned to *use* feature operators as primitive operations whose compositions the program learned to drive. The same structural pattern — *a learner that picks which operator to invoke on which input, with the operators themselves partly plastic* — shows up in three fields (AutoML, GP, agents) sixty years apart, because it is genuinely the right way to delegate work that the programmer does not want to specify by hand.
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="Hebb's Rule and the Perceptron Learning Rule">
+<div class="md" data-mathlevel="40">
 ### The Hidden Connection: Hebb's Rule and the Perceptron Learning Rule
 
 The Perceptron learning rule $\Delta w = \eta \cdot (\text{target} - \text{output}) \cdot \text{input}$ is not a fundamentally new idea, it is Hebb's rule made precise by adding an error signal.
@@ -792,7 +792,7 @@ Jürgen Schmidhuber's \citetitle{schmidhuber2022deep} documents a striking conce
 </div>
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="The Critique (1969)">
+<div class="md" data-mathlevel="40">
 ### The Critique (1969)
 Marvin Minsky and Seymour Papert published their book \citetitle{minskyperceptrons}, which provided a mathematical proof of the architecture's limitations. They demonstrated that a single-layer perceptron could not solve the **XOR (Exclusive OR)** problem because it was not “linearly separable.”
 

@@ -22,7 +22,7 @@ This chapter covers the mathematical core: Markov Decision Processes, value func
 ## Foundations
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The Markov Decision Process">
+<div class="md" data-mathlevel="60">
 ### The Markov Decision Process
 
 An MDP is the formal setting for RL: $(\mathcal{S}, \mathcal{A}, P, R, \gamma)$ where
@@ -46,7 +46,7 @@ A few terms used throughout the chapter:
 * **Episode**: a single finite trajectory, from initial state to a terminal state (e.g., one game, one conversation, one user session). For continuing tasks without a natural endpoint, RL uses “episodic” framing by resetting at fixed horizons.
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Value Functions">
+<div class="md" data-mathlevel="60">
 ### Value Functions
 
 The **state-value function** measures how good a state is under policy $\pi$:
@@ -76,7 +76,7 @@ $$
 For an LLM, the “state” is the current context window, the “action” is the next token, and the “reward” comes from a reward model (**RLHF**) or verifier (reasoning training).
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Tabular RL: Q-Learning">
+<div class="md" data-mathlevel="60">
 ### Tabular RL: Q-Learning
 
 Q-Learning (\cite[Watkins, 1989]{watkins1989qlearning}) converges to $Q^*$ by iterative updates:
@@ -94,7 +94,7 @@ Deep Q-Networks (\cite[Mnih et al., 2013]{mnih2013dqn}, Mnih et al., 2013) repla
 ## Policy Optimization
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Policy Gradients">
+<div class="md" data-mathlevel="60">
 ### Policy Gradients
 
 For continuous or large action spaces, parameterize the policy as $\pi_\theta(a \mid s)$ and directly optimize:
@@ -118,7 +118,7 @@ REINFORCE (\cite[Williams, 1992]{williams1992reinforce}) has high variance. The 
 The same structure hides inside the transformer: the gradient backpropagated through an attention layer is *exactly* an advantage-based policy gradient — each key's score is updated in proportion to how far that key's marginal utility beats the attention distribution's own average \cite[the attention gradient as an advantage-based policy gradient]{litman2025sdpaot}.
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Actor-Critic Methods">
+<div class="md" data-mathlevel="60">
 ### Actor-Critic Methods
 
 **Actor-critic** algorithms learn both a policy (actor) and a value function (critic):
@@ -149,7 +149,7 @@ PPO is simple, stable, and the default choice for **RLHF** and many robotics tas
 ## RL for LLMs: Preference Optimization
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="RLHF: Reinforcement Learning from Human Feedback">
+<div class="md" data-mathlevel="60">
 ### RLHF: Reinforcement Learning from Human Feedback
 
 **RLHF** (Christiano et al., 2017; Ouyang et al., InstructGPT, 2022) adapts RL to align LLMs with human preferences:
@@ -175,7 +175,7 @@ $$
 where $y_w$ is the “winner” and $y_l$ the “loser”.
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="DPO: Direct Preference Optimization">
+<div class="md" data-mathlevel="65">
 ### DPO: Direct Preference Optimization
 
 \cite[Rafailov et al. (2023)]{rafailov2023dpo} showed that the **RLHF** objective has a **closed-form solution**:
@@ -206,7 +206,7 @@ Variants have proliferated:
 * **SimPO** (\cite[Meng et al., 2024]{meng2024simpo}): length-normalized, no reference model.
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="GRPO: Group Relative Policy Optimization">
+<div class="md" data-mathlevel="60">
 ### GRPO: Group Relative Policy Optimization
 
 GRPO (\cite[Shao et al., DeepSeek, 2024]{shao2024grpo}) was the breakthrough that enabled **R1's pure-RL training**. For each prompt:

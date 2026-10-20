@@ -35,8 +35,11 @@
  *   __opencodelog.rescan()        wrap functions created after load
  *   __opencodelog.uninstall()     restore all originals
  *
- * Auto-installs on window `load`; auto-enables when the URL contains
- * `?opencodelog=1`. Live prefix in the console: [opencodelog].
+ * Opt-in: nothing wraps until you call __opencodelog.enable() (or load the
+ * page with ?opencodelog=1 in the URL, which calls enable() for you).
+ * Wrapping every window function on every page load was measurable overhead
+ * on the toolkit's hot paths, so installation is now a developer action.
+ * Live prefix in the console: [opencodelog].
  */
 
 (function () {
@@ -369,13 +372,20 @@
 		state: state
 	};
 
-	if (document.readyState === "complete") {
-		install();
-	} else {
-		window.addEventListener("load", function () { install(); });
+	// Opt-in only: do NOT auto-install on window.load. The wrapper replaces
+	// every window function with a thin proxy; even with the !state.active
+	// fast-path inside, every wrapped call pays one extra boolean read +
+	// function-call indirection on the hottest paths of the toolkit. That
+	// overhead is paid by every page load today. enable() below calls
+	// install() when the developer asks for it.
+	function _bootProfiler() {
+		if (/[?&]opencodelog=1(&|$)/.test(window.location.search)) {
+			enable();
+		}
 	}
-	if (/[?&]opencodelog=1(&|$)/.test(window.location.search)) {
-		state.active = true;
-		console.log("[" + LOGTAG + "] auto-enabled via ?opencodelog=1");
+	if (document.readyState === "complete") {
+		_bootProfiler();
+	} else {
+		window.addEventListener("load", _bootProfiler);
 	}
 })();

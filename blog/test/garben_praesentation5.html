@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Garben — visuell</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,600&family=Inter:wght@300;400;600&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:#07080c;}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    color:#e8e6f0;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ambient background */
+  #bg{position:fixed;inset:0;z-index:0;}
+  #vignette{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(ellipse at 50% 40%, rgba(0,0,0,0) 35%, rgba(4,4,9,.85) 100%);}
+
+  #deck{position:relative;z-index:2;height:100%;}
+
+  section.slide{
+    position:absolute;inset:0;
+    display:grid;
+    grid-template-columns: minmax(0,380px) minmax(0,1fr);
+    gap:40px;
+    align-items:center;
+    padding:6vh 6vw;
+    opacity:0;transform:translateY(40px) scale(.98);
+    pointer-events:none;
+    transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1);
+  }
+  section.slide.active{opacity:1;transform:none;pointer-events:auto;}
+
+  .txt{max-width:380px;}
+  .eyebrow{
+    font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:#8a7fd4;margin-bottom:18px;font-weight:600;
+  }
+  h1{
+    font-family:'Fraunces',serif;font-weight:300;
+    font-size:clamp(34px,4.4vw,62px);line-height:1.02;
+    letter-spacing:-.02em;margin-bottom:20px;
+  }
+  h1 em{font-style:italic;font-weight:600;
+    background:linear-gradient(100deg,#b7a6ff,#6ee7d7 60%,#ffd9a0);
+    -webkit-background-clip:text;background-clip:text;color:transparent;}
+  p.lead{font-size:16px;line-height:1.7;color:#a8a4bd;font-weight:300;}
+  p.lead b{color:#e8e6f0;font-weight:600;}
+  .formula{
+    margin-top:22px;font-family:'Fraunces',serif;font-size:19px;
+    color:#6ee7d7;letter-spacing:.01em;
+  }
+  .hint{margin-top:26px;font-size:12px;color:#5d5a73;letter-spacing:.04em}
+
+  .stage{
+    position:relative;width:100%;height:76vh;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .stage canvas{
+    width:100%;height:100%;
+    border-radius:20px;
+    display:block;
+  }
+  .glowframe{
+    position:absolute;inset:-1px;border-radius:21px;pointer-events:none;
+    background:linear-gradient(140deg,rgba(183,166,255,.25),rgba(110,231,215,.08) 40%,rgba(255,255,255,.02));
+    -webkit-mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);
+    -webkit-mask-composite:xor;mask-composite:exclude;padding:1px;
+  }
+
+  /* nav dots */
+  #dots{position:fixed;right:26px;top:50%;transform:translateY(-50%);z-index:10;
+    display:flex;flex-direction:column;gap:14px;}
+  #dots button{
+    width:9px;height:9px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(255,255,255,.18);transition:.35s;padding:0;
+  }
+  #dots button.on{background:#b7a6ff;box-shadow:0 0 14px #b7a6ff99;transform:scale(1.4)}
+
+  #prog{position:fixed;left:0;top:0;height:2px;z-index:11;
+    background:linear-gradient(90deg,#b7a6ff,#6ee7d7);width:0;transition:width .6s cubic-bezier(.22,1,.36,1)}
+
+  #counter{position:fixed;left:6vw;bottom:4vh;z-index:10;font-size:12px;
+    letter-spacing:.2em;color:#4f4c63}
+  #counter b{color:#b7a6ff;font-weight:600}
+
+  @media(max-width:900px){
+    section.slide{grid-template-columns:1fr;gap:18px;padding:5vh 7vw;align-content:center}
+    .stage{height:52vh}
+    h1{font-size:30px}
+    #dots{right:12px}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+<div id="vignette"></div>
+<div id="prog"></div>
+
+<div id="deck">
+
+  <!-- 1 -->
+  <section class="slide" data-c="intro">
+    <div class="txt">
+      <div class="eyebrow">Garbentheorie</div>
+      <h1>Was ist eine <em>Garbe</em>?</h1>
+      <p class="lead">Ein Rezept, das jedem <b>Stück Raum</b> die Daten zuordnet, die dort <b>lokal</b> leben — und sagt, wie man sie <b>verklebt</b>.</p>
+      <p class="hint">↓ Scrollen oder Pfeiltasten</p>
+    </div>
+    <div class="stage"><canvas></canvas><div class="glowframe"></div></div>
+  </section>
+
+  <!-- 2 -->
+  <section class="slide" data-c="presheaf">
+    <div class="txt">
+      <div class="eyebrow">01 · Prägarbe</div>
+      <h1>Offene Mengen → <em>Daten</em></h1>
+      <p class="lead">Jede offene Menge <b>U</b> bekommt eine Menge von <b>Schnitten</b> ℱ(U). Wird U kleiner, kann man <b>einschränken</b>.</p>
+      <div class="formula">ρ : ℱ(U) ⟶ ℱ(V),&nbsp; V ⊆ U</div>
+    </div>
+    <div class="stage"><canvas></canvas><div class="glowframe"></div></div>
+  </section>
+
+  <!-- 3 -->
+  <section class="slide" data-c="sections">
+    <div class="txt">
+      <div class="eyebrow">02 · Schnitte</div>
+      <h1>Ein Schnitt ist ein <em>Lift</em></h1>
+      <p class="lead">Über jedem Punkt liegt eine Faser. Ein <b>Schnitt</b> wählt stetig aus jeder Faser einen Punkt — ein Graph über der Basis.</p>
+      <div class="formula">s : U ⟶ E,&nbsp; π ∘ s = id</div>
+    </div>
+    <div class="stage"><canvas></canvas><div class="glowframe"></div></div>
+  </section>
+
+  <!-- 4 -->
+  <section class="slide" data-c="restrict">
+    <div class="txt">
+      <div class="eyebrow">03 · Restriktion</div>
+      <h1>Zoom nach <em>innen</em></h1>
+      <p class="lead">Einschränken verliert Information — nie umgekehrt. Immer kleinere Umgebungen um einen Punkt.</p>
+      <div class="formula">s|<sub>V</sub> ∈ ℱ(V)</div>
+    </div>
+    <div class="stage"><canvas></canvas><div class="glowframe"></div></div>
+  </section>
+
+  <!-- 5 -->
+  <section class="slide" data-c="germ">
+    <div class="txt">
+      <div class="eyebrow">04 · Keim</div>
+      <h1>Der <em>Keim</em> im Punkt</h1>
+      <p class="lead">Zwei Schnitte sind <b>äquivalent in p</b>, wenn sie auf <i>irgendeiner</i> Umgebung übereinstimmen. Die Klasse ist der <b>Keim</b> — der Limes allen Zoomens.</p>
+      <div class="formula">ℱ<sub>p</sub> = colim<sub>p ∈ U</sub> ℱ(U)</div>
+    </div>
+    <div class="stage"><canvas></canvas><div class="glowframe"></div></div>
+  </section>
+
+  <!-- 6 -->
+  <section class="slide" data-c="stalk">
+    <div class="txt">
+      <div class="eyebrow">05 · Halm</div>
+      <h1>Alle Keime = <em>Halm</em></h1>
+      <p class="lead">Sammle alle Keime über p: das ist der <b>Halm</b> ℱ<sub>p</sub>. Die Garbe wächst wie ein Feld — über jedem Punkt ein Halm.</p>
+      <div class="formula">ℱ = ⨆<sub>p∈X</sub> ℱ<sub>p</sub></div>
+    </div>
+    <div class="stage"><canvas></canvas><div class="glowframe"></div></div>
+  </section>
+
+  <!-- 7 -->
+  <section class="slide" data-c="glue">
+    <div class="txt">
+      <div class="eyebrow">06 · Axiome</div>
+      <h1>Verkleben & <em>Eindeutigkeit</em></h1>
+      <p class="lead">Stimmen lokale Schnitte auf den <b>Überlappungen</b> überein, so verkleben sie zu <b>genau einem</b> globalen Schnitt. Das macht die Prägarbe zur <b>Garbe</b>.</p>
+      <div class="formula">s<sub>i</sub>|<sub>U<sub>ij</sub></sub> = s<sub>j</sub>|<sub>U<sub>ij</sub></sub> ⟹ ∃! s</div>
+    </div>
+    <div class="stage"><canvas></canvas><div class="glowframe"></div></div>
+  </section>
+
+  <!-- 8 -->
+  <section class="slide" data-c="obstruct">
+    <div class="txt">
+      <div class="eyebrow">07 · Obstruktion</div>
+      <h1>Lokal ja, global <em>nein</em></h1>
+      <p class="lead">Manchmal passt alles lokal — und trotzdem gibt es keinen globalen Schnitt. Die Monodromie dreht den Streifen. Das misst <b>Kohomologie</b>.</p>
+      <div class="formula">H¹(X, ℱ) ≠ 0</div>
+    </div>
+    <div class="stage"><canvas></canvas><div class="glowframe"></div></div>
+  </section>
+
+  <!-- 9 -->
+  <section class="slide" data-c="space">
+    <div class="txt">
+      <div class="eyebrow">08 · Étalé-Raum</div>
+      <h1>Die Garbe als <em>Raum</em></h1>
+      <p class="lead">Alle Halme nebeneinandergelegt ergeben einen Raum über X. Schnitte werden zu echten <b>Blättern</b> — sie überlagern die Basis.</p>
+      <div class="formula">π : Ét(ℱ) ⟶ X&nbsp; lokaler Homöo.</div>
+    </div>
+    <div class="stage"><canvas></canvas><div class="glowframe"></div></div>
+  </section>
+
+  <!-- 10 -->
+  <section class="slide" data-c="finale">
+    <div class="txt">
+      <div class="eyebrow">Ende</div>
+      <h1>Lokal → <em>Global</em></h1>
+      <p class="lead">Eine Garbe ist die Grammatik des Übergangs vom Kleinen zum Großen. Keime, Halme, Schnitte, Verkleben — ein einziger Gedanke.</p>
+    </div>
+    <div class="stage"><canvas></canvas><div class="glowframe"></div></div>
+  </section>
+
+</div>
+
+<div id="dots"></div>
+<div id="counter"><b id="cNow">01</b> / <span id="cAll">10</span></div>
+
+<script>
+/* ============ helpers ============ */
+const TAU=Math.PI*2;
+const lerp=(a,b,t)=>a+(b-a)*t;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+function fit(cv){
+  const dpr=Math.min(devicePixelRatio||1,2);
+  const r=cv.getBoundingClientRect();
+  cv.width=Math.max(2,r.width*dpr); cv.height=Math.max(2,r.height*dpr);
+  const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+  return {c,w:r.width,h:r.height};
+}
+function grad(c,x0,y0,x1,y1,stops){
+  const g=c.createLinearGradient(x0,y0,x1,y1);
+  stops.forEach(([p,col])=>g.addColorStop(p,col)); return g;
+}
+function glowLine(c,pts,col,w,blur){
+  c.save(); c.shadowColor=col; c.shadowBlur=blur||14;
+  c.strokeStyle=col; c.lineWidth=w; c.lineJoin='round'; c.lineCap='round';
+  c.beginPath(); pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));
+  c.stroke(); c.restore();
+}
+function dot(c,x,y,r,col,blur=12){
+  c.save(); c.shadowColor=col; c.shadowBlur=blur;
+  c.fillStyle=col; c.beginPath(); c.arc(x,y,r,0,TAU); c.fill(); c.restore();
+}
+function label(c,x,y,t,col='#cfcbe3',size=12,align='center',italic=false){
+  c.save(); c.font=`${italic?'italic ':''}${size}px Inter, sans-serif`;
+  c.fillStyle=col; c.textAlign=align; c.textBaseline='middle';
+  c.fillText(t,x,y); c.restore();
+}
+const PURPLE='#b7a6ff', MINT='#6ee7d7', GOLD='#ffd9a0', ROSE='#ff9ec4';
+
+/* ============ ambient background ============ */
+(function(){
+  const cv=document.getElementById('bg');
+  let c,w,h,parts=[];
+  function init(){
+    const f=fit(cv); c=f.c; w=f.w; h=f.h;
+    parts=Array.from({length:70},()=>({
+      x:Math.random()*w,y:Math.random()*h,
+      r:Math.random()*1.6+.3,
+      s:Math.random()*.12+.02,
+      p:Math.random()*TAU
+    }));
+  }
+  init(); addEventListener('resize',init);
+  (function loop(t){
+    c.clearRect(0,0,w,h);
+    // soft blobs
+    const g1=c.createRadialGradient(w*.25,h*.3,0,w*.25,h*.3,w*.5);
+    g1.addColorStop(0,'rgba(90,70,190,.20)'); g1.addColorStop(1,'rgba(0,0,0,0)');
+    c.fillStyle=g1; c.fillRect(0,0,w,h);
+    const g2=c.createRadialGradient(w*.8,h*.75,0,w*.8,h*.75,w*.45);
+    g2.addColorStop(0,'rgba(20,140,130,.16)'); g2.addColorStop(1,'rgba(0,0,0,0)');
+    c.fillStyle=g2; c.fillRect(0,0,w,h);
+    parts.forEach(p=>{
+      p.y-=p.s; if(p.y<-5){p.y=h+5;p.x=Math.random()*w;}
+      const a=.18+.18*Math.sin(t/1400+p.p);
+      c.fillStyle=`rgba(200,195,255,${a})`;
+      c.beginPath(); c.arc(p.x+Math.sin(t/3000+p.p)*8,p.y,p.r,0,TAU); c.fill();
+    });
+    requestAnimationFrame(loop);
+  })(0);
+})();
+
+/* ============ scene painters ============ */
+const SCENES={};
+
+/* 1 — intro: breathing sheaf of fibers */
+SCENES.intro=(c,w,h,t)=>{
+  const cx=w/2, by=h*.72, R=Math.min(w,h)*.33;
+  // base manifold
+  const pts=[];
+  for(let i=0;i<=120;i++){const x=w*.12+ (w*.76)*i/120;
+    pts.push([x, by + Math.sin(i/120*Math.PI*1.6+.4)*18]);}
+  glowLine(c,pts,'rgba(183,166,255,.5)',2.5,18);
+  label(c,w*.12,by+34,'X',PURPLE,14,'left',true);
+
+  // stalks
+  const N=22;
+  for(let i=0;i<N;i++){
+    const u=i/(N-1), x=w*.12+w*.76*u;
+    const yb=by+Math.sin(u*Math.PI*1.6+.4)*18;
+    const ph=t/900+u*4;
+    const hgt=R*(.45+.35*Math.sin(ph))*(.6+.5*Math.sin(u*Math.PI));
+    const bend=Math.sin(t/1200+u*3)*16;
+    const seg=[];
+    for(let k=0;k<=18;k++){const s=k/18;
+      seg.push([x+bend*s*s, yb-hgt*s]);}
+    const col=`hsla(${lerp(258,170,u)},80%,${72-10*Math.sin(ph)}%,.75)`;
+    glowLine(c,seg,col,1.6,12);
+    dot(c,seg[18][0],seg[18][1],2.6,col,16);
+  }
+  // floating section curve through tips
+  const sec=[];
+  for(let i=0;i<N;i++){
+    const u=i/(N-1), x=w*.12+w*.76*u;
+    const yb=by+Math.sin(u*Math.PI*1.6+.4)*18;
+    const hgt=R*(.45+.35*Math.sin(t/900+u*4))*(.6+.5*Math.sin(u*Math.PI));
+    sec.push([x+Math.sin(t/1200+u*3)*16, yb-hgt]);
+  }
+  c.save(); c.globalAlpha=.35;
+  glowLine(c,sec,MINT,1.2,20); c.restore();
+};
+
+/* 2 — presheaf: open sets poset with arrows */
+SCENES.presheaf=(c,w,h,t)=>{
+  const cx=w/2, cy=h*.56, R=Math.min(w,h)*.30;
+  // big U
+  const pulse=1+.012*Math.sin(t/700);
+  c.save();
+  c.strokeStyle='rgba(183,166,255,.75)'; c.lineWidth=2;
+  c.shadowColor=PURPLE; c.shadowBlur=26;
+  c.beginPath();
+  for(let a=0;a<=TAU+.01;a+=.03){
+    const r=R*pulse*(1+.06*Math.sin(a*3+t/1600)+.04*Math.cos(a*5-t/2000));
+    const x=cx+Math.cos(a)*r*1.25, y=cy+Math.sin(a)*r;
+    a?c.lineTo(x,y):c.moveTo(x,y);
+  } c.closePath();
+  c.fillStyle='rgba(183,166,255,.05)'; c.fill(); c.stroke(); c.restore();
+  label(c,cx+R*1.35,cy-R*.75,'U',PURPLE,16,'left',true);
+
+  // inner V
+  const vx=cx-R*.38, vy=cy+R*.12, vr=R*.42;
+  c.save(); c.strokeStyle='rgba(110,231,215,.85)'; c.lineWidth=2;
+  c.shadowColor=MINT; c.shadowBlur=22; c.beginPath();
+  for(let a=0;a<=TAU+.01;a+=.04){
+    const r=vr*(1+.08*Math.sin(a*4-t/1300));
+    const x=vx+Math.cos(a)*r*1.15,y=vy+Math.sin(a)*r;
+    a?c.lineTo(x,y):c.moveTo(x,y);
+  } c.closePath(); c.fillStyle='rgba(110,231,215,.07)'; c.fill(); c.stroke(); c.restore();
+  label(c,vx,vy+vr+20,'V ⊆ U',MINT,14,'center',true);
+
+  // data boxes
+  const bw=86,bh=34;
+  function box(x,y,txt,col){
+    c.save(); c.shadowColor=col; c.shadowBlur=18;
+    c.strokeStyle=col; c.lineWidth=1.4;
+    c.fillStyle='rgba(10,10,20,.75)';
+    c.beginPath(); c.roundRect(x-bw/2,y-bh/2,bw,bh,10); c.fill(); c.stroke(); c.restore();
+    label(c,x,y,txt,col,14);
+  }
+  const ax=cx+R*1.55>w-70? w-80 : cx+R*1.1;
+  box(w*.80,h*.22,'ℱ(U)',PURPLE);
+  box(w*.80,h*.80,'ℱ(V)',MINT);
+
+  // restriction arrow with flowing particles
+  const x0=w*.80,y0=h*.22+bh/2, y1=h*.80-bh/2;
+  c.save(); c.strokeStyle='rgba(255,255,255,.22)'; c.lineWidth=1.2;
+  c.beginPath(); c.moveTo(x0,y0); c.lineTo(x0,y1); c.stroke(); c.restore();
+  for(let k=0;k<5;k++){
+    const p=((t/1400)+k/5)%1;
+    dot(c,x0,lerp(y0,y1,p),2.4,GOLD,14);
+  }
+  label(c,x0+16,(y0+y1)/2,'ρ',GOLD,15,'left',true);
+
+  // link circles to boxes
+  c.save(); c.setLineDash([3,6]); c.strokeStyle='rgba(255,255,255,.14)';
+  c.beginPath(); c.moveTo(cx+R*1.1,cy-R*.5); c.lineTo(w*.80-bw/2,h*.22); c.stroke();
+  c.beginPath(); c.moveTo(vx+vr,vy+vr*.4); c.lineTo(w*.80-bw/2,h*.80); c.stroke();
+  c.restore();
+};
+
+/* 3 — sections as lift over fibers */
+SCENES.sections=(c,w,h,t)=>{
+  const x0=w*.14, x1=w*.86, by=h*.80, top=h*.18;
+  // base line X
+  glowLine(c,[[x0,by],[x1,by]],'rgba(183,166,255,.55)',2.2,16);
+  label(c,x0-6,by+22,'X',PURPLE,14,'left',true);
+
+  // fibers π⁻¹(p)
+  const N=16;
+  for(let i=0;i<N;i++){
+    const u=i/(N-1), x=lerp(x0,x1,u);
+    c.save();
+    c.strokeStyle='rgba(255,255,255,.09)'; c.lineWidth=1;
+    c.beginPath(); c.moveTo(x,by); c.lineTo(x,top); c.stroke(); c.restore();
+    dot(c,x,by,2,'rgba(183,166,255,.6)',8);
+  }
+  label(c,x1+8,(by+top)/2,'Fasern',' #5d5a73',11,'left');
+
+  // total space E (soft band)
+  c.save();
+  c.fillStyle=grad(c,0,top,0,by,[[0,'rgba(110,231,215,.07)'],[1,'rgba(183,166,255,.03)']]);
+  c.fillRect(x0,top,x1-x0,by-top); c.restore();
+  label(c,x0+10,top+14,'E',MINT,14,'left',true);
+
+  // the section s : U → E
+  const sec=[];
+  for(let i=0;i<=120;i++){
+    const u=i/120, x=lerp(x0,x1,u);
+    const y=lerp(by-30, top+40, .5+.42*Math.sin(u*Math.PI*2.1+t/1100)+.12*Math.sin(u*Math.PI*5-t/900));
+    sec.push([x,y]);
+  }
+  glowLine(c,sec,MINT,2.6,22);
+
+  // marching points showing π∘s = id
+  for(let k=0;k<6;k++){
+    const p=((t/2600)+k/6)%1;
+    const idx=Math.floor(p*120);
+    const [px,py]=sec[idx];
+    dot(c,px,py,4,GOLD,18);
+    c.save(); c.setLineDash([2,5]); c.strokeStyle='rgba(255,217,160,.35)';
+    c.beginPath(); c.moveTo(px,py); c.lineTo(px,by); c.stroke(); c.restore();
+    dot(c,px,by,3,GOLD,12);
+  }
+  label(c,sec[20][0],sec[20][1]-20,'s',MINT,16,'center',true);
+};
+
+/* 4 — restriction: nested zoom */
+SCENES.restrict=(c,w,h,t)=>{
+  const cx=w/2, cy=h/2, R=Math.min(w,h)*.38;
+  const cyc=(t/3200)%1;
+  // nested shrinking neighbourhoods
+  for(let k=0;k<5;k++){
+    const phase=(cyc+k/5)%1;
+    const r=R*(1-phase)*.95+6;
+    const a=Math.sin(phase*Math.PI)*.9;
+    c.save();
+    c.strokeStyle=`hsla(${lerp(258,170,phase)},78%,72%,${a})`;
+    c.lineWidth=1.6; c.shadowColor=PURPLE; c.shadowBlur=18;
+    c.beginPath();
+    for(let ang=0;ang<=TAU+.01;ang+=.05){
+      const rr=r*(1+.05*Math.sin(ang*4+k*1.7+t/1500));
+      const x=cx+Math.cos(ang)*rr, y=cy+Math.sin(ang)*rr;
+      ang?c.lineTo(x,y):c.moveTo(x,y);
+    } c.closePath(); c.stroke(); c.restore();
+  }
+  // the section living on them — gets cropped
+  for(let k=0;k<5;k++){
+    const phase=(cyc+k/5)%1;
+    const r=R*(1-phase)*.95+6;
+    const a=Math.sin(phase*Math.PI)*.75;
+    const pts=[];
+    for(let i=0;i<=60;i++){
+      const u=i/60, x=cx-r+2*r*u;
+      const y=cy+Math.sin(u*Math.PI*3+t/1000)*r*.32;
+      if((x-cx)**2+(y-cy)**2 < r*r) pts.push([x,y]);
+    }
+    if(pts.length>1) glowLine(c,pts,`rgba(110,231,215,${a})`,2,16);
+  }
+  dot(c,cx,cy,4,GOLD,22);
+  label(c,cx,cy+18,'p',GOLD,13);
+  label(c,cx,cy-R-16,'U ⊇ V ⊇ W ⊇ …',PURPLE,13);
+};
+
+/* 5 — germ: equivalence classes collapsing to a point */
+SCENES.germ=(c,w,h,t)=>{
+  const cx=w*.5, cy=h*.56, R=Math.min(w,h)*.34;
+  const cyc=(t/3000)%1;
+
+  // ground line
+  glowLine(c,[[cx-R*1.3,cy+R*.75],[cx+R*1.3,cy+R*.75]],'rgba(183,166,255,.35)',1.6,12);
+  dot(c,cx,cy+R*.75,4,GOLD,20);
+  label(c,cx,cy+R*.75+20,'p',GOLD,13);
+
+  // three curves that agree near p but differ far away
+  const cols=[MINT,PURPLE,ROSE];
+  const shrink=lerp(1,.08,ease(cyc));
+  for(let k=0;k<3;k++){
+    const pts=[];
+    for(let i=0;i<=100;i++){
+      const u=i/100, x=cx-R*1.15+2.3*R*u;
+      const d=(x-cx)/R;                       // distance from p
+      const base=Math.sin(d*2.0+t/1400)*R*.22;
+      const diff=Math.sin(d*5+k*2.2)*R*.26*Math.min(1,Math.abs(d)*1.6);
+      pts.push([x, cy+R*.75 - R*.55 + base + diff]);
+    }
+    const alpha=.75;
+    glowLine(c,pts,cols[k].replace(')',`)`),2,14);
+    c.save(); c.globalAlpha=alpha; c.restore();
+  }
+
+  // shrinking window highlighting agreement
+  const ww=R*1.15*shrink;
+  c.save();
+  c.fillStyle='rgba(255,217,160,.10)';
+  c.strokeStyle='rgba(255,217,160,.55)'; c.lineWidth=1.2;
+  c.shadowColor=GOLD; c.shadowBlur=20;
+  c.beginPath(); c.roundRect(cx-ww,cy-R*.65,ww*2,R*1.45,10);
+  c.fill(); c.stroke(); c.restore();
+  label(c,cx,cy-R*.78,'sie stimmen hier überein',GOLD,11);
+
+  // germ marker emerging
+  const ga=ease(clamp((cyc-.6)/.4,0,1));
+  if(ga>0){
+    dot(c,cx,cy-R*.1,3+5*ga,MINT,30*ga);
+    label(c,cx+22,cy-R*.1,'Keim  ℱ_p',MINT,13,'left',true);
+  }
+};
+
+/* 6 — stalk: field of stalks over the base */
+SCENES.stalk=(c,w,h,t)=>{
+  const x0=w*.10,x1=w*.90, by=h*.82;
+  glowLine(c,[[x0,by],[x1,by]],'rgba(183,166,255,.5)',2,16);
+
+  const N=30;
+  for(let i=0;i<N;i++){
+    const u=i/(N-1), x=lerp(x0,x1,u);
+    const hL=(h*.52)*(.45+.4*Math.sin(u*Math.PI*2.3+t/2200)+.2*Math.sin(u*9));
+    const sway=Math.sin(t/1100+u*6)*12;
+    const seg=[];
+    for(let k=0;k<=14;k++){const s=k/14;
+      seg.push([x+sway*s*s, by-hL*s]);}
+    const col=`hsla(${lerp(260,168,u)},80%,70%,.6)`;
+    glowLine(c,seg,col,1.4,10);
+
+    // germs stacked along each stalk = elements of the stalk
+    for(let g=1;g<=3;g++){
+      const s=g/3.4, idx=Math.round(s*14);
+      dot(c,seg[idx][0],seg[idx][1],1.9,col,10);
+    }
+    dot(c,seg[14][0],seg[14][1],2.6,col,16);
+  }
+
+  // highlight one stalk
+  const hu=.5+.3*Math.sin(t/2600), hx=lerp(x0,x1,hu);
+  const hH=(h*.52)*(.45+.4*Math.sin(hu*Math.PI*2.3+t/2200)+.2*Math.sin(hu*9));
+  const hs=[];
+  for(let k=0;k<=14;k++){const s=k/14;
+    hs.push([hx+Math.sin(t/1100+hu*6)*12*s*s, by-hH*s]);}
+  glowLine(c,hs,GOLD,2.4,26);
+  dot(c,hx,by,4,GOLD,18);
+  label(c,hx,by+20,'p',GOLD,13);
+  label(c,hs[14][0],hs[14][1]-16,'ℱ_p',GOLD,14,'center',true);
+};
+
+/* 7 — gluing: overlapping covers agree → one global section */
+SCENES.glue=(c,w,h,t)=>{
+  const x0=w*.10,x1=w*.90, by=h*.78, mid=h*.42;
+  const cyc=(t/4200)%1;
+  const join=ease(clamp((cyc-.45)/.45,0,1));
+
+  glowLine(c,[[x0,by],[x1,by]],'rgba(183,166,255,.45)',2,14);
+
+  // three overlapping open sets
+  const sets=[[0,.42],[.30,.72],[.60,1]];
+  const cols=[MINT,PURPLE,ROSE];
+  sets.forEach((s,k)=>{
+    const a=lerp(x0,x1,s[0]), b=lerp(x0,x1,s[1]);
+    c.save();
+    c.fillStyle=cols[k].replace('#','rgba(').length? `${cols[k]}1a`:'';
+    c.globalAlpha=.10; c.fillStyle=cols[k];
+    c.beginPath(); c.roundRect(a,by-10,b-a,20,10); c.fill(); c.restore();
+    c.save(); c.strokeStyle=cols[k]; c.globalAlpha=.6; c.lineWidth=1.4;
+    c.shadowColor=cols[k]; c.shadowBlur=14;
+    c.beginPath(); c.roundRect(a,by-10,b-a,20,10); c.stroke(); c.restore();
+    label(c,(a+b)/2, by+26, `U${['₁','₂','₃'][k]}`, cols[k],12);
+  });
+
+  // local sections — drift apart then snap into agreement
+  function curve(k,off){
+    const s=sets[k]; const pts=[];
+    for(let i=0;i<=70;i++){
+      const u=i/70, g=lerp(s[0],s[1],u), x=lerp(x0,x1,g);
+      const base=mid+Math.sin(g*Math.PI*2.4)*h*.14;
+      pts.push([x, base+off*(1-join)]);
+    } return pts;
+  }
+  const offs=[-18*Math.sin(t/800), 14*Math.sin(t/700+1), -10*Math.sin(t/900+2)];
+  for(let k=0;k<3;k++) glowLine(c,curve(k,offs[k]),cols[k],2.4,18);
+
+  // overlap markers
+  [[.30,.42],[.60,.72]].forEach((o,i)=>{
+    const a=lerp(x0,x1,o[0]),b=lerp(x0,x1,o[1]);
+    c.save(); c.globalAlpha=.14; c.fillStyle=GOLD;
+    c.fillRect(a,mid-h*.22,b-a,h*.42); c.restore();
+    label(c,(a+b)/2, by-34, 'U∩U', GOLD, 10);
+  });
+
+  // the glued global section appears
+  if(join>.02){
+    const pts=[];
+    for(let i=0;i<=140;i++){
+      const u=i/140, x=lerp(x0,x1,u);
+      pts.push([x, mid+Math.sin(u*Math.PI*2.4)*h*.14]);
+    }
+    c.save(); c.globalAlpha=join; glowLine(c,pts,'#ffffff',2.8,30*join); c.restore();
+    c.save(); c.globalAlpha=join;
+    label(c,w*.5, mid-h*.26, '∃! globaler Schnitt  s', '#ffffff',14,'center',true);
+    c.restore();
+  }
+};
+
+/* 8 — obstruction: Möbius twist, no global section */
+SCENES.obstruct=(c,w,h,t)=>{
+  const cx=w/2, cy=h/2, R=Math.min(w,h)*.30;
+  // base circle
+  c.save(); c.strokeStyle='rgba(183,166,255,.4)'; c.lineWidth=2;
+  c.shadowColor=PURPLE; c.shadowBlur=18;
+  c.beginPath(); c.ellipse(cx,cy,R*1.25,R*.55,0,0,TAU); c.stroke(); c.restore();
+
+  // twisting fibers
+  const N=54;
+  for(let i=0;i<N;i++){
+    const a=i/N*TAU;
+    const bx=cx+Math.cos(a)*R*1.25, byy=cy+Math.sin(a)*R*.55;
+    const tw=a/2 + t/2400;                 // half-twist ⇒ Möbius
+    const L=R*.42;
+    const dx=Math.cos(tw)*0, dy=Math.cos(tw)*L;
+    const sx=Math.sin(tw)*L*.28;
+    const depth=(Math.sin(a)+1)/2;
+    const col=`hsla(${lerp(258,170,(Math.cos(tw)+1)/2)},80%,${55+25*depth}%,${.25+.55*depth})`;
+    glowLine(c,[[bx-sx,byy-dy],[bx+sx,byy+dy]],col,1.5,10);
+    dot(c,bx+sx,byy+dy,1.8,col,8);
+  }
+
+  // attempted global section that fails to close up
+  const pts=[];
+  const span=TAU*.94;
+  for(let i=0;i<=160;i++){
+    const u=i/160, a=-Math.PI*.5+u*span;
+    const tw=a/2+t/2400;
+    const bx=cx+Math.cos(a)*R*1.25, byy=cy+Math.sin(a)*R*.55;
+    pts.push([bx+Math.sin(tw)*R*.42*.28, byy+Math.cos(tw)*R*.42]);
+  }
+  glowLine(c,pts,GOLD,2.4,24);
+  const A=pts[0], B=pts[160];
+  dot(c,A[0],A[1],4.5,GOLD,20); dot(c,B[0],B[1],4.5,ROSE,20);
+  c.save(); c.setLineDash([3,5]); c.strokeStyle='rgba(255,158,196,.7)'; c.lineWidth=1.4;
+  c.beginPath(); c.moveTo(A[0],A[1]); c.lineTo(B[0],B[1]); c.stroke(); c.restore();
+  label(c,(A[0]+B[0])/2+34,(A[1]+B[1])/2,'passt nicht!',ROSE,12,'left',true);
+  label(c,cx,cy,'lokal ✓  ·  global ✗','#8a86a3',12);
+};
+
+/* 9 — étalé space: sheets covering the base */
+SCENES.space=(c,w,h,t)=>{
+  const x0=w*.10,x1=w*.90, by=h*.84;
+  glowLine(c,[[x0,by],[x1,by]],'rgba(183,166,255,.5)',2.2,16);
+  label(c,x0-4,by+22,'X',PURPLE,14,'left',true);
+
+  // sheets
+  const sheets=[
+    {o:-h*.14,f:1.0,c:MINT},
+    {o:-h*.28,f:1.7,c:PURPLE},
+    {o:-h*.42,f:2.6,c:ROSE},
+    {o:-h*.56,f:3.4,c:GOLD}
+  ];
+  sheets.forEach((s,k)=>{
+    const pts=[];
+    for(let i=0;i<=140;i++){
+      const u=i/140, x=lerp(x0,x1,u);
+      pts.push([x, by+s.o+Math.sin(u*Math.PI*s.f+t/1500+k)*h*.045]);
+    }
+    c.save(); c.globalAlpha=.75; glowLine(c,pts,s.c,2.2,18); c.restore();
+    // vertical projection hints
+    for(let i=0;i<=10;i++){
+      const u=i/10, x=lerp(x0,x1,u);
+      const y=by+s.o+Math.sin(u*Math.PI*s.f+t/1500+k)*h*.045;
+      c.save(); c.globalAlpha=.10; c.strokeStyle=s.c; c.lineWidth=1;
+      c.beginPath(); c.moveTo(x,y); c.lineTo(x,by); c.stroke(); c.restore();
+    }
+  });
+
+  // a moving point and its preimage
+  const pu=.5+.34*Math.sin(t/2800), px=lerp(x0,x1,pu);
+  dot(c,px,by,4,'#fff',18);
+  label(c,px,by+20,'p','#fff',12);
+  c.save(); c.setLineDash([3,6]); c.strokeStyle='rgba(255,255,255,.35)';
+  c.beginPath(); c.moveTo(px,by); c.lineTo(px,by-h*.60); c.stroke(); c.restore();
+  sheets.forEach((s,k)=>{
+    const y=by+s.o+Math.sin(pu*Math.PI*s.f+t/1500+k)*h*.045;
+    dot(c,px,y,3.4,s.c,16);
+  });
+  label(c,px+14,by-h*.62,'π⁻¹(p) = ℱ_p','#cfcbe3',12,'left',true);
+};
+
+/* 10 — finale: local patches rising into one global form */
+SCENES.finale=(c,w,h,t)=>{
+  const cx=w/2, cy=h/2, R=Math.min(w,h)*.34;
+  const cyc=(t/5000)%1, k=ease(Math.sin(cyc*Math.PI));
+
+  // scattered local discs converging into a ring
+  const N=42;
+  for(let i=0;i<N;i++){
+    const a=i/N*TAU + t/6000;
+    const scatterR=R*(1.35+.45*Math.sin(i*2.7));
+    const tgtR=R;
+    const r=lerp(scatterR,tgtR,k);
+    const x=cx+Math.cos(a)*r*1.1, y=cy+Math.sin(a)*r;
+    const col=`hsla(${lerp(258,170,(Math.sin(a*2)+1)/2)},82%,72%,${.25+.6*k})`;
+    dot(c,x,y,lerp(5,2.6,k),col,lerp(10,24,k));
+    if(k>.35){
+      const a2=(i+1)/N*TAU+t/6000;
+      const x2=cx+Math.cos(a2)*r*1.1, y2=cy+Math.sin(a2)*r;
+      c.save(); c.globalAlpha=(k-.35)/.65*.6;
+      glowLine(c,[[x,y],[x2,y2]],col,1.3,12); c.restore();
+    }
+  }
+  // inner glow core
+  c.save();
+  const g=c.createRadialGradient(cx,cy,0,cx,cy,R*.9);
+  g.addColorStop(0,`rgba(183,166,255,${.22*k})`);
+  g.addColorStop(.5,`rgba(110,231,215,${.10*k})`);
+  g.addColorStop(1,'rgba(0,0,0,0)');
+  c.fillStyle=g; c.beginPath(); c.arc(cx,cy,R*.95,0,TAU); c.fill(); c.restore();
+
+  label(c,cx,cy-8,'lokal','#8a86a3',13);
+  c.save(); c.globalAlpha=.4+.6*k;
+  label(c,cx,cy+14,'⟶  global',MINT,15,'center',true); c.restore();
+};
+
+/* ============ deck engine ============ */
+const slides=[...document.querySelectorAll('.slide')];
+const dotsEl=document.getElementById('dots');
+const prog=document.getElementById('prog');
+const cNow=document.getElementById('cNow');
+document.getElementById('cAll').textContent=String(slides.length).padStart(2,'0');
+
+let cur=0;
+const canvases=slides.map(s=>s.querySelector('canvas'));
+const dims=slides.map(()=>({c:null,w:0,h:0}));
+
+function resizeAll(){
+  slides.forEach((s,i)=>{
+    const prev=s.style.display;
+    s.style.display='grid';
+    dims[i]=fit(canvases[i]);
+    s.style.display=prev;
+  });
+}
+
+slides.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.setAttribute('aria-label','Folie '+(i+1));
+  b.onclick=()=>go(i);
+  dotsEl.appendChild(b);
+});
+const dotBtns=[...dotsEl.children];
+
+function go(i){
+  i=clamp(i,0,slides.length-1);
+  if(i===cur) return;
+  slides[cur].classList.remove('active');
+  cur=i;
+  slides[cur].classList.add('active');
+  paint();
+}
+function paint(){
+  dotBtns.forEach((b,i)=>b.classList.toggle('on',i===cur));
+  prog.style.width=((cur+1)/slides.length*100)+'%';
+  cNow.textContent=String(cur+1).padStart(2,'0');
+}
+
+slides[0].classList.add('active');
+resizeAll(); paint();
+addEventListener('resize',()=>{resizeAll();});
+
+// input
+addEventListener('keydown',e=>{
+  if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1);}
+  if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(cur-1);}
+  if(e.key==='Home')go(0);
+  if(e.key==='End')go(slides.length-1);
+});
+let wheelLock=0;
+addEventListener('wheel',e=>{
+  const now=performance.now();
+  if(now-wheelLock<700) return;
+  if(Math.abs(e.deltaY)<18) return;
+  wheelLock=now;
+  go(cur + (e.deltaY>0 ? 1 : -1));
+},{passive:true});
+
+// touch / swipe
+let ty=null, tx=null;
+addEventListener('touchstart',e=>{
+  ty=e.touches[0].clientY; tx=e.touches[0].clientX;
+},{passive:true});
+addEventListener('touchend',e=>{
+  if(ty===null) return;
+  const dy=ty-e.changedTouches[0].clientY;
+  const dx=tx-e.changedTouches[0].clientX;
+  if(Math.abs(dy)>Math.abs(dx) && Math.abs(dy)>50) go(cur + (dy>0?1:-1));
+  ty=null; tx=null;
+},{passive:true});
+
+// click on stage advances
+slides.forEach((s,i)=>{
+  s.querySelector('.stage').addEventListener('click',()=>go(cur+1));
+});
+
+/* ============ render loop ============ */
+let t0=performance.now();
+function frame(now){
+  const t=now-t0;
+  const s=slides[cur];
+  const key=s.dataset.c;
+  const d=dims[cur];
+  if(d && d.c && SCENES[key]){
+    // make sure size is current (fonts/layout may have settled)
+    if(Math.abs(canvases[cur].getBoundingClientRect().width - d.w) > 2){
+      dims[cur]=fit(canvases[cur]);
+    }
+    const {c,w,h}=dims[cur];
+    c.clearRect(0,0,w,h);
+    // subtle inner panel wash so canvases read as objects
+    const g=c.createLinearGradient(0,0,0,h);
+    g.addColorStop(0,'rgba(255,255,255,.028)');
+    g.addColorStop(1,'rgba(255,255,255,.005)');
+    c.fillStyle=g;
+    c.beginPath(); c.roundRect(0,0,w,h,20); c.fill();
+    c.save();
+    c.beginPath(); c.roundRect(0,0,w,h,20); c.clip();
+    SCENES[key](c,w,h,t);
+    c.restore();
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* roundRect polyfill for older engines */
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    r=Math.min(r,w/2,h/2);
+    this.moveTo(x+r,y);
+    this.arcTo(x+w,y,x+w,y+h,r);
+    this.arcTo(x+w,y+h,x,y+h,r);
+    this.arcTo(x,y+h,x,y,r);
+    this.arcTo(x,y,x+w,y,r);
+    this.closePath();
+    return this;
+  };
+}
+
+// re-fit once webfonts have loaded (labels shift otherwise)
+if(document.fonts && document.fonts.ready){
+  document.fonts.ready.then(()=>resizeAll());
+}
+</script>
+</body>
+</html>
