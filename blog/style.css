@@ -2413,73 +2413,119 @@ html.dark .kp-block {
    ════════════════════════════════════════════════════════════ */
 
 /* ── 1. Curiosity hook ───────────────────────────────────────
-   A big watermark "?", a cool sky wash, and a promise that the
-   answer is one section below. It never gives the answer away —
-   the pull IS the device.                                    */
+   A centred "chapter bridge": a soft sky halo, a small question
+   pill, the open question set in the serif face, and a chevron
+   pointing down the page. It never gives the answer away — the
+   pull IS the device.                                       */
 .mn-hook {
 	--hook-tone: var(--mn-sky);
 	position: relative;
-	margin: var(--mn-space-l) 0;
-	padding: 1.15em 1.35em 1.2em;
-	border-radius: var(--mn-radius-lg);
-	border: 1px solid color-mix(in srgb, var(--hook-tone) 32%, var(--mn-border));
+	margin: var(--mn-space-xl) auto var(--mn-space-l);
+	max-width: 56ch;
+	box-sizing: border-box;
+	padding: 1.75em 1.7em 1.55em;
+	border-radius: var(--mn-radius-xl);
+	text-align: center;
+	border: 1px solid color-mix(in srgb, var(--hook-tone) 26%, var(--mn-border));
 	background:
-		radial-gradient(130% 150% at 0% 0%, color-mix(in srgb, var(--hook-tone) 13%, transparent), transparent 62%),
-		var(--mn-surface);
-	box-shadow: var(--mn-shadow-sm);
+		radial-gradient(120% 135% at 50% -30%, color-mix(in srgb, var(--hook-tone) 18%, transparent), transparent 62%),
+		linear-gradient(180deg, color-mix(in srgb, var(--hook-tone) 6%, var(--mn-surface)), var(--mn-surface) 72%);
+	box-shadow:
+		var(--mn-shadow-lg),
+		inset 0 1px 0 color-mix(in srgb, #ffffff 45%, transparent);
 	overflow: hidden;
 }
+html.dark .mn-hook {
+	background:
+		radial-gradient(120% 135% at 50% -30%, color-mix(in srgb, var(--hook-tone) 24%, transparent), transparent 62%),
+		linear-gradient(180deg, color-mix(in srgb, var(--hook-tone) 9%, var(--mn-surface)), var(--mn-surface) 74%);
+	box-shadow:
+		var(--mn-shadow-lg),
+		inset 0 1px 0 color-mix(in srgb, #ffffff 6%, transparent);
+}
+/* a slow halo that breathes behind the question */
 .mn-hook::before {
-	content: "?";
+	content: "";
 	position: absolute;
-	right: .12em;
-	top: -.42em;
-	font: 900 clamp(4.5rem, 13vw, 8.5rem)/1 var(--mn-font-heading);
-	color: color-mix(in srgb, var(--hook-tone) 15%, transparent);
+	left: 50%;
+	top: -58%;
+	width: 135%;
+	aspect-ratio: 1 / 1;
+	transform: translateX(-50%);
+	border-radius: 50%;
+	background: radial-gradient(closest-side, color-mix(in srgb, var(--hook-tone) 15%, transparent), transparent 72%);
 	pointer-events: none;
-	user-select: none;
+	animation: mn-hook-glow 7s ease-in-out infinite;
 }
 .mn-hook-kicker {
 	position: relative;
-	display: block;
-	margin-bottom: .45em;
-	font: 700 .68rem/1 var(--mn-font-mono);
-	letter-spacing: .14em;
+	display: inline-flex;
+	align-items: center;
+	gap: .5em;
+	margin-bottom: 1.05em;
+	padding: .34em .85em .34em .6em;
+	border-radius: 999px;
+	border: 1px solid color-mix(in srgb, var(--hook-tone) 28%, transparent);
+	background: color-mix(in srgb, var(--hook-tone) 10%, transparent);
+	font: 700 .64rem/1 var(--mn-font-mono);
+	letter-spacing: .16em;
 	text-transform: uppercase;
-	color: color-mix(in srgb, var(--hook-tone) 80%, var(--mn-text-secondary));
+	color: color-mix(in srgb, var(--hook-tone) 82%, var(--mn-heading));
+}
+.mn-hook-kicker::before {
+	content: "?";
+	display: grid;
+	place-items: center;
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 50%;
+	font: 800 .82rem/1 var(--mn-font-heading);
+	color: color-mix(in srgb, var(--hook-tone) 88%, var(--mn-heading));
+	background: color-mix(in srgb, var(--hook-tone) 16%, transparent);
 }
 .mn-hook-q {
 	position: relative;
-	margin: 0;
-	max-width: 46ch;
-	font: italic 600 1.15rem/1.5 var(--mn-font-prose);
+	margin: 0 auto;
+	max-width: 40ch;
+	font: italic 500 clamp(1.12rem, 1rem + .55vw, 1.4rem)/1.5 var(--mn-font-prose);
 	color: var(--mn-heading);
+	text-wrap: balance;
 }
-.mn-hook-q em { color: color-mix(in srgb, var(--hook-tone) 70%, var(--mn-heading)); }
+.mn-hook-q em {
+	font-style: italic;
+	color: color-mix(in srgb, var(--hook-tone) 75%, var(--mn-heading));
+}
 .mn-hook-tease {
 	position: relative;
 	display: flex;
+	justify-content: center;
 	align-items: center;
-	gap: .45em;
-	margin-top: .8em;
-	font-size: .82rem;
+	gap: .55em;
+	margin-top: 1.2em;
+	font-size: .8rem;
 	font-weight: 600;
+	letter-spacing: .01em;
 	color: var(--mn-text-secondary);
 }
 .mn-hook-arrow {
-	display: inline-block;
+	display: inline-grid;
+	place-items: center;
+	width: 1.85em;
+	height: 1.85em;
+	border-radius: 50%;
 	color: var(--hook-tone);
-	animation: mn-hook-bob 1.8s ease-in-out infinite;
+	background: color-mix(in srgb, var(--hook-tone) 12%, transparent);
+	border: 1px solid color-mix(in srgb, var(--hook-tone) 32%, transparent);
+	box-shadow: 0 6px 14px -8px color-mix(in srgb, var(--hook-tone) 85%, transparent);
+	animation: mn-hook-bob 2s ease-in-out infinite;
 }
 @keyframes mn-hook-bob {
 	0%, 100% { transform: translateY(0); }
-	50%      { transform: translateY(3px); }
+	50%      { transform: translateY(4px); }
 }
-html.dark .mn-hook {
-	--hook-tone: var(--mn-sky);
-	background:
-		radial-gradient(130% 150% at 0% 0%, color-mix(in srgb, var(--hook-tone) 16%, transparent), transparent 62%),
-		var(--mn-surface);
+@keyframes mn-hook-glow {
+	0%, 100% { opacity: .55; }
+	50%      { opacity: 1; }
 }
 
 /* ── 2. Aha moment ───────────────────────────────────────────
@@ -2679,6 +2725,39 @@ html.dark .mn-hook {
 	line-height: 1.55;
 }
 .mn-demo-hint b { color: var(--mn-text); }
+.mn-demo-input {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px 12px;
+	border-radius: var(--mn-radius-sm);
+	border: 1px solid var(--mn-border);
+	background: var(--mn-bg);
+	color: var(--mn-text);
+	font-family: inherit;
+	font-size: 1em;
+	transition: border-color .15s ease, box-shadow .15s ease;
+}
+.mn-demo-input::placeholder { color: var(--mn-text-muted); }
+.mn-demo-input:focus {
+	outline: none;
+	border-color: var(--mn-accent);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--mn-accent) 20%, transparent);
+}
+
+/* ── 5b. Tight equation stacks ───────────────────────────────
+   Consecutive display equations (the autoregressive loop, the
+   step lists) otherwise stack the global `#contents p` bottom
+   margin on top of the `.cl-eq` block margin and end up with a
+   huge gap. A .md block marked .mn-mathstack tucks them together.
+   `#contents`-prefixed so it beats the id-level paragraph rule. */
+#contents .md.mn-mathstack p {
+	margin: .6em 0;
+	text-indent: 0;
+}
+#contents .md.mn-mathstack .cl-eq { margin: 0; }
+#contents .md.mn-mathstack .cl-eq .tml-display,
+#contents .md.mn-mathstack .cl-eq math[display="block"],
+#contents .md.mn-mathstack > math[display="block"] { margin: 0 !important; }
 
 /* ── 6. Scroll reveal (progressive enhancement) ─────────────
    Only active once reading_flow.js has put `.rf-anim` on <html>,
@@ -2696,7 +2775,8 @@ html.dark .mn-hook {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.mn-hook-arrow { animation: none; }
+	.mn-hook-arrow,
+	.mn-hook::before { animation: none; }
 	.rf-anim .mn-hook,
 	.rf-anim .mn-aha { opacity: 1; transform: none; transition: none; }
 	.mn-psst-body { animation: none; }

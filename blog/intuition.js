@@ -148,7 +148,7 @@ const TokenizerViz = {
 
 
 // ============================================================
-// STEP 2: EMBEDDING VISUALIZER (lndw style — Macht / Geschlecht)
+// STEP 2: EMBEDDING VISUALIZER (lndw style — Power / Gender)
 // ============================================================
 
 const EmbeddingViz = (() => {
@@ -190,14 +190,14 @@ const EmbeddingViz = (() => {
         };
     };
 
-    // Tokenize "König - Mann + Frau", "Frau + 2*Macht" etc.
+    // Tokenize "King - Man + Woman", "Woman + 2*Power" etc.
     function tokenize(expr) {
         return expr.match(/[a-zA-ZäöüÄÖÜß]+|\d+|[+\-*/()]/g) || [];
     }
 
     function calc(parts) {
         // parts = array of (word|k|num) with optional preceding sign
-        // We use a tiny recursive-descent so "Frau + 2*Macht" and "(Mann+Frau)/2" work.
+        // We use a tiny recursive-descent so "Woman + 2*Power" and "(Man+Woman)/2" work.
         let i = 0;
         function parseFactor() {
             const t = parts[i++];
@@ -322,7 +322,7 @@ const EmbeddingViz = (() => {
         const annotations = [];
 
         // Background vocabulary (greyed out but visible)
-        const bg = Object.keys(space.vocab).filter(w => w !== 'Macht' && !highlightWords.includes(w));
+        const bg = Object.keys(space.vocab).filter(w => w !== 'Power' && !highlightWords.includes(w));
         traces.push({
             x: bg.map(w => space.vocab[w][0]),
             y: bg.map(w => space.vocab[w][1]),
@@ -440,25 +440,25 @@ const EmbeddingViz = (() => {
             });
         }
 
-        // Geschlechts-Richtung: dieselbe Richtung überall
-        addArrow( 5, -10,  5, 10, GREEN);   // Mann → Frau
-        addArrow(25, -10, 25, 10, GREEN);   // König → Königin
+        // Gender direction: the same vector wherever you anchor it
+        addArrow( 5, -10,  5, 10, GREEN);   // Man → Woman
+        addArrow(25, -10, 25, 10, GREEN);   // King → Queen
         annotations.push({
             x: 15, y: 25, xref: 'x', yref: 'y',
-            text: '<b>„Geschlecht"</b> — dieselbe Richtung überall',
+            text: '<b>“Gender”</b> — the same direction everywhere',
             showarrow: false,
             font: { size: 13, color: GREEN, family: 'system-ui, sans-serif' },
             align: 'center'
         });
 
         if (stage === 'power') {
-            addArrow( 5, -10, 15, -10, ORANGE);  // Mann → Prinz
-            addArrow(15, -10, 25, -10, ORANGE);  // Prinz → König
-            addArrow( 5,  10, 15,  10, ORANGE);  // Frau → Prinzessin
-            addArrow(15,  10, 25,  10, ORANGE);  // Prinzessin → Königin
+            addArrow( 5, -10, 15, -10, ORANGE);  // Man → Prince
+            addArrow(15, -10, 25, -10, ORANGE);  // Prince → King
+            addArrow( 5,  10, 15,  10, ORANGE);  // Woman → Princess
+            addArrow(15,  10, 25,  10, ORANGE);  // Princess → Queen
             annotations.push({
                 x: 15, y: -25, xref: 'x', yref: 'y',
-                text: '<b>„Macht"</b> — auch hier dieselbe Richtung',
+                text: '<b>“Power”</b> — the same direction here too',
                 showarrow: false,
                 font: { size: 13, color: ORANGE, family: 'system-ui, sans-serif' },
                 align: 'center'
@@ -514,15 +514,15 @@ const EmbeddingViz = (() => {
 
         const expr = inp.value.trim();
         const ev = evaluate(expr);
-        if (!ev) { r.innerHTML = '<span class="res-dim">Ungültiger Ausdruck</span>'; result = null; render(); return; }
+        if (!ev) { r.innerHTML = '<span class="res-dim">Invalid expression</span>'; result = null; render(); return; }
 
         if (ev.kind === 'num') {
-            r.innerHTML = `Ergebnis: <b>${ev.n.toFixed(2)}</b> <span class="res-dim">(Skalar)</span>`;
+            r.innerHTML = `Result: <b>${ev.n.toFixed(2)}</b> <span class="res-dim">(scalar)</span>`;
             result = null;
         } else {
             const near = nearest(ev.pos);
             result = { pos: ev.pos, nearest: near.word, steps: [] };
-            r.innerHTML = `→ <b>(${ev.pos[0].toFixed(1)}, ${ev.pos[1].toFixed(1)})</b> · ähnlichster Punkt: <b style="color:#ef4444">${near.word}</b> <span class="res-dim">(d=${near.dist.toFixed(2)})</span>`;
+            r.innerHTML = `→ <b>(${ev.pos[0].toFixed(1)}, ${ev.pos[1].toFixed(1)})</b> · nearest point: <b style="color:#ef4444">${near.word}</b> <span class="res-dim">(d=${near.dist.toFixed(2)})</span>`;
         }
         render();
     }
@@ -561,7 +561,7 @@ const EmbeddingViz = (() => {
         if (!pos) { doArithmetic(); return; }
         const near = nearest(pos);
         result = { pos, nearest: near.word, steps };
-        r.innerHTML = `→ <b>(${pos[0].toFixed(1)}, ${pos[1].toFixed(1)})</b> · ähnlichster Punkt: <b style="color:#ef4444">${near.word}</b> <span class="res-dim">(d=${near.dist.toFixed(2)})</span>`;
+        r.innerHTML = `→ <b>(${pos[0].toFixed(1)}, ${pos[1].toFixed(1)})</b> · nearest point: <b style="color:#ef4444">${near.word}</b> <span class="res-dim">(d=${near.dist.toFixed(2)})</span>`;
         render();
     }
 
@@ -1447,9 +1447,9 @@ const ResidualStreamViz = {
 
 		const label = document.getElementById('residual-stream-layer-label');
 		if (label) {
-			if (this.currentLayer === 0) label.textContent = 'Embedding';
+			if (this.currentLayer === 0) label.textContent = 'x\u2080 · Embedding';
 			else if (this.currentLayer === this.numLayers) label.textContent = 'Unembedding';
-			else label.textContent = `Layer ${this.currentLayer}`;
+			else label.textContent = `h${this.currentLayer}`;
 		}
 
 		const prevBtn = document.getElementById('residual-stream-prev');
