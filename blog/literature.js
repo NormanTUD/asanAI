@@ -5449,11 +5449,11 @@ window.bibData = {
 		alternativetitle: "Behavior, Purpose and Teleology",
 		url: "https://www.jstor.org/stable/2187012"
 	},
-	"wienergodandgolem1937": {
+	"wienergodandgolem1964": {
 		author: "Norbert Wiener",
-		year: "1937",
-		title: "God and Golem, or Can Robots Think?",
-		alternativetitle: "Can Robots Think?",
+		year: "1964",
+		title: "God & Golem, Inc.: A Comment on Certain Points Where Cybernetics Impinges on Religion",
+		alternativetitle: "God & Golem, Inc.",
 		url: "https://en.wikipedia.org/wiki/Norbert_Wiener"
 	},
 	"wienerhumaneuse1950": {
@@ -8091,13 +8091,6 @@ window.bibData = {
 		author: "Bishan Yang, Wen-tau Yih, Xiaodong He, Jianfeng Gao, Li Deng",
 		year: 2015,
 		alternativetitle: "TransE-RotatE"
-	},
-	"trouillon2016complex": {
-		url: "https://arxiv.org/abs/1606.03137",
-		title: "Complex Embeddings for Simple Link Prediction",
-		author: "Théo Trouillon, Johannes Welbl, Sebastian Riedel, Éric Gaussier, Guillaume Bouchard",
-		year: 2016,
-		alternativetitle: "ComplEx"
 	},
 	"schlichtkrull2018rgcn": {
 		url: "https://arxiv.org/abs/1703.06103",
@@ -15827,13 +15820,6 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2202.05262",
 		alternativetitle: "Meng et al., ROME (2022)"
 	},
-	"belrose2023tunedlens": {
-		title: "Eliciting Latent Predictions from Transformers with the Tuned Lens",
-		author: "Nick Belrose, Zach Kenton, Mike Schneider, Brian Chen, Sam McCandlish",
-		year: 2023,
-		url: "https://arxiv.org/abs/2303.08112",
-		alternativetitle: "Belrose et al., tuned lens (2023)"
-	},
 	"todd2023emergent": {
 		title: "Emergent Linear Representations in World Models of Self-Supervised Sequence Models",
 		author: "Michael Todd, Michael Nanda, Tomer Wattenberg",
@@ -15847,13 +15833,6 @@ window.bibData = {
 		year: 2026,
 		url: "https://arxiv.org/abs/2603.16689",
 		alternativetitle: "Brenner et al., grid walkers (2026)"
-	},
-	"olsson2022induction": {
-		title: "In-Context Learning and Induction Heads",
-		author: "Jacob Olsson, Nelson Elhage, Neel Nanda, Tom H. B., et al.",
-		year: 2022,
-		url: "https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/",
-		alternativetitle: "Olsson et al., induction heads (2022)"
 	},
 	"gould2023successor": {
 		title: "Successor Heads: Recurring, Interpretable Attention Heads In The Wild",
