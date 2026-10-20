@@ -462,7 +462,7 @@ P(\mu - 3\sigma \leq X \leq \mu + 3\sigma) &\approx 99.7\%
 \end{aligned}
 $$
 
-This is why Gauß could predict where Ceres would reappear: he knew that the true position was almost certainly within $2\sigma$ to $3\sigma$ of his calculated estimate.
+This is the probabilistic logic that made predictions like Gauß's 1801 recovery of the lost planet Ceres possible: a least-squares estimate comes with a quantified uncertainty, so the astronomers knew within a small region where to point their telescopes.
 
 ##### Comparison: Binomial vs. Gauß Calculation
 
