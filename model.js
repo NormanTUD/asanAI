@@ -241,8 +241,20 @@ async function _get_recreate_model(new_model_config_hash) {
 		recreate_model = true;
 	}
 
+	// A model whose weight tensors were disposed is unusable no matter what the
+	// config/trained state says — there is nothing to preserve, so it must be
+	// rebuilt, or predict/fit fail on dead tensors ("LayersVariable … is already
+	// disposed"). This is detected here (and not in _compile_model_ensure_exists)
+	// so the rebuild goes through recreate_model_if_needed -> _create_model, which
+	// is serialized by create_model_queue. Recreating via the queue-bypassing
+	// create_model_or_throw() instead would race a concurrent _create_model.
+	var model_is_dead = model_has_disposed_weights();
+	if (model_is_dead) {
+		recreate_model = true;
+	}
+
 	if(model_is_trained) {
-		if(model_config_hash == new_model_config_hash) {
+		if(model_config_hash == new_model_config_hash && !model_is_dead) {
 			recreate_model = false;
 		} else {
 			recreate_model = true;
@@ -292,14 +304,8 @@ async function recreate_model_if_needed (new_model_config_hash) {
 }
 
 async function _compile_model_ensure_exists() {
-	// Recreate not only when the model is missing, but also when it is dead —
-	// its weight tensors were disposed by a rebuild while the config hash stayed
-	// the same. A disposed model with an unchanged hash would otherwise flow
-	// straight to _compile_model_do_compile, which would "compile" a model whose
-	// weights are gone, leaving predict/fit failing with
-	// "LayersVariable … is already disposed" / "model is undefined".
-	if (!model || model_has_disposed_weights()) {
-		if (!model && finished_loading) {
+	if (!model) {
+		if (finished_loading) {
 			dbg("compile_model: " + language[lang]["model_not_given"]);
 		}
 
@@ -482,13 +488,15 @@ async function compile_model(recursion_level=0) {
 	//
 	// A config-hash match alone is NOT sufficient: model_config_hash is only
 	// written in _compile_model_do_compile, but the model object can still be
-	// replaced or its tensors disposed out from under that hash by a
-	// concurrent rebuild. In that case the "already compiled" assumption is
-	// false — the (fresh) model created by _compile_model_ensure_exists above
-	// has no optimizer yet, or the previous model's weights are disposed — and
-	// skipping here would leave a dead/uncompiled model that predict/fit then
-	// fail on ("LayersVariable … is already disposed" / "model is undefined").
-	// model_is_usable() is what catches that and forces the real recompile.
+	// missing or its tensors disposed out from under that hash by a concurrent
+	// rebuild. In that case the "already compiled" assumption is false — the
+	// model has no optimizer yet, or its weights are disposed — and skipping
+	// here would leave a dead/uncompiled model that predict/fit then fail on
+	// ("LayersVariable … is already disposed" / "model is undefined").
+	// model_is_usable() is what catches that: it forces the slow path below,
+	// where _compile_model_ensure_exists recreates a missing model and
+	// _get_recreate_model rebuilds a disposed one (via the serialized
+	// _create_model), and _compile_model_do_compile then (re)compiles it.
 	var __model_usable = model_is_usable();
 	var __fast_path = (!config_changed) && __model_usable;
 	if (__fast_path) {
