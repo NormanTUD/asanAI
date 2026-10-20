@@ -6071,7 +6071,6 @@ window.bibData = {
 		author: "Alon Talmor, Jonathan Herzig, Nicholas Lourie, Omer Levy",
 		year: "2019",
 		title: "CommonsenseQA: A Question Answering Challenge Targeting Commonsense Reasoning",
-		url: "https://arxiv.org/abs/1811.00955",
 		publisher: "NeurIPS 2019",
 		alternativetitle: "CommonsenseQA"
 	},
@@ -6469,7 +6468,6 @@ window.bibData = {
 		year: 2014,
 		author: "Karen Simonyan, Andrew Zisserman",
 		title: "Very Deep Convolutional Networks for Large-Scale Image Recognition",
-		url: "https://arxiv.org/abs/1409.1556",
 		alternativetitle: "VGGNet"
 	},
 
@@ -6478,21 +6476,18 @@ window.bibData = {
 		year: 2014,
 		author: "Ilya Sutskever, Oriol Vinyals, Quoc V. Le",
 		title: "Sequence to Sequence Learning with Neural Networks",
-		url: "https://arxiv.org/abs/1409.3215",
 		alternativetitle: "Seq2Seq"
 	},
 	"christiano2017rlhf": {
 		year: 2017,
 		author: "Paul F. Christiano, Jan Leike, Tom B. Brown, Miljan Martic, Shane Legg, Dario Amodei",
 		title: "Deep Reinforcement Learning from Human Preferences",
-		url: "https://arxiv.org/abs/1709.06000",
 		alternativetitle: "RLHF (Foundation for InstructGPT)"
 	},
 	"brown2020gpt3": {
 		year: 2020,
 		author: "Tom B. Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, et al.",
 		title: "Language Models are Few-Shot Learners",
-		url: "https://arxiv.org/abs/2005.14165",
 		alternativetitle: "GPT-3"
 	},
 	"laplace1812analytic": {
