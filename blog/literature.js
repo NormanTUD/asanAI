@@ -13078,6 +13078,13 @@ window.bibData = {
 	 * ───────────────────────────────────────────────────────────────────── */
 
 	/* ── Biology & the social brain ── */
+	"aiellowheeler1995expensivetissue": {
+		title: "The Expensive-Tissue Hypothesis: The Brain and the Digestive System in Human and Primate Evolution",
+		author: "Leslie C. Aiello and Peter Wheeler",
+		year: 1995,
+		url: "https://doi.org/10.1086/204350",
+		alternativetitle: "The Expensive-Tissue Hypothesis"
+	},
 	"aiello1995expensivetissue": {
 		title: "In Defense of the Expensive Tissue Hypothesis",
 		author: "Leslie C. Aiello, Nicola Bates and Tracey Joffe",
@@ -13223,6 +13230,13 @@ window.bibData = {
 		year: 1632,
 		url: "https://archive.org/details/dialogue-concerning-the-two-chief-world-systems-galileo-galilei-stephen-jay-gould",
 		alternativetitle: "Galileo, Dialogue"
+	},
+	"galileoassayer1623": {
+		title: "The Assayer (Il Saggiatore)",
+		author: "Galileo Galilei",
+		year: 1623,
+		url: "https://en.wikipedia.org/wiki/The_Assayer",
+		alternativetitle: "Galileo, The Assayer (1623)"
 	},
 	"daston1988probability": {
 		title: "Classical Probability in the Enlightenment",
