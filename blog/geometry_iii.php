@@ -5,7 +5,7 @@ title: The Shape of Holes: A Working Algebraic Topology
 description: From Euler's bridges to the barcodes of embedded meaning: who turned shape into algebra, when, and why, with the exact sequences as they first appeared, and the persistent homologies that now read the shape of data.
 icon: &#127849;
 part: 1
-order: 10
+order: 12
 color: accent
 topics: geometry, math-iii, history
 tags: math-heavy, logic-heavy

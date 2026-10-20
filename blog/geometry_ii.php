@@ -5,7 +5,7 @@ title: The Shape of the Machine — A Working Geometry for AI
 description: The working geometric toolkit behind every network — projection, singular values, descent, convolution, and symmetry — each operation drawn as a picture of space, and tied to the layer that uses it.
 icon: &#129517;
 part: 1
-order: 7
+order: 8
 color: accent
 topics: geometry, math-ii, math-iii, architecture
 tags: math-heavy
