@@ -34,7 +34,8 @@ math: 65
 .ps-btn.active { background: var(--mn-accent); color: #fff; }
 .ps-row { display: flex; gap: .55rem; flex-wrap: wrap; margin: .6rem 0; }
 .ps-canvas { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--mn-border); background: var(--mn-bg-subtle); }
-.ps-plot { width: 100%; min-height: 340px; }
+.ps-plot { width: 100%; min-width: 0; min-height: 340px; }
+.ps-grid2 > * { min-width: 0; }
 .ps-3d { width: 100%; height: 460px; border-radius: 10px; border: 1px solid var(--mn-border); overflow: hidden; cursor: grab; }
 .ps-readout { font-family: var(--mn-font-mono); font-size: .9rem; color: var(--mn-emerald); background: var(--mn-bg-subtle); padding: .75rem 1rem; border-radius: 8px; border-left: 3px solid var(--mn-emerald); margin: .8rem 0; white-space: pre-wrap; line-height: 1.5; }
 .ps-example { background: var(--mn-bg-warm); border-left: 3px solid var(--mn-coral); padding: .7rem 1rem; border-radius: 0 8px 8px 0; margin: .6rem 0; font-style: italic; font-size: 1.05rem; color: var(--mn-text); }
