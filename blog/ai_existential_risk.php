@@ -5,7 +5,7 @@ title: AI Existential Risk — What Is Real and What Is Speculative
 description: A neutral survey of the AI existential-risk hypothesis: its literary and scientific origins, the main risk mechanisms, the empirical evidence today, expert and skeptic positions, and the open questions.
 icon: &#9888;
 part: 6
-order: 12
+order: 14
 color: text-secondary
 topics: safety, philosophy, society
 tags: interested-layman

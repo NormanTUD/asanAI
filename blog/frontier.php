@@ -37,7 +37,7 @@ CAI reduces human labelling by ~10× while matching (\cite[Ouyang et al., 2022]{
 ## Interpretability
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Sparse Autoencoders (SAE loss)">
+<div class="md" data-mathlevel="60">
 ### Sparse Autoencoders (SAEs) for Interpretability
 
 The interpretability chapter covered **circuits**. A complementary approach: **decompose activations into sparse, interpretable features**.
@@ -120,7 +120,7 @@ The **lost-in-the-middle** problem remains: models perform best on information a
 For evaluation, **needle-in-a-haystack** tests are now standard: insert a specific fact at a random position; ask the model to retrieve it. Performance degrades as context length grows.
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Mixture of Depths (MoD) routing">
+<div class="md" data-mathlevel="45">
 ### Mixture of Depths (MoD)
 
 Raposo et al. (Google DeepMind, 2024): instead of every token passing through every layer, **route tokens through different numbers of layers** (\cite[Bubeck et al., 2023]{bubeck2023moeoverview}). Easy tokens skip; hard tokens use full depth.

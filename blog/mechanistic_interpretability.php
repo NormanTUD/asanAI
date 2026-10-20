@@ -27,7 +27,7 @@ Each arrow represents an additive contribution to the residual stream. A “circ
 
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="The residual stream as a communication bus">
+<div class="md" data-mathlevel="65">
 ## The Residual Stream as a Communication Bus
 
 In a standard Transformer with $L$ layers, each containing multi-head attention and an MLP, the residual stream at position $i$ after all layers is:
@@ -82,7 +82,7 @@ The process of finding circuits involves several techniques (\cite[Conmy et al.,
 4. **Automated Circuit Discovery (ACDC):** An algorithm that systematically tests edges in the computational graph to find the minimal subgraph that explains a behavior.
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="The QKV mechanism: how attention heads compute">
+<div class="md" data-mathlevel="65">
 ## The QKV Mechanism: How Attention Heads Compute
 
 Each attention head computes three projections of the residual stream (\cite[Section 2]{elhage2021mathematical}):
@@ -114,7 +114,7 @@ $$\text{Output contribution} = W_O W_V \cdot x_{\text{source}}$$
 The matrix $W_O W_V$ maps source token representations to output contributions. For a “copying” head, this matrix approximates the identity in the relevant subspace.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Superposition: when features outnumber dimensions">
+<div class="md" data-mathlevel="55">
 ## Superposition: When Features Outnumber Dimensions
 
 A critical challenge in understanding circuits is **superposition** (\cite[Elhage et al., 2022]{elhage2022superposition}): the phenomenon where a model represents more features than it has dimensions, by encoding features as nearly-orthogonal directions in the residual stream. Recent work (\cite[Marks et al., 2023]{marks2023geometry}) has shown that even abstract properties like truth emerge as linearly separable directions in this high-dimensional space.
@@ -126,7 +126,7 @@ $$\text{Feature } f_i \approx \hat{d}_i \cdot x \quad \text{where } \hat{d}_i \c
 This means that individual neurons rarely correspond to single interpretable features. Instead, features are distributed across neurons, and neurons participate in multiple features. This is why \cite[sparse autoencoders]{cunningham2023sparse} have become an important tool: they learn to decompose the residual stream into a larger set of interpretable, sparsely-activating features.
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The polytope lens: why a direction isn't the right unit">
+<div class="md" data-mathlevel="60">
 ## The Polytope Lens: why a "direction" isn't quite the right unit
 
 Superposition and the features-as-directions view both treat a *direction* (a linear
@@ -150,7 +150,7 @@ description — the same tension the linear-representation results below wrestle
 other side.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Composition: how heads talk to each other">
+<div class="md" data-mathlevel="55">
 ## Composition: How Heads Talk to Each Other
 
 The most powerful circuits arise from **composition**: when the output of one head becomes the input to another (\cite[Section 3]{elhage2021mathematical}). There are three types:
@@ -177,7 +177,7 @@ Head A's output changes *what information Head B moves*.
 Induction heads are the canonical example of **K-composition**: the previous-token head writes information that the induction head uses in its key computation to find matching patterns.
 </div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="Communication channels: how heads actually talk">
+<div class="md" data-mathlevel="70">
 ## Communication Channels: How Heads Actually Talk
 
 The last section described *what* the three kinds of composition do — one head's output reshaping another head's query, key, or value. But it left open *how* a head's output is later found by a head several layers deeper. A 2024 study of GPT-2 small and Pythia (\cite[Merullo, Eickhoff & Pavlick, 2024]{merullo2024talkingheads}) gives a clean answer: heads talk through **low-rank subspaces** of the residual stream. A "channel" is a thin slice — often just one or two dimensions — that an early head writes into and a later head reads out, so two heads "talk to each other" without the whole 768-dimensional stream carrying the signal.
@@ -199,7 +199,7 @@ and the score is recomputed *piece by piece*. Now the diffuse noise resolves: on
 **Where it does not reach.** Two honest limits. *Key*-composition shows no such outlier: even though induction heads are the textbook K-composition, the 4.11 → 5.5 pair produces no composition-score spike, so the channel method is not universal. And the score reads off the weight-only product $QK$; in models with rotary positional encodings (RoPE, as in Llama and Mistral) the query and key are rotated per position, so $QK$ is no longer a clean product of the weights and the method does not transfer directly.
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="Activation patching: the surgeon's scalpel">
+<div class="md" data-mathlevel="40">
 ## Activation Patching: The Surgeon's Scalpel
 
 \cite[Activation patching]{meng2022locating} is the primary experimental technique for identifying which components matter for a given behavior. The procedure is:
@@ -216,7 +216,7 @@ If patching component $C$ causes the model to recover its clean-run prediction, 
 A large $\Delta_C$ means component $C$ is critical for the task.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The logit lens: watching predictions form layer by layer">
+<div class="md" data-mathlevel="55">
 ## The Logit Lens: Watching Predictions Form Layer by Layer
 
 One powerful tool for peering inside a Transformer is the \cite[**logit lens**]{belrose2023tunedlens}. The idea is beautifully simple: at every layer, take the hidden state of the residual stream and decode it into vocabulary probabilities by applying the unembedding matrix $W_U$. This lets us watch how the model's prediction evolves as it passes through the network, the proverbial “thinking process” laid out layer by layer.
@@ -243,7 +243,7 @@ The field of mechanistic interpretability is still young, but it represents our 
 
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The FFN as a soft hash table">
+<div class="md" data-mathlevel="60">
 ## The FFN as a Soft Hash Table
 
 The Feed-Forward Network in a Transformer layer has a precise computational analogy: it is a **soft hash table**. The FFN computes:
@@ -311,7 +311,7 @@ The “aha moment” of grokking is not a sudden leap, it is the moment when the
 
 <div id="grokking-container"></div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Emergent world representations: the Othello experiment">
+<div class="md" data-mathlevel="60">
 ## Emergent World Representations: The Othello Experiment
 
 One of the most striking demonstrations that sequence models build internal world models comes from \cite[Li et al. (2023)]{li2022othello_iclr}. The researchers trained a GPT variant (“Othello-GPT”) on sequences of legal Othello moves, with **no knowledge of the game rules, board structure, or even that a board exists**. The model saw only token sequences representing tile indices (a vocabulary of 60 tokens).
@@ -345,7 +345,7 @@ The Othello-GPT result establishes a key principle: **next-token prediction on s
 
 <div id="othello-container"></div>
 
-<div class="md" data-mathlevel="75" data-optionaltitle="The linear representation hypothesis: geometry of concepts">
+<div class="md" data-mathlevel="75">
 ## The Linear Representation Hypothesis: Geometry of Concepts
 
 \cite[Park, Choe & Veitch (2024)]{park2024linear} formalize what it means for concepts to be “linearly represented” in an LLM. They identify **three** notions of linear representation and prove they are unified by a single geometric structure:
@@ -418,7 +418,7 @@ Directions for optimism, cynicism, politeness, or formal register. \cite[Turner 
 Directions that mirror year numbers, timelines, or geographic latitude and longitude. \cite[Gurnee & Tegmark (2023)]{gurnee2023spacetime} show that LLMs learn **linear** representations of space and time across multiple scales — for places worldwide, in the US, and in New York, plus historical figures, artworks, and news headlines. Linear (ridge-regression) probes decode real coordinates and dates from the residual-stream activations, with R² up to 0.91, and a 256-neuron nonlinear MLP adds almost nothing (0.926 vs. 0.911) — strong evidence that space and time are represented **linearly**, not merely linearly *readable*. Individual "space neurons" and "time neurons" — units whose weights correlate strongly with the probe direction — reproduce the structure on their own. Here a "direction with fixed meaning" becomes a **world model**: the same linear structure that carries a fact (truth) and a behavior (refusal) also carries *where* and *when*.
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Looped transformers as programmable computers">
+<div class="md" data-mathlevel="45">
 ## Looped Transformers as Programmable Computers
 
 \cite[Giannou et al. (2023)]{giannou2023looped} demonstrate that a **constant-depth** Transformer (≤13 layers), when placed in a loop, can emulate a **general-purpose computer**. This result has profound implications for understanding what Transformers *can* compute and how they might implement algorithms internally.
@@ -476,7 +476,7 @@ All three papers share a common situs: the residual stream as a computational me
 
 <div id="looped-tf-container"></div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The feature revolution: when neurons become features">
+<div class="md" data-mathlevel="60">
 ## The Feature Revolution: When Neurons Become Features
 
 Everything above is stated in the vocabulary of *components* — attention heads and MLP layers that we patch, ablate, and trace. But the component-level view ran into a wall it could not climb: **the individual neurons of an MLP are polysemantic**. A single neuron in GPT-2 small fires on academic citations, English dialogue, HTTP requests, *and* Korean text (\cite[Bricken et al., 2023]{bricken2023monosemanticity}); a single neuron in a vision model responds to both the faces of cats and the fronts of cars. The neuron is not a meaningful unit of analysis, because — as superposition predicts — a model with $d_{\text{model}}$ dimensions represents far more than $d_{\text{model}}$ concepts by packing them into nearly-orthogonal directions.
@@ -611,7 +611,7 @@ SoLU is a double-edged sword, and the paper is honest about it: it may **hide** 
 
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The privileged basis: why some coordinates are special">
+<div class="md" data-mathlevel="55">
 ### The Privileged Basis: Why Some Coordinates Are Special
 
 \cite[Elhage et al. (2023)]{elhage2023privileged} tackle a puzzle raised by the "emergent outliers" observed in large transformers — certain coordinates of the residual stream take values **up to 20× larger** than any other (\cite[Dettmers et al., 2022]{dettmers2022llmint8}). The mathematical theory of transformers says the residual stream should have **no privileged basis**: every read/write goes through an arbitrary full-rank linear map, so one should be able to change basis freely without changing the function. If that were true, large features would be "smeared" evenly across coordinates (contributing about $1/\sqrt{d}$ of their magnitude to each). The consistent presence of extreme values in a *fixed* set of coordinates means **something is breaking the symmetry**. The answer: **the per-dimension normalizers of the Adam optimizer**. (Layer normalization and finite-precision floating-point calculations are confidently ruled out.) The practical upshot is that the residual stream is *not* basis-free the way the naive theory suggested — the token-embedding directions, in particular, retain a special status, which is one reason features and steering vectors can be so cleanly linear.
@@ -690,7 +690,7 @@ The view also suggests where interpretability is likely to fail: at **phase tran
 None of this is a finished theory. It is a research program, not a theorem. But it is the closest thing the field has to a unifying explanatory framework for *why* the techniques work, and it gives a principled reason to expect that the feature-level view, for all its success, is an *approximation* that will break down in specific, identifiable regimes.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The thermodynamics of learning">
+<div class="md" data-mathlevel="55">
 ## The Thermodynamics of Learning
 
 There is a thread that connects the physics of computation to the *process* of learning itself, and it is worth stating explicitly because it reframes what "training" actually is.
@@ -735,7 +735,7 @@ At the system level the fragility is well documented. A single **negation interv
 The takeaway is a general one: a transformer *can* implement negation — by inhibition plus construction of a "not-$X$" representation — but it is chronically fragile, because doing so means working against the attractive bias that makes attention powerful in the first place.
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Does the model know when it is uncertain?">
+<div class="md" data-mathlevel="50">
 ## Does the Model Know When It Is Uncertain?
 
 A final, practically crucial question: **does the model internally represent that it is uncertain?** There is a surface answer and a deeper one, and they do not always agree.

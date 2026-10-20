@@ -5,7 +5,7 @@ title: What Machines See
 description: How a computer learns to see — the convolution, the feature hierarchy, the full CNN pipeline, then the task stack: detection, segmentation, SAM, Vision Transformers and 3D.
 icon: &#128065;
 part: 3
-order: 5
+order: 7
 color: emerald
 topics: vision, architecture, programming, multimodal
 tags: code-heavy
@@ -27,7 +27,7 @@ The idea of hierarchical visual feature detection was first introduced by \citea
 * **Pooling/Invariance:** The concept of complex cells corresponds to “Max-Pooling” in modern architectures, achieving translation invariance.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="What is a Convolution?">
+<div class="md" data-mathlevel="55">
 ## What is a Convolution?
 
 A **convolution** is a mathematical operation that slides a small grid of numbers (the **kernel** or **filter**) across an image, computing a weighted sum at every position. This single operation is the fundamental building block of **Convolutional Neural Networks (CNNs)**, the technology behind facial recognition, autonomous vehicles, medical imaging, and satellite analysis.
@@ -48,7 +48,7 @@ In one sentence, Olah captures the whole operation:
 (\cite[Olah, 2014]{colah2014conv}) Two consequences of that single idea are easy to miss. First, in a *learned* CNN the very same kernel is reused at every position — in the layer's weight matrix the same few values repeat along each diagonal, so identical neurons and identical weights are the same statement (\cite[Olah, 2014]{colah2014conv}). Reusing one component across many positions is **weight tying** in a vision setting (\cite[Olah, 2015]{colah2015types}). Second, although a convolution looks like an $O(n^2)$ sum, it can be evaluated in $O(n\log n)$ with the right transform, and it is this fast, parallel form that made large convolutions practical on GPUs (\cite[Olah, 2014]{colah2014conv}). The formal treatment of the convolution as a translation-equivariant operator — where the same kernel is applied at every position by a single weight-sharing constraint — is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 17.2.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Why Does This Matter for AI?">
+<div class="md" data-mathlevel="55">
 ## Why Does This Matter for AI?
 
 In traditional computer vision, engineers **manually designed** kernels (like Sobel, Gaussian, or Laplacian filters) to detect edges, blur noise, or sharpen details. These hand-crafted filters work well for specific tasks but cannot generalize.
@@ -177,7 +177,7 @@ The more layers, the more abstract and complex the representations become. Howev
     </div>
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Building the classifier: the full CNN pipeline">
+<div class="md" data-mathlevel="50">
 ## Building the classifier: the full CNN pipeline
 
 The convolution explorer above shows a single filter. A real classifier stacks many of them, then bridges the gap from a 2D grid of features to a final class probability.

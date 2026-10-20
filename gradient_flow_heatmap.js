@@ -1171,6 +1171,15 @@ if (typeof window !== "undefined") {
 	window.gradientFlow = GradientFlowHeatmap;
 }
 
+// Flag maintained by main.js's tabs_settings activate/deactivate. gate the
+// expensive tf.variableGrads() path on it so a hidden gradient_flow tab is a
+// true no-op — not even a layout read, mirroring weight_surfaces.js's
+// pattern. jQuery UI's `activate` event also fires for the initially selected
+// tab on boot, so a gradient_flow tab that's active on load gets the flag
+// set automatically.
+window.__gradient_flow_visible = false;
+
 function gradientFlowToSummary() {
+	if (!window.__gradient_flow_visible) return;
 	gradientFlow("gradient_flow");
 }

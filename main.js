@@ -173,6 +173,10 @@ function init_tabs () {
 				window.__weight_surfaces_visible = true;
 			}
 
+			if (ui.newPanel.attr("id") == "gradient_flow") {
+				window.__gradient_flow_visible = true;
+			}
+
 			if (ui.newPanel.attr("id") == "weight_analysis" && typeof WeightAnalysis !== "undefined") {
 				WeightAnalysis.startAutoRefresh("weight_analysis", 5000);
 			}
@@ -201,6 +205,13 @@ function init_tabs () {
 			if (ui.panel.attr("id") == "weight_surfaces") {
 				window.__weight_surfaces_visible = false;
 				if (typeof destroy_weight_surfaces_resizers === "function") destroy_weight_surfaces_resizers();
+			}
+
+			// Leaving the gradient_flow tab: stop tf.variableGrads() (a full
+			// backward pass) from running on every epoch boundary while the
+			// heatmap is offscreen.
+			if (ui.panel.attr("id") == "gradient_flow") {
+				window.__gradient_flow_visible = false;
 			}
 		},
 		hide: { effect: "fade", duration: 0 },
@@ -734,7 +745,23 @@ function set_auto_intervals () {
 		if (Date.now() < _layout_stall_suspend_until) return;
 		repredict_if_not_image_but_image_is_shown(); // await not possible
 	}, 200);
-	setInterval(function () { if (Date.now() < _layout_stall_suspend_until) return; trigger_plot(); }, 500);
+	// trigger_plot() goes through should_skip_update -> get_weights_as_string(),
+	// which serializes every weight tensor of the model. On page load the
+	// predict tab is hidden, the plot is invisible, and the work is pure
+	// waste (~25 % of load time before this gate).
+	//
+	// Gate on the predict TAB (#predict_tab) — NOT on #plotly_predict itself.
+	// #plotly_predict starts with style="display:none" and only becomes
+	// visible after the first render, so gating on it was a chicken-and-egg:
+	// the first render never fired (regression that broke
+	// test_if_plotter_is_shown). The tab is visible the moment the user
+	// clicks its label, before any plot exists.
+	setInterval(function () {
+		if (Date.now() < _layout_stall_suspend_until) return;
+		var tab = document.getElementById("predict_tab");
+		if (!tab || !check_visible(tab)) return;
+		trigger_plot();
+	}, 500);
 	setInterval(function () { if (Date.now() < _layout_stall_suspend_until) return; write_descriptions(); }, 500); // await not possible here
 	setInterval(function () { if (Date.now() < _layout_stall_suspend_until) return; show_layer_description_when_layer_is_visible(); }, 500);
 }
@@ -1138,47 +1165,76 @@ function register_resize_observers() {
 	show_layer_description_when_layer_is_visible();
 }
 
+// ============================================================
+// boot profiling — opt-in via ?boot_profile=1. Each line is
+// "[BOOT <ms since boot>ms <Δms since last line>] <label>".
+// ============================================================
+window.__boot_profile = /[?&]boot_profile=1(&|$)/.test(window.location.search);
+var __boot_t0 = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+var __boot_last = __boot_t0;
+function __boot_log(label) {
+	if (!window.__boot_profile) return;
+	var now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+	var total = String(Math.round(now - __boot_t0)).padStart(6);
+	var delta = String(Math.round(now - __boot_last)).padStart(5);
+	__boot_last = now;
+	try { console.log("[BOOT " + total + "ms Δ" + delta + "ms] " + label); } catch (e) {}
+}
+__boot_log("main.js: enter");
+
 async function _init_app_backend_and_ui(LM) {
+	__boot_log("_init_app_backend_and_ui: enter");
 	check_all_tabs();
+	__boot_log("check_all_tabs done");
 
 	if(!check_if_lang()) {
 		return false;
 	}
 
 	load_msg_set_steps(11);
+	__boot_log("load_msg_set_steps done");
 
 	load_msg_advance(LM["loading_step_backend"] || "Setting up backend...");
 	await try_to_set_backend();
+	__boot_log("try_to_set_backend done");
 
 	assert(layer_types_that_dont_have_default_options().length == 0, "There are layer types that do not have default options");
 
 	load_msg_advance(LM["loading_step_losses"] || "Initializing losses & metrics...");
 	init_losses_and_metrics();
+	__boot_log("init_losses_and_metrics done");
 
 	show_login_stuff_when_session_id_is_set();
 
 	load_msg_advance(LM["loading_step_tabs"] || "Initializing tabs...");
 	init_tabs();
+	__boot_log("init_tabs done");
 
 	load_msg_advance(LM["loading_step_options"] || "Initializing layer options...");
 	init_set_all_options();
+	__boot_log("init_set_all_options done");
 
 	load_msg_advance(LM["loading_step_categories"] || "Initializing datasets...");
 	init_categories();
+	__boot_log("init_categories done");
 
 	load_msg_advance(LM["loading_step_page"] || "Building page contents...");
 	await init_page_contents();
+	__boot_log("init_page_contents done (this includes set_config -> compile_model #1)");
 
 	load_msg_advance(LM["loading_step_preview"] || "Loading image previews...");
 	await force_download_image_preview_data();
+	__boot_log("force_download_image_preview_data done");
 
 	set_upload_functions_onchange_handlers();
 	return true;
 }
 
 async function _init_app_data_and_handlers(LM) {
+	__boot_log("_init_app_data_and_handlers: enter");
 	load_msg_advance(LM["loading_step_data"] || "Loading training data...");
 	await change_data_origin();
+	__boot_log("change_data_origin done (this includes compile_model #2 via create_and_compile_model_or_show_error)");
 
 	window.onresize = on_resize;
 	set_auto_intervals();
@@ -1202,17 +1258,24 @@ async function _init_app_data_and_handlers(LM) {
 }
 
 async function _init_app_finalization(LM) {
+	__boot_log("_init_app_finalization: enter");
 	load_msg_advance(LM["loading_step_predict"] || "Generating initial prediction...");
 	await show_prediction(0, 1);
+	__boot_log("show_prediction done (model.predict on example images)");
 	await predict_handdrawn_if_applicable();
+	__boot_log("predict_handdrawn_if_applicable done");
 
 	change_all_initializers();
+	__boot_log("change_all_initializers done");
 
 	load_msg_advance(LM["loading_step_descriptions"] || "Writing layer descriptions...");
 	await write_descriptions(1);
+	__boot_log("write_descriptions done (DOM layout + MD5)");
 
 	load_msg_advance(LM["loading_step_ready"] || "Almost ready...");
+	__boot_log(">>> loader about to hide");
 	show_website_and_hide_loader();
+	__boot_log("<<< loader hidden (this is the point the user is waiting for)");
 
 	await restart_fcnn(1);
 	temml_or_catch();

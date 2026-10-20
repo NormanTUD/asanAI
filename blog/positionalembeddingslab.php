@@ -32,7 +32,7 @@ The challenge of processing text in parallel (instead of word-by-word like older
 * **Why Waves?** The researchers chose alternating sine and cosine functions because they allow the model to attend to relative positions. The different frequencies, ranging from “fast” wiggles to “slow” curves, act like a multi-scale clock, marking every position in a sequence with a unique, bounded mathematical signature.
 </div>
 
-<div class="md" data-mathlevel="35" data-optionaltitle="Sine and Cosine">
+<div class="md" data-mathlevel="35">
 ## Sine and Cosine
 
 Imagine a circle with radius $1$ centered at the origin (the **unit circle**). Pick a point on it by sweeping an angle $\theta$ counter-clockwise from the right. The coordinates of that point are:
@@ -96,7 +96,7 @@ $$\sin(\theta) = \cos(90^\circ - \theta)$$
 $$\cos(\theta) = \sin\!\left(\tfrac{\pi}{2} - \theta\right)$$
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="Key Properties of Sine and Cosine">
+<div class="md" data-mathlevel="40">
 ### Key Properties of Sine and Cosine
 
 * **Periodicity:** Both repeat every $2\pi$: $\sin(\theta + 2\pi) = \sin\theta$
@@ -106,7 +106,7 @@ $$\cos(\theta) = \sin\!\left(\tfrac{\pi}{2} - \theta\right)$$
 * **Derivatives:** $\frac{d}{d\theta}\sin\theta = \cos\theta$, $\frac{d}{d\theta}\cos\theta = -\sin\theta$
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="How are Sine and Cosine calculated?">
+<div class="md" data-mathlevel="40">
 ### How are Sine and Cosine calculated?
 
 Computers evaluate sine and cosine using **Taylor Series** (infinite polynomial approximations):
@@ -141,7 +141,7 @@ The original Transformer paper (\citetitle{vaswani2017attention}) uses sine and 
 $$PE_{(\text{pos}, 2i)} = \sin\!\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right), \qquad PE_{(\text{pos}, 2i+1)} = \cos\!\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
 </div>
 
-<div class="md" data-mathlevel="30" data-optionaltitle="Concrete Example: Nudging the “King”">
+<div class="md" data-mathlevel="30">
 This gives each position a distinct pattern the model can learn to interpret.
 
 ## Concrete Example: Nudging the “King”
@@ -165,7 +165,7 @@ $$\text{king}_\text{final} = \begin{pmatrix} 1.688 \\ -0.454 \\ 0 \\ 0 \end{pmat
 
 <div id="pe-viz-container" style="overflow-x: auto; background: var(--mn-surface, white); border-radius: 8px; border: 1px solid #e2e8f0; padding: 10px;"></div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Why do some lines seem straight?">
+<div class="md" data-mathlevel="50">
 ### Why do some lines seem straight?
 
 You might notice that **Dim 0** and **Dim 1** wiggle quickly, while **Dim 2** and **Dim 3** look like nearly straight lines. This is intentional:
@@ -177,7 +177,7 @@ You might notice that **Dim 0** and **Dim 1** wiggle quickly, while **Dim 2** an
 If you were to expand the slider to **Position 1000**, you would see those straight lines finally start to curve into waves!
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Positional Encoding Creates a Manifold, Not Just Labels">
+<div class="md" data-mathlevel="55">
 ## Positional Encoding Creates a Manifold, Not Just Labels
 
 The wave plots above show each dimension's projection individually, flat curves on a screen. But the PE formula actually maps each position to a point on a **high-dimensional helix**. The visualization below reconstructs this by plotting the first three PE dimensions as 3D coordinates:
@@ -196,7 +196,7 @@ The wave plots above show each dimension's projection individually, flat curves 
 
 <div id="helix-manifold" style="width:100%; height:500px; margin: 20px 0; background: var(--mn-surface, #fff); border-radius:8px; border:1px solid #e2e8f0;"></div>
 
-<div class="md" data-mathlevel="70" data-optionaltitle="The PE Rotation Group">
+<div class="md" data-mathlevel="70">
 ## The PE Rotation Group
 
 Recall the rotation matrix for each sine-cosine pair at frequency $\omega$:

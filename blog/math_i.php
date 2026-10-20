@@ -168,7 +168,7 @@ This model will (most probably) not be perfect. But it can be **good enough** to
 Throughout this course, we will look into these building blocks and how the computer then creates this model, and how these building blocks work. We'll start with very simple building blocks for simple numbers, and then go to building blocks to classify images, and end up with Transformers, which are the basic structure for chatGPT, which all take ideas from each other.
 </div>
 
-<div class="md" data-lesson-id="math-i" data-mathlevel="45" data-optionaltitle="The Sum Symbol">
+<div class="md" data-lesson-id="math-i" data-mathlevel="45">
 ## The Sum Symbol $ \sum $
 
 In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for “summation” (\cite[Lang, Basic Mathematics, Ch. 16, §1, p. 384]{lang2005basicmath}). This symbol for summation was introduced by \citeauthor{euler1755} in \citeyear{euler1755} (see p. 61, § 438, \citetitle{historyofmathematicalnotation}, Volume 2).
@@ -219,7 +219,7 @@ print(total) # Output: 100
 total = sum(numbers)
 </code></pre>
 
-<div class="md" data-lesson-id="math-i" data-mathlevel="40" data-optionaltitle="The Product Symbol">
+<div class="md" data-lesson-id="math-i" data-mathlevel="40">
 ## The Product Symbol $\prod$
 
 The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication. It works similarly to the $\sum$:
@@ -263,7 +263,7 @@ The notation $n!$ was introduced by \citeauthor{kramp1808} in \citeyear{kramp180
 Defining $0! = 1$ is a “combinatorial convention”. It ensures that fundamental formulas, such as the **Binomial Coefficient** $\binom{n}{k} = \frac{n!}{k!(n-k)!}$, remain valid when $k=0$ or $k=n$ (\cite[Lang, Basic Mathematics, Ch. 1, p. 40]{lang2005basicmath}). Without this definition, $\binom{n}{0}$ and $\binom{n}{n}$ would be undefined (since $0!$ would have no value at all), forcing awkward special cases.
 </div>
 
-<div class="md" data-lesson-id="math-i" data-mathlevel="45" data-optionaltitle="Arithmetic with infinity in computing">
+<div class="md" data-lesson-id="math-i" data-mathlevel="45">
 ## Arithmetic with $\infty$ in Computing
 
 In the floating-point math used by AI models, infinity follows specific rules that allow the model to simplify complex logic:
@@ -282,7 +282,7 @@ In the floating-point math used by AI models, infinity follows specific rules th
 
 </div>
 
-<div class="md" data-lesson-id="math-i" data-mathlevel="60" data-optionaltitle="Limits and Euler's number">
+<div class="md" data-lesson-id="math-i" data-mathlevel="60">
 ### The Concept of Limits ($\lim$)
 
 In computing, we treat $\infty$ as a value, but in mathematics, we use limits to describe behavior.
@@ -335,7 +335,7 @@ In early 1671, James Gregory independently discovered something like the general
 It was not until 1715 that \citeauthor{taylor1715} published the first general method for constructing these series (pp. 21–23), after whom they are now named. The special case centered at zero was later named after \citeauthor{maclaurin}, who published the relevant work in 1742.
 </div>
 
-<div class="md" data-lesson-id="math-i" data-mathlevel="35" data-optionaltitle="Exponentiation">
+<div class="md" data-lesson-id="math-i" data-mathlevel="35">
 ## Exponentiation
 
 In its simplest form, exponentiation is repeated multiplication (\cite[Lang, Basic Mathematics, Ch. 1, §3, p. 18]{lang2005basicmath}). If we ask, “What is 2 to the power of 3?” ($2^3$), we mean:
@@ -350,7 +350,7 @@ In the expression $b^y = x$:
 While we often start with whole numbers, the exponent $y$ can also be a **floating-point number** (a decimal). For example, $2^{0.5}$ is the same as the square root of 2 ($\approx 1.414$) (\cite[Lang, Basic Mathematics, Ch. 3, §3, p. 71]{lang2005basicmath}). When the exponent is a fraction, we are no longer just “counting” multiplications; we are looking at continuous growth. This transition from discrete steps to a continuous curve is what makes exponentiation so powerful in modeling natural processes.
 </div>
 
-<div class="optional md" data-headline="Why is $2^{0.5}$ the square root?" data-mathlevel="40" data-optionaltitle="Why is $2^{0.5}$ the square root?">
+<div class="optional md" data-headline="Why is $2^{0.5}$ the square root?" data-mathlevel="40">
 The reason $2^{0.5}$ (or $2^{1/2}$) equals $\sqrt{2}$ comes from the fundamental rule of exponents: when you multiply two powers with the same base, you add the exponents (\cite[Lang, Basic Mathematics, Ch. 1, §3, p. 18]{lang2005basicmath}):
 $$b^m \times b^n = b^{\underbrace{m+n}_\text{sum of exponents}}$$
 
@@ -366,7 +366,7 @@ $$2^{-3} = \underbrace{\frac{1}{2^3}}_\text{reciprocal} = \frac{1}{8} = 0.125$$
 In the context of the continuous curve, as the exponent moves into negative territory, the result simply gets closer and closer to zero, but never quite touches it. This is why logarithms (the inverse) are so useful, they allow us to work with these tiny, microscopic fractions by looking at the exponent instead of the decimal.
 </div>
 
-<div class="md" data-lesson-id="math-i" data-mathlevel="40" data-optionaltitle="Logarithms: Reversing the Process">
+<div class="md" data-lesson-id="math-i" data-mathlevel="40">
 ## Logarithms: Reversing the Process
 
 A logarithm is the inverse operation of exponentiation (\cite[Lang, Basic Mathematics, Ch. 13, §5, p. 338]{lang2005basicmath}). It asks the opposite question. Instead of asking for the result of a growth process, it asks: **“To what power must we raise the base to get this specific result?”** ($b^? = x$).
@@ -395,7 +395,7 @@ $$\log(A \times B) = \log(A) + \log(B)$$
 By using “Log Tables,” an astronomer could look up the logarithms of two giant numbers, add them, and then find the corresponding “anti-logarithm” to get the product. This revolutionary efficiency led the mathematician \citeauthor{laplace1821} to write in \citeyear{laplace1821} that logarithms were *“an admirable artifice which, by reducing to a few days the labour of many months, doubles the life of the astronomer”* (p. 96).
 </div>
 
-<div class="optional md" data-headline="How is the Logarithm calculated today?" data-mathlevel="55" data-optionaltitle="How is the Logarithm calculated today?">
+<div class="optional md" data-headline="How is the Logarithm calculated today?" data-mathlevel="55">
 Historically, one of the most fundamental tools is the **Mercator series** \citealternativetitle{mercator1668} (p. 32f) for the natural logarithm ($\ln$):
 
 $$\ln(1+x) = \sum_{n=1}^{\infty} \underbrace{(-1)^{n+1}}_\text{alternating sign}\, \frac{x^n}{n} = x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4} + \dots$$
@@ -403,7 +403,7 @@ $$\ln(1+x) = \sum_{n=1}^{\infty} \underbrace{(-1)^{n+1}}_\text{alternating sign}
 This is the series that taught mathematicians to think of $\ln$ as a limit of polynomials. Modern floating-point units, however, do not evaluate it term-by-term in the hot path — the alternating series converges slowly and accumulates rounding error badly. Instead, math libraries reduce the problem to a small interval (e.g., $\ln(x) = \ln(x/2^k) + k\ln 2$), then approximate on that interval with a **rational function** (a Padé / Remez minimax polynomial), a **CORDIC** iteration in hardware, or a short **table lookup with interpolation**. The Mercator series is the historical and didactic root; the polynomial a CPU actually evaluates on a single call is much shorter, of higher degree, and tuned for the working interval.
 </div>
 
-<div class="md" data-lesson-id="math-i" data-mathlevel="45" data-optionaltitle="The change of base">
+<div class="md" data-lesson-id="math-i" data-mathlevel="45">
 ### The Change of Base
 
 In practice, most mathematical libraries only “know” how to calculate the natural logarithm (base $e \approx 2.718$). To find the logarithm for any other base $a$, we use the **Change of Base Formula** (\cite[Lang, Basic Mathematics, Ch. 13, §5, p. 341]{lang2005basicmath}):

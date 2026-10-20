@@ -63,6 +63,22 @@ async function get_model_config_hash () {
 		}
 	});
 
+	// Include training config (loss / optimizer / metric / epochs) so that
+	// changing any of these triggers a real model.compile() instead of the
+	// compile_model() fast-path. Without this, set_loss/set_metric change
+	// model.optimizer's DOM inputs but not the hash — the fast-path skips
+	// the actual compile, model.optimizer stays stale, and the next
+	// training run dies with "Model or optimizer is null/undefined after
+	// await compile_model()".
+	var $loss = $("#loss");
+	var $optimizer = $("#optimizer");
+	var $metric = $("#metric");
+	var $epochs = $("#epochs");
+	if ($loss.length)     arr.push("loss=" + $loss.val());
+	if ($optimizer.length) arr.push("optimizer=" + $optimizer.val());
+	if ($metric.length)   arr.push("metric=" + $metric.val());
+	if ($epochs.length)   arr.push("epochs=" + $epochs.val());
+
 	var str = arr.join(";;;;;;;;;");
 
 	var res = await md5(str);
@@ -383,6 +399,14 @@ async function _compile_model_do_compile(new_model_config_hash) {
 }
 
 async function compile_model(recursion_level=0) {
+	var __cm_t0 = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+	function __cm_log(label) {
+		if (!window.__boot_profile) return;
+		var now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+		try { console.log("[BOOT/COMPILE +" + Math.round(now - __cm_t0) + "ms] " + label); } catch (e) {}
+	}
+	__cm_log("enter (recursion=" + recursion_level + ")");
+
 	l(language[lang]["compiling_model"]);
 
 	if(recursion_level > 3) {
@@ -393,14 +417,19 @@ async function compile_model(recursion_level=0) {
 	assert(get_number_of_layers() >= 1, "Need at least 1 layer.");
 
 	var new_model_config_hash = await get_model_config_hash();
+	__cm_log("get_model_config_hash done");
 	assert(typeof(new_model_config_hash) == "string", "new model config has is not a string");
 
 	var config_changed = (model_config_hash != new_model_config_hash);
 
 	await _compile_model_ensure_exists();
+	__cm_log("_compile_model_ensure_exists done");
+
 	await _compile_model_save_restore_weights(config_changed, new_model_config_hash);
+	__cm_log("_compile_model_save_restore_weights done");
 
 	var compile_result = await _compile_model_do_compile(new_model_config_hash);
+	__cm_log("_compile_model_do_compile done");
 
 	if (compile_result === false) return;
 	if (compile_result !== true) {

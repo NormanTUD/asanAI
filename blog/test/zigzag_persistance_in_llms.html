@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZigZag Persistence in LLMs — Visual Explainer</title>
+<style>
+  :root{
+    --bg:#05060b;
+    --ink:#e9ecff;
+    --dim:#8b93b8;
+    --c1:#00e5ff;
+    --c2:#ff2fb9;
+    --c3:#ffd24a;
+    --c4:#7cff6b;
+    --c5:#8b5cff;
+    --panel:rgba(255,255,255,.04);
+    --stroke:rgba(255,255,255,.10);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:ui-sans-serif,system-ui,"Inter","Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden}
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(900px 600px at 15% -10%, rgba(0,229,255,.16), transparent 60%),
+      radial-gradient(800px 600px at 85% 5%, rgba(255,47,185,.14), transparent 60%),
+      radial-gradient(1000px 800px at 50% 110%, rgba(139,92,255,.16), transparent 60%);
+  }
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.35;
+    background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+    background-size:44px 44px;
+    mask-image:radial-gradient(70% 60% at 50% 40%,#000 30%,transparent 100%);
+  }
+  main{position:relative;z-index:2}
+  section{max-width:1180px;margin:0 auto;padding:86px 22px}
+  h1,h2,h3{margin:0;line-height:1.05;letter-spacing:-.02em}
+  h1{font-size:clamp(38px,7vw,88px);font-weight:860}
+  h2{font-size:clamp(26px,3.6vw,46px);font-weight:820;margin-bottom:10px}
+  h3{font-size:16px;font-weight:760;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  p{color:#c3cae8;font-size:17px;line-height:1.6;max-width:70ch;margin:12px 0 0}
+  .lead{font-size:20px;color:#d7ddf7}
+  .tag{display:inline-flex;gap:8px;align-items:center;padding:7px 14px;border-radius:999px;
+    border:1px solid var(--stroke);background:var(--panel);font-size:12px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--dim)}
+  .grad{background:linear-gradient(100deg,var(--c1),var(--c2) 45%,var(--c5));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  canvas{display:block;width:100%;border-radius:18px;border:1px solid var(--stroke);
+    background:rgba(255,255,255,.015)}
+  .grid{display:grid;gap:18px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{border:1px solid var(--stroke);background:var(--panel);border-radius:18px;padding:18px;
+    backdrop-filter:blur(8px)}
+  .card .num{font-size:12px;letter-spacing:.2em;color:var(--dim)}
+  .card b{display:block;font-size:19px;margin:6px 0 6px}
+  .card p{font-size:15px;margin:0}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:13px;color:var(--dim)}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:7px;vertical-align:-1px}
+  .hr{height:1px;background:linear-gradient(90deg,transparent,var(--stroke),transparent);margin:0}
+  .ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+  button{appearance:none;border:1px solid var(--stroke);background:rgba(255,255,255,.06);
+    color:var(--ink);padding:9px 16px;border-radius:999px;font-size:13px;cursor:pointer;
+    transition:.2s}
+  button:hover{background:rgba(255,255,255,.14);transform:translateY(-1px)}
+  input[type=range]{accent-color:#00e5ff;width:190px}
+  .kpi{font-size:clamp(30px,4vw,52px);font-weight:860;letter-spacing:-.03em}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  footer{padding:60px 22px 90px;text-align:center;color:var(--dim);font-size:13px}
+  .reveal{opacity:0;transform:translateY(26px);transition:.8s cubic-bezier(.2,.7,.2,1)}
+  .reveal.on{opacity:1;transform:none}
+  .barwrap{height:10px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+  .barwrap > div{height:100%;border-radius:999px}
+</style>
+</head>
+<body>
+<main>
+
+<!-- ░░ HERO ░░ -->
+<section style="min-height:100vh;display:flex;flex-direction:column;justify-content:center;gap:26px">
+  <span class="tag reveal">arXiv 2410.11042v3 · Topological Data Analysis × LLMs</span>
+  <h1 class="reveal">Die <span class="grad">Form der Gedanken</span><br>eines Sprachmodells.</h1>
+  <p class="lead reveal">Ein LLM verschiebt Prompts Schicht für Schicht durch einen 4096-dimensionalen Raum.
+  Dieses Paper verfolgt nicht einzelne Momentaufnahmen, sondern die <b>gesamte Bahn</b> der topologischen
+  Löcher, die dabei entstehen und vergehen — mit <i>Zigzag Persistence</i>.</p>
+  <canvas id="hero" height="420" class="reveal"></canvas>
+  <div class="legend reveal">
+    <span><i style="background:var(--c1)"></i>Prompt-Punktwolke (letzte Tokens)</span>
+    <span><i style="background:var(--c2)"></i>1-dim. Loch (Zykel)</span>
+    <span><i style="background:var(--c3)"></i>kNN-Kanten</span>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ░░ PROBLEM ░░ -->
+<section>
+  <h3 class="reveal">Das Problem</h3>
+  <h2 class="reveal">Alte Methoden sehen nur <span class="grad">Standbilder</span>.</h2>
+  <p class="reveal">Intrinsic Dimension, Betti-Zahlen, Similarity-Scores: alle messen Layer <b>einzeln</b> und
+  mitteln danach. Die Information, <i>welches</i> Merkmal von Layer 7 bis Layer 23 überlebt, geht dabei verloren.</p>
+  <div class="grid g2" style="margin-top:26px">
+    <div class="card reveal"><div class="num">01 · STATUS QUO</div><b>Layerweise & aggregiert</b>
+      <canvas id="cmpA" height="260"></canvas>
+      <p style="margin-top:10px">Jede Schicht wird isoliert vermessen. Die Verbindungslinie zwischen den Messungen ist reine Interpolation.</p></div>
+    <div class="card reveal"><div class="num">02 · DIESE ARBEIT</div><b>Pfad-Tracking über alle Layer</b>
+      <canvas id="cmpB" height="260"></canvas>
+      <p style="margin-top:10px">Zigzag verfolgt jedes einzelne Loch durch die Zeitachse „Layer“ — Geburt, Leben, Tod.</p></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ░░ THEORIE ░░ -->
+<section>
+  <h3 class="reveal">Die nötige Theorie</h3>
+  <h2 class="reveal">Vier Bausteine, <span class="grad">null Magie</span>.</h2>
+  <div class="grid g4" style="margin-top:26px">
+    <div class="card reveal"><div class="num">T1</div><b>Punktwolke</b>
+      <canvas id="t1" height="180"></canvas>
+      <p style="margin-top:10px">Nur der <b>letzte Token</b> jedes Prompts, pro Layer. Er trägt autoregressiv die ganze Sequenz.</p></div>
+    <div class="card reveal"><div class="num">T2</div><b>kNN-Komplex</b>
+      <canvas id="t2" height="180"></canvas>
+      <p style="margin-top:10px">Graph aus k nächsten Nachbarn, dann Auffüllen zu Dreiecken/Tetraedern bis Dimension m=4.</p></div>
+    <div class="card reveal"><div class="num">T3</div><b>Zigzag-Filtration</b>
+      <canvas id="t3" height="180"></canvas>
+      <p style="margin-top:10px">Pfeile vor <i>und</i> zurück: Layer → Schnitt ← Layer. Damit sind Zeitschritte sauber verknüpfbar.</p></div>
+    <div class="card reveal"><div class="num">T4</div><b>Intervall-Zerlegung</b>
+      <canvas id="t4" height="180"></canvas>
+      <p style="margin-top:10px">Jedes Zigzag-Modul zerfällt eindeutig in Intervalle [b,d] — das ist der Barcode.</p></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ░░ ZIGZAG MACHINE ░░ -->
+<section>
+  <h3 class="reveal">Die Maschine</h3>
+  <h2 class="reveal">Wie ein <span class="grad">Loch geboren wird</span> — und stirbt.</h2>
+  <p class="reveal">Links: die Punktwolke verformt sich über die Layer. Rechts: jedes entstehende 1-dim. Loch
+  wird zu einem Balken. Lang = stabile Relationen, kurz = hektische Umordnung.</p>
+  <canvas id="machine" height="430" class="reveal" style="margin-top:22px"></canvas>
+  <div class="ctrl reveal">
+    <button id="mPlay">▶︎ Abspielen</button>
+    <button id="mReset">↺ Reset</button>
+    <label style="color:var(--dim);font-size:13px">Layer <input id="mSlide" type="range" min="0" max="100" value="0"></label>
+    <span class="mono" id="mLabel" style="color:var(--c1)">ℓ = 0</span>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ░░ DESKRIPTOREN ░░ -->
+<section>
+  <h3 class="reveal">Zwei Deskriptoren</h3>
+  <h2 class="reveal">Vom Bild zur <span class="grad">Zahl</span>.</h2>
+  <div class="grid g2" style="margin-top:26px">
+    <div class="card reveal"><b>Effective Persistence Image</b>
+      <canvas id="pimg" height="330"></canvas>
+      <p style="margin-top:10px">x = Geburts-Layer, y = Lebensdauer, Farbe = Anzahl Löcher. Schnitt-Layer werden
+      herausgerechnet, damit die Karte glatt wird. Klar sichtbar: <b>langlebige Features entstehen erst nach der Modellmitte</b>.</p></div>
+    <div class="card reveal"><b>Births' Frequency &amp; Inter-Layer Persistence</b>
+      <canvas id="desc" height="330"></canvas>
+      <p style="margin-top:10px">Gewicht α steuert den Fokus: α&lt;0 betont kurzlebige, α&gt;0 langlebige Merkmale.
+      Kurzlebige peaken früh, langlebige in der Mitte, beide explodieren in den letzten 2–3 Layern.</p>
+      <div class="ctrl"><label style="color:var(--dim);font-size:13px">α <input id="alpha" type="range" min="-10" max="20" value="20"></label>
+      <span class="mono" id="alphaV" style="color:var(--c3)">α = 2.0</span></div></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ░░ VIER PHASEN ░░ -->
+<section>
+  <h3 class="reveal">Der Hauptbefund</h3>
+  <h2 class="reveal">Vier <span class="grad">Phasen</span> der Prompt-Verarbeitung.</h2>
+  <canvas id="phases" height="300" class="reveal" style="margin-top:22px"></canvas>
+  <div class="grid g4" style="margin-top:18px">
+    <div class="card reveal" style="border-color:rgba(0,229,255,.4)"><div class="num" style="color:var(--c1)">PHASE 1 · ℓ 0–8</div><b>Chaotische Umordnung</b><p>Massenhaft kurzlebige Löcher. Prompts werden blitzschnell neu positioniert — lokale Kontextualisierung.</p></div>
+    <div class="card reveal" style="border-color:rgba(255,210,74,.4)"><div class="num" style="color:var(--c3)">PHASE 2 · ℓ 9–17</div><b>Stabile Relationen</b><p>Hier geborene Löcher sind am langlebigsten. Semantische Abstraktion, Dimensionalität sinkt.</p></div>
+    <div class="card reveal" style="border-color:rgba(124,255,107,.4)"><div class="num" style="color:var(--c4)">PHASE 3 · ℓ 18–28</div><b>Feinjustierung · Plateau</b><p>Wenige kurze Anpassungen. <b>Genau hier lässt sich prunen.</b></p></div>
+    <div class="card reveal" style="border-color:rgba(255,47,185,.4)"><div class="num" style="color:var(--c2)">PHASE 4 · ℓ 29–32</div><b>Output-Rearrangement</b><p>Geburtenrate explodiert, Persistenz bricht ein. Das Modell formt die Ausgabe.</p></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ░░ PRUNING ░░ -->
+<section>
+  <h3 class="reveal">Downstream-Anwendung</h3>
+  <h2 class="reveal">Layer <span class="grad">wegschneiden</span>, ohne zu verlieren.</h2>
+  <p class="reveal">Kriterium: entferne alle Layer, deren Inter-Layer-Persistence innerhalb von 10 % des Maximums liegt
+  (das Plateau der Phase 3). Danach: Sliding-Window-Benchmark zur Validierung.</p>
+  <canvas id="prune" height="340" class="reveal" style="margin-top:22px"></canvas>
+  <div class="ctrl reveal"><label style="color:var(--dim);font-size:13px">Fenster-Start <input id="pw" type="range" min="0" max="27" value="20"></label>
+    <span class="mono" id="pwV" style="color:var(--c2)">Layer 20–24 entfernt</span></div>
+
+  <div class="grid g3" style="margin-top:30px">
+    <div class="card reveal"><div class="num">LLAMA 3 · 9 LAYER WEG</div>
+      <div class="kpi" style="color:var(--c1)">70.0<span style="font-size:18px;color:var(--dim)"> / 77.1</span></div>
+      <p>WinoGrande · identisch zu State-of-the-Art</p>
+      <div class="barwrap" style="margin-top:10px"><div style="width:91%;background:linear-gradient(90deg,var(--c1),var(--c5))"></div></div></div>
+    <div class="card reveal"><div class="num">MISTRAL 7B · 10 LAYER WEG</div>
+      <div class="kpi" style="color:var(--c4)">53.2<span style="font-size:18px;color:var(--dim)"> / 62.4</span></div>
+      <p>MMLU · vs. 38.2 bei Similarity-Methoden</p>
+      <div class="barwrap" style="margin-top:10px"><div style="width:85%;background:linear-gradient(90deg,var(--c4),var(--c3))"></div></div></div>
+    <div class="card reveal"><div class="num">LLAMA 2 · 8 LAYER WEG</div>
+      <div class="kpi" style="color:var(--c3)">68.7<span style="font-size:18px;color:var(--dim)"> / 74.4</span></div>
+      <p>WinoGrande · vs. 67.7 bei Baselines</p>
+      <div class="barwrap" style="margin-top:10px"><div style="width:92%;background:linear-gradient(90deg,var(--c3),var(--c2))"></div></div></div>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ░░ UNIVERSALITÄT ░░ -->
+<section>
+  <h3 class="reveal">Robustheit</h3>
+  <h2 class="reveal">Qualitativ <span class="grad">universell</span>, quantitativ unterscheidend.</h2>
+  <p class="reveal">Vier Modelle, vier Datensätze, Modelle bis 70B, variierende Subset-Größen, kNN- und kNN-VR-Komplexe:
+  die Kurvenform bleibt. Die Höhe des Peaks aber unterscheidet Modelle — und korreliert <b>invers</b> mit der Benchmark-Leistung nach Pruning.</p>
+  <canvas id="models" height="330" class="reveal" style="margin-top:22px"></canvas>
+  <div class="legend reveal">
+    <span><i style="background:var(--c1)"></i>Llama 3 8B</span>
+    <span><i style="background:var(--c3)"></i>Llama 2 7B</span>
+    <span><i style="background:var(--c4)"></i>Mistral 7B — niedrigster Peak, beste Performance</span>
+    <span><i style="background:var(--c2)"></i>Pythia 6.9B — höchster Peak</span>
+  </div>
+</section>
+
+<div class="hr"></div>
+
+<!-- ░░ TAKEAWAY ░░ -->
+<section style="text-align:center">
+  <h3 class="reveal">Kurzfassung</h3>
+  <h2 class="reveal" style="max-width:20ch;margin:0 auto 20px">Ein LLM ist ein <span class="grad">dynamisches System</span> — also messen wir es wie eines.</h2>
+  <canvas id="final" height="260" class="reveal"></canvas>
+  <p class="reveal" style="margin:22px auto 0">Zigzag Persistence macht aus „Layer“ eine Zeitachse, aus Prompts eine evolvierende
+  Punktwolke und aus Interpretierbarkeit eine Statistik über Lebensdauern. Kosten: ~2 h für 10 k Punkte in d=4096 auf einer EPYC-CPU.</p>
+</section>
+
+<footer>
+  Gardinazzi, Viswanathan, Panerai, Ansuini, Cazzaniga, Biagetti · Area Science Park Trieste · arXiv:2410.11042v3<br>
+  Visualisierung: schematisch, Werte dem Paper nachempfunden.
+</footer>
+</main>
+
+<script>
+/* ═══════════ UTILITIES ═══════════ */
+const DPR = Math.min(devicePixelRatio||1, 2);
+function fit(c){
+  const r = c.getBoundingClientRect();
+  c.width = Math.max(1, r.width*DPR);
+  c.height = Math.max(1, (c.getAttribute('height')|0)*DPR);
+  const x = c.getContext('2d');
+  x.setTransform(DPR,0,0,DPR,0,0);
+  return {x, w:r.width, h:(c.getAttribute('height')|0)};
+}
+const lerp=(a,b,t)=>a+(b-a)*t;
+function rng(s){return ()=>{s=(s*16807)%2147483647;return s/2147483647;}}
+function glow(x,col,b){x.shadowColor=col;x.shadowBlur=b;}
+function noglow(x){x.shadowBlur=0;}
+
+/* reveal on scroll */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach((e,i)=>{e.style.transitionDelay=(i%5)*60+'ms';io.observe(e)});
+
+/* ═══════════ 1 · HERO ═══════════ */
+(function(){
+  const c=document.getElementById('hero');
+  let g=fit(c), t=0;
+  const R=rng(42), N=140;
+  const pts=[...Array(N)].map(()=>({
+    a:R()*Math.PI*2, r:.18+R()*.78, s:.3+R()*1.1, ph:R()*6.28, z:R()
+  }));
+  function draw(){
+    g=fit(c); const {x,w,h}=g;
+    x.clearRect(0,0,w,h);
+    const cx=w/2, cy=h/2, S=Math.min(w,h)*.44;
+    // positions
+    const P=pts.map(p=>{
+      const wob=Math.sin(t*p.s+p.ph)*.22;
+      const a=p.a+t*.17*(p.z-.5)*2;
+      const r=p.r+wob*.4;
+      return {x:cx+Math.cos(a)*r*S*1.7, y:cy+Math.sin(a)*r*S, z:p.z};
+    });
+    // kNN edges
+    x.lineWidth=1;
+    for(let i=0;i<P.length;i++){
+      let best=[];
+      for(let j=0;j<P.length;j++){if(i===j)continue;
+        const d=(P[i].x-P[j].x)**2+(P[i].y-P[j].y)**2;
+        best.push([d,j]);}
+      best.sort((a,b)=>a[0]-b[0]);
+      for(let k=0;k<3;k++){
+        const [d,j]=best[k];
+        if(d>(S*.55)**2) continue;
+        const a=Math.max(0,.45-Math.sqrt(d)/(S*1.6));
+        x.strokeStyle='rgba(255,210,74,'+a+')';
+        x.beginPath();x.moveTo(P[i].x,P[i].y);x.lineTo(P[j].x,P[j].y);x.stroke();
+      }
+    }
+    // breathing cycle (the 1-dim hole)
+    const k=12, ring=[];
+    for(let i=0;i<k;i++){
+      const a=i/k*Math.PI*2 + t*.25;
+      const rr=S*(.30+.055*Math.sin(t*1.3+i*.9));
+      ring.push({x:cx+Math.cos(a)*rr*1.75, y:cy+Math.sin(a)*rr});
+    }
+    const alive=.5+.5*Math.sin(t*.55);
+    x.lineWidth=2.1;
+    glow(x,'rgba(255,47,185,.85)',18);
+    x.strokeStyle='rgba(255,47,185,'+(.25+.6*alive)+')';
+    x.beginPath();
+    ring.forEach((p,i)=>i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y));
+    x.closePath();x.stroke();
+    noglow(x);
+    x.fillStyle='rgba(255,47,185,'+(.05+.1*alive)+')';x.fill();
+
+    // points
+    P.forEach((p,i)=>{
+      const r=1.6+pts[i].z*2.2;
+      glow(x,'rgba(0,229,255,.9)',10);
+      x.fillStyle='rgba(0,229,255,'+(.5+pts[i].z*.5)+')';
+      x.beginPath();x.arc(p.x,p.y,r,0,6.283);x.fill();
+      noglow(x);
+    });
+    ring.forEach(p=>{
+      x.fillStyle='#ff2fb9';
+      x.beginPath();x.arc(p.x,p.y,2.6,0,6.283);x.fill();
+    });
+
+    // layer sweep line
+    const sx=((t*.08)%1)*w;
+    const grd=x.createLinearGradient(sx-60,0,sx+60,0);
+    grd.addColorStop(0,'rgba(139,92,255,0)');
+    grd.addColorStop(.5,'rgba(139,92,255,.30)');
+    grd.addColorStop(1,'rgba(139,92,255,0)');
+    x.fillStyle=grd;x.fillRect(sx-60,0,120,h);
+    x.fillStyle='rgba(233,236,255,.5)';x.font='11px ui-monospace,monospace';
+    x.fillText('layer ℓ →', sx+8, 20);
+
+    t+=.016;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ═══════════ 2 · VERGLEICH ALT / NEU ═══════════ */
+(function(){
+  const A=document.getElementById('cmpA'), B=document.getElementById('cmpB');
+  const R=rng(7);
+  const vals=[...Array(33)].map((_,i)=>.35+.45*Math.sin(i/32*3.1)+ (R()-.5)*.09);
+  let t=0;
+  function axes(x,w,h,pad){
+    x.strokeStyle='rgba(255,255,255,.14)';x.lineWidth=1;
+    x.beginPath();x.moveTo(pad,h-pad);x.lineTo(w-pad,h-pad);x.stroke();
+    x.beginPath();x.moveTo(pad,pad*.6);x.lineTo(pad,h-pad);x.stroke();
+    x.fillStyle='rgba(139,147,184,.9)';x.font='10px ui-monospace,monospace';
+    x.fillText('Layer ℓ', w-pad-44, h-pad+16);
+  }
+  function draw(){
+    [[A,'static'],[B,'zigzag']].forEach(([c,mode])=>{
+      const {x,w,h}=fit(c); const pad=26;
+      x.clearRect(0,0,w,h); axes(x,w,h,pad);
+      const X=i=>pad+ i/32*(w-pad*2);
+      const Y=v=>h-pad-v*(h-pad*1.7);
+      if(mode==='static'){
+        // isolated bars + dashed interpolation
+        x.setLineDash([4,4]);
+        x.strokeStyle='rgba(139,147,184,.45)';x.beginPath();
+        vals.forEach((v,i)=>i?x.lineTo(X(i),Y(v)):x.moveTo(X(i),Y(v)));x.stroke();
+        x.setLineDash([]);
+        vals.forEach((v,i)=>{
+          const pulse=.5+.5*Math.sin(t*2 - i*.3);
+          x.fillStyle='rgba(0,229,255,'+(.25+.5*pulse)+')';
+          x.fillRect(X(i)-2, Y(v), 4, h-pad-Y(v));
+        });
+        x.fillStyle='rgba(255,255,255,.55)';x.font='11px ui-sans-serif';
+        x.fillText('Messung je Layer · danach Mittelwert', pad, pad*.5+6);
+      }else{
+        // persistent arcs crossing layers
+        const bars=[[2,9],[4,13],[7,11],[10,24],[12,27],[14,22],[17,20],[20,23],[26,31],[29,32],[1,5],[22,30]];
+        bars.forEach((b,bi)=>{
+          const prog=Math.min(1,Math.max(0,(t*.6 - bi*.18)));
+          if(prog<=0)return;
+          const x0=X(b[0]), x1=X(b[0]+(b[1]-b[0])*prog);
+          const yy=pad*.9 + bi*((h-pad*2.1)/bars.length);
+          const life=(b[1]-b[0])/32;
+          const col = life>.35 ? '255,47,185' : life>.18 ? '255,210,74' : '0,229,255';
+          x.strokeStyle='rgba('+col+',.9)';x.lineWidth=4;x.lineCap='round';
+          glow(x,'rgba('+col+',.6)',10);
+          x.beginPath();x.moveTo(x0,yy);x.lineTo(x1,yy);x.stroke();
+          noglow(x);
+        });
+        x.fillStyle='rgba(255,255,255,.55)';x.font='11px ui-sans-serif';
+        x.fillText('ein Balken = ein Loch, von Geburt bis Tod', pad, pad*.5+6);
+      }
+    });
+    t+=.016;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ═══════════ 3 · THEORIE-KACHELN ═══════════ */
+(function(){
+  // T1 — point cloud of last tokens
+  (function(){
+    const c=document.getElementById('t1'); const R=rng(13);
+    const P=[...Array(70)].map(()=>({x:R(),y:R(),s:R()}));
+    let t=0;
+    (function loop(){
+      const {x,w,h}=fit(c);x.clearRect(0,0,w,h);
+      P.forEach(p=>{
+        const px=12+p.x*(w-24)+Math.sin(t+p.s*6)*3;
+        const py=12+p.y*(h-24)+Math.cos(t*.8+p.s*6)*3;
+        const hot=p.s>.86;
+        glow(x,hot?'#ff2fb9':'#00e5ff',hot?12:6);
+        x.fillStyle=hot?'#ff2fb9':'rgba(0,229,255,'+(.35+p.s*.5)+')';
+        x.beginPath();x.arc(px,py,hot?3.4:2,0,6.283);x.fill();noglow(x);
+      });
+      x.fillStyle='rgba(139,147,184,.9)';x.font='10px ui-monospace,monospace';
+      x.fillText('x_i(ℓ) ∈ R^4096', 12, h-10);
+      t+=.015;requestAnimationFrame(loop);
+    })();
+  })();
+
+  // T2 — kNN graph + filled simplices
+  (function(){
+    const c=document.getElementById('t2'); const R=rng(91);
+    const P=[...Array(22)].map(()=>({x:.1+R()*.8,y:.12+R()*.76}));
+    let t=0;
+    (function loop(){
+      const {x,w,h}=fit(c);x.clearRect(0,0,w,h);
+      const Q=P.map(p=>({x:p.x*w,y:p.y*h}));
+      const k=3, E=[];
+      Q.forEach((a,i)=>{
+        const d=Q.map((b,j)=>[(a.x-b.x)**2+(a.y-b.y)**2,j]).filter(e=>e[1]!==i).sort((m,n)=>m[0]-n[0]);
+        for(let z=0;z<k;z++)E.push([i,d[z][1]]);
+      });
+      // triangles
+      const has=(i,j)=>E.some(e=>(e[0]===i&&e[1]===j)||(e[0]===j&&e[1]===i));
+      for(let i=0;i<Q.length;i++)for(let j=i+1;j<Q.length;j++)for(let l=j+1;l<Q.length;l++){
+        if(has(i,j)&&has(j,l)&&has(i,l)){
+          x.fillStyle='rgba(139,92,255,'+(.10+.07*Math.sin(t*1.5+i))+')';
+          x.beginPath();x.moveTo(Q[i].x,Q[i].y);x.lineTo(Q[j].x,Q[j].y);x.lineTo(Q[l].x,Q[l].y);x.closePath();x.fill();
+        }
+      }
+      x.strokeStyle='rgba(255,210,74,.55)';x.lineWidth=1;
+      E.forEach(([i,j])=>{x.beginPath();x.moveTo(Q[i].x,Q[i].y);x.lineTo(Q[j].x,Q[j].y);x.stroke();});
+      Q.forEach(p=>{x.fillStyle='#00e5ff';x.beginPath();x.arc(p.x,p.y,2.6,0,6.283);x.fill();});
+      x.fillStyle='rgba(139,147,184,.9)';x.font='10px ui-monospace,monospace';
+      x.fillText('k = 4 · m = 4', 12, h-10);
+      t+=.015;requestAnimationFrame(loop);
+    })();
+  })();
+
+  // T3 — zigzag arrows
+  (function(){
+    const c=document.getElementById('t3');
+    let t=0;
+    (function loop(){
+      const {x,w,h}=fit(c);x.clearRect(0,0,w,h);
+      const n=5, cy=h/2;
+      for(let i=0;i<n;i++){
+        const cx=18+i*((w-36)/(n-1));
+        const isInt = i%2===1;
+        const r=isInt?7:11;
+        const pulse=.5+.5*Math.sin(t*2-i*.8);
+        glow(x,isInt?'#8b5cff':'#00e5ff',12*pulse+4);
+        x.fillStyle=isInt?'rgba(139,92,255,.9)':'rgba(0,229,255,.9)';
+        x.beginPath();x.arc(cx,cy,r,0,6.283);x.fill();noglow(x);
+        x.fillStyle='rgba(200,206,235,.8)';x.font='9px ui-monospace,monospace';
+        x.fillText(isInt?'∩':('K'+ (i/2)), cx-7, cy+r+16);
+        if(i<n-1){
+          const nx=18+(i+1)*((w-36)/(n-1));
+          const mid=(cx+nx)/2, dir = isInt? -1 : 1; // forward then backward
+          x.strokeStyle='rgba(255,255,255,.45)';x.lineWidth=1.4;
+          x.beginPath();x.moveTo(cx+r+3,cy-22);x.lineTo(nx-r-3,cy-22);x.stroke();
+          const ax = dir>0 ? nx-r-3 : cx+r+3;
+          x.beginPath();
+          x.moveTo(ax,cy-22);
+          x.lineTo(ax-6*dir,cy-26);
+          x.lineTo(ax-6*dir,cy-18);
+          x.closePath();x.fillStyle='rgba(255,255,255,.65)';x.fill();
+        }
+      }
+      x.fillStyle='rgba(139,147,184,.9)';x.font='10px ui-monospace,monospace';
+      x.fillText('K_ℓ ⊇ K_ℓ∩K_ℓ₊₁ ⊆ K_ℓ₊₁', 12, h-10);
+      t+=.016;requestAnimationFrame(loop);
+    })();
+  })();
+
+  // T4 — interval decomposition
+  (function(){
+    const c=document.getElementById('t4');
+    const ivs=[[0,.9],[.12,.45],[.3,.62],[.46,1],[.58,.74],[.7,.96],[.05,.22]];
+    let t=0;
+    (function loop(){
+      const {x,w,h}=fit(c);x.clearRect(0,0,w,h);
+      ivs.forEach((v,i)=>{
+        const y=16+i*((h-34)/ivs.length);
+        const grow=Math.min(1,Math.max(0,t*.5-i*.2));
+        const x0=12+v[0]*(w-24), x1=x0+(v[1]-v[0])*(w-24)*grow;
+        const life=v[1]-v[0];
+        const col= life>.5?'255,47,185': life>.25?'255,210,74':'0,229,255';
+        x.strokeStyle='rgba('+col+',.95)';x.lineWidth=5;x.lineCap='round';
+        glow(x,'rgba('+col+',.55)',9);
+        x.beginPath();x.moveTo(x0,y);x.lineTo(Math.max(x1,x0+1),y);x.stroke();noglow(x);
+      });
+      x.fillStyle='rgba(139,147,184,.9)';x.font='10px ui-monospace,monospace';
+      x.fillText('H_p(χ) ≅ ⊕ I[b,d]', 12, h-8);
+      t+=.016; if(t>6)t=0; requestAnimationFrame(loop);
+    })();
+  })();
+})();
+
+/* ═══════════ 4 · ZIGZAG MACHINE ═══════════ */
+(function(){
+  const c=document.getElementById('machine');
+  const slide=document.getElementById('mSlide'),
+        play=document.getElementById('mPlay'),
+        reset=document.getElementById('mReset'),
+        label=document.getElementById('mLabel');
+  const L=32;
+  const R=rng(2024);
+  const N=46;
+  // each point gets a per-layer wander
+  const pts=[...Array(N)].map(()=>({
+    a:R()*6.283, r:.25+R()*.7, drift:(R()-.5)*1.6, rad:(R()-.5)*.5, ph:R()*6.283
+  }));
+  // synthetic barcodes consistent with the paper's 4 phases
+  const bars=[];
+  (function build(){
+    const pr=rng(555);
+    for(let i=0;i<70;i++){
+      const u=pr();
+      let b, len;
+      if(u<.34){ b=Math.floor(pr()*8); len=1+Math.floor(pr()*3); }        // phase1 short
+      else if(u<.62){ b=9+Math.floor(pr()*9); len=6+Math.floor(pr()*14);} // phase2 long
+      else if(u<.82){ b=18+Math.floor(pr()*11); len=1+Math.floor(pr()*4);}// phase3 short
+      else { b=29+Math.floor(pr()*3); len=1+Math.floor(pr()*2); }         // phase4 burst
+      bars.push({b, d:Math.min(L,b+len)});
+    }
+    bars.sort((p,q)=>p.b-q.b);
+  })();
+
+  let L0=0, running=false;
+  function pos(l){
+    return pts.map(p=>{
+      const tt=l/L;
+      // phase-dependent agitation
+      const agit = tt<.27? 1.0 : tt<.55? .25 : tt<.88? .12 : .9;
+      const a=p.a+p.drift*tt*2.4 + Math.sin(p.ph+l*.45)*.12*agit;
+      const r=p.r+p.rad*Math.sin(tt*3.1+p.ph)*agit*.55;
+      return {a, r:Math.max(.12,Math.min(1,r))};
+    });
+  }
+  function draw(){
+    const {x,w,h}=fit(c); x.clearRect(0,0,w,h);
+    const split=Math.min(w*.46, 460);
+    // ── left: point cloud
+    const cx=split/2, cy=h/2, S=Math.min(split,h)*.40;
+    const P=pos(L0).map(p=>({x:cx+Math.cos(p.a)*p.r*S*1.45, y:cy+Math.sin(p.a)*p.r*S}));
+    // kNN edges
+    for(let i=0;i<P.length;i++){
+      const d=P.map((b,j)=>[(P[i].x-b.x)**2+(P[i].y-b.y)**2,j]).filter(e=>e[1]!==i).sort((m,n)=>m[0]-n[0]);
+      for(let z=0;z<3;z++){
+        const j=d[z][1];
+        x.strokeStyle='rgba(255,210,74,.22)';x.lineWidth=1;
+        x.beginPath();x.moveTo(P[i].x,P[i].y);x.lineTo(P[j].x,P[j].y);x.stroke();
+      }
+    }
+    P.forEach(p=>{
+      glow(x,'#00e5ff',8);x.fillStyle='rgba(0,229,255,.9)';
+      x.beginPath();x.arc(p.x,p.y,2.5,0,6.283);x.fill();noglow(x);
+    });
+    // phase label
+    const ph = L0<9?['Phase 1 · Chaos','#00e5ff'] : L0<18?['Phase 2 · Stabil','#ffd24a']
+             : L0<29?['Phase 3 · Plateau','#7cff6b'] : ['Phase 4 · Output','#ff2fb9'];
+    x.fillStyle=ph[1];x.font='600 13px ui-sans-serif';x.fillText(ph[0],14,22);
+    // divider
+    x.strokeStyle='rgba(255,255,255,.10)';x.beginPath();x.moveTo(split+10,14);x.lineTo(split+10,h-14);x.stroke();
+
+    // ── right: barcode
+    const bx0=split+34, bw=w-bx0-18;
+    const X=l=>bx0+l/L*bw;
+    x.strokeStyle='rgba(255,255,255,.12)';x.lineWidth=1;
+    x.beginPath();x.moveTo(bx0,h-22);x.lineTo(bx0+bw,h-22);x.stroke();
+    [0,8,17,28,32].forEach(l=>{
+      x.strokeStyle='rgba(255,255,255,.08)';
+      x.beginPath();x.moveTo(X(l),14);x.lineTo(X(l),h-22);x.stroke();
+      x.fillStyle='rgba(139,147,184,.8)';x.font='9px ui-monospace,monospace';
+      x.fillText(l, X(l)-5, h-8);
+    });
+    const rows=bars.length, rh=(h-44)/rows;
+    bars.forEach((b,i)=>{
+      if(b.b>L0) return;
+      const end=Math.min(b.d,L0);
+      const y=16+i*rh;
+      const life=(b.d-b.b)/L;
+      const col = life>.35?'255,47,185' : life>.15?'255,210,74' : '0,229,255';
+      const alive = b.d>L0;
+      x.strokeStyle='rgba('+col+','+(alive?.95:.35)+')';
+      x.lineWidth=Math.max(1.6, rh*.55);x.lineCap='round';
+      if(alive) glow(x,'rgba('+col+',.5)',8);
+      x.beginPath();x.moveTo(X(b.b),y);x.lineTo(Math.max(X(end),X(b.b)+1),y);x.stroke();noglow(x);
+    });
+    // cursor
+    x.strokeStyle='rgba(255,255,255,.55)';x.setLineDash([3,4]);x.lineWidth=1;
+    x.beginPath();x.moveTo(X(L0),12);x.lineTo(X(L0),h-22);x.stroke();x.setLineDash([]);
+    x.fillStyle='rgba(139,147,184,.9)';x.font='10px ui-monospace,monospace';
+    x.fillText('Barcode · 1-dim. Löcher', bx0, 10);
+    label.textContent='ℓ = '+L0;
+  }
+  function setL(v){ L0=Math.max(0,Math.min(L,v)); slide.value=Math.round(L0/L*100); draw(); }
+  slide.addEventListener('input',()=>{ L0=Math.round(slide.value/100*L); draw(); });
+  play.addEventListener('click',()=>{ running=!running; play.textContent=running?'❚❚ Pause':'▶︎ Abspielen'; });
+  reset.addEventListener('click',()=>{ running=false; play.textContent='▶︎ Abspielen'; setL(0); });
+  let acc=0;
+  (function loop(){
+    if(running){ acc+=.035; if(acc>=1){acc=0; setL(L0>=L?0:L0+1);} }
+    requestAnimationFrame(loop);
+  })();
+  addEventListener('resize',draw);
+  setTimeout(()=>{setL(0); running=true; play.textContent='❚❚ Pause';},700);
+})();
+
+/* ═══════════ 5 · EFFECTIVE PERSISTENCE IMAGE ═══════════ */
+(function(){
+  const c=document.getElementById('pimg');
+  const L=32;
+  function val(b,p){
+    // short-lived mass at early births; long-lived mass after mid-depth
+    const shortMass = Math.exp(-p/2.0) * Math.exp(-((b-3)**2)/90) * 1.0;
+    const midLong   = Math.exp(-((b-14)**2)/46) * Math.exp(-((p-11)**2)/70) * .62;
+    const lateLong  = Math.exp(-((b-21)**2)/60) * Math.exp(-((p-8)**2)/60) * .40;
+    const burst     = b>28 ? Math.exp(-p/1.3)*.9*(b-28)/4 : 0;
+    const base      = Math.exp(-p/1.6)*.35*Math.exp(-((b-16)**2)/300);
+    return Math.min(1, shortMass+midLong+lateLong+burst+base);
+  }
+  function col(v){
+    // deep violet → cyan → magenta → gold
+    const s=[[8,10,30],[52,30,120],[0,160,210],[255,47,185],[255,220,120]];
+    const t=Math.pow(v,.72)*(s.length-1), i=Math.min(s.length-2,Math.floor(t)), f=t-i;
+    return 'rgb('+s[i].map((q,k)=>Math.round(lerp(q,s[i+1][k],f))).join(',')+')';
+  }
+  let t=0;
+  (function loop(){
+    const {x,w,h}=fit(c); x.clearRect(0,0,w,h);
+    const padL=42, padB=30, padT=16, padR=14;
+    const PW=w-padL-padR, PH=h-padT-padB;
+    const cells=34, cw=PW/cells, ch=PH/cells;
+    const reveal=Math.min(1,t*.5);
+    for(let bi=0;bi<cells;bi++){
+      if(bi/cells>reveal) break;
+      for(let pi=0;pi<cells;pi++){
+        const b=bi, p=pi;
+        if(b+p>L+1) continue;                 // persistence cannot exceed remaining depth
+        const v=val(b,p);
+        if(v<0.012) continue;
+        x.fillStyle=col(v);
+        x.globalAlpha=.92;
+        x.fillRect(padL+bi*cw, padT+PH-(pi+1)*ch, cw+.6, ch+.6);
+      }
+    }
+    x.globalAlpha=1;
+    // diagonal limit
+    x.strokeStyle='rgba(255,255,255,.18)';x.setLineDash([3,4]);x.lineWidth=1;
+    x.beginPath();x.moveTo(padL,padT+PH-(L/cells)*PH);x.lineTo(padL+PW,padT+PH);x.stroke();
+    x.setLineDash([]);
+    // axes
+    x.strokeStyle='rgba(255,255,255,.18)';
+    x.beginPath();x.moveTo(padL,padT);x.lineTo(padL,padT+PH);x.lineTo(padL+PW,padT+PH);x.stroke();
+    x.fillStyle='rgba(139,147,184,.95)';x.font='10px ui-monospace,monospace';
+    [0,8,16,24,32].forEach(v=>{x.fillText(v, padL+v/cells*PW-5, padT+PH+14);});
+    [0,8,16,24,32].forEach(v=>{x.fillText(v, 14, padT+PH-v/cells*PH+3);});
+    x.fillStyle='rgba(200,206,235,.85)';x.font='600 11px ui-sans-serif';
+    x.fillText('Geburts-Layer b →', padL+PW-120, padT+PH+26);
+    x.save();x.translate(13,padT+PH/2+52);x.rotate(-Math.PI/2);
+    x.fillText('Persistenz  d − b →',0,0);x.restore();
+    // annotations
+    const ann=[
+      ['kurzlebig · Phase 1', padL+PW*.08, padT+PH*.90, '#00e5ff'],
+      ['langlebig · Phase 2', padL+PW*.40, padT+PH*.52, '#ff2fb9'],
+      ['Burst · Phase 4', padL+PW*.80, padT+PH*.88, '#ffd24a']
+    ];
+    if(reveal>.98) ann.forEach(([s,ax,ay,cc],i)=>{
+      const a=Math.min(1,Math.max(0,(t-2.2-i*.35)));
+      x.globalAlpha=a; x.fillStyle=cc; x.font='600 10px ui-sans-serif';
+      x.beginPath();x.arc(ax,ay,2.6,0,6.283);x.fill();
+      x.fillText(s, ax+7, ay+3.5); x.globalAlpha=1;
+    });
+    t+=.016; requestAnimationFrame(loop);
+  })();
+})();
+
+/* ═══════════ 6 · BIRTHS' FREQUENCY & INTER-LAYER PERSISTENCE ═══════════ */
+(function(){
+  const c=document.getElementById('desc');
+  const sl=document.getElementById('alpha'), out=document.getElementById('alphaV');
+  const L=32;
+  // B_1(l): short-lived peak early, long-lived peak mid, both burst at the end
+  function B(l,a){
+    const short=Math.exp(-l/6.5)*1.0 + .18;
+    const long =Math.exp(-((l-14)**2)/58)*1.0 + .10;
+    const mix=1/(1+Math.exp(-a*1.4));
+    let v=lerp(short,long,mix);
+    if(l>=L-2) v+= (l-(L-3))*.55;      // sharp growth in last two layers
+    return v;
+  }
+  // Zbar_1(l): short-lived grows then plateaus then drops; long-lived peaks mid
+  function Z(l,a){
+    const short=1/(1+Math.exp(-(l-9)/2.6));
+    const plat = l>28 ? Math.exp(-(l-28)/1.6) : 1;
+    const long =Math.exp(-((l-15)**2)/44);
+    const mix=1/(1+Math.exp(-a*1.4));
+    return lerp(short*plat, long, mix)*.92+.04;
+  }
+  function curve(x,f,a,X,Y,col,ww){
+    x.strokeStyle=col;x.lineWidth=ww;x.lineJoin='round';
+    glow(x,col,10);x.beginPath();
+    for(let l=0;l<=L;l++){const px=X(l),py=Y(f(l,a));l?x.lineTo(px,py):x.moveTo(px,py);}
+    x.stroke();noglow(x);
+  }
+  let a=2.0, anim=0;
+  function render(){
+    const {x,w,h}=fit(c); x.clearRect(0,0,w,h);
+    const padL=36,padR=14,padT=22,padB=28;
+    const PW=w-padL-padR, PH=(h-padT-padB)/2-14;
+    const X=l=>padL+l/L*PW;
+    // phase shading helper
+    function panel(y0,f,title,colA){
+      const Y=v=>y0+PH-Math.min(1,Math.max(0,v/ (title[0]==='B'?2.2:1.05)))*PH;
+      const ph=[[0,8,'0,229,255'],[9,17,'255,210,74'],[18,28,'124,255,107'],[29,32,'255,47,185']];
+      ph.forEach(([s,e,cc])=>{x.fillStyle='rgba('+cc+',.07)';x.fillRect(X(s),y0,X(e)-X(s),PH);});
+      x.strokeStyle='rgba(255,255,255,.14)';x.lineWidth=1;
+      x.beginPath();x.moveTo(padL,y0+PH);x.lineTo(padL+PW,y0+PH);x.stroke();
+      // ghost curves for other alphas
+      [-1,0,1].forEach(aa=>{curve(x,f,aa,X,Y,'rgba(255,255,255,.12)',1);});
+      curve(x,f,a,X,Y,colA,2.4);
+      // moving marker
+      const ml=(anim*.35)%L;
+      const mx=X(ml), my=Y(f(Math.round(ml),a));
+      glow(x,colA,14);x.fillStyle=colA;x.beginPath();x.arc(mx,my,3.4,0,6.283);x.fill();noglow(x);
+      x.fillStyle='rgba(200,206,235,.9)';x.font='600 11px ui-sans-serif';x.fillText(title,padL,y0-5);
+      x.fillStyle='rgba(139,147,184,.85)';x.font='9px ui-monospace,monospace';
+      [0,8,17,28,32].forEach(v=>x.fillText(v,X(v)-4,y0+PH+13));
+    }
+    panel(padT, B, 'B₁(ℓ) · Births\u2019 Relative Frequency', '#00e5ff');
+    panel(padT+PH+40, Z, 'Z̄₁(ℓ) · Inter-Layer Persistence', '#ffd24a');
+    anim+=1;
+  }
+  sl.addEventListener('input',()=>{a=sl.value/10; out.textContent='α = '+a.toFixed(1);});
+  (function loop(){render();requestAnimationFrame(loop);})();
+})();
+
+/* ═══════════ 7 · VIER PHASEN ═══════════ */
+(function(){
+  const c=document.getElementById('phases');
+  const L=32;
+  const phases=[[0,8,'0,229,255','Chaos'],[9,17,'255,210,74','Stabil'],
+                [18,28,'124,255,107','Plateau'],[29,32,'255,47,185','Output']];
+  const R=rng(777);
+  const dots=[...Array(220)].map(()=>({l:R()*L, y:R(), s:R(), v:.2+R()*.9}));
+  let t=0;
+  (function loop(){
+    const {x,w,h}=fit(c);x.clearRect(0,0,w,h);
+    const padL=20,padR=20,padT=34,padB=40;
+    const PW=w-padL-padR, PH=h-padT-padB;
+    const X=l=>padL+l/L*PW;
+    phases.forEach(([s,e,cc,nm])=>{
+      const g=x.createLinearGradient(0,padT,0,padT+PH);
+      g.addColorStop(0,'rgba('+cc+',.22)');g.addColorStop(1,'rgba('+cc+',.03)');
+      x.fillStyle=g;x.fillRect(X(s),padT,X(e)-X(s),PH);
+      x.strokeStyle='rgba('+cc+',.45)';x.lineWidth=1;x.strokeRect(X(s)+.5,padT+.5,X(e)-X(s)-1,PH-1);
+      x.fillStyle='rgb('+cc+')';x.font='700 12px ui-sans-serif';
+      x.fillText(nm, X(s)+8, padT-10);
+      x.fillStyle='rgba(139,147,184,.9)';x.font='9px ui-monospace,monospace';
+      x.fillText('ℓ '+s+'–'+e, X(s)+8, padT+PH+16);
+    });
+    // flowing particles: agitation per phase
+    dots.forEach(d=>{
+      const l=d.l;
+      const agit = l<9?1 : l<18?.3 : l<29?.15 : .95;
+      d.l += (.10+d.v*.16)*(1+agit*1.6)*.35;
+      if(d.l>L) d.l=0;
+      const px=X(d.l);
+      const py=padT+8+d.y*(PH-16)+Math.sin(t*2.2+d.s*9)*agit*9;
+      const cc = d.l<9?'0,229,255' : d.l<18?'255,210,74' : d.l<29?'124,255,107':'255,47,185';
+      x.fillStyle='rgba('+cc+','+(.25+d.v*.6)+')';
+      x.beginPath();x.arc(px,py,1.1+d.v*1.7,0,6.283);x.fill();
+      // trails
+      x.strokeStyle='rgba('+cc+',.14)';x.lineWidth=1;
+      x.beginPath();x.moveTo(px,py);x.lineTo(px-6-agit*12,py);x.stroke();
+    });
+    x.fillStyle='rgba(200,206,235,.8)';x.font='10px ui-monospace,monospace';
+    x.fillText('Bewegungsrate der Prompts im Repräsentationsraum', padL, h-10);
+    t+=.016;requestAnimationFrame(loop);
+  })();
+})();
+
+/* ═══════════ 8 · PRUNING / SLIDING WINDOW ═══════════ */
+(function(){
+  const c=document.getElementById('prune');
+  const sl=document.getElementById('pw'), out=document.getElementById('pwV');
+  const L=32;
+  // Winogrande-like sliding-window profile (Fig. 4 of the paper, schematic)
+  const models=[
+    {n:'Llama 3 8B',  col:'0,229,255',   full:77.1, base:51},
+    {n:'Mistral 7B',  col:'124,255,107', full:77.4, base:52},
+    {n:'Llama 2 7B',  col:'255,210,74',  full:74.4, base:51},
+    {n:'Pythia 6.9B', col:'255,47,185',  full:63.3, base:50}
+  ];
+  function perf(m,s){
+    const full=m.full, base=m.base;
+    const rise=1/(1+Math.exp(-(s-7)/2.2));          // early layers critical
+    const plateau = s>=10 && s<=23 ? 1 : 1;
+    const lateDip = s>23 ? Math.exp(-((s-26)**2)/8)*0.42 : 0;   // drop before phase 4
+    const endDrop = s>26 ? (s-26)/6*.35 : 0;
+    let v = base + (full-base)*rise*plateau;
+    v -= (full-base)*(lateDip+endDrop);
+    return Math.max(base-2, v);
+  }
+  let start=20, t=0;
+  function render(){
+    const {x,w,h}=fit(c);x.clearRect(0,0,w,h);
+    const padL=42,padR=16,padT=22,padB=46;
+    const PW=w-padL-padR, PH=h-padT-padB;
+    const X=s=>padL+s/27*PW;
+    const Y=v=>padT+PH-((v-46)/(80-46))*PH;
+    // phase bands
+    [[0,8,'0,229,255'],[9,17,'255,210,74'],[18,28,'124,255,107'],[29,32,'255,47,185']].forEach(([s,e,cc])=>{
+      const a=Math.min(27,s), b=Math.min(27,e);
+      if(b<=a)return;
+      x.fillStyle='rgba('+cc+',.055)';x.fillRect(X(a),padT,X(b)-X(a),PH);
+    });
+    // grid
+    x.strokeStyle='rgba(255,255,255,.07)';x.lineWidth=1;
+    [50,60,70,80].forEach(v=>{x.beginPath();x.moveTo(padL,Y(v));x.lineTo(padL+PW,Y(v));x.stroke();
+      x.fillStyle='rgba(139,147,184,.85)';x.font='9px ui-monospace,monospace';x.fillText(v,14,Y(v)+3);});
+    // random baseline
+    x.setLineDash([4,4]);x.strokeStyle='rgba(255,255,255,.22)';
+    x.beginPath();x.moveTo(padL,Y(50));x.lineTo(padL+PW,Y(50));x.stroke();x.setLineDash([]);
+    x.fillStyle='rgba(255,255,255,.4)';x.font='9px ui-sans-serif';x.fillText('Zufallsniveau',padL+4,Y(50)-5);
+    // curves
+    models.forEach((m,mi)=>{
+      const grow=Math.min(1,Math.max(0,t*.5-mi*.25));
+      x.strokeStyle='rgb('+m.col+')';x.lineWidth=2.1;x.lineJoin='round';
+      glow(x,'rgb('+m.col+')',8);
+      x.beginPath();
+      for(let s=0;s<=27*grow;s+=.5){const px=X(s),py=Y(perf(m,s));s?x.lineTo(px,py):x.moveTo(px,py);}
+      x.stroke();noglow(x);
+      // value dot at current window
+      const py=Y(perf(m,start));
+      x.fillStyle='rgb('+m.col+')';x.beginPath();x.arc(X(start),py,3.4,0,6.283);x.fill();
+      x.fillStyle='rgba('+m.col+',.95)';x.font='600 10px ui-monospace,monospace';
+      x.fillText(perf(m,start).toFixed(1), X(start)+7, py+3);
+    });
+    // window cursor
+    const wx0=X(start), wx1=X(Math.min(27,start+5*27/32));
+    x.fillStyle='rgba(255,255,255,.07)';x.fillRect(wx0,padT,wx1-wx0,PH);
+    x.strokeStyle='rgba(255,255,255,.5)';x.setLineDash([3,3]);
+    x.strokeRect(wx0+.5,padT+.5,wx1-wx0,PH-1);x.setLineDash([]);
+    // axis
+    x.strokeStyle='rgba(255,255,255,.16)';
+    x.beginPath();x.moveTo(padL,padT+PH);x.lineTo(padL+PW,padT+PH);x.stroke();
+    x.fillStyle='rgba(139,147,184,.9)';x.font='9px ui-monospace,monospace';
+    [0,5,10,15,20,25].forEach(s=>x.fillText(s,X(s)-4,padT+PH+14));
+    x.fillStyle='rgba(200,206,235,.85)';x.font='600 10px ui-sans-serif';
+    x.fillText('Startlayer des entfernten 5er-Blocks →', padL, padT+PH+32);
+    x.fillText('WinoGrande Accuracy', padL, padT-8);
+    t+=.016;requestAnimationFrame(render);
+  }
+  sl.addEventListener('input',()=>{
+    start=+sl.value;
+    out.textContent='Layer '+start+'–'+(start+4)+' entfernt';
+  });
+  render();
+})();
+
+/* ═══════════ 9 · MODELLVERGLEICH Z̄₁ ═══════════ */
+(function(){
+  const c=document.getElementById('models');
+  const L=32;
+  const M=[
+    {n:'Llama 3 8B',  col:'0,229,255',   pk:.72, mu:15.5, sg:5.0, prune:'20–28'},
+    {n:'Llama 2 7B',  col:'255,210,74',  pk:.78, mu:15.0, sg:4.8, prune:'20–27'},
+    {n:'Mistral 7B',  col:'124,255,107', pk:.63, mu:16.0, sg:5.4, prune:'20–29'},
+    {n:'Pythia 6.9B', col:'255,47,185',  pk:.92, mu:14.5, sg:4.4, prune:'19–29'}
+  ];
+  function Zm(m,l){
+    const core=m.pk*Math.exp(-((l-m.mu)**2)/(2*m.sg*m.sg));
+    const tail = l>29 ? -0.1*(l-29) : 0;
+    return Math.max(0, core + .05 + tail);
+  }
+  let t=0;
+  (function loop(){
+    const {x,w,h}=fit(c);x.clearRect(0,0,w,h);
+    const padL=42,padR=16,padT=26,padB=38;
+    const PW=w-padL-padR, PH=h-padT-padB;
+    const X=l=>padL+l/L*PW, Y=v=>padT+PH-v/1.0*PH;
+    // bands
+    [[0,8,'0,229,255'],[9,17,'255,210,74'],[18,28,'124,255,107'],[29,32,'255,47,185']].forEach(([s,e,cc])=>{
+      x.fillStyle='rgba('+cc+',.05)';x.fillRect(X(s),padT,X(e)-X(s),PH);
+    });
+    x.strokeStyle='rgba(255,255,255,.07)';
+    [0,.25,.5,.75,1].forEach(v=>{x.beginPath();x.moveTo(padL,Y(v));x.lineTo(padL+PW,Y(v));x.stroke();
+      x.fillStyle='rgba(139,147,184,.85)';x.font='9px ui-monospace,monospace';x.fillText(v.toFixed(2),10,Y(v)+3);});
+    M.forEach((m,mi)=>{
+      const grow=Math.min(1,Math.max(0,t*.55-mi*.22));
+      // band (std dev)
+      x.fillStyle='rgba('+m.col+',.10)';
+      x.beginPath();
+      for(let l=0;l<=L*grow;l+=.5)x.lineTo(X(l),Y(Zm(m,l)*1.07));
+      for(let l=L*grow;l>=0;l-=.5)x.lineTo(X(l),Y(Zm(m,l)*0.93));
+      x.closePath();x.fill();
+      x.strokeStyle='rgb('+m.col+')';x.lineWidth=2.2;glow(x,'rgb('+m.col+')',9);
+      x.beginPath();
+      for(let l=0;l<=L*grow;l+=.5){const px=X(l),py=Y(Zm(m,l));l?x.lineTo(px,py):x.moveTo(px,py);}
+      x.stroke();noglow(x);
+      // peak marker
+      if(grow>.98){
+        const pulse=.5+.5*Math.sin(t*2.4-mi);
+        x.fillStyle='rgba('+m.col+','+(.5+pulse*.5)+')';
+        x.beginPath();x.arc(X(m.mu),Y(m.pk),3.2+pulse*1.6,0,6.283);x.fill();
+        x.fillStyle='rgba('+m.col+',.95)';x.font='600 9px ui-sans-serif';
+        x.fillText(m.n+' · prune '+m.prune, X(m.mu)+8, Y(m.pk)-6+mi*0);
+      }
+    });
+    x.strokeStyle='rgba(255,255,255,.16)';x.lineWidth=1;
+    x.beginPath();x.moveTo(padL,padT+PH);x.lineTo(padL+PW,padT+PH);x.stroke();
+    x.fillStyle='rgba(139,147,184,.9)';x.font='9px ui-monospace,monospace';
+    [0,8,16,24,32].forEach(l=>x.fillText(l,X(l)-4,padT+PH+14));
+    x.fillStyle='rgba(200,206,235,.85)';x.font='600 10px ui-sans-serif';
+    x.fillText('Z̄₁(ℓ) bei α = 2 · gleiche Form, andere Höhe', padL, padT-10);
+    x.fillText('Layer ℓ →', padL+PW-62, padT+PH+28);
+    t+=.016;requestAnimationFrame(loop);
+  })();
+})();
+
+/* ═══════════ 10 · FINALE ═══════════ */
+(function(){
+  const c=document.getElementById('final');
+  const R=rng(31337);
+  const N=90;
+  const P=[...Array(N)].map(()=>({a:R()*6.283,r:.2+R()*.8,s:.4+R()*1.3,ph:R()*6.283}));
+  let t=0;
+  (function loop(){
+    const {x,w,h}=fit(c);x.clearRect(0,0,w,h);
+    const cx=w/2, cy=h/2, S=Math.min(w,h)*.42;
+    // 32 layer rings collapsing into one
+    for(let l=0;l<32;l++){
+      const u=l/31;
+      const phase=(t*.35 - u*1.2);
+      const rr=S*(.25+ .75*Math.abs(Math.sin(phase)))*(.3+u*.7);
+      const cc = u<.28?'0,229,255' : u<.56?'255,210,74' : u<.9?'124,255,107':'255,47,185';
+      x.strokeStyle='rgba('+cc+','+(.05+.12*Math.abs(Math.cos(phase)))+')';
+      x.lineWidth=1;
+      x.beginPath();x.ellipse(cx,cy,rr*1.8,rr,0,0,6.283);x.stroke();
+    }
+    // the surviving long-lived core
+    const core=S*(.26+.03*Math.sin(t*1.1));
+    glow(x,'#ff2fb9',26);
+    x.strokeStyle='rgba(255,47,185,.9)';x.lineWidth=2;
+    x.beginPath();x.ellipse(cx,cy,core*1.8,core,0,0,6.283);x.stroke();
+    noglow(x);
+    // orbiting prompts
+    P.forEach((p,i)=>{
+      const a=p.a+t*.28*p.s;
+      const breathe=.5+.5*Math.sin(t*.7+p.ph);
+      const rr=S*(p.r*(.35+.65*breathe));
+      const px=cx+Math.cos(a)*rr*1.8, py=cy+Math.sin(a)*rr;
+      const u=(i/N);
+      const cc = u<.28?'0,229,255' : u<.56?'255,210,74' : u<.9?'124,255,107':'255,47,185';
+      glow(x,'rgba('+cc+',.9)',9);
+      x.fillStyle='rgba('+cc+','+(.4+breathe*.5)+')';
+      x.beginPath();x.arc(px,py,1.4+p.s*1.6,0,6.283);x.fill();noglow(x);
+    });
+    // centre text
+    x.textAlign='center';
+    x.fillStyle='rgba(233,236,255,.92)';x.font='700 13px ui-sans-serif';
+    x.fillText('32 Layer · 1 Barcode', cx, cy+4);
+    x.fillStyle='rgba(139,147,184,.85)';x.font='10px ui-monospace,monospace';
+    x.fillText('Persp(Φ) = { [b,d] }', cx, cy+22);
+    x.textAlign='left';
+    t+=.016;requestAnimationFrame(loop);
+  })();
+})();
+
+/* ═══════════ RESIZE ═══════════ */
+let rz;
+addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(()=>{
+  document.querySelectorAll('canvas').forEach(c=>fit(c));
+},120);});
+</script>
+</body>
+</html>

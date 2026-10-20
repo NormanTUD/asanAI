@@ -183,7 +183,7 @@ But a single circle (a single frequency) has too many ambiguities. So the networ
 <div id="wave-interference-container"></div>
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The Algorithm in Five Steps">
+<div class="md" data-mathlevel="55">
 ## The Algorithm in Five Steps
 
 The trained network implements the following algorithm (\cite[Nanda et al., 2023, Section 4]{nanda2023grokking}):
@@ -205,7 +205,7 @@ $$\text{Logit}(c) = \sum_{k \in \{14,35,41,42,52\}} \alpha_k \cdot \underbrace{\
 This is maximal when $c = (a+b) \bmod P$, because then *all five* cosine terms equal 1 simultaneously.
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Connection to Grokking">
+<div class="md" data-mathlevel="50">
 ## Connection to Grokking
 
 This algorithm is not present at the start of training. The phenomenon is called **grokking**: a model suddenly transitions from **memorization** to **generalization** long after it seems to have plateaued. Originally identified by \cite[Power et al. (2022)]{power2022grokking}, this “aha moment” occurs when a model achieves 100% training accuracy but 0% validation accuracy for an extended period, only to have validation accuracy jump to 100% within a few epochs. This indicates a shift from high-frequency noise-fitting to the discovery of an underlying algorithmic pattern, and structurally it is often marked by a transition in **attention matrices** from messy, uniform distributions to clean, highly structured representations.
@@ -219,7 +219,7 @@ Below you can explore each step of the algorithm interactively. Change the input
 
 <div id="fourier-algorithm-container"></div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The Neuron-Logit Map">
+<div class="md" data-mathlevel="60">
 ## The Neuron-Logit Map $W_L$
 
 The matrix $W_L = W_U W_{\text{out}}$ maps MLP activations directly to logits. It is approximately **rank 10**, with each direction corresponding to the cosine or sine of one of the 5 key frequencies (\cite[Nanda et al., 2023, Section 4.2, Equation 2]{nanda2023grokking}):
@@ -365,7 +365,7 @@ The residual after this approximation has Frobenius norm under **0.55%** of the 
 })();
 </script>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="The Embedding Space: Fourier Sparsity">
+<div class="md" data-mathlevel="50">
 ## The Embedding Space: Fourier Sparsity
 
 The embedding matrix $W_E$ is a $P \times d_{\text{model}} = 113 \times 128$ matrix. When we take a Discrete Fourier Transform along the token dimension and compute the $\ell_2$-norm along the model dimension, we find that $W_E$ is **sparse in the Fourier basis** (\cite[Nanda et al., 2023, Section 4.1, Figure 3]{nanda2023grokking}).
@@ -703,7 +703,7 @@ Each stage introduces new challenges. Stage 3 (composition) is particularly inte
 
 <div id="algorithmic-prompting-container" style="max-width:960px; margin:0 auto;"></div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Beyond Modular Arithmetic: digits & counting">
+<div class="md" data-mathlevel="45">
 ## Beyond Modular Arithmetic: Magnitude, Comparison, and Counting
 
 The circular representations above solve a very specific problem: **modular** addition, where the answer wraps around a fixed modulus ($\bmod N$). That is a *bounded, cyclic* task — there is no "carry out to infinity," and no question of how *big* a number is. Once you leave that world, the model hits two different walls, and understanding them clarifies what a "number" actually is inside the network.
@@ -719,7 +719,7 @@ Where does this live? In the **hidden states (the residual stream) of the later 
 **Why it is hard, in principle.** The difference from modular addition is not training data — it is the *shape of the state required*. Mod-$N$ addition lives on a finite circle, so it needs only a bounded, cyclic representation (exactly the Fourier features above \cite[Ding et al., 2024]{ding2024fittest} \cite[Engels et al., 2025]{engels2024multidim}). Exact counting, by contrast, needs an **unbounded integer** that increments and is read out at the end — a state that grows with the input. \cite[Hahn (2020)]{hahn2020limitations} proved the matching impossibility: a fixed-size transformer's self-attention **cannot model periodic finite-state languages** (counting to $n$, parity, "how many times does $x$ appear") **unless the number of layers or heads grows with the sequence length.** In other words, a fixed network has no reliable exact-integer counter, and the depth that would supply one is exactly what is fixed. Modular arithmetic is easy because it is bounded and circular; comparison needs an ordered code the model does not cleanly have, and counting needs unbounded state it cannot hold. Different failures, and neither is "just train it more."
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="A Transformer as a State Machine">
+<div class="md" data-mathlevel="50">
 ## A Transformer as a State Machine: How a Stateless Network Keeps State
 
 Here is a tension worth sitting with. An RNN keeps its state in a single hidden vector that it updates one token at a time, carrying everything forward. A transformer has **no such carried-over hidden vector**: within a single forward pass it is a *parallel* function applied to the whole context at once, with no step-by-step evolution. You are right that "time" barely exists for the network inside one forward pass — the only real notion of order is the **sequence position** of the tokens (and, during generation, the autoregressive step-by-step decoding). So "state across time" below means **state across the token positions / decode steps**, not an internal clock. Given that, the puzzle is sharper, not softer: how can a network with no carried-over memory do anything *sequential* or *stateful* — parse a sentence, follow a procedure, track a running count — when it has nowhere to keep the running total?

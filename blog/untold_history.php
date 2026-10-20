@@ -62,7 +62,7 @@ Successive generations of stars forged heavier elements in their cores and dispe
 
 The picture of *how* the matter of the universe became the elements on the periodic table was assembled over more than a century, and its modern form rests on a single, remarkable convergence of nuclear physics and stellar astronomy. In the first few minutes after the Big Bang, the universe was a hot, dense plasma of protons and neutrons. As it expanded and cooled, protons and neutrons fused into the lightest nuclei before the density ever fell low enough for heavier ones to survive. The landmark 1948 calculation of \citeauthorlastnameand{alperbethegamow1948}, the famous "alpha-beta-gamma" paper, first showed that this process could predict the observed abundance of the light elements, and the full modern theory of **Big Bang nucleosynthesis** confirms that within roughly the first twenty minutes the universe had fused about **75% of its mass into hydrogen and 25% into helium-4**, leaving only traces of deuterium, helium-3, and lithium-7 (\cite[Weinberg, 1977]{weinberg1977first}). This is a hard fact about the cosmos: nearly all the hydrogen in every atom on Earth, including the hydrogen in your body and in every drop of water, was made not inside any star but in those first twenty minutes.
 
-Big Bang nucleosynthesis, however, could not make the rest. There is no stable nucleus with five or eight nucleons, a "mass gap" that stalls any chain of fusion beyond helium, so every element from carbon upward had to be forged later, inside stars. That insight was the work of a generation of physicists. In 1939, \citeauthor{bethe1939energy} worked out, in his paper \citetitle{bethe1939energy}, the **carbon-nitrogen-oxygen (CNO) cycle** by which more massive main-sequence stars convert hydrogen into helium. The closely related **proton-proton chain**, dominant in lower-mass stars like the Sun, had been proposed independently the year before by Carl Friedrich von Weizsäcker. Together these are the two nuclear reaction chains by which stars sustain their luminosity for millions to billions of years; a decade earlier, \citeauthorlastnameand{eddington1926stars} had already argued on purely physical grounds that nuclear fusion was the only way a star could stay hot so long, but it was Bethe (and Weizsäcker, for the pp-chain) who supplied the actual nuclear bookkeeping. As a star exhausts its hydrogen, its core contracts and heats until helium ignites. Fusing three helium nuclei into carbon through the unstable intermediate beryllium-8 could only work if carbon-12 possessed a particular excited state; Hoyle calculated this requirement in 1954, and the state was found shortly afterward almost exactly where he had placed it, the **Hoyle state**, a triumph that became one of the great confirmations of the whole theory (\cite[Burbidge et al., 1957]{b2fh1957}). From carbon, a cascade of successive "burning" stages in the most massive stars, carbon burning, neon burning, then onion-skin layers of oxygen and silicon burning, climbs the periodic table up to the iron group.
+Big Bang nucleosynthesis, however, could not make the rest. There is no stable nucleus with five or eight nucleons, a "mass gap" that stalls any chain of fusion beyond helium, so every element from carbon upward had to be forged later, inside stars. That insight was the work of a generation of physicists. In 1939, \citeauthor{bethe1939energy} worked out, in his paper \citetitle{bethe1939energy}, the **carbon-nitrogen-oxygen (CNO) cycle** by which more massive main-sequence stars convert hydrogen into helium — a cycle that Carl Friedrich von Weizsäcker had already derived independently the year before, in 1938. The closely related **proton-proton chain**, dominant in lower-mass stars like the Sun, was worked out by Bethe and Charles Critchfield in that same year. Together these are the two nuclear reaction chains by which stars sustain their luminosity for millions to billions of years; a decade earlier, \citeauthorlastnameand{eddington1926stars} had already argued on purely physical grounds that nuclear fusion was the only way a star could stay hot so long, but it was Bethe — and, for the CNO cycle, Weizsäcker, independently — who supplied the actual nuclear bookkeeping. As a star exhausts its hydrogen, its core contracts and heats until helium ignites. Fusing three helium nuclei into carbon through the unstable intermediate beryllium-8 could only work if carbon-12 possessed a particular excited state; Hoyle calculated this requirement in 1954, and the state was found shortly afterward almost exactly where he had placed it, the **Hoyle state**, a triumph that became one of the great confirmations of the whole theory (\cite[Burbidge et al., 1957]{b2fh1957}). From carbon, a cascade of successive "burning" stages in the most massive stars, carbon burning, neon burning, then onion-skin layers of oxygen and silicon burning, climbs the periodic table up to the iron group.
 
 The iron group marks the absolute wall. Fusing nuclei up to iron *releases* energy; fusing iron *consumes* it, so an iron core cannot power a star. This is why the cosmic abundance of the elements has its deepest peak at iron, and it is the reason a massive star's life ends in a **core-collapse supernova**, a catastrophe whose rebounding shockwave drives a final burst of explosive nucleosynthesis and flings the star's freshly forged material out into space. But iron is not the end of the story: the heaviest elements, the gold, platinum, and uranium, are built by a different mechanism entirely, the **neutron-capture processes**. In the 1957 review that became the founding document of modern nucleosynthesis, \citetitle{b2fh1957}, \citeauthorlastnameand{b2fh1957} laid out both the **s-process** (slow neutron capture, proceeding in the gentle atmospheres of dying red-giant stars) and the **r-process** (rapid neutron capture, demanding the extreme neutron densities of stellar death), a framework first sketched the same year by \citeauthor{cameron1957nucleogenesis}.
 
@@ -371,7 +371,7 @@ Between the fall of the Western Roman Empire and the European Renaissance, the c
 **Ibn al-Haytham (Alhazen)** (965–1040 CE) wrote the \citetitle{ibnalhaytham1021optics} (\citeyear{ibnalhaytham1021optics}), a seven-volume work that established the **experimental method** as the foundation of optics and, by extension, of natural philosophy. Against the Greek emission and intromission theories of vision, Ibn al-Haytham argued, on the basis of controlled experiments, that vision occurs when light from an object enters the eye, and he designed the first controlled experiments in the history of science: varying one parameter at a time, recording the result, and drawing a general conclusion. The \citetitle{ibnalhaytham1021optics} also described the **camera obscura**, the direct optical ancestor of the photographic camera, the microscope, and the camera that will one day image a brain. The experimental method he codified, hypothesis, controlled experiment, quantitative measurement, general law, is the method that the Royal Society would formalize three centuries later and that the entire empirical science underlying AI depends on.
 </div>
 
-<div class="md" data-mathlevel="35" data-depth="40" data-optionaltitle="The Scientific Revolution: 1543–1687">
+<div class="md" data-mathlevel="35" data-depth="40">
 ### The Scientific Revolution: 1543–1687
 
 The Scientific Revolution was not a single event but a cascade of mutually reinforcing breakthroughs, each one displacing the last:
@@ -399,7 +399,7 @@ The *Principia* also contained the first rigorous formulation of **calculus** (i
 
 **Leibniz: The Calculus of Reasoning.** \citeauthorlastnameand{leibniz1686calculus} was working on a project that Newton never conceived: a **universal characteristic** (*Characteristica Universalis*), a formal language in which all concepts are expressed as symbols and all reasoning is performed as calculation. The idea is that all reasoning is, at bottom, a form of computation. The \citetitle{leibniz1666combinatoria} (\citeyear{leibniz1666combinatoria}) articulated the ambition: "If disputes should arise between scholars, it would be unnecessary for them to argue with one another... They can say, let us calculate". The \citetitle{leibniz1686calculus} (\citeyear{leibniz1686calculus}) developed the logical analysis of notions and truths that would, three centuries later, become the foundation of formal logic and, ultimately, of the logic gate.
 
-Leibniz also independently invented the **calculus** (derivatives and integrals) in the 1670s, publishing his notation ($\frac{dy}{dx}$, $\int$) in 1684, two years before Newton's *Principia*. The priority dispute that followed was bitter and prolonged, but the substance of the contribution is clear: Leibniz's notation, still in use today, was the one that proved more general and more suitable for computation.
+Leibniz also independently invented the **calculus** (derivatives and integrals) in the 1670s, publishing his notation ($\frac{dy}{dx}$, $\int$) in 1684, three years before Newton's *Principia*. The priority dispute that followed was bitter and prolonged, but the substance of the contribution is clear: Leibniz's notation, still in use today, was the one that proved more general and more suitable for computation.
 </div>
 
 <div class="md" data-depth="40">
@@ -797,7 +797,7 @@ The "longitude problem", determining one's east-west position at sea, was the gr
     <figcaption class="md">The Magdeburg hemispheres (Otto von Guericke, 1654): two copper bowls evacuated of air, held together so firmly by atmospheric pressure that teams of horses could not pull them apart. The vacuum technique pioneered here would, three centuries later, make the vacuum tube possible. Source: \citeauthor{img_magdeburg_hemispheres}, \citeyear{img_magdeburg_hemispheres}, \citealternativetitle{img_magdeburg_hemispheres}, Wikimedia Commons.</figcaption>
 </figure>
 
-**\citeauthor{torricellibarometer}**'s \citeyear{torricellibarometer} barometer demonstrated that the atmosphere has weight and, by implication, that the space above the mercury in a sealed tube is empty, a vacuum. **\citeauthor{vonguericke}**'s \citeyear{vonguericke} \citealternativetitle{vonguericke} (1654) made the point dramatically: two teams of horses could not pull apart a sphere evacuated of air. But the decisive step for computation was the development of glassblowing techniques that could seal metal electrodes inside a glass envelope from which the air had been removed. **\citeauthor{geisslertube}**'s \citeyear{geisslertube} \citealternativetitle{geisslertube} (1857) showed that electric current through low-pressure gas produces coloured light. Thomas Edison observed in 1883 that electrons flow from a heated filament to a metal plate inside a vacuum, the "Edison effect." **\citeauthor{flemingdiode}**'s \citeyear{flemingdiode} \citealternativetitle{flemingdiode} used this effect to build the first electronic rectifier; **\citeauthor{deforestaudion}**'s \citeyear{deforestaudion} \citealternativetitle{deforestaudion} (1906) added a third electrode to create the first electronic amplifier. The ENIAC (1946) used 17,468 vacuum tubes; every electronic computer until the transistor era was a room full of glowing glass bulbs, each one dependent on the vacuum techniques pioneered by Torricelli and von Guericke three centuries earlier.
+**\citeauthor{torricellibarometer}**'s \citeyear{torricellibarometer} barometer demonstrated that the atmosphere has weight and, by implication, that the space above the mercury in a sealed tube is empty, a vacuum. **\citeauthor{vonguericke}**'s \citeyear{vonguericke} \citealternativetitle{vonguericke} (1654) made the point dramatically: two teams of horses could not pull apart a sphere evacuated of air. But the decisive step for computation was the development of glassblowing techniques that could seal metal electrodes inside a glass envelope from which the air had been removed. **\citeauthor{geisslertube}**'s \citeyear{geisslertube} \citealternativetitle{geisslertube} (1857) showed that electric current through low-pressure gas produces coloured light. Thomas Edison observed in 1883 that electrons flow from a heated filament to a metal plate inside a vacuum, the "Edison effect." **\citeauthor{flemingdiode}**'s \citeyear{flemingdiode} \citealternativetitle{flemingdiode} used this effect to build the first electronic rectifier; **\citeauthor{deforestaudion}**'s \citeyear{deforestaudion} \citealternativetitle{deforestaudion} (1906) added a third electrode to create the first electronic amplifier. The ENIAC (1946) used 18,000 vacuum tubes; every electronic computer until the transistor era was a room full of glowing glass bulbs, each one dependent on the vacuum techniques pioneered by Torricelli and von Guericke three centuries earlier.
 </div>
 
 <div class="md" data-depth="40">
@@ -1314,7 +1314,7 @@ None of these components was invented for AI. Yet remove any single element and 
 
 ### The First Electronic Computers: Colossus and ENIAC
 
-The **Colossus** Mark 2 (\citeyear{flowers1983design}), built by Tommy Flowers at the Post Office Research Station for Bletchley Park, was the world's first programmable electronic digital computer. It used 2,400 vacuum tubes to break the German Lorenz cipher, helping to shorten the Second World War. Its existence was classified until the mid-1970s \cite{copeland2006colossus}.
+The **Colossus**, built by Tommy Flowers at the Post Office Research Station for Bletchley Park — the first Mark operational in early 1944, the improved Mark 2 by June 1944 — was the world's first large-scale programmable electronic digital computer. The Mark 2 used some 2,400 vacuum tubes to break the German Lorenz cipher, helping to shorten the Second World War. Its existence was classified until the mid-1970s \cite{copeland2006colossus, flowers1983design}.
 
 <figure>
     <img style="width: 100%; height: auto; display: block;" src="colossus.jpg" alt="The Colossus Mark 2 computer being operated by Dorothy Du Boisson and Elsie Booker at Bletchley Park, 1943" />
@@ -1422,14 +1422,14 @@ The Peenemünde heritage split after the war, and both branches reached high gro
 
 ### The Apollo Guidance Computer
 
-The \citealternativetitle{agc_module_image} (\citeyear{agc_module_image}) at the MIT Instrumentation Laboratory was the first computer built from silicon integrated circuits. Designed under Charles Stark Draper and Eldon C. Hall, the Block II version flown to the Moon contained roughly 2,800 dual 3-input NOR gates and 36,864 words of read-only **core rope memory**, woven by hand at a Raytheon factory \cite{mindell2008digitalapollo}.
+The **Apollo Guidance Computer**, developed at the MIT Instrumentation Laboratory from 1961, was one of the first computers built from silicon integrated circuits. Designed under Charles Stark Draper and Eldon C. Hall, the Block II version flown to the Moon contained roughly 2,800 dual 3-input NOR gates and 36,864 words of read-only **core rope memory**, woven by hand at a Raytheon factory \cite{mindell2008digitalapollo}.
 
 What matters for AI history is not the hardware but the **software**. J. Halcombe Laning designed a preemptive priority scheduler, the “Exec” and the “Waitlist”, that has no direct equivalent in the early ARPA machines of the same era \cite{hoag1976apollohistory}. When the rendezvous radar on \citealternativetitle{eyles2004lmcomputer} (\citeyear{eyles2004lmcomputer}) began flooding Apollo 11's computer with cycle steals five minutes before touchdown, the scheduler automatically shed low-priority tasks. Without it, the landing would have been aborted. Margaret Hamilton, who directed the software team, later received the Presidential Medal of Freedom for work that effectively founded **software engineering** as a discipline.
 
 <div class="image-row">
     <figure>
         <img src="apollo_agc_modules.jpg" alt="Solid-state modules and backplane of the Apollo Guidance Computer" />
-        <figcaption class="md">The \citealternativetitle{agc_module_image} (CC-BY-SA 3.0). The first computer to use silicon ICs, and the first to demonstrate that software-driven priority scheduling could safely run a vehicle carrying human lives.</figcaption>
+        <figcaption class="md">The \citealternativetitle{agc_module_image} (CC-BY-SA 3.0). One of the first computers to use silicon ICs, and a demonstration that software-driven priority scheduling could safely run a vehicle carrying human lives.</figcaption>
     </figure>
     <figure>
         <img src="margaret_hamilton.jpg" alt="Margaret Hamilton in 1969 standing next to stacks of the Apollo Guidance Computer source-code listings" />
@@ -1585,7 +1585,7 @@ The first major formalization came with **FORTRAN**, designed by \cite[John Back
 The \cite[ALGOL 60 report]{algol60report}, edited by **Peter Naur**, introduced *explicit type declarations*. Programmers now wrote `integer x` or `real y`. ALGOL 60 also introduced the `Boolean` type, named after \cite[George Boole]{bool1854}, whose 1854 *An Investigation of the Laws of Thought* reduced logic to binary algebra. This was the first language to include `Boolean` as a named, first-class data type.
 </div>
 
-<div class="md" data-mathlevel="55" data-depth="20" data-optionaltitle="Floating-Point Standardization: IEEE 754 (1985)">
+<div class="md" data-mathlevel="55" data-depth="20">
 #### Floating-Point Standardization: IEEE 754 (1985)
 
 While floating-point arithmetic existed from the earliest computers, every manufacturer implemented it differently. The chaos was resolved by \cite[IEEE 754]{ieee754_1985}, primarily the work of **William Kahan** (UC Berkeley, Turing Award 1989). It defined:
@@ -1626,7 +1626,7 @@ The earliest computers (Zuse's Z3, ENIAC) operated on raw binary patterns with n
 - **C (1972)**, Dennis Ritchie's C language exposed arrays as contiguous blocks of memory with pointer arithmetic, giving programmers direct control over memory layout.
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Why Arrays Matter">
+<div class="md" data-mathlevel="45">
 #### Why Arrays Matter
 
 Arrays map directly to how computer memory works, sequential, indexed storage. Accessing element $i$ of an array takes constant time $O(1)$ because the memory address can be computed directly:
@@ -2151,7 +2151,7 @@ He partnered with **Bob Frankston**, a skilled MIT programmer, and together they
 
 <figure>
     <img style="width: 80%; height: auto; display: block; margin: 1em auto;" src="visicalc.jpg" alt="VisiCalc running on an Apple II computer, showing the grid of cells" />
-    <figcaption class="md">\citealternativetitle{visicalc}: the original killer application. Released in 1979 for the Apple II, it was the first electronic spreadsheet and convinced a generation of business managers to buy a personal computer.</figcaption>
+    <figcaption class="md">Computer History Museum: the original killer application. Released in 1979 for the Apple II, it was the first electronic spreadsheet and convinced a generation of business managers to buy a personal computer.</figcaption>
 </figure>
 
 #### Why VisiCalc Was Revolutionary
@@ -2173,7 +2173,7 @@ VisiCalc became the first **“killer application”**, software so compelling t
 The spreadsheet metaphor, a grid of cells, each containing either a value or a formula, proved so intuitive that it has survived essentially unchanged for over 45 years.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The Mathematical Model">
+<div class="md" data-mathlevel="55">
 #### The Mathematical Model
 
 A spreadsheet can be formalized as a **directed acyclic graph (DAG)** of cell dependencies. Each cell $C_{i,j}$ contains either a constant $v$ or a function $f$ of other cells:
@@ -2252,7 +2252,7 @@ $$f(x) = x^2 + 2x + 1, \quad f(5) = 36$$
 ### Beyond Spreadsheets: The Evolution of Data Usability
 </div>
 
-<div class="md" data-mathlevel="50" data-depth="20" data-optionaltitle="The Database Revolution: From Filing Cabinets to SQL">
+<div class="md" data-mathlevel="50" data-depth="20">
 #### The Database Revolution: From Filing Cabinets to SQL
 
 While spreadsheets handle ad-hoc analysis, **databases** manage structured storage at scale.

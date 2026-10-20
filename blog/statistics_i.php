@@ -5,7 +5,7 @@ title: Statistics I — Distributions and Inference
 description: The shape of data — Bernoulli, Binomial, Normal, CLT, Chi-Square, Z-scores, Zipf.
 icon: &#128200;
 part: 1
-order: 8
+order: 10
 color: accent
 topics: math-i, statistics-i
 math: 65
@@ -50,7 +50,7 @@ These distributions also underpin the “scaling laws” that drive modern large
 </div>
 
 <div class="statlab-section">
-    <div class="md" data-mathlevel="50" data-optionaltitle="The Bernoulli Distribution: The Atom of Probability">
+    <div class="md" data-mathlevel="50">
         ### The Bernoulli Distribution: The Atom of Probability
         In \citetitle{arsconjectandi} (\citeyear{arsconjectandi}), \citeauthor{arsconjectandi} defined the simplest possible random variable. It models a single experiment with two outcomes: Success ($1$) and Failure ($0$). It is the “atom” because all complex discrete distributions (like Binomial or Geometric) are just sequences of Bernoulli trials.
 
@@ -68,7 +68,7 @@ These distributions also underpin the “scaling laws” that drive modern large
     </div>
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The Binomial Distribution">
+<div class="md" data-mathlevel="55">
 
 #### The Binomial Distribution
 
@@ -109,7 +109,7 @@ The first systematic treatment came from **Gerolamo Cardano**, a physician and a
 
 The context that solidified this into modern science was the **“Problem of Points.”** The **Chevalier de Méré** asked **Blaise Pascal** how to fairly split a prize pot if a game of dice is interrupted.
 
-Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considered the founding moment of probability theory. They moved beyond mere counting and used the **Binomial Coefficients** (Pascal's Triangle) to count the possible continuations of an interrupted game (\citetitle{oevresdeformat}, p. 288 ff.).
+Pascal wrote to **Pierre de Fermat**, and their exchange of letters is considered the founding moment of probability theory. They moved beyond mere counting and used the **Binomial Coefficients** (Pascal's Triangle) to count the possible continuations of an interrupted game (\citetitle{oeuvresdeformat}, p. 288 ff.).
 </div>
 
     <div class="statlab-interactive-zone" style="display: block !important">
@@ -208,7 +208,7 @@ To find Ceres, Gauß worked from the **errors** of the measurements. He assumed 
 
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="How to Calculate with the Normal Distribution">
+<div class="md" data-mathlevel="55">
 ### How to Calculate with the Normal Distribution
 
 Just as we learned to calculate exact probabilities with the Binomial formula $\binom{n}{k} p^k (1-p)^{n-k}$, we can calculate with the Gauß distribution. However, there is one crucial difference: the Normal Distribution is **continuous**, so we never ask “What is the probability of *exactly* $x$?” (that is always 0 for a continuous variable). Instead, we ask: **“What is the probability that $X$ falls within a range?”**
@@ -243,7 +243,7 @@ This is the same standardization Pearson used in his biometric work to make meas
     </div>
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Step 3: Use the Φ-Table (CDF)">
+<div class="md" data-mathlevel="60">
 #### Step 3: Use the $\Phi$-Table (CDF)
 
 The function $\Phi(z)$ answers one simple question: **“What percentage of all values fall to the LEFT of $z$ on the bell curve?”**
@@ -462,7 +462,7 @@ P(\mu - 3\sigma \leq X \leq \mu + 3\sigma) &\approx 99.7\%
 \end{aligned}
 $$
 
-This is why Gauß could predict where Ceres would reappear: he knew that the true position was almost certainly within $2\sigma$ to $3\sigma$ of his calculated estimate.
+This is the probabilistic logic that made predictions like Gauß's 1801 recovery of the lost planet Ceres possible: a least-squares estimate comes with a quantified uncertainty, so the astronomers knew within a small region where to point their telescopes.
 
 ##### Comparison: Binomial vs. Gauß Calculation
 
@@ -525,7 +525,7 @@ For this, he developed the **Method of Least Squares**: instead of a line passin
     </div>
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The Central Limit Theorem (CLT)">
+<div class="md" data-mathlevel="60">
 ### The Central Limit Theorem (CLT)
 The **Central Limit Theorem** is the bridge between randomness and order. It explains why, even when individual events are chaotic or “flat,” their collective averages inevitably form the **Normal Distribution** (the “Bell Curve”). De Moivre and Laplace first proved it for sums of independent trials; \citeauthor{laplace1810clt} generalized it in \citeyear{laplace1810clt}.
 
@@ -620,7 +620,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 </div>
 
 <div class="statlab-section">
-    <div class="md" data-mathlevel="65" data-optionaltitle="The Gumbel Distribution: The Math of Disasters">
+    <div class="md" data-mathlevel="65">
         ### The Gumbel Distribution: The Math of Disasters
         While the Normal Distribution describes the “average” person, **Emil Gumbel** (1958) wanted to describe the “exceptional” event. If you record the maximum river level every year for 50 years, those maximums will not follow a Bell Curve; they follow a Gumbel Distribution.
 
@@ -658,7 +658,7 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 </div>
 
 <div class="statlab-section">
-    <div class="md" data-mathlevel="55" data-optionaltitle="The Poisson Distribution: The Law of Rare Events">
+    <div class="md" data-mathlevel="55">
         ### The Poisson Distribution: The Law of Rare Events
         In \citeyear{poisson}, **\citeauthor{poisson}** published \citetitle{poisson}, a broad work on judicial probability that included (in §§ 81–82, pp. 205–207) a derivation of the limit of the Binomial distribution when the number of trials is very large ($n \to \infty$) and the probability is very small ($p \to 0$).
 
@@ -706,7 +706,7 @@ Here is the part most textbooks skip. The man who carried the average-man idea i
 That history does not invalidate the mathematics — least squares is least squares regardless of who first applied it — but it belongs in the prehistory, not a footnote: **statistics was invented, in part, as a state technique for ranking populations**. The next section is that same data in Pearson's hands: parent-and-child heights, turned into a correlation coefficient.
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Pearson's Biological Link: The Father-Son Study">
+<div class="md" data-mathlevel="50">
 ## Pearson's Biological Link: The Father-Son Study
 
 In 1801, \citeauthor{gauss1809} used least squares to find a planet; in 1895, \citeauthor{pearson1895correlation} used correlation to study human heredity. Building on data originally collected by \citeauthor{galton} — heights of parents and children in some 200 families — Pearson answered a fundamental question: *How much does one variable actually tell us about another?*
@@ -773,7 +773,7 @@ This is structurally identical to Pearson's $r$: the dot product in the numerato
     </div>
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Standardizing: Z-Scores & The Pearson Problem">
+<div class="md" data-mathlevel="50">
 ## Standardizing: Z-Scores & The Pearson Problem
 
 Z-scores standardize a value to the standard Normal:
@@ -802,7 +802,7 @@ In machine learning, **batch normalization** and **layer normalization** are con
     </div>
 </div>
 
-<div class="md" data-mathlevel="65" data-optionaltitle="Chi-Square: The Test of Independence">
+<div class="md" data-mathlevel="65">
 ## Chi-Square ($\chi^2$): The Test of Independence
 
 The chi-square distribution arises as the sum of $k$ squared standard Normal variables:
@@ -846,7 +846,7 @@ It has no closed form, it must be computed numerically or via series. Its deriva
 The complementary error function $\text{erfc}(x) = 1 - \text{erf}(x)$ appears in diffusion models (see the Diffusion chapter), where the noise schedule often involves erfc.
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The t-Test: A Dublin Brewery's Answer to Small Samples">
+<div class="md" data-mathlevel="60">
 ## The t-Test: A Dublin Brewery's Answer to Small Samples
 
 You now hold both ingredients — a standard Normal in the numerator, a $\chi^2$ in the denominator — for the most-used significance test in science. Its origin is one of the strangest in the history of statistics: not a university, but an Irish **brewery**.
@@ -894,7 +894,7 @@ Real-world datasets are rarely perfectly Normal. Common patterns:
 Recognizing the distribution of your data is the first step in choosing the right model. A Naive Bayes classifier assumes features are conditionally independent (often violated). A linear regression assumes Gaussian residuals (often violated). Knowing when these assumptions break down is essential in practice.
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Zipf's Law: The Physics of Language">
+<div class="md" data-mathlevel="45">
 ## Zipf's Law: The Physics of Language
 
 In any natural-language corpus, the $k$-th most frequent word has frequency approximately:

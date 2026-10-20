@@ -72,6 +72,15 @@ global.document = {
 	dispatchEvent() {}
 };
 global.window = global;
+// topics.js attaches module-level listeners (e.g. markTocTucked on
+// 'blogPostLoadComplete') — they only run at module load, so a no-op stub
+// is enough; we never fire the events in this harness.
+global.addEventListener = function() {};
+global.dispatchEvent = function() {};
+// markTocTucked batches work via rAF (one frame, then flushes the queue) —
+// running it synchronously is fine for unit tests, no real rendering happens.
+global.requestAnimationFrame = function(cb) { cb(); return 0; };
+global.cancelAnimationFrame = function() {};
 global.localStorage = { getItem() { return null; }, setItem() {} };
 global.CustomEvent = function(name, init) { this.name = name; };
 

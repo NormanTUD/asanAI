@@ -14,7 +14,7 @@ topics: training, data, programming, society
 A frontier LLM is roughly **half algorithm, half data**. The same architecture trained on 1 trillion curated tokens outperforms one trained on 10 trillion unfiltered tokens. This chapter covers what data is used, how it is filtered, deduplicated, and decontaminated, and why every frontier lab guards its data recipes as their most valuable trade secret.
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="The Scale of Modern Training Data">
+<div class="md" data-mathlevel="45">
 ## The Scale of Modern Training Data
 
 Frontier LLMs are trained on **10–15 trillion tokens**. The composition is roughly:
@@ -80,7 +80,7 @@ Duplicate or near-duplicate documents **inflate training cost and can cause memo
 Hash each document (SHA-256 over normalized text); keep only one copy of each hash. Catches verbatim copies but not near-duplicates.
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Fuzzy Deduplication (MinHash)">
+<div class="md" data-mathlevel="50">
 ### Fuzzy Deduplication (MinHash)
 
 Compute $k$ hash functions over $n$-grams of each document; the **MinHash signature** approximates the Jaccard similarity between document pairs in $O(k)$ space.

@@ -38,7 +38,7 @@ As \citeauthor{historyofmathematicalnotation} notes (Vol. 2, p. 197ff), Leibniz'
 
 The bitter priority dispute between Newton and Leibniz, fueled by nationalistic pride between England and continental Europe, overshadowed the fact that both men made monumental contributions. Today, historians recognize that both arrived at the fundamental ideas independently. We use Leibniz's notation ($\frac{dy}{dx}$, $\int$) almost universally, while Newton's physical intuition shaped the application of calculus to science.
 
-Before both of them, \citeauthor{oevresdeformat} had already explored the idea of finding tangent lines to curves using algebraic methods in the 1630s (see \citetitle{oevresdeformat}), and the concept of infinitesimals was discussed by mathematicians like Bonaventura Cavalieri and John Wallis (\citetitle{wallis1655}, \citeyear{wallis1655}). But it was Newton and Leibniz who unified these scattered ideas into a coherent, general framework.
+Before both of them, \citeauthor{oeuvresdeformat} had already explored the idea of finding tangent lines to curves using algebraic methods in the 1630s (see \citetitle{oeuvresdeformat}), and the concept of infinitesimals was discussed by mathematicians like Bonaventura Cavalieri and John Wallis (\citetitle{wallis1655}, \citeyear{wallis1655}). But it was Newton and Leibniz who unified these scattered ideas into a coherent, general framework.
 </div>
 
 <div class="md">
@@ -95,7 +95,7 @@ You can explore this visually below. Drag the slider to move the second point cl
     <div id="plot-secant-tangent" class="plot-container" style="width:100%; height:400px;"></div>
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Deriving x² from first principles">
+<div class="md" data-mathlevel="55">
 ### A Concrete Example: Deriving $f(x) = x^2$ from First Principles
 
 Let's apply the limit definition to $f(x) = x^2$ step by step:
@@ -113,7 +113,7 @@ $$= \lim_{h \to 0} (2x + h) = 2x$$
 So the derivative of $x^2$ is $2x$. At $x = 3$, the slope of the tangent line is $2 \cdot 3 = 6$. This means that at $x = 3$, the function is increasing at a rate of 6 units of $y$ per unit of $x$.
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="The derivative rules (product, quotient, chain)">
+<div class="md" data-mathlevel="40">
 ## Derivative Rules
 
 Computing derivatives from the limit definition every time would be tedious. Fortunately, mathematicians have derived a set of **rules** that let us differentiate most functions quickly. These rules were developed by Newton, Leibniz, and their successors (notably \citeauthor{euler1755} in \citetitle{euler1755}, \citeyear{euler1755}, who systematized much of the notation and theory).
@@ -173,7 +173,7 @@ You can explore the derivative rules interactively below. Choose a function and 
 </div>
 
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Special derivatives worth knowing">
+<div class="md" data-mathlevel="45">
 ### Special Derivatives Worth Knowing
 
 Some derivatives appear so frequently in AI and science that they are worth memorizing:
@@ -195,7 +195,7 @@ The derivative $f'(a)$ gives the **slope of the tangent line** to the graph of $
 
 $$y = f(a) + f'(a)(x - a)$$
 
-This is the best **linear approximation** of $f$ near $x = a$. In fact, this idea generalizes: the Taylor series (which we saw earlier for $\sin$ and $e$) is built by adding higher-order derivatives to get better and better polynomial approximations.
+This is the best **linear approximation** of $f$ near $x = a$. In fact, this idea generalizes: the Taylor series is built by adding higher-order derivatives to get better and better polynomial approximations.
 
 You can explore the tangent line interactively below. Move the point along the curve and see how the tangent line changes:
 </div>
@@ -216,7 +216,7 @@ You can explore the tangent line interactively below. Move the point along the c
     <div id="plot-tangent-line" class="plot-container" style="width:100%; height:400px;"></div>
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="The chain rule & backpropagation">
+<div class="md" data-mathlevel="60">
 ### The Chain Rule Visualized
 
 The chain rule is so important for AI that it deserves its own interactive demonstration. When we compose two functions $f(g(x))$, the chain rule tells us:
@@ -252,7 +252,7 @@ This is exactly what **backpropagation** computes, the chain rule applied layer 
     <div id="plot-chain-rule" class="plot-container" style="width:100%; height:400px;"></div>
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Why derivatives matter for AI (gradient descent, backprop)">
+<div class="md" data-mathlevel="55">
 ### Why Derivatives Matter for AI
 
 Derivatives are not just an abstract mathematical concept, they are the **engine** that drives all of modern machine learning. Here is why:
@@ -263,7 +263,7 @@ Derivatives are not just an abstract mathematical concept, they are the **engine
 
 3. **Optimization Landscape**: The derivative tells us about the “shape” of the loss function, where it slopes up, where it slopes down, and where it is flat (critical points). Understanding this landscape is key to training models effectively.
 
-4. **The Sigmoid Derivative**: As we derived above, the sigmoid function $\sigma(z) = \frac{1}{1+e^{-z}}$ has the elegant derivative $\sigma'(z) = \sigma(z)(1-\sigma(z))$. This means once you compute the forward pass, the backward pass is nearly free, you already have all the values you need.
+4. **The Sigmoid Derivative**: As the table above shows, the sigmoid function $\sigma(z) = \frac{1}{1+e^{-z}}$ has the elegant derivative $\sigma'(z) = \sigma(z)(1-\sigma(z))$. This means once you compute the forward pass, the backward pass is nearly free, you already have all the values you need.
 
 In summary, without derivatives, there would be no way to train neural networks, and modern AI as we know it would not exist.
 
@@ -314,7 +314,7 @@ The symbol $\partial$ for partial derivatives was introduced by the Marquis de C
     <div id="plot-gradient-surface" class="plot-container" style="width:100%; height:450px;"></div>
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Summary of differentiation">
+<div class="md" data-mathlevel="55">
 ### Summary
 
 | Concept | Notation | Meaning |

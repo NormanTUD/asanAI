@@ -18,7 +18,7 @@ The Transformer is not the end of the road. Its $O(n^2)$ attention cost creates 
 This chapter surveys the main candidates, with the mathematical core of each. The reason the field keeps circling back to a small palette of building blocks — recurrence, convolution, attention — is that each one is, in functional-programming terms, a **higher-order function** (a fold, a windowed map, and so on) that a network can reuse, so that a model is "a very rough functional program, with these flexible, learnable pieces" (\cite[Olah, 2015]{colah2015types}).
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The Quadratic Wall">
+<div class="md" data-mathlevel="55">
 ## The Quadratic Wall
 
 **KV-cache mitigation:** Even standard Transformers handle long contexts via **KV-caching** (see the Production Serving chapter), which stores past K/V matrices so per-token compute stays linear in sequence length during autoregressive generation. The O(n²) cost appears in **training** and in **prefill** of long prompts; generation with a KV cache is O(n) per token. The practical gap between Transformers and sub-quadratic alternatives is therefore smaller than the asymptotic notation suggests.
@@ -39,7 +39,7 @@ where $d_k$ is the dimension of the keys (the head dimension). The $QK^\top$ mat
 | **Recurrence + windowed attention hybrids** | Jamba, Zamba, etc. | $O(n \cdot w)$ with SSM long range |
 </div>
 
-<div class="md" data-mathlevel="72" data-optionaltitle="State-Space Models: S4 and Mamba">
+<div class="md" data-mathlevel="72">
 ## State-Space Models: S4 and Mamba
 
 A **state-space model** (SSM) describes a continuous linear dynamical system:
@@ -91,7 +91,7 @@ $$
 This hybrid scales to 256K context (Jamba-1.5-Large), uses ~25% of the memory of an equivalent Transformer, and matches its quality. Other hybrids: Zamba (Zyphra), RecurrentGemma (Google), Striped Hyena (Together AI).
 </div>
 
-<div class="md" data-mathlevel="58" data-optionaltitle="Linear Attention">
+<div class="md" data-mathlevel="58">
 ## Linear Attention
 
 The softmax in attention is what makes the operation non-associative, forcing the $O(n^2)$ cost. Replace softmax with a feature map $\phi$:

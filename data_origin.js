@@ -1,6 +1,14 @@
 "use strict";
 
 async function change_data_origin() {
+	var __cdo_t0 = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+	function __cdo_log(label) {
+		if (!window.__boot_profile) return;
+		var now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+		try { console.log("[BOOT/CDO +" + Math.round(now - __cdo_t0) + "ms] " + label); } catch (e) {}
+	}
+	__cdo_log("enter");
+
 	currently_running_change_data_origin = 1;
 	dbg("[change_data_origin] " + language[lang]["changed_data_source"] + ", " + $("#data_origin").val() + " (" + $("#dataset").val() + ")");
 
@@ -57,11 +65,15 @@ async function change_data_origin() {
 	}
 
 	show_webcam_when_needed_else_hide();
+	__cdo_log("before create_and_compile_model_or_show_error");
 	await create_and_compile_model_or_show_error();
+	__cdo_log("create_and_compile_model_or_show_error done");
 	await repair_output_shape_or_show_error();
+	__cdo_log("repair_output_shape_or_show_error done");
 	currently_running_change_data_origin = 0;
 
 	await wait_for_updated_page(1);
+	__cdo_log("wait_for_updated_page done");
 
 	if(get_data_origin() == "default") {
 		if(input_shape_is_image()) {
@@ -141,6 +153,11 @@ async function repair_output_shape_or_show_error () {
 
 async function create_and_compile_model_or_show_error () {
 	try {
+		// Unconditional rebuild + compile (5010 behavior): the fast-path
+		// optimization that delegated this to compile_model() removed the
+		// self-healing that keeps model + tensors on the current backend,
+		// which surfaced as disposed-model / layer-count / "backend undefined"
+		// failures across tests. The ~3 s cost is the reliable known-good state.
 		model = await _create_model();
 		await compile_model();
 	} catch (e) {

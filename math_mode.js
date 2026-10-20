@@ -393,6 +393,15 @@ function throttle(fn, limit = 1000) {
 
 function write_optimizer_to_math_tab() {
 	try {
+		// Gate BEFORE the model/optimizer checks: the 1 Hz periodic at the
+		// bottom of this file calls this every tick regardless of UI state,
+		// and "model not defined" / "model doesn't have optimizer key" used
+		// to spam the console every second during boot and whenever the math
+		// tab wasn't on screen. The math tab is the only consumer of the
+		// output of this function (#optimizer_variables_div), so if it's
+		// hidden we have nothing to do and nothing to complain about.
+		if (!is_math_tab_visible()) return;
+
 		if (!model) {
 			dbg("[write_optimizer_to_math_tab] model not defined");
 			return;

@@ -2694,11 +2694,15 @@ function confusion_matrix() {
 	}
 
 	if(!model) {
-		dbg("[confusion_matrix] model not defined. Cannot continue");
+		if (finished_loading) {
+			dbg("[confusion_matrix] model not defined. Cannot continue");
+		}
 	}
 
 	if(!xy_data_global || !xy_data_global["x"] || xy_data_global["x"].isDisposed) {
-		dbg("[confusion_matrix] xy_data_global not available");
+		if (finished_loading) {
+			dbg("[confusion_matrix] xy_data_global not available");
+		}
 		return "";
 	}
 

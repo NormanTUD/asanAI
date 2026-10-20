@@ -10185,6 +10185,62 @@ html.dark .topics-preset-fun {
 	width: auto;
 	transform: none;
 }
+/* Unpassende Sektion (Mathe / History-Tiefe) ganz zuklappen: nur noch die
+   Leiste mit Titel + Hinweis bleibt sichtbar (auch geöffnet, zum Zuklappen). */
+/* unsichtbar statt display:none, damit die Überschriften-Nummerierung
+   (CSS-Zähler) auch eingeklappte Sektionen weiterzählt */
+.topic-block.topic-block-collapsed > .topic-block-inner {
+	height: 0;
+	overflow: hidden;
+	visibility: hidden;
+}
+.topic-block.topic-block-collapsed::after {
+	display: none;
+}
+.topic-block.topic-block-collapsed > .topic-block-fade-badge,
+.topic-block.topic-block-revealed > .topic-block-fade-badge {
+	position: static;
+	width: 100%;
+	margin: 0.5em 0;
+}
+/* Während des Zuklappens bleibt der Inhalt sichtbar und schrumpft weg. */
+.topic-block.topic-block-collapsed.topic-block-closing > .topic-block-inner {
+	height: auto;
+	visibility: visible;
+}
+/* Nummer der Sektion in der Leiste: die Leiste zählt anstelle ihrer
+   ersten Überschrift, die Überschrift zeigt denselben Wert. */
+.topic-block-fade-badge[data-hlevel="h2"] {
+	counter-reset: h3count h4count figcount tabcount eqcount;
+	counter-increment: h2count;
+}
+.topic-block-fade-badge[data-hlevel="h3"] { counter-increment: h3count; }
+.md h2.tb-num-moved,
+.md h3.tb-num-moved { counter-increment: none; }
+.md h2.tb-num-moved { counter-reset: none; }
+.topic-block-fade-badge[data-hlevel="h2"] .tbf-num::before { content: counter(h2count) "."; }
+.topic-block-fade-badge[data-hlevel="h3"] .tbf-num::before { content: counter(h2count) "." counter(h3count); }
+.topic-block-fade-badge .tbf-num {
+	flex: 0 0 auto;
+	color: var(--mn-text-muted);
+	font-weight: 500;
+	font-variant-numeric: tabular-nums;
+}
+/* Inhaltsverzeichnis: Eintrag liegt in einer eingeklappten Sektion (dezent) */
+#toc .toc-row.toc-tucked > a { opacity: 0.55; }
+#toc .toc-row.toc-tucked > a::after {
+	content: '\00a0◦';
+	color: var(--mn-text-muted);
+	font-size: 0.85em;
+}
+#toc .toc-row.toc-tucked:hover > a { opacity: 0.85; }
+.topic-block-fade-badge .tbf-toggle {
+	flex: 0 0 auto;
+	font-size: 0.72rem;
+	font-weight: 600;
+	color: var(--mn-accent);
+	white-space: nowrap;
+}
 
 .topic-block-fade-badge {
 	display: flex;
@@ -11174,7 +11230,8 @@ html.reader-mode #course-status-box { display: none; }
 
 /* ── fully-seen tile (every segment filled) — glow + border tint */
 
-.course-tile.tile-visited > .tile-progress-bar .seg.filled {
+.course-tile.tile-visited > .tile-progress-bar .seg.filled,
+.course-tile.tile-visited > .tile-progress-bar.tile-progress-map {
 	box-shadow: 0 0 6px var(--cp-orange-glow);
 }
 

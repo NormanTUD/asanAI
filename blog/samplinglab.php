@@ -25,7 +25,7 @@ Three of the four quantities in this chapter, **Boltzmann distributions**, **ent
 ## The Baseline: Temperature and Greedy
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="The Probability Distribution">
+<div class="md" data-mathlevel="50">
 ### The Probability Distribution
 
 After the LLM produces logits $\mathbf{z} \in \mathbb{R}^{|V|}$ for the next token, softmax gives a probability distribution:
@@ -57,7 +57,7 @@ Drawback: **repetition loops** and **mode collapse** (“the the the the...”).
 ## Truncating the Candidate Set
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Top-k Sampling">
+<div class="md" data-mathlevel="55">
 ### Top-$k$ Sampling
 
 Restrict to the $k$ tokens with highest probability, then renormalize (\cite[Fan et al., 2018]{fan2018topk}):
@@ -75,7 +75,7 @@ where $Z = \sum_{j \in \mathcal{V}_k} P(j)$.
 Drawback: $k$ is a fixed number, but the appropriate $k$ varies per context. Sometimes only 3 tokens have meaningful probability; sometimes 100.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Top-p (Nucleus) Sampling">
+<div class="md" data-mathlevel="55">
 ### Top-$p$ (Nucleus) Sampling
 
 Sample from the smallest set of tokens whose cumulative probability exceeds $p$ (\cite[Holtzman et al., 2020]{holtzman2020nucleus}):
@@ -93,7 +93,7 @@ This adapts the effective vocabulary size to the distribution. When the distribu
 Most production APIs default to **top-$p$ = 0.9 or 0.95**.
 </div>
 
-<div class="md" data-mathlevel="50" data-optionaltitle="Min-p Sampling">
+<div class="md" data-mathlevel="50">
 ### Min-$p$ Sampling
 
 The new frontier method (\cite[Nguyen et al., 2025]{nguyen2025minp}), recommended by many open-source models (Qwen, Mistral):
@@ -293,7 +293,7 @@ Every method above is a different way of answering the same question: *which can
 ## Anti-Repetition and Diversity
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Repetition Penalty">
+<div class="md" data-mathlevel="45">
 ### Repetition Penalty
 
 Reduce the logits of tokens that have already appeared in the context (\cite[Keskar et al., 2019]{keskar2019ctrl}):
@@ -328,7 +328,7 @@ A 2024 technique: randomly exclude the top token from sampling with some probabi
 * $p_{\text{exclude}} = 0.1$: 10% of the time, the top token is excluded.
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="Contrastive Search">
+<div class="md" data-mathlevel="55">
 ### Contrastive Search (Su & Collier, 2022)
 
 A **deterministic** decoding strategy that picks the token maximizing:
@@ -362,7 +362,7 @@ Maintain the top $B$ partial sequences at each step; expand all of them; keep th
 Drawbacks: tends to produce generic, “averaged” outputs in open-ended generation.
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="Speculative Sampling">
+<div class="md" data-mathlevel="60">
 ### Speculative Sampling
 
 A generalization of speculative decoding: the draft model samples tokens probabilistically, the target model verifies, and corrections are sampled from the target's adjusted distribution:

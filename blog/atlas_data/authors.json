@@ -626,9 +626,9 @@
   "works": 4,
   "keys": [
    "tfive",
-   "carlini2021extracting",
    "raffel2020t5",
-   "chung2022flan"
+   "chung2022flan",
+   "carlini2021extracting"
   ],
   "cited_in": [
    "evaluation",
@@ -969,7 +969,6 @@
    "geometry_ii",
    "geometry_iii",
    "losslab",
-   "statistics",
    "statistics_i"
   ]
  },
@@ -1206,8 +1205,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "silver2016alphago",
-   "silver2016go"
+   "silver2016go",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -1624,8 +1623,8 @@
   "works": 3,
   "keys": [
    "gu2021s4",
-   "gu2023mamba",
-   "dao2024mamba2"
+   "dao2024mamba2",
+   "gu2023mamba"
   ],
   "cited_in": [
    "alternative_architectures",
@@ -1872,8 +1871,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "power2022grokking",
-   "grokking"
+   "grokking",
+   "power2022grokking"
   ],
   "cited_in": [
    "algorithms",
@@ -2263,8 +2262,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "dosovitskiy2021vit",
-   "zhai2023siglip"
+   "zhai2023siglip",
+   "dosovitskiy2021vit"
   ],
   "cited_in": [
    "computer_vision",
@@ -2644,13 +2643,15 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "vapnik1963pattern"
+   "vapnik1963pattern",
+   "vapnik1964vc"
   ],
   "cited_in": [
    "beyond_llms",
-   "geometry_i"
+   "geometry_i",
+   "history"
   ]
  },
  {
@@ -2850,13 +2851,15 @@
   "city": "Pittsburgh, United States",
   "year": 1956.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "newell1956logictheorist",
-   "newell1957gps"
+   "newell1957gps",
+   "newell1976empirical"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "symbolic_ai"
   ]
  },
  {
@@ -3080,8 +3083,9 @@
   "city": "San Francisco, United States",
   "year": 2022.0,
   "conf": 1,
-  "works": 7,
+  "works": 8,
   "keys": [
+   "olsson2022induction",
    "bricken2023monosemanticity",
    "incontextlearninghead",
    "monosemanticity",
@@ -3091,6 +3095,7 @@
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "beyond_llms",
    "embeddinglab",
@@ -4219,7 +4224,6 @@
    "kolmogorov1933"
   ],
   "cited_in": [
-   "statistics",
    "statistics_ii"
   ]
  },
@@ -4344,8 +4348,9 @@
   "city": "San Francisco, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 6,
+  "works": 7,
   "keys": [
+   "olsson2022induction",
    "templeton2024scaling",
    "lindsey2025biology",
    "ameisen2025circuit",
@@ -4354,6 +4359,7 @@
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "embeddinglab",
    "fact_lookup",
@@ -4486,6 +4492,7 @@
   "cited_in": [
    "ai_existential_risk",
    "hallucinations",
+   "intuition",
    "philosophy"
   ]
  },
@@ -4704,13 +4711,15 @@
   "city": "San Francisco, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
+   "olsson2022induction",
    "incontextlearninghead",
    "elhage2021mathematical",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "embeddinglab",
    "fact_lookup",
@@ -5667,10 +5676,10 @@
   "conf": 1,
   "works": 4,
   "keys": [
-   "silver2016alphago",
    "silver2016go",
    "silver2018zero",
-   "schrittwieser2020muzero"
+   "schrittwieser2020muzero",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -6018,9 +6027,14 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 0,
-  "keys": [],
-  "cited_in": []
+  "works": 1,
+  "keys": [
+   "liu2023lostmiddle"
+  ],
+  "cited_in": [
+   "contextwindows",
+   "rag"
+  ]
  },
  {
   "name": "Asli Celikyilmaz",
@@ -6824,13 +6838,15 @@
   "city": "San Francisco, United States",
   "year": 2020.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
+   "olsson2022induction",
    "incontextlearninghead",
    "elhage2021mathematical",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "embeddinglab",
    "fact_lookup",
@@ -8077,9 +8093,8 @@
   "city": "San Francisco, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 7,
+  "works": 6,
   "keys": [
-   "belrose2023tunedlens",
    "bricken2023monosemanticity",
    "templeton2024scaling",
    "lindsey2025biology",
@@ -8140,11 +8155,15 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "wei2022chainofthought"
+   "wei2022chainofthought",
+   "wei2022cot"
   ],
   "cited_in": [
+   "hallucinations",
+   "promptengineering",
+   "reasoning",
    "unexpected_capabilities"
   ]
  },
@@ -8727,7 +8746,6 @@
    "geometry_i",
    "geometry_ii",
    "losslab",
-   "statistics",
    "statistics_i"
   ]
  },
@@ -8879,13 +8897,17 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "elhage2022solu"
+   "elhage2022solu",
+   "elhage2022superposition"
   ],
   "cited_in": [
+   "embeddinglab",
    "fact_lookup",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "philosophy",
+   "unexpected_capabilities"
   ]
  },
  {
@@ -9034,8 +9056,9 @@
   "city": "San Francisco, United States",
   "year": 2022.0,
   "conf": 1,
-  "works": 7,
+  "works": 8,
   "keys": [
+   "olsson2022induction",
    "elhage2022solu",
    "bricken2023monosemanticity",
    "incontextlearninghead",
@@ -9045,6 +9068,7 @@
    "elhage2021framework"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "deeplearninglab",
    "embeddinglab",
@@ -9954,8 +9978,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "silver2016alphago",
-   "silver2016go"
+   "silver2016go",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -9973,7 +9997,7 @@
   "city": "San Francisco, United States",
   "year": 2019.0,
   "conf": 1,
-  "works": 21,
+  "works": 22,
   "keys": [
    "colah2014manifolds",
    "colah2014nlp",
@@ -9984,6 +10008,7 @@
    "colah2015visualinfo",
    "odena2016deconvolution",
    "goh2021multimodal",
+   "olsson2022induction",
    "elhage2022solu",
    "elhage2023privileged",
    "bricken2023monosemanticity",
@@ -9998,6 +10023,7 @@
    "olaha2020zoomin"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "alternative_architectures",
    "attentionlab",
@@ -10357,12 +10383,17 @@
   "city": "Paris, France",
   "year": 2019.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "schick2023toolformer",
    "cancedda2024sinks"
   ],
   "cited_in": [
-   "attentionlab"
+   "attentionlab",
+   "frontier",
+   "symbolic_ai",
+   "unexpected_capabilities",
+   "websearch"
   ]
  },
  {
@@ -15248,14 +15279,9 @@
   "city": "Seattle, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "liu2023lostmiddle"
-  ],
-  "cited_in": [
-   "contextwindows",
-   "rag"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Andy Arditi",
@@ -16764,11 +16790,13 @@
   "city": "Cambridge, USA",
   "year": 1945.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "bush1945aswemaythink",
    "aswemaythink"
   ],
   "cited_in": [
+   "rag",
    "untold_history"
   ]
  },
@@ -17861,14 +17889,20 @@
   "city": "San Francisco, USA",
   "year": 2015.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "mordvintsev2015inceptionism",
-   "olah2014manifolds"
+   "olah2014manifolds",
+   "elhage2022superposition"
   ],
   "cited_in": [
    "computer_vision",
-   "inceptionism"
+   "embeddinglab",
+   "fact_lookup",
+   "inceptionism",
+   "mechanistic_interpretability",
+   "philosophy",
+   "unexpected_capabilities"
   ]
  },
  {
@@ -18115,7 +18149,6 @@
   "cited_in": [
    "history",
    "language",
-   "statistics",
    "statistics_ii",
    "tokenizerlab",
    "transformer",
@@ -18353,8 +18386,8 @@
   "works": 3,
   "keys": [
    "tfive",
-   "carlini2021extracting",
-   "raffel2020t5"
+   "raffel2020t5",
+   "carlini2021extracting"
   ],
   "cited_in": [
    "evaluation",
@@ -18430,16 +18463,13 @@
   "city": "Mountain View, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 2,
+  "works": 1,
   "keys": [
-   "visicalc",
    "chm"
   ],
   "cited_in": [
-   "history",
    "human_mind",
-   "software",
-   "untold_history"
+   "software"
   ]
  },
  {
@@ -19496,13 +19526,16 @@
   "city": "San Francisco, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
+   "olsson2022induction",
    "incontextlearninghead",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
+   "fact_lookup",
    "mechanistic_interpretability",
    "reliability",
    "transformer",
@@ -19584,11 +19617,13 @@
   "city": "San Francisco, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 9,
+  "works": 11,
   "keys": [
+   "olsson2022induction",
    "elhage2022solu",
    "bricken2023monosemanticity",
    "incontextlearninghead",
+   "elhage2022superposition",
    "gpt2",
    "kaplan2020scaling",
    "christiano2017rlhf",
@@ -19598,8 +19633,10 @@
   ],
   "cited_in": [
    "ai_economics",
+   "algorithms",
    "alignment",
    "beyond_llms",
+   "embeddinglab",
    "fact_lookup",
    "history",
    "hyperparameters",
@@ -20771,11 +20808,11 @@
   "works": 6,
   "keys": [
    "mnih2013dqn",
-   "silver2016alphago",
    "mnih2015dqn",
    "silver2016go",
    "silver2018zero",
-   "schrittwieser2020muzero"
+   "schrittwieser2020muzero",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -20897,18 +20934,22 @@
   "city": "San Francisco, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 4,
+  "works": 6,
   "keys": [
+   "olsson2022induction",
    "elhage2022solu",
    "incontextlearninghead",
+   "elhage2022superposition",
    "elhage2021mathematical",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "embeddinglab",
    "fact_lookup",
    "mechanistic_interpretability",
+   "philosophy",
    "reliability",
    "transformer",
    "unexpected_capabilities"
@@ -20999,13 +21040,15 @@
   "city": "Stanford, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
+   "olsson2022induction",
    "incontextlearninghead",
    "elhage2021mathematical",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "embeddinglab",
    "fact_lookup",
@@ -21132,11 +21175,11 @@
   "conf": 1,
   "works": 6,
   "keys": [
-   "silver2016alphago",
    "mnih2015dqn",
    "silver2016go",
    "silver2018zero",
    "schrittwieser2020muzero",
+   "silver2016alphago",
    "romera2023funsearch"
   ],
   "cited_in": [
@@ -21189,9 +21232,11 @@
   "city": "Philadelphia, USA",
   "year": 1992.0,
   "conf": 1,
-  "works": 1,
+  "works": 3,
   "keys": [
-   "schmandtbesserat1992"
+   "schmandtbesserat1992",
+   "schmandtbesserat1978",
+   "schmandtbesserat1996"
   ],
   "cited_in": [
    "untold_history"
@@ -21277,13 +21322,17 @@
   "city": "Mountain View, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "wei2022chainofthought",
+   "wei2022cot",
    "shi2023cottransfer",
    "chung2022flan"
   ],
   "cited_in": [
+   "hallucinations",
+   "promptengineering",
+   "reasoning",
    "unexpected_capabilities"
   ]
  },
@@ -21727,8 +21776,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "silver2016alphago",
-   "silver2016go"
+   "silver2016go",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -22459,13 +22508,17 @@
   "city": "Mountain View, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "wei2022chainofthought",
+   "wei2022cot",
    "yi2019twotower"
   ],
   "cited_in": [
    "beyond_llms",
+   "hallucinations",
+   "promptengineering",
+   "reasoning",
    "unexpected_capabilities"
   ]
  },
@@ -22633,12 +22686,14 @@
   "city": "Eindhoven, Netherlands",
   "year": 1968.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "goto_harmful"
+   "goto_harmful",
+   "dijkstra1968goto"
   ],
   "cited_in": [
-   "software"
+   "software",
+   "untold_history"
   ]
  },
  {
@@ -23161,6 +23216,7 @@
   "cited_in": [
    "ai_existential_risk",
    "hallucinations",
+   "intuition",
    "philosophy"
   ]
  },
@@ -24294,11 +24350,13 @@
   "city": "Cambridge, United Kingdom",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "lewis2020rag"
+   "lewis2020rag",
+   "liu2023lostmiddle"
   ],
   "cited_in": [
+   "contextwindows",
    "rag",
    "websearch"
   ]
@@ -24551,11 +24609,15 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "wei2022chainofthought"
+   "wei2022chainofthought",
+   "wei2022cot"
   ],
   "cited_in": [
+   "hallucinations",
+   "promptengineering",
+   "reasoning",
    "unexpected_capabilities"
   ]
  },
@@ -25018,7 +25080,6 @@
   ],
   "cited_in": [
    "minimalneuron",
-   "statistics",
    "statistics_i"
   ]
  },
@@ -25529,7 +25590,6 @@
   ],
   "cited_in": [
    "philosophy",
-   "statistics",
    "statistics_i",
    "statistics_ii"
   ]
@@ -26501,7 +26561,6 @@
    "box1987empirical"
   ],
   "cited_in": [
-   "statistics",
    "statistics_i"
   ]
  },
@@ -26692,8 +26751,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "silver2016alphago",
-   "silver2016go"
+   "silver2016go",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -26892,7 +26951,6 @@
    "liberludo"
   ],
   "cited_in": [
-   "statistics",
    "statistics_i"
   ]
  },
@@ -26995,7 +27053,6 @@
    "ceresdiscovery"
   ],
   "cited_in": [
-   "statistics",
    "statistics_i"
   ]
  },
@@ -27259,8 +27316,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "frege1879begriffsschrift",
-   "uebersinnundbedeutung"
+   "uebersinnundbedeutung",
+   "frege1879begriffsschrift"
   ],
   "cited_in": [
    "beyond_llms",
@@ -27653,9 +27710,10 @@
   "city": "Amsterdam, Netherlands",
   "year": 2001.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "pep285"
+   "pep285",
+   "vanrossum2009tutorial"
   ],
   "cited_in": [
    "untold_history"
@@ -28753,8 +28811,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "power2022grokking",
-   "grokking"
+   "grokking",
+   "power2022grokking"
   ],
   "cited_in": [
    "algorithms",
@@ -28935,6 +28993,7 @@
    "levesque2014bestbehaviour"
   ],
   "cited_in": [
+   "history",
    "philosophy"
   ]
  },
@@ -29283,16 +29342,18 @@
   "city": "Pittsburgh, United States",
   "year": 1957.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "newell1956logictheorist",
    "newell1957gps",
-   "simon1955bounded"
+   "simon1955bounded",
+   "newell1976empirical"
   ],
   "cited_in": [
    "history",
    "human_mind",
-   "mirror_in_machine"
+   "mirror_in_machine",
+   "symbolic_ai"
   ]
  },
  {
@@ -30302,9 +30363,7 @@
   "keys": [
    "batesonphoto"
   ],
-  "cited_in": [
-   "history"
-  ]
+  "cited_in": []
  },
  {
   "name": "I. J. Good",
@@ -30615,9 +30674,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
-   "power2022grokking",
    "yang2022mup",
-   "grokking"
+   "grokking",
+   "power2022grokking"
   ],
   "cited_in": [
    "algorithms",
@@ -30779,10 +30838,10 @@
    "krizhevsky2012imagenet",
    "sutskever2014seq2seq",
    "mikolov2013exploiting",
-   "silver2016alphago",
    "radford2019language",
    "silver2016go",
    "nakkiran2019deepdd",
+   "silver2016alphago",
    "whisper2022"
   ],
   "cited_in": [
@@ -30935,11 +30994,11 @@
   "conf": 1,
   "works": 5,
   "keys": [
-   "silver2016alphago",
    "mnih2015dqn",
    "silver2016go",
    "silver2018zero",
-   "schrittwieser2020muzero"
+   "schrittwieser2020muzero",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -31465,11 +31524,13 @@
   "city": "Cambridge, United States",
   "year": 1960.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "licklider"
+   "licklider",
+   "licklider1960symbiosis"
   ],
   "cited_in": [
+   "agents",
    "software",
    "untold_history"
   ]
@@ -31880,15 +31941,18 @@
   "city": "San Francisco, United States",
   "year": 2023.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
+   "olsson2022induction",
    "incontextlearninghead",
    "kadavath2022selfknowledge",
    "openai2021dota"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "beyond_llms",
+   "fact_lookup",
    "mechanistic_interpretability",
    "reliability",
    "transformer",
@@ -32016,13 +32080,15 @@
   "city": "San Francisco, United States",
   "year": 2022.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
+   "olsson2022induction",
    "incontextlearninghead",
    "elhage2021mathematical",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "embeddinglab",
    "fact_lookup",
@@ -32065,7 +32131,6 @@
    "arsconjectandi"
   ],
   "cited_in": [
-   "statistics",
    "statistics_i"
   ]
  },
@@ -32144,16 +32209,9 @@
   "city": "San Francisco, United States",
   "year": 2022.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "olsson2022induction"
-  ],
-  "cited_in": [
-   "algorithms",
-   "fact_lookup",
-   "mechanistic_interpretability",
-   "unexpected_capabilities"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Jacob Steinhardt",
@@ -32164,10 +32222,11 @@
   "city": "Berkeley, United States",
   "year": 2023.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "wang2022interpretability",
    "nanda2023grokking",
+   "belrose2023tunedlens",
    "wei2024jailbroken",
    "interpretabilityinwild",
    "burns2022ccs"
@@ -33050,12 +33109,14 @@
   "city": "San Francisco, United States",
   "year": 2024.0,
   "conf": 1,
-  "works": 8,
+  "works": 10,
   "keys": [
+   "olsson2022induction",
    "elhage2022solu",
    "bricken2023monosemanticity",
    "lindsey2025biology",
    "incontextlearninghead",
+   "elhage2022superposition",
    "kaplan2020scaling",
    "hubinger2024sleeperagents",
    "elhage2021mathematical",
@@ -33064,6 +33125,7 @@
   "cited_in": [
    "ai_economics",
    "ai_existential_risk",
+   "algorithms",
    "alignment",
    "embeddinglab",
    "fact_lookup",
@@ -35352,12 +35414,15 @@
   "city": "Palo Alto, USA",
   "year": 2019.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "liu2023lostmiddle",
    "hewitt2019structural"
   ],
   "cited_in": [
-   "mechanistic_interpretability"
+   "contextwindows",
+   "mechanistic_interpretability",
+   "rag"
   ]
  },
  {
@@ -35441,12 +35506,14 @@
   "city": "Palo Alto, United States",
   "year": 1969.0,
   "conf": 1,
-  "works": 4,
+  "works": 6,
   "keys": [
    "algol60report",
    "darthmouthartificialintelligence",
    "mccarthy1969some",
-   "mccarthy1956dartmouth"
+   "mccarthy1956dartmouth",
+   "mccarthy1960lisp",
+   "mccarthy1978history"
   ],
   "cited_in": [
    "agents",
@@ -35534,8 +35601,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "silver2016alphago",
-   "silver2016go"
+   "silver2016go",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -36907,7 +36974,6 @@
    "buolamwini2018gender"
   ],
   "cited_in": [
-   "statistics",
    "statistics_i"
   ]
  },
@@ -37063,10 +37129,10 @@
   "conf": 1,
   "works": 4,
   "keys": [
-   "silver2016alphago",
    "silver2016go",
    "silver2018zero",
-   "schrittwieser2020muzero"
+   "schrittwieser2020muzero",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -37760,13 +37826,15 @@
   "city": "San Francisco, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
+   "olsson2022induction",
    "incontextlearninghead",
    "elhage2021mathematical",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "embeddinglab",
    "fact_lookup",
@@ -38028,7 +38096,6 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "statistics",
    "statistics_i"
   ]
  },
@@ -38545,9 +38612,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 0,
-  "keys": [],
-  "cited_in": []
+  "works": 1,
+  "keys": [
+   "liu2023lostmiddle"
+  ],
+  "cited_in": [
+   "contextwindows",
+   "rag"
+  ]
  },
  {
   "name": "Kevin Maik Jablonka",
@@ -38877,10 +38949,10 @@
   "keys": [
    "vq_vae",
    "mnih2013dqn",
-   "silver2016alphago",
    "mnih2015dqn",
    "silver2016go",
-   "oord2016wavenet"
+   "oord2016wavenet",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -39338,7 +39410,6 @@
    "gesetzderkleinenzahlen"
   ],
   "cited_in": [
-   "statistics",
    "statistics_i"
   ]
  },
@@ -39513,10 +39584,10 @@
   "conf": 1,
   "works": 4,
   "keys": [
-   "silver2016alphago",
    "silver2016go",
    "silver2018zero",
-   "schrittwieser2020muzero"
+   "schrittwieser2020muzero",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -40193,13 +40264,15 @@
   "city": "San Francisco, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
+   "olsson2022induction",
    "incontextlearninghead",
    "elhage2021mathematical",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "embeddinglab",
    "fact_lookup",
@@ -40925,8 +40998,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "dosovitskiy2021vit",
-   "zhai2023siglip"
+   "zhai2023siglip",
+   "dosovitskiy2021vit"
   ],
   "cited_in": [
    "computer_vision",
@@ -41031,7 +41104,6 @@
   ],
   "cited_in": [
    "samplinglab",
-   "statistics",
    "statistics_ii"
   ]
  },
@@ -41171,19 +41243,24 @@
   "city": "Seattle, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
-   "dettmers2022llmint8",
+   "schick2023toolformer",
    "bart",
    "elmo",
-   "dettmers2023qlora"
+   "dettmers2023qlora",
+   "dettmers2022llmint8"
   ],
   "cited_in": [
    "finetuninglab",
+   "frontier",
    "history",
    "inference_optimization",
    "mechanistic_interpretability",
-   "running_locally"
+   "running_locally",
+   "symbolic_ai",
+   "unexpected_capabilities",
+   "websearch"
   ]
  },
  {
@@ -41504,12 +41581,16 @@
   "city": "Mountain View, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "wei2022chainofthought",
+   "wei2022cot",
    "nye2021scratchpad"
   ],
   "cited_in": [
+   "hallucinations",
+   "promptengineering",
+   "reasoning",
    "unexpected_capabilities"
   ]
  },
@@ -41581,8 +41662,8 @@
   "conf": 0,
   "works": 2,
   "keys": [
-   "silver2016alphago",
-   "silver2016go"
+   "silver2016go",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -41829,9 +41910,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
-   "silver2016alphago",
    "silver2016go",
-   "silver2018zero"
+   "silver2018zero",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -42047,6 +42128,7 @@
   "cited_in": [
    "ai_existential_risk",
    "hallucinations",
+   "intuition",
    "philosophy"
   ]
  },
@@ -42059,11 +42141,15 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "schick2023toolformer",
    "mialon2023augmented"
   ],
   "cited_in": [
+   "frontier",
+   "symbolic_ai",
+   "unexpected_capabilities",
    "websearch"
   ]
  },
@@ -42872,13 +42958,15 @@
   "city": "San Francisco, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "li2022othello_iclr",
    "elhage2022solu",
+   "elhage2022superposition",
    "li2022othello"
   ],
   "cited_in": [
+   "embeddinglab",
    "fact_lookup",
    "mechanistic_interpretability",
    "philosophy",
@@ -43949,7 +44037,6 @@
    "boxmueller"
   ],
   "cited_in": [
-   "statistics",
    "statistics_i"
   ]
  },
@@ -44709,9 +44796,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 0,
-  "keys": [],
-  "cited_in": []
+  "works": 1,
+  "keys": [
+   "liu2023lostmiddle"
+  ],
+  "cited_in": [
+   "contextwindows",
+   "rag"
+  ]
  },
  {
   "name": "Michele L. Jain",
@@ -44900,9 +44992,9 @@
   "works": 8,
   "keys": [
    "lewis2020rag",
-   "dettmers2022llmint8",
    "alibi2022",
    "bart",
+   "dettmers2022llmint8",
    "press2022alibi",
    "fan2018topk",
    "press2022compositionality",
@@ -44930,14 +45022,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "belrose2023tunedlens"
-  ],
-  "cited_in": [
-   "fact_lookup",
-   "mechanistic_interpretability"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Mike Schuster",
@@ -45916,9 +46003,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
-   "silver2016alphago",
    "silver2016go",
-   "oord2016wavenet"
+   "oord2016wavenet",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -46162,7 +46249,6 @@
    "ceresimage"
   ],
   "cited_in": [
-   "statistics",
    "statistics_i"
   ]
  },
@@ -46366,14 +46452,13 @@
   "city": "San Francisco, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 9,
+  "works": 8,
   "keys": [
    "olsson2022induction",
    "nanda2023grokking",
    "arditi2024refusal",
    "copysuppression",
    "incontextlearninghead",
-   "elhage2022superposition",
    "elhage2021mathematical",
    "kissane2024attention",
    "elhage2021framework"
@@ -46384,7 +46469,6 @@
    "embeddinglab",
    "fact_lookup",
    "mechanistic_interpretability",
-   "philosophy",
    "transformer",
    "unexpected_capabilities"
   ]
@@ -46517,9 +46601,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 0,
-  "keys": [],
-  "cited_in": []
+  "works": 1,
+  "keys": [
+   "liu2023lostmiddle"
+  ],
+  "cited_in": [
+   "contextwindows",
+   "rag"
+  ]
  },
  {
   "name": "Nelson Goodman",
@@ -46615,8 +46704,9 @@
   "city": "San Francisco, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
+   "olsson2022induction",
    "bricken2023monosemanticity",
    "incontextlearninghead",
    "monosemanticity",
@@ -46624,6 +46714,7 @@
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "embeddinglab",
    "fact_lookup",
@@ -46768,17 +46859,20 @@
   "city": "San Francisco, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "elhage2022solu",
    "bricken2023monosemanticity",
+   "elhage2022superposition",
    "monosemanticity",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
    "alignment",
+   "embeddinglab",
    "fact_lookup",
    "mechanistic_interpretability",
+   "philosophy",
    "promptengineering",
    "reliability",
    "unexpected_capabilities"
@@ -46828,14 +46922,9 @@
   "city": "San Francisco, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "belrose2023tunedlens"
-  ],
-  "cited_in": [
-   "fact_lookup",
-   "mechanistic_interpretability"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Nick Bostrom",
@@ -47705,7 +47794,7 @@
   "keys": [
    "wiener1948cybernetics",
    "behaviorpurpose1943",
-   "wienergodandgolem1937",
+   "wienergodandgolem1964",
    "wienerhumaneuse1950"
   ],
   "cited_in": [
@@ -47825,13 +47914,15 @@
   "city": "San Francisco, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
+   "olsson2022induction",
    "incontextlearninghead",
    "elhage2021mathematical",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "embeddinglab",
    "fact_lookup",
@@ -49167,15 +49258,18 @@
   "city": "Palo Alto, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "park2023generativeagents",
+   "liu2023lostmiddle",
    "garg2022incontext",
    "liang2023helm"
   ],
   "cited_in": [
    "algorithms",
+   "contextwindows",
    "evaluation",
+   "rag",
    "unexpected_capabilities"
   ]
  },
@@ -49535,9 +49629,10 @@
   "city": "Copenhagen, Denmark",
   "year": 1963.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "algol60report"
+   "algol60report",
+   "naur1963algol"
   ],
   "cited_in": [
    "untold_history"
@@ -49898,12 +49993,11 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "oevresdeformat",
+   "oeuvresdeformat",
    "pascalfirmat1654"
   ],
   "cited_in": [
    "differentiation",
-   "statistics",
    "statistics_i",
    "untold_history"
   ]
@@ -50026,7 +50120,6 @@
    "laplace1814essai"
   ],
   "cited_in": [
-   "statistics",
    "statistics_i",
    "untold_history"
   ]
@@ -50416,12 +50509,14 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "python"
+   "python",
+   "vanrossum2009tutorial"
   ],
   "cited_in": [
-   "software"
+   "software",
+   "untold_history"
   ]
  },
  {
@@ -50653,15 +50748,19 @@
   "city": "Mountain View, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "wei2022chainofthought",
    "shazeer2017moe",
+   "wei2022cot",
    "trinh2024alphageometry"
   ],
   "cited_in": [
    "beyond_llms",
+   "hallucinations",
    "mixture_of_experts",
+   "promptengineering",
+   "reasoning",
    "symbolic_ai",
    "transformer",
    "unexpected_capabilities"
@@ -51823,7 +51922,6 @@
   "cited_in": [
    "history",
    "music_video_generation",
-   "statistics",
    "statistics_i",
    "transformer",
    "untold_history"
@@ -51982,7 +52080,6 @@
    "leiblerkullback"
   ],
   "cited_in": [
-   "statistics",
    "statistics_ii"
   ]
  },
@@ -52584,16 +52681,19 @@
   "city": "San Francisco, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "elhage2022solu",
    "elhage2023privileged",
    "bricken2023monosemanticity",
+   "elhage2022superposition",
    "monosemanticity"
   ],
   "cited_in": [
+   "embeddinglab",
    "fact_lookup",
    "mechanistic_interpretability",
+   "philosophy",
    "promptengineering",
    "unexpected_capabilities"
   ]
@@ -52758,11 +52858,15 @@
   "city": "",
   "year": 2023.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "schick2023toolformer",
    "mialon2023augmented"
   ],
   "cited_in": [
+   "frontier",
+   "symbolic_ai",
+   "unexpected_capabilities",
    "websearch"
   ]
  },
@@ -53008,7 +53112,6 @@
    "cerespath"
   ],
   "cited_in": [
-   "statistics",
    "statistics_i"
   ]
  },
@@ -53056,15 +53159,19 @@
   "city": "Toronto, Canada",
   "year": 2025.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "elhage2022solu",
    "lindsey2025biology",
-   "ameisen2025circuit"
+   "ameisen2025circuit",
+   "elhage2022superposition"
   ],
   "cited_in": [
+   "embeddinglab",
    "fact_lookup",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "philosophy",
+   "unexpected_capabilities"
   ]
  },
  {
@@ -53291,7 +53398,6 @@
    "fisher1922"
   ],
   "cited_in": [
-   "statistics",
    "statistics_ii"
   ]
  },
@@ -54288,20 +54394,24 @@
   "city": "San Francisco, USA",
   "year": 2020.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
-   "belrose2023tunedlens",
+   "olsson2022induction",
    "elhage2022solu",
    "incontextlearninghead",
+   "elhage2022superposition",
    "kaplan2020scaling",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
    "ai_economics",
+   "algorithms",
    "alignment",
+   "embeddinglab",
    "fact_lookup",
    "hyperparameters",
    "mechanistic_interpretability",
+   "philosophy",
    "reliability",
    "trainingdynamics",
    "transformer",
@@ -54612,9 +54722,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
-   "silver2016alphago",
    "silver2016go",
-   "oord2016wavenet"
+   "oord2016wavenet",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -55105,13 +55215,16 @@
   "city": "San Francisco, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
+   "olsson2022induction",
    "incontextlearninghead",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
+   "fact_lookup",
    "mechanistic_interpretability",
    "reliability",
    "transformer",
@@ -55941,17 +56054,20 @@
   "city": "San Francisco, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "elhage2022solu",
    "bricken2023monosemanticity",
+   "elhage2022superposition",
    "monosemanticity",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
    "alignment",
+   "embeddinglab",
    "fact_lookup",
    "mechanistic_interpretability",
+   "philosophy",
    "promptengineering",
    "reliability",
    "unexpected_capabilities"
@@ -56852,7 +56968,6 @@
    "poisson"
   ],
   "cited_in": [
-   "statistics",
    "statistics_i"
   ]
  },
@@ -57027,7 +57142,6 @@
    "leiblerkullback"
   ],
   "cited_in": [
-   "statistics",
    "statistics_ii"
   ]
  },
@@ -57627,11 +57741,14 @@
   "city": "San Francisco, USA",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "belrose2023tunedlens",
    "gao2020pile"
   ],
   "cited_in": [
+   "fact_lookup",
+   "mechanistic_interpretability",
    "training_data"
   ]
  },
@@ -59313,7 +59430,6 @@
    "bayes1763essay"
   ],
   "cited_in": [
-   "statistics",
    "statistics_ii",
    "untold_history"
   ]
@@ -59655,11 +59771,15 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "schick2023toolformer",
    "mialon2023augmented"
   ],
   "cited_in": [
+   "frontier",
+   "symbolic_ai",
+   "unexpected_capabilities",
    "websearch"
   ]
  },
@@ -59706,10 +59826,10 @@
   "conf": 1,
   "works": 4,
   "keys": [
-   "silver2016alphago",
    "silver2016go",
    "silver2018zero",
-   "schrittwieser2020muzero"
+   "schrittwieser2020muzero",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -59940,8 +60060,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "dettmers2022llmint8",
-   "dettmers2023qlora"
+   "dettmers2023qlora",
+   "dettmers2022llmint8"
   ],
   "cited_in": [
    "finetuninglab",
@@ -60046,8 +60166,8 @@
   "cited_in": [
    "ai_existential_risk",
    "hallucinations",
+   "intuition",
    "philosophy",
-   "statistics",
    "statistics_i"
   ]
  },
@@ -60101,10 +60221,10 @@
   "works": 5,
   "keys": [
    "hafner2023dreamer",
-   "silver2016alphago",
    "silver2016go",
    "silver2018zero",
-   "schrittwieser2020muzero"
+   "schrittwieser2020muzero",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -60295,15 +60415,18 @@
   "city": "San Francisco, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
+   "olsson2022induction",
    "incontextlearninghead",
    "carlini2021extracting",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "evaluation",
+   "fact_lookup",
    "mechanistic_interpretability",
    "reliability",
    "transformer",
@@ -60319,8 +60442,9 @@
   "city": "San Francisco, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 8,
+  "works": 9,
   "keys": [
+   "olsson2022induction",
    "bricken2023monosemanticity",
    "templeton2024scaling",
    "goldengateclaude",
@@ -60331,6 +60455,7 @@
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "embeddinglab",
    "fact_lookup",
@@ -60376,20 +60501,12 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 3,
+  "works": 1,
   "keys": [
-   "olsson2022induction",
-   "elhage2022superposition",
    "elhage2021framework"
   ],
   "cited_in": [
-   "algorithms",
-   "deeplearninglab",
-   "embeddinglab",
-   "fact_lookup",
-   "mechanistic_interpretability",
-   "philosophy",
-   "unexpected_capabilities"
+   "deeplearninglab"
   ]
  },
  {
@@ -60401,8 +60518,9 @@
   "city": "San Francisco, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 11,
+  "works": 13,
   "keys": [
+   "olsson2022induction",
    "elhage2022solu",
    "bricken2023monosemanticity",
    "templeton2024scaling",
@@ -60410,6 +60528,7 @@
    "ameisen2025circuit",
    "goldengateclaude",
    "incontextlearninghead",
+   "elhage2022superposition",
    "monosemanticity",
    "kaplan2020scaling",
    "elhage2021mathematical",
@@ -60417,11 +60536,13 @@
   ],
   "cited_in": [
    "ai_economics",
+   "algorithms",
    "alignment",
    "embeddinglab",
    "fact_lookup",
    "hyperparameters",
    "mechanistic_interpretability",
+   "philosophy",
    "promptengineering",
    "reliability",
    "trainingdynamics",
@@ -60839,9 +60960,9 @@
   "conf": 1,
   "works": 3,
   "keys": [
-   "gu2023mamba",
    "dao2024mamba2",
-   "dao2022flashattention"
+   "dao2022flashattention",
+   "gu2023mamba"
   ],
   "cited_in": [
    "alternative_architectures",
@@ -60892,11 +61013,12 @@
   "city": "San Francisco, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "elhage2022solu",
    "templeton2024scaling",
    "goldengateclaude",
+   "elhage2022superposition",
    "monosemanticity",
    "kadavath2022selfknowledge"
   ],
@@ -60905,6 +61027,7 @@
    "embeddinglab",
    "fact_lookup",
    "mechanistic_interpretability",
+   "philosophy",
    "reliability",
    "unexpected_capabilities"
   ]
@@ -61121,7 +61244,6 @@
    "flammarion"
   ],
   "cited_in": [
-   "statistics",
    "statistics_i"
   ]
  },
@@ -61143,7 +61265,6 @@
   "cited_in": [
    "history",
    "human_mind",
-   "statistics",
    "statistics_i"
   ]
  },
@@ -61402,8 +61523,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "silver2016alphago",
-   "silver2016go"
+   "silver2016go",
+   "silver2016alphago"
   ],
   "cited_in": [
    "ai_and_society",
@@ -61423,8 +61544,8 @@
   "conf": 0,
   "works": 2,
   "keys": [
-   "power2022grokking",
-   "grokking"
+   "grokking",
+   "power2022grokking"
   ],
   "cited_in": [
    "algorithms",
@@ -61973,15 +62094,17 @@
   "city": "New York, USA",
   "year": 1995.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "vapnik1963pattern",
    "vapnik1995book",
-   "boser1992svm"
+   "boser1992svm",
+   "vapnik1964vc"
   ],
   "cited_in": [
    "beyond_llms",
-   "geometry_i"
+   "geometry_i",
+   "history"
   ]
  },
  {
@@ -62017,7 +62140,6 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "statistics",
    "statistics_i"
   ]
  },
@@ -62328,6 +62450,7 @@
   "cited_in": [
    "history",
    "mirror_in_machine",
+   "philosophy",
    "untold_history"
   ]
  },
@@ -62889,7 +63012,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 269,
+  "works": 325,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -62985,6 +63108,7 @@
    "historyofpc",
    "chuckpeddle",
    "commodorepet",
+   "visicalc",
    "ibmpc",
    "mos6502",
    "ibmscamp",
@@ -63039,7 +63163,6 @@
    "korzybski_mapterritory",
    "brednich_wiki",
    "urbanlegends_wiki",
-   "deepfake_wiki",
    "mataavianca_wiki",
    "hallucination_ai_wiki",
    "theatreopera_wiki",
@@ -63107,6 +63230,7 @@
    "heart_on_my_sleeve_wiki",
    "wga2023strike_wiki",
    "cbs2024characterai",
+   "deepfake_wiki",
    "audio_deepfake_wiki",
    "romance_scam_wiki",
    "ward2014googleeffect",
@@ -63159,7 +63283,62 @@
    "philtrans1665",
    "venicepatent1474",
    "cohenkappa",
-   "bm25"
+   "bm25",
+   "neolithic_revolution_wiki",
+   "fertile_crescent_wiki",
+   "history_of_agriculture_wiki",
+   "domestication_wiki",
+   "v_gordon_childe_wiki",
+   "catalhoyuk_wiki",
+   "jericho_wiki",
+   "urban_revolution_wiki",
+   "uruk_wiki",
+   "cradle_of_civilization_wiki",
+   "history_of_writing_wiki",
+   "cuneiform_script_wiki",
+   "code_of_hammurabi_wiki",
+   "bronze_age_wiki",
+   "iron_age_wiki",
+   "ancient_mesopotamia_wiki",
+   "ancient_egypt_wiki",
+   "library_of_alexandria_wiki",
+   "wheel_wiki",
+   "plough_wiki",
+   "money_wiki",
+   "coinage_wiki",
+   "history_of_programming_languages_wiki",
+   "ada_lovelace_wiki",
+   "plankalkul_wiki",
+   "fortran_wiki",
+   "lisp_wiki",
+   "algol_wiki",
+   "cobol_wiki",
+   "basic_wiki",
+   "simula_wiki",
+   "c_programming_wiki",
+   "smalltalk_wiki",
+   "pascal_wiki",
+   "prolog_wiki",
+   "cpp_wiki",
+   "java_wiki",
+   "javascript_wiki",
+   "python_wiki",
+   "perl_wiki",
+   "php_wiki",
+   "ruby_wiki",
+   "ada_language_wiki",
+   "matlab_wiki",
+   "haskell_wiki",
+   "rust_wiki",
+   "go_wiki",
+   "julia_wiki",
+   "swift_wiki",
+   "mojo_wiki",
+   "structured_programming_wiki",
+   "oop_wiki",
+   "backus_naur_form_wiki",
+   "compiler_wiki",
+   "unix_wiki"
   ],
   "cited_in": [
    "ai_and_society",
@@ -66662,8 +66841,9 @@
   "city": "San Francisco, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
+   "olsson2022induction",
    "bricken2023monosemanticity",
    "incontextlearninghead",
    "elhage2021mathematical",
@@ -66671,6 +66851,7 @@
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
    "embeddinglab",
    "fact_lookup",
@@ -66744,8 +66925,8 @@
   "conf": 1,
   "works": 2,
   "keys": [
-   "power2022grokking",
-   "grokking"
+   "grokking",
+   "power2022grokking"
   ],
   "cited_in": [
    "algorithms",
@@ -67054,16 +67235,21 @@
   "city": "San Francisco, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 3,
+  "works": 5,
   "keys": [
+   "olsson2022induction",
    "elhage2022solu",
    "incontextlearninghead",
+   "elhage2022superposition",
    "kadavath2022selfknowledge"
   ],
   "cited_in": [
+   "algorithms",
    "alignment",
+   "embeddinglab",
    "fact_lookup",
    "mechanistic_interpretability",
+   "philosophy",
    "reliability",
    "transformer",
    "unexpected_capabilities"
@@ -67097,14 +67283,9 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "belrose2023tunedlens"
-  ],
-  "cited_in": [
-   "fact_lookup",
-   "mechanistic_interpretability"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Zakhar Shumaylov",
@@ -67157,7 +67338,6 @@
    "zelligharris"
   ],
   "cited_in": [
-   "statistics",
    "statistics_ii"
   ]
  },

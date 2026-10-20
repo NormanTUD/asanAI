@@ -5,7 +5,7 @@ title: Over- and underfitting
 description: The delicate balance, when a model learns the pattern vs. when it memorizes the noise.
 icon: &#127922;
 part: 3
-order: 2
+order: 3
 color: emerald
 topics: math-i, programming, training
 tags: math-heavy, code-heavy
@@ -24,7 +24,7 @@ We give an artificial intelligence, specifically, a single-layer neural network,
 By adjusting the controls below you will witness, in real time, why AI models sometimes *hallucinate* or collapse when they encounter something new.
 </div>
 
-<div class="md" data-mathlevel="40" data-optionaltitle="The Maths: How the Model “Thinks”">
+<div class="md" data-mathlevel="40">
 ## The Maths: How the Model “Thinks”
 
 We construct a function $f(x)$ of the form
@@ -47,7 +47,7 @@ This is **Polynomial Regression**. Rather than “knowing” the answer is a sin
 </div>
 </div>
 
-<div class="md" data-mathlevel="35" data-optionaltitle="The Loss Function">
+<div class="md" data-mathlevel="35">
 ### The Loss Function
 
 The **MSE** (Mean Squared Error) is the AI's measure of “how wrong am I?”:
@@ -60,7 +60,7 @@ $$
 * **High loss** → the model hasn't yet found a curve that fits the data.
 </div>
 
-<div class="md" data-mathlevel="60" data-optionaltitle="How the Model Learns: Gradient Descent">
+<div class="md" data-mathlevel="60">
 ### How the Model Learns: Gradient Descent
 
 Knowing “how wrong am I?” is not enough, the model also needs a strategy for getting *less wrong*. This is the job of **gradient descent**.
@@ -88,7 +88,7 @@ Adam is the end of a longer story, not the beginning. The chain runs: Adagrad �
 </div>
 </div>
 
-<div class="md" data-mathlevel="55" data-optionaltitle="The Bias–Variance Tradeoff">
+<div class="md" data-mathlevel="55">
 ### The Bias–Variance Tradeoff
 
 Every predictive model faces a fundamental tension between two sources of error:
@@ -247,7 +247,7 @@ on the interval $[-1, 1]$ with equidistant interpolation nodes. As the number of
 </div>
 </div>
 
-<div class="md" data-mathlevel="45" data-optionaltitle="Taming the “Wiggle”: Regularization & Dropout">
+<div class="md" data-mathlevel="45">
 ## Taming the “Wiggle”: Regularization & Dropout
 
 To prevent a model from chasing noise or exhibiting \citealternativetitle{rungesphenomenon}, developers impose mathematical constraints that reward *simplicity* over perfect memorization.

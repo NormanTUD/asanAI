@@ -8,7 +8,6 @@ part: 4
 order: 16
 color: coral
 topics: multimodal, audio, video, generation, architecture
-tags: deep-dive, reading-heavy
 math: 50
 -->
 
