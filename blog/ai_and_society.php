@@ -5,7 +5,7 @@ title: AI and Society: The Cultural Impact of Machines That Create
 description: A survey of how AI has reshaped art, science, labor, cognition, and truth — from the Dartmouth Conference to the flood of synthetic media. The good, the bad, the terrible, and the great.
 icon: &#9883;
 part: 6
-order: 12
+order: 13
 color: sky
 topics: society, culture, ethics, history
 tags: interested-layman
