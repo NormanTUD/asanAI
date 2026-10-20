@@ -6849,9 +6849,9 @@ window.bibData = {
 		alternativetitle: "language optimized for communication, not reasoning"
 	},
 	"ameisen2025circuittracing": {
-		url: "https://arxiv.org/abs/2503.12495",
-		title: "Circuit Tracing: Mapping How Language Models Process Language, Internally",
-		author: "Eric J. Michaud, Alexander T. R. Cooper, Soren Windolf, Arthur Conmy",
+		url: "https://transformer-circuits.pub/2025/attribution-graphs/methods.html",
+		title: "Circuit Tracing: Revealing Computational Graphs in Language Models",
+		author: "Emmanuel Ameisen et al.",
 		year: 2025,
 		alternativetitle: "Circuit Tracing"
 	},
@@ -7512,6 +7512,13 @@ window.bibData = {
 		author: "Elliot Glazer et al. (Epoch AI)",
 		year: 2024,
 		alternativetitle: "FrontierMath (Epoch AI)"
+	},
+	"madaan2022textpatterns": {
+		url: "https://arxiv.org/abs/2209.07686",
+		title: "Text and Patterns: For Effective Chain of Thought, It Takes Two to Tango",
+		author: "Aman Madaan and Amir Yazdanbakhsh",
+		year: 2022,
+		alternativetitle: "Madaan & Yazdanbakhsh (2022)"
 	},
 	"cobbe2021gsm8k": {
 		url: "https://arxiv.org/abs/2110.14168",
@@ -8219,7 +8226,7 @@ window.bibData = {
 		alternativetitle: "GAIA"
 	},
 	"du2023multiagent": {
-		url: "https://arxiv.org/abs/2305.14380",
+		url: "https://arxiv.org/abs/2305.14325",
 		title: "Improving Factuality and Reasoning in Language Models through Multiagent Debate",
 		author: "Yilun Du, Shuang Li, Antonio Torralba, Joshua B. Tenenbaum, Igor Mordatch",
 		year: 2023,
@@ -16105,9 +16112,9 @@ window.bibData = {
 	"clark2013surfing": {
 		title: "Surfing Uncertainty: Prediction, Action, and the Embodied Mind",
 		author: "Andy Clark",
-		year: 2013,
+		year: 2016,
 		url: "https://en.wikipedia.org/wiki/Surfing_Uncertainty",
-		alternativetitle: "Andy Clark, Surfing Uncertainty (2013)"
+		alternativetitle: "Andy Clark, Surfing Uncertainty (2016)"
 	},
 	"predictive_coding_wiki": {
 		title: "Predictive coding",
