@@ -5267,7 +5267,7 @@ window.bibData = {
 	"leibnizrechenmaschine": {
 		url: "https://blog.hnf.de/herr-leibniz-und-seine-verlorenen-rechenmaschinen/",
 		title: "Herr Leibniz und seine verlorenen Rechenmaschinen",
-		alternativetitle: "The Stepped Reckoner by Leibniz, invented in 1672 and built in 1700, is the first mechanical working automatic calculation machine",
+		alternativetitle: "The Stepped Reckoner by Leibniz, begun in 1673 and completed in 1694, was the first calculator able to perform all four arithmetic operations",
 		year: 2024,
 		author: "Jochen Viehoff"
 	},
@@ -13753,7 +13753,7 @@ window.bibData = {
 	},
 	"gnu_make": {
 		title: "GNU Make",
-		author: "GNU Project (Stewart Kafka)",
+		author: "GNU Project (Stuart Feldman)",
 		year: "accessed 2026",
 		url: "https://www.gnu.org/software/make/",
 		alternativetitle: "make"
