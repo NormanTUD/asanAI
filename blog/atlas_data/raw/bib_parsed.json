@@ -3816,7 +3816,7 @@
    "year": "",
    "url": "https://aclanthology.org/N18-1202/"
   },
-  "oevresdeformat": {
+  "oeuvresdeformat": {
    "title": "Œuvres de Fermat",
    "author": "Pierre de Fermat",
    "year": "",
@@ -16355,7 +16355,7 @@
    "statistics",
    "statistics_i"
   ],
-  "oevresdeformat": [
+  "oeuvresdeformat": [
    "differentiation",
    "statistics",
    "statistics_i"
@@ -33081,7 +33081,7 @@
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "oevresdeformat",
+    "oeuvresdeformat",
     "pascalfirmat1654"
    ]
   },
