@@ -1934,13 +1934,6 @@ window.bibData = {
 	    url: "https://ieeexplore.ieee.org/document/5633486",
 	    alternativetitle: "Product Quantization (Jégou et al., 2011)"
 	},
-	"robertson2009bm25": {
-	    title: "The Probabilistic Relevance Framework: BM25 and Beyond",
-	    author: "Stephen Robertson, Steve Zaragoza",
-	    year: 2009,
-	    url: "https://doi.org/10.1561/1500000019",
-	    alternativetitle: "BM25 (Robertson & Zaragoza, 2009)"
-	},
 	"johnson2017faiss": {
 	    title: "Billion-scale similarity search with GPUs",
 	    author: "Jeff Johnson, Matthijs Douze, Hervé Jégou",
@@ -2404,13 +2397,6 @@ window.bibData = {
 		year: 2025,
 		url: "https://arxiv.org/abs/2508.18302"
 	},
-	"garg2022incontext": {
-		title: "What Can Transformers Learn In-Context? A Case Study of Simple Function Classes",
-		author: "Shivam Garg and Dimitris Tsipras and Percy Liang and Gregory Valiant",
-		year: 2022,
-		url: "https://arxiv.org/abs/2208.01066",
-		abstract: "Transformers trained on diverse function classes can in-context learn new functions at inference time, matching optimal estimators like least squares, without any parameter updates."
-	},
 	"zhou2022algorithmic": {
 		title: "Teaching Algorithmic Reasoning via In-context Learning",
 		author: "Hattie Zhou and Azade Nova and Hugo Larochelle and Aaron Courville and Behnam Neyshabur and Hanie Sedghi",
@@ -2462,12 +2448,6 @@ window.bibData = {
 		author: "Neel Nanda, Lawrence Chan, Tom Lieberum, Jess Smith, Jacob Steinhardt",
 		year: 2023,
 		url: "https://arxiv.org/abs/2301.05217"
-	},
-	"power2022grokking": {
-		title: "Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets",
-		author: "Alethea Power, Yuri Burda, Harri Edwards, Igor Babuschkin, Vedant Misra",
-		year: 2022,
-		url: "https://arxiv.org/abs/2201.02177"
 	},
 	"belrose2023tunedlens": {
 		title: "Eliciting Latent Predictions from Transformers with the Tuned Lens",
@@ -3096,12 +3076,6 @@ window.bibData = {
 	// Inference Optimization
 	// ═══════════════════════════════════════════════
 
-	"dettmers2022llmint8": {
-		title: "LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale",
-		author: "Tim Dettmers, Mike Lewis, Younes Belkada, Luke Zettlemoyer",
-		year: 2022,
-		url: "https://arxiv.org/abs/2208.07339"
-	},
 	"pope2023efficiently": {
 		title: "Efficiently Scaling Transformer Inference",
 		author: "Reiner Pope, Sholto Douglas, Aakanksha Chowdhery, Jacob Devlin, James Bradbury, Anselm Levskaya, Jonathan Heek, Kefan Xiao, Shivani Agrawal, Jeff Dean",
@@ -3627,12 +3601,6 @@ window.bibData = {
 		author: "Hilary Putnam",
 		title: "The Nature of Mental States Hilary Putnam"
 	},
-	"nagel1974bat": {
-		url: "https://courses.grainger.illinois.edu/PHYS419/sp2021/Nagel1974bat.pdf",
-		year: 1974,
-		author: "Thomas Nagel",
-		title: "What Is It Like to Be a Bat?"
-	},
 	"chalmers1995hard": {
 		url: "https://consc.net/papers/facing.pdf",
 		author: "David J. Chalmers",
@@ -3688,12 +3656,6 @@ window.bibData = {
 		year: 1739,
 		url: "https://davidhume.org/texts/t/",
 		title: "A Treatise of Human Nature"
-	},
-	"tononi2004iit": {
-		url: "https://pubmed.ncbi.nlm.nih.gov/15522121/",
-		title: "An information integration theory of consciousness",
-		year: 2004,
-		author: "Giulio Tononi"
 	},
 	"earlyl2": {
 		url: "https://cs.uwaterloo.ca/~y328yu/classics/Tikhonov43.pdf",
@@ -4423,7 +4385,7 @@ window.bibData = {
 		year: 2018,
 		alternativetitle: "ELMo"
 	},
-	"oevresdeformat": {
+	"oeuvresdeformat": {
 		url: "https://archive.org/details/oeuvresdefermat02ferm",
 		year: 1654,
 		title: "Œuvres de Fermat",
@@ -4598,8 +4560,9 @@ window.bibData = {
 	"schmandtbesserat1992": {
 		author: "Denise Schmandt-Besserat",
 		year: 1992,
-		title: "Before Writing: The Counting Tally",
-		publisher: "University of California Press"
+		title: "Before Writing: From Counting to Cuneiform",
+		publisher: "University of Texas Press",
+		url: "https://en.wikipedia.org/wiki/Denise_Schmandt-Besserat"
 	},
 	"chrisomalis2010": {
 		author: "Stephen Chrisomalis",
@@ -4711,12 +4674,6 @@ window.bibData = {
 		year: 2020,
 		url: "https://arxiv.org/abs/2008.02217",
 		alternativetitle: "Modern Hopfield Networks"
-	},
-	"hopfield1982": {
-		title: "Neural networks and physical systems with emergent collective computational abilities",
-		author: "John J. Hopfield",
-		year: 1982,
-		url: "https://www.pnas.org/doi/10.1073/pnas.79.8.2554"
 	},
 	"grandmotherneuron": {
 		title: "The Value of Failure in Science: The Story of Grandmother Cells in Neuroscience",
@@ -5988,11 +5945,6 @@ window.bibData = {
 		year: "2009",
 		title: "Out of Our Heads: Why You are Not Your Brain, and Other Lessons From the Biology of Consciousness",
 	},
-	"searle1980minds": {
-		author: "John Searle",
-		year: "1980",
-		title: "Minds, Brains, and Programs",
-	},
 	"shumailov2023modelcollapse": {
 		author: "Ilia Shumailov, Zakhar Shumaylov, Yiren Zhao, Yarin Gal, Nicolas Papernot, Ross Anderson",
 		year: "2023",
@@ -6483,12 +6435,6 @@ window.bibData = {
 		title: "Grundzüge der theoretischen Logik",
 		alternativetitle: "The Entscheidungsproblem (Decision Problem)"
 	},
-	"frege1879begriffsschrift": {
-		year: 1879,
-		author: "Gottlob Frege",
-		title: "Begriffsschrift: eine der arithmetischen nachgebildete Formelsprache des reinen Denkens",
-		alternativetitle: "Concept Script (First formal logic notation)"
-	},
 
 	// --- The Missing Links in Information Theory ---
 	"nyquist1924certain": {
@@ -6941,13 +6887,6 @@ window.bibData = {
 		year: 2021,
 		alternativetitle: "CLIP"
 	},
-	"dosovitskiy2021vit": {
-		url: "https://arxiv.org/abs/2010.11929",
-		title: "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
-		author: "Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, et al.",
-		year: 2021,
-		alternativetitle: "ViT"
-	},
 	"liu2023llava": {
 		url: "https://arxiv.org/abs/2304.08485",
 		title: "Visual Instruction Tuning",
@@ -7026,13 +6965,6 @@ window.bibData = {
 		author: "Yaron Lipman, Ricky T. Q. Chen, Matthey Le, et al.",
 		year: 2023,
 		alternativetitle: "Flow Matching"
-	},
-	"peebles2023dit": {
-		url: "https://arxiv.org/abs/2212.09748",
-		title: "Scalable Diffusion Models with Transformers",
-		author: "William Peebles, Saining Xie",
-		year: 2023,
-		alternativetitle: "DiT"
 	},
 	"zhang2023controlnet": {
 		url: "https://arxiv.org/abs/2302.05543",
@@ -7437,13 +7369,6 @@ window.bibData = {
 		year: 2021,
 		alternativetitle: "S4"
 	},
-	"gu2023mamba": {
-		url: "https://arxiv.org/abs/2312.00752",
-		title: "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
-		author: "Albert Gu, Tri Dao",
-		year: 2023,
-		alternativetitle: "Mamba"
-	},
 	"dao2024mamba2": {
 		url: "https://arxiv.org/abs/2405.21060",
 		title: "Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality",
@@ -7502,13 +7427,6 @@ window.bibData = {
 	},
 
 	// Reasoning
-	"wei2022cot": {
-		url: "https://arxiv.org/abs/2201.11903",
-		title: "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
-		author: "Jason Wei, Xuezhi Wang, Dale Schuurmans, et al.",
-		year: 2022,
-		alternativetitle: "Chain-of-Thought"
-	},
 	"wang2022selfconsistency": {
 		url: "https://arxiv.org/abs/2203.11171",
 		title: "Self-Consistency Improves Chain of Thought Reasoning in Language Models",
@@ -7651,13 +7569,6 @@ window.bibData = {
 		year: 2024,
 		alternativetitle: "ARC-AGI"
 	},
-	"carlini2021extracting": {
-		url: "https://arxiv.org/abs/2012.07805",
-		title: "Extracting Training Data from Large Language Models",
-		author: "Nicholas Carlini, Florian Tramèr, Eric Wallace, et al.",
-		year: 2021,
-		alternativetitle: "Training Data Extraction"
-	},
 	"liang2023helm": {
 		url: "https://arxiv.org/abs/2211.09110",
 		title: "Holistic Evaluation of Language Models (HELM)",
@@ -7708,13 +7619,6 @@ window.bibData = {
 		author: "Christopher J. C. H. Watkins",
 		year: 1989,
 		alternativetitle: "Q-Learning"
-	},
-	"ouyang2022instructgpt": {
-		url: "https://arxiv.org/abs/2203.02155",
-		title: "Training Language Models to Follow Instructions with Human Feedback",
-		author: "Long Ouyang, Jeff Wu, Xu Jiang, et al.",
-		year: 2022,
-		alternativetitle: "InstructGPT / RLHF"
 	},
 	"rafailov2023dpo": {
 		url: "https://arxiv.org/abs/2305.18290",
@@ -8125,13 +8029,6 @@ window.bibData = {
 		author: "DeepMind",
 		year: 2024,
 		alternativetitle: "AlphaProof (DeepMind, 2024)"
-	},
-	"schick2023toolformer": {
-		url: "https://arxiv.org/abs/2302.04761",
-		title: "Toolformer: Language Models Can Teach Themselves to Use Tools",
-		author: "Timo Schick, Jane Dwivedi-Yu, Roberto Dessì, et al.",
-		year: 2023,
-		alternativetitle: "Toolformer"
 	},
 	"patil2023gorilla": {
 		url: "https://arxiv.org/abs/2305.15334",
@@ -8578,13 +8475,6 @@ window.bibData = {
 		author: "David M. Blei, Andrew Y. Ng, Michael I. Jordan",
 		year: 2003,
 		alternativetitle: "LDA"
-	},
-	"zou2023repeng": {
-		url: "https://arxiv.org/abs/2310.01405",
-		title: "Representation Engineering: A Top-Down Approach to AI Transparency",
-		author: "Andy Zou, Long Phan, Sarah Chen, et al.",
-		year: 2023,
-		alternativetitle: "Representation Engineering"
 	},
 	"oldowan": {
 		url: "https://www.nature.com/articles/nature.2016.19482",
@@ -9046,13 +8936,6 @@ window.bibData = {
 		year: 2007,
 		alternativetitle: "Tim Berners-Lee's first web browser, NeXT, December 1990"
 	},
-	"visicalc": {
-		url: "https://commons.wikimedia.org/wiki/File:VisiCalc.jpg",
-		title: "VisiCalc",
-		author: "Computer History Museum",
-		year: 2011,
-		alternativetitle: "VisiCalc running on an Apple II (1979)"
-	},
 	"mendeleev_periodic_table": {
 		url: "https://commons.wikimedia.org/wiki/File:Mendeleev%27s_periodic_table_(1869_year).jpg",
 		title: "Mendeleev's Periodic Table (First Edition, 1869)",
@@ -9142,12 +9025,6 @@ window.bibData = {
 		author: "ai.lect",
 		year: 2015,
 		alternativetitle: "Screenshot of the SHRDLU blocks-world natural language interface (Winograd, 1972)"
-	},
-	"wave_interference_diagram": {
-		title: "Interactive Wave Interference Demo",
-		author: "Self-generated (Plotly)",
-		year: 2026,
-		alternativetitle: "Interactive Plotly widget in algorithms.js showing two sine waves summing for any phase shift 0°-360° (constructive at 0°, destructive at 180°)"
 	},
 	"eisgalgen_mittenwald": {
 		url: "https://commons.wikimedia.org/wiki/File:Eisgalgen-Mittenwald-Dekan-Karl-Platz-2015-01-01.jpg",
@@ -9584,13 +9461,6 @@ window.bibData = {
 		year: 1944,
 		url: "https://www.jstor.org/stable/1884098",
 		alternativetitle: "von Neumann & Morgenstern's 1944 book, foundational text of game theory"
-	},
-	"silver2016alphago": {
-		title: "Mastering the Game of Go with Deep Neural Networks and Tree Search",
-		author: "David Silver, Aja Huang, Chris J. Maddison, Arthur Guez, Laurent Sifre, George van den Driessche, Julian Schrittwieser, Ioannis Antonoglou, Veda Panneershelvam, Marc Lanctot, Sander Dieleman, Dominik Grewe, John Nham, Nal Kalchbrenner, Ilya Sutskever, Timothy Lillicrap, Madeleine Leach, Koray Kavukcuoglu, Thore Graepel, Demis Hassabis",
-		year: 2016,
-		url: "https://www.nature.com/articles/nature16961",
-		alternativetitle: "Silver et al.'s AlphaGo paper, which uses Monte Carlo Tree Search inside a neural network"
 	},
 	"eckert1946eniac": {
 		title: "Description of the ENIAC and Comments on Electronic Digital Computing Machines",
@@ -10962,13 +10832,6 @@ window.bibData = {
 		url: "https://www.nature.com/articles/nature14236",
 		alternativetitle: "DQN"
 	},
-	"williams1992reinforce": {
-		title: "Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning",
-		author: "Ronald J. Williams",
-		year: 1992,
-		url: "https://www-anw.cs.umass.edu/~barto/courses/cs687/Williams92.pdf",
-		alternativetitle: "REINFORCE"
-	},
 	"konda2000ac": {
 		title: "Actor-Critic Algorithms",
 		author: "Vijay R. Konda, John N. Tsitsiklis",
@@ -11052,13 +10915,6 @@ window.bibData = {
 		year: 2004,
 		url: "https://www.cs.berkeley.edu/~russell/papers/icml04.pdf",
 		alternativetitle: "Inverse RL Apprenticeship"
-	},
-	"ouyang2022instructgpt": {
-		title: "Training language models to follow instructions with human feedback",
-		author: "Long Ouyang, Jeff Wu, Xu Jiang, Diogo Almeida, Carroll L. Wainwright, Pamela Mishkin, Chong Zhang, Sandhini Agarwal, Katarina Slama, Alex Ray, John Schulman, Jacob Hilton, Fraser Kelton, Luke Miller, Maddie Simens, Amanda Askell, Peter Welinder, Paul Christiano, Jan Leike, Ryan Lowe",
-		year: 2022,
-		url: "https://arxiv.org/abs/2203.02155",
-		alternativetitle: "InstructGPT"
 	},
 	"frege1879begriffsschrift": {
 		title: "Begriffsschrift, eine der arithmetischen nachgebildete Formelsprache des reinen Denkens",
@@ -11223,13 +11079,6 @@ window.bibData = {
 		year: 2016,
 		url: "https://arxiv.org/abs/1606.06357",
 		alternativetitle: "ComplEx"
-	},
-	"schlichtkrull2018rgcn": {
-		title: "Modeling Relational Data with Graph Convolutional Networks",
-		author: "Michael Schlichtkrull, Thomas N. Kipf, Peter Bloem, Rianne van den Berg, Ivan Titov, Max Welling",
-		year: 2018,
-		url: "https://arxiv.org/abs/1703.06103",
-		alternativetitle: "R-GCN"
 	},
 	"koren2009mf": {
 		title: "Matrix Factorization Techniques for Recommender Systems",
@@ -11608,20 +11457,6 @@ window.bibData = {
 		url: "https://arxiv.org/abs/1710.09829",
 		alternativetitle: "Capsule Networks"
 	},
-	"sohl2015deep": {
-		title: "Deep Unsupervised Learning using Nonequilibrium Thermodynamics",
-		author: "Jascha Sohl-Dickstein, Eric A. Weiss, Niru Maheswaranathan, Surya Ganguli",
-		year: 2015,
-		url: "https://arxiv.org/abs/1503.03585",
-		alternativetitle: "Diffusion (origin)"
-	},
-	"song2019score": {
-		title: "Generative Modeling by Estimating Gradients of the Data Distribution",
-		author: "Yang Song, Stefano Ermon",
-		year: 2019,
-		url: "https://arxiv.org/abs/1907.05600",
-		alternativetitle: "Score-based Generative Models"
-	},
 	"oord2016wavenet": {
 		title: "WaveNet: A Generative Model for Raw Audio",
 		author: "Aaron van den Oord, Sander Dieleman, Heiga Zen, Karen Simonyan, Oriol Vinyals, Alex Graves, Nal Kalchbrenner, Andrew Senior, Koray Kavukcuoglu",
@@ -11880,13 +11715,6 @@ window.bibData = {
 		year: 1992,
 		url: "https://www.researchgate.net/publication/222482730_Stacked_Generalization",
 		alternativetitle: "Stacking"
-	},
-	"shwartz2017opening": {
-		title: "Opening the Black Box of Deep Neural Networks via Information",
-		author: "Ravid Shwartz-Ziv, Naftali Tishby",
-		year: 2017,
-		url: "https://arxiv.org/abs/1703.00810",
-		alternativetitle: "Information Bottleneck in DNNs"
 	},
 
 	"pearl1995book": {
@@ -15205,27 +15033,6 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2309.17453",
 		alternativetitle: "StreamingLLM, attention sinks"
 	},
-	"darcet2024registers": {
-		title: "Vision Transformers Need Registers",
-		author: "Timothée Darcet, Maxime Oquab, Julien Mairal, Piotr Bojanowski",
-		year: 2024,
-		url: "https://arxiv.org/abs/2309.16588",
-		alternativetitle: "register tokens as ViT working memory"
-	},
-	"cancedda2024sinks": {
-		title: "Spectral Filters, Dark Signals, and Attention Sinks",
-		author: "Nicola Cancedda",
-		year: 2024,
-		url: "https://arxiv.org/abs/2402.09221",
-		alternativetitle: "attention sinks as low-frequency dark signals"
-	},
-	"wong2025sinks": {
-		title: "On the Existence and Behavior of Secondary Attention Sinks",
-		author: "Jeffrey T. H. Wong, Cheng Zhang, Louis Mahon, Wayne Luk, Anton Isopoussu, Yiren Zhao",
-		year: 2025,
-		url: "https://arxiv.org/abs/2512.22213",
-		alternativetitle: "MLPs that synthesize sink vectors"
-	},
 	"levy2024numbers": {
 		title: "Language Models Encode Numbers Using Digit Representations in Base 10",
 		author: "Amit Arnold Levy, Mor Geva",
@@ -15848,13 +15655,6 @@ window.bibData = {
 		url: "https://transformer-circuits.pub/2021/framework/",
 		alternativetitle: "Elhage et al., transformer circuits framework (2021)"
 	},
-	"elhage2022superposition": {
-		title: "Toy Models of Superposition",
-		author: "Nelson Elhage, Neel Nanda, Catherine Olsson, Tom H. B., et al.",
-		year: 2022,
-		url: "https://transformer-circuits.pub/2022/toy_model/",
-		alternativetitle: "Elhage et al., toy models of superposition (2022)"
-	},
 	"garg2026features": {
 		title: "How Many Features Can a Language Model Store Under the Linear Representation Hypothesis?",
 		author: "Garg, Kleinberg, Peng",
@@ -16176,13 +15976,6 @@ window.bibData = {
 		year: 2024,
 		url: "https://incidentdatabase.ai/cite/634/",
 		alternativetitle: "AI Incident Database, incident 634"
-	},
-	"deepfake_wiki": {
-		title: "Deepfake",
-		author: "Wikipedia contributors",
-		year: 2026,
-		url: "https://en.wikipedia.org/wiki/Deepfake",
-		alternativetitle: "deepfakes"
 	},
 	"mataavianca_wiki": {
 		title: "Mata v. Avianca, Inc.",
@@ -17257,13 +17050,6 @@ window.bibData = {
 		url: "https://www.bemyeyes.com/",
 		alternativetitle: "Be My Eyes — AI-powered visual assistance for blind and low-vision users"
 	},
-	"characterai_wiki": {
-		title: "Character.ai",
-		author: "Wikipedia contributors",
-		year: 2026,
-		url: "https://en.wikipedia.org/wiki/Character.ai",
-		alternativetitle: "Character.AI (Wikipedia) — the AI companion platform"
-	},
 	"replika_wiki": {
 		title: "Replika",
 		author: "Wikipedia contributors",
@@ -18265,13 +18051,6 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2312.10997",
 		alternativetitle: "RAG survey (2023)"
 	},
-	"liu2023lostmiddle": {
-		title: "Lost in the Middle: How Language Models Use Long Contexts",
-		author: "Nelson Liu et al.",
-		year: 2023,
-		url: "https://arxiv.org/abs/2307.03172",
-		alternativetitle: "Lost in the Middle (2023)"
-	},
 
 	/* Model to system (model_to_system.php) */
 	"react2022": {
@@ -18391,12 +18170,6 @@ window.bibData = {
 		author: "Wikipedia contributors",
 		year: 2026,
 		alternativetitle: "Cuneiform (Wikipedia)"
-	},
-	"schmandtbesserat1992": {
-		title: "From Counting to Cuneiform: The Sumerian and Related Numeration Systems",
-		author: "Denise Schmandt-Besserat",
-		year: 1992,
-		url: "https://utpress.utexas.edu/9780292762496/from-counting-to-cuneiform/"
 	},
 	"code_of_hammurabi_wiki": {
 		url: "https://en.wikipedia.org/wiki/Code_of_Hammurabi",
