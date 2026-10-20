@@ -7499,6 +7499,20 @@ window.bibData = {
 		year: 2021,
 		alternativetitle: "MMLU"
 	},
+	"wang2024mmlupro": {
+		url: "https://arxiv.org/abs/2406.01574",
+		title: "MMLU-Pro: A More Robust and Challenging Multi-Task Language Understanding Benchmark",
+		author: "Yubo Wang et al.",
+		year: 2024,
+		alternativetitle: "MMLU-Pro"
+	},
+	"glazer2024frontiermath": {
+		url: "https://epoch.ai/frontiermath",
+		title: "FrontierMath: A Benchmark for Evaluating Advanced Mathematical Reasoning",
+		author: "Elliot Glazer et al. (Epoch AI)",
+		year: 2024,
+		alternativetitle: "FrontierMath (Epoch AI)"
+	},
 	"cobbe2021gsm8k": {
 		url: "https://arxiv.org/abs/2110.14168",
 		title: "Training Verifiers to Solve Math Word Problems",

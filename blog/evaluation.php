@@ -19,7 +19,7 @@ This chapter covers the major benchmarks, their mathematical formulation, and th
 </div>
 
 <div class="optional md" data-headline="Every benchmark here is a Goodhart target">
-\citetitle{goodhartslaw} (p. 116) states that *every measure which becomes a target becomes a bad measure*. The benchmarks below, MMLU, HumanEval, GSM8K, are exactly such measures. Once a model is trained to maximize them, the benchmark stops measuring what it was supposed to measure. See the <a href="losslab">Loss chapter</a> § Beware of Goodhart's Law for the training-side version of this disease.
+\citetitle{goodhartslaw} is usually compressed into the aphorism *when a measure becomes a target, it ceases to be a good measure* — Marilyn Strathern's 1997 phrasing of Goodhart's original 1975 observation. The benchmarks below, MMLU, HumanEval, GSM8K, are exactly such measures. Once a model is trained to maximize them, the benchmark stops measuring what it was supposed to measure. See the <a href="losslab">Loss chapter</a> § Beware of Goodhart's Law for the training-side version of this disease.
 </div>
 
 <div class="md">
@@ -47,13 +47,13 @@ Each has failure modes:
 
 ### MMLU: Massive Multitask Language Understanding
 
-MMLU (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) comprises 14,144 multiple-choice questions across 57 subjects. Covers STEM, humanities, social sciences, professional law, medicine. The model sees the question and four options (A/B/C/D); we measure:
+MMLU (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) comprises 14,042 multiple-choice questions across 57 subjects. Covers STEM, humanities, social sciences, professional law, medicine. The model sees the question and four options (A/B/C/D); we measure:
 
 $$
 \text{accuracy} = \frac{1}{N}\sum_{i=1}^{N} \mathbb{1}[\arg\max_j P_\theta(y_{i,j} \mid x_i) = y_i^*]
 $$
 
-By 2025, frontier models exceed 88% on (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}); the benchmark is **saturated**. The community has moved to **MMLU-Pro** (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) (more options, harder questions, no shortcut hacks) and **GPQA** (Google, graduate-level questions in biology, chemistry, physics).
+By 2025, frontier models exceed 88% on (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}); the benchmark is **saturated**. The community has moved to **MMLU-Pro** (\cite[Wang et al., 2024]{wang2024mmlupro}) (more options, harder questions, no shortcut hacks) and **GPQA** (Rein et al., NYU/Cohere/Anthropic; graduate-level questions in biology, chemistry, physics).
 </div>
 
 <div class="md">
@@ -71,7 +71,7 @@ ARC (\cite[Clark et al., 2018]{clark2018arc}) is the AI2 Reasoning Challenge: gr
 
 ### GSM8K
 
-GSM8K (\cite[Cobbe et al., 2021]{cobbe2021gsm8k}) provides grade-school math problems (\cite[Hendrycks et al., 2021]{hendrycks2021math}):
+GSM8K (\cite[Cobbe et al., 2021]{cobbe2021gsm8k}) provides grade-school math problems:
 
 $$
 \text{Q: Janet's ducks lay 16 eggs/day. She eats 3, bakes with 4. The rest sell for \$2 each. How much per day?}
@@ -149,7 +149,7 @@ A critical finding: **arena Elo and academic benchmarks correlate only weakly** 
 <div class="md">
 ## Benchmark Contamination: The Crisis
 
-The dirty secret of LLM evaluation: **most public benchmarks have been seen during pretraining**. GPT-4's training included Common Crawl through April 2023; many benchmarks were uploaded to GitHub, posted on Stack Overflow, or discussed on Reddit before then.
+The dirty secret of LLM evaluation: **most public benchmarks have been seen during pretraining**. GPT-4's pretraining data cuts off in September 2021; many benchmarks were uploaded to GitHub, posted on Stack Overflow, or discussed on Reddit before then.
 
 \marginfig{canary_coal_mine.jpg}{A foreman holding a canary in a cage — the miners' carbon-monoxide detector (U.S. Bureau of Mines, 1928). The bird dies well before a human does, turning an invisible poison into an early alarm. **Canary strings** do the same job for benchmarks: you plant a unique token that a model could never emit naturally, and if it ever reappears in output, the test set has leaked into the training data. [Photo: public domain](https://commons.wikimedia.org/wiki/File:Canary_coal_mine.jpg)}
 
@@ -162,13 +162,13 @@ Evidence of contamination:
 
 ### Mitigations
 
-* **Dynamic benchmarks**: questions are generated fresh each test (e.g., LiveBench, MMLU-Pro (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu})).
-* **Held-out private benchmarks**: ARC-AGI (Chollet), FrontierMath (Epoch AI), SEAL (MIT). These cost money and are not public.
+* **Dynamic benchmarks**: questions are generated fresh each test (e.g., LiveBench, MMLU-Pro (\cite[Wang et al., 2024]{wang2024mmlupro})).
+* **Held-out private benchmarks**: ARC-AGI (Chollet), FrontierMath (Epoch AI), SEAL (Scale AI). These cost money and are not public.
 * **Time-shifted benchmarks**: questions created after the model's training cutoff, then benchmarked in real-time.
 * **Adversarial filtering**: maintain a “contaminated” list of items that appear in pretraining corpora (ProxiMix, D-Clean).
 * **Canary strings**: a unique token injected into benchmark items; if it appears in model output, the model has been trained on the benchmark.
 
-**FrontierMATH** problems (\cite[Hendrycks et al., 2021]{hendrycks2021math}) are novel, require expert construction, and are not available online.
+**FrontierMATH** problems (\cite[Glazer et al., 2024]{glazer2024frontiermath}) are novel, require expert construction, and are not available online.
 </div>
 
 <div class="md">
