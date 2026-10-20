@@ -38,7 +38,7 @@ As \citeauthor{historyofmathematicalnotation} notes (Vol. 2, p. 197ff), Leibniz'
 
 The bitter priority dispute between Newton and Leibniz, fueled by nationalistic pride between England and continental Europe, overshadowed the fact that both men made monumental contributions. Today, historians recognize that both arrived at the fundamental ideas independently. We use Leibniz's notation ($\frac{dy}{dx}$, $\int$) almost universally, while Newton's physical intuition shaped the application of calculus to science.
 
-Before both of them, \citeauthor{oevresdeformat} had already explored the idea of finding tangent lines to curves using algebraic methods in the 1630s (see \citetitle{oevresdeformat}), and the concept of infinitesimals was discussed by mathematicians like Bonaventura Cavalieri and John Wallis (\citetitle{wallis1655}, \citeyear{wallis1655}). But it was Newton and Leibniz who unified these scattered ideas into a coherent, general framework.
+Before both of them, \citeauthor{oeuvresdeformat} had already explored the idea of finding tangent lines to curves using algebraic methods in the 1630s (see \citetitle{oeuvresdeformat}), and the concept of infinitesimals was discussed by mathematicians like Bonaventura Cavalieri and John Wallis (\citetitle{wallis1655}, \citeyear{wallis1655}). But it was Newton and Leibniz who unified these scattered ideas into a coherent, general framework.
 </div>
 
 <div class="md">
