@@ -135,6 +135,161 @@ Similar to min-$p$ but with a different criterion: cut off tokens with probabili
 </div>
 
 <div class="md">
+### Try it: the Decoding Studio
+
+Every method above is a different way of answering the same question: *which candidates are still allowed?* Below, a model has produced logits for the next word. Turn the temperature, switch the filters on and off, and sample. The faint bar behind each token is its probability after temperature; the bright bar is what is left after the filters cut the tail and the survivors are renormalized. Then switch to the factual prompt and notice how top-$k$ keeps nonsense while top-$p$ and min-$p$ shrink to a single word on their own.
+</div>
+
+<style>
+#decoding-studio .ds-prompt {
+	display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 8px;
+	font-family: var(--mn-font-prose); font-size: 1.12rem; line-height: 1.5; color: var(--mn-heading);
+}
+#decoding-studio .ds-next {
+	display: inline-block; min-width: 4.5ch; padding: 0 10px; border-radius: 8px;
+	font-weight: 700; color: var(--mn-accent);
+	background: color-mix(in srgb, var(--mn-accent) 14%, transparent);
+	border-bottom: 2px solid var(--mn-accent);
+	transition: background .3s ease;
+}
+#decoding-studio .ds-next.is-empty { color: var(--mn-text-muted); border-bottom-style: dashed; }
+#decoding-studio .ds-historyrow { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; min-height: 24px; align-items: center; }
+#decoding-studio .ds-hist {
+	font-family: var(--mn-font-mono); font-size: .72rem; padding: 1px 8px; border-radius: 999px;
+	border: 1px solid var(--mn-border); color: var(--mn-text-secondary);
+}
+#decoding-studio .ds-rows { position: relative; display: flex; flex-direction: column; gap: 3px; padding-right: 2px; }
+#decoding-studio .ds-row {
+	--h: 22px;
+	display: grid; grid-template-columns: minmax(64px, 11ch) minmax(0, 1fr) 6ch 9ch;
+	align-items: center; gap: 8px; min-height: var(--h);
+	border-radius: 6px; transition: opacity .3s ease, background .3s ease;
+}
+#decoding-studio .ds-tok {
+	font-family: var(--mn-font-mono); font-size: .8rem; font-weight: 600; color: var(--mn-heading);
+	overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right;
+}
+#decoding-studio .ds-track { position: relative; height: 16px; border-radius: 5px; background: color-mix(in srgb, var(--mn-text-muted) 10%, transparent); overflow: hidden; }
+#decoding-studio .ds-ghost, #decoding-studio .ds-bar, #decoding-studio .ds-emp {
+	position: absolute; left: 0; border-radius: 5px; width: 0;
+	transition: width .45s cubic-bezier(.2, .8, .2, 1), opacity .3s ease;
+}
+#decoding-studio .ds-ghost { top: 0; bottom: 0; background: color-mix(in srgb, var(--mn-accent) 22%, transparent); }
+#decoding-studio .ds-bar {
+	top: 2px; bottom: 2px;
+	background: linear-gradient(90deg, var(--mn-accent), var(--mn-sky));
+	box-shadow: 0 0 12px -2px color-mix(in srgb, var(--mn-sky) 60%, transparent);
+}
+#decoding-studio .ds-emp { bottom: 0; height: 3px; background: var(--mn-coral); border-radius: 2px; }
+#decoding-studio .ds-pct { font-size: .74rem; color: var(--mn-text-secondary); text-align: right; }
+#decoding-studio .ds-tag { font-size: .68rem; font-weight: 600; color: var(--mn-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#decoding-studio .ds-tag[data-reason="top-k"] { color: var(--mn-coral); }
+#decoding-studio .ds-tag[data-reason="top-p"] { color: var(--mn-rose); }
+#decoding-studio .ds-tag[data-reason="min-p"] { color: var(--mn-sky); }
+#decoding-studio .ds-row.is-cut { opacity: .45; }
+#decoding-studio .ds-row.is-cut .ds-tok { text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--mn-text-muted) 70%, transparent); }
+#decoding-studio .ds-row.is-pick { background: color-mix(in srgb, var(--mn-coral) 12%, transparent); }
+#decoding-studio .ds-row.is-pick .ds-tok { color: var(--mn-coral); }
+#decoding-studio .ds-row.is-flash { animation: ds-flash .7s ease-out; }
+@keyframes ds-flash { 0% { background: color-mix(in srgb, var(--mn-coral) 45%, transparent); transform: scale(1.015); } 100% { transform: none; } }
+#decoding-studio .ds-row.is-nucleus-end { box-shadow: 0 2px 0 0 var(--mn-rose); border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+#decoding-studio .ds-thr {
+	position: absolute; top: -3px; bottom: -3px; width: 0; margin-left: -1px;
+	border-left: 2px dotted var(--mn-sky); opacity: 0;
+	transition: left .45s cubic-bezier(.2, .8, .2, 1), opacity .3s ease;
+}
+#decoding-studio .ds-controls { display: flex; flex-direction: column; gap: 12px; }
+#decoding-studio .ds-section-label { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mn-text-muted); margin-bottom: 4px; }
+#decoding-studio .ds-drawcount { font-size: .74rem; color: var(--mn-text-muted); min-height: 1.2em; margin-top: 6px; }
+@container mnlab (max-width: 620px) {
+	#decoding-studio .ds-row { grid-template-columns: minmax(56px, 10ch) minmax(0, 1fr) 6ch; }
+	#decoding-studio .ds-tag { display: none; }
+}
+</style>
+
+<div class="mnlab" id="decoding-studio" data-interactive>
+	<div class="mnlab-head">
+		<div>
+			<div class="mnlab-kicker">Interactive lab</div>
+			<div class="mnlab-title">Decoding Studio</div>
+			<p class="mnlab-sub">One set of logits, four knobs. Watch which words survive — then let the dice decide.</p>
+		</div>
+		<div class="mnlab-chips" role="group" aria-label="Prompt">
+			<button type="button" class="mnlab-chip" data-scenario="story" aria-pressed="true">Open story</button>
+			<button type="button" class="mnlab-chip" data-scenario="fact" aria-pressed="false">Factual question</button>
+		</div>
+	</div>
+
+	<div class="mnlab-well" style="margin-bottom: 16px;">
+		<div class="ds-prompt"><span data-ds="prompt"></span> <span class="ds-next is-empty" data-ds="next" aria-live="polite">▁▁▁</span></div>
+		<div class="ds-historyrow"><span class="mnlab-hint">Recent draws:</span><span data-ds="history" style="display:contents"></span></div>
+	</div>
+
+	<div class="ds-controls">
+		<div class="mnlab-row" style="justify-content: space-between;">
+			<div class="mnlab-chips" role="group" aria-label="Presets">
+				<span class="ds-section-label" style="align-self:center; margin: 0 4px 0 0;">Presets</span>
+				<button type="button" class="mnlab-chip" data-preset="greedy" aria-pressed="false">Greedy</button>
+				<button type="button" class="mnlab-chip" data-preset="precise" aria-pressed="false">Precise</button>
+				<button type="button" class="mnlab-chip" data-preset="chat" aria-pressed="false">Chat default</button>
+				<button type="button" class="mnlab-chip" data-preset="creative" aria-pressed="false">Creative</button>
+				<button type="button" class="mnlab-chip" data-preset="chaos" aria-pressed="false">Chaos</button>
+			</div>
+		</div>
+		<div class="mnlab-grid mnlab-grid--2" style="gap: 6px 24px;">
+			<label class="mnlab-ctrl">
+				<span class="mnlab-ctrl-top"><span class="mnlab-label">Temperature T</span><span class="mnlab-val" data-ds="Tv">1.00</span></span>
+				<input type="range" data-ds="T" min="0" max="2" step="0.05" value="1" aria-label="Temperature">
+				<span class="mnlab-hint">0 = greedy · 1 = the model as trained · 2 = very flat</span>
+			</label>
+			<label class="mnlab-ctrl">
+				<span class="mnlab-ctrl-top"><span class="mnlab-label">Top-k</span><span class="mnlab-val" data-ds="kv">off</span></span>
+				<input type="range" data-ds="k" min="1" max="16" step="1" value="16" aria-label="Top-k">
+				<span class="mnlab-hint">keep the k most likely tokens (far right = off)</span>
+			</label>
+			<label class="mnlab-ctrl">
+				<span class="mnlab-ctrl-top"><span class="mnlab-label">Top-p (nucleus)</span><span class="mnlab-val" data-ds="pv">off</span></span>
+				<input type="range" data-ds="p" min="0.05" max="1" step="0.01" value="1" aria-label="Top-p">
+				<span class="mnlab-hint">smallest set whose probability adds up to p</span>
+			</label>
+			<label class="mnlab-ctrl">
+				<span class="mnlab-ctrl-top"><span class="mnlab-label">Min-p</span><span class="mnlab-val" data-ds="mpv">off</span></span>
+				<input type="range" data-ds="mp" min="0" max="0.5" step="0.01" value="0" aria-label="Min-p">
+				<span class="mnlab-hint">drop tokens below s × (best token's probability)</span>
+			</label>
+		</div>
+	</div>
+
+	<div class="mnlab-well" style="margin-top: 14px;">
+		<div class="mnlab-row" style="justify-content: space-between; margin-bottom: 12px;">
+			<div class="ds-section-label" style="margin: 0;">Next-word candidates</div>
+			<div class="mnlab-row">
+				<button type="button" class="mnlab-btn" data-ds="sample">🎲 Sample next word</button>
+				<button type="button" class="mnlab-btn mnlab-btn--ghost" data-ds="sample100" title="Draw 200 times">×200</button>
+				<button type="button" class="mnlab-btn mnlab-btn--ghost" data-ds="reset" aria-label="Reset draws" title="Reset draws">↺</button>
+			</div>
+		</div>
+		<div class="ds-rows" data-ds="rows"></div>
+		<div class="ds-drawcount" data-ds="drawCount"></div>
+		<div class="mnlab-legend" style="margin-top: 8px;">
+			<span><i style="background: color-mix(in srgb, var(--mn-accent) 25%, transparent);"></i>after temperature</span>
+			<span><i style="background: linear-gradient(90deg, var(--mn-accent), var(--mn-sky));"></i>after filters (renormalized)</span>
+			<span><i style="background: var(--mn-coral); height: 3px;"></i>observed draws</span>
+			<span><i style="background: var(--mn-rose); height: 2px;"></i>end of the top-p nucleus</span>
+			<span><i style="border-left: 2px dotted var(--mn-sky); width: 2px; height: 12px; border-radius: 0;"></i>min-p threshold</span>
+		</div>
+	</div>
+
+	<div class="mnlab-grid mnlab-grid--4" style="margin-top: 16px;">
+		<div class="mnlab-stat"><span class="k">Candidates left</span><span class="v" data-ds="statKept">–</span></div>
+		<div class="mnlab-stat"><span class="k">Mass cut away</span><span class="v" data-ds="statCut">–</span></div>
+		<div class="mnlab-stat"><span class="k">Entropy</span><span class="v" data-ds="statH">–</span></div>
+		<div class="mnlab-stat"><span class="k">Effective choices</span><span class="v" data-ds="statEff">–</span></div>
+	</div>
+	<div class="mnlab-note" data-ds="note" aria-live="polite"></div>
+</div>
+
+<div class="md">
 ## Anti-Repetition and Diversity
 </div>
 
@@ -261,86 +416,3 @@ Not yet standardized but promising.
 
 A common mistake: using temperature 1.0 with top-$p$ 0.9 AND min-$p$ 0.05. These compound; the effective sampling becomes very restricted. **Pick one filter method** unless you know what you're doing.
 </div>
-
-<script>
-// Visualization: top-k vs top-p vs min-p on a sample distribution
-async function loadSamplingLabModule() {
-	updateLoadingStatus("Loading section about Temperature & Sampling...");
-
-	const container = document.getElementById('sampling-viz');
-	if (!container) return;
-	container.innerHTML = `
-		<div style="background: var(--mn-surface); padding: 20px; border-radius: 12px; border: 1px solid var(--mn-border); margin-bottom: 20px;">
-			<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-				<label><b>Temperature</b> <span id="sl-temp">1.0</span><br><input type="range" id="sl-temp-in" min="0.1" max="2.0" step="0.1" value="1.0"></label>
-				<label><b>Top-p</b> <span id="sl-topp">0.9</span><br><input type="range" id="sl-topp-in" min="0.1" max="1.0" step="0.05" value="0.9"></label>
-				<label><b>Min-p</b> <span id="sl-minp">0.0</span><br><input type="range" id="sl-minp-in" min="0.0" max="0.5" step="0.05" value="0.0"></label>
-			</div>
-			<div id="sl-plot" style="height: 350px;"></div>
-		</div>
-	`;
-
-	const tokens = ['the', 'a', 'one', 'his', 'my', 'her', 'their', 'our', 'some', 'any', 'no', 'every', 'each', 'this', 'that'];
-	const logitsRaw = [3.2, 2.1, 1.5, 0.8, 0.6, 0.5, 0.4, 0.3, 0.2, 0.15, 0.1, 0.05, 0.0, -0.1, -0.2];
-
-	function render() {
-		const T = parseFloat(document.getElementById('sl-temp-in').value);
-		const p = parseFloat(document.getElementById('sl-topp-in').value);
-		const mp = parseFloat(document.getElementById('sl-minp-in').value);
-
-		document.getElementById('sl-temp').textContent = T.toFixed(1);
-		document.getElementById('sl-topp').textContent = p.toFixed(2);
-		document.getElementById('sl-minp').textContent = mp.toFixed(2);
-
-		// Apply temperature
-		const probs = logitsRaw.map(z => Math.exp(z / T));
-		const Z = probs.reduce((a, b) => a + b, 0);
-		const norm = probs.map(p => p / Z);
-
-		// Sort by probability
-		const sorted = tokens.map((t, i) => ({ token: t, p: norm[i] }))
-			.sort((a, b) => b.p - a.p);
-		const cumsum = [];
-		sorted.reduce((s, x, i) => cumsum[i] = s + x.p, 0);
-
-		const maxP = sorted[0].p;
-
-		// Apply filters
-		const filtered = sorted.map((x, i) => {
-			const inTopP = cumsum[i] <= p;
-			const inMinP = x.p >= mp * maxP;
-			return { ...x, inTopP, inMinP, sampled: inTopP && inMinP };
-		});
-
-		const colors = filtered.map(x => {
-			if (!x.inMinP) return '#94a3b8';  // excluded by min-p
-			if (!x.inTopP) return '#94a3b8';
-			return '#22c55e';
-		});
-
-		Plotly.newPlot('sl-plot', [{
-			x: filtered.map(x => x.token), y: filtered.map(x => x.p * 100),
-			type: 'bar', marker: { color: colors },
-			text: filtered.map(x => (x.p * 100).toFixed(1) + '%'), textposition: 'outside'
-		}], {
-			title: { text: 'Decoding filter (green = sampled, gray = excluded)', font: { size: 13 } },
-			xaxis: { title: 'next-token candidates' },
-			yaxis: { title: 'probability (%)' },
-			margin: { t: 50, b: 70, l: 60, r: 20 },
-			paper_bgcolor: 'rgba(0,0,0,0)',
-			plot_bgcolor: 'rgba(0,0,0,0)'
-		}, { responsive: true });
-	}
-
-	['sl-temp-in', 'sl-topp-in', 'sl-minp-in'].forEach(id => {
-		document.getElementById(id).addEventListener('input', render);
-	});
-
-	render();
-}
-
-async function loadTemperatureModule() {
-	// Compatibility alias for existing index
-	return loadSamplingLabModule();
-}
-</script>

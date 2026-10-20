@@ -31,18 +31,91 @@ $$\text{MSE} = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2$$
 In the plot below, the loss creates a “bowl” shape. To train the AI, we calculate the **slope** (the derivative). If the slope is negative, the AI needs to increase its guess. If the slope is positive, it needs to decrease it.
 </div>
 
-<div style="display: flex; gap: 20px; align-items: center; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;">
-	<div style="flex: 1;">
-		<label><b>Target Number ($y$):</b> <small>(The Truth)</small></label>
-		<input type="range" id="mse-true" min="0" max="10" step="1" value="7" style="width:100%">
-		<br><br>
-		<label><b>AI Guess ($\hat{y}$):</b> <small>(The Prediction)</small></label>
-		<input type="range" id="mse-pred" min="0" max="10" step="0.1" value="2" style="width:100%">
-	</div>
-	<div id="mse-math" style="flex: 1; font-size: 1.1em; border-left: 3px solid #3b82f6; padding-left: 20px;"></div>
-</div>
+<style>
+#mse-lab, #ce-lab { --lab-accent: var(--mn-accent); --lab-accent-2: var(--mn-rose); }
+#ce-lab { --lab-accent: var(--mn-coral); --lab-accent-2: var(--mn-rose); }
+.ll-plot { width: 100%; height: 320px; }
+#mse-lab .mnlab-stat[data-tone="bad"] .v, #ce-lab .mnlab-stat[data-tone="bad"] .v { color: var(--mn-rose); }
+#ce-lab .mnlab-stat[data-tone="good"] .v { color: var(--mn-emerald); }
+#ce-lab .ce-table { display: grid; gap: 8px; }
+#ce-lab .ce-head, #ce-lab .ce-row {
+	display: grid; grid-template-columns: 6.5ch minmax(0, 1.3fr) 2ch minmax(0, 1fr) 5.5ch;
+	align-items: center; gap: 10px;
+}
+#ce-lab .ce-head { font-size: .66rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--mn-text-muted); }
+#ce-lab .ce-row { padding: 6px 8px; border-radius: 10px; border: 1px solid transparent; transition: background .3s ease, border-color .3s ease; }
+#ce-lab .ce-row.is-target { border-color: color-mix(in srgb, var(--mn-emerald) 45%, transparent); background: color-mix(in srgb, var(--mn-emerald) 8%, transparent); }
+#ce-lab .ce-name { font-weight: 700; color: var(--mn-heading); white-space: nowrap; }
+#ce-lab .ce-track { position: relative; height: 18px; border-radius: 6px; background: color-mix(in srgb, var(--mn-text-muted) 12%, transparent); overflow: hidden; }
+#ce-lab .ce-p {
+	position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 6px;
+	background: linear-gradient(90deg, var(--mn-coral), var(--mn-rose));
+	transition: width .35s cubic-bezier(.2, .8, .2, 1);
+}
+#ce-lab .ce-row.is-target .ce-p { background: linear-gradient(90deg, var(--mn-emerald), var(--mn-sky)); }
+#ce-lab .ce-pv { position: absolute; right: 6px; top: 0; line-height: 18px; font-family: var(--mn-font-mono); font-size: .72rem; font-weight: 700; color: var(--mn-heading); }
+#ce-lab .ce-y { font-family: var(--mn-font-mono); font-weight: 700; text-align: center; color: var(--mn-text-secondary); }
+#ce-lab .ce-row.is-target .ce-y { color: var(--mn-emerald); }
+#ce-lab .ce-gtrack { position: relative; height: 18px; border-radius: 6px; background: color-mix(in srgb, var(--mn-text-muted) 8%, transparent); }
+#ce-lab .ce-gtrack::before { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; border-left: 1px solid var(--mn-text-muted); opacity: .6; }
+#ce-lab .ce-g { position: absolute; top: 3px; bottom: 3px; width: 0; left: 50%; border-radius: 4px; background: var(--mn-rose); transition: width .35s ease, left .35s ease; }
+#ce-lab .ce-g.is-neg { background: var(--mn-emerald); }
+#ce-lab .ce-gv { font-family: var(--mn-font-mono); font-size: .72rem; font-weight: 600; color: var(--mn-text-secondary); text-align: right; }
+#ce-lab .ce-logits { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 18px; }
+@container mnlab (max-width: 620px) {
+	.ll-plot { height: 260px; }
+	#ce-lab .ce-logits { grid-template-columns: minmax(0, 1fr); }
+	#ce-lab .ce-head, #ce-lab .ce-row { grid-template-columns: 6ch minmax(0, 1fr) 2ch minmax(0, .8fr) 5ch; gap: 6px; }
+}
+</style>
 
-<div id="plot-mse" data-plot-theme="self" style="height: 350px;"></div>
+<div class="mnlab" id="mse-lab" data-interactive>
+	<div class="mnlab-head">
+		<div>
+			<div class="mnlab-kicker">Interactive lab</div>
+			<div class="mnlab-title">The Loss Bowl</div>
+			<p class="mnlab-sub">Set the truth, move the guess, and let the slope of the loss pull the prediction home. Compare squared and absolute error.</p>
+		</div>
+		<div class="mnlab-chips" role="group" aria-label="Loss function">
+			<button type="button" class="mnlab-chip" data-mode="mse" aria-pressed="true">Squared (y − ŷ)²</button>
+			<button type="button" class="mnlab-chip" data-mode="mae" aria-pressed="false">Absolute |y − ŷ|</button>
+		</div>
+	</div>
+	<div class="mnlab-well" style="padding: 6px 4px 2px;">
+		<div class="ll-plot" data-ml="plot" data-plot-theme="self"></div>
+	</div>
+	<div class="mnlab-legend" style="margin: 8px 2px 0;">
+		<span><i style="background: var(--mn-accent);"></i>loss of the chosen function</span>
+		<span><i style="background: repeating-linear-gradient(90deg, var(--mn-text-muted) 0 3px, transparent 3px 6px);"></i>the other loss, for comparison</span>
+		<span><i style="background: repeating-linear-gradient(90deg, var(--mn-emerald) 0 5px, transparent 5px 8px);"></i>slope at the guess</span>
+	</div>
+	<div class="mnlab-grid mnlab-grid--3" style="margin-top: 14px; gap: 6px 22px;">
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">Truth</span><span class="mnlab-val" data-ml="yv">y</span></span>
+			<input type="range" data-ml="y" min="0" max="10" step="0.5" value="7" aria-label="Target value y">
+		</label>
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">AI guess</span><span class="mnlab-val" data-ml="yhv">ŷ</span></span>
+			<input type="range" data-ml="yh" min="0" max="10" step="0.01" value="2" aria-label="Prediction y hat">
+		</label>
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">Learning rate</span><span class="mnlab-val" data-ml="lrv">η</span></span>
+			<input type="range" data-ml="lr" min="0.02" max="0.9" step="0.01" value="0.15" aria-label="Learning rate">
+		</label>
+	</div>
+	<div class="mnlab-row" style="margin-top: 10px;">
+		<button type="button" class="mnlab-btn" data-ml="step">One gradient step</button>
+		<button type="button" class="mnlab-btn mnlab-btn--ghost" data-ml="run">▶ Train</button>
+		<button type="button" class="mnlab-btn mnlab-btn--ghost" data-ml="reset">↺ Reset</button>
+	</div>
+	<div class="mnlab-grid mnlab-grid--4" style="margin-top: 14px;">
+		<div class="mnlab-stat"><span class="k">Error y − ŷ</span><span class="v" data-ml="err">–</span></div>
+		<div class="mnlab-stat"><span class="k">Loss</span><span class="v" data-ml="loss">–</span></div>
+		<div class="mnlab-stat"><span class="k">Slope ∂L/∂ŷ</span><span class="v" data-ml="grad">–</span></div>
+		<div class="mnlab-stat"><span class="k">Next guess</span><span class="v" data-ml="next">–</span></div>
+	</div>
+	<div class="mnlab-note" data-ml="note" aria-live="polite"></div>
+</div>
 
 <div class="md" data-mathlevel="48" data-optionaltitle="Classification: Cross-Entropy">
 ## Classification: Cross-Entropy
@@ -56,37 +129,70 @@ When an AI has to choose between categories (like “Cat” vs “Dog”), it do
 The math uses a *logarithm* ($-\ln(P)$), which creates a steep “wall” as confidence approaches zero. This forces the AI to be very “uncomfortable” when it is wrong.
 </div>
 
-<div style="display: flex; flex-direction: column; gap: 15px; background: #fff7ed; padding: 20px; border-radius: 12px; border: 1px solid #ffedd5;">
-	<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 15px;">
-		<p>Target Class: <span style="color: #f59e0b; font-weight: bold;">CAT</span></p>
-		<div style="display: grid; grid-template-columns: 70px 1fr 70px; gap: 15px; align-items: center; flex: 1 1 260px;">
-			<b style="font-size:0.8em">Class</b> <b style="font-size:0.8em">Confidence</b> <b style="font-size:0.8em">Loss</b>
-
-			<span>Cat (Target)</span>
-			<input type="range" id="cce-target" min="0.01" max="0.99" step="0.01" value="0.3">
-			<span id="loss-target" style="font-family: monospace; font-weight: bold; color: #10b981;">-</span>
-
-			<span>Dog</span>
-			<div id="bar-dog" style="height: 15px; background: #94a3b8; border-radius: 4px; transition: width 0.2s;"></div>
-			<span id="loss-dog" style="font-family: monospace; color: #ef4444;">-</span>
-
-			<span>Bird</span>
-			<div id="bar-bird" style="height: 15px; background: #94a3b8; border-radius: 4px; transition: width 0.2s;"></div>
-			<span id="loss-bird" style="font-family: monospace; color: #ef4444;">-</span>
+<div class="mnlab" id="ce-lab" data-interactive>
+	<div class="mnlab-head">
+		<div>
+			<div class="mnlab-kicker">Interactive lab</div>
+			<div class="mnlab-title">Cross-Entropy Playground</div>
+			<p class="mnlab-sub">The network outputs three raw scores (logits). Softmax turns them into probabilities, and the loss only asks one question: how much probability went to the right answer?</p>
 		</div>
-
-		<div style="background: #1e293b; color: #38bdf8; padding: 15px; border-radius: 8px; font-family: monospace; min-width: 180px; font-size: 0.8em;">
-			<div style="color: #94a3b8; margin-bottom: 5px; font-size: 0.8em;">Output Vector $\hat{y}$</div>
-			[ <span id="vec-dog">0.00</span>, <span id="vec-cat" style="color: #fbbf24; font-weight: bold;">0.00</span>, <span id="vec-bird">0.00</span> ]
-			<div style="margin-top: 10px; color: #94a3b8; font-size: 0.8em;">Target Vector $y$</div>
-			[ 0.00, <span style="color: #10b981;">1.00</span>, 0.00 ]
+		<div class="mnlab-chips" role="group" aria-label="Correct class">
+			<button type="button" class="mnlab-chip" data-target="0" aria-pressed="true">🐱 truth: cat</button>
+			<button type="button" class="mnlab-chip" data-target="1" aria-pressed="false">🐶 dog</button>
+			<button type="button" class="mnlab-chip" data-target="2" aria-pressed="false">🐦 bird</button>
 		</div>
 	</div>
-        
-	<div id="cce-math" style="margin-top: 10px; font-size: 1.1em; border-top: 1px solid #ffedd5; padding-top:10px;"></div>
-</div>
 
-<div id="plot-cce" data-plot-theme="self" style="height: 380px;"></div>
+	<div class="ce-logits">
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">🐱 logit z<sub>cat</sub></span><span class="mnlab-val" data-ce="zv0">0</span></span>
+			<input type="range" data-ce="z0" min="-5" max="5" step="0.05" value="-0.5" aria-label="Logit cat">
+		</label>
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">🐶 logit z<sub>dog</sub></span><span class="mnlab-val" data-ce="zv1">0</span></span>
+			<input type="range" data-ce="z1" min="-5" max="5" step="0.05" value="1.6" aria-label="Logit dog">
+		</label>
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">🐦 logit z<sub>bird</sub></span><span class="mnlab-val" data-ce="zv2">0</span></span>
+			<input type="range" data-ce="z2" min="-5" max="5" step="0.05" value="0.4" aria-label="Logit bird">
+		</label>
+	</div>
+
+	<div class="mnlab-grid mnlab-grid--2" style="margin-top: 14px; align-items: stretch;">
+		<div class="mnlab-well">
+			<div class="ce-table">
+				<div class="ce-head"><span>class</span><span>softmax ŷ</span><span>y</span><span style="grid-column: span 2;">gradient ŷ − y</span></div>
+				<div class="ce-row" data-ce="row0"><span class="ce-name">🐱 cat</span><span class="ce-track"><span class="ce-p"></span><span class="ce-pv"></span></span><span class="ce-y"></span><span class="ce-gtrack"><span class="ce-g"></span></span><span class="ce-gv"></span></div>
+				<div class="ce-row" data-ce="row1"><span class="ce-name">🐶 dog</span><span class="ce-track"><span class="ce-p"></span><span class="ce-pv"></span></span><span class="ce-y"></span><span class="ce-gtrack"><span class="ce-g"></span></span><span class="ce-gv"></span></div>
+				<div class="ce-row" data-ce="row2"><span class="ce-name">🐦 bird</span><span class="ce-track"><span class="ce-p"></span><span class="ce-pv"></span></span><span class="ce-y"></span><span class="ce-gtrack"><span class="ce-g"></span></span><span class="ce-gv"></span></div>
+			</div>
+			<p class="mnlab-hint" style="margin: 12px 0 0;">Green gradient = this logit will be raised by training, red = lowered. Training subtracts η · (ŷ − y) from every logit.</p>
+		</div>
+		<div class="mnlab-well" style="padding: 6px 4px 2px;">
+			<div class="ll-plot" data-ce="plot" data-plot-theme="self" style="height: 250px;"></div>
+		</div>
+	</div>
+
+	<div class="mnlab-row" style="margin-top: 12px; justify-content: space-between;">
+		<div class="mnlab-row">
+			<button type="button" class="mnlab-btn" data-ce="step">One training step</button>
+			<button type="button" class="mnlab-btn mnlab-btn--ghost" data-ce="run">▶ Train</button>
+			<button type="button" class="mnlab-btn mnlab-btn--ghost" data-ce="reset">↺ Reset</button>
+		</div>
+		<label class="mnlab-ctrl" style="min-width: 180px; flex: 0 1 240px;">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">Learning rate</span><span class="mnlab-val" data-ce="lrv">η</span></span>
+			<input type="range" data-ce="lr" min="0.1" max="3" step="0.1" value="1" aria-label="Learning rate">
+		</label>
+	</div>
+
+	<div class="mnlab-grid mnlab-grid--4" style="margin-top: 12px;">
+		<div class="mnlab-stat"><span class="k">Prediction</span><span class="v" data-ce="pred">–</span></div>
+		<div class="mnlab-stat"><span class="k">p(correct)</span><span class="v" data-ce="pt">–</span></div>
+		<div class="mnlab-stat"><span class="k">Loss −ln p</span><span class="v" data-ce="loss">–</span></div>
+		<div class="mnlab-stat"><span class="k">Surprise</span><span class="v" data-ce="bits">–</span></div>
+	</div>
+	<div class="mnlab-note" data-ce="note" aria-live="polite"></div>
+</div>
 
 <div class="md">
 ## Beware of Goodhart's Law
