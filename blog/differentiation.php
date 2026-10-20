@@ -195,7 +195,7 @@ The derivative $f'(a)$ gives the **slope of the tangent line** to the graph of $
 
 $$y = f(a) + f'(a)(x - a)$$
 
-This is the best **linear approximation** of $f$ near $x = a$. In fact, this idea generalizes: the Taylor series (which we saw earlier for $\sin$ and $e$) is built by adding higher-order derivatives to get better and better polynomial approximations.
+This is the best **linear approximation** of $f$ near $x = a$. In fact, this idea generalizes: the Taylor series is built by adding higher-order derivatives to get better and better polynomial approximations.
 
 You can explore the tangent line interactively below. Move the point along the curve and see how the tangent line changes:
 </div>
@@ -263,7 +263,7 @@ Derivatives are not just an abstract mathematical concept, they are the **engine
 
 3. **Optimization Landscape**: The derivative tells us about the “shape” of the loss function, where it slopes up, where it slopes down, and where it is flat (critical points). Understanding this landscape is key to training models effectively.
 
-4. **The Sigmoid Derivative**: As we derived above, the sigmoid function $\sigma(z) = \frac{1}{1+e^{-z}}$ has the elegant derivative $\sigma'(z) = \sigma(z)(1-\sigma(z))$. This means once you compute the forward pass, the backward pass is nearly free, you already have all the values you need.
+4. **The Sigmoid Derivative**: As the table above shows, the sigmoid function $\sigma(z) = \frac{1}{1+e^{-z}}$ has the elegant derivative $\sigma'(z) = \sigma(z)(1-\sigma(z))$. This means once you compute the forward pass, the backward pass is nearly free, you already have all the values you need.
 
 In summary, without derivatives, there would be no way to train neural networks, and modern AI as we know it would not exist.
 
