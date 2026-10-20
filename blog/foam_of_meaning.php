@@ -1287,7 +1287,7 @@ This chapter develops a geometric and topological view of meaningful language. T
 **Algebraic topology.** The background definitions of topological spaces, homotopy, homology, and fiber bundles used throughout the chapter are standard.
 
 - \citeauthor{hatcher}, \citealternativetitle{hatcher} (\citeyear{hatcher}) — the standard reference for algebraic topology.
-- \citeauthor{cohensteiner2007}, \citealternativetitle{cohensteiner2007} (\citeyear{cohensteiner2007}) — for the category-theoretic and homotopical viewpoint.
+- \citeauthor{cohensteiner2007}, \citealternativetitle{cohensteiner2007} (\citeyear{cohensteiner2007}) — the stability theorem for persistence diagrams.
 - \citeauthor{fiber_bundle_wiki}, \citealternativetitle{fiber_bundle_wiki} — a concise entry-level account of fiber bundles.
 
 **The cosmic web as a model landscape.** The picture of a space organized into clusters, filaments, and voids is borrowed directly from the observed large-scale structure of the universe.
@@ -1296,7 +1296,7 @@ This chapter develops a geometric and topological view of meaningful language. T
 
 **Scale-free structure and heavy tails in language.** The empirical facts about Zipf's law and heavy-tailed distributions in language are well documented.
 
-- \citeauthor{zipf1949human}, \citealternativetitle{zipf1949human} (\citeyear{zipf1949human}) — the original statement of Zipf's law.
+- \citeauthor{zipf1949human}, \citealternativetitle{zipf1949human} (\citeyear{zipf1949human}) — the book that popularised Zipf's law (the rank–frequency regularity had been noted earlier, by Estoup in 1916 and Condon in 1928).
 - \citeauthor{statisticsofextremes}, \citealternativetitle{statisticsofextremes} — on the statistics of heavy-tailed phenomena.
 
 **Generalization and psychological space.** The claim that generalization falls off with distance in a representational space is the classic "universal law of generalization."
