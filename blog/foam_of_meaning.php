@@ -5,7 +5,7 @@ title: The foam of meaning
 description: A geometric and topological theory of meaningful language spaces — the possibility space X, its image under interpretation π: X → S, and the landscapes of clusters, filaments, and voids — the shape of a sparse, structured distribution.
 icon: &#127756;
 part: 1
-order: 11
+order: 13
 color: accent
 topics: geometry, math-i, math-ii, math-iii, statistics-ii
 tags: math-heavy, logic-heavy
