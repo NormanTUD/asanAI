@@ -287,7 +287,8 @@ the cite family):
   correct, and the URL returns 200. Prefer stable authoritative URLs
   (publisher, author page, Wikipedia, arXiv, PMC, SEP, Wayback Machine).
 - **Keep keys unique** — JS object semantics make a duplicate silently
-  last-wins (no validator catches it today).
+  last-wins; `tests/literature_dup_keys.py` fails the build if any top-level
+  key appears more than once.
 - Quotes must be genuine and verifiable. Paraphrase when you cannot verify
   exact wording.
 - Citation ids are stable (`cite-<key>` on the first occurrence per `.md`
@@ -523,8 +524,8 @@ and tour stop. A hardcoded marker in `atlas.js` breaks all of that:
   (`person-alan-turing`, `place-bletchley-park`); `conf` ∈ stated/known/inferred.
 - The only remaining hand-tuned constant is the **thread floor** (`>= 100`).
   The bibliography entry count is now **derived from `literature.js`** at check
-  time (unique top-level keys — `literature.js` carries a handful of duplicate
-  keys that JS last-wins resolves, so the check counts *unique* keys to match
+  time (unique top-level keys — duplicates are caught by
+  `tests/literature_dup_keys.py`, so the check counts *unique* keys to match
   `atlas_parse_bib.py`), and provenance is **glob-based** per raw file family
   (`out_part*.json`, `placed_*.json`, `authors_chunk_*.json`, …) so a new
   `out_part15.json` / `placed_12.json` is audited automatically. No re-bumping.
@@ -633,6 +634,7 @@ dependency in a header won't resolve for a few days).
 | `uv run blog/tests/js_validator.py blog/` | bracket/brace balance, unclosed strings/comments, `debugger`/`alert`/`eval`, duplicate function names, DOM-API typos, TODO comments, BOM/line-endings | **critical issues only** (warnings don't block) | `blog/**` |
 | `uv run blog/tests/lesson_guard.py blog/` | per-lesson static regression guards (currently `math_iv.php`: headings-in-md, citation keys, 3D wiring) — extend the `LESSONS` list per lesson | any guard | `blog/**` |
 | `uv run blog/tests/link_checker.py blog/` | every `url:` in `literature.js` returns 2xx; PDFs must start `%PDF`; TLS/bot-block soft-passes never fail | real failures | `blog/**` + weekly cron |
+| `uv run blog/tests/literature_dup_keys.py blog/` | every top-level key in `literature.js` appears exactly once (JS object last-wins would silently hide a duplicate) | **any duplicate** | `blog/**` |
 | `node blog/tests/{topics,math_alt,keypoint,search_js}_test.js` | DOM-stubbed unit tests of BlogTopics (interests, math dial, learned), math-alts, keypoints, search | any failed check | `blog/**` |
 | `uv run blog/tests/php_render_validator.py blog/` | headless-Chrome render (PHP built-in server): console error → exit 1; unrendered `$$` (with `_`/`\`) outside a `<div>` → exit 2; width overflow → exit 3 (only with `--check-width`); `--all-lessons --check-width --width-only` sweeps every lesson + the width gate via `window.__layoutGuardrailCheck()` | per exit codes | index.php only (width job currently disabled in CI) |
 | `uv run blog/tests/typo_checker.py blog/` | spell-checks lesson prose; whitelist `blog/tests/typo_whitelist.txt` (one word/line, case-insensitive, append to add) | typos | **local only** |

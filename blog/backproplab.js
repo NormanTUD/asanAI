@@ -29,15 +29,21 @@ function sigmoidPlot(containerId) {
     { x: zs, y: ds, mode: "lines", name: "σ'(z)",
       line: { color: "#e74c3c", width: 2, dash: "dot" }, hoverinfo: "none" }
   ];
+  const fgStrong = themeColor('#1e293b');
+  const fgMuted = themeColor('#64748b');
+  const grid = themeColor('#E5E5E5');
+  const bg = themeColor('#fff');
+  const legendBg = isDarkMode() ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.85)';
   const layout = {
-    title: { text: "Sigmoid and its derivative", font: { size: 17 } },
-    xaxis: { title: "z", range: [zMin, zMax], gridcolor: "#E5E5E5", zeroline: true },
-    yaxis: { title: "value", range: [-0.15, 1.15], gridcolor: "#E5E5E5", zeroline: true },
-    plot_bgcolor: "white", paper_bgcolor: "white", hovermode: false,
+    title: { text: "Sigmoid and its derivative", font: { size: 17, color: fgStrong } },
+    xaxis: { title: { text: "z", font: { color: fgMuted } }, range: [zMin, zMax], gridcolor: grid, zeroline: true, tickfont: { color: fgMuted } },
+    yaxis: { title: { text: "value", font: { color: fgMuted } }, range: [-0.15, 1.15], gridcolor: grid, zeroline: true, tickfont: { color: fgMuted } },
+    plot_bgcolor: bg, paper_bgcolor: bg, hovermode: false,
     showlegend: true,
-    legend: { x: 0.01, y: 0.99, bgcolor: "rgba(255,255,255,0.85)", bordercolor: "#ccc", borderwidth: 1 },
+    legend: { x: 0.01, y: 0.99, bgcolor: legendBg, bordercolor: themeColor('#ccc'), borderwidth: 1 },
     margin: { t: 50, b: 60, l: 55, r: 20 }
   };
+  container.setAttribute('data-plot-theme', 'self');
   Plotly.newPlot(container, traces, layout,
     { displayModeBar: false, responsive: true, staticPlot: true }
   ).then(() => attachTangentOverlay(container, sig, dsig, zMin, zMax));
@@ -1315,4 +1321,24 @@ function renderBackpropVisual(rootId) {
 async function loadBackproplabModule() {
   sigmoidPlot("sigmoid-plot");
   renderBackpropVisual("bp-visual");
+  if (window.__MN_DARK && typeof window.__MN_DARK.onChange === 'function') {
+    window.__MN_DARK.onChange(() => {
+      const c = document.getElementById("sigmoid-plot");
+      if (c && typeof Plotly !== 'undefined' && Plotly.relayout) {
+        Plotly.relayout(c, {
+          paper_bgcolor: themeColor('#fff'),
+          plot_bgcolor: themeColor('#fff'),
+          'xaxis.gridcolor': themeColor('#E5E5E5'),
+          'yaxis.gridcolor': themeColor('#E5E5E5'),
+          'xaxis.tickfont.color': themeColor('#64748b'),
+          'yaxis.tickfont.color': themeColor('#64748b'),
+          'xaxis.title.font.color': themeColor('#64748b'),
+          'yaxis.title.font.color': themeColor('#64748b'),
+          'title.font.color': themeColor('#1e293b'),
+          'legend.bgcolor': isDarkMode() ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.85)',
+          'legend.bordercolor': themeColor('#ccc')
+        });
+      }
+    });
+  }
 }
