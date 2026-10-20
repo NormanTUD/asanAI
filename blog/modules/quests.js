@@ -24,7 +24,7 @@
 
 	const LEVELS = [
 		{ xp: 0, name: "Pebble Counter", icon: "🪨" },
-		{ xp: 60, name: "Tally Carver", icon: "🦴" },
+		{ xp: 60, name: "Tally Carver", icon: "🪵" },
 		{ xp: 160, name: "Abacus Apprentice", icon: "🧮" },
 		{ xp: 320, name: "Logarithm Lover", icon: "📜" },
 		{ xp: 540, name: "Difference Engineer", icon: "⚙️" },
@@ -62,7 +62,7 @@
 		"fog-walker": { cat: "demos", icon: "🌫️", name: "Fog Walker", desc: "Find the global minimum in Foggy Mountain (3 stars).", counter: "fog3", goal: 1 },
 		"fog-master": { cat: "demos", icon: "🏔️", name: "Mountain Guide", desc: "Earn 3 stars in Foggy Mountain five times.", counter: "fog3", goal: 5 },
 		"quiz-first": { cat: "quiz", icon: "✅", name: "Checked Yourself", desc: "Answer a quiz question correctly.", counter: "quizCorrect", goal: 1 },
-		"quiz-10": { cat: "quiz", icon: "🧠", name: "Quiz Whiz", desc: "Answer 10 quiz questions correctly.", counter: "quizCorrect", goal: 10 },
+		"quiz-10": { cat: "quiz", icon: "💡", name: "Quiz Whiz", desc: "Answer 10 quiz questions correctly.", counter: "quizCorrect", goal: 10 },
 		"quiz-25": { cat: "quiz", icon: "🏛️", name: "Quiz Master", desc: "Answer 25 quiz questions correctly.", counter: "quizCorrect", goal: 25 },
 		"perfect-round": { cat: "quiz", icon: "💎", name: "Flawless", desc: "Finish a whole quiz with every answer right." },
 		"mastered-1": { cat: "mastery", icon: "🏆", name: "Lesson Mastered", desc: "Complete every quest of one lesson.", counter: "mastered", goal: 1 },

@@ -1397,6 +1397,12 @@ function initGlossary() {
 					if (parent.closest('.course-tile') || parent.closest('#toc')) {
 						return NodeFilter.FILTER_REJECT;
 					}
+					// Skip the reading-flow devices (hook / aha / thread /
+					// detour): they are deliberate asides, and tooltips there
+					// clutter the pull-text instead of helping.
+					if (parent.closest('.mn-hook, .mn-aha, .mn-thread, .mn-psst')) {
+						return NodeFilter.FILTER_REJECT;
+					}
 					// Skip if inside math element or already has glossary-term
 					if (parent.closest('math') || parent.closest('.glossary-term')) return NodeFilter.FILTER_REJECT;
 					// Only process if text contains potential matches

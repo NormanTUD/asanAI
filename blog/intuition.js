@@ -2151,29 +2151,29 @@ function runAttention() { AttentionDemo.render(); }
 const FFNViz = {
     scenarios: {
         apple_fruit: {
-            desc: "Because the context is <b>eating</b>, the FFN detects the <b>Food</b> and <b>Nature</b> patterns. It zeroes out the Tech pattern (ReLU), then adds fruit-related vocabulary concepts back into the residual stream.",
+            desc: "The context is <b>eating</b>, so the keys for <b>food</b> and <b>tree/orchard</b> match; the tech key stays silent. Each matching key writes a value that raises the odds of tokens like “pie”, “juice”, “crunchy”.",
             detectors: [
-                { id: 'd1', label: 'Tech Company?', active: false, fireClass: 'idle' },
-                { id: 'd2', label: 'Edible Fruit?', active: true,  fireClass: 'fire' },
-                { id: 'd3', label: 'Nature/Tree?',   active: true,  fireClass: 'fire' }
+                { id: 'd1', label: 'Key: tech company?', active: false, fireClass: 'idle' },
+                { id: 'd2', label: 'Key: edible fruit?', active: true,  fireClass: 'fire' },
+                { id: 'd3', label: 'Key: tree / orchard?', active: true,  fireClass: 'fire' }
             ],
             facts: [
-                { id: 'f1', label: 'Add: “Juice”, “Pie”',        active: true,  fireClass: 'fire',      from: ['d2'] },
-                { id: 'f2', label: 'Add: “Mac”, “Phone”',        active: false, fireClass: 'idle',      from: [] },
-                { id: 'f3', label: 'Add: “Orchard”, “Green”',    active: true,  fireClass: 'fire',      from: ['d3'] }
+                { id: 'f1', label: '→ pie · juice · sugar',      active: true,  fireClass: 'fire',      from: ['d2'] },
+                { id: 'f2', label: '→ Mac · iPhone · Cupertino', active: false, fireClass: 'idle',      from: [] },
+                { id: 'f3', label: '→ orchard · green · tree',   active: true,  fireClass: 'fire',      from: ['d3'] }
             ]
         },
         apple_tech: {
-            desc: "Because the context is <b>buying</b>, the FFN detects the <b>Tech Company</b> pattern. The fruit patterns remain dormant. It retrieves hardware-related knowledge to predict the next word.",
+            desc: "The context is <b>buying</b>, so the <b>tech company</b> key matches and the fruit/orchard keys stay silent. That key's value raises the odds of tokens like “Mac”, “iPhone”, “stock”.",
             detectors: [
-                { id: 'd1', label: 'Tech Company?', active: true,  fireClass: 'fire-tech' },
-                { id: 'd2', label: 'Edible Fruit?', active: false, fireClass: 'idle' },
-                { id: 'd3', label: 'Nature/Tree?',   active: false, fireClass: 'idle' }
+                { id: 'd1', label: 'Key: tech company?', active: true,  fireClass: 'fire-tech' },
+                { id: 'd2', label: 'Key: edible fruit?', active: false, fireClass: 'idle' },
+                { id: 'd3', label: 'Key: tree / orchard?', active: false, fireClass: 'idle' }
             ],
             facts: [
-                { id: 'f1', label: 'Add: “Juice”, “Pie”',        active: false, fireClass: 'idle',      from: [] },
-                { id: 'f2', label: 'Add: “Mac”, “Phone”',        active: true,  fireClass: 'fire-tech', from: ['d1'] },
-                { id: 'f3', label: 'Add: “Orchard”, “Green”',    active: false, fireClass: 'idle',      from: [] }
+                { id: 'f1', label: '→ pie · juice · sugar',      active: false, fireClass: 'idle',      from: [] },
+                { id: 'f2', label: '→ Mac · iPhone · stock',     active: true,  fireClass: 'fire-tech', from: ['d1'] },
+                { id: 'f3', label: '→ orchard · green · tree',   active: false, fireClass: 'idle',      from: [] }
             ]
         }
     },
@@ -2201,7 +2201,7 @@ const FFNViz = {
         detContainer.innerHTML = data.detectors.map(d => `
             <div id="node-${d.id}" class="ffn-pill ${d.fireClass}">
                 ${d.label}
-                <div class="ffn-sub">${d.active ? '🔥 FIRES' : '✕ ZEROED (ReLU)'}</div>
+                <div class="ffn-sub">${d.active ? 'matches' : 'gated out'}</div>
             </div>
         `).join('');
 

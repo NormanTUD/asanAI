@@ -15690,6 +15690,13 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2202.05262",
 		alternativetitle: "Meng et al., ROME (2022)"
 	},
+	"shazeer2020glu": {
+		title: "GLU Variants Improve Transformer",
+		author: "Noam Shazeer",
+		year: 2020,
+		url: "https://arxiv.org/abs/2002.05202",
+		alternativetitle: "Shazeer, GLU variants (2020)"
+	},
 	"todd2023emergent": {
 		title: "Emergent Linear Representations in World Models of Self-Supervised Sequence Models",
 		author: "Michael Todd, Michael Nanda, Tomer Wattenberg",

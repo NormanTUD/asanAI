@@ -2508,20 +2508,20 @@ html.dark .mn-hook {
 	color: var(--mn-text-secondary);
 }
 .mn-hook-arrow {
-	display: inline-grid;
-	place-items: center;
-	width: 1.85em;
-	height: 1.85em;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	box-sizing: border-box;
+	width: 1.9em;
+	height: 1.9em;
+	aspect-ratio: 1 / 1;
+	line-height: 1;
 	border-radius: 50%;
 	color: var(--hook-tone);
 	background: color-mix(in srgb, var(--hook-tone) 12%, transparent);
 	border: 1px solid color-mix(in srgb, var(--hook-tone) 32%, transparent);
 	box-shadow: 0 6px 14px -8px color-mix(in srgb, var(--hook-tone) 85%, transparent);
-	animation: mn-hook-bob 2s ease-in-out infinite;
-}
-@keyframes mn-hook-bob {
-	0%, 100% { transform: translateY(0); }
-	50%      { transform: translateY(4px); }
 }
 @keyframes mn-hook-glow {
 	0%, 100% { opacity: .55; }
@@ -2775,7 +2775,6 @@ html.dark .mn-hook {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.mn-hook-arrow,
 	.mn-hook::before { animation: none; }
 	.rf-anim .mn-hook,
 	.rf-anim .mn-aha { opacity: 1; transform: none; transition: none; }

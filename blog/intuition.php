@@ -208,9 +208,8 @@ html.dark #attn-demo { box-shadow: 0 1px 0 rgba(0,0,0,.4), 0 14px 36px -16px rgb
 	color: var(--mn-text);
 	font-weight: 500;
 	min-height: 1.5em;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	line-height: 1.7;
+	display: block;
 	transition: background .35s, border-color .35s, color .35s;
 }
 #attn-demo .attn-sentence .attn-word-bank { color: #3b82f6; font-weight: 700; }
@@ -523,7 +522,7 @@ Where a word splits depends on the data the model was trained on. It chooses tha
 <div class="mn-aha">
 	<div class="mn-aha-kicker">The aha</div>
 	<p class="mn-aha-big">It can read words it has never seen.</p>
-	<p class="mn-aha-sub">Break every unfamiliar word into familiar pieces and nothing is truly new. The vocabulary never has to grow — <code>unbreakable</code> is just <code>un</code> + <code>break</code> + <code>able</code>, three things the model already knows.</p>
+	<p class="mn-aha-sub">Break every unfamiliar word into familiar pieces and nothing is truly new. The vocabulary never has to grow — <code>transformer</code> is just <code>trans</code> + <code>form</code> + <code>er</code>, three pieces the model already knows.</p>
 </div>
 
 <!-- ============================================================ -->
@@ -546,17 +545,17 @@ Where a word splits depends on the data the model was trained on. It chooses tha
 <details class="mn-psst">
 	<summary><span class="mn-psst-key" aria-hidden="true">+</span>A detour: tokens that break the machine<span class="mn-psst-hint">open</span></summary>
 	<div class="mn-psst-body">
-		<p>Because the vocabulary is learned rather than designed, a token almost never seen in training can end up with an almost arbitrary embedding. Feed one to a model and it can collapse into nonsense or start reciting from its training data. It is a quiet reminder that the model's “understanding” is measured entirely against the slices of text it happened to read.</p>
+		<p>Some tokens are almost never seen in training, so their embeddings stay nearly arbitrary. Feed one to a model and it can spill nonsense or start reciting its training data — the “understanding” only reaches as far as the text it happened to read.</p>
 	</div>
 </details>
 
 <div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" href="tokenizerlab.php"><span class="mn-thread-label">Go deeper</span>Tokenization: How Words become Numbers</a>
+	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="tokenizerlab.php"><span class="mn-thread-label">Go deeper</span>Tokenization: How Words become Numbers</a>
 </div>
 
 <div class="mn-hook">
 	<span class="mn-hook-kicker">Next</span>
-	<p class="mn-hook-q">Numbers are just numbers. So how does <em>“time”</em> come to mean something — and <em>“truth”</em> come to mean something close by?</p>
+	<p class="mn-hook-q">By itself, a number means nothing. So how does <em>“time”</em> come to mean something — and <em>“truth”</em> come to mean something nearby?</p>
 	<div class="mn-hook-tease">Every token gets a place in space <span class="mn-hook-arrow" aria-hidden="true">↓</span></div>
 </div>
 
@@ -619,12 +618,12 @@ Real networks don't use two dimensions but **thousands** — far too many to pic
 </div>
 
 <div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" href="embeddinglab.php"><span class="mn-thread-label">Go deeper</span>Embeddings: The Geometry of Meaning</a>
+	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="embeddinglab.php"><span class="mn-thread-label">Go deeper</span>Embeddings: The Geometry of Meaning</a>
 </div>
 
 <div class="mn-hook">
 	<span class="mn-hook-kicker">Next</span>
-	<p class="mn-hook-q">There is still a blind spot: to the model, <em>“dog bites man”</em> and <em>“man bites dog”</em> are the very same bag of points.</p>
+	<p class="mn-hook-q">There is still a blind spot: to the model, <em>“dog bites man”</em> and <em>“man bites dog”</em> look exactly the same.</p>
 	<div class="mn-hook-tease">So how does <em>order</em> get back in? <span class="mn-hook-arrow" aria-hidden="true">↓</span></div>
 </div>
 
@@ -679,7 +678,7 @@ Now each token carries two pieces of information: **what it is** and **where it 
 </div>
 
 <div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" href="positionalembeddingslab.php"><span class="mn-thread-label">Go deeper</span>Positional Embeddings</a>
+	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="positionalembeddingslab.php"><span class="mn-thread-label">Go deeper</span>Positional Embeddings</a>
 </div>
 
 <div class="mn-hook">
@@ -735,17 +734,17 @@ It matters, though, that not every head does something a human can read off. A h
 <div class="mn-aha">
 	<div class="mn-aha-kicker">The aha</div>
 	<p class="mn-aha-big">Context physically moves the word.</p>
-	<p class="mn-aha-sub">“Bank” is not one fixed point. Read it near <em>river</em> and it slides toward water; read it near <em>money</em> and it slides toward finance. Attention does not label the meaning — it <b>moves</b> the vector to wherever the context points.</p>
+	<p class="mn-aha-sub">“Bank” is not one fixed point. In the context of <em>water</em> it slides toward the river sense; in the context of <em>money</em>, toward finance. Attention does not care how far away the clue is — it reads the <b>context</b> and moves the vector wherever the context points.</p>
 </div>
 
 <div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" href="attentionlab.php"><span class="mn-thread-label">Go deeper</span>The Semantic Tug-of-War: How Transformers 'Think'</a>
+	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="attentionlab.php"><span class="mn-thread-label">Go deeper</span>The Semantic Tug-of-War: How Transformers 'Think'</a>
 </div>
 
 <details class="mn-psst">
 	<summary><span class="mn-psst-key" aria-hidden="true">+</span>A detour: the head that means nothing<span class="mn-psst-hint">open</span></summary>
 	<div class="mn-psst-body">
-		<p>Some heads do have a crisp job a human can name — but many fire on patterns no one would ever write down, and the model works perfectly well anyway. A head is a filter found by gradient descent, not a job description written by a designer; even the readable ones are usually understood only after the fact.</p>
+		<p>Some heads do have a crisp job a human can name — but many fire on patterns no one would ever write down, and the model works perfectly well anyway. A head is a filter the training process stumbled onto, not a job description written by a designer; even the readable ones are usually understood only after the fact.</p>
 	</div>
 </details>
 
@@ -758,17 +757,16 @@ It matters, though, that not every head does something a human can read off. A h
 <div class="md">
 #### 4b: Feed-Forward Network - “What do I conclude?”
 
-After attention has gathered context, a small **neural network** processes each token individually. This is where the model applies knowledge it memorized during training: facts, patterns, and rules of language.
+After attention has gathered context, a small **neural network** processes each token on its own. Unlike attention, it does not look at other tokens — it looks at one token's vector and transforms it. In a modern LLM this block holds about **two-thirds of all the parameters**, which is why most of the model's stored knowledge lives here (\cite[Geva et al., 2021]{geva2021kv}).
 
-If attention is *gathering clues*, the feed-forward network is *drawing conclusions* — if attention is about *looking around* at other words, the FFN is about *looking inward* into the model's memory. It is often described as the **\cite[Knowledge bank]{keyvalmem}** of a Transformer: here it is decided in what direction in the embedding space the contextualized embedding should move to reach a more meaningful next word.
+The usual cartoon says three things happen: pattern detectors fire, a filter zeroes the weak ones, and knowledge is added back. That is a useful first picture — but the modern version is sharper and a little stranger:
 
-Three things happen, in order:
+- **It is a key → value memory.** The first matrix holds thousands of *keys*: patterns in the token's vector. When a key matches, the second matrix writes a *value* — not a stored sentence, but a **distribution over the next tokens** that this kind of pattern tends to be followed by. Lower layers key on shallow patterns (word forms, syntax); upper layers key on meaning.
+- **It is where facts are recalled.** In the middle layers the FFN behaves like an associative memory for subject → attribute facts. Researchers can locate a single fact there and edit the weights to change it: the ROME method can make a model “believe” a different capital of France without retraining it (\cite[Meng et al., 2022]{meng2022locating}).
+- **The clean little cards are a convenient lie.** Real neurons are mostly *polysemantic* — one neuron responds to several unrelated things — because the model packs far more features than it has neurons, a phenomenon called superposition (\cite[Elhage et al., 2022]{elhage2022superposition}). Sparse autoencoders can untangle those activations into features a human can actually read (\cite[Bricken et al., 2023]{bricken2023monosemanticity}; \cite[Cunningham et al., 2023]{cunningham2023sparse}).
+- **Modern FFNs are often gated, and sometimes replaced.** Many current models swap the hard ReLU for a gated activation such as SwiGLU, where one branch controls how much of another passes through (\cite[Shazeer, 2020]{shazeer2020glu}). And because this block is so large, some models replace it with a **mixture of experts** — many FFNs, with each token routed to only a few of them (\cite[Fedus et al., 2022]{fedus2022switch}).
 
-1. **The Detectors** — the model expands the word's vector to check for thousands of specific patterns (“Is this a French landmark?” “Is this about technology?”).
-2. **The Filter** — a mathematical filter (ReLU) zeroes out any detector that didn't find a match. Only the strong signals survive.
-3. **The Knowledge** — for every detector that fired, the model adds associated facts back into the token's vector.
-
-Let's follow the word **“Apple”**. Because of the *attention* step, its vector already carries clues about its context. Watch how the FFN reacts differently, depending on what those clues point to.
+Let us follow the word **“Apple”**. Thanks to attention, its vector already carries clues about its context. Depending on whether those clues say *eating* or *buying*, a different set of keys matches — and a different value distribution is written into the stream.
 </div>
 
 <div id="ffn-demo">
@@ -784,28 +782,28 @@ Let's follow the word **“Apple”**. Because of the *attention* step, its vect
     <div id="ffn-viz-container">
 
         <div style="width: 120px; text-align: center; z-index: 2;">
-            <div class="ffn-col-head">Input Vector</div>
+            <div class="ffn-col-head">Residual stream</div>
             <div id="ffn-input-box" class="ffn-pill">
-                “Apple” + Context
+                “Apple” + context
             </div>
         </div>
 
         <div style="width: 180px; text-align: center; z-index: 2;">
-            <div class="ffn-col-head">Pattern Detectors</div>
+            <div class="ffn-col-head">Keys · patterns in W₁</div>
             <div id="ffn-detectors" style="display: flex; flex-direction: column; gap: 10px;">
                 </div>
         </div>
 
         <div style="width: 200px; text-align: center; z-index: 2;">
-            <div class="ffn-col-head">Added Knowledge</div>
+            <div class="ffn-col-head">Values · next-token hints</div>
             <div id="ffn-facts" style="display: flex; flex-direction: column; gap: 10px;">
                 </div>
         </div>
 
         <div style="width: 120px; text-align: center; z-index: 2;">
-            <div class="ffn-col-head">Output Vector</div>
+            <div class="ffn-col-head">Written back</div>
             <div id="ffn-output-box" class="ffn-pill">
-                Enriched Vector
+                richer vector
             </div>
         </div>
 
@@ -815,18 +813,18 @@ Let's follow the word **“Apple”**. Because of the *attention* step, its vect
     </div>
 
     <div id="ffn-explanation">
-        Select a context above to see how the FFN processes it.
+        Choose a context: the same word meets a different set of keys.
     </div>
 </div>
 
 <div class="mn-aha">
 	<div class="mn-aha-kicker">The aha</div>
 	<p class="mn-aha-big">The same word, two different meanings.</p>
-	<p class="mn-aha-sub">“Apple” is one vector, but the FFN pours <em>different knowledge</em> into it depending on the company it keeps: fruit, crunch, orchard — or phone, silicon, Cupertino. The model did not look the fact up; a pattern matched, and the fact was <b>added</b>.</p>
+	<p class="mn-aha-sub">“Apple” is one vector, but a different set of keys matches depending on the company it keeps — and each key writes a different value: pie and juice, or Mac and iPhone. The model did not look a fact up; a pattern matched, and a distribution over the next words shifted.</p>
 </div>
 
 <div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" href="fact_lookup.php"><span class="mn-thread-label">Go deeper</span>Where 'Paris' Lives — How an LLM Retrieves a Fact</a>
+	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="fact_lookup.php"><span class="mn-thread-label">Go deeper</span>Where 'Paris' Lives — How an LLM Retrieves a Fact</a>
 </div>
 
 <div class="md" data-mathlevel="55">
@@ -834,7 +832,7 @@ Technically, this is expressed with the formula:
 
 $$ \text{FFN}(x) = W_2 \cdot \max(0, W_1 \cdot x + b_1) + b_2 $$
 
-Here $W_1$ acts as the detectors, the $\max(0, \ldots)$ is the ReLU filter shutting down negative matches, and $W_2$ holds the knowledge vectors that get added together.
+Here $W_1$ holds the keys, the $\max(0, \ldots)$ keeps only the strong matches (many modern models replace it with a gated activation), and $W_2$ writes the values — the shift in the next-token distribution.
 
 #### 4c: All together
 
@@ -883,7 +881,7 @@ And crucially, neither the attention heads nor the feed-forward network are conf
 </div>
 
 <div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" href="transformer.php"><span class="mn-thread-label">Go deeper</span>The Architecture of Meaning: A Deep Dive into Transformers</a>
+	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="transformer.php"><span class="mn-thread-label">Go deeper</span>The Architecture of Meaning: A Deep Dive into Transformers</a>
 </div>
 
 <div class="mn-hook">
@@ -931,7 +929,7 @@ Then it **picks a word** — usually one of the top candidates, but with a littl
 </div>
 
 <div class="mn-thread">
-	<a class="mn-thread-item mn-thread-fwd" href="samplinglab.php"><span class="mn-thread-label">Go deeper</span>Temperature &amp; Sampling</a>
+	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="samplinglab.php"><span class="mn-thread-label">Go deeper</span>Temperature &amp; Sampling</a>
 </div>
 
 <div class="md" data-mathlevel="55">
@@ -954,7 +952,3 @@ This framing is best read as a productive working hypothesis, not a proved ident
 	<p class="mn-aha-sub">To predict the next word well, a model has to find the shortest description of the data — and the shortest description of language keeps requiring a model of the <b>world</b> that produced it. Push prediction far enough and it presses into understanding.</p>
 </div>
 
-<div class="mn-thread">
-	<a class="mn-thread-item mn-thread-back" href="intro.php"><span class="mn-thread-label">Builds on</span>From Nothing to ChatGPT</a>
-	<a class="mn-thread-item mn-thread-fwd" href="history.php"><span class="mn-thread-label">Next in the course</span>A Brief History of AI</a>
-</div>
