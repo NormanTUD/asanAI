@@ -5,7 +5,7 @@ title: The History of Language: From Sanskrit to LLMs
 description: From Sanskrit to LLMs, how millions of years of linguistic evolution led to digital minds.
 icon: &#128483;
 part: 1
-order: 7
+order: 9
 color: accent
 topics: language, history, philosophy
 tags: language-heavy, interested-layman
