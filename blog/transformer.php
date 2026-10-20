@@ -380,7 +380,7 @@ This is the architecture you are interacting with in every visualization here. W
 ### The Residual Stream
 
 <div class="smart-quote" data-cite="heraclitus500fragments" data-after="B 12">
-Everything is in flux.
+You cannot step twice into the same rivers; for fresh waters are ever flowing in upon you.
 </div>
 
 In the Transformer, the Residual Stream embodies Heraclitus' flux, serving as a shared “notebook” where the original identity $h_0$ is preserved through \cite[additive skip connections]{he2015resnet} like in **ResNet**, $x_{\text{new}} = x + \text{layer}(x)$, which serve two purposes:
@@ -843,7 +843,7 @@ Zoom out: the full pipeline, how the model knows when to stop, and how the two o
 
 Here is the complete path a prompt takes through the system, from raw text to generated response:
 
-1. **Tokenization**, The input string is chopped into subword tokens using BPE. Each token is mapped to an integer ID. “The cat sat” might become `[1996, 4937, 4021]`.
+1. **Tokenization**, The input string is chopped into subword tokens using BPE. Each token is mapped to an integer ID. In GPT-2's byte-level BPE, “The cat sat” becomes `[464, 3797, 3332]`.
 
 2. **Embedding**, Each token ID is looked up in the embedding matrix $W_E$, producing a dense vector of dimension $d_{\text{model}}$. These vectors live in a semantic space where similar words are close together.
 
@@ -863,7 +863,7 @@ Every step is differentiable, every transformation is a matrix operation, and no
 
 Step 6 of the pipeline says generation runs "until the model emits an end-of-sequence token." That sentence hides a genuinely interesting question: **how does the model *know* it is done?** There is no separate "stop detector"; stopping is just next-token prediction pointed at a special token.
 
-**The basic mechanism.** The end-of-sequence (EOS) token — the special *end* marker each tokenizer puts in its vocabulary, such as GPT's `|end_of_text|` — is an ordinary member of the vocabulary. At every step the model produces a full distribution over *all* tokens, and one of those logits is for EOS. "Stopping" simply means that, at a natural boundary, the distribution puts **enough mass on EOS** that sampling picks it. The model learns this from the sheer fact that sequences in its training data *end*: after a complete sentence, an answer, or a list, the next token is the end marker. So the model internalizes the statistics of "when a thought is over" in the same way it learns everything else.
+**The basic mechanism.** The end-of-sequence (EOS) token — the special *end* marker each tokenizer puts in its vocabulary, such as GPT-2's `<|endoftext|>` — is an ordinary member of the vocabulary. At every step the model produces a full distribution over *all* tokens, and one of those logits is for EOS. "Stopping" simply means that, at a natural boundary, the distribution puts **enough mass on EOS** that sampling picks it. The model learns this from the sheer fact that sequences in its training data *end*: after a complete sentence, an answer, or a list, the next token is the end marker. So the model internalizes the statistics of "when a thought is over" in the same way it learns everything else.
 
 **The deeper finding: it plans the shape in advance.** Stopping turns out to be *not purely local*. (\cite[Dong et al., 2025]{dong2025planning}) showed that a simple linear probe can read the **total length of the model's future response** — along with other attributes like the multiple-choice answer it intends to give — straight out of the prompt's final hidden state, **before a single output token is emitted**. The model commits to a rough shape of its answer up front. (\cite[Merzouk et al., 2026]{merzouk2026remaining}) sharpened this: there is a **linearly-decodable "remaining length" direction** that *decays* as the model generates, and it shifts at the moment the model retracts and restarts — a readable internal "how much is left" counter. (The honest caveat: this direction is *decodable*, which is evidence for a plan-like representation, not proof that the model causally reads it to decide.)
 

@@ -6726,7 +6726,7 @@ window.bibData = {
 	"nilsson1984qai": {
 		title: "The Quest for Artificial Intelligence: A History of Ideas and Achievements",
 		author: "Nils J. Nilsson",
-		year: 1984,
+		year: 2009,
 		url: "https://ai.stanford.edu/~nilsson/QAI/qai.pdf",
 		alternativetitle: "Nilsson, The Quest for Artificial Intelligence"
 	},
@@ -14660,14 +14660,14 @@ window.bibData = {
 		alternativetitle: "Weiss et al., LUCA physiology (2016)"
 	},
 	"walter1986stromatolites": {
-		title: "Microbially Induced Sedimentary Structures Older than 3,470 Ma from the Dresser Formation, Western Australia",
-		author: "Michael R. Walter",
-		year: 1986,
+		title: "Stromatolites 3,400–3,500 Myr old from the North Pole area, Western Australia",
+		author: "Michael R. Walter, Roger Buick, John S. R. Dunlop",
+		year: 1980,
 		journal: "Nature",
-		volume: 322,
-		pages: "386–389",
-		url: "https://www.nature.com/articles/322386a0",
-		alternativetitle: "Walter, 3.47 Ga stromatolites (1986)"
+		volume: 284,
+		pages: "443–445",
+		url: "https://www.nature.com/articles/284443a0",
+		alternativetitle: "Walter, 3.5 Ga stromatolites (1980)"
 	},
 	"vankranendonk2016microbial": {
 		title: "Rapid Emergence of Life Shown by Discovery of 3,700-Million-Year-Old Microbial Structures",
