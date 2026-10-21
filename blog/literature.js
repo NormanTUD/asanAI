@@ -5011,6 +5011,41 @@ window.bibData = {
 		url: "https://doi.org/10.1016/0019-1035(71)90103-5",
 		alternativetitle: "Two-Color Photometry"
 	},
+	"rosenblattmemorial1971": {
+		title: "Frank Rosenblatt, July 11, 1928 — July 11, 1971",
+		author: "Stephen T. Emlen, Howard C. Howland, Richard D. O'Brien",
+		year: 1971,
+		url: "https://ecommons.cornell.edu/bitstream/handle/1813/18965/Rosenblatt_Frank_1971.pdf",
+		alternativetitle: "Cornell memorial statement for Frank Rosenblatt (1971)"
+	},
+	"rosenblatt1966transfer1": {
+		title: "The Transfer of Learned Behavior from Trained to Untrained Rats by Mean of Brain Extracts. I.",
+		author: "Frank Rosenblatt, J. T. Farrow, S. Rhine",
+		year: 1966,
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC224185/",
+		alternativetitle: "Rosenblatt, Farrow & Rhine, Memory Transfer I (1966)"
+	},
+	"rosenblatt1966transfer2": {
+		title: "The Transfer of Learned Behavior from Trained to Untrained Rats by Means of Brain Extracts. II.",
+		author: "Frank Rosenblatt, J. T. Farrow, S. Rhine",
+		year: 1966,
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC224230/",
+		alternativetitle: "Rosenblatt, Farrow & Rhine, Memory Transfer II (1966)"
+	},
+	"rosenblatt1969behavior": {
+		title: "Behavior Induction by Brain Extracts: A Comparison of Two Procedures",
+		author: "Frank Rosenblatt",
+		year: 1969,
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC223395/",
+		alternativetitle: "Rosenblatt, Behavior Induction by Brain Extracts (1969)"
+	},
+	"frankrosenblattwiki": {
+		title: "Frank Rosenblatt",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/w/index.php?title=Frank_Rosenblatt&oldid=1380681031",
+		alternativetitle: "Wikipedia: Frank Rosenblatt"
+	},
 	"jensen2026perceptron": {
 		author: "George Osborn Jensen, David E. Dunning, Alexander B. Magoun",
 		title: "Assembling and Training the Perceptron: A Personal Account",
