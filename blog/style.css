@@ -2159,6 +2159,12 @@ input[type="number"] { width: 50px; padding: 4px; border: 1px solid #cbd5e0; bor
 	touch-action: pan-y; /* Allows touch devices to scroll the page over the plot */
 }
 
+.js-plotly-plot > .plot-container {
+	max-width: none;
+	margin-left: 0;
+	margin-right: 0;
+}
+
 #loader {
 	position: fixed;
 	top: 0;

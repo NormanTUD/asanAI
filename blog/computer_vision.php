@@ -187,7 +187,7 @@ In **Deep Learning**, the paradigm shifts completely:
 </div>
 
 <style>
-#conv-math-step { box-sizing: border-box; white-space: nowrap; }
+#conv-math-step { box-sizing: border-box; }
 </style>
 <div id="conv-math-step" class="lg-scroll" style="margin-top: 20px; padding: 18px; background: linear-gradient(to right, #f8fafc, #f1f5f9); border: 1px solid #cbd5e0; border-radius: 10px; font-size: 0.85rem; min-height: 100px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);">
 	<span style="color:#94a3b8; font-style:italic;">👆 Move your mouse over the source image to see the convolution math computed in real-time for each pixel...</span>

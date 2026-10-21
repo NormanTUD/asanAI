@@ -931,6 +931,29 @@ function renderComparison3D(config) {
         return pts;
     }
 
+    // ECharts-GL line3D has no native dashed style (its view flattens all
+    // points into one solid polyline), so a "dashed" chord is approximated by
+    // many short, unconnected segments — one line3D series per dash.
+    function dashedChordSeries(p0, p1, color, numDashes, width) {
+        const segs = [];
+        const dx = p1[0] - p0[0], dy = p1[1] - p0[1], dz = p1[2] - p0[2];
+        const total = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
+        const step = total / (numDashes * 2 - 1);
+        for (let i = 0; i < numDashes; i++) {
+            const t0 = (i * 2) * step / total;
+            const t1 = (i * 2 + 1) * step / total;
+            segs.push({
+                type: 'line3D',
+                data: [
+                    [p0[0] + dx * t0, p0[1] + dy * t0, p0[2] + dz * t0],
+                    [p0[0] + dx * t1, p0[1] + dy * t1, p0[2] + dz * t1]
+                ],
+                lineStyle: { color: color, width: width }
+            });
+        }
+        return segs;
+    }
+
     const series = [
         // Vector lines from origin
         { type: 'line3D', data: [[0,0,0], Man],  lineStyle: { color: themeColor('#64748b'), width: 6 } },
@@ -962,6 +985,10 @@ function renderComparison3D(config) {
           lineStyle: { color: '#10b981', width: 3, opacity: 0.55 } },
         { type: 'line3D', data: arcPoints(Man, Lion, ml.angle, 8),
           lineStyle: { color: '#ef4444', width: 3, opacity: 0.55 } },
+
+        // Euclidean distance chords (dashed) — straight "energy" between tokens
+        ...dashedChordSeries(Man, King, '#10b981', 8, 3),
+        ...dashedChordSeries(Man, Lion, '#ef4444', 8, 3),
 
         // Origin marker
         { type: 'scatter3D',
@@ -2359,10 +2386,10 @@ function setParallelogramConcept(concept) {
 
     // Update button styles
     document.querySelectorAll('.parallelogram-btn').forEach(btn => {
-        btn.style.background = themeColor('#64748b');
+        btn.classList.remove('is-active');
     });
     const activeBtn = document.getElementById(`btn-para-${concept}`);
-    if (activeBtn) activeBtn.style.background = '#3b82f6';
+    if (activeBtn) activeBtn.classList.add('is-active');
 
     renderParallelogram();
 }
@@ -6340,9 +6367,132 @@ const homologyState = {
     currentPreset: 'swiss',
     animating: false,
     animFrame: null,
+    // Precomputed geometry (sorted edges/triangles for fast frame drawing)
+    dist: null,
+    edgeA: null,
+    edgeB: null,
+    edgeLen: null,
+    triA: null,
+    triB: null,
+    triC: null,
+    triMax: null,
+    triBinStart: null,
     // Precomputed holes (simplified persistent homology)
     holes: []
 };
+
+const HOMOLOGY_MAX_TRIANGLES_DRAWN = 1500;
+const HOMOLOGY_MAX_EDGES_DRAWN = 2000;
+const HOMOLOGY_BIN_COUNT = 2048;
+const HOMOLOGY_BIN_MAX = 1.5;
+
+function prepareHomologyData(st) {
+    const points = st.points;
+    const N = points.length;
+    const dist = new Float32Array(N * N);
+
+    for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+            const d = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
+            dist[i * N + j] = d;
+            dist[j * N + i] = d;
+        }
+    }
+
+    const eA = [], eB = [], eL = [];
+    for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+            eA.push(i);
+            eB.push(j);
+            eL.push(dist[i * N + j]);
+        }
+    }
+    const eOrder = new Uint32Array(eL.length);
+    for (let i = 0; i < eOrder.length; i++) eOrder[i] = i;
+    eOrder.sort((a, b) => eL[a] - eL[b]);
+
+    const edgeA = new Uint16Array(eL.length);
+    const edgeB = new Uint16Array(eL.length);
+    const edgeLen = new Float32Array(eL.length);
+    for (let i = 0; i < eOrder.length; i++) {
+        const o = eOrder[i];
+        edgeA[i] = eA[o];
+        edgeB[i] = eB[o];
+        edgeLen[i] = eL[o];
+    }
+
+    const triCount = N * (N - 1) * (N - 2) / 6;
+    const triA = new Uint16Array(triCount);
+    const triB = new Uint16Array(triCount);
+    const triC = new Uint16Array(triCount);
+    const triMax = new Float32Array(triCount);
+    const binStart = new Uint32Array(HOMOLOGY_BIN_COUNT + 1);
+
+    let t = 0;
+    for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+            const dij = dist[i * N + j];
+            for (let k = j + 1; k < N; k++) {
+                const dik = dist[i * N + k];
+                const djk = dist[j * N + k];
+                const m = dij > dik ? (dij > djk ? dij : djk) : (dik > djk ? dik : djk);
+                triA[t] = i;
+                triB[t] = j;
+                triC[t] = k;
+                triMax[t] = m;
+                binStart[homologyBinOf(m) + 1]++;
+                t++;
+            }
+        }
+    }
+    for (let b = 1; b <= HOMOLOGY_BIN_COUNT; b++) binStart[b] += binStart[b - 1];
+
+    const sortedA = new Uint16Array(triCount);
+    const sortedB = new Uint16Array(triCount);
+    const sortedC = new Uint16Array(triCount);
+    const sortedMax = new Float32Array(triCount);
+    const cursor = binStart.slice(0, HOMOLOGY_BIN_COUNT);
+    for (let i = 0; i < triCount; i++) {
+        const p = cursor[homologyBinOf(triMax[i])]++;
+        sortedA[p] = triA[i];
+        sortedB[p] = triB[i];
+        sortedC[p] = triC[i];
+        sortedMax[p] = triMax[i];
+    }
+
+    st.dist = dist;
+    st.edgeA = edgeA;
+    st.edgeB = edgeB;
+    st.edgeLen = edgeLen;
+    st.triA = sortedA;
+    st.triB = sortedB;
+    st.triC = sortedC;
+    st.triMax = sortedMax;
+    st.triBinStart = binStart;
+}
+
+function homologyBinOf(maxEdge) {
+    const b = Math.floor(maxEdge / HOMOLOGY_BIN_MAX * HOMOLOGY_BIN_COUNT);
+    return b < 0 ? 0 : (b >= HOMOLOGY_BIN_COUNT ? HOMOLOGY_BIN_COUNT - 1 : b);
+}
+
+function homologyActiveTriangles(st, threshold) {
+    if (!st.triMax || st.triMax.length === 0 || !st.triBinStart) return 0;
+    if (threshold >= HOMOLOGY_BIN_MAX) return st.triMax.length;
+    const bin = Math.floor(threshold / HOMOLOGY_BIN_MAX * HOMOLOGY_BIN_COUNT);
+    return st.triBinStart[bin + 1];
+}
+
+function homologyCountAtOrBelow(sorted, value) {
+    let lo = 0;
+    let hi = sorted.length;
+    while (lo < hi) {
+        const mid = (lo + hi) >> 1;
+        if (sorted[mid] <= value) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo;
+}
 
 function generateHomologyPoints(preset) {
     const pts = [];
@@ -6357,7 +6507,7 @@ function generateHomologyPoints(preset) {
     if (preset === 'swiss') {
         // Points arranged with deliberate holes (Swiss cheese)
         // Outer scatter
-        for (let i = 0; i < 80; i++) {
+        for (let i = 0; i < 72; i++) {
             const x = 0.1 + rand() * 0.8;
             const y = 0.1 + rand() * 0.8;
             // Reject points inside the "holes"
@@ -6381,7 +6531,7 @@ function generateHomologyPoints(preset) {
             { cx: 0.25, cy: 0.65, r: 0.06 },
         ];
         holes.forEach(h => {
-            const n = Math.round(12 + h.r * 80);
+            const n = Math.round(11 + h.r * 72);
             for (let i = 0; i < n; i++) {
                 const a = (i / n) * 2 * Math.PI + (rand() - 0.5) * 0.3;
                 const r = h.r + 0.02 + rand() * 0.04;
@@ -6390,13 +6540,13 @@ function generateHomologyPoints(preset) {
         });
     } else if (preset === 'ring') {
         // Single ring with a big central hole
-        for (let i = 0; i < 60; i++) {
-            const a = (i / 60) * 2 * Math.PI + (rand() - 0.5) * 0.15;
+        for (let i = 0; i < 54; i++) {
+            const a = (i / 54) * 2 * Math.PI + (rand() - 0.5) * 0.15;
             const r = 0.28 + (rand() - 0.5) * 0.05;
             pts.push({ x: 0.5 + r * Math.cos(a), y: 0.5 + r * Math.sin(a) });
         }
         // Some scattered outer points
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 13; i++) {
             const a = rand() * 2 * Math.PI;
             const r = 0.38 + rand() * 0.08;
             pts.push({ x: 0.5 + r * Math.cos(a), y: 0.5 + r * Math.sin(a) });
@@ -6409,7 +6559,7 @@ function generateHomologyPoints(preset) {
             { cx: 0.50, cy: 0.75 },
         ];
         centers.forEach(c => {
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 27; i++) {
                 pts.push({
                     x: c.cx + randGauss() * 0.06,
                     y: c.cy + randGauss() * 0.06
@@ -6417,21 +6567,21 @@ function generateHomologyPoints(preset) {
             }
         });
         // Bridge points (sparse) to connect clusters
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 7; i++) {
             const t = rand();
             pts.push({
                 x: centers[0].cx * (1 - t) + centers[1].cx * t + randGauss() * 0.02,
                 y: centers[0].cy * (1 - t) + centers[1].cy * t + randGauss() * 0.02
             });
         }
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 7; i++) {
             const t = rand();
             pts.push({
                 x: centers[1].cx * (1 - t) + centers[2].cx * t + randGauss() * 0.02,
                 y: centers[1].cy * (1 - t) + centers[2].cy * t + randGauss() * 0.02
             });
         }
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 7; i++) {
             const t = rand();
             pts.push({
                 x: centers[2].cx * (1 - t) + centers[0].cx * t + randGauss() * 0.02,
@@ -6440,13 +6590,13 @@ function generateHomologyPoints(preset) {
         }
     } else if (preset === 'figure8') {
         // Two interlocking loops
-        for (let i = 0; i < 45; i++) {
-            const a = (i / 45) * 2 * Math.PI + (rand() - 0.5) * 0.15;
+        for (let i = 0; i < 40; i++) {
+            const a = (i / 40) * 2 * Math.PI + (rand() - 0.5) * 0.15;
             const r = 0.16 + (rand() - 0.5) * 0.04;
             pts.push({ x: 0.35 + r * Math.cos(a), y: 0.50 + r * Math.sin(a) });
         }
-        for (let i = 0; i < 45; i++) {
-            const a = (i / 45) * 2 * Math.PI + (rand() - 0.5) * 0.15;
+        for (let i = 0; i < 40; i++) {
+            const a = (i / 40) * 2 * Math.PI + (rand() - 0.5) * 0.15;
             const r = 0.16 + (rand() - 0.5) * 0.04;
             pts.push({ x: 0.65 + r * Math.cos(a), y: 0.50 + r * Math.sin(a) });
         }
@@ -6611,6 +6761,7 @@ window.loadHomologyPreset = function (name) {
     const st = homologyState;
     st.currentPreset = name;
     st.points = generateHomologyPoints(name);
+    prepareHomologyData(st);
     st.holes = computeHoles(st.points, 0.5);
     st.radius = 0;
 
@@ -6667,12 +6818,13 @@ function initHomology() {
 
     function resizeCanvas(canvas, prop) {
         const rect = canvas.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
         st[prop + 'Width'] = rect.width;
         st[prop + 'Height'] = rect.height;
-        canvas.width = rect.width * window.devicePixelRatio;
-        canvas.height = rect.height * window.devicePixelRatio;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
         const ctx = canvas.getContext('2d');
-        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        ctx.scale(dpr, dpr);
         return ctx;
     }
 
@@ -6695,13 +6847,20 @@ function initHomology() {
 
     // Generate initial points
     st.points = generateHomologyPoints('swiss');
+    prepareHomologyData(st);
     st.holes = computeHoles(st.points, 0.5);
 
     const slider = document.getElementById('homology-radius');
     if (slider) {
+        let pendingRender = false;
         slider.addEventListener('input', () => {
             st.radius = parseFloat(slider.value);
-            renderHomology();
+            if (pendingRender) return;
+            pendingRender = true;
+            requestAnimationFrame(() => {
+                pendingRender = false;
+                renderHomology();
+            });
         });
     }
 
@@ -6720,7 +6879,6 @@ function renderHomology() {
 
     const r = st.radius;
     const points = st.points;
-    const N = points.length;
     const W = st.width;
     const H = st.height;
 
@@ -6750,65 +6908,55 @@ function renderHomology() {
 
     function toC(p) { return { x: p.x * W, y: p.y * H }; }
 
-    // Precompute distances
-    const dist = [];
-    for (let i = 0; i < N; i++) {
-        dist[i] = [];
-        for (let j = 0; j < N; j++) {
-            dist[i][j] = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
-        }
-    }
+    const threshold = r * 2;
 
     // ── Radius balls ──
     if (showBalls && r > 0) {
-        points.forEach(p => {
+        const ballR = r * Math.min(W, H);
+        ctx.beginPath();
+        for (const p of points) {
             const cp = toC(p);
-            const ballR = r * Math.min(W, H);
-            ctx.beginPath();
+            ctx.moveTo(cp.x + ballR, cp.y);
             ctx.arc(cp.x, cp.y, ballR, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(96, 165, 250, 0.06)';
-            ctx.fill();
-        });
+        }
+        ctx.fillStyle = 'rgba(96, 165, 250, 0.06)';
+        ctx.fill();
     }
 
     // ── Filled triangles (2-simplices) ──
-    if (showTriangles && r > 0) {
-        for (let i = 0; i < N; i++) {
-            for (let j = i + 1; j < N; j++) {
-                if (dist[i][j] > r * 2) continue;
-                for (let k = j + 1; k < N; k++) {
-                    if (dist[i][k] > r * 2 || dist[j][k] > r * 2) continue;
-                    const pi = toC(points[i]);
-                    const pj = toC(points[j]);
-                    const pk = toC(points[k]);
-
-                    ctx.beginPath();
-                    ctx.moveTo(pi.x, pi.y);
-                    ctx.lineTo(pj.x, pj.y);
-                    ctx.lineTo(pk.x, pk.y);
-                    ctx.closePath();
-                    ctx.fillStyle = 'rgba(139, 92, 246, 0.07)';
-                    ctx.fill();
-                }
+    if (showTriangles && r > 0 && st.triMax && st.triMax.length > 0) {
+        const active = homologyActiveTriangles(st, threshold);
+        if (active > 0) {
+            const stride = Math.max(1, Math.ceil(active / HOMOLOGY_MAX_TRIANGLES_DRAWN));
+            ctx.beginPath();
+            for (let t = 0; t < active; t += stride) {
+                const pi = toC(points[st.triA[t]]);
+                const pj = toC(points[st.triB[t]]);
+                const pk = toC(points[st.triC[t]]);
+                ctx.moveTo(pi.x, pi.y);
+                ctx.lineTo(pj.x, pj.y);
+                ctx.lineTo(pk.x, pk.y);
             }
+            ctx.fillStyle = `rgba(139, 92, 246, ${Math.min(0.28, 0.07 * stride)})`;
+            ctx.fill();
         }
     }
 
     // ── Edges (1-simplices) ──
-    if (r > 0) {
-        ctx.strokeStyle = 'rgba(96, 165, 250, 0.3)';
-        ctx.lineWidth = 1;
-        for (let i = 0; i < N; i++) {
-            for (let j = i + 1; j < N; j++) {
-                if (dist[i][j] <= r * 2) {
-                    const pi = toC(points[i]);
-                    const pj = toC(points[j]);
-                    ctx.beginPath();
-                    ctx.moveTo(pi.x, pi.y);
-                    ctx.lineTo(pj.x, pj.y);
-                    ctx.stroke();
-                }
+    if (r > 0 && st.edgeLen && st.edgeLen.length > 0) {
+        const active = homologyCountAtOrBelow(st.edgeLen, threshold);
+        if (active > 0) {
+            const stride = Math.max(1, Math.ceil(active / HOMOLOGY_MAX_EDGES_DRAWN));
+            ctx.beginPath();
+            for (let e = 0; e < active; e += stride) {
+                const pi = toC(points[st.edgeA[e]]);
+                const pj = toC(points[st.edgeB[e]]);
+                ctx.moveTo(pi.x, pi.y);
+                ctx.lineTo(pj.x, pj.y);
             }
+            ctx.strokeStyle = `rgba(96, 165, 250, ${Math.min(0.5, 0.3 * Math.sqrt(stride))})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
         }
     }
 
@@ -6831,8 +6979,7 @@ function renderHomology() {
                 const hc = toC(hole.center);
                 const glowR = Math.sqrt(hole.size) * (W / 30) * 0.6;
 
-                // Pulsing glow
-                const pulse = 0.6 + 0.4 * Math.sin(Date.now() * 0.003 + hIdx);
+                const pulse = 1;
 
                 ctx.beginPath();
                 ctx.arc(hc.x, hc.y, glowR, 0, Math.PI * 2);
@@ -6861,28 +7008,26 @@ function renderHomology() {
                 ctx.fillRect(hc.x - barW / 2, hc.y + glowR + 6, barW, 3);
             }
         });
-
-        // Request animation frame for pulsing if holes are visible
-        const anyVisible = st.holes.some(h => r >= h.birth && r < h.death);
-        if (anyVisible && !st.animating) {
-            requestAnimationFrame(() => {
-                if (!st.animating) renderHomology();
-            });
-        }
     }
 
     // ── Points (0-simplices) ──
-    points.forEach(p => {
+    const outerColor = themeColor('#e2e8f0');
+    ctx.beginPath();
+    for (const p of points) {
         const cp = toC(p);
-        ctx.beginPath();
+        ctx.moveTo(cp.x + 3, cp.y);
         ctx.arc(cp.x, cp.y, 3, 0, Math.PI * 2);
-        ctx.fillStyle = themeColor('#e2e8f0');
-        ctx.fill();
-        ctx.beginPath();
+    }
+    ctx.fillStyle = outerColor;
+    ctx.fill();
+    ctx.beginPath();
+    for (const p of points) {
+        const cp = toC(p);
+        ctx.moveTo(cp.x + 1.5, cp.y);
         ctx.arc(cp.x, cp.y, 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = '#60a5fa';
-        ctx.fill();
-    });
+    }
+    ctx.fillStyle = '#60a5fa';
+    ctx.fill();
 
     // ══════════════════════════════════════════════
     // PERSISTENCE DIAGRAM (right canvas)
@@ -7047,7 +7192,6 @@ function updateHomologyStats(r) {
     const holes = st.holes;
 
     const aliveHoles = holes.filter(h => r >= h.birth && r < h.death);
-    const bornHoles = holes.filter(h => r >= h.birth);
     const totalHoles = holes.length;
 
     // Most persistent hole
@@ -7060,38 +7204,51 @@ function updateHomologyStats(r) {
         }
     });
 
-    // Edges count
-    const N = st.points.length;
-    let edgeCount = 0;
-    for (let i = 0; i < N; i++) {
-        for (let j = i + 1; j < N; j++) {
-            const d = Math.hypot(st.points[i].x - st.points[j].x, st.points[i].y - st.points[j].y);
-            if (d <= r * 2) edgeCount++;
-        }
+    const edgeCount = st.edgeLen ? homologyCountAtOrBelow(st.edgeLen, r * 2) : 0;
+
+    const themeKey = isDarkMode() ? 'dark' : 'light';
+    if (statsDiv.dataset.built !== themeKey) {
+        statsDiv.innerHTML = `
+            <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Active Holes</div>
+                <div id="homology-stat-active" style="font-size:1.4em; font-weight:bold; color:#94a3b8;">0</div>
+                <div id="homology-stat-total" style="font-size:0.7em; color:${themeColor('#94a3b8')};">of 0 detected</div>
+            </div>
+            <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Edges Formed</div>
+                <div id="homology-stat-edges" style="font-size:1.4em; font-weight:bold; color:#60a5fa;">0</div>
+                <div id="homology-stat-edges-sub" style="font-size:0.7em; color:${themeColor('#94a3b8')};">connections at r=0.000</div>
+            </div>
+            <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Most Persistent</div>
+                <div id="homology-stat-persistence" style="font-size:1.0em; font-weight:bold; color:#8b5cf6;">—</div>
+                <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">longest-lived void</div>
+            </div>
+            <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
+                <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Points</div>
+                <div id="homology-stat-points" style="font-size:1.4em; font-weight:bold; color:#10b981;">0</div>
+                <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">token vectors</div>
+            </div>
+        `;
+        statsDiv.dataset.built = themeKey;
     }
 
-    statsDiv.innerHTML = `
-        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
-            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Active Holes</div>
-            <div style="font-size:1.4em; font-weight:bold; color:${aliveHoles.length > 0 ? '#f59e0b' : '#94a3b8'};">${aliveHoles.length}</div>
-            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">of ${totalHoles} detected</div>
-        </div>
-        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
-            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Edges Formed</div>
-            <div style="font-size:1.4em; font-weight:bold; color:#60a5fa;">${edgeCount}</div>
-            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">connections at r=${r.toFixed(3)}</div>
-        </div>
-        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
-            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Most Persistent</div>
-            <div style="font-size:1.0em; font-weight:bold; color:#8b5cf6;">${maxPersLabel}</div>
-            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">longest-lived void</div>
-        </div>
-        <div style="padding:10px; background:${themeColor('#fff')}; border-radius:8px; border:1px solid ${themeColor('#e2e8f0')}; text-align:center;">
-            <div style="font-size:0.75em; color:${themeColor('#64748b')}; margin-bottom:3px;">Points</div>
-            <div style="font-size:1.4em; font-weight:bold; color:#10b981;">${st.points.length}</div>
-            <div style="font-size:0.7em; color:${themeColor('#94a3b8')};">token vectors</div>
-        </div>
-    `;
+    const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el && el.textContent !== value) el.textContent = value;
+    };
+    const setColor = (id, value) => {
+        const el = document.getElementById(id);
+        if (el && el.style.color !== value) el.style.color = value;
+    };
+
+    setText('homology-stat-active', String(aliveHoles.length));
+    setColor('homology-stat-active', aliveHoles.length > 0 ? '#f59e0b' : '#94a3b8');
+    setText('homology-stat-total', `of ${totalHoles} detected`);
+    setText('homology-stat-edges', String(edgeCount));
+    setText('homology-stat-edges-sub', `connections at r=${r.toFixed(3)}`);
+    setText('homology-stat-persistence', maxPersLabel);
+    setText('homology-stat-points', String(st.points.length));
 }
 
 // ============================================================
