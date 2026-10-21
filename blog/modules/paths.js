@@ -120,10 +120,29 @@
 		const ps = allPaths();
 		const cur = ps.filter((p) => !p.isPart), parts = ps.filter((p) => p.isPart);
 		const done = ps.filter((p) => progress(p).complete).length;
-		return '<div class="mnp-intro"><p>Pick a route through the course. A lesson counts once you have read it to the end; finish a path for <b>+100 XP</b> and a certificate.</p>' +
+		return '<div class="mnp-fork">' +
+			'<section class="mnp-fork-card">' +
+				'<span class="mnp-fork-kicker">Guided</span>' +
+				'<h3 class="mnp-fork-title">Follow a learning path</h3>' +
+				'<p class="mnp-fork-text">A curated sequence of lessons, in the order they build on each other. Finish a path for <b>+100 XP</b> and a printable certificate.</p>' +
+				'<button type="button" class="mnp-jump" data-mnp-scroll>' + cur.length + " paths to choose from <span aria-hidden=\"true\">↓</span></button>" +
+			"</section>" +
+			'<div class="mnp-fork-or" aria-hidden="true">or</div>' +
+			'<section class="mnp-fork-card mnp-fork-card--own">' +
+				'<span class="mnp-fork-kicker">Your own way</span>' +
+				'<h3 class="mnp-fork-title">Read by your own taste</h3>' +
+				'<p class="mnp-fork-text">Jump between lessons, skip what bores you, linger where you are curious. Tune the course to your interests first, or browse everything and decide as you go.</p>' +
+				'<div class="mnp-fork-actions">' +
+					'<button type="button" class="mnp-jump mnp-tune">Tune to my interests</button>' +
+					'<button type="button" class="mnp-jump mnp-browse">Browse all lessons</button>' +
+				"</div>" +
+			"</section>" +
+		"</div>" +
+			'<div class="mnp-sect-row"><h3 class="mnp-sect" id="mnp-curated">Curated paths</h3>' +
 			'<span class="mnp-count">' + done + " of " + ps.length + " paths completed</span></div>" +
-			'<h3 class="mnp-sect">Curated paths</h3><div class="mnp-paths">' + cur.map(card).join("") + "</div>" +
-			'<h3 class="mnp-sect">The six parts</h3><div class="mnp-paths">' + parts.map(card).join("") + "</div>";
+			'<div class="mnp-paths">' + cur.map(card).join("") + "</div>" +
+			'<div class="mnp-sect-row"><h3 class="mnp-sect">The six parts</h3></div>' +
+			'<div class="mnp-paths">' + parts.map(card).join("") + "</div>";
 	}
 
 	function bindCerts(root) {
@@ -131,6 +150,31 @@
 			const p = allPaths().find((x) => x.id === b.getAttribute("data-path"));
 			if (p) certificate(p, b);
 		}));
+	}
+
+	function bindFork(root) {
+		const jump = root.querySelector("[data-mnp-scroll]");
+		if (jump) jump.addEventListener("click", () => {
+			const target = root.querySelector("#mnp-curated");
+			if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+		});
+		const tune = root.querySelector(".mnp-tune");
+		if (tune) tune.addEventListener("click", () => {
+			close();
+			setTimeout(() => { if (window.BlogTopics) window.BlogTopics.openOverlay(); }, 280);
+		});
+		const browse = root.querySelector(".mnp-browse");
+		if (browse) browse.addEventListener("click", () => {
+			close();
+			const here = document.getElementById("course-overview");
+			if (here) {
+				setTimeout(() => here.scrollIntoView({ behavior: "smooth", block: "start" }), 240);
+				return;
+			}
+			const home = document.getElementById("lesson-home");
+			const href = (home ? home.getAttribute("href") : "index.php").split("#")[0];
+			setTimeout(() => { window.location.href = href + "#course-overview"; }, 160);
+		});
 	}
 
 	// ── The paths window (opened from #paths-toggle, top right) ─────
@@ -144,6 +188,7 @@
 		const cards = body.querySelectorAll(".mnp-path");
 		open.forEach((i) => { if (cards[i]) cards[i].querySelector("details").open = true; });
 		bindCerts(body);
+		bindFork(body);
 	}
 
 	function open() {
@@ -152,8 +197,11 @@
 		overlay = document.createElement("div");
 		overlay.className = "mnp-overlay";
 		overlay.innerHTML = '<div class="mnp-modal" role="dialog" aria-modal="true" aria-labelledby="mnp-modal-title">' +
-			'<div class="mnp-modal-head"><div><div class="mnp-kicker">Your way through the course</div><h2 id="mnp-modal-title">Learning paths</h2></div>' +
-			'<button type="button" class="mnp-close" aria-label="Close"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>' +
+			'<header class="mnp-modal-head"><div class="mnp-head"><div class="mnp-head-text">' +
+				'<div class="mnp-kicker">Your way through the course</div>' +
+				'<h2 id="mnp-modal-title">Choose your way</h2>' +
+				'<p class="mnp-lede">Pick a curated path through the course, or read by your own taste. A lesson counts once you have read it to the end.</p>' +
+			'</div><button type="button" class="mnp-close" aria-label="Close"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div></header>' +
 			'<div class="mnp-modal-body"></div></div>';
 		document.body.appendChild(overlay);
 		document.documentElement.classList.add("mnp-open");

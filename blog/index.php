@@ -89,7 +89,6 @@ setTimeout(function () {
 <script>window.__moduleNavData = <?php echo json_encode(get_module_nav_data()); ?>;</script>
 <div class="mn-home-dash" id="mn-home-dash">
 	<div id="mn-home-review" class="mn-home-slot" hidden></div>
-	<div class="mn-home-daily"><?php render_daily_question(); ?></div>
 </div>
 
 <div class="course-overview" id="course-overview">
