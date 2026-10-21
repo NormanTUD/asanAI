@@ -4,12 +4,8 @@ COURSE_METADATA:
 title: The December Calendar
 description: Thirty-one days, thirty-one doors — a guided December through the ideas that make modern AI and LLMs understandable.
 icon: &#127876;
-part: 6
-order: 18
-color: rose
 topics: history, language, society, philosophy
 tags: interested-layman
-featured: true
 -->
 
 <?php
