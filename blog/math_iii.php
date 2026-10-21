@@ -67,20 +67,22 @@ Both questions turn on the geometry of the spaces in which models learn.
 </div>
 
 <div class="md">
-## What are approximations?
+## Approximation
+
+### What are approximations?
 
 In traditional programming, we aim for **exactness**. If you write a function to calculate a tax rate, you want the result to be 100% correct every single time. However, the real world is messy and doesn't always follow simple, rigid rules.
 
 An **approximation** (from latin *approximātus*, “to come near, approach”, see \citetitle{kleinetymology}, p. 45) is a result that is “close enough” to the truth to be useful, even if it isn't perfect.
 
-### Most Artificial Intelligence is approximations
+#### Most Artificial Intelligence is approximations
 
 Most tasks we want AI to solve, like recognizing a face, translating a language, or driving a car, are too complex for “if-then” logic.
 
 * **Complexity:** There is no single mathematical formula for a “cat.” A cat can be any color, in any pose, and in any lighting.
 * **The Goal:** Instead of looking for a perfect rule, AI looks for a **statistical likelihood**. It approximates the pattern of a cat based on the thousands of examples it has seen.
 
-### Accuracy vs. Precision
+#### Accuracy vs. Precision
 
 When we talk about models being “good enough,” we are looking at the balance of error.
 
@@ -91,11 +93,11 @@ When we talk about models being “good enough,” we are looking at the balance
 </div>
 
 <div class="md" data-mathlevel="55">
-## The Mathematical Toolkit of Approximation
+### The Mathematical Toolkit of Approximation
 
 AI leans on three families of approximation:
 
-### 1. Numerical Approximation
+#### 1. Numerical Approximation
 
 Floating-point arithmetic cannot represent most real numbers exactly (0.1 in binary is an infinite repeating fraction). The IEEE 754 standard bounds the rounding error so that the accumulation of error stays within predictable limits.
 
@@ -107,13 +109,13 @@ $$
 
 where $\epsilon_{\text{machine}}$ is machine precision ($\approx 10^{-7}$ for fp32) and $C$ is a problem-dependent constant. So even if individual steps are approximate, the result is bounded.
 
-### 2. Statistical Approximation
+#### 2. Statistical Approximation
 
 When we say a model “predicts the next token”, we mean: of all the tokens that *could* plausibly follow, the model assigns probabilities. The **expectation** of the probability distribution is a “best guess”, but a single sample is approximate.
 
 Maximum Likelihood Estimation (MLE), Bayesian inference, and Monte Carlo methods are all formal ways of reasoning about the uncertainty inherent in statistical approximation.
 
-### 3. Function Approximation
+#### 3. Function Approximation
 
 A neural network is, mathematically, a **function approximator**. Given a function $f^*: X \to Y$, the network learns parameters $\theta$ such that $f_\theta(x) \approx f^*(x)$ for the inputs in the training distribution.
 
@@ -121,11 +123,11 @@ The **Universal Approximation Theorem** (\cite[Cybenko, 1989]{cybenko1989}; \cit
 </div>
 
 <div class="md" data-mathlevel="60">
-## The integral and the closed integral
+### The integral and the closed integral
 
 Two more signs show up throughout this book, so it is worth learning them once. Both come from the **calculus**, which **Newton** and **Leibniz** invented independently in the 1660s to 1680s to turn "what is changing" into "what has accumulated."
 
-### The integral $\int$
+#### The integral $\int$
 
 The integral $\int_a^b f(x)\,\mathrm{d}x$ **adds a quantity up continuously** over an interval. The picture: split the interval $[a,b]$ into $n$ equal slices, each of width $\Delta x = \frac{b-a}{n}$, and take one sample point $x_i$ in the $i$-th slice (say at its right edge, $x_i = a + i\,\Delta x$). In each slice, replace $f$ by the single height $f(x_i)$, so that slice contributes a rectangle of area $f(x_i)\,\Delta x$; adding the $n$ rectangles gives the **Riemann sum** $\sum_{i=1}^{n} f(x_i)\,\Delta x$. As the slices get thinner and thinner ($n \to \infty$, so $\Delta x \to 0$), this Riemann sum settles down to the exact area under the curve,
 
@@ -141,7 +143,7 @@ So you rarely take the limit by hand: find *any* antiderivative $F$ of $f$, then
 
 $$\int_0^3 2x\,\mathrm{d}x = \big[\,x^2\,\big]_{0}^{3} = 3^{2} - 0^{2} = 9 - 0 = 9 .$$
 
-### The closed integral $\oint$
+#### The closed integral $\oint$
 
 The ordinary integral $\int_a^b$ adds a quantity up along a line that has a start, $a$, and an end, $b$. The **closed integral** $\oint$ adds up the same kind of thing, but along a line that has **no start and no end** — a loop that comes all the way back to where it began. The dot in the middle is only a reminder that the line is closed.
 
@@ -157,7 +159,7 @@ You will meet the same idea again in physics and in [Geometry III](geometry_iii)
 </div>
 
 <div class="md">
-## Approximation vs. Exact Computation: When Each Wins
+### Approximation vs. Exact Computation: When Each Wins
 
 | Task | Better with exact | Better with approximation |
 |------|--------------------|---------------------------|
@@ -172,7 +174,9 @@ A good engineer uses exact tools where they suffice, and approximate tools where
 </div>
 
 <div class="md" data-mathlevel="40">
-## Vector Spaces: A Brief Recap
+## High-dimensional geometry
+
+### Vector Spaces: A Brief Recap
 
 Recall from Math II, the central idea: a vector lives in a space, and operations on vectors (addition, scaling, dot product) correspond to geometric operations on the space. Modern AI happens in vector spaces of dimension 768 to 16,000.
 
@@ -180,7 +184,7 @@ For the rest of this chapter, the only fact about vector spaces we need is the f
 </div>
 
 <div class="md" data-mathlevel="65">
-## The Curse of Dimensionality
+### The Curse of Dimensionality
 
 Classical statistics warns: **as dimensionality grows, geometry breaks down**.
 
@@ -196,7 +200,7 @@ These are real problems for classical statistical methods. Naïve nearest-neighb
 <div id="curse-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md" data-mathlevel="65">
-## The Blessing of Dimensionality
+### The Blessing of Dimensionality
 
 You may have heard of the “curse of dimensionality”: in high dimensions, distance metrics break down, and all points become roughly equidistant. But there is a corresponding **blessing of dimensionality** that makes neural networks possible.
 
@@ -210,7 +214,7 @@ This means the model can store thousands of **nearly-independent features** beca
 
 The key idea: the same property that makes high dimensions difficult for classical statistics, the concentration of measure, is what makes neural networks powerful. In low dimensions, features compete for the same axes. In high dimensions, every feature can have its own private direction with minimal interference. The curse and the blessing are two sides of the same coin.
 
-### Superposition
+#### Superposition
 
 Mechanistic interpretability research (Anthropic, 2024) has shown that LLMs represent **more features than they have dimensions**. A 768-dimensional model might encode tens of thousands of interpretable features by letting each feature occupy a *combination* of dimensions.
 
@@ -220,7 +224,7 @@ This is possible precisely because high-dimensional space has exponentially many
 <div id="blessing-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md" data-mathlevel="75">
-## Concentration of Measure
+### Concentration of Measure
 
 A foundational result in high-dimensional probability. For any function $f$ that is Lipschitz with constant $L$, the values of $f$ on random points in a high-dimensional ball are tightly concentrated around their mean:
 
@@ -234,7 +238,7 @@ This is why a 70B-parameter LLM, despite the vast size of its hypothesis space, 
 </div>
 
 <div class="md" data-mathlevel="60">
-## The Manifold Hypothesis
+### The Manifold Hypothesis
 
 A corollary of the blessing: real-world data does not actually fill high-dimensional space. A photo of a face lives on a low-dimensional **manifold**, the space of all possible faces, embedded in a much higher-dimensional pixel space. The intrinsic dimensionality of “face-ness” might be ~100, even though a $1024 \times 1024$ image has over a million dimensions.
 
@@ -244,7 +248,9 @@ This is why deep learning is so effective on images, audio, and text: each of th
 </div>
 
 <div class="md" data-mathlevel="65">
-## Why Approximations Compound and Bound
+## Approximation in LLMs
+
+### Why Approximations Compound and Bound
 
 A surprising property of well-behaved approximations: errors don't necessarily compound.
 
@@ -256,7 +262,7 @@ These guarantees are why training a 70B model on 15T tokens can produce a model 
 </div>
 
 <div class="md">
-## Beyond Approximation: Exact Computation with LLMs
+### Beyond Approximation: Exact Computation with LLMs
 
 In 2025, the frontier is the **hybrid** system: LLM for intuition, exact tools for verification.
 
