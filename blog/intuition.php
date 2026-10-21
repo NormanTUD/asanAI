@@ -1271,7 +1271,7 @@ A model thinks in a continuous space, yet it must speak in a **finite** vocabula
 	<div id="wm-caption" class="wm-caption"></div>
 
 	<div class="mn-demo-hint">
-		<b>Try it:</b> let the tour run, or drag the thought yourself. Shrink the dictionary and the cells grow; add words and the seams multiply — but the band where no word clearly wins never disappears. Raise the temperature and the circled reach grows: words that were hopeless begin to win sometimes.
+		<b>Try it:</b> step through the tour with <b>Next</b> (or <b>Play</b> to let it run), or drag the thought yourself. Shrink the dictionary and the cells grow; add words and the seams multiply — but the band where no word clearly wins never disappears. Raise the temperature and the circled reach grows: words that were hopeless begin to win sometimes.
 	</div>
 </div>
 
