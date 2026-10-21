@@ -31,7 +31,7 @@ The universe is a process of reaching out into the multi-colored world, and draw
 </div>
 
 <div class="md">
-What I was trying here is to understand AI using AI. I tried to follow every question I could possibly think of regarding AI to it's source, trying to find original publications and put everything in place, so one has a complete mental model of where AI came from and how it works. I go into many different, seemingly unrelated fields, but as a Whiteheadian, I assume that Reality is One, and everything is connected to everything else. 
+What I was trying here is to understand AI using AI. I tried to follow every question I could possibly think of regarding AI to it's source, trying to find original publications and put everything in place, so one has a complete mental model of where AI came from and how it works. I go into many different, seemingly unrelated fields, but as a Whiteheadian, I assume that Reality is One, and everything is connected to everything else, and as such there are no *really* unrelated fields. Often, connections arise where you didn't expect them at all; these are the connections I am trying to find, to weave picture of AI as complete as I can. 
 
 I tried my best to fact-check every claim, but since this project also my personal learning curve of a diverse set of very different, very complex sciences like Astronomy, Mathematics, Computer Science, Material Science, Cultural History, Cosmology, Chemistry, Physics and so on, and I myself am not a polymath, I may have introduced errors here and there, as to err is human.
 
