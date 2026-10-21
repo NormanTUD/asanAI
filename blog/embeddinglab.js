@@ -6381,7 +6381,8 @@ const homologyState = {
     holes: []
 };
 
-const HOMOLOGY_MAX_TRIANGLES_DRAWN = 6000;
+const HOMOLOGY_MAX_TRIANGLES_DRAWN = 1500;
+const HOMOLOGY_MAX_EDGES_DRAWN = 2000;
 const HOMOLOGY_BIN_COUNT = 2048;
 const HOMOLOGY_BIN_MAX = 1.5;
 
@@ -6506,7 +6507,7 @@ function generateHomologyPoints(preset) {
     if (preset === 'swiss') {
         // Points arranged with deliberate holes (Swiss cheese)
         // Outer scatter
-        for (let i = 0; i < 80; i++) {
+        for (let i = 0; i < 72; i++) {
             const x = 0.1 + rand() * 0.8;
             const y = 0.1 + rand() * 0.8;
             // Reject points inside the "holes"
@@ -6530,7 +6531,7 @@ function generateHomologyPoints(preset) {
             { cx: 0.25, cy: 0.65, r: 0.06 },
         ];
         holes.forEach(h => {
-            const n = Math.round(12 + h.r * 80);
+            const n = Math.round(11 + h.r * 72);
             for (let i = 0; i < n; i++) {
                 const a = (i / n) * 2 * Math.PI + (rand() - 0.5) * 0.3;
                 const r = h.r + 0.02 + rand() * 0.04;
@@ -6539,13 +6540,13 @@ function generateHomologyPoints(preset) {
         });
     } else if (preset === 'ring') {
         // Single ring with a big central hole
-        for (let i = 0; i < 60; i++) {
-            const a = (i / 60) * 2 * Math.PI + (rand() - 0.5) * 0.15;
+        for (let i = 0; i < 54; i++) {
+            const a = (i / 54) * 2 * Math.PI + (rand() - 0.5) * 0.15;
             const r = 0.28 + (rand() - 0.5) * 0.05;
             pts.push({ x: 0.5 + r * Math.cos(a), y: 0.5 + r * Math.sin(a) });
         }
         // Some scattered outer points
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 13; i++) {
             const a = rand() * 2 * Math.PI;
             const r = 0.38 + rand() * 0.08;
             pts.push({ x: 0.5 + r * Math.cos(a), y: 0.5 + r * Math.sin(a) });
@@ -6558,7 +6559,7 @@ function generateHomologyPoints(preset) {
             { cx: 0.50, cy: 0.75 },
         ];
         centers.forEach(c => {
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 27; i++) {
                 pts.push({
                     x: c.cx + randGauss() * 0.06,
                     y: c.cy + randGauss() * 0.06
@@ -6566,21 +6567,21 @@ function generateHomologyPoints(preset) {
             }
         });
         // Bridge points (sparse) to connect clusters
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 7; i++) {
             const t = rand();
             pts.push({
                 x: centers[0].cx * (1 - t) + centers[1].cx * t + randGauss() * 0.02,
                 y: centers[0].cy * (1 - t) + centers[1].cy * t + randGauss() * 0.02
             });
         }
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 7; i++) {
             const t = rand();
             pts.push({
                 x: centers[1].cx * (1 - t) + centers[2].cx * t + randGauss() * 0.02,
                 y: centers[1].cy * (1 - t) + centers[2].cy * t + randGauss() * 0.02
             });
         }
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < 7; i++) {
             const t = rand();
             pts.push({
                 x: centers[2].cx * (1 - t) + centers[0].cx * t + randGauss() * 0.02,
@@ -6589,13 +6590,13 @@ function generateHomologyPoints(preset) {
         }
     } else if (preset === 'figure8') {
         // Two interlocking loops
-        for (let i = 0; i < 45; i++) {
-            const a = (i / 45) * 2 * Math.PI + (rand() - 0.5) * 0.15;
+        for (let i = 0; i < 40; i++) {
+            const a = (i / 40) * 2 * Math.PI + (rand() - 0.5) * 0.15;
             const r = 0.16 + (rand() - 0.5) * 0.04;
             pts.push({ x: 0.35 + r * Math.cos(a), y: 0.50 + r * Math.sin(a) });
         }
-        for (let i = 0; i < 45; i++) {
-            const a = (i / 45) * 2 * Math.PI + (rand() - 0.5) * 0.15;
+        for (let i = 0; i < 40; i++) {
+            const a = (i / 40) * 2 * Math.PI + (rand() - 0.5) * 0.15;
             const r = 0.16 + (rand() - 0.5) * 0.04;
             pts.push({ x: 0.65 + r * Math.cos(a), y: 0.50 + r * Math.sin(a) });
         }
@@ -6817,12 +6818,13 @@ function initHomology() {
 
     function resizeCanvas(canvas, prop) {
         const rect = canvas.getBoundingClientRect();
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
         st[prop + 'Width'] = rect.width;
         st[prop + 'Height'] = rect.height;
-        canvas.width = rect.width * window.devicePixelRatio;
-        canvas.height = rect.height * window.devicePixelRatio;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
         const ctx = canvas.getContext('2d');
-        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        ctx.scale(dpr, dpr);
         return ctx;
     }
 
@@ -6944,14 +6946,15 @@ function renderHomology() {
     if (r > 0 && st.edgeLen && st.edgeLen.length > 0) {
         const active = homologyCountAtOrBelow(st.edgeLen, threshold);
         if (active > 0) {
+            const stride = Math.max(1, Math.ceil(active / HOMOLOGY_MAX_EDGES_DRAWN));
             ctx.beginPath();
-            for (let e = 0; e < active; e++) {
+            for (let e = 0; e < active; e += stride) {
                 const pi = toC(points[st.edgeA[e]]);
                 const pj = toC(points[st.edgeB[e]]);
                 ctx.moveTo(pi.x, pi.y);
                 ctx.lineTo(pj.x, pj.y);
             }
-            ctx.strokeStyle = 'rgba(96, 165, 250, 0.3)';
+            ctx.strokeStyle = `rgba(96, 165, 250, ${Math.min(0.5, 0.3 * Math.sqrt(stride))})`;
             ctx.lineWidth = 1;
             ctx.stroke();
         }
