@@ -13338,6 +13338,78 @@
    "year": "",
    "url": "https://de.wikipedia.org/w/index.php?title=Lernmatrix&oldid=265839903"
   },
+  "hnfrosenblatt2019": {
+   "title": "Frank Rosenblatt und das Perceptron",
+   "author": "HNF",
+   "year": "",
+   "url": "https://blog.hnf.de/frank-rosenblatt-und-das-perceptron/"
+  },
+  "hnflernendeautomaten2021": {
+   "title": "Lernende Automaten in Karlsruhe",
+   "author": "HNF",
+   "year": "",
+   "url": "https://blog.hnf.de/lernende-automaten-in-karlsruhe/"
+  },
+  "hnfki70jahre2026": {
+   "title": "70 Jahre Künstliche Intelligenz",
+   "author": "HNF",
+   "year": "",
+   "url": "https://blog.hnf.de/70-jahre-kuenstliche-intelligenz/"
+  },
+  "hnfmccullochpitts2023": {
+   "title": "McCulloch und Pitts – das erste neuronale Netz",
+   "author": "HNF",
+   "year": "",
+   "url": "https://blog.hnf.de/mcculloch-und-pitts-das-erste-neuronale-netz/"
+  },
+  "hnfturing2020": {
+   "title": "Alan Turings Test – 70 Jahre Imitationsspiel",
+   "author": "HNF",
+   "year": "",
+   "url": "https://blog.hnf.de/alan-turings-test-70-jahre-imitationsspiel/"
+  },
+  "hnfweizenbaum2023": {
+   "title": "Joseph Weizenbaum (1923-2008)",
+   "author": "HNF",
+   "year": "",
+   "url": "https://blog.hnf.de/joseph-weizenbaum-1923-2008/"
+  },
+  "hnffifthgen2023": {
+   "title": "Fünfte Generation aus Japan",
+   "author": "HNF",
+   "year": "",
+   "url": "https://blog.hnf.de/fuenfte-generation-aus-japan/"
+  },
+  "hnfchatgpt2023": {
+   "title": "Die Geheimnisse von ChatGPT",
+   "author": "HNF",
+   "year": "",
+   "url": "https://blog.hnf.de/die-geheimnisse-von-chatgpt/"
+  },
+  "hnfbonn2020": {
+   "title": "Künstliche Intelligenz: Es begann in Bonn",
+   "author": "HNF",
+   "year": "",
+   "url": "https://blog.hnf.de/kuenstliche-intelligenz-es-begann-in-bonn/"
+  },
+  "hnfsteinbuch2017": {
+   "title": "Karl Steinbuch: Von der Kybernetik zur Politik",
+   "author": "HNF",
+   "year": "",
+   "url": "https://blog.hnf.de/karl-steinbuch-von-der-kybernetik-zur-politik/"
+  },
+  "hnfshakey2019": {
+   "title": "Shakey der Roboter",
+   "author": "HNF",
+   "year": "",
+   "url": "https://blog.hnf.de/shakey-der-roboter/"
+  },
+  "hnfki_frauen2023": {
+   "title": "Künstliche Intelligenz und die Frauen",
+   "author": "HNF",
+   "year": "",
+   "url": "https://blog.hnf.de/kuenstliche-intelligenz-und-die-frauen/"
+  },
   "roberts1960perceptron": {
    "title": "Pattern Recognition with an Adaptive Network",
    "author": "Lawrence G. Roberts",
@@ -18238,6 +18310,9 @@
   "turingimage": [
    "history"
   ],
+  "hnfturing2020": [
+   "history"
+  ],
   "levesque2014bestbehaviour": [
    "history",
    "philosophy"
@@ -18311,6 +18386,9 @@
   "bain": [
    "history"
   ],
+  "hnfmccullochpitts2023": [
+   "history"
+  ],
   "rosenblattad": [
    "history"
   ],
@@ -18339,6 +18417,9 @@
   "rosenblatt1971twocolor": [
    "history"
   ],
+  "hnfrosenblatt2019": [
+   "history"
+  ],
   "newyorktimesperceptron": [
    "history",
    "untold_history"
@@ -18362,6 +18443,9 @@
    "history"
   ],
   "steinbuch1961matrix": [
+   "history"
+  ],
+  "hnflernendeautomaten2021": [
    "history"
   ],
   "steinbuch1961automat": [
@@ -18425,6 +18509,9 @@
    "untold_history"
   ],
   "weizenbaum1976computer": [
+   "history"
+  ],
+  "hnfweizenbaum2023": [
    "history"
   ],
   "lane2025eliza": [
@@ -18516,6 +18603,9 @@
   "touvron2023llama": [
    "history"
   ],
+  "hnfchatgpt2023": [
+   "history"
+  ],
   "racter1984": [
    "history"
   ],
@@ -18528,6 +18618,24 @@
   "searle1980minds": [
    "history",
    "philosophy"
+  ],
+  "hnfki70jahre2026": [
+   "history"
+  ],
+  "hnfshakey2019": [
+   "history"
+  ],
+  "hnffifthgen2023": [
+   "history"
+  ],
+  "hnfsteinbuch2017": [
+   "history"
+  ],
+  "hnfbonn2020": [
+   "history"
+  ],
+  "hnfki_frauen2023": [
+   "history"
   ],
   "pope2022scaling": [
    "inference_vs_training"
@@ -54277,6 +54385,25 @@
    "maxyear": null,
    "keys": [
     "steinbuch1963learningmatrices"
+   ]
+  },
+  "HNF": {
+   "count": 12,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "hnfrosenblatt2019",
+    "hnflernendeautomaten2021",
+    "hnfki70jahre2026",
+    "hnfmccullochpitts2023",
+    "hnfturing2020",
+    "hnfweizenbaum2023",
+    "hnffifthgen2023",
+    "hnfchatgpt2023",
+    "hnfbonn2020",
+    "hnfsteinbuch2017",
+    "hnfshakey2019",
+    "hnfki_frauen2023"
    ]
   },
   "Lawrence G. Roberts": {

@@ -17472,6 +17472,34 @@
   ]
  },
  {
+  "name": "HNF",
+  "canon": "HNF",
+  "alias": null,
+  "lat": 51.72,
+  "lng": 8.76,
+  "city": "Paderborn, Germany",
+  "year": 2026.0,
+  "conf": 1,
+  "works": 12,
+  "keys": [
+   "hnfrosenblatt2019",
+   "hnflernendeautomaten2021",
+   "hnfki70jahre2026",
+   "hnfmccullochpitts2023",
+   "hnfturing2020",
+   "hnfweizenbaum2023",
+   "hnffifthgen2023",
+   "hnfchatgpt2023",
+   "hnfbonn2020",
+   "hnfsteinbuch2017",
+   "hnfshakey2019",
+   "hnfki_frauen2023"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
   "name": "Christiaan Huygens",
   "canon": "Christiaan Huygens",
   "alias": null,
