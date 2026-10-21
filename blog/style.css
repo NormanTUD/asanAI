@@ -12769,56 +12769,71 @@ html.mnp-open { overflow: hidden; }
 .mnp-close:hover, .mnp-close:active { transform: none; filter: none; }
 .mnp-modal-body { width: 100%; padding: clamp(22px, 4vw, 40px) clamp(18px, 4vw, 48px) clamp(56px, 8vw, 96px); box-sizing: border-box; }
 
-/* picked path: resume strip above the fork */
-.mnp-resume {
-	--tone: var(--mn-accent);
-	display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
-	margin: 0 0 18px; padding: 14px 18px; border-radius: 14px;
-	border: 1px solid color-mix(in srgb, var(--tone) 35%, var(--mn-border));
-	background: color-mix(in srgb, var(--tone) 6%, var(--mn-surface));
-}
-.mnp-resume-num { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font: 700 1rem/1 var(--mn-font-prose); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); background: color-mix(in srgb, var(--tone) 12%, transparent); border: 1px solid color-mix(in srgb, var(--tone) 28%, transparent); }
-.mnp-resume-main { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 2px; }
-.mnp-resume-kicker { font: 600 .68rem/1 var(--mn-font-prose); letter-spacing: .1em; text-transform: uppercase; color: var(--mn-text-muted); }
-.mnp-resume-main b { font: 700 1rem/1.3 var(--mn-font-prose); color: var(--mn-heading); }
-.mnp-resume-main span { font: 400 .82rem/1.4 var(--mn-font-prose); color: var(--mn-text-secondary); }
-.mnp-resume-bar { display: block; height: 3px; margin-top: 5px; border-radius: 3px; background: color-mix(in srgb, var(--mn-text-muted) 16%, transparent); overflow: hidden; }
-.mnp-resume-bar i { display: block; height: 100%; border-radius: 3px; background: var(--tone); transition: width .6s ease; }
-.mnp-resume-next { display: flex; align-items: baseline; gap: 6px; min-width: 0; margin-top: 2px; }
-.mnp-resume-next > span { flex: none; font: 600 .62rem/1 var(--mn-font-prose); letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
-.mnp-resume-next a { min-width: 0; color: var(--mn-text-secondary); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.mnp-resume-next a:hover { color: var(--tone); text-decoration: underline; }
-.mnp-resume-pct { flex: none; align-self: center; font: 600 .78rem/1 var(--mn-font-prose); font-variant-numeric: tabular-nums; color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
-.mnp-resume .mnp-jump { margin-top: 0; align-self: center; border-color: var(--tone); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
-.mnp-resume-leave { appearance: none; align-self: center; border: 0; background: none; padding: 6px 4px; color: var(--mn-text-muted); font: 500 .78rem var(--mn-font-prose); cursor: pointer; }
-.mnp-resume-leave:hover { color: var(--mn-rose); }
-
-/* the fork: paths or your own way */
-.mnp-fork { display: grid; grid-template-columns: 1fr auto 1fr; gap: clamp(14px, 2vw, 22px); align-items: stretch; }
-.mnp-fork-card { display: flex; flex-direction: column; gap: 8px; padding: clamp(18px, 2.4vw, 28px); border-radius: 16px; border: 1px solid var(--mn-border); background: var(--mn-surface); }
-.mnp-fork-card--own { border-color: color-mix(in srgb, var(--mn-accent) 35%, var(--mn-border)); background: color-mix(in srgb, var(--mn-accent) 3%, var(--mn-surface)); }
-.mnp-fork-kicker { font: 600 .72rem/1 var(--mn-font-prose); letter-spacing: .1em; text-transform: uppercase; color: var(--mn-text-muted); }
-.mnp-fork-title { margin: 0; padding: 0; border: 0; font: 700 clamp(1.15rem, 1rem + .5vw, 1.4rem)/1.25 var(--mn-font-prose); color: var(--mn-heading); }
-.mnp-fork-text { margin: 0 0 6px; font: 400 .93rem/1.55 var(--mn-font-prose); color: var(--mn-text-secondary); }
-.mnp-fork-text b { color: var(--mn-heading); }
-.mnp-fork-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 4px; }
-.mnp-fork-or { align-self: stretch; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font: italic 400 .92rem/1 var(--mn-font-prose); color: var(--mn-text-muted); }
-.mnp-fork-or::before, .mnp-fork-or::after { content: ""; width: 1px; flex: 1 1 0; min-height: 10px; background: var(--mn-border); }
 .mnp-jump {
 	appearance: none; align-self: flex-start; margin-top: auto; padding: 9px 17px; border-radius: 999px;
 	border: 1px solid var(--mn-border); background: transparent; color: var(--mn-text);
 	font: 600 .88rem/1 var(--mn-font-prose); cursor: pointer; transition: border-color .2s ease, background .2s ease, color .2s ease;
 }
-.mnp-fork-actions .mnp-jump { margin-top: 0; }
 .mnp-jump:hover { border-color: var(--mn-accent); color: var(--mn-accent); }
 .mnp-jump:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
-.mnp-tune { background: var(--mn-accent); border-color: var(--mn-accent); color: #fff; }
-.mnp-tune:hover { background: color-mix(in srgb, var(--mn-accent) 85%, #000); border-color: color-mix(in srgb, var(--mn-accent) 85%, #000); color: #fff; }
 
 .mnp-sect-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 8px 20px; margin: clamp(34px, 4vw, 52px) 0 16px; }
 .mnp-sect { margin: 0; padding: 0; border: 0; font: 700 clamp(1.3rem, 1.1rem + .5vw, 1.6rem)/1.2 var(--mn-font-prose); letter-spacing: -.01em; color: var(--mn-heading); scroll-margin-top: 140px; }
 .mnp-sect-sub { margin: 5px 0 0; font: italic 400 .88rem/1.4 var(--mn-font-prose); color: var(--mn-text-muted); }
 .mnp-count { font: 400 .82rem/1.3 var(--mn-font-prose); color: var(--mn-text-muted); white-space: nowrap; }
+
+/* calm start: one hero path with an interactive route map */
+.mnp-hero {
+	--tone: var(--mn-accent);
+	position: relative; overflow: hidden;
+	padding: clamp(20px, 3vw, 32px);
+	border: 1px solid color-mix(in srgb, var(--tone) 34%, var(--mn-border));
+	border-radius: 20px;
+	background:
+		radial-gradient(130% 90% at 0% 0%, color-mix(in srgb, var(--tone) 10%, transparent), transparent 62%),
+		var(--mn-surface);
+	font-family: var(--mn-font-prose);
+}
+.mnp-hero::before { content: ""; position: absolute; inset: 0 0 auto; height: 4px; background: var(--tone); opacity: .7; }
+.mnp-hero-top { display: flex; align-items: flex-start; gap: 16px; }
+.mnp-hero-heading { flex: 1; min-width: 0; }
+.mnp-hero-kicker { font: 600 .68rem/1 var(--mn-font-prose); letter-spacing: .1em; text-transform: uppercase; color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
+.mnp-hero-title { margin: 7px 0 0; padding: 0; border: 0; font: 700 clamp(1.55rem, 1.25rem + 1vw, 2.15rem)/1.15 var(--mn-font-prose); letter-spacing: -.01em; color: var(--mn-heading); }
+.mnp-hero-desc { margin: 8px 0 0; max-width: 62ch; font: 400 .95rem/1.55 var(--mn-font-prose); color: var(--mn-text-secondary); }
+.mnp-hero .mnp-path-num { width: 44px; height: 44px; font-size: 1.05rem; }
+.mnp-map { position: relative; display: flex; gap: 8px; list-style: none; margin: clamp(18px, 2.4vw, 26px) 0 0; padding: 2px 2px 8px; overflow-x: auto; scrollbar-width: thin; scroll-snap-type: x proximity; }
+.mnp-map::before { content: ""; position: absolute; left: 26px; right: 26px; top: 17px; height: 2px; background: color-mix(in srgb, var(--mn-text-muted) 22%, transparent); }
+.mnp-map-node { flex: 1 0 96px; scroll-snap-align: center; }
+.mnp-map-node a { display: flex; flex-direction: column; align-items: center; gap: 7px; text-decoration: none; color: inherit; }
+.mnp-map-dot { position: relative; z-index: 1; width: 30px; height: 30px; box-sizing: border-box; border-radius: 50%; display: grid; place-items: center; background: var(--mn-surface); border: 2px solid color-mix(in srgb, var(--mn-text-muted) 30%, var(--mn-border)); color: var(--mn-text-muted); font: 600 .72rem/1 var(--mn-font-prose); transition: border-color .2s ease, background .2s ease, transform .2s ease; }
+.mnp-map-node.is-seen .mnp-map-dot { border-color: color-mix(in srgb, var(--tone) 55%, var(--mn-border)); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
+.mnp-map-node.is-current .mnp-map-dot { border-color: var(--tone); background: color-mix(in srgb, var(--tone) 14%, var(--mn-surface)); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--tone) 16%, transparent); }
+.mnp-map-node.is-done .mnp-map-dot { border-color: var(--tone); background: var(--tone); color: #fff; }
+.mnp-map-title { font: 600 .7rem/1.25 var(--mn-font-prose); text-align: center; color: var(--mn-text-secondary); max-width: 100%; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.mnp-map-node.is-current .mnp-map-title { color: var(--mn-heading); }
+.mnp-map-node a:hover .mnp-map-dot { border-color: var(--tone); transform: translateY(-2px); }
+.mnp-map-node a:focus-visible { outline: 2px solid var(--tone); outline-offset: 3px; border-radius: 10px; }
+.mnp-hero-progress { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
+.mnp-hero-progress .mnp-progress { height: 7px; }
+.mnp-hero-meta { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font: 400 .84rem/1.4 var(--mn-font-prose); color: var(--mn-text-muted); }
+.mnp-hero-next { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.mnp-hero-next > span { flex: none; font: 600 .62rem/1 var(--mn-font-prose); letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
+.mnp-hero-next a { min-width: 0; color: var(--mn-text-secondary); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mnp-hero-next a:hover { color: var(--tone); text-decoration: underline; }
+.mnp-hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.mnp-hero-actions .mnp-jump { margin-top: 0; align-self: center; }
+.mnp-hero-go { background: var(--tone); border-color: var(--tone); color: #fff; }
+.mnp-hero-go:hover { background: color-mix(in srgb, var(--tone) 82%, #000); border-color: color-mix(in srgb, var(--tone) 82%, #000); color: #fff; }
+.mnp-hero-following { display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--tone) 32%, var(--mn-border)); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); font: 600 .78rem/1 var(--mn-font-prose); }
+.mnp-hero-leave { appearance: none; margin-top: 14px; padding: 2px 0; border: 0; background: none; color: var(--mn-text-muted); font: 500 .78rem var(--mn-font-prose); cursor: pointer; }
+.mnp-hero-leave:hover { color: var(--mn-rose); }
+.mnp-quiet { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin: 16px 0 0; font: 400 .82rem/1.4 var(--mn-font-prose); color: var(--mn-text-muted); }
+.mnp-quiet-link { appearance: none; padding: 0; border: 0; background: none; color: var(--mn-text-secondary); font: 600 .82rem var(--mn-font-prose); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.mnp-quiet-link:hover { color: var(--mn-accent); }
+.mnp-all { margin-top: clamp(22px, 3vw, 34px); }
+.mnp-all-body[hidden] { display: none; }
+.mnp-all .mnp-tools { margin-top: 0; }
+.mnp-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 /* search + summary above the path grids */
 .mnp-tools { display: flex; align-items: center; gap: 10px 18px; flex-wrap: wrap; margin: clamp(26px, 3vw, 40px) 0 0; }
@@ -12929,11 +12944,6 @@ html.mnp-open { overflow: hidden; }
 	.mnp-ctx .mnp-pager { order: 4; flex: 1 1 100%; }
 	.mnp-ctx .mnp-pager-select { flex: 1 1 auto; max-width: none; }
 	.mnp-ctx-all { margin-left: auto; }
-}
-@media (max-width: 760px) {
-	.mnp-fork { grid-template-columns: 1fr; }
-	.mnp-fork-or { flex-direction: row; align-self: center; width: 100%; }
-	.mnp-fork-or::before, .mnp-fork-or::after { width: auto; height: 1px; min-height: 0; flex: 1 1 auto; }
 }
 @media (prefers-reduced-motion: reduce) {
 	.mnp-overlay, .mnp-path, .mnp-path-more summary::before { transition: none; }

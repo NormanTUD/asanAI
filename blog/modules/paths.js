@@ -15,6 +15,7 @@
 
 	let pickedId = null;
 	let searchQuery = "";
+	let allOpen = false;
 	try { pickedId = localStorage.getItem(PICK_KEY) || null; } catch (e) { /* ignore */ }
 
 	const CURATED = [
@@ -181,28 +182,58 @@
 			"</article>";
 	}
 
-	function resumeStrip(p) {
+	function routeMap(p) {
+		const g = progress(p);
+		const q = Q();
+		return '<ol class="mnp-map" aria-label="Route of ' + esc(p.title) + '">' + p.lessons.map((s, i) => {
+			const m = modOf(s);
+			const done = q && q.finished(s);
+			const seen = q && q.visited(s);
+			const state = done ? " is-done" : s === g.next ? " is-current" : seen ? " is-seen" : "";
+			const title = m ? m.title : s;
+			return '<li class="mnp-map-node' + state + '"><a href="' + esc(m ? m.url : s) + '" title="' + esc(title) + '">' +
+				'<span class="mnp-map-dot" aria-hidden="true">' + (done ? "✓" : i + 1) + '</span>' +
+				'<span class="mnp-map-title">' + esc(shortTitle(title)) + "</span>" +
+				'<span class="mnp-sr">Step ' + (i + 1) + ": " + esc(title) + "</span>" +
+				"</a></li>";
+		}).join("") + "</ol>";
+	}
+
+	function recommended() {
+		const cur = allPaths().filter((p) => !p.isPart);
+		return cur.find((p) => !progress(p).complete) || cur[0] || null;
+	}
+
+	function heroHtml(p, picked) {
 		const g = progress(p);
 		const next = g.next && modOf(g.next);
 		const pct = Math.round(g.done / g.total * 100);
 		const meta = g.complete
 			? "Completed · " + g.total + " lessons · certificate ready"
-			: "Step " + (next ? p.lessons.indexOf(next.slug) + 1 : g.total) + " of " + g.total + " · " + g.done + " read";
-		const nextLine = next && !g.complete
-			? '<span class="mnp-resume-next"><span>Next</span><a href="' + esc(next.url) + '">' + esc(shortTitle(next.title)) + "</a></span>"
+			: picked ? "Step " + (next ? p.lessons.indexOf(next.slug) + 1 : g.total) + " of " + g.total + " · " + g.done + " read"
+			: g.total + " lessons · " + (g.done ? g.done + " read" : "not started");
+		const primary = g.complete
+			? '<button type="button" class="mnp-jump mnp-hero-go mnp-cert" data-path="' + esc(p.id) + '">🎓 Certificate</button>'
+			: next ? '<a class="mnp-jump mnp-hero-go" href="' + esc(next.url) + '">' + (picked ? "Continue" : "Start path") + ' <span aria-hidden="true">→</span></a>' : "";
+		const follow = picked
+			? '<span class="mnp-hero-following">Following ✓</span>'
+			: '<button type="button" class="mnp-pick mnp-hero-follow" data-path="' + esc(p.id) + '" aria-pressed="false">Follow this path</button>';
+		const nextNote = next && !g.complete
+			? '<span class="mnp-hero-next"><span>' + (picked ? "Next" : "Starts with") + '</span><a href="' + esc(next.url) + '">' + esc(shortTitle(next.title)) + "</a></span>"
 			: "";
-		const action = g.complete
-			? '<a class="mnp-jump mnp-resume-go" href="#mnp-curated">Certificate below ↓</a>'
-			: next ? '<a class="mnp-jump mnp-resume-go" href="' + esc(next.url) + '">Continue →</a>' : "";
-		return '<div class="mnp-resume" style="--tone: var(--mn-' + toneOf(p) + ')">' +
-			'<span class="mnp-resume-num" aria-hidden="true">' + pathNum(p) + '</span>' +
-			'<div class="mnp-resume-main"><span class="mnp-resume-kicker">You are following</span>' +
-			'<b>' + esc(p.title) + '</b><span>' + esc(meta) + '</span>' + nextLine +
-			'<span class="mnp-resume-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></span></div>' +
-			'<span class="mnp-resume-pct">' + pct + '%</span>' +
-			action +
-			'<button type="button" class="mnp-resume-leave" title="Stop following this path">Leave</button>' +
-			"</div>";
+		return '<section class="mnp-hero' + (picked ? " is-picked" : "") + '" data-path="' + esc(p.id) + '" style="--tone: var(--mn-' + toneOf(p) + ')">' +
+			'<div class="mnp-hero-top"><div class="mnp-hero-heading"><span class="mnp-hero-kicker">' + (picked ? "Your path" : "Start here") + '</span>' +
+			'<h3 class="mnp-hero-title">' + esc(p.title) + '</h3>' +
+			'<p class="mnp-hero-desc">' + esc(p.desc) + '</p></div>' +
+			'<span class="mnp-path-num" aria-hidden="true">' + pathNum(p) + '</span></div>' +
+			routeMap(p) +
+			'<div class="mnp-hero-progress"><span class="mnp-progress" role="progressbar" aria-label="' + g.done + ' of ' + g.total + ' lessons read" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></span>' +
+			'<span class="mnp-card-pct">' + g.done + "/" + g.total + " · " + pct + '%</span></div>' +
+			'<div class="mnp-hero-meta"><span>' + esc(meta) + "</span>" + nextNote + "</div>" +
+			'<div class="mnp-hero-actions">' + primary + follow +
+			'<button type="button" class="mnp-jump mnp-all-toggle" aria-expanded="' + (allOpen ? "true" : "false") + '" data-show="Show all ' + allPaths().length + ' paths" data-hide="Hide all paths">' + (allOpen ? "Hide all paths" : "Show all " + allPaths().length + " paths") + "</button></div>" +
+			(picked ? '<button type="button" class="mnp-hero-leave" title="Stop following this path">Leave this path</button>' : "") +
+			"</section>";
 	}
 
 	function render() {
@@ -211,39 +242,29 @@
 		const curDone = cur.filter((p) => progress(p).complete).length;
 		const partDone = parts.filter((p) => progress(p).complete).length;
 		const picked = selected();
-		return (picked ? resumeStrip(picked) : "") +
-			'<div class="mnp-fork">' +
-			'<section class="mnp-fork-card">' +
-				'<span class="mnp-fork-kicker">Guided</span>' +
-				'<h3 class="mnp-fork-title">Follow a learning path</h3>' +
-				'<p class="mnp-fork-text">A curated sequence of lessons, in the order they build on each other. Finish a path for <b>+100 XP</b> and a printable certificate.</p>' +
-				'<button type="button" class="mnp-jump" data-mnp-scroll>' + cur.length + " paths to choose from <span aria-hidden=\"true\">↓</span></button>" +
-			"</section>" +
-			'<div class="mnp-fork-or" aria-hidden="true">or</div>' +
-			'<section class="mnp-fork-card mnp-fork-card--own">' +
-				'<span class="mnp-fork-kicker">Your own way</span>' +
-				'<h3 class="mnp-fork-title">Read by your own taste</h3>' +
-				'<p class="mnp-fork-text">Jump between lessons, skip what bores you, linger where you are curious. Tune the course to your interests first, or browse everything and decide as you go.</p>' +
-				'<div class="mnp-fork-actions">' +
-					'<button type="button" class="mnp-jump mnp-tune">Tune to my interests</button>' +
-					'<button type="button" class="mnp-jump mnp-browse">Browse all lessons</button>' +
+		const hero = picked || recommended();
+		return (hero ? heroHtml(hero, !!picked) : "") +
+			'<div class="mnp-quiet"><span>Prefer to read on your own?</span>' +
+				'<button type="button" class="mnp-quiet-link mnp-tune">Tune to my interests</button>' +
+				'<button type="button" class="mnp-quiet-link mnp-browse">Browse all lessons</button></div>' +
+			'<div class="mnp-all' + (allOpen ? " is-open" : "") + '">' +
+				'<div class="mnp-all-body"' + (allOpen ? "" : " hidden") + '>' +
+				'<div class="mnp-tools"><label class="mnp-search">' +
+					'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>' +
+					'<input id="mnp-search" type="search" autocomplete="off" placeholder="Search paths or lessons…" aria-label="Search paths or lessons" value="' + esc(searchQuery) + '">' +
+					'<span class="mnp-search-count" aria-live="polite"></span></label>' +
+					'<span class="mnp-count">' + curDone + " of " + cur.length + " curated paths completed</span></div>" +
+				'<div class="mnp-sect-row"><div><h3 class="mnp-sect" id="mnp-curated">Curated paths</h3>' +
+				'<p class="mnp-sect-sub">Goal-driven routes with a clear next step.</p></div></div>' +
+				'<div class="mnp-paths" data-mnp-group="curated">' + cur.map(card).join("") + "</div>" +
+				'<p class="mnp-empty" data-mnp-empty="curated" hidden>No curated path matches that search.</p>' +
+				'<div class="mnp-sect-row"><div><h3 class="mnp-sect">The six parts</h3>' +
+				'<p class="mnp-sect-sub">The full course, part by part.</p></div>' +
+				'<span class="mnp-count">' + partDone + " of " + parts.length + " parts completed</span></div>" +
+				'<div class="mnp-paths" data-mnp-group="parts">' + parts.map(card).join("") + "</div>" +
+				'<p class="mnp-empty" data-mnp-empty="parts" hidden>No part matches that search.</p>' +
 				"</div>" +
-			"</section>" +
-		"</div>" +
-			'<div class="mnp-tools"><label class="mnp-search">' +
-				'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>' +
-				'<input id="mnp-search" type="search" autocomplete="off" placeholder="Search paths or lessons…" aria-label="Search paths or lessons" value="' + esc(searchQuery) + '">' +
-				'<span class="mnp-search-count" aria-live="polite"></span></label>' +
-				'<span class="mnp-count">' + curDone + " of " + cur.length + " curated paths completed</span></div>" +
-			'<div class="mnp-sect-row"><div><h3 class="mnp-sect" id="mnp-curated">Curated paths</h3>' +
-			'<p class="mnp-sect-sub">Goal-driven routes with a clear next step.</p></div></div>' +
-			'<div class="mnp-paths" data-mnp-group="curated">' + cur.map(card).join("") + "</div>" +
-			'<p class="mnp-empty" data-mnp-empty="curated" hidden>No curated path matches that search.</p>' +
-			'<div class="mnp-sect-row"><div><h3 class="mnp-sect">The six parts</h3>' +
-			'<p class="mnp-sect-sub">The full course, part by part.</p></div>' +
-			'<span class="mnp-count">' + partDone + " of " + parts.length + " parts completed</span></div>" +
-			'<div class="mnp-paths" data-mnp-group="parts">' + parts.map(card).join("") + "</div>" +
-			'<p class="mnp-empty" data-mnp-empty="parts" hidden>No part matches that search.</p>';
+			"</div>";
 	}
 
 	function applyFilter(root) {
@@ -292,8 +313,6 @@
 				a.addEventListener("click", () => setSelected(id, false));
 			});
 		});
-		const leave = root.querySelector(".mnp-resume-leave");
-		if (leave) leave.addEventListener("click", () => setSelected(null, true));
 	}
 
 	function bindFork(root) {
@@ -303,11 +322,30 @@
 			search.addEventListener("search", () => applyFilter(root));
 		}
 		applyFilter(root);
-		const jump = root.querySelector("[data-mnp-scroll]");
-		if (jump) jump.addEventListener("click", () => {
-			const target = root.querySelector("#mnp-curated");
-			if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+		const curNode = root.querySelector(".mnp-map-node.is-current");
+		const map = curNode && curNode.closest(".mnp-map");
+		if (map && map.scrollWidth > map.clientWidth) map.scrollLeft = Math.max(0, curNode.offsetLeft - (map.clientWidth - curNode.offsetWidth) / 2);
+		const allBtn = root.querySelector(".mnp-all-toggle");
+		if (allBtn) allBtn.addEventListener("click", () => {
+			allOpen = !allOpen;
+			allBtn.setAttribute("aria-expanded", allOpen ? "true" : "false");
+			allBtn.textContent = allOpen ? allBtn.getAttribute("data-hide") : allBtn.getAttribute("data-show");
+			const all = root.querySelector(".mnp-all");
+			if (all) all.classList.toggle("is-open", allOpen);
+			const body = root.querySelector(".mnp-all-body");
+			if (body) body.hidden = !allOpen;
 		});
+		const hero = root.querySelector(".mnp-hero");
+		if (hero) {
+			const id = hero.getAttribute("data-path");
+			hero.querySelectorAll(".mnp-map a, .mnp-hero-go:not(.mnp-cert)").forEach((a) => {
+				a.addEventListener("click", () => setSelected(id, false));
+			});
+			const follow = hero.querySelector(".mnp-hero-follow");
+			if (follow) follow.addEventListener("click", () => setSelected(id, true));
+			const leave = hero.querySelector(".mnp-hero-leave");
+			if (leave) leave.addEventListener("click", () => setSelected(null, true));
+		}
 		const tune = root.querySelector(".mnp-tune");
 		if (tune) tune.addEventListener("click", () => {
 			close();
@@ -561,6 +599,7 @@
 	function open() {
 		if (overlay) return;
 		searchQuery = "";
+		allOpen = false;
 		lastFocus = document.activeElement;
 		overlay = document.createElement("div");
 		overlay.className = "mnp-overlay";
@@ -602,7 +641,8 @@
 		box.innerHTML = '<label>Name on the certificate <input type="text" maxlength="60" value="' + esc(name) + '" placeholder="Your name"></label>' +
 			'<canvas width="1600" height="1130" aria-label="Certificate preview"></canvas>' +
 			'<div class="mnz-foot"><span class="mnz-hint">Made in your browser — nothing is uploaded.</span><button type="button" class="mnz-btn mnp-dl">Download PNG</button></div>';
-		const host = anchor.closest(".mnp-path");
+		const host = anchor.closest(".mnp-path, .mnp-hero");
+		if (!host) return;
 		const old = host.querySelector(".mnp-certbox");
 		if (old) { old.remove(); return; }
 		host.appendChild(box);

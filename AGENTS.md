@@ -132,11 +132,12 @@ learning paths + one per part, PNG certificate; all in one window opened by
 the route icon `#paths-toggle` in the top-right chrome, `render_paths_toggle()`).
 Clicking a path card picks it and jumps to its next lesson (localStorage
 `mn_path_pick`); its Follow button only picks it. A picked path weaves through
-the site: a resume strip in the picker, a "Your path · step N" strip at the top
-of the lesson TOC, a "next stop" card at the lesson end, a resume card in
-`#mn-home-dash`, step badges on `#course-overview` tiles. The top strip and the
-lesson-end card both carry a prev/next pager with a picker for any lesson in
-the path. Every lesson ends with a
+the site: a calm hero in the picker (one path with an interactive route map,
+the rest behind a searchable "all paths" drawer), a "Your path · step N" strip
+at the top of the lesson TOC, a "next stop" card at the lesson end, a resume
+card in `#mn-home-dash`, "Step N" badges on `#course-overview` tiles. The top
+strip and the lesson-end card both carry a prev/next pager with a picker for
+any lesson in the path. Every lesson ends with a
 "Check yourself" quiz; `render_daily_question()` (functions.php) can draw a
 daily question from all of them (not rendered on the intro/home page) — so keep quiz markup
 exactly `<div class="mn-quiz" data-quiz="<slug>"><script type="application/json">…</script></div>`.
