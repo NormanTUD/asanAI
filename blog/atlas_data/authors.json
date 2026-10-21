@@ -17500,6 +17500,93 @@
   ]
  },
  {
+  "name": "Stephen T. Emlen",
+  "canon": "Stephen T. Emlen",
+  "alias": null,
+  "lat": 42.45,
+  "lng": -76.49,
+  "city": "Ithaca, USA",
+  "year": 1971.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "rosenblattmemorial1971"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Howard C. Howland",
+  "canon": "Howard C. Howland",
+  "alias": null,
+  "lat": 42.45,
+  "lng": -76.49,
+  "city": "Ithaca, USA",
+  "year": 1971.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "rosenblattmemorial1971"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Richard D. O'Brien",
+  "canon": "Richard D. O'Brien",
+  "alias": null,
+  "lat": 42.45,
+  "lng": -76.49,
+  "city": "Ithaca, USA",
+  "year": 1971.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "rosenblattmemorial1971"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "J. T. Farrow",
+  "canon": "J. T. Farrow",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1966.0,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "rosenblatt1966transfer1",
+   "rosenblatt1966transfer2"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "S. Rhine",
+  "canon": "S. Rhine",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 1966.0,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "rosenblatt1966transfer1",
+   "rosenblatt1966transfer2"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
   "name": "Christiaan Huygens",
   "canon": "Christiaan Huygens",
   "alias": null,
@@ -25361,13 +25448,16 @@
   "city": "Ithaca, USA",
   "year": 1960.0,
   "conf": 1,
-  "works": 7,
+  "works": 10,
   "keys": [
    "rosenblattbackprop",
    "rosenblattad",
    "rosenblattperceptron",
    "rosenblattperceptronresults",
    "rosenblatt1971twocolor",
+   "rosenblatt1966transfer1",
+   "rosenblatt1966transfer2",
+   "rosenblatt1969behavior",
    "perceptronresults",
    "rosenblatt1958perceptron"
   ],
@@ -63137,7 +63227,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 326,
+  "works": 327,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -63196,6 +63286,7 @@
    "tensor_wiki",
    "einstein_notation_wiki",
    "studentstest_wiki",
+   "frankrosenblattwiki",
    "lowbackgroundsteel",
    "antikytherawiki",
    "brazenheadwiki",

@@ -6,5 +6,8 @@
  ["Howard C. Howland", 42.45, -76.49, "Ithaca, USA", 1971, 1],
  ["Richard D. O'Brien", 42.45, -76.49, "Ithaca, USA", 1971, 1],
  ["J. T. Farrow", null, null, "", 1966, 0],
- ["S. Rhine", null, null, "", 1966, 0]
+ ["S. Rhine", null, null, "", 1966, 0],
+ ["James E. Dobson", 43.70, -72.29, "Hanover, USA", 2025, 1],
+ ["Rena J. Mosteirin", 43.70, -72.29, "Hanover, USA", 2025, 1],
+ ["Dartmouth Libraries", 43.70, -72.29, "Hanover, USA", 2026, 1]
 ]

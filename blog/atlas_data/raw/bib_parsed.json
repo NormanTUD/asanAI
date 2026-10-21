@@ -4368,6 +4368,36 @@
    "year": "",
    "url": "https://doi.org/10.1016/0019-1035(71)90103-5"
   },
+  "rosenblattmemorial1971": {
+   "title": "Frank Rosenblatt, July 11, 1928 — July 11, 1971",
+   "author": "Stephen T. Emlen, Howard C. Howland, Richard D. O'Brien",
+   "year": "",
+   "url": "https://ecommons.cornell.edu/bitstream/handle/1813/18965/Rosenblatt_Frank_1971.pdf"
+  },
+  "rosenblatt1966transfer1": {
+   "title": "The Transfer of Learned Behavior from Trained to Untrained Rats by Mean of Brain Extracts. I.",
+   "author": "Frank Rosenblatt, J. T. Farrow, S. Rhine",
+   "year": "",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC224185/"
+  },
+  "rosenblatt1966transfer2": {
+   "title": "The Transfer of Learned Behavior from Trained to Untrained Rats by Means of Brain Extracts. II.",
+   "author": "Frank Rosenblatt, J. T. Farrow, S. Rhine",
+   "year": "",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC224230/"
+  },
+  "rosenblatt1969behavior": {
+   "title": "Behavior Induction by Brain Extracts: A Comparison of Two Procedures",
+   "author": "Frank Rosenblatt",
+   "year": "",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC223395/"
+  },
+  "frankrosenblattwiki": {
+   "title": "Frank Rosenblatt",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/w/index.php?title=Frank_Rosenblatt&oldid=1380681031"
+  },
   "jensen2026perceptron": {
    "title": "Assembling and Training the Perceptron: A Personal Account",
    "author": "George Osborn Jensen, David E. Dunning, Alexander B. Magoun",
@@ -18420,6 +18450,21 @@
   "hnfrosenblatt2019": [
    "history"
   ],
+  "frankrosenblattwiki": [
+   "history"
+  ],
+  "rosenblatt1966transfer1": [
+   "history"
+  ],
+  "rosenblatt1966transfer2": [
+   "history"
+  ],
+  "rosenblatt1969behavior": [
+   "history"
+  ],
+  "rosenblattmemorial1971": [
+   "history"
+  ],
   "newyorktimesperceptron": [
    "history",
    "untold_history"
@@ -23542,7 +23587,7 @@
    ]
   },
   "Wikipedia contributors": {
-   "count": 326,
+   "count": 327,
    "minyear": 2026,
    "maxyear": 2026,
    "keys": [
@@ -23603,6 +23648,7 @@
     "tensor_wiki",
     "einstein_notation_wiki",
     "studentstest_wiki",
+    "frankrosenblattwiki",
     "lowbackgroundsteel",
     "antikytherawiki",
     "brazenheadwiki",
@@ -31777,7 +31823,7 @@
    ]
   },
   "Frank Rosenblatt": {
-   "count": 7,
+   "count": 10,
    "minyear": 1958,
    "maxyear": 1960,
    "keys": [
@@ -31786,6 +31832,9 @@
     "rosenblattperceptron",
     "rosenblattperceptronresults",
     "rosenblatt1971twocolor",
+    "rosenblatt1966transfer1",
+    "rosenblatt1966transfer2",
+    "rosenblatt1969behavior",
     "perceptronresults",
     "rosenblatt1958perceptron"
    ]
@@ -35644,6 +35693,48 @@
    "maxyear": null,
    "keys": [
     "preaiinternet"
+   ]
+  },
+  "Stephen T. Emlen": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rosenblattmemorial1971"
+   ]
+  },
+  "Howard C. Howland": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rosenblattmemorial1971"
+   ]
+  },
+  "Richard D. O'Brien": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rosenblattmemorial1971"
+   ]
+  },
+  "J. T. Farrow": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rosenblatt1966transfer1",
+    "rosenblatt1966transfer2"
+   ]
+  },
+  "S. Rhine": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rosenblatt1966transfer1",
+    "rosenblatt1966transfer2"
    ]
   },
   "George Osborn Jensen": {
