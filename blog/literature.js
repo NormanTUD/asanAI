@@ -3265,10 +3265,11 @@ window.bibData = {
 		year: 2021
 	},
 	"rosenblattbackprop": {
-		url: "https://archive.org/details/DTIC_AD0256582/page/n7/mode/2up",
+		url: "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up",
 		author: "Frank Rosenblatt",
 		year: 1961,
-		title: "Principles of Neurodynamics"
+		title: "Principles of Neurodynamics: Perceptrons and the Theory of Brain Mechanisms",
+		alternativetitle: "Rosenblatt, Principles of Neurodynamics (1961)"
 	},
 	"hayakawa": {
 		url: "https://archive.org/details/languageinthough0000siha_k3x0/page/n5/mode/2up",
@@ -15888,11 +15889,32 @@ window.bibData = {
 		alternativetitle: "Beurle, Neural Activity as a Wave (1956)"
 	},
 	"steinbuch1961matrix": {
-		title: "Die Lernmatrix (The Learning Matrix)",
+		title: "Die Lernmatrix",
 		author: "Karl Steinbuch",
 		year: 1961,
-		url: "https://web.archive.org/web/2024/https://en.wikipedia.org/wiki/Karl_Steinbuch",
-		alternativetitle: "Steinbuch, The Learning Matrix (1961)"
+		url: "https://archive.org/details/biological-cybernetics_1961-01_1_1",
+		alternativetitle: "Steinbuch, Die Lernmatrix (1961)"
+	},
+	"steinbuch1963learningmatrices": {
+		title: "Learning Matrices and Their Applications",
+		author: "Karl Steinbuch, U. A. W. Piske",
+		year: 1963,
+		url: "https://web.archive.org/web/2024/https://ieeexplore.ieee.org/document/4038032",
+		alternativetitle: "Steinbuch & Piske, Learning Matrices (1963)"
+	},
+	"steinbuch1961automat": {
+		title: "Automat und Mensch: Über menschliche und maschinelle Intelligenz",
+		author: "Karl Steinbuch",
+		year: 1961,
+		url: "https://doi.org/10.1007/978-3-642-53168-2_13",
+		alternativetitle: "Steinbuch, Automat und Mensch (1961)"
+	},
+	"lernmatrixwiki": {
+		title: "Lernmatrix",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://de.wikipedia.org/w/index.php?title=Lernmatrix&oldid=265839903",
+		alternativetitle: "Wikipedia: Lernmatrix"
 	},
 	"roberts1960perceptron": {
 		title: "Pattern Recognition with an Adaptive Network",
