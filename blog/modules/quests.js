@@ -260,7 +260,22 @@
 		}
 	}
 
+	let queuedToasts = null;
+	function loaderPending() { return !!document.getElementById("loader"); }
+	function flushQueuedToasts() {
+		if (!queuedToasts || !queuedToasts.length) return;
+		if (loaderPending()) { setTimeout(flushQueuedToasts, 250); return; }
+		const list = queuedToasts;
+		queuedToasts = null;
+		list.forEach((t) => toast(t[0], t[1], t[2]));
+	}
+
 	function toast(html, kind, onClick) {
+		if (loaderPending()) {
+			(queuedToasts || (queuedToasts = [])).push([html, kind, onClick]);
+			if (queuedToasts.length === 1) setTimeout(flushQueuedToasts, 250);
+			return;
+		}
 		buildUI();
 		if (!toastWrap) return;
 		const t = node("div", "mnq-toast" + (kind ? " mnq-toast--" + kind : ""), html);

@@ -12341,7 +12341,7 @@ math {
 	cursor: pointer; --mnq-hud-rest: .5; opacity: var(--mnq-hud-rest); visibility: hidden;
 	transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity .3s ease, gap .3s ease, padding .3s ease, visibility .4s ease .2s;
 }
-html.is-ready .mnq-hud, html:not(:has(#loader)) .mnq-hud { visibility: visible; }
+html:not(:has(#loader)) .mnq-hud { visibility: visible; }
 html.reader-mode .mnq-hud { --mnq-hud-rest: .28; }
 .mnq-hud:hover, .mnq-hud:focus-visible { opacity: 1; gap: 8px; padding: 5px 14px 5px 5px; transform: translateY(-2px); box-shadow: var(--mn-shadow-lg); border-color: var(--mn-accent); }
 .mnq-hud:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 3px; }
@@ -12372,6 +12372,7 @@ html.mnq-panel-open { overflow: hidden; }
 /* the chapter switcher + badge stack in the same bottom-left column —
    keep the toasts above the badge so everything stays readable */
 html:has(#chsw-dock) .mnq-toasts { --mnq-toasts-bottom: 132px; }
+html:has(#loader) .mnq-toasts { visibility: hidden; }
 .mnq-toast {
 	display: flex; align-items: center; gap: 10px;
 	padding: 8px 16px; border-radius: 12px;
@@ -12732,7 +12733,6 @@ html.is-ready #paths-toggle { opacity: 1; visibility: visible; }
 #paths-toggle:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
 html.mnp-open #paths-toggle { border-color: var(--mn-accent); color: var(--mn-accent); }
 #paths-toggle.is-following { color: var(--mn-accent); border-color: color-mix(in srgb, var(--mn-accent) 45%, var(--mn-border)); }
-#paths-toggle.is-following::after { content: attr(data-step); position: absolute; top: -5px; right: -5px; min-width: 16px; height: 16px; padding: 0 3px; box-sizing: border-box; border-radius: 999px; background: var(--mn-accent); color: #fff; font: 700 .6rem/16px var(--mn-font-prose); text-align: center; box-shadow: 0 0 0 2px var(--mn-surface); pointer-events: none; }
 @media (max-width: 600px) { #paths-toggle { top: 10px; right: 236px; width: 36px; height: 36px; } }
 html.reader-mode #paths-toggle,
 html.atlas-overlap #paths-toggle,
@@ -12874,13 +12874,27 @@ html.mnp-open { overflow: hidden; }
 .mnp-ctx-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .mnp-ctx-kicker { font: 600 .64rem/1.1 var(--mn-font-prose); letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
 .mnp-ctx-main b { font: 700 .92rem/1.25 var(--mn-font-prose); color: var(--mn-heading); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mnp-ctx-go { flex: none; max-width: 42%; font: 600 .76rem/1.25 var(--mn-font-prose); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); text-decoration: none; text-align: right; }
-.mnp-ctx-go:hover { text-decoration: underline; }
 .mnp-ctx-all { appearance: none; flex: none; border: 0; background: none; padding: 2px; color: var(--mn-text-muted); font: 500 .72rem var(--mn-font-prose); cursor: pointer; }
 .mnp-ctx-all:hover { color: var(--tone); }
+.mnp-ctx-open { appearance: none; flex: none; border: 1px solid color-mix(in srgb, var(--tone) 28%, var(--mn-border)); background: var(--mn-surface); border-radius: 999px; padding: 4px 8px; font: 600 .75rem/1.2 var(--mn-font-prose); color: var(--tone); cursor: pointer; }
+.mnp-ctx-open:hover { border-color: var(--tone); background: color-mix(in srgb, var(--tone) 8%, var(--mn-surface)); }
+
+/* step pager: prev/next plus a picker for any lesson in the path */
+.mnp-pager { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.mnp-pager-btn { flex: none; display: inline-flex; align-items: center; gap: 3px; padding: 4px 9px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--tone) 28%, var(--mn-border)); background: var(--mn-surface); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); font: 600 .72rem/1.2 var(--mn-font-prose); text-decoration: none; white-space: nowrap; }
+.mnp-pager-btn:hover { border-color: var(--tone); background: color-mix(in srgb, var(--tone) 8%, var(--mn-surface)); }
+.mnp-pager-btn.is-off { opacity: .4; border-color: var(--mn-border); color: var(--mn-text-muted); }
+.mnp-pager-select { min-width: 0; max-width: 220px; padding: 5px 8px; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--tone) 28%, var(--mn-border)); background: var(--mn-surface); color: var(--mn-heading); font: 600 .72rem/1.3 var(--mn-font-prose); cursor: pointer; }
+.mnp-pager-select:focus-visible { outline: 2px solid var(--tone); outline-offset: 1px; }
+.mnp-ctx .mnp-pager { flex: 0 1 auto; }
+.mnp-ctx .mnp-pager-select { max-width: 180px; }
+.mnp-end-pager { margin: 14px 0 4px; }
+.mnp-end-pager .mnp-pager { flex-wrap: wrap; }
+.mnp-end-pager .mnp-pager-select { flex: 1 1 200px; max-width: none; }
 @media (max-width: 700px) {
 	.mnp-ctx { flex-wrap: wrap; }
-	.mnp-ctx-go { max-width: 100%; }
+	.mnp-ctx .mnp-pager { order: 4; flex: 1 1 100%; }
+	.mnp-ctx .mnp-pager-select { flex: 1 1 auto; max-width: none; }
 	.mnp-ctx-all { margin-left: auto; }
 }
 @media (max-width: 760px) {

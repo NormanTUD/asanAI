@@ -41,6 +41,8 @@
 		return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 	}
 
+	function shortTitle(t) { return String(t || "").split(/\s[—–:]\s|:\s/)[0]; }
+
 	function nav() { return window.__moduleNavData || {}; }
 	function mods() { return nav().modules || []; }
 	function modOf(slug) { return mods().find((m) => m.slug === slug); }
@@ -277,6 +279,34 @@
 		});
 	}
 
+	// ── Step pager: shown at the top (TOC) and end of a path lesson ──
+	function pagerHtml(p, mod, compact) {
+		const pos = p.lessons.indexOf(mod.slug);
+		const prev = p.lessons[pos - 1] && modOf(p.lessons[pos - 1]);
+		const next = p.lessons[pos + 1] && modOf(p.lessons[pos + 1]);
+		const q = Q();
+		const options = p.lessons.map((s, i) => {
+			const m = modOf(s);
+			return '<option value="' + esc(m ? m.url : s) + '"' + (i === pos ? " selected" : "") + ">" + (i + 1) + ". " + esc(shortTitle(m ? m.title : s)) + (q && q.finished(s) ? " ✓" : "") + "</option>";
+		}).join("");
+		const prevHtml = prev
+			? '<a class="mnp-pager-btn" href="' + esc(prev.url) + '" aria-label="Previous lesson: ' + esc(prev.title) + '" title="Previous: ' + esc(prev.title) + '">←' + (compact ? "" : " Previous") + "</a>"
+			: '<span class="mnp-pager-btn is-off" aria-hidden="true">←' + (compact ? "" : " Previous") + "</span>";
+		const nextHtml = next
+			? '<a class="mnp-pager-btn" href="' + esc(next.url) + '" aria-label="Next lesson: ' + esc(next.title) + '" title="Next: ' + esc(next.title) + '">' + (compact ? "" : "Next ") + "→</a>"
+			: '<span class="mnp-pager-btn is-off" aria-hidden="true">' + (compact ? "" : "Next ") + "→</span>";
+		return '<div class="mnp-pager' + (compact ? " mnp-pager--compact" : "") + '">' +
+			prevHtml +
+			'<select class="mnp-pager-select" aria-label="Choose a lesson in this path">' + options + "</select>" +
+			nextHtml +
+			"</div>";
+	}
+
+	function bindPager(root) {
+		const sel = root.querySelector(".mnp-pager-select");
+		if (sel) sel.addEventListener("change", () => { if (sel.value) window.location.href = sel.value; });
+	}
+
 	// ── End of a lesson: next stop on the picked path ───────────────
 	let lessonPanel = null;
 
@@ -310,6 +340,7 @@
 		return '<div class="mnp-end-head"><span class="mnp-end-kicker">Your learning path</span><span class="mnp-end-step">Step ' + step + ' of ' + g.total + "</span></div>" +
 			'<div class="mnp-end-title">' + esc(p.title) + "</div>" +
 			'<div class="mnp-end-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
+			'<div class="mnp-end-pager">' + pagerHtml(p, mod, false) + "</div>" +
 			body +
 			'<div class="mnp-end-actions"><button type="button" class="mnp-end-btn mnp-end-all">All paths</button>' +
 			'<button type="button" class="mnp-end-btn mnp-end-leave">Leave this path</button></div>';
@@ -330,6 +361,7 @@
 		const navEl = contents.querySelector(".module-nav");
 		if (navEl && navEl.parentNode === contents) contents.insertBefore(lessonPanel, navEl);
 		else contents.appendChild(lessonPanel);
+		bindPager(lessonPanel);
 		lessonPanel.querySelector(".mnp-end-all").addEventListener("click", open);
 		lessonPanel.querySelector(".mnp-end-leave").addEventListener("click", () => setSelected(null, false));
 	}
@@ -397,15 +429,14 @@
 		}
 		const g = progress(p);
 		const pos = p.lessons.indexOf(mod.slug);
-		const next = p.lessons[pos + 1] && modOf(p.lessons[pos + 1]);
 		tocStrip.style.setProperty("--tone", "var(--mn-" + toneOf(p) + ")");
 		tocStrip.innerHTML = '<span class="mnp-ctx-num" aria-hidden="true">' + pathNum(p) + '</span>' +
 			'<div class="mnp-ctx-main"><span class="mnp-ctx-kicker">Your path · step ' + (pos + 1) + ' of ' + g.total + '</span>' +
 			'<b>' + esc(p.title) + '</b></div>' +
-			(next
-				? '<a class="mnp-ctx-go" href="' + esc(next.url) + '">Next: ' + esc(next.title.split(/\s[—–:]\s|:\s/)[0]) + ' →</a>'
-				: '<button type="button" class="mnp-ctx-go mnp-ctx-open">Certificate →</button>') +
+			pagerHtml(p, mod, true) +
+			(g.complete ? '<button type="button" class="mnp-ctx-open" title="Certificate">🎓</button>' : "") +
 			'<button type="button" class="mnp-ctx-all" title="All learning paths">All paths</button>';
+		bindPager(tocStrip);
 		const openBtn = tocStrip.querySelector(".mnp-ctx-open");
 		if (openBtn) openBtn.addEventListener("click", () => openAtCard(p));
 		tocStrip.querySelector(".mnp-ctx-all").addEventListener("click", open);
@@ -447,13 +478,7 @@
 		if (!btn) return;
 		const p = selected();
 		btn.classList.toggle("is-following", !!p);
-		if (p) {
-			const g = progress(p);
-			const step = g.complete ? "✓" : String(p.lessons.indexOf(g.next) + 1 || 1);
-			btn.setAttribute("data-step", step);
-		} else {
-			btn.removeAttribute("data-step");
-		}
+		btn.removeAttribute("data-step");
 		const label = p ? "Learning paths — following " + p.title : "Learning paths";
 		btn.title = label;
 		btn.setAttribute("aria-label", label);
