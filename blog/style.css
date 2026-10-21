@@ -12731,6 +12731,8 @@ html.is-ready #paths-toggle { opacity: 1; visibility: visible; }
 #paths-toggle:active { transform: scale(.95); }
 #paths-toggle:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
 html.mnp-open #paths-toggle { border-color: var(--mn-accent); color: var(--mn-accent); }
+#paths-toggle.is-following { color: var(--mn-accent); border-color: color-mix(in srgb, var(--mn-accent) 45%, var(--mn-border)); }
+#paths-toggle.is-following::after { content: ""; position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--mn-accent); box-shadow: 0 0 0 2px var(--mn-surface); }
 @media (max-width: 600px) { #paths-toggle { top: 10px; right: 236px; width: 36px; height: 36px; } }
 html.reader-mode #paths-toggle,
 html.atlas-overlap #paths-toggle,
@@ -12812,7 +12814,7 @@ html.mnp-open { overflow: hidden; }
 .mnp-paths { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
 .mnp-path {
 	--tone: var(--mn-accent);
-	position: relative; overflow: hidden;
+	position: relative; overflow: hidden; cursor: pointer;
 	display: flex; flex-direction: column; gap: 12px; padding: 18px 20px 16px; border-radius: 16px;
 	border: 1px solid var(--mn-border); background: var(--mn-surface);
 	transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
@@ -12850,6 +12852,28 @@ html.mnp-open { overflow: hidden; }
 .mnp-steps li.is-next a { color: var(--mn-heading); font-weight: 600; }
 .mnp-steps li.is-next .mnp-step-n { box-shadow: inset 0 0 0 1.5px var(--tone); color: var(--tone); }
 .mnp-path.is-complete { border-color: color-mix(in srgb, var(--mn-emerald) 40%, var(--mn-border)); }
+
+/* path lessons in the course overview */
+.course-tile.is-path-lesson { position: relative; }
+.course-tile .mnp-tile-step { position: absolute; top: 10px; right: 10px; min-width: 24px; height: 24px; padding: 0 7px; box-sizing: border-box; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font: 700 .68rem/1 var(--mn-font-prose); color: var(--tone); background: color-mix(in srgb, var(--tone) 13%, var(--mn-surface)); border: 1px solid color-mix(in srgb, var(--tone) 35%, transparent); }
+.course-tile.is-path-next { border-color: color-mix(in srgb, var(--tone) 55%, var(--mn-border)); box-shadow: 0 0 0 2px color-mix(in srgb, var(--tone) 15%, transparent); }
+.course-tile.is-path-next .mnp-tile-step { background: var(--tone); border-color: var(--tone); color: #fff; }
+
+/* current step of the picked path, inside the lesson TOC */
+.mnp-ctx { --tone: var(--mn-accent); display: flex; align-items: center; gap: 12px; margin: 0 0 12px; padding: 10px 12px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--tone) 28%, var(--mn-border-light, var(--mn-border))); background: color-mix(in srgb, var(--tone) 5%, var(--mn-bg-subtle)); font-family: var(--mn-font-prose); }
+.mnp-ctx-num { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 700 .8rem/1 var(--mn-font-prose); color: var(--tone); background: color-mix(in srgb, var(--tone) 13%, transparent); border: 1px solid color-mix(in srgb, var(--tone) 28%, transparent); }
+.mnp-ctx-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.mnp-ctx-kicker { font: 600 .64rem/1.1 var(--mn-font-prose); letter-spacing: .08em; text-transform: uppercase; color: var(--tone); }
+.mnp-ctx-main b { font: 700 .92rem/1.25 var(--mn-font-prose); color: var(--mn-heading); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mnp-ctx-go { flex: none; max-width: 42%; font: 600 .76rem/1.25 var(--mn-font-prose); color: var(--tone); text-decoration: none; text-align: right; }
+.mnp-ctx-go:hover { text-decoration: underline; }
+.mnp-ctx-all { appearance: none; flex: none; border: 0; background: none; padding: 2px; color: var(--mn-text-muted); font: 500 .72rem var(--mn-font-prose); cursor: pointer; }
+.mnp-ctx-all:hover { color: var(--tone); }
+@media (max-width: 700px) {
+	.mnp-ctx { flex-wrap: wrap; }
+	.mnp-ctx-go { max-width: 100%; }
+	.mnp-ctx-all { margin-left: auto; }
+}
 @media (max-width: 760px) {
 	.mnp-fork { grid-template-columns: 1fr; }
 	.mnp-fork-or { justify-self: center; }
@@ -12904,8 +12928,13 @@ html.mnp-open { overflow: hidden; }
 
 /* home dashboard */
 .mn-home-dash { max-width: var(--mn-col-width, 80ch); margin: var(--mn-space-l) auto; display: grid; gap: 14px; box-sizing: border-box; }
-.mn-home-dash:has(#mn-home-review[hidden]) { display: none; }
+.mn-home-dash:not(:has(> :not([hidden]))) { display: none; }
 .mn-home-daily .mn-quiz { margin: 0; }
+.mnh-card--path { --tone: var(--mn-accent); border-color: color-mix(in srgb, var(--tone) 40%, var(--mn-border)); }
+.mnh-card--path .mnh-kicker { color: var(--tone); }
+.mnh-num { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font: 700 1rem/1 var(--mn-font-prose); color: var(--tone); background: color-mix(in srgb, var(--tone) 12%, transparent); border: 1px solid color-mix(in srgb, var(--tone) 28%, transparent); }
+.mnh-card--path .mnh-sub { white-space: normal; }
+.mnh-card--path .mnz-btn { display: inline-flex; align-items: center; background: var(--tone); color: #fff; text-decoration: none; box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--tone) 80%, transparent); }
 .mnh-card {
 	display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: var(--mn-radius-lg);
 	border: 1px solid color-mix(in srgb, var(--mn-accent) 35%, var(--mn-border)); background: var(--mn-surface); box-shadow: var(--mn-shadow-md);

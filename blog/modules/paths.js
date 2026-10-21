@@ -85,7 +85,7 @@
 			else localStorage.removeItem(PICK_KEY);
 		} catch (e) { /* ignore */ }
 		if (repaint && overlay) paint();
-		paintLesson();
+		paintAll();
 	}
 
 	function openPath(p) {
@@ -329,6 +329,132 @@
 		lessonPanel.querySelector(".mnp-end-leave").addEventListener("click", () => setSelected(null, false));
 	}
 
+	// ── Site integration: home card, TOC strip, course tiles, chrome ──
+	let homeCard = null, tocStrip = null;
+
+	function removeHomeCard() {
+		if (homeCard && homeCard.parentNode) homeCard.remove();
+		homeCard = null;
+	}
+
+	function removeTocStrip() {
+		if (tocStrip && tocStrip.parentNode) tocStrip.remove();
+		tocStrip = null;
+	}
+
+	function openAtCard(p) {
+		open();
+		setTimeout(() => {
+			const card = overlay && overlay.querySelector('.mnp-path[data-path="' + p.id + '"]');
+			if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+		}, 260);
+	}
+
+	function paintHome() {
+		const host = document.getElementById("mn-home-dash");
+		if (!host) { homeCard = null; return; }
+		const p = selected();
+		if (!p) { removeHomeCard(); return; }
+		if (!homeCard || !homeCard.parentNode) {
+			homeCard = document.createElement("div");
+			homeCard.id = "mn-home-path";
+			homeCard.className = "mn-home-slot";
+			host.appendChild(homeCard);
+		}
+		const g = progress(p);
+		const next = g.next && modOf(g.next);
+		const meta = g.complete
+			? "Completed · " + g.total + " lessons · certificate ready"
+			: g.done + " of " + g.total + " read" + (next ? " · next: " + next.title : "");
+		const action = g.complete
+			? '<button type="button" class="mnz-btn mnp-home-cert">Certificate</button>'
+			: next ? '<a class="mnz-btn" href="' + esc(next.url) + '">Continue</a>' : "";
+		homeCard.innerHTML = '<div class="mnh-card mnh-card--path" style="--tone: var(--mn-' + toneOf(p) + ')">' +
+			'<span class="mnh-num" aria-hidden="true">' + pathNum(p) + '</span>' +
+			'<div class="mnh-main"><div class="mnh-kicker">Your path</div>' +
+			'<div class="mnh-title">' + esc(p.title) + '</div>' +
+			'<div class="mnh-sub">' + esc(meta) + '</div></div>' + action + '</div>';
+		const cert = homeCard.querySelector(".mnp-home-cert");
+		if (cert) cert.addEventListener("click", () => openAtCard(p));
+		const go = homeCard.querySelector("a.mnz-btn");
+		if (go) go.addEventListener("click", () => setSelected(p.id, false));
+	}
+
+	function paintToc() {
+		const toc = document.getElementById("toc");
+		const data = nav();
+		const mod = data.modules && data.modules[data.current];
+		const p = mod ? selected() : null;
+		if (!toc || !mod || !p || p.lessons.indexOf(mod.slug) < 0) { removeTocStrip(); return; }
+		if (!tocStrip) {
+			tocStrip = document.createElement("div");
+			tocStrip.className = "mnp-ctx";
+		}
+		const g = progress(p);
+		const pos = p.lessons.indexOf(mod.slug);
+		const next = p.lessons[pos + 1] && modOf(p.lessons[pos + 1]);
+		tocStrip.style.setProperty("--tone", "var(--mn-" + toneOf(p) + ")");
+		tocStrip.innerHTML = '<span class="mnp-ctx-num" aria-hidden="true">' + pathNum(p) + '</span>' +
+			'<div class="mnp-ctx-main"><span class="mnp-ctx-kicker">Your path · step ' + (pos + 1) + ' of ' + g.total + '</span>' +
+			'<b>' + esc(p.title) + '</b></div>' +
+			(next
+				? '<a class="mnp-ctx-go" href="' + esc(next.url) + '">Next: ' + esc(next.title.split(/\s[—–:]\s|:\s/)[0]) + ' →</a>'
+				: '<button type="button" class="mnp-ctx-go mnp-ctx-open">Certificate →</button>') +
+			'<button type="button" class="mnp-ctx-all" title="All learning paths">All paths</button>';
+		const openBtn = tocStrip.querySelector(".mnp-ctx-open");
+		if (openBtn) openBtn.addEventListener("click", () => openAtCard(p));
+		tocStrip.querySelector(".mnp-ctx-all").addEventListener("click", open);
+		if (!tocStrip.parentNode) toc.insertBefore(tocStrip, toc.firstChild);
+	}
+
+	function paintTiles() {
+		const tiles = document.querySelectorAll("a.course-tile");
+		if (!tiles.length) return;
+		tiles.forEach((tile) => {
+			tile.classList.remove("is-path-lesson", "is-path-next");
+			tile.style.removeProperty("--tone");
+			const b = tile.querySelector(".mnp-tile-step");
+			if (b) b.remove();
+		});
+		const p = selected();
+		if (!p) return;
+		const stepOf = {};
+		p.lessons.forEach((s, i) => { stepOf[s] = i + 1; });
+		const next = progress(p).next;
+		const tone = "var(--mn-" + toneOf(p) + ")";
+		tiles.forEach((tile) => {
+			const href = tile.getAttribute("href") || "";
+			const slug = href.split("#")[0].split("?")[0].replace(/\.php$/, "").split("/").filter(Boolean).pop();
+			if (!stepOf[slug]) return;
+			tile.classList.add("is-path-lesson");
+			tile.style.setProperty("--tone", tone);
+			if (slug === next) tile.classList.add("is-path-next");
+			const b = document.createElement("span");
+			b.className = "mnp-tile-step";
+			b.setAttribute("aria-hidden", "true");
+			b.textContent = stepOf[slug];
+			tile.appendChild(b);
+		});
+	}
+
+	function paintChrome() {
+		const btn = document.getElementById("paths-toggle");
+		if (!btn) return;
+		const p = selected();
+		btn.classList.toggle("is-following", !!p);
+		const label = p ? "Learning paths — following " + p.title : "Learning paths";
+		btn.title = label;
+		btn.setAttribute("aria-label", label);
+	}
+
+	function paintAll() {
+		paintLesson();
+		paintHome();
+		paintToc();
+		paintTiles();
+		paintChrome();
+	}
+
 	// ── The paths window (opened from #paths-toggle, top right) ─────
 	let overlay = null, lastFocus = null;
 
@@ -467,10 +593,10 @@
 		if (!mods().length) return;
 		if (!watching) {
 			watching = true;
-			window.addEventListener("blogPostLoadComplete", paintLesson);
-			window.addEventListener("mnquest:change", paintLesson);
+			window.addEventListener("blogPostLoadComplete", paintAll);
+			window.addEventListener("mnquest:change", paintAll);
 		}
-		paintLesson();
+		paintAll();
 		if (Q()) {
 			if (!checking) {
 				checking = true;
