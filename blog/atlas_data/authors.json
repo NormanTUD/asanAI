@@ -17673,6 +17673,40 @@
   ]
  },
  {
+  "name": "Neil R. Smalheiser",
+  "canon": "Neil R. Smalheiser",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2000.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "smalheiser2000pitts"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Tara H. Abraham",
+  "canon": "Tara H. Abraham",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2016.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "abraham2016rebelgenius"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
   "name": "Christiaan Huygens",
   "canon": "Christiaan Huygens",
   "alias": null,

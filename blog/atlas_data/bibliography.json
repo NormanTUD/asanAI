@@ -13494,6 +13494,18 @@
    "year": "",
    "url": "https://nautil.us/the-man-who-tried-to-redeem-the-world-with-logic-235253/"
   },
+  "smalheiser2000pitts": {
+   "title": "Walter Pitts",
+   "author": "Neil R. Smalheiser",
+   "year": "",
+   "url": "https://doi.org/10.1353/pbm.2000.0009"
+  },
+  "abraham2016rebelgenius": {
+   "title": "Rebel Genius: Warren S. McCulloch's Transdisciplinary Life in Science",
+   "author": "Tara H. Abraham",
+   "year": "",
+   "url": "https://doi.org/10.7551/mitpress/9780262035095.001.0001"
+  },
   "roberts1960perceptron": {
    "title": "Pattern Recognition with an Adaptive Network",
    "author": "Lawrence G. Roberts",
@@ -18303,6 +18315,12 @@
    "history"
   ],
   "gefter2015pitts": [
+   "history"
+  ],
+  "smalheiser2000pitts": [
+   "history"
+  ],
+  "abraham2016rebelgenius": [
    "history"
   ],
   "wiener1948cybernetics": [
@@ -54615,6 +54633,22 @@
    "maxyear": null,
    "keys": [
     "gefter2015pitts"
+   ]
+  },
+  "Neil R. Smalheiser": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "smalheiser2000pitts"
+   ]
+  },
+  "Tara H. Abraham": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "abraham2016rebelgenius"
    ]
   },
   "Lawrence G. Roberts": {
