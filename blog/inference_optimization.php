@@ -18,7 +18,9 @@ This chapter covers every lever: quantization, KV-cache management, paged attent
 </div>
 
 <div class="md">
-## The Inference Math
+## Making inference cheaper
+
+### The Inference Math
 
 For a single token generation step on a 70B model (fp16):
 
@@ -37,9 +39,9 @@ LLM inference is **memory-bandwidth bound**, not compute-bound. This is why:
 </div>
 
 <div class="md" data-mathlevel="50">
-## Quantization
+### Quantization
 
-### Weight Quantization
+#### Weight Quantization
 
 Reduce the bit precision of model weights:
 
@@ -63,7 +65,7 @@ Standard tools:
 * **BitNet** (\cite[Ma et al., 2024]{ma2024bitnet}): 1.58-bit ternary quantization. Surprisingly competitive at scale.
 * **QuIP#** (\cite[Chee et al., 2024]{che2024quip}): lattice-based 2-bit quantization with incoherence processing.
 
-### KV-Cache Quantization
+#### KV-Cache Quantization
 
 The KV-cache is the dominant memory cost for long contexts. Quantizing it:
 
@@ -77,7 +79,7 @@ Used by vLLM, TGI, and most production stacks. Critical for serving 100K+ contex
 <div id="quant-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
-## KV-Cache Optimizations
+### KV-Cache Optimizations
 
 Beyond quantization:
 
@@ -92,7 +94,7 @@ A 70B model with GQA + INT8 KV + prefix caching can serve 128K context to roughl
 </div>
 
 <div class="md" data-mathlevel="60">
-## FlashAttention
+### FlashAttention
 
 The single biggest speedup for training **and** inference in 2022–2023 (\cite[Dao et al., 2022]{dao2022flashattention}). Reduces attention memory from $O(n^2)$ to $O(n)$ by **never materializing the full attention matrix**:
 
@@ -115,7 +117,7 @@ FlashAttention is now standard in **all** major training and inference stacks (P
 </div>
 
 <div class="md">
-## Paged Attention
+### Paged Attention
 
 The OS-virtual-memory approach to KV management (\cite[Kwon et al., 2023]{kwon2023vllm}):
 
@@ -130,7 +132,7 @@ The vLLM paper showed 14–24× throughput vs. naïve HuggingFace serving at hig
 </div>
 
 <div class="md" data-mathlevel="45">
-## Speculative Decoding
+### Speculative Decoding
 
 LLM decoding is sequential: each token requires a full forward pass. **Speculative decoding** (\cite[Leviathan et al., 2023]{leviathan2023speculative}) breaks this:
 
@@ -150,33 +152,35 @@ Variants:
 </div>
 
 <div class="md">
-## Batching Strategies
+## Batching and hardware
 
-### Static Batching
+### Batching Strategies
+
+#### Static Batching
 
 Generate one token for $B$ requests simultaneously. All requests advance in lockstep. Simple but **straggler-bound**: longest request dictates the batch's pace.
 
-### Dynamic Batching
+#### Dynamic Batching
 
 Add new requests whenever an old one finishes. Better throughput than static; still has stragglers.
 
-### Continuous Batching (Iteration-Level Scheduling)
+#### Continuous Batching (Iteration-Level Scheduling)
 
 After **every** generated token, swap finished sequences out and swap new ones in. The GPU is never idle waiting for stragglers.
 
 vLLM, TGI, TensorRT-LLM, and SGLang all implement continuous batching. **Throughput improvement: 10–20×** over static batching for chat workloads.
 
-### In-flight Batching (NVIDIA TensorRT-LLM)
+#### In-flight Batching (NVIDIA TensorRT-LLM)
 
 Same idea as continuous batching but with tighter integration into TensorRT's kernel scheduling.
 
-### Chunked Prefill
+#### Chunked Prefill
 
 A request with a 100K-token prompt would otherwise block the GPU for many seconds. Chunked prefill splits the prompt into smaller chunks and interleaves them with decode steps of other requests. Critical for long-context serving.
 </div>
 
 <div class="md">
-## Distillation Recap
+### Distillation Recap
 
 A small “student” model trained to mimic a larger “teacher”:
 
@@ -190,35 +194,37 @@ DeepSeek-R1's distillation experiments (\cite[Guo et al., 2025]{guo2025deepseekr
 </div>
 
 <div class="md">
-## Hardware-Specific Tricks
+### Hardware-Specific Tricks
 
-### Tensor Parallelism
+#### Tensor Parallelism
 
 Split weight matrices across GPUs. Each GPU computes a partial output, all-reduces. Megatron-style.
 
-### Pipeline Parallelism
+#### Pipeline Parallelism
 
 Split layers across GPUs. Required for very large models on low-GPU-count servers.
 
-### Expert Parallelism (MoE)
+#### Expert Parallelism (MoE)
 
 For MoE models (Mixtral, DeepSeek-V3), different experts live on different GPUs. Tokens routed to expert $i$ are sent to GPU $i$.
 
-### CUDA Graph Capture
+#### CUDA Graph Capture
 
 For fixed-shape models, the entire inference forward pass can be captured as a **CUDA graph**: a pre-compiled sequence of GPU operations with minimal launch overhead. Reduces per-token latency by ~20%.
 
-### Mixed Precision (FP8, INT4)
+#### Mixed Precision (FP8, INT4)
 
 H100's **Transformer Engine** does FP8 matmuls natively. INT4 path for Hopper is via TensorRT-LLM. Speedups: 1.5–2× over BF16.
 
-### Speculative Prefill
+#### Speculative Prefill
 
 When the prompt is long and the system has many concurrent decoders, prefill can preempt decode. Some systems schedule prefill on a separate “prefill pool” of GPUs.
 </div>
 
 <div class="md">
-## Caching Strategies
+## Choosing a stack
+
+### Caching Strategies
 
 * **Exact prompt caching**: identical prompts reuse computed KV. Standard for system prompts.
 * **Semantic caching**: similar prompts (cosine > threshold) reuse responses. Saves API cost at the application layer.
@@ -229,7 +235,7 @@ A good caching strategy can reduce effective cost by **5–10×** for chat workl
 </div>
 
 <div class="md">
-## Choosing a Serving Stack
+### Choosing a Serving Stack
 
 | Stack | Best for | Notes |
 |-------|----------|-------|
@@ -246,7 +252,7 @@ For most production deployments: **vLLM** is the default in 2025.
 </div>
 
 <div class="md">
-## Practical Numbers (2025, approximate)
+### Practical Numbers (2025, approximate)
 
 For a 70B model on 8x H100:
 
@@ -264,7 +270,7 @@ Combined, a single 8-GPU node can serve ~100 concurrent users generating at 30+ 
 </div>
 
 <div class="md">
-## The Frontier of Inference
+### The Frontier of Inference
 
 Active research in 2025:
 

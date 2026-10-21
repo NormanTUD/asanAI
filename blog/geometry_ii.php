@@ -30,7 +30,9 @@ Each section ends with a hands-on plot. We do **not** re-teach what the earlier 
 </div>
 
 <div class="md" data-mathlevel="60">
-## The inner product
+## Similarity and projection
+
+### The inner product
 
 Everything in a neural network is a vector, and every layer *does* a measurement of how those vectors line up. That measurement is the **inner product** (dot product). Three signs appear in the formula that follows: **$\langle u, v\rangle$** (angle brackets) is the general inner product — the plain dot product suffices in $\mathbb{R}^n$, where $\mathbb{R}$ denotes the **real numbers** ($\mathbb{R}^2$ is the plane); **$\sum$** (sigma) means “sum”; and **$\lVert v \rVert$** (double bars) is the *length* of a vector. Read the identity as “alignment = (one length) × (the other length) × (closeness to parallel).” The three forms are the same quantity:
 
@@ -66,7 +68,7 @@ That is the seed of the chapter. Everything that follows is a geometric operatio
 </div>
 
 <div class="md" data-mathlevel="65">
-## Projection: the best fit is a shadow
+### Projection: the best fit is a shadow
 
 Suppose the answer *must* lie in a subspace $S$ — a line, a plane, or the set of all outputs a layer can produce. Given a target point $p$ outside $S$, **which point $s \in S$ is closest to $p$?**
 
@@ -102,7 +104,9 @@ The picture is always *a target, a family of allowed answers, keep the shadow.* 
 </div>
 
 <div class="md" data-mathlevel="70">
-## The SVD: the shape of any linear map
+## The shape of a linear map
+
+### The SVD: the shape of any linear map
 
 A linear map $A:\mathbb{R}^n\to\mathbb{R}^m$ looks like a messy matrix of mixed-up numbers. But in one coordinate system it is simple. The **singular value decomposition** (SVD) says every such $A$ factors as
 
@@ -151,7 +155,7 @@ The interactive shows the unit circle (white) and its image under a map with sin
 </div>
 
 <div class="md" data-mathlevel="60">
-## Descent: why the gradient is steepest
+### Descent: why the gradient is steepest
 
 Training a model is walking downhill on a loss landscape $L$. At any point $w$ the **gradient** $\nabla L(w) = (\partial L/\partial w_1, \dots, \partial L/\partial w_d)$ is a vector pointing the way the function climbs *fastest*, so $-\nabla L$ points straight *downhill*. Is the gradient actually the steepest way, or just a convenient choice? The answer is geometric — it is the inner-product identity pointed at a function. The **directional derivative** of $L$ in a unit direction $d$ is an inner product (\cite[Boyd & Vandenberghe, Applied Linear Algebra, Ch. 2, §2.2, p. 36]{boyd2018appliedlinearalgebra}), using two geometric signs: $a \parallel b$ (*parallel to*) and $a \perp b$ (*perpendicular to*):
 
@@ -187,7 +191,7 @@ The *schedule* on top of this fact — momentum, Adam, learning-rate decay — i
 </div>
 
 <div class="md" data-mathlevel="65">
-## Convolution is a sliding dot product — the DFT is its shape
+### Convolution is a sliding dot product — the DFT is its shape
 
 A convolution takes a short pattern (the **kernel** $c$) and a long signal (the **input** $x$), flips the kernel, slides it across the signal, and at each position takes a **dot product** and sums:
 
@@ -238,7 +242,7 @@ This is not a curiosity. “Smooth the signal” means multiply its spectrum by 
 </div>
 
 <div class="md" data-mathlevel="60">
-## Symmetry: invariance, equivariance, and the shape of attention
+### Symmetry: invariance, equivariance, and the shape of attention
 
 A neural network is a stack of functions $f$. A function has a **symmetry** when some operation on its input changes the input but the output moves in a predictable, *structured* way. Write a symmetry as $\sigma$ and its action on an input $x$ as $\sigma \cdot x$ (here the dot means “apply $\sigma$ to $x$,” not multiplication). Two behaviors matter:
 

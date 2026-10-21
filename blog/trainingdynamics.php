@@ -18,7 +18,9 @@ This lesson makes that a thing you can touch. The interactive below is a **train
 </div>
 
 <div class="md">
-## The shape of a training run: the power law
+## The shape of a run
+
+### The shape of a training run: the power law
 
 Strip a run down to its skeleton and it is a power law. \cite[Kaplan et al. (2020)]{kaplan2020scaling} fit the held-out loss of a family of language models and found it is, to a striking approximation, a sum of two power laws in the number of parameters $N$ and the number of training tokens $D$, plus an irreducible floor:
 
@@ -105,7 +107,7 @@ That is the **Chinchilla** result, and it is the reason the field moved, in the 
 </div>
 
 <div class="md" data-mathlevel="60">
-## What the simulator is, and isn't
+### What the simulator is, and isn't
 
 The curve above is a *stylized* run, not a real one — and being explicit about that is part of the point. The loss follows the power-law floor $L_{\min}(N, D)$ from the section above: it starts at the loss of an untrained model (roughly $\ln(\text{vocab})$, a constant independent of size) and decays toward the floor as the model sees more tokens. On top of that smooth decay it adds noise that scales as $1/\sqrt{\text{batch}}$ — which is why the small-batch curve is jagged and the large-batch curve is smooth — and it can be nudged to spike or diverge.
 
@@ -113,7 +115,9 @@ What the simulator gets *right* is the **relationship** between the knobs and th
 </div>
 
 <div class="md">
-## Warmup and learning-rate schedules
+## The knobs that shape it
+
+### Warmup and learning-rate schedules
 
 The simulator's $N$, $D$ and batch decide *where* the curve goes; the **learning-rate schedule** decides *how it gets there*, and it is the single most-tuned dial in practice.
 
@@ -125,7 +129,7 @@ The simulator's $N$, $D$ and batch decide *where* the curve goes; the **learning
 </div>
 
 <div class="md">
-## Batch size and the linear scaling rule
+### Batch size and the linear scaling rule
 
 \cite[Goyal et al. (2017)]{goyal2017largebatch} made a result that is almost a law: **doubling the batch lets you double the learning rate** and still reach the same loss. The reason is the noise. A minibatch gradient is the true gradient plus noise, and that noise scales as $1/\sqrt{\text{batch}}$ — double the batch and the noise drops by $\sqrt{2}$. A proportionally larger learning rate exactly compensates, so you can trade *more* steps of *smaller* batches for *fewer* steps of *bigger* batches and land at the same place, as long as you hold the product (and the LR) in the right ratio. This is the **linear scaling rule**.
 
@@ -133,7 +137,7 @@ The simulator's $N$, $D$ and batch decide *where* the curve goes; the **learning
 </div>
 
 <div class="md">
-## When a run diverges: spikes, the edge of stability, and clipping
+### When a run diverges: spikes, the edge of stability, and clipping
 
 Training runs are *flaky* in a specific way, and you are expected to recognize the shape.
 
@@ -145,7 +149,7 @@ Training runs are *flaky* in a specific way, and you are expected to recognize t
 </div>
 
 <div class="md" data-mathlevel="65">
-## Making hyperparameters transfer: μP
+### Making hyperparameters transfer: μP
 
 All of the above is tuned per model — you pick a learning rate for *this* width, re-tune when you change it, and hope the answer transfers. \cite[Yang et al. (2022)]{yang2022mup} introduced **μP** (Maximal Update Parametrization), a way of *writing down* the network so that the optimal hyperparameters found on a *tiny* model transfer to a *huge* one essentially unchanged. The consequence is a new tuning paradigm — tune on a small net where experiments are cheap, then scale the width without re-tuning at all, and the same learning rate, warmup, and schedule keep working. For teams that train at frontier scale, that transfer is worth a lot: it turns "how do I set the learning rate for a model this size?" into "the answer I already have from the 0.1B model."
 </div>

@@ -401,7 +401,7 @@ function _updateConvMathInner(x, y, size) {
 	}
 	const ctx = getCanvasCtx(DOM.srcCanvas, 'mathInner');
 	const { pixels, sums } = extractPatchData(ctx, x, y, size);
-	DOM.mathStep.innerHTML = `$$ ${buildConvLatex(x, y, pixels, sums)} $$`;
+	DOM.mathStep.innerHTML = `$ ${buildConvLatex(x, y, pixels, sums)} $`;
 	render_temml();
 }
 

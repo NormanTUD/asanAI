@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prospect Theory — Kahneman & Tversky (1979)</title>
+<style>
+  :root{
+    --bg:#07080d;
+    --ink:#f2f4f8;
+    --muted:#8b93a7;
+    --gain:#2de3a7;
+    --loss:#ff5d73;
+    --accent:#ffc857;
+    --violet:#8b7cff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Inter","Helvetica Neue",system-ui,-apple-system,sans-serif;
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- ambient background ---------- */
+  #aurora{position:fixed;inset:0;z-index:0;filter:blur(90px);opacity:.55}
+  #aurora span{
+    position:absolute;border-radius:50%;
+    animation:drift 22s ease-in-out infinite alternate;
+  }
+  #aurora span:nth-child(1){width:46vw;height:46vw;left:-8vw;top:-10vw;background:#1b7cff}
+  #aurora span:nth-child(2){width:38vw;height:38vw;right:-6vw;top:12vh;background:#ff4d6d;animation-delay:-7s}
+  #aurora span:nth-child(3){width:42vw;height:42vw;left:28vw;bottom:-16vw;background:#13d1a0;animation-delay:-13s}
+  @keyframes drift{
+    0%{transform:translate3d(0,0,0) scale(1)}
+    100%{transform:translate3d(6vw,-5vh,0) scale(1.25)}
+  }
+  #grain{
+    position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.045;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- deck ---------- */
+  #deck{position:relative;z-index:2;height:100%}
+  .slide{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    padding:4vh 7vw;
+    opacity:0;pointer-events:none;
+    transform:scale(.96) translateY(18px);
+    transition:opacity .7s cubic-bezier(.2,.8,.2,1), transform .9s cubic-bezier(.2,.8,.2,1);
+  }
+  .slide.active{opacity:1;pointer-events:auto;transform:none}
+
+  h1{font-size:clamp(2.4rem,7vw,5.6rem);font-weight:800;letter-spacing:-.04em;line-height:.95}
+  h2{font-size:clamp(1.6rem,3.6vw,3rem);font-weight:700;letter-spacing:-.03em;margin-bottom:.6em;text-align:center}
+  p{color:var(--muted);font-size:clamp(.95rem,1.5vw,1.25rem);line-height:1.65;max-width:62ch;text-align:center}
+  .kicker{
+    font-size:.8rem;letter-spacing:.4em;text-transform:uppercase;color:var(--accent);
+    margin-bottom:1.4em;
+  }
+  .grad{
+    background:linear-gradient(100deg,#fff 0%,var(--gain) 38%,var(--violet) 68%,var(--loss) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    background-size:220% auto;animation:shimmer 7s linear infinite;
+  }
+  @keyframes shimmer{to{background-position:220% center}}
+
+  .cards{display:flex;gap:1.6rem;flex-wrap:wrap;justify-content:center;margin-top:1rem}
+  .card{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.09);
+    backdrop-filter:blur(14px);
+    border-radius:22px;padding:1.8rem 1.6rem;width:270px;
+    transition:transform .4s cubic-bezier(.2,.8,.2,1), border-color .4s, box-shadow .4s;
+  }
+  .card:hover{transform:translateY(-10px);border-color:rgba(255,255,255,.22);box-shadow:0 24px 60px -24px rgba(0,0,0,.9)}
+  .card .num{font-size:2.4rem;font-weight:800;letter-spacing:-.04em;margin-bottom:.3rem}
+  .card h3{font-size:1.05rem;margin-bottom:.5rem;font-weight:650}
+  .card p{font-size:.92rem;text-align:left;color:var(--muted)}
+
+  .choice{display:flex;gap:2.2rem;flex-wrap:wrap;justify-content:center;margin-top:1.6rem}
+  .opt{
+    border-radius:20px;padding:1.5rem 1.8rem;min-width:260px;cursor:pointer;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.03);
+    transition:.35s cubic-bezier(.2,.8,.2,1);
+    text-align:left;
+  }
+  .opt:hover{transform:translateY(-6px) scale(1.02);background:rgba(255,255,255,.07)}
+  .opt b{display:block;font-size:1.3rem;margin-bottom:.35rem}
+  .opt small{color:var(--muted);font-size:.86rem;line-height:1.5;display:block}
+  .opt .reveal{
+    max-height:0;overflow:hidden;opacity:0;
+    transition:max-height .5s ease,opacity .5s ease .1s;
+    font-size:.84rem;color:var(--accent);margin-top:.6rem;
+  }
+  .opt.shown .reveal{max-height:80px;opacity:1}
+  .opt.pick-gain{border-color:var(--gain);box-shadow:0 0 40px -10px var(--gain)}
+  .opt.pick-loss{border-color:var(--loss);box-shadow:0 0 40px -10px var(--loss)}
+
+  canvas{max-width:100%;border-radius:18px}
+  .legend{display:flex;gap:1.6rem;margin-top:1.2rem;font-size:.85rem;color:var(--muted);flex-wrap:wrap;justify-content:center}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:.45rem;vertical-align:middle}
+
+  /* ---------- nav ---------- */
+  #nav{
+    position:fixed;bottom:2.2vh;left:50%;transform:translateX(-50%);
+    z-index:10;display:flex;gap:.7rem;align-items:center;
+  }
+  #nav button{
+    width:9px;height:9px;border-radius:50%;border:0;cursor:pointer;padding:0;
+    background:rgba(255,255,255,.22);transition:.35s;
+  }
+  #nav button.on{background:var(--accent);width:30px;border-radius:5px}
+  #counter{
+    position:fixed;top:3vh;right:4vw;z-index:10;color:var(--muted);
+    font-size:.78rem;letter-spacing:.22em;font-variant-numeric:tabular-nums;
+  }
+  #hint{
+    position:fixed;bottom:2.2vh;right:4vw;z-index:10;color:rgba(255,255,255,.28);
+    font-size:.72rem;letter-spacing:.14em;
+  }
+
+  .stagger > *{opacity:0;transform:translateY(16px)}
+  .active .stagger > *{animation:rise .8s cubic-bezier(.2,.8,.2,1) forwards}
+  .active .stagger > *:nth-child(1){animation-delay:.15s}
+  .active .stagger > *:nth-child(2){animation-delay:.28s}
+  .active .stagger > *:nth-child(3){animation-delay:.41s}
+  .active .stagger > *:nth-child(4){animation-delay:.54s}
+  .active .stagger > *:nth-child(5){animation-delay:.67s}
+  @keyframes rise{to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<div id="aurora"><span></span><span></span><span></span></div>
+<div id="grain"></div>
+<div id="counter">01 / 07</div>
+<div id="hint">← → ODER LEERTASTE</div>
+
+<div id="deck">
+
+  <!-- 1 — TITEL -->
+  <section class="slide active">
+    <div class="stagger" style="display:flex;flex-direction:column;align-items:center;gap:1.2rem">
+      <div class="kicker">Econometrica · 1979</div>
+      <h1 class="grad" style="text-align:center">Prospect&nbsp;Theory</h1>
+      <p style="font-size:clamp(1rem,2vw,1.4rem);color:#c9d0e0">
+        Daniel Kahneman &amp; Amos Tversky<br>
+        <em>„An Analysis of Decision under Risk"</em>
+      </p>
+      <p>Die Arbeit, die zeigte: Menschen sind keine Nutzenmaximierer — sondern <strong style="color:var(--ink)">Veränderungsdetektoren mit Verlustangst</strong>.</p>
+    </div>
+  </section>
+
+  <!-- 2 — DAS PROBLEM -->
+  <section class="slide">
+    <div class="stagger" style="width:100%;display:flex;flex-direction:column;align-items:center">
+      <div class="kicker">Der Bruch</div>
+      <h2>Die Erwartungsnutzentheorie<br>stimmt empirisch nicht.</h2>
+      <p>Seit Bernoulli (1738) und von Neumann–Morgenstern (1944) galt: rationale Akteure maximieren den erwarteten Nutzen ihres <em>Endvermögens</em>, gewichtet mit objektiven Wahrscheinlichkeiten. K&amp;T legten Versuchspersonen schlichte Lotterien vor — und die Axiome brachen reihenweise.</p>
+      <div class="cards" style="margin-top:2.4rem">
+        <div class="card"><div class="num" style="color:var(--loss)">✕</div><h3>Unabhängigkeitsaxiom</h3><p>Verletzt durch den Allais-Paradox / Certainty-Effekt.</p></div>
+        <div class="card"><div class="num" style="color:var(--loss)">✕</div><h3>Invarianz</h3><p>Dieselbe Lotterie, anders formuliert → andere Wahl.</p></div>
+        <div class="card"><div class="num" style="color:var(--loss)">✕</div><h3>Endvermögen</h3><p>Menschen denken in Differenzen, nicht in Kontoständen.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 — DAS EXPERIMENT -->
+  <section class="slide">
+    <div class="stagger" style="width:100%;display:flex;flex-direction:column;align-items:center">
+      <div class="kicker">Problem 3 &amp; 4 — klick die Optionen</div>
+      <h2>Spiegelbild (<span class="grad">Reflection Effect</span>)</h2>
+      <p style="margin-bottom:.4rem">Zwei Entscheidungen. Mathematisch identische Erwartungswerte. Achte auf <em>deinen</em> Bauch.</p>
+
+      <div class="choice">
+        <div>
+          <div style="font-size:.78rem;letter-spacing:.24em;color:var(--gain);margin-bottom:.8rem;text-align:center">IM GEWINNBEREICH</div>
+          <div class="opt" data-k="gain" onclick="pick(this,'gain')">
+            <b style="color:var(--gain)">A &nbsp;+4000 € zu 80 %</b>
+            <small>EV = +3200 €</small>
+            <div class="reveal">nur 20 % wählten dies</div>
+          </div>
+          <div class="opt" data-k="gain" style="margin-top:1rem" onclick="pick(this,'gain')">
+            <b style="color:var(--gain)">B &nbsp;+3000 € sicher</b>
+            <small>EV = +3000 € — geringer!</small>
+            <div class="reveal">80 % wählten dies → risikoscheu</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.78rem;letter-spacing:.24em;color:var(--loss);margin-bottom:.8rem;text-align:center">IM VERLUSTBEREICH</div>
+          <div class="opt" data-k="loss" onclick="pick(this,'loss')">
+            <b style="color:var(--loss)">C &nbsp;−4000 € zu 80 %</b>
+            <small>EV = −3200 €</small>
+            <div class="reveal">92 % wählten dies → risikofreudig!</div>
+          </div>
+          <div class="opt" data-k="loss" style="margin-top:1rem" onclick="pick(this,'loss')">
+            <b style="color:var(--loss)">D &nbsp;−3000 € sicher</b>
+            <small>EV = −3000 € — besser!</small>
+            <div class="reveal">nur 8 % wählten dies</div>
+          </div>
+        </div>
+      </div>
+      <p style="margin-top:1.8rem;color:var(--accent)">Die Präferenz kippt, sobald das Vorzeichen kippt. Kein Nutzenmodell über Endvermögen kann das erklären.</p>
+    </div>
+  </section>
+
+  <!-- 4 — WERTFUNKTION -->
+  <section class="slide">
+    <div class="stagger" style="width:100%;display:flex;flex-direction:column;align-items:center">
+      <div class="kicker">Baustein 1</div>
+      <h2>Die <span class="grad">Wertfunktion</span> v(x)</h2>
+      <canvas id="valueCanvas" width="820" height="440"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--violet)"></i>Referenzpunkt = Ursprung, nicht Vermögen</span>
+        <span><i style="background:var(--gain)"></i>Gewinne: konkav → risikoscheu</span>
+        <span><i style="background:var(--loss)"></i>Verluste: konvex &amp; steiler → Verlustaversion ≈ 2,25×</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 — GEWICHTUNGSFUNKTION -->
+  <section class="slide">
+    <div class="stagger" style="width:100%;display:flex;flex-direction:column;align-items:center">
+      <div class="kicker">Baustein 2</div>
+      <h2>Die <span class="grad">Gewichtungsfunktion</span> π(p)</h2>
+      <canvas id="weightCanvas" width="640" height="440"></canvas>
+      <div class="legend">
+        <span><i style="background:var(--muted)"></i>Diagonale: π(p) = p (rationale Erwartung)</span>
+        <span><i style="background:var(--accent)"></i>Reale Gewichte: kleine p überschätzt, mittlere/große unterschätzt</span>
+      </div>
+      <p style="margin-top:1rem">Darum kaufen dieselben Menschen <strong style="color:var(--ink)">Lotterielose und Versicherungen</strong>: 1 % fühlt sich an wie 8 %. Und darum wirkt der Sprung von 95 % auf 100 % größer als der von 60 % auf 65 % — der <em>Certainty-Effekt</em>.</p>
+    </div>
+  </section>
+
+  <!-- 6 — DIE MECHANIK -->
+  <section class="slide">
+    <div class="stagger" style="width:100%;display:flex;flex-direction:column;align-items:center">
+      <div class="kicker">Die Maschine</div>
+      <h2>Zwei Phasen, eine Formel</h2>
+      <div class="cards">
+        <div class="card" style="width:330px">
+          <div class="num" style="color:var(--violet)">1</div><h3>Editing / Framing</h3>
+          <p>Optionen werden vorab vereinfacht: Kodierung als Gewinn/Verlust relativ zum Referenzpunkt, Kombination, Streichung gemeinsamer Komponenten, Runden. <em>Hier entsteht der Framing-Effekt.</em></p>
+        </div>
+        <div class="card" style="width:330px">
+          <div class="num" style="color:var(--accent)">2</div><h3>Evaluation</h3>
+          <p>Der editierte Prospekt wird bewertet mit:</p>
+          <p style="font-family:ui-monospace,monospace;color:var(--ink);margin-top:.7rem;font-size:1.05rem">V = π(p₁)·v(x₁) + π(p₂)·v(x₂)</p>
+        </div>
+      </div>
+      <p style="margin-top:2rem">Die Nichtlinearität steckt also <strong style="color:var(--ink)">an zwei Stellen gleichzeitig</strong>: im Wert <em>und</em> in der Wahrscheinlichkeit. Genau deshalb kann das Modell Allais, Versicherung, Lotterie und Reflection mit einer einzigen Gleichung abbilden.</p>
+    </div>
+  </section>
+
+  <!-- 7 — WARUM ES ZÄHLT -->
+  <section class="slide">
+    <div class="stagger" style="width:100%;display:flex;flex-direction:column;align-items:center">
+      <div class="kicker">Wirkung</div>
+      <h2>Warum dieses Paper die<br>Wirtschaftswissenschaft umbaute</h2>
+      <div class="cards">
+        <div class="card"><div class="num grad">#1</div><h3>Meistzitiert</h3><p>Eines der meistzitierten Papers der Ökonomie überhaupt — Gründungstext der Behavioral Economics.</p></div>
+        <div class="card"><div class="num grad">2002</div><h3>Nobelpreis</h3><p>An Kahneman. Tversky war 1996 gestorben; der Preis wird nicht posthum vergeben.</p></div>
+        <div class="card"><div class="num grad">1992</div><h3>Cumulative PT</h3><p>Erweiterung auf beliebig viele Outcomes via Ranggewichtung — behebt Stochastic-Dominance-Probleme.</p></div>
+      </div>
+      <p style="margin-top:2.2rem;font-size:1.15rem;color:#dfe4ef">
+        „Losses loom larger than gains."
+      </p>
+      <p style="color:var(--muted);font-size:.85rem">— Kahneman &amp; Tversky, Econometrica 47(2), 263–291</p>
+    </div>
+  </section>
+
+</div>
+
+<div id="nav"></div>
+
+<script>
+/* ---------- deck engine ---------- */
+const slides=[...document.querySelectorAll('.slide')];
+const nav=document.getElementById('nav');
+const counter=document.getElementById('counter');
+let i=0, drawn={};
+
+slides.forEach((_,n)=>{
+  const b=document.createElement('button');
+  b.onclick=()=>go(n);
+  nav.appendChild(b);
+});
+
+function go(n){
+  i=Math.max(0,Math.min(slides.length-1,n));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+  [...nav.children].forEach((b,k)=>b.classList.toggle('on',k===i));
+  counter.textContent=String(i+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+  if(i===3&&!drawn.v){drawn.v=1;animateValue();}
+  if(i===4&&!drawn.w){drawn.w=1;animateWeight();}
+}
+addEventListener('keydown',e=>{
+  if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();go(i+1);}
+  if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(i-1);}
+  if(e.key==='Home')go(0); if(e.key==='End')go(slides.length-1);
+});
+let tx=0;
+addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx; if(Math.abs(d)>60) go(i+(d<0?1:-1));},{passive:true});
+go(0);
+
+/* ---------- interactive choice ---------- */
+function pick(el,k){
+  document.querySelectorAll('.opt[data-k="'+k+'"]').forEach(o=>{
+    o.classList.add('shown');
+    o.classList.remove('pick-gain','pick-loss');
+  });
+  el.classList.add(k==='gain'?'pick-gain':'pick-loss');
+}
+
+/* ---------- value function chart ---------- */
+function animateValue(){
+  const c=document.getElementById('valueCanvas'), g=c.getContext('2d');
+  const W=c.width,H=c.height,cx=W/2,cy=H/2;
+  const sx=(W/2)/100, kGain=1.6, kLoss=1.6;
+  const vGain=x=>Math.pow(x,0.88)*kGain;
+  const vLoss=x=>-2.25*Math.pow(x,0.88)*kLoss;
+  let t=0;
+
+  (function frame(){
+    t=Math.min(1,t+0.012);
+    const e=1-Math.pow(1-t,3);
+    g.clearRect(0,0,W,H);
+
+    // quadrant tint
+    const gr1=g.createLinearGradient(cx,cy,W,0);
+    gr1.addColorStop(0,'rgba(45,227,167,0)');gr1.addColorStop(1,'rgba(45,227,167,.10)');
+    g.fillStyle=gr1;g.fillRect(cx,0,cx,cy);
+    const gr2=g.createLinearGradient(cx,cy,0,H);
+    gr2.addColorStop(0,'rgba(255,93,115,0)');gr2.addColorStop(1,'rgba(255,93,115,.12)');
+    g.fillStyle=gr2;g.fillRect(0,cy,cx,cy);
+
+    // grid
+    g.strokeStyle='rgba(255,255,255,.055)';g.lineWidth=1;
+    for(let x=0;x<=W;x+=W/16){g.beginPath();g.moveTo(x,0);g.lineTo(x,H);g.stroke();}
+    for(let y=0;y<=H;y+=H/10){g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke();}
+
+    // axes
+    g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=1.5;
+    g.beginPath();g.moveTo(0,cy);g.lineTo(W,cy);g.moveTo(cx,0);g.lineTo(cx,H);g.stroke();
+
+    // axis labels
+    g.fillStyle='rgba(255,255,255,.45)';
+    g.font='500 13px Inter,system-ui,sans-serif';
+    g.textAlign='right';  g.fillText('Verluste',cx-16,cy-14);
+    g.textAlign='left';   g.fillText('Gewinne',cx+16,cy-14);
+    g.textAlign='center'; g.fillText('Wert v(x)',cx,20);
+
+    // ---- gain branch (concave) ----
+    g.lineWidth=3.5;g.lineJoin='round';g.lineCap='round';
+    g.strokeStyle='#2de3a7';
+    g.shadowColor='rgba(45,227,167,.55)';g.shadowBlur=18;
+    g.beginPath();
+    for(let x=0;x<=100*e;x+=0.8){
+      const px=cx+x*sx, py=cy-vGain(x);
+      x===0?g.moveTo(px,py):g.lineTo(px,py);
+    }
+    g.stroke();
+
+    // ---- loss branch (convex, steeper) ----
+    g.strokeStyle='#ff5d73';
+    g.shadowColor='rgba(255,93,115,.55)';g.shadowBlur=18;
+    g.beginPath();
+    for(let x=0;x<=100*e;x+=0.8){
+      const px=cx-x*sx, py=cy-vLoss(x);
+      x===0?g.moveTo(px,py):g.lineTo(px,py);
+    }
+    g.stroke();
+    g.shadowBlur=0;
+
+    // ---- reference point ----
+    if(e>0.05){
+      g.fillStyle='#8b7cff';
+      g.shadowColor='#8b7cff';g.shadowBlur=22;
+      g.beginPath();g.arc(cx,cy,6.5,0,Math.PI*2);g.fill();
+      g.shadowBlur=0;
+      g.fillStyle='#b8aeff';
+      g.font='600 12px Inter,system-ui,sans-serif';
+      g.textAlign='left';
+      g.fillText('Referenzpunkt',cx+12,cy+24);
+    }
+
+    // ---- asymmetry marker: same |x|, different |v| ----
+    if(e>0.92){
+      const a=1-(1-e)/0.08; // 0→1 fade-in
+      const X=70;
+      const yG=cy-vGain(X), yL=cy-vLoss(X);
+      g.save();
+      g.globalAlpha=a;
+      g.setLineDash([5,5]);
+      g.strokeStyle='rgba(255,255,255,.3)';g.lineWidth=1.2;
+      g.beginPath();g.moveTo(cx+X*sx,cy);g.lineTo(cx+X*sx,yG);g.stroke();
+      g.beginPath();g.moveTo(cx-X*sx,cy);g.lineTo(cx-X*sx,yL);g.stroke();
+      g.setLineDash([]);
+      g.fillStyle='#2de3a7';g.beginPath();g.arc(cx+X*sx,yG,4.5,0,Math.PI*2);g.fill();
+      g.fillStyle='#ff5d73';g.beginPath();g.arc(cx-X*sx,yL,4.5,0,Math.PI*2);g.fill();
+      g.font='600 12px Inter,system-ui,sans-serif';
+      g.fillStyle='#2de3a7';g.textAlign='left';
+      g.fillText('v(+100) ',cx+X*sx+10,yG-6);
+      g.fillStyle='#ff5d73';g.textAlign='right';
+      g.fillText('v(−100) ≈ 2,25 × v(+100)',cx-X*sx-10,yL+16);
+      g.restore();
+    }
+
+    if(t<1)requestAnimationFrame(frame);
+  })();
+}
+
+/* ---------- probability weighting chart ---------- */
+function animateWeight(){
+  const c=document.getElementById('weightCanvas'), g=c.getContext('2d');
+  const W=c.width,H=c.height,pad=58;
+  const PW=W-pad*1.4, PH=H-pad*1.4;
+  const X=p=>pad+p*PW, Y=w=>H-pad-w*PH;
+  // Prelec-style weighting, delta=0.65
+  const d=0.65;
+  const pi=p=>{
+    if(p<=0)return 0; if(p>=1)return 1;
+    const a=Math.pow(p,d), b=Math.pow(1-p,d);
+    return a/Math.pow(a+b,1/d);
+  };
+  let t=0;
+
+  (function frame(){
+    t=Math.min(1,t+0.012);
+    const e=1-Math.pow(1-t,3);
+    g.clearRect(0,0,W,H);
+
+    // plot background
+    g.fillStyle='rgba(255,255,255,.025)';
+    g.fillRect(pad,H-pad-PH,PW,PH);
+
+    // grid
+    g.strokeStyle='rgba(255,255,255,.06)';g.lineWidth=1;
+    for(let k=0;k<=5;k++){
+      const gx=X(k/5), gy=Y(k/5);
+      g.beginPath();g.moveTo(gx,H-pad);g.lineTo(gx,H-pad-PH);g.stroke();
+      g.beginPath();g.moveTo(pad,gy);g.lineTo(pad+PW,gy);g.stroke();
+    }
+
+    // axes
+    g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=1.5;
+    g.beginPath();g.moveTo(pad,H-pad);g.lineTo(pad+PW,H-pad);
+    g.moveTo(pad,H-pad);g.lineTo(pad,H-pad-PH);g.stroke();
+
+    g.fillStyle='rgba(255,255,255,.5)';
+    g.font='500 12px Inter,system-ui,sans-serif';
+    g.textAlign='center';
+    ['0','.25','.5','.75','1'].forEach((lab,k)=>g.fillText(lab,X(k/4),H-pad+20));
+    g.fillText('Wahrscheinlichkeit  p',pad+PW/2,H-pad+42);
+    g.save();g.translate(pad-34,H-pad-PH/2);g.rotate(-Math.PI/2);
+    g.fillText('Entscheidungsgewicht  π(p)',0,0);g.restore();
+
+    // identity diagonal
+    g.setLineDash([6,6]);
+    g.strokeStyle='rgba(255,255,255,.28)';g.lineWidth=1.6;
+    g.beginPath();g.moveTo(X(0),Y(0));g.lineTo(X(1),Y(1));g.stroke();
+    g.setLineDash([]);
+
+    // area between curve and diagonal
+    g.beginPath();
+    g.moveTo(X(0),Y(0));
+    for(let p=0;p<=e;p+=0.004)g.lineTo(X(p),Y(pi(p)));
+    for(let p=e;p>=0;p-=0.004)g.lineTo(X(p),Y(p));
+    g.closePath();
+    g.fillStyle='rgba(255,200,87,.10)';g.fill();
+
+    // weighting curve
+    g.strokeStyle='#ffc857';g.lineWidth=3.5;g.lineJoin='round';g.lineCap='round';
+    g.shadowColor='rgba(255,200,87,.6)';g.shadowBlur=18;
+    g.beginPath();
+    for(let p=0;p<=e;p+=0.004){
+      const px=X(p),py=Y(pi(p));
+      p===0?g.moveTo(px,py):g.lineTo(px,py);
+    }
+    g.stroke();g.shadowBlur=0;
+
+    // annotations
+    if(e>0.3){
+      const a=Math.min(1,(e-0.3)/0.15);
+      g.save();g.globalAlpha=a;
+      g.fillStyle='#ffc857';g.font='600 12px Inter,system-ui,sans-serif';
+      g.textAlign='left';
+      g.fillText('π(p) > p',X(0.06)+14,Y(pi(0.06))-10);
+      g.fillStyle='rgba(255,255,255,.55)';g.font='500 11px Inter,system-ui,sans-serif';
+      g.fillText('kleine Risiken werden überbewertet',X(0.06)+14,Y(pi(0.06))+6);
+      g.restore();
+    }
+    if(e>0.65){
+      const a=Math.min(1,(e-0.65)/0.15);
+      g.save();g.globalAlpha=a;
+      g.fillStyle='#ffc857';g.font='600 12px Inter,system-ui,sans-serif';
+      g.textAlign='right';
+      g.fillText('π(p) < p',X(0.72)-14,Y(pi(0.72))+22);
+      g.fillStyle='rgba(255,255,255,.55)';g.font='500 11px Inter,system-ui,sans-serif';
+      g.fillText('mittlere/hohe Risiken unterbewertet',X(0.72)-14,Y(pi(0.72))+38);
+      g.restore();
+    }
+    if(e>0.97){
+      const a=(e-0.97)/0.03;
+      g.save();g.globalAlpha=a;
+      g.strokeStyle='rgba(45,227,167,.8)';g.lineWidth=2;g.setLineDash([3,4]);
+      g.beginPath();g.moveTo(X(1),Y(pi(0.99)));g.lineTo(X(1),Y(1));g.stroke();
+      g.setLineDash([]);
+      g.fillStyle='#2de3a7';g.font='600 12px Inter,system-ui,sans-serif';
+      g.textAlign='right';
+      g.fillText('Sprung bei Sicherheit →',X(1)-10,Y(0.995)-8);
+      g.fillStyle='rgba(255,255,255,.5)';g.font='500 11px Inter,system-ui,sans-serif';
+      g.fillText('Certainty-Effekt',X(1)-10,Y(0.995)+8);
+      g.restore();
+    }
+
+    if(t<1)requestAnimationFrame(frame);
+  })();
+}
+</script>
+</body>
+</html>
+
+

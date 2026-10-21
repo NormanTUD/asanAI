@@ -8,7 +8,7 @@
 		// Define the allowed element types
 
 		// Use a regular expression to find all opening and closing tags
-		preg_match_all('/<\/?(.*?)>/', $string, $matches);
+		preg_match_all('/<\/?(.*?)>/s', $string, $matches);
 
 		if (empty($matches[1])) {
 			return [];
@@ -88,40 +88,44 @@
 	}
 
 	function receiveAndCheckHTML($log_file_dir, $html_code) {
-		// Check if the log file directory is readable and writable
-		if (check_log_dir($log_file_dir)) {
-			try {
-				// Generate a unique filename for the HTML file
-				$filename = uniqid() . '.html';
+		// Resolve the absolute log directory once, shared by the check and the write
+		$log_dir = __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . $log_file_dir;
 
-				// Check if the filtered HTML is empty (no allowed types)
+		// Size limit: a report must not be able to fill the disk
+		$max_size = 1024 * 1024;
+		if (strlen($html_code) > $max_size) {
+			$GLOBALS['error_messages'][] = "Content too large (max " . $max_size . " bytes).";
+		} elseif (!check_log_dir($log_file_dir)) {
+			// check_log_dir() has already appended its diagnostic messages
+		} else {
+			try {
+				// Store as plain text, never as .html: the report is only read by an
+				// admin behind basic auth, and serving it as text/plain rules out stored XSS.
+				$filename = uniqid() . '.txt';
+
 				$unallowed_tags = checkElementsInAllowedTypes($html_code);
 				if (count($unallowed_tags)) {
 					$joined_allowed_tags = join(", ", $GLOBALS["allowed_types"]);
 					$joined_unallowed_tags = join(", ", $unallowed_tags);
 
-					$GLOBALS['error_messages'][] = "Contains unallowed_tags: ".$joined_unallowed_tags." , allowed, (".$joined_allowed_tags.").";
+					$GLOBALS['error_messages'][] = "Contains unallowed_tags: " . $joined_unallowed_tags . " , allowed, (" . $joined_allowed_tags . ").";
 				} else {
-					// Save the filtered HTML to the log file directory
-					$file_path = $log_file_dir . '/' . $filename;
+					$file_path = $log_dir . '/' . $filename;
 					file_put_contents($file_path, $html_code);
 
 					if (file_exists($file_path)) {
-						$success_message = "HTML code saved successfully.";
-						$response = array("status" => "success", "message" => $success_message);
-						echo json_encode($response);
-					} else {
-						$GLOBALS['error_messages'][] = "Failed to save HTML code to the log file directory.";
+						echo json_encode(array("status" => "success", "message" => "Report saved successfully."));
+						return;
 					}
+					$GLOBALS['error_messages'][] = "Failed to save the report to the log file directory.";
 				}
 			} catch (Exception $e) {
-				$GLOBALS['error_messages'][] = "An error occurred while saving the HTML code.";
+				$GLOBALS['error_messages'][] = "An error occurred while saving the report.";
 			}
 		}
 
-		// Log and return error messages in JSON format
-		$response = array("status" => "error", "errors" => $GLOBALS['error_messages'], ", ");
-		echo json_encode($response);
+		// Exactly one JSON response on the error path (the success path returns above).
+		echo json_encode(array("status" => "error", "errors" => $GLOBALS['error_messages']));
 	}
 
 	header("Content-Type: application/json; charset=utf-8");

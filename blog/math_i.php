@@ -169,13 +169,15 @@ Throughout this course, we will look into these building blocks and how the comp
 </div>
 
 <div class="md" data-lesson-id="math-i" data-mathlevel="45">
-## The Sum Symbol $ \sum $
+## Mathematical notation
+
+### The Sum Symbol $ \sum $
 
 In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for “summation” (\cite[Lang, Basic Mathematics, Ch. 16, §1, p. 384]{lang2005basicmath}). This symbol for summation was introduced by \citeauthor{euler1755} in \citeyear{euler1755} (see p. 61, § 438, \citetitle{historyofmathematicalnotation}, Volume 2).
 
 Think of $\sum$ as a **“for-loop”** for addition.
 
-### How to read the symbol
+#### How to read the symbol
 
 A typical summation looks like this:
 
@@ -185,13 +187,13 @@ $$\sum_{i=1}^{n} x_i$$
 * **The Top ($n$):** This is the **stop**. It tells you to stop once you reach the $n$-th item.
 * **The Right ($x_i$):** This is the **rule**. It tells you which values you are actually adding together.
 
-### A Concrete Example
+#### A Concrete Example
 
 If we have a vector $\vec{v} = \begin{pmatrix} 10 \\ 20 \\ 30 \\ 40 \end{pmatrix}$, and we want to find the sum of all its elements, we write:
 
 $$\sum_{i=1}^{4} v_i = v_1 + v_2 + v_3 + v_4 = 10 + 20 + 30 + 40 = 100$$
 
-### Why AI needs this: Weighted Sums
+#### Why AI needs this: Weighted Sums
 
 The most common use of the sum symbol in AI is the **Weighted Sum**. When a Neural Network makes a decision, it looks at different inputs (like pixels) and assigns each one a “weight” based on its importance.
 
@@ -201,7 +203,7 @@ $$\text{Score} = \sum_{i=1}^{n} \underbrace{w_i}_\text{weight}\,\underbrace{x_i}
 
 This is just a compact way of saying: $(w_1 \cdot x_1) + (w_2 \cdot x_2) + \dots + (w_n \cdot x_n)$.
 
-### Implementation in Code
+#### Implementation in Code
 
 In classical programming, the summation symbol $\sum$ is written as a simple loop:
 </div>
@@ -220,13 +222,13 @@ total = sum(numbers)
 </code></pre>
 
 <div class="md" data-lesson-id="math-i" data-mathlevel="40">
-## The Product Symbol $\prod$
+### The Product Symbol $\prod$
 
 The Greek **capital Pi** ($\prod$) is the mathematical shorthand for repeated multiplication. It works similarly to the $\sum$:
 
 $$\prod_{i = 1}^5 i = \underbrace{1 \cdot 2 \cdot 3 \cdot 4 \cdot 5}_\text{5 factors} = 120 $$
 
-### The Factorial
+#### The Factorial
 
 A special type of function often encountered in combinatorics and calculus is the **factorial**. It represents the product of all positive integers less than or equal to a non-negative integer $n$.
 
@@ -264,7 +266,7 @@ Defining $0! = 1$ is a “combinatorial convention”. It ensures that fundament
 </div>
 
 <div class="md" data-lesson-id="math-i" data-mathlevel="45">
-## Arithmetic with $\infty$ in Computing
+### Arithmetic with $\infty$ in Computing
 
 In the floating-point math used by AI models, infinity follows specific rules that allow the model to simplify complex logic:
 
@@ -283,7 +285,7 @@ In the floating-point math used by AI models, infinity follows specific rules th
 </div>
 
 <div class="md" data-lesson-id="math-i" data-mathlevel="60">
-### The Concept of Limits ($\lim$)
+#### The Concept of Limits ($\lim$)
 
 In computing, we treat $\infty$ as a value, but in mathematics, we use limits to describe behavior.
 
@@ -296,7 +298,9 @@ In computing, we treat $\infty$ as a value, but in mathematics, we use limits to
 * **Indeterminate Forms:** Limits explain why $\frac{\infty}{\infty}$ is $\text{NaN}$. Different functions reach infinity at different speeds, so the result isn't a single number. For example:
     $$\lim_{x \to \infty} \frac{x^2}{x} = \infty \quad \text{vs.} \quad \lim_{x \to \infty} \frac{x}{x^2} = 0$$
 
-## Euler's Number ($e$)
+## Exponentials and logarithms
+
+### Euler's Number ($e$)
 
 <div class="image-row md">
 	<figure>
@@ -336,7 +340,7 @@ It was not until 1715 that \citeauthor{taylor1715} published the first general m
 </div>
 
 <div class="md" data-lesson-id="math-i" data-mathlevel="35">
-## Exponentiation
+### Exponentiation
 
 In its simplest form, exponentiation is repeated multiplication (\cite[Lang, Basic Mathematics, Ch. 1, §3, p. 18]{lang2005basicmath}). If we ask, “What is 2 to the power of 3?” ($2^3$), we mean:
 
@@ -367,7 +371,7 @@ In the context of the continuous curve, as the exponent moves into negative terr
 </div>
 
 <div class="md" data-lesson-id="math-i" data-mathlevel="40">
-## Logarithms: Reversing the Process
+### Logarithms: Reversing the Process
 
 A logarithm is the inverse operation of exponentiation (\cite[Lang, Basic Mathematics, Ch. 13, §5, p. 338]{lang2005basicmath}). It asks the opposite question. Instead of asking for the result of a growth process, it asks: **“To what power must we raise the base to get this specific result?”** ($b^? = x$).
 
@@ -404,7 +408,7 @@ This is the series that taught mathematicians to think of $\ln$ as a limit of po
 </div>
 
 <div class="md" data-lesson-id="math-i" data-mathlevel="45">
-### The Change of Base
+#### The Change of Base
 
 In practice, most mathematical libraries only “know” how to calculate the natural logarithm (base $e \approx 2.718$). To find the logarithm for any other base $a$, we use the **Change of Base Formula** (\cite[Lang, Basic Mathematics, Ch. 13, §5, p. 341]{lang2005basicmath}):
 

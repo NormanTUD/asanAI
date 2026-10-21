@@ -18,7 +18,9 @@ This chapter covers the core parallelism strategies: data, tensor, pipeline, seq
 </div>
 
 <div class="md" data-mathlevel="40">
-## The Memory Budget
+## Memory and parallelism
+
+### The Memory Budget
 
 A single training step requires storing:
 
@@ -35,9 +37,9 @@ This is why **distributed training** is mandatory.
 </div>
 
 <div class="md">
-## Parallelism Strategies
+### Parallelism Strategies
 
-### Data Parallelism (DP)
+#### Data Parallelism (DP)
 
 Each GPU holds a **full copy** of the model. Each step:
 
@@ -48,7 +50,7 @@ Each GPU holds a **full copy** of the model. Each step:
 
 Memory: $W + G + O$ per GPU. Compute: linear in number of GPUs. Communication: one all-reduce per step. Scales well up to (ca. )100 GPUs; beyond that, the all-reduce becomes the bottleneck.
 
-### ZeRO (Zero Redundancy Optimizer)
+#### ZeRO (Zero Redundancy Optimizer)
 
 The key insight: in data parallelism, each GPU stores **redundant** optimizer states, gradients, and parameters (\cite[Rajbhandari et al., 2019]{rajbhandari2019zero}). ZeRO partitions these across $P$ GPUs:
 
@@ -62,7 +64,7 @@ FSDP (Fully Sharded Data Parallel) is PyTorch's native implementation of ZeRO-3.
 <div id="parallelism-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md" data-mathlevel="50">
-### Tensor Parallelism (TP)
+#### Tensor Parallelism (TP)
 
 **Split individual weight matrices** across GPUs. For a $d \times d$ linear layer:
 
@@ -82,7 +84,7 @@ The query, key, value heads are split across GPUs; each GPU computes a partial a
 </div>
 
 <div class="md">
-### Pipeline Parallelism (PP)
+#### Pipeline Parallelism (PP)
 
 **Split the model depth-wise**: GPU 0 holds layers 0–7, GPU 1 holds layers 8–15, etc. Each mini-batch propagates through the pipeline like data through a pipeline of CPUs.
 
@@ -90,7 +92,7 @@ The challenge: **pipeline bubbles**, idle time waiting for the previous stage to
 </div>
 
 <div class="md" data-mathlevel="50">
-### Sequence Parallelism
+#### Sequence Parallelism
 
 For very long contexts, the attention matrix $QK^\top$ is $O(n^2)$ per head. **Sequence parallelism** splits the sequence dimension across GPUs: GPU $i$ holds tokens $[i \cdot n/P, (i+1) \cdot n/P)$. Each computes attention on its local chunk; only the relevant $QK^\top$ slice is computed, reducing memory by $1/P$.
 
@@ -98,13 +100,15 @@ Ring Attention (\cite[Liu et al., 2023]{liu2023ring}) and Striped Attention impl
 </div>
 
 <div class="md">
-### Expert Parallelism (for MoE)
+#### Expert Parallelism (for MoE)
 
 For Mixture-of-Experts (MoE) models \cite{bubeck2023moeoverview} (see the <a href="transformer">Transformer chapter</a>): different experts live on different GPUs. Tokens routed to expert $E_i$ are sent to GPU $i$. **All-to-all** communication routes tokens to their expert GPU.
 </div>
 
 <div class="md">
-## Putting It Together: A Real-World Recipe
+## Making it work
+
+### Putting It Together: A Real-World Recipe
 
 Llama 3 (Meta, 2024) was trained on **16,384 H100s** using a combination:
 
@@ -118,7 +122,7 @@ GPT-4 was estimated at (ca. )25,000 A100s for (ca. )3 months. The trend: more GP
 </div>
 
 <div class="md">
-## Communication: AllReduce and Friends
+### Communication: AllReduce and Friends
 
 Three primitives dominate:
 
@@ -135,7 +139,7 @@ Bandwidth hierarchy (one-way, per link): NVLink (ca. 900 GB/s) $\gg$ InfiniBand 
 </div>
 
 <div class="md" data-mathlevel="45">
-## Activation Checkpointing (Gradient Checkpointing)
+### Activation Checkpointing (Gradient Checkpointing)
 
 Activations dominate memory at training time. For a 70B model with batch size 1 and 4K context, activations can reach hundreds of GB.
 
@@ -149,7 +153,7 @@ With $k = \sqrt{L}$, memory drops to $O(\sqrt{L})$ at 33% extra compute. Univers
 </div>
 
 <div class="md">
-## Mixed Precision and bf16
+### Mixed Precision and bf16
 
 Modern training uses **bfloat16** (bf16) for forward and backward, **fp32** for optimizer states and master weights:
 
@@ -161,7 +165,7 @@ NVIDIA's **Transformer Engine** (H100) supports fp8 matmul, halving memory and d
 </div>
 
 <div class="md">
-## Fault Tolerance
+### Fault Tolerance
 
 A 10,000-GPU training run experiences **multiple hardware failures per day**. Naive checkpointing once a day wastes hours of compute on recovery.
 
@@ -176,7 +180,9 @@ The result: training runs achieve **>95% efficiency** even on unreliable hardwar
 </div>
 
 <div class="md">
-## Frameworks
+## Practical choices
+
+### Frameworks
 
 * **Megatron-LM** (NVIDIA): the canonical tensor-parallel + pipeline-parallel implementation.
 * **DeepSpeed** (Microsoft): ZeRO, 3D parallelism, optimizer offload, compression. Now merged with PyTorch as FSDP2.
@@ -191,7 +197,7 @@ For a new training run today, **FSDP-2 with bf16 + activation checkpointing** is
 </div>
 
 <div class="md">
-## Practical Sizing Guide
+### Practical Sizing Guide
 
 For a 70B model with bf16:
 

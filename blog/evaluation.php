@@ -19,11 +19,13 @@ This chapter covers the major benchmarks, their mathematical formulation, and th
 </div>
 
 <div class="optional md" data-headline="Every benchmark here is a Goodhart target">
-\citetitle{goodhartslaw} (p. 116) states that *every measure which becomes a target becomes a bad measure*. The benchmarks below, MMLU, HumanEval, GSM8K, are exactly such measures. Once a model is trained to maximize them, the benchmark stops measuring what it was supposed to measure. See the <a href="losslab">Loss chapter</a> § Beware of Goodhart's Law for the training-side version of this disease.
+\citetitle{goodhartslaw} is usually compressed into the aphorism *when a measure becomes a target, it ceases to be a good measure* — Marilyn Strathern's 1997 phrasing of Goodhart's original 1975 observation. The benchmarks below, MMLU, HumanEval, GSM8K, are exactly such measures. Once a model is trained to maximize them, the benchmark stops measuring what it was supposed to measure. See the <a href="losslab">Loss chapter</a> § Beware of Goodhart's Law for the training-side version of this disease.
 </div>
 
 <div class="md">
-## The Taxonomy of Evaluations
+## Benchmark types
+
+### The Taxonomy of Evaluations
 
 LLM evaluations fall into four families:
 
@@ -43,35 +45,35 @@ Each has failure modes:
 </div>
 
 <div class="md" data-mathlevel="40">
-## Multiple-Choice Benchmarks
+### Multiple-Choice Benchmarks
 
-### MMLU: Massive Multitask Language Understanding
+#### MMLU: Massive Multitask Language Understanding
 
-MMLU (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) comprises 14,144 multiple-choice questions across 57 subjects. Covers STEM, humanities, social sciences, professional law, medicine. The model sees the question and four options (A/B/C/D); we measure:
+MMLU (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) comprises 14,042 multiple-choice questions across 57 subjects. Covers STEM, humanities, social sciences, professional law, medicine. The model sees the question and four options (A/B/C/D); we measure:
 
 $$
 \text{accuracy} = \frac{1}{N}\sum_{i=1}^{N} \mathbb{1}[\arg\max_j P_\theta(y_{i,j} \mid x_i) = y_i^*]
 $$
 
-By 2025, frontier models exceed 88% on (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}); the benchmark is **saturated**. The community has moved to **MMLU-Pro** (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) (more options, harder questions, no shortcut hacks) and **GPQA** (Google, graduate-level questions in biology, chemistry, physics).
+By 2025, frontier models exceed 88% on (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}); the benchmark is **saturated**. The community has moved to **MMLU-Pro** (\cite[Wang et al., 2024]{wang2024mmlupro}) (more options, harder questions, no shortcut hacks) and **GPQA** (Rein et al., NYU/Cohere/Anthropic; graduate-level questions in biology, chemistry, physics).
 </div>
 
 <div class="md">
-### HellaSwag
+#### HellaSwag
 
 HellaSwag (\cite[Zellers et al., 2019]{zellers2019hellaswag}) tests commonsense completion: given a context, choose the most plausible continuation from four adversarial distractors. Saturated by GPT-4.
 
-### ARC
+#### ARC
 
 ARC (\cite[Clark et al., 2018]{clark2018arc}) is the AI2 Reasoning Challenge: grade-school science questions. Saturated by 2023.
 </div>
 
 <div class="md">
-## Generative, Exact-Match
+### Generative, Exact-Match
 
-### GSM8K
+#### GSM8K
 
-GSM8K (\cite[Cobbe et al., 2021]{cobbe2021gsm8k}) provides grade-school math problems (\cite[Hendrycks et al., 2021]{hendrycks2021math}):
+GSM8K (\cite[Cobbe et al., 2021]{cobbe2021gsm8k}) provides grade-school math problems:
 
 $$
 \text{Q: Janet's ducks lay 16 eggs/day. She eats 3, bakes with 4. The rest sell for \$2 each. How much per day?}
@@ -79,13 +81,13 @@ $$
 
 The model must produce a numerical answer after reasoning. **Exact-match accuracy** requires the final integer (here, $\$18$) to be correct, with tolerance for units, commas, etc. (\cite[Cobbe et al., 2021]{cobbe2021gsm8k}).
 
-### MATH
+#### MATH
 
 MATH (\cite[Hendrycks et al., 2021]{hendrycks2021math}) comprises 12,500 competition math problems from AMC, AIME, etc. Each has a step-by-step LaTeX solution. Models must produce the final answer; correctness is checked symbolically.
 </div>
 
 <div class="md" data-mathlevel="45">
-### HumanEval
+#### HumanEval
 
 HumanEval (\cite[Chen et al., 2021]{chen2021humaneval}) consists of 164 hand-written Python programming problems with unit tests. The model's code is executed; **pass@k** measures whether at least one of $k$ samples passes all tests:
 
@@ -97,11 +99,11 @@ where $n$ is the number of samples and $c$ is the number that pass. This unbiase
 </div>
 
 <div class="md">
-### MBPP
+#### MBPP
 
 MBPP (\cite[Austin et al., 2021]{austin2021mbpp}) comprises 974 Python problems, slightly easier than (\cite[Chen et al., 2021]{chen2021humaneval}). Used as a complement.
 
-### BIG-Bench
+#### BIG-Bench
 
 BIG-Bench (\cite[Srivastava et al., 2022]{srivastava2022bigbench}) comprises 204 tasks ranging from linguistics to physics, designed to be **beyond current capabilities**. Mostly saturated by 2025 but historically important.
 </div>
@@ -109,7 +111,7 @@ BIG-Bench (\cite[Srivastava et al., 2022]{srivastava2022bigbench}) comprises 204
 <div id="mmlu-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md" data-mathlevel="45">
-## Generative, LLM-as-Judge
+### Generative, LLM-as-Judge
 
 For open-ended tasks (summarization, dialogue, instruction-following), there's no single correct answer. The standard approach is **LLM-as-judge** (Zheng et al., LMSYS, 2023):
 
@@ -125,13 +127,13 @@ $$
 
 where $Q$ is true quality and $T$ is “judge noise”. Empirical agreement with humans is ~70-80% on chat data.
 
-### MT-Bench / AlpacaEval
+#### MT-Bench / AlpacaEval
 
 MT-Bench / AlpacaEval (\cite[Zheng et al., 2023]{zheng2023lmsys}) — **MT-Bench**: 80 high-quality multi-turn questions across 8 categories, judged by GPT-4. Reported as a 1-10 score.
 
 AlpacaEval: 805 questions, judged by GPT-4 Turbo, reports win-rate against GPT-4 baseline.
 
-### LMSYS
+#### LMSYS
 
 LMSYS (\cite[Zheng et al., 2023]{zheng2023lmsys}) is the gold standard for human preference. Real users chat with two anonymous models side-by-side, then vote which they prefer. The Elo ranking:
 
@@ -147,9 +149,11 @@ A critical finding: **arena Elo and academic benchmarks correlate only weakly** 
 <div id="arena-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
-## Benchmark Contamination: The Crisis
+## Benchmark problems
 
-The dirty secret of LLM evaluation: **most public benchmarks have been seen during pretraining**. GPT-4's training included Common Crawl through April 2023; many benchmarks were uploaded to GitHub, posted on Stack Overflow, or discussed on Reddit before then.
+### Benchmark Contamination: The Crisis
+
+The dirty secret of LLM evaluation: **most public benchmarks have been seen during pretraining**. GPT-4's pretraining data cuts off in September 2021; many benchmarks were uploaded to GitHub, posted on Stack Overflow, or discussed on Reddit before then.
 
 \marginfig{canary_coal_mine.jpg}{A foreman holding a canary in a cage — the miners' carbon-monoxide detector (U.S. Bureau of Mines, 1928). The bird dies well before a human does, turning an invisible poison into an early alarm. **Canary strings** do the same job for benchmarks: you plant a unique token that a model could never emit naturally, and if it ever reappears in output, the test set has leaked into the training data. [Photo: public domain](https://commons.wikimedia.org/wiki/File:Canary_coal_mine.jpg)}
 
@@ -160,19 +164,19 @@ Evidence of contamination:
 * **Min-checksum tests** (\cite[Carlini et al., 2021]{carlini2021extracting}): if a model can complete the second half of a passage, it has probably seen the first half.
 * **Test-set perplexity**: a model that has seen the test set has lower perplexity than a fresh one.
 
-### Mitigations
+#### Mitigations
 
-* **Dynamic benchmarks**: questions are generated fresh each test (e.g., LiveBench, MMLU-Pro (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu})).
-* **Held-out private benchmarks**: ARC-AGI (Chollet), FrontierMath (Epoch AI), SEAL (MIT). These cost money and are not public.
+* **Dynamic benchmarks**: questions are generated fresh each test (e.g., LiveBench, MMLU-Pro (\cite[Wang et al., 2024]{wang2024mmlupro})).
+* **Held-out private benchmarks**: ARC-AGI (Chollet), FrontierMath (Epoch AI), SEAL (Scale AI). These cost money and are not public.
 * **Time-shifted benchmarks**: questions created after the model's training cutoff, then benchmarked in real-time.
 * **Adversarial filtering**: maintain a “contaminated” list of items that appear in pretraining corpora (ProxiMix, D-Clean).
 * **Canary strings**: a unique token injected into benchmark items; if it appears in model output, the model has been trained on the benchmark.
 
-**FrontierMATH** problems (\cite[Hendrycks et al., 2021]{hendrycks2021math}) are novel, require expert construction, and are not available online.
+**FrontierMATH** problems (\cite[Glazer et al., 2024]{glazer2024frontiermath}) are novel, require expert construction, and are not available online.
 </div>
 
 <div class="md">
-## LLM-as-Judge Failure Modes
+### LLM-as-Judge Failure Modes
 
 * **Position bias**: prefers the response shown first.
 * **Length bias**: prefers longer responses.
@@ -184,7 +188,9 @@ Mitigations: swap A/B positions, average over multiple judges, use pairwise tour
 </div>
 
 <div class="md">
-## Beyond Static Benchmarks
+## Beyond static benchmarks
+
+### Beyond Static Benchmarks
 
 The community is moving towards:
 
@@ -194,11 +200,11 @@ The community is moving towards:
 * **Behavioral red-teaming**: probing for specific failure modes (jailbreaks, hallucinations, bias).
 * **Task-specific evaluation**: medical QA with clinician review, legal tasks with lawyer review, code with actual execution and CI.
 
-### HELM: Holistic Evaluation of Language Models
+#### HELM: Holistic Evaluation of Language Models
 
 The Holistic Evaluation of Language Models benchmark suite (\cite[Liang et al., 2022]{liang2023helm}) evaluates models across **42 scenarios × 7 metrics** (accuracy, calibration, robustness, fairness, bias, toxicity, efficiency). It pioneered the multi-axis, transparent reporting standard.
 
-### The State of Evaluation in 2025
+#### The State of Evaluation in 2025
 
 The most reliable current evaluations are:
 
@@ -211,7 +217,9 @@ Static benchmarks like (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}) are **
 </div>
 
 <div class="md">
-## Practical Guidance
+## Building your own eval
+
+### Practical Guidance
 
 When evaluating an LLM for your application:
 
@@ -230,7 +238,7 @@ The first part of this chapter covered *public* benchmarks — MMLU, HumanEval, 
 </div>
 
 <div class="md">
-## From benchmark to your-own eval
+### From benchmark to your-own eval
 
 A public benchmark answers a *fixed* question ("can the model do general knowledge?"). Your product has its own question — "does it extract the invoice fields correctly?", "does it refuse the out-of-scope request?", "does it sound like our voice?" — and no leaderboard answers it for you. Building your own eval is the move from the fixed question to the specific one, and it has three parts: a **set of inputs** that represent the real cases you care about, a **way to score** each answer, and a **number** that lets you compare two versions.
 
@@ -238,7 +246,7 @@ The trap is that the scoring part is where it goes wrong. A score is only as goo
 </div>
 
 <div class="md">
-## Rubric design: a specification, not a vibe
+### Rubric design: a specification, not a vibe
 
 A **rubric** turns "good answer" into a scored, written standard: a small set of **criteria** (what matters), a **scale** (what a 1, 3, 5 each means), and **anchors** (a concrete example of what each score looks like). The anchors are the load-bearing part — they are the difference between a rubric that two people can apply identically and one they cannot.
 
@@ -257,7 +265,7 @@ Each dimension gets its own anchor examples. The point of writing the "what a 3 
 </div>
 
 <div class="md">
-## Inter-annotator agreement: is the rubric sound?
+### Inter-annotator agreement: is the rubric sound?
 
 Before you trust any score, you must trust the *standard*. The test is **inter-annotator agreement (IAA)**: have two (or more) people score the *same* answers independently, and measure how often they agree — but not naively. Two people both scoring "3" most of the time could just be lazy; the right statistic adjusts for the agreement you would expect **by chance**.
 
@@ -277,7 +285,7 @@ where $p_{\text{observed}}$ is the fraction of items the annotators agree on, an
 </div>
 
 <div class="md">
-## Calibrating an LLM judge: trust it only where it agrees
+### Calibrating an LLM judge: trust it only where it agrees
 
 You will want to scale this past two humans — human scoring is slow and costs money. The obvious move is to use a strong LLM as the judge, and the first part of this chapter introduced it. The failure is that a judge *inherits its own biases* (it prefers its own style, longer answers, a particular phrasing), so an uncalibrated LLM judge can systematically prefer the wrong thing. **Calibration** is the fix, and it is the same IAA idea applied to the machine:
 
@@ -290,7 +298,7 @@ This is the LLM-as-judge method of \cite[Zheng et al. (2023)]{llmjudge2023} in i
 </div>
 
 <div class="md">
-## Variance and significance: is the difference real?
+### Variance and significance: is the difference real?
 
 The last trap is the smallest and the most damaging: **reading too much into a small number.** You ship a prompt change and the eval goes from 82% to 87% — "up 5 points, shipped." But with $n = 100$ examples, 82% is 82 correct and 87% is 87 correct, and a difference of five correct answers out of one hundred is exactly the kind of thing that happens by chance. The question is never "did it go up?" but "**could it go up by this much if nothing changed?**"
 

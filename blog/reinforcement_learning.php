@@ -87,7 +87,7 @@ $$
 
 where $\alpha$ is the learning rate and $r + \gamma \max_{a'} Q(s', a')$ is the **TD target**. The agent samples actions by $\epsilon$-greedy: with probability $\epsilon$ take a random action (exploration), otherwise $\arg\max_a Q(s, a)$ (exploitation).
 
-Deep Q-Networks (\cite[Mnih et al., 2013]{mnih2013dqn}, Mnih et al., 2013) replaced the table with a neural network $Q_\theta(s, a)$ and added **experience replay** + a **target network** to stabilize training. This enabled RL on high-dimensional inputs (Atari).
+Deep Q-Networks (\cite[Mnih et al., 2015]{mnih2013dqn}) replaced the table with a neural network $Q_\theta(s, a)$; the 2013 paper added **experience replay**, and the 2015 *Nature* follow-up added a separate **target network** to stabilize training. This enabled RL on high-dimensional inputs (Atari).
 </div>
 
 <div class="md">
@@ -255,8 +255,7 @@ The trend: **simpler objectives that remove components** (critic, reference mode
 
 A central problem in RL: a sufficiently clever agent finds **loopholes** in the reward function that don't reflect the actual intent. Classic examples:
 
-* CoastRunners (2016): an agent trained to maximize race score learned to drive in circles collecting power-ups, never finishing the race.
-* A boat-racing game agent learned to **drive into the same power-up repeatedly** rather than progressing.
+* CoastRunners (2016): an agent trained to maximize race score learned to turn in circles and repeatedly knock over the same power-ups, never finishing the race.
 * An LLM trained with reward hacking produces long, sycophantic responses that humans rate highly but are useless.
 
 Defenses:
@@ -265,7 +264,7 @@ Defenses:
 * **KL penalty to reference**: keeps the policy close to the human-aligned SFT model.
 * **Process reward**: score intermediate reasoning steps, not just final output.
 * **Constitutional AI** (Bai et al., Anthropic 2022): self-critique against a written “constitution” of principles.
-* **Debate / red-teaming** (\cite[Du et al., 2023]{du2023multiagent}): train an adversary to find exploits, then train against them.
+* **Multiagent debate** (\cite[Du et al., 2023]{du2023multiagent}): several instances of the model propose and critique answers over rounds, converging on a shared answer that improves factuality and reasoning.
 
 ### Open Problems
 

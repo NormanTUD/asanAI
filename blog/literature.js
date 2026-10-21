@@ -998,9 +998,9 @@ window.bibData = {
 	},
 	"hatcher": {
 		title: "Algebraic Topology",
-		author: "John Hatcher",
+		author: "Allen Hatcher",
 		year: 2002,
-		url: "https://www.algebraic-topology.org/",
+		url: "https://pi.math.cornell.edu/~hatcher/AT/ATpage.html",
 		alternativetitle: "Hatcher, Algebraic Topology"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
@@ -3357,7 +3357,7 @@ window.bibData = {
 		alternativetitle: "Sextant"
 	},
 	"achleuleanhandaxe_image": {
-		title: "Acheulean handaxes from the Kariandusi site, West Turkana, Kenya",
+		title: "Acheulean handaxes from the Kariandusi site, Kenya",
 		url: "https://commons.wikimedia.org/wiki/File:Kariandusi_Acheulean_Tools.jpg",
 		author: "Xmd5a",
 		license: "CC BY-SA 4.0",
@@ -3606,6 +3606,20 @@ window.bibData = {
 		author: "David J. Chalmers",
 		title: "Facing Up the Problem of Consciousness",
 		year: 1995
+	},
+	"schwitzgebel2026aiconsciousness": {
+		title: "AI and Consciousness: A Skeptical Overview",
+		author: "Eric Schwitzgebel",
+		year: 2026,
+		url: "https://arxiv.org/abs/2510.09858",
+		alternativetitle: "Schwitzgebel, AI and Consciousness (2026)"
+	},
+	"schwitzgebel2024weirdness": {
+		title: "The Weirdness of the World",
+		author: "Eric Schwitzgebel",
+		year: 2024,
+		url: "https://doi.org/10.2307/jj.5104033",
+		alternativetitle: "Schwitzgebel, The Weirdness of the World (2024)"
 	},
 	"olson2018metaphysics": {
 		title: "The Metaphysics of Artificial Intelligence",
@@ -5267,7 +5281,7 @@ window.bibData = {
 	"leibnizrechenmaschine": {
 		url: "https://blog.hnf.de/herr-leibniz-und-seine-verlorenen-rechenmaschinen/",
 		title: "Herr Leibniz und seine verlorenen Rechenmaschinen",
-		alternativetitle: "The Stepped Reckoner by Leibniz, invented in 1672 and built in 1700, is the first mechanical working automatic calculation machine",
+		alternativetitle: "The Stepped Reckoner by Leibniz, begun in 1673 and completed in 1694, was the first calculator able to perform all four arithmetic operations",
 		year: 2024,
 		author: "Jochen Viehoff"
 	},
@@ -5740,6 +5754,18 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2404.09894",
 		year: 2024,
 	},
+	"land2024fishing": {
+		title: "Fishing for Magikarp: Automatically Detecting Under-trained Tokens in Large Language Models",
+		author: "Sander Land, Max Bartolo",
+		url: "https://arxiv.org/abs/2405.05417",
+		year: 2024,
+	},
+	"rumbelow2023solidgold": {
+		title: "SolidGoldMagikarp (plus, prompt generation)",
+		author: "Jessica Rumbelow, Matthew Watkins",
+		url: "https://www.lesswrong.com/posts/aPeJE8bSo6rAFoLqg/solidgoldmagikarp-plus-prompt-generation",
+		year: 2023,
+	},
 	"goodhartslaw": {
 		author: "Charles Albert Eric Goodhart",
 		year: "1975",
@@ -5772,6 +5798,13 @@ window.bibData = {
 		author: "Kunihiko Fukushima",
 		year: "1980",
 		url: "https://www.cs.princeton.edu/courses/archive/spr08/cos598B/Readings/Fukushima1980.pdf",
+	},
+	"deng2009imagenet": {
+		title: "ImageNet: A Large-Scale Hierarchical Image Database",
+		author: "Jia Deng, Wei Dong, Richard Socher, Li-Jia Li, Kai Li, Li Fei-Fei",
+		year: 2009,
+		url: "https://doi.org/10.1109/cvpr.2009.5206848",
+		alternativetitle: "ImageNet (Deng et al., 2009)"
 	},
 	"sgd": {
 		title: "A Stochastic Approximation Method",
@@ -6077,8 +6110,9 @@ window.bibData = {
 	"hinton2007baby": {
 		author: "Geoffrey E. Hinton",
 		year: "2007",
-		title: "The Baby Benchmark",
-		alternativetitle: "Hinton's Baby Benchmark"
+		title: "To Recognize Shapes, First Learn to Generate Images",
+		url: "https://www.cs.toronto.edu/~hinton/absps/shapesBR.pdf",
+		alternativetitle: "Hinton, To Recognize Shapes (2007)"
 	},
 	"wimmer1983belief": {
 		author: "Hannes Wimmer, Josef Perner",
@@ -6726,7 +6760,7 @@ window.bibData = {
 	"nilsson1984qai": {
 		title: "The Quest for Artificial Intelligence: A History of Ideas and Achievements",
 		author: "Nils J. Nilsson",
-		year: 1984,
+		year: 2009,
 		url: "https://ai.stanford.edu/~nilsson/QAI/qai.pdf",
 		alternativetitle: "Nilsson, The Quest for Artificial Intelligence"
 	},
@@ -6849,9 +6883,9 @@ window.bibData = {
 		alternativetitle: "language optimized for communication, not reasoning"
 	},
 	"ameisen2025circuittracing": {
-		url: "https://arxiv.org/abs/2503.12495",
-		title: "Circuit Tracing: Mapping How Language Models Process Language, Internally",
-		author: "Eric J. Michaud, Alexander T. R. Cooper, Soren Windolf, Arthur Conmy",
+		url: "https://transformer-circuits.pub/2025/attribution-graphs/methods.html",
+		title: "Circuit Tracing: Revealing Computational Graphs in Language Models",
+		author: "Emmanuel Ameisen et al.",
 		year: 2025,
 		alternativetitle: "Circuit Tracing"
 	},
@@ -7498,6 +7532,27 @@ window.bibData = {
 		author: "Dan Hendrycks, Collin Burns, Steven Basart, et al.",
 		year: 2021,
 		alternativetitle: "MMLU"
+	},
+	"wang2024mmlupro": {
+		url: "https://arxiv.org/abs/2406.01574",
+		title: "MMLU-Pro: A More Robust and Challenging Multi-Task Language Understanding Benchmark",
+		author: "Yubo Wang et al.",
+		year: 2024,
+		alternativetitle: "MMLU-Pro"
+	},
+	"glazer2024frontiermath": {
+		url: "https://epoch.ai/frontiermath",
+		title: "FrontierMath: A Benchmark for Evaluating Advanced Mathematical Reasoning",
+		author: "Elliot Glazer et al. (Epoch AI)",
+		year: 2024,
+		alternativetitle: "FrontierMath (Epoch AI)"
+	},
+	"madaan2022textpatterns": {
+		url: "https://arxiv.org/abs/2209.07686",
+		title: "Text and Patterns: For Effective Chain of Thought, It Takes Two to Tango",
+		author: "Aman Madaan and Amir Yazdanbakhsh",
+		year: 2022,
+		alternativetitle: "Madaan & Yazdanbakhsh (2022)"
 	},
 	"cobbe2021gsm8k": {
 		url: "https://arxiv.org/abs/2110.14168",
@@ -8205,7 +8260,7 @@ window.bibData = {
 		alternativetitle: "GAIA"
 	},
 	"du2023multiagent": {
-		url: "https://arxiv.org/abs/2305.14380",
+		url: "https://arxiv.org/abs/2305.14325",
 		title: "Improving Factuality and Reasoning in Language Models through Multiagent Debate",
 		author: "Yilun Du, Shuang Li, Antonio Torralba, Joshua B. Tenenbaum, Igor Mordatch",
 		year: 2023,
@@ -9785,6 +9840,13 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Hermann_Schmitz_(philosopher)",
 		alternativetitle: "Schmitz's neo-phenomenology (Neue Phänomenologie)"
 	},
+	"whitehead_concept_nature": {
+		title: "The Concept of Nature",
+		author: "Alfred North Whitehead",
+		year: 1920,
+		url: "https://www.gutenberg.org/ebooks/18835",
+		alternativetitle: "Whitehead, The Concept of Nature (1920)"
+	},
 	"whitehead_process": {
 		title: "Process and Reality: An Essay in Cosmology",
 		author: "Alfred North Whitehead",
@@ -10423,6 +10485,12 @@ window.bibData = {
 		url: "https://www.springer.com/gp/book/9780387987804",
 		alternativetitle: "Statistical Learning Theory"
 	},
+	"aizerman1964potential": {
+		title: "Theoretical Foundations of the Potential Function Method in Pattern Recognition Learning",
+		author: "M. A. Aizerman, E. M. Braverman, L. I. Rozonoer",
+		year: 1964,
+		alternativetitle: "Aizerman et al. (1964)"
+	},
 	"aitchison1972kernel": {
 		title: "A comparison of the C and Fortran languages as media for the implementation of a small statistical package",
 		author: "J. Aitchison",
@@ -11034,7 +11102,7 @@ window.bibData = {
 	"bertot2013coq": {
 		title: "Interactive Theorem Proving and Program Development: Coq'Art: The Calculus of Inductive Constructions",
 		author: "Yves Bertot, Pierre Castéran",
-		year: 2013,
+		year: 2004,
 		url: "https://www.springer.com/gp/book/9783540208549",
 		alternativetitle: "Coq Book"
 	},
@@ -11355,6 +11423,13 @@ window.bibData = {
 		year: 2008,
 		url: "https://www.jmlr.org/papers/v9/vandermaaten08a.html",
 		alternativetitle: "t-SNE"
+	},
+	"vandermaaten2008tsne": {
+		title: "Visualizing Data using t-SNE",
+		author: "Laurens van der Maaten and Geoffrey Hinton",
+		year: 2008,
+		url: "https://jmlr.org/papers/v9/vandermaaten08a.html",
+		alternativetitle: "Van der Maaten & Hinton, t-SNE (2008)"
 	},
 	"van2009dimensionality": {
 		title: "Dimensionality Reduction: A Comparative Review",
@@ -13078,6 +13153,13 @@ window.bibData = {
 	 * ───────────────────────────────────────────────────────────────────── */
 
 	/* ── Biology & the social brain ── */
+	"aiellowheeler1995expensivetissue": {
+		title: "The Expensive-Tissue Hypothesis: The Brain and the Digestive System in Human and Primate Evolution",
+		author: "Leslie C. Aiello and Peter Wheeler",
+		year: 1995,
+		url: "https://doi.org/10.1086/204350",
+		alternativetitle: "The Expensive-Tissue Hypothesis"
+	},
 	"aiello1995expensivetissue": {
 		title: "In Defense of the Expensive Tissue Hypothesis",
 		author: "Leslie C. Aiello, Nicola Bates and Tracey Joffe",
@@ -13223,6 +13305,13 @@ window.bibData = {
 		year: 1632,
 		url: "https://archive.org/details/dialogue-concerning-the-two-chief-world-systems-galileo-galilei-stephen-jay-gould",
 		alternativetitle: "Galileo, Dialogue"
+	},
+	"galileoassayer1623": {
+		title: "The Assayer (Il Saggiatore)",
+		author: "Galileo Galilei",
+		year: 1623,
+		url: "https://en.wikipedia.org/wiki/The_Assayer",
+		alternativetitle: "Galileo, The Assayer (1623)"
 	},
 	"daston1988probability": {
 		title: "Classical Probability in the Enlightenment",
@@ -13753,7 +13842,7 @@ window.bibData = {
 	},
 	"gnu_make": {
 		title: "GNU Make",
-		author: "GNU Project (Stewart Kafka)",
+		author: "GNU Project (Stuart Feldman)",
 		year: "accessed 2026",
 		url: "https://www.gnu.org/software/make/",
 		alternativetitle: "make"
@@ -14633,14 +14722,14 @@ window.bibData = {
 		alternativetitle: "Weiss et al., LUCA physiology (2016)"
 	},
 	"walter1986stromatolites": {
-		title: "Microbially Induced Sedimentary Structures Older than 3,470 Ma from the Dresser Formation, Western Australia",
-		author: "Michael R. Walter",
-		year: 1986,
+		title: "Stromatolites 3,400–3,500 Myr old from the North Pole area, Western Australia",
+		author: "Michael R. Walter, Roger Buick, John S. R. Dunlop",
+		year: 1980,
 		journal: "Nature",
-		volume: 322,
-		pages: "386–389",
-		url: "https://www.nature.com/articles/322386a0",
-		alternativetitle: "Walter, 3.47 Ga stromatolites (1986)"
+		volume: 284,
+		pages: "443–445",
+		url: "https://www.nature.com/articles/284443a0",
+		alternativetitle: "Walter, 3.5 Ga stromatolites (1980)"
 	},
 	"vankranendonk2016microbial": {
 		title: "Rapid Emergence of Life Shown by Discovery of 3,700-Million-Year-Old Microbial Structures",
@@ -15385,11 +15474,11 @@ window.bibData = {
 	 *  and where knowledge is stored (facts, world-state, circuits).
 	 * ───────────────────────────────────────────────────────────────────── */
 	"telgarsky2016wars": {
-		title: "Representation Wars: Simple Neuron Networks vs Deep Linear Networks",
-		author: "Maksym Telgarsky",
-		year: 2016,
-		url: "https://arxiv.org/abs/1506.08433",
-		alternativetitle: "Telgarsky, Representation Wars (2016)"
+		title: "Representation Benefits of Deep Feedforward Networks",
+		author: "Matus Telgarsky",
+		year: 2015,
+		url: "https://arxiv.org/abs/1509.08101",
+		alternativetitle: "Telgarsky, Representation Benefits of Depth (2015)"
 	},
 	"montufar2014regions": {
 		title: "On the Number of Linear Regions of Deep Neural Networks",
@@ -15626,6 +15715,13 @@ window.bibData = {
 		year: 2022,
 		url: "https://arxiv.org/abs/2202.05262",
 		alternativetitle: "Meng et al., ROME (2022)"
+	},
+	"shazeer2020glu": {
+		title: "GLU Variants Improve Transformer",
+		author: "Noam Shazeer",
+		year: 2020,
+		url: "https://arxiv.org/abs/2002.05202",
+		alternativetitle: "Shazeer, GLU variants (2020)"
 	},
 	"todd2023emergent": {
 		title: "Emergent Linear Representations in World Models of Self-Supervised Sequence Models",
@@ -16064,9 +16160,9 @@ window.bibData = {
 	"clark2013surfing": {
 		title: "Surfing Uncertainty: Prediction, Action, and the Embodied Mind",
 		author: "Andy Clark",
-		year: 2013,
+		year: 2016,
 		url: "https://en.wikipedia.org/wiki/Surfing_Uncertainty",
-		alternativetitle: "Andy Clark, Surfing Uncertainty (2013)"
+		alternativetitle: "Andy Clark, Surfing Uncertainty (2016)"
 	},
 	"predictive_coding_wiki": {
 		title: "Predictive coding",
@@ -16714,10 +16810,10 @@ window.bibData = {
 	},
 	"keller2018canonical": {
 		title: "Predictive Processing: A Canonical Cortical Computation",
-		author: "Georg B. Keller, Thomas D. Mrsić-Flogel",
+		author: "Georg B. Keller, Thomas D. Mrsic-Flogel",
 		year: 2018,
 		url: "https://doi.org/10.1016/j.neuron.2018.10.003",
-		alternativetitle: "Keller & Mrsić-Flogel 2018, Neuron"
+		alternativetitle: "Keller & Mrsic-Flogel 2018, Neuron"
 	},
 	"bastos2012microcircuit": {
 		title: "Canonical Microcircuits for Predictive Coding",

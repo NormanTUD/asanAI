@@ -655,9 +655,9 @@
 				name: 'f(r) \u221D r^-' + a.toFixed(2)
 			}], plotLayout({
 				title: { text: 'Zipf: log\u2013log', font: { color: P.accent, size: 13 } },
-				xaxis: { title: 'rank r (log)', type: 'log', gridcolor: P.grid },
-				yaxis: { title: 'frequency f (log)', type: 'log', gridcolor: P.grid }
-			}), { displayModeBar: false });
+				xaxis: { title: 'rank r (log)', type: 'log', gridcolor: P.grid, automargin: true },
+				yaxis: { title: 'frequency f (log)', type: 'log', gridcolor: P.grid, automargin: true }
+			}), { displayModeBar: false, responsive: true });
 
 			const ns = [], vs = [];
 			for (let n = 1; n <= 1e6; n *= 1.3) { ns.push(n); vs.push(Math.pow(n, b)); }
@@ -667,9 +667,9 @@
 				name: 'V \u221D N^' + b.toFixed(2)
 			}], plotLayout({
 				title: { text: 'Heaps: vocabulary growth', font: { color: P.accent2, size: 13 } },
-				xaxis: { title: 'text length N (log)', type: 'log', gridcolor: P.grid },
-				yaxis: { title: 'vocabulary V(N) (log)', type: 'log', gridcolor: P.grid }
-			}), { displayModeBar: false });
+				xaxis: { title: 'text length N (log)', type: 'log', gridcolor: P.grid, automargin: true },
+				yaxis: { title: 'vocabulary V(N) (log)', type: 'log', gridcolor: P.grid, automargin: true }
+			}), { displayModeBar: false, responsive: true });
 
 			const qs = [], mono = [], multi = [];
 			for (let q = -5; q <= 5.001; q += 0.1) {

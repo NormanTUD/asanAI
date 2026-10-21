@@ -64,7 +64,9 @@ Models like **wav2vec 2.0**, **HuBERT**, and **WavLM** learn speech representati
 </div>
 
 <div class="md">
-## Speech Recognition: Whisper and Friends
+## Speech and music systems
+
+### Speech Recognition: Whisper and Friends
 
 **Whisper** (Radford et al., OpenAI, 2022) is the dominant open ASR model. Architecture:
 
@@ -81,7 +83,7 @@ Note that Whisper is one of the few remaining widely-used **encoder-decoder** Tr
 </div>
 
 <div class="md">
-## Text-to-Speech: From Tacotron to Neural Codec Models
+### Text-to-Speech: From Tacotron to Neural Codec Models
 
 TTS has three historical generations:
 
@@ -89,7 +91,7 @@ TTS has three historical generations:
 2. **Neural spectrogram models** (Tacotron 2, 2017): encoder–decoder produces a mel-spectrogram, a separate **vocoder** (WaveNet, WaveGlow) converts it to waveform.
 3. **Codec-based models** (VALL-E, Bark, SoundStorm, 2023+): treat speech as discrete codec tokens; a Transformer LLM predicts them; the codec decoder converts to waveform. Voice cloning from a 3-second reference sample becomes trivial.
 
-## Music Generation
+### Music Generation
 
 * **Jukebox** (OpenAI, 2020): VQ-VAE on raw audio + autoregressive Transformer. Slow, hours of music.
 * **MusicGen** (Meta, 2024): single-pass Transformer over EnCodec tokens, conditioned on text and (optionally) melody.
@@ -100,7 +102,7 @@ All rely on the same principle: **audio as a sequence of discrete tokens** + aut
 </div>
 
 <div class="md">
-## Unified Speech–Text Models (2024+)
+### Unified Speech–Text Models (2024+)
 
 The frontier is a single Transformer that handles text, audio, and image tokens interchangeably:
 

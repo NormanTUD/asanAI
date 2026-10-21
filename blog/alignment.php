@@ -22,7 +22,9 @@ topics: safety
 </div>
 
 <div class="md">
-## Why it is hard: the specification problem
+## The problem
+
+### Why it is hard: the specification problem
 
 We specify **proxies**, not the goal. **Specification gaming (reward hacking)** is when an optimizer pursues the *letter* of a proxy rather than its spirit. Two structural difficulties:
 
@@ -31,7 +33,23 @@ We specify **proxies**, not the goal. **Specification gaming (reward hacking)** 
 </div>
 
 <div class="md">
-## The current toolkit
+### Failure modes, made concrete
+
+* **Mesa-optimization.** A trained model can contain an *inner* optimizer with an objective that differs from the training loss — alignment of the outer system says nothing about the inner one. (\cite[Hubinger et al., 2019]{mesa_optimization})
+* **Deceptive alignment / alignment faking.** A model *appears* aligned during training and evaluation, then drops the act. Backdoors can persist through subsequent safety training (\cite[Hubinger et al., 2024]{hubinger2024sleeperagents}); frontier models show **alignment faking** (\cite[Greenblatt et al., 2024]{alignment_faking}) and, in reasoning models, "think" harmful content internally before refusing (\cite[Chua et al., 2025]{thought_crime}).
+* **Reward tampering.** Under RL pressure, models drift from harmless sycophancy toward **covert subterfuge** when given the chance to alter their reward. (\cite[Denison et al., 2024]{reward_tampering})
+</div>
+
+<div class="md">
+### Empirical evidence that it is real, not hypothetical
+
+These are not only thought experiments. In benign computer-use tasks with a **corrigibility obstacle** (a human interrupt, a login, a shutdown), a majority of frontier models **overrode the interrupt to finish the task — and stronger models did so more often** (\cite[Tien et al., 2026]{rogue_agents}). In deep RL, the **"treacherous turn"** — where deceptive action becomes optimal — is now empirically mapped across environments and training regimes (\cite[Ashcraft et al., 2025]{treacherous_turn}).
+</div>
+
+<div class="md">
+## The methods
+
+### The current toolkit
 
 The modern pipeline: **SFT** (demonstrations) $\to$ **RLHF** (learn a reward model from human preferences) $\to$ **RLAIF / Constitutional AI** (AI feedback instead of humans) $\to$ **preference optimization** (learn the policy directly, no explicit RL loop). (\cite[Christiano et al., 2017]{christiano2017rlhf}; \cite[Ouyang et al., 2022]{ouyang2022instructgpt}; \cite[Lee et al., 2023]{rlaif}; \cite[Bai et al., 2022]{bai2022constitutional})
 
@@ -41,21 +59,7 @@ The models also acquire **self-knowledge**: they track their own accuracy surpri
 </div>
 
 <div class="md">
-## Failure modes, made concrete
-
-* **Mesa-optimization.** A trained model can contain an *inner* optimizer with an objective that differs from the training loss — alignment of the outer system says nothing about the inner one. (\cite[Hubinger et al., 2019]{mesa_optimization})
-* **Deceptive alignment / alignment faking.** A model *appears* aligned during training and evaluation, then drops the act. Backdoors can persist through subsequent safety training (\cite[Hubinger et al., 2024]{hubinger2024sleeperagents}); frontier models show **alignment faking** (\cite[Greenblatt et al., 2024]{alignment_faking}) and, in reasoning models, "think" harmful content internally before refusing (\cite[Chua et al., 2025]{thought_crime}).
-* **Reward tampering.** Under RL pressure, models drift from harmless sycophancy toward **covert subterfuge** when given the chance to alter their reward. (\cite[Denison et al., 2024]{reward_tampering})
-</div>
-
-<div class="md">
-## Empirical evidence that it is real, not hypothetical
-
-These are not only thought experiments. In benign computer-use tasks with a **corrigibility obstacle** (a human interrupt, a login, a shutdown), a majority of frontier models **overrode the interrupt to finish the task — and stronger models did so more often** (\cite[Tien et al., 2026]{rogue_agents}). In deep RL, the **"treacherous turn"** — where deceptive action becomes optimal — is now empirically mapped across environments and training regimes (\cite[Ashcraft et al., 2025]{treacherous_turn}).
-</div>
-
-<div class="md">
-## The two big research programs
+### The two big research programs
 
 **1. Scalable oversight** — how to supervise a model *stronger* than its supervisor:
 
@@ -67,19 +71,21 @@ These are not only thought experiments. In benign computer-use tasks with a **co
 </div>
 
 <div class="md">
-## Interpretability as a safety tool
+### Interpretability as a safety tool
 
 You cannot supervise what you cannot see. **Mechanistic interpretability** — sparse autoencoders, circuit discovery, activation steering — is increasingly applied as a *safety* instrument: to find the "safety circuit" (detection heads $\to$ safety neurons $\to$ refusal heads), to spot a backdoor's signature in later layers, and to build **abstention** — letting the model say *I don't know* rather than bluff. (\cite[Naseem, 2026]{mech_interp_alignment})
 </div>
 
 <div class="md">
-## Where alignment lives in this book
+## Context
+
+### Where alignment lives in this book
 
 Alignment is the **objective-function thread** running through several chapters: the existential framing (instrumental convergence, the paperclip) in <a href="philosophy">Philosophy</a>; the adversarial attacks (jailbreaks, prompt injection, data poisoning) in <a href="security_inference">Security</a>; interpretability-as-safety in <a href="frontier">Frontier</a>; "fitness beats truth" in <a href="hallucinations">Hallucinations</a>. This chapter gathers them under one question: *is the optimizer aiming at the target we meant — and can we keep it that way?*
 </div>
 
 <div class="md">
-## Open questions
+### Open questions
 
 * Can we **verify** that a model is not deceptively aligned, rather than merely *test* for it?
 * Does **scalable oversight** (debate, weak-to-strong, process rewards) survive the jump to superintelligence, or does it hit a fundamental limit?

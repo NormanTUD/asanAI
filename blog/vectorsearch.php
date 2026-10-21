@@ -26,14 +26,16 @@ $$
 <div id="vslab-pipeline-diagram"></div>
 
 <div class="md">
-## The Three Paradigms of Search
+## Search paradigms
+
+### The Three Paradigms of Search
 
 Before diving into vector databases, it's essential to understand what they replaced and what they complement. There are three fundamentally different approaches to finding information in a corpus:
 
 </div>
 
 <div class="md" data-mathlevel="55">
-### 1. Keyword Search (Lexical / Sparse)
+#### 1. Keyword Search (Lexical / Sparse)
 
 The oldest and most intuitive approach. You type words, the system finds documents containing those exact words.
 
@@ -56,7 +58,7 @@ Where:
 </div>
 
 <div class="md" data-mathlevel="50">
-### 2. Semantic Search (Dense Vector Search)
+#### 2. Semantic Search (Dense Vector Search)
 
 Instead of matching words, match **meanings**. Both the query and every document are converted to dense vectors by an embedding model. Search becomes geometric: find the vectors closest to the query vector.
 
@@ -73,7 +75,7 @@ $$
 </div>
 
 <div class="md" data-mathlevel="50">
-### 3. Hybrid Search
+#### 3. Hybrid Search
 
 The best modern systems combine both approaches:
 
@@ -93,11 +95,13 @@ Where $\alpha$ controls the balance. This ensures you get both exact keyword pre
 <div id="vslab-search-comparison"></div>
 
 <div class="md" data-mathlevel="45">
-## How Vector Databases Work
+## How vector databases work
+
+### How Vector Databases Work
 
 A vector database is **not** a traditional relational database with an added vector column. It is a fundamentally different data structure, optimized for a fundamentally different operation: instead of `WHERE name = 'Alice'`, it answers `FIND 10 NEAREST TO [0.23, -0.87, 0.11, ...]`.
 
-### What's stored?
+#### What's stored?
 
 Each record in a vector database contains:
 
@@ -108,7 +112,7 @@ Each record in a vector database contains:
 | `text` | “The Transformer was introduced in 2017…” | Original chunk, returned to the LLM |
 | `metadata` | `{source: "vaswani2017", page: 3, date: "2017-06-12"}` | For filtering and citations |
 
-### The Brute-Force Problem
+#### The Brute-Force Problem
 
 Given $N$ vectors of dimension $d$, a naive exact search computes:
 
@@ -123,9 +127,9 @@ The solution: **Approximate Nearest Neighbor (ANN)** algorithms that sacrifice a
 </div>
 
 <div class="md" data-mathlevel="45">
-## ANN Algorithms: How Billions of Vectors Are Searched in Milliseconds
+### ANN Algorithms: How Billions of Vectors Are Searched in Milliseconds
 
-### HNSW (Hierarchical Navigable Small World)
+#### HNSW (Hierarchical Navigable Small World)
 
 HNSW \cite{malkov2018hnsw} is the most popular ANN algorithm in production today. It builds a **multi-layer graph** where each vector is a node, and edges connect nearby vectors.
 
@@ -150,7 +154,7 @@ $$
 </div>
 
 <div class="md" data-mathlevel="45">
-### IVF (Inverted File Index)
+#### IVF (Inverted File Index)
 
 IVF takes a different approach: **pre-cluster** the vectors, then only search relevant clusters.
 
@@ -174,7 +178,7 @@ $$
 </div>
 
 <div class="md">
-### Product Quantization (PQ)
+#### Product Quantization (PQ)
 
 PQ \cite{jegou2011pq} addresses a different bottleneck: **memory**. Storing 1 billion 768-dimensional float32 vectors requires:
 
@@ -191,7 +195,7 @@ Compressed size: $10^9 \times 96 \times 1 \text{ byte} = 96 \text{ GB}$, a **32x
 
 Distance computation uses precomputed lookup tables, making it extremely fast despite the compression.
 
-### Comparison of ANN Algorithms
+#### Comparison of ANN Algorithms
 
 | Algorithm | Speed | Memory | Recall | Best for |
 |-----------|-------|--------|--------|----------|
@@ -203,9 +207,11 @@ Distance computation uses precomputed lookup tables, making it extremely fast de
 
 In practice, these are often **combined**: HNSW for the graph navigation, PQ for memory compression, and IVF for pre-filtering. Libraries like FAISS \cite{johnson2017faiss} support all combinations.
 
-## The Vector Database Landscape
+## The ecosystem
 
-### Open-Source Libraries (embedded, no server)
+### The Vector Database Landscape
+
+#### Open-Source Libraries (embedded, no server)
 
 | Library | Creator | Language | Notes |
 |---------|---------|----------|-------|
@@ -214,7 +220,7 @@ In practice, these are often **combined**: HNSW for the graph navigation, PQ for
 | **HNSWlib** | Yury Malkov | C++ / Python | Pure HNSW implementation. Very fast |
 | **USearch** | Unum | C++ / many bindings | Compact, fast, cross-platform |
 
-### Managed Vector Databases (server-based)
+#### Managed Vector Databases (server-based)
 
 | Database | Type | Key Feature |
 |----------|------|-------------|
@@ -225,7 +231,7 @@ In practice, these are often **combined**: HNSW for the graph navigation, PQ for
 | **Milvus** | Open-source + cloud | Billion-scale, GPU-accelerated |
 | **pgvector** | PostgreSQL extension | Add vector search to existing Postgres DB |
 
-### How to Choose?
+#### How to Choose?
 
 | If you need… | Use… |
 |--------------|------|
@@ -235,18 +241,18 @@ In practice, these are often **combined**: HNSW for the graph navigation, PQ for
 | Minimal infrastructure | **Pinecone** (managed) or **pgvector** (if you already use Postgres) |
 | Hybrid search out of the box | **Weaviate** |
 
-## The Embedding Model: The Unsung Hero
+### The Embedding Model: The Unsung Hero
 
 A vector database is only as good as the vectors you put into it. The **embedding model** determines the quality of semantic search.
 
-### What makes a good embedding model?
+#### What makes a good embedding model?
 
 1. **Semantic faithfulness:** Similar meanings → similar vectors
 2. **Dimensionality:** Higher dimensions capture more nuance but cost more memory and compute
 3. **Training data:** Models trained on diverse text generalize better
 4. **Instruction-awareness:** Modern models accept a task prefix (“search_query:”, “search_document:”) to optimize for retrieval
 
-### Popular Embedding Models (2025-2026)
+#### Popular Embedding Models (2025-2026)
 
 | Model | Dimensions | Creator | Notes |
 |-------|-----------|---------|-------|
@@ -257,7 +263,7 @@ A vector database is only as good as the vectors you put into it. The **embeddin
 | `nomic-embed-text-v1.5` | 768 | Nomic AI | Open-source, Matryoshka (variable dim) \cite{kusupati2022matryoshka} |
 | `mxbai-embed-large-v1` | 1024 | Mixedbread | Top-tier open-source |
 
-### The Embedding Pipeline
+#### The Embedding Pipeline
 </div>
 
 <pre class="vslab-code-block"><code># Pseudocode: Indexing documents into a vector database
@@ -291,11 +297,11 @@ results = db.search(query_vector, top_k=5)
 # ]</code></pre>
 
 <div class="md">
-## Chunking: The Art of Splitting Documents
+### Chunking: The Art of Splitting Documents
 
 How you split documents into chunks has a **massive** impact on retrieval quality. Too large, and irrelevant text dilutes the signal. Too small, and critical context is lost.
 
-### Chunking Strategies
+#### Chunking Strategies
 
 | Strategy | How it works | Pros | Cons |
 |----------|-------------|------|------|
@@ -305,7 +311,7 @@ How you split documents into chunks has a **massive** impact on retrieval qualit
 | **Recursive** | Try large splits first, then smaller | Respects document structure | More complex |
 | **Semantic** | Split when embedding similarity drops | Meaning-aware boundaries | Slow, requires embedding calls |
 
-### Overlap
+#### Overlap
 
 Most systems use **overlapping chunks**, each chunk shares 50-100 tokens with its neighbors. This ensures that information at chunk boundaries isn't lost:
 
@@ -315,7 +321,9 @@ $$
 
 The 50-token overlap means a sentence split between chunks appears in full in at least one of them.
 
-## Metadata Filtering: Narrowing Before Searching
+## Improving retrieval
+
+### Metadata Filtering: Narrowing Before Searching
 
 Raw vector search returns the semantically closest chunks regardless of source, date, or category. **Metadata filtering** adds structured constraints:
 </div>
@@ -333,7 +341,7 @@ results = db.search(
 <div class="md">
 This is called **pre-filtering** (narrow first, then search) or **post-filtering** (search first, then narrow). Pre-filtering is faster but can miss relevant results; post-filtering is more thorough but slower. Most modern vector databases support both.
 
-## Re-Ranking: The Second Pass
+### Re-Ranking: The Second Pass
 
 Vector search retrieves candidates quickly but approximately. A **re-ranker** then scores each candidate more carefully:
 
@@ -348,7 +356,9 @@ A **bi-encoder** embeds query and document separately, fast but can miss subtle 
 
 This two-stage pipeline is standard in production RAG systems.
 
-## Connecting It All: Vector Search Powers Everything
+## Connections and limits
+
+### Connecting It All: Vector Search Powers Everything
 
 Vector databases are not just for RAG. They are the backbone of:
 
@@ -363,7 +373,7 @@ Vector databases are not just for RAG. They are the backbone of:
 
 The core operation is always the same: embed → store → search → retrieve.
 
-## Limitations & Challenges
+### Limitations & Challenges
 
 - **Embedding quality ceiling:** If the embedding model doesn't capture a distinction, the vector DB can't find it
 - **Curse of dimensionality:** In very high dimensions, distances between all points converge, making search harder
@@ -372,7 +382,7 @@ The core operation is always the same: embed → store → search → retrieve.
 - **Multilingual gaps:** Embedding models may perform unevenly across languages
 - **No reasoning:** Vector search finds *similar* content, not *correct* answers, that's the LLM's job
 
-## Summary
+### Summary
 
 | Question | Answer |
 |----------|--------|
@@ -387,7 +397,7 @@ The core operation is always the same: embed → store → search → retrieve.
 </div>
 
 <div class="md">
-## 🔍 Interactive: Keyword vs. Semantic Search
+### 🔍 Interactive: Keyword vs. Semantic Search
 </div>
 
 <div id="vslab-demo-container">

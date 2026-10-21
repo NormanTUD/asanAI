@@ -15,7 +15,9 @@ A frontier LLM is roughly **half algorithm, half data**. The same architecture t
 </div>
 
 <div class="md" data-mathlevel="45">
-## The Scale of Modern Training Data
+## Collecting the data
+
+### The Scale of Modern Training Data
 
 Frontier LLMs are trained on **10–15 trillion tokens**. The composition is roughly:
 
@@ -34,7 +36,7 @@ The **Chinchilla scaling law** (\cite[Hoffmann et al., 2022]{hoffmann2022chinchi
 </div>
 
 <div class="md">
-## Common Crawl: The Foundation
+### Common Crawl: The Foundation
 
 **Common Crawl** (commoncrawl.org) is a non-profit that has been archiving web pages since 2008. Each month, it crawls ~3 billion URLs, producing ~300 TB of raw HTML. After deduplication and WARC-packaging, this yields ~30 TB of useful text per month.
 
@@ -51,7 +53,9 @@ The pipeline:
 </div>
 
 <div class="md">
-## Quality Filtering
+## Cleaning the data
+
+### Quality Filtering
 
 Web text is mostly junk: SEO spam, machine-translated articles, product listings with 50 keyword variations, “Lorem ipsum”, repetitive template content. A model trained on this learns to mimic junk.
 
@@ -71,17 +75,17 @@ FineWeb (\cite[Penedo et al., 2024]{penedo2024fineweb}) pushed this further: 1.3
 <div id="filter-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
-## Deduplication
+### Deduplication
 
 Duplicate or near-duplicate documents **inflate training cost and can cause memorization**. Dedup is essential.
 
-### Exact Deduplication
+#### Exact Deduplication
 
 Hash each document (SHA-256 over normalized text); keep only one copy of each hash. Catches verbatim copies but not near-duplicates.
 </div>
 
 <div class="md" data-mathlevel="50">
-### Fuzzy Deduplication (MinHash)
+#### Fuzzy Deduplication (MinHash)
 
 Compute $k$ hash functions over $n$-grams of each document; the **MinHash signature** approximates the Jaccard similarity between document pairs in $O(k)$ space.
 
@@ -93,23 +97,23 @@ Documents with identical MinHash signatures have high Jaccard similarity. Thresh
 </div>
 
 <div class="md">
-### Substring Deduplication (Suffix Array)
+#### Substring Deduplication (Suffix Array)
 
 For very large corpora, build a **suffix array** across the entire corpus and identify repeated substrings of length $\geq k$ (typically $k = 100$ characters). Drop all but one occurrence. **PaCoRA** (MosaicML) and **SemDeDup** (\cite[Abbas et al., 2023]{abbas2023semdedup}) extend this to semantic duplicates via embedding-based clustering.
 </div>
 
 <div class="md">
-## Decontamination
+### Decontamination
 
 A document in the training set may **contain benchmark items verbatim**. Models that have seen the test set are not being honestly evaluated.
 
-### Standard Decontamination Pipeline
+#### Standard Decontamination Pipeline
 
 1. Build a list of benchmark items (questions, options, answers, code stubs).
 2. **n-gram overlap**: for each training document, compute the longest common n-gram with any benchmark item. If $> k$ (typically $k = 8$ for words, $k = 50$ for characters), drop or rewrite the document.
 3. **Suffix array approach**: index all benchmark items as substrings; find all training documents containing them.
 
-### Limitations
+#### Limitations
 
 * **Paraphrase contamination**: rewriting a benchmark question in different words is hard to detect.
 * **Translation contamination**: a French-language model could be tested on French versions of English benchmarks; cross-lingual contamination is harder.
@@ -119,7 +123,9 @@ Sophisticated methods (ProxiMix, D-Clean) combine overlap detection with **perpl
 </div>
 
 <div class="md">
-## Specialized Datasets
+## Shaping the mix
+
+### Specialized Datasets
 
 Beyond raw web text, frontier models train on carefully curated datasets:
 
@@ -136,7 +142,7 @@ Open recipes (RedPajama, FineWeb) have been critical for the open-source LLM mov
 </div>
 
 <div class="md">
-## Data Mixing: The Frontier Secret
+### Data Mixing: The Frontier Secret
 
 How much web vs. code vs. math? This is largely **undocumented and proprietary**. Chinchilla's scaling laws \cite{hoffmann2022chinchilla} fix the total token-to-parameter ratio, but they say little about the *domain mix*, which is tuned empirically per model. Technical reports and ablations show:
 
@@ -150,23 +156,23 @@ How much web vs. code vs. math? This is largely **undocumented and proprietary**
 </div>
 
 <div class="md">
-## Why Code Is Disproportionately Powerful
+### Why Code Is Disproportionately Powerful
 
 Code is only 10–15% of a frontier training mix, yet it is the single most effective ingredient for reasoning ability. Three data-level properties explain most of it.
 
-### Verifiable ground truth at web scale
+#### Verifiable ground truth at web scale
 
 Prose makes claims; code makes predictions. Docstrings specify contracts, tests can be *run* — execution is a free, automatic truth oracle. GitHub is the largest collection of (specification, correct solution) pairs in existence, and **HumanEval** (\cite[Chen et al., 2021]{chen2021codex}) is literally the training pattern itself: docstring → program. Verifiability compounds: (\cite[Li et al., 2022]{li2022alphacode}) reached competitive-programming rank by sampling up to ~100,000 candidates per problem and keeping only those whose *execution* matched the expected test outputs.
 
-### Dense, and up-weighted by tokenization
+#### Dense, and up-weighted by tokenization
 
 Code is telegraphic: little stylistic redundancy, high signal per byte. BPE splits code's dense symbols into more tokens per byte than prose (often 1.5–2×), so the per-token loss effectively up-weights code relative to its byte share. And valid programs live on a sharply constrained manifold — syntax narrows the legal continuations at every step — so the model learns code's structural constraints cheaply, the way it learns grammar.
 
-### Explicit step-by-step reasoning in the raw
+#### Explicit step-by-step reasoning in the raw
 
 A program is reasoning with the working memory made visible: variables as state, loops as iteration, branches as case analysis. Code is the densest source of (problem → algorithm → implementation) triples on the web. Pretraining on a code+text mixture improves *general* reasoning almost without negative transfer, and code data at instruction-tuning time adds task-specific reasoning (\cite[Ma et al., 2023]{ma2023codereasoning}). What transfers is structure, not vocabulary: across 3,331 controlled fine-tuning runs in 10 languages, breaking code's *structure* hurt far more than breaking its *meaning*; pseudocode was often as effective as code, and corrupted code stayed competitive as long as surface regularities survived (\cite[Waheed et al., 2025]{waheed2025codeinduced}).
 
-### Why this becomes everything else
+#### Why this becomes everything else
 
 Because code is executable, it is the bridge to the symbolic: PAL had the LLM decompose a word problem into a short program and offloaded the computation to an interpreter — a 12B model plus an interpreter beat PaLM-540B's chain-of-thought on GSM8K (\cite[Gao et al., 2022]{gao2022pal}). Executable code is also a universal action space for agents (up to 20% higher success rates than pre-defined JSON actions \cite[Wang et al., 2024]{wang2024codeact}) and the reason RL with verifiable rewards (see the <a href="reasoning">Reasoning chapter</a>) works best on code and math: the test suite *is* the reward model.
 
@@ -176,7 +182,7 @@ The other side of the same data: models are strongest where the corpus is thicke
 </div>
 
 <div class="md">
-## Synthetic Data
+### Synthetic Data
 
 With natural data exhaust, frontier labs increasingly generate **synthetic training data**:
 
@@ -195,7 +201,9 @@ OpenAI's **WebGPT** and DeepMind's **Sparrow** demonstrated that synthetic prefe
 </div>
 
 <div class="md">
-## Practical Recipe (Llama 3-style)
+## Recipes and lessons
+
+### Practical Recipe (Llama 3-style)
 
 For those training their own models, the rough sequence is:
 
@@ -213,7 +221,7 @@ This pipeline takes weeks of engineering and significant compute. The result is 
 </div>
 
 <div class="md">
-## Why Data Is Half the Secret
+### Why Data Is Half the Secret
 
 A famous result from the **DataComp-LM** benchmark: at fixed compute, model quality scales linearly with the **quality-adjusted token count**. Doubling the data quality is equivalent to doubling model size.
 

@@ -16,7 +16,9 @@ This book opened with the universe: stars forging the elements, a handful of law
 </div>
 
 <div class="md">
-## The flagship: AlphaFold
+## The models
+
+### The flagship: AlphaFold
 
 **Protein folding** — predicting a protein's 3D shape from its amino-acid sequence — was a 50-year grand challenge. **AlphaFold** solved it at near-experimental accuracy, winning CASP14 by a wide margin (\cite[Jumper et al., 2021]{jumper2021alphafold}); its leaders shared the 2024 **Nobel Prize in Chemistry**. **AlphaFold 3** extended the model to the joint structure of proteins, nucleic acids, ligands, ions, and modified residues (\cite[Abramson et al., 2024]{alphafold3}), and **AlphaMissense** scored essentially all ~216 million possible human missense variants (\cite[Abramson et al., 2023]{alphamissense}). The AlphaFold Protein Structure Database released ~**200 million** predicted structures, free to use — a new atlas of biology. (\cite[EMBL-EBI, 2023]{alphafold_db})
 </div>
@@ -29,7 +31,7 @@ This book opened with the universe: stars forging the elements, a handful of law
 </div>
 
 <div class="md">
-## Mathematics: from competition problems to open problems
+### Mathematics: from competition problems to open problems
 
 This is where the story becomes startling. AI has moved from *solving given problems* to *opening new ones*.
 
@@ -48,7 +50,7 @@ The competition-math line ran in parallel: **AlphaProof** + **AlphaGeometry 2** 
 </div>
 
 <div class="md">
-## Materials, weather, molecules
+### Materials, weather, molecules
 
 * **Materials.** **GNoME**, a graph network over crystal structures, predicted **2.2 million** new stable materials, ~800,000 of them promising ceramics, superhard substances, and superconductors (\cite[Merchant et al., 2023]{merchant2023gnome}).
 * **Weather.** **FourCastNet** and **Graph Cast** forecast a week of global weather in *seconds*, matching or beating the physics-based ECMWF model while being orders of magnitude faster (\cite[Pathak et al., 2022]{pathak2022fourcastnet}).

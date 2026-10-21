@@ -1,6 +1,7 @@
 .env
 _ALL.js
 cosmo_ok
+blog/darkmode-ci/node_modules/
 beta
 table2.csv
 timetable.csv

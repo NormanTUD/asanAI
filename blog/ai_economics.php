@@ -17,7 +17,9 @@ The course has covered what AI *is* and what it *can do*; this chapter is the pa
 </div>
 
 <div class="md">
-## The 6ND rule: training cost in one line
+## The cost model
+
+### The 6ND rule: training cost in one line
 
 Here is the load-bearing estimate. Training a transformer on $D$ tokens, with $N$ parameters, costs approximately
 
@@ -102,7 +104,7 @@ Double $N$ or double $D$ and you double the cost — that linearity is why "make
 </script>
 
 <div class="md">
-## Inference cost per token: active parameters, not total
+### Inference cost per token: active parameters, not total
 
 Inference is a **forward pass only** — no backward — so the per-token cost is roughly half of one training step's forward, i.e. about **2 FLOPs per active parameter per token**:
 
@@ -150,7 +152,9 @@ Notice the word **active**. For a dense model that is the total $N$; for a [MoE]
 </script>
 
 <div class="md">
-## Why caching saves ~10×: the prefill is paid once
+## Paying for it in practice
+
+### Why caching saves ~10×: the prefill is paid once
 
 The single most important serving cost-saver is **prompt caching**, and its arithmetic is the [prefill/decode split](inference_vs_training.php) you already met. The expensive part of a call is often the **prefill** — reading a long, *repeated* system prompt, tool definitions, or few-shot examples into context. Without caching, you pay the prefill FLOPs *every call*. With caching, the repeated prefix's keys and values are computed **once** and *reused*, so the second and later calls skip that prefill almost entirely.
 
@@ -160,7 +164,7 @@ The deeper point: caching is not a trick, it is a consequence of the two regimes
 </div>
 
 <div class="md">
-## 7B on a laptop, or the API: fixed cost vs per-token cost
+### 7B on a laptop, or the API: fixed cost vs per-token cost
 
 The last comparison is the one people get wrong. "Run it locally" and "call the API" are not the same cost shape:
 

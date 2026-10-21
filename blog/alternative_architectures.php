@@ -40,7 +40,9 @@ where $d_k$ is the dimension of the keys (the head dimension). The $QK^\top$ mat
 </div>
 
 <div class="md" data-mathlevel="72">
-## State-Space Models: S4 and Mamba
+## Sequence-model alternatives
+
+### State-Space Models: S4 and Mamba
 
 A **state-space model** (SSM) describes a continuous linear dynamical system:
 
@@ -60,11 +62,11 @@ This is a **linear recurrent network** with a fixed-size state $h_t \in \mathbb{
 </div>
 
 <div class="md">
-### S4
+#### S4
 
 \cite[Gu et al. (2021)]{gu2021s4} made training stable by parameterizing $A$ in a **HiPPO structure** (high-order polynomial projection operator), which captures long-range dependencies efficiently. S4 set state-of-the-art on the Long Range Arena benchmark, beating Transformers by a large margin on sequences of length $16{,}000$.
 
-### Mamba
+#### Mamba
 
 Mamba's key contribution (\cite[Gu & Dao, 2023]{gu2023mamba}) is making the SSM **input-dependent**:
 
@@ -76,11 +78,11 @@ i.e. the state-transition matrices depend on the current input. This breaks line
 </div>
 
 <div class="md">
-### Mamba-2 and SSD
+#### Mamba-2 and SSD
 
 Mamba-2 (\cite[Dao & Gu, 2024]{dao2024mamba2}) reveals that selective SSMs and attention are **algebraically dual** through a tensor contraction framework called **Structured State-Space Duality (SSD)**. In practice this lets Mamba-2 use an efficient attention-like kernel for compute, retaining the linear-time recurrence for inference.
 
-### Jamba (AI21, 2024): Hybrid SSM + Attention
+#### Jamba (AI21, 2024): Hybrid SSM + Attention
 
 Jamba interleaves Mamba and Transformer blocks in a 1:7 ratio:
 
@@ -92,7 +94,7 @@ This hybrid scales to 256K context (Jamba-1.5-Large), uses ~25% of the memory of
 </div>
 
 <div class="md" data-mathlevel="58">
-## Linear Attention
+### Linear Attention
 
 The softmax in attention is what makes the operation non-associative, forcing the $O(n^2)$ cost. Replace softmax with a feature map $\phi$:
 
@@ -102,13 +104,13 @@ $$
 
 By computing $\sum_j \phi(K_j) V_j^\top$ once as an $d \times d$ outer product (the “state”), compute drops to $O(n \cdot d^2)$ and memory is $O(d^2)$, independent of $n$.
 
-### Performer
+#### Performer
 
 $\phi(x) = \exp(-\|x\|^2/2) \cdot (\exp(\omega_1 \cdot x), \ldots, \exp(\omega_m \cdot x))$ for random $\omega_i \sim \mathcal{N}(0, I)$ (positive random features). Provably unbiased kernel approximation (\cite[Choromanski et al., 2021]{choromanski2021performer}).
 </div>
 
 <div class="md">
-### RetNet (Sun et al., Microsoft, 2023)
+#### RetNet (Sun et al., Microsoft, 2023)
 
 RetNet uses $\phi = \text{ELU} + 1$ (a simple element-wise nonlinearity) and supports three computation modes:
 
@@ -118,13 +120,15 @@ RetNet uses $\phi = \text{ELU} + 1$ (a simple element-wise nonlinearity) and sup
 
 RetNet claims 8× lower latency and 7× lower memory than vanilla Transformer at inference.
 
-### RWKV
+#### RWKV
 
 \cite[Peng et al. (2023)]{peng2023rwkv} introduced a linear-attention-with-decay RNN. RWKV-7 (2025) matches 7B Transformers on language tasks.
 </div>
 
 <div class="md">
-## Other Architectures
+## Trade-offs
+
+### Other Architectures
 
 * **Hyena** (\cite[Poli et al., 2023]{poli2023hyena}): replaces attention with **implicit long convolutions** parameterised by an MLP, with element-wise gating. Achieves Transformer-quality language modelling at sub-quadratic cost.
 * **Mega** (\cite[Ma et al., 2022]{ma2022mega}): combines moving-average gated linear units with attention. Position-aware.
@@ -136,7 +140,7 @@ The field is in active flux; no single “Transformer replacement” has emerged
 </div>
 
 <div class="md">
-## Compute / Memory Comparison
+### Compute / Memory Comparison
 
 For sequence length $n$, model dim $d$, batch size $b$:
 
@@ -153,7 +157,7 @@ The constant factors matter: an SSM with state $N = 16$ is roughly comparable in
 </div>
 
 <div class="md">
-## Where Transformers Still Win
+### Where Transformers Still Win
 
 Despite the architectural menu, vanilla Transformers remain dominant in 2025 because:
 
@@ -165,7 +169,7 @@ The picture is changing fast: in 2025, Jamba, RecurrentGemma, RWKV-7, Striped Hy
 </div>
 
 <div class="md">
-## Open Questions
+### Open Questions
 
 * Can pure-SSM models match Transformers at long-horizon reasoning, or are hybrids strictly necessary?
 * Will the in-context-learning gap close?

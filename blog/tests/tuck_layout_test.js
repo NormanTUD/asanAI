@@ -372,21 +372,10 @@ check(allGroupBadges().length === groupCountBefore, 'T7: no duplicate group badg
 check(I.findRecollapse(blkA) === recA2, 'T7: fold-away button not recreated on re-pass (same node)');
 check(blkC.querySelectorAll(':scope > .topic-block-fade-badge').length === 1, 'T7: no duplicate solo badge');
 
-/* ── T5: end-of-article settle order ─────────────────────────── */
+/* ── T5: end-of-article learned UI is removed ────────────────── */
 I.showLearnedUI();
-const box = doc.getElementById('course-status-box');
-const learnedBtn = doc.getElementById('topic-learned-btn');
-check(!!box, 'T5: course status box present');
-check(!!learnedBtn, 'T5: learned button created');
-check(!!box && box.parentNode === contents, 'T5: box is a direct child of #contents');
-check(!!box && foot.previousElementSibling === box, 'T5: box sits right before the footnotes section (END of article, not top)');
-check(!!box && box.previousElementSibling === learnedBtn, 'T5: learned button directly before the box');
-check(!!box && /Lesson 2 of 4/.test(lab.textContent), 'T5: box label reads "Lesson 2 of 4" (math-ii is module 2)');
-check(contents.firstElementChild !== box, 'T5: box is NOT at the top of the article');
-
-// settle is idempotent: re-running showLearnedUI must not move anything
-I.showLearnedUI();
-check(foot.previousElementSibling === box && box.previousElementSibling === learnedBtn, 'T5: settle is a no-op once in place (no scroll jump)');
+check(!doc.getElementById('course-status-box'), 'T5: course status box removed by showLearnedUI');
+check(!doc.getElementById('topic-learned-btn'), 'T5: learned button not created (removed)');
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');
 if (fail > 0) process.exit(1);

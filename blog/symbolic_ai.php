@@ -18,7 +18,9 @@ This chapter traces the other branch of AI and shows how it complements neural n
 </div>
 
 <div class="md">
-## Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry
+## Foundations
+
+### Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry
 
 Before the technical material, it is worth pausing on the philosophical manifesto that grounded the entire symbolic-AI tradition in a defence of itself as a *science*. \citeauthor{newell1976empirical} (\citeyear{newell1976empirical}) — Allen Newell and Herbert A. Simon, in the second of the Turing Award lectures' "Computer Science as Empirical Inquiry" papers (the first was given by Newell alone in 1975, and the joint paper is the canonical published form) — make a sustained case that computer science is not *applied mathematics* and not *engineering*, but an *empirical* science on a par with physics or biology, whose natural objects are **symbol systems** and whose characteristic method is the construction of *symbols and search*.
 
@@ -40,7 +42,7 @@ The synthesis below happens naturally once you read three other chapters: <a hre
 </div>
 
 <div class="md">
-## The Two Branches
+### The Two Branches
 
 | | Symbolic (GOFAI) | Neural (Connectionist) |
 |---|---|---|
@@ -56,15 +58,17 @@ Both have strengths the other lacks. **Neuro-symbolic AI** is the synthesis.
 </div>
 
 <div class="md" data-mathlevel="50">
-## Knowledge Representation: From Logic to RDF
+## Knowledge representation
+
+### Knowledge Representation: From Logic to RDF
 
 The classical symbolic AI stack rests on **first-order logic** and its extensions.
 
-### Propositional Logic
+#### Propositional Logic
 
 Variables are boolean; connectives $\land, \lor, \neg, \implies$ combine them. Decidable; SAT solvers are highly optimized.
 
-### First-Order Logic (FOL)
+#### First-Order Logic (FOL)
 
 Adds $\forall$ (forall), $\exists$ (exists), predicates $P(x)$, and functions $f(x)$. More expressive; semi-decidable.
 
@@ -78,7 +82,7 @@ $$
 \end{aligned}
 $$
 
-### Description Logics (DLs)
+#### Description Logics (DLs)
 
 A fragment of FOL designed to be **decidable** while still expressive. Foundation of the **Semantic Web**:
 
@@ -91,7 +95,7 @@ The standard **SROIQ** description logic underlies **OWL 2** (Web Ontology Langu
 </div>
 
 <div class="md">
-## RDF, RDFS, OWL, SPARQL
+### RDF, RDFS, OWL, SPARQL
 
 The Semantic Web stack (W3C standards):
 
@@ -120,7 +124,7 @@ Major public knowledge graphs:
 <div id="kg-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto; height:520px;"></div>
 
 <div class="md">
-## Reasoning Over Knowledge Graphs
+### Reasoning Over Knowledge Graphs
 
 A KG query is **graph pattern matching**:
 
@@ -143,7 +147,7 @@ For **rule-based reasoning** beyond OWL, **Datalog** and **Prolog** are used. Mo
 </div>
 
 <div class="md" data-mathlevel="55">
-### Embedding-Based KG Reasoning
+#### Embedding-Based KG Reasoning
 
 To bridge symbolic KGs with neural methods, several **KG embedding** methods learn vector representations of entities and relations:
 
@@ -157,7 +161,9 @@ These enable **link prediction**: given $(h, r, ?)$, predict $t$, completing mis
 </div>
 
 <div class="md">
-## Symbolic Reasoning in 2025: LLMs + Tools
+## Hybrid systems
+
+### Symbolic Reasoning in 2025: LLMs + Tools
 
 Modern LLMs use **tools** as symbolic primitives:
 
@@ -173,7 +179,7 @@ The LLM acts as a **planner and natural-language interface**; the symbolic syste
 </div>
 
 <div class="md">
-## Formal Verification and Theorem Proving
+### Formal Verification and Theorem Proving
 
 Symbolic AI is critical for **provable correctness**:
 
@@ -182,7 +188,7 @@ Symbolic AI is critical for **provable correctness**:
 * **SMT solvers** (Z3, CVC5): extend SAT with theories (arithmetic, arrays, bit-vectors).
 * **Model checkers** (SPIN, TLA+, Isabelle): verify state machines, distributed systems, protocols.
 
-### LLM + Theorem Proving (the 2024 frontier)
+#### LLM + Theorem Proving (the 2024 frontier)
 
 The Lean-based **“AI for math”** initiative (DeepMind, 2024; OpenAI, 2024) has produced LLMs that:
 
@@ -195,7 +201,7 @@ AlphaProof (\cite[DeepMind, 2024]{deepmind2024alphaproof}) reached silver-medal 
 </div>
 
 <div class="md">
-## Neuro-Symbolic Architectures
+### Neuro-Symbolic Architectures
 
 The synthesis takes several forms:
 
@@ -208,25 +214,27 @@ The synthesis takes several forms:
 | **Differentiable logic** | Soft logic, gradient through rules | DeepProbLog, NARS |
 | **LLM + tool use** | Neural planner, symbolic tools | ReAct \cite{yao2023react}, Toolformer, agents |
 
-### AlphaGeometry (DeepMind, 2024)
+#### AlphaGeometry (DeepMind, 2024)
 
 Solves IMO (\cite[Trinh et al., 2024]{trinh2024alphageometry}) problems: a Transformer generates candidate constructions, a symbolic DDAR (deductive database) verifies. Solved 25/30 IMO 2024 problems, near gold-medal level.
 
-### Toolformer
+#### Toolformer
 
 A Transformer that learns to **call APIs** (calculator, search, translation) by self-supervised training on examples where API calls improve perplexity (\cite[Schick et al., 2023]{schick2023toolformer}). Pure neural, but uses symbolic tools.
 
-### Logic Tensor Networks (Serafini & Garcez, 2016)
+#### Logic Tensor Networks (Serafini & Garcez, 2016)
 
 Embed logical rules as soft constraints on neural network outputs. Combines first-order logic with deep learning in a single end-to-end trainable system.
 
-### DeepProbLog
+#### DeepProbLog
 
 Extends ProbLog (probabilistic logic programming) with neural predicates (\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog}). A neural net outputs probabilities; the probabilistic logic engine reasons over them.
 </div>
 
 <div class="md">
-## When Symbolic Wins
+## Trade-offs and future
+
+### When Symbolic Wins
 
 Pure neural is bad at:
 
@@ -238,14 +246,14 @@ Pure neural is bad at:
 
 When you need provable, deterministic, exact results: use a symbolic system, possibly wrapped by an LLM as the interface.
 
-## When Neural Wins
+### When Neural Wins
 
 * Open-ended generation (text, images, audio, video).
 * Pattern recognition (vision, speech, anomalies).
 * Tasks where rules are unknown or hard to specify.
 * Handling natural-language inputs robustly.
 
-## The Future: Hybrid by Default
+### The Future: Hybrid by Default
 
 By 2030, the standard production AI system will be:
 

@@ -33,11 +33,13 @@ $$
 </div>
 <div id="wslab-pipeline-diagram"></div>
 <div class="md">
-## Step 1: Intent Detection, Does This Query Need a Search?
+## The pipeline
+
+### Step 1: Intent Detection, Does This Query Need a Search?
 
 Not every question requires a web search. The system (or the LLM itself) first determines whether the query can be answered from training data alone or needs fresh information.
 
-### How the decision is made
+#### How the decision is made
 
 | Signal | Example | Action |
 |--------|---------|--------|
@@ -60,7 +62,7 @@ Do NOT use it when:
 - The question is about well-established facts
 - The question is about reasoning, math, or code logic</code></pre>
 <div class="md">
-## Step 2: Query Formulation
+### Step 2: Query Formulation
 
 Once the LLM decides to search, it doesn't just forward the user's raw question to a search engine. It **reformulates** the query into something optimized for search:
 
@@ -76,11 +78,11 @@ $$
 \text{Conversational question} \;\xrightarrow{\text{LLM rewrite}}\; \text{Search-optimized query}
 $$
 
-## Step 3: The Search Engine, What's Actually Used?
+### Step 3: The Search Engine, What's Actually Used?
 
 This is the question everyone asks: *“What search engine does ChatGPT use?”*
 
-### Commercial LLM providers use **Search APIs**:
+#### Commercial LLM providers use **Search APIs**:
 
 | Provider | Search Backend | How it works |
 |----------|---------------|--------------|
@@ -90,7 +92,7 @@ This is the question everyone asks: *“What search engine does ChatGPT use?”*
 | Perplexity | **Own crawlers + LLM index** (\cite[Wikipedia, 2026]{perplexityai}) | Synthesizes answers from live web results |
 | You.com | **Web search APIs + LLM** (\cite[Wikipedia, 2026]{youcom}) | Pivoted from consumer search to LLM APIs |
 
-### For local/open-source LLMs:
+#### For local/open-source LLMs:
 
 | Solution | Type | Notes |
 |----------|------|-------|
@@ -100,7 +102,7 @@ This is the question everyone asks: *“What search engine does ChatGPT use?”*
 | **Serper.dev** \cite[Serper]{serper} | Google SERP API | Fast, cheap, returns structured results |
 | **Tavily** \cite[Tavily]{tavily} | AI-optimized search API | Designed specifically for LLM consumption |
 
-### What does a Search API actually return?
+#### What does a Search API actually return?
 
 The search API returns **structured JSON**, not rendered web pages:
 </div>
@@ -124,16 +126,16 @@ The search API returns **structured JSON**, not rendered web pages:
 <div class="md">
 The LLM receives **titles, snippets, and URLs**, not full page content (at least not from the search step alone). This is similar to what you see on a Google results page before clicking any link.
 
-## Step 4: Content Fetching, Loading the Actual Web Pages
+### Step 4: Content Fetching, Loading the Actual Web Pages
 
 Snippets from search results are often too short to answer complex questions. So the system **fetches full page content** from the top-ranked URLs. This is where it gets interesting.
 
-### How web pages are loaded
+#### How web pages are loaded
 </div>
 
 <pre class="wslab-code-block"><code>URL → HTTP GET request → Raw HTML → Parser → Clean text</code></pre>
 <div class="md">
-### The technical pipeline
+#### The technical pipeline
 
 **1. HTTP Fetch**
 A server-side process makes an HTTP GET request to the URL. This is *not* a browser, it's a headless HTTP client (like `curl`, Python's `requests`, or Node's `fetch`).
@@ -165,7 +167,7 @@ $$
 </div>
 <div id="wslab-fetch-diagram"></div>
 <div class="md">
-## Step 5: Chunking &amp; Ranking Retrieved Content
+### Step 5: Chunking &amp; Ranking Retrieved Content
 
 A single web page might contain 5,000+ tokens of text, too much to include for every result. The system:
 
@@ -177,7 +179,7 @@ A single web page might contain 5,000+ tokens of text, too much to include for e
 
 Only the **top chunks** from the **top pages** make it into the final prompt.
 
-### Token budget management
+#### Token budget management
 </div>
 
 <pre class="wslab-code-block"><code>Available context: ~128,000 tokens
@@ -190,7 +192,7 @@ Remaining unused:  ~119,500 tokens</code></pre>
 <div class="md">
 The system is conservative, it doesn't fill the entire context window with search results. It selects only the most relevant passages to keep the LLM focused.
 
-## Step 6: Prompt Assembly &amp; Generation
+### Step 6: Prompt Assembly &amp; Generation
 
 The final prompt sent to the LLM looks something like this:
 </div>
@@ -217,7 +219,9 @@ User: What are the latest advances in transformer architecture?</code></pre>
 <div class="md">
 The LLM then generates an answer **grounded in these sources** (\cite[Lewis et al., 2020]{lewis2020rag}), citing them inline, exactly like what you're reading right now.
 
-## The Full Architecture Diagram
+## Architecture and implementation
+
+### The Full Architecture Diagram
 </div>
 <div class="wslab-architecture">
     <div class="wslab-arch-step wslab-arch-step--user">
@@ -302,7 +306,7 @@ The LLM then generates an answer **grounded in these sources** (\cite[Lewis et a
     </div>
 </div>
 <div class="md">
-## Open-Source Web Search: SearXNG
+### Open-Source Web Search: SearXNG
 
 For privacy-conscious or self-hosted setups, **SearXNG** \cite[SearXNG]{searxng} is the most popular choice. It's a meta-search engine that aggregates results from multiple search providers without sending user data to any of them.
 
@@ -312,7 +316,7 @@ $$
 \text{LLM} \;\xrightarrow{\text{query}}\; \text{SearXNG} \;\xrightarrow{\text{fan-out}}\; \begin{cases} \text{Google} \\ \text{Bing} \\ \text{DuckDuckGo} \\ \text{Brave} \\ \vdots \end{cases} \;\xrightarrow{\text{merge}}\; \text{Unified results}
 $$
 
-## Tool Use / Function Calling: The Mechanism
+### Tool Use / Function Calling: The Mechanism
 
 The LLM doesn't have “built-in” web access. Instead, it uses a protocol called **function calling** (or **tool use**) \cite[OpenAI]{openai2023functioncalling}:
 
@@ -355,7 +359,7 @@ The LLM doesn't have “built-in” web access. Instead, it uses a protocol call
 
 This loop can repeat multiple times: the LLM might search, read a page, search again with refined terms, then finally answer. This interleaving of reasoning and tool calls is the defining pattern of LLM agents (\cite[Yao et al., 2023]{yao2023react}).
 
-## Custom Sites vs. Open Web Browsing
+### Custom Sites vs. Open Web Browsing
 
 There's an important distinction between how LLMs handle **specified URLs** versus **open web search**:
 </div>
@@ -382,7 +386,9 @@ There's an important distinction between how LLMs handle **specified URLs** vers
     </div>
 </div>
 <div class="md">
-## Latency Breakdown: Where Does the Time Go?
+## Performance and limitations
+
+### Latency Breakdown: Where Does the Time Go?
 
 | Step | Typical Latency | Notes |
 |------|----------------|-------|
@@ -396,7 +402,7 @@ There's an important distinction between how LLMs handle **specified URLs** vers
 | LLM generation | ~1-5s | Token-by-token streaming |
 | **Total** | **~3-10s** | This is why search answers take longer |
 
-## Limitations &amp; Challenges
+### Limitations &amp; Challenges
 
 - **Paywalls &amp; login walls:** The fetcher can't access content behind authentication
 - **Rate limiting:** Websites may block rapid automated requests
@@ -407,7 +413,7 @@ There's an important distinction between how LLMs handle **specified URLs** vers
 - **Hallucinated citations:** The LLM might misattribute information to the wrong source
 - **Indirect prompt injection:** Malicious instructions embedded in retrieved web pages can attempt to override the system prompt (\cite[Greshake et al., 2023]{greshake2023injection}) (see the Security chapter)
 
-## Summary
+### Summary
 
 | Question | Answer |
 |----------|--------|
@@ -420,7 +426,9 @@ There's an important distinction between how LLMs handle **specified URLs** vers
 | How is this different from RAG? | RAG searches a **private** vector DB. Web search queries the **public** internet via APIs. Same principle, different data source |
 </div>
 <div class="md">
-## 🔍 Interactive: Web Search Simulation
+## Interactive and connections
+
+### 🔍 Interactive: Web Search Simulation
 </div>
 <div id="wslab-demo-container">
     <p class="wslab-demo-subtitle">Simulate how an LLM processes a web search query. Type a question and see the pipeline in action, from intent detection through search results to final answer assembly.</p>
@@ -433,7 +441,7 @@ There's an important distinction between how LLMs handle **specified URLs** vers
     </details>
 </div>
 <div class="md">
-## Connecting It All: Web Search is RAG Over the Internet
+### Connecting It All: Web Search is RAG Over the Internet
 
 If you understood the RAG chapter, web search is conceptually simple:
 

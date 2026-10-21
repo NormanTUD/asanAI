@@ -36,7 +36,9 @@ math: 60
 </style>
 
 <div class="md" data-mathlevel="60">
-## Stretch, Squish — but Never Cut
+## The constraint: what a layer cannot do
+
+### Stretch, Squish — but Never Cut
 
 In the previous chapter we met feed-forward networks as **paper folders**: a ReLU layer
 is a hammer-blow that creases the data into a spare, higher dimension, and depth is a
@@ -95,7 +97,7 @@ free to *fold*, a tanh layer is not.
 </div>
 
 <div class="md" data-mathlevel="70">
-## A Straight Line Has a Topology Problem
+### A Straight Line Has a Topology Problem
 
 Now the consequence that makes this more than a curiosity. Take the **"2-D egg"**: one
 class is a solid **disk** in the middle, the other is a **ring** that completely surrounds
@@ -156,7 +158,9 @@ the width, and only because a third dimension let the disk escape the ring.
 </div>
 
 <div class="md" data-mathlevel="55">
-## The One-Dimensional Egg
+## The demonstration: untangling by hand
+
+### The One-Dimensional Egg
 
 Strip the picture down to a single number and the mechanism becomes impossible to miss.
 Put one class on the middle of a line — $A = [-\tfrac13, \tfrac13]$ — and the other on the
@@ -198,7 +202,7 @@ line; with two, it bends into an arch.
 </div>
 
 <div class="md">
-## Now You Untangle It
+### Now You Untangle It
 
 The egg is a fixed puzzle; real data isn't. So let's do what \citeauthor{karpathy2015convnetjs}
 invites you to do \cite{karpathy2015convnetjs}: **make your own data** and watch a small
