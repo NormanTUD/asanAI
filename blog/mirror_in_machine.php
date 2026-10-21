@@ -20,7 +20,9 @@ In the first half, the body's own measured laws — the all-or-none spike, the c
 </div>
 
 <div class="md">
-## I. The Vocabulary Was Stolen From Neurology
+## The brain builds the machine
+
+### I. The Vocabulary Was Stolen From Neurology
 
 Before there was a "neural network" there was a **neuron** — and nearly every load-bearing noun in the field is a loanword from a nineteenth-century anatomist.
 
@@ -34,7 +36,7 @@ The aha is small but total: **the language of machine learning is a dialect of n
 </div>
 
 <div class="md">
-## II. The First Machines Were Built on the Body's Own Laws
+### II. The First Machines Were Built on the Body's Own Laws
 
 The *Brief History of AI* gives the timeline; the deeper point is that the first machines were not metaphors *for* the brain but literal formalizations of three documented physiological laws.
 
@@ -54,7 +56,9 @@ The aha: the first machine was not *inspired by* the brain. It was built **from*
 </div>
 
 <div class="md">
-## III. The World Inside the Head
+## The machine reads the brain
+
+### III. The World Inside the Head
 
 If the cell became the unit, the *maps* the brain builds became the model's memory.
 
@@ -66,7 +70,7 @@ If the cell became the unit, the *maps* the brain builds became the model's memo
 </div>
 
 <div class="md">
-## IV. Where the Math Coincides: The Cortex as a Predictive Machine
+### IV. Where the Math Coincides: The Cortex as a Predictive Machine
 
 The deepest overlap is not a metaphor but an equation. In the **predictive-coding** picture, \citeauthorlastnameand{rao1999predictive} showed the visual cortex works top-down: higher areas send a *prediction*, lower areas send back only the *mismatch* \cite{rao1999predictive} — a generative model minimizing a loss, where the loss is just the gap between what the senses deliver and what the model forecast:
 
@@ -78,7 +82,9 @@ And the algorithm at the heart of this course — **backpropagation** — may it
 </div>
 
 <div class="md">
-## V. How the Machine Started Shaping the Brain
+## The mirror turns both ways
+
+### V. How the Machine Started Shaping the Brain
 
 For a century the current ran one way — brain to machine. The last decade reversed it.
 
@@ -96,7 +102,7 @@ The aha: the machine is no longer just built *from* the brain — it is now the 
 </div>
 
 <div class="md">
-## VI. The Divergence: What the Mirror Refuses to Show
+### VI. The Divergence: What the Mirror Refuses to Show
 
 The most useful thing the comparison does is mark where the reflection breaks — the places where the two machines genuinely differ.
 
@@ -106,7 +112,7 @@ That divergence is the map of what you are. Where the brain wins, you are *more 
 </div>
 
 <div class="md">
-## VII. The Mirror on You
+### VII. The Mirror on You
 
 Pull the thread back to the reader. The claims above are not about a machine in a data centre. They are about the head on the other end of the screen:
 
