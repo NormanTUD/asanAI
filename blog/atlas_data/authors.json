@@ -515,6 +515,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering",
    "unexpected_capabilities"
@@ -809,6 +810,7 @@
    "embeddinglab",
    "fact_lookup",
    "frontier",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering",
    "unexpected_capabilities"
@@ -969,6 +971,7 @@
    "geometry_ii",
    "geometry_iii",
    "losslab",
+   "statistics",
    "statistics_i"
   ]
  },
@@ -1146,6 +1149,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -1915,6 +1919,7 @@
   ],
   "cited_in": [
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -2009,7 +2014,6 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "computer_vision",
    "history",
    "overandunderfittinglab"
   ]
@@ -2104,6 +2108,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering",
    "unexpected_capabilities"
@@ -2421,13 +2426,9 @@
   "city": "San Francisco, USA",
   "year": 2025.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "ameisen2025circuittracing"
-  ],
-  "cited_in": [
-   "mechanistic_interpretability"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Alexander Tsigler",
@@ -2697,10 +2698,11 @@
   "city": "Oxford, United Kingdom",
   "year": 1929.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "processandreality",
    "russell1910principia",
+   "whitehead_concept_nature",
    "whitehead_process",
    "russell1903principia",
    "russell1910pm"
@@ -3104,6 +3106,7 @@
    "frontier",
    "hallucinations",
    "history",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering",
    "reasoning",
@@ -4224,6 +4227,7 @@
    "kolmogorov1933"
   ],
   "cited_in": [
+   "statistics",
    "statistics_ii"
   ]
  },
@@ -4723,6 +4727,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "reliability",
    "transformer",
@@ -5631,14 +5636,13 @@
   "city": "San Francisco, United States",
   "year": 2023.0,
   "conf": 1,
-  "works": 8,
+  "works": 7,
   "keys": [
    "wang2022interpretability",
    "conmy2023automated",
    "successorheads",
    "copysuppression",
    "interpretabilityinwild",
-   "ameisen2025circuittracing",
    "kissane2024attention",
    "gould2023successor"
   ],
@@ -6580,6 +6584,7 @@
   "cited_in": [
    "activationlab",
    "frontier",
+   "intuition",
    "origami",
    "unexpected_capabilities"
   ]
@@ -6850,6 +6855,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "reliability",
    "transformer",
@@ -8105,6 +8111,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering",
    "unexpected_capabilities"
@@ -8746,6 +8753,7 @@
    "geometry_i",
    "geometry_ii",
    "losslab",
+   "statistics",
    "statistics_i"
   ]
  },
@@ -8905,6 +8913,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "unexpected_capabilities"
@@ -9018,6 +9027,7 @@
    "ai_existential_risk",
    "alignment",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "promptengineering",
@@ -9073,6 +9083,7 @@
    "deeplearninglab",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "promptengineering",
@@ -9164,6 +9175,7 @@
   ],
   "cited_in": [
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering",
    "unexpected_capabilities"
@@ -10032,6 +10044,7 @@
    "deconvolution",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "losslab",
    "math_ii",
    "mechanistic_interpretability",
@@ -10095,7 +10108,8 @@
    "mabrok2026latent"
   ],
   "cited_in": [
-   "foam_of_meaning"
+   "foam_of_meaning",
+   "intuition"
   ]
  },
  {
@@ -10112,7 +10126,8 @@
    "gardenfors2000conceptual"
   ],
   "cited_in": [
-   "foam_of_meaning"
+   "foam_of_meaning",
+   "intuition"
   ]
  },
  {
@@ -12596,13 +12611,9 @@
   "city": "London, England",
   "year": 2012.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "keller2018canonical"
-  ],
-  "cited_in": [
-   "mirror_in_machine"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Andre M. Bastos",
@@ -17900,6 +17911,7 @@
    "embeddinglab",
    "fact_lookup",
    "inceptionism",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "unexpected_capabilities"
@@ -18149,6 +18161,7 @@
   "cited_in": [
    "history",
    "language",
+   "statistics",
    "statistics_ii",
    "tokenizerlab",
    "transformer",
@@ -19640,6 +19653,7 @@
    "fact_lookup",
    "history",
    "hyperparameters",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "positionalembeddingslab",
@@ -19877,6 +19891,7 @@
   ],
   "cited_in": [
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "unexpected_capabilities"
@@ -20948,6 +20963,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "reliability",
@@ -21052,6 +21068,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "reliability",
    "transformer",
@@ -23246,12 +23263,13 @@
   "city": "San Francisco, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "templeton2024scaling",
    "lindsey2025biology",
    "ameisen2025circuit",
-   "goldengateclaude"
+   "goldengateclaude",
+   "ameisen2025circuittracing"
   ],
   "cited_in": [
    "embeddinglab",
@@ -23455,10 +23473,9 @@
   "city": "San Francisco, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 4,
+  "works": 3,
   "keys": [
    "marks2024featurecircuits",
-   "ameisen2025circuittracing",
    "ding2024fittest",
    "engels2024multidim"
   ],
@@ -23553,8 +23570,7 @@
    "van2009dimensionality"
   ],
   "cited_in": [
-   "beyond_llms",
-   "geometry_i"
+   "beyond_llms"
   ]
  },
  {
@@ -25080,6 +25096,7 @@
   ],
   "cited_in": [
    "minimalneuron",
+   "statistics",
    "statistics_i"
   ]
  },
@@ -25280,12 +25297,13 @@
   "city": "Ithaca, USA",
   "year": 1960.0,
   "conf": 1,
-  "works": 6,
+  "works": 7,
   "keys": [
    "rosenblattbackprop",
    "rosenblattad",
    "rosenblattperceptron",
    "rosenblattperceptronresults",
+   "rosenblatt1971twocolor",
    "perceptronresults",
    "rosenblatt1958perceptron"
   ],
@@ -25590,6 +25608,7 @@
   ],
   "cited_in": [
    "philosophy",
+   "statistics",
    "statistics_i",
    "statistics_ii"
   ]
@@ -25848,10 +25867,11 @@
   "city": "Florence, Italy",
   "year": 1632.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "galileosidereus",
    "galileodialogue1632",
+   "galileoassayer1623",
    "galileodialogo"
   ],
   "cited_in": [
@@ -26192,7 +26212,8 @@
    "glitchtokens"
   ],
   "cited_in": [
-   "embeddinglab"
+   "embeddinglab",
+   "intuition"
   ]
  },
  {
@@ -26284,9 +26305,7 @@
    "history",
    "loss_landscape",
    "mechanistic_interpretability",
-   "mirror_in_machine",
    "optimizerlab",
-   "philosophy",
    "transformer",
    "untold_history"
   ]
@@ -26310,7 +26329,6 @@
   ],
   "cited_in": [
    "autodiff",
-   "computer_vision",
    "history",
    "normalizationlab",
    "overandunderfittinglab",
@@ -26561,6 +26579,7 @@
    "box1987empirical"
   ],
   "cited_in": [
+   "statistics",
    "statistics_i"
   ]
  },
@@ -26951,6 +26970,7 @@
    "liberludo"
   ],
   "cited_in": [
+   "statistics",
    "statistics_i"
   ]
  },
@@ -27053,6 +27073,7 @@
    "ceresdiscovery"
   ],
   "cited_in": [
+   "statistics",
    "statistics_i"
   ]
  },
@@ -27447,7 +27468,8 @@
    "attentionlab",
    "embeddinglab",
    "geometry_ii",
-   "history"
+   "history",
+   "intuition"
   ]
  },
  {
@@ -28763,7 +28785,8 @@
    "glitchtokens"
   ],
   "cited_in": [
-   "embeddinglab"
+   "embeddinglab",
+   "intuition"
   ]
  },
  {
@@ -29713,6 +29736,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -30848,7 +30872,6 @@
    "ai_and_society",
    "ai_for_science",
    "beyond_llms",
-   "computer_vision",
    "embeddinglab",
    "history",
    "overandunderfittinglab",
@@ -31358,9 +31381,7 @@
   "keys": [
    "aitchison1972kernel"
   ],
-  "cited_in": [
-   "beyond_llms"
-  ]
+  "cited_in": []
  },
  {
   "name": "J. Alan Robinson",
@@ -31928,8 +31949,7 @@
    "van2009dimensionality"
   ],
   "cited_in": [
-   "beyond_llms",
-   "geometry_i"
+   "beyond_llms"
   ]
  },
  {
@@ -31994,6 +32014,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering"
   ]
@@ -32092,6 +32113,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "reliability",
    "transformer",
@@ -32131,6 +32153,7 @@
    "arsconjectandi"
   ],
   "cited_in": [
+   "statistics",
    "statistics_i"
   ]
  },
@@ -33130,6 +33153,7 @@
    "embeddinglab",
    "fact_lookup",
    "hyperparameters",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "promptengineering",
@@ -33892,7 +33916,8 @@
    "autodiff",
    "embeddinglab",
    "geometry_ii",
-   "history"
+   "history",
+   "intuition"
   ]
  },
  {
@@ -35377,15 +35402,9 @@
   "city": "Ithaca, USA",
   "year": 2002.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "hatcher"
-  ],
-  "cited_in": [
-   "foam_of_meaning",
-   "geometry_i",
-   "geometry_iii"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "John Healy",
@@ -36870,6 +36889,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering",
    "unexpected_capabilities"
@@ -36974,6 +36994,7 @@
    "buolamwini2018gender"
   ],
   "cited_in": [
+   "statistics",
    "statistics_i"
   ]
  },
@@ -37603,7 +37624,8 @@
    "attentionlab",
    "embeddinglab",
    "geometry_ii",
-   "history"
+   "history",
+   "intuition"
   ]
  },
  {
@@ -37755,7 +37777,8 @@
    "glitchtokens"
   ],
   "cited_in": [
-   "embeddinglab"
+   "embeddinglab",
+   "intuition"
   ]
  },
  {
@@ -37838,6 +37861,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "reliability",
    "transformer",
@@ -38020,6 +38044,7 @@
   ],
   "cited_in": [
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering",
    "unexpected_capabilities"
@@ -38096,6 +38121,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "statistics",
    "statistics_i"
   ]
  },
@@ -38655,6 +38681,7 @@
   ],
   "cited_in": [
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -39410,6 +39437,7 @@
    "gesetzderkleinenzahlen"
   ],
   "cited_in": [
+   "statistics",
    "statistics_i"
   ]
  },
@@ -39548,7 +39576,6 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "geometry_i",
    "philosophy"
   ]
  },
@@ -39792,6 +39819,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -40146,9 +40174,7 @@
   "keys": [
    "aiello1995expensivetissue"
   ],
-  "cited_in": [
-   "human_mind"
-  ]
+  "cited_in": []
  },
  {
   "name": "Leslie E. Orgel",
@@ -40276,6 +40302,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "reliability",
    "transformer",
@@ -40431,7 +40458,8 @@
    "glitchtokens"
   ],
   "cited_in": [
-   "embeddinglab"
+   "embeddinglab",
+   "intuition"
   ]
  },
  {
@@ -40668,6 +40696,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -41104,6 +41133,7 @@
   ],
   "cited_in": [
    "samplinglab",
+   "statistics",
    "statistics_ii"
   ]
  },
@@ -41715,14 +41745,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "telgarsky2016wars"
-  ],
-  "cited_in": [
-   "deeplearninglab",
-   "loss_landscape"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Maneesh Agrawala",
@@ -42968,6 +42993,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "unexpected_capabilities"
@@ -44037,6 +44063,7 @@
    "boxmueller"
   ],
   "cited_in": [
+   "statistics",
    "statistics_i"
   ]
  },
@@ -46249,6 +46276,7 @@
    "ceresimage"
   ],
   "cited_in": [
+   "statistics",
    "statistics_i"
   ]
  },
@@ -46468,6 +46496,7 @@
    "deeplearninglab",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "transformer",
    "unexpected_capabilities"
@@ -46585,6 +46614,7 @@
    "deeplearninglab",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "reliability",
@@ -46718,6 +46748,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering",
    "reliability",
@@ -46871,6 +46902,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "promptengineering",
@@ -47005,6 +47037,7 @@
   ],
   "cited_in": [
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering"
   ]
@@ -47039,9 +47072,7 @@
   "keys": [
    "aiello1995expensivetissue"
   ],
-  "cited_in": [
-   "human_mind"
-  ]
+  "cited_in": []
  },
  {
   "name": "Nicolas Chapados",
@@ -47699,14 +47730,15 @@
   "city": "Mountain View, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 6,
+  "works": 7,
   "keys": [
    "shazeer2017moe",
    "tfive",
    "raffel2020t5",
    "fedus2022switch",
    "shazeer2019mqa",
-   "vaswani2017attention"
+   "vaswani2017attention",
+   "shazeer2020glu"
   ],
   "cited_in": [
    "autodiff",
@@ -47883,7 +47915,8 @@
    "nostalgebraist2020logitlens"
   ],
   "cited_in": [
-   "fact_lookup"
+   "fact_lookup",
+   "mechanistic_interpretability"
   ]
  },
  {
@@ -47926,6 +47959,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "reliability",
    "transformer",
@@ -49998,6 +50032,7 @@
   ],
   "cited_in": [
    "differentiation",
+   "statistics",
    "statistics_i",
    "untold_history"
   ]
@@ -50120,6 +50155,7 @@
    "laplace1814essai"
   ],
   "cited_in": [
+   "statistics",
    "statistics_i",
    "untold_history"
   ]
@@ -51922,6 +51958,7 @@
   "cited_in": [
    "history",
    "music_video_generation",
+   "statistics",
    "statistics_i",
    "transformer",
    "untold_history"
@@ -52080,6 +52117,7 @@
    "leiblerkullback"
   ],
   "cited_in": [
+   "statistics",
    "statistics_ii"
   ]
  },
@@ -52133,11 +52171,13 @@
   "city": "Palo Alto, USA",
   "year": 2011.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "deng2009imagenet",
    "socher2011"
   ],
   "cited_in": [
+   "computer_vision",
    "history"
   ]
  },
@@ -52584,6 +52624,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -52692,6 +52733,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "promptengineering",
@@ -53112,6 +53154,7 @@
    "cerespath"
   ],
   "cited_in": [
+   "statistics",
    "statistics_i"
   ]
  },
@@ -53169,6 +53212,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "unexpected_capabilities"
@@ -53398,6 +53442,7 @@
    "fisher1922"
   ],
   "cited_in": [
+   "statistics",
    "statistics_ii"
   ]
  },
@@ -54410,6 +54455,7 @@
    "embeddinglab",
    "fact_lookup",
    "hyperparameters",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "reliability",
@@ -55246,6 +55292,7 @@
   ],
   "cited_in": [
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering"
   ]
@@ -56066,6 +56113,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "promptengineering",
@@ -56968,6 +57016,7 @@
    "poisson"
   ],
   "cited_in": [
+   "statistics",
    "statistics_i"
   ]
  },
@@ -57142,6 +57191,7 @@
    "leiblerkullback"
   ],
   "cited_in": [
+   "statistics",
    "statistics_ii"
   ]
  },
@@ -57245,13 +57295,9 @@
   "city": "London, UK",
   "year": 2025.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "ameisen2025circuittracing"
-  ],
-  "cited_in": [
-   "mechanistic_interpretability"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Soroush Vosoughi",
@@ -59430,6 +59476,7 @@
    "bayes1763essay"
   ],
   "cited_in": [
+   "statistics",
    "statistics_ii",
    "untold_history"
   ]
@@ -60086,6 +60133,7 @@
   ],
   "cited_in": [
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering",
    "unexpected_capabilities"
@@ -60168,6 +60216,7 @@
    "hallucinations",
    "intuition",
    "philosophy",
+   "statistics",
    "statistics_i"
   ]
  },
@@ -60399,6 +60448,7 @@
    "fact_lookup",
    "history",
    "hyperparameters",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "promptengineering",
@@ -60460,6 +60510,7 @@
    "embeddinglab",
    "fact_lookup",
    "frontier",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering",
    "reliability",
@@ -60486,6 +60537,7 @@
    "deeplearninglab",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "loss_landscape",
    "mechanistic_interpretability",
    "security_inference",
@@ -60541,6 +60593,7 @@
    "embeddinglab",
    "fact_lookup",
    "hyperparameters",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "promptengineering",
@@ -60706,7 +60759,8 @@
    "attentionlab",
    "embeddinglab",
    "geometry_ii",
-   "history"
+   "history",
+   "intuition"
   ]
  },
  {
@@ -60889,6 +60943,7 @@
   "cited_in": [
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering",
    "unexpected_capabilities"
@@ -61026,6 +61081,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "reliability",
@@ -61244,6 +61300,7 @@
    "flammarion"
   ],
   "cited_in": [
+   "statistics",
    "statistics_i"
   ]
  },
@@ -61265,6 +61322,7 @@
   "cited_in": [
    "history",
    "human_mind",
+   "statistics",
    "statistics_i"
   ]
  },
@@ -62140,6 +62198,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "statistics",
    "statistics_i"
   ]
  },
@@ -62766,7 +62825,8 @@
    "glitchtokens"
   ],
   "cited_in": [
-   "embeddinglab"
+   "embeddinglab",
+   "intuition"
   ]
  },
  {
@@ -63556,6 +63616,7 @@
   ],
   "cited_in": [
    "frontier",
+   "intuition",
    "unexpected_capabilities"
   ]
  },
@@ -65075,6 +65136,7 @@
   ],
   "cited_in": [
    "embeddinglab",
+   "intuition",
    "transformer"
   ]
  },
@@ -65589,7 +65651,8 @@
    "glitchtokens"
   ],
   "cited_in": [
-   "embeddinglab"
+   "embeddinglab",
+   "intuition"
   ]
  },
  {
@@ -65856,7 +65919,8 @@
    "dao2024flashattention3"
   ],
   "cited_in": [
-   "embeddinglab"
+   "embeddinglab",
+   "intuition"
   ]
  },
  {
@@ -66115,6 +66179,7 @@
   ],
   "cited_in": [
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability"
   ]
  },
@@ -66609,7 +66674,8 @@
    "glitchtokens"
   ],
   "cited_in": [
-   "embeddinglab"
+   "embeddinglab",
+   "intuition"
   ]
  },
  {
@@ -66855,6 +66921,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "promptengineering",
    "reliability",
@@ -67069,7 +67136,8 @@
    "glitchtokens"
   ],
   "cited_in": [
-   "embeddinglab"
+   "embeddinglab",
+   "intuition"
   ]
  },
  {
@@ -67248,6 +67316,7 @@
    "alignment",
    "embeddinglab",
    "fact_lookup",
+   "intuition",
    "mechanistic_interpretability",
    "philosophy",
    "reliability",
@@ -67338,6 +67407,7 @@
    "zelligharris"
   ],
   "cited_in": [
+   "statistics",
    "statistics_ii"
   ]
  },

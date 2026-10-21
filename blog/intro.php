@@ -16,9 +16,15 @@ tags: interested-layman
 		<img src="cave_hands.jpg" alt="Hand stencils at Cueva de las Manos, Argentina" />
 		<figcaption class="md">Hand stencils at \cite[Cueva de las Manos]{cuevadelasmanos_image}, Argentina (c. 7300 BC - 700 AD). Paint was sprayed through bone pipes onto hands pressed against the rock wall.</figcaption>
 	</figure>
+<!--
 	<figure>
 		<img src="image.php?f=FrankRosenblattWiringPerceptron.jpg&amp;ar-base=cave_hands.jpg" alt="Perceptron Wiring" />
 		<figcaption class="md">\citetitle[Wiring the Perceptron (1958), the first artificial neural network with a formal learning rule]{perceptronimagewiring}</figcaption>
+	</figure>
+-->
+	<figure>
+		<img src="image.php?f=perceptron2.jpg&amp;ar-base=cave_hands.jpg" alt="Perceptron Wiring" />
+		<figcaption>\citealternativetitle{perceptronimagedetection} detecting letters, showing engineer Perceptron project engineer Charles Wightman</figcaption>
 	</figure>
 </div>
 

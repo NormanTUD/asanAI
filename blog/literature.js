@@ -4999,6 +4999,17 @@ window.bibData = {
 		title: "Perceptron Simulation Experiments (Project Para)",
 		year: 1959
 	},
+	"rosenblatt1971twocolor": {
+		author: "Frank Rosenblatt",
+		title: "A Two-Color Photometric Method for Detection of Extra-Solar Planetary Systems",
+		year: 1971,
+		journal: "Icarus",
+		volume: "14",
+		number: "1",
+		pages: "71-93",
+		url: "https://doi.org/10.1016/0019-1035(71)90103-5",
+		alternativetitle: "Two-Color Photometry"
+	},
 	"jensen2026perceptron": {
 		author: "George Osborn Jensen, David E. Dunning, Alexander B. Magoun",
 		title: "Assembling and Training the Perceptron: A Personal Account",
