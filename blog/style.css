@@ -12784,6 +12784,11 @@ html.mnp-open { overflow: hidden; }
 .mnp-resume-main span { font: 400 .82rem/1.4 var(--mn-font-prose); color: var(--mn-text-secondary); }
 .mnp-resume-bar { display: block; height: 3px; margin-top: 5px; border-radius: 3px; background: color-mix(in srgb, var(--mn-text-muted) 16%, transparent); overflow: hidden; }
 .mnp-resume-bar i { display: block; height: 100%; border-radius: 3px; background: var(--tone); transition: width .6s ease; }
+.mnp-resume-next { display: flex; align-items: baseline; gap: 6px; min-width: 0; margin-top: 2px; }
+.mnp-resume-next > span { flex: none; font: 600 .62rem/1 var(--mn-font-prose); letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
+.mnp-resume-next a { min-width: 0; color: var(--mn-text-secondary); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mnp-resume-next a:hover { color: var(--tone); text-decoration: underline; }
+.mnp-resume-pct { flex: none; align-self: center; font: 600 .78rem/1 var(--mn-font-prose); font-variant-numeric: tabular-nums; color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
 .mnp-resume .mnp-jump { margin-top: 0; align-self: center; border-color: var(--tone); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
 .mnp-resume-leave { appearance: none; align-self: center; border: 0; background: none; padding: 6px 4px; color: var(--mn-text-muted); font: 500 .78rem var(--mn-font-prose); cursor: pointer; }
 .mnp-resume-leave:hover { color: var(--mn-rose); }
@@ -12815,6 +12820,18 @@ html.mnp-open { overflow: hidden; }
 .mnp-sect-sub { margin: 5px 0 0; font: italic 400 .88rem/1.4 var(--mn-font-prose); color: var(--mn-text-muted); }
 .mnp-count { font: 400 .82rem/1.3 var(--mn-font-prose); color: var(--mn-text-muted); white-space: nowrap; }
 
+/* search + summary above the path grids */
+.mnp-tools { display: flex; align-items: center; gap: 10px 18px; flex-wrap: wrap; margin: clamp(26px, 3vw, 40px) 0 0; }
+.mnp-search { flex: 1 1 260px; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--mn-border); border-radius: 999px; background: var(--mn-surface); color: var(--mn-text-muted); }
+.mnp-search:focus-within { border-color: var(--mn-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mn-accent) 16%, transparent); }
+.mnp-search svg { width: 16px; height: 16px; flex: none; }
+.mnp-search input { flex: 1; min-width: 0; border: 0; background: none; color: var(--mn-text); font: 500 .85rem/1.2 var(--mn-font-prose); outline: none; }
+.mnp-search input::placeholder { color: var(--mn-text-muted); }
+.mnp-search-count { flex: none; font: 600 .7rem/1 var(--mn-font-prose); color: var(--mn-text-muted); }
+.mnp-tools + .mnp-sect-row { margin-top: 18px; }
+.mnp-empty { margin: 6px 0 0; padding: 14px 16px; border: 1px dashed var(--mn-border); border-radius: 12px; font: italic 400 .88rem/1.4 var(--mn-font-prose); color: var(--mn-text-muted); }
+.mnp-empty[hidden] { display: none; }
+
 /* path cards */
 .mnp-paths { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
 .mnp-path {
@@ -12843,9 +12860,24 @@ html.mnp-open { overflow: hidden; }
 .mnp-dot.is-seen { background: color-mix(in srgb, var(--tone) 40%, var(--mn-surface)); }
 .mnp-dot.is-done { background: var(--tone); }
 .mnp-dot.is-next { background: var(--tone); box-shadow: 0 0 0 1px var(--mn-surface), 0 0 0 3px color-mix(in srgb, var(--tone) 22%, transparent); }
-.mnp-path-meta { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; font: 400 .8rem/1.35 var(--mn-font-prose); color: var(--mn-text-muted); }
-.mnp-link { appearance: none; border: 0; background: none; padding: 0; cursor: pointer; font: 600 .82rem/1.35 var(--mn-font-prose); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); text-decoration: none; text-align: right; white-space: normal; }
-.mnp-link:hover { text-decoration: underline; }
+.mnp-path[hidden] { display: none !important; }
+.mnp-card-progress { display: flex; align-items: center; gap: 10px; }
+.mnp-progress { flex: 1; height: 6px; border-radius: 99px; background: color-mix(in srgb, var(--mn-text-muted) 16%, transparent); overflow: hidden; }
+.mnp-progress i { display: block; height: 100%; border-radius: 99px; background: var(--tone); transition: width .6s ease; }
+.mnp-card-pct { flex: none; font: 600 .72rem/1 var(--mn-font-prose); font-variant-numeric: tabular-nums; color: var(--mn-text-muted); }
+.mnp-card-note { display: flex; align-items: baseline; gap: 6px; min-width: 0; font: 400 .82rem/1.4 var(--mn-font-prose); color: var(--mn-text-muted); }
+.mnp-card-note-k { flex: none; font: 600 .62rem/1 var(--mn-font-prose); letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
+.mnp-card-note a { min-width: 0; color: var(--mn-text-secondary); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mnp-card-note a:hover { color: var(--tone); text-decoration: underline; }
+.mnp-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: auto; }
+.mnp-status { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--mn-border); font: 600 .68rem/1.2 var(--mn-font-prose); color: var(--mn-text-muted); white-space: nowrap; }
+.mnp-status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .5; }
+.mnp-status.is-active { color: color-mix(in srgb, var(--tone) 62%, var(--mn-heading)); border-color: color-mix(in srgb, var(--tone) 30%, var(--mn-border)); }
+.mnp-status.is-active::before { opacity: 1; background: var(--tone); }
+.mnp-status.is-done { color: color-mix(in srgb, var(--mn-emerald) 65%, var(--mn-heading)); border-color: color-mix(in srgb, var(--mn-emerald) 32%, var(--mn-border)); }
+.mnp-status.is-done::before { opacity: 1; }
+.mnp-card-go { appearance: none; display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--tone) 32%, var(--mn-border)); background: color-mix(in srgb, var(--tone) 8%, var(--mn-surface)); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); font: 600 .8rem/1 var(--mn-font-prose); text-decoration: none; cursor: pointer; white-space: nowrap; }
+.mnp-card-go:hover { border-color: var(--tone); background: color-mix(in srgb, var(--tone) 13%, var(--mn-surface)); }
 .mnp-path-more summary { cursor: pointer; font: 400 .82rem var(--mn-font-prose); color: var(--mn-text-secondary); list-style: none; }
 .mnp-path-more summary::-webkit-details-marker { display: none; }
 .mnp-path-more summary::before { content: "›"; display: inline-block; width: 1em; transition: transform .2s ease; }
@@ -12884,6 +12916,7 @@ html.mnp-open { overflow: hidden; }
 .mnp-pager-btn { flex: none; display: inline-flex; align-items: center; gap: 3px; padding: 4px 9px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--tone) 28%, var(--mn-border)); background: var(--mn-surface); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); font: 600 .72rem/1.2 var(--mn-font-prose); text-decoration: none; white-space: nowrap; }
 .mnp-pager-btn:hover { border-color: var(--tone); background: color-mix(in srgb, var(--tone) 8%, var(--mn-surface)); }
 .mnp-pager-btn.is-off { opacity: .4; border-color: var(--mn-border); color: var(--mn-text-muted); }
+.mnp-pager-label { flex: none; font: 600 .64rem/1 var(--mn-font-prose); letter-spacing: .08em; text-transform: uppercase; color: var(--mn-text-muted); }
 .mnp-pager-select { min-width: 0; max-width: 220px; padding: 5px 8px; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--tone) 28%, var(--mn-border)); background: var(--mn-surface); color: var(--mn-heading); font: 600 .72rem/1.3 var(--mn-font-prose); cursor: pointer; }
 .mnp-pager-select:focus-visible { outline: 2px solid var(--tone); outline-offset: 1px; }
 .mnp-ctx .mnp-pager { flex: 0 1 auto; }

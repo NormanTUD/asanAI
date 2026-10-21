@@ -14,6 +14,7 @@
 	const PICK_KEY = "mn_path_pick";
 
 	let pickedId = null;
+	let searchQuery = "";
 	try { pickedId = localStorage.getItem(PICK_KEY) || null; } catch (e) { /* ignore */ }
 
 	const CURATED = [
@@ -147,6 +148,7 @@
 		const nm = g.next && modOf(g.next);
 		const q = Q();
 		const started = g.done > 0 || !!(q && p.lessons.some((s) => q.visited(s)));
+		const pct = Math.round(g.done / g.total * 100);
 		const dotState = (s) => q && q.finished(s) ? "is-done" : s === g.next ? "is-next" : q && q.visited(s) ? "is-seen" : "";
 		const steps = p.lessons.map((s, k) => {
 			const m = modOf(s);
@@ -156,17 +158,25 @@
 			const m = modOf(s);
 			return '<span class="mnp-dot ' + dotState(s) + '" title="' + esc(m ? m.title : s) + '"></span>';
 		}).join("");
-		const status = g.complete ? "Completed" : g.done ? g.done + " of " + g.total + " read" : "Not started";
 		const isPicked = pickedId === p.id;
+		const status = g.complete ? "Completed" : started ? "In progress" : "Not started";
+		const statusCls = g.complete ? " is-done" : started ? " is-active" : "";
+		const note = g.complete
+			? '<span class="mnp-card-note">All ' + g.total + ' lessons read · certificate ready</span>'
+			: nm ? '<span class="mnp-card-note"><span class="mnp-card-note-k">' + (started ? "Next" : "Starts with") + '</span><a href="' + esc(nm.url) + '">' + esc(shortTitle(nm.title)) + "</a></span>" : "";
 		const action = g.complete
-			? '<button type="button" class="mnp-link mnp-cert" data-path="' + esc(p.id) + '">Certificate</button>'
-			: nm ? '<a class="mnp-link" href="' + esc(nm.url) + '">' + (started ? "Continue" : "Start") + " with " + esc(nm.title.split(/\s[—–:]\s|:\s/)[0]) + " →</a>" : "";
-		return '<article class="mnp-path' + (g.complete ? " is-complete" : "") + (isPicked ? " is-picked" : "") + '" data-path="' + esc(p.id) + '" style="--tone: var(--mn-' + toneOf(p) + ')">' +
+			? '<button type="button" class="mnp-card-go mnp-cert" data-path="' + esc(p.id) + '">🎓 Certificate</button>'
+			: nm ? '<a class="mnp-card-go" href="' + esc(nm.url) + '">' + (started ? "Continue" : "Start path") + ' <span aria-hidden="true">→</span></a>' : "";
+		const search = [p.title, p.desc].concat(p.lessons.map((s) => { const m = modOf(s); return m ? m.title : s; })).join(" ").toLowerCase();
+		return '<article class="mnp-path' + (g.complete ? " is-complete" : "") + (isPicked ? " is-picked" : "") + '" data-path="' + esc(p.id) + '" data-search="' + esc(search) + '" style="--tone: var(--mn-' + toneOf(p) + ')">' +
 			'<div class="mnp-path-head"><span class="mnp-path-num" aria-hidden="true">' + pathNum(p) + '</span>' +
 			'<div class="mnp-path-t"><b>' + esc(p.title) + "</b><span>" + esc(p.desc) + "</span></div>" +
 			'<button type="button" class="mnp-pick" aria-pressed="' + (isPicked ? "true" : "false") + '" title="' + (isPicked ? "Following this path" : "Follow this path") + '">' + (isPicked ? "Following ✓" : "Follow") + "</button></div>" +
+			'<div class="mnp-card-progress"><span class="mnp-progress" role="progressbar" aria-label="' + g.done + ' of ' + g.total + ' lessons read" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></span>' +
+			'<span class="mnp-card-pct">' + g.done + "/" + g.total + " · " + pct + '%</span></div>' +
 			'<div class="mnp-route" role="img" aria-label="' + g.done + ' of ' + g.total + ' lessons read">' + route + '</div>' +
-			'<div class="mnp-path-meta"><span>' + status + "</span>" + action + "</div>" +
+			note +
+			'<div class="mnp-card-foot"><span class="mnp-status' + statusCls + '">' + status + "</span>" + action + "</div>" +
 			'<details class="mnp-path-more"><summary>' + p.lessons.length + ' lessons</summary><ol class="mnp-steps">' + steps + "</ol></details>" +
 			"</article>";
 	}
@@ -174,18 +184,22 @@
 	function resumeStrip(p) {
 		const g = progress(p);
 		const next = g.next && modOf(g.next);
+		const pct = Math.round(g.done / g.total * 100);
 		const meta = g.complete
 			? "Completed · " + g.total + " lessons · certificate ready"
-			: g.done + " of " + g.total + " read" + (next ? " · next: " + next.title : "");
-		const pct = Math.round(g.done / g.total * 100);
+			: "Step " + (next ? p.lessons.indexOf(next.slug) + 1 : g.total) + " of " + g.total + " · " + g.done + " read";
+		const nextLine = next && !g.complete
+			? '<span class="mnp-resume-next"><span>Next</span><a href="' + esc(next.url) + '">' + esc(shortTitle(next.title)) + "</a></span>"
+			: "";
 		const action = g.complete
 			? '<a class="mnp-jump mnp-resume-go" href="#mnp-curated">Certificate below ↓</a>'
-			: next ? '<a class="mnp-jump mnp-resume-go" href="' + esc(next.url) + '">Continue with ' + esc(next.title.split(/\s[—–:]\s|:\s/)[0]) + ' →</a>' : "";
+			: next ? '<a class="mnp-jump mnp-resume-go" href="' + esc(next.url) + '">Continue →</a>' : "";
 		return '<div class="mnp-resume" style="--tone: var(--mn-' + toneOf(p) + ')">' +
 			'<span class="mnp-resume-num" aria-hidden="true">' + pathNum(p) + '</span>' +
 			'<div class="mnp-resume-main"><span class="mnp-resume-kicker">You are following</span>' +
-			'<b>' + esc(p.title) + '</b><span>' + esc(meta) + '</span>' +
+			'<b>' + esc(p.title) + '</b><span>' + esc(meta) + '</span>' + nextLine +
 			'<span class="mnp-resume-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></span></div>' +
+			'<span class="mnp-resume-pct">' + pct + '%</span>' +
 			action +
 			'<button type="button" class="mnp-resume-leave" title="Stop following this path">Leave</button>' +
 			"</div>";
@@ -194,7 +208,8 @@
 	function render() {
 		const ps = allPaths();
 		const cur = ps.filter((p) => !p.isPart), parts = ps.filter((p) => p.isPart);
-		const done = ps.filter((p) => progress(p).complete).length;
+		const curDone = cur.filter((p) => progress(p).complete).length;
+		const partDone = parts.filter((p) => progress(p).complete).length;
 		const picked = selected();
 		return (picked ? resumeStrip(picked) : "") +
 			'<div class="mnp-fork">' +
@@ -215,13 +230,40 @@
 				"</div>" +
 			"</section>" +
 		"</div>" +
+			'<div class="mnp-tools"><label class="mnp-search">' +
+				'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>' +
+				'<input id="mnp-search" type="search" autocomplete="off" placeholder="Search paths or lessons…" aria-label="Search paths or lessons" value="' + esc(searchQuery) + '">' +
+				'<span class="mnp-search-count" aria-live="polite"></span></label>' +
+				'<span class="mnp-count">' + curDone + " of " + cur.length + " curated paths completed</span></div>" +
 			'<div class="mnp-sect-row"><div><h3 class="mnp-sect" id="mnp-curated">Curated paths</h3>' +
-			'<p class="mnp-sect-sub">Goal-driven routes with a clear next step.</p></div>' +
-			'<span class="mnp-count">' + done + " of " + ps.length + " paths completed</span></div>" +
-			'<div class="mnp-paths">' + cur.map(card).join("") + "</div>" +
+			'<p class="mnp-sect-sub">Goal-driven routes with a clear next step.</p></div></div>' +
+			'<div class="mnp-paths" data-mnp-group="curated">' + cur.map(card).join("") + "</div>" +
+			'<p class="mnp-empty" data-mnp-empty="curated" hidden>No curated path matches that search.</p>' +
 			'<div class="mnp-sect-row"><div><h3 class="mnp-sect">The six parts</h3>' +
-			'<p class="mnp-sect-sub">The full course, part by part.</p></div></div>' +
-			'<div class="mnp-paths">' + parts.map(card).join("") + "</div>";
+			'<p class="mnp-sect-sub">The full course, part by part.</p></div>' +
+			'<span class="mnp-count">' + partDone + " of " + parts.length + " parts completed</span></div>" +
+			'<div class="mnp-paths" data-mnp-group="parts">' + parts.map(card).join("") + "</div>" +
+			'<p class="mnp-empty" data-mnp-empty="parts" hidden>No part matches that search.</p>';
+	}
+
+	function applyFilter(root) {
+		const input = root.querySelector("#mnp-search");
+		const q = input ? input.value.trim().toLowerCase() : "";
+		searchQuery = input ? input.value : "";
+		let total = 0;
+		root.querySelectorAll("[data-mnp-group]").forEach((grid) => {
+			let shown = 0;
+			grid.querySelectorAll(".mnp-path").forEach((el) => {
+				const hit = !q || (el.getAttribute("data-search") || "").indexOf(q) >= 0;
+				el.hidden = !hit;
+				if (hit) shown++;
+			});
+			total += shown;
+			const empty = root.querySelector('[data-mnp-empty="' + grid.getAttribute("data-mnp-group") + '"]');
+			if (empty) empty.hidden = shown > 0;
+		});
+		const count = root.querySelector(".mnp-search-count");
+		if (count) count.textContent = q ? total + (total === 1 ? " match" : " matches") : "";
 	}
 
 	function bindCerts(root) {
@@ -246,7 +288,7 @@
 				e.stopPropagation();
 				setSelected(id, true);
 			});
-			el.querySelectorAll("a.mnp-link:not(.mnp-cert), .mnp-steps a").forEach((a) => {
+			el.querySelectorAll("a.mnp-card-go:not(.mnp-cert), .mnp-steps a").forEach((a) => {
 				a.addEventListener("click", () => setSelected(id, false));
 			});
 		});
@@ -255,6 +297,12 @@
 	}
 
 	function bindFork(root) {
+		const search = root.querySelector("#mnp-search");
+		if (search) {
+			search.addEventListener("input", () => applyFilter(root));
+			search.addEventListener("search", () => applyFilter(root));
+		}
+		applyFilter(root);
 		const jump = root.querySelector("[data-mnp-scroll]");
 		if (jump) jump.addEventListener("click", () => {
 			const target = root.querySelector("#mnp-curated");
@@ -297,7 +345,8 @@
 			: '<span class="mnp-pager-btn is-off" aria-hidden="true">' + (compact ? "" : "Next ") + "→</span>";
 		return '<div class="mnp-pager' + (compact ? " mnp-pager--compact" : "") + '">' +
 			prevHtml +
-			'<select class="mnp-pager-select" aria-label="Choose a lesson in this path">' + options + "</select>" +
+			(compact ? "" : '<span class="mnp-pager-label">Jump to</span>') +
+			'<select class="mnp-pager-select" aria-label="Choose a lesson in ' + esc(p.title) + '">' + options + "</select>" +
 			nextHtml +
 			"</div>";
 	}
@@ -467,8 +516,8 @@
 			if (slug === next) tile.classList.add("is-path-next");
 			const b = document.createElement("span");
 			b.className = "mnp-tile-step";
-			b.setAttribute("aria-hidden", "true");
-			b.textContent = stepOf[slug];
+			b.textContent = (slug === next ? "Next · " : "Step ") + stepOf[slug];
+			b.title = "Step " + stepOf[slug] + " of " + p.lessons.length + " in " + p.title;
 			tile.appendChild(b);
 		});
 	}
@@ -511,6 +560,7 @@
 
 	function open() {
 		if (overlay) return;
+		searchQuery = "";
 		lastFocus = document.activeElement;
 		overlay = document.createElement("div");
 		overlay.className = "mnp-overlay";
