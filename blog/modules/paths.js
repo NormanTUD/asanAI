@@ -172,13 +172,15 @@
 		const meta = g.complete
 			? "Completed · " + g.total + " lessons · certificate ready"
 			: g.done + " of " + g.total + " read" + (next ? " · next: " + next.title : "");
+		const pct = Math.round(g.done / g.total * 100);
 		const action = g.complete
 			? '<a class="mnp-jump mnp-resume-go" href="#mnp-curated">Certificate below ↓</a>'
 			: next ? '<a class="mnp-jump mnp-resume-go" href="' + esc(next.url) + '">Continue with ' + esc(next.title.split(/\s[—–:]\s|:\s/)[0]) + ' →</a>' : "";
 		return '<div class="mnp-resume" style="--tone: var(--mn-' + toneOf(p) + ')">' +
 			'<span class="mnp-resume-num" aria-hidden="true">' + pathNum(p) + '</span>' +
 			'<div class="mnp-resume-main"><span class="mnp-resume-kicker">You are following</span>' +
-			'<b>' + esc(p.title) + '</b><span>' + esc(meta) + '</span></div>' +
+			'<b>' + esc(p.title) + '</b><span>' + esc(meta) + '</span>' +
+			'<span class="mnp-resume-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></span></div>' +
 			action +
 			'<button type="button" class="mnp-resume-leave" title="Stop following this path">Leave</button>' +
 			"</div>";

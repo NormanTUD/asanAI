@@ -12750,7 +12750,7 @@ html.mnp-open { overflow: hidden; }
 .mnp-modal { min-height: 100%; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; background: var(--mn-bg); }
 .mnp-modal-head {
 	position: sticky; top: 0; z-index: 2;
-	background: color-mix(in srgb, var(--mn-bg) 92%, transparent);
+	background: linear-gradient(180deg, color-mix(in srgb, var(--mn-accent) 4%, var(--mn-bg)) 0%, color-mix(in srgb, var(--mn-bg) 92%, transparent) 100%);
 	-webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
 	border-bottom: 1px solid var(--mn-border);
 	padding: 18px clamp(18px, 5vw, 56px) 15px;
@@ -12775,12 +12775,14 @@ html.mnp-open { overflow: hidden; }
 	border: 1px solid color-mix(in srgb, var(--tone) 35%, var(--mn-border));
 	background: color-mix(in srgb, var(--tone) 6%, var(--mn-surface));
 }
-.mnp-resume-num { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font: 700 1rem/1 var(--mn-font-prose); color: var(--tone); background: color-mix(in srgb, var(--tone) 12%, transparent); border: 1px solid color-mix(in srgb, var(--tone) 28%, transparent); }
+.mnp-resume-num { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font: 700 1rem/1 var(--mn-font-prose); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); background: color-mix(in srgb, var(--tone) 12%, transparent); border: 1px solid color-mix(in srgb, var(--tone) 28%, transparent); }
 .mnp-resume-main { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 2px; }
 .mnp-resume-kicker { font: 600 .68rem/1 var(--mn-font-prose); letter-spacing: .1em; text-transform: uppercase; color: var(--mn-text-muted); }
 .mnp-resume-main b { font: 700 1rem/1.3 var(--mn-font-prose); color: var(--mn-heading); }
 .mnp-resume-main span { font: 400 .82rem/1.4 var(--mn-font-prose); color: var(--mn-text-secondary); }
-.mnp-resume .mnp-jump { margin-top: 0; align-self: center; border-color: var(--tone); color: var(--tone); }
+.mnp-resume-bar { display: block; height: 3px; margin-top: 5px; border-radius: 3px; background: color-mix(in srgb, var(--mn-text-muted) 16%, transparent); overflow: hidden; }
+.mnp-resume-bar i { display: block; height: 100%; border-radius: 3px; background: var(--tone); transition: width .6s ease; }
+.mnp-resume .mnp-jump { margin-top: 0; align-self: center; border-color: var(--tone); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
 .mnp-resume-leave { appearance: none; align-self: center; border: 0; background: none; padding: 6px 4px; color: var(--mn-text-muted); font: 500 .78rem var(--mn-font-prose); cursor: pointer; }
 .mnp-resume-leave:hover { color: var(--mn-rose); }
 
@@ -12824,18 +12826,18 @@ html.mnp-open { overflow: hidden; }
 .mnp-path.is-picked { border-color: var(--tone); background: color-mix(in srgb, var(--tone) 4%, var(--mn-surface)); box-shadow: inset 0 0 0 1px var(--tone); }
 .mnp-path.is-picked::before { opacity: 1; }
 .mnp-path-head { display: flex; gap: 13px; align-items: flex-start; }
-.mnp-path-num { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font: 700 .95rem/1 var(--mn-font-prose); color: var(--tone); background: color-mix(in srgb, var(--tone) 12%, transparent); border: 1px solid color-mix(in srgb, var(--tone) 28%, transparent); }
-.mnp-path.is-picked .mnp-path-num { background: var(--tone); border-color: var(--tone); color: #fff; }
+.mnp-path-num { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font: 700 .95rem/1 var(--mn-font-prose); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); background: color-mix(in srgb, var(--tone) 12%, transparent); border: 1px solid color-mix(in srgb, var(--tone) 28%, transparent); }
+.mnp-path.is-picked .mnp-path-num { background: color-mix(in srgb, var(--tone) 20%, var(--mn-surface)); border-color: var(--tone); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
 .mnp-path-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .mnp-path-t b { font: 700 1.12rem/1.3 var(--mn-font-prose); color: var(--mn-heading); }
 .mnp-path-t span { font: 400 .87rem/1.55 var(--mn-font-prose); color: var(--mn-text-secondary); }
 .mnp-pick { appearance: none; flex: none; align-self: flex-start; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--mn-border); background: transparent; color: var(--mn-text-muted); font: 600 .72rem/1 var(--mn-font-prose); cursor: pointer; white-space: nowrap; transition: border-color .2s ease, background .2s ease, color .2s ease; }
 .mnp-pick:hover { border-color: var(--tone); color: var(--tone); }
-.mnp-pick[aria-pressed="true"] { background: var(--tone); border-color: var(--tone); color: #fff; }
+.mnp-pick[aria-pressed="true"] { background: color-mix(in srgb, var(--tone) 18%, var(--mn-surface)); border-color: var(--tone); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
 .mnp-path-bar { height: 3px; border-radius: 3px; background: color-mix(in srgb, var(--mn-text-muted) 16%, transparent); overflow: hidden; }
 .mnp-path-bar i { display: block; height: 100%; border-radius: 3px; background: color-mix(in srgb, var(--tone) 80%, transparent); transition: width .6s ease; }
 .mnp-path-meta { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; font: 400 .8rem/1.35 var(--mn-font-prose); color: var(--mn-text-muted); }
-.mnp-link { appearance: none; border: 0; background: none; padding: 0; cursor: pointer; font: 600 .82rem/1.35 var(--mn-font-prose); color: var(--tone); text-decoration: none; text-align: right; white-space: normal; }
+.mnp-link { appearance: none; border: 0; background: none; padding: 0; cursor: pointer; font: 600 .82rem/1.35 var(--mn-font-prose); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); text-decoration: none; text-align: right; white-space: normal; }
 .mnp-link:hover { text-decoration: underline; }
 .mnp-path-more summary { cursor: pointer; font: 400 .82rem var(--mn-font-prose); color: var(--mn-text-secondary); list-style: none; }
 .mnp-path-more summary::-webkit-details-marker { display: none; }
@@ -12848,24 +12850,24 @@ html.mnp-open { overflow: hidden; }
 .mnp-steps a { color: var(--mn-text-secondary); text-decoration: none; }
 .mnp-steps a:hover { color: var(--tone); }
 .mnp-steps li.is-seen a { color: var(--mn-text); }
-.mnp-steps li.is-done .mnp-step-n { background: color-mix(in srgb, var(--tone) 20%, var(--mn-surface)); color: var(--tone); }
+.mnp-steps li.is-done .mnp-step-n { background: color-mix(in srgb, var(--tone) 20%, var(--mn-surface)); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
 .mnp-steps li.is-next a { color: var(--mn-heading); font-weight: 600; }
-.mnp-steps li.is-next .mnp-step-n { box-shadow: inset 0 0 0 1.5px var(--tone); color: var(--tone); }
+.mnp-steps li.is-next .mnp-step-n { box-shadow: inset 0 0 0 1.5px var(--tone); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
 .mnp-path.is-complete { border-color: color-mix(in srgb, var(--mn-emerald) 40%, var(--mn-border)); }
 
 /* path lessons in the course overview */
 .course-tile.is-path-lesson { position: relative; }
-.course-tile .mnp-tile-step { position: absolute; top: 10px; right: 10px; min-width: 24px; height: 24px; padding: 0 7px; box-sizing: border-box; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font: 700 .68rem/1 var(--mn-font-prose); color: var(--tone); background: color-mix(in srgb, var(--tone) 13%, var(--mn-surface)); border: 1px solid color-mix(in srgb, var(--tone) 35%, transparent); }
+.course-tile .mnp-tile-step { position: absolute; top: 10px; right: 10px; min-width: 24px; height: 24px; padding: 0 7px; box-sizing: border-box; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font: 700 .68rem/1 var(--mn-font-prose); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); background: color-mix(in srgb, var(--tone) 13%, var(--mn-surface)); border: 1px solid color-mix(in srgb, var(--tone) 35%, transparent); }
 .course-tile.is-path-next { border-color: color-mix(in srgb, var(--tone) 55%, var(--mn-border)); box-shadow: 0 0 0 2px color-mix(in srgb, var(--tone) 15%, transparent); }
-.course-tile.is-path-next .mnp-tile-step { background: var(--tone); border-color: var(--tone); color: #fff; }
+.course-tile.is-path-next .mnp-tile-step { background: color-mix(in srgb, var(--tone) 20%, var(--mn-surface)); border-color: var(--tone); }
 
 /* current step of the picked path, inside the lesson TOC */
 .mnp-ctx { --tone: var(--mn-accent); display: flex; align-items: center; gap: 12px; margin: 0 0 12px; padding: 10px 12px; border-radius: 10px; border: 1px solid color-mix(in srgb, var(--tone) 28%, var(--mn-border-light, var(--mn-border))); background: color-mix(in srgb, var(--tone) 5%, var(--mn-bg-subtle)); font-family: var(--mn-font-prose); }
-.mnp-ctx-num { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 700 .8rem/1 var(--mn-font-prose); color: var(--tone); background: color-mix(in srgb, var(--tone) 13%, transparent); border: 1px solid color-mix(in srgb, var(--tone) 28%, transparent); }
+.mnp-ctx-num { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 700 .8rem/1 var(--mn-font-prose); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); background: color-mix(in srgb, var(--tone) 13%, transparent); border: 1px solid color-mix(in srgb, var(--tone) 28%, transparent); }
 .mnp-ctx-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.mnp-ctx-kicker { font: 600 .64rem/1.1 var(--mn-font-prose); letter-spacing: .08em; text-transform: uppercase; color: var(--tone); }
+.mnp-ctx-kicker { font: 600 .64rem/1.1 var(--mn-font-prose); letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
 .mnp-ctx-main b { font: 700 .92rem/1.25 var(--mn-font-prose); color: var(--mn-heading); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mnp-ctx-go { flex: none; max-width: 42%; font: 600 .76rem/1.25 var(--mn-font-prose); color: var(--tone); text-decoration: none; text-align: right; }
+.mnp-ctx-go { flex: none; max-width: 42%; font: 600 .76rem/1.25 var(--mn-font-prose); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); text-decoration: none; text-align: right; }
 .mnp-ctx-go:hover { text-decoration: underline; }
 .mnp-ctx-all { appearance: none; flex: none; border: 0; background: none; padding: 2px; color: var(--mn-text-muted); font: 500 .72rem var(--mn-font-prose); cursor: pointer; }
 .mnp-ctx-all:hover { color: var(--tone); }
@@ -12894,7 +12896,7 @@ html.mnp-open { overflow: hidden; }
 	font-family: var(--mn-font-prose); color: var(--mn-text);
 }
 .mnp-end-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-.mnp-end-kicker { font: 600 .7rem/1 var(--mn-font-prose); letter-spacing: .1em; text-transform: uppercase; color: var(--tone); }
+.mnp-end-kicker { font: 600 .7rem/1 var(--mn-font-prose); letter-spacing: .1em; text-transform: uppercase; color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
 .mnp-end-step { font: 400 .8rem/1.3 var(--mn-font-prose); color: var(--mn-text-muted); }
 .mnp-end-title { margin: 7px 0 10px; font: 700 clamp(1.2rem, 1rem + .5vw, 1.45rem)/1.25 var(--mn-font-prose); color: var(--mn-heading); }
 .mnp-end-bar { height: 5px; border-radius: 5px; background: color-mix(in srgb, var(--mn-text-muted) 18%, transparent); overflow: hidden; }
@@ -12907,19 +12909,19 @@ html.mnp-open { overflow: hidden; }
 	text-decoration: none; color: inherit; transition: border-color .2s ease, background .2s ease;
 }
 .mnp-end-next:hover { border-color: var(--tone); background: color-mix(in srgb, var(--tone) 9%, var(--mn-bg)); }
-.mnp-end-next-num { flex: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--tone) 16%, transparent); color: var(--tone); font: 700 .82rem var(--mn-font-prose); }
+.mnp-end-next-num { flex: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--tone) 16%, transparent); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); font: 700 .82rem var(--mn-font-prose); }
 .mnp-end-next-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .mnp-end-next-body b { font: 700 1rem/1.3 var(--mn-font-prose); color: var(--mn-heading); }
 .mnp-end-next-body span { font: 400 .82rem/1.4 var(--mn-font-prose); color: var(--mn-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.mnp-end-next-go { flex: none; font: 600 .85rem var(--mn-font-prose); color: var(--tone); }
+.mnp-end-next-go { flex: none; font: 600 .85rem var(--mn-font-prose); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
 .mnp-end-then { margin: 10px 0 0; font: 400 .82rem/1.5 var(--mn-font-prose); color: var(--mn-text-muted); }
 .mnp-end-then a { color: var(--mn-text-secondary); text-decoration: none; }
 .mnp-end-then a:hover { color: var(--tone); text-decoration: underline; }
 .mnp-end-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
 .mnp-end-btn { appearance: none; border: 1px solid var(--mn-border); background: transparent; color: var(--mn-text-secondary); border-radius: 999px; padding: 7px 14px; font: 600 .8rem var(--mn-font-prose); cursor: pointer; }
 .mnp-end-btn:hover { border-color: var(--tone); color: var(--tone); }
-.mnp-end-all { background: var(--tone); border-color: var(--tone); color: #fff; }
-.mnp-end-all:hover { color: #fff; background: color-mix(in srgb, var(--tone) 85%, #000); border-color: color-mix(in srgb, var(--tone) 85%, #000); }
+.mnp-end-all { background: var(--mn-accent); border-color: var(--mn-accent); color: #fff; }
+.mnp-end-all:hover { color: #fff; background: color-mix(in srgb, var(--mn-accent) 85%, #000); border-color: color-mix(in srgb, var(--mn-accent) 85%, #000); }
 
 .mnp-certbox { display: grid; gap: 10px; margin-top: 4px; }
 .mnp-certbox label { display: grid; gap: 4px; font-size: 12px; color: var(--mn-text-secondary); }
@@ -12931,10 +12933,10 @@ html.mnp-open { overflow: hidden; }
 .mn-home-dash:not(:has(> :not([hidden]))) { display: none; }
 .mn-home-daily .mn-quiz { margin: 0; }
 .mnh-card--path { --tone: var(--mn-accent); border-color: color-mix(in srgb, var(--tone) 40%, var(--mn-border)); }
-.mnh-card--path .mnh-kicker { color: var(--tone); }
-.mnh-num { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font: 700 1rem/1 var(--mn-font-prose); color: var(--tone); background: color-mix(in srgb, var(--tone) 12%, transparent); border: 1px solid color-mix(in srgb, var(--tone) 28%, transparent); }
+.mnh-card--path .mnh-kicker { color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
+.mnh-num { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font: 700 1rem/1 var(--mn-font-prose); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); background: color-mix(in srgb, var(--tone) 12%, transparent); border: 1px solid color-mix(in srgb, var(--tone) 28%, transparent); }
 .mnh-card--path .mnh-sub { white-space: normal; }
-.mnh-card--path .mnz-btn { display: inline-flex; align-items: center; background: var(--tone); color: #fff; text-decoration: none; box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--tone) 80%, transparent); }
+.mnh-card--path .mnz-btn { display: inline-flex; align-items: center; background: var(--mn-accent); color: #fff; text-decoration: none; box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--mn-accent) 80%, transparent); }
 .mnh-card {
 	display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: var(--mn-radius-lg);
 	border: 1px solid color-mix(in srgb, var(--mn-accent) 35%, var(--mn-border)); background: var(--mn-surface); box-shadow: var(--mn-shadow-md);

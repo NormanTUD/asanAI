@@ -131,9 +131,11 @@ progress overview; other modules add overview tabs via `MNQuest.addTab`),
 learning paths + one per part, PNG certificate; all in one window opened by
 the route icon `#paths-toggle` in the top-right chrome, `render_paths_toggle()`).
 Clicking a path card picks it and jumps to its next lesson (localStorage
-`mn_path_pick`); its Follow button only picks it. A picked path shows a resume
-strip in the window and, at the end of each of its lessons, a "next stop" card
-in the page font. Every lesson ends with a
+`mn_path_pick`); its Follow button only picks it. A picked path weaves through
+the site: a resume strip in the picker, a "Your path · step N" strip at the top
+of the lesson TOC, a "next stop" card at the lesson end, a resume card in
+`#mn-home-dash`, step badges on `#course-overview` tiles, and a dot on
+`#paths-toggle`. Every lesson ends with a
 "Check yourself" quiz; `render_daily_question()` (functions.php) can draw a
 daily question from all of them (not rendered on the intro/home page) — so keep quiz markup
 exactly `<div class="mn-quiz" data-quiz="<slug>"><script type="application/json">…</script></div>`.
