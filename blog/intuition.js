@@ -3237,26 +3237,6 @@ const WordMeadowViz = (() => {
 		draw();
 	}
 
-	function drawCursor(c, x, y) {
-		c.save();
-		c.translate(x, y);
-		c.beginPath();
-		c.moveTo(0, 0);
-		c.lineTo(0, 16);
-		c.lineTo(3.8, 12.4);
-		c.lineTo(6.6, 18.4);
-		c.lineTo(9.2, 17.2);
-		c.lineTo(6.4, 11.4);
-		c.lineTo(11.6, 11);
-		c.closePath();
-		c.shadowColor = 'rgba(0,0,0,.3)'; c.shadowBlur = 4; c.shadowOffsetY = 1;
-		c.fillStyle = 'rgba(255,255,255,.95)';
-		c.fill();
-		c.shadowColor = 'transparent';
-		c.strokeStyle = 'rgba(30,41,59,.75)'; c.lineWidth = 1.2; c.stroke();
-		c.restore();
-	}
-
 	function drawWordPins(c, sx, sy, pal, showLabels) {
 		for (let i = 0; i < anchors.length; i++) {
 			const a = anchors[i];
@@ -3422,7 +3402,6 @@ const WordMeadowViz = (() => {
 		c.fillStyle = pal.surface; c.fill();
 		c.strokeStyle = pal.thought; c.lineWidth = 2.5; c.stroke();
 
-		if (!realActive) drawCursor(c, mx, my);
 
 		const winner = scores[0];
 		const runner = scores[1];
