@@ -16,7 +16,9 @@ A model that is right 95% of the time but **confident when it is wrong** is not 
 </div>
 
 <div class="md" data-mathlevel="30">
-## Calibration
+## Confidence and uncertainty
+
+### Calibration
 
 A **calibrated** model says $P(\text{cat}) = 0.9$ only when roughly 90% of its 0.9-cat cases are actually cats. Modern networks are not — they are systematically **over-confident**, especially out of distribution.
 
@@ -26,7 +28,7 @@ LLMs expose a related signal. When asked to estimate the chance that they *know*
 </div>
 
 <div class="md">
-## Two kinds of uncertainty
+### Two kinds of uncertainty
 
 \cite[Kendall & Gal (2017)]{kendall2017uncertainties} separate the one uncertainty everyone means into two:
 
@@ -37,13 +39,15 @@ The distinction drives safe autonomy: a car should brake for epistemic uncertain
 </div>
 
 <div class="md">
-## When to stop: abstention & OOD
+## Knowing when to decline
+
+### When to stop: abstention & OOD
 
 **Selective prediction** predicts only when confident and **abstains** the rest, trading *coverage* for *risk*. **Out-of-distribution (OOD) detection** is its cousin: flag inputs far from anything seen in training (ensemble disagreement, low similarity to the training manifold) and route them to a human or a fallback. The goal is not to be right everywhere; it is to **know the boundary of where you are allowed to answer**.
 </div>
 
 <div class="md" data-mathlevel="40">
-## Conformal prediction: finite-sample guarantees
+### Conformal prediction: finite-sample guarantees
 
 Everything above is empirical. **Conformal prediction** is different: wrap any black-box model in a calibration procedure that outputs a **set** of answers guaranteed to contain the truth with probability $\ge 1-\varepsilon$ — **distribution-free**, no assumptions about the data or the model. It is the rigorous, assumption-light way to hand a user an honest "I'm not sure," and it applies to LLMs, vision, and structured outputs alike. (\cite[Angelopoulos & Bates, 2021]{angelopoulos2021conformal})
 </div>

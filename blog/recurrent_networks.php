@@ -13,7 +13,9 @@ math: 60
 -->
 
 <div class="md" data-mathlevel="55">
-## The Loop
+## The recurrent idea
+
+### The Loop
 
 A feedforward network answers one question and forgets it. The token that left the model's mind is gone — the next token is produced without the first one having made a mark. But language is *sequential*: the meaning of “was” arrives only with what came before. \citeauthor{colah2015lstm}'s classic walkthrough (\citeyear{colah2015lstm}) puts it simply:
 
@@ -25,7 +27,7 @@ $$\mathbf{h}_t = \tanh\!\big(\mathbf{W}_h \mathbf{h}_{t-1} + \mathbf{W}_x \mathb
 </div>
 
 <div class="md">
-## Unrolling: One Network, Many Copies
+### Unrolling: One Network, Many Copies
 
 The recurrence is easiest to read when it is **unrolled** across time — drawn as a sequence of identical networks, one per step, each handing its state forward:
 
@@ -40,7 +42,9 @@ The recurrence is easiest to read when it is **unrolled** across time — drawn 
 </div>
 
 <div class="md" data-mathlevel="60">
-## The Long-Distance Problem
+## The long-distance problem
+
+### The Long-Distance Problem
 
 Because the state must be *propagated* — multiplied through the chain, step by step — far-apart context is fragile. Predicting the next word in *“the clouds are in the sky”* needs only recent words. But finish *“I grew up in France … I speak fluent __”*, and the answer depends on something from sentences ago. In the long gap, an RNN must remember the word “France” while doing all the intervening work.
 
@@ -52,7 +56,7 @@ The failure mode is the [vanishing gradient](backproplab.php). Unrolling an RNN 
 </div>
 
 <div class="md" data-mathlevel="62">
-## The LSTM's Conveyor Belt
+### The LSTM's Conveyor Belt
 
 The **Long Short-Term Memory** network, introduced by \citeauthorlastnameand{lstm} in \citeyear{lstm}, changes what flows down the chain \cite{lstm}. Alongside the ordinary hidden state $\mathbf{h}_t$ runs a **cell state** $\mathbf{c}_t$ — a lane that is *not* transformed by every gate. \citeauthor{colah2015lstm} calls it the conveyor belt: information rides on it straight through the network, altered only by the gentle, learned interactions that **gates** apply.
 
@@ -74,7 +78,7 @@ Forget the gate, keep the memory: that is the whole trick — a *single* multipl
 </div>
 
 <div class="md">
-## The Family Tree
+### The Family Tree
 
 What follows is a pruning of the idea, not a new invention. The **gated recurrent unit (GRU)** of \citeauthor{cho2014gru} (\citeyear{cho2014gru}) merges the forget and input gates into one **update gate**, and weds the memory to the output via a **reset gate** — two gates instead of three, fewer parameters, similar performance \cite{cho2014gru}. And when \citeauthor{greff2015lstm} and colleagues *searched* the space of LSTM variants systematically, they reached a deflating but reassuring conclusion: the best variants are only marginally better than the plain, standard LSTM \cite{greff2015lstm}.
 

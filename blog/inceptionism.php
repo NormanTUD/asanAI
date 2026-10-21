@@ -11,7 +11,9 @@ topics: architecture, generative, interpretability, history
 -->
 
 <div class="md">
-## The Network Turned Upside Down
+## Turning the network around
+
+### The Network Turned Upside Down
 
 Everything so far trained a network by adjusting **weights** so that an input maps to a correct output. The original Inceptionism essay by \citeauthor{mordvintsev2015inceptionism} (\citeyear{mordvintsev2015inceptionism}) asks what happens if you **freeze the weights and adjust the input instead**: run gradient *ascent* on one class score, and the pixel values themselves start to echo whatever the network has stored about that class \cite{mordvintsev2015inceptionism}.
 
@@ -23,7 +25,7 @@ Start from pure noise, maximize the “banana” output, and the noise organizes
 </div>
 
 <div class="md">
-## Gradient Ascent on a Class
+### Gradient Ascent on a Class
 
 A classifier trained on ImageNet computes a score for each of ~22,000 classes. In forward mode the image is fixed and the network reads it; in dream mode the roles flip — a single random seed gradient-ascented on the “banana” channel. The same image can be optimized for *any* class or any region of it, and the network's layer depth decides the visual style: low layers produce edges, curves and simple strokes; high layers assemble **whole objects** from what they represent \cite{mordvintsev2015inceptionism}.
 </div>
@@ -40,7 +42,7 @@ A classifier trained on ImageNet computes a score for each of ~22,000 classes. I
 </div>
 
 <div class="md">
-## Let the Network Choose: Layer by Layer
+### Let the Network Choose: Layer by Layer
 
 Instead of prescribing a class, feed the network a photo and ask it to *enhance whatever it detected* — “whatever you see there, I want more of it”. The chosen layer then sets the whole visual vocabulary: \citeauthor{mordvintsev2015inceptionism} note that the first layers are sensitive to basic features, edges and their orientations, so they over-interpret the input as strokes and simple ornament-like patterns, while high layers assemble these into complete objects \cite{mordvintsev2015inceptionism}.
 </div>
@@ -51,7 +53,9 @@ Instead of prescribing a class, feed the network a photo and ask it to *enhance 
 </figure>
 
 <div class="md">
-## Dream Logic: The Weightlifter's Dumbbells
+## What the dreams reveal
+
+### Dream Logic: The Weightlifter's Dumbbells
 
 The funniest artifact of the process is that the dreams obey the network's *natural environment*. Asked to dream a dumbbell, the network repeatedly produced pictures of a **weightlifter holding one up** — not because the weights encode a dumbbell standing alone, but because, in the training world, dumbbells practically never appear without a person \cite{mordvintsev2015inceptionism}. The dream exposes the training distribution's hidden scenery.
 
@@ -78,7 +82,7 @@ The over-interpretation is deliberate and childlike — the essay's own words \c
 
 But because the data is stored at such a high abstraction, the results are an interesting remix of these learned features — neither faithful reproductions nor noise, but the network's own hybrids.
 
-## The Dream Map
+### The Dream Map
 
 An especially revealing variant: instead of starting from noise, start from a real photo. Editing it by gradient ascent shows *where* the network already had opinions — \citeauthor{mordvintsev2015inceptionism} call the visualization a **dream map**, showing which regions the network "understood" as what:
 </div>
@@ -89,7 +93,7 @@ An especially revealing variant: instead of starting from noise, start from a re
 </figure>
 
 <div class="md">
-## Fractal Dreams
+### Fractal Dreams
 
 Zoom the dream into a pattern and run the loop again — the process never settles. Each new pattern is parsed by the network and amplified into new objects, which themselves re-enter the loop: towers sprout from rocks, birds spiral from clouds, and every iteration of the zoom yields *more intricate* structure. In the post's own, now-famous formulation \cite{mordvintsev2015inceptionism}:
 

@@ -17,7 +17,9 @@ The transformer you have been building all this chapter passes every token throu
 </div>
 
 <div class="md">
-## The core idea: swap the FFN for a bank of routed experts
+## The architecture
+
+### The core idea: swap the FFN for a bank of routed experts
 
 Recall the per-layer structure from [The Transformer](transformer.php): an attention block, then a feed-forward (FFN) block. The FFN is where most parameters live — roughly two of the three parameters in a layer sit in it. The MoE move, introduced by \cite[Shazeer et al. (2017)]{shazeer2017moe}, is to replace that single FFN with a **bank of $E$ experts** — a set of smaller FFNs — plus a tiny **router** (a.k.a. the gating network) that decides, for each token, which experts to use.
 
@@ -63,7 +65,7 @@ Everything else about the model — the attention, the residual stream, the othe
 </div>
 
 <div class="md">
-## Routing: a learned sparse switch
+### Routing: a learned sparse switch
 
 The router looks trivial — in the original it is a single linear projection to $E$ scores — but its *behavior* is the whole story. In the standard **top-$k$** form, the router computes a softmax over the $E$ experts, keeps the $k$ largest, and renormalizes those $k$ to sum to one; the token's output is the weighted sum of those $k$ experts' outputs. The router is trained *end-to-end* with the rest of the model, so it learns to send "this kind of token" to the experts that are good at it. In practice the experts specialize: some become good at grammar, some at code, some at numerals, and the router routes accordingly. The model can therefore afford to be *bad at most things* in any one expert, because each expert only ever sees the slice of tokens that gets routed to it.
 
@@ -71,7 +73,7 @@ A later refinement, used in \cite[DeepSeek-V3 (2024)]{deepseekv3tech2024}, repla
 </div>
 
 <div class="md">
-## Load balancing: why the experts would otherwise collapse
+### Load balancing: why the experts would otherwise collapse
 
 Here is the failure mode that a MoE must fight, and the reason a whole class of training machinery exists. A router left to itself **collapses**. Because routing a token to a single expert is "cheaper" in gradient terms than splitting it across several, an unbalanced router drifts until a few experts grab *almost all* the traffic and the rest starve. The model's effective capacity then silently shrinks back toward a dense model — you built $E$ experts and the router quietly uses two.
 
@@ -93,19 +95,21 @@ The two terms pull in opposite directions. The task loss wants to route each tok
 </div>
 
 <div class="md">
-## Shared experts: the part everyone needs, plus the part each token picks
+### Shared experts: the part everyone needs, plus the part each token picks
 
 A cleaner decomposition arrived with \cite[DeepSeek-V3 (2024)]{deepseekv3tech2024}, whose two MoE ideas are now the reference design. The first is a **shared expert**: one expert is *dense* — every token goes through it — while the remaining experts are *sparse* — routed as usual. The shared expert holds the knowledge that *every* token needs (syntax, general language form), and the routed experts hold the *specialized* knowledge (a domain, a rare pattern). It is a clean split: "what everyone shares" + "what this token picks." The second idea, **auxiliary-loss-free balancing**, replaces the fixed aux penalty with a *dynamic* router whose bias grows for under-used experts and shrinks for over-used ones, so the routing self-corrects during training rather than being tugged by a separate term — reported to give a stable run at 671 billion parameters with no irrecoverable loss spikes \cite[DeepSeek-V3 (2024)]{deepseekv3tech2024}.
 </div>
 
 <div class="md">
-## Expert parallelism: where the experts live
+## Systems and economics
+
+### Expert parallelism: where the experts live
 
 If experts are the point, the engineering question is *where they sit*. In **expert parallelism** the $E$ experts are **sharded across devices**: each accelerator holds a different subset of experts, so a 671B model's weights spread over many chips. For a given token, the system routes to the devices that hold its $k$ experts, gathers their outputs, and scatters the next token — an **all-to-all** communication pattern in both directions. This is why MoE is famously cheap to *train* per active parameter but awkward to *serve*: the all-to-all is a synchronous, latency-sensitive step, and a request can only move on once every device holding one of its experts has answered. The training side of this is [Training Infrastructure](training_infrastructure.php); the serving side is [Inference vs Training](inference_vs_training.php). The conceptual point is that *routing* (which expert) and *parallelism* (which device) are separate decisions that compose — the router decides the logic, the parallelism decides the physics.
 </div>
 
 <div class="md">
-## The payoff for the economics: total vs active
+### The payoff for the economics: total vs active
 
 Two open models made MoE concrete, and their numbers make the point:
 
