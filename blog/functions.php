@@ -612,6 +612,7 @@ if(!server_php_self_ends_with_index_php()) {
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 		<meta name="theme-color" content="<?php echo $themeClass === 'dark' ? '#0f172a' : '#FAF8F1'; ?>">
+		<link rel="icon" type="image/x-icon" href="favicon.ico">
 		<script>
 		function toggleTheme() {
 			var html = document.documentElement;
@@ -681,6 +682,7 @@ if(!server_php_self_ends_with_index_php()) {
 		<button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></button>
 		<?php render_theme_toggle(); ?>
 		<?php render_topics_toggle(); ?>
+		<?php render_paths_toggle(); ?>
 		<?php render_reader_toggle(); ?>
 		<?php render_drawer(); ?>
 		<div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
@@ -871,6 +873,20 @@ function render_topics_toggle(): void {
 	echo '<circle cx="12" cy="12" r="5"/>';
 	echo '<circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>';
 	echo '</svg></span>';
+	echo '</button>';
+}
+
+/**
+ * Learning paths — a route icon in the top-right chrome, left of the
+ * reader toggle; opens the paths window (modules/paths.js).
+ */
+function render_paths_toggle(): void {
+	echo '<button id="paths-toggle" type="button" aria-label="Learning paths" title="Learning paths" onclick="if(window.MNPaths){window.MNPaths.open()}">';
+	echo '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+	echo '<circle cx="6" cy="19" r="2.2"/>';
+	echo '<circle cx="18" cy="5" r="2.2"/>';
+	echo '<path d="M8.2 19h8.3a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7h7.3"/>';
+	echo '</svg>';
 	echo '</button>';
 }
 

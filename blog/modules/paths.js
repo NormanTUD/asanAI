@@ -4,8 +4,8 @@
 // certificate the reader can download as a PNG — made in the browser,
 // with a name they type in; nothing leaves the page.
 //
-// Shown as the "Paths" tab of the progress overview and, on the home
-// page, inside #mn-home-paths.
+// Everything lives in one window, opened from the route icon in the
+// top-right chrome (#paths-toggle, render_paths_toggle() in functions.php).
 
 (function () {
 	"use strict";
@@ -74,64 +74,56 @@
 				if (!progress(p).complete || q.done("path-" + p.id)) return;
 				q.xp(100, "· path complete: " + p.title, "path-" + p.id);
 				q.count("paths");
-				q.toast('<span class="mnq-t-icon">🎓</span><span><small>Learning path complete</small><b>' + esc(p.title) + "</b><em>Click to get your certificate.</em></span>", "ach", () => q.open("paths"));
+				q.toast('<span class="mnq-t-icon">🎓</span><span><small>Learning path complete</small><b>' + esc(p.title) + "</b><em>Click to get your certificate.</em></span>", "ach", open);
 			});
 			const sig = allPaths().map((p) => progress(p).done).join(",");
-			if (sig !== lastSig) { lastSig = sig; paintHome(); }
+			if (sig !== lastSig) { lastSig = sig; paint(); }
 		}, 300);
 	}
 	let lastSig = "";
 
 	// ── Rendering ───────────────────────────────────────────────────
 	const TONES = { llm: "accent", learn: "coral", math: "sky", build: "emerald", scale: "rose", safety: "coral", vision: "rose", inside: "accent", history: "emerald" };
-	const COLORS = ["accent", "coral", "emerald", "rose", "sky", "text-secondary"];
+	const COLORS = ["accent", "coral", "emerald", "rose", "sky"];
 
 	function toneOf(p) {
 		if (TONES[p.id]) return TONES[p.id];
 		const m = modOf(p.lessons[0]);
-		return m && COLORS.indexOf(m.color) >= 0 && m.color !== "text-secondary" ? m.color : "accent";
+		return m && COLORS.indexOf(m.color) >= 0 ? m.color : "accent";
 	}
 
-	function ring(pct) {
-		const R = 22, C = 2 * Math.PI * R;
-		return '<svg class="mnp-ring" viewBox="0 0 52 52" aria-hidden="true"><circle class="mnp-ring-bg" cx="26" cy="26" r="' + R + '"/>' +
-			'<circle class="mnp-ring-fg" cx="26" cy="26" r="' + R + '" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + (C * (1 - pct / 100)).toFixed(1) + '"/></svg>' +
-			'<span class="mnp-ring-num">' + pct + "<small>%</small></span>";
-	}
-
-	function card(p, compact) {
+	function card(p) {
 		const g = progress(p);
 		const pct = Math.round(g.done / g.total * 100);
 		const nm = g.next && modOf(g.next);
 		const q = Q();
 		const started = g.done > 0 || !!(q && p.lessons.some((s) => q.visited(s)));
-		const stones = p.lessons.map((s, k) => {
-			const m = modOf(s);
-			const st = q && q.finished(s) ? "is-done" : s === g.next ? "is-next" : q && q.visited(s) ? "is-seen" : "";
-			return '<li class="' + st + '"><a href="' + esc(m ? m.url : s) + '" title="' + (k + 1) + ". " + esc(m ? m.title : s) + '" aria-label="' + (k + 1) + ". " + esc(m ? m.title : s) + '"></a></li>';
-		}).join("");
-		const steps = compact ? "" : '<ol class="mnp-steps">' + p.lessons.map((s, k) => {
+		const steps = p.lessons.map((s, k) => {
 			const m = modOf(s);
 			const st = q && q.finished(s) ? "is-done" : s === g.next ? "is-next" : q && q.visited(s) ? "is-seen" : "";
 			return '<li class="' + st + '"><span class="mnp-step-n">' + (q && q.finished(s) ? "✓" : k + 1) + '</span><a href="' + esc(m ? m.url : s) + '">' + esc(m ? m.title : s) + "</a></li>";
-		}).join("") + "</ol>";
-		const cta = g.complete
-			? '<button type="button" class="mnp-cta mnp-cert" data-path="' + esc(p.id) + '">🎓 Get your certificate</button>'
-			: nm ? '<a class="mnp-cta" href="' + esc(nm.url) + '"><span>' + (started ? "Continue" : "Start the path") + '</span><em>' + esc(nm.title.split(/\s[—–:]\s|:\s/)[0]) + '</em><i aria-hidden="true">→</i></a>' : "";
-		return '<article class="mnp-path' + (g.complete ? " is-complete" : "") + (started ? " is-started" : "") + (p.isPart ? " is-part" : "") + '" style="--tone: var(--mn-' + toneOf(p) + ')">' +
-			'<div class="mnp-hero"><span class="mnp-orb" aria-hidden="true"><span>' + esc(p.icon) + "</span></span>" + ring(pct) + "</div>" +
-			'<div class="mnp-kick">' + (g.complete ? "Completed · " + g.total + " lessons" : g.done ? g.done + " of " + g.total + " lessons read" : (p.isPart ? "Course part" : "Learning path") + " · " + g.total + " lessons") + "</div>" +
-			'<div class="mnp-title">' + esc(p.title) + '</div><p class="mnp-desc">' + esc(p.desc) + "</p>" +
-			'<ol class="mnp-trail" style="--p:' + (g.done / g.total).toFixed(3) + '">' + stones + "</ol>" + steps +
-			'<div class="mnp-foot">' + cta + "</div></article>";
+		}).join("");
+		const status = g.complete ? "Completed" : g.done ? g.done + " of " + g.total + " read" : g.total + " lessons";
+		const action = g.complete
+			? '<button type="button" class="mnp-link mnp-cert" data-path="' + esc(p.id) + '">🎓 Certificate</button>'
+			: nm ? '<a class="mnp-link" href="' + esc(nm.url) + '">' + (started ? "Continue" : "Start") + " with " + esc(nm.title.split(/\s[—–:]\s|:\s/)[0]) + " →</a>" : "";
+		return '<article class="mnp-path' + (g.complete ? " is-complete" : "") + '" style="--tone: var(--mn-' + toneOf(p) + ')">' +
+			'<div class="mnp-path-head"><span class="mnp-path-ic" aria-hidden="true">' + esc(p.icon) + '</span>' +
+			'<div class="mnp-path-t"><b>' + esc(p.title) + "</b><span>" + esc(p.desc) + "</span></div></div>" +
+			'<div class="mnp-path-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
+			'<div class="mnp-path-meta"><span>' + status + "</span>" + action + "</div>" +
+			'<details class="mnp-path-more"><summary>Lessons</summary><ol class="mnp-steps">' + steps + "</ol></details>" +
+			"</article>";
 	}
 
-	function renderTab() {
+	function render() {
 		const ps = allPaths();
 		const cur = ps.filter((p) => !p.isPart), parts = ps.filter((p) => p.isPart);
-		return '<p class="mnq-intro">Pick a route through the course. A lesson counts once you have read it to the end. Finish a path for <b>+100 XP</b> and a certificate.</p>' +
-			'<div class="mnq-sect">Curated paths</div><div class="mnp-paths">' + cur.map((p) => card(p, false)).join("") + "</div>" +
-			'<div class="mnq-sect">The six parts</div><div class="mnp-paths">' + parts.map((p) => card(p, false)).join("") + "</div>";
+		const done = ps.filter((p) => progress(p).complete).length;
+		return '<div class="mnp-intro"><p>Pick a route through the course. A lesson counts once you have read it to the end; finish a path for <b>+100 XP</b> and a certificate.</p>' +
+			'<span class="mnp-count">' + done + " of " + ps.length + " paths completed</span></div>" +
+			'<h3 class="mnp-sect">Curated paths</h3><div class="mnp-paths">' + cur.map(card).join("") + "</div>" +
+			'<h3 class="mnp-sect">The six parts</h3><div class="mnp-paths">' + parts.map(card).join("") + "</div>";
 	}
 
 	function bindCerts(root) {
@@ -141,21 +133,49 @@
 		}));
 	}
 
-	function paintHome() {
-		const host = document.getElementById("mn-home-paths");
-		if (!host) return;
-		const q = Q();
-		const ps = allPaths().filter((p) => !p.isPart);
-		// started paths first, then the rest in their curated order
-		const started = ps.filter((p) => { const g = progress(p); return g.done > 0 || (q && p.lessons.some((s) => q.visited(s))); });
-		const order = started.concat(ps.filter((p) => started.indexOf(p) < 0));
-		host.innerHTML = '<div class="mnp-home-head"><div><div class="mnp-home-kicker">Learning paths</div><div class="mnp-home-title">Choose your way in</div>' +
-			'<p class="mnp-home-sub">Nine routes through the course — each one a story with a beginning, a payoff and a certificate at the end.</p></div>' +
-			'<button type="button" class="mnp-home-more">All paths & progress <span aria-hidden="true">→</span></button></div>' +
-			'<div class="mnp-paths mnp-paths--home">' + order.map((p) => card(p, true)).join("") + "</div>";
-		bindCerts(host);
-		host.querySelector(".mnp-home-more").addEventListener("click", () => { if (q) q.open("paths"); });
+	// ── The paths window (opened from #paths-toggle, top right) ─────
+	let overlay = null, lastFocus = null;
+
+	function paint() {
+		if (!overlay) return;
+		const body = overlay.querySelector(".mnp-modal-body");
+		const open = Array.prototype.map.call(body.querySelectorAll("details[open]"), (d) => d.closest(".mnp-path") && Array.prototype.indexOf.call(body.querySelectorAll(".mnp-path"), d.closest(".mnp-path")));
+		body.innerHTML = render();
+		const cards = body.querySelectorAll(".mnp-path");
+		open.forEach((i) => { if (cards[i]) cards[i].querySelector("details").open = true; });
+		bindCerts(body);
 	}
+
+	function open() {
+		if (overlay) return;
+		lastFocus = document.activeElement;
+		overlay = document.createElement("div");
+		overlay.className = "mnp-overlay";
+		overlay.innerHTML = '<div class="mnp-modal" role="dialog" aria-modal="true" aria-labelledby="mnp-modal-title">' +
+			'<div class="mnp-modal-head"><div><div class="mnp-kicker">Your way through the course</div><h2 id="mnp-modal-title">Learning paths</h2></div>' +
+			'<button type="button" class="mnp-close" aria-label="Close"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>' +
+			'<div class="mnp-modal-body"></div></div>';
+		document.body.appendChild(overlay);
+		document.documentElement.classList.add("mnp-open");
+		paint();
+		requestAnimationFrame(() => overlay && overlay.classList.add("is-in"));
+		overlay.addEventListener("click", (e) => { if (e.target === overlay || e.target.closest(".mnp-close")) close(); });
+		document.addEventListener("keydown", onKey);
+		overlay.querySelector(".mnp-close").focus({ preventScroll: true });
+	}
+
+	function close() {
+		if (!overlay) return;
+		const o = overlay;
+		overlay = null;
+		o.classList.remove("is-in");
+		document.documentElement.classList.remove("mnp-open");
+		document.removeEventListener("keydown", onKey);
+		setTimeout(() => o.remove(), 250);
+		if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+	}
+
+	function onKey(e) { if (e.key === "Escape") close(); }
 
 	// ── Certificate ─────────────────────────────────────────────────
 	function certificate(p, anchor) {
@@ -239,19 +259,12 @@
 	}
 
 	function start() {
-		const q = Q();
-		if (!q || !mods().length) return;
-		q.addTab({
-			id: "paths",
-			label: () => { const ps = allPaths(); return "Paths <span>" + ps.filter((p) => progress(p).complete).length + "/" + ps.length + "</span>"; },
-			render: renderTab,
-			bind: bindCerts
-		});
+		if (!Q() || !mods().length) return;
 		check();
 		window.addEventListener("mnquest:change", check);
 	}
 
-	window.MNPaths = { list: allPaths, progress: progress };
+	window.MNPaths = { list: allPaths, progress: progress, open: open, close: close };
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
 	else setTimeout(start, 0);
 })();

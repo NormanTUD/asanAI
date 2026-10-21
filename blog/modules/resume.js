@@ -1,7 +1,6 @@
 // Resume reading: remembers, per lesson, the section the reader was in
 // and offers to jump back there on the next visit ("Pick up where you
-// left off"). The home page shows the last unfinished lesson as a
-// "Continue reading" card. Only stored in this browser (localStorage).
+// left off"). Only stored in this browser (localStorage).
 //
 // A lesson URL with ?continue=1 jumps straight to the saved spot.
 
@@ -126,23 +125,7 @@
 		if (document.documentElement.classList.contains("is-ready")) go();
 	}
 
-	// ── Home page ───────────────────────────────────────────────────
-	function homePage(host) {
-		const d = load();
-		const e = d.last && d.lessons[d.last];
-		if (!e) return;
-		const others = Object.keys(d.lessons).filter((k) => k !== d.last).sort((a, b) => d.lessons[b].t - d.lessons[a].t).slice(0, 3);
-		host.hidden = false;
-		host.innerHTML = '<a class="mnh-card mnh-card--resume" href="' + esc(e.url || d.last) + '?continue=1">' +
-			'<span class="mnh-ic" aria-hidden="true">' + (e.icon || "📌") + '</span><span class="mnh-main"><span class="mnh-kicker">Continue reading · ' + Math.round(e.frac * 100) + ' %</span>' +
-			'<span class="mnh-title">' + esc(e.title) + "</span>" + (e.heading ? '<span class="mnh-sub">§ ' + esc(e.heading) + "</span>" : "") +
-			'<span class="mnr-resume-bar"><i style="width:' + Math.round(e.frac * 100) + '%"></i></span></span><span class="mnh-go" aria-hidden="true">→</span></a>' +
-			(others.length ? '<div class="mnh-also">Also unfinished: ' + others.map((k) => '<a href="' + esc(d.lessons[k].url || k) + '?continue=1">' + esc(d.lessons[k].title) + " <small>" + Math.round(d.lessons[k].frac * 100) + " %</small></a>").join(" · ") + "</div>" : "");
-	}
-
 	function start() {
-		const host = document.getElementById("mn-home-resume");
-		if (host) { homePage(host); return; }
 		const mod = current();
 		if (mod) lessonPage(mod);
 	}

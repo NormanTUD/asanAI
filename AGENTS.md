@@ -125,10 +125,11 @@ progress overview; other modules add overview tabs via `MNQuest.addTab`),
 `quiz.js` (`.mn-quiz` cards; emits `mnquiz:answer` / `mnquiz:finish`),
 `lab_challenges.js` (goals inside labs; old labs without a `root` use
 `anchor`), `review.js` (spaced-repetition deck of missed quiz questions),
-`resume.js` ("pick up where you left off" + home "Continue reading" card;
+`resume.js` ("pick up where you left off" banner;
 `?continue=1` jumps to the saved spot), `predict.js`
 (`.mn-predict` "predict first" cards before demos), `paths.js` (curated
-learning paths + one per part, PNG certificate). Every lesson ends with a
+learning paths + one per part, PNG certificate; all in one window opened by
+the route icon `#paths-toggle` in the top-right chrome, `render_paths_toggle()`). Every lesson ends with a
 "Check yourself" quiz; the home page's question of the day is drawn from all
 of them by `render_daily_question()` (functions.php) — so keep quiz markup
 exactly `<div class="mn-quiz" data-quiz="<slug>"><script type="application/json">…</script></div>`.
