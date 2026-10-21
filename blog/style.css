@@ -12732,7 +12732,7 @@ html.is-ready #paths-toggle { opacity: 1; visibility: visible; }
 #paths-toggle:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 2px; }
 html.mnp-open #paths-toggle { border-color: var(--mn-accent); color: var(--mn-accent); }
 #paths-toggle.is-following { color: var(--mn-accent); border-color: color-mix(in srgb, var(--mn-accent) 45%, var(--mn-border)); }
-#paths-toggle.is-following::after { content: ""; position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--mn-accent); box-shadow: 0 0 0 2px var(--mn-surface); }
+#paths-toggle.is-following::after { content: attr(data-step); position: absolute; top: -5px; right: -5px; min-width: 16px; height: 16px; padding: 0 3px; box-sizing: border-box; border-radius: 999px; background: var(--mn-accent); color: #fff; font: 700 .6rem/16px var(--mn-font-prose); text-align: center; box-shadow: 0 0 0 2px var(--mn-surface); pointer-events: none; }
 @media (max-width: 600px) { #paths-toggle { top: 10px; right: 236px; width: 36px; height: 36px; } }
 html.reader-mode #paths-toggle,
 html.atlas-overlap #paths-toggle,
@@ -12742,7 +12742,9 @@ body:has(#cl-lb.is-visible) #paths-toggle { opacity: 0 !important; visibility: h
 /* the paths window: a full page in the site's sans-serif UI face */
 .mnp-overlay {
 	position: fixed; inset: 0; z-index: 10050; overflow-y: auto; overflow-x: hidden;
-	background: var(--mn-bg); color: var(--mn-text); font-family: var(--mn-font-prose);
+	background-color: var(--mn-bg);
+	background-image: radial-gradient(1200px 480px at 50% -140px, color-mix(in srgb, var(--mn-accent) 6%, transparent), transparent 70%);
+	color: var(--mn-text); font-family: var(--mn-font-prose);
 	opacity: 0; transition: opacity .2s ease; -webkit-overflow-scrolling: touch;
 }
 .mnp-overlay.is-in { opacity: 1; }
@@ -12789,13 +12791,14 @@ html.mnp-open { overflow: hidden; }
 /* the fork: paths or your own way */
 .mnp-fork { display: grid; grid-template-columns: 1fr auto 1fr; gap: clamp(14px, 2vw, 22px); align-items: stretch; }
 .mnp-fork-card { display: flex; flex-direction: column; gap: 8px; padding: clamp(18px, 2.4vw, 28px); border-radius: 16px; border: 1px solid var(--mn-border); background: var(--mn-surface); }
-.mnp-fork-card--own { border-color: color-mix(in srgb, var(--mn-accent) 35%, var(--mn-border)); }
+.mnp-fork-card--own { border-color: color-mix(in srgb, var(--mn-accent) 35%, var(--mn-border)); background: color-mix(in srgb, var(--mn-accent) 3%, var(--mn-surface)); }
 .mnp-fork-kicker { font: 600 .72rem/1 var(--mn-font-prose); letter-spacing: .1em; text-transform: uppercase; color: var(--mn-text-muted); }
 .mnp-fork-title { margin: 0; padding: 0; border: 0; font: 700 clamp(1.15rem, 1rem + .5vw, 1.4rem)/1.25 var(--mn-font-prose); color: var(--mn-heading); }
 .mnp-fork-text { margin: 0 0 6px; font: 400 .93rem/1.55 var(--mn-font-prose); color: var(--mn-text-secondary); }
 .mnp-fork-text b { color: var(--mn-heading); }
 .mnp-fork-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 4px; }
-.mnp-fork-or { align-self: center; font: italic 400 .92rem/1 var(--mn-font-prose); color: var(--mn-text-muted); }
+.mnp-fork-or { align-self: stretch; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font: italic 400 .92rem/1 var(--mn-font-prose); color: var(--mn-text-muted); }
+.mnp-fork-or::before, .mnp-fork-or::after { content: ""; width: 1px; flex: 1 1 0; min-height: 10px; background: var(--mn-border); }
 .mnp-jump {
 	appearance: none; align-self: flex-start; margin-top: auto; padding: 9px 17px; border-radius: 999px;
 	border: 1px solid var(--mn-border); background: transparent; color: var(--mn-text);
@@ -12819,10 +12822,10 @@ html.mnp-open { overflow: hidden; }
 	position: relative; overflow: hidden; cursor: pointer;
 	display: flex; flex-direction: column; gap: 12px; padding: 18px 20px 16px; border-radius: 16px;
 	border: 1px solid var(--mn-border); background: var(--mn-surface);
-	transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+	transition: border-color .2s ease, box-shadow .2s ease, background .2s ease, transform .2s ease;
 }
 .mnp-path::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: color-mix(in srgb, var(--tone) 60%, transparent); opacity: .5; }
-.mnp-path:hover { border-color: color-mix(in srgb, var(--tone) 45%, var(--mn-border)); box-shadow: var(--mn-shadow-md); cursor: pointer; }
+.mnp-path:hover { border-color: color-mix(in srgb, var(--tone) 45%, var(--mn-border)); box-shadow: var(--mn-shadow-md); cursor: pointer; transform: translateY(-2px); }
 .mnp-path.is-picked { border-color: var(--tone); background: color-mix(in srgb, var(--tone) 4%, var(--mn-surface)); box-shadow: inset 0 0 0 1px var(--tone); }
 .mnp-path.is-picked::before { opacity: 1; }
 .mnp-path-head { display: flex; gap: 13px; align-items: flex-start; }
@@ -12834,8 +12837,12 @@ html.mnp-open { overflow: hidden; }
 .mnp-pick { appearance: none; flex: none; align-self: flex-start; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--mn-border); background: transparent; color: var(--mn-text-muted); font: 600 .72rem/1 var(--mn-font-prose); cursor: pointer; white-space: nowrap; transition: border-color .2s ease, background .2s ease, color .2s ease; }
 .mnp-pick:hover { border-color: var(--tone); color: var(--tone); }
 .mnp-pick[aria-pressed="true"] { background: color-mix(in srgb, var(--tone) 18%, var(--mn-surface)); border-color: var(--tone); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
-.mnp-path-bar { height: 3px; border-radius: 3px; background: color-mix(in srgb, var(--mn-text-muted) 16%, transparent); overflow: hidden; }
-.mnp-path-bar i { display: block; height: 100%; border-radius: 3px; background: color-mix(in srgb, var(--tone) 80%, transparent); transition: width .6s ease; }
+.mnp-route { position: relative; display: flex; align-items: center; gap: 4px; height: 11px; }
+.mnp-route::before { content: ""; position: absolute; left: 3px; right: 3px; top: 50%; height: 1px; background: color-mix(in srgb, var(--mn-text-muted) 22%, transparent); }
+.mnp-dot { position: relative; width: 7px; height: 7px; border-radius: 50%; background: color-mix(in srgb, var(--mn-text-muted) 30%, var(--mn-surface)); box-shadow: 0 0 0 1px var(--mn-surface); }
+.mnp-dot.is-seen { background: color-mix(in srgb, var(--tone) 40%, var(--mn-surface)); }
+.mnp-dot.is-done { background: var(--tone); }
+.mnp-dot.is-next { background: var(--tone); box-shadow: 0 0 0 1px var(--mn-surface), 0 0 0 3px color-mix(in srgb, var(--tone) 22%, transparent); }
 .mnp-path-meta { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; font: 400 .8rem/1.35 var(--mn-font-prose); color: var(--mn-text-muted); }
 .mnp-link { appearance: none; border: 0; background: none; padding: 0; cursor: pointer; font: 600 .82rem/1.35 var(--mn-font-prose); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); text-decoration: none; text-align: right; white-space: normal; }
 .mnp-link:hover { text-decoration: underline; }
@@ -12878,10 +12885,11 @@ html.mnp-open { overflow: hidden; }
 }
 @media (max-width: 760px) {
 	.mnp-fork { grid-template-columns: 1fr; }
-	.mnp-fork-or { justify-self: center; }
+	.mnp-fork-or { flex-direction: row; align-self: center; width: 100%; }
+	.mnp-fork-or::before, .mnp-fork-or::after { width: auto; height: 1px; min-height: 0; flex: 1 1 auto; }
 }
 @media (prefers-reduced-motion: reduce) {
-	.mnp-overlay, .mnp-path, .mnp-path-bar i, .mnp-path-more summary::before { transition: none; }
+	.mnp-overlay, .mnp-path, .mnp-path-more summary::before { transition: none; }
 }
 
 /* end-of-lesson card: the next stop on the picked path */

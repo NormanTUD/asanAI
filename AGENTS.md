@@ -134,7 +134,7 @@ Clicking a path card picks it and jumps to its next lesson (localStorage
 `mn_path_pick`); its Follow button only picks it. A picked path weaves through
 the site: a resume strip in the picker, a "Your path · step N" strip at the top
 of the lesson TOC, a "next stop" card at the lesson end, a resume card in
-`#mn-home-dash`, step badges on `#course-overview` tiles, and a dot on
+`#mn-home-dash`, step badges on `#course-overview` tiles, and a step badge on
 `#paths-toggle`. Every lesson ends with a
 "Check yourself" quiz; `render_daily_question()` (functions.php) can draw a
 daily question from all of them (not rendered on the intro/home page) — so keep quiz markup

@@ -142,14 +142,17 @@
 
 	function card(p) {
 		const g = progress(p);
-		const pct = Math.round(g.done / g.total * 100);
 		const nm = g.next && modOf(g.next);
 		const q = Q();
 		const started = g.done > 0 || !!(q && p.lessons.some((s) => q.visited(s)));
+		const dotState = (s) => q && q.finished(s) ? "is-done" : s === g.next ? "is-next" : q && q.visited(s) ? "is-seen" : "";
 		const steps = p.lessons.map((s, k) => {
 			const m = modOf(s);
-			const st = q && q.finished(s) ? "is-done" : s === g.next ? "is-next" : q && q.visited(s) ? "is-seen" : "";
-			return '<li class="' + st + '"><span class="mnp-step-n">' + (q && q.finished(s) ? "✓" : k + 1) + '</span><a href="' + esc(m ? m.url : s) + '">' + esc(m ? m.title : s) + "</a></li>";
+			return '<li class="' + dotState(s) + '"><span class="mnp-step-n">' + (q && q.finished(s) ? "✓" : k + 1) + '</span><a href="' + esc(m ? m.url : s) + '">' + esc(m ? m.title : s) + "</a></li>";
+		}).join("");
+		const route = p.lessons.map((s) => {
+			const m = modOf(s);
+			return '<span class="mnp-dot ' + dotState(s) + '" title="' + esc(m ? m.title : s) + '"></span>';
 		}).join("");
 		const status = g.complete ? "Completed" : g.done ? g.done + " of " + g.total + " read" : "Not started";
 		const isPicked = pickedId === p.id;
@@ -160,7 +163,7 @@
 			'<div class="mnp-path-head"><span class="mnp-path-num" aria-hidden="true">' + pathNum(p) + '</span>' +
 			'<div class="mnp-path-t"><b>' + esc(p.title) + "</b><span>" + esc(p.desc) + "</span></div>" +
 			'<button type="button" class="mnp-pick" aria-pressed="' + (isPicked ? "true" : "false") + '" title="' + (isPicked ? "Following this path" : "Follow this path") + '">' + (isPicked ? "Following ✓" : "Follow") + "</button></div>" +
-			'<div class="mnp-path-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
+			'<div class="mnp-route" role="img" aria-label="' + g.done + ' of ' + g.total + ' lessons read">' + route + '</div>' +
 			'<div class="mnp-path-meta"><span>' + status + "</span>" + action + "</div>" +
 			'<details class="mnp-path-more"><summary>' + p.lessons.length + ' lessons</summary><ol class="mnp-steps">' + steps + "</ol></details>" +
 			"</article>";
@@ -444,6 +447,13 @@
 		if (!btn) return;
 		const p = selected();
 		btn.classList.toggle("is-following", !!p);
+		if (p) {
+			const g = progress(p);
+			const step = g.complete ? "✓" : String(p.lessons.indexOf(g.next) + 1 || 1);
+			btn.setAttribute("data-step", step);
+		} else {
+			btn.removeAttribute("data-step");
+		}
 		const label = p ? "Learning paths — following " + p.title : "Learning paths";
 		btn.title = label;
 		btn.setAttribute("aria-label", label);
