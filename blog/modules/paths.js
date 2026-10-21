@@ -11,6 +11,10 @@
 	"use strict";
 
 	const NAME_KEY = "mn_cert_name";
+	const PICK_KEY = "mn_path_pick";
+
+	let pickedId = null;
+	try { pickedId = localStorage.getItem(PICK_KEY) || null; } catch (e) { /* ignore */ }
 
 	const CURATED = [
 		{ id: "llm", icon: "💬", title: "How ChatGPT Works", desc: "The shortest route from “text in” to “answer out”.",
@@ -61,6 +65,27 @@
 		const done = q ? p.lessons.filter((s) => q.finished(s)).length : 0;
 		const next = q ? p.lessons.find((s) => !q.finished(s)) : p.lessons[0];
 		return { done: done, total: p.lessons.length, next: next, complete: done === p.lessons.length };
+	}
+
+	function selected() {
+		if (!pickedId) return null;
+		const p = allPaths().find((x) => x.id === pickedId);
+		if (!p) {
+			pickedId = null;
+			try { localStorage.removeItem(PICK_KEY); } catch (e) { /* ignore */ }
+			return null;
+		}
+		return p;
+	}
+
+	function setSelected(id, repaint) {
+		pickedId = id;
+		try {
+			if (id) localStorage.setItem(PICK_KEY, id);
+			else localStorage.removeItem(PICK_KEY);
+		} catch (e) { /* ignore */ }
+		if (repaint && overlay) paint();
+		paintLesson();
 	}
 
 	// ── Completion ──────────────────────────────────────────────────

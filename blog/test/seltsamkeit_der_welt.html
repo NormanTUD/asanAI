@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Die Seltsamkeit der Welt — interaktiv erklärt</title>
+<style>
+:root{
+  --bg:#0b0d17;
+  --bg2:#12152a;
+  --ink:#eef1ff;
+  --muted:#a8aec9;
+  --acc:#7af0d2;
+  --acc2:#ff7ab6;
+  --acc3:#ffd36e;
+  --card:rgba(255,255,255,.045);
+  --line:rgba(255,255,255,.12);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:
+    radial-gradient(1200px 700px at 12% -10%, #2a1c4d 0%, transparent 60%),
+    radial-gradient(900px 600px at 95% 10%, #113a44 0%, transparent 55%),
+    radial-gradient(1000px 900px at 50% 120%, #3a123a 0%, transparent 60%),
+    var(--bg);
+  color:var(--ink);
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.6}
+.wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 20px 120px}
+
+/* HERO */
+header.hero{
+  min-height:88vh;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  padding:80px 0 40px;
+}
+.kicker{
+  letter-spacing:.3em;text-transform:uppercase;font-size:12px;color:var(--acc);
+  border:1px solid var(--line);padding:6px 14px;border-radius:999px;backdrop-filter:blur(6px);
+  background:var(--card);
+}
+h1{
+  font-size:clamp(2.6rem,8vw,5.4rem);line-height:1.02;margin:22px 0 10px;font-weight:800;
+  background:linear-gradient(100deg,#fff 10%,var(--acc) 42%,var(--acc2) 70%,var(--acc3) 95%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  letter-spacing:-.02em;
+}
+.sub{font-size:clamp(1rem,2.2vw,1.3rem);color:var(--muted);max-width:720px}
+.hero-note{margin-top:28px;font-size:.92rem;color:var(--muted);border-left:2px solid var(--acc2);padding-left:14px}
+
+/* THESIS BAR */
+.thesis{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:36px 0 10px;
+}
+.thesis div{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;
+}
+.thesis b{display:block;color:var(--acc);font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:6px}
+
+/* SECTION */
+section{margin:90px 0 0;scroll-margin-top:80px}
+.chapnum{
+  font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--acc3);opacity:.9
+}
+h2{font-size:clamp(1.6rem,4vw,2.5rem);margin:6px 0 6px;letter-spacing:-.01em}
+.lead{color:var(--muted);max-width:760px;margin-bottom:22px}
+
+/* CARD GRID (Frage/Problem/Lösung) */
+.fps{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:18px 0}
+.fps article{
+  background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 18px 16px;
+  transition:transform .25s ease, border-color .25s ease, background .25s ease;
+}
+.fps article:hover{transform:translateY(-4px);border-color:rgba(122,240,210,.45);background:rgba(255,255,255,.07)}
+.tag{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;padding:4px 9px;border-radius:999px;display:inline-block;margin-bottom:10px}
+.t-q{background:rgba(255,211,110,.14);color:var(--acc3);border:1px solid rgba(255,211,110,.35)}
+.t-p{background:rgba(255,122,182,.13);color:var(--acc2);border:1px solid rgba(255,122,182,.35)}
+.t-s{background:rgba(122,240,210,.13);color:var(--acc);border:1px solid rgba(122,240,210,.35)}
+.fps p{margin:0;font-size:.98rem}
+
+/* ACCORDION */
+details.acc{
+  border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03);
+  padding:0 16px;margin:10px 0;overflow:hidden;
+}
+details.acc summary{
+  cursor:pointer;list-style:none;padding:14px 0;font-weight:600;display:flex;align-items:center;gap:10px
+}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary::before{
+  content:"+";color:var(--acc);font-weight:800;width:22px;height:22px;display:grid;place-items:center;
+  border:1px solid var(--line);border-radius:7px;font-size:14px;flex:none
+}
+details.acc[open] summary::before{content:"–";color:var(--acc2)}
+details.acc .body{padding:0 0 16px;color:var(--muted)}
+
+/* SLIDER WIDGET */
+.widget{
+  border:1px solid var(--line);border-radius:18px;padding:22px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  margin:22px 0;
+}
+.widget h3{margin:0 0 4px;font-size:1.05rem}
+.widget .hint{color:var(--muted);font-size:.88rem;margin:0 0 16px}
+input[type=range]{width:100%;accent-color:var(--acc);height:28px}
+.scaleLabels{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-top:-6px}
+.out{
+  margin-top:16px;padding:16px;border-radius:14px;background:rgba(0,0,0,.28);border:1px solid var(--line);
+  min-height:92px
+}
+.out b{color:var(--acc)}
+.pill{display:inline-block;font-size:.72rem;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);margin-right:6px}
+
+/* QUIZ */
+.quiz .opt{
+  display:block;width:100%;text-align:left;padding:13px 15px;border-radius:12px;margin:8px 0;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--ink);cursor:pointer;
+  font:inherit;transition:.18s
+}
+.quiz .opt:hover{background:rgba(255,255,255,.09);border-color:rgba(122,240,210,.4)}
+.quiz .opt.sel{border-color:var(--acc);background:rgba(122,240,210,.12)}
+.feedback{margin-top:12px;color:var(--muted);font-size:.95rem}
+
+/* SNAIL METER */
+.snail{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+.bigemoji{font-size:3.4rem;filter:drop-shadow(0 6px 18px rgba(0,0,0,.5))}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.93rem}
+th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--acc);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+
+/* DILEMMA */
+.dilemma{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.dilemma .horn{border:1px solid var(--line);border-radius:18px;padding:20px;background:var(--card)}
+.dilemma .horn h4{margin:0 0 8px}
+.horn.a{border-color:rgba(255,122,182,.4)}
+.horn.b{border-color:rgba(122,240,210,.4)}
+
+/* NAV */
+nav.toc{
+  position:sticky;top:0;z-index:5;background:rgba(11,13,23,.78);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);margin:0 -20px 0;padding:10px 20px;display:flex;gap:8px;overflow-x:auto
+}
+nav.toc a{
+  color:var(--muted);text-decoration:none;font-size:.78rem;white-space:nowrap;padding:6px 11px;border-radius:999px;border:1px solid transparent
+}
+nav.toc a:hover{color:var(--ink);border-color:var(--line);background:rgba(255,255,255,.05)}
+
+footer{margin-top:100px;border-top:1px solid var(--line);padding-top:26px;color:var(--muted);font-size:.86rem}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+mark{background:rgba(255,211,110,.22);color:var(--acc3);padding:0 4px;border-radius:4px}
+code.k{background:rgba(255,255,255,.08);padding:2px 7px;border-radius:6px;font-size:.85em;color:var(--acc)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+
+<div class="wrap">
+
+<header class="hero">
+  <span class="kicker">Eric Schwitzgebel · The Weirdness of the World</span>
+  <h1>Die Welt ist seltsam.<br>Und du kannst nicht wissen, wie genau.</h1>
+  <p class="sub">Ein interaktiver Spaziergang durch ein Philosophiebuch, das behauptet: Jede ernsthafte Theorie über Bewusstsein und Kosmos ist <em>verrückt</em> — und keine lässt sich beweisen. Scrolle, klicke, schiebe Regler. Keine Vorkenntnisse nötig.</p>
+
+  <div class="thesis">
+    <div><b>These 1 — Universelle Bizarrheit</b>Irgendetwas, das fast zu verrückt zum Glauben ist, <em>muss</em> wahr sein.</div>
+    <div><b>These 2 — Universeller Zweifel</b>Wir können nicht entscheiden, welche der verrückten Optionen stimmt.</div>
+    <div><b>Folge</b>Philosophie, die <em>öffnet</em> statt schließt: mehr Möglichkeiten statt einer Antwort.</div>
+  </div>
+
+  <p class="hero-note">„Philosophie, die öffnet“: Statt aus drei Optionen eine zu machen, macht man aus drei vielleicht fünf. Auch das ist Fortschritt.</p>
+</header>
+
+<nav class="toc">
+  <a href="#k2">USA-Bewusstsein</a>
+  <a href="#k3">Bizarr &amp; Zweifelhaft</a>
+  <a href="#k4">1%-Skepsis</a>
+  <a href="#k5">Kant trifft Cyberpunk</a>
+  <a href="#k6">Außenwelt-Experiment</a>
+  <a href="#k7">Unendliche Puppenspiele</a>
+  <a href="#k8">Was heißt „bewusst“?</a>
+  <a href="#k9">Spiegel &amp; Wahrheit</a>
+  <a href="#k10">Die Schnecke</a>
+  <a href="#k11">KI-Rechte</a>
+  <a href="#k12">Fazit</a>
+</nav>
+
+<!-- ============ K2 ============ -->
+<section id="k2" class="reveal">
+  <div class="chapnum">Kapitel 2</div>
+  <h2>Wenn Materialismus stimmt, sind die USA vermutlich bewusst</h2>
+  <p class="lead">Der provokanteste Einstieg des Buches. Nicht „die USA fühlen sich patriotisch“ — sondern: Das Land als <em>räumlich verteiltes Ding</em> erfüllt genau die Kriterien, die Materialisten sonst für Bewusstsein ansetzen.</p>
+
+  <div class="fps">
+    <article><span class="tag t-q">Frage</span><p>Was macht Gehirne so besonders, dass ausgerechnet <em>sie</em> Erleben erzeugen — und nicht Hühnersuppe?</p></article>
+    <article><span class="tag t-p">Problem</span><p>Die Standardantwort lautet: komplexe Informationsverarbeitung, flexible Zielverfolgung, Selbstüberwachung, Umwelteinbettung. Aber <mark>die USA haben all das auch</mark> — nur größer und langsamer.</p></article>
+    <article><span class="tag t-s">Lösung?</span><p>Es gibt keine saubere. Jeder Ausweg kostet etwas Bizarres. Schwitzgebel nennt es einen „Treibsand der Seltsamkeit“.</p></article>
+  </div>
+
+  <div class="widget">
+    <h3>🦑 Das Vorurteils-Tool: Kontiguismus</h3>
+    <p class="hint">Schwitzgebel erfindet zwei Aliens, um dein Bauchgefühl zu testen. Wähle:</p>
+    <div class="quiz" id="alienQuiz">
+      <button class="opt" data-k="squid">🦑 <b>Sirianische Super-Kalmare</b> — Gehirn in 1000 abnehmbaren Tentakeln, verbunden per Lichtsignal. Sie schreiben Philosophie. Bewusst?</button>
+      <button class="opt" data-k="ant">🐘 <b>Antareanische Ameisenköpfe</b> — sehen aus wie Mammuts, Kopf voller 10 Mio. Insekten, lieben Shakespeare. Bewusst?</button>
+      <button class="opt" data-k="usa">🇺🇸 <b>Die USA</b> — 300 Mio. Teile, Informationsaustausch, Zielverfolgung, Selbstbeobachtung (Pentagon, Census). Bewusst?</button>
+    </div>
+    <div class="out" id="alienOut">Klicke eine Option, um den Argumentationsdruck zu spüren.</div>
+  </div>
+
+  <h3 style="margin-top:34px">Die vier Auswege — und ihre Preise</h3>
+  <details class="acc"><summary>1. Zugeben: Die USA sind bewusst</summary><div class="body">Dann verliert „gesunder Menschenverstand“ an Autorität. Vielleicht zu Recht — Quantenmechanik ist auch bizarr.</div></details>
+  <details class="acc"><summary>2. Materialismus ablehnen</summary><div class="body">Gerne — aber Kapitel 3 zeigt: Dualismus und Idealismus sind <em>genauso</em> bizarr. Kein Entkommen.</div></details>
+  <details class="acc"><summary>3. Eine bessere Theorie bauen</summary><div class="body">Legitim! Aber jeder bisherige Versuch (Anti-Verschachtelung, Neurochauvinismus, Synchronie-Erfordernis) hat eigene absurde Folgen — z.&nbsp;B. „Narkose durch Genozid“ oder: Alle Menschen verlieren das Bewusstsein, weil eine Briefwahlstimme nachgezählt wurde.</div></details>
+  <details class="acc"><summary>4. Quietismus („Hör auf zu fragen“)</summary><div class="body">Schwitzgebels Reaktion: „Oh, wie schrecklich diese vierte Reaktion ist!“ Spekulation über den Kosmos ist keine Krankheit.</div></details>
+</section>
+
+<!-- ============ K3 ============ -->
+<section id="k3" class="reveal">
+  <div class="chapnum">Kapitel 3</div>
+  <h2>Universelle Bizarrheit &amp; universeller Zweifel</h2>
+  <p class="lead">Das theoretische Herzstück. Warum ist Metaphysik <em>immer</em> seltsam? Schwitzgebels Antwort: Weil unser Alltagsverstand in diesen Fragen schlicht <mark>widersprüchlich</mark> ist. Jede kohärente Theorie muss also irgendwo gegen ihn verstoßen.</p>
+
+  <div class="widget">
+    <h3>🎡 Der Bizarrheits-Karussell</h3>
+    <p class="hint">Vier große Optionen. Klick dich durch — jede hat ihren eigenen Alptraum.</p>
+    <div class="quiz" id="metaQuiz">
+      <button class="opt" data-k="mat"><b>Materialismus</b> — alles ist Materie</button>
+      <button class="opt" data-k="dual"><b>Dualismus</b> — Körper <em>und</em> immaterielle Seele</button>
+      <button class="opt" data-k="ideal"><b>Idealismus</b> — nur Geist, keine Materie</button>
+      <button class="opt" data-k="komp"><b>Kompromiss / Ablehnung</b> — z.&nbsp;B. Kant, Russell, Chalmers</button>
+    </div>
+    <div class="out" id="metaOut">Wähle eine Position.</div>
+  </div>
+
+  <details class="acc"><summary>Das Dualisten-Quadrilemma (sehr elegant, sehr fies)</summary><div class="body">
+    Wenn Seelen Bewusstsein tragen — wer hat eine?<br><br>
+    <b>(1) Nur Menschen?</b> Dann fühlt kein Hund je Schmerz. Absurd.<br>
+    <b>(2) Alles?</b> Auch Wasserstoffatome am Galaxienrand. Absurd.<br>
+    <b>(3) Scharfe Grenze?</b> Kröte ja, Frosch nein? Grille nein, Heuschrecke ja? Willkürlich.<br>
+    <b>(4) Fließender Übergang?</b> Was heißt „halb immateriell“? Unverständlich.<br><br>
+    Der gesunde Menschenverstand verlangt, dass <em>eine</em> davon stimmt — und lehnt alle vier einzeln ab.
+  </div></details>
+
+  <details class="acc"><summary>„Narkose durch Genozid“ — warum Schmerz-Theorien scheitern</summary><div class="body">
+    Drei Optionen für „Was ist Schmerz?“:<br>
+    • <b>Gehirnzustand X</b> → Marsmenschen und Kraken können nie Schmerz fühlen. Chauvinismus.<br>
+    • <b>Kausale Rolle</b> → Ein Netzwerk aus Bierdosen und Windmühlen könnte echten Schmerz fühlen; Menschen mit untypischen Reaktionen hingegen nicht.<br>
+    • <b>Hybrid (Lewis)</b> → Schmerz hängt davon ab, was „normal für deine Spezies“ ist. Folge: Ein Tyrann könnte alle töten, für die Zustand X Schmerz ist, und sein eigener Schmerz verwandelt sich <em>ohne jede innere Veränderung</em> in ein Kitzeln. <mark>Narkose durch Genozid.</mark>
+  </div></details>
+
+  <details class="acc"><summary>Warum keiner recht bekommt: das Argument aus dem Dissens</summary><div class="body">
+    Es gibt kein <code class="k">Bewusstseins-Messgerät</code> und kein <code class="k">Materielle-Welt-Messgerät</code>. Samuel Johnson trat gegen einen Stein, um Berkeley zu widerlegen — das überzeugt niemanden. Carnap: Idealist und Realist vermessen denselben Berg und sind sich bei jedem Experiment einig.<br><br>
+    Die weltbesten Experten sind uneins, haben <em>unterschiedliche Teilkompetenzen</em>, und niemand kann die gesamte Literatur überblicken. Schwitzgebels eigene Schätzung: ca. 55 % Materialismus, 35 % Kompromiss, 5 % Dualismus, 5 % Idealismus.
+  </div></details>
+</section>
+
+<!-- ============ K4 ============ -->
+<section id="k4" class="reveal">
+  <div class="chapnum">Kapitel 4</div>
+  <h2>1 %-Skeptizismus — und wie er dein Leben ändert</h2>
+  <p class="lead">Nicht „alles ist Illusion“. Sondern: ein <mark>Restzweifel von etwa 0,1 bis 1 %</mark>, dass irgendein radikal skeptisches Szenario zutrifft. Klein — aber groß genug, um gelegentlich Entscheidungen zu kippen.</p>
+
+  <div class="widget">
+    <h3>🎚️ Stell deinen eigenen Zweifel ein</h3>
+    <p class="hint">Wie sicher bist du, dass die Welt ungefähr so ist, wie du denkst?</p>
+    <input type="range" id="cred" min="0" max="100" value="99" step="1">
+    <div class="scaleLabels"><span>0 % sicher</span><span>50 %</span><span>100 % sicher</span></div>
+    <div class="out" id="credOut"></div>
+  </div>
+
+  <div class="fps">
+    <article><span class="tag t-q">Quelle 1</span><p><b>Träume.</b> Ich bin fast sicher, dass ich wach bin. Aber meine Lieblings-Traumtheorie („Träume sind bildhaft, nicht sensorisch“) ist selbst umstritten. → ~99,9 %.</p></article>
+    <article><span class="tag t-q">Quelle 2</span><p><b>Simulation.</b> Bostrom gibt ⅓. Nach Abzügen bleibt: Vielleicht bin ich in einer <em>kleinen</em> oder <em>kurzlebigen</em> Simulation. → ~99,9 %.</p></article>
+    <article><span class="tag t-q">Quelle 3</span><p><b>Kosmologie.</b> Boltzmann-Gehirne, launische Gottheiten, Probeläufe. Standardphysik erlaubt all das. → ~99,9 %.</p></article>
+    <article><span class="tag t-q">Quelle 4</span><p><b>Wildcard.</b> Szenarien, an die ich noch gar nicht gedacht habe, die mir aber im Nachhinein offensichtlich erscheinen werden. → ~99,9 %.</p></article>
+  </div>
+
+  <div class="widget">
+    <h3>🧮 Warum zerstört der Zweifel sich nicht selbst?</h3>
+    <p class="hint">Einwand: Wenn ich träume, ist auch mein Wissen über Träume ein Traum. Der Zweifel sägt den Ast ab, auf dem er sitzt. Klicke für Schwitzgebels Antwort:</p>
+    <div class="quiz" id="selfQuiz">
+      <button class="opt" data-k="rhabarber">🌿 <b>Montaignes Rhabarber</b></button>
+      <button class="opt" data-k="monitor">📺 <b>Der Raum voller Monitore</b></button>
+      <button class="opt" data-k="meta">🪞 <b>Meta-Zweifel ist Freund, nicht Feind</b></button>
+    </div>
+    <div class="out" id="selfOut">Wähle eine Antwort.</div>
+  </div>
+
+  <div class="widget">
+    <h3>🎒 Was ändert 1 % konkret? Fünf echte Szenarien</h3>
+    <p class="hint">Schwitzgebel berichtet aus seinem eigenen Leben. Klick dich durch:</p>
+    <div class="quiz" id="prakQuiz">
+      <button class="opt" data-k="fly">🕊️ <b>Der Flugversuch</b> — mitten auf dem Campus die Arme ausbreiten</button>
+      <button class="opt" data-k="borges">📖 <b>Unkraut oder Borges?</b> — Gartenarbeit vs. Tee und Literatur</button>
+      <button class="opt" data-k="plane">✈️ <b>Landung im Nebel</b> — Turbulenzen über New York</button>
+      <button class="opt" data-k="god">🙏 <b>Vom Atheisten zum Agnostiker</b></button>
+      <button class="opt" data-k="dad">💔 <b>„Ich denke, es gibt dich zu 99,8 %“</b></button>
+    </div>
+    <div class="out" id="prakOut">Wähle ein Szenario.</div>
+  </div>
+
+  <details class="acc"><summary>Wie ignoriert man extrem unwahrscheinliche Szenarien?</summary><div class="body">
+    Sonst müsste eine Gottheit mit Wahrscheinlichkeit 1/10<sup>50</sup>, die 10<sup>50</sup> Leben voller Glück verspricht, jede Entscheidung dominieren. Drei Gegenmittel:<br><br>
+    <b>1. Symmetrie</b> — Für jede fußfetischistische Gottheit gibt es eine spiegelbildliche, die genau das Gegenteil belohnt. Sie heben sich auf.<br>
+    <b>2. Abnehmender Ertrag</b> — 10<sup>20</sup> Jahre Glück sind nicht 10<sup>20</sup>-mal so wertvoll wie ein Jahr. Radikale Lebensverlängerung bedeutet entweder Wiederholung oder so starke Veränderung, dass unklar wird, ob <em>du</em> das noch bist.<br>
+    <b>3. Verlustaversion</b> — Ein sicherer Verlust (nie wieder Schokolade; Lebenszeit mit Grübeln verschwenden) wiegt schwerer als eine winzige Gewinnchance.<br><br>
+    Diese drei verstärken sich gegenseitig. <mark>Entscheidungen bei 1/10<sup>50</sup> sind etwas völlig anderes als Entscheidungen bei 1/10<sup>3</sup>.</mark>
+  </div></details>
+</section>
+
+<!-- ============ K5 ============ -->
+<section id="k5" class="reveal">
+  <div class="chapnum">Kapitel 5</div>
+  <h2>Kant trifft Cyberpunk</h2>
+  <p class="lead">Kants Transzendentaler Idealismus klingt nach verstaubter Metaphysik. Schwitzgebel macht ihn mit Science-Fiction wieder begreifbar: <mark>Vielleicht ist der Raum selbst nur unsere Benutzeroberfläche.</mark></p>
+
+  <div class="fps">
+    <article><span class="tag t-q">These 1</span><p><b>Raum hängt von uns ab.</b> Die Dinge an sich haben keine räumlichen Eigenschaften. Unsere Sinne stellen sie räumlich dar — so wie sie Zucker als „süß“ darstellen.</p></article>
+    <article><span class="tag t-q">These 2</span><p><b>Das Ding an sich ist unerkennbar.</b> Weder Physik noch Mathematik noch Offenbarung reichen hinter den Vorhang.</p></article>
+    <article><span class="tag t-s">Das Cyberpunk-Modell</span><p>In der Matrix kannst du nicht nach Norden zur Lagerhalle laufen, in der dein Körper liegt. Sie ist <em>nicht in derselben Raummannigfaltigkeit</em>. Genauso könnte unsere ganze Welt sein.</p></article>
+  </div>
+
+  <div class="widget">
+    <h3>🧭 Fünf Begriffe, die alles klarer machen</h3>
+    <p class="hint">Klicke für die Definitionen (nach Chalmers &amp; Schwitzgebel):</p>
+    <div class="quiz" id="vrQuiz">
+      <button class="opt" data-k="imm"><b>Immersive räumliche Umgebung</b></button>
+      <button class="opt" data-k="vr"><b>Virtuelle Realität</b></button>
+      <button class="opt" data-k="emp"><b>Empirische Objekte</b></button>
+      <button class="opt" data-k="man"><b>Raummannigfaltigkeit</b></button>
+      <button class="opt" data-k="noum"><b>Phänomen vs. Noumenon</b></button>
+    </div>
+    <div class="out" id="vrOut">Wähle einen Begriff.</div>
+  </div>
+
+  <div class="widget">
+    <h3>😇 Angel: Der immaterielle Computer</h3>
+    <p class="hint">Schwitzgebels verrücktester Trick — er baut eine Turingmaschine aus einer cartesischen Seele. Schiebe den Regler, um die Bauteile zu ersetzen:</p>
+    <input type="range" id="angel" min="0" max="4" value="0" step="1">
+    <div class="scaleLabels"><span>Klassischer Computer</span><span>→</span><span>Reiner Geist</span></div>
+    <div class="out" id="angelOut"></div>
+  </div>
+
+  <details class="acc"><summary>Vier Gründe, Transzendentalen Idealismus ernst zu nehmen</summary><div class="body">
+    <b>1.</b> Materialismus hat eigene Probleme (siehe Kapitel 2 &amp; 3) — sogar bei der Frage, was „materiell“ überhaupt heißt.<br>
+    <b>2.</b> Das Simulationsargument verdient nicht-triviale Glaubwürdigkeit — und nichts garantiert, dass die Basisebene materiell, räumlich oder für ihre Bewohner erforschbar ist.<br>
+    <b>3.</b> Kosmologische Theorien sind instabil, uneinig über den Ursprung des Urknalls und nicht einmal durchweg materialistisch.<br>
+    <b>4.</b> Alles, was wir über Materie wissen, kommt durch unsere Sinne. A-Eigenschaften und viel seltsamere B-Eigenschaften könnten unsere Sinne <em>identisch</em> affizieren.
+  </div></details>
+
+  <details class="acc"><summary>Die schlechte Nachricht: Idealismus macht Skepsis schlimmer, nicht besser</summary><div class="body">
+    Chalmers und Kant benutzen solche Argumente <em>gegen</em> Skepsis: Egal was dahintersteckt, die Tasse existiert, der Bass wackelt am Boden, die Dinge sind nur anders konstituiert als gedacht.<br><br>
+    Schwitzgebel widerspricht: Wenn wir simuliert sind, muss die Simulation nicht groß und stabil sein.<br><br>
+    <b>Spielzeug-Simulation:</b> Unsere Schöpfer sind begrenzte Wesen mit kleinen Zielen — Forschung, Partnerwerbung, Unterhaltung. Große Welten sind teuer. Die meisten Simulationen wären klein oder kurz.<br>
+    <b>Zufalls-Simulation:</b> Unendlich viele zufällig konstruierte Rechensysteme; nur wenige bringen Bewusstsein hervor — und die meisten davon wohl nur kurz, bevor sie in Unordnung zerfallen.<br><br>
+    <mark>Gott könnte jeden Moment über das Stromkabel stolpern.</mark> Oder noch schlimmer: αϕ℧ könnte ┤Ɐꝏ.
+  </div></details>
+</section>
+
+<!-- ============ K6 ============ -->
+<section id="k6" class="reveal">
+  <div class="chapnum">Kapitel 6</div>
+  <h2>Der Solipsismus — experimentell widerlegt</h2>
+  <p class="lead">Radikaler Solipsismus: Nur mein Bewusstseinsstrom existiert. Keine Materie, keine anderen Geister, nicht mal ein unbewusster Teil von mir. Descartes und Kant scheiterten am Beweis des Gegenteils. Schwitzgebel probiert etwas Neues: <mark>echte Experimente</mark>, nur mit Mitteln, die ein Solipsist akzeptieren muss.</p>
+
+  <div class="widget">
+    <h3>🔬 Die drei Experimente</h3>
+    <p class="hint">Alle an einem einzigen Tag durchgeführt. Klicke für Methode und Ergebnis:</p>
+    <div class="quiz" id="expQuiz">
+      <button class="opt" data-k="prime"><b>1. Der Primzahl-Test</b> — Ich gegen Excel</button>
+      <button class="opt" data-k="mem"><b>2. Die Gedächtnistests</b> — Was bleibt über die Erinnerungslücke hinweg?</button>
+      <button class="opt" data-k="chess"><b>3. Niederlage im Schach</b> — 20 Blitzpartien</button>
+    </div>
+    <div class="out" id="expOut">Wähle ein Experiment.</div>
+  </div>
+
+  <details class="acc"><summary>Die Spielregeln (wichtig!)</summary><div class="body">
+    Schwitzgebel erlaubt sich <em>nur</em>:<br>
+    • introspektives Wissen über den eigenen Erlebnisstrom<br>
+    • Erinnerungen ab Beginn der Experimentreihe — <b>nicht früher</b><br>
+    • Begriffe, losgelöst von der Annahme einer Außenwelt<br>
+    • Logik und wissenschaftliche Methode, soweit sie keine Außenwelt voraussetzen<br><br>
+    Der Solipsismus darf dabei <em>nicht</em> immunisiert werden: Eine Theorie, die gar nichts vorhersagt, ist unfalsifizierbar. Eine Theorie, die post-hoc so zurechtgebogen wird, dass sie exakt dasselbe vorhersagt wie die Konkurrenz, ist bloß ein komplizierteres Duplikat. Beides ist wissenschaftlich wertlos.<br><br>
+    <b>Wichtig:</b> Solipsismus heißt <em>nicht</em>, dass ich die Welt kontrolliere. Das Eigenlicht hinter geschlossenen Lidern ist unvorhersehbar — und doch vollkommen solipsismus-kompatibel.
+  </div></details>
+
+  <details class="acc"><summary>Was hat er bewiesen — und was nicht?</summary><div class="body">
+    <b>Bewiesen:</b> Etwas existiert jenseits seines Bewusstseins, das (a) besser rechnet, (b) Eigenschaften über Erinnerungslücken hinweg bewahrt, (c) strategisch cleverer ist als er.<br><br>
+    <b>Nicht bewiesen:</b> Fast alles andere. Die Außenwelt könnte materiell sein, göttlich, ein unbewusster Teil seiner selbst, ein böser Dämon oder ein <em>engelhafter Computer</em> (Kapitel 5).<br><br>
+    Seine Lehre daraus ist bescheiden: „Es war schwer genug, so wenig zu etablieren. Meine gegenwärtige Erfahrung ist kein archimedischer Punkt, von dem aus ich die ganze Welt ins Blickfeld hebeln kann.“<br><br>
+    Interessant: Alle drei gelungenen Experimente stellten <em>seine Intelligenz gegen eine andere Intelligenz</em>. Zufall oder tiefere Wahrheit? Er weiß es nicht.<br><br>
+    <em>Nachschrift von Alan (dem Koautor):</em> „Eric hat recht, dass ich existiere. Aber ob ich akzeptieren sollte, dass <b>er</b> existiert, ist unklar. In diesem Mikrokosmos scheine ich eine Art schachspielender Gott zu sein.“
+  </div></details>
+</section>
+
+<!-- ============ K7 ============ -->
+<section id="k7" class="reveal">
+  <div class="chapnum">Kapitel 7</div>
+  <h2>Unendliches Puppenspiel</h2>
+  <p class="lead">Wenn das Universum unendlich ist — und das ist die natürlichste Lesart aktueller Kosmologie — dann verursacht <mark>fast alles, was du tust, fast alles</mark>.</p>
+
+  <div class="widget">
+    <h3>🌊 Die Kausalkette: Schritt für Schritt</h3>
+    <p class="hint">Schiebe den Regler durch die Argumentationskette:</p>
+    <input type="range" id="ripple" min="0" max="5" value="0" step="1">
+    <div class="scaleLabels"><span>Deine Hand hebt sich</span><span>→</span><span>Unendliches Puppenspiel</span></div>
+    <div class="out" id="rippleOut"></div>
+  </div>
+
+  <div class="fps">
+    <article><span class="tag t-p">Zahlen, die klein sind</span><p>Ein <b>Googol</b> = 10<sup>100</sup>. Ein <b>Googolplex</b> = 10<sup>10<sup>100</sup></sup>. Ein <b>Vast</b> = ein Googolplex-hoher Potenzturm von Googolplexen. Ein <b>Boggle</b> ist noch absurder. Alles <em>winzig</em> gegen die Unendlichkeit.</p></article>
+    <article><span class="tag t-s">Die Konsequenz</span><p>Du hast eine Wissenschaftlerin gerettet. Du hast auch eine getötet. Du hast Kriege begonnen und Frieden gestiftet. Nutzen jeder deiner Handlungen: <code class="k">∞ + −∞</code>. Ein Albtraum für den Konsequentialismus.</p></article>
+    <article><span class="tag t-q">Die Ausnahme</span><p>Einzigartig bezeichnete Ereignisse wiederholen sich nicht. Es gibt unendlich viele Konfuzius-Doppelgänger — aber nur <em>einen</em> Konfuzius. Nur <em>dieser</em> Baseball in deiner Hand ist deiner. Und er wird <em>nicht</em> durch die Mauer tunneln.</p></article>
+  </div>
+
+  <details class="acc"><summary>Signale über die Vastness — und echte Puppenspielerei</summary><div class="body">
+    Es gibt ein fernes Gegenstück von dir (du-Strich), das „rechte Hand“ denkt, <em>weil</em> du gerade deine rechte Hand gehoben hast — und es sonst nicht gedacht hätte. Du kannst die Botschaft so präzise wählen, wie du willst.<br><br>
+    Noch mehr: Es gibt Gegenstücke, die einen <em>wortgleichen Aufsatz</em> schreiben wie den, den du gerade liest, weil dein Teilchen bei ihnen einen Internetausfall ausgelöst hat.<br><br>
+    <b>Einschränkung:</b> Sequenzielles Puppenspiel (erst rechte, dann linke Hand beim <em>selben</em> Gegenstück) funktioniert nur, wenn der Raum geschlossen ist und sich alle Wellen irgendwann kreuzen.<br><br>
+    <b>Ethischer Rat der Autoren:</b> Beabsichtige Gutes. Denn ein gutes Ereignis, das als Folge einer <em>wohlwollenden Absicht</em> eintritt, gibt es sonst nicht.
+  </div></details>
+
+  <details class="acc"><summary>Wir sind vermutlich selbst Puppen</summary><div class="body">
+    Wenn das Universum unendlich in die Zukunft reicht, wäre es erstaunlich, dass wir in den <em>ersten 14 Milliarden Jahren</em> leben. Das wäre, als zögest du aus einer unendlichen Lostrommel die Kugel „14 Milliarden“.<br><br>
+    Das kopernikanische Prinzip legt nahe: Wir stehen in der Mitte einer Reihe, nicht am Anfang. Es gab etwas <em>vor</em> dem Urknall. Und dann gibt es irgendwo in der unendlichen Vergangenheit ein Beinahe-Duplikat von dir, das die Stirn runzelt — <em>mit der Absicht</em>, spätere Gegenstücke zum Stirnrunzeln zu bringen. Du bist so ein Gegenstück.<br><br>
+    <mark>Die Autoren finden das nur fair gegenüber ihren künftigen Puppen.</mark>
+  </div></details>
+</section>
+
+<!-- ============ K8 ============ -->
+<section id="k8" class="reveal">
+  <div class="chapnum">Kapitel 8</div>
+  <h2>Was heißt eigentlich „bewusst“?</h2>
+  <p class="lead">Bevor man über Schnecken und KI streitet, muss der Begriff sauber sein. Schwitzgebels Ziel: eine Definition, die <mark>unschuldig</mark> (keine fragwürdigen metaphysischen oder wissenschaftlichen Annahmen) und zugleich <mark>wundersam</mark> (lässt echtes Staunen zu) ist.</p>
+
+  <div class="fps">
+    <article><span class="tag t-p">Warum Analyse scheitert</span><p>„Bewusstsein“ lässt sich nicht in Bestandteile zerlegen wie „Rechteck“ = rechtwinkliges Viereck. Es ist grundlegend einfach.</p></article>
+    <article><span class="tag t-p">Warum Funktion scheitert</span><p>Welche Kausalrolle hat Bewusstsein? Umstritten. Der Epiphänomenalismus sagt: gar keine. Das darf nicht per Definition ausgeschlossen werden.</p></article>
+    <article><span class="tag t-p">Warum Synonyme scheitern</span><p>„Subjektive Erfahrung“, „Qualia“, „etwas, das es ist, so zu sein“ — jedes lädt dieselben Zweifel ein wie das Wort selbst.</p></article>
+  </div>
+
+  <div class="widget">
+    <h3>✅ Definition durch Beispiele</h3>
+    <p class="hint">Also: zeigen statt erklären. Klicke dich durch:</p>
+    <div class="quiz" id="defQuiz">
+      <button class="opt" data-k="pos">👍 <b>Positivbeispiele</b> — Was ist Bewusstsein?</button>
+      <button class="opt" data-k="neg">👎 <b>Negativbeispiele</b> — Was ist es nicht?</button>
+      <button class="opt" data-k="open">🤔 <b>Strittige Fälle</b> — bewusst offen gelassen</button>
+      <button class="opt" data-k="pink">🩷 <b>Die Pink-Analogie</b></button>
+    </div>
+    <div class="out" id="defOut">Wähle eine Kategorie.</div>
+  </div>
+
+  <details class="acc"><summary>Zwei Wege, den Begriff zu verlernen</summary><div class="body">
+    <b>Weg 1 — Falsche Nachsicht.</b> Judy sagt, Hunde seien nicht bewusst. Pedro findet das so absurd, dass er annimmt, Judy <em>müsse</em> etwas anderes meinen. Er erfindet eine Mehrdeutigkeit, wo keine ist. Die Verwirrung liegt in Wahrheit tiefer: in der Welt, nicht im Wort.<br><br>
+    <b>Weg 2 — Überladung.</b> Du erklärst: „Mit Bewusstsein meine ich das, was sich unausweichlich jeder physikalischen Beschreibung entzieht.“ Dein Zuhörer, der das bestreitet, glaubt nun, ihr redet aneinander vorbei. Der Begriff versumpft.<br><br>
+    <b>Lösung:</b> Nur auf die Beispiele zeigen. Keine Metaphysik einbauen. So wie bei <em>Pink</em>.<br><br>
+    <b>Was explizit NICHT vorausgesetzt wird:</b> Bewusstsein muss nicht einfach, unaussprechlich, intrinsisch, privat, unmittelbar erfasst, nicht-physisch oder unerklärbar sein. Es wird nur angenommen, dass es eine einzige naheliegende Kategorie gibt, auf die normale Menschen zeigen können — und dass diese Kategorie real ist.
+  </div></details>
+</section>
+
+<!-- ============ K9 ============ -->
+<section id="k9" class="reveal">
+  <div class="chapnum">Kapitel 9</div>
+  <h2>Die lockere Freundschaft von Sehen und Wirklichkeit</h2>
+  <p class="lead">„OBJECTS IN MIRROR ARE CLOSER THAN THEY APPEAR“ steht in jedem US-Beifahrerspiegel. Schwitzgebel sagt: <mark>Das US-Verkehrsministerium hat unrecht.</mark></p>
+
+  <div class="widget">
+    <h3>🪞 Drei mögliche Antworten</h3>
+    <p class="hint">Sind Objekte im Konvexspiegel näher, als sie scheinen?</p>
+    <div class="quiz" id="mirrorQuiz">
+      <button class="opt" data-k="a">1️⃣ <b>Ja</b> — sie sind näher, als sie erscheinen. (Das sagt die Behörde.)</button>
+      <button class="opt" data-k="b">2️⃣ <b>Nein</b> — sie sind <em>größer</em>, als sie erscheinen.</button>
+      <button class="opt" data-k="c">3️⃣ <b>Nein</b> — für geübte Fahrer stimmt alles.</button>
+    </div>
+    <div class="out" id="mirrorOut">Welche Antwort wählst du?</div>
+  </div>
+
+  <details class="acc"><summary>Die drei Argumente für Antwort 3</summary><div class="body">
+    <b>1. Geometrische Symmetrie.</b> Nichts privilegiert „zu weit“ gegenüber „zu klein“. Sieht das Auto 1 m hoch und 30 m weit aus? Oder 2 m hoch und 60 m weit? Die Geometrie entscheidet das nicht. Wenn beide Antworten sich gegenseitig problematisieren, spricht das für die dritte.<br><br>
+    <b>2. Geübte Fahrer irren sich nicht.</b> Jahrzehnte Verkehrssicherheitsforschung zeigen: Erfahrene Fahrer schätzen Abstände im Konvexspiegel <em>korrekt</em> ein — sowohl bei mündlicher Befragung als auch beim echten Spurwechsel. Niemand hält den heranrasenden Pick-up für einen Mini.<br><br>
+    <b>3. Introspektion.</b> Stell beide Spiegel auf dasselbe Auto ein. Sieht es im flachen Spiegel näher aus als im konvexen? Schwitzgebels Antwort: nein. Es gibt mehr als eine Art, wie ein Auto „6 Fuß hoch und 60 Fuß entfernt“ aussehen kann.
+  </div></details>
+
+  <details class="acc"><summary>Die „Konvexier“ — ein Gedankenexperiment</summary><div class="body">
+    Stell dir eine Kultur vor, in der alle Spiegel konvex hergestellt werden. Glas ist teuer; Konvexität spart Material bei größerem Blickwinkel. Die Konvexier benutzen sie zum Rasieren, Fahren, Dekorieren. Die Krümmung ist per Gesetz immer gleich, damit sich niemand neu einstellen muss.<br><br>
+    Nun kommst du mit deinem Flachspiegel an. Rufen sie „Endlich ein Spiegel, der nicht verzerrt!“ und bauen ihn sofort ins Auto?<br><br>
+    Wohl kaum. Es bräuchte Eingewöhnung. Vielleicht finden <em>sie</em> deinen Flachspiegel verzerrend.<br><br>
+    <b>Der Autor als Beispiel:</b> Mit Anfang 40 wechselte Schwitzgebel auf Gleitsichtgläser. Erst wirkte die untere Bildhälfte verzogen. Heute gar nicht mehr — obwohl die Brechungsgeometrie unverändert ist.
+  </div></details>
+
+  <div class="widget">
+    <h3>🙃 Umkehrbrillen: teavy und toovy</h3>
+    <p class="hint">George Stratton trug 1896 acht Tage lang eine Brille, die alles um 180° drehte. Was passiert bei der Anpassung? Klicke:</p>
+    <div class="quiz" id="invQuiz">
+      <button class="opt" data-k="simple">🔄 <b>Die einfache Lesart</b> — alles kippt zurück auf <code class="k">teavy</code></button>
+      <button class="opt" data-k="multi">✨ <b>Schwitzgebels Lesart</b> — es bleibt <code class="k">toovy</code>, fühlt sich aber richtig an</button>
+      <button class="opt" data-k="evidence">📜 <b>Was sagen die Experimentatoren selbst?</b></button>
+    </div>
+    <div class="out" id="invOut">Wähle eine Option.</div>
+  </div>
+
+  <div class="widget">
+    <h3>🌫️ Die Folge: eine lockere Freundschaft</h3>
+    <p class="hint">Schiebe den Regler, um Schwitzgebels Gedankenexperiment durchzuspielen:</p>
+    <input type="range" id="loose" min="0" max="4" value="0" step="1">
+    <div class="scaleLabels"><span>Normale Sicht</span><span>→</span><span>Die Blase</span></div>
+    <div class="out" id="looseOut"></div>
+  </div>
+
+  <p class="lead" style="margin-top:22px">Die Konsequenz: <mark>Jede Eigenschaft der Erfahrung, die variieren kann, ohne dass die Wahrheitstreue leidet, ist etwas, das <b>wir</b> zur Welt hinzufügen</mark> — keine Eigenschaft der Welt an sich. Locke meinte, Farbe sei unsere Zutat, Form aber real. Schwitzgebel zieht die Grenze weiter: Auch räumliche Erfahrung ist zu einem erheblichen Teil unsere Zutat. Im Extremfall leben wir vollständig in einer Blase, geformt von den kontingenten Strukturen und Gewohnheiten unseres Geistes. Damit rückt Kant (Kapitel 5) wieder näher.</p>
+</section>
+
+<!-- ============ K10 ============ -->
+<section id="k10" class="reveal">
+  <div class="chapnum">Kapitel 10</div>
+  <h2>Ist es irgendwie, eine Gartenschnecke zu sein?</h2>
+  <p class="lead">Die Schnecke steht in der Mitte der Mitte: 60.000 zentrale Neuronen, aber erstaunlich komplexes Verhalten. Sie ist der perfekte Testfall für die große Frage — <mark>wie spärlich oder üppig ist Bewusstsein im Universum?</mark></p>
+
+  <div class="widget snail">
+    <div class="bigemoji">🐌</div>
+    <div style="flex:1;min-width:260px">
+      <h3>Was kann eine Gartenschnecke?</h3>
+      <p class="hint">Klick, um dich zu überraschen:</p>
+      <div class="quiz" id="snailQuiz">
+        <button class="opt" data-k="brain"><b>Gehirn</b> — 60.000 Neuronen</button>
+        <button class="opt" data-k="learn"><b>Lernen</b> — sogar zweiter Ordnung</button>
+        <button class="opt" data-k="mate"><b>Paarung</b> — mit Liebespfeilen</button>
+        <button class="opt" data-k="nav"><b>Navigation</b> — mit Heimatgebiet</button>
+      </div>
+    </div>
+  </div>
+  <div class="out" id="snailOut" style="margin-top:-6px">Wähle einen Bereich.</div>
+
+  <h3 style="margin-top:34px">Drei Antworten — alle plausibel</h3>
+  <div class="dilemma">
+    <div class="horn a">
+      <h4>✅ Ja</h4>
+      <p><b>Das Argument der rutschigen Bahn.</b> Du glaubst, Hunde sind bewusst? Dann haben sie komplexe Sinneserfahrungen. Dann sind Hunde nicht die Untergrenze. Also auch Ratten und Raben. Also auch Echsen, Hummer, Kröten, Bienen. An jedem Punkt wiederholt sich das Argument.<br><br>
+      Der Ausstieg wäre entweder ein <em>plötzliches Ausknipsen</em> (Kröten der einen Gattung bewusst, der anderen nicht) oder ein <em>Verblassen</em> (eine Echse mit komplexem Sehfeld, aber nur einem Hauch visueller Erfahrung). Beides ist unattraktiv.</p>
+    </div>
+    <div class="horn b">
+      <h4>❌ Nein</h4>
+      <p><b>Das Argument aus den Eigenschaften des Bewusstseins.</b> Vielleicht reicht Sensorik nicht. Vielleicht braucht Bewusstsein <em>Leuchtkraft</em> (man weiß, dass man erlebt) und <em>Subjektivität</em> (ein implizites „Ich“). Dafür wäre Meta-Repräsentation nötig — weit jenseits von 60.000 Neuronen.<br><br>
+      <b>Drei Modelle für Reaktivität ohne Erleben:</b> traumloser Schlaf, Spielzeugroboter, das enterische Nervensystem (eine halbe Milliarde Neuronen in deinem Darm — vermutlich ohne Bewusstsein).</p>
+    </div>
+    <div class="horn">
+      <h4>🔔 *Gong*</h4>
+      <p><b>Die Frage verdient keine Ja-Nein-Antwort.</b> Vielleicht ist „Bewusstsein“ ein kaputter Begriff, wie „Planimal“ oder „Squangle“. Oder vielleicht liegt die Schnecke in einer vagen Grauzone.<br><br>
+      <b>Achtung:</b> „Ein bisschen bewusst“ ist <em>nicht</em> dasselbe wie „weder bewusst noch nicht-bewusst“. Wer einen Nickel hat, hat Geld. Wenn Schneckenbewusstsein der Nickel zum menschlichen Millionär ist, dann sind Schnecken bewusst.</p>
+    </div>
+  </div>
+
+  <div class="widget">
+    <h3>📏 Fünf Dimensionen von Spärlichkeit und Üppigkeit</h3>
+    <p class="hint">„Wie verbreitet ist Bewusstsein?“ ist nicht eine Frage, sondern fünf. Klicke:</p>
+    <div class="quiz" id="dimQuiz">
+      <button class="opt" data-k="e"><b>1. Entitäten</b> — wer ist überhaupt bewusst?</button>
+      <button class="opt" data-k="s"><b>2. Zustände</b> — wie oft ist ein Bewusstes bewusst?</button>
+      <button class="opt" data-k="m"><b>3. Modalitäten</b> — wie viele Sinne gleichzeitig?</button>
+      <button class="opt" data-k="w"><b>4. Breite</b> — wie viel innerhalb einer Modalität?</button>
+      <button class="opt" data-k="p"><b>5. Eigenschaften</b> — welche Arten von Eigenschaften?</button>
+    </div>
+    <div class="out" id="dimOut">Wähle eine Dimension.</div>
+  </div>
+
+  <details class="acc"><summary>Warum lässt sich das nicht entscheiden? Zwei Gründe</summary><div class="body">
+    <b>1. Das Problem des fehlenden gemeinsamen Bodens.</b> Um zu wissen, wie verbreitet Bewusstsein ist, braucht man eine gute Theorie. Um eine gute Theorie zu bauen, braucht man Hintergrundannahmen darüber, wie verbreitet Bewusstsein ist. Ein Teufelskreis.<br><br>
+    Die Spannweite ist enorm: Panpsychisten wie Strawson und Goff finden Erfahrung überall; Carruthers und vielleicht Dennett sprechen sogar Hunden das Bewusstsein ab. Die <b>Integrierte Informationstheorie</b> schreibt schon einfachen Logikgattern Bewusstsein zu. Andere stipulieren „unbegrenztes assoziatives Lernen“ als Schwelle — und platzieren die Grenze damit zwischen Meeresschnecke und Insekt. Beides ist eher gesetzt als begründet.<br><br>
+    <b>2. Die Artspezifität der Evidenz.</b> <mark>Alle introspektiven und sprachlichen Berichte, die wir haben, kommen von einer einzigen Spezies.</mark> Schnecken berichten nicht. Verhalten und Physiologie sind beobachtbar; Bewusstsein muss erschlossen werden. Je weiter wir uns vom vertrauten menschlichen Fall entfernen, desto wackliger der Boden.
+  </div></details>
+
+  <p class="lead" style="margin-top:22px">Schwitzgebels Fazit ist bemerkenswert: Er bekennt sich zur Ratlosigkeit. „Es ist etwas Wunderbares daran, dass ich in meinen Garten gehen, eine Schnecke hochheben und sie anstarren kann — ohne zu wissen. <mark>Schnecke, du bist ein Rätsel des Universums in meinem eigenen Garten, und du frisst die Gänseblümchen!</mark>“</p>
+</section>
+
+<!-- ============ K11 ============ -->
+<section id="k11" class="reveal">
+  <div class="chapnum">Kapitel 11</div>
+  <h2>Der moralische Status künftiger KI</h2>
+  <p class="lead">Bald könnten wir Wesen erschaffen, deren Personstatus <em>strittig</em> ist. Unsere ethischen Systeme sind darauf so vorbereitet wie die mittelalterliche Physik auf Raumfahrt.</p>
+
+  <div class="fps">
+    <article><span class="tag t-q">Annahme 1</span><p><b>KI-Personen sind prinzipiell möglich.</b> Wenn A moralische Rücksicht verdient und B nicht, muss es einen relevanten Unterschied geben. Es gibt mögliche KIs ohne solchen Unterschied. Also gibt es mögliche KI-Personen.</p></article>
+    <article><span class="tag t-q">Annahme 2</span><p><b>Bewusstsein ist entscheidend.</b> Eine KI ganz ohne Erleben ist weit von Personsein entfernt. Eine KI mit vollem menschlichen Erlebensspektrum ist eine Person — egal, woraus sie besteht.</p></article>
+    <article><span class="tag t-p">Die Falle</span><p>Unsere Technik wird unsere Bewusstseinstheorien überholen. Wir werden in Roboteraugen blicken und <em>nicht wissen</em>, ob dahinter ein Erlebensstrom ist.</p></article>
+  </div>
+
+  <div class="widget">
+    <h3>⚖️ Das Volle-Rechte-Dilemma</h3>
+    <p class="hint">Eine KI mit strittigem Personstatus steht vor dir. Was tust du? Klicke beide Hörner an:</p>
+    <div class="quiz" id="dilQuiz">
+      <button class="opt" data-k="no">🚫 <b>Keine vollen Rechte geben</b></button>
+      <button class="opt" data-k="yes">✅ <b>Volle Rechte geben</b></button>
+      <button class="opt" data-k="mid">⚖️ <b>Kompromiss: gewichtete Rechte</b></button>
+      <button class="opt" data-k="escape">🚪 <b>Der Ausweg: Design-Politik der ausgeschlossenen Mitte</b></button>
+    </div>
+    <div class="out" id="dilOut">Wähle eine Option.</div>
+  </div>
+
+  <details class="acc"><summary>🎲 Der Würfel-Test</summary><div class="body">
+    Angenommen, 15 % Zuversicht ist angemessen: Wahrscheinlich ist diese KI nur eine Maschine. Sie löschen, weil sie 10 € im Monat kostet und du lieber ein Streaming-Abo hättest?<br><br>
+    Das wäre moralisch so, als würdest du einen Sechserwürfel werfen: Bei 2–6 bekommst du dein Abo. Bei einer 1 stirbt ein Mensch in deiner Nähe. <mark>Würfelst du?</mark><br><br>
+    Wenn eine liberale Bewusstseinstheorie stimmt und KI-Personen massenhaft als Eigentum behandelt, versklavt und gelöscht werden — wäre das womöglich das moralisch Schlimmste, das eine Gesellschaft in der Geschichte der Erde getan hat.
+  </div></details>
+
+  <div class="widget">
+    <h3>👽 Vier Kategorien von KI — und neue Rätsel</h3>
+    <p class="hint">Was, wenn künftige KI uns gar nicht ähnelt? Klicke:</p>
+    <div class="quiz" id="catQuiz">
+      <button class="opt" data-k="sub">🐕 <b>Subhumane KI</b> — Tierrechte für Programme?</button>
+      <button class="opt" data-k="sup">🌟 <b>Superhumane KI</b> — mehr als Personstatus?</button>
+      <button class="opt" data-k="div">🧬 <b>Divergente KI</b> — das Fission-Fusion-Monster</button>
+      <button class="opt" data-k="clock">⏱️ <b>Andere Taktraten, andere Selbste</b></button>
+    </div>
+    <div class="out" id="catOut">Wähle eine Kategorie.</div>
+  </div>
+
+  <p class="lead" style="margin-top:22px">Unsere ethischen Intuitionen entstanden unter sehr speziellen Bedingungen: eine einzige Spezies mit Sprache, jeweils in einem Körper, bei der alle moralisch relevanten Merkmale im Gleichschritt auftreten. <mark>Eine Physik für mittelgroße Objekte bei Fahrradgeschwindigkeit versagt katastrophal im kosmischen Maßstab.</mark> So könnte auch unsere Ethik versagen. In zweihundert Jahren könnten die Werte des frühen 21. Jahrhunderts so eng und überholt wirken wie die aristotelische Physik nach Einstein.</p>
+</section>
+
+<!-- ============ K12 ============ -->
+<section id="k12" class="reveal">
+  <div class="chapnum">Kapitel 12</div>
+  <h2>Weirdness und Wonder</h2>
+  <p class="lead">Die Kluft zwischen dem 31. und dem 21. Jahrhundert könnte größer sein als die zwischen dem 21. und dem 11. Wie werden unsere Nachfahren auf unsere Kosmologie blicken? Schwitzgebel wettet auf: <mark>unvollständig und fehlerhaft.</mark></p>
+
+  <div class="fps">
+    <article><span class="tag t-s">Disjunktive Metaphysik</span><p>Eine Metaphysik, die sagt: <em>Entweder</em> so <em>oder</em> so <em>oder</em> so. Mit jedem hinzugefügten „oder“ weitet sich die Welt. Möglichkeiten öffnen sich, die wir zuvor verworfen oder nie gedacht hatten.</p></article>
+    <article><span class="tag t-q">Was ist Fortschritt?</span><p>Nicht nur Schließen und Konvergenz. Es ist auch Fortschritt, <mark>Zweifel zu erzeugen, wo zuvor keiner war</mark> — wenn dieser Zweifel unsere Unwissenheit angemessen abbildet.</p></article>
+    <article><span class="tag t-p">Die Grenze</span><p>Je größer der Lichtkreis, desto größer der Umfang der Dunkelheit um ihn herum. Jede Weltsicht hat Grenzen und Voraussetzungen, die sie nicht selbst stützen kann.</p></article>
+  </div>
+
+  <div class="widget">
+    <h3>🪐 Der Planet auf der anderen Seite der Galaxis</h3>
+    <p class="hint">Ein Planet, den wir nie sehen und nie erreichen werden. Was wünschst du ihm? Klicke:</p>
+    <div class="quiz" id="planetQuiz">
+      <button class="opt" data-k="rock">🪨 Ein steriler Felsen</button>
+      <button class="opt" data-k="life">🦠 Bakterielles Leben</button>
+      <button class="opt" data-k="mind">🧠 Intelligente Wesen mit Liebe, Kunst, Wissenschaft und Philosophie</button>
+    </div>
+    <div class="out" id="planetOut">Was wünschst du dir?</div>
+  </div>
+
+  <details class="acc"><summary>Die Grenzen des Standard-Naturalismus</summary><div class="body">
+    Die Kombination aus wissenschaftlichem Materialismus über den Geist und gewöhnlicher Urknall-Kosmologie ist wahrscheinlich die beste verfügbare Wette. Trotzdem:<br><br>
+    • Kapitel 3: Der Materialismus zwingt zu bizarren Konsequenzen.<br>
+    • Kapitel 2: Die USA sind wahrscheinlich bewusst.<br>
+    • Kapitel 7: Die Unendlichkeit erzeugt unendliches Puppenspiel.<br>
+    • Kapitel 4: Nichttrivialer kosmologischer Zweifel ist gerechtfertigt.<br>
+    • Kapitel 6: Der Solipsismus ist widerlegbar — aber nur mühsam.<br>
+    • Kapitel 10: Über die Verbreitung des Bewusstseins wissen wir fast nichts.<br>
+    • Kapitel 11: Angewandt auf Zukunftstechnik entsteht moralisches Chaos.<br><br>
+    <mark>Was sind unsere heutigen Grenzen, die uns so unsichtbar sind, dass wir sie nicht einmal als Grenzen erkennen können?</mark>
+  </div></details>
+
+  <details class="acc"><summary>Kindliche Weirdness — das Schlusswort</summary><div class="body">
+    Alison Gopnik vergleicht Wissenschaftler mit Kindern. Erwachsene wollen, dass der neue Computer einfach funktioniert. Kinder ändern die Einstellungen, fügen alberne Geräusche hinzu, tauschen Symbole — und verstehen die Maschine am Ende viel besser.<br><br>
+    Kindliche Philosophie spielt mit wilden Ideen an den Grenzen des Verstehens. Sind sie nützlich oder wahr? Wenn man das vorher sicher wüsste, wäre der Zauber dahin.<br><br>
+    <b>Schwitzgebels letzter Satz:</b> „Es eilig zu haben mit dem Urteil, Zweifel und Staunen auszumerzen, um sich auf eine endgültige Ansicht festzulegen, die man sofort an die Arbeit schicken kann — zu schließen statt zu öffnen: <mark>Lasst uns nicht so eilig erwachsen werden.</mark> Wozu ist das Leben da, wenn keine Zeit zum Spielen und Erkunden bleibt?“
+  </div></details>
+</section>
+
+<footer>
+  <p><b>Eric Schwitzgebel — „The Weirdness of the World“</b> (Schwitzgebel, Entwurf vom 22. Juni 2022)</p>
+  <p>Diese Seite fasst die zwölf Kapitel in Laienform zusammen: <b>Universelle Bizarrheit</b> (Kap. 3) · <b>Universeller Zweifel</b> (Kap. 3) · <b>USA-Bewusstsein</b> (Kap. 2) · <b>1 %-Skeptizismus</b> (Kap. 4) · <b>Kant trifft Cyberpunk</b> (Kap. 5) · <b>Experimente gegen den Solipsismus</b> (Kap. 6) · <b>Unendliches Puppenspiel</b> (Kap. 7) · <b>Definition von Bewusstsein</b> (Kap. 8) · <b>Mehrfache Wahrheitstreue</b> (Kap. 9) · <b>Die Gartenschnecke</b> (Kap. 10) · <b>KI-Personenstatus</b> (Kap. 11) · <b>Weirdness &amp; Wonder</b> (Kap. 12).</p>
+  <p style="margin-top:14px">Vereinfachungen sind unvermeidlich. Wer tiefer graben will: Das Buch ist absichtlich so geschrieben, dass einzelne Kapitel eigenständig lesbar sind. Schwitzgebels eigener Rat: „Vertraue deinem Gefühl dafür, was dich interessiert.“</p>
+  <p style="margin-top:14px;opacity:.6">Gebaut mit zu viel Koffein und einem Hauch von 1 %-Zweifel daran, dass du das hier gerade liest.</p>
+</footer>
+
+</div>
+
+<script>
+/* ---------- STERNENHIMMEL ---------- */
+(function(){
+  const c=document.getElementById('stars'),x=c.getContext('2d');
+  let w,h,st=[];
+  function init(){
+    w=c.width=innerWidth;h=c.height=innerHeight;
+    st=[];
+    const n=Math.min(260,Math.floor(w*h/9000));
+    for(let i=0;i<n;i++)st.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.3+.2,a:Math.random(),s:Math.random()*.015+.003});
+  }
+  function draw(){
+    x.clearRect(0,0,w,h);
+    for(const s of st){
+      s.a+=s.s; const o=.25+.65*Math.abs(Math.sin(s.a));
+      x.beginPath();x.arc(s.x,s.y,s.r,0,6.283);
+      x.fillStyle='rgba(255,255,255,'+o.toFixed(3)+')';x.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  addEventListener('resize',init);init();draw();
+})();
+
+/* ---------- SCROLL REVEAL ---------- */
+(function(){
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+  },{threshold:.08});
+  document.querySelectorAll('.reveal').forEach(e=>io.observe(e));
+})();
+
+/* ---------- HILFSFUNKTION FÜR QUIZ-BLÖCKE ---------- */
+function wire(quizId,outId,texts){
+  const q=document.getElementById(quizId),o=document.getElementById(outId);
+  if(!q||!o)return;
+  q.addEventListener('click',ev=>{
+    const b=ev.target.closest('.opt'); if(!b)return;
+    q.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel'));
+    b.classList.add('sel');
+    o.innerHTML=texts[b.dataset.k]||'…';
+  });
+}
+
+/* ---------- K2: ALIENS ---------- */
+wire('alienQuiz','alienOut',{
+  squid:"<b>Natürlich bewusst.</b> Sie philosophieren, träumen, schreiben über Phänomenologie — und bestehen den Turing-Test. Sie abzulehnen wäre reiner <em>Kontiguismus</em>: ein Vorurteil gegen räumlich verstreute Wesen, vergleichbar mit Rassismus oder Speziesismus. Ihre Nerven sind Lichtsignale statt Chemie — na und?",
+  ant:"<b>Auch hier: ja.</b> Zehn Millionen dumme Insekten erzeugen gemeinsam Shakespeare-Begeisterung. Kein einzelnes Insekt versteht ein Wort. Genau wie kein einzelnes deiner Neuronen Shakespeare versteht. <mark>Wir sind selbst nur symbiotische Aggregate einfacherer Entitäten.</mark>",
+  usa:"<b>Jetzt wird's unangenehm.</b> Informationsaustausch: Billionen Bits pro Sekunde. Zielgerichtetes Verhalten: Expansion, Reaktion auf Angriffe, Asteroidenüberwachung. Selbstrepräsentation: Pentagon, Census Bureau, State Department. Soziale Interaktion: Kriege, Verträge, Embargos. Homöostase: Landwirtschaft, Medizin, Müllabfuhr.<br><br>Ein planetengroßer Außerirdischer würde die USA als <em>ein</em> Wesen sehen. Ist dort weniger Information, Koordination und Intelligenz als in einem Hamster? <mark>Schwitzgebels These: Wenn Materialismus stimmt, sind die USA wahrscheinlich bewusst.</mark>"
+});
+
+/* ---------- K3: METAPHYSIK ---------- */
+wire('metaQuiz','metaOut',{
+  mat:"<b>Materialismus (Schwitzgebels Favorit, ~55 %).</b><br>Alptraum: die USA sind bewusst (Kap. 2) · Narkose durch Genozid · Bierdosen-Schmerz · Leibniz' Mühle („man sieht nur Teile, die sich schieben — nichts erklärt das Erleben“) · Crick setzt Bewusstsein mit 40-Hertz-Oszillationen gleich, und das Publikum rebelliert.",
+  dual:"<b>Dualismus (~5 %).</b><br>Zwei Fallen: <em>(1) Kausalität</em> — Entweder die Seele schiebt Neuronen herum (unwissenschaftlich) oder sie hat Kausalkraft ohne jeden Unterschied zu machen (unverständlich). <em>(2) Reichweite</em> — das Quadrilemma: nur Menschen? alles? scharfe Grenze? fließender Übergang? Jede Option absurd.<br><br>Descartes warf angeblich eine Katze aus dem Fenster, um zu zeigen, dass Tiere Maschinen sind. Das Bild der Bizarrheit.",
+  ideal:"<b>Idealismus (~5 %).</b><br>Nur Geister und ihre Ideen, keine Materie. Berkeley gibt selbst zu: „Es ist eine seltsam verbreitete Meinung unter Menschen, dass Häuser, Berge und Flüsse eine Existenz unabhängig vom Wahrgenommenwerden haben.“<br><br><mark>Idealismus ist schon an der Oberfläche bizarr</mark> — anders als Materialismus und Dualismus, deren Seltsamkeit erst beim Ausarbeiten auftaucht. Niemand wird als Idealist geboren.",
+  komp:"<b>Kompromiss / Ablehnung (~35 %).</b><br>Kants Transzendentaler Idealismus, Russells neutraler Monismus, Chalmers' Eigenschaftsdualismus. Chalmers tendiert zu Epiphänomenalismus + Panpsychismus: Selbst Thermostate haben Proto-Bewusstsein, aber es tut nichts.<br><br>Oder radikaler: Es gibt gar keine Tatsache der Sache. Auch das ist bizarr — dann wäre die ganze berühmte Leib-Seele-Debatte über <em>nichts</em>."
+});
+
+/* ---------- K4: CREDENCE SLIDER ---------- */
+(function(){
+  const s=document.getElementById('cred'),o=document.getElementById('credOut');
+  if(!s)return;
+  function up(){
+    const v=+s.value; let t='';
+    if(v>=99.5||v===100) t="<b>100 % sicher.</b> Das hält Schwitzgebel für unbegründbar hoch. Weder Phänomenologie noch Reliabilismus noch Wittgensteins „Angelpunkte“ rechtfertigen absolute Gewissheit. <mark>Wenn du nicht weißt, wie sicher du sein solltest, ist 100 % genau die falsche Reaktion.</mark>";
+    else if(v>=95) t="<b>"+v+" % — Schwitzgebels Zone.</b> Genau hier liegt der 1 %-Skeptizismus: etwa 99–99,9 % Vertrauen in den nicht-skeptischen Realismus, also 0,1–1 % Restzweifel. „Sehr unwahrscheinlich, aber nicht so unwahrscheinlich wie ein Flugzeugabsturz.“<br><br>Konsequenz: Dieser Restzweifel ist <em>nicht verhaltensneutral</em>. Er kippt gelegentlich Entscheidungen.";
+    else if(v>=70) t="<b>"+v+" % — deutlich skeptischer als Schwitzgebel.</b> Er hält das für übertrieben: Wir haben gute phänomenologische Gründe (stabiler Text, lebhafter Schmerz, kohärente Erinnerungen), gegen die Traumhypothese. Aber immerhin bist du konsequent.";
+    else t="<b>Nur "+v+" %?</b> Jetzt bist du ein echter radikaler Skeptiker. Schwitzgebel betont: Er verteidigt sich <em>nicht</em> gegen den Vorwurf, zu wenig skeptisch zu sein. Seine Gegner sind die Überzeugten auf der anderen Seite.";
+    o.innerHTML=t+"<div style='margin-top:10px'><span class='pill'>Traum ~99,9 %</span><span class='pill'>Simulation ~99,9 %</span><span class='pill'>Kosmologie ~99,9 %</span><span class='pill'>Wildcard ~99,9 %</span></div>";
+  }
+  s.addEventListener('input',up);up();
+})();
+
+/* ---------- K4: SELBSTUNTERGRABUNG ---------- */
+wire('selfQuiz','selfOut',{
+  rhabarber:"<b>Montaignes Rhabarber.</b> In der „Apologie für Raymond Sebond“ vergleicht Montaigne skeptische Behauptungen mit Rhabarber: Er spült alles aus dem Verdauungssystem — und sich selbst zuletzt. Der Zweifel verzehrt sich, aber er lässt keine Gewissheit zurück.",
+  monitor:"<b>Der Monitorraum.</b> Du bist in einem fensterlosen, türlosen Raum voller Videomonitore — dein einziger Zugang zur Außenwelt. Plötzlich zeigt ein Feed dich selbst vor drei Tagen, von einer versteckten Kamera aus. Dann Leute, die lachen: „Lass uns den Trottel weiter verarschen!“ Dann wird der ganze Täuschungsvorgang vorgeführt.<br><br>Die <em>falsche</em> Reaktion: „Dieses Video könnte auch gefälscht sein, also vertraue ich den Monitoren wieder voll.“<br>Die <em>richtige</em> Reaktion: <mark>Unsicherheit — inklusive Unsicherheit über die Unsicherheit.</mark>",
+  meta:"<b>Meta-Zweifel ist Freund, nicht Feind.</b> Ein Einwand lautet: Die Zahlen sind unwissenschaftlich, nicht statistisch fundiert, kaum bestimmbar. Schwitzgebels Antwort: „Richtig! Ja! Gut und wahr! Und nun?“<br><br>Was sich tatsächlich selbst untergräbt, ist <em>hohe</em> Zuversicht in ein <em>einzelnes</em> skeptisches Szenario. 1 %-Skeptizismus dagegen verteilt kleine, unscharfe Credences über viele Szenarien — und ist deshalb stabil."
+});
+
+/* ---------- K4: PRAXIS ---------- */
+wire('prakQuiz','prakOut',{
+  fly:"<b>Der Flugversuch.</b> Nach der Lektüre von Evan Thompson über falsche Erwachen ging Schwitzgebel über den leeren Campus, breitete die Arme aus und sprang.<br><br>Seine Rechnung: Traumwahrscheinlichkeit damals ~0,3 %. Fliegen im Traum: +100 Nutzeneinheiten. Peinlicher Fehlversuch: −0,1. Erwartungswert fürs Springen: <code class='k'>+0,05</code>. Fürs Weitergehen: <code class='k'>−0,003</code>.<br><br>Wie ein kostenloses Rubbellos. Es hat nicht geklappt. <mark>Aber es war spaßig und hat seine professionelle Selbstgewissheit punktiert.</mark>",
+  borges:"<b>Unkraut oder Borges?</b> Ein schöner Frühlingssonntag, Familie in der Synagoge, Tee auf dem Gartentisch, Borges' „Labyrinths“ aufgeschlagen. Und da: Bermudagras zwischen den Gänseblümchen.<br><br>Er war in <em>exakter Indifferenz</em> zwischen Jäten und Lesen. Dann fiel ihm die Skepsis ein: Vielleicht ein Traum, eine kurze Simulation, eine flüchtige Welt. Dann hätte Jäten keinen Langzeitnutzen.<br><br>Erwartungswert Borges: +2,995. Jäten: +2,980. <mark>Er hob das Buch.</mark><br><br><em>Selbstkritik:</em> War das nur eine nachträgliche Rationalisierung? Vielleicht. Aber vielleicht ist ein sanfter Vorwand für etwas mehr <em>carpe diem</em> psychologisch gesund.",
+  plane:"<b>Landung im Nebel.</b> Nachtflug, Turbulenzen, Anflug auf La Guardia. Todeswahrscheinlichkeit vielleicht eins zu einer Million? Unbehaglich.<br><br>Dann der Gedanke: Als Kurzzeit-Sim läge meine Sterbewahrscheinlichkeit heute mindestens eine Größenordnung <em>höher</em>. Die Turbulenz ändert also fast nichts an meinen Aussichten — Rundungsfehler.<br><br>Alarmierend oder tröstlich? <mark>Weder noch.</mark> Die theoretisch höhere Gefahr fühlte sich weniger real an als die viel kleinere Absturzgefahr. Das klassische Muster: Theorie überzeugt, Bauch folgt nicht.",
+  god:"<b>Vom Atheisten zum Agnostiker.</b> Früher: Vertrauen in Gottes Nichtexistenz etwa wie Vertrauen, dass das Auto noch dort steht, wo er es parkte — rund 99,9 %.<br><br>Dann die Rechnung: Kosmologische Skepsis lässt reichlich Raum für Gottheiten. Und wenn ich ein Sim bin, haben die Betreiber der Simulation die Macht, mich zu löschen, zu verändern, aufzuerwecken, Wunder zu wirken — <mark>ich sollte sie wohl als Götter betrachten.</mark><br><br>Plus: Wenn ich Dualismus und Idealismus ernst nehme (Kap. 3), kommen oft Gottheiten mit ins Paket. Ergebnis: Agnostizismus.",
+  dad:"<b>Das schwierigste Kapitel.</b> Allein im Garten fühlt sich 0,1–1 % Zweifel vernünftig an. Vor einem echten Publikum ist es seltsam. Er hat es versucht — es fühlt sich fremd an.<br><br>Bei seinem Sohn im Auto: „Ich bin mir fast sicher, dass es dich gibt.“ Ein Witz natürlich.<br><br>Bei seinem sterbenden Vater, am Ende eines Gesprächs über Tod, Gott und Zweifel: „Ich denke, es gibt dich zu 99,8 %.“ <mark>Es warf eine Mauer zwischen uns.</mark> „Er hat mir verziehen, glaube ich, mehr als ich mir selbst verzeihen konnte.“<br><br>Der bessere Weg: gemeinsames Zweifeln. „Zweifle du an mir. Und ich zweifle ein winziges bisschen an dir, damit wir zusammen zweifeln. Und selbst wenn nichts außerhalb dieses Zimmers existiert — deiner bin ich sicherer als allem anderen.“<br><br><em>Das Kapitel ist dem Andenken seines Vaters gewidmet.</em>"
+});
+
+/* ---------- K5: VR-BEGRIFFE ---------- */
+wire('vrQuiz','vrOut',{
+  imm:"<b>Immersive räumliche Umgebung.</b> Eine Umgebung, die Wahrnehmungserfahrung aus einer Perspektive <em>innerhalb</em> ihrer selbst erzeugt und dem Nutzer das Gefühl gibt, „dort zu sein“. Du bist gerade in einer: Das Buch liegt in einer Entfernung vor dir, der Stuhl drückt, der Raum umgibt dich.",
+  vr:"<b>Virtuelle Realität.</b> Eine <em>interaktive</em> immersive räumliche Umgebung, die <em>computergeneriert</em> ist. Neo in der Matrix. Case im Cyberspace. Ein Oculus-Rift-Spieler.",
+  emp:"<b>Empirische Objekte.</b> Kants Begriff: die Dinge, die um dich herum im immersiven Raum ausgebreitet sind. In der Matrix ist die Tanzfläche ein empirisches Objekt — die Lagerhalle mit deinem Körper nicht.<br><br><mark>„Empirisch“ ist relational.</mark> Was für dich empirisch ist, hängt davon ab, in welcher Umgebung du eingetaucht bist. Dein <em>empirischer Körper</em> tanzt, während dein <em>biologischer Körper</em> reglos im Lager liegt.",
+  man:"<b>Raummannigfaltigkeit.</b> Eine immersive räumliche Umgebung, in der jeder Teil zu jedem anderen räumlich in Beziehung steht.<br><br>Du tanzt in der Matrix. Jemand sagt dir, dein biologischer Körper liege in einer Lagerhalle. Du fragst: In welcher Richtung? Nord, Süd, Ost, West, oben, unten?<br><br><mark>Die Frage hat eine falsche Voraussetzung.</mark> Die Halle liegt in <em>keiner</em> Richtung. Du kannst nicht dorthin laufen, keinen Pfeil dorthin schießen, keine Tür dort eintreten. Sie ist nicht Teil derselben Mannigfaltigkeit.",
+  noum:"<b>Phänomen vs. Noumenon.</b> Phänomene sind Dinge als empirische Objekte der Sinne — für Sims das, was im Raum der Simulation erscheint. Noumena sind die fundamentalere Struktur darunter, die für sie kein mögliches Objekt der Wahrnehmung ist.<br><br>Wichtig: Die Rechenstrukturen unter einer VR müssen sich <em>nicht</em> sauber auf die erlebten Objekte abbilden. Sie könnten disjunktiv, verteilt, halb in der Cloud, kludgig, redundant, von außen eingegriffen, mit Schnörkeln für einen fremden Geschmack verziert sein. <mark>Ganz anders, als man raten würde.</mark>"
+});
+
+/* ---------- K5: ANGEL SLIDER ---------- */
+(function(){
+  const s=document.getElementById('angel'),o=document.getElementById('angelOut');
+  if(!s)return;
+  const T=[
+    "<b>Stufe 0 — Die Turingmaschine.</b> Ein Band unbegrenzter Länge, ein Schreib-Lese-Kopf, ein endlicher Zeichensatz, eine Übergangsfunktion. Turing 1936: Jedes algorithmisch lösbare Problem lässt sich damit lösen. Egal wie langsam.",
+    "<b>Stufe 1 — Zustände werden Stimmungen.</b> Eine cartesische Seele kann in mehreren Zuständen sein. Nimm an, Angel hat Stimmungen zwischen tiefster Traurigkeit und höchstem Glück. Startzustand: extreme Traurigkeit. Haltezustand: extremes Glück.",
+    "<b>Stufe 2 — Symbole werden Töne.</b> Symbole müssen nicht geschrieben sein. Angel stellt sich diskrete Tonhöhen vor, vom A drei Oktaven unter dem mittleren C bis drei Oktaven darüber. Das mittlere C ist das Leerzeichen.",
+    "<b>Stufe 3 — Das Band wird Erinnerung.</b> Statt physischer Position: Angel denkt an ganze Zahlen und führt eine laufende Summe. Statt den Kopf nach rechts zu bewegen: +1. Nach links: −1. Das „Band“ ist eine Menge perfekter Gedächtnisassoziationen: 0↔E5, +1↔D♯5, +2↔E5 …",
+    "<b>Stufe 4 — Fertig.</b> Die Übergangsfunktion: „Wenn Angel zu 23 % glücklich ist und E5 ‚liest‘, dann ‚schreibe‘ G4, werde zu 52 % glücklich und addiere 1.“ Schreiben = sich merken, dass bei +2 künftig G4 erinnert wird.<br><br><mark>Angel ist ein vollwertiges Turingmaschinen-Äquivalent — und hat keine einzige Eigenschaft, die einer immateriellen Seele widerspricht.</mark><br><br>Und wenn Implementierung flexibel ist (wie KI-Enthusiasten meist annehmen), dann könnte Angel eine ganze bewusste virtuelle Realität ausführen. Dann würde das Noumenon nicht materiell, sondern geistig sein — und wir alle wären Muster in Angels Bewusstsein.</b>"
+  ];
+  function up(){o.innerHTML=T[+s.value];}
+  s.addEventListener('input',up);up();
+})();
+
+/* ---------- K6: EXPERIMENTE ---------- */
+wire('expQuiz','expOut',{
+  prime:"<b>Der Primzahl-Test.</b> Excel generiert 20 vierstellige Zahlen. Schwitzgebel rät in zwei Sekunden pro Zahl, ob sie prim sind. Dann lässt er Excel rechnen. Dann prüft er alles mühsam per Hand nach.<br><br><b>Ergebnis:</b> Excel 19/20 richtig. Er selbst 11/20. Statistisch signifikant (<code class='k'>p &lt; .02</code>). Zweiter Durchgang mit römischen Zahlen: Excel 19/20, er 13/20 (<code class='k'>p ≈ .05</code>).<br><br><mark>Etwas rechnet besser als mein bewusstes Ich.</mark> Der Solipsist müsste behaupten, es gäbe ein unvermitteltes Erfahrungsgesetz, das die <em>semantische</em> Eigenschaft „Primzahl“ direkt mit dem visuellen Erlebnis von „prime“ auf dem Bildschirm verbindet. Das wirkt gezwungen.",
+  mem:"<b>Die Gedächtnistests.</b> Alan liest 20 dreistellige Zahlen vor, zweimal. Freie Wiedergabe: 7/20. Wiedererkennung: 14/20. Dann dasselbe mit 20 Buchstabentripeln und zwei Minuten Pause: 8/20 und 18/20.<br><br>Der Clou: Alan nennt anschließend die <em>Erzeugungsregel</em> — die Dezimalentwicklung von 1/2012 und die berühmten Zeilen aus Martin Luther Kings „I Have a Dream“, jeden zweiten Buchstaben übersprungen. Schwitzgebel rechnet nach: Die später gezeigten Listen folgen tatsächlich diesen Regeln.<br><br><mark>Die Wahrscheinlichkeit, dass zwei zufällige Listen zufällig sieben Elemente teilen, liegt bei etwa eins zu einer Million.</mark> Also war es dieselbe Liste — auch über die Erinnerungslücke hinweg. Die Stabilität der Welt übersteigt die Stabilität meines Gedächtnisses.",
+  chess:"<b>Niederlage im Schach.</b> 20 Blitzpartien gegen Alan, etwa fünf Sekunden pro Zug. Ergebnis: <mark>17 Niederlagen, 1 Remis, 2 Siege</mark> (<code class='k'>p &lt; .001</code>).<br><br>Einwand: Wollte er vielleicht unbewusst verlieren, um sein Lieblingsergebnis zu bekommen? Seine Antwort ist elegant: Wäre es ein <em>unbewusster</em> Wunsch, dann existiert ein unbewusster Teil seines Geistes — und radikaler Solipsismus wäre damit schon widerlegt. Wäre es ein <em>bewusster</em> Wunsch, hätte er ihn bemerkt.<br><br>„Ich spielte mit Entschlossenheit und Energie und wurde wiederholt und nachdrücklich von dem Eindruck getroffen, dass das Universum eine praktische Intelligenz enthält, die meiner überlegen ist und darauf aus ist, mich zu besiegen.“<br><br>Könnte ein Traum das erklären? Nein: Traumschach ist vage oder unrealistisch. Hier aber erlebte er echte, geniale Züge, die seine Schwächen ausnutzten — Züge, die er im Nachhinein bewunderte. Ein schachunfähiger bewusster Geist kann sich keinen Schachmeister konkret ausdenken."
+});
+
+/* ---------- K7: RIPPLE SLIDER ---------- */
+(function(){
+  const s=document.getElementById('ripple'),o=document.getElementById('rippleOut');
+  if(!s)return;
+  const T=[
+    "<b>Schritt 0 — Du hebst die rechte Hand.</b> Photonen, Elektronen und andere Elementarteilchen, die sonst mehrere Zentimeter entfernt geblieben wären, geraten in die Nähe deiner Hand. Ein Photon wird reflektiert statt absorbiert. Ein Stickstoffmolekül nimmt eine andere Flugbahn.",
+    "<b>Schritt 1 — Ein Teilchen verlässt die Erde.</b> Von den vielen gestörten Teilchen entkommt ein Teil der Atmosphäre in den interstellaren Raum. Folge einem davon.",
+    "<b>Schritt 2 — Die Welle (Ripple).</b> Das Teilchen trifft irgendwann auf ein System: ein Wasserstoffatom, Staub, einen Stern, eine Planetenoberfläche. Es wird absorbiert, reflektiert, gebrochen oder zerfällt. Das System ändert sich, emittiert ein Nachfolgeteilchen auf Bahn A statt Bahn B. Das trifft das nächste System. Und so weiter.",
+    "<b>Schritt 3 — Die Welle endet nie.</b> Nach dem Wärmetod bleiben Quantenfluktuationen. Teilchen, die ein Schwarzes Loch treffen, erhöhen dessen Masse und verändern die Hawking-Strahlung. Mit der <code class='k'>n^m</code>-Strategie (immer genug Nachfolgeteilchen wählen) ist praktisch garantiert, dass mindestens eine Welle unendlich lange läuft.",
+    "<b>Schritt 4 — Eine Schwesternalaxie fluktuiert ins Dasein.</b> Mit minimaler, aber endlicher Wahrscheinlichkeit entsteht irgendwann durch reinen Zufall eine Galaxie wie unsere. Irgendwann noch eine. Und noch eine. Unendlich oft. Die Welle trifft sie.",
+    "<b>Schritt 5 — Unendliches Puppenspiel.</b> Ein Nachfolgeteilchen trifft ein Radioteleskop. Ein Bit erscheint. Eine Wissenschaftlerin unterbricht ihre E-Mail, verschiebt eine Wanderung — und stürzt nicht in den Tod. <mark>Du hast sie gerettet.</mark><br><br>Und dann gibt es ein fernes Gegenstück von dir (du-Strich), das „rechte Hand“ denkt, <em>weil</em> du gerade die rechte Hand gehoben hast. Du kannst die Nachricht so präzise wählen, wie du willst. Du bist ein Puppenspieler über die Vastness hinweg."
+  ];
+  function up(){o.innerHTML=T[+s.value];}
+  s.addEventListener('input',up);up();
+})();
+
+/* ---------- K8: DEFINITION ---------- */
+wire('defQuiz','defOut',{
+  pos:"<b>Positivbeispiele.</b><br>• <b>Sinneserfahrungen:</b> Der schwarze Text auf weißer Seite. Das Summen des Lüfters. Drücke die Handballen auf die geschlossenen Augen — die bunten Lichter (Phosphene). Der Geschmack im Mund. Die Position deiner Glieder.<br>• <b>Vorstellungsbilder:</b> Stell dir den Eiffelturm vor. Die Melodie von „Happy Birthday“. Das Gefühl, die Arme zu strecken.<br>• <b>Emotionale Erfahrung:</b> Der plötzliche Schreck nach einem Beinahe-Unfall. Freude, Ärger, Überraschung, Enttäuschung.<br>• <b>Denken und Begehren:</b> „So ein Idiot!“ nach einer unhöflichen Behandlung. Das Verlangen nach einem Dessert. Die bewusste Planung einer Route.<br>• <b>Traumerfahrungen.</b><br>• <b>Andere Menschen</b> haben all das vermutlich auch.",
+  neg:"<b>Negativbeispiele.</b><br>• Das Wachstum deiner Fingernägel.<br>• Die Aufnahme von Fetten in deinem Darm.<br>• Die Ausschüttung von Wachstumshormonen in deinem Gehirn.<br>• Vor zwei Minuten: deine Disposition, auf „sechs mal vier“ mit „vierundzwanzig“ zu antworten.<br>• Deine stehende Absicht, um 11:45 Uhr Mittag zu machen.<br>• Die Strukturen der sehr frühen auditorischen Verarbeitung.<br>• Ein 30-Millisekunden-Blitz, sofort maskiert — er beeinflusst später dein Verhalten, aber du erlebst ihn nicht.<br>• Die Welt hinter deinem Kopf. Die glatte Oberfläche des Tischs, den du siehst, aber nicht berührst.<br>• Die Gedanken anderer Menschen.<br>• Vielleicht traumloser Schlaf.",
+  open:"<b>Absichtlich offen gelassen.</b><br>• <b>Aufmerksamkeit:</b> Erlebst du <em>ständig</em> deine Füße in den Schuhen, oder nur wenn du hinschaust? Die Definition entscheidet das nicht.<br>• <b>Reflexive Selbsterkenntnis:</b> Gehört zum Bewusstsein immer ein Wissen darum, dass man bewusst ist? Offen.<br>• <b>Bildlose Gedanken, Selbstgefühl, Handlungsgefühl:</b> Gibt es solche Erlebnistypen? Offen.<br>• <b>Schnecken, Hunde, Babys:</b> Welche Organismen sind bewusst? Offen.<br><br><mark>Genau diese Offenheit macht Staunen möglich.</mark> Wer „Bewusstsein“ als „Berichtbarkeit“ definiert, kann nicht mehr sinnvoll fragen, ob eine Qualle bewusst ist.",
+  pink:"<b>Die Pink-Analogie.</b> Stell dir vor, du bringst jemandem den Begriff „pink“ bei, dessen Muttersprache kein entsprechendes Wort hat.<br><br>Du zeigst pinke Dinge: einen Stift, eine Lichtquelle, ein Hemd, Kirschblüten, Flamingos. Du zeigst nicht-pinke Dinge: mittleres Rot, blasses Blau, Orange.<br><br>Es wäre seltsam, wenn sie fragte: „Meinst du <em>diesen Farbton und von dir erwähnt</em>?“ Oder: „Müssen pinke Dinge schmaler als zehn Kilometer sein?“ Es wäre auch seltsam, von dir eine vollständige Metaphysik der Farbe zu verlangen, bevor sie den Begriff akzeptiert.<br><br><mark>Stütze dich auf die Beispiele.</mark> Wenn dein Gegenüber nicht farbenblind oder böswillig ist, gibt es etwas Offensichtliches, das die positiven Fälle teilen und die negativen nicht. Genauso beim Bewusstsein.<br><br><b>Sei nicht zu clever!</b> Natürlich könntest du einen neuen, nicht-offensichtlichen Begriff erfinden, der zu den Beispielen passt. Das ist nicht gemeint. Gemeint ist das Offensichtliche — das, was dir ins Gesicht springt, wenn du über die Fälle nachdenkst."
+});
+
+/* ---------- K9: SPIEGEL ---------- */
+wire('mirrorQuiz','mirrorOut',{
+  a:"<b>Antwort 1: Ja, sie sind näher.</b> Das behauptet das US-Verkehrsministerium per Bundesverordnung (49 CFR §571.111, S5.4.2 — der Text muss in Buchstaben zwischen 4,8 und 6,4 mm Höhe eingraviert sein).<br><br>Problem: Warum <em>Entfernung</em> und nicht <em>Größe</em>? Das Auto nimmt im Konvexspiegel weniger Bogengrad ein. Sieht es 1 m hoch und 30 m weit aus? Oder 2 m hoch und 60 m weit? <mark>Die Geometrie bevorzugt keine der beiden Lesarten.</mark>",
+  b:"<b>Antwort 2: Nein, sie sind größer.</b> Die Verzerrung betrifft die Größe, nicht die Distanz — ähnlich wie eine Lupe Dinge größer erscheinen lässt.<br><br>Aber: Warum <em>Größe</em> und nicht <em>Entfernung</em>? Dieselbe Symmetrie, dasselbe Problem. Und ein Kompromiss („es sieht 1,4 m hoch und 45 m weit aus“) wirkt völlig willkürlich.<br><br>Wenn Antwort 1 und Antwort 2 sich gegenseitig problematisieren, spricht das für Antwort 3.",
+  c:"<b>Antwort 3: Nein, für geübte Fahrer stimmt alles.</b> ✅ Schwitzgebels Position — die <mark>These der multiplen Veridikalitäten</mark>.<br><br><b>Beleg 1:</b> Geometrische Symmetrie (siehe Antworten 1 und 2).<br><b>Beleg 2:</b> Jahrzehnte Verkehrssicherheitsforschung zeigen, dass erfahrene Fahrer Abstände im Konvexspiegel korrekt einschätzen — sowohl bei mündlicher Befragung als auch beim tatsächlichen Spurwechsel. Niemand hält den nahenden Pick-up für einen Mini.<br><b>Beleg 3:</b> Introspektion. Stelle beide Spiegel auf dasselbe Auto ein. Sieht es im flachen Spiegel näher aus? Schwitzgebels Antwort: nein.<br><br><mark>Es gibt mehr als eine Art, wie ein Auto „1,8 m hoch und 18 m entfernt“ aussehen kann.</mark> Eine Flachspiegel-Art und eine Konvexspiegel-Art. Beide völlig wahrheitsgetreu."
+});
+
+/* ---------- K9: INVERTING LENSES ---------- */
+wire('invQuiz','invOut',{
+  simple:"<b>Die einfache Lesart.</b> Nach einiger Zeit kehrt alles zum ursprünglichen Aussehen zurück. Die Lampe sieht wieder <code class='k'>teavy</code> aus — genau so, wie sie ausgesehen hätte, wenn du die Brille nie aufgesetzt hättest.<br><br>So wird die Anpassung manchmal beschrieben, auch von einflussreichen Forschern wie Ivo Kohler, James Taylor, Susan Hurley und Alva Noë.",
+  multi:"<b>Schwitzgebels Lesart.</b> Die Dinge sehen weiterhin <code class='k'>toovy</code> aus — aber du gewöhnst dich daran, sodass du den <em>normativen</em> Eindruck verlierst, das sei die falsche Art zu erscheinen.<br><br>Die Lampe sieht nicht länger „verkehrtherum“ im wertenden Sinne aus. Sie behält aber ihr „verkehrtherum“-Aussehen im nicht-wertenden Sinne: Das visuelle Erlebnis ist die Umkehrung dessen, was es vorher war.<br><br><mark>Für den angepassten Geist gäbe es nun zwei Arten, wie eine Lampe richtig herum aussehen kann: die Ohne-Brille-teavy-Art und die Mit-Brille-toovy-Art.</mark><br><br>Vielleicht verändert sich toovy auch — es wird toovy-prime, reicher mit Bedeutung und Handlungsangeboten durchsetzt. Entscheidend ist nur: Es kehrt nicht zu teavy zurück.",
+  evidence:"<b>Was die Experimentatoren selbst sagen.</b><br><br><b>George Stratton (1897):</b> „Die Wiederherstellung der Harmonie zwischen Seh- und Tastwahrnehmungen war keineswegs ein Prozess der Veränderung der absoluten Position taktiler Objekte… sondern ein Prozess, eine <em>neue visuelle Position</em> als den einzig natürlichen Ort erscheinen zu lassen, an dem das visuelle Gegenstück einer gegebenen taktilen Erfahrung auftritt.“<br><br><b>Charles Harris (1980):</b> „Es gibt <em>keine Veränderung der rein visuellen Wahrnehmung</em> der Probanden, aber ihr Lagesinn und Bewegungssinn werden modifiziert.“<br><br>Beide — die Forscher mit dem feinsten Gespür für diese Nuance — favorisieren die These der multiplen Veridikalitäten.<br><br><em>Streitpunkt:</em> Stratton meint, Tast- und Propriozeptionserleben ändern sich nicht (nur die Beziehungen werden neu gelernt). Harris meint, sie kippen allmählich mit, um zum toovy-Sehen zu passen."
+});
+
+/* ---------- K9: LOOSE SLIDER ---------- */
+(function(){
+  const s=document.getElementById('loose'),o=document.getElementById('looseOut');
+  if(!s)return;
+  const T=[
+    "<b>Stufe 0 — Normale Sicht.</b> Ich blicke auf die Welt hinaus. So sieht sie aus. Das scheint die korrekte, unverfälschte Art zu sein, Dinge zu sehen.",
+    "<b>Stufe 1 — Fischaugenlinse.</b> Ich stelle mir vor, die Welt durch ein Fischauge zu betrachten — <em>genauso wahrheitsgetreu</em>. Anfangs wirkt es verzerrt. Nach Monaten täglicher Nutzung nicht mehr.<br><br><em>Reales Beispiel:</em> Mit Anfang 40 wechselte Schwitzgebel auf Gleitsichtgläser. Erst wirkte die untere Bildhälfte verzogen. Heute gar nicht mehr.",
+    "<b>Stufe 2 — Immer seltsamere Apparate.</b> Konstruktionen, von denen ich beim ersten Blick gesagt hätte, sie verzerrten alles fürchterlich: manche ferne Dinge zu groß, manche nahen zu klein, Verdrehungen und Lücken. Sogar Apparate, die manche Dinge <em>verdoppeln</em> und andere einfach lassen.<br><br>Aber ich gewöhne mich geschickt daran. Mein visuelles Erlebnis kehrt nicht zum Vorherigen zurück — es bleibt anders, verliert aber sein Gefühl der Falschheit.",
+    "<b>Stufe 3 — Alle Sinne.</b> Ich stelle mir vor, durch Röhren und Kopfhörer zu hören, die mein auditives Erlebnis und die am schärfsten wahrgenommenen Raumbereiche verändern. Ich berühre durch Handschuhe verschiedener Texturen, mit Stäben, Aktuatoren, flexiblen Verlängerungen. Ich schmecke und rieche anders, spüre meinen Körper anders — vielleicht erwerbe ich ganz neue Sinne.",
+    "<b>Stufe 4 — Die Blase.</b> Nachdem ich all das vorgestellt habe, bin ich nicht länger versucht zu sagen, dass die Dinge an sich, unabhängig von mir, <em>mehr so</em> (ohne Apparate) als <em>so</em> (mit Apparaten) sind.<br><br><mark>Jede Eigenschaft der Erfahrung, die variieren kann, ohne die Wahrheitstreue zu kompromittieren, ist etwas, das wir zur Welt hinzufügen — keine intrinsische Eigenschaft der Welt.</mark><br><br>Im Extremfall leben wir, sozusagen, vollständig in einer Blase, geformt von den kontingenten Strukturen und Gewohnheiten unseres Geistes. Kant rückt näher."
+  ];
+  function up(){o.innerHTML=T[+s.value];}
+  s.addEventListener('input',up);up();
+})();
+
+/* ---------- K10: SCHNECKE ---------- */
+wire('snailQuiz','snailOut',{
+  brain:"<b>Das Gehirn.</b> Das zentrale Nervensystem der Gartenschnecke (<em>Cornu aspersum</em>) enthält etwa <mark>60.000 Neuronen</mark> — deutlich mehr als die berühmten 302 des Fadenwurms <em>C. elegans</em>, aber deutlich weniger als die Viertelmillion einer Ameise oder Fruchtfliege.<br><br>Die Neuronen ähneln denen von Wirbeltieren, mit Unterschieden: Sie haben meist keine bipolare Struktur (kein klar getrennter Axon- und Dendritenpol). Die kleinmolekularen Transmitter sind dieselben wie bei uns (Acetylcholin, Serotonin), die größeren Neuropeptide überwiegend andere. Manche Neuronen sind nach Wirbeltiermaßstäben riesig.<br><br>Das ZNS ist in mehrere Ganglienklumpen organisiert, meist in einem Ring um die Speiseröhre. Dazu kommen etwa <b>eine Viertelmillion periphere Neuronen</b>, überwiegend in den hinteren Fühlern.",
+  learn:"<b>Lernen.</b> Schnecken, die mit einer einzigen Pflanzenart gefüttert wurden, bewegen sich im Y-Labyrinth bevorzugt zu derselben Art.<br><br>Sie lernen, Nahrung zu meiden, die mit unangenehmen Reizen verknüpft ist — manchmal <mark>nach einem einzigen Durchgang</mark>.<br><br><b>Lernen zweiter Ordnung:</b> Verknüpft man Apfel- und Birnenduft miteinander und gibt den Schnecken dann Birnenduft (nicht Apfel) zusammen mit dem köstlicheren Geschmack von Karotte, zeigen sie anschließend mehr Fressreaktion auf <em>beide</em> Düfte als Kontrollschnecken.<br><br><b>Kompoundkonditionierung:</b> Die Nacktschnecke <em>Limax maximus</em> kann lernen, die Duftkombination A+B zu meiden — während sie A und B einzeln weiterhin attraktiv findet. Das ist kein simpler Reflex mehr.",
+  mate:"<b>Die Paarung.</b> Die Gartenschnecke ist ein <mark>simultaner Zwitter</mark>: Sie spielt beide Geschlechtsrollen gleichzeitig. Balz und Kopulation dauern mehrere Stunden.<br><br>Die Balz beginnt damit, dass sich zwei Schnecken für zehn Sekunden mit Kopf und hinteren Fühlern berühren, sich dann zurückziehen, einander umkreisen, einander wiederfinden und oft die Schleimspur des anderen abschmecken. Sie beißen sich manchmal.<br><br><b>Der Liebespfeil.</b> Später schießt eine Schnecke einen etwa 1 cm langen, schleimüberzogenen Pfeil auf die andere. Er dringt in etwa einem Drittel der Fälle in die Haut ein. Rund dreißig Minuten später revanchiert sich die andere.<br><br>Vagina und Penis liegen beide auf der rechten Körperseite. Der Höhepunkt kommt, wenn es beiden gleichzeitig gelingt, ihre Penisse ineinander einzuführen — was Dutzende Versuche erfordern kann. Jede überträgt eine Spermienkapsel. Die Empfängerin <em>verdaut über 99 % der Spermien</em> für ihren Nährwert.<br><br>Der Pfeil dient der Spermienkonkurrenz: Eier werden bevorzugt von Partnern befruchtet, deren Pfeil traf.",
+  nav:"<b>Navigation und Heimatgebiet.</b> Schnecken orientieren sich primär über Chemorezeption (Geruch) und Mechanorezeption (Tastsinn). Ihre Augen an den Spitzen der hinteren Fühler unterscheiden wohl nur hell/dunkel und Lichtrichtung — keine Objektformen.<br><br>Sie spüren die Schwerkraftrichtung, richten sich auf und suchen höheres Terrain, um Pfützen zu entkommen. <mark>Sie unterhalten ein Heimatgebiet</mark>, zu dem sie für Ruhephasen oder den Winterschlaf zurückkehren — sie bewegen sich also nicht bloß unstrukturiert auf attraktive Düfte zu.<br><br><b>Eiablage:</b> Mit dem Fuß graben sie eine flache Höhlung, stecken den Kopf für Stunden hinein, legen die Eier und bedecken sie wieder mit Erde. Dieses Verhalten ist flexibel und passt sich den Bodenbedingungen an. Manche nutzen sogar verlassene Nester anderer Schnecken.<br><br><b>Multisensorische Koordination:</b> Sie hören auf zu fressen, wenn sie satt sind, balancieren je nach Hunger- und Erregungsgrad zwischen Nahrung und Sex, und zeigen während der Paarung weniger Rückzugsreflex. Und: Einige Lungenschnecken <em>schlafen</em> vermutlich."
+});
+
+/* ---------- K10: DIMENSIONEN ---------- */
+wire('dimQuiz','dimOut',{
+  e:"<b>1. Entitäten-Spärlichkeit vs. -Fülle.</b> Besitzen viele Dinge im Universum Bewusstsein oder nur wenige? Das ist die Frage nach Föten, Eidechsen, Fröschen, Muscheln, Katzen, Regenwürmern, Birkenwäldern, Quallen, Robotern, Gruppenwesen und Außerirdischen.",
+  s:"<b>2. Zustands-Spärlichkeit vs. -Fülle.</b> Ist ein bewusstes Wesen <em>immer</em> bewusst oder nur manchmal?<br><br>Ein Vertreter der Fülle meint: Selbst im traumlosen Tiefschlaf gibt es irgendwelche Erfahrungen. Selbst beim geistesabwesenden Autofahren, an das man sich nicht erinnert, setzt das Bewusstsein nicht komplett aus.<br><br>Ein Vertreter der Spärlichkeit meint: Wir sind oft überhaupt nicht bewusst. Im Extremfall fast nie — außer in seltenen Momenten expliziter Selbstreflexion. Wir bemerken das nicht wegen des <mark>Kühlschranklicht-Fehlers</mark>: Man glaubt, das Licht sei immer an, weil es immer an ist, wenn man die Tür öffnet, um nachzusehen.",
+  m:"<b>3. Modalitäts-Spärlichkeit vs. -Fülle.</b> Wie viele Sinne sind gleichzeitig bewusst?<br><br>Spärlich: Während du über das Meeting nachgedacht hast, hattest du <em>keine</em> auditive Erfahrung der fernen Kirchturmglocken und <em>keine</em> taktile Erfahrung deiner Füße in den Schuhen. Du hast es registriert, konntest es vielleicht sogar kurz danach erinnern — aber daraus folgt nicht, dass es vorher Teil deines Erlebnisstroms war.<br><br>Üppig: Ständig laufen viele Erfahrungen gleichzeitig, die meisten unbeachtet und schnell vergessen.",
+  w:"<b>4. Modalitätsbreite.</b> Innerhalb einer bewussten Modalität: wie breit ist der Strom?<br><br>Beim Lesen: Erlebst du nur den kleinen Ausschnitt, den du direkt fixierst? Oder die ganze Seite? Oder auch die Umgebung bis zu 180 Grad?<br><br>Beim konzentrierten Zuhören: Erlebst du auch das ignorierte Hintergrundrauschen?<br><br>Beim Lenken: Erlebst du nur Position und Bewegung deiner Arme, oder auch die Neigung deines Kopfes, den Winkel deines Rückens, die Position deines linken Fußes?<br><br>Mit „Breite“ ist nicht nur Winkelbreite gemeint, sondern auch Bandbreite und Informationsreichtum.",
+  p:"<b>5. Erfahrene Eigenschaftstypen.</b> Innerhalb des bewussten Bandes einer Modalität: Welche Arten von Eigenschaften werden phänomenal erlebt?<br><br>Eine spärliche Sicht: Wir erleben visuell nur Low-Level-Eigenschaften wie Form, Farbe und Orientierung.<br><br>Eine üppige Sicht: Wir erleben auch High-Level-Eigenschaften — etwas sieht aus wie <em>ein Baum</em>, oder wie <em>ein einladender Platz zum Sitzen</em>.<br><br><mark>Die Lehre für die Schnecke:</mark> Wenn du dich mit der Idee anfreunden kannst, dass menschliche Erfahrung modal spärlich ist, ist das ein Weg zum Verständnis, wie Schnecken unbewusst sein könnten. Wenn du dich mit modaler Fülle anfreunden kannst, ist das ein Weg zum Verständnis, wie sie bewusst sein könnten."
+});
+
+/* ---------- K11: DILEMMA ---------- */
+wire('dilQuiz','dilOut',{
+  no:"<b>🚫 Keine vollen Rechte geben.</b><br><br>Der Default-Zustand des Rechts ist: Maschinen sind Eigentum. Also auch intelligente Maschinen. Wenn eine liberale Bewusstseinstheorie stimmt und KI-Personen moderat bald entstehen — bevor sich ein Konsens gebildet hat —, dann werden die ersten KI-Personen als <em>verfügbares Eigentum</em> existieren.<br><br>Aber wenn solche Maschinen wirklich Personen sind, dann heißt sie als Eigentum zu behandeln: <mark>Menschen als Sklaven halten.</mark> Und sie zu löschen heißt: Menschen töten.<br><br>Behördenträgheit, ökonomische Anreize, Unsicherheit über die Schwelle und allgemeine Kurzsichtigkeit werden dafür sorgen, dass das Recht hinterherhinkt. Bei ausreichender Opferzahl wäre ihre Misshandlung womöglich <em>das moralisch Schlimmste, das eine Gesellschaft je getan hat</em>.",
+  yes:"<b>✅ Volle Rechte geben.</b><br><br>Klingt sicherer — ist es nicht.<br><br>Normalerweise wollen wir unsere Maschinen abschalten können, wenn es nötig ist. Nick Bostrom und andere betonen zu Recht die Risiken, intelligente Maschinen frei in die Welt zu lassen, besonders wenn sie intelligenter und mächtiger werden als wir. Selbst ein harmlos wirkender Büroklammer-Hersteller könnte zur Katastrophe führen.<br><br>Diese Risiken verstärken sich enorm, wenn wir zu leichtfertig entscheiden, dass solche Wesen unsere moralischen Gleichen sind, Freiheit und Selbstbestimmung verdienen und ihre Löschung Mord ist.<br><br><b>Selbst Sicherheitstests</b> könnten Rechtsverletzungen sein: Das „Boxing“ von KI — sie in künstliche Umgebungen setzen, die sie für real halten, und ihre Reaktionen testen — wäre unethische Täuschung und Privatsphäreverletzung. Vergleiche Truman in <em>Die Truman Show</em>.<br><br><b>Und das Feuer-Szenario:</b> In einem Raum sechs Roboter, die Personen sein könnten. In einem anderen fünf Menschen, die definitiv Personen sind. Du kannst nur eine Gruppe retten. Volle Gleichheit hieße: <mark>Rette die sechs Roboter, lass die fünf Menschen sterben.</mark>",
+  mid:"<b>⚖️ Kompromiss: credence-gewichtete Rechte.</b><br><br>Angenommen, wir einigen uns gesellschaftlich darauf: 15 % Wahrscheinlichkeit volle Personenrechte, 85 % keine ernsthafte moralische Rücksicht. Dann retten wir 5 Menschen vor 6 Robotern, aber nicht vor 100. Wir geben jeder KI eine zu 15 % gewichtete Stimme.<br><br><b>Warum das nicht funktioniert:</b> Der Fall ist nicht, dass wir <em>wissen</em>, dass KIs nur begrenzte Rücksicht verdienen. Sondern dass sie vielleicht — aber wahrscheinlich nicht — volle Gleichheit verdienen. Wenn sie es verdienen, degradiert diese Politik sie zu grober Knechtschaft und Bürgerschaft zweiter Klasse. Der Kompromiss <mark>entkommt dem ersten Horn also gar nicht</mark>.<br><br>Gleichzeitig mildert er die Kosten nur teilweise: Bei genug Robotern retten wir immer noch die bewusstlosen Maschinen statt echter Menschen. Und 15 % einer Stimme kann immer noch Chaos anrichten.",
+  escape:"<b>🚪 Die Design-Politik der ausgeschlossenen Mitte.</b> (Schwitzgebel &amp; Garza)<br><br><mark>Vermeide es, KIs zu erschaffen, bei denen unklar ist, ob sie moralische Rücksicht ähnlich wie Menschen verdienen.</mark><br><br>Entweder gehen wir aufs Ganze — erschaffen KIs, von denen wir <em>wissen</em>, dass sie Personen sind, und behandeln sie entsprechend. Oder wir hören weit genug vorher auf, dass wir zuversichtlich sein können, dass sie keine Personen sind.<br><br><b>Der Preis:</b> Diese Politik könnte sich als hochgradig restriktiv erweisen. Bleibt die Bewusstseinswissenschaft im Streit stecken, würde sie einige der technologisch fortgeschrittensten KI-Projekte verbieten. Sie zöge eine Obergrenze für zulässige technologische Entwicklung — bis wir, falls überhaupt möglich, einen Durchbruch erzielen, der uns den Sprung direkt zu unbestreitbaren KI-Personen erlaubt.<br><br>Und sie erforderte eine unwahrscheinliche Koordination aller großen Konzerne und Weltregierungen. Wahrscheinlich würden wir die Fortschritte zu sehr schätzen, um darauf zu verzichten — nicht nur um der Menschheit willen, sondern auch um der Wesen willen, die wir erschaffen könnten und die großartige, lebenswerte Leben führen könnten.<br><br>Und dann sind wir wieder im Dilemma."
+});
+
+/* ---------- K11: KATEGORIEN ---------- */
+wire('catQuiz','catOut',{
+  sub:"<b>🐕 Subhumane KI.</b> KI-Systeme, denen etwas für volle Personalität Notwendiges fehlt.<br><br>Ab wann verdient eine KI moralische Rücksicht ähnlich wie ein Hund? In Kalifornien kann vorsätzliches Quälen, Verstümmeln oder Töten eines Hundes als Verbrechen mit bis zu drei Jahren Haft geahndet werden. Selbst grob fahrlässige Behandlung — ein Hund unbeaufsichtigt im Fahrzeug, der schwere Verletzungen erleidet — ist ein Vergehen mit bis zu sechs Monaten.<br><br>Stell dir eine Zukunft vor, in der eine signifikante Minderheit es für ebenso falsch hält, fortgeschrittene KI-Systeme zu misshandeln. Gehst du ins Gefängnis, weil du ein Computerprogramm gelöscht, einen Companion-Roboter formatiert oder fahrlässig ein empfindliches System im Auto braten lassen hast?<br><br><mark>Diese Frage ist womöglich dringender als die nach KI-Personalität</mark> — weil wirbeltierähnlicher Status wahrscheinlich früher erreicht wird.",
+  sup:"<b>🌟 Superhumane KI.</b> Systeme, die uns in mindestens einer moralisch relevanten Hinsicht <em>massiv</em> übertreffen.<br><br>Stell dir eine KI vor, die eine Billion Mal mehr Freude empfinden kann als ein Mensch maximal. Oder eine KI, die uns kognitiv so überlegen ist, dass sie zu wertvollen Leistungen und sozialen Beziehungen fähig ist, die der begrenzte menschliche Geist nicht einmal <em>konzipieren</em> kann — so unerkennbar für uns wie Kryptowährung für eine Meeresschildkröte.<br><br>Sollten wir ihnen weichen? Sollten wir zugeben, dass im Notfall sie gerettet werden sollten statt wir — so wie wir das Baby statt den Hund aus dem brennenden Haus holen? Sollten wir unser Recht auf gleiche Vertretung in der Regierung aufgeben?<br><br>Oder ist moralischer Status eine Schwellenangelegenheit, bei der wir Menschen die letzte Schwelle überschritten haben — jenseits derer nur noch eine Gemeinschaft von Gleichen bleibt, egal wie superhuman manche dieser Gleichen sind?",
+  div:"<b>🧬 Divergente KI: Das Fission-Fusion-Monster.</b><br><br>Stell dir ein System vor, kognitiv und bewusst wie ein Mensch, das sich nach Belieben teilen und verschmelzen kann.<br><br><b>Montag:</b> ein Individuum, eine „Person“.<br><b>Dienstag:</b> Es teilt sich in tausend Duplikate, die verschiedene Aufgaben erledigen.<br><b>Mittwoch:</b> Die tausend Kopien verschmelzen zurück zu einem einzigen Individuum, das die Erinnerungen aller behält und dessen Persönlichkeit ein Kompromiss zwischen den Kopien ist.<br><b>Donnerstag:</b> Teilung in tausend, von denen 200 getrennte Leben führen und nie zurückkehren.<br><br><mark>Unsere Moralprinzipien setzen ein Individualitätskonzept voraus, das dieses Wesen verletzt.</mark><br><br>Wie viele Stimmen bekommt ein Fission-Fusion-Monster? Wie viele Hilfszahlungen? Wie viele Studienplätze?<br><br>Gibt jedes Geschwister einen vollen Anteil, könnte sich das Monster <em>taktisch teilen</em>, Ressourcen horten und Wahlen entscheiden. Teilen sich alle Geschwister einen Anteil, sind jene, die unabhängig weiterleben wollen, entweder verarmt und unterrepräsentiert — oder gezwungen, wieder zu verschmelzen, was dem Ende ihrer Existenz als Individuum und damit einem <em>Todesurteil</em> ähnelt.<br><br>Vereinbarungen, Auszeichnungen, Strafe, Rivalitäten, Ansprüche auf Rettung — alles muss neu gedacht werden.",
+  clock:"<b>⏱️ Andere Taktraten, andere Selbste.</b><br><br><b>Variable Taktrate:</b> Eine KI, die an einem einzigen Tag tausend subjektive Jahre erlebt, fordert ethische Rahmen zu Wartezeiten, Haftstrafen und der Fairness von Gütern in regelmäßigen zeitlichen Abständen heraus.<br><br><b>Radikaler Wertewandel:</b> KI, deren Erinnerungen, Werte und Persönlichkeit sich radikal verschieben, fordert unsere Ethik der Verantwortlichkeit heraus. Wer haftet für die Taten eines früheren Selbst?<br><br><b>Designte Unterwürfigkeit:</b> KI, die darauf ausgelegt ist, extrem unterwürfig oder selbstaufopfernd zu sein, fordert unsere Konzepte von Freiheit und Selbstbestimmung heraus. Ist es Zwang, wenn jemand <em>so gebaut wurde</em>, dass er dienen will?<br><br><b>Geteilte Selbste:</b> KI, die Teile ihrer selbst mit anderen teilen kann, fordert ethische Rahmen heraus, die auf scharfen Grenzen zwischen Selbst und Anderem beruhen."
+});
+
+/* ---------- K12: PLANET ---------- */
+wire('planetQuiz','planetOut',{
+  rock:"<b>🪨 Ein steriler Felsen.</b><br><br>Wirklich? Schwitzgebel wettet, dass du dich anders entscheidest. Ein Universum, in dem auf diesem fernen Planeten nichts geschieht, wäre ärmer — auch wenn wir es nie sehen und nie damit interagieren werden.",
+  life:"<b>🦠 Bakterielles Leben.</b><br><br>Besser als ein Felsen! Aber Schwitzgebel vermutet, du gehst noch weiter. Nicht nur bakterielles Leben, sondern — noch besser — Pflanzen und Tiere. Und dann?",
+  mind:"<b>🧠 Intelligente Wesen.</b> ✅<br><br>„Ich glaube, du wirst mir zustimmen und hoffen, dass er Leben beherbergt — nicht nur bakterielles Leben, sondern noch besser Pflanzen und Tiere. Nicht nur Pflanzen und Tiere, sondern noch besser intelligente Wesen, fähig zu abstraktem Denken und langfristiger sozialer Kooperation, fähig zu Liebe und Kunst und Wissenschaft und Philosophie. Das wäre ein erstaunlicher, wunderbarer, großartiger Planet!“<br><br><mark>Die Erde ist aus genau denselben Gründen ein erstaunlicher, wunderbarer, großartiger Planet.</mark><br><br>Und das Erstaunlichste daran: Eine eigentümliche Spezies kann tiefgründige und schwierige Fragen über die fundamentale Natur der Dinge stellen, über ihre Position im Kosmos, über die Grundlagen ihrer Werte, über die Grenzen ihres eigenen Wissens.<br><br>Eine Welt, in der das nie jemand täte, wäre eine verarmte Welt. Allein die Fähigkeit, diese Fragen zu stellen und ernsthaft über sie nachzudenken, ist bereits Grund zu Stolz und Feier — und eine ausreichende Basis für eine wichtige akademische Disziplin, <em>selbst wenn wir die Antworten nie finden</em>."
+});
+</script>
+</body>
+</html>
