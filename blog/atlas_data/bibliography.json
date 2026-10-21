@@ -13458,6 +13458,36 @@
    "year": "",
    "url": "https://blog.hnf.de/kuenstliche-intelligenz-und-die-frauen/"
   },
+  "mccullochwiki": {
+   "title": "Warren Sturgis McCulloch",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/w/index.php?title=Warren_Sturgis_McCulloch&oldid=1375521309"
+  },
+  "pittswiki": {
+   "title": "Walter Pitts",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/w/index.php?title=Walter_Pitts&oldid=1375521299"
+  },
+  "hebbwiki": {
+   "title": "Donald O. Hebb",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/w/index.php?title=Donald_O._Hebb&oldid=1374390561"
+  },
+  "minskywiki": {
+   "title": "Marvin Minsky",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/w/index.php?title=Marvin_Minsky&oldid=1380782007"
+  },
+  "hnfpapert2016": {
+   "title": "Der Geistesstürmer – zur Erinnerung an Seymour Papert",
+   "author": "HNF",
+   "year": "",
+   "url": "https://blog.hnf.de/der-geistesstuermer-zur-erinnerung-an-seymour-papert/"
+  },
   "roberts1960perceptron": {
    "title": "Pattern Recognition with an Adaptive Network",
    "author": "Lawrence G. Roberts",
@@ -18492,6 +18522,27 @@
   "koken2021remembering": [
    "history"
   ],
+  "mccullochwiki": [
+   "history"
+  ],
+  "pittswiki": [
+   "history"
+  ],
+  "hebbwiki": [
+   "history"
+  ],
+  "minskywiki": [
+   "history"
+  ],
+  "hnfpapert2016": [
+   "history"
+  ],
+  "hnfweizenbaum2023": [
+   "history"
+  ],
+  "weizenbaum1976computer": [
+   "history"
+  ],
   "newyorktimesperceptron": [
    "history",
    "untold_history"
@@ -18579,12 +18630,6 @@
   "mooreslaw": [
    "history",
    "untold_history"
-  ],
-  "weizenbaum1976computer": [
-   "history"
-  ],
-  "hnfweizenbaum2023": [
-   "history"
   ],
   "lane2025eliza": [
    "history"
@@ -23614,7 +23659,7 @@
    ]
   },
   "Wikipedia contributors": {
-   "count": 327,
+   "count": 331,
    "minyear": 2026,
    "maxyear": 2026,
    "keys": [
@@ -23760,6 +23805,10 @@
     "rumi",
     "protocell_wiki",
     "lernmatrixwiki",
+    "mccullochwiki",
+    "pittswiki",
+    "hebbwiki",
+    "minskywiki",
     "ioed_wiki",
     "algofairness_wiki",
     "computational_theory_of_mind",
@@ -54538,7 +54587,7 @@
    ]
   },
   "HNF": {
-   "count": 12,
+   "count": 13,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -54553,7 +54602,8 @@
     "hnfbonn2020",
     "hnfsteinbuch2017",
     "hnfshakey2019",
-    "hnfki_frauen2023"
+    "hnfki_frauen2023",
+    "hnfpapert2016"
    ]
   },
   "Lawrence G. Roberts": {

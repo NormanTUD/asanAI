@@ -16060,6 +16060,41 @@ window.bibData = {
 		url: "https://blog.hnf.de/kuenstliche-intelligenz-und-die-frauen/",
 		alternativetitle: "HNF, Künstliche Intelligenz und die Frauen (2023)"
 	},
+	"mccullochwiki": {
+		title: "Warren Sturgis McCulloch",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/w/index.php?title=Warren_Sturgis_McCulloch&oldid=1375521309",
+		alternativetitle: "Wikipedia: Warren Sturgis McCulloch"
+	},
+	"pittswiki": {
+		title: "Walter Pitts",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/w/index.php?title=Walter_Pitts&oldid=1375521299",
+		alternativetitle: "Wikipedia: Walter Pitts"
+	},
+	"hebbwiki": {
+		title: "Donald O. Hebb",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/w/index.php?title=Donald_O._Hebb&oldid=1374390561",
+		alternativetitle: "Wikipedia: Donald O. Hebb"
+	},
+	"minskywiki": {
+		title: "Marvin Minsky",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/w/index.php?title=Marvin_Minsky&oldid=1380782007",
+		alternativetitle: "Wikipedia: Marvin Minsky"
+	},
+	"hnfpapert2016": {
+		title: "Der Geistesstürmer – zur Erinnerung an Seymour Papert",
+		author: "HNF",
+		year: 2016,
+		url: "https://blog.hnf.de/der-geistesstuermer-zur-erinnerung-an-seymour-papert/",
+		alternativetitle: "HNF, Der Geistesstürmer – Seymour Papert (2016)"
+	},
 	"roberts1960perceptron": {
 		title: "Pattern Recognition with an Adaptive Network",
 		author: "Lawrence G. Roberts",

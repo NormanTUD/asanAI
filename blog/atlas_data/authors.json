@@ -17480,7 +17480,7 @@
   "city": "Paderborn, Germany",
   "year": 2026.0,
   "conf": 1,
-  "works": 12,
+  "works": 13,
   "keys": [
    "hnfrosenblatt2019",
    "hnflernendeautomaten2021",
@@ -17493,7 +17493,8 @@
    "hnfbonn2020",
    "hnfsteinbuch2017",
    "hnfshakey2019",
-   "hnfki_frauen2023"
+   "hnfki_frauen2023",
+   "hnfpapert2016"
   ],
   "cited_in": [
    "history"
@@ -63295,7 +63296,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 327,
+  "works": 331,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -63439,6 +63440,10 @@
    "rumi",
    "protocell_wiki",
    "lernmatrixwiki",
+   "mccullochwiki",
+   "pittswiki",
+   "hebbwiki",
+   "minskywiki",
    "ioed_wiki",
    "algofairness_wiki",
    "computational_theory_of_mind",
