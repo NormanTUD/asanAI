@@ -16102,6 +16102,20 @@ window.bibData = {
 		url: "https://nautil.us/the-man-who-tried-to-redeem-the-world-with-logic-235253/",
 		alternativetitle: "Gefter, The Man Who Tried to Redeem the World with Logic (2015)"
 	},
+	"smalheiser2000pitts": {
+		title: "Walter Pitts",
+		author: "Neil R. Smalheiser",
+		year: 2000,
+		url: "https://doi.org/10.1353/pbm.2000.0009",
+		alternativetitle: "Smalheiser, Walter Pitts (2000)"
+	},
+	"abraham2016rebelgenius": {
+		title: "Rebel Genius: Warren S. McCulloch's Transdisciplinary Life in Science",
+		author: "Tara H. Abraham",
+		year: 2016,
+		url: "https://doi.org/10.7551/mitpress/9780262035095.001.0001",
+		alternativetitle: "Abraham, Rebel Genius (2016)"
+	},
 	"roberts1960perceptron": {
 		title: "Pattern Recognition with an Adaptive Network",
 		author: "Lawrence G. Roberts",
