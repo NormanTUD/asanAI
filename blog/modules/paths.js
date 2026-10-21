@@ -117,6 +117,15 @@
 		return m && COLORS.indexOf(m.color) >= 0 ? m.color : "accent";
 	}
 
+	function pathNum(p) {
+		if (p.isPart) {
+			const n = parseInt(String(p.id).split("-")[1], 10);
+			return ["Ⅰ", "Ⅱ", "Ⅲ", "Ⅳ", "Ⅴ", "Ⅵ"][n - 1] || String(n);
+		}
+		const i = CURATED.findIndex((x) => x.id === p.id);
+		return i >= 0 ? String(i + 1).padStart(2, "0") : "·";
+	}
+
 	function card(p) {
 		const g = progress(p);
 		const pct = Math.round(g.done / g.total * 100);
@@ -128,18 +137,18 @@
 			const st = q && q.finished(s) ? "is-done" : s === g.next ? "is-next" : q && q.visited(s) ? "is-seen" : "";
 			return '<li class="' + st + '"><span class="mnp-step-n">' + (q && q.finished(s) ? "✓" : k + 1) + '</span><a href="' + esc(m ? m.url : s) + '">' + esc(m ? m.title : s) + "</a></li>";
 		}).join("");
-		const status = g.complete ? "Completed" : g.done ? g.done + " of " + g.total + " read" : g.total + " lessons";
+		const status = g.complete ? "Completed" : g.done ? g.done + " of " + g.total + " read" : "Not started";
 		const isPicked = pickedId === p.id;
 		const action = g.complete
-			? '<button type="button" class="mnp-link mnp-cert" data-path="' + esc(p.id) + '">🎓 Certificate</button>'
+			? '<button type="button" class="mnp-link mnp-cert" data-path="' + esc(p.id) + '">Certificate</button>'
 			: nm ? '<a class="mnp-link" href="' + esc(nm.url) + '">' + (started ? "Continue" : "Start") + " with " + esc(nm.title.split(/\s[—–:]\s|:\s/)[0]) + " →</a>" : "";
 		return '<article class="mnp-path' + (g.complete ? " is-complete" : "") + (isPicked ? " is-picked" : "") + '" data-path="' + esc(p.id) + '" style="--tone: var(--mn-' + toneOf(p) + ')">' +
-			'<div class="mnp-path-head"><span class="mnp-path-ic" aria-hidden="true">' + esc(p.icon) + '</span>' +
+			'<div class="mnp-path-head"><span class="mnp-path-num" aria-hidden="true">' + pathNum(p) + '</span>' +
 			'<div class="mnp-path-t"><b>' + esc(p.title) + "</b><span>" + esc(p.desc) + "</span></div>" +
 			'<button type="button" class="mnp-pick" aria-pressed="' + (isPicked ? "true" : "false") + '" title="' + (isPicked ? "Following this path" : "Follow this path") + '">' + (isPicked ? "Following ✓" : "Follow") + "</button></div>" +
 			'<div class="mnp-path-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
 			'<div class="mnp-path-meta"><span>' + status + "</span>" + action + "</div>" +
-			'<details class="mnp-path-more"><summary>Lessons</summary><ol class="mnp-steps">' + steps + "</ol></details>" +
+			'<details class="mnp-path-more"><summary>' + p.lessons.length + ' lessons</summary><ol class="mnp-steps">' + steps + "</ol></details>" +
 			"</article>";
 	}
 
@@ -153,7 +162,7 @@
 			? '<a class="mnp-jump mnp-resume-go" href="#mnp-curated">Certificate below ↓</a>'
 			: next ? '<a class="mnp-jump mnp-resume-go" href="' + esc(next.url) + '">Continue with ' + esc(next.title.split(/\s[—–:]\s|:\s/)[0]) + ' →</a>' : "";
 		return '<div class="mnp-resume" style="--tone: var(--mn-' + toneOf(p) + ')">' +
-			'<span class="mnp-resume-ic" aria-hidden="true">' + esc(p.icon) + '</span>' +
+			'<span class="mnp-resume-num" aria-hidden="true">' + pathNum(p) + '</span>' +
 			'<div class="mnp-resume-main"><span class="mnp-resume-kicker">You are following</span>' +
 			'<b>' + esc(p.title) + '</b><span>' + esc(meta) + '</span></div>' +
 			action +
@@ -185,10 +194,12 @@
 				"</div>" +
 			"</section>" +
 		"</div>" +
-			'<div class="mnp-sect-row"><h3 class="mnp-sect" id="mnp-curated">Curated paths</h3>' +
+			'<div class="mnp-sect-row"><div><h3 class="mnp-sect" id="mnp-curated">Curated paths</h3>' +
+			'<p class="mnp-sect-sub">Goal-driven routes with a clear next step.</p></div>' +
 			'<span class="mnp-count">' + done + " of " + ps.length + " paths completed</span></div>" +
 			'<div class="mnp-paths">' + cur.map(card).join("") + "</div>" +
-			'<div class="mnp-sect-row"><h3 class="mnp-sect">The six parts</h3></div>' +
+			'<div class="mnp-sect-row"><div><h3 class="mnp-sect">The six parts</h3>' +
+			'<p class="mnp-sect-sub">The full course, part by part.</p></div></div>' +
 			'<div class="mnp-paths">' + parts.map(card).join("") + "</div>";
 	}
 

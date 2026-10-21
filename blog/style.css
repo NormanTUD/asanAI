@@ -12755,8 +12755,8 @@ html.mnp-open { overflow: hidden; }
 }
 .mnp-head { width: 100%; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
 .mnp-head-text { min-width: 0; }
-.mnp-kicker { font: 600 .72rem/1 var(--mn-font-prose); letter-spacing: .1em; text-transform: uppercase; color: var(--mn-text-muted); }
-.mnp-modal-head h2 { margin: 5px 0 0; padding: 0; border: 0; font: 700 clamp(1.5rem, 1.2rem + 1vw, 2rem)/1.15 var(--mn-font-prose); color: var(--mn-heading); }
+.mnp-kicker { font: italic 400 .88rem/1.2 var(--mn-font-prose); color: var(--mn-text-muted); }
+.mnp-modal-head h2 { margin: 6px 0 0; padding: 0; border: 0; font: 700 clamp(1.7rem, 1.35rem + 1.1vw, 2.35rem)/1.12 var(--mn-font-prose); letter-spacing: -.01em; color: var(--mn-heading); }
 .mnp-lede { margin: 8px 0 0; max-width: 64ch; font: 400 .95rem/1.55 var(--mn-font-prose); color: var(--mn-text-secondary); }
 .mnp-close { appearance: none; flex: none; box-sizing: border-box; width: 36px; height: 36px; min-width: 36px; padding: 0; margin: 0; border-radius: 50%; border: 1px solid var(--mn-border); background: transparent; color: var(--mn-text-secondary); cursor: pointer; display: grid; place-items: center; line-height: 0; }
 .mnp-close svg { display: block; width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
@@ -12773,7 +12773,7 @@ html.mnp-open { overflow: hidden; }
 	border: 1px solid color-mix(in srgb, var(--tone) 35%, var(--mn-border));
 	background: color-mix(in srgb, var(--tone) 6%, var(--mn-surface));
 }
-.mnp-resume-ic { flex: none; width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; font-size: 18px; color: var(--tone); background: color-mix(in srgb, var(--tone) 14%, transparent); }
+.mnp-resume-num { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font: 700 1rem/1 var(--mn-font-prose); color: var(--tone); background: color-mix(in srgb, var(--tone) 12%, transparent); border: 1px solid color-mix(in srgb, var(--tone) 28%, transparent); }
 .mnp-resume-main { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 2px; }
 .mnp-resume-kicker { font: 600 .68rem/1 var(--mn-font-prose); letter-spacing: .1em; text-transform: uppercase; color: var(--mn-text-muted); }
 .mnp-resume-main b { font: 700 1rem/1.3 var(--mn-font-prose); color: var(--mn-heading); }
@@ -12803,30 +12803,35 @@ html.mnp-open { overflow: hidden; }
 .mnp-tune { background: var(--mn-accent); border-color: var(--mn-accent); color: #fff; }
 .mnp-tune:hover { background: color-mix(in srgb, var(--mn-accent) 85%, #000); border-color: color-mix(in srgb, var(--mn-accent) 85%, #000); color: #fff; }
 
-.mnp-sect-row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin: clamp(30px, 4vw, 48px) 0 14px; }
-.mnp-sect { margin: 0; padding: 0; border: 0; font: 700 clamp(1.15rem, 1rem + .4vw, 1.35rem)/1.2 var(--mn-font-prose); color: var(--mn-heading); scroll-margin-top: 140px; }
+.mnp-sect-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 8px 20px; margin: clamp(34px, 4vw, 52px) 0 16px; }
+.mnp-sect { margin: 0; padding: 0; border: 0; font: 700 clamp(1.3rem, 1.1rem + .5vw, 1.6rem)/1.2 var(--mn-font-prose); letter-spacing: -.01em; color: var(--mn-heading); scroll-margin-top: 140px; }
+.mnp-sect-sub { margin: 5px 0 0; font: italic 400 .88rem/1.4 var(--mn-font-prose); color: var(--mn-text-muted); }
 .mnp-count { font: 400 .82rem/1.3 var(--mn-font-prose); color: var(--mn-text-muted); white-space: nowrap; }
 
-/* calm path cards */
-.mnp-paths { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
+/* path cards */
+.mnp-paths { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
 .mnp-path {
 	--tone: var(--mn-accent);
-	display: flex; flex-direction: column; gap: 12px; padding: 16px 18px; border-radius: 14px;
+	position: relative; overflow: hidden;
+	display: flex; flex-direction: column; gap: 12px; padding: 18px 20px 16px; border-radius: 16px;
 	border: 1px solid var(--mn-border); background: var(--mn-surface);
-	transition: border-color .2s ease, box-shadow .2s ease;
+	transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
 }
-.mnp-path:hover { border-color: color-mix(in srgb, var(--tone) 40%, var(--mn-border)); box-shadow: var(--mn-shadow-md); cursor: pointer; }
-.mnp-path.is-picked { border-color: var(--tone); box-shadow: inset 0 0 0 1px var(--tone); }
-.mnp-path-head { display: flex; gap: 12px; align-items: flex-start; }
-.mnp-path-ic { flex: none; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-size: 17px; font-weight: 700; color: var(--tone); background: color-mix(in srgb, var(--tone) 12%, transparent); }
+.mnp-path::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: color-mix(in srgb, var(--tone) 60%, transparent); opacity: .5; }
+.mnp-path:hover { border-color: color-mix(in srgb, var(--tone) 45%, var(--mn-border)); box-shadow: var(--mn-shadow-md); cursor: pointer; }
+.mnp-path.is-picked { border-color: var(--tone); background: color-mix(in srgb, var(--tone) 4%, var(--mn-surface)); box-shadow: inset 0 0 0 1px var(--tone); }
+.mnp-path.is-picked::before { opacity: 1; }
+.mnp-path-head { display: flex; gap: 13px; align-items: flex-start; }
+.mnp-path-num { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font: 700 .95rem/1 var(--mn-font-prose); color: var(--tone); background: color-mix(in srgb, var(--tone) 12%, transparent); border: 1px solid color-mix(in srgb, var(--tone) 28%, transparent); }
+.mnp-path.is-picked .mnp-path-num { background: var(--tone); border-color: var(--tone); color: #fff; }
 .mnp-path-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-.mnp-path-t b { font: 700 1.05rem/1.3 var(--mn-font-prose); color: var(--mn-heading); }
-.mnp-path-t span { font: 400 .85rem/1.55 var(--mn-font-prose); color: var(--mn-text-secondary); }
-.mnp-pick { appearance: none; flex: none; align-self: flex-start; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--mn-border); background: transparent; color: var(--mn-text-muted); font: 600 .72rem/1 var(--mn-font-prose); cursor: pointer; white-space: nowrap; }
+.mnp-path-t b { font: 700 1.12rem/1.3 var(--mn-font-prose); color: var(--mn-heading); }
+.mnp-path-t span { font: 400 .87rem/1.55 var(--mn-font-prose); color: var(--mn-text-secondary); }
+.mnp-pick { appearance: none; flex: none; align-self: flex-start; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--mn-border); background: transparent; color: var(--mn-text-muted); font: 600 .72rem/1 var(--mn-font-prose); cursor: pointer; white-space: nowrap; transition: border-color .2s ease, background .2s ease, color .2s ease; }
 .mnp-pick:hover { border-color: var(--tone); color: var(--tone); }
 .mnp-pick[aria-pressed="true"] { background: var(--tone); border-color: var(--tone); color: #fff; }
-.mnp-path-bar { height: 4px; border-radius: 4px; background: color-mix(in srgb, var(--mn-text-muted) 18%, transparent); overflow: hidden; }
-.mnp-path-bar i { display: block; height: 100%; border-radius: 4px; background: color-mix(in srgb, var(--tone) 75%, transparent); transition: width .6s ease; }
+.mnp-path-bar { height: 3px; border-radius: 3px; background: color-mix(in srgb, var(--mn-text-muted) 16%, transparent); overflow: hidden; }
+.mnp-path-bar i { display: block; height: 100%; border-radius: 3px; background: color-mix(in srgb, var(--tone) 80%, transparent); transition: width .6s ease; }
 .mnp-path-meta { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; font: 400 .8rem/1.35 var(--mn-font-prose); color: var(--mn-text-muted); }
 .mnp-link { appearance: none; border: 0; background: none; padding: 0; cursor: pointer; font: 600 .82rem/1.35 var(--mn-font-prose); color: var(--tone); text-decoration: none; text-align: right; white-space: normal; }
 .mnp-link:hover { text-decoration: underline; }
@@ -12835,12 +12840,13 @@ html.mnp-open { overflow: hidden; }
 .mnp-path-more summary::before { content: "›"; display: inline-block; width: 1em; transition: transform .2s ease; }
 .mnp-path-more[open] summary::before { transform: rotate(90deg); }
 .mnp-steps { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 1px; }
-.mnp-steps li { display: flex; align-items: center; gap: 8px; padding: 3px 4px; border-radius: 6px; font: 400 .86rem/1.4 var(--mn-font-prose); }
-.mnp-step-n { flex: none; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font: 600 .65rem var(--mn-font-prose); color: var(--mn-text-muted); background: color-mix(in srgb, var(--mn-text-muted) 12%, transparent); }
+.mnp-steps li { position: relative; display: flex; align-items: center; gap: 8px; padding: 3px 4px; border-radius: 6px; font: 400 .86rem/1.4 var(--mn-font-prose); }
+.mnp-steps li:not(:last-child)::after { content: ""; position: absolute; left: 12px; top: 21px; bottom: -4px; width: 1px; background: color-mix(in srgb, var(--mn-text-muted) 22%, transparent); }
+.mnp-step-n { position: relative; z-index: 1; flex: none; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font: 600 .65rem var(--mn-font-prose); color: var(--mn-text-muted); background: color-mix(in srgb, var(--mn-text-muted) 12%, var(--mn-surface)); }
 .mnp-steps a { color: var(--mn-text-secondary); text-decoration: none; }
 .mnp-steps a:hover { color: var(--tone); }
 .mnp-steps li.is-seen a { color: var(--mn-text); }
-.mnp-steps li.is-done .mnp-step-n { background: color-mix(in srgb, var(--tone) 20%, transparent); color: var(--tone); }
+.mnp-steps li.is-done .mnp-step-n { background: color-mix(in srgb, var(--tone) 20%, var(--mn-surface)); color: var(--tone); }
 .mnp-steps li.is-next a { color: var(--mn-heading); font-weight: 600; }
 .mnp-steps li.is-next .mnp-step-n { box-shadow: inset 0 0 0 1.5px var(--tone); color: var(--tone); }
 .mnp-path.is-complete { border-color: color-mix(in srgb, var(--mn-emerald) 40%, var(--mn-border)); }
