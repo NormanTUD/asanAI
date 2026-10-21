@@ -2386,10 +2386,10 @@ function setParallelogramConcept(concept) {
 
     // Update button styles
     document.querySelectorAll('.parallelogram-btn').forEach(btn => {
-        btn.style.background = themeColor('#64748b');
+        btn.classList.remove('is-active');
     });
     const activeBtn = document.getElementById(`btn-para-${concept}`);
-    if (activeBtn) activeBtn.style.background = '#3b82f6';
+    if (activeBtn) activeBtn.classList.add('is-active');
 
     renderParallelogram();
 }
