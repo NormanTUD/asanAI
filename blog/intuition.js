@@ -54,10 +54,31 @@ const TokenizerViz = {
     animationInProgress: false,
 
     tokenize: function(text) {
-        const words = text.toLowerCase().split(/\s+/).filter(w => w.length > 0);
+        const parts = text.toLowerCase().split(/(\s+)/).filter(p => p.length > 0);
         const tokens = [];
 
-        words.forEach(word => {
+        const whitespaceLabel = (ws) => ws
+            .replace(/ /g, '␣')
+            .replace(/\t/g, '⇥')
+            .replace(/\n/g, '↵')
+            .replace(/\r/g, '');
+
+        parts.forEach(word => {
+            // Whitespace runs become their own token, as in the BPE tokenizer
+            if (/^\s+$/.test(word)) {
+                tokens.push({
+                    text: word,
+                    displayText: whitespaceLabel(word),
+                    id: 220,
+                    isSubword: false,
+                    isWhitespace: true,
+                    originalWord: null,
+                    splitIndex: 0,
+                    splitTotal: 1
+                });
+                return;
+            }
+
             // Check if word needs subword splitting
             if (this.splitRules[word]) {
                 const parts = this.splitRules[word];
@@ -124,6 +145,7 @@ const TokenizerViz = {
                 " onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
                     <span style="font-weight:bold; font-size:1.05em; color:${color};">${token.displayText}</span>
                     <span style="font-size:0.7em; color:#94a3b8; font-family:monospace;">ID: ${token.id}</span>
+                    ${token.isWhitespace ? '<span style="font-size:0.6em; color:#8b5cf6;">space</span>' : ''}
                     ${token.isSubword ? '<span style="font-size:0.6em; color:#f59e0b;">subword</span>' : ''}
                 </div>`;
         });
@@ -134,11 +156,13 @@ const TokenizerViz = {
         // Stats
         if (statsDiv) {
             const subwordCount = tokens.filter(t => t.isSubword).length;
-            const uniqueWords = [...new Set(tokens.map(t => t.originalWord))].length;
+            const whitespaceCount = tokens.filter(t => t.isWhitespace).length;
+            const uniqueWords = [...new Set(tokens.filter(t => !t.isWhitespace).map(t => t.originalWord))].length;
             statsDiv.innerHTML = `
                 <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap; font-size:0.85em; color:#475569;">
                     <span><b>${tokens.length}</b> tokens</span>
                     <span><b>${uniqueWords}</b> words</span>
+                    ${whitespaceCount ? `<span><b>${whitespaceCount}</b> whitespace</span>` : ''}
                     <span><b>${subwordCount}</b> subword splits</span>
                     <span>Vocab IDs: [${tokens.map(t => t.id).join(', ')}]</span>
                 </div>`;

@@ -635,6 +635,7 @@ Where a word splits depends on the data the model was trained on. It chooses tha
 	<div class="mn-demo-hint">
 	💡 Try typing <b>“understanding”</b> or <b>“unbreakable”</b> to see subword splitting in action.
 	The model breaks unknown words into known pieces it learned during training.
+	Spaces are tokens too — the <b>␣</b> chips are the whitespace between words.
 	</div>
 </div>
 
