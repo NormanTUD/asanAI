@@ -129,7 +129,10 @@ progress overview; other modules add overview tabs via `MNQuest.addTab`),
 `?continue=1` jumps to the saved spot), `predict.js`
 (`.mn-predict` "predict first" cards before demos), `paths.js` (curated
 learning paths + one per part, PNG certificate; all in one window opened by
-the route icon `#paths-toggle` in the top-right chrome, `render_paths_toggle()`). Every lesson ends with a
+the route icon `#paths-toggle` in the top-right chrome, `render_paths_toggle()`).
+Clicking a path card picks it (localStorage `mn_path_pick`); a picked path shows
+a resume strip in the window and, at the end of each of its lessons, a
+"next stop" card in the page font. Every lesson ends with a
 "Check yourself" quiz; `render_daily_question()` (functions.php) can draw a
 daily question from all of them (not rendered on the intro/home page) — so keep quiz markup
 exactly `<div class="mn-quiz" data-quiz="<slug>"><script type="application/json">…</script></div>`.
