@@ -13506,6 +13506,18 @@
    "year": "",
    "url": "https://doi.org/10.7551/mitpress/9780262035095.001.0001"
   },
+  "abraham2003mcculloch": {
+   "title": "Integrating Mind and Brain: Warren S. McCulloch, Cerebral Localization, and Experimental Epistemology",
+   "author": "Tara H. Abraham",
+   "year": "",
+   "url": "https://doi.org/10.1016/S0160-9327(03)00017-6"
+  },
+  "mcculloch1965embodiments": {
+   "title": "Embodiments of Mind",
+   "author": "Warren S. McCulloch",
+   "year": "",
+   "url": "https://archive.org/details/embodimentsofmin0000mccu"
+  },
   "roberts1960perceptron": {
    "title": "Pattern Recognition with an Adaptive Network",
    "author": "Lawrence G. Roberts",
@@ -18321,6 +18333,12 @@
    "history"
   ],
   "abraham2016rebelgenius": [
+   "history"
+  ],
+  "mcculloch1965embodiments": [
+   "history"
+  ],
+  "abraham2003mcculloch": [
    "history"
   ],
   "wiener1948cybernetics": [
@@ -54644,11 +54662,20 @@
    ]
   },
   "Tara H. Abraham": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "abraham2016rebelgenius",
+    "abraham2003mcculloch"
+   ]
+  },
+  "Warren S. McCulloch": {
    "count": 1,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "abraham2016rebelgenius"
+    "mcculloch1965embodiments"
    ]
   },
   "Lawrence G. Roberts": {

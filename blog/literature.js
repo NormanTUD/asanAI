@@ -16130,6 +16130,13 @@ window.bibData = {
 		url: "https://archive.org/details/embodimentsofmin0000mccu",
 		alternativetitle: "McCulloch, Embodiments of Mind (1965)"
 	},
+	"mcculloch1945heterarchy": {
+		title: "A Heterarchy of Values Determined by the Topology of Nervous Nets",
+		author: "Warren S. McCulloch",
+		year: 1945,
+		url: "https://doi.org/10.1007/BF02478429",
+		alternativetitle: "McCulloch, A Heterarchy of Values (1945)"
+	},
 	"roberts1960perceptron": {
 		title: "Pattern Recognition with an Adaptive Network",
 		author: "Lawrence G. Roberts",
