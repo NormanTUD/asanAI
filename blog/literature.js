@@ -15916,6 +15916,94 @@ window.bibData = {
 		url: "https://de.wikipedia.org/w/index.php?title=Lernmatrix&oldid=265839903",
 		alternativetitle: "Wikipedia: Lernmatrix"
 	},
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  HNF-Blog (Heinz Nixdorf MuseumsForum) — AI-history essays
+	 *  cited from history.php.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"hnfrosenblatt2019": {
+		title: "Frank Rosenblatt und das Perceptron",
+		author: "HNF",
+		year: 2019,
+		url: "https://blog.hnf.de/frank-rosenblatt-und-das-perceptron/",
+		alternativetitle: "HNF, Frank Rosenblatt und das Perceptron (2019)"
+	},
+	"hnflernendeautomaten2021": {
+		title: "Lernende Automaten in Karlsruhe",
+		author: "HNF",
+		year: 2021,
+		url: "https://blog.hnf.de/lernende-automaten-in-karlsruhe/",
+		alternativetitle: "HNF, Lernende Automaten in Karlsruhe (2021)"
+	},
+	"hnfki70jahre2026": {
+		title: "70 Jahre Künstliche Intelligenz",
+		author: "HNF",
+		year: 2026,
+		url: "https://blog.hnf.de/70-jahre-kuenstliche-intelligenz/",
+		alternativetitle: "HNF, 70 Jahre Künstliche Intelligenz (2026)"
+	},
+	"hnfmccullochpitts2023": {
+		title: "McCulloch und Pitts – das erste neuronale Netz",
+		author: "HNF",
+		year: 2023,
+		url: "https://blog.hnf.de/mcculloch-und-pitts-das-erste-neuronale-netz/",
+		alternativetitle: "HNF, McCulloch und Pitts (2023)"
+	},
+	"hnfturing2020": {
+		title: "Alan Turings Test – 70 Jahre Imitationsspiel",
+		author: "HNF",
+		year: 2020,
+		url: "https://blog.hnf.de/alan-turings-test-70-jahre-imitationsspiel/",
+		alternativetitle: "HNF, Alan Turings Test (2020)"
+	},
+	"hnfweizenbaum2023": {
+		title: "Joseph Weizenbaum (1923-2008)",
+		author: "HNF",
+		year: 2023,
+		url: "https://blog.hnf.de/joseph-weizenbaum-1923-2008/",
+		alternativetitle: "HNF, Joseph Weizenbaum (2023)"
+	},
+	"hnffifthgen2023": {
+		title: "Fünfte Generation aus Japan",
+		author: "HNF",
+		year: 2023,
+		url: "https://blog.hnf.de/fuenfte-generation-aus-japan/",
+		alternativetitle: "HNF, Fünfte Generation aus Japan (2023)"
+	},
+	"hnfchatgpt2023": {
+		title: "Die Geheimnisse von ChatGPT",
+		author: "HNF",
+		year: 2023,
+		url: "https://blog.hnf.de/die-geheimnisse-von-chatgpt/",
+		alternativetitle: "HNF, Die Geheimnisse von ChatGPT (2023)"
+	},
+	"hnfbonn2020": {
+		title: "Künstliche Intelligenz: Es begann in Bonn",
+		author: "HNF",
+		year: 2020,
+		url: "https://blog.hnf.de/kuenstliche-intelligenz-es-begann-in-bonn/",
+		alternativetitle: "HNF, Künstliche Intelligenz: Es begann in Bonn (2020)"
+	},
+	"hnfsteinbuch2017": {
+		title: "Karl Steinbuch: Von der Kybernetik zur Politik",
+		author: "HNF",
+		year: 2017,
+		url: "https://blog.hnf.de/karl-steinbuch-von-der-kybernetik-zur-politik/",
+		alternativetitle: "HNF, Karl Steinbuch: Von der Kybernetik zur Politik (2017)"
+	},
+	"hnfshakey2019": {
+		title: "Shakey der Roboter",
+		author: "HNF",
+		year: 2019,
+		url: "https://blog.hnf.de/shakey-der-roboter/",
+		alternativetitle: "HNF, Shakey der Roboter (2019)"
+	},
+	"hnfki_frauen2023": {
+		title: "Künstliche Intelligenz und die Frauen",
+		author: "HNF",
+		year: 2023,
+		url: "https://blog.hnf.de/kuenstliche-intelligenz-und-die-frauen/",
+		alternativetitle: "HNF, Künstliche Intelligenz und die Frauen (2023)"
+	},
 	"roberts1960perceptron": {
 		title: "Pattern Recognition with an Adaptive Network",
 		author: "Lawrence G. Roberts",
