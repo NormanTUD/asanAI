@@ -1186,6 +1186,8 @@ This framing is best read as a productive working hypothesis, not a proved ident
 ## The Meadow of Words
 
 A model thinks in a continuous space, yet it must speak in a **finite** vocabulary. This meadow shows how a thought becomes a word: every word is a pin in the field, every point of the field is a possible next-thought, and the thought simply falls into the cell of the **nearest** word. The seams between cells are exactly the places where two words are equally near — where language runs out.
+
+> **In one line:** a language model is a finite vocabulary laid over an infinite space of meaning — and a loop that keeps falling from one point in that space to the next word.
 </div>
 
 <div id="word-meadow-wrap" class="mn-demo-panel">
@@ -1281,5 +1283,5 @@ Text arrives as **tokens** and becomes **vectors**. Position is folded in. Layer
 
 Nowhere in that loop is a shelf of stored facts, and nowhere is a little module labelled "understanding". Meaning lives in the **geometry** — in directions, distances, and regions — and the model's only task at each step is to place the next thought somewhere in that space. The meadow is that last step seen up close: a finite vocabulary cutting an infinite space of possible thoughts into cells, with a seam wherever two words are equally near. Prediction is the walk; language is the trail it leaves.
 
-> **In one line:** a language model is a finite vocabulary laid over an infinite space of meaning — and a loop that keeps falling from one point in that space to the next word.
+> **In one line:** a large language model is a next-word predictor trained on a vast slice of human text — and at scale, that simple loop starts to behave like a model of language, of reasoning, and of the world behind them.
 </div>
