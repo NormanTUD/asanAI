@@ -130,8 +130,8 @@ progress overview; other modules add overview tabs via `MNQuest.addTab`),
 (`.mn-predict` "predict first" cards before demos), `paths.js` (curated
 learning paths + one per part, PNG certificate; all in one window opened by
 the route icon `#paths-toggle` in the top-right chrome, `render_paths_toggle()`).
-Clicking a path card picks it and jumps to its next lesson (localStorage
-`mn_path_pick`); its Follow button only picks it. A picked path weaves through
+A path card's Start/Continue link picks it and jumps to its next lesson
+(localStorage `mn_path_pick`); its Follow button only picks it. A picked path weaves through
 the site: a calm hero in the picker (one path with an interactive route map,
 the rest behind a searchable "all paths" drawer), a "Your path · step N" strip
 at the top of the lesson TOC, a "next stop" card at the lesson end, a resume
