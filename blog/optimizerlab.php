@@ -1,4 +1,5 @@
 <?php include_once("functions.php"); ?>
+<?php js("optimizer_race"); ?>
 <!--
 COURSE_METADATA:
 title: The Optimizer: Navigating the Loss Landscape
@@ -151,6 +152,77 @@ This division is the key insight: parameters with large, consistent gradients ge
 
 </div>
 
+<div class="md">
+### Race them: SGD vs. momentum vs. Adam
+
+The one-dimensional valley above is friendly to every optimizer. Real loss surfaces are not: they have narrow ravines, curved valleys, saddle points and small pits. Below, all three optimizers start from the same point on a two-dimensional surface and use exact gradients. Watch how differently they move — and try to make the slowest one win.
+</div>
+
+<style>
+#optimizer-race { --lab-accent: var(--mn-sky); --lab-accent-2: var(--mn-emerald); }
+#optimizer-race .or-stage { position: relative; border-radius: var(--mn-radius-md); overflow: hidden; border: 1px solid var(--mn-border); cursor: crosshair; }
+#optimizer-race canvas { display: block; width: 100%; }
+#optimizer-race .or-badge { position: absolute; left: 10px; top: 10px; padding: 3px 10px; border-radius: 99px; font: 600 11px var(--mn-font-mono); color: #fff; background: rgba(15, 23, 42, .6); backdrop-filter: blur(6px); pointer-events: none; }
+#optimizer-race .or-board { display: grid; gap: 6px; }
+#optimizer-race .or-row { display: grid; grid-template-columns: auto auto minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 8px; row-gap: 1px; align-items: center; padding: 7px 10px; border-radius: 10px; border: 1px solid var(--mn-border); background: color-mix(in srgb, var(--mn-surface) 70%, transparent); font-size: .88rem; min-width: 0; overflow: hidden; }
+#optimizer-race .or-row b { grid-column: 3; color: var(--mn-heading); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#optimizer-race .or-medal { grid-row: 1 / span 2; font-size: 1.15rem; }
+#optimizer-race .or-dot { grid-row: 1 / span 2; width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+#optimizer-race .or-st { grid-column: 3; font: 600 .74rem var(--mn-font-mono); color: var(--mn-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#optimizer-race .or-st.is-done { color: var(--mn-emerald); }
+#optimizer-race .or-st.is-dead { color: var(--mn-rose); }
+#optimizer-race .or-blurb { font-size: .86rem; color: var(--mn-text-secondary); margin: 10px 0 0; text-align: left; }
+#optimizer-race .or-curve canvas { display: block; width: 100%; }
+</style>
+<div class="mnlab" id="optimizer-race" data-interactive>
+	<div class="mnlab-head">
+		<div>
+			<div class="mnlab-kicker">Interactive lab</div>
+			<div class="mnlab-title">Optimizer Race</div>
+			<p class="mnlab-sub">Three optimizers, one start line, exact gradients. Click anywhere on the map to move the start.</p>
+		</div>
+		<div class="mnlab-chips" role="group" aria-label="Loss surface">
+			<button type="button" class="mnlab-chip" data-surface="ravine" aria-pressed="true">Ravine</button>
+			<button type="button" class="mnlab-chip" data-surface="banana" aria-pressed="false">Banana</button>
+			<button type="button" class="mnlab-chip" data-surface="saddle" aria-pressed="false">Saddle</button>
+			<button type="button" class="mnlab-chip" data-surface="bumpy" aria-pressed="false">Bumpy</button>
+		</div>
+	</div>
+	<div class="mnlab-grid mnlab-grid--main">
+		<div>
+			<div class="or-stage" data-or="stage"><canvas data-or="canvas" aria-label="Loss surface with optimizer paths"></canvas><span class="or-badge" data-or="stepv">step 0</span></div>
+			<p class="or-blurb" data-or="blurb"></p>
+		</div>
+		<div style="display:flex; flex-direction:column; gap:12px; min-width:0;">
+			<div class="or-board" data-or="board" aria-live="polite"></div>
+			<div class="mnlab-well or-curve" data-or="curvewrap" style="padding:8px;"><div class="mnlab-hint" style="margin-bottom:4px;">loss above the minimum (log scale)</div><canvas data-or="curve"></canvas></div>
+		</div>
+	</div>
+	<div class="mnlab-grid mnlab-grid--2" style="margin-top: 14px; gap: 6px 24px;">
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">Learning rates</span><span class="mnlab-val" data-or="lrv">× 1</span></span>
+			<input type="range" data-or="lr" min="-2" max="2" step="0.25" value="0" aria-label="Learning rate multiplier">
+			<span class="mnlab-hint">each optimizer starts from a sensible rate for this surface; this scales all three</span>
+		</label>
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">Speed</span><span class="mnlab-val" data-or="speedv">1</span></span>
+			<input type="range" data-or="speed" min="1" max="8" step="1" value="2" aria-label="Steps per frame">
+		</label>
+	</div>
+	<div class="mnlab-row" style="margin-top: 10px;">
+		<button type="button" class="mnlab-btn" data-or="play">▶ Race</button>
+		<button type="button" class="mnlab-btn mnlab-btn--ghost" data-or="stepbtn">+1 step</button>
+		<button type="button" class="mnlab-btn mnlab-btn--ghost" data-or="reset">↺ Reset</button>
+	</div>
+	<div class="mnlab-legend" style="margin-top: 12px;">
+		<span><i style="background: var(--mn-rose);"></i>SGD: x ← x − η g</span>
+		<span><i style="background: var(--mn-sky);"></i>Momentum: v ← 0.9v + g, x ← x − η v</span>
+		<span><i style="background: var(--mn-emerald);"></i>Adam: β₁ = 0.9, β₂ = 0.999</span>
+		<span>⭐ minimum</span>
+	</div>
+	<div class="mnlab-note" data-or="note" aria-live="polite"></div>
+</div>
+
 <div class="md" data-mathlevel="70">
 
 ### The Rest of the Optimizer Family
@@ -284,3 +356,5 @@ You may have seen the advice that the *best* learning rate is the largest one th
 
 This reframes the "learning rate too high" row in the table above. A high $\eta$ that makes the loss *oscillate but keep falling* is not a bug to fix — it is the network running at the edge of stability, a regime many modern training curves actually live in. The practical read: if your loss oscillates but trends steadily down, you are on the edge, and you can often stay there or push a little further rather than immediately dialing the learning rate back.
 </div>
+
+<div class="mn-quiz" data-quiz="optimizerrace"><script type="application/json">{"title": "Optimizers", "questions": [{"q": "What does momentum add to plain gradient descent?", "options": ["A velocity that accumulates past gradients", "A different learning rate per parameter", "Random noise", "A second derivative"], "answer": 0, "explain": "v ← 0.9 v + g; x ← x − η v. Consistent directions build up speed, oscillating ones cancel out — that is why it calms the ravine."}, {"q": "What makes Adam's step size nearly independent of the gradient's scale?", "options": ["It divides the averaged gradient by the root of its averaged square", "It uses a fixed step of 1", "It clips gradients at 1", "It ignores the gradient's sign"], "answer": 0, "explain": "m̂ / (√v̂ + ε) is roughly “gradient / typical gradient size”, so each parameter moves about η per step, steep or flat."}, {"q": "In a long narrow ravine, what does plain SGD typically do?", "options": ["Bounce between the steep walls while crawling along the floor", "Go straight to the minimum", "Stop immediately", "Move only along the floor"], "answer": 0, "explain": "The learning rate must be small enough for the steep direction, which makes progress along the gentle direction slow — the classic zig-zag."}]}</script></div>

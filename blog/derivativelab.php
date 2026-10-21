@@ -1,4 +1,5 @@
 <?php include_once("functions.php"); ?>
+<?php js("fog_game"); ?>
 <!--
 COURSE_METADATA:
 title: Derivatives: How AI "Learns" to get better
@@ -123,6 +124,57 @@ tags: math-heavy, code-heavy
 
 </div>
 
+<div class="md">
+### Mini game: the foggy mountain
+
+This is the situation every learning algorithm is in: it cannot see the whole landscape, only the height and the slope where it stands. Find the lowest point with eight probes — then compare yourself with gradient descent, which gets exactly the same information.
+</div>
+
+<style>
+#fog-game { --lab-accent: var(--mn-accent); --lab-accent-2: var(--mn-emerald); }
+#fog-game canvas { display: block; width: 100%; border-radius: 12px; border: 1px solid var(--mn-border); cursor: crosshair; background: color-mix(in srgb, var(--mn-bg) 60%, var(--mn-surface)); }
+#fog-game .fg-pips { display: flex; gap: 5px; }
+#fog-game .fg-pip { width: 14px; height: 14px; border-radius: 50%; background: var(--mn-accent); box-shadow: 0 0 8px color-mix(in srgb, var(--mn-accent) 60%, transparent); transition: all .3s ease; }
+#fog-game .fg-pip.is-used { background: color-mix(in srgb, var(--mn-text-muted) 30%, transparent); box-shadow: none; transform: scale(.75); }
+#fog-game .fg-stars { text-align: center; font-size: 2rem; letter-spacing: 6px; color: color-mix(in srgb, var(--mn-text-muted) 35%, transparent); }
+#fog-game .fg-stars .is-on { color: #fbbf24; text-shadow: 0 0 14px rgba(251, 191, 36, .6); animation: fg-star .6s cubic-bezier(.2, 1.6, .4, 1) both; }
+#fog-game .fg-stars .is-on:nth-child(2) { animation-delay: .15s; }
+#fog-game .fg-stars .is-on:nth-child(3) { animation-delay: .3s; }
+@keyframes fg-star { from { transform: scale(0) rotate(-90deg); } }
+#fog-game .fg-res { display: grid; gap: 6px; margin-top: 8px; }
+#fog-game .fg-row { display: grid; grid-template-columns: 12px minmax(0, 9em) minmax(0, 1fr) 3ch; gap: 10px; align-items: center; font-size: .86rem; }
+#fog-game .fg-row b { color: var(--mn-heading); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#fog-game .fg-dot { width: 12px; height: 12px; border-radius: 50%; }
+#fog-game .fg-bar { height: 10px; border-radius: 99px; background: color-mix(in srgb, var(--mn-text-muted) 18%, transparent); overflow: hidden; }
+#fog-game .fg-bar i { display: block; height: 100%; border-radius: inherit; }
+#fog-game .fg-num { font: 700 .86rem var(--mn-font-mono); text-align: right; color: var(--mn-heading); }
+#fog-game .fg-verdict { text-align: center; margin: 10px 0 0; color: var(--mn-text-secondary); }
+</style>
+<div class="mnlab" id="fog-game" data-interactive>
+	<div class="mnlab-head">
+		<div>
+			<div class="mnlab-kicker">Mini game</div>
+			<div class="mnlab-title">Foggy Mountain</div>
+			<p class="mnlab-sub">Somewhere under the fog is the lowest point. You have 8 probes. Each one shows the height — and which way the ground slopes. Then you race gradient descent with the same budget.</p>
+		</div>
+		<div class="mnlab-row"><span class="mnlab-hint">probes</span><div class="fg-pips" data-fg="left"></div></div>
+	</div>
+	<div><canvas data-fg="canvas" aria-label="Foggy landscape: click to probe"></canvas></div>
+	<div class="mnlab-row" style="margin-top: 12px; justify-content: space-between;">
+		<div class="mnlab-row">
+			<button type="button" class="mnlab-btn mnlab-btn--ghost" data-fg="reveal" disabled>Lift the fog</button>
+			<button type="button" class="mnlab-btn" data-fg="next">⟳ New mountain</button>
+		</div>
+		<button type="button" class="mnlab-chip" data-fg="slopes" aria-pressed="true">↘ show slopes</button>
+	</div>
+	<div class="mnlab-grid mnlab-grid--3" style="margin-top: 12px;">
+		<div class="mnlab-stat"><span class="k">Round</span><span class="v" data-fg="roundv">1</span></div>
+		<div class="mnlab-stat"><span class="k">Lowest found</span><span class="v" data-fg="bestv">–</span></div>
+		<div class="mnlab-stat"><span class="k">Personal best</span><span class="v" data-fg="pb">–</span></div>
+	</div>
+	<div data-fg="result" aria-live="polite" style="margin-top: 12px;"></div>
+</div>
+
 <div class="md" data-mathlevel="45">
 ### Understanding the Partial Derivative ($\partial$)
 
@@ -188,3 +240,5 @@ $$\frac{\partial \text{Output}}{\partial \text{Input}} = \frac{\partial \text{No
 #### Why “Back”?
 In AI, we calculate the error at the end first. We then pass that “error message” backward through the chain. Each layer multiplies the incoming message by its own local slope.
 </div>
+
+<div class="mn-quiz" data-quiz="derivativelab"><script type="application/json">{"title": "Slopes & gradient descent", "questions": [{"q": "For f(x) = x², what does the look-ahead estimate (f(x+h) − f(x)) / h give at x = 3 with h = 1?", "options": ["7", "6", "9", "3"], "answer": 0, "explain": "(16 − 9) / 1 = 7. The true derivative 2x = 6; the secant overshoots by exactly h, because (x+h)² − x² = 2xh + h²."}, {"q": "Gradient descent on f(x) = x² multiplies x by (1 − 2η) every step. What happens with η = 1.2?", "options": ["It diverges: |1 − 2.4| = 1.4 > 1", "It converges smoothly", "It stops after one step", "It zig-zags but converges"], "answer": 0, "explain": "Each step multiplies the distance to the minimum by −1.4: the sign flips (overshoot) and the size grows, so the ball flies away."}, {"q": "The slope at some point is exactly 0. What can you conclude?", "options": ["It is a flat point — a minimum, a maximum or a saddle", "It is certainly the global minimum", "It is certainly a local minimum", "The learning rate is too small"], "answer": 0, "explain": "A zero slope only says “no downhill direction right here”. Hilltops and saddle points are flat too, and a local minimum need not be the deepest one."}, {"q": "The slope at the current position is −2.5. Which way does gradient descent move x?", "options": ["To larger x (right)", "To smaller x (left)", "It does not move", "It depends on the loss value"], "answer": 0, "explain": "x_new = x − η · slope = x + 2.5η. A negative slope means the ground falls to the right, so descent goes right."}]}</script></div>

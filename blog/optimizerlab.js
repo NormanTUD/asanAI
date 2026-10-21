@@ -264,7 +264,22 @@ function updateOptPlot() {
 		hoverlabel: { bgcolor: themeColor('#1e293b'), font: { color: themeColor('#f8fafc'), size: 12 } }
 	};
 
+	// Size to the column explicitly: the lesson renders while #contents is
+	// still hidden, and Plotly then falls back to a fixed 700px width.
+	const plotEl = document.getElementById('plot-optimizer');
+	if (plotEl && plotEl.clientWidth > 0) layout.width = plotEl.clientWidth;
 	Plotly.react('plot-optimizer', data, layout, { displayModeBar: false });
+	if (plotEl && !updateOptPlot._sized && window.ResizeObserver) {
+		updateOptPlot._sized = true;
+		updateOptPlot._w = plotEl.clientWidth;
+		new ResizeObserver(() => {
+			if (plotEl.clientWidth > 0 && plotEl.clientWidth !== updateOptPlot._w) {
+				updateOptPlot._w = plotEl.clientWidth;
+				clearTimeout(updateOptPlot._rt);
+				updateOptPlot._rt = setTimeout(updateOptPlot, 60);
+			}
+		}).observe(plotEl);
+	}
 }
 
 function initOptimizerLab() {
