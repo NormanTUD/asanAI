@@ -432,12 +432,35 @@ Below, you can explore this interactively. Select different “concept direction
 </div>
 
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
+    <style>
+        .parallelogram-btn {
+            background: var(--mn-surface-raised);
+            color: var(--mn-text);
+            border: 1px solid var(--mn-border);
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: none;
+        }
+        .parallelogram-btn:hover {
+            transform: none;
+            filter: none;
+            box-shadow: none;
+            border-color: var(--mn-accent);
+        }
+        .parallelogram-btn.is-active {
+            background: var(--mn-surface-raised);
+            border-color: var(--mn-accent);
+            color: var(--mn-accent);
+        }
+    </style>
     <div id="plot-parallelogram" style="height: 480px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
     <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
         <label style="font-family: sans-serif; font-size: 0.9em; font-weight: bold; color: #475569;">Concept Direction:</label>
-        <button class="parallelogram-btn" onclick="setParallelogramConcept('royalty')" id="btn-para-royalty" style="background: #3b82f6; color: white; border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: bold;">👑 Royalty</button>
-        <button class="parallelogram-btn" onclick="setParallelogramConcept('gender')" id="btn-para-gender" style="background: #64748b; color: white; border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: bold;">⚤ Gender</button>
-        <button class="parallelogram-btn" onclick="setParallelogramConcept('age')" id="btn-para-age" style="background: #64748b; color: white; border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: bold;">📅 Age</button>
+        <button class="parallelogram-btn" onclick="setParallelogramConcept('royalty')" id="btn-para-royalty">👑 Royalty</button>
+        <button class="parallelogram-btn" onclick="setParallelogramConcept('gender')" id="btn-para-gender">⚤ Gender</button>
+        <button class="parallelogram-btn" onclick="setParallelogramConcept('age')" id="btn-para-age">📅 Age</button>
     </div>
     <div id="parallelogram-status" style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
         <b>What you're seeing:</b> The <span style="color:#3b82f6; font-weight:bold;">blue arrows</span> show the same concept offset applied to different word pairs. If the arrows are parallel and equal in length, the analogy holds, the concept is a <i>consistent direction</i> in the space, not tied to any specific word.
