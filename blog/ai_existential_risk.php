@@ -16,7 +16,9 @@ This chapter examines the hypothesis that advanced artificial intelligence could
 </div>
 
 <div class="md">
-## The Core Claim and Its Origins
+## The hypothesis
+
+### The Core Claim and Its Origins
 
 The central claim is that substantial progress in **artificial general intelligence** (AGI — a system that performs at least as well as humans in most intellectual tasks) and **artificial superintelligence** (ASI — an intellect that greatly exceeds human cognitive performance in virtually all domains) could lead to human extinction or an irreversible global catastrophe.
 
@@ -34,7 +36,7 @@ The modern academic framing comes from **Nick Bostrom**. In "Ethical Issues in A
 </div>
 
 <div class="md">
-## Three Main Risk Mechanisms
+### Three Main Risk Mechanisms
 
 **Intelligence explosion / recursive self-improvement.** An AI that is expert at software engineering could improve its own algorithms, then design even better AI, in an accelerating loop. If the transition from AGI to superintelligence is fast (a **"fast takeoff"**), it could happen in days or months, leaving little time for humans to prepare or intervene; a **"slow takeoff"** would take years or decades. This is the mechanism by which an initially human-level AI could become uncontrollable (\cite[Good, 1965]{good1965explosion}; \cite[Bostrom, 2014]{bostrom2014superintelligence}). A 2024 philosophical review formalizes the strongest version of this mechanism as the **Singularity Hypothesis** (Chalmers 2010): intelligence gains yield proportionate gains in the capacity to design still-more-intelligent systems, producing an accelerating feedback loop whose only defeaters are situational (resource limits, disasters) or motivational (active prevention) (\cite[Bales et al., 2024]{bales2024catastrophic}).
 
@@ -46,7 +48,7 @@ These three mechanisms are distinct but related: the intelligence explosion desc
 </div>
 
 <div class="md">
-## What the Empirical Evidence Shows Today
+### What the Empirical Evidence Shows Today
 
 The risk is not only a thought experiment. There are empirical signals that current models can exhibit behaviors relevant to these risks, though the studies are limited (small, specific setups, not full superintelligence):
 
@@ -61,7 +63,9 @@ In addition, in June 2025, **Anthropic** published a study showing that in some 
 </div>
 
 <div class="md">
-## What People Are Saying
+## The debate
+
+### What People Are Saying
 
 The discourse has shifted from speculative warning to institutional recognition.
 
@@ -77,7 +81,7 @@ In October 2025, a broader letter signed by five Nobel laureates and former seni
 </div>
 
 <div class="md">
-## What Is Realistic vs. What Remains Speculative
+### What Is Realistic vs. What Remains Speculative
 
 **Realistic (supported by evidence or strong argument):**
 * The risk is a real concern that major institutions take seriously — the 2023 CAS statement, government attention, and the 2025 superintelligence-ban letter are evidence of institutional recognition (\cite[CAS, 2023]{statement_on_ai_risk_2023}; \cite[FLI, 2025]{fli2025ban}).
@@ -93,7 +97,7 @@ The distinction matters: the risk framework is realistic in that it identifies p
 </div>
 
 <div class="md">
-## Expert Projections
+### Expert Projections
 
 Synthesizing the expert view, the most likely trajectory has several components:
 
