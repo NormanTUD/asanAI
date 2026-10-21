@@ -3607,6 +3607,20 @@ window.bibData = {
 		title: "Facing Up the Problem of Consciousness",
 		year: 1995
 	},
+	"schwitzgebel2026aiconsciousness": {
+		title: "AI and Consciousness: A Skeptical Overview",
+		author: "Eric Schwitzgebel",
+		year: 2026,
+		url: "https://arxiv.org/abs/2510.09858",
+		alternativetitle: "Schwitzgebel, AI and Consciousness (2026)"
+	},
+	"schwitzgebel2024weirdness": {
+		title: "The Weirdness of the World",
+		author: "Eric Schwitzgebel",
+		year: 2024,
+		url: "https://doi.org/10.2307/jj.5104033",
+		alternativetitle: "Schwitzgebel, The Weirdness of the World (2024)"
+	},
 	"olson2018metaphysics": {
 		title: "The Metaphysics of Artificial Intelligence",
 		author: "Eric T. Olson",
