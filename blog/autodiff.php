@@ -27,7 +27,9 @@ This technique was later independently rediscovered and applied to neural networ
 </div>
 
 <div class="md" data-mathlevel="45">
-## Why Not Symbolic or Numerical Differentiation?
+## The idea
+
+### Why Not Symbolic or Numerical Differentiation?
 
 Before understanding *how* AD works, it helps to understand *why* the alternatives fail at scale:
 
@@ -44,7 +46,7 @@ This requires **one forward pass per parameter** to compute each partial derivat
 </div>
 
 <div class="md" data-mathlevel="60">
-## The Chain Rule: The Mathematical Engine
+### The Chain Rule: The Mathematical Engine
 
 The entire machinery of AD rests on the **chain rule** of calculus. If a function $y$ is computed through a chain of intermediate steps:
 
@@ -63,7 +65,7 @@ AD automates this process by recording each elementary operation and its local d
 </div>
 
 <div class="md" data-mathlevel="55">
-## Forward Mode vs. Reverse Mode
+### Forward Mode vs. Reverse Mode
 
 There are two “directions” in which the chain rule can be evaluated:
 
@@ -79,21 +81,23 @@ Since training always reduces to minimizing a single scalar loss $L$, reverse mo
 </div>
 
 <div class="md">
-## Before the name existed: a machine that differentiated
+## The tape
+
+### Before the name existed: a machine that differentiated
 
 Forward-mode AD is older than it sounds. In the 1820s **Charles Babbage** designed the **Difference Engine**, a steam-era machine that tabulated polynomial functions by the **method of finite differences** \cite[Babbage's Difference Engine]{differenceengine}. You loaded it with a function's value and its successive differences at one starting point — which, for a smooth function, are just its **derivatives at that point** — and then cranked it forward: each turn produced the next value purely by *adding* the stored differences, with no multiplication and no formula at all. In the vocabulary of this chapter, the engine was a **forward-mode automatic-differentiation machine**. It carried the function *together with* its derivative state forward in lockstep, and read each new value off that state, more than a century before the term "automatic differentiation" was ever coined. The tape that reverse-mode AD records a hundred and fifty years later is the same idea, turned around.
 
 </div>
 
 <div class="md">
-## The Tape: Recording the Computation
+### The Tape: Recording the Computation
 
 The central data structure in reverse-mode AD is the **computational graph**, colloquially called the **tape** (by analogy with a magnetic tape that records operations sequentially). During the forward pass, every elementary operation, addition, multiplication, exponentiation, activation functions, is recorded on this tape along with its inputs and the local partial derivatives.
 
 </div>
 
 <div class="md" data-mathlevel="65">
-## A Concrete Example
+### A Concrete Example
 
 Consider the function:
 
@@ -160,7 +164,7 @@ You can explore this process interactively below. Adjust $x$ and $y$ and watch t
 </div>
 
 <div class="md">
-## The Computational Graph: Visualizing the Tape
+### The Computational Graph: Visualizing the Tape
 
 The tape can also be visualized as a **directed acyclic graph (DAG)**, where each node is an operation and each edge carries a value and a local derivative. The forward pass flows left-to-right, and the backward pass flows right-to-left, accumulating gradients via the chain rule at each node.
 
@@ -189,7 +193,9 @@ Below is an interactive visualization of the computational graph for $f(x, y) = 
 </div>
 
 <div class="md" data-mathlevel="50">
-## Gradient Descent on a Loss Landscape
+## Applying it
+
+### Gradient Descent on a Loss Landscape
 
 In practice, automatic differentiation is used to compute the gradient $\nabla L(\mathbf{w})$ of a loss function $L$ with respect to all model weights $\mathbf{w}$. The optimizer then updates the weights in the direction that reduces the loss:
 
@@ -233,15 +239,15 @@ The interactive demo below shows gradient descent on a simple 2D loss landscape 
 </div>
 
 <div class="md">
-## Tape-Based AD in Practice: TensorFlow and PyTorch
+### Tape-Based AD in Practice: TensorFlow and PyTorch
 
 Modern deep learning frameworks implement reverse-mode AD as a core feature. The two dominant frameworks, \citealternativetitle{tensorflow2016} and \citealternativetitle{pytorch}, take slightly different approaches to building the computational graph, but both ultimately implement the same mathematical principle.
 
-### TensorFlow: Explicit Tape with `GradientTape`
+#### TensorFlow: Explicit Tape with `GradientTape`
 
 \citealternativetitle{tensorflow2016} uses an **explicit tape** via the `tf.GradientTape()` context manager. You must explicitly tell TensorFlow to start recording operations. This gives you fine-grained control over what gets differentiated.
 
-### PyTorch: Implicit Tape with `autograd`
+#### PyTorch: Implicit Tape with `autograd`
 
 \citealternativetitle{pytorch} uses an **implicit tape**, any tensor created with `requires_grad=True` automatically records operations performed on it. The tape is built dynamically during the forward pass (this is called **define-by-run** or **eager mode**), which makes debugging more intuitive.
 
@@ -271,7 +277,7 @@ render_gem_tabs($autodiffcodetabs, "autodiff");
 ?>
 
 <div class="md">
-### Key Differences at a Glance
+#### Key Differences at a Glance
 
 | Feature | PyTorch | TensorFlow |
 |---------|---------|------------|
@@ -284,7 +290,7 @@ render_gem_tabs($autodiffcodetabs, "autodiff");
 
 Both frameworks produce mathematically identical gradients. The choice is primarily about API ergonomics and ecosystem preferences.
 
-## Building a Minimal Autograd Engine
+### Building a Minimal Autograd Engine
 
 To truly understand tape-based Automatic Differentiation, it helps to build one from scratch. The following is a minimal but complete implementation of a reverse-mode autograd engine in pure Python. It supports addition, multiplication, and the sine function, enough to differentiate our example $f(x, y) = (x + y) \cdot \sin(x)$.
 </div>
@@ -297,7 +303,9 @@ This minimal engine implements the exact same algorithm that PyTorch and TensorF
 </div>
 
 <div class="md" data-mathlevel="60">
-## The Vanishing and Exploding Gradient Problem
+## Problems and variations
+
+### The Vanishing and Exploding Gradient Problem
 
 One critical consequence of tape-based Automatic Differentiation in deep networks is the **vanishing gradient problem**, first identified by \citeauthor{hochreiter1991vanishing} in \citeyear{hochreiter1991vanishing} and further analyzed by \citeauthor{bengio1994learning} in \citeyear{bengio1994learning}.
 
@@ -307,7 +315,7 @@ $$\frac{\partial L}{\partial w_1} = \frac{\partial L}{\partial a_n} \cdot \frac{
 
 This is a product of $n$ local derivatives. If each factor is small (say, less than 1), the product shrinks **exponentially** toward zero as $n$ grows, the gradient **vanishes**. Conversely, if each factor is greater than 1, the product **explodes** toward infinity.
 
-### Vanishing Gradients
+#### Vanishing Gradients
 
 Consider a network using the sigmoid activation $\sigma(z) = \frac{1}{1+e^{-z}}$. Its derivative is:
 
@@ -319,11 +327,11 @@ $$\left(0.25\right)^{10} \approx 9.5 \times 10^{-7}$$
 
 The gradient reaching the first layer is less than one millionth of the gradient at the output. The early layers effectively stop learning, they receive no useful signal about how to update their weights.
 
-### Exploding Gradients
+#### Exploding Gradients
 
 The opposite problem occurs when the local derivatives are consistently greater than 1. In recurrent neural networks processing long sequences, the gradient can grow exponentially, causing weight updates so large that the model diverges to $\text{NaN}$.
 
-### Solutions
+#### Solutions
 
 Several architectural innovations have been developed to combat these problems:
 
@@ -367,7 +375,7 @@ You can explore the vanishing gradient problem interactively below. Adjust the n
 </div>
 
 <div class="md">
-## Dynamic vs. Static Computational Graphs
+### Dynamic vs. Static Computational Graphs
 
 An important distinction in modern AD frameworks is whether the computational graph is built **statically** (before execution) or **dynamically** (during execution).
 

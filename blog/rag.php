@@ -17,7 +17,9 @@ The best way to predict the future is to invent it.
 </div>
 
 <div class="md">
-## What is RAG?
+## The pipeline
+
+### What is RAG?
 
 A standard LLM can only use what it memorized during training. Ask it about a document it never saw, and it either **hallucinates** or says *“I don't know.”*
 
@@ -35,9 +37,9 @@ $$
 <div id="raglab-pipeline-diagram"></div>
 
 <div class="md">
-## The RAG Pipeline, Step by Step
+### The RAG Pipeline, Step by Step
 
-### Phase 1: Indexing (offline, done once)
+#### Phase 1: Indexing (offline, done once)
 
 **Step 1, Chunk the documents.**
 Split each source (PDF, webpage, database row) into small, overlapping passages, typically 200–500 tokens. Overlap ensures no information falls between the cracks.
@@ -54,7 +56,7 @@ Save every $(\vec{v}_i,\; \text{chunk\_text}_i,\; \text{metadata}_i)$ triple in 
 </div>
 
 <div class="md" data-mathlevel="50">
-### Phase 2: Retrieval + Generation (online, every query)
+#### Phase 2: Retrieval + Generation (online, every query)
 
 **Step 4, Embed the query.**
 The user's question is passed through the *same* embedding model, producing $\vec{q}$ in the same vector space.
@@ -87,11 +89,11 @@ The LLM reads the enriched prompt and produces a **grounded** answer. Hallucinat
 </div>
 
 <div class="md">
-## How Data Is Stored: Vector Databases
+### How Data Is Stored: Vector Databases
 
 A vector database is **not** a traditional SQL database. It doesn't search by keyword matching. It indexes high-dimensional vectors so that *semantic similarity* queries are fast.
 
-### What's actually stored?
+#### What's actually stored?
 
 | Field | Example | Purpose |
 |-------|---------|---------|
@@ -100,7 +102,7 @@ A vector database is **not** a traditional SQL database. It doesn't search by ke
 | `text` | “The Transformer was introduced in 2017…” | Original chunk, returned to the LLM |
 | `metadata` | `{source: "vaswani2017", page: 3}` | Filtering, citations |
 
-### How is search so fast?
+#### How is search so fast?
 
 Brute-force comparison against millions of vectors would be $O(n \cdot d)$ per query, too slow. Vector DBs use **Approximate Nearest Neighbor (ANN)** algorithms:
 
@@ -112,7 +114,9 @@ Result: querying **1 billion vectors in ~50 ms** on a single machine.
 </div>
 
 <div class="md">
-## 🔍 Interactive: Similarity Search Demo
+## RAG in context
+
+### 🔍 Interactive: Similarity Search Demo
 </div>
 
 <div id="raglab-demo-container">
@@ -127,7 +131,7 @@ Result: querying **1 billion vectors in ~50 ms** on a single machine.
 </div>
 
 <div class="md">
-## RAG vs. In-Context Learning (ICL)
+### RAG vs. In-Context Learning (ICL)
 
 **In-Context Learning** is when you put examples or instructions directly in the prompt and the LLM “learns” the task on the fly, no weight updates, just pattern-matching over the provided tokens.
 
@@ -156,13 +160,13 @@ RAG and ICL are **complementary**, not competing. In fact, **RAG feeds into ICL*
 </div>
 
 <div class="md">
-### Why do they *seem* different?
+#### Why do they *seem* different?
 
 ICL relies on whatever the user manually puts in the prompt. RAG **automates the selection** using vector search. The LLM itself doesn't know the difference, it just sees tokens in its context window either way. The magic of RAG is in the retrieval step *before* the LLM runs.
 
 <p>$$ \underbrace{\text{RAG}}_{\text{automated retrieval}} \;\longrightarrow\; \underbrace{\text{ICL}}_{\text{LLM reads retrieved chunks}} $$</p>
 
-## RAG and Long Context Windows
+### RAG and Long Context Windows
 
 Modern LLMs have ever-growing context windows: 128K tokens (GPT-4 Turbo), 200K (Claude 3), even 1M+ (Gemini 1.5). So why bother with RAG?
 </div>
@@ -170,7 +174,7 @@ Modern LLMs have ever-growing context windows: 128K tokens (GPT-4 Turbo), 200K (
 <div id="raglab-context-table"></div>
 
 <div class="md">
-### The “Lost in the Middle” Problem
+#### The “Lost in the Middle” Problem
 
 Research shows that LLMs pay the most attention to the **beginning** and **end** of long contexts, often ignoring information buried in the middle \cite{liu2023lostmiddle}. Even if a 200K-token window *can* hold your data, the model may fail to *use* it.
 
@@ -178,7 +182,9 @@ RAG sidesteps this by only injecting the 3–5 most relevant chunks, keeping the
 
 In practice, **RAG + long context** work together: RAG retrieves the top 10–20 chunks, and the long context window gives the model room to reason over all of them at once.
 
-## Limitations &amp; Failure Modes
+## Making RAG work
+
+### Limitations &amp; Failure Modes
 
 - **Garbage in, garbage out.** If the document store contains wrong information, RAG will confidently retrieve and present it.
 - **Indirect prompt injection.** Because RAG feeds retrieved text straight into the prompt, malicious instructions hidden in a document can try to hijack the model (see the Security chapter).
@@ -190,13 +196,13 @@ In practice, **RAG + long context** work together: RAG retrieves the top 10–20
 </div>
 
 <div class="md">
-## Retrieval, in Depth
+### Retrieval, in Depth
 
 The happy path — embed the corpus, retrieve the nearest chunks, hand them to the model — is what the sections above walk (see also [Semantic search](vectorsearch.php)). This deeper half is what happens in practice, and it is mostly about the parts the happy path hides — **how you cut the corpus into chunks** (the single highest-leverage, least-discussed knob), **how you combine keyword and semantic search**, **how you rerank** with a second, more expensive model, and — the half the demos never show — **why retrieval-augmented generation so often underperforms** and how to find out whether *your* failure is in the retrieval or the generation.
 </div>
 
 <div class="md">
-### Chunking is a decision, not a default
+#### Chunking is a decision, not a default
 
 Before anything is embedded, the corpus must be **chunked** — cut into pieces, because the model will be asked to answer from a *few* of them, not the whole. The chunk is the **unit of retrieval**: it is the granularity at which "relevant" is decided and at which context is *spent*. And its size and boundaries are the highest-leverage choice in the whole pipeline, because they set two opposing costs at once.
 
@@ -212,7 +218,7 @@ The trade is **recall versus context-dilution**, and it is the whole game. A chu
 </div>
 
 <div class="md">
-### Hybrid search: BM25 and dense are different questions
+#### Hybrid search: BM25 and dense are different questions
 
 [Dense](vectorsearch.php) retrieval asks "which chunks are *semantically close* to this query?" — great for **paraphrase** (the query "how do I undo my last commit" matches "reverting a commit" even though no word is shared). But it is weak on **exact, rare terms**: a product ID, an error code, a proper noun, a specific API flag. Those are the things a *lexical* retriever — **BM25** \cite[Wikipedia, Okapi BM25]{bm25} — is built for: it scores by term match, weighted by how rare the term is across the corpus, and it does not care whether the query and the document *mean* the same thing, only whether they *share* the right words.
 
@@ -249,7 +255,7 @@ with $k$ a constant (commonly 60). RRF is attractive because it needs no calibra
 </div>
 
 <div class="md">
-### Reranking: the expensive second look
+#### Reranking: the expensive second look
 
 Dense and BM25 are **first-stage** retrievers: they are cheap, so they can score *all* of the corpus, but they do so *coarsely* — a dense model scores the query and a document *separately* (two encodings, one distance), so it never actually reads them together. A **cross-encoder** is the **second-stage** reranker: it takes the query *and* a candidate document as a single input, runs them through a transformer *jointly*, and outputs a relevance score for that pair. Because it reads the pair, it is far more precise — it can tell that a chunk *mentions* the topic but does not *answer* the question, which a first-stage similarity cannot.
 
@@ -257,7 +263,7 @@ But a cross-encoder is $O(N)$ — one expensive forward pass per candidate — s
 </div>
 
 <div class="md">
-### Contextual retrieval: fix the chunk at index time
+#### Contextual retrieval: fix the chunk at index time
 
 A recurring failure is that a chunk, *out of context*, is not retrievable. A paragraph that says "the failure mode was severe" is a great answer — but if the word "failure" never appears in the query, no retriever finds it, because the chunk, standing alone, does not say what it is *about*. **Contextual retrieval** \cite[Ford, Anthropic (2024)]{contextualretrieval2024} addresses this at **index time**: before embedding a chunk, prepend a short piece of LLM-written context that orients the chunk ("this paragraph is from a post-mortem about the checkout service's 2024-03-14 incident, and it describes the failure mode"), so the *enriched* chunk is what gets embedded and retrieved. Reported to cut the retrieval-failure rate by roughly half \cite[Ford, Anthropic (2024)]{contextualretrieval2024}.
 
@@ -265,7 +271,7 @@ The idea generalizes: retrieval quality is set at **index time** as much as quer
 </div>
 
 <div class="md">
-### Why RAG underperforms: the honest half
+#### Why RAG underperforms: the honest half
 
 None of the above is a substitute for the fact that RAG *fails*, and the failure modes are structural (\cite[Gao et al., 2023]{ragsurvey2023}):
 
@@ -277,7 +283,7 @@ The through-line: RAG is not a feature you add; it is a **pipeline with two fail
 </div>
 
 <div class="md">
-## Summary
+### Summary
 
 | Question | Answer |
 |----------|--------|
@@ -290,7 +296,9 @@ The through-line: RAG is not a feature you add; it is a **pipeline with two fail
 </div>
 
 <div class="md">
-## Bush 1945: The Memex, Hypertext, and Personal Information Retrieval
+## History
+
+### Bush 1945: The Memex, Hypertext, and Personal Information Retrieval
 
 The RAG pipeline described in this chapter has a longer ancestry than 2020. Its conceptual blueprint — a personal, queryable store of human knowledge with associative links between documents, retrieved at the moment of use to augment a human's thinking — was drawn in 1945 by \citeauthor{bush1945aswemaythink} (\citeyear{bush1945aswemaythink}) in *The Atlantic Monthly*, in an essay so influential that the first personal-computer vision in modern culture is usually dated to it. \citeauthor{bush1945aswemaythink} named the device the **memex** ("memory extender") and described it as a desk-sized electromechanical console that would store a personal library of microfilmed books and records, let the user consult them on translucent screens at will, and — this is the part the field remembered — allow the user to build **associative trails** between documents by stringing them together with named links, so that consulting one document would automatically pull up the next.
 

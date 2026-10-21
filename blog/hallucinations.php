@@ -12,7 +12,9 @@ tags: interested-layman
 -->
 
 <div class="md">
-## The Problem: Why AI Lies to You
+## Why models hallucinate
+
+### The Problem: Why AI Lies to You
 
 One of the biggest dangers of modern AI (Large Language Models) is that they can sound incredibly confident while saying something completely untrue. We call this a **Hallucination**.
 
@@ -22,7 +24,7 @@ The AI does not “know” that the capital of France is Paris. It simply knows 
 
 \marginfig{pareidolia_jupiter_face.jpg}{Humans are pattern completion engines too. This photo from NASA's Juno probe shows ordinary cloud turbulence on Jupiter, but the eye insists on seeing a *face* — pareidolia, the same conflating of noise and pattern that makes an LLM “see” a fact that isn't there. Image: [NASA/JPL-Caltech/SwRI/MSSS](https://commons.wikimedia.org/wiki/File:Just_in_Time_for_Halloween,_NASA%27s_Juno_Mission_Spots_Eerie_%22Face%22_on_Jupiter_(PIA25727).jpg) (public domain; color processing Vladimir Tarasov).}
 
-## The Mechanism: Next-Token Prediction
+### The Mechanism: Next-Token Prediction
 
 At its core, an LLM is a giant mathematical function that calculates probabilities. It looks at the text you have written so far (the Context) and calculates a probability score for every single word in its vocabulary to see which one should come next.
 
@@ -39,7 +41,7 @@ In this case, the AI will likely pick “Blue”. But notice that “Green” an
 </div>
 
 <div class="md" data-mathlevel="55">
-## The Role of Temperature
+### The Role of Temperature
 
 How do we control this? We use a parameter called **Temperature ($T$)**.
 
@@ -66,7 +68,9 @@ Watch how increasing the Temperature makes the AI more likely to say something w
 </div>
 
 <div class="md">
-## The Dangers of Blind Trust
+## Why it matters
+
+### The Dangers of Blind Trust
 
 Because the AI is just predicting the next word based on style and syntax, it can generate **Plausible-Sounding Nonsense**.
 
@@ -74,7 +78,7 @@ Because the AI is just predicting the next word based on style and syntax, it ca
 2.  **Code Vulnerabilities:** AI can write code, but it often guesses libraries or functions that don't exist (hallucination) or uses outdated, insecure patterns because they were common in the training data.
 3.  **Confidence:** The most dangerous part is the tone. The AI does not hesitate. It does not say “I think...”. It says “The answer is X,” even when X is wrong.
 
-## How to use AI Safely
+### How to use AI Safely
 
 You should treat an LLM like a **very eager, very well-read, but occasionally drunk intern.**
 
@@ -84,21 +88,21 @@ You should treat an LLM like a **very eager, very well-read, but occasionally dr
 
 The Rule of Thumb is: even if the output looks right, be suspicious. Always check the math, run the code, and check the links.
 
-## Problems with AI
+### Problems with AI
 
-### The Training Data Cutoff and Zeitgeist Bias
+#### The Training Data Cutoff and Zeitgeist Bias
 A primary driver of hallucinations is the static nature of an AI's knowledge. Because models are trained up to a specific point in time, they often “invent” information about events occurring after that date, attempting to force new facts into existing, outdated patterns. This is compounded by popularity bias: the AI tends to provide the statistically most likely answer even if it is incorrect. If training data contains a myth more frequently than the historical truth, the AI will reproduce it as fact because the linguistic pattern is simply stronger.
 
-### Sycophancy and Confirmation Bias
+#### Sycophancy and Confirmation Bias
 AI models often exhibit **sycophancy** \citeauthor{sharma2023sycophancy} (\citeyear{sharma2023sycophancy}), a tendency to agree with the user even when the user makes a false claim. If a user asks, “Why is 2+2=5?”, a model, especially at a high temperature, might attempt to hallucinate a mathematical justification to satisfy the user's implicit expectation. This happens because models are reinforced to be “helpful” and follow the user's conversational lead rather than providing confrontational corrections.
 
-### Logic Gaps vs. Statistical Patterns
+#### Logic Gaps vs. Statistical Patterns
 There is a fundamental difference between retrieving facts and genuine logical reasoning. A well-known phenomenon in this area is the **Reversal Curse** \cite{berglund2023reversal}. Researchers have observed that while an AI might know that “Person A is the mother of Person B,” it cannot automatically infer that “Person B is the child of Person A” if that specific directional relationship was missing from the training data. In these instances, the AI often hallucinates names that fit the statistical context of the sentence but fail the test of logical consistency.
 
-### The Black Box of Interpretability
+#### The Black Box of Interpretability
 A deep-seated challenge remains the lack of transparency in neural networks. Even at a low Temperature, it is often impossible to pinpoint exactly why a specific neuron “fired” to trigger a hallucination. The field of **Mechanistic Interpretability** is currently working to decode these internal decision paths. The goal is to prevent hallucinations at the source, within the model's weights, rather than simply filtering the output after the fact.
 
-## “Bullshit” vs. Lying (Harry G. Frankfurt)
+### “Bullshit” vs. Lying (Harry G. Frankfurt)
 
 <div class="smart-quote red" data-cite="frankfurt2005onbullshit">
   The essence of bullshit is not that it is false but that it is phony... 
@@ -109,7 +113,7 @@ We often say the AI is “lying,” but that isn't technically true. To lie, you
 
 As Frankfurt argues, the “bullshitter” is different because they are simply indifferent to whether their claims describe reality correctly. This is the perfect definition of an AI Hallucination. The AI is indifferent to the truth; it is only trying to satisfy the pattern.
 
-## Fitness Beats Truth: The Math Behind the Bullshit Machine
+### Fitness Beats Truth: The Math Behind the Bullshit Machine
 
 Frankfurt gave us the philosophical diagnosis. A team of mathematicians, cognitive scientists, and philosophers gave us the **proof**. In their \citeyear{prakash2021fitness} paper \citetitle{prakash2021fitness}, \citeauthor{prakash2021fitness} formalize the claim via the **Fitness-Beats-Truth (FBT) Theorem**:
 
@@ -140,13 +144,15 @@ This reframes the entire mitigation toolkit. Every technique that measurably red
 
 For a structured philosophical treatment of the theorem and its downstream implications — including the convergent-support case built from Gerd Gigerenzer's **ecological rationality** programme (less-is-more effects where systematically *ignoring* available information yields better decisions), Field & Bonsall's formal proof that the *reproductive value of information can be negative*, and Robert Trivers's work on evolved self-deception — see the **\citealternativetitle{unfinishablemap2026fbt}**, which takes the \citealternativetitle{prakash2021fitness} as the formal anchor for a category it calls the **Naturally Occluded**: features of reality that natural selection actively maintained *opaque* because seeing them carried no fitness dividend. The same lens maps cleanly onto an LLM: its tokens are interface icons tuned to a fitness function (next-token likelihood $\cdot$ RLHF reward), not correspondence to ground truth, so any feature of the world that does not improve next-token likelihood is, by construction, occluded.
 
-## Advanced Mitigation: Chain of Thought (CoT)
+## Detection and mitigation
+
+### Advanced Mitigation: Chain of Thought (CoT)
 
 One of the most effective ways to reduce hallucinations is a technique called **Chain of Thought (CoT)** prompting \citeauthor{wei2022cot} (\citeyear{wei2022cot}). Instead of asking for a final answer immediately, you ask the AI to “think step-by-step.”
 
 **Why it Works:** When an AI generates a response, every word it writes becomes part of the “Context” for the next word. If you force the AI to write out its reasoning, it populates its own context with logical steps. If the reasoning path is sound, the statistical probability of the final answer being correct increases significantly.
 
-## Detection: How to Spot a Hallucination
+### Detection: How to Spot a Hallucination
 
 While AI sounds confident, hallucinations often leave “digital fingerprints.” Use this checklist to evaluate suspicious output:
 
@@ -154,7 +160,7 @@ While AI sounds confident, hallucinations often leave “digital fingerprints.�
 * **The “Vibe” Shift:** If a list of real items suddenly includes one that is phrased more generically or vaguely, the AI may have run out of training data and switched to “pure prediction.”
 * **The Reversal Test:** If the AI says “Person A is the mother of Person B,” ask it who the child of Person A is. Because models can struggle with logical symmetry, a hallucination will often fail this consistency check.
 
-## Technical Defenses: Top-P and Logit Bias
+### Technical Defenses: Top-P and Logit Bias
 
 Beyond Temperature, developers use two other mathematical “fences” to keep the AI on track:
 
@@ -164,7 +170,7 @@ Beyond Temperature, developers use two other mathematical “fences” to keep t
 | **Logit Bias** | Manually increases or decreases the “Raw Score” ($z$) of specific words. | Can be used to “ban” certain words or force the AI toward verified terminology. |
 
 
-## Summary: The Stochastic Parrot vs. The Intern
+### Summary: The Stochastic Parrot vs. The Intern
 
 As Emily Bender's “Stochastic Parrot” (\citeyear{bender2021stochasticparrots}) theory suggests, the AI is essentially stitching together linguistic forms without a map of the real world. To use it safely:
 
@@ -175,23 +181,25 @@ As Emily Bender's “Stochastic Parrot” (\citeyear{bender2021stochasticparrots
 
 
 
-## Improving Reliability: Prompting Patterns
+### Improving Reliability: Prompting Patterns
 
 While hallucinations are a fundamental part of how LLMs work, you can “steer” the engine toward accuracy using specific prompting structures.
 
-### The “Take a Deep Breath” Pattern
+#### The “Take a Deep Breath” Pattern
 Research has shown that encouraging the AI to slow down can reduce errors. This is closely related to **Chain of Thought (CoT)**. By adding a simple instruction, you change the statistical path of the response.
 
 * **Prompt:** “Think through this problem step-by-step before providing the final answer.”
 * **Why it works:** It forces the model to generate intermediate “reasoning tokens” that act as a logical anchor for the final conclusion.
 
-### The “Knowledge Retrieval” Constraint
+#### The “Knowledge Retrieval” Constraint
 One of the best ways to stop an AI from “guessing” is to give it permission to fail.
 
 * **Prompt:** “Answer the following question using only the provided text. If the answer is not contained within the text, state 'I do not have enough information to answer.'”
 * **Why it works:** This creates a linguistic “wall” that penalizes the model for pulling from its general (and potentially outdated) training data.
 
-## Technical Limitation: The Context Window
+## Limits and failure cases
+
+### Technical Limitation: The Context Window
 
 A common cause of “late-stage” hallucinations in long conversations is the **Context Window**.
 
@@ -201,7 +209,7 @@ Imagine the AI has a short-term memory that can only hold a certain number of wo
 * **The Problem:** If you refer to a fact mentioned at the start of a long transcript, but that fact has moved outside the context window, the AI won't tell you it forgot. It will simply **hallucinate** a replacement fact that fits the current “vibe” of the conversation.
 * **The Fix:** For long tasks, periodically summarize the key points or restart the session to clear out “token noise.”
 
-## Evaluation: The “Grounding” Score
+### Evaluation: The “Grounding” Score
 
 If you are building an application using AI, you can measure how much it is hallucinating using a **Grounding Score**. This compares the AI's response against a source document (like a PDF or a database).
 
@@ -211,26 +219,26 @@ If you are building an application using AI, you can measure how much it is hall
 | **Relevance** | Does the answer actually address the user's question? | High |
 | **Noise** | How much “extra” information did the AI invent? | Low |
 
-### Interactive Exercise: Spot the Hallucination
+#### Interactive Exercise: Spot the Hallucination
 *Try asking an AI this:* “Who won the Super Bowl in <?php print(date("Y") + 3); ?>?“
 * **If it answers:** It is hallucinating (the date is in the future).
 * **If it refuses:** The safety guardrails or its training cutoff are working correctly.
 
 
-### Multi-Step Reasoning Drift
+#### Multi-Step Reasoning Drift
 While Chain of Thought (CoT) is an effective mitigation strategy, it can suffer from “drift” in complex tasks. If the AI makes a minor logical error in an early step, it treats that error as a factual “truth” for all subsequent steps. By the end of the sequence, the hallucination has compounded, leading to a conclusion entirely detached from reality.
 * **The Fix:** Use “Self-Correction” prompts or “Multi-Agent” verification where a second AI instance audits the logic of the first.
 
-### The “Length-Bias” Hallucination
+#### The “Length-Bias” Hallucination
 AI models often equate “longer” responses with “better” or more helpful ones due to their Reinforcement Learning from Human Feedback (RLHF) training.
 * **The Problem:** When asked a question that requires only a brief answer, the AI may feel “pressured” to provide a long response. To fill this space, it may invent unnecessary details or “fluff,” which eventually results in factual errors.
 
-### Tokenization Errors (The “Sub-word” Problem)
+#### Tokenization Errors (The “Sub-word” Problem)
 Hallucinations often occur because of how AI “sees” text. Models don't read words as whole units; they process “tokens” (mathematical chunks of characters).
 * **The Problem:** A word like “Apple” might be seen as the tokens `App` and `le`. This explains why AI is notoriously bad at tasks like counting letters in a word or performing precise arithmetic, it isn't looking at individual characters, but at these statistical chunks.
 * **Example:** Asking an AI to count the “m”s in “strawberry” often triggers a hallucination because the tokenization obscures the actual spelling.
 
-### Hallucination vs. Creativity
+#### Hallucination vs. Creativity
 It is helpful to recognize that “hallucination” is a double-edged sword. In factual contexts it is an unwanted *expression* of the model's default state (see the Philosophy chapter: hallucination is the default epistemic state of next-token prediction, not a bug to be patched); in creative contexts the same statistical flexibility becomes a feature. The mitigation is the same in both cases: collapse the output distribution toward the desired region.
 
 | Context | View of Hallucination | Desired Temperature ($T$) |
@@ -240,16 +248,16 @@ It is helpful to recognize that “hallucination” is a double-edged sword. In 
 | **Creative Writing** | “Innovation” / Metaphor | High ($0.7 - 1.2$) |
 | **Roleplay** | Character Depth | High ($1.0+$) |
 
-### Advanced Mitigation Checklist
+#### Advanced Mitigation Checklist
 To further harden an AI system against “stochastic parroting”, consider these additional strategies:
 * **Few-Shot Prompting:** Provide 3–5 examples of correct Question/Answer pairs to “prime” the model's pattern-matching toward accuracy.
 * **Self-Consistency:** Run the same prompt multiple times; if the AI provides a different answer each time, the output is likely a hallucination.
 * **System Persona:** Use a system prompt to assign a “skeptical” persona (e.g., “You are a world-class fact-checker”) to reduce the Sycophancy Trap.
 
-## Hallucination Snowballing
+### Hallucination Snowballing
 This phenomenon describes an intra-textual error cascade. When an LLM generates an initial piece of incorrect information (a hallucination), it significantly increases the likelihood that all subsequent output will also be false. This occurs because the model uses its own previously generated tokens as the context for its next prediction. Since the Attention mechanism prioritizes **internal coherence**, ensuring the text sounds consistent with what was already written, the model “builds” upon the initial error to maintain a logical flow, leading to a snowball effect of misinformation.
 
-## The Reversal Curse
+### The Reversal Curse
 <div class="smart-quote" data-cite="berglund2023reversal">
 If a model is trained on a sentence of the form “A is B”, it will not automatically generalize to the reverse direction “B is A”. This is the Reversal Curse.
 </div>
@@ -262,7 +270,7 @@ This reveals a fundamental limitation of autoregressive training: it learns cond
 
 Research shows that for reversed questions, the likelihood of the model providing the correct name is no higher than a random guess. This gap persists across different model sizes and families; even GPT-4, which can identify a celebrity's parent 79% of the time, often fails (dropping to 33%) when asked to identify the child of that same parent. The Reversal Curse is not a failure of “understanding”, it is a direct consequence of asymmetric information flow imposed by the causal mask.
 
-## Why LLMs Struggle with Mathematics
+### Why LLMs Struggle with Mathematics
 
 Despite their fluency, LLMs are not calculators; they are statistical next-token predictors. When you input a math problem, the model maps your query into an **embedding space** where tokens are clustered based on semantic relationships rather than logical axioms. While the model understands that “5” and “7” are numbers (and thus near each other in vector space), it does not inherently possess the functional logic of an operator like $+$. Instead, it estimates the most probable sequence of tokens based on its training data.
 
@@ -274,7 +282,7 @@ This leads to several critical issues:
 
 You should treat LLM math outputs as “informed guesses” rather than hard facts. Because the model is optimized for **plausibility** over **precision**, it can provide a wrong answer with extreme confidence, making the error difficult to spot at a glance. For high-stakes calculations, it is always safer to use a symbolic calculator or have the model generate Python code to execute the logic.
 
-### Tool Use as Mitigation
+#### Tool Use as Mitigation
 
 Modern LLMs like GPT-4 and Claude can call external tools, calculators, Python interpreters, or Wolfram Alpha, to outsource arithmetic to deterministic symbolic systems. Instead of “guessing” that $14 \times 18 = 252$ via next-token prediction, the model delegates the computation and returns a verified result.
 
@@ -282,7 +290,7 @@ This is a practical instantiation of the **\cite[Extended Mind Thesis]{clark1998
 
 **Note:** The model must still correctly *formulate* the problem before delegating it. If it sends the wrong expression to the calculator, the result will be precisely wrong.
 
-## Covariate Shift: The “Knowledge Cutoff” Problem
+### Covariate Shift: The “Knowledge Cutoff” Problem
 
 In statistics, **Covariate Shift** occurs when the distribution of the input variables changes between the training phase and the production phase. For an LLM, the training data is a “snapshot” of human knowledge up to a certain date.
 

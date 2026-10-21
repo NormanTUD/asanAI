@@ -18,7 +18,9 @@ This chapter traces the technical lineage from pixels-as-tensors (see the <a hre
 </div>
 
 <div class="md" data-mathlevel="45">
-## The Two Towers: Why Aligning Spaces Is Hard
+## Aligning the modalities
+
+### The Two Towers: Why Aligning Spaces Is Hard
 
 A trained text model lives in a **language embedding space** $\mathbb{R}^d$ where “king” and “queen” sit close together. An image encoder (a CNN or Vision Transformer) lives in a **visual embedding space** $\mathbb{R}^{d'}$ where two photographs of the same cat also sit close together. The problem: these two spaces are not the same. You cannot, in general, do $\vec{v}_\text{cat\,image} - \vec{v}_\text{dog\,image} \approx \vec{v}_\text{“cat”} - \vec{v}_\text{“dog”}$ until they have been aligned.
 
@@ -26,7 +28,7 @@ The simplest alignment is **contrastive learning**: pull matched (image, caption
 </div>
 
 <div class="md" data-mathlevel="60">
-## CLIP: Contrastive Language-Image Pre-training
+### CLIP: Contrastive Language-Image Pre-training
 
 Published by \cite[Radford et al. (OpenAI), 2021]{radford2021clip}, CLIP trains two encoders simultaneously on ~400 million (image, text) pairs scraped from the public web:
 
@@ -49,7 +51,7 @@ This is the foundation of every modern vision-language model.
 </div>
 
 <div class="md">
-## Vision Transformers: Turning Pixels into Tokens
+### Vision Transformers: Turning Pixels into Tokens
 
 A Vision Transformer (ViT, \cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit}) treats an image as a **sequence of patches**. For an image of $H \times W \times 3$ pixels with patch size $P \times P$:
 
@@ -69,11 +71,13 @@ This is the deep conceptual shift: **an image is no longer “a grid to be convo
 </div>
 
 <div class="md">
-## Multimodal LLMs: How a Text Model Learns to See
+## Multimodal LLMs
+
+### Multimodal LLMs: How a Text Model Learns to See
 
 The challenge: a pretrained text-only LLM has never seen a pixel. Three architectural patterns have emerged (often combined):
 
-### Pattern 1: Projection Layer (LLaVA-style)
+#### Pattern 1: Projection Layer (LLaVA-style)
 
 A pretrained vision encoder (e.g., CLIP-ViT) produces a sequence of visual tokens. A small **projection MLP** maps each visual token from the vision space into the LLM's text-token embedding space:
 
@@ -85,17 +89,17 @@ The projected visual tokens are concatenated with the text-token sequence and fe
 
 LLaVA-1.5 (\cite[Liu et al., 2023]{liu2023llava}) used a 7B Vicuna LLM + CLIP-ViT-L/14 + a 2-layer MLP projector. With ~600k image-instruction pairs, it reached 78.5% on VQAv2, competitive with GPT-4 on several multimodal benchmarks.
 
-### Pattern 2: Cross-Attention (Flamingo-style)
+#### Pattern 2: Cross-Attention (Flamingo-style)
 
 The vision tokens are not concatenated into the text sequence; instead, the LLM's self-attention layers are augmented with **cross-attention blocks** that read from the visual sequence at every layer. Flamingo (\cite[Alayrac et al., 2022]{alayrac2022flamingo}) interleaved gated cross-attention layers between frozen Transformer blocks, training only the cross-attention and a Perceiver Resampler that compressed variable-length image features into a fixed 64-token representation.
 
-### Pattern 3: Native Multimodality (GPT-4o, Gemini)
+#### Pattern 3: Native Multimodality (GPT-4o, Gemini)
 
 The Transformer is trained from scratch on interleaved image, audio, text, and video tokens. There is no projection layer; the model has always seen pixels as first-class tokens. Tokens representing 1/24-second audio frames, $16 \times 16$ image patches, and BPE text tokens all flow through the same residual stream. (The text side is BPE, a **compression** algorithm repurposed as a tokenizer: it fuses frequent patterns into short-ID tokens, so the text enters already in a shorter, lossless form.) This requires vast multimodal training data (trillions of tokens), but produces the most coherent cross-modal reasoning.
 </div>
 
 <div class="md">
-## How a Multimodal LLM Answers a Question
+### How a Multimodal LLM Answers a Question
 
 Take the prompt *“What is unusual about this image?”* with an attached photo. The pipeline:
 
@@ -109,7 +113,9 @@ The LLM treats the visual tokens as if they were a foreign language it has been 
 </div>
 
 <div class="md">
-## Visual Question Answering Benchmarks
+## Evaluation and limits
+
+### Visual Question Answering Benchmarks
 
 | Benchmark | What it tests | Why it matters |
 |-----------|---------------|----------------|
@@ -125,7 +131,7 @@ The leaderboard has shifted dramatically: in 2022, GPT-3.5 with no vision got ~0
 </div>
 
 <div class="md">
-## The Limits of Multimodal LLMs
+### The Limits of Multimodal LLMs
 
 Multimodal does **not** mean omnipotent:
 
@@ -137,7 +143,7 @@ Multimodal does **not** mean omnipotent:
 </div>
 
 <div class="md">
-## What's Next
+### What's Next
 
 * **Any-to-any models**: GPT-4o, Gemini 2, and others can take image, audio, video *and* produce any of them, generating speech, singing, or video from a text prompt.
 * **Video as a long sequence of patches**: video tokens are simply more frames stacked in time. Gemini 1.5 Pro accepts up to 1 hour of video at native resolution.
@@ -145,7 +151,7 @@ Multimodal does **not** mean omnipotent:
 </div>
 
 <div class="md">
-## Summary
+### Summary
 
 Multimodal LLMs are conceptually simple:
 

@@ -687,7 +687,9 @@ $$S = \sum_{i=1}^{n} \underbrace{(y_i - f(x_i))^2}_{\text{The Squared Residual}}
 </div>
 
 <div class="md">
-## Statistics as a state technique: from mortality tables to the average man
+## The history of statistical thinking
+
+### Statistics as a state technique: from mortality tables to the average man
 
 Before statistics was a neutral tool in a mathematician's hand, it was an instrument of the **state** — a way to know a population well enough to tax it, mobilize it, and govern it. Its origins are less mathematical than you might expect.
 
@@ -707,7 +709,7 @@ That history does not invalidate the mathematics — least squares is least squa
 </div>
 
 <div class="md" data-mathlevel="50">
-## Pearson's Biological Link: The Father-Son Study
+### Pearson's Biological Link: The Father-Son Study
 
 In 1801, \citeauthor{gauss1809} used least squares to find a planet; in 1895, \citeauthor{pearson1895correlation} used correlation to study human heredity. Building on data originally collected by \citeauthor{galton} — heights of parents and children in some 200 families — Pearson answered a fundamental question: *How much does one variable actually tell us about another?*
 
@@ -774,7 +776,7 @@ This is structurally identical to Pearson's $r$: the dot product in the numerato
 </div>
 
 <div class="md" data-mathlevel="50">
-## Standardizing: Z-Scores & The Pearson Problem
+### Standardizing: Z-Scores & The Pearson Problem
 
 Z-scores standardize a value to the standard Normal:
 
@@ -803,7 +805,9 @@ In machine learning, **batch normalization** and **layer normalization** are con
 </div>
 
 <div class="md" data-mathlevel="65">
-## Chi-Square ($\chi^2$): The Test of Independence
+## Statistical tests
+
+### Chi-Square ($\chi^2$): The Test of Independence
 
 The chi-square distribution arises as the sum of $k$ squared standard Normal variables:
 
@@ -811,7 +815,7 @@ $$\chi^2_k = \sum_{i=1}^k Z_i^2, \quad Z_i \sim \mathcal{N}(0, 1)$$
 
 It has one parameter, $k$ (degrees of freedom), and is **asymmetric**, bounded below at 0, with a long right tail.
 
-### The Equation of “Surprise”
+#### The Equation of “Surprise”
 
 The chi-square statistic measures how far observed counts are from expected counts:
 
@@ -819,7 +823,7 @@ $$\chi^2 = \sum_{i=1}^{k} \frac{(O_i - E_i)^2}{E_i}$$
 
 where $O_i$ is observed count and $E_i$ is expected count under the null hypothesis. Small $\chi^2$ = data consistent with hypothesis; large $\chi^2$ = data inconsistent.
 
-### Why 3.84?
+#### Why 3.84?
 
 For a test with $k = 2$ categories and $\alpha = 0.05$ significance level, the critical value is $\chi^2_{1, 0.05} = 3.841$. This is the **magic number** for the famous “p < 0.05” threshold. If your $\chi^2$ exceeds 3.84, you reject the null hypothesis at the 5% level.
 
@@ -827,7 +831,7 @@ The 3.84 comes from inverting the chi-square CDF at the 95th percentile with 1 d
 
 $$P(\chi^2_1 \leq 3.841) = 0.95$$
 
-### The General Critical Value Equation
+#### The General Critical Value Equation
 
 For $k$ degrees of freedom and significance level $\alpha$:
 
@@ -835,7 +839,7 @@ $$\chi^2_{k, \alpha} = \text{icdf}(\chi^2_k, 1 - \alpha)$$
 
 (where $\text{icdf}$ is the inverse CDF). Tables or software give the values.
 
-### Deep Dive: The Error Function ($erf$)
+#### Deep Dive: The Error Function ($erf$)
 
 The error function is closely related to the Normal distribution:
 
@@ -847,7 +851,7 @@ The complementary error function $\text{erfc}(x) = 1 - \text{erf}(x)$ appears in
 </div>
 
 <div class="md" data-mathlevel="60">
-## The t-Test: A Dublin Brewery's Answer to Small Samples
+### The t-Test: A Dublin Brewery's Answer to Small Samples
 
 You now hold both ingredients — a standard Normal in the numerator, a $\chi^2$ in the denominator — for the most-used significance test in science. Its origin is one of the strangest in the history of statistics: not a university, but an Irish **brewery**.
 
@@ -865,7 +869,7 @@ The pseudonym had a commercial reason: after one of the lab's papers revealed de
 </div>
 
 <div class="md">
-## The controlled experiment: from scurvy to ablation
+### The controlled experiment: from scurvy to ablation
 
 Testing a difference is only half the discipline. The other half — the one that actually *creates* trustworthy evidence — is **designing an experiment** that produces a difference you can trust. That design was invented in three stages, and each is a direct ancestor of something you do in ML.
 
@@ -881,7 +885,9 @@ Now map it onto what you do. An **A/B test** — ship variant A of a page to hal
 </div>
 
 <div class="md">
-## The Statistical Soul: Dataset Distributions
+## Distributions in data
+
+### The Statistical Soul: Dataset Distributions
 
 Real-world datasets are rarely perfectly Normal. Common patterns:
 
@@ -895,7 +901,7 @@ Recognizing the distribution of your data is the first step in choosing the righ
 </div>
 
 <div class="md" data-mathlevel="45">
-## Zipf's Law: The Physics of Language
+### Zipf's Law: The Physics of Language
 
 In any natural-language corpus, the $k$-th most frequent word has frequency approximately:
 

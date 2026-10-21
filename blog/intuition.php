@@ -640,8 +640,10 @@ Where a word splits depends on the data the model was trained on. It chooses tha
 
 <details class="mn-psst">
 	<summary><span class="mn-psst-key" aria-hidden="true">+</span>A detour: tokens that break the machine<span class="mn-psst-hint">open</span></summary>
-	<div class="mn-psst-body">
-		<p>Some tokens are almost never seen in training, so their embeddings stay nearly arbitrary. Feed one to a model and it can spill nonsense or start reciting its training data — the “understanding” only reaches as far as the text it happened to read.</p>
+	<div class="mn-psst-body md">
+		<p>Some tokens are almost never seen in training, so their embeddings stay nearly arbitrary. Feed one to a model and it can spill nonsense or start reciting its training data — the “understanding” only reaches as far as the text it happened to read. Researchers call them <b>glitch tokens</b> (\cite[Land &amp; Bartolo, 2024]{land2024fishing}; \cite[Li et al., 2024]{glitchtokens}).</p>
+		<p>The most famous example is <code>SolidGoldMagikarp</code>. It is not a word and not a random string: it is the Reddit handle of one of six users who spent years counting upward together on <i>r/counting</i>, one number per comment. Their names appeared so often in that corner of the web that the tokenizer gave some of them their own tokens. But the vocabulary was built from a broader scrape of the web than the curated text used to train the model, so the model barely ever met them. Ask it to repeat <code>SolidGoldMagikarp</code> and it may answer “distribute”, refuse, or insult you. The token <code>davidjl</code> — a truncated <code>davidjl123</code>, who alone posted 163,000 times in that subreddit — can make a model start reciting numbers (\cite[Rumbelow &amp; Watkins, 2023]{rumbelow2023solidgold}).</p>
+		<p>That is the lesson in miniature. A token is not a concept the model knows; it is a slot the model had to fill from data. If the slot was filled with almost nothing, there is almost nothing behind it — and what comes out is whatever the surrounding statistics happen to drag along.</p>
 	</div>
 </details>
 

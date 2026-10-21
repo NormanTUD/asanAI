@@ -13,7 +13,9 @@ math: 50
 -->
 
 <div class="md" data-lesson-id="algorithms">
-## Two Lessons in One
+## The idea of an algorithm
+
+### Two Lessons in One
 
 This chapter has two halves. The first asks a question that took two thousand years to be *asked*: **what makes a procedure an *algorithm*?** — and follows the answer through Euclid's gcd, the Sieve of Eratosthenes, and the 1928 decision problem that forced the entire theory of computation to be invented. The second shows a modern transformer *executing* algorithms on its own: grokking the Discrete Fourier Transform without being told it, and running code that exists only in the prompt. Read the first half to understand the object being executed; the second is the machine that runs it.
 </div>
@@ -30,7 +32,7 @@ A procedure that has both is an algorithm. The rest of this half is the story of
 </div>
 
 <div class="md">
-## The first non-trivial algorithm: Euclid (c. 300 BC)
+### The first non-trivial algorithm: Euclid (c. 300 BC)
 
 The oldest algorithm still in use every day sits in Euclid's *Elements*, Book VII \cite[Euclidean algorithm]{euclideanalgorithm} \cite[The Elements]{euclidelements}. Given two whole numbers, find their **greatest common divisor** — the largest number that divides both. The procedure:
 
@@ -57,7 +59,7 @@ For the next two thousand years, this was just *the way you found a common divis
 </div>
 
 <div class="md">
-### Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)
+#### Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)
 
 A little later, and a little further east, the same two millennia-old craft produced a different *shape* of procedure: the \cite[Sieve of Eratosthenes]{sieveoferatosthenes}. Given a limit $n$, list every number from 2 to $n$, then cross off every multiple of 2, then every multiple of 3, then 5, and so on. What is left standing is exactly the set of primes.
 
@@ -67,7 +69,7 @@ Where Euclid's algorithm *reduces* a problem step by step, the sieve **filters**
 </div>
 
 <div class="md">
-## The gap: two thousand years of *doing*, none of *studying*
+### The gap: two thousand years of *doing*, none of *studying*
 
 Here is the gap the rest of the course has been circling. For all that, the algorithm was never a **thing**. It was a **verb**. People *did* algorithms; no one *studied* them as objects with properties you could check.
 
@@ -79,7 +81,7 @@ Naming a class of things is not the same as asking whether the class has a singl
 </div>
 
 <div class="md">
-## The question that built everything: the Entscheidungsproblem (1928)
+### The question that built everything: the Entscheidungsproblem (1928)
 
 In 1928 the mathematician David Hilbert (\cite[Hilbert & Ackermann, 1928]{hilbert1928entscheidung}) posed a question that had been waiting, unasked, for two thousand years. In German it is the **Entscheidungsproblem**, the decision problem:
 
@@ -93,7 +95,7 @@ The answer, delivered eight years later by two independent mathematicians wieldi
 </div>
 
 <div class="md">
-## 1936: two machines, one answer
+### 1936: two machines, one answer
 
 Kurt Gödel had already delivered the first blow in 1931 with his incompleteness theorems \cite[Gödel's incompleteness theorems (1931)]{godel1931incompleteness}: no consistent system strong enough for arithmetic can prove every true statement in it. But incompleteness left a door open — it says some truths escape *proof*, not that no *procedure* could still decide which statements are decidable. The decision problem was still, as far as anyone could tell, on the table.
 
@@ -113,7 +115,7 @@ And the upshot for the 1928 question: within this shared class of "what a machin
 </div>
 
 <div class="md">
-## The payoff: the algorithm becomes an object
+### The payoff: the algorithm becomes an object
 
 Step back, and the whole chapter is one turning point.
 
@@ -158,7 +160,9 @@ GCD = {
 </script>
 
 <div class="md">
-## How a Transformer Executes Algorithms
+## A transformer executes algorithms
+
+### How a Transformer Executes Algorithms
 
 The concept is settled: an algorithm is a procedure that terminates and is correct, and since 1936 we can *reason* about algorithms — their cost, their guarantees, their limits. The second half of this chapter asks a concrete question: can a *neural network* actually *run* one?
 
@@ -174,7 +178,7 @@ $$a + b \mod P$$
 
 where $P = 113$ is a prime number. The network's vocabulary is just the numbers $\{0, 1, 2, \ldots, 112\}$, and it must output the correct sum modulo 113.
 
-## The Core Insight
+### The Core Insight
 
 The network learns that **modular arithmetic is circular**. After $P$, you wrap around to 0, just like an angle wrapping around a circle. So the network represents each number as a **point on a circle**, and performs addition by **rotating angles**.
 
@@ -184,7 +188,7 @@ But a single circle (a single frequency) has too many ambiguities. So the networ
 </div>
 
 <div class="md" data-mathlevel="55">
-## The Algorithm in Five Steps
+### The Algorithm in Five Steps
 
 The trained network implements the following algorithm (\cite[Nanda et al., 2023, Section 4]{nanda2023grokking}):
 
@@ -206,13 +210,13 @@ This is maximal when $c = (a+b) \bmod P$, because then *all five* cosine terms e
 </div>
 
 <div class="md" data-mathlevel="50">
-## Connection to Grokking
+### Connection to Grokking
 
 This algorithm is not present at the start of training. The phenomenon is called **grokking**: a model suddenly transitions from **memorization** to **generalization** long after it seems to have plateaued. Originally identified by \cite[Power et al. (2022)]{power2022grokking}, this “aha moment” occurs when a model achieves 100% training accuracy but 0% validation accuracy for an extended period, only to have validation accuracy jump to 100% within a few epochs. This indicates a shift from high-frequency noise-fitting to the discovery of an underlying algorithmic pattern, and structurally it is often marked by a transition in **attention matrices** from messy, uniform distributions to clean, highly structured representations.
 
 Here the network first **memorizes** the training data (achieving 100% train accuracy but ca. 0% test accuracy). Then, after many more epochs, it suddenly “groks” the addition pattern, test accuracy jumping from 0% to 100% in a few hundred steps. Weight decay forces the network to find this compact Fourier solution instead of maintaining a large lookup table.
 
-## Interactive Exploration
+### Interactive Exploration
 
 Below you can explore each step of the algorithm interactively. Change the input numbers, toggle frequencies on and off, and watch how the interference pattern changes.
 </div>
@@ -220,7 +224,7 @@ Below you can explore each step of the algorithm interactively. Change the input
 <div id="fourier-algorithm-container"></div>
 
 <div class="md" data-mathlevel="60">
-## The Neuron-Logit Map $W_L$
+### The Neuron-Logit Map $W_L$
 
 The matrix $W_L = W_U W_{\text{out}}$ maps MLP activations directly to logits. It is approximately **rank 10**, with each direction corresponding to the cosine or sine of one of the 5 key frequencies (\cite[Nanda et al., 2023, Section 4.2, Equation 2]{nanda2023grokking}):
 
@@ -366,7 +370,7 @@ The residual after this approximation has Frobenius norm under **0.55%** of the 
 </script>
 
 <div class="md" data-mathlevel="50">
-## The Embedding Space: Fourier Sparsity
+### The Embedding Space: Fourier Sparsity
 
 The embedding matrix $W_E$ is a $P \times d_{\text{model}} = 113 \times 128$ matrix. When we take a Discrete Fourier Transform along the token dimension and compute the $\ell_2$-norm along the model dimension, we find that $W_E$ is **sparse in the Fourier basis** (\cite[Nanda et al., 2023, Section 4.1, Figure 3]{nanda2023grokking}).
 
@@ -500,13 +504,15 @@ This is the first line of evidence that the network operates in a Fourier basis:
 
 
 <div class="md">
-## In-Context Algorithm Execution: How LLMs Run Code That Only Exists in the Prompt
+## In-context algorithm execution
+
+### In-Context Algorithm Execution: How LLMs Run Code That Only Exists in the Prompt
 
 Everything above describes an algorithm **baked into the weights** during training. But something far stranger happens every day: you paste pseudocode into a prompt, say “now execute `add(128, 367)`“, and the model produces the correct answer, despite never having been trained on *your* algorithm.
 
 This is **in-context algorithm execution**. The algorithm is not in the weights. It exists only as tokens in the context window. Yet the model follows it step by step.
 
-### The Puzzle
+#### The Puzzle
 
 Consider this prompt:
 </div>
@@ -535,7 +541,7 @@ The model has no Python interpreter. It has no CPU. It has no variable registers
 
 **How?**
 
-### What the Weights Actually Encode: A Meta-Algorithm
+#### What the Weights Actually Encode: A Meta-Algorithm
 
 The key insight from \cite[Garg et al. (2022)]{garg2022incontext} is that Transformers trained on diverse data don't memorize specific algorithms, they learn a **meta-algorithm**: a general-purpose procedure for extracting and executing patterns from context.
 
@@ -547,7 +553,7 @@ a trained Transformer can predict $f(x_{\text{query}})$ for functions $f$ it has
 
 But your algorithm prompt isn't input-output pairs, it's *code*. So what's happening?
 
-### The Three Things the Weights Encode
+#### The Three Things the Weights Encode
 
 The weights don't contain your algorithm. They contain three capabilities that *together* allow execution:
 
@@ -565,7 +571,7 @@ This is not a literal register file, it's a distributed representation across hu
 **3. Step-by-Step Generation (Autoregressive Decoding)**
 Each generated token advances the computation by one micro-step. The model doesn't execute the entire algorithm in a single forward pass, it executes one step per generated token, using its own output as “scratch space” for the next step.
 
-### Why Ambiguity Kills: The Algorithmic Prompting Discovery
+#### Why Ambiguity Kills: The Algorithmic Prompting Discovery
 
 \cite[Zhou et al. (2022)]{zhou2022algorithmic} proved something crucial: **how you describe the algorithm determines whether the model can execute it.**
 
@@ -588,7 +594,7 @@ Length of A is 1. Thus A=[5]. Since (15-5)/10=1, C[2]=1.
 
 The result: **90.5% accuracy on 19-digit addition** vs. 9.5% for few-shot baselines, a 9× error reduction \cite[Table 2]{zhou2022algorithmic}.
 
-### Proof That the Model Actually Follows the In-Context Algorithm
+#### Proof That the Model Actually Follows the In-Context Algorithm
 
 Is the model truly executing the algorithm from context, or just pattern-matching the output format? \cite[Zhou et al. (2022)]{zhou2022algorithmic} prove it's genuine execution through three tests:
 
@@ -600,7 +606,7 @@ Is the model truly executing the algorithm from context, or just pattern-matchin
 
 This is in stark contrast to chain-of-thought prompting, where providing wrong reasoning patterns barely affects performance, suggesting those models rely on pretraining knowledge, not in-context learning (\cite[Madaan and Yazdanbakhsh, 2022]{madaan2022textpatterns}).
 
-### The Mechanism: Layer by Layer
+#### The Mechanism: Layer by Layer
 
 Combining insights from both papers, here's what happens during a single forward pass when the model encounters “Execute: add(128, 367)” after seeing the algorithm:
 
@@ -623,7 +629,7 @@ MLP layers transform the bound state into the next output token. For each genera
 
 This is why **autoregressive generation is essential**: the model can only execute one step per forward pass. Complex algorithms require many generated tokens (the “scratchpad”), with each token advancing the state by one micro-step.
 
-### The Critical Role of the Scratchpad
+#### The Critical Role of the Scratchpad
 
 The model cannot execute a 19-digit addition in a single forward pass, that would require maintaining ca. 19 loop iterations worth of state simultaneously. Instead, it generates intermediate tokens that serve as **external memory**:
 
@@ -633,7 +639,7 @@ Each forward pass reads the previously generated tokens (which encode the curren
 
 This is why \cite[Zhou et al. (2022)]{zhou2022algorithmic} find that **context length is the primary bottleneck**: the model can only execute as many steps as fit in its context window.
 
-### The Four Stages of Teaching Algorithms In-Context
+#### The Four Stages of Teaching Algorithms In-Context
 
 \cite[Zhou et al. (2022)]{zhou2022algorithmic} identify a hierarchy of capabilities:
 
@@ -645,7 +651,7 @@ This is why \cite[Zhou et al. (2022)]{zhou2022algorithmic} find that **context l
 
 4. **Skills as Tools:** Using learned algorithms as subroutines within broader reasoning (e.g., using the addition algorithm inside a word problem). This reveals an **interference phenomenon**: mixing formal algorithm execution with informal reasoning in the same context degrades both (\cite[Section 6]{zhou2022algorithmic}).
 
-### What the Model Cannot Do
+#### What the Model Cannot Do
 
 Despite these capabilities, there are hard limits:
 
@@ -654,7 +660,7 @@ Despite these capabilities, there are hard limits:
 - **Interference between skills:** Mixing very different types of reasoning (e.g., informal math reasoning + formal algorithm execution) in one prompt causes performance degradation (\cite[Zhou et al., 2022, Section 6]{zhou2022algorithmic}).
 - **No true compilation:** The model doesn't “compile” your code into an internal representation. It simulates execution token by token. This means execution speed is O(output_tokens), not O(algorithm_complexity).
 
-### Interactive Exploration
+#### Interactive Exploration
 
 Below you can explore how an LLM executes an addition algorithm step by step. Provide two numbers, and watch the model trace through the algorithm, showing how each generated token advances the computational state.
 </div>
@@ -662,11 +668,11 @@ Below you can explore how an LLM executes an addition algorithm step by step. Pr
 <div id="icl-execution-container" style="max-width:900px; margin:0 auto;"></div>
 
 <div class="md">
-## Algorithmic Prompting: Why Specificity Unlocks Execution
+### Algorithmic Prompting: Why Specificity Unlocks Execution
 
 The discovery by \cite[Zhou et al. (2022)]{zhou2022algorithmic} that changed how we think about in-context algorithm execution is deceptively simple: **the more precisely you describe each step, the better the model executes it.** But the mechanism behind this is subtle and reveals something deep about how Transformers process instructions.
 
-### The Specificity Spectrum
+#### The Specificity Spectrum
 
 Consider teaching a model to add two numbers. There's a spectrum of how explicitly you can describe the algorithm:
 
@@ -679,7 +685,7 @@ Consider teaching a model to add two numbers. There's a spectrum of how explicit
 
 The 9× improvement from few-shot to algorithmic prompting isn't just “more detail helps.” It reveals that the model's attention heads can only reliably extract rules when those rules are **unambiguous from the context** (\cite[Section 2]{zhou2022algorithmic}).
 
-### The Ambiguity Problem (Visualized)
+#### The Ambiguity Problem (Visualized)
 
 When you show the model `8 + 7 = 15, write 5, carry 1` followed by `2 + 6 = 8, write 8, carry 0`, the model must infer the carry rule. But from just these two examples, multiple rules are consistent:
 
@@ -689,7 +695,7 @@ When you show the model `8 + 7 = 15, write 5, carry 1` followed by `2 + 6 = 8, w
 
 Algorithmic prompting eliminates this by making the rule explicit: `Since 8+7+0=15 and 15≥10, carry = (15-5)/10 = 1`.
 
-### The Four Stages of Algorithmic Teaching
+#### The Four Stages of Algorithmic Teaching
 
 Zhou et al. discovered that algorithmic reasoning can be taught progressively through four stages, each building on the last:
 
@@ -704,7 +710,9 @@ Each stage introduces new challenges. Stage 3 (composition) is particularly inte
 <div id="algorithmic-prompting-container" style="max-width:960px; margin:0 auto;"></div>
 
 <div class="md" data-mathlevel="45">
-## Beyond Modular Arithmetic: Magnitude, Comparison, and Counting
+## Beyond modular arithmetic
+
+### Beyond Modular Arithmetic: Magnitude, Comparison, and Counting
 
 The circular representations above solve a very specific problem: **modular** addition, where the answer wraps around a fixed modulus ($\bmod N$). That is a *bounded, cyclic* task — there is no "carry out to infinity," and no question of how *big* a number is. Once you leave that world, the model hits two different walls, and understanding them clarifies what a "number" actually is inside the network.
 
@@ -720,7 +728,7 @@ Where does this live? In the **hidden states (the residual stream) of the later 
 </div>
 
 <div class="md" data-mathlevel="50">
-## A Transformer as a State Machine: How a Stateless Network Keeps State
+### A Transformer as a State Machine: How a Stateless Network Keeps State
 
 Here is a tension worth sitting with. An RNN keeps its state in a single hidden vector that it updates one token at a time, carrying everything forward. A transformer has **no such carried-over hidden vector**: within a single forward pass it is a *parallel* function applied to the whole context at once, with no step-by-step evolution. You are right that "time" barely exists for the network inside one forward pass — the only real notion of order is the **sequence position** of the tokens (and, during generation, the autoregressive step-by-step decoding). So "state across time" below means **state across the token positions / decode steps**, not an internal clock. Given that, the puzzle is sharper, not softer: how can a network with no carried-over memory do anything *sequential* or *stateful* — parse a sentence, follow a procedure, track a running count — when it has nowhere to keep the running total?
 

@@ -19,7 +19,9 @@ The picture we sketch in this chapter is the best current answer that the mechan
 </div>
 
 <div class="md" data-mathlevel="55">
-## The question, re-framed
+## Where a fact lives
+
+### The question, re-framed
 
 First, the word "knows". It is doing a lot of work in the question "how does it know to reply Paris?", and most of that work is misleading. We do **not** mean:
 
@@ -43,7 +45,7 @@ A language model is trained to do one thing: predict the next token in a sequenc
 </div>
 
 <div class="md" data-mathlevel="55">
-## What the model actually computes, top to bottom
+### What the model actually computes, top to bottom
 
 The forward pass that turns "The capital of France is " into a distribution over next tokens is short. In a modern decoder-only Transformer like those behind GPT, Claude, and LLaMA, it looks like this:
 
@@ -63,7 +65,7 @@ This sounds too austere to be true. The next sections will fill in how it can ne
 </div>
 
 <div class="md" data-mathlevel="55">
-## The residual stream as a public scratchpad
+### The residual stream as a public scratchpad
 
 The single most important structural fact about a Transformer is the **residual stream**: a single vector $x_i^{(\ell)} \in \mathbb{R}^d$ at every layer $\ell$ and every position $i$, to which every component *adds* its output (\cite[Elhage et al., 2021]{elhage2021mathematical}). Concretely:
 
@@ -85,7 +87,7 @@ If you have ever tried to debug a neural network where one component *overwrites
 </div>
 
 <div class="md" data-mathlevel="60">
-## Attention: routing "France" to the end
+### Attention: routing "France" to the end
 
 For the prompt "The capital of France is ", the first thing the model has to do is *figure out which tokens matter*. The word "is" is a verb that wants an object. The object is a country. The country is "France", which appeared three tokens earlier. The mechanism for this routing is **self-attention** (\cite[Vaswani et al., 2017]{vaswani2017attention}).
 
@@ -107,7 +109,7 @@ A useful decomposition, due to (\cite[Elhage et al., 2021]{elhage2021mathematica
 </div>
 
 <div class="md" data-mathlevel="55">
-## The MLP as a soft key-value memory
+### The MLP as a soft key-value memory
 
 If attention is the routing layer — the part that figures out *which* information matters — then the **MLP layers** are where the *content* of the model's knowledge actually lives. This is the most important conceptual claim in this chapter, and it has substantial experimental support.
 
@@ -129,7 +131,7 @@ A hard hash table stores a fact or it doesn't. A soft key-value memory does some
 </div>
 
 <div class="md">
-### Where "Paris" specifically lives
+#### Where "Paris" specifically lives
 
 So there is a cloud of soft key-value pairs in the model's weights. The question is: is "Paris is the capital of France" stored *somewhere specific*, or is it smeared across millions of pairs in some inseparable way? The experimental evidence from the last few years is, surprisingly clearly: *somewhere specific*.
 
@@ -146,7 +148,9 @@ This is the closest thing we have to a smoking gun: there exist *local, causally
 </div>
 
 <div class="md">
-## Opening up one fact: ROME
+## Editing and reading facts
+
+### Opening up one fact: ROME
 
 The most dramatic experimental evidence that facts live in identifiable, narrow regions of the weights comes from (\cite[Meng et al., 2022]{meng2022locating}) and their method **ROME** — *Rank-One Model Editing*.
 
@@ -166,7 +170,7 @@ Honest caveats. ROME is not a complete theory of fact storage. It is one experim
 </div>
 
 <div class="md" data-mathlevel="55">
-## Facts as directions: the linear representation hypothesis
+### Facts as directions: the linear representation hypothesis
 
 The third piece of the picture is the most surprising, and the most contested.
 
@@ -192,7 +196,7 @@ This same "direction with a fixed meaning" scales from *facts* to whole *behavio
 </div>
 
 <div class="md" data-mathlevel="45">
-## Watching the answer form: the logit lens
+### Watching the answer form: the logit lens
 
 All of the above is the result of careful *post-hoc* analysis: you run the model, find what mattered, edit it, see what changes. There is also a much simpler trick that lets you *watch the answer form in real time* as the forward pass progresses: the **logit lens**.
 
@@ -219,7 +223,9 @@ The logit lens is a *diagnostic*, not a measurement of what the model is "thinki
 </div>
 
 <div class="md">
-## The attractor analogy, honestly
+## What the picture gets right and wrong
+
+### The attractor analogy, honestly
 
 There is a tempting picture that goes like this. The residual stream starts somewhere — a vector near the embedding of " ", perturbed by attention that has read "France" from earlier. As it passes through layer after layer, it gets *pulled* toward a region of $\mathbb{R}^d$ that decodes to "Paris". Other prompts — "The capital of Germany is", "2 + 2 =", "Once upon a" — get pulled toward different regions. The picture is of basins of attraction, like a Hopfield network or a dynamical system with fixed points.
 
@@ -227,7 +233,7 @@ This picture is *suggestive* and *partially grounded*, but it is not, as of this
 </div>
 
 <div class="md" data-mathlevel="65">
-### What is grounded
+#### What is grounded
 
 The connection between Transformer attention and modern Hopfield networks is mathematically precise. (\cite[Ramsauer et al., 2020]{ramsauer2020hopfield}) showed that the attention update rule
 
@@ -241,11 +247,11 @@ where $\mathrm{lse}$ is the log-sum-exp. The classical Hopfield network of (\cit
 </div>
 
 <div class="md">
-### What is suggested but not proven
+#### What is suggested but not proven
 
 From this, it is *tempting* to conclude that the whole residual stream is being "attracted" toward stored memory states across layers. The logit-lens evidence (§7) is consistent with this picture — predictions become more confident as layers progress, as if the residual stream is converging toward an attractor. The function-vector evidence (§6) is consistent — small vectors steer predictions, as if the residual stream were being gently pushed toward a different basin.
 
-### What is wrong with the picture
+#### What is wrong with the picture
 
 Three honest problems with calling this "attractor dynamics" in the strict sense:
 
@@ -255,7 +261,7 @@ Three honest problems with calling this "attractor dynamics" in the strict sense
 
 So: the *attention* part of the Transformer is mathematically a Hopfield-style associative memory. The *whole* Transformer is, *maybe*, doing something attractor-like, but the evidence is empirical (logit lens, function vectors) and the formal justification is incomplete.
 
-### On chaos theory
+#### On chaos theory
 
 You may have heard LLMs described as "high-dimensional dynamical systems", and dynamical systems make people think of chaos. Let us be careful here, because the word *chaos* has a technical meaning (sensitivity to initial conditions, topological mixing, dense periodic orbits) that does not strictly apply.
 
@@ -265,7 +271,7 @@ The forward pass is also, empirically, mostly **contractive**: semantically simi
 </div>
 
 <div class="md">
-## Superposition: why there is no "grandmother cell"
+### Superposition: why there is no "grandmother cell"
 
 There is an obvious question lurking behind §4 and §5. If facts live in MLP neurons, why is it that you cannot just open up a 7-billion-parameter model, look at the neurons one by one, and find the neuron that fires for "Paris"?
 
@@ -279,19 +285,19 @@ The systematic way to *recover* monosemantic features from a superposed residual
 </div>
 
 <div class="md">
-## Three honest limits
+### Three honest limits
 
 The picture in §3–§9 is the best current account, and it is the one most mechanistic interpretability researchers would defend at a conference. It is also incomplete in ways that matter.
 
-### Scale gap
+#### Scale gap
 
 Almost all the experiments cited in this chapter — ROME, knowledge neurons, induction heads, logit lens — were done on models in the 100M–7B parameter range: BERT-base, GPT-2 small, GPT-J. Frontier models in 2025–2026 are 100× to 1000× larger. The honest version of this concern is that the picture in §3–§9 is well-supported for "small" production models (≤ 7B) and is rapidly being extended to frontier-scale production models. (\cite[Templeton et al., 2024]{templeton2024scaling}) have trained sparse autoencoders on Claude 3 Sonnet and recovered millions of interpretable features. (\cite[Lindsey et al., 2025]{lindsey2025biology}) and (\cite[Ameisen et al., 2025]{ameisen2025circuit}) have applied "circuit tracing" — replacing MLP layers with cross-layer transcoders and then following the computation feature-by-feature — to Claude 3.5 Haiku, producing the first end-to-end mechanistic accounts of multi-step behaviors in a production model. The picture is converging: the same general mechanisms (residual stream as scratchpad, attention as routing, MLPs as soft key-value stores, facts as directions) appear to hold, with new layers of structure visible only at the frontier scale.
 
-### Multi-hop and composition
+#### Multi-hop and composition
 
 The picture works well for single-hop retrieval: "the capital of X is Y" → look up X, return Y. It is much less clear for multi-hop: "the wife of the actor who played Batman in 1989 is". This requires the model to *compose* several retrieved facts: identify Batman-1989 → Michael Keaton, identify Keaton's wife → Caroline McWilliams (or whoever the model thinks). We do not have a clean mechanistic story for this. There is some evidence that multi-hop reasoning uses chains of attention heads acting as a kind of scratchpad in the residual stream (\cite[Olsson et al., 2022]{olsson2022induction}), but it is not as crisp as the single-fact picture. This is one of the most active areas of current research.
 
-### Facts vs. world models
+#### Facts vs. world models
 
 When the model says "Paris", is it because it has an internal *model* of the world in which France has a capital called Paris? Or is it because it has memorized a soft key-value pair that happens to fire on this context?
 
@@ -303,7 +309,9 @@ The honest summary is that the *mechanism* of fact retrieval is reasonably well-
 </div>
 
 <div class="md">
-## Binding Across Distance — and Why It Breaks
+## Synthesis
+
+### Binding Across Distance — and Why It Breaks
 
 A large part of what the model does is **binding**: tying a "filler" to a "gap" across distance — the subject to its verb, the object to the verb that governs it, a pronoun to its antecedent. The cleanest reverse-engineered case is the **indirect-object-identification circuit** (\cite[Wang et al., 2022]{wang2022interpretability}): a small set of heads whose job is to *copy* the right noun across the intervening verb to the position where it is needed. Understanding *why* this works sometimes and fails other times comes down to a single resource: **depth, as a budget of hops.**
 
@@ -319,7 +327,7 @@ The takeaway is a clean one: **binding works for short, unambiguous chains, and 
 </div>
 
 <div class="md" data-mathlevel="45">
-## Putting it together
+### Putting it together
 
 Here is the picture in one breath, with citations:
 
@@ -341,7 +349,7 @@ Those are open questions. They are the questions the next decade of interpretabi
 </div>
 
 <div class="md">
-## What to carry away
+### What to carry away
 
 Five things, restated as a checklist.
 

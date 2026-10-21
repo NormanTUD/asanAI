@@ -22,7 +22,9 @@ Most of AI's image generators used to be delicate. GANs collapsed, VAEs blurred,
 
 The idea is almost paradoxical: instead of generating an image in one forward pass, **destroy an image with noise step by step, then learn to undo the destruction, one tiny step at a time**. It is a different paradigm from the autoregressive next-token prediction that drives LLMs, even though both produce staggering results.
 
-## The central trick: destroy, then learn to undo
+## The diffusion process
+
+### The central trick: destroy, then learn to undo
 
 Imagine dropping a clear photograph into a glass of water and slowly stirring in drops of black ink. After each drop the picture becomes a little less recognizable. After enough drops, all you see is uniform grey.
 
@@ -32,7 +34,7 @@ That is what a diffusion model does. The forward process (ink going in) is a han
 </div>
 
 <div class="md" data-mathlevel="65">
-## The forward process: a controlled demolition
+### The forward process: a controlled demolition
 
 Concretely, the forward process takes a clean image $x_0$ and at each of $T$ small timesteps sprinkles in a little Gaussian noise. After $T = 1000$ steps nothing of the original picture survives.
 
@@ -50,7 +52,7 @@ The slider below shows the forward process happening to a real image. Drag it to
 <div id="forward-slider" style="max-width: 512px; margin: 1em auto; text-align: center;"></div>
 
 <div class="md">
-## The reverse process: the part that learns
+### The reverse process: the part that learns
 
 The reverse process starts from pure noise and runs backward. At each step, the network looks at the current noisy image and asks: *what noise should I subtract to make this slightly more recognizable?* A thousand such tiny denoising steps, and out pops a clean image.
 
@@ -69,7 +71,7 @@ The slider below steps through the **reverse** process on the same image. Drag i
 <div id="reverse-slider" style="max-width: 512px; margin: 1em auto; text-align: center;"></div>
 
 <div class="md">
-## Why does this work?
+### Why does this work?
 
 You might ask: how can *removing noise* ever create a picture? The trick is this, **a denoiser that can spot noise must also have learned what “no noise” looks like**. It has implicitly learned the shape of the data distribution. So if you start from pure noise and repeatedly denoise, you trace a path through that distribution, and end up with a brand new sample.
 
@@ -82,7 +84,9 @@ Either view explains why “denoising” and “generation” are two sides of t
 </div>
 
 <div class="md" data-mathlevel="60">
-## Telling the model what to draw
+## Conditioning and the model
+
+### Telling the model what to draw
 
 To make a model draw *what you want*, you have to feed it some signal. For text-to-image, that signal is a text prompt, first encoded into a vector by a separate text encoder (typically CLIP or T5).
 
@@ -96,11 +100,11 @@ The factor $w$ is the **guidance scale**. The intuition: $\epsilon_\theta(x_t, t
 </div>
 
 <div class="md">
-## From text to image: the whole pipeline
+### From text to image: the whole pipeline
 
 The CFG trick above answers “how do you amplify the prompt”. But three questions remain: **where do the (image, prompt) training pairs come from?**, **how does the text encoder turn words into something the U-Net can read?**, and **how does the U-Net actually use those numbers?** This section walks through the full pipeline end-to-end.
 
-### 1. Training data, no manual labels needed
+#### 1. Training data, no manual labels needed
 
 You do **not** need to sit down and label 100,000 images. The training set for Stable Diffusion is **LAION-5B**, a publicly released scrape of about 5 billion (image, alt-text) pairs from the web. The “label” of every image is whatever its surrounding HTML already said, the alt attribute, the caption, the page title.
 
@@ -114,7 +118,7 @@ This is also why diffusion models sometimes hallucinate or get details wrong: th
 <div id="tokenizer-viz" style="max-width: 880px; margin: 1em auto;"></div>
 
 <div class="md">
-### 2. Text becomes numbers, the text encoder and embeddings
+#### 2. Text becomes numbers, the text encoder and embeddings
 
 The diffusion U-Net cannot read English. Before it ever sees your prompt, a separate **text encoder** turns the prompt into a sequence of vectors. For Stable Diffusion 1.5, that encoder is CLIP's text tower; for SD 3 and FLUX, it is T5. Both are **Transformer encoders**, the same architecture family as the LLMs in the other chapters.
 
@@ -122,7 +126,7 @@ The text encoder does two things, in order, tokenization and embedding. Both are
 </div>
 
 <div class="md">
-### 3. Cross-attention, how the U-Net reads the text
+#### 3. Cross-attention, how the U-Net reads the text
 
 Now the diffusion U-Net has two inputs at every denoising step:
 
@@ -149,7 +153,7 @@ The full Stable Diffusion pipeline looks like this end-to-end:
 <div class="md">
 So the answer to “do I need to label 100k images?” is: **no** for pretraining (the labels already exist on the web). The yes cases are *fine-tuning*, if you want the model to draw a specific style or subject, you can fine-tune with **LoRA** (\cite[Hu et al., 2021]{hu2021lora}) on as few as a few dozen images, or steer outputs with **ControlNet** (\cite[Zhang et al., 2023]{zhang2023controlnet}) using edge maps, depth maps, or pose skeletons.
 
-## What's the network?
+### What's the network?
 
 It is **not** a stack of dense layers. The denoiser is a **U-Net** built from:
 
@@ -163,7 +167,7 @@ It is **not** a stack of dense layers. The denoiser is a **U-Net** built from:
 
 The only fully-connected layers are tiny MLPs for the time and text embeddings. Everything else is convolution or attention. Stable Diffusion 1.5 has ~860 M parameters. The forward pass per denoising step: encode $t$, run the noisy latent down through four encoder blocks, apply self- and cross-attention at the bottleneck, run back up through four decoder blocks with skip connections, output the predicted noise.
 
-## Stable Diffusion: doing it in a compressed space
+### Stable Diffusion: doing it in a compressed space
 
 Doing all this in raw pixel space at $512 \times 512$ resolution is brutally expensive. Each image is roughly 786,000 numbers, and the network must process hundreds of millions of them per step.
 
@@ -182,6 +186,8 @@ Below, the famous DDIM denoising sequence for a real Stable Diffusion run shows 
 <div class="md">
 ## Beyond images
 
+### Beyond images
+
 The same recipe works anywhere you can define a “noising” process and a network that can reverse it:
 
 * **Video**: Sora, Veo, Stable Video Diffusion, same idea, with an extra time dimension and attention layers that keep frames consistent.
@@ -193,7 +199,7 @@ The same recipe works anywhere you can define a “noising” process and a netw
 
 The general principle is almost embarrassingly simple: **if you can blur it, you can unblur it; and if you can unblur it, you can generate it from scratch.**
 
-## Where the field is now
+### Where the field is now
 
 By 2025, the diffusion community has largely moved on to **flow matching** (\cite[Lipman et al., 2023]{lipman2023flow}), a more general framework where the “noising” path between data and noise can be a straight line instead of a curved one. FLUX, Stable Diffusion 3, and most 2024+ models use it.
 
@@ -203,7 +209,7 @@ Practical models have also become fast. Modern systems generate images in **1–
 
 In five years, the technique went from “diffusion as a curiosity” to “diffusion as the universal generative recipe” for images, video, audio, and molecules.
 
-## Try it yourself
+### Try it yourself
 
 These are the tools the diffusion community actually uses:
 

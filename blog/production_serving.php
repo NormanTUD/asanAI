@@ -19,7 +19,9 @@ The frontier in 2025: serving **hundreds of thousands of tokens per second per c
 </div>
 
 <div class="md">
-## The Inference Challenge
+## The inference challenge
+
+### The Inference Challenge
 
 For a 70B model in bf16 on a single H100, each generated token requires reading the full model weights from HBM. With 140 GB at ~3 TB/s HBM bandwidth, this gives **~46 ms per token** as a *pure memory-bandwidth lower bound*, the absolute floor for fp16, single-user, single-GPU decode. Production chat targets are tighter: **TTFT** (time to first token) of < 500 ms and **TPOT** (time per output token) of < 50 ms. To beat the 46 ms floor, systems use FP8 quantization, speculative decoding (multiple tokens per memory pass), and/or multi-GPU sharding that reduces per-GPU memory traffic, the techniques discussed in this chapter.
 
@@ -33,7 +35,7 @@ Solutions attack each in turn.
 </div>
 
 <div class="md" data-mathlevel="50">
-## KV-Cache: The Hidden Memory Tax
+### KV-Cache: The Hidden Memory Tax
 
 Recall from the Attention chapter: during autoregressive generation, each new token must attend to all previous tokens. Without caching, every step recomputes the K and V matrices for the full history, $O(n^2)$ work per token.
 
@@ -57,19 +59,19 @@ This is the dominant memory cost in inference. Several techniques address it:
 <div id="kv-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
-## Batching: The Key to GPU Efficiency
+### Batching: The Key to GPU Efficiency
 
 A single forward pass for one user underutilizes the GPU. **Batching** amortizes memory reads across many requests:
 
-### Static Batching
+#### Static Batching
 
 Generate one token for $B$ requests at the same time. All requests run synchronously; some finish early but wait for others. **Straggler problem**: one long request blocks the rest.
 
-### Dynamic Batching
+#### Dynamic Batching
 
 Continuously add new requests to the batch as they arrive. Better throughput, but still has stragglers.
 
-### Continuous Batching (Iteration-level Scheduling)
+#### Continuous Batching (Iteration-level Scheduling)
 
 **vLLM** (\cite[Kwon et al., 2023]{kwon2023vllm}) and **TGI** (HuggingFace) introduced this: after each token is generated, immediately swap finished sequences out of the batch and swap new ones in. GPU stays at peak utilization; no waiting.
 
@@ -79,7 +81,7 @@ Continuous batching alone can give 10–20× throughput improvement over static 
 <div id="batching-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
-## Paged Attention
+### Paged Attention
 
 Naïve KV-cache allocation reserves a contiguous block per request: if a request needs 4K tokens but only 2K are used, the rest is wasted. With many requests, fragmentation can waste **30–60%** of KV memory.
 
@@ -94,7 +96,7 @@ Paged Attention (\cite[Kwon et al., 2023]{kwon2023vllm}) is now the standard in 
 </div>
 
 <div class="md">
-## Speculative Decoding
+### Speculative Decoding
 
 LLM decoding is **memory-bound**, not compute-bound. Each token requires reading all model weights once. A 70B model can generate at most ~20 tokens/s on a single H100, regardless of FLOPs.
 
@@ -110,7 +112,7 @@ If the draft and target agree on $k$ tokens, you get $k$ tokens for the cost of 
 </div>
 
 <div class="md" data-mathlevel="50">
-## Quantization
+### Quantization
 
 Reduce precision of weights and/or activations:
 
@@ -129,7 +131,7 @@ For activations, **fp8** (H100 native) gives 2× throughput with minimal quality
 </div>
 
 <div class="md">
-## Distillation Revisited
+### Distillation Revisited
 
 A small student model trained to mimic a large teacher:
 
@@ -148,29 +150,31 @@ Distilled models can match the teacher on specific benchmarks within 5–10% of 
 </div>
 
 <div class="md">
-## Serving Stacks
+## Serving stacks and hardware
 
-### vLLM (UC Berkeley)
+### Serving Stacks
+
+#### vLLM (UC Berkeley)
 
 The most widely used open-source serving system. Paged Attention (\cite[Kwon et al., 2023]{kwon2023vllm}), continuous batching, tensor parallelism, speculative decoding, prefix caching. Powers ChatGPT-style deployments at major labs.
 
-### TGI (HuggingFace Text Generation Inference)
+#### TGI (HuggingFace Text Generation Inference)
 
 Rust-based serving stack. Optimized for transformer inference with built-in quantization, batching, and streaming. Production-grade at HuggingFace, AWS, and many enterprises.
 
-### TensorRT-LLM (NVIDIA)
+#### TensorRT-LLM (NVIDIA)
 
 NVIDIA's optimized inference engine. Tightly integrated with TensorRT for kernel fusion, in-flight batching, and fp8/int4 quantization. Highest raw throughput on NVIDIA hardware.
 
-### SGLang (Stanford LMSYS)
+#### SGLang (Stanford LMSYS)
 
 Optimized for **structured generation**, JSON output, grammar-constrained decoding, multi-turn tool use. Powers Vicuna and many agent systems.
 
-### llama.cpp (Georgi Gerganov)
+#### llama.cpp (Georgi Gerganov)
 
 The reference CPU and consumer-GPU inference engine. **GGUF** format, dozens of quantization levels, runs Llama 70B on a MacBook. The cornerstone of local LLM inference.
 
-### Inference Endpoints (Cloud)
+#### Inference Endpoints (Cloud)
 
 * **OpenAI API**: GPT-4o, o1, o3. Managed, OpenAI's own stack.
 * **Anthropic API**: Claude 3.5/3.7/4. Managed.
@@ -180,7 +184,7 @@ The reference CPU and consumer-GPU inference engine. **GGUF** format, dozens of 
 </div>
 
 <div class="md">
-## Hardware: What to Use When
+### Hardware: What to Use When
 
 | Workload | Hardware | Why |
 |----------|----------|-----|
@@ -195,13 +199,15 @@ The custom-silicon competition (Groq's LPU, Cerebras WSE, SambaNova, AWS Trainiu
 </div>
 
 <div class="md">
-## From Model to Product: the pipeline around the model
+## The product around the model
+
+### From Model to Product: the pipeline around the model
 
 Everything up to this point has been about *serving* the model — the stack, the batching, the memory, the hardware. A deployed LLM **product** is a different animal, and the difference is structural, not incidental. **The model is a component, not the system.** It is a *stochastic* component — it can produce a different answer to the same prompt twice, it can be slow, it can exceed its budget, and it can, occasionally, fail outright — wrapped in a *deterministic* system that decides which model to call, what it is allowed to say, what it is allowed to do, what to do when it fails, and what it all cost. [Agents](agents.php) showed one piece of this; the sections below are the whole shape, because a "model" and a "product made with a model" are two different architectures, and most LLM engineering is the second one.
 </div>
 
 <div class="md">
-### The reframe: services around a thing that sometimes fails
+#### The reframe: services around a thing that sometimes fails
 
 Start from the property that drives everything: the model is **non-deterministic** (temperature > 0) and **reliably wrong sometimes**. A traditional service is deterministic and either works or returns an error; you design for the error. An LLM service is *probabilistic*: it returns *an* answer, most of the time *a good one*, occasionally *a bad one you cannot distinguish from a good one by its shape*. So the system around it is not a wrapper that calls it; it is a set of **services that manage a stochastic component's failures** — the same way a system around a flaky network manages packet loss, except here the "loss" is a confident, plausible, wrong answer.
 
@@ -238,7 +244,7 @@ The product, then, is a pipeline, and each stage is a service with its own job:
 </div>
 
 <div class="md">
-### The router: pick the model per query
+#### The router: pick the model per query
 
 The cheapest and highest-leverage service is the **router**. Not every query needs the biggest, most expensive model. A simple "what's the weather?" needs a small, fast model; a multi-step reasoning task needs a large one; a domain question needs a specialized or fine-tuned one. A router inspects the query and dispatches it — for **cost, quality, and latency** at once — and the common pattern is **cheap-then-escalate**: answer with a small model, and only if it signals low confidence (or the query classifies as hard) do you *escalate* to the big one. \cite[Ong et al., RouteLLM (2024)]{routellm2024} make this concrete: a lightweight learner, trained on preference data, predicts which model a query needs, and routes the easy ones to the small model — saving the large model's cost on the queries it was never going to beat anyway.
 
@@ -246,7 +252,7 @@ Routing is the first place the "the model is a component" reframe pays off: you 
 </div>
 
 <div class="md">
-### Guardrails: enforced layers, not prompts
+#### Guardrails: enforced layers, not prompts
 
 A guardrail is a check that runs **outside** the model, on its input or its output, that the model itself does not enforce. Input guardrails screen the query (is it in scope? does it contain PII you are not allowed to process? is it a prompt-injection attempt?). Output guardrails screen the answer (does it actually answer the question? does it contain a prohibited claim or a leaked secret? does it match the required format?). The key word is **enforced**: a guardrail is a *layer* the answer must pass, not a line in the system prompt asking the model to "please be careful." A prompt is a *request* to a stochastic component; a guardrail is a *gate* in the deterministic system. \cite[Rebedea et al., NeMo Guardrails (2023)]{nemocguardrails} is the canonical framing of guardrails as programmable, checkable "rails" the model's output must follow — safety, factuality, format, and scope as *checks*, not *advice*.
 
@@ -254,13 +260,13 @@ This is the same move as the entire course: you do not *trust* the stochastic pa
 </div>
 
 <div class="md">
-### The tool-calling schema: a specification the model fills
+#### The tool-calling schema: a specification the model fills
 
 When the model can act — read a file, call an API, run a function — the interface is a **schema**: a JSON description of the available tools, their arguments, and their types. The model does not "use the tool"; it *fills in the schema* — it emits a structured call (function name + arguments) that the *system* validates and executes. This is the [tool use](agents.php) half, but the architectural point is that the schema is a **specification**: a typed contract between a stochastic emitter (the model) and a deterministic executor (your code). The executor does not trust the emitted arguments; it *validates* them against the schema, and if the arguments are malformed or out of range, it rejects them and re-prompts. The model proposes; the schema disposes. The [ReAct](react2022) pattern (\cite[Yao et al., 2022]{react2022}) — reason, act, observe, repeat — is the loop this runs in, but the *contract* is the schema, and a schema is exactly the kind of written, checkable standard the [evaluation](evaluation.php) chapter keeps coming back to.
 </div>
 
 <div class="md">
-### Retry, fallback, and degradation: determinism is built, not had
+#### Retry, fallback, and degradation: determinism is built, not had
 
 Because the component is non-deterministic, the system must handle its failures *explicitly*, the way a distributed system handles a flaky dependency:
 
@@ -276,7 +282,7 @@ The through-line: **determinism is a property you build, not one the model has.*
 </div>
 
 <div class="md">
-## Observability: The Hidden Half
+### Observability: The Hidden Half
 
 A production LLM system needs:
 
@@ -297,7 +303,7 @@ A common production mistake: shipping an LLM endpoint without **cost attribution
 </div>
 
 <div class="md">
-## When NOT to Use an LLM
+### When NOT to Use an LLM
 
 A good production engineer knows when to skip the LLM entirely:
 
@@ -311,7 +317,7 @@ Rule of thumb: prototype with the best model; measure cost; downgrade if necessa
 </div>
 
 <div class="md">
-## MLOps / LLM-Ops: life after deployment
+### MLOps / LLM-Ops: life after deployment
 
 Serving is only the start. In production a model is a **system** that drifts, regresses, and costs money:
 

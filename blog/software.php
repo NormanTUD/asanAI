@@ -12,7 +12,9 @@ tags: code-heavy, interested-layman
 -->
 
 <div class="md">
-## Software: The Layer That Made Everything Else Possible
+## From hardware to software
+
+### Software: The Layer That Made Everything Else Possible
 
 Every large language model runs on a stack of software that is, strictly speaking, older than the idea of an LLM by several decades. The GPU does the matrix math; but *something* has to decide which GPU runs which layer, when to move data between memory and disk, how a process that has run for a week keeps from corrupting its neighbor, and how a line of Python becomes a billion instructions on a specific chip. That something is not a single invention. It is a **ladder of abstractions** — an operating system, a compiler, a library, a runtime, a framework — each rung hiding the messy reality of the rung below and exposing a small, clean interface to the rung above.
 
@@ -24,7 +26,7 @@ The framing borrowed from the [Untold History](untold_history) chapter applies d
 </div>
 
 <div class="md">
-## The Abstraction Ladder, Stacked
+### The Abstraction Ladder, Stacked
 
 To keep the thread visible while we climb, here is the whole stack, from the first mechanical gears to the final sentence, with the historical moment each rung was nailed down:
 
@@ -48,7 +50,7 @@ We will climb this ladder from the bottom up, because that is the order the rung
 </div>
 
 <div class="md">
-## Before the Transistor: The Machine Learns to Be Programmed
+### Before the Transistor: The Machine Learns to Be Programmed
 
 The ladder looks, from the transistor up, like a story that begins in 1947. But the *question* the whole ladder answers — how do you separate a *machine* from the *task* it is doing today? — is far older, and it was first posed in brass, not silicon. The rungs below the transistor are mechanical, and they belong on this page for one reason above all: **software does not exist until a machine can be *programmed***. Until a machine can be told, in a general and changeable way, what to do, there is no boundary between machine and task, and therefore no place for “software” to live.
 
@@ -84,7 +86,7 @@ This is the foundation the rest of the ladder is built on. Every electronic comp
 </figure>
 
 <div class="md">
-## Programming by Hand (1943–1950): Before There Was “Software”
+### Programming by Hand (1943–1950): Before There Was “Software”
 
 The word *software* barely existed in 1945. A “program” for the ENIAC was not a file. It was a **patch panel**: thousands of cables plugged into specific sockets, plus a bank of switches set by hand, that told the machine what circuit to compute. To run a *different* calculation you had to physically re-patch the machine, a process that could take days and was full of silent errors, because there was no place to *store* the instructions separately from the hardware. There was no such thing as an operating system, a compiler, or a “language,” because there was no boundary between the machine and its task.
 
@@ -103,7 +105,9 @@ The most famous “bug” in computing history is a literal one. On **9 Septembe
 </div>
 
 <div class="md">
-## The First Operating Systems (1950s): The Machine That Manages Itself
+## Operating systems
+
+### The First Operating Systems (1950s): The Machine That Manages Itself
 
 A stored-program machine is a *better* calculator, but it is still a single-user, single-task device. If you feed it a job and the job spends forty minutes reading data from a slow tape, the fast CPU just **sits idle**, waiting. The obvious waste — and the obvious opportunity — was to let the machine **look after itself**: while one job's tape was churning, run another job's calculation.
 
@@ -121,7 +125,7 @@ What is striking about GM-NAA I/O is how *unheroic* the first operating system w
 </div>
 
 <div class="md">
-## Multics (1964–1969): The “Too Much” System
+### Multics (1964–1969): The “Too Much” System
 
 If CTSS was the proof of concept, **Multics** was the ambition. Starting in **1964**, a three-way collaboration between **Bell Labs**, **General Electric (GE)** and **MIT's Project MAC** set out to build the definitive timesharing operating system \cite{multics_plan9}. The goal was *everything at once*: true multi-user timesharing, hardware **memory segmentation**, a **hierarchical file system** with a directory structure, **security** and **access control** on every file, and **reliability** through redundant components. It was, in the words of its later critics, the first operating system that treated the computer as a *public utility* to be shared by thousands of people, safely.
 
@@ -137,7 +141,7 @@ The Multics team did not just build a file system; they built a *culture*. To te
 </div>
 
 <div class="md">
-## Unix and the Hacker Ethos (1969–1973)
+### Unix and the Hacker Ethos (1969–1973)
 
 **Unix** was written at **Bell Labs** starting in **1969**, by **Ken Thompson** and (from about 1971) **Dennis Ritchie**, on that spare PDP-7 \cite{unix_ts}. Its name was a playful jab at Multics — a seven-letter pun, and a statement of intent: *the opposite of that over-engineered thing*. Unix was small. Its first kernel fit on a single page of documentation. It had a file system, a shell (a command interpreter, the first “sh,” written by Thompson himself), a few utilities, and — crucially — an attitude.
 
@@ -149,7 +153,7 @@ The attitude was later codified as the **Unix philosophy**, and it is an *ideolo
 
 The **pipe** — the `|` operator that connects the output of one program to the input of another — was added in **1973** by **Doug McIlroy**, and it is arguably the single most important idea in the design: it is the “level of indirection” made concrete. You do not need to know what the two programs do to each other; you only need to know they share a *vocabulary* (text) and a *contract* (one reads stdin, the other writes stdout). This is composition, and composition is the entire game \cite{unix_ts}.
 
-### C: The Operating System, Rewritten to Be Portable (1972)
+#### C: The Operating System, Rewritten to Be Portable (1972)
 
 Unix began in a language called **B** (1969, Thompson's own invention, a tiny precursor). In **1972**, **Dennis Ritchie** extended B into **C**, and in **1973** he and Thompson did something that had never been done: they **rewrote the operating system in the very language the operating system was compiling** \cite{unix_ts}. Before C, an operating system was written in the machine's own assembly language, which meant it was *locked to one machine*; to run it on a different computer you had to rewrite it from scratch. After C, the Unix kernel was **portable**: compile the same C source on a different machine and you get a working Unix for that machine.
 
@@ -163,7 +167,7 @@ When asked, years later, to describe the feeling of writing Unix, the members of
 </div>
 
 <div class="md">
-## The Unix Wars, and the Idea of a Standard (1979–1990)
+### The Unix Wars, and the Idea of a Standard (1979–1990)
 
 A portable, powerful, well-liked operating system was, commercially, a *dangerous* thing for AT&T, because Bell Labs (part of AT&T) was not allowed to *sell* Unix. That opened the door. Universities and vendors began shipping their own versions, and within a decade there were two incompatible families: the **Berkeley Software Distribution (BSD)**, out of the University of California, Berkeley (which added the socket interface for networking and the famous `csh` and `tcpdump`), and **System V**, AT&T's commercial line \cite{unix_ts}. They were *Unixes* in the cultural sense but *incompatible* in the technical one — a program written for one often would not run on the other.
 
@@ -173,7 +177,7 @@ The “wars” were also, and this is the part that belongs in the psychology, a
 </div>
 
 <div class="md">
-## Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)
+### Plan 9 and Inferno: The “Start Over” Operating System (1990s–2000s)
 
 In the early 1990s, some of the original Unix people at Bell Labs — Thompson, **Rob Pike**, and a few others — did what purists do when the original idea has, in their view, been corrupted by decades of add-ons: they **started over from scratch** \cite{multics_plan9}. The result was **Plan 9 from Bell Labs** (often just “Plan 9,” a reference to Ed Wood's 1957 cult science-fiction film *Plan 9 from Outer Space*).
 
@@ -189,16 +193,16 @@ The “9” in Plan 9 is a Bell Labs in-joke, but not the one often told. The na
 </div>
 
 <div class="md">
-## The Personal Computer and the Operating-System War (1974–1995)
+### The Personal Computer and the Operating-System War (1974–1995)
 
 By the mid-1970s, the microprocessor made a *whole computer* cheap enough to fit on a desk, and with the personal computer came the first *consumer* operating-system war.
 
-### CP/M: The First Microcomputer OS (1974)
+#### CP/M: The First Microcomputer OS (1974)
 The first popular microcomputer operating system was **CP/M** (Control Program/Monitor), written in 1974 by **Gary Kildall** at **Digital Research** for the 8-bit Intel 8080. It was the default OS on hundreds of thousands of small machines, from the Altair to the Apple II, and it defined, in miniature, the model that followed: a tiny kernel, a disk file system (the `.COM`, `.EXE`, `.SYS` file types still echo it), and a command line \cite{chm}.
 
 The story of CP/M meeting IBM is one of the great “what-ifs” of the industry. In 1980, IBM was designing its first personal computer and needed an operating system. It approached Digital Research about **CP/M-86**, a 16-bit version. The famous (and fiercely disputed) anecdote has Kildall unavailable for the key meeting because he was water-skiing, and an IBM engineer walking away and instead talking to **Microsoft** \cite{chm}. Whether or not the water-skiing is literally true, the *consequence* is not in dispute: IBM licensed its PC's operating system from Microsoft, not from CP/M's author. The result made Microsoft, and it made the next twenty years of computing.
 
-### MS-DOS and the IBM PC (1981)
+#### MS-DOS and the IBM PC (1981)
 What Microsoft sold to IBM was not, at first, even a serious operating system. In 1980, **Tim Paterson** at the tiny firm **Seattle Computer Products** had written **86-DOS** — internally nicknamed **QDOS**, *Quick and Dirty Operating System* — a quick clone of CP/M ported to the new 16-bit Intel 8086, built in about six weeks and left thin and unfinished \cite{chm}. When the IBM deal came together in 1981, Microsoft **hired Paterson** and **bought 86-DOS** (version 1.10) for a reported **twenty-five thousand dollars**, reworked it, renamed it **MS-DOS**, and licensed it to IBM, which shipped it as **PC DOS** \cite{chm}. The **IBM PC**, released in August 1981, used it.
 
 Two decisions in that contract shaped the industry. First, Microsoft kept the *rights* to the OS and licensed it to *other* manufacturers as well, not just IBM — a small clause that turned MS-DOS into the OS of the *entire* PC market, not just IBM's. Second, IBM did **not** patent its **BIOS** (the basic firmware that boots the machine), so others could *clean-room* reverse-engineer it and build “PC-compatible” clones, from Compaq up \cite{chm}. The result was the **Wintel** standard: Intel's CPU plus Microsoft's OS, cloned by everyone, the dominant platform of the personal-computer era, and the platform on which the first wave of consumer software — and, later, the first wave of desktop AI tools — was built \cite{windows_ms}.
@@ -209,7 +213,7 @@ It is a detail that is easy to miss and worth stating, because it is the differe
 </div>
 
 <div class="md">
-### OS/2: The Collaboration That Ate Itself (1987)
+#### OS/2: The Collaboration That Ate Itself (1987)
 The most instructive operating-system failure of the PC era was not a failure of technology but a **failure of trust**. In the mid-1980s, **IBM and Microsoft** decided to build a *real* 32-bit operating system *together*, a successor to DOS that could do preemptive multitasking, protected memory, and a proper graphical interface. The result was **OS/2**, released in 1987 \cite{windows_ms}.
 
 For a time it looked like the future. OS/2 was, technically, a *better* operating system than the DOS that was about to dominate: it was 32-bit, it had true preemptive multitasking, it had a real memory model, and its **Presentation Manager** GUI was ahead of its time \cite{windows_ms}. And then the two partners pulled in opposite directions. **IBM** decided OS/2 was *the* future and went all-in on it, building the powerful **OS/2 Warp** (1994). **Microsoft**, meanwhile, did something far simpler and far more effective: it bolted a graphical shell, **Windows 3.0** (1990), *on top of the existing DOS*, and let it run on the *huge* installed base of cheap PCs that OS/2 did not. Windows was, engineering-wise, a patch on a 16-bit machine; but it was *cheap, familiar, and already installed*, and it won \cite{windows_ms}.
@@ -218,7 +222,7 @@ The fallout was a long, bitter legal and commercial dispute that ran through the
 </div>
 
 <div class="md">
-### Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)
+#### Windows and NT: The Kernel Built by a Small Team of the Best (1985–1995)
 **Windows 1.0** (1985) was a graphical shell over DOS; it was useful but fragile. **Windows 3.0** (1990) and **3.1** (1992) made it *good* — a real graphical environment, VGA color, the file manager and the programs people actually wanted — and they made the PC a mass-market machine \cite{windows_ms}. But under the hood it was still DOS, 16-bit, and the engineers at Microsoft knew it was a *temporary* structure.
 
 So, in parallel, Microsoft built a *real* operating system from the ground up: **Windows NT** (1993), the “New Technology” kernel. The decisive move was hiring **Dave Cutler**, the architect of VMS at **Digital Equipment Corporation (DEC)**, and a small team of some of the best systems engineers in the industry, to write it \cite{windows_ms}. NT was 32-bit, preemptive, portable across several CPUs, and *secure* in a way DOS and its Windows shell never were. It was the “serious” Microsoft operating system, and it is the direct ancestor of every modern Windows (and of the security model of much of the server world).
@@ -231,7 +235,7 @@ The operating-system war of the 1980s did not end with the Wintel standard; it s
 </div>
 
 <div class="md">
-## The Other Operating Systems (the “and so on and so forth”)
+### The Other Operating Systems (the “and so on and so forth”)
 
 Unix, Windows, and their war are the famous thread. But the space was crowded, and several *other* operating systems made contributions that are easy to skip and hard to replace.
 
@@ -275,7 +279,9 @@ And the rest, briefly, so the map is complete: **RISC OS** (Acorn, the clean, el
 </div>
 
 <div class="md">
-## Programming Languages: The Development of a Way of Thinking
+## Programming languages
+
+### Programming Languages: The Development of a Way of Thinking
 
 If the operating system is the *machine that manages itself*, the programming language is the *way a human talks to it*. And the history of programming languages is, more than any other part of software, a history of *ideas about thinking*: what is a *computation*? what is a *function*? what is a *value*? which abstractions are *honest* and which are *lies*? Each major language is a *thesis*, and the “winning” language of an era is the thesis that most people found *bearable*.
 
@@ -283,7 +289,7 @@ The languages were not invented in the order we use them. They were invented in 
 </div>
 
 <div class="md">
-### The First Languages (1950s): Saving the Labor of Coding
+#### The First Languages (1950s): Saving the Labor of Coding
 
 The first high-level language was not *elegant*; it was *economic*. In 1957, a team at IBM led by **John Backus** built **FORTRAN** (FORmula TRANslation), the first language that let a *scientist* write a calculation in a form close to the *mathematics* (a sum, a loop, a formula) instead of in machine code \cite{fortran2}. The claim that sold it — that a FORTRAN program ran as fast as, or faster than, hand-tuned assembly, while taking a fraction of the time to *write* — was, for the first time, *credible* \cite{fortran2}. FORTRAN is *still* the language of a huge amount of scientific and numerical computing; the *computational kernel* of much of modern numerical software is, literally, FORTRAN, wrapped in newer languages.
 
@@ -295,7 +301,7 @@ Grace Hopper is one of the great *translators* in the history of the field, in b
 </div>
 
 <div class="md">
-### Lisp (1958): The Language That Treated Computation as Mathematics
+#### Lisp (1958): The Language That Treated Computation as Mathematics
 
 In **1958**, **John McCarthy** at MIT invented **Lisp** (LISt Processing), and it was a *different kind of thing* from FORTRAN. Where FORTRAN was a language for *numbers*, Lisp was a language for *symbols* and *functions*, built directly on the **lambda calculus** of **Alonzo Church** (1930s) — the mathematical theory of *functions as first-class objects*. In Lisp, a *function* is a *value*: you can pass it around, return it, build new functions out of old ones. The whole language is, essentially, a small *calculus*, and it was the first language that treated *computation itself* as a *mathematical object* to be manipulated \cite{lispworks}.
 
@@ -305,7 +311,7 @@ The psychology of Lisp is the psychology of **McCarthy**, who was, by all accoun
 </div>
 
 <div class="md">
-### ALGOL (1958/1960): The Language That Taught Us *Structure*
+#### ALGOL (1958/1960): The Language That Taught Us *Structure*
 
 If Lisp was the *mathematical* language, **ALGOL** (ALGOrithmic Language, 1958, and the **ALGOL 60** report of 1963) was the *structured* one \cite{algol60}. ALGOL was designed by a committee with a *deliberate* goal: to make programming *readable* and *correct*, by giving the language a real *structure*. It introduced, or consolidated, the ideas that every “structured” language since has inherited: **block structure** (a program is a tree of *blocks*, each with its own *scope*), **lexical scoping** (a variable is visible in exactly the block where it is defined and the blocks nested inside it), and **structured control** (`if`, `for`, `while`) \cite{algol60}.
 
@@ -322,7 +328,7 @@ In **1968**, **Edsger Dijkstra** wrote, to a friend, the letter that became **�
 </div>
 
 <div class="md">
-### C, C++, and the Systems Languages (1970s)
+#### C, C++, and the Systems Languages (1970s)
 We met **C** (1972, Ritchie) in the Unix story; it is the *systems* language, the “portable assembly,” the language in which the operating systems, the compilers, the databases, and the *low-level* half of everything is built. Its standards (C89 in 1989, then C99, C11, C17, and C23) froze and extended the language that a *whole industry* had been building on \cite{unix_ts}.
 
 **C++** is the *argument* about what C should have been. **Bjarne Stroustrup** at Bell Labs began in 1979 with “C with Classes” — the idea of taking the *bare* C and adding an *object model* on top of it — and it grew, over the 1980s and 1990s, into a *large* language that tries to be *everything at once*: low-level *and* object-oriented *and* generic, systems *and* application \cite{isocpp}. C++ is *contested* in a way that few languages are — its *power* is its *complexity*, and its *complexity* is its *bug* — but it is also *indispensable*: it is the language of the *game engines*, the *browsers*, the *databases*, and a *very large* share of the *high-performance* half of machine learning (the C++ and CUDA kernels under the Python frameworks) \cite{isocpp}. The psychology of C++ is the psychology of *refusal to choose*: it is the language for people who are not willing to give up *either* the *control* of C *or* the *convenience* of the high-level, and who are willing to pay, in *complexity*, for having both.
@@ -371,7 +377,7 @@ Xerox PARC is the *Rosetta Stone* of the “ahead of its time” story. In the 1
 </div>
 
 <div class="md">
-### The Modern Languages (1990s–now): The Polyglot Era
+#### The Modern Languages (1990s–now): The Polyglot Era
 
 From the 1990s on, the *number* of *languages* *exploded*, and the *question* changed from “*which* language is *right*?” to “*which* language is *right for this job*?” — the *polyglot* era, in which a single *system* is built from *several* languages, each doing *what it is best at*.
 
@@ -403,21 +409,21 @@ Python has a *rich* *culture* of *public* *discussion* (the *mailing* *lists*, t
 </div>
 
 <div class="md">
-## The Toolchain: The Software That Builds the Software
+### The Toolchain: The Software That Builds the Software
 
 A language and an operating system are not *enough* to build a *large* *system*. You also need the *tools* that let a *team* *write*, *build*, *test*, and *maintain* *software* that is *complex* *enough* to be *useful*. These tools are the *most* *underrated* *part* of the *stack*, and they are the *part* that is *most* *directly* *responsible* for making *large* *software* (and therefore *AI*) *possible* at *all*.
 
-### The Compiler, the Assembler, and the “Translator”
+#### The Compiler, the Assembler, and the “Translator”
 We met the *compiler* with *Hopper* (1952). The *assembler* (the *IBM 701* *assembler*, 1952) came *around* the *same* *time*, and it is the *first* *translator*: it *maps* *short* *mnemonics* (`ADD`, `MOV`) to *machine* *code*, so the *programmer* does not have to *write* *binary* \cite{chm}. The *compiler* *generalized* the *idea*: *translate* a *whole* *language*, not just a *shorthand*. And the *optimizing* *compiler* (the *FORTRAN* *optimizer*, the *register* *allocator*, the *peephole* *optimizer*) *added* the *third* *idea*: that the *translator* can *make* the *program* *faster* than the *human* could *have* *written* it *by hand*, by *rearranging* and *simplifying* the *code* \cite{fortran2}. The *compiler* is, in *effect*, the *first* *AI* *in* the *stack*: a *program* that *reads* a *human's* *intent* (the *source*) and *produces* a *different*, *better*, *machine* *form* of it, *automatically*. The *entire* *idea* of a *model* that *transforms* an *input* into a *better* *output* is *prefigured* in the *compiler*. \cite{chm}
 </div>
 
 <div class="md">
-### `make`: The “Build” That Runs Itself (1976)
+#### `make`: The “Build” That Runs Itself (1976)
 In **1976**, **Stuart Feldman** at Bell Labs wrote **`make`**, a *tool* that *answers* the *question* “*what* *needs* to be *rebuilt*?” \cite{gnu_make}. A *large* program is a *graph* of *dependencies*: file *C* depends on file *B*, which depends on file *A*. When you *change* *A*, you must *rebuild* *B* and *C* (but *not* the *fifty* other files that *do not* depend on *A*). `make` reads a *description* of that *graph* (a *Makefile*) and *works out*, *automatically*, the *minimal* set of *things* to *rebuild*, and *builds* them *in* the *right* *order* \cite{gnu_make}. It is a *small* *program*, and it is *one* of the *most* *important* *tools* in the *history* of *software*, because it is the *first* *tool* that *treated* the *build* *process* as a *computable* *problem* (a *graph* *traversal*) rather than a *manual* *chore*. Every *build* *system* since (**CMake**, **Bazel**, the *build* systems of *TensorFlow* and *PyTorch*) is a *descendant* of `make`, and the *idea* — *the* *build* is a *graph*, and the *graph* can be *solved* — is the *idea* that makes *building* a *large* *software* *system* (a *model*, a *framework*, a *compiler* *itself*) *tractable* \cite{gnu_make}.
 </div>
 
 <div class="md">
-### Version Control: The “Team” That Never Collides (1972–2005)
+#### Version Control: The “Team” That Never Collides (1972–2005)
 The *single* *greatest* *barrier* to *large* *software* is not the *machine*; it is the *team*. If *ten* *people* edit the *same* *code*, they *collide*: they *overwrite* each other, they *lose* each other's *changes*, they *cannot* say *what* *changed* *and* *when* and *why*. The *answer* is **version control**: a *system* that *keeps* *every* *version* of *every* *file*, *records* *who* *changed* *what* and *when*, and lets *people* *work* on the *same* *code* *at the same time* without *destroying* each other \cite{git}.
 
 The *lineage* is a *beautiful* *one*: **SCCS** (1972, **Marc Rochkind**, Bell Labs) was the *first* *serious* *system*; **RCS** (1982, **Walter F. Tichy**) *refined* it; **CVS** (1986, **Dick Grune**) made it *networked* (so a *team* across the *world* could *share* a *repository*); **Subversion** (2000, **CollabNet**) *simplified* it; and **Git** (2005, **Linus Torvalds**) *revolutionized* it \cite{git}. Git was *born* of a *specific* *fight*: the *Linux* *kernel* *team* had been *using* a *proprietary* *tool* (**BitKeeper**), and when the *license* was *withdrawn*, Torvalds *built* a *replacement* in a *matter of weeks*, *designed* around *one* *radical* *idea*: that *every* *developer* has a *complete, local* *copy* of the *entire* *history*, and that *commits* are *local* and *fast*, and *sharing* is an *explicit* act \cite{git}. Git is now the *universal* *version* control *system*, and it is *directly* *responsible* for the *way* *modern* *software* — and *modern* *AI* — is *developed*: the *open*, *distributed*, *collaborative* *development* of a *large* *system* by *hundreds* of *people* *at once* is *only* *possible* because of *Git*. \cite{git}
@@ -428,7 +434,9 @@ The name **Git** is, by the *creator's* *own* *admission*, a *self-deprecating* 
 </div>
 
 <div class="md">
-## What Was Required, in the End, for a Human to Build Something Like Today's AI
+## The discipline and the culture
+
+### What Was Required, in the End, for a Human to Build Something Like Today's AI
 
 Pull the *threads* together, and a *clear* *answer* emerges to the *question* the [Intro](intro) *posed*: *what* had to be *true* about the *world*, and about *human* *society*, before a *machine* could *learn* to *write*?
 
@@ -449,7 +457,7 @@ The *operating system*, the *language*, the *toolchain*: these are the *displace
 </div>
 
 <div class="md">
-### “Software Engineering”: The Moment Software Became a *Discipline*
+#### “Software Engineering”: The Moment Software Became a *Discipline*
 The word **“software engineering”** was *coined* at the **1968** **Garmisch** conference (the *First International Conference on Software Engineering*), where the *participants* — many of them *watching* the *Apollo* program — agreed that *software* had grown *too* *large* and *too* *important* to be a *craft*, and that it needed to be an *engineering* *discipline*, with *methods*, *standards*, and *measures* \cite{garmisch1968}. The *person* most *associated* with *making* that *idea* *real* is **Margaret Hamilton**, whose team wrote the **Apollo** *Guidance* *Computer*'s *flight* *software* — a *system* that had to *detect* its *own* *errors* and *recover*, *in flight*, on a machine with *less* memory than a *pocket* *calculator* \cite{chm}. The *famous* *photograph* of *Hamilton* *standing* beside a *pyramid* of *punch* *cards* (the *entire* *Apollo* *AGC* *software*, *stacked*) is *one* of the *icons* of the *field*, and the *idea* it *embodies* — that *software* is a *serious*, *measurable*, *engineerable* *thing*, with *failure* *modes* that must be *designed* *against* — is the *idea* that *underlies* the *entire* *modern* *practice* of *building* *reliable* *large* *systems*, *including* the *training* and *deployment* of *large* *models*. \cite{garmisch1968}
 </div>
 
@@ -458,11 +466,11 @@ The *pyramid* *photo* is *often* *described* as showing “*72,000 lines of code
 </div>
 
 <div class="md">
-## The Ideas and the Minds: The Geist of the Software
+### The Ideas and the Minds: The Geist of the Software
 
 The *technical* history — the *OSes*, the *languages*, the *tools* — is the *skeleton*. The *flesh* is the *history of the ideas* and the *psychology of the people* who *fought* over them, and it is the *part* that *explains* *why* the *stack* has the *shape* it *does*.
 
-### The Great Arguments
+#### The Great Arguments
 Software is *defined* by its *arguments*. There is no *area* of it in which the *right* *answer* was *obvious*, and the *shape* of the *modern* *stack* is the *shape of the* *arguments* that were *won* (or *left* *unresolved*).
 
 * **Monolithic versus microkernel.** *Should* the *kernel* be a *big* *monolith* (fast, but *hard* to *verify*) or a *small* *microkernel* (clean, but *slower*)? Fought by **Tanenbaum** and **Torvalds** (MINIX’s microkernel versus Linux’s monolith), *resolved* (in *practice*) by the *hybrid* \cite{chm}.
@@ -470,7 +478,7 @@ Software is *defined* by its *arguments*. There is no *area* of it in which the 
 * **Open versus closed.** *Should* the *code* be *free* to *read* and *modify* (the *Unix* *BSD* *camp*, the *free-software* *movement*, *open* *source*), or *proprietary* (the *System V* *camp*, the *commercial* *empire*)? The *answer* is *both*, in a *tension* that *has never* been *resolved* and that *defines* the *industry* \cite{chm}.
 * **Purity versus pragmatism.** *Should* the *language* be *pure* and *provable* (the *functional* *camp*, *Haskell*) or *pragmatic* and *powerful* (the *systems* *camp*, *C* and *C++)*? The *answer* is *a* *spectrum*, and the *spectrum* is the *whole* *space* of *languages* \cite{haskell}.
 
-### The Psychology of the Builders
+#### The Psychology of the Builders
 The *people* matter as *much* as the *ideas*, because the *ideas* were *carried* by *specific* *minds* with *specific* *temperaments*:
 
 * **Dennis Ritchie** was the *quiet* *perfectionist*. He *built* *C* and *Unix* with a *minimalism* that was *almost* *aesthetic*: the *fewest* *keywords*, the *smallest* *kernel*, the *cleanest* *interface*. His *style* is the *style* of the *Unix* *philosophy* made *flesh* \cite{unix_ts}.
@@ -485,12 +493,12 @@ The *people* matter as *much* as the *ideas*, because the *ideas* were *carried*
 </div>
 
 <div class="md">
-### The Hacker Ethic and the Gift Economy
+#### The Hacker Ethic and the Gift Economy
 Running through all of this is a *distinctive* *psychology*, the **hacker ethic**: the *belief* that *information* should be *free*, that *software* should be *shared* and *improved* by *everyone*, that the *measure* of a *programmer* is the *quality* of the *work* (not the *title* or the *institution*), and that the *intrinsic* *pleasure* of *making a clever, working thing* is a *legitimate*, even *primary*, motivation \cite{bell_labs}. This *ethic* is the *engine* of the *open* *side* of *software*: of *Unix* (*given away* by *Bell Labs*), of *open source* (*Linux*, *Git*, *the* *web* *browser*), of *free* *software* (*GNU*, *the* *Hurd*), and — *directly* — of the *open* *model* *movement* in *AI* (*the* *open-weights* *models*, *the* *open* *frameworks*, *the* *public* *datasets*). The *hacker ethic* is the *cultural* *prerequisite* of *open* *AI*, in exactly the *way* that the *operating system* is the *technical* *prerequisite*: without the *belief* that *sharing* the *work* *makes* it *better*, there is no *open* *ecosystem*, and without the *open* *ecosystem*, the *pace* of *progress* in *AI* would have been *slower* by an *order* of *magnitude*. \cite{bell_labs}
 </div>
 
 <div class="md">
-## The Thread That Runs All the Way Down
+### The Thread That Runs All the Way Down
 
 Look at the *whole* *ladder* again, from the *bottom* up, and the *shape* of it is *not* *accidental*. It is the *shape* of the *idea* that **computation is the manipulation of symbols**, *stated* by **Leibniz**, *proved* by **Turing**, *built* by **Ritchie** and *the* *Unix* *group*, *expressed* in *a* *hundred* *languages*, *managed* by *a* *hundred* *operating* *systems*, and *finally* — *in* the *model* — *turned back on itself*: a *system* of *symbol* *manipulation* that *learns* *the* *rules* of *symbol* *manipulation* from *the* *data*, instead of *having them written down*.
 

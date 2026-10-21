@@ -16,7 +16,9 @@ This chapter is everything a vision model does and how it does it. First the **m
 </div>
 
 <div class="md">
-## Historical Context
+## Foundations
+
+### Historical Context
 
 The idea of hierarchical visual feature detection was pioneered by \citeauthor{neocognitron}: he published multilayered visual feature-extraction networks as early as 1969 and introduced the \cite[Neocognitron]{neocognitron} in 1979 (English 1980), directly inspired by \citeauthorlastnameand{hubelwiesel}'s Nobel Prize–winning research on the mammalian visual cortex. Years later, in \citeyear{lecun1989backpropagation}, LeCun et al. made the concept practical by combining convolutions with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service. That 1989 system was a research prototype; the first *commercially deployed* convolutional network was the later LeNet-5, built into NCR's check-reading systems and fielded in U.S. banks from about 1996.
 
@@ -28,7 +30,7 @@ The idea of hierarchical visual feature detection was pioneered by \citeauthor{n
 </div>
 
 <div class="md" data-mathlevel="55">
-## What is a Convolution?
+### What is a Convolution?
 
 A **convolution** is a mathematical operation that slides a small grid of numbers (the **kernel** or **filter**) across an image, computing a weighted sum at every position. This single operation is the fundamental building block of **Convolutional Neural Networks (CNNs)**, the technology behind facial recognition, autonomous vehicles, medical imaging, and satellite analysis.
 
@@ -49,7 +51,7 @@ In one sentence, Olah captures the whole operation:
 </div>
 
 <div class="md" data-mathlevel="55">
-## Why Does This Matter for AI?
+### Why Does This Matter for AI?
 
 In traditional computer vision, engineers **manually designed** kernels (like Sobel, Gaussian, or Laplacian filters) to detect edges, blur noise, or sharpen details. These hand-crafted filters work well for specific tasks but cannot generalize.
 
@@ -61,7 +63,9 @@ In **Deep Learning**, the paradigm shifts completely:
 </div>
 
 <div class="md">
-## Understanding the Preset Filters
+## Filters and hierarchy
+
+### Understanding the Preset Filters
 
 * **Sharpen:** Amplifies the difference between a pixel and its neighbors, enhancing fine detail and high-frequency information.
 * **Edge Detection:** Highlights boundaries where pixel intensity changes abruptly. The result is a map of the image's structural skeleton.
@@ -130,11 +134,11 @@ In **Deep Learning**, the paradigm shifts completely:
 
 <div class="lab-dashboard" style="display: flex; flex-direction: column; gap: 20px; padding: 20px">
 <div class="md">
-## The Power of Hierarchy: Building Complexity from Simplicity
+### The Power of Hierarchy: Building Complexity from Simplicity
 
 A deep learning model doesn't identify a “stop sign” in a single leap. Instead, it constructs an understanding through a **layered hierarchy of abstraction**, where each successive layer examines the output of the previous one to discover increasingly complex patterns. This mirrors the architecture of the human visual cortex, where neurons in area V1 respond to simple oriented edges, while neurons in higher areas respond to faces and objects.
 
-### Layer 1: Primitive Edge Detection
+#### Layer 1: Primitive Edge Detection
 
 The first convolutional layer acts like a microscopic scanner. Each kernel examines a tiny local window of pixels (e.g., $3 \times 3$) to detect basic **primitives**: horizontal lines, vertical lines, diagonal edges, and color gradients.
 
@@ -142,7 +146,7 @@ At this stage, the network has no concept of a “sign”, it only knows that th
 
 The four feature maps below show exactly this: each filter responds to edges at a different orientation.
 
-### Layer 2: Pattern Composition, Finding Corners and Curves
+#### Layer 2: Pattern Composition, Finding Corners and Curves
 
 The second convolutional layer doesn't look at the original image at all. Instead, it looks at the **feature maps** produced by Layer 1.
 
@@ -150,7 +154,7 @@ The second convolutional layer doesn't look at the original image at all. Instea
 * **Expanding the Receptive Field:** Because each layer's kernel covers a region of the *previous* layer's output, deeper layers effectively “see” a much larger area of the original image. A $3 \times 3$ kernel in Layer 2, applied to Layer 1's output, actually represents a $5 \times 5$ region of the raw input.
 * **The Heatmap Below:** The combined heatmap squares the activations to amplify regions where multiple filters fire simultaneously, these are the corners and junctions of the octagonal stop sign.
 
-### Deeper Layers: From Parts to Objects
+#### Deeper Layers: From Parts to Objects
 
 In a full-scale network (e.g., ResNet-50 with 50 layers, or VGG-16 with 16 layers), this process repeats:
 
@@ -181,7 +185,9 @@ The more layers, the more abstract and complex the representations become. Howev
 </div>
 
 <div class="md" data-mathlevel="50">
-## Building the classifier: the full CNN pipeline
+## The CNN pipeline
+
+### Building the classifier: the full CNN pipeline
 
 The convolution explorer above shows a single filter. A real classifier stacks many of them, then bridges the gap from a 2D grid of features to a final class probability.
 
@@ -225,7 +231,7 @@ Both versions train with `python3 tf.py --mode train --path dataset` (one subfol
 </div>
 
 <div class="md">
-## From classification to detection
+### From classification to detection
 
 **Classification** asks one question of a whole image: *which of the labels?* ImageNet (\cite[Deng et al., 2009]{deng2009imagenet}) and the ResNet that dominated it (\cite[He et al., 2015]{he2015resnet}) are the reference points. **Detection** asks for *many* objects at once, each with a box and a label, measured by **mAP** across IoU thresholds. Two families emerged:
 
@@ -238,7 +244,7 @@ Two-stage was more accurate; one-stage was faster. The gap closed as both scaled
 </div>
 
 <div class="md">
-## Segmentation: pixels, not boxes
+### Segmentation: pixels, not boxes
 
 Boxes are coarse. **Segmentation** labels at the pixel level: **semantic** (each pixel → class), **instance** (each object separated), **panoptic** (both).
 
@@ -255,13 +261,15 @@ Boxes are coarse. **Segmentation** labels at the pixel level: **semantic** (each
 </div>
 
 <div class="md">
-## ViTs: the Transformer arrives in vision
+## Beyond CNNs
+
+### ViTs: the Transformer arrives in vision
 
 The **Vision Transformer (ViT)** (\cite[Dosovitskiy et al., 2021]{dosovitskiy2021vit}) splits an image into 16×16 **patches**, treats them as tokens, and runs a plain Transformer. With enough data it matches or beats the best CNNs — the convolution's inductive bias is useful but not essential. Two companions completed the picture: **MAE** (\cite[He et al., 2022]{he2021mae}), self-supervised pretraining by masking 75% of patches; and **CLIP** (\cite[Radford et al., 2021]{radford2021clip}), contrastive pretraining on (image, caption) pairs, giving vision a *text* interface — the bridge to <a href="multimodal">Multimodal</a> and <a href="diffusion">Diffusion</a>. An audit of CLIP itself then uncovered **multimodal neurons** — individual units that fire for one concept (“spider web”, a celebrity's face) whether it appears in an image or in text, foreshadowing the mechanistic-interpretability work we meet later \cite{goh2021multimodal}. A separate audit of ViTs found that the network quietly reserves a few high-norm **register** tokens as scratchpad working memory, the vision analogue of the attention sink (\cite[Darcet et al., 2024]{darcet2024registers}) (see <a href="attentionlab">Attention</a>).
 </div>
 
 <div class="md">
-## Beyond 2D: the world
+### Beyond 2D: the world
 
 Real vision is 3D and dynamic: **pose** (keypoints), **depth**, **point clouds**, and **NeRF**-style radiance fields that render novel views. Generative models now produce 3D and video, not just stills (see <a href="diffusion">Diffusion</a>).
 

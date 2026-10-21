@@ -17,7 +17,9 @@ We speak of "the information age" as if information became valuable only recentl
 </div>
 
 <div class="md">
-## News becomes a commodity: the Fugger network (16th c.)
+## Compiling knowledge before the web
+
+### News becomes a commodity: the Fugger network (16th c.)
 
 The first layer is the **market** itself. In the sixteenth century, in the banking city of Augsburg, the Fugger family ran one of Europe's largest information networks \cite[the Fugger news market, Wikipedia]{fuggernews}. Bankers and merchants lived on *information*: a rumor of war, a price in Venice, a ship lost at sea — any of these was money, and it was money that *decayed*. So the Fuggers ran a web of correspondents across Europe. A letter describing a significant event was copied and circulated as a news report; and a common device was a plain listing of current prices, the circulation of which quickened international trade \cite[News — early news networks, Wikipedia]{fuggernews}.
 
@@ -30,7 +32,7 @@ This is the *Relation*, the German newssheet — and it is the first place we ca
 </div>
 
 <div class="md">
-## The coffee-house public sphere
+### The coffee-house public sphere
 
 A commodity needs a **public**. In the seventeenth and eighteenth centuries the venue was the coffee house. The sociologist \citeauthor{habermaspublicsphere} (\citeyear{habermaspublicsphere}) later named what was happening there: the **public sphere** — a space that was physically a coffee house in Britain, a salon in France, a reading society in Germany, where private individuals gathered to talk about *printed matter* as a shared reality \cite[the coffee-house public sphere, Habermas]{habermaspublicsphere}.
 
@@ -40,7 +42,7 @@ Notice what is new. The authority is not in any single person's rank, title, or 
 </div>
 
 <div class="md">
-## Before the Encyclopédie: Isidore of Seville
+### Before the Encyclopédie: Isidore of Seville
 
 The urge to gather *all* knowledge into one place is far older than the Enlightenment. Nearly eleven centuries before Diderot, in Visigothic Spain, the archbishop \cite[Isidore of Seville]{isidoreofseville} (c. 560–636) compiled the *\citetitle{etymologiae}* — a twenty-book encyclopedia that tried to capture the whole of ancient learning in a single ordered work. Its modern translators call it "arguably the most influential book, after the Bible, in the learned world of the Latin West for nearly a thousand years" \cite{etymologiae}.
 
@@ -50,7 +52,9 @@ It is a fitting accident of history, then, that the Catholic Church has come to 
 </div>
 
 <div class="md">
-## The Encyclopédie: compiling everything at once
+## The Encyclopédie and the Mundaneum
+
+### The Encyclopédie: compiling everything at once
 
 If the coffee house was where information was *discussed*, the Encyclopédie was the great eighteenth-century attempt to **collect** it. Between 1751 and 1772, \citeauthor{encyclopedie} and some hundred and forty contributors set out to put *all* known knowledge into a single work — the sciences, the arts, the trades — and, crucially, to **cross-reference** the articles to one another: a device the history of the book calls "a kind of precursor to the hyperlink" \cite[the Encyclopédie, Diderot & d'Alembert]{encyclopedie}.
 
@@ -63,7 +67,7 @@ The ambition was not merely to *store* knowledge but to *connect* it — and in 
 </div>
 
 <div class="md">
-## Paul Otlet and the Mundaneum: the library that wanted to be the world
+### Paul Otlet and the Mundaneum: the library that wanted to be the world
 
 The final layer is the one that was missing from the story for a hundred years, because it was almost lost. In 1910 two Belgian lawyers — \cite[Paul Otlet]{paulotlet} and Henri La Fontaine — built the **Mundaneum** in Brussels \cite[the Mundaneum, Wikipedia]{mundaneum}. It was a *documentation of the world*: every book, article, and fact they could collect reduced to a standardized index card, classified by the Universal Decimal Classification and **cross-indexed**, so that a single fact sat in many drawers at once. At its height the building held more than twelve million cards — a physical model of the whole of human knowledge, *networked by index* \cite[the Mundaneum, Wikipedia]{mundaneum}.
 
@@ -71,7 +75,7 @@ The final layer is the one that was missing from the story for a hundred years, 
 </div>
 
 <div class="md">
-### 1934: the paper internet
+#### 1934: the paper internet
 
 In 1934 Otlet published the \cite[Traité de Documentation]{traitededocumentation}, and with it the vision that the next forty years would chase. He described a network of what he called "electric telescopes" — a *worldwide network* (a *réseau mondial*) of interlinked documents, held in a central repository, that anyone could consult from their own armchair: a moving image of the world, projected on a personal screen \cite[Wright, Cataloging the World (2014)]{catalogingtheworld}. He called that central repository the **mundotheque** — his word for a "world-library" that would display any document on demand, from anywhere \cite[the Mundaneum, Wikipedia]{mundaneum}.
 

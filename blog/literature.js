@@ -5754,6 +5754,18 @@ window.bibData = {
 		url: "https://arxiv.org/abs/2404.09894",
 		year: 2024,
 	},
+	"land2024fishing": {
+		title: "Fishing for Magikarp: Automatically Detecting Under-trained Tokens in Large Language Models",
+		author: "Sander Land, Max Bartolo",
+		url: "https://arxiv.org/abs/2405.05417",
+		year: 2024,
+	},
+	"rumbelow2023solidgold": {
+		title: "SolidGoldMagikarp (plus, prompt generation)",
+		author: "Jessica Rumbelow, Matthew Watkins",
+		url: "https://www.lesswrong.com/posts/aPeJE8bSo6rAFoLqg/solidgoldmagikarp-plus-prompt-generation",
+		year: 2023,
+	},
 	"goodhartslaw": {
 		author: "Charles Albert Eric Goodhart",
 		year: "1975",
