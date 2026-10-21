@@ -1073,3 +1073,230 @@ This framing is best read as a productive working hypothesis, not a proved ident
 	<p class="mn-aha-sub">To predict the next word well, a model has to find the shortest description of the data — and the shortest description of language keeps requiring a model of the <b>world</b> that produced it. Push prediction far enough and it presses into understanding.</p>
 </div>
 
+
+<!-- ============================================================ -->
+<!-- THE MEADOW OF WORDS — a Voronoi field over the vocabulary     -->
+<!-- ============================================================ -->
+<style>
+#word-meadow-wrap .wm-tour {
+	display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+	margin: 0 0 12px;
+}
+#word-meadow-wrap .wm-step {
+	appearance: none; cursor: pointer;
+	padding: 5px 11px; border-radius: 999px;
+	border: 1px solid var(--mn-border);
+	background: var(--mn-bg);
+	color: var(--mn-text-secondary);
+	font: 600 .72rem/1.2 inherit;
+	transition: background .15s ease, color .15s ease, border-color .15s ease;
+}
+#word-meadow-wrap .wm-step:hover { border-color: var(--mn-accent); color: var(--mn-text); }
+#word-meadow-wrap .wm-step.is-active {
+	background: color-mix(in srgb, var(--mn-accent) 16%, var(--mn-surface));
+	border-color: color-mix(in srgb, var(--mn-accent) 55%, var(--mn-border));
+	color: var(--mn-heading);
+}
+#word-meadow-wrap .wm-canvas {
+	display: block; width: 100%; height: 460px;
+	border-radius: var(--mn-radius-md);
+	border: 1px solid var(--mn-border);
+	background: var(--mn-surface);
+	cursor: crosshair;
+	touch-action: none;
+}
+#word-meadow-wrap .wm-legend {
+	display: flex; flex-wrap: wrap; gap: 8px 16px;
+	margin: 9px 2px 0; font-size: .72rem; color: var(--mn-text-muted);
+}
+#word-meadow-wrap .wm-legend span { display: inline-flex; align-items: center; gap: 6px; }
+#word-meadow-wrap .wm-legend i {
+	width: 12px; height: 12px; border-radius: 50%;
+	display: inline-block; flex: 0 0 auto;
+}
+#word-meadow-wrap .wm-legend .wm-dot { background: var(--mn-surface); border: 2px solid var(--mn-text-secondary); }
+#word-meadow-wrap .wm-legend .wm-seam { width: 14px; height: 3px; border-radius: 2px; background: var(--mn-text-secondary); }
+#word-meadow-wrap .wm-legend .wm-band { background: color-mix(in srgb, #d97706 45%, transparent); border-radius: 3px; }
+#word-meadow-wrap .wm-legend .wm-thought { background: #0f766e; }
+#word-meadow-wrap .wm-controls {
+	display: grid; grid-template-columns: 1fr 1fr; gap: 12px 22px;
+	margin-top: 14px; align-items: start;
+}
+#word-meadow-wrap .wm-ctl { display: block; font-size: .76rem; color: var(--mn-text-secondary); }
+#word-meadow-wrap .wm-ctl b { color: var(--mn-text); font-variant-numeric: tabular-nums; }
+#word-meadow-wrap .wm-ctl input[type=range] {
+	display: block; width: 100%; margin-top: 6px;
+	accent-color: var(--mn-accent); cursor: pointer;
+}
+#word-meadow-wrap .wm-ctl.wm-temp input[type=range] { accent-color: #b45309; }
+#word-meadow-wrap .wm-ctl.wm-temp b { color: #b45309; }
+#word-meadow-wrap .wm-dim {
+	grid-column: 1 / -1;
+	display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+	font-size: .76rem; color: var(--mn-text-secondary);
+}
+#word-meadow-wrap .wm-dim-btn {
+	appearance: none; cursor: pointer;
+	padding: 5px 11px; border-radius: 8px;
+	border: 1px solid var(--mn-border);
+	background: var(--mn-bg);
+	color: var(--mn-text-secondary);
+	font: 600 .74rem/1.2 inherit;
+}
+#word-meadow-wrap .wm-dim-btn.is-active {
+	background: color-mix(in srgb, var(--mn-accent) 14%, var(--mn-surface));
+	border-color: color-mix(in srgb, var(--mn-accent) 50%, var(--mn-border));
+	color: var(--mn-heading);
+}
+#word-meadow-wrap .wm-dim-note { color: var(--mn-text-muted); }
+#word-meadow-wrap .wm-nav {
+	display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+	margin-top: 14px;
+}
+#word-meadow-wrap .wm-nav button {
+	appearance: none; cursor: pointer;
+	padding: 7px 16px; border-radius: 8px;
+	border: 1px solid var(--mn-border);
+	background: var(--mn-bg);
+	color: var(--mn-text);
+	font: 600 .8rem/1.2 inherit;
+	transition: border-color .15s ease, background .15s ease;
+}
+#word-meadow-wrap .wm-nav button:hover { border-color: var(--mn-accent); }
+#word-meadow-wrap .wm-nav button:disabled { opacity: .45; cursor: default; border-color: var(--mn-border); }
+#word-meadow-wrap .wm-readouts {
+	display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 10px; margin-top: 13px;
+}
+#word-meadow-wrap .wm-box {
+	padding: 9px 12px; border-radius: 10px;
+	background: var(--mn-bg);
+	border: 1px solid var(--mn-border);
+	min-width: 0;
+}
+#word-meadow-wrap .wm-box .wm-k { font-size: .67rem; color: var(--mn-text-muted); line-height: 1.25; }
+#word-meadow-wrap .wm-box .wm-v {
+	font: 700 1.02rem/1.3 var(--mn-font-heading);
+	color: var(--mn-heading); margin-top: 2px;
+	overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#word-meadow-wrap .wm-box .wm-s { font-size: .68rem; color: var(--mn-text-secondary); margin-top: 1px; }
+#word-meadow-wrap .wm-box.amber { background: color-mix(in srgb, #d97706 9%, var(--mn-bg)); border-color: color-mix(in srgb, #d97706 30%, var(--mn-border)); }
+#word-meadow-wrap .wm-box.amber .wm-v { color: #b45309; }
+#word-meadow-wrap .wm-box.rose { background: color-mix(in srgb, #be185d 8%, var(--mn-bg)); border-color: color-mix(in srgb, #be185d 26%, var(--mn-border)); }
+#word-meadow-wrap .wm-box.rose .wm-v { color: #be185d; }
+#word-meadow-wrap .wm-caption {
+	margin-top: 11px; padding: 10px 14px;
+	border-left: 3px solid var(--mn-accent);
+	border-radius: 0 var(--mn-radius-md) var(--mn-radius-md) 0;
+	background: var(--mn-bg);
+	color: var(--mn-text-secondary);
+	font-size: .84rem; line-height: 1.55;
+	min-height: 3.1em;
+}
+#word-meadow-wrap .wm-caption b { color: var(--mn-text); }
+@media (max-width: 620px) {
+	#word-meadow-wrap .wm-controls { grid-template-columns: 1fr; }
+	#word-meadow-wrap .wm-readouts { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="md">
+## The Meadow of Words
+
+A model thinks in a continuous space, yet it must speak in a **finite** vocabulary. This meadow shows how a thought becomes a word: every word is a pin in the field, every point of the field is a possible next-thought, and the thought simply falls into the cell of the **nearest** word. The seams between cells are exactly the places where two words are equally near — where language runs out.
+</div>
+
+<div id="word-meadow-wrap" class="mn-demo-panel">
+	<div class="mn-demo-title">The geometry of choosing a word</div>
+	<div class="mn-demo-sub">Words are pins; each one owns the region of thoughts closest to it. The line between two regions is a seam where the thought could tip either way.</div>
+
+	<div class="wm-tour" role="group" aria-label="Guided tour">
+		<button type="button" class="wm-step is-active" data-wstep="0">1 · The meadow</button>
+		<button type="button" class="wm-step" data-wstep="1">2 · A clear thought</button>
+		<button type="button" class="wm-step" data-wstep="2">3 · On the seam</button>
+		<button type="button" class="wm-step" data-wstep="3">4 · More words</button>
+		<button type="button" class="wm-step" data-wstep="4">5 · Temperature</button>
+		<button type="button" class="wm-step" data-wstep="5">6 · Expressibility gap</button>
+	</div>
+
+	<canvas id="wm-canvas" class="wm-canvas" aria-label="A two-dimensional meadow partitioned into the cells of a finite vocabulary">A meadow of words: every word owns a cell, and every thought falls into the nearest word's cell.</canvas>
+
+	<div class="wm-legend" aria-hidden="true">
+		<span><i class="wm-dot"></i>word (pin)</span>
+		<span><i class="wm-seam"></i>seam: here the winner changes</span>
+		<span><i class="wm-band"></i>ambiguous band</span>
+		<span><i class="wm-thought"></i>thought</span>
+	</div>
+
+	<div class="wm-controls">
+		<label class="wm-ctl" for="wm-sN"><span>Dictionary size</span> <b id="wm-rN">12</b>
+			<input type="range" id="wm-sN" min="4" max="40" step="1" value="12">
+		</label>
+		<label class="wm-ctl wm-temp" for="wm-sT"><span>Temperature (how open the draw is)</span> <b id="wm-rT">0.80</b>
+			<input type="range" id="wm-sT" min="10" max="300" step="1" value="80">
+		</label>
+		<div class="wm-dim">
+			<span>Space:</span>
+			<button type="button" class="wm-dim-btn" data-wdim="1">1-D line</button>
+			<button type="button" class="wm-dim-btn is-active" data-wdim="2">2-D meadow</button>
+			<span class="wm-dim-note">drawn here: 2 dimensions · inside an LLM: d ≈ 768–4096</span>
+		</div>
+	</div>
+
+	<div class="wm-nav">
+		<button type="button" id="wm-prev">← Previous</button>
+		<button type="button" id="wm-play">Pause</button>
+		<button type="button" id="wm-next">Next →</button>
+	</div>
+
+	<div class="wm-readouts">
+		<div class="wm-box">
+			<div class="wm-k">Thought falls into the cell of</div>
+			<div class="wm-v" id="wm-rWord">—</div>
+			<div class="wm-s" id="wm-rCell">move the pointer across the field</div>
+		</div>
+		<div class="wm-box amber">
+			<div class="wm-k">Winning chance</div>
+			<div class="wm-v" id="wm-rProb">—</div>
+			<div class="wm-s" id="wm-rRunner">runner-up: —</div>
+		</div>
+		<div class="wm-box rose">
+			<div class="wm-k">Margin to the nearest seam (0 = on it)</div>
+			<div class="wm-v" id="wm-rEdge">—</div>
+			<div class="wm-s" id="wm-rGap">ambiguous zone: —</div>
+		</div>
+	</div>
+
+	<div id="wm-caption" class="wm-caption"></div>
+
+	<div class="mn-demo-hint">
+		<b>Try it:</b> let the tour run, or drag the thought yourself. Shrink the dictionary and the cells grow; add words and the seams multiply — but the band where no word clearly wins never disappears. Raise the temperature and the circled reach grows: words that were hopeless begin to win sometimes.
+	</div>
+</div>
+
+<div class="md" data-mathlevel="40">
+### The same construction in any dimension
+
+The meadow is a **Voronoi partition** of thought space. With word pins $a_1, \dots, a_n$, the cell of word $w$ is the set of thoughts for which $a_w$ is the nearest pin:
+
+<div>
+$$C_w = \{\, h : \|h - a_w\| \le \|h - a_v\| \ \text{for every } v \,\}$$
+</div>
+
+- In **one dimension** the cells are intervals and the seams are isolated points.
+- In **two dimensions** (the meadow) the cells are polygons and the seams are straight segments: the places where the thought is exactly equally far from two words.
+- In the **thousands of dimensions** of a real LLM, the cells are convex polytopes whose shared walls are $(d-1)$-dimensional hyperplanes. Nothing else changes: whichever cell contains the thought wins the word, and the distance to the nearest wall measures how undecided the model is.
+
+The idea that a concept is a **region** rather than a single point is the conceptual spaces of \citeauthor{gardenfors2000conceptual} (\citeyear{gardenfors2000conceptual}). The machine-learning version — hidden states on a latent semantic manifold, tokens as Voronoi regions, and a lower bound on the share of states that no finite vocabulary can resolve — is worked out by \citeauthor{mabrok2026latent} (\citeyear{mabrok2026latent}). Because the seam has no thickness in one place but wraps around every cell, the fraction of near-seam states does not go away when the dictionary grows; it only gets thinner, never empty.
+</div>
+
+<div class="mn-aha">
+	<div class="mn-aha-kicker">The aha</div>
+	<p class="mn-aha-big">The vocabulary tiles the space of thoughts.</p>
+	<p class="mn-aha-sub">Every word owns a cell; every thought falls into exactly one. Choosing a word is not a lookup but a <b>partition</b> — and the seams, where two cells meet, are where the model is genuinely unsure. Grow the dictionary and the cells shrink; the seams never vanish.</p>
+</div>
+
+<div class="mn-thread">
+	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="foam_of_meaning.php"><span class="mn-thread-label">Go deeper</span>The Foam of Meaning — the geometry of ambiguity</a>
+</div>

@@ -2727,6 +2727,11 @@ function loadIntuitionModule() {
         MnIsoViz.init();
     });
 
+    // The meadow of words: Voronoi cells over a finite vocabulary
+    _lazyRegister('word-meadow-wrap', () => {
+        WordMeadowViz.init();
+    });
+
     // Start observing everything
     _lazyCreateObserver();
 
@@ -2738,3 +2743,901 @@ function loadIntuitionModule() {
         });
     }
 }
+
+// ============================================================
+// THE MEADOW OF WORDS - a Voronoi field over a finite vocabulary
+// Ends intuition.php. Every word is a pin; every thought falls
+// into the cell of the nearest pin. Works in 1-D or 2-D (and the
+// same construction, with hyperplane walls, in any dimension).
+// ============================================================
+
+const WordMeadowViz = (() => {
+	const WORDS = ["Dog", "Cat", "Tree", "House", "Car", "Book", "Mouse", "Lamp", "Flower", "Stone", "Table", "Chair", "Water", "Fire", "Night", "Sun", "Rain", "Moon", "Coffee", "Star", "River", "Mountain", "Bird", "Fish", "Milk", "Sugar", "Door", "Window", "Bridge", "Field", "Kitchen", "Garden", "Ship", "Clock", "Road", "City", "Bread", "Apple", "Tea", "Hat", "Bell"];
+	const HUES = [188, 220, 260, 290, 320, 350, 15, 40, 60, 90, 140, 170, 200, 240, 280, 310, 340, 25, 50, 75, 120, 155, 195, 230, 270, 300, 330, 10, 45, 100, 160, 210, 250, 295, 335, 20, 65, 130, 185, 245, 305];
+
+	const CW = 560;
+	const CH = 392;
+	const DISPLAY_H = 460;
+	const N_CHECKPOINTS = [12, 18, 24, 30];
+	const N_ANIM_DUR = 1800;
+	const T_ANIM_DUR = 1100;
+	const PTR_ANIM_DUR = 800;
+	const STEP_HOLD = 2600;
+	const ROWS_PER_FRAME = 14;
+	const LAST_STEP = 5;
+
+	const CAPTIONS = [
+		'Every point of the meadow is a possible <b>in-between thought</b>. The words sit in the field like pins &mdash; and <b>the nearest pin wins</b>.',
+		'A clear thought sits deep inside one cell, far from every seam. The next word wins here <b>with a wide lead</b> &mdash; the winning chance is high.',
+		'Now the thought lies on a <b>golden seam</b>: two words are almost equally close. It still falls into a cell, but barely &mdash; <b>no word fits exactly</b>.',
+		'More words &rarr; smaller cells and thinner bands. But the <b>share</b> of the ambiguous zone never reaches zero: between any two words there is always a seam.',
+		'<b>Temperature</b> sets how open the draw is: <b>low</b> &rarr; almost always the same word &middot; <b>high</b> &rarr; many words get a real chance (the circle shows the reach).',
+		'These seams are the <b>expressibility gap</b>: the loss has a lower bound that no larger dictionary removes.'
+	];
+
+	let cv, sN, sT, rN, rT, rWord, rCell, rProb, rRunner, rEdge, rGap, captionEl, playBtn, prevBtn, nextBtn;
+	let inited = false;
+	let running = false;
+	let rafId = null;
+
+	let currentN = 12;
+	let T = 0.8;
+	let dim = 2;
+	let gapFrac = 0;
+	let anchors = [];
+	let fieldCache = {};
+	let precompQueue = [];
+	let precomp = null;
+
+	let step = 0;
+	let autoPlay = true;
+	let stepStart = 0;
+	let lastAnimDur = 0;
+	let tweens = [];
+
+	let pointer = null;
+	let scriptTarget = null;
+	let realActive = false;
+	let realPos = null;
+
+	const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+	function mulberry32(a) {
+		return function () {
+			a |= 0; a = a + 0x6D2B79F5 | 0;
+			let t = Math.imul(a ^ a >>> 15, 1 | a);
+			t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+			return ((t ^ t >>> 14) >>> 0) / 4294967296;
+		};
+	}
+
+	function hsl(h, s, l) {
+		s /= 100; l /= 100;
+		const k = n => (n + h / 30) % 12;
+		const a = s * Math.min(l, 1 - l);
+		const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+		return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)];
+	}
+
+	function smoothstep(a, b, t) {
+		if (a === b) return t < a ? 0 : 1;
+		t = clamp((t - a) / (b - a), 0, 1);
+		return t * t * (3 - 2 * t);
+	}
+
+	function mix(c1, c2, t) {
+		return [
+			Math.round(c1[0] + (c2[0] - c1[0]) * t),
+			Math.round(c1[1] + (c2[1] - c1[1]) * t),
+			Math.round(c1[2] + (c2[2] - c1[2]) * t)
+		];
+	}
+
+	function palette() {
+		const api = window.__MN_DARK;
+		const dark = api ? api.isDark() : false;
+		const v = (name, fallback) => {
+			const x = typeof cssVar === 'function' ? cssVar(name) : '';
+			return x || fallback;
+		};
+		return {
+			dark: dark,
+			surface: v('--mn-surface', dark ? '#1e293b' : '#FDFAF1'),
+			text: v('--mn-text', dark ? '#cbd5e1' : '#3A2F25'),
+			muted: v('--mn-text-muted', dark ? '#64748b' : '#8C7E68'),
+			border: v('--mn-border', dark ? '#334155' : '#D8CFB6'),
+			accent: v('--mn-accent', '#6366f1'),
+			edge: dark ? [148, 163, 184] : [71, 85, 105],
+			gold: dark ? [245, 158, 11] : [180, 83, 9],
+			thought: dark ? '#2dd4bf' : '#0f766e',
+			thoughtFill: dark ? 'rgba(45,212,191,.14)' : 'rgba(15,118,110,.08)',
+			ink: dark ? '#e2e8f0' : '#28303c'
+		};
+	}
+
+	function gen2D(n) {
+		const rng = mulberry32(7 + n * 13);
+		const cols = Math.ceil(Math.sqrt(n * CW / CH));
+		const rows = Math.ceil(n / cols);
+		const pts = [];
+		for (let i = 0; i < n; i++) {
+			const cx = (i % cols);
+			const cy = Math.floor(i / cols);
+			const jx = (rng() - 0.5) * 0.72;
+			const jy = (rng() - 0.5) * 0.72;
+			pts.push({
+				x: clamp((cx + 0.3 + jx) / cols * CW, 24, CW - 24),
+				y: clamp((cy + 0.3 + jy) / rows * CH, 24, CH - 24),
+				w: WORDS[i % WORDS.length],
+				c: HUES[i % HUES.length]
+			});
+		}
+		return pts;
+	}
+
+	function gen1D(n) {
+		const rng = mulberry32(11 + n * 17);
+		const pts = [];
+		const span = CW - 56;
+		for (let i = 0; i < n; i++) {
+			const base = 28 + (i + 0.5) / n * span;
+			const jitter = (rng() - 0.5) * (span / n) * 0.4;
+			pts.push({
+				x: clamp(base + jitter, 22, CW - 22),
+				y: CH / 2,
+				w: WORDS[i % WORDS.length],
+				c: HUES[i % HUES.length]
+			});
+		}
+		pts.sort((a, b) => a.x - b.x);
+		return pts;
+	}
+
+	function genFor(n) {
+		return dim === 1 ? gen1D(n) : gen2D(n);
+	}
+
+	function scaleFor(a) {
+		if (dim === 1) {
+			const spacing = (CW - 56) / Math.max(1, a.length);
+			return Math.max(12, spacing * 0.62);
+		}
+		return Math.sqrt(CW * CH / Math.max(1, a.length)) * 0.52;
+	}
+
+	function distTo(a, x, y) {
+		return dim === 1 ? Math.abs(x - a.x) : Math.hypot(x - a.x, y - a.y);
+	}
+
+	function nearestTwo(x, y, a) {
+		let d1 = 1e9, d2 = 1e9, i1 = 0;
+		for (let i = 0; i < a.length; i++) {
+			const d = distTo(a[i], x, y);
+			if (d < d1) { d2 = d1; i1 = i; d1 = d; }
+			else if (d < d2) { d2 = d; }
+		}
+		return { i1: i1, d1: d1, d2: d2, m: d2 - d1 };
+	}
+
+	function colorFor(m, idx, pal, scale, arr) {
+		const q = clamp(m / scale, 0, 1);
+		let col = hsl(arr[idx].c, 34 + 16 * q, pal.dark ? 28 + 16 * q : 64 + 16 * q);
+		const eps = 0.32 * scale;
+		const edgePx = 2.4;
+		if (m < eps) col = mix(col, pal.gold, 0.55 * (1 - smoothstep(edgePx, eps, m)));
+		if (m < edgePx) col = mix(pal.edge, col, smoothstep(0, edgePx * 0.75, m));
+		return col;
+	}
+
+	function computeRows(a, imgData, y0, y1, pal, scale) {
+		let cnt = 0;
+		const eps = 0.32 * scale;
+		for (let y = y0; y < y1; y++) {
+			for (let x = 0; x < CW; x++) {
+				const n2 = nearestTwo(x, y, a);
+				const col = colorFor(n2.m, n2.i1, pal, scale, a);
+				const p = (y * CW + x) * 4;
+				imgData.data[p] = col[0];
+				imgData.data[p + 1] = col[1];
+				imgData.data[p + 2] = col[2];
+				imgData.data[p + 3] = 255;
+				if (n2.m < eps) cnt++;
+			}
+		}
+		return cnt;
+	}
+
+	function makeFieldSync(n, pal) {
+		const a = gen2D(n);
+		const scale = scaleFor(a);
+		const c = document.createElement('canvas');
+		c.width = CW; c.height = CH;
+		const cctx = c.getContext('2d');
+		const imgData = cctx.createImageData(CW, CH);
+		const cnt = computeRows(a, imgData, 0, CH, pal, scale);
+		cctx.putImageData(imgData, 0, 0);
+		return { canvas: c, gapFrac: cnt / (CW * CH) };
+	}
+
+	function fieldKey(n, pal) {
+		return n + '|' + (pal.dark ? 'd' : 'l');
+	}
+
+	function ensureField(n, pal) {
+		const key = fieldKey(n, pal);
+		if (!fieldCache[key]) fieldCache[key] = makeFieldSync(n, pal);
+		return fieldCache[key];
+	}
+
+	function queuePrecompute(pal) {
+		if (dim !== 2) return;
+		const key = fieldKey(currentN, pal);
+		for (let i = 0; i < N_CHECKPOINTS.length; i++) {
+			const n = N_CHECKPOINTS[i];
+			if (fieldCache[fieldKey(n, pal)]) continue;
+			if (precomp && precomp.N === n) continue;
+			if (n === currentN && fieldCache[key]) continue;
+			if (precompQueue.indexOf(n) === -1) precompQueue.push(n);
+		}
+	}
+
+	function stepPrecompute() {
+		if (dim !== 2) { precomp = null; precompQueue = []; return; }
+		const pal = palette();
+		if (precomp && precomp.dark !== pal.dark) { precomp = null; precompQueue = []; fieldCache = {}; }
+		if (precomp) {
+			const endRow = Math.min(CH, precomp.row + ROWS_PER_FRAME);
+			precomp.cnt += computeRows(precomp.anchors, precomp.imgData, precomp.row, endRow, pal, precomp.scale);
+			precomp.row = endRow;
+			if (precomp.row >= CH) {
+				precomp.ctx.putImageData(precomp.imgData, 0, 0);
+				fieldCache[fieldKey(precomp.N, pal)] = { canvas: precomp.canvas, gapFrac: precomp.cnt / (CW * CH) };
+				if (precomp.N === currentN) gapFrac = fieldCache[fieldKey(precomp.N, pal)].gapFrac;
+				precomp = null;
+			}
+			return;
+		}
+		if (precompQueue.length) {
+			const n = precompQueue.shift();
+			if (fieldCache[fieldKey(n, pal)]) return;
+			const a = gen2D(n);
+			const c = document.createElement('canvas');
+			c.width = CW; c.height = CH;
+			const cctx = c.getContext('2d');
+			const imgData = cctx.createImageData(CW, CH);
+			precomp = {
+				N: n, canvas: c, ctx: cctx, imgData: imgData,
+				anchors: a, scale: scaleFor(a), dark: pal.dark, row: 0, cnt: 0
+			};
+		}
+	}
+
+	function gapOf1D(a) {
+		if (!a.length) return 0;
+		const scale = scaleFor(a);
+		const eps = 0.32 * scale;
+		let cnt = 0;
+		for (let x = 0; x < CW; x++) {
+			if (nearestTwo(x, CH / 2, a).m < eps) cnt++;
+		}
+		return cnt / CW;
+	}
+
+	function setN(n) {
+		currentN = n;
+		anchors = genFor(n);
+		const pal = palette();
+		if (dim === 2) {
+			gapFrac = ensureField(n, pal).gapFrac;
+		} else {
+			gapFrac = gapOf1D(anchors);
+		}
+	}
+
+	function setT(t) {
+		T = t;
+		if (sT) sT.value = Math.round(t * 100);
+		if (rT) rT.textContent = t.toFixed(2);
+	}
+
+	function findPoint2D(a, mode) {
+		let best = null;
+		let bestM = mode === 'clear' ? -1 : 1e9;
+		const GX = 16, GY = 11, M = 30;
+		for (let gy = 0; gy < GY; gy++) {
+			for (let gx = 0; gx < GX; gx++) {
+				const x = M + (gx + 0.5) / GX * (CW - 2 * M);
+				const y = M + (gy + 0.5) / GY * (CH - 2 * M);
+				const m = nearestTwo(x, y, a).m;
+				if (mode === 'clear' ? m > bestM : m < bestM) { bestM = m; best = { x: x, y: y }; }
+			}
+		}
+		for (let dy = -8; dy <= 8; dy += 2) {
+			for (let dx = -8; dx <= 8; dx += 2) {
+				const x = best.x + dx, y = best.y + dy;
+				if (x < 20 || y < 20 || x > CW - 20 || y > CH - 20) continue;
+				const m = nearestTwo(x, y, a).m;
+				if (mode === 'clear' ? m > bestM : m < bestM) { bestM = m; best = { x: x, y: y }; }
+			}
+		}
+		return best;
+	}
+
+	function findPoint1D(a, mode) {
+		const sorted = a.slice().sort((p, q) => p.x - q.x);
+		let bestX = CW / 2;
+		let bestScore = mode === 'clear' ? -1 : 1e9;
+		for (let i = 0; i < sorted.length - 1; i++) {
+			const mid = (sorted[i].x + sorted[i + 1].x) / 2;
+			const gap = sorted[i + 1].x - sorted[i].x;
+			const score = mode === 'clear' ? gap : Math.abs(mid - CW / 2);
+			if (mode === 'clear' ? score > bestScore : score < bestScore) {
+				bestScore = score;
+				bestX = mid;
+			}
+		}
+		return { x: bestX, y: CH / 2 };
+	}
+
+	function findPoint(a, mode) {
+		return dim === 1 ? findPoint1D(a, mode) : findPoint2D(a, mode);
+	}
+
+	function targetFor(k) {
+		switch (k) {
+			case 0: return { N: 12, T: 0.8, pointer: null };
+			case 1: return { N: 12, T: 0.8, pointer: findPoint(genFor(12), 'clear') };
+			case 2: return { N: 12, T: 0.8, pointer: findPoint(genFor(12), 'boundary') };
+			case 3: return { N: 30, T: 0.8, pointer: 'keep' };
+			case 4: return { N: 30, T: 2.6, pointer: findPoint(genFor(30), 'boundary') };
+			case 5: return { N: 30, T: 0.8, pointer: 'keep' };
+		}
+		return { N: 12, T: 0.8, pointer: null };
+	}
+
+	function addTween(tw) { tw.t0 = performance.now(); tweens.push(tw); }
+
+	function removeTweens(tag) {
+		for (let i = tweens.length - 1; i >= 0; i--) {
+			if (tweens[i].tag === tag) tweens.splice(i, 1);
+		}
+	}
+
+	function updateTweens(now) {
+		let active = false;
+		for (let i = tweens.length - 1; i >= 0; i--) {
+			const tw = tweens[i];
+			let u = (now - tw.t0) / tw.dur;
+			if (u >= 1) u = 1;
+			const e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+			tw.onUpdate(tw.from + (tw.to - tw.from) * e, e);
+			if (u >= 1) {
+				tweens.splice(i, 1);
+				if (tw.onDone) tw.onDone();
+			} else {
+				active = true;
+			}
+		}
+		return active;
+	}
+
+	function checkpointAt(f) {
+		let best = N_CHECKPOINTS[0];
+		for (let i = 0; i < N_CHECKPOINTS.length; i++) {
+			if (N_CHECKPOINTS[i] <= f) best = N_CHECKPOINTS[i];
+		}
+		return best;
+	}
+
+	function aimPointer(target) {
+		scriptTarget = target;
+		removeTweens('ptr');
+		const from = pointer ? { x: pointer.x, y: pointer.y } : { x: CW / 2, y: CH / 2 };
+		addTween({
+			tag: 'ptr', dur: PTR_ANIM_DUR, from: 0, to: 1,
+			onUpdate: u => {
+				pointer = {
+					x: from.x + (target.x - from.x) * u,
+					y: from.y + (target.y - from.y) * u
+				};
+			}
+		});
+	}
+
+	function stepPointerTarget() {
+		if (step === 0) return null;
+		const t = targetFor(step);
+		if (!t.pointer || t.pointer === 'keep') return null;
+		return t.pointer;
+	}
+
+	function setPills(k) {
+		document.querySelectorAll('#word-meadow-wrap .wm-step').forEach(el => {
+			el.classList.toggle('is-active', +el.getAttribute('data-wstep') === k);
+		});
+	}
+
+	function setCaption(k) {
+		if (captionEl) captionEl.innerHTML = CAPTIONS[k] || '';
+	}
+
+	function updateNav() {
+		if (prevBtn) prevBtn.disabled = step <= 0;
+		if (nextBtn) nextBtn.disabled = step >= LAST_STEP;
+		if (playBtn) playBtn.textContent = autoPlay ? 'Pause' : (step >= LAST_STEP ? 'Replay' : 'Play');
+	}
+
+	function animateToStep(k) {
+		step = k;
+		setCaption(k);
+		setPills(k);
+		const t = targetFor(k);
+		let maxDur = 0;
+		if (t.N !== currentN) {
+			removeTweens('n');
+			const from = currentN;
+			maxDur = Math.max(maxDur, N_ANIM_DUR);
+			addTween({
+				tag: 'n', dur: N_ANIM_DUR, from: from, to: t.N,
+				onUpdate: v => {
+					if (sN) sN.value = Math.round(v);
+					if (rN) rN.textContent = Math.round(v);
+					const cf = checkpointAt(v);
+					if (cf !== currentN) setN(cf);
+				},
+				onDone: () => {
+					if (sN) sN.value = t.N;
+					if (rN) rN.textContent = t.N;
+					if (currentN !== t.N) setN(t.N);
+				}
+			});
+		}
+		if (Math.abs(t.T - T) > 1e-6) {
+			removeTweens('t');
+			const from = T;
+			maxDur = Math.max(maxDur, T_ANIM_DUR);
+			addTween({ tag: 't', dur: T_ANIM_DUR, from: from, to: t.T, onUpdate: v => setT(v) });
+		}
+		if (t.pointer && t.pointer !== 'keep') {
+			aimPointer(t.pointer);
+			maxDur = Math.max(maxDur, PTR_ANIM_DUR);
+		} else if (t.pointer === null) {
+			removeTweens('ptr');
+			pointer = null;
+			scriptTarget = null;
+		}
+		lastAnimDur = maxDur;
+		stepStart = performance.now();
+		if (k >= LAST_STEP) autoPlay = false;
+		updateNav();
+		draw();
+	}
+
+	function applyStepInstant(k) {
+		step = k;
+		setCaption(k);
+		setPills(k);
+		removeTweens('n');
+		removeTweens('t');
+		removeTweens('ptr');
+		const t = targetFor(k);
+		if (sN) sN.value = t.N;
+		if (rN) rN.textContent = t.N;
+		setN(t.N);
+		setT(t.T);
+		if (t.pointer === null) {
+			pointer = null;
+			scriptTarget = null;
+		} else if (t.pointer !== 'keep') {
+			pointer = { x: t.pointer.x, y: t.pointer.y };
+			scriptTarget = { x: t.pointer.x, y: t.pointer.y };
+		}
+		if (k >= LAST_STEP) autoPlay = false;
+		updateNav();
+		draw();
+	}
+
+	function drawCursor(c, x, y) {
+		c.save();
+		c.translate(x, y);
+		c.beginPath();
+		c.moveTo(0, 0);
+		c.lineTo(0, 16);
+		c.lineTo(3.8, 12.4);
+		c.lineTo(6.6, 18.4);
+		c.lineTo(9.2, 17.2);
+		c.lineTo(6.4, 11.4);
+		c.lineTo(11.6, 11);
+		c.closePath();
+		c.shadowColor = 'rgba(0,0,0,.3)'; c.shadowBlur = 4; c.shadowOffsetY = 1;
+		c.fillStyle = 'rgba(255,255,255,.95)';
+		c.fill();
+		c.shadowColor = 'transparent';
+		c.strokeStyle = 'rgba(30,41,59,.75)'; c.lineWidth = 1.2; c.stroke();
+		c.restore();
+	}
+
+	function drawWordPins(c, sx, sy, pal, showLabels) {
+		for (let i = 0; i < anchors.length; i++) {
+			const a = anchors[i];
+			const ax = a.x * sx;
+			const ay = (dim === 1 ? CH / 2 : a.y) * sy;
+			c.save();
+			c.shadowColor = 'rgba(0,0,0,.18)'; c.shadowBlur = 6; c.shadowOffsetY = 1;
+			c.beginPath(); c.arc(ax, ay, 6, 0, Math.PI * 2);
+			c.fillStyle = pal.surface; c.fill();
+			c.restore();
+			c.beginPath(); c.arc(ax, ay, 6, 0, Math.PI * 2);
+			c.strokeStyle = pal.ink; c.globalAlpha = 0.55; c.lineWidth = 1.5; c.stroke();
+			c.globalAlpha = 1;
+			if (showLabels) {
+				c.font = '600 11px system-ui';
+				c.textAlign = 'center'; c.textBaseline = 'top';
+				const ly = ay + 11;
+				const tw = c.measureText(a.w).width;
+				c.globalAlpha = 0.86;
+				c.fillStyle = pal.surface;
+				c.fillRect(ax - tw / 2 - 4, ly - 2, tw + 8, 16);
+				c.globalAlpha = 1;
+				c.fillStyle = pal.ink;
+				c.fillText(a.w, ax, ly + 1);
+			}
+		}
+	}
+
+	function draw2D(c, w, pal) {
+		const f = ensureField(currentN, pal);
+		gapFrac = f.gapFrac;
+		c.imageSmoothingEnabled = true;
+		c.imageSmoothingQuality = 'high';
+		c.drawImage(f.canvas, 0, 0, w, DISPLAY_H);
+		drawWordPins(c, w / CW, DISPLAY_H / CH, pal, currentN <= 20);
+	}
+
+	function draw1D(c, w, pal) {
+		const bandTop = DISPLAY_H * 0.17;
+		const bandH = DISPLAY_H * 0.66;
+		const scale = scaleFor(anchors);
+		const eps = 0.32 * scale;
+		c.fillStyle = pal.surface;
+		c.fillRect(0, 0, w, DISPLAY_H);
+
+		let cnt = 0;
+		for (let sx = 0; sx < w; sx++) {
+			const x = (sx + 0.5) / w * CW;
+			const n2 = nearestTwo(x, CH / 2, anchors);
+			const col = colorFor(n2.m, n2.i1, pal, scale, anchors);
+			if (n2.m < eps) cnt++;
+			c.fillStyle = 'rgb(' + col[0] + ',' + col[1] + ',' + col[2] + ')';
+			c.fillRect(sx, bandTop, 1, bandH);
+		}
+		gapFrac = cnt / Math.max(1, w);
+
+		c.strokeStyle = 'rgb(' + pal.edge[0] + ',' + pal.edge[1] + ',' + pal.edge[2] + ')';
+		c.globalAlpha = 0.75;
+		c.lineWidth = 1.3;
+		for (let i = 0; i < anchors.length - 1; i++) {
+			const mid = (anchors[i].x + anchors[i + 1].x) / 2;
+			const mx = mid / CW * w;
+			c.beginPath();
+			c.moveTo(mx, bandTop);
+			c.lineTo(mx, bandTop + bandH);
+			c.stroke();
+		}
+		c.globalAlpha = 1;
+
+		const mid = CH / 2;
+		c.strokeStyle = pal.border;
+		c.lineWidth = 1;
+		c.beginPath();
+		c.moveTo(0, mid / CH * DISPLAY_H);
+		c.lineTo(w, mid / CH * DISPLAY_H);
+		c.stroke();
+
+		drawWordPins(c, w / CW, DISPLAY_H / CH, pal, anchors.length <= 20);
+	}
+
+	function drawThought(c, P, w, pal) {
+		const scale = scaleFor(anchors);
+		const px = clamp(P.x, 0, CW - 1);
+		const py = dim === 1 ? CH / 2 : clamp(P.y, 0, CH - 1);
+		const mx = px * w / CW;
+		const my = py * DISPLAY_H / CH;
+		const radiusPx = T * scale * 1.2 * (w / CW);
+
+		c.beginPath();
+		if (dim === 1) {
+			const rx = T * scale * 1.2 / CW * w;
+			c.moveTo(mx - rx, my);
+			c.lineTo(mx + rx, my);
+			c.strokeStyle = pal.thought;
+			c.globalAlpha = 0.55; c.lineWidth = 2; c.setLineDash([6, 4]); c.stroke(); c.setLineDash([]);
+			c.globalAlpha = 1;
+			c.fillStyle = pal.thoughtFill;
+			c.fillRect(mx - rx, DISPLAY_H * 0.17, rx * 2, DISPLAY_H * 0.66);
+		} else {
+			c.arc(mx, my, radiusPx, 0, Math.PI * 2);
+			c.strokeStyle = pal.thought;
+			c.globalAlpha = 0.55; c.lineWidth = 2; c.setLineDash([6, 4]); c.stroke(); c.setLineDash([]);
+			c.globalAlpha = 1;
+			c.fillStyle = pal.thoughtFill; c.fill();
+		}
+
+		const allD = [];
+		for (let i = 0; i < anchors.length; i++) {
+			allD.push({ i: i, d: distTo(anchors[i], px, py) });
+		}
+		allD.sort((a, b) => a.d - b.d);
+		const near = allD.slice(0, Math.min(5, allD.length));
+		const sigma = Math.max(1e-6, T * scale * 0.5);
+		const scores = near.map(cd => ({ i: cd.i, d: cd.d, s: Math.exp(-cd.d / sigma) }));
+		let sum = 0;
+		for (let j = 0; j < scores.length; j++) sum += scores[j].s;
+		if (!sum) sum = 1;
+
+		const panelW = 178;
+		const rowH = 24;
+		const panelH = near.length * rowH + 22;
+		const right = mx + radiusPx + 16;
+		const panelX = (right + panelW > w - 8)
+			? clamp(mx - radiusPx - panelW - 16, 4, w - panelW - 8)
+			: clamp(right, 4, w - panelW - 8);
+		const panelY = clamp(my - panelH / 2, 8, DISPLAY_H - panelH - 8);
+
+		c.globalAlpha = 0.96;
+		c.fillStyle = pal.surface;
+		c.beginPath(); c.roundRect(panelX, panelY, panelW, panelH, 10); c.fill();
+		c.globalAlpha = 1;
+		c.strokeStyle = pal.border; c.lineWidth = 1; c.stroke();
+
+		c.font = '700 10px system-ui';
+		c.fillStyle = pal.muted;
+		c.textAlign = 'left'; c.textBaseline = 'middle';
+		c.fillText('CHANCES', panelX + 10, panelY + 11);
+
+		const barX = panelX + 68;
+		const barMax = panelW - 68 - 44;
+		for (let j = 0; j < scores.length; j++) {
+			const cd = scores[j];
+			const prob = cd.s / sum;
+			const rowY = panelY + 26 + j * rowH;
+			c.font = (j === 0 ? '700' : '400') + ' 12px system-ui';
+			c.fillStyle = j === 0 ? pal.thought : pal.text;
+			c.textAlign = 'left';
+			c.fillText(anchors[cd.i].w, panelX + 10, rowY);
+			const bw = Math.max(3, prob * barMax);
+			c.fillStyle = pal.border;
+			c.beginPath(); c.roundRect(barX, rowY - 5, barMax, 10, 5); c.fill();
+			c.fillStyle = j === 0 ? pal.thought : pal.muted;
+			c.globalAlpha = j === 0 ? 1 : 0.5;
+			c.beginPath(); c.roundRect(barX, rowY - 5, bw, 10, 5); c.fill();
+			c.globalAlpha = 1;
+			c.font = '600 10px monospace';
+			c.fillStyle = j === 0 ? pal.thought : pal.muted;
+			c.textAlign = 'right';
+			c.fillText(Math.round(prob * 100) + '%', panelX + panelW - 8, rowY);
+		}
+
+		c.beginPath(); c.arc(mx, my, 7, 0, Math.PI * 2);
+		c.fillStyle = pal.surface; c.fill();
+		c.strokeStyle = pal.thought; c.lineWidth = 2.5; c.stroke();
+
+		if (!realActive) drawCursor(c, mx, my);
+
+		const winner = scores[0];
+		const runner = scores[1];
+		const seamGap = near.length > 1 ? near[1].d - near[0].d : 0;
+		if (winner) {
+			if (rWord) rWord.textContent = anchors[winner.i].w;
+			if (rCell) rCell.textContent = 'cell ' + (winner.i + 1) + ' of ' + anchors.length + ' - nearest pin wins';
+			if (rProb) rProb.textContent = Math.round(winner.s / sum * 100) + '%';
+			if (rRunner) rRunner.textContent = runner ? 'runner-up: ' + anchors[runner.i].w + ' - ' + Math.round(runner.s / sum * 100) + '%' : 'runner-up: -';
+			if (rEdge) rEdge.textContent = (seamGap / scale).toFixed(2);
+			if (rGap) rGap.textContent = 'ambiguous zone: ' + Math.round(gapFrac * 100) + '% of the field';
+		}
+	}
+
+	function clearReadouts() {
+		if (rWord) rWord.textContent = '-';
+		if (rCell) rCell.textContent = 'move the pointer across the field';
+		if (rProb) rProb.textContent = '-';
+		if (rRunner) rRunner.textContent = 'runner-up: -';
+		if (rEdge) rEdge.textContent = '-';
+		if (rGap) rGap.textContent = 'ambiguous zone: ' + Math.round(gapFrac * 100) + '% of the field';
+	}
+
+	function draw() {
+		if (!cv || !cv.clientWidth) return;
+		const w = cv.clientWidth;
+		const dpr = Math.min(2, window.devicePixelRatio || 1);
+		const W = Math.round(w * dpr);
+		const H = Math.round(DISPLAY_H * dpr);
+		if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+		const c = cv.getContext('2d');
+		c.setTransform(dpr, 0, 0, dpr, 0, 0);
+		c.clearRect(0, 0, w, DISPLAY_H);
+		const pal = palette();
+		if (dim === 1) draw1D(c, w, pal);
+		else draw2D(c, w, pal);
+		const P = realActive ? realPos : pointer;
+		if (P) drawThought(c, P, w, pal);
+		else clearReadouts();
+	}
+
+	function loop() {
+		if (!running) { rafId = null; return; }
+		rafId = requestAnimationFrame(loop);
+		const now = performance.now();
+		stepPrecompute();
+		const animating = updateTweens(now);
+		if (autoPlay && step < LAST_STEP && now - stepStart > lastAnimDur + STEP_HOLD) {
+			animateToStep(step + 1);
+		}
+		if (animating) draw();
+	}
+
+	function startLoop() {
+		if (rafId == null) rafId = requestAnimationFrame(loop);
+	}
+
+	function stopLoop() {
+		if (rafId != null) { cancelAnimationFrame(rafId); rafId = null; }
+	}
+
+	function setDim(k) {
+		if (dim === k) return;
+		dim = k;
+		document.querySelectorAll('#word-meadow-wrap .wm-dim-btn').forEach(el => {
+			el.classList.toggle('is-active', +el.getAttribute('data-wdim') === k);
+		});
+		removeTweens('n');
+		anchors = genFor(currentN);
+		if (dim === 2) {
+			gapFrac = ensureField(currentN, palette()).gapFrac;
+			queuePrecompute(palette());
+		} else {
+			gapFrac = gapOf1D(anchors);
+			precomp = null;
+			precompQueue = [];
+		}
+		draw();
+	}
+
+	function bindEvents() {
+		sN.addEventListener('input', () => {
+			removeTweens('n');
+			autoPlay = false;
+			updateNav();
+			const n = +sN.value;
+			if (rN) rN.textContent = n;
+			if (n !== currentN) setN(n);
+			draw();
+		});
+		sT.addEventListener('input', () => {
+			removeTweens('t');
+			autoPlay = false;
+			updateNav();
+			setT(+sT.value / 100);
+			draw();
+		});
+		cv.addEventListener('pointermove', e => {
+			if (!running) return;
+			const r = cv.getBoundingClientRect();
+			realPos = {
+				x: (e.clientX - r.left) / r.width * CW,
+				y: (e.clientY - r.top) / r.height * CH
+			};
+			realActive = true;
+			draw();
+		});
+		cv.addEventListener('pointerdown', e => {
+			autoPlay = false;
+			updateNav();
+			const r = cv.getBoundingClientRect();
+			realPos = {
+				x: (e.clientX - r.left) / r.width * CW,
+				y: (e.clientY - r.top) / r.height * CH
+			};
+			realActive = true;
+			draw();
+		});
+		cv.addEventListener('pointerleave', () => {
+			if (!realActive) return;
+			realActive = false;
+			if (realPos) {
+				pointer = { x: realPos.x, y: realPos.y };
+				const target = stepPointerTarget();
+				if (target) aimPointer(target);
+			}
+			realPos = null;
+			draw();
+		});
+		window.addEventListener('resize', () => { if (running) draw(); });
+
+		document.querySelectorAll('#word-meadow-wrap .wm-step').forEach(el => {
+			el.addEventListener('click', () => {
+				autoPlay = false;
+				applyStepInstant(+el.getAttribute('data-wstep'));
+			});
+		});
+		document.querySelectorAll('#word-meadow-wrap .wm-dim-btn').forEach(el => {
+			el.addEventListener('click', () => setDim(+el.getAttribute('data-wdim')));
+		});
+		if (nextBtn) nextBtn.addEventListener('click', () => {
+			if (step >= LAST_STEP) return;
+			autoPlay = false;
+			animateToStep(step + 1);
+		});
+		if (prevBtn) prevBtn.addEventListener('click', () => {
+			if (step <= 0) return;
+			autoPlay = false;
+			applyStepInstant(step - 1);
+		});
+		if (playBtn) playBtn.addEventListener('click', () => {
+			if (autoPlay) {
+				autoPlay = false;
+			} else {
+				if (step >= LAST_STEP) applyStepInstant(0);
+				autoPlay = true;
+				stepStart = performance.now();
+			}
+			updateNav();
+		});
+	}
+
+	function initEls() {
+		if (inited) return;
+		cv = document.getElementById('wm-canvas');
+		sN = document.getElementById('wm-sN');
+		sT = document.getElementById('wm-sT');
+		rN = document.getElementById('wm-rN');
+		rT = document.getElementById('wm-rT');
+		rWord = document.getElementById('wm-rWord');
+		rCell = document.getElementById('wm-rCell');
+		rProb = document.getElementById('wm-rProb');
+		rRunner = document.getElementById('wm-rRunner');
+		rEdge = document.getElementById('wm-rEdge');
+		rGap = document.getElementById('wm-rGap');
+		captionEl = document.getElementById('wm-caption');
+		playBtn = document.getElementById('wm-play');
+		prevBtn = document.getElementById('wm-prev');
+		nextBtn = document.getElementById('wm-next');
+		if (!cv || !sN || !sT) return;
+		inited = true;
+		bindEvents();
+	}
+
+	function startMeadow() {
+		if (inited) return;
+		initEls();
+		if (!inited) return;
+		anchors = genFor(12);
+		gapFrac = dim === 2 ? ensureField(12, palette()).gapFrac : gapOf1D(anchors);
+		applyStepInstant(0);
+		queuePrecompute(palette());
+		running = true;
+		autoPlay = true;
+		stepStart = performance.now();
+		startLoop();
+		if (window.__MN_DARK) {
+			window.__MN_DARK.onChange(() => {
+				fieldCache = {};
+				precomp = null;
+				precompQueue = [];
+				if (dim === 2) {
+					gapFrac = ensureField(currentN, palette()).gapFrac;
+					queuePrecompute(palette());
+				}
+				draw();
+			});
+		}
+	}
+
+	function destroy() {
+		stopLoop();
+		running = false;
+		inited = false;
+	}
+
+	return { init: startMeadow, destroy: destroy, draw: draw };
+})();
