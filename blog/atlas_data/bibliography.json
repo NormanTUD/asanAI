@@ -4398,6 +4398,18 @@
    "year": "",
    "url": "https://en.wikipedia.org/w/index.php?title=Frank_Rosenblatt&oldid=1380681031"
   },
+  "dobson2025perceptron": {
+   "title": "Perceptron",
+   "author": "James E. Dobson, Rena J. Mosteirin",
+   "year": "",
+   "url": "https://doi.org/10.53288/0408.1.00"
+  },
+  "dartmouthrosenblatt2026": {
+   "title": "Writing Frank Rosenblatt Back Into AI History",
+   "author": "Dartmouth Libraries",
+   "year": "",
+   "url": "https://www.library.dartmouth.edu/news/frank-rosenblatt-ai-history"
+  },
   "jensen2026perceptron": {
    "title": "Assembling and Training the Perceptron: A Personal Account",
    "author": "George Osborn Jensen, David E. Dunning, Alexander B. Magoun",
@@ -18463,6 +18475,12 @@
    "history"
   ],
   "rosenblattmemorial1971": [
+   "history"
+  ],
+  "dobson2025perceptron": [
+   "history"
+  ],
+  "dartmouthrosenblatt2026": [
    "history"
   ],
   "newyorktimesperceptron": [
@@ -35735,6 +35753,30 @@
    "keys": [
     "rosenblatt1966transfer1",
     "rosenblatt1966transfer2"
+   ]
+  },
+  "James E. Dobson": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dobson2025perceptron"
+   ]
+  },
+  "Rena J. Mosteirin": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dobson2025perceptron"
+   ]
+  },
+  "Dartmouth Libraries": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dartmouthrosenblatt2026"
    ]
   },
   "George Osborn Jensen": {

@@ -5046,6 +5046,20 @@ window.bibData = {
 		url: "https://en.wikipedia.org/w/index.php?title=Frank_Rosenblatt&oldid=1380681031",
 		alternativetitle: "Wikipedia: Frank Rosenblatt"
 	},
+	"dobson2025perceptron": {
+		title: "Perceptron",
+		author: "James E. Dobson, Rena J. Mosteirin",
+		year: 2025,
+		url: "https://doi.org/10.53288/0408.1.00",
+		alternativetitle: "Dobson & Mosteirin, Perceptron (2025)"
+	},
+	"dartmouthrosenblatt2026": {
+		title: "Writing Frank Rosenblatt Back Into AI History",
+		author: "Dartmouth Libraries",
+		year: 2026,
+		url: "https://www.library.dartmouth.edu/news/frank-rosenblatt-ai-history",
+		alternativetitle: "Dartmouth Libraries, Writing Frank Rosenblatt Back Into AI History (2026)"
+	},
 	"jensen2026perceptron": {
 		author: "George Osborn Jensen, David E. Dunning, Alexander B. Magoun",
 		title: "Assembling and Training the Perceptron: A Personal Account",

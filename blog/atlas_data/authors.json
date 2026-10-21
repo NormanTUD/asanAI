@@ -17587,6 +17587,57 @@
   ]
  },
  {
+  "name": "James E. Dobson",
+  "canon": "James E. Dobson",
+  "alias": null,
+  "lat": 43.7,
+  "lng": -72.29,
+  "city": "Hanover, USA",
+  "year": 2025.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "dobson2025perceptron"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Rena J. Mosteirin",
+  "canon": "Rena J. Mosteirin",
+  "alias": null,
+  "lat": 43.7,
+  "lng": -72.29,
+  "city": "Hanover, USA",
+  "year": 2025.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "dobson2025perceptron"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Dartmouth Libraries",
+  "canon": "Dartmouth Libraries",
+  "alias": null,
+  "lat": 43.7,
+  "lng": -72.29,
+  "city": "Hanover, USA",
+  "year": 2026.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "dartmouthrosenblatt2026"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
   "name": "Christiaan Huygens",
   "canon": "Christiaan Huygens",
   "alias": null,
