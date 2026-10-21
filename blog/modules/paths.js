@@ -88,6 +88,20 @@
 		paintLesson();
 	}
 
+	function openPath(p) {
+		const g = progress(p);
+		const next = g.next && modOf(g.next);
+		if (next) {
+			setSelected(p.id, false);
+			window.location.href = next.url;
+			return;
+		}
+		setSelected(p.id, true);
+		if (!overlay) return;
+		const card = overlay.querySelector('.mnp-path[data-path="' + p.id + '"]');
+		if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+	}
+
 	// ── Completion ──────────────────────────────────────────────────
 	let checkTimer = 0;
 	function check() {
@@ -216,7 +230,8 @@
 			if (!id) return;
 			el.addEventListener("click", (e) => {
 				if (e.target.closest("a, button, summary, input, label, canvas, select, textarea")) return;
-				setSelected(id, true);
+				const p = allPaths().find((x) => x.id === id);
+				if (p) openPath(p);
 			});
 			const pick = el.querySelector(".mnp-pick");
 			if (pick) pick.addEventListener("click", (e) => {
