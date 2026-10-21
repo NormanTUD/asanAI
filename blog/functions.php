@@ -730,7 +730,49 @@ function get_module_nav_data(): array {
 	foreach ($linear as $i => $m) {
 		if ($m['slug'] === $current) { $idx = $i; break; }
 	}
-	return ['modules' => $linear, 'current' => $idx];
+	return ['modules' => $linear, 'current' => $idx, 'parts' => course_part_titles()];
+}
+
+// Question of the day: one question from every "Check yourself" card in
+// the course, chosen by date, so everyone sees the same one each day.
+function render_daily_question(): void {
+	$pool = [];
+	foreach (parse_course_metadata() as $mods) {
+		foreach ($mods as $m) {
+			$src = @file_get_contents(__DIR__ . '/' . $m['slug'] . '.php');
+			if ($src === false) continue;
+			if (!preg_match_all('/<div class="mn-quiz" data-quiz="[^"]*"><script type="application\/json">(.*?)<\/script><\/div>/s', $src, $all)) continue;
+			foreach ($all[1] as $json) {
+				$data = json_decode($json, true);
+				if (!is_array($data) || empty($data['questions'])) continue;
+				foreach ($data['questions'] as $q) {
+					if (isset($q['q'], $q['options'], $q['answer'])) $pool[] = ['q' => $q, 'title' => $m['title'], 'url' => $m['url']];
+				}
+			}
+		}
+	}
+	if (!$pool) return;
+	$day = date('Y-m-d');
+	$pick = $pool[abs(crc32('mn-daily-' . $day)) % count($pool)];
+	$data = [
+		'kicker' => 'Question of the day',
+		'title' => 'A new one every day',
+		'questions' => [$pick['q']],
+		'source' => ['href' => $pick['url'], 'title' => $pick['title']],
+	];
+	$json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG);
+	echo '<div class="mn-quiz mn-quiz--daily" data-quiz="daily-' . $day . '"><script type="application/json">' . $json . '</script></div>';
+}
+
+function course_part_titles(): array {
+	return [
+		1 => ['title' => 'Foundations', 'desc' => 'Where we came from, what language is, and the mathematical bedrock beneath AI.'],
+		2 => ['title' => 'How Neural Networks Learn', 'desc' => 'The learning algorithm step by step, from loss functions to live training.'],
+		3 => ['title' => 'Deep Learning & Vision', 'desc' => 'Stacking layers, seeing images, and the engineering that makes depth possible.'],
+		4 => ['title' => 'The Transformer Revolution', 'desc' => 'The architecture that changed everything — attention, embeddings, multimodal, diffusion, and the post-transformer alternatives.'],
+		5 => ['title' => 'Making AI Useful', 'desc' => 'Fine-tuning, retrieval, search, safety, and the practical craft of working with LLMs.'],
+		6 => ['title' => 'Bigger Questions', 'desc' => 'The global AI ecosystem, the displaced prerequisites, and the open problems at the frontier of AI.'],
+	];
 }
 
 function render_module_nav(): void {

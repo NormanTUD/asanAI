@@ -73,6 +73,8 @@ A convolution is just “multiply the 3×3 neighbourhood by the kernel and add i
 	#conv-studio .cv-op { transform: rotate(90deg); }
 }
 </style>
+<div class="mn-predict" data-predict="sobel-square"><script type="application/json">{"q": "You run the **Vertical edges** kernel over the filled square. Where will the output be non-zero?", "options": ["Everywhere inside the square", "Only along the square's left and right edges", "Only in the four corners", "Nowhere"], "answer": 1, "try": "Pick the **■** image and the **Vertical edges** preset, then hover over the feature map.", "explain": "The kernel subtracts the left column from the right column. Inside the square and in the empty background both sides are equal, so the result is 0. Only where brightness changes from left to right — the vertical borders — does it respond, with opposite signs on the two sides."}</script></div>
+
 <div class="mnlab" id="conv-studio" data-interactive>
 	<div class="mnlab-head">
 		<div>

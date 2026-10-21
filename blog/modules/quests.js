@@ -80,6 +80,14 @@
 		"light-and-shadow": { cat: "special", icon: "🌗", name: "Light & Shadow", desc: "Switch between light and dark mode." },
 		"focus-mode": { cat: "special", icon: "🧘", name: "Focus Mode", desc: "Try reader mode." },
 		"self-aware": { cat: "special", icon: "🪞", name: "Know Thyself", desc: "Mark 3 lessons as learned.", counter: "learned", goal: 3 },
+		"comeback": { cat: "read", icon: "📌", name: "Picking Up the Thread", desc: "Continue a lesson right where you left off." },
+		"daily-1": { cat: "habit", icon: "☀️", name: "Question of the Day", desc: "Answer the question of the day.", counter: "daily", goal: 1 },
+		"daily-7": { cat: "habit", icon: "🗓️", name: "Daily Ritual", desc: "Answer the question of the day on 7 different days.", counter: "daily", goal: 7 },
+		"reviewer": { cat: "quiz", icon: "🔁", name: "Second Chance", desc: "Answer 10 review questions.", counter: "reviews", goal: 10 },
+		"long-term": { cat: "quiz", icon: "🧠", name: "Long-Term Memory", desc: "Retire 5 questions from your review deck by getting them right again and again.", counter: "retired", goal: 5 },
+		"oracle": { cat: "demos", icon: "🔮", name: "Oracle", desc: "Predict 5 demo outcomes correctly before trying them.", counter: "predictRight", goal: 5 },
+		"pathfinder": { cat: "mastery", icon: "🥾", name: "Pathfinder", desc: "Complete a learning path.", counter: "paths", goal: 1 },
+		"trailblazer": { cat: "mastery", icon: "🗻", name: "Trailblazer", desc: "Complete 3 learning paths.", counter: "paths", goal: 3 },
 		"konami": { cat: "hidden", icon: "🎮", name: "Old-School Gamer", desc: "↑ ↑ ↓ ↓ ← → ← → B A", hidden: true },
 		"four-leaf": { cat: "hidden", icon: "🍀", name: "Four-Leaf Clover", desc: "Pure luck: a 1-in-100 chance on any page view.", hidden: true, hint: "Some page views are luckier than others." },
 		"the-answer": { cat: "hidden", icon: "🌌", name: "The Answer", desc: "Have an XP total that ends in 42.", hidden: true, hint: "Life, the universe and your XP…" },
@@ -252,18 +260,18 @@
 		}
 	}
 
-	function toast(html, kind) {
+	function toast(html, kind, onClick) {
 		buildUI();
 		if (!toastWrap) return;
 		const t = node("div", "mnq-toast" + (kind ? " mnq-toast--" + kind : ""), html);
-		if (kind === "ach" || kind === "level") {
+		if (kind === "ach" || kind === "level" || onClick) {
 			t.setAttribute("role", "button");
 			t.tabIndex = 0;
-			t.addEventListener("click", () => openPanel(kind === "ach" ? "achievements" : "overview"));
+			t.addEventListener("click", () => (onClick ? onClick() : openPanel(kind === "ach" ? "achievements" : "overview")));
 		}
 		toastWrap.appendChild(t);
 		requestAnimationFrame(() => t.classList.add("is-in"));
-		const life = kind === "ach" || kind === "level" ? 4200 : 1500;
+		const life = kind === "ach" || kind === "level" || onClick ? 4200 : 1500;
 		setTimeout(() => { t.classList.remove("is-in"); setTimeout(() => t.remove(), 450); }, life);
 		while (toastWrap.children.length > 4) toastWrap.firstChild.remove();
 	}
@@ -418,10 +426,13 @@
 		const tabs = [["overview", "Overview"], ["achievements", "Achievements <span>" + got + "/" + achIds.length + "</span>"]];
 		if (cat) tabs.push(["challenges", "Lab challenges <span>" + chDone + "/" + chTotal + "</span>"]);
 		if (mods.length) tabs.push(["lessons", "Lessons <span>" + lessonsDone + "/" + mods.length + "</span>"]);
+		extTabs.forEach((x) => { if (!x.show || x.show()) tabs.push([x.id, x.label()]); });
 		if (!tabs.some((t) => t[0] === currentTab)) currentTab = "overview";
 
+		const ext = extTabs.find((x) => x.id === currentTab);
 		let body = "";
-		if (currentTab === "overview") body = renderOverview(L);
+		if (ext) body = ext.render();
+		else if (currentTab === "overview") body = renderOverview(L);
 		else if (currentTab === "achievements") body = renderAchievements();
 		else if (currentTab === "challenges") body = renderChallenges();
 		else body = renderLessons();
@@ -437,6 +448,15 @@
 			'<div class="mnq-tabs" role="tablist">' + tabs.map((t) => '<button type="button" role="tab" class="mnq-tab' + (t[0] === currentTab ? " is-active" : "") + '" aria-selected="' + (t[0] === currentTab) + '" data-mnq-tab="' + t[0] + '">' + t[1] + "</button>").join("") + "</div>" +
 			'<div class="mnq-body">' + body + "</div>" +
 			'<div class="mnq-foot">Progress is saved only in this browser.</div>';
+		if (ext && ext.bind) ext.bind(panel.querySelector(".mnq-body"));
+	}
+
+	// Other modules (review deck, learning paths) add their own tabs.
+	const extTabs = [];
+	function addTab(def) {
+		if (!def || !def.id || extTabs.some((x) => x.id === def.id)) return;
+		extTabs.push(def);
+		renderPanel();
 	}
 
 	function renderOverview(L) {
@@ -469,7 +489,9 @@
 			'<div class="mnq-sect">How to earn XP</div><ul class="mnq-how">' +
 			"<li><b>+10</b> first visit of a lesson · <b>+10</b> per lesson quest · <b>+30</b> for mastering a lesson</li>" +
 			"<li><b>+15</b> per correct quiz answer · <b>+20–50</b> per lab challenge</li>" +
-			"<li><b>+3</b> per deep dive opened · <b>+2</b> per demo watched · <b>+5</b> per demo you play with</li></ul>";
+			"<li><b>+3</b> per deep dive opened · <b>+2</b> per demo watched · <b>+5</b> per demo you play with</li>" +
+			"<li><b>+5</b> per prediction (<b>+10</b> more if it was right) · <b>+5</b> per review answer</li>" +
+			"<li><b>+15</b> for the question of the day · <b>+100</b> for completing a learning path</li></ul>";
 	}
 
 	function achCard(id) {
@@ -587,6 +609,14 @@
 		summary: function () { return { xp: state.xp, level: levelOf(state.xp), unlocked: Object.keys(state.unlocked), streak: streak() }; },
 		open: openPanel,
 		close: closePanel,
+		toast: toast,
+		addTab: addTab,
+		refresh: renderPanel,
+		value: counterValue,
+		visited: function (slug) { return !!state.lessons[slug]; },
+		finished: function (slug) { return !!state.finished[slug]; },
+		mastered: function (slug) { return !!state.mastered[slug]; },
+		lessonTitle: lessonTitle,
 		quest: function (id, label, group) {
 			if (state.quests[id] && state.quests[id].label === label) return;
 			state.quests[id] = { label: label, group: group };
@@ -683,7 +713,7 @@
 			card = node("div", "mnq-lessoncard");
 			card.id = "mnq-lesson";
 			card.setAttribute("data-interactive", "");
-			const anchor = document.getElementById("topic-learned-btn") || document.getElementById("course-status-box") || document.getElementById("sources-section");
+			const anchor = document.getElementById("topic-learned-btn") || document.getElementById("course-status-box") || document.getElementById("footnotes-section") || document.getElementById("sources-section");
 			if (anchor && anchor.parentNode === contents) contents.insertBefore(card, anchor);
 			else contents.appendChild(card);
 			observeCard(card);
@@ -744,7 +774,7 @@
 		const out = [];
 		Array.prototype.forEach.call(contents.children, (el) => {
 			if (!el || el.id === "mnq-lesson" || el.id === "toc" || el.id === "topic-learned-btn" || el.id === "course-status-box" || el.id === "sources-section") return;
-			if (el.classList.contains("mn-quiz") || el.tagName === "SCRIPT" || el.tagName === "STYLE") return;
+			if (el.classList.contains("mn-quiz") || el.classList.contains("mn-predict") || el.tagName === "SCRIPT" || el.tagName === "STYLE") return;
 			if (el.matches(DEMO_SEL) || el.querySelector(DEMO_SEL)) {
 				const cv = el.matches("canvas") ? el : null;
 				if (cv && cv.width < 120) return;

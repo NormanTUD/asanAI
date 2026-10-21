@@ -129,6 +129,8 @@ When an AI has to choose between categories (like “Cat” vs “Dog”), it do
 The math uses a *logarithm* ($-\ln(P)$), which creates a steep “wall” as confidence approaches zero. This forces the AI to be very “uncomfortable” when it is wrong.
 </div>
 
+<div class="mn-predict" data-predict="ce-confident-wrong"><script type="application/json">{"q": "The model gives the true class only 1 % probability. Roughly how big is the cross-entropy loss?", "options": ["0.01", "About 1", "About 4.6", "Infinite"], "answer": 2, "try": "Push the logit of the true class far below the others and watch the loss value.", "explain": "−ln(0.01) ≈ 4.6. Cross-entropy punishes confident mistakes hard and grows without bound as the probability of the truth goes to 0 — but it only becomes infinite at exactly 0."}</script></div>
+
 <div class="mnlab" id="ce-lab" data-interactive>
 	<div class="mnlab-head">
 		<div>

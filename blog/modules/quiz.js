@@ -1,6 +1,7 @@
 // "Check yourself" quiz cards.
 // Markup: <div class="mn-quiz" data-quiz="id"><script type="application/json">{…}</script></div>
 // JSON:   { "title": "…", "questions": [ { "q": "…", "options": ["…"], "answer": 0, "explain": "…" } ] }
+//         optional: "kicker" (default "Check yourself"), "source": { "href": "…", "title": "…" }
 // Options are shuffled, one try per question, the explanation always follows.
 // XP and achievements go through MNQuest (modules/quests.js).
 
@@ -47,7 +48,7 @@
 		root.setAttribute("data-interactive", "");
 		const head = document.createElement("div");
 		head.className = "mnz-head";
-		head.innerHTML = '<div><div class="mnz-kicker">Check yourself</div><div class="mnz-title">' + fmt(data.title || "Quick quiz") + '</div></div><div class="mnz-dots" aria-hidden="true">' +
+		head.innerHTML = '<div><div class="mnz-kicker">' + fmt(data.kicker || "Check yourself") + '</div><div class="mnz-title">' + fmt(data.title || "Quick quiz") + '</div></div><div class="mnz-dots" aria-hidden="true">' +
 			Q.map(() => '<span class="mnz-dot"></span>').join("") + "</div>";
 		const body = document.createElement("div");
 		root.appendChild(head);
@@ -89,7 +90,15 @@
 				const fresh = window.MNQuest.xp(15, "· quiz answer", "quiz-" + id + "-" + i);
 				if (fresh) window.MNQuest.count("quizCorrect");
 			}
+			window.dispatchEvent(new CustomEvent("mnquiz:answer", { detail: { id: id, index: i, right: right, question: q, title: data.title || "", source: data.source || null } }));
 			const foot = body.querySelector(".mnz-foot");
+			if (data.source && data.source.href) {
+				const a = document.createElement("a");
+				a.className = "mnz-source";
+				a.href = data.source.href;
+				a.innerHTML = "From <b>" + fmt(data.source.title || data.source.href) + "</b> →";
+				foot.appendChild(a);
+			}
 			const next = document.createElement("button");
 			next.type = "button";
 			next.className = "mnz-btn";

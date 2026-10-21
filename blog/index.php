@@ -80,21 +80,24 @@ setTimeout(function () {
 	<?php render_constellation(); ?>
 	<h1>From Nothing to ChatGPT</h1>
 	<a class="course-jump" href="#course-overview">Jump to the course list&nbsp;&darr;</a>
+	<div id="mn-home-resume" class="mn-home-slot mn-home-resume" hidden></div>
 </div>
 
 <?php incl("A Peek inside the Black Box", "intro"); ?>
 
+<script>window.__moduleNavData = <?php echo json_encode(get_module_nav_data()); ?>;</script>
+<div class="mn-home-dash" id="mn-home-dash">
+	<div id="mn-home-review" class="mn-home-slot" hidden></div>
+	<div class="mn-home-row">
+		<div class="mn-home-daily"><?php render_daily_question(); ?></div>
+		<div id="mn-home-paths" class="mn-home-slot mn-home-paths"></div>
+	</div>
+</div>
+
 <div class="course-overview" id="course-overview">
 
 <?php
-$partTitles = [
-	1 => ['title' => 'Foundations', 'desc' => 'Where we came from, what language is, and the mathematical bedrock beneath AI.'],
-	2 => ['title' => 'How Neural Networks Learn', 'desc' => 'The learning algorithm step by step, from loss functions to live training.'],
-	3 => ['title' => 'Deep Learning & Vision', 'desc' => 'Stacking layers, seeing images, and the engineering that makes depth possible.'],
-	4 => ['title' => 'The Transformer Revolution', 'desc' => 'The architecture that changed everything — attention, embeddings, multimodal, diffusion, and the post-transformer alternatives.'],
-	5 => ['title' => 'Making AI Useful', 'desc' => 'Fine-tuning, retrieval, search, safety, and the practical craft of working with LLMs.'],
-	6 => ['title' => 'Bigger Questions', 'desc' => 'The global AI ecosystem, the displaced prerequisites, and the open problems at the frontier of AI.'],
-];
+$partTitles = course_part_titles();
 
 $parts = parse_course_metadata();
 

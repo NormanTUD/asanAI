@@ -78,6 +78,8 @@ The ideas above become tangible when you watch a network learn. Below is a real 
 #nn-playground .nn-group { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mn-text-muted); margin: 0 0 4px; }
 #nn-playground .nn-check { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--mn-text-secondary); cursor: pointer; }
 </style>
+<div class="mn-predict" data-predict="circle-linear"><script type="application/json">{"q": "The circle dataset, with only x₁ and x₂ as inputs and **no hidden layer**. Can the network separate the inner dots from the outer ring?", "options": ["Yes, easily", "No — it can only draw a straight line", "Only with a very high learning rate", "Only after 10,000 epochs"], "answer": 1, "try": "Choose **◎ Circle**, keep only x₁ and x₂ switched on, set **Hidden layers** to 0 and train. Then switch on **x₁², x₂²**.", "explain": "Without a hidden layer the model is a single linear unit: its boundary is one straight line, and no line separates a disk from a ring. Give it x₁² and x₂², and the circle becomes a straight cut in the new feature space."}</script></div>
+
 <div class="mnlab" id="nn-playground" data-interactive>
 	<div class="mnlab-head">
 		<div>

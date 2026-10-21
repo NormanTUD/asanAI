@@ -16,8 +16,16 @@
 		or: () => (typeof OptimizerRace !== "undefined" ? OptimizerRace : null),
 		nn: () => (typeof NNPlayground !== "undefined" ? NNPlayground : null),
 		cv: () => (typeof ConvStudio !== "undefined" ? ConvStudio : null),
-		fg: () => (typeof FogGame !== "undefined" ? FogGame : null)
+		fg: () => (typeof FogGame !== "undefined" ? FogGame : null),
+		tl: () => (typeof TrainLab !== "undefined" ? TrainLab : null),
+		fl: () => (typeof FittingLab !== "undefined" ? FittingLab : null)
 	};
+
+	// Older labs have no `root`: their challenge box goes after an anchor element.
+	const num = (id) => { const e = document.getElementById(id); return e ? parseFloat(e.textContent || e.value) : NaN; };
+	const TL = (L) => L.configs.traininglab;
+	const lastLoss = (c) => (c.loss.length ? c.loss[c.loss.length - 1] : Infinity);
+	const isTable = (c, rows) => c.data.length === rows.length && rows.every((r) => c.data.some((d) => d.length === 3 && d[0] === r[0] && d[1] === r[1] && d[2] === r[2]));
 
 	// Per-lab memory for event-based goals (reset with the challenges).
 	const mem = { trained: false, crossings: 0, lastSign: 0, ceHigh: false, scanned: false, fog: null };
@@ -146,6 +154,30 @@
 			]
 		},
 		{
+			root: "traininglab-train-btn", anchor: () => { const b = document.getElementById("traininglab-train-btn"); return b && b.closest(".lab-dashboard"); },
+			obj: G.tl, hooks: ["updateVisuals"], icon: "🧠", title: "Live Training", lesson: "traininglab", needs: (L) => !!(L.configs && L.configs.traininglab && L.configs.traininglab.model),
+			items: [
+				{ id: "tl-xor", xp: 40, text: "<b>Crack XOR:</b> get the training loss below 0.05 on the XOR table. The defaults are not enough — try the learning rate or the epochs.",
+					check: (L) => isTable(TL(L), [[0, 0, 0], [0, 1, 1], [1, 0, 1], [1, 1, 0]]) && lastLoss(TL(L)) < 0.05 },
+				{ id: "tl-and", xp: 30, text: "<b>Logic switch:</b> edit the table into AND (only 1, 1 → 1) and train it below a loss of 0.05.",
+					check: (L) => isTable(TL(L), [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 1]]) && lastLoss(TL(L)) < 0.05 },
+				{ id: "tl-more", xp: 30, text: "<b>More data:</b> add at least two extra rows to the table and still train the loss below 0.05.",
+					check: (L) => TL(L).data.length >= 6 && lastLoss(TL(L)) < 0.05 }
+			]
+		},
+		{
+			root: "fitting-plot", anchor: () => document.getElementById("fitting-plot"),
+			obj: G.fl, hooks: ["_updateLossDisplays"], icon: "📈", title: "Over- and Underfitting", lesson: "overandunderfittinglab", needs: (L) => !!L.model,
+			items: [
+				{ id: "fl-underfit", xp: 20, text: "<b>Too simple:</b> with degree 1, train for at least 300 epochs and watch the training MSE refuse to drop below 0.15.",
+					check: (L) => parseInt(document.getElementById("slider-degree").value, 10) === 1 && L.epochCount >= 300 && num("loss-train") > 0.15 },
+				{ id: "fl-sweet", xp: 40, text: "<b>Sweet spot:</b> with noise at 0.15 or more, train a model whose <i>test</i> MSE is below 0.04.",
+					check: (L) => L.noiseStdDev >= 0.15 && L.epochCount > 0 && num("loss-test") < 0.04 },
+				{ id: "fl-clean", xp: 30, text: "<b>Noise-free:</b> set the noise to 0 and get the training MSE below 0.015.",
+					check: (L) => L.noiseStdDev === 0 && L.epochCount > 0 && num("loss-train") < 0.015 }
+			]
+		},
+		{
 			root: "conv-studio", obj: G.cv, hooks: ["compute"], icon: "🎨", title: "Convolution Studio", lesson: "computer_vision",
 			setup: () => window.addEventListener("convstudio:scanned", () => { mem.scanned = true; if (G.cv()) G.cv().compute(); }),
 			items: [
@@ -173,8 +205,9 @@
 	};
 
 	function register(lab, obj) {
-		const root = document.getElementById(lab.root);
-		if (!root || root.querySelector(".mnc")) return;
+		const anchor = lab.anchor ? lab.anchor() : null;
+		const root = anchor || document.getElementById(lab.root);
+		if (!root || root.querySelector(".mnc") || (anchor && anchor.nextElementSibling && anchor.nextElementSibling.classList.contains("mnc"))) return;
 		const box = document.createElement("div");
 		box.className = "mnc";
 		box.innerHTML = '<div class="mnc-head"><span class="mnc-title">🏆 Challenges</span><span class="mnc-count"></span></div><ul class="mnc-list"></ul>';
@@ -186,7 +219,8 @@
 			ul.appendChild(li);
 			return { c: c, li: li };
 		});
-		root.appendChild(box);
+		if (anchor) anchor.insertAdjacentElement("afterend", box);
+		else root.appendChild(box);
 
 		function paint() {
 			let n = 0;
@@ -219,7 +253,7 @@
 					}
 					it.li.classList.add("is-new");
 					setTimeout(() => it.li.classList.remove("is-new"), 900);
-					window.dispatchEvent(new CustomEvent("mnchallenge:done", { detail: { id: it.c.id, root: root } }));
+					window.dispatchEvent(new CustomEvent("mnchallenge:done", { detail: { id: it.c.id, root: box } }));
 				});
 				paint();
 			} finally {
@@ -251,7 +285,7 @@
 		LABS.forEach((lab) => {
 			if (lab._wired || !document.getElementById(lab.root)) return;
 			const obj = lab.obj();
-			if (!obj || !obj.root || (lab.needs && !lab.needs(obj))) { pending++; return; }
+			if (!obj || (!lab.anchor && !obj.root) || (lab.needs && !lab.needs(obj))) { pending++; return; }
 			register(lab, obj);
 		});
 		return pending === 0;

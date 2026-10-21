@@ -1320,7 +1320,13 @@ function initModuleNav() {
 		nav.appendChild(document.createElement('span'));
 	}
 
-	contents.appendChild(nav);
+	// Above the lesson quests, footnotes and sources, not after them.
+	const below = ['mnq-lesson', 'footnotes-section', 'sources-section']
+		.map(function (id) { return document.getElementById(id); })
+		.filter(function (el) { return el && el.parentNode === contents; })
+		.sort(function (a, b) { return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1; })[0];
+	if (below) contents.insertBefore(nav, below);
+	else contents.appendChild(nav);
 }
 
 function escHtml(str) {

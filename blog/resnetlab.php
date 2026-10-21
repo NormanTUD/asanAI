@@ -94,6 +94,8 @@ This allows the network to match the “shape” of the main path $F(x)$ so the 
 @container mnlab (max-width: 620px) { #gradient-highway .gh-plot { height: 260px; } }
 </style>
 
+<div class="mn-predict" data-predict="plain-50"><script type="application/json">{"q": "A plain network with 50 layers, each multiplying the error signal by about 0.85. How much of the signal reaches the first layer?", "options": ["About 85 %", "About half", "Far less than 1 %", "More than 100 %"], "answer": 2, "try": "Set **Network depth** to 50 and leave the local derivative around 0.9. Compare the red (plain) and green (residual) curves.", "explain": "0.85⁵⁰ ≈ 0.0003 — the product of many factors below 1 shrinks exponentially. That is the vanishing gradient. The residual path multiplies by 1 + something small per block and keeps the signal near 1."}</script></div>
+
 <div class="mnlab" id="gradient-highway" data-interactive>
 	<div class="mnlab-head">
 		<div>

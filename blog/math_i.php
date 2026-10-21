@@ -753,3 +753,5 @@ if (typeof Plotly !== 'undefined' && document.getElementById('plot-step-1')) {
 	renderLog();
 })();
 </script>
+
+<div class="mn-quiz" data-quiz="math_i"><script type="application/json">{"title": "The numerical foundations", "questions": [{"q": "What does Σᵢ₌₁³ i compute?", "options": ["1 + 2 + 3 = 6", "1 · 2 · 3 = 6", "3", "1 + 3 = 4"], "answer": 0, "explain": "The capital sigma is a sum over the index: add every term from i = 1 to i = 3."}, {"q": "What does Πᵢ₌₁⁴ i compute?", "options": ["1 · 2 · 3 · 4 = 24", "1 + 2 + 3 + 4 = 10", "4", "4⁴ = 256"], "answer": 0, "explain": "The capital pi is the product version of the sum symbol."}, {"q": "The logarithm reverses which operation?", "options": ["Exponentiation", "Addition", "Square roots of negative numbers", "Division by zero"], "answer": 0, "explain": "If bˣ = y, then log_b(y) = x: the log answers “which exponent gives this number?”."}, {"q": "Roughly what is Euler's number e?", "options": ["≈ 2.718", "≈ 3.142", "≈ 1.414", "≈ 1.618"], "answer": 0, "explain": "e ≈ 2.71828, the base of natural growth; π ≈ 3.14, √2 ≈ 1.41 and the golden ratio ≈ 1.62."}]}</script></div>
