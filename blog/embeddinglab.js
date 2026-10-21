@@ -931,6 +931,29 @@ function renderComparison3D(config) {
         return pts;
     }
 
+    // ECharts-GL line3D has no native dashed style (its view flattens all
+    // points into one solid polyline), so a "dashed" chord is approximated by
+    // many short, unconnected segments — one line3D series per dash.
+    function dashedChordSeries(p0, p1, color, numDashes, width) {
+        const segs = [];
+        const dx = p1[0] - p0[0], dy = p1[1] - p0[1], dz = p1[2] - p0[2];
+        const total = Math.sqrt(dx * dx + dy * dy + dz * dz) || 1;
+        const step = total / (numDashes * 2 - 1);
+        for (let i = 0; i < numDashes; i++) {
+            const t0 = (i * 2) * step / total;
+            const t1 = (i * 2 + 1) * step / total;
+            segs.push({
+                type: 'line3D',
+                data: [
+                    [p0[0] + dx * t0, p0[1] + dy * t0, p0[2] + dz * t0],
+                    [p0[0] + dx * t1, p0[1] + dy * t1, p0[2] + dz * t1]
+                ],
+                lineStyle: { color: color, width: width }
+            });
+        }
+        return segs;
+    }
+
     const series = [
         // Vector lines from origin
         { type: 'line3D', data: [[0,0,0], Man],  lineStyle: { color: themeColor('#64748b'), width: 6 } },
@@ -962,6 +985,10 @@ function renderComparison3D(config) {
           lineStyle: { color: '#10b981', width: 3, opacity: 0.55 } },
         { type: 'line3D', data: arcPoints(Man, Lion, ml.angle, 8),
           lineStyle: { color: '#ef4444', width: 3, opacity: 0.55 } },
+
+        // Euclidean distance chords (dashed) — straight "energy" between tokens
+        ...dashedChordSeries(Man, King, '#10b981', 8, 3),
+        ...dashedChordSeries(Man, Lion, '#ef4444', 8, 3),
 
         // Origin marker
         { type: 'scatter3D',
