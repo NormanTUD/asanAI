@@ -1130,25 +1130,6 @@ This framing is best read as a productive working hypothesis, not a proved ident
 }
 #word-meadow-wrap .wm-ctl.wm-temp input[type=range] { accent-color: #b45309; }
 #word-meadow-wrap .wm-ctl.wm-temp b { color: #b45309; }
-#word-meadow-wrap .wm-dim {
-	grid-column: 1 / -1;
-	display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
-	font-size: .76rem; color: var(--mn-text-secondary);
-}
-#word-meadow-wrap .wm-dim-btn {
-	appearance: none; cursor: pointer;
-	padding: 5px 11px; border-radius: 8px;
-	border: 1px solid var(--mn-border);
-	background: var(--mn-bg);
-	color: var(--mn-text-secondary);
-	font: 600 .74rem/1.2 inherit;
-}
-#word-meadow-wrap .wm-dim-btn.is-active {
-	background: color-mix(in srgb, var(--mn-accent) 14%, var(--mn-surface));
-	border-color: color-mix(in srgb, var(--mn-accent) 50%, var(--mn-border));
-	color: var(--mn-heading);
-}
-#word-meadow-wrap .wm-dim-note { color: var(--mn-text-muted); }
 #word-meadow-wrap .wm-nav {
 	display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
 	margin-top: 14px;
@@ -1236,17 +1217,10 @@ A model thinks in a continuous space, yet it must speak in a **finite** vocabula
 		<label class="wm-ctl wm-temp" for="wm-sT"><span>Temperature (how open the draw is)</span> <b id="wm-rT">0.80</b>
 			<input type="range" id="wm-sT" min="10" max="300" step="1" value="80">
 		</label>
-		<div class="wm-dim">
-			<span>Space:</span>
-			<button type="button" class="wm-dim-btn" data-wdim="1">1-D line</button>
-			<button type="button" class="wm-dim-btn is-active" data-wdim="2">2-D meadow</button>
-			<span class="wm-dim-note">drawn here: 2 dimensions · inside an LLM: d ≈ 768–4096</span>
-		</div>
 	</div>
 
 	<div class="wm-nav">
 		<button type="button" id="wm-prev">← Previous</button>
-		<button type="button" id="wm-play">Pause</button>
 		<button type="button" id="wm-next">Next →</button>
 	</div>
 
@@ -1270,9 +1244,6 @@ A model thinks in a continuous space, yet it must speak in a **finite** vocabula
 
 	<div id="wm-caption" class="wm-caption"></div>
 
-	<div class="mn-demo-hint">
-		<b>Try it:</b> step through the tour with <b>Next</b> (or <b>Play</b> to let it run), or drag the thought yourself. Shrink the dictionary and the cells grow; add words and the seams multiply — but the band where no word clearly wins never disappears. Raise the temperature and the circled reach grows: words that were hopeless begin to win sometimes.
-	</div>
 </div>
 
 <div class="md" data-mathlevel="40">
@@ -1299,4 +1270,16 @@ The idea that a concept is a **region** rather than a single point is the concep
 
 <div class="mn-thread">
 	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="foam_of_meaning.php"><span class="mn-thread-label">Go deeper</span>The Foam of Meaning — the geometry of ambiguity</a>
+</div>
+
+<div class="md">
+## The loop, all the way down
+
+A language model is a loop that turns geometry into words, and words back into geometry.
+
+Text arrives as **tokens** and becomes **vectors**. Position is folded in. Layer after layer, **attention** lets every vector look at its neighbours while the **residual stream** carries all earlier findings forward untouched. The last vector is then scored against the entire **vocabulary** and turned into a probability distribution — and one word is drawn. That word is appended to the input, and the loop starts again.
+
+Nowhere in that loop is a shelf of stored facts, and nowhere is a little module labelled "understanding". Meaning lives in the **geometry** — in directions, distances, and regions — and the model's only task at each step is to place the next thought somewhere in that space. The meadow is that last step seen up close: a finite vocabulary cutting an infinite space of possible thoughts into cells, with a seam wherever two words are equally near. Prediction is the walk; language is the trail it leaves.
+
+> **In one line:** a language model is a finite vocabulary laid over an infinite space of meaning — and a loop that keeps falling from one point in that space to the next word.
 </div>
