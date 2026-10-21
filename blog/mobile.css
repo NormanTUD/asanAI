@@ -740,7 +740,7 @@ body {
 	}
 
 	.btn,
-	button:not(.cl-close):not(.lp-close):not(.drawer-close):not(.search-close):not(.mnq-close):not(#drawer-toggle):not(#theme-toggle):not(#search-trigger) {
+	button:not(.cl-close):not(.lp-close):not(.drawer-close):not(.search-close):not(.mnq-close):not(.mnp-close):not(#drawer-toggle):not(#theme-toggle):not(#search-trigger) {
 		min-height: 40px;
 	}
 

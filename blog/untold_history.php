@@ -438,6 +438,8 @@ Each of these revolutions was driven by problems that had nothing to do with com
  The narrative above traces the *intellectual* lineage of the LLM, from Aristotle's syllogisms to the Transformer. But ideas alone do not compute. Every inference made by a modern language model rests upon a vast, invisible scaffolding of discoveries made by people who never imagined, and could never have imagined, that their work would one day help a machine write poetry. These are the **displaced prerequisites**: contributions so fundamental that they vanish into the background, like the air we breathe but rarely notice.
 </div>
 
+<div class="mn-quiz mn-quiz--checkpoint" data-quiz="untold_history-cp1" data-depth="60"><script type="application/json">{"title": "Checkpoint: from mythos to logos", "questions": [{"q": "Which medieval picture of the world left computation the intuition of discrete, nested, ranked categories — a “level of abstraction” and a “class”?", "options": ["The Great Chain of Being (scala naturae)", "The Ptolemaic epicycles", "The four humours", "The music of the spheres"], "answer": 0, "explain": "A fixed hierarchy from minerals through plants, animals and humans up to God — rigid, but it trained the habit of thinking in nested classes."}]}</script></div>
+
 <div class="md" data-depth="80">
 
 ## From Foragers to Civilisations: The Sedentarisation That Made Computation Thinkable
@@ -1308,6 +1310,8 @@ Every digital computer operates to the rhythm of a **crystal oscillator**. The q
 None of these components was invented for AI. Yet remove any single element and the entire edifice collapses. The history of AI hardware is the ultimate illustration of the “displaced prerequisite”: a convergence of solutions to unrelated problems that proved inseparable once they met.
 </div>
 
+<div class="mn-quiz mn-quiz--checkpoint" data-quiz="untold_history-cp2" data-depth="40"><script type="application/json">{"title": "Checkpoint: the material foundations", "questions": [{"q": "What did cell theory, established in the 19th century, propose?", "options": ["That the tissues of all organisms are built from cells", "That cells are made of silicon", "That only plants have cells", "That nerves are one continuous net"], "answer": 0, "explain": "From Hooke's “honeycomb” in cork and Leeuwenhoek's living cells to a principle for all life — the road that later led to the neuron."}]}</script></div>
+
 <div class="md" data-depth="20">
 
 ## From the Battlefield to AlphaGo: How War Research Helped to Build Modern AI
@@ -1409,6 +1413,8 @@ The methods above moved quickly into civilian use. Monte Carlo radiative-transfe
 The history of AI is not only the history of algorithms. It is also the history of numerical methods, statistical techniques, and computing infrastructure that were developed for wartime and weapons-research needs and were later redirected toward the civilian world.
 
 </div>
+
+<div class="mn-quiz mn-quiz--checkpoint" data-quiz="untold_history-cp3" data-depth="20"><script type="application/json">{"title": "Checkpoint: war research", "questions": [{"q": "What was ENIAC originally designed to compute?", "options": ["Artillery firing tables", "Census statistics", "Weather forecasts", "Bank balances"], "answer": 0, "explain": "Built at the University of Pennsylvania, it was a wartime machine — like much of early computing and cybernetics."}]}</script></div>
 
 <div class="md" data-depth="20">
 
@@ -1555,6 +1561,8 @@ That gesture is the single most important idea in modern generative AI. A **deno
 None of these systems was built for AI. Yet between the corner cubes on the Moon and the forty-minute radio link to Mars, the space program quietly supplied the bit-flip discipline that guards a GPU cluster, the ranging idea that became the self-driving car's eyes, the first machine that repaired itself, the compression mathematics behind the latent space, the labelled data that taught the first "AI for science" models, and the denoising loop at the heart of generative AI. Together with the hardware, the coding theory, and the fly-by-wire laws, they form much of the invisible scaffolding on which every mobile robot — and every model that learns to see, plan, and speak — now depends.
 
 </div>
+
+<div class="mn-quiz mn-quiz--checkpoint" data-quiz="untold_history-cp4" data-depth="20"><script type="application/json">{"title": "Checkpoint: spaceflight", "questions": [{"q": "The Apollo Guidance Computer was one of the first computers built from…", "options": ["silicon integrated circuits", "vacuum tubes", "mechanical relays", "optical fibres"], "answer": 0, "explain": "Developed at the MIT Instrumentation Laboratory from 1961, it made spaceflight an early, demanding customer of the integrated circuit."}]}</script></div>
 
 <div class="md" data-depth="20">
 ## The Abstraction of Data: From Types to Tensors
@@ -2082,6 +2090,8 @@ Every language was invented to solve a problem that had nothing to do with AI �
 
 </div>
 
+<div class="mn-quiz mn-quiz--checkpoint" data-quiz="untold_history-cp5" data-depth="40"><script type="application/json">{"title": "Checkpoint: programming languages", "questions": [{"q": "What do most historians of computing regard as the first published computer program?", "options": ["Ada Lovelace's Note G, computing the Bernoulli numbers on the Analytical Engine", "Zuse's Plankalkül", "The first FORTRAN compiler", "The Jacquard loom's punched cards"], "answer": 0, "explain": "Lovelace's 1843 notes contained a step-by-step table of operations — a program for a machine that was never finished."}]}</script></div>
+
 <div class="md" data-depth="60">
 ## The Spreadsheet and the Evolution of Data Usability
 
@@ -2415,3 +2425,5 @@ This is the direct, causal link to modern AI. A large language model learns by i
 
 As noted elsewhere in this history, the \cite[Bitter Lesson]{sutton2019bitter} teaches that scale and data ultimately outperform hand-crafted rules. But scale requires *something to scale on*. The World Wide Web provided exactly that: a self-assembling, ever-growing corpus of human thought, freely accessible and machine-readable. ARPANET gave machines the ability to talk to each other. TCP/IP gave them a common language. The World Wide Web gave humanity a reason to pour its collective knowledge into the network. And that collective knowledge became the raw material from which a language model learns to speak.
 </div>
+
+<div class="mn-quiz" data-quiz="untold_history"><script type="application/json">{"title": "The untold history", "questions": [{"q": "What does the chapter mean by “displaced prerequisites”?", "options": ["Discoveries from unrelated fields that AI could not exist without", "Lessons you can skip", "Failed AI projects", "Prerequisites removed from the curriculum"], "answer": 0, "explain": "Materials science, spaceflight, programming languages and the web are not “AI”, but AI rests on them."}, {"q": "How did spaceflight help build the computer industry?", "options": ["Programs like Apollo were early, demanding buyers of integrated circuits", "Astronauts wrote the first programs", "Rockets carried the first servers", "It did not"], "answer": 0, "explain": "Guaranteed demand for tiny, reliable electronics helped make integrated circuits cheap."}, {"q": "Why is VisiCalc (1979) in a history of AI?", "options": ["The spreadsheet made data manipulation usable for ordinary people — a step towards data as an everyday object", "It was the first neural network", "It invented the GPU", "It was a chatbot"], "answer": 0, "explain": "Usability of data mattered as much as raw computing power."}, {"q": "What did the World Wide Web eventually provide for modern AI?", "options": ["The training corpus: an enormous body of human-written text", "Faster processors", "The transformer architecture", "Electricity"], "answer": 0, "explain": "Tim Berners-Lee's web is where most LLM training text comes from."}]}</script></div>

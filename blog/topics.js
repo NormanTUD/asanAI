@@ -2331,7 +2331,7 @@
 		'footnotes': 1, 'sources': 1, 'footnotes-section': 1, 'sources-section': 1,
 		'contents': 1, 'loader': 1, 'toc': 1, 'course-status': 1,
 		'course-status-box': 1, 'topic-learned-btn': 1, 'sidenotes-rail': 1,
-		'curiosity-score': 1
+		'curiosity-score': 1, 'mnq-lesson': 1
 	};
 
 	/** The element that ends `block`'s SECTION: the next page-furniture id,

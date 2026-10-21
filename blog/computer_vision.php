@@ -1,4 +1,5 @@
 <?php include_once("functions.php"); ?>
+<?php js("conv_studio"); ?>
 <!--
 COURSE_METADATA:
 title: What Machines See
@@ -48,6 +49,69 @@ In one sentence, Olah captures the whole operation:
 > as a weighted sum of the pixels it floats over.
 
 (\cite[Olah, 2014]{colah2014conv}) Two consequences of that single idea are easy to miss. First, in a *learned* CNN the very same kernel is reused at every position — in the layer's weight matrix the same few values repeat along each diagonal, so identical neurons and identical weights are the same statement (\cite[Olah, 2014]{colah2014conv}). Reusing one component across many positions is **weight tying** in a vision setting (\cite[Olah, 2015]{colah2015types}). Second, although a convolution looks like an $O(n^2)$ sum, it can be evaluated in $O(n\log n)$ with the right transform, and it is this fast, parallel form that made large convolutions practical on GPUs (\cite[Olah, 2014]{colah2014conv}). The formal treatment of the convolution as a translation-equivariant operator — where the same kernel is applied at every position by a single weight-sharing constraint — is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 17.2.
+</div>
+
+<div class="md">
+### Paint your own convolution
+
+A convolution is just “multiply the 3×3 neighbourhood by the kernel and add it up” — repeated at every position. Paint something on the left, pick or type a kernel, and hover over the feature map to see the arithmetic behind any single output pixel.
+</div>
+
+<style>
+#conv-studio { --lab-accent: var(--mn-coral); --lab-accent-2: var(--mn-rose); }
+#conv-studio .cv-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 14px; align-items: center; }
+#conv-studio canvas { display: block; width: 100%; border-radius: 10px; border: 1px solid var(--mn-border); touch-action: none; }
+#conv-studio .cv-input canvas { cursor: crosshair; }
+#conv-studio .cv-cap { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mn-text-muted); margin-bottom: 6px; display: flex; justify-content: space-between; gap: 6px; }
+#conv-studio .cv-kgrid { display: grid; grid-template-columns: repeat(3, 52px); gap: 4px; }
+#conv-studio .cv-k { width: 52px; height: 42px; text-align: center; border-radius: 8px; border: 1px solid var(--mn-border); background: color-mix(in srgb, var(--mn-bg) 60%, var(--mn-surface)); color: var(--mn-heading); font: 700 .82rem var(--mn-font-mono); -moz-appearance: textfield; }
+#conv-studio .cv-mid { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+#conv-studio .cv-op { font-size: 1.4rem; color: var(--mn-text-muted); }
+#conv-studio .cv-calc { font: .82rem/1.5 var(--mn-font-mono); color: var(--mn-text); min-height: 3em; overflow-wrap: anywhere; }
+@container mnlab (max-width: 620px) {
+	#conv-studio .cv-grid { grid-template-columns: minmax(0, 1fr); }
+	#conv-studio .cv-op { transform: rotate(90deg); }
+}
+</style>
+<div class="mn-predict" data-predict="sobel-square"><script type="application/json">{"q": "You run the **Vertical edges** kernel over the filled square. Where will the output be non-zero?", "options": ["Everywhere inside the square", "Only along the square's left and right edges", "Only in the four corners", "Nowhere"], "answer": 1, "try": "Pick the **■** image and the **Vertical edges** preset, then hover over the feature map.", "explain": "The kernel subtracts the left column from the right column. Inside the square and in the empty background both sides are equal, so the result is 0. Only where brightness changes from left to right — the vertical borders — does it respond, with opposite signs on the two sides."}</script></div>
+
+<div class="mnlab" id="conv-studio" data-interactive>
+	<div class="mnlab-head">
+		<div>
+			<div class="mnlab-kicker">Interactive lab</div>
+			<div class="mnlab-title">Convolution Studio</div>
+			<p class="mnlab-sub">Paint on the left. The same 3×3 kernel slides over every position, multiplies, adds — and builds the feature map on the right.</p>
+		</div>
+	</div>
+	<div class="mnlab-chips" role="group" aria-label="Kernel presets" style="margin-bottom: 10px;">
+		<button type="button" class="mnlab-chip" data-kernel="identity">Identity</button>
+		<button type="button" class="mnlab-chip" data-kernel="blur">Blur</button>
+		<button type="button" class="mnlab-chip" data-kernel="sharpen">Sharpen</button>
+		<button type="button" class="mnlab-chip" data-kernel="sobelx">│ edges</button>
+		<button type="button" class="mnlab-chip" data-kernel="sobely">─ edges</button>
+		<button type="button" class="mnlab-chip" data-kernel="outline">Outline</button>
+	</div>
+	<div class="cv-grid">
+		<div class="cv-input"><div class="cv-cap"><span>Input · paint here</span></div><canvas data-cv="input" aria-label="Input image, draw with mouse or finger"></canvas></div>
+		<div class="cv-mid"><span class="cv-op">⊛</span><div class="cv-kgrid" data-cv="kgrid"></div><span class="mnlab-hint">edit the weights</span><span class="cv-op">→</span></div>
+		<div><div class="cv-cap"><span>Feature map</span><span data-cv="range"></span></div><canvas data-cv="output" aria-label="Feature map"></canvas></div>
+	</div>
+	<div class="mnlab-row" style="margin-top: 12px; justify-content: space-between;">
+		<div class="mnlab-chips">
+			<button type="button" class="mnlab-chip" data-brush="1" aria-pressed="true">✏️ Draw</button>
+			<button type="button" class="mnlab-chip" data-brush="0" aria-pressed="false">🧽 Erase</button>
+			<button type="button" class="mnlab-chip" data-img="seven">7</button>
+			<button type="button" class="mnlab-chip" data-img="smile">☺</button>
+			<button type="button" class="mnlab-chip" data-img="square">■</button>
+			<button type="button" class="mnlab-chip" data-img="clear">Clear</button>
+		</div>
+		<div class="mnlab-row">
+			<button type="button" class="mnlab-chip" data-cv="relu" aria-pressed="false">ReLU</button>
+			<button type="button" class="mnlab-btn" data-cv="scan">▶ Animate scan</button>
+		</div>
+	</div>
+	<div class="mnlab-well cv-calc" data-cv="calc" style="margin-top: 12px;"></div>
+	<div class="mnlab-legend" style="margin-top: 8px;"><span><i style="background: var(--mn-sky);"></i>positive response</span><span><i style="background: var(--mn-coral);"></i>negative response</span><span>zero padding at the border · stride 1</span></div>
 </div>
 
 <div class="md" data-mathlevel="55">
@@ -277,3 +341,5 @@ Real vision is 3D and dynamic: **pose** (keypoints), **depth**, **point clouds**
 
 To see what this perception stack *assumes* when it builds images back up, continue to [Pixels and Checkerboards](deconvolution.php) and [Inceptionism](inceptionism.php): the same filters that recognize reality are perfectly happy to hallucinate it \cite{mordvintsev2015inceptionism}.
 </div>
+
+<div class="mn-quiz" data-quiz="convstudio"><script type="application/json">{"title": "Convolutions", "questions": [{"q": "What does a 3×3 kernel with all weights 1/9 do?", "options": ["It blurs: each output is the average of 9 neighbouring pixels", "It detects vertical edges", "It inverts the image", "It sharpens the image"], "answer": 0, "explain": "Every output pixel becomes the mean of its 3×3 neighbourhood, which smooths out sharp transitions."}, {"q": "A kernel's weights add up to 0. What is its output on a region of constant brightness?", "options": ["Zero", "The brightness itself", "Twice the brightness", "It depends on the image size"], "answer": 0, "explain": "On a constant patch the output is brightness × (sum of weights) = 0. Such kernels only respond where something changes — at edges."}, {"q": "How many weights does a 3×3 convolution with one input and one output channel have (ignoring the bias)?", "options": ["9 — no matter how big the image is", "One per pixel of the image", "3", "81"], "answer": 0, "explain": "The same 9 weights are reused at every position (weight sharing). That is why convolutions need far fewer parameters than fully connected layers."}]}</script></div>

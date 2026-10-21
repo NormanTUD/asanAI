@@ -129,6 +129,8 @@ When an AI has to choose between categories (like “Cat” vs “Dog”), it do
 The math uses a *logarithm* ($-\ln(P)$), which creates a steep “wall” as confidence approaches zero. This forces the AI to be very “uncomfortable” when it is wrong.
 </div>
 
+<div class="mn-predict" data-predict="ce-confident-wrong"><script type="application/json">{"q": "The model gives the true class only 1 % probability. Roughly how big is the cross-entropy loss?", "options": ["0.01", "About 1", "About 4.6", "Infinite"], "answer": 2, "try": "Push the logit of the true class far below the others and watch the loss value.", "explain": "−ln(0.01) ≈ 4.6. Cross-entropy punishes confident mistakes hard and grows without bound as the probability of the truth goes to 0 — but it only becomes infinite at exactly 0."}</script></div>
+
 <div class="mnlab" id="ce-lab" data-interactive>
 	<div class="mnlab-head">
 		<div>
@@ -263,4 +265,4 @@ $$\frac{\partial \mathcal{L}}{\partial z_i} = \hat{y}_i - y_i$$
 The error signal is just “how wrong were you?”, the difference between prediction and truth. This simplicity is why this combination dominates classification: the gradient points directly from the prediction toward the target, with no complicating curvature or saturation effects (unlike MSE with softmax, which saturates when predictions are confidently wrong).
 </div>
 
-
+<div class="mn-quiz" data-quiz="losslab"><script type="application/json">{"title": "Loss functions", "questions": [{"q": "The truth is y = 7 and the model predicts ŷ = 5. What is the squared error?", "options": ["4", "2", "−2", "49"], "answer": 0, "explain": "(7 − 5)² = 2² = 4. Squaring removes the sign and punishes large errors disproportionately."}, {"q": "A classifier gives the correct class 50 % probability. What is the cross-entropy loss (natural log)?", "options": ["≈ 0.69", "0.5", "1", "≈ 2.3"], "answer": 0, "explain": "−ln(0.5) = ln 2 ≈ 0.693 nats — exactly one bit of surprise."}, {"q": "With softmax + cross-entropy, the correct class has ŷ = 0.8. What is the gradient for its logit?", "options": ["−0.2", "0.8", "−0.8", "0.2"], "answer": 0, "explain": "The gradient is ŷ − y = 0.8 − 1 = −0.2: negative, so training raises this logit."}, {"q": "Your data contains a few wild outliers. Which loss is less dominated by them?", "options": ["Absolute error |y − ŷ|", "Squared error (y − ŷ)²", "Both equally", "Neither depends on outliers"], "answer": 0, "explain": "An error of 10 costs 10 under absolute error but 100 under squared error, so a few outliers can dominate the mean squared error."}]}</script></div>

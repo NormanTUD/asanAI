@@ -1,4 +1,5 @@
 <?php include_once("functions.php"); ?>
+<?php js("nn_playground"); ?>
 <!--
 COURSE_METADATA:
 title: Deep Learning
@@ -61,6 +62,76 @@ And the cleanest modern characterization, \citeauthor{petersen2024mathdl} (\cite
 
 So the theorem is foundational, but it doesn't explain *why* deep networks work so well. For that, we need to look at what depth actually buys us.
 
+</div>
+
+<div class="md">
+### Try it: train a network yourself
+
+The ideas above become tangible when you watch a network learn. Below is a real multilayer perceptron, trained with backpropagation and Adam right in your browser. The small squares in the diagram show what each neuron responds to: the first hidden layer learns simple straight cuts, deeper layers combine them into curves. Try the circle without hidden layers, then add the feature x₁², x₂².
+</div>
+
+<style>
+#nn-playground { --lab-accent: var(--mn-sky); --lab-accent-2: var(--mn-accent); }
+#nn-playground canvas { display: block; width: 100%; }
+#nn-playground .nn-board { border-radius: var(--mn-radius-md); overflow: hidden; border: 1px solid var(--mn-border); }
+#nn-playground .nn-side { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+#nn-playground .nn-group { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--mn-text-muted); margin: 0 0 4px; }
+#nn-playground .nn-check { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--mn-text-secondary); cursor: pointer; }
+</style>
+<div class="mn-predict" data-predict="circle-linear"><script type="application/json">{"q": "The circle dataset, with only x₁ and x₂ as inputs and **no hidden layer**. Can the network separate the inner dots from the outer ring?", "options": ["Yes, easily", "No — it can only draw a straight line", "Only with a very high learning rate", "Only after 10,000 epochs"], "answer": 1, "try": "Choose **◎ Circle**, keep only x₁ and x₂ switched on, set **Hidden layers** to 0 and train. Then switch on **x₁², x₂²**.", "explain": "Without a hidden layer the model is a single linear unit: its boundary is one straight line, and no line separates a disk from a ring. Give it x₁² and x₂², and the circle becomes a straight cut in the new feature space."}</script></div>
+
+<div class="mnlab" id="nn-playground" data-interactive>
+	<div class="mnlab-head">
+		<div>
+			<div class="mnlab-kicker">Interactive lab</div>
+			<div class="mnlab-title">Neural Network Playground</div>
+			<p class="mnlab-sub">A real multilayer perceptron, trained live in your browser. Each little square shows what one neuron responds to.</p>
+		</div>
+		<div class="mnlab-chips" role="group" aria-label="Dataset">
+			<button type="button" class="mnlab-chip" data-ds="circle" aria-pressed="true">◎ Circle</button>
+			<button type="button" class="mnlab-chip" data-ds="xor" aria-pressed="false">✕ XOR</button>
+			<button type="button" class="mnlab-chip" data-ds="gauss" aria-pressed="false">⁘ Clusters</button>
+			<button type="button" class="mnlab-chip" data-ds="spiral" aria-pressed="false">@ Spiral</button>
+		</div>
+	</div>
+	<div class="mnlab-well" data-nn="nwrap" style="padding: 8px;"><canvas data-nn="net" aria-label="Network diagram"></canvas></div>
+	<div class="mnlab-grid mnlab-grid--2" style="margin-top: 14px;">
+		<div data-nn="bwrap"><div class="nn-board"><canvas data-nn="boundary" aria-label="Decision boundary"></canvas></div>
+			<label class="nn-check" style="margin-top:6px;"><input type="checkbox" data-nn="showtest" onchange="NNPlayground.render()"> show test points (dark outline)</label></div>
+		<div class="nn-side">
+			<div><div class="nn-group">Input features</div><div class="mnlab-chips">
+				<button type="button" class="mnlab-chip" data-feat="x" aria-pressed="true">x₁</button>
+				<button type="button" class="mnlab-chip" data-feat="y" aria-pressed="true">x₂</button>
+				<button type="button" class="mnlab-chip" data-feat="sq" aria-pressed="false">x₁², x₂²</button>
+				<button type="button" class="mnlab-chip" data-feat="xy" aria-pressed="false">x₁·x₂</button>
+				<button type="button" class="mnlab-chip" data-feat="sin" aria-pressed="false">sin</button></div></div>
+			<div><div class="nn-group">Activation</div><div class="mnlab-chips">
+				<button type="button" class="mnlab-chip" data-act="tanh" aria-pressed="true">tanh</button>
+				<button type="button" class="mnlab-chip" data-act="relu" aria-pressed="false">ReLU</button>
+				<button type="button" class="mnlab-chip" data-act="sigmoid" aria-pressed="false">sigmoid</button></div></div>
+			<label class="mnlab-ctrl"><span class="mnlab-ctrl-top"><span class="mnlab-label">Hidden layers</span><span class="mnlab-val" data-nn="layersv">2</span></span>
+				<input type="range" data-nn="layers" min="0" max="3" step="1" value="2" aria-label="Hidden layers"></label>
+			<label class="mnlab-ctrl"><span class="mnlab-ctrl-top"><span class="mnlab-label">Neurons per layer</span><span class="mnlab-val" data-nn="neuronsv">4</span></span>
+				<input type="range" data-nn="neurons" min="1" max="8" step="1" value="4" aria-label="Neurons per layer"></label>
+			<label class="mnlab-ctrl"><span class="mnlab-ctrl-top"><span class="mnlab-label">Noise</span><span class="mnlab-val" data-nn="noisev">10 %</span></span>
+				<input type="range" data-nn="noise" min="0" max="0.6" step="0.05" value="0.1" aria-label="Noise"></label>
+			<label class="mnlab-ctrl"><span class="mnlab-ctrl-top"><span class="mnlab-label">Learning rate (Adam)</span><span class="mnlab-val" data-nn="lrv">0.03</span></span>
+				<input type="range" data-nn="lr" min="-3" max="-0.5" step="0.1" value="-1.5" aria-label="Learning rate"></label>
+		</div>
+	</div>
+	<div class="mnlab-row" style="margin-top: 12px;">
+		<button type="button" class="mnlab-btn" data-nn="play">▶ Train</button>
+		<button type="button" class="mnlab-btn mnlab-btn--ghost" data-nn="step">+1 epoch</button>
+		<button type="button" class="mnlab-btn mnlab-btn--ghost" data-nn="reset">↺ New weights</button>
+	</div>
+	<div class="mnlab-grid mnlab-grid--4" style="margin-top: 12px;">
+		<div class="mnlab-stat"><span class="k">Epoch</span><span class="v" data-nn="epoch">0</span></div>
+		<div class="mnlab-stat"><span class="k">Train loss</span><span class="v" data-nn="trl" style="color:var(--mn-sky)">–</span></div>
+		<div class="mnlab-stat"><span class="k">Test loss</span><span class="v" data-nn="tel" style="color:var(--mn-coral)">–</span></div>
+		<div class="mnlab-stat"><span class="k">Test accuracy</span><span class="v" data-nn="acc">–</span></div>
+	</div>
+	<div class="mnlab-well" style="margin-top: 10px; padding: 8px 10px;"><div class="mnlab-row" style="justify-content: space-between;"><span class="mnlab-hint">loss over time · <span style="color:var(--mn-sky)">train</span> vs <span style="color:var(--mn-coral)">test</span></span><span class="mnlab-hint"><span data-nn="params">0</span> parameters</span></div><canvas data-nn="curve"></canvas></div>
+	<div class="mnlab-note" data-nn="note" aria-live="polite"></div>
 </div>
 
 <div class="md" data-mathlevel="50">
@@ -253,3 +324,5 @@ By keeping non-linear "bends" between the stacks, the network can warp the coord
 	<button class="btn" style="background:#64748b; color:white; width:100%" onclick="DeepLab.init('deep')">🔄 Reset Model</button>
 	<div id="deep-console" class="status-console"></div>
 </div>
+
+<div class="mn-quiz" data-quiz="nnplayground"><script type="application/json">{"title": "Neural networks", "questions": [{"q": "With only x₁ and x₂ as inputs and no hidden layer, why can the network not separate the circle?", "options": ["Without hidden layers its decision boundary is a straight line", "The learning rate is too small", "Sigmoid outputs cannot be above 0.5", "There are too few data points"], "answer": 0, "explain": "A single neuron computes σ(w₁x₁ + w₂x₂ + b); its 0.5-boundary is the line w₁x₁ + w₂x₂ + b = 0. A circle needs a curved boundary."}, {"q": "Why does adding x₁² and x₂² as inputs make the circle easy, even without hidden layers?", "options": ["Inside the circle means x₁² + x₂² < r² — a straight cut in the new features", "Squares make training faster", "It doubles the number of data points", "It removes the noise"], "answer": 0, "explain": "In terms of x₁² and x₂², the condition is linear. Good features can replace layers."}, {"q": "The training loss keeps falling while the test loss rises. What is happening?", "options": ["Overfitting: the network memorises the training points", "Underfitting: the network is too small", "The learning rate is zero", "The data has no labels"], "answer": 0, "explain": "The network bends its boundary around individual noisy training points. That helps on the training set and hurts on new data."}]}</script></div>

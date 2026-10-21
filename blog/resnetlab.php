@@ -94,6 +94,8 @@ This allows the network to match the “shape” of the main path $F(x)$ so the 
 @container mnlab (max-width: 620px) { #gradient-highway .gh-plot { height: 260px; } }
 </style>
 
+<div class="mn-predict" data-predict="plain-50"><script type="application/json">{"q": "A plain network with 50 layers, each multiplying the error signal by about 0.85. How much of the signal reaches the first layer?", "options": ["About 85 %", "About half", "Far less than 1 %", "More than 100 %"], "answer": 2, "try": "Set **Network depth** to 50 and leave the local derivative around 0.9. Compare the red (plain) and green (residual) curves.", "explain": "0.85⁵⁰ ≈ 0.0003 — the product of many factors below 1 shrinks exponentially. That is the vanishing gradient. The residual path multiplies by 1 + something small per block and keeps the signal near 1."}</script></div>
+
 <div class="mnlab" id="gradient-highway" data-interactive>
 	<div class="mnlab-head">
 		<div>
@@ -155,3 +157,5 @@ This allows the network to match the “shape” of the main path $F(x)$ so the 
 		</div>
 	</div>
 </div>
+
+<div class="mn-quiz" data-quiz="resnetlab"><script type="application/json">{"title": "Vanishing gradients & ResNets", "questions": [{"q": "A gradient passes back through 20 layers, each multiplying it by 0.5. Roughly how much arrives?", "options": ["About one millionth (≈ 10⁻⁶)", "About 0.5", "About 10 % ", "Exactly 0"], "answer": 0, "explain": "0.5²⁰ ≈ 9.5 × 10⁻⁷. Repeated multiplication shrinks exponentially — that is the vanishing gradient."}, {"q": "What is the derivative of a residual block y = F(x) + x with respect to x?", "options": ["∂F/∂x + 1 (identity)", "∂F/∂x", "∂F/∂x · x", "1 / ∂F/∂x"], "answer": 0, "explain": "The skip path contributes the identity. Even when ∂F/∂x is tiny, the factor stays close to 1 instead of close to 0."}, {"q": "Why does a ResNet sometimes need a 1×1 convolution on the shortcut?", "options": ["To match the number of channels so x and F(x) can be added", "To make the network deeper", "To blur the image", "To replace the activation function"], "answer": 0, "explain": "Addition needs equal shapes. A 1×1 convolution W_s projects x to the channel count of F(x) without looking at neighbouring pixels."}]}</script></div>

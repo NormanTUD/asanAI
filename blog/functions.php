@@ -612,6 +612,7 @@ if(!server_php_self_ends_with_index_php()) {
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 		<meta name="theme-color" content="<?php echo $themeClass === 'dark' ? '#0f172a' : '#FAF8F1'; ?>">
+		<link rel="icon" type="image/x-icon" href="favicon.ico">
 		<script>
 		function toggleTheme() {
 			var html = document.documentElement;
@@ -681,6 +682,7 @@ if(!server_php_self_ends_with_index_php()) {
 		<button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></button>
 		<?php render_theme_toggle(); ?>
 		<?php render_topics_toggle(); ?>
+		<?php render_paths_toggle(); ?>
 		<?php render_reader_toggle(); ?>
 		<?php render_drawer(); ?>
 		<div id="loader" role="status" aria-live="polite" aria-label="Loading course content">
@@ -730,7 +732,49 @@ function get_module_nav_data(): array {
 	foreach ($linear as $i => $m) {
 		if ($m['slug'] === $current) { $idx = $i; break; }
 	}
-	return ['modules' => $linear, 'current' => $idx];
+	return ['modules' => $linear, 'current' => $idx, 'parts' => course_part_titles()];
+}
+
+// Question of the day: one question from every "Check yourself" card in
+// the course, chosen by date, so everyone sees the same one each day.
+function render_daily_question(): void {
+	$pool = [];
+	foreach (parse_course_metadata() as $mods) {
+		foreach ($mods as $m) {
+			$src = @file_get_contents(__DIR__ . '/' . $m['slug'] . '.php');
+			if ($src === false) continue;
+			if (!preg_match_all('/<div class="mn-quiz" data-quiz="[^"]*"><script type="application\/json">(.*?)<\/script><\/div>/s', $src, $all)) continue;
+			foreach ($all[1] as $json) {
+				$data = json_decode($json, true);
+				if (!is_array($data) || empty($data['questions'])) continue;
+				foreach ($data['questions'] as $q) {
+					if (isset($q['q'], $q['options'], $q['answer'])) $pool[] = ['q' => $q, 'title' => $m['title'], 'url' => $m['url']];
+				}
+			}
+		}
+	}
+	if (!$pool) return;
+	$day = date('Y-m-d');
+	$pick = $pool[abs(crc32('mn-daily-' . $day)) % count($pool)];
+	$data = [
+		'kicker' => 'Question of the day',
+		'title' => 'A new one every day',
+		'questions' => [$pick['q']],
+		'source' => ['href' => $pick['url'], 'title' => $pick['title']],
+	];
+	$json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG);
+	echo '<div class="mn-quiz mn-quiz--daily" data-quiz="daily-' . $day . '"><script type="application/json">' . $json . '</script></div>';
+}
+
+function course_part_titles(): array {
+	return [
+		1 => ['title' => 'Foundations', 'desc' => 'Where we came from, what language is, and the mathematical bedrock beneath AI.'],
+		2 => ['title' => 'How Neural Networks Learn', 'desc' => 'The learning algorithm step by step, from loss functions to live training.'],
+		3 => ['title' => 'Deep Learning & Vision', 'desc' => 'Stacking layers, seeing images, and the engineering that makes depth possible.'],
+		4 => ['title' => 'The Transformer Revolution', 'desc' => 'The architecture that changed everything — attention, embeddings, multimodal, diffusion, and the post-transformer alternatives.'],
+		5 => ['title' => 'Making AI Useful', 'desc' => 'Fine-tuning, retrieval, search, safety, and the practical craft of working with LLMs.'],
+		6 => ['title' => 'Bigger Questions', 'desc' => 'The global AI ecosystem, the displaced prerequisites, and the open problems at the frontier of AI.'],
+	];
 }
 
 function render_module_nav(): void {
@@ -829,6 +873,20 @@ function render_topics_toggle(): void {
 	echo '<circle cx="12" cy="12" r="5"/>';
 	echo '<circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/>';
 	echo '</svg></span>';
+	echo '</button>';
+}
+
+/**
+ * Learning paths — a route icon in the top-right chrome, left of the
+ * reader toggle; opens the paths window (modules/paths.js).
+ */
+function render_paths_toggle(): void {
+	echo '<button id="paths-toggle" type="button" aria-label="Learning paths" title="Learning paths" onclick="if(window.MNPaths){window.MNPaths.open()}">';
+	echo '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+	echo '<circle cx="6" cy="19" r="2.2"/>';
+	echo '<circle cx="18" cy="5" r="2.2"/>';
+	echo '<path d="M8.2 19h8.3a3.5 3.5 0 0 0 0-7h-9a3.5 3.5 0 0 1 0-7h7.3"/>';
+	echo '</svg>';
 	echo '</button>';
 }
 

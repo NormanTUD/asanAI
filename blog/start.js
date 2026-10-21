@@ -1320,7 +1320,13 @@ function initModuleNav() {
 		nav.appendChild(document.createElement('span'));
 	}
 
-	contents.appendChild(nav);
+	// Above the lesson quests, footnotes and sources, not after them.
+	const below = ['mnq-lesson', 'footnotes-section', 'sources-section']
+		.map(function (id) { return document.getElementById(id); })
+		.filter(function (el) { return el && el.parentNode === contents; })
+		.sort(function (a, b) { return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1; })[0];
+	if (below) contents.insertBefore(nav, below);
+	else contents.appendChild(nav);
 }
 
 function escHtml(str) {
@@ -1395,6 +1401,11 @@ function initGlossary() {
 					// Skip navigation chrome (course tiles, TOC) — glossary
 					// tooltips belong in prose, not in the menu
 					if (parent.closest('.course-tile') || parent.closest('#toc')) {
+						return NodeFilter.FILTER_REJECT;
+					}
+					// Skip lab controls, quizzes (a tooltip could give the answer
+					// away) and the quest UI; lab prose (notes, subtitles) keeps it
+					if (parent.closest('.mnlab-ctrl, .mnlab-stat, .mnlab-legend, .mnlab-kicker, .mnlab-title, .mnlab-hint, .mnc, .mn-quiz, #mnq-lesson, [data-no-glossary]')) {
 						return NodeFilter.FILTER_REJECT;
 					}
 					// Skip the reading-flow devices (hook / aha / thread /
@@ -2172,7 +2183,7 @@ function sendHeight() {
           rect:rect(box)
         } : { present:false }
       };
-      const NO_TUCK_IDS={ 'footnotes':1,'sources':1,'footnotes-section':1,'sources-section':1,'contents':1,'loader':1,'toc':1,'course-status':1,'course-status-box':1,'topic-learned-btn':1,'sidenotes-rail':1,'curiosity-score':1 };
+      const NO_TUCK_IDS={ 'footnotes':1,'sources':1,'footnotes-section':1,'sources-section':1,'contents':1,'loader':1,'toc':1,'course-status':1,'course-status-box':1,'topic-learned-btn':1,'sidenotes-rail':1,'curiosity-score':1,'mnq-lesson':1 };
       const isTuckedB=el=>!!(el&&el.classList&&el.classList.contains('topic-block')&&el.classList.contains('topic-block-collapsed'));
       const isTransparent=el=>!!(el&&((el.tagName==='SCRIPT'||el.tagName==='STYLE'||el.tagName==='TEMPLATE')||(el.classList&&el.classList.contains('topic-demo-tucked'))));
       const runEndOf=b=>{ let s=b.nextElementSibling; while(s){ if(s.tagName==='SCRIPT'||s.tagName==='STYLE'||s.tagName==='TEMPLATE'){s=s.nextElementSibling;continue;} if(s.tagName==='SECTION') return s; if(s.id&&NO_TUCK_IDS[s.id]) return s; if(s.matches&&s.matches('[data-mathlevel],[data-math-level],[data-optionaltitle],[data-topic]')) return s; if(s.matches&&s.matches('h1,h2,h3,h4,h5,h6')) return s; s=s.nextElementSibling; } return null; };

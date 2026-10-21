@@ -119,6 +119,27 @@ the target lesson, shows its first content image + title above the link;
 tests, where `hover:hover` reports false).
 A new cross-lesson helper belongs in one of these, not copied into lessons.
 
+**Reader-retention modules** (all state in localStorage, nothing leaves the
+browser): `quests.js` (`MNQuest`: XP, levels, achievements, lesson quests, the
+progress overview; other modules add overview tabs via `MNQuest.addTab`),
+`quiz.js` (`.mn-quiz` cards; emits `mnquiz:answer` / `mnquiz:finish`),
+`lab_challenges.js` (goals inside labs; old labs without a `root` use
+`anchor`), `review.js` (spaced-repetition deck of missed quiz questions),
+`resume.js` ("pick up where you left off" banner;
+`?continue=1` jumps to the saved spot), `predict.js`
+(`.mn-predict` "predict first" cards before demos), `paths.js` (curated
+learning paths + one per part, PNG certificate; all in one window opened by
+the route icon `#paths-toggle` in the top-right chrome, `render_paths_toggle()`). Every lesson ends with a
+"Check yourself" quiz; the home page's question of the day is drawn from all
+of them by `render_daily_question()` (functions.php) — so keep quiz markup
+exactly `<div class="mn-quiz" data-quiz="<slug>"><script type="application/json">…</script></div>`.
+`.mn-predict` uses the same shape with `{q, options, answer, explain, try}`.
+Mid-lesson checkpoints use `class="mn-quiz mn-quiz--checkpoint"` (with the
+section's `data-depth` where the lesson is depth-tagged) and are not in the
+daily pool. A module that must call `MNQuest` at start-up starts with
+`setTimeout(start, 0)` when the document is already parsed (the home page
+loads base JS with `defer`, and module files run in alphabetical order).
+
 ## The Blog: lesson authoring contract
 
 Each lesson is one `blog/<slug>.php`. The shape is a contract, not a style
