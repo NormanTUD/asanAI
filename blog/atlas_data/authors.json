@@ -17436,6 +17436,42 @@
   ]
  },
  {
+  "name": "Karl Steinbuch",
+  "canon": "Karl Steinbuch",
+  "alias": null,
+  "lat": 49.01,
+  "lng": 8.4,
+  "city": "Karlsruhe, Germany",
+  "year": 1961.0,
+  "conf": 1,
+  "works": 3,
+  "keys": [
+   "steinbuch1961matrix",
+   "steinbuch1963learningmatrices",
+   "steinbuch1961automat"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "U. A. W. Piske",
+  "canon": "U. A. W. Piske",
+  "alias": null,
+  "lat": 49.01,
+  "lng": 8.4,
+  "city": "Karlsruhe, Germany",
+  "year": 1963.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "steinbuch1963learningmatrices"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
   "name": "Christiaan Huygens",
   "canon": "Christiaan Huygens",
   "alias": null,
@@ -61343,7 +61379,8 @@
    "perceptronimagedetection"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "intro"
   ]
  },
  {
@@ -63072,7 +63109,7 @@
   "city": "",
   "year": 2026.0,
   "conf": 0,
-  "works": 325,
+  "works": 326,
   "keys": [
    "math_paper_folding_wiki",
    "beloch_fold_wiki",
@@ -63214,6 +63251,7 @@
    "socraticmethod",
    "rumi",
    "protocell_wiki",
+   "lernmatrixwiki",
    "ioed_wiki",
    "algofairness_wiki",
    "computational_theory_of_mind",

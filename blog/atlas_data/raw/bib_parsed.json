@@ -2737,10 +2737,10 @@
    "url": ""
   },
   "rosenblattbackprop": {
-   "title": "Principles of Neurodynamics",
+   "title": "Principles of Neurodynamics: Perceptrons and the Theory of Brain Mechanisms",
    "author": "Frank Rosenblatt",
    "year": "",
-   "url": "https://archive.org/details/DTIC_AD0256582/page/n7/mode/2up"
+   "url": "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up"
   },
   "hayakawa": {
    "title": "Language in Thought and Action",
@@ -13315,10 +13315,28 @@
    "url": "https://web.archive.org/web/2024/https://royalsocietypublishing.org/doi/10.1098/rstb.1956.0007"
   },
   "steinbuch1961matrix": {
-   "title": "Die Lernmatrix (The Learning Matrix)",
+   "title": "Die Lernmatrix",
    "author": "Karl Steinbuch",
    "year": "",
-   "url": "https://web.archive.org/web/2024/https://en.wikipedia.org/wiki/Karl_Steinbuch"
+   "url": "https://archive.org/details/biological-cybernetics_1961-01_1_1"
+  },
+  "steinbuch1963learningmatrices": {
+   "title": "Learning Matrices and Their Applications",
+   "author": "Karl Steinbuch, U. A. W. Piske",
+   "year": "",
+   "url": "https://web.archive.org/web/2024/https://ieeexplore.ieee.org/document/4038032"
+  },
+  "steinbuch1961automat": {
+   "title": "Automat und Mensch: Über menschliche und maschinelle Intelligenz",
+   "author": "Karl Steinbuch",
+   "year": "",
+   "url": "https://doi.org/10.1007/978-3-642-53168-2_13"
+  },
+  "lernmatrixwiki": {
+   "title": "Lernmatrix",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://de.wikipedia.org/w/index.php?title=Lernmatrix&oldid=265839903"
   },
   "roberts1960perceptron": {
    "title": "Pattern Recognition with an Adaptive Network",
@@ -18303,7 +18321,8 @@
    "history"
   ],
   "perceptronimagedetection": [
-   "history"
+   "history",
+   "intro"
   ],
   "ronkowitz2017perceptron": [
    "history"
@@ -18343,6 +18362,15 @@
    "history"
   ],
   "steinbuch1961matrix": [
+   "history"
+  ],
+  "steinbuch1961automat": [
+   "history"
+  ],
+  "steinbuch1963learningmatrices": [
+   "history"
+  ],
+  "lernmatrixwiki": [
    "history"
   ],
   "roberts1960perceptron": [
@@ -23406,7 +23434,7 @@
    ]
   },
   "Wikipedia contributors": {
-   "count": 325,
+   "count": 326,
    "minyear": 2026,
    "maxyear": 2026,
    "keys": [
@@ -23550,6 +23578,7 @@
     "socraticmethod",
     "rumi",
     "protocell_wiki",
+    "lernmatrixwiki",
     "ioed_wiki",
     "algofairness_wiki",
     "computational_theory_of_mind",
@@ -54233,11 +54262,21 @@
    ]
   },
   "Karl Steinbuch": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "steinbuch1961matrix",
+    "steinbuch1963learningmatrices",
+    "steinbuch1961automat"
+   ]
+  },
+  "U. A. W. Piske": {
    "count": 1,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "steinbuch1961matrix"
+    "steinbuch1963learningmatrices"
    ]
   },
   "Lawrence G. Roberts": {
