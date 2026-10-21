@@ -16116,6 +16116,20 @@ window.bibData = {
 		url: "https://doi.org/10.7551/mitpress/9780262035095.001.0001",
 		alternativetitle: "Abraham, Rebel Genius (2016)"
 	},
+	"abraham2003mcculloch": {
+		title: "Integrating Mind and Brain: Warren S. McCulloch, Cerebral Localization, and Experimental Epistemology",
+		author: "Tara H. Abraham",
+		year: 2003,
+		url: "https://doi.org/10.1016/S0160-9327(03)00017-6",
+		alternativetitle: "Abraham, McCulloch and Experimental Epistemology (2003)"
+	},
+	"mcculloch1965embodiments": {
+		title: "Embodiments of Mind",
+		author: "Warren S. McCulloch",
+		year: 1965,
+		url: "https://archive.org/details/embodimentsofmin0000mccu",
+		alternativetitle: "McCulloch, Embodiments of Mind (1965)"
+	},
 	"roberts1960perceptron": {
 		title: "Pattern Recognition with an Adaptive Network",
 		author: "Lawrence G. Roberts",
