@@ -4410,6 +4410,12 @@
    "year": "",
    "url": "https://www.library.dartmouth.edu/news/frank-rosenblatt-ai-history"
   },
+  "koken2021remembering": {
+   "title": "Remembering Frank Rosenblatt",
+   "author": "Terrell E. Koken",
+   "year": "",
+   "url": "https://websites.umass.edu/comphon/2021/07/08/remembering-frank-rosenblatt/"
+  },
   "jensen2026perceptron": {
    "title": "Assembling and Training the Perceptron: A Personal Account",
    "author": "George Osborn Jensen, David E. Dunning, Alexander B. Magoun",
@@ -18481,6 +18487,9 @@
    "history"
   ],
   "dartmouthrosenblatt2026": [
+   "history"
+  ],
+  "koken2021remembering": [
    "history"
   ],
   "newyorktimesperceptron": [
@@ -35777,6 +35786,14 @@
    "maxyear": null,
    "keys": [
     "dartmouthrosenblatt2026"
+   ]
+  },
+  "Terrell E. Koken": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "koken2021remembering"
    ]
   },
   "George Osborn Jensen": {

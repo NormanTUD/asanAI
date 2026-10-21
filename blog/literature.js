@@ -5060,6 +5060,13 @@ window.bibData = {
 		url: "https://www.library.dartmouth.edu/news/frank-rosenblatt-ai-history",
 		alternativetitle: "Dartmouth Libraries, Writing Frank Rosenblatt Back Into AI History (2026)"
 	},
+	"koken2021remembering": {
+		title: "Remembering Frank Rosenblatt",
+		author: "Terrell E. Koken",
+		year: 2021,
+		url: "https://websites.umass.edu/comphon/2021/07/08/remembering-frank-rosenblatt/",
+		alternativetitle: "Koken, Remembering Frank Rosenblatt (2021)"
+	},
 	"jensen2026perceptron": {
 		author: "George Osborn Jensen, David E. Dunning, Alexander B. Magoun",
 		title: "Assembling and Training the Perceptron: A Personal Account",
