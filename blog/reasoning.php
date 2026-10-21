@@ -25,7 +25,9 @@ This chapter covers the techniques behind reasoning models, from the cheap and e
 </div>
 
 <div class="md" data-mathlevel="60">
-## Chain-of-Thought Prompting
+## Prompting: thinking in the open
+
+### Chain-of-Thought Prompting
 
 The **magic phrase** *“Let's think step by step”*, added to a zero-shot prompt, was introduced by (\cite[Kojima et al., 2022]{kojima2022zeroshot}) and dramatically improves performance on arithmetic, commonsense, and symbolic reasoning tasks. Independently and almost simultaneously, (\cite[Wei et al., 2022]{wei2022cot}) showed that **few-shot** chain-of-thought prompting, providing hand-written reasoning exemplars in the prompt, achieves an even larger effect. The model in both cases decomposes the problem into intermediate steps rather than jumping to an answer.
 
@@ -39,7 +41,7 @@ where $z$ is a chain-of-thought (a sequence of intermediate reasoning tokens). M
 </div>
 
 <div class="md">
-## Variants
+### Variants
 
 | Method | Year | Idea |
 |--------|------|------|
@@ -57,7 +59,7 @@ where $z$ is a chain-of-thought (a sequence of intermediate reasoning tokens). M
 </div>
 
 <div class="md" data-mathlevel="40">
-## Self-Consistency
+### Self-Consistency
 
 The simplest and most reliable inference-time scaling trick (\cite[Wang et al., 2022]{wang2022selfconsistency}):
 
@@ -71,7 +73,7 @@ The cost is $k \times$ more inference, but no retraining required.
 </div>
 
 <div class="md" data-mathlevel="45">
-## Tree of Thoughts
+### Tree of Thoughts
 
 Tree of Thoughts (\cite[Yao et al., 2023]{yao2023tot}) explores a branching tree of candidate thoughts rather than a linear chain:
 
@@ -86,7 +88,9 @@ ToT can solve problems that linear CoT cannot (e.g., 24-game, crossword puzzles)
 </div>
 
 <div class="md">
-## The o1 / R1 Paradigm: Inference-Time Training
+## The o1 / R1 paradigm: learning to think
+
+### The o1 / R1 Paradigm: Inference-Time Training
 
 OpenAI's o1 (September 2024) and DeepSeek's R1 (January 2025) pushed reasoning further by **training the model to think longer**:
 
@@ -102,7 +106,7 @@ R1's emergent long chain-of-thought is **not magic**. It is what falls out when 
 </div>
 
 <div class="md">
-### Why It Works
+#### Why It Works
 
 The hypothesis: **a hard problem is easier to solve step-by-step than in one forward pass**, because each intermediate step reduces the conditional entropy of the next. A 100-token CoT might involve ~10 reasoning “chunks”, each of which the model has seen many times in pretraining. The model is essentially **decomposing a single hard prediction into many easy ones**.
 
@@ -110,7 +114,7 @@ Forcing the model to verify its own work (critique-then-revise, search over cand
 </div>
 
 <div class="md">
-## Process Reward Models (PRMs)
+### Process Reward Models (PRMs)
 
 A **reward model** (used in \cite[Ouyang et al., 2022]{ouyang2022instructgpt}, see the <a href="finetuninglab">Fine-Tuning chapter</a>) scores the *final* output. A **Process Reward Model** scores every **step** of a reasoning trace.
 
@@ -126,7 +130,7 @@ The Math-Shepherd method (\cite[Zhang et al., 2024]{zhang2024mathshepherd}) auto
 </div>
 
 <div class="md" data-mathlevel="50">
-## Inference-Time Scaling Laws
+### Inference-Time Scaling Laws
 
 \citetitle{snell2024testtime} (\citeyear{snell2024testtime}) and others have shown that **inference-time compute scaling** follows a power law similar to training-time scaling:
 
@@ -145,7 +149,9 @@ Compare this with training: achieving 85% on AIME by training would require eith
 </div>
 
 <div class="md">
-## When Reasoning Helps (and When It Doesn't)
+## Using reasoning well
+
+### When Reasoning Helps (and When It Doesn't)
 
 Reasoning improves performance on tasks where:
 
@@ -164,7 +170,7 @@ The bitter lesson still applies: **scale helps**. But now you have two knobs, tr
 </div>
 
 <div class="md">
-## Practical Patterns for Reasoning
+### Practical Patterns for Reasoning
 
 For practitioners building with today's models:
 
@@ -177,7 +183,7 @@ The frontier of research is **meta-reasoning**: training the model to *decide ho
 </div>
 
 <div class="md">
-## Summary
+### Summary
 
 | Method | Compute cost | When to use |
 |--------|-------------|-------------|
