@@ -16095,6 +16095,13 @@ window.bibData = {
 		url: "https://blog.hnf.de/der-geistesstuermer-zur-erinnerung-an-seymour-papert/",
 		alternativetitle: "HNF, Der Geistesstürmer – Seymour Papert (2016)"
 	},
+	"gefter2015pitts": {
+		title: "The Man Who Tried to Redeem the World with Logic",
+		author: "Amanda Gefter",
+		year: 2015,
+		url: "https://nautil.us/the-man-who-tried-to-redeem-the-world-with-logic-235253/",
+		alternativetitle: "Gefter, The Man Who Tried to Redeem the World with Logic (2015)"
+	},
 	"roberts1960perceptron": {
 		title: "Pattern Recognition with an Adaptive Network",
 		author: "Lawrence G. Roberts",

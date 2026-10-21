@@ -17656,6 +17656,23 @@
   ]
  },
  {
+  "name": "Amanda Gefter",
+  "canon": "Amanda Gefter",
+  "alias": null,
+  "lat": 42.37,
+  "lng": -71.11,
+  "city": "Cambridge, USA",
+  "year": 2015.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "gefter2015pitts"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
   "name": "Christiaan Huygens",
   "canon": "Christiaan Huygens",
   "alias": null,

@@ -13488,6 +13488,12 @@
    "year": "",
    "url": "https://blog.hnf.de/der-geistesstuermer-zur-erinnerung-an-seymour-papert/"
   },
+  "gefter2015pitts": {
+   "title": "The Man Who Tried to Redeem the World with Logic",
+   "author": "Amanda Gefter",
+   "year": "",
+   "url": "https://nautil.us/the-man-who-tried-to-redeem-the-world-with-logic-235253/"
+  },
   "roberts1960perceptron": {
    "title": "Pattern Recognition with an Adaptive Network",
    "author": "Lawrence G. Roberts",
@@ -18296,6 +18302,9 @@
   "pittsfirstpaper": [
    "history"
   ],
+  "gefter2015pitts": [
+   "history"
+  ],
   "wiener1948cybernetics": [
    "history",
    "untold_history"
@@ -18520,12 +18529,6 @@
    "history"
   ],
   "koken2021remembering": [
-   "history"
-  ],
-  "mccullochwiki": [
-   "history"
-  ],
-  "pittswiki": [
    "history"
   ],
   "hebbwiki": [
@@ -54604,6 +54607,14 @@
     "hnfshakey2019",
     "hnfki_frauen2023",
     "hnfpapert2016"
+   ]
+  },
+  "Amanda Gefter": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "gefter2015pitts"
    ]
   },
   "Lawrence G. Roberts": {
