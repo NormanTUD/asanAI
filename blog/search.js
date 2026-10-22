@@ -5,6 +5,8 @@
 	var activeIndex = -1;
 	var abortController = null;
 	var debounceTimer = null;
+	var trigger = null;
+	var lastFocus = null;
 
 	function init() {
 		if (document.getElementById('search-overlay')) return;
@@ -12,22 +14,27 @@
 		overlay = document.createElement('div');
 		overlay.id = 'search-overlay';
 		overlay.className = 'search-overlay';
+		overlay.setAttribute('role', 'dialog');
+		overlay.setAttribute('aria-modal', 'true');
+		overlay.setAttribute('aria-label', 'Search the course');
+		overlay.setAttribute('aria-hidden', 'true');
 		overlay.innerHTML =
 			'<div class="search-backdrop"></div>' +
 			'<div class="search-modal">' +
 				'<div class="search-header">' +
-					'<svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>' +
-					'<input type="text" class="search-input" placeholder="Search across all modules…" spellcheck="false">' +
-					'<button class="search-close" aria-label="Close search">&times;</button>' +
+					'					<svg class="search-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>' +
+					'<input type="text" class="search-input" placeholder="Search across all modules…" aria-label="Search across all lessons" spellcheck="false">' +
+					'<button type="button" class="search-close" aria-label="Close search">&times;</button>' +
 				'</div>' +
 				'<div class="search-hints">' +
 					'<span class="search-hint-default">Press <kbd>Esc</kbd> to close &middot; <kbd>/pattern/</kbd> regex &middot; <kbd>~term</kbd> fuzzy</span>' +
 					'<span class="search-hint-mode" id="search-hint-mode"></span>' +
 				'</div>' +
-				'<div class="search-results"></div>' +
+				'<div class="search-results" aria-live="polite"></div>' +
 			'</div>';
 
 		document.body.appendChild(overlay);
+		overlay.inert = true;
 		showEmptyState();
 
 		input = overlay.querySelector('.search-input');
@@ -39,10 +46,25 @@
 		input.addEventListener('input', onInput);
 		input.addEventListener('keydown', onKeyDown);
 
-		var trigger = document.getElementById('search-trigger');
+		trigger = document.getElementById('search-trigger');
 		if (trigger) {
 			trigger.addEventListener('click', open);
 		}
+
+		overlay.addEventListener('keydown', function(e) {
+			if (e.key !== 'Tab' || !overlay.classList.contains('search-open')) return;
+			var focusable = overlay.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])');
+			if (!focusable.length) return;
+			var first = focusable[0];
+			var last = focusable[focusable.length - 1];
+			if (e.shiftKey && document.activeElement === first) {
+				e.preventDefault();
+				last.focus();
+			} else if (!e.shiftKey && document.activeElement === last) {
+				e.preventDefault();
+				first.focus();
+			}
+		});
 
 		document.addEventListener('keydown', function(e) {
 			if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -66,13 +88,18 @@
 
 	function open() {
 		if (!isPageReady()) return;
+		if (!trigger) trigger = document.getElementById('search-trigger');
 		init();
 		if (overlay.classList.contains('search-open')) {
 			input.focus();
 			input.select();
 			return;
 		}
+		lastFocus = document.activeElement;
+		overlay.inert = false;
+		overlay.removeAttribute('aria-hidden');
 		overlay.classList.add('search-open');
+		if (trigger) trigger.setAttribute('aria-expanded', 'true');
 		document.body.style.overflow = 'hidden';
 		setTimeout(function() { input.focus(); }, 100);
 	}
@@ -83,7 +110,14 @@
 
 	function close() {
 		if (!overlay) return;
+		if (overlay.contains(document.activeElement)) {
+			lastFocus = trigger || lastFocus;
+			if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+		}
 		overlay.classList.remove('search-open');
+		overlay.inert = true;
+		overlay.setAttribute('aria-hidden', 'true');
+		if (trigger) trigger.setAttribute('aria-expanded', 'false');
 		document.body.style.overflow = '';
 		if (abortController) {
 			abortController.abort();

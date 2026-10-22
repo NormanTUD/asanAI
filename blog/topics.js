@@ -1260,6 +1260,7 @@
 			</div>
 		`;
 		document.body.appendChild(overlay);
+		overlay.inert = true;
 
 		overlay.querySelectorAll('[data-close]').forEach(function (el) {
 			el.addEventListener('click', closeOverlay);
@@ -1479,6 +1480,7 @@
 		renderAudienceSelection();
 		updateUndoButtons();
 		const o = document.getElementById('topics-overlay');
+		o.inert = false;
 		o.classList.add('open');
 		o.setAttribute('aria-hidden', 'false');
 		document.body.style.overflow = 'hidden';
@@ -1492,6 +1494,7 @@
 		if (!o) return;
 		o.classList.remove('open');
 		o.setAttribute('aria-hidden', 'true');
+		o.inert = true;
 		document.body.style.overflow = '';
 		if (_lastFocused && typeof _lastFocused.focus === 'function') _lastFocused.focus();
 		try { document.dispatchEvent(new CustomEvent('topics:close')); } catch (e) { /* ignore */ }

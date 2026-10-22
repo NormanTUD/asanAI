@@ -314,11 +314,11 @@ function mountNoiseSlider(containerId, frames, reverse, titleText) {
 	if (!container) return;
 	container.innerHTML =
 		'<div style="position:relative;">' +
-			'<img id="' + containerId + '-img" style="width:100%; height:auto; display:block; border-radius:6px; background:#1e293b;" />' +
+			'<img id="' + containerId + '-img" alt="' + titleText + '" style="width:100%; height:auto; display:block; border-radius:6px; background:#1e293b;" />' +
 			'<div style="position:absolute; top:8px; left:8px; background:rgba(15,23,42,0.7); color:#fff; padding:4px 10px; border-radius:4px; font-size:12px;">' + titleText + '</div>' +
 		'</div>' +
 		'<div style="display:flex; align-items:center; gap:12px; margin-top:10px;">' +
-			'<input type="range" id="' + containerId + '-range" min="0" max="' + (frames.length - 1) + '" value="' + (reverse ? frames.length - 1 : 0) + '" style="flex:1;" />' +
+			'<input type="range" id="' + containerId + '-range" aria-label="' + titleText + ' frame" min="0" max="' + (frames.length - 1) + '" value="' + (reverse ? frames.length - 1 : 0) + '" style="flex:1;" />' +
 			'<span id="' + containerId + '-label" style="min-width:120px; font-size:13px; font-variant-numeric:tabular-nums;"></span>' +
 		'</div>';
 	const img = container.querySelector('img');

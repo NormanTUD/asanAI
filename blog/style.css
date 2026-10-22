@@ -13062,3 +13062,36 @@ html.mnp-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
 	.mnr-resume, .mnp-arrow, .mnh-card { animation: none !important; transition: none !important; }
 }
+
+/* ── Accessibility utilities ─────────────────────────────────── */
+.sr-only {
+	position: absolute !important;
+	width: 1px; height: 1px;
+	padding: 0; margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+#contents:focus,
+#contents:focus-visible { outline: none; }
+
+@media (forced-colors: active) {
+	:focus-visible {
+		outline: 3px solid CanvasText;
+		outline-offset: 3px;
+	}
+	.cl-skip {
+		border: 2px solid CanvasText;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after {
+		animation-duration: .01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: .01ms !important;
+		transition-delay: 0ms !important;
+		scroll-behavior: auto !important;
+	}
+}

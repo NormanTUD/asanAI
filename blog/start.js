@@ -1257,8 +1257,26 @@ function initDrawer() {
 	const close = document.getElementById('drawer-close');
 	if (!toggle || !panel || !backdrop) return;
 
-	function open() { panel.classList.add('open'); backdrop.classList.add('open'); }
-	function closeDrawer() { panel.classList.remove('open'); backdrop.classList.remove('open'); }
+	function setOpen(on) {
+		panel.classList.toggle('open', on);
+		backdrop.classList.toggle('open', on);
+		toggle.setAttribute('aria-expanded', on ? 'true' : 'false');
+		if (on) {
+			panel.inert = false;
+			panel.removeAttribute('aria-hidden');
+		} else {
+			if (panel.contains(document.activeElement)) toggle.focus();
+			panel.inert = true;
+			panel.setAttribute('aria-hidden', 'true');
+		}
+	}
+	function open() {
+		setOpen(true);
+		if (close) requestAnimationFrame(function () { close.focus(); });
+	}
+	function closeDrawer() { setOpen(false); }
+
+	setOpen(false);
 
 	toggle.addEventListener('click', open);
 	if (close) close.addEventListener('click', closeDrawer);
@@ -1267,6 +1285,22 @@ function initDrawer() {
 	// Close on escape
 	document.addEventListener('keydown', function(e) {
 		if (e.key === 'Escape' && panel.classList.contains('open')) closeDrawer();
+	});
+
+	// Keep keyboard focus inside the open drawer.
+	panel.addEventListener('keydown', function(e) {
+		if (e.key !== 'Tab' || !panel.classList.contains('open')) return;
+		const focusable = panel.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+		if (!focusable.length) return;
+		const first = focusable[0];
+		const last = focusable[focusable.length - 1];
+		if (e.shiftKey && document.activeElement === first) {
+			e.preventDefault();
+			last.focus();
+		} else if (!e.shiftKey && document.activeElement === last) {
+			e.preventDefault();
+			first.focus();
+		}
 	});
 
 	// Close on module link click
