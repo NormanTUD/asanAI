@@ -12338,12 +12338,12 @@ math {
 	-webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
 	box-shadow: var(--mn-shadow-md);
 	color: var(--mn-text); font: 600 12px/1 var(--mn-font-body);
-	cursor: pointer; --mnq-hud-rest: .5; --mnq-hud-opacity: 0; opacity: var(--mnq-hud-opacity); visibility: hidden;
-	transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity 1s ease .15s, gap .3s ease, padding .3s ease, visibility .4s ease .2s;
+	cursor: pointer; --mnq-hud-rest: .5; --mnq-hud-opacity: 0; opacity: var(--mnq-hud-opacity); translate: 0 8px; scale: .96; visibility: hidden;
+	transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity 1.2s cubic-bezier(.22, .61, .36, 1) .15s, translate 1.2s cubic-bezier(.22, .61, .36, 1) .15s, scale 1.2s cubic-bezier(.22, .61, .36, 1) .15s, gap .3s ease, padding .3s ease, visibility .4s ease .2s;
 }
-html:not(:has(#loader)) .mnq-hud { visibility: visible; --mnq-hud-opacity: var(--mnq-hud-rest); }
+html:not(:has(#loader)) .mnq-hud { visibility: visible; --mnq-hud-opacity: var(--mnq-hud-rest); translate: 0 0; scale: 1; }
 html.reader-mode .mnq-hud { --mnq-hud-rest: .28; }
-.mnq-hud:hover, .mnq-hud:focus-visible { opacity: 1; gap: 8px; padding: 5px 14px 5px 5px; transform: translateY(-2px); box-shadow: var(--mn-shadow-lg); border-color: var(--mn-accent); transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity .2s ease, gap .3s ease, padding .3s ease, visibility .2s ease; }
+.mnq-hud:hover, .mnq-hud:focus-visible { opacity: 1; gap: 8px; padding: 5px 14px 5px 5px; transform: translateY(-2px); box-shadow: var(--mn-shadow-lg); border-color: var(--mn-accent); transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, opacity .2s ease, translate 1.2s cubic-bezier(.22, .61, .36, 1) .15s, scale 1.2s cubic-bezier(.22, .61, .36, 1) .15s, gap .3s ease, padding .3s ease, visibility .2s ease; }
 .mnq-hud:focus-visible { outline: 2px solid var(--mn-accent); outline-offset: 3px; }
 .mnq-hud.is-bump { animation: mnq-bump .6s cubic-bezier(.2, 1.6, .4, 1); }
 @keyframes mnq-bump { 35% { transform: scale(1.06); } 100% { transform: none; } }
