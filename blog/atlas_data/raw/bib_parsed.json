@@ -13518,6 +13518,12 @@
    "year": "",
    "url": "https://archive.org/details/embodimentsofmin0000mccu"
   },
+  "mcculloch1945heterarchy": {
+   "title": "A Heterarchy of Values Determined by the Topology of Nervous Nets",
+   "author": "Warren S. McCulloch",
+   "year": "",
+   "url": "https://doi.org/10.1007/BF02478429"
+  },
   "roberts1960perceptron": {
    "title": "Pattern Recognition with an Adaptive Network",
    "author": "Lawrence G. Roberts",
@@ -18339,6 +18345,9 @@
    "history"
   ],
   "abraham2003mcculloch": [
+   "history"
+  ],
+  "mcculloch1945heterarchy": [
    "history"
   ],
   "wiener1948cybernetics": [
@@ -54671,11 +54680,12 @@
    ]
   },
   "Warren S. McCulloch": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "mcculloch1965embodiments"
+    "mcculloch1965embodiments",
+    "mcculloch1945heterarchy"
    ]
   },
   "Lawrence G. Roberts": {
