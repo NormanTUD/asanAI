@@ -555,7 +555,7 @@
 			cat.labs().map((lab) => {
 				const items = lab.items, d = items.filter((c) => state.keys["challenge-" + c.id]).length;
 				const xpSum = items.reduce((s, c) => s + c.xp, 0);
-				return '<div class="mnq-labcard' + (d === items.length ? " is-complete" : "") + '"><div class="mnq-labhead"><span class="mnq-labicon">' + lab.icon + '</span><div><b>' + esc(lab.title) + '</b><a href="' + esc(lab.lesson) + '">' + esc(lessonTitle(lab.lesson)) + ' →</a></div><span class="mnq-labnum">' + d + " / " + items.length + "<small>" + xpSum + " XP</small></span></div>" +
+				return '<div class="mnq-labcard' + (d === items.length ? " is-complete" : "") + '"><div class="mnq-labhead">' + (lab.icon ? '<span class="mnq-labicon">' + lab.icon + '</span>' : "") + '<div><b>' + esc(lab.title) + '</b><a href="' + esc(lab.lesson) + '">' + esc(lessonTitle(lab.lesson)) + ' →</a></div><span class="mnq-labnum">' + d + " / " + items.length + "<small>" + xpSum + " XP</small></span></div>" +
 					'<span class="mnq-qbar"><i style="width:' + (d / items.length * 100).toFixed(0) + '%"></i></span><ul>' +
 					items.map((c) => { const ok = !!state.keys["challenge-" + c.id]; return '<li class="' + (ok ? "is-done" : "") + '"><span>' + (ok ? "✓" : "○") + '</span><span class="mnq-ch-t">' + c.text + '</span><em>+' + c.xp + "</em></li>"; }).join("") +
 					"</ul></div>";

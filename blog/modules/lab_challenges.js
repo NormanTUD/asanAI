@@ -155,7 +155,7 @@
 		},
 		{
 			root: "traininglab-train-btn", anchor: () => { const b = document.getElementById("traininglab-train-btn"); return b && b.closest(".lab-dashboard"); },
-			obj: G.tl, hooks: ["updateVisuals"], icon: "🧠", title: "Live Training", lesson: "traininglab", needs: (L) => !!(L.configs && L.configs.traininglab && L.configs.traininglab.model),
+			obj: G.tl, hooks: ["updateVisuals"], icon: "🏋️", title: "Live Training", lesson: "traininglab", needs: (L) => !!(L.configs && L.configs.traininglab && L.configs.traininglab.model),
 			items: [
 				{ id: "tl-xor", xp: 40, text: "<b>Crack XOR:</b> get the training loss below 0.05 on the XOR table. The defaults are not enough — try the learning rate or the epochs.",
 					check: (L) => isTable(TL(L), [[0, 0, 0], [0, 1, 1], [1, 0, 1], [1, 1, 0]]) && lastLoss(TL(L)) < 0.05 },
