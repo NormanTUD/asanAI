@@ -12405,7 +12405,7 @@ html:has(#loader) .mnq-toasts { visibility: hidden; }
 .mnq-panel-wrap.is-in { opacity: 1; }
 .mnq-panel {
 	position: relative; display: flex; flex-direction: column;
-	width: min(820px, 100%); max-height: min(90vh, 920px);
+	width: min(820px, 100%); height: min(90vh, 920px);
 	border-radius: var(--mn-radius-xl); border: 1px solid var(--mn-border);
 	background:
 		radial-gradient(120% 60% at 0% 0%, color-mix(in srgb, var(--mn-accent) 12%, transparent), transparent 60%),
