@@ -12354,7 +12354,7 @@ html.reader-mode .mnq-hud { --mnq-hud-rest: .28; }
 .mnq-hud-text { display: flex; flex-direction: column; gap: 3px; text-align: left; max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transition: max-width .35s ease, opacity .25s ease; }
 .mnq-hud-lv { color: var(--mn-heading); font-size: 12px; }
 .mnq-hud-xp { color: var(--mn-text-muted); font: 500 10.5px var(--mn-font-mono); }
-.mnq-hud-week { padding: 0; border-radius: 99px; font: 700 11px var(--mn-font-mono); color: var(--mn-emerald); background: color-mix(in srgb, var(--mn-emerald) 15%, transparent); max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transition: max-width .35s ease, opacity .25s ease, padding .35s ease, margin .35s ease; }
+.mnq-hud-week { padding: 0; border-radius: 99px; font: 700 11px var(--mn-font-mono); color: var(--mn-accent); background: color-mix(in srgb, var(--mn-accent) 15%, transparent); max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transition: max-width .35s ease, opacity .25s ease, padding .35s ease, margin .35s ease; }
 .mnq-hud:hover .mnq-hud-text, .mnq-hud:focus-visible .mnq-hud-text { max-width: 170px; opacity: 1; }
 .mnq-hud:hover .mnq-hud-week:not([hidden]), .mnq-hud:focus-visible .mnq-hud-week:not([hidden]) { max-width: 64px; opacity: 1; padding: 3px 7px; margin-left: 2px; }
 /* the chapter switcher and the badge share the bottom-left corner: the
@@ -12451,7 +12451,6 @@ html:has(#loader) .mnq-toasts { visibility: hidden; }
 .mnq-panel-head > div { flex: 1; min-width: 0; }
 .mnq-kicker, .mnq-sect { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--mn-accent); }
 .mnq-week-chip { text-transform: none; letter-spacing: 0; font-weight: 600; color: var(--mn-text-muted); }
-.mnq-week-chip.is-met { color: var(--mn-emerald); }
 .mnq-title { font: 750 1.4rem/1.2 var(--mn-font-heading); color: var(--mn-heading); margin: 2px 0 8px; }
 .mnq-bar { height: 8px; border-radius: 99px; background: color-mix(in srgb, var(--mn-text-muted) 22%, transparent); overflow: hidden; }
 .mnq-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--mn-accent), var(--mn-sky)); }
@@ -12487,12 +12486,10 @@ html:has(#loader) .mnq-toasts { visibility: hidden; }
 .mnq-heat i { border-radius: 3px; background: color-mix(in srgb, var(--mn-text-muted) 16%, transparent); }
 .mnq-heat i.is-on { background: var(--mn-emerald); box-shadow: 0 0 6px color-mix(in srgb, var(--mn-emerald) 50%, transparent); }
 .mnq-weekcard { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--mn-border); background: color-mix(in srgb, var(--mn-bg) 55%, transparent); }
-.mnq-weekcard.is-met { border-color: color-mix(in srgb, var(--mn-emerald) 45%, transparent); background: color-mix(in srgb, var(--mn-emerald) 7%, var(--mn-surface)); }
 .mnq-weekdots { display: flex; gap: 5px; flex: none; }
 .mnq-weekdots i { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--mn-border); background: var(--mn-surface); color: var(--mn-text-muted); font: 600 10px var(--mn-font-mono); font-style: normal; }
 .mnq-weekdots i.is-on { border-color: var(--mn-emerald); background: color-mix(in srgb, var(--mn-emerald) 16%, var(--mn-surface)); color: var(--mn-emerald); }
 .mnq-weeknote { flex: 1; min-width: 170px; font-size: 12px; line-height: 1.45; color: var(--mn-text-secondary); }
-.mnq-weeknote small { display: block; margin-top: 3px; font-size: 10.5px; color: var(--mn-text-muted); }
 .mnq-how { margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.7; color: var(--mn-text-secondary); text-align: left; }
 .mnq-how b { color: var(--mn-emerald); font-family: var(--mn-font-mono); }
 .mnq-achs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }

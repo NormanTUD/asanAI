@@ -73,8 +73,6 @@
 		"streak-3": { cat: "habit", icon: "🔥", name: "On a Roll", desc: "Learn on 3 different days.", counter: "days", goal: 3 },
 		"streak-7": { cat: "habit", icon: "🌋", name: "Habit Formed", desc: "Learn on 7 different days.", counter: "days", goal: 7 },
 		"streak-fire": { cat: "habit", icon: "📅", name: "Three in a Row", desc: "Learn on three consecutive days." },
-		"week-3": { cat: "habit", icon: "🌱", name: "Steady Rhythm", desc: "Meet the three-day weekly goal three weeks in a row." },
-		"week-10": { cat: "habit", icon: "🌳", name: "Long Haul", desc: "Meet the weekly goal ten weeks in a row." },
 		"night-owl": { cat: "habit", icon: "🦉", name: "Night Owl", desc: "Study between midnight and 4 a.m." },
 		"early-bird": { cat: "habit", icon: "🐦", name: "Early Bird", desc: "Study between 5 and 7 a.m." },
 		"globetrotter": { cat: "special", icon: "🛰️", name: "Globetrotter", desc: "Open the Atlas of the course." },
@@ -216,9 +214,9 @@
 		return n;
 	}
 
-	// Habit loop: the visible goal is three learning days per week, not a
-	// perfect daily chain. A short week never breaks the weekly run.
-	const WEEK_GOAL = 3;
+	// A gentle record of when the reader was here — no target, no chain to
+	// protect. The daily run above is only kept for the old achievement and
+	// forgives one rest day.
 	const WEEKDAYS = ["M", "T", "W", "T", "F", "S", "S"];
 
 	function startOfWeek(offset) {
@@ -226,13 +224,6 @@
 		d.setHours(0, 0, 0, 0);
 		d.setDate(d.getDate() - ((d.getDay() + 6) % 7) + (offset || 0) * 7);
 		return d;
-	}
-
-	function weekCount(offset) {
-		const d = startOfWeek(offset);
-		let n = 0;
-		for (let i = 0; i < 7; i++) { if (state.days[dayKey(d)]) n++; d.setDate(d.getDate() + 1); }
-		return n;
 	}
 
 	function weekStats() {
@@ -244,9 +235,7 @@
 			if (on) n++;
 			d.setDate(d.getDate() + 1);
 		}
-		let run = 0, off = n >= WEEK_GOAL ? 0 : -1;
-		while (run < 520 && weekCount(off - run) >= WEEK_GOAL) run++;
-		return { days: n, goal: WEEK_GOAL, met: n >= WEEK_GOAL, run: run, cells: cells };
+		return { days: n, cells: cells };
 	}
 
 	function levelOf(xp) {
@@ -301,9 +290,8 @@
 		fg.style.strokeDashoffset = (c * (1 - L.frac)).toFixed(1);
 		const wk = weekStats(), wEl = hud.querySelector(".mnq-hud-week");
 		wEl.hidden = wk.days === 0;
-		wEl.textContent = wk.days + "/" + wk.goal;
-		wEl.title = wk.days + " of " + wk.goal + " learning days this week" +
-			(wk.run > 1 ? " · " + wk.run + " weeks in a row" : "");
+		wEl.textContent = wk.days + (wk.days === 1 ? " day" : " days");
+		wEl.title = "Learning days this week: " + wk.days;
 		if (bump && !reduceMotion) {
 			hud.classList.remove("is-bump");
 			void hud.offsetWidth;
@@ -512,7 +500,7 @@
 		panel.querySelector(".mnq-panel").innerHTML =
 			'<button type="button" class="mnq-close" aria-label="Close"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>' +
 			'<div class="mnq-panel-head"><span class="mnq-big-icon">' + L.icon + "</span><div>" +
-			'<div class="mnq-kicker">Level ' + L.n + ' · <span class="mnq-week-chip' + (wk.met ? " is-met" : "") + '">' + (wk.met ? "✓ week goal" : "This week " + wk.days + "/" + wk.goal + " days") + "</span></div>" +
+			'<div class="mnq-kicker">Level ' + L.n + ' · <span class="mnq-week-chip">This week ' + wk.days + (wk.days === 1 ? " day" : " days") + "</span></div>" +
 			'<div class="mnq-title">' + esc(L.name) + "</div>" +
 			'<div class="mnq-bar"><i style="width:' + (L.frac * 100).toFixed(1) + '%"></i></div>' +
 			'<div class="mnq-sub">' + (L.max ? state.xp + " XP — top level reached" : state.xp + " / " + L.to + " XP · next: " + esc(LEVELS[L.n].name)) + "</div></div></div>" +
@@ -552,13 +540,11 @@
 			.sort((x, y) => y.p - x.p).slice(0, 3);
 		const hid = Object.keys(ACHIEVEMENTS).filter((id) => ACHIEVEMENTS[id].cat === "hidden");
 		const hidGot = hid.filter((id) => state.unlocked[id]).length;
-		const wk = weekStats(), run = streak();
+		const wk = weekStats();
 		const weekDots = wk.cells.map((c) => '<i class="' + (c.on ? "is-on" : "") + '" title="' + c.label + " · " + c.day + '"><span>' + c.day + "</span></i>").join("");
-		const weekCard = '<div class="mnq-sect">This week <span class="mnq-sect-n">' + wk.days + " / " + wk.goal + ' days</span></div>' +
-			'<div class="mnq-weekcard' + (wk.met ? " is-met" : "") + '"><div class="mnq-weekdots" aria-hidden="true">' + weekDots + "</div>" +
-			'<div class="mnq-weeknote">' + (wk.met ? "Goal met — nicely done." : "Three days a week is plenty. Rest days are fine.") +
-			(run >= 2 ? "<small>🔥 " + run + "-day run · one rest day is built in.</small>" : "") +
-			(wk.run > 1 ? "<small>" + wk.run + " weeks in a row at the goal.</small>" : "") + "</div></div>";
+		const weekCard = '<div class="mnq-sect">This week <span class="mnq-sect-n">' + wk.days + (wk.days === 1 ? " day" : " days") + '</span></div>' +
+			'<div class="mnq-weekcard"><div class="mnq-weekdots" aria-hidden="true">' + weekDots + "</div>" +
+			'<div class="mnq-weeknote">A record of when you were here — no targets, no streak to keep alive.</div></div>';
 		return '<div class="mnq-ladder">' + ladder + "</div>" +
 			'<div class="mnq-stats">' + stats.map((s) => "<div><b>" + counterValue(s[0]) + "</b><span>" + s[1] + "</span></div>").join("") + "</div>" +
 			weekCard +
@@ -1056,9 +1042,6 @@
 			if (Object.keys(state.days).length > 1) xp(5, "· new learning day", "day-" + d);
 		}
 		if (streak() >= 3) unlock("streak-fire", true);
-		const weeklyRun = weekStats().run;
-		if (weeklyRun >= 3) unlock("week-3", true);
-		if (weeklyRun >= 10) unlock("week-10", true);
 		checkClock(true);
 		if (Math.random() < 0.01) unlock("four-leaf", true);
 		if (SLUG === "atlas") unlock("globetrotter", true);
