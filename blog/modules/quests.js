@@ -73,6 +73,8 @@
 		"streak-3": { cat: "habit", icon: "🔥", name: "On a Roll", desc: "Learn on 3 different days.", counter: "days", goal: 3 },
 		"streak-7": { cat: "habit", icon: "🌋", name: "Habit Formed", desc: "Learn on 7 different days.", counter: "days", goal: 7 },
 		"streak-fire": { cat: "habit", icon: "📅", name: "Three in a Row", desc: "Learn on three consecutive days." },
+		"week-3": { cat: "habit", icon: "🌱", name: "Steady Rhythm", desc: "Meet the three-day weekly goal three weeks in a row." },
+		"week-10": { cat: "habit", icon: "🌳", name: "Long Haul", desc: "Meet the weekly goal ten weeks in a row." },
 		"night-owl": { cat: "habit", icon: "🦉", name: "Night Owl", desc: "Study between midnight and 4 a.m." },
 		"early-bird": { cat: "habit", icon: "🐦", name: "Early Bird", desc: "Study between 5 and 7 a.m." },
 		"globetrotter": { cat: "special", icon: "🛰️", name: "Globetrotter", desc: "Open the Atlas of the course." },
@@ -171,6 +173,13 @@
 		return (window.__moduleNavData && window.__moduleNavData.modules) || [];
 	}
 
+	function currentSlug() {
+		if (SLUG) return SLUG;
+		const nav = window.__moduleNavData;
+		if (nav && nav.current >= 0 && nav.modules && nav.modules[nav.current]) return nav.modules[nav.current].slug;
+		return null;
+	}
+
 	function goalOf(a) {
 		if (a.goal === "all") return Math.max(1, navModules().length || 100);
 		if (a.goal === "allChallenges") return Math.max(1, window.MNChallengeCatalog ? window.MNChallengeCatalog.total() : 30);
@@ -192,11 +201,52 @@
 		return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 	}
 
+	// One rest day inside a run is forgiven (a built-in streak freeze). If
+	// today has no activity yet, the run is measured from yesterday so it
+	// does not collapse at midnight before the reader has started.
 	function streak() {
-		let n = 0;
+		let n = 0, grace = 1, guard = 0;
 		const d = new Date();
-		while (state.days[dayKey(d)]) { n++; d.setDate(d.getDate() - 1); }
+		if (!state.days[dayKey(d)]) d.setDate(d.getDate() - 1);
+		while (guard++ < 3700) {
+			if (state.days[dayKey(d)]) { n++; d.setDate(d.getDate() - 1); }
+			else if (grace > 0) { grace--; d.setDate(d.getDate() - 1); }
+			else break;
+		}
 		return n;
+	}
+
+	// Habit loop: the visible goal is three learning days per week, not a
+	// perfect daily chain. A short week never breaks the weekly run.
+	const WEEK_GOAL = 3;
+	const WEEKDAYS = ["M", "T", "W", "T", "F", "S", "S"];
+
+	function startOfWeek(offset) {
+		const d = new Date();
+		d.setHours(0, 0, 0, 0);
+		d.setDate(d.getDate() - ((d.getDay() + 6) % 7) + (offset || 0) * 7);
+		return d;
+	}
+
+	function weekCount(offset) {
+		const d = startOfWeek(offset);
+		let n = 0;
+		for (let i = 0; i < 7; i++) { if (state.days[dayKey(d)]) n++; d.setDate(d.getDate() + 1); }
+		return n;
+	}
+
+	function weekStats() {
+		const d = startOfWeek(0), cells = [];
+		let n = 0;
+		for (let i = 0; i < 7; i++) {
+			const key = dayKey(d), on = !!state.days[key];
+			cells.push({ key: key, on: on, day: d.getDate(), label: WEEKDAYS[i] });
+			if (on) n++;
+			d.setDate(d.getDate() + 1);
+		}
+		let run = 0, off = n >= WEEK_GOAL ? 0 : -1;
+		while (run < 520 && weekCount(off - run) >= WEEK_GOAL) run++;
+		return { days: n, goal: WEEK_GOAL, met: n >= WEEK_GOAL, run: run, cells: cells };
 	}
 
 	function levelOf(xp) {
@@ -229,7 +279,7 @@
 		hud.title = "Your progress";
 		hud.innerHTML =
 			'<svg class="mnq-ring" viewBox="0 0 36 36" aria-hidden="true"><circle class="mnq-ring-bg" cx="18" cy="18" r="15.5"/><circle class="mnq-ring-fg" cx="18" cy="18" r="15.5"/></svg>' +
-			'<span class="mnq-hud-icon" aria-hidden="true"></span><span class="mnq-hud-text"><b class="mnq-hud-lv"></b><span class="mnq-hud-xp"></span></span><span class="mnq-hud-streak" hidden></span>';
+			'<span class="mnq-hud-icon" aria-hidden="true"></span><span class="mnq-hud-text"><b class="mnq-hud-lv"></b><span class="mnq-hud-xp"></span></span><span class="mnq-hud-week" hidden></span>';
 		hud.addEventListener("click", () => openPanel());
 		document.body.appendChild(hud);
 		document.documentElement.classList.add("mnq-on");
@@ -249,10 +299,11 @@
 		const fg = hud.querySelector(".mnq-ring-fg");
 		fg.style.strokeDasharray = c.toFixed(1);
 		fg.style.strokeDashoffset = (c * (1 - L.frac)).toFixed(1);
-		const st = streak(), sEl = hud.querySelector(".mnq-hud-streak");
-		sEl.hidden = st < 2;
-		sEl.textContent = "🔥 " + st;
-		sEl.title = st + " days in a row";
+		const wk = weekStats(), wEl = hud.querySelector(".mnq-hud-week");
+		wEl.hidden = wk.days === 0;
+		wEl.textContent = wk.days + "/" + wk.goal;
+		wEl.title = wk.days + " of " + wk.goal + " learning days this week" +
+			(wk.run > 1 ? " · " + wk.run + " weeks in a row" : "");
 		if (bump && !reduceMotion) {
 			hud.classList.remove("is-bump");
 			void hud.offsetWidth;
@@ -442,10 +493,10 @@
 		const cat = window.MNChallengeCatalog;
 		const chTotal = cat ? cat.total() : 0, chDone = cat ? cat.doneCount() : 0;
 		const mods = navModules();
-		const lessonsDone = mods.filter((m) => state.mastered[m.slug]).length;
+		const lessonsRead = mods.filter((m) => state.finished[m.slug]).length;
 		const tabs = [["overview", "Overview"], ["achievements", "Achievements <span>" + got + "/" + achIds.length + "</span>"]];
 		if (cat) tabs.push(["challenges", "Lab challenges <span>" + chDone + "/" + chTotal + "</span>"]);
-		if (mods.length) tabs.push(["lessons", "Lessons <span>" + lessonsDone + "/" + mods.length + "</span>"]);
+		if (mods.length) tabs.push(["lessons", "Journey <span>" + lessonsRead + "/" + mods.length + "</span>"]);
 		extTabs.forEach((x) => { if (!x.show || x.show()) tabs.push([x.id, x.label()]); });
 		if (!tabs.some((t) => t[0] === currentTab)) currentTab = "overview";
 
@@ -457,11 +508,11 @@
 		else if (currentTab === "challenges") body = renderChallenges();
 		else body = renderLessons();
 
-		const st = streak();
+		const wk = weekStats();
 		panel.querySelector(".mnq-panel").innerHTML =
 			'<button type="button" class="mnq-close" aria-label="Close"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>' +
 			'<div class="mnq-panel-head"><span class="mnq-big-icon">' + L.icon + "</span><div>" +
-			'<div class="mnq-kicker">Level ' + L.n + (st >= 2 ? ' · <span class="mnq-streak-chip">🔥 ' + st + "-day streak</span>" : "") + "</div>" +
+			'<div class="mnq-kicker">Level ' + L.n + ' · <span class="mnq-week-chip' + (wk.met ? " is-met" : "") + '">' + (wk.met ? "✓ week goal" : "This week " + wk.days + "/" + wk.goal + " days") + "</span></div>" +
 			'<div class="mnq-title">' + esc(L.name) + "</div>" +
 			'<div class="mnq-bar"><i style="width:' + (L.frac * 100).toFixed(1) + '%"></i></div>' +
 			'<div class="mnq-sub">' + (L.max ? state.xp + " XP — top level reached" : state.xp + " / " + L.to + " XP · next: " + esc(LEVELS[L.n].name)) + "</div></div></div>" +
@@ -501,8 +552,17 @@
 			.sort((x, y) => y.p - x.p).slice(0, 3);
 		const hid = Object.keys(ACHIEVEMENTS).filter((id) => ACHIEVEMENTS[id].cat === "hidden");
 		const hidGot = hid.filter((id) => state.unlocked[id]).length;
+		const wk = weekStats(), run = streak();
+		const weekDots = wk.cells.map((c) => '<i class="' + (c.on ? "is-on" : "") + '" title="' + c.label + " · " + c.day + '"><span>' + c.day + "</span></i>").join("");
+		const weekCard = '<div class="mnq-sect">This week <span class="mnq-sect-n">' + wk.days + " / " + wk.goal + ' days</span></div>' +
+			'<div class="mnq-weekcard' + (wk.met ? " is-met" : "") + '"><div class="mnq-weekdots" aria-hidden="true">' + weekDots + "</div>" +
+			'<div class="mnq-weeknote">' + (wk.met ? "Goal met — nicely done." : "Three days a week is plenty. Rest days are fine.") +
+			(run >= 2 ? "<small>🔥 " + run + "-day run · one rest day is built in.</small>" : "") +
+			(wk.run > 1 ? "<small>" + wk.run + " weeks in a row at the goal.</small>" : "") + "</div></div>";
 		return '<div class="mnq-ladder">' + ladder + "</div>" +
 			'<div class="mnq-stats">' + stats.map((s) => "<div><b>" + counterValue(s[0]) + "</b><span>" + s[1] + "</span></div>").join("") + "</div>" +
+			weekCard +
+			'<button type="button" class="mnq-journey-chip" data-mnq-tab="lessons">🧭 <b>Your journey</b> — see where you are in the story →</button>' +
 			'<button type="button" class="mnq-hidden-chip" data-mnq-tab="achievements">🗝️ <b>' + hidGot + " of " + hid.length + "</b> hidden achievements found →</button>" +
 			(next.length ? '<div class="mnq-sect">Almost there</div><div class="mnq-achs">' + next.map((n) => achCard(n.id)).join("") + "</div>" : "") +
 			'<div class="mnq-sect">Your last 12 weeks</div><div class="mnq-heat">' + cells.join("") + "</div>" +
@@ -562,20 +622,47 @@
 			}).join("") + "</div>";
 	}
 
+	const ROMAN = ["I", "II", "III", "IV", "V", "VI"];
+
 	function renderLessons() {
 		const mods = navModules();
 		const parts = {};
 		mods.forEach((m) => { (parts[m.part] = parts[m.part] || []).push(m); });
-		return '<p class="mnq-intro">👁 visited · 📖 read to the end · 🏆 all lesson quests done. Lesson quests are at the bottom of every lesson.</p>' +
-			Object.keys(parts).sort((a, b) => a - b).map((p) => {
-				const list = parts[p], v = list.filter((m) => state.lessons[m.slug]).length;
-				return '<div class="mnq-sect">Part ' + esc(p) + ' <span class="mnq-sect-n">' + v + " / " + list.length + ' visited</span></div><div class="mnq-lessons">' +
-					list.map((m) => {
-						const s = m.slug;
-						const badge = (state.lessons[s] ? "👁" : "·") + (state.finished[s] ? " 📖" : "") + (state.mastered[s] ? " 🏆" : "");
-						return '<a class="mnq-lesson' + (state.lessons[s] ? " is-seen" : "") + (state.mastered[s] ? " is-mastered" : "") + '" href="' + esc(m.url || s) + '"><span class="mnq-lesson-ic">' + (m.icon || "•") + '</span><span class="mnq-lesson-t">' + esc(m.title) + '</span><span class="mnq-lesson-b">' + badge + "</span></a>";
-					}).join("") + "</div>";
-			}).join("");
+		const info = (window.__moduleNavData && window.__moduleNavData.parts) || {};
+		const here = currentSlug();
+		const hereMod = here ? mods.find((m) => m.slug === here) : null;
+		const hereCard = hereMod ? '<a class="mnq-herecard" href="' + esc(hereMod.url || here) + '">' +
+			'<span class="mnq-herecard-pin">You are here</span>' +
+			'<b>' + esc(hereMod.title) + '</b>' +
+			'<span class="mnq-herecard-part">Part ' + esc(hereMod.part) + ' · ' + esc((info[hereMod.part] || {}).title || "") + '</span>' +
+			'<span class="mnq-herecard-go">Continue →</span></a>' : "";
+		const station = (p) => {
+			const list = parts[p], v = list.filter((m) => state.lessons[m.slug]).length;
+			const r = list.filter((m) => state.finished[m.slug]).length;
+			const mastered = list.filter((m) => state.mastered[m.slug]).length;
+			const isHere = !!(hereMod && String(hereMod.part) === String(p));
+			const complete = r === list.length;
+			const pct = Math.round(r / list.length * 100);
+			return '<section class="mnq-station' + (isHere ? " is-here" : "") + (complete ? " is-complete" : "") + '">' +
+				'<div class="mnq-station-head"><span class="mnq-station-num">' + (ROMAN[parseInt(p, 10) - 1] || esc(p)) + '</span>' +
+				'<div class="mnq-station-body"><div class="mnq-station-kicker">Part ' + esc(p) + (complete ? " · complete" : "") + '</div>' +
+				'<div class="mnq-station-title">' + esc(info[p] && info[p].title || "Part " + p) + '</div>' +
+				(info[p] && info[p].desc ? '<p class="mnq-station-desc">' + esc(info[p].desc) + '</p>' : "") + '</div>' +
+				(isHere ? '<span class="mnq-here-pill">You are here</span>' : "") + '</div>' +
+				'<div class="mnq-station-meta"><span>' + r + " / " + list.length + " read</span>" +
+				(mastered ? "<span>" + mastered + " mastered</span>" : "") + "</div>" +
+				'<span class="mnq-station-bar"><i style="width:' + pct + '%"></i></span>' +
+				'<div class="mnq-lessons">' + list.map((m) => {
+					const s = m.slug;
+					const badge = (state.lessons[s] ? "👁" : "·") + (state.finished[s] ? " 📖" : "") + (state.mastered[s] ? " 🏆" : "");
+					return '<a class="mnq-lesson' + (state.lessons[s] ? " is-seen" : "") + (state.mastered[s] ? " is-mastered" : "") +
+						(s === here ? " is-here" : "") + '" href="' + esc(m.url || s) + '"' + (s === here ? ' aria-current="page"' : "") +
+						'><span class="mnq-lesson-ic">' + (m.icon || "•") + '</span><span class="mnq-lesson-t">' + esc(m.title) +
+						'</span><span class="mnq-lesson-b">' + badge + "</span></a>";
+				}).join("") + "</div></section>";
+		};
+		return '<p class="mnq-intro">One long story — from the first tally marks to language models. 👁 visited · 📖 read · 🏆 lesson mastered.</p>' +
+			hereCard + '<div class="mnq-journey">' + Object.keys(parts).sort((a, b) => a - b).map(station).join("") + "</div>";
 	}
 
 	// ── Console helpers ─────────────────────────────────────────────
@@ -969,6 +1056,9 @@
 			if (Object.keys(state.days).length > 1) xp(5, "· new learning day", "day-" + d);
 		}
 		if (streak() >= 3) unlock("streak-fire", true);
+		const weeklyRun = weekStats().run;
+		if (weeklyRun >= 3) unlock("week-3", true);
+		if (weeklyRun >= 10) unlock("week-10", true);
 		checkClock(true);
 		if (Math.random() < 0.01) unlock("four-leaf", true);
 		if (SLUG === "atlas") unlock("globetrotter", true);

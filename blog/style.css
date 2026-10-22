@@ -12354,9 +12354,9 @@ html.reader-mode .mnq-hud { --mnq-hud-rest: .28; }
 .mnq-hud-text { display: flex; flex-direction: column; gap: 3px; text-align: left; max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transition: max-width .35s ease, opacity .25s ease; }
 .mnq-hud-lv { color: var(--mn-heading); font-size: 12px; }
 .mnq-hud-xp { color: var(--mn-text-muted); font: 500 10.5px var(--mn-font-mono); }
-.mnq-hud-streak { padding: 0; border-radius: 99px; font: 700 11px var(--mn-font-mono); color: var(--mn-coral); background: color-mix(in srgb, var(--mn-coral) 15%, transparent); max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transition: max-width .35s ease, opacity .25s ease, padding .35s ease, margin .35s ease; }
+.mnq-hud-week { padding: 0; border-radius: 99px; font: 700 11px var(--mn-font-mono); color: var(--mn-emerald); background: color-mix(in srgb, var(--mn-emerald) 15%, transparent); max-width: 0; opacity: 0; overflow: hidden; white-space: nowrap; transition: max-width .35s ease, opacity .25s ease, padding .35s ease, margin .35s ease; }
 .mnq-hud:hover .mnq-hud-text, .mnq-hud:focus-visible .mnq-hud-text { max-width: 170px; opacity: 1; }
-.mnq-hud:hover .mnq-hud-streak:not([hidden]), .mnq-hud:focus-visible .mnq-hud-streak:not([hidden]) { max-width: 64px; opacity: 1; padding: 3px 7px; margin-left: 2px; }
+.mnq-hud:hover .mnq-hud-week:not([hidden]), .mnq-hud:focus-visible .mnq-hud-week:not([hidden]) { max-width: 64px; opacity: 1; padding: 3px 7px; margin-left: 2px; }
 /* the chapter switcher and the badge share the bottom-left corner: the
    switcher sits at the very bottom, the badge above it */
 html:has(#chsw-dock) .mnq-hud { bottom: 76px; }
@@ -12435,20 +12435,23 @@ html:has(#loader) .mnq-toasts { visibility: hidden; }
 .mnq-sect--hidden { color: var(--mn-rose); }
 .mnq-hidden-bar { height: 6px; margin: 6px 0 4px; border-radius: 99px; background: color-mix(in srgb, var(--mn-text-muted) 22%, transparent); overflow: hidden; }
 .mnq-hidden-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--mn-rose), var(--mn-accent)); }
-.mnq-panel .mnq-hidden-chip {
+.mnq-panel .mnq-hidden-chip, .mnq-panel .mnq-journey-chip {
 	display: inline-flex; align-items: center; gap: 6px; margin: 12px 0 4px; padding: 7px 14px;
-	border-radius: 99px; border: 1px dashed color-mix(in srgb, var(--mn-rose) 55%, transparent);
-	background: color-mix(in srgb, var(--mn-rose) 8%, transparent); color: var(--mn-text);
+	border-radius: 99px; border: 1px dashed; color: var(--mn-text);
 	font: 500 12.5px/1.2 var(--mn-font-body); cursor: pointer;
 }
+.mnq-panel .mnq-hidden-chip { border-color: color-mix(in srgb, var(--mn-rose) 55%, transparent); background: color-mix(in srgb, var(--mn-rose) 8%, transparent); }
+.mnq-panel .mnq-journey-chip { border-color: color-mix(in srgb, var(--mn-accent) 55%, transparent); background: color-mix(in srgb, var(--mn-accent) 8%, transparent); }
 .mnq-panel .mnq-hidden-chip b { color: var(--mn-rose); }
-.mnq-panel .mnq-hidden-chip:hover { transform: none; filter: none; border-style: solid; }
+.mnq-panel .mnq-journey-chip b { color: var(--mn-accent); }
+.mnq-panel .mnq-hidden-chip:hover, .mnq-panel .mnq-journey-chip:hover { transform: none; filter: none; border-style: solid; }
 .mnq-big-icon { cursor: pointer; user-select: none; }
 .mnq-big-icon.is-poked { animation: mnq-poke .35s ease; }
 @keyframes mnq-poke { 25% { transform: rotate(-12deg) scale(.92); } 60% { transform: rotate(9deg) scale(1.06); } 100% { transform: none; } }
 .mnq-panel-head > div { flex: 1; min-width: 0; }
 .mnq-kicker, .mnq-sect { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--mn-accent); }
-.mnq-streak-chip { color: var(--mn-coral); letter-spacing: .04em; }
+.mnq-week-chip { text-transform: none; letter-spacing: 0; font-weight: 600; color: var(--mn-text-muted); }
+.mnq-week-chip.is-met { color: var(--mn-emerald); }
 .mnq-title { font: 750 1.4rem/1.2 var(--mn-font-heading); color: var(--mn-heading); margin: 2px 0 8px; }
 .mnq-bar { height: 8px; border-radius: 99px; background: color-mix(in srgb, var(--mn-text-muted) 22%, transparent); overflow: hidden; }
 .mnq-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--mn-accent), var(--mn-sky)); }
@@ -12483,6 +12486,13 @@ html:has(#loader) .mnq-toasts { visibility: hidden; }
 .mnq-heat { display: grid; grid-template-rows: repeat(7, 11px); grid-auto-flow: column; grid-auto-columns: 11px; gap: 3px; }
 .mnq-heat i { border-radius: 3px; background: color-mix(in srgb, var(--mn-text-muted) 16%, transparent); }
 .mnq-heat i.is-on { background: var(--mn-emerald); box-shadow: 0 0 6px color-mix(in srgb, var(--mn-emerald) 50%, transparent); }
+.mnq-weekcard { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--mn-border); background: color-mix(in srgb, var(--mn-bg) 55%, transparent); }
+.mnq-weekcard.is-met { border-color: color-mix(in srgb, var(--mn-emerald) 45%, transparent); background: color-mix(in srgb, var(--mn-emerald) 7%, var(--mn-surface)); }
+.mnq-weekdots { display: flex; gap: 5px; flex: none; }
+.mnq-weekdots i { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--mn-border); background: var(--mn-surface); color: var(--mn-text-muted); font: 600 10px var(--mn-font-mono); font-style: normal; }
+.mnq-weekdots i.is-on { border-color: var(--mn-emerald); background: color-mix(in srgb, var(--mn-emerald) 16%, var(--mn-surface)); color: var(--mn-emerald); }
+.mnq-weeknote { flex: 1; min-width: 170px; font-size: 12px; line-height: 1.45; color: var(--mn-text-secondary); }
+.mnq-weeknote small { display: block; margin-top: 3px; font-size: 10.5px; color: var(--mn-text-muted); }
 .mnq-how { margin: 0; padding-left: 18px; font-size: 12.5px; line-height: 1.7; color: var(--mn-text-secondary); text-align: left; }
 .mnq-how b { color: var(--mn-emerald); font-family: var(--mn-font-mono); }
 .mnq-achs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
@@ -12525,9 +12535,35 @@ html:has(#loader) .mnq-toasts { visibility: hidden; }
 .mnq-lesson:hover { border-color: var(--mn-accent); opacity: 1; }
 .mnq-lesson.is-seen { opacity: 1; color: var(--mn-text); }
 .mnq-lesson.is-mastered { border-color: color-mix(in srgb, var(--mn-emerald) 50%, transparent); background: color-mix(in srgb, var(--mn-emerald) 7%, transparent); }
+.mnq-lesson.is-here { border-color: var(--mn-accent); opacity: 1; color: var(--mn-text); box-shadow: 0 0 0 2px color-mix(in srgb, var(--mn-accent) 16%, transparent); }
 .mnq-lesson-ic { flex: none; width: 1.4em; text-align: center; }
 .mnq-lesson-t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mnq-lesson-b { flex: none; font-size: 11px; }
+/* the journey: the six parts as stations of one story */
+.mnq-herecard { display: flex; flex-direction: column; gap: 2px; margin: 0 0 12px; padding: 12px 14px; border-radius: 14px; text-decoration: none; color: inherit; border: 1px solid color-mix(in srgb, var(--mn-accent) 45%, var(--mn-border)); background: color-mix(in srgb, var(--mn-accent) 6%, var(--mn-surface)); }
+.mnq-herecard-pin { font: 700 9.5px var(--mn-font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--mn-accent); }
+.mnq-herecard b { font: 700 1rem/1.25 var(--mn-font-heading); color: var(--mn-heading); }
+.mnq-herecard-part { font-size: 11.5px; color: var(--mn-text-muted); }
+.mnq-herecard-go { margin-top: 4px; font-size: 12px; font-weight: 600; color: var(--mn-accent); }
+.mnq-herecard:hover { border-color: var(--mn-accent); }
+.mnq-journey { display: grid; gap: 12px; }
+.mnq-station { border: 1px solid var(--mn-border); border-radius: 14px; padding: 12px 14px; }
+.mnq-station.is-here { border-color: color-mix(in srgb, var(--mn-accent) 55%, var(--mn-border)); background: color-mix(in srgb, var(--mn-accent) 4%, var(--mn-surface)); box-shadow: inset 3px 0 0 var(--mn-accent); }
+.mnq-station.is-complete { border-color: color-mix(in srgb, var(--mn-emerald) 45%, var(--mn-border)); }
+.mnq-station-head { display: flex; align-items: flex-start; gap: 12px; }
+.mnq-station-num { flex: none; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--mn-border); background: color-mix(in srgb, var(--mn-text-muted) 12%, transparent); color: var(--mn-heading); font: 700 11px var(--mn-font-mono); }
+.mnq-station.is-here .mnq-station-num { border-color: var(--mn-accent); background: var(--mn-accent); color: #fff; }
+.mnq-station.is-complete .mnq-station-num { border-color: var(--mn-emerald); background: var(--mn-emerald); color: #fff; }
+.mnq-station-body { flex: 1; min-width: 0; }
+.mnq-station-kicker { font: 700 10px var(--mn-font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--mn-text-muted); }
+.mnq-station-title { margin-top: 2px; font: 700 1.02rem/1.2 var(--mn-font-heading); color: var(--mn-heading); }
+.mnq-station-desc { margin: 4px 0 0; font-size: 12px; line-height: 1.45; color: var(--mn-text-secondary); }
+.mnq-here-pill { flex: none; align-self: flex-start; padding: 3px 9px; border-radius: 99px; border: 1px solid color-mix(in srgb, var(--mn-accent) 35%, transparent); background: color-mix(in srgb, var(--mn-accent) 12%, transparent); color: var(--mn-accent); font: 700 9px var(--mn-font-mono); letter-spacing: .08em; text-transform: uppercase; text-align: center; }
+.mnq-station-meta { display: flex; justify-content: space-between; gap: 10px; margin: 10px 0 6px; font: 500 10.5px var(--mn-font-mono); color: var(--mn-text-muted); }
+.mnq-station-bar { display: block; height: 5px; border-radius: 99px; background: color-mix(in srgb, var(--mn-text-muted) 22%, transparent); overflow: hidden; }
+.mnq-station-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--mn-accent), var(--mn-sky)); }
+.mnq-station.is-complete .mnq-station-bar i { background: linear-gradient(90deg, var(--mn-emerald), var(--mn-sky)); }
+.mnq-station .mnq-lessons { margin-top: 10px; }
 @media (max-width: 640px) {
 	.mnq-hud { left: 12px; bottom: 12px; }
 	.mnq-toasts { --mnq-toasts-bottom: 62px; }
@@ -12538,6 +12574,9 @@ html:has(#loader) .mnq-toasts { visibility: hidden; }
 	.mnq-body { padding: 14px 16px 8px; }
 	.mnq-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.mnq-achs, .mnq-lessons { grid-template-columns: minmax(0, 1fr); }
+	.mnq-weekdots { gap: 4px; }
+	.mnq-weekdots i { width: 23px; height: 23px; font-size: 9.5px; }
+	.mnq-station-head { flex-wrap: wrap; }
 	.mnq-lvl { font-size: 16px; }
 }
 
@@ -12814,6 +12853,7 @@ html.mnp-open { overflow: hidden; }
 .mnp-map-node.is-seen .mnp-map-dot { border-color: color-mix(in srgb, var(--tone) 55%, var(--mn-border)); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
 .mnp-map-node.is-current .mnp-map-dot { border-color: var(--tone); background: color-mix(in srgb, var(--tone) 14%, var(--mn-surface)); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--tone) 16%, transparent); }
 .mnp-map-node.is-done .mnp-map-dot { border-color: var(--tone); background: var(--tone); color: #fff; }
+.mnp-map-node.is-mastered .mnp-map-dot { box-shadow: 0 0 0 3px color-mix(in srgb, var(--mn-coral) 30%, transparent); }
 .mnp-map-title { font: 600 .7rem/1.25 var(--mn-font-prose); text-align: center; color: var(--mn-text-secondary); max-width: 100%; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .mnp-map-node.is-current .mnp-map-title { color: var(--mn-heading); }
 .mnp-map-node a:hover .mnp-map-dot { border-color: var(--tone); transform: translateY(-2px); }

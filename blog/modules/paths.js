@@ -242,16 +242,17 @@
 		return '<ol class="mnp-map" aria-label="Route of ' + esc(p.title) + ", " + g.done + " of " + g.total + ' read">' + p.lessons.map((s, i) => {
 			const m = modOf(s);
 			const done = q && q.finished(s);
+			const mastered = q && q.mastered(s);
 			const seen = q && q.visited(s);
-			const state = done ? " is-done" : s === g.next ? " is-current" : seen ? " is-seen" : "";
+			const state = mastered ? " is-done is-mastered" : done ? " is-done" : s === g.next ? " is-current" : seen ? " is-seen" : "";
 			const fit = lessonFit(m);
 			const fitCls = fit.state === "off" ? " is-off" : fit.state === "partial" ? " is-dim" : "";
 			const label = m ? m.title : s;
 			const title = label + (fit.state === "off" ? " — " + fit.reason : "");
 			return '<li class="mnp-map-node' + state + fitCls + '"><a href="' + esc(m ? m.url : s) + '" title="' + esc(title) + '"' + (s === g.next && !done ? ' aria-current="step"' : "") + ">" +
-				'<span class="mnp-map-dot" aria-hidden="true">' + (done ? "✓" : i + 1) + '</span>' +
+				'<span class="mnp-map-dot" aria-hidden="true">' + (mastered ? "★" : done ? "✓" : i + 1) + '</span>' +
 				'<span class="mnp-map-title">' + esc(shortTitle(label)) + "</span>" +
-				'<span class="mnp-sr">' + (done ? "Completed, " : "") + "step " + (i + 1) + ": " + esc(title) + "</span>" +
+				'<span class="mnp-sr">' + (mastered ? "Mastered, " : done ? "Completed, " : "") + "step " + (i + 1) + ": " + esc(title) + "</span>" +
 				"</a></li>";
 		}).join("") + "</ol>";
 	}
