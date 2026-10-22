@@ -18310,7 +18310,7 @@ window.bibData = {
 		alternativetitle: "FlashAttention (2022)"
 	},
 
-	/* Tokenizer pathologies (tokenizer_pathologies.php) */
+	/* Tokenizer pathologies (tokenizerlab.php) */
 	"kudo2018unigram": {
 		title: "Subword Regularization to Improve Neural Machine Translation",
 		author: "Taku Kudo",
@@ -18331,6 +18331,55 @@ window.bibData = {
 		year: 2025,
 		url: "https://arxiv.org/abs/2510.12389",
 		alternativetitle: "Tokenization disparity (2025)"
+	},
+	"petrov2023unfairness": {
+		title: "Language Model Tokenizers Introduce Unfairness Between Languages",
+		author: "Aleksandar Petrov, Emanuele La Malfa, Philip H. S. Torr, Adel Bibi",
+		year: 2023,
+		url: "https://arxiv.org/abs/2305.15425",
+		alternativetitle: "Petrov et al., 2023"
+	},
+	"singh2024tokenizationcounts": {
+		title: "Tokenization counts: the impact of tokenization on arithmetic in frontier LLMs",
+		author: "Aaditya K. Singh, DJ Strouse",
+		year: 2024,
+		url: "https://arxiv.org/abs/2402.14903",
+		alternativetitle: "Singh & Strouse, 2024"
+	},
+	"zheng2025brokentokens": {
+		title: "Broken Tokens? Your Language Model can Secretly Handle Non-Canonical Tokenizations",
+		author: "Brian Siyuan Zheng, Alisa Liu, Orevaoghene Ahia, Jonathan Hayase, Yejin Choi, Noah A. Smith",
+		year: 2025,
+		url: "https://arxiv.org/abs/2506.19004",
+		alternativetitle: "Zheng et al., 2025"
+	},
+	"geh2025adversarialtokenization": {
+		title: "Adversarial Tokenization",
+		author: "Renato Lui Geh, Zilei Shao, Guy Van den Broeck",
+		year: 2025,
+		url: "https://arxiv.org/abs/2503.02174",
+		alternativetitle: "Geh et al., 2025"
+	},
+	"tokenbreak2025": {
+		title: "TokenBreak: Bypassing Text Classification Models Through Token Manipulation",
+		author: "Kasimir Schulz, Kenneth Yeung, Kieran Evans",
+		year: 2025,
+		url: "https://arxiv.org/abs/2506.07948",
+		alternativetitle: "Schulz et al., 2025"
+	},
+	"glitchprober2024": {
+		title: "GlitchProber: Advancing Effective Detection and Mitigation of Glitch Tokens in Large Language Models",
+		author: "Zhibo Zhang, Wuxia Bai, Yuxi Li, Mark Huasong Meng, Kailong Wang, Ling Shi, Li Li, Jun Wang, Haoyu Wang",
+		year: 2024,
+		url: "https://arxiv.org/abs/2408.04905",
+		alternativetitle: "Zhang et al., 2024"
+	},
+	"unicodeuax15": {
+		title: "Unicode Standard Annex #15: Unicode Normalization Forms",
+		author: "Unicode Consortium",
+		year: "accessed 2026",
+		url: "https://unicode.org/reports/tr15/",
+		alternativetitle: "Unicode Normalization Forms"
 	},
 
 	/* Evaluation as a discipline (evaluation_methodology.php) */

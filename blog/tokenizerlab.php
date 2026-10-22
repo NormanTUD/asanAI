@@ -2,7 +2,7 @@
 <!--
 COURSE_METADATA:
 title: Tokenization: How Words become Numbers
-description: How words become numbers — word-level, N-gram, and subword methods compared — and the quiet bias that follows: token inflation, the byte-level floor, and the road toward tokenizer-free models.
+description: How words become numbers — word-level, N-gram, and subword methods compared — and the quiet failures that follow: token inflation, glitch tokens, numeric and Unicode artifacts, the byte-level floor, and the road toward tokenizer-free models.
 icon: &#9000;
 part: 4
 order: 1
@@ -26,7 +26,7 @@ A tokenizer's output is a list of **integers**, token IDs in $\{0, 1, \dots, |V|
     <div id="sticky-input-wrapper">
         <div class="sticky-input-inner">
             <div class="sticky-input-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                     <polyline points="4 7 4 4 20 4 20 7"></polyline>
                     <line x1="9" y1="20" x2="15" y2="20"></line>
                     <line x1="12" y1="4" x2="12" y2="20"></line>
@@ -36,6 +36,7 @@ A tokenizer's output is a list of **integers**, token IDs in $\{0, 1, \dots, |V|
                    value="The king is acting bravely and wisely and the queen is also acting wisely and bravely"
                    oninput="syncAndTokenize(this.value)"
                    placeholder="Type or paste any text here…"
+                   aria-label="Text to tokenize"
                    autocomplete="off"
                    spellcheck="false">
         </div>
@@ -204,13 +205,13 @@ Type a word like **“strawberry”** below and watch how BPE splits it. The mod
         <div id="tokenization-failure-vis" style="background:var(--mn-bg-subtle, #fef2f2); border-radius:8px; padding:16px; min-height:60px; font-family:monospace; font-size:1.1rem; line-height:2; color:var(--mn-text, #1e293b);"></div>
         <div id="tokenization-failure-explain" style="margin-top:10px; padding:12px; background:var(--mn-bg-subtle, #fff); border-radius:8px; border:1px dashed #fca5a5; font-size:0.9em; color:var(--mn-text-secondary, #475569);"></div>
         <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-            <button onclick="document.getElementById('tokenization-failure-input').value='strawberry'; showTokenizationFailure('strawberry');"
+            <button type="button" onclick="document.getElementById('tokenization-failure-input').value='strawberry'; showTokenizationFailure('strawberry');"
                     style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;">🍓 strawberry</button>
-            <button onclick="document.getElementById('tokenization-failure-input').value='banana'; showTokenizationFailure('banana');"
+            <button type="button" onclick="document.getElementById('tokenization-failure-input').value='banana'; showTokenizationFailure('banana');"
                     style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;">🍌 banana</button>
-            <button onclick="document.getElementById('tokenization-failure-input').value='mississippi'; showTokenizationFailure('mississippi');"
+            <button type="button" onclick="document.getElementById('tokenization-failure-input').value='mississippi'; showTokenizationFailure('mississippi');"
                     style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;">🌊 mississippi</button>
-            <button onclick="document.getElementById('tokenization-failure-input').value='antidisestablishment'; showTokenizationFailure('antidisestablishment');"
+            <button type="button" onclick="document.getElementById('tokenization-failure-input').value='antidisestablishment'; showTokenizationFailure('antidisestablishment');"
                     style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;">📚 antidisestablishment</button>
         </div>
     </div>
@@ -272,6 +273,33 @@ This is not a bug in the model; it is a property of the *tokenizer*, fixed befor
 </div>
 
 <div class="md">
+## When the vocabulary is a graveyard: glitch tokens
+
+Token inflation is a *quantitative* failure: the pieces are real, there are simply too many of them. There is also a stranger, *qualitative* failure. Sometimes a string becomes a single token during tokenizer training, but the model itself almost never sees that token during pretraining. The token exists in the vocabulary, it has an ID, an embedding row, and a place in every weight matrix, but its parameters are barely trained. The result is a **glitch token**: an input the tokenizer handles perfectly and the model has no learned meaning for.
+
+The canonical examples come from the GPT-2/GPT-3 tokenizer (the `·` below marks a leading space). In 2023, \citeauthor{rumbelow2023solidgold} collected strings such as `·SolidGoldMagikarp`, `·petertodd`, and `·externalToEVA` that produced bizarre, evasive, or repetitive behavior when used as prompts, including failures to repeat or spell the string back (\cite[Rumbelow & Watkins, 2023]{rumbelow2023solidgold}). The likely cause is a mismatch between the corpus used to *train the tokenizer* and the corpus used to *train the model*: a token can be frequent in the tokenizer's corpus (usernames, code handles, scraped strings) and absent from the model's training data, leaving its embedding close to its random initialization.
+
+Glitch tokens are the extreme end of a continuum, not a handful of curiosities. \cite[Land & Bartolo (2024)]{land2024fishing} showed that undertrained tokens are widespread and can be found automatically by comparing a token's frequency in the tokenizer corpus with its exposure in the model. \cite[Li et al. (2024)]{glitchtokens} built a taxonomy and detection pipeline for them, and \cite[Zhang et al. (2024)]{glitchprober2024} extended detection and mitigation. The practical lesson is not “avoid one weird string”; it is that **a vocabulary entry is not a learned concept**.
+</div>
+
+<div class="md">
+The documented examples are mostly ordinary-looking strings. That is the point: nothing in the surface form tells you whether the token was trained.
+
+| Token (the `·` marks a leading space) | What was reported | What it reveals |
+|---|---|---|
+| `·SolidGoldMagikarp` | Refusals, repetitions, and confusion when asked to repeat or spell it | A token can exist without a usable embedding |
+| `·petertodd` | Bizarre associations and unstable completions | The model may pattern-match the *string's* scraped context, not its meaning |
+| `·externalToEVA` | Evasive or malformed answers | Code identifiers can become tokens the language model never learned |
+| `·davidjl` | Unstable, sometimes evasive behavior | A username can be a single token and a blind spot |
+
+The pattern is general: **the tokenizer's training corpus and the model's training corpus are not the same corpus.** A tokenizer can create a token for a string that is frequent in its own data and then hand the model an embedding row that almost never receives a gradient. The model cannot tell you what the token means, because it was never taught.
+</div>
+
+<div class="md">
+This is also a security property. A token the model handles unpredictably is a potential bypass: adversarial tokenization can change a model's behavior or slip text past a classifier that segments it differently (\cite[Geh et al., 2025]{geh2025adversarialtokenization}; \cite[Schulz et al., 2025]{tokenbreak2025}). The lesson for anyone deploying a model is dull but important: **test the tokenizer, not just the model**, and treat “this string is one token” as a claim to verify rather than a guarantee.
+</div>
+
+<div class="md">
 ## Byte-level: the floor, not the fix
 
 Byte-level BPE \cite[Radford et al., GPT-2 (2019)]{gpt2} solved the *worst* failure — a token the model cannot even *represent*. Because the alphabet is all 256 bytes, every possible input has a tokenization; there is no unknown token, no "cannot read this script." That is a genuine, large win: a byte-level model can, in principle, read *any* language, including ones it was barely trained on.
@@ -287,4 +315,47 @@ The current research direction is to shrink, or remove, the discrete-token bottl
 The practical takeaway does not depend on the frontier. A tokenizer is a **decision with economic and fairness consequences**, not a detail. If you deploy a model multilingually, the question "how many tokens does a sentence in language *L* cost, relative to the dominant language?" is a real number, it is not one, and it should be measured — because the model's *effective* context window, and its *price*, are different for every language it serves.
 </div>
 
-<div class="mn-quiz" data-quiz="tokenizerlab"><script type="application/json">{"title": "Tokenization", "questions": [{"q": "What does Byte-Pair Encoding (BPE) do to build its vocabulary?", "options": ["Repeatedly merges the most frequent adjacent pair of symbols into a new token", "Uses every dictionary word as a token", "Splits text into single letters only", "Picks tokens at random"], "answer": 0, "explain": "Frequent strings become single tokens; rare words are built from smaller pieces."}, {"q": "What is “token inflation”?", "options": ["Some languages and scripts need many more tokens for the same content", "Tokens getting more expensive every year", "The vocabulary growing during inference", "Duplicate tokens in the training data"], "answer": 0, "explain": "Tokenizers trained mostly on English split other languages into more pieces — more cost, less context."}, {"q": "Why can a byte-level tokenizer never meet an unknown word?", "options": ["Any text can be written as a sequence of its 256 possible byte values", "It contains every word of every language", "It ignores unknown words", "It uses a spell-checker"], "answer": 0, "explain": "Bytes are the floor: everything is representable, though rare text becomes long."}, {"q": "Why do LLMs often struggle to count the letters in a word?", "options": ["They see tokens, not individual letters", "They have no memory", "Letters are removed during training", "Counting is forbidden by the tokenizer"], "answer": 0, "explain": "A word like “strawberry” may be one or a few tokens; the letters inside are not directly visible."}]}</script></div>
+<div class="md">
+## The rest of the bestiary
+
+Glitch tokens are one member of a family. Once you look at text as *tokens* rather than characters, several other failure modes become visible. None of them is exotic; all of them are consequences of the same decision to cut text at statistically convenient boundaries.
+
+### Numbers do not survive the trip
+
+A number is a sequence of digits; a tokenizer sees a string and may group it in ways that depend on frequency rather than place value. `1234` may be one token while `1235` becomes `123` + `5`; a decimal point, a leading zero, or a thousands separator can change the segmentation again. The model then has to do arithmetic across pieces that do not line up with the digits, which is one reason arithmetic accuracy depends on *how the number was written* (\cite[Singh & Strouse, 2024]{singh2024tokenizationcounts}). The fix is not “train harder”; it is to choose a representation that preserves the structure, for example digit-wise tokenization or an external calculator.
+
+### A space is not nothing
+
+Leading and trailing spaces belong to tokens. A prompt ending in `The answer is` and one ending in `The answer is ` can have different next-token distributions, because the final token is different. This matters most at the boundary between a prompt and a generated continuation, where a partial token can force the model into an awkward segmentation. Recent work shows that models can often recover from *non-canonical* tokenizations, but the distribution shift is real and measurable (\cite[Zheng et al., 2025]{zheng2025brokentokens}). Boundary-aware prompting and token healing exist precisely to avoid handing the model a split it did not expect.
+
+### One visible character, many tokens
+
+Unicode is not a one-to-one mapping from what you see to what the tokenizer receives. The same visible `é` can be one code point or `e` plus a combining acute accent; an emoji can be a single code point or a zero-width-joiner sequence of several; flags, family emoji, and right-to-left text add more cases. Normalization forms (NFC, NFD) can therefore change the token sequence without changing the rendered text (\cite[Unicode Consortium, UAX #15]{unicodeuax15}). Normalize before comparing, classifying, or hashing text — and remember that normalization is itself a lossy decision when the exact byte sequence matters.
+
+### The same string, a different tokenizer
+
+Token IDs are not portable. Each model family has its own vocabulary and merge rules, so the same sentence can be longer, shorter, or split at completely different places under a different tokenizer. That is why swapping a tokenizer invalidates the embedding matrix, why token counts from one model are not a budget for another, and why “the context window is 128k tokens” is a statement about a *particular* tokenizer. The tokenizer is part of the model contract, not a preprocessing detail you can change later.
+
+### Spelling, homoglyphs, and filter evasion
+
+If a safety filter and a generator tokenize the same text differently, an attacker can exploit the gap: invisible characters, Cyrillic letters that look Latin, leetspeak, or deliberate segmentation can change one side's view while leaving the other's meaning intact. This is the practical face of adversarial tokenization (\cite[Geh et al., 2025]{geh2025adversarialtokenization}; \cite[Schulz et al., 2025]{tokenbreak2025}). Defenses have to normalize and tokenize consistently across every component in the pipeline; a filter that reads characters while the model reads tokens is not protecting the same input.
+</div>
+
+<div class="md">
+## What to do about it
+
+The pathologies above point to a short engineering checklist:
+
+* **Measure, don't assume.** Count tokens per word for every language you serve, and track how those counts change across model families. A per-language token budget is a real product decision.
+* **Audit the vocabulary against the model's data.** Tokens that are frequent in the tokenizer corpus but rare in pretraining are candidates for pruning, retraining, or better initialization; detection is now automatic.
+* **Test the ugly cases.** Spelling, copying, numbers, whitespace, emoji, combining marks, rare names, and mixed scripts belong in the evaluation set, not in the “we'll see” bucket.
+* **Choose the right floor.** Byte-level BPE guarantees coverage; tokenizer-free and byte-latent approaches remove the discrete vocabulary entirely. Neither automatically removes the *statistical* bias, but they change which failures are possible.
+* **Give numbers a tool.** Digit-wise tokenization, a calculator, or a code interpreter is usually more reliable than asking the model to do arithmetic on arbitrary chunks.
+* **Treat the tokenizer as a versioned contract.** Document it, test it, and re-run the tests whenever the vocabulary or the model changes.
+
+> A tokenizer is a lossy interface between text and thought. The loss is not random: it is a set of decisions about which distinctions matter, made before the model sees a single example.
+
+The next time a model “can't count,” “can't spell,” or “goes weird” on an ordinary-looking string, ask the tokenizer first. It is often the part of the system that made the decision, and the part nobody debugged.
+</div>
+
+<div class="mn-quiz" data-quiz="tokenizerlab"><script type="application/json">{"title": "Tokenization", "questions": [{"q": "What does Byte-Pair Encoding (BPE) do to build its vocabulary?", "options": ["Repeatedly merges the most frequent adjacent pair of symbols into a new token", "Uses every dictionary word as a token", "Splits text into single letters only", "Picks tokens at random"], "answer": 0, "explain": "Frequent strings become single tokens; rare words are built from smaller pieces."}, {"q": "What is “token inflation”?", "options": ["Some languages and scripts need many more tokens for the same content", "Tokens getting more expensive every year", "The vocabulary growing during inference", "Duplicate tokens in the training data"], "answer": 0, "explain": "Tokenizers trained mostly on English split other languages into more pieces — more cost, less context."}, {"q": "What is a glitch token?", "options": ["A token that exists in the vocabulary but received little or no training signal", "A token that crashes the tokenizer", "A special token used only for safety filters", "Any token longer than one character"], "answer": 0, "explain": "Glitch tokens are vocabulary entries whose embeddings were barely trained, so the model has no stable meaning for them. SolidGoldMagikarp is the canonical example."}, {"q": "Why can a byte-level tokenizer never meet an unknown word?", "options": ["Any text can be written as a sequence of its 256 possible byte values", "It contains every word of every language", "It ignores unknown words", "It uses a spell-checker"], "answer": 0, "explain": "Bytes are the floor: everything is representable, though rare text becomes long."}, {"q": "Why do LLMs often struggle to count the letters in a word?", "options": ["They see tokens, not individual letters", "They have no memory", "Letters are removed during training", "Counting is forbidden by the tokenizer"], "answer": 0, "explain": "A word like “strawberry” may be one or a few tokens; the letters inside are not directly visible."}, {"q": "Why can arithmetic accuracy depend on how a number is written?", "options": ["The tokenizer may split the digits into chunks that do not follow place value", "The model cannot read Arabic numerals", "Numbers are always stored as words", "The decimal point is a special token"], "answer": 0, "explain": "If 1234 is one token but 1235 is 123 + 5, the model is doing arithmetic across inconsistent digit groupings."}]}</script></div>
