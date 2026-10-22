@@ -678,8 +678,8 @@ if(!server_php_self_ends_with_index_php()) {
 	</head>
 	<body>
 		<a class="cl-skip" href="#contents">Skip to content</a>
-		<button id="drawer-toggle" aria-label="Menu" title="Course modules">&#9776;</button>
-		<button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></button>
+		<button id="drawer-toggle" aria-label="Open course modules" title="Course modules" aria-haspopup="dialog" aria-controls="drawer-panel" aria-expanded="false">&#9776;</button>
+		<button id="search-trigger" class="search-trigger" aria-label="Search" title="Search (Ctrl+K or /)" aria-haspopup="dialog" aria-controls="search-overlay" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></button>
 		<?php render_theme_toggle(); ?>
 		<?php render_topics_toggle(); ?>
 		<?php render_paths_toggle(); ?>
@@ -692,7 +692,7 @@ if(!server_php_self_ends_with_index_php()) {
 		</div>
 
 
-		<div id="contents" style="display: none">
+		<div id="contents" role="main" tabindex="-1" style="display: none">
 <?php
 		render_home_link();
 		print_dynamic_title("h1");
@@ -832,11 +832,11 @@ function render_home_link(): void {
 function render_drawer(): void {
 	$grouped = parse_course_metadata();
 	$current = pathinfo($_SERVER['SCRIPT_FILENAME'] ?? '', PATHINFO_FILENAME);
-	echo '<div class="drawer-backdrop" id="drawer-backdrop"></div>';
-	echo '<div class="drawer-panel" id="drawer-panel">';
+	echo '<div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true"></div>';
+	echo '<div class="drawer-panel" id="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">';
 	echo '<div class="drawer-header">';
-	echo '<h2>Course Modules</h2>';
-	echo '<button class="drawer-close" id="drawer-close" aria-label="Close drawer">&times;</button>';
+	echo '<h2 id="drawer-title">Course Modules</h2>';
+	echo '<button type="button" class="drawer-close" id="drawer-close" aria-label="Close course modules">&times;</button>';
 	echo '</div>';
 	echo '<div class="drawer-sections">';
 	foreach ($grouped as $partNum => $modules) {
@@ -844,7 +844,8 @@ function render_drawer(): void {
 		echo '<div class="drawer-part-label">Part ' . $partNum . '</div>';
 		foreach ($modules as $m) {
 			$active = ($m['slug'] === $current) ? ' active' : '';
-			echo '<a href="' . htmlspecialchars($m['url']) . '" class="drawer-module' . $active . '">'
+			$currentAttr = ($m['slug'] === $current) ? ' aria-current="page"' : '';
+			echo '<a href="' . htmlspecialchars($m['url']) . '" class="drawer-module' . $active . '"' . $currentAttr . '>'
 				. htmlspecialchars($m['title']) . '</a>';
 		}
 		echo '</div>';

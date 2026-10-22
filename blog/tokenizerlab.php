@@ -200,10 +200,11 @@ Type a word like **“strawberry”** below and watch how BPE splits it. The mod
                    value="strawberry"
                    oninput="showTokenizationFailure(this.value)"
                    style="width:100%; padding:10px; border-radius:8px; border:2px solid #fca5a5; font-size:1.1rem; box-sizing:border-box;"
+                   aria-label="Word whose tokenization you want to inspect"
                    autocomplete="off" spellcheck="false">
         </div>
-        <div id="tokenization-failure-vis" style="background:var(--mn-bg-subtle, #fef2f2); border-radius:8px; padding:16px; min-height:60px; font-family:monospace; font-size:1.1rem; line-height:2; color:var(--mn-text, #1e293b);"></div>
-        <div id="tokenization-failure-explain" style="margin-top:10px; padding:12px; background:var(--mn-bg-subtle, #fff); border-radius:8px; border:1px dashed #fca5a5; font-size:0.9em; color:var(--mn-text-secondary, #475569);"></div>
+        <div id="tokenization-failure-vis" aria-live="polite" aria-atomic="true" style="background:var(--mn-bg-subtle, #fef2f2); border-radius:8px; padding:16px; min-height:60px; font-family:monospace; font-size:1.1rem; line-height:2; color:var(--mn-text, #1e293b);"></div>
+        <div id="tokenization-failure-explain" aria-live="polite" style="margin-top:10px; padding:12px; background:var(--mn-bg-subtle, #fff); border-radius:8px; border:1px dashed #fca5a5; font-size:0.9em; color:var(--mn-text-secondary, #475569);"></div>
         <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
             <button type="button" onclick="document.getElementById('tokenization-failure-input').value='strawberry'; showTokenizationFailure('strawberry');"
                     style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;">🍓 strawberry</button>
