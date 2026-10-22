@@ -292,8 +292,11 @@ The documented examples are mostly ordinary-looking strings. That is the point: 
 | `·petertodd` | Bizarre associations and unstable completions | The model may pattern-match the *string's* scraped context, not its meaning |
 | `·externalToEVA` | Evasive or malformed answers | Code identifiers can become tokens the language model never learned |
 | `·davidjl` | Unstable, sometimes evasive behavior | A username can be a single token and a blind spot |
+| `·RandomRedditor` | Unstable completions | A scraped username can occupy a whole vocabulary slot |
+| `·repmovsb` | Unstable or evasive behavior | An assembly mnemonic can be a token with no learned semantics |
+| `·TheNitromeFan` | Repeated or confused output | A fandom handle can be a token the model never learned |
 
-The pattern is general: **the tokenizer's training corpus and the model's training corpus are not the same corpus.** A tokenizer can create a token for a string that is frequent in its own data and then hand the model an embedding row that almost never receives a gradient. The model cannot tell you what the token means, because it was never taught.
+The families are recognizable in hindsight: Reddit usernames, UI identifiers such as `·guiActive`, code mnemonics such as `·repmovsb`, and ordinary-looking words such as `·Scaled`. The pattern is general: **the tokenizer's training corpus and the model's training corpus are not the same corpus.** A tokenizer can create a token for a string that is frequent in its own data and then hand the model an embedding row that almost never receives a gradient. The model cannot tell you what the token means, because it was never taught.
 </div>
 
 <div class="md">

@@ -116,7 +116,9 @@ topics, keypoint, progress_tracker, then everything in `blog/modules/*.js`
 `link_preview.js` (Wikipedia-style hover previews on course links — fetches
 the target lesson, shows its first content image + title above the link;
 `window.__LKP_FORCE__ = true` bypasses the fine-pointer gate for headless
-tests, where `hover:hover` reports false).
+tests, where `hover:hover` reports false), `a11y.js` (labels unlabeled form
+controls and chart/canvas containers, keyboard-activates non-native clickables,
+keeps closed overlays inert; `window.__a11yCheck()` is the debug audit).
 A new cross-lesson helper belongs in one of these, not copied into lessons.
 
 **Reader-retention modules** (all state in localStorage, nothing leaves the

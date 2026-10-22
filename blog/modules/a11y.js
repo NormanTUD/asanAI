@@ -117,11 +117,11 @@
 	function nameVisual(el) {
 		if (el.hasAttribute(DONE)) return;
 		el.setAttribute(DONE, "1");
-		if (el.getAttribute("role") === "img" && (el.hasAttribute("aria-label") || el.hasAttribute("aria-labelledby"))) return;
-		var name = el.getAttribute("data-a11y-label") || el.getAttribute("aria-label") || el.getAttribute("title");
+		if (el.hasAttribute("aria-label") || el.hasAttribute("aria-labelledby")) return;
+		var name = el.getAttribute("data-a11y-label") || el.getAttribute("title");
 		if (!name) name = headingNear(el);
 		if (!name) name = "Interactive visualization";
-		el.setAttribute("role", "img");
+		if (!el.hasAttribute("role")) el.setAttribute("role", "img");
 		el.setAttribute("aria-label", name);
 	}
 
@@ -146,7 +146,7 @@
 		document.querySelectorAll("button:not([type])").forEach(function (b) { b.type = "button"; });
 
 		document.querySelectorAll("input, select, textarea").forEach(function (el) {
-			if ((el.tagName === "INPUT" && el.type === "hidden") || el.closest("[inert]")) return;
+			if (el.tagName === "INPUT" && el.type === "hidden") return;
 			nameControl(el);
 		});
 
@@ -172,6 +172,8 @@
 		});
 
 		document.querySelectorAll("button svg, a svg").forEach(function (svg) {
+			var host = svg.closest("a, button");
+			if (host && host.tagName === "A" && !textOf(host) && !host.hasAttribute("aria-label") && !host.hasAttribute("aria-labelledby")) return;
 			if (!svg.hasAttribute("role") && !svg.hasAttribute("aria-label") && !svg.querySelector("title")) {
 				svg.setAttribute("aria-hidden", "true");
 				svg.setAttribute("focusable", "false");

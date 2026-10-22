@@ -833,7 +833,7 @@ function render_drawer(): void {
 	$grouped = parse_course_metadata();
 	$current = pathinfo($_SERVER['SCRIPT_FILENAME'] ?? '', PATHINFO_FILENAME);
 	echo '<div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true"></div>';
-	echo '<div class="drawer-panel" id="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">';
+	echo '<div class="drawer-panel" id="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title" aria-hidden="true" inert>';
 	echo '<div class="drawer-header">';
 	echo '<h2 id="drawer-title">Course Modules</h2>';
 	echo '<button type="button" class="drawer-close" id="drawer-close" aria-label="Close course modules">&times;</button>';
@@ -867,7 +867,7 @@ function render_theme_toggle(): void {
  * modules finish loading.
  */
 function render_topics_toggle(): void {
-	echo '<button id="topics-toggle" type="button" aria-label="Choose your interests" title="Choose your interests" onclick="if(window.BlogTopics){window.BlogTopics.openOverlay()}">';
+	echo '<button id="topics-toggle" type="button" aria-label="Choose your interests" aria-haspopup="dialog" title="Choose your interests" onclick="if(window.BlogTopics){window.BlogTopics.openOverlay()}">';
 	echo '<span class="ti-target" aria-hidden="true">';
 	echo '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
 	echo '<circle cx="12" cy="12" r="9"/>';
@@ -882,7 +882,7 @@ function render_topics_toggle(): void {
  * reader toggle; opens the paths window (modules/paths.js).
  */
 function render_paths_toggle(): void {
-	echo '<button id="paths-toggle" type="button" aria-label="Learning paths" title="Learning paths" onclick="if(window.MNPaths){window.MNPaths.open()}">';
+	echo '<button id="paths-toggle" type="button" aria-label="Learning paths" aria-haspopup="dialog" title="Learning paths" onclick="if(window.MNPaths){window.MNPaths.open()}">';
 	echo '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
 	echo '<circle cx="6" cy="19" r="2.2"/>';
 	echo '<circle cx="18" cy="5" r="2.2"/>';
