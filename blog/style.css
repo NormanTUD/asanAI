@@ -12823,12 +12823,23 @@ html.mnp-open { overflow: hidden; }
 .mnp-hero-next > span { flex: none; font: 600 .62rem/1 var(--mn-font-prose); letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
 .mnp-hero-next a { min-width: 0; color: var(--mn-text-secondary); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mnp-hero-next a:hover { color: var(--tone); text-decoration: underline; }
-.mnp-hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
-.mnp-hero-actions .mnp-jump, .mnp-hero-actions .mnp-pick { min-height: 40px; }
-.mnp-hero-actions .mnp-jump { margin-top: 0; align-self: center; }
+.mnp-hero-actions { display: flex; align-items: stretch; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.mnp-hero-actions .mnp-jump, .mnp-hero-actions .mnp-pick, .mnp-hero-actions .mnp-hero-following { box-sizing: border-box; min-height: 40px; }
+.mnp-hero-actions .mnp-jump { margin-top: 0; align-self: stretch; }
+.mnp-hero-actions .mnp-jump, .mnp-hero-actions .mnp-pick, .mnp-hero-actions .mnp-hero-following { display: inline-flex; align-items: center; justify-content: center; padding: 0 17px; font: 600 .88rem/1 var(--mn-font-prose); }
 .mnp-hero-go { background: var(--tone); border-color: var(--tone); color: #fff; }
 .mnp-hero-go:hover { background: color-mix(in srgb, var(--tone) 82%, #000); border-color: color-mix(in srgb, var(--tone) 82%, #000); color: #fff; }
-.mnp-hero-following { display: inline-flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--tone) 32%, var(--mn-border)); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); font: 600 .78rem/1 var(--mn-font-prose); }
+.mnp-hero-following { gap: 5px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--tone) 32%, var(--mn-border)); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); }
+.mnp-fit { appearance: none; display: inline-flex; align-items: center; gap: 5px; align-self: flex-start; min-height: 30px; padding: 5px 11px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--tone) 42%, var(--mn-border)); background: color-mix(in srgb, var(--tone) 6%, transparent); color: color-mix(in srgb, var(--tone) 58%, var(--mn-heading)); font: 600 .72rem/1.2 var(--mn-font-prose); cursor: pointer; white-space: nowrap; }
+.mnp-hero-meta .mnp-fit { align-self: center; }
+.mnp-fit:hover { border-color: var(--tone); background: color-mix(in srgb, var(--tone) 12%, var(--mn-surface)); }
+.mnp-fit:focus-visible { outline: 2px solid var(--tone); outline-offset: 2px; }
+.mnp-map-node.is-off .mnp-map-dot { opacity: .5; border-style: dashed; }
+.mnp-map-node.is-off .mnp-map-title { opacity: .55; }
+.mnp-map-node.is-dim .mnp-map-dot { opacity: .75; }
+.mnp-map-node.is-dim .mnp-map-title { opacity: .8; }
+.mnp-steps li.is-off { opacity: .55; }
+.mnp-steps li.is-dim { opacity: .78; }
 .mnp-hero-leave { appearance: none; margin-top: 14px; padding: 2px 0; border: 0; background: none; color: var(--mn-text-muted); font: 500 .78rem var(--mn-font-prose); cursor: pointer; }
 .mnp-hero-leave:hover { color: var(--mn-rose); }
 .mnp-quiet { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin: 16px 0 0; font: 400 .82rem/1.4 var(--mn-font-prose); color: var(--mn-text-muted); }

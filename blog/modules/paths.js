@@ -49,6 +49,53 @@
 	function mods() { return nav().modules || []; }
 	function modOf(slug) { return mods().find((m) => m.slug === slug); }
 
+	function moduleIds(m) {
+		return ((m && m.topics ? m.topics : "") + "," + (m && m.tags ? m.tags : ""))
+			.split(/[,\s]+/).filter(Boolean);
+	}
+
+	function lessonFit(m) {
+		const bt = window.BlogTopics;
+		if (!bt || !bt.scoreUnit || !m) return { state: "full", why: null, reason: "" };
+		const ids = moduleIds(m);
+		const mathReq = m.math !== undefined && m.math !== null && m.math !== "" ? m.math : null;
+		const depthReq = m.depth !== undefined && m.depth !== null && m.depth !== "" ? m.depth : (m.depthlevel || null);
+		if (!ids.length && mathReq === null && depthReq === null) return { state: "full", why: null, reason: "" };
+		return bt.scoreUnit(ids, { mathReq: mathReq, depthReq: depthReq, pure: true });
+	}
+
+	function pathFit(p) {
+		const fit = { total: p.lessons.length, full: 0, partial: 0, off: 0, why: null, reasons: {} };
+		p.lessons.forEach((s) => {
+			const f = lessonFit(modOf(s));
+			if (f.state === "off") fit.off++;
+			else if (f.state === "partial") fit.partial++;
+			else fit.full++;
+			if (f.state === "off" && f.why) fit.reasons[f.why] = (fit.reasons[f.why] || 0) + 1;
+		});
+		fit.score = fit.total ? (fit.full + fit.partial * 0.55) / fit.total : 0;
+		fit.why = Object.keys(fit.reasons).sort((a, b) => fit.reasons[b] - fit.reasons[a])[0] || null;
+		return fit;
+	}
+
+	function fitReason(why) {
+		return {
+			math: "Some lessons need more math comfort",
+			depth: "Some lessons reach further back than your history depth",
+			interests: "Some lessons are outside your selected interests",
+			category: "Some lessons use a tone you switched off",
+			layman: "Some lessons are beyond the layman core"
+		}[why] || "Some lessons do not match your settings";
+	}
+
+	function fitChip(fit, compact) {
+		if (!fit.total || !fit.off) return "";
+		const good = fit.full + fit.partial;
+		const label = compact ? good + "/" + fit.total + " fit" : good + " of " + fit.total + " lessons fit your settings";
+		const title = fitReason(fit.why) + ". Click to tune your interests, math level and depth.";
+		return '<button type="button" class="mnp-fit mnp-fit-tune" title="' + esc(title) + '">' + label + "</button>";
+	}
+
 	function allPaths() {
 		const known = {};
 		mods().forEach((m) => { known[m.slug] = true; });
@@ -130,8 +177,9 @@
 		return i >= 0 ? String(i + 1).padStart(2, "0") : "·";
 	}
 
-	function card(p) {
+	function card(p, knownFit) {
 		const g = progress(p);
+		const fit = knownFit || pathFit(p);
 		const nm = g.next && modOf(g.next);
 		const q = Q();
 		const started = g.done > 0 || !!(q && p.lessons.some((s) => q.visited(s)));
@@ -139,7 +187,10 @@
 		const dotState = (s) => q && q.finished(s) ? "is-done" : s === g.next ? "is-next" : q && q.visited(s) ? "is-seen" : "";
 		const steps = p.lessons.map((s, k) => {
 			const m = modOf(s);
-			return '<li class="' + dotState(s) + '"><span class="mnp-step-n">' + (q && q.finished(s) ? "✓" : k + 1) + '</span><a href="' + esc(m ? m.url : s) + '">' + esc(m ? m.title : s) + "</a></li>";
+			const f = lessonFit(m);
+			const fitCls = f.state === "off" ? " is-off" : f.state === "partial" ? " is-dim" : "";
+			const title = (m ? m.title : s) + (f.state === "off" ? " — " + f.reason : "");
+			return '<li class="' + dotState(s) + fitCls + '"><span class="mnp-step-n">' + (q && q.finished(s) ? "✓" : k + 1) + '</span><a href="' + esc(m ? m.url : s) + '" title="' + esc(title) + '">' + esc(m ? m.title : s) + "</a></li>";
 		}).join("");
 		const isPicked = pickedId === p.id;
 		const note = g.complete
@@ -155,7 +206,7 @@
 			'<button type="button" class="mnp-pick" aria-pressed="' + (isPicked ? "true" : "false") + '" aria-label="' + (isPicked ? "Following " : "Follow ") + esc(p.title) + '" title="' + (isPicked ? "Following this path" : "Follow this path") + '">' + (isPicked ? "Following ✓" : "Follow") + "</button></div>" +
 			(started ? '<div class="mnp-card-progress"><span class="mnp-progress" role="progressbar" aria-label="' + g.done + ' of ' + g.total + ' lessons read" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></span>' +
 			'<span class="mnp-card-pct">' + g.done + " of " + g.total + "</span></div>" : "") +
-			note +
+			note + fitChip(fit, true) +
 			'<div class="mnp-card-foot">' + action + "</div>" +
 			'<details class="mnp-path-more"><summary>' + p.lessons.length + ' lessons</summary><ol class="mnp-steps">' + steps + "</ol></details>" +
 			"</article>";
@@ -169,10 +220,13 @@
 			const done = q && q.finished(s);
 			const seen = q && q.visited(s);
 			const state = done ? " is-done" : s === g.next ? " is-current" : seen ? " is-seen" : "";
-			const title = m ? m.title : s;
-			return '<li class="mnp-map-node' + state + '"><a href="' + esc(m ? m.url : s) + '" title="' + esc(title) + '"' + (s === g.next && !done ? ' aria-current="step"' : "") + ">" +
+			const fit = lessonFit(m);
+			const fitCls = fit.state === "off" ? " is-off" : fit.state === "partial" ? " is-dim" : "";
+			const label = m ? m.title : s;
+			const title = label + (fit.state === "off" ? " — " + fit.reason : "");
+			return '<li class="mnp-map-node' + state + fitCls + '"><a href="' + esc(m ? m.url : s) + '" title="' + esc(title) + '"' + (s === g.next && !done ? ' aria-current="step"' : "") + ">" +
 				'<span class="mnp-map-dot" aria-hidden="true">' + (done ? "✓" : i + 1) + '</span>' +
-				'<span class="mnp-map-title">' + esc(shortTitle(title)) + "</span>" +
+				'<span class="mnp-map-title">' + esc(shortTitle(label)) + "</span>" +
 				'<span class="mnp-sr">' + (done ? "Completed, " : "") + "step " + (i + 1) + ": " + esc(title) + "</span>" +
 				"</a></li>";
 		}).join("") + "</ol>";
@@ -180,15 +234,18 @@
 
 	function recommended() {
 		const cur = allPaths().filter((p) => !p.isPart);
-		return cur.find((p) => !progress(p).complete) || cur[0] || null;
+		const open = cur.map((p, i) => ({ p: p, i: i, fit: pathFit(p) })).filter((x) => !progress(x.p).complete);
+		open.sort((a, b) => b.fit.score - a.fit.score || a.i - b.i);
+		return (open[0] && open[0].p) || cur[0] || null;
 	}
 
 	function heroHtml(p, picked) {
 		const g = progress(p);
+		const fit = pathFit(p);
 		const next = g.next && modOf(g.next);
 		const pct = Math.round(g.done / g.total * 100);
 		const step = next ? p.lessons.indexOf(next.slug) + 1 : g.total;
-		const kicker = picked ? "Your path · Step " + step + " of " + g.total : "Start here · " + g.total + " lessons";
+		const kicker = picked ? "Your path · Step " + step + " of " + g.total : "Suggested for you · " + g.total + " lessons";
 		const primary = g.complete
 			? '<button type="button" class="mnp-jump mnp-hero-go mnp-cert" data-path="' + esc(p.id) + '">🎓 Certificate</button>'
 			: next ? '<a class="mnp-jump mnp-hero-go" href="' + esc(next.url) + '">' + (picked ? "Continue" : "Start path") + ' <span aria-hidden="true">→</span></a>' : "";
@@ -207,7 +264,7 @@
 			routeMap(p) +
 			'<div class="mnp-hero-progress"><span class="mnp-progress" role="progressbar" aria-label="' + g.done + ' of ' + g.total + ' lessons read" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></span>' +
 			'<span class="mnp-card-pct">' + g.done + " of " + g.total + " read</span></div>" +
-			'<div class="mnp-hero-meta">' + note + "</div>" +
+			'<div class="mnp-hero-meta">' + note + fitChip(fit, false) + "</div>" +
 			'<div class="mnp-hero-actions">' + primary + follow +
 			'<button type="button" class="mnp-jump mnp-all-toggle" aria-expanded="' + (allOpen ? "true" : "false") + '" aria-controls="mnp-all-body" data-show="Show all ' + allCount + ' paths" data-hide="Hide all paths">' + (allOpen ? "Hide all paths" : "Show all " + allCount + " paths") + "</button></div>" +
 			(picked ? '<button type="button" class="mnp-hero-leave" title="Stop following this path">Leave this path</button>' : "") +
@@ -216,13 +273,15 @@
 
 	function render() {
 		const ps = allPaths();
-		const cur = ps.filter((p) => !p.isPart), parts = ps.filter((p) => p.isPart);
-		const curDone = cur.filter((p) => progress(p).complete).length;
+		const cur = ps.filter((p) => !p.isPart).map((p, i) => ({ p: p, i: i, fit: pathFit(p) }))
+			.sort((a, b) => b.fit.score - a.fit.score || a.i - b.i);
+		const parts = ps.filter((p) => p.isPart);
+		const curDone = cur.filter((x) => progress(x.p).complete).length;
 		const partDone = parts.filter((p) => progress(p).complete).length;
 		const picked = selected();
 		const hero = picked || recommended();
 		return (hero ? heroHtml(hero, !!picked) : "") +
-			'<div class="mnp-quiet"><span>Read on your own?</span>' +
+			'<div class="mnp-quiet"><span>Paths follow your interests, math comfort and history depth.</span>' +
 				'<button type="button" class="mnp-quiet-link mnp-tune">Tune to my interests</button>' +
 				'<button type="button" class="mnp-quiet-link mnp-browse">Browse all lessons</button></div>' +
 			'<div class="mnp-all' + (allOpen ? " is-open" : "") + '">' +
@@ -234,7 +293,7 @@
 					'<span class="mnp-count">' + curDone + " of " + cur.length + " curated paths completed</span></div>" +
 				'<div class="mnp-sect-row"><div><h3 class="mnp-sect" id="mnp-curated">Curated paths</h3>' +
 				'<p class="mnp-sect-sub">Goal-driven routes with a clear next step.</p></div></div>' +
-				'<div class="mnp-paths" data-mnp-group="curated">' + cur.map(card).join("") + "</div>" +
+				'<div class="mnp-paths" data-mnp-group="curated">' + cur.map((x) => card(x.p, x.fit)).join("") + "</div>" +
 				'<p class="mnp-empty" data-mnp-empty="curated" hidden>No curated path matches that search.</p>' +
 				'<div class="mnp-sect-row"><div><h3 class="mnp-sect">The six parts</h3>' +
 				'<p class="mnp-sect-sub">The full course, part by part.</p></div>' +
@@ -288,6 +347,11 @@
 		});
 	}
 
+	function tune() {
+		close();
+		setTimeout(() => { if (window.BlogTopics) window.BlogTopics.openOverlay(); }, 280);
+	}
+
 	function bindFork(root) {
 		const search = root.querySelector("#mnp-search");
 		if (search) {
@@ -319,11 +383,7 @@
 			const leave = hero.querySelector(".mnp-hero-leave");
 			if (leave) leave.addEventListener("click", () => setSelected(null, true));
 		}
-		const tune = root.querySelector(".mnp-tune");
-		if (tune) tune.addEventListener("click", () => {
-			close();
-			setTimeout(() => { if (window.BlogTopics) window.BlogTopics.openOverlay(); }, 280);
-		});
+		root.querySelectorAll(".mnp-tune, .mnp-fit-tune").forEach((b) => b.addEventListener("click", tune));
 		const browse = root.querySelector(".mnp-browse");
 		if (browse) browse.addEventListener("click", () => {
 			close();
@@ -459,10 +519,12 @@
 			host.appendChild(homeCard);
 		}
 		const g = progress(p);
+		const fit = pathFit(p);
 		const next = g.next && modOf(g.next);
 		const meta = g.complete
 			? "Completed · " + g.total + " lessons · certificate ready"
-			: g.done + " of " + g.total + " read" + (next ? " · next: " + next.title : "");
+			: g.done + " of " + g.total + " read" + (next ? " · next: " + next.title : "") +
+				(fit.off ? " · " + (fit.total - fit.off) + " of " + fit.total + " fit your settings" : "");
 		const action = g.complete
 			? '<button type="button" class="mnz-btn mnp-home-cert">Certificate</button>'
 			: next ? '<a class="mnz-btn" href="' + esc(next.url) + '">Continue</a>' : "";
@@ -706,6 +768,7 @@
 			watching = true;
 			window.addEventListener("blogPostLoadComplete", paintAll);
 			window.addEventListener("mnquest:change", paintAll);
+			if (window.BlogTopics && window.BlogTopics.onChange) window.BlogTopics.onChange(() => { if (overlay) paint(); });
 		}
 		paintAll();
 		if (Q()) {

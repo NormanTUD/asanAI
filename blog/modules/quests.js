@@ -261,6 +261,10 @@
 	}
 
 	let queuedToasts = null;
+	let introQuiet = true;
+	function endIntroQuiet() { introQuiet = false; }
+	["pointerdown", "keydown", "touchstart"].forEach((ev) => window.addEventListener(ev, endIntroQuiet, { passive: true, once: true }));
+	setTimeout(endIntroQuiet, 4000);
 	function loaderPending() { return !!document.getElementById("loader"); }
 	function flushQueuedToasts() {
 		if (!queuedToasts || !queuedToasts.length) return;
@@ -271,6 +275,7 @@
 	}
 
 	function toast(html, kind, onClick) {
+		if (introQuiet) return;
 		if (loaderPending()) {
 			(queuedToasts || (queuedToasts = [])).push([html, kind, onClick]);
 			if (queuedToasts.length === 1) setTimeout(flushQueuedToasts, 250);

@@ -874,7 +874,7 @@
 		//    suppressed for every tile (the slider's level never applied).
 		const lessonId = isIndexPage() ? null : getLessonId();
 		const deps = lessonId ? LESSON_DEPS[lessonId] : null;
-		const depsOK = (deps && deps.length) ? depsMet(lessonId) : false;
+		const depsOK = !opts.pure && (deps && deps.length) ? depsMet(lessonId) : false;
 		if (mathReq !== null && !depsOK && getMathLevel() < mathReq) {
 			state = 'off';
 			reason = 'needs ' + mathLevelLabel(mathReq) + ' math (you are at ' + mathLevelLabel(getMathLevel()) + ')';
