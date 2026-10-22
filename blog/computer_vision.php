@@ -193,7 +193,7 @@ In **Deep Learning**, the paradigm shifts completely:
 	<span style="color:#94a3b8; font-style:italic;">👆 Move your mouse over the source image to see the convolution math computed in real-time for each pixel...</span>
 </div>
 
-<img id="conv-src-hidden" src="stop_sign.jpg" crossorigin="anonymous" style="display:none">
+<img id="conv-src-hidden" src="stop_sign.jpg" alt="" aria-hidden="true" crossorigin="anonymous" style="display:none">
 <div id="computer_vision-console" style="display: none" class="status-console"></div>
 
 <div class="lab-dashboard" style="display: flex; flex-direction: column; gap: 20px; padding: 20px">
