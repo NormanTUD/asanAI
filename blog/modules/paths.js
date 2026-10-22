@@ -43,6 +43,30 @@
 		return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 	}
 
+	function reducedMotion() {
+		return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+	}
+
+	let activeViewTransition = null, pendingSwap = null;
+	function smoothSwap(fn) {
+		if (!document.startViewTransition || reducedMotion() || document.visibilityState === "hidden") { fn(); return; }
+		if (activeViewTransition) { pendingSwap = fn; return; }
+		try {
+			const vt = document.startViewTransition(fn);
+			activeViewTransition = vt;
+			const done = () => {
+				if (activeViewTransition !== vt) return;
+				activeViewTransition = null;
+				if (pendingSwap) { const next = pendingSwap; pendingSwap = null; smoothSwap(next); }
+			};
+			if (vt.finished) vt.finished.then(done, done);
+			if (vt.ready && vt.ready.catch) vt.ready.catch(() => {});
+			if (vt.updateCallbackDone && vt.updateCallbackDone.catch) vt.updateCallbackDone.catch(() => {});
+			return;
+		} catch (e) { /* ignore */ }
+		fn();
+	}
+
 	function shortTitle(t) { return String(t || "").split(/\s[—–:]\s|:\s/)[0]; }
 
 	function nav() { return window.__moduleNavData || {}; }
@@ -348,8 +372,32 @@
 	}
 
 	function tune() {
-		close();
-		setTimeout(() => { if (window.BlogTopics) window.BlogTopics.openOverlay(); }, 280);
+		if (!window.BlogTopics) return;
+		if (overlay) overlay.inert = true;
+		window.BlogTopics.openOverlay();
+	}
+
+	let allAnim = null;
+	function setAllBody(root, open, animate) {
+		const body = root.querySelector(".mnp-all-body");
+		const all = root.querySelector(".mnp-all");
+		if (!body) return;
+		if (all) all.classList.toggle("is-open", open);
+		if (allAnim) { allAnim.cancel(); allAnim = null; }
+		body.style.height = "";
+		body.style.overflow = "";
+		if (!animate || reducedMotion()) { body.hidden = !open; return; }
+		body.hidden = false;
+		const height = body.scrollHeight;
+		body.style.overflow = "hidden";
+		body.style.height = (open ? 0 : height) + "px";
+		void body.offsetHeight;
+		allAnim = body.animate(
+			[{ height: (open ? 0 : height) + "px" }, { height: (open ? height : 0) + "px" }],
+			{ duration: open ? 420 : 300, easing: "cubic-bezier(.22, .61, .36, 1)" }
+		);
+		allAnim.onfinish = () => { allAnim = null; body.hidden = !open; body.style.height = ""; body.style.overflow = ""; };
+		allAnim.oncancel = () => { allAnim = null; };
 	}
 
 	function bindFork(root) {
@@ -367,10 +415,7 @@
 			allOpen = !allOpen;
 			allBtn.setAttribute("aria-expanded", allOpen ? "true" : "false");
 			allBtn.textContent = allOpen ? allBtn.getAttribute("data-hide") : allBtn.getAttribute("data-show");
-			const all = root.querySelector(".mnp-all");
-			if (all) all.classList.toggle("is-open", allOpen);
-			const body = root.querySelector(".mnp-all-body");
-			if (body) body.hidden = !allOpen;
+			setAllBody(root, allOpen, true);
 		});
 		const hero = root.querySelector(".mnp-hero");
 		if (hero) {
@@ -615,26 +660,31 @@
 	}
 
 	// ── The paths window (opened from #paths-toggle, top right) ─────
-	let overlay = null, lastFocus = null;
+	let overlay = null, lastFocus = null, pathsDirty = false;
 
-	function paint() {
+	function paint(animate) {
 		if (!overlay) return;
-		const body = overlay.querySelector(".mnp-modal-body");
-		const scroll = overlay.scrollTop;
-		const open = Array.prototype.map.call(body.querySelectorAll("details[open]"), (d) => d.closest(".mnp-path") && Array.prototype.indexOf.call(body.querySelectorAll(".mnp-path"), d.closest(".mnp-path")));
-		body.innerHTML = render();
-		const cards = body.querySelectorAll(".mnp-path");
-		open.forEach((i) => { if (cards[i]) cards[i].querySelector("details").open = true; });
-		bindCerts(body);
-		bindFork(body);
-		bindCards(body);
-		overlay.scrollTop = scroll;
+		const paintNow = () => {
+			const body = overlay.querySelector(".mnp-modal-body");
+			const scroll = overlay.scrollTop;
+			const open = Array.prototype.map.call(body.querySelectorAll("details[open]"), (d) => d.closest(".mnp-path") && Array.prototype.indexOf.call(body.querySelectorAll(".mnp-path"), d.closest(".mnp-path")));
+			body.innerHTML = render();
+			const cards = body.querySelectorAll(".mnp-path");
+			open.forEach((i) => { if (cards[i]) cards[i].querySelector("details").open = true; });
+			bindCerts(body);
+			bindFork(body);
+			bindCards(body);
+			overlay.scrollTop = scroll;
+		};
+		if (animate === false) paintNow();
+		else smoothSwap(paintNow);
 	}
 
 	function open() {
 		if (overlay) return;
 		searchQuery = "";
 		allOpen = false;
+		pathsDirty = false;
 		lastFocus = document.activeElement;
 		overlay = document.createElement("div");
 		overlay.className = "mnp-overlay";
@@ -647,10 +697,10 @@
 			'<div class="mnp-modal-body"></div></div>';
 		document.body.appendChild(overlay);
 		document.documentElement.classList.add("mnp-open");
-		paint();
+		paint(false);
 		requestAnimationFrame(() => overlay && overlay.classList.add("is-in"));
 		overlay.addEventListener("click", (e) => { if (e.target === overlay || e.target.closest(".mnp-close")) close(); });
-		document.addEventListener("keydown", onKey);
+		document.addEventListener("keydown", onKey, true);
 		overlay.querySelector(".mnp-close").focus({ preventScroll: true });
 	}
 
@@ -658,14 +708,24 @@
 		if (!overlay) return;
 		const o = overlay;
 		overlay = null;
+		pathsDirty = false;
+		pendingSwap = null;
+		if (activeViewTransition) {
+			try { if (activeViewTransition.skipTransition) activeViewTransition.skipTransition(); } catch (e) { /* ignore */ }
+			activeViewTransition = null;
+		}
 		o.classList.remove("is-in");
-		document.documentElement.classList.remove("mnp-open");
-		document.removeEventListener("keydown", onKey);
-		setTimeout(() => o.remove(), 250);
+		document.removeEventListener("keydown", onKey, true);
+		setTimeout(() => {
+			o.remove();
+			if (!overlay) document.documentElement.classList.remove("mnp-open");
+		}, 320);
 		if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
 	}
 
 	function onKey(e) {
+		const topics = document.getElementById("topics-overlay");
+		if (topics && topics.classList.contains("open")) return;
 		if (e.key === "Escape") { close(); return; }
 		if (e.key !== "Tab" || !overlay) return;
 		const items = Array.prototype.filter.call(
@@ -768,7 +828,21 @@
 			watching = true;
 			window.addEventListener("blogPostLoadComplete", paintAll);
 			window.addEventListener("mnquest:change", paintAll);
-			if (window.BlogTopics && window.BlogTopics.onChange) window.BlogTopics.onChange(() => { if (overlay) paint(); });
+			if (window.BlogTopics && window.BlogTopics.onChange) window.BlogTopics.onChange(() => {
+				if (!overlay) return;
+				const topics = document.getElementById("topics-overlay");
+				if (topics && topics.classList.contains("open")) { pathsDirty = true; return; }
+				paint(true);
+			});
+			document.addEventListener("topics:close", () => {
+				if (!overlay) return;
+				overlay.inert = false;
+				if (!pathsDirty) return;
+				pathsDirty = false;
+				paint(false);
+				const target = overlay.querySelector(".mnp-fit-tune, .mnp-tune, .mnp-close");
+				if (target) target.focus({ preventScroll: true });
+			});
 		}
 		paintAll();
 		if (Q()) {

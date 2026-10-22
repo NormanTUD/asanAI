@@ -1494,6 +1494,7 @@
 		o.setAttribute('aria-hidden', 'true');
 		document.body.style.overflow = '';
 		if (_lastFocused && typeof _lastFocused.focus === 'function') _lastFocused.focus();
+		try { document.dispatchEvent(new CustomEvent('topics:close')); } catch (e) { /* ignore */ }
 	}
 
 	/* ── 5. Markdown pre-processing (called by helper.js) ─────── */
