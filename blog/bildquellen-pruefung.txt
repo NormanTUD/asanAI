@@ -1060,3 +1060,76 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
     Autor: Kaicarver
     Lokal: francois_chollet_portrait.jpg
     Status: OK - CC BY-SA 4.0
+
+=== PEOPLE OF AI — ADDITIONAL PORTRAITS (people_of_ai.php, Stand: Oktober 2026) ===
+================================================================================
+
+18. img_andrew_ng
+    URL: https://commons.wikimedia.org/wiki/File:Andrew_Ng_at_TechCrunch_Disrupt_SF_2017.jpg
+    Lizenz: CC BY 2.0 (via Commons API extmetadata)
+    Autor: TechCrunch
+    Lokal: andrew_ng_portrait.jpg (960x1178)
+    Status: OK - CC BY 2.0
+
+19. img_david_rumelhart
+    URL: https://commons.wikimedia.org/wiki/File:DavidRumelhart-IJCNNseattle1991-07-08.jpg
+    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+    Autor: Rolf Kickuth
+    Lokal: david_rumelhart_portrait.jpg (960x1109)
+    Status: OK - CC BY-SA 4.0
+
+20. img_david_silver
+    URL: https://commons.wikimedia.org/wiki/File:David_Silver.jpg
+    Lizenz: CC BY-SA 2.0 (via Commons API extmetadata)
+    Autor: David Silver
+    Lokal: david_silver_portrait.jpg (960x720)
+    Status: OK - CC BY-SA 2.0
+
+21. img_ian_goodfellow
+    URL: https://commons.wikimedia.org/wiki/File:Ian_Goodfellow_(cropped).jpg
+    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+    Autor: Ian Goodfellow
+    Lokal: ian_goodfellow_portrait.jpg (960x960)
+    Status: OK - CC BY-SA 4.0
+
+22. img_ilya_sutskever
+    URL: https://commons.wikimedia.org/wiki/File:Ilya_Sutskever_and_Sam_Altman_in_TAU_(cropped).jpg
+    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+    Autor: Eladkarmel
+    Lokal: ilya_sutskever_portrait.jpg (192x287; Wikimedia-Crop, niedrige Auflösung)
+    Status: OK - CC BY-SA 4.0
+
+23. img_paul_werbos
+    URL: https://commons.wikimedia.org/wiki/File:PaulWerbos-IJCNNseattle1991-07-08.jpg
+    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+    Autor: Rolf Kickuth
+    Lokal: paul_werbos_portrait.jpg (960x1202)
+    Status: OK - CC BY-SA 4.0
+
+24. img_walter_pitts
+    URL: https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg
+    Lizenz: Public domain (via Commons API extmetadata)
+    Autor: Francis Bello (1917-1987)
+    Lokal: walter_pitts_1954.jpg (733x1078)
+    Status: OK - Public domain
+
+25. img_alexnet_architecture
+    URL: https://commons.wikimedia.org/wiki/File:AlexNet_architecture.png
+    Lizenz: CC BY 4.0 (via Commons API extmetadata)
+    Autor: Daniel Voigt Godoy
+    Lokal: alexnet_architecture.png (1280x562)
+    Status: OK - CC BY 4.0
+
+26. img_ibm_704
+    URL: https://commons.wikimedia.org/wiki/File:IBM_Electronic_Data_Processing_Machine_-_GPN-2000-001881.jpg
+    Lizenz: Public domain (NASA, via Commons API extmetadata)
+    Autor: NASA
+    Lokal: ibm_704.jpg (1280x1014)
+    Status: OK - Public domain
+
+27. img_mcculloch_pitts_neuron
+    URL: https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg
+    Lizenz: CC BY-SA 3.0 (via Commons API extmetadata)
+    Autor: Adrian Lange
+    Lokal: mcculloch_pitts_neuron.png (960x422, SVG-Thumbnail)
+    Status: OK - CC BY-SA 3.0

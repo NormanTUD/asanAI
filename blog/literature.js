@@ -6648,6 +6648,7 @@ window.bibData = {
 		year: 2014,
 		author: "Ilya Sutskever, Oriol Vinyals, Quoc V. Le",
 		title: "Sequence to Sequence Learning with Neural Networks",
+		url: "https://arxiv.org/abs/1409.3215",
 		alternativetitle: "Seq2Seq"
 	},
 	"christiano2017rlhf": {
@@ -20118,6 +20119,7 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:David_Silver.jpg",
 		title: "David Silver",
 		author: "David Silver",
+		year: "n.d.",
 		license: "CC BY-SA 2.0",
 		alternativetitle: "David Silver portrait"
 	},
@@ -20125,6 +20127,7 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:Ian_Goodfellow_(cropped).jpg",
 		title: "Ian Goodfellow",
 		author: "Ian Goodfellow",
+		year: "n.d.",
 		license: "CC BY-SA 4.0",
 		alternativetitle: "Ian Goodfellow portrait"
 	},
@@ -20156,6 +20159,7 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:AlexNet_architecture.png",
 		title: "AlexNet architecture",
 		author: "Daniel Voigt Godoy",
+		year: "n.d.",
 		license: "CC BY 4.0",
 		alternativetitle: "AlexNet architecture diagram"
 	},
@@ -20163,6 +20167,7 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:IBM_Electronic_Data_Processing_Machine_-_GPN-2000-001881.jpg",
 		title: "IBM 704 electronic data processing machine",
 		author: "NASA",
+		year: "n.d.",
 		license: "Public domain",
 		alternativetitle: "IBM 704"
 	},
@@ -20170,6 +20175,7 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg",
 		title: "Diagram of a McCulloch–Pitts cell",
 		author: "Adrian Lange",
+		year: "n.d.",
 		license: "CC BY-SA 3.0",
 		alternativetitle: "McCulloch–Pitts neuron diagram"
 	},
