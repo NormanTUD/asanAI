@@ -129,7 +129,8 @@ Sophisticated methods (ProxiMix, D-Clean) combine overlap detection with **perpl
 
 Beyond raw web text, frontier models train on carefully curated datasets:
 
-* **The Pile** (\cite[Gao et al., 2020]{gao2020pile}): ~825 GB of diverse text from 22 sources (PubMed, ArXiv, GitHub, Wikipedia, StackExchange, etc.). Open dataset, but reported to contain some benchmark contamination.
+* **The Pile** (\cite[Gao et al., 2020]{gao2020pile}): ~825 GB of diverse text from 22 sources (PubMed, ArXiv, GitHub, Wikipedia, StackExchange, etc.). Open dataset, but reported to contain some benchmark contamination. The Pile also became a cautionary tale for licensing: its **Books3** component was withdrawn in 2023 amid copyright litigation, and the dataset's status is no longer as clean as its “open” label suggested.
+* **Common Pile v0.1** (EleutherAI and collaborators, 2025): 8 TB of public-domain and openly licensed text from 30 sources, built explicitly as a legally cleaner successor to the Pile. The **Comma** models were trained solely on it, demonstrating that a competitive 7B-class model does not require scraped copyrighted books (\cite[Selvam et al., 2025]{commonpile2025}).
 * **RedPajama** (\cite[Together, 2023]{together2024redpajama}): open replication of LLaMA's training mix. 1.2T tokens, all sources documented.
 * **SlimPajama** (Cerebras, 2023): cleaned, deduplicated version of RedPajama. 627B tokens.
 * **FineWeb** (HuggingFace, 2024): 1.3T high-quality English tokens.
