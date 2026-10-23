@@ -150,6 +150,93 @@ $$x_{t+1} = x_t - \eta \cdot \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}$$
 
 This division is the key insight: parameters with large, consistent gradients get *smaller* effective steps (because $\sqrt{\hat{v}_t}$ is large), while parameters with small or rare gradients get *larger* effective steps. The optimizer automatically adapts.
 
+Two consequences of these equations are worth seeing directly.
+
+* **The first step is always exactly the learning rate.** With both moments starting at zero, bias correction makes $\hat{m}_1 = g_1$ and $\sqrt{\hat{v}_1} = |g_1|$, so the update is $\eta\, g_1 / |g_1| = \pm\eta$ — no matter how large the first gradient is. Adam cannot take a giant first step, however steep the loss.
+* **The scale of the loss does not matter.** Multiply the loss by any positive constant and $m_t$ and $\sqrt{\hat{v}_t}$ both scale by the same factor, leaving the update unchanged. Adam reacts to the *shape* of the gradient history, not its absolute size — one reason the same defaults transfer across models whose losses differ by orders of magnitude.
+
+The ratio $\hat{m}_t / \sqrt{\hat{v}_t}$ also has a clean reading: it is a **signal-to-noise statistic**, near $\pm1$ when a coordinate's gradient has kept its sign and near $0$ when it is mostly noise. Adam's step therefore measures how *trustworthy* a gradient has been, not how large it happens to be.
+
+The worked example below uses the paper's defaults ($\beta_1 = 0.9$, $\beta_2 = 0.999$, $\epsilon = 10^{-8}$) and $\eta = 0.1$. Drag the three gradients and step through; every number in the cards comes straight from the four equations above.
+
+</div>
+
+<style>
+#adam-by-hand .ab-card { padding: 10px 12px; }
+#adam-by-hand .ab-card .k { margin-bottom: 4px; }
+#adam-by-hand .ab-row { display: flex; justify-content: space-between; gap: 10px; padding: 3px 0; border-bottom: 1px dashed color-mix(in srgb, var(--mn-border) 65%, transparent); font: 500 .8rem var(--mn-font-mono); }
+#adam-by-hand .ab-row:last-child { border-bottom: 0; }
+#adam-by-hand .ab-row span:first-child { color: var(--mn-text-muted); }
+#adam-by-hand .ab-row span:last-child { color: var(--mn-heading); font-variant-numeric: tabular-nums; }
+#adam-by-hand .ab-row.ab-theta { font-weight: 700; }
+#adam-by-hand .ab-card.is-done { border-color: color-mix(in srgb, var(--mn-emerald) 45%, var(--mn-border)); }
+#adam-by-hand .ab-card.is-next { border-style: dashed; border-color: color-mix(in srgb, var(--mn-sky) 45%, var(--mn-border)); }
+#adam-by-hand .ab-card.is-pending { opacity: .45; }
+</style>
+<div class="mnlab" id="adam-by-hand" data-interactive>
+	<div class="mnlab-head">
+		<div>
+			<div class="mnlab-kicker">Interactive lab</div>
+			<div class="mnlab-title">Adam by hand: three steps</div>
+			<p class="mnlab-sub">One parameter, three gradients. Watch the two moments, their bias corrections, and the step they produce.</p>
+		</div>
+	</div>
+	<div class="mnlab-grid mnlab-grid--4" style="gap: 10px; margin-bottom: 14px;">
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">g₁</span><span class="mnlab-val" data-ab="g1v">1.0</span></span>
+			<input type="range" data-ab="g1" min="-2" max="2" step="0.1" value="1" aria-label="First gradient">
+		</label>
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">g₂</span><span class="mnlab-val" data-ab="g2v">0.5</span></span>
+			<input type="range" data-ab="g2" min="-2" max="2" step="0.1" value="0.5" aria-label="Second gradient">
+		</label>
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">g₃</span><span class="mnlab-val" data-ab="g3v">1.5</span></span>
+			<input type="range" data-ab="g3" min="-2" max="2" step="0.1" value="1.5" aria-label="Third gradient">
+		</label>
+		<label class="mnlab-ctrl">
+			<span class="mnlab-ctrl-top"><span class="mnlab-label">learning rate η</span><span class="mnlab-val" data-ab="lrv">0.10</span></span>
+			<input type="range" data-ab="lr" min="0.01" max="0.3" step="0.01" value="0.1" aria-label="Learning rate">
+		</label>
+	</div>
+	<div class="mnlab-grid mnlab-grid--3" style="gap: 10px;">
+		<div class="mnlab-stat ab-card is-next" data-ab="card1">
+			<span class="k">Step 1</span>
+			<div class="ab-row"><span>m₁</span><span data-ab="m1">—</span></div>
+			<div class="ab-row"><span>v₁</span><span data-ab="v1">—</span></div>
+			<div class="ab-row"><span>m̂₁</span><span data-ab="mh1">—</span></div>
+			<div class="ab-row"><span>v̂₁</span><span data-ab="vh1">—</span></div>
+			<div class="ab-row"><span>η·m̂/√v̂</span><span data-ab="u1">—</span></div>
+			<div class="ab-row ab-theta"><span>θ₁</span><span data-ab="x1">—</span></div>
+		</div>
+		<div class="mnlab-stat ab-card is-pending" data-ab="card2">
+			<span class="k">Step 2</span>
+			<div class="ab-row"><span>m₂</span><span data-ab="m2">—</span></div>
+			<div class="ab-row"><span>v₂</span><span data-ab="v2">—</span></div>
+			<div class="ab-row"><span>m̂₂</span><span data-ab="mh2">—</span></div>
+			<div class="ab-row"><span>v̂₂</span><span data-ab="vh2">—</span></div>
+			<div class="ab-row"><span>η·m̂/√v̂</span><span data-ab="u2">—</span></div>
+			<div class="ab-row ab-theta"><span>θ₂</span><span data-ab="x2">—</span></div>
+		</div>
+		<div class="mnlab-stat ab-card is-pending" data-ab="card3">
+			<span class="k">Step 3</span>
+			<div class="ab-row"><span>m₃</span><span data-ab="m3">—</span></div>
+			<div class="ab-row"><span>v₃</span><span data-ab="v3">—</span></div>
+			<div class="ab-row"><span>m̂₃</span><span data-ab="mh3">—</span></div>
+			<div class="ab-row"><span>v̂₃</span><span data-ab="vh3">—</span></div>
+			<div class="ab-row"><span>η·m̂/√v̂</span><span data-ab="u3">—</span></div>
+			<div class="ab-row ab-theta"><span>θ₃</span><span data-ab="x3">—</span></div>
+		</div>
+	</div>
+	<div class="mnlab-row" style="margin-top: 12px;">
+		<button type="button" class="mnlab-btn" data-ab="step">+1 step</button>
+		<button type="button" class="mnlab-btn mnlab-btn--ghost" data-ab="reset">↺ Reset</button>
+	</div>
+	<div class="mnlab-note" data-ab="note" aria-live="polite">Configured for θ₀ = 0. Press <b>+1 step</b>.</div>
+</div>
+
+<div class="md" data-mathlevel="65">
+After the first full-sized step, the smaller gradient $g_2 = 0.5$ shrinks the second step, and the renewed large gradient $g_3 = 1.5$ restores it: each move stays close to $\eta$ in magnitude while the running averages smooth the direction. Set all three gradients equal and the steps become identical — a constant gradient reduces Adam to a sign-like step of exactly $\eta$. Make them wildly different instead and watch $\hat{m}_t/\sqrt{\hat{v}_t}$ fall toward zero, the optimizer's way of saying *I do not trust this direction yet*.
 </div>
 
 <div class="md">
@@ -361,6 +448,8 @@ The lineage that leads here is the cleanest story in the optimizer zoo. Adagrad 
 | **Learning rate too low** | Loss decreases painfully slowly; training takes forever | Increase LR; consider warmup schedules |
 | **Stuck in local minimum** | Loss plateaus at a suboptimal value | Try Momentum or Adam; increase LR temporarily; restart from a different position |
 | **Overfitting** | Training loss is low but validation loss rises | Add regularization (dropout, weight decay); reduce model size; get more data |
+
+Two costs sit outside the table. Adam keeps **two optimizer states per parameter**, doubling the memory needed for the weights before gradients and activations are counted — which is why low-memory variants such as Adafactor \cite{shazeer2018adafactor} and 8-bit optimizer states \cite{dettmers2021_8bit} exist. And because $v_t$ is an *average*, a sudden burst of large gradients can produce oversized steps until the second moment catches up; large training runs therefore pair Adam with **gradient clipping** and a slow **warm-up** (\cite[Brown et al., 2020]{brown2020gpt3}). At that scale the second moment is often relaxed from $\beta_2 = 0.999$ to $0.95$, so it forgets old gradient scales faster (\cite[Brown et al., 2020]{brown2020gpt3}).
 
 ### The Edge of Stability: why the best learning rate sits on a knife-edge
 

@@ -344,9 +344,114 @@ function initOptimizerLab() {
 	}
 }
 
+const ADAM_HAND_B1 = 0.9;
+const ADAM_HAND_B2 = 0.999;
+const ADAM_HAND_EPS = 1e-8;
+let adamHandStep = 0;
+
+function adamHandEl(key) {
+	const root = document.getElementById('adam-by-hand');
+	return root ? root.querySelector(`[data-ab="${key}"]`) : null;
+}
+
+function adamHandFmt(x) {
+	return isFinite(x) ? x.toFixed(4) : '—';
+}
+
+function adamHandSet(key, text) {
+	const el = adamHandEl(key);
+	if (el) el.textContent = text;
+}
+
+function adamHandCompute() {
+	const g = ['g1', 'g2', 'g3'].map((key) => parseFloat(adamHandEl(key).value));
+	const lr = parseFloat(adamHandEl('lr').value);
+	const out = [];
+	let m = 0, v = 0, theta = 0;
+
+	for (let t = 1; t <= g.length; t++) {
+		m = ADAM_HAND_B1 * m + (1 - ADAM_HAND_B1) * g[t - 1];
+		v = ADAM_HAND_B2 * v + (1 - ADAM_HAND_B2) * g[t - 1] * g[t - 1];
+		const mh = m / (1 - Math.pow(ADAM_HAND_B1, t));
+		const vh = v / (1 - Math.pow(ADAM_HAND_B2, t));
+		const update = lr * mh / (Math.sqrt(vh) + ADAM_HAND_EPS);
+		theta -= update;
+		out.push({ m, v, mh, vh, update, theta });
+	}
+	return out;
+}
+
+function adamHandRender() {
+	const steps = adamHandCompute();
+
+	steps.forEach((s, i) => {
+		const n = i + 1;
+		const done = i < adamHandStep;
+		adamHandSet('m' + n, done ? adamHandFmt(s.m) : '—');
+		adamHandSet('v' + n, done ? adamHandFmt(s.v) : '—');
+		adamHandSet('mh' + n, done ? adamHandFmt(s.mh) : '—');
+		adamHandSet('vh' + n, done ? adamHandFmt(s.vh) : '—');
+		adamHandSet('u' + n, done ? adamHandFmt(s.update) : '—');
+		adamHandSet('x' + n, done ? adamHandFmt(s.theta) : '—');
+
+		const card = adamHandEl('card' + n);
+		if (card) {
+			card.classList.toggle('is-done', done);
+			card.classList.toggle('is-next', i === adamHandStep);
+			card.classList.toggle('is-pending', i > adamHandStep);
+		}
+	});
+
+	const stepBtn = adamHandEl('step');
+	if (stepBtn) stepBtn.disabled = adamHandStep >= steps.length;
+
+	const note = adamHandEl('note');
+	if (note) {
+		if (adamHandStep === 0) {
+			note.innerHTML = 'Configured for θ₀ = 0. Press <b>+1 step</b>.';
+		} else if (adamHandStep < steps.length) {
+			const s = steps[adamHandStep - 1];
+			const ratio = s.vh > 0 ? s.mh / Math.sqrt(s.vh) : 0;
+			note.innerHTML = `Step ${adamHandStep}: update = <b>${adamHandFmt(s.update)}</b>, so θ = <b>${adamHandFmt(s.theta)}</b>. The trust ratio m̂/√v̂ is ${adamHandFmt(ratio)}.`;
+		} else {
+			note.innerHTML = 'Three steps done. The first move is exactly ±η; later moves track how consistent the gradient has been.';
+		}
+	}
+}
+
+function initAdamByHand() {
+	if (!document.getElementById('adam-by-hand')) return;
+
+	['g1', 'g2', 'g3', 'lr'].forEach((key) => {
+		const el = adamHandEl(key);
+		if (!el) return;
+		el.addEventListener('input', () => {
+			const label = adamHandEl(key + 'v');
+			if (label) label.textContent = key === 'lr' ? parseFloat(el.value).toFixed(2) : parseFloat(el.value).toFixed(1);
+			adamHandStep = 0;
+			adamHandRender();
+		});
+	});
+
+	const stepBtn = adamHandEl('step');
+	if (stepBtn) stepBtn.addEventListener('click', () => {
+		adamHandStep = Math.min(adamHandStep + 1, 3);
+		adamHandRender();
+	});
+
+	const resetBtn = adamHandEl('reset');
+	if (resetBtn) resetBtn.addEventListener('click', () => {
+		adamHandStep = 0;
+		adamHandRender();
+	});
+
+	adamHandRender();
+}
+
 async function loadOptimizerModule() {
 	updateLoadingStatus("Loading section about Optimizers...");
 	initOptimizerLab();
+	initAdamByHand();
 
 	if (window.__MN_DARK) {
 		window.__MN_DARK.onChange(() => {

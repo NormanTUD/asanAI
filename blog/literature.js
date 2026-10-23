@@ -4014,6 +4014,20 @@ window.bibData = {
 		url: "http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf",
 		alternativetitle: "Hinton, 2012"
 	},
+	"shazeer2018adafactor": {
+		title: "Adafactor: Adaptive Learning Rates with Sublinear Memory Cost",
+		author: "Noam Shazeer, Mitchell Stern",
+		year: 2018,
+		url: "https://arxiv.org/abs/1804.04235",
+		alternativetitle: "Shazeer & Stern, 2018"
+	},
+	"dettmers2021_8bit": {
+		title: "8-bit Optimizers via Block-wise Quantization",
+		author: "Tim Dettmers, Mike Lewis, Sam Shleifer, Luke Zettlemoyer",
+		year: 2021,
+		url: "https://arxiv.org/abs/2110.02861",
+		alternativetitle: "Dettmers et al., 2021"
+	},
 	"dozat2016nadam": {
 		title: "Incorporating Nesterov Momentum into Adam",
 		author: "Timothy Dozat",
@@ -20188,6 +20202,54 @@ window.bibData = {
 		author: "Gottlob Frege",
 		year: 1879,
 		alternativetitle: "Frege, Begriffsschrift"
+	},
+	"hodges1983enigma": {
+		url: "https://archive.org/details/alanturingenigma0000hodg",
+		title: "Alan Turing: The Enigma",
+		author: "Andrew Hodges",
+		year: 1983,
+		alternativetitle: "Hodges, Alan Turing: The Enigma"
+	},
+	"mccorduck1979machines": {
+		url: "https://archive.org/details/machineswhothink0000mcco",
+		title: "Machines Who Think: A Personal Inquiry into the History and Prospects of Artificial Intelligence",
+		author: "Pamela McCorduck",
+		year: 1979,
+		alternativetitle: "McCorduck, Machines Who Think"
+	},
+	"karpathy_ai": {
+		url: "https://karpathy.ai/",
+		title: "Andrej Karpathy — personal site",
+		author: "Andrej Karpathy",
+		year: 2024,
+		alternativetitle: "Karpathy's site"
+	},
+	"fchollet_site": {
+		url: "https://fchollet.com/",
+		title: "François Chollet — personal site",
+		author: "François Chollet",
+		year: 2024,
+		alternativetitle: "Chollet's site"
+	},
+	"acm2024turing": {
+		title: "ACM A.M. Turing Award 2024",
+		author: "Association for Computing Machinery",
+		year: 2024,
+		alternativetitle: "ACM Turing Award 2024"
+	},
+	"deepmind_about": {
+		url: "https://www.deepmind.com/about",
+		title: "About Google DeepMind",
+		author: "Google DeepMind",
+		year: 2024,
+		alternativetitle: "About DeepMind"
+	},
+	"bengio2023managing": {
+		url: "https://arxiv.org/abs/2310.17688",
+		title: "Managing AI Risks in an Era of Rapid Progress",
+		author: "Yoshua Bengio, Geoffrey Hinton, Andrew Yao, et al.",
+		year: 2023,
+		alternativetitle: "Managing AI Risks"
 	}
 
 };
