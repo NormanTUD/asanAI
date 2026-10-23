@@ -1474,6 +1474,9 @@ function source_bibliography() {
 		if (data.year) entryText += ` (${data.year})`;
 		entryText += `: *${data.title}*.`;
 		if (data.url) entryText += ` [Link](${data.url})`;
+		if (data.image_license) entryText += ` — Image license: ${data.image_license}`;
+		else if (data.license) entryText += ` — License: ${data.license}`;
+		else if (data.licensenotes) entryText += ` — License: restricted (see source)`;
 
 		const entryHtml = (window.marked && window.marked.parseInline) ? window.marked.parseInline(entryText) : entryText;
 		html += `<div id="bib-${key}" class="bib-entry" style="margin-bottom:4px;">${entryHtml}</div>\n`;

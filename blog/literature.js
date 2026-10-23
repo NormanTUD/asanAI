@@ -904,7 +904,8 @@ window.bibData = {
 		author: "Carl Gustav Jacob Jacobi",
 		year: 1842,
 		url: "https://en.wikipedia.org/wiki/Carl_Gustav_Jacobi",
-		alternativetitle: "Jacobi, reduction of quadratic forms (1842)"
+		alternativetitle: "Jacobi, reduction of quadratic forms (1842)",
+		image_license: "Public domain",
 	},
 	"gray2006toeplitz": {
 		title: "Toeplitz and Circulant Matrices: A Review",
@@ -918,7 +919,8 @@ window.bibData = {
 		author: "Jean-Baptiste Joseph Fourier",
 		year: 1822,
 		url: "https://en.wikipedia.org/wiki/Th%C3%A9orie_analytique_de_la_chaleur",
-		alternativetitle: "Fourier, Analytical Theory of Heat (1822)"
+		alternativetitle: "Fourier, Analytical Theory of Heat (1822)",
+		image_license: "Public domain",
 	},
 	"cooley1965fft": {
 		title: "An Algorithm for the Machine Calculation of Complex Fourier Series",
@@ -1282,7 +1284,8 @@ window.bibData = {
 		author: "Ahmes (the scribe)",
 		year: "ca. 1650 BCE",
 		url: "https://en.wikipedia.org/wiki/Rhind_Mathematical_Papyrus",
-		alternativetitle: "Rhind Papyrus"
+		alternativetitle: "Rhind Papyrus",
+		image_license: "Public domain",
 	},
 	"neugebauerexactsciences": {
 		title: "The Exact Sciences in Antiquity",
@@ -1472,7 +1475,8 @@ window.bibData = {
 		author: "Leonhard Euler",
 		year: 1741,
 		url: "https://en.wikipedia.org/wiki/Solution_of_the_K%C3%B6nigsberg_bridges_problem",
-		alternativetitle: "Solutio problematis (1741)"
+		alternativetitle: "Solutio problematis (1741)",
+		image_license: "CC BY-SA 3.0",
 	},
 	"eulersolids": {
 		title: "Elementa doctrinae solidorum",
@@ -1494,7 +1498,8 @@ window.bibData = {
 		author: "Carl Friedrich Gauss",
 		year: 1828,
 		url: "https://en.wikipedia.org/wiki/Theorema_egregium",
-		alternativetitle: "Disquisitiones (1827)"
+		alternativetitle: "Disquisitiones (1827)",
+		image_license: "Public domain",
 	},
 	"lobachevskygeometry": {
 		title: "Geometrische Untersuchungen zur Theorie des Raumes",
@@ -1515,7 +1520,8 @@ window.bibData = {
 		author: "August Ferdinand Möbius",
 		year: 1858,
 		url: "https://en.wikipedia.org/wiki/August_Ferdinand_M%C3%B6bius",
-		alternativetitle: "Möbius Band (1858)"
+		alternativetitle: "Möbius Band (1858)",
+		image_license: "CC BY-SA 3.0",
 	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Basic Math IV — Affine Transformations (math_iv.php)
@@ -4201,7 +4207,7 @@ window.bibData = {
 		author: "Eremeev",
 		year: 2016,
 		alternativetitle: "The Stepped Reckoner by Leibniz",
-		license: "CC",
+		license: "CC BY-SA 4.0",
 		title: "Gottfried Wilhelm Leibniz - Rechenmaschine"
 	},
 	"artandlogicofllull": {
@@ -4610,7 +4616,7 @@ window.bibData = {
 		title: "Os d'Ishango, Institut Royal des Sciences naturelles de Belgique, Bruxelles",
 		alternativetitle: "Ishango-Bone",
 		author: "Ben2",
-		license: "GNU"
+		license: "CC BY-SA 3.0"
 	},
 	"ishangobone": {
 		author: "Jean de Heinzelin de Braucourt",
@@ -4642,7 +4648,8 @@ window.bibData = {
 		author: "Wilhelm Kubitschek",
 		year: 1899,
 		title: "Salamis Tablet: oldest abacus from 300 BC found 1846 at the island of Salamis, Greece",
-		alternativetitle: "Salamis Tablet"
+		alternativetitle: "Salamis Tablet",
+		license: "Public domain",
 	},
 	"snarcphoto": {
 		url: "https://www.the-scientist.com/machine--learning--1951-65792",
@@ -5234,7 +5241,8 @@ window.bibData = {
 		url: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Fragments_of_the_Antikythera_Mechanism.jpg",
 		title: "Fragments (B, A and C) of the Antikythera Mechanism",
 		alternativetitle: "Fragments of the Antikythera Mechanism",
-		author: "Therese Clutario"
+		author: "Therese Clutario",
+		license: "CC BY 2.0",
 	},
 	// Early "artificial intelligence" precursors: brazen head, Pygmalion, Zhang Heng seismoscope, Mechanical Turk (history.php)
 	"brazenheadwiki": {
@@ -5321,7 +5329,7 @@ window.bibData = {
 	},
 	"babbage": {
 		url: "https://commons.wikimedia.org/wiki/File:Babbages_Analytical_Engine,_1834-1871._(9660574685).jpg",
-		license: "CC",
+		license: "CC BY-SA 2.0",
 		title: "Babbage's Analytical Engine",
 		alternativetitle: "Babbage's Analytical Engine (1871)",
 		author: "John Cummings"
@@ -5331,7 +5339,8 @@ window.bibData = {
 		url: "https://www.math.berlin/mathematiker/konrad-zuse.html",
 		title: "Mathematiker des Monats März 2017 - Konrad Zuse (1910-1995)",
 		author: "Horst Zuse",
-		alternativetitle: "Konrad Zuse with a replica of his Z1"
+		alternativetitle: "Konrad Zuse with a replica of his Z1",
+		image_license: "CC BY-SA 3.0",
 	},
 	"zusetoolazy": {
 		url: "https://www.derstandard.at/consent/tcf/story/574514/ich-bin-zu-faul-zum-rechnen",
@@ -5434,7 +5443,7 @@ window.bibData = {
 		url: "https://blog.hnf.de/das-universum-des-ramon-llull/",
 		title: "Llull-Diagramm from Ars Magna",
 		author: "Ramon Llull",
-		license: "CC",
+		license: "Public domain",
 		year: 1305
 	},
 
@@ -5885,6 +5894,7 @@ window.bibData = {
 		year: "1847",
 		title: "Méthode générale pour la résolution des systèmes d'équations simultanées",
 		url: "https://gallica.bnf.fr/ark:/12148/bpt6k2982c/f540.item",
+		license: "Public domain",
 	},
 	"rosenblatt1958perceptron": {
 		author: "Frank Rosenblatt",
@@ -9029,7 +9039,8 @@ window.bibData = {
 		title: "Cathode Ray Tube (RCA 35\")",
 		author: "VaughnSaball",
 		year: 2010,
-		alternativetitle: "Close-up of a CRT picture tube"
+		alternativetitle: "Close-up of a CRT picture tube",
+		license: "CC BY-SA 3.0",
 	},
 	"eniac_image": {
 		url: "https://commons.wikimedia.org/wiki/File:Classic_shot_of_the_ENIAC.jpg",
@@ -9175,7 +9186,8 @@ window.bibData = {
 		title: "Animal Locomotion: An Electro-Photographic Investigation of Consecutive Phases of Animal Movements — Prospectus and Catalogue of Plates",
 		author: "Eadweard Muybridge",
 		year: 1887,
-		alternativetitle: "Muybridge's 1887 Animal Locomotion catalogue at the University of Pennsylvania"
+		alternativetitle: "Muybridge's 1887 Animal Locomotion catalogue at the University of Pennsylvania",
+		license: "Public domain",
 	},
 	"solnit2003motion": {
 		url: "https://www.bloomsbury.com/us/motion-studies-9781582342458/",
@@ -14013,7 +14025,8 @@ window.bibData = {
 		title: "Segment Anything Model — promptable segmentation",
 		author: "Alexander Kirillov et al. (Meta AI)",
 		year: 2023,
-		alternativetitle: "SAM demo (masks from different prompts)"
+		alternativetitle: "SAM demo (masks from different prompts)",
+		license: "Apache-2.0",
 	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Closing the Loop — AI for Science  (ai_for_science.php)
