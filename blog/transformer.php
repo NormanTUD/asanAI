@@ -632,6 +632,39 @@ As $h$ progresses from $h_0$ to $h_{N}$, the vector for “apple” might move f
 </div>
 
 <div class="md">
+## The Modern Block: What Changed After 2017
+
+The equations above describe the 2017 Transformer. Open a 2025 open-weight model, however, and the same two sublayers are wired slightly differently. None of these changes alters the big picture — attention mixes, the FFN computes, residuals carry — but together they define the “LLaMA-style” block that most open models now share.
+
+**Pre-norm, not post-norm.** The 2017 paper normalized *after* each residual addition. Modern stacks move the normalization *inside* the branch, so the residual stream itself is an unbroken identity path:
+
+$$
+z = x + \mathrm{Attention}(\mathrm{Norm}(x)), \qquad
+y = z + \mathrm{FFN}(\mathrm{Norm}(z)).
+$$
+
+\citeauthor{xiong2020} showed that this arrangement keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up (\cite[Xiong et al., 2020]{xiong2020}). The price is that the residual stream is no longer normalized; a final normalization before the output projection carries that burden.
+
+**RMSNorm instead of LayerNorm.** Most open-weight families replace LayerNorm with RMSNorm, which rescales each token by its root mean square but does not subtract the mean. It is cheaper, drops the learned shift, and matches LayerNorm's stability in practice (\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}). The [normalization lab](normalizationlab.php) derives both and works through the arithmetic.
+
+**SwiGLU instead of ReLU/GELU.** The dense FFN becomes a *gated* one:
+
+$$
+\mathrm{FFN}_{\mathrm{SwiGLU}}(x) = W_2\big(\mathrm{Swish}(W_1 x) \odot W_g x\big),
+$$
+
+with a third matrix $W_g$ whose output multiplies the activated branch elementwise. Because there are now three matrices rather than two, the hidden width is reduced to keep the parameter count comparable — LLaMA uses $d_{\text{model}} = 4096$ and $d_{\text{ff}} = 11008$, about $2.7\,d_{\text{model}}$ instead of $4\,d_{\text{model}}$ (\cite[Shazeer, 2020]{shazeer2020glu}; \cite[Touvron et al., 2023]{touvron2023llama}).
+
+**RoPE instead of sinusoidal vectors.** Rotary position embedding rotates the query and key vectors by position-dependent angles, so their dot product depends only on the *relative* offset. It is now the default in the Llama, Mistral, Qwen, Gemma, and DeepSeek lines (\cite[Su et al., 2021]{su2021rope}); the [positional embeddings lab](positionalembeddingslab.php) builds the rotation matrix step by step.
+
+**Fewer key/value heads.** Multi-head attention gives every query head its own key and value head. Multi-query attention (MQA) shares one K/V head across all query heads, and grouped-query attention (GQA) shares one per group. The attention computation is nearly unchanged, but the **KV cache** — the memory that dominates long-context serving — shrinks by the sharing factor (\cite[Shazeer, 2019]{shazeer2019mqa}; \cite[Ainslie et al., 2023]{ainslie2023gqa}). DeepSeek-V2 went further with **multi-head latent attention** (MLA), caching a low-rank compressed latent instead of full per-head keys and values, and reconstructing them on the fly (\cite[DeepSeek-AI, 2024]{deepseek2024v2}). By 2025 the choice among MHA, GQA, and MLA had become one of the few architecture decisions still visibly separating frontier models.
+
+**The parameter budget is mostly FFN.** For a LLaMA-class layer with $d_{\text{model}} = 4096$ and $d_{\text{ff}} = 11008$, the three SwiGLU matrices hold $3 \times 4096 \times 11008 \approx 1.35 \times 10^{8}$ parameters. Across 32 layers that is roughly $4.3 \times 10^{9}$ of the model's $6.7 \times 10^{9}$ parameters — near two thirds. This is why the FFN is the main target of mixture-of-experts sparsity (see [Mixture of Experts](mixture_of_experts.php)) and of weight quantization.
+
+The modern block, in one line: **normalize the branch, rotate positions, gate the FFN, and share the KV heads.**
+</div>
+
+<div class="md">
 ## The Same, in Code: A Transformer You Can Run
 
 Everything above — the embeddings, the residual blocks, the attention, the final projection — is a lot of structure. Here is that exact structure as executable code, three ways, in the tabs below: a complete transformer written in pure Python with no framework at all, modelled on nanoGPT, plus the same model built with PyTorch and TensorFlow. Read any of them top to bottom and every line maps back to one of the equations on this page.
