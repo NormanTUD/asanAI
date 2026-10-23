@@ -25,13 +25,14 @@ China is the **second pole** of the global AI ecosystem. By 2025, Chinese open-s
 ### Frontier Model Builders
 
 * **DeepSeek** (Hangzhou): \cite[DeepSeek-V3]{deepseekv3tech2024} (671B MoE), \cite[DeepSeek-R1]{guo2025deepseekr1}. Trained reportedly for \$5–6M on H800s. State-of-the-art math/coding. Open weights.
-* **Alibaba / Qwen**: \cite[Qwen 2.5]{qwen2024} family (0.5B–72B), Qwen2-VL (vision), Qwen2-Audio. Among the most-used open models globally.
+* **Alibaba / Qwen**: \cite[Qwen 2.5]{qwen2024qwen25} family (0.5B–72B), Qwen2-VL (vision), Qwen2-Audio. **Qwen3** (2025) added hybrid thinking and non-thinking modes across dense and mixture-of-experts variants (\cite[Qwen Team, 2025]{qwen2025qwen3}). Among the most-used open models globally.
 * **Zhipu AI / GLM**: \cite[ChatGLM]{glm2024}. Strong bilingual EN/ZH performance.
 * **Baidu**: ERNIE 4.0, Ernie Bot. Earlier proprietary; later opened some weights.
-* **Moonshot AI / Kimi**: \cite[Kimi K2]{moonshot2024kimi}. Long-context champion (128K–2M tokens).
+* **Moonshot AI / Kimi**: the long-context Kimi assistant, then the open-weight **Kimi K2** — a trillion-parameter mixture-of-experts model trained with the MuonClip optimizer and tuned for agentic tool use (\cite[Kimi Team, 2025]{kimi2025k2}).
 * **01.AI (Yi)**: Yi-Lightning (long context), Yi-VL (vision).
 * **Tencent**: Hunyuan series.
-* **MiniMax** *(redacted company name in this article; original Chinese name withheld)*: see notes below.
+* **MiniMax**: the MiniMax-01, M1, and M2 lines, built on **lightning attention** — a linear-attention variant used in a hybrid stack with softmax attention (\cite[MiniMax, 2025]{minimax2025lightning}) — plus the Hailuo video models.
+* **Meituan / LongCat**: **LongCat-Flash**, a 560B-parameter mixture-of-experts model with roughly 27B active parameters that was reported as trained on Chinese-made accelerators (\cite[LongCat Team, 2025]{longcat2025}).
 * **Stepfun**: Step-1V, Step-1.5V (multimodal).
 
 ### Strategic Advantages
@@ -115,6 +116,17 @@ The African AI ecosystem is **small but scrappy**, with strong community support
 <div class="md">
 ## Other Major Players
 
+### United States: the new labs
+
+Beyond the incumbents, the 2024–2026 wave produced a cluster of well-funded startups with sharply different theses:
+
+* **Safe Superintelligence Inc.** (\cite[SSI, 2024]{ssi2024}), founded in 2024 by Ilya Sutskever, Daniel Gross, and Daniel Levy, has a single product as its stated goal: a safe superintelligence. It raised a reported \$2 billion at a roughly \$32 billion valuation in 2025 while still shipping nothing.
+* **Thinking Machines Lab** (\cite[Thinking Machines Lab, 2025]{tml2025}), founded in 2025 by former OpenAI CTO Mira Murati, raised a record seed round and builds **Tinker**, a fine-tuning API around the thesis that most users want to customize models rather than train one from scratch.
+* **Ndea** (\cite[Ndea, 2025]{ndea2025}), founded by Keras creator François Chollet and Zapier co-founder Mike Knoop, pursues **deep-learning-guided program synthesis** — combining neural networks with search over programs — as its path to general intelligence. It is the institutional continuation of the ARC-AGI benchmark program.
+* **Arcee AI** (\cite[Arcee AI, 2025]{arcee2025}) grew from model merging and distillation into from-scratch pretraining; its **Trinity** line spans 6B, 26B, and 400B sparse mixture-of-experts models released as open weights.
+
+The pattern is a broadening of *what counts as a frontier lab*: not only companies training the largest dense model, but companies betting on customization, program synthesis, or open-weight sparsity.
+
 ### United Arab Emirates
 
 * **G42** (Abu Dhabi): backed by the ruling family, partnered with OpenAI, Cerebras, and others. Building Arabic-first LLMs.
@@ -194,7 +206,9 @@ Open-source models have **dramatically changed the geography of AI**:
 * A startup in Bangalore can serve a fine-tuned Qwen on Together.ai for \$50/month.
 * A student in São Paulo can read the \cite[DeepSeek-V3]{deepseekv3tech2024} technical report and reproduce the results.
 
-The **Hugging Face Hub** hosts 1M+ models from every country. The model release pattern in 2025: most frontier-capable models are published as open weights within months of their closed-source competition.
+The **Hugging Face Hub** hosts 1M+ models from every country. The model release pattern in 2025: most frontier-capable models are published as open weights within months of their closed-source competition. Even OpenAI returned to open weights — its first since GPT-2 — with the **gpt-oss** pair (120B and 20B mixture-of-experts models under Apache 2.0), which also shipped learned per-head attention-sink logits (\cite[OpenAI, 2025]{gptoss2025}).
+
+The open-weight lineage has its own history. EleutherAI's **GPT-Neo** and **GPT-J** were early public replications of the GPT-3 design; **GPT-NeoX-20B** was, at release, the largest dense model with fully open weights (\cite[Black et al., 2022]{black2022gptneox}). Meta's **OPT** released weights together with a candid training logbook (\cite[Zhang et al., 2022]{zhang2022opt}), BigScience's **BLOOM** was a 176B multilingual collaboration (\cite[Le Scao et al., 2022]{scao2022bloom}), and EleutherAI's **Pythia** suite released 16 models *with* their intermediate training checkpoints, turning training dynamics into something outside researchers could study (\cite[Biderman et al., 2023]{biderman2023pythia}). These projects established the norm that a serious open release includes weights, data documentation, and often code — the norm that Llama, Qwen, DeepSeek, and OLMo later inherited.
 
 The asymmetry that remains:
 
