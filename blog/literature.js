@@ -16264,6 +16264,48 @@ window.bibData = {
 		url: "https://doi.org/10.1016/S0160-9327(03)00017-6",
 		alternativetitle: "Abraham, McCulloch and Experimental Epistemology (2003)"
 	},
+	"abraham2002physio": {
+		title: "(Physio)logical circuits: The intellectual origins of the McCulloch–Pitts neural networks",
+		author: "Tara H. Abraham",
+		year: 2002,
+		url: "https://doi.org/10.1002/jhbs.1094",
+		alternativetitle: "Abraham, (Physio)logical Circuits (2002)"
+	},
+	"rashevsky1936psychometrika": {
+		title: "Mathematical biophysics and psychology",
+		author: "Nicolas Rashevsky",
+		year: 1936,
+		url: "https://doi.org/10.1007/BF02287920",
+		alternativetitle: "Rashevsky, Mathematical Biophysics and Psychology (1936)"
+	},
+	"landahl1943statistical": {
+		title: "A statistical consequence of the logical calculus of nervous nets",
+		author: "H. D. Landahl, W. S. McCulloch, Walter Pitts",
+		year: 1943,
+		url: "https://doi.org/10.1007/BF02478260",
+		alternativetitle: "Landahl, McCulloch & Pitts, A Statistical Consequence (1943)"
+	},
+	"carnap1938logicalsyntax": {
+		title: "The Logical Syntax of Language",
+		author: "Rudolf Carnap",
+		year: 1937,
+		url: "https://archive.org/details/logicalsyntaxofl0000carn",
+		alternativetitle: "Carnap, The Logical Syntax of Language (1937)"
+	},
+	"northrop1931sciencefirstprinciples": {
+		title: "Science and First Principles",
+		author: "F. S. C. Northrop",
+		year: 1931,
+		url: "https://archive.org/details/sciencefirstprin0000fscn",
+		alternativetitle: "Northrop, Science and First Principles (1931)"
+	},
+	"domarus1944specificlaws": {
+		title: "The Specific Laws of Logic in Schizophrenia",
+		author: "Eilhard von Domarus",
+		year: 1944,
+		url: "https://archive.org/details/languagethoughti0000jska_m7m5",
+		alternativetitle: "Von Domarus, The Specific Laws of Logic in Schizophrenia (1944)"
+	},
 	"mcculloch1965embodiments": {
 		title: "Embodiments of Mind",
 		author: "Warren S. McCulloch",
