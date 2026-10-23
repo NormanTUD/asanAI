@@ -64,6 +64,21 @@ Researchers have long debated whether the artifact served as a simple tally, a *
 
 Ultimately, the Ishango bone represents the most significant archaeological indicator of prehistoric mathematical reasoning, and thus is a *very* early precursor to modern computers and AI systems.
 
+### The Number System You Program In
+
+The digits a machine works with today are not self-evident — they are the accumulation of four separate inventions, each of which once seemed strange. And they are the single most load-bearing fact about "how numbers work" that any programmer relies on:
+
+* **Place value (c. 2000 BCE).** Unlike the Egyptians, Greeks or Romans, the Babylonians wrote positionally: a symbol in the left column meant a larger value, just as in the decimal system. The gain was enormous — fractions multiplied exactly like whole numbers, and the notation remained the best on the planet until the Renaissance \cite{historyofmath_wikipedia}. But the Babylonians lacked a decimal point, and their zero was only a placeholder that never appeared in final position, so a symbol's value often had to be guessed from context.
+* **Zero as a number (628 CE).** The missing piece was supplied in India: \citeauthor{brahmagupta628}, in his *\citetitle{brahmagupta628}*, was the first to treat zero as a *digit and a number* and to give rules for arithmetic with it — including that something plus nothing is that something \cite{historyofmath_wikipedia} \cite{brahmagupta628}. Carried to Europe via the Islamic world, the Indian system (digits, zero, place value) replaced the abacus as the standard way to calculate.
+* **Negative numbers (Han dynasty).** In roughly the same era Indian bookkeeping was completing the number line, Chinese mathematics contributed the other side of it: the *\citealternativetitle{jiuzhangsuanshu}* handles negative quantities as book-keeping entries in systems of simultaneous linear equations — the first use of negative numbers anywhere \cite{historyofmath_wikipedia}. A Chinese accountant, not a philosopher, is why your `int` can go below zero.
+* **Decimal fractions (1585).** The final layer arrived in Europe with \citeauthor{stevin} *De Thiende* ("the art of tenths"): for the first time, fractions below the unit were fixed with a decimal point, so a number between 0 and 1 became as writable as any whole number.
+
+Put together, these four moves are the entire arithmetic of the modern machine. An `int` is Babylonian place value on a base-2 (binary) wheel; a `float` is Stevin's decimal with a binary exponent; zero and negative numbers make the number line *complete* so that subtraction and division always have an answer. When a compiler evaluates `float x = 0.1`, it is running a notational technology that took four civilizations and thirty-five centuries to assemble.
+
+### Pingala: the binary before Leibniz
+
+One more "first" belongs in this chain. The Indian prosodist **Pingala** (c. 3rd–1st century BCE), working out a system for counting Sanskrit poetic metres, used a device that corresponds exactly to a binary number system, and his combinatorics of metres is an elementary version of the binomial theorem \cite{historyofmath_wikipedia}. In other words, the alphabet of 0 and 1 was being written — literally, in the counting of Sanskrit poetic feet — some two millennia before \citeauthor{leibniz1686calculus} formalized binary notation for the digital age below.
+
 ### The Salamis Tablet and the Abacus
 
 <div class="image-row">
@@ -86,21 +101,6 @@ The **Salamis Tablet** (c. 300 BC), discovered in 1846 and preserved at the **Ep
 * **Evolution of the Abacus:** While the Salamis Tablet was a stationary counting board, it paved the way for the portable **Roman Hand Abacus** and the eventual bead-and-wire **Suanpan** (China) and **Soroban** (Japan). This transition represents the evolution from “loose” hardware (pebbles on a table) to “integrated” hardware (sliding beads), optimizing calculation speed and portability for merchants.
 
 As noted by \citeauthor{salminictablesource} (\citetitle{salminictablesource}, 1899, p. 393f), this device confirms that modern computation began by reducing thought to a formal calculus executed via a physical interface.
-
-### The Number System You Program In
-
-The digits a machine works with today are not self-evident — they are the accumulation of four separate inventions, each of which once seemed strange. And they are the single most load-bearing fact about "how numbers work" that any programmer relies on:
-
-* **Place value (c. 2000 BCE).** Unlike the Egyptians, Greeks or Romans, the Babylonians wrote positionally: a symbol in the left column meant a larger value, just as in the decimal system. The gain was enormous — fractions multiplied exactly like whole numbers, and the notation remained the best on the planet until the Renaissance \cite{historyofmath_wikipedia}. But the Babylonians lacked a decimal point, and their zero was only a placeholder that never appeared in final position, so a symbol's value often had to be guessed from context.
-* **Zero as a number (628 CE).** The missing piece was supplied in India: \citeauthor{brahmagupta628}, in his *\citetitle{brahmagupta628}*, was the first to treat zero as a *digit and a number* and to give rules for arithmetic with it — including that something plus nothing is that something \cite{historyofmath_wikipedia} \cite{brahmagupta628}. Carried to Europe via the Islamic world, the Indian system (digits, zero, place value) replaced the abacus as the standard way to calculate.
-* **Negative numbers (Han dynasty).** In roughly the same era Indian bookkeeping was completing the number line, Chinese mathematics contributed the other side of it: the *\citealternativetitle{jiuzhangsuanshu}* handles negative quantities as book-keeping entries in systems of simultaneous linear equations — the first use of negative numbers anywhere \cite{historyofmath_wikipedia}. A Chinese accountant, not a philosopher, is why your `int` can go below zero.
-* **Decimal fractions (1585).** The final layer arrived in Europe with \citeauthor{stevin} *De Thiende* ("the art of tenths"): for the first time, fractions below the unit were fixed with a decimal point, so a number between 0 and 1 became as writable as any whole number.
-
-Put together, these four moves are the entire arithmetic of the modern machine. An `int` is Babylonian place value on a base-2 (binary) wheel; a `float` is Stevin's decimal with a binary exponent; zero and negative numbers make the number line *complete* so that subtraction and division always have an answer. When a compiler evaluates `float x = 0.1`, it is running a notational technology that took four civilizations and thirty-five centuries to assemble.
-
-### Pingala: the binary before Leibniz
-
-One more "first" belongs in this chain. The Indian prosodist **Pingala** (c. 3rd–1st century BCE), working out a system for counting Sanskrit poetic metres, used a device that corresponds exactly to a binary number system, and his combinatorics of metres is an elementary version of the binomial theorem \cite{historyofmath_wikipedia}. In other words, the alphabet of 0 and 1 was being written — literally, in the counting of Sanskrit poetic feet — some two millennia before \citeauthor{leibniz1686calculus} formalized binary notation for the digital age below.
 </div>
 
 <div class="md" data-mathlevel="30">
@@ -147,16 +147,6 @@ That twin founding matters for the story of AI, because it shows the *symbol-man
 </div>
 
 <div class="md">
-### Tesnière 1959: Dependency Grammar — French, Predates Modern NLP by 40 Years
-
-The Pāṇinian line of structural linguistics reaches its otherworldly culmination in a single short book, \citetitle{tesniere1959deps} (\citeyear{tesniere1959deps}), written by the French linguist \citeauthor{tesniere1959deps} (\citeyear{tesniere1959deps}) and published posthumously five years after his death. Tesnière's central claim is that the basic unit of syntactic description is not the **phrase** (as in Pāṇini's phrase-structure rules and in Chomsky's later constituent-structure trees) but the **dependency relation**: a directed link from a *governor* word to a *dependent* word. A sentence is, on this view, a **stemma** — a tree of word-to-word dependencies, with the main verb at the root and each word hanging directly off the word whose meaning it modifies, with no intermediate phrasal nodes. A simple sentence like "the cat sat on the mat" is one verb (*sat*) with three dependents (*the cat*, its subject; *on the mat*, its prepositional complement), each of which carries its own dependents (*the* on *cat*, *the* on *mat*).
-
-What is striking about Tesnière's framework is how much modern NLP silently inherits from it. Constituent-structure trees dominated the syntactic theory of the 1960s–80s and underlie most formal grammars, but the dependency view turned out to be a better match for the kinds of *local* relations that matter in practice — who is the subject of which verb, which noun does a pronoun refer to, which preposition links which argument — and modern dependency parsers now dominate the field. The Stanford, Universal Dependencies, spaCy, and Stanza parsers all produce exactly Tesnière's dependency trees, with typed governor→dependent relations like `nsubj`, `dobj`, `amod`, `prep`; Universal Dependencies' 200+ typologically diverse languages are precisely the kind of cross-linguistic coverage Tesnière would have wanted. The two are also formally equivalent in a precise sense: a constituent-structure tree can be derived from a dependency tree (by collapsing chains of head-dependent relations into phrasal nodes), and a *projective* dependency tree can be derived from a constituent-structure tree (by reading off the head of each constituent). The difference is not in *what can be expressed*; it is in *what is taken as primitive*, and on that question, the modern NLP field has voted for Tesnière.
-
-The deeper lesson is methodological. Tesnière wrote in 1959, *before* Chomsky's *Syntactic Structures* (1957) had consolidated constituent structure into the dominant frame of generative linguistics — but the dependency idea was not new with him; it had been sketched by the Sanskrit grammarians, by the Roman *modistae*, and by Lucien Tesnière's own predecessors. The reason the framework is taking *forty years* to mature in NLP is partly that the computational tools needed to parse at scale (transition-based parsers, neural parsers, large dependency-banks) only became available in the 2000s, and partly that the *training data* — sentences annotated with dependency relations — only became widely available in 2014 with the Universal Dependencies project. The progress curve of dependency parsing looks, on the chart, much like the progress curve of every other old AI idea: the framework existed for decades; the right *representation* and *learning algorithm* took decades more; the moment it became usable, every system quietly switched to it.
-</div>
-
-<div class="md">
 ## The Antikythera Mechanism: Ancient Analog Computing
 
 <figure>
@@ -169,29 +159,6 @@ The \citealternativetitle{antikytherasciam} is an ancient Greek hand-powered orr
 * **Circumstances:** The device was discovered in 1901 among wreckage retrieved from a shipwreck off the coast of the Greek island Antikythera. It is believed to have been constructed between 200 BC and 60 BC. Following the wreck, the advanced technology required to build such complex geared mechanisms was lost to Western civilization for over a millennium, not reappearing until the development of mechanical astronomical clocks in the 14th century.
 * **Technical Sophistication:** It contained at least 30 meshing bronze gears housed in a wooden case covered in inscriptions. These inscriptions acted as a user manual, explaining the cycles of the sun, moon, and at least five planets.
 * **Significance:** It proves that the “Computer Era” has roots in mechanical simulation. While Zuse and Aiken used gears or relays for abstract math, the Antikythera mechanism used them to model the physical universe through mechanical ratios.
-</div>
-
-<div class="optional md" data-headline="The Brazen Head: the first question-answering machine (c. 1125)">
-
-Before there were logic engines, there were *talking heads*. The **brazen head** — a bust of brass or bronze said to sit on the workbench of a medieval scholar — is the oldest known legend of a machine that *answers questions*, and it is a remarkably early sketch of the conversational machine we now call a chatbot.
-
-<figure style="margin: 0">
-    <img style="max-width: 100%" src="brazen_head.jpg" alt="Friar Bacon's Brazen Head" />
-    <figcaption class="md">\citealternativetitle{brazenheadimage}. An Elizabethan woodcut from Robert Greene's *Friar Bacon and Friar Bungay* (c. 1590): while Friars Bacon and Bungay sleep, their head speaks, “Time is. Time was. Time is past.”</figcaption>
-</figure>
-
-The first written account of such a device is in the chronicle of **William of Malmesbury** (c. 1125), who collected the rumors about the polymath **Pope Sylvester II**: from a stolen book of secrets, Sylvester cast the head of a statue that “would not speak until spoken to, but then answered any yes/no question put to it.” For the next two centuries the same figure re-attached itself to whoever was then the most famous *magus* — **Robert Grosseteste**, **Albertus Magnus**, and above all **Roger Bacon**, who was said to have spent seven years building a head so he could tell whether Britain could be made impregnable by a wall of brass (like the Norse wisdom-head of **Mímir** or the bronze guardian **Talos** of Crete, the brazen head is a *repository of knowledge* that you simply query) (\cite[Brazen head, Wikipedia]{brazenheadwiki}).
-
-Read today, the legend is almost uncomfortably close to the architecture of a modern question-answering system. The head is a **passive oracle**: it initiates nothing, and *you* pose the query — the exact turn-taking contract of a chatbot. In its earliest, most disciplined form it is a **binary classifier**, answering only *yes* or *no*. And the most famous version, the Roger Bacon head, is **stateful**: asked its questions in sequence it returns *Time is* (the moment is ripe), *Time was*, then *Time is past* (the moment has gone, the work is lost) — so its output depends not just on the question but on the *state of the world*. That is the seed of a model whose answer depends on context, and of a monitoring system that watches a process and *signals the moment a critical threshold is crossed*.
-
-The legend also anticipated the *limits* we now attach to intelligent machines. In every telling the builders **miss the decisive instant** — through fatigue or neglect — and the head **explodes, collapses, or is scrapped as useless**. The great 17th-century physician and essayist \citeauthor{brownepseudodoxia} (\citeyear{brownepseudodoxia}) later rationalized the whole episode as a misreading of **alchemy**: the “copper head” was simply the vessel of the Great Work, and “Time is” the moment to seize before the work is irrecoverably lost. The head, modern scholars note, became “a metonymy for the *hubris* of Renaissance intellectuals” — the fantasy of an all-knowing machine that can only be undone by the overreach of the people who built it (\cite[Brazen head, Wikipedia]{brazenheadwiki}).
-
-The story never really died. In Dublin, a pub founded in 1198 still trades under the sign of the brazen head, one of the oldest in Ireland; and in 1837 the Viennese magician **Joseffy** built a real mechanical descendant, the singing, jaw-clicking **Skull of Balsamo**, a copper skull that “answered” by clicking its teeth — the last great *mechanical* brazen head before electronics (\cite[Brazen head, Wikipedia]{brazenheadwiki}).
-
-<figure style="width: 24%; max-width: 200px; margin: 1em 0 0 0;">
-    <img style="width: 100%; height: auto; display: block;" src="brazen_head_pub.jpg" alt="The Brazen Head pub, Dublin" />
-    <figcaption class="md">\citealternativetitle{brazenheadpubimage}, est. 1198, one of the oldest pubs in Ireland.</figcaption>
-</figure>
 </div>
 
 <div class="optional md" data-headline="Pygmalion and Galatea: the dream of the created being (c. 8 BCE)">
@@ -217,6 +184,29 @@ Sensing is the first half of perception, and perception is the precondition for 
 </div>
 
 <div class="mn-quiz mn-quiz--checkpoint" data-quiz="history-cp1"><script type="application/json">{"title": "Checkpoint: ancient computing", "questions": [{"q": "Where was the Antikythera mechanism discovered?", "options": ["In a shipwreck off the Greek island of Antikythera, in 1901", "In an Egyptian pyramid", "In a Roman library", "In a medieval monastery"], "answer": 0, "explain": "With at least 30 meshing bronze gears, it shows that computing has roots in mechanical simulation."}]}</script></div>
+
+<div class="optional md" data-headline="The Brazen Head: the first question-answering machine (c. 1125)">
+
+Before there were logic engines, there were *talking heads*. The **brazen head** — a bust of brass or bronze said to sit on the workbench of a medieval scholar — is the oldest known legend of a machine that *answers questions*, and it is a remarkably early sketch of the conversational machine we now call a chatbot.
+
+<figure style="margin: 0">
+    <img style="max-width: 100%" src="brazen_head.jpg" alt="Friar Bacon's Brazen Head" />
+    <figcaption class="md">\citealternativetitle{brazenheadimage}. An Elizabethan woodcut from Robert Greene's *Friar Bacon and Friar Bungay* (c. 1590): while Friars Bacon and Bungay sleep, their head speaks, “Time is. Time was. Time is past.”</figcaption>
+</figure>
+
+The first written account of such a device is in the chronicle of **William of Malmesbury** (c. 1125), who collected the rumors about the polymath **Pope Sylvester II**: from a stolen book of secrets, Sylvester cast the head of a statue that “would not speak until spoken to, but then answered any yes/no question put to it.” For the next two centuries the same figure re-attached itself to whoever was then the most famous *magus* — **Robert Grosseteste**, **Albertus Magnus**, and above all **Roger Bacon**, who was said to have spent seven years building a head so he could tell whether Britain could be made impregnable by a wall of brass (like the Norse wisdom-head of **Mímir** or the bronze guardian **Talos** of Crete, the brazen head is a *repository of knowledge* that you simply query) (\cite[Brazen head, Wikipedia]{brazenheadwiki}).
+
+Read today, the legend is almost uncomfortably close to the architecture of a modern question-answering system. The head is a **passive oracle**: it initiates nothing, and *you* pose the query — the exact turn-taking contract of a chatbot. In its earliest, most disciplined form it is a **binary classifier**, answering only *yes* or *no*. And the most famous version, the Roger Bacon head, is **stateful**: asked its questions in sequence it returns *Time is* (the moment is ripe), *Time was*, then *Time is past* (the moment has gone, the work is lost) — so its output depends not just on the question but on the *state of the world*. That is the seed of a model whose answer depends on context, and of a monitoring system that watches a process and *signals the moment a critical threshold is crossed*.
+
+The legend also anticipated the *limits* we now attach to intelligent machines. In every telling the builders **miss the decisive instant** — through fatigue or neglect — and the head **explodes, collapses, or is scrapped as useless**. The great 17th-century physician and essayist \citeauthor{brownepseudodoxia} (\citeyear{brownepseudodoxia}) later rationalized the whole episode as a misreading of **alchemy**: the “copper head” was simply the vessel of the Great Work, and “Time is” the moment to seize before the work is irrecoverably lost. The head, modern scholars note, became “a metonymy for the *hubris* of Renaissance intellectuals” — the fantasy of an all-knowing machine that can only be undone by the overreach of the people who built it (\cite[Brazen head, Wikipedia]{brazenheadwiki}).
+
+The story never really died. In Dublin, a pub founded in 1198 still trades under the sign of the brazen head, one of the oldest in Ireland; and in 1837 the Viennese magician **Joseffy** built a real mechanical descendant, the singing, jaw-clicking **Skull of Balsamo**, a copper skull that “answered” by clicking its teeth — the last great *mechanical* brazen head before electronics (\cite[Brazen head, Wikipedia]{brazenheadwiki}).
+
+<figure style="width: 24%; max-width: 200px; margin: 1em 0 0 0;">
+    <img style="width: 100%; height: auto; display: block;" src="brazen_head_pub.jpg" alt="The Brazen Head pub, Dublin" />
+    <figcaption class="md">\citealternativetitle{brazenheadpubimage}, est. 1198, one of the oldest pubs in Ireland.</figcaption>
+</figure>
+</div>
 
 <div class="md">
 ## The idea that logical thought can be mechanically calculated
@@ -263,7 +253,9 @@ also formalized the binary system, reducing all mathematical logic to the interp
 providing the literal alphabet for the digital age. It shifted the quest for intelligence from
 the mystical to the mathematical, providing the logical foundation that would eventually be
 realized in \citealternativetitle{turing1950computing}.
+</div>
 
+<div class="md">
 ### The Physical Manifestation: Babbage's Analytical Engine
 
 <figure>
@@ -286,21 +278,6 @@ Lovelace's genius lay in her understanding of the “Science of Operations.” S
 ### The Algebra of Reason: George Boole's Binary Breakthrough
 
 \citeauthor{bool1854} achieved what Leibniz had only dreamed of: a formal calculus of the mind. In \citetitle{bool1854}, he reduced Aristotelian logic to algebraic equations, treating truth and falsity as binary variables. This is why `true`/`false` types are still called **booleans**.
-
-### Konrad Zuse: The Engineer
-
-<div class="smart-quote" data-cite="zusetoolazy" data-page=62>
-I was too lazy to calculate by hand.
-</div>
-
-<figure>
-    <img style="width: 100%" src="zuse.jpg" alt="Zuses Z1" />
-    <figcaption class="md">\citealternativetitle{zusez1}, the first fully automatic programmable Computer, completed in 1938</figcaption>
-</figure>
-
-\citeauthor{zusebook}, a civil engineer tired of manual arithmetic, spent 1936 to 1945 building the first binary computers in his parents' Berlin living room. His Z-series evolved from the mechanical **Z1**, which used sliding metal plates but suffered from frequent jams, to the **Z3** (1941), the world's first functional, programmable, and fully automatic digital computer. By switching from mechanical parts to 2,000 electromagnetic telephone relays, Zuse proved that binary electricity was the future of calculation. He even pioneered the first high-level programming language, **Plankalkül**, while hiding his **Z4** model in the Alps to survive WWII, eventually launching the world's first commercial computer company (\citetitle{zusebook}, p. 72ff, 156ff).
-
-Zuse did not directly work on modern AI systems, but together with people like Aiken, based on earlier ideas of Leibniz, Babbage, Llull, and, in parts, of Aristotle, he helped to create the *hardware* AI can run on.
 </div>
 
 <div class="optional md" data-headline="Prerequisite for artificial Neurons: the discovery of the natural neuron">
@@ -315,38 +292,11 @@ This shift provided the physical blueprint that would later be digitized into th
 With \citeauthor{uebersinnundbedeutung} and his work \citetitle{uebersinnundbedeutung}, the project of distilling natural language through the sieve of formal logic began. He created the foundation of analytic philosophy: the conviction that thinking is the manipulation of logical symbols.
 
 This “Symbolic AI” dominated the field for nearly forty years. It was believed that if we provided the machine with enough “if-then” rules and logical predicates, intelligence would emerge. LLMs are the radical antithesis to this dream: they prove that “sense” (in \citeauthor{uebersinnundbedeutung}'s Meaning) can be simulated through statistical association without ever explicitly defining a single logical rule.
-
-## The earliest roots of modern AI
-
-### The First Practical AI (1914)
-
-<figure>
-    <img style="width: 100%" src="gonzalo.jpg" alt="Gonzalo showing El Ajedrecista to Norbert Wiener" />
-    <figcaption class="md">The \citealternativetitle{wienerajedrecista}, a chess playing machine first demonstrated in 1914, invented by Leonardo Torres Quevedo.</figcaption>
-</figure>
-
-Before the term “Artificial Intelligence” existed, the Spanish engineer \citeauthor{torres1914} built the first working AI system: **El Ajedrecista**, an electromechanical chess endgame player capable of automatically checkmating a human opponent with king and rook against king \cite{torres1914}. Back then, chess was considered an activity restricted to the realm of intelligent creatures. Torres Quevedo wanted to redefine what we mean by “thinking,” demonstrating that machines could make choices from a complex set of relational possibilities without human intervention \cite{ieeespectrum2023chess}.
-
-The machine's sensing system used a chessboard where each of the 64 squares consisted of three metallic pieces separated by insulating material: a circular central piece connected to the positive terminal and two triangular side pieces connected to horizontal and vertical conductors. The black king's silver mesh base closed two electrical circuits upon placement, driving sliding bars to positions encoding its coordinates; four additional bars tracked the white pieces similarly. The decision logic, implemented via battery-driven relays in a tree structure, partitioned the board into three zones (left: a–c files; center: d–e files; right: f–h files) and selected one of six operations based on the relative positions of the pieces, whether the black king shared a zone with the rook, the vertical distance between pieces, and the parity of horizontal separation \cite{torres1914}. Actuation was achieved through eight electro-mechanical actuators using a disc-and-pawl mechanism: when an electromagnet released the pawl, one full disc rotation executed a mechanical “microprogram” for a specific piece movement. In the upgraded 1920 version, electromagnets concealed beneath an ordinary chessboard moved the white pieces, and a gramophone announced *jaque al rey* (check) or *mate* (checkmate). If the opponent made three illegal moves, the machine shut down \cite{ieeespectrum2023chess}.
-
-While the algorithm was suboptimal, it guaranteed checkmate in fewer than 63 moves against any defense \cite{ieeespectrum2023chess}. The machine was still considered impressive decades later when AI pioneer Norbert Wiener played against it at the 1951 Paris conference on calculating machines and human thought \cite{torres1914} \cite{ieeespectrum2023chess}.
-
-Before the chess machine, the same inventor had already been building **analog calculating machines** (*máquinas algébricas*) from 1895, using floating-point arithmetic to compute the roots of polynomials up to the eighth degree, complex ones included, to a thousandth of a unit, an early rival to the purely mechanical path that ran from Babbage to the digital computer (\cite[Thomas, 2008]{thomas2008torres}).
-</div>
-
-<div class="optional md" data-headline="The Mechanical Turk: the chess machine that fooled the world (1770)">
-
-<figure style="margin: 0">
-    <img style="max-width: 100%" src="mechanical_turk.jpg" alt="The Mechanical Turk" />
-    <figcaption class="md">\citealternativetitle{mechanicalturkimage}, shown here in Joseph Racknitz's 1789 reconstruction — wrong about the details, right that a person sat inside.</figcaption>
-</figure>
-
-Above, we met the first *practical* chess machine (1914). A century and a half before it, an earlier automaton had already captivated the world — and fooled it — for 84 years. In **1770** the Hungarian inventor **Wolfgang von Kempelen** unveiled the **Mechanical Turk**, a life-sized figure that appeared to play a strong game of chess by itself. It was, in fact, the most elaborate con in the history of the field: a hidden human grandmaster sat inside the cabinet, moving the pieces by levers and magnets, and the "memory" that let it beat any single challenger again and again was simply the size of a human brain. Yet it toured for 84 years, won most of its games — including, it was claimed, against **Napoleon Bonaparte** and **Benjamin Franklin** — and was not destroyed by fire until **1854** (\cite[Mechanical Turk, Wikipedia]{mechanicalturk}).
-
-The Turk matters for the history of AI for the opposite reason to its trick. It is the first machine the public was asked to *believe* could reason, and its test — can it hold its own in a real contest against a real person, over and over? — is the ancestor of the challenge-based test that would, a century and a half later, be formalized as the **Turing test**. The Turk could even *chat*: between games it answered questions from the crowd on a letterboard, in English, French, and German, on its age, its "life," and how it worked — a talking head, the direct descendant of Roger Bacon's brazen head. When the mechanism was finally explained in detail in 1857, the lesson stuck: *to tell a machine that thinks from a person hidden in a box, you need a test that is hard to fake* — the founding question of machine intelligence (\cite[Mechanical Turk, Wikipedia]{mechanicalturk}).
 </div>
 
 <div class="md" data-mathlevel="40">
+## The earliest roots of modern AI
+
 ### The formalization of Neurons
 
 <div class="optional md" data-headline="The First Mathematical Neuron: Lapicque's Integrate-and-Fire Model (1907)">
@@ -360,12 +310,6 @@ The mathematical birth of the neuron model predates McCulloch and Pitts by 36 ye
 $$ I(t) = C \,\frac{dV(t)}{dt}, \qquad V(t) \;\mapsto\; V_\text{rest} \;\;\text{whenever}\;\; V(t) \geq V_\text{th}, $$
 
 and the **leaky** variant he added later, $C\,\dot V = I(t) - V/R$, is essentially the equation that, more than a century on, still powers large-scale spiking neural network simulations. With this model Lapicque computed the firing frequency of a nerve fiber resistively coupled to a stimulating electrode held at fixed voltage, a calculation that \citeauthor{abbott1999lapicque}, writing in \citeyear{abbott1999lapicque} \cite{abbott1999lapicque}, calls a “remarkable achievement” given that it was made long before the mechanisms responsible for action-potential generation were known. The achievement, Abbott argues, “stresses that, in neural modeling, studies of function do not necessarily require an understanding of mechanism”: significant progress is possible if a phenomenon is adequately described, even if its biophysical basis cannot yet be modeled. He further notes that the model's enduring utility comes from the **separation of time scales** between the extremely rapid action potential and the slower processes, synaptic integration, bursting, and adaptation, so that today one avoids recomputing the voltage trajectory during a spike and concentrates instead on the computation-relevant dynamics. Even with Hodgkin and Huxley's 1952 conductance-based models available, the simple integrate-and-fire cell remains adequate for many purposes and has been used in simulations of networks containing hundreds of thousands of neurons; Abbott observed at the close of the twentieth century that “the utility of this model, devised early in the 20th century, is likely to last well into the 21st” \cite{abbott1999lapicque}. So strictly speaking, the often-cited McCulloch-Pitts cell of 1943 is *not* the first artificial neuron; it is the first **logical** one. Lapicque's integrate-and-fire came first, and is still the workhorse of modern spiking networks.
-</div>
-
-<div class="optional md" data-headline="Beurle 1956: Neural Activity Is a Wave (Predates Hopfield by 26 Years)">
-A decade before Hopfield's 1982 paper re-introduced the field to recurrent attractor networks, and a quarter-century before it became standard textbook material, the British engineer \citeauthor{beurle1956wave} (\citeyear{beurle1956wave}) published in the *Philosophical Transactions of the Royal Society* one of the first proper *mathematical* theories of what happens in a *mass* of interconnected neurons — not one cell, but a continuum. Beurle's model treats the local density of active neurons as a continuous variable obeying a partial differential equation, the same formal structure used to describe chemical waves, flame fronts, and epidemics: a wave of excitation propagates outward from a focal site at finite velocity, and the tissue behind it falls into a refractory state. The result is a *travelling wave* — a coherent, self-sustaining pattern of activity that is not localised in any single cell but is a property of the population as a whole. Beurle showed that under the right conditions these waves can store and transmit information, and that the brain's *mass-action* dynamics — what he called the "mass of neurons acting together" — is fundamentally different from, and computationally richer than, what any single neuron can do alone.
-
-The 1956 paper is almost completely unknown outside specialist history-of-neuroscience circles; the standard Anglophone narrative of neural networks jumps from the McCulloch–Pitts 1943 logical neuron, through the Hebb 1949 learning rule, to the perceptron 1958 and the Amari 1972 / Hopfield 1982 attractor networks, with Beurle's wave-dynamics paper nowhere in the chain. That is a real loss. Beurle's framework anticipates three things that the 1980s and 1990s connectionist revival would rediscover from a different direction. First, it anticipates the **continuum-field** model of cortical activity that modern neural-field theories (Amari 1977, Wilson–Cowan 1972/73, Jirsa–Kelso 2000) all descend from, and that today underpins whole-brain modelling frameworks like The Virtual Brain. Second, it anticipates the **wave-as-computation** view that connects neuroscience to the wider physics of excitable media — a connection now central to the study of cortical travelling waves during sleep, attention, and working memory. Third, and most pointedly for this course, it anticipates the **attractor-network** intuition that *the brain's information is not in any single neuron but in a population-level pattern* — the same intuition Hopfield would repackage in 1982 as a content-addressable memory, and that today underpins every modern generative model that treats latent state as a population code. Beurle wrote it all down, in a Royal Society paper, twenty-six years earlier. The history of neural networks, as usually told, skips this chapter; the chapter is worth knowing about.
 </div>
 
 <div class="optional md" data-headline="The First Recurrent Network Architecture: The Lenz-Ising Model (1920-25)">
@@ -403,6 +347,95 @@ This was the conceptual shift from “calculating machines” to the idea that c
 </div>
 
 <div class="md">
+### The First Practical AI (1914)
+
+<figure>
+    <img style="width: 100%" src="gonzalo.jpg" alt="Gonzalo showing El Ajedrecista to Norbert Wiener" />
+    <figcaption class="md">The \citealternativetitle{wienerajedrecista}, a chess playing machine first demonstrated in 1914, invented by Leonardo Torres Quevedo.</figcaption>
+</figure>
+
+Before the term “Artificial Intelligence” existed, the Spanish engineer \citeauthor{torres1914} built the first working AI system: **El Ajedrecista**, an electromechanical chess endgame player capable of automatically checkmating a human opponent with king and rook against king \cite{torres1914}. Back then, chess was considered an activity restricted to the realm of intelligent creatures. Torres Quevedo wanted to redefine what we mean by “thinking,” demonstrating that machines could make choices from a complex set of relational possibilities without human intervention \cite{ieeespectrum2023chess}.
+
+The machine's sensing system used a chessboard where each of the 64 squares consisted of three metallic pieces separated by insulating material: a circular central piece connected to the positive terminal and two triangular side pieces connected to horizontal and vertical conductors. The black king's silver mesh base closed two electrical circuits upon placement, driving sliding bars to positions encoding its coordinates; four additional bars tracked the white pieces similarly. The decision logic, implemented via battery-driven relays in a tree structure, partitioned the board into three zones (left: a–c files; center: d–e files; right: f–h files) and selected one of six operations based on the relative positions of the pieces, whether the black king shared a zone with the rook, the vertical distance between pieces, and the parity of horizontal separation \cite{torres1914}. Actuation was achieved through eight electro-mechanical actuators using a disc-and-pawl mechanism: when an electromagnet released the pawl, one full disc rotation executed a mechanical “microprogram” for a specific piece movement. In the upgraded 1920 version, electromagnets concealed beneath an ordinary chessboard moved the white pieces, and a gramophone announced *jaque al rey* (check) or *mate* (checkmate). If the opponent made three illegal moves, the machine shut down \cite{ieeespectrum2023chess}.
+
+While the algorithm was suboptimal, it guaranteed checkmate in fewer than 63 moves against any defense \cite{ieeespectrum2023chess}. The machine was still considered impressive decades later when AI pioneer Norbert Wiener played against it at the 1951 Paris conference on calculating machines and human thought \cite{torres1914} \cite{ieeespectrum2023chess}.
+
+Before the chess machine, the same inventor had already been building **analog calculating machines** (*máquinas algébricas*) from 1895, using floating-point arithmetic to compute the roots of polynomials up to the eighth degree, complex ones included, to a thousandth of a unit, an early rival to the purely mechanical path that ran from Babbage to the digital computer (\cite[Thomas, 2008]{thomas2008torres}).
+</div>
+
+<div class="optional md" data-headline="The Mechanical Turk: the chess machine that fooled the world (1770)">
+
+<figure style="margin: 0">
+    <img style="max-width: 100%" src="mechanical_turk.jpg" alt="The Mechanical Turk" />
+    <figcaption class="md">\citealternativetitle{mechanicalturkimage}, shown here in Joseph Racknitz's 1789 reconstruction — wrong about the details, right that a person sat inside.</figcaption>
+</figure>
+
+Above, we met the first *practical* chess machine (1914). A century and a half before it, an earlier automaton had already captivated the world — and fooled it — for 84 years. In **1770** the Hungarian inventor **Wolfgang von Kempelen** unveiled the **Mechanical Turk**, a life-sized figure that appeared to play a strong game of chess by itself. It was, in fact, the most elaborate con in the history of the field: a hidden human grandmaster sat inside the cabinet, moving the pieces by levers and magnets, and the "memory" that let it beat any single challenger again and again was simply the size of a human brain. Yet it toured for 84 years, won most of its games — including, it was claimed, against **Napoleon Bonaparte** and **Benjamin Franklin** — and was not destroyed by fire until **1854** (\cite[Mechanical Turk, Wikipedia]{mechanicalturk}).
+
+The Turk matters for the history of AI for the opposite reason to its trick. It is the first machine the public was asked to *believe* could reason, and its test — can it hold its own in a real contest against a real person, over and over? — is the ancestor of the challenge-based test that would, a century and a half later, be formalized as the **Turing test**. The Turk could even *chat*: between games it answered questions from the crowd on a letterboard, in English, French, and German, on its age, its "life," and how it worked — a talking head, the direct descendant of Roger Bacon's brazen head. When the mechanism was finally explained in detail in 1857, the lesson stuck: *to tell a machine that thinks from a person hidden in a box, you need a test that is hard to fake* — the founding question of machine intelligence (\cite[Mechanical Turk, Wikipedia]{mechanicalturk}).
+</div>
+
+<div class="md">
+## Further developments of Computer Hardware and Computing Theory
+
+### Konrad Zuse: The Engineer
+
+<div class="smart-quote" data-cite="zusetoolazy" data-page=62>
+I was too lazy to calculate by hand.
+</div>
+
+<figure>
+    <img style="width: 100%" src="zuse.jpg" alt="Zuses Z1" />
+    <figcaption class="md">\citealternativetitle{zusez1}, the first fully automatic programmable Computer, completed in 1938</figcaption>
+</figure>
+
+\citeauthor{zusebook}, a civil engineer tired of manual arithmetic, spent 1936 to 1945 building the first binary computers in his parents' Berlin living room. His Z-series evolved from the mechanical **Z1**, which used sliding metal plates but suffered from frequent jams, to the **Z3** (1941), the world's first functional, programmable, and fully automatic digital computer. By switching from mechanical parts to 2,000 electromagnetic telephone relays, Zuse proved that binary electricity was the future of calculation. He even pioneered the first high-level programming language, **Plankalkül**, while hiding his **Z4** model in the Alps to survive WWII, eventually launching the world's first commercial computer company (\citetitle{zusebook}, p. 72ff, 156ff).
+
+Zuse did not directly work on modern AI systems, but together with people like Aiken, based on earlier ideas of Leibniz, Babbage, Llull, and, in parts, of Aristotle, he helped to create the *hardware* AI can run on.
+
+### Alan Turing: Theory and the Universal Machine (1936-1950)
+
+<figure>
+    <img style="width: 100%" src="turing.jpg" alt="Alan Turing" />
+    <figcaption class="md">\citetitle{turingimage}, c. 1930</figcaption>
+</figure>
+
+\citeauthor{turing1937} provided the mathematical proof for what a computer *could* do.
+* **Turing Machine (1937):** A theoretical model showing that a simple machine reading symbols on a tape could simulate any algorithmic logic.
+* **ACE & Enigma:** Beyond theory, he designed the Automatic Computing Engine (ACE) and led the cryptanalysis at Bletchley Park using the “Bombe.”
+</div>
+
+<div class="optional md" data-headline="Shannon's Bridge: Boolean Algebra and Electrical Circuits">
+In 1937, a 21-year-old MIT graduate student named Claude Elwood Shannon submitted his master's thesis, \cite[*A Symbolic Analysis of Relay and Switching Circuits*]{shannon1937switching}, which demonstrated that the two-valued Boolean algebra developed by \citeauthor{bool1854} in 1854 could serve as a theoretical foundation for the design of electrical switching circuits. Shannon recognized that the binary states of electrical relay switches, open or closed, on or off, were isomorphic to the truth values of Boolean logic: true and false, 1 and 0. Any arrangement of series and parallel switches could be described by a Boolean expression, and conversely, any Boolean expression could be physically realized as a circuit of relays. His thesis laid the foundations for all digital computing and digital circuits. The utilization of the binary properties of electrical switches to perform logic functions is the basic concept that underlies all electronic digital computer designs, from the earliest relay computers to the GPU clusters training today's large language models.
+</div>
+
+<div class="md">
+### Howard Aiken & The Harvard Mark I (1944)
+
+<figure>
+    <img style="width: 100%" src="aiken_portrait.jpeg" alt="Howard Aiken" />
+    <figcaption class="md">\citealternativetitle{aikenphoto}, officially named as Automatic Sequence Controlled Calculator</figcaption>
+</figure>
+
+Inspired by Babbage's Analytical Engine, Aiken designed the **ASCC (Mark I)**. While Zuse used binary, Aiken stuck to **decimal** wheels. It was a massive, 50-foot long mechanical beast synchronized by a long rotating shaft.
+* **Significance:** It was the first large-scale automatic digital computer in the USA. He described it first in \citetitle{aiken} in \citeyear{aiken}.
+
+### John von Neumann & The Stored-Program Concept (1945)
+Before von Neumann, computers like the ENIAC had to be physically rewired to change tasks. His \citetitle{vonneumann} proposed the **Von Neumann Architecture**.
+
+One of his **Big Ideas** for **Computing**: Data and instructions are stored in the same memory. This allowed the computer to be “reprogrammed” via software rather than hardware switches.
+
+### IBM 702: The First Commercial Business Computer (1953)
+
+<figure>
+    <img style="width: 100%" src="1280px-BRL61-IBM_702.jpg" alt="IBM 702 system" />
+    <figcaption class="md">\citealternativetitle{ibm702image}</figcaption>
+</figure>
+
+The \citealternativetitle{ibm702} (\citeyear{ibm702}) was IBM's first commercial electronic computer aimed at business data processing, and a direct response to Remington Rand's UNIVAC. It introduced **magnetic-core memory** for random-access applications and weighted roughly 24,645 pounds. The memory was character-oriented, Williams-tube based (later retrofitted to core), with capacities ranging from 2,000 to 10,000 characters \cite{ibm702}.
+</div>
+
+<div class="md">
 ### The Electric Tortoise: Machina speculatrix (1936)
 
 <figure>
@@ -421,6 +454,12 @@ Starting in 1936, the British neurophysiologist **W. Grey Walter** (1910–1977,
 Built by **Marvin Minsky** and **Dean Edmonds** in 1951, the **SNARC** (Stochastic Neural Analog Reinforcement Calculator) was the world's first physical artificial neural network. Inspired directly by the theoretical logic calculus of \citeauthorlastnameand{mccullochpitts1943} (\citeyear{mccullochpitts1943}), the SNARC translated abstract mathematical neurons into stochastic, learning hardware. It consisted of a randomly connected network of 40 artificial neurons constructed from vacuum tubes, salvaged B-24 bomber gyropilots, and magnetic clutches, designed to simulate a rat learning to navigate a virtual maze.
 
 Rather than relying on explicit programming, the machine learned via mechanical reinforcement. When the network made a random but “correct” move, a reinforcement signal engaged the clutches to turn potentiometers, physically altering the electrical resistance of the active connections. This increased the probability that those specific, successful pathways would fire again. By mechanically formalizing trial-and-error learning, concepts Minsky later detailed in his Princeton dissertation, *\citetitle{minsky1954}* (\citeyear{minsky1954}), the SNARC proved that a decentralized network of McCulloch-Pitts cells could autonomously calculate behavioral adaptation.
+
+<div class="optional md" data-headline="Beurle 1956: Neural Activity Is a Wave (Predates Hopfield by 26 Years)">
+A decade before Hopfield's 1982 paper re-introduced the field to recurrent attractor networks, and a quarter-century before it became standard textbook material, the British engineer \citeauthor{beurle1956wave} (\citeyear{beurle1956wave}) published in the *Philosophical Transactions of the Royal Society* one of the first proper *mathematical* theories of what happens in a *mass* of interconnected neurons — not one cell, but a continuum. Beurle's model treats the local density of active neurons as a continuous variable obeying a partial differential equation, the same formal structure used to describe chemical waves, flame fronts, and epidemics: a wave of excitation propagates outward from a focal site at finite velocity, and the tissue behind it falls into a refractory state. The result is a *travelling wave* — a coherent, self-sustaining pattern of activity that is not localised in any single cell but is a property of the population as a whole. Beurle showed that under the right conditions these waves can store and transmit information, and that the brain's *mass-action* dynamics — what he called the "mass of neurons acting together" — is fundamentally different from, and computationally richer than, what any single neuron can do alone.
+
+The 1956 paper is almost completely unknown outside specialist history-of-neuroscience circles; the standard Anglophone narrative of neural networks jumps from the McCulloch–Pitts 1943 logical neuron, through the Hebb 1949 learning rule, to the perceptron 1958 and the Amari 1972 / Hopfield 1982 attractor networks, with Beurle's wave-dynamics paper nowhere in the chain. That is a real loss. Beurle's framework anticipates three things that the 1980s and 1990s connectionist revival would rediscover from a different direction. First, it anticipates the **continuum-field** model of cortical activity that modern neural-field theories (Amari 1977, Wilson–Cowan 1972/73, Jirsa–Kelso 2000) all descend from, and that today underpins whole-brain modelling frameworks like The Virtual Brain. Second, it anticipates the **wave-as-computation** view that connects neuroscience to the wider physics of excitable media — a connection now central to the study of cortical travelling waves during sleep, attention, and working memory. Third, and most pointedly for this course, it anticipates the **attractor-network** intuition that *the brain's information is not in any single neuron but in a population-level pattern* — the same intuition Hopfield would repackage in 1982 as a content-addressable memory, and that today underpins every modern generative model that treats latent state as a population code. Beurle wrote it all down, in a Royal Society paper, twenty-six years earlier. The history of neural networks, as usually told, skips this chapter; the chapter is worth knowing about.
+</div>
 
 ## The Cyberneticians (1943-1953)
 
@@ -493,34 +532,7 @@ The group's horizon opened before Turing's. In \citetitle{wienergodandgolem1964}
 
 This transdisciplinary group is the direct parent of AI. When the field formalised in 1956 at \citealternativetitle{darthmouthartificialintelligence} \cite{darthmouthartificialintelligence}, it split off from cybernetics — and, as we will see, the neural-net wing was downplayed while symbolic AI took the funding.
 
-## Further developments of Computer Hardware and Computing Theory
-
-### Howard Aiken & The Harvard Mark I (1944)
-
-<figure>
-    <img style="width: 100%" src="aiken_portrait.jpeg" alt="Howard Aiken" />
-    <figcaption class="md">\citealternativetitle{aikenphoto}, officially named as Automatic Sequence Controlled Calculator</figcaption>
-</figure>
-
-Inspired by Babbage's Analytical Engine, Aiken designed the **ASCC (Mark I)**. While Zuse used binary, Aiken stuck to **decimal** wheels. It was a massive, 50-foot long mechanical beast synchronized by a long rotating shaft.
-* **Significance:** It was the first large-scale automatic digital computer in the USA. He described it first in \citetitle{aiken} in \citeyear{aiken}.
-
-### John von Neumann & The Stored-Program Concept (1945)
-Before von Neumann, computers like the ENIAC had to be physically rewired to change tasks. His \citetitle{vonneumann} proposed the **Von Neumann Architecture**.
-
-One of his **Big Ideas** for **Computing**: Data and instructions are stored in the same memory. This allowed the computer to be “reprogrammed” via software rather than hardware switches.
-
-### Alan Turing: Theory and the Universal Machine (1936-1950)
-
-<figure>
-    <img style="width: 100%" src="turing.jpg" alt="Alan Turing" />
-    <figcaption class="md">\citetitle{turingimage}, c. 1930</figcaption>
-</figure>
-
-\citeauthor{turing1937} provided the mathematical proof for what a computer *could* do.
-* **Turing Machine (1937):** A theoretical model showing that a simple machine reading symbols on a tape could simulate any algorithmic logic.
-* **ACE & Enigma:** Beyond theory, he designed the Automatic Computing Engine (ACE) and led the cryptanalysis at Bletchley Park using the “Bombe.”
-
+<div class="md">
 ### The Imitation Game
 
 Before the term “Artificial Intelligence” even existed, **Alan Turing** laid the philosophical groundwork in \citeyear{turing1950computing} with his paper *\citetitle{turing1950computing}*.
@@ -531,59 +543,7 @@ I propose to consider the question, 'Can machines think?'
 Turing argued that defining “thinking” was too ambiguous. Instead, he proposed the **Imitation Game** (now known as the Turing Test), an *operationalization*: a behavioral test designed to let the question “Can machines think?” be settled empirically rather than by philosophical argument \cite{hnfturing2020}. A computer would be considered intelligent if it could converse indistinguishably from a human. This shifted the goal of AI from replicating biological mechanics to replicating observable behavior.
 
 It is worth being clear, however, about what the test is and what it has come to mean. The test was never adopted as a formal scientific standard for measuring intelligence, and in modern AI research it is widely regarded as outdated: it probes the ability to *imitate* human conversation, which can be carried by surface fluency, small talk, and brief deceptions (the three classical objections of \citeauthor{levesque2014bestbehaviour} (\citeyear{levesque2014bestbehaviour}): **deception** — the machine must fabricate a human identity, which is not itself a component of intelligence; **conversation** — small talk and parlor tricks can carry a machine to a pass without real reasoning; and **evaluation** — human judges disagree and err), rather than by understanding, reasoning, or world knowledge. Its historical role is real — it shaped the field's first decades — but contemporary AI evaluation has largely moved to capability-specific benchmarks rather than open-ended mimicry.
-
-### IBM 702: The First Commercial Business Computer (1953)
-
-<figure>
-    <img style="width: 100%" src="1280px-BRL61-IBM_702.jpg" alt="IBM 702 system" />
-    <figcaption class="md">\citealternativetitle{ibm702image}</figcaption>
-</figure>
-
-The \citealternativetitle{ibm702} (\citeyear{ibm702}) was IBM's first commercial electronic computer aimed at business data processing, and a direct response to Remington Rand's UNIVAC. It introduced **magnetic-core memory** for random-access applications and weighted roughly 24,645 pounds. The memory was character-oriented, Williams-tube based (later retrofitted to core), with capacities ranging from 2,000 to 10,000 characters \cite{ibm702}.
-
-### The Personal Computer: Ed Roberts and the Altair 8800 (1974-1975)
-
-While MIT, Bell Labs, and IBM were building million-dollar mainframes, an Air Force veteran named **Henry Edward “Ed” Roberts** (\citeauthor{edroberts}, 1941–2010), running a small kit company called **MITS** out of Albuquerque, was rebuilding his calculator business after a brutal price war with Texas Instruments had driven it into 300,000 US Dollar of debt. The result, the **\citealternativetitle{altair8800}** (\citeyear{altair8800}), was the first commercially successful personal computer: a 397 US Dollar mail-order kit based on the new Intel 8080 microprocessor, featured on the cover of the January 1975 issue of *Popular Electronics* \cite{edroberts}. Roberts is most often remembered as “[the father of the personal computer](https://en.wikipedia.org/wiki/List_of_people_considered_father_or_mother_of_a_field#Computing)” \cite{edroberts_bbc}.
-
-What the Altair lacked (no keyboard, no display, no operating system, programs entered by toggle switches) was less important than what it started: an industry. \citeauthor{historyofpc} documents how the Altair spawned the **S-100 bus clone industry** (including the IMSAI 8080), the **Homebrew Computer Club**, and ultimately the founding of **Microsoft** when **Bill Gates** and **Paul Allen** wrote **Altair BASIC** \cite{historyofpc} as the company's first product.
-
-For competing claims to the title “father of the personal computer,” \citeauthor{historyofpc} lists:
-* **Chuck Peddle**, designed the **MOS 6502** microprocessor, the **KIM-1**, and the **Commodore PET** (\citeyear{commodorepet}), the cheapest of the famous “1977 Trinity” \cite{chuckpeddle} \cite{mos6502}.
-* **André Truong Trong Thi**, co-created the **Micral N** (\citeyear{micral}), one of the earliest microcomputers (1972) \cite{historyofpc}.
-
-### VisiCalc and the Killer App (1979)
-
-In 1979, **Dan Bricklin** watched a Harvard Business School professor erase and redraw an entire spreadsheet on the blackboard after changing a single number. Bricklin's \citealternativetitle{visicalc} (\citeyear{visicalc}) automated exactly that: a “killer app” that, by being Apple-II-exclusive for its first year, is credited with single-handedly selling the Apple II to the business market \cite{visicalc} \cite{historyofpc}. It is widely considered the first “killer application” in computer history.
-
-### The IBM PC (1981)
-
-Released August 12, 1981, the **IBM PC** used the Intel 8088 CPU and Microsoft-supplied **PC-DOS** (later **MS-DOS**), since IBM's negotiations with Digital Research for CP/M had failed \cite{ibmpc} \cite{historyofpc}. IBM's failure to patent the BIOS led, via clean-room reverse engineering, to a clone industry that ultimately overwhelmed IBM itself, establishing the Wintel architecture as the dominant PC standard for decades.
-
-### NASA Spaceflight Computers: Real-Time Reliability in Orbit (1965–1989)
-
-Long before neural networks, a different kind of computing was pushing the hardware forward: the computers that flew. A spacecraft computer could not crash, could not be powered off, and could not be handed to a technician who walked over and pressed *reset* — so NASA's spaceflight programs forced the industry into **real-time, fault-tolerant** design decades before it became mainstream. \citeauthor{tomayko1988spaceflight} documents the full arc in \citetitle{tomayko1988spaceflight} (\citeyear{tomayko1988spaceflight}).
-
-<div class="smart-quote" data-cite="tomayko1988spaceflight">
-NASA had no choice but to become a leader in the development of real-time systems [...] it is in this field of computing that NASA has had its greatest impact.
 </div>
-
-**The Gemini Digital Computer (1965).** Built by IBM, it was the **first digital computer flown on a manned spacecraft**: 4,096 words of ferrite-core memory at 39 bits per word, a 140-millisecond instruction cycle, and about 59 pounds \cite{tomayko1988spaceflight}. From Gemini VIII it carried an **Auxiliary Tape Memory** that loaded programs from tape into core, an early ancestor of virtual memory and program swapping \cite{tomayko1988spaceflight}.
-
-**The Apollo Guidance Computer (AGC).** Developed at MIT's Instrumentation Laboratory from 1961, the AGC was one of the first computers to be built from **integrated circuits**, a bold choice when ICs were only three years old \cite{tomayko1988spaceflight}. It used roughly 5,000 NOR-gate ICs and stored its program in **core rope memory**, a non-volatile medium whose read-wires were *hand-woven* by operators at Raytheon, at up to 2,000 bits per cubic inch \cite{tomayko1988spaceflight}. Its operating system was a **priority-interrupt** scheduler (the "Executive" and a "waitlist") that juggled several concurrent jobs by importance, the direct ancestor of the real-time operating systems still flying in spacecraft today \cite{tomayko1988spaceflight}.
-
-#### The Apollo 11 landing alarms
-
-During the lunar descent of Apollo 11 the AGC began throwing **1201 and 1202 program alarms**: the docking radar was flooding it with interrupt requests and eating about 15% of the machine's resources. Instead of aborting, the computer's **restart software** gracefully shed the overload, kept the guidance functions alive, and let Armstrong land \cite{tomayko1988spaceflight}. Sixty years on this is still the textbook example of **fault-tolerant real-time computing**, a property modern autonomous and ML systems quietly depend on.
-
-**The Space Shuttle (1981).** The Shuttle carried the most computerized avionics built to that date \cite{tomayko1988spaceflight}: **five** general-purpose computers flying in redundant configurations, digital controllers on every main engine (the first digital rocket-engine controllers), and a **fully digital fly-by-wire** system in which every mechanical linkage had been replaced by electrical signals routed through the computers \cite{tomayko1988spaceflight}. Four of the computers ran identical software and had to agree with each other at all times.
-
-<div class="smart-quote" data-cite="tomayko1988spaceflight">
-Computer synchronization proved to be the most difficult task in producing the Shuttle's avionics.
-</div>
-
-To stop a single common software bug from taking down all four at once, a fifth **Backup Flight System** ran independently developed code \cite{tomayko1988spaceflight}. The high-level language NASA commissioned for the Shuttle, **HAL/S**, introduced real-time statements like `SCHEDULE`, `TERMINATE`, `WAIT` and `PRIORITY` with priority-based task scheduling, ideas that carried straight into **Ada**, the language later adopted for the Space Station \cite{tomayko1988spaceflight}.
-
-**The STAR computer and selective redundancy.** At JPL, Algirdas Avizienis's **STAR** (Self-Testing And Repairing) computer never flew, but it invented the fault-tolerance toolkit that still underpins reliable computing: **selective redundancy** (cold spares swapped in on failure), error-correcting codes, 3-of-5 voting, and **rollback-and-retry** on transient faults \cite{tomayko1988spaceflight}. Its descendants reappear, much later, in the redundancy and checkpointing that keep large-scale training runs alive.
 
 ## The term “Artificial Intelligence”
 
@@ -826,13 +786,219 @@ The work is striking for two reasons. First, \citeauthor{bongard1966pattern}'s 1
 #### End-to-End Learning by Gradient Descent (1967–68)
 
 Two years after Ivakhnenko's layer-by-layer approach (so around 1967), \citeauthor{adaptivepattern} proposed training multi-layer perceptrons with many layers in end-to-end fashion using stochastic gradient descent (SGD). His student Saito implemented this in a **five-layer MLP with two modifiable layers**, which learned internal representations to classify non-linearly separable pattern classes, demonstrating that hidden units could discover useful features without explicit human engineering. This was achieved when compute was billions of times more expensive than today, and predates the popularization of backpropagation by nearly two decades.
-
-<div class="optional md" data-headline="The 1990-91 Annus Mirabilis at TU Munich">
-Jürgen Schmidhuber's \citetitle{schmidhuber2022deep} documents a striking concentration of foundational ideas at his lab at TU Munich in the twelve months from early 1990 to mid 1991, a window worth knowing about in its own right. In it the group published the principles for what we now call **generative adversarial networks** (a controller network in a zero-sum game with a predictor, February 1990); the first **subgoal-generating** networks for hierarchical reinforcement learning; and in 1991 a *fast-weight programmer* in which one neural network learns to slowly modify the weights of another — an abstraction Schmidhuber's group has connected to the learned key-query-value projections of the modern **Transformer**. The same window saw unsupervised **pre-training** of deep neural networks; **knowledge distillation**, in which a small network is trained to mimic a larger one (the technique that underpins DeepSeek's compression of much larger frontier models); the formal identification of the **vanishing/exploding gradient** problem in Hochreiter's 1991 diploma thesis; and the **Long Short-Term Memory** architecture, gated recurrent residual connections that have since become the most cited AI paper of the twentieth century. Several foundational ideas of modern deep learning — gated residual connections, fast-weight programmers, the GAN principle — can be traced to papers from this single window at a Bavarian technical university. Schmidhuber has argued that the standard Anglophone narrative under-credits this European and Japanese work; other researchers in the field read the priorities more cautiously, and several of the cited innovations were independently rediscovered in different communities at different times. Whatever position one takes on the priority disputes, the technical lineage itself is documented in the original papers and useful to know, because every modern AI system stands on at least some of these ideas.
 </div>
+
+<div class="optional md" data-headline="Early work on pattern classification algorithms">
+In 1967, Shunichi Amari made a foundational contribution to the theory of adaptive
+pattern classifiers in \citetitle{adaptivepattern}.
+
+His work addressed the problem of determining the optimal weight vector of linear
+pattern classifiers under general, potentially non-separable pattern distributions.
+Amari proposed a “probabilistic-descent method,” in which a correction vector is
+associated with each misclassified pattern such that, on average, the correction
+moves the discriminant function toward the optimum, even though any individual
+trial may worsen it. He proved that the weight vector converges to the optimal
+solution and revealed an important tradeoff between the speed and accuracy of
+convergence: a larger learning constant accelerates convergence but reduces
+final accuracy, while a smaller one improves accuracy at the cost of slower
+learning. He further generalized the theory to multicategory classifiers,
+piecewise-linear discriminant functions, and general nonlinear classifiers,
+and even introduced an adaptive scheme for learning the learning rule itself.
+</div>
+
+<div class="md">
+## Natural Language Processing Before LLMs (1947–1966)
+
+ ### Machine Translation: The Longest-Running Bet
+
+ <figure>
+	<img style="width: 100%; max-width: 520px;" src="warren_weaver.jpg" alt="Warren Weaver, 1940" />
+ <figcaption class="md">\citealternativetitle{img_warren_weaver} (Public Domain, \citeauthor{img_warren_weaver}, \citeyear{img_warren_weaver}): seven years before his 1947 letter proposing machine translation.</figcaption>
+ </figure>
+
+ Machine translation was one of the first uses proposed for computers beyond numerical calculation: word dictionaries could be stored in memory, and a machine could look up English equivalents for foreign words. In 1947, the mathematician and science administrator **Warren Weaver** wrote to **Norbert Wiener** asking whether a digital computer might translate between natural languages; Wiener, who had spent the war predicting where aircraft would be, was unconvinced — the boundaries of words in different languages, he replied, are "too vague" and their connotations "too extensive" for any quasi-mechanical scheme to hope on. The New York Times got there first in print: on May 31, 1949, it reported that a new "electric brain" under construction at the National Bureau of Standards laboratory — Harry D. Huskey's team at the University of California's Institute of Numerical Analysis — would be "capable not only of performing complex mathematical problems but even of translating foreign languages," by holding the 60,000 words of the Webster Collegiate Dictionary with equivalents in as many as three foreign languages. The machine had not yet translated anything, and the next day's editorial doubted it could: how would it know whether French "pont" meant "bridge" or "deck"? By July 1949, Weaver had elaborated the idea into a memorandum, "Translation", which he sent to some 200 colleagues, and which is generally credited with initiating the field of **machine translation (MT)** (\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).
+
+ The first demonstration came faster than the skeptics expected. On January 8, 1954, a collaboration between **IBM** and **Georgetown University**, running on the IBM 701, translated short Russian sentences into English for a press audience: a woman who "didn't understand a word of the language of the Soviets" punched *Mi pyeryedayem mislyi posryedstvom ryechyi*, and the machine printed "We transmit thoughts by means of speech" at two and a half lines per second. The funding surge that followed ran for a decade before crashing against the wall **Yehoshua Bar-Hillel** had already identified: a translating machine needs *world knowledge*. His example was a child who finds his toy box, "the box was in the pen" — and a machine that knows only the two dictionary senses of *pen* cannot tell a writing instrument from a playpen, unless it also knows the relative sizes of pens, toy boxes, and pens. He concluded that fully automatic high-quality translation was infeasible "not only in the near future but altogether", and called the prospect of equipping computers with the required encyclopedic knowledge "utterly chimerical" (\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).
+
+ The field's first winter was bureaucratic rather than mathematical: the US **ALPAC** report concluded that there was "no immediate or predictable prospect of useful machine translation", and large-scale funding vanished, leaving what MT's historian W. John Hutchins called the **"quiet decade"** (1967–1976). The American exception was **Systran**, built by **Petr Toma**, a Hungarian-born scientist from the Georgetown team: he founded Latsec in La Jolla in 1968, took a U.S. Air Force contract, and tested the system at Wright-Patterson Air Force Base in 1969, where it "continues to provide Russian–English translations", its promoters claimed, for the Air Force's Foreign Technology Division to this day. By Margaret Boden's reckoning, Systran's intelligibility rose from 45% (1976) to 78% (1978) — against 98–99% for human translators — and post-editing a page of its output took twenty minutes where a human translation took an hour. Machine translation, in other words, never died: it learned to survive as a tool for post-editors, until statistics and then neural networks carried it across the finish line.
+</div>
+
+<div class="md">
+### Tesnière 1959: Dependency Grammar — French, Predates Modern NLP by 40 Years
+
+The Pāṇinian line of structural linguistics reaches its otherworldly culmination in a single short book, \citetitle{tesniere1959deps} (\citeyear{tesniere1959deps}), written by the French linguist \citeauthor{tesniere1959deps} (\citeyear{tesniere1959deps}) and published posthumously five years after his death. Tesnière's central claim is that the basic unit of syntactic description is not the **phrase** (as in Pāṇini's phrase-structure rules and in Chomsky's later constituent-structure trees) but the **dependency relation**: a directed link from a *governor* word to a *dependent* word. A sentence is, on this view, a **stemma** — a tree of word-to-word dependencies, with the main verb at the root and each word hanging directly off the word whose meaning it modifies, with no intermediate phrasal nodes. A simple sentence like "the cat sat on the mat" is one verb (*sat*) with three dependents (*the cat*, its subject; *on the mat*, its prepositional complement), each of which carries its own dependents (*the* on *cat*, *the* on *mat*).
+
+What is striking about Tesnière's framework is how much modern NLP silently inherits from it. Constituent-structure trees dominated the syntactic theory of the 1960s–80s and underlie most formal grammars, but the dependency view turned out to be a better match for the kinds of *local* relations that matter in practice — who is the subject of which verb, which noun does a pronoun refer to, which preposition links which argument — and modern dependency parsers now dominate the field. The Stanford, Universal Dependencies, spaCy, and Stanza parsers all produce exactly Tesnière's dependency trees, with typed governor→dependent relations like `nsubj`, `dobj`, `amod`, `prep`; Universal Dependencies' 200+ typologically diverse languages are precisely the kind of cross-linguistic coverage Tesnière would have wanted. The two are also formally equivalent in a precise sense: a constituent-structure tree can be derived from a dependency tree (by collapsing chains of head-dependent relations into phrasal nodes), and a *projective* dependency tree can be derived from a constituent-structure tree (by reading off the head of each constituent). The difference is not in *what can be expressed*; it is in *what is taken as primitive*, and on that question, the modern NLP field has voted for Tesnière.
+
+The deeper lesson is methodological. Tesnière wrote in 1959, *before* Chomsky's *Syntactic Structures* (1957) had consolidated constituent structure into the dominant frame of generative linguistics — but the dependency idea was not new with him; it had been sketched by the Sanskrit grammarians, by the Roman *modistae*, and by Lucien Tesnière's own predecessors. The reason the framework is taking *forty years* to mature in NLP is partly that the computational tools needed to parse at scale (transition-based parsers, neural parsers, large dependency-banks) only became available in the 2000s, and partly that the *training data* — sentences annotated with dependency relations — only became widely available in 2014 with the Universal Dependencies project. The progress curve of dependency parsing looks, on the chart, much like the progress curve of every other old AI idea: the framework existed for decades; the right *representation* and *learning algorithm* took decades more; the moment it became usable, every system quietly switched to it.
+</div>
+
+<div class="md">
+### The Illusion of Empathy: The ELIZA-Effect
+
+<div class="smart-quote" data-cite="weizenbaum1976computer" data-page=7>
+I had not realized ... that extremely short exposures to a relatively simple computer program could induce powerful delusional thinking in quite normal people.
+</div>
+
+In the era of Symbolic AI, before machines played chess at a master level, they attempted conversation. In 1966, **\citeauthor{weizenbaum1976computer}** created **ELIZA**, a program designed to parody a Rogerian psychotherapist \cite{hnfweizenbaum2023}.
+
+Unlike modern LLMs which calculate probabilities, ELIZA relied on simple pattern matching and substitution scripts. If a user typed “My mother hates me,” ELIZA might use a decomposition rule to transform “My X Y me” into “Who else in your family Y you?”
+
+Despite having no understanding of the world, users, including Weizenbaum's own secretary, attributed genuine human emotions and wisdom to the machine. Weizenbaum was so disturbed by this tendency of humans to project humanity onto code that he wrote \citealternativetitle{weizenbaum1976computer} to warn against the reliance on “deciding” machines over “choosing” humans.
+
+<div class="optional md" data-headline="The original ELIZA was lost — and found">
+A \citeyear{lane2025eliza} \cite{lane2025eliza} reveals a surprising fact about ELIZA's history: the original program is not the version most historians have been writing about. Weizenbaum wrote ELIZA in MAD-SLIP at MIT's Project MAC, but the Lisp clone made soon after by Bernie Cosell at BBN, distributed through the ARPANet, supplanted the original within a few years; the BASIC re-implementation by Jeff Shrager in 1977 was what the wider public ever met. For decades the original MAD-SLIP source was assumed lost. In 2021, Shrager (coincidentally the same Jeff Shrager who wrote the 1977 BASIC version) and the MIT archivist Myles Crowley located a fan-fold printout of the original ELIZA, an early DOCTOR script, and substantial parts of MAD-SLIP itself in Weizenbaum's papers at the MIT Institute Archives. The rediscovered code differs in informative ways from the 1966 CACM paper: the preliminary “PRE” reassembly pattern is missing, the keyword stack and “NEWKEY” rule are not implemented, and reassembly-level calls between rules are not supported. A team led by Rupert Lane, David Berry, Anthony Hay, Arthur Schwarz and Shrager hand-transcribed the roughly 2600 lines of MAD and Fortran Assembly Program, brought up CTSS on an emulator of the IBM 7094 (the same 36-bit, 32 K-word, ~450 kHz machine Weizenbaum had used), debugged a single-character typo deep in the FAP, and on 21 December 2024 at 10:54 GMT got ELIZA running again after nearly sixty years. The reconstructed system nearly exactly reproduces the famous “Men are all alike” conversation from the original paper; the entire stack is open source, so any Unix user can now run the world's earliest chatbot on its original timesharing system. This means the “ELIZA” cited in most AI textbooks is, strictly speaking, Cosell's Lisp clone; Weizenbaum's own program is now the better-documented of the two.
+ </div>
+</div>
+
+<div class="md">
+### Computer-Generated Text: Early Examples
+
+
+<div class="smart-quote" data-cite="racter1984">
+More than iron, more than lead, more than gold I need electricity.
+I need it more than I need lamb or pork or lettuce or cucumber.
+I need it for my dreams.
+</div>
+
+\citetitle{racter1984} (\citeyear{racter1984}) is widely cited as the first book
+to be entirely written by a computer program. It was generated by **Racter**, a
+text-generation program created by William Chamberlain and Thomas Etter. Racter was
+originally developed on an **OSI** (Ohio Scientific) computer and later adapted to a
+**Z80-based CP/M system** — the version that allegedly produced the book's text,
+written in compiled BASIC with 64 KB of RAM. The 1984 Mindscape commercial release
+(for IBM PC compatibles, then Apple II, Mac, and Amiga) was a separate, simpler
+version built by **Inrac Corporation**, not the same program that wrote the book.
+Racter used a system of templates,
+grammatical rules, and randomized word selection to produce prose and poetry that was
+syntactically coherent but semantically surreal, lines like “More than iron, more
+than lead, more than gold I need electricity“ became iconic examples of early machine
+creativity.
+
+However, Racter was not the first instance of computer-generated text. Earlier examples
+include **Christopher Strachey's** \citetitle{strachey1952} (\citeyear{strachey1952}), which ran on the
+Manchester Mark I computer and used templates to produce randomized romantic letters,
+arguably the earliest known computer-generated literary text.
+
+The earliest of these examples is **Theo Lutz** (1932–2010), a German computer
+scientist, student of the philosopher-cyberneticist **Max Bense**, and one of the
+pioneers of what is now called *digital poetry* \cite{lutzobituary}. His \citetitle{lutz1959}
+(\citeyear{lutz1959}) ran on a Zuse Z22 at the TH Stuttgart computer center and recombined
+words from Kafka's *The Castle* according to probabilistic rules, producing what he
+explicitly called “stochastic texts”:
+
+<div class="smart-quote" data-cite="lutz1959">
+<div class="full-quote">Nicht jeder Blick ist nah. Kein Dorf ist spät.<br>
+Ein Schloss ist frei und jeder Bauer ist fern.</div>
+<div class="short-quote">Not every look is near. No village is late.<br>
+A castle is free and every farmer is far.</div>
+</div>
+
+Remarkably, Lutz even sketched how such a program could learn: by raising the transition
+probabilities between subject and predicate whenever a generated sentence was judged
+“meaningful”, \cite[“the machine has 'learned' in a certain way”]{lutz1959}, preferring
+certain word combinations over time, essentially a trainable n-gram-style language model
+proposed in 1959. These experiments predate
+Racter by decades and sit at the intersection of combinatorics and language that traces
+back through \cite[Shannon's]{shannon1948communication} information-theoretic treatment
+of English as a stochastic process.
+</div>
+
+<div class="md">
+## The Foundations: From Silicon to the Bitter Lesson
+
+### Vapnik & Chervonenkis 1964: VC Theory — The Soviet Cold-War Secret
+
+The deepest *theoretical* foundation of modern machine learning was laid, in near-total secrecy, by two mathematicians working in the Soviet Union, in the same year the Americans were still arguing about the perceptron. \citeauthor{vapnik1964vc} (\citeyear{vapnik1964vc}), then at the Institute for Control Sciences in Moscow, published in the Soviet journal *Avtomatika i Telemekhanika* the paper that introduced the **VC dimension** and the **VC inequality**: a precise, distribution-free upper bound on the *generalisation error* of a classifier trained on $n$ samples, in terms of a single property of the classifier's *hypothesis class* — the largest set the class can *shatter* (correctly label in every possible way). A classifier that can shatter $d$ points needs roughly $n \gtrsim d/\varepsilon$ labelled examples to reach error $\varepsilon$ on new data; a classifier that cannot shatter any set of size $d$ is *restricted* and generalises from correspondingly fewer. The bound holds for *every* distribution, makes *no* parametric assumptions, and is *tight* — there are constructions showing that no purely combinatorial bound can do better. The result is the first general theorem of statistical learning that gives an engineer a *numerical* answer to the question "how much data do I need?" without requiring the engineer to know the underlying distribution.
+
+The Anglo-American ML community did not learn of the result for nearly twenty-five years. The Russian-language paper sat in a Soviet journal behind a language barrier and a Cold-War travel barrier; the related 1971 monograph (*The Theory of Pattern Recognition Learning*, in Russian) reached only those who read Russian. By the time the result crossed the Iron Curtain, in the late 1970s and 1980s (through personal contacts, translations by Vapnik's collaborators, and the slow internationalisation of the field), the connectionist community was already fully invested in *empirical* "generalisation is just running on a held-out set" approaches, and the *theoretical* community was absorbed with PAC-learning, Bayesian model comparison, and statistical-decision theory. It took Vapnik's move to Bell Labs in 1990, his joint work with Cortes on the **support vector machine** (1995), and the publication of *The Nature of Statistical Learning Theory* (1995, English) to make VC theory *the* theoretical backbone of kernel methods, regularisation theory, and modern generalisation bounds. From the late 1990s onward, VC theory became standard textbook material — *Understanding Machine Learning* by Shalev-Shwartz and Ben-David, Bishop's *Pattern Recognition and Machine Learning*, Mohri's *Foundations of Machine Learning* — but the original contribution, dated 1964, sat for a generation unread in the West.
+
+The Cold-War provenance matters for this chapter's deeper story. The 1960s and 1970s Soviet AI tradition was not a *single* programme; it was *three* parallel programmes, one in each of the three subfields this chapter traces. In **deep learning**, \citeauthor{vapnik1964vc}'s colleagues \citeauthor{ivakhnenko1965} and his collaborators in Kyiv were building GMDH networks. In **pattern recognition**, \citeauthor{bongard1966pattern} at the Moscow IITP was solving Bongard problems. In **statistical learning theory**, \citeauthor{vapnik1964vc} in Moscow was formalising the generalisation bound. All three programmes were funded, conducted, and published in Russian; all three were *unknown* to the Anglophone AI community for one or two decades; all three were *rediscovered* and integrated into mainstream ML between 1985 and 2010. The Anglosphere's contribution — Rosenblatt's perceptron, Widrow's ADALINE, Rumelhart's backpropagation, LeCun's ConvNets, Hinton's deep belief nets, Sutskever's sequence-to-sequence — is more *visible* in the standard history because the network effects of English-language publication were enormous, but it is not *larger* in mathematical content. The Soviet trio — Ivakhnenko, Bongard, Vapnik — produced the three pieces of the modern ML stack the Anglophone tradition did *not* independently produce, and the 1990s integration of all three lines is the moment "machine learning" became a single field.
+</div>
+
+<div class="optional md" data-headline="How calculating Flight Paths helped to pave the way to modern AI systems">
+### The Problem
+Traditional methods for finding optimal flight paths relied on complex differential equations (**Euler-Lagrange**) that were nearly impossible to solve for real-world missions. They often failed to satisfy “two-point boundary conditions”, meaning you couldn't easily force the math to start at Point A and end exactly at Point B.
+
+### The Solution: Method of Gradients
+\citeauthor{kelley} proposed a **“Direct Method”** (Steepest Descent):
+1. **Start with a guess:** Pick any flight path that hits the start and end points.
+2. **Find the Gradient:** Calculate the direction of steepest improvement (e.g., less time/fuel).
+3. **Stepwise Update:** Shift the path slightly in that direction.
+4. **Iterate:** Repeat until the path converges to the mathematical optimum.
+
+### Relation to Modern AI (Neural Networks)
+This paper is a foundational application of **Gradient Descent**, the engine of modern AI:
+* **Loss Minimization:** In the paper, the “Error” is extra flight time; in NNs, “Loss” is the prediction error.
+* **Weight Updates:** Just as Kelley adjusted flight parameters (thrust/angle) in small steps, NNs adjust their weights using the same “steepest descent” logic.
+* **Learning Rate:** The paper's “step size” ($\Delta\sigma$) is exactly what we now call the **Learning Rate** in deep learning.
+
+This paper is now recognized as a direct **precursor of backpropagation**. Kelley's method backpropagated derivative information through standard Jacobian matrix calculations from one “stage” to the previous one, anticipating the core logic of the algorithm that would later be generalized by \citeauthor{linnainmaa1970} in \citeyear{linnainmaa1970} and eventually become the foundation of all modern deep learning. See also the related early 1960s work of Stuart Dreyfus and Arthur E. Bryson in control theory.
+</div>
+
+<div class="md">
+### The Silicon Engine: Moore's Law
+
+While AI research suffered through funding winters, the physical substrate of computing was undergoing an explosion. \citealternativetitle{mooreslaw} describes the observation made by Gordon Moore that the number of transistors in a dense integrated circuit doubles about every two years.
+
+This relentless exponential growth meant that while algorithms remained largely unchanged for decades, the machinery running them became millions of times more powerful. This “free” improvement in performance is the engine behind \citetitle{sutton2019bitter}: methods that scale with computation (like neural networks) were destined to eventually overtake methods that relied on human cleverness, simply because the hardware kept getting faster.
+
+### Automatic Differentiation (1970)
+
+While the popularization of backpropagation is often credited to the 1980s, its mathematical genesis lies in the 1970 master's thesis of \citeauthor{linnainmaa1970}. He developed the “automatic differentiation” method, specifically the *reverse mode*, originally to efficiently manage rounding errors in complex computer calculations. Without explicitly intending it for neural networks, Linnainmaa created the highly efficient algorithm required to calculate gradients in nested functions. This work serves as the invisible mathematical backbone of modern Deep Learning, allowing error signals to be propagated backward through billions of parameters with minimal computational overhead.
+</div>
+
+<div class="md">
+## The Personal Computer and Computing Beyond the Mainframe (1965–1981)
+
+### NASA Spaceflight Computers: Real-Time Reliability in Orbit (1965–1989)
+
+Long before neural networks, a different kind of computing was pushing the hardware forward: the computers that flew. A spacecraft computer could not crash, could not be powered off, and could not be handed to a technician who walked over and pressed *reset* — so NASA's spaceflight programs forced the industry into **real-time, fault-tolerant** design decades before it became mainstream. \citeauthor{tomayko1988spaceflight} documents the full arc in \citetitle{tomayko1988spaceflight} (\citeyear{tomayko1988spaceflight}).
+
+<div class="smart-quote" data-cite="tomayko1988spaceflight">
+NASA had no choice but to become a leader in the development of real-time systems [...] it is in this field of computing that NASA has had its greatest impact.
+</div>
+
+**The Gemini Digital Computer (1965).** Built by IBM, it was the **first digital computer flown on a manned spacecraft**: 4,096 words of ferrite-core memory at 39 bits per word, a 140-millisecond instruction cycle, and about 59 pounds \cite{tomayko1988spaceflight}. From Gemini VIII it carried an **Auxiliary Tape Memory** that loaded programs from tape into core, an early ancestor of virtual memory and program swapping \cite{tomayko1988spaceflight}.
+
+**The Apollo Guidance Computer (AGC).** Developed at MIT's Instrumentation Laboratory from 1961, the AGC was one of the first computers to be built from **integrated circuits**, a bold choice when ICs were only three years old \cite{tomayko1988spaceflight}. It used roughly 5,000 NOR-gate ICs and stored its program in **core rope memory**, a non-volatile medium whose read-wires were *hand-woven* by operators at Raytheon, at up to 2,000 bits per cubic inch \cite{tomayko1988spaceflight}. Its operating system was a **priority-interrupt** scheduler (the "Executive" and a "waitlist") that juggled several concurrent jobs by importance, the direct ancestor of the real-time operating systems still flying in spacecraft today \cite{tomayko1988spaceflight}.
+
+#### The Apollo 11 landing alarms
+
+During the lunar descent of Apollo 11 the AGC began throwing **1201 and 1202 program alarms**: the docking radar was flooding it with interrupt requests and eating about 15% of the machine's resources. Instead of aborting, the computer's **restart software** gracefully shed the overload, kept the guidance functions alive, and let Armstrong land \cite{tomayko1988spaceflight}. Sixty years on this is still the textbook example of **fault-tolerant real-time computing**, a property modern autonomous and ML systems quietly depend on.
+
+**The Space Shuttle (1981).** The Shuttle carried the most computerized avionics built to that date \cite{tomayko1988spaceflight}: **five** general-purpose computers flying in redundant configurations, digital controllers on every main engine (the first digital rocket-engine controllers), and a **fully digital fly-by-wire** system in which every mechanical linkage had been replaced by electrical signals routed through the computers \cite{tomayko1988spaceflight}. Four of the computers ran identical software and had to agree with each other at all times.
+
+<div class="smart-quote" data-cite="tomayko1988spaceflight">
+Computer synchronization proved to be the most difficult task in producing the Shuttle's avionics.
+</div>
+
+To stop a single common software bug from taking down all four at once, a fifth **Backup Flight System** ran independently developed code \cite{tomayko1988spaceflight}. The high-level language NASA commissioned for the Shuttle, **HAL/S**, introduced real-time statements like `SCHEDULE`, `TERMINATE`, `WAIT` and `PRIORITY` with priority-based task scheduling, ideas that carried straight into **Ada**, the language later adopted for the Space Station \cite{tomayko1988spaceflight}.
+
+**The STAR computer and selective redundancy.** At JPL, Algirdas Avizienis's **STAR** (Self-Testing And Repairing) computer never flew, but it invented the fault-tolerance toolkit that still underpins reliable computing: **selective redundancy** (cold spares swapped in on failure), error-correcting codes, 3-of-5 voting, and **rollback-and-retry** on transient faults \cite{tomayko1988spaceflight}. Its descendants reappear, much later, in the redundancy and checkpointing that keep large-scale training runs alive.
+
+### The Personal Computer: Ed Roberts and the Altair 8800 (1974-1975)
+
+While MIT, Bell Labs, and IBM were building million-dollar mainframes, an Air Force veteran named **Henry Edward “Ed” Roberts** (\citeauthor{edroberts}, 1941–2010), running a small kit company called **MITS** out of Albuquerque, was rebuilding his calculator business after a brutal price war with Texas Instruments had driven it into 300,000 US Dollar of debt. The result, the **\citealternativetitle{altair8800}** (\citeyear{altair8800}), was the first commercially successful personal computer: a 397 US Dollar mail-order kit based on the new Intel 8080 microprocessor, featured on the cover of the January 1975 issue of *Popular Electronics* \cite{edroberts}. Roberts is most often remembered as “[the father of the personal computer](https://en.wikipedia.org/wiki/List_of_people_considered_father_or_mother_of_a_field#Computing)” \cite{edroberts_bbc}.
+
+What the Altair lacked (no keyboard, no display, no operating system, programs entered by toggle switches) was less important than what it started: an industry. \citeauthor{historyofpc} documents how the Altair spawned the **S-100 bus clone industry** (including the IMSAI 8080), the **Homebrew Computer Club**, and ultimately the founding of **Microsoft** when **Bill Gates** and **Paul Allen** wrote **Altair BASIC** \cite{historyofpc} as the company's first product.
+
+For competing claims to the title “father of the personal computer,” \citeauthor{historyofpc} lists:
+* **Chuck Peddle**, designed the **MOS 6502** microprocessor, the **KIM-1**, and the **Commodore PET** (\citeyear{commodorepet}), the cheapest of the famous “1977 Trinity” \cite{chuckpeddle} \cite{mos6502}.
+* **André Truong Trong Thi**, co-created the **Micral N** (\citeyear{micral}), one of the earliest microcomputers (1972) \cite{historyofpc}.
+
+### VisiCalc and the Killer App (1979)
+
+In 1979, **Dan Bricklin** watched a Harvard Business School professor erase and redraw an entire spreadsheet on the blackboard after changing a single number. Bricklin's \citealternativetitle{visicalc} (\citeyear{visicalc}) automated exactly that: a “killer app” that, by being Apple-II-exclusive for its first year, is credited with single-handedly selling the Apple II to the business market \cite{visicalc} \cite{historyofpc}. It is widely considered the first “killer application” in computer history.
+
+### The IBM PC (1981)
+
+Released August 12, 1981, the **IBM PC** used the Intel 8088 CPU and Microsoft-supplied **PC-DOS** (later **MS-DOS**), since IBM's negotiations with Digital Research for CP/M had failed \cite{ibmpc} \cite{historyofpc}. IBM's failure to patent the BIOS led, via clean-room reverse engineering, to a clone industry that ultimately overwhelmed IBM itself, establishing the Wintel architecture as the dominant PC standard for decades.
 </div>
 
 <div class="md" data-mathlevel="40">
+## The First AI Winter and the Connectionist Revival (1969–1986)
+
 ### The Critique and the First AI Winter (1969–1980)
 
 #### Minsky and Papert's Critique (1969)
@@ -917,79 +1083,40 @@ The full argument sits in Rosenblatt's 1961 Cornell Aeronautical Laboratory repo
 However, these deep structures were difficult to train until the popularization of **Backpropagation** by \citeauthor{rumelhart1986} in \citeyear{rumelhart1986}. This mathematical technique allowed the “error” of a network to be sent backward through the layers, adjusting the weights with precision. The combination of Fukushima's architecture and Rumelhart's training algorithm set the stage for the deep learning revolution.
 </div>
 
-<div class="optional md" data-headline="How calculating Flight Paths helped to pave the way to modern AI systems">
-### The Problem
-Traditional methods for finding optimal flight paths relied on complex differential equations (**Euler-Lagrange**) that were nearly impossible to solve for real-world missions. They often failed to satisfy “two-point boundary conditions”, meaning you couldn't easily force the math to start at Point A and end exactly at Point B.
-
-### The Solution: Method of Gradients
-\citeauthor{kelley} proposed a **“Direct Method”** (Steepest Descent):
-1. **Start with a guess:** Pick any flight path that hits the start and end points.
-2. **Find the Gradient:** Calculate the direction of steepest improvement (e.g., less time/fuel).
-3. **Stepwise Update:** Shift the path slightly in that direction.
-4. **Iterate:** Repeat until the path converges to the mathematical optimum.
-
-### Relation to Modern AI (Neural Networks)
-This paper is a foundational application of **Gradient Descent**, the engine of modern AI:
-* **Loss Minimization:** In the paper, the “Error” is extra flight time; in NNs, “Loss” is the prediction error.
-* **Weight Updates:** Just as Kelley adjusted flight parameters (thrust/angle) in small steps, NNs adjust their weights using the same “steepest descent” logic.
-* **Learning Rate:** The paper's “step size” ($\Delta\sigma$) is exactly what we now call the **Learning Rate** in deep learning.
-
-This paper is now recognized as a direct **precursor of backpropagation**. Kelley's method backpropagated derivative information through standard Jacobian matrix calculations from one “stage” to the previous one, anticipating the core logic of the algorithm that would later be generalized by \citeauthor{linnainmaa1970} in \citeyear{linnainmaa1970} and eventually become the foundation of all modern deep learning. See also the related early 1960s work of Stuart Dreyfus and Arthur E. Bryson in control theory.
-</div>
-
 <div class="mn-quiz mn-quiz--checkpoint" data-quiz="history-cp2"><script type="application/json">{"title": "Checkpoint: the first neural networks", "questions": [{"q": "“Neurons that fire together, wire together” summarises which idea?", "options": ["Hebbian learning: connections strengthen when neurons are active together", "Backpropagation", "The Turing Test", "Gradient descent"], "answer": 0, "explain": "Hebb's rule inspired the first learning machines, from which Rosenblatt's Perceptron grew."}]}</script></div>
 
 <div class="md">
-## The Foundations: From Silicon to the Bitter Lesson
+## The Road to Deep Learning: CNNs, LSTM, and the Neural Turn (1989–2003)
 
-### Vapnik & Chervonenkis 1964: VC Theory — The Soviet Cold-War Secret
+### Convolutional Neural Networks and LeNet-5 (1989-1998)
 
-The deepest *theoretical* foundation of modern machine learning was laid, in near-total secrecy, by two mathematicians working in the Soviet Union, in the same year the Americans were still arguing about the perceptron. \citeauthor{vapnik1964vc} (\citeyear{vapnik1964vc}), then at the Institute for Control Sciences in Moscow, published in the Soviet journal *Avtomatika i Telemekhanika* the paper that introduced the **VC dimension** and the **VC inequality**: a precise, distribution-free upper bound on the *generalisation error* of a classifier trained on $n$ samples, in terms of a single property of the classifier's *hypothesis class* — the largest set the class can *shatter* (correctly label in every possible way). A classifier that can shatter $d$ points needs roughly $n \gtrsim d/\varepsilon$ labelled examples to reach error $\varepsilon$ on new data; a classifier that cannot shatter any set of size $d$ is *restricted* and generalises from correspondingly fewer. The bound holds for *every* distribution, makes *no* parametric assumptions, and is *tight* — there are constructions showing that no purely combinatorial bound can do better. The result is the first general theorem of statistical learning that gives an engineer a *numerical* answer to the question "how much data do I need?" without requiring the engineer to know the underlying distribution.
+While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1989backpropagation}, LeCun combined convolutions with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service, the first commercially deployed convolutional network. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, the refined architecture for recognizing handwritten digits (and, later, bank checks). Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration, mimicking the visual cortex, could solve complex pattern recognition tasks that traditional logic-based AI could not.
 
-The Anglo-American ML community did not learn of the result for nearly twenty-five years. The Russian-language paper sat in a Soviet journal behind a language barrier and a Cold-War travel barrier; the related 1971 monograph (*The Theory of Pattern Recognition Learning*, in Russian) reached only those who read Russian. By the time the result crossed the Iron Curtain, in the late 1970s and 1980s (through personal contacts, translations by Vapnik's collaborators, and the slow internationalisation of the field), the connectionist community was already fully invested in *empirical* "generalisation is just running on a held-out set" approaches, and the *theoretical* community was absorbed with PAC-learning, Bayesian model comparison, and statistical-decision theory. It took Vapnik's move to Bell Labs in 1990, his joint work with Cortes on the **support vector machine** (1995), and the publication of *The Nature of Statistical Learning Theory* (1995, English) to make VC theory *the* theoretical backbone of kernel methods, regularisation theory, and modern generalisation bounds. From the late 1990s onward, VC theory became standard textbook material — *Understanding Machine Learning* by Shalev-Shwartz and Ben-David, Bishop's *Pattern Recognition and Machine Learning*, Mohri's *Foundations of Machine Learning* — but the original contribution, dated 1964, sat for a generation unread in the West.
+<div class="optional md" data-headline="Earlier convolutional architectures">
+The popular attribution of the CNN to LeCun overlooks substantial earlier work, which \citeauthor{schmidhuber2025cnn} documents in detail. **Kunihiko Fukushima** introduced **rectified linear units (ReLUs)** in \citeyear{fukushima1969relu} — the same activation function that powers essentially every modern Transformer — and the basic **Neocognitron** architecture with alternating convolutional and downsampling layers in \citeyear{neocognitron}, inspired by Hubel and Wiesel's cat visual-cortex work. **Alex Waibel**, a German researcher in Japan, trained supervised one-dimensional convolutional NNs with weight-sharing (TDNNs) on Linnainmaa's 1970 backpropagation in \citeyear{waibel1987tdnn} for speech recognition, and introduced the term *convolution* into NNs. **Wei Zhang** at Osaka then built the first *modern* two-dimensional CNN trained by backpropagation in \citeyear{zhang1988cnn}, applied to character recognition — one year *before* LeCun's 1989 Bell Labs paper, and LeCun's widely read 1998 survey does not cite it.
 
-The Cold-War provenance matters for this chapter's deeper story. The 1960s and 1970s Soviet AI tradition was not a *single* programme; it was *three* parallel programmes, one in each of the three subfields this chapter traces. In **deep learning**, \citeauthor{vapnik1964vc}'s colleagues \citeauthor{ivakhnenko1965} and his collaborators in Kyiv were building GMDH networks. In **pattern recognition**, \citeauthor{bongard1966pattern} at the Moscow IITP was solving Bongard problems. In **statistical learning theory**, \citeauthor{vapnik1964vc} in Moscow was formalising the generalisation bound. All three programmes were funded, conducted, and published in Russian; all three were *unknown* to the Anglophone AI community for one or two decades; all three were *rediscovered* and integrated into mainstream ML between 1985 and 2010. The Anglosphere's contribution — Rosenblatt's perceptron, Widrow's ADALINE, Rumelhart's backpropagation, LeCun's ConvNets, Hinton's deep belief nets, Sutskever's sequence-to-sequence — is more *visible* in the standard history because the network effects of English-language publication were enormous, but it is not *larger* in mathematical content. The Soviet trio — Ivakhnenko, Bongard, Vapnik — produced the three pieces of the modern ML stack the Anglophone tradition did *not* independently produce, and the 1990s integration of all three lines is the moment "machine learning" became a single field.
+LeCun's contribution was nevertheless substantial. His 1989 Bell Labs work combined backpropagation with convolutions on handwritten ZIP codes for the U.S. Postal Service — the first commercially deployed convolutional network. His 1998 **LeNet-5** refined the architecture for bank-check recognition and was the first robust, end-to-end backprop-trained system deployed on a real commercial OCR problem at scale. The lineage runs from Fukushima's biological inspiration, through Zhang's and Waibel's first end-to-end CNNs, to LeCun's production-grade system; each step added something the earlier work had not.
+</div>
+</div>
+
+<div class="optional md" data-headline="The 1990-91 Annus Mirabilis at TU Munich">
+Jürgen Schmidhuber's \citetitle{schmidhuber2022deep} documents a striking concentration of foundational ideas at his lab at TU Munich in the twelve months from early 1990 to mid 1991, a window worth knowing about in its own right. In it the group published the principles for what we now call **generative adversarial networks** (a controller network in a zero-sum game with a predictor, February 1990); the first **subgoal-generating** networks for hierarchical reinforcement learning; and in 1991 a *fast-weight programmer* in which one neural network learns to slowly modify the weights of another — an abstraction Schmidhuber's group has connected to the learned key-query-value projections of the modern **Transformer**. The same window saw unsupervised **pre-training** of deep neural networks; **knowledge distillation**, in which a small network is trained to mimic a larger one (the technique that underpins DeepSeek's compression of much larger frontier models); the formal identification of the **vanishing/exploding gradient** problem in Hochreiter's 1991 diploma thesis; and the **Long Short-Term Memory** architecture, gated recurrent residual connections that have since become the most cited AI paper of the twentieth century. Several foundational ideas of modern deep learning — gated residual connections, fast-weight programmers, the GAN principle — can be traced to papers from this single window at a Bavarian technical university. Schmidhuber has argued that the standard Anglophone narrative under-credits this European and Japanese work; other researchers in the field read the priorities more cautiously, and several of the cited innovations were independently rediscovered in different communities at different times. Whatever position one takes on the priority disputes, the technical lineage itself is documented in the original papers and useful to know, because every modern AI system stands on at least some of these ideas.
 </div>
 
 <div class="md">
-### The Silicon Engine: Moore's Law
+### Bridging the Gap: Long Short-Term Memory (LSTM)
 
-While AI research suffered through funding winters, the physical substrate of computing was undergoing an explosion. \citealternativetitle{mooreslaw} describes the observation made by Gordon Moore that the number of transistors in a dense integrated circuit doubles about every two years.
+#### The “Vanishing Gradient” Problem (1991)
+The Fundamental Deep Learning Problem was identified and analyzed in \citeyear{hochreiter1991vanishing} by \citeauthor{hochreiter1991vanishing} in his diploma thesis supervised by Jürgen Schmidhuber. He showed that in typical deep or recurrent networks, back-propagated error signals either shrink rapidly (vanish) or grow out of bounds (explode), making learning impossible for long sequences. Crucially, Hochreiter derived from first principles the concept of a **recurrent residual connection**: a neural unit with the identity activation function connected to itself with weight 1.0, ensuring constant error flow across arbitrarily many time steps.
 
-This relentless exponential growth meant that while algorithms remained largely unchanged for decades, the machinery running them became millions of times more powerful. This “free” improvement in performance is the engine behind \citetitle{sutton2019bitter}: methods that scale with computation (like neural networks) were destined to eventually overtake methods that relied on human cleverness, simply because the hardware kept getting faster.
+#### The Architecture (1995-2000)
+Building on this analysis, Schmidhuber coined the term **\citetitle{lstm}** in a 1995 tech report. The main peer-reviewed publication of \citeyear{lstm} by \citeauthorlastnameand{lstm} is now the most cited AI paper of the 20th century. A critical milestone was the **“vanilla LSTM” architecture with forget gates** (\citeyear{lstm_vanilla}), the variant that everybody uses today (e.g., in Google's TensorFlow). It features gated recurrent residual connections whose gates are initially open (1.0), allowing the network to start with plain residual connections.
 
-### Automatic Differentiation (1970)
+#### CTC and the Speech Revolution (2006-2015)
+In \citeyear{ctc2006}, the training method **Connectionist Temporal Classification (CTC)** was introduced for simultaneous alignment and recognition of sequences. CTC-trained LSTM was successfully applied to speech in 2007 and became the first superior end-to-end neural speech recognizer. In 2015, this CTC-LSTM combination **dramatically improved Google's speech recognition** on Android smartphones. Google Translate (2016), whose technical paper mentions LSTM over 50 times, was based on two connected LSTMs. By 2017, LSTM also powered Facebook's machine translation (over 30 billion translations per week), Apple's Quicktype on roughly 1 billion iPhones, and the voice of Amazon's Alexa.
 
-While the popularization of backpropagation is often credited to the 1980s, its mathematical genesis lies in the 1970 master's thesis of \citeauthor{linnainmaa1970}. He developed the “automatic differentiation” method, specifically the *reverse mode*, originally to efficiently manage rounding errors in complex computer calculations. Without explicitly intending it for neural networks, Linnainmaa created the highly efficient algorithm required to calculate gradients in nested functions. This work serves as the invisible mathematical backbone of modern Deep Learning, allowing error signals to be propagated backward through billions of parameters with minimal computational overhead.
-
-### The Illusion of Empathy: The ELIZA-Effect
-
-<div class="smart-quote" data-cite="weizenbaum1976computer" data-page=7>
-I had not realized ... that extremely short exposures to a relatively simple computer program could induce powerful delusional thinking in quite normal people.
-</div>
-
-In the era of Symbolic AI, before machines played chess at a master level, they attempted conversation. In 1966, **\citeauthor{weizenbaum1976computer}** created **ELIZA**, a program designed to parody a Rogerian psychotherapist \cite{hnfweizenbaum2023}.
-
-Unlike modern LLMs which calculate probabilities, ELIZA relied on simple pattern matching and substitution scripts. If a user typed “My mother hates me,” ELIZA might use a decomposition rule to transform “My X Y me” into “Who else in your family Y you?”
-
-Despite having no understanding of the world, users, including Weizenbaum's own secretary, attributed genuine human emotions and wisdom to the machine. Weizenbaum was so disturbed by this tendency of humans to project humanity onto code that he wrote \citealternativetitle{weizenbaum1976computer} to warn against the reliance on “deciding” machines over “choosing” humans.
-
-<div class="optional md" data-headline="The original ELIZA was lost — and found">
-A \citeyear{lane2025eliza} \cite{lane2025eliza} reveals a surprising fact about ELIZA's history: the original program is not the version most historians have been writing about. Weizenbaum wrote ELIZA in MAD-SLIP at MIT's Project MAC, but the Lisp clone made soon after by Bernie Cosell at BBN, distributed through the ARPANet, supplanted the original within a few years; the BASIC re-implementation by Jeff Shrager in 1977 was what the wider public ever met. For decades the original MAD-SLIP source was assumed lost. In 2021, Shrager (coincidentally the same Jeff Shrager who wrote the 1977 BASIC version) and the MIT archivist Myles Crowley located a fan-fold printout of the original ELIZA, an early DOCTOR script, and substantial parts of MAD-SLIP itself in Weizenbaum's papers at the MIT Institute Archives. The rediscovered code differs in informative ways from the 1966 CACM paper: the preliminary “PRE” reassembly pattern is missing, the keyword stack and “NEWKEY” rule are not implemented, and reassembly-level calls between rules are not supported. A team led by Rupert Lane, David Berry, Anthony Hay, Arthur Schwarz and Shrager hand-transcribed the roughly 2600 lines of MAD and Fortran Assembly Program, brought up CTSS on an emulator of the IBM 7094 (the same 36-bit, 32 K-word, ~450 kHz machine Weizenbaum had used), debugged a single-character typo deep in the FAP, and on 21 December 2024 at 10:54 GMT got ELIZA running again after nearly sixty years. The reconstructed system nearly exactly reproduces the famous “Men are all alike” conversation from the original paper; the entire stack is open source, so any Unix user can now run the world's earliest chatbot on its original timesharing system. This means the “ELIZA” cited in most AI textbooks is, strictly speaking, Cosell's Lisp clone; Weizenbaum's own program is now the better-documented of the two.
- </div>
-
- ### Machine Translation: The Longest-Running Bet
-
- <figure>
- 	<img style="width: 100%; max-width: 520px;" src="warren_weaver.jpg" alt="Warren Weaver, 1940" />
- <figcaption class="md">\citealternativetitle{img_warren_weaver} (Public Domain, \citeauthor{img_warren_weaver}, \citeyear{img_warren_weaver}): seven years before his 1947 letter proposing machine translation.</figcaption>
- </figure>
-
- Machine translation was one of the first uses proposed for computers beyond numerical calculation: word dictionaries could be stored in memory, and a machine could look up English equivalents for foreign words. In 1947, the mathematician and science administrator **Warren Weaver** wrote to **Norbert Wiener** asking whether a digital computer might translate between natural languages; Wiener, who had spent the war predicting where aircraft would be, was unconvinced — the boundaries of words in different languages, he replied, are "too vague" and their connotations "too extensive" for any quasi-mechanical scheme to hope on. The New York Times got there first in print: on May 31, 1949, it reported that a new "electric brain" under construction at the National Bureau of Standards laboratory — Harry D. Huskey's team at the University of California's Institute of Numerical Analysis — would be "capable not only of performing complex mathematical problems but even of translating foreign languages," by holding the 60,000 words of the Webster Collegiate Dictionary with equivalents in as many as three foreign languages. The machine had not yet translated anything, and the next day's editorial doubted it could: how would it know whether French "pont" meant "bridge" or "deck"? By July 1949, Weaver had elaborated the idea into a memorandum, "Translation", which he sent to some 200 colleagues, and which is generally credited with initiating the field of **machine translation (MT)** (\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).
-
- The first demonstration came faster than the skeptics expected. On January 8, 1954, a collaboration between **IBM** and **Georgetown University**, running on the IBM 701, translated short Russian sentences into English for a press audience: a woman who "didn't understand a word of the language of the Soviets" punched *Mi pyeryedayem mislyi posryedstvom ryechyi*, and the machine printed "We transmit thoughts by means of speech" at two and a half lines per second. The funding surge that followed ran for a decade before crashing against the wall **Yehoshua Bar-Hillel** had already identified: a translating machine needs *world knowledge*. His example was a child who finds his toy box, "the box was in the pen" — and a machine that knows only the two dictionary senses of *pen* cannot tell a writing instrument from a playpen, unless it also knows the relative sizes of pens, toy boxes, and pens. He concluded that fully automatic high-quality translation was infeasible "not only in the near future but altogether", and called the prospect of equipping computers with the required encyclopedic knowledge "utterly chimerical" (\cite[Nilsson, The Quest for Artificial Intelligence]{nilsson1984qai}).
-
- The field's first winter was bureaucratic rather than mathematical: the US **ALPAC** report concluded that there was "no immediate or predictable prospect of useful machine translation", and large-scale funding vanished, leaving what MT's historian W. John Hutchins called the **"quiet decade"** (1967–1976). The American exception was **Systran**, built by **Petr Toma**, a Hungarian-born scientist from the Georgetown team: he founded Latsec in La Jolla in 1968, took a U.S. Air Force contract, and tested the system at Wright-Patterson Air Force Base in 1969, where it "continues to provide Russian–English translations", its promoters claimed, for the Air Force's Foreign Technology Division to this day. By Margaret Boden's reckoning, Systran's intelligibility rose from 45% (1976) to 78% (1978) — against 98–99% for human translators — and post-editing a page of its output took twenty minutes where a human translation took an hour. Machine translation, in other words, never died: it learned to survive as a tool for post-editors, until statistics and then neural networks carried it across the finish line.
+#### The Bridge to Modern AI
+LSTMs were the “workhorse” of AI for two decades (approx. 1997–2017). Without the LSTM, the second AI Winter (early 1990s, triggered by the expert-systems bust) likely would have dragged neural NLP along with it for much longer. It proved that connectionist models could handle the sequential, complex nature of human speech by implementing a form of persistent memory. The most widely used neural language models of that era were based on LSTM as well, the transformer-based Large Language Models (LLMs) in the modern sense only arrived with GPT in 2018. A hands-on, visual tour of that two-decade workhorse — the loops, the gates, the vanishing gradients — lives in the [Networks with Memory chapter](recurrent_networks.php).
 </div>
 
 <div class="md">
@@ -1005,39 +1132,21 @@ While Perceptrons attempted to mimic the brain's structure, a different approach
 In a historic six-game rematch, IBM's Deep Blue defeated the reigning world chess champion, **Garry Kasparov**. Unlike the learning-based Perceptron, Deep Blue relied on massive parallel processing capable of evaluating 200 million positions per second. It proved that for well-defined logical problems, a machine could exceed human capability not through intuition, but through sheer computational calculation. The match was broadcast live, and the win struck hard enough that IBM's share price briefly touched an all-time high \cite{toosi2021history}.
 
 However, Deep Blue's victory represented the pinnacle of specific, hand-crafted logic rather than general intelligence. While effective for the rigid rules of chess, relying on human-designed strategies proved to be a bottleneck for more complex, unstructured problems. This realization leads directly to a fundamental, and somewhat painful, observation about the trajectory of AI progress.
-
-### Bridging the Gap: Long Short-Term Memory (LSTM)
-
-#### The “Vanishing Gradient” Problem (1991)
-The Fundamental Deep Learning Problem was identified and analyzed in \citeyear{hochreiter1991vanishing} by \citeauthor{hochreiter1991vanishing} in his diploma thesis supervised by Jürgen Schmidhuber. He showed that in typical deep or recurrent networks, back-propagated error signals either shrink rapidly (vanish) or grow out of bounds (explode), making learning impossible for long sequences. Crucially, Hochreiter derived from first principles the concept of a **recurrent residual connection**: a neural unit with the identity activation function connected to itself with weight 1.0, ensuring constant error flow across arbitrarily many time steps.
-
-#### The Architecture (1995-2000)
-Building on this analysis, Schmidhuber coined the term **\citetitle{lstm}** in a 1995 tech report. The main peer-reviewed publication of \citeyear{lstm} by \citeauthorlastnameand{lstm} is now the most cited AI paper of the 20th century. A critical milestone was the **“vanilla LSTM” architecture with forget gates** (\citeyear{lstm_vanilla}), the variant that everybody uses today (e.g., in Google's TensorFlow). It features gated recurrent residual connections whose gates are initially open (1.0), allowing the network to start with plain residual connections.
-
-#### CTC and the Speech Revolution (2006-2015)
-In \citeyear{ctc2006}, the training method **Connectionist Temporal Classification (CTC)** was introduced for simultaneous alignment and recognition of sequences. CTC-trained LSTM was successfully applied to speech in 2007 and became the first superior end-to-end neural speech recognizer. In 2015, this CTC-LSTM combination **dramatically improved Google's speech recognition** on Android smartphones. Google Translate (2016), whose technical paper mentions LSTM over 50 times, was based on two connected LSTMs. By 2017, LSTM also powered Facebook's machine translation (over 30 billion translations per week), Apple's Quicktype on roughly 1 billion iPhones, and the voice of Amazon's Alexa.
-
-#### The Bridge to Modern AI
-LSTMs were the “workhorse” of AI for two decades (approx. 1997–2017). Without the LSTM, the second AI Winter (early 1990s, triggered by the expert-systems bust) likely would have dragged neural NLP along with it for much longer. It proved that connectionist models could handle the sequential, complex nature of human speech by implementing a form of persistent memory. The most widely used neural language models of that era were based on LSTM as well, the transformer-based Large Language Models (LLMs) in the modern sense only arrived with GPT in 2018. A hands-on, visual tour of that two-decade workhorse — the loops, the gates, the vanishing gradients — lives in the [Networks with Memory chapter](recurrent_networks.php).
-
-### Convolutional Neural Networks and LeNet-5 (1989-1998)
-
-While early neural networks were limited, **Yann LeCun et al** revolutionized computer vision by developing the first practical **Convolutional Neural Network (CNN)**. In \citeyear{lecun1989backpropagation}, LeCun combined convolutions with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service, the first commercially deployed convolutional network. In \citeyear{lecun1998gradientbased}, he introduced **LeNet-5**, the refined architecture for recognizing handwritten digits (and, later, bank checks). Unlike standard networks, CNNs use small, learnable filters to automatically extract spatial features like edges and shapes. This proved that biological inspiration, mimicking the visual cortex, could solve complex pattern recognition tasks that traditional logic-based AI could not.
-
-<div class="optional md" data-headline="Earlier convolutional architectures">
-The popular attribution of the CNN to LeCun overlooks substantial earlier work, which \citeauthor{schmidhuber2025cnn} documents in detail. **Kunihiko Fukushima** introduced **rectified linear units (ReLUs)** in \citeyear{fukushima1969relu} — the same activation function that powers essentially every modern Transformer — and the basic **Neocognitron** architecture with alternating convolutional and downsampling layers in \citeyear{neocognitron}, inspired by Hubel and Wiesel's cat visual-cortex work. **Alex Waibel**, a German researcher in Japan, trained supervised one-dimensional convolutional NNs with weight-sharing (TDNNs) on Linnainmaa's 1970 backpropagation in \citeyear{waibel1987tdnn} for speech recognition, and introduced the term *convolution* into NNs. **Wei Zhang** at Osaka then built the first *modern* two-dimensional CNN trained by backpropagation in \citeyear{zhang1988cnn}, applied to character recognition — one year *before* LeCun's 1989 Bell Labs paper, and LeCun's widely read 1998 survey does not cite it.
-
-LeCun's contribution was nevertheless substantial. His 1989 Bell Labs work combined backpropagation with convolutions on handwritten ZIP codes for the U.S. Postal Service — the first commercially deployed convolutional network. His 1998 **LeNet-5** refined the architecture for bank-check recognition and was the first robust, end-to-end backprop-trained system deployed on a real commercial OCR problem at scale. The lineage runs from Fukushima's biological inspiration, through Zhang's and Waibel's first end-to-end CNNs, to LeCun's production-grade system; each step added something the earlier work had not.
 </div>
 
+<div class="md">
 ### The Neural Turn
 
 In 2003, **“\citetitle{neuralprobabilistic}”** by **Yoshua Bengio** and co-authors revived backpropagation for language modeling. Their model replaced sparse n-gram tables with dense **word embeddings** \cite[first formalized in]{rumelhart1986pdp}, mapping semantic relationships into a continuous vector space.
+</div>
 
+<div class="md">
 ### The Democratization of ML Research
 
 Frameworks like **\cite[Torch]{collobert2002}**, **\cite[TensorFlow]{tensorflow2016}** and **\cite[PyTorch]{pytorch}** abstracted away manual differentiation and GPU memory management, allowing researchers to focus on architecture rather than implementation.
+</div>
 
+<div class="md">
 ### The Bitter Lesson: Scale over Strategy
 
 <div class="smart-quote" data-cite="sutton2019bitter">
@@ -1051,37 +1160,14 @@ The **Bitter Lesson** (\citeauthor{sutton2019bitter}) argues that for decades, A
 <div class="optional md" data-headline="What training a neural network actually looks like">
 Sutton writes from the perspective of a research director surveying decades of failed research programs. The view from inside the lab, on any given afternoon, is much messier. \citeauthor{karpathy2019recipe}'s 2019 \citetitle{karpathy2019recipe}, written by an OpenAI co-founder and former Tesla AI head, describes the everyday experience of trying to make a neural network work, and it is surprisingly downbeat. Two facts dominate, he says. First, **neural net training is a leaky abstraction**: frameworks advertise 30-line plug-and-play miracles, but backprop + SGD does not in fact magically make a network converge. Second, **neural net training fails silently**: a mislabeled augmentation, an off-by-one in an autoregressive model, a learning-rate decay secretly driving the rate to zero before convergence — none of these produces an exception. The network trains happily, only worse. Karpathy's counter-recipe is to spend hours simply looking at the data before touching code, build a tiny model first, overfit one batch to confirm the pipeline is wired correctly, and only then add complexity one ingredient at a time. *“The qualities that correlate most strongly with success in deep learning,”* he writes, *“are patience and attention to detail.”* His favourite anecdote: he once accidentally left a model training over the winter break and returned in January to a new state of the art. The bitter lesson is true in the long run; getting there is mostly debugging.
 </div>
+</div>
 
-
-
+<div class="md">
 ## The Deep Learning Revival (2010s)
 
 ### From CPU to GPU: The Realization of the “Bitter Lesson”
 
 The shift from the Central Processing Unit (CPU) to the Graphics Processing Unit (GPU) represents the most significant hardware pivot in AI history. While the CPU is designed for deep, sequential logic, a direct descendant of the von Neumann architecture, the GPU utilizes thousands of simple cores to perform matrix multiplications simultaneously. This hardware shift validates the core thesis of \citetitle{sutton2019bitter}: that methods leveraging massive computation eventually outcompete those relying on human-centric heuristics. By abstracting away complex conditional logic in favor of “brute-force” parallel math, the GPU provided the raw power necessary to turn neural networks from theoretical models into dominant technologies.
-
-### The Deep Learning Revolution (2012)
-After the second AI winter, the field shifted back to connectionism. In \citeyear{krizhevsky2012imagenet}, a team in Geoffrey Hinton's group at the University of Toronto — led by Alex Krizhevsky — demonstrated that deep convolutional neural networks, when powered by **GPUs** and massive datasets like ImageNet, could outperform all traditional methods \cite{krizhevsky2012imagenet}. The network, **AlexNet** (named after its leading author), was decisive not only for its depth but for a stack of then-unfashionable tricks: rectified-linear-unit (ReLU) activations and **dropout**, which together let it train far more layers end-to-end on raw pixels, with no hand-crafted features at all \cite{toosi2021history}. The result was the birth of the third AI boom \cite{toosi2021history}, and it validated the \citealternativetitle{sutton2019bitter}: scale and computation ultimately triumph over hand-coded human intuition. The connectionist revival was formally recognized in 2018, when the Turing Award went to Bengio, Hinton and LeCun for their pioneering work on deep learning \cite{toosi2021history}.
-
-#### Highway Networks: The First Very Deep Feedforward NNs (2015)
-
-While LSTM had made recurrent networks very deep through residual connections since the 1990s, feedforward networks remained limited to roughly 20-30 layers until 2015. In May 2015, \citeauthorlastnameand{highway2015} published **Highway Networks**, the first working, truly deep gradient-based feedforward neural networks with **hundreds of layers**, over ten times deeper than any previous feedforward network. They achieved this by transferring the 1999 LSTM principle of gated residual connections (gates initially open at 1.0) from recurrent to feedforward architectures. Seven months later, in December 2015, Microsoft's **ResNet** won the ImageNet competition. ResNet can be described as a Highway Network variant whose gates are always open (i.e., an open-gated Highway Net), a framing most strongly associated with the Schmidhuber group, though He et al. developed ResNet independently and their contribution is broader than this reduction suggests: it combined open-gated residual connections with a deeper empirical exploration (training a 152-layer network end-to-end on ImageNet), a specific initialization scheme, and a bottleneck block design that made the architecture practical at scale. Both descriptions are accurate; neither is the whole story. The Highway Net principle, constant error flow through residual connections, is now the core of virtually all modern deep learning architectures.
-
-The architectural lineage from LSTM to ResNet can be traced as a clear sequence of innovations transferring the same core principle, constant error flow through residual connections:
-
-- **1991:** Hochreiter's recurrent residual connections solve the vanishing gradient problem
-- **1997:** LSTM introduces plain recurrent residual connections (weight 1.0)
-- **1999-2000:** Vanilla LSTM adds gated recurrent residual connections (gates initially open at 1.0)
-- **2005:** Unfolding LSTM leads from recurrent to feedforward residual NNs
-- **May 2015:** Highway Networks apply gated feedforward residual connections (initially 1.0)
-- **Dec 2015:** ResNet adopts the principle as an open-gated Highway Net
-
-This timeline demonstrates that the most cited neural network of the 21st century (ResNet) is a direct descendant of the most cited neural network of the 20th century (LSTM), connected through the Highway Network.
-
-### The Dream of Structure: Recursive Neural Networks
-For decades, it was considered an axiom that language possesses an inherent hierarchical architecture. In \citeyear{socher2011}, Richard Socher et al. argued that neural networks must explicitly map this structure to succeed. Rather than treating words as beads on a string, these models used parsers to combine semantic vectors within a tree-like hierarchy.
-
-This represents a pivotal moment in the intellectual history of LLMs: the eventual departure from the idea that we must impose human syntax on the machine. The Transformer did not prevail because it possessed “better” linguistics, but because it ignored rigid structure in favor of patterns learned implicitly through massive scaling.
 
 ### The Hardware Lottery: How Gamers Saved AI
 
@@ -1116,9 +1202,32 @@ Just as Richardson's vision remained a “researcher's graveyard” until electr
 
 **CUDA** (**Compute Unified Device Architecture**), introduced by NVIDIA in \citeyear{cuda}, revolutionized AI by enabling GPUs to perform general-purpose computations using standard C code. This innovation unlocked GPUs' potential for parallel processing, crucial for tasks like matrix multiplications in neural networks. For instance, AlexNet (2012) leveraged CUDA-enabled GPUs to train in days instead of years, marking a turning point in deep learning. CUDA exemplifies the “Bitter Lesson” that scalable, compute-heavy methods outperform handcrafted algorithms over time.
 
+### The Dream of Structure: Recursive Neural Networks
+For decades, it was considered an axiom that language possesses an inherent hierarchical architecture. In \citeyear{socher2011}, Richard Socher et al. argued that neural networks must explicitly map this structure to succeed. Rather than treating words as beads on a string, these models used parsers to combine semantic vectors within a tree-like hierarchy.
+
+This represents a pivotal moment in the intellectual history of LLMs: the eventual departure from the idea that we must impose human syntax on the machine. The Transformer did not prevail because it possessed “better” linguistics, but because it ignored rigid structure in favor of patterns learned implicitly through massive scaling.
+
+### The Deep Learning Revolution (2012)
+After the second AI winter, the field shifted back to connectionism. In \citeyear{krizhevsky2012imagenet}, a team in Geoffrey Hinton's group at the University of Toronto — led by Alex Krizhevsky — demonstrated that deep convolutional neural networks, when powered by **GPUs** and massive datasets like ImageNet, could outperform all traditional methods \cite{krizhevsky2012imagenet}. The network, **AlexNet** (named after its leading author), was decisive not only for its depth but for a stack of then-unfashionable tricks: rectified-linear-unit (ReLU) activations and **dropout**, which together let it train far more layers end-to-end on raw pixels, with no hand-crafted features at all \cite{toosi2021history}. The result was the birth of the third AI boom \cite{toosi2021history}, and it validated the \citealternativetitle{sutton2019bitter}: scale and computation ultimately triumph over hand-coded human intuition. The connectionist revival was formally recognized in 2018, when the Turing Award went to Bengio, Hinton and LeCun for their pioneering work on deep learning \cite{toosi2021history}.
+
 #### Breaking the Bottleneck: The Birth of Attention
 
 Before the modern Transformer, neural networks suffered from a “representational bottleneck.” Systems like the LSTM attempted to compress the entire meaning of a long sentence into a single, fixed-length vector, a task as impossible as summarizing a complex novel into a single word without losing the nuance. The philosopher-engineer *\cite[Dzmitry Bahdanau]{bahdanau2014}* shattered this constraint by introducing the **Attention Mechanism**. Instead of forcing the model to remember everything at once, Bahdanau proposed a system that allows the decoder to “look back” at the input sequence and selectively focus on the most relevant words for each step of the translation. This shift from static compression to dynamic alignment was the pivotal moment that allowed machines to handle long-range dependencies. Without this breakthrough, the later “Self-Attention” of the Transformer would have had no foundation; Bahdanau taught the machine not just to see, but to observe what matters.
+
+#### Highway Networks: The First Very Deep Feedforward NNs (2015)
+
+While LSTM had made recurrent networks very deep through residual connections since the 1990s, feedforward networks remained limited to roughly 20-30 layers until 2015. In May 2015, \citeauthorlastnameand{highway2015} published **Highway Networks**, the first working, truly deep gradient-based feedforward neural networks with **hundreds of layers**, over ten times deeper than any previous feedforward network. They achieved this by transferring the 1999 LSTM principle of gated residual connections (gates initially open at 1.0) from recurrent to feedforward architectures. Seven months later, in December 2015, Microsoft's **ResNet** won the ImageNet competition. ResNet can be described as a Highway Network variant whose gates are always open (i.e., an open-gated Highway Net), a framing most strongly associated with the Schmidhuber group, though He et al. developed ResNet independently and their contribution is broader than this reduction suggests: it combined open-gated residual connections with a deeper empirical exploration (training a 152-layer network end-to-end on ImageNet), a specific initialization scheme, and a bottleneck block design that made the architecture practical at scale. Both descriptions are accurate; neither is the whole story. The Highway Net principle, constant error flow through residual connections, is now the core of virtually all modern deep learning architectures.
+
+The architectural lineage from LSTM to ResNet can be traced as a clear sequence of innovations transferring the same core principle, constant error flow through residual connections:
+
+- **1991:** Hochreiter's recurrent residual connections solve the vanishing gradient problem
+- **1997:** LSTM introduces plain recurrent residual connections (weight 1.0)
+- **1999-2000:** Vanilla LSTM adds gated recurrent residual connections (gates initially open at 1.0)
+- **2005:** Unfolding LSTM leads from recurrent to feedforward residual NNs
+- **May 2015:** Highway Networks apply gated feedforward residual connections (initially 1.0)
+- **Dec 2015:** ResNet adopts the principle as an open-gated Highway Net
+
+This timeline demonstrates that the most cited neural network of the 21st century (ResNet) is a direct descendant of the most cited neural network of the 20th century (LSTM), connected through the Highway Network.
 
 ### The Transformer and Attention (2017)
 Then came another breakthrough, the \citealternativetitle{vaswani2017attention}. By utilizing a mechanism called **Self-Attention**, models could process entire sequences of data in parallel rather than word-by-word. This solved the “vanishing gradient” problem and allowed models to understand long-range context in text. The further text will lead you through every step you need to understand this Self-Attention-Mechanism on a basic level. The original goal of the Attention paper was not to build a chatbot, but to improve translation systems by a lot.
@@ -1128,7 +1237,9 @@ In this context, “attention” is a mathematical mechanism for weighting infor
 There is a second, quiet invention inside the same paper that is just as load-bearing, and it is easily overlooked. Pure self-attention is **insensitive to word order**: it weighs every pair of tokens against every other, so a layer that has seen "the dog bites the man" and "the man bites the dog" sees, at its input, the same two clouds of tokens arranged differently — and would happily map both to the same output. Language would collapse into a bag of words. The authors solved this by adding **positional encodings** to every token: a deterministic pattern of sine and cosine waves overlaid on the embeddings so that each position in the sequence carries its own signature \cite{vaswani2017attention}. Its descendants — learned position vectors, and later **rotary** embeddings (RoPE), which rotate pairs of embedding coordinates by an angle proportional to the position — remain inside every modern LLM. Attention supplies the *what-goes-with-what*; positional encoding supplies the *where-it-was*, and both are needed, because neither order nor association alone is language.
 
 The Attention Mechanism will be explained in detail later on.
+</div>
 
+<div class="md">
 ## The Age of Large Language Models
 
 ### From Language Models to LLMs
@@ -1163,59 +1274,6 @@ How did the alphabet form? Each of the three candidate granularities fails alone
 
 In the modern decoding path, "predicting the next word" is literally "predicting the next *token ID*" — a number in a fixed table, looked up through the embedding matrix described in the [Embeddings](embeddinglab) chapter. You can watch a byte-pair vocabulary grow in the [Tokenizer Lab](tokenizerlab). And the historical irony is worth stating plainly: the machine that "thinks" is doing it over an alphabet that a 1994 file-compressor forged out of byte counts — the same statistical instinct that made al-Kindi's ninth-century frequency analysis work, now baked into the very units of thought.
 
-### Computer-Generated Text: Early Examples
-
-
-<div class="smart-quote" data-cite="racter1984">
-More than iron, more than lead, more than gold I need electricity.
-I need it more than I need lamb or pork or lettuce or cucumber.
-I need it for my dreams.
-</div>
-
-\citetitle{racter1984} (\citeyear{racter1984}) is widely cited as the first book
-to be entirely written by a computer program. It was generated by **Racter**, a
-text-generation program created by William Chamberlain and Thomas Etter. Racter was
-originally developed on an **OSI** (Ohio Scientific) computer and later adapted to a
-**Z80-based CP/M system** — the version that allegedly produced the book's text,
-written in compiled BASIC with 64 KB of RAM. The 1984 Mindscape commercial release
-(for IBM PC compatibles, then Apple II, Mac, and Amiga) was a separate, simpler
-version built by **Inrac Corporation**, not the same program that wrote the book.
-Racter used a system of templates,
-grammatical rules, and randomized word selection to produce prose and poetry that was
-syntactically coherent but semantically surreal, lines like “More than iron, more
-than lead, more than gold I need electricity“ became iconic examples of early machine
-creativity.
-
-However, Racter was not the first instance of computer-generated text. Earlier examples
-include **Christopher Strachey's** \citetitle{strachey1952} (\citeyear{strachey1952}), which ran on the
-Manchester Mark I computer and used templates to produce randomized romantic letters,
-arguably the earliest known computer-generated literary text.
-
-The earliest of these examples is **Theo Lutz** (1932–2010), a German computer
-scientist, student of the philosopher-cyberneticist **Max Bense**, and one of the
-pioneers of what is now called *digital poetry* \cite{lutzobituary}. His \citetitle{lutz1959}
-(\citeyear{lutz1959}) ran on a Zuse Z22 at the TH Stuttgart computer center and recombined
-words from Kafka's *The Castle* according to probabilistic rules, producing what he
-explicitly called “stochastic texts”:
-
-<div class="smart-quote" data-cite="lutz1959">
-<div class="full-quote">Nicht jeder Blick ist nah. Kein Dorf ist spät.<br>
-Ein Schloss ist frei und jeder Bauer ist fern.</div>
-<div class="short-quote">Not every look is near. No village is late.<br>
-A castle is free and every farmer is far.</div>
-</div>
-
-Remarkably, Lutz even sketched how such a program could learn: by raising the transition
-probabilities between subject and predicate whenever a generated sentence was judged
-“meaningful”, \cite[“the machine has 'learned' in a certain way”]{lutz1959}, preferring
-certain word combinations over time, essentially a trainable n-gram-style language model
-proposed in 1959. These experiments predate
-Racter by decades and sit at the intersection of combinatorics and language that traces
-back through \cite[Shannon's]{shannon1948communication} information-theoretic treatment
-of English as a stochastic process.
-
-
-
 ### Scaling Laws: From Encyclopedias to the Digital Ocean
 
 The breakthrough of modern AI was predicated on a shift in data philosophy: moving from “quality” (hand-curated expert knowledge) to “quantity” (the total sum of digital footprints). Early AI failed because the world was not yet sufficiently digitized. The current era of 2020s AI only became possible once the internet provided a large enough corpus, petabytes of text, code, and images, to allow models to internalize the latent structures of human logic. In this context, data is the “terrain” that the machine's “wheels” must traverse; without a world-scale digital ocean, the abstraction of thought would have had nothing to grip.
@@ -1232,7 +1290,9 @@ The “stochastic parrot” framing reopens the oldest wound in the philosophy o
 Today, the focus has shifted to **Large Language Models (LLMs)** like GPT (first introduced by the paper \citetitle{firstgpt} in \citeyear{firstgpt}). These models are “pre-trained” on nearly the entire internet to predict the next token in a sequence. By scaling these architectures to billions of parameters, AI has moved from simple classification to generating human-like text, code, and reasoning and even video and music.
 
 What changed since the early days was not the basic ideas, but the availability of data, computing power, and practical training techniques.
+</div>
 
+<div class="md">
 ## The Great Convergence: From Syllogisms to Silicon
 
 The emergence of ChatGPT represents the “Great Convergence” of a multi-millennial effort to decouple human thought from biology and translate it into formal abstraction. This journey began with **Aristotle's** syllogisms and was radicalized by **Llull's** mechanical knowledge wheels and **Leibniz's** binary alphabet, the idea that all reasoning could be reduced to a series of calculations. From **Babbage and Lovelace's** “algebraic patterns” to **McCulloch and Pitts'** mathematical neurons, the lineage of AI has always sought to treat thought as a formal calculus.
@@ -1256,27 +1316,6 @@ Their proposed guardrails therefore read like a checklist for the present moment
 The HNF blog is especially good on the German strand of this story. Its portrait of \cite[Karl Steinbuch]{hnfsteinbuch2017} follows him from the Lernmatrix and the first German transistor computer to his later right-wing politics; its account of the \cite[1975 Bonn meeting]{hnfbonn2020} marks the organisational birth of West German AI research; and its \cite[survey of women in AI]{hnfki_frauen2023} recovers researchers the standard narrative tends to leave out.
 </div>
 
-<div class="optional md" data-headline="Early work on pattern classification algorithms">
-In 1967, Shunichi Amari made a foundational contribution to the theory of adaptive
-pattern classifiers in \citetitle{adaptivepattern}.
-
-His work addressed the problem of determining the optimal weight vector of linear
-pattern classifiers under general, potentially non-separable pattern distributions.
-Amari proposed a “probabilistic-descent method,” in which a correction vector is
-associated with each misclassified pattern such that, on average, the correction
-moves the discriminant function toward the optimum, even though any individual
-trial may worsen it. He proved that the weight vector converges to the optimal
-solution and revealed an important tradeoff between the speed and accuracy of
-convergence: a larger learning constant accelerates convergence but reduces
-final accuracy, while a smaller one improves accuracy at the cost of slower
-learning. He further generalized the theory to multicategory classifiers,
-piecewise-linear discriminant functions, and general nonlinear classifiers,
-and even introduced an adaptive scheme for learning the learning rule itself.
-</div>
-
-
-
-
 <div class="optional md" data-headline="Scaling Abstraction: From Bits to Frameworks">
 As hardware matured from relays to vacuum tubes and finally to silicon, the bottleneck shifted from physical construction to the management of “Software.” To handle the growing complexity of these systems, computer science adopted a strategy of increasing abstraction.
 
@@ -1289,10 +1328,6 @@ This evolution moved from:
 
 Today, a developer can invoke a convolutional layer with a single command, such as `model.conv2d`. Under the hood, the system manages millions of matrix multiplications, a level of complexity that would have been impossible for a human to track manually, but which fulfills the trajectory started by Lovelace: reducing the mechanics of thought to a manageable, symbolic architecture.
 Operating Systems, later frameworks, growing complexity on the system side to reduce complexity on the human side, until progress could be made by just moving simple boxes like in asanAI or TensorFlow like model.Dense or model.conv2d. Very important to think that level of abstraction
-</div>
-
-<div class="optional md" data-headline="Shannon's Bridge: Boolean Algebra and Electrical Circuits">
-In 1937, a 21-year-old MIT graduate student named Claude Elwood Shannon submitted his master's thesis, \cite[*A Symbolic Analysis of Relay and Switching Circuits*]{shannon1937switching}, which demonstrated that the two-valued Boolean algebra developed by \citeauthor{bool1854} in 1854 could serve as a theoretical foundation for the design of electrical switching circuits. Shannon recognized that the binary states of electrical relay switches, open or closed, on or off, were isomorphic to the truth values of Boolean logic: true and false, 1 and 0. Any arrangement of series and parallel switches could be described by a Boolean expression, and conversely, any Boolean expression could be physically realized as a circuit of relays. His thesis laid the foundations for all digital computing and digital circuits. The utilization of the binary properties of electrical switches to perform logic functions is the basic concept that underlies all electronic digital computer designs, from the earliest relay computers to the GPU clusters training today's large language models.
 </div>
 
 <div class="mn-quiz" data-quiz="history"><script type="application/json">{"title": "A brief history of AI", "questions": [{"q": "What was the Antikythera mechanism?", "options": ["An ancient Greek geared device that modelled the motions of the sky", "A medieval mechanical calculator for taxes", "The first electronic computer", "A Roman water clock that could talk"], "answer": 0, "explain": "Recovered from a shipwreck, it is an analog computer of gears that predicted astronomical positions and eclipses."}, {"q": "At which event was the term “Artificial Intelligence” introduced?", "options": ["The Dartmouth summer research project (1956)", "The founding of IBM (1911)", "The Turing Test paper (1950)", "The release of ChatGPT (2022)"], "answer": 0, "explain": "John McCarthy's 1955 proposal for the 1956 Dartmouth workshop coined the name."}, {"q": "McCulloch and Pitts (1943) are remembered for…", "options": ["a mathematical model of the neuron as a logic unit", "building the first GPU", "inventing back-propagation", "writing the first chatbot"], "answer": 0, "explain": "Their 1943 paper showed that networks of idealised threshold neurons can compute logical functions — the seed of artificial neural networks."}, {"q": "What is the core claim of Rich Sutton's “Bitter Lesson”?", "options": ["General methods that scale with computation beat hand-built human knowledge in the long run", "Neural networks will never work", "Symbolic AI is always better than learning", "Bigger models always hallucinate more"], "answer": 0, "explain": "Search and learning that ride on growing compute have repeatedly overtaken clever hand-engineered approaches."}]}</script></div>
