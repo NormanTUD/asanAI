@@ -90,6 +90,7 @@ window.citationGraph = {
 	"mccullochpitts1943": [
 		"turing1937",
 		"russell1910principia", // Added (Logical foundations)
+		"carnap1938logicalsyntax", // Added (Language II notation)
 		"cajaltextura"          // Neuroscience inspiration
 	],
 	"turing1950computing": [
