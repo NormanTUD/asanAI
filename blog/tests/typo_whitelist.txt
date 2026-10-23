@@ -559,3 +559,5 @@ dasein schmitz uncommanded
 gosset sealy biometrika metron
 # glitch tokens / r-counting (intuition.php)
 subreddit
+# proper nouns / terms (history.php, Principles of Neurodynamics)
+neurodynamics hayek lashley uttley mackay equipotentiality
