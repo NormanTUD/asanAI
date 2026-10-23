@@ -19772,6 +19772,62 @@ window.bibData = {
 		author: "Sewon Min, Xinxi Lyu, Ari Holtzman, Mikel Artetxe, Mike Lewis, Hannaneh Hajishirzi, Luke Zettlemoyer",
 		year: 2022,
 		alternativetitle: "What demonstrations actually teach"
+	},
+	"infllm2024": {
+		url: "https://arxiv.org/abs/2402.04617",
+		title: "InfLLM: Training-Free Long-Context Extrapolation for LLMs with an Efficient Context Memory",
+		author: "Chaojun Xiao, Pengle Zhang, Xu Han, et al.",
+		year: 2024,
+		alternativetitle: "InfLLM"
+	},
+	"lecun2022path": {
+		url: "https://openreview.net/forum?id=BZ5a1r-kVsf",
+		title: "A Path Towards Autonomous Machine Intelligence",
+		author: "Yann LeCun",
+		year: 2022,
+		alternativetitle: "LeCun's JEPA position paper"
+	},
+	"gwern2020scaling": {
+		url: "https://gwern.net/scaling-hypothesis",
+		title: "The Scaling Hypothesis",
+		author: "Gwern Branwen",
+		year: 2020,
+		alternativetitle: "Gwern's Scaling Hypothesis"
+	},
+	"aschenbrenner2024": {
+		url: "https://situational-awareness.ai/",
+		title: "Situational Awareness: The Decade Ahead",
+		author: "Leopold Aschenbrenner",
+		year: 2024,
+		alternativetitle: "Situational Awareness"
+	},
+	"kokotajlo2025ai2027": {
+		url: "https://ai-2027.com/",
+		title: "AI 2027",
+		author: "Daniel Kokotajlo, Scott Alexander, Thomas Larsen, Eli Lifland, Romeo Dean",
+		year: 2025,
+		alternativetitle: "AI 2027"
+	},
+	"amodei2024machines": {
+		url: "https://www.darioamodei.com/essay/machines-of-loving-grace",
+		title: "Machines of Loving Grace",
+		author: "Dario Amodei",
+		year: 2024,
+		alternativetitle: "Machines of Loving Grace"
+	},
+	"karnofsky2021": {
+		url: "https://www.cold-takes.com/most-important-century/",
+		title: "The Most Important Century",
+		author: "Holden Karnofsky",
+		year: 2021,
+		alternativetitle: "The Most Important Century"
+	},
+	"christiano2019failure": {
+		url: "https://www.alignmentforum.org/posts/HBxe6wdjxK239zajf/what-failure-looks-like",
+		title: "What Failure Looks Like",
+		author: "Paul Christiano",
+		year: 2019,
+		alternativetitle: "What Failure Looks Like"
 	}
 
 };

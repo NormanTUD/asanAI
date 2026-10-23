@@ -133,15 +133,15 @@ Every architecture above still generates left to right. A **diffusion language m
 The dominant formulation for text is an **absorbing-state** process. Each token is independently replaced by a special mask symbol $m$ with probability $\beta_t$ per step, and once masked it stays masked:
 
 $$
-q(x_t^{i} \mid x_0^{i}) = \bar{\alpha}_t\,\delta_{x_t^{i}=x_0^{i}} + (1-\bar{\alpha}_t)\,\delta_{x_t^{i}=m},
+\underbrace{q(x_t^{i} \mid x_0^{i}) = \bar{\alpha}_t\,\delta_{x_t^{i}=x_0^{i}} + (1-\bar{\alpha}_t)\,\delta_{x_t^{i}=m}}_{\text{at step } t \text{ the token is either still the original or has become a mask}},
 \qquad
-\bar{\alpha}_t = \prod_{s=1}^{t}(1-\beta_s).
+\underbrace{\bar{\alpha}_t = \prod_{s=1}^{t}(1-\beta_s)}_{\text{probability the token has survived unmasked so far}}
 $$
 
 At the final step the sequence is almost entirely masks. Training reverses the process with a weighted masked-token cross-entropy over randomly sampled masking rates:
 
 $$
-\mathcal{L} = -\,\mathbb{E}_{t,\,x_0,\,x_t}\left[\,w(t)\sum_{i:\,x_t^{i}=m}\log p_\theta(x_0^{i}\mid x_t)\right].
+\underbrace{\mathcal{L} = -\,\mathbb{E}_{t,\,x_0,\,x_t}\left[\,w(t)\sum_{i:\,x_t^{i}=m}\log p_\theta(x_0^{i}\mid x_t)\right]}_{\text{cross-entropy only on the masked positions, at a randomly chosen masking rate}}
 $$
 
 That objective is BERT's fill-in-the-blank loss, rearranged so that it defines a principled generative process. Sampling starts from a fully masked sequence, asks the bidirectional Transformer for a distribution at every masked position, and commits the predictions whose confidence clears a threshold. Easy, constrained tokens (punctuation, function words) lock in first; hard content words last. Because the model attends in both directions, it can also revise earlier tokens in light of later ones and fill in the middle of a document natively.
