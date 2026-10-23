@@ -125,6 +125,32 @@ RetNet claims 8× lower latency and 7× lower memory than vanilla Transformer at
 \cite[Peng et al. (2023)]{peng2023rwkv} introduced a linear-attention-with-decay RNN. RWKV-7 (2025) matches 7B Transformers on language tasks.
 </div>
 
+<div class="md" data-mathlevel="55">
+### Diffusion Language Models: Denoising Instead of Decoding
+
+Every architecture above still generates left to right. A **diffusion language model** (dLLM) attacks the serialism itself: instead of predicting one token per forward pass, it starts from a fully corrupted sequence and refines **all positions in parallel** over a handful of denoising steps, in the same spirit as image diffusion (\cite[Austin et al., 2021]{austin2021d3pm}).
+
+The dominant formulation for text is an **absorbing-state** process. Each token is independently replaced by a special mask symbol $m$ with probability $\beta_t$ per step, and once masked it stays masked:
+
+$$
+q(x_t^{i} \mid x_0^{i}) = \bar{\alpha}_t\,\delta_{x_t^{i}=x_0^{i}} + (1-\bar{\alpha}_t)\,\delta_{x_t^{i}=m},
+\qquad
+\bar{\alpha}_t = \prod_{s=1}^{t}(1-\beta_s).
+$$
+
+At the final step the sequence is almost entirely masks. Training reverses the process with a weighted masked-token cross-entropy over randomly sampled masking rates:
+
+$$
+\mathcal{L} = -\,\mathbb{E}_{t,\,x_0,\,x_t}\left[\,w(t)\sum_{i:\,x_t^{i}=m}\log p_\theta(x_0^{i}\mid x_t)\right].
+$$
+
+That objective is BERT's fill-in-the-blank loss, rearranged so that it defines a principled generative process. Sampling starts from a fully masked sequence, asks the bidirectional Transformer for a distribution at every masked position, and commits the predictions whose confidence clears a threshold. Easy, constrained tokens (punctuation, function words) lock in first; hard content words last. Because the model attends in both directions, it can also revise earlier tokens in light of later ones and fill in the middle of a document natively.
+
+The appeal is throughput: one forward pass can commit many tokens, and the number of denoising steps is an explicit quality-versus-speed dial. **LLaDA** (2025), an 8-billion-parameter masked diffusion model trained from scratch, reported in-context learning and instruction following competitive with Llama 3 8B — the first evidence that the recipe holds at mainstream open-model scale (\cite[Nie et al., 2025]{nie2025llada}). Inception Labs' Mercury and Google DeepMind's experimental Gemini Diffusion followed in 2025, reporting sampling speeds in the thousands of tokens per second on H100-class hardware.
+
+The costs are real. Bidirectional attention is incompatible with the standard KV cache, so every denoising step recomputes attention over the whole sequence; the speedup depends on keeping the step count well below the sequence length. Tokens committed in the same step are also treated as conditionally independent, so jointly dependent words can clash, which is why practical systems use confidence schedules and semi-autoregressive block decoding. Whether dLLMs reach full quality parity with autoregressive models at frontier scale remains open as of 2026.
+</div>
+
 <div class="md">
 ## Trade-offs
 
@@ -187,4 +213,4 @@ async function loadAlternativeArchitecturesModule() {
 }
 </script>
 
-<div class="mn-quiz" data-quiz="alternative_architectures"><script type="application/json">{"title": "Beyond transformers", "questions": [{"q": "How does the cost of standard self-attention grow with sequence length n?", "options": ["Quadratically, O(n²)", "Linearly, O(n)", "Logarithmically", "It is constant"], "answer": 0, "explain": "Every token is compared with every other token."}, {"q": "What characterises state-space models like Mamba?", "options": ["They process sequences in linear time with a recurrent state, using input-dependent (selective) dynamics", "They use quadratic attention", "They need no training", "They only work on images"], "answer": 0, "explain": "Selectivity lets the model decide what to keep in its fixed-size state."}, {"q": "What is RWKV?", "options": ["An architecture that trains like a transformer but runs like an RNN", "A tokenizer", "A GPU brand", "A benchmark"], "answer": 0, "explain": "It combines parallel training with constant-memory recurrent inference."}, {"q": "Where do transformers still tend to win?", "options": ["Tasks needing precise retrieval or copying from anywhere in a long context", "Nowhere", "Only on tiny models", "Image compression"], "answer": 0, "explain": "A fixed-size state must compress the past; full attention can look anything up exactly."}]}</script></div>
+<div class="mn-quiz" data-quiz="alternative_architectures"><script type="application/json">{"title": "Beyond transformers", "questions": [{"q": "How does the cost of standard self-attention grow with sequence length n?", "options": ["Quadratically, O(n²)", "Linearly, O(n)", "Logarithmically", "It is constant"], "answer": 0, "explain": "Every token is compared with every other token."}, {"q": "What characterises state-space models like Mamba?", "options": ["They process sequences in linear time with a recurrent state, using input-dependent (selective) dynamics", "They use quadratic attention", "They need no training", "They only work on images"], "answer": 0, "explain": "Selectivity lets the model decide what to keep in its fixed-size state."}, {"q": "What is RWKV?", "options": ["An architecture that trains like a transformer but runs like an RNN", "A tokenizer", "A GPU brand", "A benchmark"], "answer": 0, "explain": "It combines parallel training with constant-memory recurrent inference."}, {"q": "Where do transformers still tend to win?", "options": ["Tasks needing precise retrieval or copying from anywhere in a long context", "Nowhere", "Only on tiny models", "Image compression"], "answer": 0, "explain": "A fixed-size state must compress the past; full attention can look anything up exactly."}, {"q": "How does a diffusion language model generate text?", "options": ["It refines a whole corrupted (masked) sequence in parallel over several denoising steps", "It predicts one token at a time from left to right", "It retrieves whole sentences from a database", "It only edits images"], "answer": 0, "explain": "Parallel denoising trades the strict left-to-right order for throughput and bidirectional context."}]}</script></div>
