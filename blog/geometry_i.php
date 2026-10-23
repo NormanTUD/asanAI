@@ -121,7 +121,7 @@ The Babylonian tradition is even richer, and even stranger, because the Babyloni
 Where did all these problems come from? The surprising answer is a *social* one: **the scribe school**. The more than 400 clay tablets that carry Babylonian mathematics were all inscribed while the clay was still moist and then baked hard in an oven or by the sun — and, tellingly, *"some of these appear to be graded homework"* \cite{historyofmath_wikipedia}. Geometry, in other words, had already become a **curriculum** a thousand years before Pythagoras: a young scribe did not simply watch a surveyor at work, he sat in a classroom and worked through problem sheets, complete with diagrams his teacher could check. The tablet below is exactly that kind of thing.
 
 <figure>
-	<img style="width: 100%" src="si_427.jpg" alt="The Si.427 field plan, an Old Babylonian surveyor's tablet" />
+	<img style="width: 100%" src="si_427_tablet.jpg" alt="The Si.427 field plan, an Old Babylonian surveyor's tablet" />
 	<figcaption class="md">\citealternativetitle{si427_image}, a hand-tablet from the Old Babylonian period (c. 1900–1600 BCE): a field being subdivided, its boundary lines set out with right angles made exact by Pythagorean triples.</figcaption>
 </figure>
 
@@ -234,8 +234,8 @@ Everything before Euclid was a collection of results; the **\citealternativetitl
 The books are organised by theme: **Book I** is plane geometry (angles, triangles, the Pythagorean theorem as **I.47**, and the *converse* as I.48); **Book VI** develops proportion and **similar triangles**, which is how the Greeks did "algebra with lengths"; **Book XII** applies the method of exhaustion to area and volume (the area of the circle, and that a cone is a third of its cylinder); and **Book XIII** closes the whole edifice by constructing the five **regular solids** — the tetrahedron, cube, octahedron, dodecahedron and icosahedron — tying geometry back to the Platonic idea that the cosmos is built from five shapes.
 
 <figure>
-	<img style="width: 100%" src="platonic_solids.jpg" alt="The five Platonic solids" />
-	<figcaption class="md">The five <strong>regular solids</strong> of <em>Elements</em> XIII — the only convex polyhedra whose faces are identical regular polygons and whose identical corners fit together. Euclid constructs all five and proves there can be no sixth; the <em>proof</em> of the "exactly five" fact, however, is usually attributed to a later reading of his construction \cite{euclidelements}.</figcaption>
+	<img style="width: 100%" src="platonic_solids_diagram.svg" alt="The five Platonic solids" />
+	<figcaption class="md">The five <strong>regular solids</strong> of <em>Elements</em> XIII — the only convex polyhedra whose faces are identical regular polygons and whose identical corners fit together. Euclid constructs all five and proves there can be no sixth; the <em>proof</em> of the "exactly five" fact, however, is usually attributed to a later reading of his construction \cite{euclidelements} (\cite[Platonic solids diagram]{platonic_solids_image}).</figcaption>
 </figure>
 
 The anecdote (told by Proclus) is that when **Ptolemy** complained the *Elements* were too hard for beginners, Euclid replied that **there is no royal road to geometry**. The line captures the whole Greek shift: the *Elements* are not a shortcut to the right answers; they are the *long way around*, and it is precisely that long way — the insistence on proof — that makes the discipline permanent. Every theorem in this book, and every formal proof a machine checks, is a descendant of Euclid's first line: *"Let AB be a given finite straight line."*
@@ -280,8 +280,8 @@ The *why* is partly optical and partly astronomical. The parabola is the only co
 <figcaption class="md" style="font-size:0.85rem; margin-top:0.4rem;">Muḥammad ibn Mūsā <strong>al-Khwārizmī</strong> (c. 780–850), whose treatise on <em>al-jabr</em> gave algebra its name — and whose surname gave us the word <em>algorithm</em> (\cite[Al-Khwarizmi portrait]{alkhwarizmi_portrait}).</figcaption>
 </figure>
 <figure style="margin:0; width:45%; max-width:260px;">
-<img style="width:100%; height:auto; border-radius:4px;" src="alhazen.jpg" alt="Ibn al-Haytham (Alhazen)" />
-<figcaption class="md" style="font-size:0.85rem; margin-top:0.4rem;"><strong>Ibn al-Haytham</strong> (Alhazen), c. 965–1040, whose <em>Book of Optics</em> made geometry the mathematics of how the world projects itself onto the eye.</figcaption>
+<img style="width:100%; height:auto; border-radius:4px;" src="alhazen_portrait.jpg" alt="Ibn al-Haytham (Alhazen)" />
+<figcaption class="md" style="font-size:0.85rem; margin-top:0.4rem;"><strong>Ibn al-Haytham</strong> (Alhazen), c. 965–1040, whose <em>Book of Optics</em> made geometry the mathematics of how the world projects itself onto the eye (\cite[Ibn al-Haytham, 1647]{alhazen_portrait}).</figcaption>
 </figure>
 </div>
 

@@ -642,8 +642,8 @@ In his \citeyear{bain} work \citetitle{bain}, \citeauthor{bain} proposed the con
 Based on the \citealternativetitle{hebb1949organizationofbehaviour}, idea of the canadian psychology professor \citeauthor{hebb1949organizationofbehaviour} published that neurons in the brain get a stronger connection to each other when they often fire together, which is often expressed as “neurons that fire together, wire together”, and the idea of neurons proposed by \citeauthorlastnameand{mccullochpitts1943}, in \citeyear{rosenblatt1958perceptron}, **\citeauthor{rosenblatt1958perceptron}** introduced the **Perceptron**, the biological-inspired ancestor of the modern neuron. Shifting away from rigid symbolic logic, he proposed a system that could “learn” by automatically adjusting its weights in response to errors. This marked a pivotal transition from hard-coded programming to the foundational principles of machine learning. The HNF blog's history of the McCulloch–Pitts paper follows their 1943 “logical calculus” from that first mathematical neuron to the networks that followed \cite{hnfmccullochpitts2023}.
 
 <figure>
-	<img style="max-width: 100%" src="rosenblatt_ad.png" alt="Perceptron" />
-	<figcaption>\citetitle{rosenblattad}</figcaption>
+	<img style="max-width: 100%" src="frank_rosenblatt_portrait.jpg" alt="Frank Rosenblatt" />
+	<figcaption>Frank Rosenblatt (\cite[Frank Rosenblatt, HNF]{rosenblatt_portrait})</figcaption>
 </figure>
 
 This project was funded by the *Office of Naval Research*, under the codename *Project Para*, first written about by \citeauthor{rosenblattperceptron} in \citeyear{rosenblattperceptron}.

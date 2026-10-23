@@ -1318,10 +1318,11 @@ window.bibData = {
 	},
 	"si427_image": {
 		title: "Si.427, Old Babylonian surveyor's field plan (c. 1900–1600 BCE)",
-		author: "UNSW Sydney / Archaeological Museum, Istanbul",
-		year: 2021,
-		url: "https://news.unsw.edu.au/en/australian-mathematician-reveals-oldest-applied-geometry",
-		alternativetitle: "Si.427 Tablet"
+		author: "Daniel Mansfield (UNSW Sydney)",
+		year: 2018,
+		url: "https://commons.wikimedia.org/wiki/File:Si427o.jpg",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Si.427 tablet"
 	},
 	"plimpton322": {
 		title: "Plimpton 322 is Babylonian exact sexagesimal trigonometry",
@@ -6848,7 +6849,9 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/A",
 		year: 2026,
 		author: "Wikipedia contributors",
-		title: "A | Wikipedia"
+		title: "History of the letter A — screenshot from Wikipedia's article 'A'",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "History of the letter A (Wikipedia)"
 	},
 	"toosi2021history": {
 		url: "https://ar5iv.labs.arxiv.org/html/2109.01517",
@@ -19339,6 +19342,31 @@ window.bibData = {
 		year: 1954,
 		license: "Public domain",
 		alternativetitle: "Walter Pitts (1954)"
+	},
+
+	"alhazen_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Ibn_al-Haytham_crop.jpg",
+		title: "Ibn al-Haytham (Alhazen) — frontispiece to Hevelius, Selenographia (1647)",
+		author: "Adolph Boÿ, engraved by Jeremias Falck",
+		year: 1647,
+		license: "Public domain",
+		alternativetitle: "Ibn al-Haytham (1647)"
+	},
+	"rosenblatt_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg",
+		title: "Frank Rosenblatt",
+		author: "Anonymous (Heinz Nixdorf MuseumsForum)",
+		year: 1950,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Frank Rosenblatt"
+	},
+	"platonic_solids_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Platonic_Solids_Transparent.svg",
+		title: "The five Platonic solids",
+		author: "Drummyfish (Wikimedia Commons)",
+		year: 2019,
+		license: "CC0",
+		alternativetitle: "Platonic solids diagram"
 	}
 
 };

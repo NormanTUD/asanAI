@@ -2,7 +2,7 @@
 
 Stand: 2026-10-23
 
-`literature.js` enthält 2665 Einträge. Davon verweisen **184** auf Wikimedia-Dateien (Commons/Wikipedia `File:`/`Datei:` oder `upload.wikimedia.org`). 164 Lizenzen wurden über die Commons-/Wikipedia-API ermittelt, 5 weitere (Weiterleitungen/Datei-Umbenennungen) manuell verifiziert. Für alle 169 liegt jetzt eine Lizenz vor.
+`literature.js` enthält 2668 Einträge. Davon verweisen **189** auf Wikimedia-Dateien (Commons/Wikipedia `File:`/`Datei:` oder `upload.wikimedia.org`). 164 Lizenzen wurden über die Commons-/Wikipedia-API ermittelt, 5 weitere (Weiterleitungen/Datei-Umbenennungen) manuell verifiziert. Für alle 169 liegt jetzt eine Lizenz vor.
 
 - **69** fehlende Lizenzen wurden automatisch ergänzt, dazu 5 gezielte Einträge (u. a. Inceptionism, Deconv, Loss Landscape, Perseverance, ENIAC).
 - Zusätzlich gezielt ergänzt: `mordvintsev2015inceptionism` (CC BY 4.0), `odena2016deconvolution` (CC BY 2.0), `li2018losslandscape` (MIT), `nasa2021perseverance` (Public domain/NASA) und `sam_demo_img` (Apache-2.0).
@@ -15,6 +15,7 @@ Stand: 2026-10-23
 | `achleuleanhandaxe_image` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Kariandusi_Acheulean_Tools.jpg |
 | `agc_module_image` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Apollo_Guidance_Computer.jpg |
 | `aikenphoto` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Aiken.jpeg |
+| `alhazen_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Ibn_al-Haytham_crop.jpg |
 | `alkhwarizmi_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Al-Khwarizmi_portrait.jpg |
 | `alphafold_protein_img` | CC0 | CC0 | https://commons.wikimedia.org/wiki/File:TMEM253_AlphaFold_Predicted_Structure.jpg |
 | `alphago_leesedol_image` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Lee_Sedol_(B)_vs_AlphaGo_(W)_-_Game_4.jpg |
@@ -72,6 +73,7 @@ Stand: 2026-10-23
 | `h264_coding_structure_img` | Public domain | Public Domain | https://commons.wikimedia.org/wiki/File:Vcl_structure.jpg |
 | `hamilton1969_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Margaret_Hamilton_-_restoration.jpg |
 | `heidegger_image` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Martin_Heidegger_for_WP.jpg |
+| `history_of_a` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://en.wikipedia.org/wiki/A |
 | `homeostatphoto` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:W._Ross_Ashby%27s_1948_Homeostat.jpg |
 | `houdini_papermagic_img` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Harry_Houdini_Cigarette_paper_trick.png |
 | `houdini_portrait_img` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Harry_Houdini,_half-length_portrait,_facing_front_LCCN96518797.jpg |
@@ -157,11 +159,13 @@ Stand: 2026-10-23
 | `perceptronimagecables` | Fair use | Fair use | https://en.wikipedia.org/wiki/File:Mark_I_perceptron.jpeg |
 | `perceptronimagedetection` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:330-PSA-80-60_(USN_710739)_(20897323365).jpg |
 | `perseverance_selfie_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Perseverance-Selfie-at-Rochette-Horizontal-V2.gif |
+| `platonic_solids_image` | CC0 | CC0 | https://commons.wikimedia.org/wiki/File:Platonic_Solids_Transparent.svg |
 | `poincare_image` | No restrictions | Public domain | https://commons.wikimedia.org/wiki/File:Portrait_of_Henri_Poincar%C3%A9_(1854-1912),_Mathematician_(2551042945).jpg |
 | `pygmalionimage` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Pygmalion_and_Galatea_by_Jean-L%C3%A9on_G%C3%A9r%C3%B4me_(Metropolitan_Museum_of_Art).jpg |
 | `pythagoras_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Pythagoras_Bust_Vatican_Museum_(cropped).jpg |
 | `rgb_color_cube` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:RGB_color_cube.svg |
 | `riemann_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Georg_Friedrich_Bernhard_Riemann.jpeg |
+| `rosenblatt_portrait` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg |
 | `salamictablet` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg |
 | `schmitz_image` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Hermann_Schmitz_(Philosoph).jpg |
 | `shakey_robot_image` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:SRI_Shakey_robot,_1969,_Computer_History_Museum.jpg |
@@ -170,6 +174,7 @@ Stand: 2026-10-23
 | `sheaf_sections_image` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:2_point_sheaf_sections.svg |
 | `sholes_typewriter` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Sholes_typewriter.jpg |
 | `shrdlu_image` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Ailect15shrdlu1.gif |
+| `si427_image` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Si427o.jpg |
 | `simonnewell_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Herbert_A._Simon_and_Allen_Newell_Chess_Match.jpg |
 | `slotmachine_image` | CC BY 4.0 | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Slot_Machines_at_the_Rio_Casino_in_Las_Vegas_1.jpg |
 | `stopsignimage` | CC0 | CC0 | https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg |
@@ -203,9 +208,7 @@ Diese Keys sind Bildquellen, deren `url` nicht auf eine Wikimedia-Datei zeigt. S
 
 | Key | Datei(en) | Lizenz | Quelle | Status / Ersatz |
 |---|---|---|---|---|
-| `euclidelements` | `platonic_solids.jpg` | — | https://en.wikisource.org/wiki/The_Elements_(Euclid,_Heath) | Handschrift PD, aber `platonic_solids.jpg` ist ein modernes Foto → [File:Platonic Solids Transparent.svg](https://commons.wikimedia.org/wiki/File:Platonic_Solids_Transparent.svg) (CC0) |
 | `grothendieck_image` | `grothendieck.jpg` | — | https://www.heidelberg-laureate-forum.org/... | keine freie Lizenz → [File:Alexander Grothendieck - face.jpg](https://commons.wikimedia.org/wiki/File:Alexander_Grothendieck_-_face.jpg) (CC BY-SA 4.0) |
-| `history_of_a` | `history_of_a.png` | — | https://en.wikipedia.org/wiki/A | keine Bildlizenz belegt → eigene Grafik erstellen |
 | `lebombobone` | `lebombo.jpg` | — | https://cacm.acm.org/... | keine freie Lizenz gefunden → anfragen/entfernen |
 | `li2018losslandscape` | `loss_landscape_resnet56_noskip.png`, `loss_landscape_resnet56_skip.png` | MIT | https://arxiv.org/abs/1712.09913 | belegt (Bildlizenz) |
 | `mccullochpittsimage` | `mcculloch.png` | — | https://www.historyofinformation.com/... | UNCLEAR → [File:1954 Walter Pitts and a blackboard.jpg](https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg) (PD) bzw. PD-Neuronenmodell |
@@ -214,13 +217,12 @@ Diese Keys sind Bildquellen, deren `url` nicht auf eine Wikimedia-Datei zeigt. S
 | `newyorktimesperceptron` | `navy.png` | — | https://timesmachine.nytimes.com/... | NYT-Archiv → `perceptron2.jpg` (PD, US Navy) nutzen |
 | `odena2016deconvolution` | `deconv_deepdream_jitter.png`, `deconv_style_clean.png` | CC BY 2.0 | https://distill.pub/2016/deconv-checkerboard/ | belegt (Bildlizenz) |
 | `perceptronimagecables` | `Mark_I_perceptron.jpeg` | Fair use | https://en.wikipedia.org/wiki/File:Mark_I_perceptron.jpeg | Fair Use → PD-Operator-Manual-Zeichnung |
-| `perceptronimagewiring` | `FrankRosenblattWiringPerceptron.jpg` | — | https://perceptrondemo.com/ | UNCLEAR → [File:Frank Rosenblatt.jpg](https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg) (CC BY-SA 4.0) |
+| `perceptronimagewiring` | `FrankRosenblattWiringPerceptron.jpg` (nicht mehr verwendet) | — | https://perceptrondemo.com/ | Bild wurde entfernt; Key bleibt ungenutzt |
 | `relufirst` | `fukushimarelu.png` | — | https://ieeexplore.ieee.org/document/4082265 | Paper-Abbildung → Formel neu zeichnen oder Bild entfernen |
 | `ronkowitz2017perceptron` | `perceptron_smithsonian.jpg` | — | https://ronkowitz.blogspot.com/... | UNCLEAR → PD-Operator-Manual-Zeichnung oder `perceptron2.jpg` |
-| `rosenblattad` | `rosenblatt_ad.png` | — | https://archive.org/details/sim_research-trends... | 1958er-Magazin, unklar → [File:Frank Rosenblatt.jpg](https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg) (CC BY-SA 4.0) |
+| `rosenblattad` | `rosenblatt_ad.png` (nicht mehr verwendet) | — | https://archive.org/details/sim_research-trends... | Bild ersetzt durch `rosenblatt_portrait`; Key ungenutzt |
 | `sam_demo_img` | `sam_demo.png` | Apache-2.0 | https://raw.githubusercontent.com/facebookresearch/segment-anything/main/assets/masks1.png | belegt (Repo-Lizenz) |
 | `shannonratphoto` | `shannons_mouse.jpg` | — | https://circlesofemotion.org/... | keine freie Lizenz gefunden → entfernen/lizenzieren |
-| `si427_image` | `si_427.jpg` | — | https://news.unsw.edu.au/... | keine freie Lizenz → [File:Si427o.jpg](https://commons.wikimedia.org/wiki/File:Si427o.jpg) (CC BY-SA 4.0) |
 | `snarcphoto` | `snarc.jpg` | — | https://www.the-scientist.com/... | keine freie Lizenz gefunden → entfernen/lizenzieren |
 | `spencerbrown1969form` | `laws_of_form_cover.jpg` | — | https://en.wikipedia.org/wiki/Laws_of_Form | Buchcover, keine freie Lizenz → Titel nennen statt Cover |
 | `steadystates` | `householderrelu.png` | — | https://link.springer.com/article/10.1007/BF02478220 | Paper-Abbildung → Formel neu zeichnen oder Bild entfernen |
