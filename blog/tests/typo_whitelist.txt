@@ -562,3 +562,4 @@ subreddit
 # proper nouns / terms (history.php, Principles of Neurodynamics)
 neurodynamics hayek lashley uttley mackay equipotentiality
 ashby homeostat ultrastable
+adaline adalines madaline ivakhnenko steinbuch bongard
