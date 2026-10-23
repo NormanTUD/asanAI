@@ -13,5 +13,7 @@
  ["Terrell E. Koken", null, null, "", 2021, 0],
  ["Amanda Gefter", 42.37, -71.11, "Cambridge, USA", 2015, 1],
  ["Neil R. Smalheiser", null, null, "", 2000, 0],
- ["Tara H. Abraham", null, null, "", 2016, 0]
+ ["Tara H. Abraham", null, null, "", 2016, 0],
+ ["Friedrich A. Hayek", 41.88, -87.63, "Chicago, USA", 1952, 1],
+ ["Karl S. Lashley", 41.88, -87.63, "Chicago, USA", 1929, 1]
 ]

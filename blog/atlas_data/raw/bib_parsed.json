@@ -968,9 +968,9 @@
   },
   "si427_image": {
    "title": "Si.427, Old Babylonian surveyor's field plan (c. 1900–1600 BCE)",
-   "author": "UNSW Sydney / Archaeological Museum, Istanbul",
+   "author": "Daniel Mansfield (UNSW Sydney)",
    "year": "",
-   "url": "https://news.unsw.edu.au/en/australian-mathematician-reveals-oldest-applied-geometry"
+   "url": "https://commons.wikimedia.org/wiki/File:Si427o.jpg"
   },
   "plimpton322": {
    "title": "Plimpton 322 is Babylonian exact sexagesimal trigonometry",
@@ -4651,10 +4651,10 @@
    "url": "https://www.derstandard.at/consent/tcf/story/574514/ich-bin-zu-faul-zum-rechnen"
   },
   "aikenphoto": {
-   "title": "Howard Aiken with Early Computer Print",
-   "author": "Unknown Photographer",
+   "title": "Howard Aiken",
+   "author": "Unknown photographer (MacTutor History of Mathematics)",
    "year": "",
-   "url": "https://www.mediastorehouse.com/fine-art-storehouse/bettmann-archive/mathematician-howard-aiken-early-computer-39321803.html"
+   "url": "https://commons.wikimedia.org/wiki/File:Aiken.jpeg"
   },
   "leibnizrechenmaschine": {
    "title": "Herr Leibniz und seine verlorenen Rechenmaschinen",
@@ -4963,10 +4963,10 @@
    "url": "https://it.wikisource.org/wiki/Della_scoperta_del_nuovo_pianeta_Cerere_Ferdinandea"
   },
   "cerespath": {
-   "title": "The Sky Today on Wednesday, December 24: Ceres makes us see double",
-   "author": "Roen Kelly",
-   "year": "2025",
-   "url": "https://www.astronomy.com/observing/the-sky-today-wednesday-december-24-2025/"
+   "title": "Ceres Orbit",
+   "author": "Orionist (Wikimedia Commons)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Ceres_Orbit.svg"
   },
   "flammarion": {
    "title": "The Flammarion Engraving",
@@ -5141,6 +5141,24 @@
    "author": "Frank Rosenblatt",
    "year": "1958",
    "url": "https://psycnet.apa.org/record/1959-09865-001"
+  },
+  "rosenblatt1962neurodynamics": {
+   "title": "Principles of Neurodynamics: Perceptrons and the Theory of Brain Mechanisms",
+   "author": "Frank Rosenblatt",
+   "year": "1962",
+   "url": "https://archive.org/details/principles-of-neurodynamics"
+  },
+  "hayek1952sensoryorder": {
+   "title": "The Sensory Order: An Inquiry into the Foundations of Theoretical Psychology",
+   "author": "Friedrich A. Hayek",
+   "year": "1952",
+   "url": "https://archive.org/details/sensoryorderinqu00haye"
+  },
+  "lashley1929brainmechanisms": {
+   "title": "Brain Mechanisms and Intelligence: A Quantitative Study of Injuries to the Brain",
+   "author": "Karl S. Lashley",
+   "year": "1929",
+   "url": "https://archive.org/details/brainmechanismsi00lash"
   },
   "perceptronimagecables": {
    "title": "The Mark I Perceptron, an early pattern recognition system, at the Cornell Aeronautical Laboratory",
@@ -5989,7 +6007,7 @@
    "url": "https://en.wikipedia.org/w/index.php?title=History_of_ancient_numeral_systems&oldid=1261588819"
   },
   "history_of_a": {
-   "title": "A | Wikipedia",
+   "title": "History of the letter A — screenshot from Wikipedia's article 'A'",
    "author": "Wikipedia contributors",
    "year": "",
    "url": "https://en.wikipedia.org/wiki/A"
@@ -8431,10 +8449,10 @@
    "url": "https://uberty.org/wp-content/uploads/2015/12/Grothendeick-RetS.pdf"
   },
   "grothendieck_image": {
-   "title": "Portrait of Alexander Grothendieck",
-   "author": "Heidelberg Laureate Forum Foundation",
+   "title": "Alexander Grothendieck — colorized portrait",
+   "author": "Konrad Jacobs / MFO (photo); PhotoColor (colorization)",
    "year": "",
-   "url": "https://www.heidelberg-laureate-forum.org/laureate/alexander-grothendieck/"
+   "url": "https://commons.wikimedia.org/wiki/File:Alexander_Grothendieck_colorized.jpg"
   },
   "awodey2010category": {
    "title": "Category Theory",
@@ -15282,6 +15300,48 @@
    "year": "",
    "url": "https://arxiv.org/abs/2510.12389"
   },
+  "petrov2023unfairness": {
+   "title": "Language Model Tokenizers Introduce Unfairness Between Languages",
+   "author": "Aleksandar Petrov, Emanuele La Malfa, Philip H. S. Torr, Adel Bibi",
+   "year": "",
+   "url": "https://arxiv.org/abs/2305.15425"
+  },
+  "singh2024tokenizationcounts": {
+   "title": "Tokenization counts: the impact of tokenization on arithmetic in frontier LLMs",
+   "author": "Aaditya K. Singh, DJ Strouse",
+   "year": "",
+   "url": "https://arxiv.org/abs/2402.14903"
+  },
+  "zheng2025brokentokens": {
+   "title": "Broken Tokens? Your Language Model can Secretly Handle Non-Canonical Tokenizations",
+   "author": "Brian Siyuan Zheng, Alisa Liu, Orevaoghene Ahia, Jonathan Hayase, Yejin Choi, Noah A. Smith",
+   "year": "",
+   "url": "https://arxiv.org/abs/2506.19004"
+  },
+  "geh2025adversarialtokenization": {
+   "title": "Adversarial Tokenization",
+   "author": "Renato Lui Geh, Zilei Shao, Guy Van den Broeck",
+   "year": "",
+   "url": "https://arxiv.org/abs/2503.02174"
+  },
+  "tokenbreak2025": {
+   "title": "TokenBreak: Bypassing Text Classification Models Through Token Manipulation",
+   "author": "Kasimir Schulz, Kenneth Yeung, Kieran Evans",
+   "year": "",
+   "url": "https://arxiv.org/abs/2506.07948"
+  },
+  "glitchprober2024": {
+   "title": "GlitchProber: Advancing Effective Detection and Mitigation of Glitch Tokens in Large Language Models",
+   "author": "Zhibo Zhang, Wuxia Bai, Yuxi Li, Mark Huasong Meng, Kailong Wang, Ling Shi, Li Li, Jun Wang, Haoyu Wang",
+   "year": "",
+   "url": "https://arxiv.org/abs/2408.04905"
+  },
+  "unicodeuax15": {
+   "title": "Unicode Standard Annex #15: Unicode Normalization Forms",
+   "author": "Unicode Consortium",
+   "year": "accessed 2026",
+   "url": "https://unicode.org/reports/tr15/"
+  },
   "llmjudge2023": {
    "title": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
    "author": "Zheng et al.",
@@ -15869,6 +15929,120 @@
    "author": "V. Gordon Childe",
    "year": "",
    "url": "https://oi.uchicago.edu/sites/default/files/uploads/shared/docs/saoc17.pdf"
+  },
+  "euclid_lueneburg_ms": {
+   "title": "Euclid, Elements — Lüneburg manuscript, fol. 13v",
+   "author": "Euclid / Boethius (manuscript); M. Folkerts (facsimile)",
+   "year": "13th century",
+   "url": "https://commons.wikimedia.org/wiki/File:Euclid_Lueneburg_ms_13v.jpg"
+  },
+  "visicalc_image": {
+   "title": "VisiCalc on an Apple II",
+   "author": "User:Gortu (Wikimedia Commons)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Visicalc.png"
+  },
+  "pythagoras_portrait": {
+   "title": "Pythagoras — bust in the Vatican Museum",
+   "author": "Andargor (Wikimedia Commons)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Pythagoras_Bust_Vatican_Museum_(cropped).jpg"
+  },
+  "moebius_portrait": {
+   "title": "August Ferdinand Möbius — portrait",
+   "author": "Adolf Neumann",
+   "year": "19th century",
+   "url": "https://commons.wikimedia.org/wiki/File:August_Ferdinand_M%C3%B6bius.jpg"
+  },
+  "lobachevsky_portrait": {
+   "title": "Nikolai Lobachevsky — portrait",
+   "author": "Lev Kryukov",
+   "year": "19th century",
+   "url": "https://commons.wikimedia.org/wiki/File:Lobachevsky_03_crop.jpg"
+  },
+  "lapicque_portrait": {
+   "title": "Louis Lapicque — portrait",
+   "author": "Unknown photographer (BIU Santé, Paris)",
+   "year": "early 20th century",
+   "url": "https://commons.wikimedia.org/wiki/File:Louis_Lapicque.jpg"
+  },
+  "gauss_portrait": {
+   "title": "Carl Friedrich Gauss (1840)",
+   "author": "Christian Albrecht Jensen",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Carl_Friedrich_Gauss_1840_by_Jensen.jpg"
+  },
+  "euclid_portrait": {
+   "title": "Euclid — painting by Jusepe de Ribera",
+   "author": "Jusepe de Ribera",
+   "year": "17th century",
+   "url": "https://commons.wikimedia.org/wiki/File:Italian_-_Euclid_-_Google_Art_Project.jpg"
+  },
+  "descartes_portrait": {
+   "title": "René Descartes — portrait after Frans Hals",
+   "author": "After Frans Hals",
+   "year": "17th century",
+   "url": "https://commons.wikimedia.org/wiki/File:Frans_Hals_-_Portret_van_Ren%C3%A9_Descartes.jpg"
+  },
+  "bolyai_portrait": {
+   "title": "János Bolyai — portrait",
+   "author": "Ferenc Márkos",
+   "year": "19th century",
+   "url": "https://commons.wikimedia.org/wiki/File:Bolyai_J%C3%A1nos_(M%C3%A1rkos_Ferenc_festm%C3%A9nye).jpg"
+  },
+  "archimedes_portrait": {
+   "title": "Archimedes — painting by Domenico Fetti (1620)",
+   "author": "Domenico Fetti",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Domenico-Fetti_Archimedes_1620.jpg"
+  },
+  "alkhwarizmi_portrait": {
+   "title": "Al-Khwarizmi — portrait",
+   "author": "Michel Bakni (Wikimedia Commons)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Al-Khwarizmi_portrait.jpg"
+  },
+  "walter_pitts_photo": {
+   "title": "Walter Pitts at a blackboard (1954)",
+   "author": "Francis Bello",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg"
+  },
+  "alhazen_portrait": {
+   "title": "Ibn al-Haytham (Alhazen) — frontispiece to Hevelius, Selenographia (1647)",
+   "author": "Adolph Boÿ, engraved by Jeremias Falck",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Ibn_al-Haytham_crop.jpg"
+  },
+  "rosenblatt_portrait": {
+   "title": "Frank Rosenblatt",
+   "author": "Anonymous (Heinz Nixdorf MuseumsForum)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg"
+  },
+  "platonic_solids_image": {
+   "title": "The five Platonic solids",
+   "author": "Drummyfish (Wikimedia Commons)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Platonic_Solids_Transparent.svg"
+  },
+  "mark_i_perceptron_manual": {
+   "title": "Mark I Perceptron — Figure 2 of the operator's manual",
+   "author": "John C. Hay, Albert E. Murray",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png"
+  },
+  "laws_of_form_diagram": {
+   "title": "Laws of Form — the form ((A)) = A",
+   "author": "AugPi (Wikimedia Commons)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Laws_of_Form_-_((A))%3DA.png"
+  },
+  "theseus_maze_image": {
+   "title": "Theseus maze by Claude Shannon (1952), MIT Museum",
+   "author": "Daderot (Wikimedia Commons)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Theseus_Maze_by_Claude_Shannon,_1952_-_MIT_Museum_-_DSC03702.JPG"
   }
  },
  "cites": {
@@ -16872,6 +17046,10 @@
    "history",
    "mirror_in_machine"
   ],
+  "mark_i_perceptron_manual": [
+   "history",
+   "mirror_in_machine"
+  ],
   "hartline1956limulus": [
    "mirror_in_machine"
   ],
@@ -17395,7 +17573,38 @@
   "tokenbias2025": [
    "tokenizerlab"
   ],
+  "rumbelow2023solidgold": [
+   "intuition",
+   "tokenizerlab"
+  ],
+  "land2024fishing": [
+   "intuition",
+   "tokenizerlab"
+  ],
+  "glitchtokens": [
+   "embeddinglab",
+   "intuition",
+   "tokenizerlab"
+  ],
+  "glitchprober2024": [
+   "tokenizerlab"
+  ],
+  "geh2025adversarialtokenization": [
+   "tokenizerlab"
+  ],
+  "tokenbreak2025": [
+   "tokenizerlab"
+  ],
   "byt52022": [
+   "tokenizerlab"
+  ],
+  "singh2024tokenizationcounts": [
+   "tokenizerlab"
+  ],
+  "zheng2025brokentokens": [
+   "tokenizerlab"
+  ],
+  "unicodeuax15": [
    "tokenizerlab"
   ],
   "qwen2024": [
@@ -17513,6 +17722,11 @@
   ],
   "transformer_attention_figure": [
    "atlas"
+  ],
+  "perceptronimagedetection": [
+   "atlas",
+   "history",
+   "intro"
   ],
   "starfield_eso_image": [
    "atlas"
@@ -18008,7 +18222,6 @@
   ],
   "lebombobone": [
    "geometry_i",
-   "history",
    "language"
   ],
   "panini_ashtadhyayi": [
@@ -18306,6 +18519,9 @@
   "mechanicalturk": [
    "history"
   ],
+  "lapicque_portrait": [
+   "history"
+  ],
   "abbott1999lapicque": [
    "history"
   ],
@@ -18323,7 +18539,7 @@
   "amari1972": [
    "history"
   ],
-  "mccullochpittsimage": [
+  "walter_pitts_photo": [
    "history"
   ],
   "darthmouthartificialintelligence": [
@@ -18358,9 +18574,6 @@
    "history"
   ],
   "img_walter_tortoise": [
-   "history"
-  ],
-  "snarcphoto": [
    "history"
   ],
   "minsky1954": [
@@ -18419,7 +18632,7 @@
   "shannonphoto": [
    "history"
   ],
-  "shannonratphoto": [
+  "theseus_maze_image": [
    "history"
   ],
   "shannonchess1950": [
@@ -18511,30 +18724,28 @@
   "poirier2025neat": [
    "history"
   ],
-  "perceptronimagewiring": [
-   "history",
-   "intro"
-  ],
   "bain": [
    "history"
   ],
   "hnfmccullochpitts2023": [
    "history"
   ],
-  "rosenblattad": [
+  "rosenblatt_portrait": [
    "history"
   ],
   "rosenblattperceptron": [
    "history"
   ],
-  "perceptronimagecables": [
+  "ronkowitz2017perceptron": [
    "history"
   ],
-  "perceptronimagedetection": [
-   "history",
-   "intro"
+  "rosenblatt1962neurodynamics": [
+   "history"
   ],
-  "ronkowitz2017perceptron": [
+  "hayek1952sensoryorder": [
+   "history"
+  ],
+  "lashley1929brainmechanisms": [
    "history"
   ],
   "jensen2026perceptron": [
@@ -21629,6 +21840,9 @@
   "summaarithmetica": [
    "untold_history"
   ],
+  "visicalc_image": [
+   "untold_history"
+  ],
   "aswemaythink": [
    "untold_history"
   ],
@@ -22284,10 +22498,6 @@
   "colah2014nlp": [
    "embeddinglab"
   ],
-  "glitchtokens": [
-   "embeddinglab",
-   "intuition"
-  ],
   "smith2017orthogonal": [
    "embeddinglab"
   ],
@@ -22390,7 +22600,13 @@
   "sulbasutras": [
    "geometry_i"
   ],
+  "pythagoras_portrait": [
+   "geometry_i"
+  ],
   "heathgreekmath": [
+   "geometry_i"
+  ],
+  "archimedes_portrait": [
    "geometry_i"
   ],
   "platorepublic": [
@@ -22402,7 +22618,16 @@
   "aristotlephysics": [
    "geometry_i"
   ],
+  "euclid_portrait": [
+   "geometry_i"
+  ],
   "euclidelements_heath": [
+   "geometry_i"
+  ],
+  "euclid_lueneburg_ms": [
+   "geometry_i"
+  ],
+  "platonic_solids_image": [
    "geometry_i"
   ],
   "heronmetrica": [
@@ -22415,6 +22640,12 @@
    "geometry_i"
   ],
   "menelaussphaerica": [
+   "geometry_i"
+  ],
+  "alkhwarizmi_portrait": [
+   "geometry_i"
+  ],
+  "alhazen_portrait": [
    "geometry_i"
   ],
   "alhazenoetic": [
@@ -22444,10 +22675,16 @@
   "humboldtsextant": [
    "geometry_i"
   ],
+  "descartes_portrait": [
+   "geometry_i"
+  ],
   "mercatoratlas": [
    "geometry_i"
   ],
   "riemann1857genus": [
+   "geometry_i"
+  ],
+  "gauss_portrait": [
    "geometry_i"
   ],
   "gaussdisquisitiones": [
@@ -22462,7 +22699,16 @@
   "bolyaiappendix": [
    "geometry_i"
   ],
+  "lobachevsky_portrait": [
+   "geometry_i"
+  ],
+  "bolyai_portrait": [
+   "geometry_i"
+  ],
   "gudmundsson2004riemannian": [
+   "geometry_i"
+  ],
+  "moebius_portrait": [
    "geometry_i"
   ],
   "bellman1957dynamic": [
@@ -23144,6 +23390,9 @@
   "higher_category_wiki": [
    "coherent_difference"
   ],
+  "laws_of_form_diagram": [
+   "coherent_difference"
+  ],
   "gunther1978idee": [
    "coherent_difference"
   ],
@@ -23257,12 +23506,6 @@
   ],
   "wittgenstein1953investigations": [
    "coherent_difference"
-  ],
-  "land2024fishing": [
-   "intuition"
-  ],
-  "rumbelow2023solidgold": [
-   "intuition"
   ],
   "geva2021kv": [
    "intuition"
@@ -25878,15 +26121,7 @@
     "si427_baublatt"
    ]
   },
-  "UNSW Sydney / Archaeological Museum": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "si427_image"
-   ]
-  },
-  "Istanbul": {
+  "Daniel Mansfield (UNSW Sydney)": {
    "count": 1,
    "minyear": null,
    "maxyear": null,
@@ -27951,12 +28186,11 @@
    ]
   },
   "Unknown Photographer": {
-   "count": 4,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "wienerajedrecista",
-    "aikenphoto",
     "perceptronimagecables",
     "perceptronimagedetection"
    ]
@@ -31857,13 +32091,14 @@
    ]
   },
   "Noah A. Smith": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "alibi2022",
     "press2022alibi",
-    "press2022compositionality"
+    "press2022compositionality",
+    "zheng2025brokentokens"
    ]
   },
   "J.A.J. Gowlett": {
@@ -31947,9 +32182,9 @@
    ]
   },
   "Frank Rosenblatt": {
-   "count": 10,
+   "count": 11,
    "minyear": 1958,
-   "maxyear": 1960,
+   "maxyear": 1962,
    "keys": [
     "rosenblattbackprop",
     "rosenblattad",
@@ -31960,7 +32195,8 @@
     "rosenblatt1966transfer2",
     "rosenblatt1969behavior",
     "perceptronresults",
-    "rosenblatt1958perceptron"
+    "rosenblatt1958perceptron",
+    "rosenblatt1962neurodynamics"
    ]
   },
   "Samuel Ichiye Hayakawa": {
@@ -36263,6 +36499,14 @@
     "zusez1"
    ]
   },
+  "Unknown photographer (MacTutor History of Mathematics)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "aikenphoto"
+   ]
+  },
   "Jochen Viehoff": {
    "count": 1,
    "minyear": null,
@@ -36666,10 +36910,10 @@
     "ceresdiscovery"
    ]
   },
-  "Roen Kelly": {
+  "Orionist (Wikimedia Commons)": {
    "count": 1,
-   "minyear": 2025,
-   "maxyear": 2025,
+   "minyear": null,
+   "maxyear": null,
    "keys": [
     "cerespath"
    ]
@@ -36798,11 +37042,12 @@
    ]
   },
   "Yuxi Li": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "glitchtokens"
+    "glitchtokens",
+    "glitchprober2024"
    ]
   },
   "Yi Liu": {
@@ -36839,19 +37084,21 @@
    ]
   },
   "Ling Shi": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "glitchtokens"
+    "glitchtokens",
+    "glitchprober2024"
    ]
   },
   "Kailong Wang": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "glitchtokens"
+    "glitchtokens",
+    "glitchprober2024"
    ]
   },
   "Yuekang Li": {
@@ -36863,11 +37110,12 @@
    ]
   },
   "Haoyu Wang": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "glitchtokens"
+    "glitchtokens",
+    "glitchprober2024"
    ]
   },
   "Sander Land": {
@@ -37054,6 +37302,22 @@
    "maxyear": 1847,
    "keys": [
     "cauchy1847"
+   ]
+  },
+  "Friedrich A. Hayek": {
+   "count": 1,
+   "minyear": 1952,
+   "maxyear": 1952,
+   "keys": [
+    "hayek1952sensoryorder"
+   ]
+  },
+  "Karl S. Lashley": {
+   "count": 1,
+   "minyear": 1929,
+   "maxyear": 1929,
+   "keys": [
+    "lashley1929brainmechanisms"
    ]
   },
   "Frederic Lewis": {
@@ -37490,14 +37754,15 @@
    ]
   },
   "Yejin Choi": {
-   "count": 4,
+   "count": 5,
    "minyear": 2019,
    "maxyear": 2019,
    "keys": [
     "sakaguchi2019winogrande",
     "holtzman2019nucleus",
     "zelikman2024quietstar",
-    "holtzman2020nucleus"
+    "holtzman2020nucleus",
+    "zheng2025brokentokens"
    ]
   },
   "Nolan Burns": {
@@ -44223,7 +44488,7 @@
     "grothedieck_ega1960"
    ]
   },
-  "Heidelberg Laureate Forum Foundation": {
+  "Konrad Jacobs / MFO (photo); PhotoColor (colorization)": {
    "count": 1,
    "minyear": null,
    "maxyear": null,
@@ -56735,6 +57000,182 @@
     "tokenbias2025"
    ]
   },
+  "Aleksandar Petrov": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "petrov2023unfairness"
+   ]
+  },
+  "Emanuele La Malfa": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "petrov2023unfairness"
+   ]
+  },
+  "Philip H. S. Torr": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "petrov2023unfairness"
+   ]
+  },
+  "Adel Bibi": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "petrov2023unfairness"
+   ]
+  },
+  "Aaditya K. Singh": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "singh2024tokenizationcounts"
+   ]
+  },
+  "DJ Strouse": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "singh2024tokenizationcounts"
+   ]
+  },
+  "Brian Siyuan Zheng": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "zheng2025brokentokens"
+   ]
+  },
+  "Alisa Liu": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "zheng2025brokentokens"
+   ]
+  },
+  "Orevaoghene Ahia": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "zheng2025brokentokens"
+   ]
+  },
+  "Jonathan Hayase": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "zheng2025brokentokens"
+   ]
+  },
+  "Renato Lui Geh": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "geh2025adversarialtokenization"
+   ]
+  },
+  "Zilei Shao": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "geh2025adversarialtokenization"
+   ]
+  },
+  "Guy Van den Broeck": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "geh2025adversarialtokenization"
+   ]
+  },
+  "Kasimir Schulz": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "tokenbreak2025"
+   ]
+  },
+  "Kenneth Yeung": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "tokenbreak2025"
+   ]
+  },
+  "Kieran Evans": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "tokenbreak2025"
+   ]
+  },
+  "Zhibo Zhang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "glitchprober2024"
+   ]
+  },
+  "Wuxia Bai": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "glitchprober2024"
+   ]
+  },
+  "Mark Huasong Meng": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "glitchprober2024"
+   ]
+  },
+  "Li Li": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "glitchprober2024"
+   ]
+  },
+  "Jun Wang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "glitchprober2024"
+   ]
+  },
+  "Unicode Consortium": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "unicodeuax15"
+   ]
+  },
   "Zheng et al.": {
    "count": 1,
    "minyear": null,
@@ -57016,6 +57457,182 @@
    "maxyear": null,
    "keys": [
     "zoharyhopf2000domestication"
+   ]
+  },
+  "Euclid / Boethius (manuscript); M. Folkerts (facsimile)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "euclid_lueneburg_ms"
+   ]
+  },
+  "User:Gortu (Wikimedia Commons)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "visicalc_image"
+   ]
+  },
+  "Andargor (Wikimedia Commons)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "pythagoras_portrait"
+   ]
+  },
+  "Adolf Neumann": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "moebius_portrait"
+   ]
+  },
+  "Lev Kryukov": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lobachevsky_portrait"
+   ]
+  },
+  "Unknown photographer (BIU Santé": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lapicque_portrait"
+   ]
+  },
+  "Paris)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lapicque_portrait"
+   ]
+  },
+  "Christian Albrecht Jensen": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "gauss_portrait"
+   ]
+  },
+  "Jusepe de Ribera": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "euclid_portrait"
+   ]
+  },
+  "After Frans Hals": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "descartes_portrait"
+   ]
+  },
+  "Ferenc Márkos": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "bolyai_portrait"
+   ]
+  },
+  "Domenico Fetti": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "archimedes_portrait"
+   ]
+  },
+  "Michel Bakni (Wikimedia Commons)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "alkhwarizmi_portrait"
+   ]
+  },
+  "Francis Bello": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "walter_pitts_photo"
+   ]
+  },
+  "Adolph Boÿ": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "alhazen_portrait"
+   ]
+  },
+  "engraved by Jeremias Falck": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "alhazen_portrait"
+   ]
+  },
+  "Anonymous (Heinz Nixdorf MuseumsForum)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rosenblatt_portrait"
+   ]
+  },
+  "Drummyfish (Wikimedia Commons)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "platonic_solids_image"
+   ]
+  },
+  "John C. Hay": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "mark_i_perceptron_manual"
+   ]
+  },
+  "Albert E. Murray": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "mark_i_perceptron_manual"
+   ]
+  },
+  "AugPi (Wikimedia Commons)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "laws_of_form_diagram"
+   ]
+  },
+  "Daderot (Wikimedia Commons)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "theseus_maze_image"
    ]
   }
  }

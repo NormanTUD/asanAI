@@ -4845,11 +4845,12 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 3,
+  "works": 4,
   "keys": [
    "img_flaming_heart",
    "moscowpapyrus",
-   "brazenheadimage"
+   "brazenheadimage",
+   "rosenblatt_portrait"
   ],
   "cited_in": [
    "geometry_i",
@@ -6798,7 +6799,6 @@
    "bell_labs"
   ],
   "cited_in": [
-   "history",
    "software"
   ]
  },
@@ -17708,6 +17708,40 @@
   ]
  },
  {
+  "name": "Friedrich A. Hayek",
+  "canon": "Friedrich A. Hayek",
+  "alias": null,
+  "lat": 41.88,
+  "lng": -87.63,
+  "city": "Chicago, USA",
+  "year": 1952.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "hayek1952sensoryorder"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Karl S. Lashley",
+  "canon": "Karl S. Lashley",
+  "alias": null,
+  "lat": 41.88,
+  "lng": -87.63,
+  "city": "Chicago, USA",
+  "year": 1929.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "lashley1929brainmechanisms"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
   "name": "Christiaan Huygens",
   "canon": "Christiaan Huygens",
   "alias": null,
@@ -25569,7 +25603,7 @@
   "city": "Ithaca, USA",
   "year": 1960.0,
   "conf": 1,
-  "works": 10,
+  "works": 11,
   "keys": [
    "rosenblattbackprop",
    "rosenblattad",
@@ -25580,7 +25614,8 @@
    "rosenblatt1966transfer2",
    "rosenblatt1969behavior",
    "perceptronresults",
-   "rosenblatt1958perceptron"
+   "rosenblatt1958perceptron",
+   "rosenblatt1962neurodynamics"
   ],
   "cited_in": [
    "activationlab",
@@ -25824,10 +25859,7 @@
   "keys": [
    "perceptronimagewiring"
   ],
-  "cited_in": [
-   "history",
-   "intro"
-  ]
+  "cited_in": []
  },
  {
   "name": "Frederick Jelinek",
@@ -26488,7 +26520,8 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition"
+   "intuition",
+   "tokenizerlab"
   ]
  },
  {
@@ -29055,13 +29088,15 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "glitchtokens"
+   "glitchtokens",
+   "glitchprober2024"
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition"
+   "intuition",
+   "tokenizerlab"
   ]
  },
  {
@@ -29325,13 +29360,9 @@
   "city": "Heidelberg, Germany",
   "year": 2012.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "grothendieck_image"
-  ],
-  "cited_in": [
-   "geometry_i"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Heiga Zen",
@@ -29669,7 +29700,6 @@
   ],
   "cited_in": [
    "geometry_i",
-   "history",
    "language"
   ]
  },
@@ -31491,13 +31521,9 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "si427_image"
-  ],
-  "cited_in": [
-   "geometry_i"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Itai Gat",
@@ -34034,9 +34060,7 @@
   "keys": [
    "snarcphoto"
   ],
-  "cited_in": [
-   "history"
-  ]
+  "cited_in": []
  },
  {
   "name": "Jeff Clune",
@@ -34379,9 +34403,7 @@
   "keys": [
    "mccullochpittsimage"
   ],
-  "cited_in": [
-   "history"
-  ]
+  "cited_in": []
  },
  {
   "name": "Jerome H. Friedman",
@@ -38047,13 +38069,15 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "glitchtokens"
+   "glitchtokens",
+   "glitchprober2024"
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition"
+   "intuition",
+   "tokenizerlab"
   ]
  },
  {
@@ -40728,13 +40752,15 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "glitchtokens"
+   "glitchtokens",
+   "glitchprober2024"
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition"
+   "intuition",
+   "tokenizerlab"
   ]
  },
  {
@@ -47897,15 +47923,17 @@
   "city": "Seattle, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "alibi2022",
    "press2022alibi",
-   "press2022compositionality"
+   "press2022compositionality",
+   "zheng2025brokentokens"
   ],
   "cited_in": [
    "frontier",
    "positionalembeddingslab",
+   "tokenizerlab",
    "unexpected_capabilities"
   ]
  },
@@ -48924,12 +48952,14 @@
   "city": "",
   "year": 2000.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "susa_geometry_tablet"
+   "susa_geometry_tablet",
+   "lapicque_portrait"
   ],
   "cited_in": [
-   "geometry_i"
+   "geometry_i",
+   "history"
   ]
  },
  {
@@ -53424,14 +53454,9 @@
   "city": "",
   "year": 2025.0,
   "conf": 0,
-  "works": 1,
-  "keys": [
-   "cerespath"
-  ],
-  "cited_in": [
-   "statistics",
-   "statistics_i"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Roger C. Conant",
@@ -61613,11 +61638,12 @@
   "works": 4,
   "keys": [
    "wienerajedrecista",
-   "aikenphoto",
    "perceptronimagecables",
-   "perceptronimagedetection"
+   "perceptronimagedetection",
+   "aikenphoto"
   ],
   "cited_in": [
+   "atlas",
    "history",
    "intro"
   ]
@@ -61646,13 +61672,9 @@
   "city": "Sydney, Australia",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
-  "keys": [
-   "si427_image"
-  ],
-  "cited_in": [
-   "geometry_i"
-  ]
+  "works": 0,
+  "keys": [],
+  "cited_in": []
  },
  {
   "name": "Uri Alon",
@@ -63102,7 +63124,8 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition"
+   "intuition",
+   "tokenizerlab"
   ]
  },
  {
@@ -65419,6 +65442,7 @@
   "cited_in": [
    "embeddinglab",
    "intuition",
+   "tokenizerlab",
    "transformer"
   ]
  },
@@ -65835,19 +65859,21 @@
   "city": "Seattle, USA",
   "year": 2019.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "sakaguchi2019winogrande",
    "holtzman2019nucleus",
    "zelikman2024quietstar",
-   "holtzman2020nucleus"
+   "holtzman2020nucleus",
+   "zheng2025brokentokens"
   ],
   "cited_in": [
    "hallucinations",
    "mechanistic_interpretability",
    "music_video_generation",
    "philosophy",
-   "samplinglab"
+   "samplinglab",
+   "tokenizerlab"
   ]
  },
  {
@@ -65934,7 +65960,8 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition"
+   "intuition",
+   "tokenizerlab"
   ]
  },
  {
@@ -66202,7 +66229,8 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition"
+   "intuition",
+   "tokenizerlab"
   ]
  },
  {
@@ -66957,7 +66985,8 @@
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition"
+   "intuition",
+   "tokenizerlab"
   ]
  },
  {
@@ -67413,13 +67442,15 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "glitchtokens"
+   "glitchtokens",
+   "glitchprober2024"
   ],
   "cited_in": [
    "embeddinglab",
-   "intuition"
+   "intuition",
+   "tokenizerlab"
   ]
  },
  {
