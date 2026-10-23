@@ -179,7 +179,7 @@ The Greeks did not invent geometry; they made it demonstrative. The motive was n
 
 ### Thales, Pythagoras and the theorem
 
-\marginfig{pythagoras.jpg}{Pythagoras of Samos (c. 570–495 BCE), founder of the school that gave its name to the most famous theorem in the world.}
+\marginfig{pythagoras_bust.jpg}{Pythagoras of Samos (c. 570–495 BCE), founder of the school that gave its name to the most famous theorem in the world (\cite[Pythagoras, Vatican bust]{pythagoras_portrait}).}
 
 The tradition places the first proofs with **Thales of Miletus** (c. 624–546 BCE) — for example, that a circle is bisected by its diameter and that the angles of a triangle sum to two right angles (I.32) \cite{heathgreekmath}. Thales' theorem, in modern symbols: if $AC$ is a diameter of a circle and $B$ is any other point on it, then $\angle ABC = 90^{\circ}$. The Pythagoreans, the circle around **Pythagoras** (c. 570–495 BCE), are credited with the first *proof* of what is now named after them: in any right triangle the square on the hypotenuse equals the sum of the squares on the two legs,
 
@@ -197,7 +197,7 @@ and Euclid's *Elements* XII is built on it \cite{heathgreekmath}.
 
 ### Archimedes: exhaustion perfected
 
-\marginfig{archimedes.jpg}{Archimedes of Syracuse (c. 287–212 BCE), who perfected the method of exhaustion and computed the sphere's volume and surface with proofs that survive today.}
+\marginfig{archimedes_fetti.jpg}{Archimedes of Syracuse (c. 287–212 BCE), who perfected the method of exhaustion and computed the sphere's volume and surface with proofs that survive today (\cite[Archimedes, Fetti]{archimedes_portrait}).}
 
 If Eudoxus gave the *method*, **Archimedes of Syracuse** (c. 287–212 BCE) gave it its masterpieces \cite{heathgreekmath}. Working with the same exhaustion engine, he computed, with proofs that survive today, the area and circumference of the circle, and then the *volumes* that were the great open problem: the sphere, the cone, the cylinder, the paraboloid and the spheroid. His results, in modern symbols,
 
@@ -217,7 +217,7 @@ The tradition also preserves the legend that Plato had written above the door of
 
 ### Euclid's Elements: the machine of proof
 
-\marginfig{euclid.jpg}{Euclid of Alexandria (c. 300 BCE) demonstrating a proposition to a student — the standard image of the man who set the template for every proof that followed.}
+\marginfig{euclid_ribera.jpg}{Euclid of Alexandria (c. 300 BCE) demonstrating a proposition to a student — the standard image of the man who set the template for every proof that followed (\cite[Euclid, Ribera]{euclid_portrait}).}
 
 Everything before Euclid was a collection of results; the **\citealternativetitle{euclidelements}** (composed c. 300 BCE in Alexandria, the standard edition edited and translated by \citeauthor{euclidelements_heath}) is the first *system* \cite{euclidelements} \cite{euclidelements_heath}. The *why* is institutional: Alexandria was the library of the ancient world, and Euclid's book was a textbook for the students who flocked there — a way to organise *all* the known geometry into one sequence in which each result depends only on the ones before it. Its structure is as famous as its content: a short list of definitions, **five postulates** (the working rules of compass and straightedge) and **five common notions** (self-evident truths about magnitudes) from which **465 propositions** follow, each ending with the little square — the *tombstone* (or *halmos*) — that marks "it has been proved". That architecture is the template for every proof-based subject that followed:
 
@@ -227,8 +227,8 @@ Everything before Euclid was a collection of results; the **\citealternativetitl
 * **Propositions** — statements proved *only* from the definitions, postulates and common notions, plus earlier propositions.
 
 <figure>
-	<img style="width: 100%" src="euclid_elements.jpg" alt="A page from a manuscript of Euclid's Elements" />
-	<figcaption class="md">A page from a medieval manuscript of the \citealternativetitle{euclidelements}: definition, postulate, and proposition, each with its proof, in the unbroken chain Euclid designed. This is what "a proof" looked like for two thousand years.</figcaption>
+	<img style="width: 100%" src="euclid_lueneburg_ms13v.jpg" alt="A page from the Lüneburg manuscript of Euclid's Elements" />
+	<figcaption class="md">A page from a medieval manuscript of the \citealternativetitle{euclidelements} (\cite[Lüneburg manuscript]{euclid_lueneburg_ms}): definition, postulate, and proposition, each with its proof, in the unbroken chain Euclid designed. This is what "a proof" looked like for two thousand years.</figcaption>
 </figure>
 
 The books are organised by theme: **Book I** is plane geometry (angles, triangles, the Pythagorean theorem as **I.47**, and the *converse* as I.48); **Book VI** develops proportion and **similar triangles**, which is how the Greeks did "algebra with lengths"; **Book XII** applies the method of exhaustion to area and volume (the area of the circle, and that a cone is a third of its cylinder); and **Book XIII** closes the whole edifice by constructing the five **regular solids** — the tetrahedron, cube, octahedron, dodecahedron and icosahedron — tying geometry back to the Platonic idea that the cosmos is built from five shapes.
@@ -276,8 +276,8 @@ The *why* is partly optical and partly astronomical. The parabola is the only co
 
 <div style="display:flex; gap:1.5rem; flex-wrap:wrap; justify-content:center; margin:0 0 1.5rem;">
 <figure style="margin:0; width:45%; max-width:260px;">
-<img style="width:100%; height:auto; border-radius:4px;" src="alkhwarizmi.jpg" alt="Muḥammad ibn Mūsā al-Khwārizmī" />
-<figcaption class="md" style="font-size:0.85rem; margin-top:0.4rem;">Muḥammad ibn Mūsā <strong>al-Khwārizmī</strong> (c. 780–850), whose treatise on <em>al-jabr</em> gave algebra its name — and whose surname gave us the word <em>algorithm</em>.</figcaption>
+<img style="width:100%; height:auto; border-radius:4px;" src="alkhwarizmi_portrait.jpg" alt="Muḥammad ibn Mūsā al-Khwārizmī" />
+<figcaption class="md" style="font-size:0.85rem; margin-top:0.4rem;">Muḥammad ibn Mūsā <strong>al-Khwārizmī</strong> (c. 780–850), whose treatise on <em>al-jabr</em> gave algebra its name — and whose surname gave us the word <em>algorithm</em> (\cite[Al-Khwarizmi portrait]{alkhwarizmi_portrait}).</figcaption>
 </figure>
 <figure style="margin:0; width:45%; max-width:260px;">
 <img style="width:100%; height:auto; border-radius:4px;" src="alhazen.jpg" alt="Ibn al-Haytham (Alhazen)" />
@@ -371,7 +371,7 @@ a *projective* transformation. The Renaissance discovery of perspective is thus,
 
 ### Descartes and analytic geometry (1637)
 
-\marginfig{descartes.jpg}{René Descartes (1596–1650), painted by Frans Hals. His *Géométrie* fused algebra and geometry into a single subject.}
+\marginfig{descartes_frans_hals.jpg}{René Descartes (1596–1650), painted by Frans Hals. His *Géométrie* fused algebra and geometry into a single subject (\cite[Descartes, after Frans Hals]{descartes_portrait}).}
 
 \citeauthor{descartesgeometrie}'s **\citealternativetitle{descartesgeometrie}** (1637), the final part of his *Discourse on the Method*, is the hinge on which all of later mathematics turns \cite{descartesgeometrie}. His move is the simplest and most powerful in the book of mathematics: put a **grid of coordinates** on the plane, so that every point is a *pair of numbers* and every curve is an *equation*. A line is $y = mx + c$; a circle is $x^{2} + y^{2} = r^{2}$; the conics are the degree-two equations. Geometry and algebra, which had walked in parallel for two thousand years, are now *the same subject written in two languages*. (It was **Fermat**, working independently, who developed the same idea in the same decade.)
 
@@ -433,7 +433,7 @@ so $\chi$ never exceeds $2$, and equality holds *only* for the sphere: each hand
 <div class="md" data-mathlevel="85">
 ### Gauss: curvature is intrinsic
 
-\marginfig{gauss.jpg}{Carl Friedrich Gauss (1777–1855), who while surveying Hanover found that a surface can read its own curvature from the inside.}
+\marginfig{gauss_portrait_1840.jpg}{Carl Friedrich Gauss (1777–1855), who while surveying Hanover found that a surface can read its own curvature from the inside (\cite[Gauss, 1840]{gauss_portrait}).}
 
 **\citeauthor{gaussdisquisitiones}** (1777–1855), while surveying the state of Hanover for a living, was led to a question that looks innocent and is profound \cite{gaussdisquisitiones}. Surveying means measuring the angles of a *triangle* of survey markers on the ground. If the Earth's surface is truly flat, the three angles always sum to $180^{\circ}$; if it is curved, the sum is *more* (the more, the larger and curvier the triangle). So a sufficiently careful survey of a sufficiently large triangle could, in principle, tell us whether *space itself* is Euclidean. That made the *parallel postulate* — the axiom that guarantees the flat angle-sum — into an **empirical** question about the physical world, which was a scandal for a subject that was supposed to be true by pure reason alone.
 
@@ -468,7 +468,7 @@ $$\underbrace{\iint_{S} K\, dA}_{\substack{\text{add up ALL the bend}\\\text{on 
 
 The parallel postulate had resisted proof for 2,000 years. The breakthrough was to stop trying to prove it and to *negate* it. **\citeauthor{lobachevskygeometry}** (1792–1856) and, independently, **\citeauthor{bolyaiappendix}** (1802–1860), each discovered that if you *replace* Euclid's fifth postulate with "through a point not on a line there pass *infinitely many* lines that never meet it", a perfectly consistent geometry results — **hyperbolic (or "non-Euclidean") geometry** \cite{lobachevskygeometry} \cite{bolyaiappendix}.
 
-\marginfig{lobachevsky.jpg}{Nikolai Lobachevsky (1792–1856), who published the first non-Euclidean geometry in 1829.}
+\marginfig{lobachevsky_portrait.jpg}{Nikolai Lobachevsky (1792–1856), who published the first non-Euclidean geometry in 1829 (\cite[Lobachevsky]{lobachevsky_portrait}).}
 
 The *why* is the 2,000-year hang-up on the fifth postulate itself: it had always looked less self-evident than the other four, and for two centuries mathematicians (Saccheri, Legendre, and others) had tried and failed to prove it from the rest. The daring move was to ask what happens if you *assume the opposite* — and to find not a contradiction but a *world*. In the hyperbolic plane, the angles of a triangle sum to *less* than two right angles, and the shortfall is not a bug but the *area*: for a triangle on a surface of curvature $K=-1$,
 
@@ -476,7 +476,7 @@ $$\underbrace{A + B + C}_{\text{its three angles, added up}} \;<\; \underbrace{\
 
 So a triangle's area is read directly from its *angular defect*, and there is no largest triangle: every triangle's area is bounded above by $\pi$ (the area of an ideal triangle), even though the plane itself extends without bound. (In the opposite, spherical geometry, the sum is *more* than $\pi$ and the excess is the area.) The result was striking, because it was not a contradiction: it was a *different, equally valid, geometry of space*. The father **Farkas Bolyai** and **Gauss** (who had found the same geometry independently but never published) both recognised that the *truth* of Euclidean versus hyperbolic geometry is no longer a question of pure reason — it is, as Gauss put it, an **empirical** question, to be settled by measuring the angle-sum of a *very large* triangle in the real world. Geometry had become a question about *physical space*, not just a set of theorems.
 
-\marginfig{bolyai.jpg}{János Bolyai (1802–1860), son of Farkas, who worked out the same geometry in an 1837 appendix to his father's book.}
+\marginfig{bolyai_portrait.jpg}{János Bolyai (1802–1860), son of Farkas, who worked out the same geometry in an 1837 appendix to his father's book (\cite[Bolyai]{bolyai_portrait}).}
 </div>
 
 <div class="md" data-mathlevel="75">
@@ -504,7 +504,7 @@ the Einstein field equation: *the curvature of spacetime on the left equals the 
 
 In the same decade the *metric-free* side was named. **\citeauthor{mobiusband}** (1790–1868) discovered the one-sided band that bears his name (1858) \cite{mobiusband}, and **\citeauthor{listingtopologie}** (1808–1882) coined the very word **"topology"** (from *topos*, "place") in his *Vorstudien zur Topologie* (1847) \cite{listingtopologie}.
 
-\marginfig{mobius.jpg}{August Ferdinand Möbius (1790–1868), who, with Listing, named the study of shape up to continuous deformation.}
+\marginfig{moebius_portrait.jpg}{August Ferdinand Möbius (1790–1868), who, with Listing, named the study of shape up to continuous deformation (\cite[Möbius]{moebius_portrait}).}
 
 <figure>
 	<img style="width: 100%" src="mobius_strip.jpg" alt="The Möbius strip" />

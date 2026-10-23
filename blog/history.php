@@ -356,8 +356,8 @@ The Turk matters for the history of AI for the opposite reason to its trick. It 
 
 <div class="optional md" data-headline="The First Mathematical Neuron: Lapicque's Integrate-and-Fire Model (1907)">
 <figure style="float: right; width: 22%; max-width: 160px; margin: 0 0 1em 1em;">
-    <img style="width: 100%; height: auto; display: block;" src="lapicque.jpg" alt="Louis Lapicque" />
-    <figcaption class="md">Louis Lapicque, 1866–1952</figcaption>
+    <img style="width: 100%; height: auto; display: block;" src="lapicque_portrait.jpg" alt="Louis Lapicque" />
+    <figcaption class="md">Louis Lapicque, 1866–1952 (\cite[Lapicque]{lapicque_portrait})</figcaption>
 </figure>
 
 The mathematical birth of the neuron model predates McCulloch and Pitts by 36 years. In \citeyear{lapicque1907}, French neuroscientist \citeauthor{lapicque1907} published \citealternativetitle{lapicque1907}, the paper that introduced what we now call the **integrate-and-fire** neuron. Working at the Sorbonne, Lapicque replaced the messy biophysics of the nerve membrane with the simplest possible electrical analogue: a parallel capacitor–resistor circuit representing the membrane's capacitance and leakage resistance, charged by an input current until its voltage crosses a fixed threshold, at which point a “spike” is emitted and the capacitor discharges back to rest. In modern notation, the non-leaky form he wrote down is
@@ -383,8 +383,8 @@ Long before digital computers existed, physicists \citeauthor{lenz1920} and his 
 		<figcaption>Neurophysiologist Warren McCulloch, \citeyear{mccullochpittsimage}</figcaption>
 	</figure>
 	<figure>
-		<img src="pitts.jpg" alt="Walter Pitts" />
-		<figcaption>Logician and psychologist Walter Pitts, \citeyear{mccullochpittsimage}</figcaption>
+		<img src="walter_pitts_1954.jpg" alt="Walter Pitts" />
+		<figcaption>Logician and psychologist Walter Pitts (\cite[Pitts, 1954]{walter_pitts_photo})</figcaption>
 	</figure>
 </div>
 
@@ -512,7 +512,7 @@ This transdisciplinary group is the direct parent of AI. When the field formalis
 ### Howard Aiken & The Harvard Mark I (1944)
 
 <figure>
-    <img style="width: 100%" src="aiken.jpg" alt="Howard Aiken" />
+    <img style="width: 100%" src="aiken_portrait.jpeg" alt="Howard Aiken" />
     <figcaption class="md">\citealternativetitle{aikenphoto}, officially named as Automatic Sequence Controlled Calculator</figcaption>
 </figure>
 
@@ -630,13 +630,6 @@ A \citeyear{poirier2025neat} historical study \cite{poirier2025neat} shows that 
 
 ## The Beginning of Artificial Neural Networks
 </div>
-
-<!--
-<figure>
-	<img style="max-width: 100%" src="FrankRosenblattWiringPerceptron.jpg" alt="Perceptron Wiring" />
-	<figcaption>\citetitle{perceptronimagewiring}</figcaption>
-</figure>
--->
 
 <div class="md">
 <div class="smart-quote" data-cite="hebb1949organizationofbehaviour" data-page=62>

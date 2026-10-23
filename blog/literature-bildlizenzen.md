@@ -2,7 +2,7 @@
 
 Stand: 2026-10-23
 
-`literature.js` enthält 2652 Einträge. Davon verweisen **169** auf Wikimedia-Dateien (Commons/Wikipedia `File:`/`Datei:` oder `upload.wikimedia.org`). 164 Lizenzen wurden über die Commons-/Wikipedia-API ermittelt, 5 weitere (Weiterleitungen/Datei-Umbenennungen) manuell verifiziert. Für alle 169 liegt jetzt eine Lizenz vor.
+`literature.js` enthält 2665 Einträge. Davon verweisen **184** auf Wikimedia-Dateien (Commons/Wikipedia `File:`/`Datei:` oder `upload.wikimedia.org`). 164 Lizenzen wurden über die Commons-/Wikipedia-API ermittelt, 5 weitere (Weiterleitungen/Datei-Umbenennungen) manuell verifiziert. Für alle 169 liegt jetzt eine Lizenz vor.
 
 - **69** fehlende Lizenzen wurden automatisch ergänzt, dazu 5 gezielte Einträge (u. a. Inceptionism, Deconv, Loss Landscape, Perseverance, ENIAC).
 - Zusätzlich gezielt ergänzt: `mordvintsev2015inceptionism` (CC BY 4.0), `odena2016deconvolution` (CC BY 2.0), `li2018losslandscape` (MIT), `nasa2021perseverance` (Public domain/NASA) und `sam_demo_img` (Apache-2.0).
@@ -14,9 +14,12 @@ Stand: 2026-10-23
 |---|---|---|---|
 | `achleuleanhandaxe_image` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Kariandusi_Acheulean_Tools.jpg |
 | `agc_module_image` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Apollo_Guidance_Computer.jpg |
+| `aikenphoto` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Aiken.jpeg |
+| `alkhwarizmi_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Al-Khwarizmi_portrait.jpg |
 | `alphafold_protein_img` | CC0 | CC0 | https://commons.wikimedia.org/wiki/File:TMEM253_AlphaFold_Predicted_Structure.jpg |
 | `alphago_leesedol_image` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Lee_Sedol_(B)_vs_AlphaGo_(W)_-_Game_4.jpg |
 | `antikytheraimage` | CC BY 2.0 | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Fragments_of_the_Antikythera_Mechanism.jpg |
+| `archimedes_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Domenico-Fetti_Archimedes_1620.jpg |
 | `aristotleandplato` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Sanzio_01_Plato_Aristotle.jpg |
 | `arithmometer_thomas` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Arithmometer-ThomasDeColmar1850.jpg |
 | `arpanet_map` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Arpanet_logical_map,_march_1977.png |
@@ -25,12 +28,14 @@ Stand: 2026-10-23
 | `audio_spectrogram_img` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Audio_spectrogram_sonic_visualiser.png |
 | `babbage` | CC BY-SA 2.0 | CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:Babbages_Analytical_Engine,_1834-1871._(9660574685).jpg |
 | `batesonphoto` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Goodbye_and_Good_Luck_to_Margaret_Mead_and_Gregory_Bateson.jpg |
+| `bolyai_portrait` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Bolyai_J%C3%A1nos_(M%C3%A1rkos_Ferenc_festm%C3%A9nye).jpg |
 | `brazenheadimage` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Friar_Bacon%27s_Brazen_Head.png |
 | `brazenheadpubimage` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:The_Brazen_Head_pub_exterior.jpg |
 | `budassi_universe_image` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Logarhitmic_radial_photo_of_the_universe_by_pablo_budassi_9MFK.jpg |
 | `category_diagram_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Commutative_diagram_for_morphism.svg |
 | `cd_compact_disc_img` | Public domain | Public Domain | https://commons.wikimedia.org/wiki/File:Compact_Disc.png |
 | `ceresimage` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg |
+| `cerespath` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Ceres_Orbit.svg |
 | `colladon_lightpipe` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:DanielColladon%27s_Lightfountain_or_Lightpipe,LaNature(magazine),1884.JPG |
 | `colossus_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Colossus.jpg |
 | `cosmic_web_foam_image` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Cosmic_web.jpg |
@@ -40,6 +45,7 @@ Stand: 2026-10-23
 | `cuevadelasmanos_image` | CC BY-SA 2.0 | CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:Cueva_de_las_Manos_(6811931046).jpg |
 | `cuneiform` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Clay_tablet_mentioning_the_name_of_Eannatum,_prince_of_Lagash._From_Iraq,_c._2470_BCE._Iraq_Museum.jpg |
 | `dawkins_image` | CC BY 3.0 | CC BY 3.0 | https://commons.wikimedia.org/wiki/File:Richard_Dawkins_Cooper_Union_Shankbone.jpg |
+| `descartes_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Frans_Hals_-_Portret_van_Ren%C3%A9_Descartes.jpg |
 | `diffusion_architecture_img` | MIT | MIT | https://commons.wikimedia.org/wiki/File:Stable_Diffusion_architecture.png |
 | `diffusion_astronaut_img` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Astronaut_Riding_a_Horse_(SD3.5).webp |
 | `diffusion_ddim_img` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:X-Y_plot_of_algorithmically-generated_AI_art_of_European-style_castle_in_Japan_demonstrating_DDIM_diffusion_steps.png |
@@ -50,6 +56,8 @@ Stand: 2026-10-23
 | `eisschlagen_traunsee` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Eisschlagen.JPG |
 | `eniac1946_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Glen_Beck_and_Betty_Snyder_program_the_ENIAC_in_building_328_at_the_Ballistic_Research_Laboratory.jpg |
 | `eniac_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Classic_shot_of_the_ENIAC.jpg |
+| `euclid_lueneburg_ms` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Euclid_Lueneburg_ms_13v.jpg |
+| `euclid_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Italian_-_Euclid_-_Google_Art_Project.jpg |
 | `euler_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Leonhard_Euler_2.jpg |
 | `faraday_disk` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Faraday_disk_generator.jpg |
 | `film_strip_35mm_img` | CC BY 3.0 | CC BY 3.0 | https://commons.wikimedia.org/wiki/File:35mm_Polyester_Film_Strip_Stock.jpg |
@@ -60,6 +68,7 @@ Stand: 2026-10-23
 | `foldedkoch_img` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:FoldedKoch.gif |
 | `freud_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Sigmund_Freud_1926_(cropped).jpg |
 | `galilei_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Justus_Sustermans_-_Portrait_of_Galileo_Galilei_(Uffizi)_(cropped).jpg |
+| `gauss_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Carl_Friedrich_Gauss_1840_by_Jensen.jpg |
 | `h264_coding_structure_img` | Public domain | Public Domain | https://commons.wikimedia.org/wiki/File:Vcl_structure.jpg |
 | `hamilton1969_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Margaret_Hamilton_-_restoration.jpg |
 | `heidegger_image` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Martin_Heidegger_for_WP.jpg |
@@ -125,8 +134,10 @@ Stand: 2026-10-23
 | `jacquard_loom` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:A_Jacquard_loom_showing_information_punchcards,_National_Museum_of_Scotland.jpg |
 | `jung_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Carl_Gustav_Jung_portrait.jpg |
 | `lagrange_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Lagrange_portrait.jpg |
+| `lapicque_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Louis_Lapicque.jpg |
 | `leibniz_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Gottfried_Wilhelm_Leibniz,_Bernhard_Christoph_Francke.jpg |
 | `leibnizcc` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg |
+| `lobachevsky_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Lobachevsky_03_crop.jpg |
 | `m87_blackhole_image` | CC BY 4.0 | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Black_hole_-_Messier_87.jpg |
 | `mechanicalturkimage` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Racknitz_-_The_Turk_3.jpg |
 | `mendeleev_periodic_table` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Mendeleev%27s_periodic_table_(1869_year).jpg |
@@ -134,6 +145,7 @@ Stand: 2026-10-23
 | `midi_keyboard_img` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Alesis_Q25_MIDI_Controller.jpg |
 | `mirrorselfrecognition_image` | CC BY 2.0 | CC BY 2.0 | https://commons.wikimedia.org/wiki/File:Mirror_Self-Recognition.jpg |
 | `modular_origami_img` | CC0 | CC0 | https://commons.wikimedia.org/wiki/File:Small_Modular_Origami_Structure.jpg |
+| `moebius_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:August_Ferdinand_M%C3%B6bius.jpg |
 | `monte_carlo_animation_image` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Approximation_d%27une_distribution_normale.gif |
 | `napier_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:John_Napier.jpg |
 | `neural_network_diagram` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Artificial_neural_network.svg |
@@ -147,6 +159,7 @@ Stand: 2026-10-23
 | `perseverance_selfie_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Perseverance-Selfie-at-Rochette-Horizontal-V2.gif |
 | `poincare_image` | No restrictions | Public domain | https://commons.wikimedia.org/wiki/File:Portrait_of_Henri_Poincar%C3%A9_(1854-1912),_Mathematician_(2551042945).jpg |
 | `pygmalionimage` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Pygmalion_and_Galatea_by_Jean-L%C3%A9on_G%C3%A9r%C3%B4me_(Metropolitan_Museum_of_Art).jpg |
+| `pythagoras_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Pythagoras_Bust_Vatican_Museum_(cropped).jpg |
 | `rgb_color_cube` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:RGB_color_cube.svg |
 | `riemann_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Georg_Friedrich_Bernhard_Riemann.jpeg |
 | `salamictablet` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg |
@@ -169,12 +182,14 @@ Stand: 2026-10-23
 | `turingimage` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Alan_Turing_az_1930-as_%C3%A9vekben.jpg |
 | `vhs_cassette_img` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:VHS_videocassette_-_front.jpg |
 | `vinyl_lp_record_img` | Public domain | Public Domain | https://commons.wikimedia.org/wiki/File:12in-Vinyl-LP-Record-Angle.jpg |
+| `visicalc_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Visicalc.png |
 | `volta_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Volta_A.jpg |
 | `voltaic_pile` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Voltaic_pile_battery.png |
 | `vonneumann_lanl_image` | Attribution | Attribution | https://commons.wikimedia.org/wiki/File:JohnvonNeumann-LosAlamos.gif |
 | `vonneumannphoto` | Attribution | Public domain | https://commons.wikimedia.org/wiki/File:JohnvonNeumann-LosAlamos.jpg |
 | `wadielholinscription_i` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Wadi_el-Hol_inscriptions_I_drawing.jpg |
 | `wadielholinscription_ii` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Wadi_el-Hol_inscriptions_II_drawing.jpg |
+| `walter_pitts_photo` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg |
 | `wienerajedrecista` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Gonzalo_showing_El_Ajedrecista_to_Norbert_Wiener.jpg |
 | `wienerphoto` | CC BY-SA 2.0 de | CC BY-SA 2.0 DE | https://commons.wikimedia.org/wiki/File:Norbert_wiener.jpg |
 | `williams_tube` | CC BY-SA 2.0 | CC BY-SA 2.0 | https://commons.wikimedia.org/wiki/File:Williams-Kilburn_tube_-_geograph.org.uk_-_5279623.jpg |
@@ -188,14 +203,12 @@ Diese Keys sind Bildquellen, deren `url` nicht auf eine Wikimedia-Datei zeigt. S
 
 | Key | Datei(en) | Lizenz | Quelle | Status / Ersatz |
 |---|---|---|---|---|
-| `aikenphoto` | `aiken.jpg` | — | https://www.mediastorehouse.com/... | Bettmann-Archiv, keine freie Lizenz → [File:Aiken.jpeg](https://commons.wikimedia.org/wiki/File:Aiken.jpeg) (PD) |
-| `cerespath` | `ceres_path.png` | — | https://www.astronomy.com/... | keine freie Lizenz → [File:Ceres Orbit.svg](https://commons.wikimedia.org/wiki/File:Ceres_Orbit.svg) (CC BY-SA 3.0) |
-| `euclidelements` | `euclid_elements.jpg`, `platonic_solids.jpg` | — | https://en.wikisource.org/wiki/The_Elements_(Euclid,_Heath) | Handschrift PD, aber `platonic_solids.jpg` ist ein modernes Foto → [File:Platonic Solids Transparent.svg](https://commons.wikimedia.org/wiki/File:Platonic_Solids_Transparent.svg) (CC0) |
+| `euclidelements` | `platonic_solids.jpg` | — | https://en.wikisource.org/wiki/The_Elements_(Euclid,_Heath) | Handschrift PD, aber `platonic_solids.jpg` ist ein modernes Foto → [File:Platonic Solids Transparent.svg](https://commons.wikimedia.org/wiki/File:Platonic_Solids_Transparent.svg) (CC0) |
 | `grothendieck_image` | `grothendieck.jpg` | — | https://www.heidelberg-laureate-forum.org/... | keine freie Lizenz → [File:Alexander Grothendieck - face.jpg](https://commons.wikimedia.org/wiki/File:Alexander_Grothendieck_-_face.jpg) (CC BY-SA 4.0) |
 | `history_of_a` | `history_of_a.png` | — | https://en.wikipedia.org/wiki/A | keine Bildlizenz belegt → eigene Grafik erstellen |
 | `lebombobone` | `lebombo.jpg` | — | https://cacm.acm.org/... | keine freie Lizenz gefunden → anfragen/entfernen |
 | `li2018losslandscape` | `loss_landscape_resnet56_noskip.png`, `loss_landscape_resnet56_skip.png` | MIT | https://arxiv.org/abs/1712.09913 | belegt (Bildlizenz) |
-| `mccullochpittsimage` | `mcculloch.png`, `pitts.jpg` | — | https://www.historyofinformation.com/... | UNCLEAR → [File:1954 Walter Pitts and a blackboard.jpg](https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg) (PD) bzw. PD-Neuronenmodell |
+| `mccullochpittsimage` | `mcculloch.png` | — | https://www.historyofinformation.com/... | UNCLEAR → [File:1954 Walter Pitts and a blackboard.jpg](https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg) (PD) bzw. PD-Neuronenmodell |
 | `mordvintsev2015inceptionism` | `inceptionism_classvis.png`, `inceptionism_dream_map.png`, `inceptionism_dumbbells.png`, `inceptionism_funny_animals.png`, `inceptionism_ibis.png`, `inceptionism_sky_arrow.png` | CC BY 4.0 | https://research.google/blog/inceptionism-going-deeper-into-neural-networks/ | belegt (Bildlizenz) |
 | `nasa2021perseverance` | `perseverance_selfie.gif` | Public domain (NASA) | https://photojournal.jpl.nasa.gov/catalog/PIA24430 | belegt |
 | `newyorktimesperceptron` | `navy.png` | — | https://timesmachine.nytimes.com/... | NYT-Archiv → `perceptron2.jpg` (PD, US Navy) nutzen |

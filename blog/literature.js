@@ -5363,11 +5363,12 @@ window.bibData = {
 		author: "Konrad Zuse"
 	},
 	"aikenphoto": {
-		url: "https://www.mediastorehouse.com/fine-art-storehouse/bettmann-archive/mathematician-howard-aiken-early-computer-39321803.html",
-		author: "Unknown Photographer",
-		title: "Howard Aiken with Early Computer Print",
-		alternativetitle: "Howard Aiken with his early Mark I",
-		year: 1944
+		url: "https://commons.wikimedia.org/wiki/File:Aiken.jpeg",
+		author: "Unknown photographer (MacTutor History of Mathematics)",
+		title: "Howard Aiken",
+		alternativetitle: "Howard Aiken",
+		year: 1944,
+		license: "Public domain"
 	},
 	"leibnizrechenmaschine": {
 		url: "https://blog.hnf.de/herr-leibniz-und-seine-verlorenen-rechenmaschinen/",
@@ -5728,11 +5729,12 @@ window.bibData = {
 		author: "Giuseppe Piazzi"
 	},
 	"cerespath": {
-		title: "The Sky Today on Wednesday, December 24: Ceres makes us see double",
-		url: "https://www.astronomy.com/observing/the-sky-today-wednesday-december-24-2025/",
-		alternativetitle: "The apparent Path of the Dwarf Planet Ceres in the night sky over the time of one month (December 2025)",
-		year: "2025",
-		author: "Roen Kelly"
+		url: "https://commons.wikimedia.org/wiki/File:Ceres_Orbit.svg",
+		title: "Ceres Orbit",
+		author: "Orionist (Wikimedia Commons)",
+		year: 2006,
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Ceres orbit"
 	},
 	"flammarion": {
 		title: "The Flammarion Engraving",
@@ -19232,5 +19234,111 @@ window.bibData = {
 		author: "V. Gordon Childe",
 		year: 1950,
 		alternativetitle: "Childe, The Urban Revolution (1950)"
+	},
+
+	"euclid_lueneburg_ms": {
+		url: "https://commons.wikimedia.org/wiki/File:Euclid_Lueneburg_ms_13v.jpg",
+		title: "Euclid, Elements — Lüneburg manuscript, fol. 13v",
+		author: "Euclid / Boethius (manuscript); M. Folkerts (facsimile)",
+		year: "13th century",
+		license: "Public domain",
+		alternativetitle: "Euclid, Elements (Lüneburg manuscript)"
+	},
+	"visicalc_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Visicalc.png",
+		title: "VisiCalc on an Apple II",
+		author: "User:Gortu (Wikimedia Commons)",
+		year: 1979,
+		license: "Public domain",
+		alternativetitle: "VisiCalc screenshot"
+	},
+	"pythagoras_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Pythagoras_Bust_Vatican_Museum_(cropped).jpg",
+		title: "Pythagoras — bust in the Vatican Museum",
+		author: "Andargor (Wikimedia Commons)",
+		year: 2006,
+		license: "Public domain",
+		alternativetitle: "Pythagoras (Vatican bust)"
+	},
+	"moebius_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:August_Ferdinand_M%C3%B6bius.jpg",
+		title: "August Ferdinand Möbius — portrait",
+		author: "Adolf Neumann",
+		year: "19th century",
+		license: "Public domain",
+		alternativetitle: "August Ferdinand Möbius"
+	},
+	"lobachevsky_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Lobachevsky_03_crop.jpg",
+		title: "Nikolai Lobachevsky — portrait",
+		author: "Lev Kryukov",
+		year: "19th century",
+		license: "Public domain",
+		alternativetitle: "Nikolai Lobachevsky"
+	},
+	"lapicque_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Louis_Lapicque.jpg",
+		title: "Louis Lapicque — portrait",
+		author: "Unknown photographer (BIU Santé, Paris)",
+		year: "early 20th century",
+		license: "Public domain",
+		alternativetitle: "Louis Lapicque"
+	},
+	"gauss_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Carl_Friedrich_Gauss_1840_by_Jensen.jpg",
+		title: "Carl Friedrich Gauss (1840)",
+		author: "Christian Albrecht Jensen",
+		year: 1840,
+		license: "Public domain",
+		alternativetitle: "Carl Friedrich Gauss"
+	},
+	"euclid_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Italian_-_Euclid_-_Google_Art_Project.jpg",
+		title: "Euclid — painting by Jusepe de Ribera",
+		author: "Jusepe de Ribera",
+		year: "17th century",
+		license: "Public domain",
+		alternativetitle: "Euclid of Alexandria"
+	},
+	"descartes_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Frans_Hals_-_Portret_van_Ren%C3%A9_Descartes.jpg",
+		title: "René Descartes — portrait after Frans Hals",
+		author: "After Frans Hals",
+		year: "17th century",
+		license: "Public domain",
+		alternativetitle: "René Descartes"
+	},
+	"bolyai_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Bolyai_J%C3%A1nos_(M%C3%A1rkos_Ferenc_festm%C3%A9nye).jpg",
+		title: "János Bolyai — portrait",
+		author: "Ferenc Márkos",
+		year: "19th century",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "János Bolyai"
+	},
+	"archimedes_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Domenico-Fetti_Archimedes_1620.jpg",
+		title: "Archimedes — painting by Domenico Fetti (1620)",
+		author: "Domenico Fetti",
+		year: 1620,
+		license: "Public domain",
+		alternativetitle: "Archimedes of Syracuse"
+	},
+	"alkhwarizmi_portrait": {
+		url: "https://commons.wikimedia.org/wiki/File:Al-Khwarizmi_portrait.jpg",
+		title: "Al-Khwarizmi — portrait",
+		author: "Michel Bakni (Wikimedia Commons)",
+		year: 2020,
+		license: "Public domain",
+		alternativetitle: "Muhammad ibn Musa al-Khwarizmi"
+	},
+	"walter_pitts_photo": {
+		url: "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg",
+		title: "Walter Pitts at a blackboard (1954)",
+		author: "Francis Bello",
+		year: 1954,
+		license: "Public domain",
+		alternativetitle: "Walter Pitts (1954)"
 	}
+
 };
