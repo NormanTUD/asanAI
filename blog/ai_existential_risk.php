@@ -116,14 +116,14 @@ Most of the debate runs through a small canon of essays and blog posts rather th
 
 | Essay | Author, year | What it argues |
 |---|---|---|
-| **The Bitter Lesson** | (\cite[Sutton, 2019]{sutton2019bitter}) | General methods that exploit computation beat methods with built-in human knowledge — the historical case for scale. |
-| **The Scaling Hypothesis** | (\cite[Gwern, 2020]{gwern2020scaling}) | GPT-3 as a meta-learner; scaling as the dominant axis toward general capability. |
-| **Situational Awareness** | (\cite[Aschenbrenner, 2024]{aschenbrenner2024}) | Extrapolates compute and capability trends to AGI within roughly a decade, with national-security stakes. |
-| **AI 2027** | (\cite[Kokotajlo et al., 2025]{kokotajlo2025ai2027}) | A month-by-month scenario of how the years 2025–2027 could unfold, written as a forecast rather than a prediction. |
-| **What Failure Looks Like** | (\cite[Christiano, 2019]{christiano2019failure}) | Slow, incremental proxy failure and influence-seeking systems — a threat model that does not require a sudden takeover. |
-| **Simulators** | (\cite[janus, 2022]{simulatorstheory}) | Language models as simulators of agents and characters, not as agents themselves — a frame for thinking about goals and personas. |
-| **The Most Important Century** | (\cite[Karnofsky, 2021]{karnofsky2021}) | The case that transformative AI makes this century plausibly the most consequential in human history. |
-| **Machines of Loving Grace** | (\cite[Amodei, 2024]{amodei2024machines}) | A positive vision of how powerful AI could compress decades of scientific and medical progress. |
+| \citetitle{sutton2019bitter} | (\cite[Sutton, 2019]{sutton2019bitter}) | General methods that exploit computation beat methods with built-in human knowledge — the historical case for scale. |
+| \citetitle{gwern2020scaling} | (\cite[Gwern, 2020]{gwern2020scaling}) | GPT-3 as a meta-learner; scaling as the dominant axis toward general capability. |
+| \citetitle{aschenbrenner2024} | (\cite[Aschenbrenner, 2024]{aschenbrenner2024}) | Extrapolates compute and capability trends to AGI within roughly a decade, with national-security stakes. |
+| \citetitle{kokotajlo2025ai2027} | (\cite[Kokotajlo et al., 2025]{kokotajlo2025ai2027}) | A month-by-month scenario of how the years 2025–2027 could unfold, written as a forecast rather than a prediction. |
+| \citetitle{christiano2019failure} | (\cite[Christiano, 2019]{christiano2019failure}) | Slow, incremental proxy failure and influence-seeking systems — a threat model that does not require a sudden takeover. |
+| \citetitle{simulatorstheory} | (\cite[janus, 2022]{simulatorstheory}) | Language models as simulators of agents and characters, not as agents themselves — a frame for thinking about goals and personas. |
+| \citetitle{karnofsky2021} | (\cite[Karnofsky, 2021]{karnofsky2021}) | The case that transformative AI makes this century plausibly the most consequential in human history. |
+| \citetitle{amodei2024machines} | (\cite[Amodei, 2024]{amodei2024machines}) | A positive vision of how powerful AI could compress decades of scientific and medical progress. |
 
 The essays disagree sharply about timelines and probabilities. Read them as arguments to be assessed, not as data: none of the forecasts in the table has been tested by time, and the empirical record — the failure modes documented above — is the part of the debate that is actually observable today.
 </div>

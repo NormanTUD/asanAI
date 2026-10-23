@@ -19892,6 +19892,20 @@ window.bibData = {
 		author: "Marvin Minsky",
 		year: 1986,
 		alternativetitle: "Minsky, The Society of Mind"
+	},
+	"kim2020cogs": {
+		url: "https://arxiv.org/abs/2010.05465",
+		title: "COGS: A Compositional Generalization Challenge Based on Semantic Interpretation",
+		author: "Najoung Kim, Tal Linzen",
+		year: 2020,
+		alternativetitle: "COGS"
+	},
+	"rosenblatt1960simulation": {
+		url: "https://babel.hathitrust.org/cgi/pt?id=coo.31924004657973&seq=1",
+		title: "Perceptron Simulation Experiments",
+		author: "Frank Rosenblatt",
+		year: 1960,
+		alternativetitle: "Rosenblatt, Perceptron Simulation Experiments (1960)"
 	}
 
 };
