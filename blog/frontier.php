@@ -20,7 +20,7 @@ This chapter surveys the research frontier of 2025, the techniques and ideas tha
 
 ### Constitutional AI (CAI)
 
-Bai et al. (Anthropic, 2022) replaced most of (\cite[Ouyang et al., 2022]{ouyang2022instructgpt})'s human-labelling with **AI self-critique against a written constitution**:
+Bai et al. (Anthropic, 2022) replaced most of the human labelling used by \citeauthor{ouyang2022instructgpt} (\citeyear{ouyang2022instructgpt}) with **AI self-critique against a written constitution**:
 
 1. The model generates a response.
 2. The model critiques it against a constitutional principle (“be helpful, harmless, honest”).
@@ -111,9 +111,9 @@ Techniques enabling this:
 
 * **RoPE scaling** (\cite[Su et al., 2021]{su2021rope}): interpolate or extrapolate rotary position embeddings. **YaRN** (\cite[Peng et al., 2023]{peng2023yarn}) extends this with frequency-aware scaling.
 * **ALiBi** (\cite[Press et al., 2022]{press2022alibi}): linear bias to attention scores; doesn't require position embedding changes.
-* **Ring Attention** (\cite[Li2023Seqparallel]{li2023seqparallel}): sequence parallelism with overlap of compute and communication.
-* **InfLLM**: training-free long-context via KV compression (\cite[Ma et al., 2024]{ma2024bitnet}).
-* **Landmark Attention** (\cite[Mohtashami & Jaggi, 2023]{mohtashami2023landmark}: append “landmark” tokens summarizing past context.
+* **Ring Attention** (\cite[Li et al., 2023]{li2023seqparallel}): sequence parallelism with overlap of compute and communication.
+* **InfLLM**: training-free long-context via KV compression (\cite[Xiao et al., 2024]{infllm2024}).
+* **Landmark Attention** (\cite[Mohtashami & Jaggi, 2023]{mohtashami2023landmark}): append “landmark” tokens summarizing past context.
 
 The **lost-in-the-middle** problem remains: models perform best on information at the start or end of the context window, worse in the middle. The reason is poorly understood but reproducible across architectures.
 
@@ -123,7 +123,7 @@ For evaluation, **needle-in-a-haystack** tests are now standard: insert a specif
 <div class="md" data-mathlevel="45">
 ### Mixture of Depths (MoD)
 
-Raposo et al. (Google DeepMind, 2024): instead of every token passing through every layer, **route tokens through different numbers of layers** (\cite[Bubeck et al., 2023]{bubeck2023moeoverview}). Easy tokens skip; hard tokens use full depth.
+Raposo et al. (Google DeepMind, 2024): instead of every token passing through every layer, **route tokens through different numbers of layers** (\cite[Raposo et al., 2024]{raposo2024mod}). Easy tokens skip; hard tokens use full depth.
 
 $$
 \text{tokens through layer } l = \begin{cases} \text{skip} & \text{if } p_\theta(x) < r \\ \text{process} & \text{otherwise} \end{cases}
@@ -163,7 +163,7 @@ Key 2024–2025 results:
 * **Sora** (OpenAI, 2024): world-model-like video generation, though OpenAI doesn't explicitly call it one.
 * **RT-2 / PaLM-E / OpenVLA**: vision-language-action models for robot control.
 
-The hypothesis: **true general intelligence requires internal simulation of consequences**, which pure text models lack. Whether this is correct is an open (\cite[Du et al., 2023]{du2023multiagent}).
+The hypothesis: **true general intelligence requires internal simulation of consequences**, which pure text models lack. Whether this is correct is an open question; LeCun's position paper argues that prediction in representation space, not token prediction, is the missing ingredient (\cite[LeCun, 2022]{lecun2022path}).
 </div>
 
 <div class="md">
@@ -202,6 +202,28 @@ LLMs are **stateless**: they don't learn from interactions. Every conversation s
 * **Continual learning**: training on a stream of new data without forgetting old. Still unsolved at frontier scale.
 
 For practical deployments: a good **memory + retrieval layer** is more useful than a longer context window.
+</div>
+
+<div class="md">
+## The 2026 Snapshot: Which Ideas Stuck
+
+A model zoo is not a curriculum, but the releases of 2023–2026 are a useful audit of which research ideas survived contact with scale. Five patterns recur across otherwise unrelated labs.
+
+**1. Sparse mixture-of-experts became the default at the frontier.** DeepSeek-V3 (671B total, 37B active) reported frontier quality from a disclosed final training run of roughly \$5.6M (\cite[DeepSeek-AI, 2024]{deepseek2024v3}); Kimi K2 pushed open weights to a trillion parameters with the MuonClip optimizer (\cite[Kimi Team, 2025]{kimi2025k2}); LongCat-Flash reached 560B with about 27B active and was reported as trained on Chinese accelerators (\cite[LongCat Team, 2025]{longcat2025}). The economic logic is the one from the [Mixture of Experts](mixture_of_experts.php) chapter: capacity scales with total parameters, cost with active ones.
+
+**2. Hybrid attention layouts replaced pure dense attention.** gpt-oss alternates dense and sliding-window attention layers and gives every head a learned sink logit (\cite[OpenAI, 2025]{gptoss2025}); MiniMax built its line on lightning attention, a linear-attention variant interleaved with softmax attention (\cite[MiniMax, 2025]{minimax2025lightning}); DeepSeek-V2 introduced multi-head latent attention to shrink the KV cache (\cite[DeepSeek-AI, 2024]{deepseek2024v2}). The goal in every case is the same: keep exact attention where it matters, and stop paying quadratic cost everywhere.
+
+**3. Reasoning became a training target, not a prompt trick.** RLVR — reinforcement learning against programmatic verifiers — turned chain-of-thought from something users coaxed out of a model into something models are trained to produce. DeepSeek-R1 published the recipe and open weights (\cite[Guo et al., 2025]{guo2025deepseekr1}), and the o-series, Claude's extended thinking, and Gemini's thinking modes made the inference-compute dial a product feature.
+
+**4. Hybrid thinking modes arrived.** Qwen3 trained dense and mixture-of-experts models with both a fast, non-thinking mode and a slower reasoning mode, selectable per request (\cite[Qwen Team, 2025]{qwen2025qwen3}) — an acknowledgment that most queries do not need a thousand tokens of deliberation.
+
+**5. Open weights moved from “small models” to frontier-adjacent scale.** The Llama 3 herd's 405B variant was the first open-weight model widely described as competitive with closed frontier systems (\cite[Grattafiori et al., 2024]{llama3herd2024}); Llama 4 added native multimodality and MoE (\cite[Meta AI, 2025]{meta2025llama4}); Gemma 3 brought multimodality and long context to the small-model tier (\cite[Gemma Team, 2025]{gemma2025v3}); Qwen3 and Kimi K2 became standard bases for fine-tuning. The open ecosystem no longer trails by a full generation on architecture — mainly on data and compute.
+
+**6. Interpretability moved into the system card.** Frontier safety reports now routinely include sparse-autoencoder features, attribution graphs, activation steering, and activation verbalizers — the techniques of the [Mechanistic Interpretability](mechanistic_interpretability.php) chapter — as evidence about internal states rather than as research curiosities (\cite[Lindsey et al., 2025]{anthropic2025biology}; \cite[Pan et al., 2024]{pan2024latentqa}).
+
+**7. Diffusion language models became a real alternative.** LLaDA showed that masked diffusion could train an 8B instruction-following model from scratch, and Mercury and Gemini Diffusion brought parallel decoding to products (\cite[Nie et al., 2025]{nie2025llada}). Whether dLLMs close the quality gap at the frontier is still open, but “autoregressive or bust” is no longer the default assumption.
+
+The through-line: the Transformer did not get replaced. It got **specialized** — sparse experts, hybrid attention, learned sinks, compressed caches, and a second axis of compute at inference time.
 </div>
 
 <div class="md">
