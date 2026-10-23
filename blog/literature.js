@@ -19900,6 +19900,20 @@ window.bibData = {
 		author: "Frank Rosenblatt",
 		year: 1960,
 		alternativetitle: "Rosenblatt, Perceptron Simulation Experiments (1960)"
+	},
+	"wang2022selfinstruct": {
+		url: "https://arxiv.org/abs/2212.10560",
+		title: "Self-Instruct: Aligning Language Models with Self-Generated Instructions",
+		author: "Yizhong Wang, Yeganeh Kordi, Swaroop Mishra, et al.",
+		year: 2022,
+		alternativetitle: "Self-Instruct"
+	},
+	"taori2023alpaca": {
+		url: "https://crfm.stanford.edu/2023/03/13/alpaca.html",
+		title: "Alpaca: A Strong, Replicable Instruction-Following Model",
+		author: "Rohan Taori, Ishaan Gulrajani, Tianyi Zhang, et al.",
+		year: 2023,
+		alternativetitle: "Alpaca"
 	}
 
 };
