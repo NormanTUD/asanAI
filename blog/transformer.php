@@ -639,8 +639,9 @@ The equations above describe the 2017 Transformer. Open a 2025 open-weight model
 **Pre-norm, not post-norm.** The 2017 paper normalized *after* each residual addition. Modern stacks move the normalization *inside* the branch, so the residual stream itself is an unbroken identity path:
 
 $$
-z = x + \mathrm{Attention}(\mathrm{Norm}(x)), \qquad
-y = z + \mathrm{FFN}(\mathrm{Norm}(z)).
+\underbrace{z = x + \mathrm{Attention}(\mathrm{Norm}(x))}_{\text{normalize the branch, then add its result back}},
+\qquad
+\underbrace{y = z + \mathrm{FFN}(\mathrm{Norm}(z))}_{\text{the same pattern for the feed-forward branch}}
 $$
 
 \citeauthor{xiong2020} showed that this arrangement keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up (\cite[Xiong et al., 2020]{xiong2020}). The price is that the residual stream is no longer normalized; a final normalization before the output projection carries that burden.
@@ -650,7 +651,7 @@ $$
 **SwiGLU instead of ReLU/GELU.** The dense FFN becomes a *gated* one:
 
 $$
-\mathrm{FFN}_{\mathrm{SwiGLU}}(x) = W_2\big(\mathrm{Swish}(W_1 x) \odot W_g x\big),
+\underbrace{\mathrm{FFN}_{\mathrm{SwiGLU}}(x) = W_2\big(\mathrm{Swish}(W_1 x) \odot W_g x\big)}_{\text{gate the expanded features before projecting back down}}
 $$
 
 with a third matrix $W_g$ whose output multiplies the activated branch elementwise. Because there are now three matrices rather than two, the hidden width is reduced to keep the parameter count comparable — LLaMA uses $d_{\text{model}} = 4096$ and $d_{\text{ff}} = 11008$, about $2.7\,d_{\text{model}}$ instead of $4\,d_{\text{model}}$ (\cite[Shazeer, 2020]{shazeer2020glu}; \cite[Touvron et al., 2023]{touvron2023llama}).
