@@ -19936,14 +19936,6 @@ window.bibData = {
 		year: 2024,
 		alternativetitle: "Nobel Prize in Physics 2024"
 	},
-	"nobel2024chemistry": {
-		url: "https://www.nobelprize.org/prizes/chemistry/2024/summary/",
-		title: "The Nobel Prize in Chemistry 2024",
-		author: "The Royal Swedish Academy of Sciences",
-		year: 2024,
-		alternativetitle: "Nobel Prize in Chemistry 2024"
-	},
-
 	/* Portraits for people_of_ai.php — all Public Domain or Creative Commons */
 	"img_ada_lovelace": {
 		url: "https://commons.wikimedia.org/wiki/File:Ada_Lovelace_Chalon_portrait.jpg",
@@ -20190,6 +20182,12 @@ window.bibData = {
 		author: "Eliezer Yudkowsky",
 		year: 2008,
 		alternativetitle: "AI as a global risk factor"
+	},
+	"frege1879": {
+		title: "Begriffsschrift, eine der arithmetischen nachgebildete Formelsprache des reinen Denkens",
+		author: "Gottlob Frege",
+		year: 1879,
+		alternativetitle: "Frege, Begriffsschrift"
 	}
 
 };

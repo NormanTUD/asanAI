@@ -18,77 +18,6 @@ Artificial intelligence has a surprisingly small cast of recurring characters. T
 It is deliberately not a ranking. Credit in AI is contested, collaborative, and often late. The person whose name is on the paper is not always the person who had the idea first, and the person who had the idea first is not always the person who made it work. Where the record is disputed, the lesson says so.
 </div>
 
-<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(145px, 1fr)); gap:18px; margin:1.5em 0 2em;">
-	<figure style="margin:0;">
-		<img src="ada_lovelace_portrait.jpg" alt="Portrait of Ada Lovelace" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Ada Lovelace</strong><br>\cite{img_ada_lovelace}. Public domain.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="charles_babbage_portrait.jpg" alt="Portrait of Charles Babbage" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Charles Babbage</strong><br>\cite{img_charles_babbage}. Public domain.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="alan_turing_1951.jpg" alt="Portrait of Alan Turing" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Alan Turing</strong><br>\cite{img_alan_turing}. Public domain.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="claude_shannon_portrait.jpg" alt="Portrait of Claude Shannon" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Claude Shannon</strong><br>\cite{img_claude_shannon}. <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="john_von_neumann_portrait.jpg" alt="Portrait of John von Neumann" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>John von Neumann</strong><br>\cite{img_john_von_neumann}. <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="frank_rosenblatt_commons.jpg" alt="Portrait of Frank Rosenblatt" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Frank Rosenblatt</strong><br>\cite{img_frank_rosenblatt}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="marvin_minsky_portrait.jpg" alt="Portrait of Marvin Minsky" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Marvin Minsky</strong><br>\cite{img_marvin_minsky}. <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="seymour_papert_portrait.jpg" alt="Portrait of Seymour Papert" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Seymour Papert</strong><br>\cite{img_seymour_papert}. <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="john_hopfield_portrait.jpg" alt="Portrait of John Hopfield" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>John Hopfield</strong><br>\cite{img_john_hopfield}. <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="geoffrey_hinton_portrait.jpg" alt="Portrait of Geoffrey Hinton" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Geoffrey Hinton</strong><br>\cite{img_geoffrey_hinton}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="yann_lecun_portrait.jpg" alt="Portrait of Yann LeCun" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Yann LeCun</strong><br>\cite{img_yann_lecun}. <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="yoshua_bengio_portrait.jpg" alt="Portrait of Yoshua Bengio" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Yoshua Bengio</strong><br>\cite{img_yoshua_bengio}. <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="richard_sutton_portrait.jpg" alt="Portrait of Richard Sutton" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Richard Sutton</strong><br>\cite{img_richard_sutton}. <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="demis_hassabis_portrait.jpg" alt="Portrait of Demis Hassabis" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Demis Hassabis</strong><br>\cite{img_demis_hassabis}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="john_jumper_portrait.jpg" alt="Portrait of John Jumper" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>John Jumper</strong><br>\cite{img_john_jumper}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="andrej_karpathy_portrait.png" alt="Portrait of Andrej Karpathy" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Andrej Karpathy</strong><br>\cite{img_andrej_karpathy}. <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</figcaption>
-	</figure>
-	<figure style="margin:0;">
-		<img src="francois_chollet_portrait.jpg" alt="Portrait of François Chollet" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
-		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>François Chollet</strong><br>\cite{img_francois_chollet}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
-	</figure>
-</div>
-
 <div class="md">
 ## Before the Machine
 
@@ -238,13 +167,136 @@ Chollet created Keras, the deep-learning API that made neural networks accessibl
 </div>
 
 <div class="md">
+## The Mathematicians and Computer Pioneers
+
+The people below built the formal and institutional foundations on which everything else rests. Their work is older than the label “AI,” but the field's central questions — what can be computed, what can be represented, and what can be learned — are theirs.
+
+### George Boole and Gottlob Frege
+
+Boole's **Laws of Thought** (1854) turned Aristotle's syllogisms into algebra: propositions become variables, “and” and “or” become operations, and logical inference becomes calculation. Every digital circuit and every symbolic AI system is downstream of that move (\citetitle{boole1854}). Frege's **Begriffsschrift** (1879) went further, inventing predicate logic and the quantifier notation that made it possible to express statements about *all* or *some* objects — the logical grammar that Russell and Whitehead later built into *Principia Mathematica* (\citetitle{frege1879}).
+
+### Alonzo Church and Alan Turing
+
+Church's lambda calculus gave computation a second formal language, and his 1936 proof that the Entscheidungsproblem is unsolvable established that not every well-defined mathematical question has a mechanical answer (\cite[Church, 1936]{church1936}). Turing's contemporaneous paper on computable numbers introduced the abstract machine that now bears his name, proved the same negative result by a different route, and gave the field its standard model of what a computer *is* (\citetitle{turing1936}). The Church–Turing thesis — that every effectively calculable function is computable by a Turing machine — is the unspoken premise of every neural network.
+
+### John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon
+
+The 1955 **Dartmouth proposal** named the field and set its first research agenda: language, neurons, abstraction, and creativity, all to be studied by building machines that could exhibit them (\cite[McCarthy et al., 1955]{mccarthy1955dartmouth}). McCarthy went on to invent LISP and to argue that common-sense knowledge could be represented as explicit logical statements — the symbolic programme that dominated AI's first decades. Minsky co-founded MIT's AI laboratory and later wrote *The Society of Mind*, a book-length argument that intelligence is a society of simpler agents rather than a single monolithic algorithm.
+
+### Herbert Simon and Allen Newell
+
+Simon and Newell built the **Logic Theory Machine**, one of the first programs to prove theorems, and used it to argue that human problem solving is symbol manipulation. Their **physical symbol system hypothesis** — that a physical symbol system has the necessary and sufficient means for general intelligent action — became the philosophical core of classical AI. Simon also won the Nobel Prize in Economics for his work on bounded rationality, a reminder that the study of intelligence has always crossed disciplinary lines (\cite[Newell & Simon, 1956]{newell1956logic}).
+
+### W. Ross Ashby and Donald Hebb
+
+Ashby's **Design for a Brain** defined adaptation as the maintenance of essential variables within viable limits and built the **Homeostat**, a machine that reorganized its own connections until it recovered stability. His “law of requisite variety” — only variety can absorb variety — is still the best one-line statement of why control requires internal complexity (\citetitle{ashbydesigndbrain1952}). Hebb's **The Organization of Behavior** proposed that repeated co-activation strengthens synapses, the rule that Rosenblatt turned into the perceptron's error-correction mechanism (\citetitle{hebb1949organizationofbehaviour}).
+</div>
+
+<div class="md">
+## Vision and Generative Models
+
+### Kaiming He and Alexey Dosovitskiy
+
+He's **ResNet** introduced the residual connection — learn a *delta* rather than a full transformation — and made networks with hundreds of layers trainable. The idea is so basic that it now appears in almost every deep architecture, including the Transformer's own residual stream (\cite[He et al., 2016]{he2016resnet}). Dosovitskiy's **Vision Transformer** treated an image as a sequence of patches and showed that a plain Transformer, with enough data, could match or beat convolutional networks. That result opened the path to the unified multimodal models of the 2020s (\cite[Dosovitskiy et al., 2020]{dosovitskiy2020vit}).
+
+### Olaf Ronneberger and Phillip Isola
+
+The **U-Net** paired a contracting encoder with an expanding decoder and skip connections, giving image generation and segmentation a precise spatial backbone; it is still the default architecture inside diffusion models (\cite[Ronneberger et al., 2015]{ronneberger2015unet}). **pix2pix** showed that a conditional GAN could learn image-to-image translation from paired examples — edges to photographs, maps to aerial views, day to night — and made “image translation” a standard task (\cite[Isola et al., 2017]{isola2017pix2pix}).
+
+### Jonathan Ho, Yang Song, and Robin Rombach
+
+Ho's **DDPM** made diffusion models practical by learning to reverse a fixed noising process one small step at a time (\cite[Ho et al., 2020]{ho2020ddpm}). Song's score-based formulation provided the continuous-time view — learn the gradient of the log density, then follow it back to data — that unified diffusion with earlier energy-based methods (\cite[Song & Ermon, 2019]{song2019score}). Rombach's **latent diffusion** moved the whole process into a compressed image space, cutting the compute enough to put Stable Diffusion on a consumer GPU (\cite[Rombach et al., 2022]{rombach2022ldm}).
+
+### Aditya Ramesh, Alec Radford, and William Peebles
+
+Ramesh's **DALL·E** was an autoregressive Transformer over discrete image tokens — a direct application of the language-model recipe to pixels (\cite[Ramesh et al., 2021]{ramesh2021dalle}). Radford's **CLIP** learned a shared image-text space from hundreds of millions of pairs by contrastive training, giving text-to-image systems a semantic steering wheel (\cite[Radford et al., 2021]{radford2021clip}); his GPT-2 and Whisper work did the same for open-ended text and speech (\cite[Radford et al., 2019]{radford2019language}; \cite[Radford et al., 2022]{radford2022whisper}). Peebles' **Diffusion Transformer** replaced the U-Net with a plain Transformer over latent patches and became the backbone of Sora, FLUX, and Stable Diffusion 3 (\cite[Peebles & Xie, 2023]{peebles2023dit}).
+</div>
+
+<div class="md">
+## The NLP Lineage
+
+The language-model stack was assembled from many small inventions. These are the people whose papers supply the pieces.
+
+### Tomas Mikolov and Jeffrey Pennington
+
+Mikolov's **word2vec** trained dense word vectors on local context windows and showed that their differences encode analogies — “king − man + woman ≈ queen” (\cite[Mikolov et al., 2013]{mikolov2013word2vec}). Pennington's **GloVe** reached the same geometry from the opposite direction, factorizing the global co-occurrence matrix so that dot products approximate log counts (\cite[Pennington et al., 2014]{pennington2014glove}). Together they made the embedding layer a standard component of neural language models.
+
+### Rico Sennrich and Taku Kudo
+
+Sennrich's **subword BPE** solved the out-of-vocabulary problem by learning a vocabulary of frequent character fragments, so any word can be reconstructed from pieces (\cite[Sennrich et al., 2016]{sennrich2016subword}). Kudo's **SentencePiece** made the same idea language-independent by treating whitespace as a normal symbol, which is why multilingual models can tokenize Chinese, English, and code with one vocabulary (\cite[Kudo & Richardson, 2018]{kudo2018sentencepiece}).
+
+### Jacob Devlin, Yinhan Liu, and Colin Raffel
+
+Devlin's **BERT** trained a bidirectional encoder with masked language modelling and established the pretrain-then-fine-tune paradigm for understanding tasks (\cite[Devlin et al., 2019]{devlin2019bert}). Liu's **RoBERTa** showed that BERT was undertrained: remove next-sentence prediction, resample masks dynamically, train longer on more data, and the same architecture sets new records (\cite[Liu et al., 2019]{liu2019roberta}). Raffel's **T5** unified translation, summarization, classification, and question answering into one text-to-text format with span-corruption pretraining (\cite[Raffel et al., 2020]{raffel2020t5}).
+</div>
+
+<div class="md">
+## Systems and Efficiency
+
+A frontier model is not just an algorithm; it is a distributed system. These people made the difference between a paper and a training run.
+
+### Jeff Dean, Samyam Rajbhandari, and Dmitry Lepikhin
+
+Dean's **DistBelief** showed that neural networks could be trained across thousands of machines, and his later work on TensorFlow and TPUs made that infrastructure usable (\cite[Dean et al., 2012]{dean2012large}). Rajbhandari's **ZeRO** partitioned optimizer states, gradients, and parameters across data-parallel workers, removing the memory duplication that had blocked trillion-parameter training (\cite[Rajbhandari et al., 2020]{rajbhandari2020zero}). Lepikhin's **GShard** combined mixture-of-experts routing with automatic sharding, making sparse models practical at scale (\cite[Lepikhin et al., 2021]{lepikhin2021gshard}).
+
+### William Fedus, Tri Dao, and Woosuk Kwon
+
+Fedus's **Switch Transformer** simplified MoE routing to one expert per token and scaled it to trillion-parameter models (\cite[Fedus et al., 2022]{fedus2022switch}). Dao's **FlashAttention** made exact attention IO-aware: it tiles the computation to fit in GPU on-chip memory instead of materializing the full attention matrix (\cite[Dao et al., 2022]{dao2022flashattention}). Kwon's **vLLM** introduced PagedAttention, managing the KV cache in fixed-size blocks like an operating system's virtual memory; it turned serving from a memory-fragmentation problem into a throughput problem (\cite[Kwon et al., 2023]{kwon2023vllm}).
+</div>
+
+<div class="md">
+## Interpretability and Safety
+
+### Chris Olah, Nelson Elhage, and Trenton Bricken
+
+Olah's **circuits thread** reframed neural networks as objects to be reverse-engineered: features are directions, circuits are subgraphs, and the goal is a mechanistic explanation of behavior (\cite[Olah et al., 2020]{olaha2020zoomin}). Elhage's **Mathematical Framework for Transformer Circuits** formalized the residual stream and the QK/OV circuits, and his **Toy Models of Superposition** explained why neurons are polysemantic: networks pack more features than dimensions by using nearly orthogonal directions (\cite[Elhage et al., 2021]{elhage2021mathematical}; \cite[Elhage et al., 2022]{elhage2022superposition}). Bricken's **Towards Monosemanticity** showed that sparse autoencoders could recover interpretable features from superposition, the technique later scaled to production models (\cite[Bricken et al., 2023]{bricken2023monosemanticity}).
+
+### Andy Zou and Alexander Matt Turner
+
+Zou's **representation engineering** turned interpretability into a top-down toolkit for reading and controlling high-level properties such as honesty and power-seeking (\cite[Zou et al., 2023]{zou2023repeng}). Turner's **activation addition** showed that a single contrastive direction — “Love” minus “Hate” — could steer a model's sentiment at inference time without any training (\cite[Turner et al., 2023]{turner2023actadd}).
+
+### Collin Burns, Dario Amodei, and Geoffrey Irving
+
+Burns' **weak-to-strong generalization** fine-tuned strong models on labels from weak supervisors to measure how much latent capability could be elicited — a present-day proxy for the alignment problem (\cite[Burns et al., 2023]{burns2023weakstrong}). Amodei's **Concrete Problems in AI Safety** named the failure modes that the field still uses as its taxonomy: reward hacking, side effects, scalable oversight, safe exploration, and distributional shift (\cite[Amodei et al., 2016]{amodei2016concrete}). Irving's **AI safety via debate** proposed training two models to argue opposite sides of a question in front of a human judge, so that the judge can supervise answers too complex to verify directly (\cite[Irving et al., 2018]{irving2018debate}).
+
+### Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord
+
+Russell's **Human Compatible** argues that the standard objective-based model of AI is the problem: a machine optimizing a fixed objective will resist correction, so the design goal should be uncertainty about human preferences and a willingness to be switched off (\citetitle{russell2019human}). Bostrom's **Superintelligence** framed the control problem and the orthogonality thesis — intelligence and final goals are independent — for a broad audience (\citetitle{bostrom2014superintelligence}). Yudkowsky's earlier essay on AI as a global risk factor made the case that a sufficiently capable optimizer need not be malevolent to be dangerous (\cite[Yudkowsky, 2008]{yudkowsky2008ai}). Ord's **The Precipice** places AI risk alongside pandemics and nuclear war in a broader ethics of existential risk (\citetitle{ord2020precipice}).
+</div>
+
+<div class="md">
+## Reinforcement Learning and Games
+
+### Gerald Tesauro, Volodymyr Mnih, and John Schulman
+
+Tesauro's **TD-Gammon** combined self-play with temporal-difference learning and a neural network, reaching master-level backgammon and demonstrating that value learning from self-generated experience could work at scale (\cite[Tesauro, 1995]{tesauro1995tdgammon}). Mnih's **DQN** learned Atari games directly from pixels with a convolutional network and experience replay, the result that launched deep reinforcement learning (\cite[Mnih et al., 2015]{mnih2015dqn}). Schulman's **PPO** made policy-gradient training stable enough to become the default algorithm for RLHF and for many game-playing systems (\cite[Schulman et al., 2017]{schulman2017ppo}).
+
+### Zhihong Shao
+
+Shao's **DeepSeekMath** introduced **GRPO**, the group-relative policy optimization that removes the critic by normalizing rewards across sampled answers to the same prompt. GRPO made verifiable-reward RL cheap enough to run at scale and became the optimization engine behind DeepSeek-R1 and many open reasoning models (\cite[Shao et al., 2024]{shao2024grpo}).
+</div>
+
+<div class="md">
 ## The Recurring Cast
 
-These are the names that appear most often across the course, counted by citations and full-name mentions. The right-hand column points to the lessons where their work does the most work.
+These are the names that appear most often across the course, counted approximately by citation keys plus full-name mentions in the top-level lesson files. The right-hand column points to the lessons where their work does the most work.
 
 | Person | Recurring in |
 |---|---|
 | **Geoffrey Hinton** | [History](history.php), [Backpropagation](backproplab.php), [Optimizers](optimizerlab.php), [Deep Learning](deeplearninglab.php) |
+| **Alan Turing** | [History](history.php), [Algorithms](algorithms.php), [Philosophy](philosophy.php), [Myths](myths.php) |
+| **Norbert Wiener** | [History](history.php), [Untold History](untold_history.php) |
+| **John von Neumann** | [History](history.php), [Software](software.php), [Untold History](untold_history.php) |
+| **Ada Lovelace** | [History](history.php), [Software](software.php), [Untold History](untold_history.php) |
+| **Charles Babbage** | [History](history.php), [Software](software.php), [Untold History](untold_history.php) |
+| **Marvin Minsky** | [History](history.php), [AI and Society](ai_and_society.php) |
+| **Seymour Papert** | [History](history.php), [Philosophy](philosophy.php) |
+| **John Hopfield** | [History](history.php), [The Mirror in the Machine](mirror_in_machine.php) |
+| **Paul Werbos** | [History](history.php), [Backpropagation](backproplab.php) |
+| **Demis Hassabis** | [AI and Society](ai_and_society.php), [AI for Science](ai_for_science.php) |
+| **David Silver** | [Reinforcement Learning](reinforcement_learning.php), [AI for Science](ai_for_science.php) |
+| **John Jumper** | [AI for Science](ai_for_science.php) |
+| **Andrew Ng** | [History](history.php), [Software](software.php) |
 | **Yann LeCun** | [Computer Vision](computer_vision.php), [History](history.php), [AI Existential Risk](ai_existential_risk.php) |
 | **Yoshua Bengio** | [Language](language.php), [History](history.php), [AI Existential Risk](ai_existential_risk.php) |
 | **Frank Rosenblatt** | [History](history.php), [Smallest Neural Network](minimalneuron.php), [Activation Functions](activationlab.php) |
