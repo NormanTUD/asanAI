@@ -27757,13 +27757,15 @@
   "city": "Mountain View, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "puppeteer",
    "googlecustomsearch",
-   "gemini2024v15"
+   "gemini2024v15",
+   "img_transformer_attention_heads"
   ],
   "cited_in": [
+   "people_of_ai",
    "websearch"
   ]
  },
@@ -59954,14 +59956,16 @@
   "city": "Mountain View, USA",
   "year": 2012.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "puppeteer",
    "googlecustomsearch",
    "gemini2024v15",
+   "img_transformer_attention_heads",
    "go_lang"
   ],
   "cited_in": [
+   "people_of_ai",
    "software",
    "websearch"
   ]
@@ -69421,15 +69425,17 @@
   "city": "Mountain View, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "transformer_attention_figure",
    "puppeteer",
    "googlecustomsearch",
-   "gemini2024v15"
+   "gemini2024v15",
+   "img_transformer_attention_heads"
   ],
   "cited_in": [
    "atlas",
+   "people_of_ai",
    "websearch"
   ]
  },

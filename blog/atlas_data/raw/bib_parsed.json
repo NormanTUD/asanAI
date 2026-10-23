@@ -16674,6 +16674,42 @@
    "year": "",
    "url": "https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg"
   },
+  "img_fei_fei_li": {
+   "title": "Fei-Fei Li at AI for Good, 2017",
+   "author": "ITU Pictures",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Fei-Fei_Li_at_AI_for_Good_2017.jpg"
+  },
+  "img_juergen_schmidhuber": {
+   "title": "Jürgen Schmidhuber at AI for Good, 2017",
+   "author": "ITU/R.Farrell",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:J%C3%BCrgen_Schmidhuber,_2017_(cropped).jpg"
+  },
+  "img_sepp_hochreiter": {
+   "title": "Sepp Hochreiter at his institute, 2015",
+   "author": "Eulenreich",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Sepp_Hochreiter.JPG"
+  },
+  "img_jared_kaplan": {
+   "title": "Jared Kaplan",
+   "author": "TechCrunch",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Jared_Kaplan_(cropped).jpg"
+  },
+  "img_transformer_attention_heads": {
+   "title": "Two attention heads from “Attention Is All You Need”",
+   "author": "Google",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Full_attentions_for_head_5.png"
+  },
+  "img_ilya_sutskever_altman": {
+   "title": "Ilya Sutskever and Sam Altman in Tel Aviv, 2023",
+   "author": "Eladkarmel",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Ilya_Sutskever_and_Sam_Altman_in_TAU.jpg"
+  },
   "lettvin1959frog": {
    "title": "What the Frog's Eye Tells the Frog's Brain",
    "author": "Jerome Y. Lettvin, Humberto R. Maturana, Warren S. McCulloch, Walter H. Pitts",
@@ -22994,10 +23030,10 @@
   "img_walter_pitts": [
    "people_of_ai"
   ],
-  "img_mcculloch_pitts_neuron": [
+  "pitts1947universals": [
    "people_of_ai"
   ],
-  "pitts1947universals": [
+  "img_mcculloch_pitts_neuron": [
    "people_of_ai"
   ],
   "lettvin1959frog": [
@@ -23032,13 +23068,13 @@
   "img_david_rumelhart": [
    "people_of_ai"
   ],
-  "img_geoffrey_hinton": [
-   "people_of_ai"
-  ],
   "rumelhart1986pasttense": [
    "people_of_ai"
   ],
   "ackley1985boltzmann": [
+   "people_of_ai"
+  ],
+  "img_geoffrey_hinton": [
    "people_of_ai"
   ],
   "img_paul_werbos": [
@@ -23056,13 +23092,19 @@
   "bengio2023managing": [
    "people_of_ai"
   ],
+  "img_sepp_hochreiter": [
+   "people_of_ai"
+  ],
+  "img_juergen_schmidhuber": [
+   "people_of_ai"
+  ],
   "img_alexnet_architecture": [
    "people_of_ai"
   ],
   "krizhevsky2009cifar": [
    "people_of_ai"
   ],
-  "img_ilya_sutskever": [
+  "img_ilya_sutskever_altman": [
    "people_of_ai"
   ],
   "sutskever2014seq2seq": [
@@ -23070,6 +23112,9 @@
    "recurrent_networks"
   ],
   "sutskever2013thesis": [
+   "people_of_ai"
+  ],
+  "img_fei_fei_li": [
    "people_of_ai"
   ],
   "deng2009imagenet": [
@@ -23131,6 +23176,12 @@
    "people_of_ai"
   ],
   "acm2024turing": [
+   "people_of_ai"
+  ],
+  "img_transformer_attention_heads": [
+   "people_of_ai"
+  ],
+  "img_jared_kaplan": [
    "people_of_ai"
   ],
   "img_francois_chollet": [
@@ -29339,13 +29390,14 @@
    ]
   },
   "Google": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "puppeteer",
     "googlecustomsearch",
-    "gemini2024v15"
+    "gemini2024v15",
+    "img_transformer_attention_heads"
    ]
   },
   "Jina AI": {
@@ -60086,11 +60138,12 @@
    ]
   },
   "TechCrunch": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "img_andrew_ng"
+    "img_andrew_ng",
+    "img_jared_kaplan"
    ]
   },
   "Rolf Kickuth": {
@@ -60103,11 +60156,12 @@
    ]
   },
   "Eladkarmel": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "img_ilya_sutskever"
+    "img_ilya_sutskever",
+    "img_ilya_sutskever_altman"
    ]
   },
   "Daniel Voigt Godoy": {
@@ -60124,6 +60178,30 @@
    "maxyear": null,
    "keys": [
     "img_mcculloch_pitts_neuron"
+   ]
+  },
+  "ITU Pictures": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_fei_fei_li"
+   ]
+  },
+  "ITU/R.Farrell": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_juergen_schmidhuber"
+   ]
+  },
+  "Eulenreich": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_sepp_hochreiter"
    ]
   },
   "Jerome Y. Lettvin": {
