@@ -486,6 +486,12 @@ The top-right "interests" toggle opens a `BlogTopics` overlay. Durable facts:
 - **Block math rule**: `$$…$$` containing `_` or backslash commands must sit
   inside a `<div>` **inside** a `.md` block — otherwise the render validator
   fails (exit 2) and marked can mangle it.
+- **Equation readability rule**: every new display equation must carry **two
+  levels of `\underbrace`**. The inner level names the variables, functions and
+  parameters; the outer level explains in plain English what the equation is
+  doing. Use `\substack{…\\…}` for multi-line labels, and keep the brace text
+  short enough that the equation still fits the reading column. Split long
+  equations with `\begin{aligned}` rather than letting them overflow.
 - `math_guardrail.js` runs **only in debug mode** (`?debug=1` or
   `window.__MATH_GUARDRAIL__ = true`): flags `data-mathlevel` blocks lacking a
   `data-optionaltitle`/inner heading and raw `$$` outside `.md`. It reports via
