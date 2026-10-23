@@ -216,9 +216,9 @@ In five years, the technique went from “diffusion as a curiosity” to “diff
 Text adds a wrinkle: tokens are discrete, so you cannot gradually add Gaussian noise to them. The dominant fix is an **absorbing-state** process. Each token is independently replaced by a special `[MASK]` symbol with probability $\beta_t$ per step, and once masked it stays masked:
 
 $$
-q(x_t^{i} \mid x_0^{i}) = \bar{\alpha}_t\,\delta_{x_t^{i}=x_0^{i}} + (1-\bar{\alpha}_t)\,\delta_{x_t^{i}=m},
+\underbrace{q(x_t^{i} \mid x_0^{i}) = \bar{\alpha}_t\,\delta_{x_t^{i}=x_0^{i}} + (1-\bar{\alpha}_t)\,\delta_{x_t^{i}=m}}_{\text{at step } t \text{ the token is either still the original or masked}},
 \qquad
-\bar{\alpha}_t = \prod_{s=1}^{t}(1-\beta_s).
+\underbrace{\bar{\alpha}_t = \prod_{s=1}^{t}(1-\beta_s)}_{\text{probability the token has survived unmasked so far}}
 $$
 
 Training is then a weighted masked-token cross-entropy over randomly sampled masking rates — BERT's fill-in-the-blank loss, rearranged into a generative process (\cite[Austin et al., 2021]{austin2021d3pm}). Sampling starts from a fully masked sequence, predicts every masked position in parallel, and commits the confident ones; easy tokens lock in first and hard content words last. This is a **diffusion language model** (dLLM), and it replaces left-to-right decoding with a handful of bidirectional denoising passes.
