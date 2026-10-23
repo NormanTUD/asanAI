@@ -69,6 +69,16 @@ Until late 2024, reasoning was something the model produced as visible tokens: w
 ### The Compositionality Gap
 
 A model that answers each fact correctly should be able to combine those facts. (\cite[Press et al., 2023]{press2022compositionality}) measured this directly using multi-hop questions (“Who directed the film starring the actress who won the 2020 Best Actress Oscar?”). They found that **single-hop performance improves with scale, but multi-hop performance does not keep up**, the gap between “knows each fact” and “can compose the facts” actually *widens* in the GPT-3 family. The model *has* the necessary information in its parameters; it simply fails to compose it without explicit prompting. Chain-of-thought and the “self-ask” method (the model asks itself follow-up questions before answering) close this gap. The finding is important because it shows that scaling alone does not solve compositional reasoning, and that the right inference-time scaffolding can be the missing piece.
+
+### Systematicity: The Old Question, Resurfacing
+
+The compositionality gap is a new measurement of an old philosophical objection. In 1988, Fodor and Pylyshyn argued that **systematicity** — the ability to understand novel combinations of familiar components — comes free in symbolic systems but has to be stipulated in connectionist ones. A learner who knows “red ball” and “blue cube” should understand “red cube” on first encounter. Neural networks, the argument went, learn associations, not rules.
+
+The modern benchmark program put the charge to a test. \citeauthor{lake2018scan}'s **SCAN** benchmark reduced the question to navigation commands and found that sequence-to-sequence models which parsed their training commands perfectly failed to compose the same words into new commands (\cite[Lake & Baroni, 2018]{lake2018scan}). COGS reported the same pattern for semantic parsing. Chollet's ARC widened the frame from language to abstraction itself, proposing that generalization be measured as the *efficiency* of acquiring skill on previously unseen tasks (\cite[Chollet, 2019]{chollet2019measure}).
+
+A compact failure case is the **reversal curse**: models trained on “A is B” routinely fail to infer “B is A” (\cite[Berglund et al., 2023]{berglund2023reversal}). The model has the fact in one direction and cannot use it in the other — exactly the kind of asymmetry a purely associative account predicts and a rule-based one does not.
+
+The picture is not one-sided. **Grokking** shows that a memorizing network can continue training into a generalizing one, so memorization and generalization behave as *phases* rather than mutually exclusive outcomes (\cite[Power et al., 2022]{power2022grokking}). And the sharpest caution about “emergent abilities” is that many of the dramatic curves were artifacts of discontinuous metrics: a benchmark that scores an answer as all-or-nothing can make a smooth improvement in per-token accuracy look like a sudden jump from zero to one (\cite[Schaeffer et al., 2023]{schaeffer2023mirage}). Whether the remaining gap closes through scale, through search at inference time, or through architectures built around abstraction explicitly is still open.
 </div>
 
 <div class="md">
