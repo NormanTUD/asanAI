@@ -6604,7 +6604,8 @@ window.bibData = {
 		year: 1928,
 		author: "David Hilbert, Wilhelm Ackermann",
 		title: "Grundzüge der theoretischen Logik",
-		alternativetitle: "The Entscheidungsproblem (Decision Problem)"
+		url: "https://archive.org/details/grundzugedertheo0000wack",
+		alternativetitle: "Hilbert & Ackermann, Grundzüge der theoretischen Logik (1928; 1946 ed.)"
 	},
 
 	// --- The Missing Links in Information Theory ---
@@ -16298,6 +16299,19 @@ window.bibData = {
 		year: 1931,
 		url: "https://archive.org/details/sciencefirstprin0000fscn",
 		alternativetitle: "Northrop, Science and First Principles (1931)"
+	},
+	"woodger1937axiomatic": {
+		title: "The Axiomatic Method in Biology",
+		author: "J. H. Woodger",
+		year: 1937,
+		alternativetitle: "Woodger, The Axiomatic Method in Biology (1937)"
+	},
+	"domarus1930logicalstructure": {
+		title: "The Logical Structure of Mind: An Inquiry into the Philosophical Foundation of Psychology and Psychiatry",
+		author: "Eilhard von Domarus",
+		year: 1930,
+		url: "https://archive.org/details/communicationthe0000inte",
+		alternativetitle: "Von Domarus, The Logical Structure of Mind (1930; repr. in Thayer, 1967)"
 	},
 	"domarus1944specificlaws": {
 		title: "The Specific Laws of Logic in Schizophrenia",
