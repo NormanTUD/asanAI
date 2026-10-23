@@ -19914,6 +19914,34 @@ window.bibData = {
 		author: "Rohan Taori, Ishaan Gulrajani, Tianyi Zhang, et al.",
 		year: 2023,
 		alternativetitle: "Alpaca"
+	},
+	"karpathy2015rnn": {
+		url: "https://karpathy.github.io/2015/05/21/rnn-effectiveness/",
+		title: "The Unreasonable Effectiveness of Recurrent Neural Networks",
+		author: "Andrej Karpathy",
+		year: 2015,
+		alternativetitle: "Karpathy on RNNs"
+	},
+	"dean2012large": {
+		url: "https://papers.nips.cc/paper/4687-large-scale-distributed-deep-networks.pdf",
+		title: "Large Scale Distributed Deep Networks",
+		author: "Jeffrey Dean, Greg Corrado, Rajat Monga, Kai Chen, Matthieu Devin, Mark Mao, Marc'aurelio Ranzato, Andrew Senior, Paul Tucker, Ke Yang, Quoc V. Le, Andrew Y. Ng",
+		year: 2012,
+		alternativetitle: "DistBelief"
+	},
+	"nobel2024physics": {
+		url: "https://www.nobelprize.org/prizes/physics/2024/summary/",
+		title: "The Nobel Prize in Physics 2024",
+		author: "The Royal Swedish Academy of Sciences",
+		year: 2024,
+		alternativetitle: "Nobel Prize in Physics 2024"
+	},
+	"nobel2024chemistry": {
+		url: "https://www.nobelprize.org/prizes/chemistry/2024/summary/",
+		title: "The Nobel Prize in Chemistry 2024",
+		author: "The Royal Swedish Academy of Sciences",
+		year: 2024,
+		alternativetitle: "Nobel Prize in Chemistry 2024"
 	}
 
 };
