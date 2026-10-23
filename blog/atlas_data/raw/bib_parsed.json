@@ -2737,9 +2737,9 @@
    "url": ""
   },
   "rosenblattbackprop": {
-   "title": "Principles of Neurodynamics: Perceptrons and the Theory of Brain Mechanisms",
+   "title": "Principles of Neurodynamics: Perceptrons and the Theory of Brain Mechanisms (CAL Report VQ-196-0-6)",
    "author": "Frank Rosenblatt",
-   "year": "",
+   "year": "1961",
    "url": "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up"
   },
   "hayakawa": {
@@ -18727,6 +18727,12 @@
   "bain": [
    "history"
   ],
+  "farleyclark1954": [
+   "history"
+  ],
+  "joseph1961perceptron": [
+   "history"
+  ],
   "hnfmccullochpitts2023": [
    "history"
   ],
@@ -18739,13 +18745,17 @@
   "ronkowitz2017perceptron": [
    "history"
   ],
-  "rosenblatt1962neurodynamics": [
+  "newyorktimesperceptron": [
+   "history",
+   "untold_history"
+  ],
+  "sleepingbeauty": [
    "history"
   ],
-  "hayek1952sensoryorder": [
+  "perceptronresults": [
    "history"
   ],
-  "lashley1929brainmechanisms": [
+  "rosenblattperceptronresults": [
    "history"
   ],
   "jensen2026perceptron": [
@@ -18755,6 +18765,15 @@
    "history"
   ],
   "minskyperceptrons": [
+   "history"
+  ],
+  "rosenblatt1962neurodynamics": [
+   "history"
+  ],
+  "hayek1952sensoryorder": [
+   "history"
+  ],
+  "lashley1929brainmechanisms": [
    "history"
   ],
   "rosenblatt1971twocolor": [
@@ -18802,26 +18821,13 @@
   "weizenbaum1976computer": [
    "history"
   ],
-  "newyorktimesperceptron": [
-   "history",
-   "untold_history"
-  ],
-  "perceptronresults": [
-   "history"
-  ],
-  "rosenblattperceptronresults": [
-   "history"
-  ],
-  "farleyclark1954": [
-   "history"
-  ],
-  "joseph1961perceptron": [
-   "history"
-  ],
-  "markkac": [
+  "img_widrow_adaline": [
    "history"
   ],
   "widrow1960adaline": [
+   "history"
+  ],
+  "roberts1960perceptron": [
    "history"
   ],
   "steinbuch1961matrix": [
@@ -18839,16 +18845,10 @@
   "lernmatrixwiki": [
    "history"
   ],
-  "roberts1960perceptron": [
+  "markkac": [
    "history"
   ],
   "uhrvossler1961operators": [
-   "history"
-  ],
-  "sleepingbeauty": [
-   "history"
-  ],
-  "img_widrow_adaline": [
    "history"
   ],
   "ivakhnenko1965": [
@@ -18866,9 +18866,6 @@
   "adaptivepattern": [
    "history"
   ],
-  "rosenblattbackprop": [
-   "history"
-  ],
   "linnainmaa1970": [
    "autodiff",
    "history"
@@ -18879,6 +18876,9 @@
   "dreyfus1972what": [
    "history",
    "philosophy"
+  ],
+  "rosenblattbackprop": [
+   "history"
   ],
   "kelley": [
    "history"
