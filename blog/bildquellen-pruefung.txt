@@ -1133,3 +1133,45 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
     Autor: Adrian Lange
     Lokal: mcculloch_pitts_neuron.png (960x422, SVG-Thumbnail)
     Status: OK - CC BY-SA 3.0
+
+28. img_fei_fei_li
+    URL: https://commons.wikimedia.org/wiki/File:Fei-Fei_Li_at_AI_for_Good_2017.jpg
+    Lizenz: CC BY 2.0 (via Commons API extmetadata)
+    Autor: ITU Pictures
+    Lokal: fei_fei_li_portrait.jpg (909x1350)
+    Status: OK - CC BY 2.0
+
+29. img_juergen_schmidhuber
+    URL: https://commons.wikimedia.org/wiki/File:J%C3%BCrgen_Schmidhuber,_2017_(cropped).jpg
+    Lizenz: CC BY 2.0 (via Commons API extmetadata)
+    Autor: ITU/R.Farrell
+    Lokal: juergen_schmidhuber_portrait.jpg (960x1358)
+    Status: OK - CC BY 2.0
+
+30. img_sepp_hochreiter
+    URL: https://commons.wikimedia.org/wiki/File:Sepp_Hochreiter.JPG
+    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+    Autor: Eulenreich
+    Lokal: sepp_hochreiter_portrait.jpg (960x1132)
+    Status: OK - CC BY-SA 4.0
+
+31. img_jared_kaplan
+    URL: https://commons.wikimedia.org/wiki/File:Jared_Kaplan_(cropped).jpg
+    Lizenz: CC BY 2.0 (via Commons API extmetadata)
+    Autor: TechCrunch
+    Lokal: jared_kaplan_portrait.jpg (852x902)
+    Status: OK - CC BY 2.0
+
+32. img_transformer_attention_heads
+    URL: https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Full_attentions_for_head_5.png
+    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+    Autor: Google
+    Lokal: transformer_attention_heads.png (1196x644)
+    Status: OK - CC BY-SA 4.0
+
+33. img_ilya_sutskever_altman
+    URL: https://commons.wikimedia.org/wiki/File:Ilya_Sutskever_and_Sam_Altman_in_TAU.jpg
+    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+    Autor: Eladkarmel
+    Lokal: ilya_sutskever_altman_2023.jpg (768x1024)
+    Status: OK - CC BY-SA 4.0

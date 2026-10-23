@@ -20186,6 +20186,54 @@ window.bibData = {
 		license: "CC BY-SA 3.0",
 		alternativetitle: "McCulloch–Pitts neuron diagram"
 	},
+	"img_fei_fei_li": {
+		url: "https://commons.wikimedia.org/wiki/File:Fei-Fei_Li_at_AI_for_Good_2017.jpg",
+		title: "Fei-Fei Li at AI for Good, 2017",
+		author: "ITU Pictures",
+		year: 2017,
+		license: "CC BY 2.0",
+		alternativetitle: "Fei-Fei Li portrait"
+	},
+	"img_juergen_schmidhuber": {
+		url: "https://commons.wikimedia.org/wiki/File:J%C3%BCrgen_Schmidhuber,_2017_(cropped).jpg",
+		title: "Jürgen Schmidhuber at AI for Good, 2017",
+		author: "ITU/R.Farrell",
+		year: 2017,
+		license: "CC BY 2.0",
+		alternativetitle: "Jürgen Schmidhuber portrait"
+	},
+	"img_sepp_hochreiter": {
+		url: "https://commons.wikimedia.org/wiki/File:Sepp_Hochreiter.JPG",
+		title: "Sepp Hochreiter at his institute, 2015",
+		author: "Eulenreich",
+		year: 2015,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Sepp Hochreiter portrait"
+	},
+	"img_jared_kaplan": {
+		url: "https://commons.wikimedia.org/wiki/File:Jared_Kaplan_(cropped).jpg",
+		title: "Jared Kaplan",
+		author: "TechCrunch",
+		year: 2025,
+		license: "CC BY 2.0",
+		alternativetitle: "Jared Kaplan portrait"
+	},
+	"img_transformer_attention_heads": {
+		url: "https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Full_attentions_for_head_5.png",
+		title: "Two attention heads from “Attention Is All You Need”",
+		author: "Google",
+		year: 2017,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Attention-head visualisation"
+	},
+	"img_ilya_sutskever_altman": {
+		url: "https://commons.wikimedia.org/wiki/File:Ilya_Sutskever_and_Sam_Altman_in_TAU.jpg",
+		title: "Ilya Sutskever and Sam Altman in Tel Aviv, 2023",
+		author: "Eladkarmel",
+		year: 2023,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Sutskever and Altman, 2023"
+	},
 
 	/* Additional primary sources for the expanded people_of_ai.php */
 	"lettvin1959frog": {
