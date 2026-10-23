@@ -1323,6 +1323,7 @@ function initModuleNav() {
 	const idx = data.current;
 	const nav = document.createElement('nav');
 	nav.className = 'module-nav';
+	nav.setAttribute('aria-label', 'Lesson navigation');
 
 	if (idx > 0) {
 		const prev = modules[idx - 1];

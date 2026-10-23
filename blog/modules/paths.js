@@ -697,6 +697,8 @@
 			'</div><button type="button" class="mnp-close" aria-label="Close"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div></header>' +
 			'<div class="mnp-modal-body"></div></div>';
 		document.body.appendChild(overlay);
+		var triggerBtn = document.getElementById("paths-toggle");
+		if (triggerBtn) triggerBtn.setAttribute("aria-expanded", "true");
 		document.documentElement.classList.add("mnp-open");
 		paint(false);
 		requestAnimationFrame(() => overlay && overlay.classList.add("is-in"));
@@ -716,6 +718,8 @@
 			activeViewTransition = null;
 		}
 		o.classList.remove("is-in");
+		var triggerBtn = document.getElementById("paths-toggle");
+		if (triggerBtn) triggerBtn.setAttribute("aria-expanded", "false");
 		document.removeEventListener("keydown", onKey, true);
 		setTimeout(() => {
 			o.remove();

@@ -479,6 +479,36 @@
 		state.zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, isFinite(z) ? z : 1));
 	};
 	const bind3DNav = (cv, state, redraw) => {
+		cv.setAttribute('tabindex', '0');
+		if (!cv.hasAttribute('role')) cv.setAttribute('role', 'application');
+		if (!cv.hasAttribute('aria-label')) {
+			cv.setAttribute('aria-label', 'Interactive 3D view. Use the arrow keys to rotate, plus and minus to zoom.');
+		}
+		cv.setAttribute('aria-keyshortcuts', 'ArrowLeft ArrowRight ArrowUp ArrowDown');
+		cv.addEventListener('keydown', e => {
+			const step = e.shiftKey ? 0.15 : 0.05;
+			let handled = true;
+			if (e.key === 'ArrowLeft') {
+				state.yaw -= step;
+			} else if (e.key === 'ArrowRight') {
+				state.yaw += step;
+			} else if (e.key === 'ArrowUp') {
+				state.pitch -= step;
+			} else if (e.key === 'ArrowDown') {
+				state.pitch += step;
+			} else if (e.key === '+' || e.key === '=') {
+				setZoom(state, state.zoom * 1.1);
+			} else if (e.key === '-' || e.key === '_') {
+				setZoom(state, state.zoom / 1.1);
+			} else {
+				handled = false;
+			}
+			if (!handled) return;
+			state.pitch = Math.max(-Math.PI / 2 + 0.05, Math.min(Math.PI / 2 - 0.05, state.pitch));
+			state.auto = false;
+			e.preventDefault();
+			schedule(redraw);
+		});
 		cv.addEventListener('wheel', e => {
 			e.preventDefault();
 			setZoom(state, state.zoom * Math.exp(-e.deltaY * 0.0012));

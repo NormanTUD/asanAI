@@ -207,13 +207,13 @@ Type a word like **“strawberry”** below and watch how BPE splits it. The mod
         <div id="tokenization-failure-explain" aria-live="polite" style="margin-top:10px; padding:12px; background:var(--mn-bg-subtle, #fff); border-radius:8px; border:1px dashed #fca5a5; font-size:0.9em; color:var(--mn-text-secondary, #475569);"></div>
         <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
             <button type="button" onclick="document.getElementById('tokenization-failure-input').value='strawberry'; showTokenizationFailure('strawberry');"
-                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;">🍓 strawberry</button>
+                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;"><span aria-hidden="true">🍓</span> strawberry</button>
             <button type="button" onclick="document.getElementById('tokenization-failure-input').value='banana'; showTokenizationFailure('banana');"
-                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;">🍌 banana</button>
+                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;"><span aria-hidden="true">🍌</span> banana</button>
             <button type="button" onclick="document.getElementById('tokenization-failure-input').value='mississippi'; showTokenizationFailure('mississippi');"
-                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;">🌊 mississippi</button>
+                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;"><span aria-hidden="true">🌊</span> mississippi</button>
             <button type="button" onclick="document.getElementById('tokenization-failure-input').value='antidisestablishment'; showTokenizationFailure('antidisestablishment');"
-                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;">📚 antidisestablishment</button>
+                    style="padding:6px 14px; border:1px solid #fca5a5; border-radius:6px; background:var(--mn-surface, #fff); color:var(--mn-text, #1e293b); cursor:pointer; font-size:0.85rem;"><span aria-hidden="true">📚</span> antidisestablishment</button>
         </div>
     </div>
 

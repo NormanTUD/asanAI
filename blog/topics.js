@@ -1262,6 +1262,23 @@
 		document.body.appendChild(overlay);
 		overlay.inert = true;
 
+		overlay.addEventListener('keydown', function (e) {
+			if (e.key !== 'Tab' || !overlay.classList.contains('open')) return;
+			const modal = overlay.querySelector('.topics-modal');
+			if (!modal) return;
+			const focusable = modal.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])');
+			if (!focusable.length) return;
+			const first = focusable[0];
+			const last = focusable[focusable.length - 1];
+			if (e.shiftKey && document.activeElement === first) {
+				e.preventDefault();
+				last.focus();
+			} else if (!e.shiftKey && document.activeElement === last) {
+				e.preventDefault();
+				first.focus();
+			}
+		});
+
 		overlay.querySelectorAll('[data-close]').forEach(function (el) {
 			el.addEventListener('click', closeOverlay);
 		});
@@ -1483,6 +1500,8 @@
 		o.inert = false;
 		o.classList.add('open');
 		o.setAttribute('aria-hidden', 'false');
+		const toggle = document.getElementById('topics-toggle');
+		if (toggle) toggle.setAttribute('aria-expanded', 'true');
 		document.body.style.overflow = 'hidden';
 		_lastFocused = document.activeElement;
 		const first = o.querySelector('input, button');
@@ -1495,6 +1514,8 @@
 		o.classList.remove('open');
 		o.setAttribute('aria-hidden', 'true');
 		o.inert = true;
+		const toggle = document.getElementById('topics-toggle');
+		if (toggle) toggle.setAttribute('aria-expanded', 'false');
 		document.body.style.overflow = '';
 		if (_lastFocused && typeof _lastFocused.focus === 'function') _lastFocused.focus();
 		try { document.dispatchEvent(new CustomEvent('topics:close')); } catch (e) { /* ignore */ }

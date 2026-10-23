@@ -623,6 +623,7 @@ if(!server_php_self_ends_with_index_php()) {
 				html.classList.remove('dark');
 			}
 			var btn = document.getElementById('theme-toggle');
+			if (btn) btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
 			var meta = document.querySelector('meta[name="theme-color"]');
 			if (meta) meta.content = isDark ? '#0f172a' : '#FAF8F1';
 			document.cookie = 'theme=' + (isDark ? 'dark' : 'light') + '; path=/; max-age=' + 60*60*24*365;
@@ -645,6 +646,8 @@ if(!server_php_self_ends_with_index_php()) {
 			var on = !html.classList.contains('reader-mode');
 			if (on) html.classList.add('reader-mode');
 			else html.classList.remove('reader-mode');
+			var btn = document.getElementById('reader-toggle');
+			if (btn) btn.setAttribute('aria-pressed', on ? 'true' : 'false');
 			try { localStorage.setItem('readerMode', on ? '1' : '0'); } catch (e) {}
 			var meta = document.querySelector('meta[name="theme-color"]');
 			if (meta && on) {
@@ -782,7 +785,7 @@ function render_module_nav(): void {
 	if ($data['current'] < 0) return;
 	$modules = $data['modules'];
 	$idx = $data['current'];
-	echo '<nav class="module-nav">';
+	echo '<nav class="module-nav" aria-label="Lesson navigation">';
 	if ($idx > 0) {
 		$prev = $modules[$idx - 1];
 		echo '<a href="' . htmlspecialchars($prev['url']) . '" class="module-nav-link module-nav-prev">'
@@ -854,7 +857,8 @@ function render_drawer(): void {
 }
 
 function render_theme_toggle(): void {
-	echo '<button id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode" onclick="toggleTheme()">';
+	$pressed = get_theme_class() === 'dark' ? 'true' : 'false';
+	echo '<button id="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="' . $pressed . '" title="Toggle dark mode" onclick="toggleTheme()">';
 	echo '<span class="ti-sun" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></span>';
 	echo '<span class="ti-moon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>';
 	echo '</button>';
@@ -867,7 +871,7 @@ function render_theme_toggle(): void {
  * modules finish loading.
  */
 function render_topics_toggle(): void {
-	echo '<button id="topics-toggle" type="button" aria-label="Choose your interests" aria-haspopup="dialog" title="Choose your interests" onclick="if(window.BlogTopics){window.BlogTopics.openOverlay()}">';
+	echo '<button id="topics-toggle" type="button" aria-label="Choose your interests" aria-haspopup="dialog" aria-expanded="false" title="Choose your interests" onclick="if(window.BlogTopics){window.BlogTopics.openOverlay()}">';
 	echo '<span class="ti-target" aria-hidden="true">';
 	echo '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
 	echo '<circle cx="12" cy="12" r="9"/>';
@@ -882,7 +886,7 @@ function render_topics_toggle(): void {
  * reader toggle; opens the paths window (modules/paths.js).
  */
 function render_paths_toggle(): void {
-	echo '<button id="paths-toggle" type="button" aria-label="Learning paths" aria-haspopup="dialog" title="Learning paths" onclick="if(window.MNPaths){window.MNPaths.open()}">';
+	echo '<button id="paths-toggle" type="button" aria-label="Learning paths" aria-haspopup="dialog" aria-expanded="false" title="Learning paths" onclick="if(window.MNPaths){window.MNPaths.open()}">';
 	echo '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
 	echo '<circle cx="6" cy="19" r="2.2"/>';
 	echo '<circle cx="18" cy="5" r="2.2"/>';
@@ -900,7 +904,7 @@ function render_paths_toggle(): void {
  * it survives reloads and is per-tab. Keyboard shortcut: `R`.
  */
 function render_reader_toggle(): void {
-	echo '<button id="reader-toggle" type="button" aria-label="Toggle reader mode" title="Reader mode (R)" onclick="toggleReaderMode()">';
+	echo '<button id="reader-toggle" type="button" aria-label="Toggle reader mode" aria-pressed="false" title="Reader mode (R)" onclick="toggleReaderMode()">';
 	echo '<span class="ti-book" aria-hidden="true">';
 	echo '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">';
 	echo '<path d="M2 4h7a4 4 0 0 1 4 4v12"/>';

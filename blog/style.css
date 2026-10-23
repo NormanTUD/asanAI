@@ -13096,3 +13096,55 @@ html.mnp-open { overflow: hidden; }
 		scroll-behavior: auto !important;
 	}
 }
+
+@media (prefers-contrast: more) {
+	:root, html.dark {
+		--mn-text-muted: var(--mn-text-secondary);
+		--mn-border-light: var(--mn-border);
+	}
+	#contents .md a { text-decoration: underline; }
+	button, input, select, textarea { border-color: var(--mn-text-secondary) !important; }
+	:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+	.search-backdrop, .drawer-backdrop, .topics-backdrop,
+	.topics-modal, .search-modal, .mnp-modal, .mnp-modal-head, .lkp-card, .cl-sh-card {
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+	}
+	.search-backdrop, .drawer-backdrop, .topics-backdrop {
+		background: rgba(0, 0, 0, 0.72) !important;
+	}
+}
+
+@media (pointer: coarse) {
+	#drawer-toggle, #search-trigger, #theme-toggle, #topics-toggle,
+	#paths-toggle, #reader-toggle, #drawer-close, .search-close {
+		min-width: 44px;
+		min-height: 44px;
+	}
+	#toc li.has-children > .toc-row > .toggle-icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 24px;
+		min-height: 24px;
+	}
+}
+
+:target,
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+	scroll-margin-top: 5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	::view-transition-old(root),
+	::view-transition-new(root) { animation: none !important; }
+}

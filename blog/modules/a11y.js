@@ -119,6 +119,15 @@
 		el.setAttribute(DONE, "1");
 		if (el.hasAttribute("aria-label") || el.hasAttribute("aria-labelledby")) return;
 		var name = el.getAttribute("data-a11y-label") || el.getAttribute("title");
+		if (!name && el.layout && el.layout.title) {
+			name = typeof el.layout.title === "string" ? el.layout.title : el.layout.title.text;
+		}
+		if (!name && el.getOption) {
+			try {
+				var option = el.getOption();
+				if (option && option.title) name = Array.isArray(option.title) ? (option.title[0] && option.title[0].text) : option.title.text;
+			} catch (e) { /* ignore */ }
+		}
 		if (!name) name = headingNear(el);
 		if (!name) name = "Interactive visualization";
 		if (!el.hasAttribute("role")) el.setAttribute("role", "img");
@@ -145,6 +154,11 @@
 	function enhance() {
 		document.querySelectorAll("button:not([type])").forEach(function (b) { b.type = "button"; });
 
+		var readerBtn = document.getElementById("reader-toggle");
+		if (readerBtn) readerBtn.setAttribute("aria-pressed", document.documentElement.classList.contains("reader-mode") ? "true" : "false");
+		var themeBtn = document.getElementById("theme-toggle");
+		if (themeBtn) themeBtn.setAttribute("aria-pressed", document.documentElement.classList.contains("dark") ? "true" : "false");
+
 		document.querySelectorAll("input, select, textarea").forEach(function (el) {
 			if (el.tagName === "INPUT" && el.type === "hidden") return;
 			nameControl(el);
@@ -169,6 +183,34 @@
 			} else if (b.id) {
 				b.setAttribute("aria-label", humanize(b.id));
 			}
+		});
+
+		["sources-section", "footnotes-section"].forEach(function (id) {
+			var section = document.getElementById(id);
+			if (section && !section.hasAttribute("aria-label") && !section.hasAttribute("aria-labelledby")) {
+				section.setAttribute("aria-label", id === "sources-section" ? "Sources" : "Footnotes");
+			}
+		});
+
+		document.querySelectorAll("table").forEach(function (table) {
+			if (!table.querySelector("caption") && !table.hasAttribute("aria-label") && !table.hasAttribute("aria-labelledby")) {
+				var label = headingNear(table);
+				if (label) table.setAttribute("aria-label", label);
+			}
+			table.querySelectorAll("th").forEach(function (th) {
+				if (th.hasAttribute("scope")) return;
+				th.setAttribute("scope", th.closest("thead") ? "col" : "row");
+			});
+		});
+
+		document.querySelectorAll('a[target="_blank"]').forEach(function (a) {
+			if (!a.hasAttribute("rel")) a.setAttribute("rel", "noopener noreferrer");
+			if (a.hasAttribute("data-a11y-external") || a.querySelector(".sr-only")) return;
+			a.setAttribute("data-a11y-external", "1");
+			var note = document.createElement("span");
+			note.className = "sr-only";
+			note.textContent = " (opens in a new tab)";
+			a.appendChild(note);
 		});
 
 		document.querySelectorAll("button svg, a svg").forEach(function (svg) {

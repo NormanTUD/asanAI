@@ -395,11 +395,19 @@
 		if (built) return;
 		built = true;
 		try {
-			if (!fine) return;
 			if (!('DOMParser' in window) || typeof fetch !== 'function') return;
 			buildCard();
-			document.addEventListener('mouseover', onOver, true);
-			document.addEventListener('mouseout', onOut, true);
+			if (fine) {
+				document.addEventListener('mouseover', onOver, true);
+				document.addEventListener('mouseout', onOut, true);
+			}
+			document.addEventListener('focusin', function (e) {
+				if (!e.target || !e.target.matches) return;
+				try {
+					if (e.target.matches(':focus-visible')) onOver(e);
+				} catch (err) { /* ignore */ }
+			}, true);
+			document.addEventListener('focusout', onOut, true);
 			document.addEventListener('mousedown', function (e) {
 				var t = e.target;
 				if (t && t.closest && t.closest('.lkp-card')) return;

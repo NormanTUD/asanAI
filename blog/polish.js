@@ -86,8 +86,14 @@
 		function setCurrent(h) {
 			const li = linkByHeading.get(h);
 			if (!li || li === current) return;
-			if (current) current.classList.remove('toc-current');
+			if (current) {
+				current.classList.remove('toc-current');
+				var oldLink = current.querySelector('a');
+				if (oldLink) oldLink.removeAttribute('aria-current');
+			}
 			li.classList.add('toc-current');
+			var newLink = li.querySelector('a');
+			if (newLink) newLink.setAttribute('aria-current', 'location');
 			current = li;
 			// ensure the active item is visible in the TOC
 			try {
@@ -325,6 +331,7 @@
 		el.id = 'cl-shortcut-help';
 		el.setAttribute('role', 'dialog');
 		el.setAttribute('aria-label', 'Keyboard shortcuts');
+		el.tabIndex = -1;
 		el.hidden = true;
 		el.innerHTML = [
 			'<div class="cl-sh-card">',
@@ -351,9 +358,19 @@
 		return {
 			el: el,
 			hidden: true,
+			_last: null,
 			toggle: function () { el.hidden ? this.show() : this.hide(); },
-			show:   function () { el.hidden = false; this.hidden = false; },
-			hide:   function () { el.hidden = true;  this.hidden = true;  }
+			show: function () {
+				this._last = document.activeElement;
+				el.hidden = false;
+				this.hidden = false;
+				el.focus();
+			},
+			hide: function () {
+				el.hidden = true;
+				this.hidden = true;
+				if (this._last && typeof this._last.focus === 'function') this._last.focus();
+			}
 		};
 	}
 

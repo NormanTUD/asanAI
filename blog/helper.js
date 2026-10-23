@@ -943,6 +943,7 @@ function revealAncestorOptionalBlocks(el) {
 				const icon = header.querySelector('.optional-icon');
 				if (icon) icon.innerHTML = '▼';
 				header.classList.add('active');
+				header.setAttribute('aria-expanded', 'true');
 			}
 		}
 		// Walk further up in case optional blocks are nested
@@ -1507,7 +1508,9 @@ function addCopyButtons() {
 		`;
 
 		const btn = document.createElement('button');
+		btn.type = 'button';
 		btn.className = 'code-copy-btn';
+		btn.setAttribute('aria-label', 'Copy code to clipboard');
 
 		const defaultBg = 'rgba(255,255,255,0.08)';
 		const defaultColor = '#aaa';
@@ -1545,6 +1548,7 @@ function addCopyButtons() {
 		const swapText = (newText, newColor, callback) => {
 			if (isSwapping) return;
 			isSwapping = true;
+			btn.setAttribute('aria-label', newText);
 
 			// Phase 1: Dissolve out
 			textWrap.style.opacity = '0';
@@ -1662,6 +1666,8 @@ function addCuriosityScore() {
 
 	const badge = document.createElement('div');
 	badge.id = 'curiosity-score';
+	badge.setAttribute('role', 'status');
+	badge.setAttribute('aria-live', 'polite');
 	badge.style.cssText = `
 		position: fixed; top: 14px; left: 20px; z-index: 9998;
 		background: rgba(20, 20, 30, 0.85);
@@ -1855,11 +1861,16 @@ function initOptionalBlocks() {
 		block.innerHTML = '';
 
 		// Create Header
+		const contentId = 'optional-content-' + Math.random().toString(36).slice(2, 10);
 		const header = document.createElement('div');
 		header.className = 'optional-header';
 		header.style.cursor = 'pointer';
+		header.setAttribute('role', 'button');
+		header.setAttribute('tabindex', '0');
+		header.setAttribute('aria-expanded', 'false');
+		header.setAttribute('aria-controls', contentId);
 		header.innerHTML = `
-			<span class="optional-icon" style="display:inline-block; transition: transform 0.3s ease;">▶</span>
+			<span class="optional-icon" style="display:inline-block; transition: transform 0.3s ease;" aria-hidden="true">▶</span>
 			<span class="optional-title">${headline}</span>
 		`;
 
@@ -1898,6 +1909,7 @@ function initOptionalBlocks() {
 		// Create Content Wrapper (initially hidden)
 		const contentWrapper = document.createElement('div');
 		contentWrapper.className = 'optional-content';
+		contentWrapper.id = contentId;
 		contentWrapper.style.display = 'none';
 		// 🔧 FIX 2: overflow:hidden NICHT mehr dauerhaft setzen.
 		// Es wird nur noch temporär während der Collapse-Animation gesetzt.
@@ -2013,6 +2025,13 @@ function initOptionalBlocks() {
 			}
 		};
 
+		header.addEventListener('keydown', (e) => {
+			if (e.key === 'Enter' || e.key === ' ') {
+				e.preventDefault();
+				header.click();
+			}
+		});
+
 		// Toggle Logic
 		header.onclick = () => {
 			if (isAnimating) {
@@ -2030,6 +2049,7 @@ function initOptionalBlocks() {
 				icon.style.transform = 'rotate(90deg)';
 				icon.innerHTML = '▼';
 				header.classList.add('active');
+				header.setAttribute('aria-expanded', 'true');
 
 				block.style.transition = 'box-shadow 0.4s ease';
 				block.style.boxShadow = '0 0 12px rgba(171,71,188,0.15)';
@@ -2074,6 +2094,7 @@ function initOptionalBlocks() {
 					icon.style.transform = 'rotate(0deg)';
 					icon.innerHTML = '▶';
 					header.classList.remove('active');
+					header.setAttribute('aria-expanded', 'false');
 
 					isAnimating = false;
 				});

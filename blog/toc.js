@@ -56,6 +56,8 @@ function toc() {
 	if (!tocDiv) {
 		tocDiv = document.createElement('div');
 		tocDiv.id = 'toc';
+		tocDiv.setAttribute('role', 'navigation');
+		tocDiv.setAttribute('aria-label', 'Table of contents');
 		tocDiv.innerHTML = '';
 		// functions.php emits #lesson-home as the first child of #contents.
 		// Slip in behind it so the link reads as a breadcrumb ABOVE the TOC
@@ -67,6 +69,11 @@ function toc() {
 		} else {
 			contents.prepend(tocDiv);
 		}
+	}
+
+	function syncToggle(toggle, expanded) {
+		toggle.textContent = expanded ? '▾' : '▸';
+		toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
 	}
 
 	var urlParams = new URLSearchParams(window.location.search);
@@ -341,7 +348,10 @@ function toc() {
 		// on the chevron toggles; click anywhere else navigates.
 		var toggle = document.createElement("span");
 		toggle.className = "toggle-icon";
-		toggle.textContent = li.classList.contains("expanded") ? '▾' : '▸';
+		toggle.setAttribute("role", "button");
+		toggle.setAttribute("tabindex", "-1");
+		toggle.setAttribute("aria-label", "Toggle subsections: " + titleText);
+		syncToggle(toggle, li.classList.contains("expanded"));
 		row.appendChild(toggle);
 
 		var link = document.createElement("a");
@@ -397,11 +407,17 @@ function toc() {
 			var parentLi = parentUl.parentElement;
 			if (parentLi && parentLi.tagName === "LI") {
 				parentLi.classList.add("has-children");
+				var parentToggle = parentLi.querySelector(':scope > .toc-row > .toggle-icon');
+				if (parentToggle) parentToggle.setAttribute("tabindex", "0");
 			}
 		}
 
 		var nextUl = document.createElement("ul");
 		nextUl.classList.add("collapsible");
+		if (header.id) {
+			nextUl.id = "toc-sub-" + header.id;
+			toggle.setAttribute("aria-controls", nextUl.id);
+		}
 		li.appendChild(nextUl);
 		stack.push({ level: level, element: nextUl });
 
@@ -411,8 +427,15 @@ function toc() {
 			e.preventDefault();
 			e.stopPropagation();
 			li.classList.toggle("expanded");
-			toggle.textContent = li.classList.contains("expanded") ? '▾' : '▸';
+			syncToggle(toggle, li.classList.contains("expanded"));
 			saveState();
+		});
+		toggle.addEventListener("keydown", function(e) {
+			if (e.key === "Enter" || e.key === " ") {
+				e.preventDefault();
+				e.stopPropagation();
+				toggle.click();
+			}
 		});
 	});
 
@@ -426,7 +449,7 @@ function toc() {
 			var wantsExpanded = !!storedState[href];
 			li.classList.toggle('expanded', wantsExpanded);
 			var t = li.querySelector(':scope > .toggle-icon');
-			if (t) t.textContent = wantsExpanded ? '▾' : '▸';
+			if (t) syncToggle(t, wantsExpanded);
 		});
 	}
 
@@ -471,7 +494,7 @@ function toc() {
 		tocDiv.querySelectorAll('li.has-children').forEach(function(li) {
 			li.classList.toggle('expanded', wantExpanded);
 			var t = li.querySelector(':scope > .toggle-icon');
-			if (t) t.textContent = wantExpanded ? '▾' : '▸';
+			if (t) syncToggle(t, wantExpanded);
 		});
 		saveState();
 	}

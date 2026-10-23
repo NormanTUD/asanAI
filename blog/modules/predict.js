@@ -51,12 +51,12 @@
 					return '<button type="button" class="' + cls + '" data-k="' + k + '"' + (guess !== null ? " disabled" : "") + '><span class="mnz-letter">' + L[k] + "</span><span>" + fmt(o) + "</span></button>";
 				}).join("") + "</div>";
 			if (guess !== null && !revealed) {
-				html += '<div class="mnp-try"><b>Locked in.</b> ' + fmt(data.try || "Now try it in the demo below.") + ' <span class="mnp-arrow" aria-hidden="true">↓</span></div>' +
-					'<div class="mnz-foot"><span class="mnz-hint">Come back after trying it.</span><button type="button" class="mnz-btn mnp-reveal">Reveal the answer</button></div>';
+				html += '<div class="mnp-feedback" aria-live="polite"><div class="mnp-try"><b>Locked in.</b> ' + fmt(data.try || "Now try it in the demo below.") + ' <span class="mnp-arrow" aria-hidden="true">↓</span></div>' +
+					'<div class="mnz-foot"><span class="mnz-hint">Come back after trying it.</span><button type="button" class="mnz-btn mnp-reveal">Reveal the answer</button></div></div>';
 			}
 			if (revealed) {
 				const right = guess === data.answer;
-				html += '<div class="mnz-explain' + (right ? "" : " is-wrong") + '"><b>' + (right ? "You called it!" : "Surprise!") + "</b> " + fmt(data.explain || "") + "</div>";
+				html += '<div class="mnp-feedback" aria-live="polite"><div class="mnz-explain' + (right ? "" : " is-wrong") + '"><b>' + (right ? "You called it!" : "Surprise!") + "</b> " + fmt(data.explain || "") + "</div></div>";
 			}
 			root.innerHTML = html;
 			root.querySelectorAll(".mnp-opt:not(:disabled)").forEach((b) => b.addEventListener("click", () => {
@@ -64,6 +64,11 @@
 				const m = load(); m[id] = { guess: guess, revealed: false }; save(m);
 				if (window.MNQuest) window.MNQuest.xp(5, "· prediction", "predict-" + id);
 				paint();
+				const next = root.querySelector(".mnp-reveal") || root.querySelector(".mnp-feedback");
+				if (next) {
+					if (next.tagName !== "BUTTON") next.setAttribute("tabindex", "-1");
+					next.focus({ preventScroll: true });
+				}
 			}));
 			const rv = root.querySelector(".mnp-reveal");
 			if (rv) rv.addEventListener("click", () => {
@@ -71,6 +76,11 @@
 				const m = load(); m[id] = { guess: guess, revealed: true }; save(m);
 				if (guess === data.answer && window.MNQuest && window.MNQuest.xp(10, "· prediction was right", "predict-right-" + id)) window.MNQuest.count("predictRight");
 				paint();
+				const feedback = root.querySelector(".mnp-feedback");
+				if (feedback) {
+					feedback.setAttribute("tabindex", "-1");
+					feedback.focus({ preventScroll: true });
+				}
 			});
 		}
 		paint();
