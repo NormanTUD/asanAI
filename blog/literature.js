@@ -6569,6 +6569,7 @@ window.bibData = {
 		alternativetitle: "Backpropagation",
 		title: "Learning representations by back-propagating errors",
 		year: 1986,
+		url: "https://doi.org/10.1038/323533a0",
 	},
 
 	"krizhevsky2012imagenet": {
@@ -6625,6 +6626,7 @@ window.bibData = {
 		year: 1960,
 		author: "Bernard Widrow, Marcian Hoff",
 		title: "Adaptive Switching Circuits",
+		url: "https://isl.stanford.edu/~widrow/papers/c1960adaptiveswitching.pdf",
 		alternativetitle: "The ADALINE and Delta Rule"
 	},
 	"elman1990finding": {
@@ -6652,12 +6654,14 @@ window.bibData = {
 		year: 2017,
 		author: "Paul F. Christiano, Jan Leike, Tom B. Brown, Miljan Martic, Shane Legg, Dario Amodei",
 		title: "Deep Reinforcement Learning from Human Preferences",
+		url: "https://arxiv.org/abs/1706.03741",
 		alternativetitle: "RLHF (Foundation for InstructGPT)"
 	},
 	"brown2020gpt3": {
 		year: 2020,
 		author: "Tom B. Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, et al.",
 		title: "Language Models are Few-Shot Learners",
+		url: "https://arxiv.org/abs/2005.14165",
 		alternativetitle: "GPT-3"
 	},
 	"laplace1812analytic": {
@@ -7047,6 +7051,13 @@ window.bibData = {
 		author: "David E. Rumelhart, Geoffrey E. Hinton, James L. McClelland",
 		year: 1986,
 		alternativetitle: "PDP Chapter 8"
+	},
+	"rumelhart1986pasttense": {
+		url: "https://stanford.edu/~jlmcc/papers/PDP/Volume%202/Chap18_PDP86.pdf",
+		title: "On Learning the Past Tenses of English Verbs",
+		author: "David E. Rumelhart, James L. McClelland",
+		year: 1986,
+		alternativetitle: "The past-tense model"
 	},
 
 	// ─── New citations added for textbook extensions ───
@@ -20087,6 +20098,81 @@ window.bibData = {
 		license: "CC BY 3.0",
 		alternativetitle: "John Hopfield portrait"
 	},
+	"img_andrew_ng": {
+		url: "https://commons.wikimedia.org/wiki/File:Andrew_Ng_at_TechCrunch_Disrupt_SF_2017.jpg",
+		title: "Andrew Ng at TechCrunch Disrupt SF 2017",
+		author: "TechCrunch",
+		year: 2017,
+		license: "CC BY 2.0",
+		alternativetitle: "Andrew Ng portrait"
+	},
+	"img_david_rumelhart": {
+		url: "https://commons.wikimedia.org/wiki/File:DavidRumelhart-IJCNNseattle1991-07-08.jpg",
+		title: "David Rumelhart at IJCNN Seattle, 1991",
+		author: "Rolf Kickuth",
+		year: 1991,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "David Rumelhart portrait"
+	},
+	"img_david_silver": {
+		url: "https://commons.wikimedia.org/wiki/File:David_Silver.jpg",
+		title: "David Silver",
+		author: "David Silver",
+		license: "CC BY-SA 2.0",
+		alternativetitle: "David Silver portrait"
+	},
+	"img_ian_goodfellow": {
+		url: "https://commons.wikimedia.org/wiki/File:Ian_Goodfellow_(cropped).jpg",
+		title: "Ian Goodfellow",
+		author: "Ian Goodfellow",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Ian Goodfellow portrait"
+	},
+	"img_ilya_sutskever": {
+		url: "https://commons.wikimedia.org/wiki/File:Ilya_Sutskever_and_Sam_Altman_in_TAU_(cropped).jpg",
+		title: "Ilya Sutskever in Tel Aviv, 2023",
+		author: "Eladkarmel",
+		year: 2023,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Ilya Sutskever portrait"
+	},
+	"img_paul_werbos": {
+		url: "https://commons.wikimedia.org/wiki/File:PaulWerbos-IJCNNseattle1991-07-08.jpg",
+		title: "Paul Werbos at IJCNN Seattle, 1991",
+		author: "Rolf Kickuth",
+		year: 1991,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Paul Werbos portrait"
+	},
+	"img_walter_pitts": {
+		url: "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg",
+		title: "Walter Pitts in 1954",
+		author: "Francis Bello",
+		year: 1954,
+		license: "Public domain",
+		alternativetitle: "Walter Pitts portrait"
+	},
+	"img_alexnet_architecture": {
+		url: "https://commons.wikimedia.org/wiki/File:AlexNet_architecture.png",
+		title: "AlexNet architecture",
+		author: "Daniel Voigt Godoy",
+		license: "CC BY 4.0",
+		alternativetitle: "AlexNet architecture diagram"
+	},
+	"img_ibm_704": {
+		url: "https://commons.wikimedia.org/wiki/File:IBM_Electronic_Data_Processing_Machine_-_GPN-2000-001881.jpg",
+		title: "IBM 704 electronic data processing machine",
+		author: "NASA",
+		license: "Public domain",
+		alternativetitle: "IBM 704"
+	},
+	"img_mcculloch_pitts_neuron": {
+		url: "https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg",
+		title: "Diagram of a McCulloch–Pitts cell",
+		author: "Adrian Lange",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "McCulloch–Pitts neuron diagram"
+	},
 
 	/* Additional primary sources for the expanded people_of_ai.php */
 	"lettvin1959frog": {
@@ -20275,6 +20361,7 @@ window.bibData = {
 		title: "Begriffsschrift, eine der arithmetischen nachgebildete Formelsprache des reinen Denkens",
 		author: "Gottlob Frege",
 		year: 1879,
+		url: "https://archive.org/details/11388662",
 		alternativetitle: "Frege, Begriffsschrift"
 	},
 	"hodges1983enigma": {
@@ -20309,6 +20396,7 @@ window.bibData = {
 		title: "ACM A.M. Turing Award 2024",
 		author: "Association for Computing Machinery",
 		year: 2024,
+		url: "https://web.archive.org/web/2024/https://awards.acm.org/about/2024-turing",
 		alternativetitle: "ACM Turing Award 2024"
 	},
 	"deepmind_about": {

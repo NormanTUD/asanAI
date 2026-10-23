@@ -71,7 +71,18 @@ Von Neumann was a Hungarian-born prodigy who worked on game theory, quantum mech
 
 ### Warren McCulloch and Walter Pitts
 
-In 1943 McCulloch, a neurophysiologist, and Pitts, a self-taught logician, published **“A Logical Calculus of the Ideas Immanent in Nervous Activity.”** They modelled the neuron as an all-or-none threshold unit and showed that networks of such units can express any function of propositional logic; with recurrent loops, the model anticipated the computational generality later formalized in automata theory. The paper is the founding document of neural-network theory. It gave Rosenblatt the unit he would teach, gave Hopfield the binary element his energy model would settle, and gave the field the step nonlinearity that later became the obstacle backpropagation had to overcome (\cite[McCulloch & Pitts, 1943]{mccullochpitts1943}).
+<div style="display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin:0.5em 0 1em;">
+	<figure style="flex:1 1 160px; max-width:210px; margin:0;">
+	<img src="walter_pitts_1954.jpg" alt="Walter Pitts in 1954" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_walter_pitts}. Public domain.</figcaption>
+</figure>
+	<figure style="flex:1 1 220px; max-width:340px; margin:0; align-self:center;">
+	<img src="mcculloch_pitts_neuron.png" alt="Diagram of a McCulloch–Pitts neuron" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_mcculloch_pitts_neuron}. <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>.</figcaption>
+</figure>
+</div>
+
+In 1943 McCulloch, a neurophysiologist, and Pitts, a self-taught logician, published **“A Logical Calculus of the Ideas Immanent in Nervous Activity.”** They modelled the neuron as an all-or-none threshold unit and showed that networks of such units can express any function of propositional logic; with recurrent loops, the model anticipated the computational generality later formalized in automata theory. The paper is the founding document of neural-network theory. It gave Rosenblatt the unit he would teach, gave Hopfield the binary element his energy model would settle, and gave the field the step nonlinearity that later became the obstacle backpropagation had to overcome (\cite[McCulloch & Pitts, 1943]{mccullochpitts1943}). Their 1947 follow-up, **“How We Know Universals,”** extended the model to the perception of auditory and visual form and anticipated the idea that nervous systems compute invariant representations (\cite[Pitts & McCulloch, 1947]{pitts1947universals}). McCulloch collected the programme in \citetitle{mcculloch1965embodiments} (\citeyear{mcculloch1965embodiments}).
 
 Pitts never took a degree. He joined the University of Chicago as a teenager, worked with Norbert Wiener at MIT, and coauthored **“What the Frog's Eye Tells the Frog's Brain”** (1959), which showed that the retina already extracts behaviourally specific features before any central processing — a founding text of computational neuroscience. His later withdrawal from scientific life, after a rupture in the Wiener circle, is one of the field's quiet tragedies (\cite[Lettvin et al., 1959]{lettvin1959frog}).
 
@@ -86,7 +97,12 @@ Rosenblatt was born in New Rochelle in 1928, graduated from the Bronx High Schoo
 
 ### Arthur Samuel
 
-Samuel's checkers player, written at IBM between 1952 and 1967, was the first machine-learning system to attract wide public attention. It learned in two ways: **rote learning** stored analysed positions and their backed-up scores, and **generalization learning** adjusted the coefficients of its evaluation function so that a position's static score tracked the value found by deeper search. His 1959 paper gave the field its name — **machine learning** — and his self-play arrangement is the direct ancestor of temporal-difference learning, TD-Gammon, and AlphaGo (\cite[Samuel, 1959]{samuel1959checkers}).
+<figure style="max-width:360px; margin:0.5em auto 1em;">
+	<img src="ibm_704.jpg" alt="IBM 704 electronic data processing machine" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_ibm_704}. Public domain (NASA). The IBM 704, the machine on which Samuel's later checkers program ran.</figcaption>
+</figure>
+
+Samuel's checkers player, written at IBM between 1952 and 1967, was the first machine-learning system to attract wide public attention. It learned in two ways: **rote learning** stored analysed positions and their backed-up scores, and **generalization learning** adjusted the coefficients of its evaluation function so that a position's static score tracked the value found by deeper search. His 1959 paper gave the field its name — **machine learning** — and his self-play arrangement is the direct ancestor of temporal-difference learning, TD-Gammon, and AlphaGo (\cite[Samuel, 1959]{samuel1959checkers}). An eleven-page follow-up in 1967 reported the later, stronger version and documented how the program's evaluation function had improved through play (\cite[Samuel, 1967]{samuel1967checkers}).
 
 ### Marvin Minsky and Seymour Papert
 
@@ -122,18 +138,29 @@ Hopfield trained as a physicist, worked at Bell Labs and Princeton, and came to 
 
 ### David Rumelhart, Geoffrey Hinton, and Ronald Williams
 
-<figure style="max-width:240px; margin:0.5em auto 1em;">
+<div style="display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin:0.5em 0 1em;">
+	<figure style="flex:1 1 160px; max-width:220px; margin:0;">
+	<img src="david_rumelhart_portrait.jpg" alt="Portrait of David Rumelhart" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_david_rumelhart}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+</figure>
+	<figure style="flex:1 1 160px; max-width:220px; margin:0;">
 	<img src="geoffrey_hinton_portrait.jpg" alt="Portrait of Geoffrey Hinton" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
 	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_geoffrey_hinton}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
 </figure>
+</div>
 
-Rumelhart was a psychologist who led the PDP group at UC San Diego; Hinton was a British-Canadian psychologist who had been arguing for connectionism since the 1970s; Williams was the mathematician who helped make the gradient computation precise. Their 1986 Nature paper showed that the chain rule could be applied backward through a multi-layer network to compute every parameter's gradient in one pass, and demonstrated the idea on tasks that had defeated earlier single-layer systems. The algorithm had been derived earlier — by Werbos in 1974, and independently by others — but the 1986 paper gave it a clean statement, a public demonstration, and a generation of readers. Hinton later co-invented the Boltzmann machine, led the deep-belief-network revival, coauthored AlexNet, left Google in 2023 to warn about risk, and shared the 2024 Nobel Prize in Physics (\cite[Rumelhart et al., 1986]{rumelhart1986}; \cite[Hinton et al., 2006]{hinton2006}; \cite[Nobel Prize, 2024]{nobel2024physics}).
+Rumelhart was a psychologist who led the PDP group at UC San Diego; Hinton was a British-Canadian psychologist who had been arguing for connectionism since the 1970s; Williams was the mathematician who helped make the gradient computation precise. Their 1986 Nature paper showed that the chain rule could be applied backward through a multi-layer network to compute every parameter's gradient in one pass, and demonstrated the idea on tasks that had defeated earlier single-layer systems. The algorithm had been derived earlier — by Werbos in 1974, and independently by others — but the 1986 paper gave it a clean statement, a public demonstration, and a generation of readers. The same PDP volumes collected the wider programme, including Rumelhart and McClelland's past-tense model, which became the standard test case in the rules-versus-associations debate (\cite[Rumelhart & McClelland, 1986]{rumelhart1986pasttense}). Hinton later co-invented the Boltzmann machine, led the deep-belief-network revival, coauthored AlexNet, left Google in 2023 to warn about risk, and shared the 2024 Nobel Prize in Physics (\cite[Rumelhart et al., 1986]{rumelhart1986}; \cite[Hinton et al., 2006]{hinton2006}; \cite[Nobel Prize, 2024]{nobel2024physics}).
 
 Hinton went on to co-invent the Boltzmann machine, lead the deep-belief-network revival of 2006, and coauthor AlexNet in 2012. He shared the 2024 Nobel Prize in Physics with Hopfield, and later became one of the most prominent voices warning about the risks of the technology he helped create (\cite[Hinton et al., 2006]{hinton2006}; \cite[Krizhevsky et al., 2012]{krizhevsky2012imagenet}; \cite[Nobel Prize, 2024]{nobel2024physics}).
 
 ### Paul Werbos
 
-Werbos published the first derivation of backpropagation for neural networks in his 1974 Harvard dissertation, **Beyond Regression**, more than a decade before the 1986 paper made it famous. He also developed **backpropagation through time** for recurrent networks and the **adaptive critic** family of designs — a learned value model guiding a learned policy — which he later called approximate dynamic programming. His experience is the field's standard cautionary tale about how long a good idea can sit unread (\cite[Werbos, 1974]{werbos1974}).
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="paul_werbos_portrait.jpg" alt="Portrait of Paul Werbos" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_paul_werbos}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+</figure>
+
+Werbos published the first derivation of backpropagation for neural networks in his 1974 Harvard dissertation, **Beyond Regression**, more than a decade before the 1986 paper made it famous. He also developed **backpropagation through time** for recurrent networks and the **adaptive critic** family of designs — a learned value model guiding a learned policy — which he later called approximate dynamic programming. His experience is the field's standard cautionary tale about how long a good idea can sit unread (\cite[Werbos, 1974]{werbos1974}; \cite[Werbos, 1990]{werbos1990bptt}).
 
 ### Yann LeCun
 
@@ -163,9 +190,19 @@ Their 1997 **Long Short-Term Memory** introduced the cell state and the gating m
 
 ### Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton
 
-**AlexNet** won the 2012 ImageNet challenge by a margin of more than ten percentage points. It was a deep convolutional network trained on two consumer GPUs, with ReLU activations and dropout — not a new idea in any single component, but the first demonstration that scale, data, and GPU compute could leave hand-engineered vision features behind. The result launched the deep-learning era and made “GPU + big data + a big network” the default recipe (\cite[Krizhevsky et al., 2012]{krizhevsky2012imagenet}).
+<figure style="max-width:520px; margin:0.5em auto 1em;">
+	<img src="alexnet_architecture.png" alt="Diagram of the AlexNet architecture" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_alexnet_architecture}. <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</figcaption>
+</figure>
 
-Sutskever went on to co-invent sequence-to-sequence learning, co-found OpenAI, and serve as its chief scientist through the GPT era. His recurring thesis is that prediction at sufficient scale forces a model to internalize the structure of the data (\cite[Sutskever et al., 2014]{sutskever2014seq2seq}).
+**AlexNet** won the 2012 ImageNet challenge by a margin of more than ten percentage points. It was a deep convolutional network trained on two consumer GPUs, with ReLU activations and dropout — not a new idea in any single component, but the first demonstration that scale, data, and GPU compute could leave hand-engineered vision features behind. The result launched the deep-learning era and made “GPU + big data + a big network” the default recipe (\cite[Krizhevsky et al., 2012]{krizhevsky2012imagenet}). Krizhevsky also built **CIFAR-10** and **CIFAR-100**, the small-image datasets that became standard benchmarks for testing a new architecture cheaply (\cite[Krizhevsky, 2009]{krizhevsky2009cifar}).
+
+<figure style="max-width:190px; margin:0.5em auto 1em;">
+	<img src="ilya_sutskever_portrait.jpg" alt="Portrait of Ilya Sutskever" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_ilya_sutskever}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+</figure>
+
+Sutskever went on to co-invent sequence-to-sequence learning, co-found OpenAI, and serve as its chief scientist through the GPT era. His recurring thesis is that prediction at sufficient scale forces a model to internalize the structure of the data (\cite[Sutskever et al., 2014]{sutskever2014seq2seq}). His 2013 thesis on training recurrent networks remains one of the clearest early statements of that programme (\cite[Sutskever, 2013]{sutskever2013thesis}).
 
 ### Fei-Fei Li
 
@@ -186,7 +223,12 @@ Karpathy was born in Slovakia and moved to Canada as a child; he studied at Toro
 
 ### Andrew Ng
 
-Ng co-founded Google Brain and Coursera, and his machine-learning courses introduced millions of students to the subject. His research on large-scale distributed training — including the DistBelief system — helped establish that neural networks could be trained across many machines, a precondition for the scale era (\cite[Dean et al., 2012]{dean2012large}).
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="andrew_ng_portrait.jpg" alt="Portrait of Andrew Ng" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_andrew_ng}. <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>.</figcaption>
+</figure>
+
+Ng co-founded Google Brain and Coursera, and his machine-learning courses introduced millions of students to the subject. His research on large-scale distributed training — including the DistBelief system — helped establish that neural networks could be trained across many machines, a precondition for the scale era (\cite[Dean et al., 2012]{dean2012large}). The breadth of that work runs from latent Dirichlet allocation, a topic model still used across text analysis (\cite[Blei et al., 2003]{blei2003lda}), to the 2012 Google Brain “cat paper,” which showed that a large unsupervised network could learn a face detector from unlabelled YouTube frames (\cite[Le et al., 2012]{le2012cat}).
 </div>
 
 <div class="md">
