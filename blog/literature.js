@@ -3285,9 +3285,9 @@ window.bibData = {
 	"rosenblattbackprop": {
 		url: "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up",
 		author: "Frank Rosenblatt",
-		year: 1961,
-		title: "Principles of Neurodynamics: Perceptrons and the Theory of Brain Mechanisms",
-		alternativetitle: "Rosenblatt, Principles of Neurodynamics (1961)"
+		year: "1961",
+		title: "Principles of Neurodynamics: Perceptrons and the Theory of Brain Mechanisms (CAL Report No. VQ-196-0-6)",
+		alternativetitle: "Rosenblatt's 1961 CAL Report on Back-Propagating Errors"
 	},
 	"hayakawa": {
 		url: "https://archive.org/details/languageinthough0000siha_k3x0/page/n5/mode/2up",
