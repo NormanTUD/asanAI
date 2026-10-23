@@ -22,6 +22,8 @@ Most of AI's image generators used to be delicate. GANs collapsed, VAEs blurred,
 
 The idea is almost paradoxical: instead of generating an image in one forward pass, **destroy an image with noise step by step, then learn to undo the destruction, one tiny step at a time**. It is a different paradigm from the autoregressive next-token prediction that drives LLMs, even though both produce staggering results.
 
+Not every system in that wave was a diffusion model. **DALL·E** (2021) was a 12-billion-parameter autoregressive Transformer over discrete image tokens, a direct application of the language-model recipe to pixels; **DALL·E 2** then switched to diffusion conditioned on CLIP image embeddings, and the rest of the field followed (\cite[Ramesh et al., 2021]{ramesh2021dalle}). The brief autoregressive detour is a useful reminder that “predict the next token” is architecture-agnostic: the token can be a word, an image patch, or an audio frame.
+
 ## The diffusion process
 
 ### The central trick: destroy, then learn to undo
@@ -208,6 +210,20 @@ The dominant backbone is no longer the U-Net but the **Diffusion Transformer (Di
 Practical models have also become fast. Modern systems generate images in **1–8 network evaluations** through clever solvers (DPM-Solver, EDM) and adversarial distillation (SDXL-Turbo, LCM). Diffusion is no longer slow.
 
 In five years, the technique went from “diffusion as a curiosity” to “diffusion as the universal generative recipe” for images, video, audio, and molecules.
+
+### Diffusion for text: language models that denoise
+
+Text adds a wrinkle: tokens are discrete, so you cannot gradually add Gaussian noise to them. The dominant fix is an **absorbing-state** process. Each token is independently replaced by a special `[MASK]` symbol with probability $\beta_t$ per step, and once masked it stays masked:
+
+$$
+q(x_t^{i} \mid x_0^{i}) = \bar{\alpha}_t\,\delta_{x_t^{i}=x_0^{i}} + (1-\bar{\alpha}_t)\,\delta_{x_t^{i}=m},
+\qquad
+\bar{\alpha}_t = \prod_{s=1}^{t}(1-\beta_s).
+$$
+
+Training is then a weighted masked-token cross-entropy over randomly sampled masking rates — BERT's fill-in-the-blank loss, rearranged into a generative process (\cite[Austin et al., 2021]{austin2021d3pm}). Sampling starts from a fully masked sequence, predicts every masked position in parallel, and commits the confident ones; easy tokens lock in first and hard content words last. This is a **diffusion language model** (dLLM), and it replaces left-to-right decoding with a handful of bidirectional denoising passes.
+
+The promise is throughput: one forward pass can commit many tokens, and the step count is an explicit quality-versus-speed dial. **LLaDA** (2025), an 8B masked-diffusion model trained from scratch, reported instruction following competitive with Llama 3 8B — the first evidence that the recipe holds at open-model scale (\cite[Nie et al., 2025]{nie2025llada}); Inception Labs' Mercury and Google DeepMind's Gemini Diffusion followed. The cost is that bidirectional attention is incompatible with the standard KV cache, so each step recomputes over the whole sequence, and quality parity with autoregressive models at the frontier is still unresolved. The architectural comparison is in [Beyond Transformers](alternative_architectures.php).
 
 ### Try it yourself
 
@@ -515,4 +531,4 @@ async function loadDiffusionModule() {
 }
 </script>
 
-<div class="mn-quiz" data-quiz="diffusion"><script type="application/json">{"title": "Diffusion models", "questions": [{"q": "What does the forward process of a diffusion model do?", "options": ["Gradually adds Gaussian noise until the image is pure noise", "Generates the image", "Compresses the image to a JPEG", "Labels the image"], "answer": 0, "explain": "This part has no learned parameters; it is a fixed, controlled demolition."}, {"q": "What does the network learn in the reverse process?", "options": ["To predict and remove the noise, one small step at a time", "To add more noise", "To classify images", "To write captions"], "answer": 0, "explain": "Starting from noise and denoising repeatedly yields a new sample."}, {"q": "Why does Stable Diffusion work in a latent space?", "options": ["Denoising a compressed representation is far cheaper than working on full-resolution pixels", "Latent space has no noise", "Pixels cannot be denoised", "It needs no network"], "answer": 0, "explain": "An autoencoder compresses the image; diffusion runs there and a decoder turns the result back into pixels."}, {"q": "How does a text prompt steer the image?", "options": ["Text embeddings condition the denoiser, typically through cross-attention", "The prompt is drawn onto the image", "The prompt changes the noise level only", "It does not; images are random"], "answer": 0, "explain": "Guidance strengthens the influence of the condition at every denoising step."}]}</script></div>
+<div class="mn-quiz" data-quiz="diffusion"><script type="application/json">{"title": "Diffusion models", "questions": [{"q": "What does the forward process of a diffusion model do?", "options": ["Gradually adds Gaussian noise until the image is pure noise", "Generates the image", "Compresses the image to a JPEG", "Labels the image"], "answer": 0, "explain": "This part has no learned parameters; it is a fixed, controlled demolition."}, {"q": "What does the network learn in the reverse process?", "options": ["To predict and remove the noise, one small step at a time", "To add more noise", "To classify images", "To write captions"], "answer": 0, "explain": "Starting from noise and denoising repeatedly yields a new sample."}, {"q": "Why does Stable Diffusion work in a latent space?", "options": ["Denoising a compressed representation is far cheaper than working on full-resolution pixels", "Latent space has no noise", "Pixels cannot be denoised", "It needs no network"], "answer": 0, "explain": "An autoencoder compresses the image; diffusion runs there and a decoder turns the result back into pixels."}, {"q": "How does a text prompt steer the image?", "options": ["Text embeddings condition the denoiser, typically through cross-attention", "The prompt is drawn onto the image", "The prompt changes the noise level only", "It does not; images are random"], "answer": 0, "explain": "Guidance strengthens the influence of the condition at every denoising step."}, {"q": "How does a diffusion language model corrupt text?", "options": ["It replaces tokens with a mask symbol and learns to restore them", "It adds Gaussian noise to word vectors", "It deletes the whole vocabulary", "It only reverses word order"], "answer": 0, "explain": "Discrete tokens cannot take Gaussian noise, so masking is the standard absorbing-state corruption."}]}</script></div>
