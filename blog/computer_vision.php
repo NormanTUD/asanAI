@@ -23,6 +23,8 @@ This chapter is everything a vision model does and how it does it. First the **m
 
 The idea of hierarchical visual feature detection was pioneered by \citeauthor{neocognitron}: he published multilayered visual feature-extraction networks as early as 1969 and introduced the \cite[Neocognitron]{neocognitron} in 1979 (English 1980), directly inspired by \citeauthorlastnameand{hubelwiesel}'s Nobel Prize–winning research on the mammalian visual cortex. Years later, in \citeyear{lecun1989backpropagation}, LeCun et al. made the concept practical by combining convolutions with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service. That 1989 system was a research prototype; the first *commercially deployed* convolutional network was the later LeNet-5, built into NCR's check-reading systems and fielded in U.S. banks from about 1996.
 
+The prototype lineage became the mainstream in 2012. **ImageNet** — 14 million images organized by WordNet, with a 1,000-class ILSVRC challenge — gave vision a common benchmark of realistic difficulty (\cite[Deng et al., 2009]{deng2009imagenet}). **AlexNet** (\cite[Krizhevsky et al., 2012]{krizhevsky2012imagenet}) trained a deep CNN on two consumer GPUs and cut the top-5 error to 15.3 percent, beating the runner-up by more than ten points. It was not a new idea — convolutions, ReLU, and dropout all existed — but it was the first demonstration that scale, data, and GPU compute could leave hand-engineered features behind. The third AI boom is usually dated from that result.
+
 \citeauthorlastnameand{hubelwiesel}'s paper serves as the direct biological blueprint for Convolutional Neural Networks (CNNs):
 
 * **Local Connectivity:** Cells respond only to small portions of the visual field (Receptive Fields).
