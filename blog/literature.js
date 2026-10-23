@@ -19879,6 +19879,19 @@ window.bibData = {
 		author: "Frank Rosenblatt",
 		year: 1967,
 		alternativetitle: "Rosenblatt on biological memory"
+	},
+	"saki1911clovis": {
+		url: "https://www.gutenberg.org/ebooks/3688",
+		title: "The Chronicles of Clovis",
+		author: "Saki (H. H. Munro)",
+		year: 1911,
+		alternativetitle: "Saki, The Chronicles of Clovis"
+	},
+	"minsky1986society": {
+		title: "The Society of Mind",
+		author: "Marvin Minsky",
+		year: 1986,
+		alternativetitle: "Minsky, The Society of Mind"
 	}
 
 };
