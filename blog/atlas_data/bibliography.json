@@ -5728,7 +5728,7 @@
    "title": "Backpropagation",
    "author": "David E. Rumelhart, Geoffrey E. Hinton, Ronald J. Williams",
    "year": "",
-   "url": ""
+   "url": "https://doi.org/10.1038/323533a0"
   },
   "krizhevsky2012imagenet": {
    "title": "ImageNet Classification with Deep Convolutional Neural Networks",
@@ -5776,7 +5776,7 @@
    "title": "Adaptive Switching Circuits",
    "author": "Bernard Widrow, Marcian Hoff",
    "year": "",
-   "url": ""
+   "url": "https://isl.stanford.edu/~widrow/papers/c1960adaptiveswitching.pdf"
   },
   "elman1990finding": {
    "title": "Finding Structure in Time",
@@ -5794,19 +5794,19 @@
    "title": "Sequence to Sequence Learning with Neural Networks",
    "author": "Ilya Sutskever, Oriol Vinyals, Quoc V. Le",
    "year": "",
-   "url": ""
+   "url": "https://arxiv.org/abs/1409.3215"
   },
   "christiano2017rlhf": {
    "title": "Deep Reinforcement Learning from Human Preferences",
    "author": "Paul F. Christiano, Jan Leike, Tom B. Brown, Miljan Martic, Shane Legg, Dario Amodei",
    "year": "",
-   "url": ""
+   "url": "https://arxiv.org/abs/1706.03741"
   },
   "brown2020gpt3": {
    "title": "Language Models are Few-Shot Learners",
    "author": "Tom B. Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, et al.",
    "year": "",
-   "url": ""
+   "url": "https://arxiv.org/abs/2005.14165"
   },
   "laplace1812analytic": {
    "title": "Théorie analytique des probabilités",
@@ -6161,6 +6161,12 @@
    "author": "David E. Rumelhart, Geoffrey E. Hinton, James L. McClelland",
    "year": "",
    "url": "https://stanford.edu/~jlmcc/papers/PDP/Volume%201/Chap8_PDP86.pdf"
+  },
+  "rumelhart1986pasttense": {
+   "title": "On Learning the Past Tenses of English Verbs",
+   "author": "David E. Rumelhart, James L. McClelland",
+   "year": "",
+   "url": "https://stanford.edu/~jlmcc/papers/PDP/Volume%202/Chap18_PDP86.pdf"
   },
   "radford2021clip": {
    "title": "Learning Transferable Visual Models From Natural Language Supervision",
@@ -6745,8 +6751,8 @@
    "url": "https://arxiv.org/abs/2311.12022"
   },
   "chollet2024arcagi": {
-   "title": "ARC-AGI",
-   "author": "François Chollet",
+   "title": "ARC Prize 2024: Technical Report",
+   "author": "François Chollet, Mike Knoop, Gregory Kamradt, Bryan Landers",
    "year": "",
    "url": "https://arxiv.org/abs/2412.04604"
   },
@@ -8741,6 +8747,12 @@
    "author": "Ian J. Goodfellow, Jean Pouget-Abadie, Mehdi Mirza, Bing Xu, David Warde-Farley, Sherjil Ozair, Aaron Courville, Yoshua Bengio",
    "year": "",
    "url": "https://arxiv.org/abs/1406.2661"
+  },
+  "goodfellow2016deep": {
+   "title": "Deep Learning",
+   "author": "Ian Goodfellow, Yoshua Bengio, Aaron Courville",
+   "year": "",
+   "url": "https://www.deeplearningbook.org/"
   },
   "vincent2008dae": {
    "title": "Extracting and Composing Robust Features with Denoising Autoencoders",
@@ -16602,11 +16614,71 @@
    "year": "",
    "url": "https://commons.wikimedia.org/wiki/File:John_Hopfield_2016.jpg"
   },
+  "img_andrew_ng": {
+   "title": "Andrew Ng at TechCrunch Disrupt SF 2017",
+   "author": "TechCrunch",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Andrew_Ng_at_TechCrunch_Disrupt_SF_2017.jpg"
+  },
+  "img_david_rumelhart": {
+   "title": "David Rumelhart at IJCNN Seattle, 1991",
+   "author": "Rolf Kickuth",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:DavidRumelhart-IJCNNseattle1991-07-08.jpg"
+  },
+  "img_david_silver": {
+   "title": "David Silver",
+   "author": "David Silver",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:David_Silver.jpg"
+  },
+  "img_ian_goodfellow": {
+   "title": "Ian Goodfellow",
+   "author": "Ian Goodfellow",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Ian_Goodfellow_(cropped).jpg"
+  },
+  "img_ilya_sutskever": {
+   "title": "Ilya Sutskever in Tel Aviv, 2023",
+   "author": "Eladkarmel",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Ilya_Sutskever_and_Sam_Altman_in_TAU_(cropped).jpg"
+  },
+  "img_paul_werbos": {
+   "title": "Paul Werbos at IJCNN Seattle, 1991",
+   "author": "Rolf Kickuth",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:PaulWerbos-IJCNNseattle1991-07-08.jpg"
+  },
+  "img_walter_pitts": {
+   "title": "Walter Pitts in 1954",
+   "author": "Francis Bello",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg"
+  },
+  "img_alexnet_architecture": {
+   "title": "AlexNet architecture",
+   "author": "Daniel Voigt Godoy",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:AlexNet_architecture.png"
+  },
+  "img_ibm_704": {
+   "title": "IBM 704 electronic data processing machine",
+   "author": "NASA",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:IBM_Electronic_Data_Processing_Machine_-_GPN-2000-001881.jpg"
+  },
+  "img_mcculloch_pitts_neuron": {
+   "title": "Diagram of a McCulloch–Pitts cell",
+   "author": "Adrian Lange",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg"
+  },
   "lettvin1959frog": {
    "title": "What the Frog's Eye Tells the Frog's Brain",
    "author": "Jerome Y. Lettvin, Humberto R. Maturana, Warren S. McCulloch, Walter H. Pitts",
    "year": "",
-   "url": ""
+   "url": "https://doi.org/10.1109/JRPROC.1959.287195"
   },
   "boole1854": {
    "title": "An Investigation of the Laws of Thought",
@@ -16624,19 +16696,79 @@
    "title": "On Computable Numbers, with an Application to the Entscheidungsproblem",
    "author": "Alan M. Turing",
    "year": "",
-   "url": ""
+   "url": "https://doi.org/10.1112/plms/s2-42.1.230"
   },
   "mccarthy1955dartmouth": {
    "title": "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
    "author": "John McCarthy, Marvin L. Minsky, Nathaniel Rochester, Claude E. Shannon",
    "year": "",
-   "url": ""
+   "url": "https://web.archive.org/web/2023/http://www-formal.stanford.edu/jmc/history/dartmouth/dartmouth.html"
   },
   "newell1956logic": {
    "title": "The Logic Theory Machine: A Complex Information Processing System",
    "author": "Allen Newell, Herbert A. Simon",
    "year": "",
-   "url": ""
+   "url": "https://web.archive.org/web/2024/https://www.rand.org/pubs/papers/P868.html"
+  },
+  "krizhevsky2009cifar": {
+   "title": "Learning Multiple Layers of Features from Tiny Images",
+   "author": "Alex Krizhevsky",
+   "year": "",
+   "url": "https://www.cs.toronto.edu/~kriz/learning-features-2009-TR.pdf"
+  },
+  "le2012cat": {
+   "title": "Building High-level Features Using Large Scale Unsupervised Learning",
+   "author": "Quoc V. Le, Marc'Aurelio Ranzato, Rajat Monga, Matthieu Devin, Kai Chen, Greg S. Corrado, Jeff Dean, Andrew Y. Ng",
+   "year": "",
+   "url": "https://arxiv.org/abs/1112.6209"
+  },
+  "goodfellow2015adversarial": {
+   "title": "Explaining and Harnessing Adversarial Examples",
+   "author": "Ian J. Goodfellow, Jonathon Shlens, Christian Szegedy",
+   "year": "",
+   "url": "https://arxiv.org/abs/1412.6572"
+  },
+  "chollet2016xception": {
+   "title": "Xception: Deep Learning with Depthwise Separable Convolutions",
+   "author": "François Chollet",
+   "year": "",
+   "url": "https://arxiv.org/abs/1610.02357"
+  },
+  "werbos1990bptt": {
+   "title": "Backpropagation Through Time: What It Does and How to Do It",
+   "author": "Paul J. Werbos",
+   "year": "",
+   "url": "https://doi.org/10.1109/5.58337"
+  },
+  "sutskever2013thesis": {
+   "title": "Training Recurrent Neural Networks",
+   "author": "Ilya Sutskever",
+   "year": "",
+   "url": "https://www.cs.utoronto.ca/~ilya/pubs/ilya_sutskever_phd_thesis.pdf"
+  },
+  "samuel1967checkers": {
+   "title": "Some Studies in Machine Learning Using the Game of Checkers. II—Recent Progress",
+   "author": "Arthur L. Samuel",
+   "year": "",
+   "url": "https://doi.org/10.1147/rd.116.0601"
+  },
+  "pitts1947universals": {
+   "title": "How We Know Universals: The Perception of Auditory and Visual Forms",
+   "author": "Walter Pitts, Warren S. McCulloch",
+   "year": "",
+   "url": "https://doi.org/10.1007/BF02478291"
+  },
+  "silver2021reward": {
+   "title": "Reward is Enough",
+   "author": "David Silver, Satinder Singh, Doina Precup, Richard S. Sutton",
+   "year": "",
+   "url": "https://doi.org/10.1016/j.artint.2021.103535"
+  },
+  "hassabis2007patients": {
+   "title": "Patients with Hippocampal Amnesia Cannot Imagine New Experiences",
+   "author": "Demis Hassabis, Dharshan Kumaran, S. D. Vann, Eleanor A. Maguire",
+   "year": "",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1805588/"
   },
   "kudo2018sentencepiece": {
    "title": "SentencePiece: A simple and language independent subword tokenizer and detokenizer for Neural Text Processing",
@@ -16702,7 +16834,7 @@
    "title": "Begriffsschrift, eine der arithmetischen nachgebildete Formelsprache des reinen Denkens",
    "author": "Gottlob Frege",
    "year": "",
-   "url": ""
+   "url": "https://archive.org/details/11388662"
   },
   "hodges1983enigma": {
    "title": "Alan Turing: The Enigma",
@@ -16732,7 +16864,7 @@
    "title": "ACM A.M. Turing Award 2024",
    "author": "Association for Computing Machinery",
    "year": "",
-   "url": ""
+   "url": "https://web.archive.org/web/2024/https://awards.acm.org/about/2024-turing"
   },
   "deepmind_about": {
    "title": "About Google DeepMind",
@@ -18855,7 +18987,8 @@
    "inceptionism"
   ],
   "alphafold3": [
-   "ai_for_science"
+   "ai_for_science",
+   "people_of_ai"
   ],
   "alphamissense": [
    "ai_for_science"
@@ -19398,7 +19531,8 @@
    "history"
   ],
   "mcculloch1965embodiments": [
-   "history"
+   "history",
+   "people_of_ai"
   ],
   "abraham2003mcculloch": [
    "history"
@@ -20691,7 +20825,8 @@
    "beyond_llms"
   ],
   "schrittwieser2020muzero": [
-   "beyond_llms"
+   "beyond_llms",
+   "people_of_ai"
   ],
   "rechenberg1973es": [
    "beyond_llms"
@@ -22856,10 +22991,25 @@
   "img_john_von_neumann": [
    "people_of_ai"
   ],
+  "img_walter_pitts": [
+   "people_of_ai"
+  ],
+  "img_mcculloch_pitts_neuron": [
+   "people_of_ai"
+  ],
+  "pitts1947universals": [
+   "people_of_ai"
+  ],
   "lettvin1959frog": [
    "people_of_ai"
   ],
   "img_frank_rosenblatt": [
+   "people_of_ai"
+  ],
+  "img_ibm_704": [
+   "people_of_ai"
+  ],
+  "samuel1967checkers": [
    "people_of_ai"
   ],
   "img_marvin_minsky": [
@@ -22879,7 +23029,22 @@
   "nobel2024physics": [
    "people_of_ai"
   ],
+  "img_david_rumelhart": [
+   "people_of_ai"
+  ],
   "img_geoffrey_hinton": [
+   "people_of_ai"
+  ],
+  "rumelhart1986pasttense": [
+   "people_of_ai"
+  ],
+  "ackley1985boltzmann": [
+   "people_of_ai"
+  ],
+  "img_paul_werbos": [
+   "people_of_ai"
+  ],
+  "werbos1990bptt": [
    "people_of_ai"
   ],
   "img_yann_lecun": [
@@ -22891,12 +23056,33 @@
   "bengio2023managing": [
    "people_of_ai"
   ],
+  "img_alexnet_architecture": [
+   "people_of_ai"
+  ],
+  "krizhevsky2009cifar": [
+   "people_of_ai"
+  ],
+  "img_ilya_sutskever": [
+   "people_of_ai"
+  ],
   "sutskever2014seq2seq": [
    "people_of_ai",
    "recurrent_networks"
   ],
+  "sutskever2013thesis": [
+   "people_of_ai"
+  ],
   "deng2009imagenet": [
    "computer_vision",
+   "people_of_ai"
+  ],
+  "img_ian_goodfellow": [
+   "people_of_ai"
+  ],
+  "goodfellow2015adversarial": [
+   "people_of_ai"
+  ],
+  "goodfellow2016deep": [
    "people_of_ai"
   ],
   "img_andrej_karpathy": [
@@ -22911,13 +23097,31 @@
   "karpathy_ai": [
    "people_of_ai"
   ],
+  "img_andrew_ng": [
+   "people_of_ai"
+  ],
   "dean2012large": [
+   "people_of_ai"
+  ],
+  "blei2003lda": [
+   "people_of_ai"
+  ],
+  "le2012cat": [
+   "people_of_ai"
+  ],
+  "img_david_silver": [
    "people_of_ai"
   ],
   "img_demis_hassabis": [
    "people_of_ai"
   ],
+  "hassabis2007patients": [
+   "people_of_ai"
+  ],
   "deepmind_about": [
+   "people_of_ai"
+  ],
+  "silver2021reward": [
    "people_of_ai"
   ],
   "img_john_jumper": [
@@ -22930,6 +23134,9 @@
    "people_of_ai"
   ],
   "img_francois_chollet": [
+   "people_of_ai"
+  ],
+  "chollet2016xception": [
    "people_of_ai"
   ],
   "chollet2024arcagi": [
@@ -24895,7 +25102,7 @@
    ]
   },
   "Yoshua Bengio": {
-   "count": 20,
+   "count": 21,
    "minyear": 1994,
    "maxyear": 2011,
    "keys": [
@@ -24908,6 +25115,7 @@
     "bengio2013representation",
     "bornschein2014reweighted",
     "goodfellow2014gan",
+    "goodfellow2016deep",
     "vincent2008dae",
     "oreshkin2020nbeats",
     "velickovic2018gat",
@@ -26536,13 +26744,14 @@
    ]
   },
   "Marc'Aurelio Ranzato": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "lecun2007ebm",
     "lecun2006",
-    "conneau2018word"
+    "conneau2018word",
+    "le2012cat"
    ]
   },
   "Fu Jie Huang": {
@@ -26658,12 +26867,13 @@
    ]
   },
   "James L. McClelland": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "saxe2014deep",
     "rumelhart1986pdp",
+    "rumelhart1986pasttense",
     "saxe2014exact"
    ]
   },
@@ -29253,11 +29463,12 @@
    ]
   },
   "Arthur L. Samuel": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "samuel1959checkers"
+    "samuel1959checkers",
+    "samuel1967checkers"
    ]
   },
   "Richard E. Fikes": {
@@ -32891,14 +33102,15 @@
    ]
   },
   "Jeff Dean": {
-   "count": 4,
+   "count": 5,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "pope2023efficiently",
     "hinton2015distilling",
     "shazeer2017moe",
-    "chung2022flan"
+    "chung2022flan",
+    "le2012cat"
    ]
   },
   "Yaniv Leviathan": {
@@ -35758,7 +35970,7 @@
    ]
   },
   "Ilya Sutskever": {
-   "count": 13,
+   "count": 14,
    "minyear": 2011,
    "maxyear": 2014,
    "keys": [
@@ -35774,7 +35986,8 @@
     "nakkiran2019deepdd",
     "silver2016alphago",
     "whisper2022",
-    "radford2022whisper"
+    "radford2022whisper",
+    "sutskever2013thesis"
    ]
   },
   "Alexander Rush": {
@@ -36728,12 +36941,13 @@
    ]
   },
   "Matthieu Devin": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "tensorflow2016",
-    "dean2012large"
+    "dean2012large",
+    "le2012cat"
    ]
   },
   "Sanjay Ghemawat": {
@@ -36779,12 +36993,13 @@
    ]
   },
   "Rajat Monga": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "tensorflow2016",
-    "dean2012large"
+    "dean2012large",
+    "le2012cat"
    ]
   },
   "Sherry Moore": {
@@ -37253,11 +37468,12 @@
    ]
   },
   "Walter Pitts": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "pittsfirstpaper"
+    "pittsfirstpaper",
+    "pitts1947universals"
    ]
   },
   "Alston Scott Householder": {
@@ -37505,7 +37721,7 @@
    ]
   },
   "Andrew Y. Ng": {
-   "count": 6,
+   "count": 7,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -37514,7 +37730,8 @@
     "blei2003lda",
     "ng2000irl",
     "abbeel2004irl",
-    "dean2012large"
+    "dean2012large",
+    "le2012cat"
    ]
   },
   "Dan C. Cireşan": {
@@ -38657,13 +38874,14 @@
    ]
   },
   "Alex Krizhevsky": {
-   "count": 3,
+   "count": 4,
    "minyear": 2012,
    "maxyear": 2014,
    "keys": [
     "srivastava2014dropout",
     "krizhevsky2012imagenet",
-    "hinton2011capsules"
+    "hinton2011capsules",
+    "krizhevsky2009cifar"
    ]
   },
   "Robert Tibshirani": {
@@ -39090,7 +39308,7 @@
    ]
   },
   "Quoc V. Le": {
-   "count": 10,
+   "count": 11,
    "minyear": 2017,
    "maxyear": 2019,
    "keys": [
@@ -39103,7 +39321,8 @@
     "real2019amoeba",
     "smithle2018bayesian",
     "clark2020electra",
-    "dean2012large"
+    "dean2012large",
+    "le2012cat"
    ]
   },
   "Fran\\u00e7ois Chollet": {
@@ -39696,12 +39915,13 @@
    ]
   },
   "Kai Chen": {
-   "count": 2,
+   "count": 3,
    "minyear": 2013,
    "maxyear": 2013,
    "keys": [
     "mikolov2013word2vec",
-    "dean2012large"
+    "dean2012large",
+    "le2012cat"
    ]
   },
   "Greg Corrado": {
@@ -39764,12 +39984,13 @@
    ]
   },
   "David E. Rumelhart": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "rumelhart1986",
     "rumelhart1986pdp",
+    "rumelhart1986pasttense",
     "rumelhart1986learning"
    ]
   },
@@ -40244,12 +40465,13 @@
    ]
   },
   "Aaron Courville": {
-   "count": 4,
+   "count": 5,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "bengio2013representation",
     "goodfellow2014gan",
+    "goodfellow2016deep",
     "rahaman2019spectral",
     "shen2021structformer"
    ]
@@ -42504,12 +42726,37 @@
    ]
   },
   "François Chollet": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "chollet2024arcagi",
+    "chollet2016xception",
     "fchollet_site"
+   ]
+  },
+  "Mike Knoop": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "chollet2024arcagi"
+   ]
+  },
+  "Gregory Kamradt": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "chollet2024arcagi"
+   ]
+  },
+  "Bryan Landers": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "chollet2024arcagi"
    ]
   },
   "Rishi Bommasani": {
@@ -42530,7 +42777,7 @@
    ]
   },
   "Richard S. Sutton": {
-   "count": 6,
+   "count": 7,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -42539,7 +42786,8 @@
     "sutton1988td",
     "sutton1991dyna",
     "sutton2018rlbook",
-    "sutton2019bitterlesson"
+    "sutton2019bitterlesson",
+    "silver2021reward"
    ]
   },
   "Andrew G. Barto": {
@@ -42562,7 +42810,7 @@
    ]
   },
   "David Silver": {
-   "count": 6,
+   "count": 8,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -42571,7 +42819,9 @@
     "silver2016go",
     "silver2018zero",
     "schrittwieser2020muzero",
-    "silver2016alphago"
+    "silver2016alphago",
+    "img_david_silver",
+    "silver2021reward"
    ]
   },
   "Adria Puigdomènech Badia": {
@@ -44625,12 +44875,13 @@
    ]
   },
   "NASA": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "cosmic_web_image",
-    "img_deep_space_1"
+    "img_deep_space_1",
+    "img_ibm_704"
    ]
   },
   "ESA": {
@@ -46573,11 +46824,12 @@
    ]
   },
   "Ian J. Goodfellow": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "goodfellow2014gan"
+    "goodfellow2014gan",
+    "goodfellow2015adversarial"
    ]
   },
   "Jean Pouget-Abadie": {
@@ -46610,6 +46862,15 @@
    "maxyear": null,
    "keys": [
     "goodfellow2014gan"
+   ]
+  },
+  "Ian Goodfellow": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "goodfellow2016deep",
+    "img_ian_goodfellow"
    ]
   },
   "Hugo Larochelle": {
@@ -48256,12 +48517,13 @@
    ]
   },
   "Dharshan Kumaran": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "mnih2015dqn",
-    "silver2018zero"
+    "silver2018zero",
+    "hassabis2007patients"
    ]
   },
   "Daan Wierstra": {
@@ -48273,7 +48535,7 @@
    ]
   },
   "Demis Hassabis": {
-   "count": 6,
+   "count": 7,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -48282,7 +48544,8 @@
     "silver2018zero",
     "schrittwieser2020muzero",
     "silver2016alphago",
-    "romera2023funsearch"
+    "romera2023funsearch",
+    "hassabis2007patients"
    ]
   },
   "Vijay R. Konda": {
@@ -55816,11 +56079,12 @@
    ]
   },
   "Christian Szegedy": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "ioffe2015batchnorm"
+    "ioffe2015batchnorm",
+    "goodfellow2015adversarial"
    ]
   },
   "Jeremy Cohen": {
@@ -56267,13 +56531,14 @@
    ]
   },
   "Warren S. McCulloch": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "mcculloch1965embodiments",
     "mcculloch1945heterarchy",
-    "lettvin1959frog"
+    "lettvin1959frog",
+    "pitts1947universals"
    ]
   },
   "Lawrence G. Roberts": {
@@ -58891,11 +59156,12 @@
    ]
   },
   "Francis Bello": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "walter_pitts_photo"
+    "walter_pitts_photo",
+    "img_walter_pitts"
    ]
   },
   "Adolph Boÿ": {
@@ -59819,6 +60085,47 @@
     "img_john_hopfield"
    ]
   },
+  "TechCrunch": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_andrew_ng"
+   ]
+  },
+  "Rolf Kickuth": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_david_rumelhart",
+    "img_paul_werbos"
+   ]
+  },
+  "Eladkarmel": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_ilya_sutskever"
+   ]
+  },
+  "Daniel Voigt Godoy": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_alexnet_architecture"
+   ]
+  },
+  "Adrian Lange": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_mcculloch_pitts_neuron"
+   ]
+  },
   "Jerome Y. Lettvin": {
    "count": 1,
    "minyear": null,
@@ -59841,6 +60148,62 @@
    "maxyear": null,
    "keys": [
     "mccarthy1955dartmouth"
+   ]
+  },
+  "Greg S. Corrado": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "le2012cat"
+   ]
+  },
+  "Jonathon Shlens": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "goodfellow2015adversarial"
+   ]
+  },
+  "Paul J. Werbos": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "werbos1990bptt"
+   ]
+  },
+  "Satinder Singh": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "silver2021reward"
+   ]
+  },
+  "Doina Precup": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "silver2021reward"
+   ]
+  },
+  "S. D. Vann": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "hassabis2007patients"
+   ]
+  },
+  "Eleanor A. Maguire": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "hassabis2007patients"
    ]
   },
   "John Richardson": {

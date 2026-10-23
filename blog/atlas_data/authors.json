@@ -279,10 +279,11 @@
   "city": "Montreal, Canada",
   "year": 2013.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "bengio2013representation",
    "goodfellow2014gan",
+   "goodfellow2016deep",
    "rahaman2019spectral",
    "shen2021structformer"
   ],
@@ -2023,11 +2024,12 @@
   "city": "Toronto, Canada",
   "year": 2012.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "srivastava2014dropout",
    "krizhevsky2012imagenet",
-   "hinton2011capsules"
+   "hinton2011capsules",
+   "krizhevsky2009cifar"
   ],
   "cited_in": [
    "beyond_llms",
@@ -4193,14 +4195,15 @@
   "city": "Palo Alto, United States",
   "year": 2003.0,
   "conf": 1,
-  "works": 6,
+  "works": 7,
   "keys": [
    "raina2009large",
    "socher2011",
    "blei2003lda",
    "ng2000irl",
    "abbeel2004irl",
-   "dean2012large"
+   "dean2012large",
+   "le2012cat"
   ],
   "cited_in": [
    "beyond_llms",
@@ -5784,9 +5787,10 @@
   "city": "New York, United States",
   "year": 1959.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "samuel1959checkers"
+   "samuel1959checkers",
+   "samuel1967checkers"
   ],
   "cited_in": [
    "history",
@@ -12004,12 +12008,14 @@
   "city": "Mountain View, USA",
   "year": 2015.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "ioffe2015batchnorm"
+   "ioffe2015batchnorm",
+   "goodfellow2015adversarial"
   ],
   "cited_in": [
-   "loss_landscape"
+   "loss_landscape",
+   "people_of_ai"
   ]
  },
  {
@@ -20596,10 +20602,11 @@
   "city": "San Diego, USA",
   "year": 1986.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "rumelhart1986",
    "rumelhart1986pdp",
+   "rumelhart1986pasttense",
    "rumelhart1986learning"
   ],
   "cited_in": [
@@ -20695,6 +20702,7 @@
    "boltzmannlearning"
   ],
   "cited_in": [
+   "people_of_ai",
    "untold_history"
   ]
  },
@@ -21094,7 +21102,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "loss_landscape"
+   "loss_landscape",
+   "people_of_ai"
   ]
  },
  {
@@ -21276,14 +21285,16 @@
   "city": "London, United Kingdom",
   "year": 2016.0,
   "conf": 1,
-  "works": 6,
+  "works": 8,
   "keys": [
    "mnih2013dqn",
    "mnih2015dqn",
    "silver2016go",
    "silver2018zero",
    "schrittwieser2020muzero",
-   "silver2016alphago"
+   "silver2016alphago",
+   "img_david_silver",
+   "silver2021reward"
   ],
   "cited_in": [
    "ai_and_society",
@@ -21661,14 +21672,15 @@
   "city": "London, United Kingdom",
   "year": 2016.0,
   "conf": 1,
-  "works": 6,
+  "works": 7,
   "keys": [
    "mnih2015dqn",
    "silver2016go",
    "silver2018zero",
    "schrittwieser2020muzero",
    "silver2016alphago",
-   "romera2023funsearch"
+   "romera2023funsearch",
+   "hassabis2007patients"
   ],
   "cited_in": [
    "ai_and_society",
@@ -21952,10 +21964,11 @@
   "city": "London, United Kingdom",
   "year": 2015.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "mnih2015dqn",
-   "silver2018zero"
+   "silver2018zero",
+   "hassabis2007patients"
   ],
   "cited_in": [
    "ai_for_science",
@@ -23285,7 +23298,8 @@
    "schrittwieser2020muzero"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "people_of_ai"
   ]
  },
  {
@@ -25906,9 +25920,10 @@
   "city": "Mountain View, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "chollet2024arcagi",
+   "chollet2016xception",
    "fchollet_site"
   ],
   "cited_in": [
@@ -31055,9 +31070,10 @@
   "city": "Montreal, Canada",
   "year": 2014.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "goodfellow2014gan"
+   "goodfellow2014gan",
+   "goodfellow2015adversarial"
   ],
   "cited_in": [
    "beyond_llms",
@@ -31393,7 +31409,7 @@
   "city": "San Francisco, United States",
   "year": 2014.0,
   "conf": 1,
-  "works": 13,
+  "works": 14,
   "keys": [
    "gpt2",
    "firstgpt",
@@ -31407,7 +31423,8 @@
    "nakkiran2019deepdd",
    "silver2016alphago",
    "whisper2022",
-   "radford2022whisper"
+   "radford2022whisper",
+   "sutskever2013thesis"
   ],
   "cited_in": [
    "ai_and_society",
@@ -33300,15 +33317,17 @@
   "city": "San Diego, United States",
   "year": 1986.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "saxe2014deep",
    "rumelhart1986pdp",
+   "rumelhart1986pasttense",
    "saxe2014exact"
   ],
   "cited_in": [
    "history",
-   "loss_landscape"
+   "loss_landscape",
+   "people_of_ai"
   ]
  },
  {
@@ -34352,17 +34371,19 @@
   "city": "Mountain View, United States",
   "year": 2016.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "pope2023efficiently",
    "hinton2015distilling",
    "shazeer2017moe",
-   "chung2022flan"
+   "chung2022flan",
+   "le2012cat"
   ],
   "cited_in": [
    "beyond_llms",
    "finetuninglab",
    "mixture_of_experts",
+   "people_of_ai",
    "production_serving",
    "transformer",
    "unexpected_capabilities"
@@ -37342,7 +37363,8 @@
    "alphamissense"
   ],
   "cited_in": [
-   "ai_for_science"
+   "ai_for_science",
+   "people_of_ai"
   ]
  },
  {
@@ -38208,10 +38230,11 @@
   "city": "Mountain View, United States",
   "year": 2013.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "mikolov2013word2vec",
-   "dean2012large"
+   "dean2012large",
+   "le2012cat"
   ],
   "cited_in": [
    "attentionlab",
@@ -42582,11 +42605,12 @@
   "city": "Menlo Park, USA",
   "year": 2018.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "lecun2007ebm",
    "lecun2006",
    "conneau2018word",
+   "le2012cat",
    "dean2012large"
   ],
   "cited_in": [
@@ -44157,10 +44181,11 @@
   "city": "Mountain View, USA",
   "year": 2016.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "tensorflow2016",
-   "dean2012large"
+   "dean2012large",
+   "le2012cat"
   ],
   "cited_in": [
    "autodiff",
@@ -44951,6 +44976,7 @@
   ],
   "cited_in": [
    "beyond_llms",
+   "people_of_ai",
    "transformer"
   ]
  },
@@ -46865,14 +46891,16 @@
   "city": "Washington, USA",
   "year": 2020.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "cosmic_web_image",
-   "img_deep_space_1"
+   "img_deep_space_1",
+   "img_ibm_704"
   ],
   "cited_in": [
    "atlas",
    "foam_of_meaning",
+   "people_of_ai",
    "untold_history"
   ]
  },
@@ -51540,7 +51568,7 @@
   "city": "Mountain View, USA",
   "year": 2019.0,
   "conf": 1,
-  "works": 10,
+  "works": 11,
   "keys": [
    "trinh2018commonsense",
    "ramachandran2017swish",
@@ -51551,7 +51579,8 @@
    "real2019amoeba",
    "smithle2018bayesian",
    "clark2020electra",
-   "dean2012large"
+   "dean2012large",
+   "le2012cat"
   ],
   "cited_in": [
    "activationlab",
@@ -52029,10 +52058,11 @@
   "city": "Mountain View, USA",
   "year": 2016.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "tensorflow2016",
-   "dean2012large"
+   "dean2012large",
+   "le2012cat"
   ],
   "cited_in": [
    "autodiff",
@@ -52895,14 +52925,15 @@
   "city": "Edmonton, Canada",
   "year": 2019.0,
   "conf": 1,
-  "works": 6,
+  "works": 7,
   "keys": [
    "sutton2018reinforcement",
    "sutton1996sarsa",
    "sutton1988td",
    "sutton1991dyna",
    "sutton2018rlbook",
-   "sutton2019bitterlesson"
+   "sutton2019bitterlesson",
+   "silver2021reward"
   ],
   "cited_in": [
    "beyond_llms",
@@ -57759,7 +57790,8 @@
    "schrittwieser2020muzero"
   ],
   "cited_in": [
-   "beyond_llms"
+   "beyond_llms",
+   "people_of_ai"
   ]
  },
  {
@@ -59821,6 +59853,7 @@
    "boltzmannlearning"
   ],
   "cited_in": [
+   "people_of_ai",
    "untold_history"
   ]
  },
@@ -63246,12 +63279,14 @@
   "city": "Chicago, USA",
   "year": 1943.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "pittsfirstpaper"
+   "pittsfirstpaper",
+   "pitts1947universals"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "people_of_ai"
   ]
  },
  {
@@ -67206,7 +67241,7 @@
   "city": "Montreal, Canada",
   "year": 2011.0,
   "conf": 1,
-  "works": 20,
+  "works": 21,
   "keys": [
    "cho2014gru",
    "bahdanau2014",
@@ -67217,6 +67252,7 @@
    "bengio2013representation",
    "bornschein2014reweighted",
    "goodfellow2014gan",
+   "goodfellow2016deep",
    "vincent2008dae",
    "oreshkin2020nbeats",
    "velickovic2018gat",

@@ -964,5 +964,34 @@
     "cited_in": ["hyperparameters"],
     "bibkeys": [],
     "conf": "stated"
+  },
+  {
+    "id": "person-francois-chollet",
+    "name": "François Chollet",
+    "type": "person",
+    "loc": "Mountain View, California, USA",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "1989-present",
+    "active": [2015, 2026],
+    "blurb": "Creator of Keras and ARC-AGI; author of On the Measure of Intelligence, which defines intelligence as skill-acquisition efficiency.",
+    "cited_in": ["people_of_ai", "unexpected_capabilities", "philosophy"],
+    "bibkeys": ["chollet2019measure", "chollet2016xception", "chollet2024arcagi"],
+    "conf": "known"
+  },
+  {
+    "id": "person-ian-goodfellow",
+    "name": "Ian Goodfellow",
+    "type": "person",
+    "loc": "Mountain View, California, USA",
+    "lat": 37.39,
+    "lng": -122.08,
+    "years": "1987-present",
+    "active": [2014, 2026],
+    "blurb": "Invented the generative adversarial network and co-authored the Deep Learning textbook; also systematized adversarial examples.",
+    "cited_in": ["people_of_ai"],
+    "bibkeys": ["goodfellow2014gan", "goodfellow2015adversarial", "goodfellow2016deep"],
+    "conf": "known"
   }
+
 ]
