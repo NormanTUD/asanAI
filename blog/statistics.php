@@ -125,7 +125,7 @@ On January 1, 1801, the dwarf planet **Ceres** was spotted by \citeauthor{ceresd
 </div>
 
 <figure class="md">
-    <img style="width: 100%" src="ceres_path.png" alt="The apparent path of Ceres in the Night Sky" />
+    <img style="width: 100%" src="ceres_orbit.svg" alt="The orbit of Ceres" />
     <figcaption class="md">\citealternativetitle{cerespath}</figcaption>
 </figure>
 
