@@ -150,6 +150,26 @@ The deeper point is that a *relationship* is itself a vector. The arrow from “
 No one programmed this. \citeauthor{mikolov2013word2vec} popularized these analogies with Word2Vec, but what makes them remarkable is *how* they arise: \citeauthor{colah2014nlp} stresses that none of these regularities — synonyms landing nearby, analogies encoding as fixed offset vectors — was designed in. The network was only trained to do a simple task, and the whole geometric structure “popped out of the optimization process” as a side effect (\cite[Olah, 2014]{colah2014nlp}).
 </div>
 
+<div class="md" data-mathlevel="45" data-optionaltitle="The static-embedding lineage">
+### From word2vec to GloVe and fastText
+
+Word2vec was not the only way to turn co-occurrence into geometry, and the alternatives expose different assumptions about what a word vector should capture.
+
+**Word2vec** (\cite[Mikolov et al., 2013]{mikolov2013word2vec}) comes in two architectures. **CBOW** predicts a target word from its surrounding context; **skip-gram** predicts each context word from the target. Both train a tiny linear predictor on local windows and throw the predictor away, keeping the learned embedding table. Negative sampling makes the objective cheap by contrasting real context words against random ones. The window is local, so the statistics are dominated by nearby words.
+
+**GloVe** (\cite[Pennington et al., 2014]{pennington2014glove}) starts from the opposite end: build the **global word–word co-occurrence matrix** $X$, where $X_{ij}$ counts how often word $j$ appears in the context of word $i$, and fit vectors whose dot products reproduce the *logarithm* of those counts:
+
+$$
+\underbrace{w_i^\top \tilde{w}_j + b_i + \tilde{b}_j \;\approx\; \log X_{ij}}_{\text{the vectors' dot product should match the logarithm of their co-occurrence count}}
+$$
+
+The log turns multiplicative ratios (“ice” is to “steam” as “solid” is to “gas”) into additive differences, which is exactly the structure that makes analogy arithmetic work. GloVe combines the global statistics that count-based methods used with the dense, low-rank factorization that neural methods learned.
+
+**fastText** (\cite[Bojanowski et al., 2017]{bojanowski2017fasttext}) adds morphology: each word is represented as the sum of its character $n$-grams, so “running”, “runs”, and “runner” share most of their vector. This handles rare words, typos, and morphologically rich languages far better than a fixed vocabulary of whole words, and it makes the embedding of an unseen word computable from its spelling.
+
+All three produce **static** embeddings: one vector per word, regardless of context. That is the limitation the next step removes. ELMo and BERT compute a *contextual* vector for every occurrence, so “bank” in “river bank” and “bank account” get different representations (\cite[Devlin et al., 2019]{devlin2019bert}). The embedding table at the input of a modern LLM is still a descendant of word2vec — but it is only the first layer, and context rewrites it immediately.
+</div>
+
 <section style="background: #f8fafc; padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 40px;">
     <div id="plot-diff-vec" style="height: 440px; background: var(--mn-surface, #fff); border-radius: 8px; width: 100%; margin-bottom: 15px;"></div>
     <div style="padding: 12px 16px; font-size: 0.85em; color: #475569; line-height: 1.6; margin-top: 12px;">
