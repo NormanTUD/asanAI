@@ -2,7 +2,7 @@
 
 Stand: 2026-10-23
 
-Analysiert wurden **alle** `*.php`-Lektionen und die zugehörigen `*.js`-Dateien. Erfasst: `<img src>`, `srcset`, `<source>`, `poster`, CSS-`url(...)`, `image.php?f=...`, `\marginfig{}`, `\sideimage{}{}` und Bilddateinamen in JS. Quellen/Lizenzen wurden gegen `literature.js` und die Wikimedia-API geprüft.
+Analysiert wurden **alle** `*.php`-Lektionen und die zugehörigen `*.js`-Dateien. Erfasst: `<img src>`, `srcset`, `<source>`, `poster`, CSS-`url(...)`, `image.php?f=...`, `\marginfig{}`, `\sideimage{}{}` und Bilddateinamen in JS. Quellen/Lizenzen wurden gegen `literature.js` und die Wikimedia-API geprüft. Der vollständige Audit **aller** Bild-Einträge in `literature.js` steht in `literature-bildlizenzen.md`.
 
 ## Zusammenfassung
 
@@ -11,9 +11,9 @@ Analysiert wurden **alle** `*.php`-Lektionen und die zugehörigen `*.js`-Dateien
 | **NICHT VERWENDEN** | 5 | Fair Use / Lizenz ausdrücklich unklar |
 | Lizenz nicht belegt | 15 | Quelle in `literature.js`, aber kein Lizenzfeld |
 | Keine Quelle | 12 | weder Key noch Credit im Caption |
-| Frei, nur im Caption | 12 | Quelle+Lizenz im Caption, nicht in `literature.js` |
-| Frei (literature.js/Commons) | 173 | Lizenz sauber belegt |
-| Frei (Prüfdatei) | 52 | in `bildquellen-pruefung.txt` als OK dokumentiert |
+| Frei, nur im Caption | 7 | Quelle+Lizenz im Caption, nicht in `literature.js` |
+| Frei (literature.js/Commons) | 184 | Lizenz sauber belegt |
+| Frei (Prüfdatei) | 46 | in `bildquellen-pruefung.txt` als OK dokumentiert |
 | **Gesamt genutzt** | 269 | |
 
 > Neu: Die Lizenz wird jetzt am Ende jeder Quelle im Quellenverzeichnis auf Englisch angezeigt: `— License: …` bzw. `— Image license: …` (`helper.js`, Feld `license`/`image_license`).
@@ -83,14 +83,9 @@ Weder `literature.js`-Key noch Credit im Caption. Für alle zwölf wurde ein fre
 
 | Datei | Wo genutzt | Caption-Lizenz | Quelle |
 |---|---|---|---|
-| `deconv_deepdream_jitter.png` | deconvolution.php:64 (It's in the Gradients, Not Just the Pixels) | Caption: CC BY 2.0 | https://distill.pub/2016/deconv-checkerboard/ |
 | `deep_blue_kasparov.jpg` | ai_and_society.php:41 (The Arc of Public Perception: Winters and Springs); history.php:996 (The Triumph of Symbolic AI) | Caption: CC BY 2.0 | https://www.theguardian.com/sport/2021/feb/12/deep-blue-computer-beats-kasparov-chess-1996 |
 | `dolni_vestonice_head.jpg` | untold_history.php:330 (The Development of Humans) | Caption: CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Female_face,_ivory_carving,_Doln%C3%AD_V%C4%9Bstonice,_Gravettian,_28_000_-_22_000_BP.jpg |
 | `eniac_1946.jpg` | untold_history.php:1236 (The Polar Program That Nudged the State of the Art) | Caption: public domain | https://commons.wikimedia.org/wiki/File:Two_women_operating_ENIAC_%28full_resolution%29.jpg |
-| `inceptionism_dream_map.png` | inceptionism.php:91 (The Dream Map) | Caption: CC BY 4.0 | https://research.google/blog/inceptionism-going-deeper-into-neural-networks/ |
-| `inceptionism_funny_animals.png` | inceptionism.php:73 (Dream Logic: The Weightlifter's Dumbbells) | Caption: CC BY 4.0 | https://research.google/blog/inceptionism-going-deeper-into-neural-networks/ |
-| `inceptionism_ibis.png` | inceptionism.php:51 (Let the Network Choose: Layer by Layer) | Caption: CC BY 4.0 | https://research.google/blog/inceptionism-going-deeper-into-neural-networks/ |
-| `inceptionism_sky_arrow.png` | inceptionism.php:69 (Dream Logic: The Weightlifter's Dumbbells) | Caption: CC BY 4.0 | https://research.google/blog/inceptionism-going-deeper-into-neural-networks/ |
 | `qubit_cryostat.jpg` | untold_history.php:1240 (The Polar Program That Nudged the State of the Art) | Caption: CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Measuring_a_qubit_leaves_no_room_for_error.jpg |
 | `venus_galgenberg.jpg` | untold_history.php:326 (The Development of Humans) | Caption: CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Venus_vom_Galgenberg.JPG |
 | `venus_hohle_fels.jpg` | untold_history.php:324 (The Development of Humans) | Caption: CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:VenusHohlefels2.jpg |
@@ -98,7 +93,7 @@ Weder `literature.js`-Key noch Credit im Caption. Für alle zwölf wurde ein fre
 
 ## 6. Neu ergänzte Lizenzen in `literature.js`
 
-Diese Felder wurden ergänzt und erscheinen jetzt im Quellenverzeichnis. `license` = die Quelle selbst ist das Bild; `image_license` = die Lizenz gilt für das im Artikel eingebettete Bild.
+Diese Felder wurden ergänzt und erscheinen jetzt im Quellenverzeichnis. `license` = die Quelle selbst ist das Bild; `image_license` = die Lizenz gilt für das im Artikel eingebettete Bild. Hinzu kommen **69 automatisch ergänzte Wikimedia-Lizenzen**; die vollständige Tabelle aller 169 Wikimedia-Bildquellen steht in `literature-bildlizenzen.md`.
 
 | Key | Feld | Lizenz | Grundlage |
 |---|---|---|---|
@@ -158,14 +153,9 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `mobius.jpg` | keine Quelle | — |  | geometry_i.php:507 (Möbius and Listing: the word "topology") |
 | `pythagoras.jpg` | keine Quelle | — |  | geometry_i.php:182 (Thales, Pythagoras and the theorem) |
 | `visicalc.jpg` | keine Quelle | — |  | untold_history.php:2163 (The Origin Story) |
-| `deconv_deepdream_jitter.png` | Caption | `odena2016deconvolution` | Caption: CC BY 2.0 | deconvolution.php:64 (It's in the Gradients, Not Just the Pixels) |
 | `deep_blue_kasparov.jpg` | Caption | `deepblue` | Caption: CC BY 2.0 | ai_and_society.php:41 (The Arc of Public Perception: Winters and Springs); history.php:996 (The Triumph of Symbolic AI) |
 | `dolni_vestonice_head.jpg` | Caption | — | Caption: CC BY-SA 4.0 | untold_history.php:330 (The Development of Humans) |
 | `eniac_1946.jpg` | Caption | — | Caption: public domain | untold_history.php:1236 (The Polar Program That Nudged the State of the Art) |
-| `inceptionism_dream_map.png` | Caption | `mordvintsev2015inceptionism` | Caption: CC BY 4.0 | inceptionism.php:91 (The Dream Map) |
-| `inceptionism_funny_animals.png` | Caption | `mordvintsev2015inceptionism` | Caption: CC BY 4.0 | inceptionism.php:73 (Dream Logic: The Weightlifter's Dumbbells) |
-| `inceptionism_ibis.png` | Caption | `mordvintsev2015inceptionism` | Caption: CC BY 4.0 | inceptionism.php:51 (Let the Network Choose: Layer by Layer) |
-| `inceptionism_sky_arrow.png` | Caption | `mordvintsev2015inceptionism` | Caption: CC BY 4.0 | inceptionism.php:69 (Dream Logic: The Weightlifter's Dumbbells) |
 | `qubit_cryostat.jpg` | Caption | — | Caption: CC BY 4.0 | untold_history.php:1240 (The Polar Program That Nudged the State of the Art) |
 | `venus_galgenberg.jpg` | Caption | — | Caption: CC BY-SA 3.0 | untold_history.php:326 (The Development of Humans) |
 | `venus_hohle_fels.jpg` | Caption | — | Caption: CC BY-SA 3.0 | untold_history.php:324 (The Development of Humans) |
@@ -212,6 +202,8 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `curiosity_panorama.jpg` | frei | `img_curiosity_panorama` | Public domain | untold_history.php:1533 (Fitting a Mountain in a Matchbox: The Compression Standar…) |
 | `data_center.jpg` | frei | `img_data_center` | CC BY-SA 2.0 | untold_history.php:1496 (Space Radiation: The Bit Flip That Now Haunts the Data Ce…) |
 | `dawkins.jpg` | frei | `dawkins_image` | CC BY 3.0 | human_mind.php:554 (The Collective Brain and the Meme) |
+| `deconv_deepdream_jitter.png` | frei | `odena2016deconvolution` | CC BY 2.0 | deconvolution.php:64 (It's in the Gradients, Not Just the Pixels) |
+| `deconv_style_clean.png` | frei | `odena2016deconvolution` | CC BY 2.0 | deconvolution.php:46 (Where the Checkerboard Comes From) |
 | `deep_space_1_spacecraft.jpg` | frei | `img_deep_space_1` | Public domain | untold_history.php:1524 (Forty Minutes of Silence: The Light-Delay That Invented "…) |
 | `dickinsonia_costata.jpg` | frei | `img_dickinsonia_costata` | CC BY-SA 3.0 | untold_history.php:174 (The Development of Life) |
 | `diffusion_architecture.png` | frei | `diffusion_architecture_img` | MIT | diffusion.php:149 (3. Cross-attention, how the U-Net reads the text) |
@@ -221,7 +213,7 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `earth_texture.jpg` | frei | `earth_moon_cc_textures` | CC BY 4.0 | atlas.js:466 |
 | `eisgalgen_mittenwald.jpg` | frei | `eisgalgen_mittenwald` | CC BY 4.0 | untold_history.php:842 (Refrigeration and Cooling: Keeping the Mind from Melting) |
 | `eisschlagen_traunsee.jpg` | frei | `eisschlagen_traunsee` | Public domain | untold_history.php:838 (Refrigeration and Cooling: Keeping the Mind from Melting) |
-| `eniac.jpg` | frei | `eniac_image` | Public domain | software.php:84 (Before the Transistor: The Machine Learns to Be Programmed); untold_history.php:1249 (The Central Processing Unit (CPU)); untold_history.php:1331 (The First Electronic Computers: Colossus and ENIAC) |
+| `eniac.jpg` | frei | `eniac1946_image` | Public domain | software.php:84 (Before the Transistor: The Machine Learns to Be Programmed); untold_history.php:1249 (The Central Processing Unit (CPU)); untold_history.php:1331 (The First Electronic Computers: Colossus and ENIAC) |
 | `euler.jpg` | frei | `euler_portrait` | Public domain | math_i.php:307 (Euler's Number ($e$)) |
 | `faraday_disk.jpg` | frei | `faraday_disk` | Public domain | untold_history.php:674 (From Amber to Amperes: The Discovery and Harnessing of El…) |
 | `FigurScheiben.jpg` | frei | `arsmagnavolvelle` | Public domain | history.php:232 (The earliest attempt: Ramon Llull) |
@@ -249,6 +241,12 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `hubble_ultra_deep_field.jpg` | frei | `img_hubble_udf` | Public domain | untold_history.php:1555 (Unblurring the Sky: The Inverse Problem That Became the D…) |
 | `huygens_aerial_telescope_1684.jpg` | frei | `img_huygens_aerial_telescope` | Public domain | untold_history.php:591 (Glass and Lenses: The Instruments That Expanded Perception) |
 | `huygens_horologium_1673.jpeg` | frei | `img_huygens_horologium` | Public domain | untold_history.php:811 (Precision Clocks: The Metronome of Computation) |
+| `inceptionism_classvis.png` | frei | `mordvintsev2015inceptionism` | CC BY 4.0 | inceptionism.php:39 (Gradient Ascent on a Class) |
+| `inceptionism_dream_map.png` | frei | `mordvintsev2015inceptionism` | CC BY 4.0 | inceptionism.php:91 (The Dream Map) |
+| `inceptionism_dumbbells.png` | frei | `mordvintsev2015inceptionism` | CC BY 4.0 | inceptionism.php:62 (Dream Logic: The Weightlifter's Dumbbells) |
+| `inceptionism_funny_animals.png` | frei | `mordvintsev2015inceptionism` | CC BY 4.0 | inceptionism.php:73 (Dream Logic: The Weightlifter's Dumbbells) |
+| `inceptionism_ibis.png` | frei | `mordvintsev2015inceptionism` | CC BY 4.0 | inceptionism.php:51 (Let the Network Choose: Layer by Layer) |
+| `inceptionism_sky_arrow.png` | frei | `mordvintsev2015inceptionism` | CC BY 4.0 | inceptionism.php:69 (Dream Logic: The Weightlifter's Dumbbells) |
 | `iron_pillar_delhi.jpg` | frei | `img_iron_pillar_delhi` | Public domain | untold_history.php:697 (From Bloomery to Boolean: The Metals That Compute) |
 | `ishango.jpg` | frei | `ishangobonephoto` | CC BY-SA 3.0 | geometry_i.php:63 (Blombos Cave (c. 75,000 years ago)); history.php:64 (The Ishango Bone) |
 | `jabir_alembic.jpg` | frei | `img_jabir_alembic` | Public domain | untold_history.php:1128 (Alchemy: The Displaced Root of Chemistry) |
@@ -263,6 +261,8 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `leibniz.jpg` | frei | `leibniz_portrait` | Public domain | differentiation.php:32 |
 | `Leibnizrechenmaschine.jpg` | frei | `leibnizcc` | CC BY-SA 4.0 | history.php:259 (Gottfried Wilhelm Leibniz); software.php:62 (Before the Transistor: The Machine Learns to Be Programmed) |
 | `libavius_alembics.png` | frei | `img_libavius_alembics` | Public domain | untold_history.php:1143 (Alchemy: The Displaced Root of Chemistry) |
+| `loss_landscape_resnet56_noskip.png` | frei | `li2018losslandscape` | MIT | loss_landscape.php:30 (The Loss Landscape) |
+| `loss_landscape_resnet56_skip.png` | frei | `li2018losslandscape` | MIT | loss_landscape.php:37 (The Loss Landscape) |
 | `m87_real.jpg` | frei | `m87_blackhole_image` | CC BY 4.0 | atlas.js:738 |
 | `magdeburg_hemispheres.jpg` | frei | `img_magdeburg_hemispheres` | Public domain | untold_history.php:798 (Vacuum Technique: Emptying Space to Fill It with Electrons) |
 | `margaret_hamilton.jpg` | frei | `hamilton1969_image` | Public domain | software.php:450 (What Was Required, in the End, for a Human to Build Somet…); untold_history.php:1441 (The Apollo Guidance Computer) |
@@ -299,6 +299,7 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `rgb_color_cube.png` | frei | `rgb_color_cube` | CC BY-SA 3.0 | math_ii.php:1044 (3D: The Color Cube) |
 | `rhind_papyrus.png` | frei | `rhindpapyrus` | Public domain | geometry_i.php:99 (Egypt: the Rhind Papyrus) |
 | `riemann.jpeg` | frei | `riemann_portrait` | Public domain | embeddinglab.php:68; geometry_i.php:491 (Riemann: the general idea of "space") |
+| `saddle_hyperbolic_paraboloid.png` | frei | `hyperbolic_paraboloid_saddle` | CC0 | loss_landscape.php:566 (Saddles outnumber minima in high dimensions) |
 | `salamic_table.jpg` | frei | `salamictablet` | Public domain | history.php:76 (The Salamis Tablet and the Abacus) |
 | `sam_demo.png` | frei | `sam_demo_img` | Apache-2.0 | computer_vision.php:322 (Segmentation: pixels, not boxes) |
 | `Sanzio_01_Plato_Aristotle.jpg` | frei | `aristotleandplato` | Public domain | history.php:115 (The Roots of Formal Logic); human_mind.php:164 (From Wonder to Philosophy) |
@@ -348,7 +349,6 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `canary_coal_mine.jpg` | Prüfdatei | — | Caption: public domain | evaluation.php:158 (Benchmark Contamination: The Crisis) |
 | `coffee_house_1674.png` | Prüfdatei | — |  | information_market.php:41 (The coffee-house public sphere) |
 | `deconv_style_artifacts.png` | Prüfdatei | — |  | deconvolution.php:42 (Where the Checkerboard Comes From) |
-| `deconv_style_clean.png` | Prüfdatei | `odena2016deconvolution` | Caption: CC BY 2.0 | deconvolution.php:46 (Where the Checkerboard Comes From) |
 | `encyclopedie_title.jpg` | Prüfdatei | — |  | information_market.php:64 (The Encyclopédie: compiling everything at once) |
 | `eratosthenes.jpg` | Prüfdatei | — |  | algorithms.php:68 (Another shape of algorithm: the Sieve of Eratosthenes (c.…) |
 | `frances_yates.jpg` | Prüfdatei | — |  | human_mind.php:324 (A millennium of the *ars memoriae*) |
@@ -360,14 +360,10 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `giordano_bruno_mnemonic.gif` | Prüfdatei | `giordanobruno` |  | human_mind.php:258 (The method of loci) |
 | `giordano_bruno_portrait.jpg` | Prüfdatei | `giordanobruno` |  | human_mind.php:310 (A millennium of the *ars memoriae*) |
 | `hilbert_1907.jpg` | Prüfdatei | — |  | algorithms.php:94 (The question that built everything: the Entscheidungsprob…) |
-| `inceptionism_classvis.png` | Prüfdatei | `mordvintsev2015inceptionism` | Caption: CC BY 4.0 | inceptionism.php:39 (Gradient Ascent on a Class) |
-| `inceptionism_dumbbells.png` | Prüfdatei | `mordvintsev2015inceptionism` |  | inceptionism.php:62 (Dream Logic: The Weightlifter's Dumbbells) |
 | `james_lind.jpg` | Prüfdatei | — |  | statistics_i.php:878 (The controlled experiment: from scurvy to ablation) |
 | `john_graunt.png` | Prüfdatei | — |  | statistics_i.php:698 (Statistics as a state technique: from mortality tables to…) |
 | `justitia_statue.jpg` | Prüfdatei | — | Caption: CC BY-SA 4.0, Rigorius | law_regulation.php:17; myths.php:81 (It is neutral and objective) |
 | `library_card_catalog.jpg` | Prüfdatei | — | Caption: CC BY-SA 4.0 | rag.php:32 (What is RAG?) |
-| `loss_landscape_resnet56_noskip.png` | Prüfdatei | `li2018losslandscape` |  | loss_landscape.php:30 (The Loss Landscape) |
-| `loss_landscape_resnet56_skip.png` | Prüfdatei | `li2018losslandscape` |  | loss_landscape.php:37 (The Loss Landscape) |
 | `memex_diagram.jpg` | Prüfdatei | — |  | untold_history.php:2381 (The pre-history: the Memex and hypertext (1945–1968)) |
 | `mental_rotation.jpg` | Prüfdatei | — |  | human_mind.php:96 (Mental Imagery: Turning Things in the Head) |
 | `noise_to_banana.png` | Prüfdatei | — |  | inceptionism.php:35 (Gradient Ascent on a Class) |
@@ -377,7 +373,6 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `procession_trojan_horse.jpg` | Prüfdatei | — | Caption: public domain | security_inference.php:40 (Data Poisoning) |
 | `relation_1609.jpg` | Prüfdatei | — |  | information_market.php:29 (News becomes a commodity: the Fugger network (16th c.)) |
 | `rnn_unrolled.svg` | Prüfdatei | — | Caption: CC BY-SA 4.0 | recurrent_networks.php:35 (Unrolling: One Network, Many Copies) |
-| `saddle_hyperbolic_paraboloid.png` | Prüfdatei | `hyperbolic_paraboloid_saddle` |  | loss_landscape.php:566 (Saddles outnumber minima in high dimensions) |
 | `sir_francis_galton.jpg` | Prüfdatei | — |  | statistics_i.php:706 (Statistics as a state technique: from mortality tables to…) |
 | `solsys_earth.jpg` | Prüfdatei | — |  | atlas.js:779 |
 | `solsys_jupiter.jpg` | Prüfdatei | — |  | atlas.js:779 |
