@@ -19887,12 +19887,6 @@ window.bibData = {
 		year: 1911,
 		alternativetitle: "Saki, The Chronicles of Clovis"
 	},
-	"minsky1986society": {
-		title: "The Society of Mind",
-		author: "Marvin Minsky",
-		year: 1986,
-		alternativetitle: "Minsky, The Society of Mind"
-	},
 	"kim2020cogs": {
 		url: "https://arxiv.org/abs/2010.05465",
 		title: "COGS: A Compositional Generalization Challenge Based on Semantic Interpretation",

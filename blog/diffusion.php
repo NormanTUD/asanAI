@@ -238,7 +238,7 @@ These are the tools the diffusion community actually uses:
 For *controlling* what the model draws:
 
 * **[ControlNet](https://github.com/lllyasviel/ControlNet)** (\cite[Zhang et al., 2023]{zhang2023controlnet}), spatial control from edge maps, depth maps, or pose skeletons, without retraining the base model.
-* **LoRA** (\cite[Hu et al., 2021]{hu2021lora}), small adapters that fine-tune the U-Net's attention layers on a few hundred images of your own style, in minutes on a single GPU. ([paper](https://arxiv.org/abs/2106.09685))
+* **LoRA** (\cite[Hu et al., 2021]{hu2021lora}), small adapters that fine-tune the U-Net's attention layers on a few hundred images of your own style, in minutes on a single GPU.
 
 If you would rather read the foundational papers, the trio that started it all is Sohl-Dickstein's 2015 thermodynamic framing (\cite[Sohl-Dickstein et al., 2015]{sohl2015deep}), Song & Ermon's score-based 2019 paper (\cite[Song & Ermon, 2019]{song2019score}), and Ho's DDPM in 2020 (\cite[Ho et al., 2020]{ho2020ddpm}).
 </div>
