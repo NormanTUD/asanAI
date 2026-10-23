@@ -6220,7 +6220,7 @@ window.bibData = {
 		year: "2019",
 		title: "On the Measure of Intelligence",
 		url: "https://arxiv.org/abs/1911.01547",
-		alternativetitle: "ARC-AGI (On the Measure of Intelligence)"
+		alternativetitle: "Chollet, On the Measure of Intelligence (2019)"
 	},
 	"weston2015babi": {
 		author: "Jason Weston, Antoine Bordes, Sumit Chopra, Tomas Mikolov, Armand Joulin",
@@ -7760,10 +7760,10 @@ window.bibData = {
 	},
 	"chollet2024arcagi": {
 		url: "https://arxiv.org/abs/2412.04604",
-		title: "ARC-AGI",
-		author: "François Chollet",
+		title: "ARC Prize 2024: Technical Report",
+		author: "François Chollet, Mike Knoop, Gregory Kamradt, Bryan Landers",
 		year: 2024,
-		alternativetitle: "ARC-AGI"
+		alternativetitle: "ARC Prize 2024"
 	},
 	"liang2023helm": {
 		url: "https://arxiv.org/abs/2211.09110",
@@ -20093,6 +20093,7 @@ window.bibData = {
 		title: "What the Frog's Eye Tells the Frog's Brain",
 		author: "Jerome Y. Lettvin, Humberto R. Maturana, Warren S. McCulloch, Walter H. Pitts",
 		year: 1959,
+		url: "https://doi.org/10.1109/JRPROC.1959.287195",
 		alternativetitle: "The frog's eye paper"
 	},
 	"boole1854": {
