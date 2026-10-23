@@ -284,6 +284,34 @@ This is why Transformers work well with Pre-Norm: the clean spherical geometry e
 </div>
 
 <div class="md">
+## RMSNorm: The Normalizer Modern LLMs Actually Use
+
+If you open the weights of a model released after 2023, the `LayerNorm` you expect is often called `RMSNorm`. The change is small but it tells you what the field decided LayerNorm was actually for. **Root mean square layer normalization** keeps the rescaling half of LayerNorm and throws away the re-centering half (\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}).
+
+For a token vector $x \in \mathbb{R}^d$:
+
+$$
+\underbrace{\mathrm{RMS}(x) = \sqrt{\frac{1}{d}\sum_{i=1}^{d} x_i^2 + \epsilon}}_{\text{root mean square of the token's features}},
+\qquad
+\underbrace{y = \frac{x}{\mathrm{RMS}(x)} \odot \gamma}_{\text{rescale, then apply the learned per-feature gain}}
+$$
+
+Compare this with the LayerNorm equation above: there is **no mean subtraction** and **no learned shift** $\beta$. LayerNorm needs two reductions over the feature dimension (mean, then variance) and four elementwise operations; RMSNorm needs one reduction (the mean of the squares) and two elementwise operations, and it carries only half the learned parameters.
+
+**A worked example.** Take the same four-dimensional vector as before, $x = (2, 4, 4, 6)$, and ignore $\epsilon$. The squares are $(4, 16, 16, 36)$, their mean is $72/4 = 18$, so $\mathrm{RMS}(x) = \sqrt{18} \approx 4.2426$. Dividing component-wise gives
+
+$$
+\underbrace{y \approx (0.471,\ 0.943,\ 0.943,\ 1.414)}_{\text{the RMS is now 1, but the mean is about 0.94, not 0}}
+$$
+
+The output's root mean square is exactly $1$, which is what the normalization promises, but its mean is $3.771/4 \approx 0.943$, not zero. RMSNorm fixes the **scale** of the vector and leaves its **offset** where it found it.
+
+**Why drop the mean?** The pathology that hurts a deep residual stack is scale drift: as layers add their outputs, the magnitude of the residual stream can grow or shrink, and every following matrix multiply sees a differently scaled input. Re-centering does not address that problem, and Zhang and Sennrich argued that it contributes little to LayerNorm's stabilizing effect. Their analysis makes the trade precise: LayerNorm is invariant to both shifting and scaling its input, while RMSNorm is invariant only to scaling. A constant added to every feature passes straight through. In a trained model the mean of a token's features is itself a readable signal, so leaving it alone costs nothing and saves a pass over the vector (\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}).
+
+**Where it shipped.** RMSNorm appeared at scale in DeepMind's Gopher (2021), but its wide adoption dates to \citeauthor{touvron2023llama}'s LLaMA (2023), whose recipe of pre-normalization with RMSNorm, SwiGLU feed-forward layers, and rotary position embeddings was copied by Mistral, Gemma, Qwen, DeepSeek, and most subsequent open-weight Transformers (\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}; \cite[Touvron et al., 2023]{touvron2023llama}). Full LayerNorm survives mainly in older and encoder-style models such as BERT. The simplification is a quality *parity* result, not a quality gain: where the normalizer's cost is irrelevant, full LayerNorm remains a perfectly defensible choice.
+</div>
+
+<div class="md">
 ## Group Normalization: Slice the Channels, Normalize Once per Slice
 
 To normalize a feature map, you first have to decide **which numbers get pooled into the same average**. LayerNorm says “all channels of one token”; BatchNorm says “this channel across all samples in the batch”. **Group Normalization (GN)** \cite{wu2018groupnorm} splits the $C$ channels into $G$ slices (groups), then for each group computes **one** mean and **one** std across that group's channels × all spatial positions.
@@ -358,4 +386,4 @@ $$
 * $G \in (1, C)$: the sweet spot; Stable Diffusion's U-Net uses $G = 32$.
 </div>
 
-<div class="mn-quiz" data-quiz="normalizationlab"><script type="application/json">{"title": "Layer normalization", "questions": [{"q": "Over what does LayerNorm compute its mean and variance?", "options": ["Over the features of one token (one example), not over the batch", "Over the whole training set", "Over the batch dimension only", "Over the vocabulary"], "answer": 0, "explain": "That is what makes it independent of batch size — ideal for sequences and inference."}, {"q": "After the normalisation step, what are γ and β for?", "options": ["A learned scale and shift, so the layer can undo the normalisation if useful", "The learning rate and momentum", "The mean and variance of the data", "Dropout probabilities"], "answer": 0, "explain": "y = γ · (x − μ)/σ + β: normalise, then let the network choose a useful scale."}, {"q": "Where is LayerNorm placed in a modern GPT-style “pre-norm” block?", "options": ["Before attention and before the feed-forward layer, inside the residual branch", "Only after the final layer", "Only on the input embeddings", "Between the tokenizer and the embedding"], "answer": 0, "explain": "Pre-norm keeps the residual stream untouched, which makes deep transformers more stable to train."}, {"q": "Geometrically, what does LayerNorm (without γ, β) do to a vector?", "options": ["Centres it and projects it onto a sphere of fixed radius", "Rotates it by 90 degrees", "Sets it to zero", "Doubles its length"], "answer": 0, "explain": "Subtracting the mean removes one direction; dividing by the standard deviation fixes the length."}]}</script></div>
+<div class="mn-quiz" data-quiz="normalizationlab"><script type="application/json">{"title": "Layer normalization", "questions": [{"q": "Over what does LayerNorm compute its mean and variance?", "options": ["Over the features of one token (one example), not over the batch", "Over the whole training set", "Over the batch dimension only", "Over the vocabulary"], "answer": 0, "explain": "That is what makes it independent of batch size — ideal for sequences and inference."}, {"q": "After the normalisation step, what are γ and β for?", "options": ["A learned scale and shift, so the layer can undo the normalisation if useful", "The learning rate and momentum", "The mean and variance of the data", "Dropout probabilities"], "answer": 0, "explain": "y = γ · (x − μ)/σ + β: normalise, then let the network choose a useful scale."}, {"q": "Where is LayerNorm placed in a modern GPT-style “pre-norm” block?", "options": ["Before attention and before the feed-forward layer, inside the residual branch", "Only after the final layer", "Only on the input embeddings", "Between the tokenizer and the embedding"], "answer": 0, "explain": "Pre-norm keeps the residual stream untouched, which makes deep transformers more stable to train."}, {"q": "Geometrically, what does LayerNorm (without γ, β) do to a vector?", "options": ["Centres it and projects it onto a sphere of fixed radius", "Rotates it by 90 degrees", "Sets it to zero", "Doubles its length"], "answer": 0, "explain": "Subtracting the mean removes one direction; dividing by the standard deviation fixes the length."}, {"q": "What does RMSNorm drop relative to LayerNorm?", "options": ["The mean subtraction and the learned shift β", "The learned scale γ", "The division by a root mean square", "The residual connection"], "answer": 0, "explain": "RMSNorm rescales by the root mean square only; it keeps the offset instead of removing it."}]}</script></div>
