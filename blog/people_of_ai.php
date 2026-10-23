@@ -25,21 +25,47 @@ The intellectual scaffolding predates electronic computers by a century. These a
 
 ### Ada Lovelace and Charles Babbage
 
-Babbage designed the **Analytical Engine**, a programmable mechanical computer with a store, a mill, and punched-card input. Lovelace translated Menabrea's account of it and added notes that are longer than the original, including **Note G** — a step-by-step algorithm for computing Bernoulli numbers that is traditionally described as the first published computer program. Her deeper claim was that such a machine could manipulate *symbols*, not merely numbers, and that its operations could be composed to express any rule-governed process. That is the conceptual ancestor of software — and of the idea that a machine's behaviour can be changed without rebuilding it (\cite[Menabrea & Lovelace, 1843]{menabrea_lovelace1843}).
+<div style="display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin:0.5em 0 1em;">
+	<figure style="flex:1 1 160px; max-width:220px; margin:0;">
+	<img src="ada_lovelace_portrait.jpg" alt="Portrait of Ada Lovelace" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_ada_lovelace}. Public domain.</figcaption>
+</figure>
+	<figure style="flex:1 1 160px; max-width:220px; margin:0;">
+	<img src="charles_babbage_portrait.jpg" alt="Portrait of Charles Babbage" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_charles_babbage}. Public domain.</figcaption>
+</figure>
+</div>
+
+Babbage was a mathematician and inventor who hated the errors in printed mathematical tables; that frustration drove his Difference Engine and then the Analytical Engine, a programmable machine with a store, a mill, and punched-card input. He never saw it completed, and spent much of his fortune and the government's patience on the design. Lovelace, the daughter of Lord Byron, was taught mathematics by Augustus De Morgan and translated Menabrea's account of the engine; her notes are longer than the original. Note G is a step-by-step algorithm for Bernoulli numbers, traditionally described as the first published computer program. She called her approach “poetical science” and insisted that the machine could manipulate symbols — even compose music — not merely crunch numbers. She died at 36, and the Analytical Engine was never built (\cite[Menabrea & Lovelace, 1843]{menabrea_lovelace1843}; \cite[McCorduck, 1979]{mccorduck1979machines}).
 
 ### Alan Turing
 
-Turing gave computation its modern mathematical form. In 1936 he described an abstract machine — a tape, a head, a finite table of states — and proved that some well-defined problems cannot be decided by any such machine. In 1950 he replaced the question “Can machines think?” with an operational one: can a machine's text responses be distinguished from a human's? The **imitation game** did not settle the philosophy, but it turned a metaphysical dispute into an experiment, and it set the agenda for every later benchmark that measures behaviour rather than inner life (\cite[Turing, 1950]{turing1950computing}).
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="alan_turing_1951.jpg" alt="Portrait of Alan Turing" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_alan_turing}. Public domain.</figcaption>
+</figure>
+
+Turing was a Cambridge mathematician who, at 24, imagined a machine with an infinite tape and a finite table of states, and used it to prove that some well-defined problems have no mechanical solution. During the Second World War he worked at Bletchley Park on breaking the Enigma cipher, an episode that stayed secret for decades. In 1950 he replaced “Can machines think?” with an operational question: can a machine's text responses be distinguished from a human's? The imitation game did not settle the philosophy, but it turned a metaphysical dispute into an experiment. He was prosecuted in 1952 for homosexuality, then a crime in Britain, and died in 1954 at 41. His question — whether thought can be mechanized — is still the field's north star (\cite[Turing, 1936]{turing1936}; \cite[Turing, 1950]{turing1950computing}; \cite[Hodges, 1983]{hodges1983enigma}).
 
 ### Claude Shannon
 
-Shannon founded information theory by treating communication as a statistical problem: a message source has an **entropy**, a channel has a capacity, and reliable transmission is possible up to that capacity. His 1951 paper on the entropy of printed English then framed language itself as a prediction problem — guess the next character, and the difficulty of the guess measures the redundancy of the text. Every language model's training loss is a version of that measurement (\cite[Shannon, 1948]{shannon1948communication}; \cite[Shannon, 1951]{shannon1951communication}).
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="claude_shannon_portrait.jpg" alt="Portrait of Claude Shannon" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_claude_shannon}. <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>.</figcaption>
+</figure>
+
+Shannon was a Michigan-born mathematician and engineer whose master's thesis applied Boolean algebra to electrical relays — the idea that made digital circuit design a branch of logic. At Bell Labs he asked what the fundamental limits of communication are, and answered with entropy and channel capacity. He was also a playful inventor: his maze-solving mouse Theseus, his juggling, and his unicycle rides through the Bell Labs corridors were famous. His 1951 paper framed language as a prediction problem — guess the next character, and the difficulty of the guess measures the redundancy of the text. Every language model's training loss is a version of that measurement (\cite[Shannon, 1948]{shannon1948communication}; \cite[Shannon, 1951]{shannon1951communication}; \cite[McCorduck, 1979]{mccorduck1979machines}).
 
 ### John von Neumann and Norbert Wiener
 
-Von Neumann's **EDVAC report** described the stored-program computer, in which instructions and data share the same memory — the architecture every digital computer still uses. It also cited McCulloch and Pitts' threshold neuron, making the paper a bridge between neural modelling and computer design (\cite[von Neumann, 1945]{vonneumann}). Wiener's **cybernetics** gave the post-war world a science of feedback and control, and his insistence that organisms and machines could be analysed in the same loop shaped the vocabulary of adaptation that Rosenblatt, Ashby, and the early connectionists inherited (\cite[Wiener, 1948]{wiener1948cybernetics}).
-</div>
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="john_von_neumann_portrait.jpg" alt="Portrait of John von Neumann" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_john_von_neumann}. <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>.</figcaption>
+</figure>
 
+Von Neumann was a Hungarian-born prodigy who worked on game theory, quantum mechanics, and the Manhattan Project before turning to computers. His EDVAC report described the stored-program computer, in which instructions and data share the same memory — the architecture every digital computer still uses — and it cited McCulloch and Pitts' threshold neuron, making the paper a bridge between neural modelling and computer design. Wiener, a child prodigy taught intensively by his father, founded cybernetics: the science of feedback and control. His insistence that organisms and machines could be analysed in the same loop shaped the vocabulary of adaptation that Rosenblatt, Ashby, and the early connectionists inherited (\cite[von Neumann, 1945]{vonneumann}; \cite[Wiener, 1948]{wiener1948cybernetics}; \cite[McCorduck, 1979]{mccorduck1979machines}).
+
+</div>
 <div class="md">
 ## The First Neurons
 
@@ -51,7 +77,12 @@ Pitts never took a degree. He joined the University of Chicago as a teenager, wo
 
 ### Frank Rosenblatt
 
-Rosenblatt turned the threshold unit into a **learning** machine. The perceptron adjusted its connection strengths by an error-correction rule: when the output was wrong, the active connections moved in the direction of the correct answer. He proved that for any linearly separable classification the rule makes only finitely many mistakes, and he built the **Mark I Perceptron** to run the rule in analogue hardware. His 1962 book **Principles of Neurodynamics** framed the whole programme as a science of brain mechanisms rather than a pattern-recognition gadget, and its chapter 13 already proposed a “back-propagating error-correction procedure” for multi-layer machines — without the gradient that would make it work (\cite[Rosenblatt, 1958]{rosenblatt1958perceptron}; \citetitle{rosenblatt1962neurodynamics}).
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="frank_rosenblatt_commons.jpg" alt="Portrait of Frank Rosenblatt" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_frank_rosenblatt}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+</figure>
+
+Rosenblatt was born in New Rochelle in 1928, graduated from the Bronx High School of Science, and earned a PhD in psychology at Cornell. He built the perceptron as a brain model, not a pattern-recognition gadget: when the output was wrong, the active connections moved in the direction of the correct answer, and he proved that for any linearly separable classification the rule makes only finitely many mistakes. The 1958 Navy press conference turned the machine into a sensation, with the New York Times predicting it might “walk, talk, see, write, reproduce itself and be conscious of its existence.” He built the Mark I Perceptron to run the rule in analogue hardware, and his 1962 book framed the programme as a science of brain mechanisms. He died in 1971, on his 43rd birthday, while sailing his sloop Shearwater on Chesapeake Bay (\cite[Rosenblatt, 1958]{rosenblatt1958perceptron}; \citetitle{rosenblatt1962neurodynamics}; \cite[Lefkowitz, 2019]{lefkowitz2019perceptron}; \cite[Dobson & Mosteirin, 2025]{dobson2025perceptron}).
 
 ### Arthur Samuel
 
@@ -59,7 +90,18 @@ Samuel's checkers player, written at IBM between 1952 and 1967, was the first ma
 
 ### Marvin Minsky and Seymour Papert
 
-Minsky and Papert's **Perceptrons** (1969) proved that a single-layer perceptron cannot compute predicates such as parity and connectedness — the exclusive-or function is the standard example — and expressed pessimism that multi-layer extensions could be trained with the tools of the time. The book is often remembered as the cause of the first AI winter. The historical record is messier: Papert later rejected the single-book reading, and later scholarship emphasized institutional competition and the genuine limitations of the machines (\citetitle{minskyperceptrons}; \cite[Papert, 1988]{papert1988oneai}).
+<div style="display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin:0.5em 0 1em;">
+	<figure style="flex:1 1 160px; max-width:220px; margin:0;">
+	<img src="marvin_minsky_portrait.jpg" alt="Portrait of Marvin Minsky" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_marvin_minsky}. <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.</figcaption>
+</figure>
+	<figure style="flex:1 1 160px; max-width:220px; margin:0;">
+	<img src="seymour_papert_portrait.jpg" alt="Portrait of Seymour Papert" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_seymour_papert}. <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>.</figcaption>
+</figure>
+</div>
+
+Minsky grew up in New York, built the SNARC from vacuum tubes and salvaged B-24 gyropilots, co-founded MIT's AI Laboratory, and wrote \citetitle{minsky1986society}. Papert grew up in Pretoria, opposed apartheid as a student, worked with Piaget in Geneva, and came to MIT to build LOGO and the idea of constructionism — children learning mathematics by programming turtles. Their 1969 \citetitle{minskyperceptrons} proved that a single-layer perceptron cannot compute predicates such as parity and connectedness, and expressed pessimism that multi-layer extensions could be trained. The book is often remembered as the cause of the first AI winter, but the record is messier: Papert later rejected the single-book reading, and later scholarship emphasized institutional competition and the genuine limitations of the machines (\cite[Papert, 1988]{papert1988oneai}; \cite[McCorduck, 1979]{mccorduck1979machines}).
 
 ### Bernard Widrow
 
@@ -71,11 +113,21 @@ Widrow's **ADALINE** was a single adaptive linear element with weights implement
 
 ### John Hopfield
 
-Hopfield's 1982 paper gave recurrent networks a physical metaphor: the network is an **energy landscape**, stored patterns are its minima, and recall is relaxation downhill. The model made associative memory rigorous, connected neural networks to statistical physics, and helped restart a field that had been in retreat since the perceptron critique. Hopfield shared the 2024 Nobel Prize in Physics with Geoffrey Hinton for these foundations (\cite[Hopfield, 1982]{hopfield1982}; \cite[Nobel Prize, 2024]{nobel2024physics}).
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="john_hopfield_portrait.jpg" alt="Portrait of John Hopfield" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_john_hopfield}. <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</figcaption>
+</figure>
+
+Hopfield trained as a physicist, worked at Bell Labs and Princeton, and came to neural networks from the physics of collective behaviour. His 1982 paper treated the network as an energy landscape: stored patterns are minima, and recall is relaxation downhill. The model made associative memory rigorous, connected neural networks to statistical physics, and helped restart a field that had been in retreat since the perceptron critique. He shared the 2024 Nobel Prize in Physics with Geoffrey Hinton for these foundations (\cite[Hopfield, 1982]{hopfield1982}; \cite[Nobel Prize, 2024]{nobel2024physics}).
 
 ### David Rumelhart, Geoffrey Hinton, and Ronald Williams
 
-Their 1986 **Nature** paper, “Learning Representations by Back-Propagating Errors,” made backpropagation famous. It showed that the chain rule could be applied backward through a multi-layer network to compute every parameter's gradient in one pass, and it demonstrated the idea on tasks that had defeated earlier single-layer systems. The algorithm had been derived earlier — by Werbos in 1974, and independently by others — but the 1986 paper gave it a clean statement, a public demonstration, and a generation of readers (\cite[Rumelhart et al., 1986]{rumelhart1986}).
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="geoffrey_hinton_portrait.jpg" alt="Portrait of Geoffrey Hinton" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_geoffrey_hinton}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+</figure>
+
+Rumelhart was a psychologist who led the PDP group at UC San Diego; Hinton was a British-Canadian psychologist who had been arguing for connectionism since the 1970s; Williams was the mathematician who helped make the gradient computation precise. Their 1986 Nature paper showed that the chain rule could be applied backward through a multi-layer network to compute every parameter's gradient in one pass, and demonstrated the idea on tasks that had defeated earlier single-layer systems. The algorithm had been derived earlier — by Werbos in 1974, and independently by others — but the 1986 paper gave it a clean statement, a public demonstration, and a generation of readers. Hinton later co-invented the Boltzmann machine, led the deep-belief-network revival, coauthored AlexNet, left Google in 2023 to warn about risk, and shared the 2024 Nobel Prize in Physics (\cite[Rumelhart et al., 1986]{rumelhart1986}; \cite[Hinton et al., 2006]{hinton2006}; \cite[Nobel Prize, 2024]{nobel2024physics}).
 
 Hinton went on to co-invent the Boltzmann machine, lead the deep-belief-network revival of 2006, and coauthor AlexNet in 2012. He shared the 2024 Nobel Prize in Physics with Hopfield, and later became one of the most prominent voices warning about the risks of the technology he helped create (\cite[Hinton et al., 2006]{hinton2006}; \cite[Krizhevsky et al., 2012]{krizhevsky2012imagenet}; \cite[Nobel Prize, 2024]{nobel2024physics}).
 
@@ -85,11 +137,21 @@ Werbos published the first derivation of backpropagation for neural networks in 
 
 ### Yann LeCun
 
-LeCun combined convolutional weight-sharing with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service in 1989; the later **LeNet-5** was deployed in bank check-reading systems. Convolutional networks became the dominant vision architecture for the next quarter-century, and LeCun's work on energy-based models and self-supervised learning kept pushing against the limits of supervised classification. He shared the 2018 Turing Award with Hinton and Bengio (\cite[LeCun et al., 1989]{lecun1989backpropagation}).
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="yann_lecun_portrait.jpg" alt="Portrait of Yann LeCun" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_yann_lecun}. <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.</figcaption>
+</figure>
+
+LeCun grew up in France, studied in Paris, and joined Bell Labs, where he combined convolutional weight-sharing with backpropagation to recognize handwritten ZIP codes for the U.S. Postal Service in 1989; the later LeNet-5 was deployed in bank check-reading systems. He later founded NYU's CILVR lab and Meta's FAIR, and has spent the last decade arguing that self-supervised world models, not next-token prediction alone, are the path to general intelligence. He shared the 2018 Turing Award with Hinton and Bengio (\cite[LeCun et al., 1989]{lecun1989backpropagation}; \cite[LeCun, 2022]{lecun2022path}).
 
 ### Yoshua Bengio
 
-Bengio's 2003 **neural probabilistic language model** replaced sparse n-gram tables with dense, learned word embeddings and a neural network over the context — the direct ancestor of the input layer of every modern language model. His group's work on attention-based translation, representation learning, and generative models helped build the bridge from word embeddings to seq2seq and then to the Transformer. He shared the 2018 Turing Award with Hinton and LeCun (\cite[Bengio et al., 2003]{neuralprobabilistic}).
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="yoshua_bengio_portrait.jpg" alt="Portrait of Yoshua Bengio" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_yoshua_bengio}. <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</figcaption>
+</figure>
+
+Bengio grew up in France and Canada, trained as a computer scientist, and built Mila in Montreal into one of the world's leading academic deep-learning labs. His 2003 neural probabilistic language model replaced sparse n-gram tables with dense, learned word embeddings — the direct ancestor of the input layer of every modern language model. He shared the 2018 Turing Award with Hinton and LeCun, and has become one of the most prominent scientific voices on AI safety, arguing that the field needs international coordination and a precautionary approach (\cite[Bengio et al., 2003]{neuralprobabilistic}; \cite[Bengio et al., 2023]{bengio2023managing}).
 
 ### Sepp Hochreiter and Jürgen Schmidhuber
 
@@ -115,7 +177,12 @@ Goodfellow's **generative adversarial network** (2014) paired a generator with a
 
 ### Andrej Karpathy
 
-Karpathy is the field's most influential teacher. His blog posts and courses — **The Unreasonable Effectiveness of Recurrent Neural Networks**, CS231n, “Neural Networks: Zero to Hero,” nanoGPT — made the internals of deep learning legible to a generation of practitioners. He co-founded OpenAI, led AI at Tesla, and has repeatedly argued that the best way to understand a model is to build a small one yourself (\cite[Karpathy, 2015]{karpathy2015rnn}; \cite[Karpathy, 2023]{karpathy2023zerotohero}).
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="andrej_karpathy_portrait.png" alt="Portrait of Andrej Karpathy" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_andrej_karpathy}. <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</figcaption>
+</figure>
+
+Karpathy was born in Slovakia and moved to Canada as a child; he studied at Toronto and Stanford, co-founded OpenAI, and led AI at Tesla. His blog posts and courses — The Unreasonable Effectiveness of Recurrent Neural Networks, CS231n, “Neural Networks: Zero to Hero,” nanoGPT — made the internals of deep learning legible to a generation of practitioners. He has a gift for making the difficult feel obvious, and he argues that the best way to understand a model is to build a small one yourself (\cite[Karpathy, 2015]{karpathy2015rnn}; \cite[Karpathy, 2023]{karpathy2023zerotohero}; \cite[Karpathy, 2024]{karpathy_ai}).
 
 ### Andrew Ng
 
@@ -127,17 +194,32 @@ Ng co-founded Google Brain and Coursera, and his machine-learning courses introd
 
 ### David Silver and Demis Hassabis
 
-Silver led the AlphaGo project, which combined deep policy and value networks with Monte Carlo tree search to beat Lee Sedol in 2016, and then AlphaZero, which learned chess, shogi, and Go from the rules alone by self-play. Hassabis co-founded DeepMind and built the organization that made both projects possible; he shared the 2024 Nobel Prize in Chemistry with John Jumper for AlphaFold (\cite[Silver et al., 2016]{silver2016alphago}; \cite[Silver et al., 2018]{silver2018zero}; \cite[Nobel Prize, 2024]{nobel2024chemistry}).
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="demis_hassabis_portrait.jpg" alt="Portrait of Demis Hassabis" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_demis_hassabis}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+</figure>
+
+Silver studied at Cambridge and UCL, joined DeepMind in 2010, and led the AlphaGo team that combined deep policy and value networks with Monte Carlo tree search to beat Lee Sedol in 2016. He then led AlphaZero, which learned chess, shogi, and Go from the rules alone by self-play. Hassabis co-founded DeepMind after a career that included neuroscience research at UCL, and built the organization that made both projects possible; he shared the 2024 Nobel Prize in Chemistry with John Jumper for AlphaFold (\cite[Silver et al., 2016]{silver2016alphago}; \cite[Silver et al., 2018]{silver2018zero}; \cite[Jumper et al., 2021]{jumper2021alphafold}; \cite[Nobel Prize, 2024]{nobel2024chemistry}; \cite[DeepMind, 2024]{deepmind_about}).
 
 ### John Jumper
 
-Jumper led the AlphaFold project that effectively solved single-chain protein structure prediction at CASP14 in 2020. AlphaFold 2's accuracy turned a decades-old grand challenge into a practical tool, and AlphaFold 3 extended the approach to biomolecular complexes. Jumper shared the 2024 Nobel Prize in Chemistry with Hassabis (\cite[Jumper et al., 2021]{jumper2021alphafold}; \cite[Nobel Prize, 2024]{nobel2024chemistry}).
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="john_jumper_portrait.jpg" alt="Portrait of John Jumper" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_john_jumper}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+</figure>
+
+Jumper is a computational chemist who joined DeepMind in 2017 and led the AlphaFold team. He had worked on protein folding as a student and knew the problem's reputation: a protein's function is determined by its three-dimensional shape, but the space of possible folds is astronomical. AlphaFold 2's accuracy at CASP14 in 2020 turned a decades-old grand challenge into a practical tool, and AlphaFold 3 extended the approach to biomolecular complexes. He shared the 2024 Nobel Prize in Chemistry with Hassabis (\cite[Jumper et al., 2021]{jumper2021alphafold}; \cite[Nobel Prize, 2024]{nobel2024chemistry}; \cite[DeepMind, 2024]{deepmind_about}).
 
 ### Richard Sutton and Andrew Barto
 
-Sutton and Barto built the conceptual and algorithmic foundations of reinforcement learning: temporal-difference learning, the value-function view, and the textbook that trained the field. Sutton's **“The Bitter Lesson”** is the clearest statement of the scaling worldview — general methods that exploit computation beat methods with built-in human knowledge — and it remains the most cited argument for the approach that produced modern LLMs. Sutton and Barto shared the 2024 ACM Turing Award (\cite[Sutton, 1988]{sutton1988td}; \citetitle{sutton2018rlbook}; \cite[Sutton, 2019]{sutton2019bitter}).
-</div>
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="richard_sutton_portrait.jpg" alt="Portrait of Richard Sutton" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_richard_sutton}. <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>.</figcaption>
+</figure>
 
+Sutton grew up in Canada, did a PhD at UMass Amherst, and worked at AT&T Bell Labs before returning to Alberta; Barto was his UMass colleague and coauthor. Together they built temporal-difference learning, the value-function view, and the textbook that trained the field. Sutton's “The Bitter Lesson” is the clearest statement of the scaling worldview — general methods that exploit computation beat methods with built-in human knowledge — and it remains the most cited argument for the approach that produced modern LLMs. In 2024 they shared the ACM Turing Award (\cite[Sutton, 1988]{sutton1988td}; \citetitle{sutton2018rlbook}; \cite[Sutton, 2019]{sutton2019bitter}; \cite[ACM, 2024]{acm2024turing}).
+
+</div>
 <div class="md">
 ## The LLM Era
 
@@ -163,9 +245,14 @@ Olsson led the **induction-heads** work, which identified a two-head circuit tha
 
 ### François Chollet
 
-Chollet created Keras, the deep-learning API that made neural networks accessible to non-specialists, and wrote **“On the Measure of Intelligence,”** which argued that intelligence should be measured as the efficiency of skill acquisition on novel tasks rather than as performance on familiar ones. He then built **ARC-AGI**, a benchmark designed to resist memorization and measure exactly that kind of generalization. His current lab, Ndea, pursues deep-learning-guided program synthesis as a path beyond pattern matching (\cite[Chollet, 2019]{chollet2019measure}; \cite[Chollet, 2024]{chollet2024arcagi}).
-</div>
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="francois_chollet_portrait.jpg" alt="Portrait of François Chollet" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_francois_chollet}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+</figure>
 
+Chollet is a French engineer and researcher who created Keras as an independent open-source project before joining Google. He wrote “On the Measure of Intelligence,” which argued that intelligence should be measured as the efficiency of skill acquisition on novel tasks rather than as performance on familiar ones, and then built ARC-AGI to measure exactly that kind of generalization. He left Google in 2024 to co-found Ndea, a lab pursuing deep-learning-guided program synthesis as a path beyond pattern matching (\cite[Chollet, 2019]{chollet2019measure}; \cite[Chollet, 2024]{chollet2024arcagi}; \cite[Chollet, 2024]{fchollet_site}).
+
+</div>
 <div class="md">
 ## The Mathematicians and Computer Pioneers
 
