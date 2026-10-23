@@ -19385,6 +19385,15 @@ window.bibData = {
 		year: 2019,
 		license: "Public domain",
 		alternativetitle: "Laws of Form diagram"
+	},
+
+	"theseus_maze_image": {
+		url: "https://commons.wikimedia.org/wiki/File:Theseus_Maze_by_Claude_Shannon,_1952_-_MIT_Museum_-_DSC03702.JPG",
+		title: "Theseus maze by Claude Shannon (1952), MIT Museum",
+		author: "Daderot (Wikimedia Commons)",
+		year: 1952,
+		license: "CC0",
+		alternativetitle: "Shannon's Theseus maze (1952)"
 	}
 
 };

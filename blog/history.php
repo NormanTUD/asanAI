@@ -488,8 +488,8 @@ In World War II Bateson served in the OSS designing "black propaganda" radio bro
 		<figcaption class="md">\citealternativetitle{shannonphoto}, \citeyear{shannonphoto}</figcaption>
 	</figure>
 	<figure>
-		<img src="shannons_mouse.jpg" alt="Claude Shannon with Theseus, his electronic maze-solving mouse" />
-		<figcaption class="md">Claude Shannon with <em>Theseus</em> (originally <em>Rat</em>), his relay mouse that learned to navigate a 25-square maze by trial and error \cite{shannonratphoto}.</figcaption>
+		<img src="theseus_maze_1952.jpg" alt="Claude Shannon's Theseus maze (1952), MIT Museum" />
+		<figcaption class="md">Claude Shannon's <em>Theseus</em> maze (1952), the 25-square relay maze his mouse learned to navigate by trial and error (\cite[Theseus maze, MIT Museum]{theseus_maze_image}).</figcaption>
 	</figure>
 </div>
 
