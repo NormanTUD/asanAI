@@ -6598,7 +6598,7 @@ window.bibData = {
 		year: 1910,
 		author: "Bertrand Russell, Alfred North Whitehead",
 		title: "Principia Mathematica",
-		url: "https://lesharmoniesdelesprit.wordpress.com/wp-content/uploads/2015/11/whiteheadrussell-principiamathematicavolumei.pdf"
+		url: "https://archive.org/details/cu31924001575244"
 	},
 	"hilbert1928entscheidung": {
 		year: 1928,
