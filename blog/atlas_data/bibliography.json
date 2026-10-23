@@ -3438,6 +3438,18 @@
    "year": "",
    "url": "http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf"
   },
+  "shazeer2018adafactor": {
+   "title": "Adafactor: Adaptive Learning Rates with Sublinear Memory Cost",
+   "author": "Noam Shazeer, Mitchell Stern",
+   "year": "",
+   "url": "https://arxiv.org/abs/1804.04235"
+  },
+  "dettmers2021_8bit": {
+   "title": "8-bit Optimizers via Block-wise Quantization",
+   "author": "Tim Dettmers, Mike Lewis, Sam Shleifer, Luke Zettlemoyer",
+   "year": "",
+   "url": "https://arxiv.org/abs/2110.02861"
+  },
   "dozat2016nadam": {
    "title": "Incorporating Nesterov Momentum into Adam",
    "author": "Timothy Dozat",
@@ -7421,12 +7433,6 @@
    "author": "Sourya Basu, Govardana Sachitanandam Ramachandran, Nitish Shirish Keskar, Lav R. Varshney",
    "year": "",
    "url": "https://arxiv.org/abs/2008.00723"
-  },
-  "power2022grokking": {
-   "title": "Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets",
-   "author": "Alethea Power, Yuri Burda, Harri Edwards, Igor Babuschkin, Vedant Misra",
-   "year": "",
-   "url": "https://arxiv.org/abs/2201.02177"
   },
   "huang2018gpipe": {
    "title": "GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism",
@@ -16043,6 +16049,702 @@
    "author": "Daderot (Wikimedia Commons)",
    "year": "",
    "url": "https://commons.wikimedia.org/wiki/File:Theseus_Maze_by_Claude_Shannon,_1952_-_MIT_Museum_-_DSC03702.JPG"
+  },
+  "zhang2019rmsnorm": {
+   "title": "Root Mean Square Layer Normalization",
+   "author": "Biao Zhang, Rico Sennrich",
+   "year": "",
+   "url": "https://arxiv.org/abs/1910.07467"
+  },
+  "deepseek2024v2": {
+   "title": "DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model",
+   "author": "DeepSeek-AI",
+   "year": "",
+   "url": "https://arxiv.org/abs/2405.04434"
+  },
+  "austin2021d3pm": {
+   "title": "Structured Denoising Diffusion Models in Discrete State-Spaces",
+   "author": "Jacob Austin, Daniel D. Johnson, Jonathan Ho, Daniel Tarlow, Rianne van den Berg",
+   "year": "",
+   "url": "https://arxiv.org/abs/2107.03006"
+  },
+  "nie2025llada": {
+   "title": "Large Language Diffusion Models",
+   "author": "Shen Nie, Fengqi Zhu, Zebin You, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2502.09992"
+  },
+  "lake2018scan": {
+   "title": "Generalization without Systematicity: On the Compositional Skills of Sequence-to-Sequence Recurrent Networks",
+   "author": "Brenden M. Lake, Marco Baroni",
+   "year": "",
+   "url": "https://arxiv.org/abs/1711.00350"
+  },
+  "power2022grokking": {
+   "title": "Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets",
+   "author": "Alethea Power, Yuri Burda, Harri Edwards, Igor Babuschkin, Vedant Misra",
+   "year": "",
+   "url": "https://arxiv.org/abs/2201.02177"
+  },
+  "schaeffer2023mirage": {
+   "title": "Are Emergent Abilities of Large Language Models a Mirage?",
+   "author": "Rylan Schaeffer, Brando Miranda, Sanmi Koyejo",
+   "year": "",
+   "url": "https://arxiv.org/abs/2304.15004"
+  },
+  "burns2023weakstrong": {
+   "title": "Weak-to-Strong Generalization: Eliciting Strong Capabilities With Weak Supervision",
+   "author": "Collin Burns, Pavel Izmailov, Jan Hendrik Kirchner, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2312.09390"
+  },
+  "christian2021elk": {
+   "title": "Eliciting Latent Knowledge: How to tell if your eyes deceive you",
+   "author": "Paul Christiano, Ajeya Cotra, Mark Xu",
+   "year": "",
+   "url": "https://www.alignmentforum.org/posts/qHCDysDnvhteW7kRd/arc-s-first-technical-report-eliciting-latent-knowledge"
+  },
+  "pan2024latentqa": {
+   "title": "LatentQA: Teaching LLMs to Decode Activations Into Natural Language",
+   "author": "Alexander Pan, Lijie Chen, Jacob Steinhardt",
+   "year": "",
+   "url": "https://arxiv.org/abs/2412.08686"
+  },
+  "turner2023actadd": {
+   "title": "Steering Language Models With Activation Engineering",
+   "author": "Alexander Matt Turner, Lisa Thiergart, Gavin Leech, David Udell, Juan J. Vazquez, Ulisse Mini, Monte MacDiarmid",
+   "year": "",
+   "url": "https://arxiv.org/abs/2308.10248"
+  },
+  "rimsky2023caa": {
+   "title": "Steering Llama 2 via Contrastive Activation Addition",
+   "author": "Nina Rimsky, Nick Gabrieli, Julian Schulz, Meg Tong, Evan Hubinger, Alexander Matt Turner",
+   "year": "",
+   "url": "https://arxiv.org/abs/2312.06681"
+  },
+  "chen2025persona": {
+   "title": "Persona Vectors: Monitoring and Controlling Character Traits in Language Models",
+   "author": "Runjin Chen, Andy Arditi, Henry Sleight, Owain Evans, Jack Lindsey",
+   "year": "",
+   "url": "https://arxiv.org/abs/2507.21509"
+  },
+  "sun2024massive": {
+   "title": "Massive Activations in Large Language Models",
+   "author": "Mingjie Sun, Xinlei Chen, J. Zico Kolter, Zhuang Liu",
+   "year": "",
+   "url": "https://arxiv.org/abs/2402.17762"
+  },
+  "anthropic2025biology": {
+   "title": "On the Biology of a Large Language Model",
+   "author": "Jack Lindsey et al.",
+   "year": "",
+   "url": "https://transformer-circuits.pub/2025/attribution-graphs/biology.html"
+  },
+  "liu2019roberta": {
+   "title": "RoBERTa: A Robustly Optimized BERT Pretraining Approach",
+   "author": "Yinhan Liu, Myle Ott, Naman Goyal, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/1907.11692"
+  },
+  "clark2020electra": {
+   "title": "ELECTRA: Pre-training Text Encoders as Discriminators Rather Than Generators",
+   "author": "Kevin Clark, Minh-Thang Luong, Quoc V. Le, Christopher D. Manning",
+   "year": "",
+   "url": "https://arxiv.org/abs/2003.10555"
+  },
+  "howard2018ulmfit": {
+   "title": "Universal Language Model Fine-tuning for Text Classification",
+   "author": "Jeremy Howard, Sebastian Ruder",
+   "year": "",
+   "url": "https://arxiv.org/abs/1801.06146"
+  },
+  "pennington2014glove": {
+   "title": "GloVe: Global Vectors for Word Representation",
+   "author": "Jeffrey Pennington, Richard Socher, Christopher D. Manning",
+   "year": "",
+   "url": "https://aclanthology.org/D14-1162/"
+  },
+  "bojanowski2017fasttext": {
+   "title": "Enriching Word Vectors with Subword Information",
+   "author": "Piotr Bojanowski, Edouard Grave, Armand Joulin, Tomas Mikolov",
+   "year": "",
+   "url": "https://arxiv.org/abs/1607.04606"
+  },
+  "bengio2015scheduled": {
+   "title": "Scheduled Sampling for Sequence Prediction with Recurrent Neural Networks",
+   "author": "Samy Bengio, Oriol Vinyals, Navdeep Jaitly, Noam Shazeer",
+   "year": "",
+   "url": "https://arxiv.org/abs/1506.03099"
+  },
+  "minimax2025lightning": {
+   "title": "MiniMax-01: Scaling Foundation Models with Lightning Attention",
+   "author": "MiniMax",
+   "year": "",
+   "url": "https://arxiv.org/abs/2501.08313"
+  },
+  "ramesh2021dalle": {
+   "title": "Zero-Shot Text-to-Image Generation",
+   "author": "Aditya Ramesh, Mikhail Pavlov, Gabriel Goh, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2102.12092"
+  },
+  "radford2022whisper": {
+   "title": "Robust Speech Recognition via Large-Scale Weak Supervision",
+   "author": "Alec Radford, Jong Wook Kim, Tao Xu, Greg Brockman, Christine McLeavey, Ilya Sutskever",
+   "year": "",
+   "url": "https://arxiv.org/abs/2212.04356"
+  },
+  "commonpile2025": {
+   "title": "The Common Pile v0.1: An 8TB Dataset of Public Domain and Openly Licensed Text",
+   "author": "Nikil Roashan Selvam, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2506.05209"
+  },
+  "dolma2024": {
+   "title": "Dolma: an Open Corpus of Three Trillion Tokens for Language Model Pretraining Research",
+   "author": "Luca Soldaini, Rodney Kinney, Akshita Bhagia, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2402.00159"
+  },
+  "fineweb2024": {
+   "title": "The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale",
+   "author": "Guilherme Penedo, Hynek Kydlíček, Loubna Ben Allal, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2406.17557"
+  },
+  "biderman2023pythia": {
+   "title": "Pythia: A Suite for Analyzing Large Language Models Across Training and Scaling",
+   "author": "Stella Biderman, Hailey Schoelkopf, Quentin Anthony, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2304.01373"
+  },
+  "black2022gptneox": {
+   "title": "GPT-NeoX-20B: An Open-Source Autoregressive Language Model",
+   "author": "Sid Black, Stella Biderman, Eric Hallahan, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2204.06745"
+  },
+  "scao2022bloom": {
+   "title": "BLOOM: A 176B-Parameter Open-Access Multilingual Language Model",
+   "author": "Teven Le Scao, Angela Fan, Christopher Akiki, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2211.05100"
+  },
+  "zhang2022opt": {
+   "title": "OPT: Open Pre-trained Transformer Language Models",
+   "author": "Susan Zhang, Stephen Roller, Naman Goyal, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2205.01068"
+  },
+  "jiang2023mistral": {
+   "title": "Mistral 7B",
+   "author": "Albert Q. Jiang, Alexandre Sablayrolles, Arthur Mensch, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2310.06825"
+  },
+  "qwen2024qwen25": {
+   "title": "Qwen2.5 Technical Report",
+   "author": "Qwen Team",
+   "year": "",
+   "url": "https://arxiv.org/abs/2412.15115"
+  },
+  "qwen2025qwen3": {
+   "title": "Qwen3 Technical Report",
+   "author": "Qwen Team",
+   "year": "",
+   "url": "https://arxiv.org/abs/2505.09388"
+  },
+  "gemini2024v15": {
+   "title": "Gemini 1.5: Unlocking multimodal understanding across millions of tokens of context",
+   "author": "Gemini Team, Google",
+   "year": "",
+   "url": "https://arxiv.org/abs/2403.05530"
+  },
+  "gemma2025v3": {
+   "title": "Gemma 3 Technical Report",
+   "author": "Gemma Team, Google DeepMind",
+   "year": "",
+   "url": "https://arxiv.org/abs/2503.19786"
+  },
+  "meta2025llama4": {
+   "title": "The Llama 4 herd: The beginning of a new era of natively multimodal AI innovation",
+   "author": "Meta AI",
+   "year": "",
+   "url": "https://arxiv.org/abs/2504.19191"
+  },
+  "openai2023gpt4": {
+   "title": "GPT-4 Technical Report",
+   "author": "OpenAI",
+   "year": "",
+   "url": "https://arxiv.org/abs/2303.08774"
+  },
+  "kimi2025k2": {
+   "title": "Kimi K2: Open Agentic Intelligence",
+   "author": "Kimi Team, Moonshot AI",
+   "year": "",
+   "url": "https://arxiv.org/abs/2507.20534"
+  },
+  "longcat2025": {
+   "title": "LongCat-Flash Technical Report",
+   "author": "Meituan LongCat Team",
+   "year": "",
+   "url": "https://arxiv.org/abs/2509.01322"
+  },
+  "gptoss2025": {
+   "title": "gpt-oss-120b & gpt-oss-20b Model Card",
+   "author": "OpenAI",
+   "year": "",
+   "url": "https://arxiv.org/abs/2508.10925"
+  },
+  "lambert2024tulu3": {
+   "title": "Tulu 3: Pushing Frontiers in Open Language Model Post-Training",
+   "author": "Nathan Lambert, Jacob Morrison, Valentina Pyatkin, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2411.15124"
+  },
+  "gudibande2023falsepromise": {
+   "title": "The False Promise of Imitating Proprietary LLMs",
+   "author": "Arnav Gudibande, Eric Wallace, Charlie Snell, Xinyang Geng, Hao Liu, Pieter Abbeel, Sergey Levine, Dawn Song",
+   "year": "",
+   "url": "https://arxiv.org/abs/2305.15717"
+  },
+  "hsieh2023distilling": {
+   "title": "Distilling Step-by-Step! Outperforming Larger Language Models with Less Training Data and Smaller Model Sizes",
+   "author": "Cheng-Yu Hsieh, Chun-Liang Li, Chih-Kuan Yeh, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2305.02301"
+  },
+  "ssi2024": {
+   "title": "Safe Superintelligence Inc.",
+   "author": "Safe Superintelligence Inc.",
+   "year": "",
+   "url": "https://ssi.inc/"
+  },
+  "tml2025": {
+   "title": "Thinking Machines Lab",
+   "author": "Thinking Machines Lab",
+   "year": "",
+   "url": "https://thinkingmachines.ai/"
+  },
+  "ndea2025": {
+   "title": "Ndea",
+   "author": "Ndea",
+   "year": "",
+   "url": "https://ndea.com/"
+  },
+  "arcee2025": {
+   "title": "Arcee AI",
+   "author": "Arcee AI",
+   "year": "",
+   "url": "https://arcee.ai/"
+  },
+  "llama3herd2024": {
+   "title": "The Llama 3 Herd of Models",
+   "author": "Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2407.21783"
+  },
+  "jordan2024muon": {
+   "title": "Muon: An optimizer for hidden layers in neural networks",
+   "author": "Keller Jordan",
+   "year": "",
+   "url": "https://kellerjordan.github.io/posts/muon/"
+  },
+  "min2022rethinking": {
+   "title": "Rethinking the Role of Demonstrations: What Makes In-Context Learning Work?",
+   "author": "Sewon Min, Xinxi Lyu, Ari Holtzman, Mikel Artetxe, Mike Lewis, Hannaneh Hajishirzi, Luke Zettlemoyer",
+   "year": "",
+   "url": "https://arxiv.org/abs/2202.12837"
+  },
+  "infllm2024": {
+   "title": "InfLLM: Training-Free Long-Context Extrapolation for LLMs with an Efficient Context Memory",
+   "author": "Chaojun Xiao, Pengle Zhang, Xu Han, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2402.04617"
+  },
+  "lecun2022path": {
+   "title": "A Path Towards Autonomous Machine Intelligence",
+   "author": "Yann LeCun",
+   "year": "",
+   "url": "https://openreview.net/forum?id=BZ5a1r-kVsf"
+  },
+  "gwern2020scaling": {
+   "title": "The Scaling Hypothesis",
+   "author": "Gwern Branwen",
+   "year": "",
+   "url": "https://gwern.net/scaling-hypothesis"
+  },
+  "aschenbrenner2024": {
+   "title": "Situational Awareness: The Decade Ahead",
+   "author": "Leopold Aschenbrenner",
+   "year": "",
+   "url": "https://situational-awareness.ai/"
+  },
+  "kokotajlo2025ai2027": {
+   "title": "AI 2027",
+   "author": "Daniel Kokotajlo, Scott Alexander, Thomas Larsen, Eli Lifland, Romeo Dean",
+   "year": "",
+   "url": "https://ai-2027.com/"
+  },
+  "amodei2024machines": {
+   "title": "Machines of Loving Grace",
+   "author": "Dario Amodei",
+   "year": "",
+   "url": "https://www.darioamodei.com/essay/machines-of-loving-grace"
+  },
+  "karnofsky2021": {
+   "title": "The Most Important Century",
+   "author": "Holden Karnofsky",
+   "year": "",
+   "url": "https://www.cold-takes.com/most-important-century/"
+  },
+  "christiano2019failure": {
+   "title": "What Failure Looks Like",
+   "author": "Paul Christiano",
+   "year": "",
+   "url": "https://www.alignmentforum.org/posts/HBxe6wdjxK239zajf/what-failure-looks-like"
+  },
+  "lefkowitz2019perceptron": {
+   "title": "Professor's Perceptron Paved the Way for AI: 60 Years Too Soon",
+   "author": "Melanie Lefkowitz",
+   "year": "",
+   "url": "https://news.cornell.edu/stories/2019/09/professors-perceptron-paved-way-ai-60-years-too-soon"
+  },
+  "block1962perceptron": {
+   "title": "The Perceptron: A Model for Brain Functioning. I",
+   "author": "H. D. Block",
+   "year": "",
+   "url": "https://journals.aps.org/rmp/abstract/10.1103/RevModPhys.34.123"
+  },
+  "novikoff1963convergence": {
+   "title": "On Convergence Proofs for Perceptrons",
+   "author": "A. B. J. Novikoff",
+   "year": "",
+   "url": ""
+  },
+  "olazaran1996sociological": {
+   "title": "A Sociological Study of the Official History of the Perceptrons Controversy",
+   "author": "Mikel Olazaran",
+   "year": "",
+   "url": ""
+  },
+  "papert1988oneai": {
+   "title": "One AI or Many?",
+   "author": "Seymour Papert",
+   "year": "",
+   "url": "https://www.jstor.org/stable/20025183"
+  },
+  "anderson2000talkingnets": {
+   "title": "Talking Nets: An Oral History of Neural Networks",
+   "author": "James A. Anderson, Edward Rosenfeld (eds.)",
+   "year": "",
+   "url": ""
+  },
+  "rosenblatt1959twotheorems": {
+   "title": "Two Theorems of Statistical Separability in the Perceptron",
+   "author": "Frank Rosenblatt",
+   "year": "",
+   "url": ""
+  },
+  "rosenblatt1967recentwork": {
+   "title": "Recent Work on Theoretical Models of Biological Memory",
+   "author": "Frank Rosenblatt",
+   "year": "",
+   "url": ""
+  },
+  "saki1911clovis": {
+   "title": "The Chronicles of Clovis",
+   "author": "Saki (H. H. Munro)",
+   "year": "",
+   "url": "https://www.gutenberg.org/ebooks/3688"
+  },
+  "kim2020cogs": {
+   "title": "COGS: A Compositional Generalization Challenge Based on Semantic Interpretation",
+   "author": "Najoung Kim, Tal Linzen",
+   "year": "",
+   "url": "https://arxiv.org/abs/2010.05465"
+  },
+  "rosenblatt1960simulation": {
+   "title": "Perceptron Simulation Experiments",
+   "author": "Frank Rosenblatt",
+   "year": "",
+   "url": "https://babel.hathitrust.org/cgi/pt?id=coo.31924004657973&seq=1"
+  },
+  "wang2022selfinstruct": {
+   "title": "Self-Instruct: Aligning Language Models with Self-Generated Instructions",
+   "author": "Yizhong Wang, Yeganeh Kordi, Swaroop Mishra, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2212.10560"
+  },
+  "taori2023alpaca": {
+   "title": "Alpaca: A Strong, Replicable Instruction-Following Model",
+   "author": "Rohan Taori, Ishaan Gulrajani, Tianyi Zhang, et al.",
+   "year": "",
+   "url": "https://crfm.stanford.edu/2023/03/13/alpaca.html"
+  },
+  "karpathy2015rnn": {
+   "title": "The Unreasonable Effectiveness of Recurrent Neural Networks",
+   "author": "Andrej Karpathy",
+   "year": "",
+   "url": "https://karpathy.github.io/2015/05/21/rnn-effectiveness/"
+  },
+  "dean2012large": {
+   "title": "Large Scale Distributed Deep Networks",
+   "author": "Jeffrey Dean, Greg Corrado, Rajat Monga, Kai Chen, Matthieu Devin, Mark Mao, Marc'aurelio Ranzato, Andrew Senior, Paul Tucker, Ke Yang, Quoc V. Le, Andrew Y. Ng",
+   "year": "",
+   "url": "https://papers.nips.cc/paper/4687-large-scale-distributed-deep-networks.pdf"
+  },
+  "nobel2024physics": {
+   "title": "The Nobel Prize in Physics 2024",
+   "author": "The Royal Swedish Academy of Sciences",
+   "year": "",
+   "url": "https://www.nobelprize.org/prizes/physics/2024/summary/"
+  },
+  "img_ada_lovelace": {
+   "title": "Ada Lovelace",
+   "author": "Alfred Edward Chalon",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Ada_Lovelace_Chalon_portrait.jpg"
+  },
+  "img_charles_babbage": {
+   "title": "Charles Babbage",
+   "author": "Anonymous (The Illustrated London News)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Charles_Babbage_1860.jpg"
+  },
+  "img_alan_turing": {
+   "title": "Alan Turing",
+   "author": "Elliott & Fry",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Alan_Turing_(1951).jpg"
+  },
+  "img_claude_shannon": {
+   "title": "Claude Shannon",
+   "author": "Tekniska Museet (unknown photographer)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:C.E._Shannon._Tekniska_museet_43069_(cropped).jpg"
+  },
+  "img_john_von_neumann": {
+   "title": "John von Neumann",
+   "author": "wikispaces (uploader)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:John_von_Neumann.jpg"
+  },
+  "img_frank_rosenblatt": {
+   "title": "Frank Rosenblatt",
+   "author": "Anonymous / Heinz Nixdorf MuseumsForum",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg"
+  },
+  "img_marvin_minsky": {
+   "title": "Marvin Minsky",
+   "author": "Steamtalks (Flickr)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Marvin_Minsky.jpg"
+  },
+  "img_seymour_papert": {
+   "title": "Seymour Papert",
+   "author": "Matematicamente.it",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Seymour_Papert.jpg"
+  },
+  "img_geoffrey_hinton": {
+   "title": "Geoffrey Hinton",
+   "author": "Arthur Petron",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Geoffrey_E._Hinton,_2024_Nobel_Prize_Laureate_in_Physics_(cropped1).jpg"
+  },
+  "img_yann_lecun": {
+   "title": "Yann LeCun",
+   "author": "Jérémy Barande",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Yann_LeCun_-_2018_(cropped).jpg"
+  },
+  "img_yoshua_bengio": {
+   "title": "Yoshua Bengio",
+   "author": "Maryse Boyce",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Yoshua_Bengio_2019_cropped.jpg"
+  },
+  "img_demis_hassabis": {
+   "title": "Demis Hassabis",
+   "author": "Alain Herzog",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Demis_Hassabis.jpg"
+  },
+  "img_john_jumper": {
+   "title": "John Jumper",
+   "author": "Arthur Petron",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:John_Jumper,_2024_Nobel_Prize_Laureate_in_Chemistry.jpg"
+  },
+  "img_andrej_karpathy": {
+   "title": "Andrej Karpathy",
+   "author": "Gladwin Analytics",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Andrej_Karpathy,_OpenAI_(cropped).png"
+  },
+  "img_francois_chollet": {
+   "title": "François Chollet",
+   "author": "Kaicarver",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Fran%C3%A7ois_Chollet.jpg"
+  },
+  "img_richard_sutton": {
+   "title": "Richard Sutton",
+   "author": "Steve Jurvetson",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Richard_Sutton,_October_27,_2016.jpg"
+  },
+  "img_john_hopfield": {
+   "title": "John Hopfield",
+   "author": "bhadeshia123",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:John_Hopfield_2016.jpg"
+  },
+  "lettvin1959frog": {
+   "title": "What the Frog's Eye Tells the Frog's Brain",
+   "author": "Jerome Y. Lettvin, Humberto R. Maturana, Warren S. McCulloch, Walter H. Pitts",
+   "year": "",
+   "url": ""
+  },
+  "boole1854": {
+   "title": "An Investigation of the Laws of Thought",
+   "author": "George Boole",
+   "year": "",
+   "url": "https://archive.org/details/investigationofl00bool"
+  },
+  "church1936": {
+   "title": "An Unsolvable Problem of Elementary Number Theory",
+   "author": "Alonzo Church",
+   "year": "",
+   "url": "https://doi.org/10.2307/2371045"
+  },
+  "turing1936": {
+   "title": "On Computable Numbers, with an Application to the Entscheidungsproblem",
+   "author": "Alan M. Turing",
+   "year": "",
+   "url": ""
+  },
+  "mccarthy1955dartmouth": {
+   "title": "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
+   "author": "John McCarthy, Marvin L. Minsky, Nathaniel Rochester, Claude E. Shannon",
+   "year": "",
+   "url": ""
+  },
+  "newell1956logic": {
+   "title": "The Logic Theory Machine: A Complex Information Processing System",
+   "author": "Allen Newell, Herbert A. Simon",
+   "year": "",
+   "url": ""
+  },
+  "kudo2018sentencepiece": {
+   "title": "SentencePiece: A simple and language independent subword tokenizer and detokenizer for Neural Text Processing",
+   "author": "Taku Kudo, John Richardson",
+   "year": "",
+   "url": "https://arxiv.org/abs/1808.06226"
+  },
+  "dosovitskiy2020vit": {
+   "title": "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+   "author": "Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2010.11929"
+  },
+  "he2016resnet": {
+   "title": "Deep Residual Learning for Image Recognition",
+   "author": "Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun",
+   "year": "",
+   "url": "https://arxiv.org/abs/1512.03385"
+  },
+  "isola2017pix2pix": {
+   "title": "Image-to-Image Translation with Conditional Adversarial Networks",
+   "author": "Phillip Isola, Jun-Yan Zhu, Tinghui Zhou, Alexei A. Efros",
+   "year": "",
+   "url": "https://arxiv.org/abs/1611.07004"
+  },
+  "rajbhandari2020zero": {
+   "title": "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models",
+   "author": "Samyam Rajbhandari, Jeff Rasley, Olatunji Ruwase, Yuxiong He",
+   "year": "",
+   "url": "https://arxiv.org/abs/1910.02054"
+  },
+  "lepikhin2021gshard": {
+   "title": "GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding",
+   "author": "Dmitry Lepikhin, HyoukJoong Lee, Yuanzhong Xu, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2006.16668"
+  },
+  "irving2018debate": {
+   "title": "AI Safety via Debate",
+   "author": "Geoffrey Irving, Paul Christiano, Dario Amodei",
+   "year": "",
+   "url": "https://arxiv.org/abs/1805.00899"
+  },
+  "amodei2016concrete": {
+   "title": "Concrete Problems in AI Safety",
+   "author": "Dario Amodei, Chris Olah, Jacob Steinhardt, Paul Christiano, John Schulman, Dan Mané",
+   "year": "",
+   "url": "https://arxiv.org/abs/1606.06565"
+  },
+  "russell2019human": {
+   "title": "Human Compatible: Artificial Intelligence and the Problem of Control",
+   "author": "Stuart Russell",
+   "year": "",
+   "url": "https://www.penguinrandomhouse.com/books/566677/human-compatible-by-stuart-russell/"
+  },
+  "yudkowsky2008ai": {
+   "title": "Artificial Intelligence as a Positive and Negative Factor in Global Risk",
+   "author": "Eliezer Yudkowsky",
+   "year": "",
+   "url": "https://intelligence.org/files/AIPosNegFactor.pdf"
+  },
+  "frege1879": {
+   "title": "Begriffsschrift, eine der arithmetischen nachgebildete Formelsprache des reinen Denkens",
+   "author": "Gottlob Frege",
+   "year": "",
+   "url": ""
+  },
+  "hodges1983enigma": {
+   "title": "Alan Turing: The Enigma",
+   "author": "Andrew Hodges",
+   "year": "",
+   "url": "https://archive.org/details/alanturingenigma0000hodg"
+  },
+  "mccorduck1979machines": {
+   "title": "Machines Who Think: A Personal Inquiry into the History and Prospects of Artificial Intelligence",
+   "author": "Pamela McCorduck",
+   "year": "",
+   "url": "https://archive.org/details/machineswhothink0000mcco"
+  },
+  "karpathy_ai": {
+   "title": "Andrej Karpathy — personal site",
+   "author": "Andrej Karpathy",
+   "year": "",
+   "url": "https://karpathy.ai/"
+  },
+  "fchollet_site": {
+   "title": "François Chollet — personal site",
+   "author": "François Chollet",
+   "year": "",
+   "url": "https://fchollet.com/"
+  },
+  "acm2024turing": {
+   "title": "ACM A.M. Turing Award 2024",
+   "author": "Association for Computing Machinery",
+   "year": "",
+   "url": ""
+  },
+  "deepmind_about": {
+   "title": "About Google DeepMind",
+   "author": "Google DeepMind",
+   "year": "",
+   "url": "https://www.deepmind.com/about"
+  },
+  "bengio2023managing": {
+   "title": "Managing AI Risks in an Era of Rapid Progress",
+   "author": "Yoshua Bengio, Geoffrey Hinton, Andrew Yao, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2310.17688"
   }
  },
  "cites": {
@@ -16062,6 +16764,7 @@
   ],
   "shannon1948communication": [
    "history",
+   "people_of_ai",
    "statistics",
    "statistics_ii",
    "tokenizerlab",
@@ -16102,6 +16805,15 @@
    "autodiff",
    "normalizationlab"
   ],
+  "zhang2019rmsnorm": [
+   "normalizationlab",
+   "transformer"
+  ],
+  "touvron2023llama": [
+   "history",
+   "normalizationlab",
+   "transformer"
+  ],
   "wu2018groupnorm": [
    "normalizationlab"
   ],
@@ -16136,7 +16848,8 @@
    "embeddinglab",
    "geometry_ii",
    "history",
-   "intuition"
+   "intuition",
+   "people_of_ai"
   ],
   "axler2024linearalgebra": [
    "geometry_ii",
@@ -16226,16 +16939,19 @@
    "finetuninglab",
    "frontier",
    "history",
+   "people_of_ai",
    "reasoning"
   ],
   "anthropic2024goldengate": [
-   "frontier"
+   "frontier",
+   "people_of_ai"
   ],
   "redman2024causalscrubbing": [
    "frontier"
   ],
   "zou2023repeng": [
-   "frontier"
+   "frontier",
+   "people_of_ai"
   ],
   "zhang2024mathshepherd": [
    "frontier",
@@ -16245,7 +16961,8 @@
    "frontier"
   ],
   "su2021rope": [
-   "frontier"
+   "frontier",
+   "transformer"
   ],
   "peng2023yarn": [
    "frontier"
@@ -16256,24 +16973,23 @@
   "li2023seqparallel": [
    "frontier"
   ],
-  "ma2024bitnet": [
-   "frontier",
-   "inference_optimization",
-   "production_serving"
+  "infllm2024": [
+   "frontier"
   ],
   "mohtashami2023landmark": [
    "frontier"
   ],
-  "bubeck2023moeoverview": [
-   "frontier",
-   "training_infrastructure"
+  "raposo2024mod": [
+   "alternative_architectures",
+   "frontier"
   ],
   "elhoushi2024early": [
    "frontier"
   ],
   "fedus2022switch": [
    "frontier",
-   "intuition"
+   "intuition",
+   "people_of_ai"
   ],
   "sakurai2024skrr": [
    "frontier"
@@ -16293,6 +17009,68 @@
    "frontier"
   ],
   "hafner2023dreamer": [
+   "frontier"
+  ],
+  "lecun2022path": [
+   "frontier",
+   "people_of_ai"
+  ],
+  "deepseek2024v3": [
+   "frontier",
+   "global_ai_ecosystem"
+  ],
+  "kimi2025k2": [
+   "frontier",
+   "global_ai_ecosystem",
+   "optimizerlab"
+  ],
+  "longcat2025": [
+   "frontier",
+   "global_ai_ecosystem"
+  ],
+  "gptoss2025": [
+   "frontier",
+   "global_ai_ecosystem"
+  ],
+  "minimax2025lightning": [
+   "frontier",
+   "global_ai_ecosystem"
+  ],
+  "deepseek2024v2": [
+   "frontier",
+   "inference_optimization",
+   "transformer"
+  ],
+  "guo2025deepseekr1": [
+   "finetuninglab",
+   "frontier",
+   "global_ai_ecosystem",
+   "inference_optimization"
+  ],
+  "qwen2025qwen3": [
+   "frontier",
+   "global_ai_ecosystem"
+  ],
+  "llama3herd2024": [
+   "frontier"
+  ],
+  "meta2025llama4": [
+   "frontier"
+  ],
+  "gemma2025v3": [
+   "frontier"
+  ],
+  "anthropic2025biology": [
+   "frontier",
+   "people_of_ai"
+  ],
+  "pan2024latentqa": [
+   "frontier",
+   "mechanistic_interpretability"
+  ],
+  "nie2025llada": [
+   "alternative_architectures",
+   "diffusion",
    "frontier"
   ],
   "keup2022origami": [
@@ -16333,28 +17111,44 @@
    "inference_optimization",
    "mechanistic_interpretability"
   ],
+  "ma2024bitnet": [
+   "inference_optimization",
+   "production_serving"
+  ],
   "che2024quip": [
    "inference_optimization"
   ],
   "shazeer2019mqa": [
    "contextwindows",
-   "inference_optimization"
+   "inference_optimization",
+   "people_of_ai",
+   "transformer"
   ],
   "ainslie2023gqa": [
    "contextwindows",
    "inference_optimization",
-   "production_serving"
+   "production_serving",
+   "transformer"
   ],
   "beltagy2020longformer": [
    "inference_optimization"
   ],
+  "xiao2023streaming": [
+   "attentionlab",
+   "inference_optimization"
+  ],
+  "sun2024massive": [
+   "inference_optimization"
+  ],
   "dao2022flashattention": [
    "contextwindows",
-   "inference_optimization"
+   "inference_optimization",
+   "people_of_ai"
   ],
   "kwon2023vllm": [
    "contextwindows",
    "inference_optimization",
+   "people_of_ai",
    "production_serving"
   ],
   "leviathan2023speculative": [
@@ -16367,10 +17161,6 @@
   "li2024eagle": [
    "inference_optimization"
   ],
-  "guo2025deepseekr1": [
-   "global_ai_ecosystem",
-   "inference_optimization"
-  ],
   "goodhartslaw": [
    "evaluation",
    "losslab"
@@ -16380,6 +17170,8 @@
    "history",
    "hyperparameters",
    "losslab",
+   "overandunderfittinglab",
+   "people_of_ai",
    "training_data",
    "trainingdynamics"
   ],
@@ -16410,6 +17202,7 @@
    "math_iv",
    "music_video_generation",
    "origami",
+   "people_of_ai",
    "philosophy",
    "positionalembeddingslab",
    "transformer"
@@ -16439,6 +17232,7 @@
    "fact_lookup",
    "intuition",
    "mechanistic_interpretability",
+   "people_of_ai",
    "transformer"
   ],
   "tishby2000informationbottleneck": [
@@ -16482,6 +17276,11 @@
    "origami",
    "transformer"
   ],
+  "shazeer2020glu": [
+   "intuition",
+   "people_of_ai",
+   "transformer"
+  ],
   "jacobs1991moe": [
    "beyond_llms",
    "transformer"
@@ -16492,8 +17291,10 @@
    "transformer"
   ],
   "sutton2019bitter": [
+   "ai_existential_risk",
    "history",
    "music_video_generation",
+   "people_of_ai",
    "statistics",
    "statistics_i",
    "transformer",
@@ -16597,7 +17398,8 @@
   ],
   "power2022grokking": [
    "algorithms",
-   "mechanistic_interpretability"
+   "mechanistic_interpretability",
+   "unexpected_capabilities"
   ],
   "garg2022incontext": [
    "algorithms",
@@ -16607,6 +17409,7 @@
    "algorithms",
    "fact_lookup",
    "mechanistic_interpretability",
+   "people_of_ai",
    "unexpected_capabilities"
   ],
   "zhou2022algorithmic": [
@@ -16654,6 +17457,9 @@
    "training_infrastructure"
   ],
   "liu2023ring": [
+   "training_infrastructure"
+  ],
+  "bubeck2023moeoverview": [
    "training_infrastructure"
   ],
   "newell1976empirical": [
@@ -16720,6 +17526,7 @@
    "activationlab",
    "history",
    "minimalneuron",
+   "people_of_ai",
    "untold_history"
   ],
   "steadystates": [
@@ -16771,6 +17578,7 @@
   ],
   "silver2016alphago": [
    "ai_and_society",
+   "people_of_ai",
    "untold_history"
   ],
   "openai2022chatgpt": [
@@ -16815,6 +17623,7 @@
   "jumper2021alphafold": [
    "ai_and_society",
    "ai_for_science",
+   "people_of_ai",
    "untold_history"
   ],
   "alphafold_wiki": [
@@ -16823,6 +17632,7 @@
   ],
   "nobel2024chemistry": [
    "ai_and_society",
+   "people_of_ai",
    "untold_history"
   ],
   "merchant2023gnome": [
@@ -16967,6 +17777,7 @@
   "lstm": [
    "alternative_architectures",
    "history",
+   "people_of_ai",
    "positionalembeddingslab",
    "recurrent_networks"
   ],
@@ -16986,13 +17797,14 @@
   "peng2023rwkv": [
    "alternative_architectures"
   ],
+  "austin2021d3pm": [
+   "alternative_architectures",
+   "diffusion"
+  ],
   "poli2023hyena": [
    "alternative_architectures"
   ],
   "ma2022mega": [
-   "alternative_architectures"
-  ],
-  "raposo2024mod": [
    "alternative_architectures"
   ],
   "robertson2009bm25": [
@@ -17039,6 +17851,7 @@
   "mccullochpitts1943": [
    "history",
    "mirror_in_machine",
+   "people_of_ai",
    "philosophy",
    "untold_history"
   ],
@@ -17062,11 +17875,13 @@
   "lecun1989backpropagation": [
    "computer_vision",
    "history",
-   "mirror_in_machine"
+   "mirror_in_machine",
+   "people_of_ai"
   ],
   "hebb1949organizationofbehaviour": [
    "history",
    "mirror_in_machine",
+   "people_of_ai",
    "untold_history"
   ],
   "okeefe1971place": [
@@ -17196,11 +18011,13 @@
   ],
   "schulman2017ppo": [
    "beyond_llms",
+   "people_of_ai",
    "reinforcement_learning"
   ],
   "rafailov2023dpo": [
    "alignment",
    "finetuninglab",
+   "people_of_ai",
    "reinforcement_learning"
   ],
   "azar2023ipo": [
@@ -17217,6 +18034,7 @@
   ],
   "shao2024grpo": [
    "finetuninglab",
+   "people_of_ai",
    "reasoning",
    "reinforcement_learning"
   ],
@@ -17232,9 +18050,6 @@
    "attentionlab"
   ],
   "ramsauer2021hopfield": [
-   "attentionlab"
-  ],
-  "xiao2023streaming": [
    "attentionlab"
   ],
   "darcet2024registers": [
@@ -17292,7 +18107,8 @@
   ],
   "bahdanau2014": [
    "history",
-   "positionalembeddingslab"
+   "positionalembeddingslab",
+   "recurrent_networks"
   ],
   "rope2021": [
    "positionalembeddingslab"
@@ -17402,6 +18218,7 @@
   "kaplan2020scaling": [
    "ai_economics",
    "hyperparameters",
+   "people_of_ai",
    "trainingdynamics"
   ],
   "promptcaching": [
@@ -17532,22 +18349,41 @@
   "loshchilov2019adamw": [
    "optimizerlab"
   ],
+  "jordan2024muon": [
+   "optimizerlab"
+  ],
   "werbos1974": [
    "autodiff",
-   "optimizerlab"
+   "optimizerlab",
+   "people_of_ai"
   ],
   "rumelhart1986": [
    "autodiff",
    "backproplab",
    "differentiation",
    "history",
-   "optimizerlab"
+   "optimizerlab",
+   "people_of_ai"
   ],
   "zipf1949human": [
    "foam_of_meaning",
    "language",
    "optimizerlab",
    "tokenizerlab"
+  ],
+  "shazeer2018adafactor": [
+   "optimizerlab"
+  ],
+  "dettmers2021_8bit": [
+   "optimizerlab"
+  ],
+  "brown2020gpt3": [
+   "history",
+   "optimizerlab",
+   "people_of_ai",
+   "philosophy",
+   "trainingdynamics",
+   "unexpected_capabilities"
   ],
   "arora2022edgeofstability": [
    "optimizerlab",
@@ -17557,6 +18393,7 @@
    "tokenizerlab"
   ],
   "shannon1951communication": [
+   "people_of_ai",
    "tokenizerlab"
   ],
   "sutskever2011generating": [
@@ -17565,6 +18402,7 @@
   "sennrich2016subword": [
    "embeddinglab",
    "history",
+   "people_of_ai",
    "tokenizerlab"
   ],
   "kudo2018unigram": [
@@ -17616,19 +18454,28 @@
   "masakhane2024": [
    "global_ai_ecosystem"
   ],
+  "qwen2024qwen25": [
+   "global_ai_ecosystem"
+  ],
   "glm2024": [
-   "global_ai_ecosystem"
-  ],
-  "moonshot2024kimi": [
-   "global_ai_ecosystem"
-  ],
-  "deepseek2024v3": [
    "global_ai_ecosystem"
   ],
   "china2023algorithmic": [
    "global_ai_ecosystem"
   ],
   "insta2023": [
+   "global_ai_ecosystem"
+  ],
+  "ssi2024": [
+   "global_ai_ecosystem"
+  ],
+  "tml2025": [
+   "global_ai_ecosystem"
+  ],
+  "ndea2025": [
+   "global_ai_ecosystem"
+  ],
+  "arcee2025": [
    "global_ai_ecosystem"
   ],
   "technologyinnovation2024": [
@@ -17638,6 +18485,18 @@
    "global_ai_ecosystem"
   ],
   "euaiact2024": [
+   "global_ai_ecosystem"
+  ],
+  "black2022gptneox": [
+   "global_ai_ecosystem"
+  ],
+  "zhang2022opt": [
+   "global_ai_ecosystem"
+  ],
+  "scao2022bloom": [
+   "global_ai_ecosystem"
+  ],
+  "biderman2023pythia": [
    "global_ai_ecosystem"
   ],
   "bostrom2012orthogonal": [
@@ -17683,13 +18542,15 @@
   ],
   "christiano2017rlhf": [
    "alignment",
-   "history"
+   "history",
+   "people_of_ai"
   ],
   "rlaif": [
    "alignment"
   ],
   "bai2022constitutional": [
    "alignment",
+   "people_of_ai",
    "training_data",
    "unexpected_capabilities"
   ],
@@ -17806,11 +18667,17 @@
   "ho2020ddpm": [
    "beyond_llms",
    "diffusion",
-   "music_video_generation"
+   "music_video_generation",
+   "people_of_ai"
   ],
   "song2019score": [
    "beyond_llms",
-   "diffusion"
+   "diffusion",
+   "people_of_ai"
+  ],
+  "ramesh2021dalle": [
+   "diffusion",
+   "people_of_ai"
   ],
   "ho2022cfg": [
    "diffusion",
@@ -17824,7 +18691,8 @@
   ],
   "rombach2022ldm": [
    "diffusion",
-   "music_video_generation"
+   "music_video_generation",
+   "people_of_ai"
   ],
   "diffusion_ddim_img": [
    "diffusion"
@@ -17834,7 +18702,8 @@
   ],
   "peebles2023dit": [
    "diffusion",
-   "music_video_generation"
+   "music_video_generation",
+   "people_of_ai"
   ],
   "sohl2015deep": [
    "beyond_llms",
@@ -18031,7 +18900,8 @@
   ],
   "silver2018zero": [
    "ai_for_science",
-   "beyond_llms"
+   "beyond_llms",
+   "people_of_ai"
   ],
   "lecun2022jepa": [
    "ai_for_science"
@@ -18100,7 +18970,8 @@
   "radford2021clip": [
    "computer_vision",
    "multimodal",
-   "music_video_generation"
+   "music_video_generation",
+   "people_of_ai"
   ],
   "oord2016wavenet": [
    "beyond_llms",
@@ -18167,7 +19038,8 @@
   ],
   "hinton2006": [
    "deeplearninglab",
-   "geometry_i"
+   "geometry_i",
+   "people_of_ai"
   ],
   "cybenko1989": [
    "deeplearninglab",
@@ -18377,15 +19249,6 @@
   "ishango12": [
    "history"
   ],
-  "salamictablet": [
-   "history"
-  ],
-  "earliestabacusphoto": [
-   "history"
-  ],
-  "salminictablesource": [
-   "history"
-  ],
   "jiuzhangsuanshu": [
    "geometry_i",
    "history"
@@ -18398,6 +19261,15 @@
    "software",
    "untold_history"
   ],
+  "salamictablet": [
+   "history"
+  ],
+  "earliestabacusphoto": [
+   "history"
+  ],
+  "salminictablesource": [
+   "history"
+  ],
   "aristotleandplato": [
    "history",
    "human_mind"
@@ -18408,25 +19280,10 @@
   "bochenski": [
    "history"
   ],
-  "tesniere1959deps": [
-   "history"
-  ],
   "antikytheraimage": [
    "history"
   ],
   "antikytherasciam": [
-   "history"
-  ],
-  "brazenheadimage": [
-   "history"
-  ],
-  "brazenheadwiki": [
-   "history"
-  ],
-  "brownepseudodoxia": [
-   "history"
-  ],
-  "brazenheadpubimage": [
    "history"
   ],
   "pygmalionimage": [
@@ -18439,6 +19296,18 @@
    "history"
   ],
   "zhanghengseismoscope": [
+   "history"
+  ],
+  "brazenheadimage": [
+   "history"
+  ],
+  "brazenheadwiki": [
+   "history"
+  ],
+  "brownepseudodoxia": [
+   "history"
+  ],
+  "brazenheadpubimage": [
    "history"
   ],
   "tractatusdespheara": [
@@ -18470,6 +19339,7 @@
    "ai_existential_risk",
    "history",
    "myths",
+   "people_of_ai",
    "philosophy"
   ],
   "babbage": [
@@ -18485,15 +19355,6 @@
    "history",
    "untold_history"
   ],
-  "zusez1": [
-   "history",
-   "software"
-  ],
-  "zusebook": [
-   "history",
-   "software",
-   "untold_history"
-  ],
   "cajaltextura": [
    "history",
    "untold_history"
@@ -18501,31 +19362,10 @@
   "uebersinnundbedeutung": [
    "history"
   ],
-  "wienerajedrecista": [
-   "history"
-  ],
-  "torres1914": [
-   "history"
-  ],
-  "ieeespectrum2023chess": [
-   "history"
-  ],
-  "thomas2008torres": [
-   "history"
-  ],
-  "mechanicalturkimage": [
-   "history"
-  ],
-  "mechanicalturk": [
-   "history"
-  ],
   "lapicque_portrait": [
    "history"
   ],
   "abbott1999lapicque": [
-   "history"
-  ],
-  "beurle1956wave": [
    "history"
   ],
   "lenz1920": [
@@ -18568,15 +19408,67 @@
   ],
   "wiener1948cybernetics": [
    "history",
+   "people_of_ai",
    "untold_history"
   ],
   "piccini": [
+   "history"
+  ],
+  "wienerajedrecista": [
+   "history"
+  ],
+  "torres1914": [
+   "history"
+  ],
+  "ieeespectrum2023chess": [
+   "history"
+  ],
+  "thomas2008torres": [
+   "history"
+  ],
+  "mechanicalturkimage": [
+   "history"
+  ],
+  "mechanicalturk": [
+   "history"
+  ],
+  "zusez1": [
+   "history",
+   "software"
+  ],
+  "zusebook": [
+   "history",
+   "software",
+   "untold_history"
+  ],
+  "turingimage": [
+   "history"
+  ],
+  "aikenphoto": [
+   "history"
+  ],
+  "aiken": [
+   "history"
+  ],
+  "vonneumann": [
+   "history",
+   "people_of_ai",
+   "software",
+   "untold_history"
+  ],
+  "ibm702image": [
+   "history"
+  ],
+  "ibm702": [
    "history"
   ],
   "img_walter_tortoise": [
    "history"
   ],
   "minsky1954": [
+   "history"
+  ],
+  "beurle1956wave": [
    "history"
   ],
   "wienerphoto": [
@@ -18614,7 +19506,8 @@
    "history"
   ],
   "ashbydesigndbrain1952": [
-   "history"
+   "history",
+   "people_of_ai"
   ],
   "wienerhumaneuse1950": [
    "history"
@@ -18641,66 +19534,12 @@
   "wienergodandgolem1964": [
    "history"
   ],
-  "aikenphoto": [
-   "history"
-  ],
-  "aiken": [
-   "history"
-  ],
-  "vonneumann": [
-   "history",
-   "software",
-   "untold_history"
-  ],
-  "turingimage": [
-   "history"
-  ],
   "hnfturing2020": [
    "history"
   ],
   "levesque2014bestbehaviour": [
    "history",
    "philosophy"
-  ],
-  "ibm702image": [
-   "history"
-  ],
-  "ibm702": [
-   "history"
-  ],
-  "edroberts": [
-   "history"
-  ],
-  "altair8800": [
-   "history"
-  ],
-  "edroberts_bbc": [
-   "history"
-  ],
-  "historyofpc": [
-   "history"
-  ],
-  "commodorepet": [
-   "history"
-  ],
-  "chuckpeddle": [
-   "history"
-  ],
-  "mos6502": [
-   "history"
-  ],
-  "micral": [
-   "history"
-  ],
-  "visicalc": [
-   "history"
-  ],
-  "ibmpc": [
-   "history"
-  ],
-  "tomayko1988spaceflight": [
-   "history",
-   "untold_history"
   ],
   "russell2021aima": [
    "history"
@@ -18716,7 +19555,8 @@
    "history"
   ],
   "samuel1959checkers": [
-   "history"
+   "history",
+   "people_of_ai"
   ],
   "newell1957gps": [
    "history"
@@ -18733,6 +19573,13 @@
   "joseph1961perceptron": [
    "history"
   ],
+  "lefkowitz2019perceptron": [
+   "history",
+   "people_of_ai"
+  ],
+  "rosenblattmemorial1971": [
+   "history"
+  ],
   "hnfmccullochpitts2023": [
    "history"
   ],
@@ -18742,10 +19589,20 @@
   "rosenblattperceptron": [
    "history"
   ],
-  "ronkowitz2017perceptron": [
+  "jensen2026perceptron": [
+   "history"
+  ],
+  "saki1911clovis": [
    "history"
   ],
   "newyorktimesperceptron": [
+   "history",
+   "untold_history"
+  ],
+  "ronkowitz2017perceptron": [
+   "history"
+  ],
+  "tomayko1988spaceflight": [
    "history",
    "untold_history"
   ],
@@ -18758,16 +19615,30 @@
   "rosenblattperceptronresults": [
    "history"
   ],
-  "jensen2026perceptron": [
-   "history"
-  ],
   "lindquist2026weirdai": [
    "history"
   ],
   "minskyperceptrons": [
-   "history"
+   "history",
+   "people_of_ai"
   ],
   "rosenblatt1962neurodynamics": [
+   "history",
+   "people_of_ai"
+  ],
+  "block1962perceptron": [
+   "history"
+  ],
+  "novikoff1963convergence": [
+   "history"
+  ],
+  "rosenblatt1959twotheorems": [
+   "history"
+  ],
+  "rosenblatt1960simulation": [
+   "history"
+  ],
+  "rosenblatt1967recentwork": [
    "history"
   ],
   "hayek1952sensoryorder": [
@@ -18794,11 +19665,9 @@
   "rosenblatt1969behavior": [
    "history"
   ],
-  "rosenblattmemorial1971": [
-   "history"
-  ],
   "dobson2025perceptron": [
-   "history"
+   "history",
+   "people_of_ai"
   ],
   "dartmouthrosenblatt2026": [
    "history"
@@ -18808,6 +19677,11 @@
   ],
   "hebbwiki": [
    "history"
+  ],
+  "minsky1986society": [
+   "history",
+   "human_mind",
+   "people_of_ai"
   ],
   "minskywiki": [
    "history"
@@ -18825,7 +19699,8 @@
    "history"
   ],
   "widrow1960adaline": [
-   "history"
+   "history",
+   "people_of_ai"
   ],
   "roberts1960perceptron": [
    "history"
@@ -18866,11 +19741,79 @@
   "adaptivepattern": [
    "history"
   ],
-  "rosenblattbackprop": [
+  "img_warren_weaver": [
+   "history"
+  ],
+  "tesniere1959deps": [
+   "history"
+  ],
+  "lane2025eliza": [
+   "history"
+  ],
+  "racter1984": [
+   "history"
+  ],
+  "lutzobituary": [
+   "history"
+  ],
+  "lutz1959": [
+   "history"
+  ],
+  "vapnik1964vc": [
+   "history"
+  ],
+  "kelley": [
    "history"
   ],
   "linnainmaa1970": [
    "autodiff",
+   "history"
+  ],
+  "mooreslaw": [
+   "history",
+   "untold_history"
+  ],
+  "edroberts": [
+   "history"
+  ],
+  "altair8800": [
+   "history"
+  ],
+  "edroberts_bbc": [
+   "history"
+  ],
+  "historyofpc": [
+   "history"
+  ],
+  "commodorepet": [
+   "history"
+  ],
+  "chuckpeddle": [
+   "history"
+  ],
+  "mos6502": [
+   "history"
+  ],
+  "micral": [
+   "history"
+  ],
+  "visicalc": [
+   "history"
+  ],
+  "ibmpc": [
+   "history"
+  ],
+  "rosenblattbackprop": [
+   "history"
+  ],
+  "papert1988oneai": [
+   "history",
+   "people_of_ai"
+  ],
+  "olazaran1996sociological": [
+   "history"
+  ],
+  "anderson2000talkingnets": [
    "history"
   ],
   "lighthillreport": [
@@ -18879,31 +19822,6 @@
   "dreyfus1972what": [
    "history",
    "philosophy"
-  ],
-  "kelley": [
-   "history"
-  ],
-  "vapnik1964vc": [
-   "history"
-  ],
-  "mooreslaw": [
-   "history",
-   "untold_history"
-  ],
-  "lane2025eliza": [
-   "history"
-  ],
-  "img_warren_weaver": [
-   "history"
-  ],
-  "deepblue": [
-   "history"
-  ],
-  "lstm_vanilla": [
-   "history"
-  ],
-  "ctc2006": [
-   "history"
   ],
   "schmidhuber2025cnn": [
    "history"
@@ -18917,8 +19835,18 @@
   "zhang1988cnn": [
    "history"
   ],
-  "neuralprobabilistic": [
+  "lstm_vanilla": [
    "history"
+  ],
+  "ctc2006": [
+   "history"
+  ],
+  "deepblue": [
+   "history"
+  ],
+  "neuralprobabilistic": [
+   "history",
+   "people_of_ai"
   ],
   "rumelhart1986pdp": [
    "history"
@@ -18934,12 +19862,6 @@
    "history"
   ],
   "karpathy2019recipe": [
-   "history"
-  ],
-  "krizhevsky2012imagenet": [
-   "history"
-  ],
-  "socher2011": [
    "history"
   ],
   "hooker2020": [
@@ -18961,6 +19883,14 @@
    "history",
    "untold_history"
   ],
+  "socher2011": [
+   "history"
+  ],
+  "krizhevsky2012imagenet": [
+   "computer_vision",
+   "history",
+   "people_of_ai"
+  ],
   "alkindi_cryptanalysis": [
    "history"
   ],
@@ -18970,25 +19900,22 @@
   "schmidhuber1996nplm": [
    "history"
   ],
-  "brown2020gpt3": [
-   "history",
-   "philosophy",
-   "trainingdynamics",
-   "unexpected_capabilities"
-  ],
-  "touvron2023llama": [
+  "howard2018ulmfit": [
    "history"
+  ],
+  "liu2019roberta": [
+   "history",
+   "people_of_ai"
+  ],
+  "clark2020electra": [
+   "history"
+  ],
+  "raffel2020t5": [
+   "history",
+   "people_of_ai",
+   "training_data"
   ],
   "hnfchatgpt2023": [
-   "history"
-  ],
-  "racter1984": [
-   "history"
-  ],
-  "lutzobituary": [
-   "history"
-  ],
-  "lutz1959": [
    "history"
   ],
   "searle1980minds": [
@@ -19026,7 +19953,8 @@
    "hallucinations"
   ],
   "berglund2023reversal": [
-   "hallucinations"
+   "hallucinations",
+   "unexpected_capabilities"
   ],
   "hoffman2015interface": [
    "hallucinations",
@@ -19163,6 +20091,7 @@
    "software"
   ],
   "hinton2015distilling": [
+   "finetuninglab",
    "production_serving"
   ],
   "routellm2024": [
@@ -19312,9 +20241,6 @@
   "newellsimon1972problemsolving": [
    "human_mind"
   ],
-  "minsky1986society": [
-   "human_mind"
-  ],
   "simonnewell_image": [
    "human_mind"
   ],
@@ -19448,10 +20374,13 @@
    "beyond_llms"
   ],
   "goodfellow2014gan": [
-   "beyond_llms"
+   "beyond_llms",
+   "people_of_ai"
   ],
   "devlin2019bert": [
-   "beyond_llms"
+   "beyond_llms",
+   "embeddinglab",
+   "people_of_ai"
   ],
   "chen2020simclr": [
    "beyond_llms"
@@ -19460,7 +20389,8 @@
    "beyond_llms"
   ],
   "radford2019language": [
-   "beyond_llms"
+   "beyond_llms",
+   "people_of_ai"
   ],
   "helmholtz1867handbook": [
    "beyond_llms"
@@ -19779,10 +20709,12 @@
    "beyond_llms"
   ],
   "tesauro1995tdgammon": [
-   "beyond_llms"
+   "beyond_llms",
+   "people_of_ai"
   ],
   "mnih2015dqn": [
-   "beyond_llms"
+   "beyond_llms",
+   "people_of_ai"
   ],
   "levine2016guidance": [
    "beyond_llms"
@@ -19809,7 +20741,8 @@
    "beyond_llms"
   ],
   "sutton1988td": [
-   "beyond_llms"
+   "beyond_llms",
+   "people_of_ai"
   ],
   "konda2000ac": [
    "beyond_llms"
@@ -20177,7 +21110,8 @@
    "beyond_llms"
   ],
   "sutton2018rlbook": [
-   "beyond_llms"
+   "beyond_llms",
+   "people_of_ai"
   ],
   "hamilton2020graphbook": [
    "beyond_llms"
@@ -20232,7 +21166,8 @@
   ],
   "bostrom2014superintelligence": [
    "ai_existential_risk",
-   "myths"
+   "myths",
+   "people_of_ai"
   ],
   "luddite_wiki": [
    "myths"
@@ -20362,6 +21297,9 @@
    "differentiation",
    "math_i"
   ],
+  "min2022rethinking": [
+   "unexpected_capabilities"
+  ],
   "chung2022flan": [
    "unexpected_capabilities"
   ],
@@ -20385,6 +21323,20 @@
    "unexpected_capabilities"
   ],
   "press2022compositionality": [
+   "unexpected_capabilities"
+  ],
+  "lake2018scan": [
+   "unexpected_capabilities"
+  ],
+  "kim2020cogs": [
+   "unexpected_capabilities"
+  ],
+  "chollet2019measure": [
+   "people_of_ai",
+   "philosophy",
+   "unexpected_capabilities"
+  ],
+  "schaeffer2023mirage": [
    "unexpected_capabilities"
   ],
   "udrescu2020aifeynman": [
@@ -20412,6 +21364,7 @@
    "fact_lookup",
    "intuition",
    "mechanistic_interpretability",
+   "people_of_ai",
    "philosophy",
    "unexpected_capabilities"
   ],
@@ -20485,6 +21438,7 @@
    "fact_lookup",
    "intuition",
    "mechanistic_interpretability",
+   "people_of_ai",
    "promptengineering"
   ],
   "leibniz1666combinatoria": [
@@ -21006,6 +21960,7 @@
    "untold_history"
   ],
   "olaha2020zoomin": [
+   "people_of_ai",
    "untold_history"
   ],
   "laertius": [
@@ -21796,6 +22751,7 @@
    "untold_history"
   ],
   "menabrea_lovelace1843": [
+   "people_of_ai",
    "untold_history"
   ],
   "backus1957fortran": [
@@ -21876,6 +22832,180 @@
   "wikimediadumps": [
    "untold_history"
   ],
+  "img_ada_lovelace": [
+   "people_of_ai"
+  ],
+  "img_charles_babbage": [
+   "people_of_ai"
+  ],
+  "mccorduck1979machines": [
+   "people_of_ai"
+  ],
+  "img_alan_turing": [
+   "people_of_ai"
+  ],
+  "turing1936": [
+   "people_of_ai"
+  ],
+  "hodges1983enigma": [
+   "people_of_ai"
+  ],
+  "img_claude_shannon": [
+   "people_of_ai"
+  ],
+  "img_john_von_neumann": [
+   "people_of_ai"
+  ],
+  "lettvin1959frog": [
+   "people_of_ai"
+  ],
+  "img_frank_rosenblatt": [
+   "people_of_ai"
+  ],
+  "img_marvin_minsky": [
+   "people_of_ai"
+  ],
+  "img_seymour_papert": [
+   "people_of_ai"
+  ],
+  "img_john_hopfield": [
+   "people_of_ai"
+  ],
+  "hopfield1982": [
+   "fact_lookup",
+   "loss_landscape",
+   "people_of_ai"
+  ],
+  "nobel2024physics": [
+   "people_of_ai"
+  ],
+  "img_geoffrey_hinton": [
+   "people_of_ai"
+  ],
+  "img_yann_lecun": [
+   "people_of_ai"
+  ],
+  "img_yoshua_bengio": [
+   "people_of_ai"
+  ],
+  "bengio2023managing": [
+   "people_of_ai"
+  ],
+  "sutskever2014seq2seq": [
+   "people_of_ai",
+   "recurrent_networks"
+  ],
+  "deng2009imagenet": [
+   "computer_vision",
+   "people_of_ai"
+  ],
+  "img_andrej_karpathy": [
+   "people_of_ai"
+  ],
+  "karpathy2015rnn": [
+   "people_of_ai"
+  ],
+  "karpathy2023zerotohero": [
+   "people_of_ai"
+  ],
+  "karpathy_ai": [
+   "people_of_ai"
+  ],
+  "dean2012large": [
+   "people_of_ai"
+  ],
+  "img_demis_hassabis": [
+   "people_of_ai"
+  ],
+  "deepmind_about": [
+   "people_of_ai"
+  ],
+  "img_john_jumper": [
+   "people_of_ai"
+  ],
+  "img_richard_sutton": [
+   "people_of_ai"
+  ],
+  "acm2024turing": [
+   "people_of_ai"
+  ],
+  "img_francois_chollet": [
+   "people_of_ai"
+  ],
+  "chollet2024arcagi": [
+   "people_of_ai",
+   "training_data"
+  ],
+  "fchollet_site": [
+   "people_of_ai"
+  ],
+  "boole1854": [
+   "people_of_ai"
+  ],
+  "frege1879": [
+   "people_of_ai"
+  ],
+  "church1936": [
+   "people_of_ai"
+  ],
+  "mccarthy1955dartmouth": [
+   "people_of_ai"
+  ],
+  "newell1956logic": [
+   "people_of_ai"
+  ],
+  "he2016resnet": [
+   "people_of_ai"
+  ],
+  "dosovitskiy2020vit": [
+   "people_of_ai"
+  ],
+  "ronneberger2015unet": [
+   "computer_vision",
+   "people_of_ai"
+  ],
+  "isola2017pix2pix": [
+   "people_of_ai"
+  ],
+  "radford2022whisper": [
+   "people_of_ai"
+  ],
+  "pennington2014glove": [
+   "embeddinglab",
+   "people_of_ai"
+  ],
+  "kudo2018sentencepiece": [
+   "people_of_ai"
+  ],
+  "rajbhandari2020zero": [
+   "people_of_ai"
+  ],
+  "lepikhin2021gshard": [
+   "people_of_ai"
+  ],
+  "turner2023actadd": [
+   "people_of_ai"
+  ],
+  "burns2023weakstrong": [
+   "mechanistic_interpretability",
+   "people_of_ai"
+  ],
+  "amodei2016concrete": [
+   "people_of_ai"
+  ],
+  "irving2018debate": [
+   "people_of_ai"
+  ],
+  "russell2019human": [
+   "people_of_ai"
+  ],
+  "yudkowsky2008ai": [
+   "people_of_ai"
+  ],
+  "ord2020precipice": [
+   "ai_existential_risk",
+   "people_of_ai"
+  ],
   "colah2014conv": [
    "computer_vision",
    "recurrent_networks"
@@ -21884,6 +23014,9 @@
    "recurrent_networks"
   ],
   "greff2015lstm": [
+   "recurrent_networks"
+  ],
+  "bengio2015scheduled": [
    "recurrent_networks"
   ],
   "dosovitskiy2021vit": [
@@ -21895,6 +23028,21 @@
   ],
   "alayrac2022flamingo": [
    "multimodal"
+  ],
+  "wang2022selfinstruct": [
+   "finetuninglab"
+  ],
+  "taori2023alpaca": [
+   "finetuninglab"
+  ],
+  "lambert2024tulu3": [
+   "finetuninglab"
+  ],
+  "hsieh2023distilling": [
+   "finetuninglab"
+  ],
+  "gudibande2023falsepromise": [
+   "finetuninglab"
   ],
   "houlsby2019adapters": [
    "finetuninglab"
@@ -22219,6 +23367,9 @@
   "manakul2023selfcheck": [
    "mechanistic_interpretability"
   ],
+  "christian2021elk": [
+   "mechanistic_interpretability"
+  ],
   "goh2021multimodal": [
    "computer_vision",
    "mechanistic_interpretability"
@@ -22414,19 +23565,16 @@
   "rae2021gopher": [
    "training_data"
   ],
-  "raffel2020t5": [
-   "training_data"
-  ],
   "penedo2024fineweb": [
    "training_data"
   ],
   "abbas2023semdedup": [
    "training_data"
   ],
-  "chollet2024arcagi": [
+  "gao2020pile": [
    "training_data"
   ],
-  "gao2020pile": [
+  "commonpile2025": [
    "training_data"
   ],
   "together2024redpajama": [
@@ -22496,6 +23644,9 @@
    "geometry_i"
   ],
   "colah2014nlp": [
+   "embeddinglab"
+  ],
+  "bojanowski2017fasttext": [
    "embeddinglab"
   ],
   "smith2017orthogonal": [
@@ -22874,10 +24025,6 @@
   "wales2003energy": [
    "loss_landscape"
   ],
-  "hopfield1982": [
-   "fact_lookup",
-   "loss_landscape"
-  ],
   "snell2024testtime": [
    "reasoning"
   ],
@@ -22933,9 +24080,6 @@
    "philosophy"
   ],
   "talmor2018commonsenseqa": [
-   "philosophy"
-  ],
-  "chollet2019measure": [
    "philosophy"
   ],
   "plato399apology": [
@@ -23162,6 +24306,7 @@
    "philosophy"
   ],
   "simulatorstheory": [
+   "ai_existential_risk",
    "philosophy"
   ],
   "reflectionstrustingtrust": [
@@ -23360,7 +24505,22 @@
   "kokotajlo2016takeoff": [
    "ai_existential_risk"
   ],
-  "ord2020precipice": [
+  "gwern2020scaling": [
+   "ai_existential_risk"
+  ],
+  "aschenbrenner2024": [
+   "ai_existential_risk"
+  ],
+  "kokotajlo2025ai2027": [
+   "ai_existential_risk"
+  ],
+  "christiano2019failure": [
+   "ai_existential_risk"
+  ],
+  "karnofsky2021": [
+   "ai_existential_risk"
+  ],
+  "amodei2024machines": [
    "ai_existential_risk"
   ],
   "hornik1989": [
@@ -23510,9 +24670,6 @@
   "geva2021kv": [
    "intuition"
   ],
-  "shazeer2020glu": [
-   "intuition"
-  ],
   "graunt1662": [
    "statistics_i"
   ],
@@ -23555,9 +24712,6 @@
   "stopsignimage": [
    "computer_vision"
   ],
-  "deng2009imagenet": [
-   "computer_vision"
-  ],
   "girshick2014rcnn": [
    "computer_vision"
   ],
@@ -23565,9 +24719,6 @@
    "computer_vision"
   ],
   "redmon2016yolo": [
-   "computer_vision"
-  ],
-  "ronneberger2015unet": [
    "computer_vision"
   ],
   "he2017maskrcnn": [
@@ -23662,7 +24813,7 @@
    ]
   },
   "Chris Olah": {
-   "count": 22,
+   "count": 23,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -23687,7 +24838,8 @@
     "monosemanticity",
     "elhage2021mathematical",
     "kadavath2022selfknowledge",
-    "olaha2020zoomin"
+    "olaha2020zoomin",
+    "amodei2016concrete"
    ]
   },
   "Kyunghyun Cho": {
@@ -23743,7 +24895,7 @@
    ]
   },
   "Yoshua Bengio": {
-   "count": 19,
+   "count": 20,
    "minyear": 1994,
    "maxyear": 2011,
    "keys": [
@@ -23765,7 +24917,8 @@
     "dauphin2014identifying",
     "pascanu2014saddle",
     "dinh2017sharpness",
-    "bergstra2010random"
+    "bergstra2010random",
+    "bengio2023managing"
    ]
   },
   "Klaus Greff": {
@@ -23839,12 +24992,13 @@
    ]
   },
   "Gabriel Goh": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "goh2021multimodal",
-    "olaha2020zoomin"
+    "olaha2020zoomin",
+    "ramesh2021dalle"
    ]
   },
   "Nick Cammarata": {
@@ -23897,7 +25051,7 @@
    ]
   },
   "Alec Radford": {
-   "count": 8,
+   "count": 9,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -23908,7 +25062,8 @@
     "radford2021clip",
     "radford2023whisper",
     "radford2019language",
-    "whisper2022"
+    "whisper2022",
+    "radford2022whisper"
    ]
   },
   "Alexander Mordvintsev": {
@@ -23939,14 +25094,16 @@
    ]
   },
   "Andrej Karpathy": {
-   "count": 4,
+   "count": 6,
    "minyear": 2019,
    "maxyear": 2019,
    "keys": [
     "karpathy2015convnetjs",
     "nanogpt",
     "karpathy2023zerotohero",
-    "karpathy2019recipe"
+    "karpathy2019recipe",
+    "karpathy2015rnn",
+    "karpathy_ai"
    ]
   },
   "Wikipedia contributors": {
@@ -24678,7 +25835,7 @@
    ]
   },
   "et al.": {
-   "count": 145,
+   "count": 166,
    "minyear": 2017,
    "maxyear": 2020,
    "keys": [
@@ -24826,7 +25983,28 @@
     "elhage2021framework",
     "zou2023repeng",
     "laion2022blog",
-    "popel2020cubitt"
+    "popel2020cubitt",
+    "nie2025llada",
+    "burns2023weakstrong",
+    "liu2019roberta",
+    "ramesh2021dalle",
+    "commonpile2025",
+    "dolma2024",
+    "fineweb2024",
+    "biderman2023pythia",
+    "black2022gptneox",
+    "scao2022bloom",
+    "zhang2022opt",
+    "jiang2023mistral",
+    "lambert2024tulu3",
+    "hsieh2023distilling",
+    "llama3herd2024",
+    "infllm2024",
+    "wang2022selfinstruct",
+    "taori2023alpaca",
+    "dosovitskiy2020vit",
+    "lepikhin2021gshard",
+    "bengio2023managing"
    ]
   },
   "J. Elisenda Grigsby": {
@@ -25001,14 +26179,15 @@
    ]
   },
   "Samy Bengio": {
-   "count": 4,
+   "count": 5,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "dinh2016realnvp",
     "collobert2002",
     "dinh2017realnvp",
-    "dinh2017sharpness"
+    "dinh2017sharpness",
+    "bengio2015scheduled"
    ]
   },
   "SueYeon Chung": {
@@ -25114,12 +26293,13 @@
    ]
   },
   "Sid Black": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "black2022polytopelens",
-    "gao2020pile"
+    "gao2020pile",
+    "black2022gptneox"
    ]
   },
   "Lee Sharkey": {
@@ -25321,7 +26501,7 @@
    ]
   },
   "Yann LeCun": {
-   "count": 8,
+   "count": 9,
    "minyear": 1989,
    "maxyear": 1998,
    "keys": [
@@ -25332,7 +26512,8 @@
     "lecun1989backpropagation",
     "lecun1998gradientbased",
     "choromanska2015loss",
-    "chaudhari2016entropysgd"
+    "chaudhari2016entropysgd",
+    "lecun2022path"
    ]
   },
   "Sumit Chopra": {
@@ -27069,15 +28250,17 @@
    ]
   },
   "Luke Zettlemoyer": {
-   "count": 5,
+   "count": 7,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "schick2023toolformer",
+    "dettmers2021_8bit",
     "bart",
     "elmo",
     "dettmers2023qlora",
-    "dettmers2022llmint8"
+    "dettmers2022llmint8",
+    "min2022rethinking"
    ]
   },
   "Nicola Cancedda": {
@@ -27455,12 +28638,13 @@
    ]
   },
   "Edouard Grave": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "mialon2023augmented",
-    "touvron2023llama"
+    "touvron2023llama",
+    "bojanowski2017fasttext"
    ]
   },
   "Yongliang Shen": {
@@ -27558,13 +28742,15 @@
    ]
   },
   "Naman Goyal": {
-   "count": 3,
+   "count": 5,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "lewis2020rag",
     "bart",
-    "touvron2023llama"
+    "touvron2023llama",
+    "liu2019roberta",
+    "zhang2022opt"
    ]
   },
   "Heinrich Küttler": {
@@ -27576,18 +28762,20 @@
    ]
   },
   "Mike Lewis": {
-   "count": 8,
+   "count": 10,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "lewis2020rag",
     "alibi2022",
+    "dettmers2021_8bit",
     "bart",
     "dettmers2022llmint8",
     "press2022alibi",
     "fan2018topk",
     "press2022compositionality",
-    "xiao2023streaming"
+    "xiao2023streaming",
+    "min2022rethinking"
    ]
   },
   "Wen-tau Yih": {
@@ -27941,12 +29129,13 @@
    ]
   },
   "Google": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "puppeteer",
-    "googlecustomsearch"
+    "googlecustomsearch",
+    "gemini2024v15"
    ]
   },
   "Jina AI": {
@@ -28018,7 +29207,7 @@
    ]
   },
   "OpenAI": {
-   "count": 6,
+   "count": 8,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -28027,28 +29216,32 @@
     "openai2023apipricing",
     "navier_stokes_openai",
     "openai2023superintelligence",
-    "openai2022chatgpt"
+    "openai2022chatgpt",
+    "openai2023gpt4",
+    "gptoss2025"
    ]
   },
   "Allen Newell": {
-   "count": 3,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "newell1956logictheorist",
-    "newell1957gps",
-    "newell1976empirical"
-   ]
-  },
-  "Herbert A. Simon": {
    "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "newell1956logictheorist",
     "newell1957gps",
+    "newell1976empirical",
+    "newell1956logic"
+   ]
+  },
+  "Herbert A. Simon": {
+   "count": 5,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "newell1956logictheorist",
+    "newell1957gps",
     "simon1955bounded",
-    "newell1976empirical"
+    "newell1976empirical",
+    "newell1956logic"
    ]
   },
   "J.C. Shaw": {
@@ -28824,7 +30017,7 @@
    ]
   },
   "Dario Amodei": {
-   "count": 11,
+   "count": 14,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -28838,7 +30031,10 @@
     "christiano2017rlhf",
     "kadavath2022selfknowledge",
     "radford2019language",
-    "ai_safety_debate"
+    "ai_safety_debate",
+    "amodei2024machines",
+    "irving2018debate",
+    "amodei2016concrete"
    ]
   },
   "Tom Brown": {
@@ -28935,7 +30131,7 @@
    ]
   },
   "Jacob Steinhardt": {
-   "count": 6,
+   "count": 8,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -28944,7 +30140,9 @@
     "belrose2023tunedlens",
     "wei2024jailbroken",
     "interpretabilityinwild",
-    "burns2022ccs"
+    "burns2022ccs",
+    "pan2024latentqa",
+    "amodei2016concrete"
    ]
   },
   "Augustine N. Mavor-Parker": {
@@ -29123,12 +30321,14 @@
    ]
   },
   "Stella Biderman": {
-   "count": 2,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "belrose2023tunedlens",
-    "gao2020pile"
+    "gao2020pile",
+    "biderman2023pythia",
+    "black2022gptneox"
    ]
   },
   "Tristan Hume": {
@@ -29344,7 +30544,7 @@
    ]
   },
   "Jack Lindsey": {
-   "count": 5,
+   "count": 6,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -29352,7 +30552,8 @@
     "templeton2024scaling",
     "lindsey2025biology",
     "ameisen2025circuit",
-    "goldengateclaude"
+    "goldengateclaude",
+    "chen2025persona"
    ]
   },
   "Anthropic Interpretability Team": {
@@ -29430,13 +30631,14 @@
    ]
   },
   "Monte MacDiarmid": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "templeton2024scaling",
     "turner2023activation",
-    "goldengateclaude"
+    "goldengateclaude",
+    "turner2023actadd"
    ]
   },
   "Esin Durmus": {
@@ -29561,11 +30763,12 @@
    ]
   },
   "Andy Arditi": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "arditi2024refusal"
+    "arditi2024refusal",
+    "chen2025persona"
    ]
   },
   "Oscar Obeso": {
@@ -29730,51 +30933,58 @@
    ]
   },
   "Alexander Matt Turner": {
-   "count": 1,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "turner2023activation"
+    "turner2023activation",
+    "turner2023actadd",
+    "rimsky2023caa"
    ]
   },
   "Lisa Thiergart": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "turner2023activation"
+    "turner2023activation",
+    "turner2023actadd"
    ]
   },
   "Gavin Leech": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "turner2023activation"
+    "turner2023activation",
+    "turner2023actadd"
    ]
   },
   "David Udell": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "turner2023activation"
+    "turner2023activation",
+    "turner2023actadd"
    ]
   },
   "Juan J. Vazquez": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "turner2023activation"
+    "turner2023activation",
+    "turner2023actadd"
    ]
   },
   "Ulisse Mini": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "turner2023activation"
+    "turner2023activation",
+    "turner2023actadd"
    ]
   },
   "Kai Konen": {
@@ -30037,7 +31247,7 @@
    ]
   },
   "John McCarthy": {
-   "count": 6,
+   "count": 7,
    "minyear": 1969,
    "maxyear": 1969,
    "keys": [
@@ -30046,7 +31256,8 @@
     "mccarthy1969some",
     "mccarthy1956dartmouth",
     "mccarthy1960lisp",
-    "mccarthy1978history"
+    "mccarthy1978history",
+    "mccarthy1955dartmouth"
    ]
   },
   "Alan J. Perlis": {
@@ -30141,11 +31352,12 @@
    ]
   },
   "Alonzo Church": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "churchsimplytyped"
+    "churchsimplytyped",
+    "church1936"
    ]
   },
   "J. Roger Hindley": {
@@ -31434,12 +32646,13 @@
    ]
   },
   "Eric Wallace": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "wallace2024hierarchy",
-    "carlini2021extracting"
+    "carlini2021extracting",
+    "gudibande2023falsepromise"
    ]
   },
   "Kai Xiao": {
@@ -31716,7 +32929,7 @@
    ]
   },
   "Geoffrey Hinton": {
-   "count": 6,
+   "count": 7,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -31725,18 +32938,20 @@
     "shazeer2017moe",
     "hinton2012rmsprop",
     "chen2020simclr",
-    "van2008tsne"
+    "van2008tsne",
+    "bengio2023managing"
    ]
   },
   "Oriol Vinyals": {
-   "count": 4,
+   "count": 5,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "hinton2015distilling",
     "sutskever2014seq2seq",
     "vq_vae",
-    "oord2016wavenet"
+    "oord2016wavenet",
+    "bengio2015scheduled"
    ]
   },
   "Alan Kay": {
@@ -31774,11 +32989,12 @@
    ]
   },
   "Arthur Mensch": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "hoffmann2022chinchilla"
+    "hoffmann2022chinchilla",
+    "jiang2023mistral"
    ]
   },
   "Priya Goyal": {
@@ -32182,7 +33398,7 @@
    ]
   },
   "Frank Rosenblatt": {
-   "count": 11,
+   "count": 14,
    "minyear": 1958,
    "maxyear": 1962,
    "keys": [
@@ -32196,7 +33412,10 @@
     "rosenblatt1969behavior",
     "perceptronresults",
     "rosenblatt1958perceptron",
-    "rosenblatt1962neurodynamics"
+    "rosenblatt1962neurodynamics",
+    "rosenblatt1959twotheorems",
+    "rosenblatt1967recentwork",
+    "rosenblatt1960simulation"
    ]
   },
   "Samuel Ichiye Hayakawa": {
@@ -33452,17 +34671,19 @@
    ]
   },
   "Noam Shazeer": {
-   "count": 7,
+   "count": 9,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "shazeer2017moe",
+    "shazeer2018adafactor",
     "tfive",
     "raffel2020t5",
     "fedus2022switch",
     "shazeer2019mqa",
     "vaswani2017attention",
-    "shazeer2020glu"
+    "shazeer2020glu",
+    "bengio2015scheduled"
    ]
   },
   "Azalia Mirhoseini": {
@@ -33527,13 +34748,14 @@
    ]
   },
   "Sebastian Ruder": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "ruder2016overview",
     "sogaard2018limitations",
-    "shi2023cottransfer"
+    "shi2023cottransfer",
+    "howard2018ulmfit"
    ]
   },
   "Yurii Nesterov": {
@@ -33574,6 +34796,32 @@
    "maxyear": null,
    "keys": [
     "zeiler2012adadelta"
+   ]
+  },
+  "Mitchell Stern": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "shazeer2018adafactor"
+   ]
+  },
+  "Tim Dettmers": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dettmers2021_8bit",
+    "dettmers2023qlora",
+    "dettmers2022llmint8"
+   ]
+  },
+  "Sam Shleifer": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dettmers2021_8bit"
    ]
   },
   "Timothy Dozat": {
@@ -33850,12 +35098,13 @@
    ]
   },
   "Rico Sennrich": {
-   "count": 2,
+   "count": 3,
    "minyear": 2016,
    "maxyear": 2016,
    "keys": [
     "analyzingmultiheads",
-    "sennrich2016subword"
+    "sennrich2016subword",
+    "zhang2019rmsnorm"
    ]
   },
   "Ivan Titov": {
@@ -33868,11 +35117,12 @@
    ]
   },
   "Yinhan Liu": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "bart"
+    "bart",
+    "liu2019roberta"
    ]
   },
   "Marjan Ghazvininejad": {
@@ -34140,11 +35390,12 @@
    ]
   },
   "Phillip Isola": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "huh2024platonic"
+    "huh2024platonic",
+    "isola2017pix2pix"
    ]
   },
   "Lucinda Backwell": {
@@ -34507,7 +35758,7 @@
    ]
   },
   "Ilya Sutskever": {
-   "count": 12,
+   "count": 13,
    "minyear": 2011,
    "maxyear": 2014,
    "keys": [
@@ -34522,7 +35773,8 @@
     "silver2016go",
     "nakkiran2019deepdd",
     "silver2016alphago",
-    "whisper2022"
+    "whisper2022",
+    "radford2022whisper"
    ]
   },
   "Alexander Rush": {
@@ -35316,13 +36568,14 @@
    ]
   },
   "John Schulman": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "ouyang2022instructgpt",
     "schulman2017ppo",
-    "schulman2015trpo"
+    "schulman2015trpo",
+    "amodei2016concrete"
    ]
   },
   "Jacob Hilton": {
@@ -35368,12 +36621,16 @@
    ]
   },
   "Paul Christiano": {
-   "count": 2,
+   "count": 6,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "ouyang2022instructgpt",
-    "ai_safety_debate"
+    "ai_safety_debate",
+    "christian2021elk",
+    "christiano2019failure",
+    "irving2018debate",
+    "amodei2016concrete"
    ]
   },
   "Jan Leike": {
@@ -35418,13 +36675,14 @@
    ]
   },
   "George Boole": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "bool1854",
     "boole1847analysis",
-    "boole1854laws"
+    "boole1854laws",
+    "boole1854"
    ]
   },
   "Martín Abadi": {
@@ -35460,20 +36718,22 @@
    ]
   },
   "Jeffrey Dean": {
-   "count": 2,
+   "count": 3,
    "minyear": 2013,
    "maxyear": 2013,
    "keys": [
     "tensorflow2016",
-    "mikolov2013word2vec"
+    "mikolov2013word2vec",
+    "dean2012large"
    ]
   },
   "Matthieu Devin": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "tensorflow2016"
+    "tensorflow2016",
+    "dean2012large"
    ]
   },
   "Sanjay Ghemawat": {
@@ -35485,12 +36745,13 @@
    ]
   },
   "Geoffrey Irving": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "tensorflow2016",
-    "ai_safety_debate"
+    "ai_safety_debate",
+    "irving2018debate"
    ]
   },
   "Michael Isard": {
@@ -35518,11 +36779,12 @@
    ]
   },
   "Rajat Monga": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "tensorflow2016"
+    "tensorflow2016",
+    "dean2012large"
    ]
   },
   "Sherry Moore": {
@@ -35551,11 +36813,12 @@
    ]
   },
   "Paul Tucker": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "tensorflow2016"
+    "tensorflow2016",
+    "dean2012large"
    ]
   },
   "Vijay Vasudevan": {
@@ -36242,7 +37505,7 @@
    ]
   },
   "Andrew Y. Ng": {
-   "count": 5,
+   "count": 6,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -36250,7 +37513,8 @@
     "socher2011",
     "blei2003lda",
     "ng2000irl",
-    "abbeel2004irl"
+    "abbeel2004irl",
+    "dean2012large"
    ]
   },
   "Dan C. Cireşan": {
@@ -36944,11 +38208,12 @@
    ]
   },
   "Seymour Papert": {
-   "count": 1,
+   "count": 2,
    "minyear": 1969,
    "maxyear": 1969,
    "keys": [
-    "minskyperceptrons"
+    "minskyperceptrons",
+    "papert1988oneai"
    ]
   },
   "Donald Olding Hebb": {
@@ -37017,20 +38282,22 @@
    ]
   },
   "Marvin L. Minsky": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "darthmouthartificialintelligence"
-   ]
-  },
-  "Nathaniel Rochester": {
    "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "darthmouthartificialintelligence",
-    "mccarthy1956dartmouth"
+    "mccarthy1955dartmouth"
+   ]
+  },
+  "Nathaniel Rochester": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "darthmouthartificialintelligence",
+    "mccarthy1956dartmouth",
+    "mccarthy1955dartmouth"
    ]
   },
   "John Wallis": {
@@ -37247,12 +38514,13 @@
    ]
   },
   "Richard Socher": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "deng2009imagenet",
-    "socher2011"
+    "socher2011",
+    "pennington2014glove"
    ]
   },
   "Li-Jia Li": {
@@ -37447,7 +38715,7 @@
    ]
   },
   "Kaiming He": {
-   "count": 6,
+   "count": 7,
    "minyear": 2015,
    "maxyear": 2018,
    "keys": [
@@ -37456,36 +38724,40 @@
     "ren2015faster",
     "he2017maskrcnn",
     "he2021mae",
-    "he2016identity"
+    "he2016identity",
+    "he2016resnet"
    ]
   },
   "Xiangyu Zhang": {
-   "count": 2,
+   "count": 3,
    "minyear": 2015,
    "maxyear": 2015,
    "keys": [
     "he2015resnet",
-    "he2016identity"
+    "he2016identity",
+    "he2016resnet"
    ]
   },
   "Shaoqing Ren": {
-   "count": 3,
+   "count": 4,
    "minyear": 2015,
    "maxyear": 2015,
    "keys": [
     "he2015resnet",
     "ren2015faster",
-    "he2016identity"
+    "he2016identity",
+    "he2016resnet"
    ]
   },
   "Jian Sun": {
-   "count": 3,
+   "count": 4,
    "minyear": 2015,
    "maxyear": 2015,
    "keys": [
     "he2015resnet",
     "ren2015faster",
-    "he2016identity"
+    "he2016identity",
+    "he2016resnet"
    ]
   },
   "Jimmy Lei Ba": {
@@ -37648,11 +38920,12 @@
    ]
   },
   "Evan Hubinger": {
-   "count": 1,
+   "count": 2,
    "minyear": 2024,
    "maxyear": 2024,
    "keys": [
-    "hubinger2024sleeperagents"
+    "hubinger2024sleeperagents",
+    "rimsky2023caa"
    ]
   },
   "Jesse Mu": {
@@ -37817,7 +39090,7 @@
    ]
   },
   "Quoc V. Le": {
-   "count": 8,
+   "count": 10,
    "minyear": 2017,
    "maxyear": 2019,
    "keys": [
@@ -37828,7 +39101,9 @@
     "mckenzie2023inverse",
     "chung2022flan",
     "real2019amoeba",
-    "smithle2018bayesian"
+    "smithle2018bayesian",
+    "clark2020electra",
+    "dean2012large"
    ]
   },
   "Fran\\u00e7ois Chollet": {
@@ -37862,21 +39137,23 @@
    ]
   },
   "Tomas Mikolov": {
-   "count": 2,
+   "count": 3,
    "minyear": 2015,
    "maxyear": 2015,
    "keys": [
     "weston2015babi",
-    "mikolov2013exploiting"
+    "mikolov2013exploiting",
+    "bojanowski2017fasttext"
    ]
   },
   "Armand Joulin": {
-   "count": 2,
+   "count": 3,
    "minyear": 2015,
    "maxyear": 2015,
    "keys": [
     "weston2015babi",
-    "touvron2023llama"
+    "touvron2023llama",
+    "bojanowski2017fasttext"
    ]
   },
   "Justus Johnson": {
@@ -38205,12 +39482,13 @@
    ]
   },
   "Meg Tong": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "berglund2023reversal",
-    "sharma2023sycophancy"
+    "sharma2023sycophancy",
+    "rimsky2023caa"
    ]
   },
   "Max Kaufmann": {
@@ -38247,13 +39525,14 @@
    ]
   },
   "Owain Evans": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "berglund2023reversal",
     "lin2021truthful",
-    "lin2022uncertainty"
+    "lin2022uncertainty",
+    "chen2025persona"
    ]
   },
   "Chetan Prakash": {
@@ -38417,19 +39696,21 @@
    ]
   },
   "Kai Chen": {
-   "count": 1,
+   "count": 2,
    "minyear": 2013,
    "maxyear": 2013,
    "keys": [
-    "mikolov2013word2vec"
+    "mikolov2013word2vec",
+    "dean2012large"
    ]
   },
   "Greg Corrado": {
-   "count": 1,
+   "count": 2,
    "minyear": 2013,
    "maxyear": 2013,
    "keys": [
-    "mikolov2013word2vec"
+    "mikolov2013word2vec",
+    "dean2012large"
    ]
   },
   "John Rupert Firth": {
@@ -39040,13 +40321,15 @@
    ]
   },
   "Christopher D. Manning": {
-   "count": 3,
+   "count": 5,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "socher2011",
     "hewitt2019structural",
-    "tian2023calibration"
+    "tian2023calibration",
+    "clark2020electra",
+    "pennington2014glove"
    ]
   },
   "Sara Hooker": {
@@ -39074,12 +40357,13 @@
    ]
   },
   "Gottlob Frege": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "uebersinnundbedeutung",
-    "frege1879begriffsschrift"
+    "frege1879begriffsschrift",
+    "frege1879"
    ]
   },
   "Hugo Touvron": {
@@ -39428,11 +40712,12 @@
    ]
   },
   "Piotr Bojanowski": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "darcet2024registers"
+    "darcet2024registers",
+    "bojanowski2017fasttext"
    ]
   },
   "Jeffrey T. H. Wong": {
@@ -39598,11 +40883,12 @@
    ]
   },
   "Alexander Pan": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "zou2023representation"
+    "zou2023representation",
+    "pan2024latentqa"
    ]
   },
   "Ann-Kathrin Dombrowski": {
@@ -39638,20 +40924,22 @@
    ]
   },
   "Sanmi Koyejo": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "zou2023representation"
-   ]
-  },
-  "Dawn Song": {
    "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "zou2023representation",
-    "carlini2021extracting"
+    "schaeffer2023mirage"
+   ]
+  },
+  "Dawn Song": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "zou2023representation",
+    "carlini2021extracting",
+    "gudibande2023falsepromise"
    ]
   },
   "Matt Fredrikson": {
@@ -39663,23 +40951,25 @@
    ]
   },
   "J. Zico Kolter": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "zou2023representation",
     "bai2018tcn",
-    "cohen2021edgeofstability"
+    "cohen2021edgeofstability",
+    "sun2024massive"
    ]
   },
   "Jong Wook Kim": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "radford2021clip",
     "radford2023whisper",
-    "whisper2022"
+    "whisper2022",
+    "radford2022whisper"
    ]
   },
   "Chris Hallacy": {
@@ -39764,21 +41054,23 @@
    ]
   },
   "Alexander Kolesnikov": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "zhai2023siglip",
-    "dosovitskiy2021vit"
+    "dosovitskiy2021vit",
+    "dosovitskiy2020vit"
    ]
   },
   "Lucas Beyer": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "zhai2023siglip",
-    "dosovitskiy2021vit"
+    "dosovitskiy2021vit",
+    "dosovitskiy2020vit"
    ]
   },
   "Chaoyou Fu": {
@@ -39830,13 +41122,14 @@
    ]
   },
   "Jonathan Ho": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "ho2020ddpm",
     "ho2022cfg",
-    "ho2022imagenvideo"
+    "ho2022imagenvideo",
+    "austin2021d3pm"
    ]
   },
   "Ajay Jain": {
@@ -39848,7 +41141,7 @@
    ]
   },
   "Pieter Abbeel": {
-   "count": 9,
+   "count": 10,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -39860,7 +41153,8 @@
     "schulman2015trpo",
     "abbeel2004irl",
     "levine2016guidance",
-    "openai2021dota"
+    "openai2021dota",
+    "gudibande2023falsepromise"
    ]
   },
   "Eric A. Weiss": {
@@ -40034,12 +41328,13 @@
    ]
   },
   "Tao Xu": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "radford2023whisper",
-    "whisper2022"
+    "whisper2022",
+    "radford2022whisper"
    ]
   },
   "Alexandre Défossez": {
@@ -40727,11 +42022,12 @@
    ]
   },
   "Quentin Anthony": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "peng2023rwkv"
+    "peng2023rwkv",
+    "biderman2023pythia"
    ]
   },
   "Michael Poli": {
@@ -40873,11 +42169,12 @@
    ]
   },
   "Charlie Snell": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "snell2024testtime"
+    "snell2024testtime",
+    "gudibande2023falsepromise"
    ]
   },
   "Kelvin Xu": {
@@ -40975,14 +42272,15 @@
    ]
   },
   "Collin Burns": {
-   "count": 4,
+   "count": 5,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "hendrycks2021mmlu",
     "hendrycks2021math",
     "burns2022ccs",
-    "weak_to_strong"
+    "weak_to_strong",
+    "burns2023weakstrong"
    ]
   },
   "Yubo Wang et al.": {
@@ -41062,12 +42360,13 @@
    ]
   },
   "Jacob Austin": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "austin2021mbpp",
-    "nye2021scratchpad"
+    "nye2021scratchpad",
+    "austin2021d3pm"
    ]
   },
   "Maxwell Nye": {
@@ -41088,13 +42387,14 @@
    ]
   },
   "Ari Holtzman": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "zellers2019hellaswag",
     "dettmers2023qlora",
-    "holtzman2020nucleus"
+    "holtzman2020nucleus",
+    "min2022rethinking"
    ]
   },
   "Yonatan Bisk": {
@@ -41204,11 +42504,12 @@
    ]
   },
   "François Chollet": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "chollet2024arcagi"
+    "chollet2024arcagi",
+    "fchollet_site"
    ]
   },
   "Rishi Bommasani": {
@@ -41422,15 +42723,6 @@
     "meng2024simpo"
    ]
   },
-  "Tim Dettmers": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "dettmers2023qlora",
-    "dettmers2022llmint8"
-   ]
-  },
   "Artidoro Pagnoni": {
    "count": 1,
    "minyear": null,
@@ -41512,27 +42804,30 @@
    ]
   },
   "Guilherme Penedo": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "penedo2024fineweb"
+    "penedo2024fineweb",
+    "fineweb2024"
    ]
   },
   "Hynek Kydlíček": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "penedo2024fineweb"
+    "penedo2024fineweb",
+    "fineweb2024"
    ]
   },
   "Loubna Ben Allal": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "penedo2024fineweb"
+    "penedo2024fineweb",
+    "fineweb2024"
    ]
   },
   "Amro Abbas": {
@@ -41560,27 +42855,30 @@
    ]
   },
   "Luca Soldaini": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "soldaini2024dolma"
+    "soldaini2024dolma",
+    "dolma2024"
    ]
   },
   "Rodney Kinney": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "soldaini2024dolma"
+    "soldaini2024dolma",
+    "dolma2024"
    ]
   },
   "Akshita Bhagia": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "soldaini2024dolma"
+    "soldaini2024dolma",
+    "dolma2024"
    ]
   },
   "Yujia Li": {
@@ -41770,36 +43068,40 @@
    ]
   },
   "Samyam Rajbhandari": {
-   "count": 1,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "rajbhandari2019zero"
-   ]
-  },
-  "Jeff Rasley": {
    "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "rajbhandari2019zero",
-    "rasley2020deepspeed"
+    "rajbhandari2020zero"
+   ]
+  },
+  "Jeff Rasley": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rajbhandari2019zero",
+    "rasley2020deepspeed",
+    "rajbhandari2020zero"
    ]
   },
   "Olatunji Ruwase": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "rajbhandari2019zero"
+    "rajbhandari2019zero",
+    "rajbhandari2020zero"
    ]
   },
   "Yuxiong He": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "rajbhandari2019zero"
+    "rajbhandari2019zero",
+    "rajbhandari2020zero"
    ]
   },
   "Zhiqing Sun": {
@@ -41883,13 +43185,14 @@
    ]
   },
   "Hao Liu": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "li2023seqparallel",
     "liu2023ringattention",
-    "liu2023ring"
+    "liu2023ring",
+    "gudibande2023falsepromise"
    ]
   },
   "William Fedus": {
@@ -42206,11 +43509,12 @@
    ]
   },
   "Rianne van den Berg": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "schlichtkrull2018rgcn"
+    "schlichtkrull2018rgcn",
+    "austin2021d3pm"
    ]
   },
   "Max Welling": {
@@ -42673,19 +43977,22 @@
    ]
   },
   "DeepSeek-AI": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "deepseekv3tech2024"
+    "deepseekv3tech2024",
+    "deepseek2024v2"
    ]
   },
   "Qwen Team": {
-   "count": 1,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "qwen2024"
+    "qwen2024",
+    "qwen2024qwen25",
+    "qwen2025qwen3"
    ]
   },
   "Alibaba Group": {
@@ -42713,11 +44020,12 @@
    ]
   },
   "Moonshot AI": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "moonshot2024kimi"
+    "moonshot2024kimi",
+    "kimi2025k2"
    ]
   },
   "AI4Bharat": {
@@ -42945,11 +44253,12 @@
    ]
   },
   "Angela Fan": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "fan2018topk"
+    "fan2018topk",
+    "scao2022bloom"
    ]
   },
   "Yann Dauphin": {
@@ -44102,11 +45411,12 @@
    ]
   },
   "Alan M. Turing": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "turing1950bandits"
+    "turing1950bandits",
+    "turing1936"
    ]
   },
   "I. J. Good": {
@@ -44692,11 +46002,12 @@
    ]
   },
   "Najoung Kim": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "mckenzie2023inverse"
+    "mckenzie2023inverse",
+    "kim2020cogs"
    ]
   },
   "Muru Zhang": {
@@ -44708,11 +46019,12 @@
    ]
   },
   "Sewon Min": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "press2022compositionality"
+    "press2022compositionality",
+    "min2022rethinking"
    ]
   },
   "Ludwig Schmidt": {
@@ -46990,12 +48302,13 @@
    ]
   },
   "Sergey Levine": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "schulman2015trpo",
-    "levine2016guidance"
+    "levine2016guidance",
+    "gudibande2023falsepromise"
    ]
   },
   "Philipp Moritz": {
@@ -47233,11 +48546,12 @@
    ]
   },
   "Stuart Russell": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "ng2000irl"
+    "ng2000irl",
+    "russell2019human"
    ]
   },
   "Armin Biere": {
@@ -48978,11 +50292,12 @@
    ]
   },
   "Andrew Senior": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "oord2016wavenet"
+    "oord2016wavenet",
+    "dean2012large"
    ]
   },
   "Shakir Mohamed": {
@@ -49694,12 +51009,13 @@
    ]
   },
   "Greg Brockman": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "openai2021dota",
-    "whisper2022"
+    "whisper2022",
+    "radford2022whisper"
    ]
   },
   "Brooke Chan": {
@@ -51193,11 +52509,12 @@
    ]
   },
   "Steve Jurvetson": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "mirrorselfrecognition_image"
+    "mirrorselfrecognition_image",
+    "img_richard_sutton"
    ]
   },
   "Thomas Nagel": {
@@ -51758,19 +53075,21 @@
    ]
   },
   "Alexey Dosovitskiy": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "dosovitskiy2021vit"
+    "dosovitskiy2021vit",
+    "dosovitskiy2020vit"
    ]
   },
   "Xinlei Chen": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "he2021mae"
+    "he2021mae",
+    "sun2024massive"
    ]
   },
   "Yanghao Li": {
@@ -54200,11 +55519,12 @@
    ]
   },
   "Daniel Kokotajlo": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "kokotajlo2016takeoff"
+    "kokotajlo2016takeoff",
+    "kokotajlo2025ai2027"
    ]
   },
   "Mary Shelley": {
@@ -54423,11 +55743,12 @@
    ]
   },
   "Pavel Izmailov": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "garipov2018mode"
+    "garipov2018mode",
+    "burns2023weakstrong"
    ]
   },
   "Dmitrii Podoprikhin": {
@@ -54842,11 +56163,12 @@
    ]
   },
   "Humberto R. Maturana": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "maturana1980autopoiesis"
+    "maturana1980autopoiesis",
+    "lettvin1959frog"
    ]
   },
   "Francisco J. Varela": {
@@ -54945,12 +56267,13 @@
    ]
   },
   "Warren S. McCulloch": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "mcculloch1965embodiments",
-    "mcculloch1945heterarchy"
+    "mcculloch1945heterarchy",
+    "lettvin1959frog"
    ]
   },
   "Lawrence G. Roberts": {
@@ -55166,11 +56489,13 @@
    ]
   },
   "Google DeepMind": {
-   "count": 1,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "graphcast_github"
+    "graphcast_github",
+    "gemma2025v3",
+    "deepmind_about"
    ]
   },
   "ECMWF": {
@@ -56167,11 +57492,12 @@
    ]
   },
   "Christine McLeavey": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "whisper2022"
+    "whisper2022",
+    "radford2022whisper"
    ]
   },
   "Svetlana Kirillov": {
@@ -56977,11 +58303,12 @@
    ]
   },
   "Taku Kudo": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "kudo2018unigram"
+    "kudo2018unigram",
+    "kudo2018sentencepiece"
    ]
   },
   "Xue et al.": {
@@ -57633,6 +58960,991 @@
    "maxyear": null,
    "keys": [
     "theseus_maze_image"
+   ]
+  },
+  "Biao Zhang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "zhang2019rmsnorm"
+   ]
+  },
+  "Daniel D. Johnson": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "austin2021d3pm"
+   ]
+  },
+  "Daniel Tarlow": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "austin2021d3pm"
+   ]
+  },
+  "Shen Nie": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "nie2025llada"
+   ]
+  },
+  "Fengqi Zhu": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "nie2025llada"
+   ]
+  },
+  "Zebin You": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "nie2025llada"
+   ]
+  },
+  "Brenden M. Lake": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lake2018scan"
+   ]
+  },
+  "Marco Baroni": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lake2018scan"
+   ]
+  },
+  "Rylan Schaeffer": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "schaeffer2023mirage"
+   ]
+  },
+  "Brando Miranda": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "schaeffer2023mirage"
+   ]
+  },
+  "Jan Hendrik Kirchner": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "burns2023weakstrong"
+   ]
+  },
+  "Ajeya Cotra": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "christian2021elk"
+   ]
+  },
+  "Mark Xu": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "christian2021elk"
+   ]
+  },
+  "Lijie Chen": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "pan2024latentqa"
+   ]
+  },
+  "Nina Rimsky": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rimsky2023caa"
+   ]
+  },
+  "Nick Gabrieli": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rimsky2023caa"
+   ]
+  },
+  "Julian Schulz": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rimsky2023caa"
+   ]
+  },
+  "Runjin Chen": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "chen2025persona"
+   ]
+  },
+  "Henry Sleight": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "chen2025persona"
+   ]
+  },
+  "Mingjie Sun": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "sun2024massive"
+   ]
+  },
+  "Zhuang Liu": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "sun2024massive"
+   ]
+  },
+  "Jack Lindsey et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "anthropic2025biology"
+   ]
+  },
+  "Myle Ott": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "liu2019roberta"
+   ]
+  },
+  "Kevin Clark": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "clark2020electra"
+   ]
+  },
+  "Minh-Thang Luong": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "clark2020electra"
+   ]
+  },
+  "Jeremy Howard": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "howard2018ulmfit"
+   ]
+  },
+  "Jeffrey Pennington": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "pennington2014glove"
+   ]
+  },
+  "Navdeep Jaitly": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "bengio2015scheduled"
+   ]
+  },
+  "MiniMax": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "minimax2025lightning"
+   ]
+  },
+  "Aditya Ramesh": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ramesh2021dalle"
+   ]
+  },
+  "Mikhail Pavlov": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ramesh2021dalle"
+   ]
+  },
+  "Nikil Roashan Selvam": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "commonpile2025"
+   ]
+  },
+  "Hailey Schoelkopf": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "biderman2023pythia"
+   ]
+  },
+  "Eric Hallahan": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "black2022gptneox"
+   ]
+  },
+  "Teven Le Scao": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "scao2022bloom"
+   ]
+  },
+  "Christopher Akiki": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "scao2022bloom"
+   ]
+  },
+  "Susan Zhang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "zhang2022opt"
+   ]
+  },
+  "Stephen Roller": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "zhang2022opt"
+   ]
+  },
+  "Albert Q. Jiang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "jiang2023mistral"
+   ]
+  },
+  "Alexandre Sablayrolles": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "jiang2023mistral"
+   ]
+  },
+  "Gemini Team": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "gemini2024v15"
+   ]
+  },
+  "Gemma Team": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "gemma2025v3"
+   ]
+  },
+  "Meta AI": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "meta2025llama4"
+   ]
+  },
+  "Kimi Team": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "kimi2025k2"
+   ]
+  },
+  "Meituan LongCat Team": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "longcat2025"
+   ]
+  },
+  "Nathan Lambert": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lambert2024tulu3"
+   ]
+  },
+  "Jacob Morrison": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lambert2024tulu3"
+   ]
+  },
+  "Valentina Pyatkin": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lambert2024tulu3"
+   ]
+  },
+  "Arnav Gudibande": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "gudibande2023falsepromise"
+   ]
+  },
+  "Xinyang Geng": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "gudibande2023falsepromise"
+   ]
+  },
+  "Cheng-Yu Hsieh": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "hsieh2023distilling"
+   ]
+  },
+  "Chun-Liang Li": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "hsieh2023distilling"
+   ]
+  },
+  "Chih-Kuan Yeh": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "hsieh2023distilling"
+   ]
+  },
+  "Safe Superintelligence Inc.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ssi2024"
+   ]
+  },
+  "Thinking Machines Lab": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "tml2025"
+   ]
+  },
+  "Ndea": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ndea2025"
+   ]
+  },
+  "Arcee AI": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "arcee2025"
+   ]
+  },
+  "Aaron Grattafiori": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "llama3herd2024"
+   ]
+  },
+  "Abhimanyu Dubey": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "llama3herd2024"
+   ]
+  },
+  "Abhinav Jauhri": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "llama3herd2024"
+   ]
+  },
+  "Keller Jordan": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "jordan2024muon"
+   ]
+  },
+  "Xinxi Lyu": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "min2022rethinking"
+   ]
+  },
+  "Mikel Artetxe": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "min2022rethinking"
+   ]
+  },
+  "Hannaneh Hajishirzi": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "min2022rethinking"
+   ]
+  },
+  "Chaojun Xiao": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "infllm2024"
+   ]
+  },
+  "Pengle Zhang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "infllm2024"
+   ]
+  },
+  "Xu Han": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "infllm2024"
+   ]
+  },
+  "Gwern Branwen": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "gwern2020scaling"
+   ]
+  },
+  "Leopold Aschenbrenner": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "aschenbrenner2024"
+   ]
+  },
+  "Scott Alexander": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "kokotajlo2025ai2027"
+   ]
+  },
+  "Thomas Larsen": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "kokotajlo2025ai2027"
+   ]
+  },
+  "Eli Lifland": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "kokotajlo2025ai2027"
+   ]
+  },
+  "Romeo Dean": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "kokotajlo2025ai2027"
+   ]
+  },
+  "Holden Karnofsky": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "karnofsky2021"
+   ]
+  },
+  "Melanie Lefkowitz": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lefkowitz2019perceptron"
+   ]
+  },
+  "H. D. Block": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "block1962perceptron"
+   ]
+  },
+  "A. B. J. Novikoff": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "novikoff1963convergence"
+   ]
+  },
+  "Mikel Olazaran": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "olazaran1996sociological"
+   ]
+  },
+  "James A. Anderson": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "anderson2000talkingnets"
+   ]
+  },
+  "Edward Rosenfeld (eds.)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "anderson2000talkingnets"
+   ]
+  },
+  "Saki (H. H. Munro)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "saki1911clovis"
+   ]
+  },
+  "Tal Linzen": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "kim2020cogs"
+   ]
+  },
+  "Yizhong Wang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "wang2022selfinstruct"
+   ]
+  },
+  "Yeganeh Kordi": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "wang2022selfinstruct"
+   ]
+  },
+  "Swaroop Mishra": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "wang2022selfinstruct"
+   ]
+  },
+  "Rohan Taori": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "taori2023alpaca"
+   ]
+  },
+  "Ishaan Gulrajani": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "taori2023alpaca"
+   ]
+  },
+  "Tianyi Zhang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "taori2023alpaca"
+   ]
+  },
+  "Mark Mao": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dean2012large"
+   ]
+  },
+  "Marc'aurelio Ranzato": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dean2012large"
+   ]
+  },
+  "Ke Yang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dean2012large"
+   ]
+  },
+  "The Royal Swedish Academy of Sciences": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "nobel2024physics"
+   ]
+  },
+  "Alfred Edward Chalon": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_ada_lovelace"
+   ]
+  },
+  "Anonymous (The Illustrated London News)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_charles_babbage"
+   ]
+  },
+  "Elliott & Fry": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_alan_turing"
+   ]
+  },
+  "Tekniska Museet (unknown photographer)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_claude_shannon"
+   ]
+  },
+  "wikispaces (uploader)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_john_von_neumann"
+   ]
+  },
+  "Anonymous / Heinz Nixdorf MuseumsForum": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_frank_rosenblatt"
+   ]
+  },
+  "Steamtalks (Flickr)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_marvin_minsky"
+   ]
+  },
+  "Matematicamente.it": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_seymour_papert"
+   ]
+  },
+  "Arthur Petron": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_geoffrey_hinton",
+    "img_john_jumper"
+   ]
+  },
+  "Jérémy Barande": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_yann_lecun"
+   ]
+  },
+  "Maryse Boyce": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_yoshua_bengio"
+   ]
+  },
+  "Alain Herzog": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_demis_hassabis"
+   ]
+  },
+  "Gladwin Analytics": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_andrej_karpathy"
+   ]
+  },
+  "Kaicarver": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_francois_chollet"
+   ]
+  },
+  "bhadeshia123": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_john_hopfield"
+   ]
+  },
+  "Jerome Y. Lettvin": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lettvin1959frog"
+   ]
+  },
+  "Walter H. Pitts": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lettvin1959frog"
+   ]
+  },
+  "Claude E. Shannon": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "mccarthy1955dartmouth"
+   ]
+  },
+  "John Richardson": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "kudo2018sentencepiece"
+   ]
+  },
+  "Jun-Yan Zhu": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "isola2017pix2pix"
+   ]
+  },
+  "Tinghui Zhou": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "isola2017pix2pix"
+   ]
+  },
+  "Alexei A. Efros": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "isola2017pix2pix"
+   ]
+  },
+  "Dmitry Lepikhin": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lepikhin2021gshard"
+   ]
+  },
+  "HyoukJoong Lee": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lepikhin2021gshard"
+   ]
+  },
+  "Yuanzhong Xu": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lepikhin2021gshard"
+   ]
+  },
+  "Dan Mané": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "amodei2016concrete"
+   ]
+  },
+  "Eliezer Yudkowsky": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "yudkowsky2008ai"
+   ]
+  },
+  "Andrew Hodges": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "hodges1983enigma"
+   ]
+  },
+  "Pamela McCorduck": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "mccorduck1979machines"
+   ]
+  },
+  "Association for Computing Machinery": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "acm2024turing"
+   ]
+  },
+  "Andrew Yao": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "bengio2023managing"
    ]
   }
  }
