@@ -19367,6 +19367,24 @@ window.bibData = {
 		year: 2019,
 		license: "CC0",
 		alternativetitle: "Platonic solids diagram"
+	},
+
+	"mark_i_perceptron_manual": {
+		url: "https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png",
+		title: "Mark I Perceptron — Figure 2 of the operator's manual",
+		author: "John C. Hay, Albert E. Murray",
+		year: 1958,
+		license: "Public domain",
+		alternativetitle: "Mark I Perceptron (operator's manual, Fig. 2)"
+	},
+
+	"laws_of_form_diagram": {
+		url: "https://commons.wikimedia.org/wiki/File:Laws_of_Form_-_((A))%3DA.png",
+		title: "Laws of Form — the form ((A)) = A",
+		author: "AugPi (Wikimedia Commons)",
+		year: 2019,
+		license: "Public domain",
+		alternativetitle: "Laws of Form diagram"
 	}
 
 };

@@ -377,16 +377,10 @@ The 1956 paper is almost completely unknown outside specialist history-of-neuros
 Long before digital computers existed, physicists \citeauthor{lenz1920} and his student \citeauthor{ising1925} introduced what is now recognized as the first <b>recurrent neural network architecture</b>. The Ising model describes a lattice of nodes (spins) with feedback connections, where each node influences its neighbors, and the system settles into an equilibrium state in response to input conditions. While it was designed to model ferromagnetism, not computation, its mathematical structure is identical to that of later associative memory networks. In \citeyear{amari1972}, \citeauthor{amari1972} made this recurrent architecture <b>adaptive</b>, enabling it to learn to associate input patterns with output patterns by changing its connection weights, creating the first published learning recurrent neural network. Ten years later, the basic equations of Amari's network were republished and its storage capacity analyzed under the name “Hopfield Network.”
 </div>
 
-<div class="image-row">
-	<figure>
-		<img src="mcculloch.png" alt="Warren McCulloch" />
-		<figcaption>Neurophysiologist Warren McCulloch, \citeyear{mccullochpittsimage}</figcaption>
-	</figure>
-	<figure>
-		<img src="walter_pitts_1954.jpg" alt="Walter Pitts" />
-		<figcaption>Logician and psychologist Walter Pitts (\cite[Pitts, 1954]{walter_pitts_photo})</figcaption>
-	</figure>
-</div>
+<figure>
+	<img src="walter_pitts_1954.jpg" alt="Walter Pitts" />
+	<figcaption>Logician and psychologist Walter Pitts (\cite[Pitts, 1954]{walter_pitts_photo})</figcaption>
+</figure>
 
 The mathematical birth of Artificial Intelligence did not start with silicon or vacuum tubes, but with the realization that biological processes could be described as logical calculi. Strictly speaking, the very first formal neuron model was \citeauthor{lapicque1907}'s integrate-and-fire cell of \citeyear{lapicque1907} (see the aside above); the work of \citeauthor{mccullochpitts1943} that follows is the first **logical** neuron, which is what most histories of AI mean when they speak of “the first artificial neuron.” Before \citeauthorlastnameand{darthmouthartificialintelligence} even named the field, neurophysiologist and neuroscientist team of \citeauthor{mccullochpitts1943} laid the very bedrock foundation for modern AI in their seminal work \citetitle{mccullochpitts1943}. They based their research on the research of \citeauthor{steadystates}, who they extensively cited in their first paper \citetitle{pittsfirstpaper}, in which Pitts demonstrated how circular chains of neurons mathematically settle into predictable firing patterns or constant inactivity based on their connection strengths, proving neurons are not just some biological mess, but a logical, deterministical machine.
 
@@ -650,8 +644,8 @@ This project was funded by the *Office of Naval Research*, under the codename *P
 
 <div class="image-row">
 	<figure>
-		<img src="Mark_I_perceptron.jpeg" alt="Mark I Perceptron Cables" />
-		<figcaption>\citetitle{perceptronimagecables}</figcaption>
+		<img src="mark_i_perceptron_manual.png" alt="Mark I Perceptron, figure from the operator's manual" />
+		<figcaption>\citetitle{mark_i_perceptron_manual}</figcaption>
 	</figure>
 	<figure>
 		<img src="perceptron2.jpg" alt="Perceptron Detection" />
@@ -787,8 +781,8 @@ These early neural networks were extremely limited by today's standards, but the
 #### The Hype (1958)
 
 <figure>
-    <img style="width: 100%" src="perceptron_smithsonian.jpg" alt="The Mark I Perceptron at the Smithsonian" />
-    <figcaption class="md">The Mark I Perceptron, on display at the Smithsonian's National Museum of History and Technology (\cite[Kowitz, 2017]{ronkowitz2017perceptron}).</figcaption>
+    <img style="width: 100%" src="mark_i_perceptron_manual.png" alt="The Mark I Perceptron, figure from the operator's manual" />
+    <figcaption class="md">The Mark I Perceptron, shown in Figure 2 of its operator's manual (\cite[Mark I Perceptron, operator's manual]{mark_i_perceptron_manual}).</figcaption>
 </figure>
 
 When Frank Rosenblatt introduced the \citealternativetitle{rosenblattperceptron}, the press did not file it as one clever experiment among many; it treated it as the dawn of machine consciousness. At a 1958 United States Navy press conference, Rosenblatt's remarks opened a firestorm inside the fledgling AI community, and *The New York Times* seized on it, describing the Perceptron as "the embryo of an electronic computer that [the Navy] expects will be able to walk, talk, see, write, reproduce itself and be conscious of its existence" (\cite[Kowitz, 2017]{ronkowitz2017perceptron}). That was the same framing the paper had already given it \cite{newyorktimesperceptron}: a machine that would eventually walk, talk, think, and even translate languages. What made the hype endure is that most of Rosenblatt's predictions were, in the end, surprisingly accurate. The coverage was even more literal than is usually remembered: it reported Perceptrons might one day be **fired to the planets as mechanical space explorers** \cite{tomayko1988spaceflight}. Six decades later, on the Martian surface, that prediction was quietly realized, when NASA's Perseverance rover used autonomous target selection (**AEGIS**) and hazard-avoidant path planning (**ENav**) to choose which rocks to drill and how to steer around boulders without waiting for a human in Mission Control to tell it to \cite{tomayko1988spaceflight}.

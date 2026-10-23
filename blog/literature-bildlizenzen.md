@@ -2,7 +2,7 @@
 
 Stand: 2026-10-23
 
-`literature.js` enthält 2668 Einträge. Davon verweisen **189** auf Wikimedia-Dateien (Commons/Wikipedia `File:`/`Datei:` oder `upload.wikimedia.org`). 164 Lizenzen wurden über die Commons-/Wikipedia-API ermittelt, 5 weitere (Weiterleitungen/Datei-Umbenennungen) manuell verifiziert. Für alle 169 liegt jetzt eine Lizenz vor.
+`literature.js` enthält 2670 Einträge. Davon verweisen **191** auf Wikimedia-Dateien (Commons/Wikipedia `File:`/`Datei:` oder `upload.wikimedia.org`). 164 Lizenzen wurden über die Commons-/Wikipedia-API ermittelt, 5 weitere (Weiterleitungen/Datei-Umbenennungen) manuell verifiziert. Für alle 169 liegt jetzt eine Lizenz vor.
 
 - **69** fehlende Lizenzen wurden automatisch ergänzt, dazu 5 gezielte Einträge (u. a. Inceptionism, Deconv, Loss Landscape, Perseverance, ENIAC).
 - Zusätzlich gezielt ergänzt: `mordvintsev2015inceptionism` (CC BY 4.0), `odena2016deconvolution` (CC BY 2.0), `li2018losslandscape` (MIT), `nasa2021perseverance` (Public domain/NASA) und `sam_demo_img` (Apache-2.0).
@@ -137,10 +137,12 @@ Stand: 2026-10-23
 | `jung_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Carl_Gustav_Jung_portrait.jpg |
 | `lagrange_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Lagrange_portrait.jpg |
 | `lapicque_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Louis_Lapicque.jpg |
+| `laws_of_form_diagram` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Laws_of_Form_-_((A))%3DA.png |
 | `leibniz_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Gottfried_Wilhelm_Leibniz,_Bernhard_Christoph_Francke.jpg |
 | `leibnizcc` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Rechenmaschine_von_Leibniz_(Nachbau)_06.jpg |
 | `lobachevsky_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Lobachevsky_03_crop.jpg |
 | `m87_blackhole_image` | CC BY 4.0 | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Black_hole_-_Messier_87.jpg |
+| `mark_i_perceptron_manual` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png |
 | `mechanicalturkimage` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Racknitz_-_The_Turk_3.jpg |
 | `mendeleev_periodic_table` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Mendeleev%27s_periodic_table_(1869_year).jpg |
 | `metropolis_hastings_image` | CC BY 4.0 | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Flowchart-of-Metropolis-Hastings-M-H-algorithm-for-the-parameter-estimation-using-the.png |
@@ -208,24 +210,23 @@ Diese Keys sind Bildquellen, deren `url` nicht auf eine Wikimedia-Datei zeigt. S
 
 | Key | Datei(en) | Lizenz | Quelle | Status / Ersatz |
 |---|---|---|---|---|
-| `grothendieck_image` | `grothendieck.jpg` | — | https://www.heidelberg-laureate-forum.org/... | keine freie Lizenz → [File:Alexander Grothendieck - face.jpg](https://commons.wikimedia.org/wiki/File:Alexander_Grothendieck_-_face.jpg) (CC BY-SA 4.0) |
-| `lebombobone` | `lebombo.jpg` | — | https://cacm.acm.org/... | keine freie Lizenz gefunden → anfragen/entfernen |
+| `grothendieck_image` | `grothendieck.jpg` | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Alexander_Grothendieck_colorized.jpg | Ersatz: coloriertes Porträt |
+| `lebombobone` | `lebombo.jpg` | Public domain | https://commons.wikimedia.org/wiki/File:Border_Cave00.jpg | Ersatz: Foto des Fundorts (nicht des Knochens) |
 | `li2018losslandscape` | `loss_landscape_resnet56_noskip.png`, `loss_landscape_resnet56_skip.png` | MIT | https://arxiv.org/abs/1712.09913 | belegt (Bildlizenz) |
-| `mccullochpittsimage` | `mcculloch.png` | — | https://www.historyofinformation.com/... | UNCLEAR → [File:1954 Walter Pitts and a blackboard.jpg](https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg) (PD) bzw. PD-Neuronenmodell |
+| `mccullochpittsimage` | `mcculloch.png` (Bild entfernt), `pitts.jpg` (ersetzt) | — | https://www.historyofinformation.com/... | Bilder entfernt/ersetzt; Key bleibt für den Text |
 | `mordvintsev2015inceptionism` | `inceptionism_classvis.png`, `inceptionism_dream_map.png`, `inceptionism_dumbbells.png`, `inceptionism_funny_animals.png`, `inceptionism_ibis.png`, `inceptionism_sky_arrow.png` | CC BY 4.0 | https://research.google/blog/inceptionism-going-deeper-into-neural-networks/ | belegt (Bildlizenz) |
 | `nasa2021perseverance` | `perseverance_selfie.gif` | Public domain (NASA) | https://photojournal.jpl.nasa.gov/catalog/PIA24430 | belegt |
 | `newyorktimesperceptron` | `navy.png` | — | https://timesmachine.nytimes.com/... | NYT-Archiv → `perceptron2.jpg` (PD, US Navy) nutzen |
 | `odena2016deconvolution` | `deconv_deepdream_jitter.png`, `deconv_style_clean.png` | CC BY 2.0 | https://distill.pub/2016/deconv-checkerboard/ | belegt (Bildlizenz) |
-| `perceptronimagecables` | `Mark_I_perceptron.jpeg` | Fair use | https://en.wikipedia.org/wiki/File:Mark_I_perceptron.jpeg | Fair Use → PD-Operator-Manual-Zeichnung |
+| `perceptronimagecables` | `Mark_I_perceptron.jpeg` (nicht mehr verwendet) | — | https://en.wikipedia.org/wiki/File:Mark_I_perceptron.jpeg | Bild ersetzt durch `mark_i_perceptron_manual` |
 | `perceptronimagewiring` | `FrankRosenblattWiringPerceptron.jpg` (nicht mehr verwendet) | — | https://perceptrondemo.com/ | Bild wurde entfernt; Key bleibt ungenutzt |
-| `relufirst` | `fukushimarelu.png` | — | https://ieeexplore.ieee.org/document/4082265 | Paper-Abbildung → Formel neu zeichnen oder Bild entfernen |
-| `ronkowitz2017perceptron` | `perceptron_smithsonian.jpg` | — | https://ronkowitz.blogspot.com/... | UNCLEAR → PD-Operator-Manual-Zeichnung oder `perceptron2.jpg` |
+| `relufirst` | `fukushimarelu.png` (Bild entfernt) | — | https://ieeexplore.ieee.org/document/4082265 | Bild entfernt; Inhalt steht im Text (activationlab.php) |
+| `ronkowitz2017perceptron` | `perceptron_smithsonian.jpg` (nicht mehr verwendet) | — | https://ronkowitz.blogspot.com/... | Bild ersetzt; Key bleibt für den Text |
 | `rosenblattad` | `rosenblatt_ad.png` (nicht mehr verwendet) | — | https://archive.org/details/sim_research-trends... | Bild ersetzt durch `rosenblatt_portrait`; Key ungenutzt |
 | `sam_demo_img` | `sam_demo.png` | Apache-2.0 | https://raw.githubusercontent.com/facebookresearch/segment-anything/main/assets/masks1.png | belegt (Repo-Lizenz) |
-| `shannonratphoto` | `shannons_mouse.jpg` | — | https://circlesofemotion.org/... | keine freie Lizenz gefunden → entfernen/lizenzieren |
-| `snarcphoto` | `snarc.jpg` | — | https://www.the-scientist.com/... | keine freie Lizenz gefunden → entfernen/lizenzieren |
-| `spencerbrown1969form` | `laws_of_form_cover.jpg` | — | https://en.wikipedia.org/wiki/Laws_of_Form | Buchcover, keine freie Lizenz → Titel nennen statt Cover |
-| `steadystates` | `householderrelu.png` | — | https://link.springer.com/article/10.1007/BF02478220 | Paper-Abbildung → Formel neu zeichnen oder Bild entfernen |
+| `shannonratphoto` | `shannons_mouse.jpg` | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Theseus_(1950),_Betty_and_Claude_Shannon,_MIT_Museum.jpg | Ersatz: Theseus-Foto, MIT Museum |
+| `snarcphoto` | `snarc.jpg` | CC BY 3.0 | https://commons.wikimedia.org/wiki/File:Marvin_Minsky_at_OLPCb_(3x4_cropped).jpg | Ersatz: Minsky-Porträt (kein freies SNARC-Foto) |
+| `steadystates` | `householderrelu.png` (Bild entfernt) | — | https://link.springer.com/article/10.1007/BF02478220 | Bild entfernt; Inhalt steht im Text (activationlab.php) |
 
 ## C. Hinweise
 

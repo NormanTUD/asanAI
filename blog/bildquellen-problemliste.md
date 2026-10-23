@@ -8,23 +8,19 @@ Analysiert wurden **alle** `*.php`-Lektionen und die zugehörigen `*.js`-Dateien
 
 | Status | Anzahl | Bedeutung |
 |---|---:|---|
-| **NICHT VERWENDEN** | 3 | Fair Use / Lizenz ausdrücklich unklar |
-| Lizenz nicht belegt | 8 | Quelle in `literature.js`, aber kein Lizenzfeld |
+| **NICHT VERWENDEN** | 0 | Fair Use / Lizenz ausdrücklich unklar |
+| Lizenz nicht belegt | 5 | Quelle in `literature.js`, aber kein Lizenzfeld |
 | Keine Quelle | 0 | weder Key noch Credit im Caption |
 | Frei, nur im Caption | 7 | Quelle+Lizenz im Caption, nicht in `literature.js` |
-| Frei (literature.js/Commons) | 204 | Lizenz sauber belegt |
+| Frei (literature.js/Commons) | 206 | Lizenz sauber belegt |
 | Frei (Prüfdatei) | 46 | in `bildquellen-pruefung.txt` als OK dokumentiert |
-| **Gesamt genutzt** | 268 | |
+| **Gesamt genutzt** | 264 | |
 
 > Neu: Die Lizenz wird jetzt am Ende jeder Quelle im Quellenverzeichnis auf Englisch angezeigt: `— License: …` bzw. `— Image license: …` (`helper.js`, Feld `license`/`image_license`).
 
 ## 1. Definitiv nicht verwenden — mit Ersatzvorschlag
 
-| Datei | Wo genutzt | Problem | Freier Ersatz | Lizenz |
-|---|---|---|---|---|
-| `Mark_I_perceptron.jpeg` | history.php:653 (The Beginning of Artificial Neural Networks); mirror_in_machine.php:47 (II. The First Machines Were Built on the Body's Own Laws) | Fair use | [File:Mark I Perceptron, Figure 2 of operator's manual.png](https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png) | Public domain |
-| `mcculloch.png` | history.php:382 (The formalization of Neurons) | UNCLEAR | [File:Mcculloch-pitts-neuron-model.png](https://commons.wikimedia.org/wiki/File:Mcculloch-pitts-neuron-model.png) | Public domain |
-| `perceptron_smithsonian.jpg` | history.php:790 (The Hype (1958)) | UNCLEAR (Prüfdatei) | [File:Mark I Perceptron, Figure 2 of operator's manual.png](https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png) | Public domain |
+Keine offenen Fälle — alle Fair-Use-/UNCLEAR-Bilder wurden ersetzt oder entfernt.
 
 Hinweise zu den Ersatzbildern:
 
@@ -42,27 +38,21 @@ Keine offenen Fälle — die Labels `CC`/`GNU` wurden bereits korrigiert (siehe 
 
 | Datei | Wo genutzt | Key | Quelle (URL) | Maßnahme / freie Alternative |
 |---|---|---|---|---|
-| `fukushimarelu.png` | activationlab.php:173 (The Breaking Point: Vanishing Gradients) | `relufirst` | https://ieeexplore.ieee.org/document/4082265 | Formel neu zeichnen (eine mathematische Formel ist nicht urheberrechtlich geschützt) oder Bild entfernen. |
-| `grothendieck.jpg` | geometry_i.php:663 (Grothendieck: the space revealed by its functions) | `grothendieck_image` | https://www.heidelberg-laureate-forum.org/laureate/alexander-grothendieck/ | [File:Alexander Grothendieck - face.jpg](https://commons.wikimedia.org/wiki/File:Alexander_Grothendieck_-_face.jpg) (CC BY-SA 4.0) |
-| `householderrelu.png` | activationlab.php:169 (The Breaking Point: Vanishing Gradients) | `steadystates` | https://link.springer.com/article/10.1007/BF02478220 | Formel neu zeichnen oder Bild entfernen. |
-| `laws_of_form_cover.jpg` | coherent_difference.php:146 (The first move: distinction) | `spencerbrown1969form` | https://en.wikipedia.org/wiki/Laws_of_Form | Kein freies Cover; den Titel im Text nennen statt das Buchcover zu zeigen. |
-| `lebombo.jpg` | geometry_i.php:70 (Tally bones: Lebombo and Ishango); history.php:43 (The Lebombo Bone); atlas.js:1940 | `lebombobone` | https://cacm.acm.org/blogcacm/technical-marvels-part-2-lebombo-and-ishango-bones/ | Kein freies Foto auf Commons gefunden; beim CACM/Autor anfragen oder Bild entfernen. |
-| `navy.png` | history.php:692 (The Beginning of Artificial Neural Networks) | `newyorktimesperceptron` | https://timesmachine.nytimes.com/timesmachine/1958/07/08/83417341.html?pageNumber=25 | [perceptron2.jpg (bereits im Blog)](history.php:664) (Public domain) |
-| `shannons_mouse.jpg` | history.php:497 (Shannon, chess and the rat) | `shannonratphoto` | https://circlesofemotion.org/vocabularies/faces/item/31e7bb6b/faces-of-human-to-non-human-encounter | Kein freies Äquivalent gefunden; Bild entfernen oder Lizenz klären. |
-| `snarc.jpg` | history.php:432 (The SNARC: The First Physical Neural Network (1951)) | `snarcphoto` | https://www.the-scientist.com/machine--learning--1951-65792 | Kein freies Äquivalent gefunden; Bild entfernen oder Lizenz klären. |
+| `grothendieck.jpg` | geometry_i.php:663 (Grothendieck: the space revealed by its functions) | `grothendieck_image` | https://www.heidelberg-laureate-forum.org/laureate/alexander-grothendieck/ | [File:Alexander Grothendieck colorized.jpg](https://commons.wikimedia.org/wiki/File:Alexander_Grothendieck_colorized.jpg) (CC BY-SA 4.0) |
+| `lebombo.jpg` | geometry_i.php:70 (Tally bones: Lebombo and Ishango); history.php:43 (The Lebombo Bone); atlas.js:1940 | `lebombobone` | https://cacm.acm.org/blogcacm/technical-marvels-part-2-lebombo-and-ishango-bones/ | [File:Border Cave00.jpg](https://commons.wikimedia.org/wiki/File:Border_Cave00.jpg) (Public domain) |
+| `navy.png` | history.php:686 (The Beginning of Artificial Neural Networks) | `newyorktimesperceptron` | https://timesmachine.nytimes.com/timesmachine/1958/07/08/83417341.html?pageNumber=25 | [perceptron2.jpg (bereits im Blog)](history.php:664) (Public domain) |
+| `shannons_mouse.jpg` | history.php:491 (Shannon, chess and the rat) | `shannonratphoto` | https://circlesofemotion.org/vocabularies/faces/item/31e7bb6b/faces-of-human-to-non-human-encounter | [File:Theseus (1950), Betty and Claude Shannon, MIT Museum.jpg](https://commons.wikimedia.org/wiki/File:Theseus_(1950),_Betty_and_Claude_Shannon,_MIT_Museum.jpg) (CC BY 4.0) |
+| `snarc.jpg` | history.php:426 (The SNARC: The First Physical Neural Network (1951)) | `snarcphoto` | https://www.the-scientist.com/machine--learning--1951-65792 | [File:Marvin Minsky at OLPCb (3x4 cropped).jpg](https://commons.wikimedia.org/wiki/File:Marvin_Minsky_at_OLPCb_(3x4_cropped).jpg) (CC BY 3.0) |
 
 ## 4. Keine Quelle belegt — mit Quellenvorschlag
 
-Weder `literature.js`-Key noch Credit im Caption. Für alle zwölf wurde ein freies Wikimedia-Äquivalent gefunden; das aktuelle Bild sollte durch dieses ersetzt oder die Quelle nachgetragen werden.
-
-| Datei | Wo genutzt | Mögliche freie Quelle | Lizenz |
-|---|---|---|---|
+Keine offenen Fälle — alle Bilder ohne Quelle wurden ersetzt oder mit einer belegten Lizenz versehen.
 
 ## 5. Frei, aber nur im Caption belegt (nicht in `literature.js`)
 
 | Datei | Wo genutzt | Caption-Lizenz | Quelle |
 |---|---|---|---|
-| `deep_blue_kasparov.jpg` | ai_and_society.php:41 (The Arc of Public Perception: Winters and Springs); history.php:989 (The Triumph of Symbolic AI) | Caption: CC BY 2.0 | https://www.theguardian.com/sport/2021/feb/12/deep-blue-computer-beats-kasparov-chess-1996 |
+| `deep_blue_kasparov.jpg` | ai_and_society.php:41 (The Arc of Public Perception: Winters and Springs); history.php:983 (The Triumph of Symbolic AI) | Caption: CC BY 2.0 | https://www.theguardian.com/sport/2021/feb/12/deep-blue-computer-beats-kasparov-chess-1996 |
 | `dolni_vestonice_head.jpg` | untold_history.php:330 (The Development of Humans) | Caption: CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Female_face,_ivory_carving,_Doln%C3%AD_V%C4%9Bstonice,_Gravettian,_28_000_-_22_000_BP.jpg |
 | `eniac_1946.jpg` | untold_history.php:1236 (The Polar Program That Nudged the State of the Art) | Caption: public domain | https://commons.wikimedia.org/wiki/File:Two_women_operating_ENIAC_%28full_resolution%29.jpg |
 | `qubit_cryostat.jpg` | untold_history.php:1240 (The Polar Program That Nudged the State of the Art) | Caption: CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Measuring_a_qubit_leaves_no_room_for_error.jpg |
@@ -93,6 +83,7 @@ Diese Felder wurden ergänzt und erscheinen jetzt im Quellenverzeichnis. `licens
 | `babbage` | `license` | CC BY-SA 2.0 | Commons-Datei Babbages Analytical Engine |
 | `ishangobonephoto` | `license` | CC BY-SA 3.0 | Commons-Datei Os d'Ishango IRSNB |
 | `arsmagnavolvelle` | `license` | Public domain | Llull-Diagramm (1305) |
+| `mark_i_perceptron_manual` | `license` | Public domain | Mark I Perceptron, Operator’s Manual, Fig. 2 |
 
 ## 7. Vollständige Liste aller tatsächlich genutzten Bilder
 
@@ -100,28 +91,22 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 
 | Datei | Status | Key | Lizenz | Wo genutzt |
 |---|---|---|---|---|
-| `Mark_I_perceptron.jpeg` | NICHT VERWENDEN | `perceptronimagecables` | Fair use | history.php:653 (The Beginning of Artificial Neural Networks); mirror_in_machine.php:47 (II. The First Machines Were Built on the Body's Own Laws) |
-| `mcculloch.png` | NICHT VERWENDEN | `mccullochpittsimage` | UNCLEAR | history.php:382 (The formalization of Neurons) |
-| `perceptron_smithsonian.jpg` | NICHT VERWENDEN | `ronkowitz2017perceptron` | UNCLEAR (Prüfdatei) | history.php:790 (The Hype (1958)) |
-| `fukushimarelu.png` | unbelegt | `relufirst` |  | activationlab.php:173 (The Breaking Point: Vanishing Gradients) |
 | `grothendieck.jpg` | unbelegt | `grothendieck_image` |  | geometry_i.php:663 (Grothendieck: the space revealed by its functions) |
-| `householderrelu.png` | unbelegt | `steadystates` |  | activationlab.php:169 (The Breaking Point: Vanishing Gradients) |
-| `laws_of_form_cover.jpg` | unbelegt | `spencerbrown1969form` |  | coherent_difference.php:146 (The first move: distinction) |
 | `lebombo.jpg` | unbelegt | `lebombobone` |  | geometry_i.php:70 (Tally bones: Lebombo and Ishango); history.php:43 (The Lebombo Bone); atlas.js:1940 |
-| `navy.png` | unbelegt | `newyorktimesperceptron` |  | history.php:692 (The Beginning of Artificial Neural Networks) |
-| `shannons_mouse.jpg` | unbelegt | `shannonratphoto` |  | history.php:497 (Shannon, chess and the rat) |
-| `snarc.jpg` | unbelegt | `snarcphoto` |  | history.php:432 (The SNARC: The First Physical Neural Network (1951)) |
-| `deep_blue_kasparov.jpg` | Caption | `deepblue` | Caption: CC BY 2.0 | ai_and_society.php:41 (The Arc of Public Perception: Winters and Springs); history.php:989 (The Triumph of Symbolic AI) |
+| `navy.png` | unbelegt | `newyorktimesperceptron` |  | history.php:686 (The Beginning of Artificial Neural Networks) |
+| `shannons_mouse.jpg` | unbelegt | `shannonratphoto` |  | history.php:491 (Shannon, chess and the rat) |
+| `snarc.jpg` | unbelegt | `snarcphoto` |  | history.php:426 (The SNARC: The First Physical Neural Network (1951)) |
+| `deep_blue_kasparov.jpg` | Caption | `deepblue` | Caption: CC BY 2.0 | ai_and_society.php:41 (The Arc of Public Perception: Winters and Springs); history.php:983 (The Triumph of Symbolic AI) |
 | `dolni_vestonice_head.jpg` | Caption | — | Caption: CC BY-SA 4.0 | untold_history.php:330 (The Development of Humans) |
 | `eniac_1946.jpg` | Caption | — | Caption: public domain | untold_history.php:1236 (The Polar Program That Nudged the State of the Art) |
 | `qubit_cryostat.jpg` | Caption | — | Caption: CC BY 4.0 | untold_history.php:1240 (The Polar Program That Nudged the State of the Art) |
 | `venus_galgenberg.jpg` | Caption | — | Caption: CC BY-SA 3.0 | untold_history.php:326 (The Development of Humans) |
 | `venus_hohle_fels.jpg` | Caption | — | Caption: CC BY-SA 3.0 | untold_history.php:324 (The Development of Humans) |
 | `vostok_ice_core.jpg` | Caption | — | Caption: public domain | untold_history.php:1232 (The Polar Program That Nudged the State of the Art) |
-| `1280px-BRL61-IBM_702.jpg` | frei | `ibm702image` | Public domain | history.php:552 (IBM 702: The First Commercial Business Computer (1953)) |
+| `1280px-BRL61-IBM_702.jpg` | frei | `ibm702image` | Public domain | history.php:546 (IBM 702: The First Commercial Business Computer (1953)) |
 | `abacus.jpg` | frei | `earliestabacusphoto` | CC BY-SA 2.0 | history.php:80 (The Salamis Tablet and the Abacus) |
 | `acheulean_handaxe.jpg` | frei | `achleuleanhandaxe_image` | CC BY-SA 4.0 | geometry_i.php:39 (The Acheulean handaxe (c. 1.76 million years ago)) |
-| `aiken_portrait.jpeg` | frei | `aikenphoto` | Public domain | history.php:515 (Howard Aiken & The Harvard Mark I (1944)) |
+| `aiken_portrait.jpeg` | frei | `aikenphoto` | Public domain | history.php:509 (Howard Aiken & The Harvard Mark I (1944)) |
 | `alchemist_in_his_studio.jpg` | frei | `img_alchemist_studio` | Public domain | untold_history.php:1137 (Alchemy: The Displaced Root of Chemistry) |
 | `alhazen_portrait.jpg` | frei | `alhazen_portrait` | Public domain | geometry_i.php:283 (IV. Transmission: the Islamic Golden Age) |
 | `alkhwarizmi_portrait.jpg` | frei | `alkhwarizmi_portrait` | Public domain | geometry_i.php:279 (IV. Transmission: the Islamic Golden Age) |
@@ -135,7 +120,7 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `archimedes_fetti.jpg` | frei | `archimedes_portrait` | Public domain | geometry_i.php:200 (Archimedes: exhaustion perfected) |
 | `arithmometer_thomas.jpg` | frei | `arithmometer_thomas` | CC BY-SA 4.0 | untold_history.php:877 (The Jacquard Loom: Weaving the Concept of Programmable Input) |
 | `arpanet_map.png` | frei | `arpanet_map` | Public domain | untold_history.php:2403 (ARPANET: Connecting the First Nodes) |
-| `ashby.jpg` | frei | `ashbyphoto` | Public domain | history.php:470 (Ross Ashby and the Homeostat) |
+| `ashby.jpg` | frei | `ashbyphoto` | Public domain | history.php:464 (Ross Ashby and the Homeostat) |
 | `astrolabe.jpg` | frei | `astrolabe_image` | CC BY-SA 4.0 | geometry_i.php:323 (The Islamic formalisation: six functions and a subject of…) |
 | `audio_spectrogram.png` | frei | `audio_spectrogram_img` | CC BY-SA 4.0 | music_video_generation.php:147 (Turning time into frequencies: the MDCT) |
 | `babbage.jpg` | frei | `babbage` | CC BY-SA 2.0 | history.php:275 (The Physical Manifestation: Babbage's Analytical Engine); software.php:69 (Before the Transistor: The Machine Learns to Be Programmed) |
@@ -192,13 +177,13 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `flammarion.jpg` | frei | `flammarion` | Public domain | myths.php:21 (The habits, not the machines); statistics.php:15; statistics_i.php:30 |
 | `folded_koch.gif` | frei | `foldedkoch_img` | CC BY-SA 4.0 | origami.php:444 |
 | `fourier.jpg` | frei | `fourier1822` | Public domain | geometry_ii.php:204 (Convolution is a sliding dot product — the DFT is its shape) |
-| `frank_rosenblatt_portrait.jpg` | frei | `rosenblatt_portrait` | CC BY-SA 4.0 | history.php:645 (The Beginning of Artificial Neural Networks) |
+| `frank_rosenblatt_portrait.jpg` | frei | `rosenblatt_portrait` | CC BY-SA 4.0 | history.php:639 (The Beginning of Artificial Neural Networks) |
 | `freud.jpg` | frei | `freud_image` | Public domain | human_mind.php:511 (The Interior: Knowing the Mind from the Inside) |
 | `galilei.jpg` | frei | `galilei_image` | Public domain | human_mind.php:181 ("The Book of Nature Is Written in the Language of Mathema…) |
 | `gauss_portrait_1840.jpg` | frei | `gauss_portrait` | Public domain | geometry_i.php:436 (Gauss: curvature is intrinsic) |
 | `gonzalo.jpg` | frei | `wienerajedrecista` | Public domain | history.php:329 (The First Practical AI (1914)) |
 | `great_chain_of_being_1579.jpg` | frei | `img_great_chain_of_being_1579` | Public domain | untold_history.php:349 (The Mythos: How Story Shaped the Mind) |
-| `grey_walter_tortoise.jpg` | frei | `img_walter_tortoise` | CC BY-SA 4.0 | history.php:420 (The Electric Tortoise: Machina speculatrix (1936)) |
+| `grey_walter_tortoise.jpg` | frei | `img_walter_tortoise` | CC BY-SA 4.0 | history.php:414 (The Electric Tortoise: Machina speculatrix (1936)) |
 | `gutenberg_press.jpg` | frei | `img_caxton_celebration` | Public domain | untold_history.php:763 (The Printing Press: Mass-Producing Knowledge) |
 | `gutta_percha_cable.png` | frei | `img_gutta_percha_cable` | Public domain | untold_history.php:1000 (The Silent Other Half: Insulating Electricity from Itself) |
 | `h264_coding_structure.jpg` | frei | `h264_coding_structure_img` | Public domain | music_video_generation.php:295 (Within a frame and across frames) |
@@ -206,7 +191,7 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `hammerhead_ribozyme.png` | frei | `img_hammerhead_ribozyme` | CC BY-SA 3.0 | untold_history.php:135 (The Development of Life) |
 | `heidegger.jpg` | frei | `heidegger_image` | CC BY-SA 3.0 | human_mind.php:525 (The Interior: Knowing the Mind from the Inside) |
 | `history_of_a.png` | frei | `history_of_a` | CC BY-SA 4.0 | language.php:248 (The Phoenician Alphabet (c. 1050 BCE)) |
-| `homeostat.jpg` | frei | `homeostatphoto` | CC BY-SA 4.0 | history.php:466 (Ross Ashby and the Homeostat) |
+| `homeostat.jpg` | frei | `homeostatphoto` | CC BY-SA 4.0 | history.php:460 (Ross Ashby and the Homeostat) |
 | `hooke_cock_microscope.jpg` | frei | `img_hooke_cock_microscope` | Public domain | untold_history.php:618 (From Cork to Circuits: The Microscope That Gave AI Its Mo…) |
 | `hubble_ultra_deep_field.jpg` | frei | `img_hubble_udf` | Public domain | untold_history.php:1555 (Unblurring the Sky: The Inverse Problem That Became the D…) |
 | `huygens_aerial_telescope_1684.jpg` | frei | `img_huygens_aerial_telescope` | Public domain | untold_history.php:591 (Glass and Lenses: The Instruments That Expanded Perception) |
@@ -229,6 +214,7 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `kpge_iridium_anomaly.png` | frei | `img_kpge_iridium_anomaly` | CC BY-SA 4.0 | untold_history.php:248 (The Meteor That Ended the Age of Dinosaurs) |
 | `lagrange.jpg` | frei | `lagrange_portrait` | Public domain | differentiation.php:75 (The Instantaneous Rate of Change (The Tangent Line)) |
 | `lapicque_portrait.jpg` | frei | `lapicque_portrait` | Public domain | history.php:359 (The formalization of Neurons) |
+| `laws_of_form_diagram.png` | frei | `laws_of_form_diagram` | Public domain | coherent_difference.php:146 (The first move: distinction) |
 | `leibniz.jpg` | frei | `leibniz_portrait` | Public domain | differentiation.php:32 |
 | `Leibnizrechenmaschine.jpg` | frei | `leibnizcc` | CC BY-SA 4.0 | history.php:259 (Gottfried Wilhelm Leibniz); software.php:62 (Before the Transistor: The Machine Learns to Be Programmed) |
 | `libavius_alembics.png` | frei | `img_libavius_alembics` | Public domain | untold_history.php:1143 (Alchemy: The Displaced Root of Chemistry) |
@@ -238,6 +224,7 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `m87_real.jpg` | frei | `m87_blackhole_image` | CC BY 4.0 | atlas.js:738 |
 | `magdeburg_hemispheres.jpg` | frei | `img_magdeburg_hemispheres` | Public domain | untold_history.php:798 (Vacuum Technique: Emptying Space to Fill It with Electrons) |
 | `margaret_hamilton.jpg` | frei | `hamilton1969_image` | Public domain | software.php:450 (What Was Required, in the End, for a Human to Build Somet…); untold_history.php:1441 (The Apollo Guidance Computer) |
+| `mark_i_perceptron_manual.png` | frei | `mark_i_perceptron_manual` | Public domain | history.php:647 (The Beginning of Artificial Neural Networks); history.php:784 (The Hype (1958)); mirror_in_machine.php:47 (II. The First Machines Were Built on the Body's Own Laws) |
 | `mechanical_turk.jpg` | frei | `mechanicalturkimage` | Public domain | history.php:345 (The First Practical AI (1914)) |
 | `mendeleev_periodic_table.jpg` | frei | `mendeleev_periodic_table` | Public domain | untold_history.php:715 (The Periodic Table as Foundation) |
 | `mercator_1569.png` | frei | `img_mercator_1569` | Public domain | geometry_i.php:401 (Mercator: flattening the sphere (1569)); untold_history.php:787 (Navigation and the Longitude Problem) |
@@ -262,7 +249,7 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `pacioli_portrait.jpg` | frei | `img_pacioli_portrait` | Public domain | untold_history.php:774 (Double-Entry Bookkeeping: The First Error-Detecting Code) |
 | `pangaea_200ma.jpg` | frei | `img_pangaea_200ma` | CC BY-SA 4.0 | untold_history.php:232 (The Age of Dinosaurs and the Shifting Continents) |
 | `paracelsus_portrait.jpg` | frei | `img_paracelsus_portrait` | Public domain | untold_history.php:1154 (Alchemy: The Displaced Root of Chemistry) |
-| `perceptron2.jpg` | frei | `perceptronimagedetection` | Public domain | history.php:657 (The Beginning of Artificial Neural Networks); intro.php:20; atlas.js:1936 |
+| `perceptron2.jpg` | frei | `perceptronimagedetection` | Public domain | history.php:651 (The Beginning of Artificial Neural Networks); intro.php:20; atlas.js:1936 |
 | `perseverance_selfie.gif` | frei | `perseverance_selfie_image` | Public domain | untold_history.php:1461 (Robotic Autonomy on Mars); atlas.js:1942 |
 | `platonic_solids_diagram.svg` | frei | `platonic_solids_image` | CC0 | geometry_i.php:237 (Euclid's Elements: the machine of proof) |
 | `poincare.jpg` | frei | `poincare_image` | No restrictions | geometry_i.php:524 (VIII. The modern shape of space — and why it matters for AI); geometry_iii.php:52 (The bridge that started it all); human_mind.php:192 (The Psychology of Mathematical Discovery) |
@@ -281,7 +268,7 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `schmitz.jpg` | frei | `schmitz_image` | CC BY-SA 4.0 | human_mind.php:532 (The Interior: Knowing the Mind from the Inside) |
 | `sextant.jpg` | frei | `humboldtsextant` | CC BY-SA 4.0 | geometry_i.php:343 (How do you measure an angle? (the instruments)) |
 | `shakey_robot.jpg` | frei | `shakey_robot_image` | CC BY-SA 4.0 | untold_history.php:1351 (ARPA/DARPA: The Government Patron of AI) |
-| `shannon.png` | frei | `shannonphoto` | Public domain | history.php:493 (Shannon, chess and the rat) |
+| `shannon.png` | frei | `shannonphoto` | Public domain | history.php:487 (Shannon, chess and the rat) |
 | `sheaf_gluing.png` | frei | `sheaf_gluing_image` | CC BY-SA 3.0 | coherent_difference.php:374 (The sheaf picture: local islands, glued into a continent) |
 | `sheaf_sections.png` | frei | `sheaf_sections_image` | CC BY-SA 3.0 | coherent_difference.php:369 (The sheaf picture: local islands, glued into a continent) |
 | `sholes_typewriter.jpg` | frei | `sholes_typewriter` | Public domain | untold_history.php:1017 (From Typewriters to Keyboards: The Mechanical Alphabet) |
@@ -299,7 +286,7 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `transformer_architecture.png` | frei | `transformer_attention_figure` | CC BY-SA 4.0 | atlas.js:1935 |
 | `trig_functions.svg` | frei | `trigfunctions_image` | CC BY-SA 3.0 | geometry_i.php:315 (The Indian sine: the chord becomes a function) |
 | `trinil_shell.jpg` | frei | `trinilshell_image` | CC BY-SA 3.0 | geometry_i.php:48 (The Trinil shell (c. 500,000 years ago)) |
-| `turing.jpg` | frei | `turingimage` | Public domain | history.php:530 (Alan Turing: Theory and the Universal Machine (1936-1950)); myths.php:45 (It talks like us, so it thinks like us) |
+| `turing.jpg` | frei | `turingimage` | Public domain | history.php:524 (Alan Turing: Theory and the Universal Machine (1936-1950)); myths.php:45 (It talks like us, so it thinks like us) |
 | `tyrannosaurus_rex_mount.jpg` | frei | `img_tyrannosaurus_rex_mount` | CC BY-SA 3.0 | untold_history.php:220 (The Age of Dinosaurs and the Shifting Continents) |
 | `universe_radial_budassi.jpg` | frei | `budassi_universe_image` | CC BY-SA 3.0 | untold_history.php:57 (The Development of the Universe and Earth); atlas.js:969 |
 | `vestonice_wolf_bone.jpg` | frei | `wolfbonephoto` | CC BY-SA 3.0 | history.php:54 (The Dolní Věstonice Bone (Wolf Bone)) |
@@ -310,14 +297,14 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `volta_portrait.jpg` | frei | `volta_portrait` | Public domain | untold_history.php:660 (From Amber to Amperes: The Discovery and Harnessing of El…) |
 | `voltaic_pile.png` | frei | `voltaic_pile` | Public domain | untold_history.php:666 (From Amber to Amperes: The Discovery and Harnessing of El…) |
 | `von_neumann_lanl.gif` | frei | `vonneumann_lanl_image` | Attribution | untold_history.php:1388 (Game Theory and the Architecture of Computation) |
-| `vonneumann.jpg` | frei | `vonneumannphoto` | Attribution | history.php:449 (The Cyberneticians (1943-1953)) |
+| `vonneumann.jpg` | frei | `vonneumannphoto` | Attribution | history.php:443 (The Cyberneticians (1943-1953)) |
 | `wadielhol_inscription_i.jpg` | frei | `wadielholinscription_i` | Public domain | language.php:224 (Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c…) |
 | `wadielhol_inscription_ii.jpg` | frei | `wadielholinscription_ii` | Public domain | language.php:228 (Proto-Sinaitic Script and the Wadi el-Hol Inscriptions (c…) |
-| `walter_pitts_1954.jpg` | frei | `walter_pitts_photo` | Public domain | history.php:386 (The formalization of Neurons) |
-| `warren_weaver.jpg` | frei | `img_warren_weaver` | Public domain | history.php:972 (The Illusion of Empathy: The ELIZA-Effect) |
+| `walter_pitts_1954.jpg` | frei | `walter_pitts_photo` | Public domain | history.php:381 (The formalization of Neurons) |
+| `warren_weaver.jpg` | frei | `img_warren_weaver` | Public domain | history.php:966 (The Illusion of Empathy: The ELIZA-Effect) |
 | `watt_steam_engine_lauder.jpg` | frei | `img_watt_steam_engine` | Public domain | untold_history.php:822 (The Steam Engine: Powering Precision Manufacturing) |
-| `widrow_adaline.jpg` | frei | `img_widrow_adaline` | Public domain | history.php:801 (The ADALINE: An Engineer's Neural Network (1959)) |
-| `wiener.jpg` | frei | `wienerphoto` | CC BY-SA 2.0 de | history.php:445 (The Cyberneticians (1943-1953)) |
+| `widrow_adaline.jpg` | frei | `img_widrow_adaline` | Public domain | history.php:795 (The ADALINE: An Engineer's Neural Network (1959)) |
+| `wiener.jpg` | frei | `wienerphoto` | CC BY-SA 2.0 de | history.php:439 (The Cyberneticians (1943-1953)) |
 | `williams_tube.jpg` | frei | `williams_tube` | CC BY-SA 2.0 | untold_history.php:1260 (Random Access Memory (RAM)) |
 | `wmap_cmb.png` | frei | `wmap_cmb` | Public domain | untold_history.php:52 (The Development of the Universe and Earth) |
 | `zhang_heng_seismoscope.jpg` | frei | `zhanghengseismoscopeimage` | Public domain | history.php:215 (The Antikythera Mechanism: Ancient Analog Computing) |
@@ -376,7 +363,7 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 - **7 dokumentierte Dateien werden nicht mehr verwendet:** `cosmic_web_foam.jpg`, `cosmic_web_texture.png`, `euclid_thevet.webp`, `loss_landscape_densenet121.png`, `loss_landscape_resnet110_noskip.png`, `paraboloids_comparison.png`, `titan_topo.jpg`.
 - Eintrag 78 (`memex_diagram.jpg`) trägt selbst den Vorbehalt „bei striktem Audit ggf. nachprüfen“.
 - Eintrag 82 (`john_graunt.png`) ist kein authentisches Porträt, sondern eine Illustration von 1936.
-- Die Atlas-Journey (`atlas.js`) nutzt `zuse.jpg`, `first_transistor.jpg`, `lebombo.jpg`, `perseverance_selfie.gif` und `FrankRosenblattWiringPerceptron.jpg`; diese sind in `atlas.php` nicht alle creditiert.
+- Die Atlas-Journey (`atlas.js`) nutzt `zuse.jpg`, `first_transistor.jpg`, `lebombo.jpg` und `perseverance_selfie.gif`; diese sind in `atlas.php` nicht alle creditiert.
 
 ### Methodik
 

@@ -143,8 +143,8 @@ If you already know topology, sheaves, category theory and HoTT well, you can sk
 ### The first move: distinction
 
 <figure>
-	<img src="laws_of_form_cover.jpg" alt="Cover of Spencer-Brown's Laws of Form (1969)" style="max-width: 200px; background: white; padding: 8px;" />
-	<figcaption class="md">\citealternativetitle{spencerbrown1969form}'s \citetitle{spencerbrown1969form}, first published in \citeyear{spencerbrown1969form}, the slender volume that turned “draw a distinction” into the foundation of a calculus.</figcaption>
+	<img src="laws_of_form_diagram.png" alt="Diagram from Spencer-Brown's Laws of Form" style="max-width: 160px; background: white; padding: 8px;" />
+	<figcaption class="md">The mark of distinction from \citealternativetitle{spencerbrown1969form}'s \citetitle{spencerbrown1969form} (\citeyear{spencerbrown1969form}), which turned “draw a distinction” into the foundation of a calculus (\cite[Laws of Form diagram]{laws_of_form_diagram}).</figcaption>
 </figure>
 
 Spencer-Brown begins his book with an instruction that is also an axiom:

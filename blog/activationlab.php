@@ -164,17 +164,6 @@ The era of S-shaped curves eventually reached a limit. Because both **Sigmoid** 
 This bottleneck was finally bypassed when the community embraced the **Rectified Linear Unit (ReLU)**, a piecewise-linear function $\max(0,x)$ first introduced mathematically by \citeauthor{steadystates} in \citeyear{steadystates} (p. 65f) in the context of nerve-fiber networks, though not yet as an *activation function*. It was \citeauthor{relufirst} in \citeyear{relufirst} who first *used* this kind of piecewise-linear response as an activation function in artificial neural networks, in his Neocognitron. By maintaining a constant gradient of 1 for all positive inputs ($x > 0$), ReLU allowed gradients to flow through dozens of layers without fading, a breakthrough that \citeauthorlastnameand{glorot2011deep} (\citeyear{glorot2011deep}) demonstrated was essential for training deep supervised networks. While earlier works like the Neocognitron by \citeauthor{neocognitron} explored similar structures, the formal validation of ReLU in \citeyear{glorot2011deep} effectively launched the modern age of Deep Learning.
 </div>
 
-<div class="image-row md">
-	<figure>
-		<img src="householderrelu.png" alt="Householders ReLU definition" />
-		<figcaption class="md">A definition of the relu function from \citeauthor{steadystates}, published in \citeyear{steadystates}.</figcaption>
-	</figure>
-	<figure>
-		<img src="fukushimarelu.png" alt="Fukushima ReLU definition" />
-		<figcaption class="md">\citeauthor{relufirst}'s definition of ReLU from \citeyear{relufirst}.</figcaption>
-	</figure>
-</div>
-
 <div class="md">
 ### Why ReLU Works: Sparse Representations
 

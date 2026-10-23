@@ -44,7 +44,7 @@ The *Brief History of AI* gives the timeline; the deeper point is that the first
 
 **The membrane became the integrator.** Thirty-six years earlier, \citeauthor{lapicque1907} had modeled the excitable membrane as a capacitor that charges until it crosses a threshold and then resets — the **integrate-and-fire** neuron \cite{lapicque1907}. It was the first *quantitative* model of a nerve, and it is the direct ancestor of every spiking network.
 
-\marginfig{Mark_I_perceptron.jpeg}{The Mark I Perceptron, 1958: motor-driven potentiometers whose resistance *was* the weight — the first machine built entirely from borrowed vocabulary.}
+\marginfig{mark_i_perceptron_manual.png}{The Mark I Perceptron, 1958: motor-driven potentiometers whose resistance *was* the weight — the first machine built entirely from borrowed vocabulary (\cite[Mark I Perceptron, operator's manual]{mark_i_perceptron_manual}).}
 
 **The retina's contrast circuit became winner-take-all.** In the eye, an excited receptor *suppresses its neighbors*, sharpening edges — **lateral inhibition**, recorded from the horseshoe-crab retina by \citeauthorlastnameand{hartline1956limulus} \cite{hartline1956limulus} \cite{lateral_inhibition_wiki}. The rule "the strongest unit wins, the rest go quiet" is exactly **competitive, winner-take-all** dynamics \cite{winner_take_all_wiki} — the hard version of the soft max that closes a network's output today.
 
