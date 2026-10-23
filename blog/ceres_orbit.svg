@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 12.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 51448)  -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   width="742.463"
+   height="563.01"
+   viewBox="0 0 742.463 563.01"
+   overflow="visible"
+   enable-background="new 0 0 742.463 563.01"
+   xml:space="preserve"
+   sodipodi:version="0.32"
+   inkscape:version="0.48.1 "
+   sodipodi:docname="Ceres_Orbit.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"><metadata
+   id="metadata755"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+   id="defs753"><inkscape:perspective
+     sodipodi:type="inkscape:persp3d"
+     inkscape:vp_x="0 : 281.505 : 1"
+     inkscape:vp_y="0 : 1000 : 0"
+     inkscape:vp_z="742.46301 : 281.505 : 1"
+     inkscape:persp3d-origin="371.23151 : 187.67 : 1"
+     id="perspective757" /></defs><sodipodi:namedview
+   inkscape:window-height="778"
+   inkscape:window-width="1280"
+   inkscape:pageshadow="2"
+   inkscape:pageopacity="0.0"
+   guidetolerance="10.0"
+   gridtolerance="10.0"
+   objecttolerance="10.0"
+   borderopacity="1.0"
+   bordercolor="#666666"
+   pagecolor="#ffffff"
+   id="base"
+   showgrid="false"
+   inkscape:zoom="1.3090353"
+   inkscape:cx="307.62845"
+   inkscape:cy="281.505"
+   inkscape:window-x="-8"
+   inkscape:window-y="-8"
+   inkscape:current-layer="Layer_1"
+   inkscape:window-maximized="0" />
+<rect
+   x="-1.404"
+   y="-2.2688601"
+   width="742.867"
+   height="565.27887"
+   id="rect3" />
+<g
+   id="Layer_2">
+	<ellipse
+   fill="none"
+   stroke="#828282"
+   cx="193.665"
+   cy="194.545"
+   rx="42.788"
+   ry="41.922"
+   id="ellipse6" />
+	<ellipse
+   fill="none"
+   stroke="#FFFFFF"
+   cx="196.832"
+   cy="197.521"
+   rx="28.133"
+   ry="27.469"
+   id="ellipse8" />
+	<ellipse
+   fill="none"
+   stroke="#828282"
+   cx="195.826"
+   cy="199.092"
+   rx="10.727"
+   ry="10.777"
+   id="ellipse10" />
+	<path
+   fill="none"
+   stroke="#FFFFFF"
+   d="M185.958,203.329c-0.554-1.3-0.861-2.733-0.861-4.237c0-5.952,4.803-10.776,10.727-10.776   c3.787,0,7.116,1.97,9.023,4.948"
+   id="path12" />
+	<path
+   fill="none"
+   stroke="#FFFFFF"
+   d="M158.883,218.965c-5.038-6.876-8.005-15.31-8.005-24.42   c0-23.154,19.156-41.922,42.786-41.922c16.339,0,30.538,8.971,37.749,22.162"
+   id="path14" />
+	<ellipse
+   fill="none"
+   stroke="#0000FC"
+   cx="201.556"
+   cy="201.917"
+   rx="76.865"
+   ry="77.008"
+   id="ellipse16" />
+	<path
+   fill="none"
+   stroke="#00FAE5"
+   d="M162.926,268.508c-22.867-13.344-38.235-38.168-38.235-66.592   c0-42.53,34.414-77.008,76.866-77.008c9.644,0,18.874,1.781,27.377,5.029"
+   id="path18" />
+	
+		<ellipse
+   transform="matrix(-0.6976 -0.7165 0.7165 -0.6976 192.8795 475.9847)"
+   fill="none"
+   stroke="#828282"
+   cx="196.888"
+   cy="197.288"
+   rx="20.326"
+   ry="20.057"
+   id="ellipse20" />
+	<path
+   fill="none"
+   stroke="#FFFDFD"
+   d="M185.287,213.661c-0.976-0.699-1.904-1.494-2.771-2.384   c-7.83-8.044-7.745-20.828,0.191-28.555c6.923-6.742,17.533-7.408,25.328-2.128"
+   id="path22" />
+	<circle
+   fill="#00B307"
+   cx="185.16"
+   cy="200.382"
+   r="1.656"
+   id="circle24" />
+	<circle
+   fill="#00B307"
+   cx="183.778"
+   cy="181.855"
+   r="1.656"
+   id="circle26" />
+	<circle
+   fill="#00B307"
+   cx="150.824"
+   cy="194.618"
+   r="1.656"
+   id="circle28" />
+	<circle
+   fill="#00B307"
+   cx="222.973"
+   cy="208"
+   r="1.656"
+   id="circle30" />
+	<circle
+   fill="#0DCBC5"
+   cx="251.263"
+   cy="260.863"
+   r="1.656"
+   id="circle32" />
+	<ellipse
+   fill="none"
+   stroke="#828282"
+   cx="189.93"
+   cy="196.676"
+   rx="144.048"
+   ry="141.123"
+   id="ellipse34" />
+	<path
+   fill="none"
+   stroke="#FFFFFF"
+   d="M170.144,336.478C99.951,327.03,45.883,268.04,45.883,196.675   c0-77.939,64.492-141.123,144.047-141.123c6.814,0,13.518,0.464,20.08,1.362"
+   id="path36" />
+	<circle
+   fill="#00B307"
+   cx="80.656"
+   cy="288.563"
+   r="1.657"
+   id="circle38" />
+	<path
+   fill="#00B307"
+   d="M154.078,194.617c0,1.797-1.459,3.258-3.255,3.258c-1.8,0-3.255-1.461-3.255-3.258   c0-1.798,1.456-3.252,3.255-3.252C152.618,191.366,154.078,192.82,154.078,194.617z"
+   id="path40" />
+	<path
+   fill="#00B307"
+   d="M187.097,181.727c0,1.796-1.459,3.258-3.255,3.258c-1.8,0-3.255-1.461-3.255-3.258   c0-1.797,1.456-3.253,3.255-3.253C185.638,178.474,187.097,179.93,187.097,181.727z"
+   id="path42" />
+	<path
+   fill="#00B307"
+   d="M188.316,200.251c0,1.796-1.459,3.258-3.256,3.258c-1.799,0-3.255-1.461-3.255-3.258   c0-1.797,1.456-3.253,3.255-3.253C186.856,196.998,188.316,198.454,188.316,200.251z"
+   id="path44" />
+	<path
+   fill="#00B307"
+   d="M226.095,208.294c0,1.796-1.459,3.257-3.255,3.257c-1.8,0-3.255-1.461-3.255-3.257   c0-1.798,1.456-3.253,3.255-3.253C224.635,205.041,226.095,206.497,226.095,208.294z"
+   id="path46" />
+	<path
+   fill="#00B307"
+   d="M83.922,288.681c0,1.796-1.46,3.259-3.255,3.259c-1.8,0-3.255-1.463-3.255-3.259   c0-1.798,1.456-3.253,3.255-3.253C82.462,285.428,83.922,286.883,83.922,288.681z"
+   id="path48" />
+	<path
+   fill="#00FAE5"
+   d="M254.517,260.863c0,1.795-1.459,3.258-3.255,3.258c-1.8,0-3.255-1.462-3.255-3.258   c0-1.799,1.455-3.253,3.255-3.253C253.058,257.61,254.517,259.064,254.517,260.863z"
+   id="path50" />
+</g>
+<g
+   id="Layer_3">
+	<path
+   fill="none"
+   stroke="#828282"
+   d="M626.211,187.433c0,45.495-37.639,82.371-84.073,82.371   c-46.43,0-84.068-36.876-84.068-82.371c0-45.493,37.639-82.37,84.068-82.37C588.572,105.063,626.211,141.94,626.211,187.433z"
+   id="path53" />
+	<path
+   fill="none"
+   stroke="#FFFFFF"
+   d="M603.639,193.281c0,29.809-24.753,53.973-55.276,53.973   c-30.53,0-55.276-24.164-55.276-53.973c0-29.81,24.746-53.973,55.276-53.973C578.886,139.309,603.639,163.472,603.639,193.281z"
+   id="path55" />
+	<ellipse
+   fill="none"
+   stroke="#828282"
+   cx="546.384"
+   cy="196.368"
+   rx="21.079"
+   ry="21.175"
+   id="ellipse57" />
+	<path
+   fill="none"
+   stroke="#FFFFFF"
+   d="M526.997,204.692c-1.089-2.555-1.69-5.371-1.69-8.325c0-11.694,9.435-21.174,21.077-21.174   c7.439,0,13.982,3.87,17.729,9.721"
+   id="path59" />
+	<path
+   fill="none"
+   stroke="#FFFFFF"
+   d="M473.798,235.416c-9.899-13.51-15.73-30.081-15.73-47.983c0-45.493,37.641-82.37,84.07-82.37   c32.104,0,60.004,17.627,74.171,43.545"
+   id="path61" />
+	<ellipse
+   fill="none"
+   stroke="#0000FC"
+   cx="557.644"
+   cy="201.917"
+   rx="151.031"
+   ry="151.311"
+   id="ellipse63" />
+	<path
+   fill="none"
+   stroke="#00FAE5"
+   d="M481.736,332.76c-44.927-26.219-75.123-74.996-75.123-130.844   c0-83.565,67.615-151.312,151.03-151.312c18.948,0,37.085,3.497,53.793,9.881"
+   id="path65" />
+	<path
+   fill="none"
+   stroke="#828282"
+   d="M576.704,165.324c15.388,15.805,15.22,40.923-0.375,56.105   c-15.594,15.185-40.714,14.682-56.098-1.122c-15.386-15.806-15.218-40.924,0.377-56.106   C536.204,149.016,561.314,149.521,576.704,165.324z"
+   id="path67" />
+	<path
+   fill="none"
+   stroke="#FFFDFD"
+   d="M525.676,224.993c-1.918-1.373-3.74-2.936-5.444-4.685   c-15.386-15.806-15.218-40.924,0.377-56.106c13.602-13.246,34.451-14.555,49.766-4.183"
+   id="path69" />
+	<circle
+   fill="#00B307"
+   cx="525.427"
+   cy="198.901"
+   r="3.255"
+   id="circle71" />
+	<circle
+   fill="#00B307"
+   cx="522.713"
+   cy="162.499"
+   r="3.255"
+   id="circle73" />
+	<path
+   fill="#00B307"
+   d="M461.216,187.577c0,1.796-1.459,3.258-3.255,3.258c-1.801,0-3.256-1.461-3.256-3.258   c0-1.797,1.455-3.253,3.256-3.253C459.757,184.324,461.216,185.779,461.216,187.577z"
+   id="path75" />
+	<circle
+   fill="#00B307"
+   cx="599.726"
+   cy="213.87"
+   r="3.254"
+   id="circle77" />
+	<path
+   fill="#0DCBC5"
+   d="M658.564,317.741c0,1.795-1.458,3.254-3.254,3.254c-1.8,0-3.254-1.459-3.254-3.254   c0-1.8,1.454-3.253,3.254-3.253C657.106,314.488,658.564,315.941,658.564,317.741z"
+   id="path79" />
+</g>
+<g
+   id="Layer_4">
+	<path
+   fill="none"
+   stroke="#0000FD"
+   d="M590.468,506.076c-2.017,9.765-87.141,2.456-190.13-16.326   c-102.99-18.786-184.842-41.928-182.826-51.693c2.017-9.763,87.142-2.45,190.131,16.331   C510.633,473.171,592.485,496.313,590.468,506.076z"
+   id="path82" />
+	<path
+   fill="none"
+   stroke="#7F7F7F"
+   d="M731.405,478.034c-0.205,12.844-160.431,19.463-357.868,14.781   c-197.439-4.682-357.324-18.894-357.115-31.746c0.208-12.848,160.435-19.465,357.871-14.78   C571.73,450.97,731.615,465.184,731.405,478.034z"
+   id="path84" />
+	<path
+   fill="none"
+   stroke="#7F7F7F"
+   d="M381.379,459.177c57.41,1.61,103.86,7.208,103.75,12.502   c-0.111,5.296-46.743,8.282-104.155,6.672c-57.41-1.609-103.86-7.206-103.749-12.503   C277.336,460.555,323.967,457.567,381.379,459.177z"
+   id="path86" />
+	<path
+   fill="none"
+   stroke="#FFFFFF"
+   d="M318.18,474.641c-24.947-2.452-41.021-5.675-40.955-8.793   c0.111-5.293,46.742-8.28,104.154-6.671c28.509,0.8,54.314,2.583,73.059,4.823"
+   id="path88" />
+	<path
+   fill="#00B307"
+   d="M284.67,468.745c0,1.797-1.459,3.258-3.256,3.258c-1.799,0-3.255-1.461-3.255-3.258   c0-1.799,1.456-3.252,3.255-3.252C283.211,465.493,284.67,466.947,284.67,468.745z"
+   id="path90" />
+	<path
+   fill="#00B307"
+   d="M353.646,465.333c0,1.797-1.458,3.258-3.254,3.258c-1.8,0-3.256-1.461-3.256-3.258   c0-1.799,1.456-3.252,3.256-3.252C352.188,462.081,353.646,463.535,353.646,465.333z"
+   id="path92" />
+	<path
+   fill="#00B307"
+   d="M369.002,468.745c0,1.797-1.459,3.258-3.254,3.258c-1.8,0-3.256-1.461-3.256-3.258   c0-1.799,1.456-3.252,3.256-3.252C367.543,465.493,369.002,466.947,369.002,468.745z"
+   id="path94" />
+	<path
+   fill="#00B307"
+   d="M462.353,469.232c0,1.797-1.459,3.259-3.255,3.259c-1.8,0-3.256-1.462-3.256-3.259   c0-1.798,1.456-3.252,3.256-3.252C460.894,465.98,462.353,467.436,462.353,469.232z"
+   id="path96" />
+	<path
+   fill="#00FAE5"
+   d="M565.696,511.155c0,1.797-1.459,3.258-3.255,3.258c-1.8,0-3.257-1.461-3.257-3.258   c0-1.799,1.457-3.253,3.257-3.253C564.237,507.902,565.696,509.357,565.696,511.155z"
+   id="path98" />
+	<path
+   fill="none"
+   stroke="#FFFFFF"
+   d="M431.145,493.881c-18.755-0.248-37.998-0.602-57.607-1.065   c-197.439-4.682-357.324-18.894-357.115-31.746c0.188-11.584,130.468-18.103,300.818-15.839"
+   id="path100" />
+	<path
+   fill="#00B307"
+   d="M189.011,485.109c0,1.797-1.459,3.259-3.255,3.259c-1.8,0-3.256-1.462-3.256-3.259   c0-1.798,1.456-3.252,3.256-3.252C187.551,481.857,189.011,483.313,189.011,485.109z"
+   id="path102" />
+	<path
+   fill="none"
+   stroke="#00F0FF"
+   d="M363.22,482.614c-84.832-17.17-147.474-35.999-145.708-44.558   c2.017-9.763,87.142-2.45,190.131,16.331c2.568,0.469,5.124,0.939,7.666,1.414"
+   id="path104" />
+	<path
+   fill="#00FAE5"
+   d="M565.696,511.155c0,1.797-1.459,3.258-3.255,3.258c-1.8,0-3.257-1.461-3.257-3.258   c0-1.799,1.457-3.253,3.257-3.253C564.237,507.902,565.696,509.357,565.696,511.155z"
+   id="path106" />
+</g>
+
+
+<text
+   transform="matrix(1 0 0 1 285.1699 536.4639)"
+   id="text230" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<g
+   id="g456">
+	<path
+   fill="#0000FC"
+   d="M672.364,307.632l-3.278-2.938l-1.373-1.23l-3.256-2.918l1.241-1.384l3.256,2.918l1.373,1.23l3.277,2.938   L672.364,307.632z"
+   id="path458" />
+</g>
+<g
+   id="g460">
+	<path
+   fill="#00FAE5"
+   d="M447.641,105.697l-3.278-2.938l-1.373-1.23l-3.256-2.917l1.24-1.384l3.257,2.918l1.373,1.23l3.277,2.938   L447.641,105.697z"
+   id="path462" />
+</g>
+<text
+   transform="matrix(1 0 0 1 542.2061 200.5708)"
+   fill="#C96102"
+   font-family="'ArialMT'"
+   font-size="17.5489"
+   id="text464">+</text>
+
+
+
+<text
+   transform="matrix(1 0 0 1 385.4844 475.2598)"
+   fill="#C96102"
+   font-family="'ArialMT'"
+   font-size="17.5489"
+   id="text466">+</text>
+
+
+
+<g
+   id="g468">
+	<path
+   fill="#FFFFFF"
+   d="M479.476,139.773l-3.39-2.81l-1.419-1.176l-3.367-2.79l1.187-1.431l3.365,2.79l1.42,1.176l3.39,2.809   L479.476,139.773z"
+   id="path470" />
+</g>
+<g
+   id="g472">
+	<path
+   fill="#828282"
+   d="M608.777,245.432l-3.39-2.81l-1.42-1.176l-3.366-2.79l1.187-1.431l3.365,2.79l1.42,1.176l3.389,2.809   L608.777,245.432z"
+   id="path474" />
+</g>
+<text
+   transform="matrix(1 0 0 1 193.4614 201.8296)"
+   id="text476"><tspan
+     x="0"
+     y="0"
+     fill="#C96102"
+     font-family="'ArialMT'"
+     font-size="11.6993"
+     id="tspan478">+</tspan><tspan
+     x="6.832"
+     y="0"
+     font-family="'ArialMT'"
+     font-size="11.6993"
+     id="tspan480"> </tspan></text>
+
+
+
+<text
+   transform="matrix(1 0 0 1 458.4424 135.9805)"
+   fill="#FFFFFF"
+   font-family="'ArialMT'"
+   font-size="11.6993"
+   id="text482">Q</text>
+
+
+
+<text
+   transform="matrix(1 0 0 1 612.8096 246.4736)"
+   fill="#828282"
+   font-family="'ArialMT'"
+   font-size="11.6993"
+   id="text484">q</text>
+
+
+
+<text
+   transform="matrix(1 0 0 1 429.1963 100.8823)"
+   fill="#00FAE5"
+   font-family="'ArialMT'"
+   font-size="11.6993"
+   id="text486">q</text>
+
+
+
+<text
+   transform="matrix(1 0 0 1 676.833 309.5176)"
+   fill="#0000FC"
+   font-family="'ArialMT'"
+   font-size="11.6993"
+   id="text488">Q</text>
+
+
+
+
+
+<text
+   transform="matrix(1 0 0 1 285.1567 344.7012)"
+   id="text716" />
+
+
+
+<text
+   xml:space="preserve"
+   style="font-size:22px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana"
+   x="283.09186"
+   y="49.654884"
+   id="text2754"
+   sodipodi:linespacing="125%"><tspan
+     sodipodi:role="line"
+     id="tspan2756"
+     x="283.09186"
+     y="49.654884">Orbit of 1 Ceres</tspan></text>
+
+<text
+   xml:space="preserve"
+   style="font-size:13.99999976px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana;text-anchor:start;text-align:start;writing-mode:lr;line-height:125%"
+   x="19.098034"
+   y="517.17468"
+   id="text2758"
+   sodipodi:linespacing="125%"><tspan
+     sodipodi:role="line"
+     id="tspan2760"
+     x="19.098034"
+     y="517.17468">Distance from Sun: 2.983 a.u.</tspan><tspan
+     sodipodi:role="line"
+     x="19.098034"
+     y="537.17468"
+     id="tspan2762">Distance from Earth: 2.135 a.u.</tspan></text>
+
+<text
+   xml:space="preserve"
+   style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana"
+   x="271.51666"
+   y="534.67468"
+   id="text2764"
+   sodipodi:linespacing="125%"><tspan
+     sodipodi:role="line"
+     id="tspan2766"
+     x="271.51666"
+     y="534.67468">Orbital inclination: 10.6°</tspan></text>
+
+<text
+   xml:space="preserve"
+   style="font-size:13.99999976px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana;text-anchor:start;text-align:start;writing-mode:lr;line-height:125%"
+   x="290.30573"
+   y="346.82028"
+   id="text2768"
+   sodipodi:linespacing="125%"><tspan
+     sodipodi:role="line"
+     id="tspan2770"
+     x="290.30573"
+     y="346.82028">15 September 2006</tspan></text>
+
+<text
+   xml:space="preserve"
+   style="font-size:13.99999976px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana;text-anchor:start;text-align:start;writing-mode:lr;line-height:125%"
+   x="87.251747"
+   y="383.37711"
+   id="text2772"
+   sodipodi:linespacing="125%"><tspan
+     sodipodi:role="line"
+     id="tspan2774"
+     x="87.251747"
+     y="383.37711">Eccentricity: 0.080</tspan></text>
+
+<text
+   xml:space="preserve"
+   style="font-size:13.99999976px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana;text-anchor:start;text-align:start;writing-mode:lr;line-height:125%"
+   x="462.61145"
+   y="383.37711"
+   id="text2772"
+   sodipodi:linespacing="125%"><tspan
+     sodipodi:role="line"
+     id="tspan2774"
+     x="462.61145"
+     y="383.37711">Perihelion (<tspan fill="#00FAE5">q</tspan>): 2.544 a.u.</tspan></text>
+
+<text
+   xml:space="preserve"
+   style="font-size:13.99999976px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana;text-anchor:start;text-align:start;writing-mode:lr;line-height:125%"
+   x="462.61145"
+   y="407.8226"
+   id="text2772"
+   sodipodi:linespacing="125%"><tspan
+     sodipodi:role="line"
+     id="tspan2774"
+     x="462.61145"
+     y="407.8226">Aphelion (<tspan fill="#0000FC">Q</tspan>): 2.987 a.u.</tspan></text>
+
+<text
+   xml:space="preserve"
+   style="font-size:13.99999976px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana;text-anchor:start;text-align:start;writing-mode:lr;line-height:125%"
+   x="87.91581"
+   y="407.8226"
+   id="text2784"
+   sodipodi:linespacing="125%"><tspan
+     sodipodi:role="line"
+     id="tspan2786"
+     x="87.91581"
+     y="407.8226">Orbital Period: 4.599 years</tspan></text>
+
+<a
+   id="a2804"
+   transform="translate(-1.889348e-7,-3.0556852)"><text
+   id="text2792"
+   y="533.2171"
+   x="520.23041"
+   style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#00ffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana"
+   xml:space="preserve"><tspan
+     y="533.2171"
+     x="520.23041"
+     id="tspan2794"
+     sodipodi:role="line">Ceres</tspan></text>
+
+</a><use
+   x="0"
+   y="0"
+   xlink:href="#a2804"
+   id="use2808"
+   transform="translate(84.795268,-220.00934)"
+   width="742.46301"
+   height="563.01001" /><use
+   x="0"
+   y="0"
+   xlink:href="#a2804"
+   id="use2810"
+   transform="translate(-317.79127,-274.24774)"
+   width="742.46301"
+   height="563.01001" /><text
+   xml:space="preserve"
+   style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana"
+   x="108.47683"
+   y="196.32776"
+   id="text2812"><tspan
+     sodipodi:role="line"
+     id="tspan2814"
+     x="108.47683"
+     y="196.32776">Mars</tspan></text>
+
+<use
+   x="0"
+   y="0"
+   xlink:href="#text2812"
+   id="use2816"
+   transform="translate(308.6242,-6.1113704)"
+   width="742.46301"
+   height="563.01001" /><use
+   x="0"
+   y="0"
+   xlink:href="#text2812"
+   id="use2818"
+   transform="translate(129.1027,277.30343)"
+   width="742.46301"
+   height="563.01001" /><text
+   xml:space="preserve"
+   style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana"
+   x="27.501165"
+   y="298.69324"
+   id="text2820"><tspan
+     sodipodi:role="line"
+     id="tspan2822"
+     x="27.501165"
+     y="298.69324">Jupiter</tspan></text>
+
+<use
+   x="0"
+   y="0"
+   xlink:href="#text2820"
+   id="use2824"
+   transform="translate(113.06035,177.22974)"
+   width="742.46301"
+   height="563.01001" /><text
+   xml:space="preserve"
+   style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana"
+   x="483.56219"
+   y="157.36778"
+   id="text2826"><tspan
+     sodipodi:role="line"
+     id="tspan2828"
+     x="483.56219"
+     y="157.36778">Venus</tspan></text>
+
+<text
+   xml:space="preserve"
+   style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana"
+   x="487.38181"
+   y="213.89795"
+   id="text2830"><tspan
+     sodipodi:role="line"
+     id="tspan2832"
+     x="487.38181"
+     y="213.89795">Mercury</tspan></text>
+
+<text
+   xml:space="preserve"
+   style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#00ff00;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Verdana;-inkscape-font-specification:Verdana"
+   x="594.33075"
+   y="207.02267"
+   id="text2834"><tspan
+     sodipodi:role="line"
+     id="tspan2836"
+     x="594.33075"
+     y="207.02267">Earth</tspan></text>
+
+</svg>
