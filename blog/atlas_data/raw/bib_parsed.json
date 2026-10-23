@@ -2737,7 +2737,7 @@
    "url": ""
   },
   "rosenblattbackprop": {
-   "title": "Principles of Neurodynamics: Perceptrons and the Theory of Brain Mechanisms (CAL Report VQ-196-0-6)",
+   "title": "Principles of Neurodynamics: Perceptrons and the Theory of Brain Mechanisms (CAL Report No. VQ-196-0-6)",
    "author": "Frank Rosenblatt",
    "year": "1961",
    "url": "https://archive.org/details/DTIC_AD0256582/page/n11/mode/2up"
@@ -18866,6 +18866,9 @@
   "adaptivepattern": [
    "history"
   ],
+  "rosenblattbackprop": [
+   "history"
+  ],
   "linnainmaa1970": [
    "autodiff",
    "history"
@@ -18876,9 +18879,6 @@
   "dreyfus1972what": [
    "history",
    "philosophy"
-  ],
-  "rosenblattbackprop": [
-   "history"
   ],
   "kelley": [
    "history"
