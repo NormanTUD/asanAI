@@ -939,3 +939,124 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
     Lokal: university_of_bologna.jpg (574x550)
     Genutzt in: human_mind.php § "Institutions that outlive their founders"
     Status: OK - Public Domain (1497 Miniatur)
+
+=== PEOPLE OF AI (people_of_ai.php, Stand: Oktober 2026) ===
+====================================================================
+1. img_ada_lovelace
+   URL: https://commons.wikimedia.org/wiki/File:Ada_Lovelace_Chalon_portrait.jpg
+   Lizenz: Public domain (via Commons API extmetadata)
+   Autor: Alfred Edward Chalon
+   Lokal: ada_lovelace_portrait.jpg
+   Status: OK - Public domain
+
+2. img_charles_babbage
+   URL: https://commons.wikimedia.org/wiki/File:Charles_Babbage_1860.jpg
+   Lizenz: Public domain (via Commons API extmetadata)
+   Autor: Anonymous (The Illustrated London News)
+   Lokal: charles_babbage_portrait.jpg
+   Status: OK - Public domain
+
+3. img_alan_turing
+   URL: https://commons.wikimedia.org/wiki/File:Alan_Turing_(1951).jpg
+   Lizenz: Public domain (via Commons API extmetadata)
+   Autor: Elliott & Fry
+   Lokal: alan_turing_1951.jpg
+   Status: OK - Public domain
+
+4. img_claude_shannon
+   URL: https://commons.wikimedia.org/wiki/File:C.E._Shannon._Tekniska_museet_43069_(cropped).jpg
+   Lizenz: CC BY 2.0 (via Commons API extmetadata)
+   Autor: Tekniska Museet (unknown photographer)
+   Lokal: claude_shannon_portrait.jpg
+   Status: OK - CC BY 2.0
+
+5. img_john_von_neumann
+   URL: https://commons.wikimedia.org/wiki/File:John_von_Neumann.jpg
+   Lizenz: CC BY-SA 3.0 (via Commons API extmetadata)
+   Autor: wikispaces (uploader)
+   Lokal: john_von_neumann_portrait.jpg
+   Status: OK - CC BY-SA 3.0
+
+6. img_frank_rosenblatt
+   URL: https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg
+   Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+   Autor: Anonymous / Heinz Nixdorf MuseumsForum
+   Lokal: frank_rosenblatt_commons.jpg
+   Status: OK - CC BY-SA 4.0
+
+7. img_marvin_minsky
+   URL: https://commons.wikimedia.org/wiki/File:Marvin_Minsky.jpg
+   Lizenz: CC BY-SA 2.0 (via Commons API extmetadata)
+   Autor: Steamtalks (Flickr)
+   Lokal: marvin_minsky_portrait.jpg
+   Status: OK - CC BY-SA 2.0
+
+8. img_seymour_papert
+   URL: https://commons.wikimedia.org/wiki/File:Seymour_Papert.jpg
+   Lizenz: CC BY-SA 3.0 (via Commons API extmetadata)
+   Autor: Matematicamente.it
+   Lokal: seymour_papert_portrait.jpg
+   Status: OK - CC BY-SA 3.0
+
+9. img_john_hopfield
+   URL: https://commons.wikimedia.org/wiki/File:John_Hopfield_2016.jpg
+   Lizenz: CC BY 3.0 (via Commons API extmetadata)
+   Autor: bhadeshia123
+   Lokal: john_hopfield_portrait.jpg
+   Status: OK - CC BY 3.0
+
+10. img_geoffrey_hinton
+    URL: https://commons.wikimedia.org/wiki/File:Geoffrey_E._Hinton,_2024_Nobel_Prize_Laureate_in_Physics_(cropped1).jpg
+    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+    Autor: Arthur Petron
+    Lokal: geoffrey_hinton_portrait.jpg
+    Status: OK - CC BY-SA 4.0
+
+11. img_yann_lecun
+    URL: https://commons.wikimedia.org/wiki/File:Yann_LeCun_-_2018_(cropped).jpg
+    Lizenz: CC BY-SA 2.0 (via Commons API extmetadata)
+    Autor: Jérémy Barande
+    Lokal: yann_lecun_portrait.jpg
+    Status: OK - CC BY-SA 2.0
+
+12. img_yoshua_bengio
+    URL: https://commons.wikimedia.org/wiki/File:Yoshua_Bengio_2019_cropped.jpg
+    Lizenz: CC BY 4.0 (via Commons API extmetadata)
+    Autor: Maryse Boyce
+    Lokal: yoshua_bengio_portrait.jpg
+    Status: OK - CC BY 4.0
+
+13. img_richard_sutton
+    URL: https://commons.wikimedia.org/wiki/File:Richard_Sutton,_October_27,_2016.jpg
+    Lizenz: CC BY 2.0 (via Commons API extmetadata)
+    Autor: Steve Jurvetson
+    Lokal: richard_sutton_portrait.jpg
+    Status: OK - CC BY 2.0
+
+14. img_demis_hassabis
+    URL: https://commons.wikimedia.org/wiki/File:Demis_Hassabis.jpg
+    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+    Autor: Alain Herzog
+    Lokal: demis_hassabis_portrait.jpg
+    Status: OK - CC BY-SA 4.0
+
+15. img_john_jumper
+    URL: https://commons.wikimedia.org/wiki/File:John_Jumper,_2024_Nobel_Prize_Laureate_in_Chemistry.jpg
+    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+    Autor: Arthur Petron
+    Lokal: john_jumper_portrait.jpg
+    Status: OK - CC BY-SA 4.0
+
+16. img_andrej_karpathy
+    URL: https://commons.wikimedia.org/wiki/File:Andrej_Karpathy,_OpenAI_(cropped).png
+    Lizenz: CC BY 3.0 (via Commons API extmetadata)
+    Autor: Gladwin Analytics
+    Lokal: andrej_karpathy_portrait.png
+    Status: OK - CC BY 3.0
+
+17. img_francois_chollet
+    URL: https://commons.wikimedia.org/wiki/File:Fran%C3%A7ois_Chollet.jpg
+    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+    Autor: Kaicarver
+    Lokal: francois_chollet_portrait.jpg
+    Status: OK - CC BY-SA 4.0

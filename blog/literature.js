@@ -20080,6 +20080,116 @@ window.bibData = {
 		year: 2016,
 		license: "CC BY 3.0",
 		alternativetitle: "John Hopfield portrait"
+	},
+
+	/* Additional primary sources for the expanded people_of_ai.php */
+	"lettvin1959frog": {
+		title: "What the Frog's Eye Tells the Frog's Brain",
+		author: "Jerome Y. Lettvin, Humberto R. Maturana, Warren S. McCulloch, Walter H. Pitts",
+		year: 1959,
+		alternativetitle: "The frog's eye paper"
+	},
+	"boole1854": {
+		url: "https://archive.org/details/investigationofl00bool",
+		title: "An Investigation of the Laws of Thought",
+		author: "George Boole",
+		year: 1854,
+		alternativetitle: "Boole, Laws of Thought"
+	},
+	"church1936": {
+		url: "https://doi.org/10.2307/2371045",
+		title: "An Unsolvable Problem of Elementary Number Theory",
+		author: "Alonzo Church",
+		year: 1936,
+		alternativetitle: "Church's undecidability paper"
+	},
+	"turing1936": {
+		title: "On Computable Numbers, with an Application to the Entscheidungsproblem",
+		author: "Alan M. Turing",
+		year: 1936,
+		alternativetitle: "Turing's computable numbers"
+	},
+	"mccarthy1955dartmouth": {
+		title: "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
+		author: "John McCarthy, Marvin L. Minsky, Nathaniel Rochester, Claude E. Shannon",
+		year: 1955,
+		alternativetitle: "The Dartmouth proposal"
+	},
+	"newell1956logic": {
+		title: "The Logic Theory Machine: A Complex Information Processing System",
+		author: "Allen Newell, Herbert A. Simon",
+		year: 1956,
+		alternativetitle: "Logic Theory Machine"
+	},
+	"kudo2018sentencepiece": {
+		url: "https://arxiv.org/abs/1808.06226",
+		title: "SentencePiece: A simple and language independent subword tokenizer and detokenizer for Neural Text Processing",
+		author: "Taku Kudo, John Richardson",
+		year: 2018,
+		alternativetitle: "SentencePiece"
+	},
+	"dosovitskiy2020vit": {
+		url: "https://arxiv.org/abs/2010.11929",
+		title: "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+		author: "Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, et al.",
+		year: 2020,
+		alternativetitle: "Vision Transformer"
+	},
+	"he2016resnet": {
+		url: "https://arxiv.org/abs/1512.03385",
+		title: "Deep Residual Learning for Image Recognition",
+		author: "Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun",
+		year: 2016,
+		alternativetitle: "ResNet"
+	},
+	"isola2017pix2pix": {
+		url: "https://arxiv.org/abs/1611.07004",
+		title: "Image-to-Image Translation with Conditional Adversarial Networks",
+		author: "Phillip Isola, Jun-Yan Zhu, Tinghui Zhou, Alexei A. Efros",
+		year: 2017,
+		alternativetitle: "pix2pix"
+	},
+	"rajbhandari2020zero": {
+		url: "https://arxiv.org/abs/1910.02054",
+		title: "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models",
+		author: "Samyam Rajbhandari, Jeff Rasley, Olatunji Ruwase, Yuxiong He",
+		year: 2020,
+		alternativetitle: "ZeRO"
+	},
+	"lepikhin2021gshard": {
+		url: "https://arxiv.org/abs/2006.16668",
+		title: "GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding",
+		author: "Dmitry Lepikhin, HyoukJoong Lee, Yuanzhong Xu, et al.",
+		year: 2021,
+		alternativetitle: "GShard"
+	},
+	"irving2018debate": {
+		url: "https://arxiv.org/abs/1805.00899",
+		title: "AI Safety via Debate",
+		author: "Geoffrey Irving, Paul Christiano, Dario Amodei",
+		year: 2018,
+		alternativetitle: "AI safety via debate"
+	},
+	"amodei2016concrete": {
+		url: "https://arxiv.org/abs/1606.06565",
+		title: "Concrete Problems in AI Safety",
+		author: "Dario Amodei, Chris Olah, Jacob Steinhardt, Paul Christiano, John Schulman, Dan Mané",
+		year: 2016,
+		alternativetitle: "Concrete Problems in AI Safety"
+	},
+	"russell2019human": {
+		url: "https://www.penguinrandomhouse.com/books/566677/human-compatible-by-stuart-russell/",
+		title: "Human Compatible: Artificial Intelligence and the Problem of Control",
+		author: "Stuart Russell",
+		year: 2019,
+		alternativetitle: "Human Compatible"
+	},
+	"yudkowsky2008ai": {
+		url: "https://intelligence.org/files/AIPosNegFactor.pdf",
+		title: "Artificial Intelligence as a Positive and Negative Factor in Global Risk",
+		author: "Eliezer Yudkowsky",
+		year: 2008,
+		alternativetitle: "AI as a global risk factor"
 	}
 
 };
