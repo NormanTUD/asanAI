@@ -55,7 +55,7 @@ The **Trinil shell** is the oldest known deliberate geometric incision. Working 
 
 <figure>
 	<img style="width: 100%" src="blombosochre.jpg" alt="Engraved ochre from Blombos Cave" />
-	<figcaption class="md">Engraved ochre from \citealternativetitle{blombosochre}, South Africa. The cross-hatching and rhomboid grids are among the earliest evidence of abstract, non-utilitarian spatial patterning.</figcaption>
+	<figcaption class="md">Engraved ochre from the \cite[Blombos-Cave]{blombosochre}, South Africa. The cross-hatching and rhomboid grids are among the earliest evidence of abstract, non-utilitarian spatial patterning.</figcaption>
 </figure>
 
 A second, independent thread runs through the Middle Stone Age of southern Africa. The engraved pieces from **Blombos Cave**, dating to roughly 75,000 years ago, carry cross-hatched grids and rhomboid fields of incisions on red ochre \cite{emergenceofmodernhumanbehaviour} \cite{blombosochre}. Read purely as geometry, they are a study in the *partition of a plane*: a surface divided into a regular network of cells by crossing lines. That is, in miniature, exactly the operation that later surveyors and mapmakers would perform on a much larger scale. The motivation here is again not mathematical but *symbolic* — a decorated surface is a claim about order, and order is the raw material geometry will later formalise.
