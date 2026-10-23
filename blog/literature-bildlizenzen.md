@@ -2,7 +2,7 @@
 
 Stand: 2026-10-23
 
-`literature.js` enthält 2670 Einträge. Davon verweisen **191** auf Wikimedia-Dateien (Commons/Wikipedia `File:`/`Datei:` oder `upload.wikimedia.org`). 164 Lizenzen wurden über die Commons-/Wikipedia-API ermittelt, 5 weitere (Weiterleitungen/Datei-Umbenennungen) manuell verifiziert. Für alle 169 liegt jetzt eine Lizenz vor.
+`literature.js` enthält 2671 Einträge. Davon verweisen **192** auf Wikimedia-Dateien (Commons/Wikipedia `File:`/`Datei:` oder `upload.wikimedia.org`). 164 Lizenzen wurden über die Commons-/Wikipedia-API ermittelt, 5 weitere (Weiterleitungen/Datei-Umbenennungen) manuell verifiziert. Für alle 169 liegt jetzt eine Lizenz vor.
 
 - **69** fehlende Lizenzen wurden automatisch ergänzt, dazu 5 gezielte Einträge (u. a. Inceptionism, Deconv, Loss Landscape, Perseverance, ENIAC).
 - Zusätzlich gezielt ergänzt: `mordvintsev2015inceptionism` (CC BY 4.0), `odena2016deconvolution` (CC BY 2.0), `li2018losslandscape` (MIT), `nasa2021perseverance` (Public domain/NASA) und `sam_demo_img` (Apache-2.0).
@@ -183,6 +183,7 @@ Stand: 2026-10-23
 | `submarine_cable` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Submarine_cable_cross-section.svg |
 | `susa_geometry_tablet` | CC BY-SA 2.0 fr | CC BY-SA 2.0 fr | https://commons.wikimedia.org/wiki/File:Geometry_problem-Sb_13088-IMG_0593-white.jpg |
 | `tesla_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Tesla_circa_1890.jpeg |
+| `theseus_maze_image` | CC0 | CC0 | https://commons.wikimedia.org/wiki/File:Theseus_Maze_by_Claude_Shannon,_1952_-_MIT_Museum_-_DSC03702.JPG |
 | `titan_contour_map` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:First_topographic_map_of_Titan-CassiniNASA-PIA16849.jpg |
 | `trigfunctions_image` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Trigonometric_functions.svg |
 | `trinilshell_image` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Homo_Erectus_shell_with_geometric_incisions_circa_500,000_BP,_Naturalis_Biodiversity_Center,_Netherlands_(with_detail).jpg |
@@ -211,7 +212,7 @@ Diese Keys sind Bildquellen, deren `url` nicht auf eine Wikimedia-Datei zeigt. S
 | Key | Datei(en) | Lizenz | Quelle | Status / Ersatz |
 |---|---|---|---|---|
 | `grothendieck_image` | `grothendieck.jpg` | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Alexander_Grothendieck_colorized.jpg | Ersatz: coloriertes Porträt |
-| `lebombobone` | `lebombo.jpg` | Public domain | https://commons.wikimedia.org/wiki/File:Border_Cave00.jpg | Ersatz: Foto des Fundorts (nicht des Knochens) |
+| `lebombobone` | `lebombo.jpg` | PNAS noncommercial/educational | https://cdn.ncbi.nlm.nih.gov/pmc/blobs/23e0/3421171/8016995d624f/pnas.1204213109fig01.jpg | Beste Quelle: PNAS Fig. 1 (notched bones, Border Cave); CACM-Fotos: Robert Hart, keine freie Lizenz |
 | `li2018losslandscape` | `loss_landscape_resnet56_noskip.png`, `loss_landscape_resnet56_skip.png` | MIT | https://arxiv.org/abs/1712.09913 | belegt (Bildlizenz) |
 | `mccullochpittsimage` | `mcculloch.png` (Bild entfernt), `pitts.jpg` (ersetzt) | — | https://www.historyofinformation.com/... | Bilder entfernt/ersetzt; Key bleibt für den Text |
 | `mordvintsev2015inceptionism` | `inceptionism_classvis.png`, `inceptionism_dream_map.png`, `inceptionism_dumbbells.png`, `inceptionism_funny_animals.png`, `inceptionism_ibis.png`, `inceptionism_sky_arrow.png` | CC BY 4.0 | https://research.google/blog/inceptionism-going-deeper-into-neural-networks/ | belegt (Bildlizenz) |
@@ -224,8 +225,8 @@ Diese Keys sind Bildquellen, deren `url` nicht auf eine Wikimedia-Datei zeigt. S
 | `ronkowitz2017perceptron` | `perceptron_smithsonian.jpg` (nicht mehr verwendet) | — | https://ronkowitz.blogspot.com/... | Bild ersetzt; Key bleibt für den Text |
 | `rosenblattad` | `rosenblatt_ad.png` (nicht mehr verwendet) | — | https://archive.org/details/sim_research-trends... | Bild ersetzt durch `rosenblatt_portrait`; Key ungenutzt |
 | `sam_demo_img` | `sam_demo.png` | Apache-2.0 | https://raw.githubusercontent.com/facebookresearch/segment-anything/main/assets/masks1.png | belegt (Repo-Lizenz) |
-| `shannonratphoto` | `shannons_mouse.jpg` | CC BY 4.0 | https://commons.wikimedia.org/wiki/File:Theseus_(1950),_Betty_and_Claude_Shannon,_MIT_Museum.jpg | Ersatz: Theseus-Foto, MIT Museum |
-| `snarcphoto` | `snarc.jpg` | CC BY 3.0 | https://commons.wikimedia.org/wiki/File:Marvin_Minsky_at_OLPCb_(3x4_cropped).jpg | Ersatz: Minsky-Porträt (kein freies SNARC-Foto) |
+| `shannonratphoto` | `shannons_mouse.jpg` (nicht mehr verwendet) | — | https://circlesofemotion.org/... | Bild ersetzt durch `theseus_maze_image` |
+| `snarcphoto` | `snarc.jpg` | keine freie Lizenz | https://cyberneticzoo.com/wp-content/uploads/neuron-SNARC-GJLoan2011-x640.jpg | Objektfoto: CyberneticZoo, courtesy Gregory Loan (Permission nötig); Rekonstruktion: historyof.ai (keine freie Lizenz); freier Fallback: Minsky-Porträt |
 | `steadystates` | `householderrelu.png` (Bild entfernt) | — | https://link.springer.com/article/10.1007/BF02478220 | Bild entfernt; Inhalt steht im Text (activationlab.php) |
 
 ## C. Hinweise

@@ -9,10 +9,10 @@ Analysiert wurden **alle** `*.php`-Lektionen und die zugehörigen `*.js`-Dateien
 | Status | Anzahl | Bedeutung |
 |---|---:|---|
 | **NICHT VERWENDEN** | 0 | Fair Use / Lizenz ausdrücklich unklar |
-| Lizenz nicht belegt | 5 | Quelle in `literature.js`, aber kein Lizenzfeld |
+| Lizenz nicht belegt | 4 | Quelle in `literature.js`, aber kein Lizenzfeld |
 | Keine Quelle | 0 | weder Key noch Credit im Caption |
 | Frei, nur im Caption | 7 | Quelle+Lizenz im Caption, nicht in `literature.js` |
-| Frei (literature.js/Commons) | 206 | Lizenz sauber belegt |
+| Frei (literature.js/Commons) | 207 | Lizenz sauber belegt |
 | Frei (Prüfdatei) | 46 | in `bildquellen-pruefung.txt` als OK dokumentiert |
 | **Gesamt genutzt** | 264 | |
 
@@ -39,10 +39,9 @@ Keine offenen Fälle — die Labels `CC`/`GNU` wurden bereits korrigiert (siehe 
 | Datei | Wo genutzt | Key | Quelle (URL) | Maßnahme / freie Alternative |
 |---|---|---|---|---|
 | `grothendieck.jpg` | geometry_i.php:663 (Grothendieck: the space revealed by its functions) | `grothendieck_image` | https://www.heidelberg-laureate-forum.org/laureate/alexander-grothendieck/ | [File:Alexander Grothendieck colorized.jpg](https://commons.wikimedia.org/wiki/File:Alexander_Grothendieck_colorized.jpg) (CC BY-SA 4.0) |
-| `lebombo.jpg` | geometry_i.php:70 (Tally bones: Lebombo and Ishango); history.php:43 (The Lebombo Bone); atlas.js:1940 | `lebombobone` | https://cacm.acm.org/blogcacm/technical-marvels-part-2-lebombo-and-ishango-bones/ | [File:Border Cave00.jpg](https://commons.wikimedia.org/wiki/File:Border_Cave00.jpg) (Public domain) |
+| `lebombo.jpg` | geometry_i.php:70 (Tally bones: Lebombo and Ishango); history.php:43 (The Lebombo Bone); atlas.js:1940 | `lebombobone` | https://cacm.acm.org/blogcacm/technical-marvels-part-2-lebombo-and-ishango-bones/ | [PNAS Fig. 1: notched bones from Border Cave](https://cdn.ncbi.nlm.nih.gov/pmc/blobs/23e0/3421171/8016995d624f/pnas.1204213109fig01.jpg) (PNAS noncommercial/educational) |
 | `navy.png` | history.php:686 (The Beginning of Artificial Neural Networks) | `newyorktimesperceptron` | https://timesmachine.nytimes.com/timesmachine/1958/07/08/83417341.html?pageNumber=25 | [perceptron2.jpg (bereits im Blog)](history.php:664) (Public domain) |
-| `shannons_mouse.jpg` | history.php:491 (Shannon, chess and the rat) | `shannonratphoto` | https://circlesofemotion.org/vocabularies/faces/item/31e7bb6b/faces-of-human-to-non-human-encounter | [File:Theseus (1950), Betty and Claude Shannon, MIT Museum.jpg](https://commons.wikimedia.org/wiki/File:Theseus_(1950),_Betty_and_Claude_Shannon,_MIT_Museum.jpg) (CC BY 4.0) |
-| `snarc.jpg` | history.php:426 (The SNARC: The First Physical Neural Network (1951)) | `snarcphoto` | https://www.the-scientist.com/machine--learning--1951-65792 | [File:Marvin Minsky at OLPCb (3x4 cropped).jpg](https://commons.wikimedia.org/wiki/File:Marvin_Minsky_at_OLPCb_(3x4_cropped).jpg) (CC BY 3.0) |
+| `snarc.jpg` | history.php:426 (The SNARC: The First Physical Neural Network (1951)) | `snarcphoto` | https://www.the-scientist.com/machine--learning--1951-65792 | [SNARC neuron photo (CyberneticZoo, courtesy Gregory Loan)](https://cyberneticzoo.com/wp-content/uploads/neuron-SNARC-GJLoan2011-x640.jpg) (keine freie Lizenz — Permission nötig) |
 
 ## 4. Keine Quelle belegt — mit Quellenvorschlag
 
@@ -94,7 +93,6 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `grothendieck.jpg` | unbelegt | `grothendieck_image` |  | geometry_i.php:663 (Grothendieck: the space revealed by its functions) |
 | `lebombo.jpg` | unbelegt | `lebombobone` |  | geometry_i.php:70 (Tally bones: Lebombo and Ishango); history.php:43 (The Lebombo Bone); atlas.js:1940 |
 | `navy.png` | unbelegt | `newyorktimesperceptron` |  | history.php:686 (The Beginning of Artificial Neural Networks) |
-| `shannons_mouse.jpg` | unbelegt | `shannonratphoto` |  | history.php:491 (Shannon, chess and the rat) |
 | `snarc.jpg` | unbelegt | `snarcphoto` |  | history.php:426 (The SNARC: The First Physical Neural Network (1951)) |
 | `deep_blue_kasparov.jpg` | Caption | `deepblue` | Caption: CC BY 2.0 | ai_and_society.php:41 (The Arc of Public Perception: Winters and Springs); history.php:983 (The Triumph of Symbolic AI) |
 | `dolni_vestonice_head.jpg` | Caption | — | Caption: CC BY-SA 4.0 | untold_history.php:330 (The Development of Humans) |
@@ -283,6 +281,7 @@ Status: `NICHT VERWENDEN`, `Label`, `unbelegt`, `keine Quelle`, `Caption`, `frei
 | `susa_geometry_tablet.jpg` | frei | `susa_geometry_tablet` | CC BY-SA 2.0 fr | geometry_i.php:115 (Babylon: geometry on clay) |
 | `tesla_portrait.jpeg` | frei | `tesla_portrait` | Public domain | untold_history.php:678 (From Amber to Amperes: The Discovery and Harnessing of El…) |
 | `theorema_egregium.png` | frei | `gaussdisquisitiones` | Public domain | geometry_i.php:451 (Gauss: curvature is intrinsic) |
+| `theseus_maze_1952.jpg` | frei | `theseus_maze_image` | CC0 | history.php:491 (Shannon, chess and the rat) |
 | `transformer_architecture.png` | frei | `transformer_attention_figure` | CC BY-SA 4.0 | atlas.js:1935 |
 | `trig_functions.svg` | frei | `trigfunctions_image` | CC BY-SA 3.0 | geometry_i.php:315 (The Indian sine: the chord becomes a function) |
 | `trinil_shell.jpg` | frei | `trinilshell_image` | CC BY-SA 3.0 | geometry_i.php:48 (The Trinil shell (c. 500,000 years ago)) |
