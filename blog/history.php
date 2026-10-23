@@ -359,7 +359,28 @@ Pitts had struggled with depression for years. He described it to McCulloch as a
 
 The 1943 neuron is simpler, and stranger, than the textbook version. McCulloch and Pitts made five assumptions: the activity of a neuron is all-or-none; a fixed number of excitatory synapses must be excited within the period of latent addition; the only significant delay is synaptic; an inhibitory synapse absolutely prevents firing; and the structure of the net does not change with time. In their notation, neuron $i$ fires at time $t$ exactly when
 
-$$N_i(t)=1 \iff \sum_{j\in E_i} N_j(t-1)\ge \theta_i \quad\text{and}\quad \sum_{j\in I_i} N_j(t-1)=0,$$
+$$
+\begin{aligned}
+\underbrace{
+  \underbrace{N_i(t)}_{\substack{\text{activity of}\\\text{neuron } i \text{ at } t}}
+  =
+  \underbrace{1}_{\text{fires}}
+}_{\text{neuron } i \text{ fires}}
+&\quad\Longleftrightarrow\quad
+\underbrace{
+  \underbrace{\sum_{j\in E_i} N_j(t-1)}_{\text{excitatory input}}
+  \ge
+  \underbrace{\theta_i}_{\text{threshold}}
+}_{\text{enough excitation}}
+\\
+&\quad\text{and}\quad
+\underbrace{
+  \underbrace{\sum_{j\in I_i} N_j(t-1)}_{\text{inhibitory input}}
+  =
+  \underbrace{0}_{\text{no inhibition}}
+}_{\text{not inhibited}}
+\end{aligned}
+$$
 
 where $E_i$ and $I_i$ are the excitatory and inhibitory synapses onto $i$ and $\theta_i$ is its threshold. There are no weights in this formula: the original model counts synapses. The familiar $y=\sigma(\sum_i w_i x_i-\theta)$ is the later perceptron/connectionist gloss, not McCulloch and Pitts's notation.
 
@@ -369,7 +390,7 @@ The bibliography is a giveaway. The paper cites Carnap's *Logical Syntax of Lang
 
 #### From a biophysics journal to the Hixon Symposium
 
-The paper appeared in the *Bulletin of Mathematical Biophysics* 5 (1943), 115–133, not in a physiology journal. A companion note in the same volume, by Landahl, McCulloch and Pitts, worked out a statistical consequence of the calculus for nerve nets (\cite{landahl1943statistical}). The paper was not an instant hit: Marvin Minsky read it as an undergraduate and understood, by his own account, as much of it as he could, and its notation was later criticized as a fusion of Hilbert's and Carnap's symbols (\cite[Abraham, 2002]{abraham2002physio}). Its first wide audience came at the 1948 Hixon Symposium, where von Neumann presented his theory of automata and gave the McCulloch–Pitts nets their first broad exposure; the same von Neumann had already cited the paper in his 1945 EDVAC report (\cite{abraham2002physio, vonneumann}). The 1947 follow-up, “How We Know Universals,” applied the calculus to auditory and visual perception and pushed toward invariant representations (\cite{pitts1947universals}).
+McCulloch and Pitts's “A Logical Calculus of the Ideas Immanent in Nervous Activity” appeared in the *Bulletin of Mathematical Biophysics* 5 (1943), 115–133 — not in a physiology journal. A companion note in the same volume, by Landahl, McCulloch and Pitts, worked out a statistical consequence of the calculus for nerve nets (\cite{landahl1943statistical}). It was not an instant hit: Marvin Minsky read it as an undergraduate and understood, by his own account, as much of it as he could, and its notation was later criticized as a fusion of Hilbert's and Carnap's symbols (\cite[Abraham, 2002]{abraham2002physio}). Its first wide audience came at the 1948 Hixon Symposium, where von Neumann presented his theory of automata and gave the McCulloch–Pitts nets their first broad exposure; the same von Neumann had already cited the paper in his 1945 EDVAC report (\cite{abraham2002physio, vonneumann}). The 1947 follow-up, “How We Know Universals,” applied the calculus to auditory and visual perception and pushed toward invariant representations (\cite{pitts1947universals}).
 
 This breakthrough allowed the brain to be viewed not just as a mysterious organ, but as a computational engine. Parallel to this, \citeauthor{wiener1948cybernetics} defined the field of **\citealternativetitle{wiener1948cybernetics}** in \citeyear{wiener1948cybernetics}. Wiener recognized that both machines and living organisms operate on principles of feedback loops and information transmission. This synthesis of biology, logic, and engineering provided the fertile soil from which modern AI would eventually grow. The full cast of these **cyberneticians** is covered in its own section below.
 
