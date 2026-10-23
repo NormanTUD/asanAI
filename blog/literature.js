@@ -100,7 +100,8 @@ window.bibData = {
 		author: "Augustus Odena, Vincent Dumoulin, Chris Olah",
 		year: 2016,
 		url: "https://distill.pub/2016/deconv-checkerboard/",
-		alternativetitle: "Odena, Dumoulin & Olah 2016 (Distill)"
+		alternativetitle: "Odena, Dumoulin & Olah 2016 (Distill)",
+		image_license: "CC BY 2.0",
 	},
 	"goh2021multimodal": {
 		title: "Multimodal Neurons in Artificial Neural Networks",
@@ -114,7 +115,8 @@ window.bibData = {
 		author: "Alexander Mordvintsev, Christopher Olah, Mike Tyka",
 		year: 2015,
 		url: "https://research.google/blog/inceptionism-going-deeper-into-neural-networks/",
-		alternativetitle: "Mordvintsev, Olah & Tyka 2015 (Google Research Blog)"
+		alternativetitle: "Mordvintsev, Olah & Tyka 2015 (Google Research Blog)",
+		image_license: "CC BY 4.0",
 	},
 	"karpathy2015convnetjs": {
 		title: "ConvNetJS: Classify 2D data (interactive demo)",
@@ -240,35 +242,40 @@ window.bibData = {
 		author: "Harry Houdini (Public Domain)",
 		year: 1922,
 		url: "https://commons.wikimedia.org/wiki/File:Harry_Houdini_Cigarette_paper_trick.png",
-		alternativetitle: "Houdini, cigarette-paper tear (Wikimedia Commons, public domain)"
+		alternativetitle: "Houdini, cigarette-paper tear (Wikimedia Commons, public domain)",
+		license: "Public domain",
 	},
 	"houdini_portrait_img": {
 		title: "Harry Houdini, half-length portrait, facing front (1906)",
 		author: "Library of Congress (Public Domain)",
 		year: 1906,
 		url: "https://commons.wikimedia.org/wiki/File:Harry_Houdini,_half-length_portrait,_facing_front_LCCN96518797.jpg",
-		alternativetitle: "Harry Houdini portrait (Library of Congress, public domain)"
+		alternativetitle: "Harry Houdini portrait (Library of Congress, public domain)",
+		license: "Public domain",
 	},
 	"origami_cranes_img": {
 		title: "Origami made by Brighton University to support Japan (April 2011)",
 		author: "Dominic Alves (CC BY 2.0)",
 		year: 2011,
 		url: "https://commons.wikimedia.org/wiki/File:Origami_made_by_Brighton_University_to_support_Japan;_April_2011.jpg",
-		alternativetitle: "Paper cranes, Brighton University (Wikimedia Commons, CC BY 2.0)"
+		alternativetitle: "Paper cranes, Brighton University (Wikimedia Commons, CC BY 2.0)",
+		license: "CC BY 2.0",
 	},
 	"dragon_origami_img": {
 		title: "Dragon Origami (153422653)",
 		author: "Buffaloz Fotografie (CC BY 3.0)",
 		year: 2016,
 		url: "https://commons.wikimedia.org/wiki/File:Dragon_Origami_(153422653).jpeg",
-		alternativetitle: "Dragon origami (Buffaloz Fotografie, CC BY 3.0)"
+		alternativetitle: "Dragon origami (Buffaloz Fotografie, CC BY 3.0)",
+		license: "CC BY 3.0",
 	},
 	"modular_origami_img": {
 		title: "Small Modular Origami Structure",
 		author: "Icyshadowking (CC0)",
 		year: 2025,
 		url: "https://commons.wikimedia.org/wiki/File:Small_Modular_Origami_Structure.jpg",
-		alternativetitle: "Small modular origami structure (Icyshadowking, CC0)"
+		alternativetitle: "Small modular origami structure (Icyshadowking, CC0)",
+		license: "CC0",
 	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Origami in N dimensions: the neural-network fold  (origami.php)
@@ -288,7 +295,8 @@ window.bibData = {
 		title: "FoldedKoch.gif — creating a Koch snowflake curve by the fold-and-cut method",
 		author: "Greg Egan (CC BY-SA 4.0)",
 		year: 2023,
-		alternativetitle: "Folded Koch snowflake (Wikimedia Commons)"
+		alternativetitle: "Folded Koch snowflake (Wikimedia Commons)",
+		license: "CC BY-SA 4.0",
 	},
 	"linear_separability_wiki": {
 		title: "Linear separability",
@@ -1269,7 +1277,7 @@ window.bibData = {
 		author: "Naturalis Biodiversity Center, The Netherlands",
 		year: 2015,
 		url: "https://commons.wikimedia.org/wiki/File:Homo_Erectus_shell_with_geometric_incisions_circa_500,000_BP,_Naturalis_Biodiversity_Center,_Netherlands_(with_detail).jpg",
-		license: "CC-BY-4.0",
+		license: "CC BY-SA 3.0",
 		alternativetitle: "Trinil Shell"
 	},
 	"moscowpapyrus": {
@@ -1805,7 +1813,8 @@ window.bibData = {
 		title: "Cueva de las Manos (6811931046)",
 		author: "Wikimedia Commons",
 		year: 2012,
-		url: "https://commons.wikimedia.org/wiki/File:Cueva_de_las_Manos_(6811931046).jpg"
+		url: "https://commons.wikimedia.org/wiki/File:Cueva_de_las_Manos_(6811931046).jpg",
+		license: "CC BY-SA 2.0",
 	},
 	"The Ramon Llull's Thinking Machine for Automated Ideation": {
 		title: "The Ramon Llull's Thinking Machine for Automated Ideation",
@@ -2190,7 +2199,8 @@ window.bibData = {
 		author: "Unknown Photographer",
 		title: "Gonzalo showing El Ajedrecista to Norbert Wiener",
 		year: "ca. 1950",
-		alternativetitle: "El Ajedrecista"
+		alternativetitle: "El Ajedrecista",
+		license: "Public domain",
 	},
 
 	"torres1914": {
@@ -3113,7 +3123,8 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:Alan_Turing_az_1930-as_%C3%A9vekben.jpg",
 		title: "Alan Turing",
 		year: 1930,
-		author: "Unknown author"
+		author: "Unknown author",
+		license: "Public domain",
 	},
 	"hoffmann2022chinchilla": {
 		title: "Training Compute-Optimal Large Language Models",
@@ -3451,7 +3462,8 @@ window.bibData = {
 		url: "https://upload.wikimedia.org/wikipedia/commons/9/98/Notes_of_a_course_of_nine_lectures_on_light_delivered_at_The_Royal_Institution_of_Great_Britain%2C_April_8-June_3%2C_1869_%28IA_b28129994%29.pdf",
 		title: "Notes on Light",
 		year: 1872,
-		author: "John Tyndall"
+		author: "John Tyndall",
+		license: "Public domain",
 	},
 	"typewriterpatent": {
 		url: "https://patents.google.com/patent/US79265",
@@ -3754,7 +3766,8 @@ window.bibData = {
 		author: "Osama Shukir Muhammed Amin",
 		title: "Clay tablet mentioning the name of Eannatum, prince of Lagash. From Iraq, c. 2470 BCE. Iraq Museum",
 		alternativetitle: "Early Cuneiform Writing",
-		year: "c. 2470 BCE"
+		year: "c. 2470 BCE",
+		license: "CC BY-SA 4.0",
 	},
 	"rebusprinciple": {
 		url: "https://web.archive.org/web/20091015073859/http://www.fask.uni-mainz.de/inst/iaspk/Linguistik/Phonetik/Schriftentwicklung.html",
@@ -4641,7 +4654,8 @@ window.bibData = {
 		year: "ca 340-320 BC",
 		author: "Darius",
 		url: "https://commons.wikimedia.org/wiki/File:Darius_Vase_abacus.jpg",
-		alternativetitle: "The Darius-Vase (ca. 340-320 BC)"
+		alternativetitle: "The Darius-Vase (ca. 340-320 BC)",
+		license: "CC BY-SA 2.0",
 	},
 	"salamictablet": {
 		url: "https://de.wikipedia.org/wiki/Datei:Salaminische_Tafel_Salamis_Tablet_nach_Wilhelm_Kubitschek_Numismatische_Zeitschrift_Bd_31_Wien_1899_p._394_ff.jpg",
@@ -5379,7 +5393,8 @@ window.bibData = {
 		year: "1509",
 		title: "La scuola di Atene",
 		alternativetitle: "Plato (left) and Aristotle (right) in 'The School Of Athens'",
-		url: "https://commons.wikimedia.org/wiki/File:Sanzio_01_Plato_Aristotle.jpg"
+		url: "https://commons.wikimedia.org/wiki/File:Sanzio_01_Plato_Aristotle.jpg",
+		license: "Public domain",
 	},
 	"aristotleanalytics": {
 		author: "Aristotle",
@@ -5703,7 +5718,8 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:Ceres_-_RC3_-_Haulani_Crater_(22381131691)_(cropped).jpg",
 		title: "Ceres, as photographed by the Dawn probe",
 		year: "2015",
-		author: "NASA / JPL-Caltech / UCLA / MPS / DLR / IDA / Justin Cowart"
+		author: "NASA / JPL-Caltech / UCLA / MPS / DLR / IDA / Justin Cowart",
+		license: "Public domain",
 	},
 	"ceresdiscovery": {
 		title: "Della scoperta del nuovo pianeta Cerere Ferdinandea",
@@ -5722,7 +5738,8 @@ window.bibData = {
 		title: "The Flammarion Engraving",
 		author: "Unknown Artist",
 		year: "1888",
-		url: "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg"
+		url: "https://commons.wikimedia.org/wiki/File:Flammarion_Woodcut_1888_Color_2.jpg",
+		license: "Public domain",
 	},
 	"lighthillreport": {
 		title: "Artificial Intelligence: A General Survey",
@@ -5907,12 +5924,14 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/File:Mark_I_perceptron.jpeg",
 		title: "The Mark I Perceptron, an early pattern recognition system, at the Cornell Aeronautical Laboratory",
 		author: "Unknown Photographer",
+		license: "Fair use",
 	},
 	"perceptronimagedetection": {
 		url: "https://commons.wikimedia.org/wiki/File:330-PSA-80-60_(USN_710739)_(20897323365).jpg",
 		title: "Experimental Machine Able To Identify Letters of Alphabet Announced By Navy",
 		alternativetitle: "The Mark I Perceptron",
 		author: "Unknown Photographer",
+		license: "Public domain",
 	},
 	"perceptronimagewiring": {
 		url: "https://perceptrondemo.com/",
@@ -5950,6 +5969,7 @@ window.bibData = {
 		title: "A stop sign somewhere in Victoria, Australia",
 		year: "2012",
 		author: "Matthew Paul Argall",
+		license: "CC0",
 	},
 	"srivastava2014dropout": {
 		author: "Nitish Srivastava, Geoffrey Everest Hinton, Alex Krizhevsky, Ilya Sutskever, Ruslan Salakhutdinov",
@@ -7090,21 +7110,24 @@ window.bibData = {
 		title: "Astronaut Riding a Horse (SD3.5)",
 		author: "VulcanSphere (Wikimedia Commons)",
 		year: 2024,
-		alternativetitle: "Stable Diffusion 3.5 — 'astronaut riding a horse'"
+		alternativetitle: "Stable Diffusion 3.5 — 'astronaut riding a horse'",
+		license: "Public domain",
 	},
 	"diffusion_ddim_img": {
 		url: "https://commons.wikimedia.org/wiki/File:X-Y_plot_of_algorithmically-generated_AI_art_of_European-style_castle_in_Japan_demonstrating_DDIM_diffusion_steps.png",
 		title: "X-Y plot of AI art of European-style castle in Japan demonstrating DDIM diffusion steps",
 		author: "Benlisquare (Wikimedia Commons)",
 		year: 2022,
-		alternativetitle: "DDIM denoising steps"
+		alternativetitle: "DDIM denoising steps",
+		license: "CC BY-SA 4.0",
 	},
 	"diffusion_architecture_img": {
 		url: "https://commons.wikimedia.org/wiki/File:Stable_Diffusion_architecture.png",
 		title: "Diagram of the Stable Diffusion architecture",
 		author: "Machine Vision and Learning Group, LMU Munich",
 		year: 2021,
-		alternativetitle: "Stable Diffusion architecture diagram"
+		alternativetitle: "Stable Diffusion architecture diagram",
+		license: "MIT",
 	},
 	"ma2024bitnet": {
 		url: "https://arxiv.org/abs/2402.17764",
@@ -8767,7 +8790,8 @@ window.bibData = {
 		title: "WMAP Image of the Cosmic Microwave Background",
 		author: "NASA / WMAP Science Team",
 		year: 2010,
-		alternativetitle: "Wilkinson Microwave Anisotropy Probe, 7-year data"
+		alternativetitle: "Wilkinson Microwave Anisotropy Probe, 7-year data",
+		license: "Public domain",
 	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  A Geometric and Topological Theory of Meaningful Language Spaces
@@ -8976,63 +9000,72 @@ window.bibData = {
 		title: "Portrait of Alessandro Volta",
 		author: "Garavaglia Giovita (after); Gaetano Bonatti (engraver)",
 		year: 1825,
-		alternativetitle: "Alessandro Volta (1745–1827)"
+		alternativetitle: "Alessandro Volta (1745–1827)",
+		license: "Public domain",
 	},
 	"voltaic_pile": {
 		url: "https://commons.wikimedia.org/wiki/File:Voltaic_pile_battery.png",
 		title: "Voltaic Pile",
 		author: "Adolphe Ganot",
 		year: 1893,
-		alternativetitle: "Volta's voltaic pile, the first electric battery (1800)"
+		alternativetitle: "Volta's voltaic pile, the first electric battery (1800)",
+		license: "Public domain",
 	},
 	"faraday_disk": {
 		url: "https://commons.wikimedia.org/wiki/File:Faraday_disk_generator.jpg",
 		title: "Faraday Disk",
 		author: "Émile Alglave & J. Boulard",
 		year: 1884,
-		alternativetitle: "Faraday's electromagnetic induction experiment (1831)"
+		alternativetitle: "Faraday's electromagnetic induction experiment (1831)",
+		license: "Public domain",
 	},
 	"tesla_portrait": {
 		url: "https://commons.wikimedia.org/wiki/File:Tesla_circa_1890.jpeg",
 		title: "Nikola Tesla, Age 34",
 		author: "Napoleon Sarony",
 		year: 1890,
-		alternativetitle: "Nikola Tesla (1856–1943)"
+		alternativetitle: "Nikola Tesla (1856–1943)",
+		license: "Public domain",
 	},
 	"first_transistor": {
 		url: "https://commons.wikimedia.org/wiki/File:A_replica_of_the_first_working_transistor.jpg",
 		title: "A Replica of the First Working Transistor",
 		author: "Mister rf",
 		year: 2014,
-		alternativetitle: "Bardeen and Brattain's point-contact transistor (December 1947)"
+		alternativetitle: "Bardeen and Brattain's point-contact transistor (December 1947)",
+		license: "CC BY-SA 4.0",
 	},
 	"colladon_lightpipe": {
 		url: "https://commons.wikimedia.org/wiki/File:DanielColladon%27s_Lightfountain_or_Lightpipe,LaNature(magazine),1884.JPG",
 		title: "Daniel Colladon's Lightfountain or Lightpipe",
 		author: "La Nature (magazine)",
 		year: 1884,
-		alternativetitle: "Demonstration of total internal reflection in a jet of water (1842)"
+		alternativetitle: "Demonstration of total internal reflection in a jet of water (1842)",
+		license: "Public domain",
 	},
 	"submarine_cable": {
 		url: "https://commons.wikimedia.org/wiki/File:Submarine_cable_cross-section.svg",
 		title: "Cross-Section of a Submarine Communications Cable",
 		author: "Mysid",
 		year: 2008,
-		alternativetitle: "Submarine fiber-optic cable anatomy"
+		alternativetitle: "Submarine fiber-optic cable anatomy",
+		license: "Public domain",
 	},
 	"jacquard_loom": {
 		url: "https://commons.wikimedia.org/wiki/File:A_Jacquard_loom_showing_information_punchcards,_National_Museum_of_Scotland.jpg",
 		title: "A Jacquard Loom Showing Information Punchcards, National Museum of Scotland",
 		author: "Stephencdickson",
 		year: 2014,
-		alternativetitle: "Jacquard loom with chain of punched cards (1804)"
+		alternativetitle: "Jacquard loom with chain of punched cards (1804)",
+		license: "CC BY-SA 4.0",
 	},
 	"sholes_typewriter": {
 		url: "https://commons.wikimedia.org/wiki/File:Sholes_typewriter.jpg",
 		title: "Sholes Type-Writer",
 		author: "George Iles (after a contemporary photograph)",
 		year: 1912,
-		alternativetitle: "Prototype typewriter by Sholes, Glidden and Soule (1868–1873)"
+		alternativetitle: "Prototype typewriter by Sholes, Glidden and Soule (1868–1873)",
+		license: "Public domain",
 	},
 	"crt": {
 		url: "https://commons.wikimedia.org/wiki/File:CRT.jpg",
@@ -9047,98 +9080,112 @@ window.bibData = {
 		title: "Classic Shot of the ENIAC (U.S. Army Photo)",
 		author: "U.S. Army",
 		year: 1946,
-		alternativetitle: "ENIAC (Electronic Numerical Integrator and Computer) at the Moore School"
+		alternativetitle: "ENIAC (Electronic Numerical Integrator and Computer) at the Moore School",
+		license: "Public domain",
 	},
 	"williams_tube": {
 		url: "https://commons.wikimedia.org/wiki/File:Williams-Kilburn_tube_-_geograph.org.uk_-_5279623.jpg",
 		title: "Williams-Kilburn Tube",
 		author: "Bob Harvey",
 		year: 2017,
-		alternativetitle: "Cathode-ray-tube based random-access memory (1947)"
+		alternativetitle: "Cathode-ray-tube based random-access memory (1947)",
+		license: "CC BY-SA 2.0",
 	},
 	"arpanet_map": {
 		url: "https://commons.wikimedia.org/wiki/File:Arpanet_logical_map,_march_1977.png",
 		title: "ARPANET Logical Map, March 1977",
 		author: "ARPANET / The Computer History Museum",
 		year: 1977,
-		alternativetitle: "Logical topology of the ARPANET in March 1977"
+		alternativetitle: "Logical topology of the ARPANET in March 1977",
+		license: "Public domain",
 	},
 	"first_web_browser": {
 		url: "https://commons.wikimedia.org/wiki/File:WorldWideWeb.png",
 		title: "Screenshot of the WorldWideWeb Browser",
 		author: "FedericoMP (based on a screenshot by Ck_mpk)",
 		year: 2007,
-		alternativetitle: "Tim Berners-Lee's first web browser, NeXT, December 1990"
+		alternativetitle: "Tim Berners-Lee's first web browser, NeXT, December 1990",
+		license: "Public domain",
 	},
 	"mendeleev_periodic_table": {
 		url: "https://commons.wikimedia.org/wiki/File:Mendeleev%27s_periodic_table_(1869_year).jpg",
 		title: "Mendeleev's Periodic Table (First Edition, 1869)",
 		author: "Dmitri Ivanovich Mendeleev",
 		year: 1869,
-		alternativetitle: "The first published version of the periodic table"
+		alternativetitle: "The first published version of the periodic table",
+		license: "Public domain",
 	},
 	"arithmometer_thomas": {
 		url: "https://commons.wikimedia.org/wiki/File:Arithmometer-ThomasDeColmar1850.jpg",
 		title: "Arithmometer by Thomas de Colmar, c. 1850",
 		author: "Alexf",
 		year: 2011,
-		alternativetitle: "Thomas de Colmar's Arithmometer at the Musée des Arts et Métiers, Paris"
+		alternativetitle: "Thomas de Colmar's Arithmometer at the Musée des Arts et Métiers, Paris",
+		license: "CC BY-SA 4.0",
 	},
 	"newton_portrait": {
 		url: "https://commons.wikimedia.org/wiki/File:GodfreyKneller-IsaacNewton-1689.jpg",
 		title: "Portrait of Isaac Newton (1689)",
 		author: "Godfrey Kneller",
 		year: 1689,
-		alternativetitle: "Portrait of Isaac Newton at age 46 by Godfrey Kneller, 1689"
+		alternativetitle: "Portrait of Isaac Newton at age 46 by Godfrey Kneller, 1689",
+		license: "Public domain",
 	},
 	"leibniz_portrait": {
 		url: "https://commons.wikimedia.org/wiki/File:Gottfried_Wilhelm_Leibniz%2C_Bernhard_Christoph_Francke.jpg",
 		title: "Portrait of Gottfried Wilhelm Leibniz",
 		author: "Bernhard Christoph Francke",
 		year: 1700,
-		alternativetitle: "Portrait of Gottfried Wilhelm Leibniz by Bernhard Christoph Francke, c. 1700"
+		alternativetitle: "Portrait of Gottfried Wilhelm Leibniz by Bernhard Christoph Francke, c. 1700",
+		license: "Public domain",
 	},
 	"euler_portrait": {
 		url: "https://commons.wikimedia.org/wiki/File:Leonhard_Euler_2.jpg",
 		title: "Portrait of Leonhard Euler",
 		author: "Jakob Emanuel Handmann",
 		year: 1753,
-		alternativetitle: "Portrait of Leonhard Euler by Jakob Emanuel Handmann, 1753"
+		alternativetitle: "Portrait of Leonhard Euler by Jakob Emanuel Handmann, 1753",
+		license: "Public domain",
 	},
 	"riemann_portrait": {
 		url: "https://commons.wikimedia.org/wiki/File:Georg_Friedrich_Bernhard_Riemann.jpeg",
 		title: "Portrait of Bernhard Riemann",
 		author: "Unknown",
 		year: 1873,
-		alternativetitle: "Portrait photograph of Bernhard Riemann, c. 1860s"
+		alternativetitle: "Portrait photograph of Bernhard Riemann, c. 1860s",
+		license: "Public domain",
 	},
 	"napier_portrait": {
 		url: "https://commons.wikimedia.org/wiki/File:John_Napier.jpg",
 		title: "Portrait of John Napier",
 		author: "Unknown",
 		year: 1616,
-		alternativetitle: "Portrait of John Napier of Merchiston (1550-1617), inventor of logarithms"
+		alternativetitle: "Portrait of John Napier of Merchiston (1550-1617), inventor of logarithms",
+		license: "Public domain",
 	},
 	"lagrange_portrait": {
 		url: "https://commons.wikimedia.org/wiki/File:Lagrange_portrait.jpg",
 		title: "Portrait of Joseph-Louis Lagrange",
 		author: "Unknown",
 		year: 1790,
-		alternativetitle: "Portrait of Joseph-Louis Lagrange (1736-1813)"
+		alternativetitle: "Portrait of Joseph-Louis Lagrange (1736-1813)",
+		license: "Public domain",
 	},
 	"rgb_color_cube": {
 		url: "https://commons.wikimedia.org/wiki/File:RGB_color_cube.svg",
 		title: "RGB Color Cube",
 		author: "SharkD",
 		year: 2010,
-		alternativetitle: "RGB color cube showing all possible colors in the 8-bit sRGB color space"
+		alternativetitle: "RGB color cube showing all possible colors in the 8-bit sRGB color space",
+		license: "CC BY-SA 3.0",
 	},
 	"neural_network_diagram": {
 		url: "https://commons.wikimedia.org/wiki/File:Artificial_neural_network.svg",
 		title: "Artificial Neural Network",
 		author: "Glosser.ca",
 		year: 2013,
-		alternativetitle: "Diagram of an artificial neural network with input, hidden, and output layers"
+		alternativetitle: "Diagram of an artificial neural network with input, hidden, and output layers",
+		license: "CC BY-SA 3.0",
 	},
 	"wave_interference_diagram": {
 		title: "Constructive and Destructive Wave Interference",
@@ -9151,35 +9198,40 @@ window.bibData = {
 		title: "Lee Sedol vs AlphaGo, Game 4",
 		author: "Korea Baduk Association",
 		year: 2016,
-		alternativetitle: "AlphaGo vs. Lee Sedol match, Game 4, March 2016, Seoul"
+		alternativetitle: "AlphaGo vs. Lee Sedol match, Game 4, March 2016, Seoul",
+		license: "CC BY-SA 4.0",
 	},
 	"shrdlu_image": {
 		url: "https://commons.wikimedia.org/wiki/File:Ailect15shrdlu1.gif",
 		title: "SHRDLU",
 		author: "ai.lect",
 		year: 2015,
-		alternativetitle: "Screenshot of the SHRDLU blocks-world natural language interface (Winograd, 1972)"
+		alternativetitle: "Screenshot of the SHRDLU blocks-world natural language interface (Winograd, 1972)",
+		license: "CC BY-SA 4.0",
 	},
 	"eisgalgen_mittenwald": {
 		url: "https://commons.wikimedia.org/wiki/File:Eisgalgen-Mittenwald-Dekan-Karl-Platz-2015-01-01.jpg",
 		title: "Eisgalgen in Mittenwald auf dem Dekan-Karl-Platz",
 		author: "HubertSt (Wikimedia Commons)",
 		year: 2015,
-		alternativetitle: "Ice gallows (Eisgalgen) at the Dekan-Karl-Platz in Mittenwald, Bavaria, January 2015"
+		alternativetitle: "Ice gallows (Eisgalgen) at the Dekan-Karl-Platz in Mittenwald, Bavaria, January 2015",
+		license: "CC BY 4.0",
 	},
 	"eisschlagen_traunsee": {
 		url: "https://commons.wikimedia.org/wiki/File:Eisschlagen.JPG",
 		title: "Brechen von Eis am Traunsee",
 		author: "Duke Philipp of Württemberg (1838–1917)",
 		year: 1899,
-		alternativetitle: "Ice-cutting on an Austrian lake (Traunsee), December 1899"
+		alternativetitle: "Ice-cutting on an Austrian lake (Traunsee), December 1899",
+		license: "Public domain",
 	},
 	"niepce_le_gras": {
 		url: "https://commons.wikimedia.org/wiki/File:View_from_the_Window_at_Le_Gras,_Joseph_Nic%C3%A9phore_Ni%C3%A9pce.jpg",
 		title: "Point de vue du Gras",
 		author: "Joseph Nicéphore Niépce",
 		year: 1827,
-		alternativetitle: "Niépce's heliograph \"View from the Window at Le Gras\" — the oldest surviving camera photograph"
+		alternativetitle: "Niépce's heliograph \"View from the Window at Le Gras\" — the oldest surviving camera photograph",
+		license: "Public domain",
 	},
 	"muybridge1887catalogue": {
 		url: "https://archive.org/details/cu31924024580353",
@@ -9415,7 +9467,8 @@ window.bibData = {
 		author: "NASA / JPL-Caltech / MSSS",
 		year: 2021,
 		url: "https://photojournal.jpl.nasa.gov/catalog/PIA24430",
-		alternativetitle: "NASA's official Perseverance selfie at the Rochette abrasion patch (September 2021)"
+		alternativetitle: "NASA's official Perseverance selfie at the Rochette abrasion patch (September 2021)",
+		license: "Public domain (NASA)",
 	},
 	"verma2023autonomy": {
 		title: "Autonomous Robotics Is Driving Perseverance Rover's Progress on Mars",
@@ -9458,14 +9511,16 @@ window.bibData = {
 		author: "Trammell Hudson (photograph, Autopilot on Wikimedia Commons)",
 		year: 2012,
 		url: "https://commons.wikimedia.org/wiki/File:Apollo_Guidance_Computer.jpg",
-		alternativetitle: "Autopilot's photograph of the AGC modules at the InfoAge museum (CC-BY-SA 3.0)"
+		alternativetitle: "Autopilot's photograph of the AGC modules at the InfoAge museum (CC-BY-SA 3.0)",
+		license: "CC BY-SA 3.0",
 	},
 	"hamilton1969_image": {
 		title: "Margaret Hamilton standing beside the Apollo Guidance Computer source-code listings, 1969",
 		author: "NASA / Draper Laboratory (restoration by Adam Cuerden, 2017)",
 		year: 1969,
 		url: "https://commons.wikimedia.org/wiki/File:Margaret_Hamilton_-_restoration.jpg",
-		alternativetitle: "NASA photograph of Margaret Hamilton with the AGC listings (Public Domain, PD US no notice)"
+		alternativetitle: "NASA photograph of Margaret Hamilton with the AGC listings (Public Domain, PD US no notice)",
+		license: "Public domain",
 	},
 
 	// ═══════════════════════════════════════════════
@@ -9543,21 +9598,24 @@ window.bibData = {
 		author: "UK National Archives (FO850/234)",
 		year: 1943,
 		url: "https://commons.wikimedia.org/wiki/File:Colossus.jpg",
-		alternativetitle: "Public-domain photograph of Colossus Mark 2 in operation at Bletchley Park"
+		alternativetitle: "Public-domain photograph of Colossus Mark 2 in operation at Bletchley Park",
+		license: "Public domain",
 	},
 	"eniac1946_image": {
 		title: "ENIAC — U.S. Army photograph, c. 1947",
 		author: "U.S. Army (Public Domain)",
 		year: 1947,
 		url: "https://commons.wikimedia.org/wiki/File:Eniac.jpg",
-		alternativetitle: "Public-domain photograph of ENIAC at the Moore School, courtesy U.S. Army"
+		alternativetitle: "Public-domain photograph of ENIAC at the Moore School, courtesy U.S. Army",
+		license: "Public domain",
 	},
 	"shakey_robot_image": {
 		title: "SRI Shakey robot, 1969, Computer History Museum",
 		author: "The wub on Wikimedia Commons",
 		year: 2023,
 		url: "https://commons.wikimedia.org/wiki/File:SRI_Shakey_robot,_1969,_Computer_History_Museum.jpg",
-		alternativetitle: "Photograph of Shakey at the Computer History Museum (CC-BY-SA 4.0)"
+		alternativetitle: "Photograph of Shakey at the Computer History Museum (CC-BY-SA 4.0)",
+		license: "CC BY-SA 4.0",
 	},
 
 	// ═══════════════════════════════════════════════
@@ -9614,28 +9672,32 @@ window.bibData = {
 		author: "Titouan Christophe (Wikimedia Commons)",
 		year: 2014,
 		url: "https://commons.wikimedia.org/wiki/File:Approximation_d%27une_distribution_normale.gif",
-		alternativetitle: "Animation of Monte Carlo convergence to a normal distribution (CC-BY-SA 3.0)"
+		alternativetitle: "Animation of Monte Carlo convergence to a normal distribution (CC-BY-SA 3.0)",
+		license: "CC BY-SA 3.0",
 	},
 	"metropolis_hastings_image": {
 		title: "Flowchart of the Metropolis–Hastings algorithm",
 		author: "Jaewook Lee, Woosuk Sung, Joo-Ho Choi (Wikimedia Commons)",
 		year: 2015,
 		url: "https://commons.wikimedia.org/wiki/File:Flowchart-of-Metropolis-Hastings-M-H-algorithm-for-the-parameter-estimation-using-the.png",
-		alternativetitle: "Flowchart of the Metropolis–Hastings algorithm (CC-BY 4.0)"
+		alternativetitle: "Flowchart of the Metropolis–Hastings algorithm (CC-BY 4.0)",
+		license: "CC BY 4.0",
 	},
 	"vonneumann_lanl_image": {
 		title: "John von Neumann at Los Alamos",
 		author: "Los Alamos National Laboratory",
 		year: 1947,
 		url: "https://commons.wikimedia.org/wiki/File:JohnvonNeumann-LosAlamos.gif",
-		alternativetitle: "LANL photograph of John von Neumann at Los Alamos, public domain"
+		alternativetitle: "LANL photograph of John von Neumann at Los Alamos, public domain",
+		license: "Attribution",
 	},
 	"perseverance_selfie_image": {
 		title: "Perseverance's Selfie at \"Rochette\"",
 		author: "NASA / JPL-Caltech",
 		year: 2021,
 		url: "https://commons.wikimedia.org/wiki/File:Perseverance-Selfie-at-Rochette-Horizontal-V2.gif",
-		alternativetitle: "NASA's Perseverance Mars rover self-portrait at the Rochette abrasion patch (Public Domain)"
+		alternativetitle: "NASA's Perseverance Mars rover self-portrait at the Rochette abrasion patch (Public Domain)",
+		license: "Public domain",
 	},
 
 	"spencerbrown1969form": {
@@ -9669,14 +9731,16 @@ window.bibData = {
 		author: "Wikipedia contributors",
 		year: 2024,
 		url: "https://commons.wikimedia.org/wiki/File:2_point_sheaf_gluing.svg",
-		alternativetitle: "Sheaf gluing diagram from Wikipedia (CC-BY-SA 4.0)"
+		alternativetitle: "Sheaf gluing diagram from Wikipedia (CC-BY-SA 4.0)",
+		license: "CC BY-SA 3.0",
 	},
 	"sheaf_sections_image": {
 		title: "Sections over two opens of the two-point space",
 		author: "Wikipedia contributors",
 		year: 2024,
 		url: "https://commons.wikimedia.org/wiki/File:2_point_sheaf_sections.svg",
-		alternativetitle: "Sheaf sections diagram from Wikipedia (CC-BY-SA 4.0)"
+		alternativetitle: "Sheaf sections diagram from Wikipedia (CC-BY-SA 4.0)",
+		license: "CC BY-SA 3.0",
 	},
 	"grothendieck_sheaf": {
 		title: "Alexander Grothendieck and the Theory of Schemes",
@@ -9695,7 +9759,8 @@ window.bibData = {
 		author: "Wikipedia contributors",
 		year: 2007,
 		url: "https://commons.wikimedia.org/wiki/File:Commutative_diagram_for_morphism.svg",
-		alternativetitle: "Category-theory commutative diagram from Wikipedia (CC-BY-SA 4.0)"
+		alternativetitle: "Category-theory commutative diagram from Wikipedia (CC-BY-SA 4.0)",
+		license: "Public domain",
 	},
 	"maclane1998categories": {
 		title: "Categories for the Working Mathematician",
@@ -12332,35 +12397,40 @@ window.bibData = {
 		author: "William Small (engraver), published in The Graphic, 30 January 1877",
 		year: 1877,
 		url: "https://commons.wikimedia.org/wiki/File:The_Caxton_Celebration_-_William_Caxton_showing_specimens_of_his_printing_to_King_Edward_IV_and_his_Queen.jpg",
-		alternativetitle: "Caxton Celebration (1877 engraving)"
+		alternativetitle: "Caxton Celebration (1877 engraving)",
+		license: "Public domain",
 	},
 	"img_pacioli_portrait": {
 		title: "Portrait of Fra Luca Pacioli",
 		author: "Attributed to Jacopo de' Barbari",
 		year: "c. 1495",
 		url: "https://commons.wikimedia.org/wiki/File:Pacioli.jpg",
-		alternativetitle: "Portrait of Luca Pacioli (c. 1495)"
+		alternativetitle: "Portrait of Luca Pacioli (c. 1495)",
+		license: "Public domain",
 	},
 	"img_mercator_1569": {
 		title: "Nova et Aucta Orbis Terrae Descriptio ad Usum Navigantium Emendatissima",
 		author: "Gerardus Mercator",
 		year: 1569,
 		url: "https://commons.wikimedia.org/wiki/File:Mercator_1569.png",
-		alternativetitle: "Mercator's 1569 world map"
+		alternativetitle: "Mercator's 1569 world map",
+		license: "Public domain",
 	},
 	"img_magdeburg_hemispheres": {
 		title: "Die Magdeburger Halbkugeln (reconstruction of von Guericke's hemispheres experiment)",
 		author: "Wikimedia Commons contributor",
 		year: "Reconstruction",
 		url: "https://commons.wikimedia.org/wiki/File:Magdeburg.jpg",
-		alternativetitle: "Magdeburg hemispheres reconstruction"
+		alternativetitle: "Magdeburg hemispheres reconstruction",
+		license: "Public domain",
 	},
 	"img_morse_telegraph": {
 		title: "Morse-Taste (Morse telegraph key)",
 		author: "Wikimedia Commons contributor",
 		year: "Historical photograph",
 		url: "https://commons.wikimedia.org/wiki/File:Morsetaste.jpg",
-		alternativetitle: "Morse telegraph key"
+		alternativetitle: "Morse telegraph key",
+		license: "CC BY-SA 4.0",
 	},
 
 	// ────────────────────────────────────────────────────────────
@@ -14071,7 +14141,8 @@ window.bibData = {
 		title: "Predicted tertiary structure of TMEM253 (AlphaFold), coloured by pLDDT confidence",
 		author: "Wikimedia Commons (CC BY 4.0)",
 		year: 2026,
-		alternativetitle: "AlphaFold predicted protein structure"
+		alternativetitle: "AlphaFold predicted protein structure",
+		license: "CC0",
 	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Reliability  (reliability.php)  &  NLP/MLOps sections
@@ -15580,7 +15651,8 @@ window.bibData = {
 		author: "Hao Li, Zheng Xu, Gavin Taylor, Christoph Studer, Tom Goldstein",
 		year: 2018,
 		url: "https://arxiv.org/abs/1712.09913",
-		alternativetitle: "Li et al., loss landscape (2018)"
+		alternativetitle: "Li et al., loss landscape (2018)",
+		image_license: "MIT",
 	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  The Loss Landscape  (loss_landscape.php)
@@ -15753,14 +15825,16 @@ window.bibData = {
 		author: "NASA/JPL-Caltech/ASI/JHUAPL/Cornell/Weizmann",
 		year: 2013,
 		url: "https://upload.wikimedia.org/wikipedia/commons/0/01/First_topographic_map_of_Titan-CassiniNASA-PIA16849.jpg",
-		alternativetitle: "Titan topographic contour map (public domain)"
+		alternativetitle: "Titan topographic contour map (public domain)",
+		license: "Public domain",
 	},
 	"hyperbolic_paraboloid_saddle": {
 		title: "Hyperbolic paraboloid quadric (z = x^2 - y^2), the canonical saddle surface",
 		author: "Rectas",
 		year: "2023",
 		url: "https://upload.wikimedia.org/wikipedia/commons/b/bd/Hyperbolic_paraboloid_quadric.png",
-		alternativetitle: "Hyperbolic paraboloid = a saddle (CC0)"
+		alternativetitle: "Hyperbolic paraboloid = a saddle (CC0)",
+		license: "CC0",
 	},
 	"belkin2019reconciling": {
 		title: "Reconciling modern machine-learning practice and previous theoretical theories",
