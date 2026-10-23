@@ -87,4 +87,44 @@ The message of that search echoes [the universality discussion in the toolkit](h
 > …the next step in the intellectual progression toward better language understanding is attention. … the idea of letting every step look at other information in the input sequence — and figuring out what's important.
 </div>
 
-<div class="mn-quiz" data-quiz="recurrent_networks"><script type="application/json">{"title": "Networks with memory", "questions": [{"q": "What makes a network recurrent?", "options": ["Its hidden state from one step is fed back in at the next step", "It has more than one layer", "It uses attention", "It is trained twice"], "answer": 0, "explain": "The loop carries information from earlier inputs forward through the sequence."}, {"q": "What does “unrolling” a recurrent network mean?", "options": ["Drawing it as one copy of the same network per time step, sharing the weights", "Deleting the loop", "Training it backwards", "Converting it into a transformer"], "answer": 0, "explain": "Unrolled, it is a very deep network — which is why backpropagation through time faces vanishing gradients."}, {"q": "What does the LSTM's cell state (“conveyor belt”) achieve?", "options": ["Information can flow across many steps with little change, controlled by gates", "It removes the need for training", "It stores the whole training set", "It makes the network non-sequential"], "answer": 0, "explain": "Additive updates through forget and input gates let gradients survive over long distances."}, {"q": "What is the long-distance problem of simple RNNs?", "options": ["Information from far back fades — gradients vanish over many steps", "They cannot process short sentences", "They forget the most recent word first", "They need a GPU per word"], "answer": 0, "explain": "Repeated multiplication by the same matrix shrinks (or explodes) the signal."}]}</script></div>
+<div class="md" data-mathlevel="55">
+### From sequences to translations: seq2seq
+
+The recurrent loop becomes much more useful when you give it a job with two different sequences. **Sequence-to-sequence** learning (seq2seq), introduced in 2014 by Sutskever, Vinyals, and Le and independently by Cho et al., pairs two recurrent networks (\cite[Sutskever et al., 2014]{sutskever2014seq2seq}; \cite[Cho et al., 2014]{cho2014gru}):
+
+* an **encoder** reads the source sentence one token at a time and compresses it into a single **context vector** — the final hidden state;
+* a **decoder** is initialized with that vector and generates the target sentence token by token, feeding its own previous output back in.
+
+For a source $x_1,\dots,x_T$ and target $y_1,\dots,y_{T'}$:
+
+$$
+\underbrace{h_t = \mathrm{LSTM}_{\mathrm{enc}}(x_t, h_{t-1})}_{\text{read the source one token at a time}},
+\qquad
+\underbrace{c = h_T}_{\text{compress the whole source into one vector}}
+$$
+$$
+\underbrace{s_t = \mathrm{LSTM}_{\mathrm{dec}}(y_{t-1}, s_{t-1}, c)}_{\text{generate the target one token at a time}},
+\qquad
+\underbrace{p(y_t \mid y_{1:t-1}, c) = \mathrm{softmax}(W_s s_t + b_s)}_{\text{predict the next target token from the decoder state}}
+$$
+
+The context vector is the paradigm's central wager: that the meaning of a sentence of any length can be stored as a point in a fixed-dimensional space, and unfolded back into another language. It is also its central weakness. Everything the decoder knows about the source must pass through those few numbers, so quality falls as sentences get longer. Sutskever et al. found a cheap partial fix: **reverse the source sentence**, which puts the first source words — the ones that predict the first target words — close to the context vector.
+
+**Attention** removed the bottleneck. \citeauthor{bahdanau2014} let the decoder compute, at every output step, a weighted sum over *all* encoder states:
+
+$$
+\underbrace{c_i = \sum_{j=1}^{T}\alpha_{ij}h_j}_{\text{a per-step summary of the source}},
+\qquad
+\underbrace{\alpha_{ij} = \frac{\exp(e_{ij})}{\sum_k \exp(e_{ik})}}_{\text{softmax over source positions}},
+\qquad
+\underbrace{e_{ij} = a(s_{i-1}, h_j)}_{\text{a learned alignment score}}
+$$
+
+That per-step alignment is the direct ancestor of the self-attention inside every Transformer: instead of one compressed summary, the decoder learns *where to look* (\cite[Bahdanau et al., 2014]{bahdanau2014}).
+
+Training introduced a protocol that every modern language model still uses. **Teacher forcing** feeds the decoder the *true* previous token at every step, not its own prediction, so all positions can be scored in one parallel pass (\cite[Bengio et al., 2015]{bengio2015scheduled}). At inference the gold prefix is gone and the model consumes its own outputs; the mismatch between the two conditions is called **exposure bias**. Scheduled sampling, which gradually replaces gold tokens with model predictions during training, was the recurrent era's remedy. At Transformer scale the problem largely receded in practice, but the protocol did not: next-token training *is* teacher forcing with a causal mask.
+
+The seq2seq form outlived the recurrence. Google's production GNMT system stacked eight LSTM layers per side, the Transformer kept the encoder–decoder skeleton and replaced the recurrent core with attention, T5 recast every task as text-to-text, and Whisper carried the same shape into speech recognition.
+</div>
+
+<div class="mn-quiz" data-quiz="recurrent_networks"><script type="application/json">{"title": "Networks with memory", "questions": [{"q": "What makes a network recurrent?", "options": ["Its hidden state from one step is fed back in at the next step", "It has more than one layer", "It uses attention", "It is trained twice"], "answer": 0, "explain": "The loop carries information from earlier inputs forward through the sequence."}, {"q": "What does “unrolling” a recurrent network mean?", "options": ["Drawing it as one copy of the same network per time step, sharing the weights", "Deleting the loop", "Training it backwards", "Converting it into a transformer"], "answer": 0, "explain": "Unrolled, it is a very deep network — which is why backpropagation through time faces vanishing gradients."}, {"q": "What does the LSTM's cell state (“conveyor belt”) achieve?", "options": ["Information can flow across many steps with little change, controlled by gates", "It removes the need for training", "It stores the whole training set", "It makes the network non-sequential"], "answer": 0, "explain": "Additive updates through forget and input gates let gradients survive over long distances."}, {"q": "What is the long-distance problem of simple RNNs?", "options": ["Information from far back fades — gradients vanish over many steps", "They cannot process short sentences", "They forget the most recent word first", "They need a GPU per word"], "answer": 0, "explain": "Repeated multiplication by the same matrix shrinks (or explodes) the signal."}, {"q": "What did attention fix in the seq2seq model?", "options": ["The fixed-size context-vector bottleneck, by letting the decoder look at every encoder state", "The tokenizer", "The learning rate", "The training data"], "answer": 0, "explain": "Per-step alignment replaced the single compressed summary and became the ancestor of self-attention."}]}</script></div>
