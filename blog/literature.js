@@ -8574,13 +8574,6 @@ window.bibData = {
 	},
 
 	// Other missing
-	"power2022grokking": {
-		url: "https://arxiv.org/abs/2201.02177",
-		title: "Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets",
-		author: "Alethea Power, Yuri Burda, Harri Edwards, Igor Babuschkin, Vedant Misra",
-		year: 2022,
-		alternativetitle: "Grokking"
-	},
 	"huang2018gpipe": {
 		url: "https://arxiv.org/abs/1811.06965",
 		title: "GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism",
@@ -19417,6 +19410,368 @@ window.bibData = {
 		year: 1952,
 		license: "CC0",
 		alternativetitle: "Shannon's Theseus maze (1952)"
+	},
+
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Additions from the LLM Wiki cross-check: modern architecture,
+	 *  post-training, interpretability, data and model lineage.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"zhang2019rmsnorm": {
+		url: "https://arxiv.org/abs/1910.07467",
+		title: "Root Mean Square Layer Normalization",
+		author: "Biao Zhang, Rico Sennrich",
+		year: 2019,
+		alternativetitle: "RMSNorm"
+	},
+	"deepseek2024v2": {
+		url: "https://arxiv.org/abs/2405.04434",
+		title: "DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model",
+		author: "DeepSeek-AI",
+		year: 2024,
+		alternativetitle: "DeepSeek-V2 / multi-head latent attention"
+	},
+	"austin2021d3pm": {
+		url: "https://arxiv.org/abs/2107.03006",
+		title: "Structured Denoising Diffusion Models in Discrete State-Spaces",
+		author: "Jacob Austin, Daniel D. Johnson, Jonathan Ho, Daniel Tarlow, Rianne van den Berg",
+		year: 2021,
+		alternativetitle: "D3PM"
+	},
+	"nie2025llada": {
+		url: "https://arxiv.org/abs/2502.09992",
+		title: "Large Language Diffusion Models",
+		author: "Shen Nie, Fengqi Zhu, Zebin You, et al.",
+		year: 2025,
+		alternativetitle: "LLaDA"
+	},
+	"lake2018scan": {
+		url: "https://arxiv.org/abs/1711.00350",
+		title: "Generalization without Systematicity: On the Compositional Skills of Sequence-to-Sequence Recurrent Networks",
+		author: "Brenden M. Lake, Marco Baroni",
+		year: 2018,
+		alternativetitle: "SCAN benchmark"
+	},
+	"power2022grokking": {
+		url: "https://arxiv.org/abs/2201.02177",
+		title: "Grokking: Generalization Beyond Overfitting on Small Algorithmic Datasets",
+		author: "Alethea Power, Yuri Burda, Harri Edwards, Igor Babuschkin, Vedant Misra",
+		year: 2022,
+		alternativetitle: "Grokking"
+	},
+	"schaeffer2023mirage": {
+		url: "https://arxiv.org/abs/2304.15004",
+		title: "Are Emergent Abilities of Large Language Models a Mirage?",
+		author: "Rylan Schaeffer, Brando Miranda, Sanmi Koyejo",
+		year: 2023,
+		alternativetitle: "Emergence as a measurement artifact"
+	},
+	"burns2023weakstrong": {
+		url: "https://arxiv.org/abs/2312.09390",
+		title: "Weak-to-Strong Generalization: Eliciting Strong Capabilities With Weak Supervision",
+		author: "Collin Burns, Pavel Izmailov, Jan Hendrik Kirchner, et al.",
+		year: 2023,
+		alternativetitle: "Weak-to-strong generalization"
+	},
+	"christian2021elk": {
+		url: "https://www.alignmentforum.org/posts/qHCDysDnvhteW7kRd/arc-s-first-technical-report-eliciting-latent-knowledge",
+		title: "Eliciting Latent Knowledge: How to tell if your eyes deceive you",
+		author: "Paul Christiano, Ajeya Cotra, Mark Xu",
+		year: 2021,
+		alternativetitle: "ELK"
+	},
+	"pan2024latentqa": {
+		url: "https://arxiv.org/abs/2412.08686",
+		title: "LatentQA: Teaching LLMs to Decode Activations Into Natural Language",
+		author: "Alexander Pan, Lijie Chen, Jacob Steinhardt",
+		year: 2024,
+		alternativetitle: "LatentQA / activation verbalizers"
+	},
+	"turner2023actadd": {
+		url: "https://arxiv.org/abs/2308.10248",
+		title: "Steering Language Models With Activation Engineering",
+		author: "Alexander Matt Turner, Lisa Thiergart, Gavin Leech, David Udell, Juan J. Vazquez, Ulisse Mini, Monte MacDiarmid",
+		year: 2023,
+		alternativetitle: "ActAdd"
+	},
+	"rimsky2023caa": {
+		url: "https://arxiv.org/abs/2312.06681",
+		title: "Steering Llama 2 via Contrastive Activation Addition",
+		author: "Nina Rimsky, Nick Gabrieli, Julian Schulz, Meg Tong, Evan Hubinger, Alexander Matt Turner",
+		year: 2023,
+		alternativetitle: "Contrastive activation addition"
+	},
+	"chen2025persona": {
+		url: "https://arxiv.org/abs/2507.21509",
+		title: "Persona Vectors: Monitoring and Controlling Character Traits in Language Models",
+		author: "Runjin Chen, Andy Arditi, Henry Sleight, Owain Evans, Jack Lindsey",
+		year: 2025,
+		alternativetitle: "Persona vectors"
+	},
+	"sun2024massive": {
+		url: "https://arxiv.org/abs/2402.17762",
+		title: "Massive Activations in Large Language Models",
+		author: "Mingjie Sun, Xinlei Chen, J. Zico Kolter, Zhuang Liu",
+		year: 2024,
+		alternativetitle: "Massive activations"
+	},
+	"anthropic2025biology": {
+		url: "https://transformer-circuits.pub/2025/attribution-graphs/biology.html",
+		title: "On the Biology of a Large Language Model",
+		author: "Jack Lindsey et al.",
+		year: 2025,
+		alternativetitle: "Attribution graphs"
+	},
+	"liu2019roberta": {
+		url: "https://arxiv.org/abs/1907.11692",
+		title: "RoBERTa: A Robustly Optimized BERT Pretraining Approach",
+		author: "Yinhan Liu, Myle Ott, Naman Goyal, et al.",
+		year: 2019,
+		alternativetitle: "RoBERTa"
+	},
+	"clark2020electra": {
+		url: "https://arxiv.org/abs/2003.10555",
+		title: "ELECTRA: Pre-training Text Encoders as Discriminators Rather Than Generators",
+		author: "Kevin Clark, Minh-Thang Luong, Quoc V. Le, Christopher D. Manning",
+		year: 2020,
+		alternativetitle: "ELECTRA"
+	},
+	"howard2018ulmfit": {
+		url: "https://arxiv.org/abs/1801.06146",
+		title: "Universal Language Model Fine-tuning for Text Classification",
+		author: "Jeremy Howard, Sebastian Ruder",
+		year: 2018,
+		alternativetitle: "ULMFiT"
+	},
+	"pennington2014glove": {
+		url: "https://aclanthology.org/D14-1162/",
+		title: "GloVe: Global Vectors for Word Representation",
+		author: "Jeffrey Pennington, Richard Socher, Christopher D. Manning",
+		year: 2014,
+		alternativetitle: "GloVe"
+	},
+	"bojanowski2017fasttext": {
+		url: "https://arxiv.org/abs/1607.04606",
+		title: "Enriching Word Vectors with Subword Information",
+		author: "Piotr Bojanowski, Edouard Grave, Armand Joulin, Tomas Mikolov",
+		year: 2017,
+		alternativetitle: "fastText"
+	},
+	"bengio2015scheduled": {
+		url: "https://arxiv.org/abs/1506.03099",
+		title: "Scheduled Sampling for Sequence Prediction with Recurrent Neural Networks",
+		author: "Samy Bengio, Oriol Vinyals, Navdeep Jaitly, Noam Shazeer",
+		year: 2015,
+		alternativetitle: "Scheduled sampling / exposure bias"
+	},
+	"minimax2025lightning": {
+		url: "https://arxiv.org/abs/2501.08313",
+		title: "MiniMax-01: Scaling Foundation Models with Lightning Attention",
+		author: "MiniMax",
+		year: 2025,
+		alternativetitle: "MiniMax lightning attention"
+	},
+	"ramesh2021dalle": {
+		url: "https://arxiv.org/abs/2102.12092",
+		title: "Zero-Shot Text-to-Image Generation",
+		author: "Aditya Ramesh, Mikhail Pavlov, Gabriel Goh, et al.",
+		year: 2021,
+		alternativetitle: "DALL-E"
+	},
+	"radford2022whisper": {
+		url: "https://arxiv.org/abs/2212.04356",
+		title: "Robust Speech Recognition via Large-Scale Weak Supervision",
+		author: "Alec Radford, Jong Wook Kim, Tao Xu, Greg Brockman, Christine McLeavey, Ilya Sutskever",
+		year: 2022,
+		alternativetitle: "Whisper"
+	},
+	"commonpile2025": {
+		url: "https://arxiv.org/abs/2506.05209",
+		title: "The Common Pile v0.1: An 8TB Dataset of Public Domain and Openly Licensed Text",
+		author: "Nikil Roashan Selvam, et al.",
+		year: 2025,
+		alternativetitle: "Common Pile"
+	},
+	"dolma2024": {
+		url: "https://arxiv.org/abs/2402.00159",
+		title: "Dolma: an Open Corpus of Three Trillion Tokens for Language Model Pretraining Research",
+		author: "Luca Soldaini, Rodney Kinney, Akshita Bhagia, et al.",
+		year: 2024,
+		alternativetitle: "Dolma"
+	},
+	"fineweb2024": {
+		url: "https://arxiv.org/abs/2406.17557",
+		title: "The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale",
+		author: "Guilherme Penedo, Hynek Kydlíček, Loubna Ben Allal, et al.",
+		year: 2024,
+		alternativetitle: "FineWeb"
+	},
+	"biderman2023pythia": {
+		url: "https://arxiv.org/abs/2304.01373",
+		title: "Pythia: A Suite for Analyzing Large Language Models Across Training and Scaling",
+		author: "Stella Biderman, Hailey Schoelkopf, Quentin Anthony, et al.",
+		year: 2023,
+		alternativetitle: "Pythia"
+	},
+	"black2022gptneox": {
+		url: "https://arxiv.org/abs/2204.06745",
+		title: "GPT-NeoX-20B: An Open-Source Autoregressive Language Model",
+		author: "Sid Black, Stella Biderman, Eric Hallahan, et al.",
+		year: 2022,
+		alternativetitle: "GPT-NeoX-20B"
+	},
+	"scao2022bloom": {
+		url: "https://arxiv.org/abs/2211.05100",
+		title: "BLOOM: A 176B-Parameter Open-Access Multilingual Language Model",
+		author: "Teven Le Scao, Angela Fan, Christopher Akiki, et al.",
+		year: 2022,
+		alternativetitle: "BLOOM"
+	},
+	"zhang2022opt": {
+		url: "https://arxiv.org/abs/2205.01068",
+		title: "OPT: Open Pre-trained Transformer Language Models",
+		author: "Susan Zhang, Stephen Roller, Naman Goyal, et al.",
+		year: 2022,
+		alternativetitle: "OPT"
+	},
+	"jiang2023mistral": {
+		url: "https://arxiv.org/abs/2310.06825",
+		title: "Mistral 7B",
+		author: "Albert Q. Jiang, Alexandre Sablayrolles, Arthur Mensch, et al.",
+		year: 2023,
+		alternativetitle: "Mistral 7B"
+	},
+	"qwen2024qwen25": {
+		url: "https://arxiv.org/abs/2412.15115",
+		title: "Qwen2.5 Technical Report",
+		author: "Qwen Team",
+		year: 2024,
+		alternativetitle: "Qwen2.5"
+	},
+	"qwen2025qwen3": {
+		url: "https://arxiv.org/abs/2505.09388",
+		title: "Qwen3 Technical Report",
+		author: "Qwen Team",
+		year: 2025,
+		alternativetitle: "Qwen3"
+	},
+	"gemini2024v15": {
+		url: "https://arxiv.org/abs/2403.05530",
+		title: "Gemini 1.5: Unlocking multimodal understanding across millions of tokens of context",
+		author: "Gemini Team, Google",
+		year: 2024,
+		alternativetitle: "Gemini 1.5"
+	},
+	"gemma2025v3": {
+		url: "https://arxiv.org/abs/2503.19786",
+		title: "Gemma 3 Technical Report",
+		author: "Gemma Team, Google DeepMind",
+		year: 2025,
+		alternativetitle: "Gemma 3"
+	},
+	"meta2025llama4": {
+		url: "https://arxiv.org/abs/2504.19191",
+		title: "The Llama 4 herd: The beginning of a new era of natively multimodal AI innovation",
+		author: "Meta AI",
+		year: 2025,
+		alternativetitle: "Llama 4"
+	},
+	"openai2023gpt4": {
+		url: "https://arxiv.org/abs/2303.08774",
+		title: "GPT-4 Technical Report",
+		author: "OpenAI",
+		year: 2023,
+		alternativetitle: "GPT-4"
+	},
+	"kimi2025k2": {
+		url: "https://arxiv.org/abs/2507.20534",
+		title: "Kimi K2: Open Agentic Intelligence",
+		author: "Kimi Team, Moonshot AI",
+		year: 2025,
+		alternativetitle: "Kimi K2"
+	},
+	"longcat2025": {
+		url: "https://arxiv.org/abs/2509.01322",
+		title: "LongCat-Flash Technical Report",
+		author: "Meituan LongCat Team",
+		year: 2025,
+		alternativetitle: "LongCat-Flash"
+	},
+	"gptoss2025": {
+		url: "https://arxiv.org/abs/2508.10925",
+		title: "gpt-oss-120b & gpt-oss-20b Model Card",
+		author: "OpenAI",
+		year: 2025,
+		alternativetitle: "gpt-oss"
+	},
+	"lambert2024tulu3": {
+		url: "https://arxiv.org/abs/2411.15124",
+		title: "Tulu 3: Pushing Frontiers in Open Language Model Post-Training",
+		author: "Nathan Lambert, Jacob Morrison, Valentina Pyatkin, et al.",
+		year: 2024,
+		alternativetitle: "Tulu 3 / RLVR"
+	},
+	"gudibande2023falsepromise": {
+		url: "https://arxiv.org/abs/2305.15717",
+		title: "The False Promise of Imitating Proprietary LLMs",
+		author: "Arnav Gudibande, Eric Wallace, Charlie Snell, Xinyang Geng, Hao Liu, Pieter Abbeel, Sergey Levine, Dawn Song",
+		year: 2023,
+		alternativetitle: "The limits of imitation"
+	},
+	"hsieh2023distilling": {
+		url: "https://arxiv.org/abs/2305.02301",
+		title: "Distilling Step-by-Step! Outperforming Larger Language Models with Less Training Data and Smaller Model Sizes",
+		author: "Cheng-Yu Hsieh, Chun-Liang Li, Chih-Kuan Yeh, et al.",
+		year: 2023,
+		alternativetitle: "Rationale distillation"
+	},
+	"ssi2024": {
+		url: "https://ssi.inc/",
+		title: "Safe Superintelligence Inc.",
+		author: "Safe Superintelligence Inc.",
+		year: 2024,
+		alternativetitle: "Safe Superintelligence"
+	},
+	"tml2025": {
+		url: "https://thinkingmachines.ai/",
+		title: "Thinking Machines Lab",
+		author: "Thinking Machines Lab",
+		year: 2025,
+		alternativetitle: "Thinking Machines Lab"
+	},
+	"ndea2025": {
+		url: "https://ndea.com/",
+		title: "Ndea",
+		author: "Ndea",
+		year: 2025,
+		alternativetitle: "Ndea"
+	},
+	"arcee2025": {
+		url: "https://arcee.ai/",
+		title: "Arcee AI",
+		author: "Arcee AI",
+		year: 2025,
+		alternativetitle: "Arcee AI"
+	},
+	"llama3herd2024": {
+		url: "https://arxiv.org/abs/2407.21783",
+		title: "The Llama 3 Herd of Models",
+		author: "Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri, et al.",
+		year: 2024,
+		alternativetitle: "Llama 3 herd"
+	},
+	"jordan2024muon": {
+		url: "https://kellerjordan.github.io/posts/muon/",
+		title: "Muon: An optimizer for hidden layers in neural networks",
+		author: "Keller Jordan",
+		year: 2024,
+		alternativetitle: "Muon"
+	},
+	"min2022rethinking": {
+		url: "https://arxiv.org/abs/2202.12837",
+		title: "Rethinking the Role of Demonstrations: What Makes In-Context Learning Work?",
+		author: "Sewon Min, Xinxi Lyu, Ari Holtzman, Mikel Artetxe, Mike Lewis, Hannaneh Hajishirzi, Luke Zettlemoyer",
+		year: 2022,
+		alternativetitle: "What demonstrations actually teach"
 	}
 
 };
