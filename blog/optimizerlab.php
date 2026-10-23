@@ -308,6 +308,18 @@ The cleanest family tree above doesn't mean Adam (or AdamW) is always the right 
 
 The pragmatic rule of thumb: **start with AdamW**. If you have the compute for a careful learning-rate sweep and you need every last fraction of a percent of accuracy, try SGD-with-momentum with a cosine schedule. For transformers and large language models specifically, AdamW dominates, because the per-parameter adaptivity genuinely matters when individual weights (especially in token embeddings) see wildly different gradient magnitudes. Don't reach for anything else unless you have a specific reason to.
 
+#### Muon — orthogonalize the update
+
+**Muon** (MomentUm Orthogonalized by Newton-Schulz) is the first optimizer in years to challenge AdamW at language-model scale, and it starts from a different observation: for a 2-D weight matrix, the *direction* of the update matters more than its per-element magnitude. Muon takes the momentum matrix $M$, orthogonalizes it — approximately, with a few Newton–Schulz iterations rather than an expensive SVD — and applies the resulting matrix, whose singular values are pushed toward $1$:
+
+$$
+\underbrace{\theta_{t+1} = \theta_t - \eta\,\mathrm{Ortho}(M_t)}_{\text{take a step along the orthogonalized momentum, not the raw gradient}}
+$$
+
+The effect is that every update direction is scaled to comparable size, so no single singular direction dominates a step. In practice Muon is used only for the hidden 2-D weight matrices inside the network; embeddings, the output head, and 1-D parameters such as norms and biases stay on AdamW, because orthogonalization is not meaningful there (\cite[Jordan, 2024]{jordan2024muon}).
+
+At trillion-parameter scale the attention logits can explode when the query and key weights grow together. **MuonClip**, used to train Kimi K2, adds a QK-clip that rescales those weights when their logits exceed a threshold, making the optimizer stable enough for a 1T-parameter mixture-of-experts run (\cite[Kimi Team, 2025]{kimi2025k2}). Muon is still young, but it is the first concrete evidence that the AdamW monoculture may not be permanent.
+
 </div>
 
 <div class="md" data-mathlevel="55">

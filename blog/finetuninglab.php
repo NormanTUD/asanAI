@@ -184,6 +184,35 @@ The reward is typically a combination of:
 <div id="grpo-viz" style="max-width:880px; margin:1em auto;"></div>
 
 <div class="md">
+### RLVR: The Name for the Verifiable-Reward Recipe
+
+The recipe above acquired a name in 2024: **reinforcement learning with verifiable rewards** (RLVR). The term was popularized by AI2's fully open Tulu 3 post-training recipe, and it is the reward-source label for the training that produced the o1-class and R1-class reasoning models (\cite[Lambert et al., 2024]{lambert2024tulu3}).
+
+The distinction is worth keeping straight:
+
+* **GRPO** is an *optimizer* — a way to estimate advantages from a group of sampled answers without a critic.
+* **RLVR** is a *reward source* — the signal comes from a programmatic verifier (a math answer checker, a unit-test suite, a constraint validator) rather than a learned model of human preference.
+
+Because a verifier cannot be flattered, only satisfied, RLVR largely sidesteps the reward hacking that plagues RLHF. That is why it works so well on mathematics, code, and structured tasks — and why it does not transfer automatically to open-ended judgment, where no cheap checker exists. Trained this way, models spontaneously lengthen their chains of thought, backtrack, and self-verify; DeepSeek's R1 paper documented these behaviours emerging without supervised reasoning demonstrations (\cite[Guo et al., 2025]{guo2025deepseekr1}).
+
+RLVR has its own failure modes. Verifiers can be gamed at the margins (a model that overfits a test suite rather than solving the problem), long chains raise serving costs, and whether the verbalized reasoning faithfully reflects the computation is an open question. It **composes** with SFT and preference stages rather than replacing them: the modern stack is usually SFT → preference optimization → RLVR.
+</div>
+
+<div class="md">
+## Distillation: What Transfers, and What Doesn't
+
+Post-training is also where **knowledge distillation** enters. The classical recipe trains a small student on the *soft* output distribution of a large teacher, so that the teacher's relative confidences — its “dark knowledge” about which wrong answers are nearly right — become supervision (\cite[Hinton et al., 2015]{hinton2015distilling}). At language-model scale the target broadened from logits to text:
+
+* **Sequence-level distillation** trains the student on teacher-generated text outright.
+* **Rationale distillation** trains on the teacher's *reasoning traces*, not just its answers; a small model can then beat its teacher's few-shot performance on some tasks (\cite[Hsieh et al., 2023]{hsieh2023distilling}).
+* **Synthetic instruction data** (Self-Instruct, Alpaca, and most modern SFT mixtures) is distillation in all but name.
+
+Imitation has a documented ceiling. Gudibande et al. trained models on outputs of proprietary systems and found that they learned to mimic **style and persona** while their factual and reasoning performance lagged behind the teacher. Their conclusion is the working caveat for every synthetic-data pipeline: distillation transfers what the teacher can *demonstrate*, not necessarily what the teacher *knows* (\cite[Gudibande et al., 2023]{gudibande2023falsepromise}).
+
+The analytic extreme skips the student altogether. **Rationale distillation** extracts a teacher's reasoning; **mechanistic interpretability** tries to read the algorithm out of the weights directly — induction heads, the modular-addition circuit in a grokked transformer, sparse-autoencoder feature dictionaries. Where output distillation compresses *behaviour*, circuit-level work compresses *mechanism*, and its results feed back into evaluation, model editing, and safety. Distillation is also the centre of a persistent intellectual-property fight: most closed-model terms prohibit training competitors on their outputs, and the open web is now saturated with model-generated text, making the provenance of “human” data increasingly hard to establish.
+</div>
+
+<div class="md">
 ## Stage 5: Online RL and Iterative DPO
 
 A 2024 frontier-lab pattern:

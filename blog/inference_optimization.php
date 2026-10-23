@@ -85,10 +85,14 @@ Beyond quantization:
 
 * **Multi-Query Attention (MQA)** (\cite[Shazeer, 2019]{shazeer2019mqa}): all query heads share a single K and V head. 64× KV memory reduction.
 * **Grouped-Query Attention (GQA)** (\cite[Ainslie et al., 2023]{ainslie2023gqa}): middle ground, 8 KV heads for 64 query heads gives 8× reduction with quality close to MHA. Used by Llama 2/3, Mistral, Qwen.
+* **Multi-head latent attention (MLA)** (\cite[DeepSeek-AI, 2024]{deepseek2024v2}): cache a low-rank latent per token and reconstruct the per-head keys and values on the fly. DeepSeek-V2 reported a KV cache an order of magnitude smaller than a comparable MHA model.
 * **Sliding Window Attention** (\cite[Beltagy et al., 2020]{beltagy2020longformer}): only attend to the last $w$ tokens. KV memory is $O(w)$ instead of $O(n)$. Combine with a few “global” attention layers to preserve long-range context.
+* **Attention sinks / StreamingLLM** (\cite[Xiao et al., 2024]{xiao2023streaming}): a plain sliding window fails once the very first tokens are evicted, because trained heads park their surplus softmax mass on them. Keeping the KV of roughly four initial tokens alongside the recent window restores stable generation over millions of tokens, with no fine-tuning.
 * **Paged Attention** (vLLM, 2023): non-contiguous KV allocation like OS virtual memory. Eliminates fragmentation.
 * **Prefix caching**: KV cache for a system prompt is computed once and reused across requests. Standard for chatbot APIs.
 * **Cross-request KV sharing**: identical prompts across users share KV blocks. Used in vLLM and SGLang.
+
+One caveat ties these together: the outlier coordinates that implement attention sinks — the “massive activations” that grow orders of magnitude larger than their neighbours — are exactly the values that low-precision KV quantization handles worst, so aggressive INT4 caching can disturb sink behaviour unless the scheme protects outliers (\cite[Sun et al., 2024]{sun2024massive}).
 
 A 70B model with GQA + INT8 KV + prefix caching can serve 128K context to roughly 20–30 concurrent users on a single 8xH100 node (the 335 GB of fp16 KV per user drops to ~21 GB with GQA and INT8, and an 8xH100 node holds 640 GB).
 </div>

@@ -297,6 +297,8 @@ Because the model must learn the pattern with only *partial* information at ever
 
 </div>
 
+**Why frontier pretraining quietly dropped it.** Dropout was part of the original Transformer recipe, applied at rate 0.1 to sublayer outputs, attention weights, and embedding sums. BERT and GPT-2-era models trained with it as a matter of course. Then it largely disappeared from frontier pretraining runs — not because it stopped working, but because the disease it treats became rare. Dropout fights overfitting by preventing units from co-adapting to repeated examples. Once pretraining moved to single-epoch training on trillion-token corpora, most tokens are seen once, memorization is no longer the binding constraint, and the gradient noise dropout adds mostly taxes fitting. The compute-optimal analyses that documented this regime made the trade explicit (\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}). Dropout survives where data is still limited: fine-tuning, small curated datasets, and most academic replication studies.
+
 ### Over- and Underfitting in LLMs & Modern AI
 
 The curve's behaviour outside the blue box mirrors a core challenge of modern AI:
