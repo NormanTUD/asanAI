@@ -210,7 +210,12 @@ Li's **ImageNet** gave vision a benchmark of realistic difficulty: 14 million im
 
 ### Ian Goodfellow
 
-Goodfellow's **generative adversarial network** (2014) paired a generator with a discriminator in a zero-sum game: the generator learns to produce samples that fool the discriminator, and the discriminator learns to tell real from fake. GANs produced the first sharp, high-resolution synthetic images and made “generative model” a mainstream idea before diffusion models displaced them for most image work (\cite[Goodfellow et al., 2014]{goodfellow2014gan}).
+<figure style="max-width:240px; margin:0.5em auto 1em;">
+	<img src="ian_goodfellow_portrait.jpg" alt="Portrait of Ian Goodfellow" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_ian_goodfellow}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+</figure>
+
+Goodfellow's **generative adversarial network** (2014) paired a generator with a discriminator in a zero-sum game: the generator learns to produce samples that fool the discriminator, and the discriminator learns to tell real from fake. GANs produced the first sharp, high-resolution synthetic images and made “generative model” a mainstream idea before diffusion models displaced them for most image work (\cite[Goodfellow et al., 2014]{goodfellow2014gan}). A year later he gave **adversarial examples** their standard explanation: tiny, deliberately chosen input perturbations can move a confident classifier across its decision boundary, because the loss is locally almost linear (\cite[Goodfellow et al., 2015]{goodfellow2015adversarial}).
 
 ### Andrej Karpathy
 
@@ -236,12 +241,18 @@ Ng co-founded Google Brain and Coursera, and his machine-learning courses introd
 
 ### David Silver and Demis Hassabis
 
-<figure style="max-width:240px; margin:0.5em auto 1em;">
+<div style="display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin:0.5em 0 1em;">
+	<figure style="flex:1 1 160px; max-width:220px; margin:0;">
+	<img src="david_silver_portrait.jpg" alt="Portrait of David Silver" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
+	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_david_silver}. <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.</figcaption>
+</figure>
+	<figure style="flex:1 1 160px; max-width:220px; margin:0;">
 	<img src="demis_hassabis_portrait.jpg" alt="Portrait of Demis Hassabis" style="width:100%; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0); display:block;">
 	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_demis_hassabis}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
 </figure>
+</div>
 
-Silver studied at Cambridge and UCL, joined DeepMind in 2010, and led the AlphaGo team that combined deep policy and value networks with Monte Carlo tree search to beat Lee Sedol in 2016. He then led AlphaZero, which learned chess, shogi, and Go from the rules alone by self-play. Hassabis co-founded DeepMind after a career that included neuroscience research at UCL, and built the organization that made both projects possible; he shared the 2024 Nobel Prize in Chemistry with John Jumper for AlphaFold (\cite[Silver et al., 2016]{silver2016alphago}; \cite[Silver et al., 2018]{silver2018zero}; \cite[Jumper et al., 2021]{jumper2021alphafold}; \cite[Nobel Prize, 2024]{nobel2024chemistry}; \cite[DeepMind, 2024]{deepmind_about}).
+Silver studied at Cambridge and UCL, joined DeepMind in 2010, and led the AlphaGo team that combined deep policy and value networks with Monte Carlo tree search to beat Lee Sedol in 2016. He then led AlphaZero, which learned chess, shogi, and Go from the rules alone by self-play (\cite[Silver et al., 2016]{silver2016alphago}; \cite[Silver et al., 2018]{silver2018zero}). MuZero carried the idea further, learning a model of the environment's dynamics and planning inside it without being given the rules (\cite[Schrittwieser et al., 2020]{schrittwieser2020muzero}). Hassabis co-founded DeepMind after a career that included neuroscience research at UCL — including work on how patients with hippocampal amnesia imagine new experiences (\cite[Hassabis et al., 2007]{hassabis2007patients}) — and built the organization that made both projects possible; he shared the 2024 Nobel Prize in Chemistry with John Jumper for AlphaFold (\cite[Jumper et al., 2021]{jumper2021alphafold}; \cite[Nobel Prize, 2024]{nobel2024chemistry}; \cite[DeepMind, 2024]{deepmind_about}). Silver and Sutton's later essay argues that reward maximization is sufficient for intelligence in general, not just for games (\cite[Silver et al., 2021]{silver2021reward}).
 
 ### John Jumper
 
@@ -292,7 +303,7 @@ Olsson led the **induction-heads** work, which identified a two-head circuit tha
 	<figcaption class="md" style="font-size:0.7rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px; text-align:center;">\cite{img_francois_chollet}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
 </figure>
 
-Chollet is a French engineer and researcher who created Keras as an independent open-source project before joining Google. He wrote “On the Measure of Intelligence,” which argued that intelligence should be measured as the efficiency of skill acquisition on novel tasks rather than as performance on familiar ones, and then built ARC-AGI to measure exactly that kind of generalization. He left Google in 2024 to co-found Ndea, a lab pursuing deep-learning-guided program synthesis as a path beyond pattern matching (\cite[Chollet, 2019]{chollet2019measure}; \cite[Chollet, 2024]{chollet2024arcagi}; \cite[Chollet, 2024]{fchollet_site}).
+Chollet is a French engineer and researcher who created Keras as an independent open-source project before joining Google. His **Xception** architecture replaced the Inception module with depthwise separable convolutions and made that decomposition a standard building block (\cite[Chollet, 2017]{chollet2016xception}). He wrote “On the Measure of Intelligence,” which argued that intelligence should be measured as the efficiency of skill acquisition on novel tasks rather than as performance on familiar ones, and then built ARC-AGI to measure exactly that kind of generalization. He left Google in 2024 to co-found Ndea, a lab pursuing deep-learning-guided program synthesis as a path beyond pattern matching (\cite[Chollet, 2019]{chollet2019measure}; \cite[Chollet et al., 2024]{chollet2024arcagi}; \cite[Chollet, 2024]{fchollet_site}).
 
 </div>
 <div class="md">
