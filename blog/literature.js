@@ -5923,6 +5923,27 @@ window.bibData = {
 		title: "The Perceptron: A Probabilistic Model for Information Storage and Organization in The Brain",
 		url: "https://psycnet.apa.org/record/1959-09865-001",
 	},
+	"rosenblatt1962neurodynamics": {
+		author: "Frank Rosenblatt",
+		year: "1962",
+		title: "Principles of Neurodynamics: Perceptrons and the Theory of Brain Mechanisms",
+		alternativetitle: "Rosenblatt, Principles of Neurodynamics (1962)",
+		url: "https://archive.org/details/principles-of-neurodynamics",
+	},
+	"hayek1952sensoryorder": {
+		author: "Friedrich A. Hayek",
+		year: "1952",
+		title: "The Sensory Order: An Inquiry into the Foundations of Theoretical Psychology",
+		alternativetitle: "Hayek, The Sensory Order (1952)",
+		url: "https://archive.org/details/sensoryorderinqu00haye",
+	},
+	"lashley1929brainmechanisms": {
+		author: "Karl S. Lashley",
+		year: "1929",
+		title: "Brain Mechanisms and Intelligence: A Quantitative Study of Injuries to the Brain",
+		alternativetitle: "Lashley, Brain Mechanisms and Intelligence (1929)",
+		url: "https://archive.org/details/brainmechanismsi00lash",
+	},
 	"perceptronimagecables": {
 		url: "https://en.wikipedia.org/wiki/File:Mark_I_perceptron.jpeg",
 		title: "The Mark I Perceptron, an early pattern recognition system, at the Cornell Aeronautical Laboratory",
