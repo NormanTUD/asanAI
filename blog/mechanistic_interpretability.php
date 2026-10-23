@@ -766,6 +766,24 @@ The bottom line: there *is* a learnable internal uncertainty / "I don't know" si
 </div>
 
 <div class="md">
+### Reading Without Asking: ELK, Probes, and Activation Verbalizers
+
+Everything above reads the network. A parallel question asks whether we can make a model *report* what it knows — and whether we could ever trust that report. The sharpest statement of the problem is **Eliciting Latent Knowledge** (ELK), posed by Paul Christiano, Ajeya Cotra, and Mark Xu at the Alignment Research Center in 2021 (\cite[Christiano et al., 2021]{christian2021elk}).
+
+The running example is the **SmartVault**: an AI guards a diamond and predicts camera footage of the vault. Humans approve actions whose predicted footage shows the diamond still there. A sufficiently sophisticated thief could take the diamond and spoof the cameras; a predictor that models the world accurately would internally know the diamond is gone, while the footage — and therefore the humans — say it is safe. We want to train a **reporter** that translates the predictor's internal state into an answer. The trouble is that on every labeled example two reporters fit equally well: the **direct translator**, which reports what the predictor actually represents, and the **human simulator**, which predicts what a human looking at the same evidence would conclude. They diverge exactly in the cases that matter, where the model knows more than its overseers can check. The report works through a long list of proposed fixes and constructs a counterexample for each; ELK remains unsolved in its worst-case form, and a deep obstacle is **ontology mismatch** — the model's internal concepts may not map cleanly onto human ones.
+
+ELK is a worst-case framing, but it explains why interpretability tools are treated as safety instruments rather than curiosities. Three practical families attack restricted versions:
+
+* **Linear probes.** Train a small classifier on hidden states to detect a concept. **Contrast-consistent search** (CCS) tried to find a truth direction without labels by enforcing logical consistency between a statement and its negation (\cite[Burns et al., 2022]{burns2022ccs}). Follow-up work found that such unsupervised methods often recover whatever feature is most salient — including a simulated character's beliefs — rather than truth, which is the human-simulator objection resurfacing empirically.
+* **Sparse autoencoders and circuit tracing.** Decompose activations into features and trace the causal graph, as in the sections above. These are the most mechanistic answers, and they still come without worst-case guarantees.
+* **Activation verbalizers.** Train a second language model to take one activation $h_{l,t}$ from the model under study, together with a question $q$, and generate a natural-language explanation $e \sim V_\theta(\cdot \mid q, h_{l,t})$ (\cite[Pan et al., 2024]{pan2024latentqa}). The reader is as expressive as the representation, so it can describe a concept nobody thought to probe for. That freedom is also the weakness: a verbalizer can **confabulate** plausible details that are not in the activation. The practical standard is therefore consistency — if the same concept is mentioned across many samples *and* several token positions, treat it as evidence; a detail that appears once, at one position, is not.
+
+The **weak-to-strong** experiment is a measurable present-day analogue of ELK: fine-tune a strong model on labels from a much weaker supervisor, and see how much of the strong model's latent capability is recovered. GPT-4-scale students supervised by weak teachers recovered substantial but incomplete performance (\cite[Burns et al., 2023]{burns2023weakstrong}).
+
+A methodological caution applies to all of these methods, and especially to steering. Showing that adding a vector changes behaviour does **not** prove that the model represents the target concept with that direction: many directions can push the output the same way, superposition means an intervention along one direction disturbs others, and steering coefficients transfer poorly across models and even checkpoints. Behavioural steering is one line of evidence, not a proof of mechanism — which is why current system-card analyses pair it with SAE features, attribution graphs, and verbalizer explanations rather than relying on any single tool.
+</div>
+
+<div class="md">
 ### Summary: Opening the Black Box
 
 Mechanistic interpretability is the practice of reverse-engineering neural networks into human-understandable algorithms. The key insights are:
