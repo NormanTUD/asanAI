@@ -8078,6 +8078,29 @@
   "bg": false
  },
  {
+  "id": "person-j-h-woodger",
+  "name": "J. H. Woodger",
+  "type": "person",
+  "loc": "London, United Kingdom",
+  "lat": 51.51,
+  "lng": -0.13,
+  "years": "1894-1981",
+  "active": [
+   1929.0,
+   1981.0
+  ],
+  "blurb": "Philosopher of biology whose axiomatic method influenced Northrop and the McCulloch circle.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "woodger1937axiomatic"
+  ],
+  "conf": "known",
+  "source": "out_part1.json",
+  "bg": false
+ },
+ {
   "id": "place-lomekwi-3",
   "name": "Lomekwi 3",
   "type": "place",
