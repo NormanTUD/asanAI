@@ -18,6 +18,77 @@ Artificial intelligence has a surprisingly small cast of recurring characters. T
 It is deliberately not a ranking. Credit in AI is contested, collaborative, and often late. The person whose name is on the paper is not always the person who had the idea first, and the person who had the idea first is not always the person who made it work. Where the record is disputed, the lesson says so.
 </div>
 
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(145px, 1fr)); gap:18px; margin:1.5em 0 2em;">
+	<figure style="margin:0;">
+		<img src="ada_lovelace_portrait.jpg" alt="Portrait of Ada Lovelace" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Ada Lovelace</strong><br>\cite{img_ada_lovelace}. Public domain.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="charles_babbage_portrait.jpg" alt="Portrait of Charles Babbage" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Charles Babbage</strong><br>\cite{img_charles_babbage}. Public domain.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="alan_turing_1951.jpg" alt="Portrait of Alan Turing" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Alan Turing</strong><br>\cite{img_alan_turing}. Public domain.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="claude_shannon_portrait.jpg" alt="Portrait of Claude Shannon" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Claude Shannon</strong><br>\cite{img_claude_shannon}. <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="john_von_neumann_portrait.jpg" alt="Portrait of John von Neumann" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>John von Neumann</strong><br>\cite{img_john_von_neumann}. <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="frank_rosenblatt_commons.jpg" alt="Portrait of Frank Rosenblatt" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Frank Rosenblatt</strong><br>\cite{img_frank_rosenblatt}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="marvin_minsky_portrait.jpg" alt="Portrait of Marvin Minsky" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Marvin Minsky</strong><br>\cite{img_marvin_minsky}. <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="seymour_papert_portrait.jpg" alt="Portrait of Seymour Papert" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Seymour Papert</strong><br>\cite{img_seymour_papert}. <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="john_hopfield_portrait.jpg" alt="Portrait of John Hopfield" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>John Hopfield</strong><br>\cite{img_john_hopfield}. <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="geoffrey_hinton_portrait.jpg" alt="Portrait of Geoffrey Hinton" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Geoffrey Hinton</strong><br>\cite{img_geoffrey_hinton}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="yann_lecun_portrait.jpg" alt="Portrait of Yann LeCun" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Yann LeCun</strong><br>\cite{img_yann_lecun}. <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC BY-SA 2.0</a>.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="yoshua_bengio_portrait.jpg" alt="Portrait of Yoshua Bengio" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Yoshua Bengio</strong><br>\cite{img_yoshua_bengio}. <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="richard_sutton_portrait.jpg" alt="Portrait of Richard Sutton" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Richard Sutton</strong><br>\cite{img_richard_sutton}. <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="demis_hassabis_portrait.jpg" alt="Portrait of Demis Hassabis" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Demis Hassabis</strong><br>\cite{img_demis_hassabis}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="john_jumper_portrait.jpg" alt="Portrait of John Jumper" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>John Jumper</strong><br>\cite{img_john_jumper}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="andrej_karpathy_portrait.png" alt="Portrait of Andrej Karpathy" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>Andrej Karpathy</strong><br>\cite{img_andrej_karpathy}. <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</figcaption>
+	</figure>
+	<figure style="margin:0;">
+		<img src="francois_chollet_portrait.jpg" alt="Portrait of François Chollet" style="width:100%; aspect-ratio:3/4; object-fit:cover; object-position:center top; border-radius:8px; border:1px solid var(--mn-border, #e2e8f0);">
+		<figcaption class="md" style="font-size:0.72rem; line-height:1.35; color:var(--mn-text-secondary, #64748b); margin-top:6px;"><strong>François Chollet</strong><br>\cite{img_francois_chollet}. <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</figcaption>
+	</figure>
+</div>
+
 <div class="md">
 ## Before the Machine
 

@@ -19942,6 +19942,144 @@ window.bibData = {
 		author: "The Royal Swedish Academy of Sciences",
 		year: 2024,
 		alternativetitle: "Nobel Prize in Chemistry 2024"
+	},
+
+	/* Portraits for people_of_ai.php — all Public Domain or Creative Commons */
+	"img_ada_lovelace": {
+		url: "https://commons.wikimedia.org/wiki/File:Ada_Lovelace_Chalon_portrait.jpg",
+		title: "Ada Lovelace",
+		author: "Alfred Edward Chalon",
+		year: 1840,
+		license: "Public domain",
+		alternativetitle: "Ada Lovelace portrait"
+	},
+	"img_charles_babbage": {
+		url: "https://commons.wikimedia.org/wiki/File:Charles_Babbage_1860.jpg",
+		title: "Charles Babbage",
+		author: "Anonymous (The Illustrated London News)",
+		year: 1860,
+		license: "Public domain",
+		alternativetitle: "Charles Babbage portrait"
+	},
+	"img_alan_turing": {
+		url: "https://commons.wikimedia.org/wiki/File:Alan_Turing_(1951).jpg",
+		title: "Alan Turing",
+		author: "Elliott & Fry",
+		year: 1951,
+		license: "Public domain",
+		alternativetitle: "Alan Turing portrait"
+	},
+	"img_claude_shannon": {
+		url: "https://commons.wikimedia.org/wiki/File:C.E._Shannon._Tekniska_museet_43069_(cropped).jpg",
+		title: "Claude Shannon",
+		author: "Tekniska Museet (unknown photographer)",
+		year: 1960,
+		license: "CC BY 2.0",
+		alternativetitle: "Claude Shannon portrait"
+	},
+	"img_john_von_neumann": {
+		url: "https://commons.wikimedia.org/wiki/File:John_von_Neumann.jpg",
+		title: "John von Neumann",
+		author: "wikispaces (uploader)",
+		year: 1940,
+		license: "CC BY-SA 3.0",
+		alternativetitle: "John von Neumann portrait"
+	},
+	"img_frank_rosenblatt": {
+		url: "https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg",
+		title: "Frank Rosenblatt",
+		author: "Anonymous / Heinz Nixdorf MuseumsForum",
+		year: 1958,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Frank Rosenblatt portrait"
+	},
+	"img_marvin_minsky": {
+		url: "https://commons.wikimedia.org/wiki/File:Marvin_Minsky.jpg",
+		title: "Marvin Minsky",
+		author: "Steamtalks (Flickr)",
+		year: 2008,
+		license: "CC BY-SA 2.0",
+		alternativetitle: "Marvin Minsky portrait"
+	},
+	"img_seymour_papert": {
+		url: "https://commons.wikimedia.org/wiki/File:Seymour_Papert.jpg",
+		title: "Seymour Papert",
+		author: "Matematicamente.it",
+		year: 2014,
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Seymour Papert portrait"
+	},
+	"img_geoffrey_hinton": {
+		url: "https://commons.wikimedia.org/wiki/File:Geoffrey_E._Hinton,_2024_Nobel_Prize_Laureate_in_Physics_(cropped1).jpg",
+		title: "Geoffrey Hinton",
+		author: "Arthur Petron",
+		year: 2024,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Geoffrey Hinton portrait"
+	},
+	"img_yann_lecun": {
+		url: "https://commons.wikimedia.org/wiki/File:Yann_LeCun_-_2018_(cropped).jpg",
+		title: "Yann LeCun",
+		author: "Jérémy Barande",
+		year: 2018,
+		license: "CC BY-SA 2.0",
+		alternativetitle: "Yann LeCun portrait"
+	},
+	"img_yoshua_bengio": {
+		url: "https://commons.wikimedia.org/wiki/File:Yoshua_Bengio_2019_cropped.jpg",
+		title: "Yoshua Bengio",
+		author: "Maryse Boyce",
+		year: 2019,
+		license: "CC BY 4.0",
+		alternativetitle: "Yoshua Bengio portrait"
+	},
+	"img_demis_hassabis": {
+		url: "https://commons.wikimedia.org/wiki/File:Demis_Hassabis.jpg",
+		title: "Demis Hassabis",
+		author: "Alain Herzog",
+		year: 2018,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Demis Hassabis portrait"
+	},
+	"img_john_jumper": {
+		url: "https://commons.wikimedia.org/wiki/File:John_Jumper,_2024_Nobel_Prize_Laureate_in_Chemistry.jpg",
+		title: "John Jumper",
+		author: "Arthur Petron",
+		year: 2024,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "John Jumper portrait"
+	},
+	"img_andrej_karpathy": {
+		url: "https://commons.wikimedia.org/wiki/File:Andrej_Karpathy,_OpenAI_(cropped).png",
+		title: "Andrej Karpathy",
+		author: "Gladwin Analytics",
+		year: 2017,
+		license: "CC BY 3.0",
+		alternativetitle: "Andrej Karpathy portrait"
+	},
+	"img_francois_chollet": {
+		url: "https://commons.wikimedia.org/wiki/File:Fran%C3%A7ois_Chollet.jpg",
+		title: "François Chollet",
+		author: "Kaicarver",
+		year: 2015,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "François Chollet portrait"
+	},
+	"img_richard_sutton": {
+		url: "https://commons.wikimedia.org/wiki/File:Richard_Sutton,_October_27,_2016.jpg",
+		title: "Richard Sutton",
+		author: "Steve Jurvetson",
+		year: 2016,
+		license: "CC BY 2.0",
+		alternativetitle: "Richard Sutton portrait"
+	},
+	"img_john_hopfield": {
+		url: "https://commons.wikimedia.org/wiki/File:John_Hopfield_2016.jpg",
+		title: "John Hopfield",
+		author: "bhadeshia123",
+		year: 2016,
+		license: "CC BY 3.0",
+		alternativetitle: "John Hopfield portrait"
 	}
 
 };
