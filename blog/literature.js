@@ -19828,6 +19828,57 @@ window.bibData = {
 		author: "Paul Christiano",
 		year: 2019,
 		alternativetitle: "What Failure Looks Like"
+	},
+	"lefkowitz2019perceptron": {
+		url: "https://news.cornell.edu/stories/2019/09/professors-perceptron-paved-way-ai-60-years-too-soon",
+		title: "Professor's Perceptron Paved the Way for AI: 60 Years Too Soon",
+		author: "Melanie Lefkowitz",
+		year: 2019,
+		alternativetitle: "Cornell Chronicle on Rosenblatt"
+	},
+	"block1962perceptron": {
+		url: "https://journals.aps.org/rmp/abstract/10.1103/RevModPhys.34.123",
+		title: "The Perceptron: A Model for Brain Functioning. I",
+		author: "H. D. Block",
+		year: 1962,
+		alternativetitle: "Block's perceptron proof"
+	},
+	"novikoff1963convergence": {
+		title: "On Convergence Proofs for Perceptrons",
+		author: "A. B. J. Novikoff",
+		year: 1963,
+		alternativetitle: "Novikoff's convergence proof"
+	},
+	"olazaran1996sociological": {
+		title: "A Sociological Study of the Official History of the Perceptrons Controversy",
+		author: "Mikel Olazaran",
+		year: 1996,
+		alternativetitle: "Olazaran on the perceptron controversy"
+	},
+	"papert1988oneai": {
+		url: "https://www.jstor.org/stable/20025183",
+		title: "One AI or Many?",
+		author: "Seymour Papert",
+		year: 1988,
+		alternativetitle: "Papert, One AI or Many?"
+	},
+	"anderson2000talkingnets": {
+		title: "Talking Nets: An Oral History of Neural Networks",
+		author: "James A. Anderson, Edward Rosenfeld (eds.)",
+		year: 2000,
+		alternativetitle: "Talking Nets"
+	},
+	"rosenblatt1959twotheorems": {
+		title: "Two Theorems of Statistical Separability in the Perceptron",
+		author: "Frank Rosenblatt",
+		year: 1959,
+		alternativetitle: "Rosenblatt's separability theorems"
+	},
+	"rosenblatt1967recentwork": {
+		title: "Recent Work on Theoretical Models of Biological Memory",
+		author: "Frank Rosenblatt",
+		year: 1967,
+		alternativetitle: "Rosenblatt on biological memory"
 	}
 
 };
