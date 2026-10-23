@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bildquellen — sofortiger Handlungsbedarf</title>
+<style>
+:root{--bg:#0f172a;--panel:#172033;--panel2:#1e293b;--text:#e5e7eb;--muted:#94a3b8;--line:#334155;--p1:#f87171;--p2:#fbbf24;--p3:#60a5fa;--ok:#34d399;}
+@media (prefers-color-scheme: light){:root{--bg:#f8fafc;--panel:#fff;--panel2:#f1f5f9;--text:#0f172a;--muted:#475569;--line:#e2e8f0;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px}
+h1{font-size:1.7rem;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 18px}
+.summary{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 26px}
+.pill{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.9rem}
+.pill b{font-size:1.05rem}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 22px}
+.filters button{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;font:inherit}
+.filters button.active{border-color:var(--text);background:var(--panel2)}
+.card{display:grid;grid-template-columns:240px 1fr;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin:0 0 18px}
+.card.p1{border-left:5px solid var(--p1)} .card.p2{border-left:5px solid var(--p2)} .card.p3{border-left:5px solid var(--p3)}
+.orig-wrap{min-width:0}
+.orig{width:100%;height:180px;object-fit:contain;background:var(--panel2);border-radius:8px;display:block}
+.fname{font:0.8rem/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--muted);margin-top:6px;word-break:break-all}
+.head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 6px}
+h2{font-size:1.08rem;margin:0}
+.badge{font-size:.72rem;font-weight:700;letter-spacing:.04em;padding:3px 8px;border-radius:6px;color:#0b1020}
+.badge.p1{background:var(--p1)} .badge.p2{background:var(--p2)} .badge.p3{background:var(--p3)}
+.where{font-size:.86rem;color:var(--muted);margin:6px 0 10px}
+.where code{color:var(--text);background:var(--panel2);padding:1px 5px;border-radius:4px}
+.sec{color:var(--muted)}
+.warn{color:var(--p2)}
+.problem{margin:0 0 12px}
+.alts-title{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 8px}
+.alts{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.alt{display:flex;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px;min-width:0}
+.alt-img{flex:0 0 84px;width:84px;height:84px;display:block;border-radius:6px;overflow:hidden;background:#0002}
+.alt-img img{width:100%;height:100%;object-fit:cover}
+.alt-img.empty{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.72rem;text-align:center;padding:4px}
+.alt-body{min-width:0}
+.alt-name{color:var(--text);text-decoration:none;font-weight:600;font-size:.9rem;display:block}
+.alt-name:hover{text-decoration:underline}
+.lic{font-size:.78rem;color:var(--ok);margin-top:2px}
+.note{font-size:.78rem;color:var(--muted);margin-top:2px}
+.legend{color:var(--muted);font-size:.85rem;margin:0 0 18px}
+.legend b{color:var(--text)}
+@media(max-width:720px){.card{grid-template-columns:1fr}.orig{height:220px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Bildquellen — sofortiger Handlungsbedarf</h1>
+<p class="sub">Stand 2026-10-23 · Originale lokal, Alternativen auf Wikimedia Commons. Thumbnails laden von Commons; die Links sind maßgeblich.</p>
+<div class="summary">
+  <span class="pill"><b style="color:var(--p1)">5</b> sofort ersetzen (Fair Use / unklare Lizenz)</span>
+  <span class="pill"><b style="color:var(--p2)">12</b> Quelle fehlt komplett</span>
+  <span class="pill"><b style="color:var(--p3)">15</b> Lizenz nicht belegt</span>
+  <span class="pill"><b>32</b> Bilder mit Handlungsbedarf</span>
+</div>
+<div class="filters">
+  <button class="active" data-f="all">Alle</button>
+  <button data-f="P1">P1 — sofort</button>
+  <button data-f="P2">P2 — keine Quelle</button>
+  <button data-f="P3">P3 — Lizenz fehlt</button>
+</div>
+<p class="legend"><b>P1</b> = rechtlich nicht nutzbar, jetzt ersetzen. <b>P2</b> = kein Quellennachweis, jetzt Quelle/Ersatz eintragen. <b>P3</b> = Quelle vorhanden, aber Lizenz ungeklärt.</p>
+<article class="card p1" data-pri="P1">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="FrankRosenblattWiringPerceptron.jpg" alt="FrankRosenblattWiringPerceptron.jpg"><div class="fname">FrankRosenblattWiringPerceptron.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p1">P1</span><h2>Lizenz unklar — nicht verwenden</h2></div>
+    <div class="where"><b>Wo:</b><br><code>history.php:636</code> <span class="sec">The Beginning of Artificial Neural Networks</span> <span class="warn">(auskommentiert)</span><br><code>intro.php:21</code> <span class="warn">(auskommentiert)</span><br><code>atlas.js:1936</code></div>
+    <p class="problem">Das Foto stammt von perceptrondemo.com (Frederic Lewis, 1960). Auf der Quelle steht keine Lizenz; die Prüfdatei führt es als <b>UNCLEAR</b> (Eintrag 3). Es ist im Atlas aktiv (atlas.js:1936); in history.php und intro.php nur auskommentiert.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Frank_Rosenblatt.jpg?width=480" alt="Porträt von Frank Rosenblatt"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" target="_blank" rel="noopener">Porträt von Frank Rosenblatt</a>
+    <div class="lic">CC BY-SA 4.0</div>
+    <div class="note">Freies Porträt; Attribution erforderlich.</div>
+  </div>
+</div>
+<div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Organization_of_a_biological_brain_and_a_perceptron.png" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Organization_of_a_biological_brain_and_a_perceptron.png?width=480" alt="Perceptron-Diagramm (Rosenblatt)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Organization_of_a_biological_brain_and_a_perceptron.png" target="_blank" rel="noopener">Perceptron-Diagramm (Rosenblatt)</a>
+    <div class="lic">Public domain</div>
+    <div class="note">PD-Diagramm aus Rosenblatts Paper.</div>
+  </div>
+</div>
+<div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Typical_connections_in_a_close-loop_cross-coupled_perceptron.png" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Typical_connections_in_a_close-loop_cross-coupled_perceptron.png?width=480" alt="Verdrahtungs-Diagramm"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Typical_connections_in_a_close-loop_cross-coupled_perceptron.png" target="_blank" rel="noopener">Verdrahtungs-Diagramm</a>
+    <div class="lic">Public domain</div>
+    <div class="note">PD-Diagramm aus „Principles of Neurodynamics“.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p1" data-pri="P1">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="Mark_I_perceptron.jpeg" alt="Mark_I_perceptron.jpeg"><div class="fname">Mark_I_perceptron.jpeg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p1">P1</span><h2>Fair Use — nicht verwenden</h2></div>
+    <div class="where"><b>Wo:</b><br><code>history.php:660</code> <span class="sec">The Beginning of Artificial Neural Networks</span><br><code>mirror_in_machine.php:47</code> <span class="sec">II. The First Machines Were Built on the Body&#x27;s Own Laws</span></div>
+    <p class="problem">Die Datei ist auf en.wikipedia.org nur unter <b>Fair Use</b> eingebunden (non-free). Eine Weiterverwendung im Blog ist nicht erlaubt. Genutzt in history.php und mirror_in_machine.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Mark_I_Perceptron%2C_Figure_2_of_operator%27s_manual.png?width=480" alt="Mark I Perceptron — Operator’s Manual, Fig. 2"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png" target="_blank" rel="noopener">Mark I Perceptron — Operator’s Manual, Fig. 2</a>
+    <div class="lic">Public domain</div>
+    <div class="note">Technische Zeichnung, PD.</div>
+  </div>
+</div>
+<div class="alt">
+  <a class="alt-img" href="perceptron2.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="perceptron2.jpg" alt="US-Navy-Foto (bereits im Blog)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="perceptron2.jpg" target="_blank" rel="noopener">US-Navy-Foto (bereits im Blog)</a>
+    <div class="lic">Public domain</div>
+    <div class="note">Lokale Datei; schon in history.php/intro.php verwendet.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p1" data-pri="P1">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="mcculloch.png" alt="mcculloch.png"><div class="fname">mcculloch.png</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p1">P1</span><h2>Lizenz unklar — nicht verwenden</h2></div>
+    <div class="where"><b>Wo:</b><br><code>history.php:382</code> <span class="sec">The formalization of Neurons</span></div>
+    <p class="problem">Quelle ist historyofinformation.com (Jeremy Norman); die Seite hat keine CC-Lizenz. Die Prüfdatei führt den Key <code>mccullochpittsimage</code> als <b>UNCLEAR</b> (Eintrag 4). Genutzt in history.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Mcculloch-pitts-neuron-model.png" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Mcculloch-pitts-neuron-model.png?width=480" alt="McCulloch-Pitts-Neuronenmodell"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Mcculloch-pitts-neuron-model.png" target="_blank" rel="noopener">McCulloch-Pitts-Neuronenmodell</a>
+    <div class="lic">Public domain</div>
+    <div class="note">PD-Diagramm von McCulloch.</div>
+  </div>
+</div>
+<div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Diagram_of_a_McCulloch-Pitts-cell.svg?width=480" alt="McCulloch-Pitts-Zelle (SVG)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg" target="_blank" rel="noopener">McCulloch-Pitts-Zelle (SVG)</a>
+    <div class="lic">CC BY-SA 3.0</div>
+    <div class="note">Attribution: Adrian Lange.</div>
+  </div>
+</div>
+<div class="alt"><div class="alt-img empty">kein Bild</div><div class="alt-body"><div class="alt-name">Kein freies Porträt gefunden</div><div class="note">Auf Commons existiert kein freies McCulloch-Porträt; besser das Neuron-Modell zeigen.</div></div></div></div>
+  </div>
+</article><article class="card p1" data-pri="P1">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="pitts.jpg" alt="pitts.jpg"><div class="fname">pitts.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p1">P1</span><h2>Lizenz unklar — nicht verwenden</h2></div>
+    <div class="where"><b>Wo:</b><br><code>history.php:386</code> <span class="sec">The formalization of Neurons</span></div>
+    <p class="problem">Gleiche Quelle wie mcculloch.png: historyofinformation.com ohne CC-Lizenz; Prüfdatei-Eintrag 4 <b>UNCLEAR</b>. Genutzt in history.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/1954_Walter_Pitts_and_a_blackboard.jpg?width=480" alt="Walter Pitts (1954)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:1954_Walter_Pitts_and_a_blackboard.jpg" target="_blank" rel="noopener">Walter Pitts (1954)</a>
+    <div class="lic">Public domain</div>
+    <div class="note">Foto von Francis Bello; direktes freies Porträt.</div>
+  </div>
+</div>
+<div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Lettvin_Pitts.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Lettvin_Pitts.jpg?width=480" alt="Pitts mit Lettvin"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Lettvin_Pitts.jpg" target="_blank" rel="noopener">Pitts mit Lettvin</a>
+    <div class="lic">CC BY-SA 3.0</div>
+    <div class="note">Attribution: Iapx86.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p1" data-pri="P1">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="perceptron_smithsonian.jpg" alt="perceptron_smithsonian.jpg"><div class="fname">perceptron_smithsonian.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p1">P1</span><h2>Lizenz unklar — nicht verwenden</h2></div>
+    <div class="where"><b>Wo:</b><br><code>history.php:797</code> <span class="sec">The Hype (1958)</span></div>
+    <p class="problem">Repost eines Smithsonian-Fotos (1968) auf ronkowitz.blogspot.com, ohne CC-Hinweis. Die Prüfdatei führt den Key <code>ronkowitz2017perceptron</code> als <b>UNCLEAR</b> (Eintrag 21). Genutzt in history.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Mark_I_Perceptron%2C_Figure_2_of_operator%27s_manual.png?width=480" alt="Mark I Perceptron — Operator’s Manual, Fig. 2"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Mark_I_Perceptron,_Figure_2_of_operator%27s_manual.png" target="_blank" rel="noopener">Mark I Perceptron — Operator’s Manual, Fig. 2</a>
+    <div class="lic">Public domain</div>
+    <div class="note">Technische Zeichnung, PD.</div>
+  </div>
+</div>
+<div class="alt">
+  <a class="alt-img" href="perceptron2.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="perceptron2.jpg" alt="US-Navy-Foto (bereits im Blog)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="perceptron2.jpg" target="_blank" rel="noopener">US-Navy-Foto (bereits im Blog)</a>
+    <div class="lic">Public domain</div>
+    <div class="note">Lokale Datei; schon im Blog verwendet.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p2" data-pri="P2">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="alhazen.jpg" alt="alhazen.jpg"><div class="fname">alhazen.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p2">P2</span><h2>Keine Quelle belegt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:283</code> <span class="sec">IV. Transmission: the Islamic Golden Age</span></div>
+    <p class="problem">Weder <code>literature.js</code>-Key noch Credit/Lizenz im Caption. Das Bild ist damit nicht nachvollziehbar lizenziert. Genutzt in geometry_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Ibn_al-Haytham_crop.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Ibn_al-Haytham_crop.jpg?width=480" alt="Ibn al-Haytham (Porträt)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Ibn_al-Haytham_crop.jpg" target="_blank" rel="noopener">Ibn al-Haytham (Porträt)</a>
+    <div class="lic">Public domain</div>
+    <div class="note">Stich, PD.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p2" data-pri="P2">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="alkhwarizmi.jpg" alt="alkhwarizmi.jpg"><div class="fname">alkhwarizmi.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p2">P2</span><h2>Keine Quelle belegt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:279</code> <span class="sec">IV. Transmission: the Islamic Golden Age</span></div>
+    <p class="problem">Weder Key noch Credit im Caption. Genutzt in geometry_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Al-Khwarizmi_portrait.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Al-Khwarizmi_portrait.jpg?width=480" alt="Al-Khwarizmi (Porträt)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Al-Khwarizmi_portrait.jpg" target="_blank" rel="noopener">Al-Khwarizmi (Porträt)</a>
+    <div class="lic">Public domain</div>
+    <div class="note">PD-Porträt.</div>
+  </div>
+</div>
+<div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Persian_khwarizmi.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Persian_khwarizmi.jpg?width=480" alt="Persisches Al-Khwarizmi-Porträt"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Persian_khwarizmi.jpg" target="_blank" rel="noopener">Persisches Al-Khwarizmi-Porträt</a>
+    <div class="lic">Public domain</div>
+    <div class="note">PD.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p2" data-pri="P2">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="archimedes.jpg" alt="archimedes.jpg"><div class="fname">archimedes.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p2">P2</span><h2>Keine Quelle belegt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:200</code> <span class="sec">Archimedes: exhaustion perfected</span></div>
+    <p class="problem">Weder Key noch Credit im Caption. Genutzt in geometry_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Domenico-Fetti_Archimedes_1620.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Domenico-Fetti_Archimedes_1620.jpg?width=480" alt="Archimedes (Domenico Fetti, 1620)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Domenico-Fetti_Archimedes_1620.jpg" target="_blank" rel="noopener">Archimedes (Domenico Fetti, 1620)</a>
+    <div class="lic">Public domain</div>
+    <div class="note">Gemälde, PD.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p2" data-pri="P2">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="bolyai.jpg" alt="bolyai.jpg"><div class="fname">bolyai.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p2">P2</span><h2>Keine Quelle belegt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:479</code> <span class="sec">Lobachevsky and Bolyai: the parallel postulate is a choice</span></div>
+    <p class="problem">Weder Key noch Credit im Caption. Genutzt in geometry_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Bolyai_J%C3%A1nos_(M%C3%A1rkos_Ferenc_festm%C3%A9nye).jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Bolyai_J%C3%A1nos_%28M%C3%A1rkos_Ferenc_festm%C3%A9nye%29.jpg?width=480" alt="János Bolyai (Gemälde)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Bolyai_J%C3%A1nos_(M%C3%A1rkos_Ferenc_festm%C3%A9nye).jpg" target="_blank" rel="noopener">János Bolyai (Gemälde)</a>
+    <div class="lic">CC BY-SA 3.0</div>
+    <div class="note">Attribution: Ferenc Márkos.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p2" data-pri="P2">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="descartes.jpg" alt="descartes.jpg"><div class="fname">descartes.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p2">P2</span><h2>Keine Quelle belegt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:374</code> <span class="sec">Descartes and analytic geometry (1637)</span></div>
+    <p class="problem">Weder Key noch Credit im Caption. Genutzt in geometry_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Frans_Hals_-_Portret_van_Ren%C3%A9_Descartes.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Frans_Hals_-_Portret_van_Ren%C3%A9_Descartes.jpg?width=480" alt="René Descartes (Frans Hals)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Frans_Hals_-_Portret_van_Ren%C3%A9_Descartes.jpg" target="_blank" rel="noopener">René Descartes (Frans Hals)</a>
+    <div class="lic">Public domain</div>
+    <div class="note">Gemälde, PD.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p2" data-pri="P2">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="euclid.jpg" alt="euclid.jpg"><div class="fname">euclid.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p2">P2</span><h2>Keine Quelle belegt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:220</code> <span class="sec">Euclid&#x27;s Elements: the machine of proof</span></div>
+    <p class="problem">Weder Key noch Credit im Caption. Genutzt in geometry_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Italian_-_Euclid_-_Google_Art_Project.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Italian_-_Euclid_-_Google_Art_Project.jpg?width=480" alt="Euklid (Jusepe de Ribera)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Italian_-_Euclid_-_Google_Art_Project.jpg" target="_blank" rel="noopener">Euklid (Jusepe de Ribera)</a>
+    <div class="lic">Public domain</div>
+    <div class="note">Gemälde, PD.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p2" data-pri="P2">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="gauss.jpg" alt="gauss.jpg"><div class="fname">gauss.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p2">P2</span><h2>Keine Quelle belegt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:436</code> <span class="sec">Gauss: curvature is intrinsic</span></div>
+    <p class="problem">Weder Key noch Credit im Caption. Genutzt in geometry_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Carl_Friedrich_Gauss_1840_by_Jensen.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Carl_Friedrich_Gauss_1840_by_Jensen.jpg?width=480" alt="Carl Friedrich Gauss (1840)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Carl_Friedrich_Gauss_1840_by_Jensen.jpg" target="_blank" rel="noopener">Carl Friedrich Gauss (1840)</a>
+    <div class="lic">Public domain</div>
+    <div class="note">Gemälde von C. A. Jensen, PD.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p2" data-pri="P2">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="lapicque.jpg" alt="lapicque.jpg"><div class="fname">lapicque.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p2">P2</span><h2>Keine Quelle belegt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>history.php:359</code> <span class="sec">The formalization of Neurons</span></div>
+    <p class="problem">Weder Key noch Credit im Caption. Genutzt in history.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Louis_Lapicque.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Louis_Lapicque.jpg?width=480" alt="Louis Lapicque"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Louis_Lapicque.jpg" target="_blank" rel="noopener">Louis Lapicque</a>
+    <div class="lic">Public domain</div>
+    <div class="note">PD-Porträt.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p2" data-pri="P2">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="lobachevsky.jpg" alt="lobachevsky.jpg"><div class="fname">lobachevsky.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p2">P2</span><h2>Keine Quelle belegt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:471</code> <span class="sec">Lobachevsky and Bolyai: the parallel postulate is a choice</span></div>
+    <p class="problem">Weder Key noch Credit im Caption. Genutzt in geometry_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Lobachevsky_03_crop.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Lobachevsky_03_crop.jpg?width=480" alt="Nikolai Lobachevsky"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Lobachevsky_03_crop.jpg" target="_blank" rel="noopener">Nikolai Lobachevsky</a>
+    <div class="lic">Public domain</div>
+    <div class="note">PD-Porträt.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p2" data-pri="P2">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="mobius.jpg" alt="mobius.jpg"><div class="fname">mobius.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p2">P2</span><h2>Keine Quelle belegt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:507</code> <span class="sec">Möbius and Listing: the word &quot;topology&quot;</span></div>
+    <p class="problem">Weder Key noch Credit im Caption. Genutzt in geometry_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:August_Ferdinand_M%C3%B6bius.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/August_Ferdinand_M%C3%B6bius.jpg?width=480" alt="August Ferdinand Möbius"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:August_Ferdinand_M%C3%B6bius.jpg" target="_blank" rel="noopener">August Ferdinand Möbius</a>
+    <div class="lic">Public domain</div>
+    <div class="note">Stich von Adolf Neumann, PD.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p2" data-pri="P2">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="pythagoras.jpg" alt="pythagoras.jpg"><div class="fname">pythagoras.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p2">P2</span><h2>Keine Quelle belegt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:182</code> <span class="sec">Thales, Pythagoras and the theorem</span></div>
+    <p class="problem">Weder Key noch Credit im Caption. Genutzt in geometry_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Pythagoras_Bust_Vatican_Museum_(cropped).jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Pythagoras_Bust_Vatican_Museum_%28cropped%29.jpg?width=480" alt="Pythagoras (Vatikan-Büste)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Pythagoras_Bust_Vatican_Museum_(cropped).jpg" target="_blank" rel="noopener">Pythagoras (Vatikan-Büste)</a>
+    <div class="lic">Public domain</div>
+    <div class="note">PD-Foto einer antiken Büste.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p2" data-pri="P2">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="visicalc.jpg" alt="visicalc.jpg"><div class="fname">visicalc.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p2">P2</span><h2>Keine Quelle belegt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>untold_history.php:2163</code> <span class="sec">The Origin Story</span></div>
+    <p class="problem">Weder Key noch Credit im Caption. Genutzt in untold_history.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Visicalc.png" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Visicalc.png?width=480" alt="VisiCalc-Screenshot"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Visicalc.png" target="_blank" rel="noopener">VisiCalc-Screenshot</a>
+    <div class="lic">Public domain</div>
+    <div class="note">PD-Screenshot.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="aiken.jpg" alt="aiken.jpg"><div class="fname">aiken.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>history.php:515</code> <span class="sec">Howard Aiken &amp; The Harvard Mark I (1944)</span></div>
+    <p class="problem"><code>literature.js</code> verlinkt ein Bettmann-/Mediastorehouse-Foto, aber ohne Lizenzfeld. Das ist ein kommerzielles Archiv — nicht frei. Genutzt in history.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Aiken.jpeg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Aiken.jpeg?width=480" alt="Howard Aiken (freies Foto)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Aiken.jpeg" target="_blank" rel="noopener">Howard Aiken (freies Foto)</a>
+    <div class="lic">Public domain</div>
+    <div class="note">PD-Foto; bitte auch den Key/Quelle ersetzen.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="ceres_path.png" alt="ceres_path.png"><div class="fname">ceres_path.png</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>statistics.php:128</code> <span class="sec">The Astronomical Origin: Hunting Ceres</span><br><code>statistics_i.php:143</code> <span class="sec">The Astronomical Origin: Hunting Ceres</span></div>
+    <p class="problem">Quelle ist ein astronomy.com-Artikel ohne Lizenzfeld. Genutzt in statistics.php und statistics_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Ceres_Orbit.svg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Ceres_Orbit.svg?width=480" alt="Ceres-Orbit-Diagramm"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Ceres_Orbit.svg" target="_blank" rel="noopener">Ceres-Orbit-Diagramm</a>
+    <div class="lic">CC BY-SA 3.0</div>
+    <div class="note">Attribution: Orionist.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="euclid_elements.jpg" alt="euclid_elements.jpg"><div class="fname">euclid_elements.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:230</code> <span class="sec">Euclid&#x27;s Elements: the machine of proof</span></div>
+    <p class="problem">Der Key <code>euclidelements</code> hat kein Lizenzfeld. Die Handschriftenseite ist PD; das gilt aber nicht automatisch für das moderne Foto <code>platonic_solids.jpg</code>, das denselben Key nutzt. Genutzt in geometry_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Euclid_Lueneburg_ms_13v.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Euclid_Lueneburg_ms_13v.jpg?width=480" alt="Euklid-Handschrift (Lüneburg)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Euclid_Lueneburg_ms_13v.jpg" target="_blank" rel="noopener">Euklid-Handschrift (Lüneburg)</a>
+    <div class="lic">Public domain</div>
+    <div class="note">Mittelalterliche Handschrift, PD.</div>
+  </div>
+</div>
+<div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Platonic_Solids_Transparent.svg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Platonic_Solids_Transparent.svg?width=480" alt="Platonische Körper (SVG)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Platonic_Solids_Transparent.svg" target="_blank" rel="noopener">Platonische Körper (SVG)</a>
+    <div class="lic">CC0</div>
+    <div class="note">Freies Diagramm für platonic_solids.jpg.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="fukushimarelu.png" alt="fukushimarelu.png"><div class="fname">fukushimarelu.png</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>activationlab.php:173</code> <span class="sec">The Breaking Point: Vanishing Gradients</span></div>
+    <p class="problem">Abbildung aus Fukushima (1969), IEEE-Paper. Paper-Abbildungen sind in der Regel nicht frei. Genutzt in activationlab.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt"><div class="alt-img empty">kein Bild</div><div class="alt-body"><div class="alt-name">Keine freie Abbildung gefunden</div><div class="note">Formel neu zeichnen (mathematische Formel ist nicht geschützt) oder Bild entfernen.</div></div></div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="grothendieck.jpg" alt="grothendieck.jpg"><div class="fname">grothendieck.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:663</code> <span class="sec">Grothendieck: the space revealed by its functions</span></div>
+    <p class="problem">Quelle ist die Heidelberg Laureate Forum-Seite ohne Lizenzfeld. Genutzt in geometry_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Alexander_Grothendieck_-_face.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Alexander_Grothendieck_-_face.jpg?width=480" alt="Alexander Grothendieck (Porträt)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Alexander_Grothendieck_-_face.jpg" target="_blank" rel="noopener">Alexander Grothendieck (Porträt)</a>
+    <div class="lic">CC BY-SA 4.0</div>
+    <div class="note">Attribution: Konrad Jacobs / MFO.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="history_of_a.png" alt="history_of_a.png"><div class="fname">history_of_a.png</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>language.php:248</code> <span class="sec">The Phoenician Alphabet (c. 1050 BCE)</span></div>
+    <p class="problem">Der Key <code>history_of_a</code> verlinkt nur den Wikipedia-Artikel „A“, nicht die Bilddatei; keine Bildlizenz belegt. Genutzt in language.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt"><div class="alt-img empty">kein Bild</div><div class="alt-body"><div class="alt-name">Kein verifiziertes Äquivalent gefunden</div><div class="note">Eigene Grafik erstellen oder eine konkrete Commons-Datei mit Lizenz auswählen.</div></div></div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="householderrelu.png" alt="householderrelu.png"><div class="fname">householderrelu.png</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>activationlab.php:169</code> <span class="sec">The Breaking Point: Vanishing Gradients</span></div>
+    <p class="problem">Abbildung aus Householder (1941), Springer-Paper; keine freie Lizenz belegt. Genutzt in activationlab.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt"><div class="alt-img empty">kein Bild</div><div class="alt-body"><div class="alt-name">Keine freie Abbildung gefunden</div><div class="note">Formel neu zeichnen oder Bild entfernen.</div></div></div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="laws_of_form_cover.jpg" alt="laws_of_form_cover.jpg"><div class="fname">laws_of_form_cover.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>coherent_difference.php:146</code> <span class="sec">The first move: distinction</span></div>
+    <p class="problem">Buchcover von <i>Laws of Form</i> (1969); der Key verlinkt nur den Wikipedia-Artikel, keine freie Bildlizenz. Genutzt in coherent_difference.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt"><div class="alt-img empty">kein Bild</div><div class="alt-body"><div class="alt-name">Kein freies Cover</div><div class="note">Titel im Text nennen statt das Cover zu zeigen.</div></div></div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="lebombo.jpg" alt="lebombo.jpg"><div class="fname">lebombo.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:70</code> <span class="sec">Tally bones: Lebombo and Ishango</span><br><code>history.php:43</code> <span class="sec">The Lebombo Bone</span><br><code>atlas.js:1940</code></div>
+    <p class="problem">Der Key <code>lebombobone</code> verlinkt einen CACM-Blogartikel ohne Lizenzfeld. Genutzt in geometry_i.php, history.php und atlas.js.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt"><div class="alt-img empty">kein Bild</div><div class="alt-body"><div class="alt-name">Kein freies Foto gefunden</div><div class="note">Beim CACM/Autor anfragen oder Bild entfernen.</div></div></div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="navy.png" alt="navy.png"><div class="fname">navy.png</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>history.php:699</code> <span class="sec">The Beginning of Artificial Neural Networks</span></div>
+    <p class="problem">Der Key <code>newyorktimesperceptron</code> verlinkt das NYT-Archiv (1958), keine freie Lizenz. Genutzt in history.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="perceptron2.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="perceptron2.jpg" alt="US-Navy-Foto (bereits im Blog)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="perceptron2.jpg" target="_blank" rel="noopener">US-Navy-Foto (bereits im Blog)</a>
+    <div class="lic">Public domain</div>
+    <div class="note">Lokale Datei; frei und thematisch passend.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="platonic_solids.jpg" alt="platonic_solids.jpg"><div class="fname">platonic_solids.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:237</code> <span class="sec">Euclid&#x27;s Elements: the machine of proof</span></div>
+    <p class="problem">Das Foto (Canon PowerShot, 2009) hängt am Key <code>euclidelements</code>, der keine Bildlizenz für dieses moderne Foto belegt. Genutzt in geometry_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Platonic_Solids_Transparent.svg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Platonic_Solids_Transparent.svg?width=480" alt="Platonische Körper (SVG)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Platonic_Solids_Transparent.svg" target="_blank" rel="noopener">Platonische Körper (SVG)</a>
+    <div class="lic">CC0</div>
+    <div class="note">Freies Diagramm.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="rosenblatt_ad.png" alt="rosenblatt_ad.png"><div class="fname">rosenblatt_ad.png</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>history.php:652</code> <span class="sec">The Beginning of Artificial Neural Networks</span></div>
+    <p class="problem">Scan aus <i>Research Trends</i> (1958) über archive.org; keine freie Lizenz belegt. Genutzt in history.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Frank_Rosenblatt.jpg?width=480" alt="Frank Rosenblatt (Porträt)"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Frank_Rosenblatt.jpg" target="_blank" rel="noopener">Frank Rosenblatt (Porträt)</a>
+    <div class="lic">CC BY-SA 4.0</div>
+    <div class="note">Freies Porträt.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="shannons_mouse.jpg" alt="shannons_mouse.jpg"><div class="fname">shannons_mouse.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>history.php:497</code> <span class="sec">Shannon, chess and the rat</span></div>
+    <p class="problem">Quelle ist circlesofemotion.org ohne Lizenzfeld. Genutzt in history.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt"><div class="alt-img empty">kein Bild</div><div class="alt-body"><div class="alt-name">Kein freies Äquivalent gefunden</div><div class="note">Bild entfernen oder Lizenz klären.</div></div></div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="si_427.jpg" alt="si_427.jpg"><div class="fname">si_427.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>geometry_i.php:124</code> <span class="sec">Babylon: geometry on clay</span></div>
+    <p class="problem">Quelle ist eine UNSW-Newsseite ohne Lizenzfeld. Genutzt in geometry_i.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt">
+  <a class="alt-img" href="https://commons.wikimedia.org/wiki/File:Si427o.jpg" target="_blank" rel="noopener"><img loading="lazy" referrerpolicy="no-referrer" src="https://commons.wikimedia.org/wiki/Special:FilePath/Si427o.jpg?width=480" alt="Si.427-Tafel"></a>
+  <div class="alt-body">
+    <a class="alt-name" href="https://commons.wikimedia.org/wiki/File:Si427o.jpg" target="_blank" rel="noopener">Si.427-Tafel</a>
+    <div class="lic">CC BY-SA 4.0</div>
+    <div class="note">Attribution: Daniel Mansfield.</div>
+  </div>
+</div></div>
+  </div>
+</article><article class="card p3" data-pri="P3">
+  <div class="orig-wrap"><img class="orig" loading="lazy" src="snarc.jpg" alt="snarc.jpg"><div class="fname">snarc.jpg</div></div>
+  <div class="content">
+    <div class="head"><span class="badge p3">P3</span><h2>Quelle vorhanden, Lizenz fehlt</h2></div>
+    <div class="where"><b>Wo:</b><br><code>history.php:432</code> <span class="sec">The SNARC: The First Physical Neural Network (1951)</span></div>
+    <p class="problem">Quelle ist ein The-Scientist-Artikel ohne Lizenzfeld. Genutzt in history.php.</p>
+    <div class="alts-title">Freie Alternativen / Quellen</div>
+    <div class="alts"><div class="alt"><div class="alt-img empty">kein Bild</div><div class="alt-body"><div class="alt-name">Kein freies Äquivalent gefunden</div><div class="note">Bild entfernen oder Lizenz klären.</div></div></div></div>
+  </div>
+</article>
+<p class="legend" style="margin-top:28px"><b>Niedrige Priorität:</b> 7 weitere Bilder haben Quelle und Lizenz nur im Caption, aber keinen <code>literature.js</code>-Eintrag (u. a. <code>deep_blue_kasparov.jpg</code>, <code>dolni_vestonice_head.jpg</code>, <code>eniac_1946.jpg</code>, <code>qubit_cryostat.jpg</code>, <code>venus_galgenberg.jpg</code>, <code>venus_hohle_fels.jpg</code>, <code>vostok_ice_core.jpg</code>). Diese sind nutzbar, sollten aber in <code>literature.js</code> nachgetragen werden.</p>
+</div>
+<script>
+document.querySelectorAll('.filters button').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.filters button').forEach(function(x){x.classList.remove('active')});
+    b.classList.add('active');
+    var f=b.dataset.f;
+    document.querySelectorAll('.card').forEach(function(c){
+      c.style.display=(f==='all'||c.dataset.pri===f)?'':'none';
+    });
+  });
+});
+</script>
+</body>
+</html>
