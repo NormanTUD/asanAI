@@ -20114,19 +20114,92 @@ window.bibData = {
 		title: "On Computable Numbers, with an Application to the Entscheidungsproblem",
 		author: "Alan M. Turing",
 		year: 1936,
+		url: "https://doi.org/10.1112/plms/s2-42.1.230",
 		alternativetitle: "Turing's computable numbers"
 	},
 	"mccarthy1955dartmouth": {
 		title: "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
 		author: "John McCarthy, Marvin L. Minsky, Nathaniel Rochester, Claude E. Shannon",
 		year: 1955,
+		url: "https://web.archive.org/web/2023/http://www-formal.stanford.edu/jmc/history/dartmouth/dartmouth.html",
 		alternativetitle: "The Dartmouth proposal"
 	},
 	"newell1956logic": {
 		title: "The Logic Theory Machine: A Complex Information Processing System",
 		author: "Allen Newell, Herbert A. Simon",
 		year: 1956,
+		url: "https://web.archive.org/web/2024/https://www.rand.org/pubs/papers/P868.html",
 		alternativetitle: "Logic Theory Machine"
+	},
+	"krizhevsky2009cifar": {
+		title: "Learning Multiple Layers of Features from Tiny Images",
+		author: "Alex Krizhevsky",
+		year: 2009,
+		url: "https://www.cs.toronto.edu/~kriz/learning-features-2009-TR.pdf",
+		alternativetitle: "CIFAR-10 and CIFAR-100 (Krizhevsky, 2009)"
+	},
+	"le2012cat": {
+		title: "Building High-level Features Using Large Scale Unsupervised Learning",
+		author: "Quoc V. Le, Marc'Aurelio Ranzato, Rajat Monga, Matthieu Devin, Kai Chen, Greg S. Corrado, Jeff Dean, Andrew Y. Ng",
+		year: 2012,
+		url: "https://arxiv.org/abs/1112.6209",
+		alternativetitle: "The Google Brain cat paper"
+	},
+	"goodfellow2015adversarial": {
+		title: "Explaining and Harnessing Adversarial Examples",
+		author: "Ian J. Goodfellow, Jonathon Shlens, Christian Szegedy",
+		year: 2015,
+		url: "https://arxiv.org/abs/1412.6572",
+		alternativetitle: "Adversarial examples (Goodfellow et al., 2015)"
+	},
+	"chollet2016xception": {
+		title: "Xception: Deep Learning with Depthwise Separable Convolutions",
+		author: "François Chollet",
+		year: 2017,
+		url: "https://arxiv.org/abs/1610.02357",
+		alternativetitle: "Xception"
+	},
+	"werbos1990bptt": {
+		title: "Backpropagation Through Time: What It Does and How to Do It",
+		author: "Paul J. Werbos",
+		year: 1990,
+		url: "https://doi.org/10.1109/5.58337",
+		alternativetitle: "Backpropagation through time"
+	},
+	"sutskever2013thesis": {
+		title: "Training Recurrent Neural Networks",
+		author: "Ilya Sutskever",
+		year: 2013,
+		url: "https://www.cs.utoronto.ca/~ilya/pubs/ilya_sutskever_phd_thesis.pdf",
+		alternativetitle: "Sutskever's PhD thesis"
+	},
+	"samuel1967checkers": {
+		title: "Some Studies in Machine Learning Using the Game of Checkers. II—Recent Progress",
+		author: "Arthur L. Samuel",
+		year: 1967,
+		url: "https://doi.org/10.1147/rd.116.0601",
+		alternativetitle: "Samuel, checkers II (1967)"
+	},
+	"pitts1947universals": {
+		title: "How We Know Universals: The Perception of Auditory and Visual Forms",
+		author: "Walter Pitts, Warren S. McCulloch",
+		year: 1947,
+		url: "https://doi.org/10.1007/BF02478291",
+		alternativetitle: "Pitts & McCulloch, How We Know Universals (1947)"
+	},
+	"silver2021reward": {
+		title: "Reward is Enough",
+		author: "David Silver, Satinder Singh, Doina Precup, Richard S. Sutton",
+		year: 2021,
+		url: "https://doi.org/10.1016/j.artint.2021.103535",
+		alternativetitle: "Reward is Enough"
+	},
+	"hassabis2007patients": {
+		title: "Patients with Hippocampal Amnesia Cannot Imagine New Experiences",
+		author: "Demis Hassabis, Dharshan Kumaran, S. D. Vann, Eleanor A. Maguire",
+		year: 2007,
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC1805588/",
+		alternativetitle: "Hassabis et al., episodic memory (2007)"
 	},
 	"kudo2018sentencepiece": {
 		url: "https://arxiv.org/abs/1808.06226",
