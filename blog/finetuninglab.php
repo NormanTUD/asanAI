@@ -50,7 +50,7 @@ where $x$ is the instruction and $y$ is the response.
 **Data sources**:
 
 * **Human-written** (highest quality): OpenAI's early InstructGPT used ~13K human-written examples.
-* **Distilled from stronger models** (scalable): Self-instruct, WizardLM, Alpaca. Use GPT-4 to generate 100K–1M examples.
+* **Distilled from stronger models** (scalable): Self-Instruct (\cite[Wang et al., 2022]{wang2022selfinstruct}), WizardLM, Alpaca (\cite[Taori et al., 2023]{taori2023alpaca}). Use GPT-4 to generate 100K–1M examples.
 * **Synthetic** (cheap, controllable): Constitutional AI, Evol-Instruct, Magpie.
 
 A typical 2025 SFT dataset: 100K–1M examples. Llama 3 used ~10M SFT examples.
@@ -205,7 +205,7 @@ Post-training is also where **knowledge distillation** enters. The classical rec
 
 * **Sequence-level distillation** trains the student on teacher-generated text outright.
 * **Rationale distillation** trains on the teacher's *reasoning traces*, not just its answers; a small model can then beat its teacher's few-shot performance on some tasks (\cite[Hsieh et al., 2023]{hsieh2023distilling}).
-* **Synthetic instruction data** (Self-Instruct, Alpaca, and most modern SFT mixtures) is distillation in all but name.
+* **Synthetic instruction data** (\cite[Wang et al., 2022]{wang2022selfinstruct}; \cite[Taori et al., 2023]{taori2023alpaca}; and most modern SFT mixtures) is distillation in all but name.
 
 Imitation has a documented ceiling. Gudibande et al. trained models on outputs of proprietary systems and found that they learned to mimic **style and persona** while their factual and reasoning performance lagged behind the teacher. Their conclusion is the working caveat for every synthetic-data pipeline: distillation transfers what the teacher can *demonstrate*, not necessarily what the teacher *knows* (\cite[Gudibande et al., 2023]{gudibande2023falsepromise}).
 
