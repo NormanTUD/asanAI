@@ -9941,10 +9941,12 @@ window.bibData = {
 		alternativetitle: "Grothendieck's autobiographical manuscript"
 	},
 	"grothendieck_image": {
-		title: "Portrait of Alexander Grothendieck",
-		author: "Heidelberg Laureate Forum Foundation",
-		url: "https://www.heidelberg-laureate-forum.org/laureate/alexander-grothendieck/",
-		alternativetitle: "Grothendieck portrait (Heidelberg Laureate Forum)"
+		url: "https://commons.wikimedia.org/wiki/File:Alexander_Grothendieck_colorized.jpg",
+		title: "Alexander Grothendieck — colorized portrait",
+		author: "Konrad Jacobs / MFO (photo); PhotoColor (colorization)",
+		year: 2018,
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Alexander Grothendieck"
 	},
 	"awodey2010category": {
 		title: "Category Theory",

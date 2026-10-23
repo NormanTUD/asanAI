@@ -39,11 +39,6 @@ This trajectory eventually crossed from the physical to the cognitive. As identi
 
 #### The Lebombo Bone
 
-<figure>
-    <img style="width: 100%" src="lebombo.jpg" alt="Lebombo Bone" />
-    <figcaption class="md">\citealternativetitle{lebombobone}, found in the 1970s, is the oldest object that was used for mathematical purposes</figcaption>
-</figure>
-
 The Lebombo bone, a baboon fibula discovered by \citeauthor{lebomboboneoriginal} in \citeyear{lebomboboneoriginal} in the Lebombo Mountains of Eswatini and dated to approximately c. 41,000 BCE, represents the earliest known instance of “outsourcing mathematical thought to physical objects”. Featuring 29 distinct notches, the artifact is widely interpreted as a tally stick or lunar calendar, probably used to track the moon's phases or menstrual cycles. As a foundational example of “spatial abstraction,” it serves as a prehistoric precursor to modern computation by mapping abstract numbers onto a physical medium.
 
 It can be thought of as the earliest surviving external mathematical memory of early humans.
@@ -421,11 +416,6 @@ Starting in 1936, the British neurophysiologist **W. Grey Walter** (1910–1977,
 <div class="md">
 ### The SNARC: The First Physical Neural Network (1951)
 </div>
-
-<figure class="md">
-    <img style="width: 100%" src="snarc.jpg" alt="SNARC" />
-    <figcaption class="md">\citealternativetitle{snarcphoto}</figcaption>
-</figure>
 
 <div class="md">
 Built by **Marvin Minsky** and **Dean Edmonds** in 1951, the **SNARC** (Stochastic Neural Analog Reinforcement Calculator) was the world's first physical artificial neural network. Inspired directly by the theoretical logic calculus of \citeauthorlastnameand{mccullochpitts1943} (\citeyear{mccullochpitts1943}), the SNARC translated abstract mathematical neurons into stochastic, learning hardware. It consisted of a randomly connected network of 40 artificial neurons constructed from vacuum tubes, salvaged B-24 bomber gyropilots, and magnetic clutches, designed to simulate a rat learning to navigate a virtual maze.

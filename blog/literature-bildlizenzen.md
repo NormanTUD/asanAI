@@ -2,7 +2,7 @@
 
 Stand: 2026-10-23
 
-`literature.js` enthält 2671 Einträge. Davon verweisen **192** auf Wikimedia-Dateien (Commons/Wikipedia `File:`/`Datei:` oder `upload.wikimedia.org`). 164 Lizenzen wurden über die Commons-/Wikipedia-API ermittelt, 5 weitere (Weiterleitungen/Datei-Umbenennungen) manuell verifiziert. Für alle 169 liegt jetzt eine Lizenz vor.
+`literature.js` enthält 2671 Einträge. Davon verweisen **193** auf Wikimedia-Dateien (Commons/Wikipedia `File:`/`Datei:` oder `upload.wikimedia.org`). 164 Lizenzen wurden über die Commons-/Wikipedia-API ermittelt, 5 weitere (Weiterleitungen/Datei-Umbenennungen) manuell verifiziert. Für alle 169 liegt jetzt eine Lizenz vor.
 
 - **69** fehlende Lizenzen wurden automatisch ergänzt, dazu 5 gezielte Einträge (u. a. Inceptionism, Deconv, Loss Landscape, Perseverance, ENIAC).
 - Zusätzlich gezielt ergänzt: `mordvintsev2015inceptionism` (CC BY 4.0), `odena2016deconvolution` (CC BY 2.0), `li2018losslandscape` (MIT), `nasa2021perseverance` (Public domain/NASA) und `sam_demo_img` (Apache-2.0).
@@ -70,6 +70,7 @@ Stand: 2026-10-23
 | `freud_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Sigmund_Freud_1926_(cropped).jpg |
 | `galilei_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Justus_Sustermans_-_Portrait_of_Galileo_Galilei_(Uffizi)_(cropped).jpg |
 | `gauss_portrait` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Carl_Friedrich_Gauss_1840_by_Jensen.jpg |
+| `grothendieck_image` | CC BY-SA 4.0 | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Alexander_Grothendieck_colorized.jpg |
 | `h264_coding_structure_img` | Public domain | Public Domain | https://commons.wikimedia.org/wiki/File:Vcl_structure.jpg |
 | `hamilton1969_image` | Public domain | Public domain | https://commons.wikimedia.org/wiki/File:Margaret_Hamilton_-_restoration.jpg |
 | `heidegger_image` | CC BY-SA 3.0 | CC BY-SA 3.0 | https://commons.wikimedia.org/wiki/File:Martin_Heidegger_for_WP.jpg |
@@ -211,8 +212,7 @@ Diese Keys sind Bildquellen, deren `url` nicht auf eine Wikimedia-Datei zeigt. S
 
 | Key | Datei(en) | Lizenz | Quelle | Status / Ersatz |
 |---|---|---|---|---|
-| `grothendieck_image` | `grothendieck.jpg` | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:Alexander_Grothendieck_colorized.jpg | Ersatz: coloriertes Porträt |
-| `lebombobone` | `lebombo.jpg` | PNAS noncommercial/educational | https://cdn.ncbi.nlm.nih.gov/pmc/blobs/23e0/3421171/8016995d624f/pnas.1204213109fig01.jpg | Beste Quelle: PNAS Fig. 1 (notched bones, Border Cave); CACM-Fotos: Robert Hart, keine freie Lizenz |
+| `lebombobone` | `lebombo.jpg` (Bild entfernt) | — | https://cacm.acm.org/blogcacm/technical-marvels-part-2-lebombo-and-ishango-bones/ | Bild entfernt; Key bleibt für den Text. Beste Bildquelle wäre PNAS Fig. 1 (noncommercial/educational) |
 | `li2018losslandscape` | `loss_landscape_resnet56_noskip.png`, `loss_landscape_resnet56_skip.png` | MIT | https://arxiv.org/abs/1712.09913 | belegt (Bildlizenz) |
 | `mccullochpittsimage` | `mcculloch.png` (Bild entfernt), `pitts.jpg` (ersetzt) | — | https://www.historyofinformation.com/... | Bilder entfernt/ersetzt; Key bleibt für den Text |
 | `mordvintsev2015inceptionism` | `inceptionism_classvis.png`, `inceptionism_dream_map.png`, `inceptionism_dumbbells.png`, `inceptionism_funny_animals.png`, `inceptionism_ibis.png`, `inceptionism_sky_arrow.png` | CC BY 4.0 | https://research.google/blog/inceptionism-going-deeper-into-neural-networks/ | belegt (Bildlizenz) |
@@ -226,7 +226,7 @@ Diese Keys sind Bildquellen, deren `url` nicht auf eine Wikimedia-Datei zeigt. S
 | `rosenblattad` | `rosenblatt_ad.png` (nicht mehr verwendet) | — | https://archive.org/details/sim_research-trends... | Bild ersetzt durch `rosenblatt_portrait`; Key ungenutzt |
 | `sam_demo_img` | `sam_demo.png` | Apache-2.0 | https://raw.githubusercontent.com/facebookresearch/segment-anything/main/assets/masks1.png | belegt (Repo-Lizenz) |
 | `shannonratphoto` | `shannons_mouse.jpg` (nicht mehr verwendet) | — | https://circlesofemotion.org/... | Bild ersetzt durch `theseus_maze_image` |
-| `snarcphoto` | `snarc.jpg` | keine freie Lizenz | https://cyberneticzoo.com/wp-content/uploads/neuron-SNARC-GJLoan2011-x640.jpg | Objektfoto: CyberneticZoo, courtesy Gregory Loan (Permission nötig); Rekonstruktion: historyof.ai (keine freie Lizenz); freier Fallback: Minsky-Porträt |
+| `snarcphoto` | `snarc.jpg` (Bild entfernt) | — | https://www.the-scientist.com/machine--learning--1951-65792 | Bild entfernt; Key ungenutzt. Objektfoto nur bei CyberneticZoo (courtesy Gregory Loan, keine freie Lizenz) |
 | `steadystates` | `householderrelu.png` (Bild entfernt) | — | https://link.springer.com/article/10.1007/BF02478220 | Bild entfernt; Inhalt steht im Text (activationlab.php) |
 
 ## C. Hinweise

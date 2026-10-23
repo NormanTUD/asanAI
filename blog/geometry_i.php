@@ -66,11 +66,6 @@ A second, independent thread runs through the Middle Stone Age of southern Afric
 
 If the shell and the ochre mark the birth of *form*, the **Ishango bone** and the earlier **Lebombo bone** mark the birth of *counting* as a spatial act: quantities are not held in the mind, they are laid out as marks in a row, and rows as *groupings* in the plane \cite{ishangobone} \cite{lebombobone}. Geometry and arithmetic are born in the same gesture — a number is a *shape* of marks, and a shape is a *count* of something.
 
-<figure>
-	<img style="width: 100%" src="lebombo.jpg" alt="The Lebombo bone, a tally bone from c. 41,000 BCE" />
-	<figcaption class="md">The <strong>Lebombo bone</strong> (c. 41,000 BCE, South Africa), a baboon fibula with 29 notches arranged in groups — a <em>spatial</em> record of quantity, and a strong candidate for the oldest known counting device \cite{lebombobone}.</figcaption>
-</figure>
-
 (We return to both artifacts in the [History of AI](history) chapter, where they matter as the first *external memory*; here we only need that the notches are themselves a two-dimensional arrangement — the earliest "database" was a pattern on a bone.)
 </div>
 
@@ -660,7 +655,7 @@ Dimension four went differently, and here the (later) help of physics is real. *
 
 ### Grothendieck: the space revealed by its functions
 
-\marginfig{grothendieck.jpg}{Alexander Grothendieck (1928–2014). Photograph courtesy of the \citeauthor{grothendieck_image}.}
+\marginfig{grothendieck_colorized.jpg}{Alexander Grothendieck (1928–2014). Photograph by Konrad Jacobs / MFO, colorized by PhotoColor (\cite[Grothendieck portrait]{grothendieck_image}).}
 
 No-one bent the word "geometry" further and to greater effect than **\citeauthor{grothedieck_res}** (1928–2014), and a short personal history is worth it: born in Berlin to a Russian anarchist father (Sascha Schapiro) and a German journalist mother, he grew up as a refugee: internment camps in southern France, then, self-taught, he walked into French mathematics as an adult and within two decades rebuilt most of its foundations \cite{grothedieck_res}. His ruling idea: a space is not its points, but the *functions* admitted to live on it. A **scheme** is a space whose "points" are not locations but *solutions of polynomial equations*; a **topos** is a space so general that it may have no points at all — it is recorded by the sheaves of functions that can be planted in it, and the space itself is defined *by those functions* \cite{grothedieck_ega1960}.
 
