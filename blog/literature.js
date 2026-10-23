@@ -10322,6 +10322,13 @@ window.bibData = {
 		url: "https://arxiv.org/abs/1406.2661",
 		alternativetitle: "GAN"
 	},
+	"goodfellow2016deep": {
+		title: "Deep Learning",
+		author: "Ian Goodfellow, Yoshua Bengio, Aaron Courville",
+		year: 2016,
+		url: "https://www.deeplearningbook.org/",
+		alternativetitle: "The Deep Learning textbook"
+	},
 	"vincent2008dae": {
 		title: "Extracting and Composing Robust Features with Denoising Autoencoders",
 		author: "Pascal Vincent, Hugo Larochelle, Yoshua Bengio, Pierre-Antoine Manzagol",
@@ -20119,7 +20126,7 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:David_Silver.jpg",
 		title: "David Silver",
 		author: "David Silver",
-		year: "n.d.",
+		year: 2007,
 		license: "CC BY-SA 2.0",
 		alternativetitle: "David Silver portrait"
 	},
@@ -20127,7 +20134,7 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:Ian_Goodfellow_(cropped).jpg",
 		title: "Ian Goodfellow",
 		author: "Ian Goodfellow",
-		year: "n.d.",
+		year: 2017,
 		license: "CC BY-SA 4.0",
 		alternativetitle: "Ian Goodfellow portrait"
 	},
@@ -20159,7 +20166,7 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:AlexNet_architecture.png",
 		title: "AlexNet architecture",
 		author: "Daniel Voigt Godoy",
-		year: "n.d.",
+		year: 2021,
 		license: "CC BY 4.0",
 		alternativetitle: "AlexNet architecture diagram"
 	},
@@ -20167,7 +20174,7 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:IBM_Electronic_Data_Processing_Machine_-_GPN-2000-001881.jpg",
 		title: "IBM 704 electronic data processing machine",
 		author: "NASA",
-		year: "n.d.",
+		year: 1957,
 		license: "Public domain",
 		alternativetitle: "IBM 704"
 	},
@@ -20175,7 +20182,7 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:Diagram_of_a_McCulloch-Pitts-cell.svg",
 		title: "Diagram of a McCulloch–Pitts cell",
 		author: "Adrian Lange",
-		year: "n.d.",
+		year: 2011,
 		license: "CC BY-SA 3.0",
 		alternativetitle: "McCulloch–Pitts neuron diagram"
 	},
