@@ -357,6 +357,8 @@ html:not(.dark) #atlas-stage {
 
 *The transformer figure in the journey:* Figure 1 (the encoder–decoder architecture) from (\cite[Vaswani et al., 2017]{transformer_attention_figure}) — Ashish Vaswani and colleagues, Google, CC BY-SA 4.0 ([file](https://commons.wikimedia.org/wiki/File:Attention_Is_All_You_Need_-_Encoder-decoder_Architecture.png)).
 
+*The perceptron photograph in the journey:* the U.S. Navy photograph of the Mark I Perceptron, public domain (\cite[U.S. Navy]{perceptronimagedetection}).
+
 *Starfield backdrop:* ESO's all-sky panorama of the Milky Way, (\cite[ESO, 2009]{starfield_eso_image}) — ESO / S. Brunier, CC BY 4.0 ([file](https://commons.wikimedia.org/wiki/File:ESO_-_Milky_Way.jpg)).
 
 *Planet surfaces in the solar-system view:* equirectangular texture maps from \cite[Solar System Scope]{solsys_planet_textures} — Solar System Scope (based on NASA imagery), CC BY 4.0.
