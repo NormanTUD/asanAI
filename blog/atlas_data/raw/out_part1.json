@@ -525,7 +525,10 @@
    "history"
   ],
   "bibkeys": [
-   "mccullochpitts1943"
+   "mccullochpitts1943",
+   "mcculloch1965embodiments",
+   "mcculloch1945heterarchy",
+   "landahl1943statistical"
   ],
   "conf": "known"
  },
@@ -546,6 +549,9 @@
    "history"
   ],
   "bibkeys": [
+   "pittsfirstpaper",
+   "landahl1943statistical",
+   "pitts1947universals",
    "mccullochpitts1943"
   ],
   "conf": "known"
@@ -3912,7 +3918,9 @@
   "cited_in": [
    "geometry-iii"
   ],
-  "bibkeys": [],
+  "bibkeys": [
+   "carnap1938logicalsyntax"
+  ],
   "conf": "known"
  },
  {
@@ -6991,6 +6999,7 @@
    "history"
   ],
   "bibkeys": [
+   "domarus1930logicalstructure",
    "domarus1944specificlaws"
   ],
   "conf": "known"

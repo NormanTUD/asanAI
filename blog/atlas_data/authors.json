@@ -17918,8 +17918,9 @@
   "city": "Orangeburg, United States",
   "year": 1932.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
+   "domarus1930logicalstructure",
    "domarus1944specificlaws"
   ],
   "cited_in": [
@@ -17956,7 +17957,9 @@
   "keys": [
    "carnap1938logicalsyntax"
   ],
-  "cited_in": []
+  "cited_in": [
+   "history"
+  ]
  },
  {
   "name": "W. S. McCulloch",
@@ -17970,6 +17973,23 @@
   "works": 1,
   "keys": [
    "landahl1943statistical"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "J. H. Woodger",
+  "canon": "J. H. Woodger",
+  "alias": null,
+  "lat": 51.51,
+  "lng": -0.13,
+  "city": "London, United Kingdom",
+  "year": 1937.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "woodger1937axiomatic"
   ],
   "cited_in": [
    "history"
@@ -20859,7 +20879,8 @@
   "cited_in": [
    "algorithms",
    "embeddinglab",
-   "geometry_i"
+   "geometry_i",
+   "history"
   ]
  },
  {
@@ -64457,7 +64478,8 @@
    "hilbert1928entscheidung"
   ],
   "cited_in": [
-   "algorithms"
+   "algorithms",
+   "history"
   ]
  },
  {

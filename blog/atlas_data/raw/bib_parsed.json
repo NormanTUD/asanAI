@@ -5758,7 +5758,7 @@
    "title": "Grundzüge der theoretischen Logik",
    "author": "David Hilbert, Wilhelm Ackermann",
    "year": "",
-   "url": ""
+   "url": "https://archive.org/details/grundzugedertheo0000wack"
   },
   "nyquist1924certain": {
    "title": "Certain Factors Affecting Telegraph Speed",
@@ -13578,6 +13578,18 @@
    "year": "",
    "url": "https://archive.org/details/sciencefirstprin0000fscn"
   },
+  "woodger1937axiomatic": {
+   "title": "The Axiomatic Method in Biology",
+   "author": "J. H. Woodger",
+   "year": "",
+   "url": ""
+  },
+  "domarus1930logicalstructure": {
+   "title": "The Logical Structure of Mind: An Inquiry into the Philosophical Foundation of Psychology and Psychiatry",
+   "author": "Eilhard von Domarus",
+   "year": "",
+   "url": "https://archive.org/details/communicationthe0000inte"
+  },
   "domarus1944specificlaws": {
    "title": "The Specific Laws of Logic in Schizophrenia",
    "author": "Eilhard von Domarus",
@@ -17583,7 +17595,8 @@
    "history"
   ],
   "hilbert1928entscheidung": [
-   "algorithms"
+   "algorithms",
+   "history"
   ],
   "godel1931incompleteness": [
    "algorithms"
@@ -19603,7 +19616,13 @@
    "history",
    "people_of_ai"
   ],
+  "domarus1930logicalstructure": [
+   "history"
+  ],
   "domarus1944specificlaws": [
+   "history"
+  ],
+  "woodger1937axiomatic": [
    "history"
   ],
   "northrop1931sciencefirstprinciples": [
@@ -19620,6 +19639,13 @@
   ],
   "mcculloch1945heterarchy": [
    "history"
+  ],
+  "carnap1938logicalsyntax": [
+   "history"
+  ],
+  "russell1910principia": [
+   "history",
+   "untold_history"
   ],
   "landahl1943statistical": [
    "history"
@@ -19771,10 +19797,6 @@
   ],
   "toosi2021history": [
    "history"
-  ],
-  "russell1910principia": [
-   "history",
-   "untold_history"
   ],
   "newell1956logictheorist": [
    "history"
@@ -56676,11 +56698,20 @@
     "northrop1931sciencefirstprinciples"
    ]
   },
-  "Eilhard von Domarus": {
+  "J. H. Woodger": {
    "count": 1,
    "minyear": null,
    "maxyear": null,
    "keys": [
+    "woodger1937axiomatic"
+   ]
+  },
+  "Eilhard von Domarus": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "domarus1930logicalstructure",
     "domarus1944specificlaws"
    ]
   },
