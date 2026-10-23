@@ -7916,6 +7916,159 @@
   "bg": false
  },
  {
+  "id": "person-nicolas-rashevsky",
+  "name": "Nicolas Rashevsky",
+  "type": "person",
+  "loc": "Chicago, USA",
+  "lat": 41.79,
+  "lng": -87.6,
+  "years": "1899-1972",
+  "active": [
+   1934.0,
+   1972.0
+  ],
+  "blurb": "Russian theoretical physicist who founded mathematical biophysics at Chicago and its Bulletin of Mathematical Biophysics.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "rashevsky1936psychometrika"
+  ],
+  "conf": "stated",
+  "source": "out_part1.json",
+  "bg": false
+ },
+ {
+  "id": "person-johannes-dusser-de-barenne",
+  "name": "Johannes Gregorius Dusser de Barenne",
+  "type": "person",
+  "loc": "New Haven, USA",
+  "lat": 41.31,
+  "lng": -72.92,
+  "years": "1885-1940",
+  "active": [
+   1916.0,
+   1940.0
+  ],
+  "blurb": "Dutch neurophysiologist at Yale who mapped cortical connections by strychnine neuronography; McCulloch's teacher.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "known",
+  "source": "out_part1.json",
+  "bg": false
+ },
+ {
+  "id": "person-f-sc-northrop",
+  "name": "F. S. C. Northrop",
+  "type": "person",
+  "loc": "New Haven, USA",
+  "lat": 41.31,
+  "lng": -72.92,
+  "years": "1893-1992",
+  "active": [
+   1923.0,
+   1962.0
+  ],
+  "blurb": "Yale philosopher of science whose call for an axiomatic biology shaped McCulloch's experimental epistemology.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "northrop1931sciencefirstprinciples"
+  ],
+  "conf": "known",
+  "source": "out_part1.json",
+  "bg": false
+ },
+ {
+  "id": "person-eilhard-von-domarus",
+  "name": "Eilhard von Domarus",
+  "type": "person",
+  "loc": "Orangeburg, USA",
+  "lat": 41.04,
+  "lng": -73.95,
+  "years": "1893-1958",
+  "active": [
+   1922.0,
+   1958.0
+  ],
+  "blurb": "Psychiatrist who linked schizophrenia to a distinct logic; McCulloch met him at Rockland State Hospital.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [
+   "domarus1944specificlaws"
+  ],
+  "conf": "known",
+  "source": "out_part1.json",
+  "bg": false
+ },
+ {
+  "id": "institution-university-of-chicago",
+  "name": "University of Chicago",
+  "type": "institution",
+  "loc": "Chicago, USA",
+  "lat": 41.79,
+  "lng": -87.6,
+  "years": "1890-",
+  "active": [
+   1890.0,
+   2026.0
+  ],
+  "blurb": "Chicago university whose mathematical-biophysics group published McCulloch and Pitts's 1943 paper.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated",
+  "source": "out_part1.json",
+  "bg": false
+ },
+ {
+  "id": "institution-bulletin-of-mathematical-biophysics",
+  "name": "Bulletin of Mathematical Biophysics",
+  "type": "institution",
+  "loc": "Chicago, USA",
+  "lat": 41.79,
+  "lng": -87.6,
+  "years": "1939-",
+  "active": [
+   1939.0,
+   2026.0
+  ],
+  "blurb": "Journal founded by Nicolas Rashevsky in 1939; published McCulloch and Pitts's logical calculus.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated",
+  "source": "out_part1.json",
+  "bg": false
+ },
+ {
+  "id": "institution-illinois-neuropsychiatric-institute",
+  "name": "Illinois Neuropsychiatric Institute",
+  "type": "institution",
+  "loc": "Chicago, USA",
+  "lat": 41.87,
+  "lng": -87.67,
+  "years": "1939-",
+  "active": [
+   1939.0,
+   2026.0
+  ],
+  "blurb": "Chicago institute where McCulloch worked as professor of psychiatry when he met Walter Pitts.",
+  "cited_in": [
+   "history"
+  ],
+  "bibkeys": [],
+  "conf": "stated",
+  "source": "out_part1.json",
+  "bg": false
+ },
+ {
   "id": "place-lomekwi-3",
   "name": "Lomekwi 3",
   "type": "place",

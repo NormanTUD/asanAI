@@ -13548,6 +13548,42 @@
    "year": "",
    "url": "https://doi.org/10.1016/S0160-9327(03)00017-6"
   },
+  "abraham2002physio": {
+   "title": "(Physio)logical circuits: The intellectual origins of the McCulloch–Pitts neural networks",
+   "author": "Tara H. Abraham",
+   "year": "",
+   "url": "https://doi.org/10.1002/jhbs.1094"
+  },
+  "rashevsky1936psychometrika": {
+   "title": "Mathematical biophysics and psychology",
+   "author": "Nicolas Rashevsky",
+   "year": "",
+   "url": "https://doi.org/10.1007/BF02287920"
+  },
+  "landahl1943statistical": {
+   "title": "A statistical consequence of the logical calculus of nervous nets",
+   "author": "H. D. Landahl, W. S. McCulloch, Walter Pitts",
+   "year": "",
+   "url": "https://doi.org/10.1007/BF02478260"
+  },
+  "carnap1938logicalsyntax": {
+   "title": "The Logical Syntax of Language",
+   "author": "Rudolf Carnap",
+   "year": "",
+   "url": "https://archive.org/details/logicalsyntaxofl0000carn"
+  },
+  "northrop1931sciencefirstprinciples": {
+   "title": "Science and First Principles",
+   "author": "F. S. C. Northrop",
+   "year": "",
+   "url": "https://archive.org/details/sciencefirstprin0000fscn"
+  },
+  "domarus1944specificlaws": {
+   "title": "The Specific Laws of Logic in Schizophrenia",
+   "author": "Eilhard von Domarus",
+   "year": "",
+   "url": "https://archive.org/details/languagethoughti0000jska_m7m5"
+  },
   "mcculloch1965embodiments": {
    "title": "Embodiments of Mind",
    "author": "Warren S. McCulloch",
@@ -19551,10 +19587,26 @@
   "walter_pitts_photo": [
    "history"
   ],
-  "darthmouthartificialintelligence": [
+  "abraham2002physio": [
    "history"
   ],
   "pittsfirstpaper": [
+   "history"
+  ],
+  "rashevsky1936psychometrika": [
+   "history"
+  ],
+  "abraham2003mcculloch": [
+   "history"
+  ],
+  "mcculloch1965embodiments": [
+   "history",
+   "people_of_ai"
+  ],
+  "domarus1944specificlaws": [
+   "history"
+  ],
+  "northrop1931sciencefirstprinciples": [
    "history"
   ],
   "gefter2015pitts": [
@@ -19566,15 +19618,21 @@
   "abraham2016rebelgenius": [
    "history"
   ],
-  "mcculloch1965embodiments": [
-   "history",
-   "people_of_ai"
-  ],
-  "abraham2003mcculloch": [
-   "history"
-  ],
   "mcculloch1945heterarchy": [
    "history"
+  ],
+  "landahl1943statistical": [
+   "history"
+  ],
+  "vonneumann": [
+   "history",
+   "people_of_ai",
+   "software",
+   "untold_history"
+  ],
+  "pitts1947universals": [
+   "history",
+   "people_of_ai"
   ],
   "wiener1948cybernetics": [
    "history",
@@ -19619,12 +19677,6 @@
   ],
   "aiken": [
    "history"
-  ],
-  "vonneumann": [
-   "history",
-   "people_of_ai",
-   "software",
-   "untold_history"
   ],
   "ibm702image": [
    "history"
@@ -19702,6 +19754,9 @@
    "history"
   ],
   "wienergodandgolem1964": [
+   "history"
+  ],
+  "darthmouthartificialintelligence": [
    "history"
   ],
   "hnfturing2020": [
@@ -23028,9 +23083,6 @@
    "people_of_ai"
   ],
   "img_walter_pitts": [
-   "people_of_ai"
-  ],
-  "pitts1947universals": [
    "people_of_ai"
   ],
   "img_mcculloch_pitts_neuron": [
@@ -37520,11 +37572,12 @@
    ]
   },
   "Walter Pitts": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "pittsfirstpaper",
+    "landahl1943statistical",
     "pitts1947universals"
    ]
   },
@@ -56574,12 +56627,61 @@
    ]
   },
   "Tara H. Abraham": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "abraham2016rebelgenius",
-    "abraham2003mcculloch"
+    "abraham2003mcculloch",
+    "abraham2002physio"
+   ]
+  },
+  "Nicolas Rashevsky": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rashevsky1936psychometrika"
+   ]
+  },
+  "H. D. Landahl": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "landahl1943statistical"
+   ]
+  },
+  "W. S. McCulloch": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "landahl1943statistical"
+   ]
+  },
+  "Rudolf Carnap": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "carnap1938logicalsyntax"
+   ]
+  },
+  "F. S. C. Northrop": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "northrop1931sciencefirstprinciples"
+   ]
+  },
+  "Eilhard von Domarus": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "domarus1944specificlaws"
    ]
   },
   "Warren S. McCulloch": {

@@ -17826,15 +17826,16 @@
   "name": "Tara H. Abraham",
   "canon": "Tara H. Abraham",
   "alias": null,
-  "lat": null,
-  "lng": null,
-  "city": "",
-  "year": 2016.0,
-  "conf": 0,
-  "works": 2,
+  "lat": 43.53,
+  "lng": -80.22,
+  "city": "Guelph, Canada",
+  "year": 2002.0,
+  "conf": 1,
+  "works": 3,
   "keys": [
    "abraham2016rebelgenius",
-   "abraham2003mcculloch"
+   "abraham2003mcculloch",
+   "abraham2002physio"
   ],
   "cited_in": [
    "history"
@@ -17869,6 +17870,106 @@
   "works": 1,
   "keys": [
    "lashley1929brainmechanisms"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Nicolas Rashevsky",
+  "canon": "Nicolas Rashevsky",
+  "alias": null,
+  "lat": 41.79,
+  "lng": -87.6,
+  "city": "Chicago, United States",
+  "year": 1934.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "rashevsky1936psychometrika"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "F. S. C. Northrop",
+  "canon": "F. S. C. Northrop",
+  "alias": null,
+  "lat": 41.31,
+  "lng": -72.92,
+  "city": "New Haven, United States",
+  "year": 1923.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "northrop1931sciencefirstprinciples"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Eilhard von Domarus",
+  "canon": "Eilhard von Domarus",
+  "alias": null,
+  "lat": 41.04,
+  "lng": -73.95,
+  "city": "Orangeburg, United States",
+  "year": 1932.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "domarus1944specificlaws"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "H. D. Landahl",
+  "canon": "H. D. Landahl",
+  "alias": null,
+  "lat": 41.79,
+  "lng": -87.6,
+  "city": "Chicago, United States",
+  "year": 1940.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "landahl1943statistical"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Rudolf Carnap",
+  "canon": "Rudolf Carnap",
+  "alias": null,
+  "lat": 41.79,
+  "lng": -87.6,
+  "city": "Chicago, United States",
+  "year": 1938.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "carnap1938logicalsyntax"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "W. S. McCulloch",
+  "canon": "W. S. McCulloch",
+  "alias": null,
+  "lat": 41.79,
+  "lng": -87.6,
+  "city": "Chicago, United States",
+  "year": 1943.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "landahl1943statistical"
   ],
   "cited_in": [
    "history"
@@ -63283,9 +63384,10 @@
   "city": "Chicago, USA",
   "year": 1943.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "pittsfirstpaper",
+   "landahl1943statistical",
    "pitts1947universals"
   ],
   "cited_in": [
