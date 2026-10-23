@@ -25,6 +25,8 @@ LLMs were trained on a single, well-defined objective: **next-token prediction**
 ### Few-Shot In-Context Learning (GPT-3, 2020)
 
 The first major surprise. (\cite[Brown et al., 2020]{brown2020gpt3}) showed that a 175-billion parameter autoregressive language model could be conditioned on a handful of input-output examples written into the prompt and then continue the pattern on a new query, **without any weight updates, without gradient descent, without a fine-tuning loop**. This was not how language modelling was supposed to work. Prior to GPT-3, neural NLP required task-specific architectures, features, and training. After GPT-3, “prompting” became a programming interface. The deeper surprise was that the ability appeared *smoothly* with scale: at small scales models ignore the examples, at large scales they exploit them reliably.
+
+**What do the demonstrations actually teach?** A follow-up study replaced the gold labels in the demonstrations with *random* labels and found that performance on many tasks barely dropped (\cite[Min et al., 2022]{min2022rethinking}). The input-label mapping was not the main thing being learned from the prompt. What the context supplied was the **task framing**: the format, the label space, the distribution of inputs, and the style of the expected answer. This is an important correction to the naive reading of in-context learning: the model is not necessarily inferring a new function from the examples, and a prompt can work for reasons that have little to do with the correctness of its examples.
 </div>
 
 <div class="md" data-mathlevel="55">
