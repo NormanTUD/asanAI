@@ -2638,6 +2638,66 @@ The final layer is the committee. RFC 2026 documents the Internet standards proc
 
 </div>
 
+<div class="md" data-depth="40">
+## The Deep Stack: The Budgets Behind the Machine
+
+Every prerequisite described so far is paid for out of a budget. This closing part zooms out from the individual invention to the planetary and civilizational accounts that make the whole chain possible: the solar energy stored by plants, the nitrogen that grows the population, the fresh water that cools and cleans, the minerals concentrated by geology, the capital that finances the fab, and the attention that pays for the free web. None of these budgets was created for AI. All of them are drawn down by it.
+
+### The Solar Budget: From Photosynthesis to the Coal Seam
+
+Photosynthesis is the original energy-storage technology. Priestley's experiments on air and Ingenhousz's demonstration that plants purify the common air in sunlight established that the atmosphere is not a fixed medium but a cycle maintained by living things (\cite[Priestley, 1772]{priestley1772air}; \cite[Ingenhousz, 1779]{ingenhousz1779vegetables}). Calvin and Benson then traced the path of carbon in photosynthesis, showing how light-driven chemistry fixes carbon into organic molecules (\cite[Calvin and Benson, 1948]{calvin1948photosynthesis}). Coal is the geological savings account of that process: the EIA describes coal as containing the energy stored by plants that lived hundreds of millions of years ago, compressed and heated under layers of rock (\cite[EIA, 2026]{eia_coal}). The Industrial Revolution was, in energy terms, a withdrawal from that account. The grid, the fab and the data center are later withdrawals from the same account; the IEA's projection of data-centre demand doubling from 485 TWh in 2025 to 950 TWh in 2030 is a statement about how much of the planetary energy budget is being redirected into computation (\cite[IEA, 2026]{iea2026energyai}).
+
+> **Open questions.** How many years of ancient sunlight are stored in a barrel of oil? What would a fab powered only by current sunlight require? Can the grid decarbonise at the speed at which AI demand is growing?
+
+### The Nitrogen Budget: From Malthus to Haber-Bosch
+
+Plants cannot use the nitrogen that makes up most of the atmosphere; they need it fixed as nitrate or ammonia. Haber's Nobel lecture explains the problem: industrial societies move food far from where it is grown, so the bound nitrogen is not returned to the soil, creating a worldwide economic necessity for synthetic fixed nitrogen (\cite[Haber, 1920]{haber1920ammonia}). Haber-Bosch synthesised ammonia from nitrogen and hydrogen, and Borlaug's Green Revolution relied on that fertiliser: the new high-yielding varieties responded to much heavier nitrogen doses, producing twenty to twenty-five kilos of additional grain per kilo of nitrogen instead of ten (\cite[Borlaug, 1970]{borlaug1970green}). Malthus had argued that population grows geometrically while subsistence grows arithmetically, imposing a check (\cite[Malthus, 1798]{malthus1798population}). Synthetic nitrogen postponed that check; it also fed the population that staffs the laboratories, factories and data centers. The nitrogen budget is therefore a hidden input to the human-capital budget.
+
+> **Open questions.** How many people does synthetic nitrogen feed? What is the energy cost of a kilogram of ammonia? What happens to the nitrogen cycle if fertiliser is diverted to fuel crops?
+
+### The Water Budget: From the Aqueduct to the Cooling Tower
+
+Water is a managed resource before it is a natural one. Frontinus, appointed water commissioner of Rome, wrote a treatise on the aqueducts because the supply concerned the convenience, health and safety of the city; he measured what each aqueduct delivered and how it was distributed (\cite[Frontinus, 97]{frontinus97aqueducts}). Modern water use is measured at the same planetary scale: the USGS estimates total withdrawals of about 322 billion gallons per day in 2015, with thermoelectric power and irrigation the two largest uses, and freshwater making up 281 billion gallons per day (\cite[Dieter et al., 2018]{usgs2015wateruse}). Computation adds a demand for water that is easy to overlook: ultrapure water is used in semiconductor manufacturing, where ultrafiltration and leak detection are prerequisites for defect-free production (\cite[Ruth and Berndt, 2016]{ruth2016ultrapure}). A data center is a water consumer twice over: directly for cooling and indirectly through the electricity system.
+
+> **Open questions.** How much water does a data center consume per megawatt-hour? Can cooling be closed-loop? Who has priority in a drought: a city, a farm, or a fab?
+
+### The Mineral Budget: From the Ore to the Wafer
+
+Mining is one of the oldest knowledge systems. Agricola's *De Re Metallica* (1556) described mining methods, metallurgical processes, geology and mining law, and remained the standard text for 180 years (\cite[Agricola, 1556]{agricola1556demetallica}). The geological distribution of the elements is not uniform: the USGS notes that rare earths are relatively abundant in the Earth's crust but minable concentrations are less common than for most other commodities, and that the United States relies on imports for more than one-half of its lithium and more than two-thirds of its rare-earth compounds and metals (\cite[USGS, 2026]{usgs2026mcs}). Copper, cobalt, gallium and germanium have their own bottlenecks. A fab is therefore downstream of a mine and a refinery; the periodic table is not a catalogue of equally available materials but a map of geological scarcity and political geography.
+
+> **Open questions.** Which elements have no substitute? What is the lead time from discovery to production? How much of the periodic table does a single accelerator require?
+
+### The Capital Budget: From the Ledger to the Venture Fund
+
+Computation is capital-intensive. The institutions that make large capital possible are therefore part of the stack. Double-entry bookkeeping made a business auditable (\cite[Pacioli, 1494]{paciolisumma}). The joint-stock company pooled capital from strangers; the Companies Act 1856 gave investors limited liability, separating the risk of the enterprise from the personal fortune of the investor (\cite[Parliament of the United Kingdom, 1856]{companiesact1856}). In the twentieth century, the Small Business Investment Act of 1958 made equity capital and long-term credit more readily available for small-business concerns and created small business investment companies, a public-policy ancestor of the venture fund (\cite[U.S. Congress, 1958]{sbic1958}). A leading-edge fab costs billions and a frontier training run costs millions; the capital budget decides which of them gets built. The venture fund and the limited-liability company are as much prerequisites of the GPU cluster as the transistor.
+
+> **Open questions.** Who owns the model? What is the cost of capital for a ten-year fab versus a six-month training run? How does the venture model shape which research gets funded?
+
+### The Attention Budget: From the Ad to the Corpus
+
+The free web was not free; it was paid for by advertising. Google's 2004 registration statement says that most services are provided for free and that advertising is the company's principal source of revenue (\cite[Google, 2004]{google2004s1}). The technical counterpart was targeted advertising: Google's patent on increasing the number of relevant advertisements describes matching ads to search queries and scoring them by relevance and performance (\cite[Bem, 2007]{adwords2003patent}). The result was a self-reinforcing loop: free services attracted users, users produced attention and data, advertising converted attention into revenue, and the resulting pages became the corpus. The training text of a large model is therefore a by-product of an attention economy, not a neutral sample of human writing.
+
+> **Open questions.** What would the web look like with subscriptions instead of ads? How does advertising shape what gets written and indexed? Who owns the attention that trains the model?
+
+## Open Questions
+
+The chain is not finished. These are the questions this page cannot answer, and the ones a reader should carry forward:
+
+- What is the minimum energy per useful floating-point operation, and what does thermodynamics forbid?
+- Which parts of the stack are irreplaceable, and which are historical accidents?
+- How much of AI's cost is energy, water, land, materials, labour, capital, and attention?
+- What would a post-silicon substrate require?
+- Which institutions are load-bearing, and which are contingent?
+- What would a civilisation without cheap fossil fuel have computed?
+- How would the chain change if copyright law had been different?
+- What is the role of war and state capacity?
+- What is the role of open source and standards?
+- What would a non-human intelligence's prerequisites look like?
+- Which displaced prerequisites are still invisible today?
+- What is the next displaced prerequisite being created now?
+
+</div>
+
 </div>
 
 <div class="mn-quiz" data-quiz="untold_history"><script type="application/json">{"title": "The untold history", "questions": [{"q": "What does the chapter mean by “displaced prerequisites”?", "options": ["Discoveries from unrelated fields that AI could not exist without", "Lessons you can skip", "Failed AI projects", "Prerequisites removed from the curriculum"], "answer": 0, "explain": "Materials science, spaceflight, programming languages and the web are not “AI”, but AI rests on them."}, {"q": "How did spaceflight help build the computer industry?", "options": ["Programs like Apollo were early, demanding buyers of integrated circuits", "Astronauts wrote the first programs", "Rockets carried the first servers", "It did not"], "answer": 0, "explain": "Guaranteed demand for tiny, reliable electronics helped make integrated circuits cheap."}, {"q": "Why is VisiCalc (1979) in a history of AI?", "options": ["The spreadsheet made data manipulation usable for ordinary people — a step towards data as an everyday object", "It was the first neural network", "It invented the GPU", "It was a chatbot"], "answer": 0, "explain": "Usability of data mattered as much as raw computing power."}, {"q": "What did the World Wide Web eventually provide for modern AI?", "options": ["The training corpus: an enormous body of human-written text", "Faster processors", "The transformer architecture", "Electricity"], "answer": 0, "explain": "Tim Berners-Lee's web is where most LLM training text comes from."}]}</script></div>

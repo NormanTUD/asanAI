@@ -14971,9 +14971,10 @@
   "city": "Walsall, UK",
   "year": 1774.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "priestley1771airs"
+   "priestley1771airs",
+   "priestley1772air"
   ],
   "cited_in": [
    "untold_history"
@@ -15005,9 +15006,10 @@
   "city": "The Hague, Netherlands",
   "year": 1779.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "ingenhousz1779experiments"
+   "ingenhousz1779experiments",
+   "ingenhousz1779vegetables"
   ],
   "cited_in": [
    "untold_history"
@@ -24577,6 +24579,227 @@
   ]
  },
  {
+  "name": "M. Calvin",
+  "canon": "M. Calvin",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "calvin1948photosynthesis"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "A. A. Benson",
+  "canon": "A. A. Benson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "calvin1948photosynthesis"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "U.S. Energy Information Administration",
+  "canon": "U.S. Energy Information Administration",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "eia_coal"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Fritz Haber",
+  "canon": "Fritz Haber",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "haber1920ammonia"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Norman Borlaug",
+  "canon": "Norman Borlaug",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "borlaug1970green"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Thomas Robert Malthus",
+  "canon": "Thomas Robert Malthus",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "malthus1798population"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Sextus Julius Frontinus",
+  "canon": "Sextus Julius Frontinus",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "frontinus97aqueducts"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Cheryl A. Dieter et al.",
+  "canon": "Cheryl A. Dieter",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "usgs2015wateruse"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "U.S. Geological Survey",
+  "canon": "U.S. Geological Survey",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "usgs2026mcs"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Parliament of the United Kingdom",
+  "canon": "Parliament of the United Kingdom",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "companiesact1856"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "U.S. Congress",
+  "canon": "U.S. Congress",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "sbic1958"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Google Inc.",
+  "canon": "Google Inc.",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "google2004s1"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Jeremy Bem",
+  "canon": "Jeremy Bem",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "adwords2003patent"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
   "name": "Christiaan Huygens",
   "canon": "Christiaan Huygens",
   "alias": null,
@@ -34123,9 +34346,10 @@
   "city": "Stolberg, Germany",
   "year": 1556.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "deremetallica"
+   "deremetallica",
+   "agricola1556demetallica"
   ],
   "cited_in": [
    "untold_history"

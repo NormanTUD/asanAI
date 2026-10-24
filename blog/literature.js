@@ -21128,4 +21128,114 @@ window.bibData = {
 		url: "https://www.qrcode.com/en/history/",
 		alternativetitle: "DENSO WAVE, History of QR Code"
 	},
+
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The deep stack: solar, nitrogen, water, mineral, capital and
+	 *  attention budgets (untold_history.php) — primary sources.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"priestley1772air": {
+		title: "Observations on Different Kinds of Air",
+		author: "Joseph Priestley",
+		year: 1772,
+		url: "https://doi.org/10.1098/rstl.1772.0021",
+		alternativetitle: "Priestley, 1772"
+	},
+	"ingenhousz1779vegetables": {
+		title: "Experiments upon Vegetables, Discovering Their Great Power of Purifying the Common Air in the Sun-shine",
+		author: "Jan Ingenhousz",
+		year: 1779,
+		url: "https://archive.org/details/experimentsupon00ingegoog",
+		alternativetitle: "Ingenhousz, 1779"
+	},
+	"calvin1948photosynthesis": {
+		title: "The Path of Carbon in Photosynthesis",
+		author: "M. Calvin, A. A. Benson",
+		year: 1948,
+		url: "https://doi.org/10.1126/science.107.2784.476",
+		alternativetitle: "Calvin and Benson, 1948"
+	},
+	"eia_coal": {
+		title: "Coal explained: Coal takes millions of years to form",
+		author: "U.S. Energy Information Administration",
+		year: 2026,
+		url: "https://www.eia.gov/energyexplained/coal/",
+		alternativetitle: "EIA, Coal explained"
+	},
+	"haber1920ammonia": {
+		title: "The Synthesis of Ammonia from Its Elements (Nobel Lecture)",
+		author: "Fritz Haber",
+		year: 1920,
+		url: "https://www.nobelprize.org/prizes/chemistry/1918/haber/lecture/",
+		alternativetitle: "Haber, 1920"
+	},
+	"borlaug1970green": {
+		title: "The Green Revolution, Peace, and Humanity (Nobel Lecture)",
+		author: "Norman Borlaug",
+		year: 1970,
+		url: "https://www.nobelprize.org/prizes/peace/1970/borlaug/lecture/",
+		alternativetitle: "Borlaug, 1970"
+	},
+	"malthus1798population": {
+		title: "An Essay on the Principle of Population",
+		author: "Thomas Robert Malthus",
+		year: 1798,
+		url: "https://www.gutenberg.org/ebooks/4239",
+		alternativetitle: "Malthus, 1798"
+	},
+	"frontinus97aqueducts": {
+		title: "The Aqueducts of Rome (De aquaeductu urbis Romae)",
+		author: "Sextus Julius Frontinus",
+		year: 97,
+		url: "https://penelope.uchicago.edu/Thayer/E/Roman/Texts/Frontinus/De_Aquis/home.html",
+		alternativetitle: "Frontinus, De aquaeductu"
+	},
+	"usgs2015wateruse": {
+		title: "Estimated Use of Water in the United States in 2015",
+		author: "Cheryl A. Dieter et al.",
+		year: 2018,
+		url: "https://pubs.usgs.gov/circ/1441/circ1441.pdf",
+		alternativetitle: "USGS, 2018"
+	},
+	"agricola1556demetallica": {
+		title: "De Re Metallica",
+		author: "Georgius Agricola",
+		year: 1556,
+		url: "https://www.gutenberg.org/ebooks/38015",
+		alternativetitle: "Agricola, 1556"
+	},
+	"usgs2026mcs": {
+		title: "Mineral Commodity Summaries 2026",
+		author: "U.S. Geological Survey",
+		year: 2026,
+		url: "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026.pdf",
+		alternativetitle: "USGS, 2026"
+	},
+	"companiesact1856": {
+		title: "Joint Stock Companies Act 1856",
+		author: "Parliament of the United Kingdom",
+		year: 1856,
+		url: "https://www.legislation.gov.uk/ukpga/Vict/19-20/47/enacted",
+		alternativetitle: "Companies Act 1856"
+	},
+	"sbic1958": {
+		title: "Small Business Investment Act of 1958",
+		author: "U.S. Congress",
+		year: 1958,
+		url: "https://www.govinfo.gov/content/pkg/STATUTE-72/pdf/STATUTE-72-Pg689.pdf",
+		alternativetitle: "SBIC Act 1958"
+	},
+	"google2004s1": {
+		title: "Google Inc. Registration Statement (Form S-1)",
+		author: "Google Inc.",
+		year: 2004,
+		url: "https://www.sec.gov/Archives/edgar/data/1288776/000119312504073639/ds1.htm",
+		alternativetitle: "Google S-1 (2004)"
+	},
+	"adwords2003patent": {
+		title: "Increasing a number of relevant advertisements using a relaxed match (US Patent 7,647,242)",
+		author: "Jeremy Bem",
+		year: 2007,
+		url: "https://patents.google.com/patent/US7647242B2/en",
+		alternativetitle: "Google AdWords patent"
+	},
 };

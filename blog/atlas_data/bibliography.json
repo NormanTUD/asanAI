@@ -17459,6 +17459,96 @@
    "author": "DENSO WAVE INCORPORATED",
    "year": "",
    "url": "https://www.qrcode.com/en/history/"
+  },
+  "priestley1772air": {
+   "title": "Observations on Different Kinds of Air",
+   "author": "Joseph Priestley",
+   "year": "",
+   "url": "https://doi.org/10.1098/rstl.1772.0021"
+  },
+  "ingenhousz1779vegetables": {
+   "title": "Experiments upon Vegetables, Discovering Their Great Power of Purifying the Common Air in the Sun-shine",
+   "author": "Jan Ingenhousz",
+   "year": "",
+   "url": "https://archive.org/details/experimentsupon00ingegoog"
+  },
+  "calvin1948photosynthesis": {
+   "title": "The Path of Carbon in Photosynthesis",
+   "author": "M. Calvin, A. A. Benson",
+   "year": "",
+   "url": "https://doi.org/10.1126/science.107.2784.476"
+  },
+  "eia_coal": {
+   "title": "Coal explained: Coal takes millions of years to form",
+   "author": "U.S. Energy Information Administration",
+   "year": "",
+   "url": "https://www.eia.gov/energyexplained/coal/"
+  },
+  "haber1920ammonia": {
+   "title": "The Synthesis of Ammonia from Its Elements (Nobel Lecture)",
+   "author": "Fritz Haber",
+   "year": "",
+   "url": "https://www.nobelprize.org/prizes/chemistry/1918/haber/lecture/"
+  },
+  "borlaug1970green": {
+   "title": "The Green Revolution, Peace, and Humanity (Nobel Lecture)",
+   "author": "Norman Borlaug",
+   "year": "",
+   "url": "https://www.nobelprize.org/prizes/peace/1970/borlaug/lecture/"
+  },
+  "malthus1798population": {
+   "title": "An Essay on the Principle of Population",
+   "author": "Thomas Robert Malthus",
+   "year": "",
+   "url": "https://www.gutenberg.org/ebooks/4239"
+  },
+  "frontinus97aqueducts": {
+   "title": "The Aqueducts of Rome (De aquaeductu urbis Romae)",
+   "author": "Sextus Julius Frontinus",
+   "year": "",
+   "url": "https://penelope.uchicago.edu/Thayer/E/Roman/Texts/Frontinus/De_Aquis/home.html"
+  },
+  "usgs2015wateruse": {
+   "title": "Estimated Use of Water in the United States in 2015",
+   "author": "Cheryl A. Dieter et al.",
+   "year": "",
+   "url": "https://pubs.usgs.gov/circ/1441/circ1441.pdf"
+  },
+  "agricola1556demetallica": {
+   "title": "De Re Metallica",
+   "author": "Georgius Agricola",
+   "year": "",
+   "url": "https://www.gutenberg.org/ebooks/38015"
+  },
+  "usgs2026mcs": {
+   "title": "Mineral Commodity Summaries 2026",
+   "author": "U.S. Geological Survey",
+   "year": "",
+   "url": "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026.pdf"
+  },
+  "companiesact1856": {
+   "title": "Joint Stock Companies Act 1856",
+   "author": "Parliament of the United Kingdom",
+   "year": "",
+   "url": "https://www.legislation.gov.uk/ukpga/Vict/19-20/47/enacted"
+  },
+  "sbic1958": {
+   "title": "Small Business Investment Act of 1958",
+   "author": "U.S. Congress",
+   "year": "",
+   "url": "https://www.govinfo.gov/content/pkg/STATUTE-72/pdf/STATUTE-72-Pg689.pdf"
+  },
+  "google2004s1": {
+   "title": "Google Inc. Registration Statement (Form S-1)",
+   "author": "Google Inc.",
+   "year": "",
+   "url": "https://www.sec.gov/Archives/edgar/data/1288776/000119312504073639/ds1.htm"
+  },
+  "adwords2003patent": {
+   "title": "Increasing a number of relevant advertisements using a relaxed match (US Patent 7,647,242)",
+   "author": "Jeremy Bem",
+   "year": "",
+   "url": "https://patents.google.com/patent/US7647242B2/en"
   }
  },
  "cites": {
@@ -19120,6 +19210,7 @@
    "tokenizerlab"
   ],
   "shannon1951communication": [
+   "history",
    "people_of_ai",
    "tokenizerlab"
   ],
@@ -23822,6 +23913,51 @@
    "untold_history"
   ],
   "rfc2026": [
+   "untold_history"
+  ],
+  "priestley1772air": [
+   "untold_history"
+  ],
+  "ingenhousz1779vegetables": [
+   "untold_history"
+  ],
+  "calvin1948photosynthesis": [
+   "untold_history"
+  ],
+  "eia_coal": [
+   "untold_history"
+  ],
+  "haber1920ammonia": [
+   "untold_history"
+  ],
+  "borlaug1970green": [
+   "untold_history"
+  ],
+  "malthus1798population": [
+   "untold_history"
+  ],
+  "frontinus97aqueducts": [
+   "untold_history"
+  ],
+  "usgs2015wateruse": [
+   "untold_history"
+  ],
+  "agricola1556demetallica": [
+   "untold_history"
+  ],
+  "usgs2026mcs": [
+   "untold_history"
+  ],
+  "companiesact1856": [
+   "untold_history"
+  ],
+  "sbic1958": [
+   "untold_history"
+  ],
+  "google2004s1": [
+   "untold_history"
+  ],
+  "adwords2003patent": [
    "untold_history"
   ],
   "img_ada_lovelace": [
@@ -52699,11 +52835,12 @@
    ]
   },
   "Georgius Agricola": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "deremetallica"
+    "deremetallica",
+    "agricola1556demetallica"
    ]
   },
   "Henry Bessemer": {
@@ -59472,11 +59609,12 @@
    ]
   },
   "Joseph Priestley": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "priestley1771airs"
+    "priestley1771airs",
+    "priestley1772air"
    ]
   },
   "Carl Wilhelm Scheele": {
@@ -59488,11 +59626,12 @@
    ]
   },
   "Jan Ingenhousz": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "ingenhousz1779experiments"
+    "ingenhousz1779experiments",
+    "ingenhousz1779vegetables"
    ]
   },
   "Jean Senebier": {
@@ -62342,6 +62481,110 @@
    "maxyear": null,
    "keys": [
     "denso_qr_history"
+   ]
+  },
+  "M. Calvin": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "calvin1948photosynthesis"
+   ]
+  },
+  "A. A. Benson": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "calvin1948photosynthesis"
+   ]
+  },
+  "U.S. Energy Information Administration": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "eia_coal"
+   ]
+  },
+  "Fritz Haber": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "haber1920ammonia"
+   ]
+  },
+  "Norman Borlaug": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "borlaug1970green"
+   ]
+  },
+  "Thomas Robert Malthus": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "malthus1798population"
+   ]
+  },
+  "Sextus Julius Frontinus": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "frontinus97aqueducts"
+   ]
+  },
+  "Cheryl A. Dieter et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "usgs2015wateruse"
+   ]
+  },
+  "U.S. Geological Survey": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "usgs2026mcs"
+   ]
+  },
+  "Parliament of the United Kingdom": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "companiesact1856"
+   ]
+  },
+  "U.S. Congress": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "sbic1958"
+   ]
+  },
+  "Google Inc.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "google2004s1"
+   ]
+  },
+  "Jeremy Bem": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "adwords2003patent"
    ]
   }
  }
