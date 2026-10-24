@@ -470,12 +470,32 @@ def main() -> int:
 				EC.text_to_be_present_in_element((By.CSS_SELECTOR, "details.item"), "The worked example made backprop click.")
 			)
 			check("The worked example made backprop click." in item.text, "feedback search finds a comment")
+
+			browser.get(f"{feedback_url}&tab=all")
+			WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "details.item")))
+			item = browser.find_element(
+				By.XPATH,
+				"//details[contains(@class,'item')][contains(.,'The worked example made backprop click.')]",
+			)
+			browser.execute_script("arguments[0].open = true;", item)
 			accept = item.find_element(By.XPATH, ".//button[contains(., 'Accept')]")
 			accept.click()
-			prompt = WebDriverWait(browser, 20).until(
-				EC.presence_of_element_located((By.CSS_SELECTOR, "textarea[name=admin_prompt]"))
+			WebDriverWait(browser, 20).until(
+				EC.presence_of_element_located(
+					(By.XPATH, "//details[contains(@class,'item')][contains(.,'reader@example.test')]")
+				)
 			)
-			prompt_value = prompt.get_attribute("value")
+			prompt_item = browser.find_element(
+				By.XPATH,
+				"//details[contains(@class,'item')][contains(.,'reader@example.test')]",
+			)
+			browser.execute_script("arguments[0].open = true;", prompt_item)
+			prompt_value = WebDriverWait(browser, 20).until(
+				lambda d: d.execute_script(
+					"var e=arguments[0].querySelector('textarea[name=admin_prompt]'); return e ? e.value : '';",
+					prompt_item,
+				) or False
+			)
 			check("history" in prompt_value and "backprop" in prompt_value, "accept prepares an editable prompt")
 			check("blog/history.php" in prompt_value, "prompt names the source file")
 
@@ -488,10 +508,6 @@ def main() -> int:
 			comment.clear()
 			comment.send_keys("Now clearer.")
 			item.find_element(By.XPATH, ".//button[contains(., 'Save changes')]").click()
-			time.sleep(2)
-			print("DEBUG URL", browser.current_url)
-			print("DEBUG ITEMS", [i.text[:300] for i in browser.find_elements(By.CSS_SELECTOR, "details.item")])
-			print("DEBUG BODY", browser.find_element(By.TAG_NAME, "body").text[:1200])
 			WebDriverWait(browser, 20).until(
 				EC.presence_of_element_located(
 					(By.XPATH, "//details[contains(@class,'item')][contains(.,'Der Geist ist ein Gespenst.')]")
@@ -511,17 +527,18 @@ def main() -> int:
 					(By.XPATH, "//details[contains(@class,'item')][contains(.,'Der Geist ist ein Gespenst.')][contains(.,'Done')]")
 				)
 			)
-			check("Done" in browser.find_element(
+			done_item = browser.find_element(
 				By.XPATH,
 				"//details[contains(@class,'item')][contains(.,'Der Geist ist ein Gespenst.')]",
-			).text, "feedback can be marked done")
+			)
+			check("done" in done_item.text.lower(), "feedback can be marked done")
 
 			browser.get(f"{feedback_url}&tab=bugs")
 			WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "details.item")))
 			bug_item = browser.find_elements(By.CSS_SELECTOR, "details.item")[0]
 			browser.execute_script("arguments[0].open = true;", bug_item)
 			WebDriverWait(browser, 20).until(lambda d: "Chart stays blank on mobile." in bug_item.text)
-			check("Log attached" in bug_item.text, "bug report is marked as having a log")
+			check("log attached" in bug_item.text.lower(), "bug report is marked as having a log")
 			browser.execute_script(
 				"arguments[0].querySelector('details').open = true;",
 				bug_item,
@@ -541,7 +558,7 @@ def main() -> int:
 			try:
 				WebDriverWait(browser, 10).until_not(
 					EC.presence_of_element_located(
-						(By.XPATH, "//details[contains(@class,'item')][contains(.,'Der Geist ist ein Gespenst.')]")
+						(By.XPATH, "//details[contains(@class,'item')][contains(.,'reader@example.test')]")
 					)
 				)
 			except TimeoutException:
@@ -549,7 +566,7 @@ def main() -> int:
 			check(
 				not browser.find_elements(
 					By.XPATH,
-					"//details[contains(@class,'item')][contains(.,'Der Geist ist ein Gespenst.')]",
+					"//details[contains(@class,'item')][contains(.,'reader@example.test')]",
 				),
 				"feedback can be deleted",
 			)

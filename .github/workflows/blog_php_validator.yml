@@ -180,6 +180,10 @@ jobs:
         run: |
           uv run blog/tests/stats_ui_test.py
 
+      - name: Run Admin Presentation and Reader Feedback UI Test
+        run: |
+          uv run blog/tests/admin_ui_test.py
+
   # Fails the suite if any lesson has content wider than the reading column
   # (margin notes and boxes are exempt). Runs the production layout_guardrail.js
   # in headless Chrome against every lesson page.
