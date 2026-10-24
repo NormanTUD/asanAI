@@ -27,6 +27,13 @@ in-session todo list carries the same high-level items.
 - Feedback tabs, filters and actions use same-origin AJAX inside the embedded panel; charts and deep-links stay intact.
 - Feedback Overview now has ECharts: stacked feedback over time, reaction mix and helpful/not-helpful per page.
 - Unified page title and analytics-only controls switch with the top-level view.
+- Exclude-my-visits control stays visible; analytics-only Present reserves space instead of display:none, so the header no longer jumps.
+- Feedback KPI cards match analytics KPI cards (gradient, 92px min-height, typography).
+- Whole-page scrolling for feedback: iframe height follows content, no inner scrollbar.
+- Analytics charts are re-rendered when switching from feedback to analytics (views-over-time / traffic clock no longer empty).
+- Bot clicks go to Analytics Tech tab and a bot-reason filter link lists exact bots (Googlebot, Bingbot, …).
+- Dedicated External referrers list (host/views/share) with filter links.
+- Course link removed from the admin nav.
 
 ---
 
