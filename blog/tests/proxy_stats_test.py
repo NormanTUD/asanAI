@@ -176,6 +176,13 @@ def main() -> int:
 			check(has_chip(form_chips, "Page:"), "proxy GET form keeps page")
 			check(not has_chip(form_chips, "Source:"), "proxy GET form clears source")
 
+			compare = session.get(
+				f"{proxy_url}?stats.php?cmp_mode=entity&cmp_kind=path&cmp_a=history&cmp_b=attentionlab",
+				timeout=20,
+			)
+			check("compare-head" in compare.text and "compare-row--detail" in compare.text, "compare tab renders through proxy")
+			check("__proxy_path" in compare.text and "cmp_mode" in compare.text, "compare form is proxy-aware")
+
 			csrf_dashboard = re.search(r'name="csrf" value="([a-f0-9]{64})"', filtered.text)
 			check(bool(csrf_dashboard), "dashboard CSRF token for exports")
 			if csrf_dashboard:
