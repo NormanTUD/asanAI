@@ -518,6 +518,18 @@ function mn_analytics_init_db(PDO $pdo): void {
 		UNIQUE(feedback_id)
 	)");
 	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_fbc_feedback ON feedback_bug_context(feedback_id)");
+
+	$pdo->exec("CREATE TABLE IF NOT EXISTS feedback_history (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		feedback_id INTEGER NOT NULL,
+		ts INTEGER NOT NULL,
+		action TEXT NOT NULL DEFAULT '',
+		from_status TEXT NOT NULL DEFAULT '',
+		to_status TEXT NOT NULL DEFAULT '',
+		note TEXT NOT NULL DEFAULT ''
+	)");
+	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_fh_feedback ON feedback_history(feedback_id, ts)");
+	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_fh_ts ON feedback_history(ts)");
 }
 
 function mn_analytics_maybe_migrate_legacy_db(string $path): void {
@@ -580,9 +592,9 @@ function mn_analytics_open_db(bool $readOnly = false): ?PDO {
 		$pdo->exec('PRAGMA synchronous=NORMAL');
 		$pdo->exec('PRAGMA busy_timeout=5000');
 		$version = (int)$pdo->query('PRAGMA user_version')->fetchColumn();
-		if ($version < 7) {
+		if ($version < 8) {
 			mn_analytics_init_db($pdo);
-			$pdo->exec('PRAGMA user_version=7');
+			$pdo->exec('PRAGMA user_version=8');
 		}
 		return $pdo;
 	} catch (Throwable $e) {
@@ -2117,6 +2129,29 @@ function mn_feedback_json_blob(mixed $value, int $maxBytes): string {
 	return $json;
 }
 
+function mn_feedback_history_add(PDO $pdo, int $feedbackId, string $action, string $fromStatus = '', string $toStatus = '', string $note = ''): void {
+	try {
+		$stmt = $pdo->prepare(
+			"INSERT INTO feedback_history (feedback_id, ts, action, from_status, to_status, note)
+			 VALUES (?, ?, ?, ?, ?, ?)"
+		);
+		$stmt->execute([$feedbackId, time(), $action, $fromStatus, $toStatus, $note]);
+	} catch (Throwable $e) {
+		// History is useful but must never block the main action.
+	}
+}
+
+function mn_feedback_history(PDO $pdo, int $feedbackId): array {
+	try {
+		$stmt = $pdo->prepare('SELECT * FROM feedback_history WHERE feedback_id = ? ORDER BY ts DESC, id DESC');
+		$stmt->execute([$feedbackId]);
+		$rows = $stmt->fetchAll();
+		return is_array($rows) ? $rows : [];
+	} catch (Throwable $e) {
+		return [];
+	}
+}
+
 function mn_feedback_store(array $data): array {
 	if (mn_feedback_is_disabled()) {
 		return ['ok' => false, 'error' => 'disabled'];
@@ -2226,6 +2261,7 @@ function mn_feedback_store(array $data): array {
 			$now, $now,
 		]);
 		$feedbackId = (int)$pdo->lastInsertId();
+		mn_feedback_history_add($pdo, $feedbackId, 'created', '', 'new', $reaction);
 
 		if ($selectedText !== '' || $selectedHtml !== '' || $blockText !== '') {
 			$sel = $pdo->prepare(

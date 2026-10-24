@@ -189,7 +189,7 @@ check(preg_match('/^[a-f0-9]{32}$/', $token) === 1, 'pageview token shape');
 $pdo = mn_analytics_open_db();
 check($pdo instanceof PDO, 'database opens');
 if ($pdo instanceof PDO) {
-	check_same(7, (int)$pdo->query('PRAGMA user_version')->fetchColumn(), 'schema version 7');
+	check_same(8, (int)$pdo->query('PRAGMA user_version')->fetchColumn(), 'schema version 8');
 	$row = $pdo->query('SELECT * FROM pageviews ORDER BY id LIMIT 1')->fetch();
 	check_same('history', $row['path'], 'page slug stored');
 	check_same('search', $row['ref_type'], 'referrer type stored');
@@ -287,6 +287,7 @@ if ($pdo instanceof PDO) {
 	$feedbackId = (int)($stored['id'] ?? 0);
 	$feedbackRow = mn_feedback_fetch($pdo, $feedbackId);
 	check(is_array($feedbackRow), 'feedback row can be fetched');
+	check_same(1, (int)$pdo->query('SELECT COUNT(*) FROM feedback_history WHERE feedback_id = ' . $feedbackId . " AND action = 'created'")->fetchColumn(), 'feedback history records creation');
 	check_same('insight', $feedbackRow['reaction'] ?? '', 'feedback reaction stored');
 	check_same('reader@example.test', $feedbackRow['email'] ?? '', 'feedback email stored when supplied');
 	check_same(10, (int)($feedbackRow['start_offset'] ?? -1), 'selection start offset stored');
