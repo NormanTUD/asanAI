@@ -15306,7 +15306,8 @@
    "img_widrow_adaline"
   ],
   "cited_in": [
-   "history"
+   "history",
+   "people_of_ai"
   ]
  },
  {
@@ -34343,9 +34344,11 @@
   "city": "Leipzig, Germany",
   "year": 2017.0,
   "conf": 1,
-  "works": 1,
+  "works": 3,
   "keys": [
-   "hublin2017jebel"
+   "hublin2017jebel",
+   "hublin2015brain",
+   "neubauer2018brainshape"
   ],
   "cited_in": [
    "untold_history"
@@ -49526,7 +49529,8 @@
    "simonnewell_image"
   ],
   "cited_in": [
-   "human_mind"
+   "human_mind",
+   "people_of_ai"
   ]
  },
  {
@@ -50756,9 +50760,11 @@
   "city": "Tübingen, Germany",
   "year": 2017.0,
   "conf": 1,
-  "works": 1,
+  "works": 3,
   "keys": [
-   "hublin2017jebel"
+   "hublin2017jebel",
+   "hublin2015brain",
+   "neubauer2018brainshape"
   ],
   "cited_in": [
    "untold_history"
@@ -57908,9 +57914,11 @@
   "city": "",
   "year": 2017.0,
   "conf": 0,
-  "works": 1,
+  "works": 3,
   "keys": [
-   "hublin2017jebel"
+   "hublin2017jebel",
+   "hublin2015brain",
+   "neubauer2018brainshape"
   ],
   "cited_in": [
    "untold_history"
@@ -62293,12 +62301,14 @@
   "variants": [
    "W. Ross Ashby Digital Archive"
   ],
-  "works": 5,
+  "works": 7,
   "keys": [
    "riemann_portrait",
    "napier_portrait",
    "lagrange_portrait",
    "img_cai_lun",
+   "img_george_boole",
+   "img_gottlob_frege",
    "ashbyphoto"
   ],
   "cited_in": [
@@ -62306,6 +62316,7 @@
    "embeddinglab",
    "history",
    "math_i",
+   "people_of_ai",
    "untold_history"
   ]
  },

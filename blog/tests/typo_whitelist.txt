@@ -563,3 +563,7 @@ subreddit
 neurodynamics hayek lashley uttley mackay equipotentiality
 ashby homeostat ultrastable
 adaline adalines madaline ivakhnenko steinbuch bongard
+# --- untold_history.php: hominin pelvis / brain evolution ---
+platypelloid
+encephalization
+braincase

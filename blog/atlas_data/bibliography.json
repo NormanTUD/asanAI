@@ -2226,6 +2226,66 @@
    "year": "",
    "url": "https://www.nature.com/articles/nature22336"
   },
+  "senevirathne2025bipedalism": {
+   "title": "The evolution of hominin bipedalism in two steps",
+   "author": "Gayani Senevirathne, Serena C. Fernandopulle, Daniel Richard, Stephanie L. Baumgart, Anika Liv Christensen, Matteo Fabbri, Jakob Höppner, Harald Jüppner, Peishu Li, Vivien Bothe, Nadia Fröbisch, Ian Simcock, Owen J. Arthurs, Alistair Calder, Naomi Freilich, Niamh C. Nowlan, Ian A. Glass, April Craft, Terence D. Capellini",
+   "year": "",
+   "url": "https://www.nature.com/articles/s41586-025-09399-9"
+  },
+  "xu2025pelvis": {
+   "title": "The genetic architecture of and evolutionary constraints on the human pelvic form",
+   "author": "Liaoyi Xu, Eucharist Kun, Devansh Pandey, Joyce Y. Wang, Marianne F. Brasil, Tarjinder Singh, Vagheesh M. Narasimhan",
+   "year": "",
+   "url": "https://doi.org/10.1126/science.adq1521"
+  },
+  "gruss2015pelvis": {
+   "title": "The evolution of the human pelvis: changing adaptations to bipedalism, obstetrics and thermoregulation",
+   "author": "Laura Tobias Gruss, Daniel Schmitt",
+   "year": "",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4305164/"
+  },
+  "rosenberg1995obstetrical": {
+   "title": "Bipedalism and human birth: The obstetrical dilemma revisited",
+   "author": "Karen Rosenberg, Wenda Trevathan",
+   "year": "",
+   "url": "https://doi.org/10.1002/evan.1360040506"
+  },
+  "dunsworth2012altriciality": {
+   "title": "Metabolic hypothesis for human altriciality",
+   "author": "Holly M. Dunsworth, Anna G. Warrener, Terrence Deacon, Peter T. Ellison, Herman Pontzer",
+   "year": "",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3458333/"
+  },
+  "warrener2015pelvis": {
+   "title": "A Wider Pelvis Does Not Increase Locomotor Cost in Humans, with Implications for the Evolution of Childbirth",
+   "author": "Anna G. Warrener, Kristi L. Lewton, Herman Pontzer, Daniel E. Lieberman",
+   "year": "",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4356512/"
+  },
+  "desilva2011infants": {
+   "title": "A shift toward birthing relatively large infants early in human evolution",
+   "author": "Jeremy M. DeSilva",
+   "year": "",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3024680/"
+  },
+  "hublin2015brain": {
+   "title": "Brain ontogeny and life history in Pleistocene hominins",
+   "author": "Jean-Jacques Hublin, Simon Neubauer, Philipp Gunz",
+   "year": "",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4305163/"
+  },
+  "neubauer2018brainshape": {
+   "title": "The evolution of modern human brain shape",
+   "author": "Simon Neubauer, Jean-Jacques Hublin, Philipp Gunz",
+   "year": "",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5783678/"
+  },
+  "herculano2012brain": {
+   "title": "The remarkable, yet not extraordinary, human brain as a scaled-up primate brain and its associated cost",
+   "author": "Suzana Herculano-Houzel",
+   "year": "",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3386878/"
+  },
   "weinberg1977first": {
    "title": "The First Three Minutes: A Modern View of the Origin of the Universe",
    "author": "Steven Weinberg",
@@ -12774,6 +12834,72 @@
    "year": "",
    "url": "https://commons.wikimedia.org/wiki/File:Bernard_Widrow_with_ADALINE.jpg"
   },
+  "img_george_boole": {
+   "title": "Portrait of George Boole",
+   "author": "Unknown",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Portrait_of_George_Boole.png"
+  },
+  "img_gottlob_frege": {
+   "title": "Gottlob Frege, c. 1879",
+   "author": "Unknown",
+   "year": "c. 1879",
+   "url": "https://commons.wikimedia.org/wiki/File:Young_frege.jpg"
+  },
+  "img_john_mccarthy": {
+   "title": "John McCarthy at Stanford, 2006",
+   "author": "null0",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:John_McCarthy_Stanford.jpg"
+  },
+  "img_paul_christiano": {
+   "title": "Paul Christiano at IPAM, 2026",
+   "author": "Institute for Pure & Applied Mathematics (IPAM)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Paul_Christiano_-_Mechanistic_Estimation_-_IPAM_at_UCLA_-_0-34-09_%28cropped%29.jpg"
+  },
+  "img_tomas_mikolov": {
+   "title": "Tomáš Mikolov, 2020",
+   "author": "Jindřich Nosek (NoJin)",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Tom%C3%A1%C5%A1_Mikolov_%282020%29.jpg"
+  },
+  "img_jeff_dean": {
+   "title": "Jeff Dean, 2025",
+   "author": "Cmichel67",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Jeff_Dean_in_2025_x.jpg"
+  },
+  "img_dario_amodei": {
+   "title": "Dario Amodei at TechCrunch Disrupt, 2023",
+   "author": "TechCrunch",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Dario_Amodei_at_TechCrunch_Disrupt_2023_01_%28cropped%29.jpg"
+  },
+  "img_stuart_russell": {
+   "title": "Stuart Russell at Nobel Week Dialogue, 2019",
+   "author": "Bengt Oberger",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Stuart_Russell_01.jpg"
+  },
+  "img_nick_bostrom": {
+   "title": "Portrait of Nick Bostrom",
+   "author": "Future of Humanity Institute",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Prof_Nick_Bostrom_324-1.jpg"
+  },
+  "img_eliezer_yudkowsky": {
+   "title": "Eliezer Yudkowsky, Stanford, 2006",
+   "author": "null0",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Eliezer_Yudkowsky,_Stanford_2006_%28square_crop%29.jpg"
+  },
+  "img_toby_ord": {
+   "title": "Toby Ord, 2019",
+   "author": "David Fisher",
+   "year": "",
+   "url": "https://commons.wikimedia.org/wiki/File:Toby_Ord.jpg"
+  },
   "img_warren_weaver": {
    "title": "Warren Weaver, 1940",
    "author": "Donald Cooksey",
@@ -19775,7 +19901,8 @@
    "history"
   ],
   "ashbyphoto": [
-   "history"
+   "history",
+   "people_of_ai"
   ],
   "ashbyintrocybernetics1956": [
    "history",
@@ -19974,7 +20101,8 @@
    "history"
   ],
   "img_widrow_adaline": [
-   "history"
+   "history",
+   "people_of_ai"
   ],
   "widrow1960adaline": [
    "history",
@@ -20520,7 +20648,8 @@
    "human_mind"
   ],
   "simonnewell_image": [
-   "human_mind"
+   "human_mind",
+   "people_of_ai"
   ],
   "henrich2016secret": [
    "human_mind"
@@ -22056,6 +22185,36 @@
   "wonderwerk": [
    "untold_history"
   ],
+  "gruss2015pelvis": [
+   "untold_history"
+  ],
+  "senevirathne2025bipedalism": [
+   "untold_history"
+  ],
+  "xu2025pelvis": [
+   "untold_history"
+  ],
+  "rosenberg1995obstetrical": [
+   "untold_history"
+  ],
+  "dunsworth2012altriciality": [
+   "untold_history"
+  ],
+  "warrener2015pelvis": [
+   "untold_history"
+  ],
+  "desilva2011infants": [
+   "untold_history"
+  ],
+  "hublin2015brain": [
+   "untold_history"
+  ],
+  "neubauer2018brainshape": [
+   "untold_history"
+  ],
+  "herculano2012brain": [
+   "untold_history"
+  ],
   "controlleduseoffire": [
    "untold_history"
   ],
@@ -23283,6 +23442,9 @@
   "img_transformer_attention_heads": [
    "people_of_ai"
   ],
+  "img_paul_christiano": [
+   "people_of_ai"
+  ],
   "img_jared_kaplan": [
    "people_of_ai"
   ],
@@ -23299,6 +23461,12 @@
   "fchollet_site": [
    "people_of_ai"
   ],
+  "img_george_boole": [
+   "people_of_ai"
+  ],
+  "img_gottlob_frege": [
+   "people_of_ai"
+  ],
   "boole1854": [
    "people_of_ai"
   ],
@@ -23306,6 +23474,9 @@
    "people_of_ai"
   ],
   "church1936": [
+   "people_of_ai"
+  ],
+  "img_john_mccarthy": [
    "people_of_ai"
   ],
   "mccarthy1955dartmouth": [
@@ -23330,11 +23501,17 @@
   "radford2022whisper": [
    "people_of_ai"
   ],
+  "img_tomas_mikolov": [
+   "people_of_ai"
+  ],
   "pennington2014glove": [
    "embeddinglab",
    "people_of_ai"
   ],
   "kudo2018sentencepiece": [
+   "people_of_ai"
+  ],
+  "img_jeff_dean": [
    "people_of_ai"
   ],
   "rajbhandari2020zero": [
@@ -23346,6 +23523,9 @@
   "turner2023actadd": [
    "people_of_ai"
   ],
+  "img_dario_amodei": [
+   "people_of_ai"
+  ],
   "burns2023weakstrong": [
    "mechanistic_interpretability",
    "people_of_ai"
@@ -23354,6 +23534,18 @@
    "people_of_ai"
   ],
   "irving2018debate": [
+   "people_of_ai"
+  ],
+  "img_stuart_russell": [
+   "people_of_ai"
+  ],
+  "img_nick_bostrom": [
+   "people_of_ai"
+  ],
+  "img_eliezer_yudkowsky": [
+   "people_of_ai"
+  ],
+  "img_toby_ord": [
    "people_of_ai"
   ],
   "russell2019human": [
@@ -31979,11 +32171,13 @@
    ]
   },
   "Jean-Jacques Hublin": {
-   "count": 1,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "hublin2017jebel"
+    "hublin2017jebel",
+    "hublin2015brain",
+    "neubauer2018brainshape"
    ]
   },
   "Abdelouahed Ben-Ncer": {
@@ -32011,11 +32205,13 @@
    ]
   },
   "Simon Neubauer": {
-   "count": 1,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "hublin2017jebel"
+    "hublin2017jebel",
+    "hublin2015brain",
+    "neubauer2018brainshape"
    ]
   },
   "Matthew M. Skinner": {
@@ -32059,11 +32255,327 @@
    ]
   },
   "Philipp Gunz": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "hublin2017jebel",
+    "hublin2015brain",
+    "neubauer2018brainshape"
+   ]
+  },
+  "Gayani Senevirathne": {
    "count": 1,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "hublin2017jebel"
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Serena C. Fernandopulle": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Daniel Richard": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Stephanie L. Baumgart": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Anika Liv Christensen": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Matteo Fabbri": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Jakob Höppner": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Harald Jüppner": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Peishu Li": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Vivien Bothe": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Nadia Fröbisch": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Ian Simcock": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Owen J. Arthurs": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Alistair Calder": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Naomi Freilich": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Niamh C. Nowlan": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Ian A. Glass": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "April Craft": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Terence D. Capellini": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "senevirathne2025bipedalism"
+   ]
+  },
+  "Liaoyi Xu": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "xu2025pelvis"
+   ]
+  },
+  "Eucharist Kun": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "xu2025pelvis"
+   ]
+  },
+  "Devansh Pandey": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "xu2025pelvis"
+   ]
+  },
+  "Joyce Y. Wang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "xu2025pelvis"
+   ]
+  },
+  "Marianne F. Brasil": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "xu2025pelvis"
+   ]
+  },
+  "Tarjinder Singh": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "xu2025pelvis"
+   ]
+  },
+  "Vagheesh M. Narasimhan": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "xu2025pelvis"
+   ]
+  },
+  "Laura Tobias Gruss": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "gruss2015pelvis"
+   ]
+  },
+  "Daniel Schmitt": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "gruss2015pelvis"
+   ]
+  },
+  "Karen Rosenberg": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rosenberg1995obstetrical"
+   ]
+  },
+  "Wenda Trevathan": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rosenberg1995obstetrical"
+   ]
+  },
+  "Holly M. Dunsworth": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dunsworth2012altriciality"
+   ]
+  },
+  "Anna G. Warrener": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dunsworth2012altriciality",
+    "warrener2015pelvis"
+   ]
+  },
+  "Terrence Deacon": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dunsworth2012altriciality"
+   ]
+  },
+  "Peter T. Ellison": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dunsworth2012altriciality"
+   ]
+  },
+  "Herman Pontzer": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dunsworth2012altriciality",
+    "warrener2015pelvis"
+   ]
+  },
+  "Kristi L. Lewton": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "warrener2015pelvis"
+   ]
+  },
+  "Daniel E. Lieberman": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "warrener2015pelvis"
+   ]
+  },
+  "Jeremy M. DeSilva": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "desilva2011infants"
+   ]
+  },
+  "Suzana Herculano-Houzel": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "herculano2012brain"
    ]
   },
   "Steven Weinberg": {
@@ -45354,14 +45866,16 @@
    ]
   },
   "Unknown": {
-   "count": 4,
+   "count": 6,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "riemann_portrait",
     "napier_portrait",
     "lagrange_portrait",
-    "img_cai_lun"
+    "img_cai_lun",
+    "img_george_boole",
+    "img_gottlob_frege"
    ]
   },
   "SharkD": {
@@ -55013,6 +55527,73 @@
     "img_widrow_adaline"
    ]
   },
+  "null0": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_john_mccarthy",
+    "img_eliezer_yudkowsky"
+   ]
+  },
+  "Institute for Pure & Applied Mathematics (IPAM)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_paul_christiano"
+   ]
+  },
+  "Jindřich Nosek (NoJin)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_tomas_mikolov"
+   ]
+  },
+  "Cmichel67": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_jeff_dean"
+   ]
+  },
+  "TechCrunch": {
+   "count": 3,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_dario_amodei",
+    "img_andrew_ng",
+    "img_jared_kaplan"
+   ]
+  },
+  "Bengt Oberger": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_stuart_russell"
+   ]
+  },
+  "Future of Humanity Institute": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_nick_bostrom"
+   ]
+  },
+  "David Fisher": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "img_toby_ord"
+   ]
+  },
   "Donald Cooksey": {
    "count": 1,
    "minyear": null,
@@ -60313,15 +60894,6 @@
    "maxyear": null,
    "keys": [
     "img_john_hopfield"
-   ]
-  },
-  "TechCrunch": {
-   "count": 2,
-   "minyear": null,
-   "maxyear": null,
-   "keys": [
-    "img_andrew_ng",
-    "img_jared_kaplan"
    ]
   },
   "Rolf Kickuth": {
