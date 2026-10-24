@@ -12,10 +12,7 @@ tags: math-heavy, code-heavy
 math: 60
 -->
 
-<!--
-TODO https://stats.stackexchange.com/questions/499109/who-invented-the-concept-of-over-fitting
-TODO https://datascience.stackexchange.com/questions/85866/who-invented-the-concept-of-over-fitting
--->
+
 
 <div class="md">
 
