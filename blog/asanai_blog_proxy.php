@@ -108,6 +108,22 @@ function asanai_proxy_rewrite_html(string $content, string $remote_base, string 
 	) ?? $content;
 
 	$content = preg_replace_callback(
+		'/<link\b([^>]*?)\bhref\s*=\s*(["\'])(.*?)\2([^>]*)>/is',
+		static function (array $match) use ($remote_base, $proxy_name, $current_path): string {
+			$tag = $match[1] . ' ' . $match[4];
+			if (!preg_match('/\brel\s*=\s*(["\'])(.*?)\1/i', $tag, $rel) || !preg_match('/(?:stylesheet|preload|icon|manifest|apple-touch-icon)/i', $rel[2])) {
+				return $match[0];
+			}
+			$new = asanai_proxy_rewrite_url($match[3], $remote_base, $proxy_name, $current_path);
+			if ($new === $match[3]) {
+				return $match[0];
+			}
+			return '<link' . $match[1] . 'href=' . $match[2] . htmlspecialchars($new, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . $match[2] . $match[4] . '>';
+		},
+		$content
+	) ?? $content;
+
+	$content = preg_replace_callback(
 		'/\bsrc=(["\'])(?!(?:https?:\/\/|\/\/|data:))([^"\']+\.(?:js|jpg|jpeg|png|gif|json)(?:\?[^"\']*)?)\1/i',
 		static function (array $match) use ($proxy_name): string {
 			if (str_starts_with($match[2], $proxy_name)) {
@@ -122,6 +138,76 @@ function asanai_proxy_rewrite_html(string $content, string $remote_base, string 
 	$content = preg_replace('/\bsrc=(["\'])' . $exclude . '([^"\']+)\1/i', 'src=$1' . $remote_base . '$2$1', $content) ?? $content;
 	$content = preg_replace('/\bhref=(["\'])' . $exclude . '([^"\']+)\1/i', 'href=$1' . $remote_base . '$2$1', $content) ?? $content;
 
+	return $content;
+}
+
+function asanai_proxy_normalize_path(string $path): string {
+	$parts = [];
+	foreach (explode('/', $path) as $part) {
+		if ($part === '' || $part === '.') {
+			continue;
+		}
+		if ($part === '..') {
+			array_pop($parts);
+			continue;
+		}
+		$parts[] = $part;
+	}
+	return implode('/', $parts);
+}
+
+function asanai_proxy_rewrite_css_url(string $url, string $remote_base, string $proxy_name, string $css_path): string {
+	$url = trim(html_entity_decode($url, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+	if ($url === '' || str_starts_with($url, '#') || str_starts_with(strtolower($url), 'data:')) {
+		return $url;
+	}
+	$lower = strtolower($url);
+	if (str_starts_with($url, '//') || (str_starts_with($lower, 'http://') && !str_starts_with($url, $remote_base)) || (str_starts_with($lower, 'https://') && !str_starts_with($url, $remote_base))) {
+		return $url;
+	}
+	$base_path = rtrim((string)(parse_url($remote_base, PHP_URL_PATH) ?: '/'), '/') . '/';
+	if (str_starts_with($lower, 'http://') || str_starts_with($lower, 'https://')) {
+		$target = substr($url, strlen($remote_base));
+	} elseif (str_starts_with($url, '/')) {
+		if (!str_starts_with($url, $base_path)) {
+			return $url;
+		}
+		$target = substr($url, strlen($base_path));
+	} else {
+		$dir = dirname($css_path);
+		$target = ($dir === '.' || $dir === '/' ? '' : $dir . '/') . $url;
+	}
+	$target = asanai_proxy_normalize_path($target);
+	if ($target === '') {
+		return $url;
+	}
+	return $proxy_name . '?' . $target;
+}
+
+function asanai_proxy_rewrite_css(string $content, string $remote_base, string $proxy_name, string $css_path): string {
+	$content = preg_replace_callback(
+		'/url\(\s*([\'"]?)(.*?)\1\s*\)/is',
+		static function (array $match) use ($remote_base, $proxy_name, $css_path): string {
+			$new = asanai_proxy_rewrite_css_url($match[2], $remote_base, $proxy_name, $css_path);
+			if ($new === $match[2]) {
+				return $match[0];
+			}
+			$escaped = str_replace(['"', "'", ')'], ['%22', '%27', '%29'], $new);
+			return 'url("' . $escaped . '")';
+		},
+		$content
+	) ?? $content;
+	$content = preg_replace_callback(
+		'/@import\s+(?:url\(\s*)?([\'"])(.*?)\1\s*\)?/is',
+		static function (array $match) use ($remote_base, $proxy_name, $css_path): string {
+			$new = asanai_proxy_rewrite_css_url($match[2], $remote_base, $proxy_name, $css_path);
+			if ($new === $match[2]) {
+				return $match[0];
+			}
+			return '@import url("' . str_replace('"', '%22', $new) . '")';
+		},
+		$content
+	) ?? $content;
 	return $content;
 }
 
@@ -313,6 +399,8 @@ if ($content_type === '') {
 $current_remote_path = (string)explode('?', $path, 2)[0];
 if (str_contains(strtolower($content_type), 'text/html') && $status !== 204 && $status !== 304) {
 	$content = asanai_proxy_rewrite_html((string)$content, $remote_base, $proxy_name, $current_remote_path);
+} elseif (str_contains(strtolower($content_type), 'text/css') && $status !== 204 && $status !== 304) {
+	$content = asanai_proxy_rewrite_css((string)$content, $remote_base, $proxy_name, $current_remote_path);
 }
 
 http_response_code($status);

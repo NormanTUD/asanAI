@@ -456,7 +456,7 @@ Each of these revolutions was driven by problems that had nothing to do with com
 Ideas alone do not compute. Every inference rests on a scaffold of discoveries made by people who never imagined a machine writing poetry — the displaced prerequisites that fill the rest of this history.
 </div>
 
-<div class="mn-quiz mn-quiz--checkpoint" data-quiz="untold_history-cp1" data-depth="60"><script type="application/json">{"title": "Checkpoint: from mythos to logos", "questions": [{"q": "Which medieval picture of the world left computation the intuition of discrete, nested, ranked categories — a “level of abstraction” and a “class”?", "options": ["The Great Chain of Being (scala naturae)", "The Ptolemaic epicycles", "The four humours", "The music of the spheres"], "answer": 0, "explain": "A fixed hierarchy from minerals through plants, animals and humans up to God — rigid, but it trained the habit of thinking in nested classes."}]}</script></div>
+<div class="mn-quiz mn-quiz--checkpoint" data-quiz="untold_history_i-cp1" data-depth="60"><script type="application/json">{"title": "Checkpoint: from mythos to logos", "questions": [{"q": "Which medieval picture of the world left computation the intuition of discrete, nested, ranked categories — a “level of abstraction” and a “class”?", "options": ["The Great Chain of Being (scala naturae)", "The Ptolemaic epicycles", "The four humours", "The music of the spheres"], "answer": 0, "explain": "A fixed hierarchy from minerals through plants, animals and humans up to God — rigid, but it trained the habit of thinking in nested classes."}]}</script></div>
 
 <div class="md" data-depth="80">
 

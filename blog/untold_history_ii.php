@@ -766,7 +766,7 @@ Every digital computer operates to the rhythm of a **crystal oscillator**. The q
 None of these components was invented for AI. Yet remove any single element and the entire edifice collapses. The history of AI hardware is the ultimate illustration of the “displaced prerequisite”: a convergence of solutions to unrelated problems that proved inseparable once they met.
 </div>
 
-<div class="mn-quiz mn-quiz--checkpoint" data-quiz="untold_history-cp2" data-depth="40"><script type="application/json">{"title": "Checkpoint: the material foundations", "questions": [{"q": "What did cell theory, established in the 19th century, propose?", "options": ["That the tissues of all organisms are built from cells", "That cells are made of silicon", "That only plants have cells", "That nerves are one continuous net"], "answer": 0, "explain": "From Hooke's “honeycomb” in cork and Leeuwenhoek's living cells to a principle for all life — the road that later led to the neuron."}]}</script></div>
+<div class="mn-quiz mn-quiz--checkpoint" data-quiz="untold_history_ii-cp2" data-depth="40"><script type="application/json">{"title": "Checkpoint: the material foundations", "questions": [{"q": "What did cell theory, established in the 19th century, propose?", "options": ["That the tissues of all organisms are built from cells", "That cells are made of silicon", "That only plants have cells", "That nerves are one continuous net"], "answer": 0, "explain": "From Hooke's “honeycomb” in cork and Leeuwenhoek's living cells to a principle for all life — the road that later led to the neuron."}]}</script></div>
 
 <div class="md" data-depth="20">
 ## The Fab: How Sand Becomes an Accelerator
