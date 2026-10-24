@@ -129,9 +129,13 @@ def main() -> int:
 			now = int(time.time())
 			day = time.strftime("%Y-%m-%d", time.localtime(now))
 			with sqlite3.connect(db_path) as db:
-				db.execute(
+				pageview_id = db.execute(
 					"INSERT INTO pageviews (ts, day, hour, path, ref_type, ref_source, ref_host, browser, os, device, duration_sec, scroll_pct, completed) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
 					(now, day, 12, "history", "search", "google", "google.com", "Chrome", "Linux", "desktop", 30, 60, 1),
+				).lastrowid
+				db.execute(
+					"INSERT INTO pageview_sections (pageview_id, path, section_index, section_key, section_label, visible_pct, dwell_sec) VALUES (?,?,?,?,?,?,?)",
+					(pageview_id, "history", 1, "verlaesslichkeit", "Verlässlichkeit und Stabilität", 100, 10),
 				)
 				feedback_id = db.execute(
 					"INSERT INTO block_feedback (request_id, ts, day, path, lesson_title, block_text, comment, reaction, status) VALUES (?,?,?,?,?,?,?,?,?)",
@@ -157,6 +161,8 @@ def main() -> int:
 			check("Reader feedback" in search_phrase.text and "Selected passages" in search_phrase.text, "quoted phrase searches feedback and passages")
 			search_view = session.get(f"{base}?q=google", timeout=15)
 			check("Pageviews" in search_view.text, "search finds pageviews")
+			search_umlaut = session.get(f"{base}?q=verlasslichkeit", timeout=15)
+			check("Verlässlichkeit und Stabilität" in search_umlaut.text, "search folds diacritics")
 			search_none = session.get(f"{base}?q=zzzz-no-match", timeout=15)
 			check("No stored data matches" in search_none.text, "empty search state is explicit")
 			search_percent = session.get(f"{base}?q=%25", timeout=15)

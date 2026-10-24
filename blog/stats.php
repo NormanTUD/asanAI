@@ -363,7 +363,7 @@ function stats_search_run(PDO $pdo, array $terms, array $titles): array {
 	$groups['pages'] = ['label' => 'Pages & lessons', 'items' => $pageItems, 'total' => count($pageItems)];
 
 	$params = [];
-	$where = stats_search_where($terms, ['p.path', 'p.ref_type', 'p.ref_source', 'p.ref_host', 'p.ref_path', 'p.browser', 'p.os', 'p.device', 'p.bot_reason', 'p.day'], $params);
+	$where = stats_search_where($terms, ['p.path', 'p.ref_type', 'p.ref_source', 'p.ref_host', 'p.ref_path', 'p.browser', 'p.browser_major', 'p.os', 'p.os_version', 'p.device', 'p.bot_reason', 'p.day', 'CAST(p.is_bot AS TEXT)', 'CAST(p.completed AS TEXT)', 'CAST(p.duration_sec AS TEXT)', 'CAST(p.scroll_pct AS TEXT)'], $params);
 	$count = stats_search_one($pdo, "SELECT COUNT(*) AS n FROM pageviews p WHERE $where", $params);
 	$rows = stats_search_all($pdo, "SELECT p.id, p.ts, p.day, p.hour, p.path, p.ref_type, p.ref_source, p.ref_host, p.ref_path, p.browser, p.os, p.device, p.is_bot, p.bot_reason FROM pageviews p WHERE $where ORDER BY p.ts DESC LIMIT 40", $params);
 	$items = [];
@@ -423,7 +423,7 @@ function stats_search_run(PDO $pdo, array $terms, array $titles): array {
 	$groups['events'] = ['label' => 'Interaction events', 'items' => $items, 'total' => $count];
 
 	$params = [];
-	$where = stats_search_where($terms, ['f.path', 'f.lesson_title', 'f.part_title', 'f.section_title', 'f.block_key', 'f.block_text', 'f.comment', 'f.email', 'f.admin_note', 'f.admin_prompt', 'f.reaction', 'f.status'], $params);
+	$where = stats_search_where($terms, ['f.path', 'f.lesson_title', 'f.part_title', 'f.section_title', 'f.block_key', 'f.block_selector', 'f.section_anchor', 'f.container_label', 'f.context_kind', 'f.block_text', 'f.comment', 'f.email', 'f.admin_note', 'f.admin_prompt', 'f.reaction', 'f.status'], $params);
 	$count = stats_search_one($pdo, "SELECT COUNT(*) AS n FROM block_feedback f WHERE $where", $params);
 	$rows = stats_search_all($pdo, "SELECT f.id, f.ts, f.path, f.lesson_title, f.section_title, f.reaction, f.status, f.comment, f.block_text FROM block_feedback f WHERE $where ORDER BY f.ts DESC LIMIT 40", $params);
 	$items = [];
@@ -5164,7 +5164,7 @@ $presentationTitleInsight = mn_analytics_format_number($views) . ' views across 
 		<?php if ($presentationSignals): ?>
 		<section class="mn-pres-slide" data-title="Signals" style="--slide-accent: var(--sky);">
 			<h2>Signals worth a closer look</h2>
-			<div class="mn-pres-takeaways">
+			<div class="mn-pres-takeaways mn-pres-signals">
 				<?php foreach ($presentationSignals as $presentationSignal): ?>
 					<div class="mn-pres-takeaway"><b><?php echo stats_h($presentationSignal['label']); ?></b><?php echo stats_h($presentationSignal['text']); ?></div>
 				<?php endforeach; ?>
