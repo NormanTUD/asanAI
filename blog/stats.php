@@ -2120,7 +2120,7 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 .hero-brief { padding: 12px 12px 12px 14px; border-left: 1px solid var(--line); }
 .hero-brief ul { margin: 10px 0 0; padding-left: 16px; display: grid; gap: 6px; color: var(--text); font-size: 12px; line-height: 1.45; }
 .hero-brief li::marker { color: var(--accent); }
-.card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; padding-right: 56px; }
 .card-head h2 { margin: 0; }
 .segmented { display: inline-flex; gap: 3px; padding: 3px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); }
 .segmented button { border: 0; background: transparent; color: var(--muted); padding: 5px 8px; border-radius: 6px; font: inherit; font-size: 10.5px; font-weight: 600; cursor: pointer; }

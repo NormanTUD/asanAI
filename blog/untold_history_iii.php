@@ -13,7 +13,7 @@ tags: interested-layman
 
 <div class="md" data-depth="20">
 
-## 🛸 War, Space, and the Machine
+## War, Space, and the Machine
 
 ### From the Battlefield to AlphaGo: How War Research Helped to Build Modern AI
 
@@ -266,7 +266,7 @@ None of these systems was built for AI. Yet between the corner cubes on the Moon
 <div class="mn-quiz mn-quiz--checkpoint" data-quiz="untold_history_iii-cp4" data-depth="20"><script type="application/json">{"title": "Checkpoint: spaceflight", "questions": [{"q": "The Apollo Guidance Computer was one of the first computers built from…", "options": ["silicon integrated circuits", "vacuum tubes", "mechanical relays", "optical fibres"], "answer": 0, "explain": "Developed at the MIT Instrumentation Laboratory from 1961, it made spaceflight an early, demanding customer of the integrated circuit."}]}</script></div>
 
 <div class="md" data-depth="20">
-## 💿 Representing the World as Data
+## Representing the World as Data
 
 ### The Abstraction of Data: From Types to Tensors
 
@@ -1083,7 +1083,7 @@ All these developments, even though they were focussed for the normal user, are 
 </div>
 
 <div class="md" data-depth="20">
-## 📶 Networks, Corpora, and Permission
+## Networks, Corpora, and Permission
 
 ### The Industrial Stack
 
@@ -1199,7 +1199,7 @@ At the hardware layer, permission is geopolitical. The U.S. Bureau of Industry a
 </div>
 
 <div class="md" data-depth="40">
-## ⌛ Institutions and Budgets
+## Institutions and Budgets
 
 ### The School: Mass Literacy and the Human-Capital Budget
 
@@ -1385,7 +1385,7 @@ The free web was not free; it was paid for by advertising. Google's 2004 registr
 
 > **Open questions.** What would the web look like with subscriptions instead of ads? How does advertising shape what gets written and indexed? Who owns the attention that trains the model?
 
-## ❓ Open Questions
+## Open Questions
 
 The chain is not finished. These are the questions this page cannot answer, and the ones a reader should carry forward:
 
