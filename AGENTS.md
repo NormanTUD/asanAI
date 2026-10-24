@@ -72,6 +72,11 @@ auto-injects `mobile.css` + `mobile.js` into every page's `<head>` (deduped).
 `mobile.js` handles touch-only polish (glossary tap-tooltips, drawer
 swipe-close, iOS `--vh` sync). Consequence: lesson code can assume
 `mobile.css` is present even on direct-access pages.
+`blog/asanai_blog_proxy.php` is a method/cookie-aware reverse proxy for
+embeds: it forwards POST bodies, the blog's cookie allowlist and visitor
+headers, rewrites links/forms/CSS/fonts and the analytics endpoint, and makes
+stats login/CSV/backup work through the proxy. Override its remote base with
+`ASANAI_BLOG_PROXY_REMOTE` for staging/tests.
 
 ## The Blog: load & render pipeline (order matters)
 

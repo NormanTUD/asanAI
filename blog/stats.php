@@ -2418,14 +2418,14 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 		<nav class="subnav" data-tab-group="overview" data-slide="1" aria-label="Overview sections">
 			<a href="#hero">Today</a>
 			<a href="#traffic">Traffic</a>
-			<a href="#rhythm">Rhythm</a>
 			<a href="#attention">Attention</a>
+			<a href="#rhythm">Rhythm</a>
 			<a href="#content">Content</a>
 			<a href="#movers">Movers</a>
+			<a href="#portfolio">Portfolio</a>
 			<a href="#audience">Audience</a>
 			<a href="#calendar">Calendar</a>
 			<a href="#page-source">Page × source</a>
-			<a href="#portfolio">Portfolio</a>
 			<a href="#navigation">Navigation</a>
 			<a href="#quality">Quality</a>
 		</nav>
