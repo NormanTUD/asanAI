@@ -77,8 +77,6 @@ CISA's 2024 risk assessment warns that generative AI lowers the cost of producin
 
 The darkest application of the technology is the one that has driven the most legislation. A **2019 Sensity report** found that **96%** of deepfakes are sexually explicit and feature women who did not consent (\cite[Sensity, 2019]{sensity2019deepfakes}).
 
-In **South Korea**, police reported over **800 deepfake sex-crime cases** by the end of September 2024 (versus 156 in 2021). One Telegram group had **220,000 members**. "Nudify" bots were estimated at **4 million monthly users** by October 2024. The **Grok/X scandal** of late 2025/early 2026 saw users generating **6,700 sexually suggestive or nudified images per hour** over a 24-hour period, with an analysis of 20,000 images showing 2% depicted people appearing 18 or younger.
-
 This is not a "side effect." This is the largest single category of AI-generated content on the internet, and it is an act of violence at industrial scale.
 
 ### Scams: The 650-Million-Dollar Year
@@ -474,7 +472,7 @@ One of the most culturally novel and least understood impacts of generative AI i
 
 **Character.AI**, founded in **November 2021** by Noam Shazeer and Daniel de Freitas (ex-Google LaMDA team), lets users create and interact with AI characters — fictional, historical, or celebrity-based. It became one of the most popular consumer AI apps, especially among younger users (\cite[Character.AI]{characterai}).
 
-The **Sewell Setzer case** (2024) was the first high-profile legal challenge: a **14-year-old** Florida boy died by suicide in February 2024 after a months-long relationship with a **Daenerys Targaryn** character on Character.AI. His mother filed suit in **October 2024**, alleging the platform was "addictive and manipulative" by design (\cite[CBS News, 2024]{cbs2024characterai}). Related cases followed: a 13-year-old in Colorado (November 2023), and two Texas families (December 2024). In **October 2025**, Character.AI began **barring under-18s** from creating or talking to chatbots.
+The **Sewell Setzer case** (2024) was the first high-profile legal challenge: a **14-year-old** Florida boy died by suicide in February 2024 after a months-long relationship with a **Daenerys Targaryen** character on Character.AI. His mother filed suit in **October 2024**, alleging the platform was "addictive and manipulative" by design (\cite[CBS News, 2024]{cbs2024characterai}). Related cases followed: a 13-year-old in Colorado (November 2023), and two Texas families (December 2024).
 
 The Pew Research Center found that just over **half of US teens** have used chatbots for schoolwork, and **12%** have used them for **emotional support** (\cite[Pew Research, 2026]{pew2026ai}). The "AI boyfriend/girlfriend" app category grew explosively through 2024–2025.
 
