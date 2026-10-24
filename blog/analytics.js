@@ -5,7 +5,8 @@
  * sessionStorage. It keeps a page-scoped random token (issued by PHP) and a
  * visible-time counter in memory only, and sends a single final beacon when
  * the page is left. The server already counted the pageview when it rendered
- * the page; these messages only add duration/scroll depth.
+ * the page; these messages add duration, scroll depth, heading visibility and
+ * aggregate interaction events (no raw queries, full URLs or visitor ID).
  */
 (function () {
 	'use strict';
@@ -271,6 +272,12 @@
 		document.addEventListener('click', function (event) {
 			var target = event.target;
 			if (!target || !target.closest) {
+				return;
+			}
+
+			var trainButton = target.closest('.btn-train');
+			if (trainButton) {
+				addEvent('lab_run', pageSlug() + ':train', 1);
 				return;
 			}
 

@@ -766,6 +766,8 @@ $prevPageMap = [];
 $pageSourceData = [];
 $pageSourcePages = [];
 $pageSourceSources = [];
+$pageSourcePageKeys = [];
+$pageSourceSourceFilters = [];
 $contentTreemap = [];
 $sourceTreemap = [];
 $clockLabels = [];
@@ -1307,7 +1309,7 @@ if ($authed) {
 		$sectionPageViewTotal = $path !== '' ? $views : (int)($topPages[0]['views'] ?? 0);
 		if ($detailsEnabled && $sectionPath !== '') {
 			$sectionRows = stats_all($pdo, "SELECT s.section_index, s.section_key, s.section_label,
-					COUNT(*) AS reached,
+					SUM(CASE WHEN s.visible_pct >= 25 THEN 1 ELSE 0 END) AS reached,
 					AVG(s.visible_pct) AS avg_visible,
 					AVG(s.dwell_sec) AS avg_dwell
 				FROM pageview_sections s
@@ -1404,7 +1406,13 @@ if ($authed) {
 			$healthDuration = $page['avg_duration'] !== null ? (float)$page['avg_duration'] : null;
 			$healthScroll = $page['avg_scroll'] !== null ? (float)$page['avg_scroll'] : null;
 			$healthWords = mn_analytics_page_word_count($healthSlug);
-			$healthSpeed = ($healthWords !== null && $healthDuration !== null && $healthDuration > 0) ? $healthWords / ($healthDuration / 60) : null;
+			$healthSpeed = null;
+			if ($healthWords !== null && $healthDuration !== null && $healthDuration >= 45) {
+				$healthSpeed = $healthWords / ($healthDuration / 60);
+				if ($healthSpeed < 40 || $healthSpeed > 1200) {
+					$healthSpeed = null;
+				}
+			}
 			$healthPrev = (int)($prevPageMap[$healthSlug] ?? 0);
 			$healthMomentum = $healthPrev > 0 ? 100 * ($healthViews - $healthPrev) / $healthPrev : null;
 			$healthFlags = [];
@@ -3067,7 +3075,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 						<?php foreach ($contentHealth as $health): ?>
 							<a class="health-card" href="?<?php echo stats_h(stats_query(['path' => $health['slug'], 'page' => 1])); ?>">
 								<div class="health-head"><span class="title"><?php echo stats_h($health['label']); ?></span><span class="mini-share"><?php echo stats_h(number_format($health['share'], 1, '.', ',')); ?> %</span></div>
-								<div class="health-meta"><?php echo mn_analytics_format_number($health['views']); ?> views · <?php echo stats_h(mn_analytics_format_duration($health['duration'] !== null ? (int)round($health['duration']) : null)); ?> · <?php echo $health['scroll'] !== null ? stats_h(number_format($health['scroll'], 0, '.', ',')) . ' % scroll' : 'scroll —'; ?><?php if ($health['speed'] !== null): ?> · <?php echo stats_h(number_format($health['speed'], 0, '.', ',')); ?> wpm<?php endif; ?></div>
+								<div class="health-meta"><?php echo mn_analytics_format_number($health['views']); ?> views · <?php echo stats_h(mn_analytics_format_duration($health['duration'] !== null ? (int)round($health['duration']) : null)); ?> · <?php echo $health['scroll'] !== null ? stats_h(number_format($health['scroll'], 0, '.', ',')) . ' % scroll' : 'scroll —'; ?><?php if ($health['words'] !== null): ?> · <?php echo mn_analytics_format_number($health['words']); ?> words<?php endif; ?><?php if ($health['speed'] !== null): ?> · <?php echo stats_h(number_format($health['speed'], 0, '.', ',')); ?> wpm<?php endif; ?></div>
 								<?php if ($health['flags']): ?><div class="health-flags"><?php foreach ($health['flags'] as $flag): ?><span class="badge warn"><?php echo stats_h($flag); ?></span><?php endforeach; ?></div><?php endif; ?>
 								<div class="health-bars">
 									<?php foreach (['reach' => 'Reach', 'depth' => 'Depth', 'stickiness' => 'Stickiness', 'momentum' => 'Momentum'] as $scoreKey => $scoreLabel): $scoreValue = (float)($health['scores'][$scoreKey] ?? 0); ?>
@@ -3093,7 +3101,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<?php endif; ?>
 				</div>
 				<?php if ($sectionMap): ?>
-					<p class="ref" style="margin: -4px 0 10px;">Based on <?php echo mn_analytics_format_number($sectionPageviews); ?> pageviews with section data (<?php echo stats_h(number_format($sectionCoverage, 1, '.', ',')); ?> % of this page). Headings count as reached when they become visible.</p>
+					<p class="ref" style="margin: -4px 0 10px;">Based on <?php echo mn_analytics_format_number($sectionPageviews); ?> pageviews with section data (<?php echo stats_h(number_format($sectionCoverage, 1, '.', ',')); ?> % of this page). Headings count as reached when at least a quarter of the heading is visible.</p>
 					<div class="section-list">
 						<?php foreach ($sectionMap as $section): ?>
 							<div class="section-row">
@@ -3290,7 +3298,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 							</div>
 						<?php endif; ?>
 					<?php endforeach; ?>
-					<p class="ref" style="margin: 10px 0 0;">Logged only as event counts with the ephemeral pageview token: no visitor ID, no full external URL, no search query.</p>
+					<p class="ref" style="margin: 10px 0 0;">Based on <?php echo mn_analytics_format_number($interactionPageviews); ?> pageviews with events (<?php echo stats_h(number_format($interactionCoverage, 1, '.', ',')); ?> % of views). Logged only as event counts with the ephemeral pageview token: no visitor ID, no full external URL, no search query.</p>
 				<?php else: ?>
 					<div class="empty">No interaction events yet. Logging starts with the next rendered page.</div>
 				<?php endif; ?>
@@ -3774,6 +3782,10 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<li><strong>Page transitions</strong> = a view whose previous page was another blog page. The matrix shows immediate from → to transitions (including cycles); the flow view omits weaker cycle-closing edges. These are not complete visitor journeys: a page can be a source simply because it was the previous page. Entry pages show where visits actually start.</li>
 					<li><strong>Duration</strong> = visible time in the tab, measured in milliseconds in the browser and transmitted in seconds. No cross-page tracking.</li>
 					<li><strong>Scroll depth</strong> = the maximum share of the page height a reader reached. Useful to see whether people get to the end.</li>
+					<li><strong>Section reading map</strong> = share of pageviews that made each heading visible, plus average visible dwell. It is based only on pageviews with section data; older rows predate this logging.</li>
+					<li><strong>Interaction signals</strong> = aggregate counts of internal link targets, external domains (not full URLs), citation keys, code languages, search use/result positions, quiz question IDs + correctness, lab runs, downloads and media. They are not per-person journeys.</li>
+					<li><strong>Reading speed</strong> = approximate words per minute from the lesson word count divided by active time. Treat it as a comparative signal, not an exact measurement.</li>
+					<li><strong>Content health / cohorts</strong> = transparent sub-scores and aggregate source/device profiles derived from existing pageviews. “Humans only” excludes rows whose User-Agent matched a bot.</li>
 					<li><strong>Bots</strong> = pageviews whose User-Agent matched a known bot or automation signature. Only the coarse reason label is stored. Click a reason in Tech or a raw row to see the matching rule.</li>
 					<li><strong>Open tokens</strong> = pageviews whose completion signal has not arrived yet. They are closed after at most 6 hours and the token is deleted.</li>
 					<li><strong>Browser/OS/device</strong> = coarse categories from the User-Agent (read transiently, never stored): browser family + major version, operating system + version, desktop/mobile/tablet/bot. No minor/patch versions, no device IDs, no fingerprint.</li>
@@ -3843,14 +3855,16 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<li>Referrer type and source: direct, internal (previous lesson), search, social or external. For external referrers only the host, never the path or search term.</li>
 					<li>Active visible time on page in seconds and maximum scroll depth in percent.</li>
 					<li>Coarse client categories: browser family + major version, operating system + version, device class (desktop/mobile/tablet/bot), bot flag and a coarse bot reason label (e.g. Googlebot, curl, Headless Chrome). The User-Agent is read only transiently for this and never stored.</li>
-					<li>A transient random token per pageview that only joins heartbeats and is deleted on completion or after at most 6 hours.</li>
+					<li>Section-level reading: section index, a short heading key/label, maximum heading visibility and dwell time. No scroll pixels, no text body and no visitor identity.</li>
+					<li>Aggregate interaction events: internal-link target slug, external domain (not full URL), citation key, code language, search used/result count/clicked result position, quiz question ID + correctness, lab ID, download type and media type. Targets are bounded and stripped of query strings.</li>
+					<li>A transient random token per pageview that joins heartbeats and the page's section/event details; it is deleted on completion or after at most 6 hours.</li>
 				</ul>
 				<h3>What is not stored</h3>
 				<ul>
 					<li>No IP addresses, no full User-Agent strings, no device or browser fingerprints, no exact minor/patch versions.</li>
 					<li>Visitor analytics sets no cookies, no localStorage, no sessionStorage and no persistent IDs.</li>
-					<li>No external paths, queries, search terms or campaign parameters.</li>
-					<li>No cross-page recognition and no profiling.</li>
+					<li>No external paths, queries, search terms, raw search queries, full external URLs or campaign parameters.</li>
+					<li>No free-text form contents, no per-person quiz answers and no cross-page recognition or profiling. Quiz data is only question ID + aggregate correctness.</li>
 				</ul>
 				<p>The login page sets a technically necessary session cookie, a signed admin-indicator cookie (only to show the health warning to the operator), and optionally the exclusion cookie for the owner’s own visits. The dashboard stores only the active tab, the light/dark theme preference and named filter views in localStorage; they are operator-only UI state, not analytics. These concern only the operator and are never sent to visitors.</p>
 				<h3>Why this works without consent</h3>

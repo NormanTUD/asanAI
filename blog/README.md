@@ -200,11 +200,18 @@ internal navigation and page-to-page transitions, active visible time, maximum
 scroll depth, referrer type/source, top pages and entry pages, per-page
 sparklines, browser family + major version, OS + version, device class, bot flag
 and coarse bot reason, bounce rate, hourly rhythm, weekday rhythm, weekday ×
-hour heatmap, date × hour heatmap and daily trend.
+hour heatmap, date × hour heatmap and daily trend. New detail logging adds
+section-level heading reach/dwell and aggregate interaction events (internal
+link target, external domain, citation key, code language, search use/result
+position, quiz question correctness, lab run, download type, media type).
+Reading speed is derived from page word count + active time; content-health
+scores and cohort profiles are derived from existing fields.
 
 Not stored: IP addresses, full User-Agent strings, visitor cookies,
 localStorage/sessionStorage, persistent visitor IDs, cross-page fingerprinting,
-external referrer paths/queries, search terms, exact minor/patch versions.
+external referrer paths/queries, search terms, full external URLs, raw quiz
+answers linked to a person, exact minor/patch versions. Section/event rows are
+attached only to the pageview row and are deleted with it.
 There is also no session identifier, so **complete start-to-end visitor
 journeys are not reconstructable**. The dashboard shows immediate page
 transitions and entry pages instead of pretending that a transition graph is a
@@ -229,7 +236,9 @@ by design.
   click a cell to filter), page attention matrix, reading funnel, content and
   source list/treemap views, top movers, page portfolio, audience/bots, reading
   behaviour, immediate page transitions, calendar heatmap (click a day to
-  filter), humans-vs-bots area and page × source heatmap.
+  filter), humans-vs-bots area, page × source heatmap, content-health scorecards,
+  section reading map, interaction/learning signals, period comparison, cohort
+  profiles, humans-only toggle and saved views.
 - **Presentation & theme:** **Present** hides the chrome and steps through three
   slides (traffic & rhythm, content & attention, sources & confidence) with
   arrow keys; **Light** switches the dashboard and charts to a projector-friendly
@@ -356,11 +365,12 @@ charts (daily trend with estimated visits and anomalies, traffic clock,
 attention matrix, reading funnel, content/source treemaps, top movers, page
 portfolio, referrer donut, page bar chart, page-share donut, browser/OS/device
 donuts, transition matrix/flow, calendar day filter, humans-vs-bots,
-page × source, date × hour heatmap),
-light theme, presentation slides, PNG buttons, sticky/scrollable tables,
-storage/backup, bot dialog, loader-gated alerts, the local kill switch (banner
-suppression and read-only dashboard), no console errors and no horizontal
-overflow at 1280 px and 390 px on every tab.
+page × source, date × hour heatmap), content-health cards, section reading
+map, interaction/learning signals, period comparison, cohort tables, humans-only
+toggle, saved-view control, light theme, presentation slides, PNG buttons,
+sticky/scrollable tables, storage/backup, bot dialog, loader-gated alerts, the
+local kill switch (banner suppression and read-only dashboard), no console
+errors and no horizontal overflow at 1280 px and 390 px on every tab.
 
 ### Security notes
 
@@ -377,8 +387,9 @@ overflow at 1280 px and 390 px on every tab.
   password.
 - CSP, `X-Frame-Options: DENY`, `X-Robots-Tag: noindex`,
   `Referrer-Policy: no-referrer`, `Cache-Control: no-store`.
-- Track endpoint: token/event/duration/scroll validation, 4 KB body limit,
-  same-origin guard; no IP/UA stored.
+- Track endpoint: token/event/duration/scroll/section/event validation, bounded
+  arrays, 4 KB body limit, same-origin guard; targets strip queries; no IP/UA
+  stored.
 - Prepared statements, validated filters, open-redirect guard.
 - Backups use a private `0700` temp directory and a `0600` file, streamed with
   `no-store` and deleted afterwards.

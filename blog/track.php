@@ -6,7 +6,11 @@
  *   { event: "view"|"heartbeat"|"leave"|"optout",
  *     token: 32 hex chars,
  *     duration: seconds (0..14400),
- *     scroll: 0..100 or null }
+ *     scroll: 0..100 or null,
+ *     sections: optional [{i,k,l,v,d}], events: optional [{type,target,value}] }
+ *
+ * Section/event details are accepted only on a final "leave" beacon. Targets
+ * are bounded and stripped of queries; no raw search query or full URL is sent.
  *
  * The request is deliberately not associated with an IP address, user agent,
  * cookie, referrer or any other client property. The token is the random

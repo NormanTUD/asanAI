@@ -673,7 +673,7 @@ dependency in a header won't resolve for a few days).
 |---|---|---|---|
 | `php -l blog/<slug>.php` | PHP syntax | syntax errors | via php_validator |
 | `uv run blog/tests/php_validator.py blog/` | php -l, **HTML tag balance** (strips PHP/comments/script/style, stack-checks tracked tags), BOM, extra `?>` | **any issue** | `blog/**` |
-| `php blog/tests/analytics_test.php` | standalone analytics tests: UA/referrer classification, pageview lifecycle, dedupe, cleanup, backup, health checks | any failed check | `blog/**` (workflow) |
+| `php blog/tests/analytics_test.php` | standalone analytics tests: UA/referrer classification, pageview lifecycle, section/event details, dedupe, cleanup, backup, health checks | any failed check | `blog/**` (workflow) |
 | `uv run blog/tests/js_validator.py blog/` | bracket/brace balance, unclosed strings/comments, `debugger`/`alert`/`eval`, duplicate function names, DOM-API typos, TODO comments, BOM/line-endings | **critical issues only** (warnings don't block) | `blog/**` |
 | `uv run blog/tests/lesson_guard.py blog/` | per-lesson static regression guards (currently `math_iv.php`: headings-in-md, citation keys, 3D wiring) — extend the `LESSONS` list per lesson | any guard | `blog/**` |
 | `uv run blog/tests/link_checker.py blog/` | every `url:` in `literature.js` returns 2xx; PDFs must start `%PDF`; TLS/bot-block soft-passes never fail | real failures | `blog/**` + weekly cron |
@@ -712,6 +712,11 @@ local-only; the `.sh` guards silently SKIP (exit 0) without a served site at
   automatic cleanup; the dashboard stays readable (read-only, no new DB is
   created) with a neutral disabled notice. Delete the file to re-enable. Do
   not add a GUI delete/reset path.
+- **Blog analytics detail logging**: `pageview_sections` and
+  `pageview_events` store heading reach/dwell and coarse interaction events
+  (target/domain/citation/code language/search position/quiz correctness),
+  keyed to the pageview id and deleted with it. Never store raw search queries,
+  full external URLs, form contents or per-person learning profiles.
 - **Keep it lightweight**: no heavy frameworks, no new build tooling, no
   package manager in the authoring flow. New libraries are vendored files.
 - **Match the existing style of the file you are editing**; add no comments
