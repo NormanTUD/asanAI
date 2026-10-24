@@ -3845,8 +3845,7 @@
    "history",
    "people_of_ai",
    "topology",
-   "transformer",
-   "vibe_coding"
+   "transformer"
   ]
  },
  {
@@ -14529,8 +14528,7 @@
    "prather2023copilot"
   ],
   "cited_in": [
-   "ai_and_society",
-   "vibe_coding"
+   "ai_and_society"
   ]
  },
  {
@@ -14547,8 +14545,7 @@
    "prather2023copilot"
   ],
   "cited_in": [
-   "ai_and_society",
-   "vibe_coding"
+   "ai_and_society"
   ]
  },
  {
@@ -14565,8 +14562,7 @@
    "prather2023copilot"
   ],
   "cited_in": [
-   "ai_and_society",
-   "vibe_coding"
+   "ai_and_society"
   ]
  },
  {
@@ -14617,8 +14613,7 @@
    "caosun2026augmentation"
   ],
   "cited_in": [
-   "ai_and_society",
-   "vibe_coding"
+   "ai_and_society"
   ]
  },
  {
@@ -14635,8 +14630,7 @@
    "caosun2026augmentation"
   ],
   "cited_in": [
-   "ai_and_society",
-   "vibe_coding"
+   "ai_and_society"
   ]
  },
  {
@@ -14653,8 +14647,7 @@
    "caosun2026augmentation"
   ],
   "cited_in": [
-   "ai_and_society",
-   "vibe_coding"
+   "ai_and_society"
   ]
  },
  {
@@ -26129,9 +26122,7 @@
   "keys": [
    "coderabbit2025"
   ],
-  "cited_in": [
-   "vibe_coding"
-  ]
+  "cited_in": []
  },
  {
   "name": "Ivan Mehta",
@@ -26163,9 +26154,7 @@
   "keys": [
    "github2026eternalseptember"
   ],
-  "cited_in": [
-   "vibe_coding"
-  ]
+  "cited_in": []
  },
  {
   "name": "Kyle Orland",
@@ -26502,9 +26491,7 @@
   "keys": [
    "fawzy2025grey"
   ],
-  "cited_in": [
-   "vibe_coding"
-  ]
+  "cited_in": []
  },
  {
   "name": "Yi-Hung Chou et al.",
@@ -26519,9 +26506,7 @@
   "keys": [
    "chou2025rollingdice"
   ],
-  "cited_in": [
-   "vibe_coding"
-  ]
+  "cited_in": []
  },
  {
   "name": "Muhammad Waseem et al.",
@@ -26536,9 +26521,7 @@
   "keys": [
    "waseem2025flowdebt"
   ],
-  "cited_in": [
-   "vibe_coding"
-  ]
+  "cited_in": []
  },
  {
   "name": "Songwen Zhao et al.",
@@ -26706,9 +26689,7 @@
   "keys": [
    "bansal2026vibepass"
   ],
-  "cited_in": [
-   "vibe_coding"
-  ]
+  "cited_in": []
  },
  {
   "name": "Song Wang",
@@ -26825,9 +26806,7 @@
   "keys": [
    "ge2025survey"
   ],
-  "cited_in": [
-   "vibe_coding"
-  ]
+  "cited_in": []
  },
  {
   "name": "Leon van Bokhorst",
@@ -26842,9 +26821,7 @@
   "keys": [
    "vanbokhorst2026beforetrend"
   ],
-  "cited_in": [
-   "vibe_coding"
-  ]
+  "cited_in": []
  },
  {
   "name": "Koen Suilen",
@@ -26859,9 +26836,7 @@
   "keys": [
    "vanbokhorst2026beforetrend"
   ],
-  "cited_in": [
-   "vibe_coding"
-  ]
+  "cited_in": []
  },
  {
   "name": "Md Nasir Uddin Shuvo et al.",
@@ -26876,9 +26851,7 @@
   "keys": [
    "shuvo2026context"
   ],
-  "cited_in": [
-   "vibe_coding"
-  ]
+  "cited_in": []
  },
  {
   "name": "Junkai Chen et al.",
@@ -26893,9 +26866,7 @@
   "keys": [
    "chen2025securerbench"
   ],
-  "cited_in": [
-   "vibe_coding"
-  ]
+  "cited_in": []
  },
  {
   "name": "Benjamin Livshits",
@@ -26909,6 +26880,38 @@
   "works": 1,
   "keys": [
    "livshits2026llmsecurity"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Gene Kim",
+  "canon": "Gene Kim",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2025.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kim2025vibecoding"
+  ],
+  "cited_in": [
+   "vibe_coding"
+  ]
+ },
+ {
+  "name": "Steve Yegge",
+  "canon": "Steve Yegge",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2025.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kim2025vibecoding"
   ],
   "cited_in": [
    "vibe_coding"

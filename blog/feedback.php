@@ -446,6 +446,7 @@ $reactionCounts = array_fill_keys(array_keys($reactions), 0);
 $statusCounts = ['new' => 0, 'accepted' => 0, 'rejected' => 0, 'done' => 0];
 $pathOptions = [];
 $pageStats = [];
+$feedbackChartData = ['rangeLabel' => '', 'days' => [], 'series' => [], 'mix' => [], 'pages' => ['labels' => [], 'helpful' => [], 'unhelpful' => [], 'confusing' => [], 'bug' => []]];
 $activity = [];
 $latestFeedback = [];
 $pdo = null;
@@ -583,6 +584,69 @@ if ($authed) {
 			$stmt->execute($listParams);
 			$rows = $stmt->fetchAll();
 		}
+
+		$chartRangeDays = $range > 0 ? min($range, 90) : 90;
+		$chartStart = (new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin')))->setTime(0, 0, 0)->modify('-' . ($chartRangeDays - 1) . ' days');
+		$chartRows = [];
+		try {
+			$chartStmt = $pdo->prepare(
+				"SELECT f.day, f.reaction, COUNT(*) AS n
+				 FROM block_feedback f
+				 LEFT JOIN feedback_selections s ON s.feedback_id = f.id
+				 WHERE $baseWhere AND f.day >= ?
+				 GROUP BY f.day, f.reaction"
+			);
+			$chartStmt->execute(array_merge($baseParams, [$chartStart->format('Y-m-d')]));
+			foreach ($chartStmt->fetchAll() as $chartRow) {
+				$chartRows[(string)$chartRow['day']][(string)$chartRow['reaction']] = (int)$chartRow['n'];
+			}
+		} catch (Throwable $e) {
+			$chartRows = [];
+		}
+		$chartDays = [];
+		$chartSeries = [];
+		foreach (mn_feedback_reactions() as $chartKey => $chartMeta) {
+			$chartSeries[$chartKey] = ['key' => $chartKey, 'label' => $chartMeta['label'], 'icon' => $chartMeta['icon'], 'data' => []];
+		}
+		for ($chartIndex = 0; $chartIndex < $chartRangeDays; $chartIndex++) {
+			$chartDay = $chartStart->modify('+' . $chartIndex . ' days');
+			$chartDayKey = $chartDay->format('Y-m-d');
+			$chartDays[] = $chartDay->format('M j');
+			foreach ($chartSeries as $chartKey => $chartSeriesRow) {
+				$chartSeries[$chartKey]['data'][] = (int)($chartRows[$chartDayKey][$chartKey] ?? 0);
+			}
+		}
+		$chartMix = [];
+		foreach (mn_feedback_reactions() as $chartKey => $chartMeta) {
+			$chartMix[] = [
+				'key' => $chartKey,
+				'label' => $chartMeta['label'],
+				'icon' => $chartMeta['icon'],
+				'value' => (int)($reactionCounts[$chartKey] ?? 0),
+			];
+		}
+		$chartPageSlice = array_slice($pageStats, 0, 8);
+		$chartPageLabels = [];
+		$chartPageSeries = ['helpful' => [], 'unhelpful' => [], 'confusing' => [], 'bug' => []];
+		foreach ($chartPageSlice as $chartPage) {
+			$chartPageLabels[] = mb_substr((string)$chartPage['title'], 0, 30, 'UTF-8');
+			foreach ($chartPageSeries as $chartPageKey => $chartPageValues) {
+				$chartPageSeries[$chartPageKey][] = (int)($chartPage[$chartPageKey] ?? 0);
+			}
+		}
+		$feedbackChartData = [
+			'rangeLabel' => $chartRangeDays . ' days',
+			'days' => $chartDays,
+			'series' => array_values($chartSeries),
+			'mix' => $chartMix,
+			'pages' => [
+				'labels' => $chartPageLabels,
+				'helpful' => $chartPageSeries['helpful'],
+				'unhelpful' => $chartPageSeries['unhelpful'],
+				'confusing' => $chartPageSeries['confusing'],
+				'bug' => $chartPageSeries['bug'],
+			],
+		];
 	}
 }
 
@@ -609,6 +673,7 @@ $recentPages = array_slice($pageStats, 0, 6);
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reader feedback · asanAI</title>
+<script src="echarts.min.js?v=<?php echo (int)@filemtime(__DIR__ . '/echarts.min.js'); ?>"></script>
 <style>
 :root {
 	--bg: #0f172a;
@@ -687,6 +752,15 @@ input[type="checkbox"] { accent-color: var(--accent); }
 textarea { width: 100%; resize: vertical; }
 label.check { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font-size: 12px; cursor: pointer; }
 .overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.feedback-charts { display: grid; grid-template-columns: 1.45fr 1fr; gap: 14px; margin: 0 0 16px; }
+.feedback-charts .wide { grid-column: 1 / -1; }
+.feedback-charts .card { margin: 0; min-width: 0; }
+.feedback-chart { width: 100%; height: 260px; min-width: 0; }
+.feedback-charts h2 .hint { font-weight: 400; font-size: 11px; color: var(--muted); margin-left: 8px; }
+@media (max-width: 900px) {
+	.feedback-charts { grid-template-columns: 1fr; }
+	.feedback-charts .wide { grid-column: auto; }
+}
 .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; box-shadow: var(--shadow); min-width: 0; }
 .card.wide { grid-column: 1 / -1; }
 .leader { display: grid; gap: 7px; }
@@ -762,9 +836,45 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 @media (max-width: 900px) {
 	.overview-grid { grid-template-columns: 1fr; }
 }
+html[data-embed="1"] {
+	color-scheme: dark;
+	--bg: #0b1220;
+	--surface: #111c31;
+	--surface-2: #16233b;
+	--border: #243047;
+	--text: #e2e8f0;
+	--muted: #94a3b8;
+	--heading: #f1f5f9;
+	--accent: #e9aa60;
+	--coral: #f4c98a;
+	--emerald: #34d399;
+	--rose: #fb7185;
+	--sky: #38bdf8;
+	--radius: 14px;
+	--shadow: 0 18px 50px rgba(0,0,0,.28);
+}
+html[data-embed="1"][data-theme="light"] {
+	color-scheme: light;
+	--bg: #f6f1e7;
+	--surface: #fffdf8;
+	--surface-2: #f1eadf;
+	--border: #d8cfc0;
+	--text: #1e293b;
+	--muted: #5b6472;
+	--heading: #1a140e;
+	--accent: #b7791f;
+	--coral: #d69e2e;
+	--emerald: #0f9d6e;
+	--rose: #d6455d;
+	--sky: #0284c7;
+	--shadow: 0 18px 50px rgba(60,50,30,.12);
+}
 html[data-embed="1"],
 html[data-embed="1"] body {
-	background: transparent;
+	background:
+		radial-gradient(1000px 600px at 12% -10%, rgba(233,170,96,.10), transparent 60%),
+		radial-gradient(900px 500px at 100% 0%, rgba(56,189,248,.08), transparent 55%),
+		var(--bg);
 }
 html[data-embed="1"] .page {
 	max-width: none;
@@ -776,6 +886,30 @@ html[data-embed="1"] .admin-nav {
 }
 html[data-embed="1"] .feedback-embed {
 	display: none !important;
+}
+html[data-embed="1"] a {
+	color: var(--sky);
+}
+html[data-embed="1"] .tabs {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-bottom: 1px solid var(--border);
+	border-radius: 11px;
+	padding: 5px;
+	margin-bottom: 16px;
+}
+html[data-embed="1"] .tabs a {
+	border-radius: 8px;
+	padding: 8px 12px;
+}
+html[data-embed="1"] .tabs a.active {
+	background: var(--accent);
+	color: #1a1207;
+	border-color: transparent;
+	box-shadow: none;
+}
+html[data-embed="1"] .btn.primary {
+	color: #1a1207;
 }
 
 @media (max-width: 720px) {
@@ -858,7 +992,23 @@ html[data-embed="1"] .feedback-embed {
 	</div>
 
 	<?php if ($tab === 'overview'): ?>
-		<div class="overview-grid">
+		<div class="feedback-charts">
+		<div class="card wide">
+			<h2>Feedback over time <span class="hint"><?php echo feedback_h($feedbackChartData['rangeLabel']); ?></span></h2>
+			<div id="mn-fb-trend" class="feedback-chart"></div>
+		</div>
+		<div class="card">
+			<h2>Reaction mix</h2>
+			<div id="mn-fb-mix" class="feedback-chart"></div>
+		</div>
+		<div class="card wide">
+			<h2>Helpful vs. not helpful per page</h2>
+			<div id="mn-fb-pages" class="feedback-chart"></div>
+		</div>
+	</div>
+	<script type="application/json" id="mn-feedback-chart-data"><?php echo json_encode($feedbackChartData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?></script>
+
+	<div class="overview-grid">
 			<div class="card wide">
 				<h2>Latest suggestions &amp; bugs</h2>
 				<?php if (!$latestFeedback): ?><p class="muted">No feedback yet.</p><?php else: ?>

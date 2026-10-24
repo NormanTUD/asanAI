@@ -2822,16 +2822,14 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 	</header>
 
 	<nav class="admin-nav" aria-label="Admin areas">
-		<a class="<?php echo $view === 'analytics' ? 'active' : ''; ?>" href="stats?view=analytics">Analytics</a>
-		<a class="<?php echo $view === 'feedback' ? 'active' : ''; ?>" href="stats?view=feedback">Reader feedback</a>
+		<a class="<?php echo $view === 'analytics' ? 'active' : ''; ?>" href="stats?view=analytics" data-admin-view="analytics">Analytics</a>
+		<a class="<?php echo $view === 'feedback' ? 'active' : ''; ?>" href="stats?view=feedback" data-admin-view="feedback">Reader feedback</a>
 		<a href="index">Course</a>
 	</nav>
 
-	<?php if ($view === 'feedback'): ?>
-		<div class="feedback-embed">
-			<iframe id="feedback-frame" src="<?php echo stats_h($feedbackEmbedUrl); ?>" title="Reader feedback" loading="lazy"></iframe>
-		</div>
-	<?php endif; ?>
+	<div class="feedback-embed" id="feedback-embed"<?php echo $view === 'feedback' ? '' : ' hidden'; ?>>
+		<iframe id="feedback-frame" src="<?php echo $view === 'feedback' ? stats_h($feedbackEmbedUrl) : ''; ?>" data-src="<?php echo stats_h($feedbackEmbedUrl); ?>" title="Reader feedback" loading="lazy"></iframe>
+	</div>
 
 	<div id="analytics-view"<?php echo $view === 'feedback' ? ' style="display:none"' : ''; ?>>
 
@@ -5793,6 +5791,45 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 			toggle.addEventListener('click', function () {
 				setTheme(!body.classList.contains('light'));
 			});
+		}
+	})();
+
+	(function () {
+		var analytics = document.getElementById('analytics-view');
+		var embed = document.getElementById('feedback-embed');
+		var frame = document.getElementById('feedback-frame');
+		var links = Array.prototype.slice.call(document.querySelectorAll('.admin-nav a[data-admin-view]'));
+		function showView(view, updateUrl) {
+			var feedback = view === 'feedback';
+			document.body.classList.toggle('feedback-view', feedback);
+			if (analytics) analytics.style.display = feedback ? 'none' : '';
+			if (embed) embed.hidden = !feedback;
+			links.forEach(function (link) {
+				link.classList.toggle('active', link.getAttribute('data-admin-view') === view);
+			});
+			if (feedback && frame && !frame.getAttribute('src')) {
+				frame.src = frame.getAttribute('data-src') || '';
+			}
+			if (updateUrl) {
+				try {
+					var url = new URL(window.location.href);
+					url.searchParams.set('view', view);
+					window.history.replaceState(null, '', url.toString());
+				} catch (ignored) {}
+			}
+			if (!feedback) {
+				setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 30);
+			}
+		}
+		links.forEach(function (link) {
+			link.addEventListener('click', function (event) {
+				if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+				event.preventDefault();
+				showView(link.getAttribute('data-admin-view'), true);
+			});
+		});
+		if (document.body.classList.contains('feedback-view')) {
+			showView('feedback', false);
 		}
 	})();
 

@@ -22232,4 +22232,12 @@ window.bibData = {
 		alternativetitle: "Livshits 2026 — position paper on LLMs and security"
 	},
 
+	"kim2025vibecoding": {
+		title: "Vibe Coding: Building Production-Grade Software With GenAI, Chat, Agents, and Beyond",
+		author: "Gene Kim, Steve Yegge",
+		year: 2025,
+		url: "https://itrevolution.com/product/vibe-coding-book/",
+		alternativetitle: "Kim and Yegge 2025 — Vibe Coding (IT Revolution; ISBN 978-1-966280-02-6)"
+	},
+
 };

@@ -495,16 +495,28 @@ Figma is the canary. It went public in July 2025 at a valuation above **USD 56 b
 <div class="md">
 ## The practical playbook
 
-1. **Name the mode.** Prototype, internal tool, customer product, critical system. Vibe coding is appropriate for the first; it is malpractice for the last without more process.
-2. **Read the diff for anything you keep.** "Accept all" is a prototyping technique, not a maintenance strategy.
-3. **Write the test before you accept the code.** A test turns "it looks right" into "it does the thing."
-4. **Pin dependencies and check that they exist.** Use lockfiles, a software bill of materials and an allowlist; slopsquatting depends on you not checking.
-5. **Never give an agent production credentials it does not need.** Sandbox it, scope the token, require approval for destructive actions, and test your backups.
-6. **Threat-model the default.** Authentication, authorization, input validation, secrets, rate limits, logging. The model will happily generate a login form that stores passwords in plain text.
-7. **Budget the maintenance.** Estimate hours per month, name an owner, and price the incident you have not had yet.
-8. **Keep a human accountable.** "The model wrote it" is not a defense in a post-mortem, a procurement review or a courtroom.
+The best short manual for this is Kim and Yegge's *Vibe Coding* \cite{kim2025vibecoding}. Their central metaphor is worth keeping: you are the **chef, not the sous-chef**. The model can chop, sear and plate; you own the menu, the taste and every plate that leaves the kitchen.
 
-The research is beginning to supply the guardrails. **ZORO** turns rules files such as `AGENTS.md` and `CLAUDE.md` into active controls, requiring the agent to prove each rule was followed. **VibeContract** turns high-level intent into task-level contracts with inputs, outputs and constraints. **Shift-Up** embeds executable requirements, architecture models and decision records into the agent loop. And a 737-participant experiment found that human-led instructions beat AI-led instructions, with hybrid groups performing best \cite{ma2026zoro,wang2026vibecontract,lipsanen2026shiftup,hu2026humanguidance}. The more the human supplies intent, constraints and evaluation, the better the agent performs.
+Their operating model is three loops:
+
+| Loop | Time scale | What to do |
+|---|---|---|
+| **Inner** | seconds to minutes | Small tasks; spec and tests first; commit every few minutes; verify the output; keep the agent on the path |
+| **Middle** | hours to days | Short `AGENTS.md` golden rules; Memento handover; parallel agents in separate workspaces |
+| **Outer** | weeks to months | Protect APIs and module boundaries; modularize; audit by risk and familiarity |
+
+Then the rules that matter most in practice:
+
+1. **You are the chef.** Delegating implementation is not delegating responsibility. "The AI wrote it" is not a defense in a post-mortem, a procurement review or a courtroom.
+2. **FAAFO, not just speed.** The book optimises for **F**ast, **A**mbitious, **A**utonomous, **F**un and **O**ptionality. There is no **B** for Better: quality is your job. The book's warning is concrete: set a timer and ask every hour whether you are still on the right path.
+3. **Spec before code.** Ask for acceptance criteria, edge cases, a test plan and open questions before the model writes a line. Then make it write the tests.
+4. **Keep `AGENTS.md` short, and use the Memento handover.** Around ten golden rules — what must always happen and what must never happen; long lists get ignored. At 20–50% remaining context, stop and write `HANDOVER.md`: what worked, what failed, next steps, temporary branches, pitfalls.
+5. **Count the babies and reject cardboard muffins.** Verify every requirement individually and look for deleted lines in the diff. Green tests are not enough: read the implementation and check that the test actually tests something. Models quietly decide what is "optional," and hardcoded values can make a test suite look complete when it is a film set.
+6. **Don't break bridges.** Existing module interfaces and APIs are sacrosanct unless you explicitly approve a change. Add, don't delete; ask before changing a contract.
+7. **Audit by risk.** Full depth for high-risk or unfamiliar code; lightweight for low-risk internal tools; black-box only for throwaway work.
+8. **Threat-model the default.** Auth, authorization, input validation, secrets, rate limits, logging. The model will happily generate a login form that stores passwords in plain text.
+
+The research is beginning to formalise these rules. ZORO turns `AGENTS.md` into active controls; VibeContract turns intent into task contracts; Shift-Up embeds executable requirements and architecture records into the loop; and a 737-participant experiment found human-led instructions beat AI-led instructions \cite{ma2026zoro,wang2026vibecontract,lipsanen2026shiftup,hu2026humanguidance}.
 
 The one-sentence version: **generate at the speed of a demo, verify at the speed of production.**
 </div>
