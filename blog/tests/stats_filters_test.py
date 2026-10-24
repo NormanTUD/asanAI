@@ -21,6 +21,7 @@ import html
 import os
 import re
 import socket
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -124,6 +125,42 @@ def main() -> int:
 			check("Blog-Analytics" in login.text and 'id="hero"' in login.text, "login reaches dashboard")
 			if failures:
 				return 1
+
+			now = int(time.time())
+			day = time.strftime("%Y-%m-%d", time.localtime(now))
+			with sqlite3.connect(db_path) as db:
+				db.execute(
+					"INSERT INTO pageviews (ts, day, hour, path, ref_type, ref_source, ref_host, browser, os, device, duration_sec, scroll_pct, completed) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+					(now, day, 12, "history", "search", "google", "google.com", "Chrome", "Linux", "desktop", 30, 60, 1),
+				)
+				feedback_id = db.execute(
+					"INSERT INTO block_feedback (request_id, ts, day, path, lesson_title, block_text, comment, reaction, status) VALUES (?,?,?,?,?,?,?,?,?)",
+					("search-test-request", now, day, "history", "Brief History of AI", "Der Geist ist ein Gespenst.", "Bitte mehr über McCulloch und Pitts!", "idea", "new"),
+				).lastrowid
+				db.execute(
+					"INSERT INTO feedback_selections (feedback_id, selected_text, selected_html, source_file) VALUES (?,?,?,?)",
+					(feedback_id, "Der Geist ist ein Gespenst.", "<em>Der Geist ist ein Gespenst.</em>", "blog/history.php"),
+				)
+				db.execute(
+					"INSERT INTO feedback_history (feedback_id, ts, action, from_status, to_status, note) VALUES (?,?,?,?,?,?)",
+					(feedback_id, now, "accepted", "new", "accepted", "Added a McCulloch note."),
+				)
+				db.commit()
+
+			search = session.get(f"{base}?q=McCulloch", timeout=15)
+			check('id="search-results"' in search.text, "search results card is rendered")
+			check("Reader feedback" in search.text, "search finds feedback comments")
+			check("<mark>McCulloch</mark>" in search.text, "search highlights matches")
+			search_multi = session.get(f"{base}?q=McCulloch+Pitts", timeout=15)
+			check("Reader feedback" in search_multi.text, "multiple keywords are ANDed")
+			search_phrase = session.get(f"{base}?q=%22Der+Geist%22", timeout=15)
+			check("Reader feedback" in search_phrase.text and "Selected passages" in search_phrase.text, "quoted phrase searches feedback and passages")
+			search_view = session.get(f"{base}?q=google", timeout=15)
+			check("Pageviews" in search_view.text, "search finds pageviews")
+			search_none = session.get(f"{base}?q=zzzz-no-match", timeout=15)
+			check("No stored data matches" in search_none.text, "empty search state is explicit")
+			search_percent = session.get(f"{base}?q=%25", timeout=15)
+			check("No stored data matches" in search_percent.text, "wildcards in search are treated literally")
 
 			filtered_url = (
 				f"{base}?range=30&source=transformer&path=history"

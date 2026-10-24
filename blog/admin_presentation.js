@@ -96,6 +96,8 @@
 				button.type = "button";
 				button.className = "mn-pres-thumb";
 				button.setAttribute("data-index", String(index));
+				var accent = slide.style.getPropertyValue("--slide-accent") || "var(--accent)";
+				button.style.setProperty("--thumb-accent", accent);
 				var small = document.createElement("span");
 				small.textContent = "Slide " + (index + 1);
 				var strong = document.createElement("b");

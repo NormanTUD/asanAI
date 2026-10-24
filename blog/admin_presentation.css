@@ -598,8 +598,9 @@ body.mn-presenting {
 	min-height: 100px;
 	padding: 14px;
 	border: 1px solid var(--line);
+	border-top: 3px solid var(--thumb-accent, var(--accent));
 	border-radius: 12px;
-	background: var(--panel);
+	background: linear-gradient(180deg, color-mix(in srgb, var(--thumb-accent, var(--accent)) 7%, transparent), transparent 70%), var(--panel);
 	color: var(--text);
 	text-align: left;
 	cursor: pointer;
@@ -628,16 +629,26 @@ body.mn-presenting {
 
 @media (max-width: 900px) {
 	.mn-pres-slide {
-		padding: 26px 18px 104px;
+		padding: 24px 18px 78px;
 		justify-content: flex-start;
 	}
 	.mn-pres-slide h1 { font-size: clamp(30px, 8vw, 48px); }
 	.mn-pres-slide h2 { font-size: clamp(24px, 6vw, 34px); }
-	.mn-pres-mix { grid-template-columns: 1fr; gap: 20px; }
-	.mn-pres-donut { width: 190px; height: 190px; }
+	.mn-pres-mix { grid-template-columns: 1fr; gap: 12px; }
+	.mn-pres-donut { width: 150px; height: 150px; }
+	.mn-pres-kpi { padding: 10px 12px; }
+	.mn-pres-kpi b { font-size: clamp(22px, 3.4vw, 30px); }
+	.mn-pres-kpi span { font-size: 9px; }
+	.mn-pres-insight { padding: 9px 12px; font-size: clamp(11px, 1.2vw, 13px); }
+	.mn-pres-legend-row { padding: 4px 0; font-size: clamp(10px, 1vw, 12px); }
+	.mn-pres-stacked { height: 116px; }
 	.mn-pres-controls { left: 10px; right: 10px; transform: none; justify-content: center; flex-wrap: wrap; }
 	.mn-pres-slide-title { display: none; }
 	.mn-pres-hint { display: none; }
+}
+
+@media (max-width: 700px) {
+	.mn-pres-split { grid-template-columns: 1fr; }
 }
 
 @media print {
@@ -790,10 +801,6 @@ body.mn-presenting {
 
 .mn-pres-takeaway {
 	border-left: 2px solid color-mix(in srgb, var(--slide-accent, var(--accent)) 60%, transparent);
-}
-
-@media (max-width: 900px) {
-	.mn-pres-split { grid-template-columns: 1fr; }
 }
 
 @keyframes mn-pres-pop {

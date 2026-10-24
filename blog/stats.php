@@ -561,7 +561,7 @@ function stats_valid_date(string $value): bool {
 }
 
 function stats_where_between(string $from, string $to, string $path, string $refType, string $source, string $refPath, string $browser, string $os, string $device, bool $humansOnly = false): array {
-	[$filterSql, $filterParams] = stats_where(0, $path, $refType, $source, $refPath, $browser, $os, $device, false, '', 0, -1, $humansOnly, $botReason);
+	[$filterSql, $filterParams] = stats_where(0, $path, $refType, $source, $refPath, $browser, $os, $device, false, '', 0, -1, $humansOnly, '');
 	return ['day >= ? AND day <= ? AND ' . $filterSql, array_merge([$from, $to], $filterParams)];
 }
 
