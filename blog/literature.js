@@ -884,7 +884,7 @@ window.bibData = {
 	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Computers in Spaceflight: The NASA Experience  (history.php,
-	 *  untold_history.php)
+	 *  untold_history_iii.php)
 	 *  The spaceflight-computing lineage: real-time operation, redundancy,
 	 *  distributed computing and image processing as AI prerequisites.
 	 * ───────────────────────────────────────────────────────────────────── */
@@ -2732,7 +2732,7 @@ window.bibData = {
 	},
 
 	/* ─────────────────────────────────────────────────────────────────────
-	 *  Bipedalism, the Pelvis, and the Brain  (untold_history.php)
+	 *  Bipedalism, the Pelvis, and the Brain  (untold_history_i.php)
 	 *  How upright walking reshaped the pelvis, why the modern birth canal
 	 *  is narrow rather than wide, the obstetrical dilemma and its critics,
 	 *  and the energetic and developmental costs of a large brain.
@@ -8981,7 +8981,7 @@ window.bibData = {
 		alternativetitle: "Cosmic web texture (10 Gly span)"
 	},
 	/* The Big-Bang / cosmic-scale photo in the Atlas (atlas.php) and in
-	 * untold_history.php: an artist's logarithmic radial view of the observable
+	 * untold_history_i.php: an artist's logarithmic radial view of the observable
 	 * universe, Solar System at the centre out to the CMB and the Big Bang at
 	 * the rim (local file universe_radial_budassi.jpg). */
 	"budassi_universe_image": {
@@ -12275,7 +12275,7 @@ window.bibData = {
 		alternativetitle: "Leeuwenhoek's Letters"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
-	 *  Micrographia → the cell → the neuron  (untold_history.php)
+	 *  Micrographia → the cell → the neuron  (untold_history_ii.php)
 	 *  The lens lineage: Hooke's Micrographia (1665) names the cell;
 	 *  cell theory (Schleiden, Schwann, Virchow); Golgi's black reaction
 	 *  and Cajal's neuron doctrine; the microscope as the model, the
@@ -14601,7 +14601,7 @@ window.bibData = {
 	},
 
 	/* ═══════════════════════════════════════════════════════════════════
-	 *  From Mythos to Logos: The Mental Landscape (untold_history.php)
+	 *  From Mythos to Logos: The Mental Landscape (untold_history_i.php)
 	 *  The transition from mythological to scientific thinking, the
 	 *  Scientific Revolution, and the mathematical infrastructure
 	 *  (probability, logic, information) that underpins modern AI.
@@ -14761,7 +14761,7 @@ window.bibData = {
 
 	/* ═══════════════════════════════════════════════════════════════════
 	 *  The Origin of Life: From Primordial Chemistry to the First Cell
-	 *  (untold_history.php) — prebiotic synthesis, the RNA world,
+	 *  (untold_history_i.php) — prebiotic synthesis, the RNA world,
 	 *  self-replication, and the chemistry-to-biology transition that
 	 *  preceded the first observable cells.
 	 * ═══════════════════════════════════════════════════════════════════ */
@@ -14983,7 +14983,7 @@ window.bibData = {
 	},
 
 	/* ═══════════════════════════════════════════════════════════════════
-	 *  The Development of Life: Milestones (untold_history.php)
+	 *  The Development of Life: Milestones (untold_history_i.php)
 	 *  Original publications for the earliest life, eukaryotes,
 	 *  multicellularity, the Great Oxidation Event, and the
 	 *  Cambrian Explosion.
@@ -15208,7 +15208,7 @@ window.bibData = {
 
 	/* ═══════════════════════════════════════════════════════════════════
 	 *  Image sources: Development of Life + From Mythos to Logos
-	 *  (untold_history.php) — downloaded and embedded as figures.
+	 *  (untold_history_i.php) — downloaded and embedded as figures.
 	 * ═══════════════════════════════════════════════════════════════════ */
 	"img_miller_urey_apparatus": {
 		title: "Miller–Urey experiment apparatus (schematic)",
@@ -16877,7 +16877,7 @@ window.bibData = {
 		alternativetitle: "Optuna"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
-	 *  The Polar Program  (untold_history.php)
+	 *  The Polar Program  (untold_history_ii.php)
 	 *  Ice cores, polar/climate computing, cryogenics -> superconducting
 	 *  qubits, and AI-for-weather: the poles' displaced prerequisites.
 	 *  ───────────────────────────────────────────────────────────────────── */
@@ -16973,7 +16973,7 @@ window.bibData = {
 		alternativetitle: "ECMWF"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
-	 *  Earliest art  (untold_history.php)
+	 *  Earliest art  (untold_history_i.php)
 	 *  The oldest human depictions: Venus of Hohle Fels (mammoth ivory,
 	 *  40-35 kya) and Venus of Galgenberg (serpentine, 32-36 kya).
 	 *  ───────────────────────────────────────────────────────────────────── */
@@ -16992,7 +16992,7 @@ window.bibData = {
 		alternativetitle: "Neugebauer-Maresch, 1989 (Germania 67:551-559)"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
-	 *  From body to face  (untold_history.php)
+	 *  From body to face  (untold_history_i.php)
 	 *  The first recognisable faces: the Dolni Věstonice ivory head and
 	 *  the engraved human figures of La Marche.
 	 *  ───────────────────────────────────────────────────────────────────── */
@@ -17011,7 +17011,7 @@ window.bibData = {
 		alternativetitle: "La Marche engravings (Wikipedia)"
 	},
 	/* ─────────────────────────────────────────────────────────────────────
-	 *  Alchemy: the displaced root of chemistry  (untold_history.php)
+	 *  Alchemy: the displaced root of chemistry  (untold_history_ii.php)
 	 *  Alchemy -> chemistry -> silicon purification. The laboratory, the
 	 *  glassware, the acids, the method, and the very word "chemistry" all
 	 *  descend from the alchemists, whose impossible goal was falsified into
@@ -17284,7 +17284,7 @@ window.bibData = {
 		alternativetitle: "Boyle, The Sceptical Chymist (primary text, Wikisource)"
 	},
 	/* ═══════════════════════════════════════════════════════════════════
-	 *  Image sources: Alchemy  (untold_history.php)
+	 *  Image sources: Alchemy  (untold_history_ii.php)
 	 *  All Public Domain, downloaded and embedded as figures.
 	 * ═══════════════════════════════════════════════════════════════════ */
 	"img_paracelsus_portrait": {
@@ -18071,7 +18071,7 @@ window.bibData = {
 	},
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Earth's Habitability: The Magnetic Shield, the Atmosphere, and
-	 *  the Oxygen  (untold_history.php)
+	 *  the Oxygen  (untold_history_i.php)
 	 *  Without these three, no air to breathe, no ozone shield, no food
 	 *  chain — and therefore no human to invent the Transformer.
 	 * ───────────────────────────────────────────────────────────────────── */
@@ -18183,7 +18183,7 @@ window.bibData = {
 
 	/* ═══════════════════════════════════════════════════════════════════
 	 *  The Age of Dinosaurs, the Shifting Continents, and the Meteor
-	 *  (untold_history.php) — the Mesozoic, plate tectonics, and the
+	 *  (untold_history_i.php) — the Mesozoic, plate tectonics, and the
 	 *  Cretaceous–Paleogene impact that ended the age of dinosaurs and
 	 *  opened the niches the mammals (and, contingently, we) inherited.
 	 * ═══════════════════════════════════════════════════════════════════ */
@@ -18305,7 +18305,7 @@ window.bibData = {
 	},
 
 	/* Image sources: Age of Dinosaurs, Shifting Continents, and the Meteor
-	 *  (untold_history.php) — downloaded and embedded as figures. */
+	 *  (untold_history_i.php) — downloaded and embedded as figures. */
 	"img_tyrannosaurus_rex_mount": {
 		title: "Mounted skeleton of Tyrannosaurus rex, Palais de la Découverte, Paris",
 		author: "David Monniaux",
@@ -18472,7 +18472,7 @@ window.bibData = {
 		alternativetitle: "Wright, Cataloging the World (2014)"
 	},
 
-	/* Vannevar Bush & the Memex chain (untold_history.php) */
+	/* Vannevar Bush & the Memex chain (untold_history_iii.php) */
 	"aswemaythink": {
 		title: "As We May Think",
 		author: "Vannevar Bush",
@@ -18885,7 +18885,7 @@ window.bibData = {
 		alternativetitle: "RouteLLM (2024)"
 	},
 
-	/* Sedentarization & the Neolithic Revolution (untold_history.php)
+	/* Sedentarization & the Neolithic Revolution (untold_history_i.php)
 	 * The transition from nomadic hunter-gatherer life to settled
 	 * agriculture, the founding of cities, the invention of writing and law,
 	 * and the bronze/iron ages. The durable substrate beneath every later
@@ -19045,7 +19045,7 @@ window.bibData = {
 		alternativetitle: "Coin (Wikipedia)"
 	},
 
-	/* History of programming languages (untold_history.php)
+	/* History of programming languages (untold_history_iii.php)
 	 * The displaced prerequisites of the modern ML stack: from Babbage and
 	 * Lovelace through FORTRAN, LISP, ALGOL, C and Unix, to Java, Python
 	 * and the ML-era languages that now train and serve LLMs. */
@@ -19281,7 +19281,7 @@ window.bibData = {
 		alternativetitle: "Unix (Wikipedia)"
 	},
 
-	/* Primary sources used by untold_history.php */
+	/* Primary sources used by the untold history trilogy */
 
 	/* V. Gordon Childe — Man Makes Himself (1936) — the original
 	 * text in which Childe frames prehistory as a series of "revolutions"
@@ -20741,7 +20741,7 @@ window.bibData = {
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  The missing prerequisites: fab, grid, cloud, analog data, wireless,
 	 *  text, human corpus, law, science, industry, paperwork, standards.
-	 *  (untold_history.php) — primary sources only.
+	 *  (the untold history trilogy) — primary sources only.
 	 * ───────────────────────────────────────────────────────────────────── */
 	"tsmc2025annualreport": {
 		title: "Taiwan Semiconductor Manufacturing Company Limited Annual Report 2025 (Form 20-F)",
@@ -21145,7 +21145,7 @@ window.bibData = {
 
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  The deep stack: solar, nitrogen, water, mineral, capital and
-	 *  attention budgets (untold_history.php) — primary sources.
+	 *  attention budgets (untold_history_iii.php) — primary sources.
 	 * ───────────────────────────────────────────────────────────────────── */
 	"priestley1772air": {
 		title: "Observations on Different Kinds of Air",
@@ -21509,7 +21509,7 @@ window.bibData = {
 
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  The school, the library and the immigration valve
-	 *  (untold_history.php) — primary sources.
+	 *  (untold_history_iii.php) — primary sources.
 	 * ───────────────────────────────────────────────────────────────────── */
 	"luther1524schools": {
 		title: "An die Ratsherren aller Städte deutschen Landes, dass sie christliche Schulen aufrichten und halten sollen",
@@ -21562,7 +21562,7 @@ window.bibData = {
 	},
 
 	/* ─────────────────────────────────────────────────────────────────────
-	 *  Body, city, state, spectrum, thermodynamics (untold_history.php)
+	 *  Body, city, state, spectrum, thermodynamics (untold_history_iii.php)
 	 *  — primary sources.
 	 * ───────────────────────────────────────────────────────────────────── */
 	"snow1855cholera": {
@@ -21645,7 +21645,7 @@ window.bibData = {
 
 	/* ─────────────────────────────────────────────────────────────────────
 	 *  Fiscal-military state, empire, metrology, assembly line, telephone,
-	 *  maps, audio and render farms (untold_history.php) — primary sources.
+	 *  maps, audio and render farms (untold_history_iii.php) — primary sources.
 	 * ───────────────────────────────────────────────────────────────────── */
 	"boe1694": {
 		title: "Bank of England Act 1694",
