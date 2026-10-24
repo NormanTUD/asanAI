@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atomic Habits · Das interaktive System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700;9..144,900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root{
+  --ink:#0B0D10;
+  --ink-2:#14181D;
+  --ink-3:#1C2127;
+  --line:rgba(255,255,255,.08);
+  --line-2:rgba(255,255,255,.14);
+  --fg:#ECEFF3;
+  --fg-dim:#9AA4B1;
+  --fg-faint:#5F6A77;
+
+  --amber:#FFB347;
+  --amber-2:#FF8A3D;
+  --mint:#4ADE9B;
+  --sky:#5AC8FA;
+  --violet:#A78BFA;
+  --rose:#FB7185;
+
+  --r-s:10px; --r-m:16px; --r-l:24px; --r-xl:34px;
+  --sh-1:0 1px 2px rgba(0,0,0,.4);
+  --sh-2:0 10px 30px -10px rgba(0,0,0,.6);
+  --sh-3:0 30px 70px -20px rgba(0,0,0,.75);
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--ink); color:var(--fg);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:16px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+body::before{
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(900px 520px at 12% -6%, rgba(255,179,71,.10), transparent 60%),
+    radial-gradient(760px 480px at 88% 8%, rgba(167,139,250,.10), transparent 60%),
+    radial-gradient(900px 620px at 50% 108%, rgba(74,222,155,.07), transparent 60%);
+}
+body::after{
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:1; opacity:.30;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+.wrap{position:relative; z-index:2}
+
+h1,h2,h3,h4{font-family:'Fraunces',Georgia,serif; font-weight:700; line-height:1.08; letter-spacing:-.02em; margin:0}
+.mono{font-family:'JetBrains Mono',monospace}
+
+::selection{background:var(--amber); color:#000}
+
+/* scrollbar */
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:var(--ink-2)}
+::-webkit-scrollbar-thumb{background:#2C333B;border-radius:99px;border:3px solid var(--ink-2)}
+::-webkit-scrollbar-thumb:hover{background:#3C454F}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.container{max-width:1180px;margin:0 auto;padding:0 28px}
+section{padding:96px 0; position:relative}
+.sec-label{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--amber); margin-bottom:18px;
+}
+.sec-label::before{content:'';width:26px;height:1px;background:var(--amber);opacity:.6}
+.sec-title{font-size:clamp(30px,4.4vw,52px); margin-bottom:14px}
+.sec-sub{color:var(--fg-dim); max-width:66ch; font-size:17px; margin-bottom:46px}
+
+.card{
+  background:linear-gradient(168deg, rgba(255,255,255,.045), rgba(255,255,255,.012));
+  border:1px solid var(--line); border-radius:var(--r-l);
+  box-shadow:var(--sh-2); backdrop-filter:blur(14px);
+}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+nav{
+  position:sticky; top:0; z-index:100;
+  background:rgba(11,13,16,.72); backdrop-filter:blur(20px) saturate(150%);
+  border-bottom:1px solid var(--line);
+}
+.nav-in{max-width:1180px;margin:0 auto;padding:13px 28px;display:flex;align-items:center;gap:26px}
+.brand{display:flex;align-items:center;gap:11px;font-family:'Fraunces',serif;font-weight:900;font-size:18px;letter-spacing:-.02em;white-space:nowrap}
+.atom{width:26px;height:26px;flex:none;animation:spin 14s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.nav-links{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.nav-links a{
+  color:var(--fg-dim);text-decoration:none;font-size:13.5px;font-weight:500;
+  padding:7px 13px;border-radius:99px;transition:.2s var(--ease);white-space:nowrap;
+}
+.nav-links a:hover{color:var(--fg);background:rgba(255,255,255,.07)}
+.burger{display:none;margin-left:auto;background:none;border:1px solid var(--line-2);color:var(--fg);border-radius:10px;padding:7px 11px;cursor:pointer;font-size:17px}
+@media(max-width:940px){
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(11,13,16,.98);flex-direction:column;padding:12px 20px 20px;border-bottom:1px solid var(--line)}
+  .nav-links.open{display:flex}
+  .burger{display:block}
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{padding:110px 0 80px; text-align:center}
+.pill{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:7px 16px;border-radius:99px;
+  border:1px solid rgba(255,179,71,.3); background:rgba(255,179,71,.09);
+  font-size:12px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--amber);
+  margin-bottom:30px;
+}
+.dot{width:6px;height:6px;border-radius:99px;background:var(--amber);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(1.5)}}
+.hero h1{font-size:clamp(44px,8.2vw,104px); font-weight:900; margin-bottom:20px}
+.hero h1 em{
+  font-style:italic;
+  background:linear-gradient(100deg,var(--amber) 0%,var(--amber-2) 45%,var(--rose) 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero p.lead{font-size:clamp(17px,2.1vw,21px);color:var(--fg-dim);max-width:60ch;margin:0 auto 20px}
+.quote-hero{
+  font-family:'Fraunces',serif;font-style:italic;font-size:clamp(17px,2.2vw,22px);
+  color:var(--fg);max-width:48ch;margin:0 auto 44px;padding:18px 24px;
+  border-left:2px solid var(--amber);text-align:left;
+}
+.btns{display:flex;gap:13px;justify-content:center;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:13px 26px;border-radius:99px;font-weight:600;font-size:15px;
+  text-decoration:none;cursor:pointer;border:1px solid transparent;transition:.25s var(--ease);
+  font-family:'Inter',sans-serif;
+}
+.btn-p{background:linear-gradient(135deg,var(--amber),var(--amber-2));color:#140B00;box-shadow:0 10px 32px -10px rgba(255,138,61,.65)}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 16px 42px -10px rgba(255,138,61,.8)}
+.btn-s{background:rgba(255,255,255,.055);color:var(--fg);border-color:var(--line-2)}
+.btn-s:hover{background:rgba(255,255,255,.1);transform:translateY(-2px)}
+.btn-xs{padding:8px 15px;font-size:13px}
+
+/* compounding widget */
+.comp{max-width:760px;margin:64px auto 0;padding:34px 30px}
+.comp h3{font-size:21px;margin-bottom:6px}
+.comp .hint{font-size:13.5px;color:var(--fg-faint);margin-bottom:24px}
+.slider-row{display:flex;align-items:center;gap:16px;margin-bottom:8px}
+.slider-row label{font-size:12.5px;color:var(--fg-dim);min-width:92px;font-weight:600}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;flex:1;height:5px;border-radius:99px;
+  background:linear-gradient(90deg,var(--amber),var(--amber-2));outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:19px;height:19px;border-radius:99px;background:#fff;
+  border:3px solid var(--amber-2);cursor:grab;box-shadow:0 2px 10px rgba(0,0,0,.5);
+}
+input[type=range]::-moz-range-thumb{width:19px;height:19px;border-radius:99px;background:#fff;border:3px solid var(--amber-2);cursor:grab}
+.comp-out{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:26px}
+.comp-box{padding:22px 18px;border-radius:var(--r-m);text-align:center;border:1px solid var(--line)}
+.comp-box.good{background:linear-gradient(160deg,rgba(74,222,155,.14),rgba(74,222,155,.03));border-color:rgba(74,222,155,.28)}
+.comp-box.bad{background:linear-gradient(160deg,rgba(251,113,133,.13),rgba(251,113,133,.03));border-color:rgba(251,113,133,.26)}
+.comp-box .n{font-family:'JetBrains Mono',monospace;font-size:clamp(28px,5vw,40px);font-weight:700;line-height:1;margin-bottom:7px}
+.comp-box.good .n{color:var(--mint)} .comp-box.bad .n{color:var(--rose)}
+.comp-box .l{font-size:11.5px;color:var(--fg-dim);text-transform:uppercase;letter-spacing:.11em;font-weight:600}
+.comp-note{margin-top:18px;font-size:13px;color:var(--fg-faint);text-align:center;line-height:1.6}
+
+/* ============================================================
+   HABIT LOOP
+   ============================================================ */
+.loop-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px}
+@media(max-width:860px){.loop-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.loop-grid{grid-template-columns:1fr}}
+.loop-step{
+  padding:26px 20px;border-radius:var(--r-m);cursor:pointer;
+  border:1px solid var(--line);background:rgba(255,255,255,.028);
+  transition:.3s var(--ease);position:relative;overflow:hidden;text-align:left;
+}
+.loop-step::after{content:'';position:absolute;inset:0;background:var(--c);opacity:0;transition:.3s}
+.loop-step:hover{transform:translateY(-5px);border-color:var(--line-2)}
+.loop-step.on{border-color:var(--c);box-shadow:0 0 0 1px var(--c),0 16px 40px -14px var(--c)}
+.loop-step.on::after{opacity:.07}
+.loop-step>*{position:relative;z-index:1}
+.ls-n{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--c);letter-spacing:.14em;margin-bottom:11px}
+.ls-t{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin-bottom:5px}
+.ls-d{font-size:13.5px;color:var(--fg-dim);line-height:1.5}
+.loop-detail{padding:30px 32px;min-height:140px}
+.loop-detail .ld-law{
+  display:inline-block;padding:5px 13px;border-radius:99px;font-size:11px;font-weight:700;
+  letter-spacing:.13em;text-transform:uppercase;margin-bottom:14px;
+}
+.loop-detail h4{font-size:20px;margin-bottom:10px}
+.loop-detail p{color:var(--fg-dim);font-size:15px;margin:0 0 14px}
+.loop-detail .ex{
+  font-size:14px;padding:14px 16px;border-radius:var(--r-s);
+  background:rgba(255,255,255,.04);border-left:2px solid currentColor;color:var(--fg-dim);
+}
+.loop-detail .ex b{color:var(--fg)}
+
+/* ============================================================
+   4 LAWS
+   ============================================================ */
+.laws{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:18px}
+.law{
+  padding:0;overflow:hidden;cursor:pointer;transition:.3s var(--ease);
+  display:flex;flex-direction:column;
+}
+.law:hover{transform:translateY(-6px);box-shadow:var(--sh-3)}
+.law-top{padding:26px 24px 20px;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+.law-top::before{content:'';position:absolute;top:-70%;right:-30%;width:200px;height:200px;border-radius:99px;background:var(--c);opacity:.14;filter:blur(42px)}
+.law-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.17em;color:var(--c);margin-bottom:9px;position:relative}
+.law-name{font-size:25px;margin-bottom:6px;position:relative}
+.law-de{font-size:13.5px;color:var(--fg-dim);position:relative}
+.law-body{padding:20px 24px 24px;flex:1;display:flex;flex-direction:column}
+.tactic{
+  display:flex;gap:11px;padding:10px 0;font-size:14px;line-height:1.5;
+  border-bottom:1px dashed rgba(255,255,255,.055);
+}
+.tactic:last-of-type{border-bottom:none}
+.tactic .tk{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--c);flex:none;padding-top:3px;min-width:26px}
+.tactic .tt b{display:block;color:var(--fg);font-weight:600;font-size:14px}
+.tactic .tt span{color:var(--fg-dim);font-size:13px}
+.inv{
+  margin-top:16px;padding:14px 15px;border-radius:var(--r-s);
+  background:rgba(251,113,133,.08);border:1px solid rgba(251,113,133,.2);
+}
+.inv .ih{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--rose);margin-bottom:7px}
+.inv .it{font-size:13.5px;color:var(--fg-dim);line-height:1.55}
+.inv .it b{color:var(--fg)}
+
+/* ============================================================
+   BUILDER
+   ============================================================ */
+.builder{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.builder{grid-template-columns:1fr}}
+.bform{padding:30px}
+.fg{margin-bottom:20px}
+.fg label{display:block;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:7px}
+.fg .fh{font-size:12.5px;color:var(--fg-faint);margin-bottom:9px;line-height:1.5}
+input[type=text],textarea,select{
+  width:100%;padding:12px 14px;border-radius:var(--r-s);
+  background:rgba(255,255,255,.045);border:1px solid var(--line-2);color:var(--fg);
+  font-family:'Inter',sans-serif;font-size:14.5px;transition:.2s;resize:vertical;
+}
+input[type=text]:focus,textarea:focus,select:focus{outline:none;border-color:var(--amber);background:rgba(255,255,255,.07);box-shadow:0 0 0 3px rgba(255,179,71,.13)}
+input::placeholder,textarea::placeholder{color:var(--fg-faint)}
+select option{background:var(--ink-2);color:var(--fg)}
+.bout{padding:30px;display:flex;flex-direction:column}
+.bout-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--fg-faint);gap:12px;min-height:280px}
+.bout-empty .big{font-size:42px;opacity:.3}
+.plan-h{font-size:20px;margin-bottom:4px}
+.plan-id{font-size:13.5px;color:var(--amber);margin-bottom:20px;font-style:italic;font-family:'Fraunces',serif}
+.plan-item{margin-bottom:15px;padding-bottom:15px;border-bottom:1px solid var(--line)}
+.plan-item:last-child{border:none;margin-bottom:0;padding-bottom:0}
+.plan-item .pl{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--c,var(--amber));margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.plan-item .pv{font-size:14.5px;line-height:1.6}
+.plan-item .pv em{font-style:normal;color:var(--amber);font-weight:600}
+.copy-ok{color:var(--mint);font-size:13px;margin-top:12px;display:none}
+
+/* ============================================================
+   SCORECARD
+   ============================================================ */
+.sc-add{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap}
+.sc-add input{flex:1;min-width:200px}
+.sc-list{display:flex;flex-direction:column;gap:9px}
+.sc-row{
+  display:flex;align-items:center;gap:13px;padding:13px 16px;border-radius:var(--r-s);
+  background:rgba(255,255,255,.032);border:1px solid var(--line);transition:.2s;
+}
+.sc-row:hover{background:rgba(255,255,255,.055)}
+.sc-row .txt{flex:1;font-size:14.5px}
+.marks{display:flex;gap:5px}
+.mk{
+  width:33px;height:33px;border-radius:9px;border:1px solid var(--line-2);
+  background:transparent;color:var(--fg-faint);cursor:pointer;font-weight:700;font-size:16px;
+  transition:.2s var(--ease);display:grid;place-items:center;
+  font-family:'JetBrains Mono',monospace;
+}
+.mk:hover{border-color:var(--fg-dim);color:var(--fg)}
+.mk.on-plus{background:rgba(74,222,155,.2);border-color:var(--mint);color:var(--mint)}
+.mk.on-eq{background:rgba(90,200,250,.2);border-color:var(--sky);color:var(--sky)}
+.mk.on-minus{background:rgba(251,113,133,.2);border-color:var(--rose);color:var(--rose)}
+.del{background:none;border:none;color:var(--fg-faint);cursor:pointer;font-size:17px;padding:4px 7px;border-radius:7px;transition:.2s}
+.del:hover{color:var(--rose);background:rgba(251,113,133,.12)}
+.sc-empty{text-align:center;color:var(--fg-faint);padding:34px 16px;font-size:14.5px}
+.sc-stats{display:flex;gap:11px;margin-top:20px;flex-wrap:wrap}
+.chip{padding:7px 14px;border-radius:99px;font-size:
+<!-- COMPOUNDING -->
+<div class="card comp rv">
+  <h3>Der Zinseszins-Rechner</h3>
+  <p class="hint">Verschiebe die Regler und sieh, was tägliche Mini-Entscheidungen über die Zeit anrichten.</p>
+  <div class="slider-row">
+    <label>Tage: <span class="mono" id="cDaysL" style="color:var(--amber)">365</span></label>
+    <input type="range" id="cDays" min="30" max="1095" value="365" step="5">
+  </div>
+  <div class="slider-row">
+    <label>Änderung: <span class="mono" id="cPctL" style="color:var(--amber)">1.0 %</span></label>
+    <input type="range" id="cPct" min="1" max="30" value="10" step="1">
+  </div>
+  <div class="comp-out">
+    <div class="comp-box good">
+      <div class="n" id="cUp">37.78×</div>
+      <div class="l">Besser werden</div>
+    </div>
+    <div class="comp-box bad">
+      <div class="n" id="cDown">0.03×</div>
+      <div class="l">Schlechter werden</div>
+    </div>
+  </div>
+  <p class="comp-note">
+    1.01<sup>365</sup> = <b style="color:var(--mint)">37,78</b> &nbsp;·&nbsp; 0.99<sup>365</sup> = <b style="color:var(--rose)">0,03</b><br>
+    Gewohnheiten sind ein zweischneidiges Schwert. Zeit multipliziert, was du ihr fütterst.
+  </p>
+</div>
+
+<div class="loop-grid rv">
+  <div class="loop-step on" style="--c:#FFB347" data-i="0">
+    <div class="ls-n">01 · PROBLEM</div>
+    <div class="ls-t">Cue</div>
+    <div class="ls-d">Der Auslöser, der dein Gehirn startet</div>
+  </div>
+  <div class="loop-step" style="--c:#A78BFA" data-i="1">
+    <div class="ls-n">02 · PROBLEM</div>
+    <div class="ls-t">Craving</div>
+    <div class="ls-d">Das Verlangen – die Motivationskraft</div>
+  </div>
+  <div class="loop-step" style="--c:#5AC8FA" data-i="2">
+    <div class="ls-n">03 · LÖSUNG</div>
+    <div class="ls-t">Response</div>
+    <div class="ls-d">Die Handlung, die du tatsächlich ausführst</div>
+  </div>
+  <div class="loop-step" style="--c:#4ADE9B" data-i="3">
+    <div class="ls-n">04 · LÖSUNG</div>
+    <div class="ls-t">Reward</div>
+    <div class="ls-d">Die Befriedigung – schließt den Kreis</div>
+  </div>
+</div>
+
+<div class="card loop-detail rv" id="loopDet"></div>
+
+<div class="builder rv">
+  <div class="card bform">
+    <div class="fg">
+      <label>1 · Identität</label>
+      <div class="fh">Nicht „Ich will ein Buch lesen“, sondern „Ich bin ein Leser“. Jede Handlung ist eine Stimme für diesen Typ Mensch.</div>
+      <input type="text" id="bIdent" placeholder="z. B. jemand, der sich täglich bewegt">
+    </div>
+    <div class="fg">
+      <label>2 · Die Gewohnheit</label>
+      <div class="fh">Was willst du konkret tun?</div>
+      <input type="text" id="bHabit" placeholder="z. B. 30 Minuten laufen">
+    </div>
+    <div class="fg">
+      <label>3 · Zeit &amp; Ort <span style="color:var(--fg-faint);font-weight:400;text-transform:none;letter-spacing:0">(Implementation Intention)</span></label>
+      <div class="fh">„Ich werde [X] um
+.chip{padding:7px 14px;border-radius:99px;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:rgba(255,255,255,.04);display:flex;align-items:center;gap:7px}
+.chip b{font-family:'JetBrains Mono',monospace;font-size:14px}
+.chip.p b{color:var(--mint)} .chip.e b{color:var(--sky)} .chip.m b{color:var(--rose)}
+.chip .q{color:var(--fg-faint);font-weight:500}
+
+/* ============================================================
+   TRACKER
+   ============================================================ */
+.tr-head{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.tr-head input{flex:1;min-width:200px}
+.tr-item{padding:18px 20px;border-radius:var(--r-m);background:rgba(255,255,255,.032);border:1px solid var(--line);margin-bottom:12px}
+.tr-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.tr-name{font-family:'Fraunces',serif;font-size:18px;font-weight:700;flex:1;min-width:140px}
+.streak{
+  display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;
+  background:linear-gradient(135deg,rgba(255,179,71,.18),rgba(255,138,61,.08));
+  border:1px solid rgba(255,179,71,.3);font-size:12.5px;font-weight:700;color:var(--amber);
+  font-family:'JetBrains Mono',monospace;
+}
+.grid-days{display:grid;grid-template-columns:repeat(30,1fr);gap:4px}
+@media(max-width:700px){.grid-days{grid-template-columns:repeat(15,1fr)}}
+.day{
+  aspect-ratio:1;border-radius:5px;border:1px solid var(--line);
+  background:rgba(255,255,255,.025);cursor:pointer;transition:.15s var(--ease);padding:0;
+}
+.day:hover{transform:scale(1.22);border-color:var(--fg-dim);z-index:2}
+.day.done{background:linear-gradient(135deg,var(--mint),#2FB87A);border-color:transparent;box-shadow:0 0 10px -2px rgba(74,222,155,.6)}
+.day.today{box-shadow:0 0 0 2px var(--amber)}
+.tr-foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12px;color:var(--fg-faint)}
+.warn{
+  margin-top:18px;padding:14px 16px;border-radius:var(--r-s);
+  background:rgba(255,179,71,.09);border:1px solid rgba(255,179,71,.24);
+  font-size:13.5px;color:var(--fg-dim);line-height:1.6;
+}
+.warn b{color:var(--amber)}
+
+/* ============================================================
+   GOLDILOCKS
+   ============================================================ */
+.gold{padding:34px 32px;text-align:center}
+.gold-bar{position:relative;height:74px;margin:34px 0 20px}
+.gold-track{
+  position:absolute;inset:auto 0 22px;height:10px;border-radius:99px;
+  background:linear-gradient(90deg,var(--sky) 0%,var(--mint) 42%,var(--mint) 58%,var(--rose) 100%);
+  opacity:.75;
+}
+.gold-zone{
+  position:absolute;left:42%;right:42%;bottom:14px;height:26px;border-radius:9px;
+  border:1.5px dashed var(--mint);background:rgba(74,222,155,.1);
+}
+.gold-knob{
+  position:absolute;bottom:8px;width:38px;height:38px;border-radius:99px;margin-left:-19px;
+  background:#fff;border:4px solid var(--amber-2);box-shadow:0 8px 24px -6px rgba(0,0,0,.7);
+  transition:left .18s var(--ease);display:grid;place-items:center;font-size:17px;
+}
+.gold-labels{display:flex;justify-content:space-between;font-size:11.5px;color:var(--fg-faint);text-transform:uppercase;letter-spacing:.11em;font-weight:600;margin-bottom:26px}
+.gold-out{font-family:'Fraunces',serif;font-size:clamp(19px,3vw,26px);font-weight:700;margin-bottom:8px;min-height:34px}
+.gold-desc{color:var(--fg-dim);font-size:14.5px;max-width:52ch;margin:0 auto}
+
+/* ============================================================
+   REFLECT
+   ============================================================ */
+.refl{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:860px){.refl{grid-template-columns:1fr}}
+.refl-card{padding:28px 26px}
+.refl-card h3{font-size:21px;margin-bottom:5px}
+.refl-card .when{font-size:12px;color:var(--amber);letter-spacing:.11em;text-transform:uppercase;font-weight:700;margin-bottom:18px}
+.refl-q{margin-bottom:17px}
+.refl-q label{display:block;font-size:14px;font-weight:600;margin-bottom:7px;color:var(--fg)}
+.refl-q textarea{min-height:72px;font-size:14px}
+
+/* ============================================================
+   MISC
+   ============================================================ */
+.quote-band{padding:66px 0;text-align:center}
+.quote-band blockquote{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:500;
+  font-size:clamp(22px,3.6vw,38px);line-height:1.3;max-width:20ch;margin:0 auto 18px;
+}
+.quote-band blockquote em{
+  font-style:italic;
+  background:linear-gradient(100deg,var(--amber),var(--rose));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.quote-band cite{font-style:normal;font-size:13px;color:var(--fg-faint);letter-spacing:.15em;text-transform:uppercase;font-weight:600}
+
+footer{border-top:1px solid var(--line);padding:46px 0 60px;text-align:center}
+footer p{color:var(--fg-faint);font-size:13.5px;margin:0 0 18px}
+.foot-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,120%);
+  background:var(--ink-3);border:1px solid var(--line-2);border-radius:99px;
+  padding:12px 24px;font-size:14px;font-weight:600;z-index:500;
+  box-shadow:var(--sh-3);transition:transform .35s var(--ease);
+}
+.toast.show{transform:translate(-50%,0)}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+@media print{nav,.btns,.foot-btns{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ NAV ============ -->
+<nav>
+  <div class="nav-in">
+    <div class="brand">
+      <svg class="atom" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="4.5" fill="#FFB347"/>
+        <ellipse cx="24" cy="24" rx="21" ry="8" stroke="#FFB347" stroke-width="2" opacity=".75"/>
+        <ellipse cx="24" cy="24" rx="21" ry="8" stroke="#FB7185" stroke-width="2" opacity=".75" transform="rotate(60 24 24)"/>
+        <ellipse cx="24" cy="24" rx="21" ry="8" stroke="#A78BFA" stroke-width="2" opacity=".75" transform="rotate(120 24 24)"/>
+      </svg>
+      Atomic&nbsp;Habits
+    </div>
+    <button class="burger" onclick="document.getElementById('nl').classList.toggle('open')">☰</button>
+    <div class="nav-links" id="nl">
+      <a href="#start">1 %</a>
+      <a href="#loop">Loop</a>
+      <a href="#laws">4 Gesetze</a>
+      <a href="#builder">Builder</a>
+      <a href="#scorecard">Scorecard</a>
+      <a href="#tracker">Tracker</a>
+      <a href="#goldilocks">Goldilocks</a>
+      <a href="#reflect">Review</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero container" id="start">
+  <div class="pill"><span class="dot"></span>James Clear · Das komplette System</div>
+  <h1>Winzige Änderungen,<br><em>bemerkenswerte</em> Ergebnisse.</h1>
+  <p class="lead">Du steigst nicht auf das Niveau deiner Ziele. Du fällst auf das Niveau deiner Systeme. Dieses Tool verwandelt die Kernideen des Buches in ein System, das du <b>heute</b> benutzen kannst.</p>
+  <blockquote class="quote-hero">„Gewohnheiten sind der Zinseszins der Selbstverbesserung. Genau wie Geld sich durch Zinseszins vervielfacht, vervielfacht sich die Wirkung deiner Gewohnheiten, wenn du sie wiederholst.“</blockquote>
+  <div class="btns">
+    <a href="#builder" class="btn btn-p">→ Gewohnheit bauen</a>
+    <a href="#laws" class="btn btn-s">Die 4 Gesetze ansehen</a>
+  </div>
+
+  <!-- COMPOUNDING -->
+  <div class="card comp reveal">
+    <h3>Der Zinseszins-Rechner</h3>
+    <p class="hint">1 % besser pro Tag für ein Jahr = 37,78× besser. 1 % schlechter pro Tag = fast auf null.</p>
+    <div class="slider-row">
+      <label>Verbesserung</label>
+      <input type="range" id="rate" min="0.1" max="3" step="0.1" value="1">
+      <span class="mono" id="rateV" style="min-width:52px;text-align:right;font-weight:700;color:var(--amber)">1.0 %</span>
+    </div>
+    <div class="slider-row">
+      <label>Tage</label>
+      <input type="range" id="days" min="30" max="730" step="5" value="365">
+      <span class="mono" id="daysV" style="min-width:52px;text-align:right;font-weight:700;color:var(--amber)">365</span>
+    </div>
+    <div class="comp-out">
+      <div class="comp-box good"><div class="n" id="up">37.78×</div><div class="l">Besser werden</div></div>
+      <div class="comp-box bad"><div class="n" id="dn">0.03×</div><div class="l">Schlechter werden</div></div>
+    </div>
+    <p class="comp-note">Im Buch: <span class="mono">1.01<sup>365</sup> = 37,78</span> &nbsp;·&nbsp; <span class="mono">0.99<sup>365</sup> = 0,03</span><br>Deine Ergebnisse sind ein nachlaufendes Maß deiner Gewohnheiten.</p>
+  </div>
+</header>
+
+<!-- ============ HABIT LOOP ============ -->
+<section id="loop" class="container">
+  <div class="reveal">
+    <div class="sec-label">Die Mechanik</div>
+    <h2 class="sec-title">Der Habit Loop</h2>
+    <p class="sec-sub">Jede Gewohnheit durchläuft vier Stufen – immer in derselben Reihenfolge. Problemphase (Auslöser + Verlangen) und Lösungsphase (Reaktion + Belohnung). Klick dich durch.</p>
+  </div>
+
+  <div class="loop-grid reveal" id="loopGrid"></div>
+  <div class="card loop-detail reveal" id="loopDetail"></div>
+</section>
+
+<!-- ============ 4 LAWS ============ -->
+<section id="laws" class="container">
+  <div class="reveal">
+    <div class="sec-label">Das Framework</div>
+    <h2 class="sec-title">Die 4 Gesetze der Verhaltensänderung</h2>
+    <p class="sec-sub">Jede Stufe des Loops wird zu einem Hebel. Richtig eingestellt entstehen gute Gewohnheiten mühelos – und schlechte verkümmern. Jede Karte enthält die konkreten Taktiken aus dem Buch plus die Inversion zum Abgewöhnen.</p>
+  </div>
+  <div class="laws reveal" id="lawsGrid"></div>
+</section>
+
+<!-- ============ QUOTE ============ -->
+<section class="quote-band container">
+  <blockquote>Jede Handlung ist eine <em>Stimme</em> für den Menschen, der du werden willst.</blockquote>
+  <cite>Kapitel 2 · Identitätsbasierte Gewohnheiten</cite>
+</section>
+
+<!-- ============ BUILDER ============ -->
+<section id="builder" class="container">
+  <div class="reveal">
+    <div class="sec-label">Das Werkzeug</div>
+    <h2 class="sec-title">Habit Builder</h2>
+    <p class="sec-sub">Fülle die Felder aus – du bekommst einen fertigen Plan: Identität, Implementation Intention, Habit Stacking, Zwei-Minuten-Version, Umgebungsdesign und sofortige Belohnung. Alles aus dem Buch, alles sofort einsetzbar.</p>
+  </div>
+
+  <div class="builder reveal">
+    <div class="card bform">
+      <div class="fg">
+        <label>1 · Identität</label>
+        <div class="fh">Nicht „Ich will ein Buch lesen“, sondern „Ich werde ein Leser“. Wer ist der Mensch, der dein Ergebnis mühelos erreicht?</div>
+        <input type="text" id="bIdent" placeholder="z. B. jemand, der nie ein Training auslässt">
+      </div>
+      <div class="fg">
+        <label>2 · Die Gewohnheit</label>
+        <div class="fh">Was willst du konkret tun?</div>
+        <input type="text" id="bHabit" placeholder="z. B. 30 Minuten trainieren">
+      </div>
+      <div class="fg">
+        <label>3 · Zeit &amp; Ort</label>
+        <div class="fh">Implementation Intention: „Ich werde [X] um [ZEIT] an [ORT] tun.“ (91 % Erfolgsquote in der Studie statt 35 %)</div>
+        <div style="display:flex;gap:10px">
+          <input type="text" id="bTime" placeholder="17:00 Uhr" style="flex:1">
+          <input type="text" id="bPlace" placeholder="im Fitnessstudio" style="flex:1.4">
+        </div>
+      </div>
+      <div class="fg">
+        <label>4 · Anker-Gewohnheit</label>
+        <div class="fh">Habit Stacking: „Nach [BESTEHENDE GEWOHNHEIT] werde ich [NEUE GEWOHNHEIT].“ Wähle etwas, das du täglich ohne Ausnahme tust.</div>
+        <input type="text" id="bAnchor" placeholder="z. B. meine Arbeitsschuhe ausziehen">
+      </div>
+      <div class="fg">
+        <label>5 · Zwei-Minuten-Version</label>
+        <div class="fh">Skaliere herunter, bis es in unter 2 Minuten machbar ist. „Laufe 5 km“ → „Zieh die Laufschuhe an.“ Beherrsche die Kunst des Auftauchens.</div>
+        <input type="text" id="bTwo" placeholder="z. B. Sportkleidung anziehen">
+      </div>
+      <div class="fg">
+        <label>6 · Sofortige Belohnung</label>
+        <div class="fh">Was wird sofort nach Abschluss befriedigend sein? Wähle etwas, das deine Identität stärkt, nicht untergräbt.</div>
+        <input type="text" id="bRew" placeholder="z. B. 5 € ins Reise-Sparkonto">
+      </div>
+      <div class="btns" style="justify-content:flex-start">
+        <button class="btn btn-p" onclick="buildPlan()">Plan erzeugen</button>
+        <button class="btn btn-s btn-xs" onclick="fillDemo()">Beispiel laden</button>
+      </div>
+    </div>
+
+    <div class="card bout" id="bOut">
+      <div class="bout-empty">
+        <div class="big">◇</div>
+        <div>Dein Plan erscheint hier.<br><span style="font-size:13px">Fülle links die Felder aus.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCORECARD ============ -->
+<section id="scorecard" class="container">
+  <div class="reveal">
+    <div class="sec-label">Gesetz 1 · Taktik 1.1</div>
+    <h2 class="sec-title">Habits Scorecard</h2>
+    <p class="sec-sub">Verhaltensänderung beginnt immer mit Bewusstsein. Liste deine täglichen Gewohnheiten und markiere jede: <b style="color:var(--mint)">+</b> gut, <b style="color:var(--sky)">=</b> neutral, <b style="color:var(--rose)">–</b> schlecht. Noch nichts ändern – nur bemerken. Leitfrage: <em>„Hilft mir dieses Verhalten, der Mensch zu werden, der ich sein will?“</em></p>
+  </div>
+
+  <div class="card reveal" style="padding:28px 26px">
+    <div class="sc-add">
+      <input type="text" id="scIn" placeholder="z. B. Handy checken direkt nach dem Aufwachen" onkeydown="if(event.key==='Enter')addSc()">
+      <button class="btn btn-p btn-xs" onclick="addSc()">+ Hinzufügen</button>
+    </div>
+    <div class="sc-list" id="scList"></div>
+    <div class="sc-stats" id="scStats"></div>
+  </div>
+</section>
+
+<!-- ============ TRACKER ============ -->
+<section id="tracker" class="container">
+  <div class="reveal">
+    <div class="sec-label">Gesetz 4 · Taktik 4.3 &amp; 4.4</div>
+    <h2 class="sec-title">Habit Tracker</h2>
+    <p class="sec-sub">„Don't break the chain.“ Tracking macht eine Gewohnheit gleichzeitig <b>offensichtlich</b>, <b>attraktiv</b> und <b>befriedigend</b>. Die letzten 30 Tage – klicke die Felder.</p>
+  </div>
+
+  <div class="card reveal" style="padding:28px 26px">
+    <div class="tr-head">
+      <input type="text" id="trIn" placeholder="Neue Gewohnheit tracken …" onkeydown="if(event.key==='Enter')addTr()">
+      <button class="btn btn-p btn-xs" onclick="addTr()">+ Tracken</button>
+    </div>
+    <div id="trList"></div>
+    <div class="warn">
+      <b>Never miss twice.</b> Der erste Fehler ruiniert dich nie – es ist die Spirale der wiederholten Fehler. Einmal verpassen ist ein Unfall. Zweimal verpassen ist der Beginn einer neuen Gewohnheit. &nbsp;·&nbsp; <b>Charlie Munger:</b> „Die erste Regel des Zinseszinses: Unterbrich ihn niemals unnötig.“
+    </div>
+  </div>
+</section>
+
+<!-- ============ GOLDILOCKS ============ -->
+<section id="goldilocks" class="container">
+  <div class="reveal">
+    <div class="sec-label">Fortgeschrittene Taktik · Kapitel 19</div>
+    <h2 class="sec-title">Die Goldilocks-Regel</h2>
+    <p class="sec-sub">Maximale Motivation entsteht bei Aufgaben genau an der Grenze deiner aktuellen Fähigkeiten. Nicht zu schwer. Nicht zu leicht. Genau richtig. Schieb den Regler.</p>
+  </div>
+
+  <div class="card gold reveal">
+    <div class="gold-bar">
+      <div class="gold-track"></div>
+      <div class="gold-zone"></div>
+      <div class="gold-knob" id="gKnob" style="left:50%">◆</div>
+    </div>
+    <div class="gold-labels"><span>Zu leicht · Langeweile</span><span>Flow-Zone</span><span>Zu schwer · Angst</span></div>
+    <input type="range" id="gRange" min="0" max="100" value="50" style="max-width:560px;margin:0 auto;display:block">
+    <div class="gold-out" id="gOut" style="margin-top:26px"></div>
+    <div class="gold-desc" id="gDesc"></div>
+  </div>
+</section>
+
+<!-- ============ REFLECT ============ -->
+<section id="reflect" class="container">
+  <div class="reveal">
+    <div class="sec-label">Kapitel 20 · Die Kehrseite guter Gewohnheiten</div>
+    <h2 class="sec-title">Reflexion &amp; Review</h2>
+    <p class="sec-sub">Gewohnheiten + bewusstes Üben = Meisterschaft. Ohne Reflexion wiederholst du Fehler blind. James Clear macht jährlich zwei Reviews – hier sind sie, zum Ausfüllen.</p>
+  </div>
+
+  <div class="refl reveal">
+    <div class="card refl-card">
+      <h3>Annual Review</h3>
+      <div class="when">Jeden Dezember</div>
+      <div class="refl-q"><label>Was lief dieses Jahr gut?</label><textarea id="r1"></textarea></div>
+      <div class="refl-q"><label>Was lief nicht so gut?</label><textarea id="r2"></textarea></div>
+      <div class="refl-q"><label>Was habe ich gelernt?</label><textarea id="r3"></textarea></div>
+    </div>
+    <div class="card refl-card">
+      <h3>Integrity Report</h3>
+      <div class="when">Jeden Sommer</div>
+      <div class="refl-q"><label>Welche Grundwerte treiben mein Leben &amp; meine Arbeit?</label><textarea id="r4"></textarea></div>
+      <div class="refl-q"><label>Lebe und arbeite ich gerade mit Integrität?</label><textarea id="r5"></textarea></div>
+      <div class="refl-q"><label>Wie setze ich zukünftig einen höheren Standard?</label><textarea id="r6"></textarea></div>
+    </div>
+  </div>
+
+  <div class="warn reveal" style="margin-top:22px">
+    <b>Halte deine Identität klein.</b> Je enger du dich an <em>eine</em> Identität klammerst, desto schwerer wird es, darüber hinauszuwachsen. „Ich bin Athlet“ wird besser zu „Ich bin jemand, der mental stark ist und körperliche Herausforderungen liebt.“ So bleibt deine Identität flexibel statt spröde. &nbsp;·&nbsp; <b>Gewohnheiten + bewusstes Üben = Meisterschaft.</b>
+  </div>
+</section>
+
+<!-- ============ QUOTE 2 ============ -->
+<section class="quote-band container">
+  <blockquote>Du steigst nicht auf das Niveau deiner Ziele.<br>Du <em>fällst</em> auf das Niveau deiner Systeme.</blockquote>
+  <cite>Kapitel 1 · Das Fazit in einem Satz</cite>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="container">
+  <p>Alle Daten werden ausschließlich lokal in deinem Browser gespeichert (localStorage).<br>Inhalte basieren auf „Atomic Habits“ von James Clear.</p>
+  <div class="foot-btns">
+    <button class="btn btn-s btn-xs" onclick="exportData()">⬇ Daten exportieren</button>
+    <button class="btn btn-s btn-xs" onclick="document.getElementById('impFile').click()">⬆ Daten importieren</button>
+    <input type="file" id="impFile" accept=".json" style="display:none" onchange="importData(event)">
+    <button class="btn btn-s btn-xs" onclick="window.print()">🖨 Drucken</button>
+    <button class="btn btn-s btn-xs" onclick="resetAll()" style="border-color:rgba(251,113,133,.4);color:var(--rose)">✕ Alles zurücksetzen</button>
+  </div>
+</footer>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   STATE
+   ============================================================ */
+const KEY='atomicHabitsApp_v1';
+let S = JSON.parse(localStorage.getItem(KEY) || 'null') || {
+  scorecard:[], trackers:[], reflect:{}, builder:{}
+};
+function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200); }
+
+/* ============================================================
+   HERO · COMPOUNDING
+   ============================================================ */
+const rate=document.getElementById('rate'), days=document.getElementById('days');
+function calcComp(){
+  const r=parseFloat(rate.value), d=parseInt(days.value);
+  document.getElementById('rateV').textContent=r.toFixed(1)+' %';
+  document.getElementById('daysV').textContent=d;
+  const up=Math.pow(1+r/100,d), dn=Math.pow(1-r/100,d);
+  document.getElementById('up').textContent = up>=1000 ? up.toExponential(2)+'×' : up.toFixed(2)+'×';
+  document.getElementById('dn').textContent = dn<0.01 ? dn.toExponential(2)+'×' : dn.toFixed(2)+'×';
+}
+rate.oninput=days.oninput=calcComp; calcComp();
+
+/* ============================================================
+   HABIT LOOP
+   ============================================================ */
+const LOOP=[
+  {n:'Schritt 01',t:'Auslöser',d:'Der Hinweisreiz, der dein Gehirn anstößt',c:'#FFB347',law:'1. Gesetz · Mach es offensichtlich',
+   h:'Der Cue ist ein Informationsfetzen, der eine Belohnung vorhersagt.',
+   p:'Dein Verstand scannt permanent die Umgebung nach Hinweisen, wo Belohnungen liegen. Die zwei häufigsten Auslöser sind <b>Zeit</b> und <b>Ort</b>. Gewohnheiten beginnen immer hier – und weil der Cue der erste Hinweis auf eine Belohnung ist, führt er direkt zum Verlangen.',
+   ex:'<b>Beispiel:</b> Dein Handy vibriert mit einer neuen Nachricht. &nbsp;|&nbsp; Du betrittst einen dunklen Raum. &nbsp;|&nbsp; Du riechst einen Donut-Laden auf dem Weg ins Büro.'},
+  {n:'Schritt 02',t:'Verlangen',d:'Die motivierende Kraft hinter jeder Gewohnheit',c:'#A78BFA',law:'2. Gesetz · Mach es attraktiv',
+   h:'Ohne Verlangen gibt es keinen Grund zu handeln.',
+   p:'Du begehrst nicht die Gewohnheit selbst, sondern die <b>Zustandsänderung</b>, die sie liefert. Du willst nicht rauchen – du willst das Gefühl von Erleichterung. Du willst nicht den Fernseher anschalten – du willst unterhalten werden. Jedes Verlangen ist mit dem Wunsch verknüpft, deinen inneren Zustand zu ändern.',
+   ex:'<b>Dopamin steigt in der Erwartung</b>, nicht bei der Erfüllung. Spielsüchtige bekommen den Dopaminschub <em>vor</em> dem Einsatz, nicht nach dem Gewinn. Die Vorfreude treibt die Handlung an.'},
+  {n:'Schritt 03',t:'Reaktion',d:'Die eigentliche Gewohnheit – Gedanke oder Handlung',c:'#4ADE9B',law:'3. Gesetz · Mach es einfach',
+   h:'Ob eine Reaktion erfolgt, hängt von Motivation und Reibung ab.',
+   p:'Wenn eine Handlung mehr körperliche oder mentale Anstrengung erfordert, als du bereit bist aufzuwenden, tust du sie nicht. Menschliches Verhalten folgt dem <b>Gesetz des geringsten Aufwands</b>: Von allen möglichen Handlungen wird die realisiert, die den meisten Wert bei geringstem Aufwand liefert.',
+   ex:'<b>Zwei-Minuten-Regel:</b> „Lies vor dem Schlafen“ → „Lies eine Seite.“ &nbsp;|&nbsp; „Mach 30 Min Yoga“ → „Hol die Yogamatte raus.“ &nbsp;|&nbsp; „Lauf 5 km“ → „Zieh die Laufschuhe an.“'},
+  {n:'Schritt 04',t:'Belohnung',d:'Das Endziel jeder Gewohnheit',c:'#FB7185',law:'4. Gesetz · Mach es befriedigend',
+   h:'Belohnungen befriedigen dich – und sie lehren dich.',
+   p:'Erstens stillen Belohnungen dein Verlangen. Zweitens bringen sie deinem Gehirn bei, welche Handlungen es sich merken soll. Gefühle von Freude und Enttäuschung sind Teil des Feedback-Mechanismus, der nützliche von nutzlosen Handlungen trennt. Die Belohnung schließt den Kreis.',
+   ex:'<b>Kardinalregel:</b> Was sofort belohnt wird, wird wiederholt. Was sofort bestraft wird, wird vermieden. Problem: Bei guten Gewohnheiten liegen die Kosten in der Gegenwart, der Nutzen in der Zukunft.'}
+];
+const lg=document.getElementById('loopGrid');
+LOOP.forEach((s,i)=>{
+  const el=document.createElement('div');
+  el.className='loop-step'+(i===0?' on':''); el.style.setProperty('--c',s.c);
+  el.innerHTML=`<div class="ls-n">${s.n}</div><div class="ls-t">${s.t}</div><div class="ls-d">${s.d}</div>`;
+  el.onclick=()=>{ document.querySelectorAll('.loop-step').forEach(x=>x.classList.remove('on')); el.classList.add('on'); showLoop(i); };
+  lg.appendChild(el);
+});
+function showLoop(i){
+  const s=LOOP[i];
+  document.getElementById('loopDetail').innerHTML=
+    `<div class="ld-law" style="background:${s.c}22;color:${s.c};border:1px solid ${s.c}55">${s.law}</div>
+     <h4 style="color:${s.c}">${s.h}</h4>
+     <p>${s.p}</p>
+     <div class="ex" style="color:${s.c}"><span style="color:var(--fg-dim)">${s.ex}</span></div>`;
+}
+showLoop(0);
+
+/* ============================================================
+   4 LAWS
+   ============================================================ */
+const LAWS=[
+  {num:'1. Gesetz',name:'Make It Obvious',de:'Mach es offensichtlich · Auslöser',c:'#FFB347',
+   t:[['1.1','Habits Scorecard','Schreib deine aktuellen Gewohnheiten auf, um dir ihrer bewusst zu werden.'],
+      ['1.2','Implementation Intention','„Ich werde [VERHALTEN] um [ZEIT] an [ORT] tun.“ — 91 % statt 35 % Erfolg.'],
+      ['1.3','Habit Stacking','„Nach [AKTUELLE GEWOHNHEIT] werde ich [NEUE GEWOHNHEIT].“'],
+      ['1.4','Umgebungsdesign','Mach die Auslöser guter Gewohnheiten offensichtlich und sichtbar.']],
+   inv:['1.5 · Mach es unsichtbar','<b>Reduziere die Exposition.</b> Entferne die Auslöser deiner schlechten Gewohnheiten aus deiner Umgebung. Selbstkontrolle ist eine Kurzzeitstrategie. Menschen mit der besten Selbstbeherrschung sind die, die sie am seltensten brauchen.']},
+  {num:'2. Gesetz',name:'Make It Attractive',de:'Mach es attraktiv · Verlangen',c:'#A78BFA',
+   t:[['2.1','Temptation Bundling','Koppele eine Handlung, die du <em>willst</em>, mit einer, die du <em>brauchst</em>.'],
+      ['2.2','Richtige Kultur','Tritt einer Gruppe bei, in der dein gewünschtes Verhalten das normale Verhalten ist.'],
+      ['2.3','Motivations-Ritual','Tue etwas, das du genießt, unmittelbar vor einer schwierigen Gewohnheit.']],
+   inv:['2.4 · Mach es unattraktiv','<b>Reframe deine Denkweise.</b> Hebe die Vorteile hervor, die entstehen, wenn du die schlechte Gewohnheit vermeidest. Jedes Verhalten hat ein oberflächliches Verlangen und ein tieferliegendes Motiv – deine Gewohnheiten sind moderne Lösungen für uralte Bedürfnisse.']},
+  {num:'3. Gesetz',name:'Make It Easy',de:'Mach es einfach · Reaktion',c:'#4ADE9B',
+   t:[['3.1','Reibung reduzieren','Verringere die Anzahl der Schritte zwischen dir und deinen guten Gewohnheiten.'],
+      ['3.2','Umgebung vorbereiten','Bereite deine Umgebung so vor, dass künftige Handlungen leichter fallen.'],
+      ['3.3','Entscheidende Momente','Optimiere die kleinen Entscheidungen mit überdimensionaler Wirkung.'],
+      ['3.4','Zwei-Minuten-Regel','Skaliere herunter, bis die Gewohnheit in unter 2 Minuten machbar ist.'],
+      ['3.5','Automatisieren','Investiere in Technik und einmalige Käufe, die künftiges Verhalten festlegen.']],
+   inv:['3.6/3.7 · Mach es schwierig','<b>Erhöhe die Reibung</b> und nutze ein <b>Commitment Device</b> – eine Entscheidung in der Gegenwart, die dein zukünftiges Verhalten kontrolliert. Victor Hugo ließ seine Kleidung einschließen, um sein Buch zu beenden.']},
+  {num:'4. Gesetz',name:'Make It Satisfying',de:'Mach es befriedigend · Belohnung',c:'#FB7185',
+   t:[['4.1','Verstärkung','Gib dir eine sofortige Belohnung, wenn du die Gewohnheit abgeschlossen hast.'],
+      ['4.2','„Nichtstun“ genießbar machen','Mach Vermeidung sichtbar – z. B. Geld auf ein Sparkonto überweisen.'],
+      ['4.3','Habit Tracker','Verfolge deine Serie und „don’t break the chain“.'],
+      ['4.4','Never miss twice','Wenn du einmal aussetzt, komm sofort zurück auf Kurs.']],
+   inv:['4.5/4.6 · Mach es unbefriedigend','<b>Hol dir einen Accountability Partner</b> und <b>erstelle einen Habit Contract.</b> Mach die Kosten deiner schlechten Gewohnheiten öffentlich und schmerzhaft. Je unmittelbarer der Schmerz, desto unwahrscheinlicher das Verhalten.']}
+];
+document.getElementById('lawsGrid').innerHTML = LAWS.map(l=>`
+  <div class="card law" style="--c:${l.c}">
+    <div class="law-top">
+      <div class="law-num">${l.num}</div>
+      <h3 class="law-name">${l.name}</h3>
+      <div class="law-de">${l.de}</div>
+    </div>
+    <div class="law-body">
+      ${l.t.map(x=>`<div class="tactic"><div class="tk">${x[0]}</div><div class="tt"><b>${x[1]}</b><span>${x[2]}</span></div></div>`).join('')}
+      <div class="inv"><div class="ih">Inversion · ${l.inv[0]}</div><div class="it">${l.inv[1]}</div></div>
+    </div>
+  </div>`).join('');
+
+/* ============================================================
+   BUILDER
+   ============================================================ */
+function v(id){ return document.getElementById(id).value.trim(); }
+function fillDemo(){
+  document.getElementById('bIdent').value='jemand, der sich täglich bewegt';
+  document.getElementById('bHabit').value='30 Minuten trainieren';
+  document.getElementById('bTime').value='17:30 Uhr';
+  document.getElementById('bPlace').value='im Fitnessstudio';
+  document.getElementById('bAnchor').value='ich meine Arbeitsschuhe ausziehe';
+  document.getElementById('bTwo').value='meine Sportkleidung anziehen';
+  document.getElementById('bRew').value='5 € aufs Reise-Sparkonto überweisen';
+  buildPlan();
+}
+function buildPlan(){
+  const i=v('bIdent'), h=v('bHabit'), t=v('bTime'), p=v('bPlace'), a=v('bAnchor'), tw=v('bTwo'), r=v('bRew');
+  if(!h){ toast('Bitte gib mindestens eine Gewohnheit ein.'); return; }
+  S.builder={i,h,t,p,a,tw,r}; save();
+  const rows=[
+    ['#FFB347','Identität · Jede Handlung ist eine Stimme', i? `Ich bin <em>${i}</em>.` : '<span style="color:var(--fg-faint)">— noch nicht definiert —</span>'],
+    ['#FFB347','1. Gesetz · Implementation Intention (1.2)', `Ich werde <em>${h}</em>${t?` um <em>${t}</em>`:''}${p?` <em>${p}</em>`:''} tun.`],
+    ['#FFB347','1. Gesetz · Habit Stacking (1.3)', a? `Nachdem <em>${a}</em>, werde ich <em>${h}</em>.` : '<span style="color:var(--fg-faint)">Wähle eine tägliche Anker-Gewohnheit.</span>'],
+    ['#A78BFA','2. Gesetz · Attraktivität (2.1/2.3)', `Direkt davor tue ich etwas, das ich mag (Motivations-Ritual), und koppele <em>${h}</em> mit etwas, das ich ohnehin genieße.`],
+    ['#4ADE9B','3. Gesetz · Zwei-Minuten-Version (3.4)', tw? `Minimalversion: <em>${tw}</em>. Beherrsche die Kunst des Auftauchens.` : '<span style="color:var(--fg-faint)">Definiere eine &lt;2-Minuten-Version.</span>'],
+    ['#4ADE9B','3. Gesetz · Umgebung vorbereiten (3.2)', `Lege alles für <em>${h}</em> am Vorabend bereit. Reduziere jeden Reibungspunkt auf Null.`],
+    ['#FB7185','4. Gesetz · Sofortige Belohnung (4.1)', r? `Direkt danach: <em>${r}</em>.` : '<span style="color:var(--fg-faint)">Wähle eine sofortige Belohnung, die deine Identität stärkt.</span>'],
+    ['#FB7185','4. Gesetz · Tracking & Regel (4.3/4.4)', `Hake <em>${h}</em> täglich ab. <b>Never miss twice.</b>`]
+  ];
+  document.getElementById('bOut').innerHTML=
+    `<div class="plan-h">Dein Atomic-Habits-Plan</div>
+     <div class="plan-id">„${h}“ — Schritt für Schritt nach den 4 Gesetzen</div>
+     ${rows.map(x=>`<div class="plan-item" style="--c:${x[0]}"><div class="pl">${x[1]}</div><div class="pv">${x[2]}</div></div>`).join('')}
+     <div class="btns" style="justify-content:flex-start;margin-top:20px">
+       <button class="btn btn-s btn-xs" onclick="copyPlan()">📋 Plan kopieren</button>
+       <button class="btn btn-p btn-xs" onclick="planToTracker()">→ In Tracker übernehmen</button>
+     </div>
+     <div class="copy-ok" id="copyOk">✓ In Zwischenablage kopiert</div>`;
+  toast('Plan erzeugt.');
+}
+function copyPlan(){
+  const b=S.builder;
+  const txt=`ATOMIC HABITS PLAN\n\nIdentität: Ich bin ${b.i||'—'}.\n\n1. Implementation Intention:\nIch werde ${b.h} ${b.t?'um '+b.t:''} ${b.p||''} tun.\n\n2. Habit Stacking:\nNachdem ${b.a||'—'}, werde ich ${b.h}.\n\n3. Zwei-Minuten-Version:\n${b.tw||'—'}\n\n4. Sofortige Belohnung:\n${b.r||'—'}\n\nRegel: Never miss twice.`;
+  navigator.clipboard.writeText(txt).then(()=>{ const o=document.getElementById('copyOk'); o.style.display='block'; setTimeout(()=>o.style.display='none',2500); });
+}
+function planToTracker(){
+  if(!S.builder.h) return;
+  S.trackers.push({name:S.builder.h, done:{}}); save(); renderTr();
+  document.getElementById('tracker').scrollIntoView({behavior:'smooth'});
+  toast('Zum Tracker hinzugefügt.');
+}
+if(S.builder.h){ ['bIdent','bHabit','bTime','bPlace','bAnchor','bTwo','bRew'].forEach((id,k)=>{ const m=['i','h','t','p','a','tw','r']; document.getElementById(id).value=S.builder[m[k]]||''; }); buildPlan(); }
+
+/* ============================================================
+   SCORECARD
+   ============================================================ */
+function addSc(){
+  const el=document.getElementById('scIn'), t=el.value.trim();
+  if(!t) return;
+  S.scorecard.push({t,m:null}); el.value=''; save(); renderSc();
+}
+function mark(i,m){ S.scorecard[i].m = S.scorecard[i].m===m ? null : m; save(); renderSc(); }
+function delSc(i){ S.scorecard.splice(i,1); save(); renderSc(); }
+function renderSc(){
+  const L=document.getElementById('scList');
+  if(!S.scorecard.length){ L.innerHTML='<div class="sc-empty">Noch keine Gewohnheiten erfasst. Beginne mit dem Aufstehen und arbeite dich durch deinen Tag.</div>'; document.getElementById('scStats').innerHTML=''; return; }
+  L.innerHTML=S.scorecard.map((h,i)=>`
+    <div class="sc-row">
+      <div class="txt">${h.t}</div>
+      <div class="marks">
+        <button class="mk ${h.m==='+'?'on-plus':''}" onclick="mark(${i},'+')">+</button>
+        <button class="mk ${h.m==='='?'on-eq':''}" onclick="mark(${i},'=')">=</button>
+        <button class="mk ${h.m==='-'?'on-minus':''}" onclick="mark(${i},'-')">–</button>
+      </div>
+      <button class="del" onclick="delSc(${i})">✕</button>
+    </div>`).join('');
+  const p=S.scorecard.filter(x=>x.m==='+').length, e=S.scorecard.filter(x=>x.m==='=').length, m=S.scorecard.filter(x=>x.m==='-').length;
+  document.getElementById('scStats').innerHTML=
+    `<div class="chip p"><b>${p}</b> gut</div><div class="chip e"><b>${e}</b> neutral</div><div class="chip m"><b>${m}</b> schlecht</div>
+     <div class="chip"><span class="q">Gesamt</span><b>${S.scorecard.length}</b></div>`;
+}
+renderSc();
+
+/* ============================================================
+   TRACKER
+   ============================================================ */
+function addTr(){
+  const el=document.getElementById('trIn'), t=
+function addTr(){
+  const el=document.getElementById('trIn'), t=el.value.trim();
+  if(!t) return;
+  S.trackers.push({name:t, done:{}}); el.value=''; save(); renderTr();
+}
+function delTr(i){ S.trackers.splice(i,1); save(); renderTr(); }
+function toggleDay(i,key){
+  const d=S.trackers[i].done;
+  if(d[key]) delete d[key]; else d[key]=1;
+  save(); renderTr();
+}
+function dayKey(date){ return date.toISOString().slice(0,10); }
+function last30(){
+  const arr=[], today=new Date();
+  for(let k=29;k>=0;k--){ const d=new Date(today); d.setDate(today.getDate()-k); arr.push(d); }
+  return arr;
+}
+function streakOf(done){
+  let s=0; const today=new Date();
+  for(let k=0;k<400;k++){
+    const d=new Date(today); d.setDate(today.getDate()-k);
+    if(done[dayKey(d)]) s++;
+    else if(k===0) continue;   // heute darf noch offen sein
+    else break;
+  }
+  return s;
+}
+function renderTr(){
+  const L=document.getElementById('trList');
+  if(!S.trackers.length){
+    L.innerHTML='<div class="sc-empty">Noch keine Gewohnheit im Tracker. Starte mit <b>einer</b> – konsequent getrackt schlägt zehn sporadisch getrackte.</div>';
+    return;
+  }
+  const days=last30(), todayKey=dayKey(new Date());
+  L.innerHTML=S.trackers.map((h,i)=>{
+    const st=streakOf(h.done);
+    const total=days.filter(d=>h.done[dayKey(d)]).length;
+    return `<div class="tr-item">
+      <div class="tr-top">
+        <div class="tr-name">${h.name}</div>
+        <div class="streak">🔥 ${st} ${st===1?'Tag':'Tage'}</div>
+        <button class="del" onclick="delTr(${i})">✕</button>
+      </div>
+      <div class="grid-days">
+        ${days.map(d=>{
+          const k=dayKey(d);
+          return `<button class="day ${h.done[k]?'done':''} ${k===todayKey?'today':''}"
+            title="${d.toLocaleDateString('de-DE')}" onclick="toggleDay(${i},'${k}')"></button>`;
+        }).join('')}
+      </div>
+      <div class="tr-foot">
+        <span>vor 30 Tagen</span>
+        <span class="mono" style="color:var(--mint)">${total}/30 · ${Math.round(total/30*100)} %</span>
+        <span>heute</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+renderTr();
+
+/* ============================================================
+   GOLDILOCKS
+   ============================================================ */
+const gR=document.getElementById('gRange');
+const GOLD=[
+  {max:18, t:'Zu leicht · Langeweile', d:'Du gewinnst jeden Punkt. Dein Gehirn schaltet ab. „Die größte Bedrohung für den Erfolg ist nicht Misserfolg, sondern Langeweile.“ Erhöhe die Schwierigkeit um eine kleine Stufe.', c:'#5AC8FA', ico:'😴'},
+  {max:38, t:'Leicht · Komfortzone', d:'Angenehm, aber ohne Wachstum. Gut für Tage mit wenig Energie – aber nicht als Dauerzustand. Füge eine neue Variable hinzu.', c:'#5AC8FA', ico:'🙂'},
+  {max:62, t:'Goldilocks-Zone · Flow', d:'Genau richtig. Etwa 4 % über deinem aktuellen Können. Hier ist die Motivation maximal, der Fokus verengt sich, Ablenkungen verschwinden. Genau hier willst du leben.', c:'#4ADE9B', ico:'◆'},
+  {max:82, t:'Fordernd · Kante', d:'Hart, aber machbar. Ideal für gezielte Steigerung – in Dosen. Achte darauf, genug „Siege“ einzubauen, um motiviert zu bleiben (~50/50 Erfolg/Misserfolg).', c:'#FFB347', ico:'💪'},
+  {max:101,t:'Zu schwer · Angst', d:'Du verlierst jeden Punkt und die Motivation kollabiert. Skaliere zurück – notfalls auf die Zwei-Minuten-Version. Beherrsche die Kunst des Auftauchens zuerst.', c:'#FB7185', ico:'😰'}
+];
+function gUpd(){
+  const v=+gR.value;
+  document.getElementById('gKnob').style.left=v+'%';
+  const z=GOLD.find(x=>v<x.max);
+  document.getElementById('gKnob').textContent=z.ico;
+  document.getElementById('gOut').innerHTML=`<span style="color:${z.c}">${z.t}</span>`;
+  document.getElementById('gDesc').textContent=z.d;
+}
+gR.oninput=gUpd; gUpd();
+
+/* ============================================================
+   REFLECT
+   ============================================================ */
+['r1','r2','r3','r4','r5','r6'].forEach(id=>{
+  const el=document.getElementById(id);
+  el.value=S.reflect[id]||'';
+  el.oninput=()=>{ S.reflect[id]=el.value; save(); };
+});
+
+/* ============================================================
+   EXPORT / IMPORT / RESET
+   ============================================================ */
+function exportData(){
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='atomic-habits-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click(); toast('Daten exportiert.');
+}
+function importData(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      S=JSON.parse(r.result); save();
+      renderSc(); renderTr();
+      ['r1','r2','r3','r4','r5','r6'].forEach(id=>document.getElementById(id).value=S.reflect[id]||'');
+      if(S.builder && S.builder.h){
+        const m=['i','h','t','p','a','tw','r'];
+        ['bIdent','bHabit','bTime','bPlace','bAnchor','bTwo','bRew'].forEach((id,k)=>document.getElementById(id).value=S.builder[m[k]]||'');
+        buildPlan();
+      }
+      toast('Daten importiert.');
+    }catch(err){ toast('Datei konnte nicht gelesen werden.'); }
+  };
+  r.readAsText(f);
+}
+function resetAll(){
+  if(!confirm('Wirklich ALLE Daten löschen? Das kann nicht rückgängig gemacht werden.')) return;
+  localStorage.removeItem(KEY);
+  S={scorecard:[],trackers:[],reflect:{},builder:{}};
+  renderSc(); renderTr();
+  ['r1','r2','r3','r4','r5','r6'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('bOut').innerHTML='<div class="bout-empty"><div class="big">◇</div><div>Dein Plan erscheint hier.<br><span style="font-size:13px">Fülle links die Felder aus.</span></div></div>';
+  toast('Alles zurückgesetzt.');
+}
+
+/* ============================================================
+   REVEAL ON SCROLL + NAV
+   ============================================================ */
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+document.querySelectorAll('.nav-links a').forEach(a=>a.onclick=()=>document.getElementById('nl').classList.remove('open'));
+</script>
+</body>
+</html>
