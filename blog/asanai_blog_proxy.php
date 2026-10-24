@@ -69,6 +69,8 @@ function asanai_proxy_rewrite_url(string $url, string $remote_base, string $prox
 }
 
 function asanai_proxy_rewrite_html(string $content, string $remote_base, string $proxy_name, string $current_path): string {
+	$proxy_feedback = $proxy_name . '?feedback_track.php';
+	$content = preg_replace('/"endpoint"\s*:\s*"[^"]*feedback_track"/i', '"endpoint":"' . $proxy_feedback . '"', $content) ?? $content;
 	$proxy_track = $proxy_name . '?track.php';
 	$content = preg_replace('/"endpoint"\s*:\s*"[^"]*track"/i', '"endpoint":"' . $proxy_track . '"', $content) ?? $content;
 

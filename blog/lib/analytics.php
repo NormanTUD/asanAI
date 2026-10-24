@@ -2474,6 +2474,28 @@ function mn_admin_login_wait(): int {
 	return max(0, (int)($_SESSION['stats_lock_until'] ?? 0) - time());
 }
 
+function mn_admin_set_visitor_cookies(): void {
+	$token = mn_analytics_admin_token();
+	if ($token !== '') {
+		setcookie('mn_stats_admin', $token, [
+			'expires' => 0,
+			'path' => mn_admin_cookie_path(),
+			'secure' => mn_admin_is_secure(),
+			'httponly' => true,
+			'samesite' => 'Lax',
+		]);
+		$_COOKIE['mn_stats_admin'] = $token;
+	}
+	setcookie('mn_stats_exclude', '1', [
+		'expires' => time() + 365 * 86400,
+		'path' => mn_admin_cookie_path(),
+		'secure' => mn_admin_is_secure(),
+		'httponly' => true,
+		'samesite' => 'Lax',
+	]);
+	$_COOKIE['mn_stats_exclude'] = '1';
+}
+
 function mn_admin_attempt_login(string $input): bool {
 	if (mn_admin_login_wait() > 0) {
 		return false;
@@ -2483,6 +2505,7 @@ function mn_admin_attempt_login(string $input): bool {
 		$_SESSION['stats_auth'] = true;
 		$_SESSION['stats_fail'] = 0;
 		$_SESSION['stats_lock_until'] = 0;
+		mn_admin_set_visitor_cookies();
 		return true;
 	}
 	usleep(500000);

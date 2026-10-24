@@ -96,6 +96,19 @@ function feedback_where(int $range, string $path, string $reaction, string $stat
 	return implode(' AND ', $where);
 }
 
+function feedback_flash(string $type, string $text): void {
+	$_SESSION['feedback_flash'] = ['type' => $type, 'text' => $text];
+}
+
+function feedback_take_flash(): ?array {
+	if (empty($_SESSION['feedback_flash']) || !is_array($_SESSION['feedback_flash'])) {
+		return null;
+	}
+	$flash = $_SESSION['feedback_flash'];
+	unset($_SESSION['feedback_flash']);
+	return $flash;
+}
+
 function feedback_status_label(string $status): string {
 	return match ($status) {
 		'new' => 'New',
@@ -159,6 +172,13 @@ if (($action === 'logout') && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 }
 
 $authed = mn_admin_is_authed();
+if ($authed) {
+	$takenFlash = feedback_take_flash();
+	if (is_array($takenFlash)) {
+		$flash = (string)($takenFlash['text'] ?? '');
+		$flashType = (string)($takenFlash['type'] ?? 'ok');
+	}
+}
 
 if ($authed && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $action !== '' && $action !== 'login' && $action !== 'logout') {
 	if (!mn_admin_check_csrf()) {
@@ -182,7 +202,7 @@ if ($authed && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $action !== '' &
 					};
 					$stmt = $pdoAction->prepare('UPDATE block_feedback SET status = ?, decided_at = ?, updated_at = ? WHERE id = ?');
 					$stmt->execute([$status, time(), time(), $id]);
-					$flash = 'Feedback #' . $id . ' marked as ' . feedback_status_label($status) . '.';
+					feedback_flash('ok', 'Feedback #' . $id . ' marked as ' . feedback_status_label($status) . '.');
 				} elseif ($action === 'save_prompt') {
 					$noteRaw = $_POST['admin_note'] ?? '';
 					$note = is_scalar($noteRaw) ? mn_feedback_clean_html((string)$noteRaw, 8000) : '';
@@ -190,7 +210,7 @@ if ($authed && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $action !== '' &
 					$prompt = is_scalar($promptRaw) ? mn_feedback_clean_html((string)$promptRaw, 40000) : '';
 					$stmt = $pdoAction->prepare('UPDATE block_feedback SET admin_note = ?, admin_prompt = ?, status = ?, decided_at = COALESCE(decided_at, ?), updated_at = ? WHERE id = ?');
 					$stmt->execute([$note, $prompt, 'accepted', time(), time(), $id]);
-					$flash = 'Prompt saved for feedback #' . $id . '.';
+					feedback_flash('ok', 'Prompt saved for feedback #' . $id . '.');
 				} elseif ($action === 'regenerate_prompt') {
 					$row = mn_feedback_fetch($pdoAction, $id);
 					if ($row) {
@@ -200,7 +220,7 @@ if ($authed && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $action !== '' &
 						$prompt = mn_feedback_build_prompt($row, $note, $includeBug);
 						$stmt = $pdoAction->prepare('UPDATE block_feedback SET admin_note = ?, admin_prompt = ?, status = ?, decided_at = COALESCE(decided_at, ?), updated_at = ? WHERE id = ?');
 						$stmt->execute([$note, $prompt, 'accepted', time(), time(), $id]);
-						$flash = 'Prompt regenerated for feedback #' . $id . '.';
+						feedback_flash('ok', 'Prompt regenerated for feedback #' . $id . '.');
 					}
 				} elseif ($action === 'delete') {
 					$pdoAction->beginTransaction();
@@ -208,7 +228,7 @@ if ($authed && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $action !== '' &
 					$pdoAction->prepare('DELETE FROM feedback_bug_context WHERE feedback_id = ?')->execute([$id]);
 					$pdoAction->prepare('DELETE FROM block_feedback WHERE id = ?')->execute([$id]);
 					$pdoAction->commit();
-					$flash = 'Feedback #' . $id . ' deleted.';
+					feedback_flash('ok', 'Feedback #' . $id . ' deleted.');
 				}
 				feedback_redirect();
 			} catch (Throwable $e) {
@@ -669,7 +689,7 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 						<div class="kv"><div class="k">Editor note (feeds the prompt when regenerated)</div></div>
 						<textarea name="admin_note" rows="2" placeholder="What should change, in your own words…"><?php echo feedback_h($row['admin_note'] ?? ''); ?></textarea>
 						<div class="row">
-							<label class="check"><input type="checkbox" name="include_bug" value="1"> Include bug context when regenerating</label>
+							<?php if (!empty($full['bug_consent'])): ?><label class="check"><input type="checkbox" name="include_bug" value="1"> Include bug context when regenerating</label><?php endif; ?>
 							<button type="submit" class="btn small" name="action" value="regenerate_prompt">Regenerate prompt</button>
 						</div>
 						<div class="kv"><div class="k">AI prompt (editable)</div></div>

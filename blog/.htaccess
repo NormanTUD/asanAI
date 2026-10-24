@@ -40,7 +40,8 @@ RewriteRule ^analytics_data/ - [F,L]
 
 
 # 1. External redirect: remove .php (dynamic, without duplicated paths)
-#    stats.php and track.php are POST targets; never redirect their .php form.
+#    stats.php, feedback.php, feedback_track.php and track.php are POST targets;
+#    never redirect their .php form.
 RewriteCond %{REQUEST_URI} !/stats\.php(?:\?|$)
 RewriteCond %{REQUEST_URI} !/track\.php(?:\?|$)
 RewriteCond %{REQUEST_URI} !/feedback\.php(?:\?|$)
