@@ -46,6 +46,7 @@ const DemoRegistry = (() => {
 
                 { ref: () => typeof AttentionRowSums !== 'undefined' ? AttentionRowSums : null,
                         slideTest: s => s && s.id === 'slide-attention-matrix',
+                        onEnter: d => d.enter(),
                         onLeave: d => d.reset() },
 
                 { ref: () => typeof AttentionSimplex !== 'undefined' ? AttentionSimplex : null,
