@@ -225,10 +225,11 @@ by design.
   7-day sparkline, last-data age) and a 3-item briefing, nine secondary KPI
   cards, a collapsible full briefing with **Copy summary**, daily trend with
   estimated visits and spike/dip annotations, traffic clock, 24-hour and
-  weekday rhythm, weekday × hour heatmap (views / estimated visits toggle),
-  page attention matrix, reading funnel, content and source list/treemap views,
-  top movers, page portfolio, audience/bots, reading behaviour, immediate page
-  transitions, calendar heatmap, humans-vs-bots area and page × source heatmap.
+  weekday rhythm, weekday × hour heatmap (views / estimated visits toggle;
+  click a cell to filter), page attention matrix, reading funnel, content and
+  source list/treemap views, top movers, page portfolio, audience/bots, reading
+  behaviour, immediate page transitions, calendar heatmap (click a day to
+  filter), humans-vs-bots area and page × source heatmap.
 - **Presentation & theme:** **Present** hides the chrome and steps through three
   slides (traffic & rhythm, content & attention, sources & confidence) with
   arrow keys; **Light** switches the dashboard and charts to a projector-friendly
@@ -350,10 +351,11 @@ dashboard link, admin token and alert visibility. The blog CI workflow installs
 The dashboard is also smoke-tested locally with Selenium: login, tab switching,
 the hero, nine KPI cards, sub-navigation, full briefing and copy button, all
 charts (daily trend with estimated visits and anomalies, traffic clock,
-24-hour/weekday rhythm, weekday × hour heatmap toggles, page attention matrix,
-reading funnel, content/source treemaps, top movers, page portfolio, referrer
-donut, page bar chart, page-share donut, browser/OS/device donuts, transition
-matrix/flow, calendar, humans-vs-bots, page × source, date × hour heatmap),
+24-hour/weekday rhythm, weekday × hour heatmap toggles and cell filters, page
+attention matrix, reading funnel, content/source treemaps, top movers, page
+portfolio, referrer donut, page bar chart, page-share donut, browser/OS/device
+donuts, transition matrix/flow, calendar day filter, humans-vs-bots,
+page × source, date × hour heatmap),
 light theme, presentation slides, PNG buttons, sticky/scrollable tables,
 storage/backup, bot dialog, loader-gated alerts, the local kill switch (banner
 suppression and read-only dashboard), no console errors and no horizontal
