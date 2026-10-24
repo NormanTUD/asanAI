@@ -10,6 +10,13 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/lib/analytics.php';
 
+$embedRequest = isset($_GET['embed']) && (string)$_GET['embed'] === '1';
+if (!$embedRequest && ($_SERVER['REQUEST_METHOD'] ?? '') === 'GET') {
+	$dir = rtrim(str_replace('\\', '/', dirname((string)($_SERVER['SCRIPT_NAME'] ?? '/'))), '/');
+	header('Location: ' . ($dir === '' || $dir === '.' ? '' : $dir) . '/stats?view=feedback', true, 302);
+	exit;
+}
+
 header('Content-Type: text/html; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');

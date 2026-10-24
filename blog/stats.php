@@ -2805,7 +2805,6 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 				<label class="switch"><input type="checkbox" name="exclude_self" value="1"<?php echo $excludeSelf ? ' checked' : ''; ?> onchange="this.form.submit()"> Exclude my own visits</label>
 				<noscript><button type="submit" class="btn">Save</button></noscript>
 			</form>
-			<a class="btn" href="feedback" title="Reader feedback on lessons">Reader feedback</a>
 			<form method="post" action="" class="inline">
 				<input type="hidden" name="action" value="logout">
 				<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">
@@ -3060,7 +3059,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 		<div class="card feedback-bridge" data-tab-group="overview" data-slide="1">
 			<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;">
 				<div><h2 style="margin:0">Reader feedback</h2><p class="ref" style="margin:3px 0 0;">What readers flag in the lessons — comments, insights, confusion and bugs.</p></div>
-				<a class="btn" href="feedback">Open feedback dashboard →</a>
+				<a class="btn" href="stats?view=feedback">Open feedback dashboard →</a>
 			</div>
 			<div class="fb-grid">
 				<div class="fb-stat"><b><?php echo stats_h(number_format($feedbackSummary['total'])); ?></b><span>Total</span></div>
