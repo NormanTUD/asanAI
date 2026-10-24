@@ -3581,10 +3581,10 @@ h2::after {
 }
 
 /* Every article heading shares the presentation deck's UI sans and
-   its heading gradient (heading colour at the top, accent at the
-   bottom). The gradient is painted through the glyphs, so only use
-   it where background-clip:text exists; otherwise keep the plain
-   heading colour.
+   its heading gradient (heading colour flowing into the accent).
+   The gradient is painted through the glyphs, so only use it where
+   background-clip:text exists; otherwise keep the plain heading
+   colour.
 
    The gradient runs horizontally rather than vertically: a vertical
    gradient spans the whole element box, so a heading that wraps onto
