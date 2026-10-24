@@ -43,6 +43,7 @@ RewriteRule ^analytics_data/ - [F,L]
 #    stats.php and track.php are POST targets; never redirect their .php form.
 RewriteCond %{REQUEST_URI} !/stats\.php(?:\?|$)
 RewriteCond %{REQUEST_URI} !/track\.php(?:\?|$)
+RewriteCond %{REQUEST_URI} !/feedback\.php(?:\?|$)
 RewriteCond %{REQUEST_URI} !/feedback_track\.php(?:\?|$)
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^?\s]+)\.php(?:\?|\s) [NC]
 RewriteRule ^ %1 [R=301,L]
