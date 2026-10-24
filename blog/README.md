@@ -341,11 +341,12 @@ reason as above: there is no session identifier.
 php blog/tests/analytics_test.php
 ```
 
-98 checks: UA/referrer classification, bot reasons, DNT/GPC/prefetch,
-insert/heartbeat/leave, dedupe, token deletion, cleanup/retention, backup, DB
-path resolution, relative-path and symlink refusal, customized setup commands,
-health checks (including `pdo_sqlite`/`SQLite3`), public setup banner, real
-dashboard link, admin token and alert visibility. The blog CI workflow installs
+101 checks: UA/referrer classification, bot reasons, DNT/GPC/prefetch,
+insert/heartbeat/leave, section/event details, dedupe, token deletion,
+cleanup/retention, backup, DB path resolution, relative-path and symlink
+refusal, customized setup commands, health checks (including
+`pdo_sqlite`/`SQLite3`), public setup banner, real dashboard link, admin token
+and alert visibility. The blog CI workflow installs
 `php-sqlite3` and runs this test.
 
 The dashboard is also smoke-tested locally with Selenium: login, tab switching,

@@ -189,6 +189,7 @@ check(preg_match('/^[a-f0-9]{32}$/', $token) === 1, 'pageview token shape');
 $pdo = mn_analytics_open_db();
 check($pdo instanceof PDO, 'database opens');
 if ($pdo instanceof PDO) {
+	check_same(6, (int)$pdo->query('PRAGMA user_version')->fetchColumn(), 'schema version 6');
 	$row = $pdo->query('SELECT * FROM pageviews ORDER BY id LIMIT 1')->fetch();
 	check_same('history', $row['path'], 'page slug stored');
 	check_same('search', $row['ref_type'], 'referrer type stored');
@@ -207,7 +208,9 @@ if ($pdo instanceof PDO) {
 	check_same(0, (int)$row['completed'], 'heartbeat keeps row pending');
 	check_same($token, $row['token'], 'heartbeat keeps token');
 
-	check(mn_analytics_update_token($token, 99, 80, true), 'leave finalizes the row');
+	$sections = [['i' => 0, 'k' => 'intro', 'l' => 'Introduction', 'v' => 100, 'd' => 12]];
+	$events = [['type' => 'internal_link', 'target' => 'history', 'value' => 1], ['type' => 'quiz_answer', 'target' => 'quiz:1', 'value' => 0]];
+	check(mn_analytics_update_token($token, 99, 80, true, $sections, $events), 'leave finalizes the row');
 	$row = $pdo->query('SELECT * FROM pageviews ORDER BY id LIMIT 1')->fetch();
 	check_same(99, (int)$row['duration_sec'], 'final duration stored');
 	check_same(80, (int)$row['scroll_pct'], 'final scroll stored');
@@ -215,6 +218,8 @@ if ($pdo instanceof PDO) {
 	check_same('', $row['token'], 'token erased on completion');
 	$count = (int)$pdo->query('SELECT COUNT(*) FROM pageviews')->fetchColumn();
 	check_same(1, $count, 'one row only (no duplicate)');
+	check_same(1, (int)$pdo->query('SELECT COUNT(*) FROM pageview_sections')->fetchColumn(), 'section detail stored');
+	check_same(2, (int)$pdo->query('SELECT COUNT(*) FROM pageview_events')->fetchColumn(), 'interaction events stored');
 	check(!mn_analytics_update_token($token, 200, 90, true), 'replayed leave is a no-op');
 
 	$fallbackToken = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';

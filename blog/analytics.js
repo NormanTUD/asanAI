@@ -86,11 +86,11 @@
 		}
 
 		function cleanTarget(value) {
-			return String(value || '').replace(/[?#].*$/, '').replace(/\s+/g, ' ').trim().slice(0, 96);
+			return String(value || '').replace(/[?#].*$/, '').replace(/\s+/g, ' ').trim().slice(0, 72);
 		}
 
 		function addEvent(type, target, value) {
-			if (events.length >= 20) {
+			if (events.length >= 14) {
 				return;
 			}
 			var safeTarget = cleanTarget(target);
@@ -107,14 +107,14 @@
 		}
 
 		function sectionText(value) {
-			return String(value || '').replace(/\s+/g, ' ').trim().slice(0, 64);
+			return String(value || '').replace(/\s+/g, ' ').trim().slice(0, 48);
 		}
 
 		function sectionKey(value) {
 			return sectionText(value).toLowerCase()
 				.replace(/[^a-z0-9äöüß]+/g, '-')
 				.replace(/^-+|-+$/g, '')
-				.slice(0, 48) || 'section';
+				.slice(0, 32) || 'section';
 		}
 
 		function initSections() {
@@ -130,7 +130,7 @@
 			}
 			var i = 0;
 			headings.forEach(function (heading) {
-				if (i >= 12 || !heading || heading.closest('.toc, nav, .sidenote, .optional')) {
+				if (i >= 10 || !heading || heading.closest('.toc, nav, .sidenote, .optional')) {
 					return;
 				}
 				var label = sectionText(heading.textContent);
@@ -216,7 +216,7 @@
 			};
 			if (final && event === 'leave') {
 				payloadData.sections = finalizeSections();
-				payloadData.events = events.slice(0, 20);
+				payloadData.events = events.slice(0, 14);
 			}
 			var payload = JSON.stringify(payloadData);
 

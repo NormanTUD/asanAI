@@ -1684,16 +1684,16 @@ function mn_analytics_store_pageview_details(PDO $pdo, int $pageviewId, string $
 	);
 	$count = 0;
 	foreach ($sections as $section) {
-		if (!is_array($section) || $count >= 16) {
+		if (!is_array($section) || $count >= 10) {
 			continue;
 		}
 		$index = isset($section['i']) && is_numeric($section['i']) ? (int)$section['i'] : -1;
 		if ($index < 0 || $index > 99) {
 			continue;
 		}
-		$key = isset($section['k']) && is_string($section['k']) ? strtolower(mn_analytics_clean_client_text($section['k'], 48)) : '';
+		$key = isset($section['k']) && is_string($section['k']) ? strtolower(mn_analytics_clean_client_text($section['k'], 32)) : '';
 		$key = preg_replace('/[^a-z0-9_-]/', '', $key) ?? '';
-		$label = isset($section['l']) && is_string($section['l']) ? mn_analytics_clean_client_text($section['l'], 64) : '';
+		$label = isset($section['l']) && is_string($section['l']) ? mn_analytics_clean_client_text($section['l'], 48) : '';
 		$visible = isset($section['v']) && is_numeric($section['v']) ? max(0, min(100, (int)$section['v'])) : 0;
 		$dwell = isset($section['d']) && is_numeric($section['d']) ? max(0, min(14400, (int)$section['d'])) : 0;
 		if ($key === '' && $label === '') {
@@ -1710,14 +1710,14 @@ function mn_analytics_store_pageview_details(PDO $pdo, int $pageviewId, string $
 	);
 	$count = 0;
 	foreach ($events as $event) {
-		if (!is_array($event) || $count >= 24) {
+		if (!is_array($event) || $count >= 14) {
 			continue;
 		}
 		$kind = isset($event['type']) && is_string($event['type']) ? strtolower(trim($event['type'])) : '';
 		if (!in_array($kind, $allowedKinds, true)) {
 			continue;
 		}
-		$target = isset($event['target']) && is_string($event['target']) ? mn_analytics_clean_client_text($event['target'], 96) : '';
+		$target = isset($event['target']) && is_string($event['target']) ? mn_analytics_clean_client_text($event['target'], 72) : '';
 		$target = preg_replace('/[?#].*$/', '', $target) ?? '';
 		if ($target === '') {
 			continue;
@@ -1849,6 +1849,34 @@ function mn_analytics_lesson_titles(): array {
 		}
 	}
 	return $titles;
+}
+
+function mn_analytics_page_word_count(string $slug): ?int {
+	static $cache = [];
+	if (array_key_exists($slug, $cache)) {
+		return $cache[$slug];
+	}
+	if (!preg_match('/^[a-zA-Z0-9_-]{1,80}$/', $slug)) {
+		return $cache[$slug] = null;
+	}
+	$file = dirname(__DIR__) . '/' . $slug . '.php';
+	if (!is_file($file)) {
+		return $cache[$slug] = null;
+	}
+	$source = @file_get_contents($file);
+	if ($source === false) {
+		return $cache[$slug] = null;
+	}
+	$text = preg_replace('/<\?php.*?\?>/s', ' ', $source) ?? '';
+	$text = preg_replace('/<!--.*?-->/s', ' ', $text) ?? '';
+	$text = preg_replace('/<(script|style|pre|code)\b.*?<\/\1>/is', ' ', $text) ?? '';
+	$text = strip_tags($text);
+	$text = preg_replace('/[#*_>`~\[\](){}|]/', ' ', $text) ?? '';
+	if (preg_match_all('/\p{L}[\p{L}\p{N}\x{2019}\x{0027}-]*/u', $text, $matches) === false) {
+		return $cache[$slug] = null;
+	}
+	$count = count($matches[0] ?? []);
+	return $cache[$slug] = $count >= 20 ? $count : null;
 }
 
 function mn_analytics_format_duration(?int $sec): string {

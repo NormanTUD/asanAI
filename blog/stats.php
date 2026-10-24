@@ -57,7 +57,7 @@ function stats_redirect(): void {
 }
 
 function stats_query(array $overrides = []): string {
-	$allowed = ['range', 'path', 'ref_type', 'source', 'ref_path', 'browser', 'os', 'device', 'day', 'weekday', 'hour', 'page'];
+	$allowed = ['range', 'path', 'ref_type', 'source', 'ref_path', 'browser', 'os', 'device', 'day', 'weekday', 'hour', 'humans', 'page'];
 	$q = [];
 	foreach ($allowed as $key) {
 		$value = array_key_exists($key, $overrides) ? $overrides[$key] : ($_GET[$key] ?? null);
@@ -207,7 +207,7 @@ function stats_all(PDO $pdo, string $sql, array $params): array {
 	return is_array($rows) ? $rows : [];
 }
 
-function stats_where(int $range, string $path, string $refType, string $source, string $refPath, string $browser, string $os, string $device, bool $previous = false, string $day = '', int $weekday = 0, int $hour = -1): array {
+function stats_where(int $range, string $path, string $refType, string $source, string $refPath, string $browser, string $os, string $device, bool $previous = false, string $day = '', int $weekday = 0, int $hour = -1, bool $humansOnly = false): array {
 	$where = ['1=1'];
 	$params = [];
 	if ($range > 0) {
@@ -261,6 +261,9 @@ function stats_where(int $range, string $path, string $refType, string $source, 
 	if ($hour >= 0) {
 		$where[] = 'hour = ?';
 		$params[] = $hour;
+	}
+	if ($humansOnly) {
+		$where[] = 'is_bot = 0';
 	}
 	return [implode(' AND ', $where), $params];
 }
@@ -486,6 +489,7 @@ if ($hourRaw !== '' && is_scalar($hourRaw)) {
 		$hour = $hourCandidate;
 	}
 }
+$humansOnly = isset($_GET['humans']) && (string)$_GET['humans'] === '1';
 
 $pathRaw = $_GET['path'] ?? '';
 $path = is_scalar($pathRaw) ? (string)$pathRaw : '';
@@ -647,7 +651,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 			http_response_code(503);
 			exit;
 		}
-		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, false, $day, $weekday, $hour);
+		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, false, $day, $weekday, $hour, $humansOnly);
 		$stmt = $pdoExport->prepare(
 			"SELECT ts, day, hour, path, ref_type, ref_source, ref_host, ref_path,
 			        browser, browser_major, os, os_version, device, is_bot, bot_reason,
@@ -791,6 +795,23 @@ $weekHourEntriesMax = 0;
 $entryPages = [];
 $engagementBuckets = [];
 $engagementMax = 1;
+$sectionPath = '';
+$sectionPages = [];
+$sectionMap = [];
+$sectionPageviews = 0;
+$sectionCoverage = 0.0;
+$interactionRows = [];
+$interactionGroups = [];
+$interactionPageviews = 0;
+$interactionCoverage = 0.0;
+$quizDifficulty = [];
+$searchUsage = 0;
+$searchAvgResults = null;
+$contentHealth = [];
+$comparisonRows = [];
+$cohortRows = [];
+$prevKpi = [];
+$detailsEnabled = false;
 $refCounts = ['direct' => 0, 'internal' => 0, 'search' => 0, 'social' => 0, 'external' => 0];
 $topPages = [];
 $pageRows = [];
@@ -864,11 +885,16 @@ if ($authed) {
 	if (!$pdo) {
 		$dbError = 'The SQLite database could not be opened.';
 	} else {
+		try {
+			$detailsEnabled = (int)$pdo->query('PRAGMA user_version')->fetchColumn() >= 6;
+		} catch (Throwable $e) {
+			$detailsEnabled = false;
+		}
 		if (!$analyticsKillSwitch) {
 			mn_analytics_cleanup($pdo, true);
 		}
-		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, false, $day, $weekday, $hour);
-		[$prevWhereSql, $prevParams] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, true, $day, $weekday, $hour);
+		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, false, $day, $weekday, $hour, $humansOnly);
+		[$prevWhereSql, $prevParams] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, true, $day, $weekday, $hour, $humansOnly);
 
 		$kpi = stats_one($pdo, "SELECT
 			COUNT(*) AS views,
@@ -947,7 +973,7 @@ if ($authed) {
 		$todayLabel = (new DateTimeImmutable($today))->format('D, M j');
 		$todayPrevDay = (new DateTimeImmutable($today))->modify('-7 days')->format('Y-m-d');
 		$todayPrevLabel = (new DateTimeImmutable($todayPrevDay))->format('D');
-		[$allWhereSql, $allParams] = stats_where(0, $path, $refType, $source, $refPath, $browser, $os, $device, false, '');
+		[$allWhereSql, $allParams] = stats_where(0, $path, $refType, $source, $refPath, $browser, $os, $device, false, '', 0, -1, $humansOnly);
 		$todayStats = stats_one($pdo, "SELECT
 				SUM(CASE WHEN day = ? THEN 1 ELSE 0 END) AS views,
 				SUM(CASE WHEN day = ? AND ref_type <> 'internal' THEN 1 ELSE 0 END) AS entries,
@@ -1145,6 +1171,27 @@ if ($authed) {
 			foreach ($prevPageRows as $row) {
 				$prevPageMap[(string)$row['path']] = (int)$row['views'];
 			}
+			$prevKpi = stats_one($pdo, "SELECT
+					COUNT(*) AS views,
+					SUM(CASE WHEN ref_type <> 'internal' THEN 1 ELSE 0 END) AS entries,
+					AVG(duration_sec) AS avg_duration,
+					AVG(scroll_pct) AS avg_scroll,
+					SUM(CASE WHEN duration_sec IS NOT NULL THEN 1 ELSE 0 END) AS known,
+					SUM(CASE WHEN duration_sec IS NOT NULL AND duration_sec < 10 THEN 1 ELSE 0 END) AS bounces
+				FROM pageviews WHERE $prevWhereSql", $prevParams);
+			$prevEntries = (int)($prevKpi['entries'] ?? 0);
+			$prevKnown = (int)($prevKpi['known'] ?? 0);
+			$prevBounces = (int)($prevKpi['bounces'] ?? 0);
+			$prevAvgDuration = isset($prevKpi['avg_duration']) && $prevKpi['avg_duration'] !== null ? (float)$prevKpi['avg_duration'] : null;
+			$prevAvgScroll = isset($prevKpi['avg_scroll']) && $prevKpi['avg_scroll'] !== null ? (float)$prevKpi['avg_scroll'] : null;
+			$prevBounceRate = $prevKnown > 0 ? 100 * $prevBounces / $prevKnown : null;
+			$comparisonRows = [
+				['label' => 'Views', 'kind' => 'int', 'current' => $views, 'previous' => $prevViews],
+				['label' => 'Estimated visits', 'kind' => 'int', 'current' => $entries, 'previous' => $prevEntries],
+				['label' => 'Avg. time', 'kind' => 'duration', 'current' => $avgDuration, 'previous' => $prevAvgDuration],
+				['label' => 'Bounce rate', 'kind' => 'percent', 'current' => $bounceRate, 'previous' => $prevBounceRate],
+				['label' => 'Avg. scroll', 'kind' => 'percent', 'current' => $avgScroll, 'previous' => $prevAvgScroll],
+			];
 		}
 
 		$refRows = stats_all($pdo, "SELECT ref_type, COUNT(*) AS views FROM pageviews WHERE $whereSql GROUP BY ref_type", $params);
@@ -1255,6 +1302,144 @@ if ($authed) {
 				$portfolioPages[] = $page;
 			}
 		}
+		$sectionPath = $path !== '' ? $path : (string)($topPages[0]['path'] ?? '');
+		$sectionPages = array_slice($topPages, 0, 10);
+		$sectionPageViewTotal = $path !== '' ? $views : (int)($topPages[0]['views'] ?? 0);
+		if ($detailsEnabled && $sectionPath !== '') {
+			$sectionRows = stats_all($pdo, "SELECT s.section_index, s.section_key, s.section_label,
+					COUNT(*) AS reached,
+					AVG(s.visible_pct) AS avg_visible,
+					AVG(s.dwell_sec) AS avg_dwell
+				FROM pageview_sections s
+				JOIN pageviews p ON p.id = s.pageview_id
+				WHERE p.id IN (SELECT id FROM pageviews WHERE $whereSql) AND s.path = ?
+				GROUP BY s.section_index, s.section_key, s.section_label
+				ORDER BY s.section_index LIMIT 40", array_merge($params, [$sectionPath]));
+			$sectionPageviewsRow = stats_one($pdo, "SELECT COUNT(DISTINCT s.pageview_id) AS n
+				FROM pageview_sections s
+				JOIN pageviews p ON p.id = s.pageview_id
+				WHERE p.id IN (SELECT id FROM pageviews WHERE $whereSql) AND s.path = ?", array_merge($params, [$sectionPath]));
+			$sectionPageviews = (int)($sectionPageviewsRow['n'] ?? 0);
+			$sectionCoverage = $sectionPageViewTotal > 0 ? 100 * $sectionPageviews / $sectionPageViewTotal : 0.0;
+			foreach ($sectionRows as $sectionRow) {
+				$reached = (int)$sectionRow['reached'];
+				if ($reached <= 0) {
+					continue;
+				}
+				$sectionMap[] = [
+					'index' => (int)$sectionRow['section_index'],
+					'key' => (string)$sectionRow['section_key'],
+					'label' => (string)$sectionRow['section_label'],
+					'reached' => $reached,
+					'reach_pct' => $sectionPageviews > 0 ? 100 * $reached / $sectionPageviews : 0.0,
+					'avg_visible' => $sectionRow['avg_visible'] !== null ? (float)$sectionRow['avg_visible'] : 0.0,
+					'avg_dwell' => $sectionRow['avg_dwell'] !== null ? (float)$sectionRow['avg_dwell'] : 0.0,
+				];
+			}
+		}
+
+		if ($detailsEnabled) {
+		$interactionRows = stats_all($pdo, "SELECT e.kind, e.target, COUNT(*) AS n,
+				SUM(CASE WHEN e.value = 1 THEN 1 ELSE 0 END) AS positives,
+				AVG(e.value) AS avg_value
+			FROM pageview_events e
+			JOIN pageviews p ON p.id = e.pageview_id
+			WHERE p.id IN (SELECT id FROM pageviews WHERE $whereSql)
+			GROUP BY e.kind, e.target
+			ORDER BY n DESC LIMIT 160", $params);
+		$interactionPageviewsRow = stats_one($pdo, "SELECT COUNT(DISTINCT e.pageview_id) AS n
+			FROM pageview_events e
+			JOIN pageviews p ON p.id = e.pageview_id
+			WHERE p.id IN (SELECT id FROM pageviews WHERE $whereSql)", $params);
+		$interactionPageviews = (int)($interactionPageviewsRow['n'] ?? 0);
+		$interactionCoverage = $views > 0 ? 100 * $interactionPageviews / $views : 0.0;
+		$interactionGroups = [
+			'internal_link' => [], 'external_link' => [], 'citation' => [],
+			'code_copy' => [], 'search_result' => [], 'download' => [],
+			'media_play' => [], 'lab_run' => [], 'quiz_answer' => [],
+		];
+		foreach ($interactionRows as $interactionRow) {
+			$kind = (string)$interactionRow['kind'];
+			$n = (int)$interactionRow['n'];
+			if ($kind === 'search') {
+				$searchUsage += $n;
+				$avg = $interactionRow['avg_value'] !== null ? (float)$interactionRow['avg_value'] : 0.0;
+				$searchAvgResults = $searchAvgResults === null ? $avg : (($searchAvgResults * ($searchUsage - $n)) + ($avg * $n)) / max(1, $searchUsage);
+				continue;
+			}
+			if ($kind === 'quiz_answer') {
+				$accuracy = $n > 0 ? 100 * (int)$interactionRow['positives'] / $n : 0.0;
+				$quizDifficulty[] = [
+					'target' => (string)$interactionRow['target'],
+					'n' => $n,
+					'accuracy' => $accuracy,
+				];
+			}
+			if (isset($interactionGroups[$kind]) && count($interactionGroups[$kind]) < 8) {
+				$interactionGroups[$kind][] = $interactionRow;
+			}
+		}
+		usort($quizDifficulty, static function (array $a, array $b): int {
+			return $a['accuracy'] <=> $b['accuracy'];
+		});
+		$quizDifficulty = array_slice(array_values(array_filter($quizDifficulty, static function (array $row): bool {
+			return $row['n'] >= 3;
+		})), 0, 5);
+		}
+
+		$maxPageViews = 0;
+		foreach ($topPages as $page) {
+			$maxPageViews = max($maxPageViews, (int)$page['views']);
+		}
+		$contentHealth = [];
+		foreach (array_slice($topPages, 0, 8) as $page) {
+			$healthSlug = (string)$page['path'];
+			$healthViews = (int)$page['views'];
+			if ($healthViews <= 0) {
+				continue;
+			}
+			$healthKnown = (int)($page['known'] ?? 0);
+			$healthBounces = (int)($page['bounces'] ?? 0);
+			$healthBounceRate = $healthKnown > 0 ? 100 * $healthBounces / $healthKnown : null;
+			$healthDuration = $page['avg_duration'] !== null ? (float)$page['avg_duration'] : null;
+			$healthScroll = $page['avg_scroll'] !== null ? (float)$page['avg_scroll'] : null;
+			$healthWords = mn_analytics_page_word_count($healthSlug);
+			$healthSpeed = ($healthWords !== null && $healthDuration !== null && $healthDuration > 0) ? $healthWords / ($healthDuration / 60) : null;
+			$healthPrev = (int)($prevPageMap[$healthSlug] ?? 0);
+			$healthMomentum = $healthPrev > 0 ? 100 * ($healthViews - $healthPrev) / $healthPrev : null;
+			$healthFlags = [];
+			if ((int)($page['entries'] ?? 0) >= 3 && ($healthScroll === null || $healthScroll < 50)) {
+				$healthFlags[] = 'content gap';
+			}
+			if ($healthViews >= 5 && $healthDuration !== null && $healthDuration < 45) {
+				$healthFlags[] = 'skimmed';
+			}
+			if ($healthMomentum !== null && $healthMomentum >= 25) {
+				$healthFlags[] = 'rising';
+			} elseif ($healthMomentum !== null && $healthMomentum <= -25) {
+				$healthFlags[] = 'falling';
+			}
+			$contentHealth[] = [
+				'slug' => $healthSlug,
+				'label' => $titles[$healthSlug] ?? $healthSlug,
+				'views' => $healthViews,
+				'share' => $views > 0 ? 100 * $healthViews / $views : 0.0,
+				'duration' => $healthDuration,
+				'scroll' => $healthScroll,
+				'bounce' => $healthBounceRate,
+				'words' => $healthWords,
+				'speed' => $healthSpeed,
+				'momentum' => $healthMomentum,
+				'flags' => $healthFlags,
+				'scores' => [
+					'reach' => $maxPageViews > 0 ? 100 * $healthViews / $maxPageViews : 0.0,
+					'depth' => $healthScroll ?? 0.0,
+					'stickiness' => $healthBounceRate !== null ? max(0, 100 - $healthBounceRate) : 0.0,
+					'momentum' => $healthMomentum === null ? 50.0 : max(0, min(100, 50 + $healthMomentum / 2)),
+				],
+			];
+		}
+
 		$chartPages = array_slice($topPages, 0, 12);
 		$chartPages = array_reverse($chartPages);
 		$chartPages = array_map(function (array $page) use ($titles): array {
@@ -1476,10 +1661,41 @@ if ($authed) {
 		$deviceRows = stats_all($pdo, "SELECT device,
 				COUNT(*) AS views,
 				AVG(duration_sec) AS avg_duration,
+				AVG(scroll_pct) AS avg_scroll,
 				SUM(CASE WHEN duration_sec IS NOT NULL AND duration_sec < 10 THEN 1 ELSE 0 END) AS bounces,
 				SUM(CASE WHEN duration_sec IS NOT NULL THEN 1 ELSE 0 END) AS known
 			FROM pageviews WHERE $whereSql
 			GROUP BY device ORDER BY views DESC", $params);
+
+		$sourceCohorts = stats_all($pdo, "SELECT ref_type,
+				COUNT(*) AS views,
+				AVG(duration_sec) AS avg_duration,
+				AVG(scroll_pct) AS avg_scroll,
+				SUM(CASE WHEN duration_sec IS NOT NULL AND duration_sec < 10 THEN 1 ELSE 0 END) AS bounces,
+				SUM(CASE WHEN duration_sec IS NOT NULL THEN 1 ELSE 0 END) AS known
+			FROM pageviews WHERE $whereSql AND ref_type <> 'internal'
+			GROUP BY ref_type ORDER BY views DESC", $params);
+		$cohortRows = ['source' => [], 'device' => []];
+		foreach ($sourceCohorts as $row) {
+			$known = (int)($row['known'] ?? 0);
+			$cohortRows['source'][] = [
+				'label' => mn_analytics_ref_type_label((string)$row['ref_type']),
+				'views' => (int)$row['views'],
+				'duration' => $row['avg_duration'] !== null ? (float)$row['avg_duration'] : null,
+				'scroll' => $row['avg_scroll'] !== null ? (float)$row['avg_scroll'] : null,
+				'bounce' => $known > 0 ? 100 * (int)$row['bounces'] / $known : null,
+			];
+		}
+		foreach ($deviceRows as $row) {
+			$known = (int)($row['known'] ?? 0);
+			$cohortRows['device'][] = [
+				'label' => stats_device_label((string)$row['device']),
+				'views' => (int)$row['views'],
+				'duration' => $row['avg_duration'] !== null ? (float)$row['avg_duration'] : null,
+				'scroll' => $row['avg_scroll'] !== null ? (float)$row['avg_scroll'] : null,
+				'bounce' => $known > 0 ? 100 * (int)$row['bounces'] / $known : null,
+			];
+		}
 
 		$botRules = mn_analytics_bot_rules();
 		$botHints = [];
@@ -2162,6 +2378,42 @@ body.present .kpi .v { font-size: 32px; }
 body.present .card h2 { font-size: 18px; }
 body.present .chart { height: 360px; }
 body.present .present-bar { display: flex; }
+.humans-toggle.active { background: var(--accent); color: #1a1207; border-color: transparent; font-weight: 700; }
+.compare-list { display: grid; gap: 6px; }
+.compare-row { display: grid; grid-template-columns: 130px minmax(0, 1fr) 76px; gap: 12px; align-items: center; padding: 7px 8px; border-bottom: 1px solid rgba(36,48,71,.5); }
+.compare-row:last-child { border-bottom: 0; }
+.compare-label { color: var(--muted); font-size: 12px; }
+.compare-values { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.compare-values strong { font-size: 18px; font-variant-numeric: tabular-nums; }
+.compare-values span { color: var(--dim); font-size: 11px; }
+.compare-delta { text-align: right; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.compare-delta.up { color: var(--emerald); }
+.compare-delta.down { color: var(--rose); }
+.compare-delta.flat { color: var(--muted); }
+.health-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+.health-card { display: block; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: linear-gradient(180deg, rgba(255,255,255,.025), transparent 70%), var(--panel2); color: var(--text); text-decoration: none; min-width: 0; }
+.health-card:hover { border-color: var(--accent); text-decoration: none; }
+.health-head { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+.health-head .title { font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
+.health-meta { color: var(--muted); font-size: 10.5px; margin-top: 6px; line-height: 1.45; }
+.health-flags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+.health-bars { display: grid; gap: 4px; margin-top: 9px; }
+.health-bar { display: grid; grid-template-columns: 62px minmax(0, 1fr) 24px; gap: 6px; align-items: center; color: var(--dim); font-size: 9px; }
+.health-track { height: 5px; border-radius: 99px; background: var(--bg); overflow: hidden; }
+.health-track i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; }
+.health-bar b { text-align: right; color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+.section-list { display: grid; gap: 8px; }
+.section-row { display: grid; grid-template-columns: minmax(0, 1fr) 84px 50px; gap: 10px; align-items: center; }
+.section-title { min-width: 0; font-size: 11.5px; line-height: 1.35; overflow-wrap: anywhere; }
+.section-index { display: inline-block; min-width: 22px; color: var(--dim); font-size: 9px; letter-spacing: .06em; }
+.section-track { height: 9px; border-radius: 99px; background: var(--bg); border: 1px solid var(--line); overflow: hidden; }
+.section-track i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--sky), #7dd3fc); }
+.section-num { text-align: right; color: var(--muted); font-size: 10.5px; font-variant-numeric: tabular-nums; }
+.section-meta { grid-column: 1 / -1; color: var(--dim); font-size: 9.5px; margin-top: -5px; }
+.page-select { max-width: 190px; padding: 5px 7px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: inherit; font-size: 11px; }
+.saved-views { display: inline-flex; gap: 6px; align-items: center; }
+.saved-views select { padding: 7px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: inherit; font-size: 11px; }
+.saved-views .btn { padding: 7px 9px; }
 body.light {
 	color-scheme: light;
 	--bg: #f6f1e7;
@@ -2307,6 +2559,19 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<a class="<?php echo $range === $r ? 'active' : ''; ?>" href="?<?php echo stats_h(stats_query(['range' => $r, 'page' => 1])); ?>"><?php echo stats_h($label); ?></a>
 				<?php endforeach; ?>
 			</nav>
+			<a class="btn humans-toggle <?php echo $humansOnly ? 'active' : ''; ?>" href="?<?php echo stats_h(stats_query(['humans' => $humansOnly ? '' : '1', 'page' => 1])); ?>" title="Exclude bot pageviews">Humans only</a>
+			<div class="saved-views">
+				<select id="saved-view-select" aria-label="Saved views">
+					<option value="">Saved views…</option>
+					<option value="range=7">Last 7 days</option>
+					<option value="range=30">Last 30 days</option>
+					<option value="device=mobile">Mobile</option>
+					<option value="ref_type=search">Search</option>
+					<option value="humans=1">Humans only</option>
+					<option value="device=bot">Bots</option>
+				</select>
+				<button type="button" class="btn" id="save-view">Save view</button>
+			</div>
 			<div class="tabs" role="tablist" aria-label="Analytics sections">
 				<button type="button" class="tab active" role="tab" aria-selected="true" data-tab="overview">Overview</button>
 				<button type="button" class="tab" role="tab" aria-selected="false" data-tab="pages">Pages</button>
@@ -2318,7 +2583,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			</div>
 		</div>
 
-		<?php if ($path !== '' || $refType !== '' || $source !== '' || $refPath !== '' || $browser !== '' || $os !== '' || $device !== '' || $day !== '' || $weekday > 0 || $hour >= 0): ?>
+		<?php if ($path !== '' || $refType !== '' || $source !== '' || $refPath !== '' || $browser !== '' || $os !== '' || $device !== '' || $day !== '' || $weekday > 0 || $hour >= 0 || $humansOnly): ?>
 			<div class="chips">
 				<?php if ($day !== ''): ?>
 					<span class="chip">Day: <?php echo stats_h($day); ?> <a href="?<?php echo stats_h(stats_query(['day' => '', 'page' => 1])); ?>" aria-label="Remove day filter">×</a></span>
@@ -2328,6 +2593,9 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 				<?php endif; ?>
 				<?php if ($hour >= 0): ?>
 					<span class="chip">Hour: <?php echo stats_h(sprintf('%02d:00–%02d:59', $hour, $hour)); ?> <a href="?<?php echo stats_h(stats_query(['hour' => '', 'page' => 1])); ?>" aria-label="Remove hour filter">×</a></span>
+				<?php endif; ?>
+				<?php if ($humansOnly): ?>
+					<span class="chip">Humans only <a href="?<?php echo stats_h(stats_query(['humans' => '', 'page' => 1])); ?>" aria-label="Include bots again">×</a></span>
 				<?php endif; ?>
 				<?php if ($path !== ''): ?>
 					<span class="chip">Page: <?php echo stats_h($titles[$path] ?? $path); ?> <a href="?<?php echo stats_h(stats_query(['path' => '', 'page' => 1])); ?>" aria-label="Remove page filter">×</a></span>
@@ -2360,6 +2628,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			<input type="hidden" name="day" value="<?php echo stats_h($day); ?>">
 			<input type="hidden" name="weekday" value="<?php echo (int)$weekday; ?>">
 			<input type="hidden" name="hour" value="<?php echo $hour >= 0 ? (int)$hour : ''; ?>">
+			<input type="hidden" name="humans" value="<?php echo $humansOnly ? '1' : ''; ?>">
 			<label>Page
 				<input name="path" list="path-list" value="<?php echo stats_h($path); ?>" placeholder="e.g. history">
 			</label>
@@ -2420,10 +2689,15 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			<a href="#traffic">Traffic</a>
 			<a href="#attention">Attention</a>
 			<a href="#rhythm">Rhythm</a>
+			<a href="#compare">Compare</a>
 			<a href="#content">Content</a>
+			<a href="#health">Health</a>
+			<a href="#sections">Sections</a>
 			<a href="#movers">Movers</a>
 			<a href="#portfolio">Portfolio</a>
 			<a href="#audience">Audience</a>
+			<a href="#cohorts">Cohorts</a>
+			<a href="#signals">Signals</a>
 			<a href="#calendar">Calendar</a>
 			<a href="#page-source">Page × source</a>
 			<a href="#navigation">Navigation</a>
@@ -2667,6 +2941,24 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			<?php endif; ?>
 		</div>
 
+		<div class="card" data-tab-group="overview" data-slide="1" id="compare">
+			<h2>Period comparison <span class="hint">· current vs previous</span></h2>
+			<?php if ($comparisonRows): ?>
+				<div class="compare-list">
+					<?php foreach ($comparisonRows as $row): $kind = (string)$row['kind']; $current = $row['current']; $previous = $row['previous']; $delta = null; if (is_numeric($current) && is_numeric($previous) && (float)$previous != 0.0) { $delta = 100 * ((float)$current - (float)$previous) / (float)$previous; } $fmt = static function ($value) use ($kind): string { if ($value === null) { return '—'; } if ($kind === 'duration') { return mn_analytics_format_duration((int)round((float)$value)); } if ($kind === 'percent') { return number_format((float)$value, 1, '.', ',') . ' %'; } return mn_analytics_format_number((int)$value); }; $deltaClass = $delta === null ? 'flat' : ($delta > 0.05 ? 'up' : ($delta < -0.05 ? 'down' : 'flat')); ?>
+						<div class="compare-row">
+							<div class="compare-label"><?php echo stats_h($row['label']); ?></div>
+							<div class="compare-values"><strong><?php echo stats_h($fmt($current)); ?></strong><span>prev. <?php echo stats_h($fmt($previous)); ?></span></div>
+							<div class="compare-delta <?php echo stats_h($deltaClass); ?>"><?php echo $delta === null ? 'new' : ($delta > 0 ? '+' : '') . stats_h(number_format($delta, 1, '.', ',')) . ' %'; ?></div>
+						</div>
+					<?php endforeach; ?>
+				</div>
+				<p class="ref" style="margin-bottom: 0;">Same filters and previous equal-length period. Range “All” has no previous period.</p>
+			<?php else: ?>
+				<div class="ref">Choose a finite range (7, 30, 90 or 365 days) to compare against the previous period.</div>
+			<?php endif; ?>
+		</div>
+
 		<div class="grid-2even" data-tab-group="overview" data-slide="2" id="content">
 			<div class="card">
 				<div class="card-head">
@@ -2759,6 +3051,59 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			</div>
 		</div>
 
+
+		<div class="grid-2even" data-tab-group="overview" data-slide="2" id="health">
+			<div class="card">
+				<h2>Content health <span class="hint">· top 8 by views</span></h2>
+				<p class="ref" style="margin: -4px 0 10px;">Transparent sub-scores, not a black-box ranking. Reading speed is approximate (words ÷ active time).</p>
+				<?php if ($contentHealth): ?>
+					<div class="health-list">
+						<?php foreach ($contentHealth as $health): ?>
+							<a class="health-card" href="?<?php echo stats_h(stats_query(['path' => $health['slug'], 'page' => 1])); ?>">
+								<div class="health-head"><span class="title"><?php echo stats_h($health['label']); ?></span><span class="mini-share"><?php echo stats_h(number_format($health['share'], 1, '.', ',')); ?> %</span></div>
+								<div class="health-meta"><?php echo mn_analytics_format_number($health['views']); ?> views · <?php echo stats_h(mn_analytics_format_duration($health['duration'] !== null ? (int)round($health['duration']) : null)); ?> · <?php echo $health['scroll'] !== null ? stats_h(number_format($health['scroll'], 0, '.', ',')) . ' % scroll' : 'scroll —'; ?><?php if ($health['speed'] !== null): ?> · <?php echo stats_h(number_format($health['speed'], 0, '.', ',')); ?> wpm<?php endif; ?></div>
+								<?php if ($health['flags']): ?><div class="health-flags"><?php foreach ($health['flags'] as $flag): ?><span class="badge warn"><?php echo stats_h($flag); ?></span><?php endforeach; ?></div><?php endif; ?>
+								<div class="health-bars">
+									<?php foreach (['reach' => 'Reach', 'depth' => 'Depth', 'stickiness' => 'Stickiness', 'momentum' => 'Momentum'] as $scoreKey => $scoreLabel): $scoreValue = (float)($health['scores'][$scoreKey] ?? 0); ?>
+										<div class="health-bar"><span><?php echo stats_h($scoreLabel); ?></span><div class="health-track"><i style="width: <?php echo stats_h(number_format($scoreValue, 1, '.', '')); ?>%"></i></div><b><?php echo stats_h(number_format($scoreValue, 0, '.', ',')); ?></b></div>
+									<?php endforeach; ?>
+								</div>
+							</a>
+						<?php endforeach; ?>
+					</div>
+				<?php else: ?>
+					<div class="empty">No page data in the selected period.</div>
+				<?php endif; ?>
+			</div>
+			<div class="card">
+				<div class="card-head">
+					<h2>Section reading map <span class="hint">· where readers stop</span></h2>
+					<?php if ($sectionPages): ?>
+						<select id="section-page-select" class="page-select" aria-label="Page for section reading map">
+							<?php foreach ($sectionPages as $sectionPage): $sectionSlug = (string)$sectionPage['path']; ?>
+								<option value="<?php echo stats_h($sectionSlug); ?>"<?php echo $sectionSlug === $sectionPath ? ' selected' : ''; ?>><?php echo stats_h($titles[$sectionSlug] ?? $sectionSlug); ?></option>
+							<?php endforeach; ?>
+						</select>
+					<?php endif; ?>
+				</div>
+				<?php if ($sectionMap): ?>
+					<p class="ref" style="margin: -4px 0 10px;">Based on <?php echo mn_analytics_format_number($sectionPageviews); ?> pageviews with section data (<?php echo stats_h(number_format($sectionCoverage, 1, '.', ',')); ?> % of this page). Headings count as reached when they become visible.</p>
+					<div class="section-list">
+						<?php foreach ($sectionMap as $section): ?>
+							<div class="section-row">
+								<div class="section-title"><span class="section-index"><?php echo str_pad((string)((int)$section['index'] + 1), 2, '0', STR_PAD_LEFT); ?></span><?php echo stats_h($section['label']); ?></div>
+								<div class="section-track"><i style="width: <?php echo stats_h(number_format(min(100, (float)$section['reach_pct']), 1, '.', '')); ?>%"></i></div>
+								<div class="section-num"><?php echo stats_h(number_format($section['reach_pct'], 1, '.', ',')); ?> %</div>
+								<div class="section-meta"><?php echo stats_h(mn_analytics_format_duration((int)round($section['avg_dwell']))); ?> avg. visible · <?php echo stats_h(number_format($section['avg_visible'], 0, '.', ',')); ?> % avg. visibility</div>
+							</div>
+						<?php endforeach; ?>
+					</div>
+					<p class="ref" style="margin-bottom: 0;">Section logging uses the same ephemeral pageview token; no visitor ID is created. Older pageviews have no section data.</p>
+				<?php else: ?>
+					<div class="empty">No section data yet for this page. It starts with the next rendered lesson and is stored only as anonymous aggregate events.</div>
+				<?php endif; ?>
+			</div>
+		</div>
 
 		<div class="card" data-tab-group="overview" data-slide="2" id="movers">
 			<h2>Top movers <span class="hint">· vs previous period</span></h2>
@@ -2884,6 +3229,100 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<p class="ref" style="margin-bottom: 0;">Rows show pageviews. Unknown means the browser did not send a completion signal; open tokens are closed after at most 6 hours.</p>
 				<?php else: ?>
 					<div class="empty">No data in the selected period.</div>
+				<?php endif; ?>
+			</div>
+		</div>
+
+		<div class="card" data-tab-group="overview" data-slide="3" id="cohorts">
+			<h2>Cohort profiles <span class="hint">· aggregate, not people</span></h2>
+			<?php if (!empty($cohortRows['source']) || !empty($cohortRows['device'])): ?>
+				<div class="grid-2even" style="margin-bottom: 0;">
+					<div>
+						<div class="chart-cap">By source</div>
+						<div class="table-wrap">
+							<table aria-label="Source cohort profiles">
+								<thead><tr><th>Source</th><th class="num">Views</th><th class="num">Avg. time</th><th class="num">Scroll</th><th class="num">Bounce</th></tr></thead>
+								<tbody>
+								<?php foreach ($cohortRows['source'] as $cohort): ?>
+									<tr><td><?php echo stats_h($cohort['label']); ?></td><td class="num"><?php echo mn_analytics_format_number($cohort['views']); ?></td><td class="num"><?php echo stats_h(mn_analytics_format_duration($cohort['duration'] !== null ? (int)round($cohort['duration']) : null)); ?></td><td class="num"><?php echo $cohort['scroll'] !== null ? stats_h(number_format($cohort['scroll'], 0, '.', ',')) . ' %' : '—'; ?></td><td class="num <?php echo stats_bounce_class($cohort['bounce']); ?>"><?php echo $cohort['bounce'] !== null ? stats_h(number_format($cohort['bounce'], 1, '.', ',')) . ' %' : '—'; ?></td></tr>
+								<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div>
+						<div class="chart-cap">By device</div>
+						<div class="table-wrap">
+							<table aria-label="Device cohort profiles">
+								<thead><tr><th>Device</th><th class="num">Views</th><th class="num">Avg. time</th><th class="num">Scroll</th><th class="num">Bounce</th></tr></thead>
+								<tbody>
+								<?php foreach ($cohortRows['device'] as $cohort): ?>
+									<tr><td><?php echo stats_h($cohort['label']); ?></td><td class="num"><?php echo mn_analytics_format_number($cohort['views']); ?></td><td class="num"><?php echo stats_h(mn_analytics_format_duration($cohort['duration'] !== null ? (int)round($cohort['duration']) : null)); ?></td><td class="num"><?php echo $cohort['scroll'] !== null ? stats_h(number_format($cohort['scroll'], 0, '.', ',')) . ' %' : '—'; ?></td><td class="num <?php echo stats_bounce_class($cohort['bounce']); ?>"><?php echo $cohort['bounce'] !== null ? stats_h(number_format($cohort['bounce'], 1, '.', ',')) . ' %' : '—'; ?></td></tr>
+								<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<p class="ref" style="margin: 8px 0 0;">Source and device cohorts are aggregate profiles, not individual readers.</p>
+			<?php else: ?>
+				<div class="empty">No cohort data in the selected period.</div>
+			<?php endif; ?>
+		</div>
+
+		<div class="grid-2even" data-tab-group="overview" data-slide="3" id="signals">
+			<div class="card">
+				<h2>What readers do next <span class="hint">· aggregate events</span></h2>
+				<?php if ($interactionRows): ?>
+					<?php foreach (['internal_link' => 'Internal links', 'external_link' => 'External domains', 'citation' => 'Citations', 'code_copy' => 'Code copies'] as $kind => $label): ?>
+						<?php if (!empty($interactionGroups[$kind])): ?>
+							<div class="chart-cap" style="margin-top: 12px;"><?php echo stats_h($label); ?></div>
+							<div class="mini-list mini-list--compact">
+								<?php foreach (array_slice($interactionGroups[$kind], 0, 5) as $row): $target = (string)$row['target']; $targetLabel = $kind === 'internal_link' ? ($titles[$target] ?? $target) : $target; ?>
+									<div class="mini-row"><div class="mini-main"><span class="title"><?php echo stats_h($targetLabel); ?></span></div><div class="mini-metric"><strong><?php echo mn_analytics_format_number((int)$row['n']); ?></strong><span>events</span></div></div>
+								<?php endforeach; ?>
+							</div>
+						<?php endif; ?>
+					<?php endforeach; ?>
+					<p class="ref" style="margin: 10px 0 0;">Logged only as event counts with the ephemeral pageview token: no visitor ID, no full external URL, no search query.</p>
+				<?php else: ?>
+					<div class="empty">No interaction events yet. Logging starts with the next rendered page.</div>
+				<?php endif; ?>
+			</div>
+			<div class="card">
+				<h2>Search &amp; learning <span class="hint">· no query text</span></h2>
+				<?php if ($interactionRows): ?>
+					<div class="chart-cap">Search</div>
+					<div class="mini-list mini-list--compact">
+						<div class="mini-row"><div class="mini-main"><span class="title">Searches used</span></div><div class="mini-metric"><strong><?php echo mn_analytics_format_number($searchUsage); ?></strong><span>events</span></div></div>
+						<?php if ($searchAvgResults !== null): ?><div class="mini-row"><div class="mini-main"><span class="title">Average results</span></div><div class="mini-metric"><strong><?php echo stats_h(number_format($searchAvgResults, 1, '.', ',')); ?></strong><span>per search</span></div></div><?php endif; ?>
+					</div>
+					<?php if (!empty($interactionGroups['search_result'])): ?>
+						<div class="chart-cap" style="margin-top: 12px;">Clicked search results</div>
+						<div class="mini-list mini-list--compact">
+							<?php foreach (array_slice($interactionGroups['search_result'], 0, 5) as $row): $target = (string)$row['target']; ?>
+								<div class="mini-row"><div class="mini-main"><span class="title"><?php echo stats_h($titles[$target] ?? $target); ?></span></div><div class="mini-metric"><strong><?php echo mn_analytics_format_number((int)$row['n']); ?></strong><span>clicks</span></div></div>
+							<?php endforeach; ?>
+						</div>
+					<?php endif; ?>
+					<?php if ($quizDifficulty): ?>
+						<div class="chart-cap" style="margin-top: 12px;">Hardest quiz questions</div>
+						<div class="mini-list mini-list--compact">
+							<?php foreach ($quizDifficulty as $quiz): ?>
+								<div class="mini-row"><div class="mini-main"><span class="title"><?php echo stats_h($quiz['target']); ?></span><div class="slug"><?php echo mn_analytics_format_number((int)$quiz['n']); ?> answers</div></div><div class="mini-metric"><strong><?php echo stats_h(number_format($quiz['accuracy'], 0, '.', ',')); ?> %</strong><span>correct</span></div></div>
+							<?php endforeach; ?>
+						</div>
+					<?php endif; ?>
+					<?php foreach (['lab_run' => 'Lab runs', 'download' => 'Downloads', 'media_play' => 'Media plays'] as $kind => $label): ?>
+						<?php if (!empty($interactionGroups[$kind])): ?>
+							<div class="chart-cap" style="margin-top: 12px;"><?php echo stats_h($label); ?></div>
+							<div class="mini-list mini-list--compact">
+								<?php foreach (array_slice($interactionGroups[$kind], 0, 4) as $row): ?><div class="mini-row"><div class="mini-main"><span class="title"><?php echo stats_h($row['target']); ?></span></div><div class="mini-metric"><strong><?php echo mn_analytics_format_number((int)$row['n']); ?></strong><span>events</span></div></div><?php endforeach; ?>
+							</div>
+						<?php endif; ?>
+					<?php endforeach; ?>
+				<?php else: ?>
+					<div class="empty">No learning or search events yet.</div>
 				<?php endif; ?>
 			</div>
 		</div>
@@ -3407,7 +3846,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<li>No external paths, queries, search terms or campaign parameters.</li>
 					<li>No cross-page recognition and no profiling.</li>
 				</ul>
-				<p>The login page sets a technically necessary session cookie, a signed admin-indicator cookie (only to show the health warning to the operator), and optionally the exclusion cookie for the owner’s own visits. The dashboard stores only the active tab name and the light/dark theme preference in localStorage; they are operator-only UI state, not analytics. These concern only the operator and are never sent to visitors.</p>
+				<p>The login page sets a technically necessary session cookie, a signed admin-indicator cookie (only to show the health warning to the operator), and optionally the exclusion cookie for the owner’s own visits. The dashboard stores only the active tab, the light/dark theme preference and named filter views in localStorage; they are operator-only UI state, not analytics. These concern only the operator and are never sent to visitors.</p>
 				<h3>Why this works without consent</h3>
 				<p>§ 25 TDDDG requires consent for storing information on the device or accessing it. This analytics sets no cookies and no web storage, reads no stored information and uses only transient runtime data. The User-Agent is part of the normal HTTP request and is processed only transiently; only coarse, non-personal categories are stored. No personal data within the meaning of Art. 4 GDPR is processed: no IP, no identifier, no identifiability (see Recital 26 GDPR). DNT and Global Privacy Control are respected.</p>
 				<p>The counting itself is a pure pageview count; duration and scroll depth are anonymous aggregate attributes. A cross-page “unique visitor” identifier is deliberately omitted because it would require a persistent identifier and therefore consent.</p>
@@ -3537,6 +3976,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	var pageSourceSources = <?php echo json_encode($pageSourceSources, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var anomalies = <?php echo json_encode($seriesAnomalies, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var baseQuery = <?php echo json_encode(stats_query(['day' => '', 'page' => 1]), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var currentQuery = <?php echo json_encode(stats_query(['page' => 1]), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var statsBase = window.__MNStatsBase;
 	if (!statsBase || statsBase.indexOf('__MN_STATS_') === 0) {
 		statsBase = 'stats.php';
@@ -3769,6 +4209,74 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 			}
 		});
 	});
+
+	var sectionPageSelect = document.getElementById('section-page-select');
+	if (sectionPageSelect) {
+		sectionPageSelect.addEventListener('change', function () {
+			if (this.value) {
+				goWith({ path: this.value });
+			}
+		});
+	}
+
+	(function () {
+		var select = document.getElementById('saved-view-select');
+		var saveButton = document.getElementById('save-view');
+		if (!select) {
+			return;
+		}
+		var saved = [];
+		try {
+			var raw = localStorage.getItem('mn_stats_views');
+			var parsed = raw ? JSON.parse(raw) : [];
+			if (Array.isArray(parsed)) {
+				saved = parsed.filter(function (view) {
+					return view && typeof view.n === 'string' && typeof view.q === 'string';
+				}).slice(0, 12);
+			}
+		} catch (ignored) {
+			saved = [];
+		}
+		function persist() {
+			try {
+				localStorage.setItem('mn_stats_views', JSON.stringify(saved));
+			} catch (ignored) {}
+		}
+		function renderSaved() {
+			Array.prototype.slice.call(select.querySelectorAll('option[data-saved]')).forEach(function (option) {
+				option.remove();
+			});
+			saved.forEach(function (view, index) {
+				var option = document.createElement('option');
+				option.value = view.q;
+				option.textContent = 'Saved: ' + view.n;
+				option.setAttribute('data-saved', String(index));
+				select.appendChild(option);
+			});
+		}
+		renderSaved();
+		select.addEventListener('change', function () {
+			if (!this.value) {
+				return;
+			}
+			window.location.href = statsBase + '?' + this.value + '#overview';
+		});
+		if (saveButton) {
+			saveButton.addEventListener('click', function () {
+				var name = window.prompt('Name this view');
+				if (!name) {
+					return;
+				}
+				if (saved.length >= 12) {
+					saved.shift();
+				}
+				saved.push({ n: name.trim().slice(0, 40), q: currentQuery });
+				persist();
+				renderSaved();
+				select.value = currentQuery;
+			});
+		}
+	})();
 
 	if (daily) {
 		daily.setOption({

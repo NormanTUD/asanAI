@@ -96,7 +96,7 @@ if ($event === 'view') {
 	mn_track_end(204);
 }
 
-$sections = isset($data['sections']) && is_array($data['sections']) ? array_slice($data['sections'], 0, 16) : [];
-$events = isset($data['events']) && is_array($data['events']) ? array_slice($data['events'], 0, 24) : [];
+$sections = isset($data['sections']) && is_array($data['sections']) ? array_slice($data['sections'], 0, 10) : [];
+$events = isset($data['events']) && is_array($data['events']) ? array_slice($data['events'], 0, 14) : [];
 mn_analytics_update_token($token, $duration, $scroll, $event === 'leave', $sections, $events);
 mn_track_end(204);
