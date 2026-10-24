@@ -224,6 +224,19 @@ function stats_search_terms(string $raw): array {
 	return array_slice(array_values(array_unique($terms)), 0, 8);
 }
 
+function stats_search_norm(string $value): string {
+	$value = mb_strtolower($value, 'UTF-8');
+	return str_replace(
+		['ä', 'ö', 'ü', 'ß', 'é', 'è', 'ê', 'á', 'à', 'â', 'í', 'ì', 'î', 'ó', 'ò', 'ô', 'ú', 'ù', 'û'],
+		['a', 'o', 'u', 'ss', 'e', 'e', 'e', 'a', 'a', 'a', 'i', 'i', 'i', 'o', 'o', 'o', 'u', 'u', 'u'],
+		$value
+	);
+}
+
+function stats_search_sql_norm(string $column): string {
+	return "LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE($column, 'Ä', 'a'), 'Ö', 'o'), 'Ü', 'u'), 'ß', 'ss'), 'ä', 'a'), 'ö', 'o'), 'ü', 'u'))";
+}
+
 function stats_search_like(string $value): string {
 	return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $value);
 }
@@ -232,9 +245,9 @@ function stats_search_where(array $terms, array $columns, array &$params): strin
 	$clauses = [];
 	foreach ($terms as $term) {
 		$ors = [];
-		$like = '%' . stats_search_like($term) . '%';
+		$like = '%' . stats_search_like(stats_search_norm($term)) . '%';
 		foreach ($columns as $column) {
-			$ors[] = $column . " LIKE ? ESCAPE '\\'";
+			$ors[] = stats_search_sql_norm($column) . " LIKE ? ESCAPE '\\'";
 			$params[] = $like;
 		}
 		if ($ors) {
@@ -325,10 +338,10 @@ function stats_search_run(PDO $pdo, array $terms, array $titles): array {
 
 	$pageItems = [];
 	foreach ($titles as $slug => $title) {
-		$haystack = (string)$slug . ' ' . (string)$title;
+		$haystack = stats_search_norm((string)$slug . ' ' . (string)$title);
 		$matches = true;
 		foreach ($terms as $term) {
-			if (mb_stripos($haystack, $term) === false) {
+			if (mb_stripos($haystack, stats_search_norm($term)) === false) {
 				$matches = false;
 				break;
 			}
