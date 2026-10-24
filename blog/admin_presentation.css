@@ -442,26 +442,61 @@ body.mn-presenting {
 
 .mn-pres-quotes {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
 	gap: clamp(12px, 1.6vw, 20px);
+	align-items: stretch;
+}
+
+.mn-pres-takeaways {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+	gap: clamp(10px, 1.2vw, 16px);
+	align-items: stretch;
+}
+
+.mn-pres-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	padding: clamp(15px, 1.55vw, 22px);
+	border: 1px solid color-mix(in srgb, var(--slide-accent, var(--accent)) 22%, var(--line));
+	border-top: 2px solid color-mix(in srgb, var(--slide-accent, var(--accent)) 72%, transparent);
+	border-radius: 15px;
+	background:
+		radial-gradient(440px 170px at 100% 0%, color-mix(in srgb, var(--slide-accent, var(--accent)) 11%, transparent), transparent 72%),
+		linear-gradient(180deg, rgba(255,255,255,.042), transparent 76%),
+		var(--panel);
+	box-shadow:
+		0 18px 38px -32px color-mix(in srgb, var(--slide-accent, var(--accent)) 62%, transparent),
+		inset 0 1px 0 rgba(255,255,255,.035);
+	overflow: hidden;
 }
 
 .mn-pres-quote {
 	margin: 0;
-	padding: clamp(14px, 1.6vw, 22px);
-	border: 1px solid var(--line);
-	border-left: 3px solid var(--accent);
-	border-radius: 14px;
-	background: var(--panel2);
+}
+
+.mn-pres-quote::before {
+	content: "“";
+	position: absolute;
+	top: 2px;
+	right: 14px;
+	color: color-mix(in srgb, var(--slide-accent, var(--accent)) 30%, transparent);
+	font: 700 clamp(50px, 5vw, 78px)/1 Georgia, "Times New Roman", serif;
+	pointer-events: none;
 }
 
 .mn-pres-quote blockquote {
+	position: relative;
+	z-index: 1;
 	margin: 0;
+	padding-right: clamp(18px, 2vw, 32px);
 	color: var(--text);
 	font-family: Georgia, "Times New Roman", serif;
 	font-style: italic;
 	font-size: clamp(13px, 1.25vw, 18px);
-	line-height: 1.55;
+	line-height: 1.58;
 	display: -webkit-box;
 	-webkit-line-clamp: 6;
 	-webkit-box-orient: vertical;
@@ -469,40 +504,37 @@ body.mn-presenting {
 }
 
 .mn-pres-quote figcaption {
-	margin-top: 10px;
+	position: relative;
+	z-index: 1;
+	margin-top: auto;
+	padding-top: 12px;
+	border-top: 1px solid color-mix(in srgb, var(--line) 68%, transparent);
 	color: var(--muted);
 	font-size: clamp(10px, .9vw, 12px);
-	line-height: 1.4;
+	line-height: 1.45;
 }
 
-.mn-pres-quote figcaption b {
-	color: var(--heading);
-	font-weight: 600;
-}
-
-.mn-pres-takeaways {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-	gap: 10px;
+.mn-pres-quote figcaption b,
+.mn-pres-takeaway b {
+	color: var(--slide-accent, var(--accent));
+	font-weight: 800;
+	font-size: 9.5px;
+	letter-spacing: .12em;
+	text-transform: uppercase;
 }
 
 .mn-pres-takeaway {
-	padding: 12px 14px;
-	border: 1px solid var(--line);
-	border-radius: 11px;
-	background: var(--panel2);
+	position: relative;
+	z-index: 0;
+	padding: clamp(15px, 1.55vw, 22px);
 	color: var(--text);
 	font-size: clamp(12px, 1.05vw, 15px);
-	line-height: 1.5;
+	line-height: 1.55;
 }
 
 .mn-pres-takeaway b {
 	display: block;
-	margin-bottom: 3px;
-	color: var(--heading);
-	font-size: .85em;
-	letter-spacing: .06em;
-	text-transform: uppercase;
+	margin-bottom: 7px;
 }
 
 .mn-pres-controls {
@@ -793,18 +825,6 @@ body.mn-presenting {
 	font-size: clamp(21px, 2.2vw, 32px);
 }
 
-.mn-pres-quote:nth-child(2n) {
-	border-left-color: var(--emerald);
-}
-
-.mn-pres-quote:nth-child(3n) {
-	border-left-color: var(--sky);
-}
-
-.mn-pres-takeaway {
-	border-left: 2px solid color-mix(in srgb, var(--slide-accent, var(--accent)) 60%, transparent);
-}
-
 @keyframes mn-pres-pop {
 	from { opacity: 0; transform: translateY(10px) scale(.98); }
 	to { opacity: 1; transform: none; }
@@ -934,26 +954,4 @@ body.mn-presenting {
 
 .mn-pres-signals {
 	grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
-}
-
-.mn-pres-signals .mn-pres-takeaway {
-	padding: 15px 16px 14px;
-	border: 1px solid var(--line);
-	border-top: 2px solid color-mix(in srgb, var(--slide-accent, var(--accent)) 68%, transparent);
-	border-left: 1px solid var(--line);
-	border-radius: 13px;
-	background:
-		radial-gradient(360px 130px at 100% 0%, color-mix(in srgb, var(--slide-accent, var(--accent)) 10%, transparent), transparent 70%),
-		linear-gradient(180deg, rgba(255,255,255,.035), transparent 74%),
-		var(--panel);
-	box-shadow: 0 16px 36px -32px color-mix(in srgb, var(--slide-accent, var(--accent)) 70%, transparent);
-	font-size: clamp(12px, 1.05vw, 15px);
-	line-height: 1.5;
-}
-
-.mn-pres-signals .mn-pres-takeaway b {
-	color: var(--slide-accent, var(--accent));
-	font-size: 9.5px;
-	letter-spacing: .13em;
-	margin-bottom: 7px;
 }

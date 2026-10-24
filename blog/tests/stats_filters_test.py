@@ -126,6 +126,13 @@ def main() -> int:
 			if failures:
 				return 1
 
+			cookie_now = time.time()
+			session_cookie = next((cookie for cookie in session.cookies if cookie.name == "mnstats"), None)
+			admin_cookie = next((cookie for cookie in session.cookies if cookie.name == "mn_stats_admin"), None)
+			check(session_cookie is not None and session_cookie.expires is not None, "session cookie is persistent")
+			check(session_cookie is not None and session_cookie.expires >= cookie_now + 29 * 86400, "session cookie lasts about one month")
+			check(admin_cookie is not None and admin_cookie.expires is not None and admin_cookie.expires >= cookie_now + 29 * 86400, "admin indicator cookie lasts about one month")
+
 			now = int(time.time())
 			day = time.strftime("%Y-%m-%d", time.localtime(now))
 			with sqlite3.connect(db_path) as db:

@@ -15,6 +15,8 @@
  * denied to the web by its own .htaccess. Nothing here uses remote IPs.
  */
 
+const MN_ADMIN_SESSION_LIFETIME = 30 * 86400;
+
 function mn_analytics_disabled_file(): string {
 	return dirname(__DIR__) . '/.analytics_disabled';
 }
@@ -2625,9 +2627,10 @@ function mn_admin_session_start(): void {
 	ini_set('session.use_strict_mode', '1');
 	ini_set('session.use_only_cookies', '1');
 	ini_set('session.cookie_httponly', '1');
+	ini_set('session.gc_maxlifetime', (string)MN_ADMIN_SESSION_LIFETIME);
 	session_name('mnstats');
 	session_set_cookie_params([
-		'lifetime' => 0,
+		'lifetime' => MN_ADMIN_SESSION_LIFETIME,
 		'path' => mn_admin_cookie_path(),
 		'secure' => mn_admin_is_secure(),
 		'httponly' => true,
@@ -2659,7 +2662,7 @@ function mn_admin_set_visitor_cookies(): void {
 	$token = mn_analytics_admin_token();
 	if ($token !== '') {
 		setcookie('mn_stats_admin', $token, [
-			'expires' => 0,
+			'expires' => time() + MN_ADMIN_SESSION_LIFETIME,
 			'path' => mn_admin_cookie_path(),
 			'secure' => mn_admin_is_secure(),
 			'httponly' => true,

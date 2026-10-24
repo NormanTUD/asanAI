@@ -144,7 +144,7 @@ function stats_set_admin_indicator_cookie(): void {
 		return;
 	}
 	setcookie('mn_stats_admin', $token, [
-		'expires' => 0,
+		'expires' => time() + MN_ADMIN_SESSION_LIFETIME,
 		'path' => stats_cookie_path(),
 		'secure' => stats_is_secure(),
 		'httponly' => true,
@@ -817,9 +817,10 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 	ini_set('session.use_strict_mode', '1');
 	ini_set('session.use_only_cookies', '1');
 	ini_set('session.cookie_httponly', '1');
+	ini_set('session.gc_maxlifetime', (string)MN_ADMIN_SESSION_LIFETIME);
 	session_name('mnstats');
 	session_set_cookie_params([
-		'lifetime' => 0,
+		'lifetime' => MN_ADMIN_SESSION_LIFETIME,
 		'path' => stats_cookie_path(),
 		'secure' => stats_is_secure(),
 		'httponly' => true,
@@ -5166,7 +5167,7 @@ $presentationTitleInsight = mn_analytics_format_number($views) . ' views across 
 			<h2>Signals worth a closer look</h2>
 			<div class="mn-pres-takeaways mn-pres-signals">
 				<?php foreach ($presentationSignals as $presentationSignal): ?>
-					<div class="mn-pres-takeaway"><b><?php echo stats_h($presentationSignal['label']); ?></b><?php echo stats_h($presentationSignal['text']); ?></div>
+					<div class="mn-pres-takeaway mn-pres-card"><b><?php echo stats_h($presentationSignal['label']); ?></b><?php echo stats_h($presentationSignal['text']); ?></div>
 				<?php endforeach; ?>
 			</div>
 		</section>
@@ -5228,7 +5229,7 @@ $presentationTitleInsight = mn_analytics_format_number($views) . ' views across 
 			<h2>What readers say <small>· <?php echo count($presentationInsights); ?> recent comments</small></h2>
 			<div class="mn-pres-quotes">
 				<?php foreach ($presentationInsights as $presentationInsight): $presentationMeta = $presentationReactions[$presentationInsight['reaction']] ?? ['icon' => '', 'label' => $presentationInsight['reaction']]; ?>
-					<figure class="mn-pres-quote">
+					<figure class="mn-pres-quote mn-pres-card">
 						<blockquote>“<?php echo stats_h($presentationInsight['text']); ?>”</blockquote>
 						<figcaption><b><?php echo stats_h($presentationMeta['icon'] . ' ' . $presentationMeta['label']); ?></b> · <?php echo stats_h($titles[$presentationInsight['path']] ?? $presentationInsight['path']); ?> · <?php echo stats_h(stats_time_label($presentationInsight['ts'])); ?></figcaption>
 					</figure>
@@ -5265,7 +5266,7 @@ $presentationTitleInsight = mn_analytics_format_number($views) . ' views across 
 			<h2>Takeaways</h2>
 			<div class="mn-pres-takeaways">
 				<?php foreach ($presentationTakeaways as $presentationTakeaway): ?>
-					<div class="mn-pres-takeaway"><b><?php echo stats_h($presentationTakeaway['label']); ?></b><?php echo stats_h($presentationTakeaway['text']); ?></div>
+					<div class="mn-pres-takeaway mn-pres-card"><b><?php echo stats_h($presentationTakeaway['label']); ?></b><?php echo stats_h($presentationTakeaway['text']); ?></div>
 				<?php endforeach; ?>
 			</div>
 		</section>
@@ -5274,7 +5275,7 @@ $presentationTitleInsight = mn_analytics_format_number($views) . ' views across 
 		<section class="mn-pres-slide" data-title="Thank you" style="--slide-accent: var(--sky);">
 			<div class="mn-pres-kicker">Thank you</div>
 			<h1>Questions, ideas, next revisions.</h1>
-			<p class="mn-pres-lead">The full dashboard is behind this presentation. Use the arrow keys or space to move, <b>O</b> for the overview, <b>F</b> for fullscreen and <b>Esc</b> to close.</p>
+			<p class="mn-pres-lead">Use the arrow keys or space to move, <b>O</b> for the overview, <b>F</b> for fullscreen and <b>Esc</b> to close.</p>
 		</section>
 	</div>
 
