@@ -46,6 +46,14 @@ jobs:
         run: |
           php blog/tests/analytics_test.php
 
+      - name: Run Stats Filter Regression Tests
+        run: |
+          uv run blog/tests/stats_filters_test.py
+
+      - name: Run Proxy Stats Regression Tests
+        run: |
+          uv run blog/tests/proxy_stats_test.py
+
       - name: Run JS Validator
         run: |
           uv run blog/tests/js_validator.py blog/
@@ -163,6 +171,10 @@ jobs:
       - name: Run PHP Render Validator
         run: |
           uv run blog/tests/php_render_validator.py blog/
+
+      - name: Run Analytics Client Tracker Test
+        run: |
+          uv run blog/tests/analytics_client_test.py
 
   # Fails the suite if any lesson has content wider than the reading column
   # (margin notes and boxes are exempt). Runs the production layout_guardrail.js

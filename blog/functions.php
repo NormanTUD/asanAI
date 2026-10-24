@@ -192,6 +192,7 @@ function incl($headline, $base_name) {
 }
 
 function load_base_js ($defer = false) {
+	js("feedback_capture", null, $defer);
 	js("temml.min", null, $defer);
 	js("bpe", null, $defer);
 	css("Temml-Local.min");
@@ -232,6 +233,7 @@ function load_base_js ($defer = false) {
 		js("analytics", null, $defer);
 		mn_analytics_print_config();
 	}
+	mn_feedback_print_config();
 	js("organic-network", null, $defer);
 
 	$files = glob(__DIR__ . "/modules/*.js");

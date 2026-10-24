@@ -2542,6 +2542,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 				<label class="switch"><input type="checkbox" name="exclude_self" value="1"<?php echo $excludeSelf ? ' checked' : ''; ?> onchange="this.form.submit()"> Exclude my own visits</label>
 				<noscript><button type="submit" class="btn">Save</button></noscript>
 			</form>
+			<a class="btn" href="feedback" title="Reader feedback on lessons">Reader feedback</a>
 			<form method="post" action="" class="inline">
 				<input type="hidden" name="action" value="logout">
 				<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">

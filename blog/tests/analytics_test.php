@@ -189,7 +189,7 @@ check(preg_match('/^[a-f0-9]{32}$/', $token) === 1, 'pageview token shape');
 $pdo = mn_analytics_open_db();
 check($pdo instanceof PDO, 'database opens');
 if ($pdo instanceof PDO) {
-	check_same(6, (int)$pdo->query('PRAGMA user_version')->fetchColumn(), 'schema version 6');
+	check_same(7, (int)$pdo->query('PRAGMA user_version')->fetchColumn(), 'schema version 7');
 	$row = $pdo->query('SELECT * FROM pageviews ORDER BY id LIMIT 1')->fetch();
 	check_same('history', $row['path'], 'page slug stored');
 	check_same('search', $row['ref_type'], 'referrer type stored');
@@ -241,6 +241,125 @@ if ($pdo instanceof PDO) {
 	$count = (int)$pdo->query("SELECT COUNT(*) FROM pageviews WHERE path = 'too-old'")->fetchColumn();
 	check_same(0, $count, 'retention deletes rows older than 730 days');
 
+	// Reader feedback: storage, validation, selection, prompt, consent.
+	$reactionKeys = array_keys(mn_feedback_reactions());
+	check($reactionKeys === ['helpful', 'unhelpful', 'insight', 'confusing', 'bug'], 'feedback reaction set');
+	$feedbackToken = mn_feedback_issue_token();
+	check(mn_feedback_verify_token($feedbackToken), 'feedback token verifies');
+	check(!mn_feedback_verify_token($feedbackToken . 'x'), 'tampered feedback token is rejected');
+
+	$selection = [
+		'text' => 'A selected passage about history.',
+		'html' => '<em>A selected passage</em> about history.<script>alert(1)</script>',
+		'start' => 10,
+		'end' => 42,
+		'prefix' => 'Before the passage',
+		'suffix' => 'After the passage',
+		'block_length' => 120,
+		'range_count' => 1,
+		'direction' => 'forward',
+		'rect' => ['x' => 10, 'y' => 20, 'width' => 100, 'height' => 20],
+		'block_rect' => ['x' => 10, 'y' => 10, 'width' => 400, 'height' => 120],
+		'scroll_y' => 120,
+		'viewport_w' => 1280,
+		'viewport_h' => 800,
+	];
+	$requestId = 'abcdefabcdefabcdefabcdefabcdef12';
+	$stored = mn_feedback_store([
+		'request_id' => $requestId,
+		'path' => 'history',
+		'lesson_title' => 'A History Lesson',
+		'part' => 1,
+		'part_title' => 'Foundations',
+		'block_index' => 3,
+		'block_key' => 'history:section:3',
+		'block_selector' => 'div.md > p:nth-of-type(2)',
+		'section_title' => 'A Section',
+		'section_anchor' => 'a-section',
+		'block_text' => 'A selected passage about history. More context follows here.',
+		'block_html' => '<p>A selected passage about history. More context follows here.</p>',
+		'reaction' => 'insight',
+		'comment' => 'This point helped me understand the timeline.',
+		'email' => 'reader@example.test',
+		'selection' => $selection,
+	]);
+	check(!empty($stored['ok']) && !empty($stored['id']), 'feedback stored');
+	$feedbackId = (int)($stored['id'] ?? 0);
+	$feedbackRow = mn_feedback_fetch($pdo, $feedbackId);
+	check(is_array($feedbackRow), 'feedback row can be fetched');
+	check_same('insight', $feedbackRow['reaction'] ?? '', 'feedback reaction stored');
+	check_same('reader@example.test', $feedbackRow['email'] ?? '', 'feedback email stored when supplied');
+	check_same(10, (int)($feedbackRow['start_offset'] ?? -1), 'selection start offset stored');
+	check_same(42, (int)($feedbackRow['end_offset'] ?? -1), 'selection end offset stored');
+	check_same('A selected passage about history.', $feedbackRow['selection_text'] ?? '', 'selected text stored');
+	check(!str_contains((string)($feedbackRow['selection_html'] ?? ''), '<script'), 'script stripped from selected HTML');
+	check_same('blog/history.php', $feedbackRow['source_file'] ?? '', 'source file recorded');
+	check_same($requestId, $feedbackRow['request_id'] ?? '', 'request id stored');
+
+	$duplicate = mn_feedback_store([
+		'request_id' => $requestId,
+		'path' => 'history',
+		'reaction' => 'insight',
+		'comment' => 'Second submission should be ignored.',
+	]);
+	check(!empty($duplicate['ok']) && !empty($duplicate['duplicate']), 'duplicate request id is idempotent');
+	check_same($feedbackId, (int)($duplicate['id'] ?? 0), 'duplicate returns the original id');
+
+	$badReaction = mn_feedback_store(['path' => 'history', 'reaction' => 'nope']);
+	check(empty($badReaction['ok']), 'invalid reaction is rejected');
+	$badEmail = mn_feedback_store(['path' => 'history', 'reaction' => 'helpful', 'email' => 'not-an-email']);
+	check(empty($badEmail['ok']), 'invalid email is rejected');
+	$badPath = mn_feedback_store(['path' => '../etc/passwd', 'reaction' => 'helpful']);
+	check(empty($badPath['ok']), 'invalid path is rejected');
+
+	$bugStored = mn_feedback_store([
+		'request_id' => 'abcdefabcdefabcdefabcdefabcdef99',
+		'path' => 'history',
+		'reaction' => 'bug',
+		'comment' => 'The demo throws an error.',
+		'selection' => $selection,
+		'bug' => ['consent' => false, 'console' => [['text' => 'secret']]],
+	]);
+	$bugId = (int)($bugStored['id'] ?? 0);
+	$bugRow = mn_feedback_fetch($pdo, $bugId);
+	check_same(0, (int)($bugRow['bug_consent'] ?? 0), 'bug context is not stored without consent');
+	check_same('', (string)($bugRow['bug_console_logs_json'] ?? ''), 'console log is not stored without consent');
+
+	$consentStored = mn_feedback_store([
+		'request_id' => 'abcdefabcdefabcdefabcdefabcdef98',
+		'path' => 'history',
+		'reaction' => 'bug',
+		'comment' => 'The demo throws an error with logs.',
+		'selection' => $selection,
+		'bug' => [
+			'consent' => true,
+			'console' => [['level' => 'error', 'text' => 'boom']],
+			'clicks' => [['tag' => 'button', 'text' => 'Run']],
+			'last_error' => ['message' => 'boom'],
+			'user_agent' => 'test-agent',
+			'url' => 'http://example.test/history',
+			'viewport' => '1280x800',
+		],
+	]);
+	$consentId = (int)($consentStored['id'] ?? 0);
+	$consentRow = mn_feedback_fetch($pdo, $consentId);
+	check_same(1, (int)($consentRow['bug_consent'] ?? 0), 'bug context stored with consent');
+	check(str_contains((string)($consentRow['bug_console_logs_json'] ?? ''), 'boom'), 'console log stored with consent');
+	check(str_contains((string)($consentRow['bug_last_clicks_json'] ?? ''), 'Run'), 'last click stored with consent');
+
+	$prompt = mn_feedback_build_prompt($feedbackRow, 'Clarify the example and keep the citation.');
+	check(str_contains($prompt, 'File: blog/history.php'), 'prompt includes the source file');
+	check(str_contains($prompt, 'A selected passage about history.'), 'prompt includes the selected text');
+	check(str_contains($prompt, 'This point helped me understand the timeline.'), 'prompt includes the reader comment');
+	check(str_contains($prompt, 'Clarify the example and keep the citation.'), 'prompt includes the editor instruction');
+	check(str_contains($prompt, 'WHAT THE READER WANTS'), 'prompt has the reader-wants section');
+	check(str_contains($prompt, 'DELIVERABLE'), 'prompt has a deliverable section');
+	check(!str_contains($prompt, 'reader@example.test'), 'prompt omits the email by default');
+
+	mn_analytics_cleanup($pdo, true);
+	$feedbackCount = (int)$pdo->query('SELECT COUNT(*) FROM block_feedback')->fetchColumn();
+	check($feedbackCount >= 3, 'cleanup keeps reader feedback');
+
 	$backup = $tmpDir . '/backup.sqlite';
 	@unlink($backup);
 	check(mn_analytics_backup_to($backup), 'SQLite backup succeeds');
@@ -250,6 +369,8 @@ if ($pdo instanceof PDO) {
 		$backupDb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$count = (int)$backupDb->query('SELECT COUNT(*) FROM pageviews')->fetchColumn();
 		check($count >= 1, 'backup contains rows');
+		$feedbackBackup = (int)$backupDb->query('SELECT COUNT(*) FROM block_feedback')->fetchColumn();
+		check($feedbackBackup >= 3, 'backup contains reader feedback');
 		$backupDb = null;
 	}
 }

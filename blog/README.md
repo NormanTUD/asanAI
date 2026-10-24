@@ -355,8 +355,16 @@ insert/heartbeat/leave, section/event details, dedupe, token deletion,
 cleanup/retention, backup, DB path resolution, relative-path and symlink
 refusal, customized setup commands, health checks (including
 `pdo_sqlite`/`SQLite3`), public setup banner, real dashboard link, admin token
-and alert visibility. The blog CI workflow installs
-`php-sqlite3` and runs this test.
+and alert visibility. The blog CI workflow installs `php-sqlite3` and runs this test.
+
+Additional regression scripts (temporary PHP servers + temp SQLite/password,
+never production data):
+
+```bash
+uv run blog/tests/stats_filters_test.py   # chips, reset, source/hour/day/humans
+uv run blog/tests/proxy_stats_test.py     # proxy login/cookies/filters/CSV/backup/beacon
+uv run blog/tests/analytics_client_test.py # sections/events, no query/full URL
+```
 
 The dashboard is also smoke-tested locally with Selenium: login, tab switching,
 the hero, nine KPI cards, sub-navigation, full briefing and copy button, all

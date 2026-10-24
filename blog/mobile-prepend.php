@@ -67,7 +67,7 @@
 
 	// Endpoints and the private dashboard must not receive blog chrome CSS/JS.
 	$_mobile_script = basename((string)($_SERVER['SCRIPT_FILENAME'] ?? ''));
-	$_mobile_skip = in_array($_mobile_script, ['stats.php', 'track.php'], true);
+	$_mobile_skip = in_array($_mobile_script, ['stats.php', 'track.php', 'feedback.php', 'feedback_track.php'], true);
 
 	$_mobile_callback = function ($buffer) use ($_mobile_payload, &$_mobile_already_loaded, $_mobile_skip, $_mobile_is_cli_server) {
 		if ($_mobile_skip) {

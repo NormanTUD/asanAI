@@ -13148,3 +13148,377 @@ summary:focus-visible,
 	::view-transition-old(root),
 	::view-transition-new(root) { animation: none !important; }
 }
+
+/* ── Reader feedback ─────────────────────────────────────────────
+   A small editorial margin card that appears when a reader selects
+   text in a lesson. It is anchored to the block, never to the mouse
+   cursor, and falls back to a bottom sheet on narrow screens. */
+#mn-feedback-layer {
+	position: fixed;
+	inset: 0;
+	z-index: 9600;
+	pointer-events: none;
+}
+
+.mn-feedback-panel {
+	position: fixed;
+	width: 304px;
+	max-width: calc(100vw - 24px);
+	max-height: calc(100vh - 24px);
+	overflow-y: auto;
+	box-sizing: border-box;
+	padding: 13px 13px 12px;
+	background: var(--mn-surface);
+	color: var(--mn-text);
+	border: 1px solid var(--mn-border);
+	border-left: 3px solid var(--mn-accent);
+	border-radius: var(--mn-radius-md);
+	box-shadow: var(--mn-shadow-xl);
+	font-family: var(--mn-font-body);
+	font-size: 13px;
+	line-height: 1.45;
+	pointer-events: auto;
+	opacity: 0;
+	transform: translateY(4px);
+	transition: opacity .18s ease, transform .18s ease;
+}
+
+.mn-feedback-panel.is-open {
+	opacity: 1;
+	transform: none;
+}
+
+.mn-feedback-panel[hidden],
+.mnf-body[hidden],
+.mnf-success[hidden],
+.mnf-bug[hidden],
+.mnf-forget[hidden] {
+	display: none !important;
+}
+
+.mnf-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	margin-bottom: 8px;
+}
+
+.mnf-kicker {
+	font: 700 9.5px/1 var(--mn-font-body);
+	letter-spacing: .14em;
+	text-transform: uppercase;
+	color: var(--mn-accent);
+}
+
+.mnf-close {
+	appearance: none;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	border: 1px solid transparent;
+	border-radius: 50%;
+	background: transparent;
+	color: var(--mn-text-muted);
+	font: 400 18px/1 var(--mn-font-body);
+	cursor: pointer;
+	display: grid;
+	place-items: center;
+}
+
+.mnf-close:hover,
+.mnf-close:focus-visible {
+	background: var(--mn-bg-subtle);
+	color: var(--mn-heading);
+	outline: none;
+}
+
+.mnf-quote {
+	margin: 0 0 9px;
+	padding: 7px 9px;
+	background: var(--mn-bg-subtle);
+	border-left: 2px solid color-mix(in srgb, var(--mn-accent) 55%, transparent);
+	border-radius: 0 6px 6px 0;
+	font-family: var(--mn-font-prose);
+	font-style: italic;
+	font-size: .84rem;
+	line-height: 1.45;
+	color: var(--mn-text-secondary);
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.mnf-reactions {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: 4px;
+	margin: 0 0 9px;
+}
+
+.mnf-reaction {
+	appearance: none;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	min-width: 0;
+	padding: 6px 2px 5px;
+	border: 1px solid var(--mn-border);
+	border-radius: 10px;
+	background: transparent;
+	color: var(--mn-text-secondary);
+	font-family: var(--mn-font-body);
+	cursor: pointer;
+	transition: transform .15s ease, border-color .15s ease, background .15s ease, color .15s ease;
+}
+
+.mnf-reaction:hover {
+	transform: translateY(-1px);
+	border-color: color-mix(in srgb, var(--mn-accent) 45%, var(--mn-border));
+	color: var(--mn-heading);
+}
+
+.mnf-reaction:focus-visible {
+	outline: 2px solid var(--mn-accent);
+	outline-offset: 2px;
+}
+
+.mnf-reaction-icon {
+	font-size: 17px;
+	line-height: 1;
+}
+
+.mnf-reaction-label {
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 8.5px;
+	font-weight: 700;
+	letter-spacing: .015em;
+}
+
+.mnf-reaction[data-reaction="helpful"].is-selected {
+	color: var(--mn-emerald);
+	border-color: var(--mn-emerald);
+	background: color-mix(in srgb, var(--mn-emerald) 12%, transparent);
+}
+
+.mnf-reaction[data-reaction="unhelpful"].is-selected,
+.mnf-reaction[data-reaction="bug"].is-selected {
+	color: var(--mn-rose);
+	border-color: var(--mn-rose);
+	background: color-mix(in srgb, var(--mn-rose) 11%, transparent);
+}
+
+.mnf-reaction[data-reaction="insight"].is-selected {
+	color: var(--mn-coral);
+	border-color: var(--mn-coral);
+	background: color-mix(in srgb, var(--mn-coral) 13%, transparent);
+}
+
+.mnf-reaction[data-reaction="confusing"].is-selected {
+	color: var(--mn-sky);
+	border-color: var(--mn-sky);
+	background: color-mix(in srgb, var(--mn-sky) 12%, transparent);
+}
+
+.mnf-comment,
+.mnf-email-input {
+	width: 100%;
+	box-sizing: border-box;
+	border: 1px solid var(--mn-border);
+	border-radius: 9px;
+	background: var(--mn-surface);
+	color: var(--mn-text);
+	padding: 7px 9px;
+	font: 400 12.5px/1.45 var(--mn-font-body);
+}
+
+.mnf-comment {
+	resize: vertical;
+	min-height: 54px;
+	max-height: 170px;
+	margin: 0 0 8px;
+}
+
+.mnf-email-input {
+	margin: 0 0 4px;
+}
+
+.mnf-comment:focus,
+.mnf-email-input:focus {
+	outline: 2px solid color-mix(in srgb, var(--mn-accent) 45%, transparent);
+	outline-offset: 1px;
+	border-color: var(--mn-accent);
+}
+
+.mnf-note {
+	font-size: 10.5px;
+	line-height: 1.35;
+	color: var(--mn-text-muted);
+	margin: 0 0 4px;
+}
+
+.mnf-remember {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 10.5px;
+	color: var(--mn-text-secondary);
+	cursor: pointer;
+	user-select: none;
+}
+
+.mnf-remember input,
+.mnf-bug input {
+	accent-color: var(--mn-accent);
+	margin: 0;
+}
+
+.mnf-forget {
+	appearance: none;
+	border: 0;
+	background: transparent;
+	padding: 0 0 0 8px;
+	color: var(--mn-text-muted);
+	font: 600 10.5px var(--mn-font-body);
+	cursor: pointer;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.mnf-forget:hover,
+.mnf-forget:focus-visible {
+	color: var(--mn-rose);
+	outline: none;
+}
+
+.mnf-bug {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	margin: 8px 0 2px;
+	padding: 8px;
+	border: 1px solid color-mix(in srgb, var(--mn-rose) 30%, var(--mn-border));
+	border-radius: 9px;
+	background: color-mix(in srgb, var(--mn-rose) 6%, transparent);
+	cursor: pointer;
+}
+
+.mnf-bug b {
+	display: block;
+	font-size: 11.5px;
+	color: var(--mn-heading);
+	margin-bottom: 1px;
+}
+
+.mnf-bug small {
+	display: block;
+	font-size: 10.5px;
+	line-height: 1.35;
+	color: var(--mn-text-muted);
+}
+
+.mnf-foot {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 8px;
+}
+
+.mnf-status {
+	flex: 1 1 auto;
+	min-height: 1em;
+	font-size: 10.5px;
+	line-height: 1.35;
+	color: var(--mn-text-muted);
+}
+
+.mnf-send {
+	appearance: none;
+	flex: none;
+	border: 0;
+	border-radius: 9px;
+	padding: 7px 14px;
+	background: linear-gradient(135deg, var(--mn-accent), color-mix(in srgb, var(--mn-accent) 70%, var(--mn-coral)));
+	color: #fff;
+	font: 700 12.5px var(--mn-font-body);
+	cursor: pointer;
+	box-shadow: 0 5px 14px -7px color-mix(in srgb, var(--mn-accent) 80%, transparent);
+}
+
+.mnf-send:hover:not(:disabled) {
+	filter: brightness(1.07);
+}
+
+.mnf-send:disabled {
+	opacity: .45;
+	cursor: not-allowed;
+	box-shadow: none;
+}
+
+.mnf-success {
+	text-align: center;
+	padding: 12px 0 5px;
+}
+
+.mnf-success-icon {
+	width: 34px;
+	height: 34px;
+	margin: 0 auto 6px;
+	display: grid;
+	place-items: center;
+	border-radius: 50%;
+	background: color-mix(in srgb, var(--mn-emerald) 15%, transparent);
+	color: var(--mn-emerald);
+	font: 800 18px/1 var(--mn-font-body);
+	animation: mnf-pop .3s ease;
+}
+
+.mnf-success-text {
+	font-size: 12px;
+	color: var(--mn-text-secondary);
+}
+
+@keyframes mnf-pop {
+	from { transform: scale(.72); opacity: 0; }
+	to { transform: scale(1); opacity: 1; }
+}
+
+.mn-feedback-panel.mnf-sheet {
+	left: 12px !important;
+	right: 12px !important;
+	top: auto !important;
+	bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+	width: auto;
+	max-height: min(72vh, 560px);
+	border-left-width: 1px;
+	border-top: 3px solid var(--mn-accent);
+}
+
+::highlight(mn-feedback-selection) {
+	background-color: color-mix(in srgb, var(--mn-accent) 22%, transparent);
+	color: inherit;
+	text-decoration: underline;
+	text-decoration-color: color-mix(in srgb, var(--mn-accent) 70%, transparent);
+	text-decoration-thickness: 2px;
+	text-underline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mn-feedback-panel,
+	.mnf-reaction,
+	.mnf-success-icon {
+		transition: none !important;
+		animation: none !important;
+	}
+}
+
+@media print {
+	#mn-feedback-layer {
+		display: none !important;
+	}
+}

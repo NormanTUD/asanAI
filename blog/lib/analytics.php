@@ -448,6 +448,76 @@ function mn_analytics_init_db(PDO $pdo): void {
 	)");
 	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_pve_path ON pageview_events(path, kind)");
 	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_pve_pageview ON pageview_events(pageview_id)");
+
+	$pdo->exec("CREATE TABLE IF NOT EXISTS block_feedback (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		request_id TEXT NOT NULL DEFAULT '',
+		ts INTEGER NOT NULL,
+		day TEXT NOT NULL,
+		path TEXT NOT NULL DEFAULT '',
+		lesson_title TEXT NOT NULL DEFAULT '',
+		part INTEGER NOT NULL DEFAULT 0,
+		part_title TEXT NOT NULL DEFAULT '',
+		block_index INTEGER NOT NULL DEFAULT 0,
+		block_key TEXT NOT NULL DEFAULT '',
+		block_selector TEXT NOT NULL DEFAULT '',
+		section_title TEXT NOT NULL DEFAULT '',
+		section_anchor TEXT NOT NULL DEFAULT '',
+		block_text TEXT NOT NULL DEFAULT '',
+		block_html TEXT NOT NULL DEFAULT '',
+		reaction TEXT NOT NULL DEFAULT '',
+		comment TEXT NOT NULL DEFAULT '',
+		email TEXT NOT NULL DEFAULT '',
+		status TEXT NOT NULL DEFAULT 'new',
+		admin_note TEXT NOT NULL DEFAULT '',
+		admin_prompt TEXT NOT NULL DEFAULT '',
+		decided_at INTEGER,
+		created_at INTEGER NOT NULL DEFAULT 0,
+		updated_at INTEGER NOT NULL DEFAULT 0
+	)");
+	$pdo->exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_bf_request ON block_feedback(request_id) WHERE request_id <> ''");
+	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_bf_ts ON block_feedback(ts)");
+	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_bf_path ON block_feedback(path, ts)");
+	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_bf_reaction ON block_feedback(reaction, ts)");
+	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_bf_status ON block_feedback(status, ts)");
+
+	$pdo->exec("CREATE TABLE IF NOT EXISTS feedback_selections (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		feedback_id INTEGER NOT NULL,
+		selected_text TEXT NOT NULL DEFAULT '',
+		selected_html TEXT NOT NULL DEFAULT '',
+		start_offset INTEGER NOT NULL DEFAULT 0,
+		end_offset INTEGER NOT NULL DEFAULT 0,
+		prefix TEXT NOT NULL DEFAULT '',
+		suffix TEXT NOT NULL DEFAULT '',
+		block_text_length INTEGER NOT NULL DEFAULT 0,
+		range_count INTEGER NOT NULL DEFAULT 1,
+		direction TEXT NOT NULL DEFAULT '',
+		selection_rect_json TEXT NOT NULL DEFAULT '',
+		block_rect_json TEXT NOT NULL DEFAULT '',
+		scroll_y INTEGER NOT NULL DEFAULT 0,
+		viewport_w INTEGER NOT NULL DEFAULT 0,
+		viewport_h INTEGER NOT NULL DEFAULT 0,
+		source_file TEXT NOT NULL DEFAULT '',
+		source_mtime INTEGER NOT NULL DEFAULT 0,
+		UNIQUE(feedback_id)
+	)");
+	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_fs_feedback ON feedback_selections(feedback_id)");
+
+	$pdo->exec("CREATE TABLE IF NOT EXISTS feedback_bug_context (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		feedback_id INTEGER NOT NULL,
+		consent INTEGER NOT NULL DEFAULT 0,
+		user_agent TEXT NOT NULL DEFAULT '',
+		url TEXT NOT NULL DEFAULT '',
+		viewport TEXT NOT NULL DEFAULT '',
+		console_logs_json TEXT NOT NULL DEFAULT '',
+		last_clicks_json TEXT NOT NULL DEFAULT '',
+		last_error_json TEXT NOT NULL DEFAULT '',
+		captured_at INTEGER NOT NULL DEFAULT 0,
+		UNIQUE(feedback_id)
+	)");
+	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_fbc_feedback ON feedback_bug_context(feedback_id)");
 }
 
 function mn_analytics_maybe_migrate_legacy_db(string $path): void {
@@ -510,9 +580,9 @@ function mn_analytics_open_db(bool $readOnly = false): ?PDO {
 		$pdo->exec('PRAGMA synchronous=NORMAL');
 		$pdo->exec('PRAGMA busy_timeout=5000');
 		$version = (int)$pdo->query('PRAGMA user_version')->fetchColumn();
-		if ($version < 6) {
+		if ($version < 7) {
 			mn_analytics_init_db($pdo);
-			$pdo->exec('PRAGMA user_version=6');
+			$pdo->exec('PRAGMA user_version=7');
 		}
 		return $pdo;
 	} catch (Throwable $e) {
@@ -1910,4 +1980,532 @@ function mn_analytics_ref_type_label(string $type): string {
 		'external' => 'External',
 		default => 'Unknown',
 	};
+}
+
+/* ── Reader block feedback ─────────────────────────────────────────
+   Readers can select a passage and attach a reaction/comment. The
+   records are anonymous by default. Email is optional and only sent
+   when the reader fills it in. Bug reports may include console logs
+   and recent clicks, but only after explicit consent.
+   ───────────────────────────────────────────────────────────────── */
+
+function mn_feedback_disabled_file(): string {
+	return dirname(__DIR__) . '/.feedback_disabled';
+}
+
+function mn_feedback_is_disabled(): bool {
+	if (getenv('MN_FEEDBACK_DISABLED') === '1') {
+		return true;
+	}
+	return is_file(mn_feedback_disabled_file());
+}
+
+function mn_feedback_reactions(): array {
+	return [
+		'helpful' => ['icon' => '👍', 'label' => 'Helpful'],
+		'unhelpful' => ['icon' => '👎', 'label' => 'Not helpful'],
+		'insight' => ['icon' => '💡', 'label' => 'Insight'],
+		'confusing' => ['icon' => '❓', 'label' => 'Confusing'],
+		'bug' => ['icon' => '🐞', 'label' => 'Bug'],
+	];
+}
+
+function mn_feedback_endpoint_path(): string {
+	$script = isset($_SERVER['SCRIPT_NAME']) ? (string)$_SERVER['SCRIPT_NAME'] : '';
+	$dir = $script !== '' ? rtrim(str_replace('\\', '/', dirname($script)), '/') : '';
+	return ($dir === '' ? '' : $dir) . '/feedback_track';
+}
+
+function mn_feedback_secret(): string {
+	$line = mn_analytics_password_line();
+	return hash_hmac('sha256', 'mn-feedback-token-v1', $line !== '' ? $line : __FILE__);
+}
+
+function mn_feedback_issue_token(): string {
+	$ts = (string)time();
+	$sig = hash_hmac('sha256', $ts, mn_feedback_secret());
+	return base64_encode($ts . '.' . $sig);
+}
+
+function mn_feedback_verify_token(string $token): bool {
+	if ($token === '' || strlen($token) > 200) {
+		return false;
+	}
+	$raw = base64_decode($token, true);
+	if (!is_string($raw) || !str_contains($raw, '.')) {
+		return false;
+	}
+	[$ts, $sig] = explode('.', $raw, 2);
+	if (!preg_match('/^\d{9,12}$/', $ts) || !preg_match('/^[a-f0-9]{64}$/', $sig)) {
+		return false;
+	}
+	$age = time() - (int)$ts;
+	if ($age < -300 || $age > 7200) {
+		return false;
+	}
+	return hash_equals(hash_hmac('sha256', $ts, mn_feedback_secret()), $sig);
+}
+
+function mn_feedback_print_config(): void {
+	static $printed = false;
+	if ($printed || mn_feedback_is_disabled()) {
+		return;
+	}
+	$printed = true;
+	$reactions = [];
+	foreach (mn_feedback_reactions() as $key => $meta) {
+		$reactions[] = ['key' => $key, 'icon' => $meta['icon'], 'label' => $meta['label']];
+	}
+	$cfg = [
+		'enabled' => true,
+		'endpoint' => mn_feedback_endpoint_path(),
+		'token' => mn_feedback_issue_token(),
+		'reactions' => $reactions,
+		'limits' => [
+			'comment' => 6000,
+			'email' => 254,
+			'blockText' => 12000,
+			'selection' => 4000,
+		],
+	];
+	$json = json_encode(
+		$cfg,
+		JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE |
+		JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+	);
+	if (!is_string($json)) {
+		return;
+	}
+	echo '<script>window.__MNFeedback=' . $json . ';</script>' . "\n";
+}
+
+function mn_feedback_clean_html(string $value, int $maxLength): string {
+	$value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/u', ' ', $value) ?? '';
+	$value = preg_replace('#<(script|style|iframe|object|embed|link|meta)\b[^>]*>.*?</\1>#is', ' ', $value) ?? '';
+	$value = preg_replace('#<(script|style|iframe|object|embed|link|meta)\b[^>]*/?>#i', ' ', $value) ?? '';
+	$value = trim($value);
+	if (function_exists('mb_substr')) {
+		return mb_substr($value, 0, $maxLength, 'UTF-8');
+	}
+	return substr($value, 0, $maxLength);
+}
+
+function mn_feedback_rect_json(mixed $value): string {
+	if (!is_array($value)) {
+		return '';
+	}
+	$out = [];
+	foreach (['x', 'y', 'top', 'left', 'right', 'bottom', 'width', 'height'] as $key) {
+		if (isset($value[$key]) && is_numeric($value[$key])) {
+			$out[$key] = round((float)$value[$key], 1);
+		}
+	}
+	return $out === [] ? '' : (string)json_encode($out, JSON_UNESCAPED_SLASHES);
+}
+
+function mn_feedback_json_blob(mixed $value, int $maxBytes): string {
+	if ($value === null || $value === '') {
+		return '';
+	}
+	$json = is_string($value) ? $value : json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+	if (!is_string($json)) {
+		return '';
+	}
+	if (strlen($json) > $maxBytes) {
+		$json = substr($json, 0, $maxBytes);
+	}
+	return $json;
+}
+
+function mn_feedback_store(array $data): array {
+	if (mn_feedback_is_disabled()) {
+		return ['ok' => false, 'error' => 'disabled'];
+	}
+	$reactions = mn_feedback_reactions();
+	$reaction = isset($data['reaction']) && is_string($data['reaction']) ? strtolower(trim($data['reaction'])) : '';
+	if (!isset($reactions[$reaction])) {
+		return ['ok' => false, 'error' => 'invalid_reaction'];
+	}
+	$path = isset($data['path']) && is_string($data['path']) ? trim($data['path']) : '';
+	if (!preg_match('/^[a-zA-Z0-9_-]{1,80}$/', $path)) {
+		return ['ok' => false, 'error' => 'invalid_path'];
+	}
+	$pdo = mn_analytics_open_db();
+	if (!$pdo) {
+		return ['ok' => false, 'error' => 'database_unavailable'];
+	}
+
+	$requestId = isset($data['request_id']) && is_string($data['request_id']) ? strtolower(trim($data['request_id'])) : '';
+	$requestId = preg_replace('/[^a-f0-9]/', '', $requestId) ?? '';
+	if ($requestId === '' || strlen($requestId) < 16 || strlen($requestId) > 64) {
+		$requestId = bin2hex(random_bytes(16));
+	}
+	try {
+		$existing = $pdo->prepare('SELECT id FROM block_feedback WHERE request_id = ?');
+		$existing->execute([$requestId]);
+		$existingId = $existing->fetchColumn();
+		if ($existingId !== false && $existingId !== null) {
+			return ['ok' => true, 'id' => (int)$existingId, 'duplicate' => true];
+		}
+	} catch (Throwable $e) {
+		return ['ok' => false, 'error' => 'database_unavailable'];
+	}
+
+	$text = static function (array $src, string $key, int $max): string {
+		return isset($src[$key]) && is_string($src[$key]) ? mn_analytics_clean_client_text($src[$key], $max) : '';
+	};
+	$int = static function (array $src, string $key, int $min, int $max): int {
+		if (!isset($src[$key]) || !is_numeric($src[$key])) {
+			return $min;
+		}
+		return max($min, min($max, (int)$src[$key]));
+	};
+
+	$lessonTitle = $text($data, 'lesson_title', 160);
+	$part = $int($data, 'part', 0, 20);
+	$partTitle = $text($data, 'part_title', 120);
+	$sectionTitle = $text($data, 'section_title', 200);
+	$sectionAnchor = $text($data, 'section_anchor', 120);
+	$blockKey = $text($data, 'block_key', 160);
+	$blockSelector = $text($data, 'block_selector', 300);
+	$blockText = $text($data, 'block_text', 12000);
+	$blockHtml = isset($data['block_html']) && is_string($data['block_html']) ? mn_feedback_clean_html($data['block_html'], 30000) : '';
+	$comment = $text($data, 'comment', 6000);
+	$email = $text($data, 'email', 254);
+	if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+		return ['ok' => false, 'error' => 'invalid_email'];
+	}
+	$blockIndex = $int($data, 'block_index', 0, 100000);
+	$now = time();
+	$day = (new DateTimeImmutable('@' . $now))->setTimezone(new DateTimeZone('Europe/Berlin'))->format('Y-m-d');
+	$sourceFile = 'blog/' . $path . '.php';
+	$sourceMtime = is_file(dirname(__DIR__) . '/' . $path . '.php') ? (int)@filemtime(dirname(__DIR__) . '/' . $path . '.php') : 0;
+
+	$selection = isset($data['selection']) && is_array($data['selection']) ? $data['selection'] : [];
+	$selectedText = $text($selection, 'text', 4000);
+	$selectedHtml = isset($selection['html']) && is_string($selection['html']) ? mn_feedback_clean_html($selection['html'], 20000) : '';
+	$startOffset = $int($selection, 'start', 0, 1000000);
+	$endOffset = $int($selection, 'end', 0, 1000000);
+	if ($endOffset < $startOffset) {
+		$endOffset = $startOffset;
+	}
+	$prefix = $text($selection, 'prefix', 240);
+	$suffix = $text($selection, 'suffix', 240);
+	$blockTextLength = $int($selection, 'block_length', 0, 1000000);
+	$rangeCount = $int($selection, 'range_count', 1, 20);
+	$direction = $text($selection, 'direction', 20);
+	$selectionRect = isset($selection['rect']) ? mn_feedback_rect_json($selection['rect']) : '';
+	$blockRect = isset($selection['block_rect']) ? mn_feedback_rect_json($selection['block_rect']) : '';
+	$scrollY = $int($selection, 'scroll_y', 0, 100000000);
+	$viewportW = $int($selection, 'viewport_w', 0, 100000);
+	$viewportH = $int($selection, 'viewport_h', 0, 100000);
+
+	$bug = isset($data['bug']) && is_array($data['bug']) ? $data['bug'] : [];
+	$bugConsent = $reaction === 'bug' && !empty($bug['consent']);
+	$bugConsole = $bugConsent ? mn_feedback_json_blob($bug['console'] ?? null, 100000) : '';
+	$bugClicks = $bugConsent ? mn_feedback_json_blob($bug['clicks'] ?? null, 40000) : '';
+	$bugError = $bugConsent ? mn_feedback_json_blob($bug['last_error'] ?? null, 20000) : '';
+	$bugUserAgent = $bugConsent ? $text($bug, 'user_agent', 500) : '';
+	$bugUrl = $bugConsent ? $text($bug, 'url', 500) : '';
+	$bugViewport = $bugConsent ? $text($bug, 'viewport', 60) : '';
+
+	try {
+		$pdo->beginTransaction();
+		$stmt = $pdo->prepare(
+			"INSERT INTO block_feedback
+				(request_id, ts, day, path, lesson_title, part, part_title,
+				 block_index, block_key, block_selector, section_title, section_anchor,
+				 block_text, block_html, reaction, comment, email, status,
+				 admin_note, admin_prompt, decided_at, created_at, updated_at)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', '', '', NULL, ?, ?)"
+		);
+		$stmt->execute([
+			$requestId, $now, $day, $path, $lessonTitle, $part, $partTitle,
+			$blockIndex, $blockKey, $blockSelector, $sectionTitle, $sectionAnchor,
+			$blockText, $blockHtml, $reaction, $comment, $email,
+			$now, $now,
+		]);
+		$feedbackId = (int)$pdo->lastInsertId();
+
+		if ($selectedText !== '' || $selectedHtml !== '' || $blockText !== '') {
+			$sel = $pdo->prepare(
+				"INSERT INTO feedback_selections
+					(feedback_id, selected_text, selected_html, start_offset, end_offset,
+					 prefix, suffix, block_text_length, range_count, direction,
+					 selection_rect_json, block_rect_json, scroll_y, viewport_w, viewport_h,
+					 source_file, source_mtime)
+				 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+			);
+			$sel->execute([
+				$feedbackId, $selectedText, $selectedHtml, $startOffset, $endOffset,
+				$prefix, $suffix, $blockTextLength, $rangeCount, $direction,
+				$selectionRect, $blockRect, $scrollY, $viewportW, $viewportH,
+				$sourceFile, $sourceMtime,
+			]);
+		}
+
+		if ($bugConsent) {
+			$bugStmt = $pdo->prepare(
+				"INSERT INTO feedback_bug_context
+					(feedback_id, consent, user_agent, url, viewport,
+					 console_logs_json, last_clicks_json, last_error_json, captured_at)
+				 VALUES (?, 1, ?, ?, ?, ?, ?, ?, ?)"
+			);
+			$bugStmt->execute([
+				$feedbackId, $bugUserAgent, $bugUrl, $bugViewport,
+				$bugConsole, $bugClicks, $bugError, $now,
+			]);
+		}
+		$pdo->commit();
+		return ['ok' => true, 'id' => $feedbackId];
+	} catch (Throwable $e) {
+		if ($pdo->inTransaction()) {
+			$pdo->rollBack();
+		}
+		return ['ok' => false, 'error' => 'database_unavailable'];
+	}
+}
+
+function mn_feedback_fetch(PDO $pdo, int $id): ?array {
+	$stmt = $pdo->prepare(
+		"SELECT f.*,
+		        s.selected_text AS selection_text, s.selected_html AS selection_html,
+		        s.start_offset, s.end_offset, s.prefix, s.suffix, s.block_text_length,
+		        s.range_count, s.direction, s.selection_rect_json, s.block_rect_json,
+		        s.scroll_y, s.viewport_w, s.viewport_h, s.source_file, s.source_mtime,
+		        b.consent AS bug_consent, b.user_agent AS bug_user_agent,
+		        b.url AS bug_url, b.viewport AS bug_viewport,
+		        b.console_logs_json AS bug_console_logs_json,
+		        b.last_clicks_json AS bug_last_clicks_json,
+		        b.last_error_json AS bug_last_error_json,
+		        b.captured_at AS bug_captured_at
+		 FROM block_feedback f
+		 LEFT JOIN feedback_selections s ON s.feedback_id = f.id
+		 LEFT JOIN feedback_bug_context b ON b.feedback_id = f.id
+		 WHERE f.id = ?"
+	);
+	$stmt->execute([$id]);
+	$row = $stmt->fetch();
+	return is_array($row) ? $row : null;
+}
+
+function mn_feedback_prompt_default(string $reaction): string {
+	return match ($reaction) {
+		'helpful' => 'Preserve what works here. Make the passage a little clearer if possible, without removing the part the reader found helpful.',
+		'unhelpful' => 'Rewrite this passage so it is easier to understand. Add a concrete example or a short bridging sentence if that helps.',
+		'insight' => 'The reader had a useful insight here. Consider making that point more explicit, or add a short takeaway that helps other readers reach it too.',
+		'confusing' => 'The reader was confused. Simplify the explanation, define any unexplained term, and add a short transition or example.',
+		'bug' => 'The reader reported a problem. Reproduce or locate the issue, fix it, and explain briefly what was wrong. If it is not reproducible, say so instead of guessing.',
+		default => 'Improve this passage based on the reader feedback, keeping the change focused and the author\'s voice intact.',
+	};
+}
+
+function mn_feedback_build_prompt(array $row, string $adminInstruction = '', bool $includeBug = false): string {
+	$reactions = mn_feedback_reactions();
+	$reaction = (string)($row['reaction'] ?? '');
+	$meta = $reactions[$reaction] ?? ['icon' => '', 'label' => $reaction];
+	$file = (string)($row['source_file'] ?? '');
+	if ($file === '' && !empty($row['path'])) {
+		$file = 'blog/' . $row['path'] . '.php';
+	}
+	$adminInstruction = trim($adminInstruction);
+	if ($adminInstruction === '') {
+		$adminInstruction = mn_feedback_prompt_default($reaction);
+	}
+	$comment = trim((string)($row['comment'] ?? ''));
+	$selected = trim((string)($row['selection_text'] ?? ''));
+	$blockText = trim((string)($row['block_text'] ?? ''));
+	$prefix = trim((string)($row['prefix'] ?? ''));
+	$suffix = trim((string)($row['suffix'] ?? ''));
+	$lesson = (string)($row['lesson_title'] ?? $row['path'] ?? '');
+	$part = (int)($row['part'] ?? 0);
+	$partTitle = (string)($row['part_title'] ?? '');
+	$section = (string)($row['section_title'] ?? '');
+	$page = '/' . (string)($row['path'] ?? '');
+	$blockIndex = (string)($row['block_index'] ?? '0');
+	$selector = (string)($row['block_selector'] ?? '');
+
+	$lines = [];
+	$lines[] = 'TASK';
+	$lines[] = 'Improve one passage in the asanAI blog lesson based on reader feedback.';
+	$lines[] = '';
+	$lines[] = 'CONTEXT';
+	$lines[] = '- File: ' . $file;
+	$lines[] = '- Lesson: "' . $lesson . '"';
+	if ($part > 0) {
+		$lines[] = '- Part: ' . $part . ($partTitle !== '' ? ' - ' . $partTitle : '');
+	}
+	if ($section !== '') {
+		$lines[] = '- Section: "' . $section . '"';
+	}
+	$lines[] = '- Page: ' . $page;
+	$lines[] = '- Block index: ' . $blockIndex;
+	if ($selector !== '') {
+		$lines[] = '- Block selector: ' . $selector;
+	}
+	$lines[] = '- Locate the passage by searching the file for the exact reader selection below.';
+	$lines[] = '';
+	$lines[] = 'WHAT THE READER WANTS (verbatim)';
+	$lines[] = '- Reaction: ' . $meta['icon'] . ' ' . $meta['label'];
+	$lines[] = '- Selected text:';
+	$lines[] = '"""';
+	$lines[] = $selected !== '' ? $selected : '(no text selected)';
+	$lines[] = '"""';
+	$lines[] = '- Reader comment:';
+	$lines[] = '"""';
+	$lines[] = $comment !== '' ? $comment : '(no comment)';
+	$lines[] = '"""';
+	if ($prefix !== '' || $suffix !== '') {
+		if ($prefix !== '') {
+			$lines[] = '- Context before: "' . $prefix . '"';
+		}
+		if ($suffix !== '') {
+			$lines[] = '- Context after: "' . $suffix . '"';
+		}
+	}
+	if ($blockText !== '' && $blockText !== $selected) {
+		$lines[] = '- Full block text (for context):';
+		$lines[] = '"""';
+		$lines[] = $blockText;
+		$lines[] = '"""';
+	}
+	$lines[] = '';
+	$lines[] = 'WHAT I (EDITOR) WANT';
+	$lines[] = $adminInstruction;
+	$lines[] = '';
+
+	if ($includeBug && !empty($row['bug_consent'])) {
+		$lines[] = 'BUG REPORT CONTEXT (reader consented to sharing this)';
+		if (!empty($row['bug_url'])) {
+			$lines[] = '- URL: ' . (string)$row['bug_url'];
+		}
+		if (!empty($row['bug_user_agent'])) {
+			$lines[] = '- User agent: ' . (string)$row['bug_user_agent'];
+		}
+		if (!empty($row['bug_console_logs_json'])) {
+			$lines[] = '- Console log:';
+			$lines[] = '"""';
+			$lines[] = (string)$row['bug_console_logs_json'];
+			$lines[] = '"""';
+		}
+		if (!empty($row['bug_last_clicks_json'])) {
+			$lines[] = '- Last interactions:';
+			$lines[] = '"""';
+			$lines[] = (string)$row['bug_last_clicks_json'];
+			$lines[] = '"""';
+		}
+		if (!empty($row['bug_last_error_json'])) {
+			$lines[] = '- Last error:';
+			$lines[] = '"""';
+			$lines[] = (string)$row['bug_last_error_json'];
+			$lines[] = '"""';
+		}
+		$lines[] = '';
+	}
+
+	$lines[] = 'CONSTRAINTS';
+	$lines[] = '- Only change the relevant block; keep the diff focused and the author\'s voice intact.';
+	$lines[] = '- Follow the blog authoring contract (AGENTS.md): Markdown inside .md blocks,';
+	$lines[] = '  citations only from literature.js, no invented sources, theme tokens only,';
+	$lines[] = '  no new build tooling, and no code comments unless asked.';
+	$lines[] = '- Preserve headings, anchors, interactive blocks, and the reading flow.';
+	$lines[] = '- If the reader is factually wrong, explain instead of editing. If the request is';
+	$lines[] = '  ambiguous, ask before making a large change.';
+	$lines[] = '';
+	$lines[] = 'DELIVERABLE';
+	$lines[] = '- Edit the file, then run:';
+	$lines[] = '  php -l ' . $file;
+	$lines[] = '  uv run blog/tests/php_validator.py blog/';
+	$lines[] = '  uv run blog/tests/lesson_guard.py blog/';
+	$lines[] = '  uv run blog/tests/php_render_validator.py blog/ --all-lessons';
+	$lines[] = '- Report what changed and why, and mention any remaining questions.';
+	return implode("\n", $lines);
+}
+
+/* ── Shared admin session helpers (feedback dashboard) ───────────── */
+
+function mn_admin_is_secure(): bool {
+	if (!empty($_SERVER['HTTPS']) && (string)$_SERVER['HTTPS'] !== 'off') {
+		return true;
+	}
+	return strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https';
+}
+
+function mn_admin_cookie_path(): string {
+	$script = (string)($_SERVER['SCRIPT_NAME'] ?? '/');
+	$dir = rtrim(str_replace('\\', '/', dirname($script)), '/');
+	return $dir === '' ? '/' : $dir . '/';
+}
+
+function mn_admin_session_start(): void {
+	if (session_status() === PHP_SESSION_ACTIVE) {
+		return;
+	}
+	ini_set('session.use_strict_mode', '1');
+	ini_set('session.use_only_cookies', '1');
+	ini_set('session.cookie_httponly', '1');
+	session_name('mnstats');
+	session_set_cookie_params([
+		'lifetime' => 0,
+		'path' => mn_admin_cookie_path(),
+		'secure' => mn_admin_is_secure(),
+		'httponly' => true,
+		'samesite' => 'Strict',
+	]);
+	session_start();
+}
+
+function mn_admin_is_authed(): bool {
+	return !empty($_SESSION['stats_auth']);
+}
+
+function mn_admin_verify_password(string $input): bool {
+	$line = mn_analytics_password_line();
+	if ($line === '') {
+		return false;
+	}
+	if (preg_match('/^\$(?:2[aby]|argon2|6)\$/', $line)) {
+		return password_verify($input, $line);
+	}
+	return hash_equals($line, $input);
+}
+
+function mn_admin_login_wait(): int {
+	return max(0, (int)($_SESSION['stats_lock_until'] ?? 0) - time());
+}
+
+function mn_admin_attempt_login(string $input): bool {
+	if (mn_admin_login_wait() > 0) {
+		return false;
+	}
+	if (mn_admin_verify_password($input)) {
+		session_regenerate_id(true);
+		$_SESSION['stats_auth'] = true;
+		$_SESSION['stats_fail'] = 0;
+		$_SESSION['stats_lock_until'] = 0;
+		return true;
+	}
+	usleep(500000);
+	$_SESSION['stats_fail'] = (int)($_SESSION['stats_fail'] ?? 0) + 1;
+	if ($_SESSION['stats_fail'] >= 5) {
+		$_SESSION['stats_lock_until'] = time() + 300;
+		$_SESSION['stats_fail'] = 0;
+	}
+	return false;
+}
+
+function mn_admin_csrf(): string {
+	if (empty($_SESSION['feedback_csrf']) || !is_string($_SESSION['feedback_csrf'])) {
+		$_SESSION['feedback_csrf'] = bin2hex(random_bytes(32));
+	}
+	return $_SESSION['feedback_csrf'];
+}
+
+function mn_admin_check_csrf(): bool {
+	$token = $_POST['csrf'] ?? '';
+	if (!is_string($token) || $token === '') {
+		return false;
+	}
+	$known = $_SESSION['feedback_csrf'] ?? '';
+	return is_string($known) && $known !== '' && hash_equals($known, $token);
 }
