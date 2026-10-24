@@ -1774,13 +1774,13 @@
    "title": "The Emperor's New Mind: Concerning Computers, Minds, and the Laws of Physics",
    "author": "Roger Penrose",
    "year": "",
-   "url": "https://0ducks.wordpress.com/wp-content/uploads/2014/12/the-emperors-new-mind-by-roger-penrose.pdf"
+   "url": "https://en.wikipedia.org/wiki/The_Emperor%27s_New_Mind"
   },
   "penrose1994shadows": {
    "title": "Shadows of the Mind: A Search for the Missing Science of Consciousness",
    "author": "Roger Penrose",
    "year": "",
-   "url": "https://altexploit.wordpress.com/wp-content/uploads/2017/07/roger-penrose-shadows-of-the-mind_-a-search-for-the-missing-science-of-consciousness-oxford-university-press-1994.pdf"
+   "url": "https://en.wikipedia.org/wiki/Shadows_of_the_Mind"
   },
   "hameroff1996orch": {
    "title": "Orchestrated reduction of quantum coherence in brain microtubules: A model for consciousness",
@@ -3180,6 +3180,12 @@
    "year": "",
    "url": "https://plato.stanford.edu/entries/multiple-realizability/"
   },
+  "sep_godel_incompleteness": {
+   "title": "Gödel's Incompleteness Theorems",
+   "author": "Panu Raatikainen (Stanford Encyclopedia of Philosophy)",
+   "year": "",
+   "url": "https://plato.stanford.edu/entries/goedel-incompleteness/"
+  },
   "hume1739treatise": {
    "title": "A Treatise of Human Nature",
    "author": "David Hume",
@@ -3299,6 +3305,12 @@
    "author": "Wilhelm von Humboldt",
    "year": "",
    "url": "https://archive.org/details/berdieverschied00humbgoog"
+  },
+  "gleick2011information": {
+   "title": "The Information: A History, a Theory, a Flood",
+   "author": "James Gleick",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/The_Information:_A_History,_a_Theory,_a_Flood"
   },
   "evanslevinson2009myth": {
    "title": "The Myth of Language Universals: Language Diversity and Its Importance for Cognitive Science",
@@ -17124,6 +17136,7 @@
   ],
   "shannon1948communication": [
    "history",
+   "language",
    "people_of_ai",
    "statistics",
    "statistics_ii",
@@ -17718,6 +17731,15 @@
    "metaphysics_of_ai"
   ],
   "piccinini2015computation": [
+   "metaphysics_of_ai"
+  ],
+  "penrose1989emperor": [
+   "human_mind",
+   "metaphysics_of_ai",
+   "philosophy"
+  ],
+  "sep_godel_incompleteness": [
+   "human_mind",
    "metaphysics_of_ai"
   ],
   "parfit1984reasons": [
@@ -19472,6 +19494,9 @@
    "language"
   ],
   "evanslevinson2009myth": [
+   "language"
+  ],
+  "gleick2011information": [
    "language"
   ],
   "ishangobone": [
@@ -24715,9 +24740,6 @@
    "philosophy"
   ],
   "uexkull1934": [
-   "philosophy"
-  ],
-  "penrose1989emperor": [
    "philosophy"
   ],
   "li2022othello": [
@@ -34940,6 +34962,14 @@
     "sep_multiple_realizability"
    ]
   },
+  "Panu Raatikainen (Stanford Encyclopedia of Philosophy)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "sep_godel_incompleteness"
+   ]
+  },
   "David Hume": {
    "count": 3,
    "minyear": null,
@@ -35128,6 +35158,14 @@
    "maxyear": null,
    "keys": [
     "humboldt1836sprachbau"
+   ]
+  },
+  "James Gleick": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "gleick2011information"
    ]
   },
   "Nicholas Evans and Stephen C. Levinson": {

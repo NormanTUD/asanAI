@@ -23192,6 +23192,41 @@
   ]
  },
  {
+  "name": "James Gleick",
+  "canon": "James Gleick",
+  "alias": null,
+  "lat": 40.71,
+  "lng": -74.01,
+  "city": "New York, United States",
+  "year": 2011.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "gleick2011information"
+  ],
+  "cited_in": [
+   "language"
+  ]
+ },
+ {
+  "name": "Panu Raatikainen",
+  "canon": "Panu Raatikainen",
+  "alias": null,
+  "lat": 61.5,
+  "lng": 23.79,
+  "city": "Tampere, Finland",
+  "year": 2025.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "sep_godel_incompleteness"
+  ],
+  "cited_in": [
+   "human_mind",
+   "metaphysics_of_ai"
+  ]
+ },
+ {
   "name": "Christiaan Huygens",
   "canon": "Christiaan Huygens",
   "alias": null,
@@ -59396,6 +59431,8 @@
    "hameroff1996orch"
   ],
   "cited_in": [
+   "human_mind",
+   "metaphysics_of_ai",
    "philosophy"
   ]
  },
