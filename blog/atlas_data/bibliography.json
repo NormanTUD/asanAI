@@ -18005,7 +18005,7 @@
   "bayes1763essay": [
    "statistics",
    "statistics_ii",
-   "untold_history"
+   "untold_history_i"
   ],
   "nyquist1924certain": [
    "statistics_ii"
@@ -18024,7 +18024,8 @@
    "statistics_ii",
    "tokenizerlab",
    "transformer",
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii"
   ],
   "nietzsche1883zarathustra": [
    "statistics",
@@ -18090,7 +18091,7 @@
   ],
   "cooley1965fft": [
    "geometry_ii",
-   "untold_history"
+   "untold_history_ii"
   ],
   "zaheer2017deepsets": [
    "geometry_ii"
@@ -18148,6 +18149,816 @@
    "geometry_i",
    "geometry_ii"
   ],
+  "galileosidereus": [
+   "untold_history_i",
+   "untold_history_ii"
+  ],
+  "leeuwenhoekletters": [
+   "untold_history_ii"
+  ],
+  "img_huygens_aerial_telescope": [
+   "untold_history_ii"
+  ],
+  "micrographia": [
+   "untold_history_ii"
+  ],
+  "micrographia_wiki": [
+   "untold_history_ii"
+  ],
+  "hookecork": [
+   "untold_history_ii"
+  ],
+  "img_micrographia_cork": [
+   "untold_history_ii"
+  ],
+  "img_micrographia_titlepage": [
+   "untold_history_ii"
+  ],
+  "img_hooke_cock_microscope": [
+   "untold_history_ii"
+  ],
+  "schleiden1838": [
+   "untold_history_ii"
+  ],
+  "schwann1839": [
+   "untold_history_ii"
+  ],
+  "celltheory_wiki": [
+   "untold_history_ii"
+  ],
+  "virchow1858": [
+   "untold_history_ii"
+  ],
+  "neuron_doctrine_wiki": [
+   "untold_history_ii"
+  ],
+  "golgi1873": [
+   "mirror_in_machine",
+   "untold_history_ii"
+  ],
+  "cajal1888": [
+   "mirror_in_machine",
+   "untold_history_ii"
+  ],
+  "waldeyer1891": [
+   "mirror_in_machine",
+   "untold_history_ii"
+  ],
+  "cajaltextura": [
+   "history",
+   "untold_history_ii"
+  ],
+  "img_cajal_cerebellum": [
+   "untold_history_ii"
+  ],
+  "mccullochpitts1943": [
+   "history",
+   "mirror_in_machine",
+   "people_of_ai",
+   "philosophy",
+   "untold_history_i",
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "hebb1949organizationofbehaviour": [
+   "history",
+   "mirror_in_machine",
+   "people_of_ai",
+   "untold_history_ii"
+  ],
+  "rosenblatt1958perceptron": [
+   "activationlab",
+   "history",
+   "minimalneuron",
+   "people_of_ai",
+   "untold_history_ii"
+  ],
+  "olaha2020zoomin": [
+   "people_of_ai",
+   "untold_history_ii"
+  ],
+  "laertius": [
+   "untold_history_ii"
+  ],
+  "volta_portrait": [
+   "untold_history_ii"
+  ],
+  "volta": [
+   "untold_history_ii"
+  ],
+  "voltaic_pile": [
+   "untold_history_ii"
+  ],
+  "faraday": [
+   "untold_history_ii"
+  ],
+  "teslaelectricmotor": [
+   "untold_history_ii"
+  ],
+  "teslacurrent": [
+   "untold_history_ii"
+  ],
+  "faraday_disk": [
+   "untold_history_ii"
+  ],
+  "tesla_portrait": [
+   "untold_history_ii"
+  ],
+  "theophrastusstones": [
+   "untold_history_ii"
+  ],
+  "plinynaturalhistory": [
+   "untold_history_ii"
+  ],
+  "deremetallica": [
+   "untold_history_ii"
+  ],
+  "vonneumann": [
+   "history",
+   "people_of_ai",
+   "software",
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "bessemerpatent": [
+   "untold_history_ii"
+  ],
+  "ironpillardelhi": [
+   "untold_history_ii"
+  ],
+  "img_iron_pillar_delhi": [
+   "untold_history_ii"
+  ],
+  "img_bessemer_converter": [
+   "untold_history_ii"
+  ],
+  "czochralski1918": [
+   "untold_history_ii"
+  ],
+  "siemensprocess": [
+   "untold_history_ii"
+  ],
+  "semiconductor": [
+   "untold_history_ii"
+  ],
+  "goodenough1980licoo2": [
+   "untold_history_ii"
+  ],
+  "yoshino1985liion": [
+   "untold_history_ii"
+  ],
+  "mendeleev_periodic_table": [
+   "untold_history_ii"
+  ],
+  "wolfbone": [
+   "history",
+   "untold_history_ii"
+  ],
+  "vogelsang2010apollo11": [
+   "history",
+   "untold_history_ii"
+  ],
+  "henshilwood2018blombos": [
+   "history",
+   "untold_history_ii"
+  ],
+  "ifrah2000": [
+   "untold_history_ii"
+  ],
+  "schmandtbesserat1992": [
+   "untold_history_i",
+   "untold_history_ii"
+  ],
+  "chrisomalis2010": [
+   "untold_history_ii"
+  ],
+  "smithkarpinski1911": [
+   "untold_history_ii"
+  ],
+  "cai_lun_paper": [
+   "untold_history_ii"
+  ],
+  "img_cai_lun": [
+   "untold_history_ii"
+  ],
+  "kleinetymology": [
+   "history",
+   "math_iii",
+   "untold_history_ii"
+  ],
+  "fibonacciliber": [
+   "untold_history_ii"
+  ],
+  "fibonaccimathigon": [
+   "untold_history_ii"
+  ],
+  "fibonaccihistory": [
+   "untold_history_ii"
+  ],
+  "brahmagupta628": [
+   "history",
+   "language",
+   "untold_history_ii"
+  ],
+  "alkwarizma": [
+   "positionalembeddingslab",
+   "untold_history_ii"
+  ],
+  "fibonacciseq": [
+   "untold_history_ii"
+  ],
+  "img_caxton_celebration": [
+   "untold_history_ii"
+  ],
+  "gutenbergpress": [
+   "untold_history_ii"
+  ],
+  "img_pacioli_portrait": [
+   "untold_history_ii"
+  ],
+  "paciolisumma": [
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "librarybureau1890catalog": [
+   "untold_history_ii"
+  ],
+  "cardcatalogrules1890": [
+   "untold_history_ii"
+  ],
+  "dewey1876classification": [
+   "untold_history_ii"
+  ],
+  "halley1693mortality": [
+   "untold_history_ii"
+  ],
+  "img_mercator_1569": [
+   "untold_history_ii"
+  ],
+  "mercator1569": [
+   "untold_history_ii"
+  ],
+  "harrisonh4": [
+   "untold_history_ii"
+  ],
+  "img_magdeburg_hemispheres": [
+   "untold_history_ii"
+  ],
+  "torricellibarometer": [
+   "untold_history_ii"
+  ],
+  "vonguericke": [
+   "untold_history_ii"
+  ],
+  "geisslertube": [
+   "untold_history_ii"
+  ],
+  "flemingdiode": [
+   "untold_history_ii"
+  ],
+  "deforestaudion": [
+   "untold_history_ii"
+  ],
+  "huygenspendulum": [
+   "untold_history_ii"
+  ],
+  "img_huygens_horologium": [
+   "untold_history_ii"
+  ],
+  "meridian1884proceedings": [
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "rfc5905": [
+   "untold_history_ii"
+  ],
+  "woodland1952barcode": [
+   "untold_history_ii"
+  ],
+  "denso_qr_history": [
+   "untold_history_ii"
+  ],
+  "newcomenengine": [
+   "untold_history_ii"
+  ],
+  "wattpatent": [
+   "untold_history_ii"
+  ],
+  "img_watt_steam_engine": [
+   "untold_history_ii"
+  ],
+  "eisschlagen_traunsee": [
+   "untold_history_ii"
+  ],
+  "eisgalgen_mittenwald": [
+   "untold_history_ii"
+  ],
+  "cullencold": [
+   "untold_history_ii"
+  ],
+  "patent1250": [
+   "untold_history_ii"
+  ],
+  "psychrometric": [
+   "untold_history_ii"
+  ],
+  "jacquard_loom": [
+   "untold_history_ii"
+  ],
+  "lovelacequote": [
+   "history",
+   "software",
+   "untold_history_ii"
+  ],
+  "taocp3": [
+   "untold_history_ii"
+  ],
+  "koetsier2001programmable": [
+   "untold_history_ii"
+  ],
+  "sharkey2007jazari": [
+   "untold_history_ii"
+  ],
+  "thomasdcolmar1820": [
+   "untold_history_ii"
+  ],
+  "arithmometer_thomas": [
+   "untold_history_ii"
+  ],
+  "niepce_le_gras": [
+   "untold_history_ii"
+  ],
+  "muybridge1887catalogue": [
+   "untold_history_ii"
+  ],
+  "solnit2003motion": [
+   "untold_history_ii"
+  ],
+  "gordon2015indecent": [
+   "untold_history_ii"
+  ],
+  "nilsson1984qai": [
+   "history",
+   "language",
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "img_kirsch_baby": [
+   "untold_history_ii"
+  ],
+  "tomayko1988spaceflight": [
+   "history",
+   "untold_history_ii"
+  ],
+  "img_ranger7_moon": [
+   "untold_history_ii"
+  ],
+  "img_ranger7_guericke": [
+   "untold_history_ii"
+  ],
+  "img_ranger7_impact": [
+   "untold_history_ii"
+  ],
+  "walden1999adc": [
+   "untold_history_ii"
+  ],
+  "boyle1970ccd": [
+   "untold_history_ii"
+  ],
+  "fossum1997cmos": [
+   "untold_history_ii"
+  ],
+  "maiman1967laserpatent": [
+   "untold_history_ii"
+  ],
+  "img_morse_telegraph": [
+   "untold_history_ii"
+  ],
+  "morsetelegraph": [
+   "untold_history_ii"
+  ],
+  "cookewheatstone": [
+   "untold_history_ii"
+  ],
+  "colladon": [
+   "untold_history_ii"
+  ],
+  "notesonlight": [
+   "untold_history_ii"
+  ],
+  "colladon_lightpipe": [
+   "untold_history_ii"
+  ],
+  "fibreoptics": [
+   "untold_history_ii"
+  ],
+  "radiationlosses": [
+   "untold_history_ii"
+  ],
+  "submarine_cable": [
+   "untold_history_ii"
+  ],
+  "guttapercha": [
+   "untold_history_ii"
+  ],
+  "atlantictelegraph": [
+   "untold_history_ii"
+  ],
+  "img_gutta_percha_cable": [
+   "untold_history_ii"
+  ],
+  "goodyearvulcanization": [
+   "untold_history_ii"
+  ],
+  "baekelandpatent": [
+   "untold_history_ii"
+  ],
+  "polyethylenehistory": [
+   "untold_history_ii"
+  ],
+  "typewriterpatent": [
+   "untold_history_ii"
+  ],
+  "sholes_typewriter": [
+   "untold_history_ii"
+  ],
+  "braunannalen": [
+   "untold_history_ii"
+  ],
+  "crt": [
+   "untold_history_ii"
+  ],
+  "sketchpad": [
+   "untold_history_ii"
+  ],
+  "hertz1893electricwaves": [
+   "untold_history_ii"
+  ],
+  "marconi1897patent": [
+   "untold_history_ii"
+  ],
+  "macdonald1979cellular": [
+   "untold_history_ii"
+  ],
+  "ieee80211_1997": [
+   "untold_history_ii"
+  ],
+  "apple2007iphone": [
+   "untold_history_ii"
+  ],
+  "furber1987arm": [
+   "untold_history_ii"
+  ],
+  "threegpp_specs": [
+   "untold_history_ii"
+  ],
+  "planck": [
+   "untold_history_ii"
+  ],
+  "bohr": [
+   "untold_history_ii"
+  ],
+  "quanten": [
+   "untold_history_ii"
+  ],
+  "schroedinger": [
+   "untold_history_ii"
+  ],
+  "bloch": [
+   "untold_history_ii"
+  ],
+  "wilsonsemiconductors": [
+   "untold_history_ii"
+  ],
+  "shockley": [
+   "untold_history_ii"
+  ],
+  "first_transistor": [
+   "untold_history_ii"
+  ],
+  "img_merlin_enchanteur": [
+   "untold_history_ii"
+  ],
+  "alchemy_wiki": [
+   "untold_history_ii"
+  ],
+  "empedocles": [
+   "untold_history_ii"
+  ],
+  "democritus": [
+   "untold_history_ii"
+  ],
+  "atomism": [
+   "untold_history_ii"
+  ],
+  "stockholm_papyrus": [
+   "untold_history_ii"
+  ],
+  "leyden_papyrus_x": [
+   "untold_history_ii"
+  ],
+  "pseudo_democritus": [
+   "untold_history_ii"
+  ],
+  "bolus_of_mendes": [
+   "untold_history_ii"
+  ],
+  "zosimos_panopolis": [
+   "untold_history_ii"
+  ],
+  "hermes_trismegistus": [
+   "untold_history_ii"
+  ],
+  "tabula_smaragdina": [
+   "untold_history_ii"
+  ],
+  "jabir_ibn_hayyan": [
+   "untold_history_ii"
+  ],
+  "aqua_regia": [
+   "untold_history_ii"
+  ],
+  "alchemy_islam": [
+   "untold_history_ii"
+  ],
+  "al_razi": [
+   "untold_history_ii"
+  ],
+  "avicenna": [
+   "untold_history_ii"
+  ],
+  "img_jabir_alembic": [
+   "untold_history_ii"
+  ],
+  "img_alchemist_studio": [
+   "untold_history_ii"
+  ],
+  "maria_jewess": [
+   "untold_history_ii"
+  ],
+  "libavius": [
+   "untold_history_ii"
+  ],
+  "img_libavius_alembics": [
+   "untold_history_ii"
+  ],
+  "athanor": [
+   "untold_history_ii"
+  ],
+  "chinese_alchemy": [
+   "untold_history_ii"
+  ],
+  "ge_hong": [
+   "untold_history_ii"
+  ],
+  "rasayana": [
+   "untold_history_ii"
+  ],
+  "nagarjuna_metallurgist": [
+   "untold_history_ii"
+  ],
+  "robert_of_chester": [
+   "untold_history_ii"
+  ],
+  "liber_de_compositione": [
+   "untold_history_ii"
+  ],
+  "turba_philosophorum": [
+   "untold_history_ii"
+  ],
+  "albertus_magnus": [
+   "untold_history_ii"
+  ],
+  "roger_bacon": [
+   "untold_history_ii"
+  ],
+  "paracelsus": [
+   "untold_history_ii"
+  ],
+  "iatrochemistry": [
+   "untold_history_ii"
+  ],
+  "img_paracelsus_portrait": [
+   "untold_history_ii"
+  ],
+  "sendivogius": [
+   "untold_history_ii"
+  ],
+  "newton_alchemy": [
+   "untold_history_ii"
+  ],
+  "sceptical_chymist": [
+   "untold_history_ii"
+  ],
+  "sceptical_chymist_text": [
+   "untold_history_ii"
+  ],
+  "phlogiston": [
+   "untold_history_ii"
+  ],
+  "lavoisier": [
+   "untold_history_ii"
+  ],
+  "philosophers_stone": [
+   "untold_history_ii"
+  ],
+  "img_flaming_heart": [
+   "untold_history_ii"
+  ],
+  "jumper2021alphafold": [
+   "ai_and_society",
+   "ai_for_science",
+   "people_of_ai",
+   "untold_history_ii"
+  ],
+  "alphafold_db": [
+   "ai_and_society",
+   "ai_for_science",
+   "untold_history_ii"
+  ],
+  "alphafold_wiki": [
+   "untold_history_ii"
+  ],
+  "nobel2024chemistry": [
+   "ai_and_society",
+   "people_of_ai",
+   "untold_history_ii"
+  ],
+  "merchant2023gnome": [
+   "ai_and_society",
+   "ai_for_science",
+   "untold_history_ii"
+  ],
+  "icecorewiki": [
+   "untold_history_ii"
+  ],
+  "vostokstation": [
+   "untold_history_ii"
+  ],
+  "charney1947longwaves": [
+   "untold_history_ii"
+  ],
+  "charney1950nwp": [
+   "untold_history_ii"
+  ],
+  "ecmwf": [
+   "untold_history_ii"
+  ],
+  "onnes1913nobel": [
+   "untold_history_ii"
+  ],
+  "dilutionfridge": [
+   "untold_history_ii"
+  ],
+  "superconductingqubit": [
+   "untold_history_ii"
+  ],
+  "lam2023graphcast": [
+   "untold_history_ii"
+  ],
+  "graphcast_github": [
+   "untold_history_ii"
+  ],
+  "eniac1946": [
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "kilbyic": [
+   "untold_history_ii"
+  ],
+  "noyceic": [
+   "untold_history_ii"
+  ],
+  "eniac_image": [
+   "untold_history_ii"
+  ],
+  "intel4004": [
+   "untold_history_ii"
+  ],
+  "mooreslaw": [
+   "history",
+   "untold_history_ii"
+  ],
+  "tomasulo1967": [
+   "untold_history_ii"
+  ],
+  "edsac1949": [
+   "untold_history_ii"
+  ],
+  "williamstube": [
+   "untold_history_ii"
+  ],
+  "wangcore": [
+   "untold_history_ii"
+  ],
+  "williams_tube": [
+   "untold_history_ii"
+  ],
+  "dennard1968": [
+   "untold_history_ii"
+  ],
+  "intel1103": [
+   "untold_history_ii"
+  ],
+  "hbm2013": [
+   "untold_history_ii"
+  ],
+  "pciespec": [
+   "untold_history_ii"
+  ],
+  "nvlink": [
+   "untold_history_ii"
+  ],
+  "baran1964": [
+   "untold_history_ii"
+  ],
+  "rfc1": [
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "cerfkahn": [
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "metcalfe1976": [
+   "untold_history_ii"
+  ],
+  "infiniband2000": [
+   "untold_history_ii"
+  ],
+  "via1998": [
+   "untold_history_ii"
+  ],
+  "horovod2018": [
+   "untold_history_ii"
+  ],
+  "jacquard1804": [
+   "untold_history_ii"
+  ],
+  "hollerith1890": [
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "univac1951": [
+   "untold_history_ii"
+  ],
+  "ibmramac": [
+   "untold_history_ii"
+  ],
+  "masuoka1987": [
+   "untold_history_ii"
+  ],
+  "ibmpgc": [
+   "untold_history_ii"
+  ],
+  "cuda": [
+   "history",
+   "untold_history_ii"
+  ],
+  "jouppi2017tpu": [
+   "untold_history_ii"
+  ],
+  "cady1922": [
+   "untold_history_ii"
+  ],
+  "tsmc2025annualreport": [
+   "untold_history_ii"
+  ],
+  "asml2025annualreport": [
+   "untold_history_ii"
+  ],
+  "kinoshita1989euv": [
+   "untold_history_ii"
+  ],
+  "donovan1985cleanroom": [
+   "untold_history_ii"
+  ],
+  "ruth2016ultrapure": [
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "jun2017hbm": [
+   "untold_history_ii"
+  ],
+  "jeng2022cowos": [
+   "untold_history_ii"
+  ],
+  "iea2026energyai": [
+   "untold_history_ii",
+   "untold_history_iii"
+  ],
+  "amazons3_2006": [
+   "untold_history_ii"
+  ],
+  "amazonec2_2006": [
+   "untold_history_ii"
+  ],
+  "kubernetes_overview": [
+   "untold_history_ii"
+  ],
+  "barroso2013datacenter": [
+   "untold_history_ii"
+  ],
   "hochreiter1991vanishing": [
    "autodiff",
    "history",
@@ -18197,7 +19008,7 @@
    "history",
    "people_of_ai",
    "reasoning",
-   "untold_history"
+   "untold_history_iii"
   ],
   "anthropic2024goldengate": [
    "frontier",
@@ -18555,7 +19366,7 @@
    "statistics",
    "statistics_i",
    "transformer",
-   "untold_history"
+   "untold_history_iii"
   ],
   "logitorigin": [
    "transformer"
@@ -18789,13 +19600,6 @@
   "angelopoulos2021conformal": [
    "reliability"
   ],
-  "rosenblatt1958perceptron": [
-   "activationlab",
-   "history",
-   "minimalneuron",
-   "people_of_ai",
-   "untold_history"
-  ],
   "steadystates": [
    "activationlab",
    "history"
@@ -18834,6 +19638,537 @@
    "activationlab",
    "origami"
   ],
+  "leibniz1686calculus": [
+   "history",
+   "software",
+   "untold_history_i"
+  ],
+  "leibniz1666combinatoria": [
+   "untold_history_i"
+  ],
+  "heidegger1935metaphysics": [
+   "untold_history_i"
+  ],
+  "jocaxiannothing": [
+   "untold_history_i"
+  ],
+  "weinberg1977first": [
+   "untold_history_i"
+  ],
+  "penzias1965measurement": [
+   "untold_history_i"
+  ],
+  "wmap_cmb": [
+   "untold_history_i"
+  ],
+  "budassi_universe_image": [
+   "atlas",
+   "untold_history_i"
+  ],
+  "alperbethegamow1948": [
+   "untold_history_i"
+  ],
+  "bethe1939energy": [
+   "untold_history_i"
+  ],
+  "eddington1926stars": [
+   "untold_history_i"
+  ],
+  "b2fh1957": [
+   "untold_history_i"
+  ],
+  "cameron1957nucleogenesis": [
+   "untold_history_i"
+  ],
+  "gw170817multimessenger": [
+   "untold_history_i"
+  ],
+  "kasen2017kilonova": [
+   "untold_history_i"
+  ],
+  "jeans1902nebula": [
+   "untold_history_i"
+  ],
+  "chandrasekhar1935structure": [
+   "untold_history_i"
+  ],
+  "hewish1968pulsar": [
+   "untold_history_i"
+  ],
+  "kant1755heavens": [
+   "untold_history_i"
+  ],
+  "amelin2010solarsystem": [
+   "untold_history_i"
+  ],
+  "allegre1995age": [
+   "untold_history_i"
+  ],
+  "gomes2005nice": [
+   "untold_history_i"
+  ],
+  "hartmann1975satellite": [
+   "untold_history_i"
+  ],
+  "canupasphaug2001moon": [
+   "untold_history_i"
+  ],
+  "gilbert1600magnete": [
+   "untold_history_i"
+  ],
+  "halley1692magnetic": [
+   "untold_history_i"
+  ],
+  "magnetic_field_wiki": [
+   "untold_history_i"
+  ],
+  "magnetosphere_wiki": [
+   "untold_history_i"
+  ],
+  "atmosphere_wiki": [
+   "untold_history_i"
+  ],
+  "goe_wiki": [
+   "untold_history_i"
+  ],
+  "helmont1648ortus": [
+   "untold_history_i"
+  ],
+  "hales1727vegetable": [
+   "untold_history_i"
+  ],
+  "black1756fixedair": [
+   "untold_history_i"
+  ],
+  "priestley1771airs": [
+   "untold_history_i"
+  ],
+  "scheele1777airfire": [
+   "untold_history_i"
+  ],
+  "lavoisier1789traite": [
+   "untold_history_i"
+  ],
+  "ingenhousz1779experiments": [
+   "untold_history_i"
+  ],
+  "senebier1783recherches": [
+   "untold_history_i"
+  ],
+  "desaussure1804recherches": [
+   "untold_history_i"
+  ],
+  "orgel1973molecularevolution": [
+   "untold_history_i"
+  ],
+  "darwin1871warmpond": [
+   "untold_history_i"
+  ],
+  "oparin1936origin": [
+   "untold_history_i"
+  ],
+  "haldane1929origin": [
+   "untold_history_i"
+  ],
+  "miller1953aminoacids": [
+   "untold_history_i"
+  ],
+  "img_miller_urey_apparatus": [
+   "untold_history_i"
+  ],
+  "cleaves2012prebiotic": [
+   "untold_history_i"
+  ],
+  "oro1961adenine": [
+   "untold_history_i"
+  ],
+  "orgelparris1979murchison": [
+   "untold_history_i"
+  ],
+  "gilbert1986rnaworld": [
+   "untold_history_i"
+  ],
+  "kruger1982selfsplicing": [
+   "untold_history_i"
+  ],
+  "altman1976rnasep": [
+   "untold_history_i"
+  ],
+  "nobel1989cechantman": [
+   "untold_history_i"
+  ],
+  "sutherland2009pyrimidine": [
+   "untold_history_i"
+  ],
+  "horning2016rpr": [
+   "untold_history_i"
+  ],
+  "img_hammerhead_ribozyme": [
+   "untold_history_i"
+  ],
+  "wachtershauser1988": [
+   "untold_history_i"
+  ],
+  "eigen1971selforganization": [
+   "untold_history_i"
+  ],
+  "eigen1978hypercycle": [
+   "untold_history_i"
+  ],
+  "ganti2000chemoton": [
+   "untold_history_i"
+  ],
+  "smith2010coacervate": [
+   "untold_history_i"
+  ],
+  "protocell_wiki": [
+   "untold_history_i"
+  ],
+  "crick1968code": [
+   "untold_history_i"
+  ],
+  "walter1986stromatolites": [
+   "untold_history_i"
+  ],
+  "cloud1973isotope": [
+   "untold_history_i"
+  ],
+  "vankranendonk2016microbial": [
+   "untold_history_i"
+  ],
+  "img_stromatolite_sharkbay": [
+   "untold_history_i"
+  ],
+  "woese1977phylogenetic": [
+   "untold_history_i"
+  ],
+  "woese1990domains": [
+   "untold_history_i"
+  ],
+  "weiss2016luca": [
+   "untold_history_i"
+  ],
+  "frei2009chromium": [
+   "untold_history_i"
+  ],
+  "canfield2011ferruginous": [
+   "untold_history_i"
+  ],
+  "butterfield2000bangiomorpha": [
+   "untold_history_i"
+  ],
+  "elalbani2010gabon": [
+   "untold_history_i"
+  ],
+  "zhu2016multicellular": [
+   "untold_history_i"
+  ],
+  "sprigg1947ediacara": [
+   "untold_history_i"
+  ],
+  "img_charnia_masoni": [
+   "untold_history_i"
+  ],
+  "img_kimberella_quadrata": [
+   "untold_history_i"
+  ],
+  "fedonkin1997kimberella": [
+   "untold_history_i"
+  ],
+  "bobrovskiy2018dickinsonia": [
+   "untold_history_i"
+  ],
+  "img_dickinsonia_costata": [
+   "untold_history_i"
+  ],
+  "brain2012otavia": [
+   "untold_history_i"
+  ],
+  "antcliffe2014otavia": [
+   "untold_history_i"
+  ],
+  "brocks2017rise": [
+   "untold_history_i"
+  ],
+  "walcott1911burgess": [
+   "untold_history_i"
+  ],
+  "whittington1979burgess": [
+   "untold_history_i"
+  ],
+  "img_anomalocaris_canadensis": [
+   "untold_history_i"
+  ],
+  "img_burgess_shale_fossils": [
+   "untold_history_i"
+  ],
+  "shu2001chengjiang": [
+   "untold_history_i"
+  ],
+  "hou2003chengjiang": [
+   "untold_history_i"
+  ],
+  "img_vetulicola_cuneatus": [
+   "untold_history_i"
+  ],
+  "img_hallucigenia_smithsonian": [
+   "untold_history_i"
+  ],
+  "paleontology_history_wiki": [
+   "untold_history_i"
+  ],
+  "steno1669solido": [
+   "untold_history_i"
+  ],
+  "buckland1824megalosaurus": [
+   "untold_history_i"
+  ],
+  "mantell1825iguanodon": [
+   "untold_history_i"
+  ],
+  "owen1842dinosauria": [
+   "untold_history_i"
+  ],
+  "img_tyrannosaurus_rex_mount": [
+   "untold_history_i"
+  ],
+  "img_archaeopteryx_durbed": [
+   "untold_history_i"
+  ],
+  "continental_drift_wiki": [
+   "untold_history_i"
+  ],
+  "wegener1915origin": [
+   "untold_history_i"
+  ],
+  "holmes1931convection": [
+   "untold_history_i"
+  ],
+  "hess1962seafloor": [
+   "untold_history_i"
+  ],
+  "vinematthews1963magnetic": [
+   "untold_history_i"
+  ],
+  "img_pangaea_200ma": [
+   "untold_history_i"
+  ],
+  "chicxulub_wiki": [
+   "untold_history_i"
+  ],
+  "alvarez1980extinction": [
+   "untold_history_i"
+  ],
+  "smit1980boundary": [
+   "untold_history_i"
+  ],
+  "chicxulub1991crater": [
+   "untold_history_i"
+  ],
+  "img_chicxulub_impact_artist": [
+   "untold_history_i"
+  ],
+  "img_kpge_iridium_anomaly": [
+   "untold_history_i"
+  ],
+  "begun2003planet": [
+   "untold_history_i"
+  ],
+  "white2009ardipithecus": [
+   "untold_history_i"
+  ],
+  "lomekwi": [
+   "history",
+   "untold_history_i"
+  ],
+  "oldowan": [
+   "untold_history_i"
+  ],
+  "wonderwerk": [
+   "untold_history_i"
+  ],
+  "gruss2015pelvis": [
+   "untold_history_i"
+  ],
+  "senevirathne2025bipedalism": [
+   "untold_history_i"
+  ],
+  "xu2025pelvis": [
+   "untold_history_i"
+  ],
+  "rosenberg1995obstetrical": [
+   "untold_history_i"
+  ],
+  "dunsworth2012altriciality": [
+   "untold_history_i"
+  ],
+  "warrener2015pelvis": [
+   "untold_history_i"
+  ],
+  "desilva2011infants": [
+   "untold_history_i"
+  ],
+  "hublin2015brain": [
+   "untold_history_i"
+  ],
+  "neubauer2018brainshape": [
+   "untold_history_i"
+  ],
+  "herculano2012brain": [
+   "untold_history_i"
+  ],
+  "controlleduseoffire": [
+   "untold_history_i"
+  ],
+  "wrangham2009catching": [
+   "human_mind",
+   "untold_history_i"
+  ],
+  "hublin2017jebel": [
+   "untold_history_i"
+  ],
+  "earlylanguage": [
+   "language",
+   "untold_history_i"
+  ],
+  "emergenceofmodernhumanbehaviour": [
+   "geometry_i",
+   "human_mind",
+   "untold_history_i"
+  ],
+  "conard2009hohlefels": [
+   "untold_history_i"
+  ],
+  "neugebauer1989galgenberg": [
+   "untold_history_i"
+  ],
+  "dolnivestonice": [
+   "untold_history_i"
+  ],
+  "lamarchecave": [
+   "untold_history_i"
+  ],
+  "thomas1274summa": [
+   "untold_history_i"
+  ],
+  "linnaeus1758systema": [
+   "untold_history_i"
+  ],
+  "darwin1859origin": [
+   "untold_history_i"
+  ],
+  "img_great_chain_of_being_1579": [
+   "untold_history_i"
+  ],
+  "aristotle1685history": [
+   "untold_history_i"
+  ],
+  "aristotle1685meteorologica": [
+   "untold_history_i"
+  ],
+  "archimedes250method": [
+   "untold_history_i"
+  ],
+  "alkhwarizmi820algebra": [
+   "untold_history_i"
+  ],
+  "ibnalhaytham1021optics": [
+   "untold_history_i"
+  ],
+  "copernicus1543revolutionibus": [
+   "untold_history_i"
+  ],
+  "img_copernicus_portrait": [
+   "untold_history_i"
+  ],
+  "keplerastronomianova": [
+   "geometry_i",
+   "untold_history_i"
+  ],
+  "kepler1619harmonices": [
+   "untold_history_i"
+  ],
+  "galileodialogo": [
+   "untold_history_i"
+  ],
+  "bacon1620novumorganum": [
+   "untold_history_i"
+  ],
+  "descartes1637discours": [
+   "untold_history_i"
+  ],
+  "descartesgeometrie": [
+   "geometry_i",
+   "math_iv",
+   "untold_history_i"
+  ],
+  "descartes1664lemonde": [
+   "untold_history_i"
+  ],
+  "newtonprincipia": [
+   "geometry_i",
+   "untold_history_i"
+  ],
+  "laplace1814essai": [
+   "untold_history_i"
+  ],
+  "pascalfirmat1654": [
+   "untold_history_i"
+  ],
+  "huygens1657ratiociniis": [
+   "untold_history_i"
+  ],
+  "laplace1812analytic": [
+   "untold_history_i"
+  ],
+  "boole1847analysis": [
+   "untold_history_i"
+  ],
+  "boole1854laws": [
+   "untold_history_i"
+  ],
+  "shannon1938relay": [
+   "untold_history_i"
+  ],
+  "childe1936man": [
+   "untold_history_i"
+  ],
+  "childe1936man_txt": [
+   "untold_history_i"
+  ],
+  "childe1950urban": [
+   "untold_history_i"
+  ],
+  "zoharyhopf2000domestication": [
+   "untold_history_i"
+  ],
+  "kenyon1957digging": [
+   "untold_history_i"
+  ],
+  "mellaart1967catal": [
+   "untold_history_i"
+  ],
+  "hodder2006leopard": [
+   "untold_history_i"
+  ],
+  "schmandtbesserat1978": [
+   "untold_history_i"
+  ],
+  "schmandtbesserat1996": [
+   "untold_history_i"
+  ],
+  "roth1997lawcollections": [
+   "untold_history_i"
+  ],
+  "scheil1902code": [
+   "untold_history_i"
+  ],
+  "elabbadi1990life": [
+   "untold_history_i"
+  ],
+  "canfora1990vanished": [
+   "untold_history_i"
+  ],
   "mccarthy1956dartmouth": [
    "ai_and_society"
   ],
@@ -18853,7 +20188,7 @@
   "silver2016alphago": [
    "ai_and_society",
    "people_of_ai",
-   "untold_history"
+   "untold_history_iii"
   ],
   "garante2023chatgpt": [
    "ai_and_society"
@@ -18924,27 +20259,6 @@
   ],
   "bartz2025anthropic": [
    "ai_and_society"
-  ],
-  "jumper2021alphafold": [
-   "ai_and_society",
-   "ai_for_science",
-   "people_of_ai",
-   "untold_history"
-  ],
-  "alphafold_db": [
-   "ai_and_society",
-   "ai_for_science",
-   "untold_history"
-  ],
-  "nobel2024chemistry": [
-   "ai_and_society",
-   "people_of_ai",
-   "untold_history"
-  ],
-  "merchant2023gnome": [
-   "ai_and_society",
-   "ai_for_science",
-   "untold_history"
   ],
   "romera2023funsearch": [
    "ai_and_society"
@@ -19135,18 +20449,6 @@
   "khattab2020colbert": [
    "vectorsearch"
   ],
-  "cajal1888": [
-   "mirror_in_machine",
-   "untold_history"
-  ],
-  "golgi1873": [
-   "mirror_in_machine",
-   "untold_history"
-  ],
-  "waldeyer1891": [
-   "mirror_in_machine",
-   "untold_history"
-  ],
   "hubelwiesel": [
    "computer_vision",
    "history",
@@ -19154,13 +20456,6 @@
   ],
   "adrian1922allornothing": [
    "mirror_in_machine"
-  ],
-  "mccullochpitts1943": [
-   "history",
-   "mirror_in_machine",
-   "people_of_ai",
-   "philosophy",
-   "untold_history"
   ],
   "lapicque1907": [
    "history",
@@ -19184,12 +20479,6 @@
    "history",
    "mirror_in_machine",
    "people_of_ai"
-  ],
-  "hebb1949organizationofbehaviour": [
-   "history",
-   "mirror_in_machine",
-   "people_of_ai",
-   "untold_history"
   ],
   "okeefe1971place": [
    "mirror_in_machine"
@@ -19387,10 +20676,6 @@
   ],
   "chester1145": [
    "positionalembeddingslab"
-  ],
-  "alkwarizma": [
-   "positionalembeddingslab",
-   "untold_history"
   ],
   "gunter1620": [
    "positionalembeddingslab"
@@ -19885,10 +21170,6 @@
    "atlas",
    "foam_of_meaning"
   ],
-  "budassi_universe_image": [
-   "atlas",
-   "untold_history"
-  ],
   "transformer_attention_figure": [
    "atlas"
   ],
@@ -19917,7 +21198,7 @@
   ],
   "hendrycks2021mmlu": [
    "evaluation",
-   "untold_history"
+   "untold_history_iii"
   ],
   "chen2021humaneval": [
    "evaluation",
@@ -20041,11 +21322,6 @@
    "math_i",
    "math_iii",
    "math_iv"
-  ],
-  "descartesgeometrie": [
-   "geometry_i",
-   "math_iv",
-   "untold_history"
   ],
   "mobiusband": [
    "geometry_i",
@@ -20376,10 +21652,6 @@
   "belkin2019reconciling": [
    "deeplearninglab"
   ],
-  "earlylanguage": [
-   "language",
-   "untold_history"
-  ],
   "blombosochre": [
    "geometry_i",
    "language"
@@ -20427,11 +21699,6 @@
   "ancientnumeralsystems": [
    "language"
   ],
-  "brahmagupta628": [
-   "history",
-   "language",
-   "untold_history"
-  ],
   "shannon1937switching": [
    "history",
    "language"
@@ -20441,11 +21708,6 @@
   ],
   "kempelen_speaking_machine": [
    "language"
-  ],
-  "nilsson1984qai": [
-   "history",
-   "language",
-   "untold_history"
   ],
   "firth_context": [
    "language"
@@ -20498,15 +21760,6 @@
   "zhao2023survey": [
    "language"
   ],
-  "kleinetymology": [
-   "history",
-   "math_iii",
-   "untold_history"
-  ],
-  "lomekwi": [
-   "history",
-   "untold_history"
-  ],
   "livingdolls": [
    "history"
   ],
@@ -20518,18 +21771,6 @@
   ],
   "wolfbonephoto": [
    "history"
-  ],
-  "wolfbone": [
-   "history",
-   "untold_history"
-  ],
-  "vogelsang2010apollo11": [
-   "history",
-   "untold_history"
-  ],
-  "henshilwood2018blombos": [
-   "history",
-   "untold_history"
   ],
   "aubert2018borneo": [
    "history"
@@ -20559,11 +21800,6 @@
   ],
   "stevin": [
    "history"
-  ],
-  "leibniz1686calculus": [
-   "history",
-   "software",
-   "untold_history"
   ],
   "salamictablet": [
    "history"
@@ -20650,18 +21886,9 @@
    "history",
    "software"
   ],
-  "lovelacequote": [
-   "history",
-   "software",
-   "untold_history"
-  ],
   "bool1854": [
    "history",
-   "untold_history"
-  ],
-  "cajaltextura": [
-   "history",
-   "untold_history"
+   "untold_history_iii"
   ],
   "uebersinnundbedeutung": [
    "history"
@@ -20673,12 +21900,10 @@
    "history"
   ],
   "lenz1920": [
-   "history",
-   "untold_history"
+   "history"
   ],
   "ising1925": [
-   "history",
-   "untold_history"
+   "history"
   ],
   "amari1972": [
    "history"
@@ -20721,7 +21946,8 @@
    "history"
   ],
   "abraham2016rebelgenius": [
-   "history"
+   "history",
+   "people_of_ai"
   ],
   "mcculloch1945heterarchy": [
    "history"
@@ -20735,7 +21961,7 @@
   ],
   "russell1910principia": [
    "history",
-   "untold_history"
+   "untold_history_iii"
   ],
   "landahl1943statistical": [
    "history"
@@ -20749,12 +21975,6 @@
   "vonneumann1951automata": [
    "history"
   ],
-  "vonneumann": [
-   "history",
-   "people_of_ai",
-   "software",
-   "untold_history"
-  ],
   "pitts1947universals": [
    "history",
    "people_of_ai"
@@ -20762,7 +21982,7 @@
   "wiener1948cybernetics": [
    "history",
    "people_of_ai",
-   "untold_history"
+   "untold_history_iii"
   ],
   "piccini": [
    "history"
@@ -20792,7 +22012,7 @@
   "zusebook": [
    "history",
    "software",
-   "untold_history"
+   "untold_history_iii"
   ],
   "turingimage": [
    "history"
@@ -20944,14 +22164,10 @@
   ],
   "newyorktimesperceptron": [
    "history",
-   "untold_history"
+   "untold_history_iii"
   ],
   "ronkowitz2017perceptron": [
    "history"
-  ],
-  "tomayko1988spaceflight": [
-   "history",
-   "untold_history"
   ],
   "sleepingbeauty": [
    "history"
@@ -21117,10 +22333,6 @@
    "autodiff",
    "history"
   ],
-  "mooreslaw": [
-   "history",
-   "untold_history"
-  ],
   "edroberts": [
    "history"
   ],
@@ -21223,10 +22435,6 @@
   ],
   "weatherfactory": [
    "history"
-  ],
-  "cuda": [
-   "history",
-   "untold_history"
   ],
   "socher2011": [
    "history"
@@ -21340,7 +22548,7 @@
   ],
   "licklider": [
    "software",
-   "untold_history"
+   "untold_history_iii"
   ],
   "multics_plan9": [
    "software"
@@ -21491,10 +22699,6 @@
   "aiellowheeler1995expensivetissue": [
    "human_mind"
   ],
-  "wrangham2009catching": [
-   "human_mind",
-   "untold_history"
-  ],
   "flames_image": [
    "human_mind"
   ],
@@ -21503,8 +22707,7 @@
   ],
   "friston2010freeenergy": [
    "human_mind",
-   "philosophy",
-   "untold_history"
+   "philosophy"
   ],
   "chasesimon1973chess": [
    "human_mind"
@@ -21549,11 +22752,6 @@
   ],
   "tomasello2014thinking": [
    "human_mind"
-  ],
-  "emergenceofmodernhumanbehaviour": [
-   "geometry_i",
-   "human_mind",
-   "untold_history"
   ],
   "cuevadelasmanos_image": [
    "human_mind",
@@ -22788,1770 +23986,576 @@
    "people_of_ai",
    "promptengineering"
   ],
-  "leibniz1666combinatoria": [
-   "untold_history"
-  ],
-  "heidegger1935metaphysics": [
-   "untold_history"
-  ],
-  "jocaxiannothing": [
-   "untold_history"
-  ],
-  "weinberg1977first": [
-   "untold_history"
-  ],
-  "penzias1965measurement": [
-   "untold_history"
-  ],
-  "wmap_cmb": [
-   "untold_history"
-  ],
-  "alperbethegamow1948": [
-   "untold_history"
-  ],
-  "bethe1939energy": [
-   "untold_history"
-  ],
-  "eddington1926stars": [
-   "untold_history"
-  ],
-  "b2fh1957": [
-   "untold_history"
-  ],
-  "cameron1957nucleogenesis": [
-   "untold_history"
-  ],
-  "gw170817multimessenger": [
-   "untold_history"
-  ],
-  "kasen2017kilonova": [
-   "untold_history"
-  ],
-  "jeans1902nebula": [
-   "untold_history"
-  ],
-  "chandrasekhar1935structure": [
-   "untold_history"
-  ],
-  "hewish1968pulsar": [
-   "untold_history"
-  ],
-  "kant1755heavens": [
-   "untold_history"
-  ],
-  "amelin2010solarsystem": [
-   "untold_history"
-  ],
-  "allegre1995age": [
-   "untold_history"
-  ],
-  "gomes2005nice": [
-   "untold_history"
-  ],
-  "hartmann1975satellite": [
-   "untold_history"
-  ],
-  "canupasphaug2001moon": [
-   "untold_history"
-  ],
-  "gilbert1600magnete": [
-   "untold_history"
-  ],
-  "halley1692magnetic": [
-   "untold_history"
-  ],
-  "magnetic_field_wiki": [
-   "untold_history"
-  ],
-  "magnetosphere_wiki": [
-   "untold_history"
-  ],
-  "atmosphere_wiki": [
-   "untold_history"
-  ],
-  "goe_wiki": [
-   "untold_history"
-  ],
-  "helmont1648ortus": [
-   "untold_history"
-  ],
-  "hales1727vegetable": [
-   "untold_history"
-  ],
-  "black1756fixedair": [
-   "untold_history"
-  ],
-  "priestley1771airs": [
-   "untold_history"
-  ],
-  "scheele1777airfire": [
-   "untold_history"
-  ],
-  "lavoisier1789traite": [
-   "untold_history"
-  ],
-  "ingenhousz1779experiments": [
-   "untold_history"
-  ],
-  "senebier1783recherches": [
-   "untold_history"
-  ],
-  "desaussure1804recherches": [
-   "untold_history"
-  ],
-  "orgel1973molecularevolution": [
-   "untold_history"
-  ],
-  "darwin1871warmpond": [
-   "untold_history"
-  ],
-  "oparin1936origin": [
-   "untold_history"
-  ],
-  "haldane1929origin": [
-   "untold_history"
-  ],
-  "miller1953aminoacids": [
-   "untold_history"
-  ],
-  "img_miller_urey_apparatus": [
-   "untold_history"
-  ],
-  "cleaves2012prebiotic": [
-   "untold_history"
-  ],
-  "oro1961adenine": [
-   "untold_history"
-  ],
-  "orgelparris1979murchison": [
-   "untold_history"
-  ],
-  "gilbert1986rnaworld": [
-   "untold_history"
-  ],
-  "kruger1982selfsplicing": [
-   "untold_history"
-  ],
-  "altman1976rnasep": [
-   "untold_history"
-  ],
-  "nobel1989cechantman": [
-   "untold_history"
-  ],
-  "sutherland2009pyrimidine": [
-   "untold_history"
-  ],
-  "horning2016rpr": [
-   "untold_history"
-  ],
-  "img_hammerhead_ribozyme": [
-   "untold_history"
-  ],
-  "wachtershauser1988": [
-   "untold_history"
-  ],
-  "eigen1971selforganization": [
-   "untold_history"
-  ],
-  "eigen1978hypercycle": [
-   "untold_history"
-  ],
-  "ganti2000chemoton": [
-   "untold_history"
-  ],
-  "smith2010coacervate": [
-   "untold_history"
-  ],
-  "protocell_wiki": [
-   "untold_history"
-  ],
-  "crick1968code": [
-   "untold_history"
-  ],
-  "walter1986stromatolites": [
-   "untold_history"
-  ],
-  "cloud1973isotope": [
-   "untold_history"
-  ],
-  "vankranendonk2016microbial": [
-   "untold_history"
-  ],
-  "img_stromatolite_sharkbay": [
-   "untold_history"
-  ],
-  "woese1977phylogenetic": [
-   "untold_history"
-  ],
-  "woese1990domains": [
-   "untold_history"
-  ],
-  "weiss2016luca": [
-   "untold_history"
-  ],
-  "frei2009chromium": [
-   "untold_history"
-  ],
-  "canfield2011ferruginous": [
-   "untold_history"
-  ],
-  "butterfield2000bangiomorpha": [
-   "untold_history"
-  ],
-  "elalbani2010gabon": [
-   "untold_history"
-  ],
-  "zhu2016multicellular": [
-   "untold_history"
-  ],
-  "sprigg1947ediacara": [
-   "untold_history"
-  ],
-  "img_charnia_masoni": [
-   "untold_history"
-  ],
-  "img_kimberella_quadrata": [
-   "untold_history"
-  ],
-  "fedonkin1997kimberella": [
-   "untold_history"
-  ],
-  "bobrovskiy2018dickinsonia": [
-   "untold_history"
-  ],
-  "img_dickinsonia_costata": [
-   "untold_history"
-  ],
-  "brain2012otavia": [
-   "untold_history"
-  ],
-  "antcliffe2014otavia": [
-   "untold_history"
-  ],
-  "brocks2017rise": [
-   "untold_history"
-  ],
-  "walcott1911burgess": [
-   "untold_history"
-  ],
-  "whittington1979burgess": [
-   "untold_history"
-  ],
-  "img_anomalocaris_canadensis": [
-   "untold_history"
-  ],
-  "img_burgess_shale_fossils": [
-   "untold_history"
-  ],
-  "shu2001chengjiang": [
-   "untold_history"
-  ],
-  "hou2003chengjiang": [
-   "untold_history"
-  ],
-  "img_vetulicola_cuneatus": [
-   "untold_history"
-  ],
-  "img_hallucigenia_smithsonian": [
-   "untold_history"
-  ],
-  "paleontology_history_wiki": [
-   "untold_history"
-  ],
-  "steno1669solido": [
-   "untold_history"
-  ],
-  "buckland1824megalosaurus": [
-   "untold_history"
-  ],
-  "mantell1825iguanodon": [
-   "untold_history"
-  ],
-  "owen1842dinosauria": [
-   "untold_history"
-  ],
-  "img_tyrannosaurus_rex_mount": [
-   "untold_history"
-  ],
-  "img_archaeopteryx_durbed": [
-   "untold_history"
-  ],
-  "continental_drift_wiki": [
-   "untold_history"
-  ],
-  "wegener1915origin": [
-   "untold_history"
-  ],
-  "holmes1931convection": [
-   "untold_history"
-  ],
-  "hess1962seafloor": [
-   "untold_history"
-  ],
-  "vinematthews1963magnetic": [
-   "untold_history"
-  ],
-  "img_pangaea_200ma": [
-   "untold_history"
-  ],
-  "chicxulub_wiki": [
-   "untold_history"
-  ],
-  "alvarez1980extinction": [
-   "untold_history"
-  ],
-  "smit1980boundary": [
-   "untold_history"
-  ],
-  "chicxulub1991crater": [
-   "untold_history"
-  ],
-  "img_chicxulub_impact_artist": [
-   "untold_history"
-  ],
-  "img_kpge_iridium_anomaly": [
-   "untold_history"
-  ],
-  "begun2003planet": [
-   "untold_history"
-  ],
-  "white2009ardipithecus": [
-   "untold_history"
-  ],
-  "oldowan": [
-   "untold_history"
-  ],
-  "wonderwerk": [
-   "untold_history"
-  ],
-  "gruss2015pelvis": [
-   "untold_history"
-  ],
-  "senevirathne2025bipedalism": [
-   "untold_history"
-  ],
-  "xu2025pelvis": [
-   "untold_history"
-  ],
-  "rosenberg1995obstetrical": [
-   "untold_history"
-  ],
-  "dunsworth2012altriciality": [
-   "untold_history"
-  ],
-  "warrener2015pelvis": [
-   "untold_history"
-  ],
-  "desilva2011infants": [
-   "untold_history"
-  ],
-  "hublin2015brain": [
-   "untold_history"
-  ],
-  "neubauer2018brainshape": [
-   "untold_history"
-  ],
-  "herculano2012brain": [
-   "untold_history"
-  ],
-  "controlleduseoffire": [
-   "untold_history"
-  ],
-  "hublin2017jebel": [
-   "untold_history"
-  ],
-  "conard2009hohlefels": [
-   "untold_history"
-  ],
-  "neugebauer1989galgenberg": [
-   "untold_history"
-  ],
-  "dolnivestonice": [
-   "untold_history"
-  ],
-  "lamarchecave": [
-   "untold_history"
-  ],
-  "thomas1274summa": [
-   "untold_history"
-  ],
-  "linnaeus1758systema": [
-   "untold_history"
-  ],
-  "darwin1859origin": [
-   "untold_history"
-  ],
-  "img_great_chain_of_being_1579": [
-   "untold_history"
-  ],
-  "aristotle1685history": [
-   "untold_history"
-  ],
-  "aristotle1685meteorologica": [
-   "untold_history"
-  ],
-  "archimedes250method": [
-   "untold_history"
-  ],
-  "alkhwarizmi820algebra": [
-   "untold_history"
-  ],
-  "ibnalhaytham1021optics": [
-   "untold_history"
-  ],
-  "copernicus1543revolutionibus": [
-   "untold_history"
-  ],
-  "img_copernicus_portrait": [
-   "untold_history"
-  ],
-  "keplerastronomianova": [
-   "geometry_i",
-   "untold_history"
-  ],
-  "kepler1619harmonices": [
-   "untold_history"
-  ],
-  "galileosidereus": [
-   "untold_history"
-  ],
-  "galileodialogo": [
-   "untold_history"
-  ],
-  "bacon1620novumorganum": [
-   "untold_history"
-  ],
-  "descartes1637discours": [
-   "untold_history"
-  ],
-  "descartes1664lemonde": [
-   "untold_history"
-  ],
-  "newtonprincipia": [
-   "geometry_i",
-   "untold_history"
-  ],
-  "laplace1814essai": [
-   "untold_history"
-  ],
-  "pascalfirmat1654": [
-   "untold_history"
-  ],
-  "huygens1657ratiociniis": [
-   "untold_history"
-  ],
-  "laplace1812analytic": [
-   "untold_history"
-  ],
-  "boole1847analysis": [
-   "untold_history"
-  ],
-  "boole1854laws": [
-   "untold_history"
-  ],
-  "shannon1938relay": [
-   "untold_history"
-  ],
-  "childe1936man": [
-   "untold_history"
-  ],
-  "childe1936man_txt": [
-   "untold_history"
-  ],
-  "childe1950urban": [
-   "untold_history"
-  ],
-  "zoharyhopf2000domestication": [
-   "untold_history"
-  ],
-  "kenyon1957digging": [
-   "untold_history"
-  ],
-  "mellaart1967catal": [
-   "untold_history"
-  ],
-  "hodder2006leopard": [
-   "untold_history"
-  ],
-  "schmandtbesserat1978": [
-   "untold_history"
-  ],
-  "schmandtbesserat1992": [
-   "untold_history"
-  ],
-  "schmandtbesserat1996": [
-   "untold_history"
-  ],
-  "roth1997lawcollections": [
-   "untold_history"
-  ],
-  "scheil1902code": [
-   "untold_history"
-  ],
-  "elabbadi1990life": [
-   "untold_history"
-  ],
-  "canfora1990vanished": [
-   "untold_history"
-  ],
-  "leeuwenhoekletters": [
-   "untold_history"
-  ],
-  "img_huygens_aerial_telescope": [
-   "untold_history"
-  ],
-  "micrographia": [
-   "untold_history"
-  ],
-  "micrographia_wiki": [
-   "untold_history"
-  ],
-  "hookecork": [
-   "untold_history"
-  ],
-  "img_micrographia_cork": [
-   "untold_history"
-  ],
-  "img_micrographia_titlepage": [
-   "untold_history"
-  ],
-  "img_hooke_cock_microscope": [
-   "untold_history"
-  ],
-  "schleiden1838": [
-   "untold_history"
-  ],
-  "schwann1839": [
-   "untold_history"
-  ],
-  "celltheory_wiki": [
-   "untold_history"
-  ],
-  "virchow1858": [
-   "untold_history"
-  ],
-  "neuron_doctrine_wiki": [
-   "untold_history"
-  ],
-  "img_cajal_cerebellum": [
-   "untold_history"
-  ],
-  "olaha2020zoomin": [
-   "people_of_ai",
-   "untold_history"
-  ],
-  "laertius": [
-   "untold_history"
-  ],
-  "volta_portrait": [
-   "untold_history"
-  ],
-  "volta": [
-   "untold_history"
-  ],
-  "voltaic_pile": [
-   "untold_history"
-  ],
-  "faraday": [
-   "untold_history"
-  ],
-  "teslaelectricmotor": [
-   "untold_history"
-  ],
-  "teslacurrent": [
-   "untold_history"
-  ],
-  "faraday_disk": [
-   "untold_history"
-  ],
-  "tesla_portrait": [
-   "untold_history"
-  ],
-  "theophrastusstones": [
-   "untold_history"
-  ],
-  "plinynaturalhistory": [
-   "untold_history"
-  ],
-  "deremetallica": [
-   "untold_history"
-  ],
-  "bessemerpatent": [
-   "untold_history"
-  ],
-  "ironpillardelhi": [
-   "untold_history"
-  ],
-  "img_iron_pillar_delhi": [
-   "untold_history"
-  ],
-  "img_bessemer_converter": [
-   "untold_history"
-  ],
-  "czochralski1918": [
-   "untold_history"
-  ],
-  "siemensprocess": [
-   "untold_history"
-  ],
-  "semiconductor": [
-   "untold_history"
-  ],
-  "goodenough1980licoo2": [
-   "untold_history"
-  ],
-  "yoshino1985liion": [
-   "untold_history"
-  ],
-  "mendeleev_periodic_table": [
-   "untold_history"
-  ],
-  "ifrah2000": [
-   "untold_history"
-  ],
-  "chrisomalis2010": [
-   "untold_history"
-  ],
-  "smithkarpinski1911": [
-   "untold_history"
-  ],
-  "cai_lun_paper": [
-   "untold_history"
-  ],
-  "img_cai_lun": [
-   "untold_history"
-  ],
-  "fibonacciliber": [
-   "untold_history"
-  ],
-  "fibonaccimathigon": [
-   "untold_history"
-  ],
-  "fibonaccihistory": [
-   "untold_history"
-  ],
-  "fibonacciseq": [
-   "untold_history"
-  ],
-  "img_caxton_celebration": [
-   "untold_history"
-  ],
-  "gutenbergpress": [
-   "untold_history"
-  ],
-  "img_pacioli_portrait": [
-   "untold_history"
-  ],
-  "paciolisumma": [
-   "untold_history"
-  ],
-  "librarybureau1890catalog": [
-   "untold_history"
-  ],
-  "cardcatalogrules1890": [
-   "untold_history"
-  ],
-  "dewey1876classification": [
-   "untold_history"
-  ],
-  "halley1693mortality": [
-   "untold_history"
-  ],
-  "img_mercator_1569": [
-   "untold_history"
-  ],
-  "mercator1569": [
-   "untold_history"
-  ],
-  "harrisonh4": [
-   "untold_history"
-  ],
-  "img_magdeburg_hemispheres": [
-   "untold_history"
-  ],
-  "torricellibarometer": [
-   "untold_history"
-  ],
-  "vonguericke": [
-   "untold_history"
-  ],
-  "geisslertube": [
-   "untold_history"
-  ],
-  "flemingdiode": [
-   "untold_history"
-  ],
-  "deforestaudion": [
-   "untold_history"
-  ],
-  "huygenspendulum": [
-   "untold_history"
-  ],
-  "img_huygens_horologium": [
-   "untold_history"
-  ],
-  "meridian1884proceedings": [
-   "untold_history"
-  ],
-  "rfc5905": [
-   "untold_history"
-  ],
-  "woodland1952barcode": [
-   "untold_history"
-  ],
-  "denso_qr_history": [
-   "untold_history"
-  ],
-  "newcomenengine": [
-   "untold_history"
-  ],
-  "wattpatent": [
-   "untold_history"
-  ],
-  "img_watt_steam_engine": [
-   "untold_history"
-  ],
-  "eisschlagen_traunsee": [
-   "untold_history"
-  ],
-  "eisgalgen_mittenwald": [
-   "untold_history"
-  ],
-  "cullencold": [
-   "untold_history"
-  ],
-  "patent1250": [
-   "untold_history"
-  ],
-  "psychrometric": [
-   "untold_history"
-  ],
-  "jacquard_loom": [
-   "untold_history"
-  ],
-  "taocp3": [
-   "untold_history"
-  ],
-  "koetsier2001programmable": [
-   "untold_history"
-  ],
-  "sharkey2007jazari": [
-   "untold_history"
-  ],
-  "thomasdcolmar1820": [
-   "untold_history"
-  ],
-  "arithmometer_thomas": [
-   "untold_history"
-  ],
-  "niepce_le_gras": [
-   "untold_history"
-  ],
-  "muybridge1887catalogue": [
-   "untold_history"
-  ],
-  "solnit2003motion": [
-   "untold_history"
-  ],
-  "gordon2015indecent": [
-   "untold_history"
-  ],
-  "img_kirsch_baby": [
-   "untold_history"
-  ],
-  "img_ranger7_moon": [
-   "untold_history"
-  ],
-  "img_ranger7_guericke": [
-   "untold_history"
-  ],
-  "img_ranger7_impact": [
-   "untold_history"
-  ],
-  "walden1999adc": [
-   "untold_history"
-  ],
-  "boyle1970ccd": [
-   "untold_history"
-  ],
-  "fossum1997cmos": [
-   "untold_history"
-  ],
-  "maiman1967laserpatent": [
-   "untold_history"
-  ],
-  "img_morse_telegraph": [
-   "untold_history"
-  ],
-  "morsetelegraph": [
-   "untold_history"
-  ],
-  "cookewheatstone": [
-   "untold_history"
-  ],
-  "colladon": [
-   "untold_history"
-  ],
-  "notesonlight": [
-   "untold_history"
-  ],
-  "colladon_lightpipe": [
-   "untold_history"
-  ],
-  "fibreoptics": [
-   "untold_history"
-  ],
-  "radiationlosses": [
-   "untold_history"
-  ],
-  "submarine_cable": [
-   "untold_history"
-  ],
-  "guttapercha": [
-   "untold_history"
-  ],
-  "atlantictelegraph": [
-   "untold_history"
-  ],
-  "img_gutta_percha_cable": [
-   "untold_history"
-  ],
-  "goodyearvulcanization": [
-   "untold_history"
-  ],
-  "baekelandpatent": [
-   "untold_history"
-  ],
-  "polyethylenehistory": [
-   "untold_history"
-  ],
-  "typewriterpatent": [
-   "untold_history"
-  ],
-  "sholes_typewriter": [
-   "untold_history"
-  ],
-  "braunannalen": [
-   "untold_history"
-  ],
-  "crt": [
-   "untold_history"
-  ],
-  "sketchpad": [
-   "untold_history"
-  ],
-  "hertz1893electricwaves": [
-   "untold_history"
-  ],
-  "marconi1897patent": [
-   "untold_history"
-  ],
-  "macdonald1979cellular": [
-   "untold_history"
-  ],
-  "ieee80211_1997": [
-   "untold_history"
-  ],
-  "apple2007iphone": [
-   "untold_history"
-  ],
-  "furber1987arm": [
-   "untold_history"
-  ],
-  "threegpp_specs": [
-   "untold_history"
-  ],
-  "planck": [
-   "untold_history"
-  ],
-  "bohr": [
-   "untold_history"
-  ],
-  "quanten": [
-   "untold_history"
-  ],
-  "schroedinger": [
-   "untold_history"
-  ],
-  "bloch": [
-   "untold_history"
-  ],
-  "wilsonsemiconductors": [
-   "untold_history"
-  ],
-  "shockley": [
-   "untold_history"
-  ],
-  "first_transistor": [
-   "untold_history"
-  ],
-  "kilbyic": [
-   "untold_history"
-  ],
-  "noyceic": [
-   "untold_history"
-  ],
-  "intel4004": [
-   "untold_history"
-  ],
-  "boltzmann_thermo": [
-   "untold_history"
-  ],
-  "boltzmannlearning": [
-   "untold_history"
-  ],
-  "lecun2006": [
-   "untold_history"
-  ],
-  "img_merlin_enchanteur": [
-   "untold_history"
-  ],
-  "alchemy_wiki": [
-   "untold_history"
-  ],
-  "empedocles": [
-   "untold_history"
-  ],
-  "democritus": [
-   "untold_history"
-  ],
-  "atomism": [
-   "untold_history"
-  ],
-  "stockholm_papyrus": [
-   "untold_history"
-  ],
-  "leyden_papyrus_x": [
-   "untold_history"
-  ],
-  "pseudo_democritus": [
-   "untold_history"
-  ],
-  "bolus_of_mendes": [
-   "untold_history"
-  ],
-  "zosimos_panopolis": [
-   "untold_history"
-  ],
-  "hermes_trismegistus": [
-   "untold_history"
-  ],
-  "tabula_smaragdina": [
-   "untold_history"
-  ],
-  "jabir_ibn_hayyan": [
-   "untold_history"
-  ],
-  "aqua_regia": [
-   "untold_history"
-  ],
-  "alchemy_islam": [
-   "untold_history"
-  ],
-  "al_razi": [
-   "untold_history"
-  ],
-  "avicenna": [
-   "untold_history"
-  ],
-  "img_jabir_alembic": [
-   "untold_history"
-  ],
-  "img_alchemist_studio": [
-   "untold_history"
-  ],
-  "maria_jewess": [
-   "untold_history"
-  ],
-  "libavius": [
-   "untold_history"
-  ],
-  "img_libavius_alembics": [
-   "untold_history"
-  ],
-  "athanor": [
-   "untold_history"
-  ],
-  "chinese_alchemy": [
-   "untold_history"
-  ],
-  "ge_hong": [
-   "untold_history"
-  ],
-  "rasayana": [
-   "untold_history"
-  ],
-  "nagarjuna_metallurgist": [
-   "untold_history"
-  ],
-  "robert_of_chester": [
-   "untold_history"
-  ],
-  "liber_de_compositione": [
-   "untold_history"
-  ],
-  "turba_philosophorum": [
-   "untold_history"
-  ],
-  "albertus_magnus": [
-   "untold_history"
-  ],
-  "roger_bacon": [
-   "untold_history"
-  ],
-  "paracelsus": [
-   "untold_history"
-  ],
-  "iatrochemistry": [
-   "untold_history"
-  ],
-  "img_paracelsus_portrait": [
-   "untold_history"
-  ],
-  "sendivogius": [
-   "untold_history"
-  ],
-  "newton_alchemy": [
-   "untold_history"
-  ],
-  "sceptical_chymist": [
-   "untold_history"
-  ],
-  "sceptical_chymist_text": [
-   "untold_history"
-  ],
-  "phlogiston": [
-   "untold_history"
-  ],
-  "lavoisier": [
-   "untold_history"
-  ],
-  "philosophers_stone": [
-   "untold_history"
-  ],
-  "img_flaming_heart": [
-   "untold_history"
-  ],
-  "alphafold_wiki": [
-   "untold_history"
-  ],
-  "icecorewiki": [
-   "untold_history"
-  ],
-  "vostokstation": [
-   "untold_history"
-  ],
-  "charney1947longwaves": [
-   "untold_history"
-  ],
-  "charney1950nwp": [
-   "untold_history"
-  ],
-  "ecmwf": [
-   "untold_history"
-  ],
-  "onnes1913nobel": [
-   "untold_history"
-  ],
-  "dilutionfridge": [
-   "untold_history"
-  ],
-  "superconductingqubit": [
-   "untold_history"
-  ],
-  "lam2023graphcast": [
-   "untold_history"
-  ],
-  "graphcast_github": [
-   "untold_history"
-  ],
-  "eniac1946": [
-   "untold_history"
-  ],
-  "eniac_image": [
-   "untold_history"
-  ],
-  "tomasulo1967": [
-   "untold_history"
-  ],
-  "edsac1949": [
-   "untold_history"
-  ],
-  "williamstube": [
-   "untold_history"
-  ],
-  "wangcore": [
-   "untold_history"
-  ],
-  "williams_tube": [
-   "untold_history"
-  ],
-  "dennard1968": [
-   "untold_history"
-  ],
-  "intel1103": [
-   "untold_history"
-  ],
-  "hbm2013": [
-   "untold_history"
-  ],
-  "pciespec": [
-   "untold_history"
-  ],
-  "nvlink": [
-   "untold_history"
-  ],
-  "baran1964": [
-   "untold_history"
-  ],
-  "rfc1": [
-   "untold_history"
-  ],
-  "cerfkahn": [
-   "untold_history"
-  ],
-  "metcalfe1976": [
-   "untold_history"
-  ],
-  "infiniband2000": [
-   "untold_history"
-  ],
-  "via1998": [
-   "untold_history"
-  ],
-  "horovod2018": [
-   "untold_history"
-  ],
-  "jacquard1804": [
-   "untold_history"
-  ],
-  "hollerith1890": [
-   "untold_history"
-  ],
-  "univac1951": [
-   "untold_history"
-  ],
-  "ibmramac": [
-   "untold_history"
-  ],
-  "masuoka1987": [
-   "untold_history"
-  ],
-  "ibmpgc": [
-   "untold_history"
-  ],
-  "jouppi2017tpu": [
-   "untold_history"
-  ],
-  "cady1922": [
-   "untold_history"
-  ],
-  "tsmc2025annualreport": [
-   "untold_history"
-  ],
-  "asml2025annualreport": [
-   "untold_history"
-  ],
-  "kinoshita1989euv": [
-   "untold_history"
-  ],
-  "donovan1985cleanroom": [
-   "untold_history"
-  ],
-  "ruth2016ultrapure": [
-   "untold_history"
-  ],
-  "jun2017hbm": [
-   "untold_history"
-  ],
-  "jeng2022cowos": [
-   "untold_history"
-  ],
-  "iea2026energyai": [
-   "untold_history"
-  ],
-  "amazons3_2006": [
-   "untold_history"
-  ],
-  "amazonec2_2006": [
-   "untold_history"
-  ],
-  "kubernetes_overview": [
-   "untold_history"
-  ],
-  "barroso2013datacenter": [
-   "untold_history"
-  ],
   "copeland2006colossus": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "flowers1983design": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "colossus_image": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "haigh2006eniac": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "eniac1946_image": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "good1959statistics": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "nilsson1984shakey": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "klatt1977sur": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "lee1989sphinx": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "shakey_robot_image": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "kurzweil2010darpasingular": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "edwards1996closedworld": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "parkinson1996gps": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "wald1947sequential": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "eckhardt1987ulam": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "ulam_vonneumann1949montecarlo": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "monte_carlo_animation_image": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "metropolis1953equation": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "hastings1970mcmc": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "vonneumann_morgenstern1944": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "vonneumann_lanl_image": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "metropolis_hastings_image": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "backusfortran": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "tomayko1985hoelzer": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "ulmann2019analogcomputer": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "dickinson1964lvdc": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "burkey_lvdc": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "zak_gorodomlya": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "mindell2008digitalapollo": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "hoag1976apollohistory": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "eyles2004lmcomputer": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "agc_module_image": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "hamilton1969_image": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "gerovitch_argon": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "argon16_museum": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "ieee_digital_soyuz": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "buran_autoland": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "burancomputer_guide": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "tomayko2000flybywire": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "maimone2007vo": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "estlin2009aegis": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "francis2017aegis": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "nasa2021perseverance": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "toupet2025enav": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "verma2023autonomy": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "jpl2023mobility": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "perseverance_selfie_image": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "reed1960polynomial": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "viterbi1967error": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "berrou1993turbo": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "kalman1960filter": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "ariane501_report": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "wiki_single_event_effect": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "img_data_center": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "wiki_tmr": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "arxiv_sdc_llm": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "wiki_lunar_laser_ranging": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "img_apollo_alrr": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "wiki_lidar": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "wiki_deep_space_1": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "wiki_delay_tolerant_networking": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "img_deep_space_1": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "wiki_jpeg2000": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "img_curiosity_panorama": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "wiki_galaxy_zoo": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "img_mice_galaxies": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "wiki_richardson_lucy": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "img_hubble_udf": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "wiki_diffusion_model": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "algol60report": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "ieee754_1985": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "ieee754_2008": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "ieee754_2019": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "c99standard": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "pep285": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "churchsimplytyped": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "hindleytypes": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "milnertypeinference": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "martinloeftypetheory": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "cayleymemoirmatrices": [
    "math_ii",
-   "untold_history"
+   "untold_history_iii"
   ],
   "unicode2022standard": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "rfc3629": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "sennrich2016bpe": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "kudo2018sentencepiece": [
    "people_of_ai",
-   "untold_history"
+   "untold_history_iii"
   ],
   "smith2007tesseract": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "googlebooks_history": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "menabrea_lovelace1843": [
    "people_of_ai",
-   "untold_history"
+   "untold_history_iii"
   ],
   "backus1957fortran": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "mccarthy1960lisp": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "mccarthy1978history": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "naur1963algol": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "sammet1969programming": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "dahl1966simula": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "ritchie1993c": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "stroustrup1993cpp": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "goldberg1983smalltalk": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "wirth1974design": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "wirth1971stepwise": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "dijkstra1968goto": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "vanrossum2009tutorial": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "summaarithmetica": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "visicalc_image": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "mclean1958container": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "dantzig1963linear": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "sabre1960reservation": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "harder1983transactions": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "richardson1922weather": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "claerbout1992earth": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "aswemaythink": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "memex": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "augmentinghumanintellect": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "motherofalldemos": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "tednelson": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "tednelsonhypertext": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "arpanet_map": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bernerslee1989": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "first_web_browser": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "commoncrawl": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "wikimediadumps": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "deng2009imagenet": [
    "computer_vision",
    "people_of_ai",
-   "untold_history"
+   "untold_history_iii"
   ],
   "wang2018glue": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "rajpurkar2016squad": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "liang2022helm": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "chiang2024arena": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "raffel2020c4": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "gao2020pile": [
    "training_data",
-   "untold_history"
+   "untold_history_iii"
   ],
   "lee2022dedup": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "eu2019dsm": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "authorsguild2015google": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "eu2016gdpr": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bis2026advancedcomputing": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "luther1524schools": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "mass1647deluder": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "uk1870education": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "uk1850libraries": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "us1965immigration": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "us1990h1b": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "nsf_history": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "arxiv_about": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "git_history": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "spdx_gpl2": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "rfc2026": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "snow1855cholera": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "un2024wpp": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "uk1848publichealth": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "nyc1916zoning": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "uscensus1790": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "fisher1935design": [
    "statistics_i",
-   "untold_history"
+   "untold_history_iii"
   ],
   "mrc1948streptomycin": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "maxwell1865": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "itu_radio_regulations": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "carnot1824": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "clausius1865": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "landauer1961": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "boe1694": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "incometax1842": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "selectiveservice1917": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "berlinact1885": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "indiancensus1871": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "metre_convention1875": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "si_brochure2019": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "ford1922mylife": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "shewhart1930quality": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bell1876telephone": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "strowger1891exchange": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "erlang1922trunking": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "os1841": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "edison1877phonograph": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "berliner1887gramophone": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "mpeg_audio1993": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "catmull1974": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "hanrahan1990shading": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "pixar_ourstory": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "priestley1772air": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "ingenhousz1779vegetables": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "calvin1948photosynthesis": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "eia_coal": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "haber1920ammonia": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "borlaug1970green": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "malthus1798population": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "frontinus97aqueducts": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "usgs2015wateruse": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "agricola1556demetallica": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "usgs2026mcs": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "companiesact1856": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "sbic1958": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "google2004s1": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "adwords2003patent": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "img_ada_lovelace": [
    "people_of_ai"

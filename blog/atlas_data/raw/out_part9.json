@@ -88,7 +88,7 @@
   "id": "person-hugo-steinhaus",
   "name": "Hugo Steinhaus",
   "type": "person",
-  "loc": "Krak\u00f3w, Poland",
+  "loc": "Kraków, Poland",
   "lat": 50.06,
   "lng": 19.94,
   "years": "1892-1972",
@@ -2271,7 +2271,7 @@
  },
  {
   "id": "person-kurt-godel",
-  "name": "Kurt G\u00f6del",
+  "name": "Kurt Gödel",
   "type": "person",
   "loc": "Brno, Czech Republic",
   "lat": 49.2,
@@ -2342,7 +2342,7 @@
    1934,
    2004
   ],
-  "blurb": "American logician whose Rosser theorem sharpened G\u00f6del's incompleteness result for consistent arithmetical systems.",
+  "blurb": "American logician whose Rosser theorem sharpened Gödel's incompleteness result for consistent arithmetical systems.",
   "cited_in": [
    "recursion_coherent_difference"
   ],
@@ -2429,7 +2429,7 @@
   "id": "person-gerhard-gentzen",
   "name": "Gerhard Gentzen",
   "type": "person",
-  "loc": "G\u00f6ttingen, Germany",
+  "loc": "Göttingen, Germany",
   "lat": 51.54,
   "lng": 9.94,
   "years": "1896-1945",
@@ -2532,7 +2532,7 @@
   "id": "person-woldemar-voigt",
   "name": "Woldemar Voigt",
   "type": "person",
-  "loc": "T\u00fcbingen, Germany",
+  "loc": "Tübingen, Germany",
   "lat": 48.52,
   "lng": 9.06,
   "years": "1850-1919",
@@ -2614,7 +2614,7 @@
  },
  {
   "id": "person-evariste-galois",
-  "name": "\u00c9variste Galois",
+  "name": "Évariste Galois",
   "type": "person",
   "loc": "Bourges, France",
   "lat": 47.08,
@@ -2666,7 +2666,7 @@
    1910,
    1963
   ],
-  "blurb": "Norwegian mathematician who proved the downward L\u00f6wenheim\u2013Skolem theorem and shaped logic and set theory.",
+  "blurb": "Norwegian mathematician who proved the downward Löwenheim–Skolem theorem and shaped logic and set theory.",
   "cited_in": [
    "model_theory"
   ],
@@ -2677,7 +2677,7 @@
  },
  {
   "id": "person-leopold-lowenheim",
-  "name": "Leopold L\u00f6wenheim",
+  "name": "Leopold Löwenheim",
   "type": "person",
   "loc": "Vienna, Austria",
   "lat": 48.21,
@@ -3891,7 +3891,7 @@
  },
  {
   "id": "person-carl-friedrich-von-weizsacker",
-  "name": "Carl Friedrich von Weizs\u00e4cker",
+  "name": "Carl Friedrich von Weizsäcker",
   "type": "person",
   "loc": "Stuttgart, Germany",
   "lat": 48.78,
@@ -3903,7 +3903,7 @@
   ],
   "blurb": "Theoretical physicist who independently proposed the proton-proton fusion chain that powers Sun-like stars.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -3922,7 +3922,7 @@
   ],
   "blurb": "Cosmologist and astrophysicist who predicted the carbon-12 Hoyle state required to forge carbon in stars.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "b2fh1957"
@@ -3943,7 +3943,7 @@
   ],
   "blurb": "Astrophysicist who argued on physical grounds that nuclear fusion is the only way a star stays hot so long.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "eddington1926stars"
@@ -3964,7 +3964,7 @@
   ],
   "blurb": "Nobel laureate who worked out the carbon-nitrogen-oxygen cycle by which massive stars convert hydrogen to helium.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "bethe1939energy"
@@ -3985,7 +3985,7 @@
   ],
   "blurb": "Cosmologist and one of the 'alpha-beta-gamma' authors who first predicted primordial Big Bang nucleosynthesis abundances.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "alperbethegamow1948"
@@ -4006,7 +4006,7 @@
   ],
   "blurb": "Astrophysicist who in 1902 derived the Jeans mass, the collapse threshold for gas clouds forming stars.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "jeans1902nebula"
@@ -4027,7 +4027,7 @@
   ],
   "blurb": "Astrophysicist who derived the Chandrasekhar limit, the maximum mass a white dwarf can sustain before collapse.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "chandrasekhar1935structure"
@@ -4048,7 +4048,7 @@
   ],
   "blurb": "Radio astronomer who led the 1968 team that detected the first pulsar, a spinning neutron star.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "hewish1968pulsar"
@@ -4059,7 +4059,7 @@
   "id": "person-immanuel-kant",
   "name": "Immanuel Kant",
   "type": "person",
-  "loc": "K\u00f6nigsberg, Germany",
+  "loc": "Königsberg, Germany",
   "lat": 54.71,
   "lng": 20.51,
   "years": "1724-1804",
@@ -4069,7 +4069,7 @@
   ],
   "blurb": "Philosopher who in 1755 first proposed that the Solar System formed by gravitational settling of a nebula.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "kant1755heavens"
@@ -4090,7 +4090,7 @@
   ],
   "blurb": "Naturalist whose natural selection replaced the static Great Chain of Being with a branching tree of life.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "darwin1859origin",
@@ -4112,7 +4112,7 @@
   ],
   "blurb": "Biochemist who proposed that the young Earth's reducing atmosphere and ocean could generate the monomers of life.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "oparin1936origin"
@@ -4133,7 +4133,7 @@
   ],
   "blurb": "Geneticist who independently of Oparin argued that prebiotic organic chemistry could arise in the early ocean.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "haldane1929origin"
@@ -4154,7 +4154,7 @@
   ],
   "blurb": "Graduate student who in 1953 simulated the early Earth in a flask and produced amino acids from simple gases.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "miller1953aminoacids"
@@ -4175,7 +4175,7 @@
   ],
   "blurb": "Nobel laureate who supervised the 1953 Miller-Urey experiment that showed prebiotic synthesis of amino acids.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "miller1953aminoacids"
@@ -4196,7 +4196,7 @@
   ],
   "blurb": "Biochemist at Yale who showed that RNase P is catalysed by its own RNA, proving RNA can be an enzyme.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "altman1976rnasep",
@@ -4218,7 +4218,7 @@
   ],
   "blurb": "Chemist who quantified the error threshold and hypercycle, the chemistry needed for an evolving quasispecies.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "eigen1971selforganization",
@@ -4240,7 +4240,7 @@
   ],
   "blurb": "Molecular biologist who argued the genetic code is a 'frozen accident' locked in once translation evolved.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "crick1968code"
@@ -4261,7 +4261,7 @@
   ],
   "blurb": "Microbiologist who used 16S rRNA to root the tree of life and formalize the three-domain system.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "woese1977phylogenetic",
@@ -4283,7 +4283,7 @@
   ],
   "blurb": "Paleontologist who excavated the Burgess Shale in the Canadian Rockies and described over 70 Cambrian species.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "walcott1911burgess"
@@ -4304,7 +4304,7 @@
   ],
   "blurb": "Astronomer whose precise naked-eye measurements at Uraniborg gave Kepler the data to find the laws of the planets.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -4323,7 +4323,7 @@
   ],
   "blurb": "Milesian natural philosopher who proposed the boundless apeiron as the origin of all things without invoking gods.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -4342,7 +4342,7 @@
   ],
   "blurb": "Milesian natural philosopher who proposed air as the fundamental substance whose condensation and rarefaction make all things.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -4361,7 +4361,8 @@
   ],
   "blurb": "Pre-Socratic who proposed atomism, a computational model of the world as discrete units moving in the void.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -4380,7 +4381,8 @@
   ],
   "blurb": "Chemist at the University of Manchester whose group built prebiotic nucleotides from small carbon fragments.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii"
   ],
   "bibkeys": [
    "sutherland2009pyrimidine"
@@ -4401,7 +4403,8 @@
   ],
   "blurb": "Scientist who wrote the first book on probability and built a tubeless aerial telescope for observing the heavens.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii"
   ],
   "bibkeys": [
    "huygens1657ratiociniis"
@@ -4422,7 +4425,7 @@
   ],
   "blurb": "Radio astronomer who with Robert Wilson discovered the cosmic microwave background in 1965 at Bell Labs.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "penzias1965measurement"
@@ -4443,7 +4446,7 @@
   ],
   "blurb": "Pilbara sedimentary formation holding the oldest secure microbially induced stromatolite structures, over 3,470 million years old.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "walter1986stromatolites"
@@ -4464,7 +4467,7 @@
   ],
   "blurb": "Coastal area with living stromatolites in the same microbial-mat form that fossilized into the oldest evidence of life.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -4483,7 +4486,7 @@
   ],
   "blurb": "Greenland rock belt whose ancient graphite isotope data were cited for life's metabolic signature around 3,800 million years ago.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -4502,7 +4505,7 @@
   ],
   "blurb": "South Australian hills where Reginald Sprigg first described the Ediacara fauna of large soft-bodied organisms.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "sprigg1947ediacara"
@@ -4523,7 +4526,7 @@
   ],
   "blurb": "English upland where frond-like Ediacaran fossils such as Charnia masoni, an icon of early large soft-bodied life, were found.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -4542,7 +4545,7 @@
   ],
   "blurb": "Russian sea region whose 558-million-year-old Dickinsonia fossils proved, via animal sterols, that it was a metazoan.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "bobrovskiy2018dickinsonia"
@@ -4563,7 +4566,7 @@
   ],
   "blurb": "Gabon sedimentary group holding 2.1-billion-year-old colonial filaments, early evidence of multicellular organization.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -4582,7 +4585,7 @@
   ],
   "blurb": "North Chinese formation with 1.56-billion-year-old decimetre-scale multicellular eukaryotic fossils.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -4599,9 +4602,9 @@
    null,
    null
   ],
-  "blurb": "Middle Cambrian lagerst\u00e4tte in the Canadian Rockies, the type locality for the Cambrian Explosion fauna.",
+  "blurb": "Middle Cambrian lagerstätte in the Canadian Rockies, the type locality for the Cambrian Explosion fauna.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "whittington1979burgess"
@@ -4620,9 +4623,9 @@
    null,
    null
   ],
-  "blurb": "Yunnan lagerst\u00e4tte whose 518-million-year-old biota preserved primitive deuterostomes such as the chordate Vetulicola.",
+  "blurb": "Yunnan lagerstätte whose 518-million-year-old biota preserved primitive deuterostomes such as the chordate Vetulicola.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "shu2001chengjiang"
@@ -4643,7 +4646,7 @@
   ],
   "blurb": "Australian town where the Murchison meteorite fell in 1969, carrying a partly extraterrestrial suite of amino acids.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "orgelparris1979murchison"
@@ -4664,7 +4667,7 @@
   ],
   "blurb": "Swabian cave near Schelklingen that yielded the Venus of Hohle Fels, the oldest known depiction of a human being.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "conard2009hohlefels"
@@ -4685,7 +4688,7 @@
   ],
   "blurb": "Austrian excavation site of the Venus of Galgenberg, one of the oldest known carved figurines of a person.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "neugebauer1989galgenberg"
@@ -4696,7 +4699,7 @@
   "id": "place-la-marche",
   "name": "La Marche",
   "type": "place",
-  "loc": "Lussac-les-Ch\u00e2teaux, France",
+  "loc": "Lussac-les-Châteaux, France",
   "lat": 46.42,
   "lng": 0.88,
   "years": "",
@@ -4704,9 +4707,9 @@
    null,
    null
   ],
-  "blurb": "Magdalenian engraved slabs at Lussac-les-Ch\u00e2teaux carrying over a hundred individualised human faces.",
+  "blurb": "Magdalenian engraved slabs at Lussac-les-Châteaux carrying over a hundred individualised human faces.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -4725,7 +4728,7 @@
   ],
   "blurb": "City whose Murano glassmakers made the clear optical glass for early lenses, and where Galileo published Sidereus Nuncius.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -4744,7 +4747,7 @@
   ],
   "blurb": "South African cave holding the earliest secure archaeological evidence for the controlled use of fire, about a million years ago.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "wonderwerk"
@@ -4765,7 +4768,8 @@
   ],
   "blurb": "Country whose 760-million-year-old rocks preserve Otavia antiqua, claimed as the oldest known animal.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -4784,7 +4788,7 @@
   ],
   "blurb": "Laser Interferometer Gravitational-Wave Observatory whose detectors, with Virgo, recorded the 2017 neutron-star merger GW170817.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "gw170817multimessenger"
@@ -4805,7 +4809,7 @@
   ],
   "blurb": "Italian gravitational-wave interferometer near Pisa that co-detected the neutron-star merger producing kilonova GW170817.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "gw170817multimessenger"
@@ -4826,7 +4830,8 @@
   ],
   "blurb": "London scientific academy founded in 1660 to institutionalize evidence-driven, cumulative science and its experimental method.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -4845,7 +4850,8 @@
   ],
   "blurb": "American university where Sidney Altman showed RNase P is catalysed by its own RNA subunit.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -4864,7 +4870,8 @@
   ],
   "blurb": "British university where John Sutherland's group built prebiotic nucleotides and ribose from small carbon fragments.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii"
   ],
   "bibkeys": [
    "sutherland2009pyrimidine"
@@ -4885,7 +4892,8 @@
   ],
   "blurb": "Stanley Miller simulated the early Earth in a sealed spark-charged flask and produced amino acids from simple gases.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "miller1953aminoacids"
@@ -4906,7 +4914,9 @@
   ],
   "blurb": "Penzias and Wilson detected the cosmic microwave background, the lingering radiation of the hot early universe.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "penzias1965measurement"
@@ -4927,7 +4937,7 @@
   ],
   "blurb": "Carbonaceous chondrite that fell in 1969 and carried a partly extraterrestrial suite of amino acids; primary held in Canberra.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "orgelparris1979murchison"
@@ -4948,7 +4958,7 @@
   ],
   "blurb": "A 6 cm mammoth-ivory figurine from Hohle Fels cave, about 40,000-35,000 years old, the oldest known depiction of a human.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i"
   ],
   "bibkeys": [
    "conard2009hohlefels"
@@ -4969,7 +4979,7 @@
   ],
   "blurb": "Curator of experiments at the Royal Society who named the cell in Micrographia (1665).",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "micrographia",
@@ -4991,7 +5001,7 @@
   ],
   "blurb": "Delft draper whose ground lenses revealed animalcules, the first observed microorganisms.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "leeuwenhoekletters"
@@ -5012,7 +5022,7 @@
   ],
   "blurb": "Botanist who in 1838 argued all plant tissues are built of cells.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "schleiden1838"
@@ -5033,7 +5043,7 @@
   ],
   "blurb": "Physiologist who in 1839 extended the cell principle to animals, founding cell theory.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "schwann1839"
@@ -5054,7 +5064,7 @@
   ],
   "blurb": "Pathologist who closed the cell-theory triad with omnis cellula e cellula in 1858.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "virchow1858"
@@ -5075,7 +5085,7 @@
   ],
   "blurb": "Psychologist whose Hebbian rule, cells that fire together wire together, underpinned connectionism.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "hebb1949organizationofbehaviour"
@@ -5096,7 +5106,7 @@
   ],
   "blurb": "Industrialist who with Tesla championed alternating current for long-distance power transmission.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -5115,7 +5125,7 @@
   ],
   "blurb": "Engineer who patented the Bessemer converter, slashing steel's price and enabling the electric age.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "bessemerpatent"
@@ -5136,7 +5146,7 @@
   ],
   "blurb": "Aristotle's successor who wrote On Stones, the earliest surviving classification of rocks and minerals.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "theophrastusstones"
@@ -5157,7 +5167,7 @@
   ],
   "blurb": "Roman naturalist whose Natural History compiled the ancient world's knowledge of metals and ores.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "plinynaturalhistory"
@@ -5178,7 +5188,8 @@
   ],
   "blurb": "Miner and physician whose De re metallica was the first modern treatise on mining and smelting.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "deremetallica"
@@ -5199,7 +5210,7 @@
   ],
   "blurb": "Siemens chemist who in 1918 devised the pull-crystal method that grew semiconductor-grade silicon.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "czochralski1918"
@@ -5220,7 +5231,7 @@
   ],
   "blurb": "Physicist who in 1980 identified lithium cobalt oxide, the cathode that enabled lithium-ion batteries.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "goodenough1980licoo2"
@@ -5241,7 +5252,7 @@
   ],
   "blurb": "Chemist who in 1985 developed the first commercially viable lithium-ion cell using a graphite anode.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "yoshino1985liion"
@@ -5262,7 +5273,7 @@
   ],
   "blurb": "Chemist whose 1869 periodic table organized the elements and predicted those not yet found.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -5281,7 +5292,7 @@
   ],
   "blurb": "Han-dynasty court official whose 105 CE memorial described scalable papermaking from bark, hemp and rags.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "cai_lun_paper"
@@ -5302,7 +5313,7 @@
   ],
   "blurb": "Mathematician whose 1202 Liber Abaci carried Hindu-Arabic numerals and zero into European commerce.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "fibonacciliber",
@@ -5324,7 +5335,8 @@
   ],
   "blurb": "Mathematician whose 1494 Summa gave the first printed systematic account of double-entry bookkeeping.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "paciolisumma"
@@ -5345,7 +5357,7 @@
   ],
   "blurb": "Inventor-entrepreneur whose reliable Arithmometer became the first mass-produced mechanical calculator.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "thomasdcolmar1820",
@@ -5367,7 +5379,7 @@
   ],
   "blurb": "Painter and photographer who in 1839 announced the daguerreotype, cutting exposure from hours to minutes.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -5386,7 +5398,7 @@
   ],
   "blurb": "Scientist who invented the calotype, the paper negative that underlies modern photography.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -5405,7 +5417,7 @@
   ],
   "blurb": "California industrialist and governor who commissioned Muybridge's motion study of the galloping horse.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -5424,7 +5436,7 @@
   ],
   "blurb": "JPL engineer who pioneered digital image processing and parallel-multiplier VLSI for lunar and planetary probes.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "tomayko1988spaceflight"
@@ -5445,7 +5457,7 @@
   ],
   "blurb": "Physicist whose electric telegraph, with Cooke, was among the first faster-than-horse communication systems.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "cookewheatstone"
@@ -5466,7 +5478,7 @@
   ],
   "blurb": "Publisher and financier who led the laying of the first transatlantic telegraph cable, completed in 1858.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -5485,7 +5497,8 @@
   ],
   "blurb": "Glasgow physicist who reported on transatlantic cable telegraphy and quantified its electrical behaviour.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii"
   ],
   "bibkeys": [
    "atlantictelegraph"
@@ -5506,7 +5519,7 @@
   ],
   "blurb": "Geneva physicist who in 1842 showed light guiding through a water jet by total internal reflection.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "colladon"
@@ -5527,7 +5540,7 @@
   ],
   "blurb": "Royal Institution physicist who popularized light guiding by total internal reflection in his lectures.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "notesonlight"
@@ -5548,7 +5561,7 @@
   ],
   "blurb": "American inventor whose 1844 vulcanization patent turned rubber into a durable electrical insulator.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "goodyearvulcanization"
@@ -5569,7 +5582,7 @@
   ],
   "blurb": "Chemist who in 1907 patented Bakelite, the first fully synthetic plastic and electrical insulator.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "baekelandpatent"
@@ -5590,7 +5603,7 @@
   ],
   "blurb": "Inventor who patented the typebar typewriter whose jam-avoiding QWERTY layout still dominates keyboards.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "typewriterpatent"
@@ -5611,7 +5624,7 @@
   ],
   "blurb": "Physicist who in 1897 built the cathode-ray tube, later the basis of screens and displays.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "braunannalen"
@@ -5632,7 +5645,7 @@
   ],
   "blurb": "Inventor who in 1927 demonstrated the first fully electronic television system.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -5651,7 +5664,7 @@
   ],
   "blurb": "MIT engineer whose 1963 Sketchpad showed a screen could support direct graphical interaction.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "sketchpad"
@@ -5672,7 +5685,7 @@
   ],
   "blurb": "Bell Labs physicist who in 1927 built the first practical quartz-crystal clock.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -5691,7 +5704,7 @@
   ],
   "blurb": "Glasgow chemist who demonstrated artificial refrigeration by ether evaporation in a partial vacuum.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "cullencold"
@@ -5712,7 +5725,7 @@
   ],
   "blurb": "Engineer whose 1877 ammonia-compression refrigerator made large-scale industrial cooling viable.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "patent1250"
@@ -5733,7 +5746,7 @@
   ],
   "blurb": "Engineer who in 1902 designed the first modern air-conditioning system for a Brooklyn print shop.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "psychrometric"
@@ -5754,7 +5767,7 @@
   ],
   "blurb": "Magdeburg mayor who in 1654 demonstrated the vacuum with his famous horse-pulling hemispheres.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "vonguericke"
@@ -5775,7 +5788,7 @@
   ],
   "blurb": "Florentine mathematician whose 1643 mercury barometer implied the existence of a vacuum.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "torricellibarometer"
@@ -5796,7 +5809,7 @@
   ],
   "blurb": "Physicist who in 1857 built the low-pressure discharge tube that produced coloured electric light.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "geisslertube"
@@ -5817,7 +5830,7 @@
   ],
   "blurb": "Engineer who in 1904 built the first electronic rectifier, the thermionic valve or diode.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "flemingdiode"
@@ -5838,7 +5851,8 @@
   ],
   "blurb": "Inventor who in 1906 added a grid electrode to make the Audion, the first electronic amplifier.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii"
   ],
   "bibkeys": [
    "deforestaudion"
@@ -5859,7 +5873,7 @@
   ],
   "blurb": "Dutch scientist who in 1656 built the first pendulum clock, cutting daily error from minutes to seconds.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "huygenspendulum"
@@ -5880,7 +5894,7 @@
   ],
   "blurb": "Engineer whose 1712 atmospheric steam engine first turned heat into work to pump flooded mine shafts.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "newcomenengine"
@@ -5901,7 +5915,7 @@
   ],
   "blurb": "Instrument maker whose separate-condenser patent quadrupled steam-engine efficiency for factories.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "wattpatent"
@@ -5922,7 +5936,7 @@
   ],
   "blurb": "Bell Labs physicist who with Bardeen built the first point-contact transistor in 1947.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "semiconductor"
@@ -5943,7 +5957,7 @@
   ],
   "blurb": "Bell Labs physicist who devised the superior junction transistor that replaced the point-contact design.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "shockley"
@@ -5964,7 +5978,7 @@
   ],
   "blurb": "Physicist who in 1900 introduced the quantum of energy, founding quantum theory.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "planck"
@@ -5985,7 +5999,7 @@
   ],
   "blurb": "Danish physicist who in 1913 proposed the quantized atom and led the Copenhagen school.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "bohr"
@@ -6006,7 +6020,7 @@
   ],
   "blurb": "Physicist who in 1925 formulated matrix mechanics, a cornerstone of quantum mechanics.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "quanten"
@@ -6015,7 +6029,7 @@
  },
  {
   "id": "person-erwin-schroedinger",
-  "name": "Erwin Schr\u00f6dinger",
+  "name": "Erwin Schrödinger",
   "type": "person",
   "loc": "Vienna, Austria",
   "lat": 48.21,
@@ -6027,7 +6041,7 @@
   ],
   "blurb": "Austrian physicist who in 1926 developed wave mechanics, describing matter as wave functions.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "schroedinger"
@@ -6048,7 +6062,7 @@
   ],
   "blurb": "Physicist who applied quantum mechanics to electrons in crystals, laying the basis of band theory.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "bloch"
@@ -6069,7 +6083,7 @@
   ],
   "blurb": "Physicist who used band theory to explain why silicon and germanium are semiconductors.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "wilsonsemiconductors"
@@ -6090,7 +6104,7 @@
   ],
   "blurb": "Census engineer whose punched-card tabulator counted the 1890 US Census and became IBM.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -6109,7 +6123,7 @@
   ],
   "blurb": "Netherlands city home of the draper-microscopist Antonie van Leeuwenhoek.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -6128,7 +6142,8 @@
   ],
   "blurb": "Ancient Sumerian city where clay tokens gave way to the first proto-cuneiform tablets.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -6147,7 +6162,7 @@
   ],
   "blurb": "Indian site of an 876 CE inscription bearing the oldest dated zero symbol.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -6166,7 +6181,7 @@
   ],
   "blurb": "Cave in Eswatini where the ~43,000-year-old Lebombo counting bone was found.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -6185,7 +6200,7 @@
   ],
   "blurb": "Italian town where the first European water-powered paper mill opened around 1276.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -6202,9 +6217,9 @@
    1965,
    2026
   ],
-  "blurb": "UT Austin research library holding Ni\u00e9pce's Point de vue du Gras, the oldest photograph.",
+  "blurb": "UT Austin research library holding Niépce's Point de vue du Gras, the oldest photograph.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -6223,7 +6238,8 @@
   ],
   "blurb": "US university that commissioned Muybridge's 781-plate Animal Locomotion chronophotography project.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -6242,7 +6258,8 @@
   ],
   "blurb": "London academy that published Micrographia and received Leeuwenhoek's and Kelvin's reports.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -6261,14 +6278,14 @@
   ],
   "blurb": "Scottish university where Cullen demonstrated artificial cooling and Kelvin worked.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "stated"
  },
  {
   "id": "institution-musee-des-arts-et-metiers",
-  "name": "Mus\u00e9e des Arts et M\u00e9tiers",
+  "name": "Musée des Arts et Métiers",
   "type": "institution",
   "loc": "Paris, France",
   "lat": 48.84,
@@ -6280,7 +6297,7 @@
   ],
   "blurb": "Paris museum holding the Arithmometer, the first mass-produced mechanical calculator.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -6299,7 +6316,7 @@
   ],
   "blurb": "British prize that funded decades of chronometer and navigation research to solve longitude at sea.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -6318,7 +6335,7 @@
   ],
   "blurb": "Battle after which captured Chinese papermakers carried papermaking westward toward Europe.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -6337,7 +6354,7 @@
   ],
   "blurb": "Tripwire-camera sequence of a galloping horse, the founding image of chronophotography.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "muybridge1887catalogue"
@@ -6358,7 +6375,7 @@
   ],
   "blurb": "Wrought-iron column raised under Chandragupta II that has resisted corrosion for over 1,600 years.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "ironpillardelhi"
@@ -6377,9 +6394,9 @@
    1827,
    null
   ],
-  "blurb": "Ni\u00e9pce's oldest surviving camera photograph, an eight-hour bitumen exposure on a pewter plate.",
+  "blurb": "Niépce's oldest surviving camera photograph, an eight-hour bitumen exposure on a pewter plate.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "niepce_le_gras"
@@ -6400,7 +6417,7 @@
   ],
   "blurb": "Thomas de Colmar's stepped-drum calculator, the first mechanical calculator mass-produced and sold.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "arithmometer_thomas"
@@ -6421,7 +6438,7 @@
   ],
   "blurb": "Manchester computer scientist who built the Williams tube and the Baby, the first stored-program computer.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "williamstube"
@@ -6442,7 +6459,7 @@
   ],
   "blurb": "Inventor of the Williams tube, the first truly random-access electronic memory, at the University of Manchester.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "williamstube"
@@ -6463,7 +6480,7 @@
   ],
   "blurb": "MIT engineer who, with An Wang, developed the magnetic-core memory that dominated computing for two decades.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -6482,7 +6499,7 @@
   ],
   "blurb": "Physicist at the National Bureau of Standards who developed the quartz crystal oscillator in 1921 for radio timing.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "cady1922"
@@ -6503,7 +6520,7 @@
   ],
   "blurb": "RAND researcher who independently conceived packet switching in 1964, a foundation of the modern Internet.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "baran1964"
@@ -6524,7 +6541,7 @@
   ],
   "blurb": "NPL engineer who independently conceived packet switching and gave the term its name in 1965.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -6543,7 +6560,7 @@
   ],
   "blurb": "Co-inventor of Ethernet at Xerox PARC in 1973 and later founder of 3Com.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "metcalfe1976"
@@ -6564,7 +6581,7 @@
   ],
   "blurb": "Rocket engineer who led the Saturn V programme at Huntsville, its Instrument Unit carrying IBM's stored-program autopilot.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "dickinson1964lvdc",
@@ -6574,9 +6591,9 @@
  },
  {
   "id": "person-helmut-grottrup",
-  "name": "Helmut Gr\u00f6ttrup",
+  "name": "Helmut Gröttrup",
   "type": "person",
-  "loc": "Peenem\u00fcnde, Germany",
+  "loc": "Peenemünde, Germany",
   "lat": 54.15,
   "lng": 13.81,
   "years": "1911-",
@@ -6586,7 +6603,7 @@
   ],
   "blurb": "German V-2 rocket engineer moved to the Soviet Union in 1946 to continue the V-2 guidance lineage.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "zak_gorodomlya"
@@ -6607,7 +6624,7 @@
   ],
   "blurb": "MIT engineer whose Instrumentation Laboratory built the Apollo Guidance Computer from silicon integrated circuits.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "agc_module_image",
@@ -6629,7 +6646,7 @@
   ],
   "blurb": "Led the MIT software team for Apollo, whose priority scheduler saved the lunar landing and founded software engineering.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "hamilton1969_image",
@@ -6651,7 +6668,7 @@
   ],
   "blurb": "Statistician whose wartime Sequential Analysis (1947) now underpins A/B testing and reinforcement-learning stopping rules.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "wald1947sequential"
@@ -6660,9 +6677,9 @@
  },
  {
   "id": "person-helmut-holzer",
-  "name": "Helmut H\u00f6lzer",
+  "name": "Helmut Hölzer",
   "type": "person",
-  "loc": "Peenem\u00fcnde, Germany",
+  "loc": "Peenemünde, Germany",
   "lat": 54.15,
   "lng": 13.81,
   "years": "1907-",
@@ -6670,9 +6687,9 @@
    1933,
    1945
   ],
-  "blurb": "Peenem\u00fcnde engineer who designed the Mischger\u00e4t, the first computer built into a flying machine, in 1941.",
+  "blurb": "Peenemünde engineer who designed the Mischgerät, the first computer built into a flying machine, in 1941.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "tomayko1985hoelzer",
@@ -6694,7 +6711,7 @@
   ],
   "blurb": "Economist who co-authored Theory of Games and Economic Behavior (1944), the foundation of game-theoretic AI.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "vonneumann_morgenstern1944"
@@ -6715,7 +6732,7 @@
   ],
   "blurb": "Engineer at the Post Office Research Station who built Colossus, the first programmable electronic digital computer.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "flowers1983design",
@@ -6725,7 +6742,7 @@
  },
  {
   "id": "person-rudolf-kalman",
-  "name": "Rudolf K\u00e1lm\u00e1n",
+  "name": "Rudolf Kálmán",
   "type": "person",
   "loc": "Budapest, Hungary",
   "lat": 47.5,
@@ -6737,7 +6754,7 @@
   ],
   "blurb": "Mathematician whose 1960 recursive filter now powers SLAM, inertial sensors, and every GPS receiver.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "kalman1960filter"
@@ -6758,7 +6775,7 @@
   ],
   "blurb": "Weapons laboratory where Monte Carlo, game theory, cellular automata, and FORTRAN were all born.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "eckhardt1987ulam",
@@ -6768,9 +6785,9 @@
  },
  {
   "id": "place-penemunde",
-  "name": "Peenem\u00fcnde",
+  "name": "Peenemünde",
   "type": "place",
-  "loc": "Peenem\u00fcnde, Germany",
+  "loc": "Peenemünde, Germany",
   "lat": 54.15,
   "lng": 13.81,
   "years": "",
@@ -6780,7 +6797,7 @@
   ],
   "blurb": "German V-2 rocket site that produced the first onboard flight computer and split into rival US and Soviet branches.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "tomayko1985hoelzer",
@@ -6800,9 +6817,9 @@
    null,
    null
   ],
-  "blurb": "Antarctic base that drilled a 420,000-year ice core and recorded the coldest reliably measured temperature, \u221289 \u00b0C.",
+  "blurb": "Antarctic base that drilled a 420,000-year ice core and recorded the coldest reliably measured temperature, −89 °C.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "vostokstation"
@@ -6823,7 +6840,7 @@
   ],
   "blurb": "US Army rocket center where von Braun built the Saturn V and its IBM-built Launch Vehicle Digital Computer.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "dickinson1964lvdc",
@@ -6843,9 +6860,9 @@
    null,
    null
   ],
-  "blurb": "EPICA ice-core site on the East Antarctic plateau holding 800,000 years of CO\u2082 and temperature record.",
+  "blurb": "EPICA ice-core site on the East Antarctic plateau holding 800,000 years of CO₂ and temperature record.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "icecorewiki"
@@ -6866,7 +6883,7 @@
   ],
   "blurb": "Greenland ice-core drilling site contributing to the deep-time climate archive used to anchor climate models.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "icecorewiki"
@@ -6887,7 +6904,8 @@
   ],
   "blurb": "Home of the Moore School, where the ENIAC was built and ran the first numerical weather forecast.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "eniac1946"
@@ -6908,7 +6926,7 @@
   ],
   "blurb": "Invented the Williams tube and the Manchester Baby, the first stored-program computer to run a program.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "williamstube"
@@ -6929,7 +6947,8 @@
   ],
   "blurb": "Think tank where Paul Baran developed the packet-switching architecture that became the Internet's foundation.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "baran1964"
@@ -6950,7 +6969,8 @@
   ],
   "blurb": "Research institute that built Shakey, the first mobile robot to reason about its own actions.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "nilsson1984shakey"
@@ -6971,7 +6991,8 @@
   ],
   "blurb": "Built Harpy and Sphinx, speech-recognition systems that became a cornerstone of modern speech AI.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "klatt1977sur",
@@ -6993,7 +7014,8 @@
   ],
   "blurb": "Where Jule Charney, with von Neumann, developed the theory behind the first numerical weather prediction.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "charney1947longwaves",
@@ -7015,7 +7037,7 @@
   ],
   "blurb": "Memory maker that co-developed High Bandwidth Memory, the throughput engine of GPU-based training.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "hbm2013"
@@ -7036,7 +7058,9 @@
   ],
   "blurb": "Chemical company whose Fluorinert and Novec dielectric fluids power liquid-immersion data-center cooling.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7055,7 +7079,7 @@
   ],
   "blurb": "Charney's team ran the first numerical weather forecast on the ENIAC, the first problem worth a digital computer.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "charney1950nwp"
@@ -7076,7 +7100,8 @@
   ],
   "blurb": "Ariane 5 broke apart 39 s after liftoff when a 64-bit value overflowed into 16 bits, defining software verification.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "ariane501_report"
@@ -7097,7 +7122,8 @@
   ],
   "blurb": "Sputnik's 1957 launch prompted the US to create ARPA, the primary patron of AI research for two decades.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7116,7 +7142,8 @@
   ],
   "blurb": "Buran's single 1988 flight re-entered, approached, and landed fully autonomously with zero human intervention.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "buran_autoland",
@@ -7138,7 +7165,8 @@
   ],
   "blurb": "The vacuum-tube computer built at the Moore School for artillery tables, first user John von Neumann.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "eniac1946",
@@ -7160,7 +7188,7 @@
   ],
   "blurb": "Tommy Flowers' 2,400-tube machine that broke the German Lorenz cipher at Bletchley Park.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "flowers1983design",
@@ -7182,7 +7210,7 @@
   ],
   "blurb": "First computer built from silicon ICs, with core rope memory and a priority scheduler that saved the Moon landing.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "agc_module_image",
@@ -7204,7 +7232,7 @@
   ],
   "blurb": "Led the IBM team that designed FORTRAN, the first widely used high-level programming language.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "backusfortran"
@@ -7225,7 +7253,7 @@
   ],
   "blurb": "Danish computer scientist who edited the ALGOL 60 report that introduced explicit type declarations.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "algol60report"
@@ -7246,7 +7274,7 @@
   ],
   "blurb": "UC Berkeley mathematician whose work defined the IEEE 754 floating-point standard.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "ieee754_1985"
@@ -7267,7 +7295,7 @@
   ],
   "blurb": "Mathematician who formalized matrix algebra, the theoretical root of the array data structure.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "cayleymemoirmatrices"
@@ -7288,7 +7316,7 @@
   ],
   "blurb": "Created the C programming language and co-developed UNIX at Bell Labs.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -7307,7 +7335,7 @@
   ],
   "blurb": "Co-created UNIX at Bell Labs, making interactive computing practical and portable.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -7326,7 +7354,7 @@
   ],
   "blurb": "Creator of the Python programming language and its formal PEP process.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "pep285"
@@ -7347,7 +7375,8 @@
   ],
   "blurb": "Mathematician whose 1494 Summa de Arithmetica formalized double-entry bookkeeping and the data grid.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "summaarithmetica"
@@ -7368,7 +7397,7 @@
   ],
   "blurb": "MIT programmer who co-created VisiCalc, the first electronic spreadsheet, with Dan Bricklin.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -7387,7 +7416,7 @@
   ],
   "blurb": "Founder of Lotus Development and creator of Lotus 1-2-3, the best-selling software of its era.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7406,7 +7435,7 @@
   ],
   "blurb": "IBM researcher who proposed the relational model for data, the foundation of SQL.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7425,7 +7454,8 @@
   ],
   "blurb": "Co-designer of TCP/IP, the universal protocol suite that made the internet possible.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "cerfkahn"
@@ -7446,7 +7476,7 @@
   ],
   "blurb": "Inventor of the World Wide Web at CERN, creating HTML, HTTP, and the first web browser.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "bernerslee1989"
@@ -7467,7 +7497,7 @@
   ],
   "blurb": "Logician who developed the simply typed lambda calculus, a foundation of type theory.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "churchsimplytyped"
@@ -7488,7 +7518,7 @@
   ],
   "blurb": "Computer scientist who developed automatic type inference and the ML programming language.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "milnertypeinference"
@@ -7497,7 +7527,7 @@
  },
  {
   "id": "person-per-martin-lof",
-  "name": "Per Martin-L\u00f6f",
+  "name": "Per Martin-Löf",
   "type": "person",
   "loc": "Stockholm, Sweden",
   "lat": 59.3293,
@@ -7509,7 +7539,7 @@
   ],
   "blurb": "Logician and mathematician who founded the theory of dependent types.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "martinloeftypetheory"
@@ -7530,7 +7560,7 @@
   ],
   "blurb": "Logician who, with Milner, developed the foundation of automatic type inference.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "hindleytypes"
@@ -7551,7 +7581,7 @@
   ],
   "blurb": "Business school in Cambridge where Dan Bricklin conceived VisiCalc during an accounting class.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -7570,7 +7600,7 @@
   ],
   "blurb": "Computer company where Dan Bricklin programmed before co-creating VisiCalc.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7589,7 +7619,8 @@
   ],
   "blurb": "Conglomerate that developed Autotab, an early mainframe formula-table system.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7608,7 +7639,7 @@
   ],
   "blurb": "Company founded by Mitch Kapor that released Lotus 1-2-3, the defining 1980s spreadsheet.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7627,7 +7658,7 @@
   ],
   "blurb": "Research institute that created the Numarray project which merged into NumPy.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -7646,7 +7677,7 @@
   ],
   "blurb": "Research institute (SRI) whose node received ARPANET's first message in 1969.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -7665,7 +7696,7 @@
   ],
   "blurb": "University whose node sent ARPANET's first message in 1969.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -7684,7 +7715,8 @@
   ],
   "blurb": "Professional association that issued the IEEE 754 floating-point arithmetic standard.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "ieee754_1985"
@@ -7705,7 +7737,7 @@
   ],
   "blurb": "French computer-science research institute whose researchers developed Scikit-learn.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "stated"
@@ -7724,7 +7756,7 @@
   ],
   "blurb": "Company that commercialized the relational database with its 1979 Oracle product.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7743,7 +7775,7 @@
   ],
   "blurb": "Company behind MATLAB, the matrix-computation environment introduced in 1984.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7762,7 +7794,8 @@
   ],
   "blurb": "Company behind SAS, enterprise statistical software for analytics and clinical trials.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7781,7 +7814,7 @@
   ],
   "blurb": "Company behind Stata, software for econometrics and biostatistics.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7800,7 +7833,7 @@
   ],
   "blurb": "Company behind Tableau, the drag-and-drop visual analytics platform launched in 2003.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7819,7 +7852,7 @@
   ],
   "blurb": "Data-engineering company behind Databricks Assistant, which generates SQL and Python.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7838,7 +7871,7 @@
   ],
   "blurb": "Swedish open-source relational database management system introduced in 1995.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7857,7 +7890,8 @@
   ],
   "blurb": "Lakeside site near Lake Edward where the ~20,000-year-old Ishango bone was found.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7876,7 +7910,7 @@
   ],
   "blurb": "Aegean island and city, namesake of the c. 300 BC Salamis number tablet.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [],
   "conf": "known"
@@ -7895,7 +7929,9 @@
   ],
   "blurb": "ARPANET sent its first message from UCLA in 1969, crashing after transmitting LO of LOGIN.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "arpanet_map"
@@ -7916,7 +7952,9 @@
   ],
   "blurb": "Deep Space 1 flew Remote Agent, the first AI to plan and repair a spacecraft autonomously.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "wiki_deep_space_1"
@@ -7937,7 +7975,8 @@
   ],
   "blurb": "General-purpose electronic computer (1946) that, like the Z3, operated on raw binary patterns.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "eniac1946"
@@ -7958,7 +7997,7 @@
   ],
   "blurb": "The NeXT workstation at CERN that ran the WorldWideWeb browser and the first web page.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "first_web_browser"
@@ -8011,7 +8050,7 @@
   "id": "person-immanuel-kant",
   "name": "Immanuel Kant",
   "type": "person",
-  "loc": "Kaliningrad (K\u00f6nigsberg), Russia",
+  "loc": "Kaliningrad (Königsberg), Russia",
   "lat": 54.71,
   "lng": 20.51,
   "years": "1724-1804",
@@ -8053,7 +8092,7 @@
  },
  {
   "id": "person-kurt-godel",
-  "name": "Kurt G\u00f6del",
+  "name": "Kurt Gödel",
   "type": "person",
   "loc": "Ithaca, United States",
   "lat": 42.44,
@@ -8366,7 +8405,7 @@
  },
  {
   "id": "person-soren-kierkegaard",
-  "name": "S\u00f8ren Kierkegaard",
+  "name": "Søren Kierkegaard",
   "type": "person",
   "loc": "Copenhagen, Denmark",
   "lat": 55.68,
@@ -8938,7 +8977,7 @@
   "id": "person-thomas-metzinger",
   "name": "Thomas Metzinger",
   "type": "person",
-  "loc": "G\u00f6ttingen, Germany",
+  "loc": "Göttingen, Germany",
   "lat": 51.53,
   "lng": 9.93,
   "years": "1958-",
@@ -9437,7 +9476,7 @@
  },
  {
   "id": "person-lauri-alpoge",
-  "name": "Lauri Alp\u00f6ge",
+  "name": "Lauri Alpöge",
   "type": "person",
   "loc": "San Francisco, USA",
   "lat": 37.77,
@@ -9785,7 +9824,7 @@
  },
  {
   "id": "person-eduard-cech",
-  "name": "Eduard \u010cech",
+  "name": "Eduard Čech",
   "type": "person",
   "loc": "Prague, Czech Republic",
   "lat": 50.08,
@@ -10344,7 +10383,7 @@
   "id": "person-hermann-minkowski",
   "name": "Hermann Minkowski",
   "type": "person",
-  "loc": "G\u00f6ttingen, Germany",
+  "loc": "Göttingen, Germany",
   "lat": 51.54,
   "lng": 9.94,
   "years": "1864-1909",
@@ -10401,7 +10440,7 @@
  },
  {
   "id": "person-janos-bolyai",
-  "name": "J\u00e1nos Bolyai",
+  "name": "János Bolyai",
   "type": "person",
   "loc": "Cluj-Napoca, Romania",
   "lat": 46.77,
@@ -10432,7 +10471,7 @@
    1968,
    2026
   ],
-  "blurb": "American mathematician who introduced Ricci flow, the technique Perelman used to prove the Poincar\u00e9 conjecture.",
+  "blurb": "American mathematician who introduced Ricci flow, the technique Perelman used to prove the Poincaré conjecture.",
   "cited_in": [
    "geometry_i"
   ],
@@ -10443,7 +10482,7 @@
   "id": "person-erhard-schmidt",
   "name": "Erhard Schmidt",
   "type": "person",
-  "loc": "K\u00f6nigsberg (Kaliningrad), Russia",
+  "loc": "Königsberg (Kaliningrad), Russia",
   "lat": 54.71,
   "lng": 20.51,
   "years": "1876-1959",
@@ -10481,7 +10520,7 @@
  },
  {
   "id": "person-jean-dieudonne",
-  "name": "Jean Dieudonn\u00e9",
+  "name": "Jean Dieudonné",
   "type": "person",
   "loc": "Paris, France",
   "lat": 48.86,
@@ -10491,7 +10530,7 @@
    1931,
    1992
   ],
-  "blurb": "French mathematician, co-author of the \u00c9l\u00e9ments de g\u00e9om\u00e9trie alg\u00e9brique and a pioneer of modern algebraic geometry.",
+  "blurb": "French mathematician, co-author of the Éléments de géométrie algébrique and a pioneer of modern algebraic geometry.",
   "cited_in": [
    "geometry_i"
   ],
@@ -10502,7 +10541,7 @@
  },
  {
   "id": "person-andre-weil",
-  "name": "Andr\u00e9 Weil",
+  "name": "André Weil",
   "type": "person",
   "loc": "Paris, France",
   "lat": 48.86,
@@ -10845,7 +10884,7 @@
    null,
    null
   ],
-  "blurb": "Pyrenean village in Hautes-Pyr\u00e9n\u00e9es where Alexander Grothendieck spent his final decades in self-imposed seclusion.",
+  "blurb": "Pyrenean village in Hautes-Pyrénées where Alexander Grothendieck spent his final decades in self-imposed seclusion.",
   "cited_in": [
    "geometry_i"
   ],
@@ -10856,7 +10895,7 @@
  },
  {
   "id": "institution-ihe-s",
-  "name": "Institut des Hautes \u00c9tudes Scientifiques (IH\u00c9S)",
+  "name": "Institut des Hautes Études Scientifiques (IHÉS)",
   "type": "institution",
   "loc": "Bures-sur-Yvette, France",
   "lat": 48.7,
@@ -11403,7 +11442,7 @@
  },
  {
   "id": "person-jean-louis-gasse",
-  "name": "Jean-Louis Gass\u00e9e",
+  "name": "Jean-Louis Gassée",
   "type": "person",
   "loc": "Mountain View, United States",
   "lat": 37.38,
@@ -11445,7 +11484,7 @@
  },
  {
   "id": "person-corrado-bohm",
-  "name": "Corrado B\u00f6hm",
+  "name": "Corrado Böhm",
   "type": "person",
   "loc": "Milan, Italy",
   "lat": 45.46,
@@ -11455,7 +11494,7 @@
    1960,
    2000
   ],
-  "blurb": "Co-proved the 1966 B\u00f6hm-Jacopini theorem that any program needs only sequence, if, and while.",
+  "blurb": "Co-proved the 1966 Böhm-Jacopini theorem that any program needs only sequence, if, and while.",
   "cited_in": [
    "software"
   ],
@@ -11476,7 +11515,7 @@
    1950,
    1990
   ],
-  "blurb": "Co-proved the 1966 B\u00f6hm-Jacopini theorem on structured control flow.",
+  "blurb": "Co-proved the 1966 Böhm-Jacopini theorem on structured control flow.",
   "cited_in": [
    "software"
   ],
@@ -12736,7 +12775,7 @@
   ],
   "blurb": "Physicist at the National Bureau of Standards whose 1957 drum-scan of his son's photo was the first image ever processed by a computer.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "img_kirsch_baby"
@@ -12757,7 +12796,8 @@
   ],
   "blurb": "Russell Kirsch's drum scanner digitised a photo of his three-month-old son into a 176x176 array processed on the NBS SEAC computer.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "nilsson1984qai"
@@ -12778,7 +12818,7 @@
   ],
   "blurb": "US federal laboratory (today NIST), home of Russell Kirsch's 1957 drum scanner and the first image ever processed by a computer.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "known"

@@ -13,7 +13,7 @@
   ],
   "blurb": "Father of dynamical meteorology; with von Neumann, first numerical weather forecast on the ENIAC, 1950.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "charney1947longwaves",
@@ -38,7 +38,7 @@
   ],
   "blurb": "Liquefied helium (1908) and discovered superconductivity (1911); Nobel 1913 — the root of cryogenic computing.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "onnes1913nobel"
@@ -60,7 +60,7 @@
   ],
   "blurb": "Soviet Antarctic base; site of the deepest ice core (3,769 m, ~420,000 years) and the -89 C Earth record.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [],
   "conf": "stated",
@@ -80,7 +80,7 @@
   ],
   "blurb": "Antarctic plateau site of the EPICA core — ~800,000 years of trapped CO2 and temperature.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "icecorewiki"
@@ -102,7 +102,8 @@
   ],
   "blurb": "Greenland Summit ice-core site (GRIP/NEEM); a ~100,000-year climate record.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii"
   ],
   "bibkeys": [
    "icecorewiki"
@@ -124,7 +125,7 @@
   ],
   "blurb": "Runs the world's gold-standard numerical weather model, HRES — the system GraphCast beat.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii"
   ],
   "bibkeys": [
    "ecmwf"
@@ -146,7 +147,9 @@
   ],
   "blurb": "Charney, Fjortoft and von Neumann's 5-day forecast on the ENIAC — the first digital weather prediction.",
   "cited_in": [
-   "untold_history"
+   "untold_history_i",
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "eniac1946"
@@ -168,7 +171,7 @@
   ],
   "blurb": "Google's 53-qubit Sycamore processor — the first claimed quantum supremacy, run at millikelvin temperatures.",
   "cited_in": [
-   "untold_history"
+   "untold_history_iii"
   ],
   "bibkeys": [
    "arute2019quantum"
@@ -190,7 +193,8 @@
   ],
   "blurb": "DeepMind's graph-network weather forecaster; beat ECMWF's HRES in under a minute on one TPU.",
   "cited_in": [
-   "untold_history"
+   "untold_history_ii",
+   "untold_history_iii"
   ],
   "bibkeys": [
    "lam2023graphcast",
