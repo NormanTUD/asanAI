@@ -734,7 +734,7 @@ h2 { margin: 0 0 10px; font-size: 17px; letter-spacing: -.01em; color: var(--hea
 .admin-nav { display: flex; gap: 6px; overflow-x: auto; margin: 0 0 16px; padding: 0 0 6px; border-bottom: 1px solid var(--border); }
 .admin-nav a { flex: none; padding: 7px 12px; border: 1px solid transparent; border-radius: 999px; color: var(--muted); font-size: 12px; font-weight: 600; text-decoration: none; white-space: nowrap; }
 .admin-nav a:hover { color: var(--text); background: var(--surface); text-decoration: none; }
-.admin-nav a.active { color: var(--heading); background: var(--surface); border-color: var(--border); box-shadow: var(--shadow); }
+.admin-nav a.active { color: #1a1207; background: var(--accent); border-color: transparent; box-shadow: none; }
 .tabs { display: flex; gap: 6px; overflow-x: auto; margin: 0 0 18px; padding: 0 0 7px; border-bottom: 1px solid var(--border); scrollbar-width: thin; }
 .tabs a { flex: none; padding: 7px 11px; border: 1px solid transparent; border-radius: 999px; color: var(--muted); font: 600 12px system-ui, sans-serif; white-space: nowrap; }
 .tabs a:hover { color: var(--text); background: var(--surface); text-decoration: none; }
@@ -959,9 +959,8 @@ html[data-embed="1"] .btn.primary {
 	</header>
 
 	<nav class="admin-nav" aria-label="Admin areas">
-		<a href="stats">Analytics</a>
-		<a class="active" href="feedback">Reader feedback</a>
-		<a href="index">Course</a>
+		<a href="stats?view=analytics">Analytics</a>
+		<a class="active" href="stats?view=feedback">Reader feedback</a>
 	</nav>
 
 	<?php if ($flash !== ''): ?><div class="flash <?php echo $flashType === 'error' ? 'error' : ''; ?>"><?php echo feedback_h($flash); ?></div><?php endif; ?>

@@ -2356,10 +2356,11 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .admin-nav { display: flex; gap: 6px; overflow-x: auto; margin: 0 0 16px; padding: 0 0 6px; border-bottom: 1px solid var(--line); }
 .admin-nav a { flex: none; padding: 7px 12px; border: 1px solid transparent; border-radius: 999px; color: var(--muted); font-size: 12px; font-weight: 600; text-decoration: none; white-space: nowrap; }
 .admin-nav a:hover { color: var(--text); background: var(--panel); text-decoration: none; }
-.admin-nav a.active { color: var(--text); background: var(--panel); border-color: var(--line); }
+.admin-nav a.active { color: #1a1207; background: var(--accent); border-color: transparent; }
 #admin-title-analytics[hidden], #admin-title-feedback[hidden],
 #admin-sub-analytics[hidden], #admin-sub-feedback[hidden] { display: none !important; }
-body.feedback-view .analytics-only { display: none !important; }
+body.feedback-view .analytics-alert { display: none !important; }
+body.feedback-view .analytics-only-inline { visibility: hidden !important; pointer-events: none; }
 .feedback-bridge { margin: 14px 0 0; }
 .feedback-bridge .fb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin: 10px 0 12px; }
 .feedback-bridge .fb-stat { padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel2); }
@@ -2799,7 +2800,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 		<?php endif; ?>
 	</div>
 <?php else: ?>
-	<div class="analytics-only"><?php echo mn_analytics_alert_html(); ?></div>
+	<div class="analytics-alert"><?php echo mn_analytics_alert_html(); ?></div>
 	<header class="top">
 		<div>
 			<h1><a class="brand" href="index"><span id="admin-title-analytics"<?php echo $view === 'feedback' ? ' hidden' : ''; ?>>Blog-Analytics</span><span id="admin-title-feedback"<?php echo $view === 'analytics' ? ' hidden' : ''; ?>>Reader feedback</span></a></h1>
@@ -2810,8 +2811,8 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 		</div>
 		<div class="top-actions">
 			<button type="button" class="btn" id="theme-toggle">Light</button>
-			<button type="button" class="btn analytics-only" id="present-toggle">Present</button>
-			<form method="post" action="" class="inline analytics-only">
+			<button type="button" class="btn analytics-only-inline" id="present-toggle">Present</button>
+			<form method="post" action="" class="inline">
 				<input type="hidden" name="action" value="admin_cookie">
 				<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">
 				<label class="switch"><input type="checkbox" name="exclude_self" value="1"<?php echo $excludeSelf ? ' checked' : ''; ?> onchange="this.form.submit()"> Exclude my own visits</label>
@@ -2828,7 +2829,6 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 	<nav class="admin-nav" aria-label="Admin areas">
 		<a class="<?php echo $view === 'analytics' ? 'active' : ''; ?>" href="stats?view=analytics" data-admin-view="analytics">Analytics</a>
 		<a class="<?php echo $view === 'feedback' ? 'active' : ''; ?>" href="stats?view=feedback" data-admin-view="feedback">Reader feedback</a>
-		<a href="index">Course</a>
 	</nav>
 
 	<div class="feedback-embed" id="feedback-embed"<?php echo $view === 'feedback' ? '' : ' hidden'; ?>>
@@ -5636,6 +5636,8 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		applyChartTheme();
 	}
 
+	window.__mnRenderStatsCharts = renderCharts;
+
 	function applyChartTheme() {
 		var light = document.body.classList.contains('light');
 		var t = light ? {
@@ -5840,7 +5842,10 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 			if (feedback) {
 				requestAnimationFrame(sizeFeedbackFrame);
 			} else {
-				setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 30);
+				setTimeout(function () {
+					if (window.__mnRenderStatsCharts) window.__mnRenderStatsCharts();
+					window.dispatchEvent(new Event('resize'));
+				}, 60);
 			}
 		}
 		window.addEventListener('resize', function () {
