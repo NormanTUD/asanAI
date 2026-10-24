@@ -647,6 +647,10 @@ if ($authed) {
 				'bug' => $chartPageSeries['bug'],
 			],
 		];
+		$feedbackChartTotal = 0;
+		foreach ($feedbackChartData['series'] as $chartSeriesRow) {
+			$feedbackChartTotal += array_sum($chartSeriesRow['data']);
+		}
 	}
 }
 
@@ -912,6 +916,24 @@ html[data-embed="1"] .tabs a.active {
 html[data-embed="1"] .btn.primary {
 	color: #1a1207;
 }
+html[data-embed="1"] .card {
+	padding: 16px;
+	box-shadow: none;
+}
+html[data-embed="1"] .card h2 {
+	font-size: 14px;
+	letter-spacing: .01em;
+	margin: 0 0 12px;
+}
+html[data-embed="1"] .stats {
+	grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+	gap: 12px;
+	margin: 0 0 18px;
+}
+html[data-embed="1"] .table-wrap,
+html[data-embed="1"] .item {
+	box-shadow: none;
+}
 
 @media (max-width: 720px) {
 	.page { padding: 18px 12px 44px; }
@@ -979,19 +1001,25 @@ html[data-embed="1"] .btn.primary {
 		<?php endforeach; ?>
 	</nav>
 
+	<?php if ($summary['total'] > 0): ?>
 	<div class="stats">
 		<div class="stat"><b><?php echo feedback_h(number_format($summary['total'])); ?></b><span>In view</span></div>
-		<div class="stat"><b><?php echo feedback_h(number_format($summary['with_comment'])); ?></b><span>With comment</span></div>
-		<div class="stat"><b><?php echo feedback_h(number_format($summary['bugs'])); ?></b><span>Bugs</span></div>
-		<div class="stat"><b><?php echo feedback_h(number_format($summary['accepted'])); ?></b><span>Accepted</span></div>
-		<div class="stat"><b><?php echo feedback_h(number_format($summary['done'])); ?></b><span>Done</span></div>
-		<div class="stat"><b><?php echo feedback_h(number_format($summary['email'])); ?></b><span>Email left</span></div>
-		<?php foreach ($reactionCounts as $key => $count): $meta = $reactions[$key]; ?>
+		<?php if ($summary['with_comment'] > 0): ?><div class="stat"><b><?php echo feedback_h(number_format($summary['with_comment'])); ?></b><span>With comment</span></div><?php endif; ?>
+		<?php if ($summary['bugs'] > 0): ?><div class="stat"><b><?php echo feedback_h(number_format($summary['bugs'])); ?></b><span>Bugs</span></div><?php endif; ?>
+		<?php if ($summary['accepted'] > 0): ?><div class="stat"><b><?php echo feedback_h(number_format($summary['accepted'])); ?></b><span>Accepted</span></div><?php endif; ?>
+		<?php if ($summary['done'] > 0): ?><div class="stat"><b><?php echo feedback_h(number_format($summary['done'])); ?></b><span>Done</span></div><?php endif; ?>
+		<?php if ($summary['email'] > 0): ?><div class="stat"><b><?php echo feedback_h(number_format($summary['email'])); ?></b><span>Email left</span></div><?php endif; ?>
+		<?php foreach ($reactionCounts as $key => $count): if ($count <= 0) continue; $meta = $reactions[$key]; ?>
 			<div class="stat"><b><?php echo feedback_h(number_format($count)); ?></b><span><?php echo feedback_h($meta['icon'] . ' ' . $meta['label']); ?></span></div>
 		<?php endforeach; ?>
 	</div>
+	<?php endif; ?>
 
 	<?php if ($tab === 'overview'): ?>
+		<?php if ($summary['total'] === 0): ?>
+			<div class="empty">No reader feedback matches these filters yet.</div>
+		<?php else: ?>
+		<?php if ($feedbackChartTotal > 0): ?>
 		<div class="feedback-charts">
 		<div class="card wide">
 			<h2>Feedback over time <span class="hint"><?php echo feedback_h($feedbackChartData['rangeLabel']); ?></span></h2>
@@ -1007,11 +1035,12 @@ html[data-embed="1"] .btn.primary {
 		</div>
 	</div>
 	<script type="application/json" id="mn-feedback-chart-data"><?php echo json_encode($feedbackChartData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?></script>
+		<?php endif; ?>
 
 	<div class="overview-grid">
+			<?php if ($latestFeedback): ?>
 			<div class="card wide">
 				<h2>Latest suggestions &amp; bugs</h2>
-				<?php if (!$latestFeedback): ?><p class="muted">No feedback yet.</p><?php else: ?>
 				<div class="timeline">
 					<?php foreach ($latestFeedback as $l): ?>
 						<?php
@@ -1030,11 +1059,11 @@ html[data-embed="1"] .btn.primary {
 						</a>
 					<?php endforeach; ?>
 				</div>
-				<?php endif; ?>
 			</div>
+			<?php endif; ?>
+			<?php if ($recentPages): ?>
 			<div class="card">
 				<h2>Most feedback</h2>
-				<?php if (!$recentPages): ?><p class="muted">No pages yet.</p><?php else: ?>
 				<div class="leader">
 					<?php foreach ($recentPages as $p): ?>
 						<a class="leader-row" href="?<?php echo feedback_h(feedback_query(['tab' => 'all', 'path' => $p['path'], 'page' => 1, 'status' => ''])); ?>">
@@ -1044,11 +1073,11 @@ html[data-embed="1"] .btn.primary {
 						</a>
 					<?php endforeach; ?>
 				</div>
-				<?php endif; ?>
 			</div>
+			<?php endif; ?>
+			<?php if ($attentionPages): ?>
 			<div class="card">
 				<h2>Needs attention</h2>
-				<?php if (!$attentionPages): ?><p class="muted">Nothing flagged as unhelpful or confusing in this view.</p><?php else: ?>
 				<div class="leader">
 					<?php foreach ($attentionPages as $p): ?>
 						<a class="leader-row" href="?<?php echo feedback_h(feedback_query(['tab' => 'all', 'path' => $p['path'], 'page' => 1, 'status' => ''])); ?>">
@@ -1058,11 +1087,11 @@ html[data-embed="1"] .btn.primary {
 						</a>
 					<?php endforeach; ?>
 				</div>
-				<?php endif; ?>
 			</div>
+			<?php endif; ?>
+			<?php if ($helpfulPages): ?>
 			<div class="card">
 				<h2>Most helpful</h2>
-				<?php if (!$helpfulPages): ?><p class="muted">No “helpful” reactions in this view yet.</p><?php else: ?>
 				<div class="leader">
 					<?php foreach ($helpfulPages as $p): ?>
 						<a class="leader-row" href="?<?php echo feedback_h(feedback_query(['tab' => 'all', 'path' => $p['path'], 'page' => 1, 'status' => ''])); ?>">
@@ -1072,11 +1101,11 @@ html[data-embed="1"] .btn.primary {
 						</a>
 					<?php endforeach; ?>
 				</div>
-				<?php endif; ?>
 			</div>
+			<?php endif; ?>
+			<?php if ($activity): ?>
 			<div class="card">
 				<h2>Recent movements</h2>
-				<?php if (!$activity): ?><p class="muted">No activity yet.</p><?php else: ?>
 				<div class="timeline">
 					<?php foreach ($activity as $a): ?>
 						<div class="timeline-row">
@@ -1086,11 +1115,11 @@ html[data-embed="1"] .btn.primary {
 						</div>
 					<?php endforeach; ?>
 				</div>
-				<?php endif; ?>
 			</div>
+			<?php endif; ?>
+			<?php if ($pageStats): ?>
 			<div class="card wide">
 				<h2>Helpful vs. not helpful, per page</h2>
-				<?php if (!$pageStats): ?><p class="muted">No feedback yet.</p><?php else: ?>
 				<div class="table-wrap">
 					<table class="stats-table">
 						<thead><tr><th>Page</th><th>Total</th><th>👍</th><th>👎</th><th>👍 rate</th><th>💡</th><th>❓</th><th>🐞</th><th>Comments</th></tr></thead>
@@ -1112,9 +1141,10 @@ html[data-embed="1"] .btn.primary {
 						</tbody>
 					</table>
 				</div>
-				<?php endif; ?>
 			</div>
+			<?php endif; ?>
 		</div>
+		<?php endif; ?>
 	<?php elseif ($tab === 'pages'): ?>
 		<div class="toolbar">
 			<form method="get" action="">

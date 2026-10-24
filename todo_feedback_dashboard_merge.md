@@ -34,6 +34,13 @@ in-session todo list carries the same high-level items.
 - Bot clicks go to Analytics Tech tab and a bot-reason filter link lists exact bots (Googlebot, Bingbot, …).
 - Dedicated External referrers list (host/views/share) with filter links.
 - Course link removed from the admin nav.
+- Admin title is static (Blog-Analytics) and its brand links to stats; it no longer changes when switching Analytics/Feedback.
+- Empty feedback cards, charts, KPI boxes and overview sections are hidden; a single empty state is shown when a view has no data.
+- Analytics empty cards are hidden on load; the feedback bridge only appears when feedback exists.
+- Bot links now open Analytics → Tech, list exact bot reasons and add bot_reason filter links.
+- External referrers get their own host/views/share list.
+- Whole-page scrolling and dynamically sized feedback panel; no inner iframe scrollbar.
+- Feedback palette/card/heading/tab styles aligned with the analytics dashboard.
 
 ---
 

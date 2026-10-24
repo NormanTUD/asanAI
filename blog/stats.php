@@ -2370,8 +2370,6 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .admin-nav a { flex: none; padding: 7px 12px; border: 1px solid transparent; border-radius: 999px; color: var(--muted); font-size: 12px; font-weight: 600; text-decoration: none; white-space: nowrap; }
 .admin-nav a:hover { color: var(--text); background: var(--panel); text-decoration: none; }
 .admin-nav a.active { color: #1a1207; background: var(--accent); border-color: transparent; }
-#admin-title-analytics[hidden], #admin-title-feedback[hidden],
-#admin-sub-analytics[hidden], #admin-sub-feedback[hidden] { display: none !important; }
 body.feedback-view .analytics-alert { display: none !important; }
 body.feedback-view .analytics-only-inline { visibility: hidden !important; pointer-events: none; }
 .feedback-bridge { margin: 14px 0 0; }
@@ -2809,11 +2807,8 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 	<div class="analytics-alert"><?php echo mn_analytics_alert_html(); ?></div>
 	<header class="top">
 		<div>
-			<h1><a class="brand" href="index"><span id="admin-title-analytics"<?php echo $view === 'feedback' ? ' hidden' : ''; ?>>Blog-Analytics</span><span id="admin-title-feedback"<?php echo $view === 'analytics' ? ' hidden' : ''; ?>>Reader feedback</span></a></h1>
-			<p class="sub">
-				<span id="admin-sub-analytics"<?php echo $view === 'feedback' ? ' hidden' : ''; ?>>Anonymous · no IPs · no visitor cookies · UA read transiently · as of <?php echo stats_h($nowLabel); ?> (Berlin) <?php if ($analyticsKillSwitch): ?><span class="badge" style="margin-left:8px;">analytics disabled</span><?php else: $healthIssues = mn_analytics_health_issues(); $healthOk = $healthIssues === []; ?><span class="badge <?php echo $healthOk ? 'ok' : 'warn'; ?>" style="margin-left:8px;"><?php echo $healthOk ? 'analytics healthy' : count($healthIssues) . ' issue(s)'; ?></span><?php endif; ?></span>
-				<span id="admin-sub-feedback"<?php echo $view === 'analytics' ? ' hidden' : ''; ?>>Reader suggestions, reactions, comments and bug reports · as of <?php echo stats_h($nowLabel); ?> (Berlin)</span>
-			</p>
+			<h1><a class="brand" href="stats">Blog-Analytics</a></h1>
+			<p class="sub">Anonymous · no IPs · no visitor cookies · UA read transiently · as of <?php echo stats_h($nowLabel); ?> (Berlin) <?php if ($analyticsKillSwitch): ?><span class="badge" style="margin-left:8px;">analytics disabled</span><?php else: $healthIssues = mn_analytics_health_issues(); $healthOk = $healthIssues === []; ?><span class="badge <?php echo $healthOk ? 'ok' : 'warn'; ?>" style="margin-left:8px;"><?php echo $healthOk ? 'analytics healthy' : count($healthIssues) . ' issue(s)'; ?></span><?php endif; ?></p>
 		</div>
 		<div class="top-actions">
 			<button type="button" class="btn" id="theme-toggle">Light</button>
@@ -3075,6 +3070,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			</a>
 		</div>
 
+		<?php if ($feedbackSummary['total'] > 0): ?>
 		<div class="card feedback-bridge" data-tab-group="overview" data-slide="1">
 			<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;">
 				<div><h2 style="margin:0">Reader feedback</h2><p class="ref" style="margin:3px 0 0;">What readers flag in the lessons — comments, insights, confusion and bugs.</p></div>
@@ -3101,8 +3097,9 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					</a>
 				<?php endforeach; ?>
 			</div>
-			<?php else: ?><p class="ref" style="margin:0">No reader feedback yet.</p><?php endif; ?>
+			<?php endif; ?>
 		</div>
+		<?php endif; ?>
 
 		<div class="grid-kpi" id="overview" data-tab-group="overview" data-slide="1">
 			<div class="kpi">
@@ -5855,15 +5852,6 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 			links.forEach(function (link) {
 				link.classList.toggle('active', link.getAttribute('data-admin-view') === view);
 			});
-			['admin-title-analytics', 'admin-sub-analytics'].forEach(function (id) {
-				var node = document.getElementById(id);
-				if (node) node.hidden = feedback;
-			});
-			['admin-title-feedback', 'admin-sub-feedback'].forEach(function (id) {
-				var node = document.getElementById(id);
-				if (node) node.hidden = !feedback;
-			});
-			document.title = feedback ? 'Reader feedback · Blog-Analytics' : 'Blog-Analytics';
 			if (feedback && frame && !frame.getAttribute('src')) {
 				frame.src = frame.getAttribute('data-src') || '';
 			}
@@ -6390,6 +6378,24 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 })();
 </script>
 <?php endif; ?>
+<script>
+(function () {
+	'use strict';
+	function hideEmptyCards() {
+		document.querySelectorAll('.card').forEach(function (card) {
+			var empty = card.querySelector('.empty');
+			if (!empty || !empty.textContent.trim()) return;
+			if (card.querySelector('canvas, svg, tbody tr')) return;
+			card.style.display = 'none';
+		});
+	}
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', hideEmptyCards);
+	} else {
+		hideEmptyCards();
+	}
+})();
+</script>
 </body>
 </html>
 
