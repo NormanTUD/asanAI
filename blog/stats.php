@@ -411,6 +411,34 @@ function stats_sparkline(array $values, int $width = 96, int $height = 24): stri
 	return '<svg class="spark" width="' . $width . '" height="' . $height . '" viewBox="0 0 ' . $width . ' ' . $height . '" role="img" aria-label="Page trend over the selected period"><polyline points="' . implode(' ', $points) . '" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 }
 
+function stats_presentation_line_svg(array $values, int $width = 1000, int $height = 260): string {
+	$count = count($values);
+	if ($count === 0) {
+		return '';
+	}
+	$max = max($values);
+	if ($max <= 0) {
+		return '';
+	}
+	$points = [];
+	foreach ($values as $index => $value) {
+		$x = $count > 1 ? ($index / ($count - 1)) * $width : $width / 2;
+		$y = $height - 12 - (((int)$value / $max) * ($height - 34));
+		$points[] = number_format((float)$x, 1, '.', '') . ',' . number_format((float)$y, 1, '.', '');
+	}
+	$area = 'M0,' . $height . ' L' . implode(' L', $points) . ' L' . $width . ',' . $height . ' Z';
+	$grid = '';
+	foreach ([0.25, 0.5, 0.75] as $fraction) {
+		$y = number_format($height - 12 - ($fraction * ($height - 34)), 1, '.', '');
+		$grid .= '<line x1="0" y1="' . $y . '" x2="' . $width . '" y2="' . $y . '" stroke="currentColor" stroke-opacity=".12" stroke-width="1"/>';
+	}
+	return '<svg viewBox="0 0 ' . $width . ' ' . $height . '" preserveAspectRatio="none" role="img" aria-label="Views over time">'
+		. $grid
+		. '<path d="' . $area . '" fill="currentColor" opacity=".12"/>'
+		. '<polyline points="' . implode(' ', $points) . '" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>'
+		. '</svg>';
+}
+
 function stats_graph_has_path(array $adj, string $from, string $to): bool {
 	if ($from === $to) {
 		return true;
@@ -945,6 +973,8 @@ $raw = [];
 $feedbackSummary = ['total' => 0, 'with_comment' => 0, 'bugs' => 0, 'accepted' => 0, 'done' => 0];
 $feedbackReactionCounts = [];
 $feedbackLatest = [];
+$presentationFeedbackDaily = ['labels' => [], 'series' => []];
+$presentationFeedbackPages = [];
 $pageCount = 1;
 $sourceOptions = [];
 $dbPath = mn_analytics_db_path();
@@ -2294,11 +2324,54 @@ if ($authed) {
 			$feedbackLatest = stats_all($pdo, "SELECT f.id, f.ts, f.path, f.reaction, f.comment, f.status, s.selected_text
 				FROM block_feedback f
 				LEFT JOIN feedback_selections s ON s.feedback_id = f.id
-				ORDER BY f.ts DESC, f.id DESC LIMIT 4", []);
+				ORDER BY f.ts DESC, f.id DESC LIMIT 8", []);
+
+			$feedbackStart = (new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin')))->setTime(0, 0, 0)->modify('-29 days');
+			$feedbackDailyRows = stats_all($pdo, "SELECT day, reaction, COUNT(*) AS n
+				FROM block_feedback WHERE day >= ? GROUP BY day, reaction", [$feedbackStart->format('Y-m-d')]);
+			$feedbackDailyMap = [];
+			foreach ($feedbackDailyRows as $feedbackDailyRow) {
+				$feedbackDailyMap[(string)$feedbackDailyRow['day']][(string)$feedbackDailyRow['reaction']] = (int)$feedbackDailyRow['n'];
+			}
+			$presentationFeedbackDaily = ['labels' => [], 'series' => []];
+			foreach (mn_feedback_reactions() as $feedbackKey => $feedbackMeta) {
+				$presentationFeedbackDaily['series'][$feedbackKey] = [
+					'label' => $feedbackMeta['label'],
+					'icon' => $feedbackMeta['icon'],
+					'data' => [],
+				];
+			}
+			for ($feedbackIndex = 0; $feedbackIndex < 30; $feedbackIndex++) {
+				$feedbackDay = $feedbackStart->modify('+' . $feedbackIndex . ' days');
+				$feedbackKey = $feedbackDay->format('Y-m-d');
+				$presentationFeedbackDaily['labels'][] = $feedbackDay->format('M j');
+				foreach ($presentationFeedbackDaily['series'] as $feedbackSeriesKey => $feedbackSeriesRow) {
+					$presentationFeedbackDaily['series'][$feedbackSeriesKey]['data'][] = (int)($feedbackDailyMap[$feedbackKey][$feedbackSeriesKey] ?? 0);
+				}
+			}
+
+			$presentationFeedbackPages = stats_all($pdo, "SELECT path,
+				COUNT(*) AS total,
+				SUM(CASE WHEN reaction = 'helpful' THEN 1 ELSE 0 END) AS helpful,
+				SUM(CASE WHEN reaction = 'unhelpful' THEN 1 ELSE 0 END) AS unhelpful,
+				SUM(CASE WHEN reaction = 'confusing' THEN 1 ELSE 0 END) AS confusing,
+				SUM(CASE WHEN reaction = 'bug' THEN 1 ELSE 0 END) AS bug,
+				SUM(CASE WHEN comment <> '' THEN 1 ELSE 0 END) AS comments
+				FROM block_feedback
+				GROUP BY path
+				ORDER BY (SUM(CASE WHEN reaction = 'unhelpful' THEN 1 ELSE 0 END) + SUM(CASE WHEN reaction = 'confusing' THEN 1 ELSE 0 END) + SUM(CASE WHEN reaction = 'bug' THEN 1 ELSE 0 END)) DESC, total DESC
+				LIMIT 8", []);
+			foreach ($presentationFeedbackPages as &$presentationFeedbackPage) {
+				$presentationFeedbackPage['title'] = $titles[(string)$presentationFeedbackPage['path']] ?? (string)$presentationFeedbackPage['path'];
+				$presentationFeedbackPage['negative'] = (int)$presentationFeedbackPage['unhelpful'] + (int)$presentationFeedbackPage['confusing'] + (int)$presentationFeedbackPage['bug'];
+			}
+			unset($presentationFeedbackPage);
 		} catch (Throwable $e) {
 			$feedbackSummary = ['total' => 0, 'with_comment' => 0, 'bugs' => 0, 'accepted' => 0, 'done' => 0];
 			$feedbackReactionCounts = [];
 			$feedbackLatest = [];
+			$presentationFeedbackDaily = ['labels' => [], 'series' => []];
+			$presentationFeedbackPages = [];
 		}
 	}
 }
@@ -2775,6 +2848,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 	.chart-export { opacity: 1; }
 }
 </style>
+<link rel="stylesheet" href="admin_presentation.css?v=<?php echo (int)@filemtime(__DIR__ . '/admin_presentation.css'); ?>">
 </head>
 <body class="<?php echo $view === 'feedback' ? 'feedback-view' : ''; ?>">
 <div class="page<?php echo $authed ? '' : ' login-page'; ?>" id="top">
@@ -2819,7 +2893,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 		</div>
 		<div class="top-actions">
 			<button type="button" class="btn" id="theme-toggle">Light</button>
-			<button type="button" class="btn analytics-only-inline" id="present-toggle">Present</button>
+			<button type="button" class="btn" id="present-toggle">Present</button>
 			<form method="post" action="" class="inline">
 				<input type="hidden" name="action" value="admin_cookie">
 				<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">
@@ -4354,12 +4428,6 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 			<h3 id="saved-views-title">Saved views</h3>
 			<div id="saved-views-list"></div>
 		</dialog>
-<div class="present-bar" id="present-bar" hidden>
-			<button type="button" class="btn" data-present-prev aria-label="Previous slide">←</button>
-			<span id="present-label">Traffic &amp; rhythm</span>
-			<button type="button" class="btn" data-present-next aria-label="Next slide">→</button>
-			<button type="button" class="btn" data-present-exit>Exit presentation</button>
-		</div>
 <div class="footer"><a href="#top">Back to top ↑</a> · Anonymous visitor analytics · no IPs · no visitor cookies · no persistent IDs · UA read transiently · DNT/GPC respected</div>
 	<?php endif; ?>
 
@@ -4367,6 +4435,315 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 </div><!-- /#analytics-view -->
 </div>
 <?php if ($authed): ?>
+<?php
+$presentationReactions = mn_feedback_reactions();
+$presentationReactionColors = [
+	'helpful' => 'var(--emerald)',
+	'unhelpful' => 'var(--rose)',
+	'insight' => 'var(--coral)',
+	'confusing' => 'var(--sky)',
+	'bug' => '#c084fc',
+];
+$presentationFeedbackTotal = array_sum($feedbackReactionCounts);
+$presentationHasFeedback = $presentationFeedbackTotal > 0;
+$presentationHasAnalytics = $views > 0;
+$presentationTrafficValues = array_values(array_map('intval', array_slice($seriesCurrent, -30)));
+$presentationTrafficLabels = array_values(array_slice($seriesLabels, -30));
+$presentationTrafficSvg = stats_presentation_line_svg($presentationTrafficValues);
+$presentationTrafficMax = $presentationTrafficValues ? max($presentationTrafficValues) : 0;
+$presentationTrafficPeakLabel = '';
+if ($presentationTrafficValues) {
+	$presentationTrafficPeakIndex = array_search($presentationTrafficMax, $presentationTrafficValues, true);
+	if ($presentationTrafficPeakIndex !== false && isset($presentationTrafficLabels[$presentationTrafficPeakIndex])) {
+		$presentationTrafficPeakLabel = (string)$presentationTrafficLabels[$presentationTrafficPeakIndex];
+	}
+}
+$presentationTopPages = array_slice($topPages, 0, 8);
+$presentationTopPageMax = 1;
+foreach ($presentationTopPages as $presentationTopPage) {
+	$presentationTopPageMax = max($presentationTopPageMax, (int)$presentationTopPage['views']);
+}
+$presentationExternalReferrers = array_slice($externalReferrers, 0, 8);
+$presentationHasSources = $presentationExternalReferrers !== [] || array_sum($refCounts) > 0;
+$presentationFeedbackTrendTotal = 0;
+$presentationFeedbackDayTotals = [];
+foreach ($presentationFeedbackDaily['labels'] as $presentationDayIndex => $presentationDayLabel) {
+	$presentationDayTotal = 0;
+	foreach ($presentationFeedbackDaily['series'] as $presentationSeries) {
+		$presentationDayTotal += (int)($presentationSeries['data'][$presentationDayIndex] ?? 0);
+	}
+	$presentationFeedbackDayTotals[$presentationDayIndex] = $presentationDayTotal;
+	$presentationFeedbackTrendTotal += $presentationDayTotal;
+}
+$presentationFeedbackTrendMax = $presentationFeedbackDayTotals ? max($presentationFeedbackDayTotals) : 0;
+$presentationMixStops = [];
+if ($presentationFeedbackTotal > 0) {
+	$presentationMixAccum = 0.0;
+	foreach ($presentationReactions as $presentationKey => $presentationMeta) {
+		$presentationCount = (int)($feedbackReactionCounts[$presentationKey] ?? 0);
+		if ($presentationCount <= 0) {
+			continue;
+		}
+		$presentationStart = $presentationMixAccum;
+		$presentationMixAccum += 100 * $presentationCount / $presentationFeedbackTotal;
+		$presentationMixStops[] = $presentationReactionColors[$presentationKey] . ' ' . number_format($presentationStart, 2, '.', '') . '% ' . number_format($presentationMixAccum, 2, '.', '') . '%';
+	}
+}
+$presentationInsights = [];
+foreach ($feedbackLatest as $presentationLatest) {
+	$presentationText = trim((string)($presentationLatest['comment'] ?? ''));
+	if ($presentationText === '') {
+		$presentationText = trim((string)($presentationLatest['selected_text'] ?? ''));
+	}
+	$presentationText = preg_replace('/\s+/u', ' ', $presentationText) ?? '';
+	if ($presentationText === '') {
+		continue;
+	}
+	$presentationInsights[] = [
+		'text' => mb_substr($presentationText, 0, 320, 'UTF-8'),
+		'reaction' => (string)($presentationLatest['reaction'] ?? ''),
+		'path' => (string)($presentationLatest['path'] ?? ''),
+		'ts' => (int)($presentationLatest['ts'] ?? 0),
+	];
+	if (count($presentationInsights) >= 6) {
+		break;
+	}
+}
+$presentationTakeaways = [];
+if ($presentationFeedbackPages) {
+	$presentationNegativePage = $presentationFeedbackPages[0];
+	if ((int)$presentationNegativePage['negative'] > 0) {
+		$presentationTakeaways[] = [
+			'label' => 'Needs attention',
+			'text' => $presentationNegativePage['title'] . ' has ' . (int)$presentationNegativePage['negative'] . ' unhelpful, confusing or bug reactions.',
+		];
+	}
+	$presentationHelpfulPage = $presentationFeedbackPages[0];
+	foreach ($presentationFeedbackPages as $presentationPageRow) {
+		if ((int)$presentationPageRow['helpful'] > (int)$presentationHelpfulPage['helpful']) {
+			$presentationHelpfulPage = $presentationPageRow;
+		}
+	}
+	if ((int)$presentationHelpfulPage['helpful'] > 0) {
+		$presentationTakeaways[] = [
+			'label' => 'Working well',
+			'text' => $presentationHelpfulPage['title'] . ' has ' . (int)$presentationHelpfulPage['helpful'] . ' “helpful” reactions.',
+		];
+	}
+}
+if ((int)$feedbackSummary['bugs'] > 0) {
+	$presentationTakeaways[] = [
+		'label' => 'Bugs',
+		'text' => (int)$feedbackSummary['bugs'] . ' reader bug reports are waiting in the Bugs tab.',
+	];
+}
+if ($avgDuration !== null) {
+	$presentationTakeaways[] = [
+		'label' => 'Reading time',
+		'text' => 'Readers spend an average of ' . mn_analytics_format_duration((int)round($avgDuration)) . ' on a page.',
+	];
+}
+if ($presentationExternalReferrers) {
+	$presentationTakeaways[] = [
+		'label' => 'Discovery',
+		'text' => 'Top external referrer: ' . ($presentationExternalReferrers[0]['ref_host'] !== '' ? $presentationExternalReferrers[0]['ref_host'] : $presentationExternalReferrers[0]['ref_source']) . ' (' . mn_analytics_format_number((int)$presentationExternalReferrers[0]['views']) . ' views).',
+	];
+}
+$presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
+?>
+<div id="mn-present" class="mn-pres" hidden aria-hidden="true" tabindex="-1" role="dialog" aria-label="Analytics and reader feedback presentation">
+	<div class="mn-pres-progress"></div>
+	<div class="mn-pres-stage">
+		<section class="mn-pres-slide" data-title="Title">
+			<div class="mn-pres-kicker">asanAI · From Nothing to ChatGPT</div>
+			<h1>What readers do — and what they tell us</h1>
+			<p class="mn-pres-lead">Live course analytics and reader feedback: reach, reading time, discovery, reactions, and the ideas that should shape the next revision.</p>
+			<div class="mn-pres-meta"><?php echo stats_h($nowLabel); ?> · Berlin · anonymous, no visitor profiles</div>
+			<div class="mn-pres-hero-stats">
+				<div class="mn-pres-stat"><b><?php echo stats_h(mn_analytics_format_number($views)); ?></b><span>views</span></div>
+				<div class="mn-pres-stat"><b><?php echo stats_h(mn_analytics_format_number($entries)); ?></b><span>estimated visits</span></div>
+				<div class="mn-pres-stat"><b><?php echo stats_h(mn_analytics_format_number($presentationFeedbackTotal)); ?></b><span>reader reactions</span></div>
+			</div>
+		</section>
+
+		<?php if ($presentationHasAnalytics): ?>
+		<section class="mn-pres-slide" data-title="Audience">
+			<h2>Audience <small>· selected period</small></h2>
+			<div class="mn-pres-kpis">
+				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number($views)); ?></b><span>views</span><small><?php echo stats_h(number_format($viewsPerDay, 1, '.', ',')); ?> per day</small></div>
+				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number($entries)); ?></b><span>estimated visits</span><small><?php echo stats_h(number_format($entryShare, 1, '.', ',')); ?> % of views</small></div>
+				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number($todayViews)); ?></b><span>views today</span><small><?php echo stats_h($todayDeltaHtml); ?></small></div>
+				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_duration($avgDuration !== null ? (int)round($avgDuration) : null)); ?></b><span>average time on page</span><small>median <?php echo stats_h(mn_analytics_format_duration($medianDuration)); ?></small></div>
+				<div class="mn-pres-kpi"><b><?php echo $avgScroll !== null ? stats_h(number_format($avgScroll, 0, '.', ',')) . ' %' : '—'; ?></b><span>average scroll depth</span><small><?php echo stats_h(mn_analytics_format_number($scrollKnown)); ?> measurements</small></div>
+				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number($activeDays)); ?></b><span>active days</span><small><?php echo stats_h(mn_analytics_format_number($periodDays)); ?> days in range</small></div>
+				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number($bots)); ?></b><span>bot pageviews</span><small><?php echo stats_h(number_format($views > 0 ? 100 * $bots / $views : 0, 1, '.', ',')); ?> % of traffic</small></div>
+			</div>
+		</section>
+		<?php endif; ?>
+
+		<?php if ($presentationTrafficSvg !== ''): ?>
+		<section class="mn-pres-slide" data-title="Views over time">
+			<h2>Views over time <small>· last 30 days</small></h2>
+			<div class="mn-pres-line"><?php echo $presentationTrafficSvg; ?></div>
+			<div class="mn-pres-axis"><span><?php echo stats_h($presentationTrafficLabels[0] ?? ''); ?></span><span><?php echo stats_h($presentationTrafficLabels[(int)floor((count($presentationTrafficLabels) - 1) / 2)] ?? ''); ?></span><span><?php echo stats_h($presentationTrafficLabels[count($presentationTrafficLabels) - 1] ?? ''); ?></span></div>
+			<p class="mn-pres-lead">Peak day: <?php echo stats_h($presentationTrafficPeakLabel !== '' ? $presentationTrafficPeakLabel : '—'); ?> · <?php echo stats_h(mn_analytics_format_number($presentationTrafficMax)); ?> views.</p>
+		</section>
+		<?php endif; ?>
+
+		<?php if ($presentationTopPages): ?>
+		<section class="mn-pres-slide" data-title="Time on page">
+			<h2>Where readers spend time</h2>
+			<table class="mn-pres-table">
+				<thead><tr><th>Page</th><th>Views</th><th>Avg. time</th><th>Scroll</th><th class="mn-pres-bar-cell">Reach</th></tr></thead>
+				<tbody>
+				<?php foreach ($presentationTopPages as $presentationPage): $presentationPagePath = (string)$presentationPage['path']; $presentationPageViews = (int)$presentationPage['views']; ?>
+					<tr>
+						<td class="mn-pres-page-title"><?php echo stats_h($titles[$presentationPagePath] ?? $presentationPagePath); ?></td>
+						<td><?php echo stats_h(mn_analytics_format_number($presentationPageViews)); ?></td>
+						<td><?php echo stats_h(mn_analytics_format_duration($presentationPage['avg_duration'] !== null ? (int)round((float)$presentationPage['avg_duration']) : null)); ?></td>
+						<td><?php echo $presentationPage['avg_scroll'] !== null ? stats_h(number_format((float)$presentationPage['avg_scroll'], 0, '.', ',')) . ' %' : '—'; ?></td>
+						<td class="mn-pres-bar-cell"><div class="mn-pres-mini-bar"><i style="width: <?php echo stats_h(number_format(100 * $presentationPageViews / max(1, $presentationTopPageMax), 1, '.', '')); ?>%"></i></div></td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+		</section>
+		<?php endif; ?>
+
+		<?php if ($presentationHasSources): ?>
+		<section class="mn-pres-slide" data-title="Discovery">
+			<h2>Where readers come from</h2>
+			<div class="mn-pres-kpis">
+				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)($refCounts['direct'] ?? 0))); ?></b><span>direct</span></div>
+				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)($refCounts['search'] ?? 0))); ?></b><span>search</span></div>
+				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)($refCounts['social'] ?? 0))); ?></b><span>social</span></div>
+				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)($refCounts['external'] ?? 0))); ?></b><span>external sites</span></div>
+			</div>
+			<?php if ($presentationExternalReferrers): ?>
+			<div class="mn-pres-list">
+				<?php foreach ($presentationExternalReferrers as $presentationRef): $presentationRefName = (string)($presentationRef['ref_host'] !== '' ? $presentationRef['ref_host'] : $presentationRef['ref_source']); ?>
+					<div class="mn-pres-list-row"><span><?php echo stats_h($presentationRefName); ?></span><strong><?php echo stats_h(mn_analytics_format_number((int)$presentationRef['views'])); ?></strong></div>
+				<?php endforeach; ?>
+			</div>
+			<?php endif; ?>
+		</section>
+		<?php endif; ?>
+
+		<?php if ($presentationHasFeedback): ?>
+		<section class="mn-pres-slide" data-title="Reader feedback">
+			<h2>Reader feedback <small>· how readers experienced the course</small></h2>
+			<div class="mn-pres-mix">
+				<div class="mn-pres-donut" style="background: conic-gradient(<?php echo stats_h(implode(', ', $presentationMixStops)); ?>)">
+					<div class="mn-pres-donut-center"><b><?php echo stats_h(mn_analytics_format_number($presentationFeedbackTotal)); ?></b><span>reactions</span></div>
+				</div>
+				<div class="mn-pres-legend">
+					<?php foreach ($presentationReactions as $presentationKey => $presentationMeta): $presentationCount = (int)($feedbackReactionCounts[$presentationKey] ?? 0); ?>
+						<div class="mn-pres-legend-row"><span class="mn-pres-dot" style="--dot: <?php echo stats_h($presentationReactionColors[$presentationKey]); ?>"></span><span><?php echo stats_h($presentationMeta['icon'] . ' ' . $presentationMeta['label']); ?></span><b><?php echo stats_h(mn_analytics_format_number($presentationCount)); ?></b></div>
+					<?php endforeach; ?>
+				</div>
+			</div>
+			<div class="mn-pres-kpis">
+				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)$feedbackSummary['with_comment'])); ?></b><span>with comment</span></div>
+				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)$feedbackSummary['bugs'])); ?></b><span>bug reports</span></div>
+				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)$feedbackSummary['accepted'])); ?></b><span>accepted</span></div>
+				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)$feedbackSummary['done'])); ?></b><span>done</span></div>
+			</div>
+		</section>
+		<?php endif; ?>
+
+		<?php if ($presentationFeedbackTrendTotal > 0 && $presentationFeedbackTrendMax > 0): ?>
+		<section class="mn-pres-slide" data-title="Feedback over time">
+			<h2>Feedback over time <small>· last 30 days</small></h2>
+			<div class="mn-pres-stacked-wrap">
+				<div class="mn-pres-stacked">
+					<?php foreach ($presentationFeedbackDaily['labels'] as $presentationDayIndex => $presentationDayLabel): $presentationDayTotal = (int)($presentationFeedbackDayTotals[$presentationDayIndex] ?? 0); ?>
+						<div class="mn-pres-bar-col" style="height: <?php echo stats_h(number_format(100 * $presentationDayTotal / $presentationFeedbackTrendMax, 2, '.', '')); ?>%" title="<?php echo stats_h($presentationDayLabel . ': ' . $presentationDayTotal); ?>">
+							<?php foreach ($presentationFeedbackDaily['series'] as $presentationSeriesKey => $presentationSeries): $presentationSeriesCount = (int)($presentationSeries['data'][$presentationDayIndex] ?? 0); if ($presentationSeriesCount <= 0) continue; ?>
+								<span class="mn-pres-seg" style="flex: <?php echo $presentationSeriesCount; ?> 1 0; --seg: <?php echo stats_h($presentationReactionColors[$presentationSeriesKey]); ?>"></span>
+							<?php endforeach; ?>
+						</div>
+					<?php endforeach; ?>
+				</div>
+				<div class="mn-pres-stacked-axis"><span><?php echo stats_h($presentationFeedbackDaily['labels'][0] ?? ''); ?></span><span><?php echo stats_h($presentationFeedbackDaily['labels'][14] ?? ''); ?></span><span><?php echo stats_h($presentationFeedbackDaily['labels'][29] ?? ''); ?></span></div>
+			</div>
+			<div class="mn-pres-legend">
+				<?php foreach ($presentationReactions as $presentationKey => $presentationMeta): ?>
+					<div class="mn-pres-legend-row"><span class="mn-pres-dot" style="--dot: <?php echo stats_h($presentationReactionColors[$presentationKey]); ?>"></span><span><?php echo stats_h($presentationMeta['icon'] . ' ' . $presentationMeta['label']); ?></span></div>
+				<?php endforeach; ?>
+			</div>
+		</section>
+		<?php endif; ?>
+
+		<?php if ($presentationInsights): ?>
+		<section class="mn-pres-slide" data-title="What readers say">
+			<h2>What readers say</h2>
+			<div class="mn-pres-quotes">
+				<?php foreach ($presentationInsights as $presentationInsight): $presentationMeta = $presentationReactions[$presentationInsight['reaction']] ?? ['icon' => '', 'label' => $presentationInsight['reaction']]; ?>
+					<figure class="mn-pres-quote">
+						<blockquote>“<?php echo stats_h($presentationInsight['text']); ?>”</blockquote>
+						<figcaption><b><?php echo stats_h($presentationMeta['icon'] . ' ' . $presentationMeta['label']); ?></b> · <?php echo stats_h($titles[$presentationInsight['path']] ?? $presentationInsight['path']); ?> · <?php echo stats_h(stats_time_label($presentationInsight['ts'])); ?></figcaption>
+					</figure>
+				<?php endforeach; ?>
+			</div>
+		</section>
+		<?php endif; ?>
+
+		<?php if ($presentationFeedbackPages): ?>
+		<section class="mn-pres-slide" data-title="Where to improve">
+			<h2>Where readers need help</h2>
+			<table class="mn-pres-table">
+				<thead><tr><th>Page</th><th>Total</th><th>👍</th><th>👎</th><th>❓</th><th>🐞</th><th>Negative</th></tr></thead>
+				<tbody>
+				<?php foreach ($presentationFeedbackPages as $presentationFeedbackPage): ?>
+					<tr>
+						<td class="mn-pres-page-title"><?php echo stats_h($presentationFeedbackPage['title']); ?></td>
+						<td><?php echo (int)$presentationFeedbackPage['total']; ?></td>
+						<td><?php echo (int)$presentationFeedbackPage['helpful']; ?></td>
+						<td><?php echo (int)$presentationFeedbackPage['unhelpful']; ?></td>
+						<td><?php echo (int)$presentationFeedbackPage['confusing']; ?></td>
+						<td><?php echo (int)$presentationFeedbackPage['bug']; ?></td>
+						<td><?php echo (int)$presentationFeedbackPage['negative']; ?></td>
+					</tr>
+				<?php endforeach; ?>
+				</tbody>
+			</table>
+		</section>
+		<?php endif; ?>
+
+		<?php if ($presentationTakeaways): ?>
+		<section class="mn-pres-slide" data-title="Takeaways">
+			<h2>Takeaways</h2>
+			<div class="mn-pres-takeaways">
+				<?php foreach ($presentationTakeaways as $presentationTakeaway): ?>
+					<div class="mn-pres-takeaway"><b><?php echo stats_h($presentationTakeaway['label']); ?></b><?php echo stats_h($presentationTakeaway['text']); ?></div>
+				<?php endforeach; ?>
+			</div>
+		</section>
+		<?php endif; ?>
+
+		<section class="mn-pres-slide" data-title="Thank you">
+			<div class="mn-pres-kicker">Thank you</div>
+			<h1>Questions, ideas, next revisions.</h1>
+			<p class="mn-pres-lead">The full dashboard is behind this presentation. Use the arrow keys or space to move, <b>O</b> for the overview, <b>F</b> for fullscreen and <b>Esc</b> to close.</p>
+		</section>
+	</div>
+
+	<div class="mn-pres-controls">
+		<button type="button" class="mn-pres-btn" data-present-prev aria-label="Previous slide">←</button>
+		<span class="mn-pres-counter">1 / 1</span>
+		<span class="mn-pres-slide-title"></span>
+		<button type="button" class="mn-pres-btn" data-present-overview>Overview</button>
+		<button type="button" class="mn-pres-btn" data-present-fullscreen>Fullscreen</button>
+		<button type="button" class="mn-pres-btn" data-present-next aria-label="Next slide">→</button>
+		<button type="button" class="mn-pres-btn" data-present-exit>Exit</button>
+	</div>
+	<div class="mn-pres-hint">← → / Space · O overview · F fullscreen · Esc close</div>
+	<div class="mn-pres-overview" role="dialog" aria-label="Slide overview">
+		<h2>Slides</h2>
+		<div class="mn-pres-overview-grid"></div>
+	</div>
+</div>
+
 <script>
 (function () {
 	'use strict';
@@ -6082,7 +6459,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	})();
 
 	(function () {
-		var toggle = document.getElementById('present-toggle');
+		var toggle = null;
 		var bar = document.getElementById('present-bar');
 		var label = document.getElementById('present-label');
 		var body = document.body;
@@ -6417,6 +6794,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	}
 })();
 </script>
+<script src="admin_presentation.js?v=<?php echo (int)@filemtime(__DIR__ . '/admin_presentation.js'); ?>"></script>
 </body>
 </html>
 
