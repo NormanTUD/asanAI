@@ -617,3 +617,175 @@ body.mn-presenting {
 @media print {
 	#mn-present { display: none !important; }
 }
+
+/* Accent-driven slide details */
+.mn-pres-stage::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image: radial-gradient(color-mix(in srgb, var(--muted) 20%, transparent) 1px, transparent 1px);
+	background-size: 28px 28px;
+	opacity: .18;
+	pointer-events: none;
+}
+
+.mn-pres-slide::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background:
+		radial-gradient(900px 560px at 100% 0%, color-mix(in srgb, var(--slide-accent, var(--accent)) 13%, transparent), transparent 68%),
+		radial-gradient(700px 420px at 0% 100%, color-mix(in srgb, var(--slide-accent, var(--accent)) 6%, transparent), transparent 70%);
+	pointer-events: none;
+}
+
+.mn-pres-slide > * {
+	position: relative;
+	z-index: 1;
+}
+
+.mn-pres-kicker,
+.mn-pres-slide h2 small {
+	color: var(--slide-accent, var(--accent));
+}
+
+.mn-pres-slide h2 {
+	display: flex;
+	align-items: baseline;
+	gap: 14px;
+	flex-wrap: wrap;
+}
+
+.mn-pres-slide h1 em {
+	font-style: normal;
+	background: linear-gradient(90deg, var(--slide-accent, var(--accent)), var(--accent2));
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+.mn-pres-stat,
+.mn-pres-kpi {
+	border-top: 2px solid color-mix(in srgb, var(--slide-accent, var(--accent)) 62%, transparent);
+	box-shadow: 0 16px 40px -30px color-mix(in srgb, var(--slide-accent, var(--accent)) 55%, transparent);
+}
+
+.mn-pres-insight {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 13px 16px;
+	border-left: 3px solid var(--slide-accent, var(--accent));
+	border-radius: 0 12px 12px 0;
+	background: color-mix(in srgb, var(--slide-accent, var(--accent)) 8%, var(--panel));
+	color: var(--text);
+	font-size: clamp(12px, 1.08vw, 16px);
+	line-height: 1.55;
+	max-width: 100%;
+}
+
+.mn-pres-insight span {
+	flex: none;
+	color: var(--slide-accent, var(--accent));
+	font-size: 9px;
+	font-weight: 800;
+	letter-spacing: .14em;
+	text-transform: uppercase;
+	padding-top: 3px;
+}
+
+.mn-pres-delta {
+	display: inline-flex;
+	align-items: center;
+	padding: 3px 9px;
+	border-radius: 999px;
+	font-size: clamp(9px, .78vw, 11px);
+	font-weight: 700;
+	letter-spacing: .03em;
+	white-space: nowrap;
+}
+
+.mn-pres-delta.up {
+	color: var(--emerald);
+	background: color-mix(in srgb, var(--emerald) 14%, transparent);
+	border: 1px solid color-mix(in srgb, var(--emerald) 35%, transparent);
+}
+
+.mn-pres-delta.down {
+	color: var(--rose);
+	background: color-mix(in srgb, var(--rose) 14%, transparent);
+	border: 1px solid color-mix(in srgb, var(--rose) 35%, transparent);
+}
+
+.mn-pres-delta.flat {
+	color: var(--muted);
+	background: var(--panel2);
+	border: 1px solid var(--line);
+}
+
+.mn-pres-split {
+	display: grid;
+	grid-template-columns: minmax(0, 1.55fr) minmax(220px, .75fr);
+	gap: clamp(16px, 2.4vw, 30px);
+	align-items: stretch;
+}
+
+.mn-pres-side {
+	display: grid;
+	gap: 10px;
+	align-content: start;
+}
+
+.mn-pres-side .mn-pres-kpi {
+	padding: 13px 14px;
+}
+
+.mn-pres-side .mn-pres-kpi b {
+	font-size: clamp(21px, 2.2vw, 32px);
+}
+
+.mn-pres-quote:nth-child(2n) {
+	border-left-color: var(--emerald);
+}
+
+.mn-pres-quote:nth-child(3n) {
+	border-left-color: var(--sky);
+}
+
+.mn-pres-takeaway {
+	border-left: 2px solid color-mix(in srgb, var(--slide-accent, var(--accent)) 60%, transparent);
+}
+
+@media (max-width: 900px) {
+	.mn-pres-split { grid-template-columns: 1fr; }
+}
+
+@keyframes mn-pres-pop {
+	from { opacity: 0; transform: translateY(10px) scale(.98); }
+	to { opacity: 1; transform: none; }
+}
+
+.mn-pres-slide.is-active .mn-pres-stat b,
+.mn-pres-slide.is-active .mn-pres-kpi b {
+	animation: mn-pres-pop .46s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.mn-pres-slide.is-active .mn-pres-stat:nth-child(2) b,
+.mn-pres-slide.is-active .mn-pres-kpi:nth-child(2) b { animation-delay: .045s; }
+.mn-pres-slide.is-active .mn-pres-stat:nth-child(3) b,
+.mn-pres-slide.is-active .mn-pres-kpi:nth-child(3) b { animation-delay: .09s; }
+.mn-pres-slide.is-active .mn-pres-stat:nth-child(4) b,
+.mn-pres-slide.is-active .mn-pres-kpi:nth-child(4) b { animation-delay: .135s; }
+.mn-pres-slide.is-active .mn-pres-kpi:nth-child(5) b { animation-delay: .18s; }
+.mn-pres-slide.is-active .mn-pres-kpi:nth-child(6) b { animation-delay: .225s; }
+.mn-pres-slide.is-active .mn-pres-kpi:nth-child(7) b { animation-delay: .27s; }
+
+@media (prefers-reduced-motion: reduce) {
+	.mn-pres-slide,
+	.mn-pres-slide.is-active,
+	.mn-pres-slide.is-active .mn-pres-stat b,
+	.mn-pres-slide.is-active .mn-pres-kpi b {
+		animation: none !important;
+		transition: none !important;
+	}
+}

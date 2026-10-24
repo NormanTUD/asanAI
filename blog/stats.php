@@ -432,10 +432,18 @@ function stats_presentation_line_svg(array $values, int $width = 1000, int $heig
 		$y = number_format($height - 12 - ($fraction * ($height - 34)), 1, '.', '');
 		$grid .= '<line x1="0" y1="' . $y . '" x2="' . $width . '" y2="' . $y . '" stroke="currentColor" stroke-opacity=".12" stroke-width="1"/>';
 	}
+	$peakIndex = array_search($max, $values, true);
+	$peakPoint = $peakIndex !== false && isset($points[$peakIndex]) ? explode(',', $points[$peakIndex]) : null;
+	$peakMark = '';
+	if ($peakPoint) {
+		$peakMark = '<circle cx="' . $peakPoint[0] . '" cy="' . $peakPoint[1] . '" r="6" fill="currentColor" opacity=".9"/><circle cx="' . $peakPoint[0] . '" cy="' . $peakPoint[1] . '" r="13" fill="currentColor" opacity=".12"/>';
+	}
 	return '<svg viewBox="0 0 ' . $width . ' ' . $height . '" preserveAspectRatio="none" role="img" aria-label="Views over time">'
+		. '<defs><linearGradient id="mn-pres-traffic-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".38"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></linearGradient></defs>'
 		. $grid
-		. '<path d="' . $area . '" fill="currentColor" opacity=".12"/>'
+		. '<path d="' . $area . '" fill="url(#mn-pres-traffic-fill)"/>'
 		. '<polyline points="' . implode(' ', $points) . '" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>'
+		. $peakMark
 		. '</svg>';
 }
 
@@ -4476,6 +4484,63 @@ foreach ($presentationFeedbackDaily['labels'] as $presentationDayIndex => $prese
 	$presentationFeedbackTrendTotal += $presentationDayTotal;
 }
 $presentationFeedbackTrendMax = $presentationFeedbackDayTotals ? max($presentationFeedbackDayTotals) : 0;
+$presentationLast7 = array_sum(array_slice($presentationTrafficValues, -7));
+$presentationPrev7 = array_sum(array_slice($presentationTrafficValues, -14, 7));
+$presentationTrafficDelta = $presentationPrev7 > 0 ? 100 * ($presentationLast7 - $presentationPrev7) / $presentationPrev7 : null;
+$presentationTrafficDeltaClass = $presentationTrafficDelta === null ? 'flat' : ($presentationTrafficDelta > 0.5 ? 'up' : ($presentationTrafficDelta < -0.5 ? 'down' : 'flat'));
+$presentationTrafficDeltaLabel = $presentationTrafficDelta === null ? 'no previous 7-day baseline' : ($presentationTrafficDelta > 0 ? '+' : '') . number_format($presentationTrafficDelta, 1, '.', ',') . ' % vs previous 7 days';
+$presentationFeedbackLast7 = array_sum(array_slice($presentationFeedbackDayTotals, -7));
+$presentationFeedbackPrev7 = array_sum(array_slice($presentationFeedbackDayTotals, -14, 7));
+$presentationFeedbackDelta = $presentationFeedbackPrev7 > 0 ? 100 * ($presentationFeedbackLast7 - $presentationFeedbackPrev7) / $presentationFeedbackPrev7 : null;
+$presentationFeedbackDeltaClass = $presentationFeedbackDelta === null ? 'flat' : ($presentationFeedbackDelta > 0.5 ? 'up' : ($presentationFeedbackDelta < -0.5 ? 'down' : 'flat'));
+$presentationFeedbackDeltaLabel = $presentationFeedbackDelta === null ? 'no previous 7-day baseline' : ($presentationFeedbackDelta > 0 ? '+' : '') . number_format($presentationFeedbackDelta, 1, '.', ',') . ' % vs previous 7 days';
+$presentationTopPage = $presentationTopPages[0] ?? null;
+$presentationTopPageShare = ($presentationTopPage && $views > 0) ? 100 * (int)$presentationTopPage['views'] / $views : 0;
+$presentationTopPageDuration = ($presentationTopPage && $presentationTopPage['avg_duration'] !== null) ? (float)$presentationTopPage['avg_duration'] : null;
+$presentationTopPageDurationRatio = ($presentationTopPageDuration !== null && $avgDuration !== null && $avgDuration > 0) ? $presentationTopPageDuration / $avgDuration : null;
+$presentationDeepRead = 0.0;
+if ($views > 0 && isset($funnelData[3]['value'])) {
+	$presentationDeepRead = 100 * (int)$funnelData[3]['value'] / $views;
+}
+$presentationHelpful = (int)($feedbackReactionCounts['helpful'] ?? 0);
+$presentationUnhelpful = (int)($feedbackReactionCounts['unhelpful'] ?? 0);
+$presentationHelpfulRate = ($presentationHelpful + $presentationUnhelpful) > 0 ? 100 * $presentationHelpful / ($presentationHelpful + $presentationUnhelpful) : null;
+$presentationTopNegativePage = null;
+$presentationTopHelpfulPage = null;
+foreach ($presentationFeedbackPages as $presentationPageRow) {
+	if ($presentationTopNegativePage === null && (int)$presentationPageRow['negative'] > 0) {
+		$presentationTopNegativePage = $presentationPageRow;
+	}
+	if ($presentationTopHelpfulPage === null || (int)$presentationPageRow['helpful'] > (int)$presentationTopHelpfulPage['helpful']) {
+		$presentationTopHelpfulPage = $presentationPageRow;
+	}
+}
+$presentationSearchShare = $views > 0 ? 100 * (int)($refCounts['search'] ?? 0) / $views : 0;
+$presentationSocialShare = $views > 0 ? 100 * (int)($refCounts['social'] ?? 0) / $views : 0;
+$presentationExternalShare = $views > 0 ? 100 * (int)($refCounts['external'] ?? 0) / $views : 0;
+$presentationDirectShare = $views > 0 ? 100 * (int)($refCounts['direct'] ?? 0) / $views : 0;
+$presentationInsightTraffic = 'Last 7 days: ' . mn_analytics_format_number($presentationLast7) . ' views · ' . $presentationTrafficDeltaLabel . '.';
+if ($presentationTrafficPeakLabel !== '') {
+	$presentationInsightTraffic .= ' Peak: ' . $presentationTrafficPeakLabel . ' (' . mn_analytics_format_number($presentationTrafficMax) . ').';
+}
+$presentationInsightAudience = 'Average time on page ' . mn_analytics_format_duration($avgDuration !== null ? (int)round($avgDuration) : null)
+	. ' · ' . number_format($presentationDeepRead, 1, '.', ',') . ' % reach 75% scroll'
+	. ' · bounce rate ' . number_format($bounceRate, 1, '.', ',') . ' %.';
+$presentationInsightPages = $presentationTopPage
+	? ($titles[$presentationTopPage['path']] ?? $presentationTopPage['path']) . ' accounts for ' . number_format($presentationTopPageShare, 1, '.', ',') . ' % of views and '
+		. ($presentationTopPageDurationRatio !== null ? number_format($presentationTopPageDurationRatio, 2, '.', ',') . '× the site average reading time.' : 'is the most-read page.')
+	: 'No page-level traffic yet.';
+$presentationInsightDiscovery = 'Search ' . number_format($presentationSearchShare, 1, '.', ',') . ' %, social ' . number_format($presentationSocialShare, 1, '.', ',')
+	. ' %, external ' . number_format($presentationExternalShare, 1, '.', ',') . ' %, direct ' . number_format($presentationDirectShare, 1, '.', ',') . ' %.'
+	. ($presentationExternalReferrers ? ' Top external: ' . (($presentationExternalReferrers[0]['ref_host'] !== '') ? $presentationExternalReferrers[0]['ref_host'] : $presentationExternalReferrers[0]['ref_source']) . '.' : '');
+$presentationInsightFeedback = $presentationHelpfulRate !== null
+	? 'Helpful rate ' . number_format($presentationHelpfulRate, 0, '.', ',') . ' % (' . $presentationHelpful . ' 👍 / ' . $presentationUnhelpful . ' 👎)'
+		. ($presentationTopNegativePage ? ' · most friction: ' . $presentationTopNegativePage['title'] . '.' : '.')
+	: 'Reader reactions are still sparse.';
+$presentationInsightFeedbackTrend = 'Last 7 days: ' . mn_analytics_format_number($presentationFeedbackLast7) . ' reactions · ' . $presentationFeedbackDeltaLabel . '.';
+$presentationInsightImprove = $presentationTopNegativePage
+	? $presentationTopNegativePage['title'] . ' is the clearest revision target: ' . (int)$presentationTopNegativePage['negative'] . ' negative reactions.'
+	: 'No negative-feedback hotspot detected yet.';
 $presentationMixStops = [];
 if ($presentationFeedbackTotal > 0) {
 	$presentationMixAccum = 0.0;
@@ -4554,9 +4619,9 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 <div id="mn-present" class="mn-pres" hidden aria-hidden="true" tabindex="-1" role="dialog" aria-label="Analytics and reader feedback presentation">
 	<div class="mn-pres-progress"></div>
 	<div class="mn-pres-stage">
-		<section class="mn-pres-slide" data-title="Title">
+		<section class="mn-pres-slide" data-title="Title" style="--slide-accent: var(--accent);">
 			<div class="mn-pres-kicker">asanAI · From Nothing to ChatGPT</div>
-			<h1>What readers do — and what they tell us</h1>
+			<h1>What readers do — and <em>what they tell us</em></h1>
 			<p class="mn-pres-lead">Live course analytics and reader feedback: reach, reading time, discovery, reactions, and the ideas that should shape the next revision.</p>
 			<div class="mn-pres-meta"><?php echo stats_h($nowLabel); ?> · Berlin · anonymous, no visitor profiles</div>
 			<div class="mn-pres-hero-stats">
@@ -4567,7 +4632,7 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 		</section>
 
 		<?php if ($presentationHasAnalytics): ?>
-		<section class="mn-pres-slide" data-title="Audience">
+		<section class="mn-pres-slide" data-title="Audience" style="--slide-accent: var(--sky);">
 			<h2>Audience <small>· selected period</small></h2>
 			<div class="mn-pres-kpis">
 				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number($views)); ?></b><span>views</span><small><?php echo stats_h(number_format($viewsPerDay, 1, '.', ',')); ?> per day</small></div>
@@ -4578,20 +4643,21 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number($activeDays)); ?></b><span>active days</span><small><?php echo stats_h(mn_analytics_format_number($periodDays)); ?> days in range</small></div>
 				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number($bots)); ?></b><span>bot pageviews</span><small><?php echo stats_h(number_format($views > 0 ? 100 * $bots / $views : 0, 1, '.', ',')); ?> % of traffic</small></div>
 			</div>
+			<div class="mn-pres-insight"><span>Reading</span><div><?php echo stats_h($presentationInsightAudience); ?></div></div>
 		</section>
 		<?php endif; ?>
 
 		<?php if ($presentationTrafficSvg !== ''): ?>
-		<section class="mn-pres-slide" data-title="Views over time">
-			<h2>Views over time <small>· last 30 days</small></h2>
+		<section class="mn-pres-slide" data-title="Views over time" style="--slide-accent: var(--accent);">
+			<h2>Views over time <small>· last 30 days</small> <span class="mn-pres-delta <?php echo stats_h($presentationTrafficDeltaClass); ?>"><?php echo stats_h($presentationTrafficDeltaLabel); ?></span></h2>
 			<div class="mn-pres-line"><?php echo $presentationTrafficSvg; ?></div>
 			<div class="mn-pres-axis"><span><?php echo stats_h($presentationTrafficLabels[0] ?? ''); ?></span><span><?php echo stats_h($presentationTrafficLabels[(int)floor((count($presentationTrafficLabels) - 1) / 2)] ?? ''); ?></span><span><?php echo stats_h($presentationTrafficLabels[count($presentationTrafficLabels) - 1] ?? ''); ?></span></div>
-			<p class="mn-pres-lead">Peak day: <?php echo stats_h($presentationTrafficPeakLabel !== '' ? $presentationTrafficPeakLabel : '—'); ?> · <?php echo stats_h(mn_analytics_format_number($presentationTrafficMax)); ?> views.</p>
+			<div class="mn-pres-insight"><span>Trend</span><div><?php echo stats_h($presentationInsightTraffic); ?></div></div>
 		</section>
 		<?php endif; ?>
 
 		<?php if ($presentationTopPages): ?>
-		<section class="mn-pres-slide" data-title="Time on page">
+		<section class="mn-pres-slide" data-title="Time on page" style="--slide-accent: var(--emerald);">
 			<h2>Where readers spend time</h2>
 			<table class="mn-pres-table">
 				<thead><tr><th>Page</th><th>Views</th><th>Avg. time</th><th>Scroll</th><th class="mn-pres-bar-cell">Reach</th></tr></thead>
@@ -4607,11 +4673,12 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 				<?php endforeach; ?>
 				</tbody>
 			</table>
+			<div class="mn-pres-insight"><span>Concentration</span><div><?php echo stats_h($presentationInsightPages); ?></div></div>
 		</section>
 		<?php endif; ?>
 
 		<?php if ($presentationHasSources): ?>
-		<section class="mn-pres-slide" data-title="Discovery">
+		<section class="mn-pres-slide" data-title="Discovery" style="--slide-accent: var(--coral);">
 			<h2>Where readers come from</h2>
 			<div class="mn-pres-kpis">
 				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)($refCounts['direct'] ?? 0))); ?></b><span>direct</span></div>
@@ -4626,11 +4693,12 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 				<?php endforeach; ?>
 			</div>
 			<?php endif; ?>
+			<div class="mn-pres-insight"><span>Mix</span><div><?php echo stats_h($presentationInsightDiscovery); ?></div></div>
 		</section>
 		<?php endif; ?>
 
 		<?php if ($presentationHasFeedback): ?>
-		<section class="mn-pres-slide" data-title="Reader feedback">
+		<section class="mn-pres-slide" data-title="Reader feedback" style="--slide-accent: var(--rose);">
 			<h2>Reader feedback <small>· how readers experienced the course</small></h2>
 			<div class="mn-pres-mix">
 				<div class="mn-pres-donut" style="background: conic-gradient(<?php echo stats_h(implode(', ', $presentationMixStops)); ?>)">
@@ -4648,12 +4716,13 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)$feedbackSummary['accepted'])); ?></b><span>accepted</span></div>
 				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)$feedbackSummary['done'])); ?></b><span>done</span></div>
 			</div>
+			<div class="mn-pres-insight"><span>What it means</span><div><?php echo stats_h($presentationInsightFeedback); ?></div></div>
 		</section>
 		<?php endif; ?>
 
 		<?php if ($presentationFeedbackTrendTotal > 0 && $presentationFeedbackTrendMax > 0): ?>
-		<section class="mn-pres-slide" data-title="Feedback over time">
-			<h2>Feedback over time <small>· last 30 days</small></h2>
+		<section class="mn-pres-slide" data-title="Feedback over time" style="--slide-accent: var(--sky);">
+			<h2>Feedback over time <small>· last 30 days</small> <span class="mn-pres-delta <?php echo stats_h($presentationFeedbackDeltaClass); ?>"><?php echo stats_h($presentationFeedbackDeltaLabel); ?></span></h2>
 			<div class="mn-pres-stacked-wrap">
 				<div class="mn-pres-stacked">
 					<?php foreach ($presentationFeedbackDaily['labels'] as $presentationDayIndex => $presentationDayLabel): $presentationDayTotal = (int)($presentationFeedbackDayTotals[$presentationDayIndex] ?? 0); ?>
@@ -4671,12 +4740,13 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 					<div class="mn-pres-legend-row"><span class="mn-pres-dot" style="--dot: <?php echo stats_h($presentationReactionColors[$presentationKey]); ?>"></span><span><?php echo stats_h($presentationMeta['icon'] . ' ' . $presentationMeta['label']); ?></span></div>
 				<?php endforeach; ?>
 			</div>
+			<div class="mn-pres-insight"><span>Signal</span><div><?php echo stats_h($presentationInsightFeedbackTrend); ?></div></div>
 		</section>
 		<?php endif; ?>
 
 		<?php if ($presentationInsights): ?>
-		<section class="mn-pres-slide" data-title="What readers say">
-			<h2>What readers say</h2>
+		<section class="mn-pres-slide" data-title="What readers say" style="--slide-accent: var(--coral);">
+			<h2>What readers say <small>· <?php echo count($presentationInsights); ?> recent comments</small></h2>
 			<div class="mn-pres-quotes">
 				<?php foreach ($presentationInsights as $presentationInsight): $presentationMeta = $presentationReactions[$presentationInsight['reaction']] ?? ['icon' => '', 'label' => $presentationInsight['reaction']]; ?>
 					<figure class="mn-pres-quote">
@@ -4689,7 +4759,7 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 		<?php endif; ?>
 
 		<?php if ($presentationFeedbackPages): ?>
-		<section class="mn-pres-slide" data-title="Where to improve">
+		<section class="mn-pres-slide" data-title="Where to improve" style="--slide-accent: var(--rose);">
 			<h2>Where readers need help</h2>
 			<table class="mn-pres-table">
 				<thead><tr><th>Page</th><th>Total</th><th>👍</th><th>👎</th><th>❓</th><th>🐞</th><th>Negative</th></tr></thead>
@@ -4707,11 +4777,12 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 				<?php endforeach; ?>
 				</tbody>
 			</table>
+			<div class="mn-pres-insight"><span>Priority</span><div><?php echo stats_h($presentationInsightImprove); ?></div></div>
 		</section>
 		<?php endif; ?>
 
 		<?php if ($presentationTakeaways): ?>
-		<section class="mn-pres-slide" data-title="Takeaways">
+		<section class="mn-pres-slide" data-title="Takeaways" style="--slide-accent: var(--accent);">
 			<h2>Takeaways</h2>
 			<div class="mn-pres-takeaways">
 				<?php foreach ($presentationTakeaways as $presentationTakeaway): ?>
@@ -4721,7 +4792,7 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 		</section>
 		<?php endif; ?>
 
-		<section class="mn-pres-slide" data-title="Thank you">
+		<section class="mn-pres-slide" data-title="Thank you" style="--slide-accent: var(--sky);">
 			<div class="mn-pres-kicker">Thank you</div>
 			<h1>Questions, ideas, next revisions.</h1>
 			<p class="mn-pres-lead">The full dashboard is behind this presentation. Use the arrow keys or space to move, <b>O</b> for the overview, <b>F</b> for fullscreen and <b>Esc</b> to close.</p>
