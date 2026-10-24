@@ -210,6 +210,17 @@ function feedback_action_label(string $action): string {
 	};
 }
 
+function feedback_reaction_hint(string $reaction): string {
+	return match ($reaction) {
+		'helpful' => 'The reader found this passage useful.',
+		'unhelpful' => 'The reader did not find what they needed here.',
+		'insight' => 'An idea, example or connection the reader wants more of.',
+		'confusing' => 'The reader got lost at this point.',
+		'bug' => 'Something broke or rendered wrong.',
+		default => '',
+	};
+}
+
 $actionRaw = $_POST['action'] ?? '';
 $action = is_scalar($actionRaw) ? (string)$actionRaw : '';
 $flash = '';
@@ -744,10 +755,27 @@ h2 { margin: 0 0 10px; font-size: 17px; letter-spacing: -.01em; color: var(--hea
 .tabs a:hover { color: var(--text); background: var(--surface); text-decoration: none; }
 .tabs a.active { color: var(--heading); background: var(--surface); border-color: var(--border); box-shadow: var(--shadow); }
 .tabs .count { margin-left: 5px; color: var(--muted); font-size: 10.5px; }
-.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px; margin: 0 0 18px; }
-.stat { background: linear-gradient(180deg, rgba(255,255,255,.025), transparent 70%), var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px 16px; min-height: 92px; }
-.stat b { display: block; font-size: 26px; line-height: 1.1; letter-spacing: -.03em; color: var(--heading); }
-.stat span { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 12px; margin: 0 0 16px; }
+.stat {
+	--stat-accent: var(--accent);
+	padding: 15px 16px;
+	min-height: 108px;
+	border: 1px solid color-mix(in srgb, var(--stat-accent) 22%, var(--border));
+	border-top: 2px solid color-mix(in srgb, var(--stat-accent) 68%, transparent);
+	border-radius: 14px;
+	background:
+		radial-gradient(400px 150px at 100% 0%, color-mix(in srgb, var(--stat-accent) 12%, transparent), transparent 72%),
+		linear-gradient(180deg, rgba(255,255,255,.04), transparent 76%),
+		var(--surface);
+	box-shadow: 0 16px 36px -32px color-mix(in srgb, var(--stat-accent) 58%, transparent), inset 0 1px 0 rgba(255,255,255,.035);
+}
+.stat--rose, .stat--unhelpful, .stat--bug { --stat-accent: var(--rose); }
+.stat--emerald, .stat--helpful { --stat-accent: var(--emerald); }
+.stat--sky, .stat--confusing { --stat-accent: var(--sky); }
+.stat--coral, .stat--insight { --stat-accent: var(--coral); }
+.stat b { display: block; font-size: 30px; line-height: 1; letter-spacing: -.04em; color: var(--heading); font-variant-numeric: tabular-nums; }
+.stat span { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.stat small { display: block; margin-top: 5px; color: var(--muted); font-size: 10.5px; line-height: 1.38; letter-spacing: 0; text-transform: none; }
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 18px; }
 .toolbar form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 input, select, textarea { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 7px 9px; font: inherit; }
@@ -766,8 +794,85 @@ body.is-loading .page { opacity: .55; pointer-events: none; transition: opacity 
 	.feedback-charts { grid-template-columns: 1fr; }
 	.feedback-charts .wide { grid-column: auto; }
 }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; box-shadow: var(--shadow); min-width: 0; }
+.card {
+	--card-accent: var(--accent);
+	min-width: 0;
+	padding: 16px;
+	border: 1px solid color-mix(in srgb, var(--card-accent) 22%, var(--border));
+	border-top: 2px solid color-mix(in srgb, var(--card-accent) 68%, transparent);
+	border-radius: 15px;
+	background:
+		radial-gradient(440px 170px at 100% 0%, color-mix(in srgb, var(--card-accent) 11%, transparent), transparent 72%),
+		linear-gradient(180deg, rgba(255,255,255,.04), transparent 76%),
+		var(--surface);
+	box-shadow:
+		0 18px 38px -34px color-mix(in srgb, var(--card-accent) 58%, transparent),
+		inset 0 1px 0 rgba(255,255,255,.035);
+}
+.card--rose { --card-accent: var(--rose); }
+.card--emerald { --card-accent: var(--emerald); }
+.card--sky { --card-accent: var(--sky); }
+.card--coral { --card-accent: var(--coral); }
 .card.wide { grid-column: 1 / -1; }
+.card h2 { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.card h2::after {
+	content: "";
+	flex: 0 0 auto;
+	width: 32px;
+	height: 3px;
+	border-radius: 99px;
+	background: var(--card-accent);
+	align-self: center;
+	margin-left: auto;
+}
+.card .table-wrap { box-shadow: none; background: transparent; }
+.fb-insight {
+	display: flex;
+	align-items: flex-start;
+	gap: 11px;
+	margin: 12px 0 0;
+	padding: 11px 13px;
+	border-left: 3px solid var(--card-accent, var(--accent));
+	border-radius: 0 10px 10px 0;
+	background: color-mix(in srgb, var(--card-accent, var(--accent)) 8%, var(--surface-2));
+	color: var(--text);
+	font-size: 11.5px;
+	line-height: 1.5;
+}
+.fb-insight span {
+	flex: none;
+	color: var(--card-accent, var(--accent));
+	font-size: 9px;
+	font-weight: 800;
+	letter-spacing: .13em;
+	text-transform: uppercase;
+	padding-top: 3px;
+}
+.fb-glossary { margin: 0 0 18px; padding: 15px 16px; }
+.fb-glossary > summary {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	cursor: pointer;
+	list-style: none;
+	color: var(--heading);
+	font-size: 13px;
+	font-weight: 700;
+}
+.fb-glossary > summary::-webkit-details-marker { display: none; }
+.fb-glossary > summary::after {
+	content: "+";
+	margin-left: auto;
+	color: var(--card-accent);
+	font-size: 18px;
+	font-weight: 400;
+	line-height: 1;
+}
+.fb-glossary[open] > summary::after { content: "−"; }
+.fb-glossary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 12px; }
+.fb-glossary-item { padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); }
+.fb-glossary-item b { display: block; margin-bottom: 4px; color: var(--heading); font-size: 12px; }
+.fb-glossary-item p { margin: 0; color: var(--muted); font-size: 11.5px; line-height: 1.5; }
 .leader { display: grid; gap: 7px; }
 .leader-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; padding: 7px 8px; border-radius: 8px; background: var(--surface-2); }
 .leader-row:hover { background: color-mix(in srgb, var(--accent) 8%, var(--surface-2)); text-decoration: none; }
@@ -790,7 +895,18 @@ table.stats-table { width: 100%; border-collapse: collapse; min-width: 770px; }
 .stats-table .good { color: var(--emerald); }
 .stats-table .bad { color: var(--rose); }
 .list { display: grid; gap: 10px; }
-.item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; scroll-margin-top: 84px; }
+.item {
+	border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--border));
+	border-top: 2px solid color-mix(in srgb, var(--accent) 62%, transparent);
+	border-radius: 15px;
+	background:
+		radial-gradient(520px 180px at 100% 0%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 72%),
+		linear-gradient(180deg, rgba(255,255,255,.035), transparent 76%),
+		var(--surface);
+	box-shadow: 0 18px 38px -34px color-mix(in srgb, var(--accent) 55%, transparent);
+	overflow: hidden;
+	scroll-margin-top: 84px;
+}
 .item summary { list-style: none; cursor: pointer; padding: 13px 15px; display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: start; }
 .item summary::-webkit-details-marker { display: none; }
 .item-head { min-width: 0; }
@@ -918,7 +1034,6 @@ html[data-embed="1"] .btn.primary {
 }
 html[data-embed="1"] .card {
 	padding: 16px;
-	box-shadow: none;
 }
 html[data-embed="1"] .card h2 {
 	font-size: 14px;
@@ -930,8 +1045,7 @@ html[data-embed="1"] .stats {
 	gap: 12px;
 	margin: 0 0 18px;
 }
-html[data-embed="1"] .table-wrap,
-html[data-embed="1"] .item {
+html[data-embed="1"] .table-wrap {
 	box-shadow: none;
 }
 
@@ -1003,17 +1117,31 @@ html[data-embed="1"] .item {
 
 	<?php if ($summary['total'] > 0): ?>
 	<div class="stats">
-		<div class="stat"><b><?php echo feedback_h(number_format($summary['total'])); ?></b><span>In view</span></div>
-		<?php if ($summary['with_comment'] > 0): ?><div class="stat"><b><?php echo feedback_h(number_format($summary['with_comment'])); ?></b><span>With comment</span></div><?php endif; ?>
-		<?php if ($summary['bugs'] > 0): ?><div class="stat"><b><?php echo feedback_h(number_format($summary['bugs'])); ?></b><span>Bugs</span></div><?php endif; ?>
-		<?php if ($summary['accepted'] > 0): ?><div class="stat"><b><?php echo feedback_h(number_format($summary['accepted'])); ?></b><span>Accepted</span></div><?php endif; ?>
-		<?php if ($summary['done'] > 0): ?><div class="stat"><b><?php echo feedback_h(number_format($summary['done'])); ?></b><span>Done</span></div><?php endif; ?>
-		<?php if ($summary['email'] > 0): ?><div class="stat"><b><?php echo feedback_h(number_format($summary['email'])); ?></b><span>Email left</span></div><?php endif; ?>
+		<div class="stat"><b><?php echo feedback_h(number_format($summary['total'])); ?></b><span>In view</span><small>matching the current filters</small></div>
+		<?php if ($summary['with_comment'] > 0): ?><div class="stat"><b><?php echo feedback_h(number_format($summary['with_comment'])); ?></b><span>With comment</span><small>readers wrote something</small></div><?php endif; ?>
+		<?php if ($summary['bugs'] > 0): ?><div class="stat stat--rose"><b><?php echo feedback_h(number_format($summary['bugs'])); ?></b><span>Bugs</span><small>reported failures</small></div><?php endif; ?>
+		<?php if ($summary['accepted'] > 0): ?><div class="stat stat--emerald"><b><?php echo feedback_h(number_format($summary['accepted'])); ?></b><span>Accepted</span><small>queued for revision</small></div><?php endif; ?>
+		<?php if ($summary['done'] > 0): ?><div class="stat stat--sky"><b><?php echo feedback_h(number_format($summary['done'])); ?></b><span>Done</span><small>fixed or answered</small></div><?php endif; ?>
+		<?php if ($summary['email'] > 0): ?><div class="stat"><b><?php echo feedback_h(number_format($summary['email'])); ?></b><span>Email left</span><small>reader opted in to a reply</small></div><?php endif; ?>
 		<?php foreach ($reactionCounts as $key => $count): if ($count <= 0) continue; $meta = $reactions[$key]; ?>
-			<div class="stat"><b><?php echo feedback_h(number_format($count)); ?></b><span><?php echo feedback_h($meta['icon'] . ' ' . $meta['label']); ?></span></div>
+			<div class="stat stat--<?php echo feedback_h($key); ?>"><b><?php echo feedback_h(number_format($count)); ?></b><span><?php echo feedback_h($meta['icon'] . ' ' . $meta['label']); ?></span><small><?php echo feedback_h(feedback_reaction_hint((string)$key)); ?></small></div>
 		<?php endforeach; ?>
 	</div>
 	<?php endif; ?>
+
+	<details class="card fb-glossary">
+		<summary>What these numbers mean</summary>
+		<div class="fb-glossary-grid">
+			<div class="fb-glossary-item"><b>In view</b><p>Reactions that match the current tab, time range, lesson and search. It is the sample for everything below.</p></div>
+			<div class="fb-glossary-item"><b>With comment</b><p>The reader added their own words, not just a reaction. These are the best starting points for a revision.</p></div>
+			<div class="fb-glossary-item"><b>Bugs</b><p>Readers reported something broken: a blank chart, a dead link, a rendering error. The 🐞 tab collects them with optional console context.</p></div>
+			<div class="fb-glossary-item"><b>Accepted / Done</b><p>Accepted means “worth acting on”; Done means the lesson or code was changed. Both are editorial state, not reader signals.</p></div>
+			<div class="fb-glossary-item"><b>Email left</b><p>The reader explicitly opted in to a reply. Treat the address as personal data and never export it casually.</p></div>
+			<div class="fb-glossary-item"><b>👍 Helpful / 👎 Not helpful</b><p>A thumbs-up or thumbs-down on a selected passage. The 👍 rate uses only these two reactions.</p></div>
+			<div class="fb-glossary-item"><b>💡 Insight</b><p>The reader wants more of an idea, example or connection. Not a complaint — a request to expand.</p></div>
+			<div class="fb-glossary-item"><b>❓ Confusing</b><p>The reader got lost. “Needs attention” adds 👎 and ❓ per page, because both point to friction.</p></div>
+		</div>
+	</details>
 
 	<?php if ($tab === 'overview'): ?>
 		<?php if ($summary['total'] === 0): ?>
@@ -1021,17 +1149,20 @@ html[data-embed="1"] .item {
 		<?php else: ?>
 		<?php if ($feedbackChartTotal > 0): ?>
 		<div class="feedback-charts">
-		<div class="card wide">
+		<div class="card wide card--sky">
 			<h2>Feedback over time <span class="hint"><?php echo feedback_h($feedbackChartData['rangeLabel']); ?></span></h2>
 			<div id="mn-fb-trend" class="feedback-chart"></div>
+			<p class="fb-insight"><span>What it means</span>Each bar is one day, split by reaction. Use the trend to see whether a revision reduced ❓ and 🐞, not just whether volume went up.</p>
 		</div>
-		<div class="card">
+		<div class="card card--coral">
 			<h2>Reaction mix</h2>
 			<div id="mn-fb-mix" class="feedback-chart"></div>
+			<p class="fb-insight"><span>What it means</span>A healthy lesson mostly collects 👍 and 💡. A rising ❓ or 🐞 share points to a specific passage that needs work.</p>
 		</div>
-		<div class="card wide">
+		<div class="card wide card--rose">
 			<h2>Helpful vs. not helpful per page</h2>
 			<div id="mn-fb-pages" class="feedback-chart"></div>
+			<p class="fb-insight"><span>What it means</span>Red bars longer than green bars mark pages where readers did not get what they came for. 💡 marks pages worth expanding.</p>
 		</div>
 	</div>
 	<script type="application/json" id="mn-feedback-chart-data"><?php echo json_encode($feedbackChartData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?></script>
@@ -1039,7 +1170,7 @@ html[data-embed="1"] .item {
 
 	<div class="overview-grid">
 			<?php if ($latestFeedback): ?>
-			<div class="card wide">
+			<div class="card wide card--coral">
 				<h2>Latest suggestions &amp; bugs</h2>
 				<div class="timeline">
 					<?php foreach ($latestFeedback as $l): ?>
@@ -1059,10 +1190,11 @@ html[data-embed="1"] .item {
 						</a>
 					<?php endforeach; ?>
 				</div>
+				<p class="fb-insight"><span>What it means</span>Newest reader voice first. Open a row to read the full passage, accept it, or fix it. Comments and bugs are the most actionable entries.</p>
 			</div>
 			<?php endif; ?>
 			<?php if ($recentPages): ?>
-			<div class="card">
+			<div class="card card--coral">
 				<h2>Most feedback</h2>
 				<div class="leader">
 					<?php foreach ($recentPages as $p): ?>
@@ -1073,10 +1205,11 @@ html[data-embed="1"] .item {
 						</a>
 					<?php endforeach; ?>
 				</div>
+				<p class="fb-insight"><span>What it means</span>High volume means readers engage with the page — it is not automatically a problem. Combine it with the attention list.</p>
 			</div>
 			<?php endif; ?>
 			<?php if ($attentionPages): ?>
-			<div class="card">
+			<div class="card card--rose">
 				<h2>Needs attention</h2>
 				<div class="leader">
 					<?php foreach ($attentionPages as $p): ?>
@@ -1087,10 +1220,11 @@ html[data-embed="1"] .item {
 						</a>
 					<?php endforeach; ?>
 				</div>
+				<p class="fb-insight"><span>What it means</span>👎 says “not useful”, ❓ says “lost here”. Together they mark the strongest revision candidates.</p>
 			</div>
 			<?php endif; ?>
 			<?php if ($helpfulPages): ?>
-			<div class="card">
+			<div class="card card--emerald">
 				<h2>Most helpful</h2>
 				<div class="leader">
 					<?php foreach ($helpfulPages as $p): ?>
@@ -1101,10 +1235,11 @@ html[data-embed="1"] .item {
 						</a>
 					<?php endforeach; ?>
 				</div>
+				<p class="fb-insight"><span>What it means</span>These pages work. Use their pacing, examples and headings as a model when rewriting a page from the attention list.</p>
 			</div>
 			<?php endif; ?>
 			<?php if ($activity): ?>
-			<div class="card">
+			<div class="card card--sky">
 				<h2>Recent movements</h2>
 				<div class="timeline">
 					<?php foreach ($activity as $a): ?>
@@ -1115,10 +1250,11 @@ html[data-embed="1"] .item {
 						</div>
 					<?php endforeach; ?>
 				</div>
+				<p class="fb-insight"><span>What it means</span>The editorial trail: what was accepted, rejected, edited or finished. Use it to see whether an accepted idea actually reached the lesson.</p>
 			</div>
 			<?php endif; ?>
 			<?php if ($pageStats): ?>
-			<div class="card wide">
+			<div class="card wide card--rose">
 				<h2>Helpful vs. not helpful, per page</h2>
 				<div class="table-wrap">
 					<table class="stats-table">
@@ -1141,6 +1277,7 @@ html[data-embed="1"] .item {
 						</tbody>
 					</table>
 				</div>
+				<p class="fb-insight"><span>What it means</span>The 👍 rate uses only 👍 and 👎; read it together with 💡, ❓ and 🐞. A high rate with many ❓ still means readers are getting stuck.</p>
 			</div>
 			<?php endif; ?>
 		</div>
@@ -1169,6 +1306,7 @@ html[data-embed="1"] .item {
 		<?php if (!$pageStats): ?>
 			<div class="empty">No feedback matches these filters yet.</div>
 		<?php else: ?>
+			<div class="card wide card--sky">
 			<div class="table-wrap">
 				<table class="stats-table">
 					<thead><tr><th>Page</th><th>Total</th><th>👍 Helpful</th><th>👎 Not helpful</th><th>👍 rate</th><th>💡 Insight</th><th>❓ Confusing</th><th>🐞 Bug</th><th>Comments</th><th>Open</th><th>Accepted</th><th>Done</th><th>Last</th></tr></thead>
@@ -1194,6 +1332,8 @@ html[data-embed="1"] .item {
 					<?php endforeach; ?>
 					</tbody>
 				</table>
+			</div>
+			<p class="fb-insight"><span>What it means</span>Pages are sorted by reaction volume. The “Last” column shows where a page stopped attracting feedback; compare Open, Accepted and Done to see whether work is stuck.</p>
 			</div>
 		<?php endif; ?>
 	<?php else: ?>

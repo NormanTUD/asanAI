@@ -805,6 +805,59 @@ function stats_client_subline(array $row): string {
 	return $os . ' · ' . $device;
 }
 
+function stats_health_flag_info(): array {
+	return [
+		'content gap' => [
+			'label' => 'Content gap',
+			'tone' => 'warn',
+			'short' => 'Readers enter here but scroll less than half the page.',
+			'long' => 'At least three visits started on this page and the average scroll depth is below 50 % (or was never measured). The opening may not match what a search result or link promised, or the answer readers came for may be missing. Compare the section reading map and the reader comments before rewriting.',
+		],
+		'skimmed' => [
+			'label' => 'Skimmed',
+			'tone' => 'warn',
+			'short' => 'Five or more views, average time under 45 seconds.',
+			'long' => 'Readers leave quickly. For a reference page that can be fine; for a lesson it usually means the opening is hard to enter or the text is too dense. Check reading speed and scroll depth together.',
+		],
+		'rising' => [
+			'label' => 'Rising',
+			'tone' => 'good',
+			'short' => 'At least 25 % more views than the previous period.',
+			'long' => 'Traffic is growing. Look for a new search result, a social post or a cross-reference from another lesson that is sending readers here.',
+		],
+		'falling' => [
+			'label' => 'Falling',
+			'tone' => 'warn',
+			'short' => 'At least 25 % fewer views than the previous period.',
+			'long' => 'Traffic is dropping. It may be seasonal, but check for a broken link, a renamed lesson or a lost place in the course navigation.',
+		],
+	];
+}
+
+function stats_health_flag_label(string $flag): string {
+	$info = stats_health_flag_info()[$flag] ?? null;
+	return $info !== null ? (string)$info['label'] : ucfirst($flag);
+}
+
+function stats_health_flag_badge(string $flag): string {
+	$info = stats_health_flag_info()[$flag] ?? null;
+	$label = $info !== null ? (string)$info['label'] : ucfirst($flag);
+	$tone = $info !== null && (string)$info['tone'] === 'good' ? 'ok' : 'warn';
+	$short = $info !== null ? (string)$info['short'] : '';
+	$title = $short !== '' ? ' title="' . stats_h($short) . '"' : '';
+	return '<span class="badge ' . $tone . '"' . $title . '>' . stats_h($label) . '</span>';
+}
+
+function stats_health_flags_tone(array $flags): string {
+	$info = stats_health_flag_info();
+	foreach ($flags as $flag) {
+		if (($info[(string)$flag]['tone'] ?? 'warn') === 'warn') {
+			return 'warn';
+		}
+	}
+	return 'good';
+}
+
 function stats_day_label(string $day): string {
 	$dt = DateTimeImmutable::createFromFormat('!Y-m-d', $day, new DateTimeZone('Europe/Berlin'));
 	if (!$dt) {
@@ -2767,10 +2820,20 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 body.feedback-view .analytics-alert { display: none !important; }
 body.feedback-view .analytics-only-inline { visibility: hidden !important; pointer-events: none; }
 .feedback-bridge { margin: 14px 0 0; }
-.feedback-bridge .fb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin: 10px 0 12px; }
-.feedback-bridge .fb-stat { padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel2); }
-.feedback-bridge .fb-stat b { display: block; font-size: 19px; color: var(--text); }
-.feedback-bridge .fb-stat span { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; }
+.feedback-bridge .fb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 10px; margin: 12px 0 14px; }
+.feedback-bridge .fb-stat {
+	padding: 12px 13px;
+	border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--line));
+	border-top: 2px solid color-mix(in srgb, var(--accent) 62%, transparent);
+	border-radius: 13px;
+	background:
+		radial-gradient(360px 140px at 100% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 72%),
+		linear-gradient(180deg, rgba(255,255,255,.04), transparent 76%),
+		var(--panel2);
+	box-shadow: 0 16px 36px -32px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.feedback-bridge .fb-stat b { display: block; font-size: 26px; line-height: 1; letter-spacing: -.04em; color: var(--text); font-variant-numeric: tabular-nums; }
+.feedback-bridge .fb-stat span { display: block; margin-top: 5px; color: var(--muted); font-size: 9.5px; text-transform: uppercase; letter-spacing: .08em; }
 .feedback-bridge .fb-latest { display: grid; gap: 5px; }
 .feedback-bridge .fb-latest a { display: grid; grid-template-columns: 84px minmax(0,1fr) auto; gap: 8px; align-items: baseline; padding: 6px 8px; border-radius: 7px; background: var(--panel2); color: var(--text); text-decoration: none; font-size: 11.5px; }
 .feedback-bridge .fb-latest a:hover { background: var(--panel); text-decoration: none; }
@@ -3056,18 +3119,44 @@ body.present .present-bar { display: flex; }
 .compare-delta.up { color: var(--emerald); }
 .compare-delta.down { color: var(--rose); }
 .compare-delta.flat { color: var(--muted); }
-.health-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
-.health-card { display: block; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: linear-gradient(180deg, rgba(255,255,255,.025), transparent 70%), var(--panel2); color: var(--text); text-decoration: none; min-width: 0; }
-.health-card:hover { border-color: var(--accent); text-decoration: none; }
+.health-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+.health-card {
+	--health-accent: var(--accent);
+	display: block;
+	padding: 15px;
+	border: 1px solid color-mix(in srgb, var(--health-accent) 24%, var(--line));
+	border-top: 2px solid color-mix(in srgb, var(--health-accent) 72%, transparent);
+	border-radius: 15px;
+	background:
+		radial-gradient(420px 160px at 100% 0%, color-mix(in srgb, var(--health-accent) 12%, transparent), transparent 72%),
+		linear-gradient(180deg, rgba(255,255,255,.04), transparent 76%),
+		var(--panel2);
+	box-shadow: 0 18px 38px -32px color-mix(in srgb, var(--health-accent) 62%, transparent), inset 0 1px 0 rgba(255,255,255,.035);
+	color: var(--text);
+	text-decoration: none;
+	min-width: 0;
+}
+.health-card--warn { --health-accent: var(--rose); }
+.health-card--good { --health-accent: var(--emerald); }
+.health-card:hover { border-color: var(--health-accent); text-decoration: none; }
 .health-head { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
 .health-head .title { font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
 .health-meta { color: var(--muted); font-size: 10.5px; margin-top: 6px; line-height: 1.45; }
 .health-flags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+.health-why { display: grid; gap: 3px; margin-top: 7px; color: var(--dim); font-size: 10px; line-height: 1.4; }
+.health-why b { color: color-mix(in srgb, var(--health-accent) 78%, var(--text)); font-weight: 700; }
 .health-bars { display: grid; gap: 4px; margin-top: 9px; }
 .health-bar { display: grid; grid-template-columns: 62px minmax(0, 1fr) 24px; gap: 6px; align-items: center; color: var(--dim); font-size: 9px; }
 .health-track { height: 5px; border-radius: 99px; background: var(--bg); overflow: hidden; }
-.health-track i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; }
+.health-track i { display: block; height: 100%; background: linear-gradient(90deg, var(--health-accent), var(--accent2)); border-radius: 99px; }
 .health-bar b { text-align: right; color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+.health-glossary { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; }
+.health-glossary summary { cursor: pointer; color: var(--muted); font-size: 11.5px; font-weight: 600; }
+.health-glossary summary:hover { color: var(--text); }
+.health-glossary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin-top: 10px; }
+.health-glossary-item { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); }
+.health-glossary-term { margin-bottom: 5px; }
+.health-glossary-item p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .section-list { display: grid; gap: 8px; }
 .section-row { display: grid; grid-template-columns: minmax(0, 1fr) 84px 50px; gap: 10px; align-items: center; }
 .section-title { min-width: 0; font-size: 11.5px; line-height: 1.35; overflow-wrap: anywhere; }
@@ -3536,7 +3625,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 				<?php if ($storyTop): ?>
 					<div class="story-value story-value--text"><?php echo stats_h($titles[$storyTopSlug] ?? $storyTopSlug); ?></div>
 					<div class="story-label"><?php echo mn_analytics_format_number((int)$storyTop['views']); ?> views<?php if ($storyHealth && $storyHealth['scroll'] !== null): ?> · <?php echo stats_h(number_format($storyHealth['scroll'], 0, '.', ',')); ?> % scroll<?php endif; ?></div>
-					<?php if ($storyHealth && $storyHealth['flags']): ?><div class="story-flags"><?php foreach ($storyHealth['flags'] as $flag): ?><span class="badge warn"><?php echo stats_h($flag); ?></span><?php endforeach; ?></div><?php endif; ?>
+					<?php if ($storyHealth && $storyHealth['flags']): ?><div class="story-flags"><?php foreach ($storyHealth['flags'] as $flag): ?><?php echo stats_health_flag_badge((string)$flag); ?><?php endforeach; ?></div><?php endif; ?>
 				<?php else: ?>
 					<div class="story-value story-value--text">No data yet</div>
 					<div class="story-label">Share the blog to fill this card.</div>
@@ -3909,12 +3998,21 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 				<h2>Content health <span class="hint">· top 8 by views</span></h2>
 				<p class="ref" style="margin: -4px 0 10px;">Transparent sub-scores, not a black-box ranking. Reading speed is approximate (words ÷ active time).</p>
 				<?php if ($contentHealth): ?>
+					<?php $healthFlagInfo = stats_health_flag_info(); ?>
 					<div class="health-list">
 						<?php foreach ($contentHealth as $health): ?>
-							<a class="health-card" href="?<?php echo stats_h(stats_query(['path' => $health['slug'], 'page' => 1])); ?>">
+							<?php $healthTone = $health['flags'] ? stats_health_flags_tone($health['flags']) : 'neutral'; ?>
+							<a class="health-card health-card--<?php echo stats_h($healthTone); ?>" href="?<?php echo stats_h(stats_query(['path' => $health['slug'], 'page' => 1])); ?>">
 								<div class="health-head"><span class="title"><?php echo stats_h($health['label']); ?></span><span class="mini-share"><?php echo stats_h(number_format($health['share'], 1, '.', ',')); ?> %</span></div>
 								<div class="health-meta"><?php echo mn_analytics_format_number($health['views']); ?> views · <?php echo stats_h(mn_analytics_format_duration($health['duration'] !== null ? (int)round($health['duration']) : null)); ?> · <?php echo $health['scroll'] !== null ? stats_h(number_format($health['scroll'], 0, '.', ',')) . ' % scroll' : 'scroll —'; ?><?php if ($health['words'] !== null): ?> · <?php echo mn_analytics_format_number($health['words']); ?> words<?php endif; ?><?php if ($health['speed'] !== null): ?> · <?php echo stats_h(number_format($health['speed'], 0, '.', ',')); ?> wpm<?php endif; ?></div>
-								<?php if ($health['flags']): ?><div class="health-flags"><?php foreach ($health['flags'] as $flag): ?><span class="badge warn"><?php echo stats_h($flag); ?></span><?php endforeach; ?></div><?php endif; ?>
+								<?php if ($health['flags']): ?>
+									<div class="health-flags"><?php foreach ($health['flags'] as $flag): ?><?php echo stats_health_flag_badge((string)$flag); ?><?php endforeach; ?></div>
+									<div class="health-why">
+										<?php foreach ($health['flags'] as $flag): $flagInfo = $healthFlagInfo[(string)$flag] ?? null; if ($flagInfo === null) continue; ?>
+											<span><b><?php echo stats_h($flagInfo['label']); ?></b> — <?php echo stats_h($flagInfo['short']); ?></span>
+										<?php endforeach; ?>
+									</div>
+								<?php endif; ?>
 								<div class="health-bars">
 									<?php foreach (['reach' => 'Reach', 'depth' => 'Depth', 'stickiness' => 'Stickiness', 'momentum' => 'Momentum'] as $scoreKey => $scoreLabel): $scoreValue = (float)($health['scores'][$scoreKey] ?? 0); ?>
 										<div class="health-bar"><span><?php echo stats_h($scoreLabel); ?></span><div class="health-track"><i style="width: <?php echo stats_h(number_format($scoreValue, 1, '.', '')); ?>%"></i></div><b><?php echo stats_h(number_format($scoreValue, 0, '.', ',')); ?></b></div>
@@ -3923,6 +4021,17 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 							</a>
 						<?php endforeach; ?>
 					</div>
+					<details class="health-glossary">
+						<summary>What do these flags mean?</summary>
+						<div class="health-glossary-grid">
+							<?php foreach ($healthFlagInfo as $healthFlagKey => $healthFlagRow): ?>
+								<div class="health-glossary-item">
+									<div class="health-glossary-term"><?php echo stats_health_flag_badge((string)$healthFlagKey); ?></div>
+									<p><?php echo stats_h($healthFlagRow['long']); ?></p>
+								</div>
+							<?php endforeach; ?>
+						</div>
+					</details>
 				<?php else: ?>
 					<div class="empty">No page data in the selected period.</div>
 				<?php endif; ?>
@@ -4715,7 +4824,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<li><strong>Section reading map</strong> = share of pageviews that made each heading visible, plus average visible dwell. It is based only on pageviews with section data; older rows predate this logging.</li>
 					<li><strong>Interaction signals</strong> = aggregate counts of internal link targets, external domains (not full URLs), citation keys, code languages, search use/result positions, quiz question IDs + correctness, lab runs, downloads and media. They are not per-person journeys.</li>
 					<li><strong>Reading speed</strong> = approximate words per minute from the lesson word count divided by active time. Treat it as a comparative signal, not an exact measurement.</li>
-					<li><strong>Content health / cohorts</strong> = transparent sub-scores and aggregate source/device profiles derived from existing pageviews. “Humans only” excludes rows whose User-Agent matched a bot.</li>
+					<li><strong>Content health / cohorts</strong> = transparent sub-scores and aggregate source/device profiles derived from existing pageviews. “Humans only” excludes rows whose User-Agent matched a bot. <strong>Content gap</strong> = at least three visits started on the page and readers scrolled less than half of it (or scroll was never measured); the opening may not match the promise of the link or the answer readers wanted may be missing. <strong>Skimmed</strong> = five or more views with under 45 seconds of average reading time. <strong>Rising</strong> / <strong>falling</strong> = at least 25 % more or fewer views than the previous period. Each card explains its own flags, and the “What do these flags mean?” toggle spells them out.</li>
 					<li><strong>Bots</strong> = pageviews whose User-Agent matched a known bot or automation signature. Only the coarse reason label is stored. Click a reason in Tech or a raw row to see the matching rule.</li>
 					<li><strong>Open tokens</strong> = pageviews whose completion signal has not arrived yet. They are closed after at most 6 hours and the token is deleted.</li>
 					<li><strong>Browser/OS/device</strong> = coarse categories from the User-Agent (read transiently, never stored): browser family + major version, operating system + version, desktop/mobile/tablet/bot. No minor/patch versions, no device IDs, no fingerprint.</li>
@@ -5012,9 +5121,17 @@ foreach ($contentHealth as $presentationHealth) {
 	if (empty($presentationHealth['flags'])) {
 		continue;
 	}
+	$presentationFlagInfo = stats_health_flag_info();
+	$presentationFlagTexts = [];
+	foreach ($presentationHealth['flags'] as $presentationFlag) {
+		$presentationFlagRow = $presentationFlagInfo[(string)$presentationFlag] ?? null;
+		$presentationFlagTexts[] = $presentationFlagRow !== null
+			? $presentationFlagRow['label'] . ' — ' . lcfirst(rtrim((string)$presentationFlagRow['short'], '.'))
+			: (string)$presentationFlag;
+	}
 	$presentationSignals[] = [
 		'label' => 'Content health',
-		'text' => $presentationHealth['label'] . ': ' . implode(', ', array_map('strval', $presentationHealth['flags'])) . '.',
+		'text' => $presentationHealth['label'] . ': ' . implode('; ', $presentationFlagTexts) . '.',
 	];
 }
 $presentationSignals = array_slice($presentationSignals, 0, 6);
