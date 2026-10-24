@@ -57,7 +57,7 @@ function stats_redirect(): void {
 }
 
 function stats_query(array $overrides = []): string {
-	$allowed = ['range', 'path', 'ref_type', 'source', 'ref_path', 'browser', 'os', 'device', 'page'];
+	$allowed = ['range', 'path', 'ref_type', 'source', 'ref_path', 'browser', 'os', 'device', 'day', 'page'];
 	$q = [];
 	foreach ($allowed as $key) {
 		$value = array_key_exists($key, $overrides) ? $overrides[$key] : ($_GET[$key] ?? null);
@@ -207,7 +207,7 @@ function stats_all(PDO $pdo, string $sql, array $params): array {
 	return is_array($rows) ? $rows : [];
 }
 
-function stats_where(int $range, string $path, string $refType, string $source, string $refPath, string $browser, string $os, string $device, bool $previous = false): array {
+function stats_where(int $range, string $path, string $refType, string $source, string $refPath, string $browser, string $os, string $device, bool $previous = false, string $day = ''): array {
 	$where = ['1=1'];
 	$params = [];
 	if ($range > 0) {
@@ -250,12 +250,59 @@ function stats_where(int $range, string $path, string $refType, string $source, 
 		$where[] = 'device = ?';
 		$params[] = $device;
 	}
+	if ($day !== '') {
+		$where[] = 'day = ?';
+		$params[] = $day;
+	}
 	return [implode(' AND ', $where), $params];
 }
 
 function stats_time_label(int $ts): string {
 	$dt = (new DateTimeImmutable('@' . $ts))->setTimezone(new DateTimeZone('Europe/Berlin'));
 	return $dt->format('Y-m-d H:i');
+}
+
+function stats_relative_time(?int $ts): string {
+	if ($ts === null) {
+		return '—';
+	}
+	$diff = max(0, time() - $ts);
+	if ($diff < 60) {
+		return $diff <= 1 ? 'just now' : $diff . ' sec ago';
+	}
+	if ($diff < 3600) {
+		return (string)intdiv($diff, 60) . ' min ago';
+	}
+	if ($diff < 86400) {
+		return (string)intdiv($diff, 3600) . ' h ago';
+	}
+	return (string)intdiv($diff, 86400) . ' d ago';
+}
+
+function stats_scroll_color(?float $scroll): string {
+	if ($scroll === null) {
+		return '#64748b';
+	}
+	if ($scroll >= 75) {
+		return '#34d399';
+	}
+	if ($scroll >= 50) {
+		return '#38bdf8';
+	}
+	if ($scroll >= 25) {
+		return '#e9aa60';
+	}
+	return '#fb7185';
+}
+
+function stats_ref_color(string $type): string {
+	return match ($type) {
+		'search' => '#34d399',
+		'social' => '#fb7185',
+		'external' => '#e9aa60',
+		'internal' => '#38bdf8',
+		default => '#94a3b8',
+	};
 }
 
 function stats_browser_label(array $row): string {
@@ -410,6 +457,12 @@ $rangeRaw = $_GET['range'] ?? 30;
 $range = is_scalar($rangeRaw) ? (int)$rangeRaw : 30;
 if (!array_key_exists($range, $rangeOptions)) {
 	$range = 30;
+}
+
+$dayRaw = $_GET['day'] ?? '';
+$day = is_scalar($dayRaw) ? (string)$dayRaw : '';
+if ($day !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $day)) {
+	$day = '';
 }
 
 $pathRaw = $_GET['path'] ?? '';
@@ -572,7 +625,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 			http_response_code(503);
 			exit;
 		}
-		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device);
+		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, false, $day);
 		$stmt = $pdoExport->prepare(
 			"SELECT ts, day, hour, path, ref_type, ref_source, ref_host, ref_path,
 			        browser, browser_major, os, os_version, device, is_bot, bot_reason,
@@ -656,10 +709,45 @@ $seriesDayKeys = [];
 $seriesCurrent = [];
 $seriesPrev = [];
 $seriesEntries = [];
+$seriesAnomalies = [];
 $activeDays = 0;
 $periodDays = 1;
 $viewsPerDay = 0.0;
 $entriesPerDay = 0.0;
+$todayEntries = 0;
+$todayPrevEntries = 0;
+$todayPrevViews = 0;
+$todayLabel = '';
+$todayPrevLabel = '';
+$todayDeltaHtml = '<span class="delta flat">—</span>';
+$todaySparkline = '—';
+$headlineInsights = [];
+$lastSeen = null;
+$lastSeenAge = '—';
+$heroHourViews = 0;
+$currentHour = (int)(new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin')))->format('G');
+$calendarData = [];
+$calendarMax = 1;
+$calendarStart = '';
+$calendarEnd = '';
+$botHumanLabels = [];
+$botHumanHumans = [];
+$botHumanBots = [];
+$funnelData = [];
+$attentionData = [];
+$topMovers = ['up' => [], 'down' => []];
+$prevPageMap = [];
+$pageSourceData = [];
+$pageSourcePages = [];
+$pageSourceSources = [];
+$contentTreemap = [];
+$sourceTreemap = [];
+$clockLabels = [];
+$clockViews = [];
+$clockEntries = [];
+$confidenceDuration = 0.0;
+$confidenceScroll = 0.0;
+$confidenceBots = 0.0;
 $peakDayKey = null;
 $peakDayViews = 0;
 $peakDayLabel = '—';
@@ -676,6 +764,8 @@ $peakWeekdayViews = 0;
 $peakWeekdayEntries = 0;
 $weekHourMap = [];
 $weekHourMax = 0;
+$weekHourEntriesMap = [];
+$weekHourEntriesMax = 0;
 $entryPages = [];
 $engagementBuckets = [];
 $engagementMax = 1;
@@ -750,8 +840,8 @@ if ($authed) {
 		if (!$analyticsKillSwitch) {
 			mn_analytics_cleanup($pdo, true);
 		}
-		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device);
-		[$prevWhereSql, $prevParams] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, true);
+		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, false, $day);
+		[$prevWhereSql, $prevParams] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, true, $day);
 
 		$kpi = stats_one($pdo, "SELECT
 			COUNT(*) AS views,
@@ -827,11 +917,52 @@ if ($authed) {
 		}
 
 		$today = (new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin')))->format('Y-m-d');
-		$todayRow = stats_one($pdo, "SELECT COUNT(*) AS n FROM pageviews WHERE $whereSql AND day = ?", array_merge($params, [$today]));
-		$todayViews = (int)($todayRow['n'] ?? 0);
+		$todayLabel = (new DateTimeImmutable($today))->format('D, M j');
+		$todayPrevDay = (new DateTimeImmutable($today))->modify('-7 days')->format('Y-m-d');
+		$todayPrevLabel = (new DateTimeImmutable($todayPrevDay))->format('D');
+		[$allWhereSql, $allParams] = stats_where(0, $path, $refType, $source, $refPath, $browser, $os, $device, false, '');
+		$todayStats = stats_one($pdo, "SELECT
+				SUM(CASE WHEN day = ? THEN 1 ELSE 0 END) AS views,
+				SUM(CASE WHEN day = ? AND ref_type <> 'internal' THEN 1 ELSE 0 END) AS entries,
+				MAX(ts) AS last_seen
+			FROM pageviews WHERE $allWhereSql", array_merge([$today, $today], $allParams));
+		$todayViews = (int)($todayStats['views'] ?? 0);
+		$todayEntries = (int)($todayStats['entries'] ?? 0);
+		$lastSeen = isset($todayStats['last_seen']) && $todayStats['last_seen'] !== null ? (int)$todayStats['last_seen'] : null;
+		$lastSeenAge = stats_relative_time($lastSeen);
+		$todayPrevRow = stats_one($pdo, "SELECT
+				COUNT(*) AS views,
+				SUM(CASE WHEN ref_type <> 'internal' THEN 1 ELSE 0 END) AS entries
+			FROM pageviews WHERE $allWhereSql AND day = ?", array_merge($allParams, [$todayPrevDay]));
+		$todayPrevViews = (int)($todayPrevRow['views'] ?? 0);
+		$todayPrevEntries = (int)($todayPrevRow['entries'] ?? 0);
+		if ($todayPrevEntries > 0) {
+			$todayDelta = 100 * ($todayEntries - $todayPrevEntries) / $todayPrevEntries;
+			$todayDeltaClass = $todayDelta > 0.05 ? 'up' : ($todayDelta < -0.05 ? 'down' : 'flat');
+			$todayDeltaSign = $todayDelta > 0 ? '+' : '';
+			$todayDeltaHtml = '<span class="delta ' . $todayDeltaClass . '">' . $todayDeltaSign . number_format($todayDelta, 1, '.', ',') . ' % vs last ' . $todayPrevLabel . '</span>';
+		} elseif ($todayEntries > 0) {
+			$todayDeltaHtml = '<span class="delta up">new vs last ' . $todayPrevLabel . '</span>';
+		} else {
+			$todayDeltaHtml = '<span class="delta flat">no estimated visits yet today</span>';
+		}
 		$hourStart = intdiv(time(), 3600) * 3600;
 		$hourRow = stats_one($pdo, "SELECT COUNT(*) AS n FROM pageviews WHERE $whereSql AND ts >= ?", array_merge($params, [$hourStart]));
 		$hourViews = (int)($hourRow['n'] ?? 0);
+		$heroHourRow = stats_one($pdo, "SELECT COUNT(*) AS n FROM pageviews WHERE $allWhereSql AND ts >= ?", array_merge($allParams, [$hourStart]));
+		$heroHourViews = (int)($heroHourRow['n'] ?? 0);
+		$sparkStart = (new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin')))->setTime(0, 0, 0)->modify('-6 days');
+		$sparkRows = stats_all($pdo, "SELECT day, SUM(CASE WHEN ref_type <> 'internal' THEN 1 ELSE 0 END) AS entries
+			FROM pageviews WHERE $allWhereSql AND day >= ? GROUP BY day", array_merge($allParams, [$sparkStart->format('Y-m-d')]));
+		$sparkMap = [];
+		foreach ($sparkRows as $sparkRow) {
+			$sparkMap[(string)$sparkRow['day']] = (int)$sparkRow['entries'];
+		}
+		$sparkValues = [];
+		for ($i = 0; $i < 7; $i++) {
+			$sparkValues[] = (int)($sparkMap[$sparkStart->modify('+' . $i . ' days')->format('Y-m-d')] ?? 0);
+		}
+		$todaySparkline = stats_sparkline($sparkValues, 168, 40);
 
 		$rowsRow = stats_one($pdo, "SELECT COUNT(*) AS n FROM pageviews", []);
 		$rowsTotal = (int)($rowsRow['n'] ?? 0);
@@ -891,6 +1022,7 @@ if ($authed) {
 					}
 					for ($d = $first; $d <= $last; $d = $d->modify('+1 day')) {
 						$key = $d->format('Y-m-d');
+						$seriesDayKeys[] = $key;
 						$seriesLabels[] = $d->format('M j');
 						$seriesCurrent[] = (int)($currMap[$key] ?? 0);
 						$seriesEntries[] = (int)($currEntriesMap[$key] ?? 0);
@@ -901,6 +1033,90 @@ if ($authed) {
 				$seriesLabels[] = (new DateTimeImmutable('now', $tz))->format('M j');
 				$seriesCurrent[] = 0;
 				$seriesEntries[] = 0;
+			}
+		}
+
+		$calendarData = [];
+		$calendarMax = 1;
+		for ($i = 0; $i < count($seriesDayKeys); $i++) {
+			$dayKey = (string)$seriesDayKeys[$i];
+			$dayValue = (int)($seriesCurrent[$i] ?? 0);
+			if ($dayKey === '') {
+				continue;
+			}
+			$calendarData[] = [$dayKey, $dayValue];
+			if ($dayValue > $calendarMax) {
+				$calendarMax = $dayValue;
+			}
+		}
+
+		$calendarStart = (string)($seriesDayKeys[0] ?? $today);
+		$calendarEnd = (string)($seriesDayKeys[count($seriesDayKeys) - 1] ?? $today);
+		if ($calendarStart === '') {
+			$calendarStart = $today;
+		}
+		if ($calendarEnd === '') {
+			$calendarEnd = $today;
+		}
+
+		$seriesAnomalies = [];
+		for ($i = 0; $i < count($seriesCurrent); $i++) {
+			$history = array_slice($seriesCurrent, max(0, $i - 7), min(7, $i));
+			if (count($history) < 3) {
+				continue;
+			}
+			$avg = array_sum($history) / count($history);
+			if ($avg <= 0) {
+				continue;
+			}
+			$value = (int)$seriesCurrent[$i];
+			$ratio = $value / $avg;
+			if ($value >= 5 && $ratio >= 1.6) {
+				$seriesAnomalies[] = ['index' => $i, 'type' => 'spike', 'value' => $value, 'avg' => $avg];
+			} elseif ($avg >= 5 && $ratio <= 0.4) {
+				$seriesAnomalies[] = ['index' => $i, 'type' => 'dip', 'value' => $value, 'avg' => $avg];
+			}
+		}
+
+		$botHumanRows = stats_all($pdo, "SELECT day,
+				SUM(CASE WHEN is_bot = 0 THEN 1 ELSE 0 END) AS humans,
+				SUM(CASE WHEN is_bot = 1 THEN 1 ELSE 0 END) AS bots
+			FROM pageviews WHERE $whereSql GROUP BY day", $params);
+		$botHumanMap = [];
+		foreach ($botHumanRows as $row) {
+			$botHumanMap[(string)$row['day']] = ['humans' => (int)$row['humans'], 'bots' => (int)$row['bots']];
+		}
+		$botHumanLabels = [];
+		$botHumanHumans = [];
+		$botHumanBots = [];
+		foreach ($seriesDayKeys as $i => $dayKey) {
+			$botHumanLabels[] = $seriesLabels[$i] ?? $dayKey;
+			$botHumanHumans[] = (int)($botHumanMap[$dayKey]['humans'] ?? 0);
+			$botHumanBots[] = (int)($botHumanMap[$dayKey]['bots'] ?? 0);
+		}
+
+		$funnelRow = stats_one($pdo, "SELECT
+				COUNT(*) AS total,
+				SUM(CASE WHEN duration_sec >= 10 THEN 1 ELSE 0 END) AS ten,
+				SUM(CASE WHEN duration_sec >= 10 AND scroll_pct >= 50 THEN 1 ELSE 0 END) AS ten50,
+				SUM(CASE WHEN duration_sec >= 10 AND scroll_pct >= 75 THEN 1 ELSE 0 END) AS ten75
+			FROM pageviews WHERE $whereSql", $params);
+		$funnelData = [
+			['name' => 'All pageviews', 'value' => (int)($funnelRow['total'] ?? 0)],
+			['name' => '10 seconds or more', 'value' => (int)($funnelRow['ten'] ?? 0)],
+			['name' => '10 s + 50 % scroll', 'value' => (int)($funnelRow['ten50'] ?? 0)],
+			['name' => '10 s + 75 % scroll', 'value' => (int)($funnelRow['ten75'] ?? 0)],
+		];
+
+		$confidenceDuration = $knownPct;
+		$confidenceScroll = $views > 0 ? 100 * $scrollKnown / $views : 0.0;
+		$confidenceBots = $views > 0 ? 100 * $bots / $views : 0.0;
+
+		$prevPageMap = [];
+		if ($range > 0) {
+			$prevPageRows = stats_all($pdo, "SELECT path, COUNT(*) AS views FROM pageviews WHERE $prevWhereSql GROUP BY path", $prevParams);
+			foreach ($prevPageRows as $row) {
+				$prevPageMap[(string)$row['path']] = (int)$row['views'];
 			}
 		}
 
@@ -932,6 +1148,41 @@ if ($authed) {
 		foreach ($topPages as $page) {
 			$pageMap[(string)$page['path']] = $page;
 		}
+
+		$topMovers = ['up' => [], 'down' => []];
+		if ($range > 0) {
+			$moverSlugs = array_unique(array_merge(array_keys($pageMap), array_keys($prevPageMap)));
+			$moverRows = [];
+			foreach ($moverSlugs as $moverSlug) {
+				$current = (int)($pageMap[$moverSlug]['views'] ?? 0);
+				$previous = (int)($prevPageMap[$moverSlug] ?? 0);
+				if ($current === 0 && $previous === 0) {
+					continue;
+				}
+				$delta = $current - $previous;
+				$moverRows[] = [
+					'slug' => (string)$moverSlug,
+					'current' => $current,
+					'previous' => $previous,
+					'delta' => $delta,
+					'pct' => $previous > 0 ? 100 * $delta / $previous : null,
+				];
+			}
+			usort($moverRows, static function (array $a, array $b): int {
+				return $b['delta'] <=> $a['delta'];
+			});
+			$topMovers['up'] = array_slice(array_values(array_filter($moverRows, static function (array $row): bool {
+				return $row['delta'] > 0;
+			})), 0, 3);
+			$negative = array_values(array_filter($moverRows, static function (array $row): bool {
+				return $row['delta'] < 0;
+			}));
+			usort($negative, static function (array $a, array $b): int {
+				return $a['delta'] <=> $b['delta'];
+			});
+			$topMovers['down'] = array_slice($negative, 0, 3);
+		}
+
 		$pageSlugs = [];
 		if ($path === '') {
 			$pageSlugs = array_keys($titles);
@@ -967,9 +1218,14 @@ if ($authed) {
 			$titleB = $titles[$b['path']] ?? (string)$b['path'];
 			return strcasecmp($titleA, $titleB);
 		});
+		$portfolioPages = [];
 		foreach ($pageRows as $page) {
 			if ((int)$page['views'] === 0) {
 				$zeroPages++;
+				continue;
+			}
+			if (count($portfolioPages) < 8) {
+				$portfolioPages[] = $page;
 			}
 		}
 		$chartPages = array_slice($topPages, 0, 12);
@@ -995,6 +1251,36 @@ if ($authed) {
 				$values[] = (int)($pageTrendMap[$slug][$dayKey] ?? 0);
 			}
 			$pageSparklines[$slug] = stats_sparkline($values);
+		}
+
+		$contentTreemap = [];
+		$attentionData = [];
+		foreach (array_slice($topPages, 0, 20) as $page) {
+			$pageSlug = (string)$page['path'];
+			$pageViews = (int)$page['views'];
+			if ($pageViews <= 0) {
+				continue;
+			}
+			$pageTitle = $titles[$pageSlug] ?? $pageSlug;
+			$pageScroll = $page['avg_scroll'] !== null ? (float)$page['avg_scroll'] : null;
+			$pageDuration = $page['avg_duration'] !== null ? (float)$page['avg_duration'] : null;
+			if (count($contentTreemap) < 12) {
+				$contentTreemap[] = [
+					'name' => $pageTitle,
+					'value' => $pageViews,
+					'slug' => $pageSlug,
+					'scroll' => $pageScroll,
+					'duration' => $pageDuration,
+					'itemStyle' => ['color' => stats_scroll_color($pageScroll)],
+				];
+			}
+			if ($pageDuration !== null && $pageScroll !== null) {
+				$attentionData[] = [
+					'name' => $pageTitle,
+					'slug' => $pageSlug,
+					'value' => [(int)round($pageDuration), (int)round($pageScroll), $pageViews],
+				];
+			}
 		}
 
 		$shareTotal = 0;
@@ -1033,6 +1319,54 @@ if ($authed) {
 		}
 		$sourceOptions = array_keys($sourceOptions);
 		sort($sourceOptions);
+
+		$sourceTreemap = [];
+		foreach (array_slice($referrers, 0, 10) as $ref) {
+			$refTypeLabel = mn_analytics_ref_type_label((string)$ref['ref_type']);
+			$refName = trim((string)$ref['ref_source']);
+			if ($refName === '') {
+				$refName = $refTypeLabel;
+			}
+			$sourceTreemap[] = [
+				'name' => $refName,
+				'value' => (int)$ref['views'],
+				'ref_type' => (string)$ref['ref_type'],
+				'source' => (string)$ref['ref_source'],
+				'host' => (string)$ref['ref_host'],
+				'itemStyle' => ['color' => stats_ref_color((string)$ref['ref_type'])],
+			];
+		}
+
+		$pageSourceRaw = stats_all($pdo, "SELECT path,
+				CASE WHEN ref_source <> '' THEN ref_source ELSE ref_type END AS source,
+				COUNT(*) AS views
+			FROM pageviews WHERE $whereSql AND ref_type <> 'internal'
+			GROUP BY path, source ORDER BY views DESC LIMIT 160", $params);
+		$pageSourcePageTotals = [];
+		$pageSourceSourceTotals = [];
+		foreach ($pageSourceRaw as $row) {
+			$pageSourcePageTotals[(string)$row['path']] = ($pageSourcePageTotals[(string)$row['path']] ?? 0) + (int)$row['views'];
+			$pageSourceSourceTotals[(string)$row['source']] = ($pageSourceSourceTotals[(string)$row['source']] ?? 0) + (int)$row['views'];
+		}
+		arsort($pageSourcePageTotals);
+		arsort($pageSourceSourceTotals);
+		$pageSourcePageKeys = array_slice(array_keys($pageSourcePageTotals), 0, 8);
+		$pageSourceSourceKeys = array_slice(array_keys($pageSourceSourceTotals), 0, 8);
+		$pageSourcePages = array_map(static function (string $slug) use ($titles): string {
+			return $titles[$slug] ?? $slug;
+		}, $pageSourcePageKeys);
+		$pageSourceSources = $pageSourceSourceKeys;
+		$pageSourcePageIndex = array_flip($pageSourcePageKeys);
+		$pageSourceSourceIndex = array_flip($pageSourceSourceKeys);
+		$pageSourceData = [];
+		foreach ($pageSourceRaw as $row) {
+			$pageKey = (string)$row['path'];
+			$sourceKey = (string)$row['source'];
+			if (!isset($pageSourcePageIndex[$pageKey]) || !isset($pageSourceSourceIndex[$sourceKey])) {
+				continue;
+			}
+			$pageSourceData[] = [$pageSourceSourceIndex[$sourceKey], $pageSourcePageIndex[$pageKey], (int)$row['views']];
+		}
 
 		$internalRefs = stats_all($pdo, "SELECT ref_path,
 				COUNT(*) AS views,
@@ -1246,6 +1580,14 @@ if ($authed) {
 				$peakHourEntries = (int)$row['entries'];
 			}
 		}
+		$clockLabels = [];
+		$clockViews = [];
+		$clockEntries = [];
+		for ($h = 0; $h < 24; $h++) {
+			$clockLabels[] = sprintf('%02d', $h);
+			$clockViews[] = (int)($hourProfile[$h]['views'] ?? 0);
+			$clockEntries[] = (int)($hourProfile[$h]['entries'] ?? 0);
+		}
 
 		$weekdayProfile = [];
 		foreach ($weekdayLabels as $weekdayIndex => $weekdayLabel) {
@@ -1276,7 +1618,13 @@ if ($authed) {
 		for ($weekdayIndex = 1; $weekdayIndex <= 7; $weekdayIndex++) {
 			$weekHourMap[$weekdayIndex] = array_fill(0, 24, 0);
 		}
-		$weekHourRows = stats_all($pdo, "SELECT strftime('%w', day) AS dow, hour, COUNT(*) AS views
+		$weekHourEntriesMap = [];
+		for ($weekdayIndex = 1; $weekdayIndex <= 7; $weekdayIndex++) {
+			$weekHourEntriesMap[$weekdayIndex] = array_fill(0, 24, 0);
+		}
+		$weekHourRows = stats_all($pdo, "SELECT strftime('%w', day) AS dow, hour,
+				COUNT(*) AS views,
+				SUM(CASE WHEN ref_type <> 'internal' THEN 1 ELSE 0 END) AS entries
 			FROM pageviews WHERE $whereSql GROUP BY dow, hour", $params);
 		foreach ($weekHourRows as $row) {
 			$dow = (int)$row['dow'];
@@ -1286,8 +1634,12 @@ if ($authed) {
 				continue;
 			}
 			$weekHourMap[$weekdayIndex][$hour] = (int)$row['views'];
+			$weekHourEntriesMap[$weekdayIndex][$hour] = (int)$row['entries'];
 			if ((int)$row['views'] > $weekHourMax) {
 				$weekHourMax = (int)$row['views'];
+			}
+			if ((int)$row['entries'] > $weekHourEntriesMax) {
+				$weekHourEntriesMax = (int)$row['entries'];
 			}
 		}
 
@@ -1410,9 +1762,45 @@ if ($authed) {
 				$insights[] = 'Bots: none detected in this range.';
 			}
 
+			if ($seriesAnomalies) {
+				$spikeCount = 0;
+				$dipCount = 0;
+				foreach ($seriesAnomalies as $anomaly) {
+					if ($anomaly['type'] === 'spike') {
+						$spikeCount++;
+					} else {
+						$dipCount++;
+					}
+				}
+				$insights[] = 'Anomalies: ' . $spikeCount . ' spike(s) and ' . $dipCount . ' dip(s) vs the trailing 7-day average; marked on the daily chart.';
+			}
 		} else {
 			$insights[] = 'No views match the selected range and filters yet.';
 		}
+
+		$headlineInsights = [];
+		if ($views > 0) {
+			$headlinePage = $topPages[0] ?? null;
+			if ($headlinePage) {
+				$headlineSlug = (string)$headlinePage['path'];
+				$headlineInsights[] = 'Most read: ' . ($titles[$headlineSlug] ?? $headlineSlug) . ' (' . mn_analytics_format_number((int)$headlinePage['views']) . ' views).';
+			}
+			$headlineRef = $referrers[0] ?? null;
+			if ($headlineRef) {
+				$headlineType = mn_analytics_ref_type_label((string)$headlineRef['ref_type']);
+				$headlineName = trim((string)$headlineRef['ref_source']);
+				if ($headlineName === '') {
+					$headlineName = $headlineType;
+				}
+				$headlineInsights[] = 'Top source: ' . $headlineName . ' (' . mn_analytics_format_number((int)$headlineRef['views']) . ' views).';
+			}
+			if ($peakHour !== null) {
+				$headlineInsights[] = 'Peak hour: ' . sprintf('%02d:00–%02d:59', $peakHour, $peakHour) . ' (' . mn_analytics_format_number($peakHourViews) . ' views / ' . mn_analytics_format_number($peakHourEntries) . ' est. visits).';
+			}
+		} else {
+			$headlineInsights[] = 'No views in the selected range yet.';
+		}
+		$headlineInsights = array_slice($headlineInsights, 0, 3);
 
 		$pageCount = max(1, (int)ceil($views / $perPage));
 		if ($pageNum > $pageCount) {
@@ -1650,6 +2038,70 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 .details pre { white-space: pre-wrap; word-break: break-word; background: var(--bg); border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; color: var(--accent2); font-size: 11.5px; overflow-x: auto; }
 .footer { margin-top: 28px; color: var(--dim); font-size: 11px; text-align: center; }
 .mono { font-variant-numeric: tabular-nums; }
+[hidden] { display: none !important; }
+.card { position: relative; }
+.subnav { position: sticky; top: 48px; z-index: 40; display: flex; gap: 6px; overflow-x: auto; padding: 6px 0 8px; margin: 0 0 12px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, var(--bg) 70%, transparent); }
+.subnav a { color: var(--muted); font-size: 11px; padding: 4px 8px; border-radius: 999px; white-space: nowrap; text-decoration: none; }
+.subnav a:hover, .subnav a.active { color: var(--text); background: var(--panel2); text-decoration: none; }
+.subnav a.active { color: var(--accent2); }
+.hero { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr) minmax(0, .9fr) minmax(0, 1.1fr); gap: 16px; align-items: stretch; padding: 20px; margin: 0 0 18px; border: 1px solid rgba(233,170,96,.3); border-radius: 18px; background: radial-gradient(900px 400px at 0% 0%, rgba(233,170,96,.16), transparent 60%), radial-gradient(700px 400px at 100% 100%, rgba(56,189,248,.09), transparent 55%), var(--panel); box-shadow: var(--shadow); position: relative; overflow: hidden; }
+.hero::after { content: ''; position: absolute; right: -80px; top: -120px; width: 320px; height: 320px; border-radius: 50%; background: radial-gradient(circle, rgba(233,170,96,.14), transparent 65%); pointer-events: none; }
+.hero > * { position: relative; z-index: 1; }
+.eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: 10px; color: var(--dim); }
+.hero-number { font-size: 64px; line-height: 1; font-weight: 800; letter-spacing: -.06em; margin: 12px 0 4px; color: var(--accent2); font-variant-numeric: tabular-nums; }
+.hero-label { color: var(--muted); font-size: 13px; }
+.hero-meta { margin-top: 10px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.hero-secondary { display: grid; gap: 9px; align-content: center; }
+.hero-stat { padding: 9px 10px; border-left: 2px solid var(--line); }
+.hero-stat .k { display: block; color: var(--dim); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; }
+.hero-stat strong { display: block; font-size: 20px; letter-spacing: -.02em; margin-top: 3px; font-variant-numeric: tabular-nums; }
+.hero-spark { display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 12px; border-radius: 12px; background: rgba(0,0,0,.12); }
+.hero-spark svg { width: 100%; height: auto; color: var(--accent); }
+.hero-brief { padding: 12px 12px 12px 14px; border-left: 1px solid var(--line); }
+.hero-brief ul { margin: 10px 0 0; padding-left: 16px; display: grid; gap: 6px; color: var(--text); font-size: 12px; line-height: 1.45; }
+.hero-brief li::marker { color: var(--accent); }
+.card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.card-head h2 { margin: 0; }
+.segmented { display: inline-flex; gap: 3px; padding: 3px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); }
+.segmented button { border: 0; background: transparent; color: var(--muted); padding: 5px 8px; border-radius: 6px; font: inherit; font-size: 10.5px; font-weight: 600; cursor: pointer; }
+.segmented button:hover { color: var(--text); }
+.segmented button.active { background: var(--accent); color: #1a1207; }
+.view-pane { min-width: 0; }
+.portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.portfolio-card { display: block; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: linear-gradient(180deg, rgba(255,255,255,.025), transparent 70%), var(--panel2); color: var(--text); text-decoration: none; min-width: 0; }
+.portfolio-card:hover { border-color: var(--accent); text-decoration: none; }
+.portfolio-head { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+.portfolio-head .title { font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; }
+.portfolio-number { margin-top: 8px; font-size: 24px; font-weight: 700; letter-spacing: -.03em; }
+.portfolio-number span { color: var(--dim); font-size: 11px; font-weight: 400; }
+.portfolio-spark { margin: 6px 0; color: var(--accent); }
+.portfolio-spark svg { width: 100%; height: auto; }
+.portfolio-meta { color: var(--muted); font-size: 11px; }
+.portfolio-track { height: 5px; border-radius: 99px; background: var(--bg); overflow: hidden; margin-top: 8px; }
+.portfolio-track span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; }
+.confidence { display: grid; gap: 8px; margin: 10px 0 14px; }
+.conf-row { display: grid; grid-template-columns: 100px minmax(0, 1fr) 46px; gap: 8px; align-items: center; color: var(--muted); font-size: 11px; }
+.conf-track { height: 8px; border-radius: 99px; background: var(--bg); border: 1px solid var(--line); overflow: hidden; }
+.conf-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--accent2)); min-width: 2px; }
+.conf-row > span:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.bar-fill--rose { background: linear-gradient(90deg, var(--rose), #fda4af); }
+.chart-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; z-index: 5; }
+.chart-export { border: 1px solid var(--line); background: rgba(11,18,32,.65); color: var(--muted); font: inherit; font-size: 9px; letter-spacing: .06em; padding: 3px 5px; border-radius: 5px; cursor: pointer; opacity: 0; transition: opacity .15s ease; }
+.card:hover .chart-export, .chart-export:focus-visible { opacity: 1; }
+.insight-more summary { cursor: pointer; color: var(--accent2); font-size: 12px; font-weight: 600; margin-top: 10px; }
+.insight-more[open] summary { margin-bottom: 10px; }
+.present-bar { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 200; display: flex; gap: 8px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background: rgba(11,18,32,.94); box-shadow: var(--shadow); color: var(--muted); font-size: 12px; }
+.present-bar span { min-width: 170px; text-align: center; color: var(--text); font-weight: 600; }
+body.present .subnav, body.present .toolbar, body.present .filters, body.present .chips, body.present .top-actions, body.present .footer, body.present .flash, body.present .details, body.present .chart-actions { display: none !important; }
+body.present [data-tab-group]:not([data-tab-group="overview"]) { display: none !important; }
+body.present [data-tab-group="overview"][data-slide]:not(.present-current) { display: none !important; }
+body.present .page { max-width: none; padding: 22px 34px 70px; }
+body.present .top h1 { font-size: 38px; }
+body.present .hero-number { font-size: 78px; }
+body.present .kpi .v { font-size: 32px; }
+body.present .card h2 { font-size: 18px; }
+body.present .chart { height: 360px; }
+body.present .present-bar { display: flex; }
 @media (max-width: 1000px) {
 	.grid-3 { grid-template-columns: 1fr; }
 }
@@ -1657,6 +2109,15 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 	.grid-2, .grid-2even { grid-template-columns: 1fr; }
 	.rhythm-grid { grid-template-columns: 1fr; }
 	.chart { height: 280px; }
+}
+@media (max-width: 1180px) {
+	.hero { grid-template-columns: 1fr 1fr; }
+	.hero-brief { border-left: 0; border-top: 1px solid var(--line); padding-left: 0; }
+}
+@media (max-width: 860px) {
+	.hero { grid-template-columns: 1fr; }
+	.hero-secondary { grid-template-columns: repeat(3, minmax(0,1fr)); }
+	.hero-spark { min-height: 90px; }
 }
 @media (max-width: 560px) {
 	.page { padding: 18px 12px 44px; }
@@ -1668,6 +2129,17 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 	.hist-label { font-size: 7px; }
 	.mini-row { gap: 8px; }
 	.mini-share { min-width: 42px; }
+	.hero { padding: 15px; border-radius: 14px; }
+	.hero-number { font-size: 46px; }
+	.hero-secondary { grid-template-columns: 1fr 1fr; }
+	.hero-stat:last-child { grid-column: 1 / -1; }
+	.hero-brief ul { font-size: 11px; }
+	.conf-row { grid-template-columns: 84px minmax(0,1fr) 42px; }
+	.present-bar { left: 10px; right: 10px; bottom: 10px; transform: none; justify-content: center; flex-wrap: wrap; }
+	.present-bar span { min-width: 120px; }
+}
+@media (hover: none) {
+	.chart-export { opacity: 1; }
 }
 </style>
 </head>
@@ -1713,6 +2185,8 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 			<p class="sub">Anonymous · no IPs · no visitor cookies · UA read transiently · as of <?php echo stats_h($nowLabel); ?> (Berlin) <?php if ($analyticsKillSwitch): ?><span class="badge" style="margin-left:8px;">analytics disabled</span><?php else: $healthIssues = mn_analytics_health_issues(); $healthOk = $healthIssues === []; ?><span class="badge <?php echo $healthOk ? 'ok' : 'warn'; ?>" style="margin-left:8px;"><?php echo $healthOk ? 'analytics healthy' : count($healthIssues) . ' issue(s)'; ?></span><?php endif; ?></p>
 		</div>
 		<div class="top-actions">
+			<button type="button" class="btn" id="theme-toggle">Light</button>
+			<button type="button" class="btn" id="present-toggle">Present</button>
 			<form method="post" action="" class="inline">
 				<input type="hidden" name="action" value="admin_cookie">
 				<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">
@@ -1761,8 +2235,11 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 			</div>
 		</div>
 
-		<?php if ($path !== '' || $refType !== '' || $source !== '' || $refPath !== '' || $browser !== '' || $os !== '' || $device !== ''): ?>
+		<?php if ($path !== '' || $refType !== '' || $source !== '' || $refPath !== '' || $browser !== '' || $os !== '' || $device !== '' || $day !== ''): ?>
 			<div class="chips">
+				<?php if ($day !== ''): ?>
+					<span class="chip">Day: <?php echo stats_h($day); ?> <a href="?<?php echo stats_h(stats_query(['day' => '', 'page' => 1])); ?>" aria-label="Remove day filter">×</a></span>
+				<?php endif; ?>
 				<?php if ($path !== ''): ?>
 					<span class="chip">Page: <?php echo stats_h($titles[$path] ?? $path); ?> <a href="?<?php echo stats_h(stats_query(['path' => '', 'page' => 1])); ?>" aria-label="Remove page filter">×</a></span>
 				<?php endif; ?>
@@ -1790,6 +2267,7 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 
 		<form class="filters" method="get" action="">
 			<input type="hidden" name="range" value="<?php echo (int)$range; ?>">
+			<input type="hidden" name="day" value="<?php echo stats_h($day); ?>">
 			<label>Page
 				<input name="path" list="path-list" value="<?php echo stats_h($path); ?>" placeholder="e.g. history">
 			</label>
@@ -1845,20 +2323,60 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 			<?php endforeach; ?>
 		</datalist>
 
-		<div class="grid-kpi" id="overview" data-tab-group="overview">
+		<nav class="subnav" data-tab-group="overview" data-slide="1" aria-label="Overview sections">
+			<a href="#hero">Today</a>
+			<a href="#traffic">Traffic</a>
+			<a href="#rhythm">Rhythm</a>
+			<a href="#attention">Attention</a>
+			<a href="#content">Content</a>
+			<a href="#movers">Movers</a>
+			<a href="#audience">Audience</a>
+			<a href="#calendar">Calendar</a>
+			<a href="#page-source">Page × source</a>
+			<a href="#portfolio">Portfolio</a>
+			<a href="#navigation">Navigation</a>
+			<a href="#quality">Quality</a>
+		</nav>
+
+		<section class="hero" data-tab-group="overview" data-slide="1" id="hero">
+			<div class="hero-primary">
+				<div class="eyebrow">Today · <?php echo stats_h($todayLabel); ?></div>
+				<div class="hero-number" data-countup="<?php echo (int)$todayEntries; ?>"><?php echo mn_analytics_format_number($todayEntries); ?></div>
+				<div class="hero-label">estimated visits</div>
+				<div class="hero-meta"><?php echo mn_analytics_format_number($todayViews); ?> views today · <?php echo $todayDeltaHtml; ?></div>
+			</div>
+			<div class="hero-secondary">
+				<div class="hero-stat"><span class="k">Views today</span><strong data-countup="<?php echo (int)$todayViews; ?>"><?php echo mn_analytics_format_number($todayViews); ?></strong><span class="slug">last <?php echo stats_h($todayPrevLabel); ?>: <?php echo mn_analytics_format_number($todayPrevViews); ?></span></div>
+				<div class="hero-stat"><span class="k">This hour</span><strong data-countup="<?php echo (int)$heroHourViews; ?>"><?php echo mn_analytics_format_number($heroHourViews); ?></strong><span class="slug"><?php echo stats_h(sprintf('%02d:00', $currentHour)); ?> Berlin</span></div>
+				<div class="hero-stat"><span class="k">Last data</span><strong><?php echo stats_h($lastSeenAge); ?></strong><span class="slug"><?php echo $lastSeen !== null ? stats_h(stats_time_label($lastSeen)) : '—'; ?></span></div>
+			</div>
+			<div class="hero-spark">
+				<div class="eyebrow">Last 7 days</div>
+				<?php echo $todaySparkline; ?>
+				<div class="slug">Estimated visits per day · current filters</div>
+			</div>
+			<div class="hero-brief">
+				<div class="eyebrow">Briefing</div>
+				<ul>
+					<?php foreach ($headlineInsights as $headline): ?><li><?php echo stats_h($headline); ?></li><?php endforeach; ?>
+				</ul>
+			</div>
+		</section>
+
+		<div class="grid-kpi" id="overview" data-tab-group="overview" data-slide="1">
 			<div class="kpi">
 				<div class="k">Views</div>
-				<div class="v"><?php echo mn_analytics_format_number($views); ?></div>
+				<div class="v" data-countup="<?php echo (int)$views; ?>"><?php echo mn_analytics_format_number($views); ?></div>
 				<div class="s"><?php echo $deltaHtml; ?></div>
 			</div>
 			<div class="kpi">
 				<div class="k">Views / day</div>
-				<div class="v"><?php echo stats_h(number_format($viewsPerDay, 1, '.', ',')); ?></div>
+				<div class="v" data-countup="<?php echo stats_h(number_format($viewsPerDay, 3, '.', '')); ?>" data-decimals="1"><?php echo stats_h(number_format($viewsPerDay, 1, '.', ',')); ?></div>
 				<div class="s"><?php echo $activeDays === 1 ? '1 active day' : mn_analytics_format_number($activeDays) . ' active days'; ?> · <?php echo mn_analytics_format_number($periodDays); ?> days in range</div>
 			</div>
 			<div class="kpi">
 				<div class="k">Estimated visits</div>
-				<div class="v"><?php echo mn_analytics_format_number($entries); ?></div>
+				<div class="v" data-countup="<?php echo (int)$entries; ?>"><?php echo mn_analytics_format_number($entries); ?></div>
 				<div class="s"><?php echo stats_h(number_format($entriesPerDay, 1, '.', ',')); ?> / day · <?php echo stats_h(number_format($entryShare, 1, '.', ',')); ?> % of views</div>
 			</div>
 			<div class="kpi">
@@ -1887,42 +2405,30 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 				<div class="s"><?php echo mn_analytics_format_number($peakDayViews); ?> views</div>
 			</div>
 			<div class="kpi">
-				<div class="k">Today</div>
-				<div class="v"><?php echo mn_analytics_format_number($todayViews); ?></div>
-				<div class="s">This hour: <?php echo mn_analytics_format_number($hourViews); ?></div>
-			</div>
-			<div class="kpi">
 				<div class="k">Pages / sources</div>
 				<div class="v"><?php echo mn_analytics_format_number($distinctPages); ?> / <?php echo mn_analytics_format_number($distinctSources); ?></div>
 				<div class="s"><?php echo mn_analytics_format_number($internal); ?> internal navigations</div>
 			</div>
-			<div class="kpi">
-				<div class="k">Bots</div>
-				<div class="v"><?php echo mn_analytics_format_number($bots); ?></div>
-				<div class="s"><?php echo stats_h(number_format($views > 0 ? 100 * $bots / $views : 0, 1, '.', ',')); ?> % · <a href="?<?php echo stats_h(stats_query(['device' => 'bot', 'page' => 1])); ?>#tech">bots only</a></div>
-			</div>
-			<div class="kpi">
-				<div class="k">Duration known</div>
-				<div class="v"><?php echo stats_h(number_format($knownPct, 1, '.', ',')); ?> %</div>
-				<div class="s"><?php echo mn_analytics_format_number($pending); ?> open tokens</div>
-			</div>
 		</div>
-		<div class="card insight-card" data-tab-group="overview">
+		<div class="card insight-card" data-tab-group="overview" data-slide="1" id="briefing">
 			<div class="insight-head">
 				<div>
-					<h2>What stands out</h2>
-					<p class="ref">Generated from the current range, filters and anonymous measurements.</p>
+					<h2>Full briefing <span class="hint">· <?php echo count($insights); ?> insights</span></h2>
+					<p class="ref">The three headline items sit in the hero; open this for the complete briefing.</p>
 				</div>
 				<button type="button" class="btn" id="copy-insights">Copy summary</button>
 			</div>
-			<ul class="insight-list">
-				<?php foreach ($insights as $insight): ?>
-					<li><?php echo stats_h($insight); ?></li>
-				<?php endforeach; ?>
-			</ul>
+			<details class="insight-more">
+				<summary>Show all <?php echo count($insights); ?> insights</summary>
+				<ul class="insight-list">
+					<?php foreach ($insights as $insight): ?>
+						<li><?php echo stats_h($insight); ?></li>
+					<?php endforeach; ?>
+				</ul>
+			</details>
 		</div>
 
-		<div class="grid-2" data-tab-group="overview">
+		<div class="grid-2" data-tab-group="overview" data-slide="1" id="traffic">
 			<div class="card">
 				<h2>Views over time <span class="hint">· <?php echo stats_h($rangeLabel); ?></span></h2>
 				<?php if ($views > 0): ?>
@@ -1932,9 +2438,9 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 				<?php endif; ?>
 			</div>
 			<div class="card">
-				<h2>Source</h2>
+				<h2>Traffic clock <span class="hint">· all days, Berlin time</span></h2>
 				<?php if ($views > 0): ?>
-					<div id="chart-refs" class="chart small" role="img" aria-label="Referrer source distribution"></div>
+					<div id="chart-clock" class="chart" role="img" aria-label="Traffic by hour of day"></div>
 				<?php else: ?>
 					<div class="empty">No data.</div>
 				<?php endif; ?>
@@ -1942,7 +2448,28 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 		</div>
 
 
-		<div class="card" data-tab-group="overview">
+		<div class="grid-2" data-tab-group="overview" data-slide="2" id="attention">
+			<div class="card">
+				<h2>Page attention matrix <span class="hint">· read or skim?</span></h2>
+				<?php if ($attentionData): ?>
+					<p class="ref" style="margin: -4px 0 8px;">Each bubble is a page: x = average time, y = average scroll depth, size = views. Click a bubble to filter the dashboard.</p>
+					<div id="chart-attention" class="chart" role="img" aria-label="Page attention scatter plot"></div>
+				<?php else: ?>
+					<div class="empty">No pages with measured duration and scroll depth in this range.</div>
+				<?php endif; ?>
+			</div>
+			<div class="card">
+				<h2>Reading funnel <span class="hint">· pageviews, not people</span></h2>
+				<?php if ($funnelData && (int)$funnelData[0]['value'] > 0): ?>
+					<p class="ref" style="margin: -4px 0 8px;">How many pageviews reach 10 seconds and meaningful scroll depth. Each step is stricter than the one above.</p>
+					<div id="chart-funnel" class="chart" role="img" aria-label="Reading funnel"></div>
+				<?php else: ?>
+					<div class="empty">No data in the selected period.</div>
+				<?php endif; ?>
+			</div>
+		</div>
+
+		<div class="card" data-tab-group="overview" data-slide="1" id="rhythm">
 			<h2>Traffic rhythm <span class="hint">· Berlin time, <?php echo stats_h($rangeLabel); ?></span></h2>
 			<?php if ($views > 0): ?>
 				<div class="rhythm-facts">
@@ -1980,57 +2507,108 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 						</div>
 					</div>
 				</div>
-				<div class="chart-cap" style="margin-top: 16px;">Weekday × hour <span class="hint">· all days · intensity = pageviews</span></div>
-				<div class="heat-wrap">
-					<table class="heat heat--compact" aria-label="Pageviews by weekday and hour, Berlin time">
-						<thead>
-							<tr>
-								<th></th>
-								<?php for ($h = 0; $h < 24; $h++): ?><th><?php echo str_pad((string)$h, 2, '0', STR_PAD_LEFT); ?></th><?php endfor; ?>
-							</tr>
-						</thead>
-						<tbody>
-						<?php foreach ($weekdayLabels as $weekdayIndex => $weekdayLabel): ?>
-							<tr>
-								<th><?php echo stats_h($weekdayLabel); ?></th>
-								<?php for ($h = 0; $h < 24; $h++): $c = (int)($weekHourMap[$weekdayIndex][$h] ?? 0); $alpha = $weekHourMax > 0 ? 0.05 + 0.95 * ($c / $weekHourMax) : 0.05; $bg = 'rgba(233,170,96,' . number_format($alpha, 3, '.', '') . ')'; $txt = $c === 0 ? 'transparent' : ($alpha > 0.6 ? '#0b1220' : 'rgba(226,232,240,.9)'); ?>
-									<td style="background: <?php echo stats_h($bg); ?>; color: <?php echo stats_h($txt); ?>;" title="<?php echo stats_h($weekdayLabel . ' ' . str_pad((string)$h, 2, '0', STR_PAD_LEFT) . ':00 — ' . $c . ' views'); ?>"><span><?php echo $c; ?></span></td>
-								<?php endfor; ?>
-							</tr>
-						<?php endforeach; ?>
-						</tbody>
-					</table>
+				<div class="card-head" style="margin-top: 16px;">
+					<div class="chart-cap" style="margin: 0;">Weekday × hour <span class="hint">· all days · intensity = selected metric</span></div>
+					<div class="segmented" data-heatmap-toggle="weekhour">
+						<button type="button" class="active" data-heatmap-view="views">Views</button>
+						<button type="button" data-heatmap-view="entries">Estimated visits</button>
+					</div>
 				</div>
-				<div class="heat-legend">
-					<span class="heat-swatch" style="background: rgba(233,170,96,0.05)"></span> 0
-					<span class="heat-swatch" style="background: rgba(233,170,96,0.55)"></span> <?php echo mn_analytics_format_number((int)ceil($weekHourMax / 2)); ?>
-					<span class="heat-swatch" style="background: rgba(233,170,96,1)"></span> <?php echo mn_analytics_format_number($weekHourMax); ?>
+				<div class="view-pane" data-heatmap-pane="weekhour" data-heatmap-view="views">
+					<div class="heat-wrap">
+						<table class="heat heat--compact" aria-label="Pageviews by weekday and hour, Berlin time">
+							<thead>
+								<tr>
+									<th></th>
+									<?php for ($h = 0; $h < 24; $h++): ?><th><?php echo str_pad((string)$h, 2, '0', STR_PAD_LEFT); ?></th><?php endfor; ?>
+								</tr>
+							</thead>
+							<tbody>
+							<?php foreach ($weekdayLabels as $weekdayIndex => $weekdayLabel): ?>
+								<tr>
+									<th><?php echo stats_h($weekdayLabel); ?></th>
+									<?php for ($h = 0; $h < 24; $h++): $c = (int)($weekHourMap[$weekdayIndex][$h] ?? 0); $alpha = $weekHourMax > 0 ? 0.05 + 0.95 * ($c / $weekHourMax) : 0.05; $bg = 'rgba(233,170,96,' . number_format($alpha, 3, '.', '') . ')'; $txt = $c === 0 ? 'transparent' : ($alpha > 0.6 ? '#0b1220' : 'rgba(226,232,240,.9)'); ?>
+										<td style="background: <?php echo stats_h($bg); ?>; color: <?php echo stats_h($txt); ?>;" title="<?php echo stats_h($weekdayLabel . ' ' . str_pad((string)$h, 2, '0', STR_PAD_LEFT) . ':00 — ' . $c . ' views'); ?>"><span><?php echo $c; ?></span></td>
+									<?php endfor; ?>
+								</tr>
+							<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+					<div class="heat-legend">
+						<span class="heat-swatch" style="background: rgba(233,170,96,0.05)"></span> 0
+						<span class="heat-swatch" style="background: rgba(233,170,96,0.55)"></span> <?php echo mn_analytics_format_number((int)ceil($weekHourMax / 2)); ?>
+						<span class="heat-swatch" style="background: rgba(233,170,96,1)"></span> <?php echo mn_analytics_format_number($weekHourMax); ?>
+					</div>
 				</div>
+				<div class="view-pane" data-heatmap-pane="weekhour" data-heatmap-view="entries" hidden>
+					<div class="heat-wrap">
+						<table class="heat heat--compact" aria-label="Estimated visits by weekday and hour, Berlin time">
+							<thead>
+								<tr>
+									<th></th>
+									<?php for ($h = 0; $h < 24; $h++): ?><th><?php echo str_pad((string)$h, 2, '0', STR_PAD_LEFT); ?></th><?php endfor; ?>
+								</tr>
+							</thead>
+							<tbody>
+							<?php foreach ($weekdayLabels as $weekdayIndex => $weekdayLabel): ?>
+								<tr>
+									<th><?php echo stats_h($weekdayLabel); ?></th>
+									<?php for ($h = 0; $h < 24; $h++): $c = (int)($weekHourEntriesMap[$weekdayIndex][$h] ?? 0); $alpha = $weekHourEntriesMax > 0 ? 0.05 + 0.95 * ($c / $weekHourEntriesMax) : 0.05; $bg = 'rgba(56,189,248,' . number_format($alpha, 3, '.', '') . ')'; $txt = $c === 0 ? 'transparent' : ($alpha > 0.6 ? '#0b1220' : 'rgba(226,232,240,.9)'); ?>
+										<td style="background: <?php echo stats_h($bg); ?>; color: <?php echo stats_h($txt); ?>;" title="<?php echo stats_h($weekdayLabel . ' ' . str_pad((string)$h, 2, '0', STR_PAD_LEFT) . ':00 — ' . $c . ' estimated visits'); ?>"><span><?php echo $c; ?></span></td>
+									<?php endfor; ?>
+								</tr>
+							<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+					<div class="heat-legend">
+						<span class="heat-swatch" style="background: rgba(56,189,248,0.05)"></span> 0
+						<span class="heat-swatch" style="background: rgba(56,189,248,0.55)"></span> <?php echo mn_analytics_format_number((int)ceil($weekHourEntriesMax / 2)); ?>
+						<span class="heat-swatch" style="background: rgba(56,189,248,1)"></span> <?php echo mn_analytics_format_number($weekHourEntriesMax); ?>
+					</div>
+				</div>
+
 				<p class="ref rhythm-note">Bars and heatmap are totals across the selected range; the full date × hour heatmap is in Referrers &amp; engagement. <strong>Estimated visits</strong> count entry pageviews (non-internal referrers) and are the privacy-safe proxy for visits. Unique visitors, sessions and returning visitors are intentionally not available because they would require a persistent identifier.</p>
 			<?php else: ?>
 				<div class="empty">No data in the selected period.</div>
 			<?php endif; ?>
 		</div>
 
-		<div class="grid-2even" data-tab-group="overview">
+		<div class="grid-2even" data-tab-group="overview" data-slide="2" id="content">
 			<div class="card">
-				<h2>Top content <span class="hint">· top 5</span></h2>
-				<?php if ($topPages): ?>
-					<div class="mini-list">
-						<?php foreach (array_slice($topPages, 0, 5) as $page): $pv = (int)$page['views']; $share = $views > 0 ? 100 * $pv / $views : 0; $pageSlug = (string)$page['path']; $pageDuration = $page['avg_duration'] !== null ? (int)round((float)$page['avg_duration']) : null; ?>
-							<a class="mini-row" href="?<?php echo stats_h(stats_query(['path' => $pageSlug, 'page' => 1])); ?>">
-								<div class="mini-main">
-									<span class="title"><?php echo stats_h($titles[$pageSlug] ?? $pageSlug); ?></span>
-									<div class="slug"><?php echo stats_h($pageSlug); ?> · <?php echo stats_h(mn_analytics_format_duration($pageDuration)); ?> avg.</div>
-								</div>
-								<div class="mini-metric"><strong><?php echo mn_analytics_format_number($pv); ?></strong><span>views</span></div>
-								<div class="mini-share"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</div>
-							</a>
-						<?php endforeach; ?>
+				<div class="card-head">
+					<h2>Top content <span class="hint">· top 12</span></h2>
+					<div class="segmented" data-view-toggle="content-view">
+						<button type="button" class="active" data-view="treemap">Treemap</button>
+						<button type="button" data-view="list">List</button>
 					</div>
-				<?php else: ?>
-					<div class="empty">No data in the selected period.</div>
-				<?php endif; ?>
+				</div>
+				<div class="view-pane" data-view-pane="content-view" data-view="treemap">
+					<?php if ($contentTreemap): ?>
+						<div id="chart-content-treemap" class="chart small" role="img" aria-label="Top content treemap"></div>
+					<?php else: ?>
+						<div class="empty">No data in the selected period.</div>
+					<?php endif; ?>
+				</div>
+				<div class="view-pane" data-view-pane="content-view" data-view="list" hidden>
+					<?php if ($topPages): ?>
+						<div class="mini-list">
+							<?php foreach (array_slice($topPages, 0, 5) as $page): $pv = (int)$page['views']; $share = $views > 0 ? 100 * $pv / $views : 0; $pageSlug = (string)$page['path']; $pageDuration = $page['avg_duration'] !== null ? (int)round((float)$page['avg_duration']) : null; ?>
+								<a class="mini-row" href="?<?php echo stats_h(stats_query(['path' => $pageSlug, 'page' => 1])); ?>">
+									<div class="mini-main">
+										<span class="title"><?php echo stats_h($titles[$pageSlug] ?? $pageSlug); ?></span>
+										<div class="slug"><?php echo stats_h($pageSlug); ?> · <?php echo stats_h(mn_analytics_format_duration($pageDuration)); ?> avg.</div>
+									</div>
+									<div class="mini-metric"><strong><?php echo mn_analytics_format_number($pv); ?></strong><span>views</span></div>
+									<div class="mini-share"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</div>
+								</a>
+							<?php endforeach; ?>
+						</div>
+					<?php else: ?>
+						<div class="empty">No data in the selected period.</div>
+					<?php endif; ?>
+				</div>
 				<?php if ($entryPages): ?>
 					<div class="chart-cap" style="margin-top: 14px;">Most common entry pages</div>
 					<div class="mini-list mini-list--compact">
@@ -2044,29 +2622,112 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 				<?php endif; ?>
 			</div>
 			<div class="card">
-				<h2>Top sources <span class="hint">· top 5</span></h2>
-				<?php if ($referrers): ?>
-					<div class="mini-list">
-						<?php foreach (array_slice($referrers, 0, 5) as $ref): $refViews = (int)$ref['views']; $refShare = $views > 0 ? 100 * $refViews / $views : 0; $refTypeLabel = mn_analytics_ref_type_label((string)$ref['ref_type']); $refName = trim((string)$ref['ref_source']); if ($refName === '') { $refName = $refTypeLabel; } ?>
-							<a class="mini-row" href="?<?php echo stats_h(stats_query(['ref_type' => $ref['ref_type'], 'source' => $ref['ref_source'], 'page' => 1])); ?>">
-								<div class="mini-main">
-									<span class="badge <?php echo stats_h($ref['ref_type']); ?>"><?php echo stats_h($refTypeLabel); ?></span>
-									<span class="title" style="display:inline;"><?php echo stats_h($refName); ?></span>
-									<?php if ($ref['ref_host'] !== '' && $ref['ref_host'] !== $ref['ref_source']): ?><div class="slug"><?php echo stats_h($ref['ref_host']); ?></div><?php endif; ?>
-								</div>
-								<div class="mini-metric"><strong><?php echo mn_analytics_format_number($refViews); ?></strong><span>views</span></div>
-								<div class="mini-share"><?php echo stats_h(number_format($refShare, 1, '.', ',')); ?> %</div>
-							</a>
-						<?php endforeach; ?>
+				<div class="card-head">
+					<h2>Top sources <span class="hint">· top 10</span></h2>
+					<div class="segmented" data-view-toggle="source-view">
+						<button type="button" class="active" data-view="donut">Donut</button>
+						<button type="button" data-view="treemap">Treemap</button>
+						<button type="button" data-view="list">List</button>
 					</div>
-				<?php else: ?>
-					<div class="empty">No referrer data in the selected period.</div>
-				<?php endif; ?>
+				</div>
+				<div class="view-pane" data-view-pane="source-view" data-view="donut">
+					<?php if ($referrers): ?>
+						<div id="chart-refs" class="chart small" role="img" aria-label="Referrer source distribution"></div>
+					<?php else: ?>
+						<div class="empty">No referrer data in the selected period.</div>
+					<?php endif; ?>
+				</div>
+				<div class="view-pane" data-view-pane="source-view" data-view="treemap" hidden>
+					<?php if ($sourceTreemap): ?>
+						<div id="chart-source-treemap" class="chart small" role="img" aria-label="Top sources treemap"></div>
+					<?php else: ?>
+						<div class="empty">No referrer data in the selected period.</div>
+					<?php endif; ?>
+				</div>
+				<div class="view-pane" data-view-pane="source-view" data-view="list" hidden>
+					<?php if ($referrers): ?>
+						<div class="mini-list">
+							<?php foreach (array_slice($referrers, 0, 5) as $ref): $refViews = (int)$ref['views']; $refShare = $views > 0 ? 100 * $refViews / $views : 0; $refTypeLabel = mn_analytics_ref_type_label((string)$ref['ref_type']); $refName = trim((string)$ref['ref_source']); if ($refName === '') { $refName = $refTypeLabel; } ?>
+								<a class="mini-row" href="?<?php echo stats_h(stats_query(['ref_type' => $ref['ref_type'], 'source' => $ref['ref_source'], 'page' => 1])); ?>">
+									<div class="mini-main">
+										<span class="badge <?php echo stats_h($ref['ref_type']); ?>"><?php echo stats_h($refTypeLabel); ?></span>
+										<span class="title" style="display:inline;"><?php echo stats_h($refName); ?></span>
+										<?php if ($ref['ref_host'] !== '' && $ref['ref_host'] !== $ref['ref_source']): ?><div class="slug"><?php echo stats_h($ref['ref_host']); ?></div><?php endif; ?>
+									</div>
+									<div class="mini-metric"><strong><?php echo mn_analytics_format_number($refViews); ?></strong><span>views</span></div>
+									<div class="mini-share"><?php echo stats_h(number_format($refShare, 1, '.', ',')); ?> %</div>
+								</a>
+							<?php endforeach; ?>
+						</div>
+					<?php else: ?>
+						<div class="empty">No referrer data in the selected period.</div>
+					<?php endif; ?>
+				</div>
 				<p class="ref" style="margin-bottom: 0;">Only referrer type, source and host are stored — never external paths, queries or search terms.</p>
 			</div>
 		</div>
 
-		<div class="grid-2even" data-tab-group="overview">
+
+		<div class="card" data-tab-group="overview" data-slide="2" id="movers">
+			<h2>Top movers <span class="hint">· vs previous period</span></h2>
+			<?php if ($range > 0): ?>
+				<div class="grid-2even" style="margin-bottom: 0;">
+					<div>
+						<div class="chart-cap">Rising pages</div>
+						<?php if ($topMovers['up']): ?>
+							<div class="mini-list mini-list--compact">
+								<?php foreach ($topMovers['up'] as $mover): $moverTitle = $titles[$mover['slug']] ?? $mover['slug']; ?>
+									<a class="mini-row" href="?<?php echo stats_h(stats_query(['path' => $mover['slug'], 'page' => 1])); ?>">
+										<div class="mini-main"><span class="title"><?php echo stats_h($moverTitle); ?></span><div class="slug"><?php echo mn_analytics_format_number($mover['current']); ?> vs <?php echo mn_analytics_format_number($mover['previous']); ?> views</div></div>
+										<div class="mini-metric"><strong class="good">+<?php echo mn_analytics_format_number($mover['delta']); ?></strong><span><?php echo $mover['pct'] !== null ? '+' . stats_h(number_format($mover['pct'], 1, '.', ',')) . ' %' : 'new'; ?></span></div>
+									</a>
+								<?php endforeach; ?>
+							</div>
+						<?php else: ?>
+							<div class="ref">No rising pages in this comparison.</div>
+						<?php endif; ?>
+					</div>
+					<div>
+						<div class="chart-cap">Falling pages</div>
+						<?php if ($topMovers['down']): ?>
+							<div class="mini-list mini-list--compact">
+								<?php foreach ($topMovers['down'] as $mover): $moverTitle = $titles[$mover['slug']] ?? $mover['slug']; ?>
+									<a class="mini-row" href="?<?php echo stats_h(stats_query(['path' => $mover['slug'], 'page' => 1])); ?>">
+										<div class="mini-main"><span class="title"><?php echo stats_h($moverTitle); ?></span><div class="slug"><?php echo mn_analytics_format_number($mover['current']); ?> vs <?php echo mn_analytics_format_number($mover['previous']); ?> views</div></div>
+										<div class="mini-metric"><strong class="bad"><?php echo mn_analytics_format_number($mover['delta']); ?></strong><span><?php echo $mover['pct'] !== null ? stats_h(number_format($mover['pct'], 1, '.', ',')) . ' %' : '—'; ?></span></div>
+									</a>
+								<?php endforeach; ?>
+							</div>
+						<?php else: ?>
+							<div class="ref">No falling pages in this comparison.</div>
+						<?php endif; ?>
+					</div>
+				</div>
+			<?php else: ?>
+				<div class="ref">Choose a finite range (7, 30, 90 or 365 days) to compare against the previous period.</div>
+			<?php endif; ?>
+		</div>
+
+		<div class="card" data-tab-group="overview" data-slide="2" id="portfolio">
+			<h2>Page portfolio <span class="hint">· top 8 by views</span></h2>
+			<?php if ($portfolioPages): ?>
+				<div class="portfolio-grid">
+					<?php foreach ($portfolioPages as $page): $pageSlug = (string)$page['path']; $pageViews = (int)$page['views']; $pageShare = $views > 0 ? 100 * $pageViews / $views : 0; $pageDuration = $page['avg_duration'] !== null ? (int)round((float)$page['avg_duration']) : null; $pageScroll = $page['avg_scroll'] !== null ? (int)round((float)$page['avg_scroll']) : null; ?>
+						<a class="portfolio-card" href="?<?php echo stats_h(stats_query(['path' => $pageSlug, 'page' => 1])); ?>">
+							<div class="portfolio-head"><span class="title"><?php echo stats_h($titles[$pageSlug] ?? $pageSlug); ?></span><span class="mini-share"><?php echo stats_h(number_format($pageShare, 1, '.', ',')); ?> %</span></div>
+							<div class="portfolio-number"><?php echo mn_analytics_format_number($pageViews); ?> <span>views</span></div>
+							<div class="portfolio-spark"><?php echo $pageSparklines[$pageSlug] ?? '—'; ?></div>
+							<div class="portfolio-meta"><?php echo stats_h(mn_analytics_format_duration($pageDuration)); ?> avg. · <?php echo $pageScroll !== null ? $pageScroll . ' % scroll' : 'scroll —'; ?></div>
+							<div class="portfolio-track"><span style="width: <?php echo stats_h(number_format($pageShare, 1, '.', '')); ?>%"></span></div>
+						</a>
+					<?php endforeach; ?>
+				</div>
+			<?php else: ?>
+				<div class="empty">No pages with views in the selected period.</div>
+			<?php endif; ?>
+		</div>
+
+		<div class="grid-2even" data-tab-group="overview" data-slide="3" id="audience">
 			<div class="card">
 				<h2>Audience &amp; bots</h2>
 				<?php if ($views > 0): ?>
@@ -2135,7 +2796,37 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 			</div>
 		</div>
 
-		<div class="card" data-tab-group="overview">
+		<div class="card" data-tab-group="overview" data-slide="3" id="calendar">
+			<h2>Calendar heatmap <span class="hint">· click a day to filter</span></h2>
+			<?php if ($views > 0 && $calendarData): ?>
+				<div id="chart-calendar" class="chart" role="img" aria-label="Calendar heatmap of daily views"></div>
+				<p class="ref" style="margin-bottom: 0;">Each cell is a day; color intensity is pageviews. Click a day to filter the dashboard, then use the filter chip to remove it.</p>
+			<?php else: ?>
+				<div class="empty">No data in the selected period.</div>
+			<?php endif; ?>
+		</div>
+
+		<div class="card" data-tab-group="overview" data-slide="3" id="bot-human">
+			<h2>Humans vs bots <span class="hint">· pageviews per day</span></h2>
+			<?php if ($views > 0 && $botHumanLabels): ?>
+				<div id="chart-bots-human" class="chart small" role="img" aria-label="Human and bot pageviews per day"></div>
+				<p class="ref" style="margin-bottom: 0;">A spike that is mostly rose is likely crawler traffic, not readers.</p>
+			<?php else: ?>
+				<div class="empty">No data in the selected period.</div>
+			<?php endif; ?>
+		</div>
+
+		<div class="card" data-tab-group="overview" data-slide="3" id="page-source">
+			<h2>Page × source <span class="hint">· non-internal pageviews</span></h2>
+			<?php if ($pageSourceData): ?>
+				<div id="chart-page-source" class="chart" role="img" aria-label="Page by source heatmap"></div>
+				<p class="ref" style="margin-bottom: 0;">Which sources bring readers to which pages. Internal navigation is shown separately.</p>
+			<?php else: ?>
+				<div class="empty">No non-internal source data in the selected period.</div>
+			<?php endif; ?>
+		</div>
+
+		<div class="card" data-tab-group="overview" data-slide="3" id="navigation">
 			<h2>Internal navigation <span class="hint">· top 6 · previous page → next page</span></h2>
 			<?php if ($sankeyLinks): ?>
 				<p class="ref"><?php echo mn_analytics_format_number($internal); ?> internal transitions (<?php echo stats_h(number_format($views > 0 ? 100 * $internal / $views : 0, 1, '.', ',')); ?> % of views). The strongest flows are listed here; the full Sankey is in Referrers &amp; engagement.</p>
@@ -2483,9 +3174,15 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 			<?php endif; ?>
 		</div>
 
-		<div class="grid-2even" data-tab-group="overview">
+		<div class="grid-2even" data-tab-group="overview" data-slide="3" id="quality">
 			<div class="card">
-				<h2>Data quality</h2>
+				<h2>Data confidence</h2>
+				<div class="confidence">
+					<div class="conf-row"><span>Duration known</span><div class="conf-track"><div class="conf-fill" style="width: <?php echo stats_h(number_format($confidenceDuration, 1, '.', '')); ?>%"></div></div><span><?php echo stats_h(number_format($confidenceDuration, 1, '.', ',')); ?> %</span></div>
+					<div class="conf-row"><span>Scroll known</span><div class="conf-track"><div class="conf-fill bar-fill--sky" style="width: <?php echo stats_h(number_format($confidenceScroll, 1, '.', '')); ?>%"></div></div><span><?php echo stats_h(number_format($confidenceScroll, 1, '.', ',')); ?> %</span></div>
+					<div class="conf-row"><span>Bot share</span><div class="conf-track"><div class="conf-fill bar-fill--rose" style="width: <?php echo stats_h(number_format($confidenceBots, 1, '.', '')); ?>%"></div></div><span><?php echo stats_h(number_format($confidenceBots, 1, '.', ',')); ?> %</span></div>
+				</div>
+				<p class="ref" style="margin: 10px 0 14px;"><?php echo mn_analytics_format_number($pending); ?> open tokens are still waiting for a completion signal; they close after at most 6 hours.</p>
 				<table aria-label="Data quality">
 					<tbody>
 						<tr><td>Total rows</td><td class="num mono"><?php echo mn_analytics_format_number($rowsTotal); ?></td></tr>
@@ -2616,6 +3313,12 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 			<p id="bot-dialog-text"></p>
 		</dialog>
 
+<div class="present-bar" id="present-bar" hidden>
+			<button type="button" class="btn" data-present-prev aria-label="Previous slide">←</button>
+			<span id="present-label">Traffic &amp; rhythm</span>
+			<button type="button" class="btn" data-present-next aria-label="Next slide">→</button>
+			<button type="button" class="btn" data-present-exit>Exit presentation</button>
+		</div>
 <div class="footer"><a href="#top">Back to top ↑</a> · Anonymous visitor analytics · no IPs · no visitor cookies · no persistent IDs · UA read transiently · DNT/GPC respected</div>
 	<?php endif; ?>
 
@@ -2689,6 +3392,27 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	var browserMix = <?php echo json_encode($browserMix, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var osMix = <?php echo json_encode($osMix, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var deviceMix = <?php echo json_encode($deviceMix, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var clockLabels = <?php echo json_encode($clockLabels, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var clockViews = <?php echo json_encode($clockViews, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var clockEntries = <?php echo json_encode($clockEntries, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var clockCurrentHour = <?php echo (int)$currentHour; ?>;
+	var clockPeakHour = <?php echo $peakHour !== null ? (int)$peakHour : 'null'; ?>;
+	var attention = <?php echo json_encode($attentionData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var funnel = <?php echo json_encode($funnelData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var contentTreemapData = <?php echo json_encode($contentTreemap, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var sourceTreemapData = <?php echo json_encode($sourceTreemap, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var calendarData = <?php echo json_encode($calendarData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var calendarStart = <?php echo json_encode($calendarStart, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var calendarEnd = <?php echo json_encode($calendarEnd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var calendarMax = <?php echo (int)$calendarMax; ?>;
+	var botHumanLabels = <?php echo json_encode($botHumanLabels, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var botHumanHumans = <?php echo json_encode($botHumanHumans, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var botHumanBots = <?php echo json_encode($botHumanBots, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var pageSourceData = <?php echo json_encode($pageSourceData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var pageSourcePages = <?php echo json_encode($pageSourcePages, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var pageSourceSources = <?php echo json_encode($pageSourceSources, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var anomalies = <?php echo json_encode($seriesAnomalies, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var baseQuery = <?php echo json_encode(stats_query(['day' => '', 'page' => 1]), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 
 	function truncateLabel(value, maxLength) {
 		if (value.length <= maxLength) {
@@ -2813,6 +3537,32 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	});
 	legend.push('7-day average');
 
+	if (anomalies.length && labels.length) {
+		series[0].markPoint = {
+			symbol: 'circle',
+			symbolSize: 25,
+			itemStyle: { borderWidth: 0 },
+			label: {
+				show: true,
+				color: '#0b1220',
+				fontSize: 11,
+				fontWeight: 'bold',
+				formatter: function (params) {
+					return params.data.labelText;
+				}
+			},
+			data: anomalies.map(function (anomaly) {
+				var spike = anomaly.type === 'spike';
+				return {
+					coord: [labels[anomaly.index], anomaly.value],
+					value: anomaly.value,
+					labelText: spike ? '▲' : '▼',
+					itemStyle: { color: spike ? '#34d399' : '#fb7185' }
+				};
+			})
+		};
+	}
+
 	var dailyEl = document.getElementById('chart-daily');
 	var refsEl = document.getElementById('chart-refs');
 	var pagesEl = document.getElementById('chart-pages');
@@ -2829,6 +3579,50 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	var browserMixChart = browserMixEl ? echarts.init(browserMixEl) : null;
 	var osMixChart = osMixEl ? echarts.init(osMixEl) : null;
 	var deviceMixChart = deviceMixEl ? echarts.init(deviceMixEl) : null;
+	var clockEl = document.getElementById('chart-clock');
+	var attentionEl = document.getElementById('chart-attention');
+	var funnelEl = document.getElementById('chart-funnel');
+	var contentTreemapEl = document.getElementById('chart-content-treemap');
+	var sourceTreemapEl = document.getElementById('chart-source-treemap');
+	var calendarEl = document.getElementById('chart-calendar');
+	var botHumanEl = document.getElementById('chart-bots-human');
+	var pageSourceEl = document.getElementById('chart-page-source');
+	var clockChart = clockEl ? echarts.init(clockEl) : null;
+	var attentionChart = attentionEl ? echarts.init(attentionEl) : null;
+	var funnelChart = funnelEl ? echarts.init(funnelEl) : null;
+	var contentTreemapChart = contentTreemapEl ? echarts.init(contentTreemapEl) : null;
+	var sourceTreemapChart = sourceTreemapEl ? echarts.init(sourceTreemapEl) : null;
+	var calendarChart = calendarEl ? echarts.init(calendarEl) : null;
+	var botHumanChart = botHumanEl ? echarts.init(botHumanEl) : null;
+	var pageSourceChart = pageSourceEl ? echarts.init(pageSourceEl) : null;
+
+	function formatSeconds(value) {
+		value = Math.max(0, Math.round(Number(value) || 0));
+		if (value < 60) {
+			return value + ' s';
+		}
+		var minutes = Math.floor(value / 60);
+		var seconds = value % 60;
+		return minutes + ' m' + (seconds ? ' ' + seconds + ' s' : '');
+	}
+
+	function urlWith(overrides) {
+		var params = new URLSearchParams(baseQuery);
+		Object.keys(overrides || {}).forEach(function (key) {
+			var value = overrides[key];
+			if (value === '' || value === null || value === undefined) {
+				params.delete(key);
+			} else {
+				params.set(key, value);
+			}
+		});
+		var query = params.toString();
+		return '?' + query + '#overview';
+	}
+
+	function goWith(overrides) {
+		window.location.href = urlWith(overrides);
+	}
 
 	if (daily) {
 		daily.setOption({
@@ -3039,6 +3833,421 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		deviceMixChart.setOption(pieOption(deviceMix, ['#e9aa60', '#38bdf8', '#34d399', '#fb7185', '#a78bfa', '#f472b6', '#94a3b8']));
 	}
 
+	if (clockChart && clockViews.length) {
+		var clockPeakText = clockPeakHour !== null ? String(clockPeakHour).padStart(2, '0') + ':00' : '—';
+		clockChart.setOption({
+			backgroundColor: 'transparent',
+			title: {
+				text: clockPeakText,
+				subtext: 'peak hour',
+				left: 'center',
+				top: '38%',
+				textAlign: 'center',
+				textStyle: { color: '#e2e8f0', fontSize: 24, fontWeight: 700 },
+				subtextStyle: { color: '#64748b', fontSize: 10 }
+			},
+			tooltip: {
+				trigger: 'item',
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' },
+				formatter: function (params) {
+					var i = params.dataIndex;
+					return htmlEscape(clockLabels[i]) + ':00 — ' + clockViews[i] + ' views / ' + clockEntries[i] + ' estimated visits';
+				}
+			},
+			legend: {
+				data: ['Views', 'Estimated visits'],
+				bottom: 0,
+				left: 'center',
+				textStyle: { color: '#94a3b8', fontSize: 10 },
+				itemWidth: 9,
+				itemHeight: 9
+			},
+			polar: { radius: ['28%', '70%'], center: ['50%', '48%'] },
+			angleAxis: {
+				type: 'category',
+				data: clockLabels,
+				startAngle: 90,
+				axisLine: { lineStyle: { color: '#243047' } },
+				axisTick: { show: false },
+				axisLabel: { color: '#94a3b8', fontSize: 9, interval: 2 }
+			},
+			radiusAxis: { type: 'value', show: false },
+			series: [{
+				name: 'Views',
+				type: 'line',
+				coordinateSystem: 'polar',
+				smooth: true,
+				symbol: 'circle',
+				data: clockViews.map(function (value, index) {
+					return {
+						value: value,
+						itemStyle: { color: index === clockCurrentHour ? '#f4c98a' : '#e9aa60' },
+						symbolSize: index === clockCurrentHour ? 9 : 4
+					};
+				}),
+				lineStyle: { width: 2, color: '#e9aa60' },
+				areaStyle: { color: 'rgba(233,170,96,0.12)' },
+				itemStyle: { color: '#e9aa60' }
+			}, {
+				name: 'Estimated visits',
+				type: 'line',
+				coordinateSystem: 'polar',
+				smooth: true,
+				symbol: 'circle',
+				symbolSize: 3,
+				data: clockEntries,
+				lineStyle: { width: 1.5, type: 'dashed', color: '#38bdf8' },
+				itemStyle: { color: '#38bdf8' }
+			}]
+		});
+	}
+
+	if (attentionChart && attention.length) {
+		attentionChart.setOption({
+			backgroundColor: 'transparent',
+			tooltip: {
+				trigger: 'item',
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' },
+				formatter: function (params) {
+					var values = params.data.value;
+					return '<strong>' + htmlEscape(params.data.name) + '</strong><br>' + values[2] + ' views · ' + formatSeconds(values[0]) + ' · ' + values[1] + ' % scroll';
+				}
+			},
+			grid: { left: 52, right: 20, top: 22, bottom: 48 },
+			xAxis: {
+				type: 'value',
+				name: 'Avg. time',
+				nameTextStyle: { color: '#64748b', fontSize: 10 },
+				axisLine: { lineStyle: { color: '#243047' } },
+				axisTick: { show: false },
+				axisLabel: { color: '#94a3b8', fontSize: 10, formatter: function (value) { return formatSeconds(value); } },
+				splitLine: { lineStyle: { color: 'rgba(36,48,71,0.65)' } }
+			},
+			yAxis: {
+				type: 'value',
+				name: 'Scroll %',
+				min: 0,
+				max: 100,
+				nameTextStyle: { color: '#64748b', fontSize: 10 },
+				axisLine: { lineStyle: { color: '#243047' } },
+				axisTick: { show: false },
+				axisLabel: { color: '#94a3b8', fontSize: 10 },
+				splitLine: { lineStyle: { color: 'rgba(36,48,71,0.65)' } }
+			},
+			series: [{
+				type: 'scatter',
+				data: attention.map(function (row, index) {
+					return {
+						name: row.name,
+						value: row.value,
+						slug: row.slug,
+						label: { show: index < 6 }
+					};
+				}),
+				symbolSize: function (value) {
+					return Math.max(10, Math.min(58, Math.sqrt(value[2]) * 7));
+				},
+				itemStyle: { color: '#38bdf8', opacity: 0.82, borderColor: '#0b1220', borderWidth: 1 },
+				label: {
+					show: false,
+					position: 'top',
+					color: '#cbd5e1',
+					fontSize: 9,
+					formatter: function (params) { return truncateLabel(params.data.name, 24); }
+				},
+				emphasis: { itemStyle: { color: '#e9aa60' } }
+			}]
+		});
+		attentionChart.on('click', function (params) {
+			if (params.data && params.data.slug) {
+				goWith({ path: params.data.slug });
+			}
+		});
+	}
+
+	if (funnelChart && funnel.length && funnel[0].value > 0) {
+		funnelChart.setOption({
+			backgroundColor: 'transparent',
+			tooltip: {
+				trigger: 'item',
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' },
+				formatter: function (params) {
+					return htmlEscape(params.name) + ': ' + params.value + ' pageviews (' + params.percent + '%)';
+				}
+			},
+			series: [{
+				type: 'funnel',
+				left: '8%',
+				width: '84%',
+				top: 12,
+				bottom: 12,
+				minSize: '20%',
+				maxSize: '100%',
+				sort: 'none',
+				gap: 2,
+				label: {
+					show: true,
+					position: 'inside',
+					color: '#0b1220',
+					fontSize: 11,
+					fontWeight: 600,
+					formatter: function (params) { return params.name + ' · ' + params.value; }
+				},
+				itemStyle: { borderColor: '#0b1220', borderWidth: 2 },
+				data: funnel.map(function (row, index) {
+					return {
+						name: row.name,
+						value: row.value,
+						itemStyle: { color: ['#e9aa60', '#38bdf8', '#34d399', '#a78bfa'][index] }
+					};
+				})
+			}]
+		});
+	}
+
+	if (contentTreemapChart && contentTreemapData.length) {
+		contentTreemapChart.setOption({
+			backgroundColor: 'transparent',
+			tooltip: {
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' },
+				formatter: function (params) {
+					var row = params.data;
+					var extra = '';
+					if (row.scroll !== null && row.scroll !== undefined) {
+						extra += ' · ' + Math.round(row.scroll) + ' % scroll';
+					}
+					if (row.duration !== null && row.duration !== undefined) {
+						extra += ' · ' + formatSeconds(row.duration);
+					}
+					return '<strong>' + htmlEscape(row.name) + '</strong><br>' + row.value + ' views' + extra;
+				}
+			},
+			series: [{
+				type: 'treemap',
+				data: contentTreemapData,
+				left: 0,
+				right: 0,
+				top: 0,
+				bottom: 0,
+				roam: false,
+				nodeClick: false,
+				breadcrumb: { show: false },
+				label: {
+					show: true,
+					color: '#0b1220',
+					fontSize: 10,
+					formatter: function (params) { return truncateLabel(params.name, 16) + '\n' + params.value; }
+				},
+				upperLabel: { show: false },
+				itemStyle: { borderColor: '#0b1220', borderWidth: 2, gapWidth: 2 },
+				emphasis: { itemStyle: { shadowBlur: 12, shadowColor: 'rgba(0,0,0,.35)' } }
+			}]
+		});
+		contentTreemapChart.on('click', function (params) {
+			if (params.data && params.data.slug) {
+				goWith({ path: params.data.slug });
+			}
+		});
+	}
+
+	if (sourceTreemapChart && sourceTreemapData.length) {
+		sourceTreemapChart.setOption({
+			backgroundColor: 'transparent',
+			tooltip: {
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' },
+				formatter: function (params) {
+					var row = params.data;
+					return '<strong>' + htmlEscape(row.name) + '</strong><br>' + row.value + ' views<br>' + htmlEscape(row.host || row.source || 'No host');
+				}
+			},
+			series: [{
+				type: 'treemap',
+				data: sourceTreemapData,
+				left: 0,
+				right: 0,
+				top: 0,
+				bottom: 0,
+				roam: false,
+				nodeClick: false,
+				breadcrumb: { show: false },
+				label: {
+					show: true,
+					color: '#0b1220',
+					fontSize: 10,
+					formatter: function (params) { return truncateLabel(params.name, 18) + '\n' + params.value; }
+				},
+				upperLabel: { show: false },
+				itemStyle: { borderColor: '#0b1220', borderWidth: 2, gapWidth: 2 },
+				emphasis: { itemStyle: { shadowBlur: 12, shadowColor: 'rgba(0,0,0,.35)' } }
+			}]
+		});
+		sourceTreemapChart.on('click', function (params) {
+			if (params.data) {
+				goWith({ ref_type: params.data.ref_type, source: params.data.source });
+			}
+		});
+	}
+
+	if (calendarChart && calendarData.length) {
+		calendarChart.setOption({
+			backgroundColor: 'transparent',
+			tooltip: {
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' },
+				formatter: function (params) {
+					return htmlEscape(params.value[0]) + ': ' + params.value[1] + ' views';
+				}
+			},
+			visualMap: {
+				min: 0,
+				max: calendarMax,
+				calculable: false,
+				orient: 'horizontal',
+				left: 'center',
+				bottom: 0,
+				itemWidth: 11,
+				itemHeight: 90,
+				textStyle: { color: '#94a3b8', fontSize: 10 },
+				inRange: { color: ['#1f2937', '#7c5a2a', '#e9aa60', '#f4c98a'] }
+			},
+			calendar: {
+				range: [calendarStart, calendarEnd],
+				cellSize: ['auto', 14],
+				left: 40,
+				right: 20,
+				top: 28,
+				bottom: 52,
+				orient: 'horizontal',
+				dayLabel: { color: '#94a3b8', fontSize: 9, firstDay: 1 },
+				monthLabel: { color: '#94a3b8', fontSize: 10 },
+				yearLabel: { show: false },
+				splitLine: { lineStyle: { color: 'rgba(36,48,71,0.55)' } },
+				itemStyle: { color: 'transparent', borderColor: 'rgba(36,48,71,0.6)' }
+			},
+			series: [{
+				type: 'heatmap',
+				coordinateSystem: 'calendar',
+				data: calendarData,
+				itemStyle: { borderColor: '#0b1220', borderWidth: 1 }
+			}]
+		});
+		calendarChart.on('click', function (params) {
+			if (params.value && params.value[0]) {
+				goWith({ day: params.value[0] });
+			}
+		});
+	}
+
+	if (botHumanChart && botHumanLabels.length) {
+		botHumanChart.setOption({
+			backgroundColor: 'transparent',
+			tooltip: {
+				trigger: 'axis',
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' }
+			},
+			legend: { data: ['Humans', 'Bots'], top: 0, right: 0, textStyle: { color: '#94a3b8', fontSize: 11 } },
+			grid: { left: 42, right: 16, top: 34, bottom: 28 },
+			xAxis: {
+				type: 'category',
+				data: botHumanLabels,
+				boundaryGap: false,
+				axisLine: { lineStyle: { color: '#243047' } },
+				axisTick: { show: false },
+				axisLabel: { color: '#94a3b8', fontSize: 10, hideOverlap: true }
+			},
+			yAxis: {
+				type: 'value',
+				minInterval: 1,
+				splitLine: { lineStyle: { color: 'rgba(36,48,71,0.65)' } },
+				axisLabel: { color: '#94a3b8', fontSize: 10 }
+			},
+			series: [{
+				name: 'Humans',
+				type: 'line',
+				stack: 'total',
+				smooth: true,
+				symbol: 'none',
+				data: botHumanHumans,
+				lineStyle: { width: 1.5, color: '#34d399' },
+				areaStyle: { color: 'rgba(52,211,153,0.22)' },
+				itemStyle: { color: '#34d399' }
+			}, {
+				name: 'Bots',
+				type: 'line',
+				stack: 'total',
+				smooth: true,
+				symbol: 'none',
+				data: botHumanBots,
+				lineStyle: { width: 1.5, color: '#fb7185' },
+				areaStyle: { color: 'rgba(251,113,133,0.22)' },
+				itemStyle: { color: '#fb7185' }
+			}]
+		});
+	}
+
+	if (pageSourceChart && pageSourceData.length) {
+		var pageSourceMax = 1;
+		pageSourceData.forEach(function (row) { pageSourceMax = Math.max(pageSourceMax, row[2]); });
+		pageSourceChart.setOption({
+			backgroundColor: 'transparent',
+			tooltip: {
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' },
+				formatter: function (params) {
+					var value = params.value;
+					return '<strong>' + htmlEscape(pageSourcePages[value[1]]) + '</strong><br>' + htmlEscape(pageSourceSources[value[0]]) + ': ' + value[2] + ' views';
+				}
+			},
+			grid: { left: 160, right: 20, top: 20, bottom: 68 },
+			xAxis: {
+				type: 'category',
+				data: pageSourceSources,
+				axisLine: { lineStyle: { color: '#243047' } },
+				axisTick: { show: false },
+				axisLabel: { color: '#94a3b8', fontSize: 9, rotate: 28, interval: 0 }
+			},
+			yAxis: {
+				type: 'category',
+				data: pageSourcePages.map(function (name) { return truncateLabel(name, 24); }),
+				axisLine: { lineStyle: { color: '#243047' } },
+				axisTick: { show: false },
+				axisLabel: { color: '#cbd5e1', fontSize: 9 }
+			},
+			visualMap: {
+				min: 0,
+				max: pageSourceMax,
+				calculable: false,
+				orient: 'horizontal',
+				left: 'center',
+				bottom: 0,
+				itemWidth: 11,
+				itemHeight: 80,
+				textStyle: { color: '#94a3b8', fontSize: 10 },
+				inRange: { color: ['#1f2937', '#7c5a2a', '#e9aa60', '#f4c98a'] }
+			},
+			series: [{
+				type: 'heatmap',
+				data: pageSourceData,
+				itemStyle: { borderColor: '#0b1220', borderWidth: 2 },
+				emphasis: { itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,.35)' } }
+			}]
+		});
+	}
+
 	window.addEventListener('resize', function () {
 		if (daily) {
 			daily.resize();
@@ -3064,7 +4273,275 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		if (deviceMixChart) {
 			deviceMixChart.resize();
 		}
+		if (clockChart) {
+			clockChart.resize();
+		}
+		if (attentionChart) {
+			attentionChart.resize();
+		}
+		if (funnelChart) {
+			funnelChart.resize();
+		}
+		if (contentTreemapChart) {
+			contentTreemapChart.resize();
+		}
+		if (sourceTreemapChart) {
+			sourceTreemapChart.resize();
+		}
+		if (calendarChart) {
+			calendarChart.resize();
+		}
+		if (botHumanChart) {
+			botHumanChart.resize();
+		}
+		if (pageSourceChart) {
+			pageSourceChart.resize();
+		}
 	});
+
+	(function () {
+		function resizeCharts(container) {
+			if (!container) {
+				return;
+			}
+			container.querySelectorAll('.chart').forEach(function (element) {
+				var chart = echarts.getInstanceByDom(element);
+				if (chart) {
+					chart.resize();
+				}
+			});
+		}
+
+		document.querySelectorAll('[data-view-toggle]').forEach(function (toggle) {
+			var name = toggle.getAttribute('data-view-toggle');
+			var buttons = Array.prototype.slice.call(toggle.querySelectorAll('[data-view]'));
+			var panes = Array.prototype.slice.call(document.querySelectorAll('[data-view-pane="' + name + '"]'));
+			if (!buttons.length || !panes.length) {
+				return;
+			}
+			function activate(view) {
+				buttons.forEach(function (button) {
+					button.classList.toggle('active', button.getAttribute('data-view') === view);
+				});
+				panes.forEach(function (pane) {
+					var on = pane.getAttribute('data-view') === view;
+					pane.hidden = !on;
+					if (on) {
+						requestAnimationFrame(function () { resizeCharts(pane); });
+					}
+				});
+			}
+			buttons.forEach(function (button) {
+				button.addEventListener('click', function () { activate(button.getAttribute('data-view')); });
+			});
+		});
+
+		document.querySelectorAll('[data-heatmap-toggle]').forEach(function (toggle) {
+			var name = toggle.getAttribute('data-heatmap-toggle');
+			var buttons = Array.prototype.slice.call(toggle.querySelectorAll('[data-heatmap-view]'));
+			var panes = Array.prototype.slice.call(document.querySelectorAll('[data-heatmap-pane="' + name + '"]'));
+			if (!buttons.length || !panes.length) {
+				return;
+			}
+			function activate(view) {
+				buttons.forEach(function (button) {
+					button.classList.toggle('active', button.getAttribute('data-heatmap-view') === view);
+				});
+				panes.forEach(function (pane) {
+					pane.hidden = pane.getAttribute('data-heatmap-view') !== view;
+				});
+			}
+			buttons.forEach(function (button) {
+				button.addEventListener('click', function () { activate(button.getAttribute('data-heatmap-view')); });
+			});
+		});
+	})();
+
+	(function () {
+		var nav = document.querySelector('.subnav');
+		if (!nav) {
+			return;
+		}
+		var links = Array.prototype.slice.call(nav.querySelectorAll('a[href^="#"]'));
+		var sections = links.map(function (link) { return document.querySelector(link.getAttribute('href')); });
+		var ticking = false;
+		function update() {
+			ticking = false;
+			var y = window.scrollY + 180;
+			var active = 0;
+			for (var i = 0; i < sections.length; i++) {
+				var section = sections[i];
+				if (!section || section.hidden) {
+					continue;
+				}
+				var top = section.getBoundingClientRect().top + window.scrollY;
+				if (top <= y) {
+					active = i;
+				}
+			}
+			links.forEach(function (link, index) {
+				link.classList.toggle('active', index === active);
+			});
+		}
+		window.addEventListener('scroll', function () {
+			if (!ticking) {
+				ticking = true;
+				requestAnimationFrame(update);
+			}
+		}, { passive: true });
+		update();
+	})();
+
+	(function () {
+		var toggle = document.getElementById('present-toggle');
+		var bar = document.getElementById('present-bar');
+		var label = document.getElementById('present-label');
+		var body = document.body;
+		var slide = 1;
+		var labels = { 1: 'Traffic & rhythm', 2: 'Content & attention', 3: 'Sources & confidence' };
+		function resizeVisible() {
+			document.querySelectorAll('.present-current .chart').forEach(function (element) {
+				var chart = echarts.getInstanceByDom(element);
+				if (chart) {
+					chart.resize();
+				}
+			});
+		}
+		function show(n) {
+			slide = Math.max(1, Math.min(3, n));
+			body.classList.add('present');
+			body.setAttribute('data-present-slide', String(slide));
+			if (bar) {
+				bar.hidden = false;
+			}
+			document.querySelectorAll('[data-tab-group="overview"][data-slide]').forEach(function (element) {
+				element.classList.toggle('present-current', element.getAttribute('data-slide') === String(slide));
+			});
+			if (label) {
+				label.textContent = labels[slide];
+			}
+			window.scrollTo(0, 0);
+			requestAnimationFrame(resizeVisible);
+		}
+		function exit() {
+			body.classList.remove('present');
+			body.removeAttribute('data-present-slide');
+			if (bar) {
+				bar.hidden = true;
+			}
+			document.querySelectorAll('.present-current').forEach(function (element) {
+				element.classList.remove('present-current');
+			});
+			requestAnimationFrame(resizeVisible);
+		}
+		if (toggle) {
+			toggle.addEventListener('click', function () {
+				var overview = document.querySelector('[data-tab="overview"]');
+				if (overview) {
+					overview.click();
+				}
+				show(1);
+			});
+		}
+		if (bar) {
+			var prev = bar.querySelector('[data-present-prev]');
+			var next = bar.querySelector('[data-present-next]');
+			var close = bar.querySelector('[data-present-exit]');
+			if (prev) {
+				prev.addEventListener('click', function () { show(slide - 1); });
+			}
+			if (next) {
+				next.addEventListener('click', function () { show(slide + 1); });
+			}
+			if (close) {
+				close.addEventListener('click', exit);
+			}
+		}
+		document.addEventListener('keydown', function (event) {
+			if (!body.classList.contains('present')) {
+				return;
+			}
+			if (event.key === 'ArrowRight') {
+				event.preventDefault();
+				show(slide + 1);
+			} else if (event.key === 'ArrowLeft') {
+				event.preventDefault();
+				show(slide - 1);
+			} else if (event.key === 'Escape') {
+				event.preventDefault();
+				exit();
+			}
+		});
+	})();
+
+	(function () {
+		if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			return;
+		}
+		document.querySelectorAll('[data-countup]').forEach(function (element) {
+			var target = parseFloat(element.getAttribute('data-countup'));
+			if (!isFinite(target)) {
+				return;
+			}
+			var decimals = parseInt(element.getAttribute('data-decimals') || '0', 10);
+			if (!isFinite(decimals)) {
+				decimals = 0;
+			}
+			var start = null;
+			var duration = 720;
+			function frame(now) {
+				if (start === null) {
+					start = now;
+				}
+				var t = Math.min(1, (now - start) / duration);
+				var eased = 1 - Math.pow(1 - t, 3);
+				var value = target * eased;
+				element.textContent = value.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+				if (t < 1) {
+					requestAnimationFrame(frame);
+				}
+			}
+			requestAnimationFrame(frame);
+		});
+	})();
+
+	(function () {
+		document.querySelectorAll('.chart').forEach(function (element) {
+			var chart = echarts.getInstanceByDom(element);
+			if (!chart) {
+				return;
+			}
+			var card = element.closest('.card');
+			if (!card) {
+				return;
+			}
+			var actions = card.querySelector('.chart-actions');
+			if (!actions) {
+				actions = document.createElement('div');
+				actions.className = 'chart-actions';
+				card.appendChild(actions);
+			}
+			var button = document.createElement('button');
+			button.type = 'button';
+			button.className = 'chart-export';
+			button.textContent = 'PNG';
+			button.title = 'Download chart as PNG';
+			button.setAttribute('aria-label', 'Download chart as PNG');
+			button.addEventListener('click', function () {
+				var url = chart.getDataURL({
+					pixelRatio: 2,
+					backgroundColor: document.body.classList.contains('light') ? '#fffdf8' : '#0b1220'
+				});
+				var link = document.createElement('a');
+				link.href = url;
+				link.download = 'blog-analytics-chart-' + Date.now() + '.png';
+				document.body.appendChild(link);
+				link.click();
+				link.remove();
+			});
+			actions.appendChild(button);
+		});
+	})();
 
 	(function () {
 		var tabs = Array.prototype.slice.call(document.querySelectorAll('[data-tab]'));
