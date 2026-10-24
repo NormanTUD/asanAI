@@ -795,6 +795,23 @@ $$F_0 = 0,\quad F_1 = 1,\quad F_n = F_{n-1} + F_{n-2}$$
 </div>
 
 <div class="md" data-depth="40">
+## The Paperwork Revolution
+
+### The Card Catalog and the Filing Cabinet
+
+The database has a paper ancestor. By the 1880s the card catalog was being described as the greatest library invention because it could be kept up to date: a new card could be inserted anywhere at any time, a single reference replaced a search through pages, and a card could be removed by lifting it out, while guides and locks kept the order stable (\cite[Library Bureau, 1890]{librarybureau1890catalog}). The same catalog sold the physical furniture of retrieval, including files, index cabinets, card cases, trays and fittings (\cite[Library Bureau, 1890]{librarybureau1890catalog}). Dewey's 1890 card-catalog rules then standardised the card itself: author and classed catalogs, sample cards, and rules for subject cards, coloured cards and filing (\cite[Dewey, 1890]{cardcatalogrules1890}). A record that can be inserted, removed, cross-referenced and kept in order is already a database in paper form.
+
+### Metadata Before Databases
+
+The other half of the paperwork revolution was classification. Dewey's 1876 *A Classification and Subject Index* was devised for cataloguing and indexing, divided the library into nine numbered classes, and was found on trial to be equally useful for numbering and arranging books on shelves; Dewey explicitly lists catalogues, shelf lists, indexes and cross-references as the things the system makes cheaper to produce (\cite[Dewey, 1876]{dewey1876classification}). Metadata, in other words, is older than the computer: a book's class number is a key, a shelf list is an index, and a cross-reference is a join.
+
+### Insurance and the Actuary: Risk as Data
+
+The insurance industry was one of the first institutions to turn population records into a calculable risk. Halley's 1693 paper used the bills of mortality from Breslaw to construct a table of ages and deaths, and then used that table to value annuities on lives (\cite[Halley, 1693]{halley1693mortality}). A life table is a statistical model fitted to administrative data, and its purpose is a price. Actuarial science is therefore an early example of the full pipeline that later becomes machine learning: collect records, estimate a distribution, and use it to make decisions under uncertainty.
+
+</div>
+
+<div class="md" data-depth="40">
 ### Precision Engineering and Power
 
 #### Navigation and the Longitude Problem
@@ -827,6 +844,19 @@ The "longitude problem", determining one's east-west position at sea, was the gr
     <img style="width: 45%; height: auto; display: block; margin: 1em auto;" src="huygens_horologium_1673.jpeg" alt="Title page or plate from Christiaan Huygens' Horologium Oscillatorium (1673), the foundational treatise on the pendulum clock" />
     <figcaption class="md">The \citealternativetitle{img_huygens_horologium} (Public Domain): \citeauthor{huygenspendulum}'s \citetitle{huygenspendulum} (\citeyear{img_huygens_horologium}), the treatise that gave the pendulum clock its geometric and mathematical foundations, the instrument whose escapement broke continuous time into countable, synchronous steps. Source: \citeauthor{img_huygens_horologium}, \citeyear{img_huygens_horologium}, \citealternativetitle{img_huygens_horologium}, Wikimedia Commons.</figcaption>
 </figure>
+</div>
+
+<div class="md" data-depth="20">
+## The Standardized World
+
+### Standard Time and Time Zones
+
+A network of machines needs a shared clock. The 1884 International Meridian Conference proposed a single prime meridian for all nations, adopted the meridian of Greenwich as the initial meridian for longitude, and proposed a universal day counted from zero to twenty-four hours from mean midnight at that meridian (\cite[International Meridian Conference, 1884]{meridian1884proceedings}). The resolutions were not self-executing, but they gave railways, telegraphs and later computer networks a common temporal coordinate. The Network Time Protocol then did for computer clocks what the conference did for civil time: RFC 5905 describes a protocol that synchronises computer clocks across the Internet, with accuracy extending to tens of microseconds on modern workstations and fast local networks (\cite[Mills et al., 2010]{rfc5905}). Distributed training, logging and transaction ordering all assume that the clocks agree.
+
+### The Barcode and the QR Code
+
+The barcode gave the physical world a machine-readable identifier. Woodland and Silver's 1952 patent, "Classifying apparatus and method," describes identifying patterns that are read by photo-sensitive apparatus, so that things can be classified without relying on their own characteristics, and explicitly proposes the apparatus as a sensory and classifying organ for tabulating, computing and sorting machines (\cite[Woodland and Silver, 1952]{woodland1952barcode}). The QR code extended the idea to two dimensions: DENSO WAVE released it in 1994 with high data capacity, Kanji and Kana support, error correction and 360-degree reading, and it became an AIM standard in 1997, a Japanese industrial standard in 1999 and an ISO standard in 2000 (\cite[DENSO WAVE, 2026]{denso_qr_history}). A barcode is a join key between a physical object and a database row; a QR code is the same idea with more bits.
+
 </div>
 
 <div class="md" data-depth="40">
@@ -972,6 +1002,27 @@ In a later interview, Kirsch said that by 1957 he was "intrigued by what the lin
 </div>
 
 <div class="md" data-depth="20">
+## The Analog World Becomes Data
+
+### The ADC: Where the World Becomes Numbers
+
+A microphone, a radio antenna and a temperature sensor all produce continuous voltages. The first step into the digital world is sampling and quantisation. Shannon proved that a function limited to a band of W cycles per second is completely determined by its ordinates at discrete points spaced 1/(2W) seconds apart (\cite[Shannon, 1948]{shannon1948communication}). The analog-to-digital converter is the device that performs this reduction. Walden's survey calls ADCs ubiquitous, critical components of software radio and other signal-processing systems, and maps the trade-off between resolution and sampling rate: below about two million samples per second resolution is limited by thermal noise, and at higher rates it falls by about one bit for every doubling of the sampling rate because of aperture jitter (\cite[Walden, 1999]{walden1999adc}). Every image, every sound recording and every sensor reading in a training set passed through such a device.
+
+### The Digital Eye: CCD and CMOS
+
+The image sensor is a silicon chip that converts photons into charge and then into numbers. Boyle and Smith's charge-coupled device stores charge in potential wells at the surface of a semiconductor and moves it from one capacitor to the next by manipulating electrode potentials; they explicitly listed imaging as one of its applications (\cite[Boyle and Smith, 1970]{boyle1970ccd}). CMOS active-pixel sensors later made the camera small, cheap and low-power enough to sit in every phone: Fossum describes them as competitive with CCD technology while offering on-chip functionality, lower system power, lower cost and miniaturisation, including on-chip analog-to-digital conversion (\cite[Fossum, 1997]{fossum1997cmos}). Machine vision is downstream of that device.
+
+### The FFT: Making Waves Computable
+
+The discrete Fourier transform turns a signal into its frequency components, but the naive sum is expensive. The Cooley-Tukey algorithm computes the same transform with a recursive factorisation that made Fourier analysis practical on a machine (\cite[Cooley and Tukey, 1965]{cooley1965fft}). The consequences are everywhere: spectral analysis, filtering, radar and audio processing, image compression, and the convolution kernels inside neural networks all depend on fast transforms. The algorithm is a pure mathematical displacement: invented for numerical analysis, it became a load-bearing part of the signal-processing stack that feeds AI.
+
+### The Laser: Coherent Light as a Tool
+
+The laser is a device for generating or amplifying coherent light. Maiman's patent describes a ruby laser system and the principle of pumping a solid medium to produce coherent emission, following the maser idea proposed by Schawlow and Townes (\cite[Maiman, 1967]{maiman1960laser}). Coherent light then became a tool: it carries signals through glass fibre, reads barcodes, measures distance in LIDAR and exposes patterns in lithography. None of these uses was the point of the original device. The laser is the archetype of a displaced prerequisite: a solution in search of problems, which eventually supplied several of the problems' solutions.
+
+</div>
+
+<div class="md" data-depth="20">
 ### Networks and Interfaces
 
 #### Land Telegraphy: The First Digital Network
@@ -1054,6 +1105,23 @@ In 1897, **Karl Ferdinand Braun** invented the **cathode ray tube (CRT)** at the
 From this scientific instrument, an extraordinary displacement unfolded: **Philo Farnsworth** demonstrated fully electronic television in 1927, adapting the CRT for broadcast entertainment. During WWII, CRTs were repurposed for **radar displays**, the first use as an interactive, real-time information screen. The transition into computing followed at MIT, where the **Whirlwind** computer (early 1950s) used a CRT for real-time output, and Ivan Sutherland's \cite[Sketchpad]{sketchpad} (1963) proved a screen could be a medium for direct graphical interaction with a computer.
 
 Without the visual display, AI remains a silent, invisible process. The screen is the **output channel** through which a language model becomes conversational and immediate, and its lineage traces directly to a physicist studying oscillating currents with no notion of “computation” whatsoever.
+</div>
+
+<div class="md" data-depth="20">
+## The Wireless Century
+
+### Radio: The Invisible Network
+
+Radio begins with a laboratory demonstration that electromagnetic action propagates with finite velocity. Hertz's *Electric Waves* collects the researches in which he generated rapid electric oscillations with sparks and Leyden jars and detected their propagation through space (\cite[Hertz, 1893]{hertz1893electricwaves}). Marconi's 1897 patent, "Transmitting electrical signals," turned the laboratory effect into a signalling system (\cite[Marconi, 1897]{marconi1897patent}). Radio then became the first network without wires: broadcast, radar, navigation and, eventually, mobile data. The air itself became a medium for machine-readable signals.
+
+### Cellular and Wi-Fi: The Network Without Wires
+
+A radio network that serves many moving users needs a way to reuse spectrum. The cellular concept does exactly that: MacDonald's 1979 paper shows how a cellular system within a limited block of frequency spectrum can serve large-scale mobile telephony by frequency reuse and cell splitting, with hexagonal geometry and the AMPS system as the practical realisation (\cite[MacDonald, 1979]{macdonald1979cellular}). Local wireless networks followed a different path: the IEEE 802.11 standard of 1997 specified a wireless LAN medium-access control and physical layer, creating the technical basis for Wi-Fi (\cite[IEEE, 1997]{ieee80211_1997}). Together, cellular and Wi-Fi made network access ambient rather than a place you went to.
+
+### The Smartphone: A Supercomputer in Every Pocket
+
+The smartphone is the point where radio, low-power computing, a camera and a touchscreen became one device. Apple's 2007 launch described the iPhone as three products in one, a mobile phone, a widescreen iPod and an Internet communications device, with a large multi-touch display, a two-megapixel camera, desktop-class email, web browsing, searching and maps (\cite[Apple, 2007]{apple2007iphone}). The processor lineage behind such devices descends from the low-power RISC idea: the Acorn RISC Machine was designed as a complete system architecture for optimal implementation on silicon, aimed at the low-cost personal-computer market (\cite[Furber and Wilson, 1987]{furber1987arm}). The cellular standards that carry the data are specified by 3GPP (\cite[3GPP, 2026]{gpp_specs}). The result is a sensor platform in every pocket, generating the images, text, locations and behaviour that later become training data.
+
 </div>
 
 <div class="md">
@@ -1327,6 +1395,43 @@ None of these components was invented for AI. Yet remove any single element and 
 </div>
 
 <div class="mn-quiz mn-quiz--checkpoint" data-quiz="untold_history-cp2" data-depth="40"><script type="application/json">{"title": "Checkpoint: the material foundations", "questions": [{"q": "What did cell theory, established in the 19th century, propose?", "options": ["That the tissues of all organisms are built from cells", "That cells are made of silicon", "That only plants have cells", "That nerves are one continuous net"], "answer": 0, "explain": "From Hooke's “honeycomb” in cork and Leeuwenhoek's living cells to a principle for all life — the road that later led to the neuron."}]}</script></div>
+
+<div class="md" data-depth="20">
+## The Fab: How Sand Becomes an Accelerator
+
+The previous sections treated the chip as a component. This section treats it as a manufactured object, because a modern accelerator is not designed in a vacuum: it is the output of an industrial system that turns purified sand into patterned silicon, and then packages that silicon with memory, power delivery and cooling. Remove the fab and the design is only a file.
+
+### The Foundry: Designing Without a Factory
+
+The pure-play foundry is a relatively recent institutional invention. TSMC was founded in 1987 as a joint venture and incorporated as a dedicated foundry: it manufactures semiconductors using its customers' proprietary integrated-circuit designs rather than selling chips under its own brand (\cite[TSMC, 2026]{tsmc2025annualreport}). That separation let companies design chips without owning a fabrication plant, while the foundry amortized the enormous fixed cost of the plant across many customers. TSMC's own filing describes fabs as "largely fixed cost assets" whose economics improve as utilization rises (\cite[TSMC, 2026]{tsmc2025annualreport}). The fabless model is therefore not a detail of business history: it is why a startup can specify an AI accelerator and have it manufactured at the leading edge.
+
+### EUV: Light at 13.5 Nanometres
+
+The most difficult step is printing the pattern. ASML describes extreme ultraviolet (EUV) lithography as using light with a wavelength of 13.5 nm, the cutting edge of lithography and the highest resolution available, and states that it is currently the world's only manufacturer of EUV systems (\cite[ASML, 2026]{asml2025annualreport}). EUV simplifies manufacturing relative to multiple-patterning with deep-ultraviolet immersion: one exposure per critical layer instead of several, fewer masks and process steps, and better yield and scalability for advanced logic and memory (\cite[ASML, 2026]{asml2025annualreport}). The underlying idea is older. Soft X-ray reduction lithography with multilayer mirrors was demonstrated in the late 1980s, with experiments on a synchrotron beamline and demagnified patterns below 0.5 micrometres (\cite[Kinoshita et al., 1989]{kinoshita1989euv}). The industrial machine took another two decades; the physics was already in place.
+
+### The Cleanroom and the Ultrapure Drop
+
+A fab is a contamination-control problem before it is a computer. VLSI yields require control of particulate contamination during manufacture, and the ambient air of the production facility is one source; measuring ultrafine particles of 0.1 micrometres or less in real time requires instruments such as the differential mobility analyzer and the diffusion battery (\cite[Donovan et al., 1985]{liu1985cleanroom}). Water is the other carrier: ultrafiltration removes particles, colloids and large macromolecules from ultrapure water, and leak detection in membrane modules is a prerequisite for defect-free manufacturing (\cite[Ruth and Berndt, 2016]{ruth2016ultrapure}). The cleanroom is not a metaphor for precision; it is the physical condition under which a wafer can be patterned at all.
+
+### Advanced Packaging: Where Memory Meets Logic
+
+A modern accelerator is not one die but a stack. High Bandwidth Memory (HBM) stacks DRAM dies on a base logic die using through-silicon vias and die stacking, reaching more than 256 GB/s while reducing power, and its packaging must solve reliability, thermal dissipation, package size and high-throughput stacking (\cite[Jun et al., 2017]{jun2017hbm}). CoWoS-R uses an organic interposer to integrate heterogeneous and chiplet components, with low-RC interconnect, signal isolation and design scalability; integrated decoupling capacitors suppress power-domain noise and improve HBM3 signal integrity at high data rates (\cite[Jeng and Liu, 2022]{jeng2022cowos}). The logic die and the memory are only useful together, and the package is where their electrical and thermal limits meet.
+
+## The Grid and the Cloud: Powering and Renting Computation
+
+### The Grid: Electricity as a Utility
+
+The electric grid is a machine for moving power, not just generating it. Tesla's polyphase AC patents of the 1880s made long-distance distribution practical by supplying alternating current and a method of converting and distributing it (\cite[Tesla, 1887]{teslaelectricmotor}; \cite[Tesla, 1888]{teslacurrent}). A century later the grid has become a binding constraint on AI. The International Energy Agency's central projection has data-centre electricity consumption roughly doubling from 485 TWh in 2025 to 950 TWh in 2030, about 3% of global electricity demand, while consumption from AI-focused data centres grew by 50% in 2025 (\cite[IEA, 2026]{iea2026energyai}). The same report describes grids being stretched by the wave of project applications for data centres (\cite[IEA, 2026]{iea2026energyai}). A training cluster is therefore not only a collection of GPUs; it is a customer with a power contract, a connection queue and a cooling load.
+
+### The Cloud: Computation as a Utility
+
+The cloud turned computing into something that could be rented by the hour. Amazon S3, launched on 14 March 2006, offered an application programming interface for highly scalable, reliable, low-latency storage at very low cost (\cite[Amazon Web Services, 2006]{amazons3_2006}). Amazon EC2 entered limited beta on 25 August 2006: a virtual CPU equivalent to a 1.7 GHz Xeon, 1.75 GB of RAM, 160 GB of local disk and 250 Mb/s of network bandwidth, at ten cents per clock hour, built on the Xen virtual machine monitor and booting from Amazon Machine Images stored as S3 objects (\cite[Barr, 2006]{amazonec2_2006}). Kubernetes, open-sourced by Google in 2014, added a portable, extensible, open-source platform for managing containerized workloads, with scaling and failover handled by the platform rather than by hand (\cite[Kubernetes Authors, 2014]{kubernetes_overview}). The result is elastic compute: capacity that can be acquired for a training run and released when the run ends.
+
+### The Warehouse-Scale Computer
+
+At scale, the unit of design is no longer the server but the building. Barroso, Clidaras and Holzle describe the modern datacenter as one massive warehouse-scale computer: a warehouse full of machines whose hardware and software resources must work in concert to deliver Internet-service performance, with a design, operation and cost structure of its own (\cite[Barroso et al., 2013]{barroso2013datacenter}). The IEA notes that AI is pushing data-centre power density to the limits of today's technologies (\cite[IEA, 2026]{iea2026energyai}). The cloud is therefore not weightless. It is a warehouse, a power contract and a thermal engineering problem, and the abstraction of "renting a GPU" rests on all three.
+
+</div>
 
 <div class="md" data-depth="20">
 
@@ -1726,6 +1831,23 @@ $$\text{Scalar} \subset \text{Vector} \subset \text{Matrix} \subset \text{Tensor
 ### Summary
 
 The invention of arrays was not a single event but an evolutionary process, from mathematical matrices, through FORTRAN's first formal array declarations, to the rich ecosystem of NumPy, Pandas, and tensor libraries we use today. Each step removed a layer of manual effort, allowing practitioners to focus on *what* to compute rather than *how* to compute it, ultimately enabling the data science and AI revolution of the 2020s.
+</div>
+
+<div class="md" data-depth="20">
+## From Text to Tokens
+
+### Unicode: One Character Set for All Languages
+
+A language model cannot learn from text that a computer cannot represent. The Unicode Standard defines a universal character set and a character-encoding model with three encoding forms, UTF-8, UTF-16 and UTF-32; it also defines equivalent sequences and normalisation, so that the same text can be compared and searched consistently (\cite[Unicode Consortium, 2022]{unicode2022standard}). UTF-8, specified in RFC 3629, preserves the full US-ASCII range while representing the Universal Character Set, which encompasses most of the world's writing systems, and remains compatible with file systems and parsers that expect ASCII (\cite[Yergeau, 2003]{rfc3629}). Without that common representation, a multilingual corpus would be a patchwork of incompatible encodings.
+
+### Tokenization: From Characters to Subwords
+
+A neural language model does not read characters or words directly; it reads a fixed vocabulary of tokens. Sennrich, Haddow and Birch framed the problem as open-vocabulary translation: a fixed word vocabulary cannot cover rare words, compounds, names and morphology, so they encoded rare and unknown words as sequences of subword units using byte-pair encoding (\cite[Sennrich et al., 2016]{sennrich2016bpe}). SentencePiece extended the idea into a language-independent tokenizer and detokenizer that trains directly from raw sentences, supporting both byte-pair encoding and a unigram language model, and removes the need for language-specific pre-tokenisation (\cite[Kudo and Richardson, 2018]{kudo2018sentencepiece}). Tokenisation is the unnoticed interface between human text and the matrix of integers a model actually sees.
+
+### Mass Digitization and OCR
+
+The web is not the only corpus. Books had to be converted from ink to bytes, and that required optical character recognition at scale. Tesseract, developed at HP between 1984 and 1994 and released as open source in 2005, is an OCR engine built around line finding, feature classification and an adaptive classifier; its own history describes it as an attempt to read print that earlier commercial engines handled poorly except on the best quality pages (\cite[Smith, 2007]{smith2007tesseract}). Google Books later made more than 40 million books discoverable in more than 400 languages, while explicitly framing the project around respecting publishers, copyright and libraries (\cite[Google, 2026]{googlebooks_history}). The training corpus of a large model is therefore a layered artefact: print, scan, OCR, correction, and only then text.
+
 </div>
 
 <div class="md" data-depth="20">
@@ -2385,6 +2507,27 @@ All these developments, even though they were focussed for the normal user, are 
 </div>
 
 <div class="md" data-depth="20">
+## The Industrial Stack
+
+### Logistics: The Container and the Supply Chain
+
+Before a GPU can be trained, it has to be moved. Containerisation turned freight into a standard unit that could pass from ship to truck to rail without unloading its contents. Malcolm McLean's 1958 patent for an "Apparatus for shipping freight" describes containers carried on a ship's deck and handled as units, with the cargo protected inside the container (\cite[McLean, 1958]{mclean1958container}). The patent is not a theory of logistics; it is the physical interface that made global supply chains possible. The same logic governs the AI stack: silicon wafers, memory stacks, server racks and cooling equipment are moved through a small number of ports, fabs and assembly sites, and a disruption at one node propagates through the whole system.
+
+### Operations Research: The Simplex and the Schedule
+
+Linear programming is the mathematics of doing the best you can under constraints. Dantzig's *Linear Programming and Extensions* presents the concepts, origins and formulations of linear programs and the simplex method, applied to prices, matrix games and transportation problems, together with the convex-set and linear-space background needed for duality and network problems (\cite[Dantzig, 1963]{dantzig1963linear}). The simplex method is a procedure for solving systems of linear inequalities by moving from one feasible vertex to a better one. The same shape of problem, an objective plus constraints, appears in scheduling, supply chains, portfolio choice and, in a different mathematical form, in the training of neural networks.
+
+### Banking, SABRE, and OLTP
+
+A reservation system is a database that many people update at once, and it must never sell the same seat twice. SABRE was a completely automatic, centralized electronic airline reservations system developed by IBM for American Airlines after six years of joint research (\cite[IBM, 1960]{sabre1960reservation}). Making such a system reliable required a theory of transactions. Harder and Reuter provided a terminological framework for transaction-oriented recovery, introducing the materialized database, propagation strategy and checkpoint, and classifying logging techniques by the speed and scope of recovery and the amount of redundant information required (\cite[Harder and Reuter, 1983]{harder1983transactions}). Banks, airlines and reservation desks were the first customers for systems that had to stay correct while failing and recovering.
+
+### Weather, Seismic Imaging, and HPC
+
+Two geophysical problems helped build the market for large-scale numerical computation. Richardson's 1922 *Weather Prediction by Numerical Process* reduced forecasting to a set of computing forms and imagined a "forecast-factory" in which thousands of human computers worked in parallel; he called the hope of computing faster than the weather advances "a dream" (\cite[Richardson, 1922]{richardson1922weather}). Exploration seismology posed the inverse problem in a different form: Claerbout's *Earth Soundings Analysis* treats seismic processing as adjoint modelling and inversion, using conjugate-gradient methods for problems with dimensions from one to many millions because matrix inversion and singular-value decomposition are limited to matrices of about a thousand (\cite[Claerbout, 1992]{claerbout1992earth}). Weather and oil exploration were early, demanding customers for parallel computers, fast transforms and numerical linear algebra, long before those techniques were called machine learning.
+
+</div>
+
+<div class="md" data-depth="20">
 ## The Internet and the Web: The Training Corpus
 
 ### The pre-history: the Memex and hypertext (1945–1968)
@@ -2440,6 +2583,61 @@ The consequences were staggering. Within a decade, millions of people were volun
 This is the direct, causal link to modern AI. A large language model learns by ingesting text, as much text as possible, in as many domains, registers, and languages as possible. The datasets that power models like GPT-3 and its successors (such as \citetitle[Common Crawl]{commoncrawl}, and \cite[Wikipedia dumps]{wikimediadumps}) are direct products of the Web's open, self-publishing architecture. Without Berners-Lee's decision to make the Web royalty-free and without the open protocols of TCP/IP, the digital text generated by humanity would have remained fragmented across proprietary, incompatible, and inaccessible systems, bulletin boards, corporate intranets, and gated databases. There would be no single, crawlable, interlinked ocean of human language.
 
 As noted elsewhere in this history, the \cite[Bitter Lesson]{sutton2019bitter} teaches that scale and data ultimately outperform hand-crafted rules. But scale requires *something to scale on*. The World Wide Web provided exactly that: a self-assembling, ever-growing corpus of human thought, freely accessible and machine-readable. ARPANET gave machines the ability to talk to each other. TCP/IP gave them a common language. The World Wide Web gave humanity a reason to pour its collective knowledge into the network. And that collective knowledge became the raw material from which a language model learns to speak.
+<div class="md" data-depth="20">
+## The Human Corpus
+
+### Labeling: The Invisible Workforce
+
+A dataset is not found; it is made. ImageNet reports 12 subtrees with 5,247 synsets and 3.2 million images, each concept quality-controlled and human-annotated, and its construction explicitly relied on Amazon Mechanical Turk (\cite[Deng et al., 2009]{deng2009imagenet}). The same pattern recurs at the frontier: InstructGPT began with labeler-written prompts and prompts submitted through the OpenAI API, collected labeler demonstrations of desired behaviour, and used human feedback to fine-tune the model (\cite[Ouyang et al., 2022]{ouyang2022instructgpt}). The "human in the loop" is not a metaphor. It is a workforce, often invisible in the final paper, whose judgements become the labels and preferences that shape the model.
+
+### Benchmarks: How Progress Became Measurable
+
+Shared benchmarks turned machine learning from a collection of demonstrations into a scoreboard. GLUE offered nine diverse natural-language-understanding tasks, a diagnostic dataset and an online evaluation platform (\cite[Wang et al., 2018]{wang2018glue}). SQuAD contributed more than 100,000 questions posed by crowdworkers on Wikipedia articles, with the answer required to be a segment of the passage; human performance was 86.8 F1 against a logistic-regression baseline of 51.0 (\cite[Rajpurkar et al., 2016]{rajpurkar2016squad}). MMLU then measured 57 tasks across elementary mathematics, US history, computer science, law and more (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}). HELM added a multi-metric evaluation of 30 models on 16 core scenarios, measuring accuracy, calibration, robustness, fairness, bias, toxicity and efficiency (\cite[Liang et al., 2022]{liang2022helm}), while Chatbot Arena evaluated models by pairwise human preference and had amassed more than 240,000 votes (\cite[Chiang et al., 2024]{chiang2024arena}). Benchmarks make progress comparable, but they also decide which progress counts.
+
+### The Data Pipeline: Crawl, Clean, Deduplicate
+
+The web is raw material, not a dataset. C4, the Colossal Clean Crawled Corpus, was built for a systematic study of transfer learning and text-to-text unification (\cite[Raffel et al., 2020]{raffel2020c4}). The Pile assembled an 825 GiB English corpus from 22 diverse, high-quality subsets, many from academic or professional sources, on the argument that dataset diversity improves cross-domain generalisation (\cite[Gao et al., 2020]{gao2020pile}). Deduplication then turns a pile into a training set: Lee et al. found duplicates in all four common NLP datasets they studied, proposed exact substring matching and approximate document matching, and showed that deduplication reduces verbatim memorisation and train-test overlap (\cite[Lee et al., 2022]{lee2022dedup}). Crawl, filter, deduplicate, document: the corpus is an engineered object at every stage.
+
+</div>
+
+<div class="md" data-depth="20">
+## The Permission Layer
+
+### Copyright and Text Mining
+
+Training data is also a legal object. The EU Directive 2019/790 created a mandatory exception for text and data mining for research organisations (Article 3) and a broader exception for reproductions and extractions of lawfully accessible works for text and data mining, unless the rightholders have expressly reserved the use in an appropriate machine-readable manner (Article 4) (\cite[European Union, 2019]{eu2019dsm}). In the United States, the Second Circuit held in *Authors Guild v. Google* that Google's unauthorised digitisation of copyright-protected books, its search functionality and its snippet display were non-infringing fair uses, because the purpose was highly transformative, the display was limited and the result was not a significant market substitute (\cite[Second Circuit, 2015]{authorsguild2015google}). The permission layer does not determine what is technically possible; it determines what may be kept long enough to train on.
+
+### Privacy and Data Protection
+
+The GDPR governs personal data. It requires processing to be lawful, fair and transparent, collected for specified purposes, adequate and limited to what is necessary, accurate and kept no longer than necessary (Article 5), and it permits processing only on a lawful basis such as consent, contract, legal obligation or legitimate interests (Article 6) (\cite[European Union, 2016]{eu2016gdpr}). It also grants a right to erasure, the "right to be forgotten" (Article 17) (\cite[European Union, 2016]{eu2016gdpr}). A web-scale corpus inevitably contains personal data, so the legal question is not whether privacy applies but how the training pipeline handles it.
+
+### Export Controls and the Geopolitics of Compute
+
+At the hardware layer, permission is geopolitical. The U.S. Bureau of Industry and Security states that a licence is required to export advanced computing items to entities headquartered in Country Group D:5 or Macau, or with an ultimate parent company headquartered there, even if the entities themselves are located outside those regions; it also describes rules for authorised integrated-circuit designers (\cite[BIS, 2026]{bis2026advancedcomputing}). Compute is therefore not a neutral commodity. The fastest chips are subject to export controls, and the map of who can train what is drawn partly by trade law.
+
+</div>
+
+<div class="md" data-depth="40">
+## The Republic of Science
+
+### The University and the Grant
+
+Modern AI is a scientific community before it is a product. The U.S. National Science Foundation was established in 1950, after Vannevar Bush's 1945 report *Science: The Endless Frontier* envisioned a federal agency that would promote the progress of science by supporting basic research at colleges and universities (\cite[NSF, 2026]{nsf_history}). Before the Second World War the federal government played a minor role in supporting research at American universities; the postwar arrangement made curiosity-driven research a permanent, publicly funded institution (\cite[NSF, 2026]{nsf_history}). The grant, the peer-review panel and the university laboratory are therefore part of the technical stack, even though they produce no electrons.
+
+### The Preprint
+
+The preprint server shortened the feedback loop. arXiv was founded by Paul Ginsparg in 1991 and now hosts more than three million scholarly articles in eight subject areas; it is a curated research-sharing platform, not a peer-reviewed journal, and its submissions are checked for topicality and scholarly value but not for correctness (\cite[arXiv, 2026]{arxiv_about}). That distinction matters: the preprint made results visible before review, and the machine-learning community built its rapid iteration on that visibility. The conference paper and the arXiv posting, not the journal article, became the working memory of the field.
+
+### Open Source: The Commons That Runs the Stack
+
+The software stack is a commons. Git began in 2005, when the Linux kernel community's free use of the proprietary BitKeeper was revoked and Linus Torvalds built a replacement with speed, simple design, strong support for non-linear development, full distribution and efficient handling of large projects as goals (\cite[Chacon and Straub, 2014]{git_history}). The Linux kernel itself had been maintained through patches and archived files since 1991, and Git made the distributed collaboration that followed practical (\cite[Chacon and Straub, 2014]{git_history}). The GNU General Public License supplied the legal machinery: it grants the freedoms to use, study, modify and share the software, provided the same freedoms are preserved downstream (\cite[Free Software Foundation, 1991]{spdx_gpl2}). PyTorch, TensorFlow, NumPy and Linux are not incidental tools; they are the shared infrastructure on which reproducible AI depends.
+
+### Standards Bodies
+
+The final layer is the committee. RFC 2026 documents the Internet standards process: it defines the stages by which a specification moves from proposed standard to draft standard to Internet standard, the types of documents used, and the intellectual-property and copyright rules that accompany the process (\cite[Bradner, 1996]{rfc2026}). The Unicode Consortium performs the same function for text, maintaining a single character set and encoding model so that a document written on one system can be read on another (\cite[Unicode Consortium, 2022]{unicode2022standard}). Standards are slow, boring and indispensable: they are how a heterogeneous world agrees on the shape of the bits.
+
+</div>
+
 </div>
 
 <div class="mn-quiz" data-quiz="untold_history"><script type="application/json">{"title": "The untold history", "questions": [{"q": "What does the chapter mean by “displaced prerequisites”?", "options": ["Discoveries from unrelated fields that AI could not exist without", "Lessons you can skip", "Failed AI projects", "Prerequisites removed from the curriculum"], "answer": 0, "explain": "Materials science, spaceflight, programming languages and the web are not “AI”, but AI rests on them."}, {"q": "How did spaceflight help build the computer industry?", "options": ["Programs like Apollo were early, demanding buyers of integrated circuits", "Astronauts wrote the first programs", "Rockets carried the first servers", "It did not"], "answer": 0, "explain": "Guaranteed demand for tiny, reliable electronics helped make integrated circuits cheap."}, {"q": "Why is VisiCalc (1979) in a history of AI?", "options": ["The spreadsheet made data manipulation usable for ordinary people — a step towards data as an everyday object", "It was the first neural network", "It invented the GPU", "It was a chatbot"], "answer": 0, "explain": "Usability of data mattered as much as raw computing power."}, {"q": "What did the World Wide Web eventually provide for modern AI?", "options": ["The training corpus: an enormous body of human-written text", "Faster processors", "The transformer architecture", "Electricity"], "answer": 0, "explain": "Tim Berners-Lee's web is where most LLM training text comes from."}]}</script></div>
