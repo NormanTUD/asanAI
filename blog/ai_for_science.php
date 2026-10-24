@@ -5,7 +5,7 @@ title: Closing the Loop — AI for Science
 description: AlphaFold, Navier–Stokes, materials, weather and theorem-proving — the models built to predict the world are now discovering it.
 icon: &#129514;
 part: 6
-order: 12
+order: 14
 color: emerald
 topics: ai, data, vision, society
 tags: interested-layman

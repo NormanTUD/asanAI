@@ -6,7 +6,7 @@ title: Alignment — Making Objectives Match Intent
 description: The specification problem, the RLHF/RLAIF/DPO toolkit, deceptive alignment and reward tampering, scalable oversight, the control problem, and interpretability as a safety tool.
 icon: &#x231A;
 part: 6
-order: 7
+order: 9
 color: rose
 topics: safety
 -->

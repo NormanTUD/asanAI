@@ -5,7 +5,7 @@ title: The Mind That Built Machines
 description: The human cognitive, psychological, and evolutionary prerequisites of AI — the mind that made computation possible — including the memory palace, the first technology for storing meaning in space.
 icon: 🤔
 part: 6
-order: 3
+order: 5
 color: text-secondary
 topics: history, philosophy, society, geometry
 tags: interested-layman

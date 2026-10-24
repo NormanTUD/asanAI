@@ -5,7 +5,7 @@ title: Common Myths and Misconceptions About AI
 description: Why people believe what they believe about AI — beliefs and urban legends, read through the folklorist Brednich's method.
 icon: &#128302;
 part: 6
-order: 15
+order: 17
 color: coral
 topics: philosophy, society, ethics, language
 tags: interested-layman

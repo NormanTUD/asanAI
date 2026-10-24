@@ -5,7 +5,7 @@ title: The Mirror in the Machine
 description: How the brain's own laws — the all-or-none spike, the charge-and-fire membrane, the retina's contrast circuit — built the machine, and how that machine has now become the instrument that reads, models, and tests the brain back.
 icon: 🪞
 part: 6
-order: 5
+order: 7
 color: sky
 topics: history, neuroscience, philosophy, society
 tags: interested-layman

@@ -5,7 +5,7 @@ title: People of AI
 description: The recurring cast behind the machine — from McCulloch and Pitts to the builders of the modern LLM stack, with their primary works.
 icon: &#128101;
 part: 6
-order: 16
+order: 18
 color: sky
 topics: history, society, philosophy, frontier
 tags: interested-layman

@@ -5,7 +5,7 @@ title: The Metaphysics of Artificial Intelligence
 description: What kind of thing is a machine mind? Ontology, personal identity, the metaphysics of computation, and what the learned geometry refers to -- the serious, peer-reviewed metaphysics behind AI.
 icon: &#9883;
 part: 6
-order: 10
+order: 12
 color: sky
 topics: philosophy, interpretability, reference
 tags: interested-layman, logic-heavy
