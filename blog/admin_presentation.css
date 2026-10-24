@@ -917,3 +917,14 @@ body.mn-presenting {
 	text-transform: uppercase;
 	background: color-mix(in srgb, var(--slide-accent, var(--accent)) 5%, transparent);
 }
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+	.mn-pres-stat b,
+	.mn-pres-kpi b,
+	.mn-pres-donut-center b {
+		background: linear-gradient(180deg, var(--heading) 12%, color-mix(in srgb, var(--slide-accent, var(--accent)) 58%, var(--heading)));
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+}

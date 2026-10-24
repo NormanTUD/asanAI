@@ -5161,7 +5161,7 @@ $presentationTitleInsight = mn_analytics_format_number($views) . ' views across 
 
 		<?php if ($presentationHasFeedback): ?>
 		<section class="mn-pres-slide" data-title="Reader feedback" style="--slide-accent: var(--rose);">
-			<h2>Reader feedback <small>· how readers experienced the course</small></h2>
+			<h2>Reader feedback <small>· all time · how readers experienced the course</small></h2>
 			<div class="mn-pres-split">
 				<div class="mn-pres-mix">
 					<div class="mn-pres-donut" style="background: conic-gradient(<?php echo stats_h(implode(', ', $presentationMixStops)); ?>)">
@@ -5226,7 +5226,7 @@ $presentationTitleInsight = mn_analytics_format_number($views) . ' views across 
 
 		<?php if ($presentationFeedbackPages): ?>
 		<section class="mn-pres-slide" data-title="Where to improve" style="--slide-accent: var(--rose);">
-			<h2>Where readers need help</h2>
+			<h2>Where readers need help <small>· all time</small></h2>
 			<table class="mn-pres-table">
 				<thead><tr><th>Page</th><th>Total</th><th>👍</th><th>👎</th><th>❓</th><th>🐞</th><th>Negative</th></tr></thead>
 				<tbody>
@@ -6996,7 +6996,7 @@ $presentationTitleInsight = mn_analytics_format_number($views) . ' views across 
 	})();
 
 	(function () {
-		var toggle = null;
+		var toggle = document.getElementById('present-toggle');
 		var bar = document.getElementById('present-bar');
 		var label = document.getElementById('present-label');
 		var body = document.body;
