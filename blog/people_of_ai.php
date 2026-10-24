@@ -12,6 +12,37 @@ tags: interested-layman
 math: 0
 -->
 
+<style>
+.mn-portrait-inline {
+	float: right;
+	width: 190px;
+	max-width: 38%;
+	margin: 0.2rem 0 0.7rem 1rem;
+	padding: 0;
+}
+.mn-portrait-inline img {
+	display: block;
+	width: 100%;
+	height: auto;
+	border: 1px solid var(--mn-border);
+	border-radius: 8px;
+}
+.mn-portrait-inline figcaption {
+	margin-top: 0.3rem;
+	font-size: 0.66rem;
+	line-height: 1.35;
+	color: var(--mn-text-secondary);
+}
+@media (max-width: 600px) {
+	.mn-portrait-inline {
+		float: none;
+		width: 100%;
+		max-width: 100%;
+		margin: 0.8rem 0;
+	}
+}
+</style>
+
 <div class="md" data-lesson-id="people_of_ai">
 Artificial intelligence has a surprisingly small cast of recurring characters. The same names appear in the history chapters, the mathematics lessons, the interpretability labs, and the frontier surveys — sometimes as the person who proved the key theorem, sometimes as the person whose failed attempt defined the next decade's problem. This chapter is a **who's who**: what each person contributed, why it still matters, and one or two primary sources you can read for yourself.
 
@@ -86,6 +117,11 @@ Samuel's checkers player, written at IBM between 1952 and 1967, was the first ma
 Minsky grew up in New York, built the SNARC from vacuum tubes and salvaged B-24 gyropilots, co-founded MIT's AI Laboratory, and wrote \citetitle{minsky1986society}. \marginfig{seymour_papert_portrait.jpg}{Seymour Papert. \cite{img_seymour_papert}. [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).} Papert grew up in Pretoria, opposed apartheid as a student, worked with Piaget in Geneva, and came to MIT to build LOGO and the idea of constructionism — children learning mathematics by programming turtles. Their 1969 \citetitle{minskyperceptrons} proved that a single-layer perceptron cannot compute predicates such as parity and connectedness, and expressed pessimism that multi-layer extensions could be trained. The book is often remembered as the cause of the first AI winter, but the record is messier: Papert later rejected the single-book reading, and later scholarship emphasized institutional competition and the genuine limitations of the machines (\cite[Papert, 1988]{papert1988oneai}; \cite[McCorduck, 1979]{mccorduck1979machines}).
 
 ### Bernard Widrow
+
+<figure class="mn-portrait-inline">
+	<img src="widrow_adaline.jpg" alt="Bernard Widrow with the ADALINE machine" loading="lazy">
+	<figcaption class="md">Bernard Widrow with the ADALINE. \cite{img_widrow_adaline}. Public domain.</figcaption>
+</figure>
 
 Widrow's **ADALINE** was a single adaptive linear element with weights implemented as switchable resistor circuits; with his student Ted Hoff he built a **memistor** whose resistance could be electroplated and stripped. Their **least-mean-squares** training rule — the Widrow–Hoff rule — is the direct ancestor of the delta rule and of modern gradient descent on a squared error. The hardware was the argument that adaptive control was real, not a simulation (\cite[Widrow & Hoff, 1960]{widrow1960adaline}).
 </div>
@@ -213,6 +249,11 @@ Brown led the GPT-3 paper, which showed that a 175-billion-parameter decoder tra
 
 ### Paul Christiano, Yuntao Bai, and Rafael Rafailov
 
+<figure class="mn-portrait-inline">
+	<img src="paul_christiano_portrait.jpg" alt="Portrait of Paul Christiano" loading="lazy">
+	<figcaption class="md">Paul Christiano. \cite{img_paul_christiano}. [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).</figcaption>
+</figure>
+
 Christiano's 2017 work introduced preference-based reinforcement learning, the core of RLHF: humans compare behaviours, a reward model learns the comparison, and a policy is optimized against it. Bai led **Constitutional AI**, which replaced most human harmlessness labels with AI self-critique against written principles. Rafailov's **Direct Preference Optimization** showed that the RLHF objective could be optimized directly on preference pairs without a separate reward model or RL loop (\cite[Christiano et al., 2017]{christiano2017rlhf}; \cite[Bai et al., 2022]{bai2022constitutional}; \cite[Rafailov et al., 2023]{rafailov2023dpo}).
 
 ### Jordan Hoffmann and Jared Kaplan
@@ -239,6 +280,15 @@ The people below built the formal and institutional foundations on which everyth
 
 ### George Boole and Gottlob Frege
 
+<figure class="mn-portrait-inline">
+	<img src="george_boole_portrait.jpg" alt="Portrait of George Boole" loading="lazy">
+	<figcaption class="md">George Boole. \cite{img_george_boole}. Public domain.</figcaption>
+</figure>
+<figure class="mn-portrait-inline">
+	<img src="gottlob_frege_portrait.jpg" alt="Portrait of Gottlob Frege" loading="lazy">
+	<figcaption class="md">Gottlob Frege. \cite{img_gottlob_frege}. Public domain.</figcaption>
+</figure>
+
 Boole's **Laws of Thought** (1854) turned Aristotle's syllogisms into algebra: propositions become variables, “and” and “or” become operations, and logical inference becomes calculation. Every digital circuit and every symbolic AI system is downstream of that move (\citetitle{boole1854}). Frege's **Begriffsschrift** (1879) went further, inventing predicate logic and the quantifier notation that made it possible to express statements about *all* or *some* objects — the logical grammar that Russell and Whitehead later built into *Principia Mathematica* (\citetitle{frege1879}).
 
 ### Alonzo Church and Alan Turing
@@ -247,13 +297,28 @@ Church's lambda calculus gave computation a second formal language, and his 1936
 
 ### John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon
 
+<figure class="mn-portrait-inline">
+	<img src="john_mccarthy_portrait.jpg" alt="Portrait of John McCarthy" loading="lazy">
+	<figcaption class="md">John McCarthy. \cite{img_john_mccarthy}. [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).</figcaption>
+</figure>
+
 The 1955 **Dartmouth proposal** named the field and set its first research agenda: language, neurons, abstraction, and creativity, all to be studied by building machines that could exhibit them (\cite[McCarthy et al., 1955]{mccarthy1955dartmouth}). McCarthy went on to invent LISP and to argue that common-sense knowledge could be represented as explicit logical statements — the symbolic programme that dominated AI's first decades. Minsky co-founded MIT's AI laboratory and later wrote *The Society of Mind*, a book-length argument that intelligence is a society of simpler agents rather than a single monolithic algorithm.
 
 ### Herbert Simon and Allen Newell
 
+<figure class="mn-portrait-inline">
+	<img src="simon_newell.jpg" alt="Herbert A. Simon and Allen Newell playing chess" loading="lazy">
+	<figcaption class="md">Herbert A. Simon and Allen Newell. \cite{simonnewell_image}. Public domain.</figcaption>
+</figure>
+
 Simon and Newell built the **Logic Theory Machine**, one of the first programs to prove theorems, and used it to argue that human problem solving is symbol manipulation. Their **physical symbol system hypothesis** — that a physical symbol system has the necessary and sufficient means for general intelligent action — became the philosophical core of classical AI. Simon also won the Nobel Prize in Economics for his work on bounded rationality, a reminder that the study of intelligence has always crossed disciplinary lines (\cite[Newell & Simon, 1956]{newell1956logic}).
 
 ### W. Ross Ashby and Donald Hebb
+
+<figure class="mn-portrait-inline">
+	<img src="ashby.jpg" alt="Portrait of W. Ross Ashby" loading="lazy">
+	<figcaption class="md">W. Ross Ashby. \cite{ashbyphoto}. Public domain.</figcaption>
+</figure>
 
 Ashby's **Design for a Brain** defined adaptation as the maintenance of essential variables within viable limits and built the **Homeostat**, a machine that reorganized its own connections until it recovered stability. His “law of requisite variety” — only variety can absorb variety — is still the best one-line statement of why control requires internal complexity (\citetitle{ashbydesigndbrain1952}). Hebb's **The Organization of Behavior** proposed that repeated co-activation strengthens synapses, the rule that Rosenblatt turned into the perceptron's error-correction mechanism (\citetitle{hebb1949organizationofbehaviour}).
 </div>
@@ -285,6 +350,11 @@ The language-model stack was assembled from many small inventions. These are the
 
 ### Tomas Mikolov and Jeffrey Pennington
 
+<figure class="mn-portrait-inline">
+	<img src="tomas_mikolov_portrait.jpg" alt="Portrait of Tomáš Mikolov" loading="lazy">
+	<figcaption class="md">Tomáš Mikolov. \cite{img_tomas_mikolov}. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).</figcaption>
+</figure>
+
 Mikolov's **word2vec** trained dense word vectors on local context windows and showed that their differences encode analogies — “king − man + woman ≈ queen” (\cite[Mikolov et al., 2013]{mikolov2013word2vec}). Pennington's **GloVe** reached the same geometry from the opposite direction, factorizing the global co-occurrence matrix so that dot products approximate log counts (\cite[Pennington et al., 2014]{pennington2014glove}). Together they made the embedding layer a standard component of neural language models.
 
 ### Rico Sennrich and Taku Kudo
@@ -302,6 +372,11 @@ Devlin's **BERT** trained a bidirectional encoder with masked language modelling
 A frontier model is not just an algorithm; it is a distributed system. These people made the difference between a paper and a training run.
 
 ### Jeff Dean, Samyam Rajbhandari, and Dmitry Lepikhin
+
+<figure class="mn-portrait-inline">
+	<img src="jeff_dean_portrait.jpg" alt="Portrait of Jeff Dean" loading="lazy">
+	<figcaption class="md">Jeff Dean. \cite{img_jeff_dean}. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).</figcaption>
+</figure>
 
 Dean's **DistBelief** showed that neural networks could be trained across thousands of machines, and his later work on TensorFlow and TPUs made that infrastructure usable (\cite[Dean et al., 2012]{dean2012large}). Rajbhandari's **ZeRO** partitioned optimizer states, gradients, and parameters across data-parallel workers, removing the memory duplication that had blocked trillion-parameter training (\cite[Rajbhandari et al., 2020]{rajbhandari2020zero}). Lepikhin's **GShard** combined mixture-of-experts routing with automatic sharding, making sparse models practical at scale (\cite[Lepikhin et al., 2021]{lepikhin2021gshard}).
 
@@ -323,9 +398,31 @@ Zou's **representation engineering** turned interpretability into a top-down too
 
 ### Collin Burns, Dario Amodei, and Geoffrey Irving
 
+<figure class="mn-portrait-inline">
+	<img src="dario_amodei_portrait.jpg" alt="Portrait of Dario Amodei" loading="lazy">
+	<figcaption class="md">Dario Amodei. \cite{img_dario_amodei}. [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/).</figcaption>
+</figure>
+
 Burns' **weak-to-strong generalization** fine-tuned strong models on labels from weak supervisors to measure how much latent capability could be elicited — a present-day proxy for the alignment problem (\cite[Burns et al., 2023]{burns2023weakstrong}). Amodei's **Concrete Problems in AI Safety** named the failure modes that the field still uses as its taxonomy: reward hacking, side effects, scalable oversight, safe exploration, and distributional shift (\cite[Amodei et al., 2016]{amodei2016concrete}). Irving's **AI safety via debate** proposed training two models to argue opposite sides of a question in front of a human judge, so that the judge can supervise answers too complex to verify directly (\cite[Irving et al., 2018]{irving2018debate}).
 
 ### Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord
+
+<figure class="mn-portrait-inline">
+	<img src="stuart_russell_portrait.jpg" alt="Portrait of Stuart Russell" loading="lazy">
+	<figcaption class="md">Stuart Russell. \cite{img_stuart_russell}. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).</figcaption>
+</figure>
+<figure class="mn-portrait-inline">
+	<img src="nick_bostrom_portrait.jpg" alt="Portrait of Nick Bostrom" loading="lazy">
+	<figcaption class="md">Nick Bostrom. \cite{img_nick_bostrom}. [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).</figcaption>
+</figure>
+<figure class="mn-portrait-inline">
+	<img src="eliezer_yudkowsky_portrait.jpg" alt="Portrait of Eliezer Yudkowsky" loading="lazy">
+	<figcaption class="md">Eliezer Yudkowsky. \cite{img_eliezer_yudkowsky}. [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).</figcaption>
+</figure>
+<figure class="mn-portrait-inline">
+	<img src="toby_ord_portrait.jpg" alt="Portrait of Toby Ord" loading="lazy">
+	<figcaption class="md">Toby Ord. \cite{img_toby_ord}. [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).</figcaption>
+</figure>
 
 Russell's **Human Compatible** argues that the standard objective-based model of AI is the problem: a machine optimizing a fixed objective will resist correction, so the design goal should be uncertainty about human preferences and a willingness to be switched off (\citetitle{russell2019human}). Bostrom's **Superintelligence** framed the control problem and the orthogonality thesis — intelligence and final goals are independent — for a broad audience (\citetitle{bostrom2014superintelligence}). Yudkowsky's earlier essay on AI as a global risk factor made the case that a sufficiently capable optimizer need not be malevolent to be dangerous (\cite[Yudkowsky, 2008]{yudkowsky2008ai}). Ord's **The Precipice** places AI risk alongside pandemics and nuclear war in a broader ethics of existential risk (\citetitle{ord2020precipice}).
 </div>
@@ -376,110 +473,6 @@ These are the names that appear most often across the course, counted approximat
 | **Noam Shazeer** | [Transformer](transformer.php), [Mixture of Experts](mixture_of_experts.php), [Inference Optimization](inference_optimization.php) |
 | **Catherine Olsson** | [In-Context Learning](unexpected_capabilities.php), [Mechanistic Interpretability](mechanistic_interpretability.php) |
 | **François Chollet** | [Unexpected Capabilities](unexpected_capabilities.php), [Global AI Ecosystem](global_ai_ecosystem.php) |
-</div>
-
-<div class="md">
-## The Cast in Portraits
-
-The chapter already carries portraits of many of its subjects. Here are more free-use images — public domain or Creative Commons — for people who appear in the text but did not have a face yet. Every caption names the source and the license; the license links go to the exact terms. If you reuse an image, keep the credit with it.
-
-Some living researchers do not have a freely licensed portrait on Wikimedia Commons. I have not substituted a non-free photo for them. A missing portrait is not a judgment about importance.
-</div>
-
-<style>
-.mn-portrait-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-	gap: 0.9rem;
-	margin: 1.2rem 0 2rem;
-}
-.mn-portrait-grid figure {
-	margin: 0;
-}
-.mn-portrait-grid img {
-	display: block;
-	width: 100%;
-	aspect-ratio: 4 / 5;
-	object-fit: cover;
-	object-position: center 20%;
-	border: 1px solid var(--mn-border);
-	border-radius: 8px;
-	background: var(--mn-bg-subtle);
-}
-.mn-portrait-grid figure.wide img {
-	aspect-ratio: 4 / 3;
-	object-position: center;
-}
-.mn-portrait-grid figcaption {
-	margin-top: 0.35rem;
-	font-size: 0.68rem;
-	line-height: 1.35;
-	color: var(--mn-text-secondary);
-}
-@media (max-width: 600px) {
-	.mn-portrait-grid {
-		grid-template-columns: repeat(2, 1fr);
-	}
-}
-</style>
-
-<div class="mn-portrait-grid">
-	<figure>
-		<img src="george_boole_portrait.jpg" alt="Portrait of George Boole" loading="lazy">
-		<figcaption class="md">George Boole. \cite{img_george_boole}. Public domain.</figcaption>
-	</figure>
-	<figure>
-		<img src="gottlob_frege_portrait.jpg" alt="Portrait of Gottlob Frege" loading="lazy">
-		<figcaption class="md">Gottlob Frege. \cite{img_gottlob_frege}. Public domain.</figcaption>
-	</figure>
-	<figure>
-		<img src="john_mccarthy_portrait.jpg" alt="Portrait of John McCarthy" loading="lazy">
-		<figcaption class="md">John McCarthy. \cite{img_john_mccarthy}. [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).</figcaption>
-	</figure>
-	<figure>
-		<img src="ashby.jpg" alt="Portrait of W. Ross Ashby" loading="lazy">
-		<figcaption class="md">W. Ross Ashby. \cite{ashbyphoto}. Public domain.</figcaption>
-	</figure>
-	<figure class="wide">
-		<img src="widrow_adaline.jpg" alt="Bernard Widrow with the ADALINE machine" loading="lazy">
-		<figcaption class="md">Bernard Widrow with the ADALINE. \cite{img_widrow_adaline}. Public domain.</figcaption>
-	</figure>
-	<figure class="wide">
-		<img src="simon_newell.jpg" alt="Herbert A. Simon and Allen Newell playing chess" loading="lazy">
-		<figcaption class="md">Herbert A. Simon and Allen Newell. \cite{simonnewell_image}. Public domain.</figcaption>
-	</figure>
-	<figure>
-		<img src="paul_christiano_portrait.jpg" alt="Portrait of Paul Christiano" loading="lazy">
-		<figcaption class="md">Paul Christiano. \cite{img_paul_christiano}. [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).</figcaption>
-	</figure>
-	<figure>
-		<img src="tomas_mikolov_portrait.jpg" alt="Portrait of Tomáš Mikolov" loading="lazy">
-		<figcaption class="md">Tomáš Mikolov. \cite{img_tomas_mikolov}. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).</figcaption>
-	</figure>
-	<figure>
-		<img src="jeff_dean_portrait.jpg" alt="Portrait of Jeff Dean" loading="lazy">
-		<figcaption class="md">Jeff Dean. \cite{img_jeff_dean}. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).</figcaption>
-	</figure>
-	<figure>
-		<img src="dario_amodei_portrait.jpg" alt="Portrait of Dario Amodei" loading="lazy">
-		<figcaption class="md">Dario Amodei. \cite{img_dario_amodei}. [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/).</figcaption>
-	</figure>
-	<figure>
-		<img src="stuart_russell_portrait.jpg" alt="Portrait of Stuart Russell" loading="lazy">
-		<figcaption class="md">Stuart Russell. \cite{img_stuart_russell}. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).</figcaption>
-	</figure>
-	<figure>
-		<img src="nick_bostrom_portrait.jpg" alt="Portrait of Nick Bostrom" loading="lazy">
-		<figcaption class="md">Nick Bostrom. \cite{img_nick_bostrom}. [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).</figcaption>
-	</figure>
-	<figure>
-		<img src="eliezer_yudkowsky_portrait.jpg" alt="Portrait of Eliezer Yudkowsky" loading="lazy">
-		<figcaption class="md">Eliezer Yudkowsky. \cite{img_eliezer_yudkowsky}. [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).</figcaption>
-	</figure>
-	<figure class="wide">
-		<img src="toby_ord_portrait.jpg" alt="Portrait of Toby Ord" loading="lazy">
-		<figcaption class="md">Toby Ord. \cite{img_toby_ord}. [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).</figcaption>
-	</figure>
 </div>
 
 <div class="md">
