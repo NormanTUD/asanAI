@@ -1,18 +1,642 @@
 [
  [
-  "James Gleick",
-  40.71,
-  -74.01,
-  "New York, United States",
-  2011,
-  1
+  "TSMC",
+  null,
+  null,
+  "",
+  0,
+  0
  ],
  [
-  "Panu Raatikainen",
-  61.5,
-  23.79,
-  "Tampere, Finland",
-  2025,
-  1
+  "ASML Holding N.V.",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "H. Kinoshita",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "K. Kurihara",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Y. Ishii",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Y. Torii",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Shin-Puu Jeng",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Monsen Liu",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Hongshin Jun",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Jinhee Cho",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Kangseol Lee",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Ho-Young Son",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Kwiwook Kim",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Hanho Jin",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Keith Kim",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "R. P. Donovan",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "B. R. Locke",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "C. M. Osburn",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "A. L. Caviness",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Jochen Ruth",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Rolf Berndt",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Amazon Web Services",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Jeff Barr",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "The Kubernetes Authors",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Luiz André Barroso",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Jimmy Clidaras",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Urs Hoelzle",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "International Energy Agency",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "W. S. Boyle",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "G. E. Smith",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "E. R. Fossum",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Theodore H. Maiman",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "R. H. Walden",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Heinrich Hertz",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Guglielmo Marconi",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "V. H. Mac Donald",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "IEEE",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Apple Inc.",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "S. B. Furber",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "A. R. Wilson",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "3GPP",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "The Unicode Consortium",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "F. Yergeau",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Ray Smith",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Alex Wang",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Amanpreet Singh",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Julian Michael",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Felix Hill",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Pranav Rajpurkar",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Jian Zhang",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Konstantin Lopyrev",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Andrew Nystrom",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "U.S. Bureau of Industry and Security",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "U.S. Court of Appeals for the Second Circuit",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "U.S. National Science Foundation",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "arXiv",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Scott Chacon",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Ben Straub",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "S. Bradner",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Free Software Foundation",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "George B. Dantzig",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Theo Härder",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Andreas Reuter",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Malcolm P. McLean",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Lewis F. Richardson",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Jon F. Claerbout",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "International Business Machines Corporation",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Melvil Dewey",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Library Bureau",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Edmund Halley",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "International Meridian Conference",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "D. Mills",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "J. Martin",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "J. Burbank",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "W. Kasch",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Norman J. Woodland",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Bernard Silver",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "DENSO WAVE INCORPORATED",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "Panu Raatikainen (Stanford Encyclopedia of Philosophy)",
+  null,
+  null,
+  "",
+  0,
+  0
+ ],
+ [
+  "James Gleick",
+  null,
+  null,
+  "",
+  0,
+  0
  ]
 ]

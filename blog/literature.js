@@ -20764,7 +20764,7 @@ window.bibData = {
 		url: "https://doi.org/10.1109/IMW.2017.7939084",
 		alternativetitle: "HBM (Jun et al., 2017)"
 	},
-	"liu1985cleanroom": {
+	"donovan1985cleanroom": {
 		title: "Ultrafine Aerosol Particles in Semiconductor Cleanrooms",
 		author: "R. P. Donovan, B. R. Locke, C. M. Osburn, A. L. Caviness",
 		year: 1985,
@@ -20801,10 +20801,10 @@ window.bibData = {
 	},
 	"barroso2013datacenter": {
 		title: "The Datacenter as a Computer: An Introduction to the Design of Warehouse-Scale Machines, Second Edition",
-		author: "Luiz Andre Barroso, Jimmy Clidaras, Urs Holzle",
+		author: "Luiz André Barroso, Jimmy Clidaras, Urs Hoelzle",
 		year: 2013,
 		url: "https://research.google/pubs/the-datacenter-as-a-computer-an-introduction-to-the-design-of-warehouse-scale-machines-second-edition/",
-		alternativetitle: "Barroso, Clidaras and Holzle, 2013"
+		alternativetitle: "Barroso, Clidaras and Hoelzle, 2013"
 	},
 	"iea2026energyai": {
 		title: "Key Questions on Energy and AI",
@@ -20827,7 +20827,7 @@ window.bibData = {
 		url: "https://doi.org/10.1109/16.628824",
 		alternativetitle: "Fossum, 1997"
 	},
-	"maiman1960laser": {
+	"maiman1967laserpatent": {
 		title: "Ruby laser systems (US Patent 3,353,115)",
 		author: "Theodore H. Maiman",
 		year: 1967,
@@ -20883,7 +20883,7 @@ window.bibData = {
 		url: "https://doi.org/10.1049/ep.1987.0249",
 		alternativetitle: "Furber and Wilson, 1987"
 	},
-	"gpp_specs": {
+	"threegpp_specs": {
 		title: "3GPP Specifications and Technologies",
 		author: "3GPP",
 		year: 2026,
@@ -21039,10 +21039,10 @@ window.bibData = {
 	},
 	"harder1983transactions": {
 		title: "Principles of transaction-oriented database recovery",
-		author: "Theo Harder, Andreas Reuter",
+		author: "Theo Härder, Andreas Reuter",
 		year: 1983,
 		url: "https://dl.acm.org/doi/pdf/10.1145/289.291",
-		alternativetitle: "Harder and Reuter, 1983"
+		alternativetitle: "Härder and Reuter, 1983"
 	},
 	"mclean1958container": {
 		title: "Apparatus for shipping freight (US Patent 2,853,968)",

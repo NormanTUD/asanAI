@@ -627,19 +627,21 @@
   "city": "Mountain View, United States",
   "year": 2020.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "tfive",
    "raffel2020t5",
    "chung2022flan",
-   "carlini2021extracting"
+   "carlini2021extracting",
+   "raffel2020c4"
   ],
   "cited_in": [
    "evaluation",
    "history",
    "people_of_ai",
    "training_data",
-   "unexpected_capabilities"
+   "unexpected_capabilities",
+   "untold_history"
   ]
  },
  {
@@ -2091,7 +2093,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -2550,15 +2553,17 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "sennrich2016subword"
+   "sennrich2016subword",
+   "sennrich2016bpe"
   ],
   "cited_in": [
    "embeddinglab",
    "history",
    "people_of_ai",
-   "tokenizerlab"
+   "tokenizerlab",
+   "untold_history"
   ]
  },
  {
@@ -3150,7 +3155,8 @@
    "reasoning",
    "reliability",
    "transformer",
-   "unexpected_capabilities"
+   "unexpected_capabilities",
+   "untold_history"
   ]
  },
  {
@@ -6678,15 +6684,17 @@
   "city": "",
   "year": 1990.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "sennrich2016subword"
+   "sennrich2016subword",
+   "sennrich2016bpe"
   ],
   "cited_in": [
    "embeddinglab",
    "history",
    "people_of_ai",
-   "tokenizerlab"
+   "tokenizerlab",
+   "untold_history"
   ]
  },
  {
@@ -9099,7 +9107,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -9966,7 +9975,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -17355,7 +17365,8 @@
   ],
   "cited_in": [
    "people_of_ai",
-   "tokenizerlab"
+   "tokenizerlab",
+   "untold_history"
   ]
  },
  {
@@ -19003,7 +19014,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "people_of_ai"
+   "people_of_ai",
+   "untold_history"
   ]
  },
  {
@@ -19021,7 +19033,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "people_of_ai"
+   "people_of_ai",
+   "untold_history"
   ]
  },
  {
@@ -19039,7 +19052,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "people_of_ai"
+   "people_of_ai",
+   "untold_history"
   ]
  },
  {
@@ -19057,7 +19071,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "people_of_ai"
+   "people_of_ai",
+   "untold_history"
   ]
  },
  {
@@ -19075,7 +19090,8 @@
   ],
   "cited_in": [
    "computer_vision",
-   "people_of_ai"
+   "people_of_ai",
+   "untold_history"
   ]
  },
  {
@@ -22984,7 +23000,8 @@
    "kudo2018sentencepiece"
   ],
   "cited_in": [
-   "people_of_ai"
+   "people_of_ai",
+   "untold_history"
   ]
  },
  {
@@ -23192,38 +23209,1371 @@
   ]
  },
  {
+  "name": "TSMC",
+  "canon": "TSMC",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "tsmc2025annualreport"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "ASML Holding N.V.",
+  "canon": "ASML Holding N.V.",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "asml2025annualreport"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "H. Kinoshita",
+  "canon": "H. Kinoshita",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kinoshita1989euv"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "K. Kurihara",
+  "canon": "K. Kurihara",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kinoshita1989euv"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Y. Ishii",
+  "canon": "Y. Ishii",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kinoshita1989euv"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Y. Torii",
+  "canon": "Y. Torii",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kinoshita1989euv"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Shin-Puu Jeng",
+  "canon": "Shin-Puu Jeng",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jeng2022cowos"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Monsen Liu",
+  "canon": "Monsen Liu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jeng2022cowos"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Hongshin Jun",
+  "canon": "Hongshin Jun",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jun2017hbm"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Jinhee Cho",
+  "canon": "Jinhee Cho",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jun2017hbm"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Kangseol Lee",
+  "canon": "Kangseol Lee",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jun2017hbm"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Ho-Young Son",
+  "canon": "Ho-Young Son",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jun2017hbm"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Kwiwook Kim",
+  "canon": "Kwiwook Kim",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jun2017hbm"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Hanho Jin",
+  "canon": "Hanho Jin",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jun2017hbm"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Keith Kim",
+  "canon": "Keith Kim",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "jun2017hbm"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "R. P. Donovan",
+  "canon": "R. P. Donovan",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "donovan1985cleanroom"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "B. R. Locke",
+  "canon": "B. R. Locke",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "donovan1985cleanroom"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "C. M. Osburn",
+  "canon": "C. M. Osburn",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "donovan1985cleanroom"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "A. L. Caviness",
+  "canon": "A. L. Caviness",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "donovan1985cleanroom"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Jochen Ruth",
+  "canon": "Jochen Ruth",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ruth2016ultrapure"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Rolf Berndt",
+  "canon": "Rolf Berndt",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ruth2016ultrapure"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Amazon Web Services",
+  "canon": "Amazon Web Services",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "amazons3_2006"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Jeff Barr",
+  "canon": "Jeff Barr",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "amazonec2_2006"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "The Kubernetes Authors",
+  "canon": "The Kubernetes Authors",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "kubernetes_overview"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Luiz André Barroso",
+  "canon": "Luiz André Barroso",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "barroso2013datacenter"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Jimmy Clidaras",
+  "canon": "Jimmy Clidaras",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "barroso2013datacenter"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Urs Hoelzle",
+  "canon": "Urs Hoelzle",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "barroso2013datacenter"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "International Energy Agency",
+  "canon": "International Energy Agency",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "iea2026energyai"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "W. S. Boyle",
+  "canon": "W. S. Boyle",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "boyle1970ccd"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "G. E. Smith",
+  "canon": "G. E. Smith",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "boyle1970ccd"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "E. R. Fossum",
+  "canon": "E. R. Fossum",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "fossum1997cmos"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Theodore H. Maiman",
+  "canon": "Theodore H. Maiman",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "maiman1967laserpatent"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "R. H. Walden",
+  "canon": "R. H. Walden",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "walden1999adc"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Heinrich Hertz",
+  "canon": "Heinrich Hertz",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hertz1893electricwaves"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Guglielmo Marconi",
+  "canon": "Guglielmo Marconi",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "marconi1897patent"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "V. H. Mac Donald",
+  "canon": "V. H. Mac Donald",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "macdonald1979cellular"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "IEEE",
+  "canon": "IEEE",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ieee80211_1997"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Apple Inc.",
+  "canon": "Apple Inc.",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "apple2007iphone"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "S. B. Furber",
+  "canon": "S. B. Furber",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "furber1987arm"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "A. R. Wilson",
+  "canon": "A. R. Wilson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "furber1987arm"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "3GPP",
+  "canon": "3GPP",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "threegpp_specs"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "The Unicode Consortium",
+  "canon": "The Unicode Consortium",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "unicode2022standard"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "F. Yergeau",
+  "canon": "F. Yergeau",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rfc3629"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Ray Smith",
+  "canon": "Ray Smith",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "smith2007tesseract"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Alex Wang",
+  "canon": "Alex Wang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2018glue"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Amanpreet Singh",
+  "canon": "Amanpreet Singh",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2018glue"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Julian Michael",
+  "canon": "Julian Michael",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2018glue"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Felix Hill",
+  "canon": "Felix Hill",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wang2018glue"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Pranav Rajpurkar",
+  "canon": "Pranav Rajpurkar",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rajpurkar2016squad"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Jian Zhang",
+  "canon": "Jian Zhang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rajpurkar2016squad"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Konstantin Lopyrev",
+  "canon": "Konstantin Lopyrev",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rajpurkar2016squad"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Andrew Nystrom",
+  "canon": "Andrew Nystrom",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "lee2022dedup"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "U.S. Bureau of Industry and Security",
+  "canon": "U.S. Bureau of Industry and Security",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bis2026advancedcomputing"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "U.S. Court of Appeals for the Second Circuit",
+  "canon": "U.S. Court of Appeals for the Second Circuit",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "authorsguild2015google"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "U.S. National Science Foundation",
+  "canon": "U.S. National Science Foundation",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "nsf_history"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "arXiv",
+  "canon": "arXiv",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "arxiv_about"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Scott Chacon",
+  "canon": "Scott Chacon",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "git_history"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Ben Straub",
+  "canon": "Ben Straub",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "git_history"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "S. Bradner",
+  "canon": "S. Bradner",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rfc2026"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Free Software Foundation",
+  "canon": "Free Software Foundation",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "spdx_gpl2"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "George B. Dantzig",
+  "canon": "George B. Dantzig",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "dantzig1963linear"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Theo Härder",
+  "canon": "Theo Härder",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "harder1983transactions"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Andreas Reuter",
+  "canon": "Andreas Reuter",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "harder1983transactions"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Malcolm P. McLean",
+  "canon": "Malcolm P. McLean",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "mclean1958container"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Lewis F. Richardson",
+  "canon": "Lewis F. Richardson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "richardson1922weather"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Jon F. Claerbout",
+  "canon": "Jon F. Claerbout",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "claerbout1992earth"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "International Business Machines Corporation",
+  "canon": "International Business Machines Corporation",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "sabre1960reservation"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Melvil Dewey",
+  "canon": "Melvil Dewey",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "dewey1876classification",
+   "cardcatalogrules1890"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Library Bureau",
+  "canon": "Library Bureau",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "librarybureau1890catalog"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Edmund Halley",
+  "canon": "Edmund Halley",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "halley1693mortality"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "International Meridian Conference",
+  "canon": "International Meridian Conference",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "meridian1884proceedings"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "D. Mills",
+  "canon": "D. Mills",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rfc5905"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "J. Martin",
+  "canon": "J. Martin",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rfc5905"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "J. Burbank",
+  "canon": "J. Burbank",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rfc5905"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "W. Kasch",
+  "canon": "W. Kasch",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "rfc5905"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Norman J. Woodland",
+  "canon": "Norman J. Woodland",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "woodland1952barcode"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Bernard Silver",
+  "canon": "Bernard Silver",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "woodland1952barcode"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "DENSO WAVE INCORPORATED",
+  "canon": "DENSO WAVE INCORPORATED",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "denso_qr_history"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Panu Raatikainen (Stanford Encyclopedia of Philosophy)",
+  "canon": "Panu Raatikainen",
+  "alias": "Stanford Encyclopedia of Philosophy",
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 4,
+  "keys": [
+   "sep_godel_incompleteness",
+   "ockham",
+   "lumpschool",
+   "septruringtest"
+  ],
+  "cited_in": [
+   "coherent_difference",
+   "human_mind",
+   "metaphysics_of_ai",
+   "myths",
+   "philosophy"
+  ]
+ },
+ {
   "name": "James Gleick",
   "canon": "James Gleick",
   "alias": null,
-  "lat": 40.71,
-  "lng": -74.01,
-  "city": "New York, United States",
-  "year": 2011.0,
-  "conf": 1,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
   "works": 1,
   "keys": [
    "gleick2011information"
   ],
   "cited_in": [
    "language"
-  ]
- },
- {
-  "name": "Panu Raatikainen",
-  "canon": "Panu Raatikainen",
-  "alias": null,
-  "lat": 61.5,
-  "lng": 23.79,
-  "city": "Tampere, Finland",
-  "year": 2025.0,
-  "conf": 1,
-  "works": 1,
-  "keys": [
-   "sep_godel_incompleteness"
-  ],
-  "cited_in": [
-   "human_mind",
-   "metaphysics_of_ai"
   ]
  },
  {
@@ -24194,18 +25544,20 @@
   "city": "Mountain View, USA",
   "year": 2020.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "tfive",
    "raffel2020t5",
-   "carlini2021extracting"
+   "carlini2021extracting",
+   "raffel2020c4"
   ],
   "cited_in": [
    "evaluation",
    "history",
    "people_of_ai",
    "training_data",
-   "unexpected_capabilities"
+   "unexpected_capabilities",
+   "untold_history"
   ]
  },
  {
@@ -24249,7 +25601,8 @@
    "people_of_ai",
    "reasoning",
    "training_data",
-   "unexpected_capabilities"
+   "unexpected_capabilities",
+   "untold_history"
   ]
  },
  {
@@ -24914,7 +26267,8 @@
    "philosophy",
    "reasoning",
    "security_inference",
-   "training_data"
+   "training_data",
+   "untold_history"
   ]
  },
  {
@@ -25402,12 +26756,14 @@
   "city": "Seattle, Washington, USA",
   "year": 2025.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "waheed2025codeinduced"
+   "waheed2025codeinduced",
+   "lee2022dedup"
   ],
   "cited_in": [
-   "training_data"
+   "training_data",
+   "untold_history"
   ]
  },
  {
@@ -27530,7 +28886,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -29977,13 +31334,16 @@
   "city": "Brussels, Belgium",
   "year": 2024.0,
   "conf": 1,
-  "works": 2,
+  "works": 4,
   "keys": [
    "euaiact2024",
-   "gdpr2018"
+   "gdpr2018",
+   "eu2019dsm",
+   "eu2016gdpr"
   ],
   "cited_in": [
-   "global_ai_ecosystem"
+   "global_ai_ecosystem",
+   "untold_history"
   ]
  },
  {
@@ -31321,7 +32681,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -33110,15 +34471,17 @@
   "city": "Mountain View, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "puppeteer",
    "googlecustomsearch",
    "gemini2024v15",
-   "img_transformer_attention_heads"
+   "img_transformer_attention_heads",
+   "googlebooks_history"
   ],
   "cited_in": [
    "people_of_ai",
+   "untold_history",
    "websearch"
   ]
  },
@@ -38130,7 +39493,8 @@
    "mechanistic_interpretability",
    "people_of_ai",
    "reasoning",
-   "unexpected_capabilities"
+   "unexpected_capabilities",
+   "untold_history"
   ]
  },
  {
@@ -38871,7 +40235,8 @@
    "cooley1965fft"
   ],
   "cited_in": [
-   "geometry_ii"
+   "geometry_ii",
+   "untold_history"
   ]
  },
  {
@@ -39001,7 +40366,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -39839,7 +41205,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -41772,7 +43139,8 @@
    "history",
    "people_of_ai",
    "reasoning",
-   "reinforcement_learning"
+   "reinforcement_learning",
+   "untold_history"
   ]
  },
  {
@@ -41935,7 +43303,8 @@
    "cooley1965fft"
   ],
   "cited_in": [
-   "geometry_ii"
+   "geometry_ii",
+   "untold_history"
   ]
  },
  {
@@ -44205,7 +45574,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -44288,14 +45658,16 @@
   "city": "Palo Alto, USA",
   "year": 2021.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "tfive",
-   "carlini2021extracting"
+   "carlini2021extracting",
+   "lee2022dedup"
   ],
   "cited_in": [
    "evaluation",
-   "unexpected_capabilities"
+   "unexpected_capabilities",
+   "untold_history"
   ]
  },
  {
@@ -45900,7 +47272,8 @@
    "gao2020pile"
   ],
   "cited_in": [
-   "training_data"
+   "training_data",
+   "untold_history"
   ]
  },
  {
@@ -46309,12 +47682,14 @@
   "city": "Berkeley, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "zheng2023lmsys"
+   "zheng2023lmsys",
+   "chiang2024arena"
   ],
   "cited_in": [
-   "evaluation"
+   "evaluation",
+   "untold_history"
   ]
  },
  {
@@ -46713,7 +48088,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -47262,7 +48638,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -47683,7 +49060,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -53798,7 +55176,7 @@
   "city": "Mountain View, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 9,
+  "works": 10,
   "keys": [
    "shazeer2017moe",
    "shazeer2018adafactor",
@@ -53808,7 +55186,8 @@
    "shazeer2019mqa",
    "vaswani2017attention",
    "shazeer2020glu",
-   "bengio2015scheduled"
+   "bengio2015scheduled",
+   "raffel2020c4"
   ],
   "cited_in": [
    "autodiff",
@@ -53830,7 +55209,8 @@
    "positionalembeddingslab",
    "recurrent_networks",
    "training_data",
-   "transformer"
+   "transformer",
+   "untold_history"
   ]
  },
  {
@@ -54243,19 +55623,21 @@
   "city": "Tel Aviv, Israel",
   "year": 2019.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "bart",
    "keyvalmem",
    "talmor2018commonsenseqa",
-   "geva2021kv"
+   "geva2021kv",
+   "wang2018glue"
   ],
   "cited_in": [
    "fact_lookup",
    "intuition",
    "origami",
    "philosophy",
-   "transformer"
+   "transformer",
+   "untold_history"
   ]
  },
  {
@@ -54674,7 +56056,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -55040,7 +56423,8 @@
    "history",
    "mechanistic_interpretability",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -55397,19 +56781,22 @@
   "city": "Palo Alto, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 4,
+  "works": 6,
   "keys": [
    "park2023generativeagents",
    "liu2023lostmiddle",
    "garg2022incontext",
-   "liang2023helm"
+   "liang2023helm",
+   "rajpurkar2016squad",
+   "liang2022helm"
   ],
   "cited_in": [
    "algorithms",
    "contextwindows",
    "evaluation",
    "rag",
-   "unexpected_capabilities"
+   "unexpected_capabilities",
+   "untold_history"
   ]
  },
  {
@@ -55886,7 +57273,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -58322,7 +59710,8 @@
    "computer_vision",
    "embeddinglab",
    "history",
-   "people_of_ai"
+   "people_of_ai",
+   "untold_history"
   ]
  },
  {
@@ -58371,11 +59760,12 @@
   "city": "Edinburgh, UK",
   "year": 2016.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "analyzingmultiheads",
    "sennrich2016subword",
-   "zhang2019rmsnorm"
+   "zhang2019rmsnorm",
+   "sennrich2016bpe"
   ],
   "cited_in": [
    "embeddinglab",
@@ -58383,7 +59773,8 @@
    "normalizationlab",
    "people_of_ai",
    "tokenizerlab",
-   "transformer"
+   "transformer",
+   "untold_history"
   ]
  },
  {
@@ -58446,13 +59837,15 @@
   "city": "Palo Alto, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 2,
+  "works": 3,
   "keys": [
    "liang2023helm",
-   "wei2022emergent"
+   "wei2022emergent",
+   "liang2022helm"
   ],
   "cited_in": [
-   "evaluation"
+   "evaluation",
+   "untold_history"
   ]
  },
  {
@@ -60152,7 +61545,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -60822,16 +62216,18 @@
   "city": "Pittsburgh, USA",
   "year": 2025.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "lindsey2025biology",
    "ameisen2025circuit",
-   "htu2019dependencies"
+   "htu2019dependencies",
+   "wang2018glue"
   ],
   "cited_in": [
    "fact_lookup",
    "mechanistic_interpretability",
-   "transformer"
+   "transformer",
+   "untold_history"
   ]
  },
  {
@@ -60958,7 +62354,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -62896,7 +64293,8 @@
   "cited_in": [
    "global_ai_ecosystem",
    "mechanistic_interpretability",
-   "training_data"
+   "training_data",
+   "untold_history"
   ]
  },
  {
@@ -63990,7 +65388,8 @@
    "fact_lookup",
    "global_ai_ecosystem",
    "mechanistic_interpretability",
-   "training_data"
+   "training_data",
+   "untold_history"
   ]
  },
  {
@@ -64269,7 +65668,8 @@
   "cited_in": [
    "evaluation",
    "mechanistic_interpretability",
-   "security_inference"
+   "security_inference",
+   "untold_history"
   ]
  },
  {
@@ -65319,17 +66719,19 @@
   "city": "Mountain View, USA",
   "year": 2012.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "puppeteer",
    "googlecustomsearch",
    "gemini2024v15",
    "img_transformer_attention_heads",
+   "googlebooks_history",
    "go_lang"
   ],
   "cited_in": [
    "people_of_ai",
    "software",
+   "untold_history",
    "websearch"
   ]
  },
@@ -67070,12 +68472,14 @@
   "city": "",
   "year": 2020.0,
   "conf": 0,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "liang2023helm"
+   "liang2023helm",
+   "liang2022helm"
   ],
   "cited_in": [
-   "evaluation"
+   "evaluation",
+   "untold_history"
   ]
  },
  {
@@ -68924,12 +70328,14 @@
   "city": "Berkeley, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "zheng2023lmsys"
+   "zheng2023lmsys",
+   "chiang2024arena"
   ],
   "cited_in": [
-   "evaluation"
+   "evaluation",
+   "untold_history"
   ]
  },
  {
@@ -71069,7 +72475,8 @@
    "frontier",
    "history",
    "people_of_ai",
-   "reasoning"
+   "reasoning",
+   "untold_history"
   ]
  },
  {
@@ -72162,12 +73569,14 @@
   "city": "Berkeley, USA",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "zheng2023lmsys"
+   "zheng2023lmsys",
+   "chiang2024arena"
   ],
   "cited_in": [
-   "evaluation"
+   "evaluation",
+   "untold_history"
   ]
  },
  {
@@ -74793,17 +76202,19 @@
   "city": "Mountain View, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "transformer_attention_figure",
    "puppeteer",
    "googlecustomsearch",
    "gemini2024v15",
-   "img_transformer_attention_heads"
+   "img_transformer_attention_heads",
+   "googlebooks_history"
   ],
   "cited_in": [
    "atlas",
    "people_of_ai",
+   "untold_history",
    "websearch"
   ]
  },

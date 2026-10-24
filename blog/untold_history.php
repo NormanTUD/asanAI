@@ -1018,7 +1018,7 @@ The discrete Fourier transform turns a signal into its frequency components, but
 
 ### The Laser: Coherent Light as a Tool
 
-The laser is a device for generating or amplifying coherent light. Maiman's patent describes a ruby laser system and the principle of pumping a solid medium to produce coherent emission, following the maser idea proposed by Schawlow and Townes (\cite[Maiman, 1967]{maiman1960laser}). Coherent light then became a tool: it carries signals through glass fibre, reads barcodes, measures distance in LIDAR and exposes patterns in lithography. None of these uses was the point of the original device. The laser is the archetype of a displaced prerequisite: a solution in search of problems, which eventually supplied several of the problems' solutions.
+The laser is a device for generating or amplifying coherent light. Maiman's patent describes a ruby laser system and the principle of pumping a solid medium to produce coherent emission, following the maser idea proposed by Schawlow and Townes (\cite[Maiman, 1967]{maiman1967laserpatent}). Coherent light then became a tool: it carries signals through glass fibre, reads barcodes, measures distance in LIDAR and exposes patterns in lithography. None of these uses was the point of the original device. The laser is the archetype of a displaced prerequisite: a solution in search of problems, which eventually supplied several of the problems' solutions.
 
 </div>
 
@@ -1120,7 +1120,7 @@ A radio network that serves many moving users needs a way to reuse spectrum. The
 
 ### The Smartphone: A Supercomputer in Every Pocket
 
-The smartphone is the point where radio, low-power computing, a camera and a touchscreen became one device. Apple's 2007 launch described the iPhone as three products in one, a mobile phone, a widescreen iPod and an Internet communications device, with a large multi-touch display, a two-megapixel camera, desktop-class email, web browsing, searching and maps (\cite[Apple, 2007]{apple2007iphone}). The processor lineage behind such devices descends from the low-power RISC idea: the Acorn RISC Machine was designed as a complete system architecture for optimal implementation on silicon, aimed at the low-cost personal-computer market (\cite[Furber and Wilson, 1987]{furber1987arm}). The cellular standards that carry the data are specified by 3GPP (\cite[3GPP, 2026]{gpp_specs}). The result is a sensor platform in every pocket, generating the images, text, locations and behaviour that later become training data.
+The smartphone is the point where radio, low-power computing, a camera and a touchscreen became one device. Apple's 2007 launch described the iPhone as three products in one, a mobile phone, a widescreen iPod and an Internet communications device, with a large multi-touch display, a two-megapixel camera, desktop-class email, web browsing, searching and maps (\cite[Apple, 2007]{apple2007iphone}). The processor lineage behind such devices descends from the low-power RISC idea: the Acorn RISC Machine was designed as a complete system architecture for optimal implementation on silicon, aimed at the low-cost personal-computer market (\cite[Furber and Wilson, 1987]{furber1987arm}). The cellular standards that carry the data are specified by 3GPP (\cite[3GPP, 2026]{threegpp_specs}). The result is a sensor platform in every pocket, generating the images, text, locations and behaviour that later become training data.
 
 </div>
 
@@ -1411,7 +1411,7 @@ The most difficult step is printing the pattern. ASML describes extreme ultravio
 
 ### The Cleanroom and the Ultrapure Drop
 
-A fab is a contamination-control problem before it is a computer. VLSI yields require control of particulate contamination during manufacture, and the ambient air of the production facility is one source; measuring ultrafine particles of 0.1 micrometres or less in real time requires instruments such as the differential mobility analyzer and the diffusion battery (\cite[Donovan et al., 1985]{liu1985cleanroom}). Water is the other carrier: ultrafiltration removes particles, colloids and large macromolecules from ultrapure water, and leak detection in membrane modules is a prerequisite for defect-free manufacturing (\cite[Ruth and Berndt, 2016]{ruth2016ultrapure}). The cleanroom is not a metaphor for precision; it is the physical condition under which a wafer can be patterned at all.
+A fab is a contamination-control problem before it is a computer. VLSI yields require control of particulate contamination during manufacture, and the ambient air of the production facility is one source; measuring ultrafine particles of 0.1 micrometres or less in real time requires instruments such as the differential mobility analyzer and the diffusion battery (\cite[Donovan et al., 1985]{donovan1985cleanroom}). Water is the other carrier: ultrafiltration removes particles, colloids and large macromolecules from ultrapure water, and leak detection in membrane modules is a prerequisite for defect-free manufacturing (\cite[Ruth and Berndt, 2016]{ruth2016ultrapure}). The cleanroom is not a metaphor for precision; it is the physical condition under which a wafer can be patterned at all.
 
 ### Advanced Packaging: Where Memory Meets Logic
 
@@ -1429,7 +1429,7 @@ The cloud turned computing into something that could be rented by the hour. Amaz
 
 ### The Warehouse-Scale Computer
 
-At scale, the unit of design is no longer the server but the building. Barroso, Clidaras and Holzle describe the modern datacenter as one massive warehouse-scale computer: a warehouse full of machines whose hardware and software resources must work in concert to deliver Internet-service performance, with a design, operation and cost structure of its own (\cite[Barroso et al., 2013]{barroso2013datacenter}). The IEA notes that AI is pushing data-centre power density to the limits of today's technologies (\cite[IEA, 2026]{iea2026energyai}). The cloud is therefore not weightless. It is a warehouse, a power contract and a thermal engineering problem, and the abstraction of "renting a GPU" rests on all three.
+At scale, the unit of design is no longer the server but the building. Barroso, Clidaras and Hoelzle describe the modern data center as one massive warehouse-scale computer: a warehouse full of machines whose hardware and software resources must work in concert to deliver Internet-service performance, with a design, operation and cost structure of its own (\cite[Barroso et al., 2013]{barroso2013datacenter}). The IEA notes that AI is pushing data-center power density to the limits of today's technologies (\cite[IEA, 2026]{iea2026energyai}). The cloud is therefore not weightless. It is a warehouse, a power contract and a thermal engineering problem, and the abstraction of "renting a GPU" rests on all three.
 
 </div>
 
@@ -2519,7 +2519,7 @@ Linear programming is the mathematics of doing the best you can under constraint
 
 ### Banking, SABRE, and OLTP
 
-A reservation system is a database that many people update at once, and it must never sell the same seat twice. SABRE was a completely automatic, centralized electronic airline reservations system developed by IBM for American Airlines after six years of joint research (\cite[IBM, 1960]{sabre1960reservation}). Making such a system reliable required a theory of transactions. Harder and Reuter provided a terminological framework for transaction-oriented recovery, introducing the materialized database, propagation strategy and checkpoint, and classifying logging techniques by the speed and scope of recovery and the amount of redundant information required (\cite[Harder and Reuter, 1983]{harder1983transactions}). Banks, airlines and reservation desks were the first customers for systems that had to stay correct while failing and recovering.
+A reservation system is a database that many people update at once, and it must never sell the same seat twice. SABRE was a completely automatic, centralized electronic airline reservations system developed by IBM for American Airlines after six years of joint research (\cite[IBM, 1960]{sabre1960reservation}). Making such a system reliable required a theory of transactions. Harder and Reuter provided a terminological framework for transaction-oriented recovery, introducing the materialized database, propagation strategy and checkpoint, and classifying logging techniques by the speed and scope of recovery and the amount of redundant information required (\cite[Härder and Reuter, 1983]{harder1983transactions}). Banks, airlines and reservation desks were the first customers for systems that had to stay correct while failing and recovering.
 
 ### Weather, Seismic Imaging, and HPC
 

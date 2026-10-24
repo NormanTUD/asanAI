@@ -63,7 +63,7 @@ A typical 2025 SFT dataset: 100K–1M examples. Llama 3 used ~10M SFT examples.
 * **Multi-turn**: include conversations, not just single Q&A.
 </div>
 
-<div id="sft-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="sft-viz" style="max-width:100%; margin:1em auto;"></div>
 
 <div class="md" data-mathlevel="60">
 ## Stage 2: Reward Modeling (for RLHF)
@@ -134,7 +134,7 @@ $$
 DPO matches PPO on alignment benchmarks while being 5–10× simpler to implement. Most open-source fine-tunes (Llama-3-Instruct, Qwen-Instruct, Mistral-Instruct) use DPO or a variant.
 </div>
 
-<div id="dpo-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="dpo-viz" style="max-width:100%; margin:1em auto;"></div>
 
 <div class="md">
 ### DPO Variants
@@ -181,7 +181,7 @@ The reward is typically a combination of:
 * **Language consistency**: stay in the same language as the prompt.
 </div>
 
-<div id="grpo-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="grpo-viz" style="max-width:100%; margin:1em auto;"></div>
 
 <div class="md">
 ### RLVR: The Name for the Verifiable-Reward Recipe
@@ -254,7 +254,7 @@ Combines 4-bit quantization of the base model with LoRA adapters in fp16 (\cite[
 * **DoRA** (\cite[Liu et al., 2024]{liu2024dora}): decomposed magnitude and direction updates, often outperforms LoRA at the same rank.
 </div>
 
-<div id="lora-viz" style="max-width:880px; margin:1em auto;"></div>
+<div id="lora-viz" style="max-width:100%; margin:1em auto;"></div>
 
 <div class="md">
 ## Practical Fine-Tuning Recipe
