@@ -5799,6 +5799,13 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		var embed = document.getElementById('feedback-embed');
 		var frame = document.getElementById('feedback-frame');
 		var links = Array.prototype.slice.call(document.querySelectorAll('.admin-nav a[data-admin-view]'));
+		function sizeFeedbackFrame() {
+			if (!embed || !frame || embed.hidden) return;
+			var top = frame.getBoundingClientRect().top;
+			var height = Math.max(360, Math.round(window.innerHeight - top - 12));
+			frame.style.height = height + 'px';
+			embed.style.height = height + 'px';
+		}
 		function showView(view, updateUrl) {
 			var feedback = view === 'feedback';
 			document.body.classList.toggle('feedback-view', feedback);
@@ -5817,10 +5824,15 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 					window.history.replaceState(null, '', url.toString());
 				} catch (ignored) {}
 			}
-			if (!feedback) {
+			if (feedback) {
+				requestAnimationFrame(sizeFeedbackFrame);
+			} else {
 				setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 30);
 			}
 		}
+		window.addEventListener('resize', function () {
+			requestAnimationFrame(sizeFeedbackFrame);
+		});
 		links.forEach(function (link) {
 			link.addEventListener('click', function (event) {
 				if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
