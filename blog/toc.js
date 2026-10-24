@@ -28,16 +28,31 @@ function slugify(text, usedIds) {
 //
 //   /  ·  /index  ·  /index.php  ·  /blog  ·  /blog/  ·  /blog/index  ·
 //   /blog/index.php  ·  /blog/index_full  ·  /blog/index_full.php
-function isCourseIndexPath(pathname) {
+//   /asanai_blog_proxy?index  ·  /asanai_blog_proxy?__proxy_path=index
+function isCourseIndexPath(pathname, search) {
 	var path = String(pathname || '').replace(/\/+$/, '');
 	if (path === '') return true;
 	if (/\/(?:index|index_full)(?:\.[a-z0-9]+)?$/i.test(path)) return true;
 	// A bare course directory, without the trailing slash Apache would add.
-	return /\/blog$/i.test(path);
+	if (/\/blog$/i.test(path)) return true;
+
+	// Reverse proxy: the browser stays on asanai_blog_proxy(.php), while the
+	// actual page is carried in the query string (?index, ?__proxy_path=index).
+	if (/\/asanai_blog_proxy(?:\.php)?$/i.test(path)) {
+		var q = String(search == null ? (window.location.search || '') : search).replace(/^\?/, '');
+		var target = '';
+		try {
+			target = new URLSearchParams(q).get('__proxy_path') || '';
+		} catch (e) { /* noop */ }
+		if (!target) target = q;
+		target = String(target).replace(/^\/+/, '').split('?')[0].split('&')[0].replace(/\/+$/, '');
+		if (target === '' || /^(?:index|index_full)(?:\.php)?$/i.test(target)) return true;
+	}
+	return false;
 }
 
 function toc() {
-	if (isCourseIndexPath(window.location.pathname)) {
+	if (isCourseIndexPath(window.location.pathname, window.location.search)) {
 		return;
 	}
 	if (window.location.pathname.endsWith("atlas.php")) {
