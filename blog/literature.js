@@ -5180,6 +5180,13 @@ window.bibData = {
 		author: "John von Neumann",
 		title: "First draft of a report on the EDVAC"
 	},
+	"vonneumann1951automata": {
+		url: "https://archive.org/details/dli.scoerat.383cerebralmechanismsinbehavior",
+		year: 1951,
+		author: "John von Neumann",
+		title: "The General and Logical Theory of Automata (in Cerebral Mechanisms in Behavior: The Hixon Symposium)",
+		alternativetitle: "Von Neumann, The General and Logical Theory of Automata (1951)"
+	},
 	"aiken": {
 		url: "https://inversethought.com/jordi/mark1.pdf",
 		year: 1946,
@@ -5555,6 +5562,20 @@ window.bibData = {
 		title: "The Cybernetics Group: A Social History of the Macy Conferences in Cybernetics, 1946-1953",
 		alternativetitle: "The Cybernetics Group",
 		url: "https://mitpress.mit.edu/9780262082006/the-cybernetics-group/"
+	},
+	"masani1990cybernetical": {
+		author: "P. R. Masani",
+		year: 1990,
+		title: "The Cybernetical Movement and von Neumann's Letter, 1946",
+		alternativetitle: "Masani, The Cybernetical Movement and von Neumann's Letter (1990)",
+		url: "https://doi.org/10.1007/978-3-0348-9252-0_17"
+	},
+	"montagnini2017princeton": {
+		author: "Leone Montagnini",
+		year: 2017,
+		title: "From the Princeton Meeting to Hiroshima",
+		alternativetitle: "Montagnini, From the Princeton Meeting to Hiroshima (2017)",
+		url: "https://doi.org/10.1007/978-3-319-50657-9_8"
 	},
 	"pias2003macy": {
 		author: "Claus Pias (ed.)",

@@ -17996,6 +17996,40 @@
   ]
  },
  {
+  "name": "P. R. Masani",
+  "canon": "P. R. Masani",
+  "alias": null,
+  "lat": 40.44,
+  "lng": -79.99,
+  "city": "Pittsburgh, United States",
+  "year": 1990.0,
+  "conf": 1,
+  "works": 1,
+  "keys": [
+   "masani1990cybernetical"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
+  "name": "Leone Montagnini",
+  "canon": "Leone Montagnini",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 2017.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "montagnini2017princeton"
+  ],
+  "cited_in": [
+   "history"
+  ]
+ },
+ {
   "name": "Christiaan Huygens",
   "canon": "Christiaan Huygens",
   "alias": null,
@@ -36619,9 +36653,10 @@
   "city": "Princeton, United States",
   "year": 1945.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "vonneumann",
+   "vonneumann1951automata",
    "vonneumann_morgenstern1944",
    "eckert1946eniac",
    "charney1950nwp"

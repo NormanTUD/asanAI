@@ -4488,6 +4488,12 @@
    "year": "",
    "url": "https://archive.org/details/20200901-vN_First_Draft_Report_EDVAC_Moore_Sch_1945/page/n1/mode/2up"
   },
+  "vonneumann1951automata": {
+   "title": "The General and Logical Theory of Automata (in Cerebral Mechanisms in Behavior: The Hixon Symposium)",
+   "author": "John von Neumann",
+   "year": "",
+   "url": "https://archive.org/details/dli.scoerat.383cerebralmechanismsinbehavior"
+  },
   "aiken": {
    "title": "The Automatic Sequence Controlled Calculator",
    "author": "Howard Aiken, Grace Hopper",
@@ -4817,6 +4823,18 @@
    "author": "Steve J. Heims",
    "year": "1991",
    "url": "https://mitpress.mit.edu/9780262082006/the-cybernetics-group/"
+  },
+  "masani1990cybernetical": {
+   "title": "The Cybernetical Movement and von Neumann's Letter, 1946",
+   "author": "P. R. Masani",
+   "year": "",
+   "url": "https://doi.org/10.1007/978-3-0348-9252-0_17"
+  },
+  "montagnini2017princeton": {
+   "title": "From the Princeton Meeting to Hiroshima",
+   "author": "Leone Montagnini",
+   "year": "",
+   "url": "https://doi.org/10.1007/978-3-319-50657-9_8"
   },
   "pias2003macy": {
    "title": "Cybernetics: The Macy-Conferences 1946-1953",
@@ -19640,6 +19658,10 @@
   "mcculloch1945heterarchy": [
    "history"
   ],
+  "lettvin1959frog": [
+   "history",
+   "people_of_ai"
+  ],
   "carnap1938logicalsyntax": [
    "history"
   ],
@@ -19648,6 +19670,15 @@
    "untold_history"
   ],
   "landahl1943statistical": [
+   "history"
+  ],
+  "masani1990cybernetical": [
+   "history"
+  ],
+  "montagnini2017princeton": [
+   "history"
+  ],
+  "vonneumann1951automata": [
    "history"
   ],
   "vonneumann": [
@@ -23108,9 +23139,6 @@
    "people_of_ai"
   ],
   "img_mcculloch_pitts_neuron": [
-   "people_of_ai"
-  ],
-  "lettvin1959frog": [
    "people_of_ai"
   ],
   "img_frank_rosenblatt": [
@@ -37910,11 +37938,12 @@
    ]
   },
   "John von Neumann": {
-   "count": 4,
+   "count": 5,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "vonneumann",
+    "vonneumann1951automata",
     "vonneumann_morgenstern1944",
     "eckert1946eniac",
     "charney1950nwp"
@@ -38297,6 +38326,22 @@
    "maxyear": 1991,
    "keys": [
     "heims1991cyberneticsgroup"
+   ]
+  },
+  "P. R. Masani": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "masani1990cybernetical"
+   ]
+  },
+  "Leone Montagnini": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "montagnini2017princeton"
    ]
   },
   "Claus Pias (ed.)": {
