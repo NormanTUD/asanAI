@@ -4,6 +4,50 @@ Stable, high-level orientation. Details change; these observations are unlikely 
 Rules are stated in the imperative. If a rule conflicts with a validator, the
 validator wins — then fix the rule here.
 
+## Rules for every change
+
+These are hard constraints, not preferences. Re-read them before editing and
+again before reporting done.
+
+**RULES**
+- Do not break existing functionality. — Every change must preserve current
+  behavior; the tests in "Validate before you finish" are the proof, not your
+  intention.
+- Existing module interfaces are sacrosanct. — Do not rename or re-sign
+  exported functions, globals in `variables.js`, `load…Module()` entry points,
+  `updated_page()` call shapes, `.mn-quiz` / `COURSE_METADATA` markup, or
+  `literature.js` keys. Add alongside; never break a caller.
+- Minimal change — no new dependencies without asking. — Smallest diff that
+  solves the problem. Libraries stay vendored (no CDN, no package manager);
+  ask before adding anything new.
+- Leave it cleaner than you found it. — Code, markup, prose, and structure
+  should be better after your change than before. Tidy only what you touch; do
+  not start unrelated refactors.
+
+**QUALITY (high risk)**
+- Comprehensive tests: happy path, edge cases, failure cases. — Cover the
+  normal path, boundaries/empty/malformed input, and failure modes; add a test
+  when the existing suite does not reach the change.
+- Run ALL tests and show me the raw output. — Run the relevant
+  validators/commands from "Validate before you finish" with their raw output,
+  including failures; never summarize a green run you did not observe.
+- No hardcoded values to make tests pass. — Fix the cause, not the assertion;
+  no special-casing test inputs, slugs, or filenames.
+- Explain every non-obvious design decision. — When a choice is not obvious
+  from the code (ordering, workaround, trade-off, guard), say why in the
+  response so the reasoning survives the session; durable constraints belong
+  in this file, not only in chat.
+- Always evaluate your own code quality — and do it more than once. — Code
+  must be human-readable, clear, and beautiful. Working is not done: after
+  writing, re-read your own diff two or three times (naming, structure,
+  readability, dead code, consistency with the surrounding file, comment
+  noise) and fix what you find each pass. Do not stop at the first version
+  that runs.
+- The same applies to any text you write. — Prose, explanations, commit
+  messages, and docs must be clear, precise, and pleasant to read. Re-read
+  them before sending, cut filler, fix ambiguity and rhythm, and verify every
+  claim; a text is not done on the first draft.
+
 ## What this repository is
 
 `asanAI` is one project in two parts that share a philosophy — *make machine
