@@ -43,7 +43,8 @@ function print_font_override() {
 	$specs[] = '1em Temml';
 	print("<link rel='preload' href='$preload' as='font' type='$mime' crossorigin>\n");
 	print("<script>window.__blogFontSpecs=" . json_encode($specs) . ";</script>\n");
-	print("<style>html{--mn-font-heading:$stack;--mn-font-body:$stack;--mn-font-prose:$stack;}$extra</style>\n");
+	$headingStack = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+	print("<style>html{--mn-font-heading:$headingStack;--mn-font-body:$stack;--mn-font-prose:$stack;}$extra</style>\n");
 }
 
 /**

@@ -169,7 +169,7 @@ html {
 	/* Fonts — system stacks (no webfonts loaded); these were referenced
 	   via var() throughout the file but never defined, so code blocks
 	   silently rendered in the inherited sans-serif. */
-	--mn-font-heading: "CMS", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	--mn-font-heading: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 	--mn-font-body: "CMS", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 	--mn-font-mono: ui-monospace, "Cascadia Code", "JetBrains Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 	--mn-font-prose: "CMS", "Source Serif 4", Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
@@ -3578,6 +3578,66 @@ h2::after {
 	text-transform: uppercase;
 	letter-spacing: 0.08em;
 	margin: 1.4rem 0 0.4rem;
+}
+
+/* Every article heading shares the presentation deck's UI sans and
+   its heading gradient (heading colour at the top, accent at the
+   bottom). The gradient is painted through the glyphs, so only use
+   it where background-clip:text exists; otherwise keep the plain
+   heading colour.
+
+   The gradient runs horizontally rather than vertically: a vertical
+   gradient spans the whole element box, so a heading that wraps onto
+   a second line would start the gradient again only at the top and
+   end up with two differently coloured lines. A horizontal gradient
+   gives each line the same light-to-accent flow. */
+#contents h1, #contents h2, #contents h3,
+#contents h4, #contents h5, #contents h6,
+.md h1, .md h2, .md h3, .md h4, .md h5, .md h6 {
+	font-family: var(--mn-font-heading);
+}
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+	#contents h1, #contents h2, #contents h3,
+	#contents h4, #contents h5, #contents h6,
+	.md h1, .md h2, .md h3, .md h4, .md h5, .md h6 {
+		background-image: linear-gradient(90deg, var(--mn-heading) 0%, var(--mn-accent-dark) 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+		-webkit-text-fill-color: transparent;
+	}
+
+	/* Children must opt out of the transparent fill: heading anchors
+	   keep their own colour, counters stay muted, and inline code /
+	   math stay readable instead of disappearing into the clip. */
+	#contents h1 > .cl-h-anchor, #contents h2 > .cl-h-anchor,
+	#contents h3 > .cl-h-anchor, #contents h4 > .cl-h-anchor,
+	#contents h5 > .cl-h-anchor, #contents h6 > .cl-h-anchor,
+	.md h1 > .cl-h-anchor, .md h2 > .cl-h-anchor,
+	.md h3 > .cl-h-anchor, .md h4 > .cl-h-anchor,
+	.md h5 > .cl-h-anchor, .md h6 > .cl-h-anchor {
+		background-image: none;
+		-webkit-background-clip: border-box;
+		background-clip: border-box;
+		-webkit-text-fill-color: currentColor;
+	}
+	.md h2::before,
+	.md h3::before,
+	.numbered-h4 .md h4::before {
+		-webkit-text-fill-color: var(--mn-text-muted);
+	}
+	#contents h1 :is(code, math), #contents h2 :is(code, math),
+	#contents h3 :is(code, math), #contents h4 :is(code, math),
+	#contents h5 :is(code, math), #contents h6 :is(code, math),
+	.md h1 :is(code, math), .md h2 :is(code, math),
+	.md h3 :is(code, math), .md h4 :is(code, math),
+	.md h5 :is(code, math), .md h6 :is(code, math) {
+		color: var(--mn-heading);
+		background-image: none;
+		-webkit-background-clip: border-box;
+		background-clip: border-box;
+		-webkit-text-fill-color: currentColor;
+	}
 }
 
 .minimalneuron-page .smart-quote::before {
@@ -9541,7 +9601,15 @@ body:has(#cl-lb.is-visible) #reading-progress {
 	.md h1, .md h2, .md h3 {
 		font-family: Georgia, "Times New Roman", serif !important;
 		color: #000 !important;
+		background-image: none !important;
+		-webkit-text-fill-color: #000 !important;
 		text-wrap: balance;
+	}
+	#contents h1, #contents h2, #contents h3,
+	#contents h4, #contents h5, #contents h6 {
+		color: #000 !important;
+		background-image: none !important;
+		-webkit-text-fill-color: #000 !important;
 	}
 	.md h1 { font-size: 20pt; page-break-before: always; margin-top: 0; }
 	.md h1:first-of-type { page-break-before: avoid; }
