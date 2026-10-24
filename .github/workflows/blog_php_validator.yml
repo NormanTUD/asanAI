@@ -142,6 +142,9 @@ jobs:
       - name: Run search tests
         run: node blog/tests/search_js_test.js
 
+      - name: Run lesson-trail tests
+        run: node blog/tests/lesson_trail_test.js
+
   php-render-validation:
     runs-on: ubuntu-latest
     steps:
