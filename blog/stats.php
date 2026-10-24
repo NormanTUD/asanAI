@@ -1990,12 +1990,15 @@ if ($authed) {
 		}
 
 		$healthOnwardMap = [];
-		[$healthOnwardWhere, $healthOnwardParams] = stats_where($range, '', $refType, $source, $refPath, $browser, $os, $device, false, $day, $weekday, $hour, $humansOnly, $botReason);
-		$healthOnwardRows = stats_all($pdo, "SELECT ref_path, COUNT(*) AS n
-			FROM pageviews WHERE $healthOnwardWhere AND ref_type = 'internal' AND ref_path <> ''
-			GROUP BY ref_path", $healthOnwardParams);
-		foreach ($healthOnwardRows as $healthOnwardRow) {
-			$healthOnwardMap[(string)$healthOnwardRow['ref_path']] = (int)$healthOnwardRow['n'];
+		$healthCanMeasureOnward = $refType === '' && $source === '' && $refPath === '';
+		if ($healthCanMeasureOnward) {
+			[$healthOnwardWhere, $healthOnwardParams] = stats_where($range, '', '', '', '', $browser, $os, $device, false, $day, $weekday, $hour, $humansOnly, $botReason);
+			$healthOnwardRows = stats_all($pdo, "SELECT ref_path, COUNT(*) AS n
+				FROM pageviews WHERE $healthOnwardWhere AND ref_type = 'internal' AND ref_path <> ''
+				GROUP BY ref_path", $healthOnwardParams);
+			foreach ($healthOnwardRows as $healthOnwardRow) {
+				$healthOnwardMap[(string)$healthOnwardRow['ref_path']] = (int)$healthOnwardRow['n'];
+			}
 		}
 
 		$healthFeedbackMap = [];
@@ -2068,7 +2071,7 @@ if ($authed) {
 			$healthPrev = (int)($prevPageMap[$healthSlug] ?? 0);
 			$healthMomentum = $healthPrev > 0 ? 100 * ($healthViews - $healthPrev) / $healthPrev : null;
 			$healthOnward = (int)($healthOnwardMap[$healthSlug] ?? 0);
-			$healthOnwardShare = $healthViews > 0 ? 100 * $healthOnward / $healthViews : null;
+			$healthOnwardShare = $healthCanMeasureOnward && $healthViews > 0 ? 100 * $healthOnward / $healthViews : null;
 			$healthFeedback = $healthFeedbackMap[$healthSlug] ?? ['total' => 0, 'negative' => 0];
 			$healthNegative = (int)$healthFeedback['negative'];
 			$healthFeedbackTotal = (int)$healthFeedback['total'];
