@@ -1,12 +1,25 @@
 # TODO — Feedback dashboard, merge with analytics, selection coverage
 
-Status: **waiting for the other agent**. Do not edit shared files (`stats.php`,
-`feedback.php`, `feedback_track.php`, `lib/analytics.php`,
-`modules/feedback.js`, `style.css`, `polish.js`, proxy/tests) until that agent
-is done, then re-check the working tree before applying these changes.
+Status: **implementation in progress**. Re-check `git status` / recent commits
+before touching shared files because another agent is also active in this tree
+(notably `literature.js` and `vibe_coding.php`).
 
 This file is the persistent work list for the feedback/analytics work. The
 in-session todo list carries the same high-level items.
+
+## Progress log (latest first)
+
+- Fixed the severe client false-success path (`response.json().catch(ok:true)` removed).
+- Fixed the blog-root slug: token carries the server slug, `/asanai/blog/` stores `index`, legacy `blog` rows are migrated.
+- Page tables + count cells now link to internal filtered views; separate ↗ opens the lesson.
+- Added “Latest suggestions & bugs” to the feedback Overview and a reader-feedback summary card to the stats Overview.
+- Regenerate/save/status actions now redirect to `…&open=<id>#feedback-<id>`; the row reopens and is scrolled into view.
+- Selection now works outside `.md` (H1, sources, footnotes, smart-quotes, quizzes, demo text); quiz blocks no longer skipped wholesale.
+- Added demo fallback buttons for SVG/canvas demos.
+- Long selected passages scroll inside `.mnf-quote`.
+- Mobile bottom sheet has a drag handle; quote scroll and touch targets improved.
+- Security: random DB stored token secret, path-bound nonce token, path/file validation, daily cap, server-side title override, stricter HTML sanitizing, plaintext prompt/admin notes, action row checks.
+- Shared admin nav between stats and feedback; stats Overview shows feedback KPIs/latest. The two full data views remain separate tabs under one shared admin shell (a true single-page data merge would be a larger refactor).
 
 ---
 
