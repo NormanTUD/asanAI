@@ -2384,7 +2384,14 @@ body.feedback-view .analytics-only-inline { visibility: hidden !important; point
 .feedback-bridge .fb-latest .what { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .feedback-bridge .fb-latest .tag { color: var(--accent); font-size: 10px; font-weight: 700; white-space: nowrap; }
 .feedback-embed { margin: 0; }
-.feedback-embed iframe { display: block; width: 100%; height: 600px; min-height: 400px; border: 0; border-radius: 12px; background: transparent; }
+.feedback-embed { position: relative; }
+.feedback-embed iframe { display: block; width: 100%; height: 600px; min-height: 400px; border: 0; border-radius: 12px; background: transparent; opacity: 0; transition: opacity .2s ease; }
+.feedback-embed.is-loaded iframe { opacity: 1; }
+.feedback-embed-loader { display: flex; align-items: center; justify-content: center; height: 600px; min-height: 400px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--muted); font-size: 12px; }
+.feedback-embed.is-loaded .feedback-embed-loader { display: none; }
+@keyframes mn-feedback-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.feedback-embed.is-loaded { animation: mn-feedback-in .2s ease; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .18s; animation-timing-function: ease; }
 .inline { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
 .switch { display: inline-flex; gap: 8px; align-items: center; color: var(--muted); font-size: 12px; cursor: pointer; }
 .btn, button.btn { border: 1px solid var(--line); background: var(--panel); color: var(--text); padding: 8px 12px; border-radius: 9px; cursor: pointer; font: inherit; display: inline-block; }
@@ -2553,7 +2560,7 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 .mono { font-variant-numeric: tabular-nums; }
 [hidden] { display: none !important; }
 .card { position: relative; }
-.subnav { position: sticky; top: 48px; z-index: 40; display: flex; gap: 6px; overflow-x: auto; padding: 6px 0 8px; margin: 0 0 12px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, var(--bg) 70%, transparent); }
+.subnav { position: sticky; top: 0; z-index: 40; display: flex; gap: 6px; overflow-x: auto; padding: 6px 0 8px; margin: 0 0 12px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, var(--bg) 70%, transparent); }
 .subnav a { color: var(--muted); font-size: 11px; padding: 4px 8px; border-radius: 999px; white-space: nowrap; text-decoration: none; }
 .subnav a:hover, .subnav a.active { color: var(--text); background: var(--panel2); text-decoration: none; }
 .subnav a.active { color: var(--accent2); }
@@ -2833,6 +2840,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 	</nav>
 
 	<div class="feedback-embed" id="feedback-embed"<?php echo $view === 'feedback' ? '' : ' hidden'; ?>>
+		<div class="feedback-embed-loader" aria-live="polite">Loading reader feedback…</div>
 		<iframe id="feedback-frame" src="<?php echo $view === 'feedback' ? stats_h($feedbackEmbedUrl) : ''; ?>" data-src="<?php echo stats_h($feedbackEmbedUrl); ?>" title="Reader feedback" loading="lazy"></iframe>
 	</div>
 
@@ -5844,7 +5852,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		var embed = document.getElementById('feedback-embed');
 		var frame = document.getElementById('feedback-frame');
 		var links = Array.prototype.slice.call(document.querySelectorAll('.admin-nav a[data-admin-view]'));
-		function showView(view, updateUrl) {
+		function applyView(view, updateUrl) {
 			var feedback = view === 'feedback';
 			document.body.classList.toggle('feedback-view', feedback);
 			if (analytics) analytics.style.display = feedback ? 'none' : '';
@@ -5875,6 +5883,13 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				}, 60);
 			}
 		}
+		function showView(view, updateUrl, animate) {
+			if (animate && document.startViewTransition) {
+				document.startViewTransition(function () { applyView(view, updateUrl); });
+				return;
+			}
+			applyView(view, updateUrl);
+		}
 		function measureFeedbackFrame() {
 			if (!frame || !embed || embed.hidden) return;
 			var doc = null;
@@ -5895,16 +5910,22 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		});
 		if (frame) {
 			frame.addEventListener('load', function () {
+				if (embed) embed.classList.add('is-loaded');
 				try { frame.contentWindow.postMessage({ type: 'mn-feedback-measure' }, window.location.origin); } catch (ignored) {}
 				measureFeedbackFrame();
 				setTimeout(measureFeedbackFrame, 200);
 			});
+			try {
+				if (frame.contentDocument && frame.contentDocument.readyState === 'complete' && frame.contentDocument.body) {
+					embed.classList.add('is-loaded');
+				}
+			} catch (ignored) {}
 		}
 		links.forEach(function (link) {
 			link.addEventListener('click', function (event) {
 				if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
 				event.preventDefault();
-				showView(link.getAttribute('data-admin-view'), true);
+				showView(link.getAttribute('data-admin-view'), true, true);
 			});
 		});
 		if (document.body.classList.contains('feedback-view')) {

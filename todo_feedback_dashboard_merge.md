@@ -40,6 +40,10 @@ in-session todo list carries the same high-level items.
 - Bot links now open Analytics → Tech, list exact bot reasons and add bot_reason filter links.
 - External referrers get their own host/views/share list.
 - Whole-page scrolling and dynamically sized feedback panel; no inner iframe scrollbar.
+- Explore-mode “Today/Traffic/…” subnav is flush to the top (sticky top:0), no gap.
+- Smooth Analytics/Feedback switch via View Transitions plus a loading placeholder; no blank flash while the iframe loads.
+- Admin title is static and the brand links to stats; no title flicker on tab changes.
+- Empty analytics cards hidden on load; bot links go to Tech with exact bot reasons and filters; external referrers listed separately.
 - Feedback palette/card/heading/tab styles aligned with the analytics dashboard.
 
 ---
