@@ -15,8 +15,14 @@ RewriteRule ^december$ december.html [L]
     </IfModule>
 </FilesMatch>
 
+# Anonymous analytics database: never served by the web.
+RewriteRule ^analytics_data/ - [F,L]
+
 
 # 1. Externer Redirect: .php entfernen (dynamisch und ohne Pfad-Verdopplung)
+#    stats.php and track.php are POST targets; never redirect their .php form.
+RewriteCond %{REQUEST_URI} !/stats\.php(?:\?|$)
+RewriteCond %{REQUEST_URI} !/track\.php(?:\?|$)
 RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^.]+)\.php [NC]
 RewriteRule ^ %1 [R=301,L]
 
