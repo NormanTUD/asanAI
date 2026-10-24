@@ -267,7 +267,13 @@
 			if (ev.key === 'Escape') {
 				help.hide();
 				document.querySelectorAll('.drawer-backdrop.show, .search-overlay.show, [aria-modal="true"]')
-					.forEach(function (el) { el.click && el.click(); });
+					.forEach(function (el) {
+						// Hidden dialogs (notably the image lightbox) must not be
+						// "clicked" here: their close path can restore a stale scroll
+						// position and jump the reader to the top of the page.
+						if (el.hidden || !el.getClientRects().length) return;
+						el.click && el.click();
+					});
 				return;
 			}
 

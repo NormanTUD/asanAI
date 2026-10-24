@@ -196,6 +196,39 @@ def main() -> int:
 			public = public_session.get(f"{proxy_url}?index.php", timeout=30)
 			check(public.status_code == 200 and "Fatal error" not in public.text, "public page through proxy")
 			check('"endpoint":"asanai_blog_proxy.php?track.php"' in public.text, "analytics endpoint rewritten through proxy")
+			check('"endpoint":"asanai_blog_proxy.php?feedback_track.php"' in public.text, "feedback endpoint rewritten through proxy")
+			feedback_cfg_match = re.search(r"window\.__MNFeedback=(\{.*?\});</script>", public.text, re.S)
+			check(bool(feedback_cfg_match), "public page exposes feedback config")
+			if feedback_cfg_match:
+				try:
+					feedback_cfg = json.loads(feedback_cfg_match.group(1))
+				except json.JSONDecodeError:
+					feedback_cfg = {}
+				feedback_endpoint = str(feedback_cfg.get("endpoint") or "")
+				check(feedback_endpoint.endswith("feedback_track.php"), "feedback config points at the proxy", feedback_endpoint)
+				if feedback_endpoint:
+					feedback_response = public_session.post(
+						f"http://127.0.0.1:{proxy_port}/" + feedback_endpoint,
+						data=json.dumps({
+							"token": feedback_cfg.get("token", ""),
+							"request_id": "feedfacefeedfacefeedfacefeedface",
+							"path": "history",
+							"reaction": "helpful",
+							"comment": "Proxy feedback test",
+							"selection": {"text": "proxy passage", "start": 1, "end": 14},
+						}),
+						headers={"Content-Type": "application/json"},
+						timeout=20,
+					)
+					try:
+						feedback_json = feedback_response.json()
+					except ValueError:
+						feedback_json = {}
+					check(feedback_response.status_code == 200 and feedback_json.get("ok") is True, "feedback submission through proxy", f"{feedback_response.status_code} {feedback_response.text[:120]}")
+					if db_path.is_file():
+						with sqlite3.connect(db_path) as db:
+							feedback_count = db.execute("SELECT COUNT(*) FROM block_feedback WHERE comment = 'Proxy feedback test'").fetchone()[0]
+						check(feedback_count == 1, "feedback reached remote DB through proxy", str(feedback_count))
 			token_match = re.search(r'"token":"([a-f0-9]{32})"', public.text)
 			check(bool(token_match), "public page exposes ephemeral pageview token")
 			if token_match:

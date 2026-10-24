@@ -174,7 +174,7 @@
 		bugConsentEl = document.createElement("input");
 		bugConsentEl.type = "checkbox";
 		var bugText = document.createElement("span");
-		bugText.innerHTML = "<b>Attach console log and recent clicks</b><small>Only sent if you tick this box. It helps diagnose the problem.</small>";
+		bugText.innerHTML = "<b>Attach console log and recent clicks</b><small>Your comment, email (if entered) and selected passage are sent with this report. Tick here to also attach the console log and recent clicks.</small>";
 		bugBox.appendChild(bugConsentEl);
 		bugBox.appendChild(bugText);
 
@@ -807,6 +807,8 @@
 
 	function closePanel() {
 		clearTimeout(closeTimer);
+		var restoreX = window.scrollX || window.pageXOffset || 0;
+		var restoreY = window.scrollY || window.pageYOffset || 0;
 		open = false;
 		if (layer) layer.hidden = true;
 		if (panel) {
@@ -822,6 +824,13 @@
 			body.hidden = false;
 			successEl.hidden = true;
 		}
+		requestAnimationFrame(function () {
+			var x = window.scrollX || window.pageXOffset || 0;
+			var y = window.scrollY || window.pageYOffset || 0;
+			if (Math.abs(x - restoreX) > 1 || Math.abs(y - restoreY) > 1) {
+				window.scrollTo(restoreX, restoreY);
+			}
+		});
 	}
 
 	function schedulePosition() {

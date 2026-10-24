@@ -60,6 +60,7 @@ function feedback_tabs(): array {
 	return [
 		'overview' => 'Overview',
 		'inbox' => 'Inbox',
+		'accepted' => 'Accepted',
 		'pages' => 'Pages',
 		'resolved' => 'Resolved',
 		'bugs' => 'Bugs',
@@ -346,7 +347,7 @@ $pageRaw = $_GET['page'] ?? 1;
 $pageNum = is_scalar($pageRaw) ? max(1, (int)$pageRaw) : 1;
 $perPage = 30;
 
-$listStatus = $tab === 'inbox' ? 'new' : ($tab === 'resolved' ? 'done' : $status);
+$listStatus = $tab === 'inbox' ? 'new' : ($tab === 'accepted' ? 'accepted' : ($tab === 'resolved' ? 'done' : $status));
 $listReaction = $tab === 'bugs' ? 'bug' : $reaction;
 $listBugOnly = $bugOnly || $tab === 'bugs';
 
@@ -400,8 +401,8 @@ if ($authed) {
 			];
 		}
 
-		$countStmt = $pdo->prepare("SELECT f.reaction, COUNT(*) AS n FROM block_feedback f LEFT JOIN feedback_selections s ON s.feedback_id = f.id WHERE $baseWhere GROUP BY f.reaction");
-		$countStmt->execute($baseParams);
+		$countStmt = $pdo->prepare("SELECT f.reaction, COUNT(*) AS n FROM block_feedback f LEFT JOIN feedback_selections s ON s.feedback_id = f.id WHERE $summaryWhere GROUP BY f.reaction");
+		$countStmt->execute($summaryParams);
 		foreach ($countStmt->fetchAll() as $countRow) {
 			$key = (string)$countRow['reaction'];
 			if (isset($reactionCounts[$key])) {
@@ -416,8 +417,10 @@ if ($authed) {
 				$statusCounts[$key] = (int)$statusRow['n'];
 			}
 		}
-		$pathStmt = $pdo->prepare("SELECT f.path, COUNT(*) AS n FROM block_feedback f LEFT JOIN feedback_selections s ON s.feedback_id = f.id WHERE $baseWhere GROUP BY f.path ORDER BY n DESC, f.path");
-		$pathStmt->execute($baseParams);
+		$pathParams = [];
+		$pathWhere = feedback_where($range, '', $reaction, $status, $hasComment, $bugOnly, $search, $pathParams);
+		$pathStmt = $pdo->prepare("SELECT f.path, COUNT(*) AS n FROM block_feedback f LEFT JOIN feedback_selections s ON s.feedback_id = f.id WHERE $pathWhere GROUP BY f.path ORDER BY n DESC, f.path");
+		$pathStmt->execute($pathParams);
 		foreach ($pathStmt->fetchAll() as $pathRow) {
 			$pathOptions[(string)$pathRow['path']] = (int)$pathRow['n'];
 		}
@@ -711,6 +714,7 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 			<a class="<?php echo $tab === $key ? 'active' : ''; ?>" href="?<?php echo feedback_h(feedback_query(['tab' => $key, 'page' => 1, 'status' => ''])); ?>">
 				<?php echo feedback_h($label); ?>
 				<?php if ($key === 'inbox'): ?><span class="count"><?php echo (int)$statusCounts['new']; ?></span><?php endif; ?>
+				<?php if ($key === 'accepted'): ?><span class="count"><?php echo (int)$statusCounts['accepted']; ?></span><?php endif; ?>
 				<?php if ($key === 'resolved'): ?><span class="count"><?php echo (int)$statusCounts['done']; ?></span><?php endif; ?>
 				<?php if ($key === 'bugs'): ?><span class="count"><?php echo (int)$reactionCounts['bug']; ?></span><?php endif; ?>
 			</a>

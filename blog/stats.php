@@ -2161,6 +2161,8 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .setup code { color: var(--accent2); font-size: 12px; line-height: 1.6; }
 .top { display: flex; gap: 18px; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; }
 .top h1 { margin: 0; font-size: 30px; letter-spacing: -.03em; }
+.brand { color: inherit; text-decoration: none; }
+.brand:hover { color: var(--accent); text-decoration: none; }
 .sub { margin: 4px 0 0; color: var(--muted); }
 .top-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .inline { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
@@ -2496,7 +2498,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 <div class="page<?php echo $authed ? '' : ' login-page'; ?>" id="top">
 <?php if (!$authed): ?>
 	<div class="login-card">
-		<h1>Blog-Analytics</h1>
+		<h1><a class="brand" href="index">Blog-Analytics</a></h1>
 		<p>Anonymous analytics. Access only with the administrator password.</p>
 		<?php if ($loginError !== ''): ?>
 			<div class="login-error"><?php echo stats_h($loginError); ?></div>
@@ -2530,7 +2532,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 	<?php echo mn_analytics_alert_html(); ?>
 	<header class="top">
 		<div>
-			<h1>Blog-Analytics</h1>
+			<h1><a class="brand" href="index">Blog-Analytics</a></h1>
 			<p class="sub">Anonymous · no IPs · no visitor cookies · UA read transiently · as of <?php echo stats_h($nowLabel); ?> (Berlin) <?php if ($analyticsKillSwitch): ?><span class="badge" style="margin-left:8px;">analytics disabled</span><?php else: $healthIssues = mn_analytics_health_issues(); $healthOk = $healthIssues === []; ?><span class="badge <?php echo $healthOk ? 'ok' : 'warn'; ?>" style="margin-left:8px;"><?php echo $healthOk ? 'analytics healthy' : count($healthIssues) . ' issue(s)'; ?></span><?php endif; ?></p>
 		</div>
 		<div class="top-actions">

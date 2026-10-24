@@ -13522,3 +13522,32 @@ summary:focus-visible,
 		display: none !important;
 	}
 }
+
+@media (max-width: 760px) {
+	.mn-feedback-panel.mnf-sheet {
+		left: max(12px, env(safe-area-inset-left)) !important;
+		right: max(12px, env(safe-area-inset-right)) !important;
+		max-height: calc(100dvh - 24px);
+	}
+	.mnf-reaction {
+		min-height: 52px;
+		padding: 8px 2px 7px;
+	}
+	.mnf-reaction-icon {
+		font-size: 19px;
+	}
+	.mnf-comment,
+	.mnf-email-input {
+		font-size: 16px;
+	}
+	.mnf-send {
+		padding: 10px 18px;
+		font-size: 13px;
+	}
+	.mnf-quote {
+		-webkit-line-clamp: 2;
+	}
+	.mnf-head {
+		margin-bottom: 7px;
+	}
+}

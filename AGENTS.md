@@ -165,10 +165,13 @@ recent clicks only after explicit consent (`feedback_capture.js` keeps that
 buffer in memory, never sends on its own). Storage shares the analytics SQLite
 DB: `block_feedback` (main row + location + prompt state), `feedback_selections`
 (selected text/HTML, offsets, context, geometry) and `feedback_bug_context`
-(consent-gated). The admin page `/feedback` shares the `/stats` password and
-session, and can accept a row and copy an editable AI-fix prompt (file, lesson,
-part, section, block, verbatim reader words, editor instruction, constraints,
-validators; no source line numbers by design).
+(consent-gated) plus `feedback_history` (status/prompt movements). The admin
+page `/feedback` shares the `/stats` password and session; it is tabbed
+(Overview, Inbox, Accepted, Pages, Resolved, Bugs, All), tracks reactions per
+page (especially 👍/👎), lets the editor edit/delete a row, and can accept a row
+and copy an editable AI-fix prompt (file, lesson, part, section, block, verbatim
+reader words, editor instruction, constraints, validators; no source line
+numbers by design).
 
 ## The Blog: lesson authoring contract
 

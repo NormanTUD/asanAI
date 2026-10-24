@@ -530,6 +530,9 @@ function mn_analytics_init_db(PDO $pdo): void {
 	)");
 	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_fh_feedback ON feedback_history(feedback_id, ts)");
 	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_fh_ts ON feedback_history(ts)");
+	$pdo->exec("INSERT INTO feedback_history (feedback_id, ts, action, from_status, to_status, note)
+		SELECT id, ts, 'created', '', 'new', reaction FROM block_feedback
+		WHERE id NOT IN (SELECT feedback_id FROM feedback_history)");
 }
 
 function mn_analytics_maybe_migrate_legacy_db(string $path): void {
