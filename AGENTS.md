@@ -28,6 +28,12 @@ again before reporting done.
 - Comprehensive tests: happy path, edge cases, failure cases. — Cover the
   normal path, boundaries/empty/malformed input, and failure modes; add a test
   when the existing suite does not reach the change.
+- Test both white-box and black-box. — Read the implementation to target
+  branches, error paths, and internal state, then exercise it through its
+  public interface as a caller would; neither view alone is enough.
+- Check for race conditions. — Look for shared mutable state, async ordering,
+  debounce/observer timing, and load-order dependencies; verify behavior under
+  concurrent, repeated, or interrupted invocation.
 - Run ALL tests and show me the raw output. — Run the relevant
   validators/commands from "Validate before you finish" with their raw output,
   including failures; never summarize a green run you did not observe.
