@@ -741,9 +741,9 @@ h2 { margin: 0 0 10px; font-size: 17px; letter-spacing: -.01em; color: var(--hea
 .tabs a.active { color: var(--heading); background: var(--surface); border-color: var(--border); box-shadow: var(--shadow); }
 .tabs .count { margin-left: 5px; color: var(--muted); font-size: 10.5px; }
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px; margin: 0 0 18px; }
-.stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
-.stat b { display: block; font-size: 24px; line-height: 1.1; color: var(--heading); }
-.stat span { color: var(--muted); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; }
+.stat { background: linear-gradient(180deg, rgba(255,255,255,.025), transparent 70%), var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px 16px; min-height: 92px; }
+.stat b { display: block; font-size: 26px; line-height: 1.1; letter-spacing: -.03em; color: var(--heading); }
+.stat span { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; }
 .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 18px; }
 .toolbar form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 input, select, textarea { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 7px 9px; font: inherit; }
@@ -1515,6 +1515,7 @@ html[data-embed="1"] .btn.primary {
 				{ name: '🐞 Bug', type: 'bar', data: pageData.bug || [], itemStyle: { color: c.bug }, barMaxWidth: 12 }
 			]
 		});
+		if (window.__MNFeedbackPostHeight) window.__MNFeedbackPostHeight();
 	}
 	function systemFont() {
 		return getComputedStyle(document.body).fontFamily || 'system-ui, sans-serif';
@@ -1570,6 +1571,7 @@ html[data-embed="1"] .btn.primary {
 			if (result.url) window.history.replaceState(null, '', result.url);
 			document.title = doc.title || document.title;
 			if (window.__MNFeedbackCharts) window.__MNFeedbackCharts();
+			if (window.__MNFeedbackPostHeight) window.__MNFeedbackPostHeight();
 			revealHash();
 			window.scrollTo(0, 0);
 		}).catch(function () {
@@ -1610,6 +1612,32 @@ html[data-embed="1"] .btn.primary {
 			load(target.toString(), { method: 'POST', body: body, credentials: 'same-origin', redirect: 'follow' });
 		}
 	});
+})();
+</script>
+<script>
+(function () {
+	'use strict';
+	if (document.documentElement.getAttribute('data-embed') !== '1' || window.parent === window) return;
+	var timer = 0;
+	function postHeight() {
+		clearTimeout(timer);
+		timer = setTimeout(function () {
+			var height = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+			try { window.parent.postMessage({ type: 'mn-feedback-height', height: height }, window.location.origin); } catch (e) {}
+		}, 60);
+	}
+	window.__MNFeedbackPostHeight = postHeight;
+	window.addEventListener('load', postHeight);
+	window.addEventListener('resize', postHeight);
+	window.addEventListener('message', function (event) {
+		if (event.origin !== window.location.origin) return;
+		if (event.data && event.data.type === 'mn-feedback-measure') postHeight();
+	});
+	if (window.ResizeObserver) {
+		try { new ResizeObserver(postHeight).observe(document.body); } catch (e) {}
+	}
+	document.addEventListener('toggle', postHeight, true);
+	postHeight();
 })();
 </script>
 <script>

@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Die Kunst, Geld auszugeben — Ein interaktives Erlebnis</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,600;9..144,900&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f14; --ink2:#161a22; --paper:#f7f3ec; --gold:#d4a24c;
+  --gold-soft:#f0d9a8; --sage:#7f9c8a; --rose:#c9736a; --sky:#6f8fb5;
+  --muted:#8b8577; --line:rgba(212,162,76,.22);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ink); color:var(--paper);
+  font-family:'Inter',system-ui,sans-serif; line-height:1.75;
+  overflow-x:hidden; -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--gold);color:var(--ink)}
+h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif;font-weight:600;line-height:1.1;letter-spacing:-.02em}
+
+/* ---------- progress ---------- */
+#prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:999;
+  background:linear-gradient(90deg,var(--gold),var(--rose),var(--sage));
+  box-shadow:0 0 18px var(--gold)}
+
+/* ---------- layout ---------- */
+section{padding:clamp(5rem,12vh,9rem) clamp(1.2rem,6vw,3rem);position:relative}
+.wrap{max-width:980px;margin:0 auto}
+.narrow{max-width:720px;margin:0 auto}
+.kicker{font-size:.7rem;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--gold);font-weight:800;margin-bottom:1.2rem;opacity:.9}
+.lede{font-size:clamp(1.05rem,2.1vw,1.3rem);color:#cfc8ba;max-width:62ch}
+.dim{color:var(--muted)}
+.gold{color:var(--gold)}
+
+/* ---------- reveal ---------- */
+.rv{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:none}
+
+/* ---------- hero ---------- */
+#hero{min-height:100svh;display:grid;place-items:center;text-align:center;overflow:hidden}
+#coins{position:absolute;inset:0;z-index:0}
+#hero .wrap{position:relative;z-index:2}
+#hero h1{font-size:clamp(2.6rem,8.5vw,6.4rem);font-weight:900}
+#hero h1 em{font-style:normal;background:linear-gradient(100deg,var(--gold),#fff6e0 45%,var(--gold));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-q{margin:2.4rem auto 0;max-width:46ch;font-size:1.15rem;color:#d8d1c3;font-style:italic}
+.scroll-cue{position:absolute;bottom:2.2rem;left:50%;transform:translateX(-50%);
+  font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);z-index:2}
+.scroll-cue span{display:block;width:1px;height:46px;margin:.8rem auto 0;
+  background:linear-gradient(var(--gold),transparent);animation:cue 2s infinite}
+@keyframes cue{0%,100%{opacity:.25;transform:scaleY(.4)}50%{opacity:1;transform:scaleY(1)}}
+
+/* ---------- cards ---------- */
+.card{background:linear-gradient(160deg,#171b24,#11141b);border:1px solid var(--line);
+  border-radius:20px;padding:clamp(1.4rem,3.4vw,2.4rem);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.55}
+.grid2{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(265px,1fr))}
+.grid3{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(215px,1fr))}
+
+/* ---------- quote ---------- */
+blockquote{border-left:2px solid var(--gold);padding:.3rem 0 .3rem 1.5rem;
+  font-family:'Fraunces',serif;font-size:clamp(1.25rem,2.9vw,1.85rem);
+  font-weight:300;line-height:1.42;color:#f2ead9;margin:2.4rem 0}
+blockquote cite{display:block;font-family:'Inter';font-size:.76rem;font-style:normal;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-top:1rem;font-weight:700}
+
+/* ---------- controls ---------- */
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;
+  background:rgba(255,255,255,.12);outline:none;margin:1rem 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;
+  border-radius:50%;background:var(--gold);cursor:grab;border:3px solid var(--ink);
+  box-shadow:0 0 0 1px var(--gold),0 0 22px rgba(212,162,76,.6)}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;
+  background:var(--gold);cursor:grab;border:3px solid var(--ink)}
+.lbl{display:flex;justify-content:space-between;font-size:.76rem;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.lbl b{color:var(--gold);font-variant-numeric:tabular-nums}
+
+button{font-family:inherit;cursor:pointer;border:none}
+.btn{background:var(--gold);color:var(--ink);padding:.78rem 1.6rem;border-radius:999px;
+  font-weight:800;font-size:.84rem;letter-spacing:.07em;transition:.25s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(212,162,76,.3)}
+.btn.ghost{background:transparent;color:var(--gold);border:1px solid var(--line)}
+.btn.ghost:hover{background:rgba(212,162,76,.08)}
+
+/* ---------- misc ---------- */
+.big{font-family:'Fraunces',serif;font-size:clamp(2.6rem,8vw,5rem);font-weight:900;
+  line-height:.95;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;padding:.3rem .8rem;border-radius:999px;font-size:.7rem;
+  letter-spacing:.14em;text-transform:uppercase;font-weight:800;border:1px solid var(--line);color:var(--gold)}
+hr.sep{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);margin:3.5rem 0}
+footer{padding:4rem 1.5rem 6rem;text-align:center;border-top:1px solid var(--line);color:var(--muted);font-size:.84rem}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+
+<!-- ════════ HERO ════════ -->
+<section id="hero">
+  <canvas id="coins"></canvas>
+  <div class="wrap">
+    <p class="kicker rv">Nach Morgan Housel · The Art of Spending Money</p>
+    <h1 class="rv">Geld ist nie<br>die Antwort.<br><em>Es ist das Werkzeug.</em></h1>
+    <p class="hero-q rv">„Money is less about numbers and more about stories — stories we tell ourselves about what matters, what makes us happy, and how we measure success.“</p>
+    <p class="rv" style="margin-top:2.6rem"><a class="btn" href="#kern">Die 6 Kernideen →</a></p>
+  </div>
+  <div class="scroll-cue">Scrollen<span></span></div>
+</section>
+
+<!-- ════════ 6 KERNIDEEN ════════ -->
+<section id="kern">
+ <div class="wrap">
+  <p class="kicker rv">Das Fundament</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3.2rem)">Sechs Sätze, die alles tragen</h2>
+  <p class="lede rv" style="margin-top:1.2rem">Housel nennt sie die „gemeinsamen Nenner“ des Buches. Klick jede Karte an.</p>
+  <div class="grid2 rv" id="core" style="margin-top:2.6rem"></div>
+ </div>
+</section>
+
+<!-- ════════ GLÜCKSRECHNER ════════ -->
+<section style="background:linear-gradient(180deg,transparent,#101319 30%,#101319 70%,transparent)">
+ <div class="narrow">
+  <p class="kicker rv">Werkzeug 01 · Die Gleichung</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3rem)">Glück = Umstände − Erwartungen</h2>
+  <blockquote class="rv">All happiness in life is just the gap between expectations and circumstances.<cite>Morgan Housel</cite></blockquote>
+  <div class="card rv">
+    <div class="lbl"><span>Deine Umstände (was du hast)</span><b id="cV">60</b></div>
+    <input type="range" id="c" min="0" max="100" value="60">
+    <div class="lbl"><span>Deine Erwartungen (was du willst)</span><b id="eV">80</b></div>
+    <input type="range" id="e" min="0" max="100" value="80">
+    <div style="text-align:center;margin-top:2rem">
+      <div class="big" id="hOut">−20</div>
+      <p id="hMsg" style="margin-top:.6rem;color:#cfc8ba;max-width:44ch;margin-inline:auto"></p>
+    </div>
+    <div style="height:10px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:1.8rem;overflow:hidden">
+      <div id="hBar" style="height:100%;width:50%;transition:.4s cubic-bezier(.16,1,.3,1)"></div>
+    </div>
+    <p class="dim" style="font-size:.8rem;margin-top:1.4rem">
+      <b class="gold">Der Trick:</b> Den linken Regler hochzuschieben kostet Jahrzehnte Arbeit. Den rechten zu senken kostet nichts — und ist das einzige Spiel, das du gewinnen kannst.
+    </p>
+  </div>
+  <div class="card rv" style="margin-top:1.1rem;border-color:rgba(127,156,138,.3)">
+    <p class="pill" style="border-color:rgba(127,156,138,.4);color:var(--sage)">Beweis aus dem Buch</p>
+    <p style="margin-top:1rem">Housels angeheiratete Großmutter lebte <b>drei Jahrzehnte</b> von einem winzigen Sozialversicherungsscheck — technisch an der Armutsgrenze. Ihr Garten, Bücher aus der Bibliothek, fertig. „She had little, but wanted even less.“</p>
+    <p style="margin-top:1rem">Housels Urteil nach dem Treffen mit <b>sechs Milliardären</b>: „not a single one was as happy as my grandmother-in-law.“</p>
+  </div>
+ </div>
+</section>
+
+<!-- ════════ DOPAMIN-LEITER ════════ -->
+<section>
+ <div class="narrow">
+  <p class="kicker rv">Werkzeug 02 · Die Falle</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3rem)">Dein Gehirn will kein Auto.<br><span class="gold">Es will Dopamin.</span></h2>
+  <blockquote class="rv">From dopamine's point of view, it's not the having that matters; it's getting something — anything — that's new.<cite>The Molecule of More</cite></blockquote>
+  <div class="card rv">
+    <p class="dim" style="font-size:.82rem;margin-bottom:1.4rem">Klick dich die Leiter hoch. Schau, was am Ende wartet.</p>
+    <div id="ladder"></div>
+    <div id="ladderEnd" style="display:none;text-align:center;margin-top:2rem;padding-top:2rem;border-top:1px solid var(--line)">
+      <p class="serif" style="font-size:1.5rem;color:var(--rose)">Und was wollen die Zentimilliardäre?</p>
+      <p class="big" style="color:var(--rose);margin-top:.6rem">Unsterblichkeit.</p>
+      <p class="dim" style="margin-top:1.2rem;max-width:44ch;margin-inline:auto">„Es gibt fast kein Ende hiervon. Die Millionäre schauen auf die Zentimillionäre, die auf die Milliardäre …“</p>
+    </div>
+  </div>
+  <div class="grid2 rv" style="margin-top:1.1rem">
+    <div class="card"><p class="pill">Nixon, nach dem Amt</p><p style="margin-top:1rem;font-style:italic">„If you don't have those things, then they can mean a great deal to you. When you do have them, they mean nothing to you.“</p></div>
+    <div class="card"><p class="pill">Rick Rubin</p><p style="margin-top:1rem;font-style:italic">„It's hard to get really depressed until your dreams come true. Once your dreams come true and you realize you feel the same way you did before, then you get a feeling of hopelessness.“</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- ════════ AUFMERKSAMKEIT ════════ -->
+<section style="background:linear-gradient(180deg,transparent,#101319 30%,#101319 70%,transparent)">
+ <div class="narrow">
+  <p class="kicker rv">Werkzeug 03 · Die Verwechslung</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3rem)">Du willst keine schönen Dinge.<br>Du willst <span class="gold">Respekt.</span></h2>
+  <p class="lede rv" style="margin-top:1.2rem">Housel schrieb das in Briefen an seine beiden Kinder. Drei Fragen entscheiden über jede Status-Ausgabe:</p>
+
+  <div class="card rv" style="margin-top:2.2rem">
+    <p style="font-size:.82rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700">Die Halbwertszeit von Prahlerei</p>
+    <p class="dim" style="font-size:.84rem;margin:.6rem 0 1.4rem">Zieh den Regler: Wie viel Beachtung bleibt für dein teures Ding?</p>
+    <div class="lbl"><span>Zeit nach dem Kauf</span><b id="tV">Heute</b></div>
+    <input type="range" id="t" min="0" max="4" value="0">
+    <div style="display:flex;align-items:flex-end;gap:6px;height:130px;margin-top:1.6rem" id="bars"></div>
+    <p id="attnMsg" style="margin-top:1.4rem;font-style:italic;color:#cfc8ba"></p>
+  </div>
+
+  <div class="grid3 rv" style="margin-top:1.1rem">
+    <div class="card"><p class="gold serif" style="font-size:1.1rem">Wie wirksam?</p><p class="dim" style="font-size:.86rem;margin-top:.6rem">Sehr. Sichtbar, öffentlich, man muss mit niemandem reden.</p></div>
+    <div class="card"><p class="gold serif" style="font-size:1.1rem">Wie dauerhaft?</p><p class="dim" style="font-size:.86rem;margin-top:.6rem">Morgen weniger. In einem Monat gähne ich. In einem Jahr: egal.</p></div>
+    <div class="card"><p class="gold serif" style="font-size:1.1rem">Wer schaut hin?</p><p class="dim" style="font-size:.86rem;margin-top:.6rem">Fremde. Und die starren auf das <em>Auto</em>, nicht auf dich.</p></div>
+  </div>
+
+  <blockquote class="rv">Es ist wie Junkfood: sehr verlockend, sofort befriedigend, aber langfristig schädlich.<cite>Housel über Status-Konsum</cite></blockquote>
+
+  <div class="card rv" style="border-color:rgba(201,115,106,.3)">
+    <p class="pill" style="border-color:rgba(201,115,106,.4);color:var(--rose)">Was Housel seinem Freund sagte</p>
+    <p style="margin-top:1rem;font-size:1.05rem">„Wenn du ein guter Vater bist, ein guter Ehemann, ein ehrlicher Mensch, ein harter Arbeiter, ein hilfsbereiter Freund und ein guter Witzeerzähler — dann hast du wahrscheinlich <b class="gold">98 %</b> des Respekts verdient, den ich dir überhaupt geben kann. Wärst du zusätzlich reich, käme ich vielleicht auf 99 %.“</p>
+  </div>
+
+  <div class="card rv" style="margin-top:1.1rem">
+    <p class="pill">Praxisregel</p>
+    <p class="serif" style="font-size:1.4rem;margin-top:.8rem">Zeig das <span class="gold">Innere</span> deines Hauses, nicht das Äußere.</p>
+    <p class="dim" style="margin-top:.8rem">Wenn du Erfolg zeigen willst — zeig ihn denen, deren Respekt du wirklich willst. Fremde erzeugen ohnehin eher Neid als Bewunderung. Und: „Menschen bewundern dich mehr, wenn sie nicht neidisch auf dich sind.“ (Ben Franklin)</p>
+  </div>
+ </div>
+</section>
+
+<!-- ════════ REVERSE OBITUARY ════════ -->
+<section>
+ <div class="narrow">
+  <p class="kicker rv">Übung · 2 Minuten</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3rem)">Der umgekehrte Nachruf</h2>
+  <p class="lede rv" style="margin-top:1.2rem">Schreib auf, was dein Nachruf sagen soll. Dann richte dein Leben danach aus. Housel nennt es „den saubersten, einfachsten Weg, herauszufinden, was wirklich zählt“.</p>
+  <div class="card rv" style="margin-top:2rem">
+    <p class="dim" style="font-size:.84rem;margin-bottom:.8rem">Wähle 5 Dinge, die darin stehen sollen:</p>
+    <div id="obitPool" style="display:flex;flex-wrap:wrap;gap:.5rem"></div>
+    <div style="margin-top:1.8rem;padding-top:1.5rem;border-top:1px solid var(--line)">
+      <p class="dim" style="font-size:.84rem">Dein Nachruf:</p>
+      <p id="obitOut" class="serif" style="font-size:1.25rem;margin-top:.8rem;min-height:3.2em;color:#f2ead9">…</p>
+      <p id="obitVerdict" style="margin-top:1.2rem;font-size:.92rem"></p>
+    </div>
+  </div>
+ </div>
+</section>
+
+<!-- ════════ UTILITY VS STATUS ════════ -->
+<section style="background:linear-gradient(180deg,transparent,#101319 30%,#101319 70%,transparent)">
+ <div class="narrow">
+  <p class="kicker rv">Werkzeug 04 · Der Filter</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3rem)">Ein voll ausgestatteter Toyota<br>schlägt den <span class="gold">Einsteiger-BMW.</span></h2>
+  <p class="lede rv" style="margin-top:1.2rem">Der Toyota hat <b class="gold">Nutzen</b>: weiche Sitze, gutes Soundsystem, Schiebedach. Du besitzt ihn für dich. Der günstige BMW hat <b class="rose" style="color:var(--rose)">Status</b>: Er ändert vielleicht die Meinung anderer über dich. Du besitzt ihn für sie.</p>
+
+  <blockquote class="rv">Wenn meine Familie und ich auf einer Insel gestrandet wären und niemand uns sehen könnte — was würden wir besitzen wollen?<cite>Housels Insel-Test</cite></blockquote>
+
+  <!-- INSEL-TEST SPIEL -->
+  <div class="card rv" style="margin-top:2rem">
+    <p class="pill">Der Insel-Test · Interaktiv</p>
+    <p class="dim" style="font-size:.86rem;margin:1rem 0 1.4rem">Klick jede Ausgabe an: Würdest du sie auch auf einer einsamen Insel wollen? Finde heraus, wie viel deines Konsums für <em>andere</em> ist.</p>
+    <div id="island" class="grid3"></div>
+    <div id="islandResult" style="margin-top:1.8rem;padding-top:1.5rem;border-top:1px solid var(--line);display:none">
+      <div style="display:flex;height:14px;border-radius:99px;overflow:hidden;background:rgba(255,255,255,.07)">
+        <div id="utilBar" style="background:linear-gradient(90deg,var(--sage),#9dbfa9);transition:.6s cubic-bezier(.16,1,.3,1)"></div>
+        <div id="statBar" style="background:linear-gradient(90deg,var(--rose),#e09a92);transition:.6s cubic-bezier(.16,1,.3,1)"></div>
+      </div>
+      <div class="lbl" style="margin-top:.8rem">
+        <span style="color:var(--sage)">Nutzen <b id="utilPct" style="color:var(--sage)">0%</b></span>
+        <span style="color:var(--rose)">Status <b id="statPct" style="color:var(--rose)">0%</b></span>
+      </div>
+      <p id="islandMsg" style="margin-top:1.2rem;color:#cfc8ba"></p>
+    </div>
+  </div>
+
+  <div class="grid2 rv" style="margin-top:1.1rem">
+    <div class="card" style="border-color:rgba(127,156,138,.3)">
+      <p class="pill" style="border-color:rgba(127,156,138,.4);color:var(--sage)">Nutzen gibt dir Identität</p>
+      <p style="margin-top:1rem">„Nutzen ist zutiefst egoistisch — auf eine schöne Art. Dein oberstes Ziel wird, dein eigenes Leben und das der Menschen, die du liebst, besser zu machen. Die Meinung anderer sei verdammt.“</p>
+    </div>
+    <div class="card" style="border-color:rgba(201,115,106,.3)">
+      <p class="pill" style="border-color:rgba(201,115,106,.4);color:var(--rose)">Status zwingt dich in fremde Identität</p>
+      <p style="margin-top:1rem">„Fast per Definition ist die Jagd nach Status die Jagd danach, anderen zu zeigen, was sie sehen wollen.“ Du spielst Theater für Leute, die du nicht mal magst.</p>
+    </div>
+  </div>
+
+  <!-- FÄLSCHUNGS-BEWEIS -->
+  <div class="card rv" style="margin-top:1.1rem">
+    <p class="pill">Der Beweis: 2 Billionen Dollar Fälschungen</p>
+    <p style="margin-top:1rem">Milliardär <b>Bill Koch</b> zahlte <b class="gold">400.000 $</b> für vier Weinflaschen mit Thomas Jeffersons handschriftlicher Signatur. Historiker aus Jeffersons Anwesen sagten ihm: komplett gefälscht. Eine Untersuchung ergab: mehrere hundert seiner teuersten Weine waren billige Fakes.</p>
+    <p style="margin-top:1rem" class="dim">Der Fälscher Rudy Kurniawan kam jahrelang damit durch, weil sein Fake-Wein nicht nur gut <em>aussah</em> — er <em>schmeckte</em> authentisch.</p>
+    <p class="serif gold" style="font-size:1.3rem;margin-top:1.4rem">Wenn der Fake ununterscheidbar ist und dich das trotzdem stört, war dein Ziel nie Nutzen. Es war Status.</p>
+  </div>
+
+  <!-- DAUERHAFTIGKEIT -->
+  <div class="card rv" style="margin-top:1.1rem">
+    <p class="pill">Haltbarkeit</p>
+    <p style="margin-top:1rem">„Ich habe keine Ahnung, was Menschen in zehn Jahren beeindrucken wird. Aber ich weiß mit nahezu Sicherheit, dass ich Komfort, Verlässlichkeit, Bequemlichkeit — und vor allem Zeit mit Menschen, die ich liebe — schätzen werde.“</p>
+    <p class="dim" style="margin-top:1rem">Status ist launisch. Die Trends, an denen die Gesellschaft dich misst, ändern sich alle paar Jahre und zwingen dich zur Anpassung, koste es, was es wolle. <b class="gold">Es ist kein billiges Spiel.</b></p>
+  </div>
+ </div>
+</section>
+
+<!-- ════════ UNABHÄNGIGKEITS-SPEKTRUM ════════ -->
+<section>
+ <div class="wrap">
+  <p class="kicker rv">Werkzeug 05 · Die Leiter, die zählt</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3.2rem)">Reichtum ohne Unabhängigkeit<br>ist eine <span class="gold">eigene Form von Armut.</span></h2>
+  <p class="lede rv" style="margin-top:1.2rem">Housels 16 Stufen. Unabhängigkeit ist kein Schalter — sie ist ein Spektrum. Jeder gesparte Euro schiebt dich ein Stück nach oben. <b class="gold">Finde dich auf dieser Liste.</b></p>
+
+  <div class="card rv" style="margin-top:2.4rem;padding:0;overflow:visible">
+    <div style="padding:clamp(1.2rem,3vw,2rem)">
+      <div class="lbl"><span>Dein aktuelles Level</span><b id="lvNum">7</b></div>
+      <input type="range" id="lv" min="0" max="15" value="7">
+      <div id="lvCard" style="margin-top:1.6rem;min-height:170px"></div>
+      <div style="height:8px;border-radius:99px;background:rgba(255,255,255,.07);margin-top:1.6rem;overflow:hidden">
+        <div id="lvBar" style="height:100%;background:linear-gradient(90deg,var(--rose),var(--gold),var(--sage));transition:.45s cubic-bezier(.16,1,.3,1)"></div>
+      </div>
+    </div>
+  </div>
+
+  <blockquote class="rv">Jeder Cent Ersparnis ist ein Ticket zu einem höheren Grad an finanzieller Unabhängigkeit. Wenn ich 500 € aufs Sparkonto lege, habe ich <em>500 € Unabhängigkeit gekauft</em>. Für mich hat das keine andere Bedeutung, als hätte ich einen Fernseher für 500 € gekauft — das Geld ist in beiden Fällen „ausgegeben“.<cite>Morgan Housel</cite></blockquote>
+
+  <!-- WALKER VS URSCHEL -->
+  <div class="grid2 rv" style="margin-top:2rem">
+    <div class="card" style="border-color:rgba(201,115,106,.3)">
+      <p class="pill" style="border-color:rgba(201,115,106,.4);color:var(--rose)">Antoine Walker</p>
+      <p class="big" style="font-size:2.4rem;color:var(--rose);margin-top:.8rem">108 Mio $</p>
+      <p class="dim" style="font-size:.86rem;margin-top:.4rem">12 NBA-Saisons · ~25.000 $ pro Tag</p>
+      <ul style="margin-top:1.2rem;padding-left:1.1rem;font-size:.92rem;color:#cfc8ba;line-height:2">
+        <li>„Sechs oder sieben Autos“, ersetzt sobald er ein schöneres sah</li>
+        <li>Privat-Gehaltsliste für 30 Freunde &amp; Verwandte</li>
+        <li>Haus für die Mutter: 10 Bäder, voller Basketballplatz</li>
+        <li>Trug angeblich nie denselben Anzug zweimal</li>
+      </ul>
+      <p style="margin-top:1.2rem;font-weight:800;color:var(--rose)">2010: Insolvenz. 12,7 Mio $ Schulden gegen 4,3 Mio $ Vermögen.</p>
+    </div>
+    <div class="card" style="border-color:rgba(127,156,138,.3)">
+      <p class="pill" style="border-color:rgba(127,156,138,.4);color:var(--sage)">John Urschel</p>
+      <p class="big" style="font-size:2.4rem;color:var(--sage);margin-top:.8rem">~600 k $</p>
+      <p class="dim" style="font-size:.86rem;margin-top:.4rem">3 NFL-Saisons · nahe Mindestgehalt</p>
+      <ul style="margin-top:1.2rem;padding-left:1.1rem;font-size:.92rem;color:#cfc8ba;line-height:2">
+        <li>Lebte gut — sparte aber den Großteil jedes Gehaltsschecks</li>
+        <li>„Ich bin kein Milliardär, aber ich bin finanziell stabil.“</li>
+        <li>2017 Rücktritt, zurück an die Uni</li>
+        <li>Heute: <b class="gold">Professor am MIT</b></li>
+      </ul>
+      <p style="margin-top:1.2rem;font-weight:800;color:var(--sage)">Er hätte alles machen können, was er wollte.</p>
+    </div>
+  </div>
+  <p class="rv serif" style="text-align:center;font-size:clamp(1.3rem,3.4vw,1.9rem);margin-top:2rem">Wessen <em>Leben</em> bewunderst du mehr?<br><span class="dim" style="font-size:1rem;font-family:'Inter'">Das ist keine Fangfrage.</span></p>
+ </div>
+</section>
+
+<!-- ════════ SOCIAL DEBT ════════ -->
+<section style="background:linear-gradient(180deg,transparent,#101319 30%,#101319 70%,transparent)">
+ <div class="narrow">
+  <p class="kicker rv">Werkzeug 06 · Die unsichtbare Schuld</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3rem)">Der Chinchilla-Mantel,<br>der 70 Jahre Haft kostete</h2>
+
+  <div class="card rv" style="margin-top:2rem">
+    <p class="pill">8. März 1971 · Madison Square Garden</p>
+    <p style="margin-top:1rem"><b>Frank Lucas</b> verdiente mit Heroin <b class="gold">1 Mio $ pro Tag</b> — jahrelang unentdeckt, weil er unauffällig lebte. Dann hatte er genug davon, dass kleinere Dealer protzten.</p>
+    <p style="margin-top:1rem">Zum „Fight of the Century“ (Ali vs. Frazier) erschien er im bodenlangen <b>100.000-$-Chinchillamantel</b> mit passendem Hut — heute rund 1 Mio $. Bester Platz, vor Frank Sinatra und Vizepräsident Spiro Agnew.</p>
+    <p class="serif" style="margin-top:1.4rem;font-size:1.2rem;color:#f2ead9">„Zum ersten Mal überhaupt hatte ich wirklich Lust anzugeben.“</p>
+    <p style="margin-top:1rem">Es funktionierte. Fremde standen Schlange für Fotos. Die Presse drehte durch. <b class="rose" style="color:var(--rose)">Auch das New York Police Department passte auf.</b></p>
+    <p class="serif" style="margin-top:1.4rem;font-size:1.3rem;color:var(--rose)">„Ich kam als unbekannter Mann zum Kampf. Ich ging als gezeichneter Mann.“</p>
+    <p class="dim" style="margin-top:1rem">Verhaftung. 70 Jahre Haft.</p>
+  </div>
+
+  <!-- ARNDT-SCHULZ -->
+  <div class="card rv" style="margin-top:1.1rem">
+    <p class="pill">Die Arndt-Schulz-Regel · Pharmakologie</p>
+    <p class="serif" style="font-size:1.25rem;margin-top:.9rem">„Für jede Substanz gilt: kleine Dosen stimulieren, mittlere Dosen hemmen, große Dosen töten.“</p>
+    <div class="grid3" style="margin-top:1.4rem">
+      <div style="border-left:2px solid var(--sage);padding-left:1rem"><p style="color:var(--sage);font-weight:800;font-size:.8rem;letter-spacing:.1em">KLEIN</p><p class="dim" style="font-size:.88rem;margin-top:.3rem">Etwas Sonne ist gesund, sogar nötig</p></div>
+      <div style="border-left:2px solid var(--gold);padding-left:1rem"><p style="color:var(--gold);font-weight:800;font-size:.8rem;letter-spacing:.1em">MITTEL</p><p class="dim" style="font-size:.88rem;margin-top:.3rem">Sonnenbrand</p></div>
+      <div style="border-left:2px solid var(--rose);padding-left:1rem"><p style="color:var(--rose);font-weight:800;font-size:.8rem;letter-spacing:.1em">GROSS</p><p class="dim" style="font-size:.88rem;margin-top:.3rem">Tödlicher Krebs</p></div>
+    </div>
+    <p style="margin-top:1.4rem">„Geld funktioniert genauso. Es klingt verrückt, aber ich glaube, es gibt für jeden ein <b class="gold">ideales Vermögen</b> — den Punkt, an dem Geld nicht nur aufhört, Freude zu bringen, sondern zur sozialen Belastung wird.“</p>
+  </div>
+
+  <!-- SOCIAL DEBT SIMULATOR -->
+  <div class="card rv" style="margin-top:1.1rem">
+    <p class="pill">Social-Debt-Simulator</p>
+    <p class="dim" style="font-size:.86rem;margin:.8rem 0 1.2rem">Zieh den Regler: Wie viel Vermögen zeigst du öffentlich?</p>
+    <div class="lbl"><span>Sichtbarer Wohlstand</span><b id="sdV">30%</b></div>
+    <input type="range" id="sd" min="0" max="100" value="30">
+    <div id="sdList" style="margin-top:1.6rem;display:grid;gap:.6rem"></div>
+    <p id="sdVerdict" class="serif" style="margin-top:1.6rem;font-size:1.2rem"></p>
+  </div>
+
+  <div class="card rv" style="margin-top:1.1rem;border-color:rgba(127,156,138,.3)">
+    <p class="pill" style="border-color:rgba(127,156,138,.4);color:var(--sage)">Die 8-Milliarden-Familie</p>
+    <p style="margin-top:1rem">Housel beriet eine Familie mit <b>8 Mrd. $</b>. Googelt man ihren Namen: <b class="gold">nichts</b>. Keine Forbes-Liste, keine Gala-Fotos, keine Wikipedia-Seite.</p>
+    <p style="margin-top:1rem">Das war Absicht. „Sie lebten das erstaunlichste Leben, das man sich vorstellen kann — und hatten praktisch keine soziale Schuld. Ihr Mangel an sozialer Schuld war vielleicht ihr wertvollstes Vermögen.“</p>
+    <p class="serif gold" style="font-size:1.25rem;margin-top:1.4rem">Naval Ravikant: „Die beste Position ist, reich und anonym zu sein.“</p>
+  </div>
+
+  <div class="card rv" style="margin-top:1.1rem">
+    <p class="pill">Die NBA-Rookie-Einsicht</p>
+    <p style="margin-top:1rem">„Wenn du in Armut aufwächst und mit 22 zehn Millionen verdienst — <b>das ist nicht dein Geld</b>. Das ist Mamas Geld, Papas Geld, Omas Geld, das Geld der Cousins, der Freunde. Du kannst ihnen nicht einfach sagen: ‚Ich hab meins, viel Glück euch allen.‘“</p>
+    <p class="dim" style="margin-top:1rem">Nicht die Villa ruinierte die Sportler. Es war das bescheidene Haus für den fünften Cousin, den man nie getroffen hat.</p>
+  </div>
+ </div>
+</section>
+
+<!-- ════════ DIE REGATTA ════════ -->
+<section>
+ <div class="wrap">
+  <p class="kicker rv">Die Geschichte · Golden Globe Race 1968</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3.2rem)">Zwei Männer, ein Ozean,<br>zwei <span class="gold">Maßstäbe</span></h2>
+  <p class="lede rv" style="margin-top:1.2rem">Neun Männer starteten. Einer hatte nie gesegelt. Nur einer kam an. Aber zwei, die nicht ankamen, hatten die bemerkenswerteste Reise — aus entgegengesetzten Gründen.</p>
+
+  <div class="grid2 rv" style="margin-top:2.6rem">
+    <!-- CROWHURST -->
+    <div class="card" style="border-color:rgba(201,115,106,.32)">
+      <p class="pill" style="border-color:rgba(201,115,106,.4);color:var(--rose)">Äußerer Maßstab</p>
+      <h3 style="font-size:1.6rem;margin-top:.8rem;color:var(--rose)">Donald Crowhurst</h3>
+      <p class="dim" style="font-size:.84rem;margin-top:.3rem">36 Jahre · Wochenend-Segler · seekrank</p>
+      <div class="tl" style="margin-top:1.4rem">
+        <p>Aus Royal Air Force <em>und</em> British Army geworfen. Firma kurz vor dem Aus.</p>
+        <p>Sieht das Rennen als Erlösung: endlich der Welt zeigen, dass er Aufmerksamkeit wert ist.</p>
+        <p>Der Deal: Geldgeber zahlt die Ausrüstung — bei Nichtbeendigung schuldet Crowhurst alles zurück.</p>
+        <p>„Donald dachte, er sei Gott“, sagte ein Freund.</p>
+        <p><b>31.10.1968:</b> Am Vorabend weint er. „Ich bin sehr enttäuscht vom Boot. Ich bin nicht vorbereitet.“ Er fährt trotzdem.</p>
+        <p>Boot leckt, Elektronik stirbt. <b>Dritte Option: Betrug.</b> Er treibt im Atlantik und funkt falsche Koordinaten.</p>
+        <p>Zwei Logbücher. Die Presse jubelt über „243 Meilen an einem Tag“. Alles gelogen.</p>
+        <p>Er will <em>nicht</em> gewinnen — zu viel Prüfung. Zweiter Platz wäre ideal. Konkurrent Tetley überfordert sein Boot aus Angst und sinkt.</p>
+        <p>BBC-Telegramm: „GLÜCKWUNSCH ZUM FORTSCHRITT. HABEN FERNSEHPROGRAMM FÜR DEN TAG DER RÜCKKEHR.“ In Teignmouth formiert sich ein Empfangskomitee.</p>
+        <p class="rose" style="color:var(--rose);font-style:italic">Letzter Eintrag: „Es ist das Ende meines Spiels. Die Wahrheit ist enthüllt… Ich habe kein Bedürfnis, das Spiel zu verlängern.“</p>
+        <p><b>Das Boot wird leer gefunden.</b> Crowhurst wird nie wieder gesehen.</p>
+      </div>
+      <p class="dim" style="margin-top:1.4rem;font-size:.86rem;border-top:1px solid var(--line);padding-top:1rem">Ironie: Robin Knox-Johnston, der einzige Finisher, spendete sein Preisgeld von 5.000 £ an Clare Crowhurst — genug, um genau die Insolvenz abzuwenden, vor der Donald sich so fürchtete.</p>
+    </div>
+
+    <!-- MOITESSIER -->
+    <div class="card" style="border-color:rgba(127,156,138,.32)">
+      <p class="pill" style="border-color:rgba(127,156,138,.4);color:var(--sage)">Innerer Maßstab</p>
+      <h3 style="font-size:1.6rem;margin-top:.8rem;color:var(--sage)">Bernard Moitessier</h3>
+      <p class="dim" style="font-size:.84rem;margin-top:.3rem">48 Jahre · Meistersegler · lebte auf See</p>
+      <div class="tl sage" style="margin-top:1.4rem">
+        <p>Verachtete die Kommerzialisierung seines Sports. Für Medien zu performen beschädigte seine Seele.</p>
+        <p>Nahm <b>nicht einmal ein Funkgerät</b> mit. Vorbeifahrende Schiffe meldeten seine Position — mehr Kontakt brauchte er nicht.</p>
+        <p>Nach fünf Monaten liegt er legitim auf Siegkurs.</p>
+        <p class="sage" style="color:var(--sage);font-style:italic">„Mir wurde richtig übel bei dem Gedanken, nach Europa zurückzukehren, zurück in die Schlangengrube… Ich habe genug von falschen Göttern, die uns auflauern, spinnengleich, unsere Leber fressen, unser Mark saugen.“</p>
+        <p>Auf dem Boot dagegen: <em>„Die Tage vergehen, nie monoton. Meer, Winde, Flauten, Sonne, Wolken, Tümmler. Frieden, und die Freude, lebendig zu sein in Harmonie.“</em></p>
+        <p><b>Kap Hoorn.</b> Er denkt das Undenkbare: das Rennen aufgeben, das er gewinnen würde.</p>
+        <p>Er stoppt ein Frachtschiff und übergibt einen Brief an die <em>Sunday Times</em>:</p>
+        <p class="serif" style="color:var(--sage);font-size:1.05rem;border-left:2px solid var(--sage);padding-left:1rem">„Lieber Robert, heute ist der 18. März. Ich fahre ohne Unterbrechung weiter Richtung Pazifikinseln, weil ich auf See glücklich bin — und vielleicht, um meine Seele zu retten.“</p>
+        <p>Er dreht ab. Ziel: Tahiti. Dort baut er ein Haus am Strand, zieht sein Essen selbst, schreibt ein Buch.</p>
+        <p class="serif" style="color:var(--sage);font-size:1.15rem">„Du kannst dir nicht vorstellen, wie glücklich ich bin.“</p>
+        <p><b>Die Pointe:</b> Der Umweg nach Tahiti war so lang, dass er — obwohl ausgestiegen — die Welt umrundete und den <b class="gold">Weltrekord für die längste Nonstop-Solofahrt</b> aufstellte: über 37.000 Meilen.</p>
+        <p class="dim">In seinem Buch erwähnt er das mit <b>keinem einzigen Wort.</b></p>
+      </div>
+      <p class="dim" style="margin-top:1.4rem;font-size:.86rem;border-top:1px solid var(--line);padding-top:1rem">Es geht nicht darum, Crowhurst zu verspotten oder Moitessier zum Helden zu machen. Neun Monate allein auf See machen jeden wahnsinnig. Aber extreme Beispiele zeigen Gefühle, die wir alle täglich haben.</p>
+    </div>
+  </div>
+
+  <!-- BUFFETT SCORECARD -->
+  <div class="card rv" style="margin-top:2rem">
+    <p class="pill">Buffetts Scorecard-Test</p>
+    <p class="serif" style="font-size:1.3rem;margin-top:1rem">„Die große Frage ist, ob Menschen eine <span class="sage" style="color:var(--sage)">innere Scorecard</span> oder eine <span class="rose" style="color:var(--rose)">äußere Scorecard</span> haben. Es hilft, wenn du mit der inneren zufrieden sein kannst.“</p>
+    <div style="margin-top:1.8rem" id="scorecard"></div>
+  </div>
+ </div>
+</section>
+
+<!-- ════════ MICHAEL MAY / KONTRAST ════════ -->
+<section style="background:linear-gradient(180deg,transparent,#101319 30%,#101319 70%,transparent)">
+ <div class="narrow">
+  <p class="kicker rv">Werkzeug 07 · Der Kontrast</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3rem)">Der Mann, der über<br>einen <span class="gold">Büroteppich</span> weinte</h2>
+
+  <div class="card rv" style="margin-top:2rem">
+    <p style="font-size:1.05rem"><b>Michael May</b> verlor als Baby sein Augenlicht. Mit <b>46</b> stellte eine Operation sein Sehvermögen wieder her.</p>
+    <p style="margin-top:1rem">Beim Verlassen der Praxis blieb er wie angewurzelt stehen — wegen des <b class="gold">Teppichs</b>. Des normalen, drögen Büroteppichs.</p>
+    <p class="serif" style="font-size:1.35rem;margin-top:1.2rem;color:#f2ead9">„Schau dir diese Formen an! Schau dir diese Farben an!“</p>
+    <p style="margin-top:1rem" class="dim">Sein Biograf: „Er konnte nicht glauben, dass die anderen einfach dasaßen und diesen Teppich ignorierten — wie kann ein Mensch einfach dasitzen, wenn so ein Teppich <em>passiert</em>?“</p>
+    <p style="margin-top:1rem">Dann murmelte er: <em>„Das ist blau. Oh mein Gott, das ist blau.“</em></p>
+    <p class="serif gold" style="font-size:1.2rem;margin-top:1.4rem">Er bekam aus einem Büroteppich wahrscheinlich 10.000-mal mehr Freude, als du und ich aus dem perfektesten Sonnenuntergang.</p>
+  </div>
+
+  <blockquote class="rv">Es gibt kein objektiv gutes Erlebnis. Jedes Maß an „gut“ ist nur die Lücke zwischen Erwartung und Realität. <b>Der Kontrast, nicht die Menge, macht dich glücklich.</b><cite>Morgan Housel</cite></blockquote>
+
+  <!-- KONTRAST-MASCHINE -->
+  <div class="card rv">
+    <p class="pill">Die Kontrast-Maschine</p>
+    <p class="dim" style="font-size:.86rem;margin:.8rem 0 1.4rem">Klick auf eine Erfahrung — und sieh, wann sie am meisten wert ist.</p>
+    <div id="contrast" class="grid2"></div>
+    <p id="contrastOut" class="serif" style="margin-top:1.6rem;font-size:1.2rem;min-height:3em;color:#f2ead9"></p>
+  </div>
+
+  <div class="grid2 rv" style="margin-top:1.1rem">
+    <div class="card">
+      <p class="pill">Shackleton, 1916</p>
+      <p style="margin-top:1rem">19 Monate im Eis. Dauerhaft gefroren, nass, hungrig. Dann die Walfangstation Südgeorgien: <b>ein langes Bad, eine Rasur, neue Kleider, eine warme Mahlzeit, zwölf Stunden Schlaf.</b></p>
+      <p class="dim" style="margin-top:1rem">Selbst wenn das Wasser lauwarm und das Essen halb alt war — das war vermutlich einer der erfüllendsten Abende, die ein Mensch je erlebt hat.</p>
+      <p class="gold serif" style="margin-top:1rem;font-size:1.05rem">„Einer der schönsten Tage, die wir je hatten… ein Vergnügen, am Leben zu sein.“</p>
+    </div>
+    <div class="card">
+      <p class="pill">Dawsons Warnung</p>
+      <p style="margin-top:1rem;font-style:italic">„Das am wenigsten Wahrgenommene am Reichtum ist, dass alles Vergnügen an Geld an dem Punkt endet, an dem Sparsamkeit unnötig wird. <b class="gold">Der Mann, der alles kaufen kann, was er begehrt, ohne seinen Banker zu fragen, schätzt nichts von dem, was er kauft.</b>“</p>
+      <p class="dim" style="margin-top:1rem">Deshalb ist der reichste Moment deines Lebens wahrscheinlich dein <em>erster</em> Gehaltsscheck: Von 5 € auf 500 € ist ein größerer Sprung als von 10 Mio. auf 20 Mio.</p>
+    </div>
+  </div>
+
+  <div class="card rv" style="margin-top:1.1rem;border-color:rgba(212,162,76,.35)">
+    <p class="pill">Schwarzeneggers Diätregel — auf Geld übertragen</p>
+    <p class="serif" style="font-size:1.2rem;margin-top:.9rem">„Iss überwiegend, was du als gesund kennst. Und lass dich <em>gelegentlich</em> köstliches ungesundes Essen essen. Sonst — was soll der Sinn?“</p>
+    <p style="margin-top:1rem">Ein schlichtes Leben ist der stärkste Verstärker für Luxus. Weihnachtsmorgen, Geburtstage, der letzte Schultag fühlen sich großartig an, <b>weil sie einmal im Jahr passieren.</b></p>
+  </div>
+ </div>
+</section>
+
+<!-- ════════ DER LATTE-PARADOX ════════ -->
+<section>
+ <div class="narrow">
+  <p class="kicker rv">Werkzeug 08 · Beide Wahrheiten</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3rem)">Das Latte-Paradox</h2>
+  <p class="lede rv" style="margin-top:1.2rem">Housel sagt: <em>„Das Gegenteil einer guten Idee kann auch eine gute Idee sein.“</em> Hier sind beide — und beide stimmen.</p>
+
+  <div class="card rv" style="margin-top:2rem">
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap" id="latteTabs"></div>
+    <div id="latteBody" style="margin-top:1.6rem;min-height:230px"></div>
+  </div>
+
+  <div class="card rv" style="margin-top:1.1rem">
+    <p class="pill">Der Rechner</p>
+    <p class="dim" style="font-size:.86rem;margin:.8rem 0 1.2rem">Was kostet eine tägliche Kleinigkeit über 30 Jahre bei 8 % Rendite?</p>
+    <div class="lbl"><span>Betrag pro Tag</span><b id="dayV">5,00 €</b></div>
+    <input type="range" id="day" min="1" max="25" value="5" step="0.5">
+    <div class="grid3" style="margin-top:1.6rem">
+      <div style="text-align:center"><p class="dim" style="font-size:.74rem;letter-spacing:.1em;text-transform:uppercase">Pro Jahr</p><p class="big" style="font-size:1.7rem" id="perYear">1.825 €</p></div>
+      <div style="text-align:center"><p class="dim" style="font-size:.74rem;letter-spacing:.1em;text-transform:uppercase">Eingezahlt (30 J.)</p><p class="big" style="font-size:1.7rem" id="paid">54.750 €</p></div>
+      <div style="text-align:center"><p class="dim" style="font-size:.74rem;letter-spacing:.1em;text-transform:uppercase">Endwert</p><p class="big gold" style="font-size:1.7rem" id="fin">—</p></div>
+    </div>
+    <p style="margin-top:1.6rem;font-size:.92rem;color:#cfc8ba"><b class="gold">Aber:</b> Parkinsons Gesetz der Trivialität — „Die Aufmerksamkeit, die ein Problem bekommt, ist umgekehrt proportional zu seiner Wichtigkeit.“ Die Ausschuss-Runde genehmigt den 10-Mio-Reaktor sofort und streitet eine Stunde über den Kaffee im Pausenraum.</p>
+    <p style="margin-top:1rem;font-size:.92rem;color:#cfc8ba">Die wirklich großen Posten sind nur fünf: <b class="gold">Studium · Wohnen · Auto · Krankenversicherung · Kinderbetreuung.</b> Alles andere ist Rundungsfehler.</p>
+  </div>
+ </div>
+</section>
+
+<!-- ════════ MISERY GENERATOR ════════ -->
+<section style="background:linear-gradient(180deg,transparent,#141017 30%,#141017 70%,transparent)">
+ <div class="narrow">
+  <p class="kicker rv" style="color:var(--rose)">Invertiere, immer invertiere</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3rem)">Wie man mit Geld<br><span style="color:var(--rose)">garantiert unglücklich wird</span></h2>
+  <p class="lede rv" style="margin-top:1.2rem">Munger: „Nimm kein Kokain. Fahr keine Rennen gegen Züge. Und meide alle AIDS-Situationen.“ Erfolg durch Vermeidung. Klick dich durch Housels Liste — und sei ehrlich, bei welchen du zuckst.</p>
+
+  <div class="card rv" style="margin-top:2rem;border-color:rgba(201,115,106,.3)">
+    <div id="misery" style="min-height:190px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1.6rem;padding-top:1.4rem;border-top:1px solid var(--line)">
+      <button class="btn ghost" id="mPrev">← Zurück</button>
+      <span class="dim" style="font-size:.82rem;letter-spacing:.1em" id="mCount"></span>
+      <button class="btn" id="mNext">Weiter →</button>
+    </div>
+  </div>
+ </div>
+</section>
+
+<!-- ════════ REVERSE OBITUARY ════════ -->
+<section>
+ <div class="narrow">
+  <p class="kicker rv">Die Übung · 2 Minuten</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3rem)">Der umgekehrte Nachruf</h2>
+  <p class="lede rv" style="margin-top:1.2rem">Schreib auf, was dein Nachruf sagen soll — dann richte dein Leben danach aus. Housel: „Der sauberste, einfachste Weg herauszufinden, was wirklich zählt.“</p>
+  <p class="rv dim" style="margin-top:1rem;font-size:.92rem">Wähle fünf. Dann schau, was <em>nicht</em> drinsteht.</p>
+
+  <div class="card rv" style="margin-top:2rem">
+    <div id="obitPool" style="display:flex;flex-wrap:wrap;gap:.5rem"></div>
+    <div style="margin-top:1.8rem;padding-top:1.5rem;border-top:1px solid var(--line)">
+      <p class="dim" style="font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700">Dein Nachruf</p>
+      <p id="obitOut" class="serif" style="font-size:1.3rem;margin-top:.9rem;min-height:3.4em;color:#f2ead9;line-height:1.5">…</p>
+      <p id="obitVerdict" style="margin-top:1.2rem;font-size:.95rem"></p>
+    </div>
+  </div>
+
+  <div class="card rv" style="margin-top:1.1rem;border-color:rgba(127,156,138,.3)">
+    <p class="pill" style="border-color:rgba(127,156,138,.4);color:var(--sage)">Die Priester-Geschichte</p>
+    <p style="margin-top:1rem">Ein Priester erteilte jahrzehntelang die Sterbesakramente. Er riet den Kindern, einzeln ins Zimmer zu gehen und sich für das <em>eine</em> zu bedanken, wofür sie am dankbarsten sind.</p>
+    <p style="margin-top:1rem"><b class="rose" style="color:var(--rose)">In Familien mit belasteten Beziehungen</b> bedankt sich das Kind fast immer für etwas, das <em>Geld gekostet hat</em>: „Danke fürs Studium. Danke fürs Essen auf dem Tisch. Danke für das Auto.“</p>
+    <p style="margin-top:1rem"><b class="sage" style="color:var(--sage)">In den besten Familien</b> sagen die Kinder jedes Mal dasselbe:</p>
+    <p class="serif gold" style="font-size:1.7rem;margin-top:1rem;text-align:center">„Danke, dass du an mich geglaubt hast.“</p>
+  </div>
+
+  <div class="card rv" style="margin-top:1.1rem">
+    <p class="pill">Der Nickel und der Dime</p>
+    <p style="margin-top:1rem">Ein Vater spielte jede Woche ein Spiel mit seinem Sohn: Er bot ihm eine 10-Cent- und eine 5-Cent-Münze an. Der Sohn nahm jedes Mal die 5 Cent.</p>
+    <p style="margin-top:1rem">Sein Bruder nannte ihn verrückt — die 10 Cent seien doch mehr wert.</p>
+    <p class="serif" style="font-size:1.2rem;margin-top:1rem;color:#f2ead9">„Nein. Denn wenn ich die 10 Cent nehme, hört Papa vielleicht auf, das Spiel zu spielen.“</p>
+    <p class="dim" style="margin-top:1rem">Die, die dich lieben, wollen fast sicher nicht dein Geld so sehr, wie sie deine Liebe und Aufmerksamkeit wollen.</p>
+  </div>
+ </div>
+</section>
+
+<!-- ════════ DIE 8 SÄTZE ════════ -->
+<section style="background:linear-gradient(180deg,transparent,#101319 30%,#101319 70%,transparent)">
+ <div class="narrow">
+  <p class="kicker rv">Housels eigene Liste</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3rem)">Acht Zeilen.<br>Das ist <span class="gold">alles.</span></h2>
+  <p class="lede rv" style="margin-top:1.2rem">Am Ende des Buches fasst Housel sein gesamtes Finanzleben in acht Sätzen zusammen. „Das ist eine ziemlich umfassende Liste.“</p>
+  <div class="rv" id="eight" style="margin-top:2.4rem"></div>
+ </div>
+</section>
+
+<!-- ════════ MITNEHM-KARTE ════════ -->
+<section>
+ <div class="narrow">
+  <p class="kicker rv">Dein Mitnehm-Zettel</p>
+  <h2 class="rv" style="font-size:clamp(1.9rem,5vw,3rem)">Was nimmst du mit?</h2>
+  <p class="lede rv" style="margin-top:1.2rem">Beantworte drei Fragen. Du bekommst eine Karte, die du dir screenshotten und an den Kühlschrank hängen kannst.</p>
+
+  <div class="card rv" style="margin-top:2rem">
+    <label class="dim" style="font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700">1 · Wessen Respekt willst du wirklich?</label>
+    <input id="q1" type="text" placeholder="z. B. meiner Kinder, meiner Frau, meiner besten Freundin" style="width:100%;margin-top:.6rem;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--paper);padding:.9rem 1rem;border-radius:12px;font-family:inherit;font-size:.95rem">
+
+    <label class="dim" style="font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;display:block;margin-top:1.6rem">2 · Welche eine Ausgabe wirst du streichen?</label>
+    <input id="q2" type="text" placeholder="z. B. das Auto-Upgrade, das niemandem auffällt" style="width:100%;margin-top:.6rem;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--paper);padding:.9rem 1rem;border-radius:12px;font-family:inherit;font-size:.95rem">
+
+    <label class="dim" style="font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;display:block;margin-top:1.6rem">3 · Wofür kaufst du ab jetzt Unabhängigkeit?</label>
+    <input id="q3" type="text" placeholder="z. B. einen Tag weniger arbeiten pro Woche" style="width:100%;margin-top:.6rem;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--paper);padding:.9rem 1rem;border-radius:12px;font-family:inherit;font-size:.95rem">
+
+    <p style="margin-top:1.8rem"><button class="btn" id="mkCard">Meine Karte erstellen ✦</button></p>
+  </div>
+
+  <div id="cardOut" class="rv" style="display:none;margin-top:1.4rem">
+    <div class="card" style="border-color:var(--gold);background:linear-gradient(160deg,#1c1a16,#13161d)">
+      <p class="kicker" style="margin-bottom:.6rem">Mein Vertrag mit mir selbst</p>
+      <hr class="sep" style="margin:1rem 0">
+      <div id="cardBody" style="display:grid;gap:1.3rem"></div>
+      <hr class="sep" style="margin:1.6rem 0 1rem">
+      <p class="serif gold" style="font-size:1.15rem;text-align:center">Geld dient mir. Nicht umgekehrt.</p>
+      <p class="dim" style="text-align:center;font-size:.78rem;margin-top:.5rem">Spend less than you make · Quietly compound · Independence is wealth</p>
+    </div>
+  </div>
+ </div>
+</section>
+
+<footer>
+  <p class="serif" style="font-size:1.25rem;color:var(--paper);margin-bottom:1rem">„Alle Verhaltensweisen ergeben Sinn — mit genügend Informationen.“</p>
+  <p>Interaktive Umsetzung nach <b class="gold">Morgan Housel · The Art of Spending Money</b> (Portfolio/Penguin, 2025)</p>
+  <p style="margin-top:.6rem;font-size:.78rem">Alle Zitate, Zahlen und Geschichten stammen aus dem Buch. Für dich gebaut, zum Behalten.</p>
+</footer>
+
+<script>
+/* ═══════════ REVEAL ═══════════ */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+/* ═══════════ PROGRESS ═══════════ */
+addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  document.getElementById('prog').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';
+});
+
+/* ═══════════ HERO: MÜNZEN-PARTIKEL ═══════════ */
+(()=>{
+  const c=document.getElementById('coins'),x=c.getContext('2d');
+  let w,h,ps=[];
+  function size(){w=c.width=c.offsetWidth*devicePixelRatio;h=c.height=c.offsetHeight*devicePixelRatio;x.scale(1,1)}
+  function init(){
+    ps=[];const n=Math.min(110,Math.floor(w/22));
+    for(let i=0;i<n;i++)ps.push({
+      x:Math.random()*w,y:Math.random()*h,
+      r:Math.random()*2.4+.6,
+      vy:Math.random()*.32+.07,
+      vx:(Math.random()-.5)*.14,
+      a:Math.random()*.55+.12,
+      p:Math.random()*Math.PI*2
+    });
+  }
+  function loop(){
+    x.clearRect(0,0,w,h);
+    ps.forEach(p=>{
+      p.y+=p.vy;p.x+=p.vx;p.p+=.016;
+      if(p.y>h+10){p.y=-10;p.x=Math.random()*w}
+      if(p.x<-10)p.x=w+10;if(p.x>w+10)p.x=-10;
+      const tw=p.a*(.6+.4*Math.sin(p.p));
+      const g=x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*5);
+      g.addColorStop(0,`rgba(212,162,76,${tw})`);
+      g.addColorStop(.5,`rgba(240,217,168,${tw*.3})`);
+      g.addColorStop(1,'rgba(212,162,76,0)');
+      x.fillStyle=g;x.beginPath();x.arc(p.x,p.y,p.r*5,0,7);x.fill();
+      x.fillStyle=`rgba(255,246,224,${tw})`;x.beginPath();x.arc(p.x,p.y,p.r*.5,0,7);x.fill();
+    });
+    requestAnimationFrame(loop);
+  }
+  size();init();loop();
+  addEventListener('resize',()=>{size();init()});
+})();
+
+/* ═══════════ 6 KERNIDEEN ═══════════ */
+const CORE=[
+ {n:'01',t:'Zwei Wege, Geld zu nutzen',s:'Werkzeug oder Maßstab',
+  b:'„Einer ist ein Werkzeug, um ein besseres Leben zu führen. Der andere ist ein Maßstab für Status, um sich mit anderen zu vergleichen. <b>Viele streben nach Ersterem, verbringen ihr Leben aber mit der Jagd nach Letzterem.</b>“'},
+ {n:'02',t:'Geld ist ein Werkzeug — oder dein Herr',s:'Ohne Gnade',
+  b:'„Wenn du nicht aufpasst, benutzt es dich. Es wird dich ohne Gnade benutzen, oft ohne dass du es merkst. Für viele ist Geld zugleich finanzieller Vermögenswert <b>und psychologische Verbindlichkeit.</b>“'},
+ {n:'03',t:'Der Weg zum Glück ist indirekt',s:'Das große Haus ist nicht der Punkt',
+  b:'„Ein großes Haus macht dich vielleicht glücklicher — aber vor allem, weil es leichter wird, Freunde und Familie einzuladen. <b>Und die Freunde und die Familie sind das, was dich glücklich macht.</b>“'},
+ {n:'04',t:'Dauerhaftes Glück ist Zufriedenheit',s:'Aufhören, daran zu denken',
+  b:'„Die mit Geld Glücklichsten sind die, die einen Weg gefunden haben, <b>nicht mehr daran zu denken.</b> Wenn Geld nie deinen Kopf verlässt, hast du eine Obsession — und sie kontrolliert dich.“'},
+ {n:'05',t:'„Mehr Geld“ ist die bequeme Annahme',s:'Und maskiert tiefere Probleme',
+  b:'„Geld ist so greifbar, dass es ein leichtes Ziel ist. Es zu verfolgen kann zum Weg des geringsten Widerstands werden — <b>für die, die noch nicht entdeckt haben, was ihre Seele wirklich nährt.</b>“'},
+ {n:'06',t:'Jeder kann glücklicher ausgeben',s:'Aber keine Formel passt für alle',
+  b:'„Das schöne Zeug, das mich glücklich macht, mag dir verrückt vorkommen — und umgekehrt. Debatten über Lebensstil sind oft nur <b>Menschen mit verschiedenen Persönlichkeiten, die aneinander vorbeireden.</b>“'}
+];
+document.getElementById('core').innerHTML=CORE.map((c,i)=>`
+ <div class="card coreC" data-i="${i}" style="cursor:pointer;transition:.3s">
+   <div style="display:flex;align-items:baseline;gap:.8rem">
+     <span class="serif gold" style="font-size:2rem;opacity:.5">${c.n}</span>
+     <div><p class="serif" style="font-size:1.15rem;line-height:1.25">${c.t}</p>
+     <p class="dim" style="font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;margin-top:.2rem">${c.s}</p></div>
+   </div>
+   <p class="coreB" style="max-height:0;overflow:hidden;transition:max-height .55s cubic-bezier(.16,1,.3,1),margin .4s;margin-top:0;color:#cfc8ba;font-size:.95rem">${c.b}</p>
+   <p class="dim coreHint" style="font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;margin-top:.9rem">Klicken ↓</p>
+ </div>`).join('');
+document.querySelectorAll('.coreC').forEach(el=>{
+  el.onclick=()=>{
+    const b=el.querySelector('.coreB'),hint=el.querySelector('.coreHint');
+    const open=b.style.maxHeight&&b.style.maxHeight!=='0px';
+    b.style.maxHeight=open?'0':b.scrollHeight+'px';
+    b.style.marginTop=open?'0':'1.2rem';
+    el.style.borderColor=open?'var(--line)':'rgba(212,162,76,.5)';
+    hint.textContent=open?'Klicken ↓':'Schließen ↑';
+  };
+});
+
+/* ═══════════ GLÜCKSRECHNER ═══════════ */
+const cS=document.getElementById('c'),eS=document.getElementById('e');
+function happy(){
+  const cv=+cS.value,ev=+eS.value,g=cv-ev;
+  cV.textContent=cv;eV.textContent=ev;
+  hOut.textContent=(g>0?'+':'')+g;
+  const col=g>=25?'var(--sage)':g>=0?'var(--gold)':g>=-25?'#d19a6a':'var(--rose)';
+  hOut.style.color=col;
+  hBar.style.background=col;
+  hBar.style.width=Math.max(2,Math.min(100,50+g/2))+'%';
+  hMsg.textContent =
+    g>=30?'Du bist psychologisch reich. Deine Oma wäre stolz. „Sie hatte wenig, aber wollte noch weniger.“':
+    g>=10?'Zufriedenheit. Hier passieren die kleinen Überraschungen, die sich wie Magie anfühlen.':
+    g>=0 ?'Psychologisches Par. Du hast, was du wolltest — und fragst schon, was als Nächstes kommt.':
+    g>=-20?'Die Lücke nagt. „Begehren ist eine versteckte Form von Schulden.“':
+    'Du könntest Milliardär sein und dich ärmer fühlen als jemand mit einem Garten und einer Bibliothekskarte.';
+}
+cS.oninput=eS.oninput=happy;happy();
+
+/* ═══════════ DOPAMIN-LEITER ═══════════ */
+const LAD=[
+ {l:'Du bist jung',r:'Du träumst von einem Auto. Irgendeinem.'},
+ {l:'10.000 € Auto',r:'Du träumst vom 20.000-€-Auto.'},
+ {l:'20.000 € Auto',r:'Du träumst vom 50.000-€-Auto.'},
+ {l:'50.000 € Auto',r:'Du träumst vom 100.000-€-Auto.'},
+ {l:'100.000 € Auto',r:'Du träumst von <em>mehreren</em> 100.000-€-Autos.'}
+];
+let lad=0;
+function drawLad(){
+  document.getElementById('ladder').innerHTML=LAD.slice(0,lad+1).map((s,i)=>`
+    <div style="display:flex;gap:1rem;align-items:center;padding:.9rem 0;border-bottom:1px solid rgba(255,255,255,.05);opacity:${i===lad?1:.45};transition:.5s">
+      <div style="min-width:120px"><span class="serif gold" style="font-size:1.05rem">${s.l}</span></div>
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)"></div>
+      <div style="flex:2;color:#cfc8ba;font-size:.95rem">${s.r}</div>
+    </div>`).join('')
+  +(lad<LAD.length-1?`<p style="margin-top:1.4rem"><button class="btn ghost" id="ladBtn">Eine Stufe höher ↑</button></p>`:'');
+  if(lad<LAD.length-1)document.getElementById('ladBtn').onclick=()=>{lad++;drawLad()};
+  else document.getElementById('ladderEnd').style.display='block';
+}
+drawLad();
+
+/* ═══════════ AUFMERKSAMKEIT ═══════════ */
+const TT=['Heute','Morgen','In 1 Monat','In 1 Jahr','In 5 Jahren'];
+const TV=[100,72,25,6,1];
+const TM=[
+ 'Ein Blick, ein Nicken. Das war\'s. Fremde gaffen auf das <em>Auto</em>, nicht auf dich.',
+ '„Der Schock lässt ein bisschen nach.“',
+ '„Einen Monat später gähne ich, wenn ich dein Auto sehe.“',
+ '„Ein Jahr später ist es mir völlig egal.“',
+ 'Niemand erinnert sich. Du zahlst immer noch dafür — in Social Debt und Ersatzkäufen.'
+];
+const tS=document.getElementById('t');
+function attn(){
+  const i=+tS.value;tV.textContent=TT[i];
+  bars.innerHTML=TV.map((v,j)=>`
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%">
+      <div style="width:100%;border-radius:6px 6px 0 0;transition:.5s cubic-bezier(.16,1,.3,1);
+        height:${j<=i?v:0}%;background:${j===i?'linear-gradient(180deg,var(--gold),#8a6a2e)':'rgba(212,162,76,.17)'}"></div>
+      <span style="font-size:.6rem;letter-spacing:.06em;color:${j===i?'var(--gold)':'var(--muted)'};margin-top:.5rem;text-align:center">${TT[j]}</span>
+    </div>`).join('');
+  attnMsg.innerHTML=TM[i];
+}
+tS.oninput=attn;attn();
+
+/* ═══════════ INSEL-TEST ═══════════ */
+const ISL=[
+ {t:'Bequeme Matratze',u:1},{t:'Marken-Logo auf der Jacke',u:0},
+ {t:'Gutes Soundsystem',u:1},{t:'Teure Armbanduhr',u:0},
+ {t:'Großer Esstisch für Gäste',u:1},{t:'Prestige-Postleitzahl',u:0},
+ {t:'Zuverlässiges Auto',u:1},{t:'Einsteiger-Luxusmarke',u:0},
+ {t:'Schöne Aussicht',u:1},{t:'Designer-Handtasche',u:0},
+ {t:'Zeit mit Familie',u:1},{t:'Sichtbar teure Fassade',u:0}
+];
+let picks={};
+document.getElementById('island').innerHTML=ISL.map((o,i)=>`
+ <button class="islB" data-i="${i}" style="background:rgba(255,255,255,.03);border:1px solid var(--line);color:var(--paper);
+   padding:.85rem 1rem;border-radius:12px;font-size:.88rem;text-align:left;transition:.25s;font-family:inherit">
+   <span style="display:block;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem">Insel-Test</span>${o.t}
+ </button>`).join('');
+document.querySelectorAll('.islB').forEach(b=>{
+  b.onclick=()=>{
+    const i=+b.dataset.i;
+    picks[i]=!picks[i];
+    b.style.borderColor=picks[i]?(ISL[i].u?'var(--sage)':'var(--rose)'):'var(--line)';
+    b.style.background=picks[i]?(ISL[i].u?'rgba(127,156,138,.12)':'rgba(201,115,106,.12)'):'rgba(255,255,255,.03)';
+    const sel=Object.keys(picks).filter(k=>picks[k]);
+    if(!sel.length){islandResult.style.display='none';return}
+    islandResult.style.display='block';
+    const u=sel.filter(k=>ISL[k].u).length,s=sel.length-u;
+    const up=Math.round(u/sel.length*100),sp=100-up;
+    utilBar.style.width=up+'%';statBar.style.width=sp+'%';
+    utilPct.textContent=up+'%';statPct.textContent=sp+'%';
+    islandMsg.innerHTML = sp===0
+      ? '<b class="sage" style="color:var(--sage)">Reiner Nutzen.</b> Housel: „Nutzen ist zutiefst egoistisch — auf eine schöne Art.“ Du besitzt für dich.'
+      : up===0
+      ? '<b style="color:var(--rose)">Reiner Status.</b> Auf einer einsamen Insel wäre nichts davon etwas wert. Du besitzt es für <em>andere</em>.'
+      : `<b class="gold">${sp} % deiner Auswahl</b> würden auf einer einsamen Insel ihren Sinn verlieren. Genau dort sitzt dein Status-Budget. Housel: „Du zahlst für die Chance, dass andere dich anschauen.“`;
+  };
+});
+
+/* ═══════════ UNABHÄNGIGKEITS-SPEKTRUM ═══════════ */
+const LV=[
+ ['Totale Abhängigkeit von Fremden','Bettler — und CEOs, die um Staatsrettung bitten. Kompletter Kontrollverlust in einer zerbrechlichen, oft grausamen Welt.'],
+ ['Abhängigkeit von Menschen, die dich mögen','Kinder unter 15. Oder Geld von Freunden leihen, von dem alle wissen, dass du es nicht zurückzahlen kannst.'],
+ ['Teilweise Selbstversorgung','Du arbeitest, brauchst aber noch Unterstützung — Eltern, Sozialhilfe, Rente. Dein Wohlergehen hängt an fremden Entscheidungen.'],
+ ['Volle Selbstversorgung, aber ersetzbar','Es riecht nach Unabhängigkeit, weil du alle Rechnungen zahlst. Aber ein Chef oder Kunde besitzt deinen Tag.'],
+ ['Rücklagen für Alltagsprobleme','Kleine Arztrechnung? Okay. Höhere Heizkosten? Okay. Kind braucht neue Hose? Okay. Hier merkst du: Schon wenige Euro geben ein bisschen Freiheit.'],
+ ['Rücklagen für größere Überraschungen','Auto kaputt, Heizung kaputt — du überstehst es. Erster echter Schutz gegen „Pech“.'],
+ ['Erste Altersvorsorge, keine Kreditkartenschulden','Du hast eine Hand am Steuer. Du kannst eine Zukunft sehen, in der deine Ersparnisse zu echter Unabhängigkeit wachsen.'],
+ ['Du kannst schlechte Jobs ablehnen','„Nein, nicht du. Du bist ein schrecklicher Chef.“ <b>Housel: „Wenn du Level 7 erreichst, rockst du es.“</b> Ein wundervolles, realistisches Ziel für die meisten.'],
+ ['Du musst Fremden nichts mehr beweisen','Erster Blick auf intellektuelle Unabhängigkeit. Die Unfähigkeit dazu ist eine versteckte Form von Schulden.'],
+ ['Fast schuldenfrei — auch Studium & Hypothek','„Hör auf zu fragen: Wie hoch ist der Zinssatz? Frag: <b>Wie viel Unabhängigkeit kostet mich das?</b>“'],
+ ['Kein realistisches Ereignis wirft dich unter Level 5','Erste echte Stufe der Unabhängigkeit. Du kannst zu fast jedem „Nein, geh weg“ sagen.'],
+ ['Passives Einkommen deckt spürbaren Teil der Kosten','Hier merkst du: <b>Lebensstil-Wünsche können schneller wachsen als fast jedes Asset.</b>'],
+ ['Investments decken Grundkosten — länger als du lebst','Glückwunsch. Du arbeitest nur noch, wenn du willst, mit wem du willst.'],
+ ['Investments decken mehr als die Grundkosten','Dein Wunsch-Lebensstil plus etwas für Familie und Spenden. Vorsicht vor Lifestyle-Creep: „Wenn Bill Gates mit Oprahs Geld aufwachen würde, spränge er aus dem Fenster.“ (Chris Rock)'],
+ ['Du sagst und tust, was du für richtig hältst','Nicht „Fuck-you-Money“ — sondern „Nein danke, kein Interesse, ich widerspreche respektvoll“-Geld. Das eine rationalisiert Arschlochsein, das andere ist intellektuelle Unabhängigkeit.'],
+ ['Du wachst auf und der Tag gehört dir','Keine Chefs. Keine soziale Schuld. Keine echten Schulden. Du hast das Spiel geschlagen. <b>Das einzige Risiko: zu vergessen, wie dankbar du sein solltest.</b>']
+];
+const lvS=document.getElementById('lv');
+function lvl(){
+  const i=+lvS.value;
+  lvNum.textContent=i;
+  lvBar.style.width=((i+1)/16*100)+'%';
+  const col=i<4?'var(--rose)':i<10?'var(--gold)':'var(--sage)';
+  document.getElementById('lvCard').innerHTML=`
+    <p class="pill" style="border-color:${col};color:${col}">Level ${i}</p>
+    <h3 class="serif" style="font-size:clamp(1.3rem,3.4vw,1.9rem);margin-top:.9rem;color:#f2ead9">${LV[i][0]}</h3>
+    <p style="margin-top:.9rem;color:#cfc8ba">${LV[i][1]}</p>`;
+}
+lvS.oninput=lvl;lvl();
+
+/* ═══════════ SCORECARD-TEST ═══════════ */
+const SC=[
+ ['Wärst du lieber als bester Investor der Welt <b>bekannt</b>, wärst aber in Wahrheit der schlechteste …','… oder giltst als schlechtester, wärst aber tatsächlich der beste?','Bekannt als bester','Tatsächlich der beste'],
+ ['Hätten Leute lieber Eindruck von deinem Besitz, während du innerlich elend bist …','… oder interessiert niemanden, was du besitzt, aber du wachst glücklich auf?','Beeindruckt, elend','Unbeachtet, glücklich']
+];
+let scI=0;
+function drawSC(){
+  const s=SC[scI];
+  document.getElementById('scorecard').innerHTML=`
+   <p style="color:#cfc8ba">${s[0]}</p>
+   <p style="color:#cfc8ba;margin-top:.5rem">${s[1]}</p>
+   <div style="display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1.3rem">
+     <button class="btn ghost scB" data-v="0" style="border-color:rgba(201,115,106,.5);color:var(--rose)">${s[2]}</button>
+     <button class="btn ghost scB" data-v="1" style="border-color:rgba(127,156,138,.5);color:var(--sage)">${s[3]}</button>
+   </div>
+   <p id="scOut" style="margin-top:1.3rem;min-height:2.4em;font-size:.95rem"></p>`;
+  document.querySelectorAll('.scB').forEach(b=>b.onclick=()=>{
+    const v=+b.dataset.v;
+    document.getElementById('scOut').innerHTML = v
+      ? '<b class="sage" style="color:var(--sage)">Innere Scorecard.</b> Moitessier drehte vor dem sicheren Sieg ab — „weil ich auf See glücklich bin, und vielleicht, um meine Seele zu retten.“'
+      : '<b style="color:var(--rose)">Äußere Scorecard.</b> Genau hier saß Crowhurst. Sein letzter Eintrag: „Es ist das Ende meines Spiels.“';
+    setTimeout(()=>{if(scI<SC.length-1){scI++;drawSC()}},3400);
+  });
+}
+drawSC();
+
+/* ═══════════ KONTRAST-MASCHINE ═══════════ */
+const CON=[
+ ['Ein Glas Leitungswasser','Das beste Getränk deines Lebens — <b class="gold">wenn du durstig bist.</b> Housel: „The best drink you will ever taste is a glass of tap water when you\'re thirsty.“'],
+ ['Billiges Essen','Das beste Essen deines Lebens — <b class="gold">wenn du am Verhungern bist.</b>'],
+ ['Ein kurzes Nickerchen','Der beste Schlaf deines Lebens — <b class="gold">wenn dein Neugeborenes dich endlich lässt.</b>'],
+ ['Ein Privatjet','Fühlt sich fantastisch an — aber nur, <b class="gold">weil du vorher Economy geflogen bist.</b> Wer immer privat fliegt, verliert den Kontrast.'],
+ ['Dein eigenes Auto','Technisch ein „Privatwagen“. Niemand jubelt. 1906 nannte man das Auto noch „ein Bild der Arroganz des Reichtums“ — <b class="gold">kein Kontrast mehr, keine Freude.</b>'],
+ ['Drei Sternemahlzeiten pro Tag','Kein Warten, keine Vorfreude, kein Kontrast. <b style="color:var(--rose)">Weniger Freude als ein Kind beim ersten Bissen Überraschungs-McDonald\'s.</b>']
+];
+document.getElementById('contrast').innerHTML=CON.map((c,i)=>`
+ <button class="conB" data-i="${i}" style="background:rgba(255,255,255,.03);border:1px solid var(--line);
+   color:var(--paper);padding:1rem;border-radius:14px;text-align:left;font-family:inherit;font-size:.95rem;transition:.25s">
+   ${c[0]}
+ </button>`).join('');
+document.querySelectorAll('.conB').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.conB').forEach(x=>{x.style.borderColor='var(--line)';x.style.background='rgba(255,255,255,.03)'});
+  b.style.borderColor='var(--gold)';b.style.background='rgba(212,162,76,.1)';
+  document.getElementById('contrastOut').innerHTML=CON[+b.dataset.i][1];
+});
+
+/* ═══════════ SOCIAL-DEBT-SIMULATOR ═══════════ */
+const sdS=document.getElementById('sd');
+const SD=[
+ {t:'Privatsphäre',inv:1},
+ {t:'Echte Freunde (statt Bittsteller)',inv:1},
+ {t:'Ruhe beim Parken (kein Kratzer-Stress)',inv:1},
+ {t:'Freiheit, dein Auto nicht ersetzen zu müssen',inv:1},
+ {t:'Anonymität gegenüber Fremden',inv:1},
+ {t:'Aufmerksamkeit von Fremden',inv:0}
+];
+function sdUp(){
+  const v=+sdS.value;sdV.textContent=v+'%';
+  document.getElementById('sdList').innerHTML=SD.map(s=>{
+    const lost = s.inv ? v>35 : v<35;
+    return `<div style="display:flex;align-items:center;gap:.8rem;padding:.6rem .9rem;border-radius:10px;
+      background:${lost?'rgba(201,115,106,.1)':'rgba(127,156,138,.09)'};
+      border:1px solid ${lost?'rgba(201,115,106,.3)':'rgba(127,156,138,.28)'};transition:.35s">
+      <span style="font-size:1.05rem">${lost?'✕':'✓'}</span>
+      <span style="font-size:.92rem;${lost?'opacity:.6;text-decoration:line-through':''}">${s.t}</span>
+    </div>`;
+  }).join('');
+  const el=document.getElementById('sdVerdict');
+  if(v<=15){el.innerHTML='<span style="color:var(--sage)">Rich and anonymous.</span> Naval Ravikant: „Die beste Position ist, reich und anonym zu sein.“ Die 8-Mrd-Familie googelte sich zu <em>nichts</em>.';}
+  else if(v<=40){el.innerHTML='<span class="gold">Gesunde Dosis.</span> Arndt-Schulz: kleine Dosen stimulieren. Du zeigst genug, um dazuzugehören — ohne zur Zielscheibe zu werden.';}
+  else if(v<=70){el.innerHTML='<span style="color:#d19a6a">Sonnenbrand-Zone.</span> „Es ist sehr teuer, reich zu sein.“ Das 50.000-€-Auto kostet 50.000 € <em>plus</em> das 60.000-€-Auto in zwei Jahren.';}
+  else{el.innerHTML='<span style="color:var(--rose)">Chinchilla-Mantel.</span> „Ich kam als unbekannter Mann zum Kampf. Ich ging als gezeichneter Mann.“ Du bist jetzt sichtbar — für alle.';}
+}
+sdS.oninput=sdUp;sdUp();
+
+/* ═══════════ LATTE-PARADOX ═══════════ */
+const LAT=[
+ {k:'Coolidge',t:'Kleine Dinge summieren sich — gewaltig',
+  b:`<p>Präsident Coolidge verschickte Karten an jeden Angestellten des Landwirtschaftsministeriums:</p>
+     <p class="serif gold" style="font-size:1.2rem;margin:1rem 0;text-align:center">„Regierungskorrespondenz kostet 26 ¢ pro Brief. Schreibt weniger Briefe. Schreibt kürzere Briefe.“</p>
+     <p>Jeder Beamte bekam <b>genau einen Bleistift</b> — zurückzugeben, wenn er nicht bis zum Radiergummi abgenutzt war.</p>
+     <p style="margin-top:1rem">Absurd? 585.000 Beamte × 5 Briefe/Tag × 0,26 $ = <b class="gold">197 Mio $ im Jahr</b> — bei 2,8 Mrd $ Gesamtbudget. <b>7 % für Briefe.</b> Coolidge war kein Idiot.</p>`},
+ {k:'Rockefeller',t:'Ein Tropfen Lötzinn',
+  b:`<p>Rockefeller fragte einen Werksarbeiter: „Wie viele Tropfen Lötzinn pro Dose?“</p>
+     <p>„Vierzig.“ — „Haben Sie je 38 probiert?“</p>
+     <p style="margin-top:1rem">38 leckten. <b>39 funktionierten.</b></p>
+     <p class="serif gold" style="font-size:1.15rem;margin-top:1rem">„Dieser eine Tropfen sparte im ersten Jahr 2.500 $ — und seither viele Hunderttausende.“</p>
+     <p class="dim" style="margin-top:.8rem">Heute: rund 20 Mio $. Kleine Änderungen × Skalierung = gewaltige Wirkung.</p>`},
+ {k:'Das Haus',t:'Der versteckte Kostentropf',
+  b:`<p>Haus 1974 für 60.000 $ gekauft, heute 350.000 $ wert. Jackpot, oder?</p>
+     <p style="margin-top:1rem">Das sind <b>3,75 % pro Jahr.</b> Minus ~1 % Grundsteuer = 2,75 %. Minus 1–3 % Instandhaltung …</p>
+     <p class="serif" style="font-size:1.15rem;margin-top:1rem;color:var(--rose)">Die Rendite verdampft.</p>
+     <p class="dim" style="margin-top:.8rem"><b class="gold">Preis</b> ist leicht zu berechnen. <b class="gold">Kosten</b> sind ein langsamer Tropf, den man ignoriert — und der sich rasend summiert.</p>`},
+ {k:'Parkinson',t:'…und jetzt das Gegenteil',
+  b:`<p><b>Parkinsons Gesetz der Trivialität:</b> „Die Aufmerksamkeit, die ein Problem bekommt, ist umgekehrt proportional zu seiner Wichtigkeit.“</p>
+     <div style="display:grid;gap:.6rem;margin-top:1.2rem">
+       <div style="display:flex;gap:.8rem;align-items:center"><span class="gold serif" style="min-width:95px">10 Mio $</span><span class="dim" style="font-size:.9rem">Atomreaktor — <b>sofort genehmigt</b></span></div>
+       <div style="display:flex;gap:.8rem;align-items:center"><span class="gold serif" style="min-width:95px">400 $</span><span class="dim" style="font-size:.9rem">Fahrradschuppen — lange Debatte: Holz oder Alu?</span></div>
+       <div style="display:flex;gap:.8rem;align-items:center"><span class="gold serif" style="min-width:95px">20 $</span><span class="dim" style="font-size:.9rem">Kaffee im Pausenraum — <b>zwei Drittel der Sitzung</b></span></div>
+     </div>
+     <p style="margin-top:1.2rem">Ramit Sethi: Zu viele stellen <b>3-€-Fragen</b> („Kann ich mir diesen Latte leisten?“), während nur die <b class="gold">30.000-€-Fragen</b> zählen („Welche Uni? Welches Haus? Welches Auto?“).</p>`},
+ {k:'Die Pointe',t:'Wo ist dein Ferrari?',
+  b:`<p>„Du trinkst jeden Tag einen Latte? 30 Jahre lang? Das sind 1.900 $ im Jahr — bei 8 % wären das 250.000 $. Genug für einen Ferrari!“</p>
+     <p style="margin-top:1rem">Die Kollegin schaut verwirrt:</p>
+     <p class="serif gold" style="font-size:1.4rem;margin-top:1rem;text-align:center">„Kaufst du Lattes?“ — „Nein.“<br>„Und wo ist dein Ferrari?“</p>
+     <p style="margin-top:1.4rem"><b class="gold">Beide Wahrheiten gleichzeitig:</b></p>
+     <p style="margin-top:.6rem">Es ist fast unmöglich, Vermögen aufzubauen, ohne die <em>größten</em> Ausgaben zu kontrollieren. Und es ist sehr schwer, Vermögen zu <em>vermehren</em>, ohne sich um die kleinen zu kümmern.</p>`}
+];
+let latI=0;
+function drawLatte(){
+  document.getElementById('latteTabs').innerHTML=LAT.map((l,i)=>`
+    <button class="latB btn ${i===latI?'':'ghost'}" data-i="${i}" style="padding:.55rem 1.1rem;font-size:.76rem">${l.k}</button>`).join('');
+  const l=LAT[latI];
+  document.getElementById('latteBody').innerHTML=`<h3 class="serif gold" style="font-size:1.4rem">${l.t}</h3><div style="margin-top:1rem;color:#cfc8ba;display:grid;gap:.9rem">${l.b}</div>`;
+  document.querySelectorAll('.latB').forEach(b=>b.onclick=()=>{latI=+b.dataset.i;drawLatte()});
+}
+drawLatte();
+
+/* ═══════════ LATTE-RECHNER ═══════════ */
+const dayS=document.getElementById('day');
+function calc(){
+  const d=+dayS.value, y=d*365, paid=y*30;
+  let fv=0; for(let i=0;i<30;i++) fv=(fv+y)*1.08;
+  const f=n=>n.toLocaleString('de-DE',{maximumFractionDigits:0})+' €';
+  dayV.textContent=d.toFixed(2).replace('.',',')+' €';
+  perYear.textContent=f(y); paid_.textContent=f(paid); fin.textContent=f(fv);
+}
+const paid_=document.getElementById('paid'), fin=document.getElementById('fin');
+dayS.oninput=calc;calc();
+
+/* ═══════════ MISERY GENERATOR ═══════════ */
+const MIS=[
+ ['Schau immer eine Stufe höher','Richte deinen Blick auf die Einkommensgruppe direkt über dir und nimm an, dort wohne dauerhaftes Glück. Ignoriere, dass deine <em>jetzige</em> Gruppe einst genau dieser Traum war.'],
+ ['Status vor Unabhängigkeit','Nimm an, Glück hänge davon ab, dass Massen von Fremden von deinem Besitz beeindruckt sind — statt von der verborgenen Magie, deine eigene Zeit zu besitzen.'],
+ ['Mach Geld zu deiner Identität','Verbringe mehr Zeit damit, über Geld nachzudenken, als über das Leben, das du damit gebaut hast.'],
+ ['Gib so viel aus, dass andere dich steuern','Werde vollständig abhängig von Entscheidungen von Chefs und Bankern — von denen die meisten dich keine Sekunde interessieren.'],
+ ['Fantasiere, Geld löse alles','Glaube, keine deiner aktuellen Ängste, Zweifel und Verwirrungen existierte, wenn du nur etwas mehr Geld hättest.'],
+ ['Oder: Geld löse gar nichts','Genauso gefährlich. Lebe in einer Welt, in der die gesammelten Anstrengungen von 100 Milliarden Menschen vor dir nichts hervorgebracht haben, das deiner Aufmerksamkeit wert wäre.'],
+ ['Spare so fanatisch, dass du nie genießt','Behandle Geld, als wäre sein einziger Zweck, sich auf dem Konto anzuhäufen. Du hast kein Werkzeug mehr — du hast ein Buchhaltungs-Hobby.'],
+ ['Ego über Empathie','Dein Erfolg = harte Arbeit. Dein Scheitern = Pech. Fremder Erfolg = Glück. Fremdes Scheitern = schlechte Entscheidungen.'],
+ ['Vergleiche dein Inneres mit fremden Außenseiten','Nimm an, die Autos, Häuser und Instagram-Accounts anderer seien ein akkurates Maß für deren Glück, Gesundheit und moralische Klarheit.'],
+ ['Ignoriere die versteckten Kosten','Vergiss, dass du mit jedem Kauf eine höhere Messlatte erschaffst, die du beim nächsten Mal überspringen musst. Eine versteckte Form von Schulden.'],
+ ['Habe kein Gefühl für dein eigenes Bedauern','Sei so gefangen im Jetzt — oder so fixiert auf die ferne Zukunft — dass du am Ende zurückblickst und dich fragst, was zum Teufel du dir gedacht hast.'],
+ ['Setze Nettovermögen = Selbstwert','Für dich <em>und</em> für andere. Und nimm zusätzlich an, dass ihr Auftreten akkurat zeigt, wie viel Geld sie wirklich haben.'],
+ ['Behandle alles als Mathe-Problem','Keine Wertschätzung für vernünftige Emotion, Erinnerungswert, Seelennahrung. Interessiere dich mehr dafür, die Tabellenkalkulation glücklich zu machen, als dich selbst.'],
+ ['Lass dich von Leuten beraten, die was anderes wollen','Wolle, was die Gesellschaft sagt. Begehre, was die Werbung sagt. Suche bei Fremden nach Antworten darauf, was für <em>dich</em> am besten ist.'],
+ ['Verankere Erwartungen an den Erfolgreichsten, die du kennst','So fühlt sich sogar außergewöhnlicher Erfolg in deinem Leben unzureichend an. Es ist im Grunde ein Vertrag mit dir selbst, unglücklich zu sein.'],
+ ['Lass Erwartungen schneller wachsen als dein Einkommen','Lebe in einer Welt, in der alles besser wird — und du nichts davon schätzt, weil du alles erwartet hast. Und mehr.'],
+ ['Riskiere, was du brauchst, für das, was du nicht brauchst','Riskiere Beziehungen zu Familie und Freunden für eine Gehaltserhöhung mit minimaler Wirkung. Oder deinen Schlaf für ein Auto, das niemandem auffällt.'],
+ ['Überschätze die Aufmerksamkeit für deine schönen Dinge','Und nimm an, die Aufmerksamkeit, die du bekommst, sei Bewunderung für <em>dich</em> — statt die Fantasie anderer, dein Zeug selbst zu besitzen.'],
+ ['Nimm an, du hast schon alle Antworten','Probiere nichts Neues. Lehne das Geheimnis des Lebens ab. Behandle Geld wie Religion: Hingabe über Neugier, Orthodoxie über Erkundung.']
+];
+let misI=0;
+function drawMis(){
+  const m=MIS[misI];
+  document.getElementById('misery').innerHTML=`
+    <p class="pill" style="border-color:rgba(201,115,106,.4);color:var(--rose)">Regel ${misI+1}</p>
+    <h3 class="serif" style="font-size:clamp(1.3rem,3.6vw,1.9rem);margin-top:.9rem;color:#f2ead9">${m[0]}</h3>
+    <p style="margin-top:1rem;color:#cfc8ba">${m[1]}</p>`;
+  document.getElementById('mCount').textContent=(misI+1)+' / '+MIS.length;
+}
+document.getElementById('mNext').onclick=()=>{misI=(misI+1)%MIS.length;drawMis()};
+document.getElementById('mPrev').onclick=()=>{misI=(misI-1+MIS.length)%MIS.length;drawMis()};
+drawMis();
+
+/* ═══════════ REVERSE OBITUARY ═══════════ */
+const OB=[
+ {t:'Du wurdest geliebt',g:1},{t:'Du warst respektiert',g:1},
+ {t:'Du warst ein guter Vater / eine gute Mutter',g:1},
+ {t:'Du warst eine fürsorgliche Freundin',g:1},
+ {t:'Du warst weise, witzig und klug',g:1},
+ {t:'Du warst hilfsbereit',g:1},
+ {t:'Du warst eine Bereicherung für deine Gemeinde',g:1},
+ {t:'Du hast an Menschen geglaubt',g:1},
+ {t:'Dein Auto hatte 450 PS',g:0},
+ {t:'Dein Haus hatte 340 m²',g:0},
+ {t:'Dein Ring hatte 3 Karat',g:0},
+ {t:'Deine Küche war aus italienischem Marmor',g:0},
+ {t:'Dein Gehalt war sechsstellig',g:0},
+ {t:'Deine Kleidung war teuer',g:0}
+];
+let obSel=[];
+document.getElementById('obitPool').innerHTML=OB.map((o,i)=>`
+ <button class="obB" data-i="${i}" style="background:rgba(255,255,255,.03);border:1px solid var(--line);
+   color:var(--paper);padding:.6rem 1rem;border-radius:999px;font-size:.84rem;font-family:inherit;transition:.25s">${o.t}</button>`).join('');
+document.querySelectorAll('.obB').forEach(b=>b.onclick=()=>{
+  const i=+b.dataset.i, p=obSel.indexOf(i);
+  if(p>-1){obSel.splice(p,1);b.style.borderColor='var(--line)';b.style.background='rgba(255,255,255,.03)';b.style.color='var(--paper)';}
+  else if(obSel.length<5){obSel.push(i);b.style.borderColor='var(--gold)';b.style.background='rgba(212,162,76,.14)';b.style.color='var(--gold)';}
+  const out=document.getElementById('obitOut'), vd=document.getElementById('obitVerdict');
+  out.textContent = obSel.length ? '„'+obSel.map(x=>OB[x].t).join('. ')+'.“' : '…';
+  if(!obSel.length){vd.textContent='';return}
+  const mat=obSel.filter(x=>!OB[x].g).length;
+  vd.innerHTML = mat===0
+    ? '<b class="sage" style="color:var(--sage)">Genau wie bei fast allen.</b> Housel: „Kaum jemand würde bei dieser Übung an PS, Quadratmeter oder Karat denken — <em>weil du innerlich weißt, dass diese Dinge nicht zählen</em>.“ Jetzt die eigentliche Frage: Richtest du dein Leben danach aus?'
+    : `<b style="color:var(--rose)">Du hast ${mat} materielle${mat>1?'':'s'} Element gewählt.</b> Interessant — fast niemand tut das. David Brooks nennt es den Unterschied zwischen <em>Lebenslauf-Tugenden</em> (Gehalt, Titel, Besitz) und <em>Nachruf-Tugenden</em> (wie sehr Menschen dich wirklich respektieren).`;
+});
+
+/* ═══════════ 8 SÄTZE ═══════════ */
+const EIGHT=[
+ ['Spend less than you make','Gib weniger aus, als du verdienst.'],
+ ['Quietly compound','Lass es still wachsen.'],
+ ['Money serves you, not the other way around','Geld dient dir, nicht umgekehrt.'],
+ ['No one is thinking about you as much as you are','Niemand denkt so viel über dich nach wie du selbst.'],
+ ['Independence is wealth','Unabhängigkeit ist Reichtum.'],
+ ['Health is wealth','Gesundheit ist Reichtum.'],
+ ['Aim to be a good ancestor','Strebe danach, ein guter Vorfahre zu sein.'],
+ ['Love your family','Liebe deine Familie.']
+];
+document.getElementById('eight').innerHTML=EIGHT.map((e,i)=>`
+ <div style="display:flex;gap:1.2rem;align-items:baseline;padding:1.15rem 0;border-bottom:1px solid rgba(255,255,255,.055)">
+   <span class="serif gold" style="font-size:1.5rem;opacity:.42;min-width:2.2rem">${String(i+1).padStart(2,'0')}</span>
+   <div>
+     <p class="serif" style="font-size:clamp(1.15rem,3vw,1.5rem);color:#f2ead9;line-height:1.3">${e[0]}</p>
+     <p class="dim" style="font-size:.92rem;margin-top:.35rem">${e[1]}</p>
+   </div>
+ </div>`).join('')
++`<p class="dim" style="margin-top:2rem;font-size:.92rem;text-align:center;font-style:italic">„Das ist eine ziemlich umfassende Liste.“ — Morgan Housel</p>`;
+
+/* ═══════════ MITNEHM-KARTE ═══════════ */
+document.getElementById('mkCard').onclick=()=>{
+  const v1=document.getElementById('q1').value.trim()||'die Menschen, die mich kennen',
+        v2=document.getElementById('q2').value.trim()||'eine Ausgabe, die nur Fremde beeindruckt',
+        v3=document.getElementById('q3').value.trim()||'mehr Zeit mit den Menschen, die ich liebe';
+  const lvl=+document.getElementById('lv').value;
+  const gap=(+document.getElementById('c').value)-(+document.getElementById('e').value);
+  const rows=[
+    ['Wessen Respekt zählt',v1,'Housel: „98 % des Respekts hast du schon verdient — durch wer du bist, nicht was du besitzt.“'],
+    ['Was ich streiche',v2,'„Du zahlst nicht 50.000 € für das Auto. Du zahlst 50.000 € plus das 60.000-€-Auto in zwei Jahren.“'],
+    ['Wofür ich Unabhängigkeit kaufe',v3,'„Jeder Cent Ersparnis ist ein Ticket zu einem höheren Grad an Unabhängigkeit.“'],
+    ['Mein Unabhängigkeits-Level','Level '+lvl+' von 15 — '+LV[lvl][0], lvl>=7?'Housel: „Wenn du Level 7 erreichst, rockst du es.“':'Jeder gesparte Euro schiebt dich eine Stufe höher. Es ist ein Spektrum, kein Schalter.'],
+    ['Meine Glücks-Gleichung', (gap>=0?'+':'')+gap+' — Umstände minus Erwartungen', gap>=0?'Du bist auf der richtigen Seite der Gleichung. Halte die Erwartungen dort.':'Den rechten Regler zu senken kostet nichts — und ist das einzige Spiel, das du gewinnen kannst.']
+  ];
+  document.getElementById('cardBody').innerHTML=rows.map(r=>`
+    <div>
+      <p class="dim" style="font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;font-weight:800">${r[0]}</p>
+      <p class="serif gold" style="font-size:1.2rem;margin-top:.3rem;line-height:1.3">${r[1]}</p>
+      <p class="dim" style="font-size:.84rem;margin-top:.4rem;font-style:italic">${r[2]}</p>
+    </div>`).join('');
+  const box=document.getElementById('cardOut');
+  box.style.display='block';
+  requestAnimationFrame(()=>box.classList.add('in'));
+  box.scrollIntoView({behavior:'smooth',block:'start'});
+};
+
+/* ═══════════ TASTATUR: MISERY-KARUSSELL ═══════════ */
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight')document.getElementById('mNext').click();
+  if(e.key==='ArrowLeft')document.getElementById('mPrev').click();
+});
+</script>
+</body>
+</html>

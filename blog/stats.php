@@ -57,7 +57,7 @@ function stats_redirect(): void {
 }
 
 function stats_query(array $overrides = []): string {
-	$allowed = ['range', 'path', 'ref_type', 'source', 'ref_path', 'browser', 'os', 'device', 'day', 'weekday', 'hour', 'humans', 'view', 'cmp_mode', 'cmp_kind', 'cmp_a', 'cmp_b', 'cmp_from_a', 'cmp_to_a', 'cmp_from_b', 'cmp_to_b', 'page'];
+	$allowed = ['range', 'path', 'ref_type', 'source', 'ref_path', 'browser', 'os', 'device', 'bot_reason', 'day', 'weekday', 'hour', 'humans', 'view', 'cmp_mode', 'cmp_kind', 'cmp_a', 'cmp_b', 'cmp_from_a', 'cmp_to_a', 'cmp_from_b', 'cmp_to_b', 'page'];
 	$q = [];
 	foreach ($allowed as $key) {
 		$value = array_key_exists($key, $overrides) ? $overrides[$key] : ($_GET[$key] ?? null);
@@ -207,7 +207,7 @@ function stats_all(PDO $pdo, string $sql, array $params): array {
 	return is_array($rows) ? $rows : [];
 }
 
-function stats_where(int $range, string $path, string $refType, string $source, string $refPath, string $browser, string $os, string $device, bool $previous = false, string $day = '', int $weekday = 0, int $hour = -1, bool $humansOnly = false): array {
+function stats_where(int $range, string $path, string $refType, string $source, string $refPath, string $browser, string $os, string $device, bool $previous = false, string $day = '', int $weekday = 0, int $hour = -1, bool $humansOnly = false, string $botReason = ''): array {
 	$where = ['1=1'];
 	$params = [];
 	if ($range > 0) {
@@ -265,6 +265,10 @@ function stats_where(int $range, string $path, string $refType, string $source, 
 	if ($humansOnly) {
 		$where[] = 'is_bot = 0';
 	}
+	if ($botReason !== '') {
+		$where[] = 'bot_reason = ?';
+		$params[] = $botReason;
+	}
 	return [implode(' AND ', $where), $params];
 }
 
@@ -277,7 +281,7 @@ function stats_valid_date(string $value): bool {
 }
 
 function stats_where_between(string $from, string $to, string $path, string $refType, string $source, string $refPath, string $browser, string $os, string $device, bool $humansOnly = false): array {
-	[$filterSql, $filterParams] = stats_where(0, $path, $refType, $source, $refPath, $browser, $os, $device, false, '', 0, -1, $humansOnly);
+	[$filterSql, $filterParams] = stats_where(0, $path, $refType, $source, $refPath, $browser, $os, $device, false, '', 0, -1, $humansOnly, $botReason);
 	return ['day >= ? AND day <= ? AND ' . $filterSql, array_merge([$from, $to], $filterParams)];
 }
 
@@ -605,6 +609,11 @@ $device = is_scalar($deviceRaw) ? (string)$deviceRaw : '';
 if (!in_array($device, ['', 'desktop', 'mobile', 'tablet', 'bot', 'unknown'], true)) {
 	$device = '';
 }
+$botReasonRaw = $_GET['bot_reason'] ?? '';
+$botReason = is_scalar($botReasonRaw) ? trim((string)$botReasonRaw) : '';
+if ($botReason !== '' && !preg_match('/^[a-zA-Z0-9 ._+\-]{1,64}$/', $botReason)) {
+	$botReason = '';
+}
 
 $pageRaw = $_GET['page'] ?? 1;
 $pageNum = is_scalar($pageRaw) ? max(1, (int)$pageRaw) : 1;
@@ -724,7 +733,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 			http_response_code(503);
 			exit;
 		}
-		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, false, $day, $weekday, $hour, $humansOnly);
+		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, false, $day, $weekday, $hour, $humansOnly, $botReason);
 		$stmt = $pdoExport->prepare(
 			"SELECT ts, day, hour, path, ref_type, ref_source, ref_host, ref_path,
 			        browser, browser_major, os, os_version, device, is_bot, bot_reason,
@@ -902,6 +911,7 @@ $pageSparklines = [];
 $pageShareData = [];
 $zeroPages = 0;
 $referrers = [];
+$externalReferrers = [];
 $internalRefs = [];
 $sankeyLinks = [];
 $sankeyNodes = [];
@@ -977,8 +987,8 @@ if ($authed) {
 		if (!$analyticsKillSwitch) {
 			mn_analytics_cleanup($pdo, true);
 		}
-		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, false, $day, $weekday, $hour, $humansOnly);
-		[$prevWhereSql, $prevParams] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, true, $day, $weekday, $hour, $humansOnly);
+		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, false, $day, $weekday, $hour, $humansOnly, $botReason);
+		[$prevWhereSql, $prevParams] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, true, $day, $weekday, $hour, $humansOnly, $botReason);
 
 		$kpi = stats_one($pdo, "SELECT
 			COUNT(*) AS views,
@@ -1057,7 +1067,7 @@ if ($authed) {
 		$todayLabel = (new DateTimeImmutable($today))->format('D, M j');
 		$todayPrevDay = (new DateTimeImmutable($today))->modify('-7 days')->format('Y-m-d');
 		$todayPrevLabel = (new DateTimeImmutable($todayPrevDay))->format('D');
-		[$allWhereSql, $allParams] = stats_where(0, $path, $refType, $source, $refPath, $browser, $os, $device, false, '', 0, -1, $humansOnly);
+		[$allWhereSql, $allParams] = stats_where(0, $path, $refType, $source, $refPath, $browser, $os, $device, false, '', 0, -1, $humansOnly, $botReason);
 		$todayStats = stats_one($pdo, "SELECT
 				SUM(CASE WHEN day = ? THEN 1 ELSE 0 END) AS views,
 				SUM(CASE WHEN day = ? AND ref_type <> 'internal' THEN 1 ELSE 0 END) AS entries,
@@ -1314,8 +1324,8 @@ if ($authed) {
 				$compareBLabel = $bDevice !== '' ? stats_device_label($bDevice) : 'Choose device B';
 			}
 			if ($compareValid) {
-				[$whereA, $paramsA] = stats_where($range, $aPath, $refType, $aSource, $refPath, $browser, $os, $aDevice, false, $day, $weekday, $hour, $humansOnly);
-				[$whereB, $paramsB] = stats_where($range, $bPath, $refType, $bSource, $refPath, $browser, $os, $bDevice, false, $day, $weekday, $hour, $humansOnly);
+				[$whereA, $paramsA] = stats_where($range, $aPath, $refType, $aSource, $refPath, $browser, $os, $aDevice, false, $day, $weekday, $hour, $humansOnly, $botReason);
+				[$whereB, $paramsB] = stats_where($range, $bPath, $refType, $bSource, $refPath, $browser, $os, $bDevice, false, $day, $weekday, $hour, $humansOnly, $botReason);
 				$snapA = stats_compare_snapshot($pdo, $whereA, $paramsA);
 				$snapB = stats_compare_snapshot($pdo, $whereB, $paramsB);
 				$compareRows = [
@@ -1680,6 +1690,9 @@ if ($authed) {
 				SUM(CASE WHEN duration_sec IS NOT NULL THEN 1 ELSE 0 END) AS known
 			FROM pageviews WHERE $whereSql AND ref_type <> 'internal'
 			GROUP BY ref_type, ref_source, ref_host ORDER BY views DESC LIMIT 50", $params);
+		$externalReferrers = array_values(array_filter($referrers, static function (array $row): bool {
+			return (string)($row['ref_type'] ?? '') === 'external';
+		}));
 
 		foreach ($referrers as $row) {
 			$s = (string)$row['ref_source'];
@@ -2373,14 +2386,7 @@ body.feedback-view .analytics-only-inline { visibility: hidden !important; point
 .feedback-bridge .fb-latest .what { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .feedback-bridge .fb-latest .tag { color: var(--accent); font-size: 10px; font-weight: 700; white-space: nowrap; }
 .feedback-embed { margin: 0; }
-.feedback-embed iframe { display: block; width: 100%; height: calc(100vh - 190px); min-height: 560px; border: 0; border-radius: 12px; background: transparent; }
-body.feedback-view { overflow: hidden; }
-body.feedback-view .feedback-embed { height: calc(100vh - 190px); min-height: 560px; }
-body.feedback-view .feedback-embed iframe { height: 100%; }
-@media (max-width: 720px) {
-	.feedback-embed iframe { height: calc(100dvh - 170px); min-height: 480px; }
-	body.feedback-view .feedback-embed { height: calc(100dvh - 170px); min-height: 480px; }
-}
+.feedback-embed iframe { display: block; width: 100%; height: 600px; min-height: 400px; border: 0; border-radius: 12px; background: transparent; }
 .inline { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
 .switch { display: inline-flex; gap: 8px; align-items: center; color: var(--muted); font-size: 12px; cursor: pointer; }
 .btn, button.btn { border: 1px solid var(--line); background: var(--panel); color: var(--text); padding: 8px 12px; border-radius: 9px; cursor: pointer; font: inherit; display: inline-block; }
@@ -2886,7 +2892,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			</div>
 		</div>
 
-		<?php if ($path !== '' || $refType !== '' || $source !== '' || $refPath !== '' || $browser !== '' || $os !== '' || $device !== '' || $day !== '' || $weekday > 0 || $hour >= 0 || $humansOnly): ?>
+		<?php if ($path !== '' || $refType !== '' || $source !== '' || $refPath !== '' || $browser !== '' || $os !== '' || $device !== '' || $botReason !== '' || $day !== '' || $weekday > 0 || $hour >= 0 || $humansOnly): ?>
 			<div class="chips">
 				<?php if ($day !== ''): ?>
 					<span class="chip">Day: <?php echo stats_h($day); ?> <a href="?<?php echo stats_h(stats_query(['day' => '', 'page' => 1])); ?>" aria-label="Remove day filter">×</a></span>
@@ -2899,6 +2905,9 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 				<?php endif; ?>
 				<?php if ($humansOnly): ?>
 					<span class="chip">Humans only <a href="?<?php echo stats_h(stats_query(['humans' => '', 'page' => 1])); ?>" aria-label="Include bots again">×</a></span>
+				<?php endif; ?>
+				<?php if ($botReason !== ''): ?>
+					<span class="chip">Bot: <?php echo stats_h($botReason); ?> <a href="?<?php echo stats_h(stats_query(['bot_reason' => '', 'page' => 1])); ?>" aria-label="Remove bot filter">×</a></span>
 				<?php endif; ?>
 				<?php if ($path !== ''): ?>
 					<span class="chip">Page: <?php echo stats_h($titles[$path] ?? $path); ?> <a href="?<?php echo stats_h(stats_query(['path' => '', 'page' => 1])); ?>" aria-label="Remove page filter">×</a></span>
@@ -3817,6 +3826,29 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<div class="empty">No data.</div>
 				<?php endif; ?>
 			</div>
+			<div class="card card-full" data-tab-group="referrers">
+				<h2>External referrers</h2>
+				<?php if ($externalReferrers): ?>
+					<div class="table-wrap">
+						<table aria-label="External referrers">
+							<thead><tr><th>Site</th><th>Host</th><th class="num">Views</th><th class="num">Share</th></tr></thead>
+							<tbody>
+							<?php foreach ($externalReferrers as $ext): $extViews = (int)$ext['views']; $extShare = $views > 0 ? 100 * $extViews / $views : 0; ?>
+								<tr>
+									<td class="ref"><a href="?<?php echo stats_h(stats_query(['ref_type' => 'external', 'source' => $ext['ref_source'], 'page' => 1])); ?>"><?php echo stats_h($ext['ref_source'] !== '' ? $ext['ref_source'] : $ext['ref_host']); ?></a></td>
+									<td class="ref"><?php echo stats_h($ext['ref_host'] !== '' ? $ext['ref_host'] : '—'); ?></td>
+									<td class="num"><?php echo mn_analytics_format_number($extViews); ?></td>
+									<td class="num"><?php echo stats_h(number_format($extShare, 1, '.', ',')); ?> %</td>
+								</tr>
+							<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+					<p class="ref" style="margin-bottom:0;">External referrers keep only the hostname — never the external path, query or search term.</p>
+				<?php else: ?>
+					<div class="empty">No external referrers in the selected period.</div>
+				<?php endif; ?>
+			</div>
 		</div>
 
 		<div class="card" data-tab-group="compare" id="compare-tab">
@@ -4065,7 +4097,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 							<tbody>
 							<?php foreach ($botReasons as $bot): $reason = trim((string)($bot['bot_reason'] ?? '')); $reasonLabel = $reason !== '' ? $reason : 'Unknown bot'; $botViews = (int)$bot['views']; $botShare = $botTotal > 0 ? 100 * $botViews / $botTotal : 0; ?>
 								<tr>
-									<td><button type="button" class="bot-reason" data-reason="<?php echo stats_h($reasonLabel); ?>"><?php echo stats_h($reasonLabel); ?></button></td>
+									<td><button type="button" class="bot-reason" data-reason="<?php echo stats_h($reasonLabel); ?>"><?php echo stats_h($reasonLabel); ?></button> <a class="slug" href="?<?php echo stats_h(stats_query(['bot_reason' => $reason, 'page' => 1])); ?>">filter</a></td>
 									<td class="num"><?php echo mn_analytics_format_number($botViews); ?></td>
 									<td class="num"><?php echo stats_h(number_format($botShare, 1, '.', ',')); ?> %</td>
 								</tr>
@@ -4637,7 +4669,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		return minutes + ' m' + (seconds ? ' ' + seconds + ' s' : '');
 	}
 
-	function urlWith(overrides) {
+	function urlWith(overrides, hash) {
 		var params = new URLSearchParams(currentQuery);
 		Object.keys(overrides || {}).forEach(function (key) {
 			var value = overrides[key];
@@ -4647,16 +4679,25 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				params.set(key, value);
 			}
 		});
+		params.set('view', 'analytics');
 		var query = params.toString();
-		return statsBase + (query ? '?' + query : '') + '#overview';
+		return statsBase + (query ? '?' + query : '') + '#' + (hash || 'overview');
 	}
 
-	function goWith(overrides) {
-		window.location.href = urlWith(overrides);
+	function goWith(overrides, hash) {
+		window.location.href = urlWith(overrides, hash);
 	}
 
 	function applyFilter(kind, value) {
 		if (!kind) {
+			return;
+		}
+		if (kind === 'os' && String(value).toLowerCase() === 'bot') {
+			goWith({ os: '', device: 'bot' }, 'tech');
+			return;
+		}
+		if (kind === 'device' && String(value).toLowerCase() === 'bot') {
+			goWith({ device: 'bot' }, 'tech');
 			return;
 		}
 		var overrides = {};
@@ -4671,6 +4712,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		if (current.get('view')) {
 			params.set('view', current.get('view'));
 		}
+		params.set('view', 'analytics');
 		window.location.href = statsBase + '?' + params.toString() + '#overview';
 	}
 
@@ -5805,13 +5847,6 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		var embed = document.getElementById('feedback-embed');
 		var frame = document.getElementById('feedback-frame');
 		var links = Array.prototype.slice.call(document.querySelectorAll('.admin-nav a[data-admin-view]'));
-		function sizeFeedbackFrame() {
-			if (!embed || !frame || embed.hidden) return;
-			var top = frame.getBoundingClientRect().top;
-			var height = Math.max(360, Math.round(window.innerHeight - top - 12));
-			frame.style.height = height + 'px';
-			embed.style.height = height + 'px';
-		}
 		function showView(view, updateUrl) {
 			var feedback = view === 'feedback';
 			document.body.classList.toggle('feedback-view', feedback);
@@ -5840,7 +5875,11 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				} catch (ignored) {}
 			}
 			if (feedback) {
-				requestAnimationFrame(sizeFeedbackFrame);
+				if (frame) {
+					try { frame.contentWindow.postMessage({ type: 'mn-feedback-measure' }, window.location.origin); } catch (ignored) {}
+				}
+				requestAnimationFrame(measureFeedbackFrame);
+				setTimeout(measureFeedbackFrame, 200);
 			} else {
 				setTimeout(function () {
 					if (window.__mnRenderStatsCharts) window.__mnRenderStatsCharts();
@@ -5848,9 +5887,31 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				}, 60);
 			}
 		}
-		window.addEventListener('resize', function () {
-			requestAnimationFrame(sizeFeedbackFrame);
+		function measureFeedbackFrame() {
+			if (!frame || !embed || embed.hidden) return;
+			var doc = null;
+			try { doc = frame.contentDocument; } catch (ignored) {}
+			if (!doc || !doc.body) return;
+			var page = doc.querySelector('.page');
+			var height = Math.max(doc.body.scrollHeight, page ? page.getBoundingClientRect().height : 0);
+			if (!isFinite(height) || height <= 0) return;
+			height = Math.max(400, Math.min(100000, Math.ceil(height)));
+			frame.style.height = height + 'px';
+			embed.style.height = height + 'px';
+		}
+		window.addEventListener('message', function (event) {
+			if (event.origin !== window.location.origin) return;
+			var data = event.data || {};
+			if (data.type !== 'mn-feedback-height') return;
+			setTimeout(measureFeedbackFrame, 30);
 		});
+		if (frame) {
+			frame.addEventListener('load', function () {
+				try { frame.contentWindow.postMessage({ type: 'mn-feedback-measure' }, window.location.origin); } catch (ignored) {}
+				measureFeedbackFrame();
+				setTimeout(measureFeedbackFrame, 200);
+			});
+		}
 		links.forEach(function (link) {
 			link.addEventListener('click', function (event) {
 				if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
