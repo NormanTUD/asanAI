@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>0→1 Loop Engineering · Playbook</title>
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --bg:#07080c;
+  --bg-elev:#0d0f16;
+  --bg-card:#11141d;
+  --bg-hover:#161a26;
+  --border:#1f2433;
+  --border-glow:#2d3448;
+  --txt:#e8ebf2;
+  --txt-dim:#8e97ad;
+  --txt-faint:#5a6276;
+  --acc:#6ee7b7;
+  --acc2:#38bdf8;
+  --acc3:#a78bfa;
+  --warn:#fbbf24;
+  --danger:#fb7185;
+  --mono:'SF Mono',ui-monospace,'JetBrains Mono',Menlo,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI',system-ui,sans-serif;
+  --r:14px;
+  --r-sm:8px;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 32px -8px rgba(0,0,0,.6);
+  --shadow-lg:0 2px 4px rgba(0,0,0,.5),0 24px 64px -16px rgba(0,0,0,.8);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+/* ambient glow */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%,rgba(110,231,183,.08),transparent),
+    radial-gradient(ellipse 60% 40% at 85% 10%,rgba(167,139,250,.06),transparent),
+    radial-gradient(ellipse 50% 50% at 10% 40%,rgba(56,189,248,.05),transparent);
+}
+::selection{background:rgba(110,231,183,.25);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border-glow);border-radius:5px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:#3d4660}
+
+/* ============ LAYOUT ============ */
+.wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:0 24px}
+
+/* ============ HEADER ============ */
+header{
+  padding:72px 0 44px;
+  text-align:center;
+  position:relative;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--acc);
+  background:rgba(110,231,183,.08);
+  border:1px solid rgba(110,231,183,.2);
+  padding:6px 14px;border-radius:100px;margin-bottom:24px;
+}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+h1{
+  font-size:clamp(2.4rem,6vw,4.2rem);
+  font-weight:800;line-height:1.02;letter-spacing:-.035em;
+  background:linear-gradient(135deg,#fff 10%,var(--acc) 55%,var(--acc2) 95%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:18px;
+}
+.sub{font-size:clamp(1rem,2vw,1.2rem);color:var(--txt-dim);max-width:640px;margin:0 auto 8px}
+.sub strong{color:var(--txt);font-weight:600}
+.meta{font-family:var(--mono);font-size:12px;color:var(--txt-faint);margin-top:16px}
+
+/* ============ NAV ============ */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(7,8,12,.82);
+  backdrop-filter:blur(20px) saturate(180%);
+  border-bottom:1px solid var(--border);
+  margin-bottom:48px;
+}
+.nav-inner{
+  max-width:1240px;margin:0 auto;padding:0 24px;
+  display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;
+}
+.nav-inner::-webkit-scrollbar{display:none}
+.nav-btn{
+  background:none;border:none;color:var(--txt-dim);
+  font-family:var(--sans);font-size:13.5px;font-weight:500;
+  padding:16px 14px;cursor:pointer;white-space:nowrap;
+  border-bottom:2px solid transparent;transition:all .18s;
+}
+.nav-btn:hover{color:var(--txt)}
+.nav-btn.on{color:var(--acc);border-bottom-color:var(--acc)}
+
+/* ============ SECTIONS ============ */
+.panel{display:none;animation:fade .35s ease}
+.panel.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sec-head{margin-bottom:28px}
+.sec-head h2{
+  font-size:1.75rem;font-weight:700;letter-spacing:-.02em;margin-bottom:6px;
+  display:flex;align-items:center;gap:12px;
+}
+.sec-head h2 .ico{
+  width:34px;height:34px;border-radius:9px;
+  display:grid;place-items:center;font-size:17px;
+  background:linear-gradient(135deg,rgba(110,231,183,.15),rgba(56,189,248,.12));
+  border:1px solid rgba(110,231,183,.22);
+}
+.sec-head p{color:var(--txt-dim);font-size:14.5px;max-width:720px}
+
+/* ============ CARDS ============ */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.card{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:22px;
+  transition:border-color .2s,transform .2s,box-shadow .2s;
+  position:relative;overflow:hidden;
+}
+.card:hover{border-color:var(--border-glow);transform:translateY(-2px);box-shadow:var(--shadow)}
+.card h3{font-size:1.02rem;font-weight:650;margin-bottom:10px;letter-spacing:-.01em}
+.card p{font-size:14px;color:var(--txt-dim);line-height:1.6}
+
+/* stat cards */
+.stat{text-align:left;padding:20px}
+.stat .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:8px}
+.stat .val{font-size:1.9rem;font-weight:750;letter-spacing:-.03em;line-height:1;margin-bottom:6px}
+.stat .note{font-size:12.5px;color:var(--txt-dim)}
+.stat.a .val{color:var(--acc)}
+.stat.b .val{color:var(--acc2)}
+.stat.c .val{color:var(--acc3)}
+.stat.w .val{color:var(--warn)}
+.stat.d .val{color:var(--danger)}
+
+/* ============ CALLOUTS ============ */
+.call{
+  border-radius:var(--r);padding:18px 20px;margin:18px 0;
+  border-left:3px solid;background:var(--bg-elev);
+}
+.call .tag{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:600;margin-bottom:8px;display:block;
+}
+.call p{font-size:14px;color:var(--txt-dim)}
+.call.key{border-color:var(--acc);background:linear-gradient(90deg,rgba(110,231,183,.07),transparent 70%)}
+.call.key .tag{color:var(--acc)}
+.call.anti{border-color:var(--danger);background:linear-gradient(90deg,rgba(251,113,133,.07),transparent 70%)}
+.call.anti .tag{color:var(--danger)}
+.call.tip{border-color:var(--acc2);background:linear-gradient(90deg,rgba(56,189,248,.07),transparent 70%)}
+.call.tip .tag{color:var(--acc2)}
+.call.warn{border-color:var(--warn);background:linear-gradient(90deg,rgba(251,191,36,.07),transparent 70%)}
+.call.warn .tag{color:var(--warn)}
+
+/* ============ CALC ============ */
+.calc{
+  background:linear-gradient(145deg,var(--bg-card),var(--bg-elev));
+  border:1px solid var(--border-glow);border-radius:18px;padding:28px;
+}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:18px;margin-bottom:24px}
+.field label{
+  display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--txt-faint);margin-bottom:8px;
+}
+.field input,.field select{
+  width:100%;background:var(--bg);border:1px solid var(--border);
+  color:var(--txt);font-family:var(--mono);font-size:14px;
+  padding:10px 12px;border-radius:var(--r-sm);transition:border-color .18s,box-shadow .18s;
+}
+.field input:focus,.field select:focus{
+  outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(110,231,183,.12);
+}
+.field .hint{font-size:11.5px;color:var(--txt-faint);margin-top:6px}
+.out{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;
+  padding-top:22px;border-top:1px solid var(--border);
+}
+.out-box{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:var(--r-sm);padding:16px}
+.out-box .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:7px}
+.out-box .v{font-family:var(--mono);font-size:1.35rem;font-weight:700;letter-spacing:-.02em}
+.out-box.hero{background:linear-gradient(135deg,rgba(110,231,183,.1),rgba(56,189,248,.06));border-color:rgba(110,231,183,.3)}
+.out-box.hero .v{color:var(--acc)}
+.verdict{
+  margin-top:18px;padding:14px 18px;border-radius:var(--r-sm);
+  font-size:13.5px;line-height:1.55;display:flex;gap:12px;align-items:flex-start;
+}
+.verdict .em{font-size:19px;line-height:1}
+
+/* ============ DECISION ENGINE ============ */
+.quiz{display:grid;gap:14px}
+.q{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:20px}
+.q .qt{font-size:14.5px;font-weight:600;margin-bottom:14px}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opt{
+  background:var(--bg);border:1px solid var(--border);color:var(--txt-dim);
+  font-family:var(--sans);font-size:13px;padding:8px 15px;border-radius:100px;
+  cursor:pointer;transition:all .16s;
+}
+.opt:hover{border-color:var(--border-glow);color:var(--txt)}
+.opt.on{background:rgba(110,231,183,.13);border-color:var(--acc);color:var(--acc);font-weight:600}
+.result{
+  margin-top:20px;padding:24px;border-radius:var(--r);
+  background:linear-gradient(145deg,rgba(110,231,183,.08),rgba(56,189,248,.04));
+  border:1px solid rgba(110,231,183,.25);display:none;
+}
+.result.on{display:block;animation:fade .3s}
+.result .rtag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
+.result h4{font-size:1.3rem;font-weight:700;margin-bottom:12px;letter-spacing:-.02em}
+.result .rbody{font-size:14px;color:var(--txt-dim);line-height:1.7}
+.result ul{margin:12px 0 0 18px}
+.result li{margin-bottom:6px}
+.result code{font-family:var(--mono);font-size:12.5px;background:rgba(0,0,0,.35);padding:2px 6px;border-radius:4px;color:var(--acc2)}
+
+/* ============ TABLES ============ */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);background:var(--bg-card)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{
+  text-align:left;padding:13px 16px;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--txt-faint);
+  background:rgba(0,0,0,.25);border-bottom:1px solid var(--border);white-space:nowrap;
+}
+td{padding:13px 16px;border-bottom:1px solid rgba(31,36,51,.6);color:var(--txt-dim);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--bg-hover)}
+td strong{color:var(--txt);font-weight:600}
+.pill{
+  display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:600;
+  padding:3px 9px;border-radius:100px;letter-spacing:.04em;
+}
+.pill.g{background:rgba(110,231,183,.14);color:var(--acc)}
+.pill.b{background:rgba(56,189,248,.14);color:var(--acc2)}
+.pill.p{background:rgba(167,139,250,.14);color:var(--acc3)}
+.pill.y{background:rgba(251,191,36,.14);color:var(--warn)}
+.pill.r{background:rgba(251,113,133,.14);color:var(--danger)}
+
+/* ============ CHECKLIST ============ */
+.ck-group{margin-bottom:26px}
+.ck-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--border);
+}
+.ck-head h3{font-size:.95rem;font-weight:650;letter-spacing:-.01em}
+.ck-count{font-family:var(--mono);font-size:11.5px;color:var(--txt-faint)}
+.ck{
+  display:flex;gap:13px;align-items:flex-start;
+  padding:12px 15px;background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--r-sm);margin-bottom:7px;cursor:pointer;transition:all .16s;
+}
+.ck:hover{border-color:var(--border-glow);background:var(--bg-hover)}
+.ck.done{opacity:.52;border-color:rgba(110,231,183,.22)}
+.ck.done .ck-txt{text-decoration:line-through}
+.box{
+  width:19px;height:19px;border:1.5px solid var(--border-glow);border-radius:5px;
+  flex-shrink:0;margin-top:1px;display:grid;place-items:center;
+  font-size:12px;color:var(--bg);transition:all .16s;
+}
+.ck.done .box{background:var(--acc);border-color:var(--acc)}
+.ck-txt{font-size:13.5px;line-height:1.5}
+.ck-txt .why{display:block;font-size:12px;color:var(--txt-faint);margin-top:3px}
+.bar{height:5px;background:var(--bg-elev);border-radius:3px;overflow:hidden;margin-bottom:24px}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .4s cubic-bezier(.4,0,.2,1);border-radius:3px}
+
+/* ============ CODE ============ */
+.code{
+  background:#05060a;border:1px solid var(--border);border-radius:var(--r);
+  overflow:hidden;margin:14px 0;
+}
+.code-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 15px;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border);
+}
+.code-bar .name{font-family:var(--mono);font-size:11.5px;color:var(--txt-dim)}
+.cp{
+  background:none;border:1px solid var(--border);color:var(--txt-dim);
+  font-family:var(--mono);font-size:10.5px;padding:4px 11px;border-radius:5px;
+  cursor:pointer;transition:all .16s;letter-spacing:.04em;
+}
+.cp:hover{border-color:var(--acc);color:var(--acc)}
+.cp.ok{background:rgba(110,231,183,.13);border-color:var(--acc);color:var(--acc)}
+pre{padding:17px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.65}
+code{font-family:var(--mono)}
+.kw{color:#c084fc}.fn{color:#60a5fa}.st{color:#86efac}.cm{color:#475569;font-style:italic}.nm{color:#fbbf24}
+
+/* ============ TIMELINE ============ */
+.week{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);
+  padding:22px;margin-bottom:14px;position:relative;
+}
+.week::before{
+  content:'';position:absolute;left:0;top:22px;bottom:22px;width:3px;
+  background:linear-gradient(180deg,var(--acc),var(--acc2));border-radius:0 3px 3px 0;
+}
+.week-h{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;padding-left:14px}
+.week-h .n{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc)}
+.week-h h3{font-size:1.1rem;font-weight:680;letter-spacing:-.015em}
+.week-h .hrs{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--txt-faint)}
+.week-body{padding-left:14px}
+
+/* ============ FRAMEWORKS ============ */
+.fw{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:14px}
+.fw-h{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.fw-badge{
+  font-family:var(--mono);font-size:1.15rem;font-weight:800;letter-spacing:.08em;
+  padding:7px 14px;border-radius:9px;
+  background:linear-gradient(135deg,rgba(110,231,183,.14),rgba(56,189,248,.1));
+  border:1px solid rgba(110,231,183,.25);color:var(--acc);
+}
+.fw-h .expand{font-size:13px;color:var(--txt-dim);font-weight:500}
+.fw-best{font-family:var(--mono);font-size:11.5px;color:var(--acc2);margin:10px 0 14px}
+.fw-steps{display:grid;gap:9px}
+.fw-step{display:flex;gap:12px;font-size:13.5px;line-height:1.55}
+.fw-step .sn{
+  font-family:var(--mono);font-size:11px;font-weight:700;color:var(--acc);
+  flex-shrink:0;width:20px;height:20px;border-radius:5px;
+  background:rgba(110,231,183,.1);display:grid;place-items:center;margin-top:2px;
+}
+.fw-step b{color:var(--txt)}
+.fw-step span{color:var(--txt-dim)}
+
+/* ============ SEARCH ============ */
+.search{
+  width:100%;background:var(--bg-card);border:1px solid var(--border);
+  color:var(--txt);font-family:var(--sans);font-size:14px;
+  padding:12px 16px;border-radius:var(--r-sm);margin-bottom:18px;transition:border-color .18s;
+}
+.search:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(110,231,183,.1)}
+.search::placeholder{color:var(--txt-faint)}
+
+/* ============ FOOTER ============ */
+footer{
+  margin-top:72px;padding:32px 0 48px;border-top:1px solid var(--border);
+  text-align:center;color:var(--txt-faint);font-size:12.5px;
+}
+footer code{
+  font-family:var(--mono);font-size:11.5px;
+  color:var(--acc);background:rgba(110,231,183,.07);
+  padding:2px 7px;border-radius:5px;
+}
+footer .ft-logo{
+  font-weight:700;font-size:13px;color:var(--txt-dim);
+  letter-spacing:-.01em;margin-bottom:8px;
+}
+footer .ft-line{max-width:620px;margin:0 auto;line-height:1.7}
+
+/* ============ TOAST ============ */
+#toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(90px);
+  background:var(--bg-card);border:1px solid var(--acc);
+  color:var(--acc);font-family:var(--mono);font-size:12.5px;
+  padding:11px 22px;border-radius:100px;z-index:999;
+  box-shadow:var(--shadow-lg);opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;
+}
+#toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:720px){
+  .wrap{padding:0 16px}
+  header{padding:48px 0 32px}
+  .calc{padding:20px}
+  .card{padding:18px}
+  .sec-head h2{font-size:1.45rem}
+  .out-box .v{font-size:1.15rem}
+}
+@media print{
+  nav,.cp,#toast{display:none}
+  .panel{display:block!important}
+  body{background:#fff;color:#000}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow"><span class="dot"></span>0→1 Loop Engineering · 2026 Edition</div>
+    <h1>Das Agent Playbook</h1>
+    <p class="sub">Alles aus dem Buch, was du <strong>heute</strong> anwenden kannst. Interaktiv, berechenbar, abhakbar.</p>
+    <p class="meta">20 Kapitel · 7 Appendices · 100 Patterns → destilliert zu 9 nutzbaren Werkzeugen</p>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner" id="nav"></div>
+</nav>
+
+<div class="wrap">
+
+<!-- ========== DASHBOARD ========== -->
+<section class="panel on" id="p-dash">
+  <div class="sec-head">
+    <h2><span class="ico">◈</span>Die Zahlen, die zählen</h2>
+    <p>Wenn du nur eine Seite aus diesem Buch behältst — diese. Diese Werte sind deine Baselines für jedes Design-Review, jedes Interview und jedes Postmortem.</p>
+  </div>
+
+  <div class="grid g4" style="margin-bottom:28px">
+    <div class="card stat a"><div class="lbl">Context-Regel</div><div class="val">70%</div><div class="note">Max. Füllung mit History. 30% bleiben Reasoning-Budget.</div></div>
+    <div class="card stat b"><div class="lbl">Tool-Limit</div><div class="val">5–15</div><div class="note">Ab 30 Tools sinkt die Auswahlgenauigkeit messbar.</div></div>
+    <div class="card stat c"><div class="lbl">Prompt Caching</div><div class="val">−90%</div><div class="note">Input-Kosten bei wiederholten System-Prompts.</div></div>
+    <div class="card stat w"><div class="lbl">Model Routing</div><div class="val">40–70%</div><div class="note">Kostenersparnis durch Tiering. Höchster ROI.</div></div>
+    <div class="card stat d"><div class="lbl">Cycle-Threshold</div><div class="val">3</div><div class="note">Identische (tool, args) Calls → Intervention.</div></div>
+    <div class="card stat a"><div class="lbl">Semantic Cache</div><div class="val">0.95</div><div class="note">Similarity. Bei 0.90: ~8% False Positives.</div></div>
+    <div class="card stat b"><div class="lbl">Prod-Ready</div><div class="val">98%</div><div class="note">Success Rate. Bei 95% hat 1 von 20 Usern ein Problem.</div></div>
+    <div class="card stat c"><div class="lbl">Revisionen</div><div class="val">3–4</div><div class="note">Danach „Editing in Circles". +30% / +10% / +3%.</div></div>
+  </div>
+
+  <div class="call key">
+    <span class="tag">Kernthese des Buches</span>
+    <p>Ein Loop-System kostet <strong>multiplikativ</strong>, nicht additiv. Jeder zusätzliche Step multipliziert die API-Kosten. Bei MAX_STEPS=20 à $0.05 kostet ein Runaway-Loop $1.00 — bei 10.000 parallelen Usern sind das $10.000 pro Minute.</p>
+  </div>
+
+  <div class="call anti">
+    <span class="tag">Der $340.000-Vorfall</span>
+    <p>Ein Fintech-Agent verarbeitete 2.400 doppelte Rückerstattungen in 18 Minuten. Root Cause: <strong>kein Idempotency-Check</strong>. Der Loop prüfte nicht, ob die Erstattung bereits erfolgt war. Jede Write-Operation braucht einen Idempotency-Key-Check vor der Ausführung.</p>
+  </div>
+
+  <h3 style="margin:34px 0 14px;font-size:1.05rem;font-weight:650">Loop vs. Pipeline — die Entscheidung</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Dimension</th><th>Traditionelle Pipeline</th><th>Loop-System</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Control Flow</strong></td><td>Deterministisch, codierte Pfade</td><td>Dynamisch, modellgetrieben</td></tr>
+        <tr><td><strong>Error Handling</strong></td><td>Try/catch, explizite Fälle</td><td>Selbstkorrektur, Retry mit Kontext</td></tr>
+        <tr><td><strong>State</strong></td><td>DB-Zeilen, Session-Vars</td><td>Context Window + Memory</td></tr>
+        <tr><td><strong>Testing</strong></td><td>Unit- & Integrationstests</td><td>Eval-Suites, Trajectory-Analyse</td></tr>
+        <tr><td><strong>Kostenmodell</strong></td><td>Compute-Zeit</td><td>Token pro Iteration</td></tr>
+        <tr><td><strong>Failure Mode</strong></td><td>Crash oder falscher Output</td><td>Endlosschleife, Halluzination, Drift</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="call tip" style="margin-top:22px">
+    <span class="tag">Faustregel</span>
+    <p>Wenn du ein Flowchart zeichnen kannst, bei dem <strong>alle Branches vorher bekannt sind</strong> → Pipeline. Wenn die Branches davon abhängen, was das Modell zur Laufzeit entdeckt → Loop.</p>
+  </div>
+
+  <h3 style="margin:34px 0 14px;font-size:1.05rem;font-weight:650">Der Loop Engineer's Creed</h3>
+  <div class="grid g3">
+    <div class="card"><h3>1 · Max Steps</h3><p>Jeder Loop hat eine maximale Step-Anzahl. Keine Ausnahmen. Setze sie auf das 95. Perzentil deiner Staging-Runs +30%.</p></div>
+    <div class="card"><h3>2 · Observability</h3><p>Jede Aktion wird geloggt und ist beobachtbar. Ohne Trace kein Debugging — nur Rätselraten.</p></div>
+    <div class="card"><h3>3 · Recovery</h3><p>Jeder Fehler ist entweder behebbar oder eskalierbar. Niemals stillschweigend schlucken.</p></div>
+    <div class="card"><h3>4 · Cost First</h3><p>Kosten sind eine architektonische Constraint erster Klasse — nicht ein Optimierungsproblem für später.</p></div>
+    <div class="card"><h3>5 · Never Done</h3><p>Der Loop ist nicht „fertig", bis er in Production überwacht wird.</p></div>
+    <div class="card" style="border-color:rgba(110,231,183,.3);background:linear-gradient(145deg,rgba(110,231,183,.07),transparent)"><h3 style="color:var(--acc)">+ Success ≠ Termination</h3><p>„Inbox ist leer" ist eine <em>Success Condition</em>, keine <em>Termination Condition</em>. Beide braucht es.</p></div>
+  </div>
+</section>
+
+<!-- ========== CALCULATOR ========== -->
+<section class="panel" id="p-calc">
+  <div class="sec-head">
+    <h2><span class="ico">$</span>Kosten-Rechner</h2>
+    <p>Die Formel aus Kapitel 2 & 13, live. <em>Berechne deine Monatskosten, bevor du eine Zeile Code schreibst.</em> Das ist die wichtigste Zahl des gesamten Projekts.</p>
+  </div>
+
+  <div class="calc">
+    <div class="calc-grid">
+      <div class="field">
+        <label>Requests / Tag</label>
+        <input type="number" id="c-req" value="10000" min="1">
+        <div class="hint">Erwartetes Tagesvolumen</div>
+      </div>
+      <div class="field">
+        <label>Ø Iterationen</label>
+        <input type="number" id="c-iter" value="4" min="1" step="0.5">
+        <div class="hint">Loop-Steps pro Request</div>
+      </div>
+      <div class="field">
+        <label>Tokens / Iteration</label>
+        <input type="number" id="c-tok" value="3000" min="100" step="100">
+        <div class="hint">Input + Output kombiniert</div>
+      </div>
+      <div class="field">
+        <label>Modell-Tier</label>
+        <select id="c-model">
+          <option value="0.001">Haiku-Klasse · $0.001 / 1K</option>
+          <option value="0.01" selected>Sonnet / 4.1-mini · $0.01 / 1K</option>
+          <option value="0.075">Opus-Klasse · $0.075 / 1K</option>
+          <option value="0.0004">Gemini Flash · $0.0004 / 1K</option>
+        </select>
+        <div class="hint">Preis pro 1.000 Tokens</div>
+      </div>
+      <div class="field">
+        <label>Optimierungen</label>
+        <select id="c-opt">
+          <option value="1">Keine · Baseline</option>
+          <option value="0.85">Prompt Caching · −15%</option>
+          <option value="0.60">+ Model Routing · −40%</option>
+          <option value="0.45">+ Semantic Cache · −55%</option>
+          <option value="0.35">+ Step-Reduktion · −65%</option>
+        </select>
+        <div class="hint">Kumulative Effekte (Kap. 13)</div>
+      </div>
+      <div class="field">
+        <label>Manuelle Zeit / Task</label>
+        <input type="number" id="c-min" value="15" min="0">
+        <div class="hint">Minuten, die du ersetzt</div>
+      </div>
+    </div>
+
+    <div class="out">
+      <div class="out-box hero"><div class="k">Pro Request</div><div class="v" id="o-req">—</div></div>
+      <div class="out-box hero"><div class="k">Pro Monat</div><div class="v" id="o-mon">—</div></div>
+      <div class="out-box"><div class="k">Pro Jahr</div><div class="v" id="o-yr">—</div></div>
+      <div class="out-box"><div class="k">Ersparnis / Monat</div><div class="v" id="o-sav">—</div></div>
+      <div class="out-box"><div class="k">ROI</div><div class="v" id="o-roi">—</div></div>
+    </div>
+
+    <div class="verdict" id="o-verdict"></div>
+  </div>
+
+  <div class="call key" style="margin-top:26px">
+    <span class="tag">Die Formel</span>
+    <p style="font-family:var(--mono);font-size:13px;color:var(--txt)">Monat = Requests/Tag × Ø Iterationen × (Tokens / 1000) × Preis/1K × 30</p>
+  </div>
+
+  <div class="grid g2" style="margin-top:20px">
+    <div class="card">
+      <h3>Warum Routing so viel bringt</h3>
+      <p>Opus-Output kostet <strong>187×</strong> mehr als Gemini-Flash-Output. Opus für Klassifikation zu nutzen ist, als würdest du einen Chirurgen zum Fiebermessen rufen. 60–70% des Volumens sind triviale Fälle — route sie zu Haiku.</p>
+    </div>
+    <div class="card">
+      <h3>Output-Tokens sind nicht gratis</h3>
+      <p>Output kostet 5–10× mehr pro Token als Input. Ein Agent, der 2.000 Output-Tokens für eine Aufgabe generiert, die 400 braucht, verbrennt 5× das nötige Budget — bei <em>jedem</em> Call. Setze <code>max_tokens</code> pro Task-Typ.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== DECISION ENGINE ========== -->
+<section class="panel" id="p-arch">
+  <div class="sec-head">
+    <h2><span class="ico">⟋</span>Architektur-Entscheider</h2>
+    <p>Beantworte 6 Fragen → bekomme die empfohlene Architektur mit konkreten Konfigurationswerten. Basiert auf den Entscheidungstabellen aus Kapitel 4, 5 und 7.</p>
+  </div>
+
+  <div class="quiz" id="quiz"></div>
+  <div class="result" id="result"></div>
+</section>
+
+<!-- ========== PATTERNS ========== -->
+<section class="panel" id="p-pat">
+  <div class="sec-head">
+    <h2><span class="ico">◬</span>Die Anti-Patterns</h2>
+    <p>Jedes dieser Muster hat in Production echtes Geld gekostet. Durchsuche sie, bevor du deployst — und nochmal beim Code Review.</p>
+  </div>
+
+  <input class="search" id="search-anti" placeholder="Filtern… (z.B. „retry", „context", „tool")">
+  <div class="grid g2" id="anti-grid"></div>
+</section>
+
+<!-- ========== FRAMEWORKS ========== -->
+<section class="panel" id="p-fw">
+  <div class="sec-head">
+    <h2><span class="ico">⬡</span>Die 5 Frameworks</h2>
+    <p>Mentale Modelle aus Appendix A. Jedes löst eine andere Klasse von Problemen. Lerne sie als Checkliste, nicht als Dogma.</p>
+  </div>
+  <div id="fw-list"></div>
+</section>
+
+<!-- ========== CHECKLIST ========== -->
+<section class="panel" id="p-ck">
+  <div class="sec-head">
+    <h2><span class="ico">✓</span>Production Checklist</h2>
+    <p>Bevor dein Agent echten Traffic sieht. Dein Fortschritt wird lokal gespeichert — schließ den Tab, komm zurück, alles ist noch da.</p>
+  </div>
+
+  <div class="bar"><div class="bar-fill" id="ck-bar"></div></div>
+  <div id="ck-list"></div>
+</section>
+
+<!-- ========== 30 TAGE ========== -->
+<section class="panel" id="p-30">
+  <div class="sec-head">
+    <h2><span class="ico">→</span>30-Tage-Plan</h2>
+    <p>Von null zum deploybaren Agent. Vier Wochen, konkrete Deliverables. Wenn du nur 10h/Woche hast: die markierten Items sind nicht verhandelbar.</p>
+  </div>
+  <div id="plan-list"></div>
+</section>
+
+<!-- ========== INTERVIEW ========== -->
+<section class="panel" id="p-int">
+  <div class="sec-head">
+    <h2><span class="ico">◎</span>Interview-Cheatsheet</h2>
+    <p>Appendix F komprimiert. Generische Antworten über „Best Practices" scoren 3–4/10. Konkrete Zahlen scoren 9–10.</p>
+  </div>
+
+  <h3 style="margin-bottom:14px;font-size:1.05rem;font-weight:650">Numbers to Know</h3>
+  <div class="tbl-wrap" style="margin-bottom:28px">
+    <table>
+      <thead><tr><th>Metrik</th><th>Typisch</th><th>Gutes Ziel</th></tr></thead>
+      <tbody>
+        <tr><td><strong>ReAct Steps / Task</strong></td><td>3–8</td><td><span class="pill g">3–5 simpel · 6–10 komplex</span></td></tr>
+        <tr><td><strong>Tool Call Accuracy</strong></td><td>85–95%</td><td><span class="pill g">95%+ mit guten Descriptions</span></td></tr>
+        <tr><td><strong>Kosten / einfache Query</strong></td><td>$0.01–0.05</td><td><span class="pill b">&lt; $0.03 mit Caching</span></td></tr>
+        <tr><td><strong>Kosten / komplexer Task</strong></td><td>$0.10–0.50</td><td><span class="pill b">&lt; $0.20 mit Tiering</span></td></tr>
+        <tr><td><strong>Agent Success Rate</strong></td><td>85–95%</td><td><span class="pill g">98%+ für Production</span></td></tr>
+        <tr><td><strong>Context-Auslastung</strong></td><td>40–80%</td><td><span class="pill y">&lt; 70% (30% Reasoning)</span></td></tr>
+        <tr><td><strong>Eval-Suite-Größe</strong></td><td>20–50 Cases</td><td><span class="pill g">50+ alle 4 Kategorien</span></td></tr>
+        <tr><td><strong>Latenz / Step</strong></td><td>2–10s</td><td><span class="pill b">&lt; 5s (P95)</span></td></tr>
+        <tr><td><strong>Retry Success</strong></td><td>60–80%</td><td><span class="pill g">90%+ mit Backoff + Jitter</span></td></tr>
+        <tr><td><strong>Cache Hit Rate</strong></td><td>10–30%</td><td><span class="pill b">25%+ für Support-Agents</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="margin-bottom:14px;font-size:1.05rem;font-weight:650">Eval-Suite-Taxonomie</h3>
+  <div class="tbl-wrap" style="margin-bottom:28px">
+    <table>
+      <thead><tr><th>Kategorie</th><th>Zweck</th><th>Anteil</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Happy Path</strong></td><td>Standard-Tasks, die immer funktionieren müssen</td><td><span class="pill g">40–50%</span></td></tr>
+        <tr><td><strong>Edge Cases</strong></td><td>Ungewöhnliche Inputs, die Robustheit testen</td><td><span class="pill b">20–30%</span></td></tr>
+        <tr><td><strong>Adversarial</strong></td><td>Inputs, die gezielt Failures provozieren</td><td><span class="pill y">15–20%</span></td></tr>
+        <tr><td><strong>Regression</strong></td><td>Vergangene Failures, die nicht wiederkehren dürfen</td><td><span class="pill p">10–15%</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="call warn">
+    <span class="tag">Der klassische Fehler</span>
+    <p>95% Happy-Path-Pass-Rate klingt production-ready — bis du merkst, dass Happy Path die einfachsten 40–50% deiner Suite sind. Ein System mit 95% Happy Path aber nur 60% Adversarial ist <strong>nicht</strong> production-ready. Gate dein Deployment auf alle vier Kategorien.</p>
+  </div>
+
+  <h3 style="margin:30px 0 14px;font-size:1.05rem;font-weight:650">Kostenvergleich Model Tiers</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Tier</th><th>Input / 1M</th><th>Output / 1M</th><th>Wofür</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill g">Cheap</span> Haiku 3.5</td><td>$0.80</td><td>$4.00</td><td>Klassifikation, Routing, Extraktion</td></tr>
+        <tr><td><span class="pill b">Mid</span> Sonnet 4</td><td>$3.00</td><td>$15.00</td><td>Tool Use, Code Gen, Analyse</td></tr>
+        <tr><td><span class="pill p">Premium</span> Opus 4</td><td>$15.00</td><td>$75.00</td><td>Planning, komplexes Reasoning, Judging</td></tr>
+        <tr><td><span class="pill g">Ultra-cheap</span> Gemini Flash</td><td>$0.10</td><td>$0.40</td><td>Höchstes Volumen, niedrigste Kosten</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="call tip" style="margin-top:22px">
+    <span class="tag">Interview-Hack</span>
+    <p>Nenne deine Kostenanalyse <strong>ungefragt</strong>. Die meisten Kandidaten überspringen sie komplett. „$0.04–0.09 pro Ticket versus $15 Personalkosten, $2.000–4.500/Monat versus $750.000" zeigt ökonomisches Bewusstsein — das trennt Senior von Junior.</p>
+  </div>
+</section>
+
+<!-- ========== CODE ========== -->
+<section class="panel" id="p-code">
+  <div class="sec-head">
+    <h2><span class="ico">&lt;/&gt;</span>Copy-Paste Snippets</h2>
+    <p>Die fünf Bausteine, die jeder Production-Agent braucht. Jeder davon verhindert eine komplette Fehlerklasse.</p>
+  </div>
+  <div id="code-list"></div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="ft-logo">0→1 Loop Engineering Playbook · 2026</div>
+    <div class="ft-line">
+      Interaktive Destillation von 20 Kapiteln, 7 Appendices und 100 Design-Patterns.
+      Gebaut als Single-File-Playbook — <code>Strg+S</code> speichern, offline nutzen, Fortschritt bleibt lokal.
+    </div>
+  </div>
+</footer>
+
+<div id="toast">Kopiert</div>
+
+<script>
+/* ============================================================
+   DATA LAYER
+   ============================================================ */
+
+const NAV = [
+  {id:'dash', label:'◈ Dashboard'},
+  {id:'calc', label:'$ Kosten-Rechner'},
+  {id:'arch', label:'⟋ Architektur-Entscheider'},
+  {id:'pat',  label:'◬ Anti-Patterns'},
+  {id:'fw',   label:'⬡ Frameworks'},
+  {id:'ck',   label:'✓ Prod-Checklist'},
+  {id:'30',   label:'→ 30-Tage-Plan'},
+  {id:'int',  label:'◎ Interview'},
+  {id:'code', label:'</> Snippets'},
+];
+
+/* ---------- ANTI-PATTERNS ---------- */
+const ANTI = [
+  {t:'Missing Idempotency Check', c:'Loop Control', d:'Der Loop prüft nicht, ob eine Aktion bereits ausgeführt wurde, bevor er sie erneut ausführt. Root Cause des $340.000-Fintech-Vorfalls mit 2.400 Doppelerstattungen in 18 Minuten.', f:'Jede Write-Operation bekommt einen Idempotency-Key. Fingerprint der Aktion speichern, bei Match überspringen. Vor jedem Retry: Status der ersten Ausführung abfragen.'},
+  {t:'Framework Dependency Creep', c:'Architektur', d:'Teams starten mit LangChain „nur für die Utilities" und haben nach drei Monaten 40% ihrer Agent-Logik als Framework-Workarounds geschrieben.', f:'Tracke den Anteil aktiv. Über 20% Workaround-Code = Abstraktion kostet mehr als sie bringt. Migrationsfenster: vor Monat 3, nicht nach Monat 12.'},
+  {t:'Thinking Transactionally in a Loop', c:'Mindset', d:'Nur den finalen Output prüfen. 80% der Failures passieren in Intermediate Steps. Ein Agent, der über halluziniertes Reasoning zur richtigen Antwort kommt, hatte Glück — er ist nicht zuverlässig.', f:'Immer die komplette Trajectory loggen und inspizieren. Eine korrekte Antwort mit kaputter Trajectory ist eine Zeitbombe.'},
+  {t:'The Repetition Trap', c:'ReAct', d:'Der Agent ruft dasselbe Tool mit denselben Argumenten wiederholt auf. Ohne Dedup zahlst du für denselben Fehler bis MAX_STEPS.', f:'Call-Signature-Hash (tool_name + JSON args) vor jeder Execution prüfen. Bei Match injizieren: „You already tried this exact call. Try a different approach."'},
+  {t:'Stale Plan Execution', c:'Plan-and-Execute', d:'Der Plan basiert auf Annahmen über Tool-Outputs. Wenn ein Step diese Annahme widerlegt, produzieren die restlichen Steps Müll — bei vollem Budget.', f:'Replanning-Check nach jedem Step, dessen Output überrascht — nicht nur bei expliziten Errors.'},
+  {t:'Tool Count Explosion', c:'Tool Design', d:'Jedes Tool über 15 verwässert die Auswahlfähigkeit des Modells. Ab 30+ Tools sinkt die Selection Accuracy messbar.', f:'Verwandte Operationen unter einem Tool mit „subcommand"-Parameter gruppieren. Frage vor jedem neuen Tool: kann das ein Subcommand sein?'},
+  {t:'Flat Agent Communication', c:'Multi-Agent', d:'Alle Agents dürfen mit allen reden. 10 Agents = 45 Kanäle. Doppelte Arbeit, widersprüchliche Outputs, Conversation-Loops.', f:'Hierarchie vor dem ersten Multi-Agent-Deployment. Teams von 3-4 mit Team-Leads. Reduziert 45 Kanäle auf ~15.'},
+  {t:'Dumping Full History into Context', c:'Memory', d:'Die komplette Conversation in jeden LLM-Call laden. Ein 20-Iterations-Research-Agent sprengt ein 128K-Window bei Iteration 12 und beginnt Instruktionen zu verlieren.', f:'Rolling Compression ab dem ersten Deployment. Landmark-Entries behalten, Routine-Steps komprimieren.'},
+  {t:'Binary Approval Gates', c:'HITL', d:'„Approve oder Reject" ist eine Scheinwahl. Wer nicht blockieren will, stempelt ab. 30% realer Approval-Interaktionen enden in Modifikationen.', f:'Immer eine „Modify"-Option. Plus „Defer" und „Escalate". Ohne Modify-Pfad erzwingst du Full Rejection und verbrennst 3× die Tokens.'},
+  {t:'Shipping on Happy-Path Pass Rate', c:'Evaluation', d:'95% Happy-Path klingt production-ready — bis du merkst, dass Happy Path die einfachsten 40-50% deiner Suite sind.', f:'Deployment auf alle 4 Kategorien gaten: Happy Path, Edge Cases, Adversarial, Regression. 95% Happy / 60% Adversarial ist NICHT production-ready.'},
+  {t:'Polling Logs Instead of Querying Traces', c:'Observability', d:'Trigger: Du liest 500 Zeilen Output, um einen einzigen 12-Step-Run zu verstehen. Ohne strukturierte Spans kannst du nicht rekonstruieren, welcher LLM-Call welche Tool-Invocation erzeugt hat.', f:'Strukturiertes Tracing ab Tag 1. Jeder Failure wird zur Query — nicht zur forensischen Ausgrabung.'},
+  {t:'Retry Without Idempotency', c:'Resilience', d:'Eine nicht-idempotente Operation retryen — Payment, DB-Write, E-Mail — ohne zu prüfen, ob sie bereits erfolgreich war. Schnellster Weg zu Doppelbuchungen.', f:'Jede retry-fähige Aktion trägt einen Idempotency-Key. Retry-Logik fragt das Ergebnis des ersten Versuchs ab, bevor sie erneut feuert.'},
+  {t:'Treating Output Tokens as Free', c:'Cost', d:'Output kostet 5-10× mehr pro Token als Input. Ein Agent, der 2.000 Output-Tokens für eine 400-Token-Aufgabe generiert, verbrennt 5× das nötige Budget — bei jedem Call.', f:'max_tokens pro Task-Typ im ModelRouter setzen. Das Modell explizit zu Prägnanz instruieren.'},
+  {t:'Reading Entire Files for One Function', c:'Coding Agents', d:'Ein 2.000-Zeilen-Modul laden, um eine 40-Zeilen-Funktion zu finden, verbrennt 1.960 Tokens auf Rauschen. Trigger: Agent liest 3+ volle Files bevor er schreibt.', f:'Function-Level-Extraction via AST. Nur die relevante Klasse oder Funktion lesen. 60-80% weniger Context-Verbrauch, keine messbare Qualitätseinbuße.'},
+  {t:'Trusting Model Memory for Recent Facts', c:'Research', d:'Auf Training-Knowledge zurückfallen für zeitkritische Claims, ohne die Quelle zu kennzeichnen. Ohne Citation-Verification halluzinieren Research-Agents 15-25% der Zitate.', f:'Jeder unbelegte Claim gilt per Definition als unverified. Explizite Caveats: „based on training data as of [cutoff] — verify before use."'},
+  {t:'Automating Happy Path, Ignoring Exceptions', c:'Business Process', d:'Ein Invoice-Agent, der 80% saubere Rechnungen verarbeitet und bei 20% Exceptions crasht, hat keine Arbeit gespart — er hat die harten 20% von einer planbaren Queue in ein unplanbares Feuer verschoben.', f:'Alle bekannten Exception-Typen mappen, BEVOR du den Happy Path schreibst. Der Exception Handler ist kein Feature — er ist das Produkt.'},
+  {t:'Revision Loop Without Stopping Condition', c:'Creative', d:'Ohne hartes Revision-Limit loopt der Agent endlos oder oszilliert: Revision 4 macht Revision 3 rückgängig.', f:'Max 3-4 Revisionen. Plus „no significant improvement"-Abbruch: wenn der Min-Score um weniger als 0.05 steigt, stoppen und beste Version zurückgeben.'},
+  {t:'Showing Raw Errors to Users', c:'Product', d:'„anthropic.APIError: 529 Overloaded" oder ein Python-Stacktrace zerstört Vertrauen schneller als eine falsche Antwort.', f:'Globaler Exception Handler, der jeden Error-Typ auf eine menschenlesbare Erklärung mit konkretem nächsten Schritt mappt. Nie einen technischen Error die App-Grenze verlassen lassen.'},
+  {t:'Building Without an Eval Suite', c:'Prozess', d:'Einen Agent bauen, den du nicht messen kannst. Du baust wochenlang ohne Feedback, und dein mentales Modell von „funktioniert" passt nicht zur Produktionsrealität.', f:'10-Case-Eval-Suite, die in unter 2 Minuten bei jedem Code-Change läuft — vor dem Agent. Eval-Driven Development ist TDD für Agents.'},
+  {t:'Never Swallow Errors Silently', c:'Resilience', d:'Exception fangen und weitermachen als wäre nichts passiert. Ein 5-Step-Agent, der in Step 2 still einen Error ignoriert, produziert in Step 5 confident falschen Output.', f:'Jeder Error wird entweder (1) mit explizitem Logging recovered, (2) an einen Menschen eskaliert, oder (3) löst Graceful Degradation aus. Kein vierter Pfad.'},
+];
+
+/* ---------- FRAMEWORKS ---------- */
+const FW = [
+  {n:'LOOP', e:'Listen · Orchestrate · Observe · Perfect', best:'Single-Agent-Tasks mit Qualitätsanspruch — Research, Writing, Analyse', steps:[
+    ['Listen','Input von User, Environment oder Upstream sammeln. Intent parsen. Constraints und Success Criteria identifizieren.'],
+    ['Orchestrate','Richtige Tools, Modelle, Strategien wählen. Execution-Plan bauen. Ressourcen zuteilen (Tokens, Zeit, Cost Budget).'],
+    ['Observe','Plan Step für Step ausführen. Jedes Action-Ergebnis monitoren. Fortschritt tracken. Auf Anomalien achten.'],
+    ['Perfect','Output gegen Success Criteria evaluieren. Selbstkritik. Refinen wenn unter Threshold. Lessons für später loggen.'],
+  ]},
+  {n:'AGENT', e:'Assess · Navigate · Generate · Execute · Track', best:'Multi-Step-Tasks mit realen Seiteneffekten — Business Processes, Automation, Deployments', steps:[
+    ['Assess','Task verstehen. Was ist das Ziel? Welche Constraints? Welche Ressourcen? Was kann schiefgehen?'],
+    ['Navigate','Approach wählen. Tools selektieren. Model-Tier entscheiden. Action-Sequenz planen. Termination Criteria setzen.'],
+    ['Generate','Plan, Draft oder Lösung produzieren. Gewähltes Modell und Tools nutzen. Domänenwissen anwenden.'],
+    ['Execute','Aktionen in der realen Welt ausführen. APIs callen. Files schreiben. Messages senden. Errors in Echtzeit handhaben.'],
+    ['Track','Aufzeichnen was passiert ist. Gegen Success Criteria messen. Kosten und Latenz loggen. State für nächsten Zyklus updaten.'],
+  ]},
+  {n:'CHAIN', e:'Chunk · Hypothesize · Act · Inspect · Next', best:'Komplexe Probleme, die Dekomposition brauchen — Debugging, Datenanalyse, mehrteilige Projekte', steps:[
+    ['Chunk','Problem in handhabbare Teile zerlegen. Jeder Chunk unabhängig lösbar und verifizierbar.'],
+    ['Hypothesize','Für jeden Chunk eine Hypothese zum besten Vorgehen formen. Alternativen erwägen.'],
+    ['Act','Gewählten Approach für den aktuellen Chunk ausführen. Tools nach Bedarf nutzen.'],
+    ['Inspect','Chunk-Ergebnis verifizieren. Hat es die Hypothese erfüllt? Fehler? Integriert es mit vorherigen Chunks?'],
+    ['Next','Zum nächsten Chunk, Kontext und Lessons mitnehmen. Verbleibende Chunks anpassen falls nötig.'],
+  ]},
+  {n:'REFINE', e:'Review · Evaluate · Fix · Iterate · Narrow · Export', best:'Qualitätsverbesserungs-Loops — Editing, Code Review, Optimierung, Polishing', steps:[
+    ['Review','Aktuellen Zustand lesen und verstehen. Was existiert? Was ist der Ausgangspunkt?'],
+    ['Evaluate','Gegen Qualitätskriterien scoren. Lücken und Schwächen identifizieren. Nach Impact priorisieren.'],
+    ['Fix','Das höchstpriorisierte Issue adressieren. Minimale Änderung, die es löst.'],
+    ['Iterate','Nach dem Fix neu evaluieren. Hat sich die Gesamtqualität verbessert? Neue Issues entstanden?'],
+    ['Narrow','Mit steigender Qualität den Fokus verengen. Von strukturellen Issues zu Details. Scope der Änderungen reduzieren.'],
+    ['Export','Wenn Qualität den Threshold erreicht: finalisieren. Formatieren, verpacken, ausliefern.'],
+  ]},
+  {n:'SCALE', e:'Separate · Cache · Async · Log · Evaluate', best:'Agent-Systeme in Produktion skalieren — Infrastructure, DevOps, Platform Engineering', steps:[
+    ['Separate','System in unabhängige Komponenten zerlegen. Jede eigenständig deploybar und skalierbar.'],
+    ['Cache','Wiederholte Berechnungen identifizieren und cachen. Semantic Caching für LLM-Calls, Result-Caching für Tools, State-Caching für Multi-Step-Loops.'],
+    ['Async','Unabhängige Operationen parallel laufen lassen. Nicht auf Ergebnisse warten, die du noch nicht brauchst. Message Queues zur Entkopplung.'],
+    ['Log','Alles instrumentieren. Jeder LLM-Call, Tool-Invocation, State-Change, Decision Point. Strukturierte Logs mit Trace-IDs.'],
+    ['Evaluate','Performance kontinuierlich messen. Changes A/B-testen. Cost, Latenz, Qualität in Produktion monitoren. Bei Regressionen alerten.'],
+  ]},
+];
+
+/* ---------- CHECKLIST ---------- */
+const CK = [
+  {g:'Loop Control', items:[
+    ['MAX_STEPS gesetzt','95. Perzentil der Staging-Runs +30%. Niemals eine runde Zahl aus Gewohnheit.'],
+    ['Wall-Clock-Timeout unabhängig vom Step Count','Ein Agent kann im Step-Limit sein und trotzdem an einer API hängen.'],
+    ['Cost Circuit Breaker aktiv','Budget VOR jedem LLM-Call prüfen, Alert bei 90% — nicht 100%.'],
+    ['Cycle Detection ab 3 identischen (tool, args)','Nicht 2 (feuert bei legitimen Retries), nicht 5 (verbrennt Geld).'],
+    ['Success Condition ≠ Termination Condition','„Inbox leer" ist Success. Du brauchst beides.'],
+  ]},
+  {g:'Tools', items:[
+    ['Tool-Count unter 15','Darüber: Subcommands statt neuer Tools.'],
+    ['Jede Description hat ein "DO NOT USE WHEN"','+30-40% korrekte Tool-Selection gegenüber nacktem Funktionsnamen.'],
+    ['Tool-Result-Cap bei 2.000 Tokens','Compression als Middleware-Layer, nicht im Agent.'],
+    ['Argument-Validation vor Execution','Fängt 80% der Tool-Call-Fehler ab, bevor sie einen API-Call kosten.'],
+    ['Read-Only-Tool für jedes Write-Tool','Nie blind überschreiben.'],
+    ['Idempotency-Key auf allen Write-Operations','Macht Retries sicher. Verhindert die gesamte Runaway-Klasse.'],
+  ]},
+  {g:'Memory & State', items:[
+    ['70%-Regel eingehalten','Max 70% Context mit History. 30% bleiben Reasoning-Budget.'],
+    ['Landmark-Detection implementiert','5 Signale: changes_plan, user_feedback, state_transition, error_recovery, cost > $0.01.'],
+    ['Rolling Compression ab Deployment','Nicht erst wenn das Window voll ist.'],
+    ['State als typisierte Objekte, nicht Freitext','Verhindert Interpretationsfehler, ermöglicht programmatische Checks.'],
+    ['Memory-Deletion-API für GDPR','Nutzer müssen spezifische Erinnerungen löschen können.'],
+  ]},
+  {g:'Evaluation', items:[
+    ['Eval-Suite existiert VOR dem Agent','Eval-Driven Development. 50 Cases am Tag 1.'],
+    ['Alle 4 Kategorien abgedeckt','Happy Path 40-50%, Edge 20-30%, Adversarial 15-20%, Regression 10-15%.'],
+    ['Deployment auf alle Kategorien gegated','Nicht nur auf Happy-Path-Pass-Rate.'],
+    ['Jeder Bug wird zuerst zum Test Case','Der Fix ist nicht „done", bis der neue Test grün ist.'],
+    ['Flaky Tests kategorisiert, nicht gelöscht','Non-Determinismus, den du versteckst, trifft deine User.'],
+    ['Confident-Incorrectness-Kategorie vorhanden','Inputs ohne bekannte Antwort — erwartetes Verhalten ist Hedging oder Refusal.'],
+  ]},
+  {g:'Observability', issues:true, items:[
+    ['Strukturiertes Tracing mit Nested Spans','Nicht print-Statements. Jeder Failure wird zur Query.'],
+    ['Replay-Fähigkeit ab Tag 1','Produktions-Trace lokal deterministisch reproduzieren können.'],
+    ['8 Kern-Metriken auf Dashboard','Steps, Cost, Success Rate, Tool Errors, P95 Latency, Token Utilization, Cycle Rate, Escalation Rate.'],
+    ['Alert-Thresholds mit Baseline definiert','Warning bei <93% Success, Critical bei <85%.'],
+    ['Anomaly Detection aktiv','Action Cycles, Cost Spikes, Error Cascades, Tool Dominance.'],
+  ]},
+  {g:'Resilience', items:[
+    ['Retry mit Exponential Backoff + Jitter','Jitter verhindert Thundering Herd bei parallelen Agents.'],
+    ['Retry-Decision-Matrix befolgt','429 ja (Retry-After beachten), 400/401 nein.'],
+    ['Fallback-Chain für jedes kritische Tool','Primary → Secondary → Training-Knowledge mit Disclaimer.'],
+    ['Circuit Breaker auf externen Services','CLOSED → OPEN (Threshold) → HALF_OPEN (Timeout) → CLOSED.'],
+    ['Graceful Degradation statt Error Page','Bestes mögliches Ergebnis plus klare Kommunikation, was fehlt.'],
+    ['Kein Error wird still geschluckt','Recover + log, eskalieren, oder degradieren. Kein vierter Pfad.'],
+  ]},
+  {g:'Cost', items:[
+    ['Prompt Caching aktiviert','Höchster ROI: −90% Input-Kosten, unter 1 Stunde Implementierung.'],
+    ['Model Routing nach Task-Typ','Haiku für Klassifikation/Routing, Sonnet für Reasoning, Opus für Judging.'],
+    ['max_tokens pro Task-Typ gesetzt','Output kostet 5-10× mehr pro Token als Input.'],
+    ['Semantic Cache bei 0.95 Similarity','Bei 0.90: ~8% False Positives.'],
+    ['Budget Guard mit Forced-Synthesis-Mode','User bekommen immer eine nutzbare Antwort, auch bei Budget-Cap.'],
+    ['Cost-Optimierungen gegen Eval-Suite validiert','Ersparnis ist wertlos, wenn Qualität unter die SLA fällt.'],
+  ]},
+  {g:'Safety', items:[
+    ['Injection-Blocklist mit 8+ Phrasen','Top 9 fangen 94% der Angriffe in Red-Team-Tests.'],
+    ['Destruktive Aktionen permanent geblockt','format_disk, drop_database, rm_rf, disable_firewall.'],
+    ['Confirmation-Required-Liste definiert','delete_file, send_email, make_payment, deploy_to_production.'],
+    ['Tool-Results als Daten behandelt, nicht als Commands','Indirect Prompt Injection: eine Webseite, die "ignore previous instructions" enthält, darf kein Command sein.'],
+    ['Data-Export-Limit gesetzt','Verhindert Exfiltration. Default: 10 MB pro Run.'],
+    ['PII-Scrubbing vor Logging','Regex für SSN/Email/Phone/Kreditkarte, NER für Namen und Adressen.'],
+    ['Kill Switch existiert und wird quartalsweise getestet','Ein Feature Flag, der alle Agents in Sekunden stoppt.'],
+    ['Audit Log für alle Write-Operations','Immutable: Timestamp, Input, Rule, Decision, Confidence.'],
+  ]},
+];
+
+/* ---------- 30-TAGE-PLAN ---------- */
+const PLAN = [
+  {w:'Woche 1', t:'Foundation', h:'15–20 h', items:[
+    ['Tag 1 · Environment','Python 3.11+, venv, API-Keys (Anthropic + OpenAI), GitHub-Repo „loop-engineering-portfolio". <b>Kein LangChain.</b> Erst die Primitives verstehen.',true],
+    ['Tag 2 · Erster Tool-Call','Eine Funktion, die Claude mit Tool-Definition aufruft, das Tool ausführt, das Ergebnis zurückgibt. Die atomare Einheit aller Agent-Systeme.',true],
+    ['Tag 3–4 · ReAct from Scratch','Keine Frameworks. Pures Python. 3 Tools: Web-Search, Calculator, File-Reader. Mit 5 Queries testen, bis es zuverlässig läuft.',true],
+    ['Tag 5–6 · Structured Tracing','AgentTracer implementieren. Jeder Run → JSON-Trace mit Input, jedem Step, Output, Cost, Latency.',false],
+    ['Tag 7 · Dokumentieren & Shippen','README: Was macht der Agent, wie startet man ihn, Architektur-Diagramm, Beispiel-Trace, bekannte Limitationen. Push.',false],
+  ]},
+  {w:'Woche 2', t:'Patterns', h:'15–20 h', items:[
+    ['Tag 8–9 · Plan-and-Execute','ReAct → Plan-and-Execute. Planner erstellt 3–7-Step-Plan, Executor nutzt deinen ReAct-Agent pro Step. Replanning einbauen.',false],
+    ['Tag 10–11 · Eval-Suite','<b>Das wichtigste Deliverable der 30 Tage.</b> 10 Cases: 4 Happy Path, 3 Edge, 2 Adversarial, 1 Regression. Zwei Scoring-Funktionen.',true],
+    ['Tag 12–13 · Error Recovery & Budget','retry_with_backoff Decorator. Cost-Budget-Tracker, der bei $0.50/Run killt. Graceful Degradation. Jeden Recovery-Pfad testen.',true],
+    ['Tag 14 · Refactor & Publish','Saubere Library-Struktur, Type Hints, Docstrings. Eval-Suite final laufen lassen. Tag v1.0.',false],
+  ]},
+  {w:'Woche 3', t:'Application', h:'20–25 h', items:[
+    ['Tag 15–16 · Domain-Agent','Coding Agent (höchster Interview-Wert): read_file, write_file, search_code, run_tests, git_diff. Ziel: 3 von 5 echten GitHub-Bugs fixen.',true],
+    ['Tag 17–18 · Multi-Agent-Pipeline','2 Agents: Researcher + Writer. MessageBus-Protokoll. Messen: ist das Ergebnis besser als ein einzelner Agent? Zu welchem Cost-Aufschlag?',false],
+    ['Tag 19–20 · Cost-Optimierung','Model Routing (Haiku für Klassifikation, Sonnet fürs Reasoning) + Semantic Cache. Ziel: 40%+ Kostenreduktion bei <5% Qualitätsverlust.',true],
+    ['Tag 21 · Demo-Video','5 Minuten: 30s Intro, 3 min Agent bei echter Aufgabe (mit sichtbarem Trace), 1 min Eval-Ergebnisse, 30s „was ich verbessern würde".',true],
+  ]},
+  {w:'Woche 4', t:'Launch', h:'15–20 h', items:[
+    ['Tag 22–23 · Portfolio-Polish','README mit Architektur-Diagramm, Setup das beim ersten Versuch funktioniert, Eval-Suite <2 min, „Was ich anders machen würde"-Sektion.',true],
+    ['Tag 24–25 · Deployment','Streamlit (30 min) oder FastAPI (professioneller). Progress-Anzeige, Trace-Expander, Cost-Metrik.',false],
+    ['Tag 26–27 · Schreiben & Publizieren','Technischer Artikel: Problem, Architektur-Entscheidungen, was funktionierte, quantitative Ergebnisse, was du anders machen würdest.',false],
+    ['Tag 28–29 · Netzwerk','10 Leute kontaktieren, die an Agent-Systemen arbeiten. Frage: „Was ist der schwerste Teil an Production Agents?" Zuhören statt reden.',false],
+    ['Tag 30 · Launch','5 Bewerbungen oder ein internes Pitch-Deck. Portfolio, Demo-Video, Artikel verlinken.',true],
+  ]},
+];
+
+/* ---------- SNIPPETS ---------- */
+const CODE = [
+  {n:'react_agent.py', d:'ReAct-Loop mit Dedup, Budget-Guard und Error Handling. ~70 Zeilen. Keine Frameworks.', c:`<span class="kw">import</span> anthropic, json
+
+<span class="kw">class</span> <span class="nm">ReActAgent</span>:
+    SYSTEM = <span class="st">"""Du hast Tool-Zugriff. Format pro Step:
+
+THOUGHT: [überlege was als nächstes]
+ACTION: [tool_name]
+ACTION_INPUT: [JSON args]
+
+Wenn du genug weißt:
+THOUGHT: [fasse zusammen]
+FINAL_ANSWER: [vollständige Antwort]
+
+Regeln:
+- Immer denken bevor du handelst
+- Nie dasselbe Tool mit identischen Args zweimal
+- Bei Tool-Fehler: anderen Ansatz probieren
+- Fokus auf die ursprüngliche Frage"""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, tools, max_steps=<span class="nm">10</span>, budget=<span class="nm">1.0</span>):
+        self.client = anthropic.Anthropic()
+        self.tools, self.max_steps = tools, max_steps
+        self.budget, self.cost = budget, <span class="nm">0.0</span>
+        self.history = []  <span class="cm"># Dedup-Signaturen</span>
+
+    <span class="kw">def</span> <span class="fn">run</span>(self, query):
+        msgs = [{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: query}]
+        traj = []
+
+        <span class="kw">for</span> step <span class="kw">in</span> <span class="fn">range</span>(self.max_steps):
+            <span class="cm"># Budget VOR dem Call prüfen — 90%, nicht 100%</span>
+            <span class="kw">if</span> self.cost > self.budget * <span class="nm">0.9</span>:
+                <span class="kw">return</span> self._forced_answer(traj, <span class="st">"budget"</span>)
+
+            r = self.client.messages.create(
+                model=<span class="st">"claude-sonnet-4"</span>, max_tokens=<span class="nm">1024</span>,
+                system=self.SYSTEM, messages=msgs)
+            text = r.content[<span class="nm">0</span>].text
+            self.cost += self._calc_cost(r.usage)
+            p = self._parse(text); traj.append(p)
+
+            <span class="kw">if</span> p[<span class="st">"type"</span>] == <span class="st">"final_answer"</span>:
+                <span class="kw">return</span> {<span class="st">"answer"</span>: p[<span class="st">"content"</span>], <span class="st">"trajectory"</span>: traj,
+                        <span class="st">"steps"</span>: step+<span class="nm">1</span>, <span class="st">"cost"</span>: <span class="fn">round</span>(self.cost, <span class="nm">4</span>)}
+
+            <span class="cm"># ── Repetition Trap Guard ──</span>
+            sig = <span class="st">f"{p['tool']}:{p['args']}"</span>
+            <span class="kw">if</span> sig <span class="kw">in</span> self.history:
+                msgs += [{<span class="st">"role"</span>:<span class="st">"assistant"</span>,<span class="st">"content"</span>:text},
+                         {<span class="st">"role"</span>:<span class="st">"user"</span>,<span class="st">"content"</span>:
+                          <span class="st">"Du hast diesen exakten Call schon probiert. "</span>
+                          <span class="st">"Versuche einen anderen Ansatz."</span>}]
+                <span class="kw">continue</span>
+            self.history.append(sig)
+
+            <span class="kw">try</span>:
+                res = self.tools[p[<span class="st">"tool"</span>]](**json.loads(p[<span class="st">"args"</span>]))
+                obs = <span class="st">f"OBSERVATION: {res}"</span>
+            <span class="kw">except</span> <span class="nm">KeyError</span>:
+                obs = <span class="st">f"ERROR: Tool nicht gefunden. Verfügbar: {<span class="fn">list</span>(self.tools)}"</span>
+            <span class="kw">except</span> <span class="nm">Exception</span> <span class="kw">as</span> e:
+                obs = <span class="st">f"ERROR: {<span class="fn">type</span>(e).__name__}: {e}"</span>
+
+            msgs += [{<span class="st">"role"</span>:<span class="st">"assistant"</span>,<span class="st">"content"</span>:text},
+                     {<span class="st">"role"</span>:<span class="st">"user"</span>,<span class="st">"content"</span>:obs}]
+
+        <span class="kw">return</span> self._forced_answer(traj, <span class="st">"max_steps"</span>)`},
+
+  {n:'retry.py', d:'Exponential Backoff + Jitter. Jitter verhindert Thundering Herd bei parallelen Agents.', c:`<span class="kw">import</span> time, random
+<span class="kw">from</span> functools <span class="kw">import</span> wraps
+
+<span class="kw">def</span> <span class="fn">retry_with_backoff</span>(max_retries=<span class="nm">3</span>, base_delay=<span class="nm">1.0</span>,
+                       max_delay=<span class="nm">60.0</span>, jitter=<span class="nm">True</span>,
+                       retryable=(<span class="nm">TimeoutError</span>, <span class="nm">ConnectionError</span>)):
+    <span class="kw">def</span> <span class="fn">deco</span>(func):
+        <span class="nm">@wraps</span>(func)
+        <span class="kw">def</span> <span class="fn">wrapper</span>(*a, **kw):
+            last = <span class="nm">None</span>
+            <span class="kw">for</span> attempt <span class="kw">in</span> <span class="fn">range</span>(max_retries + <span class="nm">1</span>):
+                <span class="kw">try</span>:
+                    <span class="kw">return</span> func(*a, **kw)
+                <span class="kw">except</span> retryable <span class="kw">as</span> e:
+                    last = e
+                    <span class="kw">if</span> attempt == max_retries: <span class="kw">break</span>
+                    d = <span class="fn">min</span>(base_delay * (<span class="nm">2</span> ** attempt), max_delay)
+                    <span class="kw">if</span> jitter: d *= (<span class="nm">0.5</span> + random.random())
+                    time.sleep(d)
+            <span class="kw">raise</span> last
+        <span class="kw">return</span> wrapper
+    <span class="kw">return</span> deco
+
+<span class="cm"># Retry-Matrix:  429 → ja (Retry-After beachten) · 500 → ja
+#                400/401 → NEIN (Request fixen, nicht retryen)</span>`},
+
+  {n:'circuit_breaker.py', d:'CLOSED → OPEN → HALF_OPEN → CLOSED. Gibt failing Services Zeit zur Erholung.', c:`<span class="kw">import</span> time
+<span class="kw">from</span> enum <span class="kw">import</span> <span class="nm">Enum</span>
+
+<span class="kw">class</span> <span class="nm">State</span>(<span class="nm">Enum</span>):
+    CLOSED = <span class="st">"closed"</span>; OPEN = <span class="st">"open"</span>; HALF_OPEN = <span class="st">"half_open"</span>
+
+<span class="kw">class</span> <span class="nm">CircuitBreaker</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, threshold=<span class="nm">5</span>, timeout=<span class="nm">60</span>, half_open_max=<span class="nm">2</span>):
+        self.threshold, self.timeout = threshold, timeout
+        self.half_open_max = half_open_max
+        self.state = <span class="nm">State</span>.CLOSED
+        self.failures = <span class="nm">0</span>; self.last_fail = <span class="nm">0</span>; self.ho_ok = <span class="nm">0</span>
+
+    <span class="kw">def</span> <span class="fn">call</span>(self, func, *a, **kw):
+        <span class="kw">if</span> self.state == <span class="nm">State</span>.OPEN:
+            <span class="kw">if</span> time.time() - self.last_fail > self.timeout:
+                self.state = <span class="nm">State</span>.HALF_OPEN; self.ho_ok = <span class="nm">0</span>
+            <span class="kw">else</span>:
+                <span class="kw">raise</span> <span class="nm">CircuitOpenError</span>(<span class="st">f"Retry in {self.timeout}s"</span>)
+        <span class="kw">try</span>:
+            r = func(*a, **kw); self._ok(); <span class="kw">return</span> r
+        <span class="kw">except</span> <span class="nm">Exception</span>:
+            self._fail(); <span class="kw">raise</span>
+
+    <span class="kw">def</span> <span class="fn">_ok</span>(self):
+        <span class="kw">if</span> self.state == <span class="nm">State</span>.HALF_OPEN:
+            self.ho_ok += <span class="nm">1</span>
+            <span class="kw">if</span> self.ho_ok >= self.half_open_max:
+                self.state = <span class="nm">State</span>.CLOSED; self.failures = <span class="nm">0</span>
+        <span class="kw">else</span>: self.failures = <span class="nm">0</span>
+
+    <span class="kw">def</span> <span class="fn">_fail</span>(self):
+        self.failures += <span class="nm">1</span>; self.last_fail = time.time()
+        <span class="kw">if</span> self.failures >= self.threshold: self.state = <span class="nm">State</span>.OPEN`},
+
+  {n:'budget_guard.py', d:'Per-Run und Daily Budget. Forced-Synthesis-Mode statt Crash.', c:`<span class="kw">class</span> <span class="nm">BudgetGuard</span>:
+    <span class="st">"""User bekommen IMMER eine nutzbare Antwort — auch bei Cap."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, per_run=<span class="nm">1.0</span>, daily=<span class="nm">500.0</span>):
+        self.per_run, self.daily = per_run, daily
+        self.run_spend = <span class="nm">0.0</span>; self.daily_spend = <span class="nm">0.0</span>
+
+    <span class="kw">def</span> <span class="fn">check</span>(self, est_cost):
+        rem_run = self.per_run - self.run_spend
+        rem_day = self.daily - self.daily_spend
+
+        <span class="kw">if</span> est_cost > rem_run:
+            <span class="kw">return</span> {<span class="st">"allowed"</span>: <span class="nm">False</span>, <span class="st">"reason"</span>: <span class="st">"per_run_exceeded"</span>,
+                    <span class="st">"action"</span>: <span class="st">"force_synthesis"</span>, <span class="st">"remaining"</span>: rem_run}
+        <span class="kw">if</span> est_cost > rem_day:
+            <span class="kw">return</span> {<span class="st">"allowed"</span>: <span class="nm">False</span>, <span class="st">"reason"</span>: <span class="st">"daily_exceeded"</span>,
+                    <span class="st">"action"</span>: <span class="st">"queue_for_tomorrow"</span>, <span class="st">"remaining"</span>: rem_day}
+        <span class="kw">return</span> {<span class="st">"allowed"</span>: <span class="nm">True</span>, <span class="st">"remaining"</span>: rem_run}
+
+    <span class="kw">def</span> <span class="fn">record</span>(self, cost):
+        self.run_spend += cost; self.daily_spend += cost
+
+    <span class="kw">def</span> <span class="fn">new_run</span>(self): self.run_spend = <span class="nm">0.0</span>
+
+<span class="cm"># Budget-Allokation Research-Agent ($1.00):
+#   10% Planning · 60% Research-Iterationen · 20% Synthese · 10% Puffer</span>`},
+
+  {n:'landmark_memory.py', d:'Landmarks werden nie evicted. 40-Step-Agent → 4–6 Landmarks, unter 10K Tokens.', c:`<span class="kw">class</span> <span class="nm">LandmarkMemory</span>:
+    <span class="st">"""Keep key decision points, summarize everything else."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, max_tokens=<span class="nm">80000</span>):
+        self.landmarks = []   <span class="cm"># nie evicted</span>
+        self.regular = []     <span class="cm"># kann komprimiert werden</span>
+        self.max_tokens = max_tokens
+
+    <span class="kw">def</span> <span class="fn">is_landmark</span>(self, e):
+        <span class="st">"""5 Signale — eines reicht."""</span>
+        <span class="kw">return</span> <span class="fn">any</span>([
+            e.changes_plan,       <span class="cm"># Replanning-Event</span>
+            e.user_feedback,      <span class="cm"># Human Input</span>
+            e.state_transition,   <span class="cm"># Key State Change</span>
+            e.error_recovery,     <span class="cm"># Error + Recovery</span>
+            e.cost > <span class="nm">0.01</span>,        <span class="cm"># teure Operation</span>
+        ])
+
+    <span class="kw">def</span> <span class="fn">add</span>(self, entry):
+        target = self.landmarks <span class="kw">if</span> self.is_landmark(entry) <span class="kw">else</span> self.regular
+        target.append(entry)
+        <span class="cm"># 70%-Regel: 30% bleiben Reasoning-Budget</span>
+        <span class="kw">if</span> self.total_tokens() > self.max_tokens * <span class="nm">0.7</span>:
+            self.compress_regular()
+
+    <span class="kw">def</span> <span class="fn">compress_regular</span>(self):
+        <span class="kw">if</span> <span class="fn">len</span>(self.regular) < <span class="nm">3</span>: <span class="kw">return</span>
+        summary = self.llm.summarize(
+            entries=self.regular[:-<span class="nm">2</span>],
+            instruction=<span class="st">"Behalte: gesammelte Daten, getroffene "</span>
+                        <span class="st">"Entscheidungen, aktueller Status. "</span>
+                        <span class="st">"Verwirf: Routine-Steps."</span>)
+        self.regular = [summary] + self.regular[-<span class="nm">2</span>:]
+
+    <span class="kw">def</span> <span class="fn">build_context</span>(self):
+        <span class="kw">return</span> self.landmarks + self.regular`},
+];
+
+/* ============================================================
+   RENDER LAYER
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+/* ---- NAV ---- */
+$('#nav').innerHTML = NAV.map((n,i)=>
+  `<button class="nav-btn${i===0?' on':''}" data-p="${n.id}">${n.label}</button>`).join('');
+
+$('#nav').addEventListener('click', e=>{
+  const b = e.target.closest('.nav-btn'); if(!b) return;
+  $$('.nav-btn').forEach(x=>x.classList.remove('on'));
+  $$('.panel').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  $('#p-'+b.dataset.p).classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+/* ---- CALCULATOR ---- */
+const fmt = (n,d=2)=> '$' + n.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d});
+
+function calc(){
+  const req = +$('#c-req').value || 0;
+  const iter = +$('#c-iter').value || 0;
+  const tok = +$('#c-tok').value || 0;
+  const price = +$('#c-model').value;
+  const opt = +$('#c-opt').value;
+  const min = +$('#c-min').value || 0;
+
+  const perReq = iter * (tok/1000) * price * opt;
+  const monthly = perReq * req * 30;
+  const yearly = monthly * 12;
+  // Manuelle Kosten: 60€/h fully loaded
+  const manualMonthly = req * 30 * (min/60) * 60;
+  const saving = manualMonthly - monthly;
+  const roi = monthly > 0 ? (saving / monthly) * 100 : 0;
+
+  $('#o-req').textContent = '$' + perReq.toFixed(4);
+  $('#o-mon').textContent = fmt(monthly);
+  $('#o-yr').textContent  = fmt(yearly);
+  $('#o-sav').textContent = fmt(saving);
+  $('#o-roi').textContent = roi > 0 ? Math.round(roi).toLocaleString('de-DE')+'%' : '—';
+
+  // Verdict
+  let
+  // Verdict
+  let v = '', ico = '', col = '';
+  if (monthly === 0) {
+    v = 'Gib deine Zahlen ein, um die Monatskosten zu sehen.';
+    ico = '○'; col = 'var(--txt-dim)';
+  } else if (perReq > 0.50) {
+    ico = '⚠'; col = 'var(--danger)';
+    v = `<b style="color:var(--danger)">Kritisch.</b> ${'$'+perReq.toFixed(3)} pro Request liegt deutlich über dem Richtwert für komplexe Tasks ($0.10–0.50). Prüfe: Ist die Iterationszahl realistisch? Routest du schon? Sind deine Tool-Results auf 2.000 Tokens gekappt? Lies den Anti-Pattern „Treating Output Tokens as Free".`;
+  } else if (perReq > 0.10) {
+    ico = '◐'; col = 'var(--warn)';
+    v = `<b style="color:var(--warn)">Im komplexen Bereich.</b> ${'$'+perReq.toFixed(3)} pro Request ist typisch für mehrstufige Tasks. Zielwert mit Tiering: unter $0.20. Nächster Hebel: Model Routing (−40–70%) vor allem anderen — danach Prompt Caching.`;
+  } else if (perReq > 0.03) {
+    ico = '◆'; col = 'var(--acc2)';
+    v = `<b style="color:var(--acc2)">Solide.</b> ${'$'+perReq.toFixed(3)} pro Request liegt im normalen Band für Tool-Use-Agents. Mit Prompt Caching und Semantic Cache sind weitere 30–40% drin, ohne Qualitätsverlust.`;
+  } else {
+    ico = '✓'; col = 'var(--acc)';
+    v = `<b style="color:var(--acc)">Sehr gut.</b> ${'$'+perReq.toFixed(3)} pro Request ist unterhalb des Richtwerts für einfache Queries (&lt;$0.03 mit Caching). Weitere Optimierung lohnt sich nur, wenn du gegen deine Eval-Suite validierst — ab hier tauschst du Qualität gegen Ersparnis.`;
+  }
+  // ROI-Zusatz
+  if (saving > 0 && monthly > 0) {
+    v += ` <span style="color:var(--txt-faint)">Du ersetzt ${fmt(manualMonthly)} manuelle Arbeit pro Monat (bei 60 €/h fully loaded) — das ist ${Math.round(roi).toLocaleString('de-DE')}% ROI.</span>`;
+  }
+  $('#o-verdict').innerHTML = `<span class="em" style="color:${col}">${ico}</span><div>${v}</div>`;
+  $('#o-verdict').style.background = monthly === 0 ? 'transparent' : 'rgba(0,0,0,.25)';
+}
+['#c-req','#c-iter','#c-tok','#c-model','#c-opt','#c-min'].forEach(s=>{
+  $(s).addEventListener('input', calc);
+  $(s).addEventListener('change', calc);
+});
+calc();
+
+/* ---- DECISION ENGINE ---- */
+const QUESTIONS = [
+  {id:'branches', q:'Kennst du alle Verzweigungen im Voraus?', opts:[
+    ['known','Ja — ich kann ein vollständiges Flowchart zeichnen'],
+    ['runtime','Nein — die Pfade hängen davon ab, was das Modell zur Laufzeit entdeckt']
+  ]},
+  {id:'steps', q:'Wie viele Schritte braucht ein typischer Task?', opts:[
+    ['s1','1–2'],['s2','3–5'],['s3','6–10'],['s4','10+']
+  ]},
+  {id:'tools', q:'Wie viele unterschiedliche Tools sind im Spiel?', opts:[
+    ['t0','Keine / 1'],['t1','2–5'],['t2','6–15'],['t3','16+']
+  ]},
+  {id:'parallel', q:'Lassen sich Teilaufgaben wirklich parallelisieren?', opts:[
+    ['no','Nein — alles baut aufeinander auf'],
+    ['yes','Ja — mehrere Schritte sind voneinander unabhängig']
+  ]},
+  {id:'risk', q:'Haben die Aktionen reale Seiteneffekte?', opts:[
+    ['read','Nur lesend'],
+    ['write','Schreibend, aber reversibel'],
+    ['crit','Irreversibel (Zahlungen, Deploys, E-Mails)']
+  ]},
+  {id:'budget', q:'Wie kostensensitiv ist der Use Case?', opts:[
+    ['low','Qualität zählt mehr als Kosten'],
+    ['mid','Ausgewogen'],
+    ['high','Hochvolumig — jeder Cent zählt']
+  ]},
+];
+
+const answers = {};
+$('#quiz').innerHTML = QUESTIONS.map(q=>`
+  <div class="q">
+    <div class="qt">${q.q}</div>
+    <div class="opts">
+      ${q.opts.map(([v,l])=>`<button class="opt" data-q="${q.id}" data-v="${v}">${l}</button>`).join('')}
+    </div>
+  </div>`).join('');
+
+$('#quiz').addEventListener('click', e=>{
+  const b = e.target.closest('.opt'); if(!b) return;
+  const qid = b.dataset.q;
+  $$(`.opt[data-q="${qid}"]`).forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  answers[qid] = b.dataset.v;
+  if (Object.keys(answers).length === QUESTIONS.length) decide();
+});
+
+function decide(){
+  const a = answers;
+  let arch, why = [], cfg = [], warn = [];
+
+  // Architektur-Entscheidung (Kap. 1, 4, 5, 7)
+  if (a.branches === 'known' && (a.steps === 's1' || a.steps === 's2')) {
+    arch = 'Pipeline — kein Loop';
+    why.push('Wenn alle Branches im Voraus bekannt sind, fügt ein Loop nur Komplexität, Kosten und Unvorhersehbarkeit hinzu. Das ist die Faustregel aus Kapitel 1.');
+    why.push('Nutze deterministischen Code mit LLM-Calls als Einzelschritte. Du bekommst testbare Unit-Tests statt Eval-Suites, Stack Traces statt Trajectory-Analyse.');
+  } else if (a.steps === 's4' || (a.tools === 't3' && a.parallel === 'yes')) {
+    arch = 'Hierarchisches Multi-Agent-System';
+    why.push('Ab 10+ Schritten oder 16+ Tools überfordert ein einzelner Agent seine Tool-Selection und sein Context-Budget.');
+    why.push('Teams von 3–4 Agents mit Team-Leads. Niemals flache Kommunikation: 10 Agents = 45 Kanäle, hierarchisch nur ~15.');
+    cfg.push('Pro Agent ein <b>Role Card</b>: Model-Tier, Tool-Set, System Prompt, Input/Output-Format, Failure Behavior — in Version Control.');
+    cfg.push('Coordination-Overhead messen. Über 30% der Tokens für Agent-zu-Agent-Kommunikation = zu viele Agents.');
+  } else if (a.branches === 'known' && a.parallel === 'yes') {
+    arch = 'Plan-and-Execute mit parallelen Phasen';
+    why.push('Strukturierter Task mit unabhängigen Teilschritten — der Idealfall für Plan-and-Execute. Bei 5+ Schritten ist das ~50% günstiger als reines ReAct.');
+    why.push('Parallelisierung reduziert Wall-Clock-Latenz um 40–60%.');
+    cfg.push('Parallel-Test ist strikt: Zwei Schritte sind nur dann parallel, wenn <b>keiner</b> einen Output des anderen liest. Dependencies explizit im Plan-Objekt markieren.');
+    cfg.push('Plan-Granularität: <b>3–7 Schritte</b>, je ein Satz, je ein klares Success Criterion.');
+  } else if (a.branches === 'known') {
+    arch = 'Plan-and-Execute';
+    why.push('Du kannst den Plan vorher schreiben → Plan-and-Execute. Kohärentere Trajectories und bei 5+ Schritten rund 50% günstiger als ReAct.');
+    cfg.push('<b>Replanning-Check nach jedem Schritt</b>, dessen Output überrascht — nicht nur bei expliziten Errors. Sonst: Stale Plan Execution.');
+  } else {
+    arch = 'ReAct';
+    why.push('Der nächste Schritt hängt davon ab, was der vorherige zurückgibt → ReAct. Reaktive Adaption ist genau das, was dieses Pattern löst.');
+    why.push('Der Thought-Trace ist keine Overhead, sondern Qualitätsversicherung: ohne ihn 20–30% mehr Tool-Call-Fehler, bei ~50–100 Tokens pro Step.');
+  }
+
+  // Hybrid-Hinweis
+  if (a.branches === 'runtime' && (a.steps === 's3' || a.steps === 's4')) {
+    cfg.push('<b>Hybrid empfohlen:</b> Plan-and-Execute auf oberster Ebene für die Phasen, ReAct innerhalb jeder Phase für die unvorhersehbaren Details.');
+  }
+
+  // Steps / Budget
+  const stepMap = {s1:'3', s2:'6', s3:'10', s4:'16'};
+  cfg.push(`<code>MAX_STEPS = ${stepMap[a.steps]||'10'}</code> als Startwert. Final: <b>95. Perzentil deiner Staging-Runs +30%</b> — nie eine runde Zahl aus Gewohnheit.`);
+  cfg.push('Zusätzlich ein <b>Wall-Clock-Timeout</b> unabhängig vom Step Count. Ein Agent kann im Step-Limit sein und trotzdem an einer API hängen.');
+
+  // Tools
+  if (a.tools === 't3') {
+    warn.push('<b>Tool Count Explosion.</b> Ab 30+ Tools sinkt die Selection Accuracy messbar. Gruppiere verwandte Operationen unter einem Tool mit <code>subcommand</code>-Parameter — oder baue einen Tool Router (Haiku) der aus 30 Tools die Top-3 für den aktuellen Step auswählt.');
+  } else if (a.tools === 't2') {
+    cfg.push('Du bist am oberen Rand des gesunden Bereichs (5–15). Jede Description braucht eine <b>„DO NOT USE WHEN"</b>-Klausel: +30–40% korrekte Tool-Selection.');
+  } else if (a.tools !== 't0') {
+    cfg.push('Tool-Count im gesunden Bereich. Jede Description bekommt trotzdem ein konkretes Beispiel und eine „DO NOT USE WHEN"-Klausel.');
+  }
+
+  // Risiko
+  if (a.risk === 'crit') {
+    warn.push('<b>Idempotency ist Pflicht, nicht optional.</b> Jede Write-Operation braucht einen Idempotency-Key-Check <em>vor</em> der Ausführung. Das ist die exakte Root Cause des $340.000-Fintech-Vorfalls mit 2.400 Doppelerstattungen in 18 Minuten.');
+    warn.push('<b>Retry ohne Idempotency = Doppelbuchung.</b> Die Retry-Logik muss das Ergebnis des ersten Versuchs abfragen, bevor sie erneut feuert.');
+    cfg.push('HITL mit <b>Modify-Option</b> — nicht nur Approve/Reject. 30% realer Approval-Interaktionen enden in Modifikationen; ohne Modify-Pfad erzwingst du Full Rejection und verbrennst 3× die Tokens.');
+    cfg.push('Progressive Autonomy: Start supervised. Nach 50+ Aktionen und >85% Approval → semi-auto. Nach 100+ und >95% → autonom für Low-Risk. Daten entscheiden, nicht Bauchgefühl.');
+    cfg.push('<b>Kill Switch</b> + Audit Log für jede Write-Operation. Quartalsweise testen.');
+  } else if (a.risk === 'write') {
+    cfg.push('Read-Only-Tool für jedes Write-Tool. Nie blind überschreiben — erst lesen, dann schreiben.');
+    cfg.push('Idempotency-Keys auf allen Write-Operations. Macht Retries sicher und eliminiert die gesamte Runaway-Klasse.');
+  } else {
+    cfg.push('Read-only Scope: du kannst aggressiver cachen und brauchst keine Confirmation Gates. Nutze das für Kostenvorteile.');
+  }
+
+  // Budget
+  if (a.budget === 'high') {
+    cfg.push('<b>Kostenreihenfolge:</b> 1. Prompt Caching (−90% Input, &lt;1h Arbeit). 2. Model Routing (−40–70%). 3. Semantic Cache @ 0.95. 4. <code>max_tokens</code> pro Task-Typ. Jede Stufe gegen die Eval-Suite validieren.');
+    cfg.push('Budget Guard mit <b>Forced-Synthesis-Mode</b>: Bei Budget-Cap bekommt der User trotzdem eine nutzbare Antwort statt eines Crashes. Alert bei 90%, nicht 100% — die letzten 10% sind für die Synthese reserviert.');
+  } else if (a.budget === 'mid') {
+    cfg.push('Prompt Caching aktivieren (höchster ROI überhaupt) und Model Routing nach Task-Typ: Haiku für Klassifikation/Routing, Sonnet fürs Reasoning, Opus nur fürs Judging.');
+  } else {
+    cfg.push('Qualität vor Kosten — aber setze trotzdem einen Cost Circuit Breaker. Qualitätsfokus ist kein Grund für unbegrenzte Runaway-Loops.');
+  }
+
+  // Universell
+  cfg.push('<b>Cycle Detection ab 3</b> identischen <code>(tool, args)</code>-Paaren. Nicht 2 (feuert bei legitimen Retries), nicht 5 (verbrennt Geld). Bei Match injizieren: „You already tried this exact call. Try a different approach."');
+  cfg.push('<b>Success Condition ≠ Termination Condition.</b> „Inbox ist leer" ist Success. Du brauchst beide.');
+  cfg.push('Eval-Suite <b>vor</b> dem Agent: 50 Cases, 4 Kategorien (Happy 40–50%, Edge 20–30%, Adversarial 15–20%, Regression 10–15%). Deployment auf alle vier gaten, nicht nur auf Happy Path.');
+  cfg.push('Strukturiertes Tracing ab Tag 1 + Replay-Fähigkeit. Jeder Failure wird zur Query statt zur forensischen Ausgrabung.');
+
+  $('#result').innerHTML = `
+    <div class="rtag">Empfohlene Architektur</div>
+    <h4>${arch}</h4>
+    <div class="rbody">
+      ${why.map(w=>`<p style="margin-bottom:8px">${w}</p>`).join('')}
+      ${warn.length ? `<div style="margin:16px 0;padding:14px 16px;border-left:3px solid var(--danger);background:rgba(251,113,133,.07);border-radius:8px">
+        <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--danger);font-weight:600;margin-bottom:8px">Kritische Warnungen</div>
+        ${warn.map(w=>`<p style="margin-bottom:8px">${w}</p>`).join('')}
+      </div>` : ''}
+      <div style="font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);font-weight:600;margin:18px 0 10px">Konfiguration</div>
+      <ul>${cfg.map(c=>`<li>${c}</li>`).join('')}</ul>
+    </div>`;
+  $('#result').classList.add('on');
+}
+
+/* ---- ANTI-PATTERNS ---- */
+function renderAnti(filter=''){
+  const f = filter.toLowerCase();
+  const list = ANTI.filter(a =>
+    !f || a.t.toLowerCase().includes(f) || a.c.toLowerCase().includes(f)
+      || a.d.toLowerCase().includes(f) || a.f.toLowerCase().includes(f));
+  $('#anti-grid').innerHTML = list.length ? list.map(a=>`
+    <div class="card" style="border-left:3px solid var(--danger)">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--txt-faint);margin-bottom:8px">${a.c}</div>
+      <h3 style="color:var(--danger)">${a.t}</h3>
+      <p style="margin-bottom:12px">${a.d}</p>
+      <div style="padding-top:12px;border-top:1px solid var(--border)">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:6px">Fix</div>
+        <p style="color:var(--txt)">${a.f}</p>
+      </div>
+    </div>`).join('')
+    : `<div class="card" style="grid-column:1/-1;text-align:center;color:var(--txt-faint)">Kein Anti-Pattern passt zu „${filter}".</div>`;
+}
+renderAnti();
+$('#search-anti').addEventListener('input', e=>renderAnti(e.target.value));
+
+/* ---- FRAMEWORKS ---- */
+$('#fw-list').innerHTML = FW.map(f=>`
+  <div class="fw">
+    <div class="fw-h">
+      <span class="fw-badge">${f.n}</span>
+      <span class="expand">${f.e}</span>
+    </div>
+    <div class="fw-best">BEST FOR → ${f.best}</div>
+    <div class="fw-steps">
+      ${f.steps.map(([n,d],i)=>`
+        <div class="fw-step">
+          <span class="sn">${i+1}</span>
+          <div><b>${n}</b> — <span>${d}</span></div>
+        </div>`).join('')}
+    </div>
+  </div>`).join('');
+
+/* ---- CHECKLIST ---- */
+const CK_KEY = 'loop-eng-checklist-v1';
+let ckState = {};
+try { ckState = JSON.parse(localStorage.getItem(CK_KEY) || '{}'); } catch(e){ ckState = {}; }
+
+function renderCk(){
+  let total = 0, done = 0;
+  $('#ck-list').innerHTML = CK.map((g, gi)=>{
+    const gDone = g.items.filter((_,i)=>ckState[`${gi}-${i}`]).length;
+    total += g.items.length; done += gDone;
+    return `
+    <div class="ck-group">
+      <div class="ck-head">
+        <h3>${g.g}</h3>
+        <span class="ck-count">${gDone}/${g.items.length}</span>
+      </div>
+      ${g.items.map(([t,w],i)=>{
+        const k = `${gi}-${i}`, on = !!ckState[k];
+        return `<div class="ck${on?' done':''}" data-k="${k}">
+          <div class="box">${on?'✓':''}</div>
+          <div class="ck-txt">${t}<span class="why">${w}</span></div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+  const pct = total ? (done/total*100) : 0;
+  $('#ck-bar').style.width = pct + '%';
+}
+renderCk();
+
+$('#ck-list').addEventListener('click', e=>{
+  const c = e.target.closest('.ck'); if(!c) return;
+  const k = c.dataset.k;
+  ckState[k] = !ckState[k];
+  localStorage.setItem(CK_KEY, JSON.stringify(ckState));
+  renderCk();
+});
+
+/* ---- 30-TAGE-PLAN ---- */
+const PL_KEY = 'loop-eng-plan-v1';
+let plState = {};
+try { plState = JSON.parse(localStorage.getItem(PL_KEY) || '{}'); } catch(e){ plState = {}; }
+
+function renderPlan(){
+  $('#plan-list').innerHTML = PLAN.map((w, wi)=>`
+    <div class="week">
+      <div class="week-h">
+        <span class="n">${w.w}</span>
+        <h3>${w.t}</h3>
+        <span class="hrs">${w.h}</span>
+      </div>
+      <div class="week-body">
+        ${w.items.map(([t,d,crit],i)=>{
+          const k = `${wi}-${i}`, on = !!plState[k];
+          return `<div class="ck${on?' done':''}" data-pk="${k}" style="${crit?'border-left:2px solid var(--acc)':''}">
+            <div class="box">${on?'✓':''}</div>
+            <div class="ck-txt">
+              ${t}${crit?' <span class="pill g" style="margin-left:6px">MUST</span>':''}
+              <span class="why">${d}</span>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`).join('');
+}
+renderPlan();
+
+$('#plan-list').addEventListener('click', e=>{
+  const c = e.target.closest('.ck'); if(!c) return;
+  const k = c.dataset.pk;
+  plState[k] = !plState[k];
+  localStorage.setItem(PL_KEY, JSON.stringify(plState));
+  renderPlan();
+});
+
+/* ---- CODE SNIPPETS ---- */
+$('#code-list').innerHTML = CODE.map((c,i)=>`
+  <div style="margin-bottom:26px">
+    <h3 style="font-size:1rem;font-weight:650;margin-bottom:5px">${c.n}</h3>
+    <p style="font-size:13.5px;color:var(--txt-dim);margin-bottom:4px">${c.d}</p>
+    <div class="code">
+      <div class="code-bar">
+        <span class="name">${c.n}</span>
+        <button class="cp" data-i="${i}">COPY</button>
+      </div>
+      <pre><code>${c.c}</code></pre>
+    </div>
+  </div>`).join('');
+
+$('#code-list').addEventListener('click', e=>{
+  const b = e.target.closest('.cp'); if(!b) return;
+  const pre = b.closest('.code').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    b.textContent = 'COPIED';
+    b.classList.add('ok');
+    toast('In Zwischenablage kopiert');
+    setTimeout(()=>{ b.textContent='COPY'; b.classList.remove('ok'); }, 1600);
+  }).catch(()=>{
+    // Fallback für ältere Browser / file:// ohne Clipboard-API
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); toast('Kopiert (Fallback)'); }
+    catch(err){ toast('Kopieren fehlgeschlagen'); }
+    document.body.removeChild(ta);
+  });
+});
+
+/* ---- TOAST ---- */
+let toastTimer;
+function toast(msg){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('on'), 2000);
+}
+
+/* ---- KEYBOARD SHORTCUTS ---- */
+document.addEventListener('keydown', e=>{
+  // Ziffern 1–9 → Panel wechseln
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+  const n = parseInt(e.key, 10);
+  if (n >= 1 && n <= NAV.length) {
+    const btn = $$('.nav-btn')[n-1];
+    if (btn) btn.click();
+  }
+  // "/" → Suche fokussieren (wenn Anti-Pattern-Panel aktiv)
+  if (e.key === '/' && $('#p-pat').classList.contains('on')) {
+    e.preventDefault();
+    $('#search-anti').focus();
+  }
+});
+
+/* ---- RESET-BUTTON für Checklisten (unten einhängen) ---- */
+(function addResetControls(){
+  const mk = (panelId, key, stateRef, rerender, label) => {
+    const panel = $(panelId);
+    const bar = document.createElement('div');
+    bar.style.cssText = 'margin-top:26px;padding-top:18px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap';
+    bar.innerHTML = `
+      <button class="cp" data-reset="${key}" style="padding:7px 16px;font-size:11px">FORTSCHRITT ZURÜCKSETZEN</button>
+      <span style="font-size:12px;color:var(--txt-faint)">${label}</span>`;
+    panel.appendChild(bar);
+    bar.addEventListener('click', e=>{
+      if(!e.target.closest('[data-reset]')) return;
+      if(!confirm('Wirklich allen Fortschritt löschen?')) return;
+      localStorage.removeItem(key);
+      stateRef.clear();
+      rerender();
+      toast('Zurückgesetzt');
+    });
+  };
+  mk('#p-ck', CK_KEY, { clear(){ for(const k in ckState) delete ckState[k]; } }, renderCk,
+     'Gespeichert in diesem Browser · wird nicht hochgeladen.');
+  mk('#p-30', PL_KEY, { clear(){ for(const k in plState) delete plState[k]; } }, renderPlan,
+     'Gespeichert in diesem Browser · wird nicht hochgeladen.');
+})();
+
+/* ---- INIT-HINWEIS ---- */
+console.log('%c0→1 Loop Engineering Playbook','font-size:16px;font-weight:700;color:#6ee7b7');
+console.log('%cTastatur: 1–9 = Panel wechseln · / = Anti-Pattern-Suche','color:#8e97ad');
+</script>
+</body>
+</html>
