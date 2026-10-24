@@ -64,8 +64,8 @@ The lexical record moved faster than the research record:
 * **8 March 2025** — Merriam-Webster lists it as slang and trending \cite{merriam2025vibe}.
 * **11 March 2025** — first arXiv abstract we found that mentions the term, in passing, in a paper on code digital twins \cite{peng2025codedigitaltwin}.
 * **26 May 2025** — first arXiv paper with "vibe coding" in the title: a taxonomy contrasting vibe coding with agentic coding \cite{sapkota2025vibeagentic}.
-* **29 June 2025** — first dedicated empirical study, based on eight hours of recorded vibe-coding sessions \cite{sarkar2025vibe}.
-* **15 September 2025** — first systematic qualitative study, based on more than 190,000 words of interviews and posts \cite{pimenova2025goodvibrations}.
+* **29 June 2025** — first dedicated empirical study, based on eight hours of recorded vibe-coding sessions.
+* **15 September 2025** — first systematic qualitative study, based on more than 190,000 words of interviews and posts.
 * **6 November 2025** — Collins Word of the Year.
 
 Priority claims in a fast-moving field are fragile; the dates above are verifiable, while the labels "first" are the authors' own descriptions. The sequence is what matters: **term, then qualitative studies of practice, then benchmarks, then economics.** The early debate was shaped by demos before it was shaped by measurement.
@@ -96,7 +96,7 @@ Two caveats. Many of these papers are preprints, and several studies are small; 
 
 ### The last 20% is the product
 
-ArtCraft publishes its own scorecard, which makes the gap unusually visible. FilmCraft reported roughly **87% feature-checklist coverage**, but only **50–60% readiness for real projects** \cite{digitaltrends2026artcraft}. PhotoCraft's README is blunter: every Photoshop menu item is wired to a command, but "that measures wiring, not behavior"; it is "not yet a Photoshop replacement for daily professional work" \cite{github2026photocraft}. The missing part is not more code. It is color management that matches, a PSD round-trip that does not corrupt a layer, a brush engine that feels right, an undo stack that survives a crash, a plug-in ABI, support, security response and the thousand small behaviors professionals notice immediately.
+ArtCraft publishes its own scorecard, which makes the gap unusually visible. FilmCraft reported roughly **87% feature-checklist coverage**, but only **50–60% readiness for real projects** \cite{digitaltrends2026artcraft}. The missing part is not more code. It is color management that matches, a PSD round-trip that does not corrupt a layer, a brush engine that feels right, an undo stack that survives a crash, a plug-in ABI, support, security response and the thousand small behaviors professionals notice immediately.
 
 The best end-to-end benchmark makes the same point quantitatively: the strongest model reached **61.8%** on whole-app specifications. A demo can be impressive at 60%; a product cannot.
 
@@ -178,7 +178,7 @@ GitClear's longitudinal data — 211 million changed lines from 2020–2024 — 
 
 ArtCraft is worth studying because it is not a generic "AI writes code" story. It is a deliberate attack on a mature software category, built with the exact tools this course describes.
 
-The technical claims are real and checkable. The apps are pure Rust, native on macOS, Windows and Linux, and compile to WebAssembly. They are dual-licensed MIT/Apache. PhotoCraft's README lists 67 tools, 16 adjustment layers, 27 Photoshop blend modes, real PSD read/write, more than 1,700 tests and 500+ commands exposed through a CLI, a JSON channel and an MCP server. It also says the app is in **early alpha** and "not yet a Photoshop replacement for daily professional work" \cite{github2026photocraft}. By early October, GitHub listed 230 contributors beyond Thomas across the seven initial repositories, and PhotoCraft's release credited 31 community contributors \cite{digitaltrends2026artcraft}. The "one developer" story is already outdated.
+The technical claims are real and checkable. The apps are pure Rust, native on macOS, Windows and Linux, and compile to WebAssembly. They are dual-licensed MIT/Apache. PhotoCraft's README lists 67 tools, 16 adjustment layers, 27 Photoshop blend modes, real PSD read/write, more than 1,700 tests and 500+ commands exposed through a CLI, a JSON channel and an MCP server. It also says the app is in **early alpha** and "not yet a Photoshop replacement for daily professional work" \cite{github2026photocraft}. The community was already doing part of the last mile.
 
 What makes the clone credible is not the feature list. It is the **combination**:
 

@@ -1,0 +1,498 @@
+[
+ [
+  "Adobe",
+  37.33,
+  -121.89,
+  "San Jose, United States",
+  1982,
+  1
+ ],
+ [
+  "Canva",
+  -33.87,
+  151.21,
+  "Sydney, Australia",
+  2013,
+  1
+ ],
+ [
+  "Electronic Frontier Foundation",
+  37.77,
+  -122.42,
+  "San Francisco, United States",
+  1990,
+  1
+ ],
+ [
+  "Marc Andreessen",
+  37.45,
+  -122.18,
+  "Menlo Park, United States",
+  2011,
+  1
+ ],
+ [
+  "Miklós Koren",
+  48.21,
+  16.37,
+  "Vienna, Austria",
+  2026,
+  1
+ ],
+ [
+  "Gábor Békés",
+  48.21,
+  16.37,
+  "Vienna, Austria",
+  2026,
+  1
+ ],
+ [
+  "Veracode",
+  42.5,
+  -71.2,
+  "Burlington, United States",
+  2006,
+  1
+ ],
+ [
+  "Nathen Harvey",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Derek DeBellis",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "GitClear",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Julian Hinz",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Aaron Lohmann",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Joseph Spracklen et al.",
+  null,
+  null,
+  "",
+  2024,
+  0
+ ],
+ [
+  "Reed Albergotti",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Simon Sharwood",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "David Loker",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Ivan Mehta",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Ashley Wolf",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Kyle Orland",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Benj Edwards",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Paulo Vargas",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "ArtCraft",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "ArtCraft Team and contributors",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "MacRumors",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Gian Estrada",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Clayton M. Christensen",
+  42.37,
+  -71.12,
+  "Boston, United States",
+  1997,
+  1
+ ],
+ [
+  "Michael E. Raynor",
+  null,
+  null,
+  "",
+  2015,
+  0
+ ],
+ [
+  "Rory McDonald",
+  42.37,
+  -71.12,
+  "Boston, United States",
+  2015,
+  1
+ ],
+ [
+  "Simon Willison",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Merriam-Webster",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Xin Peng",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Chong Wang",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Ranjan Sapkota et al.",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Advait Sarkar",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Ian Drosos",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Christian Meske et al.",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Veronica Pimenova et al.",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Ahmed Fawzy et al.",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Yi-Hung Chou et al.",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Muhammad Waseem et al.",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Songwen Zhao et al.",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Hammond Pearce et al.",
+  null,
+  null,
+  "",
+  2022,
+  0
+ ],
+ [
+  "Neil Perry et al.",
+  null,
+  null,
+  "",
+  2023,
+  0
+ ],
+ [
+  "Norbert Tihanyi et al.",
+  null,
+  null,
+  "",
+  2024,
+  0
+ ],
+ [
+  "Kevin Z. Cui et al.",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Syed Ammar Asdaque et al.",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Donghoon Shin et al.",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Fei Gu et al.",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Hung Tran et al.",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Srijan Bansal et al.",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Song Wang",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Haoyu Hu et al.",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Jenny Ma et al.",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Petrus Lipsanen et al.",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Sverrir Thorgeirsson et al.",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Daiana Rinja et al.",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Yuyao Ge et al.",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Leon van Bokhorst",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Koen Suilen",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Md Nasir Uddin Shuvo et al.",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ],
+ [
+  "Junkai Chen et al.",
+  null,
+  null,
+  "",
+  2025,
+  0
+ ],
+ [
+  "Benjamin Livshits",
+  null,
+  null,
+  "",
+  2026,
+  0
+ ]
+]
