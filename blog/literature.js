@@ -2728,6 +2728,73 @@ window.bibData = {
 		year: 2017,
 		url: "https://www.nature.com/articles/nature22336"
 	},
+
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Bipedalism, the Pelvis, and the Brain  (untold_history.php)
+	 *  How upright walking reshaped the pelvis, why the modern birth canal
+	 *  is narrow rather than wide, the obstetrical dilemma and its critics,
+	 *  and the energetic and developmental costs of a large brain.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"senevirathne2025bipedalism": {
+		title: "The evolution of hominin bipedalism in two steps",
+		author: "Gayani Senevirathne, Serena C. Fernandopulle, Daniel Richard, Stephanie L. Baumgart, Anika Liv Christensen, Matteo Fabbri, Jakob Höppner, Harald Jüppner, Peishu Li, Vivien Bothe, Nadia Fröbisch, Ian Simcock, Owen J. Arthurs, Alistair Calder, Naomi Freilich, Niamh C. Nowlan, Ian A. Glass, April Craft, Terence D. Capellini",
+		year: 2025,
+		url: "https://www.nature.com/articles/s41586-025-09399-9"
+	},
+	"xu2025pelvis": {
+		title: "The genetic architecture of and evolutionary constraints on the human pelvic form",
+		author: "Liaoyi Xu, Eucharist Kun, Devansh Pandey, Joyce Y. Wang, Marianne F. Brasil, Tarjinder Singh, Vagheesh M. Narasimhan",
+		year: 2025,
+		url: "https://doi.org/10.1126/science.adq1521"
+	},
+	"gruss2015pelvis": {
+		title: "The evolution of the human pelvis: changing adaptations to bipedalism, obstetrics and thermoregulation",
+		author: "Laura Tobias Gruss, Daniel Schmitt",
+		year: 2015,
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC4305164/"
+	},
+	"rosenberg1995obstetrical": {
+		title: "Bipedalism and human birth: The obstetrical dilemma revisited",
+		author: "Karen Rosenberg, Wenda Trevathan",
+		year: 1995,
+		url: "https://doi.org/10.1002/evan.1360040506"
+	},
+	"dunsworth2012altriciality": {
+		title: "Metabolic hypothesis for human altriciality",
+		author: "Holly M. Dunsworth, Anna G. Warrener, Terrence Deacon, Peter T. Ellison, Herman Pontzer",
+		year: 2012,
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC3458333/"
+	},
+	"warrener2015pelvis": {
+		title: "A Wider Pelvis Does Not Increase Locomotor Cost in Humans, with Implications for the Evolution of Childbirth",
+		author: "Anna G. Warrener, Kristi L. Lewton, Herman Pontzer, Daniel E. Lieberman",
+		year: 2015,
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC4356512/"
+	},
+	"desilva2011infants": {
+		title: "A shift toward birthing relatively large infants early in human evolution",
+		author: "Jeremy M. DeSilva",
+		year: 2011,
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC3024680/"
+	},
+	"hublin2015brain": {
+		title: "Brain ontogeny and life history in Pleistocene hominins",
+		author: "Jean-Jacques Hublin, Simon Neubauer, Philipp Gunz",
+		year: 2015,
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC4305163/"
+	},
+	"neubauer2018brainshape": {
+		title: "The evolution of modern human brain shape",
+		author: "Simon Neubauer, Jean-Jacques Hublin, Philipp Gunz",
+		year: 2018,
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC5783678/"
+	},
+	"herculano2012brain": {
+		title: "The remarkable, yet not extraordinary, human brain as a scaled-up primate brain and its associated cost",
+		author: "Suzana Herculano-Houzel",
+		year: 2012,
+		url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC3386878/"
+	},
 	"weinberg1977first": {
 		title: "The First Three Minutes: A Modern View of the Origin of the Universe",
 		author: "Steven Weinberg",

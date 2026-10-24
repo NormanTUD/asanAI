@@ -46,7 +46,7 @@
    Every code path is guarded; the worst that can happen on a
    malformed sidenote or sideimage is a console.error and a safe
    fallback. See `guardRailCount` below for the running count of
-   specific defensive checks (currently > 30).
+   specific defensive checks (currently > 50).
    ════════════════════════════════════════════════════════════════════ */
 (function () {
 	'use strict';
@@ -62,7 +62,7 @@
 	const VERTICAL_GAP  = 12;
 	const MAX_Y         = 200000; /* sanity cap for absolute top    */
 	const MAX_NOTES     = 100;    /* performance warning threshold  */
-	const MAX_IMAGES    = 30;
+	const MAX_IMAGES    = 50;
 	/* ANGLE 36 (sideimage wrap): when the right margin is too narrow to
 	   hold the rail clear of the text, the rail's left edge digs into the
 	   article. We then move the margin figures into the article flow as
