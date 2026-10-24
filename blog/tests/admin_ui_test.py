@@ -443,6 +443,22 @@ def main() -> int:
 			browser.find_element(By.TAG_NAME, "body").send_keys(Keys.ESCAPE)
 			time.sleep(0.3)
 
+			# Content health explains its flags instead of dropping jargon.
+			browser.get(stats_url)
+			WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.ID, "health")))
+			check(
+				bool(browser.find_elements(By.CSS_SELECTOR, ".health-glossary")),
+				"content health has a flag glossary",
+			)
+			health_terms = browser.execute_script(
+				"return Array.prototype.map.call(document.querySelectorAll('.health-glossary-term'), function (el) { return el.innerText; }).join(' ');"
+			)
+			check(
+				"Content gap" in health_terms and "Falling" in health_terms,
+				"content health glossary names its flags",
+				health_terms,
+			)
+
 			# Reader feedback dashboard.
 			browser.get(f"{feedback_url}&tab=all")
 			WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "nav.tabs")))
@@ -455,6 +471,22 @@ def main() -> int:
 			)
 			for tab_label in ["Overview", "Inbox", "Accepted", "Pages", "Resolved", "Bugs", "All"]:
 				check(tab_label in tab_labels, f"feedback tab {tab_label} exists")
+			check(
+				bool(browser.find_elements(By.CSS_SELECTOR, ".fb-glossary")),
+				"feedback glossary is available on every tab",
+			)
+			browser.get(f"{feedback_url}&tab=overview")
+			WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".fb-insight")))
+			check(
+				len(browser.find_elements(By.CSS_SELECTOR, ".fb-insight")) >= 3,
+				"feedback cards explain what their numbers mean",
+			)
+			check(
+				bool(browser.find_elements(By.CSS_SELECTOR, ".stat small")),
+				"feedback KPIs carry plain-language hints",
+			)
+			browser.get(f"{feedback_url}&tab=all")
+			WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=q]")))
 
 			search = browser.find_element(By.CSS_SELECTOR, "input[name=q]")
 			search.clear()
@@ -508,18 +540,23 @@ def main() -> int:
 			comment.clear()
 			comment.send_keys("Now clearer.")
 			item.find_element(By.XPATH, ".//button[contains(., 'Save changes')]").click()
-			WebDriverWait(browser, 20).until(
-				EC.presence_of_element_located(
-					(By.XPATH, "//details[contains(@class,'item')][contains(.,'Der Geist ist ein Gespenst.')]")
+			def saved_item_text(d: webdriver.Chrome) -> str:
+				return " ".join(
+					row.get_attribute("textContent") or ""
+					for row in d.find_elements(
+						By.XPATH,
+						"//details[contains(@class,'item')][contains(.,'Der Geist ist ein Gespenst.')]",
+					)
 				)
-			)
+
+			WebDriverWait(browser, 20).until(lambda d: "Now clearer." in saved_item_text(d))
+			check("Now clearer." in saved_item_text(browser), "feedback editing persists")
+
 			item = browser.find_element(
 				By.XPATH,
 				"//details[contains(@class,'item')][contains(.,'Der Geist ist ein Gespenst.')]",
 			)
 			browser.execute_script("arguments[0].open = true;", item)
-			WebDriverWait(browser, 20).until(lambda d: "Now clearer." in item.text)
-			check("Now clearer." in item.text, "feedback editing persists")
 
 			item.find_element(By.XPATH, ".//button[contains(., 'Mark done')]").click()
 			WebDriverWait(browser, 20).until(

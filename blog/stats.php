@@ -834,11 +834,6 @@ function stats_health_flag_info(): array {
 	];
 }
 
-function stats_health_flag_label(string $flag): string {
-	$info = stats_health_flag_info()[$flag] ?? null;
-	return $info !== null ? (string)$info['label'] : ucfirst($flag);
-}
-
 function stats_health_flag_badge(string $flag): string {
 	$info = stats_health_flag_info()[$flag] ?? null;
 	$label = $info !== null ? (string)$info['label'] : ucfirst($flag);
@@ -4001,8 +3996,8 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<?php $healthFlagInfo = stats_health_flag_info(); ?>
 					<div class="health-list">
 						<?php foreach ($contentHealth as $health): ?>
-							<?php $healthTone = $health['flags'] ? stats_health_flags_tone($health['flags']) : 'neutral'; ?>
-							<a class="health-card health-card--<?php echo stats_h($healthTone); ?>" href="?<?php echo stats_h(stats_query(['path' => $health['slug'], 'page' => 1])); ?>">
+							<?php $healthTone = $health['flags'] ? stats_health_flags_tone($health['flags']) : ''; ?>
+							<a class="health-card<?php echo $healthTone !== '' ? ' health-card--' . stats_h($healthTone) : ''; ?>" href="?<?php echo stats_h(stats_query(['path' => $health['slug'], 'page' => 1])); ?>">
 								<div class="health-head"><span class="title"><?php echo stats_h($health['label']); ?></span><span class="mini-share"><?php echo stats_h(number_format($health['share'], 1, '.', ',')); ?> %</span></div>
 								<div class="health-meta"><?php echo mn_analytics_format_number($health['views']); ?> views · <?php echo stats_h(mn_analytics_format_duration($health['duration'] !== null ? (int)round($health['duration']) : null)); ?> · <?php echo $health['scroll'] !== null ? stats_h(number_format($health['scroll'], 0, '.', ',')) . ' % scroll' : 'scroll —'; ?><?php if ($health['words'] !== null): ?> · <?php echo mn_analytics_format_number($health['words']); ?> words<?php endif; ?><?php if ($health['speed'] !== null): ?> · <?php echo stats_h(number_format($health['speed'], 0, '.', ',')); ?> wpm<?php endif; ?></div>
 								<?php if ($health['flags']): ?>
