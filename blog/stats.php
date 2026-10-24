@@ -57,7 +57,7 @@ function stats_redirect(): void {
 }
 
 function stats_query(array $overrides = []): string {
-	$allowed = ['range', 'path', 'ref_type', 'source', 'ref_path', 'browser', 'os', 'device', 'day', 'weekday', 'hour', 'humans', 'page'];
+	$allowed = ['range', 'path', 'ref_type', 'source', 'ref_path', 'browser', 'os', 'device', 'day', 'weekday', 'hour', 'humans', 'view', 'page'];
 	$q = [];
 	foreach ($allowed as $key) {
 		$value = array_key_exists($key, $overrides) ? $overrides[$key] : ($_GET[$key] ?? null);
@@ -813,6 +813,9 @@ $contentHealth = [];
 $comparisonRows = [];
 $cohortRows = [];
 $prevKpi = [];
+$storyTop = null;
+$storyHealth = null;
+$storyTopSlug = '';
 $detailsEnabled = false;
 $refCounts = ['direct' => 0, 'internal' => 0, 'search' => 0, 'social' => 0, 'external' => 0];
 $topPages = [];
@@ -1448,6 +1451,10 @@ if ($authed) {
 			];
 		}
 
+		$storyTop = $topPages[0] ?? null;
+		$storyTopSlug = $storyTop ? (string)$storyTop['path'] : '';
+		$storyHealth = $contentHealth[0] ?? null;
+
 		$chartPages = array_slice($topPages, 0, 12);
 		$chartPages = array_reverse($chartPages);
 		$chartPages = array_map(function (array $page) use ($titles): array {
@@ -1694,6 +1701,8 @@ if ($authed) {
 			$known = (int)($row['known'] ?? 0);
 			$cohortRows['source'][] = [
 				'label' => mn_analytics_ref_type_label((string)$row['ref_type']),
+				'filter_kind' => 'ref_type',
+				'filter_value' => (string)$row['ref_type'],
 				'views' => (int)$row['views'],
 				'duration' => $row['avg_duration'] !== null ? (float)$row['avg_duration'] : null,
 				'scroll' => $row['avg_scroll'] !== null ? (float)$row['avg_scroll'] : null,
@@ -1704,6 +1713,8 @@ if ($authed) {
 			$known = (int)($row['known'] ?? 0);
 			$cohortRows['device'][] = [
 				'label' => stats_device_label((string)$row['device']),
+				'filter_kind' => 'device',
+				'filter_value' => (string)$row['device'],
 				'views' => (int)$row['views'],
 				'duration' => $row['avg_duration'] !== null ? (float)$row['avg_duration'] : null,
 				'scroll' => $row['avg_scroll'] !== null ? (float)$row['avg_scroll'] : null,
@@ -2257,6 +2268,7 @@ a.mini-row:hover { background: rgba(255,255,255,.035); text-decoration: none; }
 .card-full { grid-column: 1 / -1; }
 .grid-2 .card, .grid-2even .card, .grid-3 .card { margin-bottom: 0; }
 tr.zero-row td { color: var(--dim); }
+.filter-row { cursor: pointer; }
 tbody tr:hover td { background: rgba(255,255,255,.025); }
 .good { color: var(--emerald); }
 .bad { color: var(--rose); }
@@ -2430,6 +2442,46 @@ body.present .present-bar { display: flex; }
 .saved-views { display: inline-flex; gap: 6px; align-items: center; }
 .saved-views select { padding: 7px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: inherit; font-size: 11px; }
 .saved-views .btn { padding: 7px 9px; }
+.saved-view-row { display: grid; grid-template-columns: minmax(0,1fr) auto auto auto; gap: 6px; align-items: center; margin: 8px 0; }
+.saved-view-row input { min-width: 0; padding: 7px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: inherit; }
+.saved-view-row .btn { padding: 7px 8px; }
+.overview-switch { display: flex; align-items: center; gap: 6px; margin: 0 0 12px; flex-wrap: wrap; }
+.overview-switch .eyebrow { margin-right: 4px; }
+.overview-switch button { border: 1px solid var(--line); background: var(--panel); color: var(--muted); border-radius: 999px; padding: 5px 10px; cursor: pointer; font: inherit; font-size: 11px; font-weight: 600; }
+.overview-switch button.active { background: var(--accent); color: #1a1207; border-color: transparent; }
+.overview-story-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.overview-story-card { display: flex; flex-direction: column; min-width: 0; padding: 14px 15px; border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(150deg, rgba(233,170,96,.12), rgba(56,189,248,.05) 60%, var(--panel) 100%); color: var(--text); text-decoration: none; transition: border-color .15s ease, transform .15s ease; }
+.overview-story-card:hover { border-color: var(--accent); text-decoration: none; transform: translateY(-1px); }
+.story-value { font-size: 28px; font-weight: 800; letter-spacing: -.04em; line-height: 1.1; margin: 8px 0 4px; font-variant-numeric: tabular-nums; }
+.story-value--text { font-size: 18px; line-height: 1.25; font-weight: 700; letter-spacing: -.01em; }
+.story-label { color: var(--muted); font-size: 11px; line-height: 1.45; }
+.story-delta { color: var(--muted); font-size: 11px; margin-top: 8px; }
+.story-flags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 8px; }
+.story-spark { margin-top: auto; padding-top: 10px; color: var(--accent); }
+.story-spark svg { width: 100%; height: auto; }
+body.overview-briefing #overview,
+body.overview-briefing #attention,
+body.overview-briefing #rhythm,
+body.overview-briefing #compare,
+body.overview-briefing #content,
+body.overview-briefing #health,
+body.overview-briefing #sections,
+body.overview-briefing #movers,
+body.overview-briefing #portfolio,
+body.overview-briefing #audience,
+body.overview-briefing #cohorts,
+body.overview-briefing #signals,
+body.overview-briefing #calendar,
+body.overview-briefing #bot-human,
+body.overview-briefing #page-source,
+body.overview-briefing #navigation,
+body.overview-briefing #quality { display: none !important; }
+body.overview-briefing .subnav { display: none !important; }
+body.overview-explore #story-cards { display: none !important; }
+body.present .overview-switch { display: none !important; }
+@media (max-width: 860px) {
+	.overview-story-grid { grid-template-columns: 1fr; }
+}
 body.light {
 	color-scheme: light;
 	--bg: #f6f1e7;
@@ -2588,6 +2640,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<option value="device=bot">Bots</option>
 				</select>
 				<button type="button" class="btn" id="save-view">Save view</button>
+				<button type="button" class="btn" id="manage-views">Manage</button>
 			</div>
 			<div class="tabs" role="tablist" aria-label="Analytics sections">
 				<button type="button" class="tab active" role="tab" aria-selected="true" data-tab="overview">Overview</button>
@@ -2635,7 +2688,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 				<?php if ($device !== ''): ?>
 					<span class="chip">Device: <?php echo stats_h(stats_device_label($device)); ?> <a href="?<?php echo stats_h(stats_query(['device' => '', 'page' => 1])); ?>" aria-label="Remove device filter">×</a></span>
 				<?php endif; ?>
-				<a class="chip" href="?range=<?php echo (int)$range; ?>">Reset all filters</a>
+				<a class="chip" href="?range=<?php echo (int)$range; ?>" data-reset-filters>Reset all filters</a>
 			</div>
 		<?php endif; ?>
 
@@ -2646,6 +2699,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			<input type="hidden" name="weekday" value="<?php echo (int)$weekday; ?>">
 			<input type="hidden" name="hour" value="<?php echo $hour >= 0 ? (int)$hour : ''; ?>">
 			<input type="hidden" name="humans" value="<?php echo $humansOnly ? '1' : ''; ?>">
+			<input type="hidden" name="view" value="<?php echo stats_h((string)($_GET['view'] ?? '')); ?>">
 			<label>Page
 				<input name="path" list="path-list" value="<?php echo stats_h($path); ?>" placeholder="e.g. history">
 			</label>
@@ -2745,6 +2799,39 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 				</ul>
 			</div>
 		</section>
+
+		<div class="overview-switch" data-tab-group="overview" data-slide="1">
+			<span class="eyebrow">View</span>
+			<button type="button" class="active" data-overview-mode="briefing">Briefing</button>
+			<button type="button" data-overview-mode="explore">Explore all</button>
+		</div>
+
+		<div class="overview-story-grid" id="story-cards" data-tab-group="overview" data-slide="1">
+			<a class="overview-story-card" href="#traffic" data-explore-target="traffic">
+				<div class="eyebrow">Traffic</div>
+				<div class="story-value"><?php echo mn_analytics_format_number($views); ?></div>
+				<div class="story-label">views · <?php echo mn_analytics_format_number($entries); ?> estimated visits</div>
+				<div class="story-delta"><?php echo $deltaHtml; ?></div>
+				<div class="story-spark"><?php echo $todaySparkline; ?></div>
+			</a>
+			<a class="overview-story-card" href="#content" data-explore-target="content">
+				<div class="eyebrow">Content</div>
+				<?php if ($storyTop): ?>
+					<div class="story-value story-value--text"><?php echo stats_h($titles[$storyTopSlug] ?? $storyTopSlug); ?></div>
+					<div class="story-label"><?php echo mn_analytics_format_number((int)$storyTop['views']); ?> views<?php if ($storyHealth && $storyHealth['scroll'] !== null): ?> · <?php echo stats_h(number_format($storyHealth['scroll'], 0, '.', ',')); ?> % scroll<?php endif; ?></div>
+					<?php if ($storyHealth && $storyHealth['flags']): ?><div class="story-flags"><?php foreach ($storyHealth['flags'] as $flag): ?><span class="badge warn"><?php echo stats_h($flag); ?></span><?php endforeach; ?></div><?php endif; ?>
+				<?php else: ?>
+					<div class="story-value story-value--text">No data yet</div>
+					<div class="story-label">Share the blog to fill this card.</div>
+				<?php endif; ?>
+			</a>
+			<a class="overview-story-card" href="#quality" data-explore-target="quality">
+				<div class="eyebrow">Quality</div>
+				<div class="story-value"><?php echo stats_h(number_format($knownPct, 1, '.', ',')); ?> %</div>
+				<div class="story-label">duration known · <?php echo stats_h(number_format($confidenceScroll, 1, '.', ',')); ?> % scroll known</div>
+				<div class="story-delta"><?php echo mn_analytics_format_number($bots); ?> bots · last data <?php echo stats_h($lastSeenAge); ?></div>
+			</a>
+		</div>
 
 		<div class="grid-kpi" id="overview" data-tab-group="overview" data-slide="1">
 			<div class="kpi">
@@ -3261,7 +3348,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 								<thead><tr><th>Source</th><th class="num">Views</th><th class="num">Avg. time</th><th class="num">Scroll</th><th class="num">Bounce</th></tr></thead>
 								<tbody>
 								<?php foreach ($cohortRows['source'] as $cohort): ?>
-									<tr><td><?php echo stats_h($cohort['label']); ?></td><td class="num"><?php echo mn_analytics_format_number($cohort['views']); ?></td><td class="num"><?php echo stats_h(mn_analytics_format_duration($cohort['duration'] !== null ? (int)round($cohort['duration']) : null)); ?></td><td class="num"><?php echo $cohort['scroll'] !== null ? stats_h(number_format($cohort['scroll'], 0, '.', ',')) . ' %' : '—'; ?></td><td class="num <?php echo stats_bounce_class($cohort['bounce']); ?>"><?php echo $cohort['bounce'] !== null ? stats_h(number_format($cohort['bounce'], 1, '.', ',')) . ' %' : '—'; ?></td></tr>
+									<tr class="filter-row" data-filter-kind="<?php echo stats_h($cohort['filter_kind']); ?>" data-filter-value="<?php echo stats_h($cohort['filter_value']); ?>"><td><?php echo stats_h($cohort['label']); ?></td><td class="num"><?php echo mn_analytics_format_number($cohort['views']); ?></td><td class="num"><?php echo stats_h(mn_analytics_format_duration($cohort['duration'] !== null ? (int)round($cohort['duration']) : null)); ?></td><td class="num"><?php echo $cohort['scroll'] !== null ? stats_h(number_format($cohort['scroll'], 0, '.', ',')) . ' %' : '—'; ?></td><td class="num <?php echo stats_bounce_class($cohort['bounce']); ?>"><?php echo $cohort['bounce'] !== null ? stats_h(number_format($cohort['bounce'], 1, '.', ',')) . ' %' : '—'; ?></td></tr>
 								<?php endforeach; ?>
 								</tbody>
 							</table>
@@ -3274,7 +3361,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 								<thead><tr><th>Device</th><th class="num">Views</th><th class="num">Avg. time</th><th class="num">Scroll</th><th class="num">Bounce</th></tr></thead>
 								<tbody>
 								<?php foreach ($cohortRows['device'] as $cohort): ?>
-									<tr><td><?php echo stats_h($cohort['label']); ?></td><td class="num"><?php echo mn_analytics_format_number($cohort['views']); ?></td><td class="num"><?php echo stats_h(mn_analytics_format_duration($cohort['duration'] !== null ? (int)round($cohort['duration']) : null)); ?></td><td class="num"><?php echo $cohort['scroll'] !== null ? stats_h(number_format($cohort['scroll'], 0, '.', ',')) . ' %' : '—'; ?></td><td class="num <?php echo stats_bounce_class($cohort['bounce']); ?>"><?php echo $cohort['bounce'] !== null ? stats_h(number_format($cohort['bounce'], 1, '.', ',')) . ' %' : '—'; ?></td></tr>
+									<tr class="filter-row" data-filter-kind="<?php echo stats_h($cohort['filter_kind']); ?>" data-filter-value="<?php echo stats_h($cohort['filter_value']); ?>"><td><?php echo stats_h($cohort['label']); ?></td><td class="num"><?php echo mn_analytics_format_number($cohort['views']); ?></td><td class="num"><?php echo stats_h(mn_analytics_format_duration($cohort['duration'] !== null ? (int)round($cohort['duration']) : null)); ?></td><td class="num"><?php echo $cohort['scroll'] !== null ? stats_h(number_format($cohort['scroll'], 0, '.', ',')) . ' %' : '—'; ?></td><td class="num <?php echo stats_bounce_class($cohort['bounce']); ?>"><?php echo $cohort['bounce'] !== null ? stats_h(number_format($cohort['bounce'], 1, '.', ',')) . ' %' : '—'; ?></td></tr>
 								<?php endforeach; ?>
 								</tbody>
 							</table>
@@ -3894,6 +3981,11 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 			<p id="bot-dialog-text"></p>
 		</dialog>
 
+<dialog id="saved-views-dialog" class="bot-dialog" aria-labelledby="saved-views-title">
+			<form method="dialog"><button type="submit" class="btn" style="float:right;margin-left:12px;">Close</button></form>
+			<h3 id="saved-views-title">Saved views</h3>
+			<div id="saved-views-list"></div>
+		</dialog>
 <div class="present-bar" id="present-bar" hidden>
 			<button type="button" class="btn" data-present-prev aria-label="Previous slide">←</button>
 			<span id="present-label">Traffic &amp; rhythm</span>
@@ -4157,40 +4249,52 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		};
 	}
 
-	var dailyEl = document.getElementById('chart-daily');
-	var refsEl = document.getElementById('chart-refs');
-	var pagesEl = document.getElementById('chart-pages');
-	var pageShareEl = document.getElementById('chart-page-share');
-	var daily = dailyEl ? echarts.init(dailyEl) : null;
-	var refsChart = refsEl ? echarts.init(refsEl) : null;
-	var pagesChart = pagesEl ? echarts.init(pagesEl) : null;
-	var pageShareChart = pageShareEl ? echarts.init(pageShareEl) : null;
-	var sankeyEl = document.getElementById('chart-sankey');
-	var transitionMatrixEl = document.getElementById('chart-transition-matrix');
-	var sankeyChart = sankeyEl ? echarts.init(sankeyEl) : null;
-	var transitionMatrixChart = transitionMatrixEl ? echarts.init(transitionMatrixEl) : null;
-	var browserMixEl = document.getElementById('chart-browser-mix');
-	var osMixEl = document.getElementById('chart-os-mix');
-	var deviceMixEl = document.getElementById('chart-device-mix');
-	var browserMixChart = browserMixEl ? echarts.init(browserMixEl) : null;
-	var osMixChart = osMixEl ? echarts.init(osMixEl) : null;
-	var deviceMixChart = deviceMixEl ? echarts.init(deviceMixEl) : null;
-	var clockEl = document.getElementById('chart-clock');
-	var attentionEl = document.getElementById('chart-attention');
-	var funnelEl = document.getElementById('chart-funnel');
-	var contentTreemapEl = document.getElementById('chart-content-treemap');
-	var sourceTreemapEl = document.getElementById('chart-source-treemap');
-	var calendarEl = document.getElementById('chart-calendar');
-	var botHumanEl = document.getElementById('chart-bots-human');
-	var pageSourceEl = document.getElementById('chart-page-source');
-	var clockChart = clockEl ? echarts.init(clockEl) : null;
-	var attentionChart = attentionEl ? echarts.init(attentionEl) : null;
-	var funnelChart = funnelEl ? echarts.init(funnelEl) : null;
-	var contentTreemapChart = contentTreemapEl ? echarts.init(contentTreemapEl) : null;
-	var sourceTreemapChart = sourceTreemapEl ? echarts.init(sourceTreemapEl) : null;
-	var calendarChart = calendarEl ? echarts.init(calendarEl) : null;
-	var botHumanChart = botHumanEl ? echarts.init(botHumanEl) : null;
-	var pageSourceChart = pageSourceEl ? echarts.init(pageSourceEl) : null;
+	var chartsReady = false;
+	var overviewMode = 'briefing';
+	var daily = null;
+	var refsChart = null;
+	var pagesChart = null;
+	var pageShareChart = null;
+	var sankeyChart = null;
+	var transitionMatrixChart = null;
+	var browserMixChart = null;
+	var osMixChart = null;
+	var deviceMixChart = null;
+	var clockChart = null;
+	var attentionChart = null;
+	var funnelChart = null;
+	var contentTreemapChart = null;
+	var sourceTreemapChart = null;
+	var calendarChart = null;
+	var botHumanChart = null;
+	var pageSourceChart = null;
+
+	function ensureChart(id) {
+		var element = document.getElementById(id);
+		if (!element) {
+			return null;
+		}
+		var existing = echarts.getInstanceByDom(element);
+		if (existing) {
+			return existing;
+		}
+		if (element.offsetParent === null || element.offsetWidth < 2 || element.offsetHeight < 2) {
+			return null;
+		}
+		return echarts.init(element);
+	}
+
+	function bindChartOnce(chart, eventName, handler) {
+		if (!chart) {
+			return;
+		}
+		var flag = '__mnBound' + eventName;
+		if (chart[flag]) {
+			return;
+		}
+		chart[flag] = true;
+		chart.on(eventName, handler);
+	}
 
 	function formatSeconds(value) {
 		value = Math.max(0, Math.round(Number(value) || 0));
@@ -4220,6 +4324,40 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		window.location.href = urlWith(overrides);
 	}
 
+	function applyFilter(kind, value) {
+		if (!kind) {
+			return;
+		}
+		var overrides = {};
+		overrides[kind] = value;
+		goWith(overrides);
+	}
+
+	function resetFilters() {
+		var params = new URLSearchParams();
+		var current = new URLSearchParams(currentQuery);
+		params.set('range', current.get('range') || '30');
+		if (current.get('view')) {
+			params.set('view', current.get('view'));
+		}
+		window.location.href = statsBase + '?' + params.toString() + '#overview';
+	}
+
+	document.addEventListener('click', function (event) {
+		var reset = event.target.closest('[data-reset-filters]');
+		if (reset) {
+			event.preventDefault();
+			resetFilters();
+			return;
+		}
+		var target = event.target.closest('[data-filter-kind]');
+		if (!target) {
+			return;
+		}
+		event.preventDefault();
+		applyFilter(target.getAttribute('data-filter-kind'), target.getAttribute('data-filter-value') || '');
+	}, true);
+
 	document.querySelectorAll('.heat-cell').forEach(function (cell) {
 		function activate() {
 			goWith({
@@ -4248,6 +4386,9 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	(function () {
 		var select = document.getElementById('saved-view-select');
 		var saveButton = document.getElementById('save-view');
+		var manageButton = document.getElementById('manage-views');
+		var dialog = document.getElementById('saved-views-dialog');
+		var list = document.getElementById('saved-views-list');
 		if (!select) {
 			return;
 		}
@@ -4256,9 +4397,15 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 			var raw = localStorage.getItem('mn_stats_views');
 			var parsed = raw ? JSON.parse(raw) : [];
 			if (Array.isArray(parsed)) {
-				saved = parsed.filter(function (view) {
-					return view && typeof view.n === 'string' && typeof view.q === 'string';
-				}).slice(0, 12);
+				saved = parsed.map(function (view) {
+					if (view && typeof view.name === 'string' && typeof view.query === 'string') {
+						return { name: view.name.slice(0, 40), query: view.query };
+					}
+					if (view && typeof view.n === 'string' && typeof view.q === 'string') {
+						return { name: view.n.slice(0, 40), query: view.q };
+					}
+					return null;
+				}).filter(function (view) { return view !== null; }).slice(0, 20);
 			}
 		} catch (ignored) {
 			saved = [];
@@ -4268,24 +4415,85 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				localStorage.setItem('mn_stats_views', JSON.stringify(saved));
 			} catch (ignored) {}
 		}
+		function applyView(query) {
+			if (query) {
+				window.location.href = statsBase + '?' + query + '#overview';
+			}
+		}
 		function renderSaved() {
 			Array.prototype.slice.call(select.querySelectorAll('option[data-saved]')).forEach(function (option) {
 				option.remove();
 			});
 			saved.forEach(function (view, index) {
 				var option = document.createElement('option');
-				option.value = view.q;
-				option.textContent = 'Saved: ' + view.n;
+				option.value = view.query;
+				option.textContent = 'Saved: ' + view.name;
 				option.setAttribute('data-saved', String(index));
 				select.appendChild(option);
+			});
+			if (saved.some(function (view) { return view.query === currentQuery; })) {
+				select.value = currentQuery;
+			}
+		}
+		function renderManager() {
+			if (!list) {
+				return;
+			}
+			list.innerHTML = '';
+			if (!saved.length) {
+				var empty = document.createElement('p');
+				empty.className = 'ref';
+				empty.textContent = 'No saved views yet.';
+				list.appendChild(empty);
+				return;
+			}
+			saved.forEach(function (view, index) {
+				var row = document.createElement('div');
+				row.className = 'saved-view-row';
+				var input = document.createElement('input');
+				input.type = 'text';
+				input.value = view.name;
+				input.maxLength = 40;
+				input.setAttribute('aria-label', 'View name');
+				var apply = document.createElement('button');
+				apply.type = 'button';
+				apply.className = 'btn btn-primary';
+				apply.textContent = 'Apply';
+				apply.addEventListener('click', function () { applyView(view.query); });
+				var rename = document.createElement('button');
+				rename.type = 'button';
+				rename.className = 'btn';
+				rename.textContent = 'Rename';
+				rename.addEventListener('click', function () {
+					var name = input.value.trim();
+					if (!name) {
+						return;
+					}
+					view.name = name.slice(0, 40);
+					persist();
+					renderSaved();
+					renderManager();
+				});
+				var remove = document.createElement('button');
+				remove.type = 'button';
+				remove.className = 'btn';
+				remove.textContent = 'Delete';
+				remove.addEventListener('click', function () {
+					saved.splice(index, 1);
+					persist();
+					renderSaved();
+					renderManager();
+				});
+				row.appendChild(input);
+				row.appendChild(apply);
+				row.appendChild(rename);
+				row.appendChild(remove);
+				list.appendChild(row);
 			});
 		}
 		renderSaved();
 		select.addEventListener('change', function () {
-			if (!this.value) {
-				return;
-			}
-			window.location.href = statsBase + '?' + this.value + '#overview';
+			applyView(this.value);
 		});
 		if (saveButton) {
 			saveButton.addEventListener('click', function () {
@@ -4293,16 +4501,46 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				if (!name) {
 					return;
 				}
-				if (saved.length >= 12) {
+				if (saved.length >= 20) {
 					saved.shift();
 				}
-				saved.push({ n: name.trim().slice(0, 40), q: currentQuery });
+				saved.push({ name: name.trim().slice(0, 40), query: currentQuery });
 				persist();
 				renderSaved();
+				renderManager();
 				select.value = currentQuery;
 			});
 		}
+		if (manageButton && dialog) {
+			manageButton.addEventListener('click', function () {
+				renderManager();
+				if (typeof dialog.showModal === 'function') {
+					dialog.showModal();
+				} else {
+					dialog.setAttribute('open', '');
+				}
+			});
+		}
 	})();
+
+	function renderCharts() {
+		daily = ensureChart('chart-daily');
+		refsChart = ensureChart('chart-refs');
+		pagesChart = ensureChart('chart-pages');
+		pageShareChart = ensureChart('chart-page-share');
+		sankeyChart = ensureChart('chart-sankey');
+		transitionMatrixChart = ensureChart('chart-transition-matrix');
+		browserMixChart = ensureChart('chart-browser-mix');
+		osMixChart = ensureChart('chart-os-mix');
+		deviceMixChart = ensureChart('chart-device-mix');
+		clockChart = ensureChart('chart-clock');
+		attentionChart = ensureChart('chart-attention');
+		funnelChart = ensureChart('chart-funnel');
+		contentTreemapChart = ensureChart('chart-content-treemap');
+		sourceTreemapChart = ensureChart('chart-source-treemap');
+		calendarChart = ensureChart('chart-calendar');
+		botHumanChart = ensureChart('chart-bots-human');
+		pageSourceChart = ensureChart('chart-page-source');
 
 	if (daily) {
 		daily.setOption({
@@ -4335,7 +4573,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	}
 
 	if (daily) {
-		daily.on('click', function (params) {
+		bindChartOnce(daily, 'click', function (params) {
 			if (typeof params.dataIndex === 'number' && seriesDayKeys[params.dataIndex]) {
 				goWith({ day: seriesDayKeys[params.dataIndex] });
 			}
@@ -4380,6 +4618,12 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				},
 				data: refData
 			}]
+		});
+		bindChartOnce(refsChart, 'click', function (params) {
+			var refTypes = { Direct: 'direct', Internal: 'internal', Search: 'search', Social: 'social', External: 'external' };
+			if (refTypes[params.name]) {
+				goWith({ ref_type: refTypes[params.name] });
+			}
 		});
 	}
 
@@ -4559,7 +4803,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				emphasis: { itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,.35)' } }
 			}]
 		});
-		transitionMatrixChart.on('click', function (params) {
+		bindChartOnce(transitionMatrixChart, 'click', function (params) {
 			if (!params.value) {
 				return;
 			}
@@ -4654,7 +4898,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	}
 
 	if (clockChart) {
-		clockChart.on('click', function (params) {
+		bindChartOnce(clockChart, 'click', function (params) {
 			if (typeof params.dataIndex === 'number') {
 				goWith({ hour: String(params.dataIndex) });
 			}
@@ -4719,7 +4963,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				emphasis: { itemStyle: { color: '#e9aa60' } }
 			}]
 		});
-		attentionChart.on('click', function (params) {
+		bindChartOnce(attentionChart, 'click', function (params) {
 			if (params.data && params.data.slug) {
 				goWith({ path: params.data.slug });
 			}
@@ -4808,7 +5052,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				emphasis: { itemStyle: { shadowBlur: 12, shadowColor: 'rgba(0,0,0,.35)' } }
 			}]
 		});
-		contentTreemapChart.on('click', function (params) {
+		bindChartOnce(contentTreemapChart, 'click', function (params) {
 			if (params.data && params.data.slug) {
 				goWith({ path: params.data.slug });
 			}
@@ -4848,7 +5092,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				emphasis: { itemStyle: { shadowBlur: 12, shadowColor: 'rgba(0,0,0,.35)' } }
 			}]
 		});
-		sourceTreemapChart.on('click', function (params) {
+		bindChartOnce(sourceTreemapChart, 'click', function (params) {
 			if (params.data) {
 				goWith({ ref_type: params.data.ref_type, source: params.data.source });
 			}
@@ -4899,7 +5143,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				itemStyle: { borderColor: '#0b1220', borderWidth: 1 }
 			}]
 		});
-		calendarChart.on('click', function (params) {
+		bindChartOnce(calendarChart, 'click', function (params) {
 			if (params.value && params.value[0]) {
 				goWith({ day: params.value[0] });
 			}
@@ -4956,7 +5200,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	}
 
 	if (botHumanChart) {
-		botHumanChart.on('click', function (params) {
+		bindChartOnce(botHumanChart, 'click', function (params) {
 			if (typeof params.dataIndex === 'number' && seriesDayKeys[params.dataIndex]) {
 				goWith({ day: seriesDayKeys[params.dataIndex] });
 			}
@@ -5011,7 +5255,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				emphasis: { itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,.35)' } }
 			}]
 		});
-		pageSourceChart.on('click', function (params) {
+		bindChartOnce(pageSourceChart, 'click', function (params) {
 			if (!params.value) {
 				return;
 			}
@@ -5021,6 +5265,11 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				goWith(sourceFilter);
 			}
 		});
+	}
+
+		chartsReady = true;
+		addPngButtons();
+		applyChartTheme();
 	}
 
 	function applyChartTheme() {
@@ -5254,6 +5503,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 					var on = pane.getAttribute('data-view') === view;
 					pane.hidden = !on;
 					if (on) {
+						renderCharts();
 						requestAnimationFrame(function () { resizeCharts(pane); });
 					}
 				});
@@ -5337,6 +5587,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		function show(n) {
 			slide = Math.max(1, Math.min(3, n));
 			body.classList.add('present');
+			body.classList.remove('overview-briefing', 'overview-explore');
 			body.setAttribute('data-present-slide', String(slide));
 			if (bar) {
 				bar.hidden = false;
@@ -5348,11 +5599,14 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				label.textContent = labels[slide];
 			}
 			window.scrollTo(0, 0);
+			renderCharts();
 			requestAnimationFrame(resizeVisible);
 		}
 		function exit() {
 			body.classList.remove('present');
 			body.removeAttribute('data-present-slide');
+			body.classList.toggle('overview-briefing', overviewMode === 'briefing');
+			body.classList.toggle('overview-explore', overviewMode === 'explore');
 			if (bar) {
 				bar.hidden = true;
 			}
@@ -5432,12 +5686,13 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		});
 	})();
 
-	(function () {
+	function addPngButtons() {
 		document.querySelectorAll('.chart').forEach(function (element) {
 			var chart = echarts.getInstanceByDom(element);
-			if (!chart) {
+			if (!chart || chart.__pngAdded) {
 				return;
 			}
+			chart.__pngAdded = true;
 			var card = element.closest('.card');
 			if (!card) {
 				return;
@@ -5468,6 +5723,68 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 			});
 			actions.appendChild(button);
 		});
+	}
+
+	(function () {
+		function apply(mode, save) {
+			overviewMode = mode === 'explore' ? 'explore' : 'briefing';
+			var body = document.body;
+			if (!body.classList.contains('present')) {
+				body.classList.toggle('overview-briefing', overviewMode === 'briefing');
+				body.classList.toggle('overview-explore', overviewMode === 'explore');
+			}
+			document.querySelectorAll('[data-overview-mode]').forEach(function (button) {
+				button.classList.toggle('active', button.getAttribute('data-overview-mode') === overviewMode);
+			});
+			if (save) {
+				try {
+					localStorage.setItem('mn_stats_overview_view', overviewMode);
+				} catch (ignored) {}
+				try {
+					var url = new URL(window.location.href);
+					url.searchParams.set('view', overviewMode);
+					history.replaceState(null, '', url.pathname + url.search + url.hash);
+				} catch (ignored) {}
+			}
+			if (chartsReady && !body.classList.contains('present')) {
+				renderCharts();
+			}
+		}
+
+		var initial = '';
+		try {
+			initial = new URLSearchParams(window.location.search).get('view') || '';
+		} catch (ignored) {}
+		if (initial !== 'briefing' && initial !== 'explore') {
+			var hash = (window.location.hash || '').replace('#', '');
+			var exploreIds = ['attention', 'rhythm', 'compare', 'content', 'health', 'sections', 'movers', 'portfolio', 'audience', 'cohorts', 'signals', 'calendar', 'bot-human', 'page-source', 'navigation', 'quality'];
+			if (exploreIds.indexOf(hash) >= 0) {
+				initial = 'explore';
+			} else {
+				try {
+					initial = localStorage.getItem('mn_stats_overview_view') || '';
+				} catch (ignored) {}
+			}
+		}
+		apply(initial === 'explore' ? 'explore' : 'briefing', false);
+
+		document.querySelectorAll('[data-overview-mode]').forEach(function (button) {
+			button.addEventListener('click', function () {
+				apply(button.getAttribute('data-overview-mode'), true);
+			});
+		});
+		document.querySelectorAll('[data-explore-target]').forEach(function (link) {
+			link.addEventListener('click', function (event) {
+				if (overviewMode !== 'explore' && !document.body.classList.contains('present')) {
+					event.preventDefault();
+					apply('explore', true);
+					var target = document.getElementById(link.getAttribute('data-explore-target'));
+					if (target) {
+						setTimeout(function () { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 40);
+					}
+				}
+			});
+		});
 	})();
 
 	(function () {
@@ -5486,6 +5803,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				tab.setAttribute('aria-selected', on ? 'true' : 'false');
 				tab.tabIndex = on ? 0 : -1;
 			});
+			renderCharts();
 			document.querySelectorAll('[data-tab-group="' + name + '"] .chart').forEach(function (element) {
 				var chart = echarts.getInstanceByDom(element);
 				if (chart) {
