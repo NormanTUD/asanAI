@@ -5948,7 +5948,7 @@ window.bibData = {
 		title: "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
 		alternativetitle: "Dartmouth Summer Research Project",
 		author: "John McCarthy, Marvin L. Minsky, Nathaniel Rochester, Claude Elwood Shannon",
-		url: "http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf",
+		url: "https://web.archive.org/web/2023/https://www-formal.stanford.edu/jmc/history/dartmouth/dartmouth.html",
 		year: 1955,
 	},
 	"wallis1655": {
@@ -7009,7 +7009,7 @@ window.bibData = {
 		title: "The Quest for Artificial Intelligence: A History of Ideas and Achievements",
 		author: "Nils J. Nilsson",
 		year: 2009,
-		url: "https://ai.stanford.edu/~nilsson/QAI/qai.pdf",
+		url: "https://web.archive.org/web/2023/https://ai.stanford.edu/~nilsson/QAI/qai.pdf",
 		alternativetitle: "Nilsson, The Quest for Artificial Intelligence"
 	},
 	"ronkowitz2017perceptron": {
@@ -7242,7 +7242,7 @@ window.bibData = {
 		alternativetitle: "CFG"
 	},
 	"rombach2022ldm": {
-		url: "https://arxiv.org/abs/2112.10752",
+		url: "https://openaccess.thecvf.com/content/CVPR2022/papers/Rombach_High-Resolution_Image_Synthesis_With_Latent_Diffusion_Models_CVPR_2022_paper.pdf",
 		title: "High-Resolution Image Synthesis with Latent Diffusion Models",
 		author: "Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, Björn Ommer",
 		year: 2022,
@@ -17587,7 +17587,7 @@ window.bibData = {
 		title: "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
 		author: "John McCarthy, Marvin Minsky, Nathaniel Rochester, Claude Shannon",
 		year: 1955,
-		url: "http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf",
+		url: "https://web.archive.org/web/2023/https://www-formal.stanford.edu/jmc/history/dartmouth/dartmouth.html",
 		alternativetitle: "McCarthy et al. 1955 — the Dartmouth proposal"
 	},
 	"ai_winter_wiki": {
@@ -18528,7 +18528,7 @@ window.bibData = {
 		title: "The Design of Experiments",
 		author: "Ronald A. Fisher",
 		year: 1935,
-		url: "https://en.wikipedia.org/wiki/The_Design_of_Experiments",
+		url: "https://archive.org/details/in.ernet.dli.2015.199572",
 		alternativetitle: "Fisher, The Design of Experiments (1935)"
 	},
 	"doubleblind": {
@@ -21552,5 +21552,94 @@ window.bibData = {
 		year: 1990,
 		url: "https://www.govinfo.gov/content/pkg/STATUTE-104/pdf/STATUTE-104-Pg4978.pdf",
 		alternativetitle: "Immigration Act 1990 (H-1B)"
+	},
+	"cacm2023aiwinter": {
+		title: "There Was No First AI Winter",
+		author: "Communications of the ACM",
+		year: 2023,
+		url: "https://cacm.acm.org/magazines/2023/12/278152-there-was-no-first-ai-winter/fulltext",
+		alternativetitle: "CACM, There Was No First AI Winter (2023)"
+	},
+
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Body, city, state, spectrum, thermodynamics (untold_history.php)
+	 *  — primary sources.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"snow1855cholera": {
+		title: "On the Mode of Communication of Cholera",
+		author: "John Snow",
+		year: 1855,
+		url: "https://www.gutenberg.org/ebooks/72894",
+		alternativetitle: "Snow, 1855"
+	},
+	"un2024wpp": {
+		title: "World Population Prospects 2024: Summary of Results",
+		author: "United Nations Department of Economic and Social Affairs",
+		year: 2024,
+		url: "https://population.un.org/wpp/assets/Files/WPP2024_Summary-of-Results.pdf",
+		alternativetitle: "UN WPP 2024"
+	},
+	"uk1848publichealth": {
+		title: "Public Health Act 1848",
+		author: "Parliament of the United Kingdom",
+		year: 1848,
+		url: "https://www.legislation.gov.uk/ukpga/Vict/11-12/63/enacted",
+		alternativetitle: "Public Health Act 1848"
+	},
+	"nyc1916zoning": {
+		title: "Building Zone Resolution of the City of New York",
+		author: "Board of Estimate and Apportionment of the City of New York",
+		year: 1916,
+		url: "https://www.nyc.gov/assets/planning/download/pdf/about/city-planning-history/zr1916.pdf",
+		alternativetitle: "NYC Zoning Resolution 1916"
+	},
+	"uscensus1790": {
+		title: "History of the U.S. Census Bureau: 1790",
+		author: "U.S. Census Bureau",
+		year: 2026,
+		url: "https://www.census.gov/history/www/through_the_decades/overview/1790.html",
+		alternativetitle: "U.S. Census Bureau, 1790"
+	},
+	"mrc1948streptomycin": {
+		title: "Streptomycin Treatment of Pulmonary Tuberculosis: A Medical Research Council Investigation",
+		author: "Medical Research Council",
+		year: 1948,
+		url: "https://doi.org/10.1136/bmj.2.4582.769",
+		alternativetitle: "MRC, 1948"
+	},
+	"maxwell1865": {
+		title: "A Dynamical Theory of the Electromagnetic Field",
+		author: "James Clerk Maxwell",
+		year: 1865,
+		url: "https://archive.org/details/dynamicaltheoryo00maxw",
+		alternativetitle: "Maxwell, 1865"
+	},
+	"itu_radio_regulations": {
+		title: "Radio Regulations",
+		author: "International Telecommunication Union",
+		year: 2024,
+		url: "https://www.itu.int/pub/R-REG-RR",
+		alternativetitle: "ITU Radio Regulations"
+	},
+	"carnot1824": {
+		title: "Betrachtungen über die bewegende Kraft des Feuers und die zur Entwickelung dieser Kraft geeigneten Maschinen",
+		author: "Sadi Carnot",
+		year: 1824,
+		url: "https://archive.org/details/betrachtungenbe00carngoog",
+		alternativetitle: "Carnot, 1824"
+	},
+	"clausius1865": {
+		title: "Ueber verschiedene für die Anwendung bequeme Formen der Hauptgleichungen der mechanischen Wärmetheorie",
+		author: "Rudolf Clausius",
+		year: 1865,
+		url: "https://doi.org/10.1002/andp.18652010702",
+		alternativetitle: "Clausius, 1865"
+	},
+	"landauer1961": {
+		title: "Irreversibility and Heat Generation in the Computing Process",
+		author: "Rolf Landauer",
+		year: 1961,
+		url: "https://doi.org/10.1147/rd.53.0183",
+		alternativetitle: "Landauer, 1961"
 	},
 };

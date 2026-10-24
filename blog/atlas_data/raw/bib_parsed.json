@@ -5158,7 +5158,7 @@
    "title": "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
    "author": "John McCarthy, Marvin L. Minsky, Nathaniel Rochester, Claude Elwood Shannon",
    "year": "",
-   "url": "http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf"
+   "url": "https://web.archive.org/web/2023/https://www-formal.stanford.edu/jmc/history/dartmouth/dartmouth.html"
   },
   "wallis1655": {
    "title": "Arithmetica Infinitorum",
@@ -6124,7 +6124,7 @@
    "title": "The Quest for Artificial Intelligence: A History of Ideas and Achievements",
    "author": "Nils J. Nilsson",
    "year": "",
-   "url": "https://ai.stanford.edu/~nilsson/QAI/qai.pdf"
+   "url": "https://web.archive.org/web/2023/https://ai.stanford.edu/~nilsson/QAI/qai.pdf"
   },
   "ronkowitz2017perceptron": {
    "title": "Perceptron",
@@ -6322,7 +6322,7 @@
    "title": "High-Resolution Image Synthesis with Latent Diffusion Models",
    "author": "Robin Rombach, Andreas Blattmann, Dominik Lorenz, Patrick Esser, Björn Ommer",
    "year": "",
-   "url": "https://arxiv.org/abs/2112.10752"
+   "url": "https://openaccess.thecvf.com/content/CVPR2022/papers/Rombach_High-Resolution_Image_Synthesis_With_Latent_Diffusion_Models_CVPR_2022_paper.pdf"
   },
   "lipman2023flow": {
    "title": "Flow Matching for Generative Modeling",
@@ -14614,7 +14614,7 @@
    "title": "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence",
    "author": "John McCarthy, Marvin Minsky, Nathaniel Rochester, Claude Shannon",
    "year": "",
-   "url": "http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf"
+   "url": "https://web.archive.org/web/2023/https://www-formal.stanford.edu/jmc/history/dartmouth/dartmouth.html"
   },
   "ai_winter_wiki": {
    "title": "AI winter",
@@ -15370,7 +15370,7 @@
    "title": "The Design of Experiments",
    "author": "Ronald A. Fisher",
    "year": "",
-   "url": "https://en.wikipedia.org/wiki/The_Design_of_Experiments"
+   "url": "https://archive.org/details/in.ernet.dli.2015.199572"
   },
   "doubleblind": {
    "title": "Blinded (double-blind) experiment",
@@ -17813,6 +17813,78 @@
    "author": "U.S. Congress",
    "year": "",
    "url": "https://www.govinfo.gov/content/pkg/STATUTE-104/pdf/STATUTE-104-Pg4978.pdf"
+  },
+  "cacm2023aiwinter": {
+   "title": "There Was No First AI Winter",
+   "author": "Communications of the ACM",
+   "year": "",
+   "url": "https://cacm.acm.org/magazines/2023/12/278152-there-was-no-first-ai-winter/fulltext"
+  },
+  "snow1855cholera": {
+   "title": "On the Mode of Communication of Cholera",
+   "author": "John Snow",
+   "year": "",
+   "url": "https://www.gutenberg.org/ebooks/72894"
+  },
+  "un2024wpp": {
+   "title": "World Population Prospects 2024: Summary of Results",
+   "author": "United Nations Department of Economic and Social Affairs",
+   "year": "",
+   "url": "https://population.un.org/wpp/assets/Files/WPP2024_Summary-of-Results.pdf"
+  },
+  "uk1848publichealth": {
+   "title": "Public Health Act 1848",
+   "author": "Parliament of the United Kingdom",
+   "year": "",
+   "url": "https://www.legislation.gov.uk/ukpga/Vict/11-12/63/enacted"
+  },
+  "nyc1916zoning": {
+   "title": "Building Zone Resolution of the City of New York",
+   "author": "Board of Estimate and Apportionment of the City of New York",
+   "year": "",
+   "url": "https://www.nyc.gov/assets/planning/download/pdf/about/city-planning-history/zr1916.pdf"
+  },
+  "uscensus1790": {
+   "title": "History of the U.S. Census Bureau: 1790",
+   "author": "U.S. Census Bureau",
+   "year": "",
+   "url": "https://www.census.gov/history/www/through_the_decades/overview/1790.html"
+  },
+  "mrc1948streptomycin": {
+   "title": "Streptomycin Treatment of Pulmonary Tuberculosis: A Medical Research Council Investigation",
+   "author": "Medical Research Council",
+   "year": "",
+   "url": "https://doi.org/10.1136/bmj.2.4582.769"
+  },
+  "maxwell1865": {
+   "title": "A Dynamical Theory of the Electromagnetic Field",
+   "author": "James Clerk Maxwell",
+   "year": "",
+   "url": "https://archive.org/details/dynamicaltheoryo00maxw"
+  },
+  "itu_radio_regulations": {
+   "title": "Radio Regulations",
+   "author": "International Telecommunication Union",
+   "year": "",
+   "url": "https://www.itu.int/pub/R-REG-RR"
+  },
+  "carnot1824": {
+   "title": "Betrachtungen über die bewegende Kraft des Feuers und die zur Entwickelung dieser Kraft geeigneten Maschinen",
+   "author": "Sadi Carnot",
+   "year": "",
+   "url": "https://archive.org/details/betrachtungenbe00carngoog"
+  },
+  "clausius1865": {
+   "title": "Ueber verschiedene für die Anwendung bequeme Formen der Hauptgleichungen der mechanischen Wärmetheorie",
+   "author": "Rudolf Clausius",
+   "year": "",
+   "url": "https://doi.org/10.1002/andp.18652010702"
+  },
+  "landauer1961": {
+   "title": "Irreversibility and Heat Generation in the Computing Process",
+   "author": "Rolf Landauer",
+   "year": "",
+   "url": "https://doi.org/10.1147/rd.53.0183"
   }
  },
  "cites": {
@@ -18655,11 +18727,8 @@
    "ai_and_society",
    "history"
   ],
-  "nilsson1984qai": [
-   "ai_and_society",
-   "history",
-   "language",
-   "untold_history"
+  "cacm2023aiwinter": [
+   "ai_and_society"
   ],
   "campbell2002deepblue": [
    "ai_and_society"
@@ -18680,9 +18749,6 @@
    "ai_existential_risk"
   ],
   "fifteenai": [
-   "ai_and_society"
-  ],
-  "wsj2019voicefraud": [
    "ai_and_society"
   ],
   "fcc2024biden": [
@@ -20261,6 +20327,11 @@
   ],
   "kempelen_speaking_machine": [
    "language"
+  ],
+  "nilsson1984qai": [
+   "history",
+   "language",
+   "untold_history"
   ],
   "firth_context": [
    "language"
@@ -24229,6 +24300,43 @@
   "rfc2026": [
    "untold_history"
   ],
+  "snow1855cholera": [
+   "untold_history"
+  ],
+  "un2024wpp": [
+   "untold_history"
+  ],
+  "uk1848publichealth": [
+   "untold_history"
+  ],
+  "nyc1916zoning": [
+   "untold_history"
+  ],
+  "uscensus1790": [
+   "untold_history"
+  ],
+  "fisher1935design": [
+   "statistics_i",
+   "untold_history"
+  ],
+  "mrc1948streptomycin": [
+   "untold_history"
+  ],
+  "maxwell1865": [
+   "untold_history"
+  ],
+  "itu_radio_regulations": [
+   "untold_history"
+  ],
+  "carnot1824": [
+   "untold_history"
+  ],
+  "clausius1865": [
+   "untold_history"
+  ],
+  "landauer1961": [
+   "untold_history"
+  ],
   "priestley1772air": [
    "untold_history"
   ],
@@ -26235,9 +26343,6 @@
    "statistics_i"
   ],
   "lind1747scurvy": [
-   "statistics_i"
-  ],
-  "fisher1935design": [
    "statistics_i"
   ],
   "doubleblind": [
@@ -62897,13 +63002,14 @@
    ]
   },
   "Parliament of the United Kingdom": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "companiesact1856",
     "uk1870education",
-    "uk1850libraries"
+    "uk1850libraries",
+    "uk1848publichealth"
    ]
   },
   "U.S. Congress": {
@@ -63171,6 +63277,94 @@
    "maxyear": null,
    "keys": [
     "mass1647deluder"
+   ]
+  },
+  "Communications of the ACM": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "cacm2023aiwinter"
+   ]
+  },
+  "John Snow": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "snow1855cholera"
+   ]
+  },
+  "United Nations Department of Economic and Social Affairs": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "un2024wpp"
+   ]
+  },
+  "Board of Estimate and Apportionment of the City of New York": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "nyc1916zoning"
+   ]
+  },
+  "U.S. Census Bureau": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "uscensus1790"
+   ]
+  },
+  "Medical Research Council": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "mrc1948streptomycin"
+   ]
+  },
+  "James Clerk Maxwell": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "maxwell1865"
+   ]
+  },
+  "International Telecommunication Union": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "itu_radio_regulations"
+   ]
+  },
+  "Sadi Carnot": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "carnot1824"
+   ]
+  },
+  "Rudolf Clausius": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "clausius1865"
+   ]
+  },
+  "Rolf Landauer": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "landauer1961"
    ]
   }
  }

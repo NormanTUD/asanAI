@@ -24746,11 +24746,12 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 3,
+  "works": 4,
   "keys": [
    "companiesact1856",
    "uk1870education",
-   "uk1850libraries"
+   "uk1850libraries",
+   "uk1848publichealth"
   ],
   "cited_in": [
    "untold_history"
@@ -24907,9 +24908,7 @@
   "keys": [
    "wsj2019voicefraud"
   ],
-  "cited_in": [
-   "ai_and_society"
-  ]
+  "cited_in": []
  },
  {
   "name": "Federal Communications Commission",
@@ -25347,6 +25346,193 @@
   "works": 1,
   "keys": [
    "mass1647deluder"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Communications of the ACM",
+  "canon": "Communications of the ACM",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cacm2023aiwinter"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "John Snow",
+  "canon": "John Snow",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "snow1855cholera"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "United Nations Department of Economic and Social Affairs",
+  "canon": "United Nations Department of Economic and Social Affairs",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "un2024wpp"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Board of Estimate and Apportionment of the City of New York",
+  "canon": "Board of Estimate and Apportionment of the City of New York",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "nyc1916zoning"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "U.S. Census Bureau",
+  "canon": "U.S. Census Bureau",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "uscensus1790"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Medical Research Council",
+  "canon": "Medical Research Council",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "mrc1948streptomycin"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "James Clerk Maxwell",
+  "canon": "James Clerk Maxwell",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "maxwell1865"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "International Telecommunication Union",
+  "canon": "International Telecommunication Union",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "itu_radio_regulations"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Sadi Carnot",
+  "canon": "Sadi Carnot",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "carnot1824"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Rudolf Clausius",
+  "canon": "Rudolf Clausius",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "clausius1865"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Rolf Landauer",
+  "canon": "Rolf Landauer",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "landauer1961"
   ],
   "cited_in": [
    "untold_history"
@@ -55668,7 +55854,6 @@
    "nilsson1984shakey"
   ],
   "cited_in": [
-   "ai_and_society",
    "history",
    "language",
    "untold_history"
@@ -61748,7 +61933,8 @@
   ],
   "cited_in": [
    "beyond_llms",
-   "statistics_i"
+   "statistics_i",
+   "untold_history"
   ]
  },
  {

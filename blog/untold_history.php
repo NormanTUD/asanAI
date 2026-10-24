@@ -2664,6 +2664,49 @@ The final layer is the committee. RFC 2026 documents the Internet standards proc
 </div>
 
 <div class="md" data-depth="40">
+## The Body, the City, and the State: The Human and Political Budgets
+
+The previous part followed the budgets of matter and energy. This part follows the budgets of people, places and permission: the health that lets children survive to become workers and readers, the city that concentrates them, the census that makes them legible, the trial that turns experience into evidence, the spectrum that carries signals, and the thermodynamic bill that every computation must pay.
+
+### The Clinic: Public Health and the Demographic Budget
+
+Before a society can have schools, laboratories or data centers, its children have to survive. Snow's 1855 investigation of cholera in Broad Street traced the outbreak to a single water pump and used a map of deaths to show that the cases clustered around it; the lesson was that epidemic disease is a problem of infrastructure, not fate (\cite[Snow, 1855]{snow1855cholera}). The demographic result is stark: the UN's 2024 World Population Prospects puts the global population at 8.2 billion in 2024 and projects about 10.3 billion in the mid-2080s, with global life expectancy at birth at 73.3 years in 2024, 8.4 years more than in 1995 (\cite[UN DESA, 2024]{un2024wpp}). Public health and sanitation, together with later vaccines and antibiotics, were part of the mortality decline that produced the population which staffs the schools and laboratories. The clinic is therefore a prerequisite of the human-capital budget, not a separate story.
+
+> **Open questions.** How much of the AI workforce exists because of the mortality decline? Which public-health failures still constrain the talent pool? What is the demographic bill of an ageing research population?
+
+### The City: Density, Sanitation, and the Urban Stack
+
+Public health became an urban problem because the city concentrates people and waste. The Public Health Act 1848 was "An Act for promoting the Public Health" and placed the supply of water, sewerage, drainage, cleansing and paving under a local board of health (\cite[Parliament of the United Kingdom, 1848]{uk1848publichealth}). The city also had to regulate vertical space: New York's 1916 Building Zone Resolution regulated the height and bulk of buildings, the area of yards and courts, and the location of trades and industries, creating the modern zoning map (\cite[New York City, 1916]{nyc1916zoning}). Density is what makes networks, markets, universities and data centers possible; it is also what makes them vulnerable. The city is a machine for concentrating people, and computation inherits its concentration.
+
+> **Open questions.** Why do data centers cluster where they do? What is the urban footprint of a cloud region? Can the city be made resilient without making it exclusionary?
+
+### The Census: The State as a Data Machine
+
+A state that cannot count its people cannot tax, conscript, educate or plan for them. The United States has collected population data since 1790 and every ten years since (\cite[U.S. Census Bureau, 2026]{uscensus1790}). The 1890 census was the occasion for Hollerith's punched-card tabulator, which turned a constitutional headcount into a data-processing problem (\cite[Hollerith, 1890]{hollerith1890}). The census is the state's data machine: it standardises categories, defines populations, and produces the statistical substrate on which policy, markets and research depend. The data center is, in part, the descendant of the census office.
+
+> **Open questions.** Who is counted, and who is missed? How do categories shape policy? What would a census of machine-generated text look like?
+
+### The Trial: Randomization and Causal Inference
+
+Medicine had to learn how to compare. Fisher's *The Design of Experiments* (1935) formalised randomisation, replication and the analysis of variance as the basis for causal inference (\cite[Fisher, 1935]{fisher1935design}). The 1948 Medical Research Council trial of streptomycin in pulmonary tuberculosis is the canonical early randomised controlled trial: it allocated patients to treatment and control groups and compared outcomes (\cite[Medical Research Council, 1948]{mrc1948streptomycin}). The randomised trial turned medicine from anecdote into evidence and gave the world a template for testing interventions under uncertainty. The same logic underlies A/B testing, benchmark evaluation and the controlled experiments of machine learning.
+
+> **Open questions.** When is a benchmark a controlled experiment? What does randomisation buy, and what does it hide? Can alignment be tested like a drug?
+
+### The Spectrum: Maxwell, Hertz, and the Allocation of the Air
+
+Computation is not only silicon; it is also the electromagnetic spectrum. Maxwell's 1865 paper unified electricity, magnetism and light in a single field theory and predicted electromagnetic waves (\cite[Maxwell, 1865]{maxwell1865}). Hertz's experiments confirmed the prediction, and Marconi turned it into signalling. Because the spectrum is finite and shared, it had to be allocated: the ITU Radio Regulations contain the complete texts adopted by the World Radiocommunication Conference and define how frequencies are used internationally (\cite[ITU, 2024]{itu_radio_regulations}). Wi-Fi, cellular, radar, satellite and radio astronomy are all users of a governed resource. The air is a commons with a rulebook.
+
+> **Open questions.** Which bands are still available? How does spectrum policy shape the cost of connectivity? Who gets to use the air?
+
+### The Thermodynamic Bill: Carnot, Landauer, and the Cost of a Bit
+
+Every computation is a physical process, and physics sends a bill. Carnot's 1824 reflections on the motive power of fire founded the theory of heat engines and the limit on how much work can be extracted from a temperature difference (\cite[Carnot, 1824]{carnot1824}). Clausius formulated the second law and introduced entropy (\cite[Clausius, 1865]{clausius1865}). Landauer applied the lesson to computing: logical irreversibility is associated with physical irreversibility and requires a minimal heat generation of order kT per irreversible operation (\cite[Landauer, 1961]{landauer1961}). The IEA's projection of data-centre electricity demand doubling to 950 TWh by 2030 is the macroscopic version of Landauer's bill (\cite[IEA, 2026]{iea2026energyai}). The thermodynamic bill cannot be negotiated away; it can only be paid with better materials, better cooling, or reversible computing.
+
+> **Open questions.** What is the minimum energy per useful floating-point operation? How close is a GPU to the Landauer limit? Could reversible computing change the energy budget of AI?
+
+</div>
+
+<div class="md" data-depth="40">
 ## The Deep Stack: The Budgets Behind the Machine
 
 Every prerequisite described so far is paid for out of a budget. This closing part zooms out from the individual invention to the planetary and civilizational accounts that make the whole chain possible: the solar energy stored by plants, the nitrogen that grows the population, the fresh water that cools and cleans, the minerals concentrated by geology, the capital that finances the fab, and the attention that pays for the free web. None of these budgets was created for AI. All of them are drawn down by it.
