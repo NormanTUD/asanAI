@@ -155,6 +155,21 @@ daily pool. A module that must call `MNQuest` at start-up starts with
 `setTimeout(start, 0)` when the document is already parsed (the home page
 loads base JS with `defer`, and module files run in alphabetical order).
 
+**Reader feedback** (`modules/feedback.js`, `feedback_capture.js`,
+`feedback_track.php`, admin `feedback.php`): selecting text in a lesson opens a
+small rail card to the **right of the paragraph** (never at the cursor) with
+👍/👎/💡/❓/🐞 reactions, an optional comment and an optional email. The email
+is remembered in `localStorage` only when the reader ticks the box, and is sent
+with the message so the editor can reply. Bug reports attach console output and
+recent clicks only after explicit consent (`feedback_capture.js` keeps that
+buffer in memory, never sends on its own). Storage shares the analytics SQLite
+DB: `block_feedback` (main row + location + prompt state), `feedback_selections`
+(selected text/HTML, offsets, context, geometry) and `feedback_bug_context`
+(consent-gated). The admin page `/feedback` shares the `/stats` password and
+session, and can accept a row and copy an editable AI-fix prompt (file, lesson,
+part, section, block, verbatim reader words, editor instruction, constraints,
+validators; no source line numbers by design).
+
 ## The Blog: lesson authoring contract
 
 Each lesson is one `blog/<slug>.php`. The shape is a contract, not a style

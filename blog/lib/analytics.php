@@ -2040,7 +2040,7 @@ function mn_feedback_verify_token(string $token): bool {
 		return false;
 	}
 	$age = time() - (int)$ts;
-	if ($age < -300 || $age > 7200) {
+	if ($age < -300 || $age > 86400) {
 		return false;
 	}
 	return hash_equals(hash_hmac('sha256', $ts, mn_feedback_secret()), $sig);

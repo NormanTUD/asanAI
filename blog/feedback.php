@@ -664,19 +664,18 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 
 					<?php if ($full && ($rowStatus === 'accepted' || $rowStatus === 'done')): ?>
 					<form class="prompt" method="post" action="">
-						<input type="hidden" name="action" value="save_prompt">
 						<input type="hidden" name="csrf" value="<?php echo feedback_h(mn_admin_csrf()); ?>">
 						<input type="hidden" name="id" value="<?php echo $id; ?>">
 						<div class="kv"><div class="k">Editor note (feeds the prompt when regenerated)</div></div>
 						<textarea name="admin_note" rows="2" placeholder="What should change, in your own words…"><?php echo feedback_h($row['admin_note'] ?? ''); ?></textarea>
 						<div class="row">
 							<label class="check"><input type="checkbox" name="include_bug" value="1"> Include bug context when regenerating</label>
-							<button type="submit" class="btn small" formaction="" name="action" value="regenerate_prompt">Regenerate prompt</button>
+							<button type="submit" class="btn small" name="action" value="regenerate_prompt">Regenerate prompt</button>
 						</div>
 						<div class="kv"><div class="k">AI prompt (editable)</div></div>
 						<textarea name="admin_prompt" rows="16" spellcheck="false"><?php echo feedback_h($promptValue); ?></textarea>
 						<div class="row">
-							<button type="submit" class="btn primary">Save prompt</button>
+							<button type="submit" class="btn primary" name="action" value="save_prompt">Save prompt</button>
 							<button type="button" class="btn copy-prompt">Copy prompt</button>
 							<span class="hint">Paste this into an agent. The prompt contains the file, lesson, section, selection and the reader's words.</span>
 						</div>

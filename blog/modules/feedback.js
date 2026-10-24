@@ -47,6 +47,7 @@
 	var closeTimer = 0;
 	var started = false;
 	var lastSelectionEvent = 0;
+	var keyboardSelection = false;
 
 	function start() {
 		if (started) {
@@ -268,15 +269,18 @@
 			if (event.button !== 0) {
 				return;
 			}
+			keyboardSelection = false;
 			lastSelectionEvent = Date.now();
 			setTimeout(checkSelection, 0);
 		}, true);
 		document.addEventListener("touchend", function () {
+			keyboardSelection = false;
 			lastSelectionEvent = Date.now();
 			setTimeout(checkSelection, 380);
 		}, true);
 		document.addEventListener("keyup", function (event) {
 			if (event.shiftKey || /^(Arrow|Home|End|Page)/.test(event.key)) {
+				keyboardSelection = true;
 				lastSelectionEvent = Date.now();
 				setTimeout(checkSelection, 0);
 			}
@@ -626,6 +630,13 @@
 		requestAnimationFrame(function () {
 			position();
 			panel.classList.add("is-open");
+			if (keyboardSelection) {
+				var first = reactionWrap.querySelector(".mnf-reaction");
+				if (first) {
+					first.focus({ preventScroll: true });
+				}
+				keyboardSelection = false;
+			}
 		});
 		applyHighlight(info.ranges);
 	}

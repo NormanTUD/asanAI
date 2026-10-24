@@ -1,5 +1,5 @@
 /*
- * In-memory capture for reader feedback bug reports.
+ * In-memory capture for reader feedback failure reports.
  *
  * Nothing is sent anywhere by this file. It keeps a small ring buffer of
  * console output, uncaught errors and recent clicks so the feedback panel
