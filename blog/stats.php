@@ -1568,6 +1568,12 @@ if ($authed) {
 			return $titles[$slug] ?? $slug;
 		}, $pageSourcePageKeys);
 		$pageSourceSources = $pageSourceSourceKeys;
+		$pageSourceSourceFilters = [];
+		foreach ($pageSourceSourceKeys as $pageSourceSourceKey) {
+			$pageSourceSourceFilters[] = in_array($pageSourceSourceKey, ['direct', 'search', 'social', 'external'], true)
+				? ['ref_type' => $pageSourceSourceKey]
+				: ['source' => $pageSourceSourceKey];
+		}
 		$pageSourcePageIndex = array_flip($pageSourcePageKeys);
 		$pageSourceSourceIndex = array_flip($pageSourceSourceKeys);
 		$pageSourceData = [];
@@ -1623,20 +1629,20 @@ if ($authed) {
 		$sankeyNodeMap = [];
 		$sankeyAdj = [];
 		foreach ($sankeyRows as $sankeyRow) {
-			$source = (string)$sankeyRow['source'];
-			$target = (string)$sankeyRow['target'];
-			$value = (int)$sankeyRow['views'];
-			if ($value <= 0 || $source === '' || $target === '' || $source === $target) {
+			$sankeySource = (string)$sankeyRow['source'];
+			$sankeyTarget = (string)$sankeyRow['target'];
+			$sankeyValue = (int)$sankeyRow['views'];
+			if ($sankeyValue <= 0 || $sankeySource === '' || $sankeyTarget === '' || $sankeySource === $sankeyTarget) {
 				continue;
 			}
-			if (stats_graph_has_path($sankeyAdj, $target, $source)) {
+			if (stats_graph_has_path($sankeyAdj, $sankeyTarget, $sankeySource)) {
 				$sankeyOmitted++;
 				continue;
 			}
-			$sankeyAdj[$source][$target] = true;
-			$sankeyNodeMap[$source] = true;
-			$sankeyNodeMap[$target] = true;
-			$sankeyLinks[] = ['source' => $source, 'target' => $target, 'value' => $value];
+			$sankeyAdj[$sankeySource][$sankeyTarget] = true;
+			$sankeyNodeMap[$sankeySource] = true;
+			$sankeyNodeMap[$sankeyTarget] = true;
+			$sankeyLinks[] = ['source' => $sankeySource, 'target' => $sankeyTarget, 'value' => $sankeyValue];
 		}
 		foreach (array_keys($sankeyNodeMap) as $sankeySlug) {
 			$sankeyNodes[] = ['name' => $sankeySlug];
@@ -1902,12 +1908,12 @@ if ($authed) {
 		foreach ($weekHourRows as $row) {
 			$dow = (int)$row['dow'];
 			$weekdayIndex = $dow === 0 ? 7 : $dow;
-			$hour = (int)$row['hour'];
-			if (!isset($weekHourMap[$weekdayIndex]) || $hour < 0 || $hour > 23) {
+			$weekHourValue = (int)$row['hour'];
+			if (!isset($weekHourMap[$weekdayIndex]) || $weekHourValue < 0 || $weekHourValue > 23) {
 				continue;
 			}
-			$weekHourMap[$weekdayIndex][$hour] = (int)$row['views'];
-			$weekHourEntriesMap[$weekdayIndex][$hour] = (int)$row['entries'];
+			$weekHourMap[$weekdayIndex][$weekHourValue] = (int)$row['views'];
+			$weekHourEntriesMap[$weekdayIndex][$weekHourValue] = (int)$row['entries'];
 			if ((int)$row['views'] > $weekHourMax) {
 				$weekHourMax = (int)$row['views'];
 			}
@@ -3711,11 +3717,11 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 							</tr>
 						</thead>
 						<tbody>
-						<?php foreach ($heatDays as $day => $cells): ?>
+						<?php foreach ($heatDays as $heatDay => $cells): ?>
 							<tr>
-								<th><?php echo stats_h(stats_day_label((string)$day)); ?></th>
+								<th><?php echo stats_h(stats_day_label((string)$heatDay)); ?></th>
 								<?php for ($h = 0; $h < 24; $h++): $c = (int)($cells[$h] ?? 0); $alpha = $heatMax > 0 ? 0.05 + 0.95 * ($c / $heatMax) : 0.05; $bg = 'rgba(233,170,96,' . number_format($alpha, 3, '.', '') . ')'; $txt = $c === 0 ? 'transparent' : ($alpha > 0.6 ? '#0b1220' : 'rgba(226,232,240,.9)'); ?>
-									<td style="background: <?php echo stats_h($bg); ?>; color: <?php echo stats_h($txt); ?>;" title="<?php echo stats_h((string)$day . ', ' . str_pad((string)$h, 2, '0', STR_PAD_LEFT) . ':00 — ' . $c . ' views'); ?>"><span><?php echo $c; ?></span></td>
+									<td style="background: <?php echo stats_h($bg); ?>; color: <?php echo stats_h($txt); ?>;" title="<?php echo stats_h((string)$heatDay . ', ' . str_pad((string)$h, 2, '0', STR_PAD_LEFT) . ':00 — ' . $c . ' views'); ?>"><span><?php echo $c; ?></span></td>
 								<?php endfor; ?>
 							</tr>
 						<?php endforeach; ?>
@@ -3974,6 +3980,9 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	var pageSourceData = <?php echo json_encode($pageSourceData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var pageSourcePages = <?php echo json_encode($pageSourcePages, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var pageSourceSources = <?php echo json_encode($pageSourceSources, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var pageSourceSlugs = <?php echo json_encode($pageSourcePageKeys, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var pageSourceSourceFilters = <?php echo json_encode($pageSourceSourceFilters, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var seriesDayKeys = <?php echo json_encode($seriesDayKeys, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var anomalies = <?php echo json_encode($seriesAnomalies, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var baseQuery = <?php echo json_encode(stats_query(['day' => '', 'page' => 1]), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var currentQuery = <?php echo json_encode(stats_query(['page' => 1]), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
@@ -4308,6 +4317,14 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		});
 	}
 
+	if (daily) {
+		daily.on('click', function (params) {
+			if (typeof params.dataIndex === 'number' && seriesDayKeys[params.dataIndex]) {
+				goWith({ day: seriesDayKeys[params.dataIndex] });
+			}
+		});
+	}
+
 	if (refsChart) {
 		var refData = refs.filter(function (d) { return d.value > 0; });
 		refsChart.setOption({
@@ -4619,6 +4636,14 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		});
 	}
 
+	if (clockChart) {
+		clockChart.on('click', function (params) {
+			if (typeof params.dataIndex === 'number') {
+				goWith({ hour: String(params.dataIndex) });
+			}
+		});
+	}
+
 	if (attentionChart && attention.length) {
 		attentionChart.setOption({
 			backgroundColor: 'transparent',
@@ -4913,6 +4938,14 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		});
 	}
 
+	if (botHumanChart) {
+		botHumanChart.on('click', function (params) {
+			if (typeof params.dataIndex === 'number' && seriesDayKeys[params.dataIndex]) {
+				goWith({ day: seriesDayKeys[params.dataIndex] });
+			}
+		});
+	}
+
 	if (pageSourceChart && pageSourceData.length) {
 		var pageSourceMax = 1;
 		pageSourceData.forEach(function (row) { pageSourceMax = Math.max(pageSourceMax, row[2]); });
@@ -4960,6 +4993,16 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				itemStyle: { borderColor: '#0b1220', borderWidth: 2 },
 				emphasis: { itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,.35)' } }
 			}]
+		});
+		pageSourceChart.on('click', function (params) {
+			if (!params.value) {
+				return;
+			}
+			var sourceFilter = pageSourceSourceFilters[params.value[0]] || {};
+			sourceFilter.path = pageSourceSlugs[params.value[1]] || '';
+			if (sourceFilter.path) {
+				goWith(sourceFilter);
+			}
 		});
 	}
 
