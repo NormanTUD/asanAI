@@ -373,19 +373,21 @@ uv run blog/tests/analytics_client_test.py # sections/events, no query/full URL
 uv run blog/tests/stats_ui_test.py        # briefing/explore, lazy charts, compare, present/light
 ```
 
-The dashboard is also smoke-tested locally with Selenium: login, tab switching,
-the hero, nine KPI cards, sub-navigation, full briefing and copy button, all
-charts (daily trend with estimated visits and anomalies, traffic clock,
-24-hour/weekday rhythm, weekday × hour heatmap toggles and cell filters, page
-attention matrix, reading funnel, content/source treemaps, top movers, page
-portfolio, referrer donut, page bar chart, page-share donut, browser/OS/device
-donuts, transition matrix/flow, calendar day filter, humans-vs-bots,
-page × source, date × hour heatmap), content-health cards, section reading
-map, interaction/learning signals, period comparison, cohort tables, humans-only
-toggle, saved-view control, light theme, presentation slides, PNG buttons,
-sticky/scrollable tables, storage/backup, bot dialog, loader-gated alerts, the
-local kill switch (banner suppression and read-only dashboard), no console
-errors and no horizontal overflow at 1280 px and 390 px on every tab.
+The dashboard is also smoke-tested locally with Selenium: login, Briefing/
+Explore switching, lazy chart initialization on Overview/Pages/Referrers,
+tab switching, the hero, nine KPI cards, sub-navigation, full briefing and copy
+button, all charts (daily trend with estimated visits and anomalies, traffic
+clock, 24-hour/weekday rhythm, weekday × hour heatmap toggles and cell filters,
+page attention matrix, reading funnel, content/source treemaps, top movers,
+page portfolio, referrer donut, page bar chart, page-share donut,
+browser/OS/device donuts, transition matrix/flow, calendar day filter,
+humans-vs-bots, page × source, date × hour heatmap), content-health cards,
+section reading map, interaction/learning signals, period/entity/date-range
+Compare tab, cohort cross-filter rows, humans-only toggle, Saved Views CRUD,
+light theme, presentation slides, PNG buttons, sticky/scrollable tables,
+storage/backup, bot dialog, loader-gated alerts, the local kill switch (banner
+suppression and read-only dashboard), no console errors and no horizontal
+overflow at 1280 px and 390 px on every tab.
 
 ### Security notes
 
