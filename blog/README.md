@@ -364,6 +364,10 @@ overflow at 1280 px and 390 px on every tab.
 ### Security notes
 
 - Password file outside the webroot, `640`; plaintext or `password_hash()`.
+- Login password is POSTed and verified server-side; it is never written to
+  localStorage/sessionStorage. The field uses `autocomplete="new-password"` and
+  password-manager opt-out hints. Browser-managed password storage remains a
+  browser feature; the page cannot delete entries a browser already saved.
 - Session cookie: `HttpOnly`, `SameSite=Strict`, `Secure` on HTTPS.
 - CSRF tokens on login/logout/toggle/export/backup.
 - Signed HMAC admin-indicator cookie derived from the password file; separate

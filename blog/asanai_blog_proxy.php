@@ -79,6 +79,19 @@ function asanai_proxy_rewrite_html(string $content, string $remote_base, string 
 		$content = str_replace('__MN_STATS_BASE_PATH__', $current_path, $content);
 	}
 
+	// The proxy keeps the browser on asanai_blog_proxy?index, so a remote
+	// toc.js that only inspects the URL would still build a TOC there. Hide
+	// it for the course index (and the linear index_full) as a safety net;
+	// toc.js also recognises the proxy URL directly.
+	if (preg_match('~^/?(?:index|index_full)(?:\.php)?$~', $current_path)) {
+		$no_toc = '<style id="mn-proxy-index-no-toc">#toc{display:none!important}</style>';
+		if (stripos($content, '</head>') !== false) {
+			$content = preg_replace('~</head>~i', $no_toc . '</head>', $content, 1) ?? $content;
+		} else {
+			$content = $no_toc . $content;
+		}
+	}
+
 	$content = preg_replace_callback(
 		'/<a\b([^>]*?)\bhref\s*=\s*(["\'])(.*?)\2([^>]*)>/is',
 		static function (array $match) use ($remote_base, $proxy_name, $current_path): string {

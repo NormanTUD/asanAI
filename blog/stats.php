@@ -2231,19 +2231,19 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 <?php if (!$authed): ?>
 	<div class="login-card">
 		<h1>Blog-Analytics</h1>
-		<p>Anonymous analytics. Access only with the password from <code><?php echo stats_h($passwordStatus['file']); ?></code>.</p>
+		<p>Anonymous analytics. Access only with the administrator password.</p>
 		<?php if ($loginError !== ''): ?>
 			<div class="login-error"><?php echo stats_h($loginError); ?></div>
 		<?php endif; ?>
 		<?php if ($passwordStatus['ok']): ?>
-			<form method="post" action="">
+			<form method="post" action="" autocomplete="off">
 				<input type="hidden" name="action" value="login">
 				<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">
 				<label for="password">Password</label>
-				<input id="password" name="password" type="password" autocomplete="current-password" autofocus required>
+				<input id="password" name="password" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-bwignore="true" autofocus required>
 				<button type="submit">Sign in</button>
 			</form>
-			<p class="login-note">Only technically necessary cookies are used (session, signed admin indicator, optional visit exclusion). No tracking cookies.</p>
+			<p class="login-note">The password is checked server-side; this page does not write it to browser storage. Only technically necessary cookies are used (session, signed admin indicator, optional visit exclusion). No tracking cookies.</p>
 		<?php else: ?>
 			<div class="setup">
 				<strong>Login is not configured yet.</strong>
