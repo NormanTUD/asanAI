@@ -1,111 +1,361 @@
 <?php
-/**
- * PHP Proxy für asanai.scads.ai/blog
- * Ursprung: Standard Web-Proxy Pattern mit Regex-Manipulation
- */
+declare(strict_types=1);
 
-// Konfiguration
-$remote_base = 'https://asanai.scads.ai/blog/';
-$proxy_name  = 'asanai_blog_proxy.php'; // Der Name dieser Datei
+$remote_base = getenv('ASANAI_BLOG_PROXY_REMOTE') ?: 'https://asanai.scads.ai/blog/';
+if (!str_ends_with($remote_base, '/')) {
+	$remote_base .= '/';
+}
+$proxy_name = basename(__FILE__);
 
-// 1. Pfad aus Query String extrahieren
-$query_string = $_SERVER['QUERY_STRING'];
-$path = ltrim($query_string, '/');
-$path = filter_var($path, FILTER_SANITIZE_URL);
+function asanai_proxy_abort(int $code, string $message): void {
+	http_response_code($code);
+	header('Content-Type: text/plain; charset=utf-8');
+	echo $message;
+	exit;
+}
 
-// Standardmäßig index.php laden
-if (empty($path)) {
+function asanai_proxy_rewrite_url(string $url, string $remote_base, string $proxy_name, string $current_path): string {
+	$url = trim(html_entity_decode($url, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+	if ($url === '' || str_starts_with($url, '#')) {
+		return $url;
+	}
+	$lower = strtolower($url);
+	foreach (['mailto:', 'tel:', 'javascript:', 'data:', 'blob:', 'about:'] as $scheme) {
+		if (str_starts_with($lower, $scheme)) {
+			return $url;
+		}
+	}
+	if (str_starts_with($url, '//')) {
+		return $url;
+	}
+
+	$base_path = rtrim((string)(parse_url($remote_base, PHP_URL_PATH) ?: '/'), '/') . '/';
+	$target = '';
+	if (str_starts_with($lower, 'http://') || str_starts_with($lower, 'https://')) {
+		if (!str_starts_with($url, $remote_base)) {
+			if (rtrim($url, '/') === rtrim($remote_base, '/')) {
+				$target = 'index.php';
+			} else {
+				return $url;
+			}
+		} else {
+			$target = substr($url, strlen($remote_base));
+		}
+	} elseif (str_starts_with($url, '/')) {
+		if (rtrim($url, '/') === rtrim($base_path, '/')) {
+			$target = 'index.php';
+		} elseif (str_starts_with($url, $base_path)) {
+			$target = substr($url, strlen($base_path));
+		} else {
+			return $url;
+		}
+	} elseif (str_starts_with($url, '?')) {
+		$target = ($current_path === '' ? 'index.php' : $current_path) . $url;
+	} else {
+		$target = $url;
+	}
+
+	$fragment = '';
+	$hash_pos = strpos($target, '#');
+	if ($hash_pos !== false) {
+		$fragment = substr($target, $hash_pos);
+		$target = substr($target, 0, $hash_pos);
+	}
+	$target = ltrim($target, '/');
+	if ($target === '' || $target === '?') {
+		$target = 'index.php';
+	}
+	return $proxy_name . '?' . $target . $fragment;
+}
+
+function asanai_proxy_rewrite_html(string $content, string $remote_base, string $proxy_name, string $current_path): string {
+	$proxy_track = $proxy_name . '?track.php';
+	$content = preg_replace('/"endpoint"\s*:\s*"[^"]*track"/i', '"endpoint":"' . $proxy_track . '"', $content) ?? $content;
+
+	$is_stats = (bool)preg_match('~^/?stats(?:\.php)?$~', $current_path);
+	if ($is_stats) {
+		$proxy_base = $proxy_name . '?' . $current_path;
+		$content = str_replace('__MN_STATS_BASE__', $proxy_base, $content);
+		$content = str_replace('__MN_STATS_BASE_PATH__', $current_path, $content);
+	}
+
+	$content = preg_replace_callback(
+		'/<a\b([^>]*?)\bhref\s*=\s*(["\'])(.*?)\2([^>]*)>/is',
+		static function (array $match) use ($remote_base, $proxy_name, $current_path): string {
+			$new = asanai_proxy_rewrite_url($match[3], $remote_base, $proxy_name, $current_path);
+			if ($new === $match[3]) {
+				return $match[0];
+			}
+			return '<a' . $match[1] . 'href=' . $match[2] . htmlspecialchars($new, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . $match[2] . $match[4] . '>';
+		},
+		$content
+	) ?? $content;
+
+	$content = preg_replace_callback(
+		'/<form\b([^>]*?)\baction\s*=\s*(["\'])(.*?)\2([^>]*)>/is',
+		static function (array $match) use ($remote_base, $proxy_name, $current_path): string {
+			$action = trim(html_entity_decode($match[3], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+			if ($action === '' || $action === '#') {
+				return $match[0];
+			}
+			$new = asanai_proxy_rewrite_url($action, $remote_base, $proxy_name, $current_path);
+			if ($new === $match[3]) {
+				return $match[0];
+			}
+			return '<form' . $match[1] . 'action=' . $match[2] . htmlspecialchars($new, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . $match[2] . $match[4] . '>';
+		},
+		$content
+	) ?? $content;
+
+	$content = preg_replace_callback(
+		'/\bsrc=(["\'])(?!(?:https?:\/\/|\/\/|data:))([^"\']+\.(?:js|jpg|jpeg|png|gif|json)(?:\?[^"\']*)?)\1/i',
+		static function (array $match) use ($proxy_name): string {
+			if (str_starts_with($match[2], $proxy_name)) {
+				return $match[0];
+			}
+			return 'src=' . $match[1] . $proxy_name . '?' . $match[2] . $match[1];
+		},
+		$content
+	) ?? $content;
+
+	$exclude = '(?!(?:https?:\/\/|\/\/|data:|#|mailto:|tel:|javascript:|' . preg_quote($proxy_name, '/') . '))';
+	$content = preg_replace('/\bsrc=(["\'])' . $exclude . '([^"\']+)\1/i', 'src=$1' . $remote_base . '$2$1', $content) ?? $content;
+	$content = preg_replace('/\bhref=(["\'])' . $exclude . '([^"\']+)\1/i', 'href=$1' . $remote_base . '$2$1', $content) ?? $content;
+
+	return $content;
+}
+
+function asanai_proxy_rewrite_cookie(string $cookie, bool $secure): string {
+	$parts = explode(';', $cookie);
+	$name = trim((string)array_shift($parts));
+	if ($name === '') {
+		return '';
+	}
+	$out = [$name];
+	$has_path = false;
+	foreach ($parts as $part) {
+		$part = trim($part);
+		if ($part === '') {
+			continue;
+		}
+		$lower = strtolower($part);
+		if (str_starts_with($lower, 'domain=')) {
+			continue;
+		}
+		if (str_starts_with($lower, 'path=')) {
+			$out[] = 'Path=/';
+			$has_path = true;
+			continue;
+		}
+		if (!$secure && str_starts_with($lower, 'secure')) {
+			continue;
+		}
+		if (!$secure && str_starts_with($lower, 'samesite=none')) {
+			$out[] = 'SameSite=Lax';
+			continue;
+		}
+		$out[] = $part;
+	}
+	if (!$has_path) {
+		$out[] = 'Path=/';
+	}
+	return implode('; ', $out);
+}
+
+$proxy_path_param = $_GET['__proxy_path'] ?? '';
+if (is_array($proxy_path_param)) {
+	asanai_proxy_abort(400, 'Invalid proxy path.');
+}
+if (is_string($proxy_path_param) && $proxy_path_param !== '') {
+	$path = ltrim($proxy_path_param, '/');
+	$extra = $_GET;
+	unset($extra['__proxy_path']);
+	$query = http_build_query($extra);
+	if ($query !== '') {
+		$path .= '?' . $query;
+	}
+} else {
+	$path = ltrim((string)($_SERVER['QUERY_STRING'] ?? ''), '/');
+}
+
+$path = str_replace(["\r", "\n", "\0"], '', $path);
+if ($path === '') {
 	$path = 'index.php';
 }
+if (preg_match('~\.\.|\\\\|://~', $path)) {
+	asanai_proxy_abort(400, 'Invalid path.');
+}
 
-// 2. Ziel-URL bauen
 $target_url = $remote_base . $path;
-
-// Falls wir Parameter an die Remote-URL hängen müssen (z.B. für Tracking/Erkennung)
-$connector = (strpos($target_url, '?') !== false) ? '&' : '?';
-$final_url = $target_url; # . $connector . "load_from_asanai=1";
-
-// 3. Sicherheit: SSRF Schutz
-if (strpos($final_url, $remote_base) !== 0) {
-	header("HTTP/1.1 403 Forbidden");
-	exit("Unauthorized Target.");
+if (!str_starts_with($target_url, $remote_base)) {
+	asanai_proxy_abort(403, 'Unauthorized target.');
 }
 
-// 4. Content abrufen (via cURL für bessere Header-Unterstützung)
-$ch = null;
-try {
-	$ch = curl_init();
-} catch (\Throwable $e) {
-	print("$e: This can mean that you don't have <pre>sudo apt-get install php-curl</pre> installed. Try doing that.");
-	exit(1);
+$method = strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+$body = in_array($method, ['POST', 'PUT', 'PATCH'], true) ? file_get_contents('php://input') : null;
+$headers = [];
+$forward_headers = [
+	'CONTENT_TYPE' => 'Content-Type',
+	'HTTP_ACCEPT' => 'Accept',
+	'HTTP_ACCEPT_LANGUAGE' => 'Accept-Language',
+	'HTTP_REFERER' => 'Referer',
+	'HTTP_USER_AGENT' => 'User-Agent',
+	'HTTP_COOKIE' => 'Cookie',
+	'HTTP_DNT' => 'DNT',
+	'HTTP_SEC_GPC' => 'Sec-GPC',
+	'HTTP_SEC_FETCH_SITE' => 'Sec-Fetch-Site',
+	'HTTP_SEC_FETCH_MODE' => 'Sec-Fetch-Mode',
+	'HTTP_SEC_FETCH_DEST' => 'Sec-Fetch-Dest',
+	'HTTP_SEC_FETCH_USER' => 'Sec-Fetch-User',
+	'HTTP_ORIGIN' => 'Origin',
+	'HTTP_X_REQUESTED_WITH' => 'X-Requested-With',
+	'HTTP_RANGE' => 'Range',
+	'HTTP_IF_NONE_MATCH' => 'If-None-Match',
+	'HTTP_IF_MODIFIED_SINCE' => 'If-Modified-Since',
+];
+foreach ($forward_headers as $server_key => $header_name) {
+	if ($header_name === 'Cookie') {
+		continue;
+	}
+	$value = (string)($_SERVER[$server_key] ?? '');
+	if ($value !== '') {
+		$headers[] = $header_name . ': ' . $value;
+	}
 }
-curl_setopt($ch, CURLOPT_URL, $final_url);
+$allowed_cookies = ['theme', 'topics_pref', 'mnstats', 'mn_stats_admin', 'mn_stats_exclude'];
+$forward_cookies = [];
+foreach (explode(';', (string)($_SERVER['HTTP_COOKIE'] ?? '')) as $cookie) {
+	$cookie = trim($cookie);
+	if ($cookie === '') {
+		continue;
+	}
+	$name = trim(explode('=', $cookie, 2)[0]);
+	if (in_array($name, $allowed_cookies, true)) {
+		$forward_cookies[] = $cookie;
+	}
+}
+if ($forward_cookies) {
+	$headers[] = 'Cookie: ' . implode('; ', $forward_cookies);
+}
+if (empty($_SERVER['HTTP_USER_AGENT'])) {
+	$headers[] = 'User-Agent: Mozilla/5.0 (PHP blog proxy)';
+}
+
+$response_headers = [];
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $target_url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (PHP Proxy)');
+curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+curl_setopt($ch, CURLOPT_MAXREDIRS, 0);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+curl_setopt($ch, CURLOPT_ENCODING, '');
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+curl_setopt($ch, CURLOPT_HEADERFUNCTION, static function ($curl, string $line) use (&$response_headers): int {
+	$trimmed = trim($line);
+	if ($trimmed !== '') {
+		$response_headers[] = $trimmed;
+	}
+	return strlen($line);
+});
+if ($body !== null) {
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+} elseif ($method !== 'GET') {
+	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+}
+if ($method === 'HEAD') {
+	curl_setopt($ch, CURLOPT_NOBODY, true);
+}
+
 $content = curl_exec($ch);
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$content_type_header = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+$curl_error = curl_error($ch);
+$status = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$curl_type = (string)(curl_getinfo($ch, CURLINFO_CONTENT_TYPE) ?: '');
 curl_close($ch);
 
-if ($http_code !== 200 || $content === false) {
-	header("HTTP/1.1 404 Not Found");
-	exit("Resource not found or remote server error.");
+if ($content === false || $status === 0) {
+	asanai_proxy_abort(502, 'Remote server error.' . ($curl_error !== '' ? ' ' . $curl_error : ''));
 }
 
-// 5. Mime-Type Bestimmung
-$extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-$mimes = [
-	'js'   => 'application/javascript',
-	'css'  => 'text/css',
-	'png'  => 'image/png',
-	'jpg'  => 'image/jpeg',
-	'jpeg' => 'image/jpeg',
-	'gif'  => 'image/gif',
-	'txt'  => 'text/plain',
-	'html' => 'text/html',
-	'php'  => 'text/html'
+$header_map = [];
+foreach ($response_headers as $line) {
+	if (stripos($line, 'HTTP/') === 0) {
+		continue;
+	}
+	$pair = explode(':', $line, 2);
+	if (count($pair) !== 2) {
+		continue;
+	}
+	$key = strtolower(trim($pair[0]));
+	$value = trim($pair[1]);
+	$header_map[$key][] = $value;
+}
+
+$content_type = $header_map['content-type'][0] ?? $curl_type;
+if ($content_type === '') {
+	$extension = strtolower(pathinfo((string)parse_url($path, PHP_URL_PATH), PATHINFO_EXTENSION));
+	$mimes = [
+		'js' => 'application/javascript',
+		'css' => 'text/css',
+		'png' => 'image/png',
+		'jpg' => 'image/jpeg',
+		'jpeg' => 'image/jpeg',
+		'gif' => 'image/gif',
+		'json' => 'application/json',
+		'txt' => 'text/plain',
+		'html' => 'text/html; charset=utf-8',
+		'php' => 'text/html; charset=utf-8',
+	];
+	$content_type = $mimes[$extension] ?? 'application/octet-stream';
+}
+
+$current_remote_path = (string)explode('?', $path, 2)[0];
+if (str_contains(strtolower($content_type), 'text/html') && $status !== 204 && $status !== 304) {
+	$content = asanai_proxy_rewrite_html((string)$content, $remote_base, $proxy_name, $current_remote_path);
+}
+
+http_response_code($status);
+if ($content_type !== '') {
+	header('Content-Type: ' . $content_type);
+}
+$forward_header_names = [
+	'content-disposition' => 'Content-Disposition',
+	'cache-control' => 'Cache-Control',
+	'pragma' => 'Pragma',
+	'expires' => 'Expires',
+	'etag' => 'ETag',
+	'last-modified' => 'Last-Modified',
+	'x-robots-tag' => 'X-Robots-Tag',
+	'referrer-policy' => 'Referrer-Policy',
+	'x-content-type-options' => 'X-Content-Type-Options',
+	'vary' => 'Vary',
+	'permissions-policy' => 'Permissions-Policy',
+	'access-control-allow-origin' => 'Access-Control-Allow-Origin',
+	'access-control-allow-methods' => 'Access-Control-Allow-Methods',
+	'access-control-allow-headers' => 'Access-Control-Allow-Headers',
 ];
-
-// Content-Type Header setzen
-$contentType = isset($mimes[$extension]) ? $mimes[$extension] : $content_type_header;
-header("Content-Type: " . $contentType);
-
-// 6. Content Manipulation
-if (strpos($contentType, 'text/html') !== false) {
-    // 6a. Handle .js and images to route them through the proxy
-    // Added support for jpg, png, jpeg, gif, and json
-    $content = preg_replace_callback(
-        '/src=(["\'])(?!(?:https?:\/\/|\/\/))([^"\']+\.(?:js|jpg|jpeg|png|gif|json))\1/i',
-        function ($matches) use ($proxy_name) {
-            return 'src=' . $matches[1] . $proxy_name . '?' . $matches[2] . $matches[1];
-        },
-        $content
-    );
-
-    // 6b. Absolute paths for others (e.g., .css or links)
-    // Excludes: http://, https://, //, data:, and the proxy name itself
-    $exclude_pattern = '(?!(?:https?:\/\/|\/\/|data:|' . preg_quote($proxy_name) . '))';
-    
-    $content = preg_replace('/src=["\']' . $exclude_pattern . '([^"\']+)["\']/', 'src="' . $remote_base . '$1"', $content);
-    $content = preg_replace('/href=["\']' . $exclude_pattern . '([^"\']+)["\']/', 'href="' . $remote_base . '$1"', $content);
-} 
-elseif (strpos($contentType, 'application/javascript') !== false) {
-    // JS: Strings with extensions on this proxy
-    $content = preg_replace_callback(
-        '/ (["\']) (?!(?:https?:\/\/|\/\/)) ([^"\'\s]+\.(json|txt|jpg|png|jpeg|js)) \1 /ix',
-        function ($matches) use ($proxy_name) {
-            $quote = $matches[1];
-            $path  = $matches[2];
-            
-            if (strpos($path, $proxy_name) !== false) return $matches[0];
-            
-            return $quote . $proxy_name . "?" . $path . $quote;
-        },
-        $content
-    );
+foreach ($forward_header_names as $forward => $header_name) {
+	foreach ($header_map[$forward] ?? [] as $value) {
+		header($header_name . ': ' . $value, false);
+	}
 }
 
-// 7. Ausgabe
-echo $content;
-?>
+$is_secure = (!empty($_SERVER['HTTPS']) && (string)$_SERVER['HTTPS'] !== 'off')
+	|| strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https';
+foreach ($header_map['set-cookie'] ?? [] as $cookie) {
+	$cookie = asanai_proxy_rewrite_cookie($cookie, $is_secure);
+	if ($cookie !== '') {
+		header('Set-Cookie: ' . $cookie, false);
+	}
+}
+
+$location = $header_map['location'][0] ?? '';
+if ($location !== '') {
+	$location = asanai_proxy_rewrite_url($location, $remote_base, $proxy_name, $current_remote_path);
+	header('Location: ' . $location, true, $status);
+}
+
+if ($status !== 204 && $status !== 304 && $method !== 'HEAD') {
+	echo $content;
+}

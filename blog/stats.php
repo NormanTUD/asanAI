@@ -782,6 +782,11 @@ $internalRefs = [];
 $sankeyLinks = [];
 $sankeyNodes = [];
 $sankeyOmitted = 0;
+$transitionSources = [];
+$transitionTargets = [];
+$transitionSourceSlugs = [];
+$transitionTargetSlugs = [];
+$transitionMatrixData = [];
 $browsers = [];
 $osRows = [];
 $deviceRows = [];
@@ -1378,6 +1383,36 @@ if ($authed) {
 			FROM pageviews WHERE $whereSql AND ref_type = 'internal'
 				AND ref_path <> '' AND path <> '' AND ref_path <> path
 			GROUP BY ref_path, path ORDER BY views DESC LIMIT 80", $params);
+		$transitionSourceTotals = [];
+		$transitionTargetTotals = [];
+		foreach ($sankeyRows as $transitionRow) {
+			$transitionSource = (string)$transitionRow['source'];
+			$transitionTarget = (string)$transitionRow['target'];
+			$transitionValue = (int)$transitionRow['views'];
+			$transitionSourceTotals[$transitionSource] = ($transitionSourceTotals[$transitionSource] ?? 0) + $transitionValue;
+			$transitionTargetTotals[$transitionTarget] = ($transitionTargetTotals[$transitionTarget] ?? 0) + $transitionValue;
+		}
+		arsort($transitionSourceTotals);
+		arsort($transitionTargetTotals);
+		$transitionSourceSlugs = array_slice(array_keys($transitionSourceTotals), 0, 8);
+		$transitionTargetSlugs = array_slice(array_keys($transitionTargetTotals), 0, 8);
+		$transitionSources = array_map(static function (string $slug) use ($titles): string {
+			return $titles[$slug] ?? $slug;
+		}, $transitionSourceSlugs);
+		$transitionTargets = array_map(static function (string $slug) use ($titles): string {
+			return $titles[$slug] ?? $slug;
+		}, $transitionTargetSlugs);
+		$transitionSourceIndex = array_flip($transitionSourceSlugs);
+		$transitionTargetIndex = array_flip($transitionTargetSlugs);
+		$transitionMatrixData = [];
+		foreach ($sankeyRows as $transitionRow) {
+			$transitionSource = (string)$transitionRow['source'];
+			$transitionTarget = (string)$transitionRow['target'];
+			if (!isset($transitionSourceIndex[$transitionSource]) || !isset($transitionTargetIndex[$transitionTarget])) {
+				continue;
+			}
+			$transitionMatrixData[] = [$transitionTargetIndex[$transitionTarget], $transitionSourceIndex[$transitionSource], (int)$transitionRow['views']];
+		}
 		$sankeyNodeMap = [];
 		$sankeyAdj = [];
 		foreach ($sankeyRows as $sankeyRow) {
@@ -1822,6 +1857,7 @@ if ($authed) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="color-scheme" content="dark">
+<script>window.__MNStatsBase = "__MN_STATS_BASE__";</script>
 <title>Blog-Analytics</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <style>
@@ -2102,6 +2138,29 @@ body.present .kpi .v { font-size: 32px; }
 body.present .card h2 { font-size: 18px; }
 body.present .chart { height: 360px; }
 body.present .present-bar { display: flex; }
+body.light {
+	color-scheme: light;
+	--bg: #f6f1e7;
+	--panel: #fffdf8;
+	--panel2: #f1eadf;
+	--line: #d8cfc0;
+	--text: #1e293b;
+	--muted: #5b6472;
+	--dim: #7b8492;
+	--accent: #b7791f;
+	--accent2: #d69e2e;
+	--emerald: #0f9d6e;
+	--rose: #d6455d;
+	--sky: #0284c7;
+	--shadow: 0 18px 50px rgba(60,50,30,.12);
+}
+body.light .hero { border-color: rgba(183,121,31,.3); background: radial-gradient(900px 400px at 0% 0%, rgba(233,170,96,.12), transparent 60%), radial-gradient(700px 400px at 100% 100%, rgba(56,189,248,.07), transparent 55%), var(--panel); }
+body.light .hero-spark { background: rgba(255,255,255,.55); }
+body.light .card.insight-card { background: linear-gradient(135deg, rgba(233,170,96,.12), rgba(56,189,248,.05) 42%, var(--panel) 72%); }
+body.light .chart-export { background: rgba(255,253,248,.88); color: var(--muted); }
+body.light .present-bar { background: rgba(255,253,248,.96); }
+body.light table.heat td, body.light table.heat td span { color: #1e293b !important; }
+body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 @media (max-width: 1000px) {
 	.grid-3 { grid-template-columns: 1fr; }
 }
@@ -2266,6 +2325,7 @@ body.present .present-bar { display: flex; }
 		<?php endif; ?>
 
 		<form class="filters" method="get" action="">
+			<input type="hidden" name="__proxy_path" value="__MN_STATS_BASE_PATH__">
 			<input type="hidden" name="range" value="<?php echo (int)$range; ?>">
 			<input type="hidden" name="day" value="<?php echo stats_h($day); ?>">
 			<label>Page
@@ -2827,9 +2887,9 @@ body.present .present-bar { display: flex; }
 		</div>
 
 		<div class="card" data-tab-group="overview" data-slide="3" id="navigation">
-			<h2>Internal navigation <span class="hint">· top 6 · previous page → next page</span></h2>
+			<h2>Page transitions <span class="hint">· top 6 · immediate next page</span></h2>
 			<?php if ($sankeyLinks): ?>
-				<p class="ref"><?php echo mn_analytics_format_number($internal); ?> internal transitions (<?php echo stats_h(number_format($views > 0 ? 100 * $internal / $views : 0, 1, '.', ',')); ?> % of views). The strongest flows are listed here; the full Sankey is in Referrers &amp; engagement.</p>
+				<p class="ref"><?php echo mn_analytics_format_number($internal); ?> internal transitions (<?php echo stats_h(number_format($views > 0 ? 100 * $internal / $views : 0, 1, '.', ',')); ?> % of views). These are immediate transitions, not visitor journeys — a page can be first simply because it was the previous page. The transition matrix and entry pages are in Referrers &amp; engagement.</p>
 				<div class="mini-list mini-list--compact">
 					<?php foreach (array_slice($sankeyLinks, 0, 6) as $flow): $from = $titles[$flow['source']] ?? (string)$flow['source']; $to = $titles[$flow['target']] ?? (string)$flow['target']; ?>
 						<div class="mini-row">
@@ -2923,12 +2983,39 @@ body.present .present-bar { display: flex; }
 		</div>
 
 		<div class="card card-full" data-tab-group="referrers">
-			<h2>Internal navigation flow <span class="hint">· previous page → next page</span></h2>
-			<?php if ($sankeyLinks): ?>
-				<p class="ref">Top <?php echo count($sankeyLinks); ?> page-to-page transitions in the selected period. Hover a flow to see the full page titles.<?php if ($sankeyOmitted > 0): ?> <?php echo (int)$sankeyOmitted; ?> weaker cycle-closing transitions were omitted to keep the Sankey acyclic.<?php endif; ?></p>
-				<div id="chart-sankey" class="chart" style="height:440px;" role="img" aria-label="Internal navigation flow between pages"></div>
+			<div class="card-head">
+				<h2>Page transitions <span class="hint">· immediate next page, not a full journey</span></h2>
+				<?php if ($transitionMatrixData): ?>
+					<div class="segmented" data-view-toggle="transition-view">
+						<button type="button" class="active" data-view="matrix">Matrix</button>
+						<button type="button" data-view="flow">Flow</button>
+					</div>
+				<?php endif; ?>
+			</div>
+			<p class="ref" style="margin: -4px 0 12px;"><strong>This is a transition map, not a start-to-end visitor path.</strong> A page can appear on the left simply because it is often the previous page, not because visits started there. Exact paths would require a persistent session identifier, which this analytics deliberately does not store.</p>
+			<?php if ($transitionMatrixData): ?>
+				<div class="view-pane" data-view-pane="transition-view" data-view="matrix">
+					<p class="ref" style="margin: 0 0 8px;">Rows = previous page, columns = next page. This matrix includes all immediate transitions, including cycles.</p>
+					<div id="chart-transition-matrix" class="chart" style="height: 400px;" role="img" aria-label="Page transition matrix"></div>
+				</div>
+				<div class="view-pane" data-view-pane="transition-view" data-view="flow" hidden>
+					<p class="ref" style="margin: 0 0 8px;">Top <?php echo count($sankeyLinks); ?> immediate transitions as a flow. Hover a flow to see the full page titles.<?php if ($sankeyOmitted > 0): ?> <?php echo (int)$sankeyOmitted; ?> weaker cycle-closing transitions were omitted to keep the Sankey acyclic.<?php endif; ?></p>
+					<div id="chart-sankey" class="chart" style="height: 440px;" role="img" aria-label="Page transition flow"></div>
+				</div>
 			<?php else: ?>
 				<div class="empty">No internal page-to-page transitions in the selected period.</div>
+			<?php endif; ?>
+			<?php if ($entryPages): ?>
+				<div class="chart-cap" style="margin-top: 16px;">Where visits start <span class="hint">· entry pageviews</span></div>
+				<div class="mini-list mini-list--compact">
+					<?php foreach ($entryPages as $entry): $entrySlug = (string)$entry['path']; $entryCount = (int)$entry['entries']; $entryPageShare = $entries > 0 ? 100 * $entryCount / $entries : 0; ?>
+						<a class="mini-row" href="?<?php echo stats_h(stats_query(['path' => $entrySlug, 'page' => 1])); ?>">
+							<div class="mini-main"><span class="title"><?php echo stats_h($titles[$entrySlug] ?? $entrySlug); ?></span><div class="slug">entry pageview</div></div>
+							<div class="mini-metric"><strong><?php echo mn_analytics_format_number($entryCount); ?></strong><span><?php echo stats_h(number_format($entryPageShare, 1, '.', ',')); ?> % of entries</span></div>
+						</a>
+					<?php endforeach; ?>
+				</div>
+				<p class="ref" style="margin-bottom: 0;">Entry pageviews are the privacy-safe proxy for where visits start; they are not unique people.</p>
 			<?php endif; ?>
 		</div>
 
@@ -3388,6 +3475,11 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	var sankeyLinks = <?php echo json_encode($sankeyLinks, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var sankeyNodes = <?php echo json_encode($sankeyNodes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var sankeyTitles = <?php echo json_encode($titles, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var transitionSources = <?php echo json_encode($transitionSources, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var transitionTargets = <?php echo json_encode($transitionTargets, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var transitionSourceSlugs = <?php echo json_encode($transitionSourceSlugs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var transitionTargetSlugs = <?php echo json_encode($transitionTargetSlugs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var transitionMatrixData = <?php echo json_encode($transitionMatrixData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var botHints = <?php echo json_encode($botHints, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var browserMix = <?php echo json_encode($browserMix, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var osMix = <?php echo json_encode($osMix, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
@@ -3413,6 +3505,10 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	var pageSourceSources = <?php echo json_encode($pageSourceSources, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var anomalies = <?php echo json_encode($seriesAnomalies, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var baseQuery = <?php echo json_encode(stats_query(['day' => '', 'page' => 1]), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var statsBase = window.__MNStatsBase;
+	if (!statsBase || statsBase === '__MN_STATS_BASE__') {
+		statsBase = 'stats.php';
+	}
 
 	function truncateLabel(value, maxLength) {
 		if (value.length <= maxLength) {
@@ -3572,7 +3668,9 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	var pagesChart = pagesEl ? echarts.init(pagesEl) : null;
 	var pageShareChart = pageShareEl ? echarts.init(pageShareEl) : null;
 	var sankeyEl = document.getElementById('chart-sankey');
+	var transitionMatrixEl = document.getElementById('chart-transition-matrix');
 	var sankeyChart = sankeyEl ? echarts.init(sankeyEl) : null;
+	var transitionMatrixChart = transitionMatrixEl ? echarts.init(transitionMatrixEl) : null;
 	var browserMixEl = document.getElementById('chart-browser-mix');
 	var osMixEl = document.getElementById('chart-os-mix');
 	var deviceMixEl = document.getElementById('chart-device-mix');
@@ -3617,7 +3715,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 			}
 		});
 		var query = params.toString();
-		return '?' + query + '#overview';
+		return statsBase + (query ? '?' + query : '') + '#overview';
 	}
 
 	function goWith(overrides) {
@@ -3820,6 +3918,67 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 					{ depth: 3, itemStyle: { color: '#fb7185' }, lineStyle: { color: 'source', opacity: 0.25 } }
 				]
 			}]
+		});
+	}
+
+	if (transitionMatrixChart && transitionMatrixData.length) {
+		var transitionMax = 1;
+		transitionMatrixData.forEach(function (row) { transitionMax = Math.max(transitionMax, row[2]); });
+		transitionMatrixChart.setOption({
+			backgroundColor: 'transparent',
+			tooltip: {
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' },
+				formatter: function (params) {
+					var value = params.value;
+					return htmlEscape(transitionSources[value[1]]) + ' → ' + htmlEscape(transitionTargets[value[0]]) + ': ' + value[2] + ' transitions';
+				}
+			},
+			grid: { left: 160, right: 20, top: 20, bottom: 76 },
+			xAxis: {
+				type: 'category',
+				data: transitionTargets,
+				axisLine: { lineStyle: { color: '#243047' } },
+				axisTick: { show: false },
+				axisLabel: { color: '#94a3b8', fontSize: 9, rotate: 28, interval: 0 }
+			},
+			yAxis: {
+				type: 'category',
+				data: transitionSources.map(function (name) { return truncateLabel(name, 24); }),
+				axisLine: { lineStyle: { color: '#243047' } },
+				axisTick: { show: false },
+				axisLabel: { color: '#cbd5e1', fontSize: 9 }
+			},
+			visualMap: {
+				min: 0,
+				max: transitionMax,
+				calculable: false,
+				orient: 'horizontal',
+				left: 'center',
+				bottom: 0,
+				itemWidth: 11,
+				itemHeight: 80,
+				textStyle: { color: '#94a3b8', fontSize: 10 },
+				inRange: { color: ['#1f2937', '#7c5a2a', '#e9aa60', '#f4c98a'] }
+			},
+			series: [{
+				type: 'heatmap',
+				data: transitionMatrixData,
+				itemStyle: { borderColor: '#0b1220', borderWidth: 2 },
+				emphasis: { itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,.35)' } }
+			}]
+		});
+		transitionMatrixChart.on('click', function (params) {
+			if (!params.value) {
+				return;
+			}
+			var value = params.value;
+			var sourceSlug = transitionSourceSlugs[value[1]] || '';
+			var targetSlug = transitionTargetSlugs[value[0]] || '';
+			if (sourceSlug && targetSlug) {
+				goWith({ ref_path: sourceSlug, path: targetSlug });
+			}
 		});
 	}
 
@@ -4248,6 +4407,155 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		});
 	}
 
+	function applyChartTheme() {
+		var light = document.body.classList.contains('light');
+		var t = light ? {
+			text: '#1e293b',
+			muted: '#5b6472',
+			dim: '#7b8492',
+			line: '#d8cfc0',
+			split: 'rgba(216,207,192,.85)',
+			tooltipBg: '#fffdf8',
+			tooltipBorder: '#d8cfc0',
+			itemBorder: '#fffdf8',
+			heatColors: ['#efe7d8', '#d9b36a', '#b7791f', '#8a5a12']
+		} : {
+			text: '#e2e8f0',
+			muted: '#94a3b8',
+			dim: '#64748b',
+			line: '#243047',
+			split: 'rgba(36,48,71,.65)',
+			tooltipBg: '#0b1220',
+			tooltipBorder: '#243047',
+			itemBorder: '#0b1220',
+			heatColors: ['#1f2937', '#7c5a2a', '#e9aa60', '#f4c98a']
+		};
+		var allCharts = [daily, refsChart, pagesChart, pageShareChart, sankeyChart, browserMixChart, osMixChart, deviceMixChart, clockChart, attentionChart, funnelChart, contentTreemapChart, sourceTreemapChart, calendarChart, botHumanChart, pageSourceChart, transitionMatrixChart];
+		var generic = {
+			backgroundColor: 'transparent',
+			textStyle: { color: t.text },
+			tooltip: {
+				backgroundColor: t.tooltipBg,
+				borderColor: t.tooltipBorder,
+				textStyle: { color: t.text }
+			}
+		};
+		allCharts.forEach(function (chart) {
+			if (chart) {
+				chart.setOption(generic);
+			}
+		});
+		[daily, refsChart, pageShareChart, browserMixChart, osMixChart, deviceMixChart, clockChart, botHumanChart].forEach(function (chart) {
+			if (chart) {
+				chart.setOption({ legend: { textStyle: { color: t.muted } } });
+			}
+		});
+		[daily, pagesChart, attentionChart, botHumanChart, pageSourceChart, transitionMatrixChart].forEach(function (chart) {
+			if (chart) {
+				chart.setOption({
+					xAxis: {
+						axisLine: { lineStyle: { color: t.line } },
+						axisTick: { lineStyle: { color: t.line } },
+						axisLabel: { color: t.muted },
+						nameTextStyle: { color: t.dim },
+						splitLine: { lineStyle: { color: t.split } }
+					},
+					yAxis: {
+						axisLine: { lineStyle: { color: t.line } },
+						axisTick: { lineStyle: { color: t.line } },
+						axisLabel: { color: t.muted },
+						nameTextStyle: { color: t.dim },
+						splitLine: { lineStyle: { color: t.split } }
+					}
+				});
+			}
+		});
+		if (clockChart) {
+			clockChart.setOption({
+				title: {
+					textStyle: { color: t.text },
+					subtextStyle: { color: t.dim }
+				},
+				angleAxis: {
+					axisLine: { lineStyle: { color: t.line } },
+					axisLabel: { color: t.muted }
+				},
+				radiusAxis: {
+					axisLine: { lineStyle: { color: t.line } },
+					axisLabel: { color: t.muted }
+				}
+			});
+		}
+		if (calendarChart) {
+			calendarChart.setOption({
+				calendar: {
+					dayLabel: { color: t.muted },
+					monthLabel: { color: t.muted },
+					splitLine: { lineStyle: { color: t.line } },
+					itemStyle: { borderColor: t.line }
+				},
+				visualMap: { textStyle: { color: t.muted }, inRange: { color: t.heatColors } }
+			});
+		}
+		[refsChart, pageShareChart, browserMixChart, osMixChart, deviceMixChart].forEach(function (chart) {
+			if (chart) {
+				chart.setOption({
+					series: [{
+						label: { color: t.text },
+						emphasis: { label: { color: t.text } },
+						itemStyle: { borderColor: t.itemBorder }
+					}]
+				});
+			}
+		});
+		[contentTreemapChart, sourceTreemapChart].forEach(function (chart) {
+			if (chart) {
+				chart.setOption({
+					series: [{
+						label: { color: '#0b1220' },
+						itemStyle: { borderColor: t.itemBorder }
+					}]
+				});
+			}
+		});
+		if (sankeyChart) {
+			sankeyChart.setOption({ series: [{ label: { color: t.muted } }] });
+		}
+		if (attentionChart) {
+			attentionChart.setOption({ series: [{ label: { color: t.muted } }] });
+		}
+		[pageSourceChart, transitionMatrixChart].forEach(function (chart) {
+			if (chart) {
+				chart.setOption({ visualMap: { textStyle: { color: t.muted }, inRange: { color: t.heatColors } } });
+			}
+		});
+	}
+
+	(function () {
+		var toggle = document.getElementById('theme-toggle');
+		var body = document.body;
+		function setTheme(light) {
+			body.classList.toggle('light', light);
+			try {
+				localStorage.setItem('mn_stats_theme', light ? 'light' : 'dark');
+			} catch (ignored) {}
+			if (toggle) {
+				toggle.textContent = light ? 'Dark' : 'Light';
+			}
+			applyChartTheme();
+		}
+		var saved = '';
+		try {
+			saved = localStorage.getItem('mn_stats_theme') || '';
+		} catch (ignored) {}
+		setTheme(saved === 'light');
+		if (toggle) {
+			toggle.addEventListener('click', function () {
+				setTheme(!body.classList.contains('light'));
+			});
+		}
+	})();
+
 	window.addEventListener('resize', function () {
 		if (daily) {
 			daily.resize();
@@ -4263,6 +4571,9 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		}
 		if (sankeyChart) {
 			sankeyChart.resize();
+		}
+		if (transitionMatrixChart) {
+			transitionMatrixChart.resize();
 		}
 		if (browserMixChart) {
 			browserMixChart.resize();
