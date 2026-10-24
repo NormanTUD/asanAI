@@ -934,7 +934,7 @@ window.bibData = {
 		title: "An Algorithm for the Machine Calculation of Complex Fourier Series",
 		author: "James W. Cooley, John W. Tukey",
 		year: 1965,
-		url: "https://en.wikipedia.org/wiki/Fast_Fourier_transform",
+		url: "https://www.ams.org/mcom/1965-19-090/S0025-5718-1965-0178586-1/S0025-5718-1965-0178586-1.pdf",
 		alternativetitle: "Cooley and Tukey, the FFT (1965)"
 	},
 	"zaheer2017deepsets": {
@@ -2252,13 +2252,15 @@ window.bibData = {
 		title: "The Emperor's New Mind: Concerning Computers, Minds, and the Laws of Physics",
 		author: "Roger Penrose",
 		year: 1989,
-		url: "https://0ducks.wordpress.com/wp-content/uploads/2014/12/the-emperors-new-mind-by-roger-penrose.pdf"
+		url: "https://en.wikipedia.org/wiki/The_Emperor%27s_New_Mind",
+		alternativetitle: "Penrose, 1989"
 	},
 	"penrose1994shadows": {
 		title: "Shadows of the Mind: A Search for the Missing Science of Consciousness",
 		author: "Roger Penrose",
 		year: 1994,
-		url: "https://altexploit.wordpress.com/wp-content/uploads/2017/07/roger-penrose-shadows-of-the-mind_-a-search-for-the-missing-science-of-consciousness-oxford-university-press-1994.pdf"
+		url: "https://en.wikipedia.org/wiki/Shadows_of_the_Mind",
+		alternativetitle: "Penrose, 1994"
 	},
 	"hameroff1996orch": {
 		title: "Orchestrated reduction of quantum coherence in brain microtubules: A model for consciousness",
@@ -3752,6 +3754,13 @@ window.bibData = {
 		year: 2020,
 		url: "https://plato.stanford.edu/entries/multiple-realizability/"
 	},
+	"sep_godel_incompleteness": {
+		title: "Gödel's Incompleteness Theorems",
+		author: "Panu Raatikainen (Stanford Encyclopedia of Philosophy)",
+		year: 2025,
+		url: "https://plato.stanford.edu/entries/goedel-incompleteness/",
+		alternativetitle: "SEP: Gödel's Incompleteness Theorems"
+	},
 	"hume1739treatise": {
 		author: "David Hume",
 		year: 1739,
@@ -3873,6 +3882,13 @@ window.bibData = {
 		year: 1836,
 		url: "https://archive.org/details/berdieverschied00humbgoog",
 		alternativetitle: "Humboldt, 1836"
+	},
+	"gleick2011information": {
+		title: "The Information: A History, a Theory, a Flood",
+		author: "James Gleick",
+		year: 2011,
+		url: "https://en.wikipedia.org/wiki/The_Information:_A_History,_a_Theory,_a_Flood",
+		alternativetitle: "Gleick, 2011"
 	},
 	"evanslevinson2009myth": {
 		title: "The Myth of Language Universals: Language Diversity and Its Importance for Cognitive Science",
@@ -20582,7 +20598,7 @@ window.bibData = {
 		alternativetitle: "Hassabis et al., episodic memory (2007)"
 	},
 	"kudo2018sentencepiece": {
-		url: "https://arxiv.org/abs/1808.06226",
+		url: "https://aclanthology.org/D18-2012.pdf",
 		title: "SentencePiece: A simple and language independent subword tokenizer and detokenizer for Neural Text Processing",
 		author: "Taku Kudo, John Richardson",
 		year: 2018,
@@ -20706,6 +20722,410 @@ window.bibData = {
 		author: "Yoshua Bengio, Geoffrey Hinton, Andrew Yao, et al.",
 		year: 2023,
 		alternativetitle: "Managing AI Risks"
-	}
+	},
 
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The missing prerequisites: fab, grid, cloud, analog data, wireless,
+	 *  text, human corpus, law, science, industry, paperwork, standards.
+	 *  (untold_history.php) — primary sources only.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"tsmc2025annualreport": {
+		title: "Taiwan Semiconductor Manufacturing Company Limited Annual Report 2025 (Form 20-F)",
+		author: "TSMC",
+		year: 2026,
+		url: "https://www.sec.gov/Archives/edgar/data/1046179/000162828026025362/tsm-20251231.htm",
+		alternativetitle: "TSMC 2025 Annual Report"
+	},
+	"asml2025annualreport": {
+		title: "ASML Annual Report 2025 (Form 20-F)",
+		author: "ASML Holding N.V.",
+		year: 2026,
+		url: "https://www.sec.gov/Archives/edgar/data/937966/000162828026011378/asml-20251231.htm",
+		alternativetitle: "ASML 2025 Annual Report"
+	},
+	"kinoshita1989euv": {
+		title: "Soft x-ray reduction lithography using multilayer mirrors",
+		author: "H. Kinoshita, K. Kurihara, Y. Ishii, Y. Torii",
+		year: 1989,
+		url: "https://doi.org/10.1116/1.584507",
+		alternativetitle: "Kinoshita et al., 1989"
+	},
+	"jeng2022cowos": {
+		title: "Heterogeneous and Chiplet Integration Using Organic Interposer (CoWoS-R)",
+		author: "Shin-Puu Jeng, Monsen Liu",
+		year: 2022,
+		url: "https://doi.org/10.1109/IEDM45625.2022.10019517",
+		alternativetitle: "CoWoS-R (Jeng and Liu, 2022)"
+	},
+	"jun2017hbm": {
+		title: "HBM (High Bandwidth Memory) DRAM Technology and Architecture",
+		author: "Hongshin Jun, Jinhee Cho, Kangseol Lee, Ho-Young Son, Kwiwook Kim, Hanho Jin, Keith Kim",
+		year: 2017,
+		url: "https://doi.org/10.1109/IMW.2017.7939084",
+		alternativetitle: "HBM (Jun et al., 2017)"
+	},
+	"liu1985cleanroom": {
+		title: "Ultrafine Aerosol Particles in Semiconductor Cleanrooms",
+		author: "R. P. Donovan, B. R. Locke, C. M. Osburn, A. L. Caviness",
+		year: 1985,
+		url: "https://doi.org/10.1149/1.2113655",
+		alternativetitle: "Donovan et al., 1985"
+	},
+	"ruth2016ultrapure": {
+		title: "Quality control for ultrafiltration of ultrapure water production for high end semiconductor manufacturing",
+		author: "Jochen Ruth, Rolf Berndt",
+		year: 2016,
+		url: "https://doi.org/10.1109/ASMC.2016.7491077",
+		alternativetitle: "Ruth and Berndt, 2016"
+	},
+	"amazons3_2006": {
+		title: "Amazon Web Services Launches Amazon S3",
+		author: "Amazon Web Services",
+		year: 2006,
+		url: "https://press.aboutamazon.com/news-releases/news-release-details/amazon-web-services-launches-amazon-s3-simple-storage-service",
+		alternativetitle: "Amazon S3 launch (2006)"
+	},
+	"amazonec2_2006": {
+		title: "Amazon EC2 Beta",
+		author: "Jeff Barr",
+		year: 2006,
+		url: "https://aws.amazon.com/blogs/aws/amazon_ec2_beta/",
+		alternativetitle: "Amazon EC2 beta (2006)"
+	},
+	"kubernetes_overview": {
+		title: "Kubernetes Documentation: Overview",
+		author: "The Kubernetes Authors",
+		year: 2014,
+		url: "https://kubernetes.io/docs/concepts/overview/",
+		alternativetitle: "Kubernetes overview"
+	},
+	"barroso2013datacenter": {
+		title: "The Datacenter as a Computer: An Introduction to the Design of Warehouse-Scale Machines, Second Edition",
+		author: "Luiz Andre Barroso, Jimmy Clidaras, Urs Holzle",
+		year: 2013,
+		url: "https://research.google/pubs/the-datacenter-as-a-computer-an-introduction-to-the-design-of-warehouse-scale-machines-second-edition/",
+		alternativetitle: "Barroso, Clidaras and Holzle, 2013"
+	},
+	"iea2026energyai": {
+		title: "Key Questions on Energy and AI",
+		author: "International Energy Agency",
+		year: 2026,
+		url: "https://www.iea.org/reports/key-questions-on-energy-and-ai",
+		alternativetitle: "IEA, 2026"
+	},
+	"boyle1970ccd": {
+		title: "Charge Coupled Semiconductor Devices",
+		author: "W. S. Boyle, G. E. Smith",
+		year: 1970,
+		url: "https://doi.org/10.1002/j.1538-7305.1970.tb01790.x",
+		alternativetitle: "Boyle and Smith, 1970"
+	},
+	"fossum1997cmos": {
+		title: "CMOS image sensors: electronic camera-on-a-chip",
+		author: "E. R. Fossum",
+		year: 1997,
+		url: "https://doi.org/10.1109/16.628824",
+		alternativetitle: "Fossum, 1997"
+	},
+	"maiman1960laser": {
+		title: "Ruby laser systems (US Patent 3,353,115)",
+		author: "Theodore H. Maiman",
+		year: 1967,
+		url: "https://patents.google.com/patent/US3353115A/en",
+		alternativetitle: "Maiman, US Patent 3,353,115"
+	},
+	"walden1999adc": {
+		title: "Analog-to-digital converter survey and analysis",
+		author: "R. H. Walden",
+		year: 1999,
+		url: "https://doi.org/10.1109/49.761034",
+		alternativetitle: "Walden, 1999"
+	},
+	"hertz1893electricwaves": {
+		title: "Electric Waves: Being Researches on the Propagation of Electric Action with Finite Velocity Through Space",
+		author: "Heinrich Hertz",
+		year: 1893,
+		url: "https://archive.org/details/electricwavesbe00jonegoog",
+		alternativetitle: "Hertz, Electric Waves (1893)"
+	},
+	"marconi1897patent": {
+		title: "Transmitting electrical signals (US Patent 586,193)",
+		author: "Guglielmo Marconi",
+		year: 1897,
+		url: "https://patents.google.com/patent/US586193A/en",
+		alternativetitle: "Marconi, US Patent 586,193"
+	},
+	"macdonald1979cellular": {
+		title: "Advanced Mobile Phone Service: The Cellular Concept",
+		author: "V. H. Mac Donald",
+		year: 1979,
+		url: "https://doi.org/10.1002/j.1538-7305.1979.tb02209.x",
+		alternativetitle: "MacDonald, 1979"
+	},
+	"ieee80211_1997": {
+		title: "IEEE Standard for Wireless LAN Medium Access Control (MAC) and Physical Layer (PHY) Specifications",
+		author: "IEEE",
+		year: 1997,
+		url: "https://doi.org/10.1109/IEEESTD.1997.85951",
+		alternativetitle: "IEEE 802.11-1997"
+	},
+	"apple2007iphone": {
+		title: "Apple Reinvents the Phone with iPhone",
+		author: "Apple Inc.",
+		year: 2007,
+		url: "http://web.archive.org/web/20110608084440/http://www.apple.com/pr/library/2007/01/09iphone.html",
+		alternativetitle: "Apple iPhone launch (2007)"
+	},
+	"furber1987arm": {
+		title: "The Acorn RISC Machine - an architectural view",
+		author: "S. B. Furber, A. R. Wilson",
+		year: 1987,
+		url: "https://doi.org/10.1049/ep.1987.0249",
+		alternativetitle: "Furber and Wilson, 1987"
+	},
+	"gpp_specs": {
+		title: "3GPP Specifications and Technologies",
+		author: "3GPP",
+		year: 2026,
+		url: "https://www.3gpp.org/specifications-technologies",
+		alternativetitle: "3GPP specifications"
+	},
+	"unicode2022standard": {
+		title: "The Unicode Standard, Version 15.0: General Structure",
+		author: "The Unicode Consortium",
+		year: 2022,
+		url: "https://www.unicode.org/versions/Unicode15.0.0/ch02.pdf",
+		alternativetitle: "Unicode Standard, Chapter 2"
+	},
+	"rfc3629": {
+		title: "UTF-8, a transformation format of ISO 10646",
+		author: "F. Yergeau",
+		year: 2003,
+		url: "https://www.rfc-editor.org/rfc/rfc3629.txt",
+		alternativetitle: "RFC 3629"
+	},
+	"sennrich2016bpe": {
+		title: "Neural Machine Translation of Rare Words with Subword Units",
+		author: "Rico Sennrich, Barry Haddow, Alexandra Birch",
+		year: 2016,
+		url: "https://aclanthology.org/P16-1162.pdf",
+		alternativetitle: "Sennrich, Haddow and Birch, 2016"
+	},
+	"smith2007tesseract": {
+		title: "An Overview of the Tesseract OCR Engine",
+		author: "Ray Smith",
+		year: 2007,
+		url: "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/33418.pdf",
+		alternativetitle: "Smith, 2007 (Tesseract)"
+	},
+	"googlebooks_history": {
+		title: "Google Books History",
+		author: "Google",
+		year: 2026,
+		url: "https://books.google.com/googlebooks/about/history.html",
+		alternativetitle: "Google Books History"
+	},
+	"wang2018glue": {
+		title: "GLUE: A Multi-Task Benchmark and Analysis Platform for Natural Language Understanding",
+		author: "Alex Wang, Amanpreet Singh, Julian Michael, Felix Hill, Omer Levy, Samuel R. Bowman",
+		year: 2018,
+		url: "https://aclanthology.org/W18-5446.pdf",
+		alternativetitle: "GLUE (Wang et al., 2018)"
+	},
+	"rajpurkar2016squad": {
+		title: "SQuAD: 100,000+ Questions for Machine Comprehension of Text",
+		author: "Pranav Rajpurkar, Jian Zhang, Konstantin Lopyrev, Percy Liang",
+		year: 2016,
+		url: "https://aclanthology.org/D16-1264.pdf",
+		alternativetitle: "SQuAD (Rajpurkar et al., 2016)"
+	},
+	"liang2022helm": {
+		title: "Holistic Evaluation of Language Models",
+		author: "Percy Liang, Rishi Bommasani, Tony Lee, et al.",
+		year: 2022,
+		url: "https://arxiv.org/abs/2211.09110",
+		alternativetitle: "HELM (Liang et al., 2022)"
+	},
+	"chiang2024arena": {
+		title: "Chatbot Arena: An Open Platform for Evaluating LLMs by Human Preference",
+		author: "Wei-Lin Chiang, Lianmin Zheng, Ying Sheng, et al.",
+		year: 2024,
+		url: "https://arxiv.org/abs/2403.04132",
+		alternativetitle: "Chatbot Arena (Chiang et al., 2024)"
+	},
+	"raffel2020c4": {
+		title: "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer",
+		author: "Colin Raffel, Noam Shazeer, Adam Roberts, et al.",
+		year: 2020,
+		url: "https://www.jmlr.org/papers/volume21/20-074/20-074.pdf",
+		alternativetitle: "Raffel et al., 2020 (C4)"
+	},
+	"lee2022dedup": {
+		title: "Deduplicating Training Data Makes Language Models Better",
+		author: "Katherine Lee, Daphne Ippolito, Andrew Nystrom, et al.",
+		year: 2022,
+		url: "https://arxiv.org/abs/2107.06499",
+		alternativetitle: "Lee et al., 2022 (deduplication)"
+	},
+	"eu2019dsm": {
+		title: "Directive (EU) 2019/790 on copyright and related rights in the Digital Single Market",
+		author: "European Parliament and Council of the European Union",
+		year: 2019,
+		url: "https://web.archive.org/web/2024/https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32019L0790",
+		alternativetitle: "EU DSM Directive 2019/790"
+	},
+	"eu2016gdpr": {
+		title: "Regulation (EU) 2016/679 (General Data Protection Regulation)",
+		author: "European Parliament and Council of the European Union",
+		year: 2016,
+		url: "https://web.archive.org/web/2024/https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32016R0679",
+		alternativetitle: "GDPR (EU 2016/679)"
+	},
+	"bis2026advancedcomputing": {
+		title: "Guidance Regarding Enforcement of License Requirements for Advanced Computing Items",
+		author: "U.S. Bureau of Industry and Security",
+		year: 2026,
+		url: "https://www.bis.doc.gov/index.php/policy-guidance/lists-of-parties-of-concern/entity-list",
+		alternativetitle: "BIS advanced computing guidance"
+	},
+	"authorsguild2015google": {
+		title: "Authors Guild v. Google, Inc., 804 F.3d 202 (2d Cir. 2015)",
+		author: "U.S. Court of Appeals for the Second Circuit",
+		year: 2015,
+		url: "http://web.archive.org/web/20261015210009/https://law.justia.com/cases/federal/appellate-courts/ca2/13-4829/13-4829-2015-10-16.html",
+		alternativetitle: "Authors Guild v. Google (2d Cir. 2015)"
+	},
+	"nsf_history": {
+		title: "History of the National Science Foundation",
+		author: "U.S. National Science Foundation",
+		year: 2026,
+		url: "https://www.nsf.gov/about/history/vbush1945.htm",
+		alternativetitle: "NSF history"
+	},
+	"arxiv_about": {
+		title: "About arXiv",
+		author: "arXiv",
+		year: 2026,
+		url: "https://info.arxiv.org/about/index.html",
+		alternativetitle: "About arXiv"
+	},
+	"git_history": {
+		title: "A Short History of Git",
+		author: "Scott Chacon, Ben Straub",
+		year: 2014,
+		url: "https://git-scm.com/book/en/v2/Getting-Started-A-Short-History-of-Git",
+		alternativetitle: "Git history"
+	},
+	"rfc2026": {
+		title: "The Internet Standards Process -- Revision 3",
+		author: "S. Bradner",
+		year: 1996,
+		url: "https://www.rfc-editor.org/rfc/rfc2026.txt",
+		alternativetitle: "RFC 2026"
+	},
+	"spdx_gpl2": {
+		title: "GNU General Public License version 2",
+		author: "Free Software Foundation",
+		year: 1991,
+		url: "https://spdx.org/licenses/GPL-2.0-only.html",
+		alternativetitle: "GPL-2.0"
+	},
+	"dantzig1963linear": {
+		title: "Linear Programming and Extensions",
+		author: "George B. Dantzig",
+		year: 1963,
+		url: "https://www.rand.org/pubs/reports/R366.html",
+		alternativetitle: "Dantzig, 1963"
+	},
+	"harder1983transactions": {
+		title: "Principles of transaction-oriented database recovery",
+		author: "Theo Harder, Andreas Reuter",
+		year: 1983,
+		url: "https://dl.acm.org/doi/pdf/10.1145/289.291",
+		alternativetitle: "Harder and Reuter, 1983"
+	},
+	"mclean1958container": {
+		title: "Apparatus for shipping freight (US Patent 2,853,968)",
+		author: "Malcolm P. McLean",
+		year: 1958,
+		url: "https://patents.google.com/patent/US2853968A/en",
+		alternativetitle: "McLean, US Patent 2,853,968"
+	},
+	"richardson1922weather": {
+		title: "Weather Prediction by Numerical Process",
+		author: "Lewis F. Richardson",
+		year: 1922,
+		url: "https://archive.org/details/weatherpredictio00richrich",
+		alternativetitle: "Richardson, 1922"
+	},
+	"claerbout1992earth": {
+		title: "Earth Soundings Analysis: Processing versus Inversion",
+		author: "Jon F. Claerbout",
+		year: 1992,
+		url: "https://sepwww.stanford.edu/sep/prof/pvi.pdf",
+		alternativetitle: "Claerbout, 1992"
+	},
+	"sabre1960reservation": {
+		title: "Of current interest: Sabre cuts airline reservation time",
+		author: "International Business Machines Corporation",
+		year: 1960,
+		url: "https://doi.org/10.1109/EE.1960.6433028",
+		alternativetitle: "SABRE (1960)"
+	},
+	"dewey1876classification": {
+		title: "A Classification and Subject Index for Cataloging and Arranging the Books and Pamphlets of a Library",
+		author: "Melvil Dewey",
+		year: 1876,
+		url: "https://archive.org/details/classificationan00dewerich",
+		alternativetitle: "Dewey, 1876"
+	},
+	"librarybureau1890catalog": {
+		title: "Classified Illustrated Catalog of the Library Bureau: A Handbook of Library and Office Fittings and Supplies",
+		author: "Library Bureau",
+		year: 1890,
+		url: "https://archive.org/details/classifiedillust00librrich",
+		alternativetitle: "Library Bureau Catalog (1890)"
+	},
+	"cardcatalogrules1890": {
+		title: "Library School Rules: Card Catalog Rules, Accession Book Rules, Shelf List Rules",
+		author: "Melvil Dewey",
+		year: 1890,
+		url: "https://archive.org/details/libraryschoolrul00deweuoft",
+		alternativetitle: "Dewey, Card Catalog Rules (1890)"
+	},
+	"halley1693mortality": {
+		title: "An Estimate of the Degrees of the Mortality of Mankind",
+		author: "Edmund Halley",
+		year: 1693,
+		url: "https://doi.org/10.1098/rstl.1693.0007",
+		alternativetitle: "Halley, 1693"
+	},
+	"meridian1884proceedings": {
+		title: "International Conference Held at Washington for the Purpose of Fixing a Prime Meridian and a Universal Day: Protocols of the Proceedings",
+		author: "International Meridian Conference",
+		year: 1884,
+		url: "https://archive.org/details/internationalcon17759gut",
+		alternativetitle: "International Meridian Conference (1884)"
+	},
+	"rfc5905": {
+		title: "Network Time Protocol Version 4: Protocol and Algorithms Specification",
+		author: "D. Mills, J. Martin, J. Burbank, W. Kasch",
+		year: 2010,
+		url: "https://www.rfc-editor.org/rfc/rfc5905.txt",
+		alternativetitle: "RFC 5905"
+	},
+	"woodland1952barcode": {
+		title: "Classifying apparatus and method (US Patent 2,612,994)",
+		author: "Norman J. Woodland, Bernard Silver",
+		year: 1952,
+		url: "https://patents.google.com/patent/US2612994A/en",
+		alternativetitle: "Woodland and Silver, US Patent 2,612,994"
+	},
+	"denso_qr_history": {
+		title: "History of QR Code",
+		author: "DENSO WAVE INCORPORATED",
+		year: 2026,
+		url: "https://www.qrcode.com/en/history/",
+		alternativetitle: "DENSO WAVE, History of QR Code"
+	},
 };

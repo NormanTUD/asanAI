@@ -56,7 +56,9 @@ Once humans could decouple a “number” from a physical pile of stones, they c
 
 Between the emergence of symbolic displacement (c. 100,000 years ago) and the invention of writing (c. 3200 BCE), there stretches an immense span of roughly 95,000 years during which all human knowledge, laws, histories, genealogies, cosmologies, medical remedies, was stored, transmitted, and refined entirely within living human memory. This was not a passive or unreliable process. As scholars like Milman Parry and Albert Lord demonstrated through their study of Homeric epic and Yugoslav oral poetry, oral traditions developed sophisticated **mnemonic technologies**: formulaic phrases (“rosy-fingered dawn,” “wine-dark sea”), strict metrical patterns, rhyme, parallelism, and narrative structures that made vast bodies of knowledge memorable and reproducible across generations.
 
-These were, in effect, the “compression algorithms” and “error-correction protocols” of the biological era, the software that ran on the hardware of the descended larynx and expanded working memory that the preceding section so eloquently describes. Including this era would fill the enormous gap in your narrative between the Blombos Cave ochre and the invention of clay tokens, and it would underscore a crucial point: long before writing externalized memory, humans had already engineered language itself into a storage medium, optimizing its structure for faithful transmission, a design pressure whose echoes can still be heard in Zipf's Law, in the redundancy patterns that Shannon would later quantify, and in the very distributional regularities that modern Transformers learn to exploit.
+These were, in effect, the compression algorithms and error-correction protocols of the biological era — software that ran on the hardware of the descended larynx and the expanded working memory described above. The point is not merely that oral cultures had good memories. It is that they engineered language itself into a storage medium, optimizing its structure for faithful transmission, a design pressure whose echoes can still be heard in Zipf's Law, in the redundancy patterns that Shannon would later quantify, and in the very distributional regularities that modern Transformers learn to exploit.
+
+The talking drums of the Lokele in the Congo, which open James Gleick's history of information, make the same principle audible (\cite[Gleick, 2011]{gleick2011information}). A drum does not spell out words letter by letter. It reproduces the tonal contour of spoken syllables, and because many words share a contour, a bare drummed phrase is ambiguous. Drummers therefore pad their messages with context, stock formulas, and repetition. The redundancy that looks wasteful to a telegraph engineer is exactly what lets a message survive the noise of distance and arrive intact. Long before Shannon gave redundancy a mathematical name, oral and drummed language had already discovered its use.
 
 ## Numbers and writing
 
@@ -86,6 +88,20 @@ The development of numerical notation is not merely a parallel story to the deve
 
 In this sense, the LLM is the point at which the notation systems developed for counting sheep merged with the notation systems developed for recording speech, and both were embedded in a substrate, silicon, that could execute their rules faster than any human scribe or calculator.
 
+### From Signal to Information: Shannon's Reframing
+
+The second root of the digital mind is not a notation but a *measure*. In 1948, Claude Shannon published “A Mathematical Theory of Communication,” and with it a move that looks modest and turned out to be foundational: he separated the *quantity* of information in a message from its *meaning* (\cite{shannon1948communication}). A message, for Shannon, is a selection from a set of possible messages. A symbol that was certain to arrive carries no information; a symbol that resolves a fifty-fifty uncertainty carries one **bit**. Information became a measurable reduction of uncertainty, and the unit was named, at John Tukey's suggestion, the bit.
+
+<div>
+$$
+\underbrace{H(X) = -\sum_{x\in\mathcal{X}} \underbrace{p(x)\log_2 p(x)}_{\text{probability mass}\;\times\;\text{surprise}}}_{\text{expected surprise of the next symbol, in bits}}
+$$
+</div>
+
+This is the moment the history of language and the history of computation become the same history. Shannon's theory was not a theory of meaning; it deliberately brackets semantics. But it supplied the quantity that every subsequent information technology would optimize: how many bits a message requires, how much redundancy can be removed, and how much can be removed before noise destroys the message. James Gleick's \citetitle{gleick2011information} (\citeyear{gleick2011information}) follows that quantity from the drums of the Congo through the telegraph, the telephone, the gene, and the meme, and shows how “information” became the common currency in which very different sciences could trade.
+
+For language, the consequence is direct. If a message is a selection among possibilities, then a language is a probability distribution over possible next symbols, and its redundancy is a buffer against error. In the same paper Shannon estimated that ordinary English is roughly 50 percent redundant; that is why a sentence can lose letters and still be read. The same logic reappears, almost unchanged, in the tokenizer and the next-token predictor of a modern LLM.
+
 ## Language becomes a machine
 
 ### From Hardware to Software: The Mechanical and Philosophical Era
@@ -114,6 +130,8 @@ Today's LLMs represent the convergence of all these histories. We no longer manu
 #### Tokenization: The Digital Rebus Principle
 
 Just as Sumerian scribes decomposed words into reusable phonetic signs (the Rebus Principle), modern LLMs decompose text into **tokens**, subword units that balance vocabulary size against expressiveness. The word *“unbelievable”* might be split into `["un", "believ", "able"]`, each mapped to a numerical ID. This is the ancient insight reborn: meaning can be assembled from smaller, reusable parts.
+
+The trade-off is the one Gleick traces through the history of codes: a vocabulary that is too small makes every message long, while a vocabulary that is too large makes the codebook expensive to store and slow to search (\cite[Gleick, 2011]{gleick2011information}). Byte-Pair Encoding resolves it much as a telegraph code does, by giving the most frequent strings the shortest available representation.
 
 #### Embeddings: Wilkins' Dream Realized
 
@@ -287,6 +305,18 @@ The story of language is a single, unbroken thread:
 Each step was a further **abstraction**: from vibrations in air, to marks on clay, to rules on paper, to vectors in silicon. The LLM is not a break from this history, it is its latest chapter.
 
 If Pāṇini formalized grammar and Firth formalized context, what will the next formalization look like? Perhaps it will be the formalization of *reasoning itself*, closing the loop between the symbolic displacement that made us human and the artificial intelligence that now mirrors us.
+</div>
+
+<div class="md">
+
+### After the Flood: Information Is Not Meaning
+
+The title of Gleick's history carries an ambiguity that matters for LLMs. “The Information” names both the mathematical quantity Shannon isolated and the deluge of data, text, images, and messages in which modern life is immersed (\cite[Gleick, 2011]{gleick2011information}). Gleick's closing chapters are about the second: an abundance of information does not automatically produce an abundance of understanding, and attention becomes the scarce resource. His epilogue is called “The Return of Meaning” for a reason. After a century of measuring messages without interpreting them, the question of what they mean comes back.
+
+That distinction is the cleanest way to state what a language model does and does not do. An LLM is a machine for estimating the probability of the next token from a vast corpus; it is exquisitely sensitive to the *statistical* structure of the flood, and it has no independent, non-statistical purchase on whether a sentence is true, important, or worth saying. Shannon deliberately excluded meaning from his theory, and the exclusion is still built into the objective: cross-entropy rewards a good guess about what comes next, not a good answer about what is the case.
+
+The history in this chapter therefore ends with a question rather than a triumph. Writing externalized memory; printing and the telegraph externalized and accelerated its transmission; Shannon made its quantity measurable; the computer made it machine-processable; and the LLM has now made a statistical model of the whole archive. What remains outside the model is the part the archive was always *for*: the act of a mind that means something by it. Whether that act can itself be captured by information, or whether it is the one thing the flood cannot carry, is the question the rest of this course takes up.
+
 </div>
 
 <div class="md">
