@@ -107,6 +107,18 @@ function asanai_proxy_rewrite_html(string $content, string $remote_base, string 
 	) ?? $content;
 
 	$content = preg_replace_callback(
+		'/<iframe\b([^>]*?)\bsrc\s*=\s*(["\'])(.*?)\2([^>]*)>/is',
+		static function (array $match) use ($remote_base, $proxy_name, $current_path): string {
+			$new = asanai_proxy_rewrite_url($match[3], $remote_base, $proxy_name, $current_path);
+			if ($new === $match[3]) {
+				return $match[0];
+			}
+			return '<iframe' . $match[1] . 'src=' . $match[2] . htmlspecialchars($new, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . $match[2] . $match[4] . '>';
+		},
+		$content
+	) ?? $content;
+
+	$content = preg_replace_callback(
 		'/<form\b([^>]*?)\baction\s*=\s*(["\'])(.*?)\2([^>]*)>/is',
 		static function (array $match) use ($remote_base, $proxy_name, $current_path): string {
 			$action = trim(html_entity_decode($match[3], ENT_QUOTES | ENT_HTML5, 'UTF-8'));

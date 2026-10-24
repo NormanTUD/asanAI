@@ -21,6 +21,9 @@ header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-i
 
 mn_admin_session_start();
 
+$embed = isset($_GET['embed']) && (string)$_GET['embed'] === '1';
+$embedTheme = isset($_GET['theme']) && (string)$_GET['theme'] === 'light' ? 'light' : 'dark';
+
 function feedback_h(mixed $value): string {
 	return htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
@@ -582,7 +585,7 @@ $helpfulPages = array_slice(array_values(array_filter($helpfulPages, static func
 $recentPages = array_slice($pageStats, 0, 6);
 ?>
 <!DOCTYPE html>
-<html lang="en" class="dark" data-theme="dark">
+<html lang="en" class="<?php echo $embedTheme === 'light' ? '' : 'dark'; ?>" data-theme="<?php echo $embedTheme; ?>"<?php echo $embed ? ' data-embed="1"' : ''; ?>>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -740,6 +743,22 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 @media (max-width: 900px) {
 	.overview-grid { grid-template-columns: 1fr; }
 }
+html[data-embed="1"],
+html[data-embed="1"] body {
+	background: transparent;
+}
+html[data-embed="1"] .page {
+	max-width: none;
+	padding: 0;
+}
+html[data-embed="1"] .top,
+html[data-embed="1"] .admin-nav {
+	display: none !important;
+}
+html[data-embed="1"] .feedback-embed {
+	display: none !important;
+}
+
 @media (max-width: 720px) {
 	.page { padding: 18px 12px 44px; }
 	h1 { font-size: 24px; }
@@ -752,7 +771,7 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 }
 </style>
 </head>
-<body>
+<body<?php echo $embed ? ' data-embed="1"' : ''; ?>>
 <div class="page">
 <?php if (!$authed): ?>
 	<div class="login-card">
@@ -1203,10 +1222,13 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 (function () {
 	var root = document.documentElement;
 	var key = "mn_feedback_theme";
-	try {
-		var saved = localStorage.getItem(key);
-		if (saved === "light" || saved === "dark") root.setAttribute("data-theme", saved);
-	} catch (e) {}
+	var embed = root.getAttribute("data-embed") === "1";
+	if (!embed) {
+		try {
+			var saved = localStorage.getItem(key);
+			if (saved === "light" || saved === "dark") root.setAttribute("data-theme", saved);
+		} catch (e) {}
+	}
 	var btn = document.getElementById("theme-toggle");
 	if (btn) {
 		if (root.getAttribute("data-theme") === "light") btn.textContent = "Dark";

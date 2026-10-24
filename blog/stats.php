@@ -495,6 +495,11 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 	session_start();
 }
 
+$viewRaw = $_GET['view'] ?? 'analytics';
+$view = is_scalar($viewRaw) && (string)$viewRaw === 'feedback' ? 'feedback' : 'analytics';
+$statsScriptDir = rtrim(str_replace('\\', '/', dirname((string)($_SERVER['SCRIPT_NAME'] ?? '/'))), '/');
+$feedbackEmbedUrl = ($statsScriptDir === '' || $statsScriptDir === '.' ? '' : $statsScriptDir) . '/feedback?embed=1';
+
 $rangeOptions = [7 => '7 days', 30 => '30 days', 90 => '90 days', 365 => '1 year', 0 => 'All'];
 
 $rangeRaw = $_GET['range'] ?? 30;
@@ -2357,6 +2362,15 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .feedback-bridge .fb-latest .when { color: var(--muted); font-size: 10px; }
 .feedback-bridge .fb-latest .what { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .feedback-bridge .fb-latest .tag { color: var(--accent); font-size: 10px; font-weight: 700; white-space: nowrap; }
+.feedback-embed { margin: 0; }
+.feedback-embed iframe { display: block; width: 100%; height: calc(100vh - 190px); min-height: 560px; border: 0; border-radius: 12px; background: transparent; }
+body.feedback-view { overflow: hidden; }
+body.feedback-view .feedback-embed { height: calc(100vh - 190px); min-height: 560px; }
+body.feedback-view .feedback-embed iframe { height: 100%; }
+@media (max-width: 720px) {
+	.feedback-embed iframe { height: calc(100dvh - 170px); min-height: 480px; }
+	body.feedback-view .feedback-embed { height: calc(100dvh - 170px); min-height: 480px; }
+}
 .inline { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
 .switch { display: inline-flex; gap: 8px; align-items: center; color: var(--muted); font-size: 12px; cursor: pointer; }
 .btn, button.btn { border: 1px solid var(--line); background: var(--panel); color: var(--text); padding: 8px 12px; border-radius: 9px; cursor: pointer; font: inherit; display: inline-block; }
@@ -2741,7 +2755,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 }
 </style>
 </head>
-<body>
+<body class="<?php echo $view === 'feedback' ? 'feedback-view' : ''; ?>">
 <div class="page<?php echo $authed ? '' : ' login-page'; ?>" id="top">
 <?php if (!$authed): ?>
 	<div class="login-card">
@@ -2801,10 +2815,18 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 	</header>
 
 	<nav class="admin-nav" aria-label="Admin areas">
-		<a class="active" href="stats">Analytics</a>
-		<a href="feedback">Reader feedback</a>
+		<a class="<?php echo $view === 'analytics' ? 'active' : ''; ?>" href="stats?view=analytics">Analytics</a>
+		<a class="<?php echo $view === 'feedback' ? 'active' : ''; ?>" href="stats?view=feedback">Reader feedback</a>
 		<a href="index">Course</a>
 	</nav>
+
+	<?php if ($view === 'feedback'): ?>
+		<div class="feedback-embed">
+			<iframe id="feedback-frame" src="<?php echo stats_h($feedbackEmbedUrl); ?>" title="Reader feedback" loading="lazy"></iframe>
+		</div>
+	<?php endif; ?>
+
+	<div id="analytics-view"<?php echo $view === 'feedback' ? ' style="display:none"' : ''; ?>>
 
 	<?php if (is_array($flash)): ?>
 		<div class="flash <?php echo stats_h($flash['type'] ?? ''); ?>"><?php echo stats_h($flash['text'] ?? ''); ?></div>
@@ -4296,6 +4318,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	<?php endif; ?>
 
 <?php endif; ?>
+</div><!-- /#analytics-view -->
 </div>
 <?php if ($authed): ?>
 <script>
@@ -5731,6 +5754,18 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	(function () {
 		var toggle = document.getElementById('theme-toggle');
 		var body = document.body;
+		function syncFeedbackFrame() {
+			var frame = document.getElementById('feedback-frame');
+			if (!frame) return;
+			var theme = body.classList.contains('light') ? 'light' : 'dark';
+			try {
+				var url = new URL(frame.getAttribute('src'), window.location.href);
+				if (url.searchParams.get('theme') !== theme) {
+					url.searchParams.set('theme', theme);
+					frame.src = url.toString();
+				}
+			} catch (ignored) {}
+		}
 		function setTheme(light) {
 			body.classList.toggle('light', light);
 			try {
@@ -5740,6 +5775,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 				toggle.textContent = light ? 'Dark' : 'Light';
 			}
 			applyChartTheme();
+			syncFeedbackFrame();
 		}
 		var saved = '';
 		try {
