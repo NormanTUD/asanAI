@@ -20,6 +20,9 @@ in-session todo list carries the same high-level items.
 - Mobile bottom sheet has a drag handle; quote scroll and touch targets improved.
 - Security: random DB stored token secret, path-bound nonce token, path/file validation, daily cap, server-side title override, stricter HTML sanitizing, plaintext prompt/admin notes, action row checks.
 - **One unified admin page:** `/stats?view=analytics|feedback` uses one shared header/nav; the feedback view is a same-origin embedded panel (`feedback?embed=1`) with its own internal tabs. `/feedback` redirects there. Theme and auth are shared; stats Overview also shows feedback KPIs/latest.
+- Top-level Analytics/Feedback switching is client-side (no outer reload); feedback tabs/filters/actions navigate via same-origin AJAX inside the embedded panel.
+- Feedback Overview now has ECharts: stacked feedback over time, reaction mix, and helpful/not-helpful per page.
+- Embedded feedback palette is aligned with the stats palette (dark/light), fixing the white/foreign-colour panel.
 
 ---
 

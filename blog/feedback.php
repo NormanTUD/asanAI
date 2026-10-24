@@ -757,6 +757,7 @@ label.check { display: inline-flex; align-items: center; gap: 5px; color: var(--
 .feedback-charts .card { margin: 0; min-width: 0; }
 .feedback-chart { width: 100%; height: 260px; min-width: 0; }
 .feedback-charts h2 .hint { font-weight: 400; font-size: 11px; color: var(--muted); margin-left: 8px; }
+body.is-loading .page { opacity: .55; pointer-events: none; transition: opacity .15s ease; }
 @media (max-width: 900px) {
 	.feedback-charts { grid-template-columns: 1fr; }
 	.feedback-charts .wide { grid-column: auto; }
@@ -1391,6 +1392,229 @@ html[data-embed="1"] .btn.primary {
 </div>
 <script>
 (function () {
+	'use strict';
+	if (!window.echarts) return;
+	var charts = {};
+	function cssVar(name, fallback) {
+		var value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+		return value || fallback;
+	}
+	function palette() {
+		return {
+			text: cssVar('--text', '#e2e8f0'),
+			muted: cssVar('--muted', '#94a3b8'),
+			border: cssVar('--border', '#243047'),
+			surface: cssVar('--surface', '#111c31'),
+			accent: cssVar('--accent', '#e9aa60'),
+			emerald: cssVar('--emerald', '#34d399'),
+			rose: cssVar('--rose', '#fb7185'),
+			sky: cssVar('--sky', '#38bdf8'),
+			coral: cssVar('--coral', '#f4c98a'),
+			bug: cssVar('--bug', '#c084fc')
+		};
+	}
+	function draw(id, option) {
+		var el = document.getElementById(id);
+		if (!el) return;
+		var chart = charts[id] || (window.echarts.getInstanceByDom && window.echarts.getInstanceByDom(el));
+		if (!chart) chart = window.echarts.init(el);
+		charts[id] = chart;
+		chart.setOption(option, true);
+	}
+	function render() {
+		var dataEl = document.getElementById('mn-feedback-chart-data');
+		if (!dataEl) {
+			Object.keys(charts).forEach(function (key) {
+				if (charts[key] && charts[key].dispose) charts[key].dispose();
+				delete charts[key];
+			});
+			return;
+		}
+		var data;
+		try { data = JSON.parse(dataEl.textContent || '{}'); } catch (e) { return; }
+		var c = palette();
+		var colorMap = {
+			helpful: c.emerald,
+			unhelpful: c.rose,
+			insight: c.coral,
+			confusing: c.sky,
+			bug: c.bug
+		};
+		var tooltip = {
+			trigger: 'axis',
+			backgroundColor: c.surface,
+			borderColor: c.border,
+			textStyle: { color: c.text },
+			axisPointer: { lineStyle: { color: c.border } }
+		};
+		var axis = {
+			axisLine: { lineStyle: { color: c.border } },
+			axisLabel: { color: c.muted, fontSize: 10 },
+			splitLine: { lineStyle: { color: c.border } }
+		};
+		var legend = { top: 0, textStyle: { color: c.muted, fontSize: 10 } };
+		var trendSeries = (data.series || []).map(function (series) {
+			return {
+				name: (series.icon ? series.icon + ' ' : '') + series.label,
+				type: 'bar',
+				stack: 'total',
+				barMaxWidth: 18,
+				itemStyle: { color: colorMap[series.key] || c.accent },
+				emphasis: { focus: 'series' },
+				data: series.data || []
+			};
+		});
+		var trend = {
+			color: Object.keys(colorMap).map(function (key) { return colorMap[key]; }),
+			textStyle: { fontFamily: systemFont(), color: c.text },
+			tooltip: tooltip,
+			legend: legend,
+			grid: { left: 38, right: 16, top: 38, bottom: (data.days && data.days.length > 60) ? 52 : 28 },
+			xAxis: Object.assign({}, axis, { type: 'category', data: data.days || [], axisLabel: { color: c.muted, fontSize: 10, interval: (data.days && data.days.length > 45) ? 'auto' : 0 } }),
+			yAxis: Object.assign({}, axis, { type: 'value', minInterval: 1 }),
+			series: trendSeries
+		};
+		if (data.days && data.days.length > 60) {
+			trend.dataZoom = [
+				{ type: 'inside' },
+				{ type: 'slider', height: 14, bottom: 0, borderColor: c.border, fillerColor: 'rgba(233,170,96,.15)', textStyle: { color: c.muted } }
+			];
+		}
+		draw('mn-fb-trend', trend);
+
+		var mixData = (data.mix || []).map(function (item) {
+			return { name: (item.icon ? item.icon + ' ' : '') + item.label, value: item.value, itemStyle: { color: colorMap[item.key] || c.accent } };
+		});
+		draw('mn-fb-mix', {
+			textStyle: { fontFamily: systemFont(), color: c.text },
+			tooltip: { trigger: 'item', backgroundColor: c.surface, borderColor: c.border, textStyle: { color: c.text } },
+			legend: { bottom: 0, textStyle: { color: c.muted, fontSize: 10 } },
+			series: [{
+				type: 'pie',
+				radius: ['48%', '74%'],
+				center: ['50%', '46%'],
+				avoidLabelOverlap: true,
+				label: { show: false },
+				labelLine: { show: false },
+				itemStyle: { borderColor: c.surface, borderWidth: 2 },
+				data: mixData
+			}]
+		});
+
+		var pageData = data.pages || {};
+		draw('mn-fb-pages', {
+			textStyle: { fontFamily: systemFont(), color: c.text },
+			tooltip: Object.assign({}, tooltip, { trigger: 'axis', axisPointer: { type: 'shadow' } }),
+			legend: legend,
+			grid: { left: 10, right: 18, top: 34, bottom: 12, containLabel: true },
+			xAxis: Object.assign({}, axis, { type: 'value', minInterval: 1 }),
+			yAxis: Object.assign({}, axis, { type: 'category', data: pageData.labels || [], axisLabel: { color: c.muted, fontSize: 10, width: 150, overflow: 'truncate' } }),
+			series: [
+				{ name: '👍 Helpful', type: 'bar', data: pageData.helpful || [], itemStyle: { color: c.emerald }, barMaxWidth: 12 },
+				{ name: '👎 Not helpful', type: 'bar', data: pageData.unhelpful || [], itemStyle: { color: c.rose }, barMaxWidth: 12 },
+				{ name: '❓ Confusing', type: 'bar', data: pageData.confusing || [], itemStyle: { color: c.sky }, barMaxWidth: 12 },
+				{ name: '🐞 Bug', type: 'bar', data: pageData.bug || [], itemStyle: { color: c.bug }, barMaxWidth: 12 }
+			]
+		});
+	}
+	function systemFont() {
+		return getComputedStyle(document.body).fontFamily || 'system-ui, sans-serif';
+	}
+	window.__MNFeedbackCharts = render;
+	document.addEventListener('DOMContentLoaded', render);
+	window.addEventListener('load', render);
+	var resizeTimer = 0;
+	window.addEventListener('resize', function () {
+		clearTimeout(resizeTimer);
+		resizeTimer = setTimeout(function () {
+			Object.keys(charts).forEach(function (key) {
+				if (charts[key] && charts[key].resize) charts[key].resize();
+			});
+		}, 120);
+	});
+})();
+</script>
+<script>
+(function () {
+	'use strict';
+	if (document.documentElement.getAttribute('data-embed') !== '1') return;
+	var page = document.querySelector('.page');
+	var busy = false;
+	function samePage(url) {
+		try {
+			var target = new URL(url, window.location.href);
+			return target.origin === window.location.origin && target.pathname === window.location.pathname;
+		} catch (e) {
+			return false;
+		}
+	}
+	function revealHash() {
+		if (!window.location.hash || !/^#feedback-\d+$/.test(window.location.hash)) return;
+		var el = document.getElementById(window.location.hash.slice(1));
+		if (!el) return;
+		if (el.tagName === 'DETAILS') el.open = true;
+		setTimeout(function () { el.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 40);
+	}
+	function load(url, options) {
+		if (busy) return;
+		busy = true;
+		document.body.classList.add('is-loading');
+		fetch(url, options || {}).then(function (response) {
+			if (!response.ok) throw new Error('http');
+			return response.text().then(function (html) { return { html: html, url: response.url }; });
+		}).then(function (result) {
+			var doc = new DOMParser().parseFromString(result.html, 'text/html');
+			var nextPage = doc.querySelector('.page');
+			if (!nextPage) throw new Error('page');
+			page.replaceWith(nextPage);
+			page = nextPage;
+			if (result.url) window.history.replaceState(null, '', result.url);
+			document.title = doc.title || document.title;
+			if (window.__MNFeedbackCharts) window.__MNFeedbackCharts();
+			revealHash();
+			window.scrollTo(0, 0);
+		}).catch(function () {
+			window.location.href = url;
+		}).finally(function () {
+			busy = false;
+			document.body.classList.remove('is-loading');
+		});
+	}
+	document.addEventListener('click', function (event) {
+		if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+		var link = event.target.closest && event.target.closest('a[href]');
+		if (!link || link.target === '_blank' || link.hasAttribute('download')) return;
+		var href = link.getAttribute('href') || '';
+		if (!href || href.charAt(0) === '#') return;
+		if (!samePage(link.href)) return;
+		if (link.href === window.location.href) return;
+		event.preventDefault();
+		load(link.href);
+	});
+	document.addEventListener('submit', function (event) {
+		if (event.defaultPrevented) return;
+		var form = event.target;
+		if (!form || !form.tagName || form.tagName.toLowerCase() !== 'form') return;
+		var method = String(form.getAttribute('method') || 'get').toLowerCase();
+		var action = form.getAttribute('action') || '';
+		var target = new URL(action || window.location.href, window.location.href);
+		if (!samePage(target.href)) return;
+		event.preventDefault();
+		var body = new FormData(form);
+		if (event.submitter && event.submitter.name) body.append(event.submitter.name, event.submitter.value);
+		if (method === 'get') {
+			var params = new URLSearchParams();
+			body.forEach(function (value, key) { params.append(key, value); });
+			target.search = params.toString();
+			load(target.toString());
+		} else {
+			load(target.toString(), { method: 'POST', body: body, credentials: 'same-origin', redirect: 'follow' });
+		}
+	});
+})();
+</script>
+<script>
+(function () {
 	var root = document.documentElement;
 	var key = "mn_feedback_theme";
 	var embed = root.getAttribute("data-embed") === "1";
@@ -1405,6 +1629,7 @@ html[data-embed="1"] .btn.primary {
 			var data = event.data || {};
 			if (data.type === "mn-admin-theme" && (data.theme === "light" || data.theme === "dark")) {
 				root.setAttribute("data-theme", data.theme);
+				if (window.__MNFeedbackCharts) setTimeout(window.__MNFeedbackCharts, 30);
 			}
 		});
 	}
@@ -1416,6 +1641,7 @@ html[data-embed="1"] .btn.primary {
 			root.setAttribute("data-theme", light ? "light" : "dark");
 			btn.textContent = light ? "Dark" : "Light";
 			try { localStorage.setItem(key, light ? "light" : "dark"); } catch (e) {}
+			if (window.__MNFeedbackCharts) setTimeout(window.__MNFeedbackCharts, 30);
 		});
 	}
 	function revealHashRow() {

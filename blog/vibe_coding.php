@@ -208,66 +208,8 @@ GitClear's longitudinal data — 211 million changed lines from 2020–2024 — 
 .mn-calc.vr-moderate { --vr-color: var(--mn-sky); }
 .mn-calc.vr-high { --vr-color: var(--mn-coral); }
 .mn-calc.vr-severe { --vr-color: var(--mn-rose); }
-.mn-calc.ce-sub-win { --vr-color: var(--mn-sky); }
-.mn-calc.ce-clone-win { --vr-color: var(--mn-coral); }
-.mn-calc .mn-bars {
-  display: grid;
-  gap: 10px;
-  margin-top: 14px;
-}
-.mn-calc .mn-bar-row {
-  display: grid;
-  grid-template-columns: minmax(90px, 0.8fr) 2fr auto;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.9rem;
-}
-.mn-calc .mn-bar-label { color: var(--mn-text-secondary); }
-.mn-calc .mn-bar-track {
-  height: 12px;
-  border-radius: 999px;
-  background: var(--mn-border-light);
-  overflow: hidden;
-}
-.mn-calc .mn-bar-fill {
-  height: 100%;
-  width: 0;
-  border-radius: 999px;
-  transition: width 0.35s ease;
-}
-.mn-calc .mn-bar-sub {
-  background: var(--mn-sky);
-  background: linear-gradient(90deg, var(--mn-sky), color-mix(in srgb, var(--mn-sky) 55%, var(--mn-surface)));
-}
-.mn-calc .mn-bar-clone {
-  background: var(--mn-coral);
-  background: linear-gradient(90deg, var(--mn-coral), color-mix(in srgb, var(--mn-coral) 55%, var(--mn-surface)));
-}
-.mn-calc .mn-bar-amount {
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.mn-calc .mn-verdict {
-  margin: 12px 0 0;
-  padding: 12px 14px;
-  border-left: 4px solid var(--vr-color);
-  border-radius: var(--mn-radius-sm);
-  background: var(--mn-bg-subtle);
-  background: color-mix(in srgb, var(--vr-color) 9%, transparent);
-  color: var(--mn-text);
-  line-height: 1.5;
-}
-.mn-calc .mn-note {
-  margin: 10px 0 0;
-  color: var(--mn-text-secondary);
-  font-size: 0.85rem;
-  line-height: 1.45;
-}
 @media (max-width: 560px) {
   .mn-calc { padding: 18px; }
-  .mn-calc .mn-bar-row { grid-template-columns: 1fr; gap: 4px; }
-  .mn-calc .mn-bar-amount { justify-self: end; }
 }
 </style>
 
@@ -390,92 +332,6 @@ The likely outcome is not "Adobe is dead." It is **unbundling and price compress
 Figma is the canary. It went public in July 2025 at a valuation above **USD 56 billion**, then fell below **USD 20** a share by June 2026 as AI research costs rose and gross margin compressed \cite{figma_wiki,yahoo2026figma}. The market was not punishing growth; it was repricing the cost of growing in an AI world. Adobe's question is the same one, with a bigger installed base and a stronger trust moat.
 </div>
 
-<div id="clone-economics" class="mn-calc ce-sub-win">
-	<h3>The clone is free. Is it cheaper?</h3>
-	<p class="mn-calc-sub">A subscription is a known cost. A clone is an unknown project. Change the assumptions and watch the five-year total cost of ownership move.</p>
-	<div class="mn-calc-grid">
-		<label>Seats
-			<input type="number" id="ce-seats" value="10" min="1" step="1">
-		</label>
-		<label>Subscription (USD/seat/month)
-			<input type="number" id="ce-price" value="60" min="0" step="5">
-		</label>
-		<label>Years
-			<input type="number" id="ce-years" value="5" min="1" max="15" step="1">
-		</label>
-		<label>Migration cost (USD)
-			<input type="number" id="ce-migrate" value="5000" min="0" step="500">
-		</label>
-		<label>Maintenance (h/month)
-			<input type="number" id="ce-hours" value="10" min="0" step="1">
-		</label>
-		<label>Loaded labor (USD/h)
-			<input type="number" id="ce-rate" value="50" min="0" step="5">
-		</label>
-		<label>Risk buffer (%)
-			<input type="number" id="ce-risk" value="20" min="0" max="200" step="5">
-		</label>
-	</div>
-	<div class="mn-result">
-		<div class="mn-result-top">
-			<span id="ce-badge" class="mn-badge">SUBSCRIPTION WINS</span>
-			<span class="mn-score">5-year TCO</span>
-		</div>
-		<div class="mn-bars">
-			<div class="mn-bar-row">
-				<span class="mn-bar-label">Subscription</span>
-				<div class="mn-bar-track"><div id="ce-bar-sub" class="mn-bar-fill mn-bar-sub"></div></div>
-				<span id="ce-total-sub" class="mn-bar-amount">USD 0</span>
-			</div>
-			<div class="mn-bar-row">
-				<span class="mn-bar-label">Clone</span>
-				<div class="mn-bar-track"><div id="ce-bar-clone" class="mn-bar-fill mn-bar-clone"></div></div>
-				<span id="ce-total-clone" class="mn-bar-amount">USD 0</span>
-			</div>
-		</div>
-		<p id="ce-out" class="mn-verdict"></p>
-		<p class="mn-note">Not priced: support, training, plug-ins, legal review, downtime, and the opportunity cost of the team that maintains it.</p>
-	</div>
-</div>
-
-<script>
-(function () {
-	function money(x) {
-		return "USD " + Math.round(x).toLocaleString();
-	}
-	function computeClone() {
-		var seats = parseFloat(document.getElementById("ce-seats").value) || 0;
-		var price = parseFloat(document.getElementById("ce-price").value) || 0;
-		var years = parseFloat(document.getElementById("ce-years").value) || 0;
-		var migrate = parseFloat(document.getElementById("ce-migrate").value) || 0;
-		var hours = parseFloat(document.getElementById("ce-hours").value) || 0;
-		var rate = parseFloat(document.getElementById("ce-rate").value) || 0;
-		var risk = (parseFloat(document.getElementById("ce-risk").value) || 0) / 100;
-		var sub = seats * price * 12 * years;
-		var cloneBase = migrate + years * 12 * hours * rate;
-		var clone = cloneBase * (1 + risk);
-		var diff = clone - sub;
-		var max = Math.max(sub, clone, 1);
-		var cloneWins = diff < 0;
-		var wrap = document.getElementById("clone-economics");
-		wrap.className = "mn-calc " + (cloneWins ? "ce-clone-win" : "ce-sub-win");
-		document.getElementById("ce-badge").textContent = cloneWins ? "CLONE WINS" : "SUBSCRIPTION WINS";
-		document.getElementById("ce-bar-sub").style.width = Math.round((sub / max) * 100) + "%";
-		document.getElementById("ce-bar-clone").style.width = Math.round((clone / max) * 100) + "%";
-		document.getElementById("ce-total-sub").textContent = money(sub);
-		document.getElementById("ce-total-clone").textContent = money(clone);
-		document.getElementById("ce-out").textContent = cloneWins
-			? "The clone wins by " + money(-diff) + " over " + years + " years — if the maintenance estimate is real."
-			: "The subscription is cheaper by " + money(diff) + " over " + years + " years. The clone must buy something the price does not capture.";
-	}
-	["ce-seats", "ce-price", "ce-years", "ce-migrate", "ce-hours", "ce-rate", "ce-risk"].forEach(function (id) {
-		var el = document.getElementById(id);
-		if (el) el.addEventListener("input", computeClone);
-	});
-	computeClone();
-})();
-</script>
-
 <div class="md">
 ## What changes for software companies
 
@@ -508,7 +364,7 @@ Their operating model is three loops:
 Then the rules that matter most in practice:
 
 1. **You are the chef.** Delegating implementation is not delegating responsibility. "The AI wrote it" is not a defense in a post-mortem, a procurement review or a courtroom.
-2. **FAAFO, not just speed.** The book optimises for **F**ast, **A**mbitious, **A**utonomous, **F**un and **O**ptionality. There is no **B** for Better: quality is your job. The book's warning is concrete: set a timer and ask every hour whether you are still on the right path.
+2. **FAAFO, not just speed.** The book optimizes for **F**ast, **A**mbitious, **A**utonomous, **F**un and **O**ptionality. There is no **B** for Better: quality is your job. The book's warning is concrete: set a timer and ask every hour whether you are still on the right path.
 3. **Spec before code.** Ask for acceptance criteria, edge cases, a test plan and open questions before the model writes a line. Then make it write the tests.
 4. **Keep `AGENTS.md` short, and use the Memento handover.** Around ten golden rules — what must always happen and what must never happen; long lists get ignored. At 20–50% remaining context, stop and write `HANDOVER.md`: what worked, what failed, next steps, temporary branches, pitfalls.
 5. **Count the babies and reject cardboard muffins.** Verify every requirement individually and look for deleted lines in the diff. Green tests are not enough: read the implementation and check that the test actually tests something. Models quietly decide what is "optional," and hardcoded values can make a test suite look complete when it is a film set.
@@ -516,7 +372,7 @@ Then the rules that matter most in practice:
 7. **Audit by risk.** Full depth for high-risk or unfamiliar code; lightweight for low-risk internal tools; black-box only for throwaway work.
 8. **Threat-model the default.** Auth, authorization, input validation, secrets, rate limits, logging. The model will happily generate a login form that stores passwords in plain text.
 
-The research is beginning to formalise these rules. ZORO turns `AGENTS.md` into active controls; VibeContract turns intent into task contracts; Shift-Up embeds executable requirements and architecture records into the loop; and a 737-participant experiment found human-led instructions beat AI-led instructions \cite{ma2026zoro,wang2026vibecontract,lipsanen2026shiftup,hu2026humanguidance}.
+The research is beginning to formalize these rules. ZORO turns `AGENTS.md` into active controls; VibeContract turns intent into task contracts; Shift-Up embeds executable requirements and architecture records into the loop; and a 737-participant experiment found human-led instructions beat AI-led instructions \cite{ma2026zoro,wang2026vibecontract,lipsanen2026shiftup,hu2026humanguidance}.
 
 The one-sentence version: **generate at the speed of a demo, verify at the speed of production.**
 </div>
