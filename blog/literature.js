@@ -17839,6 +17839,20 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Khan_Academy",
 		alternativetitle: "Khan Academy (Wikipedia)"
 	},
+	"pnas2026khan": {
+		title: "Computer-assisted learning in the real world: How Khan Academy influences student math learning",
+		author: "PNAS",
+		year: 2026,
+		url: "https://www.pnas.org/doi/10.1073/pnas.2507708123",
+		alternativetitle: "Khan Academy learning gains (PNAS, 2026)"
+	},
+	"clinicaltrials_rentosertib": {
+		title: "Study Evaluation Rentosertib (INS018_055) in Participants With Idiopathic Pulmonary Fibrosis (GENESIS-IPF-3)",
+		author: "ClinicalTrials.gov",
+		year: 2026,
+		url: "https://clinicaltrials.gov/study/NCT07687459",
+		alternativetitle: "GENESIS-IPF-3 (NCT07687459)"
+	},
 	"prather2023copilot": {
 		title: "An Observational Study of Novice Programmers Using GitHub Copilot",
 		author: "Brett Prather, Jey Hong, Thomas D. LaToza",
@@ -21238,4 +21252,258 @@ window.bibData = {
 		url: "https://patents.google.com/patent/US7647242B2/en",
 		alternativetitle: "Google AdWords patent"
 	},
+	/* Primary sources for AI and Society (ai_and_society.php) */
+	"cisa2024elections": {
+		title: "Consolidated Risk in Focus: Generative AI and Elections",
+		author: "Cybersecurity and Infrastructure Security Agency (CISA)",
+		year: 2024,
+		url: "https://www.cisa.gov/sites/default/files/2024-05/Consolidated_Risk_in_Focus_Gen_AI_ElectionsV2_508c.pdf",
+		alternativetitle: "CISA, Generative AI and Elections (2024)"
+	},
+	"odni2024threat": {
+		title: "Annual Threat Assessment of the U.S. Intelligence Community",
+		author: "Office of the Director of National Intelligence",
+		year: 2024,
+		url: "https://www.dni.gov/files/ODNI/documents/assessments/ATA-2024-Unclassified-Report.pdf",
+		alternativetitle: "ODNI Annual Threat Assessment (2024)"
+	},
+	"alphageometry2024": {
+		title: "Solving olympiad geometry without human demonstrations",
+		author: "Trieu H. Trinh, Yuhuai Wu, Quoc V. Le, He He, Thang Luong",
+		year: 2024,
+		url: "https://doi.org/10.1038/s41586-023-06747-5",
+		alternativetitle: "AlphaGeometry (Nature, 2024)"
+	},
+	"deepmind2024imo": {
+		title: "AI solves IMO problems at silver medal level",
+		author: "Google DeepMind",
+		year: 2024,
+		url: "https://deepmind.google/discover/blog/ai-solves-imo-problems-at-silver-medal-level/",
+		alternativetitle: "DeepMind, IMO silver medal (2024)"
+	},
+	"fifteenai": {
+		title: "15.ai: High-quality speech synthesis from 15 seconds of audio",
+		author: "15.ai",
+		year: 2020,
+		url: "https://15.ai/",
+		alternativetitle: "15.ai"
+	},
+	"wsj2019voicefraud": {
+		title: "Fraudsters Use AI to Mimic CEO's Voice in Unusual Cybercrime Case",
+		author: "The Wall Street Journal",
+		year: 2019,
+		url: "https://web.archive.org/web/2023/https://www.wsj.com/articles/fraudsters-use-ai-to-mimic-ceos-voice-in-unusual-cybercrime-case-11567157402",
+		alternativetitle: "WSJ, AI voice fraud (2019)"
+	},
+	"fcc2024biden": {
+		title: "FCC Proposes $6M Fine for AI-Generated Robocall Impersonating President Biden",
+		author: "Federal Communications Commission",
+		year: 2024,
+		url: "https://www.fcc.gov/document/fcc-proposes-6m-fine-ai-generated-robocall-biden",
+		alternativetitle: "FCC, Biden robocall fine (2024)"
+	},
+	"fcc2024robocall": {
+		title: "FCC Makes AI-Generated Voices in Robocalls Illegal",
+		author: "Federal Communications Commission",
+		year: 2024,
+		url: "https://www.fcc.gov/document/fcc-makes-ai-generated-voices-robocalls-illegal",
+		alternativetitle: "FCC, AI robocall ban (2024)"
+	},
+	"sensity2019deepfakes": {
+		title: "The State of Deepfakes: Landscape, Threats, and Impact",
+		author: "Sensity AI",
+		year: 2019,
+		url: "https://sensity.ai/reports/",
+		alternativetitle: "Sensity, The State of Deepfakes (2019)"
+	},
+	"c2pa2024": {
+		title: "Coalition for Content Provenance and Authenticity (C2PA)",
+		author: "C2PA",
+		year: 2024,
+		url: "https://c2pa.org/",
+		alternativetitle: "C2PA Content Credentials"
+	},
+	"ellington2003calculators": {
+		title: "A Meta-Analysis of the Effects of Calculators on Students' Achievement and Attitude Levels in Precollege Mathematics Classes",
+		author: "Aimee J. Ellington",
+		year: 2003,
+		url: "https://doi.org/10.2307/30034795",
+		alternativetitle: "Ellington, Calculators meta-analysis (2003)"
+	},
+	"guardian2018cambridge": {
+		title: "The Cambridge Analytica files: the story so far",
+		author: "Carole Cadwalladr & Emma Graham-Harrison",
+		year: 2018,
+		url: "https://www.theguardian.com/news/2018/mar/17/data-war-whistleblower-christopher-wylie-faceook-nix-bannon-trump",
+		alternativetitle: "The Guardian, Cambridge Analytica files (2018)"
+	},
+	"characterai": {
+		title: "Character.AI",
+		author: "Character.AI",
+		year: 2024,
+		url: "https://character.ai/",
+		alternativetitle: "Character.AI"
+	},
+	"garante2023chatgpt": {
+		title: "ChatGPT: Garante privacy bans the use of the chatbot in Italy",
+		author: "Garante per la protezione dei dati personali",
+		year: 2023,
+		url: "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9870832",
+		alternativetitle: "Garante, ChatGPT ban (2023)"
+	},
+	"campbell2002deepblue": {
+		title: "Deep Blue",
+		author: "Murray Campbell, A. Joseph Hoane Jr., Feng-hsiung Hsu",
+		year: 2002,
+		url: "https://doi.org/10.1016/S0004-3702(01)00129-1",
+		alternativetitle: "Campbell et al., Deep Blue (2002)"
+	},
+	"computerhistory_deepblue": {
+		title: "Deep Blue",
+		author: "Computer History Museum",
+		year: 2024,
+		url: "https://www.computerhistory.org/chess/",
+		alternativetitle: "Computer History Museum, Deep Blue"
+	},
+	"deepl2024press": {
+		title: "DeepL press room",
+		author: "DeepL",
+		year: 2024,
+		url: "https://www.deepl.com/en/press",
+		alternativetitle: "DeepL press room"
+	},
+	"google2024translate": {
+		title: "Google Translate adds 110 new languages with the help of AI",
+		author: "Google",
+		year: 2024,
+		url: "https://blog.google/products/translate/google-translate-new-languages-2024/",
+		alternativetitle: "Google, 110 new languages (2024)"
+	},
+	"duolingo2025annual": {
+		title: "Duolingo, Inc. Annual Report 2025 (Form 10-K)",
+		author: "Duolingo, Inc.",
+		year: 2026,
+		url: "https://www.sec.gov/Archives/edgar/data/1562088/000162828026012494/duol-20251231.htm",
+		alternativetitle: "Duolingo 2025 Annual Report"
+	},
+	"christies2018belamy": {
+		title: "Edmond de Belamy, from La Famille de Belamy",
+		author: "Christie's",
+		year: 2018,
+		url: "https://www.christies.com/en/lot/lot-6166184",
+		alternativetitle: "Christie's, Edmond de Belamy (2018)"
+	},
+	"verge2018belamy": {
+		title: "AI art at Christie's: the story behind the $432,500 portrait",
+		author: "The Verge",
+		year: 2018,
+		url: "https://www.theverge.com/2018/10/23/18013190/ai-art-portrait-auction-christies-belamy-obvious-robbie-barrat-gans",
+		alternativetitle: "The Verge, AI art at Christie's (2018)"
+	},
+	"laion5b2022": {
+		title: "LAION-5B: A 5.85-Billion-Pair Multilingual Dataset for Training Large-Scale Vision-Language Models",
+		author: "Christoph Schuhmann, Romain Beaumont, Richard Vencu, et al.",
+		year: 2022,
+		url: "https://arxiv.org/abs/2210.08402",
+		alternativetitle: "LAION-5B (2022)"
+	},
+	"waxy2022stable": {
+		title: "Exploring 12 Million of the Images Used to Train Stable Diffusion",
+		author: "Andy Baio",
+		year: 2022,
+		url: "https://waxy.org/2022/08/exploring-12-million-of-the-images-used-to-train-stable-diffusions-image-generator/",
+		alternativetitle: "Baio, Stable Diffusion training images (2022)"
+	},
+	"usco2023theatre": {
+		title: "Second Request for Reconsideration for Refusal to Register Théâtre D'Opéra Spatial",
+		author: "U.S. Copyright Office Review Board",
+		year: 2023,
+		url: "https://www.copyright.gov/rulings-filings/review-board/docs/Theatre-Dopera-Spatial.pdf",
+		alternativetitle: "U.S. Copyright Office, Théâtre D'Opéra Spatial (2023)"
+	},
+	"coloradostatefair2022": {
+		title: "2022 Fine Arts First, Second, Third Place Results",
+		author: "Colorado State Fair",
+		year: 2022,
+		url: "https://coloradostatefair.com/wp-content/uploads/2022/08/2022-Fine-Arts-First-Second-Third.pdf",
+		alternativetitle: "Colorado State Fair, Fine Arts results (2022)"
+	},
+	"karpathy2025vibecoding": {
+		title: "Vibe coding",
+		author: "Andrej Karpathy",
+		year: 2025,
+		url: "https://x.com/karpathy/status/1886192184808149383",
+		alternativetitle: "Karpathy, vibe coding (2025)"
+	},
+	"wga2023mba": {
+		title: "2023 Minimum Basic Agreement",
+		author: "Writers Guild of America",
+		year: 2023,
+		url: "https://www.wga.org/contracts/contracts/mba",
+		alternativetitle: "WGA 2023 MBA"
+	},
+	"npr2023wga": {
+		title: "Writers Guild calls strike",
+		author: "NPR",
+		year: 2023,
+		url: "https://www.npr.org/2023/05/02/1172876800/writers-guild-calls-strike",
+		alternativetitle: "NPR, WGA strike (2023)"
+	},
+	"ic3_2023": {
+		title: "2023 Internet Crime Report",
+		author: "FBI Internet Crime Complaint Center",
+		year: 2023,
+		url: "https://www.ic3.gov/AnnualReport/Reports/2023_IC3Report.pdf",
+		alternativetitle: "FBI IC3, 2023 Internet Crime Report"
+	},
+	"ukfinance2024fraud": {
+		title: "Fraud — The Facts 2024",
+		author: "UK Finance",
+		year: 2024,
+		url: "https://www.ukfinance.org.uk/policy-and-guidance/reports-publications/fraud-facts-2024",
+		alternativetitle: "UK Finance, Fraud — The Facts 2024"
+	},
+	"bbc2023heart": {
+		title: "AI song featuring fake Drake and Weeknd vocals pulled from streaming services",
+		author: "BBC News",
+		year: 2023,
+		url: "https://www.bbc.com/news/entertainment-arts-65309313",
+		alternativetitle: "BBC, Heart on My Sleeve (2023)"
+	},
+	"guardian2023heart": {
+		title: "AI song featuring fake Drake and Weeknd vocals pulled from streaming services",
+		author: "The Guardian",
+		year: 2023,
+		url: "https://www.theguardian.com/music/2023/apr/18/ai-song-featuring-fake-drake-and-weeknd-vocals-pulled-from-streaming-services",
+		alternativetitle: "The Guardian, Heart on My Sleeve (2023)"
+	},
+	"guardian2018ira": {
+		title: "Robert Mueller charges Russians with election interference",
+		author: "The Guardian",
+		year: 2018,
+		url: "https://www.theguardian.com/us-news/2018/feb/16/robert-mueller-russians-charged-election",
+		alternativetitle: "The Guardian, IRA indictment (2018)"
+	},
+	"insilico2026genesis": {
+		title: "Insilico Medicine doses first patient in GENESIS-IPF-3",
+		author: "Insilico Medicine",
+		year: 2026,
+		url: "https://insilico.com/news/isn1009261-insilico-medicine-doses-first-patient-genesis-ipf-3",
+		alternativetitle: "Insilico, GENESIS-IPF-3 (2026)"
+	},
+	"silicon2023replika": {
+		title: "Italy bans AI chatbot Replika over personal data concerns",
+		author: "Silicon UK",
+		year: 2023,
+		url: "https://www.silicon.co.uk/e-innovation/artificial-intelligence/replika-italy-ban-497135",
+		alternativetitle: "Silicon UK, Replika Italy ban (2023)"
+	},
+	"eu2024aiact": {
+		title: "Regulation (EU) 2024/1689 (Artificial Intelligence Act)",
+		author: "European Parliament and Council of the European Union",
+		year: 2024,
+		url: "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+		alternativetitle: "EU AI Act (2024)"
+	},
+
 };
