@@ -379,6 +379,110 @@ These are the names that appear most often across the course, counted approximat
 </div>
 
 <div class="md">
+## The Cast in Portraits
+
+The chapter already carries portraits of many of its subjects. Here are more free-use images — public domain or Creative Commons — for people who appear in the text but did not have a face yet. Every caption names the source and the license; the license links go to the exact terms. If you reuse an image, keep the credit with it.
+
+Some living researchers do not have a freely licensed portrait on Wikimedia Commons. I have not substituted a non-free photo for them. A missing portrait is not a judgment about importance.
+</div>
+
+<style>
+.mn-portrait-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+	gap: 0.9rem;
+	margin: 1.2rem 0 2rem;
+}
+.mn-portrait-grid figure {
+	margin: 0;
+}
+.mn-portrait-grid img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 4 / 5;
+	object-fit: cover;
+	object-position: center 20%;
+	border: 1px solid var(--mn-border);
+	border-radius: 8px;
+	background: var(--mn-bg-subtle);
+}
+.mn-portrait-grid figure.wide img {
+	aspect-ratio: 4 / 3;
+	object-position: center;
+}
+.mn-portrait-grid figcaption {
+	margin-top: 0.35rem;
+	font-size: 0.68rem;
+	line-height: 1.35;
+	color: var(--mn-text-secondary);
+}
+@media (max-width: 600px) {
+	.mn-portrait-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+</style>
+
+<div class="mn-portrait-grid">
+	<figure>
+		<img src="george_boole_portrait.jpg" alt="Portrait of George Boole" loading="lazy">
+		<figcaption class="md">George Boole. \cite{img_george_boole}. Public domain.</figcaption>
+	</figure>
+	<figure>
+		<img src="gottlob_frege_portrait.jpg" alt="Portrait of Gottlob Frege" loading="lazy">
+		<figcaption class="md">Gottlob Frege. \cite{img_gottlob_frege}. Public domain.</figcaption>
+	</figure>
+	<figure>
+		<img src="john_mccarthy_portrait.jpg" alt="Portrait of John McCarthy" loading="lazy">
+		<figcaption class="md">John McCarthy. \cite{img_john_mccarthy}. [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).</figcaption>
+	</figure>
+	<figure>
+		<img src="ashby.jpg" alt="Portrait of W. Ross Ashby" loading="lazy">
+		<figcaption class="md">W. Ross Ashby. \cite{ashbyphoto}. Public domain.</figcaption>
+	</figure>
+	<figure class="wide">
+		<img src="widrow_adaline.jpg" alt="Bernard Widrow with the ADALINE machine" loading="lazy">
+		<figcaption class="md">Bernard Widrow with the ADALINE. \cite{img_widrow_adaline}. Public domain.</figcaption>
+	</figure>
+	<figure class="wide">
+		<img src="simon_newell.jpg" alt="Herbert A. Simon and Allen Newell playing chess" loading="lazy">
+		<figcaption class="md">Herbert A. Simon and Allen Newell. \cite{simonnewell_image}. Public domain.</figcaption>
+	</figure>
+	<figure>
+		<img src="paul_christiano_portrait.jpg" alt="Portrait of Paul Christiano" loading="lazy">
+		<figcaption class="md">Paul Christiano. \cite{img_paul_christiano}. [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).</figcaption>
+	</figure>
+	<figure>
+		<img src="tomas_mikolov_portrait.jpg" alt="Portrait of Tomáš Mikolov" loading="lazy">
+		<figcaption class="md">Tomáš Mikolov. \cite{img_tomas_mikolov}. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).</figcaption>
+	</figure>
+	<figure>
+		<img src="jeff_dean_portrait.jpg" alt="Portrait of Jeff Dean" loading="lazy">
+		<figcaption class="md">Jeff Dean. \cite{img_jeff_dean}. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).</figcaption>
+	</figure>
+	<figure>
+		<img src="dario_amodei_portrait.jpg" alt="Portrait of Dario Amodei" loading="lazy">
+		<figcaption class="md">Dario Amodei. \cite{img_dario_amodei}. [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/).</figcaption>
+	</figure>
+	<figure>
+		<img src="stuart_russell_portrait.jpg" alt="Portrait of Stuart Russell" loading="lazy">
+		<figcaption class="md">Stuart Russell. \cite{img_stuart_russell}. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).</figcaption>
+	</figure>
+	<figure>
+		<img src="nick_bostrom_portrait.jpg" alt="Portrait of Nick Bostrom" loading="lazy">
+		<figcaption class="md">Nick Bostrom. \cite{img_nick_bostrom}. [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).</figcaption>
+	</figure>
+	<figure>
+		<img src="eliezer_yudkowsky_portrait.jpg" alt="Portrait of Eliezer Yudkowsky" loading="lazy">
+		<figcaption class="md">Eliezer Yudkowsky. \cite{img_eliezer_yudkowsky}. [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).</figcaption>
+	</figure>
+	<figure class="wide">
+		<img src="toby_ord_portrait.jpg" alt="Portrait of Toby Ord" loading="lazy">
+		<figcaption class="md">Toby Ord. \cite{img_toby_ord}. [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/).</figcaption>
+	</figure>
+</div>
+
+<div class="md">
 ## A Note on Credit
 
 The history of AI is not a list of lone geniuses. Ideas arrive in clusters, are independently discovered, and are often named after the person who made them famous rather than the person who had them first. Backpropagation is the canonical example: Werbos derived it in 1974, Rumelhart, Hinton, and Williams made it famous in 1986, and Linnainmaa had described the reverse-mode chain rule earlier still. The perceptron has its own priority dispute: Farley and Clark built a perceptron-like device before Rosenblatt, but did not build the theory around it. The Transformer had eight authors, and its key ideas drew on attention mechanisms developed for translation.

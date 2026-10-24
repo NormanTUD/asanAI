@@ -15321,6 +15321,95 @@ window.bibData = {
 		license: "Public domain",
 		alternativetitle: "Bernard Widrow with ADALINE"
 	},
+	/* People of AI — free portrait gallery */
+	"img_george_boole": {
+		title: "Portrait of George Boole",
+		author: "Unknown",
+		year: 1865,
+		url: "https://commons.wikimedia.org/wiki/File:Portrait_of_George_Boole.png",
+		license: "Public domain",
+		alternativetitle: "George Boole"
+	},
+	"img_gottlob_frege": {
+		title: "Gottlob Frege, c. 1879",
+		author: "Unknown",
+		year: "c. 1879",
+		url: "https://commons.wikimedia.org/wiki/File:Young_frege.jpg",
+		license: "Public domain",
+		alternativetitle: "Gottlob Frege"
+	},
+	"img_john_mccarthy": {
+		title: "John McCarthy at Stanford, 2006",
+		author: "null0",
+		year: 2006,
+		url: "https://commons.wikimedia.org/wiki/File:John_McCarthy_Stanford.jpg",
+		license: "CC BY-SA 2.0",
+		alternativetitle: "John McCarthy"
+	},
+	"img_paul_christiano": {
+		title: "Paul Christiano at IPAM, 2026",
+		author: "Institute for Pure & Applied Mathematics (IPAM)",
+		year: 2026,
+		url: "https://commons.wikimedia.org/wiki/File:Paul_Christiano_-_Mechanistic_Estimation_-_IPAM_at_UCLA_-_0-34-09_%28cropped%29.jpg",
+		license: "CC BY 4.0",
+		alternativetitle: "Paul Christiano"
+	},
+	"img_tomas_mikolov": {
+		title: "Tomáš Mikolov, 2020",
+		author: "Jindřich Nosek (NoJin)",
+		year: 2020,
+		url: "https://commons.wikimedia.org/wiki/File:Tom%C3%A1%C5%A1_Mikolov_%282020%29.jpg",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Tomáš Mikolov"
+	},
+	"img_jeff_dean": {
+		title: "Jeff Dean, 2025",
+		author: "Cmichel67",
+		year: 2025,
+		url: "https://commons.wikimedia.org/wiki/File:Jeff_Dean_in_2025_x.jpg",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Jeff Dean"
+	},
+	"img_dario_amodei": {
+		title: "Dario Amodei at TechCrunch Disrupt, 2023",
+		author: "TechCrunch",
+		year: 2023,
+		url: "https://commons.wikimedia.org/wiki/File:Dario_Amodei_at_TechCrunch_Disrupt_2023_01_%28cropped%29.jpg",
+		license: "CC BY 2.0",
+		alternativetitle: "Dario Amodei"
+	},
+	"img_stuart_russell": {
+		title: "Stuart Russell at Nobel Week Dialogue, 2019",
+		author: "Bengt Oberger",
+		year: 2019,
+		url: "https://commons.wikimedia.org/wiki/File:Stuart_Russell_01.jpg",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Stuart Russell"
+	},
+	"img_nick_bostrom": {
+		title: "Portrait of Nick Bostrom",
+		author: "Future of Humanity Institute",
+		year: 2020,
+		url: "https://commons.wikimedia.org/wiki/File:Prof_Nick_Bostrom_324-1.jpg",
+		license: "CC BY 4.0",
+		alternativetitle: "Nick Bostrom"
+	},
+	"img_eliezer_yudkowsky": {
+		title: "Eliezer Yudkowsky, Stanford, 2006",
+		author: "null0",
+		year: 2006,
+		url: "https://commons.wikimedia.org/wiki/File:Eliezer_Yudkowsky,_Stanford_2006_%28square_crop%29.jpg",
+		license: "CC BY-SA 2.0",
+		alternativetitle: "Eliezer Yudkowsky"
+	},
+	"img_toby_ord": {
+		title: "Toby Ord, 2019",
+		author: "David Fisher",
+		year: 2019,
+		url: "https://commons.wikimedia.org/wiki/File:Toby_Ord.jpg",
+		license: "CC BY-SA 3.0",
+		alternativetitle: "Toby Ord"
+	},
 	"img_warren_weaver": {
 		title: "Warren Weaver, 1940",
 		author: "Donald Cooksey",

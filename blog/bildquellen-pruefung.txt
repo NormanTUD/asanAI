@@ -1175,3 +1175,118 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
     Autor: Eladkarmel
     Lokal: ilya_sutskever_altman_2023.jpg (768x1024)
     Status: OK - CC BY-SA 4.0
+
+=== PEOPLE OF AI — FREE PORTRAIT GALLERY (people_of_ai.php, 2026) ===
+====================================================================
+
+1. img_george_boole
+   URL: https://commons.wikimedia.org/wiki/File:Portrait_of_George_Boole.png
+   Lizenz: Public domain (via Commons API extmetadata)
+   Autor: Unknown
+   Lokal: george_boole_portrait.jpg (671x900)
+   Genutzt in: people_of_ai.php § "The Cast in Portraits"
+   Status: OK - Public domain
+
+2. img_gottlob_frege
+   URL: https://commons.wikimedia.org/wiki/File:Young_frege.jpg
+   Lizenz: Public domain (via Commons API extmetadata)
+   Autor: Unknown
+   Lokal: gottlob_frege_portrait.jpg (458x619)
+   Genutzt in: people_of_ai.php § "The Cast in Portraits"
+   Status: OK - Public domain
+
+3. img_john_mccarthy
+   URL: https://commons.wikimedia.org/wiki/File:John_McCarthy_Stanford.jpg
+   Lizenz: CC BY-SA 2.0 (via Commons API extmetadata)
+   Autor: null0
+   Lokal: john_mccarthy_portrait.jpg (700x811)
+   Genutzt in: people_of_ai.php § "The Cast in Portraits"
+   Status: OK - CC BY-SA 2.0
+
+4. ashbyphoto
+   URL: https://commons.wikimedia.org/wiki/File:W._Ross_Ashby_(1948).jpg
+   Lizenz: Public domain (via Commons API extmetadata)
+   Autor: Unknown (W. Ross Ashby Digital Archive)
+   Lokal: ashby.jpg (760x800)
+   Genutzt in: people_of_ai.php § "The Cast in Portraits"; history.php
+   Status: OK - Public domain
+
+5. img_widrow_adaline
+   URL: https://commons.wikimedia.org/wiki/File:Bernard_Widrow_with_ADALINE.jpg
+   Lizenz: Public domain (via Commons API extmetadata)
+   Autor: Stanford Today magazine, (c) 1963 by the Board of Trustees of Leland Stanford Junior University
+   Lokal: widrow_adaline.jpg (1000x689)
+   Genutzt in: people_of_ai.php § "The Cast in Portraits"; history.php
+   Status: OK - Public domain (see also entry 59)
+
+6. simonnewell_image
+   URL: https://commons.wikimedia.org/wiki/File:Herbert_A._Simon_and_Allen_Newell_Chess_Match.jpg
+   Lizenz: Public domain (via Commons API extmetadata)
+   Autor: Paolo Massa
+   Lokal: simon_newell.jpg (360x273)
+   Genutzt in: people_of_ai.php § "The Cast in Portraits"; human_mind.php
+   Status: OK - Public domain
+
+7. img_paul_christiano
+   URL: https://commons.wikimedia.org/wiki/File:Paul_Christiano_-_Mechanistic_Estimation_-_IPAM_at_UCLA_-_0-34-09_%28cropped%29.jpg
+   Lizenz: CC BY 4.0 (via Commons API extmetadata)
+   Autor: Institute for Pure & Applied Mathematics (IPAM)
+   Lokal: paul_christiano_portrait.jpg (700x698)
+   Genutzt in: people_of_ai.php § "The Cast in Portraits"
+   Status: OK - CC BY 4.0
+
+8. img_tomas_mikolov
+   URL: https://commons.wikimedia.org/wiki/File:Tom%C3%A1%C5%A1_Mikolov_%282020%29.jpg
+   Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+   Autor: Jindřich Nosek (NoJin)
+   Lokal: tomas_mikolov_portrait.jpg (700x875)
+   Genutzt in: people_of_ai.php § "The Cast in Portraits"
+   Status: OK - CC BY-SA 4.0
+
+9. img_jeff_dean
+   URL: https://commons.wikimedia.org/wiki/File:Jeff_Dean_in_2025_x.jpg
+   Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+   Autor: Cmichel67
+   Lokal: jeff_dean_portrait.jpg (643x900)
+   Genutzt in: people_of_ai.php § "The Cast in Portraits"
+   Status: OK - CC BY-SA 4.0
+
+10. img_dario_amodei
+    URL: https://commons.wikimedia.org/wiki/File:Dario_Amodei_at_TechCrunch_Disrupt_2023_01_%28cropped%29.jpg
+    Lizenz: CC BY 2.0 (via Commons API extmetadata)
+    Autor: TechCrunch
+    Lokal: dario_amodei_portrait.jpg (696x900)
+    Genutzt in: people_of_ai.php § "The Cast in Portraits"
+    Status: OK - CC BY 2.0
+
+11. img_stuart_russell
+    URL: https://commons.wikimedia.org/wiki/File:Stuart_Russell_01.jpg
+    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+    Autor: Bengt Oberger
+    Lokal: stuart_russell_portrait.jpg (700x820)
+    Genutzt in: people_of_ai.php § "The Cast in Portraits"
+    Status: OK - CC BY-SA 4.0
+
+12. img_nick_bostrom
+    URL: https://commons.wikimedia.org/wiki/File:Prof_Nick_Bostrom_324-1.jpg
+    Lizenz: CC BY 4.0 (via Commons API extmetadata)
+    Autor: Future of Humanity Institute
+    Lokal: nick_bostrom_portrait.jpg (692x900)
+    Genutzt in: people_of_ai.php § "The Cast in Portraits"
+    Status: OK - CC BY 4.0
+
+13. img_eliezer_yudkowsky
+    URL: https://commons.wikimedia.org/wiki/File:Eliezer_Yudkowsky,_Stanford_2006_%28square_crop%29.jpg
+    Lizenz: CC BY-SA 2.0 (via Commons API extmetadata)
+    Autor: null0
+    Lokal: eliezer_yudkowsky_portrait.jpg (700x700)
+    Genutzt in: people_of_ai.php § "The Cast in Portraits"
+    Status: OK - CC BY-SA 2.0
+
+14. img_toby_ord
+    URL: https://commons.wikimedia.org/wiki/File:Toby_Ord.jpg
+    Lizenz: CC BY-SA 3.0 (via Commons API extmetadata)
+    Autor: David Fisher
+    Lokal: toby_ord_portrait.jpg (700x612)
+    Genutzt in: people_of_ai.php § "The Cast in Portraits"
+    Status: OK - CC BY-SA 3.0
