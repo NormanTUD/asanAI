@@ -207,6 +207,286 @@ function stats_all(PDO $pdo, string $sql, array $params): array {
 	return is_array($rows) ? $rows : [];
 }
 
+function stats_search_terms(string $raw): array {
+	$raw = trim((string)preg_replace('/\s+/u', ' ', $raw));
+	if ($raw === '') {
+		return [];
+	}
+	preg_match_all('/"([^"]+)"|(\S+)/u', $raw, $matches, PREG_SET_ORDER);
+	$terms = [];
+	foreach ($matches as $match) {
+		$term = trim((string)(($match[1] ?? '') !== '' ? $match[1] : ($match[2] ?? '')));
+		if ($term === '') {
+			continue;
+		}
+		$terms[] = mb_substr($term, 0, 80);
+	}
+	return array_slice(array_values(array_unique($terms)), 0, 8);
+}
+
+function stats_search_like(string $value): string {
+	return str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $value);
+}
+
+function stats_search_where(array $terms, array $columns, array &$params): string {
+	$clauses = [];
+	foreach ($terms as $term) {
+		$ors = [];
+		$like = '%' . stats_search_like($term) . '%';
+		foreach ($columns as $column) {
+			$ors[] = $column . " LIKE ? ESCAPE '\\'";
+			$params[] = $like;
+		}
+		if ($ors) {
+			$clauses[] = '(' . implode(' OR ', $ors) . ')';
+		}
+	}
+	return $clauses ? implode(' AND ', $clauses) : '1=0';
+}
+
+function stats_search_snippet(string $text, array $terms, int $max = 220): string {
+	$text = trim((string)preg_replace('/\s+/u', ' ', strip_tags($text)));
+	if ($text === '') {
+		return '';
+	}
+	$pos = false;
+	foreach ($terms as $term) {
+		$found = mb_stripos($text, $term);
+		if ($found !== false) {
+			$pos = $found;
+			break;
+		}
+	}
+	if ($pos === false) {
+		return mb_strlen($text) > $max ? mb_substr($text, 0, $max) . '…' : $text;
+	}
+	$start = max(0, $pos - intdiv($max, 3));
+	$snippet = mb_substr($text, $start, $max);
+	if ($start > 0) {
+		$snippet = '…' . $snippet;
+	}
+	if ($start + $max < mb_strlen($text)) {
+		$snippet .= '…';
+	}
+	return $snippet;
+}
+
+function stats_search_mark(string $text, array $terms): string {
+	if ($text === '' || !$terms) {
+		return stats_h($text);
+	}
+	$quoted = array_map(static fn(string $term): string => preg_quote($term, '/'), $terms);
+	$parts = preg_split('/(' . implode('|', $quoted) . ')/iu', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+	if (!is_array($parts)) {
+		return stats_h($text);
+	}
+	$out = '';
+	foreach ($parts as $index => $part) {
+		$out .= $index % 2 === 1 ? '<mark>' . stats_h($part) . '</mark>' : stats_h($part);
+	}
+	return $out;
+}
+
+function stats_search_one(PDO $pdo, string $sql, array $params): int {
+	try {
+		$row = stats_one($pdo, $sql, $params);
+		return (int)($row['n'] ?? 0);
+	} catch (Throwable $e) {
+		return 0;
+	}
+}
+
+function stats_search_all(PDO $pdo, string $sql, array $params): array {
+	try {
+		return stats_all($pdo, $sql, $params);
+	} catch (Throwable $e) {
+		return [];
+	}
+}
+
+function stats_search_date(int $ts): string {
+	return (new DateTimeImmutable('@' . $ts))->setTimezone(new DateTimeZone('Europe/Berlin'))->format('Y-m-d H:i');
+}
+
+function stats_search_feedback_url(int $id, string $path = ''): string {
+	$params = ['tab' => 'all', 'open' => $id, 'range' => 0, 'page' => 1, 'status' => ''];
+	if ($path !== '') {
+		$params['path'] = $path;
+	}
+	return 'stats?view=feedback&' . http_build_query($params);
+}
+
+function stats_search_run(PDO $pdo, array $terms, array $titles): array {
+	$groups = [];
+	$total = 0;
+	if (!$terms) {
+		return ['groups' => [], 'total' => 0];
+	}
+
+	$pageItems = [];
+	foreach ($titles as $slug => $title) {
+		$haystack = (string)$slug . ' ' . (string)$title;
+		$matches = true;
+		foreach ($terms as $term) {
+			if (mb_stripos($haystack, $term) === false) {
+				$matches = false;
+				break;
+			}
+		}
+		if (!$matches) {
+			continue;
+		}
+		$pageItems[] = [
+			'title' => (string)$title,
+			'meta' => 'Lesson · ' . (string)$slug,
+			'snippet' => 'Course page and lesson metadata.',
+			'href' => '?' . stats_query(['path' => (string)$slug, 'page' => 1]) . '#pages',
+			'badge' => 'PAGE',
+		];
+		if (count($pageItems) >= 30) {
+			break;
+		}
+	}
+	$groups['pages'] = ['label' => 'Pages & lessons', 'items' => $pageItems, 'total' => count($pageItems)];
+
+	$params = [];
+	$where = stats_search_where($terms, ['p.path', 'p.ref_type', 'p.ref_source', 'p.ref_host', 'p.ref_path', 'p.browser', 'p.os', 'p.device', 'p.bot_reason', 'p.day'], $params);
+	$count = stats_search_one($pdo, "SELECT COUNT(*) AS n FROM pageviews p WHERE $where", $params);
+	$rows = stats_search_all($pdo, "SELECT p.id, p.ts, p.day, p.hour, p.path, p.ref_type, p.ref_source, p.ref_host, p.ref_path, p.browser, p.os, p.device, p.is_bot, p.bot_reason FROM pageviews p WHERE $where ORDER BY p.ts DESC LIMIT 40", $params);
+	$items = [];
+	foreach ($rows as $row) {
+		$slug = (string)$row['path'];
+		$bits = [stats_search_date((int)$row['ts']), mn_analytics_ref_type_label((string)$row['ref_type'])];
+		if ((string)$row['ref_source'] !== '') {
+			$bits[] = (string)$row['ref_source'];
+		}
+		$bits[] = trim((string)$row['browser'] . ' / ' . (string)$row['os'], ' /');
+		$bits[] = stats_device_label((string)$row['device']);
+		if ((int)$row['is_bot'] === 1) {
+			$bits[] = 'bot';
+		}
+		$items[] = [
+			'title' => $titles[$slug] ?? $slug,
+			'meta' => implode(' · ', array_filter($bits)),
+			'snippet' => 'Pageview #' . (int)$row['id'] . ' · ' . $slug . ((string)$row['ref_path'] !== '' ? ' · from ' . (string)$row['ref_path'] : ''),
+			'href' => '?' . stats_query(['path' => $slug, 'page' => 1]) . '#raw-data',
+			'badge' => 'VIEW',
+		];
+	}
+	$groups['pageviews'] = ['label' => 'Pageviews', 'items' => $items, 'total' => $count];
+
+	$params = [];
+	$where = stats_search_where($terms, ['s.path', 's.section_key', 's.section_label'], $params);
+	$count = stats_search_one($pdo, "SELECT COUNT(*) AS n FROM pageview_sections s WHERE $where", $params);
+	$rows = stats_search_all($pdo, "SELECT s.path, s.section_key, s.section_label, COUNT(*) AS n, MAX(p.ts) AS last_ts FROM pageview_sections s LEFT JOIN pageviews p ON p.id = s.pageview_id WHERE $where GROUP BY s.path, s.section_key, s.section_label ORDER BY n DESC LIMIT 30", $params);
+	$items = [];
+	foreach ($rows as $row) {
+		$slug = (string)$row['path'];
+		$items[] = [
+			'title' => ($titles[$slug] ?? $slug) . ' · ' . (string)$row['section_label'],
+			'meta' => (int)$row['n'] . ' pageviews' . ($row['last_ts'] !== null ? ' · last ' . stats_search_date((int)$row['last_ts']) : ''),
+			'snippet' => 'Section key: ' . (string)$row['section_key'],
+			'href' => '?' . stats_query(['path' => $slug, 'page' => 1]) . '#health',
+			'badge' => 'SECTION',
+		];
+	}
+	$groups['sections'] = ['label' => 'Sections', 'items' => $items, 'total' => $count];
+
+	$params = [];
+	$where = stats_search_where($terms, ['e.path', 'e.kind', 'e.target', 'CAST(e.value AS TEXT)'], $params);
+	$count = stats_search_one($pdo, "SELECT COUNT(*) AS n FROM pageview_events e WHERE $where", $params);
+	$rows = stats_search_all($pdo, "SELECT e.path, e.kind, e.target, e.value, COUNT(*) AS n, MAX(p.ts) AS last_ts FROM pageview_events e LEFT JOIN pageviews p ON p.id = e.pageview_id WHERE $where GROUP BY e.path, e.kind, e.target, e.value ORDER BY n DESC LIMIT 40", $params);
+	$items = [];
+	foreach ($rows as $row) {
+		$slug = (string)$row['path'];
+		$items[] = [
+			'title' => (string)$row['kind'] . ' · ' . (string)$row['target'],
+			'meta' => ($titles[$slug] ?? $slug) . ' · ' . (int)$row['n'] . ' events' . ($row['last_ts'] !== null ? ' · last ' . stats_search_date((int)$row['last_ts']) : ''),
+			'snippet' => $row['value'] !== null ? 'Value: ' . (string)$row['value'] : 'Interaction event on ' . $slug,
+			'href' => '?' . stats_query(['path' => $slug, 'page' => 1]) . '#signals',
+			'badge' => 'EVENT',
+		];
+	}
+	$groups['events'] = ['label' => 'Interaction events', 'items' => $items, 'total' => $count];
+
+	$params = [];
+	$where = stats_search_where($terms, ['f.path', 'f.lesson_title', 'f.part_title', 'f.section_title', 'f.block_key', 'f.block_text', 'f.comment', 'f.email', 'f.admin_note', 'f.admin_prompt', 'f.reaction', 'f.status'], $params);
+	$count = stats_search_one($pdo, "SELECT COUNT(*) AS n FROM block_feedback f WHERE $where", $params);
+	$rows = stats_search_all($pdo, "SELECT f.id, f.ts, f.path, f.lesson_title, f.section_title, f.reaction, f.status, f.comment, f.block_text FROM block_feedback f WHERE $where ORDER BY f.ts DESC LIMIT 40", $params);
+	$items = [];
+	foreach ($rows as $row) {
+		$slug = (string)$row['path'];
+		$title = trim((string)$row['lesson_title']) !== '' ? (string)$row['lesson_title'] : $slug;
+		if ((string)$row['section_title'] !== '') {
+			$title .= ' · ' . (string)$row['section_title'];
+		}
+		$items[] = [
+			'title' => $title,
+			'meta' => '#' . (int)$row['id'] . ' · ' . stats_search_date((int)$row['ts']) . ' · ' . (string)$row['reaction'] . ' / ' . (string)$row['status'],
+			'snippet' => stats_search_snippet((string)($row['comment'] !== '' ? $row['comment'] : $row['block_text']), $terms),
+			'href' => stats_search_feedback_url((int)$row['id'], $slug),
+			'badge' => 'FEEDBACK',
+		];
+	}
+	$groups['feedback'] = ['label' => 'Reader feedback', 'items' => $items, 'total' => $count];
+
+	$params = [];
+	$where = stats_search_where($terms, ['s.selected_text', 's.selected_html', 's.prefix', 's.suffix', 's.source_file'], $params);
+	$count = stats_search_one($pdo, "SELECT COUNT(*) AS n FROM feedback_selections s WHERE $where", $params);
+	$rows = stats_search_all($pdo, "SELECT f.id, f.ts, f.path, f.lesson_title, s.selected_text, s.source_file FROM feedback_selections s JOIN block_feedback f ON f.id = s.feedback_id WHERE $where ORDER BY f.ts DESC LIMIT 25", $params);
+	$items = [];
+	foreach ($rows as $row) {
+		$slug = (string)$row['path'];
+		$items[] = [
+			'title' => 'Selected passage · ' . (trim((string)$row['lesson_title']) !== '' ? (string)$row['lesson_title'] : $slug),
+			'meta' => '#' . (int)$row['id'] . ' · ' . stats_search_date((int)$row['ts']) . ((string)$row['source_file'] !== '' ? ' · ' . (string)$row['source_file'] : ''),
+			'snippet' => stats_search_snippet((string)$row['selected_text'], $terms),
+			'href' => stats_search_feedback_url((int)$row['id'], $slug),
+			'badge' => 'PASSAGE',
+		];
+	}
+	$groups['selections'] = ['label' => 'Selected passages', 'items' => $items, 'total' => $count];
+
+	$params = [];
+	$where = stats_search_where($terms, ['b.url', 'b.user_agent', 'b.viewport', 'b.console_logs_json', 'b.last_clicks_json', 'b.last_error_json'], $params);
+	$count = stats_search_one($pdo, "SELECT COUNT(*) AS n FROM feedback_bug_context b WHERE b.consent = 1 AND $where", $params);
+	$rows = stats_search_all($pdo, "SELECT f.id, f.ts, f.path, f.lesson_title, b.url, b.last_error_json FROM feedback_bug_context b JOIN block_feedback f ON f.id = b.feedback_id WHERE b.consent = 1 AND $where ORDER BY f.ts DESC LIMIT 20", $params);
+	$items = [];
+	foreach ($rows as $row) {
+		$slug = (string)$row['path'];
+		$items[] = [
+			'title' => 'Bug report · ' . (trim((string)$row['lesson_title']) !== '' ? (string)$row['lesson_title'] : $slug),
+			'meta' => '#' . (int)$row['id'] . ' · ' . stats_search_date((int)$row['ts']),
+			'snippet' => stats_search_snippet((string)(($row['last_error_json'] ?? '') !== '' ? $row['last_error_json'] : $row['url']), $terms),
+			'href' => stats_search_feedback_url((int)$row['id'], $slug),
+			'badge' => 'BUG',
+		];
+	}
+	$groups['bugs'] = ['label' => 'Bug reports', 'items' => $items, 'total' => $count];
+
+	$params = [];
+	$where = stats_search_where($terms, ['h.action', 'h.from_status', 'h.to_status', 'h.note'], $params);
+	$count = stats_search_one($pdo, "SELECT COUNT(*) AS n FROM feedback_history h WHERE $where", $params);
+	$rows = stats_search_all($pdo, "SELECT h.id, h.feedback_id, h.ts, h.action, h.from_status, h.to_status, h.note, f.path, f.lesson_title FROM feedback_history h JOIN block_feedback f ON f.id = h.feedback_id WHERE $where ORDER BY h.ts DESC LIMIT 25", $params);
+	$items = [];
+	foreach ($rows as $row) {
+		$slug = (string)$row['path'];
+		$items[] = [
+			'title' => 'Feedback history · ' . (string)$row['action'],
+			'meta' => '#' . (int)$row['feedback_id'] . ' · ' . stats_search_date((int)$row['ts']) . ' · ' . (string)$row['from_status'] . ' → ' . (string)$row['to_status'],
+			'snippet' => stats_search_snippet((string)$row['note'], $terms),
+			'href' => stats_search_feedback_url((int)$row['feedback_id'], $slug),
+			'badge' => 'HISTORY',
+		];
+	}
+	$groups['history'] = ['label' => 'Feedback history', 'items' => $items, 'total' => $count];
+
+	foreach ($groups as $group) {
+		$total += (int)$group['total'];
+	}
+	return ['groups' => $groups, 'total' => $total];
+}
+
 function stats_where(int $range, string $path, string $refType, string $source, string $refPath, string $browser, string $os, string $device, bool $previous = false, string $day = '', int $weekday = 0, int $hour = -1, bool $humansOnly = false, string $botReason = ''): array {
 	$where = ['1=1'];
 	$params = [];
@@ -651,6 +931,13 @@ if ($botReason !== '' && !preg_match('/^[a-zA-Z0-9 ._+\-]{1,64}$/', $botReason))
 	$botReason = '';
 }
 
+$searchRaw = $_GET['q'] ?? '';
+$search = is_scalar($searchRaw) ? trim((string)$searchRaw) : '';
+if ($search !== '') {
+	$search = mb_substr($search, 0, 160);
+}
+$searchTerms = stats_search_terms($search);
+
 $pageRaw = $_GET['page'] ?? 1;
 $pageNum = is_scalar($pageRaw) ? max(1, (int)$pageRaw) : 1;
 $perPage = 100;
@@ -927,6 +1214,9 @@ $interactionCoverage = 0.0;
 $quizDifficulty = [];
 $searchUsage = 0;
 $searchAvgResults = null;
+$searchGroups = [];
+$searchTotal = 0;
+$searchError = null;
 $contentHealth = [];
 $comparisonRows = [];
 $cohortRows = [];
@@ -1017,6 +1307,15 @@ if ($authed) {
 	if (!$pdo) {
 		$dbError = 'The SQLite database could not be opened.';
 	} else {
+		if ($search !== '' && $searchTerms) {
+			try {
+				$searchRun = stats_search_run($pdo, $searchTerms, $titles);
+				$searchGroups = $searchRun['groups'];
+				$searchTotal = (int)$searchRun['total'];
+			} catch (Throwable $e) {
+				$searchError = 'Search could not be completed.';
+			}
+		}
 		try {
 			$detailsEnabled = (int)$pdo->query('PRAGMA user_version')->fetchColumn() >= 6;
 		} catch (Throwable $e) {
@@ -2620,6 +2919,24 @@ table.heat--compact td { height: 16px; font-size: 8px; }
 .filters label { display: grid; gap: 5px; color: var(--dim); font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; }
 .filters input, .filters select { width: 100%; padding: 9px 10px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: inherit; }
 .filters .actions { display: flex; gap: 8px; align-items: center; }
+.stats-search { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.stats-search input[type="search"] { min-width: min(320px, 70vw); padding: 9px 11px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: inherit; }
+.stats-search .search-hint { color: var(--dim); font-size: 11px; }
+.search-results .search-group { border-top: 1px solid var(--line); padding-top: 10px; margin-top: 14px; }
+.search-results .search-group:first-of-type { border-top: 0; padding-top: 0; }
+.search-results summary { cursor: pointer; color: var(--text); font-weight: 600; }
+.search-results summary span { color: var(--dim); font-weight: 400; }
+.search-list { display: grid; gap: 8px; margin-top: 10px; }
+.search-hit { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel2); color: var(--text); text-decoration: none; }
+.search-hit:hover { border-color: var(--accent); text-decoration: none; }
+.search-hit .badge { flex: 0 0 auto; margin-top: 2px; }
+.search-hit-body { display: grid; gap: 2px; min-width: 0; }
+.search-hit-title { font-weight: 600; overflow-wrap: anywhere; }
+.search-hit-snippet { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.search-hit-meta { color: var(--dim); font-size: 11px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+.search-terms { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 10px; }
+.search-terms .badge { color: var(--accent2); border-color: rgba(244,201,138,.3); }
+mark { background: rgba(233,170,96,.32); color: inherit; border-radius: 3px; padding: 0 2px; }
 .table-wrap { overflow-x: auto; }
 .table-scroll { max-height: 620px; overflow: auto; }
 .table-scroll thead th { position: sticky; top: 0; z-index: 1; background: var(--panel); }
@@ -2965,6 +3282,27 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 				<button type="button" class="btn" id="save-view">Save view</button>
 				<button type="button" class="btn" id="manage-views">Manage</button>
 			</div>
+			<form class="stats-search" method="get" action="" role="search">
+				<input type="hidden" name="__proxy_path" value="__MN_STATS_BASE_PATH__">
+				<input type="hidden" name="view" value="analytics">
+				<input type="hidden" name="range" value="<?php echo (int)$range; ?>">
+				<input type="hidden" name="day" value="<?php echo stats_h($day); ?>">
+				<input type="hidden" name="weekday" value="<?php echo (int)$weekday; ?>">
+				<input type="hidden" name="hour" value="<?php echo $hour >= 0 ? (int)$hour : ''; ?>">
+				<input type="hidden" name="humans" value="<?php echo $humansOnly ? '1' : ''; ?>">
+				<input type="hidden" name="bot_reason" value="<?php echo stats_h($botReason); ?>">
+				<input type="hidden" name="path" value="<?php echo stats_h($path); ?>">
+				<input type="hidden" name="ref_type" value="<?php echo stats_h($refType); ?>">
+				<input type="hidden" name="source" value="<?php echo stats_h($source); ?>">
+				<input type="hidden" name="ref_path" value="<?php echo stats_h($refPath); ?>">
+				<input type="hidden" name="browser" value="<?php echo stats_h($browser); ?>">
+				<input type="hidden" name="os" value="<?php echo stats_h($os); ?>">
+				<input type="hidden" name="device" value="<?php echo stats_h($device); ?>">
+				<input type="search" name="q" value="<?php echo stats_h($search); ?>" placeholder="Search everything: page, source, event, feedback…" aria-label="Search all analytics and feedback">
+				<button type="submit" class="btn btn-primary">Search</button>
+				<?php if ($search !== ''): ?><a class="btn" href="?<?php echo stats_h(stats_query([])); ?>#search-results">Clear</a><?php endif; ?>
+				<span class="search-hint">all time · all tabs</span>
+			</form>
 			<div class="tabs" role="tablist" aria-label="Analytics sections">
 				<button type="button" class="tab active" role="tab" aria-selected="true" data-tab="overview">Overview</button>
 				<button type="button" class="tab" role="tab" aria-selected="false" data-tab="pages">Pages</button>
@@ -3016,6 +3354,44 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<span class="chip">Device: <?php echo stats_h(stats_device_label($device)); ?> <a href="?<?php echo stats_h(stats_query(['device' => '', 'page' => 1])); ?>" aria-label="Remove device filter">×</a></span>
 				<?php endif; ?>
 				<a class="chip" href="?range=<?php echo (int)$range; ?>" data-reset-filters>Reset all filters</a>
+			</div>
+		<?php endif; ?>
+
+		<?php if ($search !== ''): ?>
+			<div class="card search-results" id="search-results">
+				<div class="card-head">
+					<h2>Search results <span class="hint">· all stored analytics and feedback, all time</span></h2>
+					<a class="btn" href="?<?php echo stats_h(stats_query([])); ?>#search-results">Clear search</a>
+				</div>
+				<div class="search-terms">
+					<?php foreach ($searchTerms as $term): ?><span class="badge"><?php echo stats_h($term); ?></span><?php endforeach; ?>
+					<span class="badge <?php echo $searchTotal > 0 ? 'ok' : 'warn'; ?>"><?php echo stats_h(mn_analytics_format_number($searchTotal)); ?> matches</span>
+				</div>
+				<p class="ref">Separate keywords with spaces — every keyword must match somewhere. Use <code>"quoted phrases"</code> for an exact phrase. The search covers pages and lessons, pageviews, sections, interaction events, reader feedback, selected passages, bug reports and feedback history.</p>
+				<?php if ($searchError !== null): ?>
+					<div class="empty"><?php echo stats_h($searchError); ?></div>
+				<?php elseif ($searchTotal === 0): ?>
+					<div class="empty">No stored data matches <?php echo stats_h($search); ?>. Try fewer or broader keywords.</div>
+				<?php else: ?>
+					<?php foreach ($searchGroups as $group): ?>
+						<?php if (empty($group['items']) && (int)$group['total'] <= 0) { continue; } ?>
+						<details class="search-group" open>
+							<summary><?php echo stats_h($group['label']); ?> <span>· <?php echo stats_h(mn_analytics_format_number((int)$group['total'])); ?> matches, showing <?php echo count($group['items']); ?></span></summary>
+							<div class="search-list">
+								<?php foreach ($group['items'] as $item): ?>
+									<a class="search-hit" href="<?php echo stats_h($item['href']); ?>">
+										<span class="badge"><?php echo stats_h($item['badge']); ?></span>
+										<span class="search-hit-body">
+											<span class="search-hit-title"><?php echo stats_search_mark((string)$item['title'], $searchTerms); ?></span>
+											<?php if ((string)$item['snippet'] !== ''): ?><span class="search-hit-snippet"><?php echo stats_search_mark((string)$item['snippet'], $searchTerms); ?></span><?php endif; ?>
+											<span class="search-hit-meta"><?php echo stats_search_mark((string)$item['meta'], $searchTerms); ?></span>
+										</span>
+									</a>
+								<?php endforeach; ?>
+							</div>
+						</details>
+					<?php endforeach; ?>
+				<?php endif; ?>
 			</div>
 		<?php endif; ?>
 
@@ -4466,7 +4842,7 @@ if ($presentationTrafficValues) {
 		$presentationTrafficPeakLabel = (string)$presentationTrafficLabels[$presentationTrafficPeakIndex];
 	}
 }
-$presentationTopPages = array_slice($topPages, 0, 8);
+$presentationTopPages = array_slice($topPages, 0, 6);
 $presentationTopPageMax = 1;
 foreach ($presentationTopPages as $presentationTopPage) {
 	$presentationTopPageMax = max($presentationTopPageMax, (int)$presentationTopPage['views']);
@@ -4781,21 +5157,25 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 		<?php if ($presentationHasFeedback): ?>
 		<section class="mn-pres-slide" data-title="Reader feedback" style="--slide-accent: var(--rose);">
 			<h2>Reader feedback <small>· how readers experienced the course</small></h2>
-			<div class="mn-pres-mix">
-				<div class="mn-pres-donut" style="background: conic-gradient(<?php echo stats_h(implode(', ', $presentationMixStops)); ?>)">
-					<div class="mn-pres-donut-center"><b><?php echo stats_h(mn_analytics_format_number($presentationFeedbackTotal)); ?></b><span>reactions</span></div>
+			<div class="mn-pres-split">
+				<div class="mn-pres-mix">
+					<div class="mn-pres-donut" style="background: conic-gradient(<?php echo stats_h(implode(', ', $presentationMixStops)); ?>)">
+						<div class="mn-pres-donut-center"><b><?php echo stats_h(mn_analytics_format_number($presentationFeedbackTotal)); ?></b><span>reactions</span></div>
+					</div>
+					<div class="mn-pres-legend">
+						<?php foreach ($presentationReactions as $presentationKey => $presentationMeta): $presentationCount = (int)($feedbackReactionCounts[$presentationKey] ?? 0); ?>
+							<div class="mn-pres-legend-row"><span class="mn-pres-dot" style="--dot: <?php echo stats_h($presentationReactionColors[$presentationKey]); ?>"></span><span><?php echo stats_h($presentationMeta['icon'] . ' ' . $presentationMeta['label']); ?></span><b><?php echo stats_h(mn_analytics_format_number($presentationCount)); ?></b></div>
+						<?php endforeach; ?>
+					</div>
 				</div>
-				<div class="mn-pres-legend">
-					<?php foreach ($presentationReactions as $presentationKey => $presentationMeta): $presentationCount = (int)($feedbackReactionCounts[$presentationKey] ?? 0); ?>
-						<div class="mn-pres-legend-row"><span class="mn-pres-dot" style="--dot: <?php echo stats_h($presentationReactionColors[$presentationKey]); ?>"></span><span><?php echo stats_h($presentationMeta['icon'] . ' ' . $presentationMeta['label']); ?></span><b><?php echo stats_h(mn_analytics_format_number($presentationCount)); ?></b></div>
-					<?php endforeach; ?>
+				<div class="mn-pres-side">
+					<div class="mn-pres-kpis mn-pres-kpis--two">
+						<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)$feedbackSummary['with_comment'])); ?></b><span>with comment</span></div>
+						<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)$feedbackSummary['bugs'])); ?></b><span>bug reports</span></div>
+						<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)$feedbackSummary['accepted'])); ?></b><span>accepted</span></div>
+						<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)$feedbackSummary['done'])); ?></b><span>done</span></div>
+					</div>
 				</div>
-			</div>
-			<div class="mn-pres-kpis">
-				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)$feedbackSummary['with_comment'])); ?></b><span>with comment</span></div>
-				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)$feedbackSummary['bugs'])); ?></b><span>bug reports</span></div>
-				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)$feedbackSummary['accepted'])); ?></b><span>accepted</span></div>
-				<div class="mn-pres-kpi"><b><?php echo stats_h(mn_analytics_format_number((int)$feedbackSummary['done'])); ?></b><span>done</span></div>
 			</div>
 			<div class="mn-pres-insight"><span>What it means</span><div><?php echo stats_h($presentationInsightFeedback); ?></div></div>
 		</section>
@@ -4816,7 +5196,7 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 				</div>
 				<div class="mn-pres-stacked-axis"><span><?php echo stats_h($presentationFeedbackDaily['labels'][0] ?? ''); ?></span><span><?php echo stats_h($presentationFeedbackDaily['labels'][14] ?? ''); ?></span><span><?php echo stats_h($presentationFeedbackDaily['labels'][29] ?? ''); ?></span></div>
 			</div>
-			<div class="mn-pres-legend">
+			<div class="mn-pres-legend mn-pres-legend--inline">
 				<?php foreach ($presentationReactions as $presentationKey => $presentationMeta): ?>
 					<div class="mn-pres-legend-row"><span class="mn-pres-dot" style="--dot: <?php echo stats_h($presentationReactionColors[$presentationKey]); ?>"></span><span><?php echo stats_h($presentationMeta['icon'] . ' ' . $presentationMeta['label']); ?></span></div>
 				<?php endforeach; ?>

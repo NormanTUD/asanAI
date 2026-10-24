@@ -47,12 +47,20 @@ body.mn-presenting {
 	inset: 0;
 	display: none;
 	flex-direction: column;
-	justify-content: center;
-	gap: clamp(14px, 2.2vh, 26px);
-	padding: clamp(34px, 6vh, 76px) clamp(28px, 7vw, 110px) 110px;
+	justify-content: flex-start;
+	gap: clamp(12px, 1.9vh, 22px);
+	padding: clamp(28px, 4.6vh, 56px) clamp(28px, 7vw, 110px) 86px;
 	overflow: auto;
 	opacity: 0;
 	transform: translateY(10px);
+}
+
+.mn-pres-slide > :first-child {
+	margin-top: auto;
+}
+
+.mn-pres-slide > :last-child {
+	margin-bottom: auto;
 }
 
 .mn-pres-slide.is-active {
@@ -117,6 +125,10 @@ body.mn-presenting {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
 	gap: clamp(10px, 1.4vw, 18px);
+}
+
+.mn-pres-kpis--two {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .mn-pres-hero-stats {
@@ -211,7 +223,7 @@ body.mn-presenting {
 
 .mn-pres-table th,
 .mn-pres-table td {
-	padding: clamp(8px, .9vh, 13px) 10px;
+	padding: clamp(5px, .65vh, 9px) 9px;
 	border-bottom: 1px solid var(--line);
 	text-align: left;
 	vertical-align: middle;
@@ -340,6 +352,12 @@ body.mn-presenting {
 	gap: 8px;
 }
 
+.mn-pres-legend--inline {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 16px;
+}
+
 .mn-pres-legend-row {
 	display: grid;
 	grid-template-columns: 14px minmax(0, 1fr) auto;
@@ -348,6 +366,14 @@ body.mn-presenting {
 	padding: 7px 0;
 	border-bottom: 1px solid color-mix(in srgb, var(--line) 65%, transparent);
 	font-size: clamp(12px, 1.1vw, 16px);
+}
+
+.mn-pres-legend--inline .mn-pres-legend-row {
+	display: inline-flex;
+	border-bottom: 0;
+	padding: 0;
+	gap: 6px;
+	font-size: clamp(10px, .9vw, 12px);
 }
 
 .mn-pres-legend-row:last-child {
@@ -381,7 +407,7 @@ body.mn-presenting {
 	display: flex;
 	align-items: flex-end;
 	gap: 4px;
-	height: clamp(180px, 27vh, 300px);
+	height: clamp(132px, 18vh, 220px);
 	border-bottom: 1px solid var(--line);
 	padding-bottom: 2px;
 }
@@ -656,6 +682,16 @@ body.mn-presenting {
 	flex-wrap: wrap;
 }
 
+.mn-pres-slide h2::after {
+	content: "";
+	flex: 0 0 auto;
+	width: 46px;
+	height: 3px;
+	border-radius: 99px;
+	background: var(--slide-accent, var(--accent));
+	align-self: center;
+}
+
 .mn-pres-slide h1 em {
 	font-style: normal;
 	background: linear-gradient(90deg, var(--slide-accent, var(--accent)), var(--accent2));
@@ -828,4 +864,32 @@ body.mn-presenting {
 @media (max-width: 700px) {
 	.mn-pres-funnel-row { grid-template-columns: 1fr 64px; }
 	.mn-pres-funnel-track { grid-column: 1 / -1; }
+}
+
+
+/* Slide orientation + controls that recede while presenting */
+.mn-pres-slide::after {
+	content: attr(data-slide-number) " / " attr(data-slide-total);
+	position: absolute;
+	top: clamp(18px, 3.2vh, 34px);
+	right: clamp(20px, 5vw, 62px);
+	color: var(--dim);
+	font: 600 clamp(9px, .75vw, 11px) ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	letter-spacing: .08em;
+	z-index: 2;
+}
+
+#mn-present.is-idle .mn-pres-controls,
+#mn-present.is-idle .mn-pres-hint {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.mn-pres-controls,
+.mn-pres-hint {
+	transition: opacity .22s ease;
+}
+
+.mn-pres-split .mn-pres-kpis--two .mn-pres-kpi b {
+	font-size: clamp(22px, 2.5vw, 36px);
 }

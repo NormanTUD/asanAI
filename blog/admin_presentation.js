@@ -19,6 +19,15 @@
 		var open = false;
 		var restoreScroll = 0;
 		var transitionTimer = 0;
+		var idleTimer = 0;
+
+		function poke() {
+			root.classList.remove("is-idle");
+			clearTimeout(idleTimer);
+			idleTimer = setTimeout(function () {
+				if (open) root.classList.add("is-idle");
+			}, 2600);
+		}
 
 		function urlFor(index) {
 			try {
@@ -42,7 +51,10 @@
 		}
 
 		function update() {
+			root.setAttribute("data-slide-total", String(slides.length));
 			slides.forEach(function (slide, index) {
+				slide.setAttribute("data-slide-number", String(index + 1));
+				slide.setAttribute("data-slide-total", String(slides.length));
 				slide.classList.toggle("is-active", index === current);
 				slide.setAttribute("aria-hidden", index === current ? "false" : "true");
 			});
@@ -63,6 +75,7 @@
 
 		function go(index) {
 			current = Math.max(0, Math.min(slides.length - 1, index));
+			poke();
 			clearTimeout(transitionTimer);
 			transitionTimer = setTimeout(update, 20);
 		}
@@ -136,6 +149,7 @@
 			document.body.classList.add("mn-presenting");
 			buildOverview();
 			update();
+			poke();
 			try {
 				root.focus && root.focus({ preventScroll: true });
 			} catch (e) { /* ignore */ }
@@ -153,6 +167,8 @@
 			root.hidden = true;
 			root.setAttribute("aria-hidden", "true");
 			document.body.classList.remove("mn-presenting");
+			root.classList.remove("is-idle");
+			clearTimeout(idleTimer);
 			hideOverview();
 			updateUrl();
 			window.scrollTo(0, restoreScroll);
@@ -213,6 +229,7 @@
 
 		document.addEventListener("keydown", function (event) {
 			if (!open) return;
+			poke();
 			if (event.key === "Escape") {
 				event.preventDefault();
 				if (isOverviewOpen()) hideOverview(); else closeDeck();
@@ -251,7 +268,9 @@
 
 		var touchStartX = 0;
 		var touchStartY = 0;
+		root.addEventListener("mousemove", poke);
 		root.addEventListener("touchstart", function (event) {
+			poke();
 			if (!event.changedTouches || !event.changedTouches.length) return;
 			touchStartX = event.changedTouches[0].screenX;
 			touchStartY = event.changedTouches[0].screenY;
