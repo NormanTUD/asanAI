@@ -819,6 +819,30 @@ function stats_health_flag_info(): array {
 			'short' => 'Five or more views, average time under 45 seconds.',
 			'long' => 'Readers leave quickly. For a reference page that can be fine; for a lesson it usually means the opening is hard to enter or the text is too dense. Check reading speed and scroll depth together.',
 		],
+		'high bounce' => [
+			'label' => 'High bounce',
+			'tone' => 'warn',
+			'short' => 'At least 70 % of measured views end within 10 seconds.',
+			'long' => 'Most readers leave almost immediately even though the average stay is longer. A slow first screen, a layout surprise or a misleading title can cause this. Compare the first section in the reading map and the entry sources.',
+		],
+		'dead end' => [
+			'label' => 'Dead end',
+			'tone' => 'warn',
+			'short' => 'Fewer than 5 % of views continue to another lesson.',
+			'long' => 'Readers rarely follow a link from this page into the rest of the course. If the page is not meant to be a final stop, add a clear next step or a cross-reference to the next idea.',
+		],
+		'reader friction' => [
+			'label' => 'Reader friction',
+			'tone' => 'warn',
+			'short' => 'Readers flagged this page as unhelpful, confusing or broken.',
+			'long' => 'This is direct reader voice, not an inference. Open the reader-feedback dashboard and read the comments before changing the lesson.',
+		],
+		'quiz struggle' => [
+			'label' => 'Quiz struggle',
+			'tone' => 'warn',
+			'short' => 'More than half of the quiz answers on this page are wrong.',
+			'long' => 'Readers reach the check-yourself questions but miss them. The section may explain the idea without letting readers practise it. Add a worked example or a shorter intermediate step.',
+		],
 		'rising' => [
 			'label' => 'Rising',
 			'tone' => 'good',
@@ -851,6 +875,27 @@ function stats_health_flags_tone(array $flags): string {
 		}
 	}
 	return 'good';
+}
+
+function stats_quiz_target_page(string $target, array $titles): string {
+	$quizId = explode(':', $target, 2)[0];
+	if ($quizId === '') {
+		return '';
+	}
+	if (isset($titles[$quizId])) {
+		return (string)$quizId;
+	}
+	$best = '';
+	foreach (array_keys($titles) as $slug) {
+		$slug = (string)$slug;
+		if ($slug === '' || strlen($slug) <= strlen($best)) {
+			continue;
+		}
+		if (str_starts_with($quizId, $slug . '-') || str_starts_with($quizId, $slug . '_')) {
+			$best = $slug;
+		}
+	}
+	return $best;
 }
 
 function stats_day_label(string $day): string {
@@ -1944,6 +1989,58 @@ if ($authed) {
 		})), 0, 5);
 		}
 
+		$healthOnwardMap = [];
+		[$healthOnwardWhere, $healthOnwardParams] = stats_where($range, '', $refType, $source, $refPath, $browser, $os, $device, false, $day, $weekday, $hour, $humansOnly, $botReason);
+		$healthOnwardRows = stats_all($pdo, "SELECT ref_path, COUNT(*) AS n
+			FROM pageviews WHERE $healthOnwardWhere AND ref_type = 'internal' AND ref_path <> ''
+			GROUP BY ref_path", $healthOnwardParams);
+		foreach ($healthOnwardRows as $healthOnwardRow) {
+			$healthOnwardMap[(string)$healthOnwardRow['ref_path']] = (int)$healthOnwardRow['n'];
+		}
+
+		$healthFeedbackMap = [];
+		$healthFeedbackWhere = '';
+		$healthFeedbackParams = [];
+		if ($range > 0) {
+			$healthFeedbackWhere = 'WHERE ts >= ?';
+			$healthFeedbackParams[] = time() - $range * 86400;
+		}
+		$healthFeedbackRows = stats_all($pdo, "SELECT path, COUNT(*) AS total,
+				SUM(CASE WHEN reaction IN ('unhelpful', 'confusing', 'bug') THEN 1 ELSE 0 END) AS negative
+			FROM block_feedback $healthFeedbackWhere
+			GROUP BY path", $healthFeedbackParams);
+		foreach ($healthFeedbackRows as $healthFeedbackRow) {
+			$healthFeedbackMap[(string)$healthFeedbackRow['path']] = [
+				'total' => (int)$healthFeedbackRow['total'],
+				'negative' => (int)$healthFeedbackRow['negative'],
+			];
+		}
+
+		$healthQuizMap = [];
+		if ($detailsEnabled) {
+			$healthQuizRows = stats_all($pdo, "SELECT e.target, COUNT(*) AS n,
+					SUM(CASE WHEN e.value = 1 THEN 1 ELSE 0 END) AS positives
+				FROM pageview_events e
+				JOIN pageviews p ON p.id = e.pageview_id
+				WHERE p.id IN (SELECT id FROM pageviews WHERE $whereSql) AND e.kind = 'quiz_answer'
+				GROUP BY e.target", $params);
+			foreach ($healthQuizRows as $healthQuizRow) {
+				$healthQuizSlug = stats_quiz_target_page((string)$healthQuizRow['target'], $titles);
+				if ($healthQuizSlug === '') {
+					continue;
+				}
+				if (!isset($healthQuizMap[$healthQuizSlug])) {
+					$healthQuizMap[$healthQuizSlug] = ['n' => 0, 'right' => 0, 'accuracy' => 0.0];
+				}
+				$healthQuizMap[$healthQuizSlug]['n'] += (int)$healthQuizRow['n'];
+				$healthQuizMap[$healthQuizSlug]['right'] += (int)$healthQuizRow['positives'];
+			}
+			foreach ($healthQuizMap as &$healthQuizEntry) {
+				$healthQuizEntry['accuracy'] = $healthQuizEntry['n'] > 0 ? 100 * $healthQuizEntry['right'] / $healthQuizEntry['n'] : 0.0;
+			}
+			unset($healthQuizEntry);
+		}
+
 		$maxPageViews = 0;
 		foreach ($topPages as $page) {
 			$maxPageViews = max($maxPageViews, (int)$page['views']);
@@ -1970,12 +2067,30 @@ if ($authed) {
 			}
 			$healthPrev = (int)($prevPageMap[$healthSlug] ?? 0);
 			$healthMomentum = $healthPrev > 0 ? 100 * ($healthViews - $healthPrev) / $healthPrev : null;
+			$healthOnward = (int)($healthOnwardMap[$healthSlug] ?? 0);
+			$healthOnwardShare = $healthViews > 0 ? 100 * $healthOnward / $healthViews : null;
+			$healthFeedback = $healthFeedbackMap[$healthSlug] ?? ['total' => 0, 'negative' => 0];
+			$healthNegative = (int)$healthFeedback['negative'];
+			$healthFeedbackTotal = (int)$healthFeedback['total'];
+			$healthQuiz = $healthQuizMap[$healthSlug] ?? null;
 			$healthFlags = [];
 			if ((int)($page['entries'] ?? 0) >= 3 && ($healthScroll === null || $healthScroll < 50)) {
 				$healthFlags[] = 'content gap';
 			}
 			if ($healthViews >= 5 && $healthDuration !== null && $healthDuration < 45) {
 				$healthFlags[] = 'skimmed';
+			}
+			if ($healthBounceRate !== null && $healthKnown >= 5 && $healthBounceRate >= 70 && $healthDuration !== null && $healthDuration >= 45) {
+				$healthFlags[] = 'high bounce';
+			}
+			if ($healthViews >= 8 && $healthOnwardShare !== null && $healthOnwardShare < 5) {
+				$healthFlags[] = 'dead end';
+			}
+			if ($healthNegative >= 3 || ($healthNegative >= 2 && $healthFeedbackTotal > 0 && $healthNegative / $healthFeedbackTotal >= 0.3)) {
+				$healthFlags[] = 'reader friction';
+			}
+			if ($healthQuiz !== null && (int)$healthQuiz['n'] >= 5 && (float)$healthQuiz['accuracy'] < 50) {
+				$healthFlags[] = 'quiz struggle';
 			}
 			if ($healthMomentum !== null && $healthMomentum >= 25) {
 				$healthFlags[] = 'rising';
@@ -1993,6 +2108,10 @@ if ($authed) {
 				'words' => $healthWords,
 				'speed' => $healthSpeed,
 				'momentum' => $healthMomentum,
+				'onward' => $healthOnwardShare,
+				'negative' => $healthNegative,
+				'quiz_accuracy' => $healthQuiz !== null ? (float)$healthQuiz['accuracy'] : null,
+				'quiz_n' => $healthQuiz !== null ? (int)$healthQuiz['n'] : 0,
 				'flags' => $healthFlags,
 				'scores' => [
 					'reach' => $maxPageViews > 0 ? 100 * $healthViews / $maxPageViews : 0.0,
@@ -3999,7 +4118,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 							<?php $healthTone = $health['flags'] ? stats_health_flags_tone($health['flags']) : ''; ?>
 							<a class="health-card<?php echo $healthTone !== '' ? ' health-card--' . stats_h($healthTone) : ''; ?>" href="?<?php echo stats_h(stats_query(['path' => $health['slug'], 'page' => 1])); ?>">
 								<div class="health-head"><span class="title"><?php echo stats_h($health['label']); ?></span><span class="mini-share"><?php echo stats_h(number_format($health['share'], 1, '.', ',')); ?> %</span></div>
-								<div class="health-meta"><?php echo mn_analytics_format_number($health['views']); ?> views · <?php echo stats_h(mn_analytics_format_duration($health['duration'] !== null ? (int)round($health['duration']) : null)); ?> · <?php echo $health['scroll'] !== null ? stats_h(number_format($health['scroll'], 0, '.', ',')) . ' % scroll' : 'scroll —'; ?><?php if ($health['words'] !== null): ?> · <?php echo mn_analytics_format_number($health['words']); ?> words<?php endif; ?><?php if ($health['speed'] !== null): ?> · <?php echo stats_h(number_format($health['speed'], 0, '.', ',')); ?> wpm<?php endif; ?></div>
+								<div class="health-meta"><?php echo mn_analytics_format_number($health['views']); ?> views · <?php echo stats_h(mn_analytics_format_duration($health['duration'] !== null ? (int)round($health['duration']) : null)); ?> · <?php echo $health['scroll'] !== null ? stats_h(number_format($health['scroll'], 0, '.', ',')) . ' % scroll' : 'scroll —'; ?><?php if ($health['onward'] !== null): ?> · <?php echo stats_h(number_format($health['onward'], 0, '.', ',')); ?> % onward<?php endif; ?><?php if ($health['quiz_accuracy'] !== null): ?> · quiz <?php echo stats_h(number_format($health['quiz_accuracy'], 0, '.', ',')); ?> % right<?php endif; ?><?php if ($health['words'] !== null): ?> · <?php echo mn_analytics_format_number($health['words']); ?> words<?php endif; ?><?php if ($health['speed'] !== null): ?> · <?php echo stats_h(number_format($health['speed'], 0, '.', ',')); ?> wpm<?php endif; ?></div>
 								<?php if ($health['flags']): ?>
 									<div class="health-flags"><?php foreach ($health['flags'] as $flag): ?><?php echo stats_health_flag_badge((string)$flag); ?><?php endforeach; ?></div>
 									<div class="health-why">
@@ -4819,7 +4938,8 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<li><strong>Section reading map</strong> = share of pageviews that made each heading visible, plus average visible dwell. It is based only on pageviews with section data; older rows predate this logging.</li>
 					<li><strong>Interaction signals</strong> = aggregate counts of internal link targets, external domains (not full URLs), citation keys, code languages, search use/result positions, quiz question IDs + correctness, lab runs, downloads and media. They are not per-person journeys.</li>
 					<li><strong>Reading speed</strong> = approximate words per minute from the lesson word count divided by active time. Treat it as a comparative signal, not an exact measurement.</li>
-					<li><strong>Content health / cohorts</strong> = transparent sub-scores and aggregate source/device profiles derived from existing pageviews. “Humans only” excludes rows whose User-Agent matched a bot. <strong>Content gap</strong> = at least three visits started on the page and readers scrolled less than half of it (or scroll was never measured); the opening may not match the promise of the link or the answer readers wanted may be missing. <strong>Skimmed</strong> = five or more views with under 45 seconds of average reading time. <strong>Rising</strong> / <strong>falling</strong> = at least 25 % more or fewer views than the previous period. Each card explains its own flags, and the “What do these flags mean?” toggle spells them out.</li>
+					<li><strong>Content health / cohorts</strong> = transparent sub-scores and aggregate source/device profiles derived from existing pageviews. “Humans only” excludes rows whose User-Agent matched a bot. Each card explains its own flags, and the “What do these flags mean?” toggle spells them out.</li>
+					<li><strong>Problem flags</strong> are heuristics, not verdicts. <strong>Content gap</strong> = at least three visits started on the page and readers scrolled less than half of it (or scroll was never measured); the opening may not match the promise of the link or the expected answer may be missing. <strong>Skimmed</strong> = five or more views with under 45 seconds of average reading time. <strong>High bounce</strong> = at least 70 % of measured views ended within 10 seconds. <strong>Dead end</strong> = fewer than 5 % of views continue to another lesson through an internal link. <strong>Reader friction</strong> = at least three reader reactions on the page were 👎, ❓ or 🐞 (or two when they dominate the page's feedback). <strong>Quiz struggle</strong> = five or more quiz answers with under 50 % correct. <strong>Rising</strong> / <strong>falling</strong> = at least 25 % more or fewer views than the previous period.</li>
 					<li><strong>Bots</strong> = pageviews whose User-Agent matched a known bot or automation signature. Only the coarse reason label is stored. Click a reason in Tech or a raw row to see the matching rule.</li>
 					<li><strong>Open tokens</strong> = pageviews whose completion signal has not arrived yet. They are closed after at most 6 hours and the token is deleted.</li>
 					<li><strong>Browser/OS/device</strong> = coarse categories from the User-Agent (read transiently, never stored): browser family + major version, operating system + version, desktop/mobile/tablet/bot. No minor/patch versions, no device IDs, no fingerprint.</li>
