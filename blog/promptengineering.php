@@ -308,9 +308,9 @@ The mechanism is the same one *latent steering* exploits: identify directions, t
 <div class="md" data-mathlevel="65">
 ### The Spatial Picture: Distinction, Locality, Coherence, Gluing
 
-There is a deep reason this works, and it is the same reason embeddings work at all. **Meaning is a sheaf over context** \cite[sheaf theory applied to embedding spaces, local-to-global gluing]{coherent_difference_chapter}: each context (an "open set" in the topology of usage) carries its own local data (the tokens that co-occur there), and the embedding space is the *global section* that falls out when all the local patches agree on their overlaps.
+One speculative way to frame this is with sheaf theory, the mathematics of gluing local data into global objects. **On this view, meaning behaves like a sheaf over context** \cite[sheaf theory applied to embedding spaces, local-to-global gluing]{coherent_difference_chapter}: each context (an "open set" in the topology of usage) carries its own local data (the tokens that co-occur there), and the embedding space is the *global section* that would fall out if all the local patches agreed on their overlaps. This is an analogy, not a proven mechanism.
 
-When you specify a property like "nostalgic but not sad", you are doing four moves at once:
+In this picture, when you specify a property like "nostalgic but not sad", you are doing four moves at once:
 
 1. **Distinction** \cite[Draw a distinction -- the first axiom of \citetitle{spencerbrown1969form}]{spencerbrown1969form}. You mark out one direction in the embedding space from another. "Nostalgic" and "sad" are *not* the same vector, even though they live in the same neighborhood. Calling them apart is the act that makes the rest of the prompt possible.
 
@@ -318,13 +318,13 @@ When you specify a property like "nostalgic but not sad", you are doing four mov
 
 3. **Compatibility on overlaps** \cite[Sheaf condition: sections agree on pairwise intersections]{sheaf_mathematics}. "Nostalgic but not sad" is exactly the requirement that the local section labeled *nostalgic* and the local section labeled *not-sad* agree on the overlap -- i.e. there exists a point that satisfies both. The contradictions tighten compatibility: they require the intersection of multiple sections to be non-empty on a much smaller overlap.
 
-4. **Gluing into a global section** \cite[Local data + compatibility on overlaps $\Rightarrow$ unique global section]{sheaf_mathematics}. When all your local constraints are mutually compatible, the sheaf condition guarantees that there is a *unique* global point satisfying them. That point is the model's output. If your constraints are coherent, the model finds one. If they are not, the model either drifts to the nearest coherent point or produces nonsense.
+4. **Gluing into a global section** \cite[Local data + compatibility on overlaps $\Rightarrow$ unique global section]{sheaf_mathematics}. When all your local constraints are mutually compatible, the sheaf condition would license gluing them into a global point. In the analogy, that point is the model's output. If your constraints are coherent, the model finds one. If they are not, the model either drifts to the nearest coherent point or produces nonsense.
 
-The slogan is the same sentence that organizes all of sheaf theory, all of topology, and most of category theory \cite[local-to-global gluing, the structural backbone of modern structural mathematics]{coherent_difference_chapter}:
+The slogan is the same sentence that organizes sheaf theory, topology, and much of category theory \cite[local-to-global gluing, the structural backbone of modern structural mathematics]{coherent_difference_chapter}:
 
 $$\boxed{\text{local constraints} \;+\; \text{compatibility on overlaps} \;\Rightarrow\; \text{global output}}$$
 
-The chain from distinction to gluing -- distinction, relation, transformation, locality, compatibility, coherence, gluing, globality \cite[the nine-step chain, from Spencer-Brown's first cut to invariance under change of cover]{coherent_difference_chapter} -- is the chain that runs inside an LLM every time it parses a prompt and produces an answer. Prompting via semantic coordinates makes that chain visible: you are choosing which *local sections* to specify and trusting the model to glue them into a global one.
+The chain from distinction to gluing -- distinction, relation, transformation, locality, compatibility, coherence, gluing, globality \cite[the nine-step chain, from Spencer-Brown's first cut to invariance under change of cover]{coherent_difference_chapter} -- is the chain the chapter uses as an analogy for what happens inside an LLM when it parses a prompt and produces an answer. Prompting via semantic coordinates makes that chain visible: you are choosing which *local sections* to specify and trusting the model to glue them into a global one.
 </div>
 
 <div class="md">
@@ -353,7 +353,7 @@ If you want to use this technique deliberately:
 
 The technique is a **lens**. It lets you see (and shape) the region of latent space the model is sampling from, rather than the specific token sequence it produces. For tasks where the goal is *a particular kind of thing* rather than *a particular thing*, it often beats conventional prompting by a wide margin -- because it leaves the model's full expressive range available, while still defining the band that range must stay inside.
 
-The deepest version of the insight is the one the embedding space already knows, the one the sheaf picture makes formal: **local difference plus coherent transitions glues into global unity** \cite[the one-sentence summary of the whole coherent-difference picture]{coherent_difference_chapter}. A prompt is a sheaf specification. The output is the global section. Your job is to choose the local sections; the model's job is to glue them.
+In the sheaf metaphor, the deepest version of the insight is: **local difference plus coherent transitions glues into global unity** \cite[the one-sentence summary of the whole coherent-difference picture]{coherent_difference_chapter}. In that metaphor, a prompt is a sheaf specification and the output is the global section. Your job is to choose the local sections; the model's job is to glue them.
 
 ## The Inner Map: Steering by Feel
 
@@ -370,7 +370,7 @@ What you are carrying in your head is an approximate **map of the model's latent
 * **Clusters.** Topics, domains, genres, registers, modalities -- each forms a roughly recognizable region. *Quasar*, *black hole*, *supernova* cluster together; *cat*, *dog*, *rabbit* form another cluster; *eigenvalue*, *manifold*, *homeomorphism* form a third \cite[clusters in embedding space, the geometry of meaning]{coherent_difference_chapter}. You can locate, roughly, where most ordinary words live.
 * **Distances.** The distance from *quasar* to *cat* is large in many aspects (subject matter, register, modality) but small in others (both are concrete nouns). The distance from *quasar* to *active galactic nucleus* is small in most aspects. **Distance is multi-dimensional, not scalar** \cite[aspects of meaning, near in one axis, far in another]{coherent_difference_chapter}. You have learned which axis matters for which kind of comparison.
 * **Directions.** Each property -- *simple*, *interesting*, *formal*, *familiar* -- is a direction you have learned to recognize. You know roughly which way each one points in the regions you frequent. Some of these directions are remarkably **linear**: sentiment, truthfulness, language identity, register, formality, even abstract concepts like *honesty* or *humor* show up as near-straight lines in activation space \cite[The Linear Representation Hypothesis, features as linear directions]{park2024linear}. The directions you can name are the ones the model has learned to factor out as a single axis.
-* **Intersections.** You have an intuitive sense of which combinations are coherent (large non-empty intersection) and which are contradictory (empty intersection). *Calm but alive* works; *dead but loud* does not, and you know this before asking. The sheaf picture makes this precise: **compatibility on overlaps is exactly the requirement that the intersection of local regions be non-empty** \cite[sheaf condition, sections agree on pairwise intersections]{sheaf_mathematics}. You feel the sheaf condition without doing the math.
+* **Intersections.** You have an intuitive sense of which combinations are coherent (large non-empty intersection) and which are contradictory (empty intersection). *Calm but alive* works; *dead but loud* does not, and you know this before asking. The sheaf picture offers a precise metaphor for this: **compatibility on overlaps is exactly the requirement that the intersection of local regions be non-empty** \cite[sheaf condition, sections agree on pairwise intersections]{sheaf_mathematics}. You feel the sheaf condition without doing the math.
 * **Boundaries.** You know where the model's coverage is **dense** (well-trodden regions like Python code, English prose, common sense reasoning) and where it **thins** (obscure technical jargon, recent events past the cutoff, niche cultural references, low-resource languages). You can tell when a prompt is asking the model to sample from a sparse region, and you adjust accordingly \cite[coverage of the embedding manifold, sparse regions, reliability varies]{emergentmind_latent_space_steering}.
 
 The "feeling" of moving the vector consciously to a point or area in embedding space is the operation of this map in real time. You do not literally see the 4096-dimensional vector; you have learned, through repeated interaction, which **directions** and **regions** the model tends to inhabit for which inputs.
@@ -386,7 +386,7 @@ The map is not given. It is built. Four mechanisms do the work:
 
 ### Why the Map Works Mechanically
 
-The map is functional because the embedding space is not arbitrary. It is a high-dimensional manifold with real structure, and that structure is the same structure the sheaf picture describes \cite[embedding spaces as global objects assembled from local context data]{coherent_difference_chapter}:
+The map is functional because the embedding space is not arbitrary. It is a high-dimensional manifold with real structure; the sheaf picture is one way to describe that structure, not a proof that it is literally a sheaf. \cite[embedding spaces as global objects assembled from local context data]{coherent_difference_chapter}:
 
 * **Linear features.** Many semantic properties are encoded as **linear directions** in activation space \cite[Linear Representation Hypothesis, geometry of features in LLMs]{park2024linear}. The contrastive steering vectors we discussed earlier are exactly these directions, computed as the mean difference of activations on positive vs. negative examples \cite[contrastive CAA, mean-difference extraction]{emergentmind_steering_vectors}. When you name a property ("formal", "concise", "playful"), you are pointing at one of these directions.
 * **Cluster geometry.** Concepts cluster by domain and aspect, and the clusters have substructure \cite[marks2023 geometry of concepts, cluster structure in LLM representations]{marks2023geometry}. This is the geometry of meaning that makes *quasar* and *cat* far apart while *quasar* and *active galactic nucleus* are close.
@@ -404,7 +404,7 @@ The map is what lets you do the move that started this section: move the vector 
 
 ### The Coda
 
-The embedding space is not visible. You cannot draw it on paper. But its structure is **real**, in exactly the sense the sheaf picture makes precise: a global object determined by the coherent assembly of local data \cite[global object as glue of compatible locals]{coherent_difference_chapter}. The map in your head is your internal model of that global object. The better your map, the more precisely you can steer.
+The embedding space is not visible. You cannot draw it on paper. But its structure is **real** in the sense that it is stable and learnable; the sheaf picture is a metaphor for how local context might assemble into a global object \cite[global object as glue of compatible locals]{coherent_difference_chapter}. The map in your head is your internal model of that global object. The better your map, the more precisely you can steer.
 
 The deepest version of the insight, then, is not really about prompts at all. It is about the practitioner:
 
