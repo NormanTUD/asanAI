@@ -789,3 +789,43 @@ body.mn-presenting {
 		transition: none !important;
 	}
 }
+
+.mn-pres-funnel {
+	display: grid;
+	gap: clamp(10px, 1.5vh, 18px);
+	max-width: 1050px;
+}
+
+.mn-pres-funnel-row {
+	display: grid;
+	grid-template-columns: minmax(190px, .8fr) minmax(0, 2.2fr) 76px;
+	gap: clamp(10px, 1.4vw, 20px);
+	align-items: center;
+	color: var(--muted);
+	font-size: clamp(12px, 1.05vw, 15px);
+}
+
+.mn-pres-funnel-row b {
+	color: var(--heading);
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+.mn-pres-funnel-track {
+	height: clamp(12px, 1.5vh, 18px);
+	border-radius: 99px;
+	background: var(--line);
+	overflow: hidden;
+}
+
+.mn-pres-funnel-fill {
+	height: 100%;
+	border-radius: 99px;
+	background: linear-gradient(90deg, var(--slide-accent, var(--accent)), var(--accent2));
+	box-shadow: 0 0 18px color-mix(in srgb, var(--slide-accent, var(--accent)) 30%, transparent);
+}
+
+@media (max-width: 700px) {
+	.mn-pres-funnel-row { grid-template-columns: 1fr 64px; }
+	.mn-pres-funnel-track { grid-column: 1 / -1; }
+}

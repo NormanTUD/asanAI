@@ -44,7 +44,7 @@ in-session todo list carries the same high-level items.
 - Smooth Analytics/Feedback switch via View Transitions plus a loading placeholder; no blank flash while the iframe loads.
 - Admin title is static and the brand links to stats; no title flicker on tab changes.
 - Empty analytics cards hidden on load; bot links go to Tech with exact bot reasons and filters; external referrers listed separately.
-- Full-screen presentation deck across analytics + feedback (`admin_presentation.js` / `.css`): audience, views over time, time per page, discovery, feedback mix, feedback over time, reader quotes, where-to-improve, takeaways. Arrow/Space navigation, O overview, F fullscreen, Esc close, touch swipe, deep link `?present=N`.
+- Full-screen presentation deck across analytics + feedback (`admin_presentation.js` / `.css`): title, audience, views over time, reading-depth funnel, time per page, discovery, signals, feedback mix, feedback over time, reader quotes, where-to-improve, takeaways, closing. Accent-driven slide design, live insight callouts, 7-day deltas, peak annotations, numbers pop-in; arrow/Space navigation, O overview, F fullscreen, Esc close, touch swipe, deep link `?present=N`.
 - Feedback palette/card/heading/tab styles aligned with the analytics dashboard.
 
 ---

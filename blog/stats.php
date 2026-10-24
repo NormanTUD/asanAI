@@ -4488,12 +4488,12 @@ $presentationLast7 = array_sum(array_slice($presentationTrafficValues, -7));
 $presentationPrev7 = array_sum(array_slice($presentationTrafficValues, -14, 7));
 $presentationTrafficDelta = $presentationPrev7 > 0 ? 100 * ($presentationLast7 - $presentationPrev7) / $presentationPrev7 : null;
 $presentationTrafficDeltaClass = $presentationTrafficDelta === null ? 'flat' : ($presentationTrafficDelta > 0.5 ? 'up' : ($presentationTrafficDelta < -0.5 ? 'down' : 'flat'));
-$presentationTrafficDeltaLabel = $presentationTrafficDelta === null ? 'no previous 7-day baseline' : ($presentationTrafficDelta > 0 ? '+' : '') . number_format($presentationTrafficDelta, 1, '.', ',') . ' % vs previous 7 days';
+$presentationTrafficDeltaLabel = $presentationTrafficDelta === null ? ($presentationLast7 > 0 ? 'first 7-day window' : 'no views yet') : ($presentationTrafficDelta > 0 ? '+' : '') . number_format($presentationTrafficDelta, 1, '.', ',') . ' % vs previous 7 days';
 $presentationFeedbackLast7 = array_sum(array_slice($presentationFeedbackDayTotals, -7));
 $presentationFeedbackPrev7 = array_sum(array_slice($presentationFeedbackDayTotals, -14, 7));
 $presentationFeedbackDelta = $presentationFeedbackPrev7 > 0 ? 100 * ($presentationFeedbackLast7 - $presentationFeedbackPrev7) / $presentationFeedbackPrev7 : null;
 $presentationFeedbackDeltaClass = $presentationFeedbackDelta === null ? 'flat' : ($presentationFeedbackDelta > 0.5 ? 'up' : ($presentationFeedbackDelta < -0.5 ? 'down' : 'flat'));
-$presentationFeedbackDeltaLabel = $presentationFeedbackDelta === null ? 'no previous 7-day baseline' : ($presentationFeedbackDelta > 0 ? '+' : '') . number_format($presentationFeedbackDelta, 1, '.', ',') . ' % vs previous 7 days';
+$presentationFeedbackDeltaLabel = $presentationFeedbackDelta === null ? ($presentationFeedbackLast7 > 0 ? 'first 7-day window' : 'no reactions yet') : ($presentationFeedbackDelta > 0 ? '+' : '') . number_format($presentationFeedbackDelta, 1, '.', ',') . ' % vs previous 7 days';
 $presentationTopPage = $presentationTopPages[0] ?? null;
 $presentationTopPageShare = ($presentationTopPage && $views > 0) ? 100 * (int)$presentationTopPage['views'] / $views : 0;
 $presentationTopPageDuration = ($presentationTopPage && $presentationTopPage['avg_duration'] !== null) ? (float)$presentationTopPage['avg_duration'] : null;
@@ -4504,7 +4504,8 @@ if ($views > 0 && isset($funnelData[3]['value'])) {
 }
 $presentationHelpful = (int)($feedbackReactionCounts['helpful'] ?? 0);
 $presentationUnhelpful = (int)($feedbackReactionCounts['unhelpful'] ?? 0);
-$presentationHelpfulRate = ($presentationHelpful + $presentationUnhelpful) > 0 ? 100 * $presentationHelpful / ($presentationHelpful + $presentationUnhelpful) : null;
+$presentationHelpfulSample = $presentationHelpful + $presentationUnhelpful;
+$presentationHelpfulRate = $presentationHelpfulSample > 0 ? 100 * $presentationHelpful / $presentationHelpfulSample : null;
 $presentationTopNegativePage = null;
 $presentationTopHelpfulPage = null;
 foreach ($presentationFeedbackPages as $presentationPageRow) {
@@ -4523,6 +4524,31 @@ $presentationInsightTraffic = 'Last 7 days: ' . mn_analytics_format_number($pres
 if ($presentationTrafficPeakLabel !== '') {
 	$presentationInsightTraffic .= ' Peak: ' . $presentationTrafficPeakLabel . ' (' . mn_analytics_format_number($presentationTrafficMax) . ').';
 }
+$presentationFunnel = [];
+foreach ($funnelData as $presentationFunnelRow) {
+	$presentationFunnel[] = [
+		'label' => (string)($presentationFunnelRow['name'] ?? ''),
+		'value' => (int)($presentationFunnelRow['value'] ?? 0),
+	];
+}
+$presentationFunnelMax = 1;
+foreach ($presentationFunnel as $presentationFunnelRow) {
+	$presentationFunnelMax = max($presentationFunnelMax, $presentationFunnelRow['value']);
+}
+$presentationFunnelBase = $presentationFunnel ? max(1, $presentationFunnel[0]['value']) : 0;
+$presentationInsightFunnel = '';
+foreach ($presentationFunnel as $presentationFunnelIndex => $presentationFunnelRow) {
+	$presentationShare = $presentationFunnelBase > 0 ? 100 * $presentationFunnelRow['value'] / $presentationFunnelBase : 0;
+	if ($presentationFunnelIndex === 0) {
+		$presentationInsightFunnel .= mn_analytics_format_number($presentationFunnelRow['value']) . ' pageviews';
+	} elseif ($presentationFunnelIndex === 1) {
+		$presentationInsightFunnel .= ' → ' . number_format($presentationShare, 1, '.', ',') . ' % stay at least 10 s';
+	} elseif ($presentationFunnelIndex === 2) {
+		$presentationInsightFunnel .= ' → ' . number_format($presentationShare, 1, '.', ',') . ' % also reach 50 % scroll';
+	} else {
+		$presentationInsightFunnel .= ' → ' . number_format($presentationShare, 1, '.', ',') . ' % reach 75 % scroll';
+	}
+}
 $presentationInsightAudience = 'Average time on page ' . mn_analytics_format_duration($avgDuration !== null ? (int)round($avgDuration) : null)
 	. ' · ' . number_format($presentationDeepRead, 1, '.', ',') . ' % reach 75% scroll'
 	. ' · bounce rate ' . number_format($bounceRate, 1, '.', ',') . ' %.';
@@ -4530,11 +4556,13 @@ $presentationInsightPages = $presentationTopPage
 	? ($titles[$presentationTopPage['path']] ?? $presentationTopPage['path']) . ' accounts for ' . number_format($presentationTopPageShare, 1, '.', ',') . ' % of views and '
 		. ($presentationTopPageDurationRatio !== null ? number_format($presentationTopPageDurationRatio, 2, '.', ',') . '× the site average reading time.' : 'is the most-read page.')
 	: 'No page-level traffic yet.';
+$presentationInternalShare = $views > 0 ? 100 * (int)$internal / $views : 0;
 $presentationInsightDiscovery = 'Search ' . number_format($presentationSearchShare, 1, '.', ',') . ' %, social ' . number_format($presentationSocialShare, 1, '.', ',')
-	. ' %, external ' . number_format($presentationExternalShare, 1, '.', ',') . ' %, direct ' . number_format($presentationDirectShare, 1, '.', ',') . ' %.'
+	. ' %, external ' . number_format($presentationExternalShare, 1, '.', ',') . ' %, direct ' . number_format($presentationDirectShare, 1, '.', ',')
+	. ' %, internal lesson-to-lesson ' . number_format($presentationInternalShare, 1, '.', ',') . ' %.'
 	. ($presentationExternalReferrers ? ' Top external: ' . (($presentationExternalReferrers[0]['ref_host'] !== '') ? $presentationExternalReferrers[0]['ref_host'] : $presentationExternalReferrers[0]['ref_source']) . '.' : '');
 $presentationInsightFeedback = $presentationHelpfulRate !== null
-	? 'Helpful rate ' . number_format($presentationHelpfulRate, 0, '.', ',') . ' % (' . $presentationHelpful . ' 👍 / ' . $presentationUnhelpful . ' 👎)'
+	? 'Helpful rate ' . number_format($presentationHelpfulRate, 0, '.', ',') . ' % (' . $presentationHelpful . ' 👍 / ' . $presentationUnhelpful . ' 👎' . ($presentationHelpfulSample < 5 ? ', small sample' : '') . ')'
 		. ($presentationTopNegativePage ? ' · most friction: ' . $presentationTopNegativePage['title'] . '.' : '.')
 	: 'Reader reactions are still sparse.';
 $presentationInsightFeedbackTrend = 'Last 7 days: ' . mn_analytics_format_number($presentationFeedbackLast7) . ' reactions · ' . $presentationFeedbackDeltaLabel . '.';
@@ -4574,6 +4602,32 @@ foreach ($feedbackLatest as $presentationLatest) {
 		break;
 	}
 }
+$presentationSignals = [];
+foreach ($headlineInsights as $presentationHeadline) {
+	$presentationSignals[] = ['label' => 'Pattern', 'text' => (string)$presentationHeadline];
+}
+foreach (($topMovers['up'] ?? []) as $presentationMover) {
+	$presentationSignals[] = [
+		'label' => 'Rising',
+		'text' => ($titles[$presentationMover['slug']] ?? $presentationMover['slug']) . ': +' . mn_analytics_format_number((int)$presentationMover['delta']) . ' views vs previous period.',
+	];
+}
+foreach (($topMovers['down'] ?? []) as $presentationMover) {
+	$presentationSignals[] = [
+		'label' => 'Falling',
+		'text' => ($titles[$presentationMover['slug']] ?? $presentationMover['slug']) . ': ' . mn_analytics_format_number((int)$presentationMover['delta']) . ' views vs previous period.',
+	];
+}
+foreach ($contentHealth as $presentationHealth) {
+	if (empty($presentationHealth['flags'])) {
+		continue;
+	}
+	$presentationSignals[] = [
+		'label' => 'Content health',
+		'text' => $presentationHealth['label'] . ': ' . implode(', ', array_map('strval', $presentationHealth['flags'])) . '.',
+	];
+}
+$presentationSignals = array_slice($presentationSignals, 0, 6);
 $presentationTakeaways = [];
 if ($presentationFeedbackPages) {
 	$presentationNegativePage = $presentationFeedbackPages[0];
@@ -4656,6 +4710,22 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 		</section>
 		<?php endif; ?>
 
+		<?php if ($presentationFunnelBase > 0): ?>
+		<section class="mn-pres-slide" data-title="Reading depth" style="--slide-accent: var(--emerald);">
+			<h2>How deeply people read <small>· selected period</small></h2>
+			<div class="mn-pres-funnel">
+				<?php foreach ($presentationFunnel as $presentationFunnelIndex => $presentationFunnelRow): $presentationFunnelShare = 100 * $presentationFunnelRow['value'] / $presentationFunnelBase; ?>
+					<div class="mn-pres-funnel-row">
+						<span><?php echo stats_h($presentationFunnelRow['label']); ?></span>
+						<div class="mn-pres-funnel-track"><div class="mn-pres-funnel-fill" style="width: <?php echo stats_h(number_format(100 * $presentationFunnelRow['value'] / $presentationFunnelMax, 2, '.', '')); ?>%"></div></div>
+						<b><?php echo stats_h(number_format($presentationFunnelShare, 1, '.', ',')); ?> %</b>
+					</div>
+				<?php endforeach; ?>
+			</div>
+			<div class="mn-pres-insight"><span>Attention</span><div><?php echo stats_h($presentationInsightFunnel); ?></div></div>
+		</section>
+		<?php endif; ?>
+
 		<?php if ($presentationTopPages): ?>
 		<section class="mn-pres-slide" data-title="Time on page" style="--slide-accent: var(--emerald);">
 			<h2>Where readers spend time</h2>
@@ -4694,6 +4764,17 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 			</div>
 			<?php endif; ?>
 			<div class="mn-pres-insight"><span>Mix</span><div><?php echo stats_h($presentationInsightDiscovery); ?></div></div>
+		</section>
+		<?php endif; ?>
+
+		<?php if ($presentationSignals): ?>
+		<section class="mn-pres-slide" data-title="Signals" style="--slide-accent: var(--sky);">
+			<h2>Signals worth a closer look</h2>
+			<div class="mn-pres-takeaways">
+				<?php foreach ($presentationSignals as $presentationSignal): ?>
+					<div class="mn-pres-takeaway"><b><?php echo stats_h($presentationSignal['label']); ?></b><?php echo stats_h($presentationSignal['text']); ?></div>
+				<?php endforeach; ?>
+			</div>
 		</section>
 		<?php endif; ?>
 
