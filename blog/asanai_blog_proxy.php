@@ -290,6 +290,12 @@ if (!str_starts_with($target_url, $remote_base)) {
 	asanai_proxy_abort(403, 'Unauthorized target.');
 }
 
+// HTML and CSS are rewritten (URLs, index TOC suppression), so the remote
+// validators no longer describe the bytes we send. Do not let the browser
+// reuse a cached transformed response via a remote 304.
+$remote_ext = strtolower(pathinfo((string)parse_url($path, PHP_URL_PATH), PATHINFO_EXTENSION));
+$is_transformable = in_array($remote_ext, ['', 'php', 'html', 'css'], true);
+
 $method = strtoupper((string)($_SERVER['REQUEST_METHOD'] ?? 'GET'));
 $body = in_array($method, ['POST', 'PUT', 'PATCH'], true) ? file_get_contents('php://input') : null;
 $headers = [];
@@ -314,6 +320,9 @@ $forward_headers = [
 ];
 foreach ($forward_headers as $server_key => $header_name) {
 	if ($header_name === 'Cookie') {
+		continue;
+	}
+	if ($is_transformable && ($header_name === 'If-None-Match' || $header_name === 'If-Modified-Since')) {
 		continue;
 	}
 	$value = (string)($_SERVER[$server_key] ?? '');
@@ -437,9 +446,15 @@ $forward_header_names = [
 	'access-control-allow-headers' => 'Access-Control-Allow-Headers',
 ];
 foreach ($forward_header_names as $forward => $header_name) {
+	if ($is_transformable && in_array($forward, ['cache-control', 'etag', 'last-modified', 'expires'], true)) {
+		continue;
+	}
 	foreach ($header_map[$forward] ?? [] as $value) {
 		header($header_name . ': ' . $value, false);
 	}
+}
+if ($is_transformable) {
+	header('Cache-Control: no-cache, must-revalidate', true);
 }
 
 $is_secure = (!empty($_SERVER['HTTPS']) && (string)$_SERVER['HTTPS'] !== 'off')

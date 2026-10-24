@@ -101,6 +101,7 @@
 		overlay.classList.add('search-open');
 		if (trigger) trigger.setAttribute('aria-expanded', 'true');
 		document.body.style.overflow = 'hidden';
+		window.dispatchEvent(new CustomEvent('mnsearch:open'));
 		setTimeout(function() { input.focus(); }, 100);
 	}
 
@@ -212,10 +213,12 @@
 					'<div class="search-empty-icon">&#128533;</div>' +
 					'<p>No results found for <strong>' + escHtml(query) + '</strong></p>' +
 				'</div>';
+			window.dispatchEvent(new CustomEvent('mnsearch:results', { detail: { count: 0 } }));
 			return;
 		}
 
 		total = total || results.length;
+		window.dispatchEvent(new CustomEvent('mnsearch:results', { detail: { count: total } }));
 
 		/* Show every match, grouped under its page so the count matches what is rendered. */
 		var groups = [];
@@ -260,6 +263,7 @@
 			el.addEventListener('click', function(e) {
 				e.preventDefault();
 				var href = el.getAttribute('href');
+				window.dispatchEvent(new CustomEvent('mnsearch:select', { detail: { url: href, index: el.getAttribute('data-index') || '-1' } }));
 				navigateToResult(href);
 			});
 		});

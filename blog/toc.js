@@ -55,6 +55,11 @@ function toc() {
 	if (isCourseIndexPath(window.location.pathname, window.location.search)) {
 		return;
 	}
+	// A proxied or otherwise rewritten URL may not look like an index, but
+	// the course overview is only rendered on the landing page.
+	if (document.getElementById('course-overview')) {
+		return;
+	}
 	if (window.location.pathname.endsWith("atlas.php")) {
 		return;
 	}

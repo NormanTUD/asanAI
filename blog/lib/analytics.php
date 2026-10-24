@@ -424,6 +424,30 @@ function mn_analytics_init_db(PDO $pdo): void {
 	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_pv_pending ON pageviews(completed, ts)");
 	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_pv_token ON pageviews(token) WHERE token <> ''");
 	$pdo->exec("CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL)");
+	$pdo->exec("CREATE TABLE IF NOT EXISTS pageview_sections (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		pageview_id INTEGER NOT NULL,
+		path TEXT NOT NULL DEFAULT '',
+		section_index INTEGER NOT NULL DEFAULT 0,
+		section_key TEXT NOT NULL DEFAULT '',
+		section_label TEXT NOT NULL DEFAULT '',
+		visible_pct INTEGER NOT NULL DEFAULT 0,
+		dwell_sec INTEGER NOT NULL DEFAULT 0,
+		UNIQUE(pageview_id, section_index)
+	)");
+	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_pvs_path ON pageview_sections(path, section_index)");
+	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_pvs_pageview ON pageview_sections(pageview_id)");
+	$pdo->exec("CREATE TABLE IF NOT EXISTS pageview_events (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		pageview_id INTEGER NOT NULL,
+		path TEXT NOT NULL DEFAULT '',
+		kind TEXT NOT NULL DEFAULT '',
+		target TEXT NOT NULL DEFAULT '',
+		value INTEGER,
+		UNIQUE(pageview_id, kind, target, value)
+	)");
+	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_pve_path ON pageview_events(path, kind)");
+	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_pve_pageview ON pageview_events(pageview_id)");
 }
 
 function mn_analytics_maybe_migrate_legacy_db(string $path): void {
@@ -486,9 +510,9 @@ function mn_analytics_open_db(bool $readOnly = false): ?PDO {
 		$pdo->exec('PRAGMA synchronous=NORMAL');
 		$pdo->exec('PRAGMA busy_timeout=5000');
 		$version = (int)$pdo->query('PRAGMA user_version')->fetchColumn();
-		if ($version < 5) {
+		if ($version < 6) {
 			mn_analytics_init_db($pdo);
-			$pdo->exec('PRAGMA user_version=5');
+			$pdo->exec('PRAGMA user_version=6');
 		}
 		return $pdo;
 	} catch (Throwable $e) {
@@ -988,6 +1012,8 @@ function mn_analytics_cleanup(PDO $pdo, bool $force = false): void {
 		$stmt->execute([$now - 6 * 3600]);
 		$stmt = $pdo->prepare("DELETE FROM pageviews WHERE ts < ?");
 		$stmt->execute([$now - 730 * 86400]);
+		$pdo->exec('DELETE FROM pageview_sections WHERE pageview_id NOT IN (SELECT id FROM pageviews)');
+		$pdo->exec('DELETE FROM pageview_events WHERE pageview_id NOT IN (SELECT id FROM pageviews)');
 		$pdo->exec('PRAGMA optimize');
 	} catch (Throwable $e) {
 		// Analytics must never break the page.
@@ -1641,7 +1667,71 @@ function mn_analytics_print_config(): void {
 	echo '<script>window.__MNAnalytics=' . $json . ';</script>' . "\n";
 }
 
-function mn_analytics_update_token(string $token, int $duration, ?int $scroll, bool $final): bool {
+function mn_analytics_clean_client_text(string $value, int $maxLength): string {
+	$value = preg_replace('/[\x00-\x1F\x7F]+/u', ' ', $value) ?? '';
+	$value = trim(preg_replace('/\s+/u', ' ', $value) ?? '');
+	if (function_exists('mb_substr')) {
+		return mb_substr($value, 0, $maxLength, 'UTF-8');
+	}
+	return substr($value, 0, $maxLength);
+}
+
+function mn_analytics_store_pageview_details(PDO $pdo, int $pageviewId, string $path, array $sections, array $events): void {
+	$sectionStmt = $pdo->prepare(
+		"INSERT OR REPLACE INTO pageview_sections
+			(pageview_id, path, section_index, section_key, section_label, visible_pct, dwell_sec)
+		 VALUES (?, ?, ?, ?, ?, ?, ?)"
+	);
+	$count = 0;
+	foreach ($sections as $section) {
+		if (!is_array($section) || $count >= 16) {
+			continue;
+		}
+		$index = isset($section['i']) && is_numeric($section['i']) ? (int)$section['i'] : -1;
+		if ($index < 0 || $index > 99) {
+			continue;
+		}
+		$key = isset($section['k']) && is_string($section['k']) ? strtolower(mn_analytics_clean_client_text($section['k'], 48)) : '';
+		$key = preg_replace('/[^a-z0-9_-]/', '', $key) ?? '';
+		$label = isset($section['l']) && is_string($section['l']) ? mn_analytics_clean_client_text($section['l'], 64) : '';
+		$visible = isset($section['v']) && is_numeric($section['v']) ? max(0, min(100, (int)$section['v'])) : 0;
+		$dwell = isset($section['d']) && is_numeric($section['d']) ? max(0, min(14400, (int)$section['d'])) : 0;
+		if ($key === '' && $label === '') {
+			continue;
+		}
+		$sectionStmt->execute([$pageviewId, $path, $index, $key, $label, $visible, $dwell]);
+		$count++;
+	}
+
+	$allowedKinds = ['internal_link', 'external_link', 'citation', 'code_copy', 'search', 'search_result', 'quiz_answer', 'quiz_finish', 'download', 'media_play', 'lab_run'];
+	$eventStmt = $pdo->prepare(
+		"INSERT OR IGNORE INTO pageview_events (pageview_id, path, kind, target, value)
+		 VALUES (?, ?, ?, ?, ?)"
+	);
+	$count = 0;
+	foreach ($events as $event) {
+		if (!is_array($event) || $count >= 24) {
+			continue;
+		}
+		$kind = isset($event['type']) && is_string($event['type']) ? strtolower(trim($event['type'])) : '';
+		if (!in_array($kind, $allowedKinds, true)) {
+			continue;
+		}
+		$target = isset($event['target']) && is_string($event['target']) ? mn_analytics_clean_client_text($event['target'], 96) : '';
+		$target = preg_replace('/[?#].*$/', '', $target) ?? '';
+		if ($target === '') {
+			continue;
+		}
+		$value = isset($event['value']) && is_numeric($event['value']) ? (int)$event['value'] : null;
+		if ($value !== null) {
+			$value = max(-1, min(100000, $value));
+		}
+		$eventStmt->execute([$pageviewId, $path, $kind, $target, $value]);
+		$count++;
+	}
+}
+
+function mn_analytics_update_token(string $token, int $duration, ?int $scroll, bool $final, array $sections = [], array $events = []): bool {
 	if (!preg_match('/^[a-f0-9]{32}$/', $token)) {
 		return false;
 	}
@@ -1656,6 +1746,16 @@ function mn_analytics_update_token(string $token, int $duration, ?int $scroll, b
 	$oldest = time() - 6 * 3600;
 
 	try {
+		$find = $pdo->prepare("SELECT id, path FROM pageviews WHERE token = ? AND completed = 0 AND ts >= ?");
+		$find->execute([$token, $oldest]);
+		$row = $find->fetch();
+		if (!is_array($row)) {
+			return false;
+		}
+		$pageviewId = (int)$row['id'];
+		$path = (string)$row['path'];
+
+		$pdo->beginTransaction();
 		if ($final) {
 			$stmt = $pdo->prepare(
 				"UPDATE pageviews
@@ -1663,20 +1763,31 @@ function mn_analytics_update_token(string $token, int $duration, ?int $scroll, b
 				     scroll_pct = CASE WHEN ? IS NULL THEN scroll_pct ELSE MAX(COALESCE(scroll_pct, 0), ?) END,
 				     completed = 1,
 				     token = ''
-				 WHERE token = ? AND completed = 0 AND ts >= ?"
+				 WHERE id = ? AND completed = 0"
 			);
-			$stmt->execute([$duration, $scroll, $scroll, $token, $oldest]);
+			$stmt->execute([$duration, $scroll, $scroll, $pageviewId]);
 		} else {
 			$stmt = $pdo->prepare(
 				"UPDATE pageviews
 				 SET duration_sec = MAX(COALESCE(duration_sec, 0), ?),
 				     scroll_pct = CASE WHEN ? IS NULL THEN scroll_pct ELSE MAX(COALESCE(scroll_pct, 0), ?) END
-				 WHERE token = ? AND completed = 0 AND ts >= ?"
+				 WHERE id = ? AND completed = 0"
 			);
-			$stmt->execute([$duration, $scroll, $scroll, $token, $oldest]);
+			$stmt->execute([$duration, $scroll, $scroll, $pageviewId]);
 		}
-		return $stmt->rowCount() > 0;
+		if ($stmt->rowCount() < 1) {
+			$pdo->rollBack();
+			return false;
+		}
+		if ($final) {
+			mn_analytics_store_pageview_details($pdo, $pageviewId, $path, $sections, $events);
+		}
+		$pdo->commit();
+		return true;
 	} catch (Throwable $e) {
+		if ($pdo->inTransaction()) {
+			$pdo->rollBack();
+		}
 		return false;
 	}
 }
@@ -1690,10 +1801,22 @@ function mn_analytics_delete_token(string $token): bool {
 		return false;
 	}
 	try {
+		$pdo->beginTransaction();
+		$find = $pdo->prepare("SELECT id FROM pageviews WHERE token = ? AND completed = 0");
+		$find->execute([$token]);
+		$ids = $find->fetchAll(PDO::FETCH_COLUMN);
+		foreach ($ids as $id) {
+			$pdo->prepare("DELETE FROM pageview_sections WHERE pageview_id = ?")->execute([(int)$id]);
+			$pdo->prepare("DELETE FROM pageview_events WHERE pageview_id = ?")->execute([(int)$id]);
+		}
 		$stmt = $pdo->prepare("DELETE FROM pageviews WHERE token = ? AND completed = 0");
 		$stmt->execute([$token]);
+		$pdo->commit();
 		return true;
 	} catch (Throwable $e) {
+		if ($pdo->inTransaction()) {
+			$pdo->rollBack();
+		}
 		return false;
 	}
 }
