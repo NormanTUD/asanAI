@@ -249,6 +249,76 @@ html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-syst
 .attn-xc.hi .chip-x {
 	background: #fef3c7; border-radius: 3px; padding: 1px 0; color: #92400e;
 }
+
+/* Zeilensummen: die Σ-Spalte erscheint erst im letzten Schritt. */
+.attn-matrix td.attn-sumhead {
+	background: #ecfdf5; color: #047857; border-left: 2px solid #6ee7b7;
+	width: 58px; font-size: 0.68em; opacity: 0; transition: opacity 0.25s;
+}
+.attn-matrix td.attn-sumcell {
+	background: #f0fdf4; color: #047857; border-left: 2px solid #6ee7b7;
+	width: 58px; padding: 0 4px; opacity: 0; transition: opacity 0.25s;
+}
+.attn-matrix.sums-visible td.attn-sumhead,
+.attn-matrix.sums-visible td.attn-sumcell { opacity: 1; }
+.attn-matrix td.attn-sumcell .attn-sum-v { display: block; font-size: 0.82em; line-height: 1.1; }
+.attn-matrix td.attn-sumcell .attn-sum-pct { display: block; font-size: 0.56em; line-height: 1.1; color: #64748b; }
+.attn-matrix tr.attn-sum-active td.attn-v { box-shadow: inset 0 0 0 2px #f59e0b; }
+.attn-matrix tr.attn-sum-active td.attn-sumcell { background: #fef3c7; }
+.attn-matrix tr.attn-sum-done td.attn-sumcell { background: #dcfce7; }
+.attn-matrix td.attn-add { background: #fde68a !important; box-shadow: inset 0 0 0 2px #f59e0b; }
+
+/* Folien "Warum Softmax?" und "Lernen als Spielzug" */
+.attn-pbars { margin-bottom: 4px; }
+.attn-pbar { margin-bottom: 8px; }
+.attn-pbar-head {
+	display: flex; justify-content: space-between; align-items: baseline;
+	font-size: 0.8em; color: #475569; margin-bottom: 2px; gap: 8px;
+}
+.attn-pbar-head b { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.attn-pbar-val { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.92em; color: #334155; }
+.attn-pbar-track {
+	height: 15px; background: #f1f5f9; border: 1px solid #e2e8f0;
+	border-radius: 99px; overflow: hidden;
+}
+.attn-pbar-fill { height: 100%; border-radius: 99px; transition: width 0.08s linear; }
+.attn-total {
+	display: flex; justify-content: space-between; align-items: baseline;
+	margin-top: 8px; padding: 7px 10px; background: #ecfdf5;
+	border: 1px solid #a7f3d0; border-radius: 8px;
+	font-size: 0.78em; color: #065f46;
+}
+.attn-total b { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1.05em; }
+.attn-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.attn-stat {
+	background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+	padding: 6px 9px;
+}
+.attn-stat .k { font-size: 0.64em; letter-spacing: 0.05em; text-transform: uppercase; color: #64748b; }
+.attn-stat .v {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 1.05em; font-weight: 700; color: #1e293b;
+}
+.attn-forces { display: grid; gap: 4px; margin-top: 8px; font-size: 0.74em; color: #475569; line-height: 1.35; }
+.attn-force { display: flex; gap: 6px; align-items: flex-start; }
+.attn-force i { width: 9px; height: 9px; border-radius: 3px; margin-top: 3px; flex: none; }
+.attn-force b { color: #1e293b; }
+.attn-replay {
+	margin-top: 9px; padding: 5px 10px; border-radius: 7px;
+	border: 1px solid #cbd5e1; background: #fff; color: #334155;
+	font-size: 0.76em; font-weight: 600; cursor: pointer;
+}
+.attn-replay:hover { background: #f1f5f9; }
+.attn-rl-status {
+	min-height: 2.7em; padding: 7px 10px; border-radius: 8px;
+	background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af;
+	font-size: 0.78em; line-height: 1.4;
+}
+.attn-formula {
+	margin-top: 8px; padding: 7px 10px; border-radius: 8px;
+	background: #f8fafc; border: 1px solid #e2e8f0;
+	font-size: 0.9em; line-height: 1.9; color: #1e293b;
+}
 table.heads-table {
 	border-collapse: collapse; width: 100%; margin-top: 6px; font-size: 1.1em;
 }

@@ -44,6 +44,20 @@ const DemoRegistry = (() => {
                         slideTest: s => s && s.id === 'slide-attention',
                         onLeave: d => d.reset() },
 
+                { ref: () => typeof AttentionRowSums !== 'undefined' ? AttentionRowSums : null,
+                        slideTest: s => s && s.id === 'slide-attention-matrix',
+                        onLeave: d => d.reset() },
+
+                { ref: () => typeof AttentionSimplex !== 'undefined' ? AttentionSimplex : null,
+                        slideTest: s => s && s.id === 'slide-attn-simplex',
+                        onEnter: d => d.enter(),
+                        onLeave: d => d.leave() },
+
+                { ref: () => typeof AttentionBandit !== 'undefined' ? AttentionBandit : null,
+                        slideTest: s => s && s.id === 'slide-attn-rl',
+                        onEnter: d => d.enter(),
+                        onLeave: d => d.leave() },
+
                 { ref: () => typeof JSpaceViz !== 'undefined' ? JSpaceViz : null,
                         slideTest: s => s.getAttribute('data-title') === 'J-Space',
                         onEnter: d => setTimeout(() => d.init(), 80),
@@ -307,6 +321,16 @@ const FragmentActions = {
 	'typewriter': {
 	    forward: (frag) => startTypewriter(frag),
 	    backward: (frag) => resetTypewriter(frag),
+	},
+
+	// "Attention-Matrix": die Σ-Spalte baut sich Zeile für Zeile auf.
+	'attn-rowsums': {
+		forward: () => {
+			if (window.AttentionRowSums) window.AttentionRowSums.show();
+		},
+		backward: () => {
+			if (window.AttentionRowSums) window.AttentionRowSums.reset();
+		},
 	},
 
 	// "Attention + FFN ×N": im letzten Schritt wird das Lückenfeld zu „Haus"

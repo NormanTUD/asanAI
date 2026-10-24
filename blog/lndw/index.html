@@ -1006,24 +1006,28 @@
         <div class="key-insight fragment">
             Kopf 2 fragt <b>„Wer ist das Subjekt?"</b> → <span class="math-inline">\underbrace{\text{sat} \to \text{cat}}_{0.55}</span>.
         </div>
+        <div class="fragment" data-fragment-action="attn-rowsums" style="margin-top:12px; padding:12px 16px; background:#ecfdf5; border-left:4px solid #10b981; border-radius:6px; color:#065f46; line-height:1.55;">
+            Jede Zeile ist <b>eine Entscheidung</b>: Die Zahlen sind Anteile an <b>genau 1 Quantum Aufmerksamkeit</b>. Erst die Summe macht daraus eine Wahrscheinlichkeitsverteilung — und sie ist in jeder Zeile <b>1.00 = 100 %</b>.
+        </div>
 
         <script>
         (function () {
             const TOK = ['the','cat','sat','on','the','mat'];
-            const H1 = [[1,0,0,0,0,0],[0.71,0.29,0,0,0,0],[0.33,0.33,0.33,0,0,0],[0.44,0.25,0.12,0.19,0,0],[0.43,0.09,0.01,0.04,0.43,0],[0.31,0.13,0.04,0.08,0.31,0.13]];
-            const H2 = [[1,0,0,0,0,0],[0.31,0.69,0,0,0,0],[0.20,0.55,0.25,0,0,0],[0.19,0.34,0.22,0.24,0,0],[0.19,0.21,0.20,0.20,0.19,0],[0.11,0.25,0.13,0.15,0.11,0.25]];
+            const H1 = [[1,0,0,0,0,0],[0.71,0.29,0,0,0,0],[0.33,0.33,0.34,0,0,0],[0.44,0.25,0.12,0.19,0,0],[0.43,0.09,0.01,0.04,0.43,0],[0.31,0.13,0.04,0.08,0.31,0.13]];
+            const H2 = [[1,0,0,0,0,0],[0.31,0.69,0,0,0,0],[0.20,0.55,0.25,0,0,0],[0.19,0.34,0.22,0.25,0,0],[0.20,0.21,0.20,0.20,0.19,0],[0.11,0.25,0.13,0.15,0.11,0.25]];
             function alpha(v){ return Math.min(0.65, v*0.7+0.08).toFixed(2); }
             function render(name, title, M){
                 let s = '<div style="text-align:center;font-weight:700;color:#1e293b;margin-bottom:2px;">' + title + '</div>';
                 s += '<div style="overflow-x:auto;text-align:center;"><table class="attn-matrix"><tr><td></td>';
                 s += TOK.map(t=>'<td class="attn-colhead">'+t+'</td>').join('');
-                s += '</tr>';
+                s += '<td class="attn-sumhead">Σ</td></tr>';
                 for (let i=0;i<6;i++){
                     s += '<tr><td class="attn-rowhead">'+TOK[i]+'</td>';
                     for (let j=0;j<6;j++){
                         if (j>i) { s += '<td class="attn-z" title="Kausalmaske">0</td>'; }
                         else { s += '<td class="attn-v" style="background:rgba(59,130,246,'+alpha(M[i][j])+')">'+M[i][j].toFixed(2)+'</td>'; }
                     }
+                    s += '<td class="attn-sumcell"><span class="attn-sum-v">0.00</span><span class="attn-sum-pct">0%</span></td>';
                     s += '</tr>';
                 }
                 s += '</table></div>';
@@ -1033,6 +1037,94 @@
             render('attn-h2-wrap', 'Kopf 2 · Subjekt → Verb', H2);
         })();
         </script>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: Warum Softmax? Der Simplex ==================== -->
+<div class="slide" data-title="Warum Softmax? Der Simplex" id="slide-attn-simplex">
+    <div class="slide-content">
+        <h2>Warum eigentlich Softmax?</h2>
+        <p style="margin-bottom:2px; max-width:1000px; margin-left:auto; margin-right:auto;">
+            Ein Query hat <b>genau ein Quantum Aufmerksamkeit</b> zu vergeben. Es auf drei Schlüssel zu verteilen heißt: einen Punkt im Dreieck zu wählen — <span class="math-inline">p_1+p_2+p_3=1</span>.
+        </p>
+
+        <div class="demo-box" style="min-height:auto; padding:14px 18px; margin-top:10px;">
+            <div style="display:grid; grid-template-columns:1.18fr 1fr; gap:18px; align-items:center;">
+                <div>
+                    <canvas id="attn-simplex-canvas" style="width:100%; height:340px; display:block;"></canvas>
+                    <div style="text-align:center; font-size:0.72em; color:#94a3b8; margin-top:2px;">
+                        Höhenlandschaft von <span class="math-inline">J(p)</span> · dunkler = kleiner (besser)
+                        <span style="color:#64748b; margin-left:8px;">· <b>Pfeiltaste →</b> rollt einen Schritt weiter</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="attn-pbars">
+                        <div class="attn-pbar">
+                            <div class="attn-pbar-head"><span><b style="color:#2563eb">key 1</b> · s₁ = 1.4</span><span class="attn-pbar-val" id="attn-simplex-p0">33 %</span></div>
+                            <div class="attn-pbar-track"><div class="attn-pbar-fill" id="attn-simplex-fill0" style="background:#2563eb; width:33.33%"></div></div>
+                        </div>
+                        <div class="attn-pbar">
+                            <div class="attn-pbar-head"><span><b style="color:#10b981">key 2</b> · s₂ = 0.3</span><span class="attn-pbar-val" id="attn-simplex-p1">33 %</span></div>
+                            <div class="attn-pbar-track"><div class="attn-pbar-fill" id="attn-simplex-fill1" style="background:#10b981; width:33.33%"></div></div>
+                        </div>
+                        <div class="attn-pbar">
+                            <div class="attn-pbar-head"><span><b style="color:#f59e0b">key 3</b> · s₃ = -0.6</span><span class="attn-pbar-val" id="attn-simplex-p2">33 %</span></div>
+                            <div class="attn-pbar-track"><div class="attn-pbar-fill" id="attn-simplex-fill2" style="background:#f59e0b; width:33.33%"></div></div>
+                        </div>
+                    </div>
+                    <div class="attn-total"><span>Aufmerksamkeit gesamt</span><b>1.00 = 100 %</b></div>
+                    <div class="attn-stats">
+                        <div class="attn-stat"><div class="k">J(p)</div><div class="v" id="attn-simplex-J">–</div></div>
+                        <div class="attn-stat"><div class="k">Abstand zu p*</div><div class="v" id="attn-simplex-gap">–</div></div>
+                    </div>
+                    <div class="attn-forces">
+                        <div class="attn-force"><i style="background:#2563eb"></i><span><b>Ähnlichkeit maximieren</b> — hohe Scores ziehen.</span></div>
+                        <div class="attn-force"><i style="background:#f59e0b"></i><span><b>Nicht blind werden</b> — Entropie hält Optionen offen.</span></div>
+                        <div class="attn-force"><i style="background:#10b981"></i><span><b>Wahrscheinlichkeit bleiben</b> — <span class="math-inline">\sum_j p_j = 1</span>.</span></div>
+                    </div>
+                    <button type="button" class="attn-replay" onclick="AttentionSimplex.replay()">↺ Auf Anfang</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="key-insight fragment" style="margin-top:10px;">
+            Alle Startpunkte enden im <b>selben Punkt</b>: <span class="math-inline">p_j = \frac{e^{s_j/\tau}}{\sum_k e^{s_k/\tau}}</span>. Softmax ist nicht gewählt — es ist die <b>einzige</b> Lösung.
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SLIDE: Lernen als Spielzug ==================== -->
+<div class="slide" data-title="Lernen als Spielzug" id="slide-attn-rl">
+    <div class="slide-content">
+        <h2>Der Lern-Gradient ist ein Spielzug</h2>
+        <p style="margin-bottom:2px; max-width:1000px; margin-left:auto; margin-right:auto;">
+            Attention zieht einen Schlüssel wie aus einem Losbeutel. Danach zählt nur: <b>War dieser Zug besser als erwartet?</b>
+        </p>
+
+        <div class="demo-box" style="min-height:auto; padding:14px 18px; margin-top:8px;">
+            <div style="display:grid; grid-template-columns:1.15fr 1fr; gap:18px; align-items:center;">
+                <canvas id="attn-rl-canvas" style="width:100%; height:380px; display:block;"></canvas>
+                <div>
+                    <div id="attn-rl-status" class="attn-rl-status">Bereit …</div>
+                    <div class="attn-stats">
+                        <div class="attn-stat"><div class="k">Baseline E_p[u]</div><div class="v" id="attn-rl-base">–</div></div>
+                        <div class="attn-stat"><div class="k">Σ p·A</div><div class="v" id="attn-rl-zero">–</div></div>
+                    </div>
+                    <div class="attn-formula">
+                        <div><span class="math-inline">A_j = u_j - \mathbb{E}_p[u]</span></div>
+                        <div><span class="math-inline">\frac{\partial \mathcal{L}}{\partial s_j} = -\frac{p_j}{\tau}\,A_j</span></div>
+                    </div>
+                    <div style="font-size:0.76em; color:#64748b; line-height:1.45; margin-top:4px;">
+                        Ziehen → Vorteil → Update. Genau die Form eines <b>Policy-Gradienten</b> aus dem RL.
+                    </div>
+                    <button type="button" class="attn-replay" onclick="AttentionBandit.replay()">↺ Nochmal lernen</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="key-insight fragment" style="margin-top:10px;">
+            Die <b>Baseline</b> ist nicht eingebaut: Aus <span class="math-inline">\sum_j p_j = 1</span> folgt automatisch <span class="math-inline">\sum_j p_j A_j = 0</span>. Der Vorteil misst gegen den eigenen Durchschnitt — deshalb wird der Gradient ruhig, ohne dass man etwas zuschalten muss.
+        </div>
     </div>
 </div>
 
@@ -1859,6 +1951,7 @@
 <script src="philosophy.js"></script>
 <script src="presentation.js"></script>
 <script src="attention_slides.js"></script>
+<script src="attn_optimal.js"></script>
 <script src="attractors.js"></script>
 <script src="jspace_viz.js"></script>
 <script src="space_morph.js"></script>
