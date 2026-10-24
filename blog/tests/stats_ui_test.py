@@ -1,0 +1,243 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["selenium", "webdriver-manager"]
+# ///
+"""
+Browser regression test for the stats Overview modes, lazy charts, Compare
+tab, saved-view manager, Present/Light modes and mobile overflow.
+
+Uses a temporary SQLite database seeded with synthetic anonymous pageviews.
+No production data is touched.
+
+Usage:
+    uv run blog/tests/stats_ui_test.py
+"""
+
+from __future__ import annotations
+
+import os
+import shutil
+import socket
+import sqlite3
+import subprocess
+import tempfile
+import time
+from datetime import datetime, timedelta
+from pathlib import Path
+
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.os_manager import ChromeType
+
+
+ROOT = Path(__file__).resolve().parent.parent
+failures = 0
+checks = 0
+
+
+def check(condition: bool, label: str, detail: str = "") -> None:
+	global failures, checks
+	checks += 1
+	if condition:
+		print(f"ok   {label}")
+		return
+	failures += 1
+	print(f"FAIL {label}" + (f" — {detail}" if detail else ""))
+
+
+def free_port() -> int:
+	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+		sock.bind(("127.0.0.1", 0))
+		return int(sock.getsockname()[1])
+
+
+def driver() -> webdriver.Chrome:
+	options = Options()
+	for arg in [
+		"--headless=new",
+		"--no-sandbox",
+		"--disable-dev-shm-usage",
+		"--disable-gpu",
+		"--window-size=1440,1000",
+		"--remote-debugging-pipe",
+		"--disable-extensions",
+		"--disable-background-networking",
+		"--disable-software-rasterizer",
+	]:
+		options.add_argument(arg)
+	options.set_capability("goog:loggingPrefs", {"browser": "ALL"})
+	binary = (
+		shutil.which("chromium-browser")
+		or shutil.which("chromium")
+		or shutil.which("google-chrome")
+	)
+	if binary:
+		options.binary_location = binary
+	try:
+		return webdriver.Chrome(
+			service=Service(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()),
+			options=options,
+		)
+	except Exception:
+		try:
+			return webdriver.Chrome(
+				service=Service(ChromeDriverManager().install()),
+				options=options,
+			)
+		except Exception:
+			return webdriver.Chrome(options=options)
+
+
+def seed(db_path: Path) -> None:
+	env = os.environ.copy()
+	env["MN_ANALYTICS_DB"] = str(db_path)
+	env["MN_ANALYTICS_TEST_MODE"] = "1"
+	subprocess.run(
+		["php", "-r", "require 'lib/analytics.php'; mn_analytics_open_db();"],
+		cwd=str(ROOT),
+		env=env,
+		check=True,
+	)
+	now = datetime.now()
+	rows = []
+	for index in range(14):
+		day = (now - timedelta(days=index % 7)).strftime("%Y-%m-%d")
+		hour = 9 + (index % 10)
+		path = ["history", "attentionlab", "intuition", "math_i"][index % 4]
+		ref_type = ["direct", "search", "internal", "social"][index % 4]
+		ref_path = "history" if ref_type == "internal" else ""
+		source = "google" if ref_type == "search" else ("example.com" if ref_type == "social" else "")
+		device = ["desktop", "mobile", "tablet"][index % 3]
+		browser = ["Chrome", "Safari", "Firefox"][index % 3]
+		os_name = ["Linux", "iOS", "Windows"][index % 3]
+		ts = int((now - timedelta(days=index % 7, hours=index % 4)).timestamp())
+		rows.append((ts, day, hour, path, ref_type, source, "", ref_path, browser, 131, os_name, "test", device, 0, "", 40 + index, 60 + index, 1, ""))
+	with sqlite3.connect(db_path) as db:
+		db.executemany(
+			"INSERT INTO pageviews (ts, day, hour, path, ref_type, ref_source, ref_host, ref_path, browser, browser_major, os, os_version, device, is_bot, bot_reason, duration_sec, scroll_pct, completed, token) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+			rows,
+		)
+		ids = [row[0] for row in db.execute("SELECT id FROM pageviews ORDER BY id LIMIT 5")]
+		for pageview_id in ids:
+			for section in range(3):
+				db.execute(
+					"INSERT OR IGNORE INTO pageview_sections (pageview_id,path,section_index,section_key,section_label,visible_pct,dwell_sec) VALUES (?,?,?,?,?,?,?)",
+					(pageview_id, "history", section, f"section-{section}", f"Section {section + 1}", 100 - section * 20, 10 - section),
+				)
+		for pageview_id in ids[:3]:
+			db.execute(
+				"INSERT OR IGNORE INTO pageview_events (pageview_id,path,kind,target,value) VALUES (?,?,?,?,?)",
+				(pageview_id, "history", "internal_link", "intuition", 1),
+			)
+			db.execute(
+				"INSERT OR IGNORE INTO pageview_events (pageview_id,path,kind,target,value) VALUES (?,?,?,?,?)",
+				(pageview_id, "history", "quiz_answer", "history-cp1:0", 1),
+			)
+		db.commit()
+
+
+def main() -> int:
+	port = free_port()
+	base = f"http://127.0.0.1:{port}/stats.php"
+	with tempfile.TemporaryDirectory(prefix="asanai-stats-ui-") as tmp:
+		tmp_path = Path(tmp)
+		db_path = tmp_path / "analytics.sqlite"
+		password_path = tmp_path / "blogpassword"
+		password_path.write_text("ui-test-password\n", encoding="utf-8")
+		password_path.chmod(0o400)
+		seed(db_path)
+
+		env = os.environ.copy()
+		env["MN_ANALYTICS_DB"] = str(db_path)
+		env["BLOG_STATS_PASSWORD_FILE"] = str(password_path)
+		env["MN_ANALYTICS_DISABLED"] = "1"
+		server = subprocess.Popen(
+			["php", "-S", f"127.0.0.1:{port}", "-t", str(ROOT)],
+			env=env,
+			stdout=subprocess.DEVNULL,
+			stderr=subprocess.DEVNULL,
+		)
+		browser = None
+		try:
+			time.sleep(1)
+			browser = driver()
+			browser.get(base)
+			WebDriverWait(browser, 15).until(EC.presence_of_element_located((By.ID, "password")))
+			browser.find_element(By.ID, "password").send_keys("ui-test-password")
+			browser.find_element(By.CSS_SELECTOR, "button[type=submit]").click()
+			WebDriverWait(browser, 25).until(EC.presence_of_element_located((By.ID, "hero")))
+			time.sleep(1.5)
+
+			check(browser.execute_script("return document.body.classList.contains('overview-briefing')"), "default mode is briefing")
+			check(browser.find_element(By.ID, "story-cards").is_displayed(), "story cards visible")
+			check(not browser.find_element(By.ID, "overview").is_displayed(), "KPI grid hidden in briefing")
+			briefing_charts = browser.execute_script("return document.querySelectorAll('.chart canvas').length")
+			check(briefing_charts <= 4, "briefing initializes at most four charts", str(briefing_charts))
+			browser.find_element(By.CSS_SELECTOR, '[data-overview-mode="explore"]').click()
+			time.sleep(1.5)
+			explore_charts = browser.execute_script("return document.querySelectorAll('.chart canvas').length")
+			check(explore_charts > briefing_charts, "explore initializes more charts", f"{briefing_charts} -> {explore_charts}")
+			check(browser.find_element(By.ID, "overview").is_displayed(), "KPI grid visible in explore")
+
+			browser.find_element(By.CSS_SELECTOR, '[data-tab="compare"]').click()
+			time.sleep(0.5)
+			check(browser.find_element(By.ID, "compare-tab").is_displayed(), "compare tab visible")
+			check(len(browser.find_elements(By.CSS_SELECTOR, "#compare-tab .compare-row--detail")) >= 5, "previous comparison rows")
+			browser.get(base + "?cmp_mode=entity&cmp_kind=path&cmp_a=history&cmp_b=attentionlab")
+			WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.ID, "hero")))
+			browser.find_element(By.CSS_SELECTOR, '[data-tab="compare"]').click()
+			time.sleep(0.5)
+			check("Brief History of AI" in browser.find_element(By.CSS_SELECTOR, "#compare-tab .compare-head").text, "entity compare labels")
+			browser.get(base + "?cmp_mode=range&cmp_from_a=2026-10-01&cmp_to_a=2026-10-14&cmp_from_b=2026-09-01&cmp_to_b=2026-09-14")
+			WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.ID, "hero")))
+			browser.find_element(By.CSS_SELECTOR, '[data-tab="compare"]').click()
+			time.sleep(0.5)
+			check("2026-10-01" in browser.find_element(By.CSS_SELECTOR, "#compare-tab .compare-head").text, "range compare labels")
+
+			browser.find_element(By.ID, "manage-views").click()
+			time.sleep(0.2)
+			check(browser.execute_script("return document.getElementById('saved-views-dialog').open"), "saved-view manager opens")
+			browser.execute_script("document.getElementById('saved-views-dialog').close()")
+
+			browser.find_element(By.CSS_SELECTOR, '[data-tab="overview"]').click()
+			time.sleep(0.3)
+			browser.find_element(By.ID, "present-toggle").click()
+			time.sleep(0.5)
+			check(browser.execute_script("return document.body.classList.contains('present')"), "present mode opens")
+			browser.find_element(By.TAG_NAME, "body").send_keys(Keys.ESCAPE)
+			time.sleep(0.3)
+			check(not browser.execute_script("return document.body.classList.contains('present')"), "present mode exits")
+			browser.find_element(By.ID, "theme-toggle").click()
+			time.sleep(0.4)
+			check(browser.execute_script("return document.body.classList.contains('light')"), "light mode opens")
+			browser.find_element(By.ID, "theme-toggle").click()
+			time.sleep(0.3)
+
+			severe = [entry for entry in browser.get_log("browser") if entry.get("level") == "SEVERE"]
+			check(not severe, "no severe console errors", str(severe))
+			check(not browser.execute_script("return document.documentElement.scrollWidth > document.documentElement.clientWidth"), "no overflow at 1440")
+			browser.set_window_size(390, 900)
+			time.sleep(0.7)
+			check(not browser.execute_script("return document.documentElement.scrollWidth > document.documentElement.clientWidth"), "no overflow at 390")
+		finally:
+			if browser:
+				browser.quit()
+			server.terminate()
+			try:
+				server.wait(timeout=5)
+			except subprocess.TimeoutExpired:
+				server.kill()
+
+	print()
+	print(f"{checks} checks, {failures} failure(s)")
+	return 0 if failures == 0 else 1
+
+
+if __name__ == "__main__":
+	raise SystemExit(main())
