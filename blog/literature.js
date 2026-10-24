@@ -21642,4 +21642,142 @@ window.bibData = {
 		url: "https://doi.org/10.1147/rd.53.0183",
 		alternativetitle: "Landauer, 1961"
 	},
+
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Fiscal-military state, empire, metrology, assembly line, telephone,
+	 *  maps, audio and render farms (untold_history.php) — primary sources.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"boe1694": {
+		title: "Bank of England Act 1694",
+		author: "Parliament of England",
+		year: 1694,
+		url: "https://www.legislation.gov.uk/aep/WillandMar/5-6/20",
+		alternativetitle: "Bank of England Act 1694"
+	},
+	"incometax1842": {
+		title: "Income Tax Act 1842",
+		author: "Parliament of the United Kingdom",
+		year: 1842,
+		url: "https://www.legislation.gov.uk/ukpga/Vict/5-6/35/enacted",
+		alternativetitle: "Income Tax Act 1842"
+	},
+	"selectiveservice1917": {
+		title: "Selective Service Act of 1917",
+		author: "U.S. Congress",
+		year: 1917,
+		url: "https://www.govinfo.gov/content/pkg/STATUTE-40/pdf/STATUTE-40-Pg76.pdf",
+		alternativetitle: "Selective Service Act 1917"
+	},
+	"berlinact1885": {
+		title: "General Act of the Berlin Conference on West Africa",
+		author: "Berlin Conference",
+		year: 1885,
+		url: "https://archive.org/details/1885-general-act-berlin-conference",
+		alternativetitle: "General Act of Berlin (1885)"
+	},
+	"indiancensus1871": {
+		title: "Memorandum on the Census of British India of 1871-72",
+		author: "Henry Waterfield",
+		year: 1875,
+		url: "https://archive.org/details/PARI.memorandum-on-the-census-of-british-india-of-1871-72",
+		alternativetitle: "Census of British India, 1871-72"
+	},
+	"si_brochure2019": {
+		title: "The International System of Units (SI Brochure), 9th edition",
+		author: "Bureau International des Poids et Mesures",
+		year: 2019,
+		url: "https://www.bipm.org/documents/20126/41483022/SI-Brochure-9-EN.pdf",
+		alternativetitle: "BIPM SI Brochure (2019)"
+	},
+	"metre_convention1875": {
+		title: "Metre Convention",
+		author: "Bureau International des Poids et Mesures",
+		year: 1875,
+		url: "https://www.bipm.org/en/metre-convention",
+		alternativetitle: "Metre Convention (1875)"
+	},
+	"ford1922mylife": {
+		title: "My Life and Work",
+		author: "Henry Ford, Samuel Crowther",
+		year: 1922,
+		url: "https://www.gutenberg.org/ebooks/7213",
+		alternativetitle: "Ford, My Life and Work"
+	},
+	"shewhart1930quality": {
+		title: "Economic Quality Control of Manufactured Product",
+		author: "W. A. Shewhart",
+		year: 1930,
+		url: "https://archive.org/details/bstj9-2-364",
+		alternativetitle: "Shewhart, 1930"
+	},
+	"bell1876telephone": {
+		title: "Improvement in Telegraphy (US Patent 174,465)",
+		author: "Alexander Graham Bell",
+		year: 1876,
+		url: "https://patents.google.com/patent/US174465A/en",
+		alternativetitle: "Bell, US Patent 174,465"
+	},
+	"strowger1891exchange": {
+		title: "Automatic Telephone-Exchange (US Patent 447,918)",
+		author: "Almon B. Strowger",
+		year: 1891,
+		url: "https://patents.google.com/patent/US447918A/en",
+		alternativetitle: "Strowger, US Patent 447,918"
+	},
+	"erlang1922trunking": {
+		title: "The Theory of Probabilities Applied to Telephone Trunking Problems",
+		author: "A. K. Erlang",
+		year: 1922,
+		url: "https://doi.org/10.1002/j.1538-7305.1922.tb00390.x",
+		alternativetitle: "Erlang, 1922"
+	},
+	"os1841": {
+		title: "Ordnance Survey Act 1841",
+		author: "Parliament of the United Kingdom",
+		year: 1841,
+		url: "https://www.legislation.gov.uk/ukpga/Vict/4-5/30/enacted",
+		alternativetitle: "Ordnance Survey Act 1841"
+	},
+	"edison1877phonograph": {
+		title: "Improvement in Phonograph or Speaking Machines (US Patent 200,521)",
+		author: "Thomas A. Edison",
+		year: 1877,
+		url: "https://patents.google.com/patent/US200521A/en",
+		alternativetitle: "Edison, US Patent 200,521"
+	},
+	"berliner1887gramophone": {
+		title: "Gramophone (US Patent 372,786)",
+		author: "Emile Berliner",
+		year: 1887,
+		url: "https://patents.google.com/patent/US372786A/en",
+		alternativetitle: "Berliner, US Patent 372,786"
+	},
+	"mpeg_audio1993": {
+		title: "Current and Future Standardization of High-Quality Digital Audio Coding in MPEG",
+		author: "Karlheinz Brandenburg",
+		year: 1993,
+		url: "https://doi.org/10.1109/ASPAA.1993.380000",
+		alternativetitle: "Brandenburg, 1993"
+	},
+	"catmull1974": {
+		title: "Computer Display of Curved Surfaces",
+		author: "Edwin E. Catmull",
+		year: 1974,
+		url: "https://doi.org/10.1145/280811.280920",
+		alternativetitle: "Catmull, 1974"
+	},
+	"hanrahan1990shading": {
+		title: "A Language for Shading and Lighting Calculations",
+		author: "Pat Hanrahan, Jim Lawson",
+		year: 1990,
+		url: "https://doi.org/10.1145/97880.97911",
+		alternativetitle: "Hanrahan and Lawson, 1990"
+	},
+	"pixar_ourstory": {
+		title: "Our Story",
+		author: "Pixar Animation Studios",
+		year: 2026,
+		url: "https://www.pixar.com/our-story",
+		alternativetitle: "Pixar, Our Story"
+	},
 };

@@ -24746,12 +24746,14 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 4,
+  "works": 6,
   "keys": [
    "companiesact1856",
    "uk1870education",
    "uk1850libraries",
-   "uk1848publichealth"
+   "uk1848publichealth",
+   "incometax1842",
+   "os1841"
   ],
   "cited_in": [
    "untold_history"
@@ -24766,11 +24768,12 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 3,
+  "works": 4,
   "keys": [
    "sbic1958",
    "us1965immigration",
-   "us1990h1b"
+   "us1990h1b",
+   "selectiveservice1917"
   ],
   "cited_in": [
    "untold_history"
@@ -25533,6 +25536,296 @@
   "works": 1,
   "keys": [
    "landauer1961"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Parliament of England",
+  "canon": "Parliament of England",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "boe1694"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Berlin Conference",
+  "canon": "Berlin Conference",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "berlinact1885"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Henry Waterfield",
+  "canon": "Henry Waterfield",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "indiancensus1871"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Bureau International des Poids et Mesures",
+  "canon": "Bureau International des Poids et Mesures",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "si_brochure2019",
+   "metre_convention1875"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Henry Ford",
+  "canon": "Henry Ford",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ford1922mylife"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Samuel Crowther",
+  "canon": "Samuel Crowther",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ford1922mylife"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "W. A. Shewhart",
+  "canon": "W. A. Shewhart",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "shewhart1930quality"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Alexander Graham Bell",
+  "canon": "Alexander Graham Bell",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "bell1876telephone"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Almon B. Strowger",
+  "canon": "Almon B. Strowger",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "strowger1891exchange"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "A. K. Erlang",
+  "canon": "A. K. Erlang",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "erlang1922trunking"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Thomas A. Edison",
+  "canon": "Thomas A. Edison",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "edison1877phonograph"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Emile Berliner",
+  "canon": "Emile Berliner",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "berliner1887gramophone"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Karlheinz Brandenburg",
+  "canon": "Karlheinz Brandenburg",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "mpeg_audio1993"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Edwin E. Catmull",
+  "canon": "Edwin E. Catmull",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "catmull1974"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Pat Hanrahan",
+  "canon": "Pat Hanrahan",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hanrahan1990shading"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Jim Lawson",
+  "canon": "Jim Lawson",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "hanrahan1990shading"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Pixar Animation Studios",
+  "canon": "Pixar Animation Studios",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pixar_ourstory"
   ],
   "cited_in": [
    "untold_history"

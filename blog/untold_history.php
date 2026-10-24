@@ -2707,6 +2707,61 @@ Every computation is a physical process, and physics sends a bill. Carnot's 1824
 </div>
 
 <div class="md" data-depth="40">
+## The Instruments of Power and Production: Fiscal, Imperial, Metric, Industrial
+
+The previous part followed the budgets of body, city and state. This part follows the instruments that turn those budgets into capacity: the fiscal-military state that can tax, borrow and conscript; the empire that takes territory, classifies people and extracts resources; the metrological system that makes units mean the same thing everywhere; the assembly line and the control chart; the telephone switch; the map; the sound record; and the render farm.
+
+### The Fiscal-Military State: Taxation, Debt, and Conscription
+
+War is expensive, and the modern state was built to pay for it. The Bank of England Act 1694 granted duties on tonnage, beer and ale to secure £1,500,000 towards "the carrying on the Warr against France" and to induce persons to advance that sum (\cite[Parliament of England, 1694]{boe1694}). The Income Tax Act 1842 gave the British state a direct tax on income (\cite[Parliament of the United Kingdom, 1842]{incometax1842}). The Selective Service Act of 1917 authorised the President to raise troops temporarily for the emergency (\cite[U.S. Congress, 1917]{selectiveservice1917}). Taxation, public debt, conscription and logistics are the four fiscal-military instruments; the military-industrial-academic complex that later funded computing is their descendant.
+
+> **Open questions.** Who pays for the next war? What is the fiscal capacity of a digital state? How does public debt shape which research agendas survive?
+
+### The Empire: Occupation, Census, and Extraction
+
+Empire was a machine for taking territory, classifying people and extracting resources. The General Act of the Berlin Conference (1885) laid down "rules for future occupation on the coast of the African continent": any power taking possession had to notify the others, and was obliged to establish authority sufficient to protect existing rights and freedom of trade (\cite[Berlin Conference, 1885]{berlinact1885}). The Census of British India of 1871-72 classified the population by religion, nationality, language, caste, occupation and infirmities (\cite[Waterfield, 1875]{indiancensus1871}). Mapping, counting and classifying are data practices; empire was one of their largest and most violent applications. The global networks of telegraph, shipping and botanical exchange that carried resources and information were built inside that system.
+
+> **Open questions.** Who owns the data extracted from the periphery? What does decolonising the stack mean? Which maps and categories still carry imperial assumptions?
+
+### The Measure: The Metre Convention and the SI
+
+Interchangeable parts, global science and semiconductor manufacturing all depend on units that mean the same thing everywhere. The Metre Convention (1875) created the BIPM and the machinery of international metrology (\cite[BIPM, 1875]{metre_convention1875}). The SI Brochure defines the International System of Units in terms of seven defining constants and describes the CGPM, CIPM and consultative committees that maintain it (\cite[BIPM, 2019]{si_brochure2019}). A nanometre is a useful unit only because the world has agreed on the metre and can realise it. Metrology is the invisible standard underneath the fab.
+
+> **Open questions.** Who calibrates the calibrators? What happens when a base unit is redefined? How does metrology set the limits of manufacturing?
+
+### The Assembly Line: Ford, Shewhart, and Quality Control
+
+Mass production is a system, not a machine. Ford's *My Life and Work* describes the moving assembly line: drawing the chassis with a rope and windlass reduced assembly time from twelve hours and twenty-eight minutes to five hours fifty minutes; the elevated line and further subdivision cut it to one hour thirty-three minutes; the line ran at forty-four inches per minute and had forty-five stations (\cite[Ford and Crowther, 1922]{ford1922mylife}). Shewhart's 1930 paper on economic quality control gave the statistical basis for deciding when a process is in control and how much variation to leave to chance (\cite[Shewhart, 1930]{shewhart1930quality}). The assembly line and the control chart are the ancestors of the modern production line, the supply chain and the benchmark.
+
+> **Open questions.** What is the human cost of the line? Can quality control be automated? What does "in control" mean for a model?
+
+### The Switch: Bell, Strowger, and the Telephone Network
+
+The telephone network was the first real-time switched network. Bell's 1876 patent, "Improvement in Telegraphy," described the transmission of vocal sounds by undulating currents (\cite[Bell, 1876]{bell1876telephone}). Strowger's 1891 "Automatic Telephone-Exchange" replaced the human operator with an electromechanical switch (\cite[Strowger, 1891]{strowger1891exchange}). Erlang's 1922 paper applied probability to telephone trunking problems, creating the traffic engineering that dimensioned the network (\cite[Erlang, 1922]{erlang1922trunking}). The switch, the trunk and the Erlang are the ancestors of the router, the packet switch and the capacity planner.
+
+> **Open questions.** Who controls the switch? How does network architecture shape power? What is the Erlang of an LLM serving system?
+
+### The Map: The Ordnance Survey and the Coordinate Grid
+
+A map is a data structure with a coordinate system. The Ordnance Survey Act 1841 provided for a trigonometrical survey of Great Britain (\cite[Parliament of the United Kingdom, 1841]{os1841}). The 1884 International Meridian Conference adopted Greenwich as the initial meridian and proposed a universal day (\cite[International Meridian Conference, 1884]{meridian1884proceedings}). Geodesy turns territory into coordinates; coordinates turn territory into a database. Navigation, logistics, GPS and the spatial joins of a modern map all rest on that conversion.
+
+> **Open questions.** Who is on the map, and who is off it? How does the coordinate system shape what can be seen? What is the map of the training corpus?
+
+### The Record: The Phonograph, the Gramophone, and MPEG Audio
+
+Sound became a medium for machines when it became a physical record. Edison's 1877 phonograph patent described recording the human voice and other sounds in permanent characters from which they could be reproduced (\cite[Edison, 1877]{edison1877phonograph}). Berliner's 1887 gramophone patent introduced the disc and stylus (\cite[Berliner, 1887]{berliner1887gramophone}). A century later, MPEG audio standardised high-quality digital audio coding at low bit rates (\cite[Brandenburg, 1993]{mpeg_audio1993}). Recording created the sound corpus; compression made it transportable; streaming made it a training stream.
+
+> **Open questions.** Who owns the sound? What is lost in compression? What does a model hear?
+
+### The Render Farm: Catmull, RenderMan, and the Industrialization of Pixels
+
+Computer graphics became an industry when a single image required more computation than one machine could deliver. Catmull's 1974 work on computer display of curved surfaces introduced the subdivision methods that made smooth surfaces tractable (\cite[Catmull, 1974]{catmull1974}). Hanrahan and Lawson's 1990 shading language let artists and programmers describe light and surface reflectance in a portable language (\cite[Hanrahan and Lawson, 1990]{hanrahan1990shading}). Pixar's *Toy Story* (1995) was the first computer-animated feature film, and its production pipeline turned rendering into an industrial parallel workload (\cite[Pixar, 2026]{pixar_ourstory}). The render farm is the ancestor of the GPU cluster: many machines, one frame, a deadline.
+
+> **Open questions.** How much energy does a frame cost? What is the boundary between simulation and synthesis? What would a render farm for world models look like?
+
+</div>
+
+<div class="md" data-depth="40">
 ## The Deep Stack: The Budgets Behind the Machine
 
 Every prerequisite described so far is paid for out of a budget. This closing part zooms out from the individual invention to the planetary and civilizational accounts that make the whole chain possible: the solar energy stored by plants, the nitrogen that grows the population, the fresh water that cools and cleans, the minerals concentrated by geology, the capital that finances the fab, and the attention that pays for the free web. None of these budgets was created for AI. All of them are drawn down by it.
