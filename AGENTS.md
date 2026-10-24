@@ -695,6 +695,7 @@ dependency in a header won't resolve for a few days).
 | `uv run blog/tests/stats_filters_test.py` | HTTP regression: stats login, chips, reset/source removal, hour/day/weekday/humans, empty form values | any failed check | `blog/**` (workflow) |
 | `uv run blog/tests/proxy_stats_test.py` | proxy regression: login/cookies, filters, `__proxy_path`, CSV/backup, rewritten tracker endpoint, section/event beacon | any failed check | `blog/**` (workflow) |
 | `uv run blog/tests/analytics_client_test.py` | browser tracker regression: section visibility + aggregate events, no query/full URL, payload <4 KB | any failed check | `blog/**` (render job) |
+| `uv run blog/tests/stats_ui_test.py` | stats UI regression: briefing/explore, lazy charts, compare, saved views, present/light, overflow | any failed check | `blog/**` (render job) |
 | `uv run blog/tests/js_validator.py blog/` | bracket/brace balance, unclosed strings/comments, `debugger`/`alert`/`eval`, duplicate function names, DOM-API typos, TODO comments, BOM/line-endings | **critical issues only** (warnings don't block) | `blog/**` |
 | `uv run blog/tests/lesson_guard.py blog/` | per-lesson static regression guards (currently `math_iv.php`: headings-in-md, citation keys, 3D wiring) — extend the `LESSONS` list per lesson | any guard | `blog/**` |
 | `uv run blog/tests/link_checker.py blog/` | every `url:` in `literature.js` returns 2xx; PDFs must start `%PDF`; TLS/bot-block soft-passes never fail | real failures | `blog/**` + weekly cron |

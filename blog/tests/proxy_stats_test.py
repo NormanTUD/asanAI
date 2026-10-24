@@ -161,7 +161,7 @@ def main() -> int:
 				check(not has_chip(remove_chips, "Source:"), "proxy source removal clears source")
 				check(has_chip(remove_chips, "Hour:"), "proxy source removal preserves hour")
 
-			reset_match = re.search(r'<a class="chip" href="([^"]*\?range=[^"]+)">Reset all filters</a>', filtered.text)
+			reset_match = re.search(r'<a class="chip"[^>]*href="([^"]+)"[^>]*>Reset all filters</a>', filtered.text)
 			check(bool(reset_match), "proxy reset link")
 			if reset_match:
 				reset = session.get(urljoin(filtered_url, html.unescape(reset_match.group(1))), timeout=20)

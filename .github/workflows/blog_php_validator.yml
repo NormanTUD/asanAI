@@ -176,6 +176,10 @@ jobs:
         run: |
           uv run blog/tests/analytics_client_test.py
 
+      - name: Run Stats UI Regression Test
+        run: |
+          uv run blog/tests/stats_ui_test.py
+
   # Fails the suite if any lesson has content wider than the reading column
   # (margin notes and boxes are exempt). Runs the production layout_guardrail.js
   # in headless Chrome against every lesson page.

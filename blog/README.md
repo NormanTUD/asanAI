@@ -228,17 +228,19 @@ by design.
 `/stats` is password-protected and organised in tabs: **Overview**, **Pages**,
 **Referrers & engagement**, **Tech**, **Storage**, **Raw data** and **Privacy**.
 
-- **Overview:** a **Today** hero (estimated visits, views, same-weekday trend,
-  7-day sparkline, last-data age) and a 3-item briefing, nine secondary KPI
-  cards, a collapsible full briefing with **Copy summary**, daily trend with
-  estimated visits and spike/dip annotations, traffic clock, 24-hour and
-  weekday rhythm, weekday × hour heatmap (views / estimated visits toggle;
-  click a cell to filter), page attention matrix, reading funnel, content and
-  source list/treemap views, top movers, page portfolio, audience/bots, reading
-  behaviour, immediate page transitions, calendar heatmap (click a day to
-  filter), humans-vs-bots area, page × source heatmap, content-health scorecards,
-  section reading map, interaction/learning signals, period comparison, cohort
-  profiles, humans-only toggle and saved views.
+- **Overview:** a **Briefing** default with a **Today** hero, three story
+  cards (Traffic, Content, Quality), a collapsible full briefing and the
+  primary charts; **Explore all** reveals the nine KPI cards and every detail
+  card. The detail view includes daily trend with estimated visits and
+  spike/dip annotations, traffic clock, 24-hour/weekday rhythm, weekday × hour
+  heatmap (views / estimated visits toggle; click a cell to filter), page
+  attention matrix, reading funnel, content/source list/treemap views, top
+  movers, page portfolio, audience/bots, reading behaviour, immediate page
+  transitions, calendar heatmap (click a day to filter), humans-vs-bots area,
+  page × source heatmap, content-health scorecards, section reading map,
+  interaction/learning signals, period comparison, cohort profiles and a
+  humans-only toggle. Charts initialize lazily when a view or tab becomes
+  visible.
 - **Presentation & theme:** **Present** hides the chrome and steps through three
   slides (traffic & rhythm, content & attention, sources & confidence) with
   arrow keys; **Light** switches the dashboard and charts to a projector-friendly
@@ -246,6 +248,9 @@ by design.
 - **Pages:** page-performance bar chart, page-share donut (top 6 + other) and a
   table with per-page sparklines (including zero-view pages). The table lists
   all pages; scroll horizontally if needed.
+- **Compare:** current vs previous period, entity A vs B (page/source/device),
+  or two arbitrary date ranges; summary metrics with A/B bars. The overview
+  keeps the compact previous-period card.
 - **Referrers & engagement:** referrer donut, treemap and list with
   share/bounce; **immediate page transitions** as a default transition matrix
   (all transitions, including cycles) with an optional flow view; entry pages
@@ -263,9 +268,10 @@ by design.
 - **Privacy:** what is stored/not stored and the legal notes.
 
 CSV export and the backup are auth- and CSRF-protected. The **Exclude my own
-visits** toggle controls the separate exclusion cookie. There is no in-page
-delete button: to reset, stop writes and delete the SQLite file at the resolved
-path; the next request recreates an empty database.
+visits** toggle controls the separate exclusion cookie. **Saved views** support
+save, apply, rename and delete; they are stored only in the operator's browser.
+There is no in-page delete button: to reset, stop writes and delete the SQLite
+file at the resolved path; the next request recreates an empty database.
 
 ### Health warnings
 
@@ -350,7 +356,7 @@ reason as above: there is no session identifier.
 php blog/tests/analytics_test.php
 ```
 
-101 checks: UA/referrer classification, bot reasons, DNT/GPC/prefetch,
+134 checks: UA/referrer classification, bot reasons, DNT/GPC/prefetch,
 insert/heartbeat/leave, section/event details, dedupe, token deletion,
 cleanup/retention, backup, DB path resolution, relative-path and symlink
 refusal, customized setup commands, health checks (including
@@ -364,6 +370,7 @@ never production data):
 uv run blog/tests/stats_filters_test.py   # chips, reset, source/hour/day/humans
 uv run blog/tests/proxy_stats_test.py     # proxy login/cookies/filters/CSV/backup/beacon
 uv run blog/tests/analytics_client_test.py # sections/events, no query/full URL
+uv run blog/tests/stats_ui_test.py        # briefing/explore, lazy charts, compare, present/light
 ```
 
 The dashboard is also smoke-tested locally with Selenium: login, tab switching,
