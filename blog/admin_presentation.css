@@ -524,9 +524,6 @@ body.mn-presenting {
 }
 
 .mn-pres-takeaway {
-	position: relative;
-	z-index: 0;
-	padding: clamp(15px, 1.55vw, 22px);
 	color: var(--text);
 	font-size: clamp(12px, 1.05vw, 15px);
 	line-height: 1.55;

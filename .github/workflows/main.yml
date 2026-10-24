@@ -6,6 +6,7 @@ on:
       - master
     # Die Action wird NICHT ausgelöst, wenn NUR Dateien in diesen Pfaden geändert wurden
     paths-ignore:
+      - 'AGENTS.md'
       - 'blog/**'
       - 'praesentation/**'
       - '.github/**'
@@ -13,6 +14,7 @@ on:
     branches:
       - master
     paths-ignore:
+      - 'AGENTS.md'
       - 'blog/**'
       - 'praesentation/**'
       - '.github/**'
