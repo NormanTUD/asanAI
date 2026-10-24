@@ -23,6 +23,10 @@ in-session todo list carries the same high-level items.
 - Top-level Analytics/Feedback switching is client-side (no outer reload); feedback tabs/filters/actions navigate via same-origin AJAX inside the embedded panel.
 - Feedback Overview now has ECharts: stacked feedback over time, reaction mix, and helpful/not-helpful per page.
 - Embedded feedback palette is aligned with the stats palette (dark/light), fixing the white/foreign-colour panel.
+- Top-level Analytics/Feedback tabs switch client-side without a page reload; the feedback panel keeps its state.
+- Feedback tabs, filters and actions use same-origin AJAX inside the embedded panel; charts and deep-links stay intact.
+- Feedback Overview now has ECharts: stacked feedback over time, reaction mix and helpful/not-helpful per page.
+- Unified page title and analytics-only controls switch with the top-level view.
 
 ---
 

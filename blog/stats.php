@@ -2357,6 +2357,9 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .admin-nav a { flex: none; padding: 7px 12px; border: 1px solid transparent; border-radius: 999px; color: var(--muted); font-size: 12px; font-weight: 600; text-decoration: none; white-space: nowrap; }
 .admin-nav a:hover { color: var(--text); background: var(--panel); text-decoration: none; }
 .admin-nav a.active { color: var(--text); background: var(--panel); border-color: var(--line); }
+#admin-title-analytics[hidden], #admin-title-feedback[hidden],
+#admin-sub-analytics[hidden], #admin-sub-feedback[hidden] { display: none !important; }
+body.feedback-view .analytics-only { display: none !important; }
 .feedback-bridge { margin: 14px 0 0; }
 .feedback-bridge .fb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin: 10px 0 12px; }
 .feedback-bridge .fb-stat { padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel2); }
@@ -2796,23 +2799,24 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 		<?php endif; ?>
 	</div>
 <?php else: ?>
-	<?php if ($view === 'analytics') { echo mn_analytics_alert_html(); } ?>
+	<div class="analytics-only"><?php echo mn_analytics_alert_html(); ?></div>
 	<header class="top">
 		<div>
-			<h1><a class="brand" href="index"><?php echo $view === 'feedback' ? 'Reader feedback' : 'Blog-Analytics'; ?></a></h1>
-			<p class="sub"><?php if ($view === 'feedback'): ?>Reader suggestions, reactions, comments and bug reports · as of <?php echo stats_h($nowLabel); ?> (Berlin)<?php else: ?>Anonymous · no IPs · no visitor cookies · UA read transiently · as of <?php echo stats_h($nowLabel); ?> (Berlin) <?php if ($analyticsKillSwitch): ?><span class="badge" style="margin-left:8px;">analytics disabled</span><?php else: $healthIssues = mn_analytics_health_issues(); $healthOk = $healthIssues === []; ?><span class="badge <?php echo $healthOk ? 'ok' : 'warn'; ?>" style="margin-left:8px;"><?php echo $healthOk ? 'analytics healthy' : count($healthIssues) . ' issue(s)'; ?></span><?php endif; ?><?php endif; ?></p>
+			<h1><a class="brand" href="index"><span id="admin-title-analytics"<?php echo $view === 'feedback' ? ' hidden' : ''; ?>>Blog-Analytics</span><span id="admin-title-feedback"<?php echo $view === 'analytics' ? ' hidden' : ''; ?>>Reader feedback</span></a></h1>
+			<p class="sub">
+				<span id="admin-sub-analytics"<?php echo $view === 'feedback' ? ' hidden' : ''; ?>>Anonymous · no IPs · no visitor cookies · UA read transiently · as of <?php echo stats_h($nowLabel); ?> (Berlin) <?php if ($analyticsKillSwitch): ?><span class="badge" style="margin-left:8px;">analytics disabled</span><?php else: $healthIssues = mn_analytics_health_issues(); $healthOk = $healthIssues === []; ?><span class="badge <?php echo $healthOk ? 'ok' : 'warn'; ?>" style="margin-left:8px;"><?php echo $healthOk ? 'analytics healthy' : count($healthIssues) . ' issue(s)'; ?></span><?php endif; ?></span>
+				<span id="admin-sub-feedback"<?php echo $view === 'analytics' ? ' hidden' : ''; ?>>Reader suggestions, reactions, comments and bug reports · as of <?php echo stats_h($nowLabel); ?> (Berlin)</span>
+			</p>
 		</div>
 		<div class="top-actions">
 			<button type="button" class="btn" id="theme-toggle">Light</button>
-			<?php if ($view === 'analytics'): ?>
-			<button type="button" class="btn" id="present-toggle">Present</button>
-			<form method="post" action="" class="inline">
+			<button type="button" class="btn analytics-only" id="present-toggle">Present</button>
+			<form method="post" action="" class="inline analytics-only">
 				<input type="hidden" name="action" value="admin_cookie">
 				<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">
 				<label class="switch"><input type="checkbox" name="exclude_self" value="1"<?php echo $excludeSelf ? ' checked' : ''; ?> onchange="this.form.submit()"> Exclude my own visits</label>
 				<noscript><button type="submit" class="btn">Save</button></noscript>
 			</form>
-			<?php endif; ?>
 			<form method="post" action="" class="inline">
 				<input type="hidden" name="action" value="logout">
 				<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">
@@ -5814,6 +5818,15 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 			links.forEach(function (link) {
 				link.classList.toggle('active', link.getAttribute('data-admin-view') === view);
 			});
+			['admin-title-analytics', 'admin-sub-analytics'].forEach(function (id) {
+				var node = document.getElementById(id);
+				if (node) node.hidden = feedback;
+			});
+			['admin-title-feedback', 'admin-sub-feedback'].forEach(function (id) {
+				var node = document.getElementById(id);
+				if (node) node.hidden = !feedback;
+			});
+			document.title = feedback ? 'Reader feedback · Blog-Analytics' : 'Blog-Analytics';
 			if (feedback && frame && !frame.getAttribute('src')) {
 				frame.src = frame.getAttribute('data-src') || '';
 			}
