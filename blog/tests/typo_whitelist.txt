@@ -583,3 +583,17 @@ randomised itu landauer
 randomisation
 bipm shewhart strowger erlang mpeg catmull hanrahan pixar
 cgpm cipm
+# --- vibe_coding.php: proper nouns and technical terms ---
+andrej karpathy willison veracode metr gitclear coderabbit semafor replit lovable
+photoshop lightroom figma canva autodesk inkscape krita scribus
+artcraft photocraft filmcraft lightcraft gridcraft wordcraft deckcraft figcraft
+psd abi gui ftc doj arr faq nda mcp cli owasp saas yc readme
+diff diffs apps app commenters codebases workflows lockfiles allowlist autocomplete
+lifecycle mortem shotted performant reimplementation upsell enshittification
+slopsquatting franca combinator hinz koren lohmann ipos
+saa unbundling
+# --- vibe_coding.php: research names and acronyms ---
+asdaque bansal compilable cui drosos fawzy fontys ict meske pearce pimenova prs rct
+rinja sarkar sep sociotechnical susvibes thorgeirsson tihanyi utc vibepass waseem zhao zoro
+
+preprints

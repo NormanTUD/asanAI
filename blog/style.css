@@ -13244,10 +13244,32 @@ summary:focus-visible,
 	font-size: .84rem;
 	line-height: 1.45;
 	color: var(--mn-text-secondary);
-	display: -webkit-box;
-	-webkit-line-clamp: 3;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
+	max-height: 7.5em;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	touch-action: pan-y;
+	scrollbar-width: thin;
+}
+
+.mnf-quote:focus-visible {
+	outline: 2px solid var(--mn-accent);
+	outline-offset: 2px;
+}
+
+.mnf-honeypot {
+	position: absolute !important;
+	left: -99999px !important;
+	top: 0 !important;
+	width: 1px !important;
+	height: 1px !important;
+	padding: 0 !important;
+	border: 0 !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
+}
+
+.mnf-grab {
+	display: none;
 }
 
 .mnf-reactions {
@@ -13545,9 +13567,69 @@ summary:focus-visible,
 		font-size: 13px;
 	}
 	.mnf-quote {
-		-webkit-line-clamp: 2;
+		max-height: 22vh;
+	}
+	.mnf-grab {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 22px;
+		margin: -7px 0 2px;
+		cursor: grab;
+		touch-action: none;
+	}
+	.mnf-grab span {
+		width: 34px;
+		height: 4px;
+		border-radius: 99px;
+		background: color-mix(in srgb, var(--mn-text-muted) 45%, transparent);
+	}
+	.mnf-grab:active {
+		cursor: grabbing;
 	}
 	.mnf-head {
 		margin-bottom: 7px;
+	}
+}
+
+/* Small fallback affordance for demos whose text is rendered in SVG/canvas
+   and therefore cannot be selected reliably. */
+.mnf-demo-trigger {
+	appearance: none;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin: 3px 0 12px;
+	padding: 3px 8px;
+	border: 1px solid transparent;
+	border-radius: 999px;
+	background: transparent;
+	color: var(--mn-text-muted);
+	font: 600 10.5px/1.4 var(--mn-font-body);
+	cursor: pointer;
+	opacity: .55;
+	transition: opacity .15s ease, color .15s ease, border-color .15s ease, background .15s ease;
+}
+
+.mnf-demo-trigger:hover,
+.mnf-demo-trigger:focus-visible {
+	opacity: 1;
+	color: var(--mn-accent);
+	border-color: color-mix(in srgb, var(--mn-accent) 35%, var(--mn-border));
+	background: color-mix(in srgb, var(--mn-accent) 7%, transparent);
+	outline: none;
+}
+
+.mnf-quote.is-container {
+	font-style: normal;
+	font-family: var(--mn-font-body);
+	color: var(--mn-text-secondary);
+}
+
+@media (max-width: 760px) {
+	.mnf-demo-trigger {
+		opacity: .75;
+		min-height: 36px;
+		font-size: 12px;
 	}
 }

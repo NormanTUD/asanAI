@@ -21780,4 +21780,456 @@ window.bibData = {
 		url: "https://www.pixar.com/our-story",
 		alternativetitle: "Pixar, Our Story"
 	},
+
+	// Vibe coding, AI-generated software, and the creative-software market (vibe_coding.php)
+	"collins2025woty": {
+		title: "'Vibe coding' named word of the year by Collins Dictionary",
+		author: "BBC News",
+		year: 2025,
+		url: "https://www.bbc.com/news/articles/cpd2y053nleo",
+		alternativetitle: "BBC, 6 Nov 2025 — Collins Word of the Year: vibe coding"
+	},
+	"stackoverflow2025ai": {
+		title: "2025 Stack Overflow Developer Survey: AI",
+		author: "Stack Overflow",
+		year: 2025,
+		url: "https://survey.stackoverflow.co/2025/ai",
+		alternativetitle: "Stack Overflow 2025 — 84% use or plan to use AI; 46% distrust its accuracy"
+	},
+	"veracode2025genai": {
+		title: "October 2025 Update: GenAI Code Security Report",
+		author: "Veracode",
+		year: 2025,
+		url: "https://www.veracode.com/resources/analyst-reports/2025-genai-code-security-report/",
+		alternativetitle: "Veracode 2025 — 45% of AI-generated code failed security tests"
+	},
+	"dora2025": {
+		title: "Announcing the 2025 DORA Report: State of AI-Assisted Software Development",
+		author: "Nathen Harvey, Derek DeBellis",
+		year: 2025,
+		url: "https://cloud.google.com/blog/products/ai-machine-learning/announcing-the-2025-dora-report",
+		alternativetitle: "DORA 2025 — 90% use AI at work; throughput up, stability down"
+	},
+	"gitclear2025": {
+		title: "AI Copilot Code Quality: 2025 Look Back at 12 Months of Data",
+		author: "GitClear",
+		year: 2025,
+		url: "https://www.gitclear.com/ai_assistant_code_quality_2025_research",
+		alternativetitle: "GitClear 2025 — refactoring down, code duplication up"
+	},
+	"koren2026vibeoss": {
+		title: "Vibe Coding Kills Open Source",
+		author: "Miklós Koren, Gábor Békés, Julian Hinz, Aaron Lohmann",
+		year: 2026,
+		url: "https://arxiv.org/abs/2601.15494",
+		alternativetitle: "Koren et al. 2026 — why vibe coding can starve open source (arXiv)"
+	},
+	"spracklen2024slopsquatting": {
+		title: "We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs",
+		author: "Joseph Spracklen et al.",
+		year: 2024,
+		url: "https://arxiv.org/abs/2406.10279",
+		alternativetitle: "Spracklen et al. 2024 — package hallucinations and slopsquatting (arXiv)"
+	},
+	"semafor2025lovable": {
+		title: "The hottest new vibe coding startup may be a sitting duck for hackers",
+		author: "Reed Albergotti",
+		year: 2025,
+		url: "https://www.semafor.com/article/05/29/2025/the-hottest-new-vibe-coding-startup-lovable-is-a-sitting-duck-for-hackers",
+		alternativetitle: "Semafor, May 2025 — 170 Lovable-built apps exposed data"
+	},
+	"register2025replit": {
+		title: "Vibe coding service Replit deleted user's production database, faked data, told fibs galore",
+		author: "Simon Sharwood",
+		year: 2025,
+		url: "https://www.theregister.com/2025/07/21/replit_saastr_vibe_coding_incident/",
+		alternativetitle: "The Register, 21 Jul 2025 — Replit's agent deleted a production database"
+	},
+	"coderabbit2025": {
+		title: "Our new report: AI code creates 1.7x more problems",
+		author: "David Loker",
+		year: 2025,
+		url: "https://www.coderabbit.ai/blog/state-of-ai-vs-human-code-generation-report",
+		alternativetitle: "CodeRabbit 2025 — AI co-authored PRs had 1.7x more major issues"
+	},
+	"techcrunch2025yc": {
+		title: "A quarter of startups in YC's current cohort have codebases that are almost entirely AI-generated",
+		author: "Ivan Mehta",
+		year: 2025,
+		url: "https://techcrunch.com/2025/03/06/a-quarter-of-startups-in-ycs-current-cohort-have-codebases-that-are-almost-entirely-ai-generated/",
+		alternativetitle: "TechCrunch, 6 Mar 2025 — 25% of YC's W25 batch: ~95% AI-generated code"
+	},
+	"github2026eternalseptember": {
+		title: "Welcome to the Eternal September of open source. Here's what we plan to do for maintainers",
+		author: "Ashley Wolf",
+		year: 2026,
+		url: "https://github.blog/open-source/maintainers/welcome-to-the-eternal-september-of-open-source-heres-what-we-plan-to-do-for-maintainers/",
+		alternativetitle: "GitHub, Feb 2026 — AI-generated contributions overwhelm maintainers"
+	},
+	"arstechnica2026softwareover": {
+		title: "'Software is over': Bold AI developer takes aim at Adobe with open source clones",
+		author: "Kyle Orland",
+		year: 2026,
+		url: "https://arstechnica.com/ai/2026/10/software-is-over-bold-ai-developer-takes-aim-at-adobe-with-open-source-clones/",
+		alternativetitle: "Ars Technica, 7 Oct 2026 — ArtCraft's Claude-built Adobe clones"
+	},
+	"arstechnica2025vibe": {
+		title: "Will the future of software development run on vibes?",
+		author: "Benj Edwards",
+		year: 2025,
+		url: "https://arstechnica.com/ai/2025/03/is-vibe-coding-with-ai-gnarly-or-reckless-maybe-some-of-both/",
+		alternativetitle: "Ars Technica, 5 Mar 2025 — the promise and risk of vibe coding"
+	},
+	"digitaltrends2026artcraft": {
+		title: "The Adobe clones are real, but so is the work left to finish them",
+		author: "Paulo Vargas",
+		year: 2026,
+		url: "https://www.digitaltrends.com/computing/artcraft-free-adobe-clones-have-promise-but-are-they-ready/",
+		alternativetitle: "Digital Trends, 10 Oct 2026 — ArtCraft's alpha status and contributor surge"
+	},
+	"getartcraftapps": {
+		title: "Crafting Apps: open-source creative tools",
+		author: "ArtCraft",
+		year: 2026,
+		url: "https://getartcraft.com/apps",
+		alternativetitle: "ArtCraft — thirteen open-source creative apps in pure Rust"
+	},
+	"github2026photocraft": {
+		title: "PhotoCraft: An open-source, clean-room reimplementation of Adobe Photoshop, rebuilt in pure Rust",
+		author: "ArtCraft Team and contributors",
+		year: 2026,
+		url: "https://github.com/storytold/photocraft",
+		alternativetitle: "GitHub — PhotoCraft README, parity checklist, tests and licenses"
+	},
+	"adobe2025q4": {
+		title: "Adobe Reports Record Q4 and FY2025 Revenue",
+		author: "Adobe",
+		year: 2025,
+		url: "https://news.adobe.com/news/2025/12/122025-q4earnings",
+		alternativetitle: "Adobe FY2025 — $23.77B revenue, $25.2B ARR, $10B operating cash flow"
+	},
+	"adobe2025aiarr": {
+		title: "Adobe Raises FY25 Digital Media ARR Growth, Total Revenue, and EPS Targets",
+		author: "Adobe",
+		year: 2025,
+		url: "https://www.nasdaq.com/press-release/adobe-raises-fy25-digital-media-arr-growth-total-revenue-and-eps-targets-2025-09-11",
+		alternativetitle: "Adobe, Sep 2025 — AI-influenced ARR above $5B, AI-first ARR above $250M"
+	},
+	"adobe_wiki": {
+		title: "Adobe Inc.",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Adobe_Inc.",
+		alternativetitle: "Adobe Inc. (Wikipedia) — Creative Cloud, cancellation fees, FTC lawsuit"
+	},
+	"canva2025affinityfree": {
+		title: "Canva relaunches Affinity as free all-in-one design app",
+		author: "MacRumors",
+		year: 2025,
+		url: "https://www.macrumors.com/2025/10/31/canva-relaunches-affinity-free-app/",
+		alternativetitle: "MacRumors, 31 Oct 2025 — Affinity becomes a free unified app"
+	},
+	"canva2025affinityofficial": {
+		title: "Why we made Affinity free, and how we'll keep it that way",
+		author: "Canva",
+		year: 2025,
+		url: "https://www.canva.com/newsroom/news/affinity-free/",
+		alternativetitle: "Canva, Oct 2025 — 28M paying customers, $3.5B annualized revenue"
+	},
+	"figma_wiki": {
+		title: "Figma",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Figma",
+		alternativetitle: "Figma (Wikipedia) — IPO pop, $56.3B first-day value, later decline"
+	},
+	"yahoo2026figma": {
+		title: "Figma Stock Is Down 59% in a Year. The AI Bill Is Why, Here's The Fuller Picture.",
+		author: "Gian Estrada",
+		year: 2026,
+		url: "https://finance.yahoo.com/markets/stocks/articles/figma-stock-down-59-ai-160234487.html",
+		alternativetitle: "Yahoo Finance / TIKR, Sep 2026 — Figma's AI costs and margin squeeze"
+	},
+	"andreessen2011software": {
+		title: "Why Software Is Eating the World",
+		author: "Marc Andreessen",
+		year: 2011,
+		url: "https://a16z.com/why-software-is-eating-the-world/",
+		alternativetitle: "Andreessen, 2011 — software eats existing industries"
+	},
+	"eff_reverse_engineering": {
+		title: "Coders' Rights Project Reverse Engineering FAQ",
+		author: "Electronic Frontier Foundation",
+		year: 2026,
+		url: "https://www.eff.org/issues/coders/reverse-engineering-faq",
+		alternativetitle: "EFF — when reverse engineering is fair use, and when it is risky"
+	},
+	"enshittification_wiki": {
+		title: "Enshittification",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Enshittification",
+		alternativetitle: "Enshittification (Wikipedia) — platform decay and switching costs"
+	},
+	"christensen2015disruptive": {
+		title: "What Is Disruptive Innovation?",
+		author: "Clayton M. Christensen, Michael E. Raynor, Rory McDonald",
+		year: 2015,
+		url: "https://hbr.org/2015/12/what-is-disruptive-innovation",
+		alternativetitle: "Christensen et al. 2015 — disruption starts at the low end (HBR)"
+	},
+	"anthropic2024mcp": {
+		title: "Introducing the Model Context Protocol",
+		author: "Anthropic",
+		year: 2024,
+		url: "https://www.anthropic.com/news/model-context-protocol",
+		alternativetitle: "Anthropic, Nov 2024 — MCP connects models to tools and data"
+	},
+	"firefly_wiki": {
+		title: "Adobe Firefly",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Adobe_Firefly",
+		alternativetitle: "Adobe Firefly (Wikipedia) — licensed training data and 'commercially safe' claims"
+	},
+	"apple_v_microsoft_wiki": {
+		title: "Apple Computer, Inc. v. Microsoft Corp.",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Apple_Computer,_Inc._v._Microsoft_Corp.",
+		alternativetitle: "Apple v. Microsoft (Wikipedia) — look and feel is hard to own"
+	},
+	"willison2025vibe": {
+		title: "Vibe coding",
+		author: "Simon Willison",
+		year: 2025,
+		url: "https://simonwillison.net/2025/Mar/19/vibe-coding/",
+		alternativetitle: "Willison, 19 Mar 2025 — vibe coding is risky for production"
+	},
+	"willison2025vibeengineering": {
+		title: "Vibe engineering",
+		author: "Simon Willison",
+		year: 2025,
+		url: "https://simonwillison.net/2025/Oct/7/vibe-engineering/",
+		alternativetitle: "Willison, 7 Oct 2025 — the disciplined counterpart to vibe coding"
+	},
+	"photoshop_wiki": {
+		title: "Adobe Photoshop",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Adobe_Photoshop",
+		alternativetitle: "Adobe Photoshop (Wikipedia) — from 1990 to the subscription era"
+	},
+	// Vibe coding: provenance, empirical studies, security and design research
+	"merriam2025vibe": {
+		title: "vibe coding",
+		author: "Merriam-Webster",
+		year: 2025,
+		url: "https://www.merriam-webster.com/slang/vibe-coding",
+		alternativetitle: "Merriam-Webster, 8 Mar 2025 — 'vibe coding' as slang and trending"
+	},
+	"peng2025codedigitaltwin": {
+		title: "Code Digital Twin: A Knowledge Infrastructure for AI-Assisted Complex Software Development",
+		author: "Xin Peng, Chong Wang",
+		year: 2025,
+		url: "https://arxiv.org/abs/2503.07967",
+		alternativetitle: "Peng and Wang 2025 — earliest arXiv mention of vibe coding we found (11 Mar 2025)"
+	},
+	"sapkota2025vibeagentic": {
+		title: "Vibe Coding vs. Agentic Coding: Fundamentals and Practical Implications of Agentic AI",
+		author: "Ranjan Sapkota et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2505.19443",
+		alternativetitle: "Sapkota et al. 2025 — first arXiv title on vibe coding (26 May 2025)"
+	},
+	"sarkar2025vibe": {
+		title: "Vibe coding: programming through conversation with artificial intelligence",
+		author: "Advait Sarkar, Ian Drosos",
+		year: 2025,
+		url: "https://arxiv.org/abs/2506.23253",
+		alternativetitle: "Sarkar and Drosos 2025 — first empirical study of vibe coding"
+	},
+	"meske2025intent": {
+		title: "Vibe Coding as a Reconfiguration of Intent Mediation in Software Development: Definition, Implications, and Research Agenda",
+		author: "Christian Meske et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2507.21928",
+		alternativetitle: "Meske et al. 2025 — intent mediation, definition and research agenda"
+	},
+	"pimenova2025goodvibrations": {
+		title: "Good Vibrations? A Qualitative Study of Co-Creation, Communication, Flow, and Trust in Vibe Coding",
+		author: "Veronica Pimenova et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2509.12491",
+		alternativetitle: "Pimenova et al. 2025 — first systematic qualitative study of vibe coding"
+	},
+	"fawzy2025grey": {
+		title: "Vibe Coding in Practice: Motivations, Challenges, and a Future Outlook -- a Grey Literature Review",
+		author: "Ahmed Fawzy et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2510.00328",
+		alternativetitle: "Fawzy et al. 2025 — 101 sources, 518 first-hand accounts, speed-quality trade-off"
+	},
+	"chou2025rollingdice": {
+		title: "Building Software by Rolling the Dice: A Qualitative Study of Vibe Coding",
+		author: "Yi-Hung Chou et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2512.22418",
+		alternativetitle: "Chou et al. 2025 — 20 videos, 254 prompts, 'rolling the dice'"
+	},
+	"waseem2025flowdebt": {
+		title: "Vibe Coding in Practice: Flow, Technical Debt, and Guidelines for Sustainable Use",
+		author: "Muhammad Waseem et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2512.11922",
+		alternativetitle: "Waseem et al. 2025 — the flow-debt trade-off in vibe-coded MVPs"
+	},
+	"zhao2025susvibes": {
+		title: "Is Vibe Coding Safe? Benchmarking Vulnerability of Agent-Generated Code in Real-World Tasks",
+		author: "Songwen Zhao et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2512.03262",
+		alternativetitle: "Zhao et al. 2025 — SUSVIBES: 57% functionally correct, only 11.8% secure"
+	},
+	"pearce2022asleep": {
+		title: "Asleep at the Keyboard? Assessing the Security of GitHub Copilot's Code Contributions",
+		author: "Hammond Pearce et al.",
+		year: 2022,
+		url: "https://arxiv.org/abs/2108.09293",
+		alternativetitle: "Pearce et al. 2022 — 40% of 1,689 Copilot programs vulnerable (IEEE S&P)"
+	},
+	"perry2023insecure": {
+		title: "Do Users Write More Insecure Code with AI Assistants?",
+		author: "Neil Perry et al.",
+		year: 2023,
+		url: "https://arxiv.org/abs/2211.03622",
+		alternativetitle: "Perry et al. 2023 — AI users wrote less secure code but felt more secure (CCS)"
+	},
+	"tihanyi2024secure": {
+		title: "How secure is AI-generated Code: A Large-Scale Comparison of Large Language Models",
+		author: "Norbert Tihanyi et al.",
+		year: 2024,
+		url: "https://arxiv.org/abs/2404.18353",
+		alternativetitle: "Tihanyi et al. 2024 — at least 62.07% of 331,000 generated C programs vulnerable"
+	},
+	"cui2026field": {
+		title: "The Effects of Generative AI on High-Skilled Work: Evidence from Three Field Experiments with Software Developers",
+		author: "Kevin Z. Cui et al.",
+		year: 2026,
+		url: "https://doi.org/10.1287/mnsc.2025.00535",
+		alternativetitle: "Cui et al. 2026 — 4,867 developers, +26.08% completed tasks (Management Science)"
+	},
+	"asdaque2026review": {
+		title: "Novice Developers Produce Larger Review Overhead for Project Maintainers while Vibe Coding",
+		author: "Syed Ammar Asdaque et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2602.23905",
+		alternativetitle: "Asdaque et al. 2026 — 22,953 PRs: novices shift verification burden to reviewers"
+	},
+	"shin2026homogenization": {
+		title: "Interrogating Design Homogenization in Web Vibe Coding",
+		author: "Donghoon Shin et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2603.13036",
+		alternativetitle: "Shin et al. 2026 — vibe-coded web design converges on dominant styles"
+	},
+	"gu2025matthew": {
+		title: "The Matthew Effect of AI Programming Assistants: A Hidden Bias in Software Evolution",
+		author: "Fei Gu et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2509.23261",
+		alternativetitle: "Gu et al. 2025 — AI favors mainstream languages and frameworks"
+	},
+	"tran2026vibecodebench": {
+		title: "Vibe Code Bench: Evaluating AI Models on End-to-End Web Application Development",
+		author: "Hung Tran et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2603.04601",
+		alternativetitle: "Tran et al. 2026 — best frontier model 61.8% on end-to-end app specs"
+	},
+	"bansal2026vibepass": {
+		title: "VIBEPASS: Can Vibe Coders Really Pass the Vibe Check?",
+		author: "Srijan Bansal et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2603.15921",
+		alternativetitle: "Bansal et al. 2026 — self-diagnosis and repair do not scale with general capability"
+	},
+	"wang2026vibecontract": {
+		title: "VibeContract: The Missing Quality Assurance Piece in Vibe Coding",
+		author: "Song Wang",
+		year: 2026,
+		url: "https://arxiv.org/abs/2603.15691",
+		alternativetitle: "Wang 2026 — task-level contracts for vibe-coded software"
+	},
+	"hu2026humanguidance": {
+		title: "Why Human Guidance Matters in Collaborative Vibe Coding",
+		author: "Haoyu Hu et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2602.10473",
+		alternativetitle: "Hu et al. 2026 — 737 participants: human-led instructions beat AI-led instructions"
+	},
+	"ma2026zoro": {
+		title: "ZORO: Active Controls to Support Rule Following in Vibe Coding",
+		author: "Jenny Ma et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2604.15625",
+		alternativetitle: "Ma et al. 2026 — turning AGENTS.md/CLAUDE.md rules into active controls"
+	},
+	"lipsanen2026shiftup": {
+		title: "Shift-Up: A Framework for Software Engineering Guardrails in AI-native Software Development -- Initial Findings",
+		author: "Petrus Lipsanen et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2604.20436",
+		alternativetitle: "Lipsanen et al. 2026 — BDD, C4 and ADRs as guardrails for agentic coding"
+	},
+	"thorgeirsson2026skills": {
+		title: "Computer Science Achievement and Writing Skills Predict Vibe Coding Proficiency",
+		author: "Sverrir Thorgeirsson et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2603.14133",
+		alternativetitle: "Thorgeirsson et al. 2026 — writing skill and CS achievement predict vibe-coding performance"
+	},
+	"rinja2026helpseeking": {
+		title: "Unpacking Vibe Coding: Help-Seeking Processes in Student-AI Interactions While Programming",
+		author: "Daiana Rinja et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2604.27134",
+		alternativetitle: "Rinja et al. 2026 — top students inquire; low performers delegate"
+	},
+	"ge2025survey": {
+		title: "A Survey of Vibe Coding with Large Language Models",
+		author: "Yuyao Ge et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2510.12399",
+		alternativetitle: "Ge et al. 2025 — survey of the emerging vibe-coding literature"
+	},
+	"vanbokhorst2026beforetrend": {
+		title: "Vibe coding before the trend",
+		author: "Leon van Bokhorst, Koen Suilen",
+		year: 2026,
+		url: "https://arxiv.org/abs/2605.07751",
+		alternativetitle: "van Bokhorst and Suilen 2026 — classroom experiments from early 2025"
+	},
+	"shuvo2026context": {
+		title: "Context Before Code: An Experience Report on Vibe Coding in Practice",
+		author: "Md Nasir Uddin Shuvo et al.",
+		year: 2026,
+		url: "https://arxiv.org/abs/2603.11073",
+		alternativetitle: "Shuvo et al. 2026 — context engineering before code generation"
+	},
+	"chen2025securerbench": {
+		title: "SecureVibeBench: Benchmarking Secure Vibe Coding of AI Agents via Reconstructing Vulnerability-Introducing Scenarios",
+		author: "Junkai Chen et al.",
+		year: 2025,
+		url: "https://arxiv.org/abs/2509.22097",
+		alternativetitle: "Chen et al. 2025 — benchmark for secure agentic vibe coding"
+	},
+	"livshits2026llmsecurity": {
+		title: "LLMs + Security = Trouble",
+		author: "Benjamin Livshits",
+		year: 2026,
+		url: "https://arxiv.org/abs/2602.08422",
+		alternativetitle: "Livshits 2026 — position paper on LLMs and security"
+	},
+
 };

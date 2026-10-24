@@ -917,8 +917,6 @@ renderSc();
    TRACKER
    ============================================================ */
 function addTr(){
-  const el=document.getElementById('trIn'), t=
-function addTr(){
   const el=document.getElementById('trIn'), t=el.value.trim();
   if(!t) return;
   S.trackers.push({name:t, done:{}}); el.value=''; save(); renderTr();

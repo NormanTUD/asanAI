@@ -19,6 +19,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, max-age=0');
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: no-referrer');
+header('X-Robots-Tag: noindex, nofollow');
 
 function mn_feedback_end(int $code, array $payload = []): void {
 	http_response_code($code);
@@ -65,8 +66,16 @@ if (!empty($data['website'])) {
 	mn_feedback_end(204);
 }
 
+$path = isset($data['path']) && is_string($data['path']) ? trim($data['path']) : '';
+if ($path === 'blog' || $path === 'index.php') {
+	$path = 'index';
+}
+$data['path'] = $path;
+if (!preg_match('/^[a-zA-Z0-9_-]{1,80}$/', $path)) {
+	mn_feedback_end(400, ['ok' => false, 'error' => 'invalid_path']);
+}
 $token = isset($data['token']) && is_string($data['token']) ? trim($data['token']) : '';
-if (!mn_feedback_verify_token($token)) {
+if (!mn_feedback_verify_token($token, $path)) {
 	mn_feedback_end(400, ['ok' => false, 'error' => 'invalid_token']);
 }
 
@@ -75,6 +84,9 @@ if (empty($result['ok'])) {
 	$error = (string)($result['error'] ?? 'unavailable');
 	if ($error === 'invalid_reaction' || $error === 'invalid_path' || $error === 'invalid_email') {
 		mn_feedback_end(400, ['ok' => false, 'error' => $error]);
+	}
+	if ($error === 'rate_limited') {
+		mn_feedback_end(429, ['ok' => false, 'error' => 'rate_limited']);
 	}
 	mn_feedback_end(503, ['ok' => false, 'error' => 'unavailable']);
 }

@@ -921,6 +921,9 @@ $heatSpan = 28;
 $heatMax = 0;
 $insights = [];
 $raw = [];
+$feedbackSummary = ['total' => 0, 'with_comment' => 0, 'bugs' => 0, 'accepted' => 0, 'done' => 0];
+$feedbackReactionCounts = [];
+$feedbackLatest = [];
 $pageCount = 1;
 $sourceOptions = [];
 $dbPath = mn_analytics_db_path();
@@ -2239,6 +2242,40 @@ if ($authed) {
 			        duration_sec, scroll_pct, completed
 			FROM pageviews WHERE $whereSql
 			ORDER BY ts DESC, id DESC LIMIT $perPage OFFSET $offsetRaw", $params);
+
+		try {
+			$feedbackSummaryRow = stats_one($pdo, "SELECT COUNT(*) AS total,
+				SUM(CASE WHEN comment <> '' THEN 1 ELSE 0 END) AS with_comment,
+				SUM(CASE WHEN reaction = 'bug' THEN 1 ELSE 0 END) AS bugs,
+				SUM(CASE WHEN status = 'accepted' THEN 1 ELSE 0 END) AS accepted,
+				SUM(CASE WHEN status = 'done' THEN 1 ELSE 0 END) AS done
+				FROM block_feedback", []);
+			$feedbackSummary = [
+				'total' => (int)($feedbackSummaryRow['total'] ?? 0),
+				'with_comment' => (int)($feedbackSummaryRow['with_comment'] ?? 0),
+				'bugs' => (int)($feedbackSummaryRow['bugs'] ?? 0),
+				'accepted' => (int)($feedbackSummaryRow['accepted'] ?? 0),
+				'done' => (int)($feedbackSummaryRow['done'] ?? 0),
+			];
+			$feedbackReactionRows = stats_all($pdo, "SELECT reaction, COUNT(*) AS n FROM block_feedback GROUP BY reaction", []);
+			foreach (mn_feedback_reactions() as $key => $meta) {
+				$feedbackReactionCounts[$key] = 0;
+			}
+			foreach ($feedbackReactionRows as $feedbackReactionRow) {
+				$key = (string)$feedbackReactionRow['reaction'];
+				if (isset($feedbackReactionCounts[$key])) {
+					$feedbackReactionCounts[$key] = (int)$feedbackReactionRow['n'];
+				}
+			}
+			$feedbackLatest = stats_all($pdo, "SELECT f.id, f.ts, f.path, f.reaction, f.comment, f.status, s.selected_text
+				FROM block_feedback f
+				LEFT JOIN feedback_selections s ON s.feedback_id = f.id
+				ORDER BY f.ts DESC, f.id DESC LIMIT 4", []);
+		} catch (Throwable $e) {
+			$feedbackSummary = ['total' => 0, 'with_comment' => 0, 'bugs' => 0, 'accepted' => 0, 'done' => 0];
+			$feedbackReactionCounts = [];
+			$feedbackLatest = [];
+		}
 	}
 }
 ?>
@@ -2305,6 +2342,21 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .brand:hover { color: var(--accent); text-decoration: none; }
 .sub { margin: 4px 0 0; color: var(--muted); }
 .top-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.admin-nav { display: flex; gap: 6px; overflow-x: auto; margin: 0 0 16px; padding: 0 0 6px; border-bottom: 1px solid var(--line); }
+.admin-nav a { flex: none; padding: 7px 12px; border: 1px solid transparent; border-radius: 999px; color: var(--muted); font-size: 12px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.admin-nav a:hover { color: var(--text); background: var(--panel); text-decoration: none; }
+.admin-nav a.active { color: var(--text); background: var(--panel); border-color: var(--line); }
+.feedback-bridge { margin: 14px 0 0; }
+.feedback-bridge .fb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin: 10px 0 12px; }
+.feedback-bridge .fb-stat { padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel2); }
+.feedback-bridge .fb-stat b { display: block; font-size: 19px; color: var(--text); }
+.feedback-bridge .fb-stat span { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; }
+.feedback-bridge .fb-latest { display: grid; gap: 5px; }
+.feedback-bridge .fb-latest a { display: grid; grid-template-columns: 84px minmax(0,1fr) auto; gap: 8px; align-items: baseline; padding: 6px 8px; border-radius: 7px; background: var(--panel2); color: var(--text); text-decoration: none; font-size: 11.5px; }
+.feedback-bridge .fb-latest a:hover { background: var(--panel); text-decoration: none; }
+.feedback-bridge .fb-latest .when { color: var(--muted); font-size: 10px; }
+.feedback-bridge .fb-latest .what { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.feedback-bridge .fb-latest .tag { color: var(--accent); font-size: 10px; font-weight: 700; white-space: nowrap; }
 .inline { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
 .switch { display: inline-flex; gap: 8px; align-items: center; color: var(--muted); font-size: 12px; cursor: pointer; }
 .btn, button.btn { border: 1px solid var(--line); background: var(--panel); color: var(--text); padding: 8px 12px; border-radius: 9px; cursor: pointer; font: inherit; display: inline-block; }
@@ -2748,6 +2800,12 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 		</div>
 	</header>
 
+	<nav class="admin-nav" aria-label="Admin areas">
+		<a class="active" href="stats">Analytics</a>
+		<a href="feedback">Reader feedback</a>
+		<a href="index">Course</a>
+	</nav>
+
 	<?php if (is_array($flash)): ?>
 		<div class="flash <?php echo stats_h($flash['type'] ?? ''); ?>"><?php echo stats_h($flash['text'] ?? ''); ?></div>
 	<?php endif; ?>
@@ -2975,6 +3033,35 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 				<div class="story-label">duration known · <?php echo stats_h(number_format($confidenceScroll, 1, '.', ',')); ?> % scroll known</div>
 				<div class="story-delta"><?php echo mn_analytics_format_number($bots); ?> bots · last data <?php echo stats_h($lastSeenAge); ?></div>
 			</a>
+		</div>
+
+		<div class="card feedback-bridge" data-tab-group="overview" data-slide="1">
+			<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+				<div><h2 style="margin:0">Reader feedback</h2><p class="ref" style="margin:3px 0 0;">What readers flag in the lessons — comments, insights, confusion and bugs.</p></div>
+				<a class="btn" href="feedback">Open feedback dashboard →</a>
+			</div>
+			<div class="fb-grid">
+				<div class="fb-stat"><b><?php echo stats_h(number_format($feedbackSummary['total'])); ?></b><span>Total</span></div>
+				<div class="fb-stat"><b><?php echo stats_h(number_format($feedbackSummary['with_comment'])); ?></b><span>Comments</span></div>
+				<div class="fb-stat"><b><?php echo stats_h(number_format($feedbackSummary['bugs'])); ?></b><span>Bugs</span></div>
+				<div class="fb-stat"><b><?php echo stats_h(number_format($feedbackSummary['accepted'])); ?></b><span>Accepted</span></div>
+				<div class="fb-stat"><b><?php echo stats_h(number_format($feedbackSummary['done'])); ?></b><span>Done</span></div>
+				<?php foreach (mn_feedback_reactions() as $fbKey => $fbMeta): ?>
+					<div class="fb-stat"><b><?php echo stats_h(number_format($feedbackReactionCounts[$fbKey] ?? 0)); ?></b><span><?php echo stats_h($fbMeta['icon'] . ' ' . $fbMeta['label']); ?></span></div>
+				<?php endforeach; ?>
+			</div>
+			<?php if ($feedbackLatest): ?>
+			<div class="fb-latest">
+				<?php foreach ($feedbackLatest as $fbItem): $fbRead = trim((string)($fbItem['comment'] ?? '')); if ($fbRead === '') { $fbRead = trim((string)($fbItem['selected_text'] ?? '')); } ?>
+					<?php $fbUrl = 'feedback?' . http_build_query(['tab' => 'all', 'path' => $fbItem['path'], 'open' => (int)$fbItem['id'], 'range' => 0, 'page' => 1, 'status' => '']); ?>
+					<a href="<?php echo stats_h($fbUrl); ?>">
+						<span class="when"><?php echo stats_h(stats_time_label((int)$fbItem['ts'])); ?></span>
+						<span class="what"><?php echo stats_h($titles[$fbItem['path']] ?? $fbItem['path']); ?><?php if ($fbRead !== ''): ?> — <?php echo stats_h(mb_substr(preg_replace('/\s+/u', ' ', $fbRead) ?? $fbRead, 0, 90, 'UTF-8')); ?><?php endif; ?></span>
+						<span class="tag"><?php echo stats_h(mn_feedback_reactions()[$fbItem['reaction']]['icon'] ?? ''); ?></span>
+					</a>
+				<?php endforeach; ?>
+			</div>
+			<?php else: ?><p class="ref" style="margin:0">No reader feedback yet.</p><?php endif; ?>
 		</div>
 
 		<div class="grid-kpi" id="overview" data-tab-group="overview" data-slide="1">

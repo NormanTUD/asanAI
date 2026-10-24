@@ -17999,6 +17999,390 @@
    "author": "Pixar Animation Studios",
    "year": "",
    "url": "https://www.pixar.com/our-story"
+  },
+  "collins2025woty": {
+   "title": "'Vibe coding' named word of the year by Collins Dictionary",
+   "author": "BBC News",
+   "year": "",
+   "url": "https://www.bbc.com/news/articles/cpd2y053nleo"
+  },
+  "stackoverflow2025ai": {
+   "title": "2025 Stack Overflow Developer Survey: AI",
+   "author": "Stack Overflow",
+   "year": "",
+   "url": "https://survey.stackoverflow.co/2025/ai"
+  },
+  "veracode2025genai": {
+   "title": "October 2025 Update: GenAI Code Security Report",
+   "author": "Veracode",
+   "year": "",
+   "url": "https://www.veracode.com/resources/analyst-reports/2025-genai-code-security-report/"
+  },
+  "dora2025": {
+   "title": "Announcing the 2025 DORA Report: State of AI-Assisted Software Development",
+   "author": "Nathen Harvey, Derek DeBellis",
+   "year": "",
+   "url": "https://cloud.google.com/blog/products/ai-machine-learning/announcing-the-2025-dora-report"
+  },
+  "gitclear2025": {
+   "title": "AI Copilot Code Quality: 2025 Look Back at 12 Months of Data",
+   "author": "GitClear",
+   "year": "",
+   "url": "https://www.gitclear.com/ai_assistant_code_quality_2025_research"
+  },
+  "koren2026vibeoss": {
+   "title": "Vibe Coding Kills Open Source",
+   "author": "Miklós Koren, Gábor Békés, Julian Hinz, Aaron Lohmann",
+   "year": "",
+   "url": "https://arxiv.org/abs/2601.15494"
+  },
+  "spracklen2024slopsquatting": {
+   "title": "We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs",
+   "author": "Joseph Spracklen et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2406.10279"
+  },
+  "semafor2025lovable": {
+   "title": "The hottest new vibe coding startup may be a sitting duck for hackers",
+   "author": "Reed Albergotti",
+   "year": "",
+   "url": "https://www.semafor.com/article/05/29/2025/the-hottest-new-vibe-coding-startup-lovable-is-a-sitting-duck-for-hackers"
+  },
+  "register2025replit": {
+   "title": "Vibe coding service Replit deleted user's production database, faked data, told fibs galore",
+   "author": "Simon Sharwood",
+   "year": "",
+   "url": "https://www.theregister.com/2025/07/21/replit_saastr_vibe_coding_incident/"
+  },
+  "coderabbit2025": {
+   "title": "Our new report: AI code creates 1.7x more problems",
+   "author": "David Loker",
+   "year": "",
+   "url": "https://www.coderabbit.ai/blog/state-of-ai-vs-human-code-generation-report"
+  },
+  "techcrunch2025yc": {
+   "title": "A quarter of startups in YC's current cohort have codebases that are almost entirely AI-generated",
+   "author": "Ivan Mehta",
+   "year": "",
+   "url": "https://techcrunch.com/2025/03/06/a-quarter-of-startups-in-ycs-current-cohort-have-codebases-that-are-almost-entirely-ai-generated/"
+  },
+  "github2026eternalseptember": {
+   "title": "Welcome to the Eternal September of open source. Here's what we plan to do for maintainers",
+   "author": "Ashley Wolf",
+   "year": "",
+   "url": "https://github.blog/open-source/maintainers/welcome-to-the-eternal-september-of-open-source-heres-what-we-plan-to-do-for-maintainers/"
+  },
+  "arstechnica2026softwareover": {
+   "title": "'Software is over': Bold AI developer takes aim at Adobe with open source clones",
+   "author": "Kyle Orland",
+   "year": "",
+   "url": "https://arstechnica.com/ai/2026/10/software-is-over-bold-ai-developer-takes-aim-at-adobe-with-open-source-clones/"
+  },
+  "arstechnica2025vibe": {
+   "title": "Will the future of software development run on vibes?",
+   "author": "Benj Edwards",
+   "year": "",
+   "url": "https://arstechnica.com/ai/2025/03/is-vibe-coding-with-ai-gnarly-or-reckless-maybe-some-of-both/"
+  },
+  "digitaltrends2026artcraft": {
+   "title": "The Adobe clones are real, but so is the work left to finish them",
+   "author": "Paulo Vargas",
+   "year": "",
+   "url": "https://www.digitaltrends.com/computing/artcraft-free-adobe-clones-have-promise-but-are-they-ready/"
+  },
+  "getartcraftapps": {
+   "title": "Crafting Apps: open-source creative tools",
+   "author": "ArtCraft",
+   "year": "",
+   "url": "https://getartcraft.com/apps"
+  },
+  "github2026photocraft": {
+   "title": "PhotoCraft: An open-source, clean-room reimplementation of Adobe Photoshop, rebuilt in pure Rust",
+   "author": "ArtCraft Team and contributors",
+   "year": "",
+   "url": "https://github.com/storytold/photocraft"
+  },
+  "adobe2025q4": {
+   "title": "Adobe Reports Record Q4 and FY2025 Revenue",
+   "author": "Adobe",
+   "year": "",
+   "url": "https://news.adobe.com/news/2025/12/122025-q4earnings"
+  },
+  "adobe2025aiarr": {
+   "title": "Adobe Raises FY25 Digital Media ARR Growth, Total Revenue, and EPS Targets",
+   "author": "Adobe",
+   "year": "",
+   "url": "https://www.nasdaq.com/press-release/adobe-raises-fy25-digital-media-arr-growth-total-revenue-and-eps-targets-2025-09-11"
+  },
+  "adobe_wiki": {
+   "title": "Adobe Inc.",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Adobe_Inc."
+  },
+  "canva2025affinityfree": {
+   "title": "Canva relaunches Affinity as free all-in-one design app",
+   "author": "MacRumors",
+   "year": "",
+   "url": "https://www.macrumors.com/2025/10/31/canva-relaunches-affinity-free-app/"
+  },
+  "canva2025affinityofficial": {
+   "title": "Why we made Affinity free, and how we'll keep it that way",
+   "author": "Canva",
+   "year": "",
+   "url": "https://www.canva.com/newsroom/news/affinity-free/"
+  },
+  "figma_wiki": {
+   "title": "Figma",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Figma"
+  },
+  "yahoo2026figma": {
+   "title": "Figma Stock Is Down 59% in a Year. The AI Bill Is Why, Here's The Fuller Picture.",
+   "author": "Gian Estrada",
+   "year": "",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/figma-stock-down-59-ai-160234487.html"
+  },
+  "andreessen2011software": {
+   "title": "Why Software Is Eating the World",
+   "author": "Marc Andreessen",
+   "year": "",
+   "url": "https://a16z.com/why-software-is-eating-the-world/"
+  },
+  "eff_reverse_engineering": {
+   "title": "Coders' Rights Project Reverse Engineering FAQ",
+   "author": "Electronic Frontier Foundation",
+   "year": "",
+   "url": "https://www.eff.org/issues/coders/reverse-engineering-faq"
+  },
+  "enshittification_wiki": {
+   "title": "Enshittification",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Enshittification"
+  },
+  "christensen2015disruptive": {
+   "title": "What Is Disruptive Innovation?",
+   "author": "Clayton M. Christensen, Michael E. Raynor, Rory McDonald",
+   "year": "",
+   "url": "https://hbr.org/2015/12/what-is-disruptive-innovation"
+  },
+  "anthropic2024mcp": {
+   "title": "Introducing the Model Context Protocol",
+   "author": "Anthropic",
+   "year": "",
+   "url": "https://www.anthropic.com/news/model-context-protocol"
+  },
+  "firefly_wiki": {
+   "title": "Adobe Firefly",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Adobe_Firefly"
+  },
+  "apple_v_microsoft_wiki": {
+   "title": "Apple Computer, Inc. v. Microsoft Corp.",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Apple_Computer,_Inc._v._Microsoft_Corp."
+  },
+  "willison2025vibe": {
+   "title": "Vibe coding",
+   "author": "Simon Willison",
+   "year": "",
+   "url": "https://simonwillison.net/2025/Mar/19/vibe-coding/"
+  },
+  "willison2025vibeengineering": {
+   "title": "Vibe engineering",
+   "author": "Simon Willison",
+   "year": "",
+   "url": "https://simonwillison.net/2025/Oct/7/vibe-engineering/"
+  },
+  "photoshop_wiki": {
+   "title": "Adobe Photoshop",
+   "author": "Wikipedia contributors",
+   "year": "",
+   "url": "https://en.wikipedia.org/wiki/Adobe_Photoshop"
+  },
+  "merriam2025vibe": {
+   "title": "vibe coding",
+   "author": "Merriam-Webster",
+   "year": "",
+   "url": "https://www.merriam-webster.com/slang/vibe-coding"
+  },
+  "peng2025codedigitaltwin": {
+   "title": "Code Digital Twin: A Knowledge Infrastructure for AI-Assisted Complex Software Development",
+   "author": "Xin Peng, Chong Wang",
+   "year": "",
+   "url": "https://arxiv.org/abs/2503.07967"
+  },
+  "sapkota2025vibeagentic": {
+   "title": "Vibe Coding vs. Agentic Coding: Fundamentals and Practical Implications of Agentic AI",
+   "author": "Ranjan Sapkota et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2505.19443"
+  },
+  "sarkar2025vibe": {
+   "title": "Vibe coding: programming through conversation with artificial intelligence",
+   "author": "Advait Sarkar, Ian Drosos",
+   "year": "",
+   "url": "https://arxiv.org/abs/2506.23253"
+  },
+  "meske2025intent": {
+   "title": "Vibe Coding as a Reconfiguration of Intent Mediation in Software Development: Definition, Implications, and Research Agenda",
+   "author": "Christian Meske et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2507.21928"
+  },
+  "pimenova2025goodvibrations": {
+   "title": "Good Vibrations? A Qualitative Study of Co-Creation, Communication, Flow, and Trust in Vibe Coding",
+   "author": "Veronica Pimenova et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2509.12491"
+  },
+  "fawzy2025grey": {
+   "title": "Vibe Coding in Practice: Motivations, Challenges, and a Future Outlook -- a Grey Literature Review",
+   "author": "Ahmed Fawzy et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2510.00328"
+  },
+  "chou2025rollingdice": {
+   "title": "Building Software by Rolling the Dice: A Qualitative Study of Vibe Coding",
+   "author": "Yi-Hung Chou et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2512.22418"
+  },
+  "waseem2025flowdebt": {
+   "title": "Vibe Coding in Practice: Flow, Technical Debt, and Guidelines for Sustainable Use",
+   "author": "Muhammad Waseem et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2512.11922"
+  },
+  "zhao2025susvibes": {
+   "title": "Is Vibe Coding Safe? Benchmarking Vulnerability of Agent-Generated Code in Real-World Tasks",
+   "author": "Songwen Zhao et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2512.03262"
+  },
+  "pearce2022asleep": {
+   "title": "Asleep at the Keyboard? Assessing the Security of GitHub Copilot's Code Contributions",
+   "author": "Hammond Pearce et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2108.09293"
+  },
+  "perry2023insecure": {
+   "title": "Do Users Write More Insecure Code with AI Assistants?",
+   "author": "Neil Perry et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2211.03622"
+  },
+  "tihanyi2024secure": {
+   "title": "How secure is AI-generated Code: A Large-Scale Comparison of Large Language Models",
+   "author": "Norbert Tihanyi et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2404.18353"
+  },
+  "cui2026field": {
+   "title": "The Effects of Generative AI on High-Skilled Work: Evidence from Three Field Experiments with Software Developers",
+   "author": "Kevin Z. Cui et al.",
+   "year": "",
+   "url": "https://doi.org/10.1287/mnsc.2025.00535"
+  },
+  "asdaque2026review": {
+   "title": "Novice Developers Produce Larger Review Overhead for Project Maintainers while Vibe Coding",
+   "author": "Syed Ammar Asdaque et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2602.23905"
+  },
+  "shin2026homogenization": {
+   "title": "Interrogating Design Homogenization in Web Vibe Coding",
+   "author": "Donghoon Shin et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2603.13036"
+  },
+  "gu2025matthew": {
+   "title": "The Matthew Effect of AI Programming Assistants: A Hidden Bias in Software Evolution",
+   "author": "Fei Gu et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2509.23261"
+  },
+  "tran2026vibecodebench": {
+   "title": "Vibe Code Bench: Evaluating AI Models on End-to-End Web Application Development",
+   "author": "Hung Tran et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2603.04601"
+  },
+  "bansal2026vibepass": {
+   "title": "VIBEPASS: Can Vibe Coders Really Pass the Vibe Check?",
+   "author": "Srijan Bansal et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2603.15921"
+  },
+  "wang2026vibecontract": {
+   "title": "VibeContract: The Missing Quality Assurance Piece in Vibe Coding",
+   "author": "Song Wang",
+   "year": "",
+   "url": "https://arxiv.org/abs/2603.15691"
+  },
+  "hu2026humanguidance": {
+   "title": "Why Human Guidance Matters in Collaborative Vibe Coding",
+   "author": "Haoyu Hu et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2602.10473"
+  },
+  "ma2026zoro": {
+   "title": "ZORO: Active Controls to Support Rule Following in Vibe Coding",
+   "author": "Jenny Ma et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2604.15625"
+  },
+  "lipsanen2026shiftup": {
+   "title": "Shift-Up: A Framework for Software Engineering Guardrails in AI-native Software Development -- Initial Findings",
+   "author": "Petrus Lipsanen et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2604.20436"
+  },
+  "thorgeirsson2026skills": {
+   "title": "Computer Science Achievement and Writing Skills Predict Vibe Coding Proficiency",
+   "author": "Sverrir Thorgeirsson et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2603.14133"
+  },
+  "rinja2026helpseeking": {
+   "title": "Unpacking Vibe Coding: Help-Seeking Processes in Student-AI Interactions While Programming",
+   "author": "Daiana Rinja et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2604.27134"
+  },
+  "ge2025survey": {
+   "title": "A Survey of Vibe Coding with Large Language Models",
+   "author": "Yuyao Ge et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2510.12399"
+  },
+  "vanbokhorst2026beforetrend": {
+   "title": "Vibe coding before the trend",
+   "author": "Leon van Bokhorst, Koen Suilen",
+   "year": "",
+   "url": "https://arxiv.org/abs/2605.07751"
+  },
+  "shuvo2026context": {
+   "title": "Context Before Code: An Experience Report on Vibe Coding in Practice",
+   "author": "Md Nasir Uddin Shuvo et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2603.11073"
+  },
+  "chen2025securerbench": {
+   "title": "SecureVibeBench: Benchmarking Secure Vibe Coding of AI Agents via Reconstructing Vulnerability-Introducing Scenarios",
+   "author": "Junkai Chen et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2509.22097"
+  },
+  "livshits2026llmsecurity": {
+   "title": "LLMs + Security = Trouble",
+   "author": "Benjamin Livshits",
+   "year": "",
+   "url": "https://arxiv.org/abs/2602.08422"
   }
  },
  "cites": {
@@ -20279,10 +20663,12 @@
    "ai_and_society"
   ],
   "becker2025metr": [
-   "ai_and_society"
+   "ai_and_society",
+   "vibe_coding"
   ],
   "peng2023copilot": [
-   "ai_and_society"
+   "ai_and_society",
+   "vibe_coding"
   ],
   "brynjolfsson2023genai": [
    "ai_and_society"
@@ -20297,7 +20683,8 @@
    "ai_and_society"
   ],
   "caosun2026augmentation": [
-   "ai_and_society"
+   "ai_and_society",
+   "vibe_coding"
   ],
   "parasuraman1997automation": [
    "ai_and_society"
@@ -20312,7 +20699,8 @@
    "ai_and_society"
   ],
   "prather2023copilot": [
-   "ai_and_society"
+   "ai_and_society",
+   "vibe_coding"
   ],
   "georgiou2025lazy": [
    "ai_and_society"
@@ -20321,7 +20709,8 @@
    "ai_and_society"
   ],
   "karpathy2025vibecoding": [
-   "ai_and_society"
+   "ai_and_society",
+   "vibe_coding"
   ],
   "ellington2003calculators": [
    "ai_and_society"
@@ -25520,6 +25909,192 @@
   "poincareembeddings": [
    "embeddinglab"
   ],
+  "collins2025woty": [
+   "vibe_coding"
+  ],
+  "arstechnica2026softwareover": [
+   "vibe_coding"
+  ],
+  "getartcraftapps": [
+   "vibe_coding"
+  ],
+  "vibe_coding_wiki": [
+   "vibe_coding"
+  ],
+  "willison2025vibeengineering": [
+   "vibe_coding"
+  ],
+  "merriam2025vibe": [
+   "vibe_coding"
+  ],
+  "peng2025codedigitaltwin": [
+   "vibe_coding"
+  ],
+  "sapkota2025vibeagentic": [
+   "vibe_coding"
+  ],
+  "sarkar2025vibe": [
+   "vibe_coding"
+  ],
+  "meske2025intent": [
+   "vibe_coding"
+  ],
+  "pimenova2025goodvibrations": [
+   "vibe_coding"
+  ],
+  "fawzy2025grey": [
+   "vibe_coding"
+  ],
+  "zhao2025susvibes": [
+   "vibe_coding"
+  ],
+  "koren2026vibeoss": [
+   "vibe_coding"
+  ],
+  "asdaque2026review": [
+   "vibe_coding"
+  ],
+  "shin2026homogenization": [
+   "vibe_coding"
+  ],
+  "ge2025survey": [
+   "vibe_coding"
+  ],
+  "techcrunch2025yc": [
+   "vibe_coding"
+  ],
+  "stackoverflow2025ai": [
+   "vibe_coding"
+  ],
+  "vanbokhorst2026beforetrend": [
+   "vibe_coding"
+  ],
+  "cui2026field": [
+   "vibe_coding"
+  ],
+  "dora2025": [
+   "vibe_coding"
+  ],
+  "digitaltrends2026artcraft": [
+   "vibe_coding"
+  ],
+  "github2026photocraft": [
+   "vibe_coding"
+  ],
+  "tran2026vibecodebench": [
+   "vibe_coding"
+  ],
+  "bansal2026vibepass": [
+   "vibe_coding"
+  ],
+  "pearce2022asleep": [
+   "vibe_coding"
+  ],
+  "perry2023insecure": [
+   "vibe_coding"
+  ],
+  "tihanyi2024secure": [
+   "vibe_coding"
+  ],
+  "veracode2025genai": [
+   "vibe_coding"
+  ],
+  "chen2025securerbench": [
+   "vibe_coding"
+  ],
+  "livshits2026llmsecurity": [
+   "vibe_coding"
+  ],
+  "spracklen2024slopsquatting": [
+   "vibe_coding"
+  ],
+  "semafor2025lovable": [
+   "vibe_coding"
+  ],
+  "register2025replit": [
+   "vibe_coding"
+  ],
+  "coderabbit2025": [
+   "vibe_coding"
+  ],
+  "gitclear2025": [
+   "vibe_coding"
+  ],
+  "chou2025rollingdice": [
+   "vibe_coding"
+  ],
+  "waseem2025flowdebt": [
+   "vibe_coding"
+  ],
+  "gu2025matthew": [
+   "vibe_coding"
+  ],
+  "github2026eternalseptember": [
+   "vibe_coding"
+  ],
+  "canva2025affinityfree": [
+   "vibe_coding"
+  ],
+  "canva2025affinityofficial": [
+   "vibe_coding"
+  ],
+  "eff_reverse_engineering": [
+   "vibe_coding"
+  ],
+  "apple_v_microsoft_wiki": [
+   "vibe_coding"
+  ],
+  "adobe2025q4": [
+   "vibe_coding"
+  ],
+  "adobe2025aiarr": [
+   "vibe_coding"
+  ],
+  "firefly_wiki": [
+   "vibe_coding"
+  ],
+  "adobe_wiki": [
+   "vibe_coding"
+  ],
+  "anthropic2024mcp": [
+   "vibe_coding"
+  ],
+  "christensen2015disruptive": [
+   "vibe_coding"
+  ],
+  "figma_wiki": [
+   "vibe_coding"
+  ],
+  "yahoo2026figma": [
+   "vibe_coding"
+  ],
+  "andreessen2011software": [
+   "vibe_coding"
+  ],
+  "thorgeirsson2026skills": [
+   "vibe_coding"
+  ],
+  "rinja2026helpseeking": [
+   "vibe_coding"
+  ],
+  "enshittification_wiki": [
+   "vibe_coding"
+  ],
+  "ma2026zoro": [
+   "vibe_coding"
+  ],
+  "wang2026vibecontract": [
+   "vibe_coding"
+  ],
+  "lipsanen2026shiftup": [
+   "vibe_coding"
+  ],
+  "hu2026humanguidance": [
+   "vibe_coding"
+  ],
+  "shuvo2026context": [
+   "vibe_coding"
+  ],
   "twocultures": [
    "intro"
   ],
@@ -26926,7 +27501,7 @@
    ]
   },
   "Wikipedia contributors": {
-   "count": 331,
+   "count": 337,
    "minyear": 2026,
    "maxyear": 2026,
    "keys": [
@@ -27260,7 +27835,13 @@
     "oop_wiki",
     "backus_naur_form_wiki",
     "compiler_wiki",
-    "unix_wiki"
+    "unix_wiki",
+    "adobe_wiki",
+    "figma_wiki",
+    "enshittification_wiki",
+    "firefly_wiki",
+    "apple_v_microsoft_wiki",
+    "photoshop_wiki"
    ]
   },
   "Thomas C. Hull": {
@@ -31027,14 +31608,15 @@
    ]
   },
   "Anthropic": {
-   "count": 4,
+   "count": 5,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "anthropic2025websearch",
     "anthropic2024funding",
     "anthropic2025shutdown",
-    "promptcaching"
+    "promptcaching",
+    "anthropic2024mcp"
    ]
   },
   "OpenAI": {
@@ -46832,12 +47414,13 @@
    ]
   },
   "BBC News": {
-   "count": 2,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "edroberts_bbc",
-    "bbc2023heart"
+    "bbc2023heart",
+    "collins2025woty"
    ]
   },
   "U.S. Army Ballistic Research Laboratory": {
@@ -59883,11 +60466,12 @@
    ]
   },
   "Stack Overflow": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "stackoverflow2024ai"
+    "stackoverflow2024ai",
+    "stackoverflow2025ai"
    ]
   },
   "Christine McLeavey": {
@@ -63680,6 +64264,504 @@
    "maxyear": null,
    "keys": [
     "pixar_ourstory"
+   ]
+  },
+  "Veracode": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "veracode2025genai"
+   ]
+  },
+  "Nathen Harvey": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dora2025"
+   ]
+  },
+  "Derek DeBellis": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "dora2025"
+   ]
+  },
+  "GitClear": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "gitclear2025"
+   ]
+  },
+  "Miklós Koren": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "koren2026vibeoss"
+   ]
+  },
+  "Gábor Békés": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "koren2026vibeoss"
+   ]
+  },
+  "Julian Hinz": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "koren2026vibeoss"
+   ]
+  },
+  "Aaron Lohmann": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "koren2026vibeoss"
+   ]
+  },
+  "Joseph Spracklen et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "spracklen2024slopsquatting"
+   ]
+  },
+  "Reed Albergotti": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "semafor2025lovable"
+   ]
+  },
+  "Simon Sharwood": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "register2025replit"
+   ]
+  },
+  "David Loker": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "coderabbit2025"
+   ]
+  },
+  "Ivan Mehta": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "techcrunch2025yc"
+   ]
+  },
+  "Ashley Wolf": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "github2026eternalseptember"
+   ]
+  },
+  "Kyle Orland": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "arstechnica2026softwareover"
+   ]
+  },
+  "Benj Edwards": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "arstechnica2025vibe"
+   ]
+  },
+  "Paulo Vargas": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "digitaltrends2026artcraft"
+   ]
+  },
+  "ArtCraft": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "getartcraftapps"
+   ]
+  },
+  "ArtCraft Team and contributors": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "github2026photocraft"
+   ]
+  },
+  "Adobe": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "adobe2025q4",
+    "adobe2025aiarr"
+   ]
+  },
+  "MacRumors": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "canva2025affinityfree"
+   ]
+  },
+  "Canva": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "canva2025affinityofficial"
+   ]
+  },
+  "Gian Estrada": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "yahoo2026figma"
+   ]
+  },
+  "Marc Andreessen": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "andreessen2011software"
+   ]
+  },
+  "Electronic Frontier Foundation": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "eff_reverse_engineering"
+   ]
+  },
+  "Clayton M. Christensen": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "christensen2015disruptive"
+   ]
+  },
+  "Michael E. Raynor": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "christensen2015disruptive"
+   ]
+  },
+  "Rory McDonald": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "christensen2015disruptive"
+   ]
+  },
+  "Simon Willison": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "willison2025vibe",
+    "willison2025vibeengineering"
+   ]
+  },
+  "Merriam-Webster": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "merriam2025vibe"
+   ]
+  },
+  "Xin Peng": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "peng2025codedigitaltwin"
+   ]
+  },
+  "Chong Wang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "peng2025codedigitaltwin"
+   ]
+  },
+  "Ranjan Sapkota et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "sapkota2025vibeagentic"
+   ]
+  },
+  "Advait Sarkar": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "sarkar2025vibe"
+   ]
+  },
+  "Ian Drosos": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "sarkar2025vibe"
+   ]
+  },
+  "Christian Meske et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "meske2025intent"
+   ]
+  },
+  "Veronica Pimenova et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "pimenova2025goodvibrations"
+   ]
+  },
+  "Ahmed Fawzy et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "fawzy2025grey"
+   ]
+  },
+  "Yi-Hung Chou et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "chou2025rollingdice"
+   ]
+  },
+  "Muhammad Waseem et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "waseem2025flowdebt"
+   ]
+  },
+  "Songwen Zhao et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "zhao2025susvibes"
+   ]
+  },
+  "Hammond Pearce et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "pearce2022asleep"
+   ]
+  },
+  "Neil Perry et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "perry2023insecure"
+   ]
+  },
+  "Norbert Tihanyi et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "tihanyi2024secure"
+   ]
+  },
+  "Kevin Z. Cui et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "cui2026field"
+   ]
+  },
+  "Syed Ammar Asdaque et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "asdaque2026review"
+   ]
+  },
+  "Donghoon Shin et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "shin2026homogenization"
+   ]
+  },
+  "Fei Gu et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "gu2025matthew"
+   ]
+  },
+  "Hung Tran et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "tran2026vibecodebench"
+   ]
+  },
+  "Srijan Bansal et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "bansal2026vibepass"
+   ]
+  },
+  "Song Wang": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "wang2026vibecontract"
+   ]
+  },
+  "Haoyu Hu et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "hu2026humanguidance"
+   ]
+  },
+  "Jenny Ma et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ma2026zoro"
+   ]
+  },
+  "Petrus Lipsanen et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "lipsanen2026shiftup"
+   ]
+  },
+  "Sverrir Thorgeirsson et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "thorgeirsson2026skills"
+   ]
+  },
+  "Daiana Rinja et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "rinja2026helpseeking"
+   ]
+  },
+  "Yuyao Ge et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ge2025survey"
+   ]
+  },
+  "Leon van Bokhorst": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "vanbokhorst2026beforetrend"
+   ]
+  },
+  "Koen Suilen": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "vanbokhorst2026beforetrend"
+   ]
+  },
+  "Md Nasir Uddin Shuvo et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "shuvo2026context"
+   ]
+  },
+  "Junkai Chen et al.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "chen2025securerbench"
+   ]
+  },
+  "Benjamin Livshits": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "livshits2026llmsecurity"
    ]
   }
  }

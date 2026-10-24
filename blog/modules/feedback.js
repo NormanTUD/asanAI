@@ -10,11 +10,13 @@
 	"use strict";
 
 	var EMAIL_KEY = "mn_feedback_email";
-	var BLOCK_SELECTOR = "p, li, h2, h3, h4, h5, h6, blockquote, pre, figure, table, figcaption, .cl-eq, .cl-block";
+	var BLOCK_SELECTOR = "h1, h2, h3, h4, h5, h6, p, li, blockquote, pre, figure, table, figcaption, .bib-entry, .mnz-q, .mnz-explain, .mnz-title, .mnz-result, .smart-quote, .rendered-quote, .cl-eq, .cl-block";
+	var CONTAINER_SELECTOR = "[data-interactive], .plot-container, .js-plotly-plot, .mnlab, .widget, .mn-quiz, #sources-section, #footnotes-section, figure, section";
+	var DEMO_SELECTOR = "[data-interactive], .plot-container, .js-plotly-plot, .mnlab, .widget";
 	var BLOCK_QUERY = BLOCK_SELECTOR.split(",").map(function (part) {
-		return "#contents .md " + part.trim();
+		return "#contents " + part.trim();
 	}).join(", ");
-	var SKIP_CLOSEST = ".sidenote-source, .sideimage-source, .toc, nav, .mn-quiz, .mn-feedback-layer, button, input, textarea, select, [contenteditable='true']";
+	var SKIP_CLOSEST = ".sidenote-source, .sideimage-source, .toc, nav, .mn-feedback-layer, button, input, textarea, select, [contenteditable='true'], .mnz-opt, .mnz-btn, .mnz-source, .code-copy-btn, .modebar, .plotly .modebar, .mnlab-controls, [role='slider']";
 
 	var cfg = window.__MNFeedback;
 	if (!cfg || !cfg.enabled || !cfg.endpoint) {
@@ -37,6 +39,8 @@
 	var bugConsentEl = null;
 	var statusEl = null;
 	var sendBtn = null;
+	var honeypotEl = null;
+	var grabEl = null;
 
 	var reaction = "";
 	var pending = null;
@@ -48,6 +52,7 @@
 	var started = false;
 	var lastSelectionEvent = 0;
 	var keyboardSelection = false;
+	var lastFocus = null;
 
 	function start() {
 		if (started) {
@@ -60,6 +65,18 @@
 		started = true;
 		build();
 		bind();
+		mountDemoTriggers();
+		setTimeout(mountDemoTriggers, 900);
+		setTimeout(mountDemoTriggers, 2600);
+		if (window.MutationObserver) {
+			var demoObserver = new MutationObserver(function () {
+				clearTimeout(bind._demoTimer);
+				bind._demoTimer = setTimeout(mountDemoTriggers, 220);
+			});
+			try {
+				demoObserver.observe(contents, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "data-interactive"] });
+			} catch (e) { /* ignore */ }
+		}
 	}
 
 	function build() {
@@ -76,6 +93,11 @@
 		panel.setAttribute("aria-modal", "false");
 		panel.setAttribute("aria-label", "Reader feedback");
 		panel.hidden = true;
+
+		grabEl = document.createElement("div");
+		grabEl.className = "mnf-grab";
+		grabEl.setAttribute("aria-hidden", "true");
+		grabEl.innerHTML = "<span></span>";
 
 		var head = document.createElement("div");
 		head.className = "mnf-head";
@@ -96,6 +118,9 @@
 
 		quoteEl = document.createElement("blockquote");
 		quoteEl.className = "mnf-quote";
+		quoteEl.tabIndex = 0;
+		quoteEl.setAttribute("role", "region");
+		quoteEl.setAttribute("aria-label", "Selected passage");
 
 		reactionWrap = document.createElement("div");
 		reactionWrap.className = "mnf-reactions";
@@ -178,6 +203,14 @@
 		bugBox.appendChild(bugConsentEl);
 		bugBox.appendChild(bugText);
 
+		honeypotEl = document.createElement("input");
+		honeypotEl.type = "text";
+		honeypotEl.name = "website";
+		honeypotEl.className = "mnf-honeypot";
+		honeypotEl.tabIndex = -1;
+		honeypotEl.autocomplete = "off";
+		honeypotEl.setAttribute("aria-hidden", "true");
+
 		statusEl = document.createElement("span");
 		statusEl.className = "mnf-status";
 		statusEl.setAttribute("aria-live", "polite");
@@ -194,6 +227,7 @@
 		foot.appendChild(statusEl);
 		foot.appendChild(sendBtn);
 
+		body.appendChild(honeypotEl);
 		body.appendChild(quoteEl);
 		body.appendChild(reactionWrap);
 		body.appendChild(commentEl);
@@ -204,6 +238,8 @@
 		successEl = document.createElement("div");
 		successEl.className = "mnf-success";
 		successEl.hidden = true;
+		successEl.setAttribute("role", "status");
+		successEl.setAttribute("aria-live", "polite");
 		var successIcon = document.createElement("div");
 		successIcon.className = "mnf-success-icon";
 		successIcon.setAttribute("aria-hidden", "true");
@@ -214,6 +250,7 @@
 		successEl.appendChild(successIcon);
 		successEl.appendChild(successText);
 
+		panel.appendChild(grabEl);
 		panel.appendChild(head);
 		panel.appendChild(body);
 		panel.appendChild(successEl);
@@ -225,6 +262,33 @@
 	}
 
 	function bindPanel() {
+		var drag = null;
+		grabEl.addEventListener("pointerdown", function (event) {
+			if (window.innerWidth >= 760) return;
+			drag = { y: event.clientY, dy: 0 };
+			panel.classList.add("is-dragging");
+			try { grabEl.setPointerCapture(event.pointerId); } catch (e) {}
+			event.preventDefault();
+		});
+		grabEl.addEventListener("pointermove", function (event) {
+			if (!drag) return;
+			drag.dy = Math.max(0, event.clientY - drag.y);
+			panel.style.transform = "translateY(" + drag.dy + "px)";
+		});
+		grabEl.addEventListener("pointerup", function () {
+			if (!drag) return;
+			var dy = drag.dy;
+			drag = null;
+			panel.classList.remove("is-dragging");
+			panel.style.transform = "";
+			if (dy > 80) closePanel();
+		});
+		grabEl.addEventListener("pointercancel", function () {
+			drag = null;
+			panel.classList.remove("is-dragging");
+			panel.style.transform = "";
+		});
+
 		reactionWrap.addEventListener("keydown", function (event) {
 			if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") {
 				return;
@@ -329,6 +393,94 @@
 		}
 	}
 
+	function mountDemoTriggers() {
+		var nodes;
+		try {
+			nodes = Array.prototype.slice.call(contents.querySelectorAll(DEMO_SELECTOR));
+		} catch (e) {
+			return;
+		}
+		nodes.forEach(function (node) {
+			if (!node || !node.parentNode) return;
+			if (node.closest(".mn-quiz, #mn-feedback-layer")) return;
+			if (node.parentElement && node.parentElement.closest(DEMO_SELECTOR)) return;
+			if (node.nextElementSibling && node.nextElementSibling.classList && node.nextElementSibling.classList.contains("mnf-demo-trigger")) return;
+			var btn = document.createElement("button");
+			btn.type = "button";
+			btn.className = "mnf-demo-trigger";
+			btn.textContent = "💬 Feedback on this demo";
+			btn.setAttribute("aria-label", "Leave feedback on this demo");
+			btn.addEventListener("click", function (event) {
+				event.preventDefault();
+				event.stopPropagation();
+				openContainer(node);
+			});
+			node.parentNode.insertBefore(btn, node.nextSibling);
+		});
+	}
+
+	function openContainer(node) {
+		if (!node || !contents || !contents.contains(node)) return;
+		var info = infoOf(node, contents);
+		var captured = captureContainer(info, node, contents);
+		if (captured) show(captured);
+	}
+
+	function captureContainer(info, block, root) {
+		var blockText = String(block.innerText || block.textContent || "").replace(/\u00a0/g, " ").trim();
+		if (!blockText) {
+			var cap = block.querySelector ? block.querySelector("figcaption") : null;
+			blockText = cap ? String(cap.textContent || "").replace(/\s+/g, " ").trim() : "";
+		}
+		var blockRect = null;
+		try { blockRect = rectOf(block.getBoundingClientRect()); } catch (e) { blockRect = null; }
+		var container = block.closest ? (block.closest(CONTAINER_SELECTOR) || block) : block;
+		var label = "";
+		if (block.getAttribute) {
+			label = String(block.getAttribute("aria-label") || "");
+		}
+		if (!label && container && container.querySelector) {
+			var cap = container.querySelector("figcaption");
+			if (cap) label = String(cap.textContent || "").replace(/\s+/g, " ").trim();
+		}
+		if (!label && container && container.id) label = container.id;
+		if (!label) label = info.sectionTitle || "Interactive demo";
+		return {
+			key: info.key,
+			slug: info.slug,
+			lessonTitle: info.lessonTitle,
+			part: info.part,
+			partTitle: info.partTitle,
+			sectionTitle: info.sectionTitle,
+			sectionAnchor: info.sectionAnchor,
+			block: block,
+			blockIndex: info.blockIndex,
+			blockSelector: info.blockSelector,
+			blockKey: info.blockKey,
+			contextKind: "demo",
+			containerSelector: container ? cssPath(container) : info.blockSelector,
+			containerLabel: label.slice(0, 200),
+			blockText: blockText.slice(0, 12000),
+			blockHtml: String(block.innerHTML || "").slice(0, 30000),
+			selectedText: "",
+			selectedHtml: "",
+			start: 0,
+			end: 0,
+			prefix: "",
+			suffix: "",
+			blockTextLength: blockText.length,
+			rangeCount: 0,
+			direction: "",
+			ranges: [],
+			selectionRect: null,
+			blockRect: blockRect,
+			scrollY: Math.max(0, Math.round(window.scrollY || window.pageYOffset || 0)),
+			viewportW: Math.max(0, Math.round(window.innerWidth || 0)),
+			viewportH: Math.max(0, Math.round(window.innerHeight || 0)),
+			requestId: newRequestId()
+		};
+	}
+
 	function checkSelection() {
 		if (busy) {
 			return;
@@ -358,15 +510,15 @@
 		if (el.closest("#mn-feedback-layer") || el.closest(SKIP_CLOSEST)) {
 			return;
 		}
-		var md = el.closest("#contents .md");
-		if (!md) {
+		var root = el.closest("#contents");
+		if (!root) {
 			return;
 		}
-		var block = findBlock(el, md);
+		var block = findBlock(el, root);
 		if (!block) {
 			return;
 		}
-		var info = capture(infoOf(block, md), sel, range, block, md);
+		var info = capture(infoOf(block, root), sel, range, block, root);
 		if (!info) {
 			return;
 		}
@@ -381,17 +533,21 @@
 		show(info);
 	}
 
-	function findBlock(el, md) {
+	function findBlock(el, root) {
 		var block = el.closest(BLOCK_SELECTOR);
-		if (block && md.contains(block)) {
+		if (block && root.contains(block)) {
 			return block;
 		}
-		return md;
+		var container = el.closest(CONTAINER_SELECTOR);
+		if (container && root.contains(container)) {
+			return container;
+		}
+		return root;
 	}
 
 	function infoOf(block, md) {
 		var nav = window.__moduleNavData || {};
-		var slug = slugOf(window.location.pathname);
+		var slug = (cfg && typeof cfg.slug === "string" && cfg.slug) ? cfg.slug : slugOf(window.location.pathname);
 		var mod = null;
 		if (nav.modules && slug) {
 			for (var i = 0; i < nav.modules.length; i++) {
@@ -432,13 +588,30 @@
 	function slugOf(pathname) {
 		var path = String(pathname || "").replace(/\/+$/, "");
 		var part = path.split("/").pop() || "index";
-		return part.replace(/\.php$/, "") || "index";
+		part = part.replace(/\.php$/, "") || "index";
+		return part === "blog" ? "index" : part;
 	}
 
 	function sectionFor(block) {
+		if (block.closest) {
+			if (block.closest("#sources-section")) {
+				return { title: "Sources", anchor: "sources" };
+			}
+			if (block.closest("#footnotes-section")) {
+				return { title: "Footnotes", anchor: "footnotes" };
+			}
+			var quiz = block.closest(".mn-quiz");
+			if (quiz) {
+				var quizTitle = quiz.querySelector(".mnz-title");
+				return {
+					title: quizTitle ? String(quizTitle.textContent || "").replace(/\s+/g, " ").trim() : "Check yourself",
+					anchor: quiz.getAttribute("data-quiz") ? "quiz-" + quiz.getAttribute("data-quiz") : ""
+				};
+			}
+		}
 		var headings = [];
 		try {
-			headings = Array.prototype.slice.call(contents.querySelectorAll("h2, h3, h4"));
+			headings = Array.prototype.slice.call(contents.querySelectorAll("h1, h2, h3, h4"));
 		} catch (e) {
 			headings = [];
 		}
@@ -452,10 +625,19 @@
 				last = heading;
 			}
 		});
-		if (!last && /^H[2-4]$/.test(String(block.tagName || ""))) {
+		if (!last && /^H[1-4]$/.test(String(block.tagName || ""))) {
 			last = block;
 		}
 		if (!last) {
+			var demo = block.closest ? block.closest(CONTAINER_SELECTOR) : null;
+			if (demo) {
+				var cap = demo.querySelector ? demo.querySelector("figcaption") : null;
+				var label = cap ? String(cap.textContent || "") : (demo.getAttribute("id") || "");
+				return {
+					title: label.replace(/\s+/g, " ").trim().slice(0, 200) || "Interactive demo",
+					anchor: demo.getAttribute("id") || ""
+				};
+			}
 			return { title: "", anchor: "" };
 		}
 		return {
@@ -495,7 +677,7 @@
 		return parts.join(" > ");
 	}
 
-	function capture(info, sel, range, block, md) {
+	function capture(info, sel, range, block, root) {
 		var text = String(sel.toString() || "").replace(/\u00a0/g, " ").trim();
 		if (!text) {
 			return null;
@@ -547,6 +729,27 @@
 		} catch (e) {
 			direction = "forward";
 		}
+		var contextKind = "prose";
+		if (block.closest && block.closest("#sources-section")) contextKind = "source";
+		else if (block.closest && block.closest("#footnotes-section")) contextKind = "footnote";
+		else if (block.closest && block.closest(".mn-quiz")) contextKind = "quiz";
+		else if (block.closest && block.closest("[data-interactive], .plot-container, .js-plotly-plot, .mnlab, .widget")) contextKind = "demo";
+		else if (block.closest && block.closest(".smart-quote, .rendered-quote")) contextKind = "smartquote";
+		else if (/^H[1-6]$/.test(String(block.tagName || ""))) contextKind = "heading";
+		var container = block.closest ? block.closest(CONTAINER_SELECTOR) : null;
+		var containerLabel = "";
+		if (contextKind === "source") {
+			containerLabel = block.id ? "Sources entry " + block.id : "Sources entry";
+		} else if (contextKind === "quiz") {
+			var quiz = block.closest(".mn-quiz");
+			var qt = quiz ? quiz.querySelector(".mnz-title") : null;
+			containerLabel = qt ? String(qt.textContent || "").replace(/\s+/g, " ").trim() : "Check yourself";
+		} else if (contextKind === "demo") {
+			var cap = container ? container.querySelector("figcaption") : null;
+			containerLabel = cap ? String(cap.textContent || "").replace(/\s+/g, " ").trim().slice(0, 200) : (container && container.id ? container.id : "Interactive demo");
+		} else {
+			containerLabel = info.sectionTitle || "";
+		}
 		return {
 			key: info.key,
 			slug: info.slug,
@@ -559,6 +762,9 @@
 			blockIndex: info.blockIndex,
 			blockSelector: info.blockSelector,
 			blockKey: info.blockKey,
+			contextKind: contextKind,
+			containerSelector: container ? cssPath(container) : info.blockSelector,
+			containerLabel: containerLabel,
 			blockText: blockText.slice(0, 12000),
 			blockHtml: String(block.innerHTML || "").slice(0, 30000),
 			selectedText: text.slice(0, 4000),
@@ -615,6 +821,9 @@
 			build();
 		}
 		clearTimeout(closeTimer);
+		if (!open) {
+			lastFocus = document.activeElement;
+		}
 		successEl.hidden = true;
 		body.hidden = false;
 		if (!open || formKey !== info.key) {
@@ -622,7 +831,8 @@
 		}
 		pending = info;
 		formKey = info.key;
-		quoteEl.textContent = info.selectedText;
+		quoteEl.textContent = info.selectedText || info.containerLabel || "Feedback on this demo";
+		quoteEl.classList.toggle("is-container", !info.selectedText);
 		open = true;
 		layer.hidden = false;
 		panel.hidden = false;
@@ -714,6 +924,10 @@
 			block_index: pending.blockIndex,
 			block_key: pending.blockKey,
 			block_selector: pending.blockSelector,
+			container_selector: pending.containerSelector || "",
+			container_label: pending.containerLabel || "",
+			context_kind: pending.contextKind || "prose",
+			website: honeypotEl ? String(honeypotEl.value || "") : "",
 			section_title: pending.sectionTitle,
 			section_anchor: pending.sectionAnchor,
 			block_text: pending.blockText,
@@ -772,22 +986,35 @@
 			options.signal = controller.signal;
 		}
 		fetch(cfg.endpoint, options).then(function (response) {
-			if (!response.ok) {
-				throw new Error("request failed");
+			if (response.status === 204) {
+				throw new Error("empty_response");
 			}
-			return response.json().catch(function () { return { ok: true }; });
-		}).then(function (result) {
-			if (!result || result.ok !== true) {
-				throw new Error("request failed");
-			}
+			return response.json().catch(function () {
+				throw new Error("invalid_response");
+			}).then(function (result) {
+				if (!response.ok || !result || result.ok !== true) {
+					throw new Error((result && result.error) || (response.status === 429 ? "rate_limited" : "request_failed"));
+				}
+				return result;
+			});
+		}).then(function () {
 			clearTimeout(timer);
 			finishSuccess();
-		}).catch(function () {
+		}).catch(function (error) {
 			clearTimeout(timer);
 			busy = false;
 			sendBtn.disabled = false;
 			sendBtn.textContent = "Send";
-			statusEl.textContent = "Could not send. Please try again.";
+			var code = error && error.message ? error.message : "request_failed";
+			if (code === "invalid_token") {
+				statusEl.textContent = "This page was open too long. Please reload and try again.";
+			} else if (code === "rate_limited") {
+				statusEl.textContent = "Too many submissions right now. Please try again later.";
+			} else if (code === "empty_response" || code === "invalid_response") {
+				statusEl.textContent = "Could not send. Please reload and try again.";
+			} else {
+				statusEl.textContent = "Could not send. Your text is kept — please try again.";
+			}
 		});
 	}
 
@@ -824,6 +1051,10 @@
 			body.hidden = false;
 			successEl.hidden = true;
 		}
+		if (lastFocus && document.contains(lastFocus) && typeof lastFocus.focus === "function") {
+			try { lastFocus.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
+		}
+		lastFocus = null;
 		requestAnimationFrame(function () {
 			var x = window.scrollX || window.pageXOffset || 0;
 			var y = window.scrollY || window.pageYOffset || 0;

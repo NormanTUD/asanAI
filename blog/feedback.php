@@ -39,6 +39,50 @@ function feedback_redirect(): void {
 	exit;
 }
 
+function feedback_redirect_open(int $id): void {
+	$uri = feedback_current_url();
+	$parts = parse_url($uri);
+	$query = [];
+	if (isset($parts['query']) && is_string($parts['query'])) {
+		parse_str($parts['query'], $query);
+	}
+	unset($query['open']);
+	$query['tab'] = 'all';
+	$query['status'] = '';
+	$query['reaction'] = '';
+	$query['has_comment'] = '';
+	$query['bug'] = '';
+	$query['open'] = (string)$id;
+	$path = isset($parts['path']) && $parts['path'] !== '' ? $parts['path'] : '/';
+	header('Location: ' . $path . '?' . http_build_query($query) . '#feedback-' . $id, true, 303);
+	exit;
+}
+
+function feedback_normalize_path(string $path): string {
+	return in_array($path, ['blog', 'index.php'], true) ? 'index' : $path;
+}
+
+function feedback_lesson_href(string $path): string {
+	$normalized = feedback_normalize_path($path);
+	return $normalized === '' || $normalized === 'index' ? 'index' : $normalized;
+}
+
+function feedback_internal_href(array $overrides = []): string {
+	return '?' . feedback_query($overrides);
+}
+
+function feedback_count_link(string $path, string $reaction, int $count, string $class = ''): string {
+	$query = feedback_query([
+		'tab' => 'all',
+		'path' => feedback_normalize_path($path),
+		'reaction' => $reaction,
+		'page' => 1,
+		'status' => '',
+	]);
+	$cls = $class !== '' ? ' class="' . feedback_h($class) . '"' : '';
+	return '<a' . $cls . ' href="?' . feedback_h($query) . '">' . feedback_h(number_format($count)) . '</a>';
+}
+
 function feedback_flash(string $type, string $text): void {
 	$_SESSION['feedback_flash'] = ['type' => $type, 'text' => $text];
 }
@@ -69,7 +113,7 @@ function feedback_tabs(): array {
 }
 
 function feedback_query(array $overrides = []): string {
-	$allowed = ['range', 'path', 'reaction', 'status', 'has_comment', 'bug', 'q', 'tab', 'page'];
+	$allowed = ['range', 'path', 'reaction', 'status', 'has_comment', 'bug', 'q', 'tab', 'open', 'page'];
 	$q = [];
 	foreach ($allowed as $key) {
 		$value = array_key_exists($key, $overrides) ? $overrides[$key] : ($_GET[$key] ?? null);
@@ -218,10 +262,15 @@ if ($authed && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $action !== '' &
 			$flashType = 'error';
 		} else {
 			try {
+				$currentStmt = $pdoAction->prepare('SELECT status, reaction, comment, email FROM block_feedback WHERE id = ?');
+				$currentStmt->execute([$id]);
+				$current = $currentStmt->fetch();
+				if (!is_array($current)) {
+					feedback_flash('error', 'Feedback #' . $id . ' no longer exists.');
+					feedback_redirect();
+				}
 				if ($action === 'accept' || $action === 'reject' || $action === 'done' || $action === 'reopen') {
-					$current = $pdoAction->prepare('SELECT status FROM block_feedback WHERE id = ?');
-					$current->execute([$id]);
-					$fromStatus = (string)($current->fetchColumn() ?: '');
+					$fromStatus = (string)($current['status'] ?? '');
 					$toStatus = match ($action) {
 						'accept' => 'accepted',
 						'reject' => 'rejected',
@@ -230,61 +279,70 @@ if ($authed && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $action !== '' &
 					};
 					$stmt = $pdoAction->prepare('UPDATE block_feedback SET status = ?, decided_at = ?, updated_at = ? WHERE id = ?');
 					$stmt->execute([$toStatus, time(), time(), $id]);
-					mn_feedback_history_add($pdoAction, $id, $action, $fromStatus, $toStatus, '');
+					if ($stmt->rowCount() > 0) {
+						mn_feedback_history_add($pdoAction, $id, $action, $fromStatus, $toStatus, '');
+					}
 					feedback_flash('ok', 'Feedback #' . $id . ' marked as ' . feedback_status_label($toStatus) . '.');
+					feedback_redirect_open($id);
 				} elseif ($action === 'edit_feedback') {
-					$current = mn_feedback_fetch($pdoAction, $id);
 					$reactionRaw = $_POST['reaction'] ?? '';
 					$newReaction = is_scalar($reactionRaw) ? (string)$reactionRaw : '';
 					if (!isset(mn_feedback_reactions()[$newReaction])) {
 						$newReaction = (string)($current['reaction'] ?? '');
 					}
 					$commentRaw = $_POST['comment'] ?? '';
-					$newComment = is_scalar($commentRaw) ? mn_analytics_clean_client_text((string)$commentRaw, 6000) : '';
+					$newComment = is_scalar($commentRaw) ? mn_feedback_clean_text((string)$commentRaw, 6000) : '';
 					$emailRaw = $_POST['email'] ?? '';
-					$newEmail = is_scalar($emailRaw) ? mn_analytics_clean_client_text((string)$emailRaw, 254) : '';
+					$newEmail = is_scalar($emailRaw) ? mn_feedback_clean_text((string)$emailRaw, 254, false) : '';
 					if ($newEmail !== '' && filter_var($newEmail, FILTER_VALIDATE_EMAIL) === false) {
 						feedback_flash('error', 'The email address is not valid.');
 					} else {
 						$noteParts = [];
-						if ($current && $newReaction !== (string)$current['reaction']) {
-							$noteParts[] = 'reaction: ' . (string)$current['reaction'] . ' -> ' . $newReaction;
+						if ($newReaction !== (string)($current['reaction'] ?? '')) {
+							$noteParts[] = 'reaction: ' . (string)($current['reaction'] ?? '') . ' -> ' . $newReaction;
 						}
-						if ($current && $newComment !== (string)$current['comment']) {
+						if ($newComment !== (string)($current['comment'] ?? '')) {
 							$noteParts[] = $newComment === '' ? 'comment cleared' : 'comment edited';
 						}
-						if ($current && $newEmail !== (string)$current['email']) {
+						if ($newEmail !== (string)($current['email'] ?? '')) {
 							$noteParts[] = $newEmail === '' ? 'email cleared' : 'email edited';
 						}
 						$stmt = $pdoAction->prepare('UPDATE block_feedback SET reaction = ?, comment = ?, email = ?, updated_at = ? WHERE id = ?');
 						$stmt->execute([$newReaction, $newComment, $newEmail, time(), $id]);
-						mn_feedback_history_add($pdoAction, $id, 'edited', (string)($current['status'] ?? ''), (string)($current['status'] ?? ''), implode('; ', $noteParts));
+						if ($stmt->rowCount() > 0) {
+							mn_feedback_history_add($pdoAction, $id, 'edited', (string)$current['status'], (string)$current['status'], implode('; ', $noteParts));
+						}
 						feedback_flash('ok', 'Feedback #' . $id . ' updated.');
+						feedback_redirect_open($id);
 					}
 				} elseif ($action === 'save_prompt') {
-					$current = $pdoAction->prepare('SELECT status FROM block_feedback WHERE id = ?');
-					$current->execute([$id]);
-					$fromStatus = (string)($current->fetchColumn() ?: '');
+					$fromStatus = (string)($current['status'] ?? '');
 					$noteRaw = $_POST['admin_note'] ?? '';
-					$note = is_scalar($noteRaw) ? mn_feedback_clean_html((string)$noteRaw, 8000) : '';
+					$note = is_scalar($noteRaw) ? mn_feedback_clean_text((string)$noteRaw, 8000) : '';
 					$promptRaw = $_POST['admin_prompt'] ?? '';
-					$prompt = is_scalar($promptRaw) ? mn_feedback_clean_html((string)$promptRaw, 60000) : '';
+					$prompt = is_scalar($promptRaw) ? mn_feedback_clean_text((string)$promptRaw, 60000) : '';
 					$stmt = $pdoAction->prepare('UPDATE block_feedback SET admin_note = ?, admin_prompt = ?, status = ?, decided_at = COALESCE(decided_at, ?), updated_at = ? WHERE id = ?');
 					$stmt->execute([$note, $prompt, 'accepted', time(), time(), $id]);
-					mn_feedback_history_add($pdoAction, $id, 'prompt_saved', $fromStatus, 'accepted', substr($note, 0, 300));
+					if ($stmt->rowCount() > 0) {
+						mn_feedback_history_add($pdoAction, $id, 'prompt_saved', $fromStatus, 'accepted', substr($note, 0, 300));
+					}
 					feedback_flash('ok', 'Prompt saved for feedback #' . $id . '.');
+					feedback_redirect_open($id);
 				} elseif ($action === 'regenerate_prompt') {
 					$row = mn_feedback_fetch($pdoAction, $id);
 					if ($row) {
 						$noteRaw = $_POST['admin_note'] ?? '';
-						$note = is_scalar($noteRaw) ? mn_feedback_clean_html((string)$noteRaw, 8000) : '';
+						$note = is_scalar($noteRaw) ? mn_feedback_clean_text((string)$noteRaw, 8000) : '';
 						$includeBug = !empty($_POST['include_bug']);
 						$prompt = mn_feedback_build_prompt($row, $note, $includeBug);
 						$fromStatus = (string)($row['status'] ?? '');
 						$stmt = $pdoAction->prepare('UPDATE block_feedback SET admin_note = ?, admin_prompt = ?, status = ?, decided_at = COALESCE(decided_at, ?), updated_at = ? WHERE id = ?');
 						$stmt->execute([$note, $prompt, 'accepted', time(), time(), $id]);
-						mn_feedback_history_add($pdoAction, $id, 'prompt_regenerated', $fromStatus, 'accepted', $includeBug ? 'with bug context' : 'without bug context');
+						if ($stmt->rowCount() > 0) {
+							mn_feedback_history_add($pdoAction, $id, 'prompt_regenerated', $fromStatus, 'accepted', $includeBug ? 'with bug context' : 'without bug context');
+						}
 						feedback_flash('ok', 'Prompt regenerated for feedback #' . $id . '.');
+						feedback_redirect_open($id);
 					}
 				} elseif ($action === 'delete') {
 					$pdoAction->beginTransaction();
@@ -294,6 +352,7 @@ if ($authed && ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && $action !== '' &
 					$pdoAction->prepare('DELETE FROM block_feedback WHERE id = ?')->execute([$id]);
 					$pdoAction->commit();
 					feedback_flash('ok', 'Feedback #' . $id . ' deleted.');
+					feedback_redirect();
 				}
 				feedback_redirect();
 			} catch (Throwable $e) {
@@ -324,6 +383,7 @@ $path = is_scalar($pathRaw) ? (string)$pathRaw : '';
 if ($path !== '' && !preg_match('/^[a-zA-Z0-9_-]{1,80}$/', $path)) {
 	$path = '';
 }
+$path = feedback_normalize_path($path);
 $reactionRaw = $_GET['reaction'] ?? '';
 $reaction = is_scalar($reactionRaw) ? (string)$reactionRaw : '';
 if ($reaction !== '' && !isset(mn_feedback_reactions()[$reaction])) {
@@ -345,6 +405,8 @@ if (function_exists('mb_substr')) {
 }
 $pageRaw = $_GET['page'] ?? 1;
 $pageNum = is_scalar($pageRaw) ? max(1, (int)$pageRaw) : 1;
+$openRaw = $_GET['open'] ?? 0;
+$openId = is_scalar($openRaw) ? (int)$openRaw : 0;
 $perPage = 30;
 
 $listStatus = $tab === 'inbox' ? 'new' : ($tab === 'accepted' ? 'accepted' : ($tab === 'resolved' ? 'done' : $status));
@@ -363,6 +425,7 @@ $statusCounts = ['new' => 0, 'accepted' => 0, 'rejected' => 0, 'done' => 0];
 $pathOptions = [];
 $pageStats = [];
 $activity = [];
+$latestFeedback = [];
 $pdo = null;
 
 if ($authed) {
@@ -422,7 +485,8 @@ if ($authed) {
 		$pathStmt = $pdo->prepare("SELECT f.path, COUNT(*) AS n FROM block_feedback f LEFT JOIN feedback_selections s ON s.feedback_id = f.id WHERE $pathWhere GROUP BY f.path ORDER BY n DESC, f.path");
 		$pathStmt->execute($pathParams);
 		foreach ($pathStmt->fetchAll() as $pathRow) {
-			$pathOptions[(string)$pathRow['path']] = (int)$pathRow['n'];
+			$pathKey = feedback_normalize_path((string)$pathRow['path']);
+			$pathOptions[$pathKey] = ($pathOptions[$pathKey] ?? 0) + (int)$pathRow['n'];
 		}
 
 		$pageStmt = $pdo->prepare(
@@ -446,6 +510,7 @@ if ($authed) {
 		);
 		$pageStmt->execute($baseParams);
 		foreach ($pageStmt->fetchAll() as $pageRow) {
+			$pageRow['path'] = feedback_normalize_path((string)$pageRow['path']);
 			$pageRow['title'] = $titles[(string)$pageRow['path']] ?? (string)$pageRow['path'];
 			$pageRow['attention'] = (int)$pageRow['unhelpful'] + (int)$pageRow['confusing'];
 			$pageStats[] = $pageRow;
@@ -462,6 +527,17 @@ if ($authed) {
 		);
 		$activityStmt->execute($baseParams);
 		$activity = $activityStmt->fetchAll();
+
+		$latestStmt = $pdo->prepare(
+			"SELECT f.*, s.selected_text
+			 FROM block_feedback f
+			 LEFT JOIN feedback_selections s ON s.feedback_id = f.id
+			 WHERE $baseWhere
+			 ORDER BY f.ts DESC, f.id DESC
+			 LIMIT 8"
+		);
+		$latestStmt->execute($baseParams);
+		$latestFeedback = $latestStmt->fetchAll();
 
 		if ($tab !== 'overview' && $tab !== 'pages') {
 			$countStmt = $pdo->prepare("SELECT COUNT(*) FROM block_feedback f LEFT JOIN feedback_selections s ON s.feedback_id = f.id WHERE $listWhere");
@@ -568,6 +644,10 @@ h2 { margin: 0 0 10px; font-size: 17px; letter-spacing: -.01em; color: var(--hea
 .btn.small { padding: 5px 8px; font-size: 11px; }
 .flash { margin: 0 0 16px; padding: 10px 13px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); }
 .flash.error { border-color: color-mix(in srgb, var(--rose) 55%, var(--border)); color: var(--rose); }
+.admin-nav { display: flex; gap: 6px; overflow-x: auto; margin: 0 0 16px; padding: 0 0 6px; border-bottom: 1px solid var(--border); }
+.admin-nav a { flex: none; padding: 7px 12px; border: 1px solid transparent; border-radius: 999px; color: var(--muted); font-size: 12px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.admin-nav a:hover { color: var(--text); background: var(--surface); text-decoration: none; }
+.admin-nav a.active { color: var(--heading); background: var(--surface); border-color: var(--border); box-shadow: var(--shadow); }
 .tabs { display: flex; gap: 6px; overflow-x: auto; margin: 0 0 18px; padding: 0 0 7px; border-bottom: 1px solid var(--border); scrollbar-width: thin; }
 .tabs a { flex: none; padding: 7px 11px; border: 1px solid transparent; border-radius: 999px; color: var(--muted); font: 600 12px system-ui, sans-serif; white-space: nowrap; }
 .tabs a:hover { color: var(--text); background: var(--surface); text-decoration: none; }
@@ -609,7 +689,7 @@ table.stats-table { width: 100%; border-collapse: collapse; min-width: 770px; }
 .stats-table .good { color: var(--emerald); }
 .stats-table .bad { color: var(--rose); }
 .list { display: grid; gap: 10px; }
-.item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; scroll-margin-top: 84px; }
 .item summary { list-style: none; cursor: pointer; padding: 13px 15px; display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: start; }
 .item summary::-webkit-details-marker { display: none; }
 .item-head { min-width: 0; }
@@ -695,7 +775,7 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 			<p class="sub">Selected passages, reactions, comments and optional bug context · as of <?php echo feedback_h($nowLabel); ?> (Berlin)</p>
 		</div>
 		<div class="top-actions">
-			<a class="btn" href="stats">Analytics</a>
+			<a class="btn" href="<?php echo feedback_h(feedback_current_url()); ?>" title="Reload feedback">Refresh</a>
 			<button type="button" id="theme-toggle" class="btn">Light</button>
 			<form method="post" action="">
 				<input type="hidden" name="action" value="logout">
@@ -704,6 +784,12 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 			</form>
 		</div>
 	</header>
+
+	<nav class="admin-nav" aria-label="Admin areas">
+		<a href="stats">Analytics</a>
+		<a class="active" href="feedback">Reader feedback</a>
+		<a href="index">Course</a>
+	</nav>
 
 	<?php if ($flash !== ''): ?><div class="flash <?php echo $flashType === 'error' ? 'error' : ''; ?>"><?php echo feedback_h($flash); ?></div><?php endif; ?>
 	<?php if ($dbError !== ''): ?><div class="flash error"><?php echo feedback_h($dbError); ?></div><?php endif; ?>
@@ -735,6 +821,29 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 
 	<?php if ($tab === 'overview'): ?>
 		<div class="overview-grid">
+			<div class="card wide">
+				<h2>Latest suggestions &amp; bugs</h2>
+				<?php if (!$latestFeedback): ?><p class="muted">No feedback yet.</p><?php else: ?>
+				<div class="timeline">
+					<?php foreach ($latestFeedback as $l): ?>
+						<?php
+							$lMeta = $reactions[(string)$l['reaction']] ?? ['icon' => '', 'label' => (string)$l['reaction']];
+							$lText = trim((string)($l['comment'] ?? ''));
+							if ($lText === '') {
+								$lText = trim((string)($l['selected_text'] ?? ''));
+							}
+							$lText = preg_replace('/\s+/u', ' ', $lText) ?? '';
+							$lLink = feedback_internal_href(['tab' => 'all', 'path' => $l['path'], 'page' => 1, 'status' => '', 'open' => (int)$l['id']]);
+						?>
+						<a class="timeline-row" href="<?php echo feedback_h($lLink); ?>">
+							<span class="timeline-when"><?php echo feedback_h((new DateTimeImmutable('@' . (int)$l['ts']))->setTimezone(new DateTimeZone('Europe/Berlin'))->format('M j, H:i')); ?></span>
+							<span class="timeline-what"><b><?php echo feedback_h($lMeta['icon'] . ' ' . $lMeta['label']); ?></b> · <?php echo feedback_h($titles[$l['path']] ?? $l['path']); ?><?php if ($lText !== ''): ?> — <?php echo feedback_h(mb_substr($lText, 0, 120, 'UTF-8')); ?><?php endif; ?></span>
+							<span class="timeline-action"><?php echo !empty($l['bug_consent']) ? 'Log attached' : feedback_h(feedback_status_label((string)$l['status'])); ?></span>
+						</a>
+					<?php endforeach; ?>
+				</div>
+				<?php endif; ?>
+			</div>
 			<div class="card">
 				<h2>Most feedback</h2>
 				<?php if (!$recentPages): ?><p class="muted">No pages yet.</p><?php else: ?>
@@ -796,17 +905,19 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 				<?php if (!$pageStats): ?><p class="muted">No feedback yet.</p><?php else: ?>
 				<div class="table-wrap">
 					<table class="stats-table">
-						<thead><tr><th>Page</th><th>Total</th><th>👍</th><th>👎</th><th>💡</th><th>❓</th><th>🐞</th><th>Comments</th></tr></thead>
+						<thead><tr><th>Page</th><th>Total</th><th>👍</th><th>👎</th><th>👍 rate</th><th>💡</th><th>❓</th><th>🐞</th><th>Comments</th></tr></thead>
 						<tbody>
 						<?php foreach ($pageStats as $p): ?>
 							<tr>
-								<td><a href="<?php echo feedback_h($p['path']); ?>"><?php echo feedback_h($p['title']); ?></a></td>
-								<td><?php echo (int)$p['total']; ?></td>
-								<td class="good"><?php echo (int)$p['helpful']; ?></td>
-								<td class="bad"><?php echo (int)$p['unhelpful']; ?></td>
-								<td><?php echo (int)$p['insight']; ?></td>
-								<td><?php echo (int)$p['confusing']; ?></td>
-								<td><?php echo (int)$p['bug']; ?></td>
+								<td><a href="<?php echo feedback_h(feedback_internal_href(['tab' => 'all', 'path' => $p['path'], 'page' => 1, 'status' => ''])); ?>"><?php echo feedback_h($p['title']); ?></a> <a class="muted" href="<?php echo feedback_h(feedback_lesson_href($p['path'])); ?>" title="Open lesson">↗</a></td>
+								<td><?php echo feedback_count_link($p['path'], '', (int)$p['total']); ?></td>
+								<td class="good"><?php echo feedback_count_link($p['path'], 'helpful', (int)$p['helpful'], 'good'); ?></td>
+								<td class="bad"><?php echo feedback_count_link($p['path'], 'unhelpful', (int)$p['unhelpful'], 'bad'); ?></td>
+								<?php $rate = ((int)$p['helpful'] + (int)$p['unhelpful']) > 0 ? (int)round(100 * (int)$p['helpful'] / ((int)$p['helpful'] + (int)$p['unhelpful'])) : null; ?>
+								<td><?php echo $rate === null ? '—' : feedback_h($rate . ' %'); ?></td>
+								<td><?php echo feedback_count_link($p['path'], 'insight', (int)$p['insight']); ?></td>
+								<td><?php echo feedback_count_link($p['path'], 'confusing', (int)$p['confusing']); ?></td>
+								<td><?php echo feedback_count_link($p['path'], 'bug', (int)$p['bug']); ?></td>
 								<td><?php echo (int)$p['comments']; ?></td>
 							</tr>
 						<?php endforeach; ?>
@@ -841,22 +952,24 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 		<?php else: ?>
 			<div class="table-wrap">
 				<table class="stats-table">
-					<thead><tr><th>Page</th><th>Total</th><th>👍 Helpful</th><th>👎 Not helpful</th><th>💡 Insight</th><th>❓ Confusing</th><th>🐞 Bug</th><th>Comments</th><th>Open</th><th>Accepted</th><th>Done</th><th>Last</th></tr></thead>
+					<thead><tr><th>Page</th><th>Total</th><th>👍 Helpful</th><th>👎 Not helpful</th><th>👍 rate</th><th>💡 Insight</th><th>❓ Confusing</th><th>🐞 Bug</th><th>Comments</th><th>Open</th><th>Accepted</th><th>Done</th><th>Last</th></tr></thead>
 					<tbody>
 					<?php foreach ($pageStats as $p): ?>
 						<?php $lastTs = (int)($p['last_ts'] ?? 0); ?>
 						<tr>
-							<td><a href="<?php echo feedback_h($p['path']); ?>"><?php echo feedback_h($p['title']); ?></a><div class="leader-tag">/<?php echo feedback_h($p['path']); ?></div></td>
-							<td><a href="?<?php echo feedback_h(feedback_query(['tab' => 'all', 'path' => $p['path'], 'page' => 1, 'status' => ''])); ?>"><?php echo (int)$p['total']; ?></a></td>
-							<td class="good"><?php echo (int)$p['helpful']; ?></td>
-							<td class="bad"><?php echo (int)$p['unhelpful']; ?></td>
-							<td><?php echo (int)$p['insight']; ?></td>
-							<td><?php echo (int)$p['confusing']; ?></td>
-							<td><?php echo (int)$p['bug']; ?></td>
+							<td><a href="<?php echo feedback_h(feedback_internal_href(['tab' => 'all', 'path' => $p['path'], 'page' => 1, 'status' => ''])); ?>"><?php echo feedback_h($p['title']); ?></a> <a class="muted" href="<?php echo feedback_h(feedback_lesson_href($p['path'])); ?>" title="Open lesson">↗</a><div class="leader-tag">/<?php echo feedback_h(feedback_normalize_path($p['path'])); ?></div></td>
+							<td><?php echo feedback_count_link($p['path'], '', (int)$p['total']); ?></td>
+							<td class="good"><?php echo feedback_count_link($p['path'], 'helpful', (int)$p['helpful'], 'good'); ?></td>
+							<td class="bad"><?php echo feedback_count_link($p['path'], 'unhelpful', (int)$p['unhelpful'], 'bad'); ?></td>
+							<?php $rate = ((int)$p['helpful'] + (int)$p['unhelpful']) > 0 ? (int)round(100 * (int)$p['helpful'] / ((int)$p['helpful'] + (int)$p['unhelpful'])) : null; ?>
+							<td><?php echo $rate === null ? '—' : feedback_h($rate . ' %'); ?></td>
+							<td><?php echo feedback_count_link($p['path'], 'insight', (int)$p['insight']); ?></td>
+							<td><?php echo feedback_count_link($p['path'], 'confusing', (int)$p['confusing']); ?></td>
+							<td><?php echo feedback_count_link($p['path'], 'bug', (int)$p['bug']); ?></td>
 							<td><?php echo (int)$p['comments']; ?></td>
-							<td><?php echo (int)$p['open_count']; ?></td>
-							<td><?php echo (int)$p['accepted']; ?></td>
-							<td><?php echo (int)$p['done_count']; ?></td>
+							<td><a href="?<?php echo feedback_h(feedback_query(['tab' => 'inbox', 'path' => $p['path'], 'page' => 1, 'status' => '', 'reaction' => ''])); ?>"><?php echo (int)$p['open_count']; ?></a></td>
+							<td><a href="?<?php echo feedback_h(feedback_query(['tab' => 'accepted', 'path' => $p['path'], 'page' => 1, 'status' => '', 'reaction' => ''])); ?>"><?php echo (int)$p['accepted']; ?></a></td>
+							<td><a href="?<?php echo feedback_h(feedback_query(['tab' => 'resolved', 'path' => $p['path'], 'page' => 1, 'status' => '', 'reaction' => ''])); ?>"><?php echo (int)$p['done_count']; ?></a></td>
 							<td class="leader-tag"><?php echo $lastTs > 0 ? feedback_h((new DateTimeImmutable('@' . $lastTs))->setTimezone(new DateTimeZone('Europe/Berlin'))->format('M j, H:i')) : '—'; ?></td>
 						</tr>
 					<?php endforeach; ?>
@@ -925,7 +1038,7 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 						$promptValue = mn_feedback_build_prompt($full, (string)($row['admin_note'] ?? ''), false);
 					}
 				?>
-				<details class="item">
+				<details class="item" id="feedback-<?php echo $id; ?>"<?php echo $openId === $id ? ' open' : ''; ?>>
 					<summary>
 						<div class="item-head">
 							<div class="item-title">
@@ -945,11 +1058,12 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 					</summary>
 					<div class="item-body">
 						<div class="grid">
-							<div class="kv"><div class="k">Page</div><div class="v"><a href="<?php echo feedback_h($row['path']); ?>">/<?php echo feedback_h($row['path']); ?></a></div></div>
+							<div class="kv"><div class="k">Page</div><div class="v"><a href="<?php echo feedback_h(feedback_internal_href(['tab' => 'all', 'path' => $row['path'], 'page' => 1, 'status' => ''])); ?>">/<?php echo feedback_h(feedback_normalize_path($row['path'])); ?></a> · <a href="<?php echo feedback_h(feedback_lesson_href($row['path'])); ?>">open lesson</a></div></div>
 							<div class="kv"><div class="k">Part</div><div class="v"><?php echo feedback_h($row['part'] > 0 ? $row['part'] . ' · ' . $row['part_title'] : '—'); ?></div></div>
 							<div class="kv"><div class="k">Section</div><div class="v"><?php echo feedback_h($row['section_title'] ?: '—'); ?></div></div>
 							<div class="kv"><div class="k">Block</div><div class="v">#<?php echo (int)$row['block_index']; ?><?php if (!empty($row['block_selector'])): ?> · <code><?php echo feedback_h($row['block_selector']); ?></code><?php endif; ?></div></div>
-							<div class="kv"><div class="k">Source file</div><div class="v"><code><?php echo feedback_h($row['source_file'] ?: ('blog/' . $row['path'] . '.php')); ?></code></div></div>
+							<div class="kv"><div class="k">Source file</div><div class="v"><code><?php echo feedback_h($row['source_file'] ?: ('blog/' . feedback_normalize_path($row['path']) . '.php')); ?></code></div></div>
+							<div class="kv"><div class="k">Context</div><div class="v"><?php echo feedback_h($row['context_kind'] ?: 'prose'); ?><?php if (!empty($row['container_label'])): ?> · <?php echo feedback_h($row['container_label']); ?><?php endif; ?><?php if (!empty($row['container_selector'])): ?><div class="leader-tag"><code><?php echo feedback_h($row['container_selector']); ?></code></div><?php endif; ?></div></div>
 							<div class="kv"><div class="k">Selection offsets</div><div class="v"><?php echo (int)($row['start_offset'] ?? 0); ?>–<?php echo (int)($row['end_offset'] ?? 0); ?></div></div>
 						</div>
 
@@ -1103,6 +1217,15 @@ pre.block { margin: 0; padding: 10px; border-radius: 8px; background: var(--bg);
 			try { localStorage.setItem(key, light ? "light" : "dark"); } catch (e) {}
 		});
 	}
+	function revealHashRow() {
+		if (!location.hash || !/^#feedback-\d+$/.test(location.hash)) return;
+		var el = document.getElementById(location.hash.slice(1));
+		if (!el) return;
+		if (el.tagName === "DETAILS") el.open = true;
+		setTimeout(function () { el.scrollIntoView({ block: "start", behavior: "smooth" }); }, 40);
+	}
+	revealHashRow();
+
 	document.addEventListener("click", function (event) {
 		var btn = event.target.closest && event.target.closest(".copy-prompt");
 		if (!btn) return;

@@ -219,7 +219,7 @@ def main() -> int:
 						data=json.dumps({
 							"token": feedback_cfg.get("token", ""),
 							"request_id": "feedfacefeedfacefeedfacefeedface",
-							"path": "history",
+							"path": "index",
 							"reaction": "helpful",
 							"comment": "Proxy feedback test",
 							"selection": {"text": "proxy passage", "start": 1, "end": 14},
@@ -234,7 +234,7 @@ def main() -> int:
 					check(feedback_response.status_code == 200 and feedback_json.get("ok") is True, "feedback submission through proxy", f"{feedback_response.status_code} {feedback_response.text[:120]}")
 					if db_path.is_file():
 						with sqlite3.connect(db_path) as db:
-							feedback_count = db.execute("SELECT COUNT(*) FROM block_feedback WHERE comment = 'Proxy feedback test'").fetchone()[0]
+							feedback_count = db.execute("SELECT COUNT(*) FROM block_feedback WHERE comment = 'Proxy feedback test' AND path = 'index'").fetchone()[0]
 						check(feedback_count == 1, "feedback reached remote DB through proxy", str(feedback_count))
 			token_match = re.search(r'"token":"([a-f0-9]{32})"', public.text)
 			check(bool(token_match), "public page exposes ephemeral pageview token")

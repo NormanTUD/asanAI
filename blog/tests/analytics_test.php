@@ -189,7 +189,7 @@ check(preg_match('/^[a-f0-9]{32}$/', $token) === 1, 'pageview token shape');
 $pdo = mn_analytics_open_db();
 check($pdo instanceof PDO, 'database opens');
 if ($pdo instanceof PDO) {
-	check_same(8, (int)$pdo->query('PRAGMA user_version')->fetchColumn(), 'schema version 8');
+	check_same(9, (int)$pdo->query('PRAGMA user_version')->fetchColumn(), 'schema version 9');
 	$row = $pdo->query('SELECT * FROM pageviews ORDER BY id LIMIT 1')->fetch();
 	check_same('history', $row['path'], 'page slug stored');
 	check_same('search', $row['ref_type'], 'referrer type stored');
@@ -246,7 +246,13 @@ if ($pdo instanceof PDO) {
 	check($reactionKeys === ['helpful', 'unhelpful', 'insight', 'confusing', 'bug'], 'feedback reaction set');
 	$feedbackToken = mn_feedback_issue_token();
 	check(mn_feedback_verify_token($feedbackToken), 'feedback token verifies');
+	check(mn_feedback_verify_token($feedbackToken, 'history'), 'feedback token verifies for its path');
+	check(!mn_feedback_verify_token($feedbackToken, 'agents'), 'feedback token is bound to its path');
 	check(!mn_feedback_verify_token($feedbackToken . 'x'), 'tampered feedback token is rejected');
+	$tokenRaw = base64_decode($feedbackToken, true);
+	$tokenParts = is_string($tokenRaw) ? explode('.', $tokenRaw) : [];
+	$passwordDerived = count($tokenParts) === 4 ? hash_hmac('sha256', $tokenParts[0] . '.' . $tokenParts[1] . '.' . $tokenParts[2], 'test-password') : '';
+	check($passwordDerived !== ($tokenParts[3] ?? ''), 'feedback token is not derived from the admin password');
 
 	$selection = [
 		'text' => 'A selected passage about history.',
@@ -276,6 +282,9 @@ if ($pdo instanceof PDO) {
 		'block_selector' => 'div.md > p:nth-of-type(2)',
 		'section_title' => 'A Section',
 		'section_anchor' => 'a-section',
+		'context_kind' => 'prose',
+		'container_selector' => 'div.md > p',
+		'container_label' => 'A Section',
 		'block_text' => 'A selected passage about history. More context follows here.',
 		'block_html' => '<p>A selected passage about history. More context follows here.</p>',
 		'reaction' => 'insight',
@@ -289,11 +298,14 @@ if ($pdo instanceof PDO) {
 	check(is_array($feedbackRow), 'feedback row can be fetched');
 	check_same(1, (int)$pdo->query('SELECT COUNT(*) FROM feedback_history WHERE feedback_id = ' . $feedbackId . " AND action = 'created'")->fetchColumn(), 'feedback history records creation');
 	check_same('insight', $feedbackRow['reaction'] ?? '', 'feedback reaction stored');
+	check_same('prose', $feedbackRow['context_kind'] ?? '', 'feedback context kind stored');
+	check_same('A Section', $feedbackRow['container_label'] ?? '', 'feedback container label stored');
 	check_same('reader@example.test', $feedbackRow['email'] ?? '', 'feedback email stored when supplied');
 	check_same(10, (int)($feedbackRow['start_offset'] ?? -1), 'selection start offset stored');
 	check_same(42, (int)($feedbackRow['end_offset'] ?? -1), 'selection end offset stored');
 	check_same('A selected passage about history.', $feedbackRow['selection_text'] ?? '', 'selected text stored');
 	check(!str_contains((string)($feedbackRow['selection_html'] ?? ''), '<script'), 'script stripped from selected HTML');
+	check(!str_contains((string)($feedbackRow['selection_html'] ?? ''), 'onerror'), 'attributes stripped from selected HTML');
 	check_same('blog/history.php', $feedbackRow['source_file'] ?? '', 'source file recorded');
 	check_same($requestId, $feedbackRow['request_id'] ?? '', 'request id stored');
 
@@ -312,6 +324,8 @@ if ($pdo instanceof PDO) {
 	check(empty($badEmail['ok']), 'invalid email is rejected');
 	$badPath = mn_feedback_store(['path' => '../etc/passwd', 'reaction' => 'helpful']);
 	check(empty($badPath['ok']), 'invalid path is rejected');
+	$missingPath = mn_feedback_store(['path' => 'does_not_exist_123', 'reaction' => 'helpful']);
+	check(empty($missingPath['ok']), 'non-existent lesson path is rejected');
 
 	$bugStored = mn_feedback_store([
 		'request_id' => 'abcdefabcdefabcdefabcdefabcdef99',
@@ -347,6 +361,15 @@ if ($pdo instanceof PDO) {
 	check_same(1, (int)($consentRow['bug_consent'] ?? 0), 'bug context stored with consent');
 	check(str_contains((string)($consentRow['bug_console_logs_json'] ?? ''), 'boom'), 'console log stored with consent');
 	check(str_contains((string)($consentRow['bug_last_clicks_json'] ?? ''), 'Run'), 'last click stored with consent');
+
+	putenv('MN_FEEDBACK_DAILY_CAP=1');
+	$limited = mn_feedback_store([
+		'request_id' => 'abcdefabcdefabcdefabcdefabcdefff',
+		'path' => 'history',
+		'reaction' => 'helpful',
+	]);
+	check(empty($limited['ok']) && ($limited['error'] ?? '') === 'rate_limited', 'daily feedback cap is enforced');
+	putenv('MN_FEEDBACK_DAILY_CAP');
 
 	$prompt = mn_feedback_build_prompt($feedbackRow, 'Clarify the example and keep the citation.');
 	check(str_contains($prompt, 'File: blog/history.php'), 'prompt includes the source file');

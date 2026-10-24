@@ -481,6 +481,23 @@ function mn_analytics_init_db(PDO $pdo): void {
 	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_bf_reaction ON block_feedback(reaction, ts)");
 	$pdo->exec("CREATE INDEX IF NOT EXISTS idx_bf_status ON block_feedback(status, ts)");
 
+	$feedbackColumns = [
+		'container_selector' => "TEXT NOT NULL DEFAULT ''",
+		'container_label' => "TEXT NOT NULL DEFAULT ''",
+		'context_kind' => "TEXT NOT NULL DEFAULT 'prose'",
+	];
+	$feedbackExisting = [];
+	foreach ($pdo->query('PRAGMA table_info(block_feedback)') as $row) {
+		if (isset($row['name'])) {
+			$feedbackExisting[(string)$row['name']] = true;
+		}
+	}
+	foreach ($feedbackColumns as $name => $definition) {
+		if (!isset($feedbackExisting[$name])) {
+			$pdo->exec("ALTER TABLE block_feedback ADD COLUMN $name $definition");
+		}
+	}
+
 	$pdo->exec("CREATE TABLE IF NOT EXISTS feedback_selections (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		feedback_id INTEGER NOT NULL,
@@ -533,6 +550,11 @@ function mn_analytics_init_db(PDO $pdo): void {
 	$pdo->exec("INSERT INTO feedback_history (feedback_id, ts, action, from_status, to_status, note)
 		SELECT id, ts, 'created', '', 'new', reaction FROM block_feedback
 		WHERE id NOT IN (SELECT feedback_id FROM feedback_history)");
+
+	// Normalise the blog root slug written by older clients/prototypes.
+	$pdo->exec("UPDATE block_feedback SET path = 'index' WHERE path IN ('blog', 'index.php')");
+	$pdo->exec("UPDATE feedback_selections SET source_file = 'blog/index.php' WHERE source_file = 'blog/blog.php'");
+	$pdo->exec("UPDATE block_feedback SET lesson_title = 'Course overview' WHERE path = 'index' AND (lesson_title = '' OR lesson_title = 'blog' OR lesson_title = 'index')");
 }
 
 function mn_analytics_maybe_migrate_legacy_db(string $path): void {
@@ -595,9 +617,9 @@ function mn_analytics_open_db(bool $readOnly = false): ?PDO {
 		$pdo->exec('PRAGMA synchronous=NORMAL');
 		$pdo->exec('PRAGMA busy_timeout=5000');
 		$version = (int)$pdo->query('PRAGMA user_version')->fetchColumn();
-		if ($version < 8) {
+		if ($version < 9) {
 			mn_analytics_init_db($pdo);
-			$pdo->exec('PRAGMA user_version=8');
+			$pdo->exec('PRAGMA user_version=9');
 		}
 		return $pdo;
 	} catch (Throwable $e) {
@@ -2032,33 +2054,77 @@ function mn_feedback_endpoint_path(): string {
 }
 
 function mn_feedback_secret(): string {
-	$line = mn_analytics_password_line();
-	return hash_hmac('sha256', 'mn-feedback-token-v1', $line !== '' ? $line : __FILE__);
+	static $secret = null;
+	if (is_string($secret)) {
+		return $secret;
+	}
+	$pdo = mn_analytics_open_db();
+	if (!$pdo) {
+		$secret = '';
+		return $secret;
+	}
+	try {
+		$stmt = $pdo->prepare("SELECT value FROM meta WHERE key = 'feedback_secret'");
+		$stmt->execute();
+		$value = $stmt->fetchColumn();
+		if (!is_string($value) || strlen($value) < 32) {
+			$value = bin2hex(random_bytes(32));
+			$insert = $pdo->prepare("INSERT OR IGNORE INTO meta (key, value) VALUES ('feedback_secret', ?)");
+			$insert->execute([$value]);
+			$stmt->execute();
+			$value = $stmt->fetchColumn();
+		}
+		$secret = is_string($value) && strlen($value) >= 32 ? $value : '';
+	} catch (Throwable $e) {
+		$secret = '';
+	}
+	return $secret;
 }
 
 function mn_feedback_issue_token(): string {
+	$secret = mn_feedback_secret();
+	if ($secret === '') {
+		return '';
+	}
 	$ts = (string)time();
-	$sig = hash_hmac('sha256', $ts, mn_feedback_secret());
-	return base64_encode($ts . '.' . $sig);
+	$nonce = bin2hex(random_bytes(8));
+	$slug = mn_analytics_current_slug() ?: 'index';
+	$payload = $ts . '.' . $nonce . '.' . $slug;
+	$sig = hash_hmac('sha256', $payload, $secret);
+	return base64_encode($payload . '.' . $sig);
 }
 
-function mn_feedback_verify_token(string $token): bool {
-	if ($token === '' || strlen($token) > 200) {
+function mn_feedback_verify_token(string $token, string $path = ''): bool {
+	if ($token === '' || strlen($token) > 300) {
 		return false;
 	}
 	$raw = base64_decode($token, true);
-	if (!is_string($raw) || !str_contains($raw, '.')) {
+	if (!is_string($raw)) {
 		return false;
 	}
-	[$ts, $sig] = explode('.', $raw, 2);
-	if (!preg_match('/^\d{9,12}$/', $ts) || !preg_match('/^[a-f0-9]{64}$/', $sig)) {
+	$parts = explode('.', $raw);
+	if (count($parts) !== 4) {
+		return false;
+	}
+	[$ts, $nonce, $slug, $sig] = $parts;
+	if (!preg_match('/^\d{9,12}$/', $ts) || !preg_match('/^[a-f0-9]{16}$/', $nonce)) {
+		return false;
+	}
+	if (!preg_match('/^[a-z0-9_-]{1,80}$/', $slug) || !preg_match('/^[a-f0-9]{64}$/', $sig)) {
 		return false;
 	}
 	$age = time() - (int)$ts;
 	if ($age < -300 || $age > 86400) {
 		return false;
 	}
-	return hash_equals(hash_hmac('sha256', $ts, mn_feedback_secret()), $sig);
+	if ($path !== '' && !hash_equals($slug, $path)) {
+		return false;
+	}
+	$secret = mn_feedback_secret();
+	if ($secret === '') {
+		return false;
+	}
+	return hash_equals(hash_hmac('sha256', $ts . '.' . $nonce . '.' . $slug, $secret), $sig);
 }
 
 function mn_feedback_print_config(): void {
@@ -2071,10 +2137,15 @@ function mn_feedback_print_config(): void {
 	foreach (mn_feedback_reactions() as $key => $meta) {
 		$reactions[] = ['key' => $key, 'icon' => $meta['icon'], 'label' => $meta['label']];
 	}
+	$token = mn_feedback_issue_token();
+	if ($token === '') {
+		return;
+	}
 	$cfg = [
 		'enabled' => true,
 		'endpoint' => mn_feedback_endpoint_path(),
-		'token' => mn_feedback_issue_token(),
+		'token' => $token,
+		'slug' => mn_analytics_current_slug() ?: 'index',
 		'reactions' => $reactions,
 		'limits' => [
 			'comment' => 6000,
@@ -2094,10 +2165,29 @@ function mn_feedback_print_config(): void {
 	echo '<script>window.__MNFeedback=' . $json . ';</script>' . "\n";
 }
 
+function mn_feedback_clean_text(string $value, int $maxLength, bool $preserveNewlines = true): string {
+	$value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/u', ' ', $value) ?? '';
+	if ($preserveNewlines) {
+		$value = str_replace(["\r\n", "\r"], "\n", $value);
+		$value = preg_replace('/\n{3,}/u', "\n\n", $value) ?? '';
+	} else {
+		$value = preg_replace('/\s+/u', ' ', $value) ?? '';
+	}
+	$value = trim($value);
+	if (function_exists('mb_substr')) {
+		return mb_substr($value, 0, $maxLength, 'UTF-8');
+	}
+	return substr($value, 0, $maxLength);
+}
+
 function mn_feedback_clean_html(string $value, int $maxLength): string {
 	$value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/u', ' ', $value) ?? '';
 	$value = preg_replace('#<(script|style|iframe|object|embed|link|meta)\b[^>]*>.*?</\1>#is', ' ', $value) ?? '';
 	$value = preg_replace('#<(script|style|iframe|object|embed|link|meta)\b[^>]*/?>#i', ' ', $value) ?? '';
+	$allowed = '<b><strong><i><em><code><pre><span><math><sup><sub><br><p><ul><ol><li><blockquote><figure><figcaption><table><thead><tbody><tr><td><th>';
+	$value = strip_tags($value, $allowed);
+	// Remove every attribute from the remaining allowed tags.
+	$value = preg_replace('/<([a-z0-9]+)\s[^>]*>/i', '<$1>', $value) ?? '';
 	$value = trim($value);
 	if (function_exists('mb_substr')) {
 		return mb_substr($value, 0, $maxLength, 'UTF-8');
@@ -2165,7 +2255,14 @@ function mn_feedback_store(array $data): array {
 		return ['ok' => false, 'error' => 'invalid_reaction'];
 	}
 	$path = isset($data['path']) && is_string($data['path']) ? trim($data['path']) : '';
+	if ($path === 'blog' || $path === 'index.php') {
+		$path = 'index';
+	}
 	if (!preg_match('/^[a-zA-Z0-9_-]{1,80}$/', $path)) {
+		return ['ok' => false, 'error' => 'invalid_path'];
+	}
+	$lessonFile = dirname(__DIR__) . '/' . $path . '.php';
+	if (!is_file($lessonFile) || !is_readable($lessonFile)) {
 		return ['ok' => false, 'error' => 'invalid_path'];
 	}
 	$pdo = mn_analytics_open_db();
@@ -2189,8 +2286,23 @@ function mn_feedback_store(array $data): array {
 		return ['ok' => false, 'error' => 'database_unavailable'];
 	}
 
-	$text = static function (array $src, string $key, int $max): string {
-		return isset($src[$key]) && is_string($src[$key]) ? mn_analytics_clean_client_text($src[$key], $max) : '';
+	$now = time();
+	$day = (new DateTimeImmutable('@' . $now))->setTimezone(new DateTimeZone('Europe/Berlin'))->format('Y-m-d');
+	$dailyCap = (int)(getenv('MN_FEEDBACK_DAILY_CAP') ?: 500);
+	if ($dailyCap > 0) {
+		try {
+			$capStmt = $pdo->prepare('SELECT COUNT(*) FROM block_feedback WHERE day = ?');
+			$capStmt->execute([$day]);
+			if ((int)$capStmt->fetchColumn() >= $dailyCap) {
+				return ['ok' => false, 'error' => 'rate_limited'];
+			}
+		} catch (Throwable $e) {
+			return ['ok' => false, 'error' => 'database_unavailable'];
+		}
+	}
+
+	$text = static function (array $src, string $key, int $max, bool $newlines = true): string {
+		return isset($src[$key]) && is_string($src[$key]) ? mn_feedback_clean_text($src[$key], $max, $newlines) : '';
 	};
 	$int = static function (array $src, string $key, int $min, int $max): int {
 		if (!isset($src[$key]) || !is_numeric($src[$key])) {
@@ -2199,25 +2311,31 @@ function mn_feedback_store(array $data): array {
 		return max($min, min($max, (int)$src[$key]));
 	};
 
-	$lessonTitle = $text($data, 'lesson_title', 160);
+	$titles = mn_analytics_lesson_titles();
+	$lessonTitle = $titles[$path] ?? $text($data, 'lesson_title', 160);
 	$part = $int($data, 'part', 0, 20);
 	$partTitle = $text($data, 'part_title', 120);
 	$sectionTitle = $text($data, 'section_title', 200);
 	$sectionAnchor = $text($data, 'section_anchor', 120);
-	$blockKey = $text($data, 'block_key', 160);
-	$blockSelector = $text($data, 'block_selector', 300);
+	$blockKey = $text($data, 'block_key', 160, false);
+	$blockSelector = $text($data, 'block_selector', 300, false);
+	$containerSelector = $text($data, 'container_selector', 300, false);
+	$containerLabel = $text($data, 'container_label', 200);
+	$contextKind = $text($data, 'context_kind', 20, false);
+	$allowedKinds = ['prose', 'heading', 'source', 'quiz', 'demo', 'smartquote', 'footnote'];
+	if (!in_array($contextKind, $allowedKinds, true)) {
+		$contextKind = 'prose';
+	}
 	$blockText = $text($data, 'block_text', 12000);
 	$blockHtml = isset($data['block_html']) && is_string($data['block_html']) ? mn_feedback_clean_html($data['block_html'], 30000) : '';
 	$comment = $text($data, 'comment', 6000);
-	$email = $text($data, 'email', 254);
+	$email = $text($data, 'email', 254, false);
 	if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
 		return ['ok' => false, 'error' => 'invalid_email'];
 	}
 	$blockIndex = $int($data, 'block_index', 0, 100000);
-	$now = time();
-	$day = (new DateTimeImmutable('@' . $now))->setTimezone(new DateTimeZone('Europe/Berlin'))->format('Y-m-d');
 	$sourceFile = 'blog/' . $path . '.php';
-	$sourceMtime = is_file(dirname(__DIR__) . '/' . $path . '.php') ? (int)@filemtime(dirname(__DIR__) . '/' . $path . '.php') : 0;
+	$sourceMtime = (int)@filemtime($lessonFile);
 
 	$selection = isset($data['selection']) && is_array($data['selection']) ? $data['selection'] : [];
 	$selectedText = $text($selection, 'text', 4000);
@@ -2252,14 +2370,16 @@ function mn_feedback_store(array $data): array {
 		$stmt = $pdo->prepare(
 			"INSERT INTO block_feedback
 				(request_id, ts, day, path, lesson_title, part, part_title,
-				 block_index, block_key, block_selector, section_title, section_anchor,
+				 block_index, block_key, block_selector, container_selector, container_label,
+				 context_kind, section_title, section_anchor,
 				 block_text, block_html, reaction, comment, email, status,
 				 admin_note, admin_prompt, decided_at, created_at, updated_at)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', '', '', NULL, ?, ?)"
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', '', '', NULL, ?, ?)"
 		);
 		$stmt->execute([
 			$requestId, $now, $day, $path, $lessonTitle, $part, $partTitle,
-			$blockIndex, $blockKey, $blockSelector, $sectionTitle, $sectionAnchor,
+			$blockIndex, $blockKey, $blockSelector, $containerSelector, $containerLabel,
+			$contextKind, $sectionTitle, $sectionAnchor,
 			$blockText, $blockHtml, $reaction, $comment, $email,
 			$now, $now,
 		]);
@@ -2363,6 +2483,9 @@ function mn_feedback_build_prompt(array $row, string $adminInstruction = '', boo
 	$page = '/' . (string)($row['path'] ?? '');
 	$blockIndex = (string)($row['block_index'] ?? '0');
 	$selector = (string)($row['block_selector'] ?? '');
+	$containerSelector = (string)($row['container_selector'] ?? '');
+	$containerLabel = (string)($row['container_label'] ?? '');
+	$contextKind = (string)($row['context_kind'] ?? 'prose');
 
 	$lines = [];
 	$lines[] = 'TASK';
@@ -2382,7 +2505,26 @@ function mn_feedback_build_prompt(array $row, string $adminInstruction = '', boo
 	if ($selector !== '') {
 		$lines[] = '- Block selector: ' . $selector;
 	}
-	$lines[] = '- Locate the passage by searching the file for the exact reader selection below.';
+	if ($containerSelector !== '' && $containerSelector !== $selector) {
+		$lines[] = '- Container selector: ' . $containerSelector;
+	}
+	if ($containerLabel !== '') {
+		$lines[] = '- Container: ' . $containerLabel;
+	}
+	$lines[] = '- Context kind: ' . $contextKind;
+	if ($contextKind === 'source') {
+		$lines[] = '- This is a generated bibliography entry. Inspect literature.js and the cited source; do not search the lesson file for the generated text.';
+	} elseif ($contextKind === 'quiz') {
+		$lines[] = '- This is a generated quiz card. The question data lives in the lesson file as a JSON script inside .mn-quiz; edit that JSON, not the generated DOM.';
+	} elseif ($contextKind === 'demo') {
+		$lines[] = '- This text belongs to an interactive demo. Inspect the widget HTML/JS and the surrounding section; the text may be produced at runtime.';
+	} elseif ($contextKind === 'smartquote') {
+		$lines[] = '- This text is inside a smart-quote. Check the quote text, its citation key and the surrounding prose.';
+	} elseif ($contextKind === 'footnote') {
+		$lines[] = '- This is a generated footnote. Check the citation/footnote source rather than searching the lesson file for the rendered text.';
+	} else {
+		$lines[] = '- Locate the passage by searching the lesson file for the exact reader selection below.';
+	}
 	$lines[] = '';
 	$lines[] = 'WHAT THE READER WANTS (verbatim)';
 	$lines[] = '- Reaction: ' . $meta['icon'] . ' ' . $meta['label'];
