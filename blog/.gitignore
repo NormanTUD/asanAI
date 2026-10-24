@@ -1,5 +1,8 @@
 **/__pycache__
 llm_interpretability_papers/
+analytics_data/*
+!analytics_data/.htaccess
+!analytics_data/.gitkeep
 1706.03762.pdf
 .search_cache.json*
 darkmode-ci/node_modules/
