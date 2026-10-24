@@ -498,7 +498,13 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 $viewRaw = $_GET['view'] ?? 'analytics';
 $view = is_scalar($viewRaw) && (string)$viewRaw === 'feedback' ? 'feedback' : 'analytics';
 $statsScriptDir = rtrim(str_replace('\\', '/', dirname((string)($_SERVER['SCRIPT_NAME'] ?? '/'))), '/');
-$feedbackEmbedUrl = ($statsScriptDir === '' || $statsScriptDir === '.' ? '' : $statsScriptDir) . '/feedback?embed=1';
+$feedbackEmbedParams = ['embed' => '1'];
+foreach (['tab', 'path', 'reaction', 'status', 'has_comment', 'bug', 'q', 'open', 'page', 'range'] as $feedbackKey) {
+	if (isset($_GET[$feedbackKey]) && is_scalar($_GET[$feedbackKey])) {
+		$feedbackEmbedParams[$feedbackKey] = (string)$_GET[$feedbackKey];
+	}
+}
+$feedbackEmbedUrl = ($statsScriptDir === '' || $statsScriptDir === '.' ? '' : $statsScriptDir) . '/feedback?' . http_build_query($feedbackEmbedParams);
 
 $rangeOptions = [7 => '7 days', 30 => '30 days', 90 => '90 days', 365 => '1 year', 0 => 'All'];
 
@@ -2790,14 +2796,15 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 		<?php endif; ?>
 	</div>
 <?php else: ?>
-	<?php echo mn_analytics_alert_html(); ?>
+	<?php if ($view === 'analytics') { echo mn_analytics_alert_html(); } ?>
 	<header class="top">
 		<div>
-			<h1><a class="brand" href="index">Blog-Analytics</a></h1>
-			<p class="sub">Anonymous · no IPs · no visitor cookies · UA read transiently · as of <?php echo stats_h($nowLabel); ?> (Berlin) <?php if ($analyticsKillSwitch): ?><span class="badge" style="margin-left:8px;">analytics disabled</span><?php else: $healthIssues = mn_analytics_health_issues(); $healthOk = $healthIssues === []; ?><span class="badge <?php echo $healthOk ? 'ok' : 'warn'; ?>" style="margin-left:8px;"><?php echo $healthOk ? 'analytics healthy' : count($healthIssues) . ' issue(s)'; ?></span><?php endif; ?></p>
+			<h1><a class="brand" href="index"><?php echo $view === 'feedback' ? 'Reader feedback' : 'Blog-Analytics'; ?></a></h1>
+			<p class="sub"><?php if ($view === 'feedback'): ?>Reader suggestions, reactions, comments and bug reports · as of <?php echo stats_h($nowLabel); ?> (Berlin)<?php else: ?>Anonymous · no IPs · no visitor cookies · UA read transiently · as of <?php echo stats_h($nowLabel); ?> (Berlin) <?php if ($analyticsKillSwitch): ?><span class="badge" style="margin-left:8px;">analytics disabled</span><?php else: $healthIssues = mn_analytics_health_issues(); $healthOk = $healthIssues === []; ?><span class="badge <?php echo $healthOk ? 'ok' : 'warn'; ?>" style="margin-left:8px;"><?php echo $healthOk ? 'analytics healthy' : count($healthIssues) . ' issue(s)'; ?></span><?php endif; ?><?php endif; ?></p>
 		</div>
 		<div class="top-actions">
 			<button type="button" class="btn" id="theme-toggle">Light</button>
+			<?php if ($view === 'analytics'): ?>
 			<button type="button" class="btn" id="present-toggle">Present</button>
 			<form method="post" action="" class="inline">
 				<input type="hidden" name="action" value="admin_cookie">
@@ -2805,6 +2812,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 				<label class="switch"><input type="checkbox" name="exclude_self" value="1"<?php echo $excludeSelf ? ' checked' : ''; ?> onchange="this.form.submit()"> Exclude my own visits</label>
 				<noscript><button type="submit" class="btn">Save</button></noscript>
 			</form>
+			<?php endif; ?>
 			<form method="post" action="" class="inline">
 				<input type="hidden" name="action" value="logout">
 				<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">
@@ -3074,7 +3082,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			<?php if ($feedbackLatest): ?>
 			<div class="fb-latest">
 				<?php foreach ($feedbackLatest as $fbItem): $fbRead = trim((string)($fbItem['comment'] ?? '')); if ($fbRead === '') { $fbRead = trim((string)($fbItem['selected_text'] ?? '')); } ?>
-					<?php $fbUrl = 'feedback?' . http_build_query(['tab' => 'all', 'path' => $fbItem['path'], 'open' => (int)$fbItem['id'], 'range' => 0, 'page' => 1, 'status' => '']); ?>
+					<?php $fbUrl = 'stats?view=feedback&' . http_build_query(['tab' => 'all', 'path' => $fbItem['path'], 'open' => (int)$fbItem['id'], 'range' => 0, 'page' => 1, 'status' => '']); ?>
 					<a href="<?php echo stats_h($fbUrl); ?>">
 						<span class="when"><?php echo stats_h(stats_time_label((int)$fbItem['ts'])); ?></span>
 						<span class="what"><?php echo stats_h($titles[$fbItem['path']] ?? $fbItem['path']); ?><?php if ($fbRead !== ''): ?> — <?php echo stats_h(mb_substr(preg_replace('/\s+/u', ' ', $fbRead) ?? $fbRead, 0, 90, 'UTF-8')); ?><?php endif; ?></span>
@@ -5758,11 +5766,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 			if (!frame) return;
 			var theme = body.classList.contains('light') ? 'light' : 'dark';
 			try {
-				var url = new URL(frame.getAttribute('src'), window.location.href);
-				if (url.searchParams.get('theme') !== theme) {
-					url.searchParams.set('theme', theme);
-					frame.src = url.toString();
-				}
+				frame.contentWindow.postMessage({ type: 'mn-admin-theme', theme: theme }, window.location.origin);
 			} catch (ignored) {}
 		}
 		function setTheme(light) {
@@ -5780,6 +5784,10 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		try {
 			saved = localStorage.getItem('mn_stats_theme') || '';
 		} catch (ignored) {}
+		var frame = document.getElementById('feedback-frame');
+		if (frame) {
+			frame.addEventListener('load', syncFeedbackFrame);
+		}
 		setTheme(saved === 'light');
 		if (toggle) {
 			toggle.addEventListener('click', function () {

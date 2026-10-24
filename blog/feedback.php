@@ -13,7 +13,13 @@ require_once __DIR__ . '/lib/analytics.php';
 $embedRequest = isset($_GET['embed']) && (string)$_GET['embed'] === '1';
 if (!$embedRequest && ($_SERVER['REQUEST_METHOD'] ?? '') === 'GET') {
 	$dir = rtrim(str_replace('\\', '/', dirname((string)($_SERVER['SCRIPT_NAME'] ?? '/'))), '/');
-	header('Location: ' . ($dir === '' || $dir === '.' ? '' : $dir) . '/stats?view=feedback', true, 302);
+	$redirectQuery = $_GET;
+	unset($redirectQuery['embed'], $redirectQuery['theme']);
+	$redirectUrl = ($dir === '' || $dir === '.' ? '' : $dir) . '/stats?view=feedback';
+	if ($redirectQuery) {
+		$redirectUrl .= '&' . http_build_query($redirectQuery);
+	}
+	header('Location: ' . $redirectUrl, true, 302);
 	exit;
 }
 
@@ -21,10 +27,10 @@ header('Content-Type: text/html; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 header('X-Content-Type-Options: nosniff');
-header('X-Frame-Options: DENY');
+header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: no-referrer');
 header('X-Robots-Tag: noindex, nofollow, noarchive');
-header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'");
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'self'");
 
 mn_admin_session_start();
 
@@ -138,6 +144,12 @@ function feedback_query(array $overrides = []): string {
 			continue;
 		}
 		$q[$key] = $value;
+	}
+	if (isset($_GET['embed']) && is_scalar($_GET['embed']) && (string)$_GET['embed'] === '1') {
+		$q['embed'] = '1';
+	}
+	if (isset($_GET['theme']) && is_scalar($_GET['theme']) && in_array((string)$_GET['theme'], ['light', 'dark'], true)) {
+		$q['theme'] = (string)$_GET['theme'];
 	}
 	return http_build_query($q);
 }
@@ -956,6 +968,7 @@ html[data-embed="1"] .feedback-embed {
 	<?php elseif ($tab === 'pages'): ?>
 		<div class="toolbar">
 			<form method="get" action="">
+				<?php if ($embed): ?><input type="hidden" name="embed" value="1"><input type="hidden" name="theme" value="<?php echo feedback_h($embedTheme); ?>"><?php endif; ?>
 				<input type="hidden" name="tab" value="pages">
 				<select name="range" aria-label="Time range">
 					<?php foreach ($rangeOptions as $r => $label): ?>
@@ -1006,6 +1019,7 @@ html[data-embed="1"] .feedback-embed {
 	<?php else: ?>
 		<div class="toolbar">
 			<form method="get" action="">
+				<?php if ($embed): ?><input type="hidden" name="embed" value="1"><input type="hidden" name="theme" value="<?php echo feedback_h($embedTheme); ?>"><?php endif; ?>
 				<input type="hidden" name="tab" value="<?php echo feedback_h($tab); ?>">
 				<select name="range" aria-label="Time range">
 					<?php foreach ($rangeOptions as $r => $label): ?>
@@ -1235,6 +1249,14 @@ html[data-embed="1"] .feedback-embed {
 			var saved = localStorage.getItem(key);
 			if (saved === "light" || saved === "dark") root.setAttribute("data-theme", saved);
 		} catch (e) {}
+	} else {
+		window.addEventListener("message", function (event) {
+			if (event.origin !== window.location.origin) return;
+			var data = event.data || {};
+			if (data.type === "mn-admin-theme" && (data.theme === "light" || data.theme === "dark")) {
+				root.setAttribute("data-theme", data.theme);
+			}
+		});
 	}
 	var btn = document.getElementById("theme-toggle");
 	if (btn) {

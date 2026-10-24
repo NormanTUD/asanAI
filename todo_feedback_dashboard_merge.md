@@ -19,7 +19,7 @@ in-session todo list carries the same high-level items.
 - Long selected passages scroll inside `.mnf-quote`.
 - Mobile bottom sheet has a drag handle; quote scroll and touch targets improved.
 - Security: random DB stored token secret, path-bound nonce token, path/file validation, daily cap, server-side title override, stricter HTML sanitizing, plaintext prompt/admin notes, action row checks.
-- Shared admin nav between stats and feedback; stats Overview shows feedback KPIs/latest. The two full data views remain separate tabs under one shared admin shell (a true single-page data merge would be a larger refactor).
+- **One unified admin page:** `/stats?view=analytics|feedback` uses one shared header/nav; the feedback view is a same-origin embedded panel (`feedback?embed=1`) with its own internal tabs. `/feedback` redirects there. Theme and auth are shared; stats Overview also shows feedback KPIs/latest.
 
 ---
 

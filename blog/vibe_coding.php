@@ -41,6 +41,8 @@ The word covers three different practices, and most public arguments confuse the
 
 Simon Willison calls the disciplined middle version **vibe engineering**: use the tools aggressively, but keep the engineering \cite{willison2025vibeengineering}. The distinction is not cosmetic. A demo of mode one is often used to sell the economics of mode three; a failure of mode one is used to dismiss mode two.
 
+The first empirical studies already complicate the caricature: vibe coding does not eliminate expertise; it **redistributes** it toward context management, rapid evaluation and decisions about when to switch between AI and manual editing \cite{sarkar2025vibe}. Trust moves along a continuum from **delegation** to **co-creation** \cite{pimenova2025goodvibrations}, and the developer's intent is mediated by probabilistic inference rather than deterministic instruction \cite{meske2025intent}.
+
 The practical rule is equally simple:
 
 | Use vibe coding when… | Do not use it when… |
@@ -54,23 +56,8 @@ The practical rule is equally simple:
 The practice spread fast because the loop got better: an autocomplete model suggests the next line, but an agent can read a repository, edit several files, run tests, read the failure and try again. In March 2025, Y Combinator reported that a quarter of its current batch had codebases that were almost entirely AI-generated \cite{techcrunch2025yc}. In the 2025 Stack Overflow survey, 84% used or planned to use AI tools, 51% of professionals used them daily, and 72% said vibe coding was **not** part of their professional work \cite{stackoverflow2025ai}. All three numbers are true: most developers use AI; most do not hand over the craft.
 </div>
 
-<div class="md">
-## Where the term came from
-
-The attribution is precise, and easy to overstate. The earliest documented use of "vibe coding" in this sense is a post by Andrej Karpathy on **2 February 2025, 23:17 UTC**. He named a practice that was already forming around long-context models, agentic editors and tools such as Cursor. He did not claim to invent natural-language programming; the prehistory runs through program synthesis, literate programming, spreadsheets and the no-code movement.
-
-The lexical record moved faster than the research record:
-
-* **8 March 2025** — Merriam-Webster lists it as slang and trending \cite{merriam2025vibe}.
-* **11 March 2025** — first arXiv abstract we found that mentions the term, in passing, in a paper on code digital twins \cite{peng2025codedigitaltwin}.
-* **26 May 2025** — first arXiv paper with "vibe coding" in the title: a taxonomy contrasting vibe coding with agentic coding \cite{sapkota2025vibeagentic}.
-* **29 June 2025** — first dedicated empirical study, based on eight hours of recorded vibe-coding sessions.
-* **15 September 2025** — first systematic qualitative study, based on more than 190,000 words of interviews and posts.
-* **6 November 2025** — Collins Word of the Year.
-
-Priority claims in a fast-moving field are fragile; the dates above are verifiable, while the labels "first" are the authors' own descriptions. The sequence is what matters: **term, then qualitative studies of practice, then benchmarks, then economics.** The early debate was shaped by demos before it was shaped by measurement.
-
-The first studies already complicate the caricature. Sarkar and Drosos found that vibe coding does not eliminate expertise; it **redistributes** it toward context management, rapid code evaluation and decisions about when to switch between AI and manual editing \cite{sarkar2025vibe}. Pimenova et al. describe trust as a continuum from **delegation** to **co-creation** \cite{pimenova2025goodvibrations}. Meske et al. define the shift as a move from deterministic instruction to **probabilistic inference** over intent — a change in who mediates the developer's goal, not just in who types \cite{meske2025intent}.
+<div class="optional md" data-headline="Where the term came from">
+The earliest documented use of "vibe coding" in this sense is Karpathy's post of **2 February 2025, 23:17 UTC**. He named a practice that was already forming around long-context models; he did not invent natural-language programming. Merriam-Webster listed the term as slang on **8 March 2025** \cite{merriam2025vibe}. In the arXiv record, the first abstract mention is **11 March** (Peng and Wang) \cite{peng2025codedigitaltwin}, the first title is **26 May** (Sapkota et al.) \cite{sapkota2025vibeagentic}, and the first dedicated empirical study is **29 June** (Sarkar and Drosos). Collins made it Word of the Year in November. Priority claims are fragile; the sequence matters more than the labels.
 </div>
 
 <div class="md">
@@ -113,61 +100,249 @@ Three failure modes are now routine:
 GitClear's longitudinal data — 211 million changed lines from 2020–2024 — shows refactoring falling from 25% of changed lines to under 10%, while copy-pasted code rose from 8.3% to 12.3% \cite{gitclear2025}. A 2026 study of 22,953 pull requests from 1,719 vibe coders found that lower-experience contributors submitted 2.15 times more commits, received **4.52 times more review comments**, had **31% lower acceptance rates**, and their PRs stayed open **5.16 times longer** \cite{asdaque2026review}. The productivity gain did not disappear; it moved to the reviewer.
 </div>
 
-<div id="vibe-risk" style="max-width: var(--mn-col-width); margin: 1.5em auto; padding: 20px; border: 1px solid var(--mn-border); border-radius: 12px; background: var(--mn-surface);">
-	<h3 style="margin-top:0; color: var(--mn-text);">How risky is your vibe-coded project?</h3>
-	<p style="color:var(--mn-text-secondary); line-height:1.5;">The same tool can be a sketchpad or a liability. Pick the context and see where the risk concentrates.</p>
-	<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:14px; margin: 12px 0;">
-		<label style="color:var(--mn-text-secondary);">What are you building?<br><select id="vr-kind" style="width:100%; padding:6px; border:1px solid var(--mn-border); border-radius:6px; background:var(--mn-bg-subtle); color:var(--mn-text);">
-			<option value="1">Weekend prototype</option>
-			<option value="2">Internal tool</option>
-			<option value="3">Customer-facing app</option>
-			<option value="4">Safety- or money-critical system</option>
-		</select></label>
-		<label style="color:var(--mn-text-secondary);">How will you verify it?<br><select id="vr-check" style="width:100%; padding:6px; border:1px solid var(--mn-border); border-radius:6px; background:var(--mn-bg-subtle); color:var(--mn-text);">
-			<option value="4">I will just run it</option>
-			<option value="2">Tests and CI</option>
-			<option value="1">Human code review</option>
-			<option value="0">Review plus security audit</option>
-		</select></label>
-		<label style="color:var(--mn-text-secondary);">What data does it touch?<br><select id="vr-data" style="width:100%; padding:6px; border:1px solid var(--mn-border); border-radius:6px; background:var(--mn-bg-subtle); color:var(--mn-text);">
-			<option value="0">Public data only</option>
-			<option value="1">Internal business data</option>
-			<option value="2">Personal data</option>
-			<option value="3">Regulated or financial data</option>
-		</select></label>
+<style>
+.mn-calc {
+  --vr-color: var(--mn-accent);
+  max-width: var(--mn-col-width);
+  margin: 1.75em auto;
+  padding: 24px;
+  border: 1px solid var(--mn-border);
+  border-radius: var(--mn-radius-xl);
+  background: var(--mn-surface);
+  background:
+    radial-gradient(120% 120% at 0% 0%, color-mix(in srgb, var(--mn-accent) 14%, transparent), transparent 55%),
+    radial-gradient(120% 120% at 100% 100%, color-mix(in srgb, var(--mn-coral) 12%, transparent), transparent 55%),
+    var(--mn-surface);
+  box-shadow: var(--mn-shadow-md);
+}
+.mn-calc h3 {
+  margin: 0 0 6px;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+}
+.mn-calc .mn-calc-sub {
+  margin: 0 0 16px;
+  color: var(--mn-text-secondary);
+  line-height: 1.55;
+}
+.mn-calc .mn-calc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin: 14px 0 18px;
+}
+.mn-calc label {
+  color: var(--mn-text-secondary);
+  font-size: 0.9rem;
+}
+.mn-calc select,
+.mn-calc input {
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px 10px;
+  border: 1px solid var(--mn-border);
+  border-radius: var(--mn-radius-sm);
+  background: var(--mn-bg-subtle);
+  color: var(--mn-text);
+  font: inherit;
+}
+.mn-calc select:focus,
+.mn-calc input:focus {
+  outline: 2px solid color-mix(in srgb, var(--mn-accent) 55%, transparent);
+  outline-offset: 1px;
+}
+.mn-calc .mn-result {
+  padding: 16px;
+  border: 1px solid var(--mn-border);
+  border-radius: var(--mn-radius-lg);
+  background: var(--mn-bg-subtle);
+  background: color-mix(in srgb, var(--mn-bg-subtle) 88%, transparent);
+}
+.mn-calc .mn-result-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.mn-calc .mn-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--mn-border);
+  border-color: color-mix(in srgb, var(--vr-color) 40%, transparent);
+  background: var(--mn-bg-subtle);
+  background: color-mix(in srgb, var(--vr-color) 14%, transparent);
+  color: var(--vr-color);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.mn-calc .mn-score {
+  color: var(--mn-text-secondary);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+.mn-calc .mn-track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--mn-border-light);
+  overflow: hidden;
+}
+.mn-calc .mn-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: var(--vr-color);
+  background: linear-gradient(90deg, var(--vr-color), color-mix(in srgb, var(--vr-color) 55%, var(--mn-surface)));
+  transition: width 0.35s ease;
+}
+.mn-calc .mn-advice {
+  margin: 12px 0 0;
+  color: var(--mn-text);
+  line-height: 1.55;
+}
+.mn-calc.vr-low { --vr-color: var(--mn-emerald); }
+.mn-calc.vr-moderate { --vr-color: var(--mn-sky); }
+.mn-calc.vr-high { --vr-color: var(--mn-coral); }
+.mn-calc.vr-severe { --vr-color: var(--mn-rose); }
+.mn-calc.ce-sub-win { --vr-color: var(--mn-sky); }
+.mn-calc.ce-clone-win { --vr-color: var(--mn-coral); }
+.mn-calc .mn-bars {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+.mn-calc .mn-bar-row {
+  display: grid;
+  grid-template-columns: minmax(90px, 0.8fr) 2fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+.mn-calc .mn-bar-label { color: var(--mn-text-secondary); }
+.mn-calc .mn-bar-track {
+  height: 12px;
+  border-radius: 999px;
+  background: var(--mn-border-light);
+  overflow: hidden;
+}
+.mn-calc .mn-bar-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+.mn-calc .mn-bar-sub {
+  background: var(--mn-sky);
+  background: linear-gradient(90deg, var(--mn-sky), color-mix(in srgb, var(--mn-sky) 55%, var(--mn-surface)));
+}
+.mn-calc .mn-bar-clone {
+  background: var(--mn-coral);
+  background: linear-gradient(90deg, var(--mn-coral), color-mix(in srgb, var(--mn-coral) 55%, var(--mn-surface)));
+}
+.mn-calc .mn-bar-amount {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.mn-calc .mn-verdict {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border-left: 4px solid var(--vr-color);
+  border-radius: var(--mn-radius-sm);
+  background: var(--mn-bg-subtle);
+  background: color-mix(in srgb, var(--vr-color) 9%, transparent);
+  color: var(--mn-text);
+  line-height: 1.5;
+}
+.mn-calc .mn-note {
+  margin: 10px 0 0;
+  color: var(--mn-text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+@media (max-width: 560px) {
+  .mn-calc { padding: 18px; }
+  .mn-calc .mn-bar-row { grid-template-columns: 1fr; gap: 4px; }
+  .mn-calc .mn-bar-amount { justify-self: end; }
+}
+</style>
+
+<div id="vibe-risk" class="mn-calc vr-low">
+	<h3>How risky is your vibe-coded project?</h3>
+	<p class="mn-calc-sub">The same tool can be a sketchpad or a liability. Pick the context and watch the risk move.</p>
+	<div class="mn-calc-grid">
+		<label>What are you building?
+			<select id="vr-kind">
+				<option value="1">Weekend prototype</option>
+				<option value="2">Internal tool</option>
+				<option value="3">Customer-facing app</option>
+				<option value="4">Safety- or money-critical system</option>
+			</select>
+		</label>
+		<label>How will you verify it?
+			<select id="vr-check">
+				<option value="4">I will just run it</option>
+				<option value="2">Tests and CI</option>
+				<option value="1">Human code review</option>
+				<option value="0">Review plus security audit</option>
+			</select>
+		</label>
+		<label>What data does it touch?
+			<select id="vr-data">
+				<option value="0">Public data only</option>
+				<option value="1">Internal business data</option>
+				<option value="2">Personal data</option>
+				<option value="3">Regulated or financial data</option>
+			</select>
+		</label>
 	</div>
-	<p id="vr-out" style="font-family:monospace; color:var(--mn-text); line-height:1.7;"></p>
+	<div class="mn-result">
+		<div class="mn-result-top">
+			<span id="vr-badge" class="mn-badge">LOW</span>
+			<span id="vr-score" class="mn-score">3 / 11</span>
+		</div>
+		<div class="mn-track"><div id="vr-fill" class="mn-fill"></div></div>
+		<p id="vr-out" class="mn-advice"></p>
+	</div>
 </div>
 
 <script>
 (function () {
-	function compute() {
+	function computeRisk() {
 		var kind = parseInt(document.getElementById("vr-kind").value, 10) || 1;
 		var check = parseInt(document.getElementById("vr-check").value, 10) || 0;
 		var data = parseInt(document.getElementById("vr-data").value, 10) || 0;
 		var total = kind + check + data;
-		var label, advice;
+		var label, advice, level;
 		if (total <= 3) {
-			label = "LOW";
+			label = "LOW"; level = "low";
 			advice = "This is the zone vibe coding was invented for: cheap to try, cheap to throw away.";
 		} else if (total <= 6) {
-			label = "MODERATE";
+			label = "MODERATE"; level = "moderate";
 			advice = "Treat the generated code as a draft. Add tests, review the diff, and budget for maintenance.";
 		} else if (total <= 8) {
-			label = "HIGH";
+			label = "HIGH"; level = "high";
 			advice = "Do not ship without a human owner, a threat model, and a rollback plan. The demo is not the product.";
 		} else {
-			label = "SEVERE";
+			label = "SEVERE"; level = "severe";
 			advice = "This is not a vibe-coding project. Use an engineering process with accountability, audits and a security budget.";
 		}
-		document.getElementById("vr-out").innerHTML =
-			"risk score: " + total + " / 11 &nbsp;→&nbsp; <strong>" + label + "</strong><br>" + advice;
+		var wrap = document.getElementById("vibe-risk");
+		wrap.className = "mn-calc vr-" + level;
+		document.getElementById("vr-badge").textContent = label;
+		document.getElementById("vr-score").textContent = total + " / 11";
+		document.getElementById("vr-fill").style.width = Math.round((total / 11) * 100) + "%";
+		document.getElementById("vr-out").textContent = advice;
 	}
 	["vr-kind", "vr-check", "vr-data"].forEach(function (id) {
 		var el = document.getElementById(id);
-		if (el) el.addEventListener("change", compute);
+		if (el) el.addEventListener("change", computeRisk);
 	});
-	compute();
+	computeRisk();
 })();
 </script>
 
@@ -194,7 +369,7 @@ There is also a cultural cost. Shin et al. show that web vibe coding tends to re
 <div class="md">
 ## Adobe under the microscope
 
-Adobe is the ideal stress test because it is both a spectacular business and a spectacular target. In fiscal 2025 it reported **$23.77 billion** in revenue, **$25.2 billion** in ARR and more than **$10 billion** in operating cash flow; AI-influenced ARR was above **$5 billion**, AI-first ARR above **$250 million** \cite{adobe2025q4,adobe2025aiarr}. This is not a company that forgot to innovate. Firefly is embedded across its tools and marketed as "commercially safe," though reporting has questioned how complete its training-data provenance is \cite{firefly_wiki}.
+Adobe is the ideal stress test because it is both a spectacular business and a spectacular target. In fiscal 2025 it reported **USD 23.77 billion** in revenue, **USD 25.2 billion** in ARR and more than **USD 10 billion** in operating cash flow; AI-influenced ARR was above **USD 5 billion**, AI-first ARR above **USD 250 million** \cite{adobe2025q4,adobe2025aiarr}. This is not a company that forgot to innovate. Firefly is embedded across its tools and marketed as "commercially safe," though reporting has questioned how complete its training-data provenance is \cite{firefly_wiki}.
 
 So why does a free Photoshop clone matter? Because Adobe's revenue is not primarily a technology rent. It is a **workflow rent**. Photoshop is valuable because the PSD file is the lingua franca of a studio, the plug-in ecosystem is enormous, the color pipeline is trusted, the fonts are licensed, the collaboration tools sit next to the canvas, the enterprise contract includes support and indemnity, and a generation of professionals has Photoshop in their fingers. The moat is the system around the pixels.
 
@@ -212,30 +387,63 @@ That system has soft spots. Creative Cloud moved to subscription-only pricing in
 
 The likely outcome is not "Adobe is dead." It is **unbundling and price compression**. The low end — students, hobbyists, freelancers, emerging markets, internal tools — moves to free or cheap clones. The high end — enterprises, regulated industries, complex workflows — pays for trust, support, collaboration, indemnity and integration. This is the classic pattern of [disruptive innovation](https://hbr.org/2015/12/what-is-disruptive-innovation): the entrant starts where the incumbent's margin is thin, then improves \cite{christensen2015disruptive}.
 
-Figma is the canary. It went public in July 2025 at a valuation above **$56 billion**, then fell below **$20** a share by June 2026 as AI research costs rose and gross margin compressed \cite{figma_wiki,yahoo2026figma}. The market was not punishing growth; it was repricing the cost of growing in an AI world. Adobe's question is the same one, with a bigger installed base and a stronger trust moat.
+Figma is the canary. It went public in July 2025 at a valuation above **USD 56 billion**, then fell below **USD 20** a share by June 2026 as AI research costs rose and gross margin compressed \cite{figma_wiki,yahoo2026figma}. The market was not punishing growth; it was repricing the cost of growing in an AI world. Adobe's question is the same one, with a bigger installed base and a stronger trust moat.
 </div>
 
-<div id="clone-economics" style="max-width: var(--mn-col-width); margin: 1.5em auto; padding: 20px; border: 1px solid var(--mn-border); border-radius: 12px; background: var(--mn-surface);">
-	<h3 style="margin-top:0; color: var(--mn-text);">The clone is free. Is it cheaper?</h3>
-	<p style="color:var(--mn-text-secondary); line-height:1.5;">A subscription is a known cost. A clone is an unknown project. Change the assumptions and watch the five-year total cost of ownership move.</p>
-	<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:14px; margin: 12px 0;">
-		<label style="color:var(--mn-text-secondary);">Seats<br><input type="number" id="ce-seats" value="10" min="1" step="1" style="width:100%; padding:6px; border:1px solid var(--mn-border); border-radius:6px; background:var(--mn-bg-subtle); color:var(--mn-text);"></label>
-		<label style="color:var(--mn-text-secondary);">Subscription $/seat/month<br><input type="number" id="ce-price" value="60" min="0" step="5" style="width:100%; padding:6px; border:1px solid var(--mn-border); border-radius:6px; background:var(--mn-bg-subtle); color:var(--mn-text);"></label>
-		<label style="color:var(--mn-text-secondary);">Years<br><input type="number" id="ce-years" value="5" min="1" max="15" step="1" style="width:100%; padding:6px; border:1px solid var(--mn-border); border-radius:6px; background:var(--mn-bg-subtle); color:var(--mn-text);"></label>
-		<label style="color:var(--mn-text-secondary);">Migration cost $<br><input type="number" id="ce-migrate" value="5000" min="0" step="500" style="width:100%; padding:6px; border:1px solid var(--mn-border); border-radius:6px; background:var(--mn-bg-subtle); color:var(--mn-text);"></label>
-		<label style="color:var(--mn-text-secondary);">Maintenance h/month<br><input type="number" id="ce-hours" value="10" min="0" step="1" style="width:100%; padding:6px; border:1px solid var(--mn-border); border-radius:6px; background:var(--mn-bg-subtle); color:var(--mn-text);"></label>
-		<label style="color:var(--mn-text-secondary);">Loaded labor $/h<br><input type="number" id="ce-rate" value="50" min="0" step="5" style="width:100%; padding:6px; border:1px solid var(--mn-border); border-radius:6px; background:var(--mn-bg-subtle); color:var(--mn-text);"></label>
-		<label style="color:var(--mn-text-secondary);">Risk buffer %<br><input type="number" id="ce-risk" value="20" min="0" max="200" step="5" style="width:100%; padding:6px; border:1px solid var(--mn-border); border-radius:6px; background:var(--mn-bg-subtle); color:var(--mn-text);"></label>
+<div id="clone-economics" class="mn-calc ce-sub-win">
+	<h3>The clone is free. Is it cheaper?</h3>
+	<p class="mn-calc-sub">A subscription is a known cost. A clone is an unknown project. Change the assumptions and watch the five-year total cost of ownership move.</p>
+	<div class="mn-calc-grid">
+		<label>Seats
+			<input type="number" id="ce-seats" value="10" min="1" step="1">
+		</label>
+		<label>Subscription (USD/seat/month)
+			<input type="number" id="ce-price" value="60" min="0" step="5">
+		</label>
+		<label>Years
+			<input type="number" id="ce-years" value="5" min="1" max="15" step="1">
+		</label>
+		<label>Migration cost (USD)
+			<input type="number" id="ce-migrate" value="5000" min="0" step="500">
+		</label>
+		<label>Maintenance (h/month)
+			<input type="number" id="ce-hours" value="10" min="0" step="1">
+		</label>
+		<label>Loaded labor (USD/h)
+			<input type="number" id="ce-rate" value="50" min="0" step="5">
+		</label>
+		<label>Risk buffer (%)
+			<input type="number" id="ce-risk" value="20" min="0" max="200" step="5">
+		</label>
 	</div>
-	<p id="ce-out" style="font-family:monospace; color:var(--mn-text); line-height:1.7;"></p>
+	<div class="mn-result">
+		<div class="mn-result-top">
+			<span id="ce-badge" class="mn-badge">SUBSCRIPTION WINS</span>
+			<span class="mn-score">5-year TCO</span>
+		</div>
+		<div class="mn-bars">
+			<div class="mn-bar-row">
+				<span class="mn-bar-label">Subscription</span>
+				<div class="mn-bar-track"><div id="ce-bar-sub" class="mn-bar-fill mn-bar-sub"></div></div>
+				<span id="ce-total-sub" class="mn-bar-amount">USD 0</span>
+			</div>
+			<div class="mn-bar-row">
+				<span class="mn-bar-label">Clone</span>
+				<div class="mn-bar-track"><div id="ce-bar-clone" class="mn-bar-fill mn-bar-clone"></div></div>
+				<span id="ce-total-clone" class="mn-bar-amount">USD 0</span>
+			</div>
+		</div>
+		<p id="ce-out" class="mn-verdict"></p>
+		<p class="mn-note">Not priced: support, training, plug-ins, legal review, downtime, and the opportunity cost of the team that maintains it.</p>
+	</div>
 </div>
 
 <script>
 (function () {
 	function money(x) {
-		return "$" + Math.round(x).toLocaleString();
+		return "USD " + Math.round(x).toLocaleString();
 	}
-	function compute() {
+	function computeClone() {
 		var seats = parseFloat(document.getElementById("ce-seats").value) || 0;
 		var price = parseFloat(document.getElementById("ce-price").value) || 0;
 		var years = parseFloat(document.getElementById("ce-years").value) || 0;
@@ -247,24 +455,24 @@ Figma is the canary. It went public in July 2025 at a valuation above **$56 bill
 		var cloneBase = migrate + years * 12 * hours * rate;
 		var clone = cloneBase * (1 + risk);
 		var diff = clone - sub;
-		var verdict;
-		if (diff < 0) {
-			verdict = "The clone wins by " + money(-diff) + " over " + years + " years — if the maintenance estimate is real.";
-		} else {
-			verdict = "The subscription is cheaper by " + money(diff) + " over " + years + " years. The clone must buy something the price does not capture.";
-		}
-		document.getElementById("ce-out").innerHTML =
-			"subscription: " + money(sub) + "<br>" +
-			"clone (base): " + money(cloneBase) + "<br>" +
-			"clone (with risk buffer): " + money(clone) + "<br>" +
-			"<strong>" + verdict + "</strong><br>" +
-			"<span style=\"color:var(--mn-text-secondary);\">Not priced: support, training, plug-ins, legal review, downtime, and the opportunity cost of the team that maintains it.</span>";
+		var max = Math.max(sub, clone, 1);
+		var cloneWins = diff < 0;
+		var wrap = document.getElementById("clone-economics");
+		wrap.className = "mn-calc " + (cloneWins ? "ce-clone-win" : "ce-sub-win");
+		document.getElementById("ce-badge").textContent = cloneWins ? "CLONE WINS" : "SUBSCRIPTION WINS";
+		document.getElementById("ce-bar-sub").style.width = Math.round((sub / max) * 100) + "%";
+		document.getElementById("ce-bar-clone").style.width = Math.round((clone / max) * 100) + "%";
+		document.getElementById("ce-total-sub").textContent = money(sub);
+		document.getElementById("ce-total-clone").textContent = money(clone);
+		document.getElementById("ce-out").textContent = cloneWins
+			? "The clone wins by " + money(-diff) + " over " + years + " years — if the maintenance estimate is real."
+			: "The subscription is cheaper by " + money(diff) + " over " + years + " years. The clone must buy something the price does not capture.";
 	}
 	["ce-seats", "ce-price", "ce-years", "ce-migrate", "ce-hours", "ce-rate", "ce-risk"].forEach(function (id) {
 		var el = document.getElementById(id);
-		if (el) el.addEventListener("input", compute);
+		if (el) el.addEventListener("input", computeClone);
 	});
-	compute();
+	computeClone();
 })();
 </script>
 

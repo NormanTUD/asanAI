@@ -139,6 +139,8 @@ def main() -> int:
 			check("asanai_blog_proxy.php?stats.php" in login.text, "stats JS uses proxy base")
 			check('name="__proxy_path" value="stats.php"' in login.text, "stats form keeps remote path")
 			check(all(cookie.path == "/" for cookie in session.cookies), "proxy rewrites session cookie path")
+			unified = session.get(f"{proxy_url}?stats.php?view=feedback", timeout=20)
+			check("feedback-frame" in unified.text and "asanai_blog_proxy.php?feedback?embed=1" in unified.text, "unified admin page embeds feedback through proxy")
 
 			filtered_url = (
 				f"{proxy_url}?stats.php?range=30&source=transformer"
