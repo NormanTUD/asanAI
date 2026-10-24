@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The December Calendar: 31 Days to Understand AI</title>
+<meta name="description" content="A free 31-day guided path through the ideas behind modern AI and LLMs. One door a day, no calculus or code required. Includes Twitter- and LinkedIn-length social copy for every day.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="The December Calendar: 31 Days to Understand AI">
+<meta property="og:description" content="A free 31-day guided path through the ideas behind modern AI and LLMs. One door a day, no calculus or code required.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://asanai.scads.ai/blog/december">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://asanai.scads.ai/blog/december">
+<script>
+try {
+  var saved = localStorage.getItem('dec-theme');
+  if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
+} catch (error) {}
+</script>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #faf8f1;
+  --bg-soft: #f3efe4;
+  --surface: #ffffff;
+  --surface-2: #fbfaf5;
+  --ink: #1f2933;
+  --ink-strong: #111827;
+  --muted: #5b6773;
+  --line: #e3ddd0;
+  --line-strong: #cbc2b0;
+  --accent: #b45309;
+  --accent-soft: #fef3c7;
+  --on-accent: #ffffff;
+  --link: #0f766e;
+  --shadow: 0 18px 45px -28px rgba(17, 24, 39, .45);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f172a;
+  --bg-soft: #111c33;
+  --surface: #16233c;
+  --surface-2: #1b2a46;
+  --ink: #e5e7eb;
+  --ink-strong: #f8fafc;
+  --muted: #a7b1c2;
+  --line: #2b3a55;
+  --line-strong: #3b4d6d;
+  --accent: #fbbf24;
+  --accent-soft: #3a2f12;
+  --on-accent: #111827;
+  --link: #5eead4;
+  --shadow: 0 18px 45px -28px rgba(0, 0, 0, .8);
+}
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0f172a;
+    --bg-soft: #111c33;
+    --surface: #16233c;
+    --surface-2: #1b2a46;
+    --ink: #e5e7eb;
+    --ink-strong: #f8fafc;
+    --muted: #a7b1c2;
+    --line: #2b3a55;
+    --line-strong: #3b4d6d;
+    --accent: #fbbf24;
+    --accent-soft: #3a2f12;
+    --link: #5eead4;
+    --shadow: 0 18px 45px -28px rgba(0, 0, 0, .8);
+  }
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 1.5rem; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+img { max-width: 100%; height: auto; }
+::selection { background: var(--accent-soft); color: var(--ink-strong); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 100;
+  padding: .7rem 1rem; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 0 0 var(--radius-sm) 0;
+}
+.skip:focus { left: 0; }
+.wrap { width: min(1120px, 100% - 2.5rem); margin-inline: auto; }
+.kicker {
+  margin: 0 0 .7rem;
+  font-family: var(--mono);
+  font-size: .72rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(3rem, 8vw, 7rem) 0 clamp(2.5rem, 6vw, 5rem);
+  background:
+    radial-gradient(900px 420px at 12% -10%, rgba(180, 83, 9, .12), transparent 65%),
+    radial-gradient(700px 380px at 92% 8%, rgba(15, 118, 110, .10), transparent 60%),
+    var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+html[data-theme="dark"] .hero {
+  background:
+    radial-gradient(900px 420px at 12% -10%, rgba(251, 191, 36, .10), transparent 65%),
+    radial-gradient(700px 380px at 92% 8%, rgba(94, 234, 212, .08), transparent 60%),
+    var(--bg);
+}
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .hero {
+    background:
+      radial-gradient(900px 420px at 12% -10%, rgba(251, 191, 36, .10), transparent 65%),
+      radial-gradient(700px 380px at 92% 8%, rgba(94, 234, 212, .08), transparent 60%),
+      var(--bg);
+  }
+}
+.hero-inner { max-width: 920px; }
+.hero h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(2.35rem, 7vw, 4.65rem);
+  line-height: 1.02;
+  letter-spacing: -.025em;
+  color: var(--ink-strong);
+  text-wrap: balance;
+}
+.hero .lede {
+  max-width: 62ch;
+  margin: 1.2rem 0 0;
+  font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+  line-height: 1.55;
+  color: var(--muted);
+}
+.actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.8rem; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: .4rem;
+  padding: .72rem 1.05rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: .92rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform .15s ease, border-color .2s ease, background .2s ease;
+}
+.btn:hover { transform: translateY(-1px); border-color: var(--accent); color: var(--ink); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn.primary:hover { background: var(--accent); color: var(--on-accent); }
+.hero-facts {
+  display: flex; flex-wrap: wrap; gap: .5rem 1.2rem;
+  margin: 1.7rem 0 0; padding: 0; list-style: none;
+  font-family: var(--mono); font-size: .72rem; color: var(--muted);
+}
+.hero-facts strong { color: var(--ink-strong); font-size: .86rem; }
+.theme-toggle {
+  position: absolute; top: 1rem; right: 1rem;
+  padding: .45rem .7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--mono); font-size: .66rem; letter-spacing: .08em;
+  text-transform: uppercase; cursor: pointer;
+}
+.theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+.section { padding: clamp(2.4rem, 6vw, 4.5rem) 0; }
+.section + .section { border-top: 1px solid var(--line); }
+.section h2 {
+  margin: 0 0 1rem;
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+  line-height: 1.12;
+  letter-spacing: -.02em;
+  color: var(--ink-strong);
+  text-wrap: balance;
+}
+.prose { max-width: 76ch; }
+.prose p { margin: 0 0 1rem; font-family: var(--serif); font-size: 1.06rem; line-height: 1.7; }
+.prose p.lede { font-size: 1.18rem; color: var(--muted); }
+.prose h3 {
+  margin: 1.8rem 0 .5rem;
+  font-family: var(--sans);
+  font-size: .78rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.prose ul, .prose ol { margin: .4rem 0 1.2rem; padding-left: 1.25rem; }
+.prose li { margin: .35rem 0; font-family: var(--serif); font-size: 1.02rem; line-height: 1.6; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem 2rem; margin-top: 1.2rem; }
+.pull {
+  margin: 1.6rem 0 0;
+  padding: .9rem 1.1rem;
+  border-left: 3px solid var(--accent);
+  background: var(--surface-2);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-family: var(--serif);
+  font-size: 1.08rem;
+  font-style: italic;
+  color: var(--ink);
+}
+.route-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: .8rem;
+  margin-top: 1.2rem;
+}
+.route-card {
+  display: flex; flex-direction: column; gap: .35rem;
+  padding: .9rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: var(--ink);
+  transition: border-color .2s ease, transform .15s ease, box-shadow .2s ease;
+}
+.route-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow); color: var(--ink); }
+.route-card .num { font-family: var(--mono); font-size: .7rem; color: var(--accent); }
+.route-card strong { font-size: .95rem; line-height: 1.25; color: var(--ink-strong); }
+.route-card span.days { font-family: var(--mono); font-size: .65rem; color: var(--muted); }
+.month-section { margin-top: 2.4rem; }
+.month-head { padding-top: 1.1rem; border-top: 1px solid var(--line); scroll-margin-top: 1.5rem; }
+.month-head .month-kicker { margin: 0 0 .35rem; font-family: var(--mono); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.month-head h3 { margin: 0; font-family: var(--serif); font-size: clamp(1.4rem, 3vw, 2rem); line-height: 1.15; color: var(--ink-strong); }
+.month-head .question { margin: .35rem 0 0; font-weight: 600; color: var(--ink); }
+.month-head .intro { margin: .45rem 0 0; max-width: 72ch; color: var(--muted); font-size: .96rem; }
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 1rem;
+  margin-top: 1.1rem;
+}
+.day-card {
+  display: flex; flex-direction: column; gap: .55rem;
+  padding: 1.05rem 1.05rem 1.1rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--day-accent, var(--accent));
+  border-radius: var(--radius);
+  box-shadow: 0 1px 0 rgba(0,0,0,.02);
+  scroll-margin-top: 1.5rem;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .15s ease;
+}
+.day-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+.sec-1 { --day-accent: #0ea5e9; }
+.sec-2 { --day-accent: #10b981; }
+.sec-3 { --day-accent: #b45309; }
+.sec-4 { --day-accent: #f97316; }
+.sec-5 { --day-accent: #e11d48; }
+.sec-6 { --day-accent: #64748b; }
+html[data-theme="dark"] .sec-1 { --day-accent: #7dd3fc; }
+html[data-theme="dark"] .sec-2 { --day-accent: #6ee7b7; }
+html[data-theme="dark"] .sec-3 { --day-accent: #fbbf24; }
+html[data-theme="dark"] .sec-4 { --day-accent: #fdba74; }
+html[data-theme="dark"] .sec-5 { --day-accent: #fda4af; }
+html[data-theme="dark"] .sec-6 { --day-accent: #cbd5e1; }
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .sec-1 { --day-accent: #7dd3fc; }
+  html:not([data-theme="light"]) .sec-2 { --day-accent: #6ee7b7; }
+  html:not([data-theme="light"]) .sec-3 { --day-accent: #fbbf24; }
+  html:not([data-theme="light"]) .sec-4 { --day-accent: #fdba74; }
+  html:not([data-theme="light"]) .sec-5 { --day-accent: #fda4af; }
+  html:not([data-theme="light"]) .sec-6 { --day-accent: #cbd5e1; }
+}
+.day-top { display: flex; align-items: baseline; gap: .6rem; }
+.day-num { font-family: var(--serif); font-size: 2rem; font-weight: 700; line-height: .9; color: var(--day-accent, var(--accent)); font-variant-numeric: tabular-nums; }
+.day-part { font-family: var(--mono); font-size: .6rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.day-card h3 { margin: .1rem 0 0; font-size: 1.12rem; line-height: 1.28; color: var(--ink-strong); }
+.day-summary { margin: 0; font-size: .92rem; line-height: 1.5; color: var(--ink); }
+.day-meta { display: flex; flex-wrap: wrap; gap: .35rem; }
+.chip { padding: .15rem .45rem; border: 1px solid var(--line); border-radius: 999px; font-family: var(--mono); font-size: .6rem; color: var(--muted); }
+.day-links { margin: .15rem 0 0; padding-top: .55rem; border-top: 1px solid var(--line); font-size: .84rem; line-height: 1.5; }
+.day-links a { font-weight: 600; text-decoration: none; border-bottom: 1px solid currentColor; }
+.day-links .sep { color: var(--muted); }
+.social { margin-top: .1rem; padding-top: .5rem; border-top: 1px dashed var(--line-strong); }
+.social summary { cursor: pointer; font-family: var(--mono); font-size: .64rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.social summary:hover { color: var(--accent); }
+.social-block { margin-top: .7rem; }
+.social-head { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; margin-bottom: .25rem; }
+.social-label { font-family: var(--mono); font-size: .6rem; letter-spacing: .08em; text-transform: uppercase; color: var(--day-accent, var(--accent)); }
+.social-count { font-family: var(--mono); font-size: .57rem; color: var(--muted); }
+.social blockquote {
+  margin: 0;
+  padding: .7rem .8rem;
+  background: var(--surface-2);
+  border-left: 3px solid var(--day-accent, var(--accent));
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: .84rem;
+  line-height: 1.55;
+  color: var(--ink);
+  white-space: pre-line;
+}
+.social blockquote.tweet { white-space: normal; }
+.copy {
+  margin-top: .4rem;
+  padding: .3rem .55rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--mono); font-size: .6rem; letter-spacing: .05em;
+  text-transform: uppercase; cursor: pointer;
+}
+.copy:hover { border-color: var(--accent); color: var(--accent); }
+.after { padding-bottom: 4rem; }
+footer {
+  padding: 2.2rem 0 3rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .82rem;
+}
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .8rem 1.5rem; }
+footer a { color: var(--muted); }
+footer a:hover { color: var(--accent); }
+@media (max-width: 760px) {
+  body { font-size: 16px; }
+  .two-col { grid-template-columns: 1fr; }
+  .day-grid { grid-template-columns: 1fr; }
+  .theme-toggle { top: .6rem; right: .6rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; }
+}
+@media print {
+  .theme-toggle, .actions, .copy, .social { display: none; }
+  body { background: #fff; color: #000; }
+  .day-card, .route-card { box-shadow: none; break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="hero">
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle color theme">Light / dark</button>
+  <div class="wrap hero-inner">
+    <p class="kicker">The December Calendar · Free · No signup</p>
+    <h1>31 days to understand AI — without the hype.</h1>
+    <p class="lede">A guided path through the ideas behind modern language models, for curious people who are tired of both hype and condescension. One door a day. No calculus. No code.</p>
+    <div class="actions">
+      <a class="btn primary" href="#day-1">Start with Day 1</a>
+      <a class="btn" href="#overview">Read the overview</a>
+      <a class="btn" href="index.php">Browse the course</a>
+    </div>
+    <ul class="hero-facts">
+      <li><strong>31</strong> days</li>
+      <li><strong>70</strong> articles</li>
+      <li><strong>6</strong> questions</li>
+      <li><strong>15–45</strong> min/day</li>
+      <li><strong>0</strong> installs</li>
+    </ul>
+  </div>
+</header>
+
+<main id="main">
+  <section class="section wrap prose" id="overview">
+    <p class="kicker">The overview</p>
+    <h2>Why a calendar?</h2>
+
+<p class="lede">Most of us meet AI the same way: a chatbot answers a question, a headline warns about the future, a colleague says "you have to try this." The result is a strange mix of familiarity and confusion. We use the tools every day, but few of us can explain what is actually happening inside them.</p>
+
+<p>This page is an attempt to fix that. It is a 31-day reading calendar for curious adults — not a course for engineers. Each day opens one idea, points you to the clearest interactive lesson on the site, and tells you what you should be able to explain afterward. The first days are gentle. The middle is the technical core. The last days zoom out.</p>
+
+<p>You do not need calculus, programming, or a GPU. The lessons explain each idea in plain language before the symbols appear. Some days use formulas; those days tell you so, and the optional deep dives are clearly marked. You can read one door a day, or use the page as a map and jump to whatever you need.</p>
+
+<div class="two-col">
+  <div>
+    <h3>What you will be able to explain</h3>
+    <ul>
+      <li>What a language model is actually doing when it answers</li>
+      <li>Why "predict the next word" can look like understanding</li>
+      <li>How a network learns from its mistakes</li>
+      <li>What a transformer is, in plain language</li>
+      <li>Why models hallucinate, and what retrieval does</li>
+      <li>Where the money, the power, and the open questions are</li>
+    </ul>
+  </div>
+  <div>
+    <h3>Who it is for</h3>
+    <ul>
+      <li>Teachers who want a clear explanation</li>
+      <li>Journalists who need the vocabulary</li>
+      <li>Managers who have to make decisions about AI</li>
+      <li>Students who want the shape of the field</li>
+      <li>Parents who want to answer "what is ChatGPT?"</li>
+      <li>Anyone tired of both hype and condescension</li>
+    </ul>
+  </div>
+</div>
+
+<h3>What it is not</h3>
+<p>It is not a coding bootcamp. It is not a guide to prompt tricks. It is not a promise that AI will solve everything, or a warning that it will end everything. It is a map of the ideas, with the hype turned down.</p>
+
+<h3>How to use it</h3>
+<p>Read one door a day. If a day feels heavy, read the first link and stop. Each card also has a "short on time" pick and optional deep dives. The lessons are interactive: you can play with a tokenizer, train a tiny network, change a temperature, and watch a model's attention move. You do not need to install anything.</p>
+
+<p>December is a good excuse for a daily habit, but the calendar works in any month. The numbers are a promise of sequence, not a deadline. Start today.</p>
+
+<blockquote class="pull">The goal is not to turn you into a machine-learning engineer. The goal is to make you a confident reader of the field: able to tell a real capability from a demo, a benchmark from a marketing claim, and a genuinely new idea from a very old argument.</blockquote>
+
+  </section>
+
+  <section class="section wrap" id="share">
+    <p class="kicker">Ready to post</p>
+    <h2>Share the series</h2>
+    <p class="lede" style="max-width: 70ch; color: var(--muted);">Two English launch posts for the whole calendar: one for Twitter / X, one for LinkedIn. The per-day versions are inside each card below.</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; margin-top: 1.2rem;">
+      <div class="social-block" style="padding: 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);">
+        <div class="social-head"><span class="social-label">Twitter / X launch post</span><span class="social-count">256 chars</span></div>
+        <blockquote class="tweet">31 days. 6 questions. One clear path into AI — no calculus, no code, no hype. Each day opens one idea behind modern LLMs, with an interactive lesson and a plain-language summary. Free, no signup. Start today: https://asanai.scads.ai/blog/december #AI #LLMs</blockquote>
+        <button class="copy" type="button">Copy tweet</button>
+      </div>
+      <div class="social-block" style="padding: 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);">
+        <div class="social-head"><span class="social-label">LinkedIn launch post</span><span class="social-count">154 words</span></div>
+        <blockquote class="linkedin">Most of us use AI every day and still cannot explain what is happening inside it. The conversation swings between hype and fear, and the explanations are either too shallow or too mathematical.
+
+So I put together a 31-day reading calendar for curious adults. One door a day. Each day opens one idea behind modern language models, points to an interactive lesson, and tells you what you should be able to explain afterward.
+
+No calculus. No code. No signup. The first days are gentle; the middle is the technical core; the last days zoom out to the economy, safety, and the bigger questions.
+
+It is free and open: https://asanai.scads.ai/blog/december
+
+If you have been waiting for a clear, honest entry point into AI, start with Day 1. And if you know someone who keeps asking what ChatGPT actually is, send this to them.
+
+What is the one AI question you wish more people could answer?</blockquote>
+        <button class="copy" type="button">Copy post</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="route">
+    <p class="kicker">The route</p>
+    <h2>Six questions, one month</h2>
+    <p class="lede" style="max-width: 70ch; color: var(--muted);">Each section answers one question. The days inside it build on each other, but every card stands alone. Jump to the question that interests you, or follow the whole arc.</p>
+    <div class="route-grid">
+
+<a class="route-card" href="#section-1">
+  <span class="num">Section 1</span>
+  <strong>First Questions</strong>
+  <span class="days">Days 1–5</span>
+</a>
+
+<a class="route-card" href="#section-2">
+  <span class="num">Section 2</span>
+  <strong>How a Network Learns</strong>
+  <span class="days">Days 6–11</span>
+</a>
+
+<a class="route-card" href="#section-3">
+  <span class="num">Section 3</span>
+  <strong>Signals, Senses, and Software</strong>
+  <span class="days">Days 12–16</span>
+</a>
+
+<a class="route-card" href="#section-4">
+  <span class="num">Section 4</span>
+  <strong>The Transformer and Its Mind</strong>
+  <span class="days">Days 17–22</span>
+</a>
+
+<a class="route-card" href="#section-5">
+  <span class="num">Section 5</span>
+  <strong>Using AI Without Being Fooled</strong>
+  <span class="days">Days 23–26</span>
+</a>
+
+<a class="route-card" href="#section-6">
+  <span class="num">Section 6</span>
+  <strong>The Larger Questions</strong>
+  <span class="days">Days 27–31</span>
+</a>
+    </div>
+  </section>
+
+  <section class="section wrap" id="calendar">
+    <p class="kicker">The calendar</p>
+    <h2>Thirty-one doors</h2>
+    <p class="lede" style="max-width: 70ch; color: var(--muted);">Read one a day, or jump to what you need. Every card links to the lessons, and every card contains ready-to-post English copy at Twitter and LinkedIn length.</p>
+
+<section class="month-section" id="section-1">
+  <div class="month-head">
+    <p class="month-kicker">Section 1 · Days 1–5</p>
+    <h3>First Questions</h3>
+    <p class="question">What is this thing, and where did it come from?</p>
+    <p class="intro">Five gentle days to get your bearings. No prior math or programming is assumed. By the end you will know what a language model is, where the field came from, and which mathematical ideas actually matter.</p>
+  </div>
+  <div class="day-grid">
+
+<article class="day-card sec-1" id="day-1">
+  <div class="day-top">
+    <span class="day-num">01</span>
+    <span class="day-part">Section 1 · First Questions</span>
+  </div>
+  <h3>One Word at a Time</h3>
+  <p class="day-summary">A large language model is a machine that predicts the next word. Everything else — chat, code, translation — is that one trick repeated at enormous scale.</p>
+  <div class="day-meta"><span class="chip">15–20 min</span><span class="chip">No math needed</span></div>
+  <p class="day-links"><a href="intuition">An Intuition of how Large Language Models (LLMs) work</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">212 chars</span></div>
+      <blockquote class="tweet">Day 1/31: An LLM is a next-word predictor. That sounds trivial until you see how far one trick scales. Follow a single word from text to prediction — and why &#x27;just guessing&#x27; can look like understanding. #AI #LLMs</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">134 words</span></div>
+      <blockquote class="linkedin">Day 1 of 31: The one idea behind modern AI.
+
+A large language model is a next-word predictor. That is almost embarrassingly simple. But when you scale that trick to billions of parameters and trillions of words, something strange happens: the model starts to look like it understands.
+
+Today&#x27;s door is a gentle introduction. No math, no code. Just one word, followed from text to numbers, through the model, and back out as a prediction.
+
+By the end, you should be able to explain why an LLM is not a search engine or a database — and why &quot;just predicting the next token&quot; is both less magical and more interesting than it sounds.
+
+The full 31-day calendar is free: https://asanai.scads.ai/blog/december
+
+What is the one AI concept you wish someone had explained to you earlier?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-1" id="day-2">
+  <div class="day-top">
+    <span class="day-num">02</span>
+    <span class="day-part">Section 1 · First Questions</span>
+  </div>
+  <h3>Where AI Came From</h3>
+  <p class="day-summary">Modern AI did not appear in 2022. It grew out of counting machines, logic, an early neural network that failed its first big test, two winters, and a lot of contributors who are usually left out of the story.</p>
+  <div class="day-meta"><span class="chip">30–40 min</span><span class="chip">Light math</span></div>
+  <p class="day-links"><a href="history">Brief History of AI</a><span class="sep"> · </span><a href="untold_history">The Untold History of AI</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">235 chars</span></div>
+      <blockquote class="tweet">Day 2/31: Modern AI didn&#x27;t start in 2022. It grew out of logic, counting machines, a failed early neural network, two winters, and a lot of contributors the standard story forgets. A short history — and the untold version. #AI #History</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">119 words</span></div>
+      <blockquote class="linkedin">Day 2 of 31: Where AI actually came from.
+
+The standard story is a straight line: Turing, the perceptron, the AI winters, deep learning, ChatGPT. The real story is messier. Ideas arrived in clusters, were discovered twice, and were often named after the person who made them famous rather than the person who had them first.
+
+Today&#x27;s door pairs a compact history with a second look at the people and places usually left out. It gives the rest of the month a timeline.
+
+Why start with history? Because the field&#x27;s current arguments — about scale, symbols, learning, and risk — are old arguments with new hardware.
+
+Free 31-day calendar: https://asanai.scads.ai/blog/december
+
+Which AI pioneer do you think deserves more credit?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-1" id="day-3">
+  <div class="day-top">
+    <span class="day-num">03</span>
+    <span class="day-part">Section 1 · First Questions</span>
+  </div>
+  <h3>The Math You Actually Need</h3>
+  <p class="day-summary">You do not need calculus to understand the ideas. You need sums, functions, vectors, and matrices — and a feel for what they do.</p>
+  <div class="day-meta"><span class="chip">35–45 min</span><span class="chip">Some math</span></div>
+  <p class="day-links"><a href="math_i">Basic Math Concepts I — The Numerical Foundations</a><span class="sep"> · </span><a href="math_ii">Basic Math Concepts II — Linear Algebra for AI</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">213 chars</span></div>
+      <blockquote class="tweet">Day 3/31: You don&#x27;t need calculus to understand AI. You need sums, functions, vectors, and matrices — and a feel for what they do. The gentle math toolkit, explained in plain language before the symbols. #AI #Math</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">106 words</span></div>
+      <blockquote class="linkedin">Day 3 of 31: The math you actually need.
+
+A lot of people bounce off AI because they assume they need a graduate degree in mathematics. You don&#x27;t. You need four ideas: sums, functions, vectors, and matrices.
+
+Vectors are just lists of numbers. Matrices are ways to organize many lists at once. Functions turn inputs into outputs. Sums combine them. That is most of the vocabulary.
+
+Today&#x27;s door explains each idea in plain language before the symbols appear. If you have ever read a spreadsheet, you are already closer than you think.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is the math topic that used to intimidate you most?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-1" id="day-4">
+  <div class="day-top">
+    <span class="day-num">04</span>
+    <span class="day-part">Section 1 · First Questions</span>
+  </div>
+  <h3>Space, Meaning, and Language</h3>
+  <p class="day-summary">A model treats meaning as a position in a vast space. Language is how humans build that space together — and why it is so hard to hand to a machine.</p>
+  <div class="day-meta"><span class="chip">35–45 min</span><span class="chip">Light math</span></div>
+  <p class="day-links"><a href="geometry_ii">The Shape of the Machine — A Working Geometry for AI</a><span class="sep"> · </span><a href="language">The History of Language: From Sanskrit to LLMs</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">217 chars</span></div>
+      <blockquote class="tweet">Day 4/31: A model treats meaning as a position in space. Language is how humans build that space together — and why it&#x27;s so hard to hand to a machine. Geometry, meaning, and the long history of language. #AI #Language</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">127 words</span></div>
+      <blockquote class="linkedin">Day 4 of 31: Space, meaning, and language.
+
+Here is a strange idea: a model can treat the meaning of a word as a direction in a vast geometric space. Similar meanings sit close together. Differences become arrows. Analogies become arithmetic.
+
+But language is not just a list of words. It is a human invention with a long, messy history: writing systems, grammar, translation, and all the things people do with words that a machine has to infer from text.
+
+Today&#x27;s door pairs the working geometry of a model with the human story of language. It is one of the most conceptual days — and one of the most rewarding.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is a word whose meaning you find hard to explain to a child?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-1" id="day-5">
+  <div class="day-top">
+    <span class="day-num">05</span>
+    <span class="day-part">Section 1 · First Questions</span>
+  </div>
+  <h3>Thinking in Probabilities</h3>
+  <p class="day-summary">An LLM never knows the next word for sure. It assigns probabilities — and probability is the language AI uses to reason under uncertainty.</p>
+  <div class="day-meta"><span class="chip">35–45 min</span><span class="chip">Some math</span></div>
+  <p class="day-links"><a href="statistics_i">Statistics I — Distributions and Inference</a><span class="sep"> · </span><a href="statistics_ii">Statistics II — Inference and Information</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">195 chars</span></div>
+      <blockquote class="tweet">Day 5/31: An LLM never knows the next word for sure. It assigns probabilities. Distributions, Bayes, entropy, and Markov chains — the everyday ideas behind next-token prediction. #AI #Probability</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">120 words</span></div>
+      <blockquote class="linkedin">Day 5 of 31: Thinking in probabilities.
+
+An LLM does not know the next word. It assigns a probability to every possible next token. That is the whole game.
+
+Probability is how AI reasons under uncertainty: how likely is this? How surprised should I be? What should I believe after new evidence? The vocabulary sounds technical — distributions, Bayes, entropy, Markov chains — but the ideas are everyday.
+
+Today&#x27;s door is the bridge between the gentle first week and the technical core. If you understand that a model outputs a distribution rather than a single answer, the rest of the month will make much more sense.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+Where do you see probability show up in your own work?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+  </div>
+</section>
+
+<section class="month-section" id="section-2">
+  <div class="month-head">
+    <p class="month-kicker">Section 2 · Days 6–11</p>
+    <h3>How a Network Learns</h3>
+    <p class="question">How does a machine get better at something?</p>
+    <p class="intro">Now the machine starts to learn. These days are the conceptual core: how a network measures its mistakes, how it assigns blame, and why depth and stability matter. The labs are there to play with, not to memorize.</p>
+  </div>
+  <div class="day-grid">
+
+<article class="day-card sec-2" id="day-6">
+  <div class="day-top">
+    <span class="day-num">06</span>
+    <span class="day-part">Section 2 · How a Network Learns</span>
+  </div>
+  <h3>Learning by Being Wrong</h3>
+  <p class="day-summary">A neural network learns by making a guess, measuring how wrong it is, and nudging its settings. That loop is the whole story.</p>
+  <div class="day-meta"><span class="chip">25–35 min</span><span class="chip">Light math</span></div>
+  <p class="day-links"><a href="losslab">Loss: Teaching through Failure</a><span class="sep"> · </span><a href="minimalneuron">Smallest possible neural network</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">218 chars</span></div>
+      <blockquote class="tweet">Day 6/31: A neural network learns by guessing, measuring how wrong it is, and nudging its settings. That loop is the whole story. Meet the smallest possible network: one weight, one bias, one line. #AI #MachineLearning</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">109 words</span></div>
+      <blockquote class="linkedin">Day 6 of 31: Learning by being wrong.
+
+A neural network learns in a loop: make a guess, measure how wrong it is, nudge the settings, repeat. That is the whole story.
+
+Today&#x27;s door builds the smallest possible network: one weight, one bias, and a line that tries to fit the data. The loss function turns &quot;wrong&quot; into a number the machine can improve.
+
+This is where the math starts to earn its place. But the idea is simple enough to explain without a formula: the network is looking for a setting that makes its mistakes smaller.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is something you learned purely by making mistakes?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-2" id="day-7">
+  <div class="day-top">
+    <span class="day-num">07</span>
+    <span class="day-part">Section 2 · How a Network Learns</span>
+  </div>
+  <h3>The Chain Rule That Trains Everything</h3>
+  <p class="day-summary">Backpropagation is just the chain rule, applied backward through the network to tell every weight how to change.</p>
+  <div class="day-meta"><span class="chip">30–40 min</span><span class="chip">Some math</span></div>
+  <p class="day-links"><a href="derivativelab">Derivatives: How AI &quot;Learns&quot; to get better</a><span class="sep"> · </span><a href="backproplab">Backpropagation: How a Neural Network Learns From Its Mistakes</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">200 chars</span></div>
+      <blockquote class="tweet">Day 7/31: Backpropagation is just the chain rule, applied backward through the network to tell every weight how to change. It&#x27;s how a network assigns credit — or blame — in one pass. #AI #DeepLearning</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">112 words</span></div>
+      <blockquote class="linkedin">Day 7 of 31: The chain rule that trains everything.
+
+Backpropagation sounds like a secret. It is actually the chain rule from calculus, applied backward through a network.
+
+A derivative measures how a small change in one thing changes another. Backpropagation uses that idea to assign credit — or blame — to every connection in the network in a single pass. Without it, training a deep network would be computationally hopeless.
+
+Today&#x27;s door is the conceptual heart of deep learning. You do not need to do the calculus by hand; you need to understand why the signal flows backward.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is the best explanation of backpropagation you have heard?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-2" id="day-8">
+  <div class="day-top">
+    <span class="day-num">08</span>
+    <span class="day-part">Section 2 · How a Network Learns</span>
+  </div>
+  <h3>Gradients on Autopilot</h3>
+  <p class="day-summary">Automatic differentiation computes the gradients; the optimizer decides how far to step. Together they make training a network practical.</p>
+  <div class="day-meta"><span class="chip">30–40 min</span><span class="chip">Some math</span></div>
+  <p class="day-links"><a href="autodiff">Automatic Differentiation: How Machines Learn</a><span class="sep"> · </span><a href="optimizerlab">The Optimizer: Navigating the Loss Landscape</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">211 chars</span></div>
+      <blockquote class="tweet">Day 8/31: Automatic differentiation computes the gradients; the optimizer decides how far to step. Together they turn a slope into a path downhill. Meet the machinery behind every training run. #AI #Optimization</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">100 words</span></div>
+      <blockquote class="linkedin">Day 8 of 31: Gradients on autopilot.
+
+Frameworks like TensorFlow and PyTorch do not ask you to derive anything by hand. They compute gradients automatically. The optimizer then decides how far to step in the direction that reduces the loss.
+
+Two ideas, one practical result: training becomes a loop you can run at scale.
+
+Today&#x27;s door explains the difference between a gradient and an optimizer, and why the learning rate matters. If you have ever tuned a recipe by small adjustments, you already have the intuition.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is a setting you have tuned by trial and error?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-2" id="day-9">
+  <div class="day-top">
+    <span class="day-num">09</span>
+    <span class="day-part">Section 2 · How a Network Learns</span>
+  </div>
+  <h3>Why Nonlinearity Matters</h3>
+  <p class="day-summary">Stacking linear layers is still just a line. Nonlinear gates give a network the power to bend, and reward learning gives it a goal.</p>
+  <div class="day-meta"><span class="chip">30–40 min</span><span class="chip">Light math</span></div>
+  <p class="day-links"><a href="activationlab">Activation Functions: The Neural Decision Makers</a><span class="sep"> · </span><a href="reinforcement_learning">Reinforcement Learning</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">208 chars</span></div>
+      <blockquote class="tweet">Day 9/31: Stacking linear layers is still just a line. Nonlinear gates give a network the power to bend, and reward learning gives it a goal. Activation functions and reinforcement learning, together. #AI #RL</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">102 words</span></div>
+      <blockquote class="linkedin">Day 9 of 31: Why nonlinearity matters.
+
+If every layer in a neural network were linear, the whole stack would collapse into a single line. Nonlinear activation functions are what let a network bend, curve, and represent complicated patterns.
+
+The other half of the day is reinforcement learning: learning from reward instead of a labelled answer. That is the machinery behind RLHF and the assistant-style training that makes models useful.
+
+Today&#x27;s door connects the small decisions inside a network to the big idea of learning from consequences.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is a skill you learned better from feedback than from instructions?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-2" id="day-10">
+  <div class="day-top">
+    <span class="day-num">10</span>
+    <span class="day-part">Section 2 · How a Network Learns</span>
+  </div>
+  <h3>Depth, Memory, and Overfitting</h3>
+  <p class="day-summary">Deep networks can represent complicated functions, but a model that memorizes the training data has not learned the pattern.</p>
+  <div class="day-meta"><span class="chip">30–40 min</span><span class="chip">Light math</span></div>
+  <p class="day-links"><a href="deeplearninglab">Deep Learning</a><span class="sep"> · </span><a href="overandunderfittinglab">Over- and underfitting</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">218 chars</span></div>
+      <blockquote class="tweet">Day 10/31: Deep networks can represent complicated functions — but a model that memorizes the training data hasn&#x27;t learned the pattern. Depth, overfitting, and the difference between looking smart and being useful. #AI</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">116 words</span></div>
+      <blockquote class="linkedin">Day 10 of 31: Depth, memory, and overfitting.
+
+Depth lets a network build features on top of features. That is why deep learning works. But depth also creates a temptation: memorize the training data instead of learning the pattern.
+
+Overfitting is what happens when the model learns the noise. It looks brilliant on the examples it has seen and fails on everything else.
+
+Today&#x27;s door is about the practical difference between looking smart and being useful. It is also a good antidote to AI hype: a model that can recite the test is not the same as a model that understands.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+Where have you seen overfitting in real life — human or machine?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-2" id="day-11">
+  <div class="day-top">
+    <span class="day-num">11</span>
+    <span class="day-part">Section 2 · How a Network Learns</span>
+  </div>
+  <h3>Deep Networks That Stay Trainable</h3>
+  <p class="day-summary">Very deep networks used to fail. Residual connections and layer normalization are the plumbing that made them stable.</p>
+  <div class="day-meta"><span class="chip">30–40 min</span><span class="chip">Light math</span></div>
+  <p class="day-links"><a href="resnetlab">Deep Learning Mechanics: ResNets &amp; Vanishing Gradients</a><span class="sep"> · </span><a href="normalizationlab">Understanding Layer Normalization</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">197 chars</span></div>
+      <blockquote class="tweet">Day 11/31: Very deep networks used to fail. Residual connections and layer normalization are the plumbing that made them stable. Unglamorous ideas, inside every transformer block. #AI #DeepLearning</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">102 words</span></div>
+      <blockquote class="linkedin">Day 11 of 31: Deep networks that stay trainable.
+
+Very deep networks used to fail. The signal would fade or explode on its way through the layers. Two unglamorous ideas fixed that: residual connections and layer normalization.
+
+A residual connection lets a layer learn a small change instead of a whole new representation. Layer normalization keeps the numbers in a healthy range.
+
+Today&#x27;s door is about plumbing — the part of deep learning that rarely makes headlines but makes everything else possible. These ideas are inside every transformer block.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is an unglamorous tool you rely on every day?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+  </div>
+</section>
+
+<section class="month-section" id="section-3">
+  <div class="month-head">
+    <p class="month-kicker">Section 3 · Days 12–16</p>
+    <h3>Signals, Senses, and Software</h3>
+    <p class="question">How does a model handle the real world?</p>
+    <p class="intro">AI is not only text. These days cover how machines see, hear, and generate images, sound, and video, plus the ordinary software stack that turns a model into a running program.</p>
+  </div>
+  <div class="day-grid">
+
+<article class="day-card sec-3" id="day-12">
+  <div class="day-top">
+    <span class="day-num">12</span>
+    <span class="day-part">Section 3 · Signals, Senses, and Software</span>
+  </div>
+  <h3>How Machines See</h3>
+  <p class="day-summary">A computer does not see an object; it sees a grid of numbers. Convolution is how it learns to find edges, parts, and then objects.</p>
+  <div class="day-meta"><span class="chip">30–40 min</span><span class="chip">Light math</span></div>
+  <p class="day-links"><a href="computer_vision">What Machines See</a><span class="sep"> · </span><a href="inceptionism">Inceptionism: What the Network Sees</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">213 chars</span></div>
+      <blockquote class="tweet">Day 12/31: A computer doesn&#x27;t see an object; it sees a grid of numbers. Convolution learns to find edges, parts, and then objects. Inceptionism turns the network around and shows what it&#x27;s looking for. #AI #Vision</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">105 words</span></div>
+      <blockquote class="linkedin">Day 12 of 31: How machines see.
+
+A computer does not see a dog. It sees a grid of numbers. Convolutional networks learn to find edges, then parts, then objects by reusing the same small filter across an image.
+
+The fun part: you can turn the network around. Inceptionism shows what its features are looking for — sometimes with dreamlike, sometimes with ridiculous results.
+
+Today&#x27;s door is a good reminder that machine vision is not human vision. It is pattern detection at scale, and it is both impressive and limited.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is the weirdest thing you have seen an image model generate?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-3" id="day-13">
+  <div class="day-top">
+    <span class="day-num">13</span>
+    <span class="day-part">Section 3 · Signals, Senses, and Software</span>
+  </div>
+  <h3>Connecting Images and Words</h3>
+  <p class="day-summary">Multimodal models put images and text in the same space; diffusion models generate images by learning to undo noise.</p>
+  <div class="day-meta"><span class="chip">30–40 min</span><span class="chip">Light math</span></div>
+  <p class="day-links"><a href="multimodal">Multimodal &amp; Vision-Language Models</a><span class="sep"> · </span><a href="diffusion">Diffusion Models</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">207 chars</span></div>
+      <blockquote class="tweet">Day 13/31: Multimodal models put images and text in the same space. Diffusion models generate images by learning to undo noise. Two tricks, one shared idea: learn the structure of the data. #AI #GenerativeAI</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">113 words</span></div>
+      <blockquote class="linkedin">Day 13 of 31: Connecting images and words.
+
+How does a model know that a photo of a dog and the word &quot;dog&quot; belong together? And how does it create a new image from a sentence?
+
+Two different tricks. Multimodal models learn a shared space where images and text sit near each other when they mean similar things. Diffusion models learn to reverse a noising process, step by step, until an image appears.
+
+Today&#x27;s door is about the generative stack beyond text — and about the shared idea underneath: learn the structure of the data, then sample from it.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What would you create if you could describe an image perfectly?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-3" id="day-14">
+  <div class="day-top">
+    <span class="day-num">14</span>
+    <span class="day-part">Section 3 · Signals, Senses, and Software</span>
+  </div>
+  <h3>Sound, Music, and Video</h3>
+  <p class="day-summary">Audio becomes small pieces, video becomes a sequence of frames, and the same prediction trick starts to work for sound and motion.</p>
+  <div class="day-meta"><span class="chip">30–40 min</span><span class="chip">A little math</span></div>
+  <p class="day-links"><a href="speech_audio">Speech &amp; Audio Models</a><span class="sep"> · </span><a href="music_video_generation">AI Music &amp; Video Generation</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">193 chars</span></div>
+      <blockquote class="tweet">Day 14/31: Audio becomes small pieces, video becomes a sequence of frames, and the same prediction trick starts to work for sound and motion. The generative stack beyond text. #AI #Audio #Video</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">109 words</span></div>
+      <blockquote class="linkedin">Day 14 of 31: Sound, music, and video.
+
+The next-token trick is not limited to text. Audio can be turned into small pieces the model can predict. Video can be treated as a sequence of frames. Music and speech models extend the same recipe to longer, richer signals.
+
+Today&#x27;s door is a tour of the generative stack beyond text: speech, music, and video. It is also a lesson in how a good abstraction travels. Once you can turn a signal into a sequence, a transformer can try to predict it.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is a piece of music or video you would like to see AI help create?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-3" id="day-15">
+  <div class="day-top">
+    <span class="day-num">15</span>
+    <span class="day-part">Section 3 · Signals, Senses, and Software</span>
+  </div>
+  <h3>The Stack Underneath</h3>
+  <p class="day-summary">A model is a file; software is what turns it into something you can run. Operating systems, programming languages, and libraries are the invisible stack.</p>
+  <div class="day-meta"><span class="chip">15–20 min</span><span class="chip">No math needed</span></div>
+  <p class="day-links"><a href="software">Software: Operating Systems, Programming Languages &amp; the Abstraction Stack</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">226 chars</span></div>
+      <blockquote class="tweet">Day 15/31: A model is a file; software is what turns it into something you can run. Operating systems, programming languages, and libraries are the invisible stack. A gentle tour of the machinery under the magic. #AI #Software</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">116 words</span></div>
+      <blockquote class="linkedin">Day 15 of 31: The stack underneath.
+
+A model is a file. Software is what turns it into something you can run: the operating system, the programming language, the libraries, the memory management, the network.
+
+This is a gentle day. No math, no model internals. Just a tour of the ordinary machinery that makes the magic possible. It is also a useful antidote to the idea that AI is pure algorithm: a lot of it is careful engineering.
+
+Today&#x27;s door explains what an operating system, a programming language, and a library each do — and where the model sits.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is a piece of software you use without thinking about how it works?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-3" id="day-16">
+  <div class="day-top">
+    <span class="day-num">16</span>
+    <span class="day-part">Section 3 · Signals, Senses, and Software</span>
+  </div>
+  <h3>Chopping Text into Tokens</h3>
+  <p class="day-summary">A model never sees words. It sees tokens — chunks of text — and turns each token into a vector. Meaning becomes geometry.</p>
+  <div class="day-meta"><span class="chip">30–40 min</span><span class="chip">Light math</span></div>
+  <p class="day-links"><a href="tokenizerlab">Tokenization: How Words become Numbers</a><span class="sep"> · </span><a href="embeddinglab">Embeddings: The Geometry of Meaning</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">191 chars</span></div>
+      <blockquote class="tweet">Day 16/31: A model never sees words. It sees tokens — chunks of text — and turns each token into a vector. Meaning becomes geometry. Why &#x27;strawberry&#x27; is not one token. #AI #LLMs #Tokenization</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">106 words</span></div>
+      <blockquote class="linkedin">Day 16 of 31: Chopping text into tokens.
+
+A model never sees words. It sees tokens: chunks of text. &quot;Strawberry&quot; might be one token, or several, depending on the tokenizer. That is why models can struggle to count letters or spell unusual names.
+
+Each token is then turned into a vector — a position in a high-dimensional space. Similar meanings sit close together. This is where language becomes geometry.
+
+Today&#x27;s door explains tokenization and embeddings, the two steps that turn text into something a neural network can process.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is a word that you would not want an AI to split into pieces?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+  </div>
+</section>
+
+<section class="month-section" id="section-4">
+  <div class="month-head">
+    <p class="month-kicker">Section 4 · Days 17–22</p>
+    <h3>The Transformer and Its Mind</h3>
+    <p class="question">How does a transformer turn text into an answer?</p>
+    <p class="intro">This is the heart of the modern LLM: tokens, attention, the transformer block, sampling, and the first attempts to reverse-engineer what happens inside.</p>
+  </div>
+  <div class="day-grid">
+
+<article class="day-card sec-4" id="day-17">
+  <div class="day-top">
+    <span class="day-num">17</span>
+    <span class="day-part">Section 4 · The Transformer and Its Mind</span>
+  </div>
+  <h3>Memory and Attention</h3>
+  <p class="day-summary">Recurrent networks carried memory through a loop; attention let every token look at every other token at once. The second idea changed everything.</p>
+  <div class="day-meta"><span class="chip">30–40 min</span><span class="chip">Light math</span></div>
+  <p class="day-links"><a href="recurrent_networks">Networks with Memory</a><span class="sep"> · </span><a href="attentionlab">The Semantic Tug-of-War: How Transformers &#x27;Think&#x27;</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">186 chars</span></div>
+      <blockquote class="tweet">Day 17/31: Recurrent networks carried memory through a loop. Attention let every token look at every other token at once. The second idea changed everything. #AI #Transformers #Attention</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">100 words</span></div>
+      <blockquote class="linkedin">Day 17 of 31: Memory and attention.
+
+Before transformers, sequence models read text one step at a time. They carried a hidden state through a loop. It worked, but it was slow and forgetful.
+
+Attention removed the queue. Each word can gather information from any other word at once. That is why long-range context became possible — and why transformers could be trained in parallel.
+
+Today&#x27;s door compares recurrence and attention. It is the conceptual bridge to the transformer, which arrives tomorrow.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is the longest piece of text you have asked a model to work with?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-4" id="day-18">
+  <div class="day-top">
+    <span class="day-num">18</span>
+    <span class="day-part">Section 4 · The Transformer and Its Mind</span>
+  </div>
+  <h3>Position and the Transformer</h3>
+  <p class="day-summary">Attention alone has no sense of order. Positional information plus attention plus feed-forward layers gives the transformer block.</p>
+  <div class="day-meta"><span class="chip">35–45 min</span><span class="chip">Some math</span></div>
+  <p class="day-links"><a href="positionalembeddingslab">Positional Embeddings</a><span class="sep"> · </span><a href="transformer">The Architecture of Meaning: A Deep Dive into Transformers</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">183 chars</span></div>
+      <blockquote class="tweet">Day 18/31: Attention alone has no sense of order. Positional information + attention + feed-forward layers = the transformer block. The day the pieces snap together. #AI #Transformers</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">112 words</span></div>
+      <blockquote class="linkedin">Day 18 of 31: Position and the transformer.
+
+Attention is powerful, but on its own it has no sense of order. &quot;Dog bites man&quot; and &quot;man bites dog&quot; contain the same tokens. Positional information is what tells the model where each token sits.
+
+Combine position with attention and feed-forward layers, and you have the transformer block — the architecture behind modern language models.
+
+Today&#x27;s door is the day the pieces snap together. You will see how a transformer knows word order, how its blocks are wired, and why the same architecture works for text, images, and audio.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is a sentence whose meaning changes completely when you reorder it?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-4" id="day-19">
+  <div class="day-top">
+    <span class="day-num">19</span>
+    <span class="day-part">Section 4 · The Transformer and Its Mind</span>
+  </div>
+  <h3>Choosing the Next Token</h3>
+  <p class="day-summary">The model outputs a probability for every token; sampling turns that distribution into a sentence. Interpretability asks what happened inside.</p>
+  <div class="day-meta"><span class="chip">35–45 min</span><span class="chip">Light math</span></div>
+  <p class="day-links"><a href="samplinglab">Temperature &amp; Sampling</a><span class="sep"> · </span><a href="mechanistic_interpretability">Mechanistic Interpretability</a><span class="sep"> · </span><a href="unexpected_capabilities">Unexpected Capabilities of LLMs</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">200 chars</span></div>
+      <blockquote class="tweet">Day 19/31: The model outputs a probability for every token; sampling turns that distribution into a sentence. Temperature and top-p are the knobs. Interpretability asks what happened inside. #AI #LLMs</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">102 words</span></div>
+      <blockquote class="linkedin">Day 19 of 31: Choosing the next token.
+
+A model does not output a sentence. It outputs a probability for every possible next token. Sampling is what turns that distribution into text.
+
+Temperature and top-p are the knobs that make an assistant creative or predictable. Turn them one way and you get safe, repetitive answers. Turn them the other way and you get surprises.
+
+Today&#x27;s door also introduces mechanistic interpretability: the reverse-engineering project that tries to find the circuits behind the behavior. And it looks at abilities nobody explicitly trained for.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+Do you prefer your AI predictable or surprising?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-4" id="day-20">
+  <div class="day-top">
+    <span class="day-num">20</span>
+    <span class="day-part">Section 4 · The Transformer and Its Mind</span>
+  </div>
+  <h3>Where Facts Live</h3>
+  <p class="day-summary">A model can recall &quot;Paris is the capital of France&quot; without a database. And it can follow an algorithm that exists only in the prompt.</p>
+  <div class="day-meta"><span class="chip">30–40 min</span><span class="chip">Light math</span></div>
+  <p class="day-links"><a href="fact_lookup">Where &#x27;Paris&#x27; Lives — How an LLM Retrieves a Fact</a><span class="sep"> · </span><a href="algorithms">How Algorithms Work: From Euclid to the Transformer</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">208 chars</span></div>
+      <blockquote class="tweet">Day 20/31: A model can recall &#x27;Paris is the capital of France&#x27; without a database. And it can follow an algorithm that exists only in the prompt. Where facts live, and how algorithms run in context. #AI #LLMs</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">115 words</span></div>
+      <blockquote class="linkedin">Day 20 of 31: Where facts live.
+
+A model can recall that Paris is the capital of France without a database. Where is that fact stored? And how can a transformer execute an algorithm that exists only in the prompt?
+
+Today&#x27;s door is about the strange middle ground between memory and reasoning. One lesson asks where a stored fact lives inside the network. The other asks how a model follows a procedure it was never trained on.
+
+It is one of the most surprising parts of modern AI: a system trained to predict text can also, sometimes, act like a small interpreter.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is a fact you are surprised a model remembers?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-4" id="day-21">
+  <div class="day-top">
+    <span class="day-num">21</span>
+    <span class="day-part">Section 4 · The Transformer and Its Mind</span>
+  </div>
+  <h3>Context, Memory, and Search</h3>
+  <p class="day-summary">The context window is the model&#x27;s working memory; vector search is how it finds relevant text outside that window.</p>
+  <div class="day-meta"><span class="chip">30–40 min</span><span class="chip">Light math</span></div>
+  <p class="day-links"><a href="contextwindows">Context Windows &amp; Memory: What LLMs Can Hold in Mind</a><span class="sep"> · </span><a href="vectorsearch">Semantic Search &amp; Vector Databases: Finding Needles in Haystacks</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">190 chars</span></div>
+      <blockquote class="tweet">Day 21/31: The context window is the model&#x27;s working memory. Vector search is how it finds relevant text outside that window. What fits, what doesn&#x27;t, and how semantic search works. #AI #RAG</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">111 words</span></div>
+      <blockquote class="linkedin">Day 21 of 31: Context, memory, and search.
+
+A model can only attend to what is in its context. The context window is its working memory. Everything outside that window is invisible unless a system retrieves it.
+
+Vector search is how that retrieval works: embed a question and a set of documents, then find the documents whose meaning is closest. It is semantic search, not keyword matching.
+
+Today&#x27;s door explains what fits in a context window and how vector databases find &quot;similar meaning&quot;. It is the foundation for retrieval-augmented generation, which arrives in two days.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is a document you would want an AI to search for you?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-4" id="day-22">
+  <div class="day-top">
+    <span class="day-num">22</span>
+    <span class="day-part">Section 4 · The Transformer and Its Mind</span>
+  </div>
+  <h3>Turning a Model into an Assistant</h3>
+  <p class="day-summary">A pretrained model is a raw next-word predictor. Post-training teaches it to follow instructions, and the training data decides what it learns.</p>
+  <div class="day-meta"><span class="chip">30–40 min</span><span class="chip">A little math</span></div>
+  <p class="day-links"><a href="finetuninglab">Fine-Tuning &amp; Post-Training</a><span class="sep"> · </span><a href="training_data">Training Data Curation</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">198 chars</span></div>
+      <blockquote class="tweet">Day 22/31: A pretrained model is a raw next-word predictor. Post-training teaches it to follow instructions, and the training data decides what it learns. How a model becomes an assistant. #AI #LLMs</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">109 words</span></div>
+      <blockquote class="linkedin">Day 22 of 31: Turning a model into an assistant.
+
+A pretrained model is a raw next-word predictor. It can continue text, but it does not necessarily follow instructions. Post-training is what turns it into an assistant.
+
+Fine-tuning, instruction tuning, and preference learning are the steps. Behind them sits a huge, carefully curated dataset — and a lot of human judgment about what &quot;helpful&quot; and &quot;safe&quot; mean.
+
+Today&#x27;s door explains the difference between pretraining and post-training, and why data curation is a first-class problem. The model is not just a model; it is a pipeline.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What would you want a model to learn from human feedback?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+  </div>
+</section>
+
+<section class="month-section" id="section-5">
+  <div class="month-head">
+    <p class="month-kicker">Section 5 · Days 23–26</p>
+    <h3>Using AI Without Being Fooled</h3>
+    <p class="question">How do we use it without being fooled?</p>
+    <p class="intro">A model is not an oracle. These days are about the gap between fluent output and reliable output: hallucination, retrieval, agents, security, reasoning, evaluation, and the cost of a token.</p>
+  </div>
+  <div class="day-grid">
+
+<article class="day-card sec-5" id="day-23">
+  <div class="day-top">
+    <span class="day-num">23</span>
+    <span class="day-part">Section 5 · Using AI Without Being Fooled</span>
+  </div>
+  <h3>When the Model Does Not Know</h3>
+  <p class="day-summary">A language model is optimized to produce plausible text, not true text. Retrieval gives it documents to ground its answer.</p>
+  <div class="day-meta"><span class="chip">35–45 min</span><span class="chip">A little math</span></div>
+  <p class="day-links"><a href="hallucinations">Hallucinations and Dangers of AI and How to use AI Safely</a><span class="sep"> · </span><a href="rag">Retrieval-Augmented Generation: Giving LLMs a Search Engine</a><span class="sep"> · </span><a href="websearch">How LLMs Search the Web</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">193 chars</span></div>
+      <blockquote class="tweet">Day 23/31: A language model is optimized to produce plausible text, not true text. That&#x27;s why it hallucinates. Retrieval — RAG and web search — gives it documents to ground the answer. #AI #RAG</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">120 words</span></div>
+      <blockquote class="linkedin">Day 23 of 31: When the model doesn&#x27;t know.
+
+A language model is optimized to produce plausible text, not true text. That is the root of hallucination: the model fills gaps with something that sounds right.
+
+Retrieval is the practical fix. RAG and web search find relevant, fresh text and put it in front of the model before it answers. The model still has to use it well, but it no longer has to rely only on memory.
+
+Today&#x27;s door explains why models make things up and how retrieval changes the odds. It is one of the most useful days for anyone who uses AI at work.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+Have you ever caught an AI confidently making something up?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-5" id="day-24">
+  <div class="day-top">
+    <span class="day-num">24</span>
+    <span class="day-part">Section 5 · Using AI Without Being Fooled</span>
+  </div>
+  <h3>Agents, Tools, and Risks</h3>
+  <p class="day-summary">An agent wraps a model in a loop with tools, a plan, and a memory. That power also creates new ways to fail.</p>
+  <div class="day-meta"><span class="chip">35–45 min</span><span class="chip">A little math</span></div>
+  <p class="day-links"><a href="agents">AI Agents: Autonomous Reasoning and Tool Use</a><span class="sep"> · </span><a href="security_inference">Security &amp; Adversarial Attacks</a><span class="sep"> · </span><a href="running_locally">Running Models Locally</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">199 chars</span></div>
+      <blockquote class="tweet">Day 24/31: An agent wraps a model in a loop with tools, a plan, and a memory. That power creates new ways to fail. Agents, local models, and why prompt injection is hard to fix. #AI #Agents #Security</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">113 words</span></div>
+      <blockquote class="linkedin">Day 24 of 31: Agents, tools, and risks.
+
+An agent wraps a model in a loop: it can search, write files, run code, and call other services. That is a big step from a chatbot. It is also a new attack surface.
+
+Running a model locally gives you privacy and control. But prompt injection and jailbreaks show that a model reading untrusted text is a security boundary, not just a conversation.
+
+Today&#x27;s door explains the agent loop, the appeal of local models, and why prompt injection is hard to fix. If you are building with agents, this is required reading.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What would you trust an agent to do without supervision?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-5" id="day-25">
+  <div class="day-top">
+    <span class="day-num">25</span>
+    <span class="day-part">Section 5 · Using AI Without Being Fooled</span>
+  </div>
+  <h3>Reasoning and Evaluation</h3>
+  <p class="day-summary">Chain-of-thought and test-time compute let a model think longer; benchmarks try to measure whether the thinking is real.</p>
+  <div class="day-meta"><span class="chip">35–45 min</span><span class="chip">Light math</span></div>
+  <p class="day-links"><a href="reasoning">Reasoning &amp; Test-Time Compute</a><span class="sep"> · </span><a href="evaluation">Evaluation &amp; Benchmarks</a><span class="sep"> · </span><a href="reliability">Reliability — Calibration &amp; Knowing When to Stop</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">186 chars</span></div>
+      <blockquote class="tweet">Day 25/31: Chain-of-thought and test-time compute let a model think longer. Benchmarks try to measure whether the thinking is real. Reasoning, evaluation, and calibration. #AI #Reasoning</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">108 words</span></div>
+      <blockquote class="linkedin">Day 25 of 31: Reasoning and evaluation.
+
+Some models now spend more computation before answering, often by generating intermediate steps. Chain-of-thought and test-time compute are the names. The hope is that thinking longer produces better answers.
+
+But evaluation asks the uncomfortable question: are we measuring capability, or just performance on the test? And calibration asks whether the model knows when it is unsure.
+
+Today&#x27;s door is about the gap between a benchmark score and real understanding. It is essential for anyone who has to decide whether to trust an AI result.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is a test that you think AI still fails in a revealing way?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-5" id="day-26">
+  <div class="day-top">
+    <span class="day-num">26</span>
+    <span class="day-part">Section 5 · Using AI Without Being Fooled</span>
+  </div>
+  <h3>The Craft and the Cost</h3>
+  <p class="day-summary">Prompting is the practical interface; inference is the economic engine. A token has a price because serving a model is real computation.</p>
+  <div class="day-meta"><span class="chip">35–45 min</span><span class="chip">A little math</span></div>
+  <p class="day-links"><a href="promptengineering">Prompt Engineering: How to talk to LLMs</a><span class="sep"> · </span><a href="inference_vs_training">Inference vs Training — the KV-cache and the two regimes</a><span class="sep"> · </span><a href="ai_economics">The Economic Layer</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">187 chars</span></div>
+      <blockquote class="tweet">Day 26/31: Prompting is the practical interface. Inference is the economic engine. A token has a price because serving a model is real computation. The craft and the cost of AI. #AI #LLMs</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">107 words</span></div>
+      <blockquote class="linkedin">Day 26 of 31: The craft and the cost.
+
+Prompting is the practical interface to a model. Small changes can change a result, but prompting is not magic — it is clear communication with a statistical system.
+
+On the other side is inference: the computation that runs every time you ask a question. Training and inference are different regimes, and the cost of a token shapes what products are possible.
+
+Today&#x27;s door pairs the craft of asking with the economics of serving. It is a useful reality check on both the hype and the fear.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is the best prompt you have ever written?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+  </div>
+</section>
+
+<section class="month-section" id="section-6">
+  <div class="month-head">
+    <p class="month-kicker">Section 6 · Days 27–31</p>
+    <h3>The Larger Questions</h3>
+    <p class="question">What does all of this mean?</p>
+    <p class="intro">The last five days zoom out: the global ecosystem, the mind-machine comparison, the frontier, the rules, and the people behind the ideas. The final door is a map of the whole course.</p>
+  </div>
+  <div class="day-grid">
+
+<article class="day-card sec-6" id="day-27">
+  <div class="day-top">
+    <span class="day-num">27</span>
+    <span class="day-part">Section 6 · The Larger Questions</span>
+  </div>
+  <h3>The Global Map</h3>
+  <p class="day-summary">AI is not only a Silicon Valley story. Compute, data, talent, and regulation are distributed unevenly around the world.</p>
+  <div class="day-meta"><span class="chip">35–45 min</span><span class="chip">A little math</span></div>
+  <p class="day-links"><a href="global_ai_ecosystem">The Global AI Ecosystem</a><span class="sep"> · </span><a href="information_market">The Market for Information</a><span class="sep"> · </span><a href="beyond_llms">Beyond LLMs — The Wider World of Algorithms &amp; Models</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">212 chars</span></div>
+      <blockquote class="tweet">Day 27/31: AI is not only a Silicon Valley story. Compute, data, talent, and regulation are distributed unevenly around the world. The global map, the information market, and what lies beyond the transformer. #AI</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">96 words</span></div>
+      <blockquote class="linkedin">Day 27 of 31: The global map.
+
+AI is not only a Silicon Valley story. Compute, data, talent, and regulation are distributed unevenly around the world. Who builds frontier models, who supplies the chips, and who is left out?
+
+The global ecosystem is also an information market. Models change what is cheap to produce, and that changes what is worth knowing.
+
+Today&#x27;s door zooms out: the global players, the economics of information, and the architectures that might come after the transformer.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+Which part of the AI stack do you think is most under-discussed?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-6" id="day-28">
+  <div class="day-top">
+    <span class="day-num">28</span>
+    <span class="day-part">Section 6 · The Larger Questions</span>
+  </div>
+  <h3>Minds and Mirrors</h3>
+  <p class="day-summary">The brain is not a computer, and a model is not a brain. But the comparison is useful in both directions — if we are careful about what we mean.</p>
+  <div class="day-meta"><span class="chip">35–45 min</span><span class="chip">A little math</span></div>
+  <p class="day-links"><a href="human_mind">The Mind That Built Machines</a><span class="sep"> · </span><a href="mirror_in_machine">The Mirror in the Machine</a><span class="sep"> · </span><a href="metaphysics_of_ai">The Metaphysics of Artificial Intelligence</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">205 chars</span></div>
+      <blockquote class="tweet">Day 28/31: The brain is not a computer, and a model is not a brain. But the comparison is useful in both directions — if we&#x27;re careful about what we mean. Minds, mirrors, and metaphysics. #AI #Neuroscience</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">114 words</span></div>
+      <blockquote class="linkedin">Day 28 of 31: Minds and mirrors.
+
+The brain is not a computer. A model is not a brain. But the comparison is useful in both directions, as long as we are careful about what we mean.
+
+How did evolution build a mind that could invent computation? What do attention, memory, and prediction look like when we compare brains and machines? And what can we actually say about representation, meaning, and the metaphysics of it all?
+
+Today&#x27;s door is philosophical, but it is not hand-waving. It is about the questions that remain open after the engineering is done.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is one thing you think machines will never truly share with humans?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-6" id="day-29">
+  <div class="day-top">
+    <span class="day-num">29</span>
+    <span class="day-part">Section 6 · The Larger Questions</span>
+  </div>
+  <h3>The Frontier and the Rules</h3>
+  <p class="day-summary">The research frontier is betting on new architectures and new kinds of reasoning. The alignment problem asks how to keep powerful systems pointed at human goals.</p>
+  <div class="day-meta"><span class="chip">35–45 min</span><span class="chip">A little math</span></div>
+  <p class="day-links"><a href="frontier">Frontier Topics</a><span class="sep"> · </span><a href="alignment">Alignment — Making Objectives Match Intent</a><span class="sep"> · </span><a href="law_regulation">AI Law &amp; Regulation</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">219 chars</span></div>
+      <blockquote class="tweet">Day 29/31: The research frontier is betting on new architectures and new kinds of reasoning. The alignment problem asks how to keep powerful systems pointed at human goals. And the law is trying to catch up. #AI #Safety</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">105 words</span></div>
+      <blockquote class="linkedin">Day 29 of 31: The frontier and the rules.
+
+What comes after the current generation of models? And who decides how they are built, deployed, and audited?
+
+Today&#x27;s door pairs the technical frontier with the alignment problem and the legal landscape. Three different ways of asking &quot;what could go wrong?&quot;
+
+Alignment is not one problem. It is a family of problems: specifying goals, measuring whether they are met, and keeping a system corrigible when it becomes more capable. The law is a blunt instrument, but it is part of the answer.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is one rule you would write for AI systems today?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-6" id="day-30">
+  <div class="day-top">
+    <span class="day-num">30</span>
+    <span class="day-part">Section 6 · The Larger Questions</span>
+  </div>
+  <h3>Science, Society, and Risk</h3>
+  <p class="day-summary">AI is changing how science is done, how culture is made, and how risk is discussed. The honest answer is a mix of evidence, uncertainty, and values.</p>
+  <div class="day-meta"><span class="chip">35–45 min</span><span class="chip">A little math</span></div>
+  <p class="day-links"><a href="ai_for_science">Closing the Loop — AI for Science</a><span class="sep"> · </span><a href="ai_and_society">AI and Society: The Cultural Impact of Machines That Create</a><span class="sep"> · </span><a href="ai_existential_risk">AI Existential Risk — What Is Real and What Is Speculative</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">200 chars</span></div>
+      <blockquote class="tweet">Day 30/31: AI is changing how science is done, how culture is made, and how risk is discussed. The honest answer is a mix of evidence, uncertainty, and values. Science, society, and risk. #AI #Society</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">111 words</span></div>
+      <blockquote class="linkedin">Day 30 of 31: Science, society, and risk.
+
+AI is changing how science is done: protein folding, materials, drug discovery, and the daily work of prediction. At the same time, it is changing art, work, education, and truth.
+
+The honest answer is a mix of evidence, uncertainty, and values. Some benefits are concrete. Some harms are concrete. Some risks are speculative, and saying so is not the same as dismissing them.
+
+Today&#x27;s door separates the existential-risk hypothesis from what remains speculation. It is a good day to practice holding several thoughts at once.
+
+Free calendar: https://asanai.scads.ai/blog/december
+
+What is one concrete benefit and one concrete harm of AI you have seen yourself?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+
+<article class="day-card sec-6" id="day-31">
+  <div class="day-top">
+    <span class="day-num">31</span>
+    <span class="day-part">Section 6 · The Larger Questions</span>
+  </div>
+  <h3>The People and the Map</h3>
+  <p class="day-summary">Ideas do not arrive alone. They arrive through people, arguments, and institutions — and the whole course can be seen as one connected map.</p>
+  <div class="day-meta"><span class="chip">35–45 min</span><span class="chip">A little math</span></div>
+  <p class="day-links"><a href="philosophy">Philosophical and societal implications, ethical usage of AI</a><span class="sep"> · </span><a href="people_of_ai">People of AI</a><span class="sep"> · </span><a href="atlas">The Atlas</a></p>
+  <details class="social">
+    <summary>Social copy: Twitter + LinkedIn</summary>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">Twitter / X</span><span class="social-count">199 chars</span></div>
+      <blockquote class="tweet">Day 31/31: Ideas don&#x27;t arrive alone. They arrive through people, arguments, and institutions. Meet the recurring cast behind the machine — then see the whole course as one connected map. #AI #History</blockquote>
+      <button class="copy" type="button">Copy tweet</button>
+    </div>
+    <div class="social-block">
+      <div class="social-head"><span class="social-label">LinkedIn</span><span class="social-count">121 words</span></div>
+      <blockquote class="linkedin">Day 31 of 31: The people and the map.
+
+Ideas do not arrive alone. They arrive through people, arguments, and institutions. The history of AI is not a list of lone geniuses; it is a web of collaborators, rivals, and forgotten contributors.
+
+Today&#x27;s door starts with the philosophical questions that remain open, then introduces the recurring cast behind the machine. It ends with the Atlas: a globe of every person, place, and idea in the course.
+
+Thirty-one days is not the end of the subject. It is a map you can keep using. The full course, the Atlas, and every source are free and open.
+
+Start here: https://asanai.scads.ai/blog/december
+
+Which thinker from this series would you most like to have dinner with?</blockquote>
+      <button class="copy" type="button">Copy post</button>
+    </div>
+  </details>
+</article>
+  </div>
+</section>
+  </section>
+
+  <section class="section wrap prose after" id="after">
+    <p class="kicker">After December</p>
+    <h2>What comes next</h2>
+    <p>You have not learned to train a frontier model, and that was never the point. You have learned the vocabulary, the shape of the pipeline, and the questions worth asking.</p>
+    <p>If you want to keep going, the <a href="index.php">course overview</a> has the full shelf, and the <a href="atlas">Atlas</a> gives you the same material as a map. A few specialist doors sit outside this calendar: distributed training, serving stacks, inference kernels, and the deepest excursions into topology and category theory. They are all still in the course.</p>
+    <p>The calendar is free and open. Share it with someone who keeps asking what AI actually is.</p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>The December Calendar · part of the asanAI blog · free and open</span>
+    <span><a href="index.php">Course</a> · <a href="atlas">Atlas</a> · <a href="#overview">Overview</a></span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  document.querySelectorAll('.copy').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const block = button.closest('.social-block')?.querySelector('blockquote');
+      if (!block) return;
+      const old = button.textContent;
+      try {
+        await navigator.clipboard.writeText(block.innerText.trim());
+        button.textContent = 'Copied';
+        setTimeout(() => { button.textContent = old; }, 1400);
+      } catch (error) {
+        button.textContent = 'Select and copy';
+      }
+    });
+  });
+  const themeButton = document.querySelector('#theme-toggle');
+  if (themeButton) {
+    themeButton.addEventListener('click', () => {
+      const root = document.documentElement;
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      try { localStorage.setItem('dec-theme', next); } catch (error) {}
+    });
+  }
+})();
+</script>
+</body>
+</html>
