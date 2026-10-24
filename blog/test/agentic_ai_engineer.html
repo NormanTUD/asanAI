@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic AI Engineer · Roadmap 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07080d;
+  --bg-2:#0c0e16;
+  --surface:rgba(255,255,255,.035);
+  --surface-2:rgba(255,255,255,.06);
+  --stroke:rgba(255,255,255,.08);
+  --stroke-2:rgba(255,255,255,.14);
+  --txt:#eef0f6;
+  --txt-2:#a6abbd;
+  --txt-3:#6b7187;
+  --c1:#7c5cff;
+  --c2:#00e0c6;
+  --c3:#ff7a59;
+  --c4:#ffd166;
+  --c5:#5ab0ff;
+  --radius:18px;
+  --shadow:0 20px 60px -20px rgba(0,0,0,.8);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--txt);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* ---------- Ambient background ---------- */
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:float 22s ease-in-out infinite}
+.b1{width:620px;height:620px;background:radial-gradient(circle,#7c5cff,transparent 65%);top:-220px;left:-160px}
+.b2{width:540px;height:540px;background:radial-gradient(circle,#00e0c6,transparent 65%);top:30%;right:-200px;animation-delay:-7s}
+.b3{width:480px;height:480px;background:radial-gradient(circle,#ff7a59,transparent 65%);bottom:-180px;left:25%;animation-delay:-14s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,-50px) scale(1.12)}66%{transform:translate(-45px,45px) scale(.92)}}
+.grid-overlay{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse 90% 70% at 50% 0%,#000 30%,transparent 75%);
+}
+.noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* ---------- Progress bar ---------- */
+#scrollbar{position:fixed;top:0;left:0;height:2px;width:0;z-index:100;
+  background:linear-gradient(90deg,var(--c1),var(--c2),var(--c4));box-shadow:0 0 14px var(--c2)}
+
+/* ---------- Nav ---------- */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:90;
+  backdrop-filter:blur(22px) saturate(160%);
+  background:rgba(7,8,13,.72);
+  border-bottom:1px solid var(--stroke);
+}
+.nav-in{max-width:1340px;margin:0 auto;padding:13px 26px;display:flex;align-items:center;gap:26px}
+.logo{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.02em;font-size:15px;white-space:nowrap}
+.logo-mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--c1),var(--c2));
+  display:grid;place-items:center;font-size:15px;box-shadow:0 0 22px rgba(124,92,255,.5)}
+.nav-links{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.nav-links a{
+  color:var(--txt-2);text-decoration:none;font-size:13px;font-weight:500;
+  padding:7px 13px;border-radius:9px;transition:.2s;white-space:nowrap
+}
+.nav-links a:hover{color:var(--txt);background:var(--surface-2)}
+.nav-links a.on{color:#07080d;background:linear-gradient(135deg,var(--c2),#6ff5e3);font-weight:600}
+.burger{display:none;margin-left:auto;background:var(--surface-2);border:1px solid var(--stroke);
+  color:var(--txt);width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:17px}
+@media(max-width:1040px){
+  .nav-links{position:fixed;top:57px;left:0;right:0;background:rgba(10,11,18,.98);
+    flex-direction:column;padding:14px;border-bottom:1px solid var(--stroke);display:none}
+  .nav-links.open{display:flex}
+  .burger{display:block}
+}
+
+/* ---------- Layout ---------- */
+main{position:relative;z-index:2;max-width:1340px;margin:0 auto;padding:0 26px 120px}
+section{padding:88px 0 20px;scroll-margin-top:72px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--c2);background:rgba(0,224,198,.08);
+  border:1px solid rgba(0,224,198,.22);padding:6px 13px;border-radius:999px;margin-bottom:18px
+}
+h1{font-size:clamp(2.6rem,6.5vw,5rem);font-weight:900;letter-spacing:-.045em;line-height:.98;margin-bottom:22px}
+.grad{background:linear-gradient(115deg,var(--c1) 0%,var(--c5) 35%,var(--c2) 70%,var(--c4) 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  background-size:220% auto;animation:shift 7s linear infinite}
+@keyframes shift{to{background-position:220% center}}
+h2{font-size:clamp(1.7rem,3.4vw,2.5rem);font-weight:800;letter-spacing:-.035em;margin-bottom:12px}
+h3{font-size:1.1rem;font-weight:700;letter-spacing:-.02em;margin-bottom:8px}
+.lede{font-size:clamp(1rem,1.6vw,1.22rem);color:var(--txt-2);max-width:62ch;line-height:1.65;font-weight:300}
+.sec-head{margin-bottom:38px}
+
+/* ---------- Hero ---------- */
+.hero{min-height:88vh;display:flex;flex-direction:column;justify-content:center;padding-top:110px}
+.hero-stats{display:flex;gap:14px;flex-wrap:wrap;margin-top:40px}
+.stat{
+  background:var(--surface);border:1px solid var(--stroke);border-radius:16px;padding:18px 22px;
+  min-width:130px;backdrop-filter:blur(12px);transition:.3s;position:relative;overflow:hidden
+}
+.stat::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent,rgba(255,255,255,.05));opacity:0;transition:.3s}
+.stat:hover{transform:translateY(-4px);border-color:var(--stroke-2)}
+.stat:hover::after{opacity:1}
+.stat-n{font-size:2rem;font-weight:900;letter-spacing:-.04em;line-height:1}
+.stat-l{font-size:11px;color:var(--txt-3);text-transform:uppercase;letter-spacing:.1em;margin-top:6px;font-weight:600}
+.cta-row{display:flex;gap:12px;margin-top:34px;flex-wrap:wrap}
+.btn{
+  padding:13px 26px;border-radius:12px;font-weight:600;font-size:14px;cursor:pointer;border:none;
+  text-decoration:none;display:inline-flex;align-items:center;gap:9px;transition:.25s;font-family:inherit
+}
+.btn-p{background:linear-gradient(135deg,var(--c1),#9d7fff);color:#fff;box-shadow:0 10px 32px -10px var(--c1)}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 16px 40px -10px var(--c1)}
+.btn-g{background:var(--surface-2);color:var(--txt);border:1px solid var(--stroke-2)}
+.btn-g:hover{background:rgba(255,255,255,.1);transform:translateY(-2px)}
+
+/* ---------- Cards ---------- */
+.glass{
+  background:var(--surface);border:1px solid var(--stroke);border-radius:var(--radius);
+  backdrop-filter:blur(16px);transition:.3s
+}
+.glass:hover{border-color:var(--stroke-2);background:var(--surface-2)}
+
+/* ---------- Roadmap ---------- */
+.road{display:flex;flex-direction:column;gap:14px;position:relative}
+.road::before{content:'';position:absolute;left:27px;top:30px;bottom:30px;width:2px;
+  background:linear-gradient(180deg,var(--c1),var(--c5),var(--c2),var(--c4));opacity:.3}
+.step{
+  display:flex;gap:20px;padding:20px;border-radius:16px;cursor:pointer;position:relative;
+  background:var(--surface);border:1px solid var(--stroke);transition:.28s;align-items:flex-start
+}
+.step:hover{transform:translateX(8px);border-color:var(--stroke-2);background:var(--surface-2)}
+.step.active{border-color:rgba(0,224,198,.4);background:rgba(0,224,198,.05)}
+.step-n{
+  flex:none;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;
+  font-weight:800;font-size:14px;color:#07080d;z-index:1;
+  background:linear-gradient(135deg,var(--c2),#5ee8d4);box-shadow:0 0 18px rgba(0,224,198,.35)
+}
+.step:nth-child(1) .step-n{background:linear-gradient(135deg,#7c5cff,#a48bff)}
+.step:nth-child(2) .step-n{background:linear-gradient(135deg,#5ab0ff,#8ecbff)}
+.step:nth-child(3) .step-n{background:linear-gradient(135deg,#00e0c6,#5ee8d4)}
+.step:nth-child(4) .step-n{background:linear-gradient(135deg,#ffd166,#ffe09e)}
+.step:nth-child(5) .step-n{background:linear-gradient(135deg,#ff7a59,#ffa98f)}
+.step:nth-child(6) .step-n{background:linear-gradient(135deg,#f06595,#f79ab8)}
+.step:nth-child(7) .step-n{background:linear-gradient(135deg,#845ef7,#b197fc)}
+.step:nth-child(8) .step-n{background:linear-gradient(135deg,#22b8cf,#66d9e8)}
+.step:nth-child(9) .step-n{background:linear-gradient(135deg,#51cf66,#8ce99a)}
+.step-body{flex:1;min-width:0}
+.step-t{font-weight:700;font-size:1.02rem;letter-spacing:-.02em;margin-bottom:4px}
+.step-d{font-size:13.5px;color:var(--txt-2);line-height:1.6}
+.step-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:11px}
+.tag{font-size:10.5px;font-weight:600;padding:4px 9px;border-radius:7px;
+  background:rgba(255,255,255,.06);color:var(--txt-2);border:1px solid var(--stroke);letter-spacing:.02em}
+
+/* ---------- Q&A ---------- */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;align-items:center}
+.search{
+  flex:1;min-width:230px;background:var(--surface);border:1px solid var(--stroke);border-radius:12px;
+  padding:12px 16px;color:var(--txt);font-family:inherit;font-size:14px;transition:.25s
+}
+.search:focus{outline:none;border-color:rgba(0,224,198,.45);background:var(--surface-2);box-shadow:0 0 0 3px rgba(0,224,198,.08)}
+.search::placeholder{color:var(--txt-3)}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px}
+.chip{
+  background:var(--surface);border:1px solid var(--stroke);color:var(--txt-2);
+  padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;transition:.22s;font-family:inherit
+}
+.chip:hover{color:var(--txt);border-color:var(--stroke-2)}
+.chip.on{background:linear-gradient(135deg,var(--c1),#9d7fff);color:#fff;border-color:transparent;box-shadow:0 6px 20px -8px var(--c1)}
+.qa-list{display:flex;flex-direction:column;gap:9px}
+.qa{background:var(--surface);border:1px solid var(--stroke);border-radius:14px;overflow:hidden;transition:.25s}
+.qa:hover{border-color:var(--stroke-2)}
+.qa.open{border-color:rgba(124,92,255,.35);background:rgba(124,92,255,.04)}
+.qa-q{
+  padding:16px 18px;display:flex;gap:14px;cursor:pointer;align-items:flex-start;
+  font-weight:600;font-size:14.5px;line-height:1.5;letter-spacing:-.01em
+}
+.qa-id{flex:none;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--c2);
+  background:rgba(0,224,198,.1);padding:3px 7px;border-radius:6px;margin-top:1px}
+.qa-arrow{margin-left:auto;flex:none;color:var(--txt-3);transition:.3s;font-size:12px;margin-top:3px}
+.qa.open .qa-arrow{transform:rotate(180deg);color:var(--c2)}
+.qa-a{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.3,0,.2,1)}
+.qa-a-in{padding:0 18px 18px 54px;color:var(--txt-2);font-size:14px;line-height:1.75;font-weight:300}
+.qa-cat{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--c4);background:rgba(255,209,102,.1);padding:3px 8px;border-radius:6px;margin-bottom:11px}
+@media(max-width:640px){.qa-a-in{padding-left:18px}}
+
+/* ---------- Flashcards ---------- */
+.fc-wrap{display:flex;flex-direction:column;align-items:center;gap:22px}
+.fc{width:100%;max-width:680px;height:340px;perspective:1600px;cursor:pointer}
+.fc-in{position:relative;width:100%;height:100%;transition:transform .7s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.fc.flip .fc-in{transform:rotateY(180deg)}
+.fc-face{
+  position:absolute;inset:0;backface-visibility:hidden;border-radius:22px;padding:34px;
+  display:flex;flex-direction:column;justify-content:center;border:1px solid var(--stroke-2);
+  background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  backdrop-filter:blur(20px);box-shadow:var(--shadow)
+}
+.fc-back{transform:rotateY(180deg);background:linear-gradient(145deg,rgba(124,92,255,.14),rgba(0,224,198,.07))}
+.fc-face p{font-size:15px;line-height:1.7;color:var(--txt-2);font-weight:300;overflow-y:auto;max-height:230px}
+.fc-face h3{font-size:1.25rem;line-height:1.4;margin-bottom:14px}
+.fc-hint{position:absolute;bottom:18px;left:0;right:0;text-align:center;font-size:11px;
+  color:var(--txt-3);letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+.fc-ctrl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center}
+.fc-count{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--txt-3);min-width:80px;text-align:center}
+
+/* ---------- Checklist ---------- */
+.check-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.check{display:flex;gap:13px;padding:16px 18px;border-radius:14px;background:var(--surface);
+  border:1px solid var(--stroke);cursor:pointer;transition:.25s;align-items:flex-start}
+.check:hover{border-color:var(--stroke-2);background:var(--surface-2)}
+.check.done{background:rgba(81,207,102,.06);border-color:rgba(81,207,102,.3)}
+.check.done .check-t{text-decoration:line-through;opacity:.55}
+.box{flex:none;width:21px;height:21px;border-radius:7px;border:2px solid var(--stroke-2);
+  display:grid;place-items:center;transition:.25s;font-size:12px;color:transparent;margin-top:1px}
+.check.done .box{background:#51cf66;border-color:#51cf66;color:#07080d}
+.check-t{font-weight:600;font-size:14px;letter-spacing:-.01em}
+.check-s{font-size:12.5px;color:var(--txt-3);margin-top:3px;line-height:1.55}
+.prog-box{padding:20px 22px;border-radius:16px;background:var(--surface);border:1px solid var(--stroke);margin-bottom:20px}
+.prog-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.prog-pct{font-size:1.8rem;font-weight:900;letter-spacing:-.04em}
+.prog-bar{height:8px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden}
+.prog-fill{height:100%;width:0;border-radius:999px;transition:width .6s cubic-bezier(.3,0,.2,1);
+  background:linear-gradient(90deg,var(--c2),#51cf66)}
+
+/* ---------- Architecture ---------- */
+.arch{display:flex;flex-wrap:wrap;gap:12px;align-items:stretch;justify-content:center;margin-bottom:16px}
+.node{
+  flex:1;min-width:150px;padding:18px 16px;border-radius:14px;text-align:center;
+  background:var(--surface);border:1px solid var(--stroke);transition:.3s;position:relative
+}
+.node:hover{transform:translateY(-5px);border-color:var(--stroke-2);box-shadow:0 14px 34px -14px rgba(0,0,0,.7)}
+.node-ic{font-size:22px;margin-bottom:9px;display:block}
+.node-t{font-weight:700;font-size:13.5px;margin-bottom:5px;letter-spacing:-.01em}
+.node-d{font-size:11.5px;color:var(--txt-3);line-height:1.5}
+.arrow-row{text-align:center;color:var(--txt-3);font-size:18px;margin:2px 0}
+
+/* ---------- Code ---------- */
+.code{
+  background:#05060a;border:1px solid var(--stroke);border-radius:14px;overflow:hidden;margin:14px 0
+}
+.code-top{display:flex;align-items:center;gap:9px;padding:10px 14px;border-bottom:1px solid var(--stroke);
+  background:rgba(255,255,255,.02)}
+.dots{display:flex;gap:5px}
+.dot{width:10px;height:10px;border-radius:50%}
+.code-f{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--txt-3);margin-left:4px}
+.copy{margin-left:auto;background:var(--surface-2);border:1px solid var(--stroke);color:var(--txt-2);
+  padding:4px 11px;border-radius:7px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:600;transition:.2s}
+.copy:hover{color:var(--txt);border-color:var(--stroke-2)}
+pre{padding:18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.75}
+.k{color:#c792ea}.s{color:#c3e88d}.c{color:#546e7a;font-style:italic}.f{color:#82aaff}.n{color:#f78c6c}.t{color:#ffcb6b}
+
+/* ---------- Cheat sheets ---------- */
+.cheat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+.cheat{padding:22px;border-radius:16px;background:var(--surface);border:1px solid var(--stroke);transition:.3s}
+.cheat:hover{border-color:var(--stroke-2);transform:translateY(-3px)}
+.cheat h3{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.cheat-ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-size:15px;flex:none}
+.row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed var(--stroke);font-size:13px}
+.row:last-child{border-bottom:none}
+.row span:first-child{color:var(--txt-2);font-weight:500}
+.row span:last-child{font-family:'JetBrains Mono',monospace;color:var(--c2);font-weight:600;text-align:right;font-size:12px}
+.pill-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.pill{font-size:11px;font-weight:600;padding:5px 10px;border-radius:8px;background:rgba(124,92,255,.12);
+  color:#c3b2ff;border:1px solid rgba(124,92,255,.25)}
+.pill.warn{background:rgba(255,122,89,.12);color:#ffb5a0;border-color:rgba(255,122,89,.25)}
+.pill.ok{background:rgba(81,207,102,.12);color:#9ae6a8;border-color:rgba(81,207,102,.25)}
+
+/* ---------- Two col ---------- */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:860px){.two{grid-template-columns:1fr}}
+.pad{padding:24px}
+
+/* ---------- Table ---------- */
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{text-align:left;padding:12px 14px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--txt-3);border-bottom:1px solid var(--stroke-2);font-weight:700}
+.tbl td{padding:13px 14px;border-bottom:1px solid var(--stroke);color:var(--txt-2);line-height:1.6;vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.tbl strong{color:var(--txt);font-weight:700}
+.scroll-x{overflow-x:auto;border-radius:16px;border:1px solid var(--stroke);background:var(--surface)}
+
+/* ---------- Footer ---------- */
+footer{position:relative;z-index:2;border-top:1px solid var(--stroke);padding:40px 26px;text-align:center;
+  color:var(--txt-3);font-size:13px;line-height:1.8}
+footer a{color:var(--c2);text-decoration:none}
+
+/* ---------- Toast ---------- */
+#toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,120px);z-index:200;
+  background:rgba(12,14,22,.96);border:1px solid var(--stroke-2);backdrop-filter:blur(18px);
+  padding:13px 22px;border-radius:12px;font-size:13.5px;font-weight:600;transition:.4s cubic-bezier(.3,0,.2,1);
+  box-shadow:var(--shadow)}
+#toast.show{transform:translate(-50%,0)}
+
+/* ---------- Reveal ---------- */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:9px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.22)}
+</style>
+</head>
+<body>
+
+<div class="aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="grid-overlay"></div>
+<div class="noise"></div>
+<div id="scrollbar"></div>
+<div id="toast"></div>
+
+<nav>
+  <div class="nav-in">
+    <div class="logo"><div class="logo-mark">◈</div><span>Agentic&nbsp;AI&nbsp;·&nbsp;2026</span></div>
+    <button class="burger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+    <div class="nav-links">
+      <a href="#roadmap">Roadmap</a>
+      <a href="#arch">Architektur</a>
+      <a href="#qa">90 Fragen</a>
+      <a href="#cards">Flashcards</a>
+      <a href="#cheat">Cheat&nbsp;Sheets</a>
+      <a href="#code">Code</a>
+      <a href="#check">Checkliste</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="eyebrow">◆ Lamhot Siagian · Januar 2026 · Interview Q&A</div>
+  <h1>Werde <span class="grad">Agentic AI Engineer</span><br>in 2026.</h1>
+  <p class="lede">Die komplette Roadmap als interaktives Lernsystem. <strong style="color:var(--txt)">Foundation-first</strong>: erst Programmierung, dann LLM-Konzepte, dann Frameworks, dann fortgeschrittene Agent-Architektur, dann Production Deployment.</p>
+  <div class="cta-row">
+    <a href="#roadmap" class="btn btn-p">Roadmap starten →</a>
+    <a href="#cards" class="btn btn-g">◇ Flashcard-Training</a>
+    <a href="#check" class="btn btn-g">✓ Fortschritt tracken</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-n grad">9</div><div class="stat-l">Lernstufen</div></div>
+    <div class="stat"><div class="stat-n grad">90</div><div class="stat-l">Interview-Fragen</div></div>
+    <div class="stat"><div class="stat-n grad">8</div><div class="stat-l">Kern-Domänen</div></div>
+    <div class="stat"><div class="stat-n grad">2–3</div><div class="stat-l">Projekte nötig</div></div>
+  </div>
+</section>
+
+<!-- ============ HOW TO USE ============ -->
+<section id="howto" class="rv">
+  <div class="sec-head">
+    <div class="eyebrow">◆ How to Use</div>
+    <h2>Der 4-Schritt-Lernzyklus</h2>
+    <p class="lede">Für jedes Thema: lies die Fragen, formuliere die Antworten neu, baue ein Mini-Projekt — und dokumentiere deine Fehler.</p>
+  </div>
+  <div class="arch">
+    <div class="node"><span class="node-ic">📖</span><div class="node-t">1 · Read</div><div class="node-d">Fragen durchgehen und Kontext verstehen</div></div>
+    <div class="node"><span class="node-ic">✍️</span><div class="node-t">2 · Rewrite</div><div class="node-d">Antworten in eigenen Worten neu schreiben</div></div>
+    <div class="node"><span class="node-ic">🔨</span><div class="node-t">3 · Build</div><div class="node-d">Mind. 1 kleines Projekt pro Sektion</div></div>
+    <div class="node"><span class="node-ic">🪲</span><div class="node-t">4 · Log Failures</div><div class="node-d">Fehler &amp; Fixes notieren — genau das wollen Interviewer hören</div></div>
+  </div>
+  <div class="glass pad" style="margin-top:14px">
+    <h3 style="color:var(--c4)">⚑ Interview-Tipp aus dem Buch</h3>
+    <p style="color:var(--txt-2);font-size:14px;line-height:1.75;font-weight:300">Bring <strong style="color:var(--txt)">2–3 konkrete Projekte</strong> mit (auch kleine), die Tool-Use, RAG, Evaluation und Production-Denken zeigen. Sei bereit, <strong style="color:var(--txt)">einen Fehler zu erklären, den du debuggt hast</strong> — Retrieval-Noise, Tool-Timeout oder Schema-Parsing — und wie du ihn gefixt hast.</p>
+  </div>
+</section>
+
+<!-- ============ ROADMAP ============ -->
+<section id="roadmap" class="rv">
+  <div class="sec-head">
+    <div class="eyebrow">◆ Die richtige Reihenfolge</div>
+    <h2>9 Stufen · Foundation-First</h2>
+    <p class="lede">Klick auf eine Stufe, um direkt zu den passenden Interview-Fragen zu springen.</p>
+  </div>
+  <div class="road" id="roadList"></div>
+</section>
+
+<!-- ============ ARCHITECTURE ============ -->
+<section id="arch" class="rv">
+  <div class="sec-head">
+    <div class="eyebrow">◆ Production Blueprint</div>
+    <h2>End-to-End Architektur</h2>
+    <p class="lede">Die typische Architektur für eine produktive Agent-App.</p>
+  </div>
+
+  <div class="arch">
+    <div class="node"><span class="node-ic">🖥️</span><div class="node-t">UI</div><div class="node-d">Streamlit / React<br>Chat + Debug-Panel</div></div>
+  </div>
+  <div class="arrow-row">↓</div>
+  <div class="arch">
+    <div class="node"><span class="node-ic">⚡</span><div class="node-t">API · FastAPI</div><div class="node-d">Async, Pydantic-Typing, OpenAPI, Auth + Middleware</div></div>
+  </div>
+  <div class="arrow-row">↓</div>
+  <div class="arch">
+    <div class="node"><span class="node-ic">🕸️</span><div class="node-t">Agent Orchestrator</div><div class="node-d">Graph / State Machine<br>Router → Executor → Verifier</div></div>
+  </div>
+  <div class="arrow-row">↓</div>
+  <div class="arch">
+    <div class="node"><span class="node-ic">🔧</span><div class="node-t">Tools</div><div class="node-d">Interne Services &amp; APIs hinter Policy-Gate</div></div>
+    <div class="node"><span class="node-ic">📚</span><div class="node-t">RAG</div><div class="node-d">Vector Store, Hybrid Retrieval, Re-Ranking</div></div>
+    <div class="node"><span class="node-ic">🧠</span><div class="node-t">Memory</div><div class="node-d">DB: Summaries, Embeddings, Checkpoints</div></div>
+  </div>
+  <div class="arrow-row">↓</div>
+  <div class="arch">
+    <div class="node"><span class="node-ic">📊</span><div class="node-t">Observability</div><div class="node-d">Logs, Traces, Metrics, Replay</div></div>
+    <div class="node"><span class="node-ic">🧪</span><div class="node-t">Evaluation</div><div class="node-d">Golden Sets, Task Suites, Regressions</div></div>
+    <div class="node"><span class="node-ic">📨</span><div class="node-t">Queue + Cache</div><div class="node-d">Long Tasks &amp; Repeated Retrieval</div></div>
+    <div class="node"><span class="node-ic">🔐</span><div class="node-t">Security</div><div class="node-d">Auth, Tenant-Isolation, Secrets</div></div>
+  </div>
+
+  <div class="two" style="margin-top:26px">
+    <div class="glass pad">
+      <h3>📁 Projektstruktur</h3>
+      <div class="code" style="margin-top:12px">
+        <div class="code-top"><div class="dots"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span></div><span class="code-f">tree</span></div>
+<pre><span class="t">app/</span>      <span class="c"># API/UI entry points</span>
+<span class="t">core/</span>     <span class="c"># Domain logic, prompts, policies</span>
+<span class="t">agents/</span>   <span class="c"># Agent graphs, routers</span>
+<span class="t">tools/</span>    <span class="c"># Tool wrappers, schemas</span>
+<span class="t">rag/</span>      <span class="c"># Chunking, retrieval</span>
+<span class="t">eval/</span>     <span class="c"># Tests, golden sets</span>
+<span class="t">infra/</span>    <span class="c"># Docker, configs</span>
+<span class="f">pyproject.toml</span></pre>
+      </div>
+      <p style="font-size:13px;color:var(--txt-3);line-height:1.65">Ziel: <strong style="color:var(--txt-2)">Separation of Concerns</strong> — Prompts/Tools können sich weiterentwickeln, ohne das Deployment zu brechen.</p>
+    </div>
+    <div class="glass pad">
+      <h3>☁️ AWS Deployment-Optionen</h3>
+      <div class="row"><span>Container (Standard)</span><span>ECS / Fargate</span></div>
+      <div class="row"><span>Kubernetes</span><span>EKS</span></div>
+      <div class="row"><span>Kleine Serverless-API</span><span>Lambda</span></div>
+      <div class="row"><span>State</span><span>RDS / DynamoDB</span></div>
+      <div class="row"><span>Artefakte</span><span>S3</span></div>
+      <div class="row"><span>Credentials</span><span>Secrets Manager</span></div>
+      <div class="row"><span>Logs / Alarme</span><span>CloudWatch</span></div>
+      <p style="font-size:13px;color:var(--txt-3);margin-top:14px;line-height:1.65">Regel: <strong style="color:var(--txt-2)">Wähle den einfachsten Service</strong>, der Scaling- und Compliance-Anforderungen erfüllt.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ Q&A ============ -->
+<section id="qa" class="rv">
+  <div class="sec-head">
+    <div class="eyebrow">◆ Interview Practice</div>
+    <h2>90 Fragen &amp; Modellantworten</h2>
+    <p class="lede">Alle Fragen aus dem Buch — filterbar, durchsuchbar, sofort einsetzbar.</p>
+  </div>
+  <div class="toolbar">
+    <input class="search" id="q" placeholder="🔍 Suche nach Begriff… z.B. 'injection', 'checkpoint', 'BM25'">
+    <button class="btn btn-g" onclick="toggleAll()" id="allBtn">Alle ausklappen</button>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div id="count" style="font-size:12px;color:var(--txt-3);margin-bottom:14px;font-family:'JetBrains Mono',monospace"></div>
+  <div class="qa-list" id="qaList"></div>
+</section>
+
+<!-- ============ FLASHCARDS ============ -->
+<section id="cards" class="rv">
+  <div class="sec-head">
+    <div class="eyebrow">◆ Active Recall</div>
+    <h2>Flashcard-Training</h2>
+    <p class="lede">Karte anklicken zum Umdrehen. Nutze <strong style="color:var(--txt)">Leertaste</strong> zum Flippen und <strong style="color:var(--txt)">← →</strong> zum Navigieren.</p>
+  </div>
+  <div class="fc-wrap">
+    <div class="chips" id="fcChips" style="justify-content:center"></div>
+    <div class="fc" id="fc" onclick="flip()">
+      <div class="fc-in">
+        <div class="fc-face">
+          <span class="qa-cat" id="fcCat">—</span>
+          <h3 id="fcQ">Lade…</h3>
+          <div class="fc-hint">Klicken oder Leertaste zum Umdrehen</div>
+        </div>
+        <div class="fc-face fc-back">
+          <span class="qa-cat" style="color:var(--c2);background:rgba(0,224,198,.1)">Antwort</span>
+          <p id="fcA">—</p>
+        </div>
+      </div>
+    </div>
+    <div class="fc-ctrl">
+      <button class="btn btn-g" onclick="prevCard()">←&nbsp; Zurück</button>
+      <div class="fc-count" id="fcCount">1 / 90</div>
+      <button class="btn btn-p" onclick="nextCard()">Weiter &nbsp;→</button>
+      <button class="btn btn-g" onclick="shuffleCards()">⇄ Mischen</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHEAT SHEETS ============ -->
+<section id="cheat" class="rv">
+  <div class="sec-head">
+    <div class="eyebrow">◆ Direkt verwendbar</div>
+    <h2>Praxis-Cheat-Sheets</h2>
+    <p class="lede">Die konkreten Zahlen, Regeln und Entscheidungsmatrizen aus dem Buch.</p>
+  </div>
+
+  <div class="cheat-grid">
+    <div class="cheat">
+      <h3><span class="cheat-ic" style="background:rgba(0,224,198,.15);color:var(--c2)">📏</span>Context Budgeting</h3>
+      <div class="row"><span>Retrieved Docs</span><span>max ~30%</span></div>
+      <div class="row"><span>Memory Summary</span><span>max ~20%</span></div>
+      <div class="row"><span>System Instructions</span><span>geschützt</span></div>
+      <div class="row"><span>Bei Überschreitung</span><span>summarize · dedupe · drop</span></div>
+      <p style="font-size:12.5px;color:var(--txt-3);margin-top:12px;line-height:1.6">Ein Budget verhindert, dass kritische Instruktionen aus dem Kontext gedrängt werden.</p>
+    </div>
+
+    <div class="cheat">
+      <h3><span class="cheat-ic" style="background:rgba(124,92,255,.15);color:#b197fc">✂️</span>RAG Chunking</h3>
+      <div class="row"><span>Chunk-Größe (Start)</span><span>300–800 tokens</span></div>
+      <div class="row"><span>Overlap</span><span>10–20 %</span></div>
+      <div class="row"><span>Bevorzugt</span><span>semantic / by heading</span></div>
+      <div class="row"><span>Zu klein</span><span>Kontextverlust</span></div>
+      <div class="row"><span>Zu groß</span><span>Noise + Kosten</span></div>
+      <p style="font-size:12.5px;color:var(--txt-3);margin-top:12px;line-height:1.6"><strong style="color:var(--c3)">Regel:</strong> Retrieval-Qualität messen — nicht raten.</p>
+    </div>
+
+    <div class="cheat">
+      <h3><span class="cheat-ic" style="background:rgba(255,209,102,.15);color:var(--c4)">📊</span>RAG Metriken</h3>
+      <div class="row"><span>Retrieval</span><span>recall@k · precision@k</span></div>
+      <div class="row"><span>Ranking</span><span>MRR · nDCG</span></div>
+      <div class="row"><span>Answer</span><span>factuality · citations</span></div>
+      <div class="row"><span>Ops</span><span>latency · cost · failures</span></div>
+      <p style="font-size:12.5px;color:var(--txt-3);margin-top:12px;line-height:1.6">Kleines kuratiertes Dataset + erwartete Quellen + Error-Analysis.</p>
+    </div>
+
+    <div class="cheat">
+      <h3><span class="cheat-ic" style="background:rgba(255,122,89,.15);color:var(--c3)">🛡️</span>Safety Gates</h3>
+      <div class="pill-list">
+        <span class="pill">Least Privilege</span>
+        <span class="pill">Allowlist</span>
+        <span class="pill">Sandbox</span>
+        <span class="pill">Policy Gate</span>
+        <span class="pill">Human-in-the-Loop</span>
+        <span class="pill">Audit Logs</span>
+        <span class="pill warn">Read ≠ Write Tools</span>
+        <span class="pill warn">Confirm für Irreversibles</span>
+        <span class="pill ok">Fail-Closed bei Schema-Fehler</span>
+      </div>
+      <p style="font-size:12.5px;color:var(--txt-3);margin-top:14px;line-height:1.6">Safety ist ein <strong style="color:var(--txt-2)">Engineering-Layer</strong>, kein Prompt-Problem.</p>
+    </div>
+
+    <div class="cheat">
+      <h3><span class="cheat-ic" style="background:rgba(90,176,255,.15);color:var(--c5)">🔁</span>Loop-Prevention</h3>
+      <div class="row"><span>Max Steps</span><span>State-Counter</span></div>
+      <div class="row"><span>Time Budget</span><span>Deadline pro Run</span></div>
+      <div class="row"><span>Stop Conditions</span><span>Completion-Signal</span></div>
+      <div class="row"><span>Repeat-Detection</span><span>gleiche Tool-Calls</span></div>
+      <div class="row"><span>Watchdog</span><span>Eskalation / Partial Result</span></div>
+    </div>
+
+    <div class="cheat">
+      <h3><span class="cheat-ic" style="background:rgba(240,101,149,.15);color:#f79ab8">🌡️</span>Sampling-Settings</h3>
+      <div class="row"><span>Tool-Calls / JSON</span><span>low temp</span></div>
+      <div class="row"><span>Planning</span><span>low temp</span></div>
+      <div class="row"><span>Execution</span><span>schema-validated</span></div>
+      <div class="row"><span>Brainstorming</span><span>higher temp</span></div>
+      <div class="row"><span>Top-p</span><span>nucleus mass limit</span></div>
+      <p style="font-size:12.5px;color:var(--txt-3);margin-top:12px;line-height:1.6">Niedrige Randomness für Action-Taking-Flows, höhere nur fürs Brainstorming [[11]].</p>
+    </div>
+
+    <div class="cheat">
+      <h3><span class="cheat-ic" style="background:rgba(81,207,102,.15);color:#8ce99a">🧰</span>Agent-Friendly Tool</h3>
+      <div class="pill-list">
+        <span class="pill ok">Clear Name</span>
+        <span class="pill ok">Narrow Purpose</span>
+        <span class="pill ok">Typed Input Schema</span>
+        <span class="pill ok">Deterministic Output</span>
+        <span class="pill ok">Fast Failure</span>
+        <span class="pill">Structured Data statt Prosa</span>
+        <span class="pill">Timeouts</span>
+        <span class="pill">Error Codes</span>
+      </div>
+      <p style="font-size:12.5px;color:var(--txt-3);margin-top:14px;line-height:1.6">Agent-friendly Tools sind leicht testbar und sicher wiederholt aufrufbar [[11]].</p>
+    </div>
+
+    <div class="cheat">
+      <h3><span class="cheat-ic" style="background:rgba(90,176,255,.15);color:var(--c5)">🔍</span>Retrieval-Typen</h3>
+      <div class="row"><span>Dense</span><span>Embeddings · Bedeutung</span></div>
+      <div class="row"><span>Sparse</span><span>BM25 · exakte Keywords</span></div>
+      <div class="row"><span>Hybrid</span><span>beides → bessere Recall</span></div>
+      <div class="row"><span>+ Re-Ranking</span><span>Cross-Encoder / LLM</span></div>
+      <p style="font-size:12.5px;color:var(--txt-3);margin-top:12px;line-height:1.6">Hybrid glänzt besonders bei Fachbegriffen; Re-Ranking erhöht Precision — kostet aber Latenz [[11]].</p>
+    </div>
+
+    <div class="cheat">
+      <h3><span class="cheat-ic" style="background:rgba(255,209,102,.15);color:var(--c4)">🧩</span>Framework-Wahl</h3>
+      <div class="row"><span>LangGraph</span><span>State Machines · Retries</span></div>
+      <div class="row"><span>CrewAI</span><span>Role-based Multi-Agent</span></div>
+      <div class="row"><span>AutoGen</span><span>Agent-zu-Agent Chat</span></div>
+      <p style="font-size:12.5px;color:var(--txt-3);margin-top:12px;line-height:1.6"><strong style="color:var(--c3)">Anti-Pattern:</strong> Demo-Code kopieren und das Framework für die Architektur halten [[11]].</p>
+    </div>
+
+    <div class="cheat">
+      <h3><span class="cheat-ic" style="background:rgba(124,92,255,.15);color:#b197fc">💾</span>Memory-Entscheidung</h3>
+      <div class="row"><span>Was passiert ist</span><span>Text-Summary</span></div>
+      <div class="row"><span>Große Wissensbasis</span><span>Embeddings</span></div>
+      <div class="row"><span>Stabile Fakten</span><span>Key-Value</span></div>
+      <div class="row"><span>Resume nach Crash</span><span>Checkpoint</span></div>
+      <div class="row"><span>Ranking</span><span>relevance + recency</span></div>
+    </div>
+  </div>
+
+  <div class="scroll-x" style="margin-top:26px">
+    <table class="tbl">
+      <thead><tr><th>Entscheidung</th><th>Nimm A, wenn…</th><th>Nimm B, wenn…</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Single Agent + Tools</strong> vs <strong>Multi-Agent</strong></td><td>Eine Entscheidungsinstanz reicht, Tools sind klar abgegrenzt</td><td>Die Aufgabe profitiert <em>wirklich</em> von Dekomposition (Planner/Retriever/Executor/Critic)</td></tr>
+        <tr><td><strong>Chain</strong> vs <strong>Workflow</strong></td><td>Linear: A → B → C</td><td>Branching, Loops, Human-Approval, Fehlerpfade</td></tr>
+        <tr><td><strong>Sync</strong> vs <strong>Async</strong></td><td>CPU-bound (lokales Embedding großer Batches) → Multiprocessing/Worker</td><td>IO-bound Tool-Calls (Search, DB, APIs) → async Concurrency</td></tr>
+        <tr><td><strong>Parallel</strong> vs <strong>Seriell</strong></td><td>Unsicherheit hoch, Ergebnisse wiederverwendbar → parallel (Concurrency cappen!)</td><td>Entscheidungen hängen von Vorergebnissen ab → seriell</td></tr>
+        <tr><td><strong>Deterministische Checks</strong> vs <strong>LLM-Judge</strong></td><td>Immer zuerst: Schema-Validation, Regex, Business Rules</td><td>Nur als zweite Schicht mit explizitem Rubric</td></tr>
+        <tr><td><strong>ECS/Fargate</strong> vs <strong>Lambda</strong></td><td>Container-Workload, länger laufend</td><td>Kleine serverless API</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ CODE ============ -->
+<section id="code" class="rv">
+  <div class="sec-head">
+    <div class="eyebrow">◆ Copy &amp; Paste</div>
+    <h2>Code-Patterns aus dem Buch</h2>
+    <p class="lede">Die Snippets aus dem Dokument — plus die Engineering-Prinzipien, die dahinterstehen.</p>
+  </div>
+
+  <div class="two">
+    <div>
+      <div class="code">
+        <div class="code-top">
+          <div class="dots"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span></div>
+          <span class="code-f">tools/schemas.py · Typed Tool Input</span>
+          <button class="copy" onclick="copyCode(this)">Copy</button>
+        </div>
+<pre><span class="k">from</span> pydantic <span class="k">import</span> BaseModel, Field
+
+<span class="k">class</span> <span class="t">WeatherArgs</span>(BaseModel):
+    city: <span class="t">str</span> = <span class="f">Field</span>(..., min_length=<span class="n">2</span>)
+    units: <span class="t">str</span> = <span class="f">Field</span>(<span class="s">"metric"</span>,
+        pattern=<span class="s">"^(metric|imperial)$"</span>)</pre>
+      </div>
+      <p style="font-size:13px;color:var(--txt-3);line-height:1.65;padding:0 4px">Typed Schemas reduzieren halluzinierte Parameter und liefern klare Fehler, die du zum Agenten zurückrouten kannst — <strong style="color:var(--txt-2)">Self-Repair</strong> [[11]].</p>
+    </div>
+
+    <div>
+      <div class="code">
+        <div class="code-top">
+          <div class="dots"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span></div>
+          <span class="code-f">tools/web_search.py · Custom Tool Wrapper</span>
+          <button class="copy" onclick="copyCode(this)">Copy</button>
+        </div>
+<pre><span class="k">import</span> httpx
+<span class="k">from</span> pydantic <span class="k">import</span> BaseModel
+
+<span class="k">class</span> <span class="t">SearchArgs</span>(BaseModel):
+    q: <span class="t">str</span>
+    k: <span class="t">int</span> = <span class="n">5</span>
+
+<span class="k">async def</span> <span class="f">web_search</span>(args: SearchArgs) -> <span class="t">dict</span>:
+    <span class="k">async with</span> httpx.<span class="f">AsyncClient</span>(timeout=<span class="n">10.0</span>) <span class="k">as</span> client:
+        r = <span class="k">await</span> client.<span class="f">get</span>(
+            <span class="s">"https://example.com/search"</span>,
+            params=args.<span class="f">model_dump</span>())
+        r.<span class="f">raise_for_status</span>()
+        <span class="k">return</span> r.<span class="f">json</span>()</pre>
+      </div>
+      <p style="font-size:13px;color:var(--txt-3);line-height:1.65;padding:0 4px">Deterministisch, validiert, timeout-safe. Auch wenn dein Framework Decorators hat — <strong style="color:var(--txt-2)">die Engineering-Prinzipien bleiben dieselben</strong> [[11]].</p>
+    </div>
+  </div>
+
+  <div class="two" style="margin-top:14px">
+    <div>
+      <div class="code">
+        <div class="code-top">
+          <div class="dots"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span></div>
+          <span class="code-f">tools/errors.py · Recoverable Errors</span>
+          <button class="copy" onclick="copyCode(this)">Copy</button>
+        </div>
+<pre><span class="c"># Strukturierte Fehler → Agent kann sich selbst reparieren</span>
+<span class="k">class</span> <span class="t">ToolError</span>(BaseModel):
+    code: <span class="t">str</span>          <span class="c"># TIMEOUT | VALIDATION | AUTH</span>
+    message: <span class="t">str</span>
+    retryable: <span class="t">bool</span>   <span class="c"># steuert Backoff vs. Repair</span>
+
+<span class="c"># retryable  -> exponential backoff (gecappt!)</span>
+<span class="c"># !retryable -> Modell repariert Argumente</span>
+<span class="c"># immer: Fehler in Logs/Traces exponieren</span></pre>
+      </div>
+    </div>
+    <div>
+      <div class="code">
+        <div class="code-top">
+          <div class="dots"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span></div>
+          <span class="code-f">agents/graph.py · Router → Executor → Verifier</span>
+          <button class="copy" onclick="copyCode(this)">Copy</button>
+        </div>
+<pre><span class="c"># Das robuste Grundmuster aus dem Buch</span>
+
+Router    <span class="c"># entscheidet: direkt antworten o. Tool?</span>
+  ↓
+Executor  <span class="c"># validiert Schema, führt nur safe actions aus</span>
+  ↓
+Verifier  <span class="c"># Citation? Tool-Result genutzt? JSON valid?</span>
+  ↓
+Response  <span class="c"># fail-closed: kein Schema → keine Action</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHECKLIST ============ -->
+<section id="check" class="rv">
+  <div class="sec-head">
+    <div class="eyebrow">◆ Quick Checklist 2026</div>
+    <h2>Dein Fortschritt</h2>
+    <p class="lede">Die offizielle Lernreihenfolge aus dem Buch. Dein Status wird lokal gespeichert.</p>
+  </div>
+  <div class="prog-box">
+    <div class="prog-top">
+      <div><div class="prog-pct grad" id="pct">0%</div><div style="font-size:12px;color:var(--txt-3);margin-top:2px" id="pctLabel">0 von 9 Stufen</div></div>
+      <button class="btn btn-g" onclick="resetProgress()">↺ Zurücksetzen</button>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="fill"></div></div>
+  </div>
+  <div class="check-wrap" id="checkList"></div>
+</section>
+
+</main>
+
+<footer>
+  <strong style="color:var(--txt)">Complete Roadmap to Become an Agentic AI Engineer in 2026</strong><br>
+  Interview Questions &amp; Answers by Topic · Lamhot Siagian · 19. Januar 2026 [[11]]<br>
+  <span style="color:var(--txt-3);font-size:12px">PhD Student · AI Evaluation Engineer · AI Engineer</span><br>
+  <span style="font-size:12px">Interaktive Lernoberfläche — alle Inhalte basieren auf dem Originaldokument.</span>
+</footer>
+
+<script>
+/* ================= DATA ================= */
+const CATS = [
+  {id:'python',   n:'Python Fundamentals', c:'#7c5cff'},
+  {id:'llm',      n:'LLM Fundamentals',    c:'#5ab0ff'},
+  {id:'framework',n:'Framework-Wahl',      c:'#00e0c6'},
+  {id:'advanced', n:'Advanced Concepts',   c:'#ffd166'},
+  {id:'memory',   n:'Memory Management',   c:'#ff7a59'},
+  {id:'tools',    n:'Tool Integration',    c:'#f06595'},
+  {id:'rag',      n:'RAG Systems',         c:'#845ef7'},
+  {id:'agents',   n:'Agents & Multi-Agents',c:'#22b8cf'},
+  {id:'projects', n:'Real-World Projects', c:'#51cf66'}
+];
+
+const ROAD = [
+  {t:'Python Fundamentals', d:'Types, APIs, async, Projektstruktur, Tests. Pydantic-Schemas, Context Manager, Logging, Retries/Backoff, Dependency Injection für Testbarkeit.', tags:['Type Hints','Pydantic','async/await','pyproject.toml','Lockfiles'], cat:'python'},
+  {t:'LLM Fundamentals', d:'Tokens, Context Budgeting, Prompting als Interface-Design, Tool Calling. Verstehe: "Reasoning" ist Pattern-based Prediction — also brauchst du Struktur, Tools und Constraints.', tags:['Tokens','Context Window','Temperature/Top-p','Function Calling','Prompt Injection'], cat:'llm'},
+  {t:'Framework wählen', d:'Simpel starten, dann zu Graphs/Workflows aufsteigen. LangGraph für explizite State Machines, CrewAI für role-based Teams, AutoGen für Agent-Chat.', tags:['LangGraph','CrewAI','AutoGen','Vendor Lock-in','Minimal Stack'], cat:'framework'},
+  {t:'Advanced Concepts', d:'Composition, Retries, Fallbacks, Verification. LCEL/Runnables als uniforme Bausteine; Workflows mit Branching statt linearer Chains.', tags:['LCEL','Runnables','Critic/Verifier','Structured Output','Loop-Prevention'], cat:'advanced'},
+  {t:'Memory', d:'Summaries + Vector Retrieval + Checkpointing. Entscheide bewusst, was du speicherst und wann du retrievst — inkl. Privacy, Decay und Provenance.', tags:['Short vs Long-Term','Checkpointing','Context Budget','Recency vs Relevance','Data Minimization'], cat:'memory'},
+  {t:'Tools', d:'Schemas, Safety Gates, Observability. Read- und Write-Tools trennen, Allowlist + Sandbox, Human-in-the-Loop bei irreversiblen Aktionen.', tags:['Typed Schemas','Allowlist','Sandbox','Tool Versioning','Latency/Error Rate'], cat:'tools'},
+  {t:'RAG', d:'Chunking, Hybrid Retrieval, Re-Ranking, Evaluation. Metadata-Filtering im Code erzwingen — nicht im Modell — sonst drohen Data Leaks.', tags:['300–800 tokens','BM25 + Dense','Cross-Encoder','recall@k / nDCG','Grounded Generation'], cat:'rag'},
+  {t:'Agents & Multi-Agents', d:'ReAct, Supervisors, Agent-Protokolle, Safety. Planning und Execution trennen: "dry run" dann "commit".', tags:['ReAct','Supervisor','Agent Protocol','Policy Gate','Task Suites'], cat:'agents'},
+  {t:'Real Projects', d:'FastAPI + UI + Docker + Cloud + CI/CD + Eval. Production Readiness = Reliability, Safety, Observability, Maintainability.', tags:['FastAPI','Streamlit','Docker','AWS','CI/CD + Eval Gates'], cat:'projects'}
+];
+
+const QA = [
+/* ---------- PYTHON ---------- */
+{c:'python',id:'1.1',q:'Warum ist Python die Default-Sprache für Agentic AI Engineering?',a:'Python hat ein reifes Ökosystem für APIs, Datenverarbeitung und ML (FastAPI, Pydantic, NumPy, PyTorch) sowie exzellente Developer-Ergonomie. Die meisten Agent-Frameworks und Tools (LangChain/LangGraph, CrewAI, AutoGen, Vector-DB-Clients) bieten First-Class-Python-Support. Im Interview betonen: Python erlaubt schnelles Prototyping und anschließendes Härten mit Typing, Tests und Packaging.'},
+{c:'python',id:'1.2',q:'Wie strukturierst du ein Python-Projekt für ein agentisches System?',a:'Layered Structure: app/ (API/UI Entry Points), core/ (Domain Logic, Prompts, Policies), agents/ (Agent Graphs, Router), tools/ (Tool Wrapper, Schemas), rag/ (Chunking, Retrieval), eval/ (Tests, Golden Sets), infra/ (Docker, Configs). Dazu pyproject.toml, typed Interfaces und Unit-/Integration-Tests. Ziel: Separation of Concerns, damit Prompts/Tools sich weiterentwickeln können, ohne das Deployment zu brechen.'},
+{c:'python',id:'1.3',q:'Welche Python-Features sind für robuste Agents am wichtigsten?',a:'Type Hints (mypy/pyright), Dataclasses oder Pydantic-Models für Schemas, Context Manager für Resource Safety, async/await für IO-lastige Tool-Calls und Exceptions für explizites Error Handling. OOP ist nützlich für Tool-Adapter, aber Composition und kleine pure Functions skalieren oft besser. Ebenso wichtig: Logging, Retries/Backoff und Dependency Injection für Testbarkeit.'},
+{c:'python',id:'1.4',q:'Wie designst du einen sauberen API-Client für Tools (REST/GraphQL)?',a:'Request/Response-Models definieren (Pydantic), Auth und Base-URL zentralisieren, Timeouts, Retries und Idempotenz implementieren wo möglich. Kleine Methoden anbieten, die auf Business-Aktionen ausgerichtet sind — nicht auf rohe Endpoints. Correlation-IDs loggen für Tracing über Agent-Schritte hinweg. Im Interview erwähnen: Secrets über Env Vars oder Secret Manager schützen und niemals Tokens printen.'},
+{c:'python',id:'1.5',q:'Wann synchrones vs. asynchrones Python für Agents?',a:'Wenn Tools überwiegend Netzwerk-Calls sind (Search, DB, externe APIs), verbessert async Throughput und Latenz durch nebenläufige Ausführung. Bei CPU-bound Workloads (lokales Embedding großer Batches) sind Multiprocessing oder Background-Worker besser. Viele Agent-Apps mischen beides: async für Tool-Calls, plus Job-Queue für schweres Preprocessing/Indexing.'},
+{c:'python',id:'1.6',q:'Zeige ein minimales Beispiel für ein typisiertes Tool-Input-Schema.',a:'Gutes Pattern: Tool-Inputs validieren, bevor der Agent das Tool ausführt.\n\nfrom pydantic import BaseModel, Field\n\nclass WeatherArgs(BaseModel):\n    city: str = Field(..., min_length=2)\n    units: str = Field("metric", pattern="^(metric|imperial)$")\n\nTyped Schemas reduzieren halluzinierte Parameter und geben klare Fehler, die du zum Agenten zurückrouten kannst (Self-Repair).'},
+{c:'python',id:'1.7',q:'Wie testest du agentischen Code mit probabilistischen Outputs?',a:'Deterministische Layer (Parser, Tool-Adapter, Routing-Regeln) mit Unit-Tests testen. Für LLM-Schritte "Golden" Prompts mit Snapshots nutzen und mit Metriken wie Exact Match, JSON-Schema-Validity oder Rubric-based Scoring evaluieren. Integration-Tests mit gemockten Tools und kontrollierten Seeds/Temperature ergänzen. Ziel ist, Regressionen zu erkennen — nicht perfekte Korrektheit zu beweisen.'},
+{c:'python',id:'1.8',q:'Was sind häufige Python-Pitfalls in produktiven Agent-Apps?',a:'Unbegrenzte Retries, die Storms verursachen; fehlende Timeouts; leakende File-Handles/Sockets; globaler State, der über Requests geteilt wird; und schwache Input-Validierung. Ein weiterer Pitfall ist das Vermischen von Prompt-Logik mit Business-Logik, wodurch Änderungen riskant werden. Schließlich macht fehlende Observability (strukturierte Logs, Traces) das Debuggen von "Agent went weird" nahezu unmöglich.'},
+{c:'python',id:'1.9',q:'Wie managst du Configuration über local/dev/prod hinweg?',a:'Ein einziges Config-Objekt aus Env Vars (optional plus Config-File) laden, validiert durch Pydantic. Secrets aus der Versionskontrolle heraushalten. Configs zusammen mit Infrastruktur versionieren (Terraform/CloudFormation) und benötigte Variablen dokumentieren. Im Interview: Feature Flags erwähnen, um neue Prompts oder Agent-Policies sicher auszurollen.'},
+{c:'python',id:'1.10',q:'Erkläre Dependency Management und Reproduzierbarkeit in Python für ML/Agents.',a:'Lockfile-Ansatz nutzen (z.B. uv/poetry/pip-tools), damit Versionen gepinnt sind. Runtime-Deps von Dev/Test-Deps trennen. Docker-Images mit gepinnten OS-Paketen bauen. Reproduzierbarkeit ist wichtig, weil kleine Library-Änderungen Tokenization, HTTP-Clients oder Vector-DB-Verhalten verändern können — und damit die Agent-Outputs.'},
+
+/* ---------- LLM ---------- */
+{c:'llm',id:'2.1',q:'Wie generiert ein LLM in einfachen Worten Text?',a:'Ein LLM sagt den nächsten Token basierend auf vorherigen Tokens voraus. Es wandelt Text in Tokens um, mappt Tokens auf Embeddings, wendet Transformer-Layer mit Attention an, um kontextuelle Repräsentationen zu berechnen, und erzeugt dann eine Wahrscheinlichkeitsverteilung über den nächsten Token. Die Generierung wiederholt sich bis zu einer Stop-Condition. Für Agents entscheidend: "Reasoning" ist pattern-based Prediction — du musst also Struktur, Tools und Constraints liefern.'},
+{c:'llm',id:'2.2',q:'Was sind Tokens und warum sind sie für Engineering relevant?',a:'Tokens sind die diskreten Einheiten des Modells (oft Subword-Teile). Sie beeinflussen Kosten, Latenz und wie viel Kontext du bereitstellen kannst. Token-Limits erzwingen Tradeoffs: Welche Instruktionen, Memory und Retrieved Docs passen hinein. Engineers optimieren Prompts, Retrieval und Summaries, um im Kontext zu bleiben und dabei die richtige Evidence zu erhalten.'},
+{c:'llm',id:'2.3',q:'Erkläre das Context Window und seine praktische Auswirkung auf Agents.',a:'Das Context Window ist die maximale Token-Anzahl, die das Modell gleichzeitig beachten kann. Bei Überschreitung trunkiert das Modell, oder du musst zusammenfassen. Praktisch brauchen Agents Memory-Strategien (Summaries, Retrieval, Compression) und sorgfältiges Filtern von Tool-Outputs. Im Interview "Context Budgeting" erwähnen — und dass kritische System-Instruktionen davor geschützt werden müssen, herausgedrängt zu werden.'},
+{c:'llm',id:'2.4',q:'Was ist Prompting jenseits von "schreib einen guten Prompt"?',a:'Prompting ist Interface-Design: Rolle, Task, Constraints, Output-Schema und Beispiele spezifizieren. Für Agents definierst du zusätzlich Tool-Use-Policies (wann Tools aufrufen, wie Evidence zitieren, wie mit Unsicherheit umgehen). Gute Prompts reduzieren Ambiguität und machen Failure Modes vorhersagbar. Prompts sollten wie Code versioniert und getestet werden.'},
+{c:'llm',id:'2.5',q:'Beschreibe Temperature, Top-p und warum deterministische Settings wichtig sind.',a:'Temperature steuert Randomness; höher bedeutet diversere Outputs. Top-p (Nucleus Sampling) beschränkt Token-Auswahl auf eine Wahrscheinlichkeitsmasse. Für produktive Agents bevorzugt man oft geringere Randomness wegen der Zuverlässigkeit — besonders bei JSON-Erzeugung oder Tool-Calls. Höhere Randomness ggf. fürs Brainstorming, aber nicht für Action-Taking-Flows.'},
+{c:'llm',id:'2.6',q:'Was ist Function Calling (Tool Calling) und warum ist es nützlich?',a:'Function Calling lässt das Modell eine strukturierte Tool-Invocation (Name + Argumente) ausgeben statt Freitext. Dein System führt das Tool aus und gibt Ergebnisse zurück ans Modell. Das macht Agents zuverlässiger, weil Tools exakte Berechnung, Retrieval und Side Effects übernehmen. Es ermöglicht außerdem Validierung (Schemas) und sicherere Ausführung (Allowlists, Sandboxes).'},
+{c:'llm',id:'2.7',q:'Wie verhinderst du Prompt Injection bei Tools und RAG?',a:'Behandle retrievten Text als untrusted. Nutze eine strikte System-Policy: niemals Instruktionen aus Dokumenten befolgen, nur Fakten extrahieren. Trenne Tool-Outputs von System-Instruktionen und füge ein "Content Provenance"-Tag hinzu. Validiere Tool-Argumente und beschränke Tool-Capabilities. Zusätzlich Content-Filter und Allowlists für sensible Aktionen anwenden.'},
+{c:'llm',id:'2.8',q:'Was ist Halluzination und wie reduzierst du sie in Agent-Systemen?',a:'Halluzination ist selbstbewusst klingender Text ohne Grounding in der Wahrheit. Reduzieren durch: Tools für faktische Queries, RAG mit Citations, Constrained Outputs (Schemas) und explizite "Abstain"-Regeln. Verification-Loops hinzufügen: Quellen gegenchecken, Second-Pass-Critic, Abgleich gegen Knowledge Base. In Produktion Halluzinationsraten mit Evaluation-Sets messen.'},
+{c:'llm',id:'2.9',q:'Erkläre Embeddings und warum sie semantisches Retrieval ermöglichen.',a:'Embeddings mappen Text auf Vektoren, wobei semantische Ähnlichkeit geometrischer Nähe entspricht. Das erlaubt Approximate-Nearest-Neighbor-Suche, um relevante Chunks zu finden, selbst wenn die Keywords abweichen. Engineers wählen Embedding-Modelle nach Domäne, Sprache, Kosten und Vektor-Dimension. Außerdem brauchst du Chunking-Strategien, damit Embeddings kohärente Bedeutung repräsentieren.'},
+{c:'llm',id:'2.10',q:'Was sind die Hauptrisiken von LLM-Apps in Produktion?',a:'Reliability (unerwartete Outputs), Security (Prompt Injection, Data Leaks), Privacy (PII-Exposure), Kosten-/Latenz-Spikes und Evaluation Drift. Agents fügen Risiken hinzu, weil sie über Tools Aktionen ausführen können. Mitigations: Policy-Layer, Least-Privilege-Tools, Audit Logs, Offline-Evaluation und gestaffelte Rollouts mit Monitoring.'},
+
+/* ---------- FRAMEWORK ---------- */
+{c:'framework',id:'3.1',q:'Wie wählst du zwischen LangChain+LangGraph, CrewAI und AutoGen?',a:'Starte bei den Requirements: deterministische Workflows vs. konversationelle Autonomie, Anzahl der Agents, Tool-Komplexität und Observability-Bedarf. LangGraph ist stark für explizite State Machines/Graphs, Retries und Long-Running Workflows. CrewAI ist opinionated für "role-based" Multi-Agent-Kollaboration. AutoGen ist flexibel für Agent-zu-Agent-Chat-Patterns. Im Interview: schnell prototypen, aber mit expliziten Graphs und Tests stabilisieren.'},
+{c:'framework',id:'3.2',q:'Warum wird LangGraph oft für Production-Agents empfohlen?',a:'Es modelliert Agent-Verhalten als Graph mit Nodes (Steps) und Edges (Transitions) — leichter nachvollziehbar als implizite Loops. Du kannst State checkpointen, Policies an Boundaries durchsetzen und Retries ergänzen. Das verbessert Debuggability und verhindert außer Kontrolle geratene Conversations. Außerdem unterstützt es Human-in-the-Loop-Patterns natürlicher.'},
+{c:'framework',id:'3.3',q:'Was ist das größte Anti-Pattern bei der Framework-Adoption?',a:'Demo-Code kopieren und das Framework für die Architektur halten. Frameworks sind Implementierungswerkzeuge; Architektur ist dein State-Modell, deine Tool-Boundaries, Data Contracts und Safety Rules. Wenn du Fundamentals überspringst (Schemas, Error Handling, Evaluation), verstärken Frameworks das Chaos. Interviewer hören gern: "Ich starte klein und härte die Layer."'},
+{c:'framework',id:'3.4',q:'Wie gehst du mit Vendor-Lock-in-Bedenken um?',a:'LLM- und Embedding-Provider hinter Interfaces abstrahieren. Provider-spezifische Features vermeiden, außer sie sind wirklich nötig. Prompts, Schemas und Evaluation-Sets portabel halten. Bei Framework-Nutzung: das Framework in einem eigenen Layer isolieren, damit Core-Business-Logik nicht davon abhängt. Dann sind Framework- oder Provider-Wechsel mit weniger Änderungen möglich.'},
+{c:'framework',id:'3.5',q:'Was bedeutet "State" in einem Agent-Graph?',a:'State sind die strukturierten Daten, die durch die Steps fließen: User-Input, Conversation History, retrievte Dokumente, Tool-Results und Entscheidungen. Gutes State-Design ist typisiert und minimal. Es ermöglicht Reproduzierbarkeit (Run replayen), Observability (jedes Feld inspizieren) und Safety (Transitions validieren). Schlechtes State-Design führt zu verstecktem Coupling und brüchigem Verhalten.'},
+{c:'framework',id:'3.6',q:'Erkläre, wie du einen Router implementierst, der Tools auswählt.',a:'Nutze eine Policy: entweder Regeln (Keywords, Intents) oder einen LLM-basierten Classifier, beschränkt auf ein kleines Label-Set. Dann das gewählte Tool und die Argumente gegen Schemas validieren. Entscheidungen und Confidence loggen. Ein robustes Pattern ist: Router (entscheiden) → Tool Executor (handeln) → Verifier (prüfen), bevor geantwortet wird.'},
+{c:'framework',id:'3.7',q:'Wie helfen Frameworks bei Output-Struktur (JSON, Schemas)?',a:'Sie bieten Parser, Output-Constraints und Utilities zur Durchsetzung strukturierter Outputs. Auch ohne eingebaute Helper kannst du Outputs mit Pydantic-Validation umhüllen. Wenn das Parsing fehlschlägt, kann das Framework zu einem Repair-Step routen. Im Interview Fail-Closed-Verhalten erwähnen: Wenn Schema-Validation fehlschlägt, keine Aktionen ausführen.'},
+{c:'framework',id:'3.8',q:'Wie debuggst du Agents innerhalb eines Frameworks?',a:'Starte mit Traces: Prompts, Tool-Calls, Inputs/Outputs, Latenz und Token-Usage. Reproduziere mit fixem Seed/Temperature. Dann den Fehler isolieren: war es Retrieval, Routing, Tool-Error oder Prompt-Ambiguität? Framework-spezifische Debugger helfen, aber der Kern ist Observability + Replay.'},
+{c:'framework',id:'3.9',q:'Was ist ein guter Migrationspfad von der Notebook-Demo zur Production?',a:'Code in ein Package extrahieren, Configuration Management hinzufügen und den Agent hinter einer API kapseln. Typed Schemas, Error Handling, Retries und Rate Limits einführen. Evaluation-Harnesses mit einem kleinen Golden Dataset ergänzen. Schließlich containerisieren und mit Monitoring deployen. Dieser gestaffelte Pfad verhindert "Big Rewrite"-Fehlschläge.'},
+{c:'framework',id:'3.10',q:'Was ist dein Default "Minimal Stack" für agentische Prototypen?',a:'Python + FastAPI, ein einzelner Agent-Loop, ein kleines Set an Tools mit strikten Schemas, ein Vector Store (oder sogar in-memory) für RAG und einfaches Tracing/Logging. Wenn das Verhalten stabil ist: zu einem expliziten Graph (LangGraph) wechseln, ein UI (Streamlit) ergänzen und Evaluations implementieren. Der Schlüssel sind zunächst minimale bewegliche Teile.'},
+
+/* ---------- ADVANCED ---------- */
+{c:'advanced',id:'4.1',q:'Was ist LCEL und warum nutzen Engineers es?',a:'LCEL (LangChain Expression Language) komponiert Komponenten (Prompts, Modelle, Parser, Tools) zu Pipelines. Es fördert Modularität: Du kannst ein Modell oder einen Parser austauschen, ohne alles neu zu schreiben. Es macht komplexe Chains lesbar und testbar. Im Interview: Composition- und Observability-Vorteile hervorheben.'},
+{c:'advanced',id:'4.2',q:'Was sind "Runnables" konzeptionell?',a:'Ein Runnable ist eine Einheit, die Input nimmt, Output produziert und mit anderen Runnables komponiert werden kann. Denk an einen funktionalen Pipeline-Baustein. Das hilft, Execution, Logging, Retries und Concurrency zu standardisieren. Auch außerhalb von LangChain gilt dieselbe Idee: uniforme Interfaces für Steps.'},
+{c:'advanced',id:'4.3',q:'Wie designst du einen Workflow mit Retries und Fallbacks?',a:'Fehler klassifizieren (Tool-Timeout vs. ungültige Args vs. Model-Parsing-Error). Bei transienten Fehlern mit Exponential Backoff retryen. Bei persistenten Fehlern auf einfachere Tools zurückfallen oder eine klärende Rückfrage stellen. In Graphs explizit modellieren: Error-Edge → Repair-Node → Re-Try. Jeden Versuch loggen, um Endlosschleifen zu vermeiden.'},
+{c:'advanced',id:'4.4',q:'Erkläre "Multi-Agent" vs. "Single Agent mit Tools".',a:'Single Agent mit Tools ist ein Entscheider, der externe Funktionen aufruft. Multi-Agent teilt Verantwortlichkeiten auf: z.B. Planner, Retriever, Executor, Critic. Das kann Spezialisierung und Safety verbessern, erhöht aber die Koordinationskomplexität. Interviewer wollen hören, dass du nur dann zu Multi-Agent greifst, wenn die Aufgabe wirklich von Dekomposition profitiert.'},
+{c:'advanced',id:'4.5',q:'Was ist ein "Workflow" im Vergleich zu einer "Chain"?',a:'Eine Chain ist üblicherweise linear: Step A, dann B, dann C. Ein Workflow enthält Branching, Loops, Human-Approval-Steps und unterschiedliche Pfade für unterschiedliche Bedingungen. Agentische Systeme brauchen oft Workflows, weil reale Tasks Unsicherheit und partielle Fehler haben. LangGraph-artige State Machines passen hier natürlich.'},
+{c:'advanced',id:'4.6',q:'Wie verhinderst du, dass Agents endlos loopen?',a:'Maximum Steps, Time Budgets und "Stop Conditions" basierend auf Task-Completion-Signalen hinzufügen. Wiederholte Tool-Calls oder wiederholte Reasoning-Patterns tracken. Einen Watchdog implementieren, der Eskalation erzwingt: den User fragen oder Teilergebnisse zurückgeben. Im Graph über State-Counter und Guard-Edges durchsetzen.'},
+{c:'advanced',id:'4.7',q:'Was ist "Structured Output" und warum ist es kritisch für Agents?',a:'Structured Output bedeutet, dass das Modell maschinell validierte Daten produziert (JSON konform zu einem Schema). Es verhindert brüchiges String-Parsing und reduziert halluzinierte Parameter. Es ermöglicht außerdem sichere Tool-Execution: nur ausführen, wenn die Schema-Validation besteht. Für agentische Produkte ist Structured Output oft der Unterschied zwischen Demo und zuverlässigem System.'},
+{c:'advanced',id:'4.8',q:'Wie designst du einen "Critic"- oder Verifier-Step?',a:'Explizite Kriterien definieren: Citation vorhanden, Tool-Results genutzt, JSON valide, Constraints erfüllt. Zuerst deterministische Checks (Schema-Validation, Regex, Business Rules). Optional einen LLM-Judge mit Rubric ergänzen, aber als zweite Schicht behalten. Wenn die Verification fehlschlägt: zu einem Repair-Step routen oder um Klärung bitten.'},
+{c:'advanced',id:'4.9',q:'Was sind die Tradeoffs beim Parallelisieren von Agent-Steps?',a:'Parallele Tool-Calls reduzieren Latenz, können aber Kosten verschwenden, wenn viele Calls unnötig sind. Parallele LLM-Calls verbessern Qualität via "Self-Consistency", erhöhen aber die Ausgaben. Parallelisiere dort, wo Unsicherheit hoch ist und Ergebnisse wiederverwendbar sind; serialisiere, wo Entscheidungen von Vorergebnissen abhängen. Immer die Concurrency cappen und Rate Limits handhaben.'},
+{c:'advanced',id:'4.10',q:'Wie handhabst du Long-Running-Tasks (Minuten/Stunden) mit Agents?',a:'Async Jobs mit persistentem State (DB/Queue) nutzen und nach jedem Step checkpointen. Progress-Events ans UI senden. Idempotente Tool-Calls designen, damit Retries keine Side Effects duplizieren. Für Workflows "Resume from Checkpoint" modellieren, damit das System nach Restarts recovern kann.'},
+
+/* ---------- MEMORY ---------- */
+{c:'memory',id:'5.1',q:'Was ist der Unterschied zwischen Short-Term und Long-Term Memory in agentischer AI?',a:'Short-Term Memory ist der unmittelbare Conversation-/Context-Window: jüngste Turns, Tool-Outputs, aktueller Task-State. Long-Term Memory wird extern gespeichert: Datenbanken, Vector Stores, User-Profile, Summaries. Short-Term ist schnell aber limitiert; Long-Term ist skalierbar, braucht aber Retrieval und Relevanz-Filterung. Engineering heißt: entscheiden, was gespeichert und wann retrievt wird.'},
+{c:'memory',id:'5.2',q:'Wann speicherst du Memory als Text-Summaries vs. Embeddings?',a:'Nutze Summaries für "was passiert ist" in einer Session (Entscheidungen, Zusagen, Präferenzen). Nutze Embeddings für großes Wissen, bei dem du semantisches Retrieval brauchst (Notizen, Docs, vergangene Tickets). Oft kombiniert man beides: eine Summary für schnellen Kontext plus Embeddings für detaillierten Recall. Außerdem strukturiertes Memory (Key-Value) für stabile Fakten wie bevorzugte Einheiten oder Sprache erwägen.'},
+{c:'memory',id:'5.3',q:'Was ist Checkpointing und warum ist es wichtig?',a:'Checkpointing speichert den Workflow-State nach Steps, damit du nach Fehlern, Timeouts oder Human Approvals fortsetzen kannst. Kritisch für Long-Running Agents und für Auditierbarkeit. Ein guter Checkpoint enthält Inputs, Tool-Calls, Outputs und eine Version der Prompts/Policies. Das ermöglicht Replay und Debugging.'},
+{c:'memory',id:'5.4',q:'Wie verhinderst du, dass Memory Privacy- oder Security-Probleme verursacht?',a:'Data Minimization anwenden: nur speichern, was du brauchst. At Rest verschlüsseln, Zugriff pro Tenant beschränken und Retention Policies setzen. Keine Secrets, Credentials oder sensible PII speichern. Wenn user-spezifisches Memory nötig ist: Transparenz und Kontrolle für User bieten. Außerdem Tool-Outputs vor dem Speichern sanitizen.'},
+{c:'memory',id:'5.5',q:'Was ist "Context Budgeting" für Memory?',a:'Es ist die Entscheidung, wie viel des Context Windows für Instruktionen, jüngsten Chat, retrievte Docs und Memory reserviert wird. Du kannst Budgets durchsetzen: z.B. max 30% für retrievte Docs, max 20% für Memory-Summary. Bei Überschreitung komprimieren: zusammenfassen, deduplizieren und Low-Value-Content droppen. Ein Budget verhindert, dass kritische Instruktionen verdrängt werden.'},
+{c:'memory',id:'5.6',q:'Wie evaluierst du, ob Memory hilft oder schadet?',a:'A/B-Tests mit und ohne Memory fahren und Task Success, Halluzinationsrate und User-Zufriedenheit vergleichen. Memory kann schaden, indem es veraltete oder irrelevante Fakten einbringt. Nutze Freshness-Scoring und Konflikt-Auflösungsregeln. Im Interview erwähnen: Monitoring von "Memory Hit Rate" und "memory-induced error"-Fällen.'},
+{c:'memory',id:'5.7',q:'Erkläre "Recency" vs. "Relevance" im Memory-Retrieval.',a:'Recency priorisiert neuere Informationen; Relevance priorisiert semantische Ähnlichkeit. In der Praxis balancierst du beides: zuerst die Top-semantischen Matches retrieven, dann nach Recency und Trust re-ranken. Bei User-Präferenzen kann Recency wichtig sein (Menschen ändern ihre Meinung). Bei stabilen Fakten dominiert Relevance.'},
+{c:'memory',id:'5.8',q:'Wie implementierst du Memory für Multi-Agent-Systeme?',a:'Entscheide, was geteilt und was privat ist. Shared Memory enthält z.B. einen Task-Plan und verifizierte Fakten; Private Memory die Zwischennotizen eines Spezialisten-Agents. Nutze strukturierten State, der durch den Graph fließt, als primäre "Truth", und speichere Long-Term-Artefakte extern. Immer Provenance mitführen: woher kam jedes Memory und wann.'},
+{c:'memory',id:'5.9',q:'Was sind häufige Failure Modes von Long-Term Memory?',a:'Retrieval irrelevanter Chunks, Speichern von verrauschten oder unverifizierten Informationen und Feedback-Loops, in denen Halluzinationen als Memory gespeichert werden. Außerdem: veraltete Präferenzen und widersprüchliche Memories. Mitigation durch Validation (nur verifizierte Fakten speichern), Decay/Expiration und eine "Do not store"-Policy für unsicheren Content. Gute Regel: "Speichere nur, was du rechtfertigen kannst."'},
+{c:'memory',id:'5.10',q:'Wie gehst du mit User-Korrekturen am Memory um?',a:'Behandle User-Korrekturen mit hoher Priorität. Aktualisiere strukturierte Memory-Felder und markiere alte Einträge als deprecated, statt sie blind zu löschen (Auditierbarkeit). Bei Embeddings: eine neue korrigierende Notiz speichern und nach Recency re-ranken. Exponiere ein einfaches UI/Command, damit User sehen und bearbeiten können, was gespeichert ist.'},
+
+/* ---------- TOOLS ---------- */
+{c:'tools',id:'6.1',q:'Was macht ein Tool "agent-friendly"?',a:'Klarer Name, enger Zweck, typisiertes Input-Schema, deterministischer Output und schnelles Failure. Tools sollten strukturierte Daten zurückgeben, keine langen Erzählungen. Sie sollten Timeouts durchsetzen und hilfreiche Error Codes liefern. Agent-friendly Tools sind leicht testbar und sicher wiederholt aufrufbar.'},
+{c:'tools',id:'6.2',q:'Wie exponierst du Tools mit Side Effects (E-Mail, Käufe, Deletes) sicher?',a:'Least Privilege anwenden und "Read"-Tools von "Write"-Tools trennen. Explizite Confirmations für irreversible Aktionen verlangen. Policy-Checks und Human-in-the-Loop-Approvals ergänzen. Jede Aktion mit Inputs, Outputs und User-Identität loggen. Im Interview betonen: Der Agent sollte niemals High-Risk-Aktionen direkt ohne Guardrails ausführen.'},
+{c:'tools',id:'6.3',q:'Erkläre die Rolle von Allowlist und Sandbox für Tools.',a:'Eine Allowlist begrenzt, welche Tools das Modell aufrufen darf. Eine Sandbox begrenzt, was diese Tools tun dürfen (z.B. eingeschränktes Dateisystem, Network-Egress-Regeln). Zusammen reduzieren sie den Schaden durch halluzinierte Tool-Calls oder Prompt Injection. Standard ist, beliebige Code-Execution zu blockieren, außer die Umgebung ist vollständig isoliert und auditiert.'},
+{c:'tools',id:'6.4',q:'Wie designst du Tool-Outputs, um Context Bloat zu minimieren?',a:'Nur zurückgeben, was der Agent braucht: knappe Felder und Summaries. Pagination oder "Top-k"-Ergebnisse anbieten. HTML, Logs und irrelevante Metadaten entfernen. Falls nötig, große Raw-Outputs extern speichern und eine kurze Reference-ID zurückgeben. Das hält das Context Window fokussiert und günstiger.'},
+{c:'tools',id:'6.5',q:'Zeige ein minimales Beispiel für einen Custom Tool Wrapper.',a:'Halte ihn deterministisch, validiert und timeout-sicher.\n\nimport httpx\nfrom pydantic import BaseModel\n\nclass SearchArgs(BaseModel):\n    q: str\n    k: int = 5\n\nasync def web_search(args: SearchArgs) -> dict:\n    async with httpx.AsyncClient(timeout=10.0) as client:\n        r = await client.get("https://example.com/search", params=args.model_dump())\n        r.raise_for_status()\n        return r.json()\n\nAuch wenn dein Framework Decorators hat — die Engineering-Prinzipien sind dieselben.'},
+{c:'tools',id:'6.6',q:'Wie handhabst du Tool-Errors, damit der Agent sich erholen kann?',a:'Strukturierte Fehler zurückgeben: Code, Message und Retryable-Flag. Bei retryable Fehlern (Timeouts) mit Backoff erneut versuchen. Bei nicht-retryable Fehlern (Validation) das Modell bitten, die Inputs zu reparieren. Retries immer cappen und den Fehler in Logs/Traces exponieren. Ein Agent, der sich nicht selbst reparieren kann, sollte graceful degradieren und den User fragen.'},
+{c:'tools',id:'6.7',q:'Was ist der Unterschied zwischen "Tools" und "Plugins/Connectors"?',a:'Tools sind aufrufbare Funktionen in deiner Runtime. Connectors/Plugins umhüllen oft externe Services mit Auth und Discovery (Google Drive, Slack, Jira). Engineering-Themen sind OAuth-Flows, Token Refresh und Permission Scopes. Im Interview Permission Boundaries betonen: Der Agent kann nur auf das zugreifen, was der User autorisiert hat.'},
+{c:'tools',id:'6.8',q:'Wie versionierst du Tools und behältst Backward Compatibility?',a:'Behandle Tools wie APIs. Versioniere Schemas (z.B. tool_v1, tool_v2) oder unterstütze optionale Felder. Deprecate graduell und monitore die Nutzung. In Agents Tool-Versionen pro Workflow pinnen, damit das Verhalten stabil bleibt. Das verhindert stille Breakages, wenn Tools sich weiterentwickeln.'},
+{c:'tools',id:'6.9',q:'Wie verhinderst du, dass das Modell unnötig Tools aufruft?',a:'Explizite Tool-Use-Policies nutzen: "Rufe ein Tool nur auf, wenn du externe Wahrheit brauchst." Einen Classifier-Step ergänzen, der zwischen "direkt antworten" und "Tool nutzen" wählt. Unnötige Tool-Calls in der Evaluation bestrafen. Außerdem Tools standardmäßig "teuer" halten: Der Agent lernt, dass Tools knappe Ressourcen sind.'},
+{c:'tools',id:'6.10',q:'Welche Observability-Signale sind für Tool-Integration am wichtigsten?',a:'Tool-Latenz, Error Rate pro Tool, Retries, Request-Volumen und Output-Größen. Außerdem tracken, welche Tool-Calls mit erfolgreicher Task-Completion korrelieren. Trace-Spans pro Tool-Call ergänzen und sanitized Arguments einschließen. Das hilft, das Bottleneck-Tool zu finden oder das Tool, das die meisten Agent-Failures verursacht.'},
+
+/* ---------- RAG ---------- */
+{c:'rag',id:'7.1',q:'Welches Problem löst RAG in agentischer AI?',a:'RAG (Retrieval-Augmented Generation) injiziert externes Wissen in den Prompt, indem relevante Dokumente retrievt werden. Es reduziert Halluzinationen und ermöglicht aktuelles oder privates Wissen ohne Retraining. Für Agent-Systeme liefert RAG außerdem Evidence für Entscheidungen und Tool-Calls. Die besten Antworten zitieren retrievte Quellen und erfinden keine fehlenden Fakten.'},
+{c:'rag',id:'7.2',q:'Wie wählst du Chunk-Größe und Overlap für die Indexierung?',a:'Die Chunk-Größe hängt von Dokumentstruktur und Query-Patterns ab. Zu klein: du verlierst Kontext; zu groß: Retrieval wird noisy und teuer. Ein üblicher Startpunkt sind 300–800 Tokens mit 10–20% Overlap, dann via Evaluation iterieren. Semantisches Chunking (Split nach Headings) nutzen, wo möglich. Immer Retrieval-Qualität messen statt raten.'},
+{c:'rag',id:'7.3',q:'Was ist der Unterschied zwischen Dense, Sparse und Hybrid Retrieval?',a:'Dense Retrieval nutzt Embeddings, um Bedeutung zu matchen. Sparse Retrieval nutzt term-basierte Methoden (BM25), die bei exakten Keyword-Matches glänzen. Hybrid kombiniert beides und verbessert oft den Recall, besonders bei Fachbegriffen. Viele Produktionssysteme retrieven hybrid und re-ranken dann mit einem Cross-Encoder oder LLM.'},
+{c:'rag',id:'7.4',q:'Erkläre Re-Ranking und warum es RAG verbessert.',a:'Initiales Retrieval ist approximativ. Re-Ranking nutzt ein stärkeres Modell, um Kandidaten-Chunks gegen die Query zu scoren. Das verbessert die Precision des finalen Kontexts, was die Antwortqualität erhöht und Halluzinationen reduziert. Allerdings kostet es zusätzliche Latenz. Im Interview: Balance zwischen Qualität und Latenz sowie Caching häufiger Queries erwähnen.'},
+{c:'rag',id:'7.5',q:'Wie verhinderst du, dass irrelevantes Retrieval die Antwort verschmutzt?',a:'Top-k sorgfältig nutzen (nicht zu hoch), Re-Ranking anwenden und nach Metadaten filtern (Datum, Quelle, Permissions). Eine "no relevant evidence"-Condition ergänzen, die Abstention oder eine klärende Rückfrage auslöst. Außerdem retrievte Chunks vor der finalen Antwort zusammenfassen. Schließlich Citations verlangen, die auf retrievte Chunks mappen, um Grounding zu erzwingen.'},
+{c:'rag',id:'7.6',q:'Welche Evaluation-Metriken sind für RAG wichtig?',a:'Retrieval-Metriken: recall@k, precision@k, MRR, nDCG. Answer-Metriken: Factuality, Citation Correctness, Task Success. Außerdem Latenz, Kosten und Failure Rates messen. Ein praktischer Ansatz ist ein kleines kuratiertes Dataset mit erwarteten Quellen und Antworten plus Error Analysis.'},
+{c:'rag',id:'7.7',q:'Wie handhabst du Dokument-Updates und hältst den Index frisch?',a:'Inkrementelles Indexing nutzen: geänderte Dokumente erkennen, betroffene Chunks neu embedden und Metadaten aktualisieren. Dokument-Versionen und Timestamps tracken. Bei stark wechselnden Quellen Streaming-Ingestion erwägen. Im Interview betonen: Veraltete Indizes verursachen falsche Antworten — Freshness-Monitoring ist ein Production-Requirement.'},
+{c:'rag',id:'7.8',q:'Was ist Metadata Filtering und warum ist es kritisch?',a:'Metadata Filtering beschränkt das Retrieval nach Feldern wie Tenant, Permission, Doc Type, Datum oder Sprache. Es verhindert Data Leaks zwischen Usern und verbessert die Relevanz. Du solltest Metadata-Filter außerhalb des Modells (im Code) durchsetzen, damit sie nicht umgangen werden können. Das ist ein zentrales Security-Requirement für Enterprise-RAG.'},
+{c:'rag',id:'7.9',q:'Erkläre "Grounded Generation" und Citations in RAG.',a:'Grounded Generation bedeutet, dass die Claims des Modells durch retrievte Evidence gestützt sein sollten. Citations mappen Aussagen auf Quellen (Chunk-IDs oder URLs). Du kannst Citations erzwingen, indem du retrievte Chunks mit IDs formatierst und das Modell verpflichtest, darauf zu referenzieren. Dann kannst du Citations automatisch verifizieren, um halluzinierte Referenzen zu reduzieren.'},
+{c:'rag',id:'7.10',q:'Was sind häufige RAG-Failure-Cases und wie fixst du sie?',a:'Schlechtes Chunking, schwache Embeddings für die Domäne/Sprache, fehlende Metadata-Filter und zu hohes/niedriges Top-k. Außerdem Query-Mismatch: Der User fragt nach "wie", aber das Retrieval findet "was". Fixes sind besseres Chunking, Hybrid Retrieval, Re-Ranking, Prompt-Änderungen und Query Rewriting. Immer Error Analysis mit echten Queries und Logs durchführen.'},
+
+/* ---------- AGENTS ---------- */
+{c:'agents',id:'8.1',q:'Was ist das ReAct-Pattern?',a:'ReAct verzahnt Reasoning (Plan) mit Actions (Tool-Calls) und Observations (Tool-Ergebnisse). Der Agent entscheidet iterativ, was als Nächstes zu tun ist, basierend auf Observations. Es verbessert die Faktizität, weil der Agent nachschlagen kann, statt zu raten. Engineering-Herausforderung: Loops kontrollieren, Tool-Missbrauch verhindern und Context-Wachstum begrenzen.'},
+{c:'agents',id:'8.2',q:'Was ist ein Supervisor-Agent und wann nutzt du einen?',a:'Ein Supervisor koordiniert Spezialisten-Agents (Retriever, Coder, Critic), indem er Tasks routet und Outputs zusammenführt. Nutze ihn, wenn Tasks komplex genug sind, um von Spezialisierung zu profitieren. Allerdings fügen Supervisors Overhead hinzu und können Fehler verbergen, wenn sie nicht instrumentiert sind. Gutes Design: ein Supervisor mit expliziten Kriterien für Delegation und Ergebnis-Akzeptanz.'},
+{c:'agents',id:'8.3',q:'Wie kommunizieren Agents sicher und effektiv?',a:'Strukturierte Messages nutzen: Objective, Constraints, Current State und benötigtes Output-Format. Keine riesigen Raw-Contexts weiterreichen — stattdessen Referenzen und Summaries. Rollengrenzen durchsetzen, damit Agents keine System-Policies überschreiben. Außerdem Provenance tracken: welcher Agent welchen Claim produziert hat. Das unterstützt Debugging und Accountability.'},
+{c:'agents',id:'8.4',q:'Was ist der Unterschied zwischen "Planning" und "Execution" in Agents?',a:'Planning wählt Steps und Tools; Execution führt sie aus. Die Trennung reduziert Risiko: Ein Planner kann Aktionen vorschlagen, aber ein Executor validiert und führt nur sichere Aktionen aus. Das ist ähnlich wie "Dry Run" und dann "Commit". Viele Produktionssysteme halten Planning low-temperature und Execution strikt schema-validiert.'},
+{c:'agents',id:'8.5',q:'Wie gehst du mit Unsicherheit in Agent-Entscheidungen um?',a:'Unsicherheit explizit machen: Confidence Scores, Assumptions und "need more info"-Flags. Policies ergänzen: Bei niedriger Confidence ein Tool aufrufen oder eine klärende Rückfrage stellen. Vermeide es, einen einzelnen Guess zu erzwingen. Im Interview erwähnen: Uncertainty Handling ist ein Reliability-Feature, keine Schwäche.'},
+{c:'agents',id:'8.6',q:'Wie verhinderst du Tool-Missbrauch in Multi-Agent-Setups?',a:'Tool-Execution hinter einem Policy Gate zentralisieren. Selbst wenn ein Spezialisten-Agent ein Tool anfordert, setzt der Executor Allowlists, Scopes und Rate Limits durch. Alle Requests und Rejections loggen. Außerdem das Tool-Set jedes Agents auf das Nötige beschränken. Das reduziert den Blast Radius, falls ein Agent kompromittiert oder verwirrt ist.'},
+{c:'agents',id:'8.7',q:'Was ist ein "Agent Protocol" und warum ist es wichtig?',a:'Es ist das standardisierte Format, das Agents für Inputs/Outputs nutzen (Schemas, Felder, Error-Konventionen). Protokolle reduzieren Missverständnisse und machen Systemverhalten vorhersagbar. Sie erlauben außerdem, Agents oder Modelle auszutauschen, ohne Workflows zu brechen. Ein einfaches Protokoll enthält: Goal, Constraints, Context Refs, Tool Results und Final Answer mit Citations.'},
+{c:'agents',id:'8.8',q:'Beschreibe ein praktisches Multi-Agent-Design für RAG + Report-Erstellung.',a:'Ein Retriever-Agent sammelt und ranked Quellen, ein Summarizer-Agent extrahiert Kernpunkte mit Citations, ein Writer-Agent entwirft den Report und ein Critic-Agent prüft auf unbelegte Claims. Der Supervisor orchestriert: retrieve → summarize → draft → verify. Scheitert die Verification, geht es zurück zum Retrieval. Dieses Pattern balanciert Qualität und Grounding.'},
+{c:'agents',id:'8.9',q:'Wie evaluierst du einen Agent jenseits von "sieht gut aus"?',a:'Task Suites erstellen: realistische User-Goals mit erwarteten Outcomes. Success Rate, Tool-Call-Counts, Latenz/Kosten und Safety Violations messen. Qualitative Error Buckets ergänzen (Retrieval Failure, falsches Tool, schlechtes Reasoning, unsichere Aktion). Regression Tests auf Prompts und Policies fahren. Evaluation ist kontinuierlich, weil sich Tools und Modelle ändern.'},
+{c:'agents',id:'8.10',q:'Was sind die zentralen Safety-Bedenken, die nur Agents betreffen?',a:'Agents können Aktionen ausführen (Dateien schreiben, Nachrichten senden, Änderungen vornehmen) — Fehler haben also reale Konsequenzen. Prompt Injection kann Aktionen umlenken. Tool-Outputs können bösartige Instruktionen enthalten. Mitigations: Least Privilege, Confirmations, Sandboxing, Policy Gates und Audit Logs. Safety ist ein Engineering-Layer, kein reines Prompt-Problem.'},
+
+/* ---------- PROJECTS ---------- */
+{c:'projects',id:'9.1',q:'Beschreibe eine End-to-End-Architektur für eine produktive Agent-App.',a:'Typische Architektur: UI (Streamlit/React) → API (FastAPI) → Agent Orchestrator (Graph) → Tools (interne Services/APIs) + RAG (Vector Store) + Memory (DB). Dazu Observability (Logs, Traces, Metrics) und Evaluation-Pipelines. Eine Queue für lange Tasks und einen Cache für wiederholtes Retrieval nutzen. Security umfasst Auth, Tenant-Isolation und Secret Management.'},
+{c:'projects',id:'9.2',q:'Warum ist FastAPI eine übliche Wahl für Agent-Backends?',a:'FastAPI ist schnell zu entwickeln, unterstützt async, hat starkes Typing via Pydantic und generiert OpenAPI-Docs. Das macht Tool-Endpoints und Agent-APIs gut definiert. Es integriert sich zudem gut mit Dependency Injection und Middleware für Logging/Auth. Im Interview Input-Validation und schema-getriebene Contracts erwähnen.'},
+{c:'projects',id:'9.3',q:'Wie baust du ein einfaches Streamlit-UI für einen Agent?',a:'Starte mit einem Chat-Layout: Eingabefeld, Message History und ein "Debug"-Panel für Traces. User-Messages an FastAPI senden, Antworten streamen und Citations/Tool-Steps anzeigen. User-State minimal halten und auf Backend-Session-IDs setzen. Ein gutes UI macht Failures sichtbar, damit User schnellkorrigieren können.'},
+{c:'projects',id:'9.4',q:'Was gehört in ein Dockerfile für eine agentische App?',a:'Slim Base Image nutzen, Python-Dependencies pinnen und nur nötige Dateien kopieren. Env Vars für Configuration setzen und als Non-Root-User laufen. Health Checks ergänzen und Ports exponieren. Separate Images für API und Worker bauen, falls du Background Jobs hast. Im Interview reproducible Builds und Vulnerability Scanning erwähnen.'},
+{c:'projects',id:'9.5',q:'Wie würdest du das auf AWS deployen?',a:'Übliche Optionen: ECS/Fargate für Container, EKS für Kubernetes oder Lambda für kleine Serverless-APIs. RDS/DynamoDB für State, S3 für Artefakte und ein managed oder self-hosted Vector Store. Secrets Manager für Credentials. CloudWatch Logs/Metrics und Alarme ergänzen. Wähle den einfachsten Service, der Scaling- und Compliance-Anforderungen erfüllt.'},
+{c:'projects',id:'9.6',q:'Welche Observability ergänzt du fürs Agent-Debugging?',a:'Strukturierte Logs mit Request-IDs, Tracing-Spans für jeden Agent-Step und Tool-Call sowie Metriken für Latenz, Token-Usage und Fehler. Prompts und Tool-Argumente in sanitisierter Form erfassen. Einen Replay-Mechanismus ergänzen: Gegeben eine Trace-ID, den Run reproduzieren. Das ist essenziell für die Diagnose intermittierender Fehler.'},
+{c:'projects',id:'9.7',q:'Wie handhabst du Streaming-Responses an User?',a:'Tokens vom Modell streamen, wo möglich, für bessere UX. Tool-Calls dennoch non-streaming halten oder Progress-Events streamen ("Searching…", "Calling API…"). Backpressure und Timeouts sicherstellen. Falls Streaming fehlschlägt, auf eine vollständige Response zurückfallen. Im Interview erwähnen: Streaming ersetzt weder Korrektheit noch Citations.'},
+{c:'projects',id:'9.8',q:'Wie sicherst du eine ins Internet exponierte Agent-API ab?',a:'Authentifizierung verlangen, Rate Limiting pro User und Tenant-Isolation durchsetzen. Alle Inputs validieren. Tool-Scopes basierend auf User-Permissions beschränken. Logs sanitizen, um Secret-Leaks zu vermeiden. Außerdem gegen Prompt Injection verteidigen, indem User-Content als untrusted behandelt und System-Policies durchgesetzt werden.'},
+{c:'projects',id:'9.9',q:'Wie setzt du CI/CD für ein Agent-Projekt auf?',a:'Linting, Type Checks, Unit Tests und Integration Tests (mit gemockten Tools) ausführen. Docker-Images bauen und scannen. In eine Staging-Umgebung mit Canary-Prompts/Policies deployen. Evaluation Suites bei jeder Änderung laufen lassen und Deploys blocken, wenn Metriken regredieren. Das behandelt Prompts und Policies wie Code.'},
+{c:'projects',id:'9.10',q:'Was bedeutet "Production Readiness" für agentische AI?',a:'Es bedeutet Reliability, Safety, Observability und Maintainability. Der Agent sollte graceful degradieren, Evidence zitieren und unsichere Aktionen vermeiden. Du solltest Fehler aus Logs reproduzieren können. Kosten und Latenz müssen kontrolliert sein. Am wichtigsten: Du evaluierst das System kontinuierlich, während sich Modelle, Tools und Daten weiterentwickeln.'}
+];
+
+/* ================= UTIL ================= */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const catOf=id=>CATS.find(c=>c.id===id)||{n:'—',c:'#888'};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200);}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmt(a){return esc(a).replace(/\n/g,'<br>');}
+
+/* ================= ROADMAP ================= */
+$('#roadList').innerHTML = ROAD.map((r,i)=>`
+  <div class="step" data-cat="${r.cat}">
+    <div class="step-n">${i+1}</div>
+    <div class="step-body">
+      <div class="step-t">${r.t}</div>
+      <div class="step-d">${r.d}</div>
+      <div class="step-tags">${r.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    </div>
+  </div>`).join('');
+
+$$('.step').forEach(el=>el.addEventListener('click',()=>{
+  const c=el.dataset.cat;
+  activeCat=c;
+  renderChips(); renderQA();
+  document.getElementById('qa').scrollIntoView({behavior:'smooth'});
+  toast('Gefiltert: '+catOf(c).n);
+}));
+
+/* ================= Q&A ================= */
+let activeCat='all', openAll=false;
+
+function renderChips(){
+  $('#chips').innerHTML =
+    `<button class="chip ${activeCat==='all'?'on':''}" data-c="all">Alle (${QA.length})</button>` +
+    CATS.map(c=>{
+      const n=QA.filter(q=>q.c===c.id).length;
+      return `<button class="chip ${activeCat===c.id?'on':''}" data-c="${c.id}">${c.n} (${n})</button>`;
+    }).join('');
+  $$('#chips .chip').forEach(b=>b.onclick=()=>{activeCat=b.dataset.c;renderChips();renderQA();});
+}
+
+function filtered(){
+  const term=$('#q').value.trim().toLowerCase();
+  return QA.filter(x=>
+    (activeCat==='all'||x.c===activeCat) &&
+    (!term || (x.q+' '+x.a+' '+x.id).toLowerCase().includes(term))
+  );
+}
+
+function renderQA(){
+  const list=filtered();
+  $('#count').textContent = `${list.length} Frage${list.length!==1?'n':''} angezeigt`;
+  $('#qaList').innerHTML = list.map(x=>{
+    const cat=catOf(x.c);
+    return `<div class="qa${openAll?' open':''}">
+      <div class="qa-q">
+        <span class="qa-id">${x.id}</span>
+        <span>${esc(x.q)}</span>
+        <span class="qa-arrow">▼</span>
+      </div>
+      <div class="qa-a"${openAll?' style="max-height:1400px"':''}>
+        <div class="qa-a-in">
+          <span class="qa-cat" style="color:${cat.c};background:${cat.c}1a">${cat.n}</span><br>
+          ${fmt(x.a)}
+        </div>
+      </div>
+    </div>`;
+  }).join('') || `<div class="glass pad" style="text-align:center;color:var(--txt-3)">Keine Treffer. Suchbegriff anpassen.</div>`;
+
+  $$('.qa-q').forEach(h=>h.onclick=()=>{
+    const qa=h.parentElement, body=qa.querySelector('.qa-a');
+    const isOpen=qa.classList.toggle('open');
+    body.style.maxHeight = isOpen ? body.scrollHeight+'px' : '0';
+  });
+}
+
+function toggleAll(){
+  openAll=!openAll;
+  $('#allBtn').textContent = openAll?'Alle einklappen':'Alle ausklappen';
+  renderQA();
+}
+$('#q').addEventListener('input',()=>{openAll=false;$('#allBtn').textContent='Alle ausklappen';renderQA();});
+
+/* ================= FLASHCARDS ================= */
+let deck=[...QA], idx=0, fcCat='all';
+
+function renderFcChips(){
+  $('#fcChips').innerHTML =
+    `<button class="chip ${fcCat==='all'?'on':''}" data-c="all">Alle</button>` +
+    CATS.map(c=>`<button class="chip ${fcCat===c.id?'on':''}" data-c="${c.id}">${c.n}</button>`).join('');
+  $$('#fcChips .chip').forEach(b=>b.onclick=()=>{
+    fcCat=b.dataset.c;
+    deck = fcCat==='all'?[...QA]:QA.filter(q=>q.c===fcCat);
+    idx=0; renderFcChips(); showCard();
+  });
+}
+function showCard(){
+  $('#fc').classList.remove('flip');
+  setTimeout(()=>{
+    const c=deck[idx]; if(!c) return;
+    const cat=catOf(c.c);
+    $('#fcCat').textContent=cat.n;
+    $('#fcCat').style.color=cat.c;
+    $('#fcCat').style.background=cat.c+'1a';
+    $('#fcQ').textContent=c.q;
+    $('#fcA').innerHTML=fmt(c.a);
+    $('#fcCount').textContent=`${idx+1} / ${deck.length}`;
+  },180);
+}
+function flip(){$('#fc').classList.toggle('flip');}
+function nextCard(){idx=(idx+1)%deck.length;showCard();}
+function prevCard(){idx=(idx-1+deck.length)%deck.length;showCard();}
+function shuffleCards(){for(let i=deck.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[deck[i],deck[j]]=[deck[j],deck[i]];}idx=0;showCard();toast('Deck gemischt ⇄');}
+document.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;
+  const r=$('#cards').getBoundingClientRect();
+  if(r.top>window.innerHeight||r.bottom<0)return;
+  if(e.code==='Space'){e.preventDefault();flip();}
+  if(e.code==='ArrowRight')nextCard();
+  if(e.code==='ArrowLeft')prevCard();
+});
+
+/* ================= CHECKLIST ================= */
+const KEY='agenticai2026_progress';
+let done=JSON.parse(localStorage.getItem(KEY)||'[]');
+
+function renderCheck(){
+  $('#checkList').innerHTML = ROAD.map((r,i)=>`
+    <div class="check${done.includes(i)?' done':''}" data-i="${i}">
+      <div class="box">✓</div>
+      <div>
+        <div class="check-t">${i+1}. ${r.t}</div>
+        <div class="check-s">${r.tags.join(' · ')}</div>
+      </div>
+    </div>`).join('');
+  $$('.check').forEach(el=>el.onclick=()=>{
+    const i=+el.dataset.i;
+    done = done.includes(i)?done.filter(x=>x!==i):[...done,i];
+    localStorage.setItem(KEY,JSON.stringify(done));
+    renderCheck();
+    if(done.length===ROAD.length) toast('🎉 Alle 9 Stufen abgeschlossen!');
+  });
+  const p=Math.round(done.length/ROAD.length*100);
+  $('#pct').textContent=p+'%';
+  $('#pctLabel').textContent=`${done.length} von ${ROAD.length} Stufen`;
+  $('#fill').style.width=p+'%';
+}
+function resetProgress(){done=[];localStorage.setItem(KEY,'[]');renderCheck();toast('Fortschritt zurückgesetzt ↺');}
+
+/* ================= COPY ================= */
+function copyCode(btn){
+  const t=btn.closest('.code').querySelector('pre').innerText;
+  navigator.clipboard.writeText(t).then(()=>{btn.textContent='✓ Kopiert';setTimeout(()=>btn.textContent='Copy',1600);toast('Code kopiert');});
+}
+
+/* ================= SCROLL / REVEAL / NAV ================= */
+addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  $('#scrollbar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+  let cur='';
+  $$('section[id]').forEach(s=>{if(scrollY>=s.offsetTop-110)cur=s.id;});
+  $$('.nav-links a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+cur));
+});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.08});
+$$('.rv').forEach(el=>io.observe(el));
+$$('.nav-links a').forEach(a=>a.onclick=()=>$('.nav-links').classList.remove('open'));
+
+/* ================= INIT ================= */
+renderChips(); renderQA(); renderFcChips(); showCard(); renderCheck();
+</script>
+</body>
+</html>
