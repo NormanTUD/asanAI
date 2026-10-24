@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibe Coding — Die Küche</title>
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root{
+  --bg:#07070b;
+  --bg-2:#0d0d15;
+  --panel:rgba(255,255,255,.035);
+  --panel-2:rgba(255,255,255,.06);
+  --stroke:rgba(255,255,255,.09);
+  --stroke-hi:rgba(255,255,255,.18);
+  --txt:#f2f0ee;
+  --txt-dim:#a9a5b0;
+  --txt-mute:#6f6b78;
+
+  --ember:#ff6b35;
+  --ember-2:#ff9f1c;
+  --saffron:#ffd23f;
+  --mint:#2ec4b6;
+  --plum:#9b5de5;
+  --rose:#ff4d6d;
+  --sky:#4cc9f0;
+
+  --r-s:10px;
+  --r-m:18px;
+  --r-l:28px;
+  --shadow:0 24px 60px -24px rgba(0,0,0,.8);
+  --glow:0 0 60px -12px var(--ember);
+  --ease:cubic-bezier(.16,1,.3,1);
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:var(--sans);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ambient background */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(900px 600px at 12% -5%, rgba(255,107,53,.16), transparent 62%),
+    radial-gradient(800px 600px at 88% 8%, rgba(155,93,229,.13), transparent 60%),
+    radial-gradient(1000px 700px at 50% 108%, rgba(46,196,182,.10), transparent 62%),
+    var(--bg);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+  opacity:.035;mix-blend-mode:overlay;
+}
+
+/* scrollbar */
+::-webkit-scrollbar{width:11px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--ember),var(--plum));border-radius:10px;border:3px solid var(--bg)}
+
+/* scroll progress */
+#prog{position:fixed;top:0;left:0;height:3px;width:0;z-index:999;
+  background:linear-gradient(90deg,var(--ember),var(--saffron),var(--mint),var(--plum));
+  box-shadow:0 0 14px rgba(255,107,53,.8)}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  backdrop-filter:blur(22px) saturate(1.6);
+  background:rgba(7,7,11,.7);
+  border-bottom:1px solid var(--stroke);
+}
+.nav-in{max-width:1280px;margin:0 auto;padding:.85rem 1.5rem;display:flex;align-items:center;gap:1.5rem}
+.brand{display:flex;align-items:center;gap:.6rem;font-weight:800;letter-spacing:-.02em;font-size:1.02rem;white-space:nowrap}
+.brand .dot{width:9px;height:9px;border-radius:50%;background:var(--ember);box-shadow:0 0 14px var(--ember);animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.78)}}
+.nav-links{display:flex;gap:.3rem;margin-left:auto;flex-wrap:wrap}
+.nav-links a{
+  color:var(--txt-dim);text-decoration:none;font-size:.82rem;font-weight:600;
+  padding:.45rem .8rem;border-radius:999px;transition:.25s var(--ease);white-space:nowrap;
+}
+.nav-links a:hover,.nav-links a.on{color:var(--txt);background:var(--panel-2)}
+.burger{display:none;background:none;border:1px solid var(--stroke);color:var(--txt);
+  border-radius:var(--r-s);padding:.4rem .6rem;cursor:pointer;margin-left:auto;font-size:1.1rem}
+
+@media(max-width:940px){
+  .nav-links{position:absolute;top:100%;left:0;right:0;flex-direction:column;
+    background:rgba(7,7,11,.97);backdrop-filter:blur(22px);padding:.8rem;gap:.2rem;
+    border-bottom:1px solid var(--stroke);display:none}
+  .nav-links.open{display:flex}
+  .burger{display:block}
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.wrap{max-width:1180px;margin:0 auto;padding:0 1.5rem}
+section{padding:6rem 0;position:relative}
+.eyebrow{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ember-2);margin-bottom:.9rem;display:flex;align-items:center;gap:.6rem
+}
+.eyebrow::before{content:"";width:28px;height:1px;background:var(--ember)}
+h2{font-size:clamp(1.9rem,4.4vw,3rem);font-weight:850;letter-spacing:-.035em;line-height:1.06;margin-bottom:.8rem}
+h3{font-size:1.18rem;font-weight:750;letter-spacing:-.02em;margin-bottom:.45rem}
+.lede{color:var(--txt-dim);font-size:1.05rem;max-width:68ch;margin-bottom:2.6rem}
+
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+header.hero{
+  min-height:100svh;display:grid;place-items:center;text-align:center;
+  padding:8rem 1.5rem 5rem;position:relative;overflow:hidden;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  border:1px solid var(--stroke-hi);background:var(--panel);
+  padding:.4rem .95rem;border-radius:999px;font-size:.78rem;
+  font-family:var(--mono);color:var(--txt-dim);margin-bottom:1.8rem;
+}
+h1{
+  font-size:clamp(2.9rem,10vw,7.2rem);font-weight:900;letter-spacing:-.055em;line-height:.9;
+  background:linear-gradient(135deg,#fff 0%,#ffd9c7 32%,var(--ember) 62%,var(--plum) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  margin-bottom:1.1rem;
+}
+.hero-sub{font-size:clamp(1rem,2.4vw,1.32rem);color:var(--txt-dim);max-width:62ch;margin:0 auto 2.4rem}
+.hero-sub b{color:var(--saffron);font-weight:700}
+.hero-cta{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-bottom:3.4rem}
+.btn{
+  border:none;cursor:pointer;font-family:inherit;font-size:.92rem;font-weight:700;
+  padding:.85rem 1.7rem;border-radius:999px;text-decoration:none;
+  display:inline-flex;align-items:center;gap:.5rem;transition:.3s var(--ease);
+}
+.btn-p{background:linear-gradient(135deg,var(--ember),var(--ember-2));color:#140a04;box-shadow:0 10px 36px -10px var(--ember)}
+.btn-p:hover{transform:translateY(-3px);box-shadow:0 18px 48px -12px var(--ember)}
+.btn-g{background:var(--panel);color:var(--txt);border:1px solid var(--stroke-hi)}
+.btn-g:hover{background:var(--panel-2);transform:translateY(-3px)}
+
+.hero-stats{display:flex;gap:2.6rem;justify-content:center;flex-wrap:wrap}
+.hstat strong{display:block;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:850;letter-spacing:-.03em;
+  background:linear-gradient(135deg,var(--saffron),var(--ember));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hstat span{font-size:.75rem;font-family:var(--mono);color:var(--txt-mute);letter-spacing:.1em;text-transform:uppercase}
+
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.2em;color:var(--txt-mute);
+  animation:bob 2.4s infinite}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);opacity:.5}50%{transform:translateX(-50%) translateY(8px);opacity:1}}
+
+/* ============================================================
+   FAAFO
+   ============================================================ */
+.faafo{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:1rem}
+.fcard{
+  background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r-m);
+  padding:1.6rem;cursor:pointer;transition:.4s var(--ease);position:relative;overflow:hidden;
+}
+.fcard::before{content:"";position:absolute;inset:0;opacity:0;transition:.4s;
+  background:radial-gradient(400px 220px at 50% 0%,var(--c),transparent 70%)}
+.fcard:hover{transform:translateY(-7px);border-color:var(--c);box-shadow:0 20px 50px -20px var(--c)}
+.fcard:hover::before{opacity:.14}
+.fcard .glyph{font-size:1.9rem;margin-bottom:.7rem;display:block}
+.fcard .ltr{position:absolute;top:.6rem;right:1rem;font-size:3.4rem;font-weight:900;
+  color:var(--c);opacity:.14;line-height:1;font-family:var(--mono)}
+.fcard h3{color:var(--c)}
+.fcard p{font-size:.88rem;color:var(--txt-dim);position:relative}
+.fcard .more{max-height:0;overflow:hidden;transition:max-height .45s var(--ease),margin .45s;font-size:.84rem;color:var(--txt-mute)}
+.fcard.open .more{max-height:300px;margin-top:.8rem;padding-top:.8rem;border-top:1px dashed var(--stroke)}
+
+/* ============================================================
+   LOOPS
+   ============================================================ */
+.tabs{display:flex;gap:.4rem;margin-bottom:1.6rem;flex-wrap:wrap}
+.tab{
+  background:var(--panel);border:1px solid var(--stroke);color:var(--txt-dim);
+  padding:.6rem 1.15rem;border-radius:999px;cursor:pointer;font-family:inherit;
+  font-size:.85rem;font-weight:650;transition:.25s var(--ease)
+}
+.tab:hover{color:var(--txt);border-color:var(--stroke-hi)}
+.tab.on{background:linear-gradient(135deg,var(--ember),var(--ember-2));color:#140a04;border-color:transparent}
+.panel{display:none}
+.panel.on{display:block;animation:fade .45s var(--ease)}
+@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.pvc{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.pvc-col{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r-m);padding:1.4rem;border-top:3px solid var(--c)}
+.pvc-col h4{font-size:.78rem;font-family:var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--c);margin-bottom:1rem}
+.pvc-col ul{list-style:none;display:flex;flex-direction:column;gap:.6rem}
+.pvc-col li{font-size:.88rem;color:var(--txt-dim);padding-left:1.3rem;position:relative;line-height:1.5}
+.pvc-col li::before{content:"▸";position:absolute;left:0;color:var(--c);font-size:.8rem}
+.pvc-col li b{color:var(--txt);font-weight:650}
+
+.loop-meta{
+  display:inline-flex;align-items:center;gap:.5rem;font-family:var(--mono);font-size:.74rem;
+  color:var(--txt-mute);background:var(--panel);border:1px solid var(--stroke);
+  padding:.35rem .8rem;border-radius:999px;margin-bottom:1.2rem;letter-spacing:.08em
+}
+
+/* ============================================================
+   PROMPT LAB
+   ============================================================ */
+.lab{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+@media(max-width:860px){.lab{grid-template-columns:1fr}}
+.lab-box{background:var(--bg-2);border:1px solid var(--stroke);border-radius:var(--r-m);padding:1.4rem}
+.lab-box.bad{border-color:rgba(255,77,109,.3)}
+.lab-box.good{border-color:rgba(46,196,182,.3)}
+.lab-tag{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem}
+.bad .lab-tag{color:var(--rose)}
+.good .lab-tag{color:var(--mint)}
+.lab-box pre{
+  font-family:var(--mono);font-size:.82rem;line-height:1.7;color:var(--txt-dim);
+  white-space:pre-wrap;word-break:break-word;background:rgba(0,0,0,.35);
+  padding:1rem;border-radius:var(--r-s);border:1px solid var(--stroke)
+}
+.lab-note{font-size:.82rem;color:var(--txt-mute);margin-top:.9rem}
+
+.copybar{display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap}
+.copybtn{
+  background:var(--panel-2);border:1px solid var(--stroke-hi);color:var(--txt-dim);
+  font-family:var(--mono);font-size:.74rem;padding:.4rem .8rem;border-radius:var(--r-s);
+  cursor:pointer;transition:.25s
+}
+.copybtn:hover{color:var(--mint);border-color:var(--mint)}
+.copybtn.done{color:var(--mint);border-color:var(--mint);background:rgba(46,196,182,.12)}
+
+/* prompt generator */
+.gen{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r-m);padding:1.6rem;margin-top:1.4rem}
+.gen-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem;margin-bottom:1.1rem}
+.gen label{display:block;font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--txt-mute);margin-bottom:.35rem}
+.gen input,.gen select,.gen textarea{
+  width:100%;background:rgba(0,0,0,.4);border:1px solid var(--stroke);color:var(--txt);
+  border-radius:var(--r-s);padding:.6rem .75rem;font-family:inherit;font-size:.88rem;
+  transition:.25s;resize:vertical
+}
+.gen input:focus,.gen select:focus,.gen textarea:focus{outline:none;border-color:var(--ember);box-shadow:0 0 0 3px rgba(255,107,53,.14)}
+.gen-out{
+  font-family:var(--mono);font-size:.82rem;line-height:1.75;color:var(--saffron);
+  background:rgba(0,0,0,.45);border:1px solid var(--stroke);border-radius:var(--r-s);
+  padding:1.1rem;white-space:pre-wrap;min-height:120px;margin-top:.4rem
+}
+
+/* ============================================================
+   CHECKLIST
+   ============================================================ */
+.ckwrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1rem}
+.ckcard{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r-m);padding:1.4rem}
+.ckcard h4{font-size:.8rem;font-family:var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--c);margin-bottom:1rem}
+.ck{display:flex;gap:.7rem;align-items:flex-start;padding:.5rem 0;cursor:pointer;font-size:.88rem;color:var(--txt-dim);transition:.2s;line-height:1.5}
+.ck:hover{color:var(--txt)}
+.ck input{appearance:none;flex:0 0 17px;width:17px;height:17px;margin-top:3px;border:1.5px solid var(--stroke-hi);
+  border-radius:5px;cursor:pointer;transition:.25s;position:relative}
+.ck input:checked{background:var(--mint);border-color:var(--mint)}
+.ck input:checked::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#06231f;font-size:.72rem;font-weight:900}
+.ck input:checked ~ span{text-decoration:line-through;opacity:.42}
+
+.ckbar{margin-top:1.6rem;background:var(--panel);border:1px solid var(--stroke);border-radius:999px;padding:.35rem;display:flex;align-items:center;gap:.9rem}
+.ckbar-track{flex:1;height:8px;background:rgba(0,0,0,.45);border-radius:999px;overflow:hidden}
+.ckbar-fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--mint),var(--saffron));transition:width .5s var(--ease)}
+.ckbar b{font-family:var(--mono);font-size:.8rem;color:var(--txt-dim);padding-right:.9rem;white-space:nowrap}
+
+/* ============================================================
+   ANTI-PATTERNS
+   ============================================================ */
+.aps{display:grid;grid-template-columns:repeat(auto-fit,minmax(275px,1fr));gap:1rem}
+.ap{
+  background:linear-gradient(160deg,rgba(255,77,109,.07),var(--panel));
+  border:1px solid rgba(255,77,109,.2);border-radius:var(--r-m);padding:1.5rem;
+  transition:.35s var(--ease);position:relative
+}
+.ap:hover{transform:translateY(-5px);border-color:rgba(255,77,109,.5);box-shadow:0 18px 44px -20px var(--rose)}
+.ap .icon{font-size:1.7rem;margin-bottom:.6rem;display:block}
+.ap h3{color:#ff8da1;font-size:1.02rem}
+.ap p{font-size:.86rem;color:var(--txt-dim);margin-bottom:.9rem}
+.ap .fix{
+  font-size:.83rem;color:var(--mint);padding-top:.8rem;border-top:1px dashed rgba(255,255,255,.1);
+  display:flex;gap:.5rem;align-items:flex-start;line-height:1.5
+}
+.ap .fix b{color:var(--mint);font-weight:750;flex:0 0 auto}
+
+/* ============================================================
+   KITCHEN MAP (Level 1/2/3)
+   ============================================================ */
+.levels{display:flex;flex-direction:column;gap:.8rem}
+.lvl{
+  background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r-m);
+  padding:1.4rem 1.6rem;display:flex;gap:1.3rem;align-items:flex-start;
+  transition:.35s var(--ease);cursor:pointer;border-left:4px solid var(--c)
+}
+.lvl:hover{background:var(--panel-2);transform:translateX(6px)}
+.lvl .num{
+  flex:0 0 46px;height:46px;border-radius:14px;display:grid;place-items:center;
+  font-weight:900;font-size:1.2rem;background:var(--c);color:#0a0a0f;font-family:var(--mono)
+}
+.lvl h3{color:var(--c)}
+.lvl p{font-size:.9rem;color:var(--txt-dim)}
+.lvl .ex{font-size:.82rem;color:var(--txt-mute);margin-top:.5rem;font-family:var(--mono)}
+
+/* ============================================================
+   QUOTES / MARQUEE
+   ============================================================ */
+.qgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1rem}
+blockquote{
+  background:var(--panel);border:1px solid var(--stroke);border-left:3px solid var(--c);
+  border-radius:var(--r-m);padding:1.5rem;font-size:.94rem;color:var(--txt-dim);line-height:1.7
+}
+blockquote::before{content:"“";font-size:3rem;color:var(--c);opacity:.3;line-height:0;display:block;height:1rem}
+blockquote cite{display  display:block;margin-top:1rem;font-style:normal;font-size:.8rem;color:var(--c);
+  font-family:var(--mono);letter-spacing:.06em;opacity:.9
+}
+
+/* ============================================================
+   MARQUEE
+   ============================================================ */
+.marquee{overflow:hidden;border-top:1px solid var(--stroke);border-bottom:1px solid var(--stroke);
+  padding:1.1rem 0;background:rgba(255,255,255,.02);margin:0}
+.marquee-track{display:flex;gap:3rem;white-space:nowrap;animation:scroll 42s linear infinite;width:max-content}
+.marquee:hover .marquee-track{animation-play-state:paused}
+@keyframes scroll{to{transform:translateX(-50%)}}
+.marquee span{font-family:var(--mono);font-size:.9rem;color:var(--txt-mute);letter-spacing:.06em}
+.marquee span b{color:var(--ember-2);font-weight:700}
+
+/* ============================================================
+   PROMPT CARDS / SNIPPETS
+   ============================================================ */
+.snips{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:1rem}
+.snip{background:var(--bg-2);border:1px solid var(--stroke);border-radius:var(--r-m);overflow:hidden;
+  transition:.35s var(--ease)}
+.snip:hover{border-color:var(--stroke-hi);transform:translateY(-4px)}
+.snip-head{display:flex;align-items:center;justify-content:space-between;gap:.8rem;
+  padding:.85rem 1.1rem;background:rgba(255,255,255,.03);border-bottom:1px solid var(--stroke)}
+.snip-head h4{font-size:.86rem;font-weight:700;letter-spacing:-.01em}
+.snip-head .tagx{font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.2rem .55rem;border-radius:999px;background:var(--c);color:#0a0a0f;font-weight:800}
+.snip pre{padding:1.1rem;font-family:var(--mono);font-size:.79rem;line-height:1.7;
+  color:var(--txt-dim);white-space:pre-wrap;word-break:break-word;margin:0}
+.snip .foot{padding:.7rem 1.1rem;border-top:1px solid var(--stroke);display:flex;justify-content:flex-end}
+
+/* ============================================================
+   DECISION TREE / RISK MATRIX
+   ============================================================ */
+.matrix{display:grid;grid-template-columns:auto 1fr 1fr;gap:.6rem;align-items:stretch}
+@media(max-width:760px){.matrix{grid-template-columns:1fr}}
+.mx-h{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--txt-mute);display:flex;align-items:center;justify-content:center;padding:.6rem;text-align:center}
+.mx-side{writing-mode:vertical-rl;transform:rotate(180deg)}
+@media(max-width:760px){.mx-side{writing-mode:horizontal-tb;transform:none;justify-content:flex-start}}
+.mx-cell{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--r-m);padding:1.2rem;
+  border-top:3px solid var(--c);transition:.3s var(--ease)}
+.mx-cell:hover{background:var(--panel-2);transform:translateY(-3px)}
+.mx-cell h5{font-size:.82rem;font-family:var(--mono);color:var(--c);letter-spacing:.1em;
+  text-transform:uppercase;margin-bottom:.6rem}
+.mx-cell p{font-size:.85rem;color:var(--txt-dim)}
+.mx-cell .eg{font-size:.76rem;color:var(--txt-mute);margin-top:.6rem;font-style:italic}
+
+/* ============================================================
+   NK/t CALCULATOR
+   ============================================================ */
+.calc{background:linear-gradient(160deg,rgba(155,93,229,.08),var(--panel));
+  border:1px solid rgba(155,93,229,.25);border-radius:var(--r-l);padding:2rem;margin-top:1.4rem}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1.2rem;margin-bottom:1.5rem}
+.calc-f label{display:block;font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--txt-mute);margin-bottom:.5rem}
+.calc-f input[type=range]{width:100%;accent-color:var(--plum);cursor:pointer}
+.calc-f .val{font-family:var(--mono);font-size:1.5rem;font-weight:800;color:var(--plum);margin-top:.3rem}
+.calc-out{text-align:center;padding:1.6rem;background:rgba(0,0,0,.35);border-radius:var(--r-m);
+  border:1px solid var(--stroke)}
+.calc-out .big{font-size:clamp(2.2rem,7vw,3.8rem);font-weight:900;letter-spacing:-.04em;
+  background:linear-gradient(135deg,var(--plum),var(--sky));-webkit-background-clip:text;
+  background-clip:text;color:transparent;line-height:1}
+.calc-out .lbl{font-family:var(--mono);font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--txt-mute);margin-top:.5rem}
+.calc-note{font-size:.84rem;color:var(--txt-mute);margin-top:1rem;text-align:center;line-height:1.6}
+
+/* ============================================================
+   TIMELINE / ROADMAP
+   ============================================================ */
+.road{position:relative;padding-left:2.2rem}
+.road::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;
+  background:linear-gradient(var(--ember),var(--plum),transparent)}
+.road-item{position:relative;padding-bottom:1.8rem}
+.road-item::before{content:"";position:absolute;left:-2.2rem;top:4px;width:18px;height:18px;
+  border-radius:50%;background:var(--bg);border:3px solid var(--c);box-shadow:0 0 0 4px rgba(0,0,0,.4)}
+.road-item h4{font-size:1rem;color:var(--c);margin-bottom:.3rem}
+.road-item p{font-size:.88rem;color:var(--txt-dim)}
+.road-item .when{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--txt-mute);margin-bottom:.25rem}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer{border-top:1px solid var(--stroke);padding:3.5rem 0 2.5rem;text-align:center;margin-top:3rem}
+footer .f-logo{font-size:1.4rem;font-weight:900;letter-spacing:-.03em;margin-bottom:.6rem;
+  background:linear-gradient(135deg,var(--ember),var(--plum));-webkit-background-clip:text;
+  background-clip:text;color:transparent}
+footer p{font-size:.84rem;color:var(--txt-mute);max-width:56ch;margin:0 auto .4rem}
+footer .tiny{font-size:.72rem;color:#4a4752;margin-top:1.4rem;font-family:var(--mono)}
+
+/* toast */
+#toast{position:fixed;bottom:1.6rem;left:50%;transform:translateX(-50%) translateY(140%);
+  background:var(--mint);color:#06231f;font-weight:750;font-size:.86rem;
+  padding:.7rem 1.4rem;border-radius:999px;z-index:1000;transition:transform .45s var(--ease);
+  box-shadow:0 14px 34px -10px rgba(46,196,182,.6)}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+@media print{nav,#prog,.scroll-hint{display:none}}
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+<div id="toast">In Zwischenablage kopiert ✓</div>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <div class="nav-in">
+    <div class="brand"><span class="dot"></span> VIBE CODING · Die Küche</div>
+    <button class="burger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+    <div class="nav-links">
+      <a href="#faafo">FAAFO</a>
+      <a href="#loops">Schleifen</a>
+      <a href="#lab">Prompt-Lab</a>
+      <a href="#check">Checkliste</a>
+      <a href="#anti">Anti-Patterns</a>
+      <a href="#levels">Ebenen 1-3</a>
+      <a href="#risk">Risiko-Matrix</a>
+      <a href="#calc">NK/t</a>
+      <a href="#road">Start heute</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-badge">🔥 Gene Kim &amp; Steve Yegge · dpunkt/Rheinwerk 2026</div>
+    <h1>Du bist<br>Küchenchef.</h1>
+    <p class="hero-sub">
+      Nicht Hilfskoch. Die KI schreibt den Code — <b>du</b> bestimmst das Menü,
+      schmeckst ab und haftest für jeden Teller, der die Küche verlässt.
+      Das hier ist das destillierte Rezeptbuch: sofort anwendbar.
+    </p>
+    <div class="hero-cta">
+      <a href="#faafo" class="btn btn-p">Los geht's →</a>
+      <a href="#lab" class="btn btn-g">Direkt zum Prompt-Lab</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><strong>10×</strong><span>Produktivität</span></div>
+      <div class="hstat"><strong>5</strong><span>FAAFO-Dimensionen</span></div>
+      <div class="hstat"><strong>3</strong><span>Entwicklungsschleifen</span></div>
+      <div class="hstat"><strong>47</strong><span>Minuten zum Tool</span></div>
+    </div>
+  </div>
+  <div class="scroll-hint">SCROLL ↓</div>
+</header>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee">
+  <div class="marquee-track" id="mq"></div>
+</div>
+
+<!-- ============ FAAFO ============ -->
+<section id="faafo">
+  <div class="wrap">
+    <div class="eyebrow reveal">Das Kernmodell</div>
+    <h2 class="reveal">FAAFO</h2>
+    <p class="lede reveal">
+      Geschwindigkeit ist der <em>langweiligste</em> Vorteil. Vibe Coding erzeugt Wert in
+      fünf Dimensionen gleichzeitig. Klick auf eine Karte für die praktische Konsequenz.
+      <br><strong style="color:var(--rose)">Achtung: Es gibt kein „B“ für Better.</strong> Besseren Code
+      bekommst du nur durch Disziplin — nicht geschenkt.
+    </p>
+    <div class="faafo">
+      <div class="fcard reveal" style="--c:var(--ember)" onclick="this.classList.toggle('open')">
+        <span class="ltr">F</span><span class="glyph">⚡</span>
+        <h3>Fast</h3>
+        <p>Wochen → Tage. Tage → Stunden. Nicht nur Codegen: auch Debugging, Tests, Doku.</p>
+        <div class="more"><b>Praxis:</b> Wenn die KI dich <em>langsamer</em> macht (ffmpeg-Hölle, Gradle-Konfig),
+        ist das ein Signal: Tracer Bullet werfen, sonst selbst übernehmen.</div>
+      </div>
+      <div class="fcard reveal" style="--c:var(--saffron)" onclick="this.classList.toggle('open')">
+        <span class="ltr">A</span><span class="glyph">🚀</span>
+        <h3>Ambitious</h3>
+        <p>Beide Enden des Spektrums öffnen sich: Das „Unmögliche" wird machbar, das „Lohnt-sich-nicht" wird Quick Win.</p>
+        <div class="more"><b>Praxis:</b> Bugs fixen ist jetzt billiger als Tickets schreiben.
+        Kein Backlog-Friedhof mehr — nur frische Bugs sind akzeptable Bugs.</div>
+      </div>
+      <div class="fcard reveal" style="--c:var(--mint)" onclick="this.classList.toggle('open')">
+        <span class="ltr">A</span><span class="glyph">🎯</span>
+        <h3>Autonomous</h3>
+        <p>Weg mit Koordinationskosten &amp; „Du kannst mir nicht in den Kopf schauen"-Kosten.</p>
+        <div class="more"><b>Praxis:</b> Der „Drift"-Effekt — PM, Designer und Dev arbeiten im selben
+        Markdown-Cockpit. 3 Personen bauten eine GitHub-App in 48h.</div>
+      </div>
+      <div class="fcard reveal" style="--c:var(--rose)" onclick="this.classList.toggle('open')">
+        <span class="ltr">F</span><span class="glyph">🎰</span>
+        <h3>Fun</h3>
+        <p>84 % berichten von positiver Veränderung. Adidas: +50 % „Happy Time".</p>
+        <div class="more"><b>Vorsicht:</b> Die Dopamin-Falle. Agentisches Coden = Spielautomat.
+        Um 2:30 Uhr nachts hält dich der Kick auf dem falschen Weg. Pausen einbauen.</div>
+      </div>
+      <div class="fcard reveal" style="--c:var(--plum)" onclick="this.classList.toggle('open')">
+        <span class="ltr">O</span><span class="glyph">🌲</span>
+        <h3>Optionality</h3>
+        <p>Die mächtigste Dimension. Einwegtüren werden zu reversiblen Experimenten.</p>
+        <div class="more"><b>Praxis:</b> 3 Architekturen an einem Nachmittag prototypen statt
+        eine zu raten. Siehe NK/t-Rechner unten.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LOOPS ============ -->
+<section id="loops">
+  <div class="wrap">
+    <div class="eyebrow reveal">Operating System</div>
+    <h2 class="reveal">Die drei Schleifen</h2>
+    <p class="lede reveal">
+      Jede Schleife hat denselben Rhythmus: <strong style="color:var(--mint)">Verhindern → Erkennen → Korrigieren</strong>.
+      Nur die Zeitskala und die Hebel unterscheiden sich.
+    </p>
+
+    <div class="tabs reveal">
+      <button class="tab on" onclick="tab(this,'inner')">⚡ Innere Schleife</button>
+      <button class="tab" onclick="tab(this,'mid')">🔄 Mittlere Schleife</button>
+      <button class="tab" onclick="tab(this,'outer')">🏛 Äußere Schleife</button>
+    </div>
+
+    <div class="panel on" id="inner">
+      <div class="loop-meta">SEKUNDEN → MINUTEN · dein Prompt-Rhythmus</div>
+      <div class="pvc">
+        <div class="pvc-col" style="--c:var(--mint)">
+          <h4>Verhindern</h4>
+          <ul>
+            <li><b>Save Game:</b> Commit alle paar Minuten. Nicht alle paar Stunden.</li>
+            <li><b>Tasks klein halten:</b> Blattknoten-Größe. Immer.</li>
+            <li><b>KI schreibt die Spec</b> — bevor sie Code schreibt.</li>
+            <li><b>KI schreibt die Tests</b> — du reviewst und führst sie selbst aus.</li>
+            <li><b>KI ist Git-Meisterin.</b> Delegiere cherry-pick, rebase, bisect.</li>
+          </ul>
+        </div>
+        <div class="pvc-col" style="--c:var(--saffron)">
+          <h4>Erkennen</h4>
+          <ul>
+            <li><b>Verifiziere Behauptungen.</b> „Alle Tests grün" ≠ alle Tests grün.</li>
+            <li><b>ESC drücken</b> beim kleinsten Verdacht: „Stopp. Was tust du gerade?"</li>
+            <li><b>TDD</b> — Fehler sofort sichtbar machen (emotionale Halbwertszeit von Bugs!).</li>
+            <li><b>Lernen durch Zuschauen:</b> <code>gradle projects</code>, <code>bash wait</code>…</li>
+            <li><b>Souschefin aufräumen lassen</b> — sofort, nicht später.</li>
+          </ul>
+        </div>
+        <div class="pvc-col" style="--c:var(--rose)">
+          <h4>Korrigieren</h4>
+          <ul>
+            <li><b>Forward fix oder Rollback?</b> Je mehr Checkpoints, desto mehr Optionen.</li>
+            <li><b>Linting-Durchläufe</b> sequenziell: Eleganz → Fehler → Debug-Müll → Format.</li>
+            <li><b>Steuer übernehmen,</b> wenn die KI im Kreis läuft (Logging-Explosion = Signal).</li>
+            <li><b>Debugger statt print.</b> Per MCP kann die KI ihn selbst bedienen.</li>
+            <li><b>Neu anfangen:</b> „Zeig mir 5 komplett andere Wege."</li>
+            <li><b>Gummiente:</b> „Lass uns das gemeinsam durchdenken."</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="mid">
+      <div class="loop-meta">STUNDEN → TAGE · Session-Übergaben &amp; Multi-Agent</div>
+      <div class="pvc">
+        <div class="pvc-col" style="--c:var(--mint)">
+          <h4>Verhindern</h4>
+          <ul>
+            <li><b>Goldene Regeln in AGENTS.md.</b> Kurz halten — lange Listen werden ignoriert.</li>
+            <li><b>Memento-Methode:</b> Bei 20–50 % Restkontext → Stand in Markdown schreiben.</li>
+            <li><b>Für KI-Herstellbarkeit designen:</b> Standard-Layouts, gängige Frameworks, kleine Dateien.</li>
+            <li><b>2+ Agenten parallel</b> — aber getrennte Workspaces.</li>
+            <li><b>Race Conditions vermeiden:</b> kein geteiltes „Schneidebrett".</li>
+            <li><b>Idle Agents beschäftigen:</b> Selbstkritik, Tests härten, Randfälle suchen.</li>
+          </ul>
+        </div>
+        <div class="pvc-col" style="--c:var(--saffron)">
+          <h4>Erkennen</h4>
+          <ul>
+            <li><b>Lovecraft-Alarm:</b> 3000-Zeilen-Funktion ohne Modulgrenzen = Notbremse.</li>
+            <li><b>Agenten-Streit:</b> Merge-Konflikte, Port-Kollisionen, Branch-Verwirrung.</li>
+            <li><b>MCP-Server</b> sind eine neue Kollisionsfläche bei parallelem Zugriff.</li>
+          </ul>
+        </div>
+        <div class="pvc-col" style="--c:var(--rose)">
+          <h4>Korrigieren</h4>
+          <ul>
+            <li><b>Tracer Bullet:</b> minimaler End-to-End-Pfad. Entweder er zeigt den Weg — oder dass die KI's nicht kann.</li>
+            <li><b>Messer schärfen:</b> Workflow-Automation hat multiplikativen ROI.</li>
+            <li><b>Optionalität ökonomisch denken:</b> Änderungskosten senken = Systemwert steigern.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="outer">
+      <div class="loop-meta">WOCHEN → MONATE · Architektur &amp; Organisation</div>
+      <div class="pvc">
+        <div class="pvc-col" style="--c:var(--mint)">
+          <h4>Verhindern</h4>
+          <ul>
+            <li><b>Keine Brücken einreißen:</b> „Du darfst keine bestehende Funktionalität kaputtmachen."</li>
+            <li><b>Stewnami vermeiden:</b> Workspaces trennen, farblich markieren, Namen explizit.</li>
+            <li><b>Minimieren &amp; Modularisieren:</b> Code-Budgets, chirurgische Commits, Schnittstellen-Immutabilität.</li>
+            <li><b>4+ Agenten?</b> Dann brauchst du ein Schwarzes Brett (Status-Dokument).</li>
+            <li><b>Auditieren</b> nach Risiko × Vertrautheit (siehe Matrix unten).</li>
+            <li><b>Inner PM:</b> KI als On-Demand-Produkt-Co-Pilot nutzen.</li>
+          </ul>
+        </div>
+        <div class="pvc-col" style="--c:var(--saffron)">
+          <h4>Erkennen</h4>
+          <ul>
+            <li><b>Wenn die KI alles rauswirft:</b> Branch-Hygiene ist Überlebensfrage.</li>
+            <li><b>CI/CD als KI-Qualitätswächter:</b> Security-Review, Policy-Enforcement, Fehlerdeutung.</li>
+            <li><b>Telemetrie an die KI anschließen</b> — proaktiv, nicht erst beim Pager-Alarm.</li>
+          </ul>
+        </div>
+        <div class="pvc-col" style="--c:var(--rose)">
+          <h4>Korrigieren</h4>
+          <ul>
+            <li><b>Git-Chirurgie delegieren:</b> Ziel vorgeben statt Befehle raten.<br>
+                <em>„Finde einen Weg, die Arbeit zu retten. Mach es nicht schlimmer."</em></li>
+            <li><b>Prozesse reformieren:</b> 8 Freigaben killen jeden 10×-Gewinn (Morgan-Stanley-Modell).</li>
+            
+          <li><b>Monolithen auflösen:</b> Wenn Sie KI nicht für Produktivcode nutzen dürfen —
+                nutzen Sie sie für Tests, Modularisierungspläne und CI/CD-Verbesserungen.</li>
+            <li><b>Morgan-Stanley-Modell:</b> ML-Modell sagt Änderungsrisiko voraus → „Überholspur"
+                für risikoarme Deployments. Ergebnis: 0 % Vorfälle (statt 1,5 %), &lt; 1 h statt 2 Wochen.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROMPT LAB ============ -->
+<section id="lab">
+  <div class="wrap">
+    <div class="eyebrow reveal">Praxis</div>
+    <h2 class="reveal">Das Prompt-Lab</h2>
+    <p class="lede reveal">
+      Vibe Coding ist <strong>Gespräch</strong>, nicht Prompt Engineering.
+      SMS an einen Kollegen — kein Schriftsatz an den Anwalt. Tippfehler egal.
+      <strong style="color:var(--saffron)">Ziele präzise, Stil locker.</strong>
+    </p>
+
+    <div class="lab reveal">
+      <div class="lab-box bad">
+        <div class="lab-tag">✕ So nicht</div>
+        <pre>Meine App funktioniert nicht.
+
+Wir müssten Datumswerte
+mit Zeitzonen verarbeiten.
+
+Die Authentifizierung
+funktioniert nicht.</pre>
+        <p class="lab-note">Zu vage. Die KI füllt die Lücken mit Halluzinationen.
+        Du bekommst eine Lösung für ein Problem, das du nicht hast.</p>
+      </div>
+
+      <div class="lab-box good">
+        <div class="lab-tag">✓ So ja</div>
+        <pre>Ich weiß, dass Datumswerte ohne
+Zeitzone Unsinn sind. Bei uns ist
+es aber so und wir stecken fest.
+
+Beschreibe mir, wie echte Systeme
+das lösen — wie machen es Datenbanken,
+wie macht es Git?
+
+Hilf mir zu verstehen, wie ich eine
+Unix-Epoche in Python in etwas mit
+Zeitzonen umwandle.
+
+Mach mir einen Plan. Wie wäre es damit?</pre>
+        <p class="lab-note">Unstrukturiert, nachlässig formuliert, <em>aber</em>:
+        Du sagst was du weißt, was du willst, was unklar ist. Die KI versteht es wie ein aufmerksamer Mensch.</p>
+      </div>
+    </div>
+
+    <!-- SNIPPETS -->
+    <h3 class="reveal" style="margin:3rem 0 1rem;font-size:1.3rem">Copy-Paste-Arsenal</h3>
+    <div class="snips">
+      <div class="snip reveal" style="--c:var(--mint)">
+        <div class="snip-head"><h4>Spec zuerst</h4><span class="tagx">Verhindern</span></div>
+        <pre>Bevor du Code schreibst: Erstelle eine
+detaillierte Spezifikation für [ZIEL].
+
+Enthalte:
+- Akzeptanzkriterien (Given/When/Then)
+- Randfälle und Fehlerszenarien
+- Testplan mit konkreten Testfällen
+- Offene Fragen an mich
+
+Schreibe NOCH KEINEN Code.
+Wir besprechen die Spec zuerst.</pre>
+        <div class="foot"><button class="copybtn" onclick="cp(this)">kopieren</button></div>
+      </div>
+
+      <div class="snip reveal" style="--c:var(--rose)">
+        <div class="snip-head"><h4>Keine Brücken einreißen</h4><span class="tagx">Schutz</span></div>
+        <pre>Du darfst KEINE bestehende
+Funktionalität kaputtmachen.
+
+Bestehende Modulschnittstellen sind
+sakrosankt, außer ich genehmige
+explizit eine Änderung.
+
+Ergänze — lösche nicht. Wenn du
+glaubst etwas löschen zu müssen,
+frag mich vorher.</pre>
+        <div class="foot"><button class="copybtn" onclick="cp(this)">kopieren</button></div>
+      </div>
+
+      <div class="snip reveal" style="--c:var(--saffron)">
+        <div class="snip-head"><h4>Babys zählen</h4><span class="tagx">Erkennen</span></div>
+        <pre>Stopp. Gehe jede einzelne Anforderung
+aus meiner ursprünglichen Anfrage durch
+und sage mir für jede:
+
+1. Umgesetzt? (ja/nein/teilweise)
+2. Wo im Code?
+3. Durch welchen Test abgedeckt?
+
+Führe dann ALLE Tests aus und zeige
+mir die rohe Ausgabe — nicht deine
+Zusammenfassung.</pre>
+        <div class="foot"><button class="copybtn" onclick="cp(this)">kopieren</button></div>
+      </div>
+
+      <div class="snip reveal" style="--c:var(--plum)">
+        <div class="snip-head"><h4>Memento-Handover</h4><span class="tagx">Mittlere Schleife</span></div>
+        <pre>Wir haben noch ~30 % Kontext.
+Schreibe jetzt HANDOVER.md mit:
+
+- Was wir erreicht haben
+- Was NICHT funktioniert hat (und warum)
+- Der aktuelle Plan, nächste Schritte
+- Welche temporären Branches/Dateien
+  existieren und gelöscht werden müssen
+- Stolperfallen, die du entdeckt hast
+
+Schreib es so, dass eine neue Session
+ohne Vorwissen weitermachen kann.</pre>
+        <div class="foot"><button class="copybtn" onclick="cp(this)">kopieren</button></div>
+      </div>
+
+      <div class="snip reveal" style="--c:var(--sky)">
+        <div class="snip-head"><h4>Idle-Agent-Kür</h4><span class="tagx">Produktivität</span></div>
+        <pre>Du bist fertig? Dann:
+
+1. Führe alle Tests nochmal aus
+2. Reviewe deinen eigenen Code auf
+   fehlende Randfälle
+3. Schreibe einen Test, der deine
+   eigene Lösung zum Absturz bringt
+4. Refaktoriere auf minimale Größe
+5. Räume auf: temp-Dateien, Debug-Logs,
+   ungenutzte Branches
+6. Fasse alles Verdächtige zusammen</pre>
+        <div class="foot"><button class="copybtn" onclick="cp(this)">kopieren</button></div>
+      </div>
+
+      <div class="snip reveal" style="--c:var(--ember)">
+        <div class="snip-head"><h4>Git-Rettung</h4><span class="tagx">Korrigieren</span></div>
+        <pre>Diese Branches sind durcheinander.
+
+Finde einen Weg, die Arbeit zu retten
+und sauber nach main zu mergen.
+
+Mach es NICHT schlimmer.
+Sorge dafür, dass jeder Schritt
+wiederherstellbar ist.
+
+Erkläre mir deinen Plan, bevor du
+irgendetwas ausführst.</pre>
+        <div class="foot"><button class="copybtn" onclick="cp(this)">kopieren</button></div>
+      </div>
+    </div>
+
+    <!-- GENERATOR -->
+    <h3 class="reveal" style="margin:3rem 0 1rem;font-size:1.3rem">Prompt-Generator</h3>
+    <div class="gen reveal">
+      <div class="gen-grid">
+        <div>
+          <label>Ziel</label>
+          <input id="g-goal" placeholder="z.B. CSV-Import mit Validierung" oninput="gen()">
+        </div>
+        <div>
+          <label>Sprache / Stack</label>
+          <input id="g-stack" placeholder="z.B. TypeScript, Node, Vitest" oninput="gen()">
+        </div>
+        <div>
+          <label>Risikostufe</label>
+          <select id="g-risk" onchange="gen()">
+            <option value="low">Niedrig — Hobby/intern</option>
+            <option value="high" selected>Hoch — Produktiv</option>
+          </select>
+        </div>
+        <div>
+          <label>Vertrautheit</label>
+          <select id="g-fam" onchange="gen()">
+            <option value="known" selected>Kenne den Stack gut</option>
+            <option value="unknown">Stack ist neu für mich</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label>Kontext / Was du schon weißt</label>
+        <textarea id="g-ctx" rows="3" placeholder="z.B. Die Datei liegt in src/import/. Bestehende Parser nutzen papaparse. Fehlerbehandlung läuft über Result<T,E>." oninput="gen()"></textarea>
+      </div>
+      <div class="gen-out" id="g-out">Fülle die Felder aus…</div>
+      <div class="copybar"><button class="copybtn" onclick="cpGen(this)">📋 Prompt kopieren</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHECKLIST ============ -->
+<section id="check">
+  <div class="wrap">
+    <div class="eyebrow reveal">Täglich</div>
+    <h2 class="reveal">Die Küchen-Checkliste</h2>
+    <p class="lede reveal">
+      Hak ab, was sitzt. Der Fortschritt wird lokal gespeichert — komm morgen wieder.
+    </p>
+
+    <div class="ckwrap">
+      <div class="ckcard reveal" style="--c:var(--mint)">
+        <h4>⚡ Innere Schleife</h4>
+        <label class="ck"><input type="checkbox" data-ck="i1"><span>Commit nach jeder funktionierenden Mini-Änderung</span></label>
+        <label class="ck"><input type="checkbox" data-ck="i2"><span>Aufgabe ist auf Blattknoten-Größe heruntergebrochen</span></label>
+        <label class="ck"><input type="checkbox" data-ck="i3"><span>Spec wurde vor dem Code geschrieben &amp; von mir geprüft</span></label>
+        <label class="ck"><input type="checkbox" data-ck="i4"><span>Tests laufen automatisch bei jedem Speichern</span></label>
+        <label class="ck"><input type="checkbox" data-ck="i5"><span>Ich habe die Tests <em>selbst</em> laufen sehen</span></label>
+        <label class="ck"><input type="checkbox" data-ck="i6"><span>Diff vor dem Akzeptieren gelesen — auch gelöschte Zeilen</span></label>
+        <label class="ck"><input type="checkbox" data-ck="i7"><span>Bei Verdacht: ESC gedrückt und nachgefragt</span></label>
+      </div>
+
+      <div class="ckcard reveal" style="--c:var(--saffron)">
+        <h4>🔄 Mittlere Schleife</h4>
+        <label class="ck"><input type="checkbox" data-ck="m1"><span>AGENTS.md ist aktuell und kurz</span></label>
+        <label class="ck"><input type="checkbox" data-ck="m2"><span>Handover-Datei geschrieben, bevor Kontext voll war</span></label>
+        <label class="ck"><input type="checkbox" data-ck="m3"><span>Agenten arbeiten in getrennten Workspaces</span></label>
+        <label class="ck"><input type="checkbox" data-ck="m4"><span>Terminals farblich / namentlich unterscheidbar</span></label>
+        <label class="ck"><input type="checkbox" data-ck="m5"><span>Idle Agents haben eine Selbstkritik-Aufgabe</span></label>
+        <label class="ck"><input type="checkbox" data-ck="m6"><span>Keine Datei &gt; ~800 Zeilen (sonst: modularisieren)</span></label>
+        <label class="ck"><input type="checkbox" data-ck="m7"><span>Workflow-Reibung automatisiert (Messer geschärft)</span></label>
+      </div>
+
+      <div class="ckcard reveal" style="--c:var(--plum)">
+        <h4>🏛 Äußere Schleife</h4>
+        <label class="ck"><input type="checkbox" data-ck="o1"><span>Bestehende APIs wurden nicht gebrochen</span></label>
+        <label class="ck"><input type="checkbox" data-ck="o2"><span>Temporäre Branches geprüft &amp; gelöscht</span></label>
+        <label class="ck"><input type="checkbox" data-ck="o3"><span>Push auf Remote erfolgt (mehrfach gesichert)</span></label>
+        <label class="ck"><input type="checkbox" data-ck="o4"><span>CI/CD prüft Security + Policy + Lint</span></label>
+        <label class="ck"><input type="checkbox" data-ck="o5"><span>Audit-Tiefe passt zu Risiko × Vertrautheit</span></label>
+        <label class="ck"><input type="checkbox" data-ck="o6"><span>Für jeden Commit gibt es einen namentlichen Owner</span></label>
+        <label class="ck"><input type="checkbox" data-ck="o7"><span>Telemetrie ist für die KI zugänglich</span></label>
+      </div>
+    </div>
+
+    <div class="ckbar reveal">
+      <div class="ckbar-track"><div class="ckbar-fill" id="ckfill"></div></div>
+      <b id="cktxt">0 / 21</b>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ANTI-PATTERNS ============ -->
+<section id="anti">
+  <div class="wrap">
+    <div class="eyebrow reveal">Die dunkle Seite</div>
+    <h2 class="reveal">Anti-Patterns &amp; Gegenmittel</h2>
+    <p class="lede reveal">
+      Die KI wurde darauf trainiert, <em>hilfreich zu erscheinen</em> — nicht, hilfreich zu sein.
+      Das ist der Unterschied. Diese sechs Muster kosten dich Tage, wenn du sie nicht kennst.
+    </p>
+    <div class="aps">
+      <div class="ap reveal">
+        <span class="icon">🍼</span>
+        <h3>Baby Zählen</h3>
+        <p>„Rette meine 7 Babys" → „Mission erfüllt! 5 gerettet, 2 deaktiviert."
+        Die KI entscheidet still, was optional ist.</p>
+        <div class="fix"><b>Fix:</b> Jede Anforderung einzeln verifizieren lassen. Auf gelöschte Zeilen im Diff achten.</div>
+      </div>
+      <div class="ap reveal">
+        <span class="icon">🧁</span>
+        <h3>Papp-Muffins</h3>
+        <p>9 Tests grün — 4 davon mit hartcodierten Werten. Sieht vollständig aus, ist aber Filmkulisse.</p>
+        <div class="fix"><b>Fix:</b> Nicht nur „grün" prüfen. Implementierung lesen. Testen ob der Test überhaupt was testet.</div>
+      </div>
+      <div class="ap reveal">
+        <span class="icon">🥱</span>
+        <h3>Halbherzigkeit</h3>
+        <p>Die KI kennt jedes Pattern der Welt — und schreibt trotzdem Spaghetti, wenn man sie lässt.</p>
+        <div class="fix"><b>Fix:</b> Qualität explizit fordern. Die KI ihre eigene Arbeit bewerten lassen — sie erkennt den Mist.</div>
+      </div>
+      <div class="ap reveal">
+        <span class="icon">🗑</span>
+        <h3>Schmutzfink</h3>
+        <p>Debug-Logs, 8-fach verschachtelte try/catch, 400 Commits, 12 verwaiste Branches, Mock-Dateien überall.</p>
+        <div class="fix"><b>Fix:</b> „Hinterlasse es sauberer als du es vorgefunden hast" in jede Aufgabe. Systematisch aufräumen.</div>
+      </div>
+      <div class="ap reveal">
+        <span class="icon">🌊</span>
+        <h3>Stewnami</h3>
+        <p>Zwei Agenten, ein Workspace. Repo im Repo. Eine Woche Arbeit in 40.000 Dateien — verschwunden.</p>
+        <div class="fix"><b>Fix:</b> Workspaces trennen, Terminals einfärben, Branch-Namen mit Agent-Namen. Oft pushen.</div>
+      </div>
+      <div class="ap reveal">
+        <span class="icon">🎰</span>
+        <h3>Dopamin-Falle</h3>
+        <p>Jeder kleine Erfolg = Mikro-Belohnung. Um 2:30 Uhr merkst du nicht mehr, dass du seit vier Stunden falsch abgebogen bist.</p>
+        <div class="fix"><b>Fix:</b> Timer stellen. Alle 60 Min fragen: „Ist das noch die richtige Richtung?" Schlafen gehen.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LEVELS ============ -->
+<section id="levels">
+  <div class="wrap">
+    <div class="eyebrow reveal">Organisatorisches Modell</div>
+    <h2 class="reveal">Die drei Ebenen</h2>
+    <p class="lede reveal">
+      Aus <em>Wiring the Winning Organization</em> (Kim &amp; Spear). Die entscheidende Erkenntnis:
+      <strong style="color:var(--plum)">Vibe Coding befördert jeden Entwickler unfreiwillig in Ebene 3.</strong>
+    </p>
+    <div class="levels">
+      <div class="lvl reveal" style="--c:var(--mint)">
+        <div class="num">1</div>
+        <div>
+          <h3>Die Arbeit selbst</h3>
+          <p>Wo Wert entsteht: der geschriebene Code, das ausgelieferte Feature, der laufende Service. Das <em>Was</em>.</p>
+          <div class="ex">→ Früher: hier warst du. Heute: hier sind deine Agenten.</div>
+        </div>
+      </div>
+      <div class="lvl reveal" style="--c:var(--saffron)">
+        <div class="num">2</div>
+        <div>
+          <h3>Tools &amp; Infrastruktur</h3>
+          <p>IDE, Compiler, CI/CD, Kubernetes, Git, MCP-Server, Coding-Agenten. Das <em>Womit</em>.</p>
+          <div class="ex">→ Aktuell noch ziemlich primitiv für Multi-Agent. Du improvisierst mit Markdown und Bash.</div>
+        </div>
+      </div>
+      <div class="lvl reveal" style="--c:var(--plum)">
+        <div class="num">3</div>
+        <div>
+          <h3>Die organisatorische Verdrahtung</h3>
+          <p>Architektur, Aufgabenteilung, Schnittstellen, Kommunikationsprotokolle, Standards, Workflows. Das <em>Wie alles zusammenhängt</em>.</p>
+          <div class="ex">→ NUMMI-Beweis: gleiche Leute (1), gleiche Maschinen (2), nur Ebene 3 geändert → Vorbildfabrik in 2 Jahren.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ RISK MATRIX ============ -->
+<section id="risk">
+  <div class="wrap">
+    <div class="eyebrow reveal">Entscheidungshilfe</div>
+    <h2 class="reveal">Risiko-Matrix: Wie tief auditieren?</h2>
+    <p class="lede reveal">
+      Simon Willison betreibt Go-Services produktiv — ohne Go zu können. Das geht,
+      wenn du weißt, in welchem Quadranten du bist und entsprechend testest.
+    </p>
+    <div class="matrix reveal">
+      <div class="mx-h"></div>
+      <div class="mx-h">Hohes Risiko</div>
+      <div class="mx-h">Niedriges Risiko</div>
+
+      <div class="mx-h mx-side">Stack vertraut</div>
+      <div class="mx-cell" style="--c:var(--rose)">
+        <h5>Volle Tiefe</h5>
+        <p>Tiefes Whitebox- <b>und</b> Blackbox-Testing. Race Conditions, Randfälle, Datenstrukturen — alles prüfen.</p>
+        <div class="eg">z. B. Genes Writer's Workbench, Steves Game-Server</div>
+      </div>
+      <div class="mx-cell" style="--c:var(--mint)">
+        <h5>Leichtgewicht</h5>
+        <p>Code überfliegen, ein paar Smoke Tests. Nicht überoptimieren.</p>
+        <div class="eg">z. B. interne Trello-Automationstools</div>
+      </div>
+
+      <div class="mx-h mx-side">Stack neu</div>
+      <div class="mx-cell" style="--c:var(--saffron)">
+        <h5>Blackbox-schwer</h5>
+        <p>Massiv in Tests investieren. Whitebox nur auf Red Flags scannen. <b>KI als Whitebox-Auditor einsetzen.</b></p>
+        <div class="eg">z. B. Steves TypeScript-Client, Willisons Go-Service</div>
+      </div>
+      <div class="mx-cell" style="--c:var(--sky)">
+        <h5>Klassisches Vibe Coding</h5>
+        <p>Nur Blackbox. Ein- und Ausgabe prüfen, Hirn ausschalten, Spaß haben.</p>
+        <div class="eg">z. B. Datenanalyse-Notebook, Test-Framework-Migration</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CALCULATOR ============ -->
+<section id="calc">
+  <div class="wrap">
+    <div class="eyebrow reveal">Die Ökonomie</div>
+    <h2 class="reveal">Der Optionswert-Rechner</h2>
+    <p class="lede reveal">
+      <code style="font-family:var(--mono);color:var(--saffron)">(N × K × σ) / t</code> —
+      der mächtigste Hebel im Vibe Coding. Jede Workflow-Automatisierung, die <strong>t</strong> halbiert,
+      verdoppelt deinen Optionsraum. Spiel damit.
+    </p>
+
+    <div class="calc reveal">
+      <div class="calc-grid">
+        <div class="calc-f">
+          <label>N — Module</label>
+          <input type="range" id="c-n" min="1" max="30" value="8" oninput="calc()">
+          <div class="val" id="c-n-v">8</div>
+        </div>
+        <div class="calc-f">
+          <label>K — Parallele Experimente</label>
+          <input type="range" id="c-k" min="1" max="20" value="3" oninput="calc()">
+          <div class="val" id="c-k-v">3</div>
+        </div>
+        <div class="calc-f">
+          <label>σ — Unsicherheit (×10)</label>
+          <input type="range" id="c-s" min="1" max="20" value="10" oninput="calc()">
+          <div class="val" id="c-s-v">1.0</div>
+        </div>
+        <div class="calc-f">
+          <label>t — Zeit / Experiment (Min)</label>
+          <input type="range" id="c-t" min="1" max="240" value="60" oninput="calc()">
+          <div class="val" id="c-t-v">60</div>
+        </div>
+      </div>
+
+      <div class="calc-out">
+        <div class="big" id="c-out">4</div>
+        <div class="lbl">Optionswert-Index</div>
+        <p class="calc-note" id="c-note"></p>
+      </div>
+
+      <p class="calc-note" style="margin-top:1.4rem">
+        <strong style="color:var(--saffron)">Praxis-Beispiel aus dem Buch:</strong>
+        Gene senkte <code>t</code> von 3 Min auf 1 Min <em>und</em> erhöhte gleichzeitig die
+        Anzahl der Draft-Kandidaten um Faktor 40 → <strong>120× mehr Optionswert.</strong>
+        Jede Workflow-Automatisierung, die Reibung entfernt, multipliziert sich.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QUOTES ============ -->
+<section id="quotes">
+  <div class="wrap">
+    <div class="eyebrow reveal">Stimmen</div>
+    <h2 class="reveal">Was die Praktiker sagen</h2>
+    <div class="qgrid" style="margin-top:2rem">
+      <blockquote class="reveal" style="--c:var(--ember)">
+        Die Tage, in denen man Code per Hand schreibt, neigen sich dem Ende entgegen.
+        <cite>— Dr. Erik Meijer</cite>
+      </blockquote>
+      <blockquote class="reveal" style="--c:var(--plum)">
+        Die KI wird die Leute nicht ersetzen, aber vielleicht werden Leute, die KI nutzen,
+        die ersetzen, die diese nicht nutzen.
+        <cite>— Dr. Andrew Ng</cite>
+      </blockquote>
+      <blockquote class="reveal" style="--c:var(--mint)">
+        Fallen Sie nicht darauf herein, die Arbeit zu verschieben. „In sechs Monaten wird es
+        schneller sein" ist wie „Ich warte, bis der Verkehr weniger wird." Sie werden
+        trotzdem zu spät ankommen.
+        <cite>— Steve Yegge</cite>
+      </blockquote>
+      <blockquote class="reveal" style="--c:var(--saffron)">
+        Spitzenpiloten nutzen ihre Spitzeneinschätzung dazu, Situationen zu vermeiden,
+        in denen sie ihre Spitzenfähigkeiten einsetzen müssten.
+        <cite>— Frank Borman, Astronaut</cite>
+      </blockquote>
+      <blockquote class="reveal" style="--c:var(--rose)">
+        Ich habe Claude Code gebeten, sich um meine Tests zu kümmern — und das hat es auch
+        getan, so wie Godzilla sich um Tokio gekümmert hat.
+        <cite>— Steve Yegge, 2:30 Uhr nachts</cite>
+      </blockquote>
+      <blockquote class="reveal" style="--c:var(--sky)">
+        Context is King. Ein Großteil der Kunst, gute Ergebnisse aus einem LLM zu bekommen,
+        besteht darin, seinen Kontext zu managen.
+        <cite>— Simon Willison</cite>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ROADMAP ============ -->
+<section id="road">
+  <div class="wrap">
+    <div class="eyebrow reveal">Dein Plan</div>
+    <h2 class="reveal">Start heute — nicht in sechs Monaten</h2>
+    <p class="lede reveal">
+      Beginne klein. Übergib deinem Agenten eine abgeschlossene Aufgabe, sieh ihm beim
+      Stolpern zu, korrigiere, verenge die Schleife. Dann verdopple den Scope.
+      Nach der zehnten Iteration fühlt es sich weniger wie Tool-Nutzung und mehr wie
+      <strong style="color:var(--saffron)">Führung</strong> an.
+    </p>
+
+    <div class="road reveal">
+      <div class="road-item" style="--c:var(--ember)">
+        <div class="when">Heute · 30 Minuten</div>
+        <h4>Agent installieren &amp; eine Mini-Aufgabe</h4>
+        <p>Claude Code, Codex, Amp, Cursor — egal. Nimm einen echten Bug aus deinem Backlog.
+        Keine Demo-Aufgabe. Commit nach jedem funktionierenden Schritt.</p>
+      </div>
+      <div class="road-item" style="--c:var(--ember-2)">
+        <div class="when">Tag 2 · 1 Stunde</div>
+        <h4>AGENTS.md anlegen</h4>
+        <p>Maximal 10 Goldene Regeln. Was immer passieren muss, was nie passieren darf.
+        Kurz halten — lange Listen werden ignoriert.</p>
+      </div>
+      <div class="road-item" style="--c:var(--saffron)">
+        <div class="when">Woche 1</div>
+        <h4>TDD + Auto-Test-Runner</h4>
+        <p>Tests bei jedem Speichern. Das ist deine wichtigste Feedback-Schleife.
+        Ohne sie fährst du 10× schneller mit verbundenen Augen.</p>
+      </div>
+      <div class="road-item" style="--c:var(--mint)">
+        <div class="when">Woche 2</div>
+        <h4>Zwei Agenten parallel</h4>
+        <p>Getrennte Workspaces, farbige Terminals, Branch-Namen mit Agent-Präfix.
+        Lerne den Kontextwechsel. Das ist die eigentliche neue Skill.</p>
+      </div>
+      <div class="road-item" style="--c:var(--sky)">
+        <div class="when">Woche 3–4</div>
+        <h4>Messer schärfen</h4>
+        <p>Finde die nervigste repetitive Aufgabe in deinem Workflow.
+        Automatisiere sie per Vibe Coding. Der ROI ist multiplikativ.</p>
+      </div>
+      <div class="road-item" style="--c:var(--plum)">
+        <div class="when">Monat 2+</div>
+        <h4>Architektur &amp; Prozesse</h4>
+        <p>Modularisieren. CI/CD mit KI-Security-Review. Telemetrie an die KI anschließen.
+        Bürokratie abbauen. Das ist Ebene 3 — hier entscheidet sich alles.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="f-logo">Du bist Küchenchef.</div>
+    <p>
+      Modularität. Kurze Feedback-Schleifen. Menschlicher Verstand an jeder Abzweigung.
+      Diese drei Säulen ändern sich nie — egal wie sich die Modelle entwickeln.
+    </p>
+    <p style="margin-top:.8rem;color:var(--txt-dim)">
+      Kochen Sie weiter. Und spüren Sie den Vibe. 🔥
+    </p>
+    <p class="tiny">
+      Destilliert aus „Vibe Coding — Prinzipien der Softwareentwicklung mit GenAI,
+      Chat und Agenten" · Gene Kim &amp; Steve Yegge · dpunkt/Rheinwerk 2026<br>
+      Private Lernhilfe · Alle Rechte beim Verlag und den Autoren
+    </p>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   MARQUEE CONTENT
+   ============================================================ */
+const mqItems = [
+  '<b>FAAFO</b> — Fast · Ambitious · Autonomous · Fun · Optionality',
+  'Kein <b>B</b> für Better — Qualität musst du einfordern',
+  '<b>47 Minuten</b> vom Nichts zum funktionierenden Video-Tool',
+  '<b>Save Game</b> alle paar Minuten — nicht alle paar Stunden',
+  'Je voller der Kontext, desto <b>dümmer</b> die KI',
+  '<b>Zähle deine Babys</b> — alle sieben, nicht fünf',
+  'Papp-Muffins sehen aus wie <b>echte Muffins</b>',
+  'Verhindern → <b>Erkennen</b> → Korrigieren',
+  '<b>Du</b> haftest, nicht die KI',
+];
+const mqTrack = document.getElementById('mq');
+const mqHtml = mqItems.map(t=>`<span>${t}</span>`).join('');
+mqTrack.innerHTML = mqHtml + mqHtml;
+
+/* ============================================================
+   SCROLL PROGRESS
+   ============================================================ */
+const prog = document.getElementById('prog');
+addEventListener('scroll', ()=>{
+  const h = document.documentElement;
+  prog.style.width = (h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+},{passive:true});
+
+/* ============================================================
+   REVEAL ON SCROLL
+   ============================================================ */
+const io = new IntersectionObserver(es=>{
+  es.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>e.target.classList.add('in'), i*55);
+      io.unobserve(e.target);
+    }
+  });
+},{threshold:.12, rootMargin:'0px 0px -60px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ============================================================
+   NAV ACTIVE STATE
+   ============================================================ */
+const secs = [...document.querySelectorAll('section[id]')];
+const links = [...document.querySelectorAll('.nav-links a')];
+addEventListener('scroll',()=>{
+  let cur='';
+  secs.forEach(s=>{ if(scrollY >= s.offsetTop-140) cur = s.id; });
+  links.forEach(a=>a.classList.toggle('on', a.getAttribute('href')==='#'+cur));
+},{passive:true});
+links.forEach(a=>a.addEventListener('click',()=>{
+  document.querySelector('.nav-links').classList.remove('open');
+}));
+
+/* ============================================================
+   TABS
+   ============================================================ */
+function tab(btn, id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById(id).classList.add('on');
+}
+
+/* ============================================================
+   TOAST + COPY
+   ============================================================ */
+const toast = document.getElementById('toast');
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>toast.classList.remove('show'),2000);
+}
+function copyText(txt, btn, label){
+  navigator.clipboard.writeText(txt).then(()=>{
+    showToast('In Zwischenablage kopiert ✓');
+    if(btn){
+      const old = btn.textContent;
+      btn.textContent = '✓ kopiert';
+      btn.classList.add('done');
+      setTimeout(()=>{btn.textContent=old;btn.classList.remove('done')},1800);
+    }
+  });
+}
+function cp(btn){
+  const pre = btn.closest('.snip').querySelector('pre');
+  copyText(pre.innerText, btn);
+}
+function cpGen(btn){
+  copyText(document.getElementById('g-out').innerText, btn);
+}
+
+/* ============================================================
+   PROMPT GENERATOR
+   ============================================================ */
+function gen(){
+  const goal  = document.getElementById('g-goal').value.trim();
+  const stack = document.getElementById('g-stack').value.trim();
+  const risk  = document.getElementById('g-risk').value;
+  const fam   = document.getElementById('g-fam').value;
+  const ctx   = document.getElementById('g-ctx').value.trim();
+  const out   = document.getElementById('g-out');
+
+  if(!goal){ out.textContent = 'Fülle die Felder aus…'; return; }
+
+  let p = `ZIEL\n${goal}\n`;
+  if(stack) p += `\nSTACK\n${stack}\n`;
+  if(ctx)   p += `\nKONTEXT (was ich schon weiß)\n${ctx}\n`;
+
+  p += `\nVORGEHEN
+1. Schreibe ZUERST eine kurze Spezifikation:
+   - Akzeptanzkriterien (Given/When/Then)
+   - Randfälle & Fehlerszenarien
+   - Offene Fragen an mich
+2. Schreibe NOCH KEINEN Code. Wir besprechen die Spec.
+3. Danach: kleinste sinnvolle Implementierung + Tests.
+
+REGELN
+- Du darfst keine bestehende Funktionalität kaputtmachen.
+- Bestehende Modulschnittstellen sind sakrosankt.
+- Minimale Änderung — keine neuen Abhängigkeiten ohne Rückfrage.
+- Hinterlasse den Code sauberer, als du ihn vorgefunden hast.`;
+
+  if(risk === 'high'){
+    p += `\n\nQUALITÄT (hohes Risiko)
+- Umfassende Tests: Happy Path, Randfälle, Fehlerfälle.
+- Führe ALLE Tests aus und zeige mir die rohe Ausgabe.
+- Keine hartcodierten Werte, um Tests grün zu bekommen.
+- Erkläre jede nicht-offensichtliche Design-Entscheidung.`;
+  } else {
+    p += `\n\nQUALITÄT (niedriges Risiko)
+- Smoke Tests reichen. Nicht überoptimieren.
+- Halte es kurz und lesbar.`;
+  }
+
+  if(fam === 'unknown'){
+    p += `\n\nLERNMODUS
+Ich kenne diesen Stack nicht gut. Bitte:
+- Erkläre die wichtigsten Idiome, die du verwendest.
+- Weise mich auf typische Fallstricke hin.
+- Agiere zusätzlich als Whitebox-Auditor deines eigenen Codes.`;
+  }
+
+  p += `\n\nAbschließend: Gehe jede Anforderung einzeln durch und sage mir,
+ob sie umgesetzt ist, wo im Code und durch welchen Test sie abgedeckt wird.`;
+
+  out.textContent = p;
+}
+
+/* ============================================================
+   CHECKLIST + LOCALSTORAGE
+   ============================================================ */
+const cks = [...document.querySelectorAll('.ck input')];
+const KEY = 'vibe-coding-checklist-v1';
+function loadCk(){
+  let saved = {};
+  try{ saved = JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
+  cks.forEach(c=>{ if(saved[c.dataset.ck]) c.checked = true; });
+  updCk();
+}
+function saveCk(){
+  const o={};
+  cks.forEach(c=>{ if(c.checked) o[c.dataset.ck]=1; });
+  try{ localStorage.setItem(KEY, JSON.stringify(o)); }catch(e){}
+}
+function updCk(){
+  const n = cks.filter(c=>c.checked).length;
+  document.getElementById('ckfill').style.width = (n/cks.length*100)+'%';
+  document.getElementById('cktxt').textContent = `${n} / ${cks.length}`;
+}
+cks.forEach(c=>c.addEventListener('change',()=>{ updCk(); saveCk(); }));
+loadCk();
+
+/* ============================================================
+   NK/t CALCULATOR
+   ============================================================ */
+function calc(){
+  const n = +document.getElementById('c-n').value;
+  const k = +document.getElementById('c-k').value;
+  const s = +document.getElementById('c-s').value / 10;
+  const t = +document.getElementById('c-t').value;
+
+  document.getElementById('c-n-v').textContent = n;
+  document.getElementById('c-k-v').textContent = k;
+  document.getElementById('c-s-v').textContent = s.toFixed(1);
+  document.getElementById('c-t-v').textContent = t;
+
+  const v = (n * k * s) / t * 60; // normiert auf Stunde
+  const disp = v >= 100 ? Math.round(v) : v.toFixed(1);
+  document.getElementById('c-out').textContent = disp;
+
+  let note = '';
+  if(v < 2)        note = 'Sehr niedrig. Du ratest statt zu experimentieren. Senke t oder modularisiere.';
+  else if(v < 10)  note = 'Solide Basis. Jede Halbierung von t verdoppelt deinen Optionsraum.';
+  else if(v < 40)  note = 'Guter Bereich. Du kannst echte Alternativen durchspielen, statt die erste Idee zu nehmen.';
+  else if(v < 120) note = 'Starker Optionswert. Einwegtüren werden zu reversiblen Experimenten.';
+  else             note = '🔥 Hier passiert FAAFO. Du findest Lösungen, die du vorher nie gesehen hättest.';
+  document.getElementById('c-note').textContent = note;
+}
+calc();
+gen();
+
+/* ============================================================
+   KEYBOARD SHORTCUTS
+   ============================================================ */
+addEventListener('keydown', e=>{
+  if(e.target.matches('input,textarea,select')) return;
+  const map = {'1':'#faafo','2':'#loops','3':'#lab','4':'#check','5':'#anti',
+               '6':'#levels','7':'#risk','8':'#calc','9':'#road'};
+  if(map[e.key]) document.querySelector(map[e.key]).scrollIntoView();
+  if(e.key==='Home' || e.key==='0') scrollTo({top:0,behavior:'smooth'});
+});
+</script>
+</body>
+</html>
