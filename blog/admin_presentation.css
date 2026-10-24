@@ -900,3 +900,20 @@ body.mn-presenting {
 .mn-pres-split .mn-pres-kpis--two .mn-pres-kpi b {
 	font-size: clamp(22px, 2.5vw, 36px);
 }
+
+.mn-pres-agenda {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.mn-pres-agenda span {
+	padding: 5px 10px;
+	border: 1px solid var(--line);
+	border-radius: 999px;
+	color: var(--muted);
+	font-size: clamp(10px, .85vw, 12px);
+	letter-spacing: .05em;
+	text-transform: uppercase;
+	background: color-mix(in srgb, var(--slide-accent, var(--accent)) 5%, transparent);
+}

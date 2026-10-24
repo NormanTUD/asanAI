@@ -5045,6 +5045,9 @@ if ($presentationExternalReferrers) {
 	];
 }
 $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
+$presentationTitleInsight = mn_analytics_format_number($views) . ' views across ' . mn_analytics_format_number($distinctPages) . ' pages'
+	. ($presentationFeedbackTotal > 0 ? ' · ' . mn_analytics_format_number($presentationFeedbackTotal) . ' reader reactions' : '')
+	. ($presentationTopPage ? ' · most-read: ' . ($titles[$presentationTopPage['path']] ?? $presentationTopPage['path']) . '.' : '.');
 ?>
 <div id="mn-present" class="mn-pres" hidden aria-hidden="true" tabindex="-1" role="dialog" aria-label="Analytics and reader feedback presentation">
 	<div class="mn-pres-progress"></div>
@@ -5059,6 +5062,8 @@ $presentationTakeaways = array_slice($presentationTakeaways, 0, 4);
 				<div class="mn-pres-stat"><b><?php echo stats_h(mn_analytics_format_number($entries)); ?></b><span>estimated visits</span></div>
 				<div class="mn-pres-stat"><b><?php echo stats_h(mn_analytics_format_number($presentationFeedbackTotal)); ?></b><span>reader reactions</span></div>
 			</div>
+			<div class="mn-pres-agenda"><span>Reach</span><span>Attention</span><span>Discovery</span><span>Reader voice</span></div>
+			<div class="mn-pres-insight"><span>In one sentence</span><div><?php echo stats_h($presentationTitleInsight); ?></div></div>
 		</section>
 
 		<?php if ($presentationHasAnalytics): ?>
