@@ -57,7 +57,7 @@ function stats_redirect(): void {
 }
 
 function stats_query(array $overrides = []): string {
-	$allowed = ['range', 'path', 'ref_type', 'source', 'ref_path', 'browser', 'os', 'device', 'day', 'weekday', 'hour', 'humans', 'view', 'page'];
+	$allowed = ['range', 'path', 'ref_type', 'source', 'ref_path', 'browser', 'os', 'device', 'day', 'weekday', 'hour', 'humans', 'view', 'cmp_mode', 'cmp_kind', 'cmp_a', 'cmp_b', 'cmp_from_a', 'cmp_to_a', 'cmp_from_b', 'cmp_to_b', 'page'];
 	$q = [];
 	foreach ($allowed as $key) {
 		$value = array_key_exists($key, $overrides) ? $overrides[$key] : ($_GET[$key] ?? null);
@@ -266,6 +266,39 @@ function stats_where(int $range, string $path, string $refType, string $source, 
 		$where[] = 'is_bot = 0';
 	}
 	return [implode(' AND ', $where), $params];
+}
+
+function stats_valid_date(string $value): bool {
+	if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+		return false;
+	}
+	[$year, $month, $day] = array_map('intval', explode('-', $value));
+	return checkdate($month, $day, $year);
+}
+
+function stats_where_between(string $from, string $to, string $path, string $refType, string $source, string $refPath, string $browser, string $os, string $device, bool $humansOnly = false): array {
+	[$filterSql, $filterParams] = stats_where(0, $path, $refType, $source, $refPath, $browser, $os, $device, false, '', 0, -1, $humansOnly);
+	return ['day >= ? AND day <= ? AND ' . $filterSql, array_merge([$from, $to], $filterParams)];
+}
+
+function stats_compare_snapshot(PDO $pdo, string $whereSql, array $params): array {
+	$row = stats_one($pdo, "SELECT
+			COUNT(*) AS views,
+			SUM(CASE WHEN ref_type <> 'internal' THEN 1 ELSE 0 END) AS entries,
+			AVG(duration_sec) AS avg_duration,
+			AVG(scroll_pct) AS avg_scroll,
+			SUM(CASE WHEN duration_sec IS NOT NULL THEN 1 ELSE 0 END) AS known,
+			SUM(CASE WHEN duration_sec IS NOT NULL AND duration_sec < 10 THEN 1 ELSE 0 END) AS bounces
+		FROM pageviews WHERE $whereSql", $params);
+	$known = (int)($row['known'] ?? 0);
+	$bounces = (int)($row['bounces'] ?? 0);
+	return [
+		'views' => (int)($row['views'] ?? 0),
+		'entries' => (int)($row['entries'] ?? 0),
+		'avg_duration' => isset($row['avg_duration']) && $row['avg_duration'] !== null ? (float)$row['avg_duration'] : null,
+		'avg_scroll' => isset($row['avg_scroll']) && $row['avg_scroll'] !== null ? (float)$row['avg_scroll'] : null,
+		'bounce_rate' => $known > 0 ? 100 * $bounces / $known : null,
+	];
 }
 
 function stats_time_label(int $ts): string {
@@ -490,6 +523,35 @@ if ($hourRaw !== '' && is_scalar($hourRaw)) {
 	}
 }
 $humansOnly = isset($_GET['humans']) && (string)$_GET['humans'] === '1';
+
+$compareModeRaw = $_GET['cmp_mode'] ?? 'previous';
+$compareMode = is_scalar($compareModeRaw) ? (string)$compareModeRaw : 'previous';
+if (!in_array($compareMode, ['previous', 'entity', 'range'], true)) {
+	$compareMode = 'previous';
+}
+$compareKindRaw = $_GET['cmp_kind'] ?? 'path';
+$compareKind = is_scalar($compareKindRaw) ? (string)$compareKindRaw : 'path';
+if (!in_array($compareKind, ['path', 'source', 'device'], true)) {
+	$compareKind = 'path';
+}
+$compareARaw = $_GET['cmp_a'] ?? '';
+$compareBRaw = $_GET['cmp_b'] ?? '';
+$compareA = is_scalar($compareARaw) ? mb_substr((string)$compareARaw, 0, 120) : '';
+$compareB = is_scalar($compareBRaw) ? mb_substr((string)$compareBRaw, 0, 120) : '';
+$compareFromARaw = $_GET['cmp_from_a'] ?? '';
+$compareToARaw = $_GET['cmp_to_a'] ?? '';
+$compareFromBRaw = $_GET['cmp_from_b'] ?? '';
+$compareToBRaw = $_GET['cmp_to_b'] ?? '';
+$compareFromA = is_scalar($compareFromARaw) && stats_valid_date((string)$compareFromARaw) ? (string)$compareFromARaw : '';
+$compareToA = is_scalar($compareToARaw) && stats_valid_date((string)$compareToARaw) ? (string)$compareToARaw : '';
+$compareFromB = is_scalar($compareFromBRaw) && stats_valid_date((string)$compareFromBRaw) ? (string)$compareFromBRaw : '';
+$compareToB = is_scalar($compareToBRaw) && stats_valid_date((string)$compareToBRaw) ? (string)$compareToBRaw : '';
+if ($compareMode === 'range') {
+	$compareToA = $compareToA !== '' ? $compareToA : (new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin')))->format('Y-m-d');
+	$compareFromA = $compareFromA !== '' ? $compareFromA : (new DateTimeImmutable($compareToA))->modify('-29 days')->format('Y-m-d');
+	$compareToB = $compareToB !== '' ? $compareToB : (new DateTimeImmutable($compareFromA))->modify('-1 day')->format('Y-m-d');
+	$compareFromB = $compareFromB !== '' ? $compareFromB : (new DateTimeImmutable($compareToB))->modify('-29 days')->format('Y-m-d');
+}
 
 $pathRaw = $_GET['path'] ?? '';
 $path = is_scalar($pathRaw) ? (string)$pathRaw : '';
@@ -813,6 +875,9 @@ $contentHealth = [];
 $comparisonRows = [];
 $cohortRows = [];
 $prevKpi = [];
+$compareALabel = 'Current';
+$compareBLabel = 'Previous period';
+$compareRows = [];
 $storyTop = null;
 $storyHealth = null;
 $storyTopSlug = '';
@@ -1196,6 +1261,70 @@ if ($authed) {
 				['label' => 'Avg. time', 'kind' => 'duration', 'current' => $avgDuration, 'previous' => $prevAvgDuration],
 				['label' => 'Bounce rate', 'kind' => 'percent', 'current' => $bounceRate, 'previous' => $prevBounceRate],
 				['label' => 'Avg. scroll', 'kind' => 'percent', 'current' => $avgScroll, 'previous' => $prevAvgScroll],
+			];
+		}
+
+		if ($compareMode === 'previous' && $range > 0) {
+			$compareRows = [
+				['label' => 'Views', 'kind' => 'int', 'a' => $views, 'b' => $prevViews],
+				['label' => 'Estimated visits', 'kind' => 'int', 'a' => $entries, 'b' => $prevEntries],
+				['label' => 'Avg. time', 'kind' => 'duration', 'a' => $avgDuration, 'b' => $prevAvgDuration],
+				['label' => 'Bounce rate', 'kind' => 'percent', 'a' => $bounceRate, 'b' => $prevBounceRate],
+				['label' => 'Avg. scroll', 'kind' => 'percent', 'a' => $avgScroll, 'b' => $prevAvgScroll],
+			];
+		} elseif ($compareMode === 'entity') {
+			$aPath = $path;
+			$aSource = $source;
+			$aDevice = $device;
+			$bPath = $path;
+			$bSource = $source;
+			$bDevice = $device;
+			$compareValid = false;
+			if ($compareKind === 'path') {
+				$aPath = preg_match('/^[a-zA-Z0-9_-]{1,80}$/', $compareA) ? $compareA : '';
+				$bPath = preg_match('/^[a-zA-Z0-9_-]{1,80}$/', $compareB) ? $compareB : '';
+				$compareValid = $aPath !== '' && $bPath !== '';
+				$compareALabel = $aPath !== '' ? ($titles[$aPath] ?? $aPath) : 'Choose page A';
+				$compareBLabel = $bPath !== '' ? ($titles[$bPath] ?? $bPath) : 'Choose page B';
+			} elseif ($compareKind === 'source') {
+				$aSource = $compareA;
+				$bSource = $compareB;
+				$compareValid = $aSource !== '' && $bSource !== '';
+				$compareALabel = $aSource !== '' ? $aSource : 'Choose source A';
+				$compareBLabel = $bSource !== '' ? $bSource : 'Choose source B';
+			} else {
+				$aDevice = in_array($compareA, ['desktop', 'mobile', 'tablet', 'bot', 'unknown'], true) ? $compareA : '';
+				$bDevice = in_array($compareB, ['desktop', 'mobile', 'tablet', 'bot', 'unknown'], true) ? $compareB : '';
+				$compareValid = $aDevice !== '' && $bDevice !== '';
+				$compareALabel = $aDevice !== '' ? stats_device_label($aDevice) : 'Choose device A';
+				$compareBLabel = $bDevice !== '' ? stats_device_label($bDevice) : 'Choose device B';
+			}
+			if ($compareValid) {
+				[$whereA, $paramsA] = stats_where($range, $aPath, $refType, $aSource, $refPath, $browser, $os, $aDevice, false, $day, $weekday, $hour, $humansOnly);
+				[$whereB, $paramsB] = stats_where($range, $bPath, $refType, $bSource, $refPath, $browser, $os, $bDevice, false, $day, $weekday, $hour, $humansOnly);
+				$snapA = stats_compare_snapshot($pdo, $whereA, $paramsA);
+				$snapB = stats_compare_snapshot($pdo, $whereB, $paramsB);
+				$compareRows = [
+					['label' => 'Views', 'kind' => 'int', 'a' => $snapA['views'], 'b' => $snapB['views']],
+					['label' => 'Estimated visits', 'kind' => 'int', 'a' => $snapA['entries'], 'b' => $snapB['entries']],
+					['label' => 'Avg. time', 'kind' => 'duration', 'a' => $snapA['avg_duration'], 'b' => $snapB['avg_duration']],
+					['label' => 'Bounce rate', 'kind' => 'percent', 'a' => $snapA['bounce_rate'], 'b' => $snapB['bounce_rate']],
+					['label' => 'Avg. scroll', 'kind' => 'percent', 'a' => $snapA['avg_scroll'], 'b' => $snapB['avg_scroll']],
+				];
+			}
+		} elseif ($compareMode === 'range') {
+			$compareALabel = $compareFromA . ' – ' . $compareToA;
+			$compareBLabel = $compareFromB . ' – ' . $compareToB;
+			[$whereA, $paramsA] = stats_where_between($compareFromA, $compareToA, $path, $refType, $source, $refPath, $browser, $os, $device, $humansOnly);
+			[$whereB, $paramsB] = stats_where_between($compareFromB, $compareToB, $path, $refType, $source, $refPath, $browser, $os, $device, $humansOnly);
+			$snapA = stats_compare_snapshot($pdo, $whereA, $paramsA);
+			$snapB = stats_compare_snapshot($pdo, $whereB, $paramsB);
+			$compareRows = [
+				['label' => 'Views', 'kind' => 'int', 'a' => $snapA['views'], 'b' => $snapB['views']],
+				['label' => 'Estimated visits', 'kind' => 'int', 'a' => $snapA['entries'], 'b' => $snapB['entries']],
+				['label' => 'Avg. time', 'kind' => 'duration', 'a' => $snapA['avg_duration'], 'b' => $snapB['avg_duration']],
+				['label' => 'Bounce rate', 'kind' => 'percent', 'a' => $snapA['bounce_rate'], 'b' => $snapB['bounce_rate']],
+				['label' => 'Avg. scroll', 'kind' => 'percent', 'a' => $snapA['avg_scroll'], 'b' => $snapB['avg_scroll']],
 			];
 		}
 
@@ -2410,6 +2539,16 @@ body.present .present-bar { display: flex; }
 .compare-list { display: grid; gap: 6px; }
 .compare-row { display: grid; grid-template-columns: 130px minmax(0, 1fr) 76px; gap: 12px; align-items: center; padding: 7px 8px; border-bottom: 1px solid rgba(36,48,71,.5); }
 .compare-row:last-child { border-bottom: 0; }
+.compare-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; align-items: end; margin: 0 0 16px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); }
+.compare-form label { display: grid; gap: 5px; color: var(--dim); font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; }
+.compare-form input, .compare-form select { width: 100%; padding: 8px 9px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: inherit; }
+.compare-form .actions { display: flex; align-items: end; }
+.compare-form .btn { width: 100%; }
+.compare-head { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 11px; margin: 0 0 6px 130px; }
+.compare-row--detail { grid-template-columns: 130px minmax(0, 1fr) 160px; }
+.compare-bars { display: grid; gap: 3px; }
+.compare-bars i { display: block; height: 5px; min-width: 2px; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+.compare-bars i + i { background: linear-gradient(90deg, var(--sky), #7dd3fc); }
 .compare-label { color: var(--muted); font-size: 12px; }
 .compare-values { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .compare-values strong { font-size: 18px; font-variant-numeric: tabular-nums; }
@@ -2479,6 +2618,7 @@ body.overview-briefing #quality { display: none !important; }
 body.overview-briefing .subnav { display: none !important; }
 body.overview-explore #story-cards { display: none !important; }
 body.present .overview-switch { display: none !important; }
+body.present #overview { display: none !important; }
 @media (max-width: 860px) {
 	.overview-story-grid { grid-template-columns: 1fr; }
 }
@@ -2540,6 +2680,9 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 	.conf-row { grid-template-columns: 84px minmax(0,1fr) 42px; }
 	.present-bar { left: 10px; right: 10px; bottom: 10px; transform: none; justify-content: center; flex-wrap: wrap; }
 	.present-bar span { min-width: 120px; }
+	.compare-row--detail { grid-template-columns: 82px minmax(0,1fr) 92px; }
+	.compare-head { margin-left: 82px; }
+	.compare-values { gap: 5px; }
 }
 @media (hover: none) {
 	.chart-export { opacity: 1; }
@@ -2645,6 +2788,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			<div class="tabs" role="tablist" aria-label="Analytics sections">
 				<button type="button" class="tab active" role="tab" aria-selected="true" data-tab="overview">Overview</button>
 				<button type="button" class="tab" role="tab" aria-selected="false" data-tab="pages">Pages</button>
+				<button type="button" class="tab" role="tab" aria-selected="false" data-tab="compare">Compare</button>
 				<button type="button" class="tab" role="tab" aria-selected="false" data-tab="referrers">Referrers &amp; engagement</button>
 				<button type="button" class="tab" role="tab" aria-selected="false" data-tab="tech">Tech</button>
 				<button type="button" class="tab" role="tab" aria-selected="false" data-tab="storage">Storage</button>
@@ -3275,24 +3419,24 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<div class="audience-block">
 						<div class="chart-cap">Devices <span class="hint">· top 4</span></div>
 						<div class="bars">
-							<?php foreach (array_slice($deviceMix, 0, 4) as $mix): $share = 100 * (int)$mix['value'] / $views; ?>
-								<div class="bar-row"><div class="bar-label"><?php echo stats_h($mix['name']); ?></div><div class="bar-track"><div class="bar-fill" style="width: <?php echo stats_h(number_format($share, 1, '.', '')); ?>%"></div></div><div class="bar-num"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</div></div>
+							<?php foreach (array_slice($deviceMix, 0, 4) as $mix): $share = 100 * (int)$mix['value'] / $views; $deviceFilter = strtolower($mix['name']); ?>
+								<div class="bar-row filter-row" data-filter-kind="device" data-filter-value="<?php echo stats_h($deviceFilter); ?>"><div class="bar-label"><?php echo stats_h($mix['name']); ?></div><div class="bar-track"><div class="bar-fill" style="width: <?php echo stats_h(number_format($share, 1, '.', '')); ?>%"></div></div><div class="bar-num"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</div></div>
 							<?php endforeach; ?>
 						</div>
 					</div>
 					<div class="audience-block">
 						<div class="chart-cap">Browsers <span class="hint">· top 4</span></div>
 						<div class="bars">
-							<?php foreach (array_slice($browserMix, 0, 4) as $mix): $share = 100 * (int)$mix['value'] / $views; ?>
-								<div class="bar-row"><div class="bar-label"><?php echo stats_h($mix['name']); ?></div><div class="bar-track"><div class="bar-fill bar-fill--sky" style="width: <?php echo stats_h(number_format($share, 1, '.', '')); ?>%"></div></div><div class="bar-num"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</div></div>
+							<?php foreach (array_slice($browserMix, 0, 4) as $mix): $share = 100 * (int)$mix['value'] / $views; $browserFilter = preg_replace('/\s+\d+.*$/', '', (string)$mix['name']); ?>
+								<div class="bar-row filter-row" data-filter-kind="browser" data-filter-value="<?php echo stats_h($browserFilter); ?>"><div class="bar-label"><?php echo stats_h($mix['name']); ?></div><div class="bar-track"><div class="bar-fill bar-fill--sky" style="width: <?php echo stats_h(number_format($share, 1, '.', '')); ?>%"></div></div><div class="bar-num"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</div></div>
 							<?php endforeach; ?>
 						</div>
 					</div>
 					<div class="audience-block">
 						<div class="chart-cap">Operating systems <span class="hint">· top 4</span></div>
 						<div class="bars">
-							<?php foreach (array_slice($osMix, 0, 4) as $mix): $share = 100 * (int)$mix['value'] / $views; ?>
-								<div class="bar-row"><div class="bar-label"><?php echo stats_h($mix['name']); ?></div><div class="bar-track"><div class="bar-fill bar-fill--emerald" style="width: <?php echo stats_h(number_format($share, 1, '.', '')); ?>%"></div></div><div class="bar-num"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</div></div>
+							<?php foreach (array_slice($osMix, 0, 4) as $mix): $share = 100 * (int)$mix['value'] / $views; $osFilter = preg_replace('/\s+\d.*$/', '', (string)$mix['name']); ?>
+								<div class="bar-row filter-row" data-filter-kind="os" data-filter-value="<?php echo stats_h($osFilter); ?>"><div class="bar-label"><?php echo stats_h($mix['name']); ?></div><div class="bar-track"><div class="bar-fill bar-fill--emerald" style="width: <?php echo stats_h(number_format($share, 1, '.', '')); ?>%"></div></div><div class="bar-num"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</div></div>
 							<?php endforeach; ?>
 						</div>
 					</div>
@@ -3555,6 +3699,75 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<div class="empty">No data.</div>
 				<?php endif; ?>
 			</div>
+		</div>
+
+		<div class="card" data-tab-group="compare" id="compare-tab">
+			<h2>Compare <span class="hint">· previous, two entities, or two date ranges</span></h2>
+			<form class="compare-form" method="get" action="">
+				<input type="hidden" name="__proxy_path" value="__MN_STATS_BASE_PATH__">
+				<input type="hidden" name="range" value="<?php echo (int)$range; ?>">
+				<input type="hidden" name="day" value="<?php echo stats_h($day); ?>">
+				<input type="hidden" name="weekday" value="<?php echo (int)$weekday; ?>">
+				<input type="hidden" name="hour" value="<?php echo $hour >= 0 ? (int)$hour : ''; ?>">
+				<input type="hidden" name="humans" value="<?php echo $humansOnly ? '1' : ''; ?>">
+				<input type="hidden" name="path" value="<?php echo stats_h($path); ?>">
+				<input type="hidden" name="ref_type" value="<?php echo stats_h($refType); ?>">
+				<input type="hidden" name="source" value="<?php echo stats_h($source); ?>">
+				<input type="hidden" name="ref_path" value="<?php echo stats_h($refPath); ?>">
+				<input type="hidden" name="browser" value="<?php echo stats_h($browser); ?>">
+				<input type="hidden" name="os" value="<?php echo stats_h($os); ?>">
+				<input type="hidden" name="device" value="<?php echo stats_h($device); ?>">
+				<label>Mode
+					<select name="cmp_mode">
+						<option value="previous"<?php echo $compareMode === 'previous' ? ' selected' : ''; ?>>Current vs previous period</option>
+						<option value="entity"<?php echo $compareMode === 'entity' ? ' selected' : ''; ?>>Entity A vs B</option>
+						<option value="range"<?php echo $compareMode === 'range' ? ' selected' : ''; ?>>Date range A vs B</option>
+					</select>
+				</label>
+				<label>Entity type
+					<select name="cmp_kind">
+						<option value="path"<?php echo $compareKind === 'path' ? ' selected' : ''; ?>>Page</option>
+						<option value="source"<?php echo $compareKind === 'source' ? ' selected' : ''; ?>>Source</option>
+						<option value="device"<?php echo $compareKind === 'device' ? ' selected' : ''; ?>>Device</option>
+					</select>
+				</label>
+				<label>A
+					<input name="cmp_a" list="compare-path-list" value="<?php echo stats_h($compareA); ?>" placeholder="A">
+				</label>
+				<label>B
+					<input name="cmp_b" list="compare-path-list" value="<?php echo stats_h($compareB); ?>" placeholder="B">
+				</label>
+				<label>From A
+					<input type="date" name="cmp_from_a" value="<?php echo stats_h($compareFromA); ?>">
+				</label>
+				<label>To A
+					<input type="date" name="cmp_to_a" value="<?php echo stats_h($compareToA); ?>">
+				</label>
+				<label>From B
+					<input type="date" name="cmp_from_b" value="<?php echo stats_h($compareFromB); ?>">
+				</label>
+				<label>To B
+					<input type="date" name="cmp_to_b" value="<?php echo stats_h($compareToB); ?>">
+				</label>
+				<div class="actions"><button type="submit" class="btn btn-primary">Compare</button></div>
+			</form>
+			<datalist id="compare-path-list">
+				<?php foreach ($titles as $compareSlug => $compareTitle): ?><option value="<?php echo stats_h($compareSlug); ?>"><?php echo stats_h($compareTitle); ?></option><?php endforeach; ?>
+			</datalist>
+			<?php if ($compareRows): $compareFmt = static function ($value, string $kind): string { if ($value === null) { return '—'; } if ($kind === 'duration') { return mn_analytics_format_duration((int)round((float)$value)); } if ($kind === 'percent') { return number_format((float)$value, 1, '.', ',') . ' %'; } return mn_analytics_format_number((int)$value); }; ?>
+				<div class="compare-head"><span><?php echo stats_h($compareALabel); ?></span><span><?php echo stats_h($compareBLabel); ?></span></div>
+				<div class="compare-table">
+					<?php foreach ($compareRows as $compareRow): $a = $compareRow['a']; $b = $compareRow['b']; $kind = (string)$compareRow['kind']; $rowMax = max((float)($a ?? 0), (float)($b ?? 0)); $aw = $rowMax > 0 ? 100 * (float)($a ?? 0) / $rowMax : 0; $bw = $rowMax > 0 ? 100 * (float)($b ?? 0) / $rowMax : 0; ?>
+						<div class="compare-row compare-row--detail">
+							<div class="compare-label"><?php echo stats_h($compareRow['label']); ?></div>
+							<div class="compare-values"><strong><?php echo stats_h($compareFmt($a, $kind)); ?></strong><span><?php echo stats_h($compareFmt($b, $kind)); ?></span></div>
+							<div class="compare-bars"><i style="width: <?php echo stats_h(number_format($aw, 1, '.', '')); ?>%"></i><i style="width: <?php echo stats_h(number_format($bw, 1, '.', '')); ?>%"></i></div>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			<?php else: ?>
+				<div class="empty">Choose two entities or two date ranges, or use the previous-period mode.</div>
+			<?php endif; ?>
 		</div>
 
 		<div class="card card-full" data-tab-group="referrers">
@@ -4093,7 +4306,6 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	var pageSourceSourceFilters = <?php echo json_encode($pageSourceSourceFilters, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var seriesDayKeys = <?php echo json_encode($seriesDayKeys, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var anomalies = <?php echo json_encode($seriesAnomalies, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
-	var baseQuery = <?php echo json_encode(stats_query(['day' => '', 'page' => 1]), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var currentQuery = <?php echo json_encode(stats_query(['page' => 1]), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var statsBase = window.__MNStatsBase;
 	if (!statsBase || statsBase.indexOf('__MN_STATS_') === 0) {
@@ -4307,7 +4519,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	}
 
 	function urlWith(overrides) {
-		var params = new URLSearchParams(baseQuery);
+		var params = new URLSearchParams(currentQuery);
 		Object.keys(overrides || {}).forEach(function (key) {
 			var value = overrides[key];
 			if (value === '' || value === null || value === undefined) {
@@ -4666,6 +4878,14 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 		});
 	}
 
+	if (pagesChart) {
+		bindChartOnce(pagesChart, 'click', function (params) {
+			if (pages[params.dataIndex] && pages[params.dataIndex].slug) {
+				goWith({ path: pages[params.dataIndex].slug });
+			}
+		});
+	}
+
 	if (pageShareChart && pageShare.length) {
 		pageShareChart.setOption({
 			backgroundColor: 'transparent',
@@ -4819,11 +5039,36 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	if (browserMixChart && browserMix.length) {
 		browserMixChart.setOption(pieOption(browserMix, ['#e9aa60', '#38bdf8', '#34d399', '#fb7185', '#a78bfa', '#f472b6', '#94a3b8']));
 	}
+	if (browserMixChart) {
+		bindChartOnce(browserMixChart, 'click', function (params) {
+			var value = String(params.name || '').replace(/\s+\d+.*$/, '');
+			if (value) {
+				goWith({ browser: value });
+			}
+		});
+	}
 	if (osMixChart && osMix.length) {
 		osMixChart.setOption(pieOption(osMix, ['#38bdf8', '#e9aa60', '#34d399', '#fb7185', '#a78bfa', '#f472b6', '#94a3b8']));
 	}
+	if (osMixChart) {
+		bindChartOnce(osMixChart, 'click', function (params) {
+			var value = String(params.name || '').replace(/\s+\d.*$/, '');
+			if (value) {
+				goWith({ os: value });
+			}
+		});
+	}
 	if (deviceMixChart && deviceMix.length) {
 		deviceMixChart.setOption(pieOption(deviceMix, ['#e9aa60', '#38bdf8', '#34d399', '#fb7185', '#a78bfa', '#f472b6', '#94a3b8']));
+	}
+
+	if (deviceMixChart) {
+		bindChartOnce(deviceMixChart, 'click', function (params) {
+			var value = String(params.name || '').toLowerCase();
+			if (value) {
+				goWith({ device: value });
+			}
+		});
 	}
 
 	if (clockChart && clockViews.length) {
@@ -5817,7 +6062,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 					// Private mode or storage disabled.
 				}
 				if (window.history && history.replaceState) {
-					history.replaceState(null, '', '#' + name);
+					history.replaceState(null, '', window.location.pathname + window.location.search + '#' + name);
 				}
 			}
 		}

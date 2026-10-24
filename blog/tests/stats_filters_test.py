@@ -168,7 +168,7 @@ def main() -> int:
 				check(has_chip(chips, "Hour:"), "source link preserves other filters", str(chips))
 
 			# Follow the Reset all filters link.
-			reset_match = re.search(r'<a class="chip" href="(\?range=[^"]+)">Reset all filters</a>', filtered.text)
+			reset_match = re.search(r'<a class="chip"[^>]*href="([^"]+)"[^>]*>Reset all filters</a>', filtered.text)
 			check(bool(reset_match), "reset-all link exists")
 			if reset_match:
 				reset_url = urljoin(filtered_url, html.unescape(reset_match.group(1)))
