@@ -28,9 +28,9 @@ This is the story of all of that.
 
 The public relationship with AI has never been stable. It oscillates.
 
-After Dartmouth, the 1960s were a period of genuine optimism — the field was new, well-funded, and full of promise. Then came the first **AI Winter** (1974–1980). The trigger was the **Lighthill Report** (1973), in which Sir James Lighthill, appointed by the UK Parliament to review the state of British AI, concluded that the field had failed to meet its "grandiose objectives" and that its algorithms were only suitable for "toy" problems (\cite[Lighthill, 1973]{lighthillreport}; \cite[Nilsson, 2009]{nilsson1984qai}). In the UK, funding was cut almost to zero. In the US, DARPA's Speech Understanding Research program at Carnegie Mellon was cancelled after the system it produced could only recognize words spoken in a particular order.
+After Dartmouth, the 1960s were a period of genuine optimism — the field was new, well-funded, and full of promise. Then came the first **AI Winter** (1974–1980). The trigger was the **Lighthill Report** (1973), in which Sir James Lighthill, appointed by the UK Parliament to review the state of British AI, concluded that the field had failed to meet its "grandiose objectives" and that its algorithms were only suitable for "toy" problems (\cite[Lighthill, 1973]{lighthillreport}). In the UK, funding was cut almost to zero. In the US, DARPA's Speech Understanding Research program at Carnegie Mellon was cancelled after the system it produced could only recognize words spoken in a particular order.
 
-The second winter (1987–2000) was triggered by the collapse of the **LISP machine market** — a 500-million-dollar hardware industry that disappeared in a single year when general-purpose workstations caught up — and the failure of Japan's **Fifth Generation Computer Project** (¥100 billion, 1982–1992), which had promised machines that could "carry on conversations, translate languages, interpret pictures, and reason like human beings" by 1992 (\cite[Lighthill, 1973]{lighthillreport}; \cite[Nilsson, 2009]{nilsson1984qai}). By the mid-1990s, some computer scientists avoided the term "artificial intelligence" in grant proposals for fear of being viewed as "wild-eyed dreamers."
+The second winter (1987–2000) was triggered by the collapse of the **LISP machine market** — a 500-million-dollar hardware industry that disappeared in a single year when general-purpose workstations caught up — and the failure of Japan's **Fifth Generation Computer Project** (¥100 billion, 1982–1992), which had promised machines that could "carry on conversations, translate languages, interpret pictures, and reason like human beings" by 1992 (\cite[CACM, 2023]{cacm2023aiwinter}). By the mid-1990s, some computer scientists avoided the term "artificial intelligence" in grant proposals for fear of being viewed as "wild-eyed dreamers."
 
 Then: **1997**. IBM's **Deep Blue** defeated world chess champion Garry Kasparov in a six-game match (3½–2½), becoming the first computer to win a full match against a reigning world champion under standard tournament conditions (\cite[Campbell et al., 2002]{campbell2002deepblue}; \cite[Computer History Museum]{computerhistory_deepblue}). The cultural moment was enormous: for the first time, a machine had beaten a human at the game that was the canonical test of "intelligence" in the public imagination. Kasparov, who had alleged cheating (a bug in the engine's code caused a bizarre loop at move 44 of Game 2, which he misread as superior play), later called the machine "as intelligent as your alarm clock" — but the public had already seen something shift.
 
@@ -46,13 +46,9 @@ But it was **November 30, 2022** — the release of **ChatGPT** — that broke t
 
 The most immediate and visceral cultural impact of generative AI has been its capacity to **lie convincingly**. Not to lie in the way a person lies — with intent, with a face, with a voice you can look at — but to lie in the way a *photocopy* lies: a perfect surface reproduction of the truth that contains no truth.
 
-### Voice Cloning and Wire Fraud
+### Voice Cloning and Fraud
 
 The technical capability arrived before the public was ready. In **March 2020**, a MIT researcher demonstrated **15.ai**, a web application capable of generating high-quality speech from just **15 seconds** of training audio — compared to the tens of hours previously required (\cite[15.ai]{fifteenai}). By 2024, OpenAI had corroborated the same order of data efficiency in its own voice-cloning systems.
-
-The first widely reported incident of AI voice fraud came in **2019**: scammers cloned the voice of the **CEO of a German energy company** and called the **chief executive of its UK subsidiary**, instructing him to transfer **€220,000** to a Hungarian bank account. The employee recognized his boss's voice. He made the transfer before being alerted (\cite[WSJ, 2019]{wsj2019voicefraud}). In early **2020**, the same technique was used in an attempted **35-million-dollar** fraud on a branch manager.
-
-A **2023 McAfee global survey** found that **1 in 10** people reported being targeted by an AI voice-cloning scam, and **77%** of those targeted lost money. In **March 2023**, the US Federal Trade Commission issued a consumer warning specifically about AI-faked family member voices requesting money — the "your child has been in an accident, send money now" scam, upgraded from a human impersonator to a synthetic one that is, acoustically, indistinguishable from the real thing.
 
 ### The New Hampshire Robocall (2024)
 
@@ -71,7 +67,7 @@ Documented incidents include:
 * **South Africa (2024)**: Deepfakes of **Biden** threatening sanctions, **Trump** endorsing the wrong party (158,000+ views), and **Eminem** endorsing the EFF (173,000+ views).
 * **Moldova (2024)**: A deepfake of President **Maia Sandu** "throwing support behind a pro-Russian party." Moldovan officials believe Russia is behind it.
 
-CISA's 2024 risk assessment warns that generative AI lowers the cost of producing convincing false election content, and that the risk is compounded by the speed and scale of social media (\cite[CISA, 2024]{cisa2024elections}).
+CISA's 2024 risk assessment catalogues these tactics and warns that generative AI lowers the cost of producing convincing false election content, and that the risk is compounded by the speed and scale of social media (\cite[CISA, 2024]{cisa2024elections}).
 
 ### The Pornography Industrial Complex
 
@@ -85,7 +81,7 @@ The **FBI's Internet Crime Complaint Center** recorded **over 650 million dollar
 
 * **AI-generated profile pictures** of attractive, non-existent people (catfishing at scale)
 * **AI-powered conversation** that maintains the illusion of a real person 24/7, across time zones, without the human operator
-* **"Pig butchering" scams**: a combination of romance and fake cryptocurrency investment platforms, often operated by human-trafficked workers forced to commit fraud. The MIT Technology Review documented the human-trafficking dimension in August 2023.
+* **"Pig butchering" scams**: a combination of romance and fake cryptocurrency investment platforms, often operated at industrial scale (\cite[FBI IC3, 2023]{ic3_2023}).
 * **Voice cloning** for the "emergency" calls described above.
 
 The pattern is clear: AI has not created new *kinds* of crime. It has collapsed the **cost** and **effort** of the old kinds. A fraud that previously required a team, a script, and a voice actor now requires a laptop, a subscription, and 15 seconds of the victim's voice from a social media post.
@@ -263,9 +259,7 @@ A 2026 theoretical model formalizes the risk: AI lifts short-run productivity, b
 
 The **automation bias** literature (Parasuraman & Riley, 1997, and successors) documents a consistent human tendency to **favor an automated system's suggestion and ignore contradictory human information**, even when the human is right (\cite[Parasuraman & Riley, 1997]{parasuraman1997automation}). Key findings:
 
-* In healthcare, clinical decision support improved correct answers from **29% to 50%** (a 21-point gain) but **flipped 7% of originally-correct answers to wrong** when the AI was wrong.
-* In breast-cancer screening, cancers were caught in **46% of cases with no aid** but only **21% with a (failing) automated aid** — the radiologist *agreed with the machine* and missed the cancer.
-* The more reliable an aid *appears*, the less people monitor it ("learned carelessness").
+Studies of clinical decision support and cancer screening have found that a failing automated aid can pull human judgment toward the wrong answer, and that the more reliable an aid *appears*, the less people monitor it ("learned carelessness") (\cite[Parasuraman & Riley, 1997]{parasuraman1997automation}).
 
 With LLMs, the "aid" is *always* confident, *always* fluent, and *always* available. The automation bias is not a bug to be patched; it is a feature of the human cognitive architecture meeting a new kind of tool.
 
