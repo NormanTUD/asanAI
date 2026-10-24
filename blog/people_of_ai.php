@@ -69,6 +69,38 @@ He also wrote poetry — sonnets, mostly — and published a collection, *The Na
 
 Pitts never took a degree. He joined the University of Chicago as a teenager, worked with Norbert Wiener at MIT, and coauthored **“What the Frog's Eye Tells the Frog's Brain”** (1959), which showed that the retina already extracts behaviourally specific features before any central processing — a founding text of computational neuroscience. The experiments themselves were Lettvin's and Maturana's; McCulloch and Pitts joined the byline largely out of respect (\cite[Abraham, 2016, pp. 163–164]{abraham2016rebelgenius}). His later withdrawal from scientific life, after a rupture in the Wiener circle, is one of the field's quiet tragedies (\cite[Lettvin et al., 1959]{lettvin1959frog}).
 
+<div class="optional md" data-headline="Thirteen lives in one">
+McCulloch's career reads as a sequence of identities rather than a single profession:
+
+- **Student** — Haverford, Yale and Columbia; mathematics, philosophy, psychology and medicine.
+- **Poet** — sonnets collected in *The Natural Fit* (1959).
+- **Experimental neurologist** — cats, absinthe, convulsions, head injuries and cortical localisation.
+- **Psychiatry assistant** — Rockland State Hospital, 1932–34, where he met Eilhard von Domarus.
+- **Neurophysiologist** — Dusser de Barenne's strychnine laboratory at Yale, more than twenty papers.
+- **Experimental epistemologist** — Clark Hull's seminars and a physiological theory of knowledge.
+- **Theorist** — with Walter Pitts, from their meeting in 1941.
+- **Mentor** — more than 120 younger collaborators and an open door.
+- **Neuropsychiatrist** — the reticular formation, the chemistry of psychoses, electroconvulsive therapy.
+- **Cybernetician** — chair of the Macy conferences.
+- **Experimentalist** — strychnine on cortex, absinthe in cats, patients' blood in rabbits.
+- **Farmer** — Old Lyme: dams, barns and a dairy herd.
+- **Provocateur** — an intellectual showman who treated disciplinary boundaries as arbitrary fences.
+
+Abraham's argument is not that these were masks over a hidden “real” McCulloch, but that the transdisciplinary life was itself the achievement (\cite[Abraham, 2016]{abraham2016rebelgenius}).
+</div>
+
+<div class="optional md" data-headline="The open door: mentoring as a scientific method">
+The open-door policy was literal. In Hinsdale, Old Lyme and Cambridge, students and collaborators lived in the house; Robert Morison observed in 1947 that the household also contained the children of Stanley Gerr and Norbert Wiener's thirteen-year-old daughter, and concluded that McCulloch chose collaborators largely by how much help they needed. His own children called their parents “Warren” and “Rook”; Jerome Lettvin remembered being listened to “as attentively as a colleague”. Manuel Blum, who would win the Turing Award in 1995, said that McCulloch treated him as an equal when he was not one — “He really listened to what I had to say. And I could actually read his stuff” — and that McCulloch “lifted up quite ordinary people (like me) and made them feel special.” The roster that passed through his orbit includes Lettvin, Pitts, Minsky, Papert, Maturana, Varela, Arbib, Cowan, Blum, Kauffman, Selfridge, MacKay, Kilmer, Wall, Moreno-Díaz and Verbeek. It is the clearest evidence for McCulloch's own claim that his best work was the people he trained (\cite[Abraham, 2016]{abraham2016rebelgenius}).
+</div>
+
+<div class="optional md" data-headline="The farm at Old Lyme: dams, barns and symmetry">
+Old Lyme was not a retreat from science but another site of it. The farm McCulloch and Rook bought in 1928 became **Camp Aladdin**, a summer camp for children from Brooklyn where the children made the rules; after the Crash it became a working farm. McCulloch calculated the hydraulics of the dam spillways himself, built a large barn in 1938 and a stone mill building in 1940, and kept a dairy herd during the Second World War. His son David remembered that he knew which wood had which properties for which job, and that the architectural drawings always returned to symmetry — the same interest in proportion that had produced the Columbia thesis on dynamic symmetry (\cite[Abraham, 2016]{abraham2016rebelgenius}).
+</div>
+
+<div class="optional md" data-headline="The eccentric: whisky, absinthe and a beard">
+McCulloch's laboratory life and domestic life were equally unorthodox. He reportedly lived on whisky and ice cream, went to bed around four in the morning, travelled in hobnailed boots, and wore a brown leather jacket under his suit jacket. In early experiments with Elsberg and Pike he injected cats with increasing concentrations of absinthe over two hours and watched the pupils dilate, the muscles twitch, and the eyes dance with nystagmus. With Ladislas Meduna he injected blood from schizophrenic patients into rabbits; in about 60 percent of cases the blood acted as an insulin antagonist, a result that led to the diagnosis of “oneirophrenia” (from Greek *oneiros*, dream). None of this was mere eccentricity: the same willingness to move from poetry to hydraulics to neurochemistry is what made the transdisciplinary programme possible (\cite[Abraham, 2016]{abraham2016rebelgenius}).
+</div>
+
 ### Frank Rosenblatt
 
 \marginfig{frank_rosenblatt_commons.jpg}{Frank Rosenblatt. \cite{img_frank_rosenblatt}. [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).}
