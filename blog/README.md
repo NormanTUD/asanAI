@@ -205,6 +205,10 @@ hour heatmap, date × hour heatmap and daily trend.
 Not stored: IP addresses, full User-Agent strings, visitor cookies,
 localStorage/sessionStorage, persistent visitor IDs, cross-page fingerprinting,
 external referrer paths/queries, search terms, exact minor/patch versions.
+There is also no session identifier, so **complete start-to-end visitor
+journeys are not reconstructable**. The dashboard shows immediate page
+transitions and entry pages instead of pretending that a transition graph is a
+visitor path.
 
 There is deliberately no cross-page "unique visitor" count: that would require
 a persistent identifier and consent. **Estimated visits** count entry pageviews
@@ -217,20 +221,29 @@ by design.
 `/stats` is password-protected and organised in tabs: **Overview**, **Pages**,
 **Referrers & engagement**, **Tech**, **Storage**, **Raw data** and **Privacy**.
 
-- **Overview:** KPI cards (views, views/day, estimated visits, peak hour and
-  day, engagement, bots), an auto-generated **What stands out** summary with a
-  one-click **Copy summary** button, daily trend with estimated visits, 24-hour
-  and weekday rhythm, weekday × hour heatmap, top content and entry pages, top
-  sources, audience/bots, reading behaviour, internal navigation and data
-  quality.
+- **Overview:** a **Today** hero (estimated visits, views, same-weekday trend,
+  7-day sparkline, last-data age) and a 3-item briefing, nine secondary KPI
+  cards, a collapsible full briefing with **Copy summary**, daily trend with
+  estimated visits and spike/dip annotations, traffic clock, 24-hour and
+  weekday rhythm, weekday × hour heatmap (views / estimated visits toggle),
+  page attention matrix, reading funnel, content and source list/treemap views,
+  top movers, page portfolio, audience/bots, reading behaviour, immediate page
+  transitions, calendar heatmap, humans-vs-bots area and page × source heatmap.
+- **Presentation & theme:** **Present** hides the chrome and steps through three
+  slides (traffic & rhythm, content & attention, sources & confidence) with
+  arrow keys; **Light** switches the dashboard and charts to a projector-friendly
+  light theme. Every ECharts chart has a **PNG** download button.
 - **Pages:** page-performance bar chart, page-share donut (top 6 + other) and a
   table with per-page sparklines (including zero-view pages). The table lists
   all pages; scroll horizontally if needed.
-- **Referrers & engagement:** referrer donut and table with share/bounce,
-  internal-navigation **Sankey** (previous page → next page), internal
-  navigation table, time-on-page and scroll-depth histograms, and the
-  reading-time heatmap. Weaker cycle-closing transitions are omitted so the
-  Sankey stays acyclic; the table and raw rows still contain all transitions.
+- **Referrers & engagement:** referrer donut, treemap and list with
+  share/bounce; **immediate page transitions** as a default transition matrix
+  (all transitions, including cycles) with an optional flow view; entry pages
+  (where visits start); internal-navigation table; time-on-page and scroll-depth
+  histograms; and the reading-time heatmap. The flow view omits weaker
+  cycle-closing edges, while the matrix keeps them. Neither is a complete
+  visitor journey: a page can appear as a source simply because it was the
+  previous page, and exact paths would require a persistent session ID.
 - **Tech:** browser/OS/device share donuts and tables with bounce rates, plus
   bot reasons. Click a detected reason (or a bot row in Raw data) to see the
   matching rule; the full bot-rule list is in the same tab.
@@ -292,6 +305,35 @@ notice are shown. Existing data is never deleted. Remove the file to re-enable
 everything on the next request. The unit test ignores the switch via
 `MN_ANALYTICS_TEST_MODE=1`, so a local kill switch does not break CI.
 
+### Reverse proxy (`asanai_blog_proxy.php`)
+
+The proxy is a small reverse proxy for embedding the blog on another site. It
+uses `?<path>` as the remote path, e.g.
+`asanai_blog_proxy.php?stats.php`. Set `ASANAI_BLOG_PROXY_REMOTE` to override
+the default remote base for staging/tests.
+
+It is method- and cookie-aware: it forwards GET/POST bodies, the visitor
+User-Agent/Referer/DNT/Sec-GPC/Sec-Fetch headers, and the blog's own cookies
+(`theme`, `topics_pref`, `mnstats`, `mn_stats_admin`, `mn_stats_exclude`) to the
+remote. It rewrites `Set-Cookie` paths for the proxy origin, strips
+`Secure` when the proxy itself is HTTP, and forwards redirects as proxy
+redirects. This makes the password-protected **stats login, filters, CSV
+export and SQLite backup work through the proxy**. The stats form carries a
+`__proxy_path` hidden field so GET submissions keep the remote path; the stats
+JS receives the proxy base path.
+
+HTML links/forms stay on the proxy, while same-origin assets are proxied or
+rewritten. CSS `url(...)`/`@import` and font preloads are rewritten too, so
+fonts do not hit CORS. The analytics endpoint in the inline tracker config is
+rewritten to `asanai_blog_proxy.php?track.php`, so page-time/scroll beacons are
+forwarded to the remote `track.php`. `X-Frame-Options` and CSP are not
+forwarded (the proxy is intentionally embeddable); cookies are filtered to the
+blog's own names so unrelated host cookies are never sent to the remote.
+
+The remote analytics still records the pageview; the proxy does not create a
+second analytics database. Exact visitor paths remain unavailable for the same
+reason as above: there is no session identifier.
+
 ### Tests
 
 ```bash
@@ -306,14 +348,16 @@ dashboard link, admin token and alert visibility. The blog CI workflow installs
 `php-sqlite3` and runs this test.
 
 The dashboard is also smoke-tested locally with Selenium: login, tab switching,
-all charts (daily trend with estimated visits, 24-hour and weekday rhythm,
-weekday × hour heatmap, referrer donut, page bar chart, page-share donut,
-browser/OS/device donuts, Sankey, date × hour heatmap), KPI cards, top
-content/sources, audience/reading cards,
-per-page sparklines, the automatic insights and copy button, scroll-depth
-histogram, sticky/scrollable tables, storage/backup, bot dialog, loader-gated
-alerts, the local kill switch (banner suppression and read-only dashboard), no
-console errors and no horizontal overflow at 1280 px and 390 px on every tab.
+the hero, nine KPI cards, sub-navigation, full briefing and copy button, all
+charts (daily trend with estimated visits and anomalies, traffic clock,
+24-hour/weekday rhythm, weekday × hour heatmap toggles, page attention matrix,
+reading funnel, content/source treemaps, top movers, page portfolio, referrer
+donut, page bar chart, page-share donut, browser/OS/device donuts, transition
+matrix/flow, calendar, humans-vs-bots, page × source, date × hour heatmap),
+light theme, presentation slides, PNG buttons, sticky/scrollable tables,
+storage/backup, bot dialog, loader-gated alerts, the local kill switch (banner
+suppression and read-only dashboard), no console errors and no horizontal
+overflow at 1280 px and 390 px on every tab.
 
 ### Security notes
 

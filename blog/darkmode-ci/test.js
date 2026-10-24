@@ -62,7 +62,7 @@ function parseArgs() {
 }
 
 const ALL_PAGES = [
-    'index', 'intro', 'history', 'untold_history', 'philosophy', 'symbolic_ai',
+    'index', 'intro', 'history', 'untold_history_i', 'untold_history_ii', 'untold_history_iii', 'philosophy', 'symbolic_ai',
     'minimalneuron', 'activationlab', 'intuition', 'differentiation',
     'derivativelab', 'autodiff', 'backproplab', 'losslab', 'optimizerlab',
     'overandunderfittinglab', 'deeplearninglab', 'resnetlab',

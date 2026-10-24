@@ -75,7 +75,7 @@ $mn_december_days = [
 		'time' => '30-40 min',
 		'math' => 5,
 		'short' => 'history',
-		'slugs' => ['history', 'untold_history'],
+		'slugs' => ['history', 'untold_history_i', 'untold_history_ii', 'untold_history_iii'],
 		'deep' => [],
 	],
 	3 => [

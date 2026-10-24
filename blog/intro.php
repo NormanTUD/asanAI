@@ -37,7 +37,7 @@ I tried my best to fact-check every claim, but since this project also my person
 
 What I'm trying to do here is to paint a more-or-less complete picture of how AI came to be, and how many threads were neccessary for it to come into existance.
 
-Similiar to the [unfinishable map](https://unfinishablemap.org/), this is a never-to-be-finished task, since the Universe is constantly changing, and so is AI. My goal is to, as clearly and deeply as possible, draw the current state of what lead to AI systems like chatGPT. I go into the [history](history), starting with the invention of counting itself, and the prehistory, starting with the question [why anything at all exists and the Big Bang](untold_history), and many things inbetween.
+Similiar to the [unfinishable map](https://unfinishablemap.org/), this is a never-to-be-finished task, since the Universe is constantly changing, and so is AI. My goal is to, as clearly and deeply as possible, draw the current state of what lead to AI systems like chatGPT. I go into the [history](history), starting with the invention of counting itself, and the prehistory, starting with the question [why anything at all exists and the Big Bang](untold_history_i), and many things inbetween.
 
 ## What This Course Is — and What It Isn't
 
@@ -47,7 +47,7 @@ Similiar to the [unfinishable map](https://unfinishablemap.org/), this is a neve
 
 ## A Synthesis of Science and History
 
-To understand a Neural Network is to understand a tapestry of ideas that kept sidetracking into unexpected fields — and the tapestry is wide: its threads begin at the **Big Bang**, pass through the forging of the elements, the first cells, and the first numbers, and run on to the first looms and the first chips. Two pages carry that history: [The Brief History of AI](history.php) is the entry into the history of AI — the direct intellectual lineage from the first tools to the first neural models. [The Untold History of AI](untold_history.php) starts at the very beginning: the question of why there is anything at all, the Big Bang, the forging of the elements, and the development of life. The most consequential sidetracks:
+To understand a Neural Network is to understand a tapestry of ideas that kept sidetracking into unexpected fields — and the tapestry is wide: its threads begin at the **Big Bang**, pass through the forging of the elements, the first cells, and the first numbers, and run on to the first looms and the first chips. Two pages carry that history: [The Brief History of AI](history.php) is the entry into the history of AI — the direct intellectual lineage from the first tools to the first neural models. [The Untold History of AI](untold_history_i.php) starts at the very beginning: the question of why there is anything at all, the Big Bang, the forging of the elements, and the development of life. The most consequential sidetracks:
 
 * **Astronomy and Precision:** Astronomers from the fourth century onward, mapping the stars with imperfect data, developed the very optimization tools that let modern LLMs learn from the internet.
 * **The Technical and The Philosophical:** I do not just look at code. Concepts of logic, language, and "Geist" migrate from philosophical debates into billions of trainable parameters — and I follow them the whole way.

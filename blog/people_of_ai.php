@@ -380,10 +380,10 @@ These are the names that appear most often across the course, counted approximat
 |---|---|
 | **Geoffrey Hinton** | [History](history.php), [Backpropagation](backproplab.php), [Optimizers](optimizerlab.php), [Deep Learning](deeplearninglab.php) |
 | **Alan Turing** | [History](history.php), [Algorithms](algorithms.php), [Philosophy](philosophy.php), [Myths](myths.php) |
-| **Norbert Wiener** | [History](history.php), [Untold History](untold_history.php) |
-| **John von Neumann** | [History](history.php), [Software](software.php), [Untold History](untold_history.php) |
-| **Ada Lovelace** | [History](history.php), [Software](software.php), [Untold History](untold_history.php) |
-| **Charles Babbage** | [History](history.php), [Software](software.php), [Untold History](untold_history.php) |
+| **Norbert Wiener** | [History](history.php), [Untold History](untold_history_iii.php) |
+| **John von Neumann** | [History](history.php), [Software](software.php), [Untold History](untold_history_iii.php) |
+| **Ada Lovelace** | [History](history.php), [Software](software.php), [Untold History](untold_history_iii.php) |
+| **Charles Babbage** | [History](history.php), [Software](software.php), [Untold History](untold_history_iii.php) |
 | **Marvin Minsky** | [History](history.php), [AI and Society](ai_and_society.php) |
 | **Seymour Papert** | [History](history.php), [Philosophy](philosophy.php) |
 | **John Hopfield** | [History](history.php), [The Mirror in the Machine](mirror_in_machine.php) |

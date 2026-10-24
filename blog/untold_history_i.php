@@ -3,7 +3,7 @@
 COURSE_METADATA:
 title: The Untold History of AI I: From the Big Bang to Civilisation
 description: The displaced prerequisites, part I: from the first stars and the first cells to the first cities and the first scripts.
-icon: &#128295;
+icon: &#129680;
 part: 6
 order: 2
 color: text-secondary

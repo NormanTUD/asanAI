@@ -36,7 +36,7 @@
 		{ id: "inside", icon: "🔬", title: "Inside the Black Box", desc: "Geometry, topology and the circuits inside a trained model.",
 			lessons: ["origami", "topology", "geometry_ii", "mechanistic_interpretability", "fact_lookup", "unexpected_capabilities", "frontier"] },
 		{ id: "history", icon: "🏺", title: "Ideas & History", desc: "From counting sticks to thinking machines.",
-			lessons: ["history", "language", "information_market", "algorithms", "software", "untold_history", "human_mind", "philosophy"] }
+			lessons: ["history", "language", "information_market", "algorithms", "software", "untold_history_i", "untold_history_ii", "untold_history_iii", "human_mind", "philosophy"] }
 	];
 
 	function esc(s) {

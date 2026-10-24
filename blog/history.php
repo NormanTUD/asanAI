@@ -401,7 +401,7 @@ Von Neumann saw the catch early. After “the great positive contribution of Tur
 
 This breakthrough allowed the brain to be viewed not just as a mysterious organ, but as a computational engine. Parallel to this, \citeauthor{wiener1948cybernetics} defined the field of **\citealternativetitle{wiener1948cybernetics}** in \citeyear{wiener1948cybernetics}. Wiener recognized that both machines and living organisms operate on principles of feedback loops and information transmission. This synthesis of biology, logic, and engineering provided the fertile soil from which modern AI would eventually grow. The full cast of these **cyberneticians** is covered in its own section below.
 
-For the anatomical precondition, see [the neuron doctrine](untold_history.php) and [the all-or-none law](mirror_in_machine.php); for McCulloch's philosophical program, see [Philosophy](philosophy.php).
+For the anatomical precondition, see [the neuron doctrine](untold_history_ii.php) and [the all-or-none law](mirror_in_machine.php); for McCulloch's philosophical program, see [Philosophy](philosophy.php).
 
 This was the conceptual shift from “calculating machines” to the idea that cognition itself might be formalized (see the work of \citeauthor{piccini} for more details).
 </div>

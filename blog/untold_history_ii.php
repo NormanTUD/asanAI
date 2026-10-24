@@ -3,7 +3,7 @@
 COURSE_METADATA:
 title: The Untold History of AI II: The Material Foundations
 description: The displaced prerequisites, part II: glass, metals, electricity, wireless, chips and the industrial base of computation.
-icon: &#128295;
+icon: &#9879;&#65039;
 part: 6
 order: 3
 color: text-secondary
