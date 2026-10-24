@@ -1,5 +1,10 @@
 RewriteEngine On
 
+# The December calendar is a standalone landing page (december.html).
+# Serve it for the pretty URL before the generic .php rewrite.
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^december$ december.html [L]
+
 # Search index cache must not be served directly.
 <FilesMatch "^\.search_cache\.json">
     <IfModule mod_authz_core.c>
