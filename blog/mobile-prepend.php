@@ -32,9 +32,10 @@
 
 (function () {
 	// Only run if we can actually emit HTML (skip CLI / no-server contexts).
-	if (PHP_SAPI === 'cli' || PHP_SAPI === 'cli-server') {
+	if (PHP_SAPI === 'cli') {
 		return;
 	}
+	$_mobile_is_cli_server = (PHP_SAPI === 'cli-server');
 
 	// Already in a buffer started by us? Bail out (defensive against
 	// future code that might also call ob_start).
@@ -64,7 +65,54 @@
 
 	$_mobile_already_loaded = false;
 
-	$_mobile_callback = function ($buffer) use ($_mobile_payload, &$_mobile_already_loaded) {
+	// Endpoints and the private dashboard must not receive blog chrome CSS/JS.
+	$_mobile_script = basename((string)($_SERVER['SCRIPT_FILENAME'] ?? ''));
+	$_mobile_skip = in_array($_mobile_script, ['stats.php', 'track.php'], true);
+
+	$_mobile_callback = function ($buffer) use ($_mobile_payload, &$_mobile_already_loaded, $_mobile_skip, $_mobile_is_cli_server) {
+		if ($_mobile_skip) {
+			return $buffer;
+		}
+		// Never touch JSON, CSV, images or other binary responses.
+		$isHtml = preg_match('/^\s*<!DOCTYPE\s+html/i', $buffer) === 1
+			|| preg_match('/^\s*<html/i', $buffer) === 1;
+		if (!$isHtml) {
+			return $buffer;
+		}
+		// Admin-only analytics health banner (injected right after <body>).
+		if (function_exists('mn_analytics_alert_html')) {
+			try {
+				$alert = mn_analytics_alert_html();
+				if ($alert !== '') {
+					// Keep the admin/setup banner out of the boot screen. It is
+					// revealed only after #loader has been removed by revealContent().
+					$alert = str_replace(
+						'<div role="alert" style="',
+						'<div role="alert" id="mn-analytics-alert" style="display:none;',
+						$alert
+					);
+					$alert .= '<script>(function(){var el=document.getElementById("mn-analytics-alert");if(!el)return;function show(){el.style.display="";}function wait(){var loader=document.getElementById("loader");if(!loader){show();return;}var obs=new MutationObserver(function(){if(!document.getElementById("loader")){obs.disconnect();show();}});obs.observe(document.body,{childList:true,subtree:true});}if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",wait,{once:true});}else{wait();}})();</script>';
+					$withAlert = preg_replace_callback(
+						'#<body([^>]*)>#i',
+						static function (array $match) use ($alert): string {
+							return '<body' . $match[1] . '>' . $alert;
+						},
+						$buffer,
+						1
+					);
+					if (is_string($withAlert)) {
+						$buffer = $withAlert;
+					}
+				}
+			} catch (Throwable $e) {
+				// Never break the page because of the health banner.
+			}
+		}
+		// The test server skips the mobile CSS/JS injection, but the alert above
+		// must still be testable there.
+		if ($_mobile_is_cli_server) {
+			return $buffer;
+		}
 		// No <head>? Pass through (probably a redirect, JSON, or empty).
 		if (stripos($buffer, '</head>') === false) {
 			return $buffer;

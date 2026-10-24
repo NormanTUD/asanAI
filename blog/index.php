@@ -5,6 +5,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="referrer" content="strict-origin-when-cross-origin">
 	<meta name="theme-color" content="<?php echo $themeClass === 'dark' ? '#0f172a' : '#FAF8F1'; ?>">
 	<link rel="icon" type="image/x-icon" href="favicon.ico">
 	<title>From Nothing to ChatGPT</title>

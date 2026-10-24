@@ -31,7 +31,7 @@ jobs:
       - name: Install PHP CLI
         run: |
           sudo apt-get update
-          sudo apt-get install -y php-cli
+          sudo apt-get install -y php-cli php-sqlite3
 
       - name: Install uv
         run: |
@@ -41,6 +41,10 @@ jobs:
       - name: Run PHP Validator
         run: |
           uv run blog/tests/php_validator.py blog/
+
+      - name: Run Analytics Tests
+        run: |
+          php blog/tests/analytics_test.php
 
       - name: Run JS Validator
         run: |

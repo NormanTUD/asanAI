@@ -1,6 +1,7 @@
 <?php
 $GLOBALS["loaded_js"] = [];
 $GLOBALS["debug_mode"] = false;
+require_once __DIR__ . '/lib/analytics.php';
 
 /* ── Blog-Standardserif (globaler Umschalter) ─────────────────
    "utopia"          → Lingua Franca (LaTeX-"fourier"-Look =
@@ -227,6 +228,10 @@ function load_base_js ($defer = false) {
 	js("topics", null, $defer);
 	js("keypoint", null, $defer);
 	js("progress_tracker", null, $defer);
+	if (!mn_analytics_is_kill_switched()) {
+		js("analytics", null, $defer);
+		mn_analytics_print_config();
+	}
 	js("organic-network", null, $defer);
 
 	$files = glob(__DIR__ . "/modules/*.js");
@@ -611,6 +616,7 @@ if(!server_php_self_ends_with_index_php()) {
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+		<meta name="referrer" content="strict-origin-when-cross-origin">
 		<meta name="theme-color" content="<?php echo $themeClass === 'dark' ? '#0f172a' : '#FAF8F1'; ?>">
 		<link rel="icon" type="image/x-icon" href="favicon.ico">
 		<script>

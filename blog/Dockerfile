@@ -53,6 +53,9 @@ COPY . ${APACHE_DOCUMENT_ROOT}/
 # document root must be writable by the Apache user.
 RUN chown -R www-data:www-data ${APACHE_DOCUMENT_ROOT}
 
+# Anonymous analytics lives outside the webroot in the www-data home.
+RUN install -d -o www-data -g www-data -m 775 /var/www/.asanai-blog
+
 EXPOSE 80
 
 CMD ["apache2-foreground"]

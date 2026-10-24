@@ -1,0 +1,3170 @@
+<?php
+/*
+ * Password-protected anonymous analytics dashboard.
+ *
+ * Password source: /etc/blogpassword (override for tests with
+ * BLOG_STATS_PASSWORD_FILE). A plaintext password or a PHP password_hash()
+ * value is accepted. The page itself sets no tracking cookies; the only
+ * cookies are the login session and the optional "exclude my own visits"
+ * preference used by the analytics library.
+ */
+declare(strict_types=1);
+
+define('MN_ANALYTICS_DISABLED', true);
+require_once __DIR__ . '/lib/analytics.php';
+
+header('Content-Type: text/html; charset=utf-8');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: no-referrer');
+header('X-Robots-Tag: noindex, nofollow, noarchive');
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'");
+
+$analyticsKillSwitch = mn_analytics_is_kill_switched();
+$analyticsDisabledReason = mn_analytics_disabled_reason();
+
+function stats_h(mixed $value): string {
+	return htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+function stats_is_secure(): bool {
+	if (!empty($_SERVER['HTTPS']) && (string)$_SERVER['HTTPS'] !== 'off') {
+		return true;
+	}
+	return strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https';
+}
+
+function stats_cookie_path(): string {
+	$script = (string)($_SERVER['SCRIPT_NAME'] ?? '/');
+	$dir = rtrim(str_replace('\\', '/', dirname($script)), '/');
+	return $dir === '' ? '/' : $dir . '/';
+}
+
+function stats_current_url(): string {
+	$uri = (string)($_SERVER['REQUEST_URI'] ?? '/');
+	$uri = str_replace(["\r", "\n"], '', $uri);
+	if ($uri === '' || $uri[0] !== '/' || str_starts_with($uri, '//')) {
+		$uri = '/';
+	}
+	return $uri;
+}
+
+function stats_redirect(): void {
+	header('Location: ' . stats_current_url(), true, 303);
+	exit;
+}
+
+function stats_query(array $overrides = []): string {
+	$allowed = ['range', 'path', 'ref_type', 'source', 'ref_path', 'browser', 'os', 'device', 'page'];
+	$q = [];
+	foreach ($allowed as $key) {
+		$value = array_key_exists($key, $overrides) ? $overrides[$key] : ($_GET[$key] ?? null);
+		if (!is_scalar($value)) {
+			continue;
+		}
+		$value = (string)$value;
+		if ($value === '') {
+			continue;
+		}
+		if ($key === 'page' && (int)$value <= 1) {
+			continue;
+		}
+		$q[$key] = $value;
+	}
+	return http_build_query($q);
+}
+
+function stats_csrf(): string {
+	if (empty($_SESSION['stats_csrf']) || !is_string($_SESSION['stats_csrf'])) {
+		$_SESSION['stats_csrf'] = bin2hex(random_bytes(32));
+	}
+	return $_SESSION['stats_csrf'];
+}
+
+function stats_check_csrf(): bool {
+	$token = $_POST['csrf'] ?? '';
+	if (!is_string($token) || $token === '') {
+		return false;
+	}
+	$known = $_SESSION['stats_csrf'] ?? '';
+	return is_string($known) && $known !== '' && hash_equals($known, $token);
+}
+
+function stats_password_file(): string {
+	return mn_analytics_password_file();
+}
+
+function stats_password_line(): string {
+	return mn_analytics_password_line();
+}
+
+function stats_password_status(): array {
+	$file = stats_password_file();
+	if (!file_exists($file)) {
+		return ['ok' => false, 'reason' => 'missing', 'file' => $file];
+	}
+	if (!is_readable($file)) {
+		return ['ok' => false, 'reason' => 'unreadable', 'file' => $file];
+	}
+	if (stats_password_line() === '') {
+		return ['ok' => false, 'reason' => 'empty', 'file' => $file];
+	}
+	return ['ok' => true, 'file' => $file];
+}
+
+function stats_verify_password(string $input): bool {
+	$line = stats_password_line();
+	if ($line === '') {
+		return false;
+	}
+	if (preg_match('/^\$(?:2[aby]|argon2|6)\$/', $line)) {
+		return password_verify($input, $line);
+	}
+	return hash_equals($line, $input);
+}
+
+function stats_is_authed(): bool {
+	return !empty($_SESSION['stats_auth']);
+}
+
+function stats_login_wait(): int {
+	$until = (int)($_SESSION['stats_lock_until'] ?? 0);
+	return max(0, $until - time());
+}
+
+function stats_web_user(): string {
+	return mn_analytics_web_user();
+}
+
+function stats_set_admin_indicator_cookie(): void {
+	$token = mn_analytics_admin_token();
+	if ($token === '') {
+		return;
+	}
+	setcookie('mn_stats_admin', $token, [
+		'expires' => 0,
+		'path' => stats_cookie_path(),
+		'secure' => stats_is_secure(),
+		'httponly' => true,
+		'samesite' => 'Lax',
+	]);
+	$_COOKIE['mn_stats_admin'] = $token;
+}
+
+function stats_clear_admin_indicator_cookie(): void {
+	setcookie('mn_stats_admin', '', [
+		'expires' => time() - 3600,
+		'path' => stats_cookie_path(),
+		'secure' => stats_is_secure(),
+		'httponly' => true,
+		'samesite' => 'Lax',
+	]);
+	unset($_COOKIE['mn_stats_admin']);
+}
+
+function stats_set_exclude_cookie(bool $on): void {
+	$opts = [
+		'expires' => $on ? time() + 365 * 86400 : time() - 3600,
+		'path' => stats_cookie_path(),
+		'secure' => stats_is_secure(),
+		'httponly' => true,
+		'samesite' => 'Lax',
+	];
+	setcookie('mn_stats_exclude', $on ? '1' : '', $opts);
+	if ($on) {
+		$_COOKIE['mn_stats_exclude'] = '1';
+	} else {
+		unset($_COOKIE['mn_stats_exclude']);
+	}
+}
+
+function stats_flash(string $type, string $text): void {
+	$_SESSION['stats_flash'] = ['type' => $type, 'text' => $text];
+}
+
+function stats_take_flash(): ?array {
+	if (empty($_SESSION['stats_flash']) || !is_array($_SESSION['stats_flash'])) {
+		return null;
+	}
+	$flash = $_SESSION['stats_flash'];
+	unset($_SESSION['stats_flash']);
+	return $flash;
+}
+
+function stats_one(PDO $pdo, string $sql, array $params): array {
+	$stmt = $pdo->prepare($sql);
+	$stmt->execute($params);
+	$row = $stmt->fetch();
+	return is_array($row) ? $row : [];
+}
+
+function stats_all(PDO $pdo, string $sql, array $params): array {
+	$stmt = $pdo->prepare($sql);
+	$stmt->execute($params);
+	$rows = $stmt->fetchAll();
+	return is_array($rows) ? $rows : [];
+}
+
+function stats_where(int $range, string $path, string $refType, string $source, string $refPath, string $browser, string $os, string $device, bool $previous = false): array {
+	$where = ['1=1'];
+	$params = [];
+	if ($range > 0) {
+		$now = time();
+		if ($previous) {
+			$where[] = 'ts >= ?';
+			$params[] = $now - 2 * $range * 86400;
+			$where[] = 'ts < ?';
+			$params[] = $now - $range * 86400;
+		} else {
+			$where[] = 'ts >= ?';
+			$params[] = $now - $range * 86400;
+		}
+	}
+	if ($path !== '') {
+		$where[] = 'path = ?';
+		$params[] = $path;
+	}
+	if ($refType !== '') {
+		$where[] = 'ref_type = ?';
+		$params[] = $refType;
+	}
+	if ($source !== '') {
+		$where[] = 'ref_source = ?';
+		$params[] = $source;
+	}
+	if ($refPath !== '') {
+		$where[] = 'ref_path = ?';
+		$params[] = $refPath;
+	}
+	if ($browser !== '') {
+		$where[] = 'browser = ?';
+		$params[] = $browser;
+	}
+	if ($os !== '') {
+		$where[] = 'os = ?';
+		$params[] = $os;
+	}
+	if ($device !== '') {
+		$where[] = 'device = ?';
+		$params[] = $device;
+	}
+	return [implode(' AND ', $where), $params];
+}
+
+function stats_time_label(int $ts): string {
+	$dt = (new DateTimeImmutable('@' . $ts))->setTimezone(new DateTimeZone('Europe/Berlin'));
+	return $dt->format('Y-m-d H:i');
+}
+
+function stats_browser_label(array $row): string {
+	$browser = isset($row['browser']) ? (string)$row['browser'] : '';
+	if ($browser === '' || $browser === 'Unknown') {
+		return 'Unknown';
+	}
+	$major = $row['browser_major'] ?? null;
+	if ($major !== null && $major !== '') {
+		$browser .= ' ' . (int)$major;
+	}
+	return $browser;
+}
+
+function stats_os_label(array $row): string {
+	$os = isset($row['os']) ? (string)$row['os'] : '';
+	if ($os === '' || $os === 'Unknown') {
+		return 'Unknown';
+	}
+	$version = isset($row['os_version']) ? (string)$row['os_version'] : '';
+	if ($version !== '') {
+		$os .= ' ' . $version;
+	}
+	return $os;
+}
+
+function stats_bounce_class(?float $rate): string {
+	if ($rate === null) {
+		return '';
+	}
+	if ($rate >= 60.0) {
+		return 'bad';
+	}
+	if ($rate <= 20.0) {
+		return 'good';
+	}
+	return '';
+}
+
+function stats_sparkline(array $values, int $width = 96, int $height = 24): string {
+	$count = count($values);
+	if ($count === 0) {
+		return '—';
+	}
+	$max = 0;
+	foreach ($values as $value) {
+		$max = max($max, (int)$value);
+	}
+	if ($max <= 0) {
+		return '—';
+	}
+	$points = [];
+	foreach ($values as $index => $value) {
+		$x = $count > 1 ? ($index / ($count - 1)) * $width : $width / 2;
+		$y = $height - 2 - (((int)$value / $max) * ($height - 4));
+		$points[] = number_format((float)$x, 1, '.', '') . ',' . number_format((float)$y, 1, '.', '');
+	}
+	return '<svg class="spark" width="' . $width . '" height="' . $height . '" viewBox="0 0 ' . $width . ' ' . $height . '" role="img" aria-label="Page trend over the selected period"><polyline points="' . implode(' ', $points) . '" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
+
+function stats_graph_has_path(array $adj, string $from, string $to): bool {
+	if ($from === $to) {
+		return true;
+	}
+	$stack = [$from];
+	$seen = [];
+	while ($stack) {
+		$node = array_pop($stack);
+		if (isset($seen[$node])) {
+			continue;
+		}
+		$seen[$node] = true;
+		foreach (array_keys($adj[$node] ?? []) as $next) {
+			if ($next === $to) {
+				return true;
+			}
+			if (!isset($seen[$next])) {
+				$stack[] = $next;
+			}
+		}
+	}
+	return false;
+}
+
+function stats_mix_data(array $rows, callable $labelFn, int $limit = 6): array {
+	$total = 0;
+	foreach ($rows as $row) {
+		$total += (int)$row['views'];
+	}
+	$data = [];
+	$shown = 0;
+	foreach (array_slice($rows, 0, $limit) as $row) {
+		$value = (int)$row['views'];
+		if ($value <= 0) {
+			continue;
+		}
+		$shown += $value;
+		$data[] = ['name' => $labelFn($row), 'value' => $value];
+	}
+	if ($total > $shown) {
+		$data[] = ['name' => 'Other', 'value' => $total - $shown];
+	}
+	return $data;
+}
+
+function stats_device_label(string $device): string {
+	return match ($device) {
+		'desktop' => 'Desktop',
+		'mobile' => 'Mobile',
+		'tablet' => 'Tablet',
+		'bot' => 'Bot',
+		'unknown' => 'Unknown',
+		default => 'Unknown',
+	};
+}
+
+function stats_client_subline(array $row): string {
+	$os = stats_os_label($row);
+	$device = stats_device_label((string)($row['device'] ?? ''));
+	if ($os === 'Unknown' && $device === 'Unknown') {
+		return '';
+	}
+	return $os . ' · ' . $device;
+}
+
+function stats_day_label(string $day): string {
+	$dt = DateTimeImmutable::createFromFormat('!Y-m-d', $day, new DateTimeZone('Europe/Berlin'));
+	if (!$dt) {
+		return $day;
+	}
+	return $dt->format('D, M j');
+}
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+	ini_set('session.use_strict_mode', '1');
+	ini_set('session.use_only_cookies', '1');
+	ini_set('session.cookie_httponly', '1');
+	session_name('mnstats');
+	session_set_cookie_params([
+		'lifetime' => 0,
+		'path' => stats_cookie_path(),
+		'secure' => stats_is_secure(),
+		'httponly' => true,
+		'samesite' => 'Strict',
+	]);
+	session_start();
+}
+
+$rangeOptions = [7 => '7 days', 30 => '30 days', 90 => '90 days', 365 => '1 year', 0 => 'All'];
+
+$rangeRaw = $_GET['range'] ?? 30;
+$range = is_scalar($rangeRaw) ? (int)$rangeRaw : 30;
+if (!array_key_exists($range, $rangeOptions)) {
+	$range = 30;
+}
+
+$pathRaw = $_GET['path'] ?? '';
+$path = is_scalar($pathRaw) ? (string)$pathRaw : '';
+if ($path !== '' && !preg_match('/^[a-zA-Z0-9_-]{1,80}$/', $path)) {
+	$path = '';
+}
+
+$refTypeRaw = $_GET['ref_type'] ?? '';
+$refType = is_scalar($refTypeRaw) ? (string)$refTypeRaw : '';
+if (!in_array($refType, ['', 'direct', 'internal', 'search', 'social', 'external'], true)) {
+	$refType = '';
+}
+
+$sourceRaw = $_GET['source'] ?? '';
+$source = is_scalar($sourceRaw) ? (string)$sourceRaw : '';
+if ($source !== '') {
+	$source = mb_substr($source, 0, 120);
+}
+
+$refPathRaw = $_GET['ref_path'] ?? '';
+$refPath = is_scalar($refPathRaw) ? (string)$refPathRaw : '';
+if ($refPath !== '' && !preg_match('/^[a-zA-Z0-9_-]{1,80}$/', $refPath)) {
+	$refPath = '';
+}
+
+$browserRaw = $_GET['browser'] ?? '';
+$browser = is_scalar($browserRaw) ? (string)$browserRaw : '';
+if ($browser !== '' && !preg_match('/^[a-zA-Z0-9 ._+\-]{1,32}$/', $browser)) {
+	$browser = '';
+}
+
+$osRaw = $_GET['os'] ?? '';
+$os = is_scalar($osRaw) ? (string)$osRaw : '';
+if ($os !== '' && !preg_match('/^[a-zA-Z0-9 ._+\-]{1,16}$/', $os)) {
+	$os = '';
+}
+
+$deviceRaw = $_GET['device'] ?? '';
+$device = is_scalar($deviceRaw) ? (string)$deviceRaw : '';
+if (!in_array($device, ['', 'desktop', 'mobile', 'tablet', 'bot', 'unknown'], true)) {
+	$device = '';
+}
+
+$pageRaw = $_GET['page'] ?? 1;
+$pageNum = is_scalar($pageRaw) ? max(1, (int)$pageRaw) : 1;
+$perPage = 100;
+
+$actionRaw = $_POST['action'] ?? '';
+$action = is_scalar($actionRaw) ? (string)$actionRaw : '';
+$loginError = '';
+$flash = null;
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
+	if ($action === 'login') {
+		if (!stats_check_csrf()) {
+			$loginError = 'The session has expired. Please reload the page.';
+		} elseif (stats_login_wait() > 0) {
+			$loginError = 'Too many failed attempts. Please wait ' . stats_login_wait() . ' seconds.';
+		} else {
+			$passwordRaw = $_POST['password'] ?? '';
+			$password = is_scalar($passwordRaw) ? (string)$passwordRaw : '';
+			if (stats_verify_password($password)) {
+				session_regenerate_id(true);
+				$_SESSION['stats_auth'] = true;
+				$_SESSION['stats_fail'] = 0;
+				$_SESSION['stats_lock_until'] = 0;
+				$_SESSION['stats_csrf'] = bin2hex(random_bytes(32));
+				stats_set_admin_indicator_cookie();
+				stats_set_exclude_cookie(true);
+				stats_flash('ok', 'Signed in. Your own visits are excluded by default.');
+				stats_redirect();
+			}
+			usleep(500000);
+			$_SESSION['stats_fail'] = (int)($_SESSION['stats_fail'] ?? 0) + 1;
+			if ($_SESSION['stats_fail'] >= 5) {
+				$_SESSION['stats_lock_until'] = time() + 300;
+				$_SESSION['stats_fail'] = 0;
+			}
+			$loginError = 'Wrong password.';
+		}
+	} elseif ($action === 'logout') {
+		if (!stats_check_csrf()) {
+			$flash = ['type' => 'error', 'text' => 'The session has expired.'];
+		} else {
+			$_SESSION = [];
+			if (ini_get('session.use_cookies')) {
+				$p = session_get_cookie_params();
+				setcookie(session_name(), '', [
+					'expires' => time() - 42000,
+					'path' => $p['path'],
+					'domain' => $p['domain'],
+					'secure' => (bool)$p['secure'],
+					'httponly' => (bool)$p['httponly'],
+					'samesite' => $p['samesite'] ?? 'Strict',
+				]);
+			}
+			session_destroy();
+			stats_clear_admin_indicator_cookie();
+			header('Location: ' . stats_current_url(), true, 303);
+			exit;
+		}
+	} elseif ($action === 'admin_cookie') {
+		if (!stats_is_authed()) {
+			http_response_code(403);
+			exit;
+		}
+		if (!stats_check_csrf()) {
+			$flash = ['type' => 'error', 'text' => 'The session has expired.'];
+		} else {
+			$on = !empty($_POST['exclude_self']);
+			stats_set_exclude_cookie($on);
+			stats_flash('ok', $on ? 'Your own visits are no longer counted.' : 'Your own visits are counted again.');
+			stats_redirect();
+		}
+	} elseif ($action === 'backup') {
+		if (!stats_is_authed()) {
+			http_response_code(403);
+			exit;
+		}
+		if (!stats_check_csrf()) {
+			http_response_code(403);
+			exit;
+		}
+		$backupDir = sys_get_temp_dir() . '/mn-analytics-backup-' . bin2hex(random_bytes(8));
+		if (!@mkdir($backupDir, 0700, true)) {
+			http_response_code(500);
+			exit;
+		}
+		@chmod($backupDir, 0700);
+		$tmp = $backupDir . '/backup.sqlite';
+		if (!mn_analytics_backup_to($tmp)) {
+			@unlink($tmp);
+			@rmdir($backupDir);
+			http_response_code(503);
+			exit;
+		}
+		@chmod($tmp, 0600);
+		$size = @filesize($tmp);
+		header('Content-Type: application/vnd.sqlite3');
+		header('Content-Disposition: attachment; filename="blog-analytics-' . date('Y-m-d-His') . '.sqlite"');
+		header('Content-Length: ' . (int)$size);
+		header('Cache-Control: no-store');
+		header('X-Content-Type-Options: nosniff');
+		readfile($tmp);
+		@unlink($tmp);
+		@rmdir($backupDir);
+		exit;
+	} elseif ($action === 'export') {
+		if (!stats_is_authed()) {
+			http_response_code(403);
+			exit;
+		}
+		if (!stats_check_csrf()) {
+			http_response_code(403);
+			exit;
+		}
+		$pdoExport = mn_analytics_open_db($analyticsKillSwitch);
+		if (!$pdoExport) {
+			http_response_code(503);
+			exit;
+		}
+		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device);
+		$stmt = $pdoExport->prepare(
+			"SELECT ts, day, hour, path, ref_type, ref_source, ref_host, ref_path,
+			        browser, browser_major, os, os_version, device, is_bot, bot_reason,
+			        duration_sec, scroll_pct, completed
+			 FROM pageviews WHERE $whereSql ORDER BY ts DESC, id DESC LIMIT 200000"
+		);
+		$stmt->execute($params);
+		header('Content-Type: text/csv; charset=utf-8');
+		header('Content-Disposition: attachment; filename="blog-analytics-' . date('Y-m-d') . '.csv"');
+		header('Cache-Control: no-store');
+		$out = fopen('php://output', 'w');
+		if ($out === false) {
+			exit;
+		}
+		fwrite($out, "\xEF\xBB\xBF");
+		fputcsv($out, ['Date', 'Hour', 'Page', 'Referrer type', 'Referrer source', 'Referrer host', 'Previous page', 'Browser', 'Browser version', 'OS', 'OS version', 'Device', 'Bot', 'Bot reason', 'Duration (s)', 'Scroll (%)', 'Status'], ';', '"', '\\');
+		while ($row = $stmt->fetch()) {
+			fputcsv($out, [
+				(string)$row['day'],
+				str_pad((string)$row['hour'], 2, '0', STR_PAD_LEFT),
+				(string)$row['path'],
+				mn_analytics_ref_type_label((string)$row['ref_type']),
+				(string)$row['ref_source'],
+				(string)$row['ref_host'],
+				(string)$row['ref_path'],
+				(string)$row['browser'],
+				$row['browser_major'] === null ? '' : (string)$row['browser_major'],
+				(string)$row['os'],
+				(string)$row['os_version'],
+				(string)$row['device'],
+				((int)$row['is_bot'] === 1 ? 'yes' : 'no'),
+				(string)$row['bot_reason'],
+				$row['duration_sec'] === null ? '' : (string)$row['duration_sec'],
+				$row['scroll_pct'] === null ? '' : (string)$row['scroll_pct'],
+				((int)$row['completed'] === 1 ? 'completed' : 'open'),
+			], ';', '"', '\\');
+		}
+		fclose($out);
+		exit;
+	}
+}
+
+if ($flash === null) {
+	$flash = stats_take_flash();
+}
+
+$authed = stats_is_authed();
+$passwordStatus = stats_password_status();
+$excludeSelf = isset($_COOKIE['mn_stats_exclude']) && (string)$_COOKIE['mn_stats_exclude'] === '1';
+$nowLabel = (new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin')))->format('Y-m-d H:i');
+$titles = mn_analytics_lesson_titles();
+$rangeLabel = $rangeOptions[$range];
+
+$dbError = null;
+$views = 0;
+$known = 0;
+$scrollKnown = 0;
+$bounces = 0;
+$entries = 0;
+$internal = 0;
+$bots = 0;
+$pending = 0;
+$avgDuration = null;
+$medianDuration = null;
+$avgScroll = null;
+$oldest = null;
+$newest = null;
+$distinctPages = 0;
+$distinctSources = 0;
+$prevViews = 0;
+$todayViews = 0;
+$hourViews = 0;
+$rowsTotal = 0;
+$dbSize = 0;
+$bounceRate = 0.0;
+$knownPct = 0.0;
+$entryShare = 0.0;
+$deltaHtml = '<span class="delta flat">—</span>';
+$seriesLabels = [];
+$seriesDayKeys = [];
+$seriesCurrent = [];
+$seriesPrev = [];
+$seriesEntries = [];
+$activeDays = 0;
+$periodDays = 1;
+$viewsPerDay = 0.0;
+$entriesPerDay = 0.0;
+$peakDayKey = null;
+$peakDayViews = 0;
+$peakDayLabel = '—';
+$hourProfile = [];
+$hourMax = 0;
+$peakHour = null;
+$peakHourViews = 0;
+$peakHourEntries = 0;
+$weekdayLabels = [1 => 'Mon', 2 => 'Tue', 3 => 'Wed', 4 => 'Thu', 5 => 'Fri', 6 => 'Sat', 7 => 'Sun'];
+$weekdayProfile = [];
+$weekdayMax = 0;
+$peakWeekdayIndex = null;
+$peakWeekdayViews = 0;
+$peakWeekdayEntries = 0;
+$weekHourMap = [];
+$weekHourMax = 0;
+$entryPages = [];
+$engagementBuckets = [];
+$engagementMax = 1;
+$refCounts = ['direct' => 0, 'internal' => 0, 'search' => 0, 'social' => 0, 'external' => 0];
+$topPages = [];
+$pageRows = [];
+$chartPages = [];
+$pageTrendMap = [];
+$pageSparklines = [];
+$pageShareData = [];
+$zeroPages = 0;
+$referrers = [];
+$internalRefs = [];
+$sankeyLinks = [];
+$sankeyNodes = [];
+$sankeyOmitted = 0;
+$browsers = [];
+$osRows = [];
+$deviceRows = [];
+$botReasons = [];
+$botHints = [];
+$botRules = [];
+$botTotal = 0;
+$browserMix = [];
+$osMix = [];
+$deviceMix = [];
+$browserOptions = [];
+$osOptions = [];
+$bucketData = [];
+$bucketMax = 1;
+$scrollBuckets = [];
+$scrollBucketMax = 1;
+$heatDays = [];
+$heatSpan = 28;
+$heatMax = 0;
+$insights = [];
+$raw = [];
+$pageCount = 1;
+$sourceOptions = [];
+$dbPath = mn_analytics_db_path();
+$dbDir = dirname($dbPath);
+$dbDirWritable = is_dir($dbDir) && is_writable($dbDir);
+$dbInsideWebroot = mn_analytics_path_inside_webroot($dbPath);
+$dbFileExists = is_file($dbPath);
+$dbFileWritable = !$dbFileExists || is_writable($dbPath);
+$dbSource = mn_analytics_db_path_source();
+$dbProtectionFile = $dbDir . '/.htaccess';
+$dbProtected = false;
+if ($dbInsideWebroot && is_file($dbProtectionFile) && is_readable($dbProtectionFile)) {
+	$protectionContent = (string)@file_get_contents($dbProtectionFile);
+	$dbProtected = stripos($protectionContent, 'Require all denied') !== false
+		|| stripos($protectionContent, 'Deny from all') !== false;
+}
+$webUser = mn_analytics_web_user();
+$moveDir = '/var/lib/asanai-blog';
+$moveDb = $moveDir . '/analytics.sqlite';
+$moveCommands = [
+	'sudo install -d -o ' . escapeshellarg($webUser) . ' -g ' . escapeshellarg($webUser) . ' -m 775 ' . escapeshellarg($moveDir),
+	'sudo mv ' . escapeshellarg($dbPath) . ' ' . escapeshellarg($moveDb),
+	'sudo chown ' . escapeshellarg($webUser) . ':' . escapeshellarg($webUser) . ' ' . escapeshellarg($moveDb),
+	'sudo chmod 660 ' . escapeshellarg($moveDb),
+	'',
+	'Then set this in blog/lib/analytics_config.php:',
+	"return ['db_path' => '" . $moveDb . "'];",
+];
+
+if ($authed) {
+	$pdo = mn_analytics_open_db($analyticsKillSwitch);
+	if (!$pdo) {
+		$dbError = 'The SQLite database could not be opened.';
+	} else {
+		if (!$analyticsKillSwitch) {
+			mn_analytics_cleanup($pdo, true);
+		}
+		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device);
+		[$prevWhereSql, $prevParams] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, true);
+
+		$kpi = stats_one($pdo, "SELECT
+			COUNT(*) AS views,
+			SUM(CASE WHEN duration_sec IS NOT NULL THEN 1 ELSE 0 END) AS known,
+			AVG(duration_sec) AS avg_duration,
+			SUM(CASE WHEN duration_sec IS NOT NULL AND duration_sec < 10 THEN 1 ELSE 0 END) AS bounces,
+			AVG(scroll_pct) AS avg_scroll,
+			SUM(CASE WHEN scroll_pct IS NOT NULL THEN 1 ELSE 0 END) AS scroll_known,
+		SUM(CASE WHEN ref_type <> 'internal' THEN 1 ELSE 0 END) AS entries,
+		SUM(CASE WHEN ref_type = 'internal' THEN 1 ELSE 0 END) AS internal,
+		SUM(CASE WHEN is_bot = 1 THEN 1 ELSE 0 END) AS bots,
+		SUM(CASE WHEN completed = 0 THEN 1 ELSE 0 END) AS pending,
+			MIN(ts) AS oldest,
+			MAX(ts) AS newest,
+			COUNT(DISTINCT path) AS distinct_pages,
+			COUNT(DISTINCT CASE WHEN ref_source <> '' THEN ref_source END) AS distinct_sources,
+			COUNT(DISTINCT day) AS active_days
+			FROM pageviews WHERE $whereSql", $params);
+
+		$views = (int)($kpi['views'] ?? 0);
+		$known = (int)($kpi['known'] ?? 0);
+		$bounces = (int)($kpi['bounces'] ?? 0);
+		$scrollKnown = (int)($kpi['scroll_known'] ?? 0);
+		$entries = (int)($kpi['entries'] ?? 0);
+		$internal = (int)($kpi['internal'] ?? 0);
+		$bots = (int)($kpi['bots'] ?? 0);
+		$pending = (int)($kpi['pending'] ?? 0);
+		$distinctPages = (int)($kpi['distinct_pages'] ?? 0);
+		$distinctSources = (int)($kpi['distinct_sources'] ?? 0);
+		$activeDays = (int)($kpi['active_days'] ?? 0);
+		$avgDuration = isset($kpi['avg_duration']) && $kpi['avg_duration'] !== null ? (float)$kpi['avg_duration'] : null;
+		$avgScroll = isset($kpi['avg_scroll']) && $kpi['avg_scroll'] !== null ? (float)$kpi['avg_scroll'] : null;
+		$oldest = isset($kpi['oldest']) && $kpi['oldest'] !== null ? (int)$kpi['oldest'] : null;
+		$newest = isset($kpi['newest']) && $kpi['newest'] !== null ? (int)$kpi['newest'] : null;
+		$bounceRate = $known > 0 ? 100 * $bounces / $known : 0.0;
+		$knownPct = $views > 0 ? 100 * $known / $views : 0.0;
+		$entryShare = $views > 0 ? 100 * $entries / $views : 0.0;
+		if ($range > 0) {
+			$periodDays = max(1, $range);
+		} elseif ($oldest !== null && $newest !== null) {
+			$periodDays = max(1, (int)ceil(($newest - $oldest + 1) / 86400));
+		} else {
+			$periodDays = max(1, $activeDays);
+		}
+		$viewsPerDay = $views / $periodDays;
+		$entriesPerDay = $entries / $periodDays;
+
+		if ($known > 0) {
+			$offset = (int)floor($known / 2);
+			$medRow = stats_one(
+				$pdo,
+				"SELECT duration_sec FROM pageviews WHERE $whereSql AND duration_sec IS NOT NULL ORDER BY duration_sec LIMIT 1 OFFSET " . $offset,
+				$params
+			);
+			$medianDuration = isset($medRow['duration_sec']) ? (int)$medRow['duration_sec'] : null;
+		}
+
+		if ($range > 0) {
+			$prevRow = stats_one($pdo, "SELECT COUNT(*) AS views FROM pageviews WHERE $prevWhereSql", $prevParams);
+			$prevViews = (int)($prevRow['views'] ?? 0);
+			if ($prevViews > 0) {
+				$delta = ($views - $prevViews) / $prevViews * 100;
+				$cls = $delta > 0.05 ? 'up' : ($delta < -0.05 ? 'down' : 'flat');
+				$sign = $delta > 0 ? '+' : '';
+				$deltaHtml = '<span class="delta ' . $cls . '">' . $sign . number_format($delta, 1, '.', ',') . ' % vs. previous period</span>';
+			} elseif ($views > 0) {
+				$deltaHtml = '<span class="delta up">new vs. previous period</span>';
+			} else {
+				$deltaHtml = '<span class="delta flat">Previous period: 0</span>';
+			}
+		} else {
+			$deltaHtml = '<span class="delta flat">entire period</span>';
+		}
+
+		$today = (new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin')))->format('Y-m-d');
+		$todayRow = stats_one($pdo, "SELECT COUNT(*) AS n FROM pageviews WHERE $whereSql AND day = ?", array_merge($params, [$today]));
+		$todayViews = (int)($todayRow['n'] ?? 0);
+		$hourStart = intdiv(time(), 3600) * 3600;
+		$hourRow = stats_one($pdo, "SELECT COUNT(*) AS n FROM pageviews WHERE $whereSql AND ts >= ?", array_merge($params, [$hourStart]));
+		$hourViews = (int)($hourRow['n'] ?? 0);
+
+		$rowsRow = stats_one($pdo, "SELECT COUNT(*) AS n FROM pageviews", []);
+		$rowsTotal = (int)($rowsRow['n'] ?? 0);
+		$dbSize = is_file($dbPath) ? (int)@filesize($dbPath) : 0;
+
+		$seriesRows = stats_all($pdo, "SELECT day,
+				COUNT(*) AS views,
+				SUM(CASE WHEN ref_type <> 'internal' THEN 1 ELSE 0 END) AS entries
+			FROM pageviews WHERE $whereSql GROUP BY day ORDER BY day", $params);
+		$currMap = [];
+		$currEntriesMap = [];
+		foreach ($seriesRows as $row) {
+			$currMap[(string)$row['day']] = (int)$row['views'];
+			$currEntriesMap[(string)$row['day']] = (int)$row['entries'];
+		}
+		foreach ($currMap as $dayKey => $dayViews) {
+			if ($dayViews > $peakDayViews) {
+				$peakDayViews = $dayViews;
+				$peakDayKey = (string)$dayKey;
+			}
+		}
+		if ($peakDayKey !== null) {
+			$peakDayLabel = stats_day_label($peakDayKey);
+		}
+
+		$prevMap = [];
+		if ($range > 0) {
+			$prevSeriesRows = stats_all($pdo, "SELECT day, COUNT(*) AS views FROM pageviews WHERE $prevWhereSql GROUP BY day", $prevParams);
+			foreach ($prevSeriesRows as $row) {
+				$prevMap[(string)$row['day']] = (int)$row['views'];
+			}
+		}
+
+		$tz = new DateTimeZone('Europe/Berlin');
+		if ($range > 0) {
+			$end = (new DateTimeImmutable('now', $tz))->setTime(0, 0, 0);
+			$start = $end->modify('-' . ($range - 1) . ' days');
+			for ($i = 0; $i < $range; $i++) {
+				$d = $start->modify('+' . $i . ' days');
+				$key = $d->format('Y-m-d');
+				$seriesDayKeys[] = $key;
+				$seriesLabels[] = $d->format('M j');
+				$seriesCurrent[] = (int)($currMap[$key] ?? 0);
+				$seriesEntries[] = (int)($currEntriesMap[$key] ?? 0);
+				$pkey = $d->modify('-' . $range . ' days')->format('Y-m-d');
+				$seriesPrev[] = (int)($prevMap[$pkey] ?? 0);
+			}
+		} else {
+			$keys = array_keys($currMap);
+			sort($keys);
+			if ($keys) {
+				$first = DateTimeImmutable::createFromFormat('!Y-m-d', (string)$keys[0], $tz);
+				$last = DateTimeImmutable::createFromFormat('!Y-m-d', (string)$keys[count($keys) - 1], $tz);
+				if ($first && $last) {
+					if ((int)$first->diff($last)->days > 730) {
+						$first = $last->modify('-730 days');
+					}
+					for ($d = $first; $d <= $last; $d = $d->modify('+1 day')) {
+						$key = $d->format('Y-m-d');
+						$seriesLabels[] = $d->format('M j');
+						$seriesCurrent[] = (int)($currMap[$key] ?? 0);
+						$seriesEntries[] = (int)($currEntriesMap[$key] ?? 0);
+					}
+				}
+			}
+			if (!$seriesLabels) {
+				$seriesLabels[] = (new DateTimeImmutable('now', $tz))->format('M j');
+				$seriesCurrent[] = 0;
+				$seriesEntries[] = 0;
+			}
+		}
+
+		$refRows = stats_all($pdo, "SELECT ref_type, COUNT(*) AS views FROM pageviews WHERE $whereSql GROUP BY ref_type", $params);
+		foreach ($refRows as $row) {
+			$type = (string)$row['ref_type'];
+			if (array_key_exists($type, $refCounts)) {
+				$refCounts[$type] = (int)$row['views'];
+			}
+		}
+
+		$topPages = stats_all($pdo, "SELECT path,
+				COUNT(*) AS views,
+				AVG(duration_sec) AS avg_duration,
+				AVG(scroll_pct) AS avg_scroll,
+				SUM(CASE WHEN ref_type <> 'internal' THEN 1 ELSE 0 END) AS entries,
+				SUM(CASE WHEN ref_type = 'internal' THEN 1 ELSE 0 END) AS internal,
+				SUM(CASE WHEN duration_sec IS NOT NULL AND duration_sec < 10 THEN 1 ELSE 0 END) AS bounces,
+				SUM(CASE WHEN duration_sec IS NOT NULL THEN 1 ELSE 0 END) AS known,
+				MAX(ts) AS last_ts
+			FROM pageviews WHERE $whereSql
+			GROUP BY path ORDER BY views DESC LIMIT 500", $params);
+
+		$entryPages = stats_all($pdo, "SELECT path, COUNT(*) AS entries
+			FROM pageviews WHERE $whereSql AND ref_type <> 'internal'
+			GROUP BY path ORDER BY entries DESC LIMIT 5", $params);
+
+		$pageMap = [];
+		foreach ($topPages as $page) {
+			$pageMap[(string)$page['path']] = $page;
+		}
+		$pageSlugs = [];
+		if ($path === '') {
+			$pageSlugs = array_keys($titles);
+		}
+		foreach ($pageMap as $slug => $page) {
+			if (!in_array($slug, $pageSlugs, true)) {
+				$pageSlugs[] = $slug;
+			}
+		}
+		foreach ($pageSlugs as $slug) {
+			$pageRows[] = $pageMap[$slug] ?? [
+				'path' => $slug,
+				'views' => 0,
+				'avg_duration' => null,
+				'avg_scroll' => null,
+				'entries' => 0,
+				'internal' => 0,
+				'bounces' => 0,
+				'known' => 0,
+				'last_ts' => null,
+			];
+		}
+		usort($pageRows, function (array $a, array $b) use ($titles): int {
+			$views = (int)$b['views'] <=> (int)$a['views'];
+			if ($views !== 0) {
+				return $views;
+			}
+			$entries = (int)($b['entries'] ?? 0) <=> (int)($a['entries'] ?? 0);
+			if ($entries !== 0) {
+				return $entries;
+			}
+			$titleA = $titles[$a['path']] ?? (string)$a['path'];
+			$titleB = $titles[$b['path']] ?? (string)$b['path'];
+			return strcasecmp($titleA, $titleB);
+		});
+		foreach ($pageRows as $page) {
+			if ((int)$page['views'] === 0) {
+				$zeroPages++;
+			}
+		}
+		$chartPages = array_slice($topPages, 0, 12);
+		$chartPages = array_reverse($chartPages);
+		$chartPages = array_map(function (array $page) use ($titles): array {
+			return [
+				'name' => $titles[$page['path']] ?? (string)$page['path'],
+				'value' => (int)$page['views'],
+				'slug' => (string)$page['path'],
+			];
+		}, $chartPages);
+
+		$pageTrendRows = stats_all($pdo, "SELECT path, day, COUNT(*) AS views
+			FROM pageviews WHERE $whereSql
+			GROUP BY path, day", $params);
+		foreach ($pageTrendRows as $row) {
+			$pageTrendMap[(string)$row['path']][(string)$row['day']] = (int)$row['views'];
+		}
+		foreach ($pageRows as $page) {
+			$slug = (string)$page['path'];
+			$values = [];
+			foreach ($seriesDayKeys as $dayKey) {
+				$values[] = (int)($pageTrendMap[$slug][$dayKey] ?? 0);
+			}
+			$pageSparklines[$slug] = stats_sparkline($values);
+		}
+
+		$shareTotal = 0;
+		foreach ($topPages as $page) {
+			$shareTotal += (int)$page['views'];
+		}
+		$shareShown = 0;
+		foreach (array_slice($topPages, 0, 6) as $page) {
+			$value = (int)$page['views'];
+			if ($value <= 0) {
+				continue;
+			}
+			$shareShown += $value;
+			$pageShareData[] = [
+				'name' => $titles[$page['path']] ?? (string)$page['path'],
+				'value' => $value,
+			];
+		}
+		if ($shareTotal > $shareShown) {
+			$pageShareData[] = ['name' => 'Other pages', 'value' => $shareTotal - $shareShown];
+		}
+
+		$referrers = stats_all($pdo, "SELECT ref_type, ref_source, ref_host,
+				COUNT(*) AS views,
+				AVG(duration_sec) AS avg_duration,
+				SUM(CASE WHEN duration_sec IS NOT NULL AND duration_sec < 10 THEN 1 ELSE 0 END) AS bounces,
+				SUM(CASE WHEN duration_sec IS NOT NULL THEN 1 ELSE 0 END) AS known
+			FROM pageviews WHERE $whereSql AND ref_type <> 'internal'
+			GROUP BY ref_type, ref_source, ref_host ORDER BY views DESC LIMIT 50", $params);
+
+		foreach ($referrers as $row) {
+			$s = (string)$row['ref_source'];
+			if ($s !== '') {
+				$sourceOptions[$s] = true;
+			}
+		}
+		$sourceOptions = array_keys($sourceOptions);
+		sort($sourceOptions);
+
+		$internalRefs = stats_all($pdo, "SELECT ref_path,
+				COUNT(*) AS views,
+				AVG(duration_sec) AS avg_duration
+			FROM pageviews WHERE $whereSql AND ref_type = 'internal'
+			GROUP BY ref_path ORDER BY views DESC LIMIT 30", $params);
+
+		$sankeyRows = stats_all($pdo, "SELECT ref_path AS source, path AS target, COUNT(*) AS views
+			FROM pageviews WHERE $whereSql AND ref_type = 'internal'
+				AND ref_path <> '' AND path <> '' AND ref_path <> path
+			GROUP BY ref_path, path ORDER BY views DESC LIMIT 80", $params);
+		$sankeyNodeMap = [];
+		$sankeyAdj = [];
+		foreach ($sankeyRows as $sankeyRow) {
+			$source = (string)$sankeyRow['source'];
+			$target = (string)$sankeyRow['target'];
+			$value = (int)$sankeyRow['views'];
+			if ($value <= 0 || $source === '' || $target === '' || $source === $target) {
+				continue;
+			}
+			if (stats_graph_has_path($sankeyAdj, $target, $source)) {
+				$sankeyOmitted++;
+				continue;
+			}
+			$sankeyAdj[$source][$target] = true;
+			$sankeyNodeMap[$source] = true;
+			$sankeyNodeMap[$target] = true;
+			$sankeyLinks[] = ['source' => $source, 'target' => $target, 'value' => $value];
+		}
+		foreach (array_keys($sankeyNodeMap) as $sankeySlug) {
+			$sankeyNodes[] = ['name' => $sankeySlug];
+		}
+
+		$browsers = stats_all($pdo, "SELECT browser, browser_major,
+				COUNT(*) AS views,
+				AVG(duration_sec) AS avg_duration,
+				SUM(CASE WHEN duration_sec IS NOT NULL AND duration_sec < 10 THEN 1 ELSE 0 END) AS bounces,
+				SUM(CASE WHEN duration_sec IS NOT NULL THEN 1 ELSE 0 END) AS known
+			FROM pageviews WHERE $whereSql
+			GROUP BY browser, browser_major ORDER BY views DESC LIMIT 30", $params);
+
+		$osRows = stats_all($pdo, "SELECT os, os_version,
+				COUNT(*) AS views,
+				AVG(duration_sec) AS avg_duration,
+				SUM(CASE WHEN duration_sec IS NOT NULL AND duration_sec < 10 THEN 1 ELSE 0 END) AS bounces,
+				SUM(CASE WHEN duration_sec IS NOT NULL THEN 1 ELSE 0 END) AS known
+			FROM pageviews WHERE $whereSql
+			GROUP BY os, os_version ORDER BY views DESC LIMIT 30", $params);
+
+		$deviceRows = stats_all($pdo, "SELECT device,
+				COUNT(*) AS views,
+				AVG(duration_sec) AS avg_duration,
+				SUM(CASE WHEN duration_sec IS NOT NULL AND duration_sec < 10 THEN 1 ELSE 0 END) AS bounces,
+				SUM(CASE WHEN duration_sec IS NOT NULL THEN 1 ELSE 0 END) AS known
+			FROM pageviews WHERE $whereSql
+			GROUP BY device ORDER BY views DESC", $params);
+
+		$botRules = mn_analytics_bot_rules();
+		$botHints = [];
+		foreach ($botRules as $rule) {
+			$botHints[$rule['label']] = $rule['hint'];
+		}
+		$botReasons = stats_all($pdo, "SELECT bot_reason,
+				COUNT(*) AS views,
+				AVG(duration_sec) AS avg_duration
+			FROM pageviews WHERE $whereSql AND is_bot = 1
+			GROUP BY bot_reason ORDER BY views DESC LIMIT 30", $params);
+		foreach ($botReasons as $botRow) {
+			$botTotal += (int)$botRow['views'];
+		}
+
+		$browserMix = stats_mix_data($browsers, 'stats_browser_label');
+		$osMix = stats_mix_data($osRows, 'stats_os_label');
+		$deviceMix = stats_mix_data($deviceRows, static function (array $row): string {
+			return stats_device_label((string)$row['device']);
+		});
+
+		$browserOptions = ['Chrome', 'Safari', 'Firefox', 'Edge', 'Opera', 'Samsung Internet', 'Vivaldi', 'Chromium', 'Brave', 'Internet Explorer', 'Yandex Browser', 'UC Browser', 'MIUI Browser', 'Huawei Browser', 'HeyTap Browser', 'DuckDuckGo', 'QQ Browser', 'Maxthon', 'PaleMoon', 'Waterfox', 'SeaMonkey', 'Falkon', 'Konqueror', 'Epiphany', 'Bot', 'Other', 'Unknown'];
+		foreach ($browsers as $row) {
+			if ((string)$row['browser'] !== '') {
+				$browserOptions[] = (string)$row['browser'];
+			}
+		}
+		$browserOptions = array_values(array_unique($browserOptions));
+		sort($browserOptions);
+
+		$osOptions = ['Windows', 'macOS', 'iOS', 'Android', 'Linux', 'ChromeOS', 'Bot', 'Unknown'];
+		foreach ($osRows as $row) {
+			if ((string)$row['os'] !== '') {
+				$osOptions[] = (string)$row['os'];
+			}
+		}
+		$osOptions = array_values(array_unique($osOptions));
+		sort($osOptions);
+
+		$bucketRows = stats_all($pdo, "SELECT CASE
+				WHEN duration_sec IS NULL THEN 'unknown'
+				WHEN duration_sec < 5 THEN '0-4'
+				WHEN duration_sec < 10 THEN '5-9'
+				WHEN duration_sec < 30 THEN '10-29'
+				WHEN duration_sec < 60 THEN '30-59'
+				WHEN duration_sec < 120 THEN '1-2m'
+				WHEN duration_sec < 300 THEN '2-5m'
+				WHEN duration_sec < 600 THEN '5-10m'
+				WHEN duration_sec < 1800 THEN '10-30m'
+				ELSE '30m+' END AS bucket,
+				COUNT(*) AS views
+			FROM pageviews WHERE $whereSql GROUP BY bucket", $params);
+		$bucketMap = [];
+		foreach ($bucketRows as $row) {
+			$bucketMap[(string)$row['bucket']] = (int)$row['views'];
+		}
+		$bucketOrder = [
+			'0-4' => '0–4 s',
+			'5-9' => '5–9 s',
+			'10-29' => '10–29 s',
+			'30-59' => '30–59 s',
+			'1-2m' => '1–2 min',
+			'2-5m' => '2–5 min',
+			'5-10m' => '5–10 min',
+			'10-30m' => '10–30 min',
+			'30m+' => '30 min+',
+			'unknown' => 'unknown',
+		];
+		foreach ($bucketOrder as $key => $label) {
+			$bucketData[$key] = ['label' => $label, 'views' => $bucketMap[$key] ?? 0];
+			if ($bucketData[$key]['views'] > $bucketMax) {
+				$bucketMax = $bucketData[$key]['views'];
+			}
+		}
+
+		$scrollRows = stats_all($pdo, "SELECT CASE
+				WHEN scroll_pct IS NULL THEN 'unknown'
+				WHEN scroll_pct < 25 THEN '0-24'
+				WHEN scroll_pct < 50 THEN '25-49'
+				WHEN scroll_pct < 75 THEN '50-74'
+				ELSE '75-100' END AS bucket,
+				COUNT(*) AS views
+			FROM pageviews WHERE $whereSql GROUP BY bucket", $params);
+		$scrollMap = [];
+		foreach ($scrollRows as $row) {
+			$scrollMap[(string)$row['bucket']] = (int)$row['views'];
+		}
+		$scrollOrder = [
+			'0-24' => '0–24 %',
+			'25-49' => '25–49 %',
+			'50-74' => '50–74 %',
+			'75-100' => '75–100 %',
+			'unknown' => 'unknown',
+		];
+		foreach ($scrollOrder as $key => $label) {
+			$viewsForBucket = $scrollMap[$key] ?? 0;
+			$scrollBuckets[$key] = ['label' => $label, 'views' => $viewsForBucket];
+			if ($viewsForBucket > $scrollBucketMax) {
+				$scrollBucketMax = $viewsForBucket;
+			}
+		}
+
+		$engagementBuckets = [
+			['label' => '< 10 s', 'views' => (int)($bucketData['0-4']['views'] ?? 0) + (int)($bucketData['5-9']['views'] ?? 0)],
+			['label' => '10–59 s', 'views' => (int)($bucketData['10-29']['views'] ?? 0) + (int)($bucketData['30-59']['views'] ?? 0)],
+			['label' => '1–5 min', 'views' => (int)($bucketData['1-2m']['views'] ?? 0) + (int)($bucketData['2-5m']['views'] ?? 0)],
+			['label' => '5 min+', 'views' => (int)($bucketData['5-10m']['views'] ?? 0) + (int)($bucketData['10-30m']['views'] ?? 0) + (int)($bucketData['30m+']['views'] ?? 0)],
+			['label' => 'unknown', 'views' => (int)($bucketData['unknown']['views'] ?? 0)],
+		];
+		$engagementMax = 1;
+		foreach ($engagementBuckets as $bucket) {
+			if ($bucket['views'] > $engagementMax) {
+				$engagementMax = $bucket['views'];
+			}
+		}
+
+		$heatSpan = $range > 0 ? min($range, 28) : 28;
+		$heatStart = (new DateTimeImmutable('now', $tz))->setTime(0, 0, 0)->modify('-' . ($heatSpan - 1) . ' days');
+		$heatRows = stats_all($pdo, "SELECT day, hour, COUNT(*) AS views FROM pageviews WHERE $whereSql AND ts >= ? GROUP BY day, hour", array_merge($params, [$heatStart->getTimestamp()]));
+		$heatMap = [];
+		foreach ($heatRows as $row) {
+			$d = (string)$row['day'];
+			$h = (int)$row['hour'];
+			$v = (int)$row['views'];
+			$heatMap[$d][$h] = $v;
+			if ($v > $heatMax) {
+				$heatMax = $v;
+			}
+		}
+		for ($i = 0; $i < $heatSpan; $i++) {
+			$d = $heatStart->modify('+' . $i . ' days');
+			$key = $d->format('Y-m-d');
+			$heatDays[$key] = $heatMap[$key] ?? [];
+		}
+
+		for ($h = 0; $h < 24; $h++) {
+			$hourProfile[$h] = ['views' => 0, 'entries' => 0];
+		}
+		$hourRows = stats_all($pdo, "SELECT hour,
+				COUNT(*) AS views,
+				SUM(CASE WHEN ref_type <> 'internal' THEN 1 ELSE 0 END) AS entries
+			FROM pageviews WHERE $whereSql GROUP BY hour", $params);
+		foreach ($hourRows as $row) {
+			$h = (int)$row['hour'];
+			if ($h < 0 || $h > 23) {
+				continue;
+			}
+			$hourProfile[$h] = ['views' => (int)$row['views'], 'entries' => (int)$row['entries']];
+			if ((int)$row['views'] > $hourMax) {
+				$hourMax = (int)$row['views'];
+			}
+			if ($peakHour === null || (int)$row['views'] > $peakHourViews) {
+				$peakHour = $h;
+				$peakHourViews = (int)$row['views'];
+				$peakHourEntries = (int)$row['entries'];
+			}
+		}
+
+		$weekdayProfile = [];
+		foreach ($weekdayLabels as $weekdayIndex => $weekdayLabel) {
+			$weekdayProfile[$weekdayIndex] = ['views' => 0, 'entries' => 0];
+		}
+		$weekdayRows = stats_all($pdo, "SELECT strftime('%w', day) AS dow,
+				COUNT(*) AS views,
+				SUM(CASE WHEN ref_type <> 'internal' THEN 1 ELSE 0 END) AS entries
+			FROM pageviews WHERE $whereSql GROUP BY dow", $params);
+		foreach ($weekdayRows as $row) {
+			$dow = (int)$row['dow'];
+			$weekdayIndex = $dow === 0 ? 7 : $dow;
+			if (!isset($weekdayProfile[$weekdayIndex])) {
+				continue;
+			}
+			$weekdayProfile[$weekdayIndex] = ['views' => (int)$row['views'], 'entries' => (int)$row['entries']];
+			if ((int)$row['views'] > $weekdayMax) {
+				$weekdayMax = (int)$row['views'];
+			}
+			if ($peakWeekdayIndex === null || (int)$row['views'] > $peakWeekdayViews) {
+				$peakWeekdayIndex = $weekdayIndex;
+				$peakWeekdayViews = (int)$row['views'];
+				$peakWeekdayEntries = (int)$row['entries'];
+			}
+		}
+
+		$weekHourMap = [];
+		for ($weekdayIndex = 1; $weekdayIndex <= 7; $weekdayIndex++) {
+			$weekHourMap[$weekdayIndex] = array_fill(0, 24, 0);
+		}
+		$weekHourRows = stats_all($pdo, "SELECT strftime('%w', day) AS dow, hour, COUNT(*) AS views
+			FROM pageviews WHERE $whereSql GROUP BY dow, hour", $params);
+		foreach ($weekHourRows as $row) {
+			$dow = (int)$row['dow'];
+			$weekdayIndex = $dow === 0 ? 7 : $dow;
+			$hour = (int)$row['hour'];
+			if (!isset($weekHourMap[$weekdayIndex]) || $hour < 0 || $hour > 23) {
+				continue;
+			}
+			$weekHourMap[$weekdayIndex][$hour] = (int)$row['views'];
+			if ((int)$row['views'] > $weekHourMax) {
+				$weekHourMax = (int)$row['views'];
+			}
+		}
+
+		$insights = [];
+		if ($views > 0) {
+			$viewsLabel = $views === 1 ? '1 view' : mn_analytics_format_number($views) . ' views';
+			$visitsLabel = $entries === 1 ? '1 estimated visit' : mn_analytics_format_number($entries) . ' estimated visits';
+			$pagesLabel = $distinctPages === 1 ? '1 page' : mn_analytics_format_number($distinctPages) . ' pages';
+			$sourcesLabel = $distinctSources === 1 ? '1 source' : mn_analytics_format_number($distinctSources) . ' sources';
+			$activeDaysLabel = $activeDays === 1 ? '1 active day' : mn_analytics_format_number($activeDays) . ' active days';
+			$insights[] = 'Audience: ' . $viewsLabel . ' and ' . $visitsLabel . ' across ' . $pagesLabel . ' from ' . $sourcesLabel . '.';
+			$insights[] = 'Average activity: ' . number_format($viewsPerDay, 1, '.', ',') . ' views/day and ' . number_format($entriesPerDay, 1, '.', ',') . ' estimated visits/day across ' . $activeDaysLabel . '.';
+
+			$topPage = $topPages[0] ?? null;
+			if ($topPage) {
+				$topSlug = (string)$topPage['path'];
+				$topShare = 100 * (int)$topPage['views'] / $views;
+				$insights[] = 'Most viewed: ' . ($titles[$topSlug] ?? $topSlug) . ' — ' . mn_analytics_format_number((int)$topPage['views']) . ' views (' . number_format($topShare, 1, '.', ',') . '%).';
+			}
+
+			if ($range > 0 && $prevViews > 0) {
+				$delta = 100 * ($views - $prevViews) / $prevViews;
+				if ($delta > 0.05) {
+					$insights[] = 'Traffic is up ' . number_format($delta, 1, '.', ',') . '% versus the previous period (' . mn_analytics_format_number($prevViews) . ' views).';
+				} elseif ($delta < -0.05) {
+					$insights[] = 'Traffic is down ' . number_format(abs($delta), 1, '.', ',') . '% versus the previous period (' . mn_analytics_format_number($prevViews) . ' views).';
+				} else {
+					$insights[] = 'Traffic is flat versus the previous period (' . mn_analytics_format_number($prevViews) . ' views).';
+				}
+			} elseif ($range > 0) {
+				$insights[] = 'Traffic is new: no views in the previous comparable period.';
+			}
+
+			if ($peakHour !== null) {
+				$insights[] = 'Peak hour: ' . sprintf('%02d:00–%02d:59', $peakHour, $peakHour) . ' — ' . mn_analytics_format_number($peakHourViews) . ' views / ' . mn_analytics_format_number($peakHourEntries) . ' estimated visits.';
+			}
+			if ($peakWeekdayIndex !== null) {
+				$insights[] = 'Peak weekday: ' . $weekdayLabels[$peakWeekdayIndex] . ' — ' . mn_analytics_format_number($peakWeekdayViews) . ' views / ' . mn_analytics_format_number($peakWeekdayEntries) . ' estimated visits.';
+			}
+
+			$topRef = $referrers[0] ?? null;
+			if ($topRef) {
+				$refTypeLabel = mn_analytics_ref_type_label((string)$topRef['ref_type']);
+				$refName = trim((string)$topRef['ref_source']);
+				if ($refName === '') {
+					$refName = $refTypeLabel;
+				}
+				$refShare = 100 * (int)$topRef['views'] / $views;
+				$refSuffix = $refName === $refTypeLabel ? '' : ', ' . $refTypeLabel;
+				$insights[] = 'Top source: ' . $refName . ' — ' . mn_analytics_format_number((int)$topRef['views']) . ' views (' . number_format($refShare, 1, '.', ',') . '%' . $refSuffix . ').';
+			}
+
+			$bestPage = null;
+			$bestDuration = 0.0;
+			$worstPage = null;
+			$worstBounce = -1.0;
+			foreach ($topPages as $page) {
+				$knownForPage = (int)($page['known'] ?? 0);
+				if ($knownForPage < 5) {
+					continue;
+				}
+				$duration = $page['avg_duration'] !== null ? (float)$page['avg_duration'] : 0.0;
+				if ($duration > $bestDuration) {
+					$bestDuration = $duration;
+					$bestPage = $page;
+				}
+				$bounce = 100 * (int)$page['bounces'] / $knownForPage;
+				if ($bounce > $worstBounce) {
+					$worstBounce = $bounce;
+					$worstPage = $page;
+				}
+			}
+			if ($bestPage) {
+				$slug = (string)$bestPage['path'];
+				$insights[] = 'Longest average read: ' . ($titles[$slug] ?? $slug) . ' — ' . mn_analytics_format_duration((int)round($bestDuration)) . ' across ' . mn_analytics_format_number((int)$bestPage['known']) . ' timed views.';
+			}
+			if ($worstPage && $worstBounce > 0) {
+				$slug = (string)$worstPage['path'];
+				$insights[] = 'Highest bounce: ' . ($titles[$slug] ?? $slug) . ' — ' . number_format($worstBounce, 1, '.', ',') . '% left before 10 seconds (' . mn_analytics_format_number((int)$worstPage['known']) . ' timed views).';
+			}
+
+			$clientParts = [];
+			if ($browsers) {
+				$label = stats_browser_label($browsers[0]);
+				if ($label !== 'Unknown') {
+					$clientParts[] = $label;
+				}
+			}
+			if ($osRows) {
+				$label = stats_os_label($osRows[0]);
+				if ($label !== 'Unknown') {
+					$clientParts[] = $label;
+				}
+			}
+			if ($deviceRows) {
+				$label = stats_device_label((string)$deviceRows[0]['device']);
+				if ($label !== 'Unknown') {
+					$clientParts[] = $label;
+				}
+			}
+			if ($clientParts) {
+				$insights[] = 'Most common client: ' . implode(' · ', $clientParts) . '.';
+			}
+
+			if ($sankeyLinks) {
+				$flow = $sankeyLinks[0];
+				$from = $titles[$flow['source']] ?? (string)$flow['source'];
+				$to = $titles[$flow['target']] ?? (string)$flow['target'];
+				$insights[] = 'Strongest internal path: ' . $from . ' → ' . $to . ' (' . mn_analytics_format_number((int)$flow['value']) . ' transitions).';
+			}
+
+			if ($scrollKnown > 0) {
+				$deep = (int)($scrollBuckets['75-100']['views'] ?? 0);
+				$insights[] = 'Deep reads: ' . number_format(100 * $deep / $scrollKnown, 1, '.', ',') . '% of measured visits reached 75–100% scroll depth.';
+			}
+
+			if ($bots > 0) {
+				$insights[] = 'Bots: ' . mn_analytics_format_number($bots) . ' pageviews (' . number_format(100 * $bots / $views, 1, '.', ',') . '%); click a bot reason in Tech to see the rule.';
+			} else {
+				$insights[] = 'Bots: none detected in this range.';
+			}
+
+		} else {
+			$insights[] = 'No views match the selected range and filters yet.';
+		}
+
+		$pageCount = max(1, (int)ceil($views / $perPage));
+		if ($pageNum > $pageCount) {
+			$pageNum = $pageCount;
+		}
+		$offsetRaw = ($pageNum - 1) * $perPage;
+		$raw = stats_all($pdo, "SELECT ts, day, hour, path, ref_type, ref_source, ref_host, ref_path,
+			        browser, browser_major, os, os_version, device, is_bot, bot_reason,
+			        duration_sec, scroll_pct, completed
+			FROM pageviews WHERE $whereSql
+			ORDER BY ts DESC, id DESC LIMIT $perPage OFFSET $offsetRaw", $params);
+	}
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="color-scheme" content="dark">
+<title>Blog-Analytics</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<style>
+:root {
+	color-scheme: dark;
+	--bg: #0b1220;
+	--panel: #111c31;
+	--panel2: #16233b;
+	--line: #243047;
+	--text: #e2e8f0;
+	--muted: #94a3b8;
+	--dim: #64748b;
+	--accent: #e9aa60;
+	--accent2: #f4c98a;
+	--emerald: #34d399;
+	--rose: #fb7185;
+	--sky: #38bdf8;
+	--radius: 14px;
+	--shadow: 0 18px 50px rgba(0,0,0,.28);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+	background:
+		radial-gradient(1000px 600px at 12% -10%, rgba(233,170,96,.10), transparent 60%),
+		radial-gradient(900px 500px at 100% 0%, rgba(56,189,248,.08), transparent 55%),
+		var(--bg);
+	color: var(--text);
+	font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	min-height: 100vh;
+}
+a { color: var(--sky); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.page { max-width: 1240px; margin: 0 auto; padding: 28px 22px 60px; }
+.login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 22px; }
+.login-card { width: min(480px, 100%); background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 30px; box-shadow: var(--shadow); }
+.login-card h1 { margin: 0 0 6px; font-size: 24px; letter-spacing: -.02em; }
+.login-card p { color: var(--muted); margin: 0 0 20px; }
+.login-card label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin-bottom: 8px; }
+.login-card input[type=password] { width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font-size: 16px; }
+.login-card button { width: 100%; margin-top: 16px; padding: 12px 14px; border-radius: 10px; border: 0; background: var(--accent); color: #1a1207; font-weight: 700; cursor: pointer; font: inherit; }
+.login-card button:hover { background: var(--accent2); }
+.login-note { margin-top: 18px; font-size: 12px; color: var(--dim); }
+.login-error { margin: 0 0 16px; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(251,113,133,.4); background: rgba(251,113,133,.1); color: #fecdd3; }
+.setup { margin-top: 16px; padding: 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); }
+.setup p { margin: 8px 0; }
+.setup pre { margin: 8px 0; white-space: pre-wrap; word-break: break-word; }
+.setup code { color: var(--accent2); font-size: 12px; line-height: 1.6; }
+.top { display: flex; gap: 18px; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; }
+.top h1 { margin: 0; font-size: 30px; letter-spacing: -.03em; }
+.sub { margin: 4px 0 0; color: var(--muted); }
+.top-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.inline { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
+.switch { display: inline-flex; gap: 8px; align-items: center; color: var(--muted); font-size: 12px; cursor: pointer; }
+.btn, button.btn { border: 1px solid var(--line); background: var(--panel); color: var(--text); padding: 8px 12px; border-radius: 9px; cursor: pointer; font: inherit; display: inline-block; }
+.btn:hover { border-color: var(--accent); text-decoration: none; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+}
+.btn-primary { background: var(--accent); color: #1a1207; border-color: transparent; font-weight: 700; }
+.flash { margin: 0 0 18px; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); }
+.flash.ok { border-color: rgba(52,211,153,.4); background: rgba(52,211,153,.08); color: #bbf7d0; }
+.flash.error { border-color: rgba(251,113,133,.4); background: rgba(251,113,133,.08); color: #fecdd3; }
+.flash.disabled { border-color: rgba(148,163,184,.4); background: rgba(148,163,184,.08); color: #cbd5e1; }
+.toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 16px; }
+.ranges { display: flex; gap: 6px; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--line); padding: 5px; border-radius: 11px; }
+.ranges a { padding: 7px 11px; border-radius: 8px; color: var(--muted); font-size: 12px; font-weight: 600; }
+.ranges a:hover { color: var(--text); background: var(--panel2); text-decoration: none; }
+.ranges a.active { background: var(--accent); color: #1a1207; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 16px; }
+.chip { display: inline-flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+.chip a { color: var(--rose); font-weight: 700; }
+.tabs { display: flex; flex: 1 1 100%; gap: 6px; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--line); padding: 5px; border-radius: 11px; margin: 0; position: sticky; top: 0; z-index: 50; }
+.tab { border: 0; background: transparent; color: var(--muted); padding: 8px 12px; border-radius: 8px; cursor: pointer; font: inherit; font-size: 12px; font-weight: 600; }
+.tab:hover { color: var(--text); background: var(--panel2); }
+.tab.active { background: var(--accent); color: #1a1207; }
+[data-tab-group][hidden] { display: none !important; }
+[data-tab-group] { scroll-margin-top: 64px; }
+.chart.mini { height: 210px; }
+.bot-reason { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 2px; text-align: left; }
+.bot-reason:hover { color: var(--accent2); }
+.bot-dialog { max-width: 560px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); color: var(--text); padding: 20px; box-shadow: var(--shadow); }
+.bot-dialog::backdrop { background: rgba(2,6,23,.7); }
+.bot-dialog h3 { margin: 0 0 10px; font-size: 17px; }
+.bot-dialog p { margin: 0; color: var(--muted); line-height: 1.65; }
+.grid-kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.kpi { background: linear-gradient(180deg, rgba(255,255,255,.025), transparent 70%), var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 15px 16px; min-height: 92px; }
+.kpi .k { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .09em; }
+.kpi .v { font-size: 26px; font-weight: 700; letter-spacing: -.03em; margin-top: 7px; }
+.kpi .s { color: var(--dim); font-size: 11px; margin-top: 4px; }
+.kpi .v.small { font-size: 18px; line-height: 1.25; letter-spacing: -.02em; }
+.rhythm-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.rhythm-facts { display: flex; gap: 16px; flex-wrap: wrap; margin: 0 0 14px; }
+.fact { color: var(--muted); font-size: 12px; }
+.fact strong { color: var(--text); }
+.histogram { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap: 3px; align-items: end; height: 150px; padding: 8px 0 0; }
+.hist-col { display: flex; flex-direction: column; justify-content: flex-end; height: 100%; min-width: 0; }
+.hist-pair { display: flex; align-items: flex-end; gap: 1px; width: 100%; height: calc(100% - 14px); }
+.hist-bar { width: auto; flex: 1 1 0; min-height: 2px; border-radius: 3px 3px 1px 1px; background: linear-gradient(180deg, var(--accent2), var(--accent)); opacity: .88; transition: opacity .15s ease; }
+.hist-bar--visits { background: linear-gradient(180deg, #7dd3fc, var(--sky)); }
+.hist-col:hover .hist-bar { opacity: 1; }
+.hist-label { height: 14px; line-height: 14px; text-align: center; color: var(--dim); font-size: 8px; white-space: nowrap; overflow: hidden; }
+.hist-legend { display: flex; gap: 12px; align-items: center; color: var(--dim); font-size: 10px; margin-top: 6px; }
+.weekday-bars { display: grid; gap: 7px; }
+.weekday-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) 42px; gap: 8px; align-items: center; }
+.weekday-label { color: var(--muted); font-size: 11px; }
+.weekday-track { height: 11px; border-radius: 99px; background: var(--bg); border: 1px solid var(--line); overflow: hidden; }
+.weekday-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--accent2)); min-width: 2px; }
+.weekday-num { text-align: right; color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.mini-list { display: grid; gap: 2px; }
+.mini-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: center; padding: 8px 6px; border-radius: 8px; color: var(--text); text-decoration: none; border-bottom: 1px solid rgba(36,48,71,.55); }
+.mini-row:last-child { border-bottom: 0; }
+a.mini-row:hover { background: rgba(255,255,255,.035); text-decoration: none; }
+.mini-main { min-width: 0; }
+.mini-main .title { display: block; overflow-wrap: anywhere; line-height: 1.35; }
+.mini-main .slug { overflow-wrap: anywhere; }
+.mini-metric { text-align: right; white-space: nowrap; }
+.mini-metric strong { display: block; font-size: 15px; font-variant-numeric: tabular-nums; }
+.mini-metric span { display: block; color: var(--dim); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
+.mini-share { min-width: 48px; text-align: right; color: var(--accent2); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mini-list--compact .mini-row { grid-template-columns: minmax(0, 1fr) auto; padding: 5px 6px; }
+.audience-block + .audience-block { margin-top: 14px; }
+.audience-block .chart-cap { margin-bottom: 5px; }
+.rhythm-note { margin-top: 12px; }
+.card.insight-card { position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(233,170,96,.16), rgba(56,189,248,.07) 42%, var(--panel) 72%); border-color: rgba(233,170,96,.32); }
+.card.insight-card::after { content: ''; position: absolute; right: -40px; bottom: -80px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(233,170,96,.16), transparent 65%); pointer-events: none; }
+.insight-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; position: relative; z-index: 1; }
+.insight-head h2 { margin-bottom: 4px; }
+.insight-head .ref { margin: 0; }
+.insight-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 9px; position: relative; z-index: 1; }
+.insight-list li { position: relative; padding-left: 20px; line-height: 1.55; }
+.insight-list li::before { content: '◆'; position: absolute; left: 2px; top: 4px; color: var(--accent); font-size: 9px; }
+.delta.up { color: var(--emerald); }
+.delta.down { color: var(--rose); }
+.delta.flat { color: var(--muted); }
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px; margin-bottom: 18px; }
+.grid-2even { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin-bottom: 18px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; margin-bottom: 18px; }
+.grid-2 > *, .grid-2even > *, .grid-3 > * { min-width: 0; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; min-width: 0; margin-bottom: 16px; }
+.card-full { grid-column: 1 / -1; }
+.grid-2 .card, .grid-2even .card, .grid-3 .card { margin-bottom: 0; }
+tr.zero-row td { color: var(--dim); }
+tbody tr:hover td { background: rgba(255,255,255,.025); }
+.good { color: var(--emerald); }
+.bad { color: var(--rose); }
+.card h2, .card h3 { margin: 0 0 12px; font-size: 14px; letter-spacing: .01em; }
+.card h2 .hint, .card h3 .hint { color: var(--dim); font-weight: 400; }
+.chart { width: 100%; height: 320px; }
+.chart.small { height: 280px; }
+.chart-cap { color: var(--dim); font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+.spark { color: var(--accent); vertical-align: middle; }
+.spark-cell { width: 104px; }
+.empty { color: var(--dim); padding: 28px 8px; text-align: center; }
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+th, td { text-align: left; padding: 8px 8px; border-bottom: 1px solid rgba(36,48,71,.7); vertical-align: top; }
+th { color: var(--dim); font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.path { max-width: 340px; }
+td.path .title { color: var(--text); }
+td.path .slug, .slug { color: var(--dim); font-size: 11px; }
+.ref { color: var(--muted); }
+.badge { display: inline-block; padding: 2px 7px; border-radius: 999px; font-size: 10px; font-weight: 700; letter-spacing: .03em; border: 1px solid var(--line); background: var(--panel2); color: var(--muted); }
+.badge.direct { color: #cbd5e1; }
+.badge.internal { color: var(--sky); border-color: rgba(56,189,248,.35); }
+.badge.search { color: var(--emerald); border-color: rgba(52,211,153,.35); }
+.badge.social { color: var(--rose); border-color: rgba(251,113,133,.35); }
+.badge.external { color: var(--accent); border-color: rgba(233,170,96,.35); }
+.badge.ok { color: var(--emerald); border-color: rgba(52,211,153,.35); }
+.badge.warn { color: var(--rose); border-color: rgba(251,113,133,.35); }
+.bars { display: grid; gap: 8px; }
+.bar-row { display: grid; grid-template-columns: 88px minmax(0,1fr) 54px; gap: 10px; align-items: center; }
+.bar-label { color: var(--muted); font-size: 11.5px; }
+.bar-track { height: 9px; border-radius: 99px; background: var(--bg); overflow: hidden; border: 1px solid var(--line); }
+.bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--accent2)); min-width: 2px; }
+.bar-fill--sky { background: linear-gradient(90deg, var(--sky), #7dd3fc); }
+.bar-fill--emerald { background: linear-gradient(90deg, var(--emerald), #6ee7b7); }
+.bar-num { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; font-size: 11.5px; }
+.heat-wrap { overflow-x: auto; padding-bottom: 4px; }
+table.heat { min-width: 800px; table-layout: fixed; }
+table.heat th, table.heat td { padding: 2px; border: 1px solid rgba(36,48,71,.55); text-align: center; }
+table.heat th { font-size: 9px; color: var(--dim); }
+table.heat th:first-child, table.heat td:first-child { width: 82px; }
+table.heat td { height: 18px; font-size: 9px; }
+table.heat td span { opacity: .85; }
+table.heat--compact { min-width: 620px; }
+table.heat--compact th:first-child, table.heat--compact td:first-child { width: 40px; }
+table.heat--compact td { height: 16px; font-size: 8px; }
+.heat-legend { display: flex; align-items: center; gap: 8px; color: var(--dim); font-size: 11px; margin-top: 10px; }
+.heat-swatch { width: 14px; height: 10px; border-radius: 2px; border: 1px solid var(--line); }
+.filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; align-items: end; margin: 0 0 14px; }
+.filters label { display: grid; gap: 5px; color: var(--dim); font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; }
+.filters input, .filters select { width: 100%; padding: 9px 10px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: inherit; }
+.filters .actions { display: flex; gap: 8px; align-items: center; }
+.table-wrap { overflow-x: auto; }
+.table-scroll { max-height: 620px; overflow: auto; }
+.table-scroll thead th { position: sticky; top: 0; z-index: 1; background: var(--panel); }
+.pager { display: flex; gap: 8px; align-items: center; justify-content: flex-end; margin-top: 12px; color: var(--muted); font-size: 12px; flex-wrap: wrap; }
+.pager a, .pager span { padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel2); color: var(--muted); }
+.pager a:hover { color: var(--text); text-decoration: none; border-color: var(--accent); }
+.pager .current { color: var(--text); border-color: var(--accent); }
+.details { margin: 18px 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); padding: 14px 16px; }
+.details summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+.details summary:hover { color: var(--text); }
+.details .body { margin-top: 14px; color: var(--muted); font-size: 12.5px; line-height: 1.7; }
+.details h3 { color: var(--text); font-size: 13px; margin: 16px 0 6px; }
+.details p { margin: 0 0 8px; }
+.details ul { margin: 0 0 10px 18px; padding: 0; }
+.details li { margin: 2px 0; }
+.details code { color: var(--accent2); }
+.details pre { white-space: pre-wrap; word-break: break-word; background: var(--bg); border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; color: var(--accent2); font-size: 11.5px; overflow-x: auto; }
+.footer { margin-top: 28px; color: var(--dim); font-size: 11px; text-align: center; }
+.mono { font-variant-numeric: tabular-nums; }
+@media (max-width: 1000px) {
+	.grid-3 { grid-template-columns: 1fr; }
+}
+@media (max-width: 860px) {
+	.grid-2, .grid-2even { grid-template-columns: 1fr; }
+	.rhythm-grid { grid-template-columns: 1fr; }
+	.chart { height: 280px; }
+}
+@media (max-width: 560px) {
+	.page { padding: 18px 12px 44px; }
+	.top h1 { font-size: 24px; }
+	.kpi .v { font-size: 22px; }
+	.kpi .v.small { font-size: 16px; }
+	.bar-row { grid-template-columns: 74px minmax(0,1fr) 44px; }
+	.histogram { height: 120px; gap: 2px; }
+	.hist-label { font-size: 7px; }
+	.mini-row { gap: 8px; }
+	.mini-share { min-width: 42px; }
+}
+</style>
+</head>
+<body>
+<div class="page<?php echo $authed ? '' : ' login-page'; ?>" id="top">
+<?php if (!$authed): ?>
+	<div class="login-card">
+		<h1>Blog-Analytics</h1>
+		<p>Anonymous analytics. Access only with the password from <code><?php echo stats_h($passwordStatus['file']); ?></code>.</p>
+		<?php if ($loginError !== ''): ?>
+			<div class="login-error"><?php echo stats_h($loginError); ?></div>
+		<?php endif; ?>
+		<?php if ($passwordStatus['ok']): ?>
+			<form method="post" action="">
+				<input type="hidden" name="action" value="login">
+				<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">
+				<label for="password">Password</label>
+				<input id="password" name="password" type="password" autocomplete="current-password" autofocus required>
+				<button type="submit">Sign in</button>
+			</form>
+			<p class="login-note">Only technically necessary cookies are used (session, signed admin indicator, optional visit exclusion). No tracking cookies.</p>
+		<?php else: ?>
+			<div class="setup">
+				<strong>Login is not configured yet.</strong>
+				<?php if ($passwordStatus['reason'] === 'missing'): ?>
+					<p>The file <code><?php echo stats_h($passwordStatus['file']); ?></code> is missing.</p>
+				<?php elseif ($passwordStatus['reason'] === 'unreadable'): ?>
+					<p>The file <code><?php echo stats_h($passwordStatus['file']); ?></code> exists but is not readable by the web server user <code><?php echo stats_h(stats_web_user()); ?></code>.</p>
+				<?php else: ?>
+					<p>The file <code><?php echo stats_h($passwordStatus['file']); ?></code> is empty.</p>
+				<?php endif; ?>
+				<p>Create or repair it (replace the password; use a long, random password):</p>
+				<pre><code><?php echo stats_h("sudo sh -c 'printf \"%s\\n\" \"YOUR_PASSWORD\" > /etc/blogpassword && chown root:" . stats_web_user() . " /etc/blogpassword && chmod 640 /etc/blogpassword'"); ?></code></pre>
+				<p class="login-note">On this server Apache runs as <code><?php echo stats_h(stats_web_user()); ?></code>. On other servers, adjust the user accordingly.</p>
+			</div>
+		<?php endif; ?>
+	</div>
+<?php else: ?>
+	<?php echo mn_analytics_alert_html(); ?>
+	<header class="top">
+		<div>
+			<h1>Blog-Analytics</h1>
+			<p class="sub">Anonymous · no IPs · no visitor cookies · UA read transiently · as of <?php echo stats_h($nowLabel); ?> (Berlin) <?php if ($analyticsKillSwitch): ?><span class="badge" style="margin-left:8px;">analytics disabled</span><?php else: $healthIssues = mn_analytics_health_issues(); $healthOk = $healthIssues === []; ?><span class="badge <?php echo $healthOk ? 'ok' : 'warn'; ?>" style="margin-left:8px;"><?php echo $healthOk ? 'analytics healthy' : count($healthIssues) . ' issue(s)'; ?></span><?php endif; ?></p>
+		</div>
+		<div class="top-actions">
+			<form method="post" action="" class="inline">
+				<input type="hidden" name="action" value="admin_cookie">
+				<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">
+				<label class="switch"><input type="checkbox" name="exclude_self" value="1"<?php echo $excludeSelf ? ' checked' : ''; ?> onchange="this.form.submit()"> Exclude my own visits</label>
+				<noscript><button type="submit" class="btn">Save</button></noscript>
+			</form>
+			<form method="post" action="" class="inline">
+				<input type="hidden" name="action" value="logout">
+				<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">
+				<button type="submit" class="btn">Sign out</button>
+			</form>
+		</div>
+	</header>
+
+	<?php if (is_array($flash)): ?>
+		<div class="flash <?php echo stats_h($flash['type'] ?? ''); ?>"><?php echo stats_h($flash['text'] ?? ''); ?></div>
+	<?php endif; ?>
+
+	<?php if ($analyticsKillSwitch): ?>
+		<div class="flash disabled">
+			<strong>Analytics is disabled.</strong> The file <code><?php echo stats_h(mn_analytics_disabled_file()); ?></code> exists. Tracking, health warnings and automatic cleanup are off; existing data stays readable. Delete the file to re-enable.
+			<?php if ($analyticsDisabledReason !== ''): ?><div class="slug" style="margin-top: 4px;">Reason: <?php echo stats_h($analyticsDisabledReason); ?></div><?php endif; ?>
+		</div>
+	<?php endif; ?>
+
+	<?php if ($dbError !== null): ?>
+		<div class="card">
+			<h2>Database not available</h2>
+			<p class="ref"><?php echo $analyticsKillSwitch ? 'Analytics is disabled; the existing database could not be opened.' : 'The database is not available. The red warning above contains the path, cause and repair commands.'; ?></p>
+		</div>
+	<?php else: ?>
+		<div class="toolbar">
+			<nav class="ranges" aria-label="Time range">
+				<?php foreach ($rangeOptions as $r => $label): ?>
+					<a class="<?php echo $range === $r ? 'active' : ''; ?>" href="?<?php echo stats_h(stats_query(['range' => $r, 'page' => 1])); ?>"><?php echo stats_h($label); ?></a>
+				<?php endforeach; ?>
+			</nav>
+			<div class="tabs" role="tablist" aria-label="Analytics sections">
+				<button type="button" class="tab active" role="tab" aria-selected="true" data-tab="overview">Overview</button>
+				<button type="button" class="tab" role="tab" aria-selected="false" data-tab="pages">Pages</button>
+				<button type="button" class="tab" role="tab" aria-selected="false" data-tab="referrers">Referrers &amp; engagement</button>
+				<button type="button" class="tab" role="tab" aria-selected="false" data-tab="tech">Tech</button>
+				<button type="button" class="tab" role="tab" aria-selected="false" data-tab="storage">Storage</button>
+				<button type="button" class="tab" role="tab" aria-selected="false" data-tab="raw">Raw data</button>
+				<button type="button" class="tab" role="tab" aria-selected="false" data-tab="privacy">Privacy</button>
+			</div>
+		</div>
+
+		<?php if ($path !== '' || $refType !== '' || $source !== '' || $refPath !== '' || $browser !== '' || $os !== '' || $device !== ''): ?>
+			<div class="chips">
+				<?php if ($path !== ''): ?>
+					<span class="chip">Page: <?php echo stats_h($titles[$path] ?? $path); ?> <a href="?<?php echo stats_h(stats_query(['path' => '', 'page' => 1])); ?>" aria-label="Remove page filter">×</a></span>
+				<?php endif; ?>
+				<?php if ($refType !== ''): ?>
+					<span class="chip">Type: <?php echo stats_h(mn_analytics_ref_type_label($refType)); ?> <a href="?<?php echo stats_h(stats_query(['ref_type' => '', 'page' => 1])); ?>" aria-label="Remove type filter">×</a></span>
+				<?php endif; ?>
+				<?php if ($source !== ''): ?>
+					<span class="chip">Source: <?php echo stats_h($source); ?> <a href="?<?php echo stats_h(stats_query(['source' => '', 'page' => 1])); ?>" aria-label="Remove source filter">×</a></span>
+				<?php endif; ?>
+				<?php if ($refPath !== ''): ?>
+					<span class="chip">Previous: <?php echo stats_h($titles[$refPath] ?? $refPath); ?> <a href="?<?php echo stats_h(stats_query(['ref_path' => '', 'page' => 1])); ?>" aria-label="Remove previous-page filter">×</a></span>
+				<?php endif; ?>
+				<?php if ($browser !== ''): ?>
+					<span class="chip">Browser: <?php echo stats_h($browser); ?> <a href="?<?php echo stats_h(stats_query(['browser' => '', 'page' => 1])); ?>" aria-label="Remove browser filter">×</a></span>
+				<?php endif; ?>
+				<?php if ($os !== ''): ?>
+					<span class="chip">OS: <?php echo stats_h($os); ?> <a href="?<?php echo stats_h(stats_query(['os' => '', 'page' => 1])); ?>" aria-label="Remove OS filter">×</a></span>
+				<?php endif; ?>
+				<?php if ($device !== ''): ?>
+					<span class="chip">Device: <?php echo stats_h(stats_device_label($device)); ?> <a href="?<?php echo stats_h(stats_query(['device' => '', 'page' => 1])); ?>" aria-label="Remove device filter">×</a></span>
+				<?php endif; ?>
+				<a class="chip" href="?range=<?php echo (int)$range; ?>">Reset all filters</a>
+			</div>
+		<?php endif; ?>
+
+		<form class="filters" method="get" action="">
+			<input type="hidden" name="range" value="<?php echo (int)$range; ?>">
+			<label>Page
+				<input name="path" list="path-list" value="<?php echo stats_h($path); ?>" placeholder="e.g. history">
+			</label>
+			<label>Referrer type
+				<select name="ref_type">
+					<?php foreach (['' => 'All', 'direct' => 'Direct', 'internal' => 'Internal', 'search' => 'Search', 'social' => 'Social', 'external' => 'External'] as $val => $lbl): ?>
+						<option value="<?php echo stats_h($val); ?>"<?php echo $refType === $val ? ' selected' : ''; ?>><?php echo stats_h($lbl); ?></option>
+					<?php endforeach; ?>
+				</select>
+			</label>
+			<label>Source / host
+				<input name="source" list="source-list" value="<?php echo stats_h($source); ?>" placeholder="e.g. Google">
+			</label>
+			<label>Previous page
+				<input name="ref_path" list="path-list" value="<?php echo stats_h($refPath); ?>" placeholder="e.g. intro">
+			</label>
+			<label>Browser
+				<input name="browser" list="browser-list" value="<?php echo stats_h($browser); ?>" placeholder="e.g. Chrome">
+			</label>
+			<label>Operating system
+				<input name="os" list="os-list" value="<?php echo stats_h($os); ?>" placeholder="e.g. Windows">
+			</label>
+			<label>Device
+				<select name="device">
+					<?php foreach (['' => 'All', 'desktop' => 'Desktop', 'mobile' => 'Mobile', 'tablet' => 'Tablet', 'bot' => 'Bot', 'unknown' => 'Unknown'] as $val => $lbl): ?>
+						<option value="<?php echo stats_h($val); ?>"<?php echo $device === $val ? ' selected' : ''; ?>><?php echo stats_h($lbl); ?></option>
+					<?php endforeach; ?>
+				</select>
+			</label>
+			<div class="actions">
+				<button type="submit" class="btn btn-primary">Filter</button>
+				<a class="btn" href="?range=<?php echo (int)$range; ?>">Reset</a>
+			</div>
+		</form>
+		<datalist id="path-list">
+			<?php foreach ($titles as $slug => $title): ?>
+				<option value="<?php echo stats_h($slug); ?>"><?php echo stats_h($title); ?></option>
+			<?php endforeach; ?>
+		</datalist>
+		<datalist id="source-list">
+			<?php foreach ($sourceOptions as $sourceOption): ?>
+				<option value="<?php echo stats_h($sourceOption); ?>"></option>
+			<?php endforeach; ?>
+		</datalist>
+		<datalist id="browser-list">
+			<?php foreach ($browserOptions as $browserOption): ?>
+				<option value="<?php echo stats_h($browserOption); ?>"></option>
+			<?php endforeach; ?>
+		</datalist>
+		<datalist id="os-list">
+			<?php foreach ($osOptions as $osOption): ?>
+				<option value="<?php echo stats_h($osOption); ?>"></option>
+			<?php endforeach; ?>
+		</datalist>
+
+		<div class="grid-kpi" id="overview" data-tab-group="overview">
+			<div class="kpi">
+				<div class="k">Views</div>
+				<div class="v"><?php echo mn_analytics_format_number($views); ?></div>
+				<div class="s"><?php echo $deltaHtml; ?></div>
+			</div>
+			<div class="kpi">
+				<div class="k">Views / day</div>
+				<div class="v"><?php echo stats_h(number_format($viewsPerDay, 1, '.', ',')); ?></div>
+				<div class="s"><?php echo $activeDays === 1 ? '1 active day' : mn_analytics_format_number($activeDays) . ' active days'; ?> · <?php echo mn_analytics_format_number($periodDays); ?> days in range</div>
+			</div>
+			<div class="kpi">
+				<div class="k">Estimated visits</div>
+				<div class="v"><?php echo mn_analytics_format_number($entries); ?></div>
+				<div class="s"><?php echo stats_h(number_format($entriesPerDay, 1, '.', ',')); ?> / day · <?php echo stats_h(number_format($entryShare, 1, '.', ',')); ?> % of views</div>
+			</div>
+			<div class="kpi">
+				<div class="k">Avg. time on page</div>
+				<div class="v"><?php echo stats_h(mn_analytics_format_duration($avgDuration !== null ? (int)round($avgDuration) : null)); ?></div>
+				<div class="s">Median <?php echo stats_h(mn_analytics_format_duration($medianDuration)); ?></div>
+			</div>
+			<div class="kpi">
+				<div class="k">Bounce &lt; 10 s</div>
+				<div class="v <?php echo $known > 0 ? stats_bounce_class($bounceRate) : ''; ?>"><?php echo stats_h(number_format($bounceRate, 1, '.', ',')); ?> %</div>
+				<div class="s"><?php echo mn_analytics_format_number($bounces); ?> of <?php echo mn_analytics_format_number($known); ?> with duration</div>
+			</div>
+			<div class="kpi">
+				<div class="k">Avg. scroll depth</div>
+				<div class="v"><?php echo $avgScroll !== null ? stats_h(number_format($avgScroll, 0, '.', ',')) . ' %' : '—'; ?></div>
+				<div class="s"><?php echo mn_analytics_format_number($scrollKnown); ?> measurements</div>
+			</div>
+			<div class="kpi">
+				<div class="k">Peak hour</div>
+				<div class="v"><?php echo $peakHour !== null ? stats_h(sprintf('%02d:00', $peakHour)) : '—'; ?></div>
+				<div class="s"><?php echo mn_analytics_format_number($peakHourViews); ?> views · <?php echo mn_analytics_format_number($peakHourEntries); ?> est. visits</div>
+			</div>
+			<div class="kpi">
+				<div class="k">Peak day</div>
+				<div class="v small"><?php echo stats_h($peakDayLabel); ?></div>
+				<div class="s"><?php echo mn_analytics_format_number($peakDayViews); ?> views</div>
+			</div>
+			<div class="kpi">
+				<div class="k">Today</div>
+				<div class="v"><?php echo mn_analytics_format_number($todayViews); ?></div>
+				<div class="s">This hour: <?php echo mn_analytics_format_number($hourViews); ?></div>
+			</div>
+			<div class="kpi">
+				<div class="k">Pages / sources</div>
+				<div class="v"><?php echo mn_analytics_format_number($distinctPages); ?> / <?php echo mn_analytics_format_number($distinctSources); ?></div>
+				<div class="s"><?php echo mn_analytics_format_number($internal); ?> internal navigations</div>
+			</div>
+			<div class="kpi">
+				<div class="k">Bots</div>
+				<div class="v"><?php echo mn_analytics_format_number($bots); ?></div>
+				<div class="s"><?php echo stats_h(number_format($views > 0 ? 100 * $bots / $views : 0, 1, '.', ',')); ?> % · <a href="?<?php echo stats_h(stats_query(['device' => 'bot', 'page' => 1])); ?>#tech">bots only</a></div>
+			</div>
+			<div class="kpi">
+				<div class="k">Duration known</div>
+				<div class="v"><?php echo stats_h(number_format($knownPct, 1, '.', ',')); ?> %</div>
+				<div class="s"><?php echo mn_analytics_format_number($pending); ?> open tokens</div>
+			</div>
+		</div>
+		<div class="card insight-card" data-tab-group="overview">
+			<div class="insight-head">
+				<div>
+					<h2>What stands out</h2>
+					<p class="ref">Generated from the current range, filters and anonymous measurements.</p>
+				</div>
+				<button type="button" class="btn" id="copy-insights">Copy summary</button>
+			</div>
+			<ul class="insight-list">
+				<?php foreach ($insights as $insight): ?>
+					<li><?php echo stats_h($insight); ?></li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
+
+		<div class="grid-2" data-tab-group="overview">
+			<div class="card">
+				<h2>Views over time <span class="hint">· <?php echo stats_h($rangeLabel); ?></span></h2>
+				<?php if ($views > 0): ?>
+					<div id="chart-daily" class="chart" role="img" aria-label="Daily views and estimated visits chart"></div>
+				<?php else: ?>
+					<div class="empty">No data in the selected period.</div>
+				<?php endif; ?>
+			</div>
+			<div class="card">
+				<h2>Source</h2>
+				<?php if ($views > 0): ?>
+					<div id="chart-refs" class="chart small" role="img" aria-label="Referrer source distribution"></div>
+				<?php else: ?>
+					<div class="empty">No data.</div>
+				<?php endif; ?>
+			</div>
+		</div>
+
+
+		<div class="card" data-tab-group="overview">
+			<h2>Traffic rhythm <span class="hint">· Berlin time, <?php echo stats_h($rangeLabel); ?></span></h2>
+			<?php if ($views > 0): ?>
+				<div class="rhythm-facts">
+					<span class="fact"><strong>Peak hour</strong> <?php echo $peakHour !== null ? stats_h(sprintf('%02d:00–%02d:59', $peakHour, $peakHour)) : '—'; ?> · <?php echo mn_analytics_format_number($peakHourViews); ?> views / <?php echo mn_analytics_format_number($peakHourEntries); ?> est. visits</span>
+					<span class="fact"><strong>Peak day</strong> <?php echo stats_h($peakDayLabel); ?> · <?php echo mn_analytics_format_number($peakDayViews); ?> views</span>
+					<span class="fact"><strong>Active</strong> <?php echo mn_analytics_format_number($activeDays); ?> of <?php echo mn_analytics_format_number($periodDays); ?> days</span>
+				</div>
+				<div class="rhythm-grid">
+					<div>
+						<div class="chart-cap">Pageviews by hour <span class="hint">· all days · hover for estimated visits</span></div>
+						<div class="histogram" role="img" aria-label="Pageviews and estimated visits by hour of day, Berlin time">
+							<?php foreach ($hourProfile as $h => $row): $w = $hourMax > 0 ? max(2, 100 * (int)$row['views'] / $hourMax) : 2; ?>
+								<?php $entriesPct = $hourMax > 0 && (int)$row['entries'] > 0 ? max(2, 100 * (int)$row['entries'] / $hourMax) : 0; ?>
+								<div class="hist-col" title="<?php echo stats_h(sprintf('%02d:00–%02d:59', $h, $h) . ' — ' . mn_analytics_format_number((int)$row['views']) . ' views / ' . mn_analytics_format_number((int)$row['entries']) . ' estimated visits'); ?>">
+									<div class="hist-pair">
+										<div class="hist-bar" style="height: <?php echo stats_h(number_format($w, 1, '.', '')); ?>%"></div>
+										<div class="hist-bar hist-bar--visits" style="height: <?php echo stats_h(number_format($entriesPct, 1, '.', '')); ?>%; min-height: 0;"></div>
+									</div>
+									<div class="hist-label"><?php echo $h % 3 === 0 ? stats_h(sprintf('%02d', $h)) : ''; ?></div>
+								</div>
+							<?php endforeach; ?>
+						</div>
+						<div class="hist-legend"><span class="heat-swatch" style="background: linear-gradient(180deg, var(--accent2), var(--accent));"></span> Views <span class="heat-swatch" style="background: linear-gradient(180deg, #7dd3fc, var(--sky));"></span> Estimated visits</div>
+					</div>
+					<div>
+						<div class="chart-cap">Pageviews by weekday <span class="hint">· all days</span></div>
+						<div class="weekday-bars" role="img" aria-label="Pageviews and estimated visits by weekday">
+							<?php foreach ($weekdayLabels as $weekdayIndex => $weekdayLabel): $row = $weekdayProfile[$weekdayIndex] ?? ['views' => 0, 'entries' => 0]; $w = $weekdayMax > 0 ? max(2, 100 * (int)$row['views'] / $weekdayMax) : 0; ?>
+								<div class="weekday-row" title="<?php echo stats_h($weekdayLabel . ' — ' . mn_analytics_format_number((int)$row['views']) . ' views / ' . mn_analytics_format_number((int)$row['entries']) . ' estimated visits'); ?>">
+									<div class="weekday-label"><?php echo stats_h($weekdayLabel); ?></div>
+									<div class="weekday-track"><div class="weekday-fill" style="width: <?php echo stats_h(number_format($w, 1, '.', '')); ?>%"></div></div>
+									<div class="weekday-num"><?php echo mn_analytics_format_number((int)$row['views']); ?></div>
+								</div>
+							<?php endforeach; ?>
+						</div>
+					</div>
+				</div>
+				<div class="chart-cap" style="margin-top: 16px;">Weekday × hour <span class="hint">· all days · intensity = pageviews</span></div>
+				<div class="heat-wrap">
+					<table class="heat heat--compact" aria-label="Pageviews by weekday and hour, Berlin time">
+						<thead>
+							<tr>
+								<th></th>
+								<?php for ($h = 0; $h < 24; $h++): ?><th><?php echo str_pad((string)$h, 2, '0', STR_PAD_LEFT); ?></th><?php endfor; ?>
+							</tr>
+						</thead>
+						<tbody>
+						<?php foreach ($weekdayLabels as $weekdayIndex => $weekdayLabel): ?>
+							<tr>
+								<th><?php echo stats_h($weekdayLabel); ?></th>
+								<?php for ($h = 0; $h < 24; $h++): $c = (int)($weekHourMap[$weekdayIndex][$h] ?? 0); $alpha = $weekHourMax > 0 ? 0.05 + 0.95 * ($c / $weekHourMax) : 0.05; $bg = 'rgba(233,170,96,' . number_format($alpha, 3, '.', '') . ')'; $txt = $c === 0 ? 'transparent' : ($alpha > 0.6 ? '#0b1220' : 'rgba(226,232,240,.9)'); ?>
+									<td style="background: <?php echo stats_h($bg); ?>; color: <?php echo stats_h($txt); ?>;" title="<?php echo stats_h($weekdayLabel . ' ' . str_pad((string)$h, 2, '0', STR_PAD_LEFT) . ':00 — ' . $c . ' views'); ?>"><span><?php echo $c; ?></span></td>
+								<?php endfor; ?>
+							</tr>
+						<?php endforeach; ?>
+						</tbody>
+					</table>
+				</div>
+				<div class="heat-legend">
+					<span class="heat-swatch" style="background: rgba(233,170,96,0.05)"></span> 0
+					<span class="heat-swatch" style="background: rgba(233,170,96,0.55)"></span> <?php echo mn_analytics_format_number((int)ceil($weekHourMax / 2)); ?>
+					<span class="heat-swatch" style="background: rgba(233,170,96,1)"></span> <?php echo mn_analytics_format_number($weekHourMax); ?>
+				</div>
+				<p class="ref rhythm-note">Bars and heatmap are totals across the selected range; the full date × hour heatmap is in Referrers &amp; engagement. <strong>Estimated visits</strong> count entry pageviews (non-internal referrers) and are the privacy-safe proxy for visits. Unique visitors, sessions and returning visitors are intentionally not available because they would require a persistent identifier.</p>
+			<?php else: ?>
+				<div class="empty">No data in the selected period.</div>
+			<?php endif; ?>
+		</div>
+
+		<div class="grid-2even" data-tab-group="overview">
+			<div class="card">
+				<h2>Top content <span class="hint">· top 5</span></h2>
+				<?php if ($topPages): ?>
+					<div class="mini-list">
+						<?php foreach (array_slice($topPages, 0, 5) as $page): $pv = (int)$page['views']; $share = $views > 0 ? 100 * $pv / $views : 0; $pageSlug = (string)$page['path']; $pageDuration = $page['avg_duration'] !== null ? (int)round((float)$page['avg_duration']) : null; ?>
+							<a class="mini-row" href="?<?php echo stats_h(stats_query(['path' => $pageSlug, 'page' => 1])); ?>">
+								<div class="mini-main">
+									<span class="title"><?php echo stats_h($titles[$pageSlug] ?? $pageSlug); ?></span>
+									<div class="slug"><?php echo stats_h($pageSlug); ?> · <?php echo stats_h(mn_analytics_format_duration($pageDuration)); ?> avg.</div>
+								</div>
+								<div class="mini-metric"><strong><?php echo mn_analytics_format_number($pv); ?></strong><span>views</span></div>
+								<div class="mini-share"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</div>
+							</a>
+						<?php endforeach; ?>
+					</div>
+				<?php else: ?>
+					<div class="empty">No data in the selected period.</div>
+				<?php endif; ?>
+				<?php if ($entryPages): ?>
+					<div class="chart-cap" style="margin-top: 14px;">Most common entry pages</div>
+					<div class="mini-list mini-list--compact">
+						<?php foreach ($entryPages as $entry): $entrySlug = (string)$entry['path']; ?>
+							<a class="mini-row" href="?<?php echo stats_h(stats_query(['path' => $entrySlug, 'page' => 1])); ?>">
+								<div class="mini-main"><span class="title"><?php echo stats_h($titles[$entrySlug] ?? $entrySlug); ?></span></div>
+								<div class="mini-metric"><strong><?php echo mn_analytics_format_number((int)$entry['entries']); ?></strong><span>entries</span></div>
+							</a>
+						<?php endforeach; ?>
+					</div>
+				<?php endif; ?>
+			</div>
+			<div class="card">
+				<h2>Top sources <span class="hint">· top 5</span></h2>
+				<?php if ($referrers): ?>
+					<div class="mini-list">
+						<?php foreach (array_slice($referrers, 0, 5) as $ref): $refViews = (int)$ref['views']; $refShare = $views > 0 ? 100 * $refViews / $views : 0; $refTypeLabel = mn_analytics_ref_type_label((string)$ref['ref_type']); $refName = trim((string)$ref['ref_source']); if ($refName === '') { $refName = $refTypeLabel; } ?>
+							<a class="mini-row" href="?<?php echo stats_h(stats_query(['ref_type' => $ref['ref_type'], 'source' => $ref['ref_source'], 'page' => 1])); ?>">
+								<div class="mini-main">
+									<span class="badge <?php echo stats_h($ref['ref_type']); ?>"><?php echo stats_h($refTypeLabel); ?></span>
+									<span class="title" style="display:inline;"><?php echo stats_h($refName); ?></span>
+									<?php if ($ref['ref_host'] !== '' && $ref['ref_host'] !== $ref['ref_source']): ?><div class="slug"><?php echo stats_h($ref['ref_host']); ?></div><?php endif; ?>
+								</div>
+								<div class="mini-metric"><strong><?php echo mn_analytics_format_number($refViews); ?></strong><span>views</span></div>
+								<div class="mini-share"><?php echo stats_h(number_format($refShare, 1, '.', ',')); ?> %</div>
+							</a>
+						<?php endforeach; ?>
+					</div>
+				<?php else: ?>
+					<div class="empty">No referrer data in the selected period.</div>
+				<?php endif; ?>
+				<p class="ref" style="margin-bottom: 0;">Only referrer type, source and host are stored — never external paths, queries or search terms.</p>
+			</div>
+		</div>
+
+		<div class="grid-2even" data-tab-group="overview">
+			<div class="card">
+				<h2>Audience &amp; bots</h2>
+				<?php if ($views > 0): ?>
+					<div class="audience-block">
+						<div class="chart-cap">Devices <span class="hint">· top 4</span></div>
+						<div class="bars">
+							<?php foreach (array_slice($deviceMix, 0, 4) as $mix): $share = 100 * (int)$mix['value'] / $views; ?>
+								<div class="bar-row"><div class="bar-label"><?php echo stats_h($mix['name']); ?></div><div class="bar-track"><div class="bar-fill" style="width: <?php echo stats_h(number_format($share, 1, '.', '')); ?>%"></div></div><div class="bar-num"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</div></div>
+							<?php endforeach; ?>
+						</div>
+					</div>
+					<div class="audience-block">
+						<div class="chart-cap">Browsers <span class="hint">· top 4</span></div>
+						<div class="bars">
+							<?php foreach (array_slice($browserMix, 0, 4) as $mix): $share = 100 * (int)$mix['value'] / $views; ?>
+								<div class="bar-row"><div class="bar-label"><?php echo stats_h($mix['name']); ?></div><div class="bar-track"><div class="bar-fill bar-fill--sky" style="width: <?php echo stats_h(number_format($share, 1, '.', '')); ?>%"></div></div><div class="bar-num"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</div></div>
+							<?php endforeach; ?>
+						</div>
+					</div>
+					<div class="audience-block">
+						<div class="chart-cap">Operating systems <span class="hint">· top 4</span></div>
+						<div class="bars">
+							<?php foreach (array_slice($osMix, 0, 4) as $mix): $share = 100 * (int)$mix['value'] / $views; ?>
+								<div class="bar-row"><div class="bar-label"><?php echo stats_h($mix['name']); ?></div><div class="bar-track"><div class="bar-fill bar-fill--emerald" style="width: <?php echo stats_h(number_format($share, 1, '.', '')); ?>%"></div></div><div class="bar-num"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</div></div>
+							<?php endforeach; ?>
+						</div>
+					</div>
+					<div class="audience-block">
+						<div class="chart-cap">Bots <span class="hint">· top 3 · <?php echo mn_analytics_format_number($bots); ?> views / <?php echo stats_h(number_format($views > 0 ? 100 * $bots / $views : 0, 1, '.', ',')); ?> %</span></div>
+						<?php if ($botReasons): ?>
+							<div class="mini-list mini-list--compact">
+								<?php foreach (array_slice($botReasons, 0, 3) as $bot): $reason = trim((string)($bot['bot_reason'] ?? '')); $reasonLabel = $reason !== '' ? $reason : 'Unknown bot'; ?>
+									<div class="mini-row">
+										<div class="mini-main"><button type="button" class="bot-reason" data-reason="<?php echo stats_h($reasonLabel); ?>"><?php echo stats_h($reasonLabel); ?></button></div>
+										<div class="mini-metric"><strong><?php echo mn_analytics_format_number((int)$bot['views']); ?></strong><span>views</span></div>
+									</div>
+								<?php endforeach; ?>
+							</div>
+						<?php else: ?>
+							<div class="ref">No bots detected in this range.</div>
+						<?php endif; ?>
+					</div>
+				<?php else: ?>
+					<div class="empty">No data in the selected period.</div>
+				<?php endif; ?>
+			</div>
+			<div class="card">
+				<h2>Reading behaviour</h2>
+				<?php if ($views > 0): ?>
+					<div class="chart-cap">Time on page <span class="hint">· <?php echo mn_analytics_format_number($known); ?> timed views</span></div>
+					<div class="bars">
+						<?php foreach ($engagementBuckets as $bucket): $w = $bucket['views'] > 0 ? max(2, 100 * $bucket['views'] / $engagementMax) : 0; ?>
+							<div class="bar-row"><div class="bar-label"><?php echo stats_h($bucket['label']); ?></div><div class="bar-track"><div class="bar-fill" style="width: <?php echo stats_h(number_format($w, 1, '.', '')); ?>%"></div></div><div class="bar-num"><?php echo mn_analytics_format_number($bucket['views']); ?></div></div>
+						<?php endforeach; ?>
+					</div>
+					<div class="chart-cap" style="margin-top: 14px;">Scroll depth <span class="hint">· <?php echo mn_analytics_format_number($scrollKnown); ?> measurements</span></div>
+					<div class="bars">
+						<?php foreach ($scrollBuckets as $bucket): $w = $bucket['views'] > 0 ? max(2, 100 * $bucket['views'] / $scrollBucketMax) : 0; ?>
+							<div class="bar-row"><div class="bar-label"><?php echo stats_h($bucket['label']); ?></div><div class="bar-track"><div class="bar-fill bar-fill--sky" style="width: <?php echo stats_h(number_format($w, 1, '.', '')); ?>%"></div></div><div class="bar-num"><?php echo mn_analytics_format_number($bucket['views']); ?></div></div>
+						<?php endforeach; ?>
+					</div>
+					<p class="ref" style="margin-bottom: 0;">Rows show pageviews. Unknown means the browser did not send a completion signal; open tokens are closed after at most 6 hours.</p>
+				<?php else: ?>
+					<div class="empty">No data in the selected period.</div>
+				<?php endif; ?>
+			</div>
+		</div>
+
+		<div class="card" data-tab-group="overview">
+			<h2>Internal navigation <span class="hint">· top 6 · previous page → next page</span></h2>
+			<?php if ($sankeyLinks): ?>
+				<p class="ref"><?php echo mn_analytics_format_number($internal); ?> internal transitions (<?php echo stats_h(number_format($views > 0 ? 100 * $internal / $views : 0, 1, '.', ',')); ?> % of views). The strongest flows are listed here; the full Sankey is in Referrers &amp; engagement.</p>
+				<div class="mini-list mini-list--compact">
+					<?php foreach (array_slice($sankeyLinks, 0, 6) as $flow): $from = $titles[$flow['source']] ?? (string)$flow['source']; $to = $titles[$flow['target']] ?? (string)$flow['target']; ?>
+						<div class="mini-row">
+							<div class="mini-main"><span class="title"><?php echo stats_h($from); ?></span><div class="slug">→ <?php echo stats_h($to); ?></div></div>
+							<div class="mini-metric"><strong><?php echo mn_analytics_format_number((int)$flow['value']); ?></strong><span>transitions</span></div>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			<?php else: ?>
+				<div class="empty">No internal page-to-page transitions in the selected period.</div>
+			<?php endif; ?>
+		</div>
+
+		<div class="grid-2even">
+			<div class="card card-full" id="pages" data-tab-group="pages">
+				<h2>Page performance <span class="hint">· by views</span></h2>
+				<?php if ($path === ''): ?>
+					<p class="ref" style="margin:-4px 0 6px"><?php echo mn_analytics_format_number($zeroPages); ?> of <?php echo mn_analytics_format_number(count($pageRows)); ?> pages without views in the period.</p>
+				<?php endif; ?>
+				<p class="ref" style="margin:0 0 12px">Click a page to filter the whole dashboard to that page — the trend, referrers and tech tables follow. All pages are listed; scroll horizontally if needed.</p>
+				<?php if ($views > 0 && $chartPages): ?>
+					<div class="grid-2" style="margin-bottom:12px;">
+						<div>
+							<div class="chart-cap">Top pages by views</div>
+							<div id="chart-pages" class="chart" style="height:360px;" role="img" aria-label="Top pages by views"></div>
+						</div>
+						<div>
+							<div class="chart-cap">Page share · top 6 + other</div>
+							<div id="chart-page-share" class="chart small" role="img" aria-label="Page share of views"></div>
+						</div>
+					</div>
+				<?php else: ?>
+					<div class="empty">No views in the selected period.</div>
+				<?php endif; ?>
+				<?php if ($pageRows): ?>
+					<div class="table-wrap">
+						<table aria-label="Page performance by views">
+							<thead><tr><th>Page</th><th class="num">Views</th><th>Trend</th><th class="num">Share</th><th class="num">Entries</th><th class="num">Internal</th><th class="num">Avg. duration</th><th class="num">Avg. scroll</th><th class="num">Bounce</th><th class="num">Last seen</th></tr></thead>
+							<tbody>
+							<?php foreach ($pageRows as $page): $pv = (int)$page['views']; $pk = (int)($page['known'] ?? 0); $pb = (int)($page['bounces'] ?? 0); $pbr = $pk > 0 ? 100 * $pb / $pk : null; $share = $views > 0 ? 100 * $pv / $views : 0; $last = isset($page['last_ts']) && $page['last_ts'] !== null ? (int)$page['last_ts'] : null; ?>
+								<tr class="<?php echo $pv === 0 ? 'zero-row' : ''; ?>">
+									<td class="path">
+										<a href="?<?php echo stats_h(stats_query(['path' => $page['path'], 'page' => 1])); ?>"><span class="title"><?php echo stats_h($titles[$page['path']] ?? $page['path']); ?></span></a>
+										<div class="slug"><?php echo stats_h($page['path']); ?></div>
+									</td>
+									<td class="num"><?php echo mn_analytics_format_number($pv); ?></td>
+									<td class="spark-cell"><?php echo $pageSparklines[$page['path']] ?? '—'; ?></td>
+									<td class="num"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</td>
+									<td class="num"><?php echo mn_analytics_format_number((int)($page['entries'] ?? 0)); ?></td>
+									<td class="num"><?php echo mn_analytics_format_number((int)($page['internal'] ?? 0)); ?></td>
+									<td class="num"><?php echo stats_h(mn_analytics_format_duration($page['avg_duration'] !== null ? (int)round((float)$page['avg_duration']) : null)); ?></td>
+									<td class="num"><?php echo $page['avg_scroll'] !== null ? stats_h(number_format((float)$page['avg_scroll'], 0, '.', ',')) . ' %' : '—'; ?></td>
+									<td class="num <?php echo stats_bounce_class($pbr); ?>"><?php echo $pbr !== null ? stats_h(number_format($pbr, 1, '.', ',')) . ' %' : '—'; ?></td>
+									<td class="num"><?php echo $last !== null ? stats_h(stats_time_label($last)) : '—'; ?></td>
+								</tr>
+							<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+				<?php else: ?>
+					<div class="empty">No data.</div>
+				<?php endif; ?>
+			</div>
+			<div class="card card-full" data-tab-group="referrers">
+				<h2>Referrer</h2>
+				<?php if ($referrers): ?>
+					<div class="table-wrap">
+						<table aria-label="Referrer sources">
+							<thead><tr><th>Type</th><th>Source</th><th class="num">Views</th><th class="num">Share</th><th class="num">Avg. duration</th><th class="num">Bounce</th></tr></thead>
+							<tbody>
+							<?php foreach ($referrers as $ref): $refViews = (int)$ref['views']; $refShare = $views > 0 ? 100 * $refViews / $views : 0; $refKnown = (int)($ref['known'] ?? 0); $refBounces = (int)($ref['bounces'] ?? 0); $refBounceRate = $refKnown > 0 ? 100 * $refBounces / $refKnown : null; ?>
+								<tr>
+									<td><span class="badge <?php echo stats_h($ref['ref_type']); ?>"><?php echo stats_h(mn_analytics_ref_type_label($ref['ref_type'])); ?></span></td>
+									<td class="ref">
+										<a href="?<?php echo stats_h(stats_query(['ref_type' => $ref['ref_type'], 'source' => $ref['ref_source'], 'page' => 1])); ?>"><?php echo stats_h($ref['ref_source'] !== '' ? $ref['ref_source'] : 'Direct'); ?></a>
+										<?php if ($ref['ref_host'] !== '' && $ref['ref_host'] !== $ref['ref_source']): ?><div class="slug"><?php echo stats_h($ref['ref_host']); ?></div><?php endif; ?>
+									</td>
+									<td class="num"><?php echo mn_analytics_format_number($refViews); ?></td>
+									<td class="num"><?php echo stats_h(number_format($refShare, 1, '.', ',')); ?> %</td>
+									<td class="num"><?php echo stats_h(mn_analytics_format_duration($ref['avg_duration'] !== null ? (int)round((float)$ref['avg_duration']) : null)); ?></td>
+									<td class="num <?php echo stats_bounce_class($refBounceRate); ?>"><?php echo $refBounceRate !== null ? stats_h(number_format($refBounceRate, 1, '.', ',')) . ' %' : '—'; ?></td>
+								</tr>
+							<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+				<?php else: ?>
+					<div class="empty">No data.</div>
+				<?php endif; ?>
+			</div>
+		</div>
+
+		<div class="card card-full" data-tab-group="referrers">
+			<h2>Internal navigation flow <span class="hint">· previous page → next page</span></h2>
+			<?php if ($sankeyLinks): ?>
+				<p class="ref">Top <?php echo count($sankeyLinks); ?> page-to-page transitions in the selected period. Hover a flow to see the full page titles.<?php if ($sankeyOmitted > 0): ?> <?php echo (int)$sankeyOmitted; ?> weaker cycle-closing transitions were omitted to keep the Sankey acyclic.<?php endif; ?></p>
+				<div id="chart-sankey" class="chart" style="height:440px;" role="img" aria-label="Internal navigation flow between pages"></div>
+			<?php else: ?>
+				<div class="empty">No internal page-to-page transitions in the selected period.</div>
+			<?php endif; ?>
+		</div>
+
+		<div class="grid-3" data-tab-group="referrers">
+			<div class="card">
+				<h2>Internal navigation <span class="hint">· previous page</span></h2>
+				<?php if ($internalRefs): ?>
+					<div class="table-wrap">
+						<table aria-label="Internal navigation">
+							<thead><tr><th>Previous page</th><th class="num">Navigations</th><th class="num">Avg. duration after</th></tr></thead>
+							<tbody>
+							<?php foreach ($internalRefs as $ref): ?>
+								<tr>
+									<td class="path">
+										<a href="?<?php echo stats_h(stats_query(['ref_type' => 'internal', 'ref_path' => $ref['ref_path'], 'page' => 1])); ?>"><span class="title"><?php echo stats_h($titles[$ref['ref_path']] ?? $ref['ref_path']); ?></span></a>
+										<div class="slug"><?php echo stats_h($ref['ref_path']); ?></div>
+									</td>
+									<td class="num"><?php echo mn_analytics_format_number((int)$ref['views']); ?></td>
+									<td class="num"><?php echo stats_h(mn_analytics_format_duration($ref['avg_duration'] !== null ? (int)round((float)$ref['avg_duration']) : null)); ?></td>
+								</tr>
+							<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+				<?php else: ?>
+					<div class="empty">No data.</div>
+				<?php endif; ?>
+			</div>
+			<div class="card">
+				<h2>Time on page</h2>
+				<div class="bars">
+					<?php foreach ($bucketData as $bucket): $w = $bucket['views'] > 0 ? max(2, 100 * $bucket['views'] / $bucketMax) : 0; ?>
+						<div class="bar-row">
+							<div class="bar-label"><?php echo stats_h($bucket['label']); ?></div>
+							<div class="bar-track"><div class="bar-fill" style="width: <?php echo stats_h(number_format($w, 1, '.', '')); ?>%"></div></div>
+							<div class="bar-num"><?php echo mn_analytics_format_number($bucket['views']); ?></div>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			</div>
+			<div class="card">
+				<h2>Scroll depth</h2>
+				<div class="bars">
+					<?php foreach ($scrollBuckets as $bucket): $w = $bucket['views'] > 0 ? max(2, 100 * $bucket['views'] / $scrollBucketMax) : 0; ?>
+						<div class="bar-row">
+							<div class="bar-label"><?php echo stats_h($bucket['label']); ?></div>
+							<div class="bar-track"><div class="bar-fill bar-fill--sky" style="width: <?php echo stats_h(number_format($w, 1, '.', '')); ?>%"></div></div>
+							<div class="bar-num"><?php echo mn_analytics_format_number($bucket['views']); ?></div>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			</div>
+		</div>
+
+		<div class="grid-3" id="tech" data-tab-group="tech">
+			<div class="card">
+				<h2>Browser</h2>
+				<div class="chart-cap">Share</div>
+				<div id="chart-browser-mix" class="chart mini" role="img" aria-label="Browser share"></div>
+				<?php if ($browsers): ?>
+					<div class="table-wrap">
+						<table aria-label="Browser breakdown">
+							<thead><tr><th>Browser</th><th class="num">Views</th><th class="num">Share</th><th class="num">Avg. duration</th><th class="num">Bounce</th></tr></thead>
+							<tbody>
+							<?php foreach ($browsers as $row): $share = $views > 0 ? 100 * (int)$row['views'] / $views : 0; $k = (int)$row['known']; $br = $k > 0 ? 100 * (int)$row['bounces'] / $k : null; $brClass = stats_bounce_class($br); ?>
+								<tr>
+									<td><a href="?<?php echo stats_h(stats_query(['browser' => $row['browser'], 'page' => 1])); ?>"><?php echo stats_h(stats_browser_label($row)); ?></a></td>
+									<td class="num"><?php echo mn_analytics_format_number((int)$row['views']); ?></td>
+									<td class="num"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</td>
+									<td class="num"><?php echo stats_h(mn_analytics_format_duration($row['avg_duration'] !== null ? (int)round((float)$row['avg_duration']) : null)); ?></td>
+									<td class="num <?php echo $brClass; ?>"><?php echo $br !== null ? stats_h(number_format($br, 1, '.', ',')) . ' %' : '—'; ?></td>
+								</tr>
+							<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+				<?php else: ?>
+					<div class="empty">No data.</div>
+				<?php endif; ?>
+			</div>
+			<div class="card">
+				<h2>Operating system</h2>
+				<div class="chart-cap">Share</div>
+				<div id="chart-os-mix" class="chart mini" role="img" aria-label="Operating system share"></div>
+				<?php if ($osRows): ?>
+					<div class="table-wrap">
+						<table aria-label="Operating system breakdown">
+							<thead><tr><th>OS</th><th class="num">Views</th><th class="num">Share</th><th class="num">Avg. duration</th><th class="num">Bounce</th></tr></thead>
+							<tbody>
+							<?php foreach ($osRows as $row): $share = $views > 0 ? 100 * (int)$row['views'] / $views : 0; $k = (int)$row['known']; $br = $k > 0 ? 100 * (int)$row['bounces'] / $k : null; $brClass = stats_bounce_class($br); ?>
+								<tr>
+									<td><a href="?<?php echo stats_h(stats_query(['os' => $row['os'], 'page' => 1])); ?>"><?php echo stats_h(stats_os_label($row)); ?></a></td>
+									<td class="num"><?php echo mn_analytics_format_number((int)$row['views']); ?></td>
+									<td class="num"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</td>
+									<td class="num"><?php echo stats_h(mn_analytics_format_duration($row['avg_duration'] !== null ? (int)round((float)$row['avg_duration']) : null)); ?></td>
+									<td class="num <?php echo $brClass; ?>"><?php echo $br !== null ? stats_h(number_format($br, 1, '.', ',')) . ' %' : '—'; ?></td>
+								</tr>
+							<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+				<?php else: ?>
+					<div class="empty">No data.</div>
+				<?php endif; ?>
+			</div>
+			<div class="card">
+				<h2>Devices</h2>
+				<div class="chart-cap">Share</div>
+				<div id="chart-device-mix" class="chart mini" role="img" aria-label="Device share"></div>
+				<?php if ($deviceRows): ?>
+					<div class="table-wrap">
+						<table aria-label="Device breakdown">
+							<thead><tr><th>Device</th><th class="num">Views</th><th class="num">Share</th><th class="num">Avg. duration</th><th class="num">Bounce</th></tr></thead>
+							<tbody>
+							<?php foreach ($deviceRows as $row): $share = $views > 0 ? 100 * (int)$row['views'] / $views : 0; $k = (int)$row['known']; $br = $k > 0 ? 100 * (int)$row['bounces'] / $k : null; $brClass = stats_bounce_class($br); ?>
+								<tr>
+									<td><a href="?<?php echo stats_h(stats_query(['device' => $row['device'], 'page' => 1])); ?>"><?php echo stats_h(stats_device_label((string)$row['device'])); ?></a></td>
+									<td class="num"><?php echo mn_analytics_format_number((int)$row['views']); ?></td>
+									<td class="num"><?php echo stats_h(number_format($share, 1, '.', ',')); ?> %</td>
+									<td class="num"><?php echo stats_h(mn_analytics_format_duration($row['avg_duration'] !== null ? (int)round((float)$row['avg_duration']) : null)); ?></td>
+									<td class="num <?php echo $brClass; ?>"><?php echo $br !== null ? stats_h(number_format($br, 1, '.', ',')) . ' %' : '—'; ?></td>
+								</tr>
+							<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+				<?php else: ?>
+					<div class="empty">No data.</div>
+				<?php endif; ?>
+			</div>
+		</div>
+
+		<div class="grid-2even" data-tab-group="tech">
+			<div class="card">
+				<h2>Bots detected <span class="hint">· click a reason</span></h2>
+				<?php if ($botReasons): ?>
+					<p class="ref"><?php echo mn_analytics_format_number($botTotal); ?> bot pageviews in the selected period. Click a reason to see the matching rule.</p>
+					<div class="table-wrap">
+						<table aria-label="Bot reasons">
+							<thead><tr><th>Detected as</th><th class="num">Views</th><th class="num">Share of bots</th></tr></thead>
+							<tbody>
+							<?php foreach ($botReasons as $bot): $reason = trim((string)($bot['bot_reason'] ?? '')); $reasonLabel = $reason !== '' ? $reason : 'Unknown bot'; $botViews = (int)$bot['views']; $botShare = $botTotal > 0 ? 100 * $botViews / $botTotal : 0; ?>
+								<tr>
+									<td><button type="button" class="bot-reason" data-reason="<?php echo stats_h($reasonLabel); ?>"><?php echo stats_h($reasonLabel); ?></button></td>
+									<td class="num"><?php echo mn_analytics_format_number($botViews); ?></td>
+									<td class="num"><?php echo stats_h(number_format($botShare, 1, '.', ',')); ?> %</td>
+								</tr>
+							<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+				<?php else: ?>
+					<div class="empty">No bot traffic in the selected period.</div>
+				<?php endif; ?>
+			</div>
+			<div class="card">
+				<h2>How bot detection works</h2>
+				<p class="ref">Bots are classified at page render time from the User-Agent. Only the coarse reason is stored; the raw User-Agent is never stored. Click a reason in the table or a raw row to see the matching rule.</p>
+				<details class="details" style="margin:0;background:var(--bg);">
+					<summary>Show all <?php echo count($botRules); ?> bot rules</summary>
+					<div class="body">
+						<div class="table-wrap">
+							<table aria-label="Bot detection rules">
+								<thead><tr><th>Reason</th><th>Rule</th></tr></thead>
+								<tbody>
+								<?php foreach ($botRules as $rule): ?>
+									<tr><td><?php echo stats_h($rule['label']); ?></td><td><?php echo stats_h($rule['hint']); ?></td></tr>
+								<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</details>
+			</div>
+		</div>
+
+		<div class="card" id="storage" data-tab-group="storage">
+			<h2>Storage &amp; backup</h2>
+			<div class="grid-2even" style="margin-bottom:0">
+				<div>
+					<table aria-label="Analytics storage">
+						<tbody>
+							<tr><td>Database file</td><td class="mono"><code style="word-break:break-all;"><?php echo stats_h($dbPath); ?></code></td></tr>
+							<tr><td>Directory</td><td class="mono"><code style="word-break:break-all;"><?php echo stats_h($dbDir); ?></code></td></tr>
+							<tr><td>Source</td><td class="mono"><?php echo stats_h($dbSource); ?></td></tr>
+							<tr><td>Web server user</td><td class="mono"><code><?php echo stats_h($webUser); ?></code></td></tr>
+							<tr><td>Web root</td><td class="mono"><?php if ($dbInsideWebroot): ?><span class="badge <?php echo $dbProtected ? 'ok' : 'warn'; ?>"><?php echo $dbProtected ? 'inside / protected' : 'inside / unprotected'; ?></span><?php else: ?><span class="badge ok">outside</span><?php endif; ?></td></tr>
+							<tr><td>Writable</td><td class="mono"><?php if ($dbDirWritable && $dbFileWritable): ?><span class="badge ok">yes</span><?php else: ?><span class="badge warn">no</span><?php endif; ?></td></tr>
+							<tr><td>Journal mode</td><td class="mono">DELETE (single file)</td></tr>
+							<tr><td>Retention</td><td class="mono">730 days</td></tr>
+						</tbody>
+					</table>
+				</div>
+				<div>
+					<p class="ref">The SQLite file is self-contained. The backup button creates a consistent copy. Pending random tokens may be included in a snapshot, but they are not linked to a person. To move it: copy the file, set <code>db_path</code> in <code>blog/lib/analytics_config.php</code>, and set the permissions. To reset analytics, stop writes and delete the SQLite file at the path above; the next request recreates an empty database.</p>
+					<p class="ref" style="margin-top:10px">To stop tracking immediately, create <code style="word-break:break-all;"><?php echo stats_h(mn_analytics_disabled_file()); ?></code> (gitignored and denied by <code>.htaccess</code>). Tracking, health warnings and cleanup stop; existing data is opened read-only. Delete the file to re-enable.</p>
+					<form method="post" action="" class="inline" style="margin-top:10px">
+						<input type="hidden" name="action" value="backup">
+						<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">
+						<button type="submit" class="btn btn-primary">Download SQLite backup</button>
+					</form>
+					<details class="details" style="margin:14px 0 0;background:var(--bg);">
+						<summary>Move the database to another directory</summary>
+						<div class="body">
+							<p>Run these commands, then update <code>blog/lib/analytics_config.php</code>:</p>
+							<pre><code><?php echo stats_h(implode("\n", $moveCommands)); ?></code></pre>
+						</div>
+					</details>
+				</div>
+			</div>
+		</div>
+
+		<div class="card" data-tab-group="referrers">
+			<h2>When people read <span class="hint">· Berlin time, last <?php echo (int)$heatSpan; ?> days</span></h2>
+			<?php if ($views > 0): ?>
+				<div class="heat-wrap">
+					<table class="heat" aria-label="Views by day and hour, Berlin time">
+						<thead>
+							<tr>
+								<th></th>
+								<?php for ($h = 0; $h < 24; $h++): ?><th><?php echo str_pad((string)$h, 2, '0', STR_PAD_LEFT); ?></th><?php endfor; ?>
+							</tr>
+						</thead>
+						<tbody>
+						<?php foreach ($heatDays as $day => $cells): ?>
+							<tr>
+								<th><?php echo stats_h(stats_day_label((string)$day)); ?></th>
+								<?php for ($h = 0; $h < 24; $h++): $c = (int)($cells[$h] ?? 0); $alpha = $heatMax > 0 ? 0.05 + 0.95 * ($c / $heatMax) : 0.05; $bg = 'rgba(233,170,96,' . number_format($alpha, 3, '.', '') . ')'; $txt = $c === 0 ? 'transparent' : ($alpha > 0.6 ? '#0b1220' : 'rgba(226,232,240,.9)'); ?>
+									<td style="background: <?php echo stats_h($bg); ?>; color: <?php echo stats_h($txt); ?>;" title="<?php echo stats_h((string)$day . ', ' . str_pad((string)$h, 2, '0', STR_PAD_LEFT) . ':00 — ' . $c . ' views'); ?>"><span><?php echo $c; ?></span></td>
+								<?php endfor; ?>
+							</tr>
+						<?php endforeach; ?>
+						</tbody>
+					</table>
+				</div>
+				<div class="heat-legend">
+					<span class="heat-swatch" style="background: rgba(233,170,96,0.05)"></span> 0
+					<span class="heat-swatch" style="background: rgba(233,170,96,0.55)"></span> <?php echo mn_analytics_format_number((int)ceil($heatMax / 2)); ?>
+					<span class="heat-swatch" style="background: rgba(233,170,96,1)"></span> <?php echo mn_analytics_format_number($heatMax); ?>
+				</div>
+			<?php else: ?>
+				<div class="empty">No data.</div>
+			<?php endif; ?>
+		</div>
+
+		<div class="grid-2even" data-tab-group="overview">
+			<div class="card">
+				<h2>Data quality</h2>
+				<table aria-label="Data quality">
+					<tbody>
+						<tr><td>Total rows</td><td class="num mono"><?php echo mn_analytics_format_number($rowsTotal); ?></td></tr>
+						<tr><td>In filter</td><td class="num mono"><?php echo mn_analytics_format_number($views); ?></td></tr>
+						<tr><td>Duration known</td><td class="num mono"><?php echo mn_analytics_format_number($known); ?></td></tr>
+						<tr><td>Scroll known</td><td class="num mono"><?php echo mn_analytics_format_number($scrollKnown); ?></td></tr>
+						<tr><td>Active days</td><td class="num mono"><?php echo mn_analytics_format_number($activeDays); ?> / <?php echo mn_analytics_format_number($periodDays); ?></td></tr>
+						<tr><td>Estimated visits</td><td class="num mono"><?php echo mn_analytics_format_number($entries); ?></td></tr>
+						<tr><td>Open tokens</td><td class="num mono"><?php echo mn_analytics_format_number($pending); ?></td></tr>
+						<tr><td>Bots</td><td class="num mono"><?php echo mn_analytics_format_number($bots); ?></td></tr>
+						<tr><td>Oldest entry</td><td class="num mono"><?php echo $oldest !== null ? stats_h(stats_time_label($oldest)) : '—'; ?></td></tr>
+						<tr><td>Newest entry</td><td class="num mono"><?php echo $newest !== null ? stats_h(stats_time_label($newest)) : '—'; ?></td></tr>
+						<tr><td>DB size</td><td class="num mono"><?php echo stats_h(number_format($dbSize / 1024, 1, '.', ',')); ?> KB</td></tr>
+						<tr><td>Retention</td><td class="num mono">730 days</td></tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="card">
+				<h2>What these numbers mean</h2>
+				<ul class="ref">
+					<li><strong>Views</strong> = every rendered page (including without JavaScript).</li>
+					<li><strong>Estimated visits</strong> = views with a direct, external, search or social referrer (entry pageviews). This is the most honest consent-free proxy for visits; it is not a unique-person count.</li>
+					<li><strong>Views / day, peak hour, peak weekday</strong> = aggregates over the selected range in Berlin time. “Peak” means the hour/weekday with the most pageviews. Hover the rhythm bars for both pageviews and estimated visits.</li>
+					<li><strong>Page performance</strong> = views, share, entries, internal navigation, duration, scroll, bounce and last activity per page. Pages without views stay visible with 0 so you can see what nobody reads.</li>
+					<li><strong>Internal navigation</strong> = a view whose previous page was another blog page. The Sankey shows page-to-page flows; weaker cycle-closing transitions are omitted so the chart stays acyclic.</li>
+					<li><strong>Duration</strong> = visible time in the tab, measured in milliseconds in the browser and transmitted in seconds. No cross-page tracking.</li>
+					<li><strong>Scroll depth</strong> = the maximum share of the page height a reader reached. Useful to see whether people get to the end.</li>
+					<li><strong>Bots</strong> = pageviews whose User-Agent matched a known bot or automation signature. Only the coarse reason label is stored. Click a reason in Tech or a raw row to see the matching rule.</li>
+					<li><strong>Open tokens</strong> = pageviews whose completion signal has not arrived yet. They are closed after at most 6 hours and the token is deleted.</li>
+					<li><strong>Browser/OS/device</strong> = coarse categories from the User-Agent (read transiently, never stored): browser family + major version, operating system + version, desktop/mobile/tablet/bot. No minor/patch versions, no device IDs, no fingerprint.</li>
+					<li><strong>No unique visitors:</strong> that would require a persistent identifier (cookie/storage) and therefore consent. This analytics deliberately does not do that.</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="card" id="raw-data" data-tab-group="raw">
+			<h2>Raw data <span class="hint">· <?php echo (int)$perPage; ?> per page, without tokens</span></h2>
+			<div class="table-wrap table-scroll">
+				<table aria-label="Raw pageviews">
+					<thead><tr><th>Time</th><th>Page</th><th>Browser / OS</th><th>Source</th><th>Previous</th><th class="num">Duration</th><th class="num">Scroll</th><th>Status</th></tr></thead>
+					<tbody>
+					<?php if ($raw): ?>
+						<?php foreach ($raw as $row): ?>
+							<tr>
+								<td class="mono"><?php echo stats_h($row['day'] . ', ' . str_pad((string)$row['hour'], 2, '0', STR_PAD_LEFT) . ':00'); ?></td>
+								<td class="path">
+									<span class="title"><?php echo stats_h($titles[$row['path']] ?? $row['path']); ?></span>
+									<div class="slug"><?php echo stats_h($row['path']); ?></div>
+								</td>
+								<td>
+									<?php if ((int)$row['is_bot'] === 1): ?>
+										<?php $reason = trim((string)($row['bot_reason'] ?? '')); $reasonLabel = $reason !== '' ? $reason : 'Unknown bot'; ?>
+											<button type="button" class="bot-reason" data-reason="<?php echo stats_h($reasonLabel); ?>"><?php echo stats_h($reasonLabel); ?></button>
+											<div class="slug">bot</div>
+									<?php else: ?>
+										<span class="title"><?php echo stats_h(stats_browser_label($row)); ?></span>
+										<div class="slug"><?php echo stats_h(stats_client_subline($row)); ?></div>
+									<?php endif; ?>
+								</td>
+								<td><?php echo stats_h(mn_analytics_ref_type_label($row['ref_type'])); ?><?php if ($row['ref_source'] !== ''): ?><div class="slug"><?php echo stats_h($row['ref_source']); ?></div><?php endif; ?></td>
+								<td><?php echo $row['ref_path'] !== '' ? stats_h($titles[$row['ref_path']] ?? $row['ref_path']) : '—'; ?></td>
+								<td class="num"><?php echo stats_h(mn_analytics_format_duration($row['duration_sec'] !== null ? (int)$row['duration_sec'] : null)); ?></td>
+								<td class="num"><?php echo $row['scroll_pct'] !== null ? (int)$row['scroll_pct'] . ' %' : '—'; ?></td>
+								<td><?php echo ((int)$row['completed'] === 1) ? '<span class="badge">ok</span>' : '<span class="badge external">open</span>'; ?></td>
+							</tr>
+						<?php endforeach; ?>
+					<?php else: ?>
+						<tr><td colspan="8"><div class="empty">No data in the selected period.</div></td></tr>
+					<?php endif; ?>
+					</tbody>
+				</table>
+			</div>
+			<?php if ($pageCount > 1): ?>
+				<div class="pager">
+					<span>Page <?php echo (int)$pageNum; ?> of <?php echo (int)$pageCount; ?></span>
+					<?php if ($pageNum > 1): ?><a href="?<?php echo stats_h(stats_query(['page' => $pageNum - 1])); ?>#raw-data">← Previous</a><?php endif; ?>
+					<?php if ($pageNum < $pageCount): ?><a href="?<?php echo stats_h(stats_query(['page' => $pageNum + 1])); ?>#raw-data">Next →</a><?php endif; ?>
+				</div>
+			<?php endif; ?>
+			<form method="post" action="" class="inline" style="margin-top:12px">
+				<input type="hidden" name="action" value="export">
+				<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">
+				<button type="submit" class="btn">Export CSV (current filter)</button>
+			</form>
+		</div>
+
+		<details class="details" id="privacy" data-tab-group="privacy">
+			<summary>Privacy &amp; technology</summary>
+			<div class="body">
+				<h3>What is stored</h3>
+				<ul>
+					<li>Timestamp rounded to the hour (stored in UTC, displayed in Berlin time).</li>
+					<li>Page slug (e.g. <code>history</code>), without query parameters.</li>
+					<li>Referrer type and source: direct, internal (previous lesson), search, social or external. For external referrers only the host, never the path or search term.</li>
+					<li>Active visible time on page in seconds and maximum scroll depth in percent.</li>
+					<li>Coarse client categories: browser family + major version, operating system + version, device class (desktop/mobile/tablet/bot), bot flag and a coarse bot reason label (e.g. Googlebot, curl, Headless Chrome). The User-Agent is read only transiently for this and never stored.</li>
+					<li>A transient random token per pageview that only joins heartbeats and is deleted on completion or after at most 6 hours.</li>
+				</ul>
+				<h3>What is not stored</h3>
+				<ul>
+					<li>No IP addresses, no full User-Agent strings, no device or browser fingerprints, no exact minor/patch versions.</li>
+					<li>Visitor analytics sets no cookies, no localStorage, no sessionStorage and no persistent IDs.</li>
+					<li>No external paths, queries, search terms or campaign parameters.</li>
+					<li>No cross-page recognition and no profiling.</li>
+				</ul>
+				<p>The login page sets a technically necessary session cookie, a signed admin-indicator cookie (only to show the health warning to the operator), and optionally the exclusion cookie for the owner’s own visits. The dashboard stores only the active tab name in localStorage; it is operator-only UI state, not analytics. These concern only the operator and are never sent to visitors.</p>
+				<h3>Why this works without consent</h3>
+				<p>§ 25 TDDDG requires consent for storing information on the device or accessing it. This analytics sets no cookies and no web storage, reads no stored information and uses only transient runtime data. The User-Agent is part of the normal HTTP request and is processed only transiently; only coarse, non-personal categories are stored. No personal data within the meaning of Art. 4 GDPR is processed: no IP, no identifier, no identifiability (see Recital 26 GDPR). DNT and Global Privacy Control are respected.</p>
+				<p>The counting itself is a pure pageview count; duration and scroll depth are anonymous aggregate attributes. A cross-page “unique visitor” identifier is deliberately omitted because it would require a persistent identifier and therefore consent.</p>
+				<h3>Limits</h3>
+				<p>Apache access logs may contain IP addresses. That is independent of this analytics. For complete IP freedom, server logs must be anonymized or disabled. Example of a LogFormat without IP in the Apache configuration:</p>
+				<pre><code>LogFormat "%t \"%r\" %>s %b" noip
+CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
+				<h3>Existing blog features</h3>
+				<p>Theme, interests, progress, quests and reader mode already use their own cookies or localStorage. This analytics does not add any further cookies or storage entries.</p>
+				<h3>Sources</h3>
+				<ul>
+					<li><a href="https://www.gesetze-im-internet.de/ttdsg/__25.html" target="_blank" rel="noopener noreferrer">§ 25 TDDDG</a></li>
+					<li><a href="https://gdpr-info.eu/recitals/no-26/" target="_blank" rel="noopener noreferrer">GDPR, Recital 26 (anonymous data)</a></li>
+					<li><a href="https://www.datenschutzkonferenz-online.de/media/oh/20211220_oh_telemedien.pdf" target="_blank" rel="noopener noreferrer">DSK, Telemedia Guidance (2021)</a></li>
+				</ul>
+			</div>
+		</details>
+
+		<dialog id="bot-dialog" class="bot-dialog" aria-labelledby="bot-dialog-title">
+			<form method="dialog"><button type="submit" class="btn" style="float:right;margin-left:12px;">Close</button></form>
+			<h3 id="bot-dialog-title">Bot detection</h3>
+			<p id="bot-dialog-text"></p>
+		</dialog>
+
+<div class="footer"><a href="#top">Back to top ↑</a> · Anonymous visitor analytics · no IPs · no visitor cookies · no persistent IDs · UA read transiently · DNT/GPC respected</div>
+	<?php endif; ?>
+
+<?php endif; ?>
+</div>
+<?php if ($authed): ?>
+<script>
+(function () {
+	'use strict';
+	var button = document.getElementById('copy-insights');
+	if (!button) {
+		return;
+	}
+	button.addEventListener('click', function () {
+		var text = Array.prototype.map.call(document.querySelectorAll('.insight-list li'), function (item) {
+			return '• ' + item.textContent;
+		}).join('\n');
+		if (!text) {
+			return;
+		}
+		var done = function () {
+			button.textContent = 'Copied';
+			setTimeout(function () { button.textContent = 'Copy summary'; }, 1600);
+		};
+		var fallback = function () {
+			var area = document.createElement('textarea');
+			area.value = text;
+			area.setAttribute('readonly', '');
+			area.style.position = 'fixed';
+			area.style.opacity = '0';
+			document.body.appendChild(area);
+			area.select();
+			try {
+				document.execCommand('copy');
+				done();
+			} catch (ignored) {}
+			document.body.removeChild(area);
+		};
+		if (navigator.clipboard && navigator.clipboard.writeText) {
+			navigator.clipboard.writeText(text).then(done, fallback);
+		} else {
+			fallback();
+		}
+	});
+})();
+</script>
+<script src="echarts.min.js?v=<?php echo (int)@filemtime(__DIR__ . '/echarts.min.js'); ?>"></script>
+<script>
+(function () {
+	'use strict';
+	if (!window.echarts) {
+		return;
+	}
+	var labels = <?php echo json_encode($seriesLabels, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var current = <?php echo json_encode($seriesCurrent, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var entries = <?php echo json_encode($seriesEntries, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var previous = <?php echo json_encode($seriesPrev, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var refs = <?php echo json_encode([
+		['name' => 'Direct', 'value' => $refCounts['direct']],
+		['name' => 'Internal', 'value' => $refCounts['internal']],
+		['name' => 'Search', 'value' => $refCounts['search']],
+		['name' => 'Social', 'value' => $refCounts['social']],
+		['name' => 'External', 'value' => $refCounts['external']],
+	], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var pages = <?php echo json_encode($chartPages, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var pageShare = <?php echo json_encode($pageShareData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var sankeyLinks = <?php echo json_encode($sankeyLinks, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var sankeyNodes = <?php echo json_encode($sankeyNodes, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var sankeyTitles = <?php echo json_encode($titles, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var botHints = <?php echo json_encode($botHints, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var browserMix = <?php echo json_encode($browserMix, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var osMix = <?php echo json_encode($osMix, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var deviceMix = <?php echo json_encode($deviceMix, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+
+	function truncateLabel(value, maxLength) {
+		if (value.length <= maxLength) {
+			return value;
+		}
+		return value.slice(0, maxLength - 1) + '…';
+	}
+
+	function htmlEscape(value) {
+		return String(value).replace(/[&<>"']/g, function (character) {
+			return {
+				'&': '&amp;',
+				'<': '&lt;',
+				'>': '&gt;',
+				'"': '&quot;',
+				"'": '&#39;'
+			}[character];
+		});
+	}
+
+	function pieOption(data, colors) {
+		return {
+			backgroundColor: 'transparent',
+			color: colors,
+			tooltip: {
+				trigger: 'item',
+				formatter: function (params) {
+					return htmlEscape(params.name) + ': ' + params.value + ' (' + params.percent + '%)';
+				},
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' }
+			},
+			legend: {
+				type: 'scroll',
+				orient: 'horizontal',
+				bottom: 0,
+				left: 'center',
+				textStyle: { color: '#94a3b8', fontSize: 10 },
+				itemWidth: 9,
+				itemHeight: 9
+			},
+			series: [{
+				type: 'pie',
+				radius: ['40%', '62%'],
+				center: ['50%', '42%'],
+				avoidLabelOverlap: true,
+				itemStyle: { borderColor: '#111c31', borderWidth: 2 },
+				label: { show: false },
+				emphasis: {
+					label: {
+						show: true,
+						color: '#e2e8f0',
+						fontWeight: 'bold',
+						formatter: '{b}\n{d}%'
+					}
+				},
+				data: data
+			}]
+		};
+	}
+
+	function movingAverage(values, windowSize) {
+		var out = [];
+		for (var i = 0; i < values.length; i++) {
+			var from = Math.max(0, i - windowSize + 1);
+			var sum = 0;
+			var n = 0;
+			for (var j = from; j <= i; j++) {
+				sum += values[j];
+				n++;
+			}
+			out.push(n ? Math.round(sum / n * 10) / 10 : 0);
+		}
+		return out;
+	}
+
+	var series = [{
+		name: 'Views',
+		type: 'line',
+		smooth: true,
+		symbol: 'none',
+		data: current,
+		lineStyle: { width: 2, color: '#e9aa60' },
+		areaStyle: { color: 'rgba(233,170,96,0.16)' },
+		itemStyle: { color: '#e9aa60' }
+	}];
+	var legend = ['Views'];
+
+	if (previous.length && previous.some(function (v) { return v > 0; })) {
+		series.push({
+			name: 'Previous period',
+			type: 'line',
+			smooth: true,
+			symbol: 'none',
+			data: previous,
+			lineStyle: { width: 1.5, type: 'dashed', color: '#64748b' },
+			itemStyle: { color: '#64748b' }
+		});
+		legend.push('Previous period');
+	}
+
+	series.push({
+		name: 'Estimated visits',
+		type: 'line',
+		smooth: true,
+		symbol: 'none',
+		data: entries,
+		lineStyle: { width: 1.5, type: 'dashed', color: '#38bdf8' },
+		itemStyle: { color: '#38bdf8' }
+	});
+	legend.push('Estimated visits');
+
+	series.push({
+		name: '7-day average',
+		type: 'line',
+		smooth: true,
+		symbol: 'none',
+		data: movingAverage(current, 7),
+		lineStyle: { width: 1.5, type: 'dotted', color: '#34d399' },
+		itemStyle: { color: '#34d399' }
+	});
+	legend.push('7-day average');
+
+	var dailyEl = document.getElementById('chart-daily');
+	var refsEl = document.getElementById('chart-refs');
+	var pagesEl = document.getElementById('chart-pages');
+	var pageShareEl = document.getElementById('chart-page-share');
+	var daily = dailyEl ? echarts.init(dailyEl) : null;
+	var refsChart = refsEl ? echarts.init(refsEl) : null;
+	var pagesChart = pagesEl ? echarts.init(pagesEl) : null;
+	var pageShareChart = pageShareEl ? echarts.init(pageShareEl) : null;
+	var sankeyEl = document.getElementById('chart-sankey');
+	var sankeyChart = sankeyEl ? echarts.init(sankeyEl) : null;
+	var browserMixEl = document.getElementById('chart-browser-mix');
+	var osMixEl = document.getElementById('chart-os-mix');
+	var deviceMixEl = document.getElementById('chart-device-mix');
+	var browserMixChart = browserMixEl ? echarts.init(browserMixEl) : null;
+	var osMixChart = osMixEl ? echarts.init(osMixEl) : null;
+	var deviceMixChart = deviceMixEl ? echarts.init(deviceMixEl) : null;
+
+	if (daily) {
+		daily.setOption({
+			backgroundColor: 'transparent',
+			color: ['#e9aa60', '#64748b', '#38bdf8', '#34d399'],
+			tooltip: {
+				trigger: 'axis',
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' }
+			},
+			legend: { data: legend, top: 0, right: 0, textStyle: { color: '#94a3b8', fontSize: 11 } },
+			grid: { left: 42, right: 16, top: 42, bottom: 28 },
+			xAxis: {
+				type: 'category',
+				data: labels,
+				boundaryGap: false,
+				axisLine: { lineStyle: { color: '#243047' } },
+				axisTick: { show: false },
+				axisLabel: { color: '#94a3b8', fontSize: 10, hideOverlap: true }
+			},
+			yAxis: {
+				type: 'value',
+				minInterval: 1,
+				splitLine: { lineStyle: { color: 'rgba(36,48,71,0.65)' } },
+				axisLabel: { color: '#94a3b8', fontSize: 10 }
+			},
+			series: series
+		});
+	}
+
+	if (refsChart) {
+		var refData = refs.filter(function (d) { return d.value > 0; });
+		refsChart.setOption({
+			backgroundColor: 'transparent',
+			color: ['#64748b', '#38bdf8', '#34d399', '#fb7185', '#e9aa60'],
+			tooltip: {
+				trigger: 'item',
+				formatter: function (params) { return htmlEscape(params.name) + ': ' + params.value + ' (' + params.percent + '%)'; },
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' }
+			},
+			legend: {
+				type: 'scroll',
+				orient: 'horizontal',
+				bottom: 0,
+				left: 'center',
+				textStyle: { color: '#94a3b8', fontSize: 10 },
+				itemWidth: 9,
+				itemHeight: 9
+			},
+			series: [{
+				type: 'pie',
+				radius: ['40%', '62%'],
+				center: ['50%', '42%'],
+				avoidLabelOverlap: true,
+				itemStyle: { borderColor: '#111c31', borderWidth: 2 },
+				label: { show: false },
+				emphasis: {
+					label: {
+						show: true,
+						color: '#e2e8f0',
+						fontWeight: 'bold',
+						formatter: '{b}\n{d}%'
+					}
+				},
+				data: refData
+			}]
+		});
+	}
+
+	if (pagesChart && pages.length) {
+		pagesChart.setOption({
+			backgroundColor: 'transparent',
+			tooltip: {
+				trigger: 'axis',
+				axisPointer: { type: 'shadow' },
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' },
+				formatter: function (params) {
+					var p = params[0];
+					var fullName = pages[p.dataIndex] ? pages[p.dataIndex].name : p.name;
+					return htmlEscape(fullName) + ': ' + p.value + ' views';
+				}
+			},
+			grid: { left: 190, right: 30, top: 10, bottom: 20 },
+			xAxis: {
+				type: 'value',
+				minInterval: 1,
+				splitLine: { lineStyle: { color: 'rgba(36,48,71,0.65)' } },
+				axisLabel: { color: '#94a3b8', fontSize: 10 }
+			},
+			yAxis: {
+				type: 'category',
+				data: pages.map(function (p) { return truncateLabel(p.name, 30); }),
+				axisLine: { lineStyle: { color: '#243047' } },
+				axisTick: { show: false },
+				axisLabel: { color: '#cbd5e1', fontSize: 11 }
+			},
+			series: [{
+				type: 'bar',
+				data: pages.map(function (p) { return p.value; }),
+				barMaxWidth: 18,
+				itemStyle: { color: '#e9aa60', borderRadius: [0, 4, 4, 0] },
+				emphasis: { itemStyle: { color: '#f4c98a' } }
+			}]
+		});
+	}
+
+	if (pageShareChart && pageShare.length) {
+		pageShareChart.setOption({
+			backgroundColor: 'transparent',
+			color: ['#e9aa60', '#38bdf8', '#34d399', '#fb7185', '#a78bfa', '#f472b6', '#94a3b8'],
+			tooltip: {
+				trigger: 'item',
+				formatter: function (params) { return htmlEscape(params.name) + ': ' + params.value + ' (' + params.percent + '%)'; },
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' }
+			},
+			legend: {
+				type: 'scroll',
+				orient: 'horizontal',
+				bottom: 0,
+				left: 'center',
+				textStyle: { color: '#94a3b8', fontSize: 10 },
+				itemWidth: 9,
+				itemHeight: 9
+			},
+			series: [{
+				type: 'pie',
+				radius: ['40%', '62%'],
+				center: ['50%', '42%'],
+				avoidLabelOverlap: true,
+				itemStyle: { borderColor: '#111c31', borderWidth: 2 },
+				label: { show: false },
+				emphasis: {
+					label: {
+						show: true,
+						color: '#e2e8f0',
+						fontWeight: 'bold',
+						formatter: '{b}\n{d}%'
+					}
+				},
+				data: pageShare
+			}]
+		});
+	}
+
+	if (sankeyChart && sankeyLinks.length) {
+		sankeyChart.setOption({
+			backgroundColor: 'transparent',
+			tooltip: {
+				trigger: 'item',
+				backgroundColor: '#0b1220',
+				borderColor: '#243047',
+				textStyle: { color: '#e2e8f0' },
+				formatter: function (params) {
+					if (params.dataType === 'edge') {
+						var source = sankeyTitles[params.data.source] || params.data.source;
+						var target = sankeyTitles[params.data.target] || params.data.target;
+						return htmlEscape(source) + ' → ' + htmlEscape(target) + ': ' + params.data.value + ' navigations';
+					}
+					return htmlEscape(sankeyTitles[params.name] || params.name);
+				}
+			},
+			series: [{
+				type: 'sankey',
+				data: sankeyNodes,
+				links: sankeyLinks,
+				left: 10,
+				right: 140,
+				top: 10,
+				bottom: 10,
+				nodeWidth: 12,
+				nodeGap: 10,
+				nodeAlign: 'justify',
+				layoutIterations: 32,
+				emphasis: { focus: 'adjacency' },
+				lineStyle: { color: 'gradient', curveness: 0.5, opacity: 0.35 },
+				label: {
+					color: '#cbd5e1',
+					fontSize: 10,
+					formatter: function (params) {
+						return truncateLabel(sankeyTitles[params.name] || params.name, 24);
+					}
+				},
+				itemStyle: { borderWidth: 0 },
+				levels: [
+					{ depth: 0, itemStyle: { color: '#e9aa60' }, lineStyle: { color: 'source', opacity: 0.25 } },
+					{ depth: 1, itemStyle: { color: '#38bdf8' }, lineStyle: { color: 'source', opacity: 0.25 } },
+					{ depth: 2, itemStyle: { color: '#34d399' }, lineStyle: { color: 'source', opacity: 0.25 } },
+					{ depth: 3, itemStyle: { color: '#fb7185' }, lineStyle: { color: 'source', opacity: 0.25 } }
+				]
+			}]
+		});
+	}
+
+	if (browserMixChart && browserMix.length) {
+		browserMixChart.setOption(pieOption(browserMix, ['#e9aa60', '#38bdf8', '#34d399', '#fb7185', '#a78bfa', '#f472b6', '#94a3b8']));
+	}
+	if (osMixChart && osMix.length) {
+		osMixChart.setOption(pieOption(osMix, ['#38bdf8', '#e9aa60', '#34d399', '#fb7185', '#a78bfa', '#f472b6', '#94a3b8']));
+	}
+	if (deviceMixChart && deviceMix.length) {
+		deviceMixChart.setOption(pieOption(deviceMix, ['#e9aa60', '#38bdf8', '#34d399', '#fb7185', '#a78bfa', '#f472b6', '#94a3b8']));
+	}
+
+	window.addEventListener('resize', function () {
+		if (daily) {
+			daily.resize();
+		}
+		if (refsChart) {
+			refsChart.resize();
+		}
+		if (pagesChart) {
+			pagesChart.resize();
+		}
+		if (pageShareChart) {
+			pageShareChart.resize();
+		}
+		if (sankeyChart) {
+			sankeyChart.resize();
+		}
+		if (browserMixChart) {
+			browserMixChart.resize();
+		}
+		if (osMixChart) {
+			osMixChart.resize();
+		}
+		if (deviceMixChart) {
+			deviceMixChart.resize();
+		}
+	});
+
+	(function () {
+		var tabs = Array.prototype.slice.call(document.querySelectorAll('[data-tab]'));
+		var groups = Array.prototype.slice.call(document.querySelectorAll('[data-tab-group]'));
+		if (!tabs.length || !groups.length) {
+			return;
+		}
+		function activate(name, save) {
+			groups.forEach(function (element) {
+				element.hidden = element.getAttribute('data-tab-group') !== name;
+			});
+			tabs.forEach(function (tab) {
+				var on = tab.getAttribute('data-tab') === name;
+				tab.classList.toggle('active', on);
+				tab.setAttribute('aria-selected', on ? 'true' : 'false');
+				tab.tabIndex = on ? 0 : -1;
+			});
+			document.querySelectorAll('[data-tab-group="' + name + '"] .chart').forEach(function (element) {
+				var chart = echarts.getInstanceByDom(element);
+				if (chart) {
+					chart.resize();
+				}
+			});
+			if (save) {
+				try {
+					localStorage.setItem('mn_stats_tab', name);
+				} catch (e) {
+					// Private mode or storage disabled.
+				}
+				if (window.history && history.replaceState) {
+					history.replaceState(null, '', '#' + name);
+				}
+			}
+		}
+		var known = tabs.map(function (tab) { return tab.getAttribute('data-tab'); });
+		var initial = '';
+		try {
+			initial = localStorage.getItem('mn_stats_tab') || '';
+		} catch (e) {
+			initial = '';
+		}
+		var hash = (location.hash || '').replace('#', '');
+		if (hash === 'raw-data') {
+			hash = 'raw';
+		}
+		if (known.indexOf(hash) >= 0) {
+			initial = hash;
+		}
+		if (known.indexOf(initial) < 0) {
+			initial = 'overview';
+		}
+		activate(initial, false);
+		tabs.forEach(function (tab, index) {
+			tab.addEventListener('click', function () {
+				activate(tab.getAttribute('data-tab'), true);
+			});
+			tab.addEventListener('keydown', function (event) {
+				var next = null;
+				if (event.key === 'ArrowRight') {
+					next = tabs[(index + 1) % tabs.length];
+				} else if (event.key === 'ArrowLeft') {
+					next = tabs[(index - 1 + tabs.length) % tabs.length];
+				} else if (event.key === 'Home') {
+					next = tabs[0];
+				} else if (event.key === 'End') {
+					next = tabs[tabs.length - 1];
+				}
+				if (next) {
+					event.preventDefault();
+					next.focus();
+					activate(next.getAttribute('data-tab'), true);
+				}
+			});
+		});
+	})();
+
+	(function () {
+		var dialog = document.getElementById('bot-dialog');
+		var title = document.getElementById('bot-dialog-title');
+		var text = document.getElementById('bot-dialog-text');
+		if (!dialog || !title || !text) {
+			return;
+		}
+		document.querySelectorAll('.bot-reason').forEach(function (button) {
+			button.addEventListener('click', function () {
+				var reason = button.getAttribute('data-reason') || 'Unknown bot';
+				var hint = botHints[reason] || 'The User-Agent matched a known bot or automation pattern.';
+				title.textContent = 'Detected as: ' + reason;
+				text.textContent = 'Rule: ' + hint + ' Only this coarse reason is stored; the raw User-Agent is never stored.';
+				if (typeof dialog.showModal === 'function') {
+					dialog.showModal();
+				} else {
+					dialog.setAttribute('open', '');
+				}
+			});
+		});
+	})();
+})();
+</script>
+<?php endif; ?>
+</body>
+</html>
+

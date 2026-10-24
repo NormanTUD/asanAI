@@ -9,7 +9,7 @@ function search_excludes() {
 	return [
 		'index.php', 'index_full.php', 'functions.php', 'search.php', 'search_lib.php',
 		'asanai_blog_proxy.php', 'graph.php', 'literature.php', 'knowledge_map.php',
-		'_aurora_test.php',
+		'_aurora_test.php', 'stats.php', 'track.php',
 	];
 }
 
