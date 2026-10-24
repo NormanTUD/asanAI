@@ -57,7 +57,7 @@ function stats_redirect(): void {
 }
 
 function stats_query(array $overrides = []): string {
-	$allowed = ['range', 'path', 'ref_type', 'source', 'ref_path', 'browser', 'os', 'device', 'day', 'page'];
+	$allowed = ['range', 'path', 'ref_type', 'source', 'ref_path', 'browser', 'os', 'device', 'day', 'weekday', 'hour', 'page'];
 	$q = [];
 	foreach ($allowed as $key) {
 		$value = array_key_exists($key, $overrides) ? $overrides[$key] : ($_GET[$key] ?? null);
@@ -207,7 +207,7 @@ function stats_all(PDO $pdo, string $sql, array $params): array {
 	return is_array($rows) ? $rows : [];
 }
 
-function stats_where(int $range, string $path, string $refType, string $source, string $refPath, string $browser, string $os, string $device, bool $previous = false, string $day = ''): array {
+function stats_where(int $range, string $path, string $refType, string $source, string $refPath, string $browser, string $os, string $device, bool $previous = false, string $day = '', int $weekday = 0, int $hour = -1): array {
 	$where = ['1=1'];
 	$params = [];
 	if ($range > 0) {
@@ -253,6 +253,14 @@ function stats_where(int $range, string $path, string $refType, string $source, 
 	if ($day !== '') {
 		$where[] = 'day = ?';
 		$params[] = $day;
+	}
+	if ($weekday > 0) {
+		$where[] = "CAST(strftime('%w', day) AS INTEGER) = ?";
+		$params[] = $weekday === 7 ? 0 : $weekday;
+	}
+	if ($hour >= 0) {
+		$where[] = 'hour = ?';
+		$params[] = $hour;
 	}
 	return [implode(' AND ', $where), $params];
 }
@@ -465,6 +473,20 @@ if ($day !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $day)) {
 	$day = '';
 }
 
+$weekdayRaw = $_GET['weekday'] ?? '';
+$weekday = is_scalar($weekdayRaw) ? (int)$weekdayRaw : 0;
+if ($weekday < 1 || $weekday > 7) {
+	$weekday = 0;
+}
+$hourRaw = $_GET['hour'] ?? '';
+$hour = -1;
+if ($hourRaw !== '' && is_scalar($hourRaw)) {
+	$hourCandidate = (int)$hourRaw;
+	if ($hourCandidate >= 0 && $hourCandidate <= 23) {
+		$hour = $hourCandidate;
+	}
+}
+
 $pathRaw = $_GET['path'] ?? '';
 $path = is_scalar($pathRaw) ? (string)$pathRaw : '';
 if ($path !== '' && !preg_match('/^[a-zA-Z0-9_-]{1,80}$/', $path)) {
@@ -625,7 +647,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 			http_response_code(503);
 			exit;
 		}
-		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, false, $day);
+		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, false, $day, $weekday, $hour);
 		$stmt = $pdoExport->prepare(
 			"SELECT ts, day, hour, path, ref_type, ref_source, ref_host, ref_path,
 			        browser, browser_major, os, os_version, device, is_bot, bot_reason,
@@ -845,8 +867,8 @@ if ($authed) {
 		if (!$analyticsKillSwitch) {
 			mn_analytics_cleanup($pdo, true);
 		}
-		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, false, $day);
-		[$prevWhereSql, $prevParams] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, true, $day);
+		[$whereSql, $params] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, false, $day, $weekday, $hour);
+		[$prevWhereSql, $prevParams] = stats_where($range, $path, $refType, $source, $refPath, $browser, $os, $device, true, $day, $weekday, $hour);
 
 		$kpi = stats_one($pdo, "SELECT
 			COUNT(*) AS views,
@@ -2051,6 +2073,8 @@ table.heat--compact th:first-child, table.heat--compact td:first-child { width: 
 table.heat--compact td { height: 16px; font-size: 8px; }
 .heat-legend { display: flex; align-items: center; gap: 8px; color: var(--dim); font-size: 11px; margin-top: 10px; }
 .heat-swatch { width: 14px; height: 10px; border-radius: 2px; border: 1px solid var(--line); }
+.heat-cell { cursor: pointer; }
+.heat-cell:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; align-items: end; margin: 0 0 14px; }
 .filters label { display: grid; gap: 5px; color: var(--dim); font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; }
 .filters input, .filters select { width: 100%; padding: 9px 10px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg); color: var(--text); font: inherit; }
@@ -2294,10 +2318,16 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			</div>
 		</div>
 
-		<?php if ($path !== '' || $refType !== '' || $source !== '' || $refPath !== '' || $browser !== '' || $os !== '' || $device !== '' || $day !== ''): ?>
+		<?php if ($path !== '' || $refType !== '' || $source !== '' || $refPath !== '' || $browser !== '' || $os !== '' || $device !== '' || $day !== '' || $weekday > 0 || $hour >= 0): ?>
 			<div class="chips">
 				<?php if ($day !== ''): ?>
 					<span class="chip">Day: <?php echo stats_h($day); ?> <a href="?<?php echo stats_h(stats_query(['day' => '', 'page' => 1])); ?>" aria-label="Remove day filter">×</a></span>
+				<?php endif; ?>
+				<?php if ($weekday > 0): ?>
+					<span class="chip">Weekday: <?php echo stats_h($weekdayLabels[$weekday] ?? (string)$weekday); ?> <a href="?<?php echo stats_h(stats_query(['weekday' => '', 'page' => 1])); ?>" aria-label="Remove weekday filter">×</a></span>
+				<?php endif; ?>
+				<?php if ($hour >= 0): ?>
+					<span class="chip">Hour: <?php echo stats_h(sprintf('%02d:00–%02d:59', $hour, $hour)); ?> <a href="?<?php echo stats_h(stats_query(['hour' => '', 'page' => 1])); ?>" aria-label="Remove hour filter">×</a></span>
 				<?php endif; ?>
 				<?php if ($path !== ''): ?>
 					<span class="chip">Page: <?php echo stats_h($titles[$path] ?? $path); ?> <a href="?<?php echo stats_h(stats_query(['path' => '', 'page' => 1])); ?>" aria-label="Remove page filter">×</a></span>
@@ -2328,6 +2358,8 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			<input type="hidden" name="__proxy_path" value="__MN_STATS_BASE_PATH__">
 			<input type="hidden" name="range" value="<?php echo (int)$range; ?>">
 			<input type="hidden" name="day" value="<?php echo stats_h($day); ?>">
+			<input type="hidden" name="weekday" value="<?php echo (int)$weekday; ?>">
+			<input type="hidden" name="hour" value="<?php echo $hour >= 0 ? (int)$hour : ''; ?>">
 			<label>Page
 				<input name="path" list="path-list" value="<?php echo stats_h($path); ?>" placeholder="e.g. history">
 			</label>
@@ -2588,7 +2620,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 								<tr>
 									<th><?php echo stats_h($weekdayLabel); ?></th>
 									<?php for ($h = 0; $h < 24; $h++): $c = (int)($weekHourMap[$weekdayIndex][$h] ?? 0); $alpha = $weekHourMax > 0 ? 0.05 + 0.95 * ($c / $weekHourMax) : 0.05; $bg = 'rgba(233,170,96,' . number_format($alpha, 3, '.', '') . ')'; $txt = $c === 0 ? 'transparent' : ($alpha > 0.6 ? '#0b1220' : 'rgba(226,232,240,.9)'); ?>
-										<td style="background: <?php echo stats_h($bg); ?>; color: <?php echo stats_h($txt); ?>;" title="<?php echo stats_h($weekdayLabel . ' ' . str_pad((string)$h, 2, '0', STR_PAD_LEFT) . ':00 — ' . $c . ' views'); ?>"><span><?php echo $c; ?></span></td>
+										<td class="heat-cell" data-weekday="<?php echo (int)$weekdayIndex; ?>" data-hour="<?php echo (int)$h; ?>" role="button" tabindex="0" style="background: <?php echo stats_h($bg); ?>; color: <?php echo stats_h($txt); ?>;" title="<?php echo stats_h($weekdayLabel . ' ' . str_pad((string)$h, 2, '0', STR_PAD_LEFT) . ':00 — ' . $c . ' views · click to filter'); ?>"><span><?php echo $c; ?></span></td>
 									<?php endfor; ?>
 								</tr>
 							<?php endforeach; ?>
@@ -2615,7 +2647,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 								<tr>
 									<th><?php echo stats_h($weekdayLabel); ?></th>
 									<?php for ($h = 0; $h < 24; $h++): $c = (int)($weekHourEntriesMap[$weekdayIndex][$h] ?? 0); $alpha = $weekHourEntriesMax > 0 ? 0.05 + 0.95 * ($c / $weekHourEntriesMax) : 0.05; $bg = 'rgba(56,189,248,' . number_format($alpha, 3, '.', '') . ')'; $txt = $c === 0 ? 'transparent' : ($alpha > 0.6 ? '#0b1220' : 'rgba(226,232,240,.9)'); ?>
-										<td style="background: <?php echo stats_h($bg); ?>; color: <?php echo stats_h($txt); ?>;" title="<?php echo stats_h($weekdayLabel . ' ' . str_pad((string)$h, 2, '0', STR_PAD_LEFT) . ':00 — ' . $c . ' estimated visits'); ?>"><span><?php echo $c; ?></span></td>
+										<td class="heat-cell" data-weekday="<?php echo (int)$weekdayIndex; ?>" data-hour="<?php echo (int)$h; ?>" role="button" tabindex="0" style="background: <?php echo stats_h($bg); ?>; color: <?php echo stats_h($txt); ?>;" title="<?php echo stats_h($weekdayLabel . ' ' . str_pad((string)$h, 2, '0', STR_PAD_LEFT) . ':00 — ' . $c . ' estimated visits · click to filter'); ?>"><span><?php echo $c; ?></span></td>
 									<?php endfor; ?>
 								</tr>
 							<?php endforeach; ?>
@@ -3294,7 +3326,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 					<li><strong>Estimated visits</strong> = views with a direct, external, search or social referrer (entry pageviews). This is the most honest consent-free proxy for visits; it is not a unique-person count.</li>
 					<li><strong>Views / day, peak hour, peak weekday</strong> = aggregates over the selected range in Berlin time. “Peak” means the hour/weekday with the most pageviews. Hover the rhythm bars for both pageviews and estimated visits.</li>
 					<li><strong>Page performance</strong> = views, share, entries, internal navigation, duration, scroll, bounce and last activity per page. Pages without views stay visible with 0 so you can see what nobody reads.</li>
-					<li><strong>Internal navigation</strong> = a view whose previous page was another blog page. The Sankey shows page-to-page flows; weaker cycle-closing transitions are omitted so the chart stays acyclic.</li>
+					<li><strong>Page transitions</strong> = a view whose previous page was another blog page. The matrix shows immediate from → to transitions (including cycles); the flow view omits weaker cycle-closing edges. These are not complete visitor journeys: a page can be a source simply because it was the previous page. Entry pages show where visits actually start.</li>
 					<li><strong>Duration</strong> = visible time in the tab, measured in milliseconds in the browser and transmitted in seconds. No cross-page tracking.</li>
 					<li><strong>Scroll depth</strong> = the maximum share of the page height a reader reached. Useful to see whether people get to the end.</li>
 					<li><strong>Bots</strong> = pageviews whose User-Agent matched a known bot or automation signature. Only the coarse reason label is stored. Click a reason in Tech or a raw row to see the matching rule.</li>
@@ -3506,7 +3538,7 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	var anomalies = <?php echo json_encode($seriesAnomalies, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var baseQuery = <?php echo json_encode(stats_query(['day' => '', 'page' => 1]), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 	var statsBase = window.__MNStatsBase;
-	if (!statsBase || statsBase === '__MN_STATS_BASE__') {
+	if (!statsBase || statsBase.indexOf('__MN_STATS_') === 0) {
 		statsBase = 'stats.php';
 	}
 
@@ -3721,6 +3753,22 @@ CustomLog ${APACHE_LOG_DIR}/access.log noip</code></pre>
 	function goWith(overrides) {
 		window.location.href = urlWith(overrides);
 	}
+
+	document.querySelectorAll('.heat-cell').forEach(function (cell) {
+		function activate() {
+			goWith({
+				weekday: cell.getAttribute('data-weekday'),
+				hour: cell.getAttribute('data-hour')
+			});
+		}
+		cell.addEventListener('click', activate);
+		cell.addEventListener('keydown', function (event) {
+			if (event.key === 'Enter' || event.key === ' ') {
+				event.preventDefault();
+				activate();
+			}
+		});
+	});
 
 	if (daily) {
 		daily.setOption({
