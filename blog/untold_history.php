@@ -2618,6 +2618,31 @@ At the hardware layer, permission is geopolitical. The U.S. Bureau of Industry a
 </div>
 
 <div class="md" data-depth="40">
+## The School: Mass Literacy and the Human-Capital Budget
+
+A model is trained on text, but the text was written by people who had learned to read and write. The school system is therefore a prerequisite of the corpus, and the university is a prerequisite of the research community. This section traces the institutional machinery that produces literate, numerate, specialised people.
+
+### The School Before the State
+
+Luther's 1524 letter to the councillors of all German cities is an early call for public schooling: its title asks the city fathers to establish and maintain Christian schools (\cite[Luther, 1524]{luther1524schools}). A century later, the Massachusetts Bay Colony ordered every township of fifty households to appoint a teacher of reading and writing, and every township of one hundred households to set up a grammar school able to prepare youth for the university, with a fine for towns that neglected the order (\cite[Massachusetts Bay Colony, 1647]{mass1647deluder}). These schools were religious and civic in purpose, not economic; but they created a reading population, and a reading population is the raw material of a text corpus.
+
+### The Common School and Compulsory Education
+
+The modern school system is a creation of the nineteenth century. The Elementary Education Act 1870 was "an Act to provide for public Elementary Education in England and Wales"; it created school boards, tied school provision to the local rate, and made the state responsible for elementary education (\cite[Parliament of the United Kingdom, 1870]{uk1870education}). Mass schooling standardised literacy and numeracy, created a common curriculum, and produced the clerks, teachers, technicians and readers on whom industry and administration depend. The school is the institution that turns a population into a workforce and an audience.
+
+### The Public Library
+
+Schooling is the floor, not the ceiling. The Public Libraries Act 1850 enabled town councils to establish public libraries and museums, and it made admission to them free (\cite[Parliament of the United Kingdom, 1850]{uk1850libraries}). The public library extended reading beyond the years of formal schooling and beyond the ability to buy books; it was a self-education institution. For a technical civilisation, the library is a distributed memory.
+
+### The Immigration Valve
+
+A school system produces human capital nationally, but AI research is international. The Immigration and Nationality Act of 1965 removed national-origin, race and sex discrimination from visa issuance and created preferences for members of the professions and for people of exceptional ability in the sciences or arts (\cite[U.S. Congress, 1965]{us1965immigration}). The Immigration Act of 1990 created the H-1B category for temporary workers in a "specialty occupation" requiring specialised knowledge and at least a bachelor's degree, with an annual cap (\cite[U.S. Congress, 1990]{us1990h1b}). The result is a global labour market for scientists and engineers: the school systems of many countries feed the research labs of a few.
+
+> **Open questions.** Who gets educated, and who is excluded? What curriculum produces a person who can read a paper, write code, and label data? How much of AI's human capital is imported? What happens to the pipeline when borders close?
+
+</div>
+
+<div class="md" data-depth="40">
 ## The Republic of Science
 
 ### The University and the Grant

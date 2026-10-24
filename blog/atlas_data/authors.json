@@ -3660,6 +3660,7 @@
    "blattmann2023svid"
   ],
   "cited_in": [
+   "ai_and_society",
    "diffusion",
    "music_video_generation",
    "people_of_ai"
@@ -3829,16 +3830,18 @@
   "city": "Palo Alto, United States",
   "year": 2023.0,
   "conf": 1,
-  "works": 6,
+  "works": 7,
   "keys": [
    "karpathy2015convnetjs",
    "nanogpt",
    "karpathy2023zerotohero",
    "karpathy2019recipe",
    "karpathy2015rnn",
-   "karpathy_ai"
+   "karpathy_ai",
+   "karpathy2025vibecoding"
   ],
   "cited_in": [
+   "ai_and_society",
    "history",
    "people_of_ai",
    "topology",
@@ -6828,12 +6831,14 @@
   "variants": [
    "interview"
   ],
-  "works": 2,
+  "works": 3,
   "keys": [
    "edroberts_bbc",
+   "bbc2023heart",
    "hinton2023caution"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_existential_risk",
    "history"
   ]
@@ -7670,6 +7675,7 @@
    "rombach2022ldm"
   ],
   "cited_in": [
+   "ai_and_society",
    "diffusion",
    "music_video_generation",
    "people_of_ai"
@@ -14194,9 +14200,10 @@
   "city": "Montreal, Canada",
   "year": 2020.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "laion2022blog"
+   "laion2022blog",
+   "laion5b2022"
   ],
   "cited_in": [
    "ai_and_society"
@@ -14211,9 +14218,10 @@
   "city": "Bonn, Germany",
   "year": 2022.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "laion2022blog"
+   "laion2022blog",
+   "laion5b2022"
   ],
   "cited_in": [
    "ai_and_society"
@@ -14729,9 +14737,7 @@
   "keys": [
    "c2pa_wiki"
   ],
-  "cited_in": [
-   "ai_and_society"
-  ]
+  "cited_in": []
  },
  {
   "name": "Lihi Idan",
@@ -24740,9 +24746,11 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 3,
   "keys": [
-   "companiesact1856"
+   "companiesact1856",
+   "uk1870education",
+   "uk1850libraries"
   ],
   "cited_in": [
    "untold_history"
@@ -24757,9 +24765,11 @@
   "city": "",
   "year": 0.0,
   "conf": 0,
-  "works": 1,
+  "works": 3,
   "keys": [
-   "sbic1958"
+   "sbic1958",
+   "us1965immigration",
+   "us1990h1b"
   ],
   "cited_in": [
    "untold_history"
@@ -24794,6 +24804,549 @@
   "works": 1,
   "keys": [
    "adwords2003patent"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "PNAS",
+  "canon": "PNAS",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "pnas2026khan"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "ClinicalTrials.gov",
+  "canon": "ClinicalTrials.gov",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "clinicaltrials_rentosertib"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Cybersecurity and Infrastructure Security Agency (CISA)",
+  "canon": "Cybersecurity and Infrastructure Security Agency",
+  "alias": "CISA",
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "cisa2024elections"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Office of the Director of National Intelligence",
+  "canon": "Office of the Director of National Intelligence",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "odni2024threat"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "15.ai",
+  "canon": "15.ai",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "fifteenai"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "The Wall Street Journal",
+  "canon": "The Wall Street Journal",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wsj2019voicefraud"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Federal Communications Commission",
+  "canon": "Federal Communications Commission",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 2,
+  "keys": [
+   "fcc2024biden",
+   "fcc2024robocall"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Sensity AI",
+  "canon": "Sensity AI",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "sensity2019deepfakes"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "C2PA",
+  "canon": "C2PA",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "c2pa2024"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Aimee J. Ellington",
+  "canon": "Aimee J. Ellington",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ellington2003calculators"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Carole Cadwalladr & Emma Graham-Harrison",
+  "canon": "Carole Cadwalladr & Emma Graham-Harrison",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "guardian2018cambridge"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Character.AI",
+  "canon": "Character.AI",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "characterai"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Murray Campbell",
+  "canon": "Murray Campbell",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "campbell2002deepblue"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "A. Joseph Hoane Jr.",
+  "canon": "A. Joseph Hoane Jr.",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "campbell2002deepblue"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Feng-hsiung Hsu",
+  "canon": "Feng-hsiung Hsu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "campbell2002deepblue"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "DeepL",
+  "canon": "DeepL",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "deepl2024press"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Duolingo",
+  "canon": "Duolingo",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "duolingo2025annual"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Inc.",
+  "canon": "Inc.",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "duolingo2025annual"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Christie's",
+  "canon": "Christie's",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "christies2018belamy"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "The Verge",
+  "canon": "The Verge",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "verge2018belamy"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Richard Vencu",
+  "canon": "Richard Vencu",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "laion5b2022"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Andy Baio",
+  "canon": "Andy Baio",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "waxy2022stable"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "U.S. Copyright Office Review Board",
+  "canon": "U.S. Copyright Office Review Board",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "usco2023theatre"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Colorado State Fair",
+  "canon": "Colorado State Fair",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "coloradostatefair2022"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Writers Guild of America",
+  "canon": "Writers Guild of America",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "wga2023mba"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "NPR",
+  "canon": "NPR",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "npr2023wga"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "FBI Internet Crime Complaint Center",
+  "canon": "FBI Internet Crime Complaint Center",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ic3_2023"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "UK Finance",
+  "canon": "UK Finance",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "ukfinance2024fraud"
+  ],
+  "cited_in": []
+ },
+ {
+  "name": "Insilico Medicine",
+  "canon": "Insilico Medicine",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "insilico2026genesis"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Silicon UK",
+  "canon": "Silicon UK",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "silicon2023replika"
+  ],
+  "cited_in": [
+   "ai_and_society"
+  ]
+ },
+ {
+  "name": "Martin Luther",
+  "canon": "Martin Luther",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "luther1524schools"
+  ],
+  "cited_in": [
+   "untold_history"
+  ]
+ },
+ {
+  "name": "Massachusetts Bay Colony",
+  "canon": "Massachusetts Bay Colony",
+  "alias": null,
+  "lat": null,
+  "lng": null,
+  "city": "",
+  "year": 0.0,
+  "conf": 0,
+  "works": 1,
+  "keys": [
+   "mass1647deluder"
   ],
   "cited_in": [
    "untold_history"
@@ -25854,11 +26407,13 @@
   "city": "Mountain View, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "chm"
+   "chm",
+   "computerhistory_deepblue"
   ],
   "cited_in": [
+   "ai_and_society",
    "human_mind",
    "software"
   ]
@@ -26856,6 +27411,7 @@
    "chesney2019deepfakes"
   ],
   "cited_in": [
+   "ai_and_society",
    "philosophy"
   ]
  },
@@ -29238,6 +29794,7 @@
    "rombach2022ldm"
   ],
   "cited_in": [
+   "ai_and_society",
    "diffusion",
    "music_video_generation",
    "people_of_ai"
@@ -31391,6 +31948,7 @@
    "alphafold_db"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "untold_history"
   ]
@@ -31557,14 +32115,16 @@
   "city": "Brussels, Belgium",
   "year": 2024.0,
   "conf": 1,
-  "works": 4,
+  "works": 5,
   "keys": [
    "euaiact2024",
    "gdpr2018",
    "eu2019dsm",
-   "eu2016gdpr"
+   "eu2016gdpr",
+   "eu2024aiact"
   ],
   "cited_in": [
+   "ai_and_society",
    "global_ai_ecosystem",
    "untold_history"
   ]
@@ -33395,11 +33955,14 @@
   "city": "Rome, Italy",
   "year": 2023.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "italy2023chatgpt"
+   "italy2023chatgpt",
+   "garante2023chatgpt"
   ],
-  "cited_in": []
+  "cited_in": [
+   "ai_and_society"
+  ]
  },
  {
   "name": "Garavaglia Giovita (after); Gaetano Bonatti (engraver)",
@@ -34695,15 +35258,17 @@
   "city": "Mountain View, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 5,
+  "works": 6,
   "keys": [
    "puppeteer",
    "googlecustomsearch",
    "gemini2024v15",
    "img_transformer_attention_heads",
-   "googlebooks_history"
+   "googlebooks_history",
+   "google2024translate"
   ],
   "cited_in": [
+   "ai_and_society",
    "people_of_ai",
    "untold_history",
    "websearch"
@@ -36487,11 +37052,13 @@
   "city": "London, United Kingdom",
   "year": 2024.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "trinh2024alphageometry"
+   "trinh2024alphageometry",
+   "alphageometry2024"
   ],
   "cited_in": [
+   "ai_and_society",
    "symbolic_ai"
   ]
  },
@@ -40307,6 +40874,7 @@
    "lighthillreport"
   ],
   "cited_in": [
+   "ai_and_society",
    "history"
   ]
  },
@@ -52845,6 +53413,7 @@
    "alphafold_db"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "untold_history"
   ]
@@ -52949,6 +53518,7 @@
    "alphafold_db"
   ],
   "cited_in": [
+   "ai_and_society",
    "ai_for_science",
    "untold_history"
   ]
@@ -55098,6 +55668,7 @@
    "nilsson1984shakey"
   ],
   "cited_in": [
+   "ai_and_society",
    "history",
    "language",
    "untold_history"
@@ -55902,7 +56473,6 @@
    "gptoss2025"
   ],
   "cited_in": [
-   "ai_and_society",
    "ai_existential_risk",
    "ai_for_science",
    "frontier",
@@ -56476,6 +57046,7 @@
    "rombach2022ldm"
   ],
   "cited_in": [
+   "ai_and_society",
    "diffusion",
    "music_video_generation",
    "people_of_ai"
@@ -58541,7 +59112,7 @@
   "city": "Mountain View, USA",
   "year": 2019.0,
   "conf": 1,
-  "works": 11,
+  "works": 12,
   "keys": [
    "trinh2018commonsense",
    "ramachandran2017swish",
@@ -58553,10 +59124,12 @@
    "smithle2018bayesian",
    "clark2020electra",
    "dean2012large",
-   "le2012cat"
+   "le2012cat",
+   "alphageometry2024"
   ],
   "cited_in": [
    "activationlab",
+   "ai_and_society",
    "beyond_llms",
    "embeddinglab",
    "history",
@@ -60260,6 +60833,7 @@
    "chesney2019deepfakes"
   ],
   "cited_in": [
+   "ai_and_society",
    "philosophy"
   ]
  },
@@ -60780,6 +61354,7 @@
    "rombach2022ldm"
   ],
   "cited_in": [
+   "ai_and_society",
    "diffusion",
    "music_video_generation",
    "people_of_ai"
@@ -66892,11 +67467,13 @@
   "city": "Mountain View, USA",
   "year": 2024.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "trinh2024alphageometry"
+   "trinh2024alphageometry",
+   "alphageometry2024"
   ],
   "cited_in": [
+   "ai_and_society",
    "symbolic_ai"
   ]
  },
@@ -66943,16 +67520,18 @@
   "city": "Mountain View, USA",
   "year": 2012.0,
   "conf": 1,
-  "works": 6,
+  "works": 7,
   "keys": [
    "puppeteer",
    "googlecustomsearch",
    "gemini2024v15",
    "img_transformer_attention_heads",
    "googlebooks_history",
+   "google2024translate",
    "go_lang"
   ],
   "cited_in": [
+   "ai_and_society",
    "people_of_ai",
    "software",
    "untold_history",
@@ -66968,11 +67547,14 @@
   "city": "London, UK",
   "year": 2024.0,
   "conf": 1,
-  "works": 1,
+  "works": 3,
   "keys": [
-   "guardian2024sewell"
+   "guardian2024sewell",
+   "guardian2023heart",
+   "guardian2018ira"
   ],
   "cited_in": [
+   "ai_and_society",
    "myths"
   ]
  },
@@ -68890,11 +69472,13 @@
   "city": "Mountain View, USA",
   "year": 2019.0,
   "conf": 1,
-  "works": 1,
+  "works": 2,
   "keys": [
-   "trinh2018commonsense"
+   "trinh2018commonsense",
+   "alphageometry2024"
   ],
   "cited_in": [
+   "ai_and_society",
    "philosophy"
   ]
  },
@@ -74679,13 +75263,15 @@
   "city": "Mountain View, USA",
   "year": 2022.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "zelikman2024quietstar",
    "zelikman2022star",
-   "trinh2024alphageometry"
+   "trinh2024alphageometry",
+   "alphageometry2024"
   ],
   "cited_in": [
+   "ai_and_society",
    "mechanistic_interpretability",
    "symbolic_ai"
   ]
@@ -76324,13 +76910,15 @@
   "city": "London, UK",
   "year": 2023.0,
   "conf": 1,
-  "works": 3,
+  "works": 4,
   "keys": [
    "graphcast_github",
    "gemma2025v3",
-   "deepmind_about"
+   "deepmind_about",
+   "deepmind2024imo"
   ],
   "cited_in": [
+   "ai_and_society",
    "frontier",
    "people_of_ai",
    "untold_history"
@@ -76426,16 +77014,18 @@
   "city": "Mountain View, USA",
   "year": 2017.0,
   "conf": 1,
-  "works": 6,
+  "works": 7,
   "keys": [
    "transformer_attention_figure",
    "puppeteer",
    "googlecustomsearch",
    "gemini2024v15",
    "img_transformer_attention_heads",
-   "googlebooks_history"
+   "googlebooks_history",
+   "google2024translate"
   ],
   "cited_in": [
+   "ai_and_society",
    "atlas",
    "people_of_ai",
    "untold_history",

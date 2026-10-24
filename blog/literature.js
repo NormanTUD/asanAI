@@ -21506,4 +21506,51 @@ window.bibData = {
 		alternativetitle: "EU AI Act (2024)"
 	},
 
+
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  The school, the library and the immigration valve
+	 *  (untold_history.php) — primary sources.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"luther1524schools": {
+		title: "An die Ratsherren aller Städte deutschen Landes, dass sie christliche Schulen aufrichten und halten sollen",
+		author: "Martin Luther",
+		year: 1524,
+		url: "https://archive.org/details/luther-an-die-ratsherren-aller-staedte-deutschen-landes-buch",
+		alternativetitle: "Luther, 1524"
+	},
+	"mass1647deluder": {
+		title: "The Old Deluder Act (1647)",
+		author: "Massachusetts Bay Colony",
+		year: 1647,
+		url: "https://www.constitution.org/primarysources/deluder.html",
+		alternativetitle: "Massachusetts School Law, 1647"
+	},
+	"uk1870education": {
+		title: "Elementary Education Act 1870",
+		author: "Parliament of the United Kingdom",
+		year: 1870,
+		url: "https://www.legislation.gov.uk/ukpga/Vict/33-34/75/enacted",
+		alternativetitle: "Elementary Education Act 1870"
+	},
+	"uk1850libraries": {
+		title: "Public Libraries Act 1850",
+		author: "Parliament of the United Kingdom",
+		year: 1850,
+		url: "https://www.legislation.gov.uk/ukpga/1850/65/enacted",
+		alternativetitle: "Public Libraries Act 1850"
+	},
+	"us1965immigration": {
+		title: "Immigration and Nationality Act of 1965",
+		author: "U.S. Congress",
+		year: 1965,
+		url: "https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg911.pdf",
+		alternativetitle: "Immigration and Nationality Act 1965"
+	},
+	"us1990h1b": {
+		title: "Immigration Act of 1990: H-1B temporary workers",
+		author: "U.S. Congress",
+		year: 1990,
+		url: "https://www.govinfo.gov/content/pkg/STATUTE-104/pdf/STATUTE-104-Pg4978.pdf",
+		alternativetitle: "Immigration Act 1990 (H-1B)"
+	},
 };

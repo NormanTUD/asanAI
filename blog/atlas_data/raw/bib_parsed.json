@@ -14826,6 +14826,18 @@
    "year": "",
    "url": "https://en.wikipedia.org/wiki/Khan_Academy"
   },
+  "pnas2026khan": {
+   "title": "Computer-assisted learning in the real world: How Khan Academy influences student math learning",
+   "author": "PNAS",
+   "year": "",
+   "url": "https://www.pnas.org/doi/10.1073/pnas.2507708123"
+  },
+  "clinicaltrials_rentosertib": {
+   "title": "Study Evaluation Rentosertib (INS018_055) in Participants With Idiopathic Pulmonary Fibrosis (GENESIS-IPF-3)",
+   "author": "ClinicalTrials.gov",
+   "year": "",
+   "url": "https://clinicaltrials.gov/study/NCT07687459"
+  },
   "prather2023copilot": {
    "title": "An Observational Study of Novice Programmers Using GitHub Copilot",
    "author": "Brett Prather, Jey Hong, Thomas D. LaToza",
@@ -17549,6 +17561,258 @@
    "author": "Jeremy Bem",
    "year": "",
    "url": "https://patents.google.com/patent/US7647242B2/en"
+  },
+  "cisa2024elections": {
+   "title": "Consolidated Risk in Focus: Generative AI and Elections",
+   "author": "Cybersecurity and Infrastructure Security Agency (CISA)",
+   "year": "",
+   "url": "https://www.cisa.gov/sites/default/files/2024-05/Consolidated_Risk_in_Focus_Gen_AI_ElectionsV2_508c.pdf"
+  },
+  "odni2024threat": {
+   "title": "Annual Threat Assessment of the U.S. Intelligence Community",
+   "author": "Office of the Director of National Intelligence",
+   "year": "",
+   "url": "https://www.dni.gov/files/ODNI/documents/assessments/ATA-2024-Unclassified-Report.pdf"
+  },
+  "alphageometry2024": {
+   "title": "Solving olympiad geometry without human demonstrations",
+   "author": "Trieu H. Trinh, Yuhuai Wu, Quoc V. Le, He He, Thang Luong",
+   "year": "",
+   "url": "https://doi.org/10.1038/s41586-023-06747-5"
+  },
+  "deepmind2024imo": {
+   "title": "AI solves IMO problems at silver medal level",
+   "author": "Google DeepMind",
+   "year": "",
+   "url": "https://deepmind.google/discover/blog/ai-solves-imo-problems-at-silver-medal-level/"
+  },
+  "fifteenai": {
+   "title": "15.ai: High-quality speech synthesis from 15 seconds of audio",
+   "author": "15.ai",
+   "year": "",
+   "url": "https://15.ai/"
+  },
+  "wsj2019voicefraud": {
+   "title": "Fraudsters Use AI to Mimic CEO's Voice in Unusual Cybercrime Case",
+   "author": "The Wall Street Journal",
+   "year": "",
+   "url": "https://web.archive.org/web/2023/https://www.wsj.com/articles/fraudsters-use-ai-to-mimic-ceos-voice-in-unusual-cybercrime-case-11567157402"
+  },
+  "fcc2024biden": {
+   "title": "FCC Proposes $6M Fine for AI-Generated Robocall Impersonating President Biden",
+   "author": "Federal Communications Commission",
+   "year": "",
+   "url": "https://www.fcc.gov/document/fcc-proposes-6m-fine-ai-generated-robocall-biden"
+  },
+  "fcc2024robocall": {
+   "title": "FCC Makes AI-Generated Voices in Robocalls Illegal",
+   "author": "Federal Communications Commission",
+   "year": "",
+   "url": "https://www.fcc.gov/document/fcc-makes-ai-generated-voices-robocalls-illegal"
+  },
+  "sensity2019deepfakes": {
+   "title": "The State of Deepfakes: Landscape, Threats, and Impact",
+   "author": "Sensity AI",
+   "year": "",
+   "url": "https://sensity.ai/reports/"
+  },
+  "c2pa2024": {
+   "title": "Coalition for Content Provenance and Authenticity (C2PA)",
+   "author": "C2PA",
+   "year": "",
+   "url": "https://c2pa.org/"
+  },
+  "ellington2003calculators": {
+   "title": "A Meta-Analysis of the Effects of Calculators on Students' Achievement and Attitude Levels in Precollege Mathematics Classes",
+   "author": "Aimee J. Ellington",
+   "year": "",
+   "url": "https://doi.org/10.2307/30034795"
+  },
+  "guardian2018cambridge": {
+   "title": "The Cambridge Analytica files: the story so far",
+   "author": "Carole Cadwalladr & Emma Graham-Harrison",
+   "year": "",
+   "url": "https://www.theguardian.com/news/2018/mar/17/data-war-whistleblower-christopher-wylie-faceook-nix-bannon-trump"
+  },
+  "characterai": {
+   "title": "Character.AI",
+   "author": "Character.AI",
+   "year": "",
+   "url": "https://character.ai/"
+  },
+  "garante2023chatgpt": {
+   "title": "ChatGPT: Garante privacy bans the use of the chatbot in Italy",
+   "author": "Garante per la protezione dei dati personali",
+   "year": "",
+   "url": "https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/9870832"
+  },
+  "campbell2002deepblue": {
+   "title": "Deep Blue",
+   "author": "Murray Campbell, A. Joseph Hoane Jr., Feng-hsiung Hsu",
+   "year": "",
+   "url": "https://doi.org/10.1016/S0004-3702(01)00129-1"
+  },
+  "computerhistory_deepblue": {
+   "title": "Deep Blue",
+   "author": "Computer History Museum",
+   "year": "",
+   "url": "https://www.computerhistory.org/chess/"
+  },
+  "deepl2024press": {
+   "title": "DeepL press room",
+   "author": "DeepL",
+   "year": "",
+   "url": "https://www.deepl.com/en/press"
+  },
+  "google2024translate": {
+   "title": "Google Translate adds 110 new languages with the help of AI",
+   "author": "Google",
+   "year": "",
+   "url": "https://blog.google/products/translate/google-translate-new-languages-2024/"
+  },
+  "duolingo2025annual": {
+   "title": "Duolingo, Inc. Annual Report 2025 (Form 10-K)",
+   "author": "Duolingo, Inc.",
+   "year": "",
+   "url": "https://www.sec.gov/Archives/edgar/data/1562088/000162828026012494/duol-20251231.htm"
+  },
+  "christies2018belamy": {
+   "title": "Edmond de Belamy, from La Famille de Belamy",
+   "author": "Christie's",
+   "year": "",
+   "url": "https://www.christies.com/en/lot/lot-6166184"
+  },
+  "verge2018belamy": {
+   "title": "AI art at Christie's: the story behind the $432,500 portrait",
+   "author": "The Verge",
+   "year": "",
+   "url": "https://www.theverge.com/2018/10/23/18013190/ai-art-portrait-auction-christies-belamy-obvious-robbie-barrat-gans"
+  },
+  "laion5b2022": {
+   "title": "LAION-5B: A 5.85-Billion-Pair Multilingual Dataset for Training Large-Scale Vision-Language Models",
+   "author": "Christoph Schuhmann, Romain Beaumont, Richard Vencu, et al.",
+   "year": "",
+   "url": "https://arxiv.org/abs/2210.08402"
+  },
+  "waxy2022stable": {
+   "title": "Exploring 12 Million of the Images Used to Train Stable Diffusion",
+   "author": "Andy Baio",
+   "year": "",
+   "url": "https://waxy.org/2022/08/exploring-12-million-of-the-images-used-to-train-stable-diffusions-image-generator/"
+  },
+  "usco2023theatre": {
+   "title": "Second Request for Reconsideration for Refusal to Register Théâtre D'Opéra Spatial",
+   "author": "U.S. Copyright Office Review Board",
+   "year": "",
+   "url": "https://www.copyright.gov/rulings-filings/review-board/docs/Theatre-Dopera-Spatial.pdf"
+  },
+  "coloradostatefair2022": {
+   "title": "2022 Fine Arts First, Second, Third Place Results",
+   "author": "Colorado State Fair",
+   "year": "",
+   "url": "https://coloradostatefair.com/wp-content/uploads/2022/08/2022-Fine-Arts-First-Second-Third.pdf"
+  },
+  "karpathy2025vibecoding": {
+   "title": "Vibe coding",
+   "author": "Andrej Karpathy",
+   "year": "",
+   "url": "https://x.com/karpathy/status/1886192184808149383"
+  },
+  "wga2023mba": {
+   "title": "2023 Minimum Basic Agreement",
+   "author": "Writers Guild of America",
+   "year": "",
+   "url": "https://www.wga.org/contracts/contracts/mba"
+  },
+  "npr2023wga": {
+   "title": "Writers Guild calls strike",
+   "author": "NPR",
+   "year": "",
+   "url": "https://www.npr.org/2023/05/02/1172876800/writers-guild-calls-strike"
+  },
+  "ic3_2023": {
+   "title": "2023 Internet Crime Report",
+   "author": "FBI Internet Crime Complaint Center",
+   "year": "",
+   "url": "https://www.ic3.gov/AnnualReport/Reports/2023_IC3Report.pdf"
+  },
+  "ukfinance2024fraud": {
+   "title": "Fraud — The Facts 2024",
+   "author": "UK Finance",
+   "year": "",
+   "url": "https://www.ukfinance.org.uk/policy-and-guidance/reports-publications/fraud-facts-2024"
+  },
+  "bbc2023heart": {
+   "title": "AI song featuring fake Drake and Weeknd vocals pulled from streaming services",
+   "author": "BBC News",
+   "year": "",
+   "url": "https://www.bbc.com/news/entertainment-arts-65309313"
+  },
+  "guardian2023heart": {
+   "title": "AI song featuring fake Drake and Weeknd vocals pulled from streaming services",
+   "author": "The Guardian",
+   "year": "",
+   "url": "https://www.theguardian.com/music/2023/apr/18/ai-song-featuring-fake-drake-and-weeknd-vocals-pulled-from-streaming-services"
+  },
+  "guardian2018ira": {
+   "title": "Robert Mueller charges Russians with election interference",
+   "author": "The Guardian",
+   "year": "",
+   "url": "https://www.theguardian.com/us-news/2018/feb/16/robert-mueller-russians-charged-election"
+  },
+  "insilico2026genesis": {
+   "title": "Insilico Medicine doses first patient in GENESIS-IPF-3",
+   "author": "Insilico Medicine",
+   "year": "",
+   "url": "https://insilico.com/news/isn1009261-insilico-medicine-doses-first-patient-genesis-ipf-3"
+  },
+  "silicon2023replika": {
+   "title": "Italy bans AI chatbot Replika over personal data concerns",
+   "author": "Silicon UK",
+   "year": "",
+   "url": "https://www.silicon.co.uk/e-innovation/artificial-intelligence/replika-italy-ban-497135"
+  },
+  "eu2024aiact": {
+   "title": "Regulation (EU) 2024/1689 (Artificial Intelligence Act)",
+   "author": "European Parliament and Council of the European Union",
+   "year": "",
+   "url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj"
+  },
+  "luther1524schools": {
+   "title": "An die Ratsherren aller Städte deutschen Landes, dass sie christliche Schulen aufrichten und halten sollen",
+   "author": "Martin Luther",
+   "year": "",
+   "url": "https://archive.org/details/luther-an-die-ratsherren-aller-staedte-deutschen-landes-buch"
+  },
+  "mass1647deluder": {
+   "title": "The Old Deluder Act (1647)",
+   "author": "Massachusetts Bay Colony",
+   "year": "",
+   "url": "https://www.constitution.org/primarysources/deluder.html"
+  },
+  "uk1870education": {
+   "title": "Elementary Education Act 1870",
+   "author": "Parliament of the United Kingdom",
+   "year": "",
+   "url": "https://www.legislation.gov.uk/ukpga/Vict/33-34/75/enacted"
+  },
+  "uk1850libraries": {
+   "title": "Public Libraries Act 1850",
+   "author": "Parliament of the United Kingdom",
+   "year": "",
+   "url": "https://www.legislation.gov.uk/ukpga/1850/65/enacted"
+  },
+  "us1965immigration": {
+   "title": "Immigration and Nationality Act of 1965",
+   "author": "U.S. Congress",
+   "year": "",
+   "url": "https://www.govinfo.gov/content/pkg/STATUTE-79/pdf/STATUTE-79-Pg911.pdf"
+  },
+  "us1990h1b": {
+   "title": "Immigration Act of 1990: H-1B temporary workers",
+   "author": "U.S. Congress",
+   "year": "",
+   "url": "https://www.govinfo.gov/content/pkg/STATUTE-104/pdf/STATUTE-104-Pg4978.pdf"
   }
  },
  "cites": {
@@ -18387,10 +18651,20 @@
   "mccarthy1956dartmouth": [
    "ai_and_society"
   ],
-  "ai_winter_wiki": [
+  "lighthillreport": [
+   "ai_and_society",
+   "history"
+  ],
+  "nilsson1984qai": [
+   "ai_and_society",
+   "history",
+   "language",
+   "untold_history"
+  ],
+  "campbell2002deepblue": [
    "ai_and_society"
   ],
-  "deepblue_wiki": [
+  "computerhistory_deepblue": [
    "ai_and_society"
   ],
   "silver2016alphago": [
@@ -18398,40 +18672,74 @@
    "people_of_ai",
    "untold_history"
   ],
-  "openai2022chatgpt": [
+  "garante2023chatgpt": [
    "ai_and_society"
   ],
-  "chatgpt_wiki": [
+  "fli2023pause": [
+   "ai_and_society",
+   "ai_existential_risk"
+  ],
+  "fifteenai": [
    "ai_and_society"
   ],
-  "audio_deepfake_wiki": [
+  "wsj2019voicefraud": [
    "ai_and_society"
   ],
-  "ai_and_elections_wiki": [
+  "fcc2024biden": [
    "ai_and_society"
   ],
-  "deepfake_wiki": [
+  "fcc2024robocall": [
    "ai_and_society"
   ],
-  "romance_scam_wiki": [
+  "odni2024threat": [
+   "ai_and_society"
+  ],
+  "cisa2024elections": [
+   "ai_and_society"
+  ],
+  "sensity2019deepfakes": [
+   "ai_and_society"
+  ],
+  "ic3_2023": [
    "ai_and_society"
   ],
   "laion2022blog": [
    "ai_and_society"
   ],
-  "stable_diffusion_wiki": [
+  "rombach2022ldm": [
+   "ai_and_society",
+   "diffusion",
+   "music_video_generation",
+   "people_of_ai"
+  ],
+  "laion5b2022": [
    "ai_and_society"
   ],
-  "edmond_belamy_wiki": [
+  "waxy2022stable": [
    "ai_and_society"
   ],
-  "theatre_dopera_wiki": [
+  "christies2018belamy": [
    "ai_and_society"
   ],
-  "heart_on_my_sleeve_wiki": [
+  "verge2018belamy": [
    "ai_and_society"
   ],
-  "wga2023strike_wiki": [
+  "usco2023theatre": [
+   "ai_and_society"
+  ],
+  "coloradostatefair2022": [
+   "ai_and_society"
+  ],
+  "bbc2023heart": [
+   "ai_and_society"
+  ],
+  "guardian2023heart": [
+   "ai_and_society"
+  ],
+  "wga2023mba": [
+   "ai_and_society"
+  ],
+  "npr2023wga": [
    "ai_and_society"
   ],
   "bartz2025anthropic": [
@@ -18443,8 +18751,9 @@
    "people_of_ai",
    "untold_history"
   ],
-  "alphafold_wiki": [
+  "alphafold_db": [
    "ai_and_society",
+   "ai_for_science",
    "untold_history"
   ],
   "nobel2024chemistry": [
@@ -18460,19 +18769,19 @@
   "romera2023funsearch": [
    "ai_and_society"
   ],
-  "erdos_problems_wiki": [
+  "alphageometry2024": [
    "ai_and_society"
   ],
-  "alpha_geometry_wiki": [
+  "deepmind2024imo": [
    "ai_and_society"
   ],
   "bi2023pangu": [
    "ai_and_society"
   ],
-  "rentosertib_wiki": [
+  "clinicaltrials_rentosertib": [
    "ai_and_society"
   ],
-  "insilico_wiki": [
+  "insilico2026genesis": [
    "ai_and_society"
   ],
   "becker2025metr": [
@@ -18499,13 +18808,13 @@
   "parasuraman1997automation": [
    "ai_and_society"
   ],
+  "pnas2026khan": [
+   "ai_and_society"
+  ],
   "idan2026complementarity": [
    "ai_and_society"
   ],
   "learnlm2025rct": [
-   "ai_and_society"
-  ],
-  "khanacademy_wiki": [
    "ai_and_society"
   ],
   "prather2023copilot": [
@@ -18517,13 +18826,13 @@
   "huti2026jagged": [
    "ai_and_society"
   ],
-  "vibe_coding_wiki": [
+  "karpathy2025vibecoding": [
    "ai_and_society"
   ],
-  "calculator_wiki": [
+  "ellington2003calculators": [
    "ai_and_society"
   ],
-  "duolingo_wiki": [
+  "duolingo2025annual": [
    "ai_and_society"
   ],
   "popel2020cubitt": [
@@ -18541,25 +18850,26 @@
   "rand2016firehose": [
    "ai_and_society"
   ],
-  "ira_wiki": [
+  "guardian2018ira": [
    "ai_and_society"
   ],
   "bellingcat2025india": [
    "ai_and_society"
   ],
-  "cambridge_analytica_wiki": [
+  "guardian2018cambridge": [
    "ai_and_society"
   ],
   "bellingcat2026bjp": [
    "ai_and_society"
   ],
-  "synthetic_media_wiki": [
+  "chesney2019deepfakes": [
+   "ai_and_society",
+   "philosophy"
+  ],
+  "c2pa2024": [
    "ai_and_society"
   ],
-  "c2pa_wiki": [
-   "ai_and_society"
-  ],
-  "eu_ai_act_wiki": [
+  "eu2024aiact": [
    "ai_and_society"
   ],
   "beemyeyes2023": [
@@ -18571,16 +18881,16 @@
   "whisper2022": [
    "ai_and_society"
   ],
-  "google_translate_wiki": [
+  "google2024translate": [
    "ai_and_society"
   ],
-  "deepl_wiki": [
+  "deepl2024press": [
    "ai_and_society"
   ],
-  "replika_wiki": [
+  "silicon2023replika": [
    "ai_and_society"
   ],
-  "characterai_wiki": [
+  "characterai": [
    "ai_and_society"
   ],
   "cbs2024characterai": [
@@ -19508,11 +19818,6 @@
   "zhang2023controlnet": [
    "diffusion"
   ],
-  "rombach2022ldm": [
-   "diffusion",
-   "music_video_generation",
-   "people_of_ai"
-  ],
   "diffusion_ddim_img": [
    "diffusion"
   ],
@@ -19679,10 +19984,6 @@
   ],
   "alphamissense": [
    "ai_for_science"
-  ],
-  "alphafold_db": [
-   "ai_for_science",
-   "untold_history"
   ],
   "alphafold_protein_img": [
    "ai_for_science"
@@ -19960,11 +20261,6 @@
   ],
   "kempelen_speaking_machine": [
    "language"
-  ],
-  "nilsson1984qai": [
-   "history",
-   "language",
-   "untold_history"
   ],
   "firth_context": [
    "language"
@@ -20681,9 +20977,6 @@
    "history"
   ],
   "anderson2000talkingnets": [
-   "history"
-  ],
-  "lighthillreport": [
    "history"
   ],
   "dreyfus1972what": [
@@ -23354,6 +23647,9 @@
   "img_flaming_heart": [
    "untold_history"
   ],
+  "alphafold_wiki": [
+   "untold_history"
+  ],
   "icecorewiki": [
    "untold_history"
   ],
@@ -23898,6 +24194,24 @@
    "untold_history"
   ],
   "bis2026advancedcomputing": [
+   "untold_history"
+  ],
+  "luther1524schools": [
+   "untold_history"
+  ],
+  "mass1647deluder": [
+   "untold_history"
+  ],
+  "uk1870education": [
+   "untold_history"
+  ],
+  "uk1850libraries": [
+   "untold_history"
+  ],
+  "us1965immigration": [
+   "untold_history"
+  ],
+  "us1990h1b": [
    "untold_history"
   ],
   "nsf_history": [
@@ -25554,9 +25868,6 @@
   "truthdecay": [
    "philosophy"
   ],
-  "chesney2019deepfakes": [
-   "philosophy"
-  ],
   "bansal2025syntheticself": [
    "philosophy"
   ],
@@ -25711,9 +26022,6 @@
    "ai_existential_risk"
   ],
   "statement_on_ai_risk_2023": [
-   "ai_existential_risk"
-  ],
-  "fli2023pause": [
    "ai_existential_risk"
   ],
   "openai2023superintelligence": [
@@ -26324,7 +26632,7 @@
    ]
   },
   "Andrej Karpathy": {
-   "count": 6,
+   "count": 7,
    "minyear": 2019,
    "maxyear": 2019,
    "keys": [
@@ -26333,7 +26641,8 @@
     "karpathy2023zerotohero",
     "karpathy2019recipe",
     "karpathy2015rnn",
-    "karpathy_ai"
+    "karpathy_ai",
+    "karpathy2025vibecoding"
    ]
   },
   "Wikipedia contributors": {
@@ -27065,7 +27374,7 @@
    ]
   },
   "et al.": {
-   "count": 170,
+   "count": 171,
    "minyear": 2017,
    "maxyear": 2020,
    "keys": [
@@ -27238,7 +27547,8 @@
     "liang2022helm",
     "chiang2024arena",
     "raffel2020c4",
-    "lee2022dedup"
+    "lee2022dedup",
+    "laion5b2022"
    ]
   },
   "J. Elisenda Grigsby": {
@@ -30367,7 +30677,7 @@
    ]
   },
   "Google": {
-   "count": 5,
+   "count": 6,
    "minyear": null,
    "maxyear": null,
    "keys": [
@@ -30375,7 +30685,8 @@
     "googlecustomsearch",
     "gemini2024v15",
     "img_transformer_attention_heads",
-    "googlebooks_history"
+    "googlebooks_history",
+    "google2024translate"
    ]
   },
   "Jina AI": {
@@ -40693,15 +41004,16 @@
    ]
   },
   "Trieu H. Trinh": {
-   "count": 1,
+   "count": 2,
    "minyear": 2019,
    "maxyear": 2019,
    "keys": [
-    "trinh2018commonsense"
+    "trinh2018commonsense",
+    "alphageometry2024"
    ]
   },
   "Quoc V. Le": {
-   "count": 11,
+   "count": 12,
    "minyear": 2017,
    "maxyear": 2019,
    "keys": [
@@ -40715,7 +41027,8 @@
     "smithle2018bayesian",
     "clark2020electra",
     "dean2012large",
-    "le2012cat"
+    "le2012cat",
+    "alphageometry2024"
    ]
   },
   "Fran\\u00e7ois Chollet": {
@@ -42220,13 +42533,14 @@
    ]
   },
   "Yuhuai Wu": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "zelikman2024quietstar",
     "zelikman2022star",
-    "trinh2024alphageometry"
+    "trinh2024alphageometry",
+    "alphageometry2024"
    ]
   },
   "Shibo Hao": {
@@ -45233,19 +45547,21 @@
    ]
   },
   "He He": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "trinh2024alphageometry"
+    "trinh2024alphageometry",
+    "alphageometry2024"
    ]
   },
   "Thang Luong": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "trinh2024alphageometry"
+    "trinh2024alphageometry",
+    "alphageometry2024"
    ]
   },
   "DeepMind": {
@@ -45293,14 +45609,15 @@
    ]
   },
   "European Parliament and Council of the European Union": {
-   "count": 4,
+   "count": 5,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "euaiact2024",
     "gdpr2018",
     "eu2019dsm",
-    "eu2016gdpr"
+    "eu2016gdpr",
+    "eu2024aiact"
    ]
   },
   "New York Times": {
@@ -45328,11 +45645,12 @@
    ]
   },
   "Garante per la protezione dei dati personali": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "italy2023chatgpt"
+    "italy2023chatgpt",
+    "garante2023chatgpt"
    ]
   },
   "DeepSeek": {
@@ -46234,11 +46552,12 @@
    ]
   },
   "BBC News": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "edroberts_bbc"
+    "edroberts_bbc",
+    "bbc2023heart"
    ]
   },
   "U.S. Army Ballistic Research Laboratory": {
@@ -54363,11 +54682,12 @@
    ]
   },
   "Computer History Museum": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "chm"
+    "chm",
+    "computerhistory_deepblue"
    ]
   },
   "9front / Plan 9 community": {
@@ -58161,11 +58481,13 @@
    ]
   },
   "The Guardian": {
-   "count": 1,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "guardian2024sewell"
+    "guardian2024sewell",
+    "guardian2023heart",
+    "guardian2018ira"
    ]
   },
   "James Bergstra": {
@@ -58283,13 +58605,14 @@
    ]
   },
   "Google DeepMind": {
-   "count": 3,
+   "count": 4,
    "minyear": null,
    "maxyear": null,
    "keys": [
     "graphcast_github",
     "gemma2025v3",
-    "deepmind_about"
+    "deepmind_about",
+    "deepmind2024imo"
    ]
   },
   "ECMWF": {
@@ -59238,19 +59561,21 @@
    ]
   },
   "Romain Beaumont": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "laion2022blog"
+    "laion2022blog",
+    "laion5b2022"
    ]
   },
   "Christoph Schuhmann": {
-   "count": 1,
+   "count": 2,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "laion2022blog"
+    "laion2022blog",
+    "laion5b2022"
    ]
   },
   "Jenia Jitsev": {
@@ -59381,6 +59706,22 @@
    "maxyear": null,
    "keys": [
     "learnlm2025rct"
+   ]
+  },
+  "PNAS": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "pnas2026khan"
+   ]
+  },
+  "ClinicalTrials.gov": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "clinicaltrials_rentosertib"
    ]
   },
   "Brett Prather": {
@@ -62556,19 +62897,23 @@
    ]
   },
   "Parliament of the United Kingdom": {
-   "count": 1,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "companiesact1856"
+    "companiesact1856",
+    "uk1870education",
+    "uk1850libraries"
    ]
   },
   "U.S. Congress": {
-   "count": 1,
+   "count": 3,
    "minyear": null,
    "maxyear": null,
    "keys": [
-    "sbic1958"
+    "sbic1958",
+    "us1965immigration",
+    "us1990h1b"
    ]
   },
   "Google Inc.": {
@@ -62585,6 +62930,247 @@
    "maxyear": null,
    "keys": [
     "adwords2003patent"
+   ]
+  },
+  "Cybersecurity and Infrastructure Security Agency (CISA)": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "cisa2024elections"
+   ]
+  },
+  "Office of the Director of National Intelligence": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "odni2024threat"
+   ]
+  },
+  "15.ai": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "fifteenai"
+   ]
+  },
+  "The Wall Street Journal": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "wsj2019voicefraud"
+   ]
+  },
+  "Federal Communications Commission": {
+   "count": 2,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "fcc2024biden",
+    "fcc2024robocall"
+   ]
+  },
+  "Sensity AI": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "sensity2019deepfakes"
+   ]
+  },
+  "C2PA": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "c2pa2024"
+   ]
+  },
+  "Aimee J. Ellington": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ellington2003calculators"
+   ]
+  },
+  "Carole Cadwalladr & Emma Graham-Harrison": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "guardian2018cambridge"
+   ]
+  },
+  "Character.AI": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "characterai"
+   ]
+  },
+  "Murray Campbell": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "campbell2002deepblue"
+   ]
+  },
+  "A. Joseph Hoane Jr.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "campbell2002deepblue"
+   ]
+  },
+  "Feng-hsiung Hsu": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "campbell2002deepblue"
+   ]
+  },
+  "DeepL": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "deepl2024press"
+   ]
+  },
+  "Duolingo": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "duolingo2025annual"
+   ]
+  },
+  "Inc.": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "duolingo2025annual"
+   ]
+  },
+  "Christie's": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "christies2018belamy"
+   ]
+  },
+  "The Verge": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "verge2018belamy"
+   ]
+  },
+  "Richard Vencu": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "laion5b2022"
+   ]
+  },
+  "Andy Baio": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "waxy2022stable"
+   ]
+  },
+  "U.S. Copyright Office Review Board": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "usco2023theatre"
+   ]
+  },
+  "Colorado State Fair": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "coloradostatefair2022"
+   ]
+  },
+  "Writers Guild of America": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "wga2023mba"
+   ]
+  },
+  "NPR": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "npr2023wga"
+   ]
+  },
+  "FBI Internet Crime Complaint Center": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ic3_2023"
+   ]
+  },
+  "UK Finance": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "ukfinance2024fraud"
+   ]
+  },
+  "Insilico Medicine": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "insilico2026genesis"
+   ]
+  },
+  "Silicon UK": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "silicon2023replika"
+   ]
+  },
+  "Martin Luther": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "luther1524schools"
+   ]
+  },
+  "Massachusetts Bay Colony": {
+   "count": 1,
+   "minyear": null,
+   "maxyear": null,
+   "keys": [
+    "mass1647deluder"
    ]
   }
  }
