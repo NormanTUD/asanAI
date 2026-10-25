@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Statistical Consequence — Landahl, McCulloch &amp; Pitts, 1943</title>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<link rel="stylesheet" href="mp.css">
+<script src="../temml.min.js" defer></script>
+<script src="mp.js" defer></script>
+<script src="mp_1943_statistical_consequence.js" defer></script>
+</head>
+<body data-accent="cyan">
+<div class="progress"><span></span></div>
+<header class="topbar">
+  <a class="brand" href="mp_index.html"><b>MP</b><span class="dot">·</span>Codex</a>
+  <div class="topbar-meta">
+    <span class="hide-sm">Plate 02 / 12 · 1943</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+</header>
+<div class="rail" id="rail" aria-hidden="true"></div>
+
+<main>
+<section class="hero" id="top" data-label="Opening">
+  <canvas class="hero-canvas" id="heroStats" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Bulletin of Mathematical Biophysics · Vol. 5 · 1943</p>
+    <h1>A Statistical <em>Consequence</em> of the Logical Calculus of Nervous Nets</h1>
+    <p class="hero-sub">H. D. Landahl, Warren S. McCulloch, and Walter Pitts take the Boolean skeleton of the 1943 calculus and give it a body of frequencies. If impulses are independent, truth values become probabilities — and a logic of neurons becomes a statistics of nervous activity.</p>
+    <div class="hero-meta">
+      <span><b>H. D. Landahl</b> · Chicago</span>
+      <span><b>W. S. McCulloch</b> · Illinois</span>
+      <span><b>Walter Pitts</b> · Chicago</span>
+      <span>Bull. Math. Biophys. <b>5</b>, 135–137</span>
+    </div>
+    <a class="scroll-cue" href="#thesis"><span class="line"></span> Read the plate</a>
+  </div>
+</section>
+
+<section class="section" id="thesis" data-label="The bridge">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The bridge</p>
+      <h2 class="thesis">Boolean algebra was already <em>a probability calculus</em> wearing logical clothes.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">The 1943 calculus says that a neuron fires when a logical condition on its inputs is satisfied. The statistical note asks the obvious next question: what if the inputs do not fire deterministically, but as independent trains with mean frequencies? The logical condition does not disappear. It becomes a formula for the output frequency.</p>
+      <p class="lede">The paper's theorem is a dictionary. Replace each action <span class="tex-inline" data-tex="N_j"></span> by the rate <span class="tex-inline" data-tex="\delta\nu_j"></span>, disjunction by addition, conjunction by multiplication, negation by <span class="tex-inline" data-tex="1-"></span>, universal quantification by a product, and existential quantification by a sum. The equations of the net become equations of probability.</p>
+      <div class="note"><b>Why it matters:</b> this is the step from “the neuron computes AND” to “the neuron fires at a rate predicted by the input rates.” It makes the theory quantitative, measurable, and testable against electrophysiology.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="lab" data-label="The laboratory">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory · logic becomes frequency</p>
+      <h2>Change the gate. Watch the rate.</h2>
+      <p class="lede">Three independent input trains fire with adjustable probabilities per coincidence window. The output neuron implements a logical function of A, B, and C. The predicted probability follows Boolean algebra in the form of products and sums; the observed rate is counted from the actual output spikes.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>The Boole bridge, live</h3>
+          <p>Each column is one coincidence window <span class="tex-inline" data-tex="\delta"></span>. A mark means an impulse in that window. The output row is the gate applied to the three input rows.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="statLab" aria-label="Interactive spike-train coincidence lab with logic gates"></canvas>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button class="btn is-active" data-gate="AND" data-label="A ∧ B">A AND B</button>
+        <button class="btn" data-gate="OR" data-label="A ∨ B">A OR B</button>
+        <button class="btn" data-gate="XOR" data-label="A ⊕ B">A XOR B</button>
+        <button class="btn" data-gate="NOTC" data-label="A ∧ ¬C">A AND NOT C</button>
+        <button class="btn" data-gate="MAJ" data-label="majority">majority</button>
+      </div>
+      <div class="controls">
+        <div class="control"><label for="rateA">rate A <output>p</output></label><input id="rateA" type="range" min="0.02" max="0.9" step="0.01" value="0.6"></div>
+        <div class="control"><label for="rateB">rate B <output>p</output></label><input id="rateB" type="range" min="0.02" max="0.9" step="0.01" value="0.45"></div>
+        <div class="control"><label for="rateC">rate C <output>p</output></label><input id="rateC" type="range" min="0.02" max="0.9" step="0.01" value="0.3"></div>
+      </div>
+      <div class="readout">
+        <div class="cell"><span>gate</span><b class="small-value" id="gateLabel">A ∧ B</b></div>
+        <div class="cell"><span>predicted p(out)</span><b id="predVal">0.270</b></div>
+        <div class="cell"><span>observed p(out)</span><b id="obsVal">0.000</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="dictionary" data-label="The dictionary">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The theorem</p>
+      <h2>One substitution, whole calculus.</h2>
+      <p class="lede">The theorem is stated for nets whose solutions satisfy the conditions of Theorem X of the 1943 paper — the safe, constructible class. It is not a new logic. It is the old logic read as a calculus of expected values.</p>
+      <div class="kv" style="margin-top:1.5rem">
+        <dt>N<sub>j</sub></dt><dd>action of neuron j → δν<sub>j</sub>, its expected number of impulses in a window</dd>
+        <dt>∨</dt><dd>logical or → arithmetic addition</dd>
+        <dt>∧</dt><dd>logical and → multiplication</dd>
+        <dt>¬</dt><dd>negation → 1 −</dd>
+        <dt>∀</dt><dd>all times → product over times</dd>
+        <dt>∃</dt><dd>some time → sum over times</dd>
+      </div>
+    </div>
+    <div class="reveal delay-1 stack">
+      <div class="formula-card">
+        <div class="tex" data-tex="P(r\text{ excitations in }\delta)=\sum_{\substack{S\subseteq E_i\\|S|=r}}\;\prod_{j\in S}\nu_j\delta\prod_{j\notin S}(1-\nu_j\delta)" data-display></div>
+        <p class="formula-note"><b>The coincidence term.</b> With independent input trains, the chance that exactly <span class="tex-inline" data-tex="r"></span> excitatory impulses arrive in a window is a sum over all <span class="tex-inline" data-tex="r"></span>-element subsets. The neuron needs at least <span class="tex-inline" data-tex="\theta_i"></span> of them.</p>
+      </div>
+      <div class="formula-card">
+        <div class="tex" data-tex="\nu_i=\left[\sum_{r=\theta_i}^{|E_i|}\;\sum_{\substack{S\subseteq E_i\\|S|=r}}\;\prod_{j\in S}\nu_j\delta\prod_{j\notin S}(1-\nu_j\delta)\right]\prod_{k\in I_i}(1-\nu_k\delta)" data-display></div>
+        <p class="formula-note"><b>The output rate.</b> The bracket is the chance that enough excitation arrives; the final product is the chance that no inhibitory impulse does. This is the paper's equation (3), cleaned up for modern eyes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="limits" data-label="The limits">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The fine print</p>
+      <h2>The theorem has a temperature.</h2>
+    </div>
+    <div class="quote-grid" style="margin-top:2rem">
+      <figure class="quote reveal">
+        <p>“The correspondence expressed by this theorem is exactly that of Boole between the algebra of logic and that of probability.”</p>
+        <footer><b>Landahl, McCulloch &amp; Pitts</b> · § the theorem</footer>
+      </figure>
+      <figure class="quote reveal delay-1">
+        <p>“But this procedure leads to error whenever the assumptions leading to equation (3) are not fulfilled. This will be the case if the frequencies are too great.”</p>
+        <footer><b>Landahl, McCulloch &amp; Pitts</b> · § discussion</footer>
+      </figure>
+      <figure class="quote reveal delay-2">
+        <p>“The most important exceptions are those which arise from physiological factors that synchronize activities and thus restrict the domain of the validity of the assumption of statistical independences.”</p>
+        <footer><b>Landahl, McCulloch &amp; Pitts</b> · § discussion</footer>
+      </figure>
+      <figure class="quote reveal delay-3">
+        <p>“When the frequencies are too small, the statistical treatment, though valid, is of little help, but we may here conveniently use the logical calculus directly.”</p>
+        <footer><b>Landahl, McCulloch &amp; Pitts</b> · § discussion</footer>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pages" data-label="Facsimiles">
+  <div class="wrap">
+    <div class="gallery-note reveal">
+      <div>
+        <p class="eyebrow">The paper itself</p>
+        <h2>Pages from 1943</h2>
+      </div>
+      <p class="tiny">click to enlarge</p>
+    </div>
+    <div class="facsimiles reveal">
+      <figure class="facsimile">
+        <img src="mp_assets/bulletin_math_biophysics_1943_vol5_iss4.pdf_p23-23.jpg" alt="First page of A Statistical Consequence" loading="lazy">
+        <figcaption><b>p. 135.</b> The problem and equation (1): the binomial probability of exactly r concurring excitatory impulses.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/bulletin_math_biophysics_1943_vol5_iss4.pdf_p24-24.jpg" alt="Page with the theorem" loading="lazy">
+        <figcaption><b>p. 136.</b> The theorem: translate the logical solution of a net into frequency equations by a fixed substitution.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/bulletin_math_biophysics_1943_vol5_iss4.pdf_p25-25.jpg" alt="Page with the discussion of limits" loading="lazy">
+        <figcaption><b>p. 137.</b> The limits: high rates, low rates, and the physiological synchronization that breaks independence.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why" data-label="Why it matters">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">Why it matters</p>
+      <h2>The moment the theory became <em>measurable</em>.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">Before this note, the logical calculus could say what a net <em>would</em> do. After it, the theory could say how often. Frequencies are what electrodes record; they are also what muscles integrate and what behaviour averages. The bridge from proposition to rate is the bridge from an idealized net to a laboratory preparation.</p>
+      <p class="lede">The cost is independence. Real nervous systems synchronize, oscillate, and inhibit in ways that make the product rule false. The paper knows this and says so. The rest of McCulloch's work can be read as an attempt to keep the Boolean clarity while paying that cost.</p>
+      <div class="note"><b>Read next:</b> a topology of value, where inhibition between closed circuits produces preferences that no single scale can order.</div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:2.5rem">
+    <a class="next reveal" href="mp_1945_heterarchy.html">
+      <div>
+        <p class="eyebrow">Plate 03 · 1945</p>
+        <h3>A Heterarchy of Values Determined by the Topology of Nervous Nets</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span>Plate 02 · <b>A Statistical Consequence of the Logical Calculus of Nervous Nets</b></span>
+    <span>Source: <a href="https://archive.org/details/bulletin-of-mathematical-biophysics_1943-12_5_4">Bulletin of Mathematical Biophysics, Vol. 5, No. 4</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Facsimile viewer"><img alt=""><div class="cap"></div></div>
+</body>
+</html>

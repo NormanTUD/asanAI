@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How We Know Universals — Pitts &amp; McCulloch, 1947</title>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<link rel="stylesheet" href="mp.css">
+<script src="../temml.min.js" defer></script>
+<script src="mp.js" defer></script>
+<script src="mp_1947_universals.js" defer></script>
+</head>
+<body data-accent="emerald">
+<div class="progress"><span></span></div>
+<header class="topbar">
+  <a class="brand" href="mp_index.html"><b>MP</b><span class="dot">·</span>Codex</a>
+  <div class="topbar-meta">
+    <span class="hide-sm">Plate 04 / 12 · 1947</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+</header>
+<div class="rail" id="rail" aria-hidden="true"></div>
+
+<main>
+<section class="hero" id="top" data-label="Opening">
+  <canvas class="hero-canvas" id="heroUniversals" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Bulletin of Mathematical Biophysics · Vol. 9 · 1947</p>
+    <h1>How We Know <em>Universals</em><span class="thin">The perception of auditory and visual forms</span></h1>
+    <p class="hero-sub">A chord is the same chord in every key. A square is the same square at every size. Pitts and McCulloch ask how a nervous net can produce one output for every input in a group of transformations — and answer with averaging, scansion, and a reflex that centres the world.</p>
+    <div class="hero-meta">
+      <span><b>Walter Pitts</b> · Guggenheim Fellow</span>
+      <span><b>Warren S. McCulloch</b> · Illinois</span>
+      <span>Bull. Math. Biophys. <b>9</b>, 127–147</span>
+    </div>
+    <a class="scroll-cue" href="#thesis"><span class="line"></span> Read the plate</a>
+  </div>
+</section>
+
+<section class="section" id="thesis" data-label="The thesis">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The thesis</p>
+      <h2 class="thesis">To know a universal is to be <em>invariant</em> under a group of transformations.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">The paper begins with a definition that is almost mathematical in its calm: the equivalent apparitions of a figure “define a group of transformations that take the equivalents into one another but preserve the figure invariant.” A square translated is still a square; a chord transposed is still the same chord. Recognition is the production of an output that does not change when the group acts.</p>
+      <p class="lede">Two mechanisms follow. The first computes an average over the group: if the net can generate every transform and add a functional of each, the sum is invariant because the group merely permutes its own terms. The second is a reflex: it moves the eyes until the image is centred, selecting one canonical member of the group before the form is computed.</p>
+      <div class="note"><b>The deep move:</b> “the exchangeability of time and space.” A net can scan a dimension serially instead of representing it spatially, trading time for the equivalent of another spatial dimension.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="average" data-label="Group average">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory 01 · averaging over a group</p>
+      <h2>Make every transform. Add them. The sum cannot tell them apart.</h2>
+      <p class="lede">Choose a shape and a group. The ghost outlines are the transforms; the glowing field is their average. Translation blurs position, dilation blurs size, rotation blurs orientation — and the average is the invariant signature the net can use.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>The group-average machine</h3>
+          <p>An output built from all the transforms of an input is unchanged when the input is replaced by any of its transforms. That is the whole trick — and the reason a finite net can know a universal.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap">
+        <canvas id="averageLab" aria-label="Interactive group averaging of a shape under translation, scale, and rotation"></canvas>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button class="btn is-active" data-group="translation" id="grpTranslation">translation</button>
+        <button class="btn" data-group="scale" id="grpScale">dilation</button>
+        <button class="btn" data-group="rotation" id="grpRotation">rotation</button>
+      </div>
+      <div class="btn-row" style="margin-top:0.55rem">
+        <button class="btn is-active" data-shape="F" id="shapeF">F</button>
+        <button class="btn" data-shape="square" id="shapeSquare">square</button>
+        <button class="btn" data-shape="triangle" id="shapeTriangle">triangle</button>
+      </div>
+      <div class="controls">
+        <div class="control"><label for="nTrans">number of transforms <output id="nTransVal">7</output></label><input id="nTrans" type="range" min="1" max="12" step="1" value="7"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="mechanism" data-label="Two mechanisms">
+  <div class="wrap">
+    <div class="split">
+      <div class="reveal">
+        <p class="eyebrow">The mechanism</p>
+        <h2>Average the group, or <em>centre</em> the world.</h2>
+        <p class="lede">The first mechanism is an average: let <span class="tex-inline" data-tex="G"></span> be the group of equivalences, let <span class="tex-inline" data-tex="T\phi"></span> be a transform of the excitation pattern, and let <span class="tex-inline" data-tex="f"></span> assign a number to it. The sum over the group is invariant because applying <span class="tex-inline" data-tex="S\in G"></span> only permutes the terms.</p>
+        <p class="lede">The second is a reflex arc. The superior colliculus computes the centre of brightness of the retinal image and moves the eyes until that centre coincides with the visual axis. The image is thereby reduced to one standard presentation — centred — before the cortex computes its form.</p>
+      </div>
+      <div class="reveal delay-1 stack">
+        <div class="formula-card">
+          <div class="tex" data-tex="a_\xi(\phi)=\frac{1}{N}\sum_{T\in G} f\big[T\phi,\xi\big]" data-display></div>
+          <p class="formula-note"><b>Equation (1).</b> The group average. The output <span class="tex-inline" data-tex="a_\xi"></span> is invariant under every <span class="tex-inline" data-tex="T"></span> in <span class="tex-inline" data-tex="G"></span>, because the set of terms is unchanged by a group action.</p>
+        </div>
+        <div class="formula-card">
+          <div class="tex" data-tex="\bar{x}=\frac{\displaystyle\int_V x\,\phi(x,y)\,dx\,dy}{\displaystyle\int_V \phi(x,y)\,dx\,dy},\qquad \bar{y}=\frac{\displaystyle\int_V y\,\phi(x,y)\,dx\,dy}{\displaystyle\int_V \phi(x,y)\,dx\,dy}" data-display></div>
+          <p class="formula-note"><b>Equation (4).</b> The centre of brightness. The colliculus turns the eyes until <span class="tex-inline" data-tex="(\bar{x},\bar{y})"></span> reaches the origin; the reflex is a negative-feedback servomechanism.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="reflex" data-label="The reflex">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory 02 · the centring reflex</p>
+      <h2>Drag the light. The eyes follow the centre of brightness.</h2>
+      <p class="lede">The colliculus does not see a picture; it computes a weighted centre. Move the spots or change their brightness. The bump on the collicular map and the eye position are both driven by the same integral — and the retinal error shrinks as the reflex succeeds.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>Centre of gravity, on a colliculus</h3>
+          <p>Drag any spot in the visual field. Brightness weights its contribution. The dashed crosshair is the weighted centre; the eyes turn until the retinal error is zero.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="reflexLab" aria-label="Interactive centre-of-brightness reflex with visual field, colliculus, and eyes"></canvas>
+      </div>
+      <div class="controls">
+        <div class="control"><label for="bright0">spot 1 <output>b</output></label><input id="bright0" type="range" min="0.05" max="1" step="0.01" value="0.9"></div>
+        <div class="control"><label for="bright1">spot 2 <output>b</output></label><input id="bright1" type="range" min="0.05" max="1" step="0.01" value="0.55"></div>
+        <div class="control"><label for="bright2">spot 3 <output>b</output></label><input id="bright2" type="range" min="0.05" max="1" step="0.01" value="0.35"></div>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button class="btn" id="centerGaze">Centre the gaze</button>
+        <button class="btn ghost" id="resetGaze">Reset</button>
+      </div>
+      <div class="readout">
+        <div class="cell"><span>centre of brightness</span><b class="small-value" id="cogVal">0.00, 0.00</b></div>
+        <div class="cell"><span>gaze</span><b class="small-value" id="gazeVal">0.00, 0.00</b></div>
+        <div class="cell"><span>retinal error</span><b id="gazeErr">0.000</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="quotes" data-label="The voice">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The voice</p>
+      <h2>Recognition is an abstraction, not a picture.</h2>
+    </div>
+    <div class="quote-grid" style="margin-top:2rem">
+      <figure class="quote reveal">
+        <p>“The group-invariant spatio-temporal distribution of excitations which represents a figure need not resemble it in any simple way.”</p>
+        <footer><b>Pitts &amp; McCulloch</b> · § the visual mechanism</footer>
+      </figure>
+      <figure class="quote reveal delay-1">
+        <p>“This device illustrates a useful general principle which we may call the exchangeability of time and space.”</p>
+        <footer><b>Pitts &amp; McCulloch</b> · § the general model</footer>
+      </figure>
+      <figure class="quote reveal delay-2">
+        <p>“Genes can only predetermine statistical order, and original chaos must reign over nets that learn, for learning builds new order according to a law of use.”</p>
+        <footer><b>Pitts &amp; McCulloch</b> · § introduction</footer>
+      </figure>
+      <figure class="quote reveal delay-3">
+        <p>“The output … will rarely resemble the thing it means any closer than a man's name does his face.”</p>
+        <footer><b>Pitts &amp; McCulloch</b> · § conclusion</footer>
+      </figure>
+      <figure class="quote wide reveal">
+        <p>“Both are independent of small perturbations at synapses of excitation, threshold, and synchrony, and are referred to particular appropriate regions of the nervous system, thus suggesting experimental verification.”</p>
+        <footer><b>Pitts &amp; McCulloch</b> · abstract</footer>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pages" data-label="Facsimiles">
+  <div class="wrap">
+    <div class="gallery-note reveal">
+      <div>
+        <p class="eyebrow">The paper itself</p>
+        <h2>Pages from 1947</h2>
+      </div>
+      <p class="tiny">click to enlarge</p>
+    </div>
+    <div class="facsimiles reveal">
+      <figure class="facsimile">
+        <img src="mp_assets/bulletin_math_biophysics_1947_vol9_iss3.pdf_p21-21.jpg" alt="First page of How We Know Universals" loading="lazy">
+        <figcaption><b>p. 127.</b> The abstract and the opening claim: equivalent apparitions define a group that preserves the figure.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/bulletin_math_biophysics_1947_vol9_iss3.pdf_p25-25.jpg" alt="Figure 1, auditory cortex" loading="lazy">
+        <figcaption><b>p. 131.</b> Figure 1: a vertical section of the primary auditory cortex, the manifold on which pitch is mapped.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/bulletin_math_biophysics_1947_vol9_iss3.pdf_p26-26.jpg" alt="Figure 2, scansion scheme" loading="lazy">
+        <figcaption><b>p. 132.</b> Figure 2: scansion. Nonspecific afferents sweep the levels of the column, presenting the transforms one at a time.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/bulletin_math_biophysics_1947_vol9_iss3.pdf_p28-28.jpg" alt="Figure 3, visual cortex" loading="lazy">
+        <figcaption><b>p. 134.</b> Figure 3: the visual cortex as a size-invariance machine, with magnification and constriction presented serially.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/bulletin_math_biophysics_1947_vol9_iss3.pdf_p34-34.jpg" alt="Figure 6, colliculus map" loading="lazy">
+        <figcaption><b>p. 140.</b> Figure 6: the collicular map and the oculomotor wiring that turns the centre of brightness into eye movement.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why" data-label="Why it matters">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">Why it matters</p>
+      <h2>Invariance is the first theory of <em>representation</em>.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">This is the paper that makes “representation” a computational question rather than a metaphysical one. A representation is an invariant: a function of the input that is constant on the orbit of a group. The group can be translations, dilations, rotations, pitch shifts — or, later, the transformations that define an object category.</p>
+      <p class="lede">The two mechanisms also set a pattern that recurs throughout modern vision and audition: either average over the group, or actively canonicalise the input before processing it. The first is a convolutional involution; the second is attention as a servo. Pitts and McCulloch had both, in 1947, with the histology to match.</p>
+      <div class="note"><b>Read next:</b> the statistical organization of nervous activity, where the group average becomes a general principle of brain order.</div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:2.5rem">
+    <a class="next reveal" href="mp_1948_statistical_organization.html">
+      <div>
+        <p class="eyebrow">Plate 05 · 1948</p>
+        <h3>The Statistical Organization of Nervous Activity</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span>Plate 04 · <b>How We Know Universals: The Perception of Auditory and Visual Forms</b></span>
+    <span>Source: <a href="https://archive.org/details/bulletin-of-mathematical-biophysics_1947-09_9_3">Bulletin of Mathematical Biophysics, Vol. 9, No. 3</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Facsimile viewer"><img alt=""><div class="cap"></div></div>
+</body>
+</html>

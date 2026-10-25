@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why the Mind Is in the Head — McCulloch, 1951</title>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<link rel="stylesheet" href="mp.css">
+<script src="../temml.min.js" defer></script>
+<script src="mp.js" defer></script>
+<script src="mp_1951_why_mind.js" defer></script>
+</head>
+<body data-accent="violet">
+<div class="progress"><span></span></div>
+<header class="topbar">
+  <a class="brand" href="mp_index.html"><b>MP</b><span class="dot">·</span>Codex</a>
+  <div class="topbar-meta">
+    <span class="hide-sm">Plate 06 / 12 · 1951</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+</header>
+<div class="rail" id="rail" aria-hidden="true"></div>
+
+<main>
+<section class="hero" id="top" data-label="Opening">
+  <canvas class="hero-canvas" id="heroMind" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">The Hixon Symposium · 1951</p>
+    <h1>Why the <em>Mind</em> Is in the Head</h1>
+    <p class="hero-sub">A hundred million photoreceptors in each eye. Three bits per millisecond out of the hand. The brain is a device that can only corrupt revelation — and yet it knows the world, because it throws away everything that fails to agree with everything else.</p>
+    <div class="hero-meta">
+      <span><b>Warren S. McCulloch</b></span>
+      <span>Hixon Symposium on Cerebral Mechanisms in Behavior</span>
+      <span>later in <b>Embodiments of Mind</b>, 72–87</span>
+    </div>
+    <a class="scroll-cue" href="#thesis"><span class="line"></span> Read the plate</a>
+  </div>
+</section>
+
+<section class="section" id="thesis" data-label="The thesis">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The thesis</p>
+      <h2 class="thesis">Certainty is bought by <em>throwing information away</em>.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">The lecture begins with a revolution: machines will replace brains, and unlike engines they are limited by entropy, not energy. To say what such a machine can know, McCulloch quantifies information. A bivalent neuron has two states; <span class="tex-inline" data-tex="n"></span> of them have <span class="tex-inline" data-tex="2^n"></span>. One bit fixes one binary decision. Information is negative entropy: the logarithm of the reciprocal of the probability of the state.</p>
+      <p class="lede">Then the brutal arithmetic. The eye has about <span class="tex-inline" data-tex="10^8"></span> receptors; the optic nerve about <span class="tex-inline" data-tex="10^6"></span> channels; the whole motor output is a few bits per millisecond. The brain discards almost everything. What it keeps is what coincides — and coincidence is improbable, so what survives is likely to be real.</p>
+      <div class="note"><b>The trade:</b> “We pay for certainty with information.” The a priori chance of a coincidence of <span class="tex-inline" data-tex="k"></span> signals is <span class="tex-inline" data-tex="2^{-k}"></span>; the smaller that chance, the stronger the evidence when it happens.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="funnel" data-label="The funnel">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory · the information funnel</p>
+      <h2>Keep only what coincides.</h2>
+      <p class="lede">Particles stream from the receptor field through the coincidence gate. Raise <span class="tex-inline" data-tex="k"></span> and fewer pass: the output becomes rarer, more certain, and poorer in information. This is the whole economy of the nervous system in one picture.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>A hundred million in, three bits out</h3>
+          <p>Each passing particle is a coincidence that survived the gate. The chance of a chance coincidence is <span class="tex-inline" data-tex="2^{-k}"></span>; the certainty that a survivor is due to the world is <span class="tex-inline" data-tex="1-2^{-k}"></span>.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="funnelLab" aria-label="Interactive information funnel with coincidence gate"></canvas>
+      </div>
+      <div class="controls">
+        <div class="control"><label for="coincidence">coincidence threshold k <output id="kVal">7</output></label><input id="coincidence" type="range" min="1" max="14" step="1" value="7"></div>
+        <button class="btn ghost" id="resetFunnel">Reset the stream</button>
+      </div>
+      <div class="readout">
+        <div class="cell"><span>input</span><b class="small-value" id="inBitsVal">10⁸ bits/ms</b></div>
+        <div class="cell"><span>output</span><b class="small-value" id="outBitsVal">3 bits/ms</b></div>
+        <div class="cell"><span>corruption ratio</span><b class="small-value" id="corruptionVal">3.33e+7</b></div>
+        <div class="cell"><span>chance coincidence</span><b class="small-value" id="chanceVal">7.81e-3</b></div>
+        <div class="cell"><span>certainty</span><b class="small-value" id="certaintyVal">0.992188</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="information" data-label="Information">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The arithmetic</p>
+      <h2>Neurons are bivalent systems.</h2>
+      <p class="lede">A neuron either fires or does not; the eye and ear report a continuous intensity by discrete impulses whose frequency approximates the logarithm of intensity. The nervous system is a digital device built out of analogical sensors. Information is the logarithm of the reciprocal of the probability of the state — negative entropy.</p>
+      <p class="lede">The lecture then turns to memory and purpose. A reverberating circuit preserves the form of an event but loses its time: an existential quantifier over the past. A negative-feedback loop preserves a value against perturbation: a purpose. A group average preserves a universal against transformation: an idea.</p>
+    </div>
+    <div class="reveal delay-1 stack">
+      <div class="formula-card">
+        <div class="tex" data-tex="I=\log_2\frac{1}{p}=-\log_2 p" data-display></div>
+        <p class="formula-note"><b>Information.</b> For <span class="tex-inline" data-tex="n"></span> independent bivalent neurons, <span class="tex-inline" data-tex="I=n"></span> bits; fixing one neuron subtracts one from the exponent of the number of possible states.</p>
+      </div>
+      <div class="formula-card">
+        <div class="tex" data-tex="\frac{I_{\text{in}}}{I_{\text{out}}}\approx\frac{10^8}{3}\approx 3.3\times10^7" data-display></div>
+        <p class="formula-note"><b>The corruption ratio.</b> The eye alone throws away roughly a hundred million to one. The brain is not a source of information; it is a sink — and a filter.</p>
+      </div>
+      <div class="formula-card">
+        <div class="tex" data-tex="P(\text{chance coincidence of }k)=2^{-k}\quad\Longrightarrow\quad P(\text{real}\mid\text{coincidence})=1-2^{-k}" data-display></div>
+        <p class="formula-note"><b>The wager.</b> Demand more coincidence and you buy certainty with information. Demand zero logical probability and you get a contradiction that can never be confirmed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="three" data-label="Three invariants">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Three kinds of invariance</p>
+      <h2>Memory, purpose, idea.</h2>
+    </div>
+    <div class="concept-grid" style="margin-top:2rem">
+      <article class="concept reveal">
+        <span class="num">01 · MEMORY</span>
+        <h3>Form without time</h3>
+        <p>A pattern that reverberates around a closed path retains the form of what happened but not when. It asserts: there was some time at which such-and-such occurred.</p>
+      </article>
+      <article class="concept reveal delay-1">
+        <span class="num">02 · PURPOSE</span>
+        <h3>Error-operated loops</h3>
+        <p>A negative feedback returns the system toward a state by an amount proportional to its deviation. The state it seeks is the goal, aim, or end of the operation.</p>
+      </article>
+      <article class="concept reveal delay-2">
+        <span class="num">03 · IDEA</span>
+        <h3>Average over a group</h3>
+        <p>An output invariant under every transform of a figure is the same for all its exemplars. That is what it means for a net to have a universal.</p>
+      </article>
+    </div>
+    <div class="quote-grid" style="margin-top:2rem">
+      <figure class="quote wide reveal">
+        <p>“A nervous impulse is also a signal. … They are atomic signals, or atomic propositions on the move.”</p>
+        <footer><b>McCulloch</b> · § the signal</footer>
+      </figure>
+      <figure class="quote reveal">
+        <p>“Reverberating activity patterned after something that happened retains the form of the happening but loses track of when it happened. … The ‘such and such’ is the idea wrenched out of time.”</p>
+        <footer><b>McCulloch</b> · § memory</footer>
+      </figure>
+      <figure class="quote reveal delay-1">
+        <p>“We pay for certainty with information.”</p>
+        <footer><b>McCulloch</b> · § coincidence</footer>
+      </figure>
+      <figure class="quote reveal delay-2">
+        <p>“Why is the mind in the head? Because there, and only there, are hosts of possible connections to be formed as time and circumstance demand.”</p>
+        <footer><b>McCulloch</b> · conclusion</footer>
+      </figure>
+      <figure class="quote reveal delay-3">
+        <p>“The joy of creating ideals, new and eternal, in and of a world, old and temporal, robots have it not. For this my Mother bore me.”</p>
+        <footer><b>McCulloch</b> · final sentence</footer>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pages" data-label="Facsimiles">
+  <div class="wrap">
+    <div class="gallery-note reveal">
+      <div>
+        <p class="eyebrow">The paper itself</p>
+        <h2>Pages from 1951</h2>
+      </div>
+      <p class="tiny">click to enlarge</p>
+    </div>
+    <div class="facsimiles reveal">
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_why_the_mind_is_in_the_head_vordenker.pdf_p1-01.jpg" alt="First page of Why the Mind Is in the Head" loading="lazy">
+        <figcaption><b>p. 72.</b> The opening: bigger and better robots, the law of entropy, and the question of the title.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_why_the_mind_is_in_the_head_vordenker.pdf_p4-04.jpg" alt="Page on information and coincidence" loading="lazy">
+        <figcaption><b>p. 75.</b> The arithmetic of information: the impossible piano player, the eye, and the corruption ratio.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_why_the_mind_is_in_the_head_vordenker.pdf_p8-08.jpg" alt="Page on universals and value" loading="lazy">
+        <figcaption><b>p. 79.</b> Universals by group averaging, the alpha rhythm, and the value anomaly.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_why_the_mind_is_in_the_head_vordenker.pdf_p11-11.jpg" alt="Final page with the answer" loading="lazy">
+        <figcaption><b>p. 82.</b> “Why the mind is in the head” — the answer in terms of possible connections.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why" data-label="Why it matters">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">Why it matters</p>
+      <h2>A theory of <em>epistemic economy</em>.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">This is one of the clearest statements of a principle that modern machine learning rediscovered under other names: a useful representation is a lossy one. Compression is not a failure of knowledge; it is the condition of it. Coincidence detection is an early, biologically grounded form of the same idea.</p>
+      <p class="lede">And the final answer to the title is not a location but a capacity: the mind is in the head because the head is the place with the most possible connections, the most room for learning to alter the machine. That is McCulloch's answer to Descartes, and it is still a good one.</p>
+      <div class="note"><b>Read next:</b> the metaphysical lecture, where causality itself is called a superstition and the will is defined as the gap between intention and deed.</div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:2.5rem">
+    <a class="next reveal" href="mp_1951_through_den.html">
+      <div>
+        <p class="eyebrow">Plate 07 · 1951</p>
+        <h3>Through the Den of the Metaphysician</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span>Plate 06 · <b>Why the Mind Is in the Head</b></span>
+    <span>Source: <a href="https://vordenker.de/ggphilosophy/mcculloch_why-the-mind-is-in-the-head.pdf">Vordenker edition</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Facsimile viewer"><img alt=""><div class="cap"></div></div>
+</body>
+</html>

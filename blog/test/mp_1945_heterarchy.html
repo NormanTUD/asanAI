@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Heterarchy of Values — McCulloch, 1945</title>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<link rel="stylesheet" href="mp.css">
+<script src="../temml.min.js" defer></script>
+<script src="mp.js" defer></script>
+<script src="mp_1945_heterarchy.js" defer></script>
+</head>
+<body data-accent="magenta">
+<div class="progress"><span></span></div>
+<header class="topbar">
+  <a class="brand" href="mp_index.html"><b>MP</b><span class="dot">·</span>Codex</a>
+  <div class="topbar-meta">
+    <span class="hide-sm">Plate 03 / 12 · 1945</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+</header>
+<div class="rail" id="rail" aria-hidden="true"></div>
+
+<main>
+<section class="hero" id="top" data-label="Opening">
+  <canvas class="hero-canvas" id="heroHeterarchy" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Bulletin of Mathematical Biophysics · Vol. 7 · 1945</p>
+    <h1>A <em>Heterarchy</em> of Values Determined by the Topology of Nervous Nets</h1>
+    <p class="hero-sub">Prefer A to B, B to C, and C to A. The pattern looks like inconsistency. McCulloch shows that it is the signature of a nervous net too richly connected to be flattened onto a single scale of value — and that a six-neuron system is already enough.</p>
+    <div class="hero-meta">
+      <span><b>Warren S. McCulloch</b></span>
+      <span>Bull. Math. Biophys. <b>7</b>, 89–93</span>
+      <span>the value anomaly · drome · diallel · diadrome</span>
+    </div>
+    <a class="scroll-cue" href="#thesis"><span class="line"></span> Read the plate</a>
+  </div>
+</section>
+
+<section class="section" id="thesis" data-label="The thesis">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The thesis</p>
+      <h2 class="thesis">Circular preference is not <em>irrationality</em>. It is a topology.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">A reflex is a <em>drome</em>: a disturbance that leaves an organ, travels through the nervous system, and returns to stop or reverse itself. A closed chain of neurons that sustains such activity is an <em>endrome</em>. When two dromes interact, the influence between them is neither dromic nor antidromic but <em>heterodromic</em>.</p>
+      <p class="lede">Build three dromes, let each inhibit the next, and the choice between them becomes a closed loop. The loop is not the path of any drome; it is transverse to all of them — a <em>diadrome</em>. To draw it without a crossing, you need a torus. To predict it with a single scale of value, you need a miracle.</p>
+      <div class="note"><b>The claim:</b> “values are magnitudes of some one kind” is equivalent to the claim that the irreducible nervous net maps on a plane. Circular preference falsifies the second, and therefore the first.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="lab" data-label="The laboratory">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory · the value anomaly</p>
+      <h2>Three choices. Two topologies.</h2>
+      <p class="lede">Flip the pairwise preferences. A transitive order can be drawn on a plane and ranked on one scale. A cycle cannot: it needs a handle, a diallel, a diadrome. Switch to the neural view to see the same fact as a wiring problem.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>Choice graph / nervous net</h3>
+          <p>Click a pair to reverse its preference. The readouts tell you whether a common measure exists and what surface the net requires.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="heterarchyLab" aria-label="Interactive preference cycle and heterarchy net"></canvas>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button class="btn is-active" data-pref="AB">A vs B</button>
+        <button class="btn is-active" data-pref="BC">B vs C</button>
+        <button class="btn is-active" data-pref="CA">C vs A</button>
+      </div>
+      <div class="btn-row" style="margin-top:0.6rem">
+        <button class="btn ghost" id="presetHierarchy">Make it a hierarchy</button>
+        <button class="btn ghost" id="presetHeterarchy">Make it a heterarchy</button>
+        <button class="btn is-active" id="viewChoice">Choice graph</button>
+        <button class="btn" id="viewNet">Neural net</button>
+      </div>
+      <div class="readout">
+        <div class="cell"><span>scale of value</span><b class="small-value" id="scaleVal">No common measure</b></div>
+        <div class="cell"><span>minimal surface</span><b class="small-value" id="surfaceVal">Torus</b></div>
+        <div class="cell"><span>transverse loop</span><b class="small-value" id="diadromeVal">1 diadrome</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="topology" data-label="The topology">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The argument</p>
+      <h2>From three preferences to a theorem about brains.</h2>
+      <p class="lede">The paper's images are topological, not quantitative. A hierarchy of values is a set of dromes ordered by inhibition: each dominates all inferiors, and the relation is transitive. That net is planar. A cycle of dominance is not. It requires one diallel — one crossing — and the simplest surface on which it embeds without a crossing is a torus.</p>
+      <p class="lede">The consequence is not scepticism about value. It is a sharper realism: values can be real, comparable locally, and still lack a common measure globally. The failure of a single scale is a fact about the shape of the system, not a defect in the chooser.</p>
+    </div>
+    <div class="reveal delay-1 stack">
+      <div class="formula-card">
+        <div class="tex" data-tex="A \succ B,\quad B \succ C,\quad C \succ A \;\;\Longrightarrow\;\; \text{one diallel, one diadrome}" data-display></div>
+        <p class="formula-note"><b>The minimal anomaly.</b> Three dromes, each inhibiting the next. No single ranking can satisfy all three preferences at once.</p>
+      </div>
+      <div class="formula-card">
+        <div class="tex" data-tex="D \to 2^{2d}\quad\text{as } d\to\infty,\qquad D<10^{12000}\ \text{for a human brain}" data-display></div>
+        <p class="formula-note"><b>The finite bound.</b> With <span class="tex-inline" data-tex="d"></span> diallels, the maximum number of diadromes grows like <span class="tex-inline" data-tex="2^{2d}"></span>. Even with <span class="tex-inline" data-tex="d<10^{10}"></span>, the complexity is finite — a heterarchy, not an infinity.</p>
+      </div>
+      <div class="formula-card">
+        <div class="tex" data-tex="\text{hierarchy} \;\Longleftrightarrow\; \text{planar net} \qquad \text{heterarchy} \;\Longleftrightarrow\; \text{non-planar net}" data-display></div>
+        <p class="formula-note"><b>The translation.</b> The psychological question “can values be ranked?” becomes the topological question “can the net be drawn without a crossing?”</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="quotes" data-label="The voice">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The voice</p>
+      <h2>Six neurons, no summum bonum.</h2>
+    </div>
+    <div class="quote-grid" style="margin-top:2rem">
+      <figure class="quote reveal">
+        <p>“Circularities in preference instead of indicating inconsistencies, actually demonstrate consistency of a higher order than had been dreamed of in our philosophy.”</p>
+        <footer><b>McCulloch</b> · § the value anomaly</footer>
+      </figure>
+      <figure class="quote reveal delay-1">
+        <p>“An organism possessed of this nervous system — six neurons — is sufficiently endowed to be unpredictable from any theory founded on a scale of values.”</p>
+        <footer><b>McCulloch</b> · § the value anomaly</footer>
+      </figure>
+      <figure class="quote reveal delay-2">
+        <p>“It has a heterarchy of values, and is thus internectively too rich to submit to a summum bonum.”</p>
+        <footer><b>McCulloch</b> · § the value anomaly</footer>
+      </figure>
+      <figure class="quote reveal delay-3">
+        <p>“Thus, for values there can be no common scale.”</p>
+        <footer><b>McCulloch</b> · § the argument</footer>
+      </figure>
+      <figure class="quote wide reveal">
+        <p>“The apparent inconsistency of preference is shown to indicate consistency of an order too high to permit construction of a scale of values.”</p>
+        <footer><b>McCulloch</b> · abstract</footer>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pages" data-label="Facsimiles">
+  <div class="wrap">
+    <div class="gallery-note reveal">
+      <div>
+        <p class="eyebrow">The paper itself</p>
+        <h2>Pages from 1945</h2>
+      </div>
+      <p class="tiny">click to enlarge</p>
+    </div>
+    <div class="facsimiles reveal">
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_heterarchy_vordenker.pdf_p1-1.jpg" alt="First page of A Heterarchy of Values" loading="lazy">
+        <figcaption><b>p. 89.</b> Dromes, endromes, heterodromic action: the vocabulary of the argument.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_heterarchy_vordenker.pdf_p2-2.jpg" alt="Page with Figures 1-3" loading="lazy">
+        <figcaption><b>p. 90.</b> Figures 1–3: choice as two incompatible circuits, and a hierarchy that still maps on a plane.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_heterarchy_vordenker.pdf_p3-3.jpg" alt="Page with Figure 4 and the torus" loading="lazy">
+        <figcaption><b>p. 91.</b> Figure 4: the circular preference, the diallel, and the torus. The heart of the paper.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_heterarchy_vordenker.pdf_p4-4.jpg" alt="Letter to the editor" loading="lazy">
+        <figcaption><b>p. 92.</b> The letter to the editor: the anomaly can be built from summative, not inhibitory, heterodromic links.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why" data-label="Why it matters">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">Why it matters</p>
+      <h2>Value is <em>shaped</em>, not scalar.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">This is the paper that gives later cybernetics and AI its most useful word for a certain kind of order: heterarchy. It says that a system can be consistent without being rankable; that local comparisons can be real while a global utility function is impossible; that preference can be cyclic and still lawful.</p>
+      <p class="lede">Modern recommendation systems, game theory, and multi-objective optimisation rediscover the same obstruction whenever they try to collapse a cycle of trade-offs into one score. McCulloch's answer is not to force the cycle flat. It is to ask what surface the system actually lives on.</p>
+      <div class="note"><b>Read next:</b> how a net recognises a universal — the same group-theoretic move, applied to perception.</div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:2.5rem">
+    <a class="next reveal" href="mp_1947_universals.html">
+      <div>
+        <p class="eyebrow">Plate 04 · 1947</p>
+        <h3>How We Know Universals: The Perception of Auditory and Visual Forms</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span>Plate 03 · <b>A Heterarchy of Values Determined by the Topology of Nervous Nets</b></span>
+    <span>Source: <a href="https://www.vordenker.de/ggphilosophy/mcculloch_heterarchy.pdf">Vordenker edition</a> · <a href="https://archive.org/details/bulletin-of-mathematical-biophysics_1945-06_7_2">Bulletin scan</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Facsimile viewer"><img alt=""><div class="cap"></div></div>
+</body>
+</html>

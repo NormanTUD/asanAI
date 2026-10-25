@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Statistical Organization of Nervous Activity — McCulloch &amp; Pitts, 1948</title>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<link rel="stylesheet" href="mp.css">
+<script src="../temml.min.js" defer></script>
+<script src="mp.js" defer></script>
+<script src="mp_1948_statistical_organization.js" defer></script>
+</head>
+<body data-accent="teal">
+<div class="progress"><span></span></div>
+<header class="topbar">
+  <a class="brand" href="mp_index.html"><b>MP</b><span class="dot">·</span>Codex</a>
+  <div class="topbar-meta">
+    <span class="hide-sm">Plate 05 / 12 · 1948</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+</header>
+<div class="rail" id="rail" aria-hidden="true"></div>
+
+<main>
+<section class="hero" id="top" data-label="Opening">
+  <canvas class="hero-canvas" id="heroStatistical" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Biometrics · Vol. 4 · 1948</p>
+    <h1>The <em>Statistical Organization</em> of Nervous Activity</h1>
+    <p class="hero-sub">A synopsis of the theory McCulloch and Pitts had built: atoms of impulse, Boolean logic, group averages, a stretch reflex that regulates itself, and a brain that chooses among ends. The elements are all-or-none; the order is statistical.</p>
+    <div class="hero-meta">
+      <span><b>Warren S. McCulloch</b></span>
+      <span><b>Walter Pitts</b> · Guggenheim Fellow</span>
+      <span>Biometrics <b>4</b>, 91–99</span>
+    </div>
+    <a class="scroll-cue" href="#thesis"><span class="line"></span> Read the plate</a>
+  </div>
+</section>
+
+<section class="section" id="thesis" data-label="The thesis">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The thesis</p>
+      <h2 class="thesis">The brain is <em>atomistic</em> in its elements and <em>statistical</em> in its order.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">The paper is not a review of neurophysiology. It is a synopsis of a theory of the mental aspects of nervous activity — ideas and purposes — built from all-or-none signals. The highway to ideas runs through statistical conceptions: from Boolean algebra, through invariants made by averaging over groups, to a nervous system that regulates itself by negative feedback.</p>
+      <p class="lede">The move is the same one as in 1943, but generalized. A neuron is still a proposition. A net is still a logic. What is new is the claim that the <em>large-scale</em> order of the system is statistical: rates, averages, populations, thresholds controlled from above. The all-or-none element is how the brain meets a continuous world.</p>
+      <div class="note"><b>The image:</b> “This gradual ordering of the nervous system is like permanent magnetization in an originally unmagnetic bar of steel.”</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="servo" data-label="The reflex">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory · the stretch reflex</p>
+      <h2>A loop that holds a length against the world.</h2>
+      <p class="lede">Receptors in the muscle report length as a frequency. The spinal motor neuron fires when enough afferent impulses coincide. The muscle contracts, shortening the muscle and lowering the input. That is negative feedback: the output changes the input in the opposite direction. Move the load, or raise the central threshold, and the reflex finds a new equilibrium.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>The servo, with a spinal cord</h3>
+          <p>The sigmoid on the right is the motor neuron's input–output curve. Its inflection is the relative threshold <span class="tex-inline" data-tex="h'"></span>; its slope grows with the number of afferent channels. Cut the afferents and the loop opens.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="reflexServo" aria-label="Interactive stretch reflex servomechanism with load, spindle, motor neuron, and sigmoid"></canvas>
+      </div>
+      <div class="controls">
+        <div class="control"><label for="load">load <output>F</output></label><input id="load" type="range" min="1" max="10" step="0.1" value="4"></div>
+        <div class="control"><label for="centralH">central threshold h′ <output>h′</output></label><input id="centralH" type="range" min="0.1" max="0.9" step="0.01" value="0.5"></div>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button class="btn ghost" id="cutFeedback">Cut afferents</button>
+        <button class="btn ghost" id="resetServo">Reset length</button>
+      </div>
+      <div class="readout">
+        <div class="cell"><span>muscle length</span><b id="lenVal">1.00</b></div>
+        <div class="cell"><span>afferent rate p</span><b id="affVal">0.500</b></div>
+        <div class="cell"><span>efferent rate E</span><b id="effVal">0.500</b></div>
+        <div class="cell"><span>tension T</span><b class="small-value" id="tenVal">3.6</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="order" data-label="The order">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The six conclusions</p>
+      <h2>What the statistical picture claims.</h2>
+    </div>
+    <div class="concept-grid" style="margin-top:2rem">
+      <article class="concept reveal"><span class="num">01</span><h3>Propositions, timed</h3><p>The actions of neurons and their mutual relations are described by the calculus of propositions subscripted for time.</p></article>
+      <article class="concept reveal delay-1"><span class="num">02</span><h3>Statistical order</h3><p>The system as a whole is ordered on statistical principles, adjusting all-or-none elements to a continuous world.</p></article>
+      <article class="concept reveal delay-2"><span class="num">03</span><h3>It detects universals</h3><p>Recognition is invariance: averages over groups of transformations, or a reflex that canonicalises the input.</p></article>
+      <article class="concept reveal delay-3"><span class="num">04</span><h3>It conserves itself</h3><p>Closed paths keep activity, body condition, and relation to the world stable: output changes input in the opposite direction.</p></article>
+      <article class="concept reveal"><span class="num">05</span><h3>It chooses ends</h3><p>Incompatible circuits inhibit one another. With three, dominance can be circular; values need no common measure.</p></article>
+      <article class="concept reveal delay-1"><span class="num">06</span><h3>It learns</h3><p>Experience alters structure. Heredity lays down the general plan; the particulars are left to chance and use.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="formula" data-label="The formula">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The curve</p>
+      <h2>Why the reflex has a <em>threshold</em> and a <em>slope</em>.</h2>
+      <p class="lede">If afferent impulses are independent and asynchronous, the number arriving on a motor neuron in a unit interval is approximately Gaussian or Poisson. The probability that it exceeds the threshold is a sigmoid. Its inflection sits at the relative threshold; its slope grows with the square root of the number of afferent channels.</p>
+    </div>
+    <div class="reveal delay-1 stack">
+      <div class="formula-card">
+        <div class="tex" data-tex="E(p)\approx \Phi\!\left(\frac{p-h'}{\sqrt{p(1-p)/N}}\right),\qquad h'=\frac{h}{N}" data-display></div>
+        <p class="formula-note"><b>The motor neuron's curve.</b> <span class="tex-inline" data-tex="N"></span> afferent channels, mean input <span class="tex-inline" data-tex="p"></span>, threshold <span class="tex-inline" data-tex="h"></span>. The output rate is sigmoid, monotonic, and runs from zero to one when <span class="tex-inline" data-tex="h'<1"></span>.</p>
+      </div>
+      <div class="formula-card">
+        <div class="tex" data-tex="\frac{dL}{dt}\;\propto\;F_{\text{load}}-T(E(p(L)))\qquad\text{negative feedback}" data-display></div>
+        <p class="formula-note"><b>The loop.</b> If the load exceeds tension, the muscle lengthens; lengthening raises the afferent rate; the rate raises tension; tension pulls the length back. Equilibrium is where the two forces meet.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="quotes" data-label="The voice">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The voice</p>
+      <h2>From Boolean algebra to a bar of steel.</h2>
+    </div>
+    <div class="quote-grid" style="margin-top:2rem">
+      <figure class="quote wide reveal">
+        <p>“The highway to ideas lies through statistical conceptions from their logical foundation in Boolean algebra through modern methods of constructing invariants by averaging over groups of transformations.”</p>
+        <footer><b>McCulloch &amp; Pitts</b> · introduction</footer>
+      </figure>
+      <figure class="quote reveal">
+        <p>“The nervous system as a whole is ordered and operated on statistical principles. Thereby it adjusts the all-or-none laws governing its elements to a physical world of continuous variation.”</p>
+        <footer><b>McCulloch &amp; Pitts</b> · conclusion</footer>
+      </figure>
+      <figure class="quote reveal delay-1">
+        <p>“Heredity cannot fix the thresholds and connections of so many neurons. It can only lay down the general plan and leave particulars to chance. Experience brings order into this chaos.”</p>
+        <footer><b>McCulloch &amp; Pitts</b> · § learning</footer>
+      </figure>
+      <figure class="quote reveal delay-2">
+        <p>“This gradual ordering of the nervous system is like permanent magnetization in an originally unmagnetic bar of steel.”</p>
+        <footer><b>McCulloch &amp; Pitts</b> · § learning</footer>
+      </figure>
+      <figure class="quote reveal delay-3">
+        <p>“No higher structure alone can move muscles: it can only control the ‘central amplification’ of the elementary spinal reflex arc.”</p>
+        <footer><b>McCulloch &amp; Pitts</b> · § the stretch reflex</footer>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pages" data-label="Facsimiles">
+  <div class="wrap">
+    <div class="gallery-note reveal">
+      <div>
+        <p class="eyebrow">The paper itself</p>
+        <h2>Pages from 1948</h2>
+      </div>
+      <p class="tiny">click to enlarge</p>
+    </div>
+    <div class="facsimiles reveal">
+      <figure class="facsimile">
+        <img src="mp_assets/biometrics_1948_vol4_iss2.pdf_p3-03.jpg" alt="First page of The Statistical Organization of Nervous Activity" loading="lazy">
+        <figcaption><b>p. 91.</b> The introduction: atoms of impulse, Boolean algebra, group averages, purposes.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/biometrics_1948_vol4_iss2.pdf_p4-04.jpg" alt="Figures 1 and 2, neuron and synapses" loading="lazy">
+        <figcaption><b>p. 92.</b> Figures 1–2: the neuron and the conventional synapse, the physical alphabet of the theory.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/biometrics_1948_vol4_iss2.pdf_p7-07.jpg" alt="Figure 3, the stretch reflex" loading="lazy">
+        <figcaption><b>p. 95.</b> Figure 3: the stretch reflex, the simplest complete servo in the body.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/biometrics_1948_vol4_iss2.pdf_p8-08.jpg" alt="Page with the six conclusions" loading="lazy">
+        <figcaption><b>p. 96.</b> The argument reaches the motor neuron's sigmoid and the control of gain from higher structures.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why" data-label="Why it matters">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">Why it matters</p>
+      <h2>The blueprint for a <em>self-regulating</em> machine.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">This paper is where the McCulloch–Pitts programme becomes a general theory of organization. Logic explains the element; statistics explains the population; feedback explains purpose. The same triad will reappear in cybernetics, in control theory, and in the design of every adaptive system that tries to hold a variable against a changing world.</p>
+      <p class="lede">It also contains the seed of a harder idea: that “higher” functions are not commands issued to lower ones, but gains set on lower loops. The cortex does not move the muscle. It changes the threshold at which the spinal reflex responds.</p>
+      <div class="note"><b>Read next:</b> the Hixon lecture, where information, certainty, and the question “why is the mind in the head?” take centre stage.</div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:2.5rem">
+    <a class="next reveal" href="mp_1951_why_mind.html">
+      <div>
+        <p class="eyebrow">Plate 06 · 1951</p>
+        <h3>Why the Mind Is in the Head</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span>Plate 05 · <b>The Statistical Organization of Nervous Activity</b></span>
+    <span>Source: <a href="https://archive.org/details/biometrics_1948-06_4_2">Biometrics, Vol. 4, No. 2</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Facsimile viewer"><img alt=""><div class="cap"></div></div>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Through the Den of the Metaphysician — McCulloch, 1951</title>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<link rel="stylesheet" href="mp.css">
+<script src="../temml.min.js" defer></script>
+<script src="mp.js" defer></script>
+<script src="mp_1951_through_den.js" defer></script>
+</head>
+<body data-accent="gold">
+<div class="progress"><span></span></div>
+<header class="topbar">
+  <a class="brand" href="mp_index.html"><b>MP</b><span class="dot">·</span>Codex</a>
+  <div class="topbar-meta">
+    <span class="hide-sm">Plate 07 / 12 · 1951</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+</header>
+<div class="rail" id="rail" aria-hidden="true"></div>
+
+<main>
+<section class="hero" id="top" data-label="Opening">
+  <canvas class="hero-canvas" id="heroDen" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Thalès · Vol. 7 · 1951 · first published as “Dans l'antre du Métaphysicien”</p>
+    <h1>Through the <em>Den</em> of the Metaphysician</h1>
+    <p class="hero-sub">A lecture on how a computing machine can know a world that includes itself. Its most famous sentence is not about machines at all: “let us be perfectly frank to admit that causality is a superstition.” What follows is a theory of signals, time, will, and the courage to proceed serenely.</p>
+    <div class="hero-meta">
+      <span><b>Warren S. McCulloch</b></span>
+      <span>University of Virginia · 23 March 1948</span>
+      <span>Thalès <b>7</b>, 37–49</span>
+    </div>
+    <a class="scroll-cue" href="#thesis"><span class="line"></span> Read the plate</a>
+  </div>
+</section>
+
+<section class="section" id="thesis" data-label="The thesis">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The thesis</p>
+      <h2 class="thesis">A signal implies only its <em>past</em>. The future is not implied — only intended.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">McCulloch asks Clerk Maxwell's question — does the way to the relation between thought and molecular motion lie through the den of the metaphysician, strewn with the bones of former explorers? — and answers with a split: “Let us peacefully answer the first half of his question ‘Yes,’ the second half ‘No,’ and then proceed serenely.”</p>
+      <p class="lede">The knower is a computing machine of <span class="tex-inline" data-tex="10^{10}"></span> relays. Its least signal is an atomic proposition on the move. Because information cannot increase in passage, the machine can only corrupt revelation. Because implication runs backward in time, thought cannot guarantee action. The gap between them is what we call the will.</p>
+      <div class="note"><b>The wager:</b> if causality is a law of necessary connection between events, then it is a superstition — but a necessary one. The machine cannot operate on the future; it can only carry the past forward and act on a guess.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="lab" data-label="The laboratory">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory · the two arrows</p>
+      <h2>Fire a signal. Try to make the future obey.</h2>
+      <p class="lede">A signal at the present implies its antecedents with necessity: follow the solid arrows left and you reach the receptors. In the other direction the arrows are dashed. An intervention from the world can arrive at the effector before the intended impulse does. That is not a failure of the machine; it is the structure of time.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>Implication, intention, intervention</h3>
+          <p>Fire the signal, then intervene. The past is always implied; the future is only intended, and can be thwarted.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="denLab" aria-label="Interactive diagram of backward implication and forward intention with intervention"></canvas>
+      </div>
+      <div class="controls">
+        <div class="control"><label for="pathDelay">forward delay <output>Δ</output></label><input id="pathDelay" type="range" min="0.6" max="3" step="0.05" value="1.6"></div>
+        <button class="btn" id="fireSignal">Fire a signal</button>
+        <button class="btn ghost" id="intervene">Intervene</button>
+        <button class="btn ghost" id="resetDen">Reset</button>
+      </div>
+      <div class="readout">
+        <div class="cell"><span>past</span><b class="small-value" id="pastVal">—</b></div>
+        <div class="cell"><span>future</span><b class="small-value" id="futureVal">—</b></div>
+        <div class="cell"><span>will</span><b class="small-value" id="willVal">—</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="time" data-label="Time and will">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The argument</p>
+      <h2>Why the future is not implied.</h2>
+      <p class="lede">In a net without circles, a signal at any point implies a signal nearer the receptors, and so backward in time until the receptors are reached. The domain of implication is the past. Add circles and the net can assert that there was some time at which something happened — an existential quantifier — but still not when.</p>
+      <p class="lede">In the forward direction, something else may intervene between the conception of an act and the arrival of impulses at the motor horn cell. The relation falls short of implication. “Our thought does not imply our action but, as we say, only intends it.”</p>
+    </div>
+    <div class="reveal delay-1 stack">
+      <div class="formula-card">
+        <div class="tex" data-tex="N_i(t)\;\Longrightarrow\;\exists t'<t:\;N_j(t')" data-display></div>
+        <p class="formula-note"><b>The arrow backward.</b> A signal here and now implies that its antecedents occurred. The tense is past; the reference to time may be indefinite.</p>
+      </div>
+      <div class="formula-card">
+        <div class="tex" data-tex="N_i(t)\;\not\Longrightarrow\;N_k(t+\Delta)\quad\text{for any }\Delta>0" data-display></div>
+        <p class="formula-note"><b>No arrow forward.</b> The future is open to intervention. This is why a machine can intend without guaranteeing, and why the will is not a ghost but a gap.</p>
+      </div>
+      <div class="formula-card">
+        <div class="tex" data-tex="\text{information out}\;\le\;\text{information in}" data-display></div>
+        <p class="formula-note"><b>The second law of computation.</b> Entropy increases; information cannot. The machine is “a device, however complicated, which can only corrupt revelation.”</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="quotes" data-label="The voice">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The voice</p>
+      <h2>The most quotable McCulloch.</h2>
+    </div>
+    <div class="quote-grid" style="margin-top:2rem">
+      <figure class="quote wide reveal">
+        <p>“Let us peacefully answer the first half of his question ‘Yes,’ the second half ‘No,’ and then proceed serenely.”</p>
+        <footer><b>McCulloch</b> · opening</footer>
+      </figure>
+      <figure class="quote reveal">
+        <p>“But, in so doing, let us be perfectly frank to admit that causality is a superstition.”</p>
+        <footer><b>McCulloch</b> · § the limitations</footer>
+      </figure>
+      <figure class="quote reveal delay-1">
+        <p>“Each is a device, however complicated, which can only corrupt revelation.”</p>
+        <footer><b>McCulloch</b> · § information</footer>
+      </figure>
+      <figure class="quote reveal delay-2">
+        <p>“Our thought does not imply our action but, as we say, only intends it.”</p>
+        <footer><b>McCulloch</b> · § time and will</footer>
+      </figure>
+      <figure class="quote reveal delay-3">
+        <p>“If I shall do what I will do, then my will is free.”</p>
+        <footer><b>McCulloch</b> · § time and will</footer>
+      </figure>
+      <figure class="quote wide reveal">
+        <p>“It can build bigger and better brains, but what it has are sufficient to guide it through the very den of the metaphysician.”</p>
+        <footer><b>McCulloch</b> · argument</footer>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pages" data-label="Facsimiles">
+  <div class="wrap">
+    <div class="gallery-note reveal">
+      <div>
+        <p class="eyebrow">The paper itself</p>
+        <h2>Pages from 1951</h2>
+      </div>
+      <p class="tiny">click to enlarge</p>
+    </div>
+    <div class="facsimiles reveal">
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_through_the_den_of_the_metaphysician_vordenker.pdf_p1-01.jpg" alt="First page of Through the Den of the Metaphysician" loading="lazy">
+        <figcaption><b>p. 142.</b> The argument in full, and the opening invitation to proceed serenely.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_through_the_den_of_the_metaphysician_vordenker.pdf_p5-05.jpg" alt="Page on causality and propositions" loading="lazy">
+        <figcaption><b>p. 146.</b> Propositions, events, and the superstition of causality.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_through_the_den_of_the_metaphysician_vordenker.pdf_p6-06.jpg" alt="Page on memory and universals" loading="lazy">
+        <figcaption><b>p. 147.</b> Reverberation, the existential operator over time, and the recognition of universals.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_through_the_den_of_the_metaphysician_vordenker.pdf_p9-09.jpg" alt="Final page" loading="lazy">
+        <figcaption><b>p. 150.</b> Reflexes, automatic volume control, appetitive circuits — and the road to the den.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why" data-label="Why it matters">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">Why it matters</p>
+      <h2>An ethics of <em>epistemic humility</em>.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">This lecture is the philosophical heart of McCulloch's programme. It explains why a machine can be intelligent without being omniscient, why prediction is not deduction, and why responsibility survives determinism. The future is not known; it is acted into.</p>
+      <p class="lede">It also gives the codex its most useful warning: a system that confuses the strength of its inferences with the openness of the future will be either a fatalist or a fanatic. The alternative is to proceed serenely, with hypotheses of low a priori probability and the courage to let them be refuted.</p>
+      <div class="note"><b>Read next:</b> <em>Mysterium Iniquitatis</em>, where the machine question becomes a question about God, sin, and the limits of knowledge.</div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:2.5rem">
+    <a class="next reveal" href="mp_1955_mysterium.html">
+      <div>
+        <p class="eyebrow">Plate 08 · 1955</p>
+        <h3>Mysterium Iniquitatis of Sinful Man Aspiring into the Place of God</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span>Plate 07 · <b>Through the Den of the Metaphysician</b></span>
+    <span>Source: <a href="https://www.vordenker.de/ggphilosophy/mcculloch_through-the-den.pdf">Vordenker edition</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Facsimile viewer"><img alt=""><div class="cap"></div></div>
+</body>
+</html>
