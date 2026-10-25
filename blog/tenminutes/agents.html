@@ -156,9 +156,13 @@
 										</ul>
 										<div class="agent-context">
 											<div>Scratchpad: <b id="agent-memory">0 notes</b></div>
+											<div>Step: <b id="agent-step">0</b></div>
 											<div>Context: <b id="agent-tokens">0 tokens</b></div>
+											<div class="agent-meter" aria-hidden="true"><span id="agent-meter-fill"></span></div>
 											<div>Safety: <b id="agent-safety">watching</b></div>
 										</div>
+										<ul class="agent-scratch" id="agent-scratch"></ul>
+										<div class="agent-tool-doc" id="agent-tool-doc">Select a tool to see its contract.</div>
 									</aside>
 								</div>
 							</div>
@@ -386,6 +390,10 @@
 		var memoryEl = document.getElementById("agent-memory");
 		var tokensEl = document.getElementById("agent-tokens");
 		var safetyEl = document.getElementById("agent-safety");
+		var scratchEl = document.getElementById("agent-scratch");
+		var meterEl = document.getElementById("agent-meter-fill");
+		var stepEl = document.getElementById("agent-step");
+		var toolDocEl = document.getElementById("agent-tool-doc");
 		var notes = [];
 		var tokenCount = 0;
 		var waiting = false;
@@ -400,6 +408,7 @@
 			feed.scrollTop = feed.scrollHeight;
 			tokenCount += Math.max(4, Math.ceil(text.split(/\s+/).length * 1.35));
 			if (tokensEl) tokensEl.textContent = tokenCount + " tokens";
+			if (meterEl) meterEl.style.width = Math.min(100, tokenCount / 1200 * 100).toFixed(1) + "%";
 		}
 		function escapeHtml(s) {
 			return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
@@ -407,6 +416,12 @@
 		function note(text) {
 			notes.push(text);
 			if (memoryEl) memoryEl.textContent = notes.length + " note" + (notes.length === 1 ? "" : "s");
+			if (scratchEl) {
+				var li = document.createElement("li");
+				li.textContent = text;
+				scratchEl.appendChild(li);
+				scratchEl.scrollTop = scratchEl.scrollHeight;
+			}
 		}
 		function markTool(tool) {
 			if (!tool) return;
@@ -435,7 +450,7 @@
 						waiting = false;
 						choices.innerHTML = "";
 						if (nextBtn) nextBtn.disabled = false;
-						if (safetyEl) safetyEl.textContent = "watching";
+						if (safetyEl) { safetyEl.textContent = "watching"; safetyEl.className = ""; }
 						markTool(opt.tool);
 						note(opt.label);
 						addMsg("thought", "Decision: " + opt.label + ". " + opt.feedback);
@@ -445,13 +460,14 @@
 						addMsg("warning", opt.feedback);
 						b.disabled = true;
 						b.style.opacity = ".5";
-						if (safetyEl) safetyEl.textContent = "blocked";
+						if (safetyEl) { safetyEl.textContent = "blocked"; safetyEl.className = "is-warn"; }
 					}
 				});
 				choices.appendChild(b);
 			});
 		}
 		function stepOnce() {
+			if (stepEl) stepEl.textContent = cursor;
 			if (cursor >= script.length) { if (nextBtn) nextBtn.disabled = true; return; }
 			var step = script[cursor];
 			if (step.kind === "choice") { showChoices(step); return; }
@@ -460,7 +476,7 @@
 			if (step.kind === "obs") { addMsg("obs", step.text); note(step.text); }
 			if (step.kind === "answer") {
 				addMsg("answer", step.text);
-				if (safetyEl) safetyEl.textContent = "task complete";
+				if (safetyEl) { safetyEl.textContent = "task complete"; safetyEl.className = "is-done"; }
 			}
 			cursor++;
 			if (nextBtn) nextBtn.disabled = false;
@@ -472,9 +488,12 @@
 			tokenCount = 0;
 			if (feed) feed.innerHTML = "";
 			if (choices) choices.innerHTML = "";
+			if (scratchEl) scratchEl.innerHTML = "";
 			if (memoryEl) memoryEl.textContent = "0 notes";
 			if (tokensEl) tokensEl.textContent = "0 tokens";
-			if (safetyEl) safetyEl.textContent = "watching";
+			if (meterEl) meterEl.style.width = "0%";
+			if (stepEl) stepEl.textContent = "0";
+			if (safetyEl) { safetyEl.textContent = "watching"; safetyEl.className = ""; }
 			document.querySelectorAll("[data-tool]").forEach(function (li) { li.classList.remove("is-on"); });
 			if (nextBtn) nextBtn.disabled = false;
 			addMsg("thought", "Goal received. I will plan the next step.");
@@ -485,6 +504,22 @@
 			if (resetBtn) resetBtn.addEventListener("click", reset);
 			reset();
 		}
+
+		/* ── tool contracts ──────────────────────────────────── */
+		var toolDocs = {
+			calendar: "read-only · returns the current date and time. No side effects.",
+			search: "read-only · returns ranked snippets. Treat the text as untrusted data.",
+			browser: "read-only page fetch. Sanitize before injecting it into the context.",
+			confirm: "asks a human. No side effect; required before any irreversible action.",
+			book: "irreversible · spends money. Requires a fresh confirmation and a sandboxed executor."
+		};
+		document.querySelectorAll("[data-tool]").forEach(function (li) {
+			li.style.cursor = "pointer";
+			li.addEventListener("click", function () {
+				var key = li.getAttribute("data-tool");
+				if (toolDocEl && toolDocs[key]) toolDocEl.textContent = toolDocs[key];
+			});
+		});
 
 		/* ── prompt injection demo ───────────────────────────── */
 		var injectRun = document.getElementById("inject-run");

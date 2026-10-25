@@ -100,11 +100,17 @@
 								<div class="flow-detail" id="pipe-detail">
 									<h4 id="pipe-title">Tokenize</h4>
 									<p id="pipe-text"></p>
+									<p class="pipe-shape" id="pipe-shape"></p>
 								</div>
 								<div class="demo-controls">
 									<button class="btn-demo btn-demo--green" type="button" id="pipe-next">Next step in pipeline →</button>
+									<button class="btn-demo" type="button" id="pipe-mask-toggle">Show causal mask</button>
 									<button class="btn-demo" type="button" id="pipe-reset">Reset</button>
 									<span class="pipe-note" id="pipe-counter" style="margin:0">Stage 1 of 6</span>
+								</div>
+								<div class="causal-mask" id="pipe-mask" hidden>
+									<div class="cm-grid" id="cm-grid" aria-label="Causal attention mask: rows are queries, columns are keys"></div>
+									<p>Rows are queries, columns are keys. A decoder may attend only to itself and the past; the future is masked. That is what makes next-token prediction honest during training.</p>
 								</div>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>Attention mixes across positions; the feed-forward network computes per position; the residual stream carries everything forward.</span></div>
@@ -334,37 +340,44 @@
 			{
 				name: "Tokenize",
 				title: "Tokenize",
-				text: "Text is cut into subword tokens and mapped to integer IDs. The vocabulary is fixed before training. In GPT-2 byte-level BPE, “The cat sat” becomes [464, 3797, 3332]."
+				text: "Text is cut into subword tokens and mapped to integer IDs. The vocabulary is fixed before training. In GPT-2 byte-level BPE, “The cat sat” becomes [464, 3797, 3332].",
+				shape: "text → [T] token IDs"
 			},
 			{
 				name: "Embed",
 				title: "Embed",
-				text: "Each token ID indexes a row of the embedding matrix W_E, producing a dense vector of dimension d_model. Similar meanings end up near each other in this space — but this is only the first layer."
+				text: "Each token ID indexes a row of the embedding matrix W_E, producing a dense vector of dimension d_model. Similar meanings end up near each other in this space — but this is only the first layer.",
+				shape: "[T] → [T, d_model]"
 			},
 			{
 				name: "Position",
 				title: "Add position",
-				text: "A position signal is added to each embedding (sinusoidal in the original, often rotary/RoPE in modern models). Without it, “dog bites man” and “man bites dog” would be an unordered bag of the same vectors."
+				text: "A position signal is added to each embedding (sinusoidal in the original, often rotary/RoPE in modern models). Without it, “dog bites man” and “man bites dog” would be an unordered bag of the same vectors.",
+				shape: "[T, d_model] + [T, d_model] → [T, d_model]"
 			},
 			{
 				name: "Attention",
 				title: "Attention + residual",
-				text: "Each token projects to a query, key, and value. Scaled dot products decide who attends to whom; softmax normalizes the weights; values are averaged. A causal mask in a decoder hides the future. The result is added back to the residual stream. N layers repeat this."
+				text: "Each token projects to a query, key, and value. Scaled dot products decide who attends to whom; softmax normalizes the weights; values are averaged. A causal mask in a decoder hides the future. The result is added back to the residual stream. N layers repeat this.",
+				shape: "[T, d_model] → [T, d_model] · mixed across positions"
 			},
 			{
 				name: "Feed-forward",
 				title: "Feed-forward + residual",
-				text: "A per-token MLP expands the vector (usually 4×), applies a nonlinearity such as GELU or SwiGLU, and contracts it back. Attention routes information; the FFN computes with it. The result is added to the stream again."
+				text: "A per-token MLP expands the vector (usually 4×), applies a nonlinearity such as GELU or SwiGLU, and contracts it back. Attention routes information; the FFN computes with it. The result is added to the stream again.",
+				shape: "[T, d_model] → [T, 4·d_model] → [T, d_model]"
 			},
 			{
 				name: "Unembed",
 				title: "Unembed + sample",
-				text: "The final hidden state is multiplied by an unembedding matrix, giving a logit for every vocabulary token. Softmax turns logits into probabilities; a decoding rule samples or takes the argmax; the token is appended and the loop repeats until EOS."
+				text: "The final hidden state is multiplied by an unembedding matrix, giving a logit for every vocabulary token. Softmax turns logits into probabilities; a decoding rule samples or takes the argmax; the token is appended and the loop repeats until EOS.",
+				shape: "[T, d_model] → [T, vocab] → one distribution"
 			}
 		];
 		var flow = document.getElementById("pipe-flow");
 		var detailTitle = document.getElementById("pipe-title");
 		var detailText = document.getElementById("pipe-text");
+		var detailShape = document.getElementById("pipe-shape");
 		var counter = document.getElementById("pipe-counter");
 		var pipeTokens = document.getElementById("pipe-tokens");
 		var nextBtn = document.getElementById("pipe-next");
@@ -387,6 +400,7 @@
 			var stage = stages[currentStage];
 			if (detailTitle) detailTitle.textContent = stage.title;
 			if (detailText) detailText.textContent = stage.text;
+			if (detailShape) detailShape.textContent = "Shape: " + stage.shape;
 			if (counter) counter.textContent = "Stage " + (currentStage + 1) + " of " + stages.length;
 			flow.querySelectorAll(".flow-step").forEach(function (b) {
 				b.classList.toggle("is-active", parseInt(b.getAttribute("data-stage"), 10) === currentStage);
@@ -412,6 +426,26 @@
 			});
 		}
 		if (resetBtn) resetBtn.addEventListener("click", function () { selectStage(0); });
+		var maskToggle = document.getElementById("pipe-mask-toggle");
+		var maskWrap = document.getElementById("pipe-mask");
+		var cmGrid = document.getElementById("cm-grid");
+		if (cmGrid) {
+			for (var mi = 0; mi < 6; mi++) {
+				for (var mj = 0; mj < 6; mj++) {
+					var cell = document.createElement("span");
+					cell.className = "cm-cell" + (mj > mi ? " is-masked" : "");
+					cell.textContent = mj > mi ? "×" : "•";
+					cell.setAttribute("aria-label", "query " + (mi + 1) + ", key " + (mj + 1) + (mj > mi ? ": masked" : ": allowed"));
+					cmGrid.appendChild(cell);
+				}
+			}
+		}
+		if (maskToggle && maskWrap) {
+			maskToggle.addEventListener("click", function () {
+				maskWrap.hidden = !maskWrap.hidden;
+				maskToggle.textContent = maskWrap.hidden ? "Show causal mask" : "Hide causal mask";
+			});
+		}
 
 		/* ── layer lens ──────────────────────────────────────── */
 		var canvas = document.getElementById("layer-canvas");

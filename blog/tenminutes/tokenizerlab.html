@@ -111,11 +111,13 @@
 									<button class="chip" type="button" data-preset="Bonjour le monde">Bonjour</button>
 								</div>
 								<div class="token-stream" id="tok-stream" style="margin-top:12px" aria-live="polite"></div>
-								<div class="demo-readout">
+								<div class="demo-readout demo-readout--4">
 									<div><b>Tokens</b><span id="tok-count">0</span></div>
 									<div><b>Characters</b><span id="tok-chars">0</span></div>
 									<div><b>Characters / token</b><span id="tok-ratio">0</span></div>
+									<div><b>Subword / char pieces</b><span id="tok-pieces">0</span></div>
 								</div>
+								<p class="vec-note" id="tok-inspector" style="color:var(--tm-muted)">Click any token to see why it split — a known piece, a character fallback, a digit group, whitespace, or punctuation.</p>
 								<p class="meadow-caption" id="tok-caption" style="color:rgba(238,247,244,.55)">The model never sees the spaces you see; each one is a token too.</p>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>A token is a slot, not a concept. The tokenizer decides which slots exist; training decides which slots get meaning.</span></div>
@@ -259,7 +261,7 @@
 					</div>
 
 					<nav class="lesson-nav" aria-label="Lesson navigation">
-						<a href="history.html"><span class="ln-label">Previous</span><span class="ln-title">A very long fuse</span></a>
+						<a href="history.html"><span class="ln-label">Previous</span><span class="ln-title">An even briefer history</span></a>
 						<a href="embeddinglab.html"><span class="ln-label">Next</span><span class="ln-title">Meaning as geometry</span></a>
 					</nav>
 
@@ -328,12 +330,13 @@
 			}
 			return Math.abs(h);
 		}
-		function pushToken(out, text, type, sub) {
+		function pushToken(out, text, type, sub, reason) {
 			if (!text) return;
 			out.push({
 				text: text,
 				type: type,
 				sub: !!sub,
+				reason: reason || "",
 				id: 1000 + (hash(text) % 48000),
 				color: COLORS[out.length % COLORS.length]
 			});
@@ -343,19 +346,18 @@
 			var chunks = text.match(/\s+|[A-Za-z]+|[0-9]+|[^\sA-Za-z0-9]/g) || [];
 			chunks.forEach(function (chunk) {
 				if (/^\s+$/.test(chunk)) {
-					var label = "␣";
-					if (chunk.length > 1) label = new Array(Math.min(4, chunk.length) + 1).join("␣");
-					pushToken(out, chunk, "space", false);
+					pushToken(out, chunk, "space", false, "whitespace run");
 					return;
 				}
 				if (/^[0-9]+$/.test(chunk)) {
 					var groups = chunk.match(/\d{1,3}/g) || [chunk];
-					groups.forEach(function (g) { pushToken(out, g, "number", g.length < chunk.length); });
+					groups.forEach(function (g) { pushToken(out, g, "number", g.length < chunk.length, "digit group"); });
 					return;
 				}
 				if (/^[A-Za-z]+$/.test(chunk)) {
 					var lower = chunk.toLowerCase();
 					var pos = 0;
+					var wordStart = out.length;
 					while (pos < lower.length) {
 						var found = null;
 						for (var i = 0; i < PIECES.length; i++) {
@@ -367,16 +369,20 @@
 						}
 						if (found) {
 							var original = chunk.slice(pos, pos + found.length);
-							pushToken(out, original, "word", found.length < chunk.length);
+							pushToken(out, original, "word", found.length < chunk.length, "matched a known piece");
 							pos += found.length;
 						} else {
-							pushToken(out, chunk.charAt(pos), "char", true);
+							pushToken(out, chunk.charAt(pos), "char", true, "no known piece — character fallback");
 							pos++;
 						}
 					}
+					var pieces = out.length - wordStart;
+					for (var k = wordStart; k < out.length; k++) {
+						out[k].group = { label: chunk, index: k - wordStart + 1, size: pieces };
+					}
 					return;
 				}
-				pushToken(out, chunk, "punct", false);
+				pushToken(out, chunk, "punct", false, "punctuation");
 			});
 			return out;
 		}
@@ -392,6 +398,8 @@
 			if (!input || !stream) return;
 			var text = input.value;
 			var tokens = tokenize(text);
+			var inspectorEl = document.getElementById("tok-inspector");
+			if (inspectorEl) inspectorEl.textContent = "Click any token to see why it split — a known piece, a character fallback, a digit group, whitespace, or punctuation.";
 			stream.innerHTML = "";
 			tokens.forEach(function (tok, i) {
 				var el = document.createElement("span");
@@ -416,6 +424,26 @@
 		}
 		function escapeHtml(s) {
 			return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
+		}
+		var inspector = document.getElementById("tok-inspector");
+		function inspectToken(tok) {
+			if (!inspector || !tok) return;
+			var label = tok.type === "space" ? "whitespace" : tok.text;
+			var text = "“" + label + "” — " + tok.reason + ".";
+			if (tok.group) text += " Piece " + tok.group.index + " of " + tok.group.size + " in “" + tok.group.label + "”.";
+			if (tok.type === "char") text += " This is where token inflation starts: an unseen word becomes several slots.";
+			inspector.textContent = text;
+		}
+		if (stream) {
+			stream.addEventListener("click", function (ev) {
+				var el = ev.target.closest(".token");
+				if (!el) return;
+				var i = parseInt(el.getAttribute("data-token-index"), 10);
+				var current = tokenize(input ? input.value : "");
+				stream.querySelectorAll(".token").forEach(function (x) { x.classList.remove("is-selected"); });
+				el.classList.add("is-selected");
+				inspectToken(current[i]);
+			});
 		}
 		if (input) {
 			input.addEventListener("input", render);

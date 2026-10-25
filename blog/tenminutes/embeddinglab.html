@@ -114,11 +114,13 @@
 									</div>
 								</div>
 								<canvas class="demo-canvas" id="embed-canvas" style="height:380px" aria-label="A two-dimensional semantic map of words"></canvas>
-								<div class="vec-readout">
+								<div class="vec-readout demo-readout--4">
 									<div><b>Selected</b><span id="emb-selected">King</span></div>
 									<div><b>Nearest neighbour</b><span id="emb-nearest">Queen</span></div>
 									<div><b>Analogy lands on</b><span id="emb-result">Queen</span></div>
+									<div><b>Arrow alignment</b><span id="emb-align">1.00</span></div>
 								</div>
+								<p class="vec-note" id="emb-arrow-note" style="color:var(--tm-muted)">The two relationship arrows are exactly parallel in this toy. In a real embedding the same direction is approximate — which is why analogy arithmetic is suggestive, not a law.</p>
 								<div class="demo-controls">
 									<button class="btn-demo rel-btn" type="button" data-direction="gender" style="--rel:#39a9d6">Gender →</button>
 									<button class="btn-demo rel-btn" type="button" data-direction="royalty" style="--rel:#71bd56">Royalty ↑</button>
@@ -472,6 +474,13 @@
 			if (selectedEl) selectedEl.textContent = selected;
 			if (nearestEl) nearestEl.textContent = nearest ? nearest.w : "—";
 			if (resultEl) resultEl.textContent = res.nearest.w;
+			var alignEl = document.getElementById("emb-align");
+			if (alignEl) {
+				var u = { x: a.x - b.x, y: a.y - b.y };
+				var v = { x: res.p.x - cc.x, y: res.p.y - cc.y };
+				var denom = Math.hypot(u.x, u.y) * Math.hypot(v.x, v.y) || 1;
+				alignEl.textContent = ((u.x * v.x + u.y * v.y) / denom).toFixed(2);
+			}
 			if (captionEl) captionEl.setAttribute("aria-label", an.label + " lands near " + res.nearest.w);
 			var note = document.getElementById("emb-direction-note");
 			if (note) {

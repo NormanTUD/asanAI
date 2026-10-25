@@ -137,11 +137,13 @@
 									<button class="chip" type="button" data-head="meaning">Meaning</button>
 								</div>
 								<div class="att-sentence" id="att-sentence"></div>
-								<div class="demo-readout">
+								<div class="demo-readout demo-readout--4">
 									<div><b>Query</b><span id="att-query">she</span></div>
 									<div><b>Top attended</b><span id="att-top">Maria</span></div>
 									<div><b>Weight</b><span id="att-weight">0.48</span></div>
+									<div><b>Row sum</b><span>1.00</span></div>
 								</div>
+								<p class="vec-note" id="att-top3" style="color:var(--tm-muted)">Top 3: Maria 48% · bank 12% · loan 8%. Every row sums to 1: attention is a finite budget.</p>
 								<div class="demo-controls">
 									<button class="btn-demo" type="button" id="att-matrix-toggle">Show attention matrix</button>
 									<label class="att-toggle" style="text-transform:none;letter-spacing:0;font-weight:500">
@@ -397,6 +399,11 @@
 			if (queryEl) queryEl.textContent = tokens[query];
 			if (topEl) topEl.textContent = tokens[top];
 			if (weightEl) weightEl.textContent = (w[top] * 100).toFixed(0) + "%";
+			var top3El = document.getElementById("att-top3");
+			if (top3El) {
+				var ranked = w.map(function (p, i) { return { i: i, p: p }; }).sort(function (a, b) { return b.p - a.p; }).slice(0, 3);
+				top3El.textContent = "Top 3: " + ranked.map(function (x) { return tokens[x.i] + " " + Math.round(x.p * 100) + "%"; }).join(" · ") + ". Every row sums to 1: attention is a finite budget.";
+			}
 			if (captionEl) {
 				var headName = { coref: "Coreference", syntax: "Syntax", meaning: "Meaning" }[head];
 				if (head === "coref" && tokens[query] === "she") captionEl.textContent = "The coreference head links “she” back to “Maria”. The pronoun needs a referent; the head retrieves it.";
