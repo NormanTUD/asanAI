@@ -16551,9 +16551,9 @@ window.bibData = {
 	"vapnik1964vc": {
 		title: "On the Uniform Convergence of Relative Frequencies of Events to Their Probabilities",
 		author: "Vladimir N. Vapnik, Alexey Ya. Chervonenkis",
-		year: 1964,
+		year: 1971,
 		url: "https://web.archive.org/web/2024/https://en.wikipedia.org/wiki/Vapnik%E2%80%93Chervonenkis_dimension",
-		alternativetitle: "Vapnik & Chervonenkis, VC Theory (1964)"
+		alternativetitle: "Vapnik & Chervonenkis, VC Theory (1971)"
 	},
 	"lorentedeno1938cortex": {
 		title: "Architectonics and Structure of the Cerebral Cortex (Chapter XV in Fulton's Physiology of the Nervous System)",

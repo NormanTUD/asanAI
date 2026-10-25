@@ -139,6 +139,17 @@ def seed(db_path: Path) -> None:
 				"INSERT OR IGNORE INTO pageview_events (pageview_id,path,kind,target,value) VALUES (?,?,?,?,?)",
 				(pageview_id, "history", "quiz_answer", "history-cp1:0", 1),
 			)
+		feedback_rows = [
+			("seed-feedback-bug", "history", "bug", "Chart stays blank on mobile."),
+			("seed-feedback-confusing", "attentionlab", "confusing", "Too much math before the intuition."),
+			("seed-feedback-helpful", "intuition", "helpful", "The example made it click."),
+		]
+		for request_id, path, reaction, comment in feedback_rows:
+			ts = int((now - timedelta(hours=1)).timestamp())
+			db.execute(
+				"INSERT INTO block_feedback (request_id, ts, day, path, reaction, comment, status) VALUES (?,?,?,?,?,?,?)",
+				(request_id, ts, now.strftime("%Y-%m-%d"), path, reaction, comment, "new"),
+			)
 		db.commit()
 
 
@@ -176,6 +187,11 @@ def main() -> int:
 
 			check(browser.execute_script("return document.body.classList.contains('overview-briefing')"), "default mode is briefing")
 			check(browser.find_element(By.ID, "story-cards").is_displayed(), "story cards visible")
+			priorities = browser.find_element(By.ID, "priorities")
+			check(priorities.is_displayed(), "priorities card visible in briefing")
+			priorities_text = priorities.text
+			check("Brief History of AI" in priorities_text and "bug" in priorities_text.lower(), "priorities list surfaces open bugs", priorities_text)
+			check("Read feedback" in priorities_text, "priorities list links to triage")
 			check(not browser.find_element(By.ID, "overview").is_displayed(), "KPI grid hidden in briefing")
 			briefing_charts = browser.execute_script("return document.querySelectorAll('.chart canvas').length")
 			check(briefing_charts <= 4, "briefing initializes at most four charts", str(briefing_charts))

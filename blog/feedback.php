@@ -186,6 +186,20 @@ function feedback_where(int $range, string $path, string $reaction, string $stat
 	return implode(' AND ', $where);
 }
 
+function feedback_relative_time(int $ts): string {
+	$diff = max(0, time() - $ts);
+	if ($diff < 60) {
+		return 'just now';
+	}
+	if ($diff < 3600) {
+		return intdiv($diff, 60) . ' min';
+	}
+	if ($diff < 86400) {
+		return intdiv($diff, 3600) . ' h';
+	}
+	return intdiv($diff, 86400) . ' d';
+}
+
 function feedback_status_label(string $status): string {
 	return match ($status) {
 		'new' => 'New',
@@ -460,6 +474,8 @@ $pageStats = [];
 $feedbackChartData = ['rangeLabel' => '', 'days' => [], 'series' => [], 'mix' => [], 'pages' => ['labels' => [], 'helpful' => [], 'unhelpful' => [], 'confusing' => [], 'bug' => []]];
 $activity = [];
 $latestFeedback = [];
+$trafficMap = [];
+$openQueue = [];
 $pdo = null;
 
 if ($authed) {
@@ -523,6 +539,22 @@ if ($authed) {
 			$pathOptions[$pathKey] = ($pathOptions[$pathKey] ?? 0) + (int)$pathRow['n'];
 		}
 
+		$trafficWhere = ['is_bot = 0'];
+		$trafficParams = [];
+		if ($range > 0) {
+			$trafficWhere[] = 'ts >= ?';
+			$trafficParams[] = time() - $range * 86400;
+		}
+		if ($path !== '') {
+			$trafficWhere[] = 'path = ?';
+			$trafficParams[] = $path;
+		}
+		$trafficStmt = $pdo->prepare("SELECT path, COUNT(*) AS views FROM pageviews WHERE " . implode(' AND ', $trafficWhere) . " GROUP BY path");
+		$trafficStmt->execute($trafficParams);
+		foreach ($trafficStmt->fetchAll() as $trafficRow) {
+			$trafficMap[feedback_normalize_path((string)$trafficRow['path'])] = (int)$trafficRow['views'];
+		}
+
 		$pageStmt = $pdo->prepare(
 			"SELECT f.path,
 			        COUNT(*) AS total,
@@ -547,8 +579,22 @@ if ($authed) {
 			$pageRow['path'] = feedback_normalize_path((string)$pageRow['path']);
 			$pageRow['title'] = $titles[(string)$pageRow['path']] ?? (string)$pageRow['path'];
 			$pageRow['attention'] = (int)$pageRow['unhelpful'] + (int)$pageRow['confusing'];
+			$pageRow['negative'] = (int)$pageRow['unhelpful'] + (int)$pageRow['confusing'] + (int)$pageRow['bug'];
+			$pageRow['views'] = (int)($trafficMap[(string)$pageRow['path']] ?? 0);
+			$pageRow['negative_rate'] = $pageRow['views'] > 0 ? 1000 * $pageRow['negative'] / $pageRow['views'] : null;
 			$pageStats[] = $pageRow;
 		}
+
+		$openStmt = $pdo->prepare(
+			"SELECT f.id, f.ts, f.path, f.lesson_title, f.reaction, f.section_title, f.comment, s.selected_text
+			 FROM block_feedback f
+			 LEFT JOIN feedback_selections s ON s.feedback_id = f.id
+			 WHERE $baseWhere AND f.status = 'new'
+			 ORDER BY f.ts ASC, f.id ASC
+			 LIMIT 8"
+		);
+		$openStmt->execute($baseParams);
+		$openQueue = $openStmt->fetchAll();
 
 		$activityStmt = $pdo->prepare(
 			"SELECT h.*, f.path, f.lesson_title, f.reaction
@@ -885,8 +931,9 @@ body.is-loading .page { opacity: .55; pointer-events: none; transition: opacity 
 .timeline-what { min-width: 0; color: var(--text); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .timeline-what b { color: var(--heading); }
 .timeline-action { color: var(--accent); font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+.timeline-action.stale { color: var(--rose); }
 .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
-table.stats-table { width: 100%; border-collapse: collapse; min-width: 770px; }
+table.stats-table { width: 100%; border-collapse: collapse; min-width: 900px; }
 .stats-table th, .stats-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); text-align: right; font-size: 12px; white-space: nowrap; }
 .stats-table th:first-child, .stats-table td:first-child { text-align: left; white-space: normal; min-width: 190px; }
 .stats-table th { color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
@@ -1118,6 +1165,7 @@ html[data-embed="1"] .table-wrap {
 	<?php if ($summary['total'] > 0): ?>
 	<div class="stats">
 		<div class="stat"><b><?php echo feedback_h(number_format($summary['total'])); ?></b><span>In view</span><small>matching the current filters</small></div>
+		<?php if ($statusCounts['new'] > 0): ?><div class="stat stat--rose"><b><?php echo feedback_h(number_format($statusCounts['new'])); ?></b><span>Open</span><small>not triaged yet · oldest first below</small></div><?php endif; ?>
 		<?php if ($summary['with_comment'] > 0): ?><div class="stat"><b><?php echo feedback_h(number_format($summary['with_comment'])); ?></b><span>With comment</span><small>readers wrote something</small></div><?php endif; ?>
 		<?php if ($summary['bugs'] > 0): ?><div class="stat stat--rose"><b><?php echo feedback_h(number_format($summary['bugs'])); ?></b><span>Bugs</span><small>reported failures</small></div><?php endif; ?>
 		<?php if ($summary['accepted'] > 0): ?><div class="stat stat--emerald"><b><?php echo feedback_h(number_format($summary['accepted'])); ?></b><span>Accepted</span><small>queued for revision</small></div><?php endif; ?>
@@ -1134,6 +1182,8 @@ html[data-embed="1"] .table-wrap {
 		<div class="fb-glossary-grid">
 			<div class="fb-glossary-item"><b>In view</b><p>Reactions that match the current tab, time range, lesson and search. It is the sample for everything below.</p></div>
 			<div class="fb-glossary-item"><b>With comment</b><p>The reader added their own words, not just a reaction. These are the best starting points for a revision.</p></div>
+			<div class="fb-glossary-item"><b>Open / Oldest unanswered</b><p>Open means status “new”: nobody has accepted or rejected it yet. The overview puts the oldest open items first so nothing silently rots.</p></div>
+			<div class="fb-glossary-item"><b>Views / Neg. per 1k</b><p>Human pageviews in the selected range, and negative reactions (👎 + ❓ + 🐞) per 1,000 of those views. The rate makes small pages comparable with large ones; it is not a verdict when the sample is tiny.</p></div>
 			<div class="fb-glossary-item"><b>Bugs</b><p>Readers reported something broken: a blank chart, a dead link, a rendering error. The 🐞 tab collects them with optional console context.</p></div>
 			<div class="fb-glossary-item"><b>Accepted / Done</b><p>Accepted means “worth acting on”; Done means the lesson or code was changed. Both are editorial state, not reader signals.</p></div>
 			<div class="fb-glossary-item"><b>Email left</b><p>The reader explicitly opted in to a reply. Treat the address as personal data and never export it casually.</p></div>
@@ -1147,6 +1197,31 @@ html[data-embed="1"] .table-wrap {
 		<?php if ($summary['total'] === 0): ?>
 			<div class="empty">No reader feedback matches these filters yet.</div>
 		<?php else: ?>
+		<?php if ($openQueue): ?>
+		<div class="card wide card--rose" style="margin-bottom:16px;">
+			<h2>Oldest unanswered <span class="hint">status new · oldest first</span></h2>
+			<div class="timeline">
+				<?php foreach ($openQueue as $openItem): ?>
+					<?php
+						$openText = trim((string)($openItem['comment'] ?? ''));
+						if ($openText === '') {
+							$openText = trim((string)($openItem['selected_text'] ?? ''));
+						}
+						$openText = preg_replace('/\s+/u', ' ', $openText) ?? '';
+						$openMeta = $reactions[(string)$openItem['reaction']] ?? ['icon' => '', 'label' => (string)$openItem['reaction']];
+						$openAge = time() - (int)$openItem['ts'];
+						$openHref = feedback_internal_href(['tab' => 'all', 'path' => $openItem['path'], 'open' => (int)$openItem['id'], 'page' => 1, 'status' => '']);
+					?>
+					<a class="timeline-row" href="?<?php echo feedback_h($openHref); ?>">
+						<span class="timeline-when"><?php echo feedback_h(feedback_relative_time((int)$openItem['ts'])); ?></span>
+						<span class="timeline-what"><b><?php echo feedback_h($openMeta['icon'] . ' ' . $openMeta['label']); ?></b> · <?php echo feedback_h($titles[$openItem['path']] ?? $openItem['path']); ?><?php if ($openText !== ''): ?> — <?php echo feedback_h(mb_substr($openText, 0, 120, 'UTF-8')); ?><?php endif; ?></span>
+						<span class="timeline-action<?php echo $openAge > 7 * 86400 ? ' stale' : ''; ?>"><?php echo $openAge > 7 * 86400 ? 'Overdue' : 'Open'; ?></span>
+					</a>
+				<?php endforeach; ?>
+			</div>
+			<p class="fb-insight"><span>What it means</span>First in, first out: the oldest untriaged items appear at the top. Open one, accept or reject it, and the queue shrinks. Anything older than seven days is marked overdue.</p>
+		</div>
+		<?php endif; ?>
 		<?php if ($feedbackChartTotal > 0): ?>
 		<div class="feedback-charts">
 		<div class="card wide card--sky">
@@ -1216,11 +1291,11 @@ html[data-embed="1"] .table-wrap {
 						<a class="leader-row" href="?<?php echo feedback_h(feedback_query(['tab' => 'all', 'path' => $p['path'], 'page' => 1, 'status' => ''])); ?>">
 							<span class="leader-title"><?php echo feedback_h($p['title']); ?></span>
 							<span class="leader-num"><?php echo (int)$p['attention']; ?></span>
-							<span class="leader-tag">👎 + ❓</span>
+							<span class="leader-tag">👎 + ❓<?php if ($p['negative_rate'] !== null): ?> · <?php echo feedback_h(number_format((float)$p['negative_rate'], 1, '.', ',')); ?> /1k</span><?php endif; ?>
 						</a>
 					<?php endforeach; ?>
 				</div>
-				<p class="fb-insight"><span>What it means</span>👎 says “not useful”, ❓ says “lost here”. Together they mark the strongest revision candidates.</p>
+				<p class="fb-insight"><span>What it means</span>👎 says “not useful”, ❓ says “lost here”. Together they mark the strongest revision candidates. The <strong>/1k</strong> figure normalizes by human pageviews, so small pages with a high complaint rate are visible next to large ones.</p>
 			</div>
 			<?php endif; ?>
 			<?php if ($helpfulPages): ?>
@@ -1258,12 +1333,14 @@ html[data-embed="1"] .table-wrap {
 				<h2>Helpful vs. not helpful, per page</h2>
 				<div class="table-wrap">
 					<table class="stats-table">
-						<thead><tr><th>Page</th><th>Total</th><th>👍</th><th>👎</th><th>👍 rate</th><th>💡</th><th>❓</th><th>🐞</th><th>Comments</th></tr></thead>
+						<thead><tr><th>Page</th><th>Total</th><th>Views</th><th>Neg. /1k</th><th>👍</th><th>👎</th><th>👍 rate</th><th>💡</th><th>❓</th><th>🐞</th><th>Comments</th></tr></thead>
 						<tbody>
 						<?php foreach ($pageStats as $p): ?>
 							<tr>
 								<td><a href="<?php echo feedback_h(feedback_internal_href(['tab' => 'all', 'path' => $p['path'], 'page' => 1, 'status' => ''])); ?>"><?php echo feedback_h($p['title']); ?></a> <a class="muted" href="<?php echo feedback_h(feedback_lesson_href($p['path'])); ?>" title="Open lesson">↗</a></td>
 								<td><?php echo feedback_count_link($p['path'], '', (int)$p['total']); ?></td>
+								<td class="leader-tag"><?php echo feedback_h(number_format((int)$p['views'])); ?></td>
+								<td class="leader-tag"><?php echo $p['negative_rate'] === null ? '—' : feedback_h(number_format((float)$p['negative_rate'], 1, '.', ',')); ?></td>
 								<td class="good"><?php echo feedback_count_link($p['path'], 'helpful', (int)$p['helpful'], 'good'); ?></td>
 								<td class="bad"><?php echo feedback_count_link($p['path'], 'unhelpful', (int)$p['unhelpful'], 'bad'); ?></td>
 								<?php $rate = ((int)$p['helpful'] + (int)$p['unhelpful']) > 0 ? (int)round(100 * (int)$p['helpful'] / ((int)$p['helpful'] + (int)$p['unhelpful'])) : null; ?>
@@ -1309,13 +1386,15 @@ html[data-embed="1"] .table-wrap {
 			<div class="card wide card--sky">
 			<div class="table-wrap">
 				<table class="stats-table">
-					<thead><tr><th>Page</th><th>Total</th><th>👍 Helpful</th><th>👎 Not helpful</th><th>👍 rate</th><th>💡 Insight</th><th>❓ Confusing</th><th>🐞 Bug</th><th>Comments</th><th>Open</th><th>Accepted</th><th>Done</th><th>Last</th></tr></thead>
+					<thead><tr><th>Page</th><th>Total</th><th>Views</th><th>Neg. /1k</th><th>👍 Helpful</th><th>👎 Not helpful</th><th>👍 rate</th><th>💡 Insight</th><th>❓ Confusing</th><th>🐞 Bug</th><th>Comments</th><th>Open</th><th>Accepted</th><th>Done</th><th>Last</th></tr></thead>
 					<tbody>
 					<?php foreach ($pageStats as $p): ?>
 						<?php $lastTs = (int)($p['last_ts'] ?? 0); ?>
 						<tr>
 							<td><a href="<?php echo feedback_h(feedback_internal_href(['tab' => 'all', 'path' => $p['path'], 'page' => 1, 'status' => ''])); ?>"><?php echo feedback_h($p['title']); ?></a> <a class="muted" href="<?php echo feedback_h(feedback_lesson_href($p['path'])); ?>" title="Open lesson">↗</a><div class="leader-tag">/<?php echo feedback_h(feedback_normalize_path($p['path'])); ?></div></td>
 							<td><?php echo feedback_count_link($p['path'], '', (int)$p['total']); ?></td>
+							<td class="leader-tag"><?php echo feedback_h(number_format((int)$p['views'])); ?></td>
+							<td class="leader-tag"><?php echo $p['negative_rate'] === null ? '—' : feedback_h(number_format((float)$p['negative_rate'], 1, '.', ',')); ?></td>
 							<td class="good"><?php echo feedback_count_link($p['path'], 'helpful', (int)$p['helpful'], 'good'); ?></td>
 							<td class="bad"><?php echo feedback_count_link($p['path'], 'unhelpful', (int)$p['unhelpful'], 'bad'); ?></td>
 							<?php $rate = ((int)$p['helpful'] + (int)$p['unhelpful']) > 0 ? (int)round(100 * (int)$p['helpful'] / ((int)$p['helpful'] + (int)$p['unhelpful'])) : null; ?>

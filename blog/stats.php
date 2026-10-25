@@ -1375,9 +1375,12 @@ $heatSpan = 28;
 $heatMax = 0;
 $insights = [];
 $raw = [];
-$feedbackSummary = ['total' => 0, 'with_comment' => 0, 'bugs' => 0, 'accepted' => 0, 'done' => 0];
+$feedbackSummary = ['total' => 0, 'with_comment' => 0, 'bugs' => 0, 'open_bugs' => 0, 'accepted' => 0, 'done' => 0, 'open' => 0];
 $feedbackReactionCounts = [];
 $feedbackLatest = [];
+$feedbackActionPages = [];
+$feedbackSilentPages = [];
+$feedbackOpenTotal = 0;
 $presentationFeedbackDaily = ['labels' => [], 'series' => []];
 $presentationFeedbackPages = [];
 $pageCount = 1;
@@ -2789,20 +2792,39 @@ if ($authed) {
 			ORDER BY ts DESC, id DESC LIMIT $perPage OFFSET $offsetRaw", $params);
 
 		try {
+			$feedbackWhereParts = [];
+			$feedbackWhereParams = [];
+			if ($range > 0) {
+				$feedbackWhereParts[] = 'ts >= ?';
+				$feedbackWhereParams[] = time() - $range * 86400;
+			}
+			if ($path !== '') {
+				$feedbackWhereParts[] = 'path = ?';
+				$feedbackWhereParams[] = $path;
+			}
+			$feedbackWhereSql = $feedbackWhereParts ? 'WHERE ' . implode(' AND ', $feedbackWhereParts) : '';
+			$feedbackJoinWhereSql = $feedbackWhereParts ? 'WHERE ' . implode(' AND ', array_map(static function (string $part): string {
+				return 'f.' . $part;
+			}, $feedbackWhereParts)) : '';
+
 			$feedbackSummaryRow = stats_one($pdo, "SELECT COUNT(*) AS total,
 				SUM(CASE WHEN comment <> '' THEN 1 ELSE 0 END) AS with_comment,
 				SUM(CASE WHEN reaction = 'bug' THEN 1 ELSE 0 END) AS bugs,
+				SUM(CASE WHEN reaction = 'bug' AND status IN ('new', 'accepted') THEN 1 ELSE 0 END) AS open_bugs,
 				SUM(CASE WHEN status = 'accepted' THEN 1 ELSE 0 END) AS accepted,
-				SUM(CASE WHEN status = 'done' THEN 1 ELSE 0 END) AS done
-				FROM block_feedback", []);
+				SUM(CASE WHEN status = 'done' THEN 1 ELSE 0 END) AS done,
+				SUM(CASE WHEN status IN ('new', 'accepted') THEN 1 ELSE 0 END) AS open
+				FROM block_feedback $feedbackWhereSql", $feedbackWhereParams);
 			$feedbackSummary = [
 				'total' => (int)($feedbackSummaryRow['total'] ?? 0),
 				'with_comment' => (int)($feedbackSummaryRow['with_comment'] ?? 0),
 				'bugs' => (int)($feedbackSummaryRow['bugs'] ?? 0),
+				'open_bugs' => (int)($feedbackSummaryRow['open_bugs'] ?? 0),
 				'accepted' => (int)($feedbackSummaryRow['accepted'] ?? 0),
 				'done' => (int)($feedbackSummaryRow['done'] ?? 0),
+				'open' => (int)($feedbackSummaryRow['open'] ?? 0),
 			];
-			$feedbackReactionRows = stats_all($pdo, "SELECT reaction, COUNT(*) AS n FROM block_feedback GROUP BY reaction", []);
+			$feedbackReactionRows = stats_all($pdo, "SELECT reaction, COUNT(*) AS n FROM block_feedback $feedbackWhereSql GROUP BY reaction", $feedbackWhereParams);
 			foreach (mn_feedback_reactions() as $key => $meta) {
 				$feedbackReactionCounts[$key] = 0;
 			}
@@ -2815,7 +2837,80 @@ if ($authed) {
 			$feedbackLatest = stats_all($pdo, "SELECT f.id, f.ts, f.path, f.reaction, f.comment, f.status, s.selected_text
 				FROM block_feedback f
 				LEFT JOIN feedback_selections s ON s.feedback_id = f.id
-				ORDER BY f.ts DESC, f.id DESC LIMIT 8", []);
+				$feedbackJoinWhereSql
+				ORDER BY f.ts DESC, f.id DESC LIMIT 8", $feedbackWhereParams);
+
+			$feedbackActionRows = stats_all($pdo, "SELECT path,
+				SUM(CASE WHEN reaction IN ('unhelpful', 'confusing', 'bug') AND status IN ('new', 'accepted') THEN 1 ELSE 0 END) AS open_negative,
+				SUM(CASE WHEN reaction = 'bug' AND status IN ('new', 'accepted') THEN 1 ELSE 0 END) AS open_bugs,
+				SUM(CASE WHEN reaction = 'confusing' AND status IN ('new', 'accepted') THEN 1 ELSE 0 END) AS open_confusing,
+				SUM(CASE WHEN reaction = 'unhelpful' AND status IN ('new', 'accepted') THEN 1 ELSE 0 END) AS open_unhelpful,
+				SUM(CASE WHEN reaction = 'insight' AND status IN ('new', 'accepted') THEN 1 ELSE 0 END) AS open_insights,
+				MIN(CASE WHEN status IN ('new', 'accepted') THEN ts END) AS oldest_open
+				FROM block_feedback $feedbackWhereSql
+				GROUP BY path
+				HAVING open_negative > 0 OR open_insights > 0", $feedbackWhereParams);
+			foreach ($feedbackActionRows as $feedbackActionRow) {
+				$actionSlug = (string)$feedbackActionRow['path'];
+				$actionOpenNegative = (int)$feedbackActionRow['open_negative'];
+				$actionOpenInsights = (int)$feedbackActionRow['open_insights'];
+				$feedbackOpenTotal += $actionOpenNegative + $actionOpenInsights;
+				$feedbackActionPages[] = [
+					'slug' => $actionSlug,
+					'title' => $titles[$actionSlug] ?? $actionSlug,
+					'views' => (int)($pageMap[$actionSlug]['views'] ?? 0),
+					'open_negative' => $actionOpenNegative,
+					'open_bugs' => (int)$feedbackActionRow['open_bugs'],
+					'open_confusing' => (int)$feedbackActionRow['open_confusing'],
+					'open_unhelpful' => (int)$feedbackActionRow['open_unhelpful'],
+					'open_insights' => $actionOpenInsights,
+					'oldest_open' => isset($feedbackActionRow['oldest_open']) && $feedbackActionRow['oldest_open'] !== null ? (int)$feedbackActionRow['oldest_open'] : null,
+					'score' => $actionOpenNegative * 3 + $actionOpenInsights * 1,
+				];
+			}
+			$feedbackActionPageCount = count($feedbackActionPages);
+			usort($feedbackActionPages, static function (array $a, array $b): int {
+				return ($b['score'] <=> $a['score']) ?: ($b['views'] <=> $a['views']);
+			});
+			$feedbackActionPages = array_slice($feedbackActionPages, 0, 5);
+
+			$queuedSlugs = array_flip(array_map(static function (array $row): string {
+				return (string)$row['slug'];
+			}, $feedbackActionPages));
+			foreach ($contentHealth as $contentHealthRow) {
+				$silentSlug = (string)$contentHealthRow['slug'];
+				if (isset($queuedSlugs[$silentSlug]) || (int)$contentHealthRow['views'] < 5) {
+					continue;
+				}
+				$silentFlags = array_values(array_intersect($contentHealthRow['flags'], ['content gap', 'skimmed', 'high bounce', 'dead end', 'quiz struggle']));
+				if (!$silentFlags) {
+					continue;
+				}
+				$feedbackSilentPages[] = [
+					'slug' => $silentSlug,
+					'title' => (string)$contentHealthRow['label'],
+					'views' => (int)$contentHealthRow['views'],
+					'flags' => $silentFlags,
+					'scroll' => $contentHealthRow['scroll'],
+					'bounce' => $contentHealthRow['bounce'],
+					'quiz_accuracy' => $contentHealthRow['quiz_accuracy'],
+					'score' => count($silentFlags) * 4 + min(6, log10(1 + (int)$contentHealthRow['views'])),
+				];
+			}
+			usort($feedbackSilentPages, static function (array $a, array $b): int {
+				return ($b['score'] <=> $a['score']) ?: ($b['views'] <=> $a['views']);
+			});
+			$feedbackSilentPages = array_slice($feedbackSilentPages, 0, 4);
+
+			if ($feedbackOpenTotal > 0) {
+				$oldestAction = null;
+				foreach ($feedbackActionPages as $feedbackActionPage) {
+					if ($feedbackActionPage['oldest_open'] !== null && ($oldestAction === null || $feedbackActionPage['oldest_open'] < $oldestAction)) {
+						$oldestAction = (int)$feedbackActionPage['oldest_open'];
+					}
+				}
+				$insights[] = 'Reader queue: ' . mn_analytics_format_number($feedbackOpenTotal) . ' open item(s) on ' . $feedbackActionPageCount . ' lesson(s)' . ($oldestAction !== null ? '; oldest ' . stats_relative_time($oldestAction) : '') . '.';
+			}
 
 			$feedbackStart = (new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin')))->setTime(0, 0, 0)->modify('-29 days');
 			$feedbackDailyRows = stats_all($pdo, "SELECT day, reaction, COUNT(*) AS n
@@ -2858,9 +2953,12 @@ if ($authed) {
 			}
 			unset($presentationFeedbackPage);
 		} catch (Throwable $e) {
-			$feedbackSummary = ['total' => 0, 'with_comment' => 0, 'bugs' => 0, 'accepted' => 0, 'done' => 0];
+			$feedbackSummary = ['total' => 0, 'with_comment' => 0, 'bugs' => 0, 'open_bugs' => 0, 'accepted' => 0, 'done' => 0, 'open' => 0];
 			$feedbackReactionCounts = [];
 			$feedbackLatest = [];
+			$feedbackActionPages = [];
+			$feedbackSilentPages = [];
+			$feedbackOpenTotal = 0;
 			$presentationFeedbackDaily = ['labels' => [], 'series' => []];
 			$presentationFeedbackPages = [];
 		}
@@ -2957,6 +3055,32 @@ body.feedback-view .analytics-only-inline { visibility: hidden !important; point
 .feedback-bridge .fb-latest .when { color: var(--muted); font-size: 10px; }
 .feedback-bridge .fb-latest .what { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .feedback-bridge .fb-latest .tag { color: var(--accent); font-size: 10px; font-weight: 700; white-space: nowrap; }
+.priorities-card { border-top: 2px solid color-mix(in srgb, var(--rose) 55%, transparent); }
+.priorities-card .card-head { margin-bottom: 4px; }
+.priorities-card .card-head p { margin: 3px 0 0; }
+.action-list { display: grid; }
+.action-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 9px 6px; border-bottom: 1px solid rgba(36,48,71,.55); }
+.action-row:last-child { border-bottom: 0; }
+.action-main { min-width: 0; }
+.action-title { color: var(--text); font-size: 13px; font-weight: 650; text-decoration: none; overflow-wrap: anywhere; }
+.action-title:hover { color: var(--accent2); text-decoration: none; }
+.action-why { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; margin-top: 4px; }
+.action-chip { padding: 2px 7px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel2); color: var(--muted); font-size: 9.5px; font-weight: 700; letter-spacing: .02em; white-space: nowrap; }
+.action-chip--bug { color: var(--rose); border-color: rgba(251,113,133,.38); }
+.action-chip--confusing { color: var(--sky); border-color: rgba(56,189,248,.38); }
+.action-chip--unhelpful { color: var(--rose); border-color: rgba(251,113,133,.38); }
+.action-chip--insight { color: var(--accent); border-color: rgba(233,170,96,.4); }
+.action-chip--warn { color: var(--accent); border-color: rgba(233,170,96,.4); }
+.action-meta { color: var(--dim); font-size: 10.5px; white-space: nowrap; }
+.action-side { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.action-side .btn { padding: 5px 9px; font-size: 11px; }
+.action-subhead { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 16px 0 2px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.action-subhead .hint { color: var(--dim); font-weight: 400; letter-spacing: 0; text-transform: none; }
+.action-empty { margin-top: 10px; padding: 16px; border: 1px dashed var(--line); border-radius: 10px; color: var(--dim); text-align: center; font-size: 12px; }
+@media (max-width: 720px) {
+	.action-row { grid-template-columns: 1fr; gap: 6px; }
+	.action-side { justify-content: flex-start; }
+}
 .feedback-embed { margin: 0; }
 .feedback-embed { position: relative; }
 .feedback-embed iframe { display: block; width: 100%; height: 600px; min-height: 400px; border: 0; border-radius: 12px; background: transparent; opacity: 0; transition: opacity .2s ease; }
@@ -3680,6 +3804,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 
 		<nav class="subnav" data-tab-group="overview" data-slide="1" aria-label="Overview sections">
 			<a href="#hero">Today</a>
+			<a href="#priorities">Priorities</a>
 			<a href="#traffic">Traffic</a>
 			<a href="#attention">Attention</a>
 			<a href="#rhythm">Rhythm</a>
@@ -3756,14 +3881,79 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			</a>
 		</div>
 
+		<div class="card priorities-card" data-tab-group="overview" data-slide="1" id="priorities">
+			<div class="card-head">
+				<div>
+					<h2>Where to work next <span class="hint">· open reader signals and reading patterns</span></h2>
+					<p class="ref">Ranked by open 🐞, ❓ and 👎 feedback, then by traffic. Accepted items stay here until they are marked done. Reader feedback is not segmented by device or source.</p>
+				</div>
+				<a class="btn" href="stats?<?php echo stats_h(http_build_query(array_filter(['view' => 'feedback', 'tab' => 'all', 'range' => $range, 'path' => $path], static function ($value): bool {
+					return $value !== '';
+				}))); ?>">Open feedback →</a>
+			</div>
+			<?php if ($feedbackActionPages): ?>
+				<div class="action-list">
+					<?php foreach ($feedbackActionPages as $actionPage): $actionTotal = $actionPage['open_negative'] + $actionPage['open_insights']; ?>
+						<div class="action-row">
+							<div class="action-main">
+								<a class="action-title" href="?<?php echo stats_h(stats_query(['path' => $actionPage['slug'], 'page' => 1])); ?>"><?php echo stats_h($actionPage['title']); ?></a>
+								<div class="action-why">
+									<?php if ($actionPage['open_bugs'] > 0): ?><span class="action-chip action-chip--bug">🐞 <?php echo (int)$actionPage['open_bugs']; ?> bug<?php echo $actionPage['open_bugs'] === 1 ? '' : 's'; ?></span><?php endif; ?>
+									<?php if ($actionPage['open_confusing'] > 0): ?><span class="action-chip action-chip--confusing">❓ <?php echo (int)$actionPage['open_confusing']; ?> confusing</span><?php endif; ?>
+									<?php if ($actionPage['open_unhelpful'] > 0): ?><span class="action-chip action-chip--unhelpful">👎 <?php echo (int)$actionPage['open_unhelpful']; ?> not helpful</span><?php endif; ?>
+									<?php if ($actionPage['open_insights'] > 0): ?><span class="action-chip action-chip--insight">💡 <?php echo (int)$actionPage['open_insights']; ?> to expand</span><?php endif; ?>
+									<span class="action-meta"><?php echo (int)$actionTotal; ?> open · oldest <?php echo stats_h(stats_relative_time($actionPage['oldest_open'])); ?> · <?php echo mn_analytics_format_number($actionPage['views']); ?> views</span>
+								</div>
+							</div>
+							<div class="action-side">
+								<a class="btn" href="stats?<?php echo stats_h(http_build_query(array_filter(['view' => 'feedback', 'tab' => 'all', 'path' => $actionPage['slug'], 'range' => $range], static function ($value): bool {
+									return $value !== '';
+								}))); ?>">Read feedback</a>
+							</div>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			<?php endif; ?>
+			<?php if ($feedbackSilentPages): ?>
+				<div class="action-subhead">
+					<span>No open feedback, but the reading signals are weak</span>
+					<span class="hint">top <?php echo count($feedbackSilentPages); ?> · among the most viewed pages</span>
+				</div>
+				<div class="action-list">
+					<?php foreach ($feedbackSilentPages as $silentPage): ?>
+						<div class="action-row">
+							<div class="action-main">
+								<a class="action-title" href="?<?php echo stats_h(stats_query(['path' => $silentPage['slug'], 'page' => 1])); ?>"><?php echo stats_h($silentPage['title']); ?></a>
+								<div class="action-why">
+									<?php foreach ($silentPage['flags'] as $silentFlag): $silentInfo = stats_health_flag_info()[$silentFlag] ?? null; ?>
+										<span class="action-chip action-chip--warn" title="<?php echo stats_h($silentInfo['long'] ?? ''); ?>"><?php echo stats_h($silentInfo['label'] ?? ucfirst($silentFlag)); ?></span>
+									<?php endforeach; ?>
+									<span class="action-meta"><?php echo mn_analytics_format_number($silentPage['views']); ?> views<?php if ($silentPage['scroll'] !== null): ?> · <?php echo stats_h(number_format($silentPage['scroll'], 0, '.', ',')); ?> % scroll<?php endif; ?><?php if ($silentPage['bounce'] !== null): ?> · <?php echo stats_h(number_format($silentPage['bounce'], 0, '.', ',')); ?> % bounce<?php endif; ?><?php if ($silentPage['quiz_accuracy'] !== null): ?> · quiz <?php echo stats_h(number_format($silentPage['quiz_accuracy'], 0, '.', ',')); ?> % right<?php endif; ?></span>
+								</div>
+							</div>
+							<div class="action-side">
+								<a class="btn" href="?<?php echo stats_h(stats_query(['path' => $silentPage['slug'], 'page' => 1])); ?>#health">Read signals</a>
+							</div>
+						</div>
+					<?php endforeach; ?>
+				</div>
+			<?php endif; ?>
+			<?php if (!$feedbackActionPages && !$feedbackSilentPages): ?>
+				<div class="action-empty">Nothing urgent in this range: no open reader signals and no page with weak reading patterns.</div>
+			<?php endif; ?>
+		</div>
+
 		<?php if ($feedbackSummary['total'] > 0): ?>
 		<div class="card feedback-bridge" data-tab-group="overview" data-slide="1">
 			<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;">
-				<div><h2 style="margin:0">Reader feedback</h2><p class="ref" style="margin:3px 0 0;">What readers flag in the lessons — comments, insights, confusion and bugs.</p></div>
-				<a class="btn" href="stats?view=feedback">Open feedback dashboard →</a>
+				<div><h2 style="margin:0">Reader feedback</h2><p class="ref" style="margin:3px 0 0;">What readers flag in the selected range — comments, insights, confusion and bugs.</p></div>
+				<a class="btn" href="stats?<?php echo stats_h(http_build_query(array_filter(['view' => 'feedback', 'tab' => 'all', 'range' => $range, 'path' => $path], static function ($value): bool {
+					return $value !== '';
+				}))); ?>">Open feedback dashboard →</a>
 			</div>
 			<div class="fb-grid">
-				<div class="fb-stat"><b><?php echo stats_h(number_format($feedbackSummary['total'])); ?></b><span>Total</span></div>
+				<div class="fb-stat"><b><?php echo stats_h(number_format($feedbackSummary['open'])); ?></b><span>Open</span></div>
+				<div class="fb-stat"><b><?php echo stats_h(number_format($feedbackSummary['total'])); ?></b><span>In range</span></div>
 				<div class="fb-stat"><b><?php echo stats_h(number_format($feedbackSummary['with_comment'])); ?></b><span>Comments</span></div>
 				<div class="fb-stat"><b><?php echo stats_h(number_format($feedbackSummary['bugs'])); ?></b><span>Bugs</span></div>
 				<div class="fb-stat"><b><?php echo stats_h(number_format($feedbackSummary['accepted'])); ?></b><span>Accepted</span></div>
@@ -3775,7 +3965,7 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			<?php if ($feedbackLatest): ?>
 			<div class="fb-latest">
 				<?php foreach ($feedbackLatest as $fbItem): $fbRead = trim((string)($fbItem['comment'] ?? '')); if ($fbRead === '') { $fbRead = trim((string)($fbItem['selected_text'] ?? '')); } ?>
-					<?php $fbUrl = 'stats?view=feedback&' . http_build_query(['tab' => 'all', 'path' => $fbItem['path'], 'open' => (int)$fbItem['id'], 'range' => 0, 'page' => 1, 'status' => '']); ?>
+					<?php $fbUrl = 'stats?view=feedback&' . http_build_query(['tab' => 'all', 'path' => $fbItem['path'], 'open' => (int)$fbItem['id'], 'range' => $range, 'page' => 1, 'status' => '']); ?>
 					<a href="<?php echo stats_h($fbUrl); ?>">
 						<span class="when"><?php echo stats_h(stats_time_label((int)$fbItem['ts'])); ?></span>
 						<span class="what"><?php echo stats_h($titles[$fbItem['path']] ?? $fbItem['path']); ?><?php if ($fbRead !== ''): ?> — <?php echo stats_h(mb_substr(preg_replace('/\s+/u', ' ', $fbRead) ?? $fbRead, 0, 90, 'UTF-8')); ?><?php endif; ?></span>
@@ -5275,10 +5465,10 @@ if ($presentationFeedbackPages) {
 		];
 	}
 }
-if ((int)$feedbackSummary['bugs'] > 0) {
+if ((int)$feedbackSummary['open_bugs'] > 0) {
 	$presentationTakeaways[] = [
 		'label' => 'Bugs',
-		'text' => (int)$feedbackSummary['bugs'] . ' reader bug reports are waiting in the Bugs tab.',
+		'text' => (int)$feedbackSummary['open_bugs'] . ' reader bug reports are still open in the Bugs tab.',
 	];
 }
 if ($avgDuration !== null) {

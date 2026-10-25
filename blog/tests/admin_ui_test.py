@@ -32,7 +32,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -458,6 +458,14 @@ def main() -> int:
 				"content health glossary names its flags",
 				health_terms,
 			)
+			priorities = browser.find_element(By.ID, "priorities")
+			priorities_text = priorities.text
+			check(
+				"Brief History of AI" in priorities_text and "bug" in priorities_text.lower(),
+				"priorities card combines feedback and page signals",
+				priorities_text,
+			)
+			check("Read feedback" in priorities_text, "priorities card links to triage")
 
 			# Reader feedback dashboard.
 			browser.get(f"{feedback_url}&tab=all")
@@ -485,6 +493,13 @@ def main() -> int:
 				bool(browser.find_elements(By.CSS_SELECTOR, ".stat small")),
 				"feedback KPIs carry plain-language hints",
 			)
+			overview_text = browser.find_element(By.TAG_NAME, "body").text
+			check("Oldest unanswered" in overview_text, "overview exposes the oldest open queue")
+			check("Chart stays blank on mobile." in overview_text, "open queue shows the oldest item first")
+			browser.get(f"{feedback_url}&tab=pages")
+			WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "table.stats-table")))
+			pages_text = browser.find_element(By.CSS_SELECTOR, "table.stats-table").text.upper()
+			check("VIEWS" in pages_text and "NEG. /1K" in pages_text, "pages table normalizes feedback by traffic", pages_text)
 			browser.get(f"{feedback_url}&tab=all")
 			WebDriverWait(browser, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[name=q]")))
 
@@ -541,13 +556,17 @@ def main() -> int:
 			comment.send_keys("Now clearer.")
 			item.find_element(By.XPATH, ".//button[contains(., 'Save changes')]").click()
 			def saved_item_text(d: webdriver.Chrome) -> str:
-				return " ".join(
-					row.get_attribute("textContent") or ""
-					for row in d.find_elements(
+				try:
+					rows = d.find_elements(
 						By.XPATH,
 						"//details[contains(@class,'item')][contains(.,'Der Geist ist ein Gespenst.')]",
 					)
-				)
+					parts = []
+					for row in rows:
+						parts.append(row.get_attribute("textContent") or "")
+					return " ".join(parts)
+				except StaleElementReferenceException:
+					return ""
 
 			WebDriverWait(browser, 20).until(lambda d: "Now clearer." in saved_item_text(d))
 			check("Now clearer." in saved_item_text(browser), "feedback editing persists")
