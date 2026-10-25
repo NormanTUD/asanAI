@@ -1482,9 +1482,9 @@ window.bibData = {
 	"eulerbridges": {
 		title: "Solutio problematis ad geometriam situs pertinentis",
 		author: "Leonhard Euler",
-		year: 1741,
-		url: "https://en.wikipedia.org/wiki/Solution_of_the_K%C3%B6nigsberg_bridges_problem",
-		alternativetitle: "Solutio problematis (1741)",
+		year: 1736,
+		url: "https://en.wikipedia.org/wiki/Seven_Bridges_of_K%C3%B6nigsberg",
+		alternativetitle: "Solutio problematis (1736)",
 		image_license: "CC BY-SA 3.0",
 	},
 	"eulersolids": {
@@ -23072,6 +23072,201 @@ window.bibData = {
 		year: 2026,
 		url: "https://en.wikipedia.org/wiki/Karl_Pearson",
 		alternativetitle: "Karl Pearson (Wikipedia) — correlation first developed by Bravais and Galton"
+	},
+
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Round-2 sources: single neuron, activations, autodiff, RNNs,
+	 *  transformers, diffusion, topology and mixture-of-experts.
+	 *  Every URL verified to return HTTP 200.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"verhulst1838logistic": {
+		title: "Notice sur la loi que la population suit dans son accroissement",
+		author: "Pierre-François Verhulst",
+		year: 1838,
+		publisher: "Correspondance mathématique et physique, vol. X",
+		url: "https://archive.org/details/correspondancem07unkngoog",
+		alternativetitle: "Verhulst (1838) — the logistic curve"
+	},
+	"elfwing2017silu": {
+		title: "Sigmoid-Weighted Linear Units for Neural Network Function Approximation in Reinforcement Learning",
+		author: "Stefan Elfwing, Eiji Uchibe, Kenji Doya",
+		year: 2017,
+		url: "https://arxiv.org/abs/1702.03118",
+		alternativetitle: "SiLU (Elfwing et al., 2017)"
+	},
+	"linnainmaa1976": {
+		title: "Taylor expansion of the accumulated rounding error",
+		author: "Seppo Linnainmaa",
+		year: 1976,
+		url: "https://doi.org/10.1007/BF01931367",
+		alternativetitle: "Linnainmaa, reverse-mode AD (1976)"
+	},
+	"speelpenning1980": {
+		title: "Compiling fast partial derivatives of functions given by algorithms",
+		author: "Bert Speelpenning",
+		year: 1980,
+		url: "https://web.archive.org/web/20220628184459/https://www.osti.gov/biblio/5254402",
+		alternativetitle: "Speelpenning's reverse-mode thesis (1980)"
+	},
+	"griewank1989": {
+		title: "On Automatic Differentiation",
+		author: "Andreas Griewank",
+		year: 1989,
+		alternativetitle: "Griewank, reverse-mode cost analysis (1989)"
+	},
+	"griewank2008": {
+		title: "Evaluating Derivatives: Principles and Techniques of Algorithmic Differentiation",
+		author: "Andreas Griewank, Andrea Walther",
+		year: 2008,
+		url: "https://books.google.com/books?vid=ISBN9780898716597",
+		alternativetitle: "Griewank & Walther, Evaluating Derivatives (2nd ed., 2008)"
+	},
+	"jax2018": {
+		title: "JAX: composable transformations of Python+NumPy programs",
+		author: "James Bradbury, Roy Frostig, Peter Hawkins, Matthew James Johnson, Chris Leary, Dougal Maclaurin, George Necula, Adam Paszke, Jake VanderPlas, Skye Wanderman-Milne, Qiao Zhang",
+		year: 2018,
+		url: "https://github.com/jax-ml/jax",
+		alternativetitle: "JAX (Bradbury et al., 2018)"
+	},
+	"jordan1986": {
+		title: "Serial Order: A Parallel Distributed Processing Approach",
+		author: "Michael I. Jordan",
+		year: 1986,
+		url: "https://papers.baulab.info/papers/also/Jordan-1986.pdf",
+		alternativetitle: "Jordan's sequential network (1986)"
+	},
+	"williams1989": {
+		title: "A Learning Algorithm for Continually Running Fully Recurrent Neural Networks",
+		author: "Ronald J. Williams, David Zipser",
+		year: 1989,
+		url: "https://web.archive.org/web/2023/https://doi.org/10.1162/neco.1989.1.2.270",
+		alternativetitle: "Williams & Zipser, recurrent learning (1989)"
+	},
+	"wu2016gnmt": {
+		title: "Google's Neural Machine Translation System: Bridging the Gap between Human and Machine Translation",
+		author: "Yonghui Wu et al.",
+		year: 2016,
+		url: "https://arxiv.org/abs/1609.08144",
+		alternativetitle: "Google's GNMT (2016)"
+	},
+	"press2017tying": {
+		title: "Using the Output Embedding to Improve Language Models",
+		author: "Ofir Press, Lior Wolf",
+		year: 2017,
+		url: "https://arxiv.org/abs/1608.05859",
+		alternativetitle: "Press & Wolf, 2017"
+	},
+	"wang2019preln": {
+		title: "Learning Deep Transformer Models for Machine Translation",
+		author: "Qiang Wang, Bei Li, Tong Xiao, Jingbo Zhu, Changliang Li, Derek F. Wong, Lidia S. Chao",
+		year: 2019,
+		url: "https://arxiv.org/abs/1906.01787",
+		alternativetitle: "Wang et al., 2019"
+	},
+	"graves2014ntm": {
+		title: "Neural Turing Machines",
+		author: "Alex Graves, Greg Wayne, Ivo Danihelka",
+		year: 2014,
+		url: "https://arxiv.org/abs/1410.5401",
+		alternativetitle: "Neural Turing Machine"
+	},
+	"weston2015memnn": {
+		title: "Memory Networks",
+		author: "Jason Weston, Sumit Chopra, Antoine Bordes",
+		year: 2015,
+		url: "https://arxiv.org/abs/1410.3916",
+		alternativetitle: "Memory Networks"
+	},
+	"sukhbaatar2015memnn": {
+		title: "End-To-End Memory Networks",
+		author: "Sainbayar Sukhbaatar, Arthur Szlam, Jason Weston, Rob Fergus",
+		year: 2015,
+		url: "https://arxiv.org/abs/1503.08895",
+		alternativetitle: "End-To-End Memory Networks"
+	},
+	"bytnet2016": {
+		title: "Neural Machine Translation in Linear Time",
+		author: "Aäron van den Oord, Nal Kalchbrenner, Lasse Espeholt, Oriol Vinyals, Alex Graves, Koray Kavukcuoglu",
+		year: 2016,
+		url: "https://arxiv.org/abs/1610.10099",
+		alternativetitle: "ByteNet"
+	},
+	"song2020ddim": {
+		title: "Denoising Diffusion Implicit Models",
+		author: "Jiaming Song, Chenlin Meng, Stefano Ermon",
+		year: 2020,
+		url: "https://arxiv.org/abs/2010.02502",
+		alternativetitle: "DDIM"
+	},
+	"song2021sde": {
+		title: "Score-Based Generative Modeling through Stochastic Differential Equations",
+		author: "Yang Song, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, Ben Poole",
+		year: 2021,
+		url: "https://arxiv.org/abs/2011.13456",
+		alternativetitle: "Score SDE"
+	},
+	"nichol2021improved": {
+		title: "Improved Denoising Diffusion Probabilistic Models",
+		author: "Alex Nichol, Prafulla Dhariwal",
+		year: 2021,
+		url: "https://arxiv.org/abs/2102.09672",
+		alternativetitle: "Improved DDPM"
+	},
+	"dhariwal2021diffusion": {
+		title: "Diffusion Models Beat GANs on Image Synthesis",
+		author: "Prafulla Dhariwal, Alex Nichol",
+		year: 2021,
+		url: "https://arxiv.org/abs/2105.05233",
+		alternativetitle: "ADM / classifier guidance"
+	},
+	"ramesh2022dalle2": {
+		title: "Hierarchical Text-Conditional Image Generation with CLIP Latents",
+		author: "Aditya Ramesh, Prafulla Dhariwal, Alex Nichol, Casey Chu, Mark Chen",
+		year: 2022,
+		url: "https://arxiv.org/abs/2204.06125",
+		alternativetitle: "DALL·E 2"
+	},
+	"esser2021taming": {
+		title: "Taming Transformers for High-Resolution Image Synthesis",
+		author: "Patrick Esser, Robin Rombach, Björn Ommer",
+		year: 2021,
+		url: "https://arxiv.org/abs/2012.09841",
+		alternativetitle: "VQGAN"
+	},
+	"jordan1993hme": {
+		title: "Hierarchical Mixtures of Experts and the EM Algorithm",
+		author: "Michael I. Jordan, Robert A. Jacobs",
+		year: 1993,
+		url: "https://www.cs.toronto.edu/~hinton/absps/hme.pdf",
+		alternativetitle: "Jordan & Jacobs, 1993 (IJCNN; journal version 1994)"
+	},
+	"zhou2022expertchoice": {
+		title: "Mixture-of-Experts with Expert Choice Routing",
+		author: "Yanqi Zhou, Tao Lei, Hanxiao Liu, Nan Du, Yanping Huang, Vincent Zhao, Andrew Dai, Zhifeng Chen, Quoc Le, James Laudon",
+		year: 2022,
+		url: "https://arxiv.org/abs/2202.09368",
+		alternativetitle: "Zhou et al., Expert Choice (2022)"
+	},
+	"deepseekmoe2024": {
+		title: "DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models",
+		author: "Damai Dai et al.",
+		year: 2024,
+		url: "https://arxiv.org/abs/2401.06066",
+		alternativetitle: "DeepSeekMoE (2024)"
+	},
+	"wang2024auxfree": {
+		title: "Auxiliary-Loss-Free Load Balancing Strategy for Mixture-of-Experts",
+		author: "Lean Wang, Huazuo Gao, Chenggang Zhao, Xu Sun, Damai Dai",
+		year: 2024,
+		url: "https://arxiv.org/abs/2408.15664",
+		alternativetitle: "Wang et al., auxiliary-loss-free balancing (2024)"
+	},
+	"xue2024openmoe": {
+		title: "OpenMoE: An Early Effort on Open Mixture-of-Experts Language Models",
+		author: "Fuzhao Xue, Zian Zheng, Yao Fu, Jinjie Ni, Zangwei Zheng, Wangchunshu Zhou, Yang You",
+		year: 2024,
+		url: "https://arxiv.org/abs/2402.01739",
+		alternativetitle: "Xue et al., OpenMoE (2024)"
 	},
 
 };
