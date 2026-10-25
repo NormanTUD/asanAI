@@ -22891,4 +22891,187 @@ window.bibData = {
 		alternativetitle: "Jacobi, the rotation method for eigenvalues (1846)"
 	},
 
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Round-1b accuracy-audit sources: corrections for history.php,
+	 *  geometry_i/iii, math_iv and statistics_i/ii. Every URL verified 200.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"ovid_metamorphoses": {
+		author: "Ovid",
+		year: 8,
+		title: "Metamorphoses",
+		alternativetitle: "Ovid, Metamorphoses (8 CE)",
+		url: "https://en.wikipedia.org/wiki/Metamorphoses"
+	},
+	"georgetown_ibm_1954": {
+		author: "Wikipedia contributors",
+		year: 2026,
+		title: "Georgetown–IBM experiment",
+		alternativetitle: "Georgetown–IBM experiment (Wikipedia)",
+		url: "https://en.wikipedia.org/wiki/Georgetown%E2%80%93IBM_experiment"
+	},
+	"secondordercybernetics_wiki": {
+		author: "Wikipedia contributors",
+		year: 2026,
+		title: "Second-order cybernetics",
+		alternativetitle: "Second-order cybernetics (Wikipedia)",
+		url: "https://en.wikipedia.org/wiki/Second-order_cybernetics"
+	},
+	"aluqlidisi952": {
+		author: "Wikipedia contributors",
+		year: 2026,
+		title: "Abu'l-Hasan al-Uqlidisi",
+		alternativetitle: "Al-Uqlidisi (Wikipedia)",
+		url: "https://en.wikipedia.org/wiki/Abu%27l-Hasan_al-Uqlidisi"
+	},
+	"gemini_guidance_computer": {
+		author: "Wikipedia contributors",
+		year: 2026,
+		title: "Gemini Guidance Computer",
+		alternativetitle: "Gemini Guidance Computer (Wikipedia)",
+		url: "https://en.wikipedia.org/wiki/Gemini_Guidance_Computer"
+	},
+	"aristotleposterior": {
+		title: "Posterior Analytics (Book I)",
+		author: "Aristotle",
+		year: "ca. 350 BCE",
+		url: "https://classics.mit.edu/Aristotle/posterior.1.i.html",
+		alternativetitle: "Aristotle, Posterior Analytics"
+	},
+	"plimpton322_wiki": {
+		title: "Plimpton 322",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Plimpton_322",
+		alternativetitle: "Plimpton 322 (Wikipedia)"
+	},
+	"gaussbonnet_wiki": {
+		title: "Gauss–Bonnet theorem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Gauss%E2%80%93Bonnet_theorem",
+		alternativetitle: "Gauss–Bonnet theorem (Wikipedia)"
+	},
+	"poincareconjecture1904": {
+		title: "Cinquième complément à l'analysis situs (the Poincaré conjecture)",
+		author: "Henri Poincaré",
+		year: 1904,
+		url: "https://en.wikipedia.org/wiki/Poincar%C3%A9_conjecture",
+		alternativetitle: "Poincaré's 1904 conjecture"
+	},
+	"bolyai1832appendix": {
+		title: "Appendix: Scientiam Spatii Absolute Veram Exhibens",
+		author: "János Bolyai",
+		year: 1832,
+		url: "https://mathshistory.st-andrews.ac.uk/Biographies/Bolyai/",
+		alternativetitle: "Bolyai's Appendix (1832)"
+	},
+	"eilenbergmaclane1945spaces": {
+		title: "Relations between Homology and Homotopy Groups of Spaces",
+		author: "Samuel Eilenberg, Saunders Mac Lane",
+		year: 1945,
+		journal: "Annals of Mathematics",
+		volume: 46,
+		pages: "480–509",
+		url: "https://doi.org/10.2307/1969165",
+		alternativetitle: "Eilenberg and Mac Lane, Eilenberg–MacLane spaces (1945)"
+	},
+	"degree_wiki": {
+		title: "Degree of a continuous mapping",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Degree_of_a_continuous_mapping",
+		alternativetitle: "Degree of a continuous mapping (Wikipedia)"
+	},
+	"reidemeistertorsion_wiki": {
+		title: "Reidemeister torsion",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Reidemeister_torsion",
+		alternativetitle: "Reidemeister torsion (Wikipedia)"
+	},
+	"abel_ruffini_wiki": {
+		title: "Abel–Ruffini theorem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Abel%E2%80%93Ruffini_theorem",
+		alternativetitle: "Abel–Ruffini theorem (Wikipedia) — Ruffini 1799, Abel 1824"
+	},
+	"cardano_wiki": {
+		title: "Gerolamo Cardano",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Gerolamo_Cardano",
+		alternativetitle: "Cardano (Wikipedia) — Liber de ludo aleae written c. 1564, published 1663"
+	},
+	"scurvy_wiki": {
+		title: "Scurvy",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Scurvy",
+		alternativetitle: "Scurvy (Wikipedia) — Lind's 1747 trial and its six treatment groups"
+	},
+	"zipf_law_wiki": {
+		title: "Zipf's law",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Zipf%27s_law",
+		alternativetitle: "Zipf's law (Wikipedia) — 1932 observation, Estoup 1916, Auerbach 1913"
+	},
+	"design_of_experiments_wiki": {
+		title: "Design of experiments",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Design_of_experiments",
+		alternativetitle: "Design of experiments (Wikipedia) — Fisher 1926 and 1935"
+	},
+	"mobius1827barycentric": {
+		title: "Der barycentrische Calcul: ein neues Hülfsmittel zur analytischen Behandlung der Geometrie",
+		author: "August Ferdinand Möbius",
+		year: 1827,
+		url: "https://archive.org/details/11267597bsb",
+		alternativetitle: "Möbius, Der barycentrische Calcul (1827)"
+	},
+	"knot_theory_wiki": {
+		title: "Knot theory",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Knot_theory",
+		alternativetitle: "Knot theory (Wikipedia) — Vandermonde 1771, Tait 1860s/1885, Dehn/Alexander"
+	},
+	"poisson_wiki": {
+		title: "Poisson distribution",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Poisson_distribution",
+		alternativetitle: "Poisson distribution (Wikipedia) — de Moivre 1711, Poisson 1837, Bortkiewicz 1898"
+	},
+	"kullback_wiki": {
+		title: "Solomon Kullback",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Solomon_Kullback",
+		alternativetitle: "Solomon Kullback (Wikipedia) — NSA formed 1952"
+	},
+	"em_algorithm_wiki": {
+		title: "Expectation–maximization algorithm",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Expectation%E2%80%93maximization_algorithm",
+		alternativetitle: "EM algorithm (Wikipedia) — Hartley 1958, Sundberg 1974, Dempster–Laird–Rubin 1977"
+	},
+	"riemann_wiki": {
+		title: "Bernhard Riemann",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Bernhard_Riemann",
+		alternativetitle: "Bernhard Riemann (Wikipedia) — 1851 mapping theorem, 1859 conformal maps, death 1866"
+	},
+	"karl_pearson_wiki": {
+		title: "Karl Pearson",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Karl_Pearson",
+		alternativetitle: "Karl Pearson (Wikipedia) — correlation first developed by Bravais and Galton"
+	},
+
 };
