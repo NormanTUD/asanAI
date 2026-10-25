@@ -381,6 +381,7 @@
 		};
 		var selected = "King";
 		var analogyIndex = 0;
+		window.__dbg = function(){ return {selected: selected, analogyIndex: analogyIndex, target: analogies[analogyIndex].target}; };
 		var showDirection = null;
 		var canvas = document.getElementById("embed-canvas");
 		var api = null;
