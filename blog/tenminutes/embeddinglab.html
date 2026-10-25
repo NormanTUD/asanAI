@@ -381,7 +381,6 @@
 		};
 		var selected = "King";
 		var analogyIndex = 0;
-		window.__dbg = function(){ return {selected: selected, analogyIndex: analogyIndex, target: analogies[analogyIndex].target}; };
 		var showDirection = null;
 		var canvas = document.getElementById("embed-canvas");
 		var api = null;
@@ -400,7 +399,7 @@
 		function analogyResult(an) {
 			var a = get(an.a), b = get(an.b), c = get(an.c);
 			var p = { x: a.x - b.x + c.x, y: a.y - b.y + c.y };
-			var nearest = words.slice().sort(function (x, y) { return Math.hypot(p.x - x.x, p.y - y.y) - Math.hypot(p.x - y.x, p.y - y.y); })[0];
+			var nearest = words.slice().sort(function (x, y) { return Math.hypot(p.x - x.x, p.y - x.y) - Math.hypot(p.x - y.x, p.y - y.y); })[0];
 			return { p: p, nearest: nearest };
 		}
 		function drawArrow(ctx, x1, y1, x2, y2, color, dashed) {
