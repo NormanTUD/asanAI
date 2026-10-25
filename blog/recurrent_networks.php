@@ -21,9 +21,11 @@ A feedforward network answers one question and forgets it. The token that left t
 
 > Humans don't start their thinking from scratch every second. … You don't throw everything away and start thinking from scratch again. Your thoughts have persistence.
 
-A **recurrent neural network (RNN)** gives a network the same trick: a loop that feeds its own output back in. Instead of a stack of layers, it is a chain of copies of one network, each passing a **hidden state** $\mathbf{h}_{t-1}$ to the next — the machine keeps reading its own writing.
+A **recurrent neural network (RNN)** gives a network the same trick: a loop that feeds its own hidden state back in. Instead of a stack of layers, it is a chain of copies of one network, each passing a **hidden state** $\mathbf{h}_{t-1}$ to the next — the machine keeps reading its own writing.
 
 $$\mathbf{h}_t = \tanh\!\big(\mathbf{W}_h \mathbf{h}_{t-1} + \mathbf{W}_x \mathbf{x}_t + \mathbf{b}\big)$$
+
+The loop is older than the language model. \citeauthor{hopfield1982} showed that a network of symmetrically connected threshold units could store patterns as stable states of an energy landscape, with the dynamics settling into one of them \cite{hopfield1982}. Hopfield's networks were not trained by backpropagation and did not process sequences token by token, but they established the idea the RNN inherits: a network's computation can be a trajectory through state space rather than a single feedforward pass.
 </div>
 
 <div class="md">
@@ -38,7 +40,9 @@ The recurrence is easiest to read when it is **unrolled** across time — drawn 
 	</figcaption>
 </figure>
 
-“Recurrent” hides a beautiful fact: the *same* weight matrices $\mathbf{W}_h$, $\mathbf{W}_x$ are used at **every** step. There is one network, applied many times. This is the weight-sharing trick from the [computer vision chapter](computer_vision.php) — a filter that slides over time instead of over space \cite[see also the fixed-weight argument in]{colah2014conv}. It is also why \citeauthor{colah2015lstm} calls RNNs “intimately related to sequences and lists”: they are *the* natural architecture for data that arrives one step at a time.
+“Recurrent” hides a beautiful fact: the *same* weight matrices $\mathbf{W}_h$, $\mathbf{W}_x$ are used at **every** step. There is one network, applied many times. This is the weight-sharing trick from the [computer vision chapter](computer_vision.php) — a filter that slides over time instead of over space (see also the fixed-weight argument in \cite[Olah, 2014]{colah2014conv}). It is also why \citeauthor{colah2015lstm} calls RNNs “intimately related to sequences and lists”: they are *the* natural architecture for data that arrives one step at a time.
+
+The first trainable recurrent architectures came from psychology and connectionism. \citeauthor{jordan1986} added *context units* that copied the previous output back into the input, and \citeauthor{elman1990finding} made the hidden layer itself recurrent, giving the network a memory of its own internal state \cite{jordan1986,elman1990finding}. Elman called his model a *simple recurrent network*; it is essentially the recurrence above, trained by backpropagation through the unrolled chain. These small networks learned grammar-like regularities in sequences—and set the stage for the vanishing-gradient diagnosis that followed.
 </div>
 
 <div class="md" data-mathlevel="60">
@@ -52,7 +56,9 @@ Because the state must be *propagated* — multiplied through the chain, step by
 
 > In theory, RNNs are absolutely capable of handling such “long-term dependencies.” … In practice, RNNs don't seem to be able to learn them.
 
-The failure mode is the [vanishing gradient](backproplab.php). Unrolling an RNN computes gradients through many multiplications of the same matrix; if its eigenvalues sit below 1, the signal *shrinks* toward zero — mathematically, a long step sequence compounds the decay into the exponential $\lambda^{k}$ that [attention later sidesteps entirely](attentionlab.php) \cite{colah2015backprop,hochreiter1991vanishing}. The problem was diagnosed early by \citeauthor{hochreiter1991vanishing} (\citeyear{hochreiter1991vanishing}) and formalized by \citeauthor{bengio1994learning} — but the fix arrived as an explicit memory.
+The failure mode is the [vanishing gradient](backproplab.php). Unrolling an RNN computes gradients through many multiplications of the same matrix; if the Jacobian's spectral radius stays below 1, the signal *shrinks* toward zero — mathematically, a long step sequence compounds the decay into the exponential $\rho^{k}$ that [attention later sidesteps entirely](attentionlab.php) \cite{colah2015backprop,hochreiter1991vanishing}. The problem was diagnosed early by \citeauthor{hochreiter1991vanishing} (\citeyear{hochreiter1991vanishing}) and formalized for recurrent networks by \citeauthor{bengio1994learning} (\citeyear{bengio1994learning}) — but the fix arrived as an explicit memory.
+
+Training a recurrent net means differentiating through the unrolled graph, a procedure known as **backpropagation through time**. \citeauthor{werbos1990bptt} gave the method its canonical exposition, showing how the adjoint recurrence runs backward along the same chain that generated the states \cite{werbos1990bptt}. In the language of the [autodiff chapter](autodiff.php), BPTT is simply reverse-mode AD applied to a graph whose depth is the sequence length—which is exactly why the same vanishing-gradient arithmetic returns.
 </div>
 
 <div class="md" data-mathlevel="62">
@@ -60,7 +66,7 @@ The failure mode is the [vanishing gradient](backproplab.php). Unrolling an RNN 
 
 The **Long Short-Term Memory** network, introduced by \citeauthorlastnameand{lstm} in \citeyear{lstm}, changes what flows down the chain \cite{lstm}. Alongside the ordinary hidden state $\mathbf{h}_t$ runs a **cell state** $\mathbf{c}_t$ — a lane that is *not* transformed by every gate. \citeauthor{colah2015lstm} calls it the conveyor belt: information rides on it straight through the network, altered only by the gentle, learned interactions that **gates** apply.
 
-Each gate is a sigmoid layer whose output lies in $[0,1]$ — it reads “how much to let through,” from closed ($0$) to wide open ($1$) \cite{colah2015lstm}. An LSTM has three:
+Each gate is a sigmoid layer whose output lies in $[0,1]$ — it reads “how much to let through,” from closed ($0$) to wide open ($1$) \cite{colah2015lstm}. The original LSTM had an input gate and an output gate; the forget gate was added by \citeauthor{lstm_vanilla} (\citeyear{lstm_vanilla}). The modern cell has three:
 
 * **The forget gate** decides what to drop from the previous state: $\mathbf{f}_t = \sigma\!\big(\mathbf{W}_f [\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_f\big)$.
 * **The input gate** writes new memory from a candidate $\tilde{\mathbf{c}}_t = \tanh\big(\mathbf{W}_c [\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_c\big)$, scaled by $\mathbf{i}_t = \sigma\!\big(\mathbf{W}_i [\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_i\big)$.
@@ -72,9 +78,11 @@ $$\mathbf{c}_t = \mathbf{f}_t \odot \mathbf{c}_{t-1} + \mathbf{i}_t \odot \tilde
 
 In a language model that has learned grammar, \citeauthor{colah2015lstm} notes the gates learn an interpretable job:
 
-> …the network learned to use the cell state to keep track of whether the subject of a sentence is singular or plural, so that when a verb form is needed in the future, it can generate the correct one.
+> …it might output whether the subject is singular or plural, so that we know what form a verb should be conjugated into if that's what follows next.
 
-Forget the gate, keep the memory: that is the whole trick — a *single* multiplication with a number near 1 instead of a full matrix, so the gradients survive the journey across a long sentence \cite{colah2015lstm}.
+Forget the gate, keep the memory: that is the whole trick — an *elementwise* multiplication by a gate near 1 instead of a full matrix product, so the gradients survive the journey across a long sentence \cite{colah2015lstm}.
+
+The LSTM was not invented in a vacuum. In his 1991 diploma thesis, \citeauthor{hochreiter1991vanishing} analyzed why recurrent gradients decay; the solution he and Schmidhuber developed, the *constant error carousel*, appeared in the 1997 LSTM paper \cite{hochreiter1991vanishing,lstm}. The carousel is a self-connected unit whose error signal can flow backward without being multiplied by a weight matrix—the cell state made trainable. Learned input and output gates let the network decide when to write to it and when to read from it.
 </div>
 
 <div class="md">
@@ -84,7 +92,9 @@ What follows is a pruning of the idea, not a new invention. The **gated recurren
 
 The message of that search echoes [the universality discussion in the toolkit](https://asanai.scads.ai): architecture cleverness buys freedom from *unavoidable* failure, but the winning configurations cluster together — “all about the same” \cite{colah2015lstm}. What actually scaled, as [the next chapter](attentionlab.php) shows, was not a better gate but *removing the chain entirely* — \citeauthor{colah2015lstm} ends his walkthrough with an honest roadmap:
 
-> …the next step in the intellectual progression toward better language understanding is attention. … the idea of letting every step look at other information in the input sequence — and figuring out what's important.
+> A common opinion among researchers is: "Yes! There is a next step and it's attention!" The idea is to let every step of an RNN pick information to look at from some larger collection of information.
+
+The next step was not another gate but the removal of the recurrence itself. \citeauthor{vaswani2017attention}'s Transformer kept the encoder–decoder shape and replaced the recurrent chain with **self-attention**, letting every position attend to every other position in parallel \cite{vaswani2017attention}. That change shortened the path between distant tokens from a chain of length $n$ to a single attention step, and it made training parallel across the sequence. The price was quadratic cost in sequence length—and the beginning of the architecture that powers modern LLMs.
 </div>
 
 <div class="md" data-mathlevel="55">
@@ -122,9 +132,9 @@ $$
 
 That per-step alignment is the direct ancestor of the self-attention inside every Transformer: instead of one compressed summary, the decoder learns *where to look* (\cite[Bahdanau et al., 2014]{bahdanau2014}).
 
-Training introduced a protocol that every modern language model still uses. **Teacher forcing** feeds the decoder the *true* previous token at every step, not its own prediction, so all positions can be scored in one parallel pass (\cite[Bengio et al., 2015]{bengio2015scheduled}). At inference the gold prefix is gone and the model consumes its own outputs; the mismatch between the two conditions is called **exposure bias**. Scheduled sampling, which gradually replaces gold tokens with model predictions during training, was the recurrent era's remedy. At Transformer scale the problem largely receded in practice, but the protocol did not: next-token training *is* teacher forcing with a causal mask.
+Training introduced a protocol that every modern language model still uses. **Teacher forcing** feeds the decoder the *true* previous token at every step, not its own prediction, so all positions can be scored in one parallel pass; the technique goes back to \citeauthor{williams1989} (\citeyear{williams1989}). At inference the gold prefix is gone and the model consumes its own outputs; the mismatch between the two conditions is called **exposure bias**. Scheduled sampling, which gradually replaces gold tokens with model predictions during training, was the recurrent era's remedy \cite{bengio2015scheduled}. At Transformer scale the problem largely receded in practice, but the protocol did not: next-token training *is* teacher forcing with a causal mask.
 
-The seq2seq form outlived the recurrence. Google's production GNMT system stacked eight LSTM layers per side, the Transformer kept the encoder–decoder skeleton and replaced the recurrent core with attention, T5 recast every task as text-to-text, and Whisper carried the same shape into speech recognition.
+The seq2seq form outlived the recurrence. Google's production GNMT system stacked eight LSTM layers per side \cite{wu2016gnmt}, the Transformer kept the encoder–decoder skeleton and replaced the recurrent core with attention \cite{vaswani2017attention}, T5 recast every task as text-to-text \cite{raffel2020t5}, and Whisper carried the same shape into speech recognition \cite{radford2022whisper}.
 </div>
 
 <div class="mn-quiz" data-quiz="recurrent_networks"><script type="application/json">{"title": "Networks with memory", "questions": [{"q": "What makes a network recurrent?", "options": ["Its hidden state from one step is fed back in at the next step", "It stacks many more layers than a plain deep feedforward network", "It applies attention over all tokens in the sequence", "It is trained twice, once forward and once backward"], "answer": 0, "explain": "The loop carries information from earlier inputs forward through the sequence."}, {"q": "What does “unrolling” a recurrent network mean?", "options": ["Drawing one copy of the network per time step, with shared weights", "Deleting the loop so the whole network becomes feedforward", "Training the whole network backwards through the time steps", "Converting the recurrence into a transformer block that uses attention"], "answer": 0, "explain": "Unrolled, it is a very deep network — which is why backpropagation through time faces vanishing gradients."}, {"q": "What does the LSTM's cell state (“conveyor belt”) achieve?", "options": ["Information can flow across many steps with little change, gated", "It removes the need for backpropagation during the whole training", "It stores the whole training set inside the cell state as a memory", "It makes the network process all of the time steps in parallel"], "answer": 0, "explain": "Additive updates through forget and input gates let gradients survive over long distances."}, {"q": "What is the long-distance problem of simple RNNs?", "options": ["Information from far back fades — gradients vanish over many steps", "They cannot process short sentences or short input sequences at all", "They forget the most recent word before the older ones", "They need a fixed-length input window for every sentence"], "answer": 0, "explain": "Repeated multiplication by the same matrix shrinks (or explodes) the signal."}, {"q": "What did attention fix in the seq2seq model?", "options": ["The fixed-size context-vector bottleneck, letting the decoder see all encoder states", "The slow tokenizer, by letting the decoder read raw bytes instead of tokens", "The unstable learning rate, by letting the decoder train much faster on longer sequences", "The small training set, by letting the decoder memorise far fewer examples"], "answer": 0, "explain": "Per-step alignment replaced the single compressed summary and became the ancestor of self-attention."}]}</script></div>

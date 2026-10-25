@@ -18,11 +18,13 @@ math: 65
 	<figcaption>A single text prompt, and a diffusion model produced this image in seconds. This one was created with the prompt “Astronaut Riding a Horse” (\cite[Image: Stable Diffusion 3.5]{diffusion_astronaut_img})</figcaption>
 </figure>
 
-Most of AI's image generators used to be delicate. GANs collapsed, VAEs blurred, and training them was an art. Then in 2020, a paper called **DDPM** (\cite[Ho et al., 2020]{ho2020ddpm}), built on a 2019 idea from Yang Song and Stefano Ermon (\cite[Song & Ermon, 2019]{song2019score}), quietly opened a new path. Within two years, Stable Diffusion, DALL·E 2, Imagen, and Midjourney had made **diffusion** the dominant way to generate images. By 2024 it had spread to video (Sora, Veo), audio, music, and even 3D protein structures.
+Most of AI's image generators used to be delicate. GANs collapsed, VAEs blurred, and training them was an art. Then in 2020, a paper called **DDPM** (\cite[Ho et al., 2020]{ho2020ddpm}) turned a 2015 idea from Jascha Sohl-Dickstein and colleagues (\cite[Sohl-Dickstein et al., 2015]{sohl2015deep}) into a practical recipe: learn to reverse a fixed noising process. A parallel line, score-based generation (\cite[Song & Ermon, 2019]{song2019score}), was converging on the same object from the other side. Within two years, Stable Diffusion, DALL·E 2, Imagen, and Midjourney had made **diffusion** the dominant way to generate images. By 2024 it had spread to video (Sora, Veo), audio, music, and even 3D protein structures.
 
 The idea is almost paradoxical: instead of generating an image in one forward pass, **destroy an image with noise step by step, then learn to undo the destruction, one tiny step at a time**. It is a different paradigm from the autoregressive next-token prediction that drives LLMs, even though both produce staggering results.
 
-Not every system in that wave was a diffusion model. **DALL·E** (2021) was a 12-billion-parameter autoregressive Transformer over discrete image tokens, a direct application of the language-model recipe to pixels; **DALL·E 2** then switched to diffusion conditioned on CLIP image embeddings, and the rest of the field followed (\cite[Ramesh et al., 2021]{ramesh2021dalle}). The brief autoregressive detour is a useful reminder that “predict the next token” is architecture-agnostic: the token can be a word, an image patch, or an audio frame.
+The idea is older than the image generators that made it famous. \cite[Sohl-Dickstein et al. (2015)]{sohl2015deep} introduced diffusion probabilistic models in 2015 as a way to learn a generative distribution by reversing a thermodynamic relaxation: gradually destroy structure with a fixed Markov chain, then train a network to run that chain backward (\cite[Sohl-Dickstein et al., 2015]{sohl2015deep}). The method worked on small datasets but was expensive and did not beat the generative models of the day. Its revival waited for a better training objective and a better architecture.
+
+Not every system in that wave was a diffusion model. **DALL·E** (2021) was a 12-billion-parameter autoregressive Transformer over discrete image tokens, a direct application of the language-model recipe to pixels; **DALL·E 2** then switched to diffusion conditioned on CLIP *text* embeddings, using a prior to map them into image-embedding space, and the rest of the field followed (\cite[Ramesh et al., 2022]{ramesh2022dalle2}); the 2021 DALL·E paper describes the earlier autoregressive system (\cite[Ramesh et al., 2021]{ramesh2021dalle}). The brief autoregressive detour is a useful reminder that “predict the next token” is architecture-agnostic: the token can be a word, an image patch, or an audio frame.
 
 ## The diffusion process
 
@@ -43,10 +45,10 @@ Concretely, the forward process takes a clean image $x_0$ and at each of $T$ sma
 A handy mathematical shortcut is that at any intermediate timestep $t$, you can jump straight from the clean image to $x_t$ in one go, without stepping through all the intermediate $x_1, x_2, \ldots, x_{t-1}$:
 
 $$
-x_t \;=\; \sqrt{1-t}\, x_0 \;+\; \sqrt{t}\, \epsilon, \qquad \epsilon \sim \mathcal{N}(0, \mathbf{I})
+x_t \;=\; \sqrt{1-t}\, x_0 \;+\; \sqrt{t}\, \epsilon, \qquad \epsilon \sim \mathcal{N}(0, \mathbf{I}), \qquad t \in [0,1]
 $$
 
-For $t = 1$ the first term vanishes and $x_T$ is pure Gaussian noise. Crucially, **every step of the forward process is fixed in advance**, no learning required. The forward chain is just a way to manufacture training data for the model that does the hard work.
+In this demo $t$ is the *noise fraction*, not the DDPM timestep: $t = 0$ is the clean image and $t = 1$ is pure Gaussian noise. DDPM's discrete schedule reaches the same endpoint at timestep $T$. Crucially, **every step of the forward process is fixed in advance**, no learning required. The forward chain is just a way to manufacture training data for the model that does the hard work.
 
 The slider below shows the forward process happening to a real image. Drag it to watch the picture dissolve into noise.
 </div>
@@ -58,6 +60,8 @@ The slider below shows the forward process happening to a real image. Drag it to
 
 The reverse process starts from pure noise and runs backward. At each step, the network looks at the current noisy image and asks: *what noise should I subtract to make this slightly more recognizable?* A thousand such tiny denoising steps, and out pops a clean image.
 
+DDPM's contribution was to make the reverse chain trainable by a simple surrogate. Instead of predicting the full reverse distribution, the network predicts the noise that was added, and training minimizes squared error to it — a reweighted variational bound, and the reweighting is what made sample quality jump (\cite[Ho et al., 2020]{ho2020ddpm}). \cite[Nichol & Dhariwal (2021)]{nichol2021improved} then replaced the linear noise schedule with a cosine one and learned the reverse variances, improving both log-likelihood and sample quality (\cite[Nichol & Dhariwal, 2021]{nichol2021improved}); \cite[Dhariwal & Nichol (2021)]{dhariwal2021diffusion} added classifier guidance and showed diffusion could beat GANs on image synthesis (\cite[Dhariwal & Nichol, 2021]{dhariwal2021diffusion}).
+
 This is the formulation introduced by DDPM. The training objective is almost laughably simple. For a randomly chosen timestep $t$:
 
 1. Take a real image $x_0$.
@@ -65,7 +69,7 @@ This is the formulation introduced by DDPM. The training objective is almost lau
 3. Ask the network to predict *what that noise was*.
 4. Train by mean-squared error between the predicted and the true noise.
 
-For the vanilla DDPM / DDIM recipe that is it: no discriminator, no generator, no min-max game. Just MSE between predicted and true noise. This stability is one of the big reasons diffusion displaced GANs so quickly. (One caveat: the 1-step “Turbo” models like SDXL-Turbo were *not* trained with pure MSE, they use **adversarial diffusion distillation**, an explicit GAN-style loss, to compress 50 denoising steps into 1.)
+For the vanilla DDPM objective — and for DDIM, which is a *sampler* for a DDPM-trained model rather than a separate training recipe — that is it: no discriminator, no generator, no min-max game (\cite[Song et al., 2020]{song2020ddim}). Just MSE between predicted and true noise. This stability is one of the big reasons diffusion displaced GANs so quickly. (One caveat: the 1-step “Turbo” models like SDXL-Turbo were *not* trained with pure MSE, they use **adversarial diffusion distillation**, an explicit GAN-style loss, to compress 50 denoising steps into 1.)
 
 The slider below steps through the **reverse** process on the same image. Drag it from right to left to watch an image emerge from chaos. In a real diffusion model this would take a thousand tiny denoising steps; here we collapse them into a handful of frames.
 </div>
@@ -80,9 +84,11 @@ You might ask: how can *removing noise* ever create a picture? The trick is this
 That is the deep “why” of diffusion in one sentence. Two ways to make it more concrete:
 
 * **Coarse-to-fine**: at high noise levels, only the largest-scale structure of the data is recoverable. The network first sketches rough shapes, then refines detail. Generation is hierarchical *by construction*.
-* **Score matching** (\cite[Song & Ermon, 2019]{song2019score}): a denoiser that can predict the noise in any image is mathematically equivalent to a model that knows the gradient of the logarithm of the data distribution, the “score”. Following that gradient (with a little randomness, a recipe called Langevin dynamics) is equivalent to sampling from the data distribution.
+* **Score matching** (\cite[Song & Ermon, 2019]{song2019score}): for Gaussian noise at a fixed level, a denoiser that predicts the noise is mathematically equivalent to a model of the score, the gradient of the log data density (Tweedie's formula). Running Langevin dynamics on that score — following the gradient with a little randomness — samples from the distribution.
 
 Either view explains why “denoising” and “generation” are two sides of the same coin.
+
+The two lineages — denoising diffusion and score matching — were unified in 2021. \cite[Song et al. (2021)]{song2021sde} showed that both are discretizations of a stochastic differential equation: a forward SDE adds noise, and a reverse-time SDE, driven by the score, removes it (\cite[Song et al., 2021]{song2021sde}). That view made the sampler a design choice rather than a consequence of the training chain. \cite[Song et al. (2020)]{song2020ddim} had already shown the point concretely: a non-Markovian, deterministic reverse process can sample a DDPM model in far fewer steps with little loss in quality (\cite[Song et al., 2020]{song2020ddim}).
 </div>
 
 <div class="md" data-mathlevel="60">
@@ -90,7 +96,9 @@ Either view explains why “denoising” and “generation” are two sides of t
 
 ### Telling the model what to draw
 
-To make a model draw *what you want*, you have to feed it some signal. For text-to-image, that signal is a text prompt, first encoded into a vector by a separate text encoder (typically CLIP or T5).
+To make a model draw *what you want*, you have to feed it some signal. For text-to-image, that signal is a text prompt, first encoded into a sequence of token vectors by a separate text encoder (typically CLIP or T5).
+
+Guidance began with a classifier. \cite[Dhariwal & Nichol (2021)]{dhariwal2021diffusion} showed that a pretrained image classifier's gradient could steer each denoising step toward a chosen class, a trick called classifier guidance that improved sample quality at the cost of an extra network (\cite[Dhariwal & Nichol, 2021]{dhariwal2021diffusion}). \cite[Ho & Salimans (2022)]{ho2022cfg} removed the classifier: train one denoiser with the condition randomly dropped, then extrapolate away from its unconditional prediction (\cite[Ho & Salimans, 2022]{ho2022cfg}). That is the version Stable Diffusion uses, because it needs no classifier and works with free-form text.
 
 The trick that made text-to-image *actually work* is **classifier-free guidance** (\cite[Ho & Salimans, 2022]{ho2022cfg}). At training time, the network is shown the text prompt 90% of the time and *nothing* 10% of the time, learning both a conditional and an unconditional denoiser in one model. At inference, you amplify the gap between them:
 
@@ -122,7 +130,7 @@ This is also why diffusion models sometimes hallucinate or get details wrong: th
 <div class="md">
 #### 2. Text becomes numbers, the text encoder and embeddings
 
-The diffusion U-Net cannot read English. Before it ever sees your prompt, a separate **text encoder** turns the prompt into a sequence of vectors. For Stable Diffusion 1.5, that encoder is CLIP's text tower; for SD 3 and FLUX, it is T5. Both are **Transformer encoders**, the same architecture family as the LLMs in the other chapters.
+The diffusion U-Net cannot read English. Before it ever sees your prompt, a separate **text encoder** turns the prompt into a sequence of vectors. For Stable Diffusion 1.5, that encoder is CLIP's text tower; SD 3 combines CLIP-L, CLIP-G and T5-XXL, and FLUX combines CLIP-L with T5-XXL. Both are **Transformer encoders**, the same architecture family as the LLMs in the other chapters.
 
 The text encoder does two things, in order, tokenization and embedding. Both are covered in detail elsewhere on this site (see the **Tokenization** and **Embeddings** chapters); the small viz above is just a quick reminder of what comes out of the other end of that pipeline. The crucial property for our purposes is that each token ends up as a vector (768 numbers for CLIP, 4096 for T5-XXL), and **similar concepts end up close together** in that vector space: “astronaut” and “space suit” have nearby vectors, “horse” and “pony” have nearby vectors, “astronaut riding a horse” is far from “still life with fruit”.
 </div>
@@ -132,7 +140,7 @@ The text encoder does two things, in order, tokenization and embedding. Both are
 
 Now the diffusion U-Net has two inputs at every denoising step:
 
-* the current noisy image (as a grid of patches, e.g. $8 \times 8$)
+* the current noisy latent (as a grid of patches, e.g. $64 \times 64$ for a $512 \times 512$ image)
 * the text embedding (a sequence of vectors, one per token)
 
 The U-Net applies **cross-attention** at each layer. The picture to keep in your head: **at every step, the model paints the image by asking each word in your prompt, “which part of the picture is yours?”** The word *“astronaut”* claims the upper-center region. The word *“horse”* claims the lower region. The word *“riding”* claims the bit in between. Function words like *“a”*, *“of”* barely claim anything.
@@ -157,6 +165,8 @@ So the answer to “do I need to label 100k images?” is: **no** for pretrainin
 
 ### What's the network?
 
+The denoiser's shape is borrowed from medical imaging. The **U-Net** was introduced by \cite[Ronneberger et al. (2015)]{ronneberger2015unet} for biomedical segmentation, where a contracting path captures context and a symmetric expanding path restores fine detail, with skip connections passing high-resolution features across (\cite[Ronneberger et al., 2015]{ronneberger2015unet}). Diffusion models adopted it because denoising is also a dense, image-to-image prediction: every latent cell needs an output, and coarse structure and fine texture must be combined. \cite[Nichol & Dhariwal (2021)]{nichol2021improved} and \cite[Dhariwal & Nichol (2021)]{dhariwal2021diffusion} then tuned this backbone with residual blocks, attention and time embeddings.
+
 It is **not** a stack of dense layers. The denoiser is a **U-Net** built from:
 
 * **2D convolutions**, slide filters over the latent to detect local patterns
@@ -172,6 +182,8 @@ The only fully-connected layers are tiny MLPs for the time and text embeddings. 
 ### Stable Diffusion: doing it in a compressed space
 
 Doing all this in raw pixel space at $512 \times 512$ resolution is brutally expensive. Each image is roughly 786,000 numbers, and the network must process hundreds of millions of them per step.
+
+Compressing before generating was not new. Autoencoders had long learned compact codes (\cite[Kingma & Welling, 2014]{kingma2014vae}), and VQGAN showed that a discrete autoencoder plus a powerful prior could synthesise high-resolution images (\cite[Esser et al., 2021]{esser2021taming}). \cite[Rombach et al. (2022)]{rombach2022ldm} made the decisive move for diffusion: train the autoencoder first, freeze it, and run the diffusion process entirely in its latent space (\cite[Rombach et al., 2022]{rombach2022ldm}). The result was not just cheaper — it let the same denoiser scale to larger images by changing the decoder, not the diffusion model.
 
 The breakthrough of **Latent Diffusion Models** (\cite[Rombach et al., 2022]{rombach2022ldm}), the technology behind Stable Diffusion, was to *first* compress the image into a much smaller latent representation using a pretrained autoencoder, *then* do all the diffusion work in that compressed space, *then* decode the result back to pixels. The U-Net never sees a pixel; it only sees a $64 \times 64$ latent map. This makes training and inference roughly 64× cheaper.
 
@@ -203,7 +215,7 @@ The general principle is almost embarrassingly simple: **if you can blur it, you
 
 ### Where the field is now
 
-By 2025, the diffusion community has largely moved on to **flow matching** (\cite[Lipman et al., 2023]{lipman2023flow}), a more general framework where the “noising” path between data and noise can be a straight line instead of a curved one. FLUX, Stable Diffusion 3, and most 2024+ models use it.
+By 2025, many new systems use **flow matching** (\cite[Lipman et al., 2023]{lipman2023flow}) or its rectified-flow variant, in which the path between data and noise is trained to be straighter than the curved diffusion path. FLUX and Stable Diffusion 3 use rectified flow; DDPM/DDIM-style samplers remain widespread in older and distilled models.
 
 The dominant backbone is no longer the U-Net but the **Diffusion Transformer (DiT)** (\cite[Peebles & Xie, 2023]{peebles2023dit}), a vanilla Vision Transformer scaled up. Sora, FLUX, and Stable Diffusion 3 all use DiT-style backbones. The pattern is familiar: U-Net worked, then Transformers worked better once they were big enough.
 
