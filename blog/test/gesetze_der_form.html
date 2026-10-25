@@ -556,7 +556,7 @@ footer a:hover{color:var(--gold)}
 @page{margin:14mm}
 @media print{
   body{background:#fff;color:#000}
-  .reveal{opacity:1 !important;transform:none !important}
+  .reveal{opacity:1 !important;transform:none !important;transition:none !important}
   .grain,.progress,.dot-nav,.hero,.section:not(#mitnehmen),footer,.sources,.no-print{display:none !important}
   #mitnehmen{padding:0;max-width:none}
   .poster{box-shadow:none;border-radius:0;background:#fff}
@@ -845,7 +845,7 @@ footer a:hover{color:var(--gold)}
       </details>
     </div>
     <div class="prose reveal" style="margin-top:clamp(28px,4vw,44px)">
-      <p>Die Lesart ist eine Wahl: <strong>Leere = falsch</strong>, <strong>Marke = nicht</strong>, <strong>Nebeneinander = oder</strong>. Dann ist <span class="mono">()</span> wahr, <span class="mono">(A)</span> ist nicht A und <span class="mono">A B</span> ist A oder B. Vertauscht man oder mit und und die beiden Werte, erhält man die <em>duale</em> Lesart. Die Formen bleiben dieselben. De Morgan ist in dieser Notation keine Regel, die man lernen muss — sie ist schon in der Syntax enthalten. Und weil die Algebra eine <em>Gleichungslogik</em> ist, beweist man, indem man eine Form in Schritten durch eine äquivalente ersetzt.</p>
+      <p>Die Lesart ist eine Wahl: <strong>Leere = falsch</strong>, <strong>Marke = nicht</strong>, <strong>Nebeneinander = oder</strong>. Dann ist <span class="mono">()</span> wahr, <span class="mono">(A)</span> ist nicht A und <span class="mono">A B</span> ist A oder B. Vertauscht man ‚oder‘ mit ‚und‘ und dreht außerdem die beiden Werte um, erhält man die <em>duale</em> Lesart. Die Formen bleiben dieselben. De Morgan ist in dieser Notation keine Regel, die man lernen muss — sie ist schon in der Syntax enthalten. Und weil die Algebra eine <em>Gleichungslogik</em> ist, beweist man, indem man eine Form in Schritten durch eine äquivalente ersetzt.</p>
     </div>
     <p class="note reveal"><strong>Vollständigkeit:</strong> Aus den Initialen lassen sich alle gültigen Gleichungen der primären Algebra ableiten. Spencer-Brown beweist das als <span class="mono">T17</span>. Dass die beiden Initiale unabhängig voneinander sind, zeigt er als <span class="mono">T18</span>. Aus zwei Gesetzen wird eine ganze Logik.</p>
   </section>
@@ -927,7 +927,7 @@ footer a:hover{color:var(--gold)}
       <p class="triad-caption" id="triad-caption" aria-live="polite">Eine Unterscheidung trennt ein Innen von einem Außen. Sie ist der erste Akt — und es gibt keinen Beobachter ohne sie.</p>
     </div>
     <div class="prose reveal" style="margin-top:clamp(30px,5vw,48px)">
-      <p>Das ist der <strong>Beobachterdilemma</strong>: Der Beobachter muss außerhalb der Welt stehen, um sie beobachten zu können — und ist doch Teil der Welt, die er beobachtet. Die <em>Laws of Form</em> lösen das nicht weg. Sie geben ihm eine Form: die Wiedereintritts-Schleife. Der Beobachter ist die Unterscheidung, die sich selbst unterscheidet.</p>
+      <p>Das ist das <strong>Beobachterdilemma</strong>: Der Beobachter muss außerhalb der Welt stehen, um sie beobachten zu können — und ist doch Teil der Welt, die er beobachtet. Die <em>Laws of Form</em> lösen das nicht weg. Sie geben ihm eine Form: die Wiedereintritts-Schleife. Der Beobachter ist die Unterscheidung, die sich selbst unterscheidet.</p>
     </div>
     <div class="pullquote reveal">
       „… the first distinction, the Mark and the observer are not only interchangeable, but, in the form, identical.“
@@ -950,7 +950,7 @@ footer a:hover{color:var(--gold)}
       <article class="res-card reveal">
         <div class="res-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1.5"/><circle cx="12" cy="12" r="5"/></svg></div>
         <h3>Mengen &amp; Grenzen</h3>
-        <p>Eine Menge ist ein Inneres. Die Grenze entscheidet, was dazugehört. <b>Die Unterscheidung ist die ursprüngliche Mengenbildung.</b></p>
+        <p>Eine Menge ist ein Inneres. Die Grenze entscheidet, was dazugehört. <b>Die Unterscheidung ist die ursprüngliche Form der Mengenbildung.</b></p>
       </article>
       <article class="res-card reveal">
         <div class="res-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/><path d="M18 6c2.5 2 4 4.5 4 6"/></svg></div>
@@ -1043,7 +1043,7 @@ footer a:hover{color:var(--gold)}
         <svg class="poster-loop" viewBox="0 0 160 110" aria-hidden="true">
           <path d="M12 78 H72 V18"/>
           <path class="dash" d="M34 82 C 90 95 132 82 132 55 C 132 30 108 14 84 22 C 66 28 62 46 74 54 C 84 61 100 54 98 40" marker-end="none"/>
-          <circle cx="98" cy="40" r="2.6" fill="var(--paper-accent)"/>
+          <circle cx="98" cy="40" r="2.6" style="fill:var(--paper-accent)"/>
         </svg>
       </div>
     </div>
