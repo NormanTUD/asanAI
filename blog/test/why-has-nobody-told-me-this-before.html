@@ -373,9 +373,9 @@ html.light{--accent:#6d28d9;--accent-2:#c2410c;--accent-3:#047857}
 <section id="kurz" class="panel" data-nav><div class="container reveal">
 <div class="section-head"><div class="section-num">01 / KURZ</div><div><h2>In 60 Sekunden</h2><p class="lede">Das Buch ist ein Werkzeugkasten, keine Diagnose. Die Grundidee: Du musst dich nicht anders fühlen, um anders zu handeln – oft kommt das Gefühl nach der Handlung.</p></div></div>
 <div class="grid-3">
-<div class="card"><div class="big-stat">≈</div><div class="stat-label"><strong>Stimmung ist ein Sensorwert.</strong> Schlaf, Körper, Ereignisse, Gedanken und Umgebung fließen ein. Sie ist keine Charakterbeurteilung.</div></div>
-<div class="card"><div class="big-stat">→</div><div class="stat-label"><strong>Handlung vor Motivation.</strong> Auf „Lust“ zu warten dreht die Kausalität um. Die 2-Minuten-Version startet den Motor.</div></div>
-<div class="card"><div class="big-stat">↺</div><div class="stat-label"><strong>Vermeidung verkauft Angst.</strong> Kurzfristig beruhigt sie, langfristig lehrt sie das Gehirn: „Diese Situation ist gefährlich.“</div></div>
+<div class="card"><div class="big-stat">01</div><div class="stat-label"><strong>Stimmung ist ein Sensorwert.</strong> Schlaf, Körper, Ereignisse, Gedanken und Umgebung fließen ein. Sie ist keine Charakterbeurteilung.</div></div>
+<div class="card"><div class="big-stat">02</div><div class="stat-label"><strong>Handlung vor Motivation.</strong> Auf „Lust“ zu warten dreht die Kausalität um. Die 2-Minuten-Version startet den Motor.</div></div>
+<div class="card"><div class="big-stat">03</div><div class="stat-label"><strong>Vermeidung verkauft Angst.</strong> Kurzfristig beruhigt sie, langfristig lehrt sie das Gehirn: „Diese Situation ist gefährlich.“</div></div>
 </div>
 <div class="grid-2" style="margin-top:18px">
 <div class="card"><span class="tag">Grundhaltung</span><h3>Gefühle sind Perspektiven</h3><p>Sie sind Interpretationen von Körper und Kontext, keine Fakten und keine Befehle. Man kann sie anerkennen, ohne ihnen automatisch zu folgen.</p></div>
@@ -444,7 +444,7 @@ html.light{--accent:#6d28d9;--accent-2:#c2410c;--accent-3:#047857}
 <label>Freundlichkeit <input type="range" id="whn-v-friend" min="0" max="100" value="70"></label>
 <label>Mut <input type="range" id="whn-v-courage" min="0" max="100" value="55"></label>
 <label>Neugier <input type="range" id="whn-v-curious" min="0" max="100" value="60"></label>
-<label>Verbundenheit <input type="range" id="whn-v-connect" min="0" max="100" value="80"></label>
+<label>Nähe <input type="range" id="whn-v-connect" min="0" max="100" value="80"></label>
 </div>
 <button class="btn small" id="whn-make-action" style="margin-top:16px">Wochenaktion erzeugen</button>
 <div class="value-action" id="whn-value-action">Noch keine Aktion. Der wichtigste Wert ist nicht der höchste Regler – sondern der, für den du diese Woche einen kleinen Beweis liefern willst.</div>
@@ -748,7 +748,7 @@ html.light{--accent:#6d28d9;--accent-2:#c2410c;--accent-3:#047857}
     curious:"Dreißig Minuten etwas lernen, das dich fachlich nicht weiterbringt – nur weil es dich interessiert.",
     connect:"Jemandem schreiben, den du vermisst, ohne einen Grund außer dem Kontakt."
   };
-  const names={friend:"Freundlichkeit",courage:"Mut",curious:"Neugier",connect:"Verbundenheit"};
+  const names={friend:"Freundlichkeit",courage:"Mut",curious:"Neugier",connect:"Nähe"};
   function paintCompass(){
     Object.keys(sliders).forEach(k=>vals[k]=Number(sliders[k].value));
     const cx=160,cy=160,R=120;
