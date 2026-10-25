@@ -25,6 +25,8 @@
   --shadow:0 30px 80px -35px rgba(0,0,0,.9);
   --glow:0 0 50px -18px color-mix(in srgb, var(--accent) 70%, transparent);
 }
+html.light .btn,html.light .btn:hover{color:#fff}
+html.light .segmented button.on{color:#fff}
 html.light{
   --bg:#f3efe4; --bg-soft:#ece6d8; --panel:#fbf8f0; --panel-2:#f4efe3;
   --ink:#151b21; --muted:#5e6a75; --faint:#87919a;
@@ -258,7 +260,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 @media(max-width:620px){
   body{font-size:15.5px}
   .container{padding:0 18px}
-  .dock-inner{padding:9px 18px}
+  .dock-inner{padding:9px 60px 9px 18px}
   .panel{padding:68px 0}
   .grid-2,.grid-3,.grid-4,.split{grid-template-columns:1fr}
   .interactive,.quiz{padding:18px;border-radius:20px}
@@ -273,6 +275,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 }
 
 
+html.light{--accent:#8a5a00;--accent-2:#0f766e;--accent-3:#1d4ed8}
 .money-art{position:relative;width:min(460px,90vw);aspect-ratio:1;display:grid;place-items:center}
 .money-chart-hero{width:100%;height:auto;overflow:visible}
 .money-chart-hero .grid{stroke:color-mix(in srgb,var(--line) 80%,transparent);stroke-width:.7}
@@ -341,6 +344,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 @media(max-width:620px){.tails-grid{grid-template-columns:repeat(10,1fr)}.tails-wrap{gap:18px}.ice-above,.ice-below{grid-template-columns:1fr}}
 
 </style>
+<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
 <a class="sr-only" href="#kurz">Zum Inhalt springen</a>

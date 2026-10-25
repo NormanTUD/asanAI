@@ -25,6 +25,8 @@
   --shadow:0 30px 80px -35px rgba(0,0,0,.9);
   --glow:0 0 50px -18px color-mix(in srgb, var(--accent) 70%, transparent);
 }
+html.light .btn,html.light .btn:hover{color:#fff}
+html.light .segmented button.on{color:#fff}
 html.light{
   --bg:#f3efe4; --bg-soft:#ece6d8; --panel:#fbf8f0; --panel-2:#f4efe3;
   --ink:#151b21; --muted:#5e6a75; --faint:#87919a;
@@ -258,7 +260,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 @media(max-width:620px){
   body{font-size:15.5px}
   .container{padding:0 18px}
-  .dock-inner{padding:9px 18px}
+  .dock-inner{padding:9px 60px 9px 18px}
   .panel{padding:68px 0}
   .grid-2,.grid-3,.grid-4,.split{grid-template-columns:1fr}
   .interactive,.quiz{padding:18px;border-radius:20px}
@@ -273,6 +275,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 }
 
 
+html.light{--accent:#3f6212;--accent-2:#b91c1c;--accent-3:#a16207}
 body{background-image:repeating-linear-gradient(135deg,transparent 0 26px,color-mix(in srgb,var(--accent) 3%,transparent) 26px 27px)}
 .dp7-art{position:relative;width:min(430px,88vw);aspect-ratio:1;display:grid;place-items:center}
 .doc{position:relative;width:66%;aspect-ratio:.72;background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line-strong);border-radius:6px;transform:rotate(-4deg);box-shadow:var(--shadow);padding:22px;overflow:hidden}
@@ -344,6 +347,7 @@ body{background-image:repeating-linear-gradient(135deg,transparent 0 26px,color-
 @media(max-width:620px){.book-map,.cialdini-grid{grid-template-columns:1fr}}
 
 </style>
+<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
 <a class="sr-only" href="#kurz">Zum Inhalt springen</a>

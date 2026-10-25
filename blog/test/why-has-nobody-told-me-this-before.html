@@ -25,6 +25,8 @@
   --shadow:0 30px 80px -35px rgba(0,0,0,.9);
   --glow:0 0 50px -18px color-mix(in srgb, var(--accent) 70%, transparent);
 }
+html.light .btn,html.light .btn:hover{color:#fff}
+html.light .segmented button.on{color:#fff}
 html.light{
   --bg:#f3efe4; --bg-soft:#ece6d8; --panel:#fbf8f0; --panel-2:#f4efe3;
   --ink:#151b21; --muted:#5e6a75; --faint:#87919a;
@@ -258,7 +260,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 @media(max-width:620px){
   body{font-size:15.5px}
   .container{padding:0 18px}
-  .dock-inner{padding:9px 18px}
+  .dock-inner{padding:9px 60px 9px 18px}
   .panel{padding:68px 0}
   .grid-2,.grid-3,.grid-4,.split{grid-template-columns:1fr}
   .interactive,.quiz{padding:18px;border-radius:20px}
@@ -273,6 +275,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 }
 
 
+html.light{--accent:#6d28d9;--accent-2:#c2410c;--accent-3:#047857}
 .calm-art{position:relative;width:min(430px,86vw);aspect-ratio:1;display:grid;place-items:center}
 .calm-orb{width:56%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 36% 30%,color-mix(in srgb,var(--accent) 92%,#fff),color-mix(in srgb,var(--accent) 28%,#111));box-shadow:0 0 100px -12px var(--accent);animation:breathe 8s ease-in-out infinite;display:grid;place-items:center;color:#10151c;font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-align:center;line-height:1.7;font-weight:700}
 .calm-ring{position:absolute;border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);border-radius:50%;animation:breathe 8s ease-in-out infinite}
@@ -338,6 +341,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 @media(max-width:900px){.loop-grid,.grief-stage,.compass-wrap,.tool-grid,.myth-grid{grid-template-columns:1fr}.fly-wrap{grid-template-columns:1fr}.flywheel{margin:0 auto}}
 
 </style>
+<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body>
 <a class="sr-only" href="#kurz">Zum Inhalt springen</a>
