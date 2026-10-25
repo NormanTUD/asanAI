@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Is a Number — McCulloch, 1960</title>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<link rel="stylesheet" href="mp.css">
+<script src="../temml.min.js" defer></script>
+<script src="mp.js" defer></script>
+<script src="mp_1961_number.js" defer></script>
+</head>
+<body data-accent="coral">
+<div class="progress"><span></span></div>
+<header class="topbar">
+  <a class="brand" href="mp_index.html"><b>MP</b><span class="dot">·</span>Codex</a>
+  <div class="topbar-meta">
+    <span class="hide-sm">Plate 11 / 12 · 1960</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+</header>
+<div class="rail" id="rail" aria-hidden="true"></div>
+
+<main>
+<section class="hero" id="top" data-label="Opening">
+  <canvas class="hero-canvas" id="heroNumber" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Ninth Alfred Korzybski Memorial Lecture · 1960</p>
+    <h1>What Is a <em>Number</em>, that a Man May Know It?</h1>
+    <p class="hero-sub">A number is a class of classes that can be put into one-to-one correspondence. A man is a net of neurons whose least psychic events are all-or-none impulses. McCulloch's lecture is the autobiography of that double answer — and the best short introduction to his whole philosophy.</p>
+    <div class="hero-meta">
+      <span><b>Warren S. McCulloch</b></span>
+      <span>General Semantics Bulletin <b>26/27</b>, 7–18</span>
+      <span>number · psychon · probabilistic logic</span>
+    </div>
+    <a class="scroll-cue" href="#thesis"><span class="line"></span> Read the plate</a>
+  </div>
+</section>
+
+<section class="section" id="thesis" data-label="The thesis">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The thesis</p>
+      <h2 class="thesis">“What is a number, that a man may know it; and a man, that he may know a number?”</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">The question is McCulloch's lifelong question, asked at Haverford in 1917 and answered, provisionally, in this lecture. The first half is logic: following Hume and Russell, a number is the class of all classes that can be put into one-to-one correspondence with a given class. The second half is neurophysiology: a man knows a number because his nervous system is a net of all-or-none events that can realize the relations of arithmetic.</p>
+      <p class="lede">The lecture is also a tour of McCulloch's intellectual debts — Duns Scotus, Ockham, Hume, Peirce, Russell, Whitehead, Pitts — and a compact statement of the 1943 calculus, the 1947 theory of universals, the 1945 heterarchy, and the probabilistic logic he built with von Neumann's problem in mind.</p>
+      <div class="note"><b>The lovely claim:</b> “The numbers from 1 through 6 are perceptibles; others, only countables.” Small numbers are shared with beasts; larger ones require the logos of one-to-one correspondence.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="correspondence" data-label="Correspondence">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory 01 · one-to-one correspondence</p>
+      <h2>Seven days. Seven pebbles. One number.</h2>
+      <p class="lede">A number is not a thing but a relation: the class of all classes that can be matched one-to-one with a given class. Pair the days with the pebbles. When every day has exactly one pebble and every pebble exactly one day, the number is 7.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>The Russell–Hume definition, by hand</h3>
+          <p>Click a day, then a pebble. The pairing is the number. A different set with the same pairing has the same number.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap">
+        <canvas id="corrLab" aria-label="Interactive one-to-one correspondence between days and pebbles"></canvas>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button class="btn" id="pairAll">Pair all</button>
+        <button class="btn ghost" id="resetCorr">Reset</button>
+      </div>
+      <div class="readout">
+        <div class="cell"><span>pairs</span><b class="small-value" id="pairCount">0 / 7</b></div>
+        <div class="cell"><span>number</span><b id="numberVal">—</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="psychon" data-label="The psychon">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The second half</p>
+      <h2>From number to neuron.</h2>
+      <p class="lede">In 1929 it dawned on McCulloch that the least psychic event — the “psychon” — might be the all-or-none impulse of a neuron. It either happens or it does not; it implies its temporal antecedent; it proposes something to subsequent psychons; and these can be compounded into more complicated propositions.</p>
+      <p class="lede">With Walter Pitts he made the idea a calculus. The result was the 1943 paper: neurons that can be excited or inhibited, given a proper net, can extract any configuration of signals in its input; and any general Turing machine can be made of them. The psychon became a proposition on the move.</p>
+    </div>
+    <div class="reveal delay-1 stack">
+      <div class="formula-card">
+        <div class="tex" data-tex="|A|=|B|\;\iff\;\exists f:A\to B\ \text{bijective}" data-display></div>
+        <p class="formula-note"><b>The definition of number.</b> Two classes have the same number when there is a one-to-one correspondence between them. A number is the class of all classes so related.</p>
+      </div>
+      <div class="formula-card">
+        <div class="tex" data-tex="\text{psychon}\;=\;\text{the activity of a single neuron}" data-display></div>
+        <p class="formula-note"><b>The least psychic event.</b> Inherently propositional, hence “semiotic”; its relations are those of two-valued logic.</p>
+      </div>
+      <div class="formula-card">
+        <div class="tex" data-tex="a_i=\frac{1}{N}\sum_{T\in G} f_i[T\phi]" data-display></div>
+        <p class="formula-note"><b>The universal.</b> Any object is an invariant under a group of transformations; the net computes enough group averages to recognise it. This is the bridge from number to idea.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="venn" data-label="Venn functions">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory 02 · sixteen functions</p>
+      <h2>Every logical particle is a pattern of jots and blanks.</h2>
+      <p class="lede">Two arguments, four regions, sixteen Boolean functions. McCulloch's “Venn functions” picture each one as jots (true) and blanks (false) in two intersecting circles. Switch to probabilistic mode and each jot becomes a probability — the logic of a machine whose components misbehave.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>The Venn function machine</h3>
+          <p>Choose a function. The four regions show its truth values; the table reads (A,B) from 00 to 11. In probabilistic mode, each argument is true with probability <span class="tex-inline" data-tex="p"></span>.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="vennLab" aria-label="Interactive Venn diagram of the sixteen Boolean functions, with probabilistic mode"></canvas>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button class="btn" id="vennAND">AND</button>
+        <button class="btn" id="vennOR">OR</button>
+        <button class="btn" id="vennXOR">XOR</button>
+        <button class="btn" id="vennNAND">NAND</button>
+        <button class="btn" id="vennIMPL">A → B</button>
+        <button class="btn" id="vennIFF">IFF</button>
+        <button class="btn ghost" id="vennTaut">tautology</button>
+        <button class="btn ghost" id="vennContra">contradiction</button>
+      </div>
+      <div class="controls">
+        <div class="control"><label for="vennIndex">function index <output>0–15</output></label><input id="vennIndex" type="range" min="0" max="15" step="1" value="8"></div>
+        <div class="control" id="probWrap" style="opacity:0.4"><label for="probP">probability p <output>p</output></label><input id="probP" type="range" min="0.05" max="0.95" step="0.01" value="0.5"></div>
+        <button class="btn" id="probMode">Certain</button>
+      </div>
+      <div class="readout">
+        <div class="cell"><span>function</span><b class="small-value" id="vennName">AND</b></div>
+        <div class="cell"><span>jots (11,10,01,00)</span><b class="small-value" id="vennBits">0001</b></div>
+        <div class="cell"><span>P(function true)</span><b class="small-value" id="vennProb">0.250</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="quotes" data-label="The voice">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The voice</p>
+      <h2>A life in one question.</h2>
+    </div>
+    <div class="quote-grid" style="margin-top:2rem">
+      <figure class="quote wide reveal">
+        <p>“What is a number, that a man may know it, and a man, that he may know a number?”</p>
+        <footer><b>McCulloch</b> · the question, 1917</footer>
+      </figure>
+      <figure class="quote reveal">
+        <p>“A number is the class of all of those classes that can be put into one-to-one correspondence to it.”</p>
+        <footer><b>McCulloch</b> · after Russell</footer>
+      </figure>
+      <figure class="quote reveal delay-1">
+        <p>“The numbers from 1 through 6 are perceptibles; others, only countables.”</p>
+        <footer><b>McCulloch</b> · § number</footer>
+      </figure>
+      <figure class="quote reveal delay-2">
+        <p>“In 1929 it dawned on me that these events might be regarded as the all-or-none impulses of neurons.”</p>
+        <footer><b>McCulloch</b> · § the psychon</footer>
+      </figure>
+      <figure class="quote wide reveal">
+        <p>“We have come far enough to define a number so realistically that a man may know it, and a man so logically that he may know a number.”</p>
+        <footer><b>McCulloch</b> · conclusion</footer>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pages" data-label="Facsimiles">
+  <div class="wrap">
+    <div class="gallery-note reveal">
+      <div>
+        <p class="eyebrow">The paper itself</p>
+        <h2>Pages from 1960</h2>
+      </div>
+      <p class="tiny">click to enlarge</p>
+    </div>
+    <div class="facsimiles reveal">
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_what_is_a_number_vordenker.pdf_p1-01.jpg" alt="First page of What Is a Number" loading="lazy">
+        <figcaption><b>p. 7.</b> The autobiographical opening: Haverford, Rufus Jones, and the question.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_what_is_a_number_vordenker.pdf_p10-10.jpg" alt="Page with the Venn functions" loading="lazy">
+        <figcaption><b>p. 16.</b> The sixteen Venn functions as jots and blanks in two intersecting circles.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_what_is_a_number_vordenker.pdf_p11-11.jpg" alt="Page with probabilistic logic" loading="lazy">
+        <figcaption><b>p. 17.</b> Probabilistic Venn functions and the project of a logic infected by chance.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why" data-label="Why it matters">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">Why it matters</p>
+      <h2>The unity of the codex in one lecture.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">This is the best single text to read after the technical papers, because it shows how McCulloch himself connected them. Number is a relation of correspondence; a man is a net of all-or-none events; a universal is an invariant under a group; a value can be heterarchical; a logic can be probabilistic. The pieces are not separate projects. They are one experimental epistemology.</p>
+      <p class="lede">And the final answer is carefully modest. We can define a number so that a man may know it, and a man so logically that he may know a number. What we cannot do — yet — is explain insight, the learning of a logical particle from ostension. That is left, as McCulloch says, to the youngsters.</p>
+      <div class="note"><b>Read next:</b> the recollections, where the teachers and arguments behind this unity are named.</div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:2.5rem">
+    <a class="next reveal" href="mp_1974_recollections.html">
+      <div>
+        <p class="eyebrow">Plate 12 · 1974</p>
+        <h3>Recollections of the Many Sources of Cybernetics</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span>Plate 11 · <b>What Is a Number, that a Man May Know It, and a Man, that He May Know a Number?</b></span>
+    <span>Source: <a href="https://www.vordenker.de/ggphilosophy/mcculloch_what-is-a-number.pdf">Vordenker edition</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Facsimile viewer"><img alt=""><div class="cap"></div></div>
+</body>
+</html>

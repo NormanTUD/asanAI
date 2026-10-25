@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What the Frog's Eye Tells the Frog's Brain — Lettvin, Maturana, McCulloch &amp; Pitts, 1959</title>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<link rel="stylesheet" href="mp.css">
+<script src="../temml.min.js" defer></script>
+<script src="mp.js" defer></script>
+<script src="mp_1959_frog_eye.js" defer></script>
+</head>
+<body data-accent="lime">
+<div class="progress"><span></span></div>
+<header class="topbar">
+  <a class="brand" href="mp_index.html"><b>MP</b><span class="dot">·</span>Codex</a>
+  <div class="topbar-meta">
+    <span class="hide-sm">Plate 10 / 12 · 1959</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+</header>
+<div class="rail" id="rail" aria-hidden="true"></div>
+
+<main>
+<section class="hero" id="top" data-label="Opening">
+  <canvas class="hero-canvas" id="heroFrog" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Proceedings of the IRE · Vol. 47 · 1959</p>
+    <h1>What the <em>Frog's Eye</em> Tells the Frog's Brain</h1>
+    <p class="hero-sub">The frog does not see a picture. Its retina performs four operations on the image — contrast, convexity, moving edges, dimming — and sends the results along four kinds of fiber to four maps in the tectum. The eye speaks a language already highly organised.</p>
+    <div class="hero-meta">
+      <span><b>J. Y. Lettvin</b></span>
+      <span><b>H. R. Maturana</b></span>
+      <span><b>W. S. McCulloch</b></span>
+      <span><b>W. H. Pitts</b></span>
+      <span>Proc. IRE <b>47</b>, 1940–1951</span>
+    </div>
+    <a class="scroll-cue" href="#thesis"><span class="line"></span> Read the plate</a>
+  </div>
+</section>
+
+<section class="section" id="thesis" data-label="The thesis">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The thesis</p>
+      <h2 class="thesis">The retina is not a camera. It is a <em>feature extractor</em>.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">The frog hunts by vision, but it is not interested in the detail of stationary things. It will starve surrounded by food if the food does not move. Its choice is determined by size and movement. The eye has no fovea, no searching movements, and a single visual path from retina to colliculus — a clean preparation for asking what the eye actually sends.</p>
+      <p class="lede">The answer is four operations, each carried by a distinct group of fibers and mapped continuously onto a sheet in the tectum: sustained contrast detection, net convexity detection, moving-edge detection, and net dimming detection. The first two use unmyelinated fibers; the last two myelinated. The maps are in registration.</p>
+      <div class="note"><b>The sentence that changed vision:</b> “The operations thus have much more the flavor of perception than of sensation.” The eye is already interpreting.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="lab" data-label="The laboratory">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory · the frog's eye</p>
+      <h2>One bug, four kinds of seeing.</h2>
+      <p class="lede">Drag the bug across the receptive field, or let it move on its own. Each row on the right is a fiber group; each mark is an impulse. Turn a detector off and watch a whole way of seeing disappear. The convexity detector is the one the authors were tempted to call a “bug perceiver.”</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>Retina → four operations → tectum</h3>
+          <p>The field is the frog's visual world. The dashed circle is the receptive field of the recorded fiber. The rasters scroll with time; a mark is a spike.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="frogLab" aria-label="Interactive frog retina with a moving bug and four detector spike rasters"></canvas>
+      </div>
+      <div class="controls">
+        <div class="control"><label for="frogSpeed">bug speed <output id="frogSpeedVal">0.70</output></label><input id="frogSpeed" type="range" min="0" max="1.4" step="0.01" value="0.7"></div>
+        <button class="btn is-active" id="toggleAuto">Auto motion</button>
+        <button class="btn ghost" id="dimLight">Dim the light</button>
+        <button class="btn ghost" id="resetFrog">Reset</button>
+      </div>
+      <div class="btn-row" style="margin-top:0.7rem">
+        <button class="btn is-active" data-det="contrast">contrast</button>
+        <button class="btn is-active" data-det="convexity">convexity</button>
+        <button class="btn is-active" data-det="moving">moving edge</button>
+        <button class="btn is-active" data-det="dimming">dimming</button>
+      </div>
+      <div class="readout">
+        <div class="cell"><span>active detectors</span><b class="small-value" id="activeDets">4 / 4</b></div>
+        <div class="cell"><span>spikes recorded</span><b id="spikeCount">0</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="four" data-label="Four operations">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The four operations</p>
+      <h2>The retina's editorial policy.</h2>
+    </div>
+    <div class="concept-grid" style="margin-top:2rem">
+      <article class="concept reveal">
+        <span class="num">01 · CONTRAST</span>
+        <h3>Sustained contrast</h3>
+        <p>An unmyelinated fiber fires when a sharp edge, lighter or darker, moves into its field and stops. It keeps firing while the contrast remains; darkness interrupts it. It is a detector of a standing edge.</p>
+      </article>
+      <article class="concept reveal delay-1">
+        <span class="num">02 · CONVEXITY</span>
+        <h3>Net convexity</h3>
+        <p>It responds to a small dark object with a convex boundary, best when the object enters and stops. It is not fooled by a moving background. “Bug perceiver” is the authors' own tempting name.</p>
+      </article>
+      <article class="concept reveal delay-2">
+        <span class="num">03 · MOVING EDGE</span>
+        <h3>Moving edge</h3>
+        <p>A myelinated fiber reports the movement of an edge, not its position. A smooth motion is less effective than a jerky one. It measures change, not standing contrast.</p>
+      </article>
+      <article class="concept reveal delay-3">
+        <span class="num">04 · DIMMING</span>
+        <h3>Net dimming</h3>
+        <p>A myelinated fiber reports a rapid general darkening — the shadow of a predator, a cloud, a hand. It is the alarm channel, tuned to a change in the whole field.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="language" data-label="The language">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The language</p>
+      <h2>Four maps, in registration.</h2>
+      <p class="lede">Each operation maps the retina continuously onto a sheet of endings in the frog's brain. The four sheets are in registration, so a tectal cell that reaches through all four sees one point in the image in four contexts at once. The image has been transformed from a space of points to a space of qualities.</p>
+      <p class="lede">This is why the authors say the operations have “much more the flavor of perception than of sensation.” The character of the contexts is genetically built in — a physiological synthetic a priori. The eye is not neutral. It arrives with a theory of what matters.</p>
+    </div>
+    <div class="reveal delay-1 stack">
+      <div class="formula-card">
+        <div class="tex" data-tex="\text{retina}\;\longrightarrow\;\{\text{contrast},\ \text{convexity},\ \text{moving edge},\ \text{dimming}\}" data-display></div>
+        <p class="formula-note"><b>The output.</b> A set of four distributed operations, independent of the general illumination, each carried by a distinct fiber group and mapped continuously onto the tectum.</p>
+      </div>
+      <div class="formula-card">
+        <div class="tex" data-tex="\text{point }(x,y)\;\longmapsto\;\big(\text{context}_1(x,y),\ldots,\text{context}_4(x,y)\big)" data-display></div>
+        <p class="formula-note"><b>The transformation.</b> Every point is seen in definite contexts. The “figure” is no longer a pixel value but a signature of local operations.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="quotes" data-label="The voice">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The voice</p>
+      <h2>The eye speaks.</h2>
+    </div>
+    <div class="quote-grid" style="margin-top:2rem">
+      <figure class="quote wide reveal">
+        <p>“The frog does not seem to see or, at any rate, is not concerned with the detail of stationary parts of the world around him. He will starve to death surrounded by food if it is not moving.”</p>
+        <footer><b>Lettvin, Maturana, McCulloch &amp; Pitts</b> · introduction</footer>
+      </figure>
+      <figure class="quote reveal">
+        <p>“There are four separate operations on the image in the frog's eye. Each has its result transmitted by a particular group of fibers.”</p>
+        <footer><b>Lettvin et al.</b> · findings</footer>
+      </figure>
+      <figure class="quote reveal delay-1">
+        <p>“The operations thus have much more the flavor of perception than of sensation, if that distinction has any meaning now.”</p>
+        <footer><b>Lettvin et al.</b> · conclusion</footer>
+      </figure>
+      <figure class="quote reveal delay-2">
+        <p>“We have been tempted, for example, to call the convexity detectors ‘bug perceivers.’”</p>
+        <footer><b>Lettvin et al.</b> · conclusion</footer>
+      </figure>
+      <figure class="quote wide reveal">
+        <p>“The character of these contexts, genetically built in, is the physiological synthetic a priori.”</p>
+        <footer><b>Lettvin et al.</b> · general discussion</footer>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pages" data-label="Facsimiles">
+  <div class="wrap">
+    <div class="gallery-note reveal">
+      <div>
+        <p class="eyebrow">The paper itself</p>
+        <h2>Pages from 1959</h2>
+      </div>
+      <p class="tiny">click to enlarge</p>
+    </div>
+    <div class="facsimiles reveal">
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_pitts_lettvin_1959_frog_eye.pdf_p1-01.jpg" alt="First page of What the Frog's Eye Tells the Frog's Brain" loading="lazy">
+        <figcaption><b>pp. 233–234.</b> The opening: the frog's behaviour, its eye, and the choice of preparation.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_pitts_lettvin_1959_frog_eye.pdf_p4-04.jpg" alt="Page with the four operations" loading="lazy">
+        <figcaption><b>pp. 236–237.</b> Anatomy and the first statement of the four operations.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_pitts_lettvin_1959_frog_eye.pdf_p6-06.jpg" alt="Page with convexity detectors" loading="lazy">
+        <figcaption><b>pp. 238–239.</b> The convexity detector and the “bug perceiver” behaviour.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_pitts_lettvin_1959_frog_eye.pdf_p8-08.jpg" alt="Page with moving edge detectors" loading="lazy">
+        <figcaption><b>pp. 240–241.</b> Moving-edge and dimming detectors; the four operations in full.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_pitts_lettvin_1959_frog_eye.pdf_p11-11.jpg" alt="Page with the conclusion" loading="lazy">
+        <figcaption><b>pp. 243–244.</b> The discussion of the tectum and the language of complex abstractions.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why" data-label="Why it matters">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">Why it matters</p>
+      <h2>The founding experiment of <em>feature detection</em>.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">This paper gave vision science its central question: not “what is in the image?” but “what operations does the nervous system perform on the image?” The answer — contrast, convexity, movement, dimming — is a short, testable list, and it set the pattern for Hubel and Wiesel, for convolutional networks, and for every claim that perception begins with features rather than pixels.</p>
+      <p class="lede">It is also a philosophical result. The eye is not a neutral window. It is a theory of the world, genetically built in, expressed as a set of operations. What the frog sees is what its retina has already decided to ask about.</p>
+      <div class="note"><b>Read next:</b> McCulloch's Korzybski lecture, where number, logic, and the neuron are brought together in one autobiographical argument.</div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:2.5rem">
+    <a class="next reveal" href="mp_1961_number.html">
+      <div>
+        <p class="eyebrow">Plate 11 · 1961</p>
+        <h3>What Is a Number, that a Man May Know It?</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span>Plate 10 · <b>What the Frog's Eye Tells the Frog's Brain</b></span>
+    <span>Source: <a href="https://labs.la.utexas.edu/gilden/files/2016/04/WhatTheFrogsEyeTellsTheFrogsBrain.pdf">IEEE reprint (PDF)</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Facsimile viewer"><img alt=""><div class="cap"></div></div>
+</body>
+</html>
