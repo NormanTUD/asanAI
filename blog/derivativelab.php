@@ -13,9 +13,9 @@ tags: math-heavy, code-heavy
 -->
 
 <div class="md" data-mathlevel="55">
-    In AI, we don't always know the right answer immediately. Instead, we use a **Loss Function**, think of this as a “Scoreboard” that tells us how many mistakes the AI is making. 
+    In AI, we don't always know the right answer immediately. Instead, we use a **Loss Function** — a scoreboard that measures how wrong the AI's predictions are. 
 
-    The goal of an AI is to get the lowest score possible (zero mistakes). To do that, the AI has to figure out which direction to move to find the bottom of the valley.
+    The goal is to make the loss as small as possible; zero is not always attainable, because noisy data leave an irreducible error. To do that, the AI has to figure out which direction to move to find the bottom of the valley.
 
     ## Finding the Way Down
     Imagine you are standing on a foggy mountain. You can't see the bottom, but you can feel the ground under your feet. To find the way down, you:
@@ -27,14 +27,18 @@ tags: math-heavy, code-heavy
     
     $$\text{Slope} \approx \frac{f(x + h) - f(x)}{h}$$
     
+    Long before anybody wrote $f'(x)$, Greek geometers were already comparing a curve with a straight line. Eudoxus of Cnidus (c. 408–355 BCE) pinned down curved areas by inscribing and circumscribing polygons until the gap could be made smaller than any assigned quantity — the method of exhaustion, the ancestor of the limit \cite{eudoxus_mactutor}. Archimedes of Syracuse (c. 287–212 BCE) used the same engine to square a parabolic segment and, in *On Spirals*, to draw tangents at a point of a curve; he had the idea of an instantaneous direction, though not the algebra \cite{archimedes_works_heath}.
+
     ### Moving Toward the Goal: Gradient Descent
     Once the AI knows which way is “downhill,” it updates its position. This is called **Gradient Descent**. 
     
     * **The Slope:** Tells us the direction.
-    * **The Learning Rate:** Tells us how big of a step to take.
+    * **The Learning Rate:** Scales the step: the actual move is $\eta \times \text{slope}$, so steep ground still produces a longer step.
     * **The Update:** If the slope is positive (going up), the AI moves the opposite way to go down.
 
     $$x_{\text{new}} = x_{\text{old}} - (\text{Learning Rate} \times \text{Slope})$$
+
+    The recipe has a history. Cauchy proposed the method of steepest descent in 1847 as a way to solve systems of equations, moving along the negative gradient with a chosen step \cite{cauchy1847}. Hadamard's 1908 work made the same idea a practical optimization method \cite{hadamard1908}. Neither had neural networks in mind; they were solving equations and minimizing functions. The “learning rate” is the modern name for the step length that Cauchy already had to choose.
 </div>
 
 <style>
@@ -177,12 +181,20 @@ This is the situation every learning algorithm is in: it cannot see the whole la
 	<div data-fg="result" aria-live="polite" style="margin-top: 12px;"></div>
 </div>
 
+<div class="md">
+The next leap came from the Kerala school on the Malabar coast. Madhava of Sangamagrama (c. 1350–1425) and his successors obtained infinite series for $\pi$, sine and cosine around 1400, more than two centuries before Europe rediscovered them \cite{madhava_mactutor}. The *Yuktibhāṣā* (c. 1550) preserves the derivations, whose repeated summation of ever-smaller terms amounts to term-by-term integration (\cite[Yuktibhāṣā]{madhava}). Their work was not a formal derivative, but it handled change and accumulation with infinite processes long before Newton and Leibniz made such processes a general method.
+</div>
+
 <div class="md" data-mathlevel="45">
 ### Understanding the Partial Derivative ($\partial$)
 
 Above, we looked at a function with only one input ($x$). For that, we use the standard $d$ to represent a derivative. However, AI models usually have millions of inputs. When we deal with multiple variables, we use the **partial derivative** symbol: $\partial$.
 
-The symbol $\partial$ for partial derivatives was introduced by the Marquis de Condorcet in \citeyear{condorcet1770}; the modern $\partial/\mathrm{d}x$ notation was created by \citeauthor{legendre1786} in \citetitle{legendre1786} (\citeyear{legendre1786}) — a suggestion he later abandoned — and was only popularized after Jacobi reintroduced it in 1841 (according to \citeauthor{historyofmathematicalnotation}, Vol. 2, p. 225).
+The symbol $\partial$ for partial derivatives appears in one of its first known uses in the work of the Marquis de Condorcet in \citeyear{condorcet1770}; the modern partial-derivative notation $\partial f/\partial x$ was created by \citeauthor{legendre1786} in \citetitle{legendre1786} (\citeyear{legendre1786}) — a suggestion he later abandoned — and was only popularized after Jacobi reintroduced it in 1841 (according to \citeauthor{historyofmathematicalnotation}, Vol. 2, p. 225).
+
+Calculus became a general method in the seventeenth century. Newton called the quantities he differentiated *fluents* and their rates *fluxions*; his *Method of Fluxions* circulated in manuscript long before it appeared in print in 1736 \cite{newton1736fluxions}. Leibniz, working independently, chose the differential notation $dy/dx$ and the long $\int$; his *Nova Methodus pro Maximis et Minimis* (1684) announced the algorithm to a wider public \cite{leibniz1684nova}. Their priority dispute was bitter, but the notation that survived is largely Leibniz's.
+
+The modern definition is a limit, and that is a nineteenth-century achievement. Cauchy treated the derivative as the limit of the difference quotient in his 1823 *Résumé des leçons sur le calcul infinitésimal* \cite{cauchy1823resume}. Weierstrass went further, replacing talk of infinitely small quantities with the $\varepsilon$–$\delta$ inequalities that make “arbitrarily close” precise; his 1872 example of a continuous curve with no derivative anywhere showed why the rigor was needed \cite{weierstrass_mactutor}. The secant in the lab is an approximation; the derivative is what those secants approach.
 
 #### The Theory: Isolation
 The partial derivative is a way to measure how a single variable affects the final result while ignoring everything else.
@@ -196,31 +208,33 @@ The partial derivative is a way to measure how a single variable affects the fin
 Imagine an AI trying to predict house prices. To improve, the AI needs to minimize its **Loss** ($f$), which represents the mathematical “distance” between its guess and the actual price. In this scenario, the Loss depends on two internal settings the AI is adjusting: the weight given to **Size** ($x$) and the weight given to **Age** ($y$).
 
 Let's define the **Loss Function** as:
-$$f(x, y) = x^2 + 3y$$
+$$f(x, y) = x^2 + 3y^2$$
 
 To reduce the error, the AI needs to know which direction to “step” by calculating partial derivatives.
 
 **Step A: Find the influence of the Size weight ($\frac{\partial f}{\partial x}$)**
 To do this, we treat the **Age weight** ($y$) as a constant.
 * The derivative of $x^2$ is $2x$.
-* Since $3y$ is treated as a constant, its derivative is $0$.
+* Since $3y^2$ is treated as a constant, its derivative is $0$.
 * **Result:** $\frac{\partial f}{\partial x} = 2x$.
 * **Concrete Number:** If the current weight for size is $x = 4$, the gradient is $2(4) = \mathbf{8}$. This tells the AI that increasing this weight will significantly increase the error, so it should move in the opposite direction.
 
 **Step B: Find the influence of the Age weight ($\frac{\partial f}{\partial y}$)**
 Now, we treat the **Size weight** ($x$) as the constant.
 * Since $x^2$ is now a constant, its derivative is $0$.
-* The derivative of $3y$ is $3$.
-* **Result:** $\frac{\partial f}{\partial y} = \mathbf{3}$.
-* **Concrete Number:** The gradient is a constant 3. This means for every unit we increase the age weight, the error increases by 3 units. To minimize loss, the AI knows it must decrease this weight.
+* The derivative of $3y^2$ is $6y$.
+* **Result:** $\frac{\partial f}{\partial y} = 6y$.
+* **Concrete Number:** At $y = 1$ the slope is $6$; nearer $y = 0$ it is smaller, and it changes sign if $y$ crosses zero. To minimize loss, the AI moves the weight toward zero.
 
 #### Why it Matters for AI
-The AI combines these individual slopes into a **Gradient Vector**:
-$$\nabla f = [8, 3]$$
+At the current point $(x, y) = (4, 1)$, the AI combines these individual slopes into a **Gradient Vector**:
+$$\nabla f = [8, 6]$$
 
-This vector tells the AI exactly how much to adjust each “knob” (Size and Age) to reach the goal. Just like the **“Take 1 Step Down”** button, the AI uses these numbers to move toward the minimum error by updating each variable independently:
+This vector gives the local direction and rate of steepest increase; the AI moves against it by a step set by the learning rate. Just like the **“Take 1 Step Down”** button, the AI uses these numbers to move toward the minimum error by updating each variable independently:
+
+A gradient is more than a list of partials: it is the direction in which the function rises fastest, and its length is that maximal rate of change. The same idea gives the **directional derivative** in any unit direction $u$, namely $\nabla f \cdot u$. In one dimension the only directions are left and right, which is why a single slope suffices; with millions of weights, the gradient is the compact first-order summary of “which way is uphill” that the model can afford \cite{hadamard1908}.
 * $x_\text{new} = x_\text{old} - (\text{Learning Rate} \times 8)$
-* $y_\text{new} = y_\text{old} - (\text{Learning Rate} \times 3)$
+* $y_\text{new} = y_\text{old} - (\text{Learning Rate} \times 6)$
 
 </div>
 
