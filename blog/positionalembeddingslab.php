@@ -30,6 +30,8 @@ The challenge of processing text in parallel (instead of word-by-word like older
 
 * **The “\citetitle{vaswani2017attention}” Paper:** This landmark work by Vaswani et al. replaced sequential processing with the Transformer architecture. Since Transformers have no inherent sense of order, the authors introduced **Sinusoidal Positional Encodings**.
 * **Why Waves?** The researchers chose alternating sine and cosine functions because they allow the model to attend to relative positions. The different frequencies, ranging from “fast” wiggles to “slow” curves, act like a multi-scale clock, marking every position in a sequence with a unique, bounded mathematical signature.
+
+Vaswani et al. chose the base 10000 so that the wavelengths form a geometric progression: the slowest pair completes one cycle every $10000\cdot 2\pi$ positions, and each faster pair is a fixed factor quicker. The paper's motivation was not only uniqueness but linearity: for any fixed offset $k$, $PE_{pos+k}$ is a fixed linear function of $PE_{pos}$, so attention can learn relative distance without a lookup table (\cite{vaswani2017attention}). The authors called this a hypothesis about why the scheme would help; later work confirmed the inductive bias but also showed its limits.
 </div>
 
 <div class="md" data-mathlevel="35">
@@ -85,9 +87,9 @@ That's it: $\cos\theta$ is the horizontal position, $\sin\theta$ is the vertical
 </div>
 
 <div class="optional md" data-headline="History and Etymology of Sine and Cosine">
-The concept originates in ancient Indian astronomy. Indian Astronomer \citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* (“bowstring”) to describe the half-chord of a circle, which is exactly what sine measures geometrically. He needed it to compute planetary positions and predict eclipses in his treatise *\citetitle{indianastronomer}* (\citetitle{indianastronomer}, ch. 1-2). Arab scholars later transliterated this as *jiba*, which, due to the lack of vowels in written Arabic, was misread as *jayb* (“pocket” or “fold”). See the paper \citetitle{indianastronomerconstruction} if you want to know how \citeauthor{indianastronomer} constructed his tables.
+The concept originates in ancient Indian astronomy. Indian Astronomer \citeauthor{indianastronomer} (476-550 CE) used the Sanskrit *jyā* (“bowstring”) for a chord; its half, *ardha-jyā* (“half-chord”), is exactly what sine measures geometrically. He needed it to compute planetary positions and predict eclipses in his treatise *\citetitle{indianastronomer}* (\citetitle{indianastronomer}, ch. 1-2). Arab scholars later transliterated this as *jiba*, which, due to the lack of vowels in written Arabic, was misread as *jayb* (“pocket” or “fold”). See the paper \citetitle{indianastronomerconstruction} if you want to know how \citeauthor{indianastronomer} constructed his tables.
 
-In \citeyear{chester1145}, \citeauthor{chester1145}, who also produced the first Latin translation of \citealternativetitle{alkwarizma}'s foundational work on algebra that also inspired the term *algebra* (from 'Al-Jabr'; his personal name also inspired the term *algorithm*), translated *jayb* into the Latin ***sinus*** (“curve,” “bay,” or “fold”).
+In \citeyear{chester1145}, \citeauthor{chester1145} produced the first Latin translation of \citealternativetitle{alkwarizma}'s foundational work on algebra, which gave English the term *algebra* (from 'Al-Jabr'; Al-Khwarizmi's own name gave us *algorithm*). In his translation of al-Khwarizmi's astronomical tables he rendered the Arabic *jayb* as the Latin ***sinus*** (“curve,” “bay,” or “fold”).
 
 **Cosine** (“complement's sine”) was later coined by \citeauthor{gunter1620} in his \citeyear{gunter1620} work \citetitle{gunter1620}. It describes the sine of the complementary angle:
 
@@ -109,7 +111,7 @@ $$\cos(\theta) = \sin\!\left(\tfrac{\pi}{2} - \theta\right)$$
 <div class="md" data-mathlevel="40">
 ### How are Sine and Cosine calculated?
 
-Computers evaluate sine and cosine using **Taylor Series** (infinite polynomial approximations):
+Calculators and math libraries usually evaluate sine and cosine with CORDIC or minimax polynomial approximations; the **Taylor series** below is the simplest polynomial approximation to reason about, not necessarily the algorithm your CPU runs:
 
 $$\sin\theta = \theta - \frac{\theta^3}{3!} + \frac{\theta^5}{5!} - \frac{\theta^7}{7!} + \dots \qquad \cos\theta = 1 - \frac{\theta^2}{2!} + \frac{\theta^4}{4!} - \frac{\theta^6}{6!} + \dots$$
 
@@ -189,7 +191,7 @@ The wave plots above show each dimension's projection individually, flat curves 
 
 **Translational symmetry.** The **blue segment** (pos 5 to 8) and the **red segment** (pos 105 to 108) have the **same length** (equal chords of the helix), even though each points in a different direction as the helix turns. A fixed offset $k$ corresponds to a fixed rotation matrix $M_k$ independent of absolute position, just like a clock face lets you compute “3 hours from now” regardless of what time it currently is.
 
-**Generalization to unseen lengths.** Because the geometry of “nearby” vs “far away” is baked into the encoding rather than memorized, Transformers can generalize to sequence lengths they were never trained on.
+**Generalization to unseen lengths.** The encoding is defined for every integer position, and its geometry makes “nearby” vs “far away” explicit. But trained Transformers still extrapolate poorly beyond their training window: attention has never seen the larger angles, and quality degrades. This gap is why relative, rotary, and interpolation-based schemes were developed (\cite{peng2023yarn, chen2023position}).
 
 **Try rotating the 3D plot**, from directly above you will see the circular cross-section (Dims 0, 1). From the side you will see the axial drift (Dim 2). The two colored segments always subtend the same arc.
 </div>
@@ -203,7 +205,7 @@ Recall the rotation matrix for each sine-cosine pair at frequency $\omega$:
 
 $$M_k = \begin{pmatrix} \cos(k\omega) & \sin(k\omega) \\ -\sin(k\omega) & \cos(k\omega) \end{pmatrix}$$
 
-The set $\{M_k : k \in \mathbb{R}\}$ satisfies all four axioms of a **group** — closure, associativity, an identity ($M_0 = I$), and an inverse ($M_{-k}$) — so it is the **circle group** $SO(2)$, the group of all 2D rotations. (For the full four-axiom treatment and the history of the group concept, see the <a href="math_iv">Basic Math IV</a> lesson.) Since a full PE vector is a stack of independent sine-cosine pairs at different frequencies, the complete positional encoding lives in a **product of circle groups, a torus**, the same manifold we visualised as a helix above.
+The set $\{M_k : k \in \mathbb{R}\}$ satisfies all four axioms of a **group** — closure, associativity, an identity ($M_0 = I$), and an inverse ($M_{-k}$) — so it is the **circle group** $SO(2)$, the group of all 2D rotations. (For the full four-axiom treatment and the history of the group concept, see the <a href="math_iv">Basic Math IV</a> lesson.) Since a full PE vector is a stack of independent sine-cosine pairs at different frequencies, the complete positional encoding lives in a **product of circle groups, a torus**. The helix above is not the torus itself; it is a one-dimensional curve wound around it, tracing how a single position moves as the index increases.
 
 ### Why the Group Structure Matters for Attention
 
@@ -211,7 +213,7 @@ The set $\{M_k : k \in \mathbb{R}\}$ satisfies all four axioms of a **group** �
 2. **Compositions compose predictably**: “3 forward, then 5 forward” equals “8 forward” ($M_3 \cdot M_5 = M_8$).
 3. **Reversibility**: the model can ask “what was 3 positions *before* me?” via $M_{-3}$.
 
-The attention mechanism learns these rotations through its $Q$ and $K$ linear projections. The group structure guarantees that once the model learns the “shape” of an offset, it **generalises to every position in the sequence for free**. No special circuitry, no lookup tables, just linear algebra riding on top of algebraic symmetry.
+The rotations themselves are fixed by the encoding; the $Q$ and $K$ linear projections learn to read the rotated coordinates. The group structure is an inductive bias, not a guarantee: an offset that works at one location is represented the same way everywhere, but training still has to discover which offsets matter. No special circuitry, no lookup tables, just linear algebra riding on top of algebraic symmetry.
 
 **The aha-moment:** Positional encoding doesn't just *label* positions, it gives the model an **algebraic compass** that works identically everywhere in the sequence.
 
@@ -242,13 +244,21 @@ The need to encode sequential order is as old as neural sequence modeling itself
 
 **Learned absolute embeddings (2018–2019).** \citealternativetitle{firstgpt}, \citealternativetitle{bert}, and \citealternativetitle{gpt2} replaced sinusoids with a trainable embedding matrix. Simple and effective, but unable to generalize beyond the maximum trained length.
 
-**Relative position encodings (2018).** Shaw et al. (\citetitle{shaw2018relative}) argued that what matters is the *distance* between tokens, not their absolute index. A learned bias based on $(i - j)$ is injected into attention logits before softmax, extending the dynamic alignment intuition of \citeauthor{bahdanau2014} to position itself.
+Learned absolute embeddings are a matrix $E\in\mathbb{R}^{L_{\max}\times d}$ indexed by position and trained end to end. BERT used a 512-token table (\cite{bert}); GPT-2 used 1024 (\cite{gpt2}). Each row is a free parameter, so a position beyond $L_{\max}$ has no vector at all: the model cannot even be run, let alone extrapolate. That is the trade-off the sinusoids tried to avoid. Learned positions fit the training distribution better, but fixed sinusoids at least assign a value to every integer position, however poorly the trained model uses the far ones.
+
+**Relative position encodings (2018).** Shaw et al. (\citetitle{shaw2018relative}) argued that what matters is the *distance* between tokens, not their absolute index. They learned a vector for each clipped relative offset and added it to the key and value representations, extending the dynamic alignment intuition of \citeauthor{bahdanau2014} to position itself. T5 later simplified this to a learned per-head bias on the attention logits (\cite{raffel2020t5}).
+
+Shaw et al. did not add a bias to the logits. They learned a vector for each clipped relative offset and added it to the key and value representations, so the query-key score contains a term $x_iW^Q(a_{ij}^K)^\top$ on top of the usual content match (\cite{shaw2018relative}). T5 simplified the idea: a learned scalar bias per head is added directly to the attention logits, one bias per bucket of relative distance (\cite{raffel2020t5}). In both cases the representation of a distance is independent of where it occurs in the sequence, which is why relative schemes extrapolate better than absolute tables.
 
 **RoPE (2021).** Su et al. (\citetitle{rope2021}) encode absolute position as a **rotation** in the complex plane applied to query and key vectors. Since the dot product of two rotated vectors depends only on the *angle difference*, absolute information naturally yields a relative signal. Now the dominant scheme in open-weight LLMs.
 
+RoPE multiplies query and key vectors by a position-dependent complex rotation. Because $q_m^\top k_n$ depends only on $m-n$, the attention score is relative by construction, while the vectors themselves still carry absolute phase (\cite{rope2021}). The scheme is elegant but not automatically length-extrapolating: rotary frequencies are fixed at pre-training, and quality degrades past the trained window. Position Interpolation rescales positions to fit the original range (\cite{chen2023position}); YaRN interpolates frequencies and adjusts the attention temperature (\cite{peng2023yarn}). Standard versions of both need a short fine-tuning pass; YaRN's Dynamic Scaling variant can stretch the window without training.
+
 **ALiBi (2022).** Press et al. (\citetitle{alibi2022}) use no positional embeddings at all, just a fixed **linear penalty** proportional to query-key distance, with a different slope per head. Zero learned parameters, strong length extrapolation.
 
-**Length extension.** Techniques like **Position Interpolation** and **YaRN** allow models trained on 4K tokens to operate over 100K+ without retraining, by rescaling or frequency-adjusting existing positional schemes.
+ALiBi takes the opposite route: it adds no position vector at all. Each attention head receives a fixed linear penalty $-m_h\,(i-j)$ on the score for a query at position $i$ and a key at $j\le i$, with a head-specific slope $m_h$; the slopes form a geometric sequence (\cite{alibi2022}). Because the penalty is defined for any distance, a model trained on short sequences can be evaluated on much longer ones, though quality still degrades gradually. ALiBi is the cleanest demonstration that relative distance, not absolute index, is what many tasks actually need.
+
+**Length extension.** Techniques like **Position Interpolation** (\cite{chen2023position}) and **YaRN** (\cite{peng2023yarn}) let models trained on 4K tokens operate over 32K–128K by rescaling or frequency-adjusting existing positional schemes. Position Interpolation needs about 1,000 fine-tuning steps; standard YaRN needs a short fine-tuning pass, though its Dynamic Scaling variant can stretch the window without training.
 </div>
 
 <div class="mn-quiz" data-quiz="positionalembeddingslab"><script type="application/json">{"title": "Positional embeddings", "questions": [{"q": "Why do transformers need positional information at all?", "options": ["Attention by itself ignores the order of the tokens", "To keep an exact running count of the tokens seen so far", "To speed up training by sorting tokens first", "Because the tokenizer strips out all the spaces"], "answer": 0, "explain": "Without positions, shuffling the words would give the same result."}, {"q": "What does the original sinusoidal encoding use?", "options": ["Sines and cosines at many different frequencies", "The integer id of each token, scaled down by a constant", "A random vector sampled once per position", "The length of the word, encoded as a number"], "answer": 0, "explain": "Each pair of dimensions oscillates at its own frequency, like the hands of a clock."}, {"q": "Why are sine and cosine pairs convenient?", "options": ["Shifting the position corresponds to a rotation, so relative offsets are easy to express", "They are always positive, so neighbouring values never cancel each other out when summed", "They never repeat exactly, so every position stays distinct forever after", "They require no computation at inference time, only during training runs"], "answer": 0, "explain": "This rotation property is the idea that RoPE later built on directly."}, {"q": "In which paper did the transformer and its sinusoidal positional encoding appear?", "options": ["The 2017 paper “Attention Is All You Need”", "The 2015 paper “Deep Residual Learning”", "The 2012 paper “ImageNet Classification”", "The 2014 paper “Generative Adversarial Nets”"], "answer": 0, "explain": "Vaswani et al. introduced the architecture and the sine/cosine encoding."}]}</script></div>
