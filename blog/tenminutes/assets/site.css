@@ -2539,3 +2539,9 @@ html[data-theme="dark"] .btn-demo.is-on { background: var(--tm-green); border-co
 	overflow-x: auto;
 }
 .formula code { background: transparent; padding: 0; color: inherit; }
+
+.agent-msg--warning {
+	border-left: 2px solid var(--tm-coral);
+	background: rgba(223, 120, 95, 0.1);
+}
+.agent-msg--warning .am-kicker { color: var(--tm-coral); }

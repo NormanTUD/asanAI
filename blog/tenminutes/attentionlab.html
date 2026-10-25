@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="A ten-minute interactive guide to attention: queries, keys, values, softmax, multi-head attention, and what attention maps do not tell you.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>The Semantic Tug-of-War — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="attentionlab" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<header class="topbar">
+		<a class="brand" href="index.html" aria-label="Ten Minutes, home">
+			<span class="brand-mark">10<sup>′</sup></span>
+			<span class="brand-name"><b>Ten</b> Minutes</span>
+			<span class="brand-by">ScaDS.AI</span>
+		</a>
+		<nav class="topnav" aria-label="Main">
+			<a href="index.html">Home</a>
+			<a href="advent.html">Calendar</a>
+			<a href="index.html#library">Library</a>
+			<button class="icon-btn" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Dark mode">
+				<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.7 6.7 0 0 0 9.8 9.8z"/></svg>
+				<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+			</button>
+		</nav>
+	</header>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<p class="kicker">Day 17 · Part 4 · Architecture</p>
+					<h1>The semantic<br><em>tug-of-war.</em></h1>
+					<p class="hero-deck">
+						Attention is the one place inside a transformer where a token can take information
+						from another token. <strong>Query, key, value</strong>: what am I looking for, what
+						do you contain, what will I carry away? Click a word and watch the sentence decide
+						what it means.
+					</p>
+					<div class="hero-meta">
+						<span class="pill pill--green">10 minutes</span>
+						<span class="pill">Some math</span>
+						<span class="pill pill--blue">Attention explorer</span>
+						<span class="pill">Field notes</span>
+					</div>
+				</div>
+				<div class="dial-wrap" aria-hidden="true">
+					<div class="dial">
+						<div class="dial-ticks" data-ticks></div>
+						<div class="dial-orbit"><span style="--a:15deg"></span><span style="--a:135deg"></span><span style="--a:255deg"></span></div>
+						<div class="dial-inner">
+							<span class="dial-time">10′</span>
+							<span class="dial-label">one idea per visit</span>
+							<span class="dial-sub">read · play · explain</span>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="problem">
+						<div class="section-kicker"><span class="sk-num">01</span> The problem</div>
+						<h2 class="section-title">A word is not a meaning until it has neighbours.</h2>
+						<div class="prose">
+							<p>
+								“Apple” in isolation is ambiguous. In <em>I ate a juicy apple</em>, the word
+								“juicy” pulls its vector toward the fruit cluster. In <em>Apple released a
+								new chip</em>, “released” pulls it toward the company cluster. A static
+								embedding cannot do that; it gives every occurrence of “apple” the same
+								vector. Attention is how the model rewrites the vector using the other words
+								in the context.
+							</p>
+							<p>
+								The classic case is <strong>“bank”</strong>: river bank or money bank? The
+								sentence must decide. Attention lets each token ask the rest of the sequence:
+								<em>which of you matters to me right now?</em> The answer is a weighted
+								average, not a dictionary lookup.
+							</p>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">Meaning is movement.</p>
+							<p class="aha-sub">The contextual vector of “bank” is not its dictionary entry; it is a new position produced by the gravitational pull of the words it attends to.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="qkv">
+						<div class="section-kicker"><span class="sk-num">02</span> The handshake</div>
+						<h2 class="section-title">Query, key, value.</h2>
+						<div class="prose">
+							<p>
+								For every token, the model computes three vectors by multiplying its hidden
+								state with three learned matrices:
+							</p>
+							<ul>
+								<li><strong>Query (q)</strong> — what this token is looking for.</li>
+								<li><strong>Key (k)</strong> — what this token offers as a descriptor.</li>
+								<li><strong>Value (v)</strong> — the content this token will pass on if chosen.</li>
+							</ul>
+							<p>
+								The score between a query and a key is their dot product, scaled by the square
+								root of the key dimension. A large score means the vectors point in a similar
+								direction: “you are relevant to my search.” Softmax turns all the scores in a
+								row into weights that sum to one. The output is the weighted sum of the value
+								vectors.
+							</p>
+						</div>
+						<div class="formula">
+							<code>score<sub>i,j</sub> = (q<sub>i</sub> · k<sub>j</sub><sup>T</sup>) / √d<sub>k</sub><br>
+							α<sub>i,j</sub> = softmax<sub>j</sub>(score<sub>i,j</sub>)<br>
+							z<sub>i</sub> = Σ<sub>j</sub> α<sub>i,j</sub> v<sub>j</sub></code>
+						</div>
+						<div class="fieldnotes">
+							<h4>Why divide by √d<sub>k</sub>?</h4>
+							<p>As the dimension grows, dot products grow in magnitude and push softmax into a saturated regime with tiny gradients. The scaling keeps the scores in a healthy range. It changes the sharpness, not the meaning of the comparison.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="explorer">
+						<div class="section-kicker"><span class="sk-num">03</span> The explorer</div>
+						<h2 class="section-title">Who is talking to whom?</h2>
+						<div class="prose">
+							<p>
+								Below is an illustrative attention map for one sentence. Pick a query word and
+								a head. The bars under the words show how much of the query’s attention each
+								key receives. The numbers are hand-tuned to make the qualitative behaviour
+								visible; a real model’s heads are messier and only partly interpretable.
+							</p>
+						</div>
+
+						<div class="demo" id="attention-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Attention explorer <span>· demo 01</span></p>
+									<p class="demo-sub">Click a query word. Switch heads. Then open the matrix to see all rows at once.</p>
+								</div>
+								<span class="demo-badge">illustrative</span>
+							</div>
+							<div class="demo-body">
+								<div class="att-heads" id="att-heads" role="group" aria-label="Attention heads">
+									<button class="chip is-on" type="button" data-head="coref">Coreference</button>
+									<button class="chip" type="button" data-head="syntax">Syntax</button>
+									<button class="chip" type="button" data-head="meaning">Meaning</button>
+								</div>
+								<div class="att-sentence" id="att-sentence"></div>
+								<div class="demo-readout">
+									<div><b>Query</b><span id="att-query">she</span></div>
+									<div><b>Top attended</b><span id="att-top">Maria</span></div>
+									<div><b>Weight</b><span id="att-weight">0.48</span></div>
+								</div>
+								<div class="demo-controls">
+									<button class="btn-demo" type="button" id="att-matrix-toggle">Show attention matrix</button>
+									<label class="att-toggle" style="text-transform:none;letter-spacing:0;font-weight:500">
+										<input type="checkbox" id="att-causal"> Causal mask (decoder)
+									</label>
+								</div>
+								<div class="att-matrix" id="att-matrix" hidden>
+									<canvas id="att-matrix-canvas" aria-label="Attention matrix: rows are queries, columns are keys"></canvas>
+									<p class="pipe-note">Rows = query, columns = key. The causal mask removes the future (upper-right triangle) and renormalizes each row.</p>
+								</div>
+								<p class="meadow-caption" id="att-caption" style="color:var(--tm-muted)">The coreference head links “she” back to “Maria”.</p>
+							</div>
+							<div class="demo-foot">
+								The sentence: “Maria told the bank that she would repay the loan tomorrow.”
+								The toy is designed to show three different kinds of relation, not to reproduce
+								a specific trained head.
+							</div>
+						</div>
+
+						<div class="trythis">
+							<b>Try this</b>
+							<ol>
+								<li>Select <strong>“she”</strong> under the <strong>Coreference</strong> head. Where does it look? Now switch to <strong>Syntax</strong>. What changes?</li>
+								<li>Select <strong>“bank”</strong> under <strong>Meaning</strong>. Which words pull it toward finance?</li>
+								<li>Open the matrix and turn on the causal mask. Why does the upper-right triangle disappear? What would that mean during generation?</li>
+							</ol>
+						</div>
+					</section>
+
+					<section class="section-block" id="multi">
+						<div class="section-kicker"><span class="sk-num">04</span> Many heads</div>
+						<h2 class="section-title">One sentence, many lenses.</h2>
+						<div class="prose">
+							<p>
+								A single head can only attend from one perspective. The transformer runs
+								<a href="../attentionlab.php">several heads in parallel</a>, each with its own
+								projection matrices, and concatenates their outputs. In the original paper
+								there are 8 heads over a 512-dimensional model, so each head works in a
+								64-dimensional subspace. One head can chase syntax while another tracks
+								coreference; the final output projection mixes them back together.
+							</p>
+							<p>
+								This is <strong>not</strong> redundancy. Studies of BERT find that a small
+								number of heads do most of the work, some specialize in dependency relations,
+								and many can be pruned with little loss. But no single head is a clean parser,
+								and much attention lands on punctuation or special tokens. The picture is
+								distributed: syntax is partitioned across heads and depth, built bottom-up,
+								not read off one tidy tree.
+							</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Softmax is zero-sum</b><span>Each row sums to one. If one key gets more attention, every other key gets less. Attention is a finite budget.</span></div>
+							<div class="keypoint"><b>Columns are not zero-sum</b><span>Some tokens become information hubs, receiving attention from many queries.</span></div>
+							<div class="keypoint"><b>Context window</b><span>Attention can only see tokens inside the window. Memory and compute grow quadratically with window size.</span></div>
+							<div class="keypoint"><b>KV cache</b><span>During generation, past keys and values are cached so each new query need not recompute the whole prefix.</span></div>
+						</div>
+						<div class="prose">
+							<p>
+								Two beautiful connections are worth knowing. The attention operation is a
+								<strong>differentiable read head</strong> over a memory tape: query = address
+								request, keys = address tags, values = content. And modern Hopfield networks
+								show that attention is mathematically an associative memory retrieval. RAG
+								extends the same idea outside the model: retrieve documents by similarity and
+								put them in the context window.
+							</p>
+							<p>
+								There is also a strange corner case: <strong>attention sinks</strong>. In many
+								decoder-only models, a large share of attention flows to the first token even
+								when it carries no content. When streaming with a sliding window, evicting
+								that first token can collapse the model; keeping a few sink tokens pinned fixes
+								it. The model is not remembering their meaning — it is using them as a resting
+								place for the attention budget.
+							</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="limits">
+						<div class="section-kicker"><span class="sk-num">05</span> The limits</div>
+						<h2 class="section-title">An attention map is not an explanation.</h2>
+						<div class="prose">
+							<p>
+								It is tempting to read attention weights as “the model looked here.” That is
+								only partly true. The weights show where information was routed at one layer
+								and one head; they do not show what the feed-forward network did with it, how
+								the residual stream carried it, or whether the head is causally important.
+								Attention is a mechanism, not a confession.
+							</p>
+							<p>
+								The honest summary: attention is a learned, soft, differentiable routing
+								scheme. It is powerful because it lets every token see every other token in
+								one step, and it is limited because the routing is probabilistic, the context
+								is finite, and the weights are not a human-readable explanation.
+							</p>
+						</div>
+						<div class="myth-grid">
+							<div class="myth">
+								<b>Common misreading</b>
+								<span>“The model builds a syntax tree and then reads it.” Syntax is distributed across heads and layers, not stored as one parse object.</span>
+							</div>
+							<div class="myth myth--ok">
+								<b>Better frame</b>
+								<span>“Many specialist heads, coordinated through the residual stream, build structure bottom-up.” The representation is relational and distributed.</span>
+							</div>
+							<div class="myth">
+								<b>Common misreading</b>
+								<span>“High attention weight means the model used that token.” The value path and the rest of the network decide what actually matters.</span>
+							</div>
+							<div class="myth myth--ok">
+								<b>Better frame</b>
+								<span>“Attention routes information; the FFN and residual stream compute with it.” Interpretability needs both the routing and the computation.</span>
+							</div>
+						</div>
+					</section>
+
+					<nav class="lesson-nav" aria-label="Lesson navigation">
+						<a href="embeddinglab.html"><span class="ln-label">Previous</span><span class="ln-title">Meaning as geometry</span></a>
+						<a href="transformer.html"><span class="ln-label">Next</span><span class="ln-title">The whole machine</span></a>
+					</nav>
+
+					<div class="lesson-footer">
+						Condensed from <a href="../attentionlab.php">The Semantic Tug-of-War: How Transformers “Think”</a>
+						(Part 4, Lesson 6). The full chapter adds Q/K/V subspace projections, the
+						Sinkhorn identity, attention sinks, Hopfield networks, and the research on head
+						specialization.
+					</div>
+				</article>
+
+				<aside class="rail" aria-label="On this page">
+					<nav class="rail-nav">
+						<a href="#problem"><i></i>The problem</a>
+						<a href="#qkv"><i></i>Query, key, value</a>
+						<a href="#explorer"><i></i>The explorer</a>
+						<a href="#multi"><i></i>Many heads</a>
+						<a href="#limits"><i></i>The limits</a>
+					</nav>
+					<div class="rail-source">
+						Read the original:<br>
+						<a href="../attentionlab.php">The Semantic Tug-of-War</a>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</main>
+
+	<footer class="footer">
+		<div class="shell footer-grid">
+			<div>
+				<div class="footer-brand">10<sup>′</sup> Minutes</div>
+				<p>A compact companion to <a href="../index.php">From Nothing to ChatGPT</a>. Full sources and citations live in the long course.</p>
+			</div>
+			<nav aria-label="Footer">
+				<a href="index.html">Home</a>
+				<a href="advent.html">Calendar</a>
+				<a href="transformer.html">Next: Transformer</a>
+				<a href="../attentionlab.php">Full chapter</a>
+			</nav>
+		</div>
+	</footer>
+
+	<script src="assets/site.js"></script>
+	<script>
+	(function () {
+		"use strict";
+		document.querySelectorAll("[data-ticks]").forEach(function (box) {
+			for (var i = 0; i < 30; i++) {
+				var t = document.createElement("i");
+				t.style.transform = "rotate(" + (i * 12) + "deg) translateY(calc(min(330px, 76vw) * -0.44))";
+				box.appendChild(t);
+			}
+		});
+
+		var tokens = ["Maria", "told", "the", "bank", "that", "she", "would", "repay", "the", "loan", "tomorrow"];
+		var rules = {
+			coref: [
+				["she", "Maria", 0.50], ["Maria", "she", 0.18], ["she", "bank", 0.08],
+				["she", "loan", 0.06], ["bank", "she", 0.08], ["tomorrow", "she", 0.12]
+			],
+			syntax: [
+				["told", "Maria", 0.22], ["told", "that", 0.16], ["repay", "would", 0.30],
+				["repay", "loan", 0.20], ["would", "repay", 0.18], ["the", "bank", 0.18],
+				["the", "loan", 0.18], ["bank", "that", 0.12], ["loan", "tomorrow", 0.18]
+			],
+			meaning: [
+				["bank", "loan", 0.34], ["bank", "repay", 0.18], ["bank", "tomorrow", 0.08],
+				["loan", "bank", 0.26], ["repay", "loan", 0.24], ["tomorrow", "repay", 0.14],
+				["told", "bank", 0.10], ["Maria", "told", 0.18]
+			]
+		};
+		var heads = ["coref", "syntax", "meaning"];
+		var head = "coref";
+		var query = 5;
+		var showMatrix = false;
+		var causal = false;
+		var sentenceEl = document.getElementById("att-sentence");
+		var headsEl = document.getElementById("att-heads");
+		var queryEl = document.getElementById("att-query");
+		var topEl = document.getElementById("att-top");
+		var weightEl = document.getElementById("att-weight");
+		var captionEl = document.getElementById("att-caption");
+		var matrixWrap = document.getElementById("att-matrix");
+		var matrixCanvas = document.getElementById("att-matrix-canvas");
+		var matrixToggle = document.getElementById("att-matrix-toggle");
+		var causalEl = document.getElementById("att-causal");
+		var matrixApi = null;
+
+		function weights(h, qi) {
+			var w = tokens.map(function (_, j) {
+				var base = 0.025;
+				if (j === qi) base += 0.10;
+				if (Math.abs(j - qi) === 1) base += 0.05;
+				return base;
+			});
+			rules[h].forEach(function (rule) {
+				if (rule[0] === tokens[qi]) {
+					var j = tokens.indexOf(rule[1]);
+					if (j !== -1) w[j] += rule[2];
+				}
+			});
+			if (causal) {
+				for (var j = qi + 1; j < tokens.length; j++) w[j] = 0;
+			}
+			var sum = w.reduce(function (a, b) { return a + b; }, 0) || 1;
+			return w.map(function (x) { return x / sum; });
+		}
+		function renderSentence() {
+			if (!sentenceEl) return;
+			var w = weights(head, query);
+			var top = 0;
+			w.forEach(function (x, i) { if (x > w[top]) top = i; });
+			sentenceEl.innerHTML = "";
+			tokens.forEach(function (tok, i) {
+				var b = document.createElement("button");
+				b.type = "button";
+				b.className = "att-word" + (i === query ? " is-query" : "") + (i !== query && w[i] > 0.12 ? " attended" : "");
+				b.setAttribute("aria-label", tok + ", attention " + (w[i] * 100).toFixed(0) + " percent");
+				b.textContent = tok;
+				var bar = document.createElement("span");
+				bar.className = "att-bar";
+				bar.style.height = (3 + w[i] * 22).toFixed(1) + "px";
+				b.appendChild(bar);
+				if (i !== query) b.style.background = "rgba(113,189,86," + (0.04 + w[i] * 0.3).toFixed(3) + ")";
+				b.addEventListener("click", function () {
+					query = i;
+					renderSentence();
+					if (showMatrix && matrixApi) matrixApi.redraw();
+				});
+				sentenceEl.appendChild(b);
+			});
+			if (queryEl) queryEl.textContent = tokens[query];
+			if (topEl) topEl.textContent = tokens[top];
+			if (weightEl) weightEl.textContent = (w[top] * 100).toFixed(0) + "%";
+			if (captionEl) {
+				var headName = { coref: "Coreference", syntax: "Syntax", meaning: "Meaning" }[head];
+				if (head === "coref" && tokens[query] === "she") captionEl.textContent = "The coreference head links “she” back to “Maria”. The pronoun needs a referent; the head retrieves it.";
+				else if (head === "syntax" && tokens[query] === "repay") captionEl.textContent = "The syntax head favours “would” and “loan”: the auxiliary and the object frame the verb.";
+				else if (head === "meaning" && tokens[query] === "bank") captionEl.textContent = "The meaning head pulls “bank” toward “loan” and “repay”: in this sentence, the financial sense wins.";
+				else captionEl.textContent = "Head: " + headName + ". Query “" + tokens[query] + "” attends most to “" + tokens[top] + "” (" + Math.round(w[top] * 100) + "%). Every row sums to 1.";
+			}
+		}
+		function drawMatrix(ctx, w, h) {
+			var c = TM.colors();
+			var n = tokens.length;
+			var pad = 6;
+			var size = Math.min((w - 2 * pad) / n, (h - 2 * pad) / n);
+			var ox = (w - size * n) / 2;
+			var oy = (h - size * n) / 2;
+			ctx.clearRect(0, 0, w, h);
+			for (var i = 0; i < n; i++) {
+				var row = weights(head, i);
+				for (var j = 0; j < n; j++) {
+					var v = row[j];
+					var x = ox + j * size;
+					var y = oy + i * size;
+					ctx.fillStyle = v === 0 ? "rgba(120,140,150,.08)" : "rgba(57,169,214," + (0.08 + v * 0.9).toFixed(3) + ")";
+					ctx.fillRect(x, y, size - 1, size - 1);
+					if (i === query) {
+						ctx.strokeStyle = c.green;
+						ctx.lineWidth = 1.5;
+						ctx.strokeRect(x, y, size - 1, size - 1);
+					}
+				}
+			}
+			ctx.font = "500 8px ui-monospace, monospace";
+			ctx.textAlign = "center";
+			ctx.fillStyle = c.muted;
+			for (var k = 0; k < n; k++) {
+				ctx.fillText(tokens[k].slice(0, 4), ox + k * size + size / 2, oy - 3);
+				ctx.textAlign = "right";
+				ctx.fillText(tokens[k].slice(0, 4), ox - 3, oy + k * size + size / 2 + 3);
+				ctx.textAlign = "center";
+			}
+		}
+		if (sentenceEl) {
+			headsEl.querySelectorAll("[data-head]").forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					headsEl.querySelectorAll("[data-head]").forEach(function (x) { x.classList.remove("is-on"); });
+					btn.classList.add("is-on");
+					head = btn.getAttribute("data-head");
+					renderSentence();
+					if (showMatrix && matrixApi) matrixApi.redraw();
+				});
+			});
+			if (matrixToggle) {
+				matrixToggle.addEventListener("click", function () {
+					showMatrix = !showMatrix;
+					matrixWrap.hidden = !showMatrix;
+					matrixToggle.textContent = showMatrix ? "Hide attention matrix" : "Show attention matrix";
+					if (showMatrix && matrixCanvas) {
+						if (!matrixApi) {
+							matrixApi = TM.initCanvas(matrixCanvas, drawMatrix);
+							matrixCanvas.addEventListener("click", function (ev) {
+							var rect = matrixCanvas.getBoundingClientRect();
+							var n = tokens.length;
+							var size = Math.min((rect.width - 12) / n, (rect.height - 12) / n);
+							var oy = (rect.height - size * n) / 2;
+							var i = Math.floor((ev.clientY - rect.top - oy) / size);
+								if (i >= 0 && i < n) {
+									query = i;
+									renderSentence();
+									matrixApi.redraw();
+								}
+							});
+						} else {
+							matrixApi.redraw();
+						}
+					}
+				});
+			}
+			if (causalEl) {
+				causalEl.addEventListener("change", function () {
+					causal = causalEl.checked;
+					renderSentence();
+					if (showMatrix && matrixApi) matrixApi.redraw();
+				});
+			}
+			window.addEventListener("tm:theme", function () { if (showMatrix && matrixApi) matrixApi.redraw(); });
+			renderSentence();
+		}
+	})();
+	</script>
+</body>
+</html>
