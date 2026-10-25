@@ -73,13 +73,19 @@
 	TM.initCanvas = function (canvas, draw) {
 		var ctx = canvas.getContext("2d");
 		var raf = null;
+		var lastW = 0, lastH = 0, lastDpr = 0;
 		function paint() {
 			raf = null;
 			var rect = canvas.getBoundingClientRect();
 			if (!rect.width) return;
 			var dpr = Math.min(window.devicePixelRatio || 1, 2);
-			canvas.width = Math.round(rect.width * dpr);
-			canvas.height = Math.round(rect.height * dpr);
+			if (rect.width !== lastW || rect.height !== lastH || dpr !== lastDpr) {
+				canvas.width = Math.round(rect.width * dpr);
+				canvas.height = Math.round(rect.height * dpr);
+				lastW = rect.width;
+				lastH = rect.height;
+				lastDpr = dpr;
+			}
 			ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 			draw(ctx, rect.width, rect.height);
 		}

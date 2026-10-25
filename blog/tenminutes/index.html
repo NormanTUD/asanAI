@@ -47,12 +47,13 @@
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
 						</a>
 						<a class="btn btn--ghost" href="advent.html">Open the 31-door calendar</a>
+						<button class="btn btn--ghost" type="button" id="random-lesson">Surprise me</button>
 					</div>
 					<div class="hero-meta">
-						<span class="pill pill--green"><b>8</b> of 31 doors open</span>
-						<span class="pill">96 lessons condensed</span>
-						<span class="pill pill--blue">Interactive</span>
-						<span class="pill">No sign-up</span>
+						<span class="pill pill--green"><b>8</b> compact lessons open</span>
+						<span class="pill"><b>6</b> of 31 doors</span>
+						<span class="pill">96 lessons in the full course</span>
+						<span class="pill pill--blue">Progress saved locally</span>
 					</div>
 				</div>
 				<div class="dial-wrap" aria-hidden="true">
@@ -72,7 +73,7 @@
 				<div class="feature-strip" data-reveal>
 					<div class="feature-main">
 						<p class="kicker">The first ten minutes</p>
-						<h2>A machine that only guesses the next word.</h2>
+						<h2>A machine that predicts one token at a time.</h2>
 						<p>
 							That is the whole trick. Everything else — chat, code, translation, reasoning —
 							is that one prediction repeated in a loop, at enormous scale. Follow a sentence
@@ -98,6 +99,11 @@
 							<div><b>10′</b><span>each</span></div>
 						</div>
 					</div>
+				</div>
+				<div class="keypoints" style="margin-top:16px">
+					<div class="keypoint"><b>Read the claim</b><span>Each page states one thesis, then earns it with a compact argument — not a list of facts.</span></div>
+					<div class="keypoint"><b>Play the mechanism</b><span>Every lesson has a demo you can break. The toy is small on purpose; the mechanism is the real thing.</span></div>
+					<div class="keypoint"><b>Explain it back</b><span>At the end, a one-sentence prompt and an optional model answer. No score, no quiz, no timer.</span></div>
 				</div>
 			</section>
 
@@ -281,41 +287,50 @@
 		if (canvas) {
 			var pts = [];
 			var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-			TM.initCanvas(canvas, function (ctx, w, h) {
+			for (var i = 0; i < 38; i++) {
+				pts.push({
+					x: Math.random(),
+					y: Math.random(),
+					r: 0.7 + Math.random() * 1.8,
+					s: 0.004 + Math.random() * 0.012
+				});
+			}
+			var api = TM.initCanvas(canvas, function (ctx, w, h) {
 				var c = TM.colors();
+				var now = performance.now() / 1000;
 				ctx.clearRect(0, 0, w, h);
-				if (!pts.length) {
-					for (var i = 0; i < 34; i++) {
-						pts.push({ x: Math.random(), y: Math.random(), r: 0.7 + Math.random() * 1.7, s: 0.00008 + Math.random() * 0.00018 });
-					}
-				}
 				var green = c.dark ? "143,217,119" : "61,140,47";
 				var blue = c.dark ? "74,180,224" : "0,116,172";
 				pts.forEach(function (p) {
-					p.y -= p.s * (reduce ? 0 : 1) * 1000 / 60;
-					if (p.y < -0.05) p.y = 1.05;
+					var y = reduce ? p.y : (p.y - now * p.s) % 1;
+					if (y < 0) y += 1;
 					ctx.beginPath();
-					ctx.arc(p.x * w, p.y * h, p.r, 0, Math.PI * 2);
-					ctx.fillStyle = "rgba(" + blue + ",0.45)";
+					ctx.arc(p.x * w, y * h, p.r, 0, Math.PI * 2);
+					ctx.fillStyle = "rgba(" + blue + ",0.42)";
 					ctx.fill();
 				});
 				for (var a = 0; a < pts.length; a++) {
+					var ay = reduce ? pts[a].y : ((pts[a].y - now * pts[a].s) % 1 + 1) % 1;
 					for (var b = a + 1; b < pts.length; b++) {
+						var by = reduce ? pts[b].y : ((pts[b].y - now * pts[b].s) % 1 + 1) % 1;
 						var dx = (pts[a].x - pts[b].x) * w;
-						var dy = (pts[a].y - pts[b].y) * h;
+						var dy = (ay - by) * h;
 						var d = Math.hypot(dx, dy);
-						if (d < 130) {
-							ctx.strokeStyle = "rgba(" + green + "," + (0.12 * (1 - d / 130)) + ")";
+						if (d < 128) {
+							ctx.strokeStyle = "rgba(" + green + "," + (0.13 * (1 - d / 128)) + ")";
 							ctx.lineWidth = 0.7;
 							ctx.beginPath();
-							ctx.moveTo(pts[a].x * w, pts[a].y * h);
-							ctx.lineTo(pts[b].x * w, pts[b].y * h);
+							ctx.moveTo(pts[a].x * w, ay * h);
+							ctx.lineTo(pts[b].x * w, by * h);
 							ctx.stroke();
 						}
 					}
 				}
 			});
-			window.addEventListener("tm:theme", function () { window.dispatchEvent(new Event("resize")); });
+			if (!reduce) {
+				(function loop() { api.redraw(); requestAnimationFrame(loop); })();
+			}
+			window.addEventListener("tm:theme", function () { api.redraw(); });
 		}
 
 		var grid = document.getElementById("lesson-grid");
@@ -332,7 +347,29 @@
 				}
 			});
 			var count = document.getElementById("library-count");
-			if (count) count.textContent = grid.querySelectorAll(".lesson-card").length + " lessons · 10 min each";
+			var total = grid.querySelectorAll(".lesson-card").length;
+			if (count) count.textContent = total + " lessons · " + done.length + " completed";
+
+			var last = TM.storage.get("tm_last", null);
+			if (last && last.slug && done.indexOf(last.slug) === -1) {
+				var actions = document.querySelector(".hero-actions");
+				var cont = document.createElement("a");
+				cont.className = "btn";
+				cont.href = last.slug + ".html";
+				cont.textContent = "Continue: " + String(last.title || last.slug).replace(" — Ten Minutes", "");
+				actions.insertBefore(cont, actions.firstChild);
+			}
+		}
+
+		var randomBtn = document.getElementById("random-lesson");
+		if (randomBtn) {
+			randomBtn.addEventListener("click", function () {
+				var links = Array.prototype.slice.call(document.querySelectorAll("#lesson-grid .lesson-card"));
+				if (!links.length) return;
+				var all = links.map(function (a) { return a.getAttribute("href"); });
+				var pick = all[Math.floor(Math.random() * all.length)];
+				window.location.href = pick;
+			});
 		}
 	})();
 	</script>

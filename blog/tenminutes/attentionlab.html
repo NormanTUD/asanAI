@@ -267,6 +267,16 @@
 						</div>
 					</section>
 
+
+					<div class="explain-back">
+						<b>Explain it back</b>
+						<p>What do query, key, and value each do? Why is an attention map not an explanation?</p>
+						<details>
+							<summary>Compare with a model answer</summary>
+							<p>The query says what a token is looking for, the key says what a token offers as a descriptor, and the value is the content that travels if the match is strong. Scaled dot products and softmax turn the match into weights. The map shows routing at one head and layer, not what the FFN did with the information or whether that head is causally important.</p>
+						</details>
+					</div>
+
 					<nav class="lesson-nav" aria-label="Lesson navigation">
 						<a href="embeddinglab.html"><span class="ln-label">Previous</span><span class="ln-title">Meaning as geometry</span></a>
 						<a href="transformer.html"><span class="ln-label">Next</span><span class="ln-title">The whole machine</span></a>

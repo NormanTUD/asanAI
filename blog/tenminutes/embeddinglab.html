@@ -131,11 +131,14 @@
 									<div><b>Analogy lands on</b><span id="emb-result">Queen</span></div>
 								</div>
 								<div class="demo-controls">
-									<button class="btn-demo" type="button" data-direction="gender">Gender arrow</button>
-									<button class="btn-demo" type="button" data-direction="capital">Capital arrow</button>
-									<button class="btn-demo" type="button" data-direction="young">Young arrow</button>
+									<button class="btn-demo rel-btn" type="button" data-direction="gender" style="--rel:#39a9d6">Gender →</button>
+									<button class="btn-demo rel-btn" type="button" data-direction="royalty" style="--rel:#71bd56">Royalty ↑</button>
+									<button class="btn-demo rel-btn" type="button" data-direction="capital" style="--rel:#d4a13c">Capital ↗</button>
+									<button class="btn-demo rel-btn" type="button" data-direction="young" style="--rel:#df785f">Young ↖</button>
+									<button class="btn-demo" type="button" data-direction="all">Show all</button>
 									<button class="btn-demo" type="button" id="emb-clear">Clear</button>
 								</div>
+								<p class="vec-note" id="emb-direction-note" style="color:var(--tm-muted)">Each relation has its own arrow. The direction buttons overlay one family at a time; “all” shows that they are deliberately distinct.</p>
 								<p class="embed-legend" id="emb-caption" style="color:var(--tm-muted)">
 									<span><i style="background:#71bd56"></i>royalty</span>
 									<span><i style="background:#39a9d6"></i>gender</span>
@@ -273,6 +276,16 @@
 						</div>
 					</section>
 
+
+					<div class="explain-back">
+						<b>Explain it back</b>
+						<p>Why do embeddings often use cosine similarity instead of Euclidean distance, and what does a direction mean?</p>
+						<details>
+							<summary>Compare with a model answer</summary>
+							<p>Cosine measures the angle between vectors and ignores magnitude, so a frequent token that accumulated a longer vector is not penalised for being long. A direction is a reusable relationship: the arrow from man to woman can also take king to queen. The metaphor is powerful but approximate; real axes are latent features, not human labels.</p>
+						</details>
+					</div>
+
 					<nav class="lesson-nav" aria-label="Lesson navigation">
 						<a href="tokenizerlab.html"><span class="ln-label">Previous</span><span class="ln-title">Chopping text into tokens</span></a>
 						<a href="attentionlab.html"><span class="ln-label">Next</span><span class="ln-title">The semantic tug-of-war</span></a>
@@ -331,22 +344,22 @@
 
 		/* ── semantic map ────────────────────────────────────── */
 		var words = [
-			{ w: "Man", x: 0.24, y: 0.54, c: "#39a9d6" },
-			{ w: "Woman", x: 0.40, y: 0.54, c: "#39a9d6" },
-			{ w: "King", x: 0.24, y: 0.34, c: "#71bd56" },
-			{ w: "Queen", x: 0.40, y: 0.34, c: "#71bd56" },
-			{ w: "Uncle", x: 0.24, y: 0.72, c: "#39a9d6" },
-			{ w: "Aunt", x: 0.40, y: 0.72, c: "#39a9d6" },
-			{ w: "Prince", x: 0.24, y: 0.16, c: "#71bd56" },
-			{ w: "Princess", x: 0.40, y: 0.16, c: "#71bd56" },
-			{ w: "France", x: 0.62, y: 0.78, c: "#d4a13c" },
-			{ w: "Paris", x: 0.62, y: 0.62, c: "#d4a13c" },
-			{ w: "Germany", x: 0.76, y: 0.78, c: "#d4a13c" },
-			{ w: "Berlin", x: 0.76, y: 0.62, c: "#d4a13c" },
-			{ w: "Dog", x: 0.62, y: 0.30, c: "#df785f" },
-			{ w: "Puppy", x: 0.62, y: 0.16, c: "#df785f" },
-			{ w: "Cat", x: 0.78, y: 0.30, c: "#df785f" },
-			{ w: "Kitten", x: 0.78, y: 0.16, c: "#df785f" }
+			{ w: "Man", x: 0.18, y: 0.52, c: "#39a9d6" },
+			{ w: "Woman", x: 0.34, y: 0.52, c: "#39a9d6" },
+			{ w: "King", x: 0.18, y: 0.34, c: "#71bd56" },
+			{ w: "Queen", x: 0.34, y: 0.34, c: "#71bd56" },
+			{ w: "Uncle", x: 0.18, y: 0.70, c: "#39a9d6" },
+			{ w: "Aunt", x: 0.34, y: 0.70, c: "#39a9d6" },
+			{ w: "Prince", x: 0.18, y: 0.16, c: "#71bd56" },
+			{ w: "Princess", x: 0.34, y: 0.16, c: "#71bd56" },
+			{ w: "France", x: 0.54, y: 0.80, c: "#d4a13c" },
+			{ w: "Paris", x: 0.68, y: 0.66, c: "#d4a13c" },
+			{ w: "Germany", x: 0.54, y: 0.90, c: "#d4a13c" },
+			{ w: "Berlin", x: 0.68, y: 0.76, c: "#d4a13c" },
+			{ w: "Dog", x: 0.82, y: 0.52, c: "#df785f" },
+			{ w: "Puppy", x: 0.70, y: 0.36, c: "#df785f" },
+			{ w: "Cat", x: 0.90, y: 0.58, c: "#df785f" },
+			{ w: "Kitten", x: 0.78, y: 0.42, c: "#df785f" }
 		];
 		var analogies = [
 			{ a: "King", b: "Man", c: "Woman", target: "Queen", label: "King − Man + Woman" },
@@ -356,8 +369,15 @@
 		];
 		var dirSets = {
 			gender: [["Man", "Woman"], ["King", "Queen"], ["Uncle", "Aunt"], ["Prince", "Princess"]],
+			royalty: [["Man", "King"], ["Woman", "Queen"]],
 			capital: [["France", "Paris"], ["Germany", "Berlin"]],
 			young: [["Dog", "Puppy"], ["Cat", "Kitten"]]
+		};
+		var directionMeta = {
+			gender: { label: "gender", color: "#39a9d6", hint: "a horizontal arrow, repeated across four pairs" },
+			royalty: { label: "royalty", color: "#71bd56", hint: "a vertical arrow: an ordinary person becomes a royal" },
+			capital: { label: "capital", color: "#d4a13c", hint: "a diagonal up-right arrow: a country resolves to its capital" },
+			young: { label: "young", color: "#df785f", hint: "a diagonal up-left arrow: an adult becomes a juvenile" }
 		};
 		var selected = "King";
 		var analogyIndex = 0;
@@ -411,24 +431,30 @@
 			for (var gy = 0; gy < h; gy += 44) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke(); }
 
 			if (showDirection) {
-				dirSets[showDirection].forEach(function (pair) {
-					var a = get(pair[0]), b = get(pair[1]);
-					drawArrow(ctx, a.x * w, a.y * h, b.x * w, b.y * h, c.green, false);
+				var keys = showDirection === "all" ? Object.keys(dirSets) : [showDirection];
+				keys.forEach(function (key) {
+					var meta = directionMeta[key];
+					dirSets[key].forEach(function (pair) {
+						var a = get(pair[0]), b = get(pair[1]);
+						drawArrow(ctx, a.x * w, a.y * h, b.x * w, b.y * h, meta.color, false);
+					});
 				});
 			}
 
 			var an = analogies[analogyIndex];
 			var res = analogyResult(an);
 			var a = get(an.a), b = get(an.b), cc = get(an.c);
-			drawArrow(ctx, b.x * w, b.y * h, a.x * w, a.y * h, c.sky, true);
-			drawArrow(ctx, cc.x * w, cc.y * h, res.p.x * w, res.p.y * h, c.gold, true);
-			ctx.beginPath();
-			ctx.arc(res.p.x * w, res.p.y * h, 14, 0, Math.PI * 2);
-			ctx.fillStyle = "rgba(212,161,60,.22)";
-			ctx.fill();
-			ctx.strokeStyle = c.gold;
-			ctx.lineWidth = 1.2;
-			ctx.stroke();
+			if (!showDirection) {
+				drawArrow(ctx, b.x * w, b.y * h, a.x * w, a.y * h, c.sky, true);
+				drawArrow(ctx, cc.x * w, cc.y * h, res.p.x * w, res.p.y * h, c.gold, true);
+				ctx.beginPath();
+				ctx.arc(res.p.x * w, res.p.y * h, 14, 0, Math.PI * 2);
+				ctx.fillStyle = "rgba(212,161,60,.22)";
+				ctx.fill();
+				ctx.strokeStyle = c.gold;
+				ctx.lineWidth = 1.2;
+				ctx.stroke();
+			}
 
 			var nearest = nearestOf(selected);
 			if (nearest) {
@@ -463,6 +489,12 @@
 			if (nearestEl) nearestEl.textContent = nearest ? nearest.w : "—";
 			if (resultEl) resultEl.textContent = res.nearest.w;
 			if (captionEl) captionEl.setAttribute("aria-label", an.label + " lands near " + res.nearest.w);
+			var note = document.getElementById("emb-direction-note");
+			if (note) {
+				if (!showDirection) note.textContent = "Each relation has its own arrow. The direction buttons overlay one family at a time; “all” shows that they are deliberately distinct.";
+				else if (showDirection === "all") note.textContent = "Four relations, four different directions. Gender is horizontal, royalty vertical, capital up-right, young up-left. Real embeddings are noisier, but this is why a direction can act as a reusable operator.";
+				else note.textContent = "The " + directionMeta[showDirection].label + " direction is " + directionMeta[showDirection].hint + ". The same arrow appears in every pair of that family.";
+			}
 		}
 		if (canvas) {
 			api = TM.initCanvas(canvas, drawMap);
@@ -491,7 +523,8 @@
 			});
 			document.querySelectorAll("[data-direction]").forEach(function (btn) {
 				btn.addEventListener("click", function () {
-					showDirection = showDirection === btn.getAttribute("data-direction") ? null : btn.getAttribute("data-direction");
+					var next = btn.getAttribute("data-direction");
+					showDirection = showDirection === next ? null : next;
 					document.querySelectorAll("[data-direction]").forEach(function (x) { x.classList.remove("is-on"); });
 					if (showDirection) btn.classList.add("is-on");
 					if (api) api.redraw();

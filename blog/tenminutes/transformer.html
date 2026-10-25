@@ -278,6 +278,16 @@
 						</div>
 					</section>
 
+
+					<div class="explain-back">
+						<b>Explain it back</b>
+						<p>Walk through the six stages from text to next token, and say where the residual stream matters.</p>
+						<details>
+							<summary>Compare with a model answer</summary>
+							<p>Tokenize, embed, add position, run N blocks of attention plus feed-forward, unembed to logits, then decode one token. The residual stream is the shared workspace: every sublayer reads it, computes an update, and adds the update back. That identity path is also what lets gradients flow through a deep stack.</p>
+						</details>
+					</div>
+
 					<nav class="lesson-nav" aria-label="Lesson navigation">
 						<a href="attentionlab.html"><span class="ln-label">Previous</span><span class="ln-title">The semantic tug-of-war</span></a>
 						<a href="agents.html"><span class="ln-label">Next</span><span class="ln-title">When a model gets hands</span></a>

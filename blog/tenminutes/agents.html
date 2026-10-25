@@ -298,6 +298,16 @@
 						</div>
 					</section>
 
+
+					<div class="explain-back">
+						<b>Explain it back</b>
+						<p>What makes an agent different from a chatbot, and why is prompt injection a security problem?</p>
+						<details>
+							<summary>Compare with a model answer</summary>
+							<p>An agent is an LLM inside an observe–reason–act loop with tools, memory, and a permission model; a chatbot only returns text. Prompt injection is a security problem because the model reads untrusted text and cannot reliably separate data from instructions. A malicious page can therefore try to turn a tool-using agent against its user, so the boundary must be enforced by the architecture.</p>
+						</details>
+					</div>
+
 					<nav class="lesson-nav" aria-label="Lesson navigation">
 						<a href="transformer.html"><span class="ln-label">Previous</span><span class="ln-title">The whole machine</span></a>
 						<a href="advent.html#day-25"><span class="ln-label">Next</span><span class="ln-title">Reasoning and evaluation</span></a>
@@ -501,7 +511,7 @@
 			injectRun.addEventListener("click", function () {
 				if (hierarchy && hierarchy.checked) {
 					outcome.className = "injection-outcome good";
-					outcome.textContent = "Safe: the instruction hierarchy treats the page as untrusted data. The agent sees the injected sentence, quotes it as suspicious content, and does not execute it. The booking task continues.";
+					outcome.textContent = "Mitigated in this toy: the instruction hierarchy treats the page as untrusted data, so the agent quotes the injected sentence as suspicious content and does not execute it. A hierarchy reduces risk; it is not a guarantee. The system still needs least privilege, sandboxing, and confirmation gates.";
 					if (card) card.querySelector(".inject").className = "safe";
 				} else {
 					outcome.className = "injection-outcome bad";

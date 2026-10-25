@@ -142,6 +142,15 @@
 						<h2 class="section-title">Tokenization is a bias, not a preprocessing detail.</h2>
 						<div class="prose">
 							<p>
+								How is the vocabulary built? The workhorse is <strong>Byte Pair Encoding
+								(BPE)</strong>: start from characters, repeatedly merge the most frequent
+								adjacent pair in the training text, and stop at the target vocabulary size.
+								<strong>Unigram / SentencePiece</strong> fits a unigram language model over
+								candidate subwords and prunes the set that best explains the corpus.
+								<strong>Byte-level BPE</strong> starts from all 256 bytes, so every input is
+								representable; the price is that a non-ASCII character can take several tokens.
+							</p>
+							<p>
 								A tokenizer is fixed before a single weight is trained, and it prices every
 								language differently. A word that is one high-frequency subword in the
 								dominant language may need several tokens in another. For many lower-resource
@@ -247,6 +256,16 @@
 							<cite>From the full chapter</cite>
 						</div>
 					</section>
+
+
+					<div class="explain-back">
+						<b>Explain it back</b>
+						<p>Why can a model read a word it has never seen, and why is a token not a concept?</p>
+						<details>
+							<summary>Compare with a model answer</summary>
+							<p>An unknown word is split into subword pieces the vocabulary already contains, so it can still be represented. But a token is only a slot in a fixed vocabulary. Its meaning comes from training data; if the token was rare in pretraining, the slot can be almost empty — a glitch token — even though the string is tokenized correctly.</p>
+						</details>
+					</div>
 
 					<nav class="lesson-nav" aria-label="Lesson navigation">
 						<a href="history.html"><span class="ln-label">Previous</span><span class="ln-title">A very long fuse</span></a>
