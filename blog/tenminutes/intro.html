@@ -205,6 +205,13 @@
 								<div class="flow-detail" id="ladder-detail" style="border-color:var(--tm-line);background:var(--tm-paper-2);margin-top:14px">
 									<h4 id="ladder-title" style="color:var(--tm-petrol)">The concrete base</h4>
 									<p id="ladder-body" style="color:var(--tm-muted)">A model is, at bottom, a very large pile of numbers. Nothing here means anything; the meaning is in the pattern of numbers, and the pattern only appears when you climb a level.</p>
+									<div class="ladder-balance">
+										<div><b>What you gain</b><span id="ladder-gain">A precise, physical description of the machine.</span></div>
+										<div><b>What you lose</b><span id="ladder-loss">No meaning, no purpose, no explanation.</span></div>
+									</div>
+								</div>
+								<div class="demo-controls">
+									<button class="btn-demo" type="button" id="ladder-tour">Climb the ladder →</button>
 								</div>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>The same object, six descriptions. Each level compresses the one below — and the skill is knowing which level your question belongs to.</span></div>
@@ -340,41 +347,75 @@
 		var rungs = [
 			{
 				t: "The concrete base",
-				b: "A model is, at bottom, a very large pile of numbers. Nothing here means anything; the meaning is in the pattern of numbers, and the pattern only appears when you climb a level."
+				b: "A model is, at bottom, a very large pile of numbers. Nothing here means anything; the meaning is in the pattern of numbers, and the pattern only appears when you climb a level.",
+				g: "A precise, physical description of the machine.",
+				l: "No meaning, no purpose, no explanation."
 			},
 			{
 				t: "Tokens and vectors",
-				b: "Text is cut into tokens, and every token becomes a vector — a long list of numbers. Similar meanings end up near each other in this space, but no single number carries a concept."
+				b: "Text is cut into tokens, and every token becomes a vector — a long list of numbers. Similar meanings end up near each other in this space, but no single number carries a concept.",
+				g: "A computable representation of open-ended text.",
+				l: "Word boundaries and morphology disappear."
 			},
 			{
 				t: "Features and operations",
-				b: "Attention lets a token gather information from other tokens. The feed-forward network transforms each position. The residual stream carries earlier findings forward. These are the verbs of the machine."
+				b: "Attention lets a token gather information from other tokens. The feed-forward network transforms each position. The residual stream carries earlier findings forward. These are the verbs of the machine.",
+				g: "Operations that route and transform information.",
+				l: "You no longer see individual weights."
 			},
 			{
 				t: "Structures",
-				b: "A transformer block is attention plus feed-forward plus residual connections plus normalization. Stack the block N times and you have the architecture. The structure is simple; the learned weights are not."
+				b: "A transformer block is attention plus feed-forward plus residual connections plus normalization. Stack the block N times and you have the architecture. The structure is simple; the learned weights are not.",
+				g: "A reusable architecture with a clear data flow.",
+				l: "The learned parameters remain opaque."
 			},
 			{
 				t: "Concepts",
-				b: "Backpropagation, gradient descent, loss landscapes, topology, representation. These are names for patterns across many concrete operations — useful, but never a substitute for the operations themselves."
+				b: "Backpropagation, gradient descent, loss landscapes, topology, representation. These are names for patterns across many concrete operations — useful, but never a substitute for the operations themselves.",
+				g: "Names for patterns that generalize across models.",
+				l: "A name can hide the mechanism it describes."
 			},
 			{
 				t: "The abstract",
-				b: "Intelligence, meaning, agency, ethics, society. These are the words we use to argue about what the machine is for. They are real questions, but they are not answered by pointing at a matrix."
+				b: "Intelligence, meaning, agency, ethics, society. These are the words we use to argue about what the machine is for. They are real questions, but they are not answered by pointing at a matrix.",
+				g: "Questions about purpose, ethics, and society.",
+				l: "The claim cannot be tested by pointing at a matrix."
 			}
 		];
 		var rungButtons = Array.prototype.slice.call(document.querySelectorAll("[data-rung]"));
 		var title = document.getElementById("ladder-title");
 		var body = document.getElementById("ladder-body");
-		rungButtons.forEach(function (btn) {
-			btn.addEventListener("click", function () {
-				var i = parseInt(btn.getAttribute("data-rung"), 10);
-				rungButtons.forEach(function (b) { b.classList.remove("is-active"); });
-				btn.classList.add("is-active");
-				if (title) title.textContent = rungs[i].t;
-				if (body) body.textContent = rungs[i].b;
-			});
+		var gain = document.getElementById("ladder-gain");
+		var loss = document.getElementById("ladder-loss");
+		var tourBtn = document.getElementById("ladder-tour");
+		var tourTimer = null;
+		function selectRung(i) {
+			rungButtons.forEach(function (b) { b.classList.remove("is-active"); });
+			var active = rungButtons[i];
+			if (active) active.classList.add("is-active");
+			if (title) title.textContent = rungs[i].t;
+			if (body) body.textContent = rungs[i].b;
+			if (gain) gain.textContent = rungs[i].g;
+			if (loss) loss.textContent = rungs[i].l;
+		}
+		function stopTour() {
+			if (tourTimer) { clearInterval(tourTimer); tourTimer = null; }
+			if (tourBtn) tourBtn.textContent = "Climb the ladder →";
+		}
+		rungButtons.forEach(function (btn, i) {
+			btn.addEventListener("click", function () { stopTour(); selectRung(i); });
 		});
+		if (tourBtn) {
+			tourBtn.addEventListener("click", function () {
+				if (tourTimer) { stopTour(); return; }
+				var i = rungButtons.findIndex(function (b) { return b.classList.contains("is-active"); });
+				tourBtn.textContent = "Pause tour";
+				tourTimer = setInterval(function () {
+					i = (i + 1) % rungs.length;
+					selectRung(i);
+				}, 1400);
+			});
+		}
 	})();
 	</script>
 </body>

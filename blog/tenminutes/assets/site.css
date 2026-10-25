@@ -2849,3 +2849,33 @@ html[data-theme="light"] .demo-insight span { color: var(--tm-ink-soft); }
 }
 .image-trio figcaption { margin-top: 7px; }
 @media (max-width: 720px) { .image-trio { grid-template-columns: 1fr; } .image-trio img { aspect-ratio: 16/10; object-position: center; } }
+
+.ladder-balance {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+	margin-top: 12px;
+}
+.ladder-balance > div {
+	padding: 10px 12px;
+	border: 1px solid var(--tm-line);
+	border-radius: 8px;
+	background: var(--tm-paper-2);
+}
+.ladder-balance b {
+	display: block;
+	margin-bottom: 3px;
+	font-family: var(--tm-mono);
+	font-size: 0.53rem;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--tm-green-deep);
+}
+.ladder-balance span {
+	font-family: var(--tm-prose);
+	font-size: 0.8rem;
+	line-height: 1.45;
+	color: var(--tm-muted);
+}
+.ladder-balance > div:last-child b { color: var(--tm-coral); }
+@media (max-width: 560px) { .ladder-balance { grid-template-columns: 1fr; } }
