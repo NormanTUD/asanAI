@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Cal Newports Deep Work in 5–10 Minuten: Aufmerksamkeitsreste, vier Arbeitsphilosophien, die vier Regeln und ein ehrlicher Blick auf die Grenzen.">
+<meta name="color-scheme" content="dark light">
+<title>Deep Work · Die interaktive Essenz</title>
+<style>
+:root{--accent:#6ee7ff;--accent-2:#ffb454;--accent-3:#a78bfa;}
+/* ============================================================
+   SHARED SHELL — book explainers
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --bg:#080b10; --bg-soft:#0c1118; --panel:#101720; --panel-2:#141c26;
+  --ink:#f1eee6; --muted:#9aa7b4; --faint:#67737f;
+  --line:rgba(255,255,255,.10); --line-strong:rgba(255,255,255,.18);
+  --accent:#7dd3fc; --accent-2:#f5b04c; --accent-3:#9b8cff;
+  --good:#5ee0a0; --bad:#ff6b7a; --warn:#ffc861;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:"Inter","Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:18px; --r-lg:26px; --max:1180px; --ease:cubic-bezier(.22,1,.36,1);
+  --shadow:0 30px 80px -35px rgba(0,0,0,.9);
+  --glow:0 0 50px -18px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+html.light{
+  --bg:#f3efe4; --bg-soft:#ece6d8; --panel:#fbf8f0; --panel-2:#f4efe3;
+  --ink:#151b21; --muted:#5e6a75; --faint:#87919a;
+  --line:rgba(20,28,36,.12); --line-strong:rgba(20,28,36,.22);
+  --shadow:0 30px 80px -35px rgba(38,32,20,.30);
+}
+html{scroll-behavior:smooth;scroll-padding-top:92px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:16.5px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.20;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(900px 540px at 8% -8%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 62%),
+    radial-gradient(760px 520px at 96% 4%, color-mix(in srgb, var(--accent-2) 10%, transparent), transparent 62%),
+    radial-gradient(900px 680px at 50% 108%, color-mix(in srgb, var(--accent-3) 8%, transparent), transparent 64%);
+}
+img,svg,canvas{display:block;max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent);text-decoration-thickness:.08em;text-underline-offset:.18em}
+a:hover{color:var(--accent-2)}
+::selection{background:var(--accent);color:#061018}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+h1,h2,h3,h4{font-family:var(--serif);line-height:1.04;letter-spacing:-.025em;margin:0;font-weight:700}
+p{margin:0 0 1em}
+.wrap{position:relative;z-index:2}
+.container{max-width:var(--max);margin:0 auto;padding:0 26px}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.faint{color:var(--faint)}
+.small{font-size:.82rem}
+.tiny{font-size:.72rem;letter-spacing:.06em}
+.center{text-align:center}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* progress + theme */
+#progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:200;background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 16px var(--accent)}
+.theme-toggle{
+  position:fixed;right:18px;top:16px;z-index:210;width:42px;height:42px;border-radius:50%;
+  border:1px solid var(--line-strong);background:color-mix(in srgb,var(--panel) 80%,transparent);
+  backdrop-filter:blur(14px);display:grid;place-items:center;font-size:17px;
+  transition:transform .25s var(--ease), border-color .25s;
+}
+.theme-toggle:hover{transform:rotate(18deg) scale(1.06);border-color:var(--accent)}
+
+/* hero */
+.hero{position:relative;min-height:92vh;display:flex;align-items:center;padding:110px 0 70px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center;width:100%}
+.kicker{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.70rem;letter-spacing:.23em;text-transform:uppercase;color:var(--accent);margin-bottom:26px}
+.kicker::before{content:"";width:34px;height:1px;background:currentColor;display:inline-block}
+.hero h1{font-size:clamp(3.2rem,8.6vw,7.4rem);letter-spacing:-.055em;line-height:.88;text-wrap:balance}
+.hero h1 em{font-style:italic;color:var(--accent);font-weight:400}
+.hero .subtitle{font-family:var(--serif);font-size:clamp(1.2rem,2.2vw,1.65rem);line-height:1.28;color:var(--muted);margin:26px 0 0;max-width:30ch}
+.hero .author{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:26px}
+.thesis{font-size:clamp(1.02rem,1.55vw,1.22rem);line-height:1.55;color:var(--ink);max-width:54ch;margin:26px 0 0;padding-left:18px;border-left:2px solid var(--accent)}
+.meta-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:30px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--panel) 55%,transparent)}
+.chip b{color:var(--ink);font-weight:600}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;
+  padding:13px 20px;border-radius:999px;background:var(--accent);color:#061018;font-weight:700;
+  font-size:.88rem;letter-spacing:.01em;transition:transform .2s var(--ease),box-shadow .2s,background .2s;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -12px var(--accent);color:#061018}
+.btn.ghost{background:transparent;border-color:var(--line-strong);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--accent);box-shadow:none;background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.btn.small{padding:9px 14px;font-size:.78rem}
+.hero-visual{position:relative;min-height:430px;display:grid;place-items:center}
+.hero-orbit{position:relative;width:min(390px,80vw);aspect-ratio:1;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center}
+.hero-orbit::before,.hero-orbit::after{content:"";position:absolute;border-radius:50%;border:1px dashed var(--line)}
+.hero-orbit::before{inset:13%}
+.hero-orbit::after{inset:27%}
+.hero-core{width:38%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--accent),color-mix(in srgb,var(--accent) 25%,#000));box-shadow:var(--glow);position:relative;z-index:2}
+.orbit-dot{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 24px var(--accent-2);animation:orbit 16s linear infinite;transform-origin:0 0}
+.orbit-dot:nth-child(2){background:var(--accent-3);box-shadow:0 0 24px var(--accent-3);animation-duration:23s;animation-direction:reverse}
+.orbit-dot:nth-child(3){background:var(--good);box-shadow:0 0 24px var(--good);animation-duration:31s;width:9px;height:9px}
+@keyframes orbit{from{transform:rotate(0) translateX(48%)}to{transform:rotate(360deg) translateX(48%)}}
+.hero-caption{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);white-space:nowrap}
+.scroll-cue{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--faint)}
+.scroll-cue span{display:block;width:1px;height:34px;background:linear-gradient(var(--accent),transparent);animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{opacity:.25;transform:scaleY(.7)}50%{opacity:1;transform:scaleY(1)}}
+
+/* dock */
+.dock{position:sticky;top:0;z-index:150;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(18px)}
+.dock-inner{max-width:var(--max);margin:0 auto;padding:10px 26px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.dock-inner::-webkit-scrollbar{display:none}
+.dock a{flex:0 0 auto;padding:8px 12px;border-radius:999px;font-family:var(--mono);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid transparent;transition:.2s}
+.dock a:hover{color:var(--ink);border-color:var(--line)}
+.dock a.active{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,transparent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+
+/* sections */
+.panel{padding:92px 0;border-top:1px solid var(--line);position:relative}
+.panel:first-of-type{border-top:0}
+.section-head{display:grid;grid-template-columns:120px 1fr;gap:26px;margin-bottom:42px;align-items:start}
+.section-num{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;color:var(--accent);padding-top:12px}
+.section-head h2{font-size:clamp(2rem,4.4vw,3.5rem);line-height:.98;text-wrap:balance}
+.section-head .lede{font-size:1.05rem;line-height:1.6;color:var(--muted);max-width:62ch;margin-top:16px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:linear-gradient(145deg,color-mix(in srgb,var(--panel) 88%,transparent),color-mix(in srgb,var(--panel-2) 72%,transparent));border:1px solid var(--line);border-radius:var(--r);padding:24px;position:relative;transition:transform .28s var(--ease),border-color .28s,background .28s}
+.card:hover{transform:translateY(-4px);border-color:var(--line-strong)}
+.card h3{font-size:1.28rem;line-height:1.12;margin-bottom:9px}
+.card p{color:var(--muted);font-size:.93rem;line-height:1.62;margin:0}
+.card .tag{display:inline-block;font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);padding:4px 8px;border-radius:999px;margin-bottom:14px}
+.card-number{font-family:var(--serif);font-size:3.2rem;line-height:.8;color:var(--accent);opacity:.9;margin-bottom:16px;letter-spacing:-.06em}
+.big-stat{font-family:var(--serif);font-size:clamp(2.5rem,6vw,4.4rem);line-height:.85;letter-spacing:-.055em;color:var(--accent)}
+.stat-label{font-size:.88rem;color:var(--muted);margin-top:10px;line-height:1.45}
+.quote{border-left:2px solid var(--accent);padding:4px 0 4px 20px;font-family:var(--serif);font-size:1.3rem;line-height:1.4;color:var(--ink);margin:28px 0}
+.quote cite{display:block;font-family:var(--mono);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-style:normal;margin-top:12px}
+
+/* interactive shell */
+.interactive{background:linear-gradient(160deg,color-mix(in srgb,var(--panel) 92%,transparent),color-mix(in srgb,var(--bg-soft) 90%,transparent));border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:28px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.interactive::before{content:"";position:absolute;inset:0;background:radial-gradient(500px 240px at 100% 0%,color-mix(in srgb,var(--accent) 9%,transparent),transparent 65%);pointer-events:none}
+.interactive-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px;position:relative;z-index:1}
+.interactive-title{font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.interactive-hint{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:var(--faint);text-align:right}
+.stage{position:relative;z-index:1}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:18px 0}
+.segmented{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--bg) 40%,transparent)}
+.segmented button{border:0;background:transparent;color:var(--muted);padding:7px 12px;border-radius:999px;font-size:.75rem;font-family:var(--mono);letter-spacing:.04em;transition:.2s}
+.segmented button:hover{color:var(--ink)}
+.segmented button.on{background:var(--accent);color:#061018;font-weight:700}
+label.range-label{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;color:var(--muted);flex-wrap:wrap}
+input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:var(--line-strong);outline:none;min-width:160px;flex:1}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);box-shadow:0 0 0 1px var(--accent);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);cursor:pointer}
+.meter{height:10px;border-radius:99px;background:color-mix(in srgb,var(--line) 80%,transparent);overflow:hidden}
+.meter>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:99px;transition:width .5s var(--ease)}
+.meter-label{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:.63rem;letter-spacing:.07em;color:var(--faint);margin:8px 0 4px}
+.note{border:1px solid var(--line);border-left:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 5%,transparent);border-radius:0 12px 12px 0;padding:16px 18px;font-size:.9rem;color:var(--muted);line-height:1.6}
+.note strong{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 6%,transparent)}
+.note.bad{border-left-color:var(--bad);background:color-mix(in srgb,var(--bad) 7%,transparent)}
+.note.good{border-left-color:var(--good);background:color-mix(in srgb,var(--good) 6%,transparent)}
+.tag-row{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}
+.tag{display:inline-flex;align-items:center;padding:4px 8px;border:1px solid var(--line);border-radius:999px;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tag.good{color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent)}
+.tag.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+.tag.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+
+/* accordion / toggle cards */
+.toggle-card{border:1px solid var(--line);border-radius:var(--r);background:color-mix(in srgb,var(--panel) 70%,transparent);overflow:hidden;transition:border-color .2s}
+.toggle-card.open{border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+.toggle-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;border:0;background:transparent;text-align:left;color:var(--ink);font-weight:600;font-size:.96rem}
+.toggle-btn .sign{font-family:var(--mono);color:var(--accent);font-size:1.1rem;transition:transform .25s}
+.toggle-card.open .sign{transform:rotate(45deg)}
+.toggle-body{max-height:0;overflow:hidden;transition:max-height .35s var(--ease);}
+.toggle-body-inner{padding:0 20px 20px;color:var(--muted);font-size:.9rem;line-height:1.65}
+.toggle-body-inner strong{color:var(--ink)}
+
+/* quiz */
+.quiz{background:linear-gradient(160deg,color-mix(in srgb,var(--panel) 95%,transparent),color-mix(in srgb,var(--bg-soft) 92%,transparent));border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:28px;box-shadow:var(--shadow)}
+.quiz-top{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+.quiz-count{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+.quiz-score{font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+.quiz-dots{display:flex;gap:5px;margin-bottom:22px}
+.quiz-dots i{width:100%;height:3px;border-radius:99px;background:var(--line);transition:.3s}
+.quiz-dots i.done{background:var(--accent)}
+.quiz-q{font-family:var(--serif);font-size:clamp(1.25rem,2.2vw,1.6rem);line-height:1.25;margin:0 0 18px}
+.quiz-options{display:grid;gap:9px}
+.quiz-opt{display:flex;gap:12px;align-items:flex-start;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--bg) 30%,transparent);color:var(--ink);text-align:left;font-size:.9rem;line-height:1.45;transition:.18s}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,transparent);transform:translateX(3px)}
+.quiz-opt .key{font-family:var(--mono);font-size:.7rem;color:var(--faint);border:1px solid var(--line);border-radius:5px;width:22px;height:22px;display:grid;place-items:center;flex:0 0 auto;margin-top:1px}
+.quiz-opt.correct{border-color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent)}
+.quiz-opt.correct .key{border-color:var(--good);color:var(--good)}
+.quiz-opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent)}
+.quiz-opt.wrong .key{border-color:var(--bad);color:var(--bad)}
+.quiz-opt:disabled{cursor:default;opacity:.7}
+.quiz-opt.correct:disabled,.quiz-opt.wrong:disabled{opacity:1}
+.quiz-feedback{margin-top:16px;font-size:.9rem;line-height:1.6;color:var(--muted);min-height:24px}
+.quiz-feedback strong{color:var(--ink)}
+.quiz-actions{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-top:20px;flex-wrap:wrap}
+.quiz-end{text-align:center;padding:18px 0}
+.quiz-end .big-stat{font-size:5rem}
+.quiz-end p{max-width:48ch;margin:10px auto 0;color:var(--muted)}
+.quiz-end .btn{margin-top:22px}
+
+/* remember */
+.remember{counter-reset:r;display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--line)}
+.remember li{list-style:none;display:grid;grid-template-columns:44px 1fr;gap:12px;padding:18px 18px 18px 0;border-bottom:1px solid var(--line);font-size:.92rem;line-height:1.55}
+.remember li::before{counter-increment:r;content:counter(r,decimal-leading-zero);font-family:var(--mono);font-size:.65rem;color:var(--accent);padding-top:4px}
+.remember li:nth-child(odd){padding-right:28px}
+.remember li:nth-child(even){padding-left:28px;border-left:1px solid var(--line)}
+.remember-list{padding:0;margin:0}
+
+/* footer */
+.footer{padding:60px 0 80px;border-top:1px solid var(--line);color:var(--faint);font-size:.8rem;line-height:1.65}
+.footer .row{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap}
+.footer a{color:var(--muted)}
+.footer strong{color:var(--muted);font-weight:600}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* generic page bits */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+.kpi{padding:18px;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--panel) 55%,transparent)}
+.kpi b{display:block;font-family:var(--serif);font-size:2rem;line-height:.9;color:var(--accent);letter-spacing:-.04em}
+.kpi span{display:block;margin-top:7px;font-size:.78rem;color:var(--muted);line-height:1.4}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.split.tight{gap:18px}
+.stack{display:grid;gap:12px}
+.hr{height:1px;background:var(--line);border:0;margin:26px 0}
+.mini-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:7px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-family:var(--mono);font-size:.62rem;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+
+@media(max-width:900px){
+  .hero{min-height:auto;padding:100px 0 70px}
+  .hero-grid{grid-template-columns:1fr;gap:36px}
+  .hero-visual{min-height:300px;order:-1}
+  .hero .subtitle{max-width:44ch}
+  .section-head{grid-template-columns:1fr;gap:8px}
+  .section-num{padding-top:0}
+  .grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}
+  .remember{grid-template-columns:1fr}
+  .remember li:nth-child(odd),.remember li:nth-child(even){padding:18px 0;border-left:0}
+  .kpi-row{grid-template-columns:1fr 1fr}
+}
+@media(max-width:620px){
+  body{font-size:15.5px}
+  .container{padding:0 18px}
+  .dock-inner{padding:9px 18px}
+  .panel{padding:68px 0}
+  .grid-2,.grid-3,.grid-4,.split{grid-template-columns:1fr}
+  .interactive,.quiz{padding:18px;border-radius:20px}
+  .theme-toggle{top:12px;right:12px;width:38px;height:38px}
+  .kpi-row{grid-template-columns:1fr}
+  .remember li{border-left:0!important}
+  .hero h1{font-size:clamp(3rem,15vw,5rem)}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+
+
+.dw-art{position:relative;width:min(440px,86vw);aspect-ratio:1;display:grid;place-items:center}
+.dw-ring{position:absolute;border-radius:50%;border:1px solid var(--line-strong)}
+.dw-ring.r1{inset:2%;border-style:dashed;animation:spin 60s linear infinite}
+.dw-ring.r2{inset:15%;border-color:color-mix(in srgb,var(--accent) 38%,transparent)}
+.dw-ring.r3{inset:29%;border-style:dashed;animation:spin 40s linear infinite reverse}
+.dw-core{position:relative;width:36%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--accent) 95%,#fff),color-mix(in srgb,var(--accent) 30%,#000));box-shadow:0 0 80px -10px var(--accent);color:#041016;font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;font-weight:700;text-align:center;line-height:1.6}
+.dw-ring-label{position:absolute;font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);background:var(--bg);padding:3px 8px;border-radius:99px}
+.dw-ring-label.a{top:7%;right:14%}.dw-ring-label.b{bottom:12%;left:6%}.dw-ring-label.c{bottom:30%;right:-2%}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.dw-task-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin:22px 0}
+.task-card{border:1px solid var(--line);border-radius:16px;padding:18px;background:color-mix(in srgb,var(--panel) 70%,transparent);transition:.25s;cursor:pointer;text-align:left;color:var(--ink)}
+.task-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.task-card b{display:block;font-family:var(--serif);font-size:1.2rem;line-height:1.1}
+.task-card span{display:block;font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-top:8px}
+.task-card.inbox{text-align:right}
+.focus-gauge{width:150px;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--accent) calc(var(--f) * 1%),color-mix(in srgb,var(--line) 65%,transparent) 0);position:relative;transition:background .3s}
+.focus-gauge::before{content:"";position:absolute;inset:11px;border-radius:50%;background:var(--panel)}
+.focus-gauge div{position:relative;text-align:center}
+.focus-gauge b{font-family:var(--serif);font-size:2.4rem;line-height:.9;display:block}
+.focus-gauge span{font-family:var(--mono);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.dw-log{font-family:var(--mono);font-size:.7rem;line-height:1.7;color:var(--faint);min-height:38px;margin-top:14px}
+.dw-log b{color:var(--warn)}
+.dw-verdict{font-size:.9rem;color:var(--muted);margin-top:14px;line-height:1.6;min-height:52px}
+.mode-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:18px}
+.mode-btn{padding:14px 10px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--panel) 55%,transparent);color:var(--muted);text-align:left;transition:.2s}
+.mode-btn b{display:block;color:var(--ink);font-size:.9rem;margin-bottom:4px}
+.mode-btn span{font-size:.72rem;line-height:1.35;display:block}
+.mode-btn:hover{border-color:var(--accent)}
+.mode-btn.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,transparent);color:var(--ink)}
+.mode-detail{border:1px solid var(--line);border-radius:16px;padding:20px;background:color-mix(in srgb,var(--bg) 30%,transparent);min-height:120px}
+.mode-detail h4{font-size:1.45rem;margin-bottom:7px}
+.mode-detail p{color:var(--muted);font-size:.9rem;margin:0 0 8px}
+.mode-detail .who{font-family:var(--mono);font-size:.65rem;letter-spacing:.08em;color:var(--accent);text-transform:uppercase}
+.budget-wrap{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center}
+.budget-num{font-family:var(--serif);font-size:clamp(3.5rem,8vw,6rem);line-height:.8;letter-spacing:-.06em;color:var(--accent)}
+.budget-num small{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;color:var(--faint);display:block;margin-top:10px}
+.budget-bar{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--line);margin-top:18px}
+.budget-bar i{display:block;transition:width .4s var(--ease)}
+.budget-bar .deep{background:linear-gradient(90deg,var(--accent),var(--accent-3))}
+.budget-bar .shallow{background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--warn) 45%,transparent) 0 6px,transparent 6px 12px)}
+.myth-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.myth{border:1px solid var(--line);border-radius:14px;padding:18px;background:color-mix(in srgb,var(--panel) 50%,transparent)}
+.myth .m{font-family:var(--mono);font-size:.58rem;letter-spacing:.13em;text-transform:uppercase;color:var(--bad);margin-bottom:8px}
+.myth b{font-family:var(--serif);font-size:1.1rem;display:block;line-height:1.2;margin-bottom:7px}
+.myth p{font-size:.84rem;color:var(--muted);margin:0;line-height:1.55}
+@media(max-width:900px){.mode-grid{grid-template-columns:1fr 1fr}.dw-task-grid{grid-template-columns:1fr}.focus-gauge{margin:0 auto}.task-card.inbox{text-align:left}.budget-wrap{grid-template-columns:1fr}.myth-grid{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<a class="sr-only" href="#kurz">Zum Inhalt springen</a>
+<div id="progress"></div>
+<button class="theme-toggle" type="button" aria-label="Design wechseln"></button>
+<div class="wrap">
+
+<header class="hero"><div class="container"><div class="hero-grid">
+<div>
+<div class="kicker">Cal Newport · 2016 · Produktivität</div>
+<h1>Deep<br><em>Work</em></h1>
+<p class="subtitle">Konzentration ist die neue Superkraft – selten und wertvoll zugleich.</p>
+<div class="author">Rules for Focused Success in a Distracted World</div>
+<p class="thesis">Wer ohne Ablenkung an kognitiv schwierigen Dingen arbeiten kann, gewinnt. Nicht weil Tiefe moralisch besser ist, sondern weil sie knapp wird – und gleichzeitig immer mehr wert.</p>
+<div class="meta-row"><span class="chip"><b>5–7</b> Min</span><span class="chip"><b>4</b> Regeln</span><span class="chip"><b>1</b> Kernthese</span><span class="chip">kritisch geprüft</span></div>
+<div class="hero-actions"><a class="btn" href="#wechsel">Interaktiv starten</a><a class="btn ghost" href="#merken">Nur die Essenz</a></div>
+</div>
+<div class="hero-visual"><div class="dw-art" aria-hidden="true">
+<div class="dw-ring r1"></div><div class="dw-ring r2"></div><div class="dw-ring r3"></div>
+<div class="dw-core">FOKUS<br>TIEFE</div>
+<span class="dw-ring-label a">Ablenkung</span><span class="dw-ring-label b">Shallow Work</span><span class="dw-ring-label c">Attention Residue</span>
+</div><div class="hero-caption">Zeit × Intensität = Wert</div></div>
+</div></div><div class="scroll-cue">Scrollen<span></span></div></header>
+
+<nav class="dock" aria-label="Kapitel"><div class="dock-inner"><a href="#kurz" data-target="kurz">60 Sek</a><a href="#wechsel" data-target="wechsel">Wechselkosten</a><a href="#wege" data-target="wege">Vier Wege</a><a href="#regeln" data-target="regeln">4 Regeln</a><a href="#budget" data-target="budget">Budget</a><a href="#mythen" data-target="mythen">Mythen</a><a href="#kritik" data-target="kritik">Kritik</a><a href="#quiz" data-target="quiz">Quiz</a><a href="#merken" data-target="merken">Merken</a></div></nav>
+<main>
+
+<section id="kurz" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">01 / KURZ</div><div><h2>In 60 Sekunden</h2><p class="lede">Newports These passt in einen Satz: Tiefe Arbeit wird rarer und wertvoller. Der Rest des Buchs erklärt, wie man sie gegen eine Kultur der ständigen Erreichbarkeit verteidigt.</p></div></div>
+<div class="grid-3">
+<div class="card"><div class="big-stat">≤ 4 h</div><div class="stat-label">Spitzenkönner arbeiten selten mehr als vier Stunden pro Tag wirklich tief. Die Berliner Geigenstudie lag bei etwa 3,5 Stunden.</div></div>
+<div class="card"><div class="big-stat">30–50 %</div><div class="stat-label">So viel Shallow Work hält Newport für ein realistisches Budget – nicht null, aber bewusst begrenzt.</div></div>
+<div class="card"><div class="big-stat">1 Klick</div><div class="stat-label">Ein kurzer Blick in die Inbox reicht, um einen Teil der Aufmerksamkeit an die vorige Aufgabe zu binden.</div></div>
+</div>
+<div class="grid-2" style="margin-top:18px">
+<div class="card"><span class="tag">Definition</span><h3>Deep Work</h3><p>Ablenkungsfreie Konzentration auf eine kognitiv anspruchsvolle Aufgabe, die neue Wertschöpfung erzeugt, Fähigkeiten trainiert und nicht leicht kopierbar ist.</p></div>
+<div class="card"><span class="tag">Gegenbegriff</span><h3>Shallow Work</h3><p>Logistische, wenig anspruchsvolle Tätigkeiten, die oft nebenbei erledigt werden – E-Mails, Statusmeetings, Koordination. Nötig, aber leicht ersetzbar.</p></div>
+</div>
+<div class="quote">„Die Fähigkeit, tief zu arbeiten, wird genau dann seltener, als sie in der Wirtschaft wertvoller wird.“<cite>Deep Work, Teil 1, Kap. 1 – sinngemäß</cite></div>
+</div></section>
+
+<section id="wechsel" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">02 / WECHSEL</div><div><h2>Der teuerste Klick</h2><p class="lede">Attention Residue: Nach einem Wechsel bleibt ein Rest der alten Aufgabe im Kopf. Besonders dann, wenn sie unfertig ist. Das ist der Mechanismus hinter dem Gefühl, „eigentlich“ den ganzen Tag beschäftigt gewesen zu sein.</p></div></div>
+<div class="interactive"><div class="interactive-head"><div class="interactive-title">Fokus-Simulator</div><div class="interactive-hint">starten → ablenken → beobachten</div></div>
+<div class="stage">
+<div class="dw-task-grid">
+<button class="task-card" id="dw-focus" type="button"><b>Bericht schreiben</b><span>kognitiv anspruchsvoll · Deep Work</span></button>
+<div class="focus-gauge" id="dw-gauge" style="--f:50"><div><b id="dw-fokus">50</b><span>Fokus</span></div></div>
+<button class="task-card inbox" id="dw-distract" type="button"><b>Inbox checken</b><span>kurz · harmlos · oder?</span></button>
+</div>
+<div class="meter-label"><span>Fokus</span><span id="dw-fokus-label">50 / 100</span></div><div class="meter"><i id="dw-fokus-bar" style="width:50%"></i></div>
+<div class="meter-label" style="margin-top:14px"><span>Aufmerksamkeitsrest</span><span id="dw-res-label">0 / 100</span></div><div class="meter"><i id="dw-res-bar" style="width:0;background:linear-gradient(90deg,var(--warn),var(--bad))"></i></div>
+<div class="controls"><button class="btn small" id="dw-start">Deep-Work-Block starten</button><button class="btn ghost small" id="dw-reset">Zurücksetzen</button></div>
+<div class="dw-log" id="dw-log">Noch kein Wechsel. Starte den Block und arbeite 10 Sekunden.</div>
+<div class="dw-verdict" id="dw-verdict">Der Simulator ist bewusst grob: Er zeigt die Richtung, nicht die exakte Psychologie.</div>
+</div></div>
+<div class="note" style="margin-top:18px"><strong>Die Evidenz:</strong> Sophie Leroy fand den „attention residue“-Effekt bei Aufgabenwechseln; Gloria Mark beobachtet, dass Unterbrechungen die Fertigstellung verzögern und Stress erhöhen. Newport baut darauf seine Praxisforderung: lange, geschützte Blöcke statt ständiger Erreichbarkeit.</div>
+</div></section>
+
+<section id="wege" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">03 / WEGE</div><div><h2>Vier Wege in die Tiefe</h2><p class="lede">Es gibt nicht den einen Deep-Work-Lebensstil. Newport beschreibt vier Philosophien – wichtig ist, dass sie zu Job, Temperament und Alltag passen.</p></div></div>
+<div class="interactive"><div class="interactive-head"><div class="interactive-title">Modus wählen</div><div class="interactive-hint">klicken für Beispiel</div></div>
+<div class="mode-grid" id="dw-modes">
+<button class="mode-btn on" data-mode="0"><b>Monastisch</b><span>Fast alles Shallow wird gestrichen.</span></button>
+<button class="mode-btn" data-mode="1"><b>Bimodal</b><span>Klare Retreats plus normales Leben.</span></button>
+<button class="mode-btn" data-mode="2"><b>Rhythmisch</b><span>Jeden Tag dieselbe Zeit.</span></button>
+<button class="mode-btn" data-mode="3"><b>Journalistisch</b><span>Tiefe in freien Momenten.</span></button>
+</div>
+<div class="mode-detail" id="dw-mode-detail"></div>
+</div>
+</div></section>
+
+<section id="regeln" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">04 / REGELN</div><div><h2>Die vier Regeln</h2><p class="lede">Newports Praxisteil ist ein Betriebssystem für Aufmerksamkeit. Aufklappen lohnt sich nur, wenn du die Details brauchst.</p></div></div>
+<div class="grid-2">
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>1 · Arbeite tief</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>Wähle eine Philosophie, ritualisiere Ort, Dauer, Regeln und Unterstützung.</strong> Ein „grand gesture“ – ein teurer oder aufwendiger Rahmen – kann die Priorität erhöhen. Für Zusammenarbeit: private „spokes“ für Tiefe, gemeinsame „hubs“ für Austausch.</p><p>Die 4DX-Logik: ein wichtigstes Ziel, Lead-Maßnahmen (Deep Hours), sichtbares Scoreboard, wöchentliche Review. Danach: Shutdown.</p></div></div></div>
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>2 · Umarme Langeweile</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>Nimm Pausen von der Konzentration, nicht von der Ablenkung.</strong> Plane Internet-Blöcke, halte Offline-Blöcke wirklich offline. Wenn du zu früh online gehst: fünf Minuten warten.</p><p>„Roosevelt Dashes“: absurd kurze Deadline, dann volle Intensität. Produktive Meditation: ein Problem im Gehen halten, Variablen klären, nicht abschweifen. Gedächtnistraining kann Aufmerksamkeit trainieren.</p></div></div></div>
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>3 · Verlasse Social Media</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>„Any benefit“ ist die falsche Frage.</strong> Der Craftsman-Ansatz fragt: Bringt dieses Werkzeug meinen zwei oder drei Kernaktivitäten netto etwas? Wenn nicht, fliegt es raus.</p><p>Der 30-Tage-Test: ohne Ankündigung pausieren. Danach fragen: War mein Leben spürbar besser? Hat es jemanden gekümmert? Freizeit vorher planen, nicht einfach ins Leere fallen lassen.</p></div></div></div>
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>4 · Trockne das Flache aus</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>Time-Blocking:</strong> jeden Tag minutiös planen – und den Plan laufend korrigieren. Nicht Rigidität, sondern Kontrolle. Jede Aufgabe nach dem „smart recent graduate“-Test quantifizieren: Wie lange bräuchte ein kluger Absolvent?</p><p>Shallow-Budget setzen, harter Feierabend (z. B. 5:30), E-Mail-Filter, prozessorientierte Antworten, bei unklaren Mails default nicht antworten.</p></div></div></div>
+</div>
+<div class="note" style="margin-top:18px"><strong>Der 5:30-Ritual:</strong> offene Aufgaben prüfen, in einen vertrauenswürdigen Plan schreiben, den nächsten Tag planen, „Shutdown complete“ sagen. Das schließt offene Schleifen – der Zeigarnik-Effekt lässt grüßen.</div>
+</div></section>
+
+<section id="budget" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">05 / BUDGET</div><div><h2>Dein Deep-Work-Budget</h2><p class="lede">Newport empfiehlt, Shallow Work zu budgetieren statt sie nur zu beklagen. Schieb die Regler – und sieh, wie viel echte Tiefe pro Woche übrig bleibt.</p></div></div>
+<div class="interactive"><div class="interactive-head"><div class="interactive-title">Wochenrechner</div><div class="interactive-hint">Standard: 40 h / 40 % shallow</div></div>
+<div class="budget-wrap">
+<div><div class="budget-num" id="dw-deephours">24 h<small>Deep Work pro Woche</small></div>
+<div class="budget-bar"><i class="deep" id="dw-deepbar" style="width:60%"></i><i class="shallow" id="dw-shallowbar" style="width:40%"></i></div>
+<div class="legend" style="margin-top:12px"><span><i style="background:var(--accent)"></i>Tiefe</span><span><i style="background:var(--warn)"></i>Flach</span><span id="dw-budget-note"></span></div></div>
+<div class="stack">
+<label class="range-label">Arbeitsstunden / Woche <input type="range" id="dw-hours" min="20" max="60" value="40" step="1"><b id="dw-hours-out">40</b></label>
+<label class="range-label">Shallow-Anteil <input type="range" id="dw-shallow" min="10" max="70" value="40" step="5"><b id="dw-shallow-out">40 %</b></label>
+<div class="note" id="dw-budget-hint">Newports typische Empfehlung: 30–50 % Shallow. Darunter wird es oft unrealistisch, darüber frisst die Logistik die Tiefe.</div>
+</div>
+</div></div>
+</div></section>
+
+<section id="mythen" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">06 / MYTHEN</div><div><h2>Was Newport umdreht</h2><p class="lede">Die stärksten Teile des Buchs sind keine Tipps, sondern die Zerstörung lieb gewordener Ausreden.</p></div></div>
+<div class="myth-grid">
+<div class="myth"><div class="m">Mythos</div><b>„Dauernd erreichbar sein ist Pflicht.“</b><p>Perlows BCG-Experiment: Ein kompletter freier Tag pro Woche führte nicht zu verlorenen Kunden, sondern zu besserer Arbeit und mehr Lernen.</p></div>
+<div class="myth"><div class="m">Mythos</div><b>„Open Offices erzeugen Serendipität.“</b><p>Newport kontert mit Bell Labs: private Büros plus gezielte Begegnung. Ständige Nähe erzeugt vor allem Unterbrechungen.</p></div>
+<div class="myth"><div class="m">Mythos</div><b>„Multitasking spart Zeit.“</b><p>Der Wechsel kostet. Aufmerksamkeitsreste verschmutzen die nächste Aufgabe – besonders bei unerledigten offenen Schleifen.</p></div>
+<div class="myth"><div class="m">Mythos</div><b>„Mehr Stunden = mehr Output.“</b><p>Qualität ist Zeit × Intensität. Ein harter Feierabend zwingt dazu, das Flache zuerst zu streichen – und schützt die Tiefe.</p></div>
+</div>
+</div></section>
+
+<section id="kritik" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">07 / KRITIK</div><div><h2>Wo das Buch zu weit greift</h2><p class="lede">Deep Work ist ein starkes Betriebssystem, aber keine bewiesene Kausaltheorie. Die Beispiele sind fast alle post-hoc ausgewählt.</p></div></div>
+<div class="grid-2">
+<div class="note bad"><strong>Survivorship Bias:</strong> Jung, Gates, Rowling, Knuth, Caro, Darwin. Wir sehen die Gewinner mit Ritualen, nicht die vielen Menschen mit denselben Ritualen, die nicht berühmt wurden.</div>
+<div class="note warn"><strong>Die Ökonomie ist plausibel, nicht getestet:</strong> „Selten + wertvoll = wertvoll“ ist ein Argument, keine Kausalstudie. Die Aufmerksamkeitsforschung ist stärker als die Karriereprognose.</div>
+<div class="note"><strong>Die Zielgruppe hat Privilegien:</strong> Wer Schichten, Care-Arbeit, Publikumskontakt oder einen Callcenter-Job hat, kann seinen Kalender nicht frei gestalten. Newport räumt das stellenweise ein.</div>
+<div class="note"><strong>Die Metrik kann täuschen:</strong> „Deep Hours“ sind Input, nicht Wert. Ein Scoreboard kann dazu verleiten, Zeit zu optimieren statt Ergebnisse.</div>
+</div>
+<div class="quote">„Wenn du arbeitest, arbeite hart. Wenn du fertig bist, sei fertig.“<cite>Rule #1 – sinngemäß</cite></div>
+</div></section>
+
+<section id="quiz" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">08 / QUIZ</div><div><h2>Prüf dich</h2><p class="lede">Zwölf Fragen, die die Modelle testen – nicht die Zitate. Die Erklärung nach jeder Antwort ist der eigentliche Lernstoff.</p></div></div>
+<div class="quiz" id="dw-quiz"></div>
+</div></section>
+
+<section id="merken" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">09 / MERKEN</div><div><h2>Acht Dinge, die bleiben</h2></div></div>
+<ol class="remember remember-list">
+<li>Deep Work ist ablenkungsfreie Konzentration auf schwierige, wertvolle Aufgaben.</li>
+<li>Shallow Work ist Logistik – nötig, aber leicht ersetzbar und deshalb budgetierbar.</li>
+<li>Seltenheit plus Wert: Tiefe ist ein Wettbewerbsvorteil, weil alle abgelenkt sind.</li>
+<li>Attention Residue macht jeden Wechsel teurer, als er aussieht.</li>
+<li>Qualität = Zeit × Intensität. Vier fokussierte Stunden schlagen acht zerrissene.</li>
+<li>Konzentration ist trainierbar: Langeweile aushalten, Ablenkung planen.</li>
+<li>Wähle eine von vier Philosophien und ritualisiere sie – Perfektion ist nicht nötig.</li>
+<li>Shutdown, Craftsman-Tool-Audit und E-Mail-Diät schützen die Tiefe.</li>
+</ol>
+</div></section>
+
+</main>
+<footer class="footer"><div class="container"><div class="row">
+<div><strong>Deep Work · Die interaktive Essenz</strong><br>Interaktive Essenz · 5–10 Minuten · aus dem extrahierten Text erarbeitet.</div>
+<div>Keine Seitenzahlen: Zitate und Kapitelangaben folgen der Textdatei.<br>Kritische Einordnung ist Teil der Zusammenfassung.</div>
+</div></div></footer>
+</div>
+<script>
+/* shared shell */
+(function(){
+  "use strict";
+  const root = document.documentElement;
+  const saved = localStorage.getItem("ex-theme");
+  if(saved === "light") root.classList.add("light");
+  const toggle = document.querySelector(".theme-toggle");
+  if(toggle){
+    const paint = () => {
+      toggle.setAttribute("aria-label", root.classList.contains("light") ? "Dunkles Design" : "Helles Design");
+      toggle.innerHTML = root.classList.contains("light")
+        ? '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M19.1 4.9l-1.6 1.6M6.5 17.5l-1.6 1.6"/></svg>'
+        : '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.2 15.2A8.4 8.4 0 1 1 8.8 3.8a6.8 6.8 0 0 0 11.4 11.4Z"/></svg>';
+    };
+    paint();
+    toggle.addEventListener("click", () => {
+      root.classList.toggle("light");
+      localStorage.setItem("ex-theme", root.classList.contains("light") ? "light" : "dark");
+      paint();
+      document.dispatchEvent(new CustomEvent("ex-theme-change"));
+    });
+  }
+
+  const bar = document.getElementById("progress");
+  const onScroll = () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    if(bar) bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    const links = document.querySelectorAll(".dock a[data-target]");
+    let current = "";
+    document.querySelectorAll("[data-nav]").forEach(sec => {
+      if(sec.getBoundingClientRect().top < window.innerHeight * 0.34) current = sec.id;
+    });
+    links.forEach(a => a.classList.toggle("active", a.dataset.target === current));
+  };
+  window.addEventListener("scroll", onScroll, {passive:true});
+  window.addEventListener("resize", onScroll);
+  onScroll();
+
+  const reveal = document.querySelectorAll(".reveal");
+  if("IntersectionObserver" in window){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, {threshold:.08, rootMargin:"0px 0px -8% 0px"});
+    reveal.forEach(el => io.observe(el));
+  } else reveal.forEach(el => el.classList.add("in"));
+
+  document.querySelectorAll(".toggle-card").forEach(card => {
+    const btn = card.querySelector(".toggle-btn");
+    const body = card.querySelector(".toggle-body");
+    if(!btn || !body) return;
+    btn.addEventListener("click", () => {
+      const open = card.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      body.style.maxHeight = open ? body.scrollHeight + "px" : "0px";
+    });
+  });
+
+  function makeQuiz(rootId, questions){
+    const root = document.getElementById(rootId);
+    if(!root) return;
+    let index = 0, score = 0, locked = false;
+    function render(){
+      if(index >= questions.length){
+        const pct = Math.round(score / questions.length * 100);
+        let verdict = "Nochmal lesen lohnt sich.";
+        if(pct >= 90) verdict = "Du hast die Kernideen wirklich sitzen.";
+        else if(pct >= 70) verdict = "Solide. Die wichtigsten Muster sind da.";
+        else if(pct >= 50) verdict = "Die Hälfte sitzt – geh noch einmal über die visuellen Modelle.";
+        root.innerHTML = '<div class="quiz-end">' +
+          '<div class="quiz-count">Ergebnis</div>' +
+          '<div class="big-stat">' + score + '/' + questions.length + '</div>' +
+          '<p><strong>' + verdict + '</strong> Jede Frage hatte eine kurze Erklärung – die falschen Antworten sind die eigentlichen Lernpunkte.</p>' +
+          '<button class="btn" id="' + rootId + '-restart">Noch einmal</button></div>';
+        const r = document.getElementById(rootId + '-restart');
+        if(r) r.addEventListener("click", () => { index = 0; score = 0; locked = false; render(); });
+        return;
+      }
+      const q = questions[index];
+      const dots = questions.map((_, i) => '<i class="' + (i < index ? "done" : "") + '"></i>').join("");
+      const opts = q.options.map((text, i) =>
+        '<button class="quiz-opt" data-i="' + i + '"><span class="key">' + "ABCD"[i] + '</span><span>' + text + '</span></button>'
+      ).join("");
+      root.innerHTML = '<div class="quiz-top"><div class="quiz-count">Frage ' + (index + 1) + ' von ' + questions.length + '</div>' +
+        '<div class="quiz-score">Punkte ' + score + '</div></div>' +
+        '<div class="quiz-dots">' + dots + '</div>' +
+        '<h3 class="quiz-q">' + q.q + '</h3>' +
+        '<div class="quiz-options">' + opts + '</div>' +
+        '<div class="quiz-feedback" aria-live="polite"></div>' +
+        '<div class="quiz-actions"><span class="tiny muted">Eine Antwort – dann erklären wir sie.</span>' +
+        '<button class="btn small" id="' + rootId + '-next" disabled>Weiter</button></div>';
+      const next = document.getElementById(rootId + '-next');
+      const feedback = root.querySelector(".quiz-feedback");
+      root.querySelectorAll(".quiz-opt").forEach(btn => {
+        btn.addEventListener("click", () => {
+          if(locked) return;
+          locked = true;
+          const pick = Number(btn.dataset.i);
+          const correct = pick === q.a;
+          if(correct) score++;
+          root.querySelectorAll(".quiz-opt").forEach(b => {
+            b.disabled = true;
+            const i = Number(b.dataset.i);
+            if(i === q.a) b.classList.add("correct");
+            if(i === pick && !correct) b.classList.add("wrong");
+          });
+          feedback.innerHTML = '<strong>' + (correct ? "Richtig." : "Nicht ganz – richtig ist " + "ABCD"[q.a] + ".") + '</strong> ' + q.e;
+          next.disabled = false;
+          root.querySelector(".quiz-score").textContent = "Punkte " + score;
+        });
+      });
+      next.addEventListener("click", () => { index++; locked = false; render(); });
+    }
+    render();
+  }
+  window.makeQuiz = makeQuiz;
+
+  window.ex = {
+    clamp:(v,a,b)=>Math.max(a,Math.min(b,v)),
+    fmt:(n,d=0)=>Number(n).toLocaleString("de-DE",{maximumFractionDigits:d,minimumFractionDigits:d}),
+    css:(name)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim(),
+    themeColor(name, fallback){
+      const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fallback;
+    }
+  };
+})();
+
+
+(function(){
+  "use strict";
+  const modes=[
+    {t:"Monastisch", who:"Beispiel: Donald Knuth", p:"Fast vollständiger Rückzug aus E-Mail, Meetings und administrativen Rollen. Radikal, aber nur für Menschen mit echter Autonomie über ihre Rolle.", fit:"Passt, wenn dein Wert fast vollständig aus einsamer, langer Arbeit entsteht."},
+    {t:"Bimodal", who:"Beispiel: Carl Jung", p:"Klare Retreats von Tagen oder Wochen, dazwischen ein normales, erreichbares Leben. Die Grenze ist zeitlich, nicht räumlich.", fit:"Passt zu kreativen Berufen, die Phasen brauchen, aber auch Zusammenarbeit."},
+    {t:"Rhythmisch", who:"Beispiel: Jerry Chappell", p:"Jeden Tag dieselbe geschützte Zeit, oft früh morgens. Die Routine senkt die Entscheidungslast und macht Tiefe zum Default.", fit:"Passt zu den meisten Angestellten mit halbwegs stabilem Kalender."},
+    {t:"Journalistisch", who:"Beispiel: Walter Isaacson", p:"Tiefe in freien Momenten, wenn sie auftauchen. Das klingt effizient, verlangt aber bereits trainierte Konzentrationsmuskeln.", fit:"Passt zu erfahrenen Deep Workern mit unvorhersehbarem Tag."}
+  ];
+  const detail=document.getElementById("dw-mode-detail");
+  function paintMode(i){
+    document.querySelectorAll("#dw-modes .mode-btn").forEach(b=>b.classList.toggle("on",Number(b.dataset.mode)===i));
+    const m=modes[i];
+    detail.innerHTML="<h4>"+m.t+"</h4><p>"+m.p+"</p><p><strong>Passung:</strong> "+m.fit+"</p><div class='who'>"+m.who+"</div>";
+  }
+  document.querySelectorAll("#dw-modes .mode-btn").forEach(b=>b.addEventListener("click",()=>paintMode(Number(b.dataset.mode))));
+  paintMode(0);
+
+  let f=50,r=0,running=false,last=0,raf=null;
+  const gauge=document.getElementById("dw-gauge"), fokus=document.getElementById("dw-fokus"),
+        fbar=document.getElementById("dw-fokus-bar"), flabel=document.getElementById("dw-fokus-label"),
+        rbar=document.getElementById("dw-res-bar"), rlabel=document.getElementById("dw-res-label"),
+        log=document.getElementById("dw-log"), verdict=document.getElementById("dw-verdict");
+  function paint(){
+    const ff=Math.round(f), rr=Math.round(r);
+    gauge.style.setProperty("--f",ff); fokus.textContent=ff;
+    fbar.style.width=ff+"%"; flabel.textContent=ff+" / 100";
+    rbar.style.width=rr+"%"; rlabel.textContent=rr+" / 100";
+  }
+  function loop(t){
+    if(!running) return;
+    if(!last) last=t;
+    const dt=Math.min(.05,(t-last)/1000); last=t;
+    if(r>0){ r=Math.max(0,r-dt*10); f=Math.max(8,f-dt*1.5); }
+    else { f=Math.min(100,f+dt*6); }
+    paint();
+    raf=requestAnimationFrame(loop);
+  }
+  document.getElementById("dw-start").addEventListener("click",()=>{
+    running=true; last=0; if(!raf) raf=requestAnimationFrame(loop);
+    log.innerHTML="Block läuft. Du arbeitest am Bericht. <b>Jetzt nicht ablenken.</b>";
+    verdict.textContent="Beobachte: Fokus steigt langsam. Ein Wechsel ist nicht neutral – er hinterlässt einen Rest.";
+  });
+  document.getElementById("dw-distract").addEventListener("click",()=>{
+    if(!running){ log.textContent="Starte zuerst den Block – sonst gibt es keinen Fokus, den du verlieren kannst."; return; }
+    r=100; f=Math.max(8,f-26); paint();
+    log.innerHTML="Du hast die Inbox geöffnet. <b>Attention Residue = 100.</b> Der Fokus muss erst wieder hochkrabbeln.";
+    verdict.textContent="Genau das ist der Punkt: Der Blick war kurz, die Kosten sind es nicht. Mehrere solcher Wechsel pro Stunde zerstören den Block.";
+  });
+  document.getElementById("dw-reset").addEventListener("click",()=>{
+    running=false; if(raf) cancelAnimationFrame(raf); raf=null; f=50; r=0; last=0; paint();
+    log.textContent="Zurückgesetzt. Noch kein Wechsel. Starte den Block und arbeite 10 Sekunden.";
+    verdict.textContent="Der Simulator ist bewusst grob: Er zeigt die Richtung, nicht die exakte Psychologie.";
+  });
+  paint();
+
+  const hours=document.getElementById("dw-hours"), shallow=document.getElementById("dw-shallow"),
+        hout=document.getElementById("dw-hours-out"), sout=document.getElementById("dw-shallow-out"),
+        deep=document.getElementById("dw-deephours"), deepbar=document.getElementById("dw-deepbar"),
+        shallowbar=document.getElementById("dw-shallowbar"), hint=document.getElementById("dw-budget-hint");
+  function budget(){
+    const h=Number(hours.value), s=Number(shallow.value), d=h*(100-s)/100;
+    hout.textContent=h; sout.textContent=s+" %";
+    deep.innerHTML=ex.fmt(d,0)+" h<small>Deep Work pro Woche</small>";
+    deepbar.style.width=(100-s)+"%"; shallowbar.style.width=s+"%";
+    if(s<30) hint.innerHTML="<strong>Sehr radikal.</strong> Unter 30 % Shallow wird es für die meisten Jobs unrealistisch – außer du hast wirklich die Kontrolle über deinen Kalender.";
+    else if(s>50) hint.innerHTML="<strong>Zu viel Flach.</strong> Über 50 % frisst die Logistik die Tiefe. Newport würde hier zuerst Meetings und E-Mail-Regeln angreifen.";
+    else hint.innerHTML="<strong>Im empfohlenen Korridor.</strong> 30–50 % Shallow ist Newports realistische Spanne – nicht null, aber bewusst begrenzt.";
+  }
+  hours.addEventListener("input",budget); shallow.addEventListener("input",budget); budget();
+
+  makeQuiz("dw-quiz",[
+    {q:"Wie definiert Newport Deep Work?",options:["Jede konzentrierte Arbeit, die mindestens eine Stunde ohne Handy stattfindet.","Ablenkungsfreie Konzentration auf kognitiv anspruchsvolle Aufgaben.","Kreative Arbeit, die einen messbaren Marktwert erzeugt.","Arbeit in einem stillen, klösterlich organisierten Rückzugsraum."],a:1,e:"Der Kern ist die Kombination aus Ablenkungsfreiheit, kognitiver Anstrengung und Wertschöpfung – nicht Ort oder Dauer."},
+    {q:"Was besagt die Deep-Work-Hypothese?",options:["Tiefe Arbeit wird gleichzeitig seltener und wertvoller.","Tiefe Arbeit ist nur in Forschung und Kunst wirklich relevant.","Automatisierung wird tiefe Arbeit bald überflüssig machen.","Tiefe Arbeit ist angeboren und kaum trainierbar."],a:0,e:"Newport verbindet zwei Bewegungen: Die Nachfrage nach komplexer Problemlösung steigt, die Fähigkeit zur Konzentration sinkt."},
+    {q:"Was ist „Attention Residue“?",options:["Die Müdigkeit nach mehreren Stunden konzentrierter Arbeit.","Der mentale Ballast aus vielen unbeantworteten E-Mails.","Der Arbeitsgedächtnisverlust nach Monaten des Multitaskings.","Ein Aufmerksamkeitsrest, der nach einem Wechsel haften bleibt."],a:3,e:"Sophie Leroy zeigte: Ein Teil der Aufmerksamkeit bleibt an der vorigen Aufgabe – besonders wenn sie unfertig ist."},
+    {q:"Wie lautet Newports Qualitätsformel?",options:["Talent mal Anzahl der absolvierten Übungsstunden.","Zeit mal Intensität der Konzentration.","Deep Hours geteilt durch Shallow Hours plus Pausen.","Output mal Geschwindigkeit der Zusammenarbeit."],a:1,e:"Nicht die Uhr, sondern die Dichte zählt. Deshalb können vier fokussierte Stunden mehr bringen als acht zerrissene."},
+    {q:"Welche Deep-Work-Philosophie lebte Carl Jung?",options:["Monastisch: fast alle flachen Verpflichtungen streichen.","Rhythmisch: jeden Morgen dieselbe frühe Blockzeit.","Bimodal: intensive Retreats plus ein normales öffentliches Leben.","Journalistisch: Tiefe in jedem freien Moment."],a:2,e:"Jung zog sich in Bollingen zurück und kehrte dann wieder in sein arbeitsreiches Leben in Zürich zurück."},
+    {q:"Wann behält der Craftsman-Ansatz ein Werkzeug?",options:["Wenn es irgendeinen klaren Vorteil bietet, den man vermissen würde.","Wenn angesehene Menschen im eigenen Feld es benutzen.","Wenn der Nutzen für die Kernziele die Kosten übersteigt.","Wenn es schnell zu lernen ist und keine Schulung braucht."],a:2,e:"Die Frage ist nicht „Hat es irgendeinen Nutzen?“, sondern „Bringt es meinen wichtigsten Aktivitäten netto etwas?“"},
+    {q:"Was rät Newport im Umgang mit Langeweile?",options:["Pausen von der Konzentration nehmen, nicht von der Ablenkung.","Sofort auf Social Media gehen, wenn Langeweile auftaucht.","Einen kompletten offline Sabbath pro Woche einlegen.","Bei Langeweile die Aufgabe wechseln."],a:0,e:"Newport will die Fähigkeit trainieren, Reize auszuhalten. Der „Internet Sabbath“ ist nicht seine Empfehlung; geplante Internet-Blöcke sind es."},
+    {q:"Wozu dient das 5:30-Shutdown-Ritual?",options:["Alle offenen Aufgaben vor dem Gehen wirklich abzuschließen.","Deep Hours auf einem Scoreboard einzutragen.","Kollegen davon abzuhalten, nach Feierabend zu mailen.","Aufgaben zu prüfen und zu planen, damit der Kopf sie loslässt."],a:3,e:"Es schließt offene Schleifen. Der Zeigarnik-Effekt sorgt sonst dafür, dass die Arbeit im Hintergrund weiterläuft."},
+    {q:"Welches Shallow-Work-Budget schlägt Newport vor?",options:["Etwa 10 bis 20 Prozent.","Etwa 30 bis 50 Prozent.","Etwa 60 bis 70 Prozent.","Etwa 80 bis 90 Prozent."],a:1,e:"Null ist unrealistisch; über 50 Prozent frisst die Logistik die Tiefe. Der Korridor ist bewusst pragmatisch."},
+    {q:"Warum scheitert der „Any-Benefit“-Ansatz?",options:["Er ignoriert Kosten und Opportunitätskosten eines Werkzeugs.","Er verlangt, dass Nutzer für kostenlose Dienste zahlen.","Er unterstellt, dass alle Online-Tools gleich süchtig machen.","Er lehnt Tools ohne peer-reviewte Evidenz ab."],a:0,e:"Fast alles hat irgendeinen Nutzen. Die entscheidende Frage ist der Netto-Effekt gegenüber den wichtigsten Zielen."},
+    {q:"Wie quantifiziert Newport die „Tiefe“ einer Aufgabe?",options:["Wie viel Umsatz erzeugt diese Aufgabe?","Wie viele Stunden verbringst du damit?","Wie lange bräuchte ein kluger Absolvent, um sie zu lernen?","Wie leicht könnte ein Wettbewerber den Output kopieren?"],a:2,e:"Der „smart recent graduate“-Test schätzt den Trainingsaufwand. Je länger die Einarbeitung, desto tiefer die Tätigkeit."},
+    {q:"Was geschah in Perlowos BCG-Experiment mit dem freien Tag?",options:["Kunden gingen verloren und die Bewertungen sanken stark.","Wochenenden wurden zur Kompensation komplett verplant.","Kunden verlangten den ganzen Tag sofortige E-Mail-Antworten.","Die Arbeit wurde besser, Lernen nahm zu, Kunden blieben."],a:3,e:"Das Experiment ist ein starkes Gegenbeispiel zur Annahme, ständige Erreichbarkeit sei geschäftlich notwendig."}
+  ]);
+})();
+
+</script>
+</body>
+</html>
