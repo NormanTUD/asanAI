@@ -207,7 +207,7 @@ Every method above is a different way of answering the same question: *which can
 }
 </style>
 
-<div class="mn-predict" data-predict="temp-zero"><script type="application/json">{"q": "You slide the temperature T all the way down to 0. What will the sampler do?", "options": ["Pick a different word every time", "Always pick the single most likely word", "Pick words uniformly at random", "Refuse to pick anything"], "answer": 1, "try": "Drag **Temperature T** to 0 and press sample a few times. Then try T = 2.", "explain": "Dividing the logits by a tiny T blows up the gaps between them, so softmax puts almost all probability on the top word — temperature 0 is greedy decoding. A high T flattens the distribution instead."}</script></div>
+<div class="mn-predict" data-predict="temp-zero"><script type="application/json">{"q": "You slide the temperature T all the way down to 0. What will the sampler do?", "options": ["Pick a different word every time", "Always pick the most likely word", "Pick words uniformly at random", "Refuse to pick any word at all"], "answer": 1, "try": "Drag **Temperature T** to 0 and press sample a few times. Then try T = 2.", "explain": "Dividing the logits by a tiny T blows up the gaps between them, so softmax puts almost all probability on the top word — temperature 0 is greedy decoding. A high T flattens the distribution instead."}</script></div>
 
 <div class="mnlab" id="decoding-studio" data-interactive>
 	<div class="mnlab-head">

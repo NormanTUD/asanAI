@@ -203,10 +203,11 @@ option is historically the longest one by a wide margin, which makes guessing
 trivial. All four options must be roughly equal in length and equally specific;
 rewrite the three distractors as plausible *wrong* claims, not jokes or
 one-word non-answers, and keep the correct option at the same `answer` index.
-Hard rule enforced by `lesson_guard.py` (Q1): for short answers (longest ≤ 12
-chars) the spread may be at most 5; otherwise the shortest option must be at
-least 70 % of the longest and the spread at most 22 characters. The correct
-option must be neither the unique longest nor the unique shortest.
+This applies to `.mn-predict` cards as well. Hard rule enforced by
+`lesson_guard.py` (Q1): for short answers (longest ≤ 12 chars) the spread may
+be at most 5; otherwise the shortest option must be at least 70 % of the
+longest and the spread at most 22 characters. The correct option must be
+neither the unique longest nor the unique shortest.
 `.mn-predict` uses the same shape with `{q, options, answer, explain, try}`.
 Mid-lesson checkpoints use `class="mn-quiz mn-quiz--checkpoint"` (with the
 section's `data-depth` where the lesson is depth-tagged) and are not in the

@@ -56,7 +56,7 @@ tags: math-heavy, code-heavy
 }
 </style>
 
-<div class="mn-predict" data-predict="lr-diverge"><script type="application/json">{"q": "On the valley f(x) = x², gradient descent uses the learning rate 1.05. What happens?", "options": ["It reaches the minimum in one step", "It slowly creeps towards the minimum", "It jumps from side to side, further out each time", "It stops moving"], "answer": 2, "try": "Select **Valley x²**, set the **Learning rate** to about 1.05 and take a few steps.", "explain": "The update is x ← x − η·2x = (1 − 2η)·x. With η = 1.05 the factor is −1.1: the sign flips every step and the distance grows by 10 % — divergence. Any η above 1 does this on x²; η = 0.5 would land exactly at 0."}</script></div>
+<div class="mn-predict" data-predict="lr-diverge"><script type="application/json">{"q": "On the valley f(x) = x², gradient descent uses the learning rate 1.05. What happens?", "options": ["It reaches the minimum in a single step", "It slowly creeps towards the minimum", "It jumps from side to side and diverges", "It stops moving entirely after a few steps"], "answer": 2, "try": "Select **Valley x²**, set the **Learning rate** to about 1.05 and take a few steps.", "explain": "The update is x ← x − η·2x = (1 − 2η)·x. With η = 1.05 the factor is −1.1: the sign flips every step and the distance grows by 10 % — divergence. Any η above 1 does this on x²; η = 0.5 would land exactly at 0."}</script></div>
 
 <div class="mnlab" id="slope-lab" data-interactive>
 	<div class="mnlab-head">

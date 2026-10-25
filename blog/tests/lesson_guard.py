@@ -49,12 +49,13 @@ bracketed [Author, Year] and is exempt.
 
 Blog-wide quiz guard (every top-level lesson .php):
 
-  Q1 quiz-option-balance  the four options of every .mn-quiz question must be
-                        roughly equal in length, and the correct option must
-                        not be the unique longest or shortest — otherwise the
-                        answer is guessable from its character count alone.
-                        Short answers (<=12 chars): spread <=5. Otherwise:
-                        shortest >=70% of longest, spread <=22.
+  Q1 quiz-option-balance  the four options of every .mn-quiz question and
+                        every .mn-predict card must be roughly equal in
+                        length, and the correct option must not be the unique
+                        longest or shortest — otherwise the answer is
+                        guessable from its character count alone. Short
+                        answers (<=12 chars): spread <=5. Otherwise: shortest
+                        >=70% of longest, spread <=22.
 
 Usage:
     uv run blog/tests/lesson_guard.py [blog/]
@@ -312,49 +313,61 @@ QUIZ_BLOCK = re.compile(
     r"(.*?)</script>",
     re.S,
 )
+PREDICT_BLOCK = re.compile(
+    r'<div class="mn-predict[^"]*"[^>]*>\s*<script type="application/json">'
+    r"(.*?)</script>",
+    re.S,
+)
+
+
+def _option_length_issues(opts: list, ans: int) -> list[str]:
+    lens = [len(o) for o in opts]
+    mx, mn, right = max(lens), min(lens), lens[ans]
+    issues = []
+    if mx <= 12:
+        if mx - mn > 5:
+            issues.append(
+                f"short-answer spread {mx - mn} > 5 (lens {lens}) "
+                f"— the option text reveals the answer"
+            )
+    else:
+        if mn < 0.7 * mx:
+            issues.append(f"shortest option {mn} is under 70% of longest {mx} "
+                          f"(lens {lens})")
+        if mx - mn > 22:
+            issues.append(f"spread {mx - mn} > 22 (lens {lens}) "
+                          f"— balance all four options")
+    if right == mx and lens.count(right) == 1:
+        issues.append(f"correct option is the unique longest (lens {lens}) "
+                      f"— length alone gives it away")
+    if right == mn and lens.count(right) == 1:
+        issues.append(f"correct option is the unique shortest (lens {lens}) "
+                      f"— length alone gives it away")
+    return issues
 
 
 def guard_quiz_option_balance(php: str) -> list[str]:
     issues = []
-    for bi, m in enumerate(QUIZ_BLOCK.finditer(php)):
-        try:
-            data = json.loads(m.group(1))
-        except json.JSONDecodeError:
-            continue
-        for qi, q in enumerate(data.get("questions", [])):
-            opts, ans = q.get("options"), q.get("answer")
-            if not isinstance(opts, list) or not isinstance(ans, int):
+    for kind, block in (("quiz", QUIZ_BLOCK), ("predict", PREDICT_BLOCK)):
+        for bi, m in enumerate(block.finditer(php)):
+            try:
+                data = json.loads(m.group(1))
+            except json.JSONDecodeError:
                 continue
-            if not 0 <= ans < len(opts):
+            questions = data.get("questions") if kind == "quiz" else [data]
+            if not isinstance(questions, list):
                 continue
-            lens = [len(o) for o in opts]
-            mx, mn, right = max(lens), min(lens), lens[ans]
-            if mx <= 12:
-                if mx - mn > 5:
-                    issues.append(
-                        f"quiz {bi} q {qi}: short-answer spread {mx - mn} > 5 "
-                        f"(lens {lens}) — the option text reveals the answer"
-                    )
-            else:
-                if mn < 0.7 * mx:
-                    issues.append(
-                        f"quiz {bi} q {qi}: shortest option {mn} is under 70% "
-                        f"of longest {mx} (lens {lens})"
-                    )
-                if mx - mn > 22:
-                    issues.append(
-                        f"quiz {bi} q {qi}: spread {mx - mn} > 22 (lens {lens}) "
-                        f"— balance all four options"
-                    )
-            if right == mx and lens.count(right) == 1:
-                issues.append(
-                    f"quiz {bi} q {qi}: correct option is the unique longest "
-                    f"(lens {lens}) — length alone gives it away"
-                )
-            if right == mn and lens.count(right) == 1:
-                issues.append(
-                    f"quiz {bi} q {qi}: correct option is the unique shortest "
-                    f"(lens {lens}) — length alone gives it away"
+            for qi, q in enumerate(questions):
+                if not isinstance(q, dict):
+                    continue
+                opts, ans = q.get("options"), q.get("answer")
+                if not isinstance(opts, list) or not isinstance(ans, int):
+                    continue
+                if not 0 <= ans < len(opts):
+                    continue
+                issues.extend(
+                    f"{kind} {bi} q {qi}: {i}"
+                    for i in _option_length_issues(opts, ans)
                 )
     return issues
 
