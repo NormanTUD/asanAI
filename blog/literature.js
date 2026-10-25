@@ -4143,7 +4143,7 @@ window.bibData = {
 	"momentum": {
 		title: "Some methods of speeding up the convergence of iteration methods",
 		url: "https://papers.baulab.info/papers/also/Polyak-1964.pdf",
-		year: 1962,
+		year: 1964,
 		author: "Boris Teodorovich Polyak"
 	},
 	"simulatorstheory": {
@@ -4911,7 +4911,7 @@ window.bibData = {
 	"polyak": {
 		title: "Some Methods of Speeding up the Convergence of Iteration Methods",
 		author: "B. T. Polyak",
-		year: 1962,
+		year: 1964,
 		url: "https://papers.baulab.info/papers/also/Polyak-1964.pdf"
 	},
 	"hornik": {
@@ -11149,7 +11149,8 @@ window.bibData = {
 	"mockus1978bo": {
 		title: "On Bayesian Methods for Seeking the Extremum",
 		author: "Jonas Močkus",
-		year: 1978
+		year: 1975,
+		url: "https://link.springer.com/chapter/10.1007/3-540-07165-2_55"
 	},
 	"shahriari2016bo": {
 		title: "Taking the Human Out of the Loop: A Review of Bayesian Optimization",
@@ -16846,7 +16847,7 @@ window.bibData = {
 		url: "https://www.jmlr.org/papers/v13/bergstra12a.html"
 	},
 	"snoek2012practical": {
-		title: "Practical Bayesian Optimization of Machine Learning Hyperparameters",
+		title: "Practical Bayesian Optimization of Machine Learning Algorithms",
 		author: "Jasper Snoek, Hugo Larochelle, Ryan P. Adams",
 		year: 2012,
 		url: "https://arxiv.org/abs/1206.2944"
@@ -23267,6 +23268,203 @@ window.bibData = {
 		year: 2024,
 		url: "https://arxiv.org/abs/2402.01739",
 		alternativetitle: "Xue et al., OpenMoE (2024)"
+	},
+
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Round-3 sources: calculus and loss, optimizers and tuning,
+	 *  embeddings and attention, positional encodings and decoding.
+	 *  Every URL verified to return HTTP 200.
+	 * ───────────────────────────────────────────────────────────────────── */
+	"madhava_mactutor": {
+		title: "Madhava of Sangamagrama",
+		author: "J. J. O'Connor and E. F. Robertson, MacTutor History of Mathematics Archive",
+		year: "accessed 2026",
+		url: "https://mathshistory.st-andrews.ac.uk/Biographies/Madhava/",
+		alternativetitle: "Madhava of Sangamagrama (MacTutor)"
+	},
+	"cauchy1823resume": {
+		title: "Résumé des leçons données à l'École royale polytechnique sur le calcul infinitésimal",
+		author: "Augustin-Louis Cauchy",
+		year: 1823,
+		url: "https://archive.org/details/TO0E033362_TO0324_PNI-2035_000000",
+		alternativetitle: "Cauchy, Résumé des leçons (1823)"
+	},
+	"weierstrass_mactutor": {
+		title: "Karl Theodor Wilhelm Weierstrass",
+		author: "J. J. O'Connor and E. F. Robertson, MacTutor History of Mathematics Archive",
+		year: "accessed 2026",
+		url: "https://mathshistory.st-andrews.ac.uk/Biographies/Weierstrass/",
+		alternativetitle: "Weierstrass (MacTutor)"
+	},
+	"boscovich_mactutor": {
+		title: "Ruggero Giuseppe Boscovich",
+		author: "J. J. O'Connor and E. F. Robertson, MacTutor History of Mathematics Archive",
+		year: "accessed 2026",
+		url: "https://mathshistory.st-andrews.ac.uk/Biographies/Boscovich/",
+		alternativetitle: "Boscovich (MacTutor)"
+	},
+	"huber1964": {
+		title: "Robust Estimation of a Location Parameter",
+		author: "Peter J. Huber",
+		year: 1964,
+		journal: "The Annals of Mathematical Statistics 35(1): 73–101",
+		url: "https://doi.org/10.1214/aoms/1177703732",
+		alternativetitle: "Huber, Robust Estimation (1964)"
+	},
+	"lin2017focal": {
+		title: "Focal Loss for Dense Object Detection",
+		author: "Tsung-Yi Lin, Priya Goyal, Ross Girshick, Kaiming He, Piotr Dollár",
+		year: 2017,
+		url: "https://arxiv.org/abs/1708.02002",
+		alternativetitle: "Lin et al., Focal Loss (2017)"
+	},
+	"strathern1997": {
+		title: "\"Improving ratings\": audit in the British University system",
+		author: "Marilyn Strathern",
+		year: 1997,
+		journal: "European Review 5(3): 305–321",
+		url: "https://www.cambridge.org/core/journals/european-review/article/abs/improving-ratings-audit-in-the-british-university-system/FC2EE640C0C44E3DB87C29FB666E9AAB",
+		alternativetitle: "Strathern (1997) — when a measure becomes a target"
+	},
+	"hutterprize": {
+		title: "The Hutter Prize: 500,000 € Prize for Compressing Human Knowledge",
+		author: "Marcus Hutter",
+		year: 2006,
+		url: "https://www.hutter1.net/prize/",
+		alternativetitle: "The Hutter Prize"
+	},
+	"kiefer1952stochastic": {
+		title: "Stochastic Estimation of the Maximum of a Regression Function",
+		author: "J. Kiefer, J. Wolfowitz",
+		year: 1952,
+		url: "https://projecteuclid.org/journals/annals-of-mathematical-statistics/volume-23/issue-3/Stochastic-Estimation-of-the-Maximum-of-a-Regression-Function/10.1214/aoms/1177729392.full",
+		alternativetitle: "Kiefer & Wolfowitz, 1952"
+	},
+	"nesterov1983method": {
+		title: "A method of solving a convex programming problem with convergence rate O(1/k^2)",
+		author: "Yurii E. Nesterov",
+		year: 1983,
+		url: "https://openalex.org/W2936995161",
+		alternativetitle: "Nesterov, 1983"
+	},
+	"loshchilov2016sgdr": {
+		title: "SGDR: Stochastic Gradient Descent with Warm Restarts",
+		author: "Ilya Loshchilov, Frank Hutter",
+		year: 2016,
+		url: "https://arxiv.org/abs/1608.03983",
+		alternativetitle: "Loshchilov & Hutter, 2016"
+	},
+	"deerwester1990lsa": {
+		title: "Indexing by Latent Semantic Analysis",
+		author: "Scott Deerwester, Susan T. Dumais, George W. Furnas, Thomas K. Landauer, Richard Harshman",
+		year: 1990,
+		url: "https://web.archive.org/web/20040726210957id_/http://lsa.colorado.edu:80/papers/JASIS.lsi.90.pdf",
+		alternativetitle: "LSA"
+	},
+	"mikolov2013negativesampling": {
+		title: "Distributed Representations of Words and Phrases and their Compositionality",
+		author: "Tomas Mikolov, Ilya Sutskever, Kai Chen, Greg Corrado, Jeffrey Dean",
+		year: 2013,
+		url: "https://arxiv.org/abs/1310.4546",
+		alternativetitle: "word2vec with negative sampling"
+	},
+	"mu2018allbutthetop": {
+		title: "All-but-the-Top: Simple and Effective Postprocessing for Word Representations",
+		author: "Jiaqi Mu, Suma Bhat, Pramod Viswanath",
+		year: 2018,
+		url: "https://arxiv.org/abs/1702.01417",
+		alternativetitle: "all-but-the-top"
+	},
+	"luong2015attention": {
+		title: "Effective Approaches to Attention-based Neural Machine Translation",
+		author: "Minh-Thang Luong, Hieu Pham, Christopher D. Manning",
+		year: 2015,
+		url: "https://arxiv.org/abs/1508.04025",
+		alternativetitle: "Luong attention"
+	},
+	"tsai2019kernel": {
+		title: "Transformer Dissection: A Unified Understanding of Transformer's Attention via the Lens of Kernel",
+		author: "Yao-Hung Hubert Tsai, Shaojie Bai, Makoto Yamada, Louis-Philippe Morency, Ruslan Salakhutdinov",
+		year: 2019,
+		url: "https://arxiv.org/abs/1908.11775",
+		alternativetitle: "attention as kernel smoothing"
+	},
+	"clark2019bertattention": {
+		title: "What Does BERT Look At? An Analysis of BERT's Attention",
+		author: "Kevin Clark, Urvashi Khandelwal, Omer Levy, Christopher D. Manning",
+		year: 2019,
+		url: "https://arxiv.org/abs/1906.04341",
+		alternativetitle: "Clark et al., BERT attention (2019)"
+	},
+	"meister2022typical": {
+		title: "Locally Typical Sampling",
+		author: "Clara Meister, Tiago Pimentel, Gian Wiher, Ryan Cotterell",
+		year: 2022,
+		url: "https://arxiv.org/abs/2202.00666",
+		alternativetitle: "Typical Decoding"
+	},
+	"chen2023position": {
+		title: "Extending Context Window of Large Language Models via Positional Interpolation",
+		author: "Shouyuan Chen, Sherman Wong, Liangjian Chen, Yuandong Tian",
+		year: 2023,
+		url: "https://arxiv.org/abs/2306.15595",
+		alternativetitle: "Position Interpolation"
+	},
+	"lowerre1976harpy": {
+		title: "The Harpy Speech Recognition System",
+		author: "Bruce T. Lowerre",
+		year: 1976,
+		url: "https://stacks.stanford.edu/file/druid:rq916rn6924/rq916rn6924.pdf",
+		alternativetitle: "Harpy (beam search)"
+	},
+	"su2022contrastive": {
+		title: "A Contrastive Framework for Neural Text Generation",
+		author: "Yixuan Su, Tian Lan, Yan Wang, Dani Yogatama, Lingpeng Kong, Nigel Collier",
+		year: 2022,
+		url: "https://arxiv.org/abs/2202.06417",
+		alternativetitle: "Contrastive Search"
+	},
+	"gibbs1902": {
+		title: "Elementary Principles in Statistical Mechanics",
+		author: "Josiah Willard Gibbs",
+		year: 1902,
+		url: "https://archive.org/details/elementaryprinci00gibbrich",
+		alternativetitle: "Gibbs, Statistical Mechanics (1902)"
+	},
+	"bergstra2011algorithms": {
+		title: "Algorithms for Hyper-Parameter Optimization",
+		author: "James Bergstra, Rémi Bardenet, Yoshua Bengio, Balázs Kégl",
+		year: 2011,
+		url: "https://papers.nips.cc/paper_files/paper/2011/hash/86e8f7ab32cfd12577bc2619bc635690-Abstract.html",
+		alternativetitle: "Bergstra et al., 2011"
+	},
+	"jones1998ego": {
+		title: "Efficient Global Optimization of Expensive Black-Box Functions",
+		author: "Donald R. Jones, Matthias Schonlau, William J. Welch",
+		year: 1998,
+		url: "https://doi.org/10.1023/A:1008306431147",
+		alternativetitle: "Jones et al., 1998"
+	},
+	"li2016hyperband": {
+		title: "Hyperband: A Novel Bandit-Based Approach to Hyperparameter Optimization",
+		author: "Lisha Li, Kevin Jamieson, Giulia DeSalvo, Afshin Rostamizadeh, Ameet Talwalkar",
+		year: 2016,
+		url: "https://arxiv.org/abs/1603.06560",
+		alternativetitle: "Li et al., 2016"
+	},
+	"jaderberg2017pbt": {
+		title: "Population Based Training of Neural Networks",
+		author: "Max Jaderberg, Valentin Dalibard, Simon Osindero, et al.",
+		year: 2017,
+		url: "https://arxiv.org/abs/1711.09846",
+		alternativetitle: "Jaderberg et al., 2017"
+	},
+	"bengio2012practical": {
+		title: "Practical Recommendations for Gradient-Based Training of Deep Architectures",
+		author: "Yoshua Bengio",
+		year: 2012,
+		url: "https://arxiv.org/abs/1206.5533",
+		alternativetitle: "Bengio, 2012"
 	},
 
 };
