@@ -100,6 +100,14 @@
 									<div class="bars" id="nt-bars" role="group" aria-label="Next token probabilities"></div>
 								</div>
 								<div class="demo-controls">
+									<span style="font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tm-muted)">Decoder</span>
+									<div class="chip-row" id="nt-modes">
+										<button class="chip is-on" type="button" data-decode="sample">Sample</button>
+										<button class="chip" type="button" data-decode="greedy">Greedy</button>
+										<button class="chip" type="button" data-decode="topp">Top-p 0.9</button>
+									</div>
+								</div>
+								<div class="demo-controls" style="margin-top:6px">
 									<button class="btn-demo btn-demo--green" type="button" id="nt-step">Let it choose →</button>
 									<button class="btn-demo" type="button" id="nt-reset">Reset</button>
 									<label>Temperature
@@ -107,17 +115,18 @@
 										<output id="nt-temp-out">0.80</output>
 									</label>
 								</div>
-								<div class="demo-readout">
+								<div class="demo-readout demo-readout--4">
 									<div><b>Step</b><span id="nt-step-count">0 / 4</span></div>
 									<div><b>Context length</b><span id="nt-len">5 tokens</span></div>
 									<div><b>Top choice</b><span id="nt-top">Paris</span></div>
+									<div><b>Decoder</b><span id="nt-mode">sample</span></div>
 								</div>
 							</div>
 							<div class="demo-foot">
 								Toy logits, not a real model. The mechanism is real: a distribution over the
-								vocabulary, a decoding rule, append, repeat. This demo always samples;
-								production systems may use greedy or beam search instead. Try temperature
-								0.2, then 1.8.
+								vocabulary, a decoding rule, append, repeat. This demo lets you switch
+								between greedy, sampling, and top-p; production systems may also use beam
+								search. Try temperature 0.2, then 1.8.
 							</div>
 						</div>
 
@@ -132,11 +141,13 @@
 								the pool before drawing.
 							</p>
 							<p>
-								The competence lives in the learned distribution; the decoder only selects from
-								it. Sampling can make output more varied, but variation is not creativity:
-								useful novelty depends on structure, context, and the quality of the
-								distribution, and raising the temperature usually trades coherence for
-								surprise.
+								The decoder in the demo is a choice, not a property of the model. <strong>Greedy</strong>
+								always takes the top token; <strong>sampling</strong> draws from the whole
+								distribution; <strong>top-p</strong> first keeps the smallest set of tokens whose
+								probabilities reach 0.9 and then samples among them. The competence lives in the
+								learned distribution; the decoder only selects from it. Variation is not
+								creativity: useful novelty depends on structure, context, and the quality of the
+								distribution, and raising the temperature usually trades coherence for surprise.
 							</p>
 						</div>
 						<div class="aha">
@@ -316,6 +327,7 @@
 		var generated = [];
 		var stage = 0;
 		var temp = 0.8;
+		var decodeMode = "sample";
 		var sentenceEl = document.getElementById("nt-sentence");
 		var barsEl = document.getElementById("nt-bars");
 		var stepBtn = document.getElementById("nt-step");
@@ -397,13 +409,38 @@
 			if (stage >= stages.length) return;
 			var options = stages[stage];
 			var probs = softmax(options.map(function (o) { return o.l; }), temp);
+			var top = 0;
+			probs.forEach(function (p, i) { if (p > probs[top]) top = i; });
+			if (decodeMode === "greedy") { choose(options[top].t); return; }
+			var pool = probs.map(function (p, i) { return { i: i, p: p }; });
+			if (decodeMode === "topp") {
+				pool.sort(function (a, b) { return b.p - a.p; });
+				var cumulative = 0;
+				var kept = [];
+				for (var k = 0; k < pool.length; k++) {
+					kept.push(pool[k]);
+					cumulative += pool[k].p;
+					if (cumulative >= 0.9) break;
+				}
+				pool = kept;
+				var total = pool.reduce(function (s, x) { return s + x.p; }, 0);
+				pool.forEach(function (x) { x.p = x.p / total; });
+			}
 			var r = Math.random();
 			var acc = 0;
-			for (var i = 0; i < probs.length; i++) {
-				acc += probs[i];
-				if (r <= acc) { choose(options[i].t); return; }
+			for (var j = 0; j < pool.length; j++) {
+				acc += pool[j].p;
+				if (r <= acc) { choose(options[pool[j].i].t); return; }
 			}
-			choose(options[probs.length - 1].t);
+			choose(options[pool[pool.length - 1].i].t);
+		}
+		function setDecodeMode(mode) {
+			decodeMode = mode;
+			var modeEl = document.getElementById("nt-mode");
+			if (modeEl) modeEl.textContent = mode === "topp" ? "top-p 0.9" : mode;
+			document.querySelectorAll("[data-decode]").forEach(function (b) {
+				b.classList.toggle("is-on", b.getAttribute("data-decode") === mode);
+			});
 		}
 		function updateReadout() {
 			if (stepCount) stepCount.textContent = Math.min(stage, stages.length) + " / " + stages.length;
@@ -418,6 +455,9 @@
 		}
 		if (stepBtn) stepBtn.addEventListener("click", sample);
 		if (resetBtn) resetBtn.addEventListener("click", reset);
+		document.querySelectorAll("[data-decode]").forEach(function (b) {
+			b.addEventListener("click", function () { setDecodeMode(b.getAttribute("data-decode")); });
+		});
 		if (tempEl) {
 			tempEl.addEventListener("input", function () {
 				temp = parseFloat(tempEl.value);

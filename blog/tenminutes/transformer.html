@@ -90,7 +90,7 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The transformer pipeline <span>· demo 01</span></p>
-									<p class="demo-sub">Six stages. Click one, or step through the whole route.</p>
+									<p class="demo-sub">Six stages. Click one, or take the next step in the pipeline.</p>
 								</div>
 								<span class="demo-badge">click / step</span>
 							</div>
@@ -102,7 +102,7 @@
 									<p id="pipe-text"></p>
 								</div>
 								<div class="demo-controls">
-									<button class="btn-demo btn-demo--green" type="button" id="pipe-run">Run the pipeline →</button>
+									<button class="btn-demo btn-demo--green" type="button" id="pipe-next">Next step in pipeline →</button>
 									<button class="btn-demo" type="button" id="pipe-reset">Reset</button>
 									<span class="pipe-note" id="pipe-counter" style="margin:0">Stage 1 of 6</span>
 								</div>
@@ -365,11 +365,9 @@
 		var detailText = document.getElementById("pipe-text");
 		var counter = document.getElementById("pipe-counter");
 		var pipeTokens = document.getElementById("pipe-tokens");
-		var runBtn = document.getElementById("pipe-run");
+		var nextBtn = document.getElementById("pipe-next");
 		var resetBtn = document.getElementById("pipe-reset");
 		var currentStage = 0;
-		var running = false;
-		var runTimer = null;
 		var tokenWords = ["The", "cat", "sat"];
 
 		function renderTokens(stage) {
@@ -382,7 +380,7 @@
 				pipeTokens.appendChild(span);
 			});
 		}
-		function selectStage(i, auto) {
+		function selectStage(i) {
 			currentStage = TM.clamp(i, 0, stages.length - 1);
 			var stage = stages[currentStage];
 			if (detailTitle) detailTitle.textContent = stage.title;
@@ -392,13 +390,7 @@
 				b.classList.toggle("is-active", parseInt(b.getAttribute("data-stage"), 10) === currentStage);
 			});
 			renderTokens(currentStage);
-			if (!auto && running) stopRun();
-		}
-		function stopRun() {
-			running = false;
-			if (runTimer) clearTimeout(runTimer);
-			runTimer = null;
-			if (runBtn) runBtn.textContent = "Run the pipeline →";
+			if (nextBtn) nextBtn.textContent = currentStage >= stages.length - 1 ? "Start over ↺" : "Next step in pipeline →";
 		}
 		if (flow) {
 			stages.forEach(function (stage, i) {
@@ -407,31 +399,17 @@
 				b.className = "flow-step" + (i === 0 ? " is-active" : "");
 				b.setAttribute("data-stage", i);
 				b.innerHTML = '<span class="fs-num">0' + (i + 1) + "</span><b>" + stage.name + "</b>";
-				b.addEventListener("click", function () { stopRun(); selectStage(i, false); });
+				b.addEventListener("click", function () { selectStage(i); });
 				flow.appendChild(b);
 			});
-			selectStage(0, true);
+			selectStage(0);
 		}
-		function advanceRun() {
-			if (!running) return;
-			if (currentStage >= stages.length - 1) {
-				stopRun();
-				return;
-			}
-			selectStage(currentStage + 1, true);
-			runTimer = setTimeout(advanceRun, 1100);
-		}
-		if (runBtn) {
-			runBtn.addEventListener("click", function () {
-				if (running) { stopRun(); return; }
-				running = true;
-				runBtn.textContent = "Pause";
-				if (currentStage >= stages.length - 1) selectStage(0, true);
-				selectStage(currentStage + 1 > stages.length - 1 ? 0 : currentStage + 1, true);
-				runTimer = setTimeout(advanceRun, 1100);
+		if (nextBtn) {
+			nextBtn.addEventListener("click", function () {
+				selectStage(currentStage >= stages.length - 1 ? 0 : currentStage + 1);
 			});
 		}
-		if (resetBtn) resetBtn.addEventListener("click", function () { stopRun(); selectStage(0, false); });
+		if (resetBtn) resetBtn.addEventListener("click", function () { selectStage(0); });
 
 		/* ── layer lens ──────────────────────────────────────── */
 		var canvas = document.getElementById("layer-canvas");

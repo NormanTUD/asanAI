@@ -2507,3 +2507,20 @@ html[data-theme="light"] .demo .btn-demo.is-on {
 	border-color: var(--rel, var(--tm-green)) !important;
 	color: #07240e !important;
 }
+
+.demo-readout--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 720px) { .demo-readout--4 { grid-template-columns: 1fr; } }
+
+a.keypoint { display: block; color: var(--tm-ink); text-decoration: none; transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease; }
+a.keypoint:hover { border-color: var(--tm-line-strong); transform: translateY(-2px); box-shadow: var(--tm-shadow); }
+a.keypoint:hover b { color: var(--tm-blue); }
+
+.rel-btn::before {
+	content: "";
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	flex: 0 0 auto;
+	background: var(--rel, var(--tm-green));
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--rel, var(--tm-green)) 18%, transparent);
+}
