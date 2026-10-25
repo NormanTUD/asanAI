@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Words as points, relationships as directions: an interactive ten-minute tour of embeddings and cosine similarity.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>Meaning as Geometry — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="embeddinglab" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<header class="topbar">
+		<a class="brand" href="index.html" aria-label="Ten Minutes, home">
+			<span class="brand-mark">10<sup>′</sup></span>
+			<span class="brand-name"><b>Ten</b> Minutes</span>
+			<span class="brand-by">ScaDS.AI</span>
+		</a>
+		<nav class="topnav" aria-label="Main">
+			<a href="index.html">Home</a>
+			<a href="advent.html">Calendar</a>
+			<a href="index.html#library">Library</a>
+			<button class="icon-btn" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Dark mode">
+				<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.7 6.7 0 0 0 9.8 9.8z"/></svg>
+				<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+			</button>
+		</nav>
+	</header>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<p class="kicker">Day 16 · Part 4 · Meaning</p>
+					<h1>Meaning is<br><em>geometry.</em></h1>
+					<p class="hero-deck">
+						An embedding turns a token into a point in a high-dimensional space. Similar
+						meanings land near each other; <strong>relationships become directions</strong>.
+						Move the points, follow the arrows, and see why <em>king − man + woman</em> can
+						land on <em>queen</em> — and where the metaphor breaks.
+					</p>
+					<div class="hero-meta">
+						<span class="pill pill--green">10 minutes</span>
+						<span class="pill">Light math</span>
+						<span class="pill pill--blue">2 interactive maps</span>
+						<span class="pill">Field notes</span>
+					</div>
+				</div>
+				<div class="dial-wrap" aria-hidden="true">
+					<div class="dial">
+						<div class="dial-ticks" data-ticks></div>
+						<div class="dial-orbit"><span style="--a:25deg"></span><span style="--a:145deg"></span><span style="--a:265deg"></span></div>
+						<div class="dial-inner">
+							<span class="dial-time">10′</span>
+							<span class="dial-label">one idea per visit</span>
+							<span class="dial-sub">read · play · explain</span>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="oned">
+						<div class="section-kicker"><span class="sk-num">01</span> One dimension</div>
+						<h2 class="section-title">A word becomes a number.</h2>
+						<div class="prose">
+							<p>
+								Start with a single axis: temperature. Give <strong>Freezing</strong> the
+								coordinate −30, <strong>Cold</strong> 5, <strong>Warm</strong> 35, and
+								<strong>Boiling</strong> 100. In this one-dimensional world, “Cold” is
+								mathematically close to “Freezing” and far from “Boiling”. You can even do
+								approximate arithmetic: <code>Boiling − Hot ≈ Warm</code>.
+							</p>
+							<p>
+								The coordinates are hand-assigned here. In a real model nobody writes them
+								down: the model discovers a position for every token from the company it
+								keeps in billions of sentences. One axis is already a model of similarity;
+								language needs many.
+							</p>
+						</div>
+						<div class="fieldnotes">
+							<h4>What the coordinate means</h4>
+							<p>There is no “temperature neuron” in a real model. A dimension is a latent feature — a direction the optimization found useful, not a label a human chose. The 1-D line is a teaching device.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="map">
+						<div class="section-kicker"><span class="sk-num">02</span> The semantic map</div>
+						<h2 class="section-title">Relationships are reusable arrows.</h2>
+						<div class="prose">
+							<p>
+								In two or three dimensions we can draw the space. Each word is a point.
+								The arrow from <strong>man</strong> to <strong>woman</strong> is the same
+								arrow as <strong>king</strong> to <strong>queen</strong>, and
+								<strong>uncle</strong> to <strong>aunt</strong>: gender is one direction you
+								can pick up and carry to another word. Nobody typed that rule in. It fell
+								out of the statistics of the text.
+							</p>
+							<p>
+								Click a word to see its nearest neighbours. Or choose an analogy and watch
+								the arithmetic land near a word. The map is a toy projection of a much
+								higher-dimensional space; the directions are real in the toy, and the
+								principle is what matters.
+							</p>
+						</div>
+
+						<div class="demo" id="embedding-map-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The semantic map <span>· demo 01</span></p>
+									<p class="demo-sub">Click a word, try an analogy, or overlay a direction. Distances are Euclidean in this toy projection.</p>
+								</div>
+								<span class="demo-badge">2-D toy</span>
+							</div>
+							<div class="demo-body">
+								<div class="vec-toolbar">
+									<div class="chip-row" id="analogy-chips">
+										<button class="chip is-on" type="button" data-analogy="0">King − Man + Woman</button>
+										<button class="chip" type="button" data-analogy="1">Uncle − Man + Woman</button>
+										<button class="chip" type="button" data-analogy="2">Paris − France + Germany</button>
+										<button class="chip" type="button" data-analogy="3">Puppy − Dog + Cat</button>
+									</div>
+								</div>
+								<canvas class="demo-canvas" id="embed-canvas" style="height:380px" aria-label="A two-dimensional semantic map of words"></canvas>
+								<div class="vec-readout">
+									<div><b>Selected</b><span id="emb-selected">King</span></div>
+									<div><b>Nearest neighbour</b><span id="emb-nearest">Queen</span></div>
+									<div><b>Analogy lands on</b><span id="emb-result">Queen</span></div>
+								</div>
+								<div class="demo-controls">
+									<button class="btn-demo" type="button" data-direction="gender">Gender arrow</button>
+									<button class="btn-demo" type="button" data-direction="capital">Capital arrow</button>
+									<button class="btn-demo" type="button" data-direction="young">Young arrow</button>
+									<button class="btn-demo" type="button" id="emb-clear">Clear</button>
+								</div>
+								<p class="embed-legend" id="emb-caption" style="color:var(--tm-muted)">
+									<span><i style="background:#71bd56"></i>royalty</span>
+									<span><i style="background:#39a9d6"></i>gender</span>
+									<span><i style="background:#d4a13c"></i>country / capital</span>
+									<span><i style="background:#df785f"></i>animal / age</span>
+								</p>
+							</div>
+							<div class="demo-foot">
+								Coordinates are hand-designed so the toy analogies are exact. In a real
+								embedding they are approximate and noisy: the famous <em>king − man +
+								woman ≈ queen</em> is a striking regularity, not a law.
+							</div>
+						</div>
+
+						<div class="trythis">
+							<b>Try this</b>
+							<ol>
+								<li>Find a pair whose arrow is parallel to <strong>man → woman</strong>. Then try to find one that breaks.</li>
+								<li>Click <strong>Paris</strong>. Is “Berlin” its nearest neighbour? What does that tell you about what the axes capture?</li>
+								<li>Overlay the <strong>capital arrow</strong>. Carry it from France to Germany. Where does it land?</li>
+							</ol>
+						</div>
+					</section>
+
+					<section class="section-block" id="metric">
+						<div class="section-kicker"><span class="sk-num">03</span> The metric</div>
+						<h2 class="section-title">Cosine similarity: direction is meaning.</h2>
+						<div class="prose">
+							<p>
+								How close are two meanings? Euclidean distance measures the straight-line
+								gap. Cosine similarity measures the <strong>angle</strong> between the
+								vectors: 1 means they point the same way, 0 means they are unrelated, −1
+								means opposite. Modern embeddings usually prefer cosine because it is
+								<strong>scale-invariant</strong>: a long vector and a short vector pointing
+								the same way count as identical.
+							</p>
+							<p>
+								Magnitude often varies for reasons that have nothing to do with meaning —
+								frequent tokens accumulate more gradient updates and can grow longer. Cosine
+								is blind to that artefact. It is not a perfect measure of meaning, but it
+								asks a cleaner question: do these tokens point in the same direction?
+							</p>
+						</div>
+
+						<div class="demo" id="cosine-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Angle vs distance <span>· demo 02</span></p>
+									<p class="demo-sub">Rotate B and stretch it. Watch cosine stay fixed while Euclidean distance moves.</p>
+								</div>
+								<span class="demo-badge">live</span>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas" id="cosine-canvas" style="height:320px" aria-label="Two vectors with an angle and a magnitude"></canvas>
+								<div class="vec-readout">
+									<div><b>Cosine similarity</b><span id="cos-cos">0.71</span></div>
+									<div><b>Euclidean distance</b><span id="cos-dist">0.77</span></div>
+									<div><b>Dot product</b><span id="cos-dot">0.71</span></div>
+								</div>
+								<div class="demo-controls">
+									<label>Angle A <input type="range" id="cos-a" min="0" max="360" step="1" value="35"><output id="cos-a-out">35°</output></label>
+									<label>Angle B <input type="range" id="cos-b" min="0" max="360" step="1" value="80"><output id="cos-b-out">80°</output></label>
+									<label>Magnitude B <input type="range" id="cos-m" min="0.4" max="2.4" step="0.05" value="1"><output id="cos-m-out">1.00</output></label>
+								</div>
+								<p class="meadow-caption" id="cos-caption" style="color:var(--tm-muted)">The green arc is the angle. The dashed line is the Euclidean gap. Stretch B: the gap grows, the angle does not.</p>
+							</div>
+							<div class="demo-foot">
+								In high dimensions, almost all random vectors are nearly orthogonal. That is
+								one reason a “nearest neighbour” can feel surprising: the space is vast, and
+								absolute distance is less informative than direction.
+							</div>
+						</div>
+					</section>
+
+					<section class="section-block" id="real">
+						<div class="section-kicker"><span class="sk-num">04</span> What is really there</div>
+						<h2 class="section-title">The map is useful. Do not mistake it for the territory.</h2>
+						<div class="prose">
+							<p>
+								It is tempting to label axes as “Gender”, “Power”, or “Temperature”. In real
+								models, dimensions are <strong>latent features</strong>: patterns discovered
+								through co-occurrence, most of which have no name in any human language. We
+								can find directions that correlate with human concepts, but the model does
+								not “understand” a king; it places the token in a set of geometric
+								relationships.
+							</p>
+							<p>
+								The classic embedding table is also only the <strong>first layer</strong>.
+								Word2vec, GloVe, and fastText gave every word one static vector. ELMo and BERT
+								made the vector <strong>contextual</strong>: “bank” in “river bank” and “bank
+								account” gets different representations. In a transformer, the input embedding
+								is immediately rewritten by attention and the residual stream.
+							</p>
+						</div>
+						<div class="myth-grid">
+							<div class="myth">
+								<b>Common misreading</b>
+								<span>“Each dimension has a human name.” Most do not. A direction can correlate with gender or royalty without being a clean axis.</span>
+							</div>
+							<div class="myth myth--ok">
+								<b>Better frame</b>
+								<span>Meaning is a region, not a coordinate. A concept is a neighbourhood, a direction, or a subspace — often distributed across many dimensions.</span>
+							</div>
+							<div class="myth">
+								<b>Common misreading</b>
+								<span>“Cosine similarity proves understanding.” It proves geometric alignment. The interpretation of that alignment is a separate, contested question.</span>
+							</div>
+							<div class="myth myth--ok">
+								<b>Better frame</b>
+								<span>“Direction is meaning, magnitude is often noise” is a useful default, not a metaphysical law. Anisotropy and norm effects complicate it.</span>
+							</div>
+						</div>
+						<div class="prose">
+							<p>
+								Two more ideas from the full chapter are worth carrying: <strong>polysemanticity
+								and superposition</strong> — a single neuron often responds to several
+								unrelated features because the model compresses more concepts than it has
+								dimensions; and the <strong>manifold hypothesis</strong> — real data lies on a
+								lower-dimensional surface inside the huge ambient space, which is why
+								high-dimensional models can generalize instead of merely memorizing.
+							</p>
+							<p>
+								The full lesson pushes further into Voronoi cells (the territory of each
+								token), persistent homology (holes in the semantic manifold), hyperbolic
+								embeddings (hierarchies), and the geometry of negation. The ten-minute
+								version keeps one sentence: <strong>the model computes with positions and
+								directions, and meaning is what those positions do when we read them.</strong>
+							</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Distance</b><span>Euclidean gap: “how far apart in this projection?” Sensitive to magnitude.</span></div>
+							<div class="keypoint"><b>Angle</b><span>Cosine: “do they point the same way?” Scale-invariant and usually preferred.</span></div>
+							<div class="keypoint"><b>Arrows</b><span>Relationships can be reused: gender, capital, age. Approximate, not exact.</span></div>
+							<div class="keypoint"><b>Context</b><span>In LLMs the input vector is only the start; attention rewrites it immediately.</span></div>
+						</div>
+					</section>
+
+					<nav class="lesson-nav" aria-label="Lesson navigation">
+						<a href="tokenizerlab.html"><span class="ln-label">Previous</span><span class="ln-title">Chopping text into tokens</span></a>
+						<a href="attentionlab.html"><span class="ln-label">Next</span><span class="ln-title">The semantic tug-of-war</span></a>
+					</nav>
+
+					<div class="lesson-footer">
+						Condensed from <a href="../embeddinglab.php">Embeddings: The Geometry of Meaning</a>
+						(Part 4, Lesson 4). The full chapter adds word2vec/GloVe/fastText, the manifold
+						hypothesis, anisotropy, polysemanticity, superposition, hyperbolic embeddings,
+						Voronoi cells, and persistent homology.
+					</div>
+				</article>
+
+				<aside class="rail" aria-label="On this page">
+					<nav class="rail-nav">
+						<a href="#oned"><i></i>One dimension</a>
+						<a href="#map"><i></i>The semantic map</a>
+						<a href="#metric"><i></i>The metric</a>
+						<a href="#real"><i></i>What is really there</a>
+					</nav>
+					<div class="rail-source">
+						Read the original:<br>
+						<a href="../embeddinglab.php">Embeddings: The Geometry of Meaning</a>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</main>
+
+	<footer class="footer">
+		<div class="shell footer-grid">
+			<div>
+				<div class="footer-brand">10<sup>′</sup> Minutes</div>
+				<p>A compact companion to <a href="../index.php">From Nothing to ChatGPT</a>. Full sources and citations live in the long course.</p>
+			</div>
+			<nav aria-label="Footer">
+				<a href="index.html">Home</a>
+				<a href="advent.html">Calendar</a>
+				<a href="attentionlab.html">Next: Attention</a>
+				<a href="../embeddinglab.php">Full chapter</a>
+			</nav>
+		</div>
+	</footer>
+
+	<script src="assets/site.js"></script>
+	<script>
+	(function () {
+		"use strict";
+		document.querySelectorAll("[data-ticks]").forEach(function (box) {
+			for (var i = 0; i < 30; i++) {
+				var t = document.createElement("i");
+				t.style.transform = "rotate(" + (i * 12) + "deg) translateY(calc(min(330px, 76vw) * -0.44))";
+				box.appendChild(t);
+			}
+		});
+
+		/* ── semantic map ────────────────────────────────────── */
+		var words = [
+			{ w: "Man", x: 0.24, y: 0.54, c: "#39a9d6" },
+			{ w: "Woman", x: 0.40, y: 0.54, c: "#39a9d6" },
+			{ w: "King", x: 0.24, y: 0.34, c: "#71bd56" },
+			{ w: "Queen", x: 0.40, y: 0.34, c: "#71bd56" },
+			{ w: "Uncle", x: 0.24, y: 0.72, c: "#39a9d6" },
+			{ w: "Aunt", x: 0.40, y: 0.72, c: "#39a9d6" },
+			{ w: "Prince", x: 0.24, y: 0.16, c: "#71bd56" },
+			{ w: "Princess", x: 0.40, y: 0.16, c: "#71bd56" },
+			{ w: "France", x: 0.62, y: 0.78, c: "#d4a13c" },
+			{ w: "Paris", x: 0.62, y: 0.62, c: "#d4a13c" },
+			{ w: "Germany", x: 0.76, y: 0.78, c: "#d4a13c" },
+			{ w: "Berlin", x: 0.76, y: 0.62, c: "#d4a13c" },
+			{ w: "Dog", x: 0.62, y: 0.30, c: "#df785f" },
+			{ w: "Puppy", x: 0.62, y: 0.16, c: "#df785f" },
+			{ w: "Cat", x: 0.78, y: 0.30, c: "#df785f" },
+			{ w: "Kitten", x: 0.78, y: 0.16, c: "#df785f" }
+		];
+		var analogies = [
+			{ a: "King", b: "Man", c: "Woman", target: "Queen", label: "King − Man + Woman" },
+			{ a: "Uncle", b: "Man", c: "Woman", target: "Aunt", label: "Uncle − Man + Woman" },
+			{ a: "Paris", b: "France", c: "Germany", target: "Berlin", label: "Paris − France + Germany" },
+			{ a: "Puppy", b: "Dog", c: "Cat", target: "Kitten", label: "Puppy − Dog + Cat" }
+		];
+		var dirSets = {
+			gender: [["Man", "Woman"], ["King", "Queen"], ["Uncle", "Aunt"], ["Prince", "Princess"]],
+			capital: [["France", "Paris"], ["Germany", "Berlin"]],
+			young: [["Dog", "Puppy"], ["Cat", "Kitten"]]
+		};
+		var selected = "King";
+		var analogyIndex = 0;
+		var showDirection = null;
+		var canvas = document.getElementById("embed-canvas");
+		var api = null;
+		var selectedEl = document.getElementById("emb-selected");
+		var nearestEl = document.getElementById("emb-nearest");
+		var resultEl = document.getElementById("emb-result");
+		var captionEl = document.getElementById("emb-caption");
+
+		function get(name) { return words.find(function (w) { return w.w === name; }); }
+		function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+		function nearestOf(name) {
+			var base = get(name);
+			if (!base) return null;
+			return words.filter(function (w) { return w.w !== name; }).sort(function (a, b) { return dist(base, a) - dist(base, b); })[0];
+		}
+		function analogyResult(an) {
+			var a = get(an.a), b = get(an.b), c = get(an.c);
+			var p = { x: a.x - b.x + c.x, y: a.y - b.y + c.y };
+			var nearest = words.slice().sort(function (x, y) { return Math.hypot(p.x - x.x, p.y - y.y) - Math.hypot(p.x - y.x, p.y - y.y); })[0];
+			return { p: p, nearest: nearest };
+		}
+		function drawArrow(ctx, x1, y1, x2, y2, color, dashed) {
+			ctx.save();
+			ctx.strokeStyle = color;
+			ctx.fillStyle = color;
+			ctx.lineWidth = 1.6;
+			ctx.setLineDash(dashed ? [4, 4] : []);
+			ctx.beginPath();
+			ctx.moveTo(x1, y1);
+			ctx.lineTo(x2, y2);
+			ctx.stroke();
+			ctx.setLineDash([]);
+			var ang = Math.atan2(y2 - y1, x2 - x1);
+			ctx.beginPath();
+			ctx.moveTo(x2, y2);
+			ctx.lineTo(x2 - 8 * Math.cos(ang - 0.4), y2 - 8 * Math.sin(ang - 0.4));
+			ctx.lineTo(x2 - 8 * Math.cos(ang + 0.4), y2 - 8 * Math.sin(ang + 0.4));
+			ctx.closePath();
+			ctx.fill();
+			ctx.restore();
+		}
+		function drawMap(ctx, w, h) {
+			var c = TM.colors();
+			ctx.clearRect(0, 0, w, h);
+			ctx.strokeStyle = c.dark ? "rgba(160,210,215,.12)" : "rgba(0,75,111,.08)";
+			ctx.lineWidth = 1;
+			for (var gx = 0; gx < w; gx += 44) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke(); }
+			for (var gy = 0; gy < h; gy += 44) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke(); }
+
+			if (showDirection) {
+				dirSets[showDirection].forEach(function (pair) {
+					var a = get(pair[0]), b = get(pair[1]);
+					drawArrow(ctx, a.x * w, a.y * h, b.x * w, b.y * h, c.green, false);
+				});
+			}
+
+			var an = analogies[analogyIndex];
+			var res = analogyResult(an);
+			var a = get(an.a), b = get(an.b), cc = get(an.c);
+			drawArrow(ctx, b.x * w, b.y * h, a.x * w, a.y * h, c.sky, true);
+			drawArrow(ctx, cc.x * w, cc.y * h, res.p.x * w, res.p.y * h, c.gold, true);
+			ctx.beginPath();
+			ctx.arc(res.p.x * w, res.p.y * h, 14, 0, Math.PI * 2);
+			ctx.fillStyle = "rgba(212,161,60,.22)";
+			ctx.fill();
+			ctx.strokeStyle = c.gold;
+			ctx.lineWidth = 1.2;
+			ctx.stroke();
+
+			var nearest = nearestOf(selected);
+			if (nearest) {
+				var s = get(selected);
+				ctx.strokeStyle = c.dark ? "rgba(238,247,244,.35)" : "rgba(0,75,111,.3)";
+				ctx.setLineDash([3, 4]);
+				ctx.beginPath();
+				ctx.moveTo(s.x * w, s.y * h);
+				ctx.lineTo(nearest.x * w, nearest.y * h);
+				ctx.stroke();
+				ctx.setLineDash([]);
+			}
+
+			words.forEach(function (word) {
+				var x = word.x * w, y = word.y * h;
+				var isSel = word.w === selected;
+				var isOperand = word.w === an.a || word.w === an.b || word.w === an.c;
+				ctx.beginPath();
+				ctx.arc(x, y, isSel ? 7 : 4.5, 0, Math.PI * 2);
+				ctx.fillStyle = word.c;
+				ctx.fill();
+				ctx.lineWidth = isSel ? 2.5 : 1.5;
+				ctx.strokeStyle = isSel ? "#f4fbf7" : (c.dark ? "rgba(4,30,40,.8)" : "rgba(255,253,247,.9)");
+				ctx.stroke();
+				ctx.font = (isSel ? "700 " : "600 ") + "11px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "center";
+				ctx.fillStyle = isSel || isOperand ? c.ink : c.muted;
+				ctx.fillText(word.w, x, y - 11);
+			});
+
+			if (selectedEl) selectedEl.textContent = selected;
+			if (nearestEl) nearestEl.textContent = nearest ? nearest.w : "—";
+			if (resultEl) resultEl.textContent = res.nearest.w;
+			if (captionEl) captionEl.setAttribute("aria-label", an.label + " lands near " + res.nearest.w);
+		}
+		if (canvas) {
+			api = TM.initCanvas(canvas, drawMap);
+			canvas.addEventListener("click", function (ev) {
+				var rect = canvas.getBoundingClientRect();
+				var x = (ev.clientX - rect.left) / rect.width;
+				var y = (ev.clientY - rect.top) / rect.height;
+				var best = null, bd = 1;
+				words.forEach(function (word) {
+					var d = Math.hypot(word.x - x, word.y - y);
+					if (d < bd) { bd = d; best = word; }
+				});
+				if (best && bd < 0.08) {
+					selected = best.w;
+					if (api) api.redraw();
+				}
+			});
+			document.querySelectorAll("[data-analogy]").forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					document.querySelectorAll("[data-analogy]").forEach(function (x) { x.classList.remove("is-on"); });
+					btn.classList.add("is-on");
+					analogyIndex = parseInt(btn.getAttribute("data-analogy"), 10);
+					selected = analogies[analogyIndex].nearestTarget || analogies[analogyIndex].target;
+					if (api) api.redraw();
+				});
+			});
+			document.querySelectorAll("[data-direction]").forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					showDirection = showDirection === btn.getAttribute("data-direction") ? null : btn.getAttribute("data-direction");
+					document.querySelectorAll("[data-direction]").forEach(function (x) { x.classList.remove("is-on"); });
+					if (showDirection) btn.classList.add("is-on");
+					if (api) api.redraw();
+				});
+			});
+			var clear = document.getElementById("emb-clear");
+			if (clear) {
+				clear.addEventListener("click", function () {
+					showDirection = null;
+					document.querySelectorAll("[data-direction]").forEach(function (x) { x.classList.remove("is-on"); });
+					if (api) api.redraw();
+				});
+			}
+			window.addEventListener("tm:theme", function () { if (api) api.redraw(); });
+		}
+
+		/* ── cosine demo ─────────────────────────────────────── */
+		var cosCanvas = document.getElementById("cosine-canvas");
+		if (cosCanvas) {
+			var cosA = document.getElementById("cos-a");
+			var cosB = document.getElementById("cos-b");
+			var cosM = document.getElementById("cos-m");
+			var outA = document.getElementById("cos-a-out");
+			var outB = document.getElementById("cos-b-out");
+			var outM = document.getElementById("cos-m-out");
+			var cosCos = document.getElementById("cos-cos");
+			var cosDist = document.getElementById("cos-dist");
+			var cosDot = document.getElementById("cos-dot");
+			var cosCaption = document.getElementById("cos-caption");
+			var cosApi = TM.initCanvas(cosCanvas, function (ctx, w, h) {
+				var c = TM.colors();
+				var a = parseFloat(cosA.value) * Math.PI / 180;
+				var b = parseFloat(cosB.value) * Math.PI / 180;
+				var m = parseFloat(cosM.value);
+				var ox = w / 2, oy = h / 2;
+				var R = Math.min(w, h) * 0.32;
+				var ax = ox + Math.cos(a) * R, ay = oy - Math.sin(a) * R;
+				var bx = ox + Math.cos(b) * R * m, by = oy - Math.sin(b) * R * m;
+				var dot = Math.cos(a) * Math.cos(b) + Math.sin(a) * Math.sin(b);
+				var cos = Math.cos(a - b);
+				var dist = Math.hypot(ax - bx, ay - by) / R;
+				ctx.clearRect(0, 0, w, h);
+				ctx.strokeStyle = c.dark ? "rgba(160,210,215,.14)" : "rgba(0,75,111,.1)";
+				ctx.lineWidth = 1;
+				ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(w, oy); ctx.stroke();
+				ctx.beginPath(); ctx.moveTo(ox, 0); ctx.lineTo(ox, h); ctx.stroke();
+				ctx.beginPath();
+				ctx.arc(ox, oy, R, -b, -a, a < b);
+				ctx.strokeStyle = c.green;
+				ctx.lineWidth = 2;
+				ctx.stroke();
+				drawArrow(ctx, ox, oy, ax, ay, c.sky, false);
+				drawArrow(ctx, ox, oy, bx, by, c.gold, false);
+				ctx.setLineDash([4, 4]);
+				ctx.strokeStyle = c.coral;
+				ctx.lineWidth = 1.4;
+				ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+				ctx.setLineDash([]);
+				ctx.font = "600 11px Barlow, system-ui, sans-serif";
+				ctx.fillStyle = c.ink;
+				ctx.textAlign = "center";
+				ctx.fillText("A", ax, ay - 9);
+				ctx.fillText("B", bx, by - 9);
+				if (cosCos) cosCos.textContent = cos.toFixed(2);
+				if (cosDist) cosDist.textContent = dist.toFixed(2);
+				if (cosDot) cosDot.textContent = dot.toFixed(2);
+				if (outA) outA.textContent = cosA.value + "°";
+				if (outB) outB.textContent = cosB.value + "°";
+				if (outM) outM.textContent = m.toFixed(2);
+				if (cosCaption) {
+					if (m > 1.9) cosCaption.textContent = "B is stretched far out: Euclidean distance is large, but the angle is unchanged. Cosine says they still mean the same direction.";
+					else if (Math.abs(cos) < 0.08) cosCaption.textContent = "Nearly a right angle: the vectors are close to unrelated in this projection. Cosine is near zero.";
+					else cosCaption.textContent = "The green arc is the angle. The dashed line is the Euclidean gap. Stretch B: the gap grows, the angle does not.";
+				}
+			});
+			function redrawCos() { cosApi.redraw(); }
+			[cosA, cosB, cosM].forEach(function (el) { if (el) el.addEventListener("input", redrawCos); });
+			["tm:theme", "resize"].forEach(function (ev) { window.addEventListener(ev, redrawCos); });
+		}
+	})();
+	</script>
+</body>
+</html>

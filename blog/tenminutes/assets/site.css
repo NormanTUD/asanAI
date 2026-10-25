@@ -2521,3 +2521,21 @@ html[data-theme="dark"] .myth--ok b { color: var(--tm-green); }
 	.vec-readout { grid-template-columns: 1fr; }
 	.att-matrix canvas { height: 260px; }
 }
+
+.btn-demo.is-on { background: var(--tm-green); border-color: var(--tm-green); color: #07240e; }
+html[data-theme="dark"] .btn-demo.is-on { background: var(--tm-green); border-color: var(--tm-green); color: #062a12; }
+
+.formula {
+	margin: 18px 0;
+	padding: 14px 16px;
+	border: 1px solid var(--tm-line);
+	border-left: 3px solid var(--tm-sky);
+	border-radius: 0 10px 10px 0;
+	background: color-mix(in srgb, var(--tm-card) 74%, transparent);
+	font-family: var(--tm-mono);
+	font-size: 0.82rem;
+	line-height: 1.6;
+	color: var(--tm-petrol);
+	overflow-x: auto;
+}
+.formula code { background: transparent; padding: 0; color: inherit; }
