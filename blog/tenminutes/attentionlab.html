@@ -136,6 +136,11 @@
 									<button class="chip" type="button" data-head="syntax">Syntax</button>
 									<button class="chip" type="button" data-head="meaning">Meaning</button>
 								</div>
+								<div class="chip-row" style="margin-bottom:14px" id="att-presets">
+									<button class="chip" type="button" data-att-preset="coref">she → Maria</button>
+									<button class="chip" type="button" data-att-preset="syntax">repay → would</button>
+									<button class="chip" type="button" data-att-preset="meaning">bank → loan</button>
+								</div>
 								<div class="att-sentence" id="att-sentence"></div>
 								<div class="demo-readout demo-readout--4">
 									<div><b>Query</b><span id="att-query">she</span></div>
@@ -451,6 +456,19 @@
 					headsEl.querySelectorAll("[data-head]").forEach(function (x) { x.classList.remove("is-on"); });
 					btn.classList.add("is-on");
 					head = btn.getAttribute("data-head");
+					renderSentence();
+					if (showMatrix && matrixApi) matrixApi.redraw();
+				});
+			});
+			document.querySelectorAll("[data-att-preset]").forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					var preset = btn.getAttribute("data-att-preset");
+					if (preset === "coref") { head = "coref"; query = tokens.indexOf("she"); }
+					if (preset === "syntax") { head = "syntax"; query = tokens.indexOf("repay"); }
+					if (preset === "meaning") { head = "meaning"; query = tokens.indexOf("bank"); }
+					headsEl.querySelectorAll("[data-head]").forEach(function (x) { x.classList.toggle("is-on", x.getAttribute("data-head") === head); });
+					document.querySelectorAll("[data-att-preset]").forEach(function (x) { x.classList.remove("is-on"); });
+					btn.classList.add("is-on");
 					renderSentence();
 					if (showMatrix && matrixApi) matrixApi.redraw();
 				});

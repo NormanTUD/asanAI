@@ -190,6 +190,12 @@
 									<div><b>Euclidean distance</b><span id="cos-dist">0.77</span></div>
 									<div><b>Dot product</b><span id="cos-dot">0.71</span></div>
 								</div>
+								<div class="chip-row" style="margin-bottom:14px" id="cos-presets">
+									<button class="chip" type="button" data-cos-preset="parallel">Same direction</button>
+									<button class="chip" type="button" data-cos-preset="orthogonal">90°</button>
+									<button class="chip" type="button" data-cos-preset="opposite">Opposite</button>
+									<button class="chip" type="button" data-cos-preset="stretch">Stretch B</button>
+								</div>
 								<div class="demo-controls">
 									<label>Angle A <input type="range" id="cos-a" min="0" max="360" step="1" value="35"><output id="cos-a-out">35°</output></label>
 									<label>Angle B <input type="range" id="cos-b" min="0" max="360" step="1" value="80"><output id="cos-b-out">80°</output></label>
@@ -595,6 +601,18 @@
 			});
 			function redrawCos() { cosApi.redraw(); }
 			[cosA, cosB, cosM].forEach(function (el) { if (el) el.addEventListener("input", redrawCos); });
+			document.querySelectorAll("[data-cos-preset]").forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					var preset = btn.getAttribute("data-cos-preset");
+					if (preset === "parallel") { cosA.value = 0; cosB.value = 0; cosM.value = 1; }
+					if (preset === "orthogonal") { cosA.value = 0; cosB.value = 90; cosM.value = 1; }
+					if (preset === "opposite") { cosA.value = 0; cosB.value = 180; cosM.value = 1; }
+					if (preset === "stretch") { cosA.value = 35; cosB.value = 80; cosM.value = 2.2; }
+					document.querySelectorAll("[data-cos-preset]").forEach(function (x) { x.classList.remove("is-on"); });
+					btn.classList.add("is-on");
+					redrawCos();
+				});
+			});
 			["tm:theme", "resize"].forEach(function (ev) { window.addEventListener(ev, redrawCos); });
 		}
 	})();
