@@ -198,6 +198,15 @@ any lesson in the path. Every lesson ends with a
 "Check yourself" quiz; `render_daily_question()` (functions.php) can draw a
 daily question from all of them (not rendered on the intro/home page) — so keep quiz markup
 exactly `<div class="mn-quiz" data-quiz="<slug>"><script type="application/json">…</script></div>`.
+**Quiz options must not reveal the answer by their length.** The correct
+option is historically the longest one by a wide margin, which makes guessing
+trivial. All four options must be roughly equal in length and equally specific;
+rewrite the three distractors as plausible *wrong* claims, not jokes or
+one-word non-answers, and keep the correct option at the same `answer` index.
+Hard rule enforced by `lesson_guard.py` (Q1): for short answers (longest ≤ 12
+chars) the spread may be at most 5; otherwise the shortest option must be at
+least 70 % of the longest and the spread at most 22 characters. The correct
+option must be neither the unique longest nor the unique shortest.
 `.mn-predict` uses the same shape with `{q, options, answer, explain, try}`.
 Mid-lesson checkpoints use `class="mn-quiz mn-quiz--checkpoint"` (with the
 section's `data-depth` where the lesson is depth-tagged) and are not in the
@@ -751,7 +760,7 @@ dependency in a header won't resolve for a few days).
 | `uv run blog/tests/stats_ui_test.py` | stats UI regression: briefing/explore, lazy charts, compare, saved views, present/light, overflow | any failed check | `blog/**` (render job) |
 | `uv run blog/tests/admin_ui_test.py` | admin regression: global search, presentation slides/cards/URL state, reader-feedback tabs/search/accept/edit/done/bug/delete | any failed check | `blog/**` (render job) |
 | `uv run blog/tests/js_validator.py blog/` | bracket/brace balance, unclosed strings/comments, `debugger`/`alert`/`eval`, duplicate function names, DOM-API typos, TODO comments, BOM/line-endings | **critical issues only** (warnings don't block) | `blog/**` |
-| `uv run blog/tests/lesson_guard.py blog/` | per-lesson static regression guards (currently `math_iv.php`: headings-in-md, citation keys, 3D wiring) — extend the `LESSONS` list per lesson | any guard | `blog/**` |
+| `uv run blog/tests/lesson_guard.py blog/` | per-lesson static regression guards (currently `math_iv.php`: headings-in-md, citation keys, 3D wiring) — extend the `LESSONS` list per lesson — plus blog-wide citation-integration and quiz-option-balance guards | any guard | `blog/**` |
 | `uv run blog/tests/link_checker.py blog/` | every `url:` in `literature.js` returns 2xx; PDFs must start `%PDF`; TLS/bot-block soft-passes never fail | real failures | `blog/**` + weekly cron |
 | `uv run blog/tests/literature_dup_keys.py blog/` | every top-level key in `literature.js` appears exactly once (JS object last-wins would silently hide a duplicate) | **any duplicate** | `blog/**` |
 | `node blog/tests/{topics,math_alt,keypoint,search_js}_test.js` | DOM-stubbed unit tests of BlogTopics (interests, math dial, learned), math-alts, keypoints, search | any failed check | `blog/**` |
