@@ -51,7 +51,7 @@
   if (canvas) {
     var places = [
       { year: 1921, place: "Yale", disc: "Psychology", x: 0.1, y: 0.7, detail: "BA in psychology. The number question is already the centre of gravity.", carried: "logic, epistemology" },
-      { year: 1928, place: "Columbia", disc: "MA + MD", x: 0.24, y: 0.32, detail: "A master's in psychology, then a medical degree — the body enters the question.", carried: "psychology → medicine" },
+      { year: 1927, place: "Columbia", disc: "MA + MD", x: 0.24, y: 0.32, detail: "A master's in psychology, then a medical degree — the body enters the question.", carried: "psychology → medicine" },
       { year: 1928, place: "Bellevue", disc: "Neurology", x: 0.38, y: 0.68, detail: "Experimental neurology; the brain areas responsible for epileptic seizures.", carried: "clinical neurology" },
       { year: 1930, place: "Rockland", disc: "Psychiatry", x: 0.5, y: 0.28, detail: "Rockland State Hospital for the Insane; paranoia and the logic of mind.", carried: "psychiatry + logic" },
       { year: 1934, place: "Yale", disc: "Neurophysiology", x: 0.63, y: 0.64, detail: "Dusser de Barenne's laboratory; functional organisation of the brain in primates.", carried: "experimental method" },
