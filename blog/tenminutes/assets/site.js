@@ -194,175 +194,23 @@
 		Object.keys(map).forEach(function (id) { io.observe(document.getElementById(id)); });
 	}
 
-	/* ── ten minute timer ──────────────────────────────────── */
+	/* ── completion ────────────────────────────────────────── */
 
-	function initTimer() {
-		var displays = Array.prototype.slice.call(document.querySelectorAll("[data-timer-display]"));
-		var toggle = document.querySelector("[data-timer-toggle]");
-		if (!displays.length) return;
-		var total = 10 * 60;
-		var left = total;
-		var running = false;
-		var started = false;
-		var last = 0;
-		var finished = false;
-		var slug = document.body.getAttribute("data-lesson") || "lesson";
-		var saved = storage.get("tm_timer_" + slug, null);
-		if (saved && typeof saved.left === "number" && saved.left > 0 && saved.left < total) {
-			left = saved.left;
-			started = true;
-		}
-
-		function fmt(s) {
-			var m = Math.floor(Math.max(0, s) / 60);
-			var sec = Math.floor(Math.max(0, s) % 60);
-			return m + ":" + (sec < 10 ? "0" : "") + sec;
-		}
-		function render() {
-			displays.forEach(function (el) {
-				el.textContent = finished ? "0:00" : fmt(left);
-			});
-			if (toggle) {
-				toggle.setAttribute("aria-label", running ? "Pause the ten-minute timer" : "Start the ten-minute timer");
-				toggle.setAttribute("title", running ? "Pause timer" : (started ? "Resume timer" : "Start timer"));
-				toggle.innerHTML = running
-					? '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>'
-					: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5z"/></svg>';
-			}
-		}
-		function tick(now) {
-			if (!running) return;
-			var dt = (now - last) / 1000;
-			last = now;
-			left -= dt;
-			if (left <= 0) {
-				left = 0;
-				running = false;
-				finished = true;
-				storage.set("tm_timer_" + slug, { left: 0 });
-				document.documentElement.setAttribute("data-timer-finished", "true");
-			} else {
-				storage.set("tm_timer_" + slug, { left: Math.round(left) });
-			}
-			render();
-			if (running) requestAnimationFrame(tick);
-		}
-		function start() {
-			if (finished) return;
-			if (!started) {
-				started = true;
-				document.documentElement.setAttribute("data-timer-started", "true");
-			}
-			running = true;
-			last = performance.now();
-			render();
-			requestAnimationFrame(tick);
-		}
-		function pause() {
-			running = false;
-			render();
-		}
-		if (toggle) {
-			toggle.addEventListener("click", function () {
-				if (running) pause(); else start();
-			});
-		}
-		var autoStart = function () {
-			if (!started) start();
-			window.removeEventListener("scroll", autoStart);
-		};
-		window.addEventListener("scroll", autoStart, { passive: true, once: true });
-		render();
-	}
-
-	/* ── quiz ──────────────────────────────────────────────── */
-
-	function initQuiz() {
-		var mount = document.querySelector("[data-quiz]");
-		if (!mount) return;
-		var slug = mount.getAttribute("data-quiz");
-		var dataEl = document.getElementById("quiz-data");
-		var data;
-		try { data = JSON.parse(dataEl ? dataEl.textContent : "{}"); } catch (e) { data = null; }
-		if (!data || !Array.isArray(data.questions) || !data.questions.length) return;
-
-		var answered = storage.get("tm_quiz_" + slug, {});
-		var total = data.questions.length;
-		var correct = 0;
-
-		var head = document.createElement("div");
-		head.className = "quiz-head";
-		head.innerHTML = '<h3>' + (data.title || "Check yourself") + '</h3><span class="pill">' + total + ' question' + (total === 1 ? "" : "s") + '</span>';
-		mount.appendChild(head);
-
-		data.questions.forEach(function (q, qi) {
-			var box = document.createElement("div");
-			box.className = "quiz-item";
-			var question = document.createElement("p");
-			question.className = "quiz-q";
-			question.textContent = (qi + 1) + ". " + q.q;
-			box.appendChild(question);
-
-			var opts = document.createElement("div");
-			opts.className = "quiz-options";
-			var explain = document.createElement("p");
-			explain.className = "quiz-explain";
-			explain.textContent = q.explain || "";
-
-			q.options.forEach(function (opt, oi) {
-				var b = document.createElement("button");
-				b.type = "button";
-				b.className = "quiz-option";
-				b.innerHTML = '<span class="qo-mark">' + String.fromCharCode(65 + oi) + '</span><span>' + opt + '</span>';
-				b.addEventListener("click", function () {
-					if (box.getAttribute("data-answered")) return;
-					box.setAttribute("data-answered", "1");
-					var isRight = oi === q.answer;
-					b.classList.add(isRight ? "is-correct" : "is-wrong");
-					if (!isRight) {
-						var right = opts.querySelectorAll(".quiz-option")[q.answer];
-						if (right) right.classList.add("is-correct");
-					}
-					opts.querySelectorAll(".quiz-option").forEach(function (x) { x.disabled = true; });
-					explain.classList.add("is-on");
-					answered[qi] = { choice: oi, right: isRight };
-					storage.set("tm_quiz_" + slug, answered);
-					updateScore();
-				});
-				opts.appendChild(b);
-			});
-			box.appendChild(opts);
-			box.appendChild(explain);
-			mount.appendChild(box);
-
-			if (answered[qi]) {
-				box.setAttribute("data-answered", "1");
-				var chosen = opts.querySelectorAll(".quiz-option")[answered[qi].choice];
-				if (chosen) chosen.classList.add(answered[qi].right ? "is-correct" : "is-wrong");
-				if (!answered[qi].right) {
-					var right = opts.querySelectorAll(".quiz-option")[q.answer];
-					if (right) right.classList.add("is-correct");
-				}
-				opts.querySelectorAll(".quiz-option").forEach(function (x) { x.disabled = true; });
-				explain.classList.add("is-on");
-			}
-		});
-
-		var score = document.createElement("p");
-		score.className = "quiz-score";
-		mount.appendChild(score);
-
-		function updateScore() {
-			var keys = Object.keys(answered);
-			correct = keys.filter(function (k) { return answered[k].right; }).length;
-			if (keys.length < total) {
-				score.textContent = keys.length + " of " + total + " answered — no score yet.";
-			} else {
-				score.textContent = "Score: " + correct + " / " + total + (correct === total ? " — you can explain it." : " — revisit the section that surprised you.");
+	function initCompletion() {
+		var slug = document.body.getAttribute("data-lesson");
+		if (!slug) return;
+		var marked = false;
+		function check() {
+			if (marked) return;
+			var doc = document.documentElement;
+			if (window.scrollY + window.innerHeight >= doc.scrollHeight - 260) {
+				marked = true;
 				TM.markDone(slug);
+				window.removeEventListener("scroll", check);
 			}
 		}
-		updateScore();
+		window.addEventListener("scroll", check, { passive: true });
+		setTimeout(check, 400);
 	}
 
 	/* ── page chrome ───────────────────────────────────────── */
@@ -372,8 +220,7 @@
 		initReadbar();
 		initReveal();
 		initRail();
-		initTimer();
-		initQuiz();
+		initCompletion();
 
 		var slug = document.body.getAttribute("data-lesson");
 		if (slug) TM.markSeen(slug);

@@ -45,7 +45,7 @@
 						<span class="pill pill--green">10 minutes</span>
 						<span class="pill">Light math</span>
 						<span class="pill pill--blue">Live tokenizer</span>
-						<span class="pill">Self-check</span>
+						<span class="pill">Recap</span>
 					</div>
 				</div>
 				<div class="dial-wrap" aria-hidden="true">
@@ -53,9 +53,9 @@
 						<div class="dial-ticks" data-ticks></div>
 						<div class="dial-orbit"><span style="--a:10deg"></span><span style="--a:130deg"></span><span style="--a:250deg"></span></div>
 						<div class="dial-inner">
-							<span class="dial-time" data-timer-display>10:00</span>
-							<span class="dial-label">your ten minutes</span>
-							<span class="dial-sub">starts when you scroll</span>
+							<span class="dial-time">10′</span>
+							<span class="dial-label">one idea per visit</span>
+							<span class="dial-sub">read · play · explain</span>
 						</div>
 					</div>
 				</div>
@@ -248,8 +248,6 @@
 						</div>
 					</section>
 
-					<section class="quiz" data-quiz="tokenizerlab" aria-label="Self-check"></section>
-
 					<nav class="lesson-nav" aria-label="Lesson navigation">
 						<a href="history.html"><span class="ln-label">Previous</span><span class="ln-title">A very long fuse</span></a>
 						<a href="embeddinglab.html"><span class="ln-label">Next</span><span class="ln-title">Meaning as geometry</span></a>
@@ -263,13 +261,6 @@
 				</article>
 
 				<aside class="rail" aria-label="On this page">
-					<div class="rail-timer">
-						<div>
-							<div class="rt-num" data-timer-display>10:00</div>
-							<div class="rt-label">ten-minute timer</div>
-						</div>
-						<button type="button" data-timer-toggle aria-label="Start the ten-minute timer" title="Start timer"></button>
-					</div>
 					<nav class="rail-nav">
 						<a href="#why"><i></i>The first cut</a>
 						<a href="#lab"><i></i>Try it</a>
@@ -299,58 +290,6 @@
 			</nav>
 		</div>
 	</footer>
-
-	<script type="application/json" id="quiz-data">
-	{
-		"title": "The first cut",
-		"questions": [
-			{
-				"q": "Why can a model read a word it has never seen before?",
-				"options": [
-					"Because unknown words are split into familiar subword pieces",
-					"Because the model stores a dictionary of every known word",
-					"Because the tokenizer asks the user to define new words",
-					"Because a special unknown token contains its meaning"
-				],
-				"answer": 0,
-				"explain": "The vocabulary is fixed, but unfamiliar words are assembled from pieces the model already knows."
-			},
-			{
-				"q": "What is a glitch token?",
-				"options": [
-					"A vocabulary entry the model barely saw during training",
-					"A token that crashes the tokenizer before any model runs",
-					"A punctuation mark that the model cannot represent",
-					"A word that appears too often in the training corpus"
-				],
-				"answer": 0,
-				"explain": "The tokenizer created a slot, but the model's training data did not fill it with learned meaning."
-			},
-			{
-				"q": "Why does token inflation matter for a deployed model?",
-				"options": [
-					"It raises cost and shortens the effective context",
-					"It makes the model's vocabulary permanently smaller",
-					"It removes the need for byte-level fallback tokens",
-					"It guarantees better translation for rare languages"
-				],
-				"answer": 0,
-				"explain": "More tokens per meaning means higher bills, a context window that fills sooner, and less content per attention budget."
-			},
-			{
-				"q": "What does byte-level BPE actually solve?",
-				"options": [
-					"Every input can be represented, but cost gaps remain",
-					"Every language costs exactly the same per sentence",
-					"Every word becomes a single token in every script",
-					"Every model becomes multilingual without training"
-				],
-				"answer": 0,
-				"explain": "A 256-byte alphabet guarantees coverage. It does not equalise how many tokens a language needs."
-			}
-		]
-	}
-	</script>
 	<script src="assets/site.js"></script>
 	<script>
 	(function () {

@@ -54,9 +54,9 @@
 						<div class="dial-ticks" data-ticks></div>
 						<div class="dial-orbit"><span style="--a:30deg"></span><span style="--a:150deg"></span><span style="--a:270deg"></span></div>
 						<div class="dial-inner">
-							<span class="dial-time" data-timer-display>10:00</span>
-							<span class="dial-label">your ten minutes</span>
-							<span class="dial-sub">starts when you scroll</span>
+							<span class="dial-time">10′</span>
+							<span class="dial-label">one idea per visit</span>
+							<span class="dial-sub">read · play · explain</span>
 						</div>
 					</div>
 				</div>
@@ -288,8 +288,6 @@
 						</div>
 					</section>
 
-					<section class="quiz" data-quiz="intro" aria-label="Self-check"></section>
-
 					<nav class="lesson-nav" aria-label="Lesson navigation">
 						<a href="index.html"><span class="ln-label">Back to</span><span class="ln-title">The library</span></a>
 						<a href="intuition.html"><span class="ln-label">Next</span><span class="ln-title">One word at a time</span></a>
@@ -303,13 +301,6 @@
 				</article>
 
 				<aside class="rail" aria-label="On this page">
-					<div class="rail-timer">
-						<div>
-							<div class="rt-num" data-timer-display>10:00</div>
-							<div class="rt-label">ten-minute timer</div>
-						</div>
-						<button type="button" data-timer-toggle aria-label="Start the ten-minute timer" title="Start timer"></button>
-					</div>
 					<nav class="rail-nav">
 						<a href="#wager"><i></i>The wager</a>
 						<a href="#is-isnt"><i></i>Is / is not</a>
@@ -341,47 +332,6 @@
 			</nav>
 		</div>
 	</footer>
-
-	<script type="application/json" id="quiz-data">
-	{
-		"title": "The frame",
-		"questions": [
-			{
-				"q": "What is the course trying to do, in one sentence?",
-				"options": [
-					"Trace how ideas from many fields converged into modern AI",
-					"Teach readers to train a frontier model from scratch",
-					"Collect prompt-engineering tricks for everyday use",
-					"Replace mathematics with intuitive storytelling only"
-				],
-				"answer": 0,
-				"explain": "The course is a synthesis: history, mathematics, and machines, with every thread followed to its source."
-			},
-			{
-				"q": "What does the ladder of abstraction ask you to do?",
-				"options": [
-					"Move between levels without confusing one for another",
-					"Stay on the highest level to avoid unnecessary detail",
-					"Stay on the lowest level to avoid philosophical claims",
-					"Choose one level and ignore the rest permanently"
-				],
-				"answer": 0,
-				"explain": "Each level compresses the one below. The skill is knowing which level your question belongs to."
-			},
-			{
-				"q": "How should you treat this interactive textbook?",
-				"options": [
-					"Play, skip, re-read, and verify before production use",
-					"Read it once linearly and never return to a chapter",
-					"Trust every claim because it was generated with AI",
-					"Avoid the demos and only memorise the definitions"
-				],
-				"answer": 0,
-				"explain": "The course invites exploration and is explicit that it was built with LLM help and may contain errors."
-			}
-		]
-	}
-	</script>
 	<script src="assets/site.js"></script>
 	<script>
 	(function () {

@@ -45,7 +45,7 @@
 						<span class="pill pill--green">10 minutes</span>
 						<span class="pill">No math</span>
 						<span class="pill pill--blue">Timeline + convergence</span>
-						<span class="pill">Self-check</span>
+						<span class="pill">Recap</span>
 					</div>
 				</div>
 				<div class="dial-wrap" aria-hidden="true">
@@ -53,9 +53,9 @@
 						<div class="dial-ticks" data-ticks></div>
 						<div class="dial-orbit"><span style="--a:40deg"></span><span style="--a:160deg"></span><span style="--a:280deg"></span></div>
 						<div class="dial-inner">
-							<span class="dial-time" data-timer-display>10:00</span>
-							<span class="dial-label">your ten minutes</span>
-							<span class="dial-sub">starts when you scroll</span>
+							<span class="dial-time">10′</span>
+							<span class="dial-label">one idea per visit</span>
+							<span class="dial-sub">read · play · explain</span>
 						</div>
 					</div>
 				</div>
@@ -202,8 +202,6 @@
 						</div>
 					</section>
 
-					<section class="quiz" data-quiz="history" aria-label="Self-check"></section>
-
 					<nav class="lesson-nav" aria-label="Lesson navigation">
 						<a href="intuition.html"><span class="ln-label">Previous</span><span class="ln-title">One word at a time</span></a>
 						<a href="tokenizerlab.html"><span class="ln-label">Next</span><span class="ln-title">Chopping text into tokens</span></a>
@@ -218,13 +216,6 @@
 				</article>
 
 				<aside class="rail" aria-label="On this page">
-					<div class="rail-timer">
-						<div>
-							<div class="rt-num" data-timer-display>10:00</div>
-							<div class="rt-label">ten-minute timer</div>
-						</div>
-						<button type="button" data-timer-toggle aria-label="Start the ten-minute timer" title="Start timer"></button>
-					</div>
 					<nav class="rail-nav">
 						<a href="#fuse"><i></i>The long fuse</a>
 						<a href="#timeline"><i></i>Ten turning points</a>
@@ -254,47 +245,6 @@
 			</nav>
 		</div>
 	</footer>
-
-	<script type="application/json" id="quiz-data">
-	{
-		"title": "The long fuse",
-		"questions": [
-			{
-				"q": "Where was the Antikythera mechanism discovered?",
-				"options": [
-					"In a shipwreck off the Greek island of Antikythera",
-					"In a sunken Egyptian temple near Alexandria",
-					"In a Roman library buried under volcanic ash",
-					"In a medieval monastery in southern France"
-				],
-				"answer": 0,
-				"explain": "It was recovered in 1901 from a 1st-century BCE shipwreck and contains at least 30 meshing bronze gears."
-			},
-			{
-				"q": "What did the 1943 McCulloch–Pitts paper model?",
-				"options": [
-					"A neuron as a simple logical threshold unit",
-					"A transformer as a stack of attention blocks",
-					"A perceptron trained by backpropagation",
-					"A language model trained on internet text"
-				],
-				"answer": 0,
-				"explain": "Their artificial neuron was a threshold unit, linking the logic of propositions to the biology of nerve cells."
-			},
-			{
-				"q": "Why is the history of AI not a straight line?",
-				"options": [
-					"Ideas from many fields converged, with winters and detours",
-					"One inventor planned the transformer in the nineteenth century",
-					"Progress stopped until the internet supplied all the answers",
-					"The mathematics was complete before any machine existed"
-				],
-				"answer": 0,
-				"explain": "The convergence was retrospective. Each field was solving its own problems; the fusion required hardware, data, and time."
-			}
-		]
-	}
-	</script>
 	<script src="assets/site.js"></script>
 	<script>
 	(function () {

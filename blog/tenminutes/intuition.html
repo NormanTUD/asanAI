@@ -45,7 +45,7 @@
 						<span class="pill pill--green">10 minutes</span>
 						<span class="pill">No math</span>
 						<span class="pill pill--blue">2 interactive demos</span>
-						<span class="pill">Self-check</span>
+						<span class="pill">Recap</span>
 					</div>
 				</div>
 				<div class="dial-wrap" aria-hidden="true">
@@ -53,9 +53,9 @@
 						<div class="dial-ticks" data-ticks></div>
 						<div class="dial-orbit"><span style="--a:20deg"></span><span style="--a:140deg"></span><span style="--a:260deg"></span></div>
 						<div class="dial-inner">
-							<span class="dial-time" data-timer-display>10:00</span>
-							<span class="dial-label">your ten minutes</span>
-							<span class="dial-sub">starts when you scroll</span>
+							<span class="dial-time">10′</span>
+							<span class="dial-label">one idea per visit</span>
+							<span class="dial-sub">read · play · explain</span>
 						</div>
 					</div>
 				</div>
@@ -250,8 +250,6 @@
 						</div>
 					</section>
 
-					<section class="quiz" data-quiz="intuition" aria-label="Self-check"></section>
-
 					<nav class="lesson-nav" aria-label="Lesson navigation">
 						<a href="intro.html"><span class="ln-label">Previous</span><span class="ln-title">What this course is</span></a>
 						<a href="history.html"><span class="ln-label">Next</span><span class="ln-title">A very long fuse</span></a>
@@ -266,13 +264,6 @@
 				</article>
 
 				<aside class="rail" aria-label="On this page">
-					<div class="rail-timer">
-						<div>
-							<div class="rt-num" data-timer-display>10:00</div>
-							<div class="rt-label">ten-minute timer</div>
-						</div>
-						<button type="button" data-timer-toggle aria-label="Start the ten-minute timer" title="Start timer"></button>
-					</div>
 					<nav class="rail-nav">
 						<a href="#idea"><i></i>The only trick</a>
 						<a href="#loop"><i></i>Play the loop</a>
@@ -302,47 +293,6 @@
 			</nav>
 		</div>
 	</footer>
-
-	<script type="application/json" id="quiz-data">
-	{
-		"title": "How an LLM writes",
-		"questions": [
-			{
-				"q": "At its core, what does a large language model do at every step?",
-				"options": [
-					"Assign a probability to every token, then sample one",
-					"Look up the likely answer in a large text database",
-					"Plan the entire reply before writing the first word",
-					"Translate the prompt into formal logic, then solve it"
-				],
-				"answer": 0,
-				"explain": "It is a next-token predictor: a distribution over the vocabulary, one sampled token, then the loop repeats."
-			},
-			{
-				"q": "What happens to a token right after the model has produced it?",
-				"options": [
-					"It is appended to the context for the next step",
-					"It is discarded once the next token is chosen",
-					"It is checked against a dictionary of meanings",
-					"It is sent back into training for an update"
-				],
-				"answer": 0,
-				"explain": "This is the autoregressive loop: the output becomes part of the input one step later."
-			},
-			{
-				"q": "What is the relationship between prediction and compression here?",
-				"options": [
-					"Compression and prediction are deeply linked",
-					"Compression and prediction are unrelated goals",
-					"Compression is only used to store the weights",
-					"Compression replaces the need for training data"
-				],
-				"answer": 0,
-				"explain": "A better predictor is a better compressor of the data. The stronger claim — that this means the model understands — remains contested."
-			}
-		]
-	}
-	</script>
 	<script src="assets/site.js"></script>
 	<script>
 	(function () {
