@@ -5084,9 +5084,10 @@ only the page background here leans on --mn-bg.
 	bottom: 7.5vh;
 	margin: 0;
 	text-align: center;
-	font-family: var(--mn-font-mono);
-	font-size: 11px;
-	letter-spacing: 0.03em;
+	font-family: var(--mn-font-body);
+	font-size: 12px;
+	font-weight: 400;
+	letter-spacing: 0.02em;
 	color: var(--mn-text-muted);
 	z-index: 2;
 }
@@ -9795,10 +9796,11 @@ html.dark .course-tile::after {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   4. Scroll-reveal for course parts & tiles
-   Sections stay hidden until they enter the viewport, then
-   fade in with a cascade. The existing keyframe animation
-   (tileIn) is suppressed so the IO-driven reveal wins.
+   4. Course parts & tiles
+   Every part is marked .is-revealed immediately by effects.js,
+   so nothing waits for a scroll. The rules below define that
+   shown state; the keyframe animation (tileIn) is suppressed
+   while effects are on so the page crossfade stays in charge.
    ───────────────────────────────────────────────────────────── */
 .effects-on .course-part.reveal-target {
 	opacity: 0;
