@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Der Beweis, dass Atome wirklich sind — Einstein, visualisiert</title>
+<meta name="description" content="Ein Pollenkorn zittert im Wasser. Niemand kann die Moleküle sehen, die es stoßen. Einstein zeigt: Man kann sie trotzdem zählen — mit einer Formel für den Zufall.">
+<style>
+:root{
+  --bg:#07070b;
+  --bg-2:#0b0b12;
+  --panel:rgba(255,255,255,.038);
+  --panel-2:rgba(255,255,255,.026);
+  --ink:#ece9e1;
+  --muted:#a8a397;
+  --dim:#6f6b63;
+  --line:rgba(255,255,255,.085);
+  --line-strong:rgba(255,255,255,.16);
+  --accent:#e8b45a;
+  --accent-soft:rgba(232,180,90,.16);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  --math:"Latin Modern Math","STIX Two Math","Cambria Math",Cambria,Georgia,serif;
+  --col:72ch;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:17px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(900px 620px at 78% -8%,var(--accent-soft),transparent 62%),
+    radial-gradient(700px 500px at 8% 18%,rgba(120,140,255,.055),transparent 65%),
+    linear-gradient(180deg,#08080d 0%,#07070b 45%,#06060a 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+::selection{background:var(--accent);color:#111}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:rgba(255,255,255,.05)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#fff6d8);box-shadow:0 0 14px var(--accent);transition:width .08s linear}
+.topbar{
+  position:fixed;top:2px;left:0;right:0;z-index:55;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:12px clamp(16px,3vw,38px);
+  background:linear-gradient(180deg,rgba(7,7,11,.92),rgba(7,7,11,.55) 70%,transparent);
+  backdrop-filter:blur(10px);
+}
+.brand{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--muted);
+  white-space:nowrap;text-transform:uppercase;
+}
+.brand:hover{color:var(--ink);text-decoration:none}
+#sectionNav{display:flex;gap:4px;overflow:auto;scrollbar-width:none;mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
+#sectionNav::-webkit-scrollbar{display:none}
+#sectionNav a{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);
+  padding:5px 8px;border-radius:99px;white-space:nowrap;transition:.25s var(--ease);
+}
+#sectionNav a:hover{color:var(--ink);text-decoration:none;background:rgba(255,255,255,.05)}
+#sectionNav a.on{color:var(--accent);background:var(--accent-soft)}
+main{position:relative}
+.hero{
+  position:relative;min-height:clamp(520px,82vh,820px);display:flex;align-items:flex-end;
+  padding:120px clamp(20px,5vw,64px) clamp(48px,8vh,90px);
+  overflow:hidden;
+}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:18px;
+}
+.kicker::before{content:"";width:28px;height:1px;background:var(--accent);opacity:.7}
+h1{
+  font-family:var(--serif);font-weight:400;font-size:clamp(2.35rem,6.2vw,5.6rem);
+  line-height:1.02;letter-spacing:-.025em;margin:0 0 22px;max-width:17ch;
+  text-wrap:balance;
+}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{font-size:clamp(1.02rem,1.7vw,1.28rem);line-height:1.55;color:#cfcac0;max-width:56ch;margin:0 0 18px}
+.epigraph{
+  font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--muted);
+  max-width:52ch;margin:0 0 22px;padding-left:16px;border-left:1px solid var(--line-strong);
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.meta b{color:var(--muted);font-weight:400}
+.scroll-hint{
+  position:absolute;right:clamp(20px,5vw,64px);bottom:28px;z-index:2;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--dim);
+  writing-mode:vertical-rl;display:flex;align-items:center;gap:10px;
+}
+.scroll-hint::after{content:"";width:1px;height:38px;background:linear-gradient(var(--accent),transparent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.chapter{padding:clamp(58px,9vh,110px) 0;border-top:1px solid var(--line);position:relative}
+.chapter-head{display:grid;grid-template-columns:64px minmax(0,1fr);gap:clamp(10px,2vw,26px);margin-bottom:clamp(26px,4vw,44px);align-items:start}
+.chapter-num{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--accent);
+  padding-top:9px;border-top:1px solid var(--accent);
+}
+.chapter h2{
+  font-family:var(--serif);font-weight:400;font-size:clamp(1.65rem,3.1vw,2.65rem);
+  line-height:1.12;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;
+}
+.chapter h3{font-family:var(--serif);font-weight:400;font-size:1.32rem;margin:0 0 10px;letter-spacing:-.01em}
+.chapter .sub{color:var(--muted);max-width:62ch;margin:0;font-size:1rem}
+.prose{max-width:var(--col);color:#cfcac0}
+.prose p{margin:0 0 1.05em}
+.prose p:last-child{margin-bottom:0}
+.prose strong{color:var(--ink);font-weight:600}
+.prose em{color:#e3ded4}
+.prose ul,.prose ol{margin:.2em 0 1.1em;padding-left:1.25em}
+.prose li{margin:.32em 0}
+.prose code{font-family:var(--mono);font-size:.86em;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px}
+.lead{font-size:1.12rem;line-height:1.62;color:#dcd7cd}
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,56px);align-items:center}
+.split.wide-left{grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr)}
+.split.wide-right{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:16px;padding:22px;
+  position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.35}
+.card h4{font-family:var(--sans);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:0 0 9px;font-weight:600}
+.card p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.58}
+.card .big{font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.2;margin-bottom:8px}
+.stage{
+  position:relative;background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.stage canvas{display:block;width:100%;height:100%}
+.stage .label{
+  position:absolute;left:14px;top:12px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);pointer-events:none;
+}
+.stage .readout{
+  position:absolute;right:14px;top:12px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.06em;color:var(--accent);pointer-events:none;
+}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:14px 0 0}
+.control{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--muted)}
+.control input[type=range]{
+  -webkit-appearance:none;appearance:none;width:clamp(110px,18vw,190px);height:2px;background:var(--line-strong);outline:none;border-radius:2px;
+}
+.control input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--accent);border:2px solid #111;box-shadow:0 0 0 3px var(--accent-soft);cursor:pointer;
+}
+.control input[type=range]::-moz-range-thumb{width:11px;height:11px;border:2px solid #111;border-radius:50%;background:var(--accent);cursor:pointer}
+.control .val{min-width:52px;color:var(--ink);font-variant-numeric:tabular-nums}
+.btn{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 14px;border-radius:99px;border:1px solid var(--line-strong);
+  background:transparent;color:var(--ink);cursor:pointer;transition:.2s var(--ease);
+}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.btn.on{background:var(--accent);color:#111;border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:0}
+.formula{
+  font-family:var(--math);font-size:clamp(1.05rem,2vw,1.38rem);line-height:1.85;
+  color:#f1ede4;background:rgba(255,255,255,.028);border:1px solid var(--line);
+  border-left:2px solid var(--accent);border-radius:0 12px 12px 0;
+  padding:18px 22px;margin:18px 0;overflow-x:auto;
+}
+.formula .small{font-size:.62em;color:var(--muted)}
+.formula-note{font-family:var(--sans);font-size:.78rem;color:var(--dim);margin-top:8px;letter-spacing:0}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .18em;line-height:1.15}
+.frac .num{border-bottom:1px solid currentColor;padding:0 .18em}
+.frac .den{padding:.08em .18em 0}
+.sqrt{border-top:1px solid currentColor;padding:0 .12em}
+.takeaways{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:26px}
+.takeaway{
+  background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.015));
+  border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+  border-radius:14px;padding:18px 18px 16px;position:relative;
+}
+.takeaway .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:7px}
+.takeaway p{margin:0;font-size:.9rem;line-height:1.55;color:#d8d3c9}
+.quote{
+  font-family:var(--serif);font-style:italic;font-size:clamp(1.15rem,2.1vw,1.45rem);
+  line-height:1.5;color:#e6e1d6;margin:28px 0;padding:0 0 0 22px;border-left:1px solid var(--accent);
+  max-width:60ch;
+}
+.quote cite{display:block;font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:12px}
+.timeline{position:relative;margin:20px 0;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:1px;background:linear-gradient(var(--accent),var(--line))}
+.timeline .t{position:relative;padding:0 0 20px}
+.timeline .t::before{content:"";position:absolute;left:-22px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.timeline .y{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent);display:block}
+.timeline .t p{margin:2px 0 0;font-size:.92rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);padding:4px 9px;border-radius:99px;margin:0 6px 6px 0}
+.quiz{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel);margin-top:26px}
+.quiz .q{font-family:var(--serif);font-size:1.1rem;margin:0 0 14px;color:var(--ink)}
+.quiz-options{display:grid;gap:8px}
+.quiz-option{
+  text-align:left;font-family:var(--sans);font-size:.9rem;color:#cfcac0;
+  padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:transparent;cursor:pointer;transition:.2s var(--ease);
+}
+.quiz-option:hover{border-color:var(--line-strong);background:rgba(255,255,255,.04)}
+.quiz-option.ok{border-color:#57c785;background:rgba(87,199,133,.12);color:#d8ffe8}
+.quiz-option.no{border-color:#e26868;background:rgba(226,104,104,.1);color:#ffdada}
+.quiz-explain{font-size:.86rem;color:var(--muted);margin:12px 0 0;display:none;line-height:1.55}
+.quiz-explain.show{display:block}
+.sources{border-top:1px solid var(--line);padding:34px 0 60px;color:var(--dim);font-size:.83rem}
+.sources h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.sources p{margin:0 0 8px;max-width:80ch}
+.sources a{color:var(--muted);border-bottom:1px solid var(--line-strong)}
+.sources a:hover{color:var(--accent);text-decoration:none}
+.prevnext{display:flex;justify-content:space-between;gap:16px;padding:26px 0 0;border-top:1px solid var(--line);margin-top:34px}
+.prevnext a{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);display:flex;flex-direction:column;gap:3px;max-width:45%}
+.prevnext a:hover{color:var(--accent);text-decoration:none}
+.prevnext a span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.prevnext .right{text-align:right;margin-left:auto}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.mono{font-family:var(--mono);font-size:.82em;letter-spacing:.02em}
+.dim{color:var(--dim)}
+.accent{color:var(--accent)}
+.center{text-align:center}
+.mt0{margin-top:0}.mt1{margin-top:10px}.mt2{margin-top:20px}.mt3{margin-top:34px}
+.hr{height:1px;background:var(--line);border:0;margin:30px 0}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+footer{color:var(--dim);font-size:.78rem}
+.foot-inner{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 50px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:900px){
+  .split,.split.wide-left,.split.wide-right,.grid2,.grid3{grid-template-columns:1fr}
+  .chapter-head{grid-template-columns:40px minmax(0,1fr)}
+  .topbar{gap:10px}
+  #sectionNav{display:none}
+  h1{max-width:20ch}
+}
+@media(max-width:560px){
+  body{font-size:16px}
+  .hero{min-height:620px;padding-top:96px}
+  .chapter-head{grid-template-columns:1fr;gap:8px}
+  .chapter-num{border-top:0;padding:0}
+  .controls{gap:10px 14px}
+  .scroll-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  .topbar,.progress,#heroCanvas,.scroll-hint{display:none}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#111}
+  .card,.stage,.formula{border-color:#ddd}
+}
+
+/* index work cards */
+.work{display:block;color:var(--ink);text-decoration:none;transition:transform .35s var(--ease),border-color .35s var(--ease),background .35s var(--ease)}
+.work:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--accent) 55%,transparent);text-decoration:none;background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.02))}
+.work-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim)}
+.work-no{color:var(--accent)}
+.work-year{border:1px solid var(--line);padding:3px 7px;border-radius:99px}
+.work h4{color:var(--accent);margin-bottom:6px}
+.work .work-title{font-family:var(--serif);font-size:1.28rem;line-height:1.18;color:var(--ink);margin:0 0 9px;letter-spacing:-.01em}
+.work p{font-size:.88rem;color:var(--muted);line-height:1.55}
+.work-go{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+</style>
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body style="--accent:#d9a441;--accent-soft:rgba(217,164,65,.17)">
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <a class="brand" href="einstein_index.html">Einstein · visualisiert</a>
+  <nav id="sectionNav" aria-label="Abschnitte"></nav>
+</header>
+<main>
+<section class="hero" id="top">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">Annus Mirabilis · 1905 · Annalen der Physik 17</div>
+    <h1>Der Beweis, dass <em>Atome</em> wirklich sind</h1>
+    <p class="lede">Ein Pollenkorn zittert im Wasser. Niemand kann die Moleküle sehen, die es stoßen. Einstein zeigt: Man kann sie trotzdem zählen — mit einer Formel für den Zufall.</p>
+    <p class="epigraph">„Wenn sich die hier zu behandelnde Bewegung samt den für sie zu erwartenden Gesetzmäßigkeiten wirklich beobachten läßt, so ist … eine exakte Bestimmung der wahren Atomgröße möglich.“</p>
+    <div class="meta"><span><b>Original</b> Über die von der molekularkinetischen Theorie der Wärme geforderte Bewegung von in ruhenden Flüssigkeiten suspendierten Teilchen</span><span><b>Empfangen</b> 11. Mai 1905</span><span><b>Umfang</b> 12 Seiten</span></div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</section>
+
+
+<div class="wrap">
+<section class="chapter" id="zittern">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">01</div>
+    <div>
+      <h2>Ein Nebel, der nicht stillsteht</h2>
+      <p class="sub">1827 beobachtet Robert Brown, dass Pollenkörner im Wasser unablässig zucken. Erst die Atomhypothese erklärt, warum.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p class="lead">Ein Pollenkorn ist vieltausendmal größer als ein Wassermolekül. Trotzdem bewegt es sich, als würde es von unsichtbaren Fingern gestoßen. Brown sieht das Zittern, kann es aber nicht erklären.</p>
+      <p>Die Thermodynamik des 19. Jahrhunderts hat dafür keinen Platz. Sie beschreibt Wärme als Kontinuum. Ein suspendiertes Körnchen sollte einfach liegen bleiben — die freie Energie hängt nicht davon ab, wo es sich befindet.</p>
+      <p>Einstein dreht die Frage um: Wenn die Wärme wirklich die Bewegung von Molekülen ist, dann <strong>muss</strong> ein sichtbares Korn zittern. Und zwar mit einer Größe, die man vorhersagen kann.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Suspendierte Teilchen · Zufallsstöße</span>
+        <span class="readout" id="heroReadout">1 s · 200 Schritte</span>
+        <canvas id="brownHero"></canvas>
+      </div>
+      <div class="legend"><span><i style="background:#f2d391"></i>Teilchen</span><span><i style="background:#d9a441"></i>Weg</span><span><i style="background:#555"></i>Flüssigkeit</span></div>
+    </div>
+  </div>
+  <div class="grid3 mt3">
+    <div class="card reveal"><h4>Brown 1827</h4><p>Pollenkörner in Wasser zittern ohne äußere Ursache. Auch tote Materie. Auch ohne Licht.</p></div>
+    <div class="card reveal"><h4>Die Spannung</h4><p>Kontinuierliche Thermodynamik sagt: Ruhe. Molekularkinetik sagt: ewige Zufallsbewegung.</p></div>
+    <div class="card reveal"><h4>Die Wette</h4><p>Wenn Einstein recht hat, ist das Zittern ein messbares Fenster in die Welt der Atome.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="osmose">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">02</div>
+    <div>
+      <h2>Osmose für Riesen</h2>
+      <p class="sub">Ein suspendiertes Korn verhält sich wie ein riesiges gelöstes Molekül — mit einem erstaunlich kleinen Druck.</p>
+    </div>
+  </div>
+  <div class="split wide-left">
+    <div class="prose reveal">
+      <p>Für die Molekulartheorie ist der Unterschied zwischen einem gelösten Zucker und einem suspendierten Staubkorn nur eine Frage der Größe. Beide werden von den Flüssigkeitsmolekülen umhergestoßen. Beide üben einen osmotischen Druck aus.</p>
+      <p>Für <span class="mono">n</span> Teilchen in einem Volumen <span class="mono">V*</span> gilt wie für ein verdünntes Gas:</p>
+      <div class="formula">p = <span class="frac"><span class="num">n</span><span class="den">V*</span></span> · <span class="frac"><span class="num">R T</span><span class="den">N</span></span>
+        <div class="formula-note">R: Gaskonstante, N: Avogadro-Zahl, T: absolute Temperatur. Derselbe Druck wie bei n gelösten Molekülen.</div>
+      </div>
+      <p>Der Druck ist winzig, aber er ist da. Und er ist der Schlüssel: Ohne äußere Kraft entsteht ein Konzentrationsgefälle — genau wie bei der Diffusion. Die zufälligen Stöße werden als <strong>Diffusion</strong> sichtbar.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:320px">
+        <span class="label">Semipermeable Membran</span>
+        <span class="readout" id="osmReadout">p ∝ n / V*</span>
+        <canvas id="osmosis"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Teilchen <input type="range" id="osmN" min="6" max="60" value="26" data-out="osmNVal" data-format="0"><span class="val" id="osmNVal">26</span></label>
+        <label class="control">Temperatur <input type="range" id="osmT" min="250" max="330" value="293" data-out="osmTVal" data-format="0"><span class="val" id="osmTVal">293</span> K</label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="zufall">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">03</div>
+    <div>
+      <h2>Der Zufall hat ein Maß</h2>
+      <p class="sub">Nicht die einzelne Bewegung ist vorhersagbar, sondern ihre Statistik. Und die wächst mit der Wurzel der Zeit.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p>Ein Teilchen macht in kleinen Zeitintervallen unabhängige Schritte. Nach <span class="mono">n</span> Schritten wächst die mittlere quadratische Verschiebung proportional zu <span class="mono">n</span>. Die typische Distanz selbst wächst daher nur mit <span class="mono">√n</span>.</p>
+      <p>Einstein leitet aus der Diffusionsgleichung ab:</p>
+      <div class="formula">⟨x²⟩ = 2 D t &nbsp;&nbsp;⇒&nbsp;&nbsp; x<sub>rms</sub> = <span class="sqrt">2 D t</span>
+        <div class="formula-note">D ist der Diffusionskoeffizient. Die mittlere Verschiebung wächst mit √t — nicht mit t.</div>
+      </div>
+      <p>Das ist der Unterschied zwischen einem gerichteten Lauf und einem Betrunkenen: Wer geradeaus geht, kommt doppelt so weit, wenn er doppelt so lange geht. Der Zufallspfad kommt nur um <span class="mono">√2</span> weiter.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:340px">
+        <span class="label">Viele Teilchen · eine Statistik</span>
+        <span class="readout" id="walkReadout">t = 0.0 s</span>
+        <canvas id="walkPlot"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Zeit <input type="range" id="walkT" min="0" max="100" value="0" data-out="walkTVal" data-format="1"><span class="val" id="walkTVal">0.0</span> s</label>
+        <button class="btn" id="walkGo">laufen lassen</button>
+        <button class="btn" id="walkReset">neu starten</button>
+      </div>
+    </div>
+  </div>
+  <div class="grid2 mt3">
+    <div class="card reveal"><h4>Gerichtete Bewegung</h4><p class="big">d ∝ t</p><p>Ein Boot im Fluss: doppelte Zeit, doppelte Strecke.</p></div>
+    <div class="card reveal"><h4>Zufallsbewegung</h4><p class="big">d ∝ √t</p><p>Ein Teilchen im Wasser: doppelte Zeit, nur 1,41-fache typische Strecke.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="formel">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">04</div>
+    <div>
+      <h2>Die Formel, die Atome zählt</h2>
+      <p class="sub">Setzt man die Brownsche Bewegung und die Zähigkeit der Flüssigkeit zusammen, fällt die Avogadro-Zahl heraus.</p>
+    </div>
+  </div>
+  <div class="split wide-right">
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Kugel im zähen Medium</span>
+        <span class="readout" id="stokesReadout">D = kT / (6πηr)</span>
+        <canvas id="stokesPlot"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Radius <input type="range" id="stR" min="0.2" max="2.0" step="0.05" value="0.5" data-out="stRVal" data-format="2"><span class="val" id="stRVal">0.50</span> µm</label>
+        <label class="control">Zähigkeit <input type="range" id="stEta" min="0.5" max="3.0" step="0.05" value="1.0" data-out="stEtaVal" data-format="2"><span class="val" id="stEtaVal">1.00</span> mPa·s</label>
+      </div>
+      <div class="legend"><span><i style="background:#d9a441"></i>Diffusion</span><span><i style="background:#7f9cff"></i>Reibung</span></div>
+    </div>
+    <div class="prose reveal">
+      <p>Der Diffusionskoeffizient einer Kugel vom Radius <span class="mono">P</span> in einer Flüssigkeit mit Reibungskoeffizient <span class="mono">k</span> ist nach Stokes <span class="mono">D = RT/N · 1/(6πkP)</span>. Kombiniert mit <span class="mono">⟨x²⟩ = 2Dt</span>:</p>
+      <div class="formula">λ<sub>x</sub> = <span class="sqrt"><span class="frac"><span class="num">R T</span><span class="den">N</span></span> · <span class="frac"><span class="num">t</span><span class="den">3 π k P</span></span></span>
+        <div class="formula-note">λx: mittlere Verschiebung in x-Richtung nach der Zeit t. Alles ist messbar — außer N.</div>
+      </div>
+      <p>Ein Teilchen von 1 µm Durchmesser in Wasser bei 17 °C verschiebt sich in einer Sekunde im Mittel um <strong>0,8 µm</strong>, in einer Minute um etwa <strong>6 µm</strong>. Das liegt im Bereich eines guten Mikroskops.</p>
+      <p>Also: Verschiebung messen, Temperatur und Zähigkeit kennen — und <span class="mono">N</span> ausrechnen. Kein Atom muss dafür einzeln gesehen werden.</p>
+    </div>
+  </div>
+  <div class="quiz reveal" data-answer="2">
+    <p class="q">Warum wächst die typische Verschiebung nur mit √t?</p>
+    <div class="quiz-options">
+      <button class="quiz-option">Weil die Flüssigkeit das Teilchen mit der Zeit immer stärker bremst.</button>
+      <button class="quiz-option">Weil die Temperatur während der Bewegung langsam sinkt.</button>
+      <button class="quiz-option">Weil sich unabhängige Zufallsschritte teilweise gegenseitig aufheben.</button>
+      <button class="quiz-option">Weil die Teilchen nach kurzer Zeit an der Gefäßwand haften bleiben.</button>
+    </div>
+    <p class="quiz-explain">Bei einem Random Walk addieren sich die Varianzen, nicht die Distanzen: Nach n Schritten ist ⟨x²⟩ = n·ℓ², also x_rms = ℓ·√n. Die Richtungen heben sich im Mittel teilweise auf.</p>
+  </div>
+</section>
+
+<section class="chapter" id="entschieden">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">05</div>
+    <div>
+      <h2>Der Streit ist entschieden</h2>
+      <p class="sub">Einstein bleibt vorsichtig. Jean Perrin macht aus der Formel ein Experiment — und beendet eine jahrzehntelange Debatte.</p>
+    </div>
+  </div>
+  <div class="timeline">
+    <div class="t reveal"><span class="y">1827</span><p>Robert Brown beschreibt die unregelmäßige Bewegung von Pollenkörnern.</p></div>
+    <div class="t reveal"><span class="y">1905</span><p>Einstein leitet die mittlere Verschiebung her und schlägt die Messung von N vor.</p></div>
+    <div class="t reveal"><span class="y">1908</span><p>Jean Perrin bestätigt die Vorhersage mit ultramikroskopischen Beobachtungen.</p></div>
+    <div class="t reveal"><span class="y">1913</span><p>Perrins Buch <em>Les Atomes</em> macht die Atomhypothese zur Messwissenschaft.</p></div>
+    <div class="t reveal"><span class="y">1926</span><p>Perrin erhält den Nobelpreis — für den Beweis, dass Materie aus Atomen besteht.</p></div>
+  </div>
+  <div class="quote reveal">„Möge es bald einem Forscher gelingen, die hier aufgeworfene, für die Theorie der Wärme wichtige Frage zu entscheiden!“<cite>Einstein 1905, Schluss</cite></div>
+</section>
+
+<section class="chapter" id="mitnehmen">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">06</div>
+    <div>
+      <h2>Was du mitnimmst</h2>
+      <p class="sub">Drei Ideen, die weit über das Pollenkorn hinausgehen.</p>
+    </div>
+  </div>
+  <div class="takeaways">
+    <div class="takeaway reveal"><span class="n">01 · STATISTIK IST EIN MIKROSKOP</span><p>Man muss die Moleküle nicht sehen, um sie zu zählen. Eine Verteilung verrät, wie viele es sind.</p></div>
+    <div class="takeaway reveal"><span class="n">02 · DIE WURZEL DER ZEIT</span><p>Zufallspfade wachsen mit √t. Diese Signatur findet sich in Diffusion, Wärmeleitung und Finanzmärkten.</p></div>
+    <div class="takeaway reveal"><span class="n">03 · VORSICHT IST STÄRKE</span><p>Einstein sagt nicht „Atome existieren“. Er sagt: Wenn sie existieren, dann muss dies messbar sein. Genau so wird eine Hypothese prüfbar.</p></div>
+  </div>
+  <div class="prevnext">
+    <a href="einstein_01_lichtquanten.html"><span>Zurück</span>Das Licht ist körnig</a>
+    <a class="right" href="einstein_03_spezielle-relativitaet.html"><span>Weiter</span>Raum und Zeit →</a>
+  </div>
+</section>
+</div>
+
+<section class="sources">
+  <div class="wrap">
+    <h3>Quelle &amp; Weiterlesen</h3>
+    <p>A. Einstein, <em>Über die von der molekularkinetischen Theorie der Wärme geforderte Bewegung von in ruhenden Flüssigkeiten suspendierten Teilchen</em>, Annalen der Physik 17 (1905), 549–560. Public Domain. Faksimile: <a href="https://archive.org/details/annalenderphysi108unkngoog" target="_blank" rel="noopener">archive.org</a>.</p>
+    <p>Die Simulation ist eine didaktische Vereinfachung: echte Brownsche Bewegung hat ein kontinuierliches Zeitspektrum, keine festen Schritte. Die Skalenwerte folgen Einsteins Zahlenbeispiel.</p>
+  </div>
+</section>
+
+
+</main>
+<footer>
+  <div class="foot-inner">
+    <span>Einstein · visualisiert</span>
+    <span>Quelle: Annalen der Physik 17 (1905), 549–560 · Public Domain</span>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var EIN = window.EIN = {};
+
+  EIN.clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  EIN.lerp = function (a, b, t) { return a + (b - a) * t; };
+  EIN.ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+  EIN.TAU = Math.PI * 2;
+
+  EIN.css = function (name) {
+    return getComputedStyle(document.body).getPropertyValue(name).trim();
+  };
+
+  EIN.fit = function (canvas) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(r.width));
+    var h = Math.max(1, Math.round(r.height));
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h, dpr: dpr };
+  };
+
+  EIN.onResize = function (canvas, draw) {
+    var raf = 0;
+    function run() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
+    if (window.ResizeObserver) new ResizeObserver(run).observe(canvas);
+    window.addEventListener("resize", run);
+    return run;
+  };
+
+  EIN.loop = function (fn) {
+    var t0 = performance.now();
+    var last = t0;
+    function frame(now) {
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      fn(Math.max(0, (now - t0) / 1000), dt);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  };
+
+  EIN.visible = function (el, onEnter, onExit) {
+    if (!el || !("IntersectionObserver" in window)) { if (onEnter) onEnter(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { if (onEnter) onEnter(); }
+        else if (onExit) onExit();
+      });
+    }, { rootMargin: "140px 0px" });
+    io.observe(el);
+  };
+
+  EIN.arrow = function (ctx, x1, y1, x2, y2, color, width) {
+    var a = Math.atan2(y2 - y1, x2 - x1);
+    var s = 7;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width || 1.4;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - s * Math.cos(a - 0.38), y2 - s * Math.sin(a - 0.38));
+    ctx.lineTo(x2 - s * Math.cos(a + 0.38), y2 - s * Math.sin(a + 0.38));
+    ctx.closePath(); ctx.fill();
+  };
+
+  EIN.label = function (ctx, text, x, y, color, size, align) {
+    ctx.fillStyle = color || "#8a857c";
+    ctx.font = (size || 10) + "px ui-monospace, SFMono-Regular, Consolas, monospace";
+    ctx.textAlign = align || "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, y);
+  };
+
+  function initProgress() {
+    var bar = document.getElementById("progressBar");
+    if (!bar) return;
+    function upd() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    }
+    window.addEventListener("scroll", upd, { passive: true });
+    window.addEventListener("resize", upd);
+    upd();
+  }
+
+  function initNav() {
+    var nav = document.getElementById("sectionNav");
+    var sections = [].slice.call(document.querySelectorAll(".chapter[id]"));
+    if (!nav || !sections.length) return;
+    sections.forEach(function (s, i) {
+      var h = s.querySelector("h2");
+      var a = document.createElement("a");
+      a.href = "#" + s.id;
+      a.textContent = h ? h.textContent.replace(/\s+/g, " ").slice(0, 26) : "0" + (i + 1);
+      nav.appendChild(a);
+    });
+    var links = [].slice.call(nav.querySelectorAll("a"));
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var i = sections.indexOf(e.target);
+        links.forEach(function (l, j) { l.classList.toggle("on", i === j); });
+      });
+    }, { rootMargin: "-20% 0px -68% 0px" });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  function initReveal() {
+    var els = [].slice.call(document.querySelectorAll(".reveal"));
+    if (!els.length) return;
+    if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    els.forEach(function (e, i) { e.style.transitionDelay = (Math.min(i % 4, 3) * 55) + "ms"; io.observe(e); });
+  }
+
+  function initRanges() {
+    [].slice.call(document.querySelectorAll("input[type=range][data-out]")).forEach(function (r) {
+      var out = document.getElementById(r.getAttribute("data-out"));
+      function upd() {
+        if (!out) return;
+        var v = parseFloat(r.value);
+        var f = r.getAttribute("data-format");
+        out.textContent = f === "int" ? Math.round(v) : v.toFixed(f ? parseInt(f, 10) : 1);
+      }
+      r.addEventListener("input", upd); upd();
+    });
+  }
+
+  function initQuiz() {
+    [].slice.call(document.querySelectorAll(".quiz")).forEach(function (quiz) {
+      var ans = parseInt(quiz.getAttribute("data-answer"), 10);
+      var opts = [].slice.call(quiz.querySelectorAll(".quiz-option"));
+      var ex = quiz.querySelector(".quiz-explain");
+      opts.forEach(function (o, i) {
+        o.addEventListener("click", function () {
+          opts.forEach(function (x) { x.classList.remove("ok", "no"); x.disabled = true; });
+          if (i === ans) { o.classList.add("ok"); }
+          else { o.classList.add("no"); opts[ans].classList.add("ok"); }
+          if (ex) ex.classList.add("show");
+        });
+      });
+    });
+  }
+
+  function boot() {
+    initProgress(); initNav(); initReveal(); initRanges(); initQuiz();
+    if (window.__pageInit) window.__pageInit();
+    document.documentElement.classList.add("ready");
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+
+</script>
+<script>
+
+(function () {
+  "use strict";
+
+  
+  (function () {
+    var c = document.getElementById("heroCanvas");
+    if (!c) return;
+    var ps = [];
+    for (var i = 0; i < 54; i++) {
+      ps.push({ x: Math.random(), y: Math.random(), vx: 0, vy: 0, tr: [] });
+    }
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      for (var i = 0; i < ps.length; i++) {
+        var p = ps[i];
+        p.vx += (Math.random() - .5) * 0.0009; p.vy += (Math.random() - .5) * 0.0009;
+        p.vx *= .985; p.vy *= .985;
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < .02 || p.x > .98) p.vx *= -1;
+        if (p.y < .04 || p.y > .96) p.vy *= -1;
+        p.x = EIN.clamp(p.x, .02, .98); p.y = EIN.clamp(p.y, .04, .96);
+        p.tr.push([p.x, p.y]); if (p.tr.length > 30) p.tr.shift();
+        var px = p.x * w, py = p.y * h;
+        ctx.beginPath();
+        for (var k = 0; k < p.tr.length; k++) {
+          var qx = p.tr[k][0] * w, qy = p.tr[k][1] * h;
+          if (k === 0) ctx.moveTo(qx, qy); else ctx.lineTo(qx, qy);
+        }
+        ctx.strokeStyle = "rgba(217,164,65,.10)"; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = "rgba(255,238,190,.45)"; ctx.beginPath(); ctx.arc(px, py, 1.2, 0, EIN.TAU); ctx.fill();
+      }
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("brownHero");
+    if (!c) return;
+    var ps = [];
+    for (var i = 0; i < 26; i++) {
+      ps.push({ x: Math.random(), y: Math.random(), hx: 0, hy: 0, trail: [], ph: Math.random() * 6 });
+    }
+    EIN.loop(function (t, dt) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var pad = 18;
+      ctx.strokeStyle = "rgba(255,255,255,.05)";
+      for (var gx = pad; gx < w; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, pad); ctx.lineTo(gx, h - pad); ctx.stroke(); }
+      for (var gy = pad; gy < h; gy += 40) { ctx.beginPath(); ctx.moveTo(pad, gy); ctx.lineTo(w - pad, gy); ctx.stroke(); }
+      for (var i = 0; i < ps.length; i++) {
+        var p = ps[i];
+        var kick = 0.0009;
+        p.hx += (Math.random() - .5) * kick; p.hy += (Math.random() - .5) * kick;
+        p.hx *= 0.985; p.hy *= 0.985;
+        p.x += p.hx; p.y += p.hy;
+        if (p.x < 0.02 || p.x > 0.98) p.hx *= -1;
+        if (p.y < 0.04 || p.y > 0.96) p.hy *= -1;
+        p.x = EIN.clamp(p.x, 0.02, 0.98); p.y = EIN.clamp(p.y, 0.04, 0.96);
+        p.trail.push([p.x, p.y]); if (p.trail.length > 26) p.trail.shift();
+        var px = pad + p.x * (w - 2 * pad), py = pad + p.y * (h - 2 * pad);
+        ctx.beginPath();
+        for (var k = 0; k < p.trail.length; k++) {
+          var qx = pad + p.trail[k][0] * (w - 2 * pad), qy = pad + p.trail[k][1] * (h - 2 * pad);
+          if (k === 0) ctx.moveTo(qx, qy); else ctx.lineTo(qx, qy);
+        }
+        ctx.strokeStyle = "rgba(217,164,65,.13)"; ctx.lineWidth = 1; ctx.stroke();
+        var rg = ctx.createRadialGradient(px, py, 0, px, py, 11);
+        rg.addColorStop(0, "rgba(255,238,190,.9)"); rg.addColorStop(.3, "rgba(217,164,65,.5)"); rg.addColorStop(1, "rgba(217,164,65,0)");
+        ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(px, py, 11, 0, EIN.TAU); ctx.fill();
+        ctx.fillStyle = "rgba(255,245,215,.95)"; ctx.beginPath(); ctx.arc(px, py, 2.2, 0, EIN.TAU); ctx.fill();
+      }
+      EIN.label(ctx, "t = " + (t % 100).toFixed(1) + " s", w - 18, h - 12, "rgba(217,164,65,.55)", 10, "right");
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("osmosis");
+    if (!c) return;
+    var N = 26, T = 293, seed = 7, ps = [];
+    var sn = document.getElementById("osmN"), st = document.getElementById("osmT"), ro = document.getElementById("osmReadout");
+    function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    function reset() {
+      ps = [];
+      for (var i = 0; i < 90; i++) ps.push({ x: rnd(), y: rnd(), vx: (rnd() - .5) * .0016 * Math.sqrt(T / 293), vy: (rnd() - .5) * .0016 * Math.sqrt(T / 293), r: i < N ? 4.6 : 1.5 });
+    }
+    reset();
+    sn.oninput = function () { N = +sn.value; reset(); };
+    st.oninput = function () { T = +st.value; reset(); };
+    EIN.loop(function (t, dt) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var box = { x: 24, y: 24, w: w - 48, h: h - 48 };
+      ctx.strokeStyle = "rgba(255,255,255,.14)"; ctx.strokeRect(box.x, box.y, box.w, box.h);
+      var mem = box.x + box.w * 0.5;
+      ctx.strokeStyle = "rgba(217,164,65,.55)"; ctx.setLineDash([5, 5]);
+      ctx.beginPath(); ctx.moveTo(mem, box.y); ctx.lineTo(mem, box.y + box.h); ctx.stroke(); ctx.setLineDash([]);
+      var big = 0, smallL = 0, smallR = 0;
+      for (var i = 0; i < ps.length; i++) {
+        var p = ps[i];
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) { p.x = 0; p.vx *= -1; } if (p.x > 1) { p.x = 1; p.vx *= -1; }
+        if (p.y < 0) { p.y = 0; p.vy *= -1; } if (p.y > 1) { p.y = 1; p.vy *= -1; }
+        if (p.r > 2) {
+          big++;
+          if (p.x > 0.5) { p.x = 0.5 - 0.01; p.vx = -Math.abs(p.vx); }
+        } else {
+          if (p.x < 0.5) smallL++; else smallR++;
+        }
+        var px = box.x + 6 + p.x * (box.w - 12), py = box.y + 6 + p.y * (box.h - 12);
+        ctx.fillStyle = p.r > 2 ? "rgba(255,226,150,.9)" : "rgba(180,200,255,.35)";
+        ctx.beginPath(); ctx.arc(px, py, p.r, 0, EIN.TAU); ctx.fill();
+      }
+      var pressure = N / 26;
+      EIN.label(ctx, "gelöste Teilchen links: " + big, box.x + 8, box.y - 8, "rgba(217,164,65,.8)", 10);
+      EIN.label(ctx, "p ∝ n·T/V*", box.x + box.w, box.y - 8, "rgba(255,255,255,.4)", 10, "right");
+      ro.textContent = "p ∝ " + (pressure * (T / 293)).toFixed(2);
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("walkPlot");
+    if (!c) return;
+    var N = 70, steps = 0, maxSteps = 900, walkers = [], running = false, tAcc = 0;
+    var slider = document.getElementById("walkT"), out = document.getElementById("walkTVal"), ro = document.getElementById("walkReadout");
+    function reset() {
+      walkers = [];
+      for (var i = 0; i < N; i++) walkers.push({ x: 0, y: 0, trail: [[0, 0]] });
+      steps = 0; running = false; slider.value = 0; out.textContent = "0.0"; ro.textContent = "t = 0.0 s";
+    }
+    reset();
+    document.getElementById("walkReset").onclick = reset;
+    document.getElementById("walkGo").onclick = function () {
+      if (steps >= maxSteps) { reset(); running = true; this.textContent = "pausieren"; return; }
+      running = !running; this.textContent = running ? "pausieren" : "laufen lassen";
+    };
+    slider.addEventListener("input", function () { steps = Math.round(+slider.value / 100 * maxSteps); out.textContent = (+slider.value / 10).toFixed(1); });
+    EIN.loop(function (t, dt) {
+      if (running) {
+        tAcc += dt;
+        var want = Math.floor(tAcc * 900);
+        if (want > steps) {
+          var add = Math.min(want - steps, 60);
+          for (var s = 0; s < add; s++) {
+            for (var i = 0; i < walkers.length; i++) {
+              var w = walkers[i];
+              var a = Math.random() * EIN.TAU, l = 1;
+              w.x += Math.cos(a) * l; w.y += Math.sin(a) * l;
+              w.trail.push([w.x, w.y]);
+            }
+            steps++;
+          }
+          slider.value = Math.min(100, steps / maxSteps * 100);
+          out.textContent = (steps / maxSteps * 10).toFixed(1);
+        }
+        if (steps >= maxSteps) { running = false; document.getElementById("walkGo").textContent = "laufen lassen"; }
+      }
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * 0.5, cy = h * 0.5, scale = Math.min(w, h) * 0.38 / 42;
+      ctx.strokeStyle = "rgba(255,255,255,.05)";
+      for (var r = 10; r <= 40; r += 10) { ctx.beginPath(); ctx.arc(cx, cy, r * scale, 0, EIN.TAU); ctx.stroke(); }
+      var sum2 = 0;
+      for (var i = 0; i < walkers.length; i++) {
+        var p = walkers[i];
+        sum2 += p.x * p.x + p.y * p.y;
+        if (p.trail.length > 1) {
+          ctx.beginPath();
+          for (var k = 0; k < p.trail.length; k++) {
+            var qx = cx + p.trail[k][0] * scale, qy = cy + p.trail[k][1] * scale;
+            if (k === 0) ctx.moveTo(qx, qy); else ctx.lineTo(qx, qy);
+          }
+          ctx.strokeStyle = "rgba(217,164,65,.16)"; ctx.lineWidth = 1; ctx.stroke();
+        }
+        var px = cx + p.x * scale, py = cy + p.y * scale;
+        ctx.fillStyle = "rgba(255,235,185,.8)"; ctx.beginPath(); ctx.arc(px, py, 1.6, 0, EIN.TAU); ctx.fill();
+      }
+      var rms = Math.sqrt(sum2 / walkers.length);
+      ctx.strokeStyle = "rgba(255,255,255,.55)"; ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.arc(cx, cy, rms * scale, 0, EIN.TAU); ctx.stroke(); ctx.setLineDash([]);
+      EIN.label(ctx, "rms = " + rms.toFixed(1) + " ℓ", w - 16, 20, "rgba(255,255,255,.55)", 10, "right");
+      EIN.label(ctx, "n = " + steps + " Schritte", 16, 20, "rgba(217,164,65,.7)", 10);
+      EIN.label(ctx, "√n = " + Math.sqrt(steps).toFixed(1), 16, 36, "rgba(217,164,65,.45)", 10);
+      ro.textContent = "t = " + (steps / 90).toFixed(1) + " s";
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("stokesPlot");
+    if (!c) return;
+    var r = 0.5, eta = 1.0;
+    var sr = document.getElementById("stR"), se = document.getElementById("stEta"), ro = document.getElementById("stokesReadout");
+    function D(r, eta) { var k = 1.380649e-23, T = 293.15; return k * T / (6 * Math.PI * eta * 1e-3 * r * 1e-6); }
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var pad = { l: 46, r: 20, t: 24, b: 30 };
+      var rMin = 0.2, rMax = 2.0, dMax = 6.2e-13;
+      function X(rr) { return pad.l + ((rr - rMin) / (rMax - rMin)) * (w - pad.l - pad.r); }
+      function Y(d) { return h - pad.b - (d / dMax) * (h - pad.t - pad.b); }
+      ctx.strokeStyle = "rgba(255,255,255,.12)";
+      ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+      EIN.label(ctx, "D (10⁻¹³ m²/s)", 6, pad.t - 6, "rgba(255,255,255,.35)", 9);
+      EIN.label(ctx, "Radius (µm)", w - pad.r, h - 8, "rgba(255,255,255,.35)", 9, "right");
+      for (var rr = rMin; rr <= rMax + .01; rr += .3) {
+        EIN.label(ctx, rr.toFixed(1), X(rr), h - pad.b + 12, "rgba(255,255,255,.25)", 8, "center");
+      }
+      ctx.beginPath();
+      for (var px = 0; px <= w - pad.l - pad.r; px += 2) {
+        var rr = rMin + (px / (w - pad.l - pad.r)) * (rMax - rMin);
+        var y = Y(D(rr, eta));
+        if (px === 0) ctx.moveTo(pad.l, y); else ctx.lineTo(pad.l + px, y);
+      }
+      ctx.strokeStyle = "rgba(217,164,65,.95)"; ctx.lineWidth = 2; ctx.stroke();
+      var px2 = X(r), py2 = Y(D(r, eta));
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(px2, py2, 4, 0, EIN.TAU); ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.25)"; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(px2, py2); ctx.lineTo(px2, h - pad.b); ctx.moveTo(px2, py2); ctx.lineTo(pad.l, py2); ctx.stroke(); ctx.setLineDash([]);
+      ro.textContent = "D = " + (D(r, eta) * 1e13).toFixed(2) + " · 10⁻¹³ m²/s";
+    }
+    sr.oninput = function () { r = +sr.value; draw(); };
+    se.oninput = function () { eta = +se.value; draw(); };
+    EIN.onResize(c, draw); draw();
+  })();
+})();
+
+</script>
+</body>
+</html>

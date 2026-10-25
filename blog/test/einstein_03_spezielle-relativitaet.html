@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Raum und Zeit sind verhandelbar — Einstein, visualisiert</title>
+<meta name="description" content="Einstein nimmt zwei Sätze ernst, die sich zu widersprechen scheinen: Alle Inertialsysteme sind gleichberechtigt — und Licht ist immer gleich schnell. Daraus folgt eine neue Physik von Raum und Zeit.">
+<style>
+:root{
+  --bg:#07070b;
+  --bg-2:#0b0b12;
+  --panel:rgba(255,255,255,.038);
+  --panel-2:rgba(255,255,255,.026);
+  --ink:#ece9e1;
+  --muted:#a8a397;
+  --dim:#6f6b63;
+  --line:rgba(255,255,255,.085);
+  --line-strong:rgba(255,255,255,.16);
+  --accent:#e8b45a;
+  --accent-soft:rgba(232,180,90,.16);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  --math:"Latin Modern Math","STIX Two Math","Cambria Math",Cambria,Georgia,serif;
+  --col:72ch;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:17px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(900px 620px at 78% -8%,var(--accent-soft),transparent 62%),
+    radial-gradient(700px 500px at 8% 18%,rgba(120,140,255,.055),transparent 65%),
+    linear-gradient(180deg,#08080d 0%,#07070b 45%,#06060a 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+::selection{background:var(--accent);color:#111}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:rgba(255,255,255,.05)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#fff6d8);box-shadow:0 0 14px var(--accent);transition:width .08s linear}
+.topbar{
+  position:fixed;top:2px;left:0;right:0;z-index:55;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:12px clamp(16px,3vw,38px);
+  background:linear-gradient(180deg,rgba(7,7,11,.92),rgba(7,7,11,.55) 70%,transparent);
+  backdrop-filter:blur(10px);
+}
+.brand{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--muted);
+  white-space:nowrap;text-transform:uppercase;
+}
+.brand:hover{color:var(--ink);text-decoration:none}
+#sectionNav{display:flex;gap:4px;overflow:auto;scrollbar-width:none;mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
+#sectionNav::-webkit-scrollbar{display:none}
+#sectionNav a{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);
+  padding:5px 8px;border-radius:99px;white-space:nowrap;transition:.25s var(--ease);
+}
+#sectionNav a:hover{color:var(--ink);text-decoration:none;background:rgba(255,255,255,.05)}
+#sectionNav a.on{color:var(--accent);background:var(--accent-soft)}
+main{position:relative}
+.hero{
+  position:relative;min-height:clamp(520px,82vh,820px);display:flex;align-items:flex-end;
+  padding:120px clamp(20px,5vw,64px) clamp(48px,8vh,90px);
+  overflow:hidden;
+}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:18px;
+}
+.kicker::before{content:"";width:28px;height:1px;background:var(--accent);opacity:.7}
+h1{
+  font-family:var(--serif);font-weight:400;font-size:clamp(2.35rem,6.2vw,5.6rem);
+  line-height:1.02;letter-spacing:-.025em;margin:0 0 22px;max-width:17ch;
+  text-wrap:balance;
+}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{font-size:clamp(1.02rem,1.7vw,1.28rem);line-height:1.55;color:#cfcac0;max-width:56ch;margin:0 0 18px}
+.epigraph{
+  font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--muted);
+  max-width:52ch;margin:0 0 22px;padding-left:16px;border-left:1px solid var(--line-strong);
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.meta b{color:var(--muted);font-weight:400}
+.scroll-hint{
+  position:absolute;right:clamp(20px,5vw,64px);bottom:28px;z-index:2;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--dim);
+  writing-mode:vertical-rl;display:flex;align-items:center;gap:10px;
+}
+.scroll-hint::after{content:"";width:1px;height:38px;background:linear-gradient(var(--accent),transparent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.chapter{padding:clamp(58px,9vh,110px) 0;border-top:1px solid var(--line);position:relative}
+.chapter-head{display:grid;grid-template-columns:64px minmax(0,1fr);gap:clamp(10px,2vw,26px);margin-bottom:clamp(26px,4vw,44px);align-items:start}
+.chapter-num{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--accent);
+  padding-top:9px;border-top:1px solid var(--accent);
+}
+.chapter h2{
+  font-family:var(--serif);font-weight:400;font-size:clamp(1.65rem,3.1vw,2.65rem);
+  line-height:1.12;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;
+}
+.chapter h3{font-family:var(--serif);font-weight:400;font-size:1.32rem;margin:0 0 10px;letter-spacing:-.01em}
+.chapter .sub{color:var(--muted);max-width:62ch;margin:0;font-size:1rem}
+.prose{max-width:var(--col);color:#cfcac0}
+.prose p{margin:0 0 1.05em}
+.prose p:last-child{margin-bottom:0}
+.prose strong{color:var(--ink);font-weight:600}
+.prose em{color:#e3ded4}
+.prose ul,.prose ol{margin:.2em 0 1.1em;padding-left:1.25em}
+.prose li{margin:.32em 0}
+.prose code{font-family:var(--mono);font-size:.86em;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px}
+.lead{font-size:1.12rem;line-height:1.62;color:#dcd7cd}
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,56px);align-items:center}
+.split.wide-left{grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr)}
+.split.wide-right{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:16px;padding:22px;
+  position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.35}
+.card h4{font-family:var(--sans);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:0 0 9px;font-weight:600}
+.card p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.58}
+.card .big{font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.2;margin-bottom:8px}
+.stage{
+  position:relative;background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.stage canvas{display:block;width:100%;height:100%}
+.stage .label{
+  position:absolute;left:14px;top:12px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);pointer-events:none;
+}
+.stage .readout{
+  position:absolute;right:14px;top:12px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.06em;color:var(--accent);pointer-events:none;
+}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:14px 0 0}
+.control{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--muted)}
+.control input[type=range]{
+  -webkit-appearance:none;appearance:none;width:clamp(110px,18vw,190px);height:2px;background:var(--line-strong);outline:none;border-radius:2px;
+}
+.control input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--accent);border:2px solid #111;box-shadow:0 0 0 3px var(--accent-soft);cursor:pointer;
+}
+.control input[type=range]::-moz-range-thumb{width:11px;height:11px;border:2px solid #111;border-radius:50%;background:var(--accent);cursor:pointer}
+.control .val{min-width:52px;color:var(--ink);font-variant-numeric:tabular-nums}
+.btn{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 14px;border-radius:99px;border:1px solid var(--line-strong);
+  background:transparent;color:var(--ink);cursor:pointer;transition:.2s var(--ease);
+}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.btn.on{background:var(--accent);color:#111;border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:0}
+.formula{
+  font-family:var(--math);font-size:clamp(1.05rem,2vw,1.38rem);line-height:1.85;
+  color:#f1ede4;background:rgba(255,255,255,.028);border:1px solid var(--line);
+  border-left:2px solid var(--accent);border-radius:0 12px 12px 0;
+  padding:18px 22px;margin:18px 0;overflow-x:auto;
+}
+.formula .small{font-size:.62em;color:var(--muted)}
+.formula-note{font-family:var(--sans);font-size:.78rem;color:var(--dim);margin-top:8px;letter-spacing:0}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .18em;line-height:1.15}
+.frac .num{border-bottom:1px solid currentColor;padding:0 .18em}
+.frac .den{padding:.08em .18em 0}
+.sqrt{border-top:1px solid currentColor;padding:0 .12em}
+.takeaways{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:26px}
+.takeaway{
+  background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.015));
+  border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+  border-radius:14px;padding:18px 18px 16px;position:relative;
+}
+.takeaway .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:7px}
+.takeaway p{margin:0;font-size:.9rem;line-height:1.55;color:#d8d3c9}
+.quote{
+  font-family:var(--serif);font-style:italic;font-size:clamp(1.15rem,2.1vw,1.45rem);
+  line-height:1.5;color:#e6e1d6;margin:28px 0;padding:0 0 0 22px;border-left:1px solid var(--accent);
+  max-width:60ch;
+}
+.quote cite{display:block;font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:12px}
+.timeline{position:relative;margin:20px 0;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:1px;background:linear-gradient(var(--accent),var(--line))}
+.timeline .t{position:relative;padding:0 0 20px}
+.timeline .t::before{content:"";position:absolute;left:-22px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.timeline .y{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent);display:block}
+.timeline .t p{margin:2px 0 0;font-size:.92rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);padding:4px 9px;border-radius:99px;margin:0 6px 6px 0}
+.quiz{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel);margin-top:26px}
+.quiz .q{font-family:var(--serif);font-size:1.1rem;margin:0 0 14px;color:var(--ink)}
+.quiz-options{display:grid;gap:8px}
+.quiz-option{
+  text-align:left;font-family:var(--sans);font-size:.9rem;color:#cfcac0;
+  padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:transparent;cursor:pointer;transition:.2s var(--ease);
+}
+.quiz-option:hover{border-color:var(--line-strong);background:rgba(255,255,255,.04)}
+.quiz-option.ok{border-color:#57c785;background:rgba(87,199,133,.12);color:#d8ffe8}
+.quiz-option.no{border-color:#e26868;background:rgba(226,104,104,.1);color:#ffdada}
+.quiz-explain{font-size:.86rem;color:var(--muted);margin:12px 0 0;display:none;line-height:1.55}
+.quiz-explain.show{display:block}
+.sources{border-top:1px solid var(--line);padding:34px 0 60px;color:var(--dim);font-size:.83rem}
+.sources h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.sources p{margin:0 0 8px;max-width:80ch}
+.sources a{color:var(--muted);border-bottom:1px solid var(--line-strong)}
+.sources a:hover{color:var(--accent);text-decoration:none}
+.prevnext{display:flex;justify-content:space-between;gap:16px;padding:26px 0 0;border-top:1px solid var(--line);margin-top:34px}
+.prevnext a{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);display:flex;flex-direction:column;gap:3px;max-width:45%}
+.prevnext a:hover{color:var(--accent);text-decoration:none}
+.prevnext a span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.prevnext .right{text-align:right;margin-left:auto}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.mono{font-family:var(--mono);font-size:.82em;letter-spacing:.02em}
+.dim{color:var(--dim)}
+.accent{color:var(--accent)}
+.center{text-align:center}
+.mt0{margin-top:0}.mt1{margin-top:10px}.mt2{margin-top:20px}.mt3{margin-top:34px}
+.hr{height:1px;background:var(--line);border:0;margin:30px 0}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+footer{color:var(--dim);font-size:.78rem}
+.foot-inner{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 50px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:900px){
+  .split,.split.wide-left,.split.wide-right,.grid2,.grid3{grid-template-columns:1fr}
+  .chapter-head{grid-template-columns:40px minmax(0,1fr)}
+  .topbar{gap:10px}
+  #sectionNav{display:none}
+  h1{max-width:20ch}
+}
+@media(max-width:560px){
+  body{font-size:16px}
+  .hero{min-height:620px;padding-top:96px}
+  .chapter-head{grid-template-columns:1fr;gap:8px}
+  .chapter-num{border-top:0;padding:0}
+  .controls{gap:10px 14px}
+  .scroll-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  .topbar,.progress,#heroCanvas,.scroll-hint{display:none}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#111}
+  .card,.stage,.formula{border-color:#ddd}
+}
+
+/* index work cards */
+.work{display:block;color:var(--ink);text-decoration:none;transition:transform .35s var(--ease),border-color .35s var(--ease),background .35s var(--ease)}
+.work:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--accent) 55%,transparent);text-decoration:none;background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.02))}
+.work-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim)}
+.work-no{color:var(--accent)}
+.work-year{border:1px solid var(--line);padding:3px 7px;border-radius:99px}
+.work h4{color:var(--accent);margin-bottom:6px}
+.work .work-title{font-family:var(--serif);font-size:1.28rem;line-height:1.18;color:var(--ink);margin:0 0 9px;letter-spacing:-.01em}
+.work p{font-size:.88rem;color:var(--muted);line-height:1.55}
+.work-go{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+</style>
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body style="--accent:#6fc3d9;--accent-soft:rgba(111,195,217,.16)">
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <a class="brand" href="einstein_index.html">Einstein · visualisiert</a>
+  <nav id="sectionNav" aria-label="Abschnitte"></nav>
+</header>
+<main>
+<section class="hero" id="top">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">Annus Mirabilis · 1905 · Annalen der Physik 17</div>
+    <h1>Raum und Zeit sind <em>verhandelbar</em></h1>
+    <p class="lede">Einstein nimmt zwei Sätze ernst, die sich zu widersprechen scheinen: Alle Inertialsysteme sind gleichberechtigt — und Licht ist immer gleich schnell. Daraus folgt eine neue Physik von Raum und Zeit.</p>
+    <p class="epigraph">„Wir sehen also, daß wir dem Begriffe der Gleichzeitigkeit keine absolute Bedeutung beimessen dürfen.“</p>
+    <div class="meta"><span><b>Original</b> Zur Elektrodynamik bewegter Körper</span><span><b>Empfangen</b> 30. Juni 1905</span><span><b>Umfang</b> 31 Seiten</span></div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</section>
+
+
+<div class="wrap">
+<section class="chapter" id="asymmetrie">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">01</div>
+    <div>
+      <h2>Die Asymmetrie</h2>
+      <p class="sub">Ein Magnet, ein Leiter — und eine Theorie, die zwei verschiedene Geschichten erzählt, obwohl die Natur nur eine zeigt.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p class="lead">Bewegt sich ein Magnet auf einen Leiter zu, entsteht im Leiter ein Strom. Bewegt sich der Leiter auf den Magneten zu, entsteht derselbe Strom. Beobachtbar ist nur die Relativbewegung.</p>
+      <p>Maxwells Theorie aber behandelt die beiden Fälle verschieden: Im ersten erzeugt der bewegte Magnet ein elektrisches Feld; im zweiten wirkt eine elektromotorische Kraft ohne Energieinhalt. Zwei Erklärungen, ein Phänomen.</p>
+      <p>Einstein macht daraus ein Prinzip: <strong>Nur relative Bewegung ist physikalisch bedeutsam.</strong> Dazu kommt die Konstanz der Lichtgeschwindigkeit — und die beiden Sätze zusammen erzwingen eine Revolution.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:320px">
+        <span class="label">Magnet ↔ Leiter</span>
+        <span class="readout" id="asymReadout">gleicher Strom</span>
+        <canvas id="asymCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <button class="btn" id="asymToggle">Rollen tauschen</button>
+        <label class="control">Geschwindigkeit <input type="range" id="asymV" min="10" max="90" value="55" data-out="asymVVal" data-format="0"><span class="val" id="asymVVal">55</span>%</label>
+      </div>
+    </div>
+  </div>
+  <div class="quote reveal">„Daß die Elektrodynamik Maxwells — wie dieselbe gegenwärtig aufgefaßt zu werden pflegt — in ihrer Anwendung auf bewegte Körper zu Asymmetrien führt, welche den Phänomenen nicht anzuhaften scheinen, ist bekannt.“<cite>Einstein 1905, erster Satz</cite></div>
+</section>
+
+<section class="chapter" id="gleichzeitigkeit">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">02</div>
+    <div>
+      <h2>Gleichzeitigkeit ist eine Definition</h2>
+      <p class="sub">Zwei Blitze, ein fahrender Zug, zwei Beobachter. Wer recht hat, hängt davon ab, wer fragt.</p>
+    </div>
+  </div>
+  <div class="split wide-left">
+    <div class="prose reveal">
+      <p>Um „gleichzeitig“ zu definieren, schickt Einstein Lichtsignale hin und zurück: Zwei Uhren an verschiedenen Orten laufen synchron, wenn die Hin- und Rückreise gleich lange dauert. Das ist keine Selbstverständlichkeit — es ist eine <strong>operative Festlegung</strong> mit Licht als Boten.</p>
+      <p>Nun der Zug: Im Zugwaggon schlagen zwei Blitze an den Enden ein. Für den Beobachter am Bahnsteig sind sie gleichzeitig. Für den Beobachter im Zug nicht — denn während das Licht zu ihm läuft, bewegt er sich auf einen der Blitze zu.</p>
+      <div class="formula">Δt′ = γ (Δt − <span class="frac"><span class="num">v Δx</span><span class="den">c²</span></span>)
+        <div class="formula-note">Gleichzeitigkeit ist relativ. Δt = 0 im Bahnsteig-System bedeutet nicht Δt′ = 0 im Zug-System.</div>
+      </div>
+      <p>Der Effekt ist winzig bei Alltagsgeschwindigkeiten — und absolut real bei <span class="mono">v</span> nahe <span class="mono">c</span>. Es gibt keine universelle Jetzt-Linie.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:360px">
+        <span class="label">Bahnsteig-System</span>
+        <span class="readout" id="trainReadout">v = 0.50 c</span>
+        <canvas id="trainCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Zuggeschwindigkeit <input type="range" id="trainV" min="0" max="90" value="50" data-out="trainVVal" data-format="2"><span class="val" id="trainVVal">0.50</span> c</label>
+        <button class="btn" id="trainFlash">Blitze</button>
+      </div>
+      <div class="legend"><span><i style="background:#6fc3d9"></i>Bahnsteig</span><span><i style="background:#f2d391"></i>Zug</span><span><i style="background:#ff8f6b"></i>Licht</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="lorentz">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">03</div>
+    <div>
+      <h2>Die Lorentz-Transformation</h2>
+      <p class="sub">Raum und Zeit vermischen sich — mit demselben Faktor, der auch die Lichtuhr langsamer ticken lässt.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p>Wenn Licht in jedem Inertialsystem <span class="mono">c</span> hat, können die Galilei-Transformationen nicht stimmen. Einstein ersetzt sie durch lineare Gleichungen, die <span class="mono">x² + y² + z² − c²t²</span> invariant lassen:</p>
+      <div class="formula">x′ = γ(x − vt) &nbsp;&nbsp;&nbsp; t′ = γ(t − <span class="frac"><span class="num">v x</span><span class="den">c²</span></span>)
+        <div class="formula-note">γ = 1/√(1 − v²/c²). Bei v = 0 ist γ = 1; bei v → c wächst γ über alle Grenzen.</div>
+      </div>
+      <p>Die Transformation ist symmetrisch: Jeder sieht den anderen bewegt. Es gibt keinen ausgezeichneten „ruhenden“ Beobachter. Genau das war die Asymmetrie am Anfang — und sie ist weg.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">γ als Funktion von β = v/c</span>
+        <span class="readout" id="gammaReadout">γ = 1.15</span>
+        <canvas id="gammaPlot"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">β <input type="range" id="gammaV" min="0" max="99" value="50" data-out="gammaVVal" data-format="2"><span class="val" id="gammaVVal">0.50</span></label>
+      </div>
+    </div>
+  </div>
+  <div class="grid3 mt3">
+    <div class="card reveal"><h4>Bei 0,5 c</h4><p class="big">γ = 1,155</p><p>Eine Sekunde im bewegten System dauert 1,155 s im ruhenden.</p></div>
+    <div class="card reveal"><h4>Bei 0,9 c</h4><p class="big">γ = 2,294</p><p>Die Effekte werden deutlich — und der Energiebedarf explodiert.</p></div>
+    <div class="card reveal"><h4>Bei 0,99 c</h4><p class="big">γ = 7,089</p><p>Näher an c heißt: fast die ganze Energie steckt in der Bewegung.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="zeit">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">04</div>
+    <div>
+      <h2>Zeit und Länge</h2>
+      <p class="sub">Die Lichtuhr ist das einfachste Gedankenexperiment der Relativität — und sie zeigt beide Effekte auf einmal.</p>
+    </div>
+  </div>
+  <div class="split wide-right">
+    <div class="reveal">
+      <div class="stage" style="height:370px">
+        <span class="label">Lichtuhr · ruhend und bewegt</span>
+        <span class="readout" id="clockReadout">γ = 1.15 · 1 Tick = 1.15 s</span>
+        <canvas id="clockCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Geschwindigkeit <input type="range" id="clockV" min="0" max="90" value="50" data-out="clockVVal" data-format="2"><span class="val" id="clockVVal">0.50</span> c</label>
+        <button class="btn" id="clockPause">Pause</button>
+      </div>
+    </div>
+    <div class="prose reveal">
+      <p>Eine Lichtuhr: Ein Photon läuft zwischen zwei Spiegeln auf und ab. Im Ruhesystem ist der Weg <span class="mono">2L</span>, ein Tick dauert <span class="mono">2L/c</span>.</p>
+      <p>Bewegt sich die Uhr, läuft das Photon für den äußeren Beobachter schräg. Der Weg ist länger, die Lichtgeschwindigkeit dieselbe — also dauert ein Tick länger:</p>
+      <div class="formula">Δt = γ Δt₀ &nbsp;&nbsp;&nbsp; L = <span class="frac"><span class="num">L₀</span><span class="den">γ</span></span>
+        <div class="formula-note">Zeitdilatation und Längenkontraktion sind zwei Seiten derselben Geometrie.</div>
+      </div>
+      <p>Myonen entstehen in der oberen Atmosphäre und erreichen dank ihrer verlängerten Lebensdauer den Boden. Teilchenbeschleuniger messen die Dilatation täglich. Und der GPS-Empfänger korrigiert sie — sonst wäre die Position nach einem Tag um Kilometer verschoben.</p>
+    </div>
+  </div>
+  <div class="grid2 mt3">
+    <div class="card reveal"><h4>Zeitdilatation</h4><p class="big">Bewegte Uhren ticken langsamer</p><p>Gemessen vom ruhenden System aus. Der bewegte Beobachter sieht die ruhende Uhr genauso langsamer — die Aussage ist reziprok.</p></div>
+    <div class="card reveal"><h4>Längenkontraktion</h4><p class="big">Bewegte Längen sind kürzer</p><p>Nur in Bewegungsrichtung. Quer zur Bewegung ändert sich nichts.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="geschwindigkeit">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">05</div>
+    <div>
+      <h2>Geschwindigkeiten addieren sich nicht einfach</h2>
+      <p class="sub">0,9 c plus 0,9 c ergibt nicht 1,8 c. Die Natur hat ein Tempolimit.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p>Galilei addiert Geschwindigkeiten linear: <span class="mono">u = u′ + v</span>. Das funktioniert für Autos. Für Licht nicht. Die relativistische Addition lautet:</p>
+      <div class="formula">u = <span class="frac"><span class="num">u′ + v</span><span class="den">1 + u′v/c²</span></span>
+        <div class="formula-note">Für kleine Geschwindigkeiten ist der Nenner ≈ 1 — Galilei erscheint als Grenzfall.</div>
+      </div>
+      <p>Setzt man <span class="mono">u′ = c</span>, kommt wieder <span class="mono">c</span> heraus. Licht lässt sich nicht überholen. Der Nenner ist der mathematische Grund, warum <span class="mono">c</span> eine Grenze und keine beliebige Zahl ist.</p>
+      <p>Fizeau hatte 1851 gemessen, dass Licht in bewegtem Wasser nicht einfach mitaddiert wird. Die Relativität erklärt seinen merkwürdigen Mitführungskoeffizienten fast mühelos.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:320px">
+        <span class="label">Geschwindigkeitsadditon</span>
+        <span class="readout" id="addReadout">u = 0.80 c</span>
+        <canvas id="addCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">u′ <input type="range" id="addU" min="0" max="99" value="60" data-out="addUVal" data-format="2"><span class="val" id="addUVal">0.60</span> c</label>
+        <label class="control">v <input type="range" id="addV" min="0" max="99" value="60" data-out="addVVal" data-format="2"><span class="val" id="addVVal">0.60</span> c</label>
+      </div>
+      <div class="legend"><span><i style="background:#6fc3d9"></i>relativistisch</span><span><i style="background:#8a857c"></i>klassisch</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="folgen">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">06</div>
+    <div>
+      <h2>Was daraus folgt</h2>
+      <p class="sub">Die spezielle Relativität ist keine Kuriosität. Sie ist die Grammatik der modernen Physik.</p>
+    </div>
+  </div>
+  <div class="grid3">
+    <div class="card reveal"><h4>Minkowski-Raum</h4><p>1908 fasst Raum und Zeit zu einer vierdimensionalen Geometrie zusammen. Bewegung ist eine Drehung im Raumzeit-Kontinuum.</p></div>
+    <div class="card reveal"><h4>E = mc²</h4><p>Masse und Energie sind äquivalent. Die träge Masse eines Körpers hängt von seinem Energieinhalt ab — der nächste Aufsatz.</p></div>
+    <div class="card reveal"><h4>Antimaterie &amp; Teilchen</h4><p>Relativistische Quantenmechanik (Dirac 1928) verbindet c mit h — und sagt Antiteilchen voraus.</p></div>
+  </div>
+  <div class="takeaways mt3">
+    <div class="takeaway reveal"><span class="n">01 · KEIN ABSOLUTES JETZT</span><p>Gleichzeitigkeit ist keine Eigenschaft der Welt, sondern eine Beziehung zwischen Beobachtern und Signalen.</p></div>
+    <div class="takeaway reveal"><span class="n">02 · C IST EINE ÜBERSETZUNG</span><p>Raum und Zeit sind keine getrennten Größen. c ist der Umrechnungsfaktor zwischen Metern und Sekunden.</p></div>
+    <div class="takeaway reveal"><span class="n">03 · SYMMETRIE STATT ÄTHER</span><p>Die Theorie braucht kein ruhendes Medium. Sie braucht nur die Gleichberechtigung aller Inertialsysteme.</p></div>
+  </div>
+  <div class="quiz reveal" data-answer="0">
+    <p class="q">Im Bahnsteig-System schlagen zwei Blitze gleichzeitig an den Zugenden ein. Was sieht der Beobachter im Zug?</p>
+    <div class="quiz-options">
+      <button class="quiz-option">Den vorderen Blitz früher, weil er sich auf dessen Licht zubewegt.</button>
+      <button class="quiz-option">Beide Blitze gleichzeitig, weil Licht in jedem System gleich schnell ist.</button>
+      <button class="quiz-option">Den hinteren Blitz früher, weil der Zug ihm davonfährt.</button>
+      <button class="quiz-option">Gar keinen Blitz, weil sich die Lichtwellen im Zug überlagern.</button>
+    </div>
+    <p class="quiz-explain">Δt′ = γ(Δt − vΔx/c²). Mit Δt = 0 und Δx = Abstand der Blitze wird Δt′ negativ für das vordere Ereignis: Es liegt im Zug früher. Die Konstanz von c gilt für jeden Beobachter — gerade deshalb verschiebt sich die Gleichzeitigkeit.</p>
+  </div>
+  <div class="prevnext">
+    <a href="einstein_02_brownsche-bewegung.html"><span>Zurück</span>Der Beweis, dass Atome wirklich sind</a>
+    <a class="right" href="einstein_04_emc2.html"><span>Weiter</span>Masse ist geronnene Energie →</a>
+  </div>
+</section>
+</div>
+
+<section class="sources">
+  <div class="wrap">
+    <h3>Quelle &amp; Weiterlesen</h3>
+    <p>A. Einstein, <em>Zur Elektrodynamik bewegter Körper</em>, Annalen der Physik 17 (1905), 891–921. Public Domain. Transkription: <a href="https://de.wikisource.org/wiki/Zur_Elektrodynamik_bewegter_K%C3%B6rper" target="_blank" rel="noopener">de.wikisource.org</a>.</p>
+    <p>Die Animationen sind nicht maßstäblich. Bei 0,5 c sind die Effekte bereits deutlich sichtbar; im Alltag liegen sie weit unter der Messgrenze.</p>
+  </div>
+</section>
+
+
+</main>
+<footer>
+  <div class="foot-inner">
+    <span>Einstein · visualisiert</span>
+    <span>Quelle: Annalen der Physik 17 (1905), 891–921 · Public Domain</span>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var EIN = window.EIN = {};
+
+  EIN.clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  EIN.lerp = function (a, b, t) { return a + (b - a) * t; };
+  EIN.ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+  EIN.TAU = Math.PI * 2;
+
+  EIN.css = function (name) {
+    return getComputedStyle(document.body).getPropertyValue(name).trim();
+  };
+
+  EIN.fit = function (canvas) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(r.width));
+    var h = Math.max(1, Math.round(r.height));
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h, dpr: dpr };
+  };
+
+  EIN.onResize = function (canvas, draw) {
+    var raf = 0;
+    function run() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
+    if (window.ResizeObserver) new ResizeObserver(run).observe(canvas);
+    window.addEventListener("resize", run);
+    return run;
+  };
+
+  EIN.loop = function (fn) {
+    var t0 = performance.now();
+    var last = t0;
+    function frame(now) {
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      fn(Math.max(0, (now - t0) / 1000), dt);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  };
+
+  EIN.visible = function (el, onEnter, onExit) {
+    if (!el || !("IntersectionObserver" in window)) { if (onEnter) onEnter(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { if (onEnter) onEnter(); }
+        else if (onExit) onExit();
+      });
+    }, { rootMargin: "140px 0px" });
+    io.observe(el);
+  };
+
+  EIN.arrow = function (ctx, x1, y1, x2, y2, color, width) {
+    var a = Math.atan2(y2 - y1, x2 - x1);
+    var s = 7;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width || 1.4;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - s * Math.cos(a - 0.38), y2 - s * Math.sin(a - 0.38));
+    ctx.lineTo(x2 - s * Math.cos(a + 0.38), y2 - s * Math.sin(a + 0.38));
+    ctx.closePath(); ctx.fill();
+  };
+
+  EIN.label = function (ctx, text, x, y, color, size, align) {
+    ctx.fillStyle = color || "#8a857c";
+    ctx.font = (size || 10) + "px ui-monospace, SFMono-Regular, Consolas, monospace";
+    ctx.textAlign = align || "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, y);
+  };
+
+  function initProgress() {
+    var bar = document.getElementById("progressBar");
+    if (!bar) return;
+    function upd() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    }
+    window.addEventListener("scroll", upd, { passive: true });
+    window.addEventListener("resize", upd);
+    upd();
+  }
+
+  function initNav() {
+    var nav = document.getElementById("sectionNav");
+    var sections = [].slice.call(document.querySelectorAll(".chapter[id]"));
+    if (!nav || !sections.length) return;
+    sections.forEach(function (s, i) {
+      var h = s.querySelector("h2");
+      var a = document.createElement("a");
+      a.href = "#" + s.id;
+      a.textContent = h ? h.textContent.replace(/\s+/g, " ").slice(0, 26) : "0" + (i + 1);
+      nav.appendChild(a);
+    });
+    var links = [].slice.call(nav.querySelectorAll("a"));
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var i = sections.indexOf(e.target);
+        links.forEach(function (l, j) { l.classList.toggle("on", i === j); });
+      });
+    }, { rootMargin: "-20% 0px -68% 0px" });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  function initReveal() {
+    var els = [].slice.call(document.querySelectorAll(".reveal"));
+    if (!els.length) return;
+    if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    els.forEach(function (e, i) { e.style.transitionDelay = (Math.min(i % 4, 3) * 55) + "ms"; io.observe(e); });
+  }
+
+  function initRanges() {
+    [].slice.call(document.querySelectorAll("input[type=range][data-out]")).forEach(function (r) {
+      var out = document.getElementById(r.getAttribute("data-out"));
+      function upd() {
+        if (!out) return;
+        var v = parseFloat(r.value);
+        var f = r.getAttribute("data-format");
+        out.textContent = f === "int" ? Math.round(v) : v.toFixed(f ? parseInt(f, 10) : 1);
+      }
+      r.addEventListener("input", upd); upd();
+    });
+  }
+
+  function initQuiz() {
+    [].slice.call(document.querySelectorAll(".quiz")).forEach(function (quiz) {
+      var ans = parseInt(quiz.getAttribute("data-answer"), 10);
+      var opts = [].slice.call(quiz.querySelectorAll(".quiz-option"));
+      var ex = quiz.querySelector(".quiz-explain");
+      opts.forEach(function (o, i) {
+        o.addEventListener("click", function () {
+          opts.forEach(function (x) { x.classList.remove("ok", "no"); x.disabled = true; });
+          if (i === ans) { o.classList.add("ok"); }
+          else { o.classList.add("no"); opts[ans].classList.add("ok"); }
+          if (ex) ex.classList.add("show");
+        });
+      });
+    });
+  }
+
+  function boot() {
+    initProgress(); initNav(); initReveal(); initRanges(); initQuiz();
+    if (window.__pageInit) window.__pageInit();
+    document.documentElement.classList.add("ready");
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+
+</script>
+<script>
+
+(function () {
+  "use strict";
+
+  
+  (function () {
+    var c = document.getElementById("heroCanvas");
+    if (!c) return;
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * 0.62, cy = h * 0.5;
+      for (var i = -14; i <= 14; i++) {
+        ctx.beginPath();
+        for (var j = -10; j <= 10; j++) {
+          var x = cx + i * 56 + j * 8 * Math.sin(t * .2 + i * .3);
+          var y = cy + j * 30 + i * 4 * Math.cos(t * .17 + j * .2);
+          var d = Math.hypot(x - cx, y - cy);
+          x += (x - cx) / (d + 80) * 22; y += (y - cy) / (d + 80) * 22;
+          if (j === -10) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = "rgba(111,195,217," + (0.05 + 0.02 * Math.abs(i % 3)) + ")";
+        ctx.lineWidth = 1; ctx.stroke();
+      }
+      for (var k = -12; k <= 12; k++) {
+        ctx.beginPath();
+        for (var m = -10; m <= 10; m++) {
+          var x2 = cx + m * 56 + k * 8 * Math.cos(t * .18 + m * .2);
+          var y2 = cy + k * 30 + m * 4 * Math.sin(t * .15 + k * .2);
+          if (m === -10) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2);
+        }
+        ctx.strokeStyle = "rgba(111,195,217,.04)"; ctx.stroke();
+      }
+      
+      ctx.strokeStyle = "rgba(255,143,107,.55)"; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx - 170, cy - 150); ctx.moveTo(cx, cy); ctx.lineTo(cx + 170, cy - 150); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx - 170, cy + 150); ctx.moveTo(cx, cy); ctx.lineTo(cx + 170, cy + 150); ctx.stroke();
+      var rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 60);
+      rg.addColorStop(0, "rgba(255,220,160,.55)"); rg.addColorStop(1, "rgba(255,220,160,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, cy, 60, 0, EIN.TAU); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(cx, cy, 3, 0, EIN.TAU); ctx.fill();
+      EIN.label(ctx, "Ereignis", cx + 10, cy + 14, "rgba(255,255,255,.45)", 9);
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("asymCanvas");
+    if (!c) return;
+    var swapped = false, speed = 55;
+    var btn = document.getElementById("asymToggle"), sv = document.getElementById("asymV"), ro = document.getElementById("asymReadout");
+    btn.onclick = function () { swapped = !swapped; btn.textContent = swapped ? "Rollen zurück" : "Rollen tauschen"; };
+    sv.oninput = function () { speed = +sv.value; };
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var mid = h * 0.5;
+      ctx.strokeStyle = "rgba(255,255,255,.07)";
+      ctx.beginPath(); ctx.moveTo(0, mid + 52); ctx.lineTo(w, mid + 52); ctx.stroke();
+      var phase = t * speed * 0.02;
+      var mx = swapped ? w * 0.62 : w * 0.3 + Math.sin(phase) * 44;
+      var lx = swapped ? w * 0.3 + Math.sin(phase) * 44 : w * 0.62;
+      
+      ctx.save(); ctx.translate(mx, mid);
+      ctx.fillStyle = "rgba(255,143,107,.9)"; ctx.fillRect(-34, -22, 26, 44);
+      ctx.fillStyle = "rgba(111,195,217,.9)"; ctx.fillRect(8, -22, 26, 44);
+      ctx.fillStyle = "rgba(255,255,255,.7)"; ctx.font = "11px ui-monospace, monospace"; ctx.textAlign = "center";
+      ctx.fillText("N", -21, 4); ctx.fillText("S", 21, 4);
+      ctx.restore();
+      
+      for (var k = -2; k <= 2; k++) {
+        ctx.beginPath();
+        ctx.ellipse(mx, mid + k * 8, 58 + Math.abs(k) * 7, 26 + Math.abs(k) * 5, 0, 0, EIN.TAU);
+        ctx.strokeStyle = "rgba(255,143,107,.12)"; ctx.stroke();
+      }
+      
+      ctx.strokeStyle = "rgba(200,220,235,.75)"; ctx.lineWidth = 2;
+      ctx.strokeRect(lx - 26, mid - 30, 52, 60);
+      
+      for (var i = 0; i < 9; i++) {
+        var a = t * 1.6 + i * EIN.TAU / 9;
+        var dx = lx + Math.cos(a) * 20, dy = mid + Math.sin(a) * 24;
+        ctx.fillStyle = "rgba(255,225,150,.8)"; ctx.beginPath(); ctx.arc(dx, dy, 2.2, 0, EIN.TAU); ctx.fill();
+      }
+      EIN.label(ctx, swapped ? "Leiter bewegt" : "Magnet bewegt", mx, mid + 46, "rgba(255,255,255,.4)", 9, "center");
+      EIN.label(ctx, swapped ? "Magnet ruht" : "Leiter ruht", lx, mid + 46, "rgba(255,255,255,.4)", 9, "center");
+      ro.textContent = swapped ? "Leiter bewegt · gleicher Strom" : "Magnet bewegt · gleicher Strom";
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("trainCanvas");
+    if (!c) return;
+    var v = 0.5, flashT = -10, lastFlash = -10;
+    var sv = document.getElementById("trainV"), ro = document.getElementById("trainReadout");
+    sv.oninput = function () { v = +sv.value / 100; };
+    document.getElementById("trainFlash").onclick = function () { lastFlash = performance.now() / 1000; };
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var railY = h * 0.72, cx = w * 0.5;
+      
+      ctx.strokeStyle = "rgba(255,255,255,.18)"; ctx.beginPath(); ctx.moveTo(0, railY); ctx.lineTo(w, railY); ctx.stroke();
+      for (var x = 0; x < w; x += 24) { ctx.beginPath(); ctx.moveTo(x, railY); ctx.lineTo(x - 8, railY + 9); ctx.strokeStyle = "rgba(255,255,255,.08)"; ctx.stroke(); }
+      var trainW = Math.min(420, w * 0.55), trainH = 78;
+      var travel = (t * v * 90) % (w + trainW) - trainW;
+      var tx = w * 0.5 - trainW / 2 + Math.sin(t * 0.6) * 18 * v;
+      var ty = railY - trainH - 8;
+      
+      ctx.fillStyle = "rgba(111,195,217,.08)"; ctx.strokeStyle = "rgba(111,195,217,.5)"; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.roundRect(tx, ty, trainW, trainH, 10); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "rgba(255,255,255,.06)";
+      for (var wnd = 0; wnd < 6; wnd++) ctx.fillRect(tx + 26 + wnd * 58, ty + 14, 34, 22);
+      
+      var rear = tx + 12, front = tx + trainW - 12;
+      EIN.label(ctx, "Zug", tx + trainW / 2, ty - 10, "rgba(111,195,217,.7)", 9, "center");
+      
+      var elapsed = t - lastFlash;
+      var active = elapsed >= 0 && elapsed < 3.2;
+      var phase = active ? elapsed : 1e9;
+      var waveR = active ? (phase % 3.2) * 140 : 0;
+      if (active) {
+        [rear, front].forEach(function (px, idx) {
+          var rg = ctx.createRadialGradient(px, ty + 20, 0, px, ty + 20, Math.max(1, waveR));
+          rg.addColorStop(0, "rgba(255,143,107,.0)");
+          rg.addColorStop(.7, "rgba(255,143,107,.32)");
+          rg.addColorStop(.82, "rgba(255,220,180,.55)");
+          rg.addColorStop(1, "rgba(255,143,107,0)");
+          ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(px, ty + 20, Math.max(1, waveR), 0, EIN.TAU); ctx.fill();
+          ctx.fillStyle = "rgba(255,230,190,.9)"; ctx.beginPath(); ctx.arc(px, ty + 20, 3, 0, EIN.TAU); ctx.fill();
+        });
+      }
+      
+      var groundX = w * 0.5;
+      var trainObs = tx + trainW / 2;
+      ctx.fillStyle = "rgba(111,195,217,.9)"; ctx.beginPath(); ctx.arc(groundX, railY + 26, 4, 0, EIN.TAU); ctx.fill();
+      EIN.label(ctx, "Bahnsteig", groundX, railY + 42, "rgba(111,195,217,.6)", 9, "center");
+      ctx.fillStyle = "rgba(242,211,145,.95)"; ctx.beginPath(); ctx.arc(trainObs, ty + 56, 4, 0, EIN.TAU); ctx.fill();
+      EIN.label(ctx, "im Zug", trainObs, ty + 70, "rgba(242,211,145,.7)", 9, "center");
+      
+      var gamma = 1 / Math.sqrt(1 - v * v);
+      var dt = gamma * v * trainW / 180;
+      ro.textContent = "v = " + v.toFixed(2) + " c · Δt′ = " + dt.toFixed(2);
+      EIN.label(ctx, "Blitze gleichzeitig am Bahnsteig", 14, 20, "rgba(255,143,107,.6)", 9);
+      EIN.label(ctx, dt < 0.02 ? "im Zug: fast gleichzeitig" : "im Zug: vorne zuerst", w - 14, 20, "rgba(242,211,145,.65)", 9, "right");
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("gammaPlot");
+    if (!c) return;
+    var beta = 0.5;
+    var sv = document.getElementById("gammaV"), ro = document.getElementById("gammaReadout");
+    sv.oninput = function () { beta = +sv.value / 100; draw(); };
+    function gamma(b) { return 1 / Math.sqrt(1 - b * b); }
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var pad = { l: 44, r: 18, t: 24, b: 30 };
+      function X(b) { return pad.l + b * (w - pad.l - pad.r); }
+      function Y(g) { return h - pad.b - (g / 8) * (h - pad.t - pad.b); }
+      ctx.strokeStyle = "rgba(255,255,255,.12)";
+      ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+      EIN.label(ctx, "γ", 20, pad.t - 6, "rgba(255,255,255,.35)", 9);
+      EIN.label(ctx, "β = v/c", w - pad.r, h - 8, "rgba(255,255,255,.35)", 9, "right");
+      for (var b = 0; b <= 1; b += .25) EIN.label(ctx, b.toFixed(2), X(b), h - pad.b + 12, "rgba(255,255,255,.25)", 8, "center");
+      for (var g = 2; g <= 8; g += 2) EIN.label(ctx, g + "", 22, Y(g), "rgba(255,255,255,.25)", 8);
+      
+      ctx.strokeStyle = "rgba(255,143,107,.35)"; ctx.setLineDash([4, 5]);
+      ctx.beginPath(); ctx.moveTo(X(1), pad.t); ctx.lineTo(X(1), h - pad.b); ctx.stroke(); ctx.setLineDash([]);
+      
+      ctx.beginPath();
+      for (var px = 0; px <= w - pad.l - pad.r; px += 2) {
+        var bb = Math.min(.985, px / (w - pad.l - pad.r));
+        var y = Y(gamma(bb));
+        if (px === 0) ctx.moveTo(pad.l, y); else ctx.lineTo(pad.l + px, y);
+      }
+      var grad = ctx.createLinearGradient(pad.l, 0, w - pad.r, 0);
+      grad.addColorStop(0, "rgba(111,195,217,.6)"); grad.addColorStop(1, "rgba(255,143,107,.95)");
+      ctx.strokeStyle = grad; ctx.lineWidth = 2; ctx.stroke();
+      var g = gamma(beta), px2 = X(beta), py2 = Y(g);
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(px2, py2, 4, 0, EIN.TAU); ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.25)"; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(px2, py2); ctx.lineTo(px2, h - pad.b); ctx.moveTo(px2, py2); ctx.lineTo(pad.l, py2); ctx.stroke(); ctx.setLineDash([]);
+      ro.textContent = "γ = " + g.toFixed(2);
+      document.getElementById("gammaVVal").textContent = beta.toFixed(2);
+    }
+    EIN.onResize(c, draw); draw();
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("clockCanvas");
+    if (!c) return;
+    var v = 0.5, paused = false, clockT = 0, last = performance.now() / 1000;
+    var sv = document.getElementById("clockV"), ro = document.getElementById("clockReadout");
+    sv.oninput = function () { v = +sv.value / 100; document.getElementById("clockVVal").textContent = v.toFixed(2); };
+    var pb = document.getElementById("clockPause");
+    pb.onclick = function () { paused = !paused; pb.textContent = paused ? "Weiter" : "Pause"; };
+    EIN.loop(function (t) {
+      var now = performance.now() / 1000;
+      var dt = Math.min(.05, now - last); last = now;
+      if (!paused) clockT += dt;
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var gamma = 1 / Math.sqrt(1 - v * v);
+      var H = Math.min(150, h * 0.46);
+      var restX = w * 0.27, movX = w * 0.68 + Math.sin(t * 0.8) * 8 * v;
+      var top = h * 0.5 - H / 2, bot = h * 0.5 + H / 2;
+      function mirrors(x) {
+        ctx.fillStyle = "rgba(200,220,235,.18)"; ctx.fillRect(x - 34, top - 4, 68, 7); ctx.fillRect(x - 34, bot - 3, 68, 7);
+        ctx.strokeStyle = "rgba(111,195,217,.4)"; ctx.strokeRect(x - 34, top - 4, 68, 7); ctx.strokeRect(x - 34, bot - 3, 68, 7);
+      }
+      mirrors(restX); mirrors(movX);
+      
+      var period = 2.0;
+      var u = (clockT / period) % 1;
+      var ry = top + (u < .5 ? u * 2 : (1 - u) * 2) * H;
+      ctx.strokeStyle = "rgba(242,211,145,.25)"; ctx.beginPath(); ctx.moveTo(restX, top); ctx.lineTo(restX, ry); ctx.stroke();
+      var rg = ctx.createRadialGradient(restX, ry, 0, restX, ry, 12);
+      rg.addColorStop(0, "rgba(255,240,200,.95)"); rg.addColorStop(.3, "rgba(242,211,145,.5)"); rg.addColorStop(1, "rgba(242,211,145,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(restX, ry, 12, 0, EIN.TAU); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(restX, ry, 2.4, 0, EIN.TAU); ctx.fill();
+      
+      var u2 = (clockT / (period * gamma)) % 1;
+      var my = top + (u2 < .5 ? u2 * 2 : (1 - u2) * 2) * H;
+      var mx = movX + (u2 < .5 ? (u2 * 2 - 1) * 30 * v : (1 - (1 - u2) * 2) * 30 * v);
+      
+      ctx.beginPath();
+      for (var k = 0; k < 44; k++) {
+        var uu = (clockT / (period * gamma) - k * 0.012 + 10) % 1;
+        var yy = top + (uu < .5 ? uu * 2 : (1 - uu) * 2) * H;
+        var xx = movX + (uu < .5 ? (uu * 2 - 1) * 30 * v : (1 - (1 - uu) * 2) * 30 * v);
+        if (k === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+      }
+      ctx.strokeStyle = "rgba(111,195,217,.18)"; ctx.stroke();
+      var rg2 = ctx.createRadialGradient(mx, my, 0, mx, my, 12);
+      rg2.addColorStop(0, "rgba(255,240,200,.95)"); rg2.addColorStop(.3, "rgba(111,195,217,.55)"); rg2.addColorStop(1, "rgba(111,195,217,0)");
+      ctx.fillStyle = rg2; ctx.beginPath(); ctx.arc(mx, my, 12, 0, EIN.TAU); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(mx, my, 2.4, 0, EIN.TAU); ctx.fill();
+      EIN.label(ctx, "ruhende Uhr", restX, bot + 26, "rgba(242,211,145,.6)", 9, "center");
+      EIN.label(ctx, "bewegte Uhr", movX, bot + 26, "rgba(111,195,217,.7)", 9, "center");
+      EIN.label(ctx, "1 Tick", restX, top - 18, "rgba(255,255,255,.35)", 9, "center");
+      ro.textContent = "γ = " + gamma.toFixed(2) + " · 1 Tick = " + gamma.toFixed(2) + " s";
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("addCanvas");
+    if (!c) return;
+    var u = 0.6, v = 0.6;
+    var su = document.getElementById("addU"), sv = document.getElementById("addV"), ro = document.getElementById("addReadout");
+    su.oninput = function () { u = +su.value / 100; };
+    sv.oninput = function () { v = +sv.value / 100; };
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * 0.5, cy = h * 0.58, R = Math.min(w, h) * 0.34;
+      
+      ctx.strokeStyle = "rgba(255,255,255,.12)"; ctx.lineWidth = 12;
+      ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI, 0); ctx.stroke();
+      var rel = (u + v) / (1 + u * v);
+      var cls = u + v;
+      function arc(val, color, rad, width) {
+        ctx.strokeStyle = color; ctx.lineWidth = width;
+        ctx.beginPath(); ctx.arc(cx, cy, rad, Math.PI, Math.PI + Math.min(1, val) * Math.PI); ctx.stroke();
+      }
+      arc(cls, "rgba(138,133,124,.55)", R - 18, 5);
+      arc(rel, "rgba(111,195,217,.95)", R, 12);
+      
+      for (var k = 0; k <= 10; k++) {
+        var a = Math.PI + k / 10 * Math.PI;
+        var x1 = cx + Math.cos(a) * (R + 12), y1 = cy + Math.sin(a) * (R + 12);
+        var x2 = cx + Math.cos(a) * (R + 18), y2 = cy + Math.sin(a) * (R + 18);
+        ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+      }
+      EIN.label(ctx, "0", cx - R - 24, cy + 8, "rgba(255,255,255,.3)", 9);
+      EIN.label(ctx, "c", cx + R + 18, cy + 8, "rgba(255,255,255,.5)", 9);
+      
+      var a2 = Math.PI + Math.min(1, rel) * Math.PI;
+      EIN.arrow(ctx, cx, cy, cx + Math.cos(a2) * (R - 30), cy + Math.sin(a2) * (R - 30), "#fff", 1.5);
+      EIN.label(ctx, rel.toFixed(3) + " c", cx, cy - 12, "rgba(255,255,255,.8)", 13, "center");
+      EIN.label(ctx, "klassisch: " + cls.toFixed(2) + " c", cx, cy + 20, "rgba(255,143,107,.75)", 10, "center");
+      EIN.label(ctx, "relativistisch", cx, cy + 42, "rgba(111,195,217,.6)", 9, "center");
+      ro.textContent = "u = " + rel.toFixed(3) + " c";
+      document.getElementById("addUVal").textContent = u.toFixed(2);
+      document.getElementById("addVVal").textContent = v.toFixed(2);
+    });
+  })();
+})();
+
+</script>
+</body>
+</html>

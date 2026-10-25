@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Die Vermessung eines Moleküls — Einstein, visualisiert</title>
+<meta name="description" content="Wie groß ist ein Zucker-Molekül? Einstein misst es nicht direkt. Er lässt es die Zähigkeit einer Lösung verändern — und rechnet aus zwei Messwerten die Größe der unsichtbaren Dinge aus.">
+<style>
+:root{
+  --bg:#07070b;
+  --bg-2:#0b0b12;
+  --panel:rgba(255,255,255,.038);
+  --panel-2:rgba(255,255,255,.026);
+  --ink:#ece9e1;
+  --muted:#a8a397;
+  --dim:#6f6b63;
+  --line:rgba(255,255,255,.085);
+  --line-strong:rgba(255,255,255,.16);
+  --accent:#e8b45a;
+  --accent-soft:rgba(232,180,90,.16);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  --math:"Latin Modern Math","STIX Two Math","Cambria Math",Cambria,Georgia,serif;
+  --col:72ch;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:17px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(900px 620px at 78% -8%,var(--accent-soft),transparent 62%),
+    radial-gradient(700px 500px at 8% 18%,rgba(120,140,255,.055),transparent 65%),
+    linear-gradient(180deg,#08080d 0%,#07070b 45%,#06060a 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+::selection{background:var(--accent);color:#111}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:rgba(255,255,255,.05)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#fff6d8);box-shadow:0 0 14px var(--accent);transition:width .08s linear}
+.topbar{
+  position:fixed;top:2px;left:0;right:0;z-index:55;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:12px clamp(16px,3vw,38px);
+  background:linear-gradient(180deg,rgba(7,7,11,.92),rgba(7,7,11,.55) 70%,transparent);
+  backdrop-filter:blur(10px);
+}
+.brand{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--muted);
+  white-space:nowrap;text-transform:uppercase;
+}
+.brand:hover{color:var(--ink);text-decoration:none}
+#sectionNav{display:flex;gap:4px;overflow:auto;scrollbar-width:none;mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
+#sectionNav::-webkit-scrollbar{display:none}
+#sectionNav a{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);
+  padding:5px 8px;border-radius:99px;white-space:nowrap;transition:.25s var(--ease);
+}
+#sectionNav a:hover{color:var(--ink);text-decoration:none;background:rgba(255,255,255,.05)}
+#sectionNav a.on{color:var(--accent);background:var(--accent-soft)}
+main{position:relative}
+.hero{
+  position:relative;min-height:clamp(520px,82vh,820px);display:flex;align-items:flex-end;
+  padding:120px clamp(20px,5vw,64px) clamp(48px,8vh,90px);
+  overflow:hidden;
+}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:18px;
+}
+.kicker::before{content:"";width:28px;height:1px;background:var(--accent);opacity:.7}
+h1{
+  font-family:var(--serif);font-weight:400;font-size:clamp(2.35rem,6.2vw,5.6rem);
+  line-height:1.02;letter-spacing:-.025em;margin:0 0 22px;max-width:17ch;
+  text-wrap:balance;
+}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{font-size:clamp(1.02rem,1.7vw,1.28rem);line-height:1.55;color:#cfcac0;max-width:56ch;margin:0 0 18px}
+.epigraph{
+  font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--muted);
+  max-width:52ch;margin:0 0 22px;padding-left:16px;border-left:1px solid var(--line-strong);
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.meta b{color:var(--muted);font-weight:400}
+.scroll-hint{
+  position:absolute;right:clamp(20px,5vw,64px);bottom:28px;z-index:2;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--dim);
+  writing-mode:vertical-rl;display:flex;align-items:center;gap:10px;
+}
+.scroll-hint::after{content:"";width:1px;height:38px;background:linear-gradient(var(--accent),transparent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.chapter{padding:clamp(58px,9vh,110px) 0;border-top:1px solid var(--line);position:relative}
+.chapter-head{display:grid;grid-template-columns:64px minmax(0,1fr);gap:clamp(10px,2vw,26px);margin-bottom:clamp(26px,4vw,44px);align-items:start}
+.chapter-num{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--accent);
+  padding-top:9px;border-top:1px solid var(--accent);
+}
+.chapter h2{
+  font-family:var(--serif);font-weight:400;font-size:clamp(1.65rem,3.1vw,2.65rem);
+  line-height:1.12;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;
+}
+.chapter h3{font-family:var(--serif);font-weight:400;font-size:1.32rem;margin:0 0 10px;letter-spacing:-.01em}
+.chapter .sub{color:var(--muted);max-width:62ch;margin:0;font-size:1rem}
+.prose{max-width:var(--col);color:#cfcac0}
+.prose p{margin:0 0 1.05em}
+.prose p:last-child{margin-bottom:0}
+.prose strong{color:var(--ink);font-weight:600}
+.prose em{color:#e3ded4}
+.prose ul,.prose ol{margin:.2em 0 1.1em;padding-left:1.25em}
+.prose li{margin:.32em 0}
+.prose code{font-family:var(--mono);font-size:.86em;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px}
+.lead{font-size:1.12rem;line-height:1.62;color:#dcd7cd}
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,56px);align-items:center}
+.split.wide-left{grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr)}
+.split.wide-right{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:16px;padding:22px;
+  position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.35}
+.card h4{font-family:var(--sans);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:0 0 9px;font-weight:600}
+.card p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.58}
+.card .big{font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.2;margin-bottom:8px}
+.stage{
+  position:relative;background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.stage canvas{display:block;width:100%;height:100%}
+.stage .label{
+  position:absolute;left:14px;top:12px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);pointer-events:none;
+}
+.stage .readout{
+  position:absolute;right:14px;top:12px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.06em;color:var(--accent);pointer-events:none;
+}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:14px 0 0}
+.control{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--muted)}
+.control input[type=range]{
+  -webkit-appearance:none;appearance:none;width:clamp(110px,18vw,190px);height:2px;background:var(--line-strong);outline:none;border-radius:2px;
+}
+.control input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--accent);border:2px solid #111;box-shadow:0 0 0 3px var(--accent-soft);cursor:pointer;
+}
+.control input[type=range]::-moz-range-thumb{width:11px;height:11px;border:2px solid #111;border-radius:50%;background:var(--accent);cursor:pointer}
+.control .val{min-width:52px;color:var(--ink);font-variant-numeric:tabular-nums}
+.btn{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 14px;border-radius:99px;border:1px solid var(--line-strong);
+  background:transparent;color:var(--ink);cursor:pointer;transition:.2s var(--ease);
+}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.btn.on{background:var(--accent);color:#111;border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:0}
+.formula{
+  font-family:var(--math);font-size:clamp(1.05rem,2vw,1.38rem);line-height:1.85;
+  color:#f1ede4;background:rgba(255,255,255,.028);border:1px solid var(--line);
+  border-left:2px solid var(--accent);border-radius:0 12px 12px 0;
+  padding:18px 22px;margin:18px 0;overflow-x:auto;
+}
+.formula .small{font-size:.62em;color:var(--muted)}
+.formula-note{font-family:var(--sans);font-size:.78rem;color:var(--dim);margin-top:8px;letter-spacing:0}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .18em;line-height:1.15}
+.frac .num{border-bottom:1px solid currentColor;padding:0 .18em}
+.frac .den{padding:.08em .18em 0}
+.sqrt{border-top:1px solid currentColor;padding:0 .12em}
+.takeaways{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:26px}
+.takeaway{
+  background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.015));
+  border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+  border-radius:14px;padding:18px 18px 16px;position:relative;
+}
+.takeaway .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:7px}
+.takeaway p{margin:0;font-size:.9rem;line-height:1.55;color:#d8d3c9}
+.quote{
+  font-family:var(--serif);font-style:italic;font-size:clamp(1.15rem,2.1vw,1.45rem);
+  line-height:1.5;color:#e6e1d6;margin:28px 0;padding:0 0 0 22px;border-left:1px solid var(--accent);
+  max-width:60ch;
+}
+.quote cite{display:block;font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:12px}
+.timeline{position:relative;margin:20px 0;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:1px;background:linear-gradient(var(--accent),var(--line))}
+.timeline .t{position:relative;padding:0 0 20px}
+.timeline .t::before{content:"";position:absolute;left:-22px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.timeline .y{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent);display:block}
+.timeline .t p{margin:2px 0 0;font-size:.92rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);padding:4px 9px;border-radius:99px;margin:0 6px 6px 0}
+.quiz{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel);margin-top:26px}
+.quiz .q{font-family:var(--serif);font-size:1.1rem;margin:0 0 14px;color:var(--ink)}
+.quiz-options{display:grid;gap:8px}
+.quiz-option{
+  text-align:left;font-family:var(--sans);font-size:.9rem;color:#cfcac0;
+  padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:transparent;cursor:pointer;transition:.2s var(--ease);
+}
+.quiz-option:hover{border-color:var(--line-strong);background:rgba(255,255,255,.04)}
+.quiz-option.ok{border-color:#57c785;background:rgba(87,199,133,.12);color:#d8ffe8}
+.quiz-option.no{border-color:#e26868;background:rgba(226,104,104,.1);color:#ffdada}
+.quiz-explain{font-size:.86rem;color:var(--muted);margin:12px 0 0;display:none;line-height:1.55}
+.quiz-explain.show{display:block}
+.sources{border-top:1px solid var(--line);padding:34px 0 60px;color:var(--dim);font-size:.83rem}
+.sources h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.sources p{margin:0 0 8px;max-width:80ch}
+.sources a{color:var(--muted);border-bottom:1px solid var(--line-strong)}
+.sources a:hover{color:var(--accent);text-decoration:none}
+.prevnext{display:flex;justify-content:space-between;gap:16px;padding:26px 0 0;border-top:1px solid var(--line);margin-top:34px}
+.prevnext a{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);display:flex;flex-direction:column;gap:3px;max-width:45%}
+.prevnext a:hover{color:var(--accent);text-decoration:none}
+.prevnext a span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.prevnext .right{text-align:right;margin-left:auto}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.mono{font-family:var(--mono);font-size:.82em;letter-spacing:.02em}
+.dim{color:var(--dim)}
+.accent{color:var(--accent)}
+.center{text-align:center}
+.mt0{margin-top:0}.mt1{margin-top:10px}.mt2{margin-top:20px}.mt3{margin-top:34px}
+.hr{height:1px;background:var(--line);border:0;margin:30px 0}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+footer{color:var(--dim);font-size:.78rem}
+.foot-inner{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 50px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:900px){
+  .split,.split.wide-left,.split.wide-right,.grid2,.grid3{grid-template-columns:1fr}
+  .chapter-head{grid-template-columns:40px minmax(0,1fr)}
+  .topbar{gap:10px}
+  #sectionNav{display:none}
+  h1{max-width:20ch}
+}
+@media(max-width:560px){
+  body{font-size:16px}
+  .hero{min-height:620px;padding-top:96px}
+  .chapter-head{grid-template-columns:1fr;gap:8px}
+  .chapter-num{border-top:0;padding:0}
+  .controls{gap:10px 14px}
+  .scroll-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  .topbar,.progress,#heroCanvas,.scroll-hint{display:none}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#111}
+  .card,.stage,.formula{border-color:#ddd}
+}
+
+/* index work cards */
+.work{display:block;color:var(--ink);text-decoration:none;transition:transform .35s var(--ease),border-color .35s var(--ease),background .35s var(--ease)}
+.work:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--accent) 55%,transparent);text-decoration:none;background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.02))}
+.work-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim)}
+.work-no{color:var(--accent)}
+.work-year{border:1px solid var(--line);padding:3px 7px;border-radius:99px}
+.work h4{color:var(--accent);margin-bottom:6px}
+.work .work-title{font-family:var(--serif);font-size:1.28rem;line-height:1.18;color:var(--ink);margin:0 0 9px;letter-spacing:-.01em}
+.work p{font-size:.88rem;color:var(--muted);line-height:1.55}
+.work-go{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+</style>
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body style="--accent:#a8c46f;--accent-soft:rgba(168,196,111,.16)">
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <a class="brand" href="einstein_index.html">Einstein · visualisiert</a>
+  <nav id="sectionNav" aria-label="Abschnitte"></nav>
+</header>
+<main>
+<section class="hero" id="top">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">Dissertation · 1905/1906 · Annalen der Physik 19</div>
+    <h1>Die Vermessung eines <em>Moleküls</em></h1>
+    <p class="lede">Wie groß ist ein Zucker-Molekül? Einstein misst es nicht direkt. Er lässt es die Zähigkeit einer Lösung verändern — und rechnet aus zwei Messwerten die Größe der unsichtbaren Dinge aus.</p>
+    <p class="epigraph">„…so ist eine exakte Bestimmung der wahren Atomgröße möglich.“</p>
+    <div class="meta"><span><b>Original</b> Eine neue Bestimmung der Moleküldimensionen</span><span><b>Eingereicht</b> 30. April 1905 · Universität Zürich</span><span><b>Umfang</b> 17 Seiten</span></div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</section>
+
+
+<div class="wrap">
+<section class="chapter" id="problem">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">01</div>
+    <div>
+      <h2>Zu klein für jedes Mikroskop</h2>
+      <p class="sub">Ein Molekül ist unsichtbar. Aber in einer verdünnten Lösung verhält es sich wie eine winzige Kugel — und die stört die Strömung.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p class="lead">Die kinetische Gastheorie hatte die Größe von Molekülen bereits abgeschätzt. Für Flüssigkeiten fehlte eine Methode. Einstein findet sie in einer unscheinbaren Beobachtung: Gelöste Stoffe verändern die Zähigkeit des Lösungsmittels.</p>
+      <p>Seine Annahme: Das gelöste Molekül ist groß gegen ein Lösungsmittel-Molekül und verhält sich hydrodynamisch wie eine starre Kugel. Dann darf man die Kontinuumsgleichungen der Strömungslehre bis an die Kugeloberfläche heran benutzen.</p>
+      <p>Das ist kein exaktes Bild — Zucker ist kein Ball. Aber es ist ein Bild, das eine <strong>prüfbare Zahl</strong> liefert.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:320px">
+        <span class="label">Kugeln in Scherströmung</span>
+        <span class="readout" id="shearReadout">η = η₀ · 1.00</span>
+        <canvas id="shearCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Volumenanteil φ <input type="range" id="shearPhi" min="0" max="30" value="8" data-out="shearPhiVal" data-format="0"><span class="val" id="shearPhiVal">8</span>%</label>
+      </div>
+      <div class="legend"><span><i style="background:#a8c46f"></i>gelöste Kugeln</span><span><i style="background:#6f8fbf"></i>Lösungsmittel</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="zaehigkeit">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">02</div>
+    <div>
+      <h2>Die Zähigkeit verrät die Menge</h2>
+      <p class="sub">Je mehr Kugeln im Fluid schwimmen, desto zäher wird es. Einstein berechnet den Zusammenhang — und er ist erstaunlich einfach.</p>
+    </div>
+  </div>
+  <div class="split wide-left">
+    <div class="prose reveal">
+      <p>Eine Kugel in einer Scherströmung erzeugt ein Störfeld. Das kostet Energie, und makroskopisch sieht das aus wie eine höhere Viskosität. Für viele verdünnte Kugeln addieren sich die Störungen:</p>
+      <div class="formula">η = η₀ (1 + 2,5 φ)
+        <div class="formula-note">η₀: Viskosität des reinen Lösungsmittels. φ: Volumenanteil der gelösten Kugeln. Gültig für verdünnte Lösungen.</div>
+      </div>
+      <p>Der Faktor 2,5 ist universell: Er hängt nicht davon ab, <em>welcher</em> Stoff gelöst ist, sondern nur davon, wie viel Volumen die Kugeln einnehmen. Das macht die Formel so brauchbar.</p>
+      <p>Aus der gemessenen Viskositätserhöhung kennt man also das Produkt <span class="mono">N P³</span> — Avogadro-Zahl mal Kugelvolumen.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Viskosität vs. Volumenanteil</span>
+        <span class="readout" id="etaReadout">Beispiel φ = 0.08</span>
+        <canvas id="etaPlot"></canvas>
+      </div>
+      <div class="legend"><span><i style="background:#a8c46f"></i>η/η₀</span><span><i style="background:#8a857c"></i>verdünnt</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="diffusion">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">03</div>
+    <div>
+      <h2>Die zweite Gleichung: Diffusion</h2>
+      <p class="sub">Dieselbe Kugel, ein anderes Experiment. Wie schnell wandert sie durch die Flüssigkeit?</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p>Die Brownsche Bewegung liefert den Diffusionskoeffizienten. Für eine Kugel vom Radius <span class="mono">P</span> in einer Flüssigkeit der Zähigkeit <span class="mono">η</span> gilt:</p>
+      <div class="formula">D = <span class="frac"><span class="num">R T</span><span class="den">N</span></span> · <span class="frac"><span class="num">1</span><span class="den">6 π η P</span></span>
+        <div class="formula-note">Stokes-Reibung: je größer die Kugel, desto langsamer diffundiert sie. D ist makroskopisch messbar.</div>
+      </div>
+      <p>Damit hat man eine zweite Gleichung für dieselben zwei Unbekannten <span class="mono">N</span> und <span class="mono">P</span>. Zwei Messungen, zwei Gleichungen — das System ist lösbar.</p>
+      <p>Der Trick ist typisch Einstein: Man braucht keine Annahme über die chemische Struktur. Nur Hydrodynamik, Thermodynamik und eine gute Messung.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Diffusion vs. Radius</span>
+        <span class="readout" id="diffReadout">D ∝ 1/P</span>
+        <canvas id="diffPlot"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Radius P <input type="range" id="diffR" min="0.3" max="3.0" step="0.05" value="1.0" data-out="diffRVal" data-format="2"><span class="val" id="diffRVal">1.00</span> nm</label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="loesung">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">04</div>
+    <div>
+      <h2>Zwei Gleichungen, zwei Unbekannte</h2>
+      <p class="sub">Für Zucker in Wasser findet Einstein einen Radius von etwa einem Nanometer — und eine Avogadro-Zahl in der richtigen Größenordnung.</p>
+    </div>
+  </div>
+  <div class="split wide-right">
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Aus zwei Messungen</span>
+        <span class="readout" id="solveReadout">P ≈ 0.99 nm</span>
+        <canvas id="solvePlot"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">NP³ <input type="range" id="solveA" min="50" max="400" value="200" data-out="solveAVal" data-format="0"><span class="val" id="solveAVal">200</span></label>
+        <label class="control">NP <input type="range" id="solveB" min="1.5" max="2.5" value="2.08" step="0.01" data-out="solveBVal" data-format="2"><span class="val" id="solveBVal">2.08</span> ·10¹⁶</label>
+      </div>
+    </div>
+    <div class="prose reveal">
+      <p>Aus der Viskositätsmessung folgt <span class="mono">N P³ = 200</span> (in Einheiten der Originalarbeit). Aus der Diffusion folgt ein Wert für <span class="mono">N P</span>. Dividiert man, fällt N heraus:</p>
+      <div class="formula">P² = <span class="frac"><span class="num">N P³</span><span class="den">N P</span></span> &nbsp;⇒&nbsp; P ≈ 9,9 · 10<sup>−8</sup> cm
+        <div class="formula-note">Das sind etwa 1 nm Radius — die Größenordnung eines Zucker-Moleküls.</div>
+      </div>
+      <p>Setzt man P wieder ein, erhält man <span class="mono">N ≈ 4,15 · 10²³</span>. Das war noch nicht der heutige Wert (6,022 · 10²³), aber die Größenordnung stimmte. Spätere Korrekturen — und bessere Diffusionsdaten — brachten Einstein näher heran.</p>
+      <p>Wichtig ist nicht die letzte Ziffer. Wichtig ist: <strong>Eine makroskopische Messung zählt Moleküle.</strong></p>
+    </div>
+  </div>
+  <div class="grid2 mt3">
+    <div class="card reveal"><h4>Radius</h4><p class="big">≈ 1 nm</p><p>Der hydrodynamisch wirksame Radius eines Zucker-Moleküls. Nicht die exakte Atomposition, aber eine echte Längenskala.</p></div>
+    <div class="card reveal"><h4>Avogadro</h4><p class="big">≈ 4 · 10²³</p><p>Die erste brauchbare Bestimmung aus Flüssigkeitsdaten. Heute: 6,022 · 10²³ mol⁻¹.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="skala">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">05</div>
+    <div>
+      <h2>Die Skala des Unsichtbaren</h2>
+      <p class="sub">Ein Nanometer ist schwer vorzustellen. Diese Leiste macht die Größenverhältnisse sichtbar.</p>
+    </div>
+  </div>
+  <div class="stage reveal" style="height:auto;padding:28px 22px">
+    <span class="label">Logarithmische Größenskala</span>
+    <div style="margin-top:26px" id="scaleBars"></div>
+  </div>
+  <div class="grid3 mt3">
+    <div class="card reveal"><h4>Wasser</h4><p>Ein Wassermolekül misst etwa 0,3 nm. Ein Zucker-Molekül ist rund dreimal so groß.</p></div>
+    <div class="card reveal"><h4>Protein</h4><p>Ein typisches Protein liegt bei 5–10 nm. Viren bei 20–300 nm.</p></div>
+    <div class="card reveal"><h4>Zelle</h4><p>Eine Bakterienzelle ist etwa 1–5 µm groß — tausendmal größer als ein Zucker-Molekül.</p></div>
+  </div>
+  <div class="quiz reveal" data-answer="1">
+    <p class="q">Warum liefert die Viskositätsmessung allein noch nicht den Molekülradius?</p>
+    <div class="quiz-option">Weil die Viskosität von der Temperatur unabhängig ist.</div>
+    <div class="quiz-option">Weil sie nur das Produkt N·P³ liefert, nicht N und P einzeln.</div>
+    <div class="quiz-option">Weil Zucker in Wasser nicht gelöst wird.</div>
+    <div class="quiz-option">Weil die Kugelform für alle Moleküle exakt gilt.</div>
+    <p class="quiz-explain">Die Viskositätsgleichung enthält den Volumenanteil, also N·P³. Erst die Diffusionsgleichung liefert N·P. Zusammen lassen sich N und P trennen.</p>
+  </div>
+</section>
+
+<section class="chapter" id="mitnehmen">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">06</div>
+    <div>
+      <h2>Was du mitnimmst</h2>
+      <p class="sub">Drei Ideen aus einer Dissertation, die oft übersehen wird.</p>
+    </div>
+  </div>
+  <div class="takeaways">
+    <div class="takeaway reveal"><span class="n">01 · HYDRODYNAMIK ALS MIKROSKOP</span><p>Die Zähigkeit einer Lösung ist ein Makroskopischer Detektor für die Größe unsichtbarer Teilchen.</p></div>
+    <div class="takeaway reveal"><span class="n">02 · ZWEI MESSUNGEN SCHLAGEN EINE</span><p>Zwei unabhängige Gleichungen für zwei Unbekannte — ein Muster, das in der Physik immer wieder auftaucht.</p></div>
+    <div class="takeaway reveal"><span class="n">03 · DAS MODELL DARF FALSCH SEIN</span><p>Zucker ist keine Kugel. Trotzdem liefert das Kugelmodell eine Größenordnung, die stimmt — weil die Details für die Bilanz eine Nebenrolle spielen.</p></div>
+  </div>
+  <div class="prevnext">
+    <a href="einstein_04_emc2.html"><span>Zurück</span>Masse ist geronnene Energie</a>
+    <a class="right" href="einstein_06_feldgleichungen.html"><span>Weiter</span>Die Feldgleichungen →</a>
+  </div>
+</section>
+</div>
+
+<section class="sources">
+  <div class="wrap">
+    <h3>Quelle &amp; Weiterlesen</h3>
+    <p>A. Einstein, <em>Eine neue Bestimmung der Moleküldimensionen</em>, Annalen der Physik 19 (1906), 289–306 (Dissertation, Universität Zürich, 1905). Public Domain. Faksimile: <a href="https://archive.org/details/sim_annalen-der-physik_1906_19_2" target="_blank" rel="noopener">archive.org</a>.</p>
+    <p>Die Originalzahlen sind in cgs-Einheiten angegeben. Die interaktive Rechnung ist eine didaktische Näherung; die Kurven sind schematisch.</p>
+  </div>
+</section>
+
+
+</main>
+<footer>
+  <div class="foot-inner">
+    <span>Einstein · visualisiert</span>
+    <span>Quelle: Annalen der Physik 19 (1906), 289–306 · Public Domain</span>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var EIN = window.EIN = {};
+
+  EIN.clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  EIN.lerp = function (a, b, t) { return a + (b - a) * t; };
+  EIN.ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+  EIN.TAU = Math.PI * 2;
+
+  EIN.css = function (name) {
+    return getComputedStyle(document.body).getPropertyValue(name).trim();
+  };
+
+  EIN.fit = function (canvas) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(r.width));
+    var h = Math.max(1, Math.round(r.height));
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h, dpr: dpr };
+  };
+
+  EIN.onResize = function (canvas, draw) {
+    var raf = 0;
+    function run() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
+    if (window.ResizeObserver) new ResizeObserver(run).observe(canvas);
+    window.addEventListener("resize", run);
+    return run;
+  };
+
+  EIN.loop = function (fn) {
+    var t0 = performance.now();
+    var last = t0;
+    function frame(now) {
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      fn(Math.max(0, (now - t0) / 1000), dt);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  };
+
+  EIN.visible = function (el, onEnter, onExit) {
+    if (!el || !("IntersectionObserver" in window)) { if (onEnter) onEnter(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { if (onEnter) onEnter(); }
+        else if (onExit) onExit();
+      });
+    }, { rootMargin: "140px 0px" });
+    io.observe(el);
+  };
+
+  EIN.arrow = function (ctx, x1, y1, x2, y2, color, width) {
+    var a = Math.atan2(y2 - y1, x2 - x1);
+    var s = 7;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width || 1.4;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - s * Math.cos(a - 0.38), y2 - s * Math.sin(a - 0.38));
+    ctx.lineTo(x2 - s * Math.cos(a + 0.38), y2 - s * Math.sin(a + 0.38));
+    ctx.closePath(); ctx.fill();
+  };
+
+  EIN.label = function (ctx, text, x, y, color, size, align) {
+    ctx.fillStyle = color || "#8a857c";
+    ctx.font = (size || 10) + "px ui-monospace, SFMono-Regular, Consolas, monospace";
+    ctx.textAlign = align || "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, y);
+  };
+
+  function initProgress() {
+    var bar = document.getElementById("progressBar");
+    if (!bar) return;
+    function upd() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    }
+    window.addEventListener("scroll", upd, { passive: true });
+    window.addEventListener("resize", upd);
+    upd();
+  }
+
+  function initNav() {
+    var nav = document.getElementById("sectionNav");
+    var sections = [].slice.call(document.querySelectorAll(".chapter[id]"));
+    if (!nav || !sections.length) return;
+    sections.forEach(function (s, i) {
+      var h = s.querySelector("h2");
+      var a = document.createElement("a");
+      a.href = "#" + s.id;
+      a.textContent = h ? h.textContent.replace(/\s+/g, " ").slice(0, 26) : "0" + (i + 1);
+      nav.appendChild(a);
+    });
+    var links = [].slice.call(nav.querySelectorAll("a"));
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var i = sections.indexOf(e.target);
+        links.forEach(function (l, j) { l.classList.toggle("on", i === j); });
+      });
+    }, { rootMargin: "-20% 0px -68% 0px" });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  function initReveal() {
+    var els = [].slice.call(document.querySelectorAll(".reveal"));
+    if (!els.length) return;
+    if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    els.forEach(function (e, i) { e.style.transitionDelay = (Math.min(i % 4, 3) * 55) + "ms"; io.observe(e); });
+  }
+
+  function initRanges() {
+    [].slice.call(document.querySelectorAll("input[type=range][data-out]")).forEach(function (r) {
+      var out = document.getElementById(r.getAttribute("data-out"));
+      function upd() {
+        if (!out) return;
+        var v = parseFloat(r.value);
+        var f = r.getAttribute("data-format");
+        out.textContent = f === "int" ? Math.round(v) : v.toFixed(f ? parseInt(f, 10) : 1);
+      }
+      r.addEventListener("input", upd); upd();
+    });
+  }
+
+  function initQuiz() {
+    [].slice.call(document.querySelectorAll(".quiz")).forEach(function (quiz) {
+      var ans = parseInt(quiz.getAttribute("data-answer"), 10);
+      var opts = [].slice.call(quiz.querySelectorAll(".quiz-option"));
+      var ex = quiz.querySelector(".quiz-explain");
+      opts.forEach(function (o, i) {
+        o.addEventListener("click", function () {
+          opts.forEach(function (x) { x.classList.remove("ok", "no"); x.disabled = true; });
+          if (i === ans) { o.classList.add("ok"); }
+          else { o.classList.add("no"); opts[ans].classList.add("ok"); }
+          if (ex) ex.classList.add("show");
+        });
+      });
+    });
+  }
+
+  function boot() {
+    initProgress(); initNav(); initReveal(); initRanges(); initQuiz();
+    if (window.__pageInit) window.__pageInit();
+    document.documentElement.classList.add("ready");
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+
+</script>
+<script>
+
+(function () {
+  "use strict";
+
+  
+  (function () {
+    var c = document.getElementById("heroCanvas");
+    if (!c) return;
+    var spheres = [];
+    for (var i = 0; i < 18; i++) spheres.push({ x: Math.random(), y: Math.random(), r: 4 + Math.random() * 7, ph: Math.random() * 6 });
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      
+      for (var j = 0; j < 22; j++) {
+        var y0 = (j / 21) * h;
+        ctx.beginPath();
+        for (var x = 0; x <= w; x += 6) {
+          var yy = y0;
+          for (var k = 0; k < spheres.length; k++) {
+            var s = spheres[k];
+            var sx = s.x * w + Math.sin(t * .3 + s.ph) * 6;
+            var sy = s.y * h + Math.cos(t * .4 + s.ph) * 6;
+            var dx = x - sx, dy = y0 - sy;
+            var d2 = dx * dx + dy * dy + 120;
+            yy += (dy / d2) * 900 * s.r;
+          }
+          if (x === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
+        }
+        ctx.strokeStyle = "rgba(111,143,191," + (0.05 + 0.02 * (j % 3)) + ")";
+        ctx.lineWidth = 1; ctx.stroke();
+      }
+      for (var i = 0; i < spheres.length; i++) {
+        var s = spheres[i];
+        var sx = s.x * w + Math.sin(t * .3 + s.ph) * 6;
+        var sy = s.y * h + Math.cos(t * .4 + s.ph) * 6;
+        var rg = ctx.createRadialGradient(sx - s.r * .3, sy - s.r * .3, 0, sx, sy, s.r);
+        rg.addColorStop(0, "rgba(230,245,200,.95)");
+        rg.addColorStop(.6, "rgba(168,196,111,.65)");
+        rg.addColorStop(1, "rgba(168,196,111,0)");
+        ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(sx, sy, s.r, 0, EIN.TAU); ctx.fill();
+      }
+      EIN.label(ctx, "Scherströmung", 16, 20, "rgba(168,196,111,.55)", 9);
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("shearCanvas");
+    if (!c) return;
+    var phi = 0.08, seed = 3, balls = [];
+    var sv = document.getElementById("shearPhi"), ro = document.getElementById("shearReadout");
+    function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    function reset() {
+      balls = [];
+      var n = Math.round(phi * 120);
+      for (var i = 0; i < n; i++) balls.push({ x: rnd(), y: rnd(), r: 3 + rnd() * 5, ph: rnd() * 6 });
+    }
+    reset();
+    sv.oninput = function () { phi = +sv.value / 100; reset(); };
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      for (var j = 0; j < 20; j++) {
+        var y = (j / 19) * h;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y);
+        ctx.strokeStyle = "rgba(111,143,191," + (0.08 + 0.03 * Math.sin(j)) + ")"; ctx.stroke();
+      }
+      for (var i = 0; i < balls.length; i++) {
+        var b = balls[i];
+        b.x += 0.0007 + b.y * 0.0004; if (b.x > 1) b.x -= 1;
+        var bx = b.x * w, by = b.y * h;
+        ctx.fillStyle = "rgba(168,196,111,.35)"; ctx.beginPath(); ctx.arc(bx, by, b.r, 0, EIN.TAU); ctx.fill();
+        ctx.strokeStyle = "rgba(200,225,160,.55)"; ctx.stroke();
+      }
+      var eta = 1 + 2.5 * phi;
+      ro.textContent = "η = η₀ · " + eta.toFixed(2);
+      EIN.label(ctx, "η/η₀ = " + eta.toFixed(2), w - 18, 20, "rgba(168,196,111,.8)", 10, "right");
+      EIN.label(ctx, "φ = " + (phi * 100).toFixed(0) + " %", 16, 20, "rgba(255,255,255,.45)", 9);
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("etaPlot");
+    if (!c) return;
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var pad = { l: 44, r: 18, t: 26, b: 32 };
+      function X(p) { return pad.l + (p / 0.3) * (w - pad.l - pad.r); }
+      function Y(e) { return h - pad.b - ((e - 1) / 0.8) * (h - pad.t - pad.b); }
+      ctx.strokeStyle = "rgba(255,255,255,.12)";
+      ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+      EIN.label(ctx, "η/η₀", 8, pad.t - 6, "rgba(255,255,255,.35)", 9);
+      EIN.label(ctx, "φ", w - pad.r, h - 8, "rgba(255,255,255,.35)", 9, "right");
+      for (var p = 0; p <= .3001; p += .1) EIN.label(ctx, (p * 100).toFixed(0) + "%", X(p), h - pad.b + 12, "rgba(255,255,255,.25)", 8, "center");
+      for (var e = 1; e <= 1.81; e += .2) EIN.label(ctx, e.toFixed(1), 26, Y(e), "rgba(255,255,255,.25)", 8);
+      ctx.beginPath(); ctx.moveTo(X(0), Y(1)); ctx.lineTo(X(.3), Y(1.75));
+      ctx.strokeStyle = "rgba(168,196,111,.95)"; ctx.lineWidth = 2; ctx.stroke();
+      
+      var px = X(.08), py = Y(1.2);
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(px, py, 4, 0, EIN.TAU); ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, h - pad.b); ctx.moveTo(px, py); ctx.lineTo(pad.l, py); ctx.stroke(); ctx.setLineDash([]);
+      document.getElementById("etaReadout").textContent = "φ = 0.08 · η/η₀ = 1.20";
+      EIN.label(ctx, "linear in φ", pad.l + 10, pad.t + 14, "rgba(168,196,111,.6)", 9);
+    }
+    EIN.onResize(c, draw); draw();
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("diffPlot");
+    if (!c) return;
+    var P = 1.0;
+    var sv = document.getElementById("diffR"), ro = document.getElementById("diffReadout");
+    sv.oninput = function () { P = +sv.value; draw(); };
+    function D(p) { return 1 / p; }
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var pad = { l: 46, r: 18, t: 26, b: 32 };
+      function X(p) { return pad.l + ((p - .3) / 2.7) * (w - pad.l - pad.r); }
+      function Y(d) { return h - pad.b - (d / 3.5) * (h - pad.t - pad.b); }
+      ctx.strokeStyle = "rgba(255,255,255,.12)";
+      ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+      EIN.label(ctx, "D (rel.)", 8, pad.t - 6, "rgba(255,255,255,.35)", 9);
+      EIN.label(ctx, "P (nm)", w - pad.r, h - 8, "rgba(255,255,255,.35)", 9, "right");
+      for (var p = .5; p <= 3; p += .5) EIN.label(ctx, p.toFixed(1), X(p), h - pad.b + 12, "rgba(255,255,255,.25)", 8, "center");
+      ctx.beginPath();
+      for (var px = 0; px <= w - pad.l - pad.r; px += 2) {
+        var pp = .3 + (px / (w - pad.l - pad.r)) * 2.7;
+        var y = Y(D(pp));
+        if (px === 0) ctx.moveTo(pad.l, y); else ctx.lineTo(pad.l + px, y);
+      }
+      ctx.strokeStyle = "rgba(168,196,111,.95)"; ctx.lineWidth = 2; ctx.stroke();
+      var px2 = X(P), py2 = Y(D(P));
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(px2, py2, 4, 0, EIN.TAU); ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(px2, py2); ctx.lineTo(px2, h - pad.b); ctx.moveTo(px2, py2); ctx.lineTo(pad.l, py2); ctx.stroke(); ctx.setLineDash([]);
+      ro.textContent = "D = " + D(P).toFixed(2) + " · (k_B T / 6πη) / nm";
+      document.getElementById("diffRVal").textContent = P.toFixed(2);
+    }
+    EIN.onResize(c, draw); draw();
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("solvePlot");
+    if (!c) return;
+    var A = 200, B = 2.08; 
+    var sa = document.getElementById("solveA"), sb = document.getElementById("solveB"), ro = document.getElementById("solveReadout");
+    sa.oninput = function () { A = +sa.value; draw(); };
+    sb.oninput = function () { B = +sb.value; draw(); };
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var pad = { l: 48, r: 20, t: 26, b: 34 };
+      function X(p) { return pad.l + (p / 2.0) * (w - pad.l - pad.r); }
+      function Y(v) { return h - pad.b - (v / 420) * (h - pad.t - pad.b); }
+      ctx.strokeStyle = "rgba(255,255,255,.12)";
+      ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+      EIN.label(ctx, "N P³", 8, pad.t - 6, "rgba(255,255,255,.35)", 9);
+      EIN.label(ctx, "P (nm)", w - pad.r, h - 8, "rgba(255,255,255,.35)", 9, "right");
+      for (var p = 0; p <= 2; p += .5) EIN.label(ctx, p.toFixed(1), X(p), h - pad.b + 12, "rgba(255,255,255,.25)", 8, "center");
+      
+      ctx.beginPath(); ctx.moveTo(X(0), Y(A)); ctx.lineTo(X(2), Y(A));
+      ctx.strokeStyle = "rgba(168,196,111,.8)"; ctx.lineWidth = 1.8; ctx.stroke();
+      
+      ctx.beginPath();
+      for (var px = 0; px <= w - pad.l - pad.r; px += 2) {
+        var pp = (px / (w - pad.l - pad.r)) * 2;
+        var v = 100 * B * pp * pp;
+        var y = Y(Math.min(420, v));
+        if (px === 0) ctx.moveTo(pad.l, y); else ctx.lineTo(pad.l + px, y);
+      }
+      ctx.strokeStyle = "rgba(111,143,191,.8)"; ctx.lineWidth = 1.8; ctx.stroke();
+      
+      var pStar = Math.sqrt(A / (100 * B));
+      var xStar = X(pStar), yStar = Y(A);
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(xStar, yStar, 4, 0, EIN.TAU); ctx.fill();
+      EIN.label(ctx, "P*", xStar, yStar - 14, "rgba(255,255,255,.75)", 9, "center");
+      EIN.label(ctx, "N P³ = const", pad.l + 10, pad.t + 14, "rgba(168,196,111,.65)", 9);
+      EIN.label(ctx, "N P = const", pad.l + 10, pad.t + 30, "rgba(111,143,191,.65)", 9);
+      ro.textContent = "P ≈ " + pStar.toFixed(2) + " nm";
+      document.getElementById("solveAVal").textContent = A;
+      document.getElementById("solveBVal").textContent = B.toFixed(2);
+    }
+    EIN.onResize(c, draw); draw();
+  })();
+
+  
+  (function () {
+    var host = document.getElementById("scaleBars");
+    if (!host) return;
+    var items = [
+      ["Wasser-Molekül", 0.3, "0.3 nm"],
+      ["Zucker (Radius)", 1.0, "1 nm"],
+      ["Protein", 7, "7 nm"],
+      ["Virus", 100, "100 nm"],
+      ["Bakterie", 2000, "2 µm"],
+      ["Zelle", 20000, "20 µm"]
+    ];
+    var min = Math.log10(0.2), max = Math.log10(30000);
+    items.forEach(function (it) {
+      var pos = (Math.log10(it[1]) - min) / (max - min) * 100;
+      var row = document.createElement("div");
+      row.style.cssText = "position:relative;height:46px;border-bottom:1px solid rgba(255,255,255,.06)";
+      var lab = document.createElement("div");
+      lab.textContent = it[0];
+      lab.style.cssText = "position:absolute;left:0;top:4px;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--muted)";
+      var bar = document.createElement("div");
+      bar.style.cssText = "position:absolute;left:0;bottom:8px;height:2px;background:linear-gradient(90deg,var(--accent),rgba(168,196,111,.15));width:" + pos + "%;opacity:.55";
+      var dot = document.createElement("div");
+      dot.style.cssText = "position:absolute;left:calc(" + pos + "% - 4px);bottom:4px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)";
+      var val = document.createElement("div");
+      val.textContent = it[2];
+      val.style.cssText = "position:absolute;right:0;top:4px;font-family:var(--mono);font-size:9.5px;color:var(--accent)";
+      row.appendChild(lab); row.appendChild(bar); row.appendChild(dot); row.appendChild(val);
+      host.appendChild(row);
+    });
+  })();
+})();
+
+</script>
+</body>
+</html>

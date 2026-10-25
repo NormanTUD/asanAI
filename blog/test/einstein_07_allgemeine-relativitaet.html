@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Die Krümmung der Welt — Einstein, visualisiert</title>
+<meta name="description" content="Einstein schreibt seine Theorie zum ersten Mal vollständig auf. Was als Gedanke im Aufzug beginnt, wird zu einer Geometrie, in der Materie und Raumzeit sich gegenseitig formen.">
+<style>
+:root{
+  --bg:#07070b;
+  --bg-2:#0b0b12;
+  --panel:rgba(255,255,255,.038);
+  --panel-2:rgba(255,255,255,.026);
+  --ink:#ece9e1;
+  --muted:#a8a397;
+  --dim:#6f6b63;
+  --line:rgba(255,255,255,.085);
+  --line-strong:rgba(255,255,255,.16);
+  --accent:#e8b45a;
+  --accent-soft:rgba(232,180,90,.16);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  --math:"Latin Modern Math","STIX Two Math","Cambria Math",Cambria,Georgia,serif;
+  --col:72ch;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:17px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(900px 620px at 78% -8%,var(--accent-soft),transparent 62%),
+    radial-gradient(700px 500px at 8% 18%,rgba(120,140,255,.055),transparent 65%),
+    linear-gradient(180deg,#08080d 0%,#07070b 45%,#06060a 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+::selection{background:var(--accent);color:#111}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:rgba(255,255,255,.05)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#fff6d8);box-shadow:0 0 14px var(--accent);transition:width .08s linear}
+.topbar{
+  position:fixed;top:2px;left:0;right:0;z-index:55;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:12px clamp(16px,3vw,38px);
+  background:linear-gradient(180deg,rgba(7,7,11,.92),rgba(7,7,11,.55) 70%,transparent);
+  backdrop-filter:blur(10px);
+}
+.brand{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--muted);
+  white-space:nowrap;text-transform:uppercase;
+}
+.brand:hover{color:var(--ink);text-decoration:none}
+#sectionNav{display:flex;gap:4px;overflow:auto;scrollbar-width:none;mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
+#sectionNav::-webkit-scrollbar{display:none}
+#sectionNav a{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);
+  padding:5px 8px;border-radius:99px;white-space:nowrap;transition:.25s var(--ease);
+}
+#sectionNav a:hover{color:var(--ink);text-decoration:none;background:rgba(255,255,255,.05)}
+#sectionNav a.on{color:var(--accent);background:var(--accent-soft)}
+main{position:relative}
+.hero{
+  position:relative;min-height:clamp(520px,82vh,820px);display:flex;align-items:flex-end;
+  padding:120px clamp(20px,5vw,64px) clamp(48px,8vh,90px);
+  overflow:hidden;
+}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:18px;
+}
+.kicker::before{content:"";width:28px;height:1px;background:var(--accent);opacity:.7}
+h1{
+  font-family:var(--serif);font-weight:400;font-size:clamp(2.35rem,6.2vw,5.6rem);
+  line-height:1.02;letter-spacing:-.025em;margin:0 0 22px;max-width:17ch;
+  text-wrap:balance;
+}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{font-size:clamp(1.02rem,1.7vw,1.28rem);line-height:1.55;color:#cfcac0;max-width:56ch;margin:0 0 18px}
+.epigraph{
+  font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--muted);
+  max-width:52ch;margin:0 0 22px;padding-left:16px;border-left:1px solid var(--line-strong);
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.meta b{color:var(--muted);font-weight:400}
+.scroll-hint{
+  position:absolute;right:clamp(20px,5vw,64px);bottom:28px;z-index:2;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--dim);
+  writing-mode:vertical-rl;display:flex;align-items:center;gap:10px;
+}
+.scroll-hint::after{content:"";width:1px;height:38px;background:linear-gradient(var(--accent),transparent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.chapter{padding:clamp(58px,9vh,110px) 0;border-top:1px solid var(--line);position:relative}
+.chapter-head{display:grid;grid-template-columns:64px minmax(0,1fr);gap:clamp(10px,2vw,26px);margin-bottom:clamp(26px,4vw,44px);align-items:start}
+.chapter-num{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--accent);
+  padding-top:9px;border-top:1px solid var(--accent);
+}
+.chapter h2{
+  font-family:var(--serif);font-weight:400;font-size:clamp(1.65rem,3.1vw,2.65rem);
+  line-height:1.12;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;
+}
+.chapter h3{font-family:var(--serif);font-weight:400;font-size:1.32rem;margin:0 0 10px;letter-spacing:-.01em}
+.chapter .sub{color:var(--muted);max-width:62ch;margin:0;font-size:1rem}
+.prose{max-width:var(--col);color:#cfcac0}
+.prose p{margin:0 0 1.05em}
+.prose p:last-child{margin-bottom:0}
+.prose strong{color:var(--ink);font-weight:600}
+.prose em{color:#e3ded4}
+.prose ul,.prose ol{margin:.2em 0 1.1em;padding-left:1.25em}
+.prose li{margin:.32em 0}
+.prose code{font-family:var(--mono);font-size:.86em;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px}
+.lead{font-size:1.12rem;line-height:1.62;color:#dcd7cd}
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,56px);align-items:center}
+.split.wide-left{grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr)}
+.split.wide-right{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:16px;padding:22px;
+  position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.35}
+.card h4{font-family:var(--sans);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:0 0 9px;font-weight:600}
+.card p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.58}
+.card .big{font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.2;margin-bottom:8px}
+.stage{
+  position:relative;background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.stage canvas{display:block;width:100%;height:100%}
+.stage .label{
+  position:absolute;left:14px;top:12px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);pointer-events:none;
+}
+.stage .readout{
+  position:absolute;right:14px;top:12px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.06em;color:var(--accent);pointer-events:none;
+}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:14px 0 0}
+.control{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--muted)}
+.control input[type=range]{
+  -webkit-appearance:none;appearance:none;width:clamp(110px,18vw,190px);height:2px;background:var(--line-strong);outline:none;border-radius:2px;
+}
+.control input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--accent);border:2px solid #111;box-shadow:0 0 0 3px var(--accent-soft);cursor:pointer;
+}
+.control input[type=range]::-moz-range-thumb{width:11px;height:11px;border:2px solid #111;border-radius:50%;background:var(--accent);cursor:pointer}
+.control .val{min-width:52px;color:var(--ink);font-variant-numeric:tabular-nums}
+.btn{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 14px;border-radius:99px;border:1px solid var(--line-strong);
+  background:transparent;color:var(--ink);cursor:pointer;transition:.2s var(--ease);
+}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.btn.on{background:var(--accent);color:#111;border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:0}
+.formula{
+  font-family:var(--math);font-size:clamp(1.05rem,2vw,1.38rem);line-height:1.85;
+  color:#f1ede4;background:rgba(255,255,255,.028);border:1px solid var(--line);
+  border-left:2px solid var(--accent);border-radius:0 12px 12px 0;
+  padding:18px 22px;margin:18px 0;overflow-x:auto;
+}
+.formula .small{font-size:.62em;color:var(--muted)}
+.formula-note{font-family:var(--sans);font-size:.78rem;color:var(--dim);margin-top:8px;letter-spacing:0}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .18em;line-height:1.15}
+.frac .num{border-bottom:1px solid currentColor;padding:0 .18em}
+.frac .den{padding:.08em .18em 0}
+.sqrt{border-top:1px solid currentColor;padding:0 .12em}
+.takeaways{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:26px}
+.takeaway{
+  background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.015));
+  border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+  border-radius:14px;padding:18px 18px 16px;position:relative;
+}
+.takeaway .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:7px}
+.takeaway p{margin:0;font-size:.9rem;line-height:1.55;color:#d8d3c9}
+.quote{
+  font-family:var(--serif);font-style:italic;font-size:clamp(1.15rem,2.1vw,1.45rem);
+  line-height:1.5;color:#e6e1d6;margin:28px 0;padding:0 0 0 22px;border-left:1px solid var(--accent);
+  max-width:60ch;
+}
+.quote cite{display:block;font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:12px}
+.timeline{position:relative;margin:20px 0;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:1px;background:linear-gradient(var(--accent),var(--line))}
+.timeline .t{position:relative;padding:0 0 20px}
+.timeline .t::before{content:"";position:absolute;left:-22px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.timeline .y{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent);display:block}
+.timeline .t p{margin:2px 0 0;font-size:.92rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);padding:4px 9px;border-radius:99px;margin:0 6px 6px 0}
+.quiz{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel);margin-top:26px}
+.quiz .q{font-family:var(--serif);font-size:1.1rem;margin:0 0 14px;color:var(--ink)}
+.quiz-options{display:grid;gap:8px}
+.quiz-option{
+  text-align:left;font-family:var(--sans);font-size:.9rem;color:#cfcac0;
+  padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:transparent;cursor:pointer;transition:.2s var(--ease);
+}
+.quiz-option:hover{border-color:var(--line-strong);background:rgba(255,255,255,.04)}
+.quiz-option.ok{border-color:#57c785;background:rgba(87,199,133,.12);color:#d8ffe8}
+.quiz-option.no{border-color:#e26868;background:rgba(226,104,104,.1);color:#ffdada}
+.quiz-explain{font-size:.86rem;color:var(--muted);margin:12px 0 0;display:none;line-height:1.55}
+.quiz-explain.show{display:block}
+.sources{border-top:1px solid var(--line);padding:34px 0 60px;color:var(--dim);font-size:.83rem}
+.sources h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.sources p{margin:0 0 8px;max-width:80ch}
+.sources a{color:var(--muted);border-bottom:1px solid var(--line-strong)}
+.sources a:hover{color:var(--accent);text-decoration:none}
+.prevnext{display:flex;justify-content:space-between;gap:16px;padding:26px 0 0;border-top:1px solid var(--line);margin-top:34px}
+.prevnext a{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);display:flex;flex-direction:column;gap:3px;max-width:45%}
+.prevnext a:hover{color:var(--accent);text-decoration:none}
+.prevnext a span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.prevnext .right{text-align:right;margin-left:auto}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.mono{font-family:var(--mono);font-size:.82em;letter-spacing:.02em}
+.dim{color:var(--dim)}
+.accent{color:var(--accent)}
+.center{text-align:center}
+.mt0{margin-top:0}.mt1{margin-top:10px}.mt2{margin-top:20px}.mt3{margin-top:34px}
+.hr{height:1px;background:var(--line);border:0;margin:30px 0}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+footer{color:var(--dim);font-size:.78rem}
+.foot-inner{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 50px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:900px){
+  .split,.split.wide-left,.split.wide-right,.grid2,.grid3{grid-template-columns:1fr}
+  .chapter-head{grid-template-columns:40px minmax(0,1fr)}
+  .topbar{gap:10px}
+  #sectionNav{display:none}
+  h1{max-width:20ch}
+}
+@media(max-width:560px){
+  body{font-size:16px}
+  .hero{min-height:620px;padding-top:96px}
+  .chapter-head{grid-template-columns:1fr;gap:8px}
+  .chapter-num{border-top:0;padding:0}
+  .controls{gap:10px 14px}
+  .scroll-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  .topbar,.progress,#heroCanvas,.scroll-hint{display:none}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#111}
+  .card,.stage,.formula{border-color:#ddd}
+}
+
+/* index work cards */
+.work{display:block;color:var(--ink);text-decoration:none;transition:transform .35s var(--ease),border-color .35s var(--ease),background .35s var(--ease)}
+.work:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--accent) 55%,transparent);text-decoration:none;background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.02))}
+.work-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim)}
+.work-no{color:var(--accent)}
+.work-year{border:1px solid var(--line);padding:3px 7px;border-radius:99px}
+.work h4{color:var(--accent);margin-bottom:6px}
+.work .work-title{font-family:var(--serif);font-size:1.28rem;line-height:1.18;color:var(--ink);margin:0 0 9px;letter-spacing:-.01em}
+.work p{font-size:.88rem;color:var(--muted);line-height:1.55}
+.work-go{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+</style>
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body style="--accent:#9aa7f0;--accent-soft:rgba(154,167,240,.16)">
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <a class="brand" href="einstein_index.html">Einstein · visualisiert</a>
+  <nav id="sectionNav" aria-label="Abschnitte"></nav>
+</header>
+<main>
+<section class="hero" id="top">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">Annalen der Physik · 1916 · 49</div>
+    <h1>Die <em>Krümmung</em> der Welt</h1>
+    <p class="lede">Einstein schreibt seine Theorie zum ersten Mal vollständig auf. Was als Gedanke im Aufzug beginnt, wird zu einer Geometrie, in der Materie und Raumzeit sich gegenseitig formen.</p>
+    <p class="epigraph">„…so sieht man, daß die Durchführung der allgemeinen Relativitätstheorie zugleich zu einer Theorie der Gravitation führen muß.“</p>
+    <div class="meta"><span><b>Original</b> Die Grundlage der allgemeinen Relativitätstheorie</span><span><b>Erschienen</b> 1916</span><span><b>Umfang</b> 54 Seiten</span></div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</section>
+
+
+<div class="wrap">
+<section class="chapter" id="aufzug">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">01</div>
+    <div>
+      <h2>Der glücklichste Gedanke</h2>
+      <p class="sub">1907: Einstein sitzt im Patentamt und stellt sich einen frei fallenden Beobachter vor. In diesem Moment verschwindet die Schwerkraft.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p class="lead">Ein Aufzug, der im Weltraum gleichmäßig beschleunigt wird, fühlt sich genauso an wie ein Aufzug, der auf der Erde steht. Ein frei fallender Aufzug fühlt sich schwerelos an. Lokal gibt es keinen Unterschied zwischen Beschleunigung und Gravitation.</p>
+      <p>Daraus folgt sofort etwas Merkwürdiges: Ein Lichtstrahl, der quer durch den beschleunigten Aufzug läuft, muss für den Insassen nach unten gebogen erscheinen. Also muss Gravitation auch Licht krümmen.</p>
+      <p>Und Uhren? Ein Lichtstrahl, der von unten nach oben läuft, verliert Energie — er wird rotverschoben. Je höher man ist, desto schneller vergeht die Zeit. Das ist Gravitationsrotverschiebung, lange bevor sie gemessen wurde.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:340px">
+        <span class="label">Beschleunigung vs. Gravitation</span>
+        <span class="readout" id="elevReadout">g = 1.0</span>
+        <canvas id="elevatorCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Stärke <input type="range" id="elevG" min="0" max="100" value="55" data-out="elevGVal" data-format="0"><span class="val" id="elevGVal">55</span></label>
+      </div>
+      <div class="legend"><span><i style="background:#9aa7f0"></i>Licht</span><span><i style="background:#f2d391"></i>Aufzug</span></div>
+    </div>
+  </div>
+  <div class="quote reveal">„Der glücklichste Gedanke meines Lebens.“<cite>Einstein über das Äquivalenzprinzip, rückblickend 1920</cite></div>
+</section>
+
+<section class="chapter" id="sprache">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">02</div>
+    <div>
+      <h2>Die Sprache der Krümmung</h2>
+      <p class="sub">Um Gravitation als Geometrie zu schreiben, braucht Einstein Tensoren. Sie sind die einzigen Objekte, die in jedem Koordinatensystem dieselbe Physik beschreiben.</p>
+    </div>
+  </div>
+  <div class="split wide-left">
+    <div class="prose reveal">
+      <p>Die zentrale Größe ist die <strong>Metrik</strong> <span class="mono">g<sub>μν</sub></span>. Sie sagt, wie Abstände und Zeitintervalle gemessen werden:</p>
+      <div class="formula">ds² = g<sub>μν</sub> dx<sup>μ</sup> dx<sup>ν</sup>
+        <div class="formula-note">In der flachen Raumzeit ist g die Minkowski-Metrik. Krümmung bedeutet: g hängt vom Ort ab.</div>
+      </div>
+      <p>Teilchen fallen nicht „geradeaus“, sondern auf der kürzesten Bahn — einer <strong>Geodäte</strong>. Im flachen Raum ist das eine Gerade; im gekrümmten Raum eine Kurve. Die Geodätengleichung enthält genau die Christoffel-Symbole, die aus der Metrik folgen.</p>
+      <p>Die Krümmung selbst wird durch den Riemann-Tensor beschrieben. Zieht man ihn zusammen, erhält man den Ricci-Tensor <span class="mono">R<sub>μν</sub></span> und den Krümmungsskalar <span class="mono">R</span>. Daraus baut Einstein seine Feldgleichung.</p>
+      <p>Das Entscheidende: Tensoren transformieren sich so, dass eine Gleichung wie <span class="mono">G<sub>μν</sub> = κT<sub>μν</sub></span> in <em>jedem</em> Koordinatensystem gilt. Koordinaten sind nur Etiketten.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Flach · positiv · negativ gekrümmt</span>
+        <span class="readout" id="curveReadout">K = +1</span>
+        <canvas id="curveCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Krümmung <input type="range" id="curveK" min="-1" max="1" step="0.1" value="1" data-out="curveKVal" data-format="1"><span class="val" id="curveKVal">1.0</span></label>
+      </div>
+      <div class="legend"><span><i style="background:#9aa7f0"></i>Geodäte</span><span><i style="background:#f2d391"></i>Dreieck</span></div>
+    </div>
+  </div>
+  <div class="grid3 mt3">
+    <div class="card reveal"><h4>Flach</h4><p>K = 0. Winkelsumme 180°. Euklid gilt. Große Regionen unseres Alltags sehen so aus.</p></div>
+    <div class="card reveal"><h4>Positiv</h4><p>K &gt; 0. Winkelsumme &gt; 180°. Wie auf einer Kugel. Parallelen treffen sich.</p></div>
+    <div class="card reveal"><h4>Negativ</h4><p>K &lt; 0. Winkelsumme &lt; 180°. Wie auf einem Sattel. Parallelen laufen auseinander.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="tests">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">03</div>
+    <div>
+      <h2>Drei Tests, die alles entscheiden</h2>
+      <p class="sub">Eine Theorie ist erst Physik, wenn sie Zahlen vorhersagt. Die allgemeine Relativität besteht alle drei klassischen Prüfungen.</p>
+    </div>
+  </div>
+  <div class="stage reveal" style="height:300px">
+    <span class="label">Die klassischen Tests</span>
+    <canvas id="testsCanvas"></canvas>
+  </div>
+  <div class="grid3 mt3">
+    <div class="card reveal"><h4>1 · Merkur</h4><p class="big">43″ / Jahrhundert</p><p>Die Periheldrehung, die Newton nicht erklären konnte, folgt direkt aus der Krümmung.</p></div>
+    <div class="card reveal"><h4>2 · Licht</h4><p class="big">1,75″ am Sonnenrand</p><p>1919 bei einer Sonnenfinsternis gemessen. Der doppelte Newtonsche Wert.</p></div>
+    <div class="card reveal"><h4>3 · Rotverschiebung</h4><p class="big">Δν/ν = ΔΦ/c²</p><p>Uhren ticken tiefer im Gravitationsfeld langsamer. 1959 im Harvard-Turm bestätigt.</p></div>
+  </div>
+  <div class="prose reveal mt3">
+    <p>Die drei Effekte sind klein, aber unabhängig voneinander. Zusammen mit der späteren Bestätigung von Gravitationswellen (2015) und der Schwarzschild-Geometrie bilden sie das Fundament, auf dem die moderne Astrophysik steht.</p>
+  </div>
+</section>
+
+<section class="chapter" id="folgen">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">04</div>
+    <div>
+      <h2>Was aus der Gleichung wurde</h2>
+      <p class="sub">Schwarze Löcher, expandierende Universen, Gravitationswellen — alles Lösungen derselben Theorie.</p>
+    </div>
+  </div>
+  <div class="timeline">
+    <div class="t reveal"><span class="y">1916</span><p>Schwarzschild findet die erste exakte Lösung: ein kugelsymmetrisches Feld mit Ereignishorizont.</p></div>
+    <div class="t reveal"><span class="y">1917</span><p>Einstein führt die kosmologische Konstante ein, um ein statisches Universum zu erhalten.</p></div>
+    <div class="t reveal"><span class="y">1918</span><p>Einstein leitet Gravitationswellen ab — zunächst als mathematische Möglichkeit.</p></div>
+    <div class="t reveal"><span class="y">1929</span><p>Hubble zeigt: Das Universum expandiert. Die statische Lösung war die falsche Annahme.</p></div>
+    <div class="t reveal"><span class="y">1960er</span><p>Quasare, Pulsare, Kosmische Mikrowellenstrahlung: Die Relativität wird Astrophysik.</p></div>
+    <div class="t reveal"><span class="y">2015</span><p>LIGO misst Gravitationswellen direkt — hundert Jahre nach der Vorhersage.</p></div>
+    <div class="t reveal"><span class="y">2019</span><p>Das Event Horizon Telescope fotografiert den Schatten eines Schwarzen Lochs.</p></div>
+  </div>
+  <div class="quote reveal">„Die Materie sagt dem Raum, wie er sich krümmen soll; der Raum sagt der Materie, wie sie sich bewegen soll.“<cite>John Archibald Wheeler (nicht Einstein) — die moderne Kurzfassung</cite></div>
+</section>
+
+<section class="chapter" id="mitnehmen">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">05</div>
+    <div>
+      <h2>Was du mitnimmst</h2>
+      <p class="sub">Drei Ideen, die aus einem Aufzug ein Weltbild machen.</p>
+    </div>
+  </div>
+  <div class="takeaways">
+    <div class="takeaway reveal"><span class="n">01 · GRAVITATION IST KEINE KRAFT</span><p>Sie ist die Geometrie der Raumzeit. Körper fallen, weil sie der kürzesten Bahn folgen — nicht weil eine Kraft zieht.</p></div>
+    <div class="takeaway reveal"><span class="n">02 · KOORDINATEN SIND ETIKETTEN</span><p>Die Physik darf nicht davon abhängen, wie wir ein Koordinatensystem wählen. Tensoren machen diese Forderung mathematisch.</p></div>
+    <div class="takeaway reveal"><span class="n">03 · TESTS STATT ELEGANZ</span><p>Die Theorie ist schön. Aber Merkur, Licht und Rotverschiebung haben sie zur Physik gemacht.</p></div>
+  </div>
+  <div class="quiz reveal" data-answer="3">
+    <p class="q">Warum kann man Beschleunigung und Gravitation lokal nicht unterscheiden?</p>
+    <div class="quiz-option">Weil beide dieselbe physikalische Einheit haben.</div>
+    <div class="quiz-option">Weil Gravitation nur in der Nähe großer Massen existiert.</div>
+    <div class="quiz-option">Weil Licht in beiden Fällen gleich schnell ist.</div>
+    <div class="quiz-option">Weil alle Körper im selben Gravitationsfeld gleich stark beschleunigt werden.</div>
+    <p class="quiz-explain">Die träge Masse (Widerstand gegen Beschleunigung) und die schwere Masse (Stärke der Gravitationswirkung) sind gleich. Deshalb fühlt sich ein beschleunigter Aufzug wie ein Gravitationsfeld an — lokal ist kein Experiment möglich, das beide unterscheidet.</p>
+  </div>
+  <div class="prevnext">
+    <a href="einstein_06_feldgleichungen.html"><span>Zurück</span>Die Gravitation wird Geometrie</a>
+    <a class="right" href="einstein_08_kosmologie.html"><span>Weiter</span>Die Welt als Kugel →</a>
+  </div>
+</section>
+</div>
+
+<section class="sources">
+  <div class="wrap">
+    <h3>Quelle &amp; Weiterlesen</h3>
+    <p>A. Einstein, <em>Die Grundlage der allgemeinen Relativitätstheorie</em>, Annalen der Physik 49 (1916), 769–822. Public Domain. Faksimile: <a href="https://archive.org/details/sim_annalen-der-physik_1916_49_7" target="_blank" rel="noopener">archive.org</a>.</p>
+    <p>Die Darstellung ist konzeptionell; die Tensoren werden nicht vollständig eingeführt. Für die mathematische Herleitung sei auf das Original und moderne Lehrbücher verwiesen.</p>
+  </div>
+</section>
+
+
+</main>
+<footer>
+  <div class="foot-inner">
+    <span>Einstein · visualisiert</span>
+    <span>Quelle: Annalen der Physik 49 (1916), 769–822 · Public Domain</span>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var EIN = window.EIN = {};
+
+  EIN.clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  EIN.lerp = function (a, b, t) { return a + (b - a) * t; };
+  EIN.ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+  EIN.TAU = Math.PI * 2;
+
+  EIN.css = function (name) {
+    return getComputedStyle(document.body).getPropertyValue(name).trim();
+  };
+
+  EIN.fit = function (canvas) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(r.width));
+    var h = Math.max(1, Math.round(r.height));
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h, dpr: dpr };
+  };
+
+  EIN.onResize = function (canvas, draw) {
+    var raf = 0;
+    function run() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
+    if (window.ResizeObserver) new ResizeObserver(run).observe(canvas);
+    window.addEventListener("resize", run);
+    return run;
+  };
+
+  EIN.loop = function (fn) {
+    var t0 = performance.now();
+    var last = t0;
+    function frame(now) {
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      fn(Math.max(0, (now - t0) / 1000), dt);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  };
+
+  EIN.visible = function (el, onEnter, onExit) {
+    if (!el || !("IntersectionObserver" in window)) { if (onEnter) onEnter(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { if (onEnter) onEnter(); }
+        else if (onExit) onExit();
+      });
+    }, { rootMargin: "140px 0px" });
+    io.observe(el);
+  };
+
+  EIN.arrow = function (ctx, x1, y1, x2, y2, color, width) {
+    var a = Math.atan2(y2 - y1, x2 - x1);
+    var s = 7;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width || 1.4;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - s * Math.cos(a - 0.38), y2 - s * Math.sin(a - 0.38));
+    ctx.lineTo(x2 - s * Math.cos(a + 0.38), y2 - s * Math.sin(a + 0.38));
+    ctx.closePath(); ctx.fill();
+  };
+
+  EIN.label = function (ctx, text, x, y, color, size, align) {
+    ctx.fillStyle = color || "#8a857c";
+    ctx.font = (size || 10) + "px ui-monospace, SFMono-Regular, Consolas, monospace";
+    ctx.textAlign = align || "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, y);
+  };
+
+  function initProgress() {
+    var bar = document.getElementById("progressBar");
+    if (!bar) return;
+    function upd() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    }
+    window.addEventListener("scroll", upd, { passive: true });
+    window.addEventListener("resize", upd);
+    upd();
+  }
+
+  function initNav() {
+    var nav = document.getElementById("sectionNav");
+    var sections = [].slice.call(document.querySelectorAll(".chapter[id]"));
+    if (!nav || !sections.length) return;
+    sections.forEach(function (s, i) {
+      var h = s.querySelector("h2");
+      var a = document.createElement("a");
+      a.href = "#" + s.id;
+      a.textContent = h ? h.textContent.replace(/\s+/g, " ").slice(0, 26) : "0" + (i + 1);
+      nav.appendChild(a);
+    });
+    var links = [].slice.call(nav.querySelectorAll("a"));
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var i = sections.indexOf(e.target);
+        links.forEach(function (l, j) { l.classList.toggle("on", i === j); });
+      });
+    }, { rootMargin: "-20% 0px -68% 0px" });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  function initReveal() {
+    var els = [].slice.call(document.querySelectorAll(".reveal"));
+    if (!els.length) return;
+    if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    els.forEach(function (e, i) { e.style.transitionDelay = (Math.min(i % 4, 3) * 55) + "ms"; io.observe(e); });
+  }
+
+  function initRanges() {
+    [].slice.call(document.querySelectorAll("input[type=range][data-out]")).forEach(function (r) {
+      var out = document.getElementById(r.getAttribute("data-out"));
+      function upd() {
+        if (!out) return;
+        var v = parseFloat(r.value);
+        var f = r.getAttribute("data-format");
+        out.textContent = f === "int" ? Math.round(v) : v.toFixed(f ? parseInt(f, 10) : 1);
+      }
+      r.addEventListener("input", upd); upd();
+    });
+  }
+
+  function initQuiz() {
+    [].slice.call(document.querySelectorAll(".quiz")).forEach(function (quiz) {
+      var ans = parseInt(quiz.getAttribute("data-answer"), 10);
+      var opts = [].slice.call(quiz.querySelectorAll(".quiz-option"));
+      var ex = quiz.querySelector(".quiz-explain");
+      opts.forEach(function (o, i) {
+        o.addEventListener("click", function () {
+          opts.forEach(function (x) { x.classList.remove("ok", "no"); x.disabled = true; });
+          if (i === ans) { o.classList.add("ok"); }
+          else { o.classList.add("no"); opts[ans].classList.add("ok"); }
+          if (ex) ex.classList.add("show");
+        });
+      });
+    });
+  }
+
+  function boot() {
+    initProgress(); initNav(); initReveal(); initRanges(); initQuiz();
+    if (window.__pageInit) window.__pageInit();
+    document.documentElement.classList.add("ready");
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+
+</script>
+<script>
+
+(function () {
+  "use strict";
+
+  
+  (function () {
+    var c = document.getElementById("heroCanvas");
+    if (!c) return;
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * 0.62, cy = h * 0.5;
+      function warp(x, y) {
+        var dx = x - cx, dy = y - cy, r = Math.hypot(dx, dy) + 40;
+        var pull = 3200 / (r * 1.2);
+        return [x - dx / r * pull, y - dy / r * pull];
+      }
+      for (var i = -12; i <= 12; i++) {
+        ctx.beginPath();
+        for (var j = -10; j <= 10; j++) {
+          var p = warp(cx + i * 60, cy + j * 32);
+          if (j === -10) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+        }
+        ctx.strokeStyle = "rgba(154,167,240," + (0.045 + 0.02 * (Math.abs(i) % 3)) + ")"; ctx.stroke();
+      }
+      for (var k = -10; k <= 10; k++) {
+        ctx.beginPath();
+        for (var m = -12; m <= 12; m++) {
+          var p2 = warp(cx + m * 60, cy + k * 32);
+          if (m === -12) ctx.moveTo(p2[0], p2[1]); else ctx.lineTo(p2[0], p2[1]);
+        }
+        ctx.strokeStyle = "rgba(154,167,240,.035)"; ctx.stroke();
+      }
+      var rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 50);
+      rg.addColorStop(0, "rgba(255,250,225,.95)"); rg.addColorStop(.3, "rgba(242,211,145,.65)"); rg.addColorStop(1, "rgba(154,167,240,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, cy, 50, 0, EIN.TAU); ctx.fill();
+      
+      for (var o = 0; o < 3; o++) {
+        ctx.beginPath();
+        for (var a = 0; a <= EIN.TAU + .05; a += .05) {
+          var rr = 90 + o * 48;
+          var x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr * .55;
+          if (a === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = "rgba(242,211,145," + (0.22 - o * .05) + ")"; ctx.setLineDash([3, 6]); ctx.stroke(); ctx.setLineDash([]);
+        var ang = t * (0.8 - o * .16) + o * 1.7;
+        var px = cx + Math.cos(ang) * (90 + o * 48), py = cy + Math.sin(ang) * (90 + o * 48) * .55;
+        ctx.fillStyle = "rgba(242,211,145,.9)"; ctx.beginPath(); ctx.arc(px, py, 2.6, 0, EIN.TAU); ctx.fill();
+      }
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(cx, cy, 4, 0, EIN.TAU); ctx.fill();
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("elevatorCanvas");
+    if (!c) return;
+    var g = 55;
+    var sv = document.getElementById("elevG"), ro = document.getElementById("elevReadout");
+    sv.oninput = function () { g = +sv.value; draw(); };
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var half = w / 2;
+      
+      ctx.strokeStyle = "rgba(255,255,255,.1)"; ctx.beginPath(); ctx.moveTo(half, 20); ctx.lineTo(half, h - 20); ctx.stroke();
+      function cabin(cx, label, sub) {
+        var top = h * 0.2, bot = h * 0.78, left = cx - w * 0.12, right = cx + w * 0.12;
+        ctx.strokeStyle = "rgba(242,211,145,.55)"; ctx.lineWidth = 1.4;
+        ctx.strokeRect(left, top, right - left, bot - top);
+        
+        ctx.fillStyle = "rgba(242,211,145,.08)"; ctx.fillRect(left, bot - 6, right - left, 6);
+        
+        var bend = (g / 55) * 28;
+        ctx.beginPath(); ctx.moveTo(left + 8, top + 26);
+        ctx.quadraticCurveTo(cx, top + 26 + bend, right - 8, top + 26 + bend * 1.6);
+        ctx.strokeStyle = "rgba(154,167,240,.95)"; ctx.lineWidth = 1.6; ctx.stroke();
+        ctx.fillStyle = "rgba(154,167,240,.9)"; ctx.beginPath(); ctx.arc(right - 8, top + 26 + bend * 1.6, 3, 0, EIN.TAU); ctx.fill();
+        EIN.label(ctx, label, cx, h - 8, "rgba(255,255,255,.55)", 10, "center");
+        EIN.label(ctx, sub, cx, 18, "rgba(255,255,255,.35)", 9, "center");
+      }
+      cabin(half * 0.5, "beschleunigter Aufzug", "a nach oben");
+      cabin(half * 1.5, "Gravitationsfeld", "Masse unten");
+      
+      EIN.arrow(ctx, half * 0.5, h * 0.84, half * 0.5, h * 0.9, "rgba(242,211,145,.7)", 1.2);
+      for (var i = 0; i < 5; i++) {
+        var x = half * 1.5 - 40 + i * 20;
+        EIN.arrow(ctx, x, h * 0.82, x, h * 0.9, "rgba(154,167,240,.35)", 1);
+      }
+      ro.textContent = "g = " + (g / 55).toFixed(2);
+    }
+    EIN.onResize(c, draw); draw();
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("curveCanvas");
+    if (!c) return;
+    var K = 1;
+    var sv = document.getElementById("curveK"), ro = document.getElementById("curveReadout");
+    sv.oninput = function () { K = +sv.value; draw(); };
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cols = [0, 0.5, 1];
+      var labels = ["K = 0", "K > 0", "K < 0"];
+      var vals = [0, 1, -1];
+      cols.forEach(function (col, idx) {
+        var cx = w * (0.17 + col * 0.33), cy = h * 0.52;
+        var active = (idx === 0 && Math.abs(K) < 0.15) || (idx === 1 && K >= 0.15) || (idx === 2 && K <= -0.15);
+        var R = Math.min(w * 0.13, h * 0.3);
+        
+        for (var i = -3; i <= 3; i++) {
+          ctx.beginPath();
+          for (var j = -3; j <= 3; j++) {
+            var u = i / 3, v = j / 3;
+            var x = cx + u * R, y = cy + v * R * 0.7;
+            if (vals[idx] > 0) { x -= u * Math.abs(v) * R * 0.25; y -= v * Math.abs(u) * R * 0.18; }
+            if (vals[idx] < 0) { x += u * Math.abs(v) * R * 0.25; y += v * Math.abs(u) * R * 0.18; }
+            if (j === -3) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = active ? "rgba(154,167,240,.5)" : "rgba(154,167,240,.13)"; ctx.lineWidth = 1; ctx.stroke();
+        }
+        for (var k = -3; k <= 3; k++) {
+          ctx.beginPath();
+          for (var m = -3; m <= 3; m++) {
+            var u2 = m / 3, v2 = k / 3;
+            var x2 = cx + u2 * R, y2 = cy + v2 * R * 0.7;
+            if (vals[idx] > 0) { x2 -= u2 * Math.abs(v2) * R * 0.25; y2 -= v2 * Math.abs(u2) * R * 0.18; }
+            if (vals[idx] < 0) { x2 += u2 * Math.abs(v2) * R * 0.25; y2 += v2 * Math.abs(u2) * R * 0.18; }
+            if (m === -3) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2);
+          }
+          ctx.strokeStyle = active ? "rgba(154,167,240,.5)" : "rgba(154,167,240,.13)"; ctx.lineWidth = 1; ctx.stroke();
+        }
+        
+        var pts = [[-0.7, .5], [.7, .5], [0, -0.65]];
+        ctx.beginPath();
+        pts.forEach(function (p, i) {
+          var x = cx + p[0] * R, y = cy + p[1] * R * 0.7;
+          if (vals[idx] > 0) { x -= p[0] * Math.abs(p[1]) * R * 0.25; y -= p[1] * Math.abs(p[0]) * R * 0.18 - R * 0.08; }
+          if (vals[idx] < 0) { x += p[0] * Math.abs(p[1]) * R * 0.25; y += p[1] * Math.abs(p[0]) * R * 0.18; }
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.closePath();
+        ctx.strokeStyle = active ? "rgba(242,211,145,.95)" : "rgba(242,211,145,.3)"; ctx.lineWidth = active ? 2 : 1.2; ctx.stroke();
+        EIN.label(ctx, labels[idx], cx, h - 14, active ? "rgba(255,255,255,.75)" : "rgba(255,255,255,.3)", 10, "center");
+      });
+      var sum = K >= 0.15 ? "> 180°" : (K <= -0.15 ? "< 180°" : "= 180°");
+      ro.textContent = "K = " + K.toFixed(1) + " · Winkelsumme " + sum;
+      document.getElementById("curveKVal").textContent = K.toFixed(1);
+    }
+    EIN.onResize(c, draw); draw();
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("testsCanvas");
+    if (!c) return;
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var third = w / 3;
+      
+      ["Merkur", "Licht", "Rotverschiebung"].forEach(function (lab, i) {
+        EIN.label(ctx, lab, third * (i + .5), 18, "rgba(255,255,255,.5)", 10, "center");
+      });
+      
+      var cx1 = third * .5, cy1 = h * .58;
+      var a1 = Math.min(third * .34, h * .27);
+      ctx.beginPath();
+      for (var q = 0; q <= EIN.TAU + .05; q += .06) {
+        var rot = t * .25;
+        var r = a1 * (1 - .12 * .12) / (1 + .12 * Math.cos(q));
+        var x = cx1 + Math.cos(q + rot) * r, y = cy1 + Math.sin(q + rot) * r * .62;
+        if (q === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = "rgba(242,211,145,.55)"; ctx.stroke();
+      ctx.fillStyle = "rgba(255,250,220,.9)"; ctx.beginPath(); ctx.arc(cx1, cy1, 9, 0, EIN.TAU); ctx.fill();
+      var p1x = cx1 + Math.cos(t * 1.3) * a1 * .8, p1y = cy1 + Math.sin(t * 1.3) * a1 * .5;
+      ctx.fillStyle = "rgba(154,167,240,.9)"; ctx.beginPath(); ctx.arc(p1x, p1y, 2.4, 0, EIN.TAU); ctx.fill();
+      
+      var cx2 = third * 1.5, cy2 = h * .58;
+      var rg = ctx.createRadialGradient(cx2, cy2, 0, cx2, cy2, 26);
+      rg.addColorStop(0, "rgba(255,250,220,.9)"); rg.addColorStop(1, "rgba(242,211,145,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx2, cy2, 26, 0, EIN.TAU); ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,.8)"; ctx.beginPath(); ctx.arc(cx2, cy2, 8, 0, EIN.TAU); ctx.fill();
+      ctx.beginPath();
+      for (var x2 = cx2 - 80; x2 <= cx2 + 80; x2 += 2) {
+        var dx = x2 - cx2;
+        var y2 = cy2 - 26 + 20 * Math.exp(-Math.pow(dx / 30, 2));
+        if (x2 === cx2 - 80) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2);
+      }
+      ctx.strokeStyle = "rgba(154,167,240,.9)"; ctx.lineWidth = 1.4; ctx.stroke();
+      
+      var cx3 = third * 2.5, top3 = h * .3, bot3 = h * .8;
+      var rows = [
+        { y: top3 + (bot3 - top3) * .12, shift: 0, col: "rgba(154,167,240,.9)", label: "Labor" },
+        { y: top3 + (bot3 - top3) * .46, shift: 16, col: "rgba(242,211,145,.9)", label: "Sonne" },
+        { y: top3 + (bot3 - top3) * .80, shift: 32, col: "rgba(255,143,107,.9)", label: "weißer Zwerg" }
+      ];
+      rows.forEach(function (ln) {
+        var g = ctx.createLinearGradient(cx3 - 70, 0, cx3 + 70, 0);
+        g.addColorStop(0, "rgba(120,120,255,.18)"); g.addColorStop(.5, "rgba(255,255,255,.14)"); g.addColorStop(1, "rgba(255,100,100,.18)");
+        ctx.fillStyle = g; ctx.fillRect(cx3 - 70, ln.y - 5, 140, 10);
+        ctx.strokeStyle = "rgba(0,0,0,.8)"; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(cx3 - 20 + ln.shift, ln.y - 6); ctx.lineTo(cx3 - 20 + ln.shift, ln.y + 6); ctx.stroke();
+        EIN.label(ctx, ln.label, cx3 + 78, ln.y, "rgba(255,255,255,.3)", 8);
+      });
+      EIN.arrow(ctx, cx3 - 34, top3 + 8, cx3 - 34, bot3 - 8, "rgba(255,255,255,.18)", 1);
+      
+      EIN.arrow(ctx, cx3 - 55, top3 + (bot3 - top3) * .32 + 8, cx3 - 55, top3 + (bot3 - top3) * .52 - 8, "rgba(255,255,255,.25)", 1);
+    });
+  })();
+})();
+
+</script>
+</body>
+</html>

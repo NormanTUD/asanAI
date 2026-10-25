@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Geometrie ist die älteste Physik — Einstein, visualisiert</title>
+<meta name="description" content="Warum passt Mathematik so gut zur Welt? Einstein gibt eine doppelte Antwort: Als reine Form ist sie sicher, aber leer. Erst die Erfahrung macht aus Geometrie Physik.">
+<style>
+:root{
+  --bg:#07070b;
+  --bg-2:#0b0b12;
+  --panel:rgba(255,255,255,.038);
+  --panel-2:rgba(255,255,255,.026);
+  --ink:#ece9e1;
+  --muted:#a8a397;
+  --dim:#6f6b63;
+  --line:rgba(255,255,255,.085);
+  --line-strong:rgba(255,255,255,.16);
+  --accent:#e8b45a;
+  --accent-soft:rgba(232,180,90,.16);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  --math:"Latin Modern Math","STIX Two Math","Cambria Math",Cambria,Georgia,serif;
+  --col:72ch;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:17px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(900px 620px at 78% -8%,var(--accent-soft),transparent 62%),
+    radial-gradient(700px 500px at 8% 18%,rgba(120,140,255,.055),transparent 65%),
+    linear-gradient(180deg,#08080d 0%,#07070b 45%,#06060a 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+::selection{background:var(--accent);color:#111}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:rgba(255,255,255,.05)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#fff6d8);box-shadow:0 0 14px var(--accent);transition:width .08s linear}
+.topbar{
+  position:fixed;top:2px;left:0;right:0;z-index:55;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:12px clamp(16px,3vw,38px);
+  background:linear-gradient(180deg,rgba(7,7,11,.92),rgba(7,7,11,.55) 70%,transparent);
+  backdrop-filter:blur(10px);
+}
+.brand{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--muted);
+  white-space:nowrap;text-transform:uppercase;
+}
+.brand:hover{color:var(--ink);text-decoration:none}
+#sectionNav{display:flex;gap:4px;overflow:auto;scrollbar-width:none;mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
+#sectionNav::-webkit-scrollbar{display:none}
+#sectionNav a{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);
+  padding:5px 8px;border-radius:99px;white-space:nowrap;transition:.25s var(--ease);
+}
+#sectionNav a:hover{color:var(--ink);text-decoration:none;background:rgba(255,255,255,.05)}
+#sectionNav a.on{color:var(--accent);background:var(--accent-soft)}
+main{position:relative}
+.hero{
+  position:relative;min-height:clamp(520px,82vh,820px);display:flex;align-items:flex-end;
+  padding:120px clamp(20px,5vw,64px) clamp(48px,8vh,90px);
+  overflow:hidden;
+}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:18px;
+}
+.kicker::before{content:"";width:28px;height:1px;background:var(--accent);opacity:.7}
+h1{
+  font-family:var(--serif);font-weight:400;font-size:clamp(2.35rem,6.2vw,5.6rem);
+  line-height:1.02;letter-spacing:-.025em;margin:0 0 22px;max-width:17ch;
+  text-wrap:balance;
+}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{font-size:clamp(1.02rem,1.7vw,1.28rem);line-height:1.55;color:#cfcac0;max-width:56ch;margin:0 0 18px}
+.epigraph{
+  font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--muted);
+  max-width:52ch;margin:0 0 22px;padding-left:16px;border-left:1px solid var(--line-strong);
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.meta b{color:var(--muted);font-weight:400}
+.scroll-hint{
+  position:absolute;right:clamp(20px,5vw,64px);bottom:28px;z-index:2;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--dim);
+  writing-mode:vertical-rl;display:flex;align-items:center;gap:10px;
+}
+.scroll-hint::after{content:"";width:1px;height:38px;background:linear-gradient(var(--accent),transparent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.chapter{padding:clamp(58px,9vh,110px) 0;border-top:1px solid var(--line);position:relative}
+.chapter-head{display:grid;grid-template-columns:64px minmax(0,1fr);gap:clamp(10px,2vw,26px);margin-bottom:clamp(26px,4vw,44px);align-items:start}
+.chapter-num{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--accent);
+  padding-top:9px;border-top:1px solid var(--accent);
+}
+.chapter h2{
+  font-family:var(--serif);font-weight:400;font-size:clamp(1.65rem,3.1vw,2.65rem);
+  line-height:1.12;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;
+}
+.chapter h3{font-family:var(--serif);font-weight:400;font-size:1.32rem;margin:0 0 10px;letter-spacing:-.01em}
+.chapter .sub{color:var(--muted);max-width:62ch;margin:0;font-size:1rem}
+.prose{max-width:var(--col);color:#cfcac0}
+.prose p{margin:0 0 1.05em}
+.prose p:last-child{margin-bottom:0}
+.prose strong{color:var(--ink);font-weight:600}
+.prose em{color:#e3ded4}
+.prose ul,.prose ol{margin:.2em 0 1.1em;padding-left:1.25em}
+.prose li{margin:.32em 0}
+.prose code{font-family:var(--mono);font-size:.86em;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px}
+.lead{font-size:1.12rem;line-height:1.62;color:#dcd7cd}
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,56px);align-items:center}
+.split.wide-left{grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr)}
+.split.wide-right{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:16px;padding:22px;
+  position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.35}
+.card h4{font-family:var(--sans);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:0 0 9px;font-weight:600}
+.card p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.58}
+.card .big{font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.2;margin-bottom:8px}
+.stage{
+  position:relative;background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.stage canvas{display:block;width:100%;height:100%}
+.stage .label{
+  position:absolute;left:14px;top:12px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);pointer-events:none;
+}
+.stage .readout{
+  position:absolute;right:14px;top:12px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.06em;color:var(--accent);pointer-events:none;
+}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:14px 0 0}
+.control{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--muted)}
+.control input[type=range]{
+  -webkit-appearance:none;appearance:none;width:clamp(110px,18vw,190px);height:2px;background:var(--line-strong);outline:none;border-radius:2px;
+}
+.control input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--accent);border:2px solid #111;box-shadow:0 0 0 3px var(--accent-soft);cursor:pointer;
+}
+.control input[type=range]::-moz-range-thumb{width:11px;height:11px;border:2px solid #111;border-radius:50%;background:var(--accent);cursor:pointer}
+.control .val{min-width:52px;color:var(--ink);font-variant-numeric:tabular-nums}
+.btn{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 14px;border-radius:99px;border:1px solid var(--line-strong);
+  background:transparent;color:var(--ink);cursor:pointer;transition:.2s var(--ease);
+}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.btn.on{background:var(--accent);color:#111;border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:0}
+.formula{
+  font-family:var(--math);font-size:clamp(1.05rem,2vw,1.38rem);line-height:1.85;
+  color:#f1ede4;background:rgba(255,255,255,.028);border:1px solid var(--line);
+  border-left:2px solid var(--accent);border-radius:0 12px 12px 0;
+  padding:18px 22px;margin:18px 0;overflow-x:auto;
+}
+.formula .small{font-size:.62em;color:var(--muted)}
+.formula-note{font-family:var(--sans);font-size:.78rem;color:var(--dim);margin-top:8px;letter-spacing:0}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .18em;line-height:1.15}
+.frac .num{border-bottom:1px solid currentColor;padding:0 .18em}
+.frac .den{padding:.08em .18em 0}
+.sqrt{border-top:1px solid currentColor;padding:0 .12em}
+.takeaways{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:26px}
+.takeaway{
+  background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.015));
+  border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+  border-radius:14px;padding:18px 18px 16px;position:relative;
+}
+.takeaway .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:7px}
+.takeaway p{margin:0;font-size:.9rem;line-height:1.55;color:#d8d3c9}
+.quote{
+  font-family:var(--serif);font-style:italic;font-size:clamp(1.15rem,2.1vw,1.45rem);
+  line-height:1.5;color:#e6e1d6;margin:28px 0;padding:0 0 0 22px;border-left:1px solid var(--accent);
+  max-width:60ch;
+}
+.quote cite{display:block;font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:12px}
+.timeline{position:relative;margin:20px 0;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:1px;background:linear-gradient(var(--accent),var(--line))}
+.timeline .t{position:relative;padding:0 0 20px}
+.timeline .t::before{content:"";position:absolute;left:-22px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.timeline .y{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent);display:block}
+.timeline .t p{margin:2px 0 0;font-size:.92rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);padding:4px 9px;border-radius:99px;margin:0 6px 6px 0}
+.quiz{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel);margin-top:26px}
+.quiz .q{font-family:var(--serif);font-size:1.1rem;margin:0 0 14px;color:var(--ink)}
+.quiz-options{display:grid;gap:8px}
+.quiz-option{
+  text-align:left;font-family:var(--sans);font-size:.9rem;color:#cfcac0;
+  padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:transparent;cursor:pointer;transition:.2s var(--ease);
+}
+.quiz-option:hover{border-color:var(--line-strong);background:rgba(255,255,255,.04)}
+.quiz-option.ok{border-color:#57c785;background:rgba(87,199,133,.12);color:#d8ffe8}
+.quiz-option.no{border-color:#e26868;background:rgba(226,104,104,.1);color:#ffdada}
+.quiz-explain{font-size:.86rem;color:var(--muted);margin:12px 0 0;display:none;line-height:1.55}
+.quiz-explain.show{display:block}
+.sources{border-top:1px solid var(--line);padding:34px 0 60px;color:var(--dim);font-size:.83rem}
+.sources h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.sources p{margin:0 0 8px;max-width:80ch}
+.sources a{color:var(--muted);border-bottom:1px solid var(--line-strong)}
+.sources a:hover{color:var(--accent);text-decoration:none}
+.prevnext{display:flex;justify-content:space-between;gap:16px;padding:26px 0 0;border-top:1px solid var(--line);margin-top:34px}
+.prevnext a{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);display:flex;flex-direction:column;gap:3px;max-width:45%}
+.prevnext a:hover{color:var(--accent);text-decoration:none}
+.prevnext a span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.prevnext .right{text-align:right;margin-left:auto}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.mono{font-family:var(--mono);font-size:.82em;letter-spacing:.02em}
+.dim{color:var(--dim)}
+.accent{color:var(--accent)}
+.center{text-align:center}
+.mt0{margin-top:0}.mt1{margin-top:10px}.mt2{margin-top:20px}.mt3{margin-top:34px}
+.hr{height:1px;background:var(--line);border:0;margin:30px 0}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+footer{color:var(--dim);font-size:.78rem}
+.foot-inner{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 50px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:900px){
+  .split,.split.wide-left,.split.wide-right,.grid2,.grid3{grid-template-columns:1fr}
+  .chapter-head{grid-template-columns:40px minmax(0,1fr)}
+  .topbar{gap:10px}
+  #sectionNav{display:none}
+  h1{max-width:20ch}
+}
+@media(max-width:560px){
+  body{font-size:16px}
+  .hero{min-height:620px;padding-top:96px}
+  .chapter-head{grid-template-columns:1fr;gap:8px}
+  .chapter-num{border-top:0;padding:0}
+  .controls{gap:10px 14px}
+  .scroll-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  .topbar,.progress,#heroCanvas,.scroll-hint{display:none}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#111}
+  .card,.stage,.formula{border-color:#ddd}
+}
+
+/* index work cards */
+.work{display:block;color:var(--ink);text-decoration:none;transition:transform .35s var(--ease),border-color .35s var(--ease),background .35s var(--ease)}
+.work:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--accent) 55%,transparent);text-decoration:none;background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.02))}
+.work-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim)}
+.work-no{color:var(--accent)}
+.work-year{border:1px solid var(--line);padding:3px 7px;border-radius:99px}
+.work h4{color:var(--accent);margin-bottom:6px}
+.work .work-title{font-family:var(--serif);font-size:1.28rem;line-height:1.18;color:var(--ink);margin:0 0 9px;letter-spacing:-.01em}
+.work p{font-size:.88rem;color:var(--muted);line-height:1.55}
+.work-go{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+</style>
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body style="--accent:#d6c3a1;--accent-soft:rgba(214,195,161,.16)">
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <a class="brand" href="einstein_index.html">Einstein · visualisiert</a>
+  <nav id="sectionNav" aria-label="Abschnitte"></nav>
+</header>
+<main>
+<section class="hero" id="top">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">Preußische Akademie · 27. Januar 1921</div>
+    <h1>Geometrie ist die <em>älteste Physik</em></h1>
+    <p class="lede">Warum passt Mathematik so gut zur Welt? Einstein gibt eine doppelte Antwort: Als reine Form ist sie sicher, aber leer. Erst die Erfahrung macht aus Geometrie Physik.</p>
+    <p class="epigraph">„Soweit sich die Sätze der Mathematik auf die Wirklichkeit beziehen, sind sie nicht sicher; und soweit sie sicher sind, beziehen sie sich nicht auf die Wirklichkeit.“</p>
+    <div class="meta"><span><b>Original</b> Geometrie und Erfahrung</span><span><b>Vortrag</b> Preußische Akademie der Wissenschaften, 27. Januar 1921</span><span><b>Umfang</b> 8 Seiten</span></div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</section>
+
+
+<div class="wrap">
+<section class="chapter" id="raetsel">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">01</div>
+    <div>
+      <h2>Das Rätsel der Mathematik</h2>
+      <p class="sub">Mathematik ist sicher — aber warum beschreibt sie die Welt? Einsteins Antwort ist so einfach wie tief: Sie beschreibt sie nur, wenn wir sie mit Erfahrung verbinden.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p class="lead">Ein Dreieck hat in der euklidischen Geometrie immer 180°. Das folgt aus den Axiomen, nicht aus Messungen. Aber warum stimmt es dann für Felder, Gebäude und Landkarten?</p>
+      <p>Einstein unterscheidet zwei Dinge. Die <strong>axiomatische Geometrie</strong> ist ein logisches Spiel mit leeren Begriffen: Punkt, Gerade, Abstand. Sie sagt nichts über die Welt. Die <strong>praktische Geometrie</strong> verbindet diese Begriffe mit realen starren Körpern und Maßstäben. Erst dadurch wird sie eine Naturwissenschaft.</p>
+      <p>Der Satz „Die Winkelsumme ist 180°“ ist also nicht allein aus der Geometrie wahr. Er ist wahr für die Art, wie sich unsere Maßstäbe in der Welt verhalten — und das ist eine Erfahrungstatsache.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Drei Geometrien</span>
+        <span class="readout" id="triReadout">eben · 180°</span>
+        <canvas id="triCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Krümmung <input type="range" id="triK" min="-1" max="1" step="0.1" value="0" data-out="triKVal" data-format="1"><span class="val" id="triKVal">0.0</span></label>
+      </div>
+      <div class="legend"><span><i style="background:#d6c3a1"></i>Dreieck</span><span><i style="background:#f2d391"></i>Winkel</span></div>
+    </div>
+  </div>
+  <div class="quote reveal">„Die so vervollständigte Geometrie ist offenbar eine Naturwissenschaft; ja, wir können sie als den ältesten Zweig der Physik betrachten.“<cite>Einstein 1921</cite></div>
+</section>
+
+<section class="chapter" id="axiome">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">02</div>
+    <div>
+      <h2>Axiome sind freie Erfindungen</h2>
+      <p class="sub">Die moderne Axiomatik befreit die Mathematik von der Anschauung. Genau dadurch wird sichtbar, wo sie aufhört und die Physik beginnt.</p>
+    </div>
+  </div>
+  <div class="split wide-left">
+    <div class="prose reveal">
+      <p>In der klassischen Auffassung sind Axiome „selbstverständlich“: Jeder weiß, was eine Gerade ist. Die moderne Auffassung ist nüchterner: Axiome sind <strong>implizite Definitionen</strong>. Sie legen fest, wie die Wörter benutzt werden — mehr nicht.</p>
+      <p>Dann ist klar, warum Mathematik keine Aussage über wirkliche Dinge machen kann. Ihre Begriffe sind leer, bis man sie mit Erfahrung füllt. Einstein nennt das den Unterschied zwischen „rein axiomatischer“ und „praktischer“ Geometrie.</p>
+      <p>Und er zieht eine erkenntnistheoretische Konsequenz: Die Frage, ob das Universum euklidisch ist, ist keine Frage der Mathematik. Sie ist eine Frage der Messung.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Axiom ↔ Erfahrung</span>
+        <span class="readout" id="axReadout">leere Begriffe</span>
+        <canvas id="axCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <button class="btn on" id="axPure">axiomatisch</button>
+        <button class="btn" id="axPhys">praktisch</button>
+      </div>
+      <div class="legend"><span><i style="background:#d6c3a1"></i>Form</span><span><i style="background:#f2d391"></i>Erfahrung</span></div>
+    </div>
+  </div>
+  <div class="grid3 mt3">
+    <div class="card reveal"><h4>Punkt</h4><p>In der reinen Geometrie ein undefinierter Grundbegriff. In der Physik: eine Markierung, ein Ereignis, ein Ort.</p></div>
+    <div class="card reveal"><h4>Gerade</h4><p>Rein formal: die kürzeste Verbindung. Praktisch: die Bahn eines Lichtstrahls oder eine gespannte Schnur.</p></div>
+    <div class="card reveal"><h4>Abstand</h4><p>Rein formal: eine Metrik. Praktisch: das Ergebnis einer Messung mit einem starren Maßstab.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="poincare">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">03</div>
+    <div>
+      <h2>Poincaré und die Konvention</h2>
+      <p class="sub">Wenn eine Messung nicht zur euklidischen Geometrie passt, kann man die Geometrie ändern — oder die Physik. Beide Wege beschreiben dieselbe Erfahrung.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p>Henri Poincaré hatte argumentiert: Geometrie (G) allein sagt nichts über die Welt. Erst die Summe aus Geometrie und physikalischen Gesetzen (G + P) wird durch Erfahrung geprüft. Man kann also an G festhalten und stattdessen P anpassen — etwa die Maßstäbe als temperaturabhängig oder verzerrt ansehen.</p>
+      <p>Einstein stimmt zu — „sub specie aeterni“, also im Prinzip. Aber er hält an der praktischen Trennung fest: Solange wir keine vollständige Theorie starrer Körper haben, sind Maßstäbe und Uhren eigenständige physikalische Objekte. Und die Erfahrung spricht dafür, dass die Geometrie des Universums im Großen nicht euklidisch ist.</p>
+      <p>Die rotierende Scheibe hatte ihm gezeigt: Sobald man beschleunigte Systeme zulässt, passt die euklidische Geometrie nicht mehr. Das war der Schritt zur allgemeinen Relativität.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:340px">
+        <span class="label">Eine Messung, zwei Erklärungen</span>
+        <span class="readout" id="poincareReadout">G + P = Erfahrung</span>
+        <canvas id="poincareCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <button class="btn on" id="poinGeo">Geometrie ändern</button>
+        <button class="btn" id="poinPhys">Physik ändern</button>
+      </div>
+      <div class="legend"><span><i style="background:#d6c3a1"></i>G</span><span><i style="background:#f2d391"></i>P</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="folgen">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">04</div>
+    <div>
+      <h2>Was daraus folgt</h2>
+      <p class="sub">Geometrie ist keine zeitlose Wahrheit über den Raum. Sie ist eine empirische Wissenschaft — mit einer erstaunlich großen Reichweite.</p>
+    </div>
+  </div>
+  <div class="timeline">
+    <div class="t reveal"><span class="y">Euklid</span><p>Die Geometrie als axiomatisches System. Jahrhunderte lang als Vorbild sicherer Erkenntnis.</p></div>
+    <div class="t reveal"><span class="y">1820er</span><p>Gauß, Bolyai und Lobatschewski entdecken nichteuklidische Geometrien. Die Anschauung ist nicht mehr bindend.</p></div>
+    <div class="t reveal"><span class="y">1854</span><p>Riemann verallgemeinert den Krümmungsbegriff auf beliebige Dimensionen.</p></div>
+    <div class="t reveal"><span class="y">1905–1915</span><p>Einstein verbindet Physik und Geometrie: Die Raumzeit ist gekrümmt, und die Krümmung ist messbar.</p></div>
+    <div class="t reveal"><span class="y">1921</span><p>In „Geometrie und Erfahrung“ zieht er die erkenntnistheoretische Bilanz.</p></div>
+  </div>
+  <div class="takeaways mt3">
+    <div class="takeaway reveal"><span class="n">01 · FORM IST NICHT INHALT</span><p>Axiome legen Bedeutungen fest, nicht die Welt. Erst die Zuordnung zu Erfahrung macht Geometrie physikalisch.</p></div>
+    <div class="takeaway reveal"><span class="n">02 · WAHRHEIT IST MESSBAR</span><p>Ob der Raum euklidisch ist, entscheidet nicht die Logik, sondern die Messung von Winkeln und Abständen.</p></div>
+    <div class="takeaway reveal"><span class="n">03 · KONVENTIONEN SIND ERLAUBT</span><p>Poincarés Punkt bleibt gültig: G und P sind nur gemeinsam prüfbar. Aber die Wahl sollte die Physik nicht unnötig verkomplizieren.</p></div>
+  </div>
+  <div class="quiz reveal" data-answer="2">
+    <p class="q">Was meint Einstein mit „praktischer Geometrie“?</p>
+    <div class="quiz-option">Die Geometrie, die man in der Schule lernt.</div>
+    <div class="quiz-option">Die reine Axiomatik ohne Anschauung.</div>
+    <div class="quiz-option">Geometrie, deren Begriffe mit realen starren Körpern und Messungen verbunden sind.</div>
+    <div class="quiz-option">Die Geometrie der rotierenden Scheibe.</div>
+    <p class="quiz-explain">Praktische Geometrie entsteht, wenn man den leeren Begriffen der Axiomatik reale Maßstäbe, Lichtstrahlen und Uhren zuordnet. Erst dann kann man sie durch Erfahrung prüfen.</p>
+  </div>
+  <div class="prevnext">
+    <a href="einstein_11_aether.html"><span>Zurück</span>Der Äther lebt</a>
+    <a class="right" href="einstein_13_bedeutung-der-relativitaet.html"><span>Weiter</span>Vier Vorlesungen →</a>
+  </div>
+</section>
+</div>
+
+<section class="sources">
+  <div class="wrap">
+    <h3>Quelle &amp; Weiterlesen</h3>
+    <p>A. Einstein, <em>Geometrie und Erfahrung</em>, erweiterte Fassung des Festvortrags an der Preußischen Akademie der Wissenschaften, Springer, Berlin 1921. Public Domain. Englische Übersetzung in <em>Sidelights on Relativity</em>: <a href="https://www.gutenberg.org/ebooks/7333" target="_blank" rel="noopener">Project Gutenberg #7333</a>.</p>
+    <p>Die Winkelabweichungen in den Simulationen sind stark übertrieben. Auf der Erdoberfläche ist die Abweichung von 180° für Alltagsdreiecke praktisch unmessbar.</p>
+  </div>
+</section>
+
+
+</main>
+<footer>
+  <div class="foot-inner">
+    <span>Einstein · visualisiert</span>
+    <span>Quelle: Springer, Berlin 1921 · Public Domain</span>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var EIN = window.EIN = {};
+
+  EIN.clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  EIN.lerp = function (a, b, t) { return a + (b - a) * t; };
+  EIN.ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+  EIN.TAU = Math.PI * 2;
+
+  EIN.css = function (name) {
+    return getComputedStyle(document.body).getPropertyValue(name).trim();
+  };
+
+  EIN.fit = function (canvas) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(r.width));
+    var h = Math.max(1, Math.round(r.height));
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h, dpr: dpr };
+  };
+
+  EIN.onResize = function (canvas, draw) {
+    var raf = 0;
+    function run() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
+    if (window.ResizeObserver) new ResizeObserver(run).observe(canvas);
+    window.addEventListener("resize", run);
+    return run;
+  };
+
+  EIN.loop = function (fn) {
+    var t0 = performance.now();
+    var last = t0;
+    function frame(now) {
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      fn(Math.max(0, (now - t0) / 1000), dt);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  };
+
+  EIN.visible = function (el, onEnter, onExit) {
+    if (!el || !("IntersectionObserver" in window)) { if (onEnter) onEnter(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { if (onEnter) onEnter(); }
+        else if (onExit) onExit();
+      });
+    }, { rootMargin: "140px 0px" });
+    io.observe(el);
+  };
+
+  EIN.arrow = function (ctx, x1, y1, x2, y2, color, width) {
+    var a = Math.atan2(y2 - y1, x2 - x1);
+    var s = 7;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width || 1.4;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - s * Math.cos(a - 0.38), y2 - s * Math.sin(a - 0.38));
+    ctx.lineTo(x2 - s * Math.cos(a + 0.38), y2 - s * Math.sin(a + 0.38));
+    ctx.closePath(); ctx.fill();
+  };
+
+  EIN.label = function (ctx, text, x, y, color, size, align) {
+    ctx.fillStyle = color || "#8a857c";
+    ctx.font = (size || 10) + "px ui-monospace, SFMono-Regular, Consolas, monospace";
+    ctx.textAlign = align || "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, y);
+  };
+
+  function initProgress() {
+    var bar = document.getElementById("progressBar");
+    if (!bar) return;
+    function upd() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    }
+    window.addEventListener("scroll", upd, { passive: true });
+    window.addEventListener("resize", upd);
+    upd();
+  }
+
+  function initNav() {
+    var nav = document.getElementById("sectionNav");
+    var sections = [].slice.call(document.querySelectorAll(".chapter[id]"));
+    if (!nav || !sections.length) return;
+    sections.forEach(function (s, i) {
+      var h = s.querySelector("h2");
+      var a = document.createElement("a");
+      a.href = "#" + s.id;
+      a.textContent = h ? h.textContent.replace(/\s+/g, " ").slice(0, 26) : "0" + (i + 1);
+      nav.appendChild(a);
+    });
+    var links = [].slice.call(nav.querySelectorAll("a"));
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var i = sections.indexOf(e.target);
+        links.forEach(function (l, j) { l.classList.toggle("on", i === j); });
+      });
+    }, { rootMargin: "-20% 0px -68% 0px" });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  function initReveal() {
+    var els = [].slice.call(document.querySelectorAll(".reveal"));
+    if (!els.length) return;
+    if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    els.forEach(function (e, i) { e.style.transitionDelay = (Math.min(i % 4, 3) * 55) + "ms"; io.observe(e); });
+  }
+
+  function initRanges() {
+    [].slice.call(document.querySelectorAll("input[type=range][data-out]")).forEach(function (r) {
+      var out = document.getElementById(r.getAttribute("data-out"));
+      function upd() {
+        if (!out) return;
+        var v = parseFloat(r.value);
+        var f = r.getAttribute("data-format");
+        out.textContent = f === "int" ? Math.round(v) : v.toFixed(f ? parseInt(f, 10) : 1);
+      }
+      r.addEventListener("input", upd); upd();
+    });
+  }
+
+  function initQuiz() {
+    [].slice.call(document.querySelectorAll(".quiz")).forEach(function (quiz) {
+      var ans = parseInt(quiz.getAttribute("data-answer"), 10);
+      var opts = [].slice.call(quiz.querySelectorAll(".quiz-option"));
+      var ex = quiz.querySelector(".quiz-explain");
+      opts.forEach(function (o, i) {
+        o.addEventListener("click", function () {
+          opts.forEach(function (x) { x.classList.remove("ok", "no"); x.disabled = true; });
+          if (i === ans) { o.classList.add("ok"); }
+          else { o.classList.add("no"); opts[ans].classList.add("ok"); }
+          if (ex) ex.classList.add("show");
+        });
+      });
+    });
+  }
+
+  function boot() {
+    initProgress(); initNav(); initReveal(); initRanges(); initQuiz();
+    if (window.__pageInit) window.__pageInit();
+    document.documentElement.classList.add("ready");
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+
+</script>
+<script>
+
+(function () {
+  "use strict";
+
+  
+  (function () {
+    var c = document.getElementById("heroCanvas");
+    if (!c) return;
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cols = [0.17, 0.5, 0.83];
+      var ks = [0, 1, -1];
+      var labels = ["K = 0 · 180°", "K > 0 · > 180°", "K < 0 · < 180°"];
+      cols.forEach(function (cx, idx) {
+        var cy = h * .5, R = Math.min(w * .12, h * .26);
+        var k = ks[idx];
+        
+        for (var i = -3; i <= 3; i++) {
+          ctx.beginPath();
+          for (var j = -3; j <= 3; j++) {
+            var u = i / 3, v = j / 3;
+            var x = cx + u * R, y = cy + v * R * .72;
+            if (k > 0) { x -= u * Math.abs(v) * R * .22; y -= v * Math.abs(u) * R * .16; }
+            if (k < 0) { x += u * Math.abs(v) * R * .22; y += v * Math.abs(u) * R * .16; }
+            if (j === -3) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = "rgba(214,195,161,.12)"; ctx.stroke();
+        }
+        for (var kk = -3; kk <= 3; kk++) {
+          ctx.beginPath();
+          for (var m = -3; m <= 3; m++) {
+            var u2 = m / 3, v2 = kk / 3;
+            var x2 = cx + u2 * R, y2 = cy + v2 * R * .72;
+            if (k > 0) { x2 -= u2 * Math.abs(v2) * R * .22; y2 -= v2 * Math.abs(u2) * R * .16; }
+            if (k < 0) { x2 += u2 * Math.abs(v2) * R * .22; y2 += v2 * Math.abs(u2) * R * .16; }
+            if (m === -3) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2);
+          }
+          ctx.strokeStyle = "rgba(214,195,161,.12)"; ctx.stroke();
+        }
+        
+        var pts = [[-0.75, .55], [.75, .55], [0, -.7]];
+        ctx.beginPath();
+        pts.forEach(function (p, i) {
+          var x = cx + p[0] * R, y = cy + p[1] * R * .72;
+          if (k > 0) { x -= p[0] * Math.abs(p[1]) * R * .22; y -= p[1] * Math.abs(p[0]) * R * .16 - R * .06; }
+          if (k < 0) { x += p[0] * Math.abs(p[1]) * R * .22; y += p[1] * Math.abs(p[0]) * R * .16; }
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.closePath();
+        ctx.strokeStyle = "rgba(242,211,145,.85)"; ctx.lineWidth = 1.8; ctx.stroke();
+        EIN.label(ctx, labels[idx], cx, h - 18, "rgba(255,255,255,.4)", 9, "center");
+      });
+      EIN.label(ctx, "Winkelsumme", w - 18, 20, "rgba(214,195,161,.5)", 9, "right");
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("triCanvas");
+    if (!c) return;
+    var K = 0;
+    var sv = document.getElementById("triK"), ro = document.getElementById("triReadout");
+    sv.oninput = function () { K = +sv.value; draw(); };
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * .5, cy = h * .5, R = Math.min(w, h) * .3;
+      function map(u, v) {
+        var x = cx + u * R, y = cy + v * R * .72;
+        if (K > 0) { x -= u * Math.abs(v) * R * .3 * K; y -= v * Math.abs(u) * R * .2 * K - R * .08 * K; }
+        if (K < 0) { x += u * Math.abs(v) * R * .3 * -K; y += v * Math.abs(u) * R * .2 * -K; }
+        return [x, y];
+      }
+      
+      for (var i = -4; i <= 4; i++) {
+        ctx.beginPath();
+        for (var j = -4; j <= 4; j++) {
+          var p = map(i / 4, j / 4);
+          if (j === -4) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+        }
+        ctx.strokeStyle = "rgba(214,195,161,.14)"; ctx.stroke();
+      }
+      for (var k = -4; k <= 4; k++) {
+        ctx.beginPath();
+        for (var m = -4; m <= 4; m++) {
+          var p2 = map(m / 4, k / 4);
+          if (m === -4) ctx.moveTo(p2[0], p2[1]); else ctx.lineTo(p2[0], p2[1]);
+        }
+        ctx.strokeStyle = "rgba(214,195,161,.14)"; ctx.stroke();
+      }
+      
+      var pts = [map(-.75, .55), map(.75, .55), map(0, -.7)];
+      ctx.beginPath();
+      pts.forEach(function (p, i) { if (i === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]); });
+      ctx.closePath();
+      ctx.strokeStyle = "rgba(242,211,145,.95)"; ctx.lineWidth = 2; ctx.stroke();
+      pts.forEach(function (p, i) {
+        ctx.fillStyle = "rgba(242,211,145,.9)"; ctx.beginPath(); ctx.arc(p[0], p[1], 3, 0, EIN.TAU); ctx.fill();
+        EIN.label(ctx, ["α", "β", "γ"][i], p[0] + 8, p[1] - 8, "rgba(255,255,255,.55)", 10);
+      });
+      var sum = 180 + K * 18 + (K < 0 ? K * 4 : 0);
+      ro.textContent = (K === 0 ? "eben" : (K > 0 ? "positiv" : "negativ")) + " · " + Math.round(sum) + "°";
+      document.getElementById("triKVal").textContent = K.toFixed(1);
+    }
+    EIN.onResize(c, draw); draw();
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("axCanvas");
+    if (!c) return;
+    var pure = true;
+    var pb = document.getElementById("axPure"), fb = document.getElementById("axPhys"), ro = document.getElementById("axReadout");
+    function set(m) {
+      pure = m === "p";
+      pb.classList.toggle("on", pure); fb.classList.toggle("on", !pure);
+      ro.textContent = pure ? "leere Begriffe" : "reale Maßstäbe";
+    }
+    pb.onclick = function () { set("p"); };
+    fb.onclick = function () { set("f"); };
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      if (pure) {
+        
+        ctx.strokeStyle = "rgba(214,195,161,.5)"; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(w * .25, h * .65); ctx.lineTo(w * .5, h * .25); ctx.lineTo(w * .75, h * .65); ctx.closePath(); ctx.stroke();
+        var labels = ["A", "B", "C"];
+        [[w * .25, h * .65], [w * .5, h * .25], [w * .75, h * .65]].forEach(function (p, i) {
+          EIN.label(ctx, labels[i], p[0] + 8, p[1] - 8, "rgba(255,255,255,.45)", 10);
+        });
+        EIN.label(ctx, "Punkt, Gerade, Abstand", w * .5, h * .82, "rgba(214,195,161,.5)", 9, "center");
+        EIN.label(ctx, "keine Erfahrung", w * .5, h * .12, "rgba(255,255,255,.3)", 9, "center");
+      } else {
+        
+        var ax = w * .25, ay = h * .65, bx = w * .5, by = h * .25, cx = w * .75, cy = h * .65;
+        ctx.strokeStyle = "rgba(242,211,145,.75)"; ctx.lineWidth = 5;
+        ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.lineTo(cx, cy); ctx.closePath(); ctx.stroke();
+        ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.lineWidth = 1;
+        for (var i = 0; i < 8; i++) {
+          var t2 = i / 8;
+          ctx.beginPath(); ctx.moveTo(ax + (bx - ax) * t2, ay + (by - ay) * t2); ctx.lineTo(ax + (bx - ax) * t2 + 2, ay + (by - ay) * t2 - 6); ctx.stroke();
+        }
+        EIN.label(ctx, "Maßstäbe, Licht, Uhren", w * .5, h * .82, "rgba(242,211,145,.65)", 9, "center");
+        EIN.label(ctx, "Erfahrung", w * .5, h * .12, "rgba(255,255,255,.4)", 9, "center");
+      }
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("poincareCanvas");
+    if (!c) return;
+    var geo = true;
+    var gb = document.getElementById("poinGeo"), pb = document.getElementById("poinPhys"), ro = document.getElementById("poincareReadout");
+    function set(m) {
+      geo = m === "g";
+      gb.classList.toggle("on", geo); pb.classList.toggle("on", !geo);
+      ro.textContent = geo ? "G ändern · P festhalten" : "P ändern · G festhalten";
+    }
+    gb.onclick = function () { set("g"); };
+    pb.onclick = function () { set("p"); };
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * .5, cy = h * .5, R = Math.min(w, h) * .28;
+      
+      ctx.strokeStyle = "rgba(255,255,255,.15)"; ctx.lineWidth = 1;
+      for (var i = -3; i <= 3; i++) {
+        var y = cy + i / 3 * R * .8;
+        ctx.beginPath(); ctx.moveTo(cx - R, y); ctx.lineTo(cx + R, y); ctx.stroke();
+      }
+      
+      var pts = [[-0.8, .55], [.8, .55], [0, -.7]];
+      ctx.beginPath();
+      pts.forEach(function (p, i) {
+        var x = cx + p[0] * R, y = cy + p[1] * R * .8;
+        if (geo) { y -= (p[0] * p[0]) * R * .06; }
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+      ctx.strokeStyle = "rgba(214,195,161,.9)"; ctx.lineWidth = 2; ctx.stroke();
+      
+      if (!geo) {
+        ctx.strokeStyle = "rgba(242,211,145,.5)"; ctx.lineWidth = 1;
+        for (var k = -3; k <= 3; k++) {
+          ctx.beginPath();
+          for (var x = cx - R; x <= cx + R; x += 4) {
+            var yy = cy + k / 3 * R * .8 + Math.sin(x * .05 + k) * 3;
+            if (x === cx - R) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
+          }
+          ctx.stroke();
+        }
+      }
+      EIN.label(ctx, "α + β + γ ≈ 183°", cx, cy + R + 26, "rgba(255,255,255,.6)", 10, "center");
+      EIN.label(ctx, geo ? "Raum ist gekrümmt" : "Maßstäbe sind verzerrt", cx, 20, geo ? "rgba(214,195,161,.75)" : "rgba(242,211,145,.75)", 10, "center");
+      var pulse = .5 + .5 * Math.sin(t * 1.6);
+      ctx.fillStyle = "rgba(255,255,255," + (0.1 + pulse * .1) + ")";
+      ctx.beginPath(); ctx.arc(cx, cy + R + 46, 2, 0, EIN.TAU); ctx.fill();
+    });
+  })();
+})();
+
+</script>
+</body>
+</html>

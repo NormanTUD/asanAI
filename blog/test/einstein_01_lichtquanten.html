@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Das Licht ist körnig — Einstein, visualisiert</title>
+<meta name="description" content="Einstein nimmt Maxwells glatte Lichtwelle ernst — und zerbricht sie in endliche Energiepakete. Aus einem Rechentrick wird der Photonbegriff.">
+<style>
+:root{
+  --bg:#07070b;
+  --bg-2:#0b0b12;
+  --panel:rgba(255,255,255,.038);
+  --panel-2:rgba(255,255,255,.026);
+  --ink:#ece9e1;
+  --muted:#a8a397;
+  --dim:#6f6b63;
+  --line:rgba(255,255,255,.085);
+  --line-strong:rgba(255,255,255,.16);
+  --accent:#e8b45a;
+  --accent-soft:rgba(232,180,90,.16);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  --math:"Latin Modern Math","STIX Two Math","Cambria Math",Cambria,Georgia,serif;
+  --col:72ch;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:17px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(900px 620px at 78% -8%,var(--accent-soft),transparent 62%),
+    radial-gradient(700px 500px at 8% 18%,rgba(120,140,255,.055),transparent 65%),
+    linear-gradient(180deg,#08080d 0%,#07070b 45%,#06060a 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+::selection{background:var(--accent);color:#111}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:rgba(255,255,255,.05)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#fff6d8);box-shadow:0 0 14px var(--accent);transition:width .08s linear}
+.topbar{
+  position:fixed;top:2px;left:0;right:0;z-index:55;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:12px clamp(16px,3vw,38px);
+  background:linear-gradient(180deg,rgba(7,7,11,.92),rgba(7,7,11,.55) 70%,transparent);
+  backdrop-filter:blur(10px);
+}
+.brand{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--muted);
+  white-space:nowrap;text-transform:uppercase;
+}
+.brand:hover{color:var(--ink);text-decoration:none}
+#sectionNav{display:flex;gap:4px;overflow:auto;scrollbar-width:none;mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
+#sectionNav::-webkit-scrollbar{display:none}
+#sectionNav a{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);
+  padding:5px 8px;border-radius:99px;white-space:nowrap;transition:.25s var(--ease);
+}
+#sectionNav a:hover{color:var(--ink);text-decoration:none;background:rgba(255,255,255,.05)}
+#sectionNav a.on{color:var(--accent);background:var(--accent-soft)}
+main{position:relative}
+.hero{
+  position:relative;min-height:clamp(520px,82vh,820px);display:flex;align-items:flex-end;
+  padding:120px clamp(20px,5vw,64px) clamp(48px,8vh,90px);
+  overflow:hidden;
+}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:18px;
+}
+.kicker::before{content:"";width:28px;height:1px;background:var(--accent);opacity:.7}
+h1{
+  font-family:var(--serif);font-weight:400;font-size:clamp(2.35rem,6.2vw,5.6rem);
+  line-height:1.02;letter-spacing:-.025em;margin:0 0 22px;max-width:17ch;
+  text-wrap:balance;
+}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{font-size:clamp(1.02rem,1.7vw,1.28rem);line-height:1.55;color:#cfcac0;max-width:56ch;margin:0 0 18px}
+.epigraph{
+  font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--muted);
+  max-width:52ch;margin:0 0 22px;padding-left:16px;border-left:1px solid var(--line-strong);
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.meta b{color:var(--muted);font-weight:400}
+.scroll-hint{
+  position:absolute;right:clamp(20px,5vw,64px);bottom:28px;z-index:2;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--dim);
+  writing-mode:vertical-rl;display:flex;align-items:center;gap:10px;
+}
+.scroll-hint::after{content:"";width:1px;height:38px;background:linear-gradient(var(--accent),transparent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.chapter{padding:clamp(58px,9vh,110px) 0;border-top:1px solid var(--line);position:relative}
+.chapter-head{display:grid;grid-template-columns:64px minmax(0,1fr);gap:clamp(10px,2vw,26px);margin-bottom:clamp(26px,4vw,44px);align-items:start}
+.chapter-num{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--accent);
+  padding-top:9px;border-top:1px solid var(--accent);
+}
+.chapter h2{
+  font-family:var(--serif);font-weight:400;font-size:clamp(1.65rem,3.1vw,2.65rem);
+  line-height:1.12;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;
+}
+.chapter h3{font-family:var(--serif);font-weight:400;font-size:1.32rem;margin:0 0 10px;letter-spacing:-.01em}
+.chapter .sub{color:var(--muted);max-width:62ch;margin:0;font-size:1rem}
+.prose{max-width:var(--col);color:#cfcac0}
+.prose p{margin:0 0 1.05em}
+.prose p:last-child{margin-bottom:0}
+.prose strong{color:var(--ink);font-weight:600}
+.prose em{color:#e3ded4}
+.prose ul,.prose ol{margin:.2em 0 1.1em;padding-left:1.25em}
+.prose li{margin:.32em 0}
+.prose code{font-family:var(--mono);font-size:.86em;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px}
+.lead{font-size:1.12rem;line-height:1.62;color:#dcd7cd}
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,56px);align-items:center}
+.split.wide-left{grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr)}
+.split.wide-right{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:16px;padding:22px;
+  position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.35}
+.card h4{font-family:var(--sans);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:0 0 9px;font-weight:600}
+.card p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.58}
+.card .big{font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.2;margin-bottom:8px}
+.stage{
+  position:relative;background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.stage canvas{display:block;width:100%;height:100%}
+.stage .label{
+  position:absolute;left:14px;top:12px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);pointer-events:none;
+}
+.stage .readout{
+  position:absolute;right:14px;top:12px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.06em;color:var(--accent);pointer-events:none;
+}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:14px 0 0}
+.control{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--muted)}
+.control input[type=range]{
+  -webkit-appearance:none;appearance:none;width:clamp(110px,18vw,190px);height:2px;background:var(--line-strong);outline:none;border-radius:2px;
+}
+.control input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--accent);border:2px solid #111;box-shadow:0 0 0 3px var(--accent-soft);cursor:pointer;
+}
+.control input[type=range]::-moz-range-thumb{width:11px;height:11px;border:2px solid #111;border-radius:50%;background:var(--accent);cursor:pointer}
+.control .val{min-width:52px;color:var(--ink);font-variant-numeric:tabular-nums}
+.btn{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 14px;border-radius:99px;border:1px solid var(--line-strong);
+  background:transparent;color:var(--ink);cursor:pointer;transition:.2s var(--ease);
+}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.btn.on{background:var(--accent);color:#111;border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:0}
+.formula{
+  font-family:var(--math);font-size:clamp(1.05rem,2vw,1.38rem);line-height:1.85;
+  color:#f1ede4;background:rgba(255,255,255,.028);border:1px solid var(--line);
+  border-left:2px solid var(--accent);border-radius:0 12px 12px 0;
+  padding:18px 22px;margin:18px 0;overflow-x:auto;
+}
+.formula .small{font-size:.62em;color:var(--muted)}
+.formula-note{font-family:var(--sans);font-size:.78rem;color:var(--dim);margin-top:8px;letter-spacing:0}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .18em;line-height:1.15}
+.frac .num{border-bottom:1px solid currentColor;padding:0 .18em}
+.frac .den{padding:.08em .18em 0}
+.sqrt{border-top:1px solid currentColor;padding:0 .12em}
+.takeaways{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:26px}
+.takeaway{
+  background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.015));
+  border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+  border-radius:14px;padding:18px 18px 16px;position:relative;
+}
+.takeaway .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:7px}
+.takeaway p{margin:0;font-size:.9rem;line-height:1.55;color:#d8d3c9}
+.quote{
+  font-family:var(--serif);font-style:italic;font-size:clamp(1.15rem,2.1vw,1.45rem);
+  line-height:1.5;color:#e6e1d6;margin:28px 0;padding:0 0 0 22px;border-left:1px solid var(--accent);
+  max-width:60ch;
+}
+.quote cite{display:block;font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:12px}
+.timeline{position:relative;margin:20px 0;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:1px;background:linear-gradient(var(--accent),var(--line))}
+.timeline .t{position:relative;padding:0 0 20px}
+.timeline .t::before{content:"";position:absolute;left:-22px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.timeline .y{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent);display:block}
+.timeline .t p{margin:2px 0 0;font-size:.92rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);padding:4px 9px;border-radius:99px;margin:0 6px 6px 0}
+.quiz{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel);margin-top:26px}
+.quiz .q{font-family:var(--serif);font-size:1.1rem;margin:0 0 14px;color:var(--ink)}
+.quiz-options{display:grid;gap:8px}
+.quiz-option{
+  text-align:left;font-family:var(--sans);font-size:.9rem;color:#cfcac0;
+  padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:transparent;cursor:pointer;transition:.2s var(--ease);
+}
+.quiz-option:hover{border-color:var(--line-strong);background:rgba(255,255,255,.04)}
+.quiz-option.ok{border-color:#57c785;background:rgba(87,199,133,.12);color:#d8ffe8}
+.quiz-option.no{border-color:#e26868;background:rgba(226,104,104,.1);color:#ffdada}
+.quiz-explain{font-size:.86rem;color:var(--muted);margin:12px 0 0;display:none;line-height:1.55}
+.quiz-explain.show{display:block}
+.sources{border-top:1px solid var(--line);padding:34px 0 60px;color:var(--dim);font-size:.83rem}
+.sources h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.sources p{margin:0 0 8px;max-width:80ch}
+.sources a{color:var(--muted);border-bottom:1px solid var(--line-strong)}
+.sources a:hover{color:var(--accent);text-decoration:none}
+.prevnext{display:flex;justify-content:space-between;gap:16px;padding:26px 0 0;border-top:1px solid var(--line);margin-top:34px}
+.prevnext a{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);display:flex;flex-direction:column;gap:3px;max-width:45%}
+.prevnext a:hover{color:var(--accent);text-decoration:none}
+.prevnext a span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.prevnext .right{text-align:right;margin-left:auto}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.mono{font-family:var(--mono);font-size:.82em;letter-spacing:.02em}
+.dim{color:var(--dim)}
+.accent{color:var(--accent)}
+.center{text-align:center}
+.mt0{margin-top:0}.mt1{margin-top:10px}.mt2{margin-top:20px}.mt3{margin-top:34px}
+.hr{height:1px;background:var(--line);border:0;margin:30px 0}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+footer{color:var(--dim);font-size:.78rem}
+.foot-inner{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 50px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:900px){
+  .split,.split.wide-left,.split.wide-right,.grid2,.grid3{grid-template-columns:1fr}
+  .chapter-head{grid-template-columns:40px minmax(0,1fr)}
+  .topbar{gap:10px}
+  #sectionNav{display:none}
+  h1{max-width:20ch}
+}
+@media(max-width:560px){
+  body{font-size:16px}
+  .hero{min-height:620px;padding-top:96px}
+  .chapter-head{grid-template-columns:1fr;gap:8px}
+  .chapter-num{border-top:0;padding:0}
+  .controls{gap:10px 14px}
+  .scroll-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  .topbar,.progress,#heroCanvas,.scroll-hint{display:none}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#111}
+  .card,.stage,.formula{border-color:#ddd}
+}
+
+/* index work cards */
+.work{display:block;color:var(--ink);text-decoration:none;transition:transform .35s var(--ease),border-color .35s var(--ease),background .35s var(--ease)}
+.work:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--accent) 55%,transparent);text-decoration:none;background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.02))}
+.work-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim)}
+.work-no{color:var(--accent)}
+.work-year{border:1px solid var(--line);padding:3px 7px;border-radius:99px}
+.work h4{color:var(--accent);margin-bottom:6px}
+.work .work-title{font-family:var(--serif);font-size:1.28rem;line-height:1.18;color:var(--ink);margin:0 0 9px;letter-spacing:-.01em}
+.work p{font-size:.88rem;color:var(--muted);line-height:1.55}
+.work-go{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+</style>
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body style="--accent:#e8b45a;--accent-soft:rgba(232,180,90,.17)">
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <a class="brand" href="einstein_index.html">Einstein · visualisiert</a>
+  <nav id="sectionNav" aria-label="Abschnitte"></nav>
+</header>
+<main>
+<section class="hero" id="top">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">Annus Mirabilis · 1905 · Annalen der Physik 17</div>
+    <h1>Das Licht ist <em>körnig</em></h1>
+    <p class="lede">Einstein nimmt Maxwells glatte Lichtwelle ernst — und zerbricht sie in endliche Energiepakete. Aus einem Rechentrick wird der Photonbegriff.</p>
+    <p class="epigraph">„…eine endliche Zahl von in Raumpunkten lokalisierten Energiequanten, welche sich bewegen, ohne sich zu teilen und nur als Ganze absorbiert und erzeugt werden können.“</p>
+    <div class="meta"><span><b>Original</b> Über einen die Erzeugung und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt</span><span><b>Empfangen</b> 18. März 1905</span><span><b>Umfang</b> 17 Seiten</span></div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</section>
+
+
+<div class="wrap">
+<section class="chapter" id="wellenbild">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">01</div>
+    <div>
+      <h2>Der Riss im Weltbild</h2>
+      <p class="sub">Zwei Physiken, die nicht zueinander passen: diskrete Materie hier, kontinuierliches Feld dort.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p class="lead">Maxwells Elektrodynamik beschreibt Licht als Welle: Die Energie verteilt sich stetig über den Raum, wie ein Tintenfleck im Wasser. Materie dagegen besteht für die Physiker des Jahres 1905 aus Atomen und Elektronen — endlich viele, klar abzählbare Dinge.</p>
+      <p>Einstein beginnt seinen Aufsatz mit genau dieser Spannung. Die Wellentheorie erklärt Beugung, Reflexion und Brechung glänzend. Aber sie erklärt nicht, <em>wie Licht entsteht und wie es sich verwandelt</em>: beim photoelektrischen Effekt, bei der Photolumineszenz, bei der Ionisierung von Gasen.</p>
+      <p>Seine Vermutung: Die Wellenbeschreibung liefert nur <strong>zeitliche Mittelwerte</strong>. Im Einzelakt verhält sich Licht wie eine Ansammlung unteilbarer Pakete.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:300px">
+        <span class="label">Welle ↔ Quant</span>
+        <span class="readout" id="wpReadout">kontinuierlich</span>
+        <canvas id="waveParticle"></canvas>
+      </div>
+      <div class="controls">
+        <button class="btn on" id="wpWave">Welle</button>
+        <button class="btn" id="wpQuant">Quanten</button>
+        <label class="control">Frequenz <input type="range" id="wpFreq" min="0" max="100" value="52" data-out="wpFreqVal" data-format="0"><span class="val" id="wpFreqVal">52</span></label>
+      </div>
+    </div>
+  </div>
+  <div class="grid3 mt3">
+    <div class="card reveal"><h4>Die Welle kann</h4><p>Interferenz, Beugung, Dispersion, Polarisation — präzise und universell. Niemand will sie abschaffen.</p></div>
+    <div class="card reveal"><h4>Die Welle kann nicht</h4><p>Erklären, warum UV-Licht Elektronen herausschlägt, rotes Licht aber nicht — egal wie hell es ist.</p></div>
+    <div class="card reveal"><h4>Der Verdacht</h4><p>Vielleicht ist die Strahlungsenergie räumlich diskontinuierlich verteilt: endlich viele, lokalisierte Quanten.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="planck">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">02</div>
+    <div>
+      <h2>Planck rechnet — Einstein glaubt</h2>
+      <p class="sub">Die Strahlungsformel war nur ein Fit. Einstein nimmt das diskrete Energieelement wörtlich.</p>
+    </div>
+  </div>
+  <div class="split wide-left">
+    <div class="prose reveal">
+      <p>1900 hatte Max Planck eine Formel gefunden, die das Spektrum des schwarzen Körpers perfekt beschreibt. Um sie zu begründen, musste er die Energie der Wandoszillatoren in Portionen <span class="mono">hν</span> einteilen — und hielt das zunächst für einen formalen Trick.</p>
+      <p>Einstein geht weiter: Das Energieelement gehört nicht nur zum Oszillator, sondern <strong>zum Lichtfeld selbst</strong>. Im Wien-Bereich (hohe Frequenz, kleine Dichte) verhält sich monochromatische Strahlung thermodynamisch wie ein Gas aus unabhängigen Teilchen der Energie</p>
+      <div class="formula">E = hν = <span class="frac"><span class="num">R</span><span class="den">N</span></span> βν
+        <div class="formula-note">R/N ist die Boltzmann-Konstante; β ist Plancks Strahlungskonstante. In heutiger Schreibweise: E = hν.</div>
+      </div>
+      <p>Die Zahl <span class="mono">N</span> ist die Avogadro-Zahl. Einstein kann sie aus der Strahlungsformel ablesen — ein früher Beweis, dass die Quantenhypothese nicht nur ein Bild, sondern eine Messmethode ist.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:340px">
+        <span class="label">Plancksches Spektrum</span>
+        <span class="readout" id="planckPeak">λmax ≈ 966 nm</span>
+        <canvas id="planckPlot"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Temperatur <input type="range" id="planckT" min="2500" max="10000" step="100" value="3000" data-out="planckTVal" data-format="0"><span class="val" id="planckTVal">3000</span> K</label>
+      </div>
+      <div class="legend"><span><i style="background:#e8b45a"></i>Spektrum</span><span><i style="background:#7f9cff"></i>sichtbar</span><span><i style="background:#fff"></i>Maximum</span></div>
+    </div>
+  </div>
+  <div class="quote reveal">„Je größer die Energiedichte und die Wellenlänge einer Strahlung ist, als um so brauchbarer erweisen sich die von uns benutzten theoretischen Grundlagen; für kleine Wellenlängen und kleine Strahlungsdichten aber versagen dieselben vollständig.“<cite>Einstein 1905, § 2</cite></div>
+</section>
+
+<section class="chapter" id="entropie">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">03</div>
+    <div>
+      <h2>Entropie zählt Möglichkeiten</h2>
+      <p class="sub">Der entscheidende Schritt ist statistisch: Wie viele Plätze kann sich ein Energiepaket aussuchen?</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p>Einstein berechnet, wie die Entropie einer monochromatischen Strahlung vom Volumen abhängt. Das Ergebnis sieht aus wie bei einem idealen Gas: <span class="mono">S − S₀ = (E/hν) · k · ln(V/V₀)</span>.</p>
+      <p>Boltzmanns Prinzip <span class="mono">S = k ln W</span> liest das als Wahrscheinlichkeit: Wenn sich <span class="mono">n</span> unabhängige Energiequanten zufällig im Volumen verteilen, ist die Wahrscheinlichkeit, alle in einem Teilvolumen <span class="mono">v</span> zu finden, gerade <span class="mono">(v/v₀)ⁿ</span>.</p>
+      <p><strong>Das ist der ganze Trick.</strong> Keine neue Dynamik, keine Äthermechanik — nur Abzählen. Und das Abzählen funktioniert nur, wenn die Energie in endlichen Portionen vorkommt.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Teilvolumen v / v₀</span>
+        <span class="readout" id="boxReadout">v/v₀ = 0.50</span>
+        <canvas id="boxPlot"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Volumen <input type="range" id="boxV" min="5" max="100" value="50" data-out="boxVVal" data-format="0"><span class="val" id="boxVVal">50</span>%</label>
+        <button class="btn" id="boxReset">neu mischen</button>
+      </div>
+      <div class="legend"><span><i style="background:#e8b45a"></i>Quant im Teilvolumen</span><span><i style="background:#555"></i>außerhalb</span></div>
+    </div>
+  </div>
+  <div class="formula reveal">W = (v/v₀)<sup>n</sup> &nbsp;&nbsp;⇒&nbsp;&nbsp; S − S₀ = k<sub>B</sub> n ln(v/v₀)
+    <div class="formula-note">n = E/(hν) ist die Anzahl der Quanten. Die Entropie sinkt, wenn sich alle Quanten in ein kleineres Volumen quetschen.</div>
+  </div>
+</section>
+
+<section class="chapter" id="photoeffekt">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">04</div>
+    <div>
+      <h2>Der Photoeffekt: Frequenz schlägt Helligkeit</h2>
+      <p class="sub">Ein Lichtquant gibt seine ganze Energie an ein einziges Elektron ab. Daraus folgt eine Gerade — und eine neue Naturkonstante.</p>
+    </div>
+  </div>
+  <div class="split wide-right">
+    <div class="reveal">
+      <div class="stage" style="height:360px">
+        <span class="label">Metallplatte · Vakuum</span>
+        <span class="readout" id="peReadout">λ = 400 nm · E = 3.10 eV</span>
+        <canvas id="photoStage"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Wellenlänge <input type="range" id="peLambda" min="200" max="700" value="400" data-out="peLambdaVal" data-format="0"><span class="val" id="peLambdaVal">400</span> nm</label>
+        <label class="control">Intensität <input type="range" id="peIntensity" min="5" max="100" value="55" data-out="peIntVal" data-format="0"><span class="val" id="peIntVal">55</span>%</label>
+      </div>
+      <div class="stage mt2" style="height:190px">
+        <span class="label">Gegenfeld-Spannung</span>
+        <canvas id="photoGraph"></canvas>
+      </div>
+      <div class="legend"><span><i style="background:#e8b45a"></i>Photonen</span><span><i style="background:#7f9cff"></i>Elektronen</span><span><i style="background:#e26868"></i>Austrittsarbeit W</span></div>
+    </div>
+    <div class="prose reveal">
+      <p>Die Wellentheorie sagt: Mehr Intensität, mehr Energie — irgendwann müssen Elektronen herauskommen. Die Messung sagt etwas anderes. Bei rotem Licht kommen sie nie, selbst bei größter Helligkeit. Bei UV kommen sie sofort, selbst bei schwächstem Licht.</p>
+      <p>Einsteins Bild: Ein Quant der Energie <span class="mono">hν</span> wird absorbiert. Ein Teil davon wird gebraucht, um das Elektron aus dem Metall zu lösen (<span class="mono">W</span>). Der Rest wird kinetische Energie.</p>
+      <div class="formula">E<sub>kin,max</sub> = hν − W
+        <div class="formula-note">Äquivalent: eU₀ = hν − W. Die Steigung im Diagramm ist h/e — unabhängig vom Material.</div>
+      </div>
+      <p>Intensität ändert nur die <strong>Anzahl</strong> der Quanten, nicht ihre Energie. Deshalb wächst der Strom, aber nicht die maximale Elektronengeschwindigkeit. Genau das beobachtete Philipp Lenard.</p>
+      <p>Einstein nennt die Form „heuristisch“ — als Hypothese, nicht als fertige Theorie. Die Bestätigung durch Millikan dauerte bis 1916.</p>
+    </div>
+  </div>
+  <div class="grid2 mt3">
+    <div class="card reveal"><h4>Beobachtung 1</h4><p class="big">Mehr Licht → mehr Elektronen</p><p>Die Anzahl der ausgelösten Elektronen ist proportional zur Intensität.</p></div>
+    <div class="card reveal"><h4>Beobachtung 2</h4><p class="big">Höhere Frequenz → schnellere Elektronen</p><p>Die maximale kinetische Energie hängt linear von ν ab, nicht von der Intensität.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="folgen">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">05</div>
+    <div>
+      <h2>Eine Kette von Folgen</h2>
+      <p class="sub">Einstein zieht aus demselben Quant sofort mehrere Prüfungen: Lumineszenz, Stokes-Regel, Ionisierung.</p>
+    </div>
+  </div>
+  <div class="grid3">
+    <div class="card reveal"><h4>Stokes-Regel</h4><p>Ein erzeugendes Quant kann höchstens ein neues Quant mit <span class="mono">ν′ ≤ ν</span> anregen. Das ausgesandte Licht ist langwelliger. Die Quantenbilanz erklärt die Regel — und ihre Ausnahmen.</p></div>
+    <div class="card reveal"><h4>Photolumineszenz</h4><p>Bei schwacher Belichtung wirkt jedes Quant für sich. Die Lichtmenge wächst proportional zur Anregung — ohne untere Intensitätsschwelle.</p></div>
+    <div class="card reveal"><h4>Ionisierung</h4><p>Ein absorbiertes Quant kann ein Gasmolekül ionisieren, wenn <span class="mono">hν</span> größer ist als die Ionisierungsarbeit. Auch hier: eine scharfe Frequenzschwelle.</p></div>
+  </div>
+  <div class="timeline mt3">
+    <div class="t reveal"><span class="y">1905</span><p>Einstein: Lichtenergie ist in Quanten lokalisiert. Die Arbeit bleibt „heuristisch“.</p></div>
+    <div class="t reveal"><span class="y">1916</span><p>Millikan bestätigt die lineare Beziehung <span class="mono">E_kin = hν − W</span> und bestimmt h.</p></div>
+    <div class="t reveal"><span class="y">1923</span><p>Compton zeigt, dass Photonen Impuls tragen und wie Teilchen streuen.</p></div>
+    <div class="t reveal"><span class="y">1927</span><p>Quantenmechanik: Welle und Teilchen sind zwei Beschreibungen desselben Zustands.</p></div>
+    <div class="t reveal"><span class="y">Heute</span><p>Photomultiplier, Solarzellen, Laser, Quantenoptik — das Photon ist Alltagstechnik.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="mitnehmen">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">06</div>
+    <div>
+      <h2>Was du mitnimmst</h2>
+      <p class="sub">Drei Ideen, die diesen Aufsatz über die Physik hinaus tragen.</p>
+    </div>
+  </div>
+  <div class="takeaways">
+    <div class="takeaway reveal"><span class="n">01 · ZÄHLEN STATT BEHAUPTEN</span><p>Einstein führt keine neue Kraft ein. Er zählt Zustände und vergleicht Entropien. Die Diskontinuität fällt aus der Statistik heraus.</p></div>
+    <div class="takeaway reveal"><span class="n">02 · DIE FORMEL IST EIN TEST</span><p>Wenn <span class="mono">E_kin = hν − W</span> stimmt, muss die Kurve eine Gerade sein, deren Steigung nur von h abhängt. Genau das macht die Hypothese prüfbar.</p></div>
+    <div class="takeaway reveal"><span class="n">03 · BILDER SIND WERKZEUGE</span><p>Einstein nennt seine Quanten „heuristisch“. Ein Bild muss nicht endgültig wahr sein, um die richtige Frage zu stellen.</p></div>
+  </div>
+  <div class="quiz reveal" data-answer="1">
+    <p class="q">Warum kommen bei rotem Licht keine Elektronen aus der Metallplatte, egal wie hell es ist?</p>
+    <div class="quiz-options">
+      <button class="quiz-option">Weil rotes Licht von Metall stärker reflektiert wird.</button>
+      <button class="quiz-option">Weil ein einzelnes rotes Photon die Austrittsarbeit nicht überwindet.</button>
+      <button class="quiz-option">Weil die Elektronen bei roter Farbe zu langsam schwingen.</button>
+      <button class="quiz-option">Weil die Platte bei niedriger Frequenz elektrisch aufgeladen wird.</button>
+    </div>
+    <p class="quiz-explain">Entscheidend ist die Energie pro Quant, hν. Intensität erhöht nur die Zahl der Photonen, nicht die Energie des einzelnen Quants. Liegt hν unter W, passiert nichts.</p>
+  </div>
+  <div class="prevnext">
+    <a href="einstein_index.html"><span>Übersicht</span>Alle Werke</a>
+    <a class="right" href="einstein_02_brownsche-bewegung.html"><span>Weiter</span>Die Brownsche Bewegung →</a>
+  </div>
+</section>
+</div>
+
+<section class="sources">
+  <div class="wrap">
+    <h3>Quelle &amp; Weiterlesen</h3>
+    <p>A. Einstein, <em>Über einen die Erzeugung und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt</em>, Annalen der Physik 17 (1905), 132–148. Public Domain. Faksimile: <a href="https://archive.org/details/annalenderphysi108unkngoog" target="_blank" rel="noopener">archive.org</a>.</p>
+    <p>Die Zahlenwerte im interaktiven Modul sind gerundete Lehrbuchwerte (h = 6,626·10⁻³⁴ J·s, W = 2,2 eV) und dienen der Anschauung, nicht der Messung.</p>
+  </div>
+</section>
+
+
+</main>
+<footer>
+  <div class="foot-inner">
+    <span>Einstein · visualisiert</span>
+    <span>Quelle: Annalen der Physik 17 (1905), 132–148 · Public Domain</span>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var EIN = window.EIN = {};
+
+  EIN.clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  EIN.lerp = function (a, b, t) { return a + (b - a) * t; };
+  EIN.ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+  EIN.TAU = Math.PI * 2;
+
+  EIN.css = function (name) {
+    return getComputedStyle(document.body).getPropertyValue(name).trim();
+  };
+
+  EIN.fit = function (canvas) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(r.width));
+    var h = Math.max(1, Math.round(r.height));
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h, dpr: dpr };
+  };
+
+  EIN.onResize = function (canvas, draw) {
+    var raf = 0;
+    function run() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
+    if (window.ResizeObserver) new ResizeObserver(run).observe(canvas);
+    window.addEventListener("resize", run);
+    return run;
+  };
+
+  EIN.loop = function (fn) {
+    var t0 = performance.now();
+    var last = t0;
+    function frame(now) {
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      fn(Math.max(0, (now - t0) / 1000), dt);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  };
+
+  EIN.visible = function (el, onEnter, onExit) {
+    if (!el || !("IntersectionObserver" in window)) { if (onEnter) onEnter(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { if (onEnter) onEnter(); }
+        else if (onExit) onExit();
+      });
+    }, { rootMargin: "140px 0px" });
+    io.observe(el);
+  };
+
+  EIN.arrow = function (ctx, x1, y1, x2, y2, color, width) {
+    var a = Math.atan2(y2 - y1, x2 - x1);
+    var s = 7;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width || 1.4;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - s * Math.cos(a - 0.38), y2 - s * Math.sin(a - 0.38));
+    ctx.lineTo(x2 - s * Math.cos(a + 0.38), y2 - s * Math.sin(a + 0.38));
+    ctx.closePath(); ctx.fill();
+  };
+
+  EIN.label = function (ctx, text, x, y, color, size, align) {
+    ctx.fillStyle = color || "#8a857c";
+    ctx.font = (size || 10) + "px ui-monospace, SFMono-Regular, Consolas, monospace";
+    ctx.textAlign = align || "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, y);
+  };
+
+  function initProgress() {
+    var bar = document.getElementById("progressBar");
+    if (!bar) return;
+    function upd() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    }
+    window.addEventListener("scroll", upd, { passive: true });
+    window.addEventListener("resize", upd);
+    upd();
+  }
+
+  function initNav() {
+    var nav = document.getElementById("sectionNav");
+    var sections = [].slice.call(document.querySelectorAll(".chapter[id]"));
+    if (!nav || !sections.length) return;
+    sections.forEach(function (s, i) {
+      var h = s.querySelector("h2");
+      var a = document.createElement("a");
+      a.href = "#" + s.id;
+      a.textContent = h ? h.textContent.replace(/\s+/g, " ").slice(0, 26) : "0" + (i + 1);
+      nav.appendChild(a);
+    });
+    var links = [].slice.call(nav.querySelectorAll("a"));
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var i = sections.indexOf(e.target);
+        links.forEach(function (l, j) { l.classList.toggle("on", i === j); });
+      });
+    }, { rootMargin: "-20% 0px -68% 0px" });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  function initReveal() {
+    var els = [].slice.call(document.querySelectorAll(".reveal"));
+    if (!els.length) return;
+    if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    els.forEach(function (e, i) { e.style.transitionDelay = (Math.min(i % 4, 3) * 55) + "ms"; io.observe(e); });
+  }
+
+  function initRanges() {
+    [].slice.call(document.querySelectorAll("input[type=range][data-out]")).forEach(function (r) {
+      var out = document.getElementById(r.getAttribute("data-out"));
+      function upd() {
+        if (!out) return;
+        var v = parseFloat(r.value);
+        var f = r.getAttribute("data-format");
+        out.textContent = f === "int" ? Math.round(v) : v.toFixed(f ? parseInt(f, 10) : 1);
+      }
+      r.addEventListener("input", upd); upd();
+    });
+  }
+
+  function initQuiz() {
+    [].slice.call(document.querySelectorAll(".quiz")).forEach(function (quiz) {
+      var ans = parseInt(quiz.getAttribute("data-answer"), 10);
+      var opts = [].slice.call(quiz.querySelectorAll(".quiz-option"));
+      var ex = quiz.querySelector(".quiz-explain");
+      opts.forEach(function (o, i) {
+        o.addEventListener("click", function () {
+          opts.forEach(function (x) { x.classList.remove("ok", "no"); x.disabled = true; });
+          if (i === ans) { o.classList.add("ok"); }
+          else { o.classList.add("no"); opts[ans].classList.add("ok"); }
+          if (ex) ex.classList.add("show");
+        });
+      });
+    });
+  }
+
+  function boot() {
+    initProgress(); initNav(); initReveal(); initRanges(); initQuiz();
+    if (window.__pageInit) window.__pageInit();
+    document.documentElement.classList.add("ready");
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+
+</script>
+<script>
+
+(function () {
+  "use strict";
+
+  
+  (function () {
+    var c = document.getElementById("heroCanvas");
+    if (!c) return;
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var base = h * 0.52, mid = w * 0.56;
+      ctx.strokeStyle = "rgba(232,180,90,.10)";
+      ctx.lineWidth = 1;
+      for (var gx = 0; gx < w; gx += 46) {
+        ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+      }
+      
+      for (var k = 0; k < 7; k++) {
+        ctx.beginPath();
+        for (var x = 0; x < mid; x += 3) {
+          var env = Math.sin((x / mid) * Math.PI);
+          var y = base + Math.sin(x * 0.035 + t * 1.6 + k * 0.5) * 34 * env * (1 - k * 0.08)
+                    + Math.sin(x * 0.012 - t * 0.9 + k) * 13 * env;
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = "rgba(232,180,90," + (0.08 + k * 0.018) + ")";
+        ctx.lineWidth = 1.1;
+        ctx.stroke();
+      }
+      
+      var grd = ctx.createLinearGradient(mid - 40, 0, mid + 40, 0);
+      grd.addColorStop(0, "rgba(232,180,90,0)"); grd.addColorStop(.5, "rgba(232,180,90,.55)"); grd.addColorStop(1, "rgba(232,180,90,0)");
+      ctx.fillStyle = grd; ctx.fillRect(mid - 40, 0, 80, 1.2);
+      ctx.fillStyle = grd; ctx.fillRect(mid - 40, h - 1, 80, 1.2);
+      
+      for (var i = 0; i < 46; i++) {
+        var seed = i * 97.13;
+        var px = mid + 35 + ((seed + t * (26 + (i % 5) * 4)) % (w - mid - 20));
+        var py = (h * 0.5) + Math.sin(seed * 1.7 + i) * h * 0.26 + Math.cos(t * 0.7 + i) * 8;
+        var r = 1.6 + (i % 4) * 0.55;
+        var a = 0.35 + 0.4 * Math.abs(Math.sin(t * 1.2 + i));
+        var rg = ctx.createRadialGradient(px, py, 0, px, py, r * 7);
+        rg.addColorStop(0, "rgba(255,225,160," + (a * 0.9) + ")");
+        rg.addColorStop(.25, "rgba(232,180,90," + (a * 0.45) + ")");
+        rg.addColorStop(1, "rgba(232,180,90,0)");
+        ctx.fillStyle = rg;
+        ctx.beginPath(); ctx.arc(px, py, r * 7, 0, EIN.TAU); ctx.fill();
+        ctx.fillStyle = "rgba(255,240,205," + a + ")";
+        ctx.beginPath(); ctx.arc(px, py, r, 0, EIN.TAU); ctx.fill();
+      }
+      ctx.fillStyle = "rgba(232,180,90,.55)";
+      ctx.font = "10px ui-monospace, monospace";
+      ctx.fillText("MAXWELL", 20, h - 26);
+      ctx.fillText("E = hν", w - 78, h - 26);
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("waveParticle");
+    if (!c) return;
+    var quant = false, freq = 52;
+    var wb = document.getElementById("wpWave"), qb = document.getElementById("wpQuant");
+    var fr = document.getElementById("wpFreq"), fv = document.getElementById("wpFreqVal"), ro = document.getElementById("wpReadout");
+    function set(mode) {
+      quant = mode === "q";
+      wb.classList.toggle("on", !quant); qb.classList.toggle("on", quant);
+      ro.textContent = quant ? "diskret" : "kontinuierlich";
+    }
+    wb.onclick = function () { set("w"); };
+    qb.onclick = function () { set("q"); };
+    fr.oninput = function () { freq = +fr.value; fv.textContent = freq; };
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var mid = h * 0.5;
+      ctx.strokeStyle = "rgba(255,255,255,.08)";
+      ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(w, mid); ctx.stroke();
+      var lam = 18 + (100 - freq) * 0.55;
+      if (!quant) {
+        for (var k = 0; k < 5; k++) {
+          ctx.beginPath();
+          for (var x = 0; x < w; x += 2) {
+            var y = mid + Math.sin((x / lam) * EIN.TAU - t * 2 + k * .35) * (30 - k * 4);
+            if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = "rgba(232,180,90," + (0.15 + k * 0.06) + ")";
+          ctx.lineWidth = 1.2; ctx.stroke();
+        }
+        EIN.label(ctx, "Energie verteilt sich stetig", 14, 20, "rgba(232,180,90,.6)", 10);
+      } else {
+        var n = 15;
+        for (var i = 0; i < n; i++) {
+          var px = ((i * (lam * 1.15) + t * 42) % (w + 40)) - 20;
+          var py = mid + Math.sin(i * 2.4) * 26;
+          var rg = ctx.createRadialGradient(px, py, 0, px, py, 13);
+          rg.addColorStop(0, "rgba(255,235,180,.95)");
+          rg.addColorStop(.2, "rgba(232,180,90,.75)");
+          rg.addColorStop(1, "rgba(232,180,90,0)");
+          ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(px, py, 13, 0, EIN.TAU); ctx.fill();
+          ctx.fillStyle = "#fff4d8"; ctx.beginPath(); ctx.arc(px, py, 3, 0, EIN.TAU); ctx.fill();
+          ctx.strokeStyle = "rgba(232,180,90,.3)";
+          ctx.beginPath(); ctx.moveTo(px - 12, py); ctx.lineTo(px - 5, py); ctx.stroke();
+        }
+        EIN.label(ctx, "n lokalisierte Quanten", 14, 20, "rgba(232,180,90,.7)", 10);
+      }
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("planckPlot");
+    if (!c) return;
+    var T = 3000;
+    var slider = document.getElementById("planckT"), out = document.getElementById("planckTVal"), peak = document.getElementById("planckPeak");
+    function B(lam, T) {
+      var h = 6.626e-34, cc = 2.998e8, kb = 1.381e-23;
+      var l = lam * 1e-9;
+      return (2 * h * cc * cc / Math.pow(l, 5)) / (Math.exp(h * cc / (l * kb * T)) - 1);
+    }
+    slider.oninput = function () { T = +slider.value; out.textContent = T; };
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var pad = { l: 44, r: 18, t: 26, b: 34 };
+      var lamMax = 2500;
+      var maxB = B(2898 / T, T);
+      
+      var x1 = pad.l + (380 / lamMax) * (w - pad.l - pad.r);
+      var x2 = pad.l + (750 / lamMax) * (w - pad.l - pad.r);
+      ctx.fillStyle = "rgba(127,156,255,.10)";
+      ctx.fillRect(x1, pad.t, x2 - x1, h - pad.t - pad.b);
+      ctx.strokeStyle = "rgba(127,156,255,.25)";
+      ctx.beginPath(); ctx.moveTo(x1, pad.t); ctx.lineTo(x1, h - pad.b); ctx.moveTo(x2, pad.t); ctx.lineTo(x2, h - pad.b); ctx.stroke();
+      
+      ctx.strokeStyle = "rgba(255,255,255,.14)";
+      ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+      for (var l = 500; l <= lamMax; l += 500) {
+        var x = pad.l + (l / lamMax) * (w - pad.l - pad.r);
+        ctx.strokeStyle = "rgba(255,255,255,.05)";
+        ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, h - pad.b); ctx.stroke();
+        EIN.label(ctx, l + "", x, h - pad.b + 14, "rgba(255,255,255,.3)", 9, "center");
+      }
+      EIN.label(ctx, "λ (nm)", w - pad.r, h - 8, "rgba(255,255,255,.35)", 9, "right");
+      EIN.label(ctx, "Intensität", 8, pad.t - 10, "rgba(255,255,255,.35)", 9);
+      
+      ctx.beginPath();
+      for (var px = 0; px <= w - pad.l - pad.r; px += 2) {
+        var lam = (px / (w - pad.l - pad.r)) * lamMax;
+        var val = B(lam, T) / maxB;
+        var y = h - pad.b - val * (h - pad.t - pad.b - 6);
+        if (px === 0) ctx.moveTo(pad.l, y); else ctx.lineTo(pad.l + px, y);
+      }
+      var grad = ctx.createLinearGradient(pad.l, 0, w - pad.r, 0);
+      grad.addColorStop(0, "rgba(232,180,90,.25)"); grad.addColorStop(.55, "rgba(232,180,90,.95)"); grad.addColorStop(1, "rgba(255,240,205,.8)");
+      ctx.strokeStyle = grad; ctx.lineWidth = 2; ctx.stroke();
+      ctx.lineTo(w - pad.r, h - pad.b); ctx.lineTo(pad.l, h - pad.b); ctx.closePath();
+      var fill = ctx.createLinearGradient(0, pad.t, 0, h - pad.b);
+      fill.addColorStop(0, "rgba(232,180,90,.18)"); fill.addColorStop(1, "rgba(232,180,90,0)");
+      ctx.fillStyle = fill; ctx.fill();
+      
+      var lp = 2898000 / T;
+      var xp = pad.l + (lp / lamMax) * (w - pad.l - pad.r);
+      ctx.strokeStyle = "rgba(255,255,255,.35)"; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(xp, pad.t); ctx.lineTo(xp, h - pad.b); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(xp, pad.t + 7, 3, 0, EIN.TAU); ctx.fill();
+      peak.textContent = "λmax ≈ " + Math.round(lp) + " nm";
+    }
+    slider.addEventListener("input", draw);
+    EIN.onResize(c, draw); draw();
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("boxPlot");
+    if (!c) return;
+    var frac = 0.5, N = 90, pts = [], seed = 1;
+    var sv = document.getElementById("boxV"), vo = document.getElementById("boxVVal"), ro = document.getElementById("boxReadout");
+    function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    function reset() {
+      seed = Math.floor(Math.random() * 2147483000) + 1;
+      pts = [];
+      for (var i = 0; i < N; i++) pts.push({ x: rnd(), y: rnd(), vx: (rnd() - .5) * .0012, vy: (rnd() - .5) * .0012 });
+    }
+    reset();
+    sv.oninput = function () { frac = +sv.value / 100; vo.textContent = sv.value; };
+    document.getElementById("boxReset").onclick = reset;
+    EIN.loop(function (t, dt) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var box = { x: 38, y: 28, w: w - 76, h: h - 62 };
+      ctx.strokeStyle = "rgba(255,255,255,.18)"; ctx.strokeRect(box.x, box.y, box.w, box.h);
+      var vx = box.x + box.w * frac;
+      ctx.fillStyle = "rgba(232,180,90,.055)"; ctx.fillRect(box.x, box.y, vx - box.x, box.h);
+      ctx.strokeStyle = "rgba(232,180,90,.7)"; ctx.setLineDash([4, 5]);
+      ctx.beginPath(); ctx.moveTo(vx, box.y); ctx.lineTo(vx, box.y + box.h); ctx.stroke(); ctx.setLineDash([]);
+      var inside = 0;
+      for (var i = 0; i < pts.length; i++) {
+        var p = pts[i];
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > 1) p.vx *= -1;
+        if (p.y < 0 || p.y > 1) p.vy *= -1;
+        p.x = EIN.clamp(p.x, 0, 1); p.y = EIN.clamp(p.y, 0, 1);
+        var px = box.x + 4 + p.x * (box.w - 8);
+        var py = box.y + 4 + p.y * (box.h - 8);
+        var inV = p.x < frac;
+        if (inV) inside++;
+        ctx.fillStyle = inV ? "rgba(255,226,150,.95)" : "rgba(255,255,255,.2)";
+        ctx.beginPath(); ctx.arc(px, py, inV ? 2.6 : 2, 0, EIN.TAU); ctx.fill();
+      }
+      ro.textContent = "v/v₀ = " + frac.toFixed(2);
+      var dS = Math.log(frac) * (N / 12);
+      EIN.label(ctx, "ΔS/k ≈ " + dS.toFixed(1), box.x, box.y - 10, "rgba(232,180,90,.85)", 10);
+      EIN.label(ctx, "n = " + inside + " / " + N + " im Teilvolumen", box.x + box.w, box.y - 10, "rgba(255,255,255,.4)", 10, "right");
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("photoStage");
+    if (!c) return;
+    var lambda = 400, intensity = 55, W = 2.2;
+    var sl = document.getElementById("peLambda"), si = document.getElementById("peIntensity");
+    var lv = document.getElementById("peLambdaVal"), iv = document.getElementById("peIntVal"), ro = document.getElementById("peReadout");
+    var photons = [], electrons = [], tacc = 0;
+    function energy() { return 1239.84193 / lambda; }
+    sl.oninput = function () { lambda = +sl.value; lv.textContent = lambda; };
+    si.oninput = function () { intensity = +si.value; iv.textContent = intensity; };
+    EIN.loop(function (t, dt) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var plateX = w * 0.66, top = h * 0.18, bot = h * 0.84;
+      
+      ctx.fillStyle = "rgba(127,156,255,.03)"; ctx.fillRect(0, top, plateX, bot - top);
+      
+      var pg = ctx.createLinearGradient(plateX, 0, plateX + 16, 0);
+      pg.addColorStop(0, "rgba(200,200,210,.62)"); pg.addColorStop(1, "rgba(120,120,135,.18)");
+      ctx.fillStyle = pg; ctx.fillRect(plateX, top, 16, bot - top);
+      ctx.strokeStyle = "rgba(255,255,255,.25)"; ctx.strokeRect(plateX, top, 16, bot - top);
+      EIN.label(ctx, "Metall", plateX + 9, bot + 14, "rgba(255,255,255,.35)", 9, "center");
+      var E = energy();
+      var emit = E > W;
+      
+      tacc += dt * (2 + intensity * 0.16);
+      while (tacc > 1) {
+        tacc -= 1;
+        photons.push({ x: 0, y: top + 12 + Math.random() * (bot - top - 24), sp: 170 + Math.random() * 60, ph: Math.random() * 6 });
+      }
+      for (var i = photons.length - 1; i >= 0; i--) {
+        var p = photons[i];
+        p.x += p.sp * dt;
+        var y = p.y + Math.sin(t * 3 + p.ph) * 3;
+        var rg = ctx.createRadialGradient(p.x, y, 0, p.x, y, 11);
+        rg.addColorStop(0, "rgba(255,240,200,.95)");
+        rg.addColorStop(.3, "rgba(232,180,90,.5)");
+        rg.addColorStop(1, "rgba(232,180,90,0)");
+        ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(p.x, y, 11, 0, EIN.TAU); ctx.fill();
+        ctx.strokeStyle = "rgba(232,180,90,.5)"; ctx.beginPath();
+        for (var k = 0; k < 4; k++) {
+          var xx = p.x - 10 + k * 5, yy = y + Math.sin(t * 8 + k + p.ph) * 3;
+          if (k === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+        }
+        ctx.stroke();
+        if (p.x >= plateX - 2) {
+          photons.splice(i, 1);
+          if (emit) {
+            electrons.push({ x: plateX + 14, y: y, vx: 40 + (E - W) * 46, vy: (Math.random() - .5) * 30, life: 0 });
+          }
+        }
+      }
+      for (var j = electrons.length - 1; j >= 0; j--) {
+        var e = electrons[j];
+        e.x -= e.vx * dt; e.y += e.vy * dt; e.life += dt;
+        var alpha = EIN.clamp(1 - e.life / 2.2, 0, 1);
+        var eg = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, 9);
+        eg.addColorStop(0, "rgba(160,190,255," + alpha + ")");
+        eg.addColorStop(.3, "rgba(127,156,255," + (alpha * .55) + ")");
+        eg.addColorStop(1, "rgba(127,156,255,0)");
+        ctx.fillStyle = eg; ctx.beginPath(); ctx.arc(e.x, e.y, 9, 0, EIN.TAU); ctx.fill();
+        ctx.fillStyle = "rgba(210,225,255," + alpha + ")"; ctx.beginPath(); ctx.arc(e.x, e.y, 2.2, 0, EIN.TAU); ctx.fill();
+        if (e.x < 0 || e.life > 2.4) electrons.splice(j, 1);
+      }
+      if (!emit) {
+        EIN.label(ctx, "hν < W — keine Emission", w * 0.5, 22, "rgba(226,104,104,.85)", 11, "center");
+      } else {
+        EIN.label(ctx, "hν − W = " + (E - W).toFixed(2) + " eV", w * 0.5, 22, "rgba(127,156,255,.9)", 11, "center");
+      }
+      ro.textContent = "λ = " + lambda + " nm · E = " + E.toFixed(2) + " eV";
+    });
+
+    
+    var g = document.getElementById("photoGraph");
+    function graph() {
+      var f = EIN.fit(g), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var pad = { l: 42, r: 16, t: 18, b: 28 };
+      var nuMin = 1.8, nuMax = 6.5, eMax = 4.2;
+      function X(nu) { return pad.l + ((nu - nuMin) / (nuMax - nuMin)) * (w - pad.l - pad.r); }
+      function Y(e) { return h - pad.b - (e / eMax) * (h - pad.t - pad.b); }
+      ctx.strokeStyle = "rgba(255,255,255,.12)";
+      ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+      EIN.label(ctx, "E_kin (eV)", 6, pad.t - 6, "rgba(255,255,255,.35)", 9);
+      EIN.label(ctx, "ν (10¹⁴ Hz)", w - pad.r, h - 8, "rgba(255,255,255,.35)", 9, "right");
+      
+      var nu0 = W / 4.1357;
+      ctx.strokeStyle = "rgba(226,104,104,.55)"; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(X(nu0), pad.t); ctx.lineTo(X(nu0), h - pad.b); ctx.stroke(); ctx.setLineDash([]);
+      EIN.label(ctx, "ν₀", X(nu0), h - pad.b + 12, "rgba(226,104,104,.8)", 9, "center");
+      
+      ctx.beginPath();
+      ctx.moveTo(X(nu0), Y(0)); ctx.lineTo(X(nuMax), Y(4.1357 * (nuMax - nu0)));
+      ctx.strokeStyle = "rgba(127,156,255,.9)"; ctx.lineWidth = 1.8; ctx.stroke();
+      
+      var nu = 1239.84193 / lambda / 4.1357;
+      var ek = Math.max(0, 4.1357 * nu - W);
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(X(nu), Y(ek), 4, 0, EIN.TAU); ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.4)";
+      ctx.beginPath(); ctx.moveTo(X(nu), Y(ek)); ctx.lineTo(X(nu), Y(0)); ctx.stroke();
+      EIN.label(ctx, "Steigung = h", pad.l + 8, pad.t + 14, "rgba(127,156,255,.7)", 9);
+    }
+    EIN.onResize(g, graph);
+    sl.addEventListener("input", graph);
+    graph();
+  })();
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vier Vorlesungen — Einstein, visualisiert</title>
+<meta name="description" content="Einstein fasst seine Theorie zum ersten Mal systematisch zusammen. Vier Vorlesungen führen von der Uhrensynchronisation über die Krümmung bis zum ganzen Universum — und zu einem Traum, der unvollendet blieb.">
+<style>
+:root{
+  --bg:#07070b;
+  --bg-2:#0b0b12;
+  --panel:rgba(255,255,255,.038);
+  --panel-2:rgba(255,255,255,.026);
+  --ink:#ece9e1;
+  --muted:#a8a397;
+  --dim:#6f6b63;
+  --line:rgba(255,255,255,.085);
+  --line-strong:rgba(255,255,255,.16);
+  --accent:#e8b45a;
+  --accent-soft:rgba(232,180,90,.16);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  --math:"Latin Modern Math","STIX Two Math","Cambria Math",Cambria,Georgia,serif;
+  --col:72ch;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:17px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(900px 620px at 78% -8%,var(--accent-soft),transparent 62%),
+    radial-gradient(700px 500px at 8% 18%,rgba(120,140,255,.055),transparent 65%),
+    linear-gradient(180deg,#08080d 0%,#07070b 45%,#06060a 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+::selection{background:var(--accent);color:#111}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:rgba(255,255,255,.05)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#fff6d8);box-shadow:0 0 14px var(--accent);transition:width .08s linear}
+.topbar{
+  position:fixed;top:2px;left:0;right:0;z-index:55;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:12px clamp(16px,3vw,38px);
+  background:linear-gradient(180deg,rgba(7,7,11,.92),rgba(7,7,11,.55) 70%,transparent);
+  backdrop-filter:blur(10px);
+}
+.brand{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--muted);
+  white-space:nowrap;text-transform:uppercase;
+}
+.brand:hover{color:var(--ink);text-decoration:none}
+#sectionNav{display:flex;gap:4px;overflow:auto;scrollbar-width:none;mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
+#sectionNav::-webkit-scrollbar{display:none}
+#sectionNav a{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);
+  padding:5px 8px;border-radius:99px;white-space:nowrap;transition:.25s var(--ease);
+}
+#sectionNav a:hover{color:var(--ink);text-decoration:none;background:rgba(255,255,255,.05)}
+#sectionNav a.on{color:var(--accent);background:var(--accent-soft)}
+main{position:relative}
+.hero{
+  position:relative;min-height:clamp(520px,82vh,820px);display:flex;align-items:flex-end;
+  padding:120px clamp(20px,5vw,64px) clamp(48px,8vh,90px);
+  overflow:hidden;
+}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:18px;
+}
+.kicker::before{content:"";width:28px;height:1px;background:var(--accent);opacity:.7}
+h1{
+  font-family:var(--serif);font-weight:400;font-size:clamp(2.35rem,6.2vw,5.6rem);
+  line-height:1.02;letter-spacing:-.025em;margin:0 0 22px;max-width:17ch;
+  text-wrap:balance;
+}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{font-size:clamp(1.02rem,1.7vw,1.28rem);line-height:1.55;color:#cfcac0;max-width:56ch;margin:0 0 18px}
+.epigraph{
+  font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--muted);
+  max-width:52ch;margin:0 0 22px;padding-left:16px;border-left:1px solid var(--line-strong);
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.meta b{color:var(--muted);font-weight:400}
+.scroll-hint{
+  position:absolute;right:clamp(20px,5vw,64px);bottom:28px;z-index:2;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--dim);
+  writing-mode:vertical-rl;display:flex;align-items:center;gap:10px;
+}
+.scroll-hint::after{content:"";width:1px;height:38px;background:linear-gradient(var(--accent),transparent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.chapter{padding:clamp(58px,9vh,110px) 0;border-top:1px solid var(--line);position:relative}
+.chapter-head{display:grid;grid-template-columns:64px minmax(0,1fr);gap:clamp(10px,2vw,26px);margin-bottom:clamp(26px,4vw,44px);align-items:start}
+.chapter-num{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--accent);
+  padding-top:9px;border-top:1px solid var(--accent);
+}
+.chapter h2{
+  font-family:var(--serif);font-weight:400;font-size:clamp(1.65rem,3.1vw,2.65rem);
+  line-height:1.12;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;
+}
+.chapter h3{font-family:var(--serif);font-weight:400;font-size:1.32rem;margin:0 0 10px;letter-spacing:-.01em}
+.chapter .sub{color:var(--muted);max-width:62ch;margin:0;font-size:1rem}
+.prose{max-width:var(--col);color:#cfcac0}
+.prose p{margin:0 0 1.05em}
+.prose p:last-child{margin-bottom:0}
+.prose strong{color:var(--ink);font-weight:600}
+.prose em{color:#e3ded4}
+.prose ul,.prose ol{margin:.2em 0 1.1em;padding-left:1.25em}
+.prose li{margin:.32em 0}
+.prose code{font-family:var(--mono);font-size:.86em;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px}
+.lead{font-size:1.12rem;line-height:1.62;color:#dcd7cd}
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,56px);align-items:center}
+.split.wide-left{grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr)}
+.split.wide-right{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:16px;padding:22px;
+  position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.35}
+.card h4{font-family:var(--sans);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:0 0 9px;font-weight:600}
+.card p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.58}
+.card .big{font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.2;margin-bottom:8px}
+.stage{
+  position:relative;background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.stage canvas{display:block;width:100%;height:100%}
+.stage .label{
+  position:absolute;left:14px;top:12px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);pointer-events:none;
+}
+.stage .readout{
+  position:absolute;right:14px;top:12px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.06em;color:var(--accent);pointer-events:none;
+}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:14px 0 0}
+.control{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--muted)}
+.control input[type=range]{
+  -webkit-appearance:none;appearance:none;width:clamp(110px,18vw,190px);height:2px;background:var(--line-strong);outline:none;border-radius:2px;
+}
+.control input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--accent);border:2px solid #111;box-shadow:0 0 0 3px var(--accent-soft);cursor:pointer;
+}
+.control input[type=range]::-moz-range-thumb{width:11px;height:11px;border:2px solid #111;border-radius:50%;background:var(--accent);cursor:pointer}
+.control .val{min-width:52px;color:var(--ink);font-variant-numeric:tabular-nums}
+.btn{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 14px;border-radius:99px;border:1px solid var(--line-strong);
+  background:transparent;color:var(--ink);cursor:pointer;transition:.2s var(--ease);
+}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.btn.on{background:var(--accent);color:#111;border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:0}
+.formula{
+  font-family:var(--math);font-size:clamp(1.05rem,2vw,1.38rem);line-height:1.85;
+  color:#f1ede4;background:rgba(255,255,255,.028);border:1px solid var(--line);
+  border-left:2px solid var(--accent);border-radius:0 12px 12px 0;
+  padding:18px 22px;margin:18px 0;overflow-x:auto;
+}
+.formula .small{font-size:.62em;color:var(--muted)}
+.formula-note{font-family:var(--sans);font-size:.78rem;color:var(--dim);margin-top:8px;letter-spacing:0}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .18em;line-height:1.15}
+.frac .num{border-bottom:1px solid currentColor;padding:0 .18em}
+.frac .den{padding:.08em .18em 0}
+.sqrt{border-top:1px solid currentColor;padding:0 .12em}
+.takeaways{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:26px}
+.takeaway{
+  background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.015));
+  border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+  border-radius:14px;padding:18px 18px 16px;position:relative;
+}
+.takeaway .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:7px}
+.takeaway p{margin:0;font-size:.9rem;line-height:1.55;color:#d8d3c9}
+.quote{
+  font-family:var(--serif);font-style:italic;font-size:clamp(1.15rem,2.1vw,1.45rem);
+  line-height:1.5;color:#e6e1d6;margin:28px 0;padding:0 0 0 22px;border-left:1px solid var(--accent);
+  max-width:60ch;
+}
+.quote cite{display:block;font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:12px}
+.timeline{position:relative;margin:20px 0;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:1px;background:linear-gradient(var(--accent),var(--line))}
+.timeline .t{position:relative;padding:0 0 20px}
+.timeline .t::before{content:"";position:absolute;left:-22px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.timeline .y{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent);display:block}
+.timeline .t p{margin:2px 0 0;font-size:.92rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);padding:4px 9px;border-radius:99px;margin:0 6px 6px 0}
+.quiz{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel);margin-top:26px}
+.quiz .q{font-family:var(--serif);font-size:1.1rem;margin:0 0 14px;color:var(--ink)}
+.quiz-options{display:grid;gap:8px}
+.quiz-option{
+  text-align:left;font-family:var(--sans);font-size:.9rem;color:#cfcac0;
+  padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:transparent;cursor:pointer;transition:.2s var(--ease);
+}
+.quiz-option:hover{border-color:var(--line-strong);background:rgba(255,255,255,.04)}
+.quiz-option.ok{border-color:#57c785;background:rgba(87,199,133,.12);color:#d8ffe8}
+.quiz-option.no{border-color:#e26868;background:rgba(226,104,104,.1);color:#ffdada}
+.quiz-explain{font-size:.86rem;color:var(--muted);margin:12px 0 0;display:none;line-height:1.55}
+.quiz-explain.show{display:block}
+.sources{border-top:1px solid var(--line);padding:34px 0 60px;color:var(--dim);font-size:.83rem}
+.sources h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.sources p{margin:0 0 8px;max-width:80ch}
+.sources a{color:var(--muted);border-bottom:1px solid var(--line-strong)}
+.sources a:hover{color:var(--accent);text-decoration:none}
+.prevnext{display:flex;justify-content:space-between;gap:16px;padding:26px 0 0;border-top:1px solid var(--line);margin-top:34px}
+.prevnext a{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);display:flex;flex-direction:column;gap:3px;max-width:45%}
+.prevnext a:hover{color:var(--accent);text-decoration:none}
+.prevnext a span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.prevnext .right{text-align:right;margin-left:auto}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.mono{font-family:var(--mono);font-size:.82em;letter-spacing:.02em}
+.dim{color:var(--dim)}
+.accent{color:var(--accent)}
+.center{text-align:center}
+.mt0{margin-top:0}.mt1{margin-top:10px}.mt2{margin-top:20px}.mt3{margin-top:34px}
+.hr{height:1px;background:var(--line);border:0;margin:30px 0}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+footer{color:var(--dim);font-size:.78rem}
+.foot-inner{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 50px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:900px){
+  .split,.split.wide-left,.split.wide-right,.grid2,.grid3{grid-template-columns:1fr}
+  .chapter-head{grid-template-columns:40px minmax(0,1fr)}
+  .topbar{gap:10px}
+  #sectionNav{display:none}
+  h1{max-width:20ch}
+}
+@media(max-width:560px){
+  body{font-size:16px}
+  .hero{min-height:620px;padding-top:96px}
+  .chapter-head{grid-template-columns:1fr;gap:8px}
+  .chapter-num{border-top:0;padding:0}
+  .controls{gap:10px 14px}
+  .scroll-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  .topbar,.progress,#heroCanvas,.scroll-hint{display:none}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#111}
+  .card,.stage,.formula{border-color:#ddd}
+}
+
+/* index work cards */
+.work{display:block;color:var(--ink);text-decoration:none;transition:transform .35s var(--ease),border-color .35s var(--ease),background .35s var(--ease)}
+.work:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--accent) 55%,transparent);text-decoration:none;background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.02))}
+.work-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim)}
+.work-no{color:var(--accent)}
+.work-year{border:1px solid var(--line);padding:3px 7px;border-radius:99px}
+.work h4{color:var(--accent);margin-bottom:6px}
+.work .work-title{font-family:var(--serif);font-size:1.28rem;line-height:1.18;color:var(--ink);margin:0 0 9px;letter-spacing:-.01em}
+.work p{font-size:.88rem;color:var(--muted);line-height:1.55}
+.work-go{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+</style>
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body style="--accent:#c9a7e8;--accent-soft:rgba(201,167,232,.16)">
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <a class="brand" href="einstein_index.html">Einstein · visualisiert</a>
+  <nav id="sectionNav" aria-label="Abschnitte"></nav>
+</header>
+<main>
+<section class="hero" id="top">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">Princeton · Mai 1921 · Vieweg 1922</div>
+    <h1>Vier <em>Vorlesungen</em></h1>
+    <p class="lede">Einstein fasst seine Theorie zum ersten Mal systematisch zusammen. Vier Vorlesungen führen von der Uhrensynchronisation über die Krümmung bis zum ganzen Universum — und zu einem Traum, der unvollendet blieb.</p>
+    <p class="epigraph">„Der Gegenstand aller Wissenschaft … ist, unsere Erfahrungen zu koordinieren und in ein logisches System zu bringen.“</p>
+    <div class="meta"><span><b>Original</b> Vier Vorlesungen über Relativitätstheorie</span><span><b>Gehalten</b> Princeton, Mai 1921</span><span><b>Erschienen</b> 1922 · 5. Aufl. 1955</span></div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</section>
+
+
+<div class="wrap">
+<section class="chapter" id="system">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">01</div>
+    <div>
+      <h2>Die Theorie als Ganzes</h2>
+      <p class="sub">Bisher hatte Einstein in Aufsätzen und populären Büchern geschrieben. In Princeton ordnet er alles in vier Vorlesungen.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p class="lead">Die Vorlesungen sind kein Lehrbuch für Anfänger. Sie setzen Mathematik voraus und führen die Theorie in ihrer damals modernsten Form vor. Gerade deshalb sind sie ein einzigartiges Dokument: Einstein spricht hier als Systematiker.</p>
+      <p>Die erste Vorlesung beginnt nicht mit Physik, sondern mit Erkenntnistheorie: Wie entstehen unsere Begriffe von Raum und Zeit? Die zweite entwickelt die spezielle Relativität, die dritte die allgemeine, die vierte den Kosmos und die offenen Fragen.</p>
+      <p>Das Buch wurde mehrfach überarbeitet. Die späteren Auflagen enthalten Anhänge zur einheitlichen Feldtheorie — Einsteins letzter großer Forschungsplan.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Vier Vorlesungen</span>
+        <span class="readout" id="lecReadout">I · Raum und Zeit</span>
+        <canvas id="lectureCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <button class="btn on" data-lec="0">I</button>
+        <button class="btn" data-lec="1">II</button>
+        <button class="btn" data-lec="2">III</button>
+        <button class="btn" data-lec="3">IV</button>
+      </div>
+      <div class="legend"><span><i style="background:#c9a7e8"></i>Struktur</span><span><i style="background:#f2d391"></i>Physik</span></div>
+    </div>
+  </div>
+  <div class="grid3 mt3">
+    <div class="card reveal"><h4>I · Vor der Relativität</h4><p>Subjektive Zeit, Uhren, starre Körper, Poincaré, Mach. Die Begriffe werden operational definiert.</p></div>
+    <div class="card reveal"><h4>II · Spezielle Relativität</h4><p>Lorentz-Transformation, Minkowski-Raum, Energie-Impuls, die Konstanz von c.</p></div>
+    <div class="card reveal"><h4>III · Allgemeine Relativität</h4><p>Äquivalenzprinzip, Metrik, Geodäten, Feldgleichungen, Machs Prinzip.</p></div>
+    <div class="card reveal"><h4>IV · Kosmos</h4><p>Geschlossene Welt, kosmologische Konstante, offene Fragen, einheitliche Feldtheorie.</p></div>
+    <div class="card reveal"><h4>Anhänge</h4><p>Spätere Auflagen ergänzen die Theorie um Versuche, Gravitation und Elektromagnetismus zu vereinigen.</p></div>
+    <div class="card reveal"><h4>Vermächtnis</h4><p>Die letzte Auflage 1955 ist Einsteins letzte systematische Darstellung seiner Theorie.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="mach">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">02</div>
+    <div>
+      <h2>Machs Prinzip</h2>
+      <p class="sub">Woher weiß ein Körper, dass er rotiert? Ernst Mach sagte: von den fernen Sternen. Einstein suchte nach einer Feldtheorie, die das erklärt.</p>
+    </div>
+  </div>
+  <div class="split wide-left">
+    <div class="prose reveal">
+      <p>Newtons Eimer-Experiment: Das Wasser steigt am Rand hoch, wenn der Eimer rotiert — auch ohne sichtbaren Bezug. Newton sagt: absolute Rotation gegenüber dem Raum. Mach sagt: gegenüber den fernen Massen.</p>
+      <p>Einstein findet in der allgemeinen Relativität einen Kompromiss. Die Raumzeit hat eine Metrik, aber sie wird von der Materie bestimmt. Eine rotierende Massenschale sollte die lokale Trägheit beeinflussen — der Lense-Thirring-Effekt, 1918 berechnet und später gemessen.</p>
+      <p>Vollständig ist Machs Programm nicht umgesetzt: Die Raumzeit behält eine gewisse Eigenständigkeit. Aber die Idee, dass Trägheit von der Massenverteilung abhängt, ist ein Kernstück der Theorie.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:340px">
+        <span class="label">Rotierende Massenschale</span>
+        <span class="readout" id="machReadout">Ω = 0.60 · Rahmen wird mitgezogen</span>
+        <canvas id="machCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Rotation <input type="range" id="machV" min="0" max="100" value="60" data-out="machVVal" data-format="2"><span class="val" id="machVVal">0.60</span></label>
+      </div>
+      <div class="legend"><span><i style="background:#c9a7e8"></i>Massenschale</span><span><i style="background:#f2d391"></i>Pendel</span></div>
+    </div>
+  </div>
+  <div class="quote reveal">„Die Trägheit eines Körpers ist eine Wirkung der gesamten Materie des Universums.“<cite>Machs Idee, wie Einstein sie in den Vorlesungen diskutiert</cite></div>
+</section>
+
+<section class="chapter" id="traum">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">03</div>
+    <div>
+      <h2>Der unvollendete Traum</h2>
+      <p class="sub">Gravitation und Elektromagnetismus sollten ein einziges Feld werden. Einstein arbeitete dreißig Jahre daran — ohne Erfolg.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p>Die allgemeine Relativität beschreibt Gravitation als Geometrie. Der Elektromagnetismus bleibt ein separates Feld. Für Einstein war das unbefriedigend: Die Natur sollte nicht zwei grundverschiedene Strukturen haben.</p>
+      <p>Er versuchte, die Metrik zu verallgemeinern — mit nichtsymmetrischen Tensoren, zusätzlichen Dimensionen, fernparallelen Geometrien. Keine dieser Theorien beschrieb die reale Welt besser als die bestehenden.</p>
+      <p>Heute wissen wir: Die elektroschwache Theorie vereinigt Elektromagnetismus und schwache Kraft, aber nicht die Gravitation. Die Quantengravitation ist noch offen. Einsteins Traum lebt weiter — nur nicht in seiner Form.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Zwei Felder · ein Ziel</span>
+        <span class="readout" id="unifyReadout">getrennt</span>
+        <canvas id="unifyCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Vereinigung <input type="range" id="unifyV" min="0" max="100" value="30" data-out="unifyVVal" data-format="0"><span class="val" id="unifyVVal">30</span>%</label>
+      </div>
+      <div class="legend"><span><i style="background:#c9a7e8"></i>Gravitation</span><span><i style="background:#f2d391"></i>Elektromagnetismus</span></div>
+    </div>
+  </div>
+  <div class="grid2 mt3">
+    <div class="card reveal"><h4>Was gelang</h4><p>Die Geometrisierung der Gravitation. Die Feldgleichungen. Die Vorhersage von Wellen, Schwarzen Löchern und expandierenden Universen.</p></div>
+    <div class="card reveal"><h4>Was offen blieb</h4><p>Die Vereinigung mit dem Elektromagnetismus. Die Quantisierung der Gravitation. Die Natur der dunklen Energie.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="wirkung">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">04</div>
+    <div>
+      <h2>Was von den Vorlesungen bleibt</h2>
+      <p class="sub">Ein Buch, das die Theorie ordnet — und ihre Grenzen sichtbar macht.</p>
+    </div>
+  </div>
+  <div class="timeline">
+    <div class="t reveal"><span class="y">1921</span><p>Einstein hält die Vorlesungen in Princeton. Sie werden 1922 als Buch veröffentlicht.</p></div>
+    <div class="t reveal"><span class="y">1922</span><p>Die erste Auflage erscheint. Weitere Auflagen folgen mit neuen Anhängen.</p></div>
+    <div class="t reveal"><span class="y">1931</span><p>Die zweite Auflage ergänzt kosmologische Diskussionen.</p></div>
+    <div class="t reveal"><span class="y">1950</span><p>Die dritte Auflage enthält den Anhang zur verallgemeinerten Gravitationstheorie.</p></div>
+    <div class="t reveal"><span class="y">1955</span><p>Die fünfte Auflage erscheint kurz vor Einsteins Tod. Sie ist sein letztes systematisches Werk.</p></div>
+  </div>
+  <div class="takeaways mt3">
+    <div class="takeaway reveal"><span class="n">01 · ORDNUNG STATT NEUHEIT</span><p>Die Vorlesungen fügen nichts Wesentliches hinzu. Sie zeigen, wie die Teile zusammenhängen — und das ist selbst eine Leistung.</p></div>
+    <div class="takeaway reveal"><span class="n">02 · ERKENNTNISTHEORIE IST TEIL DER PHYSIK</span><p>Einstein beginnt mit der Frage, wie Begriffe entstehen. Physik ohne Begriffsanalyse ist für ihn blind.</p></div>
+    <div class="takeaway reveal"><span class="n">03 · OFFENE FRAGEN GEHÖREN DAZU</span><p>Die Vorlesungen enden nicht mit einem fertigen Weltbild, sondern mit einem Programm. Das ist ehrlicher als jede Erfolgsgeschichte.</p></div>
+  </div>
+  <div class="quiz reveal" data-answer="1">
+    <p class="q">Warum begann Einstein die erste Vorlesung mit Raum, Zeit und Erkenntnistheorie?</p>
+    <div class="quiz-option">Weil er die Mathematik der Tensoren vermeiden wollte.</div>
+    <div class="quiz-option">Weil die Relativitätstheorie für ihn zuerst eine Theorie der Messungen und Begriffe ist.</div>
+    <div class="quiz-option">Weil die Zuhörer in Princeton keine Physik kannten.</div>
+    <div class="quiz-option">Weil die spezielle Relativität nur für Uhren gilt.</div>
+    <p class="quiz-explain">Einstein verstand die Relativität als Physik der Messungen: Was bedeutet „gleichzeitig“, „Länge“, „Zeit“? Ohne diese operationale Klärung ist die Lorentz-Transformation nur ein Formelsystem.</p>
+  </div>
+  <div class="prevnext">
+    <a href="einstein_12_geometrie-erfahrung.html"><span>Zurück</span>Geometrie ist die älteste Physik</a>
+    <a class="right" href="einstein_index.html"><span>Zur Übersicht</span>Alle Werke →</a>
+  </div>
+</section>
+</div>
+
+<section class="sources">
+  <div class="wrap">
+    <h3>Quelle &amp; Weiterlesen</h3>
+    <p>A. Einstein, <em>Vier Vorlesungen über Relativitätstheorie, gehalten im Mai 1921 an der Universität Princeton</em>, Vieweg, Braunschweig 1922. Public Domain. Englische Ausgabe <em>The Meaning of Relativity</em>: <a href="https://www.gutenberg.org/ebooks/36276" target="_blank" rel="noopener">Project Gutenberg #36276</a>.</p>
+    <p>Die Darstellung folgt der ersten Auflage. Die späteren Anhänge zur einheitlichen Feldtheorie sind hier nur erwähnt, nicht im Detail behandelt.</p>
+  </div>
+</section>
+
+
+</main>
+<footer>
+  <div class="foot-inner">
+    <span>Einstein · visualisiert</span>
+    <span>Quelle: Vieweg, Braunschweig 1922 · Public Domain</span>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var EIN = window.EIN = {};
+
+  EIN.clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  EIN.lerp = function (a, b, t) { return a + (b - a) * t; };
+  EIN.ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+  EIN.TAU = Math.PI * 2;
+
+  EIN.css = function (name) {
+    return getComputedStyle(document.body).getPropertyValue(name).trim();
+  };
+
+  EIN.fit = function (canvas) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(r.width));
+    var h = Math.max(1, Math.round(r.height));
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h, dpr: dpr };
+  };
+
+  EIN.onResize = function (canvas, draw) {
+    var raf = 0;
+    function run() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
+    if (window.ResizeObserver) new ResizeObserver(run).observe(canvas);
+    window.addEventListener("resize", run);
+    return run;
+  };
+
+  EIN.loop = function (fn) {
+    var t0 = performance.now();
+    var last = t0;
+    function frame(now) {
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      fn(Math.max(0, (now - t0) / 1000), dt);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  };
+
+  EIN.visible = function (el, onEnter, onExit) {
+    if (!el || !("IntersectionObserver" in window)) { if (onEnter) onEnter(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { if (onEnter) onEnter(); }
+        else if (onExit) onExit();
+      });
+    }, { rootMargin: "140px 0px" });
+    io.observe(el);
+  };
+
+  EIN.arrow = function (ctx, x1, y1, x2, y2, color, width) {
+    var a = Math.atan2(y2 - y1, x2 - x1);
+    var s = 7;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width || 1.4;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - s * Math.cos(a - 0.38), y2 - s * Math.sin(a - 0.38));
+    ctx.lineTo(x2 - s * Math.cos(a + 0.38), y2 - s * Math.sin(a + 0.38));
+    ctx.closePath(); ctx.fill();
+  };
+
+  EIN.label = function (ctx, text, x, y, color, size, align) {
+    ctx.fillStyle = color || "#8a857c";
+    ctx.font = (size || 10) + "px ui-monospace, SFMono-Regular, Consolas, monospace";
+    ctx.textAlign = align || "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, y);
+  };
+
+  function initProgress() {
+    var bar = document.getElementById("progressBar");
+    if (!bar) return;
+    function upd() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    }
+    window.addEventListener("scroll", upd, { passive: true });
+    window.addEventListener("resize", upd);
+    upd();
+  }
+
+  function initNav() {
+    var nav = document.getElementById("sectionNav");
+    var sections = [].slice.call(document.querySelectorAll(".chapter[id]"));
+    if (!nav || !sections.length) return;
+    sections.forEach(function (s, i) {
+      var h = s.querySelector("h2");
+      var a = document.createElement("a");
+      a.href = "#" + s.id;
+      a.textContent = h ? h.textContent.replace(/\s+/g, " ").slice(0, 26) : "0" + (i + 1);
+      nav.appendChild(a);
+    });
+    var links = [].slice.call(nav.querySelectorAll("a"));
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var i = sections.indexOf(e.target);
+        links.forEach(function (l, j) { l.classList.toggle("on", i === j); });
+      });
+    }, { rootMargin: "-20% 0px -68% 0px" });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  function initReveal() {
+    var els = [].slice.call(document.querySelectorAll(".reveal"));
+    if (!els.length) return;
+    if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    els.forEach(function (e, i) { e.style.transitionDelay = (Math.min(i % 4, 3) * 55) + "ms"; io.observe(e); });
+  }
+
+  function initRanges() {
+    [].slice.call(document.querySelectorAll("input[type=range][data-out]")).forEach(function (r) {
+      var out = document.getElementById(r.getAttribute("data-out"));
+      function upd() {
+        if (!out) return;
+        var v = parseFloat(r.value);
+        var f = r.getAttribute("data-format");
+        out.textContent = f === "int" ? Math.round(v) : v.toFixed(f ? parseInt(f, 10) : 1);
+      }
+      r.addEventListener("input", upd); upd();
+    });
+  }
+
+  function initQuiz() {
+    [].slice.call(document.querySelectorAll(".quiz")).forEach(function (quiz) {
+      var ans = parseInt(quiz.getAttribute("data-answer"), 10);
+      var opts = [].slice.call(quiz.querySelectorAll(".quiz-option"));
+      var ex = quiz.querySelector(".quiz-explain");
+      opts.forEach(function (o, i) {
+        o.addEventListener("click", function () {
+          opts.forEach(function (x) { x.classList.remove("ok", "no"); x.disabled = true; });
+          if (i === ans) { o.classList.add("ok"); }
+          else { o.classList.add("no"); opts[ans].classList.add("ok"); }
+          if (ex) ex.classList.add("show");
+        });
+      });
+    });
+  }
+
+  function boot() {
+    initProgress(); initNav(); initReveal(); initRanges(); initQuiz();
+    if (window.__pageInit) window.__pageInit();
+    document.documentElement.classList.add("ready");
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+
+</script>
+<script>
+
+(function () {
+  "use strict";
+
+  
+  (function () {
+    var c = document.getElementById("heroCanvas");
+    if (!c) return;
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var n = 4, gap = 12, pw = (w - gap * (n + 1)) / n;
+      for (var i = 0; i < n; i++) {
+        var x = gap + i * (pw + gap);
+        ctx.strokeStyle = "rgba(201,167,232,.16)"; ctx.lineWidth = 1;
+        ctx.strokeRect(x, h * .18, pw, h * .64);
+        var cx = x + pw / 2, cy = h * .5;
+        if (i === 0) {
+          ctx.strokeStyle = "rgba(242,211,145,.6)"; ctx.beginPath(); ctx.arc(cx, cy, pw * .22, 0, EIN.TAU); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(t) * pw * .15, cy + Math.sin(t) * pw * .15); ctx.stroke();
+        } else if (i === 1) {
+          ctx.strokeStyle = "rgba(242,211,145,.55)";
+          ctx.beginPath(); ctx.moveTo(cx, cy + pw * .25); ctx.lineTo(cx - pw * .22, cy - pw * .2); ctx.moveTo(cx, cy + pw * .25); ctx.lineTo(cx + pw * .22, cy - pw * .2); ctx.stroke();
+          ctx.beginPath(); ctx.arc(cx, cy + pw * .25, 3, 0, EIN.TAU); ctx.fillStyle = "#fff"; ctx.fill();
+        } else if (i === 2) {
+          for (var j = -2; j <= 2; j++) {
+            ctx.beginPath();
+            for (var k = -2; k <= 2; k++) {
+              var xx = cx + j * pw * .08, yy = cy + k * pw * .08;
+              var d = Math.hypot(xx - cx, yy - cy) + 10;
+              xx -= (xx - cx) / d * 8; yy -= (yy - cy) / d * 8;
+              if (k === -2) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+            }
+            ctx.strokeStyle = "rgba(201,167,232,.4)"; ctx.stroke();
+          }
+        } else {
+          ctx.strokeStyle = "rgba(242,211,145,.45)"; ctx.beginPath(); ctx.arc(cx, cy, pw * .2, 0, EIN.TAU); ctx.stroke();
+          for (var q = 0; q < 10; q++) {
+            var a = q / 10 * EIN.TAU + t * .3;
+            ctx.fillStyle = "rgba(242,211,145,.6)"; ctx.beginPath(); ctx.arc(cx + Math.cos(a) * pw * .2, cy + Math.sin(a) * pw * .2, 1.5, 0, EIN.TAU); ctx.fill();
+          }
+        }
+        EIN.label(ctx, ["I", "II", "III", "IV"][i], cx, h * .86, "rgba(201,167,232,.5)", 10, "center");
+      }
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("lectureCanvas");
+    if (!c) return;
+    var lec = 0;
+    var buttons = [].slice.call(document.querySelectorAll("[data-lec]"));
+    var ro = document.getElementById("lecReadout");
+    var names = ["I · Raum und Zeit", "II · Spezielle Relativität", "III · Allgemeine Relativität", "IV · Kosmos"];
+    buttons.forEach(function (b) {
+      b.onclick = function () {
+        lec = +b.getAttribute("data-lec");
+        buttons.forEach(function (x, i) { x.classList.toggle("on", i === lec); });
+        ro.textContent = names[lec];
+      };
+    });
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * .5, cy = h * .5;
+      if (lec === 0) {
+        
+        ctx.strokeStyle = "rgba(255,255,255,.15)"; ctx.beginPath(); ctx.moveTo(w * .2, h * .7); ctx.lineTo(w * .8, h * .7); ctx.moveTo(w * .2, h * .7); ctx.lineTo(w * .2, h * .3); ctx.stroke();
+        ctx.strokeStyle = "rgba(242,211,145,.7)"; ctx.beginPath(); ctx.arc(w * .65, h * .45, 38, 0, EIN.TAU); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(w * .65, h * .45); ctx.lineTo(w * .65 + Math.cos(t) * 24, h * .45 + Math.sin(t) * 24); ctx.stroke();
+        EIN.label(ctx, "Uhren und Maßstäbe", cx, h * .84, "rgba(242,211,145,.6)", 10, "center");
+      } else if (lec === 1) {
+        
+        ctx.strokeStyle = "rgba(242,211,145,.7)"; ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx - 120, cy - 110); ctx.moveTo(cx, cy); ctx.lineTo(cx + 120, cy - 110); ctx.moveTo(cx, cy); ctx.lineTo(cx - 120, cy + 110); ctx.moveTo(cx, cy); ctx.lineTo(cx + 120, cy + 110); ctx.stroke();
+        var rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 50);
+        rg.addColorStop(0, "rgba(255,245,210,.5)"); rg.addColorStop(1, "rgba(255,245,210,0)");
+        ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, cy, 50, 0, EIN.TAU); ctx.fill();
+        EIN.label(ctx, "Lichtkegel · Kausalität", cx, h * .84, "rgba(242,211,145,.6)", 10, "center");
+      } else if (lec === 2) {
+        
+        for (var i = -5; i <= 5; i++) {
+          ctx.beginPath();
+          for (var j = -5; j <= 5; j++) {
+            var x = cx + i * 18, y = cy + j * 12;
+            var d = Math.hypot(x - cx, y - cy) + 24;
+            x -= (x - cx) / d * 40; y -= (y - cy) / d * 30;
+            if (j === -5) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = "rgba(201,167,232,.45)"; ctx.stroke();
+        }
+        for (var k = -5; k <= 5; k++) {
+          ctx.beginPath();
+          for (var m = -5; m <= 5; m++) {
+            var x2 = cx + m * 18, y2 = cy + k * 12;
+            var d2 = Math.hypot(x2 - cx, y2 - cy) + 24;
+            x2 -= (x2 - cx) / d2 * 40; y2 -= (y2 - cy) / d2 * 30;
+            if (m === -5) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2);
+          }
+          ctx.strokeStyle = "rgba(201,167,232,.45)"; ctx.stroke();
+        }
+        EIN.label(ctx, "gekrümmte Raumzeit", cx, h * .84, "rgba(201,167,232,.6)", 10, "center");
+      } else {
+        
+        var R = Math.min(w, h) * .24;
+        ctx.strokeStyle = "rgba(201,167,232,.5)"; ctx.beginPath(); ctx.arc(cx, cy, R, 0, EIN.TAU); ctx.stroke();
+        for (var q = 0; q < 26; q++) {
+          var a = q / 26 * EIN.TAU + t * .2;
+          var rr = R * (0.3 + (q % 4) * .18);
+          ctx.fillStyle = "rgba(242,211,145,.5)"; ctx.beginPath(); ctx.arc(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr, 1.8, 0, EIN.TAU); ctx.fill();
+        }
+        EIN.label(ctx, "geschlossenes Universum", cx, h * .84, "rgba(201,167,232,.6)", 10, "center");
+      }
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("machCanvas");
+    if (!c) return;
+    var om = 0.6;
+    var sv = document.getElementById("machV"), ro = document.getElementById("machReadout");
+    sv.oninput = function () { om = +sv.value / 100; };
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * .5, cy = h * .5, R = Math.min(w, h) * .3;
+      
+      for (var i = 0; i < 40; i++) {
+        var a = i * 2.4, rr = R * (1.25 + (i % 5) * .16);
+        ctx.fillStyle = "rgba(255,255,255,.18)";
+        ctx.beginPath(); ctx.arc(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr, 1, 0, EIN.TAU); ctx.fill();
+      }
+      
+      ctx.strokeStyle = "rgba(201,167,232,.45)"; ctx.lineWidth = 6;
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, EIN.TAU); ctx.stroke();
+      for (var j = 0; j < 24; j++) {
+        var ang = j / 24 * EIN.TAU + t * om;
+        var sx = cx + Math.cos(ang) * (R - 4), sy = cy + Math.sin(ang) * (R - 4);
+        ctx.fillStyle = "rgba(201,167,232,.8)"; ctx.beginPath(); ctx.arc(sx, sy, 2, 0, EIN.TAU); ctx.fill();
+      }
+      
+      var swing = Math.sin(t * 1.4) * 0.5 + om * 0.6;
+      var px = cx + Math.cos(swing) * 52, py = cy + Math.sin(swing) * 52;
+      ctx.strokeStyle = "rgba(242,211,145,.8)"; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
+      ctx.fillStyle = "rgba(242,211,145,.95)"; ctx.beginPath(); ctx.arc(px, py, 5, 0, EIN.TAU); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(cx, cy, 2.5, 0, EIN.TAU); ctx.fill();
+      EIN.label(ctx, "Ω = " + om.toFixed(2), 16, 20, "rgba(201,167,232,.7)", 10);
+      EIN.label(ctx, "Rahmen wird mitgezogen", w - 16, 20, "rgba(201,167,232,.55)", 9, "right");
+      ro.textContent = "Ω = " + om.toFixed(2) + " · Rahmen wird mitgezogen";
+      document.getElementById("machVVal").textContent = om.toFixed(2);
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("unifyCanvas");
+    if (!c) return;
+    var u = 0.3;
+    var sv = document.getElementById("unifyV"), ro = document.getElementById("unifyReadout");
+    sv.oninput = function () { u = +sv.value / 100; draw(); };
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * .5, cy = h * .5, R = Math.min(w, h) * .3;
+      
+      ctx.strokeStyle = "rgba(201,167,232,.5)"; ctx.lineWidth = 1;
+      for (var i = -4; i <= 4; i++) {
+        ctx.beginPath();
+        for (var j = -4; j <= 4; j++) {
+          var x = cx + i * 16, y = cy + j * 12;
+          var d = Math.hypot(x - cx, y - cy) + 20;
+          x -= (x - cx) / d * (20 + u * 30); y -= (y - cy) / d * (14 + u * 20);
+          if (j === -4) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+      
+      ctx.strokeStyle = "rgba(242,211,145," + (0.35 + u * 0.4) + ")"; ctx.lineWidth = 1.4;
+      for (var k = 0; k < 3; k++) {
+        ctx.beginPath();
+        for (var x2 = cx - R; x2 <= cx + R; x2 += 3) {
+          var y2 = cy + (k - 1) * 18 + Math.sin(x2 * .08 + performance.now() / 500) * 8 * (0.4 + u);
+          if (x2 === cx - R) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2);
+        }
+        ctx.stroke();
+      }
+      EIN.label(ctx, u < 0.8 ? "zwei getrennte Felder" : "noch keine Vereinigung", cx, cy + R + 26, u < 0.8 ? "rgba(255,255,255,.45)" : "rgba(255,143,107,.8)", 10, "center");
+      EIN.label(ctx, "Gravitation", cx - R - 10, cy, "rgba(201,167,232,.7)", 9, "right");
+      EIN.label(ctx, "EM", cx + R + 10, cy, "rgba(242,211,145,.7)", 9);
+      ro.textContent = "Vereinigung: " + Math.round(u * 100) + "% · offen";
+      document.getElementById("unifyVVal").textContent = Math.round(u * 100);
+    }
+    EIN.onResize(c, draw); draw();
+    EIN.loop(function () { draw(); });
+  })();
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Die Welt als Kugel — Einstein, visualisiert</title>
+<meta name="description" content="Newtons Universum ist unendlich — und genau deshalb instabil. Einstein macht daraus eine geschlossene Kugel, führt eine neue Konstante ein und erfindet damit die moderne Kosmologie.">
+<style>
+:root{
+  --bg:#07070b;
+  --bg-2:#0b0b12;
+  --panel:rgba(255,255,255,.038);
+  --panel-2:rgba(255,255,255,.026);
+  --ink:#ece9e1;
+  --muted:#a8a397;
+  --dim:#6f6b63;
+  --line:rgba(255,255,255,.085);
+  --line-strong:rgba(255,255,255,.16);
+  --accent:#e8b45a;
+  --accent-soft:rgba(232,180,90,.16);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  --math:"Latin Modern Math","STIX Two Math","Cambria Math",Cambria,Georgia,serif;
+  --col:72ch;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:17px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(900px 620px at 78% -8%,var(--accent-soft),transparent 62%),
+    radial-gradient(700px 500px at 8% 18%,rgba(120,140,255,.055),transparent 65%),
+    linear-gradient(180deg,#08080d 0%,#07070b 45%,#06060a 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+::selection{background:var(--accent);color:#111}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:rgba(255,255,255,.05)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#fff6d8);box-shadow:0 0 14px var(--accent);transition:width .08s linear}
+.topbar{
+  position:fixed;top:2px;left:0;right:0;z-index:55;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:12px clamp(16px,3vw,38px);
+  background:linear-gradient(180deg,rgba(7,7,11,.92),rgba(7,7,11,.55) 70%,transparent);
+  backdrop-filter:blur(10px);
+}
+.brand{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--muted);
+  white-space:nowrap;text-transform:uppercase;
+}
+.brand:hover{color:var(--ink);text-decoration:none}
+#sectionNav{display:flex;gap:4px;overflow:auto;scrollbar-width:none;mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
+#sectionNav::-webkit-scrollbar{display:none}
+#sectionNav a{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);
+  padding:5px 8px;border-radius:99px;white-space:nowrap;transition:.25s var(--ease);
+}
+#sectionNav a:hover{color:var(--ink);text-decoration:none;background:rgba(255,255,255,.05)}
+#sectionNav a.on{color:var(--accent);background:var(--accent-soft)}
+main{position:relative}
+.hero{
+  position:relative;min-height:clamp(520px,82vh,820px);display:flex;align-items:flex-end;
+  padding:120px clamp(20px,5vw,64px) clamp(48px,8vh,90px);
+  overflow:hidden;
+}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:18px;
+}
+.kicker::before{content:"";width:28px;height:1px;background:var(--accent);opacity:.7}
+h1{
+  font-family:var(--serif);font-weight:400;font-size:clamp(2.35rem,6.2vw,5.6rem);
+  line-height:1.02;letter-spacing:-.025em;margin:0 0 22px;max-width:17ch;
+  text-wrap:balance;
+}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{font-size:clamp(1.02rem,1.7vw,1.28rem);line-height:1.55;color:#cfcac0;max-width:56ch;margin:0 0 18px}
+.epigraph{
+  font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--muted);
+  max-width:52ch;margin:0 0 22px;padding-left:16px;border-left:1px solid var(--line-strong);
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.meta b{color:var(--muted);font-weight:400}
+.scroll-hint{
+  position:absolute;right:clamp(20px,5vw,64px);bottom:28px;z-index:2;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--dim);
+  writing-mode:vertical-rl;display:flex;align-items:center;gap:10px;
+}
+.scroll-hint::after{content:"";width:1px;height:38px;background:linear-gradient(var(--accent),transparent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.chapter{padding:clamp(58px,9vh,110px) 0;border-top:1px solid var(--line);position:relative}
+.chapter-head{display:grid;grid-template-columns:64px minmax(0,1fr);gap:clamp(10px,2vw,26px);margin-bottom:clamp(26px,4vw,44px);align-items:start}
+.chapter-num{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--accent);
+  padding-top:9px;border-top:1px solid var(--accent);
+}
+.chapter h2{
+  font-family:var(--serif);font-weight:400;font-size:clamp(1.65rem,3.1vw,2.65rem);
+  line-height:1.12;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;
+}
+.chapter h3{font-family:var(--serif);font-weight:400;font-size:1.32rem;margin:0 0 10px;letter-spacing:-.01em}
+.chapter .sub{color:var(--muted);max-width:62ch;margin:0;font-size:1rem}
+.prose{max-width:var(--col);color:#cfcac0}
+.prose p{margin:0 0 1.05em}
+.prose p:last-child{margin-bottom:0}
+.prose strong{color:var(--ink);font-weight:600}
+.prose em{color:#e3ded4}
+.prose ul,.prose ol{margin:.2em 0 1.1em;padding-left:1.25em}
+.prose li{margin:.32em 0}
+.prose code{font-family:var(--mono);font-size:.86em;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px}
+.lead{font-size:1.12rem;line-height:1.62;color:#dcd7cd}
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,56px);align-items:center}
+.split.wide-left{grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr)}
+.split.wide-right{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:16px;padding:22px;
+  position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.35}
+.card h4{font-family:var(--sans);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:0 0 9px;font-weight:600}
+.card p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.58}
+.card .big{font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.2;margin-bottom:8px}
+.stage{
+  position:relative;background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.stage canvas{display:block;width:100%;height:100%}
+.stage .label{
+  position:absolute;left:14px;top:12px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);pointer-events:none;
+}
+.stage .readout{
+  position:absolute;right:14px;top:12px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.06em;color:var(--accent);pointer-events:none;
+}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:14px 0 0}
+.control{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--muted)}
+.control input[type=range]{
+  -webkit-appearance:none;appearance:none;width:clamp(110px,18vw,190px);height:2px;background:var(--line-strong);outline:none;border-radius:2px;
+}
+.control input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--accent);border:2px solid #111;box-shadow:0 0 0 3px var(--accent-soft);cursor:pointer;
+}
+.control input[type=range]::-moz-range-thumb{width:11px;height:11px;border:2px solid #111;border-radius:50%;background:var(--accent);cursor:pointer}
+.control .val{min-width:52px;color:var(--ink);font-variant-numeric:tabular-nums}
+.btn{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 14px;border-radius:99px;border:1px solid var(--line-strong);
+  background:transparent;color:var(--ink);cursor:pointer;transition:.2s var(--ease);
+}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.btn.on{background:var(--accent);color:#111;border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:0}
+.formula{
+  font-family:var(--math);font-size:clamp(1.05rem,2vw,1.38rem);line-height:1.85;
+  color:#f1ede4;background:rgba(255,255,255,.028);border:1px solid var(--line);
+  border-left:2px solid var(--accent);border-radius:0 12px 12px 0;
+  padding:18px 22px;margin:18px 0;overflow-x:auto;
+}
+.formula .small{font-size:.62em;color:var(--muted)}
+.formula-note{font-family:var(--sans);font-size:.78rem;color:var(--dim);margin-top:8px;letter-spacing:0}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .18em;line-height:1.15}
+.frac .num{border-bottom:1px solid currentColor;padding:0 .18em}
+.frac .den{padding:.08em .18em 0}
+.sqrt{border-top:1px solid currentColor;padding:0 .12em}
+.takeaways{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:26px}
+.takeaway{
+  background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.015));
+  border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+  border-radius:14px;padding:18px 18px 16px;position:relative;
+}
+.takeaway .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:7px}
+.takeaway p{margin:0;font-size:.9rem;line-height:1.55;color:#d8d3c9}
+.quote{
+  font-family:var(--serif);font-style:italic;font-size:clamp(1.15rem,2.1vw,1.45rem);
+  line-height:1.5;color:#e6e1d6;margin:28px 0;padding:0 0 0 22px;border-left:1px solid var(--accent);
+  max-width:60ch;
+}
+.quote cite{display:block;font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:12px}
+.timeline{position:relative;margin:20px 0;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:1px;background:linear-gradient(var(--accent),var(--line))}
+.timeline .t{position:relative;padding:0 0 20px}
+.timeline .t::before{content:"";position:absolute;left:-22px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.timeline .y{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent);display:block}
+.timeline .t p{margin:2px 0 0;font-size:.92rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);padding:4px 9px;border-radius:99px;margin:0 6px 6px 0}
+.quiz{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel);margin-top:26px}
+.quiz .q{font-family:var(--serif);font-size:1.1rem;margin:0 0 14px;color:var(--ink)}
+.quiz-options{display:grid;gap:8px}
+.quiz-option{
+  text-align:left;font-family:var(--sans);font-size:.9rem;color:#cfcac0;
+  padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:transparent;cursor:pointer;transition:.2s var(--ease);
+}
+.quiz-option:hover{border-color:var(--line-strong);background:rgba(255,255,255,.04)}
+.quiz-option.ok{border-color:#57c785;background:rgba(87,199,133,.12);color:#d8ffe8}
+.quiz-option.no{border-color:#e26868;background:rgba(226,104,104,.1);color:#ffdada}
+.quiz-explain{font-size:.86rem;color:var(--muted);margin:12px 0 0;display:none;line-height:1.55}
+.quiz-explain.show{display:block}
+.sources{border-top:1px solid var(--line);padding:34px 0 60px;color:var(--dim);font-size:.83rem}
+.sources h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.sources p{margin:0 0 8px;max-width:80ch}
+.sources a{color:var(--muted);border-bottom:1px solid var(--line-strong)}
+.sources a:hover{color:var(--accent);text-decoration:none}
+.prevnext{display:flex;justify-content:space-between;gap:16px;padding:26px 0 0;border-top:1px solid var(--line);margin-top:34px}
+.prevnext a{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);display:flex;flex-direction:column;gap:3px;max-width:45%}
+.prevnext a:hover{color:var(--accent);text-decoration:none}
+.prevnext a span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.prevnext .right{text-align:right;margin-left:auto}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.mono{font-family:var(--mono);font-size:.82em;letter-spacing:.02em}
+.dim{color:var(--dim)}
+.accent{color:var(--accent)}
+.center{text-align:center}
+.mt0{margin-top:0}.mt1{margin-top:10px}.mt2{margin-top:20px}.mt3{margin-top:34px}
+.hr{height:1px;background:var(--line);border:0;margin:30px 0}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+footer{color:var(--dim);font-size:.78rem}
+.foot-inner{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 50px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:900px){
+  .split,.split.wide-left,.split.wide-right,.grid2,.grid3{grid-template-columns:1fr}
+  .chapter-head{grid-template-columns:40px minmax(0,1fr)}
+  .topbar{gap:10px}
+  #sectionNav{display:none}
+  h1{max-width:20ch}
+}
+@media(max-width:560px){
+  body{font-size:16px}
+  .hero{min-height:620px;padding-top:96px}
+  .chapter-head{grid-template-columns:1fr;gap:8px}
+  .chapter-num{border-top:0;padding:0}
+  .controls{gap:10px 14px}
+  .scroll-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  .topbar,.progress,#heroCanvas,.scroll-hint{display:none}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#111}
+  .card,.stage,.formula{border-color:#ddd}
+}
+
+/* index work cards */
+.work{display:block;color:var(--ink);text-decoration:none;transition:transform .35s var(--ease),border-color .35s var(--ease),background .35s var(--ease)}
+.work:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--accent) 55%,transparent);text-decoration:none;background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.02))}
+.work-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim)}
+.work-no{color:var(--accent)}
+.work-year{border:1px solid var(--line);padding:3px 7px;border-radius:99px}
+.work h4{color:var(--accent);margin-bottom:6px}
+.work .work-title{font-family:var(--serif);font-size:1.28rem;line-height:1.18;color:var(--ink);margin:0 0 9px;letter-spacing:-.01em}
+.work p{font-size:.88rem;color:var(--muted);line-height:1.55}
+.work-go{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+</style>
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body style="--accent:#7fc4a3;--accent-soft:rgba(127,196,163,.16)">
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <a class="brand" href="einstein_index.html">Einstein · visualisiert</a>
+  <nav id="sectionNav" aria-label="Abschnitte"></nav>
+</header>
+<main>
+<section class="hero" id="top">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">Preußische Akademie · 8. Februar 1917</div>
+    <h1>Die Welt als <em>Kugel</em></h1>
+    <p class="lede">Newtons Universum ist unendlich — und genau deshalb instabil. Einstein macht daraus eine geschlossene Kugel, führt eine neue Konstante ein und erfindet damit die moderne Kosmologie.</p>
+    <p class="epigraph">„Wenn es nämlich möglich wäre, die Welt als ein nach seinen räumlichen Erstreckungen geschlossenes Kontinuum anzusehen, dann hätte man überhaupt keine derartigen Grenzbedingungen nötig.“</p>
+    <div class="meta"><span><b>Original</b> Kosmologische Betrachtungen zur allgemeinen Relativitätstheorie</span><span><b>Vorgetragen</b> 8. Februar 1917</span><span><b>Umfang</b> 11 Seiten</span></div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</section>
+
+
+<div class="wrap">
+<section class="chapter" id="problem">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">01</div>
+    <div>
+      <h2>Newtons Himmel hat ein Problem</h2>
+      <p class="sub">Ein unendliches, gleichmäßig gefülltes Universum müsste kollabieren — oder der Himmel müsste hell sein wie die Sonne.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p class="lead">Newton braucht für seine Gravitation eine Randbedingung: Im Unendlichen soll das Potential einen festen Wert haben. Daraus folgt, dass die Materiedichte nach außen hin abnimmt. Das Universum wäre endlich — mit einem Rand.</p>
+      <p>Doch ein endliches, ruhendes Sternsystem fällt in sich zusammen. Ein unendliches, homogenes Universum hat kein Zentrum, aber dann müsste das Gravitationspotential überall divergieren. Und nach Olbers wäre der Nachthimmel hell: In jeder Richtung stünde irgendwann ein Stern.</p>
+      <p>Einstein sucht einen Ausweg, der ohne Rand und ohne Zusammenbruch funktioniert. Die Lösung ist radikal: Der Raum selbst ist geschlossen.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Newtons unendliches Gitter</span>
+        <span class="readout" id="newtonReadout">homogen · instabil</span>
+        <canvas id="newtonCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Dichte <input type="range" id="newtonRho" min="10" max="100" value="55" data-out="newtonRhoVal" data-format="0"><span class="val" id="newtonRhoVal">55</span></label>
+        <button class="btn" id="newtonReset">neu starten</button>
+      </div>
+      <div class="legend"><span><i style="background:#7fc4a3"></i>Materie</span><span><i style="background:#f2d391"></i>Gravitation</span></div>
+    </div>
+  </div>
+  <div class="grid2 mt3">
+    <div class="card reveal"><h4>Das Gravitationsparadox</h4><p>In einem unendlichen homogenen Universum ist die Gravitationskraft an jedem Punkt unbestimmt — nicht null. Newton braucht eine Grenzbedingung, die es nicht geben kann.</p></div>
+    <div class="card reveal"><h4>Olbers' Paradox</h4><p>Wäre das Universum unendlich, alt und gleichmäßig mit Sternen gefüllt, wäre der Nachthimmel gleißend hell. Er ist es nicht.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="kugel">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">02</div>
+    <div>
+      <h2>Endlich, aber ohne Rand</h2>
+      <p class="sub">Die Oberfläche einer Kugel ist endlich und hat keinen Rand. Einstein überträgt diese Idee auf den dreidimensionalen Raum.</p>
+    </div>
+  </div>
+  <div class="split wide-left">
+    <div class="prose reveal">
+      <p>Ein <strong>sphärischer Raum</strong> ist die dreidimensionale Entsprechung einer Kugeloberfläche. Wer immer geradeaus geht, kommt irgendwann von der anderen Seite zurück. Es gibt kein „Außen“, keinen Rand, keine Grenzbedingung.</p>
+      <p>Mathematisch beschreibt man ihn mit einem Radius <span class="mono">R</span> und einem Linienelement, das die Krümmung enthält:</p>
+      <div class="formula">ds² = R² [ dχ² + sin²χ (dθ² + sin²θ dφ²) ]
+        <div class="formula-note">Das ist die Metrik eines geschlossenen, homogenen Raums. Die Winkelsumme großer Dreiecke ist größer als 180°.</div>
+      </div>
+      <p>Die Materie ist gleichmäßig verteilt. Die Relativgeschwindigkeiten der Sterne sind klein — deshalb darf man in erster Näherung von einem ruhenden Kosmos ausgehen. Genau das nimmt Einstein 1917 an.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:340px">
+        <span class="label">Geschlossener Raum · 2D-Analogie</span>
+        <span class="readout" id="sphereReadout">R = 1.00</span>
+        <canvas id="sphereCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Radius <input type="range" id="sphereR" min="40" max="100" value="70" data-out="sphereRVal" data-format="0"><span class="val" id="sphereRVal">70</span></label>
+      </div>
+      <div class="legend"><span><i style="background:#7fc4a3"></i>Galaxien</span><span><i style="background:#f2d391"></i>Geodäte</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="lambda">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">03</div>
+    <div>
+      <h2>Die kosmologische Konstante</h2>
+      <p class="sub">Damit die Kugel nicht kollabiert, braucht Einstein eine Abstoßung. Er baut sie als neuen Term in die Feldgleichung ein.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p>Die ursprüngliche Feldgleichung erlaubt keine statische, gleichmäßig gefüllte Welt. Einstein erweitert sie um den Term <span class="mono">−Λ g<sub>μν</sub></span>:</p>
+      <div class="formula">G<sub>μν</sub> − Λ g<sub>μν</sub> = <span class="frac"><span class="num">8πG</span><span class="den">c⁴</span></span> T<sub>μν</sub>
+        <div class="formula-note">Λ wirkt wie eine dem Raum innewohnende Abstoßung. Sie ist überall gleich, unabhängig von der Materie.</div>
+      </div>
+      <p>Im statischen Fall gilt <span class="mono">Λ = 1/R²</span>. Die Dichte der Materie ist dann fest mit Λ verknüpft. Je größer Λ, desto kleiner die Kugel — und desto stärker die Abstoßung, die die Gravitation ausbalanciert.</p>
+      <p>Das ist keine „Kraft“ im Newtonschen Sinn. Λ ist eine Eigenschaft der Raumzeit selbst — ein konstanter Krümmungsterm, der auch dort existiert, wo keine Materie ist.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:340px">
+        <span class="label">Gravitation ↔ Λ</span>
+        <span class="readout" id="lambdaReadout">Λ = 1.00 · statisch</span>
+        <canvas id="lambdaCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Λ <input type="range" id="lambdaV" min="20" max="180" value="100" data-out="lambdaVVal" data-format="0"><span class="val" id="lambdaVVal">100</span></label>
+      </div>
+      <div class="legend"><span><i style="background:#7fc4a3"></i>Gravitation</span><span><i style="background:#f2d391"></i>Λ</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="ironie">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">04</div>
+    <div>
+      <h2>Die Ironie der Geschichte</h2>
+      <p class="sub">1929 expandiert das Universum. Die statische Lösung war instabil. Und Λ kehrt 1998 als dunkle Energie zurück.</p>
+    </div>
+  </div>
+  <div class="split wide-right">
+    <div class="reveal">
+      <div class="stage" style="height:340px">
+        <span class="label">Expansion des Universums</span>
+        <span class="readout" id="expReadout">ΩΛ = 0.70</span>
+        <canvas id="expCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">ΩΛ <input type="range" id="expL" min="0" max="100" value="70" data-out="expLVal" data-format="2"><span class="val" id="expLVal">0.70</span></label>
+      </div>
+      <div class="legend"><span><i style="background:#7fc4a3"></i>Skalenfaktor a(t)</span><span><i style="background:#f2d391"></i>heute</span></div>
+    </div>
+    <div class="prose reveal">
+      <p>1929 zeigt Edwin Hubble: Je weiter eine Galaxie entfernt ist, desto schneller entfernt sie sich. Das Universum expandiert. Ein statisches Universum ist keine Lösung der Beobachtung.</p>
+      <p>Einsteins Λ-Welt ist zudem instabil: Eine winzige Störung lässt sie entweder kollabieren oder davonlaufen. Die Konstante war ein Umweg, kein Fundament.</p>
+      <p>1998 entdecken zwei Teams, dass die Expansion <em>beschleunigt</em> ist. Dafür braucht man wieder etwas wie Λ — heute „dunkle Energie“ genannt. Einstein hatte den richtigen Term, aber die falsche Begründung.</p>
+      <p>Die Anekdote, er habe Λ später „seine größte Eselei“ genannt, stammt von George Gamow. Einstein selbst hat sich öffentlich vorsichtiger geäußert.</p>
+    </div>
+  </div>
+  <div class="timeline mt3">
+    <div class="t reveal"><span class="y">1917</span><p>Einstein führt Λ ein, um ein statisches, geschlossenes Universum zu ermöglichen.</p></div>
+    <div class="t reveal"><span class="y">1922</span><p>Friedmann findet expandierende Lösungen — ohne Λ. Einstein hält sie zunächst für einen Rechenfehler.</p></div>
+    <div class="t reveal"><span class="y">1929</span><p>Hubble misst die Expansion. Das statische Weltmodell fällt.</p></div>
+    <div class="t reveal"><span class="y">1998</span><p>Supernovae zeigen: Die Expansion beschleunigt sich. Λ kehrt zurück.</p></div>
+    <div class="t reveal"><span class="y">Heute</span><p>ΛCDM ist das Standardmodell: ≈ 68 % dunkle Energie, ≈ 27 % dunkle Materie, ≈ 5 % normale Materie.</p></div>
+  </div>
+  <div class="quiz reveal" data-answer="2">
+    <p class="q">Warum führte Einstein die kosmologische Konstante Λ ein?</p>
+    <div class="quiz-option">Um die Lichtgeschwindigkeit im Vakuum zu erklären.</div>
+    <div class="quiz-option">Um die Rotverschiebung der Galaxien vorherzusagen.</div>
+    <div class="quiz-option">Um ein statisches, geschlossenes Universum gegen den Gravitationskollaps zu stabilisieren.</div>
+    <div class="quiz-option">Um die Quantenmechanik mit der Gravitation zu vereinigen.</div>
+    <p class="quiz-explain">Die ursprüngliche Feldgleichung erlaubt keine statische, homogen gefüllte Welt. Λ wirkt als Abstoßung und balanciert die Gravitation — zum Preis einer neuen, zunächst willkürlichen Konstante.</p>
+  </div>
+</section>
+
+<section class="chapter" id="mitnehmen">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">05</div>
+    <div>
+      <h2>Was du mitnimmst</h2>
+      <p class="sub">Drei Ideen, die die Kosmologie bis heute bestimmen.</p>
+    </div>
+  </div>
+  <div class="takeaways">
+    <div class="takeaway reveal"><span class="n">01 · DER RAUM HAT EINE FORM</span><p>Das Universum ist keine unendliche Bühne. Seine globale Geometrie ist eine physikalische Frage — und messbar.</p></div>
+    <div class="takeaway reveal"><span class="n">02 · KONSTANTEN SIND HYPOTHESEN</span><p>Λ war ein Hilfsmittel, um eine Annahme zu retten. Solche Hilfsmittel sind erlaubt — aber sie müssen sich der Beobachtung stellen.</p></div>
+    <div class="takeaway reveal"><span class="n">03 · DIE GESCHICHTE KORRIGIERT</span><p>Die stärkste Theorie kann an einer falschen Annahme scheitern. Hubble und die Supernovae haben Einsteins Kosmos zweimal umgeschrieben.</p></div>
+  </div>
+  <div class="prevnext">
+    <a href="einstein_07_allgemeine-relativitaet.html"><span>Zurück</span>Die Krümmung der Welt</a>
+    <a class="right" href="einstein_09_quantentheorie-strahlung.html"><span>Weiter</span>Der Laser steckt in dieser Formel →</a>
+  </div>
+</section>
+</div>
+
+<section class="sources">
+  <div class="wrap">
+    <h3>Quelle &amp; Weiterlesen</h3>
+    <p>A. Einstein, <em>Kosmologische Betrachtungen zur allgemeinen Relativitätstheorie</em>, Sitzungsberichte der Preußischen Akademie der Wissenschaften (1917), 142–152. Public Domain. Faksimile: <a href="https://archive.org/details/sitzungsberichte1917deut" target="_blank" rel="noopener">archive.org</a>.</p>
+    <p>Die Expansionskurven sind schematische Lösungen der Friedmann-Gleichung für ein flaches Universum. Die 2D-Kugel ist eine Analogie für den 3-Sphäre-Raum.</p>
+  </div>
+</section>
+
+
+</main>
+<footer>
+  <div class="foot-inner">
+    <span>Einstein · visualisiert</span>
+    <span>Quelle: Sitzungsberichte der Preußischen Akademie (1917), 142–152 · Public Domain</span>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var EIN = window.EIN = {};
+
+  EIN.clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  EIN.lerp = function (a, b, t) { return a + (b - a) * t; };
+  EIN.ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+  EIN.TAU = Math.PI * 2;
+
+  EIN.css = function (name) {
+    return getComputedStyle(document.body).getPropertyValue(name).trim();
+  };
+
+  EIN.fit = function (canvas) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(r.width));
+    var h = Math.max(1, Math.round(r.height));
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h, dpr: dpr };
+  };
+
+  EIN.onResize = function (canvas, draw) {
+    var raf = 0;
+    function run() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
+    if (window.ResizeObserver) new ResizeObserver(run).observe(canvas);
+    window.addEventListener("resize", run);
+    return run;
+  };
+
+  EIN.loop = function (fn) {
+    var t0 = performance.now();
+    var last = t0;
+    function frame(now) {
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      fn(Math.max(0, (now - t0) / 1000), dt);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  };
+
+  EIN.visible = function (el, onEnter, onExit) {
+    if (!el || !("IntersectionObserver" in window)) { if (onEnter) onEnter(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { if (onEnter) onEnter(); }
+        else if (onExit) onExit();
+      });
+    }, { rootMargin: "140px 0px" });
+    io.observe(el);
+  };
+
+  EIN.arrow = function (ctx, x1, y1, x2, y2, color, width) {
+    var a = Math.atan2(y2 - y1, x2 - x1);
+    var s = 7;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width || 1.4;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - s * Math.cos(a - 0.38), y2 - s * Math.sin(a - 0.38));
+    ctx.lineTo(x2 - s * Math.cos(a + 0.38), y2 - s * Math.sin(a + 0.38));
+    ctx.closePath(); ctx.fill();
+  };
+
+  EIN.label = function (ctx, text, x, y, color, size, align) {
+    ctx.fillStyle = color || "#8a857c";
+    ctx.font = (size || 10) + "px ui-monospace, SFMono-Regular, Consolas, monospace";
+    ctx.textAlign = align || "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, y);
+  };
+
+  function initProgress() {
+    var bar = document.getElementById("progressBar");
+    if (!bar) return;
+    function upd() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    }
+    window.addEventListener("scroll", upd, { passive: true });
+    window.addEventListener("resize", upd);
+    upd();
+  }
+
+  function initNav() {
+    var nav = document.getElementById("sectionNav");
+    var sections = [].slice.call(document.querySelectorAll(".chapter[id]"));
+    if (!nav || !sections.length) return;
+    sections.forEach(function (s, i) {
+      var h = s.querySelector("h2");
+      var a = document.createElement("a");
+      a.href = "#" + s.id;
+      a.textContent = h ? h.textContent.replace(/\s+/g, " ").slice(0, 26) : "0" + (i + 1);
+      nav.appendChild(a);
+    });
+    var links = [].slice.call(nav.querySelectorAll("a"));
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var i = sections.indexOf(e.target);
+        links.forEach(function (l, j) { l.classList.toggle("on", i === j); });
+      });
+    }, { rootMargin: "-20% 0px -68% 0px" });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  function initReveal() {
+    var els = [].slice.call(document.querySelectorAll(".reveal"));
+    if (!els.length) return;
+    if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    els.forEach(function (e, i) { e.style.transitionDelay = (Math.min(i % 4, 3) * 55) + "ms"; io.observe(e); });
+  }
+
+  function initRanges() {
+    [].slice.call(document.querySelectorAll("input[type=range][data-out]")).forEach(function (r) {
+      var out = document.getElementById(r.getAttribute("data-out"));
+      function upd() {
+        if (!out) return;
+        var v = parseFloat(r.value);
+        var f = r.getAttribute("data-format");
+        out.textContent = f === "int" ? Math.round(v) : v.toFixed(f ? parseInt(f, 10) : 1);
+      }
+      r.addEventListener("input", upd); upd();
+    });
+  }
+
+  function initQuiz() {
+    [].slice.call(document.querySelectorAll(".quiz")).forEach(function (quiz) {
+      var ans = parseInt(quiz.getAttribute("data-answer"), 10);
+      var opts = [].slice.call(quiz.querySelectorAll(".quiz-option"));
+      var ex = quiz.querySelector(".quiz-explain");
+      opts.forEach(function (o, i) {
+        o.addEventListener("click", function () {
+          opts.forEach(function (x) { x.classList.remove("ok", "no"); x.disabled = true; });
+          if (i === ans) { o.classList.add("ok"); }
+          else { o.classList.add("no"); opts[ans].classList.add("ok"); }
+          if (ex) ex.classList.add("show");
+        });
+      });
+    });
+  }
+
+  function boot() {
+    initProgress(); initNav(); initReveal(); initRanges(); initQuiz();
+    if (window.__pageInit) window.__pageInit();
+    document.documentElement.classList.add("ready");
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+
+</script>
+<script>
+
+(function () {
+  "use strict";
+
+  
+  (function () {
+    var c = document.getElementById("heroCanvas");
+    if (!c) return;
+    var pts = [];
+    for (var i = 0; i < 90; i++) {
+      var u = Math.random() * EIN.TAU, v = Math.acos(2 * Math.random() - 1);
+      pts.push([u, v, Math.random() * 6]);
+    }
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * 0.62, cy = h * 0.5, R = Math.min(w, h) * 0.3;
+      
+      for (var lat = -4; lat <= 4; lat++) {
+        var phi = lat / 4 * Math.PI / 2;
+        ctx.beginPath();
+        for (var lon = 0; lon <= EIN.TAU + .1; lon += .08) {
+          var x = cx + Math.cos(lon + t * .08) * Math.cos(phi) * R;
+          var y = cy + Math.sin(phi) * R + Math.sin(lon + t * .08) * Math.cos(phi) * R * 0.18;
+          if (lon === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = "rgba(127,196,163,.11)"; ctx.stroke();
+      }
+      for (var lon = 0; lon < 12; lon++) {
+        var a = lon / 12 * Math.PI;
+        ctx.beginPath();
+        for (var ph = -Math.PI / 2; ph <= Math.PI / 2 + .05; ph += .08) {
+          var x2 = cx + Math.cos(a + t * .08) * Math.cos(ph) * R;
+          var y2 = cy + Math.sin(ph) * R + Math.sin(a + t * .08) * Math.cos(ph) * R * 0.18;
+          if (ph === -Math.PI / 2) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2);
+        }
+        ctx.strokeStyle = "rgba(127,196,163,.08)"; ctx.stroke();
+      }
+      
+      pts.forEach(function (p) {
+        var lon = p[0] + t * .08, phi = p[1] - Math.PI / 2;
+        var x = cx + Math.cos(lon) * Math.cos(phi) * R;
+        var y = cy + Math.sin(phi) * R + Math.sin(lon) * Math.cos(phi) * R * 0.18;
+        var front = Math.cos(lon) > -0.2;
+        ctx.fillStyle = front ? "rgba(242,211,145,.85)" : "rgba(242,211,145,.22)";
+        ctx.beginPath(); ctx.arc(x, y, front ? 1.8 : 1.1, 0, EIN.TAU); ctx.fill();
+      });
+      var rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.25);
+      rg.addColorStop(0, "rgba(127,196,163,.06)"); rg.addColorStop(.7, "rgba(127,196,163,.03)"); rg.addColorStop(1, "rgba(127,196,163,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, cy, R * 1.25, 0, EIN.TAU); ctx.fill();
+      EIN.label(ctx, "endlich · ohne Rand", cx, cy + R * 1.32, "rgba(127,196,163,.55)", 10, "center");
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("newtonCanvas");
+    if (!c) return;
+    var rho = 55, ps = [], seed = 5;
+    var sv = document.getElementById("newtonRho"), ro = document.getElementById("newtonReadout");
+    function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+    function reset() {
+      ps = [];
+      for (var i = 0; i < 55; i++) ps.push({ x: .1 + rnd() * .8, y: .1 + rnd() * .8, vx: (rnd() - .5) * .0008, vy: (rnd() - .5) * .0008 });
+    }
+    reset();
+    sv.oninput = function () { rho = +sv.value; };
+    document.getElementById("newtonReset").onclick = reset;
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * .5, cy = h * .5;
+      
+      for (var i = 0; i < ps.length; i++) {
+        var p = ps[i];
+        var dx = cx - (p.x * w), dy = cy - (p.y * h);
+        var r = Math.hypot(dx, dy) + 20;
+        var g = rho * 0.00000045;
+        p.vx += dx / r * g; p.vy += dy / r * g;
+        p.vx *= .999; p.vy *= .999;
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < .02 || p.x > .98) p.vx *= -1;
+        if (p.y < .04 || p.y > .96) p.vy *= -1;
+        p.x = EIN.clamp(p.x, .02, .98); p.y = EIN.clamp(p.y, .04, .96);
+        var px = p.x * w, py = p.y * h;
+        ctx.fillStyle = "rgba(127,196,163,.75)"; ctx.beginPath(); ctx.arc(px, py, 1.8, 0, EIN.TAU); ctx.fill();
+      }
+      
+      for (var a = 0; a < 12; a++) {
+        var ang = a / 12 * EIN.TAU;
+        ctx.beginPath();
+        for (var rr = 30; rr < Math.min(w, h) * .45; rr += 8) {
+          var x = cx + Math.cos(ang) * rr, y = cy + Math.sin(ang) * rr;
+          if (rr === 30) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = "rgba(242,211,145,.08)"; ctx.stroke();
+      }
+      EIN.label(ctx, "ρ = " + (rho / 100).toFixed(2), 16, 20, "rgba(127,196,163,.7)", 10);
+      EIN.label(ctx, "Gravitation zieht nach innen", w - 16, 20, "rgba(242,211,145,.55)", 9, "right");
+      ro.textContent = "homogen · instabil";
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("sphereCanvas");
+    if (!c) return;
+    var R = 70;
+    var sv = document.getElementById("sphereR"), ro = document.getElementById("sphereReadout");
+    sv.oninput = function () { R = +sv.value; draw(); };
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * .5, cy = h * .5, rad = Math.min(w, h) * .38 * (R / 70);
+      
+      var rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
+      rg.addColorStop(0, "rgba(127,196,163,.04)"); rg.addColorStop(.8, "rgba(127,196,163,.02)"); rg.addColorStop(1, "rgba(127,196,163,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, cy, rad, 0, EIN.TAU); ctx.fill();
+      ctx.strokeStyle = "rgba(127,196,163,.5)"; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(cx, cy, rad, 0, EIN.TAU); ctx.stroke();
+      
+      ctx.beginPath();
+      for (var a = 0; a <= EIN.TAU + .05; a += .05) {
+        var x = cx + Math.cos(a) * rad * .82, y = cy + Math.sin(a) * rad * .82;
+        if (a === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = "rgba(242,211,145,.55)"; ctx.lineWidth = 1.2; ctx.setLineDash([4, 5]); ctx.stroke(); ctx.setLineDash([]);
+      
+      for (var i = 0; i < 34; i++) {
+        var ang = i / 34 * EIN.TAU + i * .7;
+        var rr = rad * (0.2 + (i % 5) * .16);
+        var x = cx + Math.cos(ang) * rr, y = cy + Math.sin(ang) * rr;
+        ctx.fillStyle = "rgba(242,211,145,.55)"; ctx.beginPath(); ctx.arc(x, y, 1.5, 0, EIN.TAU); ctx.fill();
+      }
+      
+      var ta = performance.now() / 1000 * .5;
+      var tx = cx + Math.cos(ta) * rad * .82, ty = cy + Math.sin(ta) * rad * .82;
+      var g = ctx.createRadialGradient(tx, ty, 0, tx, ty, 10);
+      g.addColorStop(0, "rgba(255,245,210,.95)"); g.addColorStop(1, "rgba(255,245,210,0)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(tx, ty, 10, 0, EIN.TAU); ctx.fill();
+      EIN.label(ctx, "R", cx + 8, cy - 4, "rgba(255,255,255,.4)", 10);
+      EIN.label(ctx, "geradeaus → zurück", cx, cy + rad + 26, "rgba(127,196,163,.55)", 9, "center");
+      ro.textContent = "R = " + (R / 70).toFixed(2);
+      document.getElementById("sphereRVal").textContent = R;
+    }
+    EIN.onResize(c, draw);
+    EIN.loop(function () { draw(); });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("lambdaCanvas");
+    if (!c) return;
+    var L = 100;
+    var sv = document.getElementById("lambdaV"), ro = document.getElementById("lambdaReadout");
+    sv.oninput = function () { L = +sv.value; draw(); };
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * .5, cy = h * .55;
+      var gravity = 1.0, lam = L / 100;
+      var balance = lam / gravity;
+      
+      var gl = 60 + gravity * 40, ll = 60 + lam * 40;
+      EIN.arrow(ctx, cx - 10, cy, cx - 10 - gl, cy, "rgba(127,196,163,.85)", 2);
+      EIN.arrow(ctx, cx + 10, cy, cx + 10 + ll, cy, "rgba(242,211,145,.85)", 2);
+      EIN.label(ctx, "Gravitation", cx - 28, cy - 18, "rgba(127,196,163,.7)", 9, "right");
+      EIN.label(ctx, "Λ", cx + 28, cy - 18, "rgba(242,211,145,.7)", 9);
+      
+      var R = Math.max(18, Math.min(90, 60 / Math.sqrt(lam)));
+      var rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+      rg.addColorStop(0, "rgba(255,255,255,.06)"); rg.addColorStop(.8, "rgba(127,196,163,.05)"); rg.addColorStop(1, "rgba(127,196,163,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, cy, R, 0, EIN.TAU); ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.beginPath(); ctx.arc(cx, cy, R, 0, EIN.TAU); ctx.stroke();
+      
+      var diff = lam - gravity;
+      var status = Math.abs(diff) < .08 ? "statisch" : (diff > 0 ? "expandiert" : "kollabiert");
+      var col = Math.abs(diff) < .08 ? "rgba(127,196,163,.9)" : (diff > 0 ? "rgba(242,211,145,.9)" : "rgba(255,143,107,.9)");
+      EIN.label(ctx, status, cx, cy + 4, col, 12, "center");
+      EIN.label(ctx, "Λ = " + lam.toFixed(2) + " · R ∝ 1/√Λ", cx, cy + R + 26, "rgba(255,255,255,.4)", 9, "center");
+      ro.textContent = "Λ = " + lam.toFixed(2) + " · " + status;
+      document.getElementById("lambdaVVal").textContent = L;
+    }
+    EIN.onResize(c, draw); draw();
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("expCanvas");
+    if (!c) return;
+    var OL = 0.7;
+    var sv = document.getElementById("expL"), ro = document.getElementById("expReadout");
+    sv.oninput = function () { OL = +sv.value / 100; draw(); };
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var pad = { l: 44, r: 18, t: 26, b: 32 };
+      function X(t) { return pad.l + (t / 14) * (w - pad.l - pad.r); }
+      function Y(a) { return h - pad.b - (a / 2.4) * (h - pad.t - pad.b); }
+      ctx.strokeStyle = "rgba(255,255,255,.12)";
+      ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+      EIN.label(ctx, "a(t)", 8, pad.t - 6, "rgba(255,255,255,.35)", 9);
+      EIN.label(ctx, "Zeit", w - pad.r, h - 8, "rgba(255,255,255,.35)", 9, "right");
+      
+      ctx.strokeStyle = "rgba(242,211,145,.35)"; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(X(10), pad.t); ctx.lineTo(X(10), h - pad.b); ctx.stroke(); ctx.setLineDash([]);
+      EIN.label(ctx, "heute", X(10), h - pad.b + 12, "rgba(242,211,145,.6)", 8, "center");
+      
+      function curve(OLv, color, width) {
+        var a = 0.02, t = 0, pts = [];
+        var Om = 1 - OLv;
+        while (t < 14 && a < 2.4) {
+          var H = Math.sqrt(Om / a + OLv * a * a + 0.0001);
+          a += H * 0.02; t += 0.02;
+          pts.push([t, a]);
+        }
+        ctx.beginPath();
+        pts.forEach(function (p, i) {
+          var x = X(p[0]), y = Y(p[1]);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = color; ctx.lineWidth = width; ctx.stroke();
+      }
+      curve(0, "rgba(255,255,255,.18)", 1.2);
+      curve(OL, "rgba(127,196,163,.95)", 2);
+      curve(1, "rgba(242,211,145,.45)", 1.2);
+      EIN.label(ctx, "ΩΛ = 0", w - pad.r - 6, Y(1.05), "rgba(255,255,255,.3)", 8, "right");
+      EIN.label(ctx, "ΩΛ = 1", w - pad.r - 6, Y(2.1), "rgba(242,211,145,.45)", 8, "right");
+      ro.textContent = "ΩΛ = " + OL.toFixed(2);
+      document.getElementById("expLVal").textContent = OL.toFixed(2);
+    }
+    EIN.onResize(c, draw); draw();
+  })();
+})();
+
+</script>
+</body>
+</html>

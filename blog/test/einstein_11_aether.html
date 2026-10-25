@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Der Äther lebt — ohne Bewegung — Einstein, visualisiert</title>
+<meta name="description" content="Einstein hält seine berühmte Leidener Rede. Er schafft den mechanischen Äther ab — und gibt dem Raum dafür physikalische Eigenschaften, die man nicht mehr wie einen Stoff behandeln kann.">
+<style>
+:root{
+  --bg:#07070b;
+  --bg-2:#0b0b12;
+  --panel:rgba(255,255,255,.038);
+  --panel-2:rgba(255,255,255,.026);
+  --ink:#ece9e1;
+  --muted:#a8a397;
+  --dim:#6f6b63;
+  --line:rgba(255,255,255,.085);
+  --line-strong:rgba(255,255,255,.16);
+  --accent:#e8b45a;
+  --accent-soft:rgba(232,180,90,.16);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  --math:"Latin Modern Math","STIX Two Math","Cambria Math",Cambria,Georgia,serif;
+  --col:72ch;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:17px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(900px 620px at 78% -8%,var(--accent-soft),transparent 62%),
+    radial-gradient(700px 500px at 8% 18%,rgba(120,140,255,.055),transparent 65%),
+    linear-gradient(180deg,#08080d 0%,#07070b 45%,#06060a 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+::selection{background:var(--accent);color:#111}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:rgba(255,255,255,.05)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#fff6d8);box-shadow:0 0 14px var(--accent);transition:width .08s linear}
+.topbar{
+  position:fixed;top:2px;left:0;right:0;z-index:55;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:12px clamp(16px,3vw,38px);
+  background:linear-gradient(180deg,rgba(7,7,11,.92),rgba(7,7,11,.55) 70%,transparent);
+  backdrop-filter:blur(10px);
+}
+.brand{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--muted);
+  white-space:nowrap;text-transform:uppercase;
+}
+.brand:hover{color:var(--ink);text-decoration:none}
+#sectionNav{display:flex;gap:4px;overflow:auto;scrollbar-width:none;mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
+#sectionNav::-webkit-scrollbar{display:none}
+#sectionNav a{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);
+  padding:5px 8px;border-radius:99px;white-space:nowrap;transition:.25s var(--ease);
+}
+#sectionNav a:hover{color:var(--ink);text-decoration:none;background:rgba(255,255,255,.05)}
+#sectionNav a.on{color:var(--accent);background:var(--accent-soft)}
+main{position:relative}
+.hero{
+  position:relative;min-height:clamp(520px,82vh,820px);display:flex;align-items:flex-end;
+  padding:120px clamp(20px,5vw,64px) clamp(48px,8vh,90px);
+  overflow:hidden;
+}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:18px;
+}
+.kicker::before{content:"";width:28px;height:1px;background:var(--accent);opacity:.7}
+h1{
+  font-family:var(--serif);font-weight:400;font-size:clamp(2.35rem,6.2vw,5.6rem);
+  line-height:1.02;letter-spacing:-.025em;margin:0 0 22px;max-width:17ch;
+  text-wrap:balance;
+}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{font-size:clamp(1.02rem,1.7vw,1.28rem);line-height:1.55;color:#cfcac0;max-width:56ch;margin:0 0 18px}
+.epigraph{
+  font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--muted);
+  max-width:52ch;margin:0 0 22px;padding-left:16px;border-left:1px solid var(--line-strong);
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.meta b{color:var(--muted);font-weight:400}
+.scroll-hint{
+  position:absolute;right:clamp(20px,5vw,64px);bottom:28px;z-index:2;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--dim);
+  writing-mode:vertical-rl;display:flex;align-items:center;gap:10px;
+}
+.scroll-hint::after{content:"";width:1px;height:38px;background:linear-gradient(var(--accent),transparent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.chapter{padding:clamp(58px,9vh,110px) 0;border-top:1px solid var(--line);position:relative}
+.chapter-head{display:grid;grid-template-columns:64px minmax(0,1fr);gap:clamp(10px,2vw,26px);margin-bottom:clamp(26px,4vw,44px);align-items:start}
+.chapter-num{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--accent);
+  padding-top:9px;border-top:1px solid var(--accent);
+}
+.chapter h2{
+  font-family:var(--serif);font-weight:400;font-size:clamp(1.65rem,3.1vw,2.65rem);
+  line-height:1.12;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;
+}
+.chapter h3{font-family:var(--serif);font-weight:400;font-size:1.32rem;margin:0 0 10px;letter-spacing:-.01em}
+.chapter .sub{color:var(--muted);max-width:62ch;margin:0;font-size:1rem}
+.prose{max-width:var(--col);color:#cfcac0}
+.prose p{margin:0 0 1.05em}
+.prose p:last-child{margin-bottom:0}
+.prose strong{color:var(--ink);font-weight:600}
+.prose em{color:#e3ded4}
+.prose ul,.prose ol{margin:.2em 0 1.1em;padding-left:1.25em}
+.prose li{margin:.32em 0}
+.prose code{font-family:var(--mono);font-size:.86em;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px}
+.lead{font-size:1.12rem;line-height:1.62;color:#dcd7cd}
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,56px);align-items:center}
+.split.wide-left{grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr)}
+.split.wide-right{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:16px;padding:22px;
+  position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.35}
+.card h4{font-family:var(--sans);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:0 0 9px;font-weight:600}
+.card p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.58}
+.card .big{font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.2;margin-bottom:8px}
+.stage{
+  position:relative;background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.stage canvas{display:block;width:100%;height:100%}
+.stage .label{
+  position:absolute;left:14px;top:12px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);pointer-events:none;
+}
+.stage .readout{
+  position:absolute;right:14px;top:12px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.06em;color:var(--accent);pointer-events:none;
+}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:14px 0 0}
+.control{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--muted)}
+.control input[type=range]{
+  -webkit-appearance:none;appearance:none;width:clamp(110px,18vw,190px);height:2px;background:var(--line-strong);outline:none;border-radius:2px;
+}
+.control input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--accent);border:2px solid #111;box-shadow:0 0 0 3px var(--accent-soft);cursor:pointer;
+}
+.control input[type=range]::-moz-range-thumb{width:11px;height:11px;border:2px solid #111;border-radius:50%;background:var(--accent);cursor:pointer}
+.control .val{min-width:52px;color:var(--ink);font-variant-numeric:tabular-nums}
+.btn{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 14px;border-radius:99px;border:1px solid var(--line-strong);
+  background:transparent;color:var(--ink);cursor:pointer;transition:.2s var(--ease);
+}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.btn.on{background:var(--accent);color:#111;border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:0}
+.formula{
+  font-family:var(--math);font-size:clamp(1.05rem,2vw,1.38rem);line-height:1.85;
+  color:#f1ede4;background:rgba(255,255,255,.028);border:1px solid var(--line);
+  border-left:2px solid var(--accent);border-radius:0 12px 12px 0;
+  padding:18px 22px;margin:18px 0;overflow-x:auto;
+}
+.formula .small{font-size:.62em;color:var(--muted)}
+.formula-note{font-family:var(--sans);font-size:.78rem;color:var(--dim);margin-top:8px;letter-spacing:0}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .18em;line-height:1.15}
+.frac .num{border-bottom:1px solid currentColor;padding:0 .18em}
+.frac .den{padding:.08em .18em 0}
+.sqrt{border-top:1px solid currentColor;padding:0 .12em}
+.takeaways{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:26px}
+.takeaway{
+  background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.015));
+  border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+  border-radius:14px;padding:18px 18px 16px;position:relative;
+}
+.takeaway .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:7px}
+.takeaway p{margin:0;font-size:.9rem;line-height:1.55;color:#d8d3c9}
+.quote{
+  font-family:var(--serif);font-style:italic;font-size:clamp(1.15rem,2.1vw,1.45rem);
+  line-height:1.5;color:#e6e1d6;margin:28px 0;padding:0 0 0 22px;border-left:1px solid var(--accent);
+  max-width:60ch;
+}
+.quote cite{display:block;font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:12px}
+.timeline{position:relative;margin:20px 0;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:1px;background:linear-gradient(var(--accent),var(--line))}
+.timeline .t{position:relative;padding:0 0 20px}
+.timeline .t::before{content:"";position:absolute;left:-22px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.timeline .y{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent);display:block}
+.timeline .t p{margin:2px 0 0;font-size:.92rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);padding:4px 9px;border-radius:99px;margin:0 6px 6px 0}
+.quiz{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel);margin-top:26px}
+.quiz .q{font-family:var(--serif);font-size:1.1rem;margin:0 0 14px;color:var(--ink)}
+.quiz-options{display:grid;gap:8px}
+.quiz-option{
+  text-align:left;font-family:var(--sans);font-size:.9rem;color:#cfcac0;
+  padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:transparent;cursor:pointer;transition:.2s var(--ease);
+}
+.quiz-option:hover{border-color:var(--line-strong);background:rgba(255,255,255,.04)}
+.quiz-option.ok{border-color:#57c785;background:rgba(87,199,133,.12);color:#d8ffe8}
+.quiz-option.no{border-color:#e26868;background:rgba(226,104,104,.1);color:#ffdada}
+.quiz-explain{font-size:.86rem;color:var(--muted);margin:12px 0 0;display:none;line-height:1.55}
+.quiz-explain.show{display:block}
+.sources{border-top:1px solid var(--line);padding:34px 0 60px;color:var(--dim);font-size:.83rem}
+.sources h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.sources p{margin:0 0 8px;max-width:80ch}
+.sources a{color:var(--muted);border-bottom:1px solid var(--line-strong)}
+.sources a:hover{color:var(--accent);text-decoration:none}
+.prevnext{display:flex;justify-content:space-between;gap:16px;padding:26px 0 0;border-top:1px solid var(--line);margin-top:34px}
+.prevnext a{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);display:flex;flex-direction:column;gap:3px;max-width:45%}
+.prevnext a:hover{color:var(--accent);text-decoration:none}
+.prevnext a span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.prevnext .right{text-align:right;margin-left:auto}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.mono{font-family:var(--mono);font-size:.82em;letter-spacing:.02em}
+.dim{color:var(--dim)}
+.accent{color:var(--accent)}
+.center{text-align:center}
+.mt0{margin-top:0}.mt1{margin-top:10px}.mt2{margin-top:20px}.mt3{margin-top:34px}
+.hr{height:1px;background:var(--line);border:0;margin:30px 0}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+footer{color:var(--dim);font-size:.78rem}
+.foot-inner{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 50px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:900px){
+  .split,.split.wide-left,.split.wide-right,.grid2,.grid3{grid-template-columns:1fr}
+  .chapter-head{grid-template-columns:40px minmax(0,1fr)}
+  .topbar{gap:10px}
+  #sectionNav{display:none}
+  h1{max-width:20ch}
+}
+@media(max-width:560px){
+  body{font-size:16px}
+  .hero{min-height:620px;padding-top:96px}
+  .chapter-head{grid-template-columns:1fr;gap:8px}
+  .chapter-num{border-top:0;padding:0}
+  .controls{gap:10px 14px}
+  .scroll-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  .topbar,.progress,#heroCanvas,.scroll-hint{display:none}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#111}
+  .card,.stage,.formula{border-color:#ddd}
+}
+
+/* index work cards */
+.work{display:block;color:var(--ink);text-decoration:none;transition:transform .35s var(--ease),border-color .35s var(--ease),background .35s var(--ease)}
+.work:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--accent) 55%,transparent);text-decoration:none;background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.02))}
+.work-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim)}
+.work-no{color:var(--accent)}
+.work-year{border:1px solid var(--line);padding:3px 7px;border-radius:99px}
+.work h4{color:var(--accent);margin-bottom:6px}
+.work .work-title{font-family:var(--serif);font-size:1.28rem;line-height:1.18;color:var(--ink);margin:0 0 9px;letter-spacing:-.01em}
+.work p{font-size:.88rem;color:var(--muted);line-height:1.55}
+.work-go{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+</style>
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body style="--accent:#7fb8d9;--accent-soft:rgba(127,184,217,.16)">
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <a class="brand" href="einstein_index.html">Einstein · visualisiert</a>
+  <nav id="sectionNav" aria-label="Abschnitte"></nav>
+</header>
+<main>
+<section class="hero" id="top">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">Leiden · 5. Mai 1920 · Springer</div>
+    <h1>Der Äther lebt — <em>ohne Bewegung</em></h1>
+    <p class="lede">Einstein hält seine berühmte Leidener Rede. Er schafft den mechanischen Äther ab — und gibt dem Raum dafür physikalische Eigenschaften, die man nicht mehr wie einen Stoff behandeln kann.</p>
+    <p class="epigraph">„Raum ohne Äther ist undenkbar.“</p>
+    <div class="meta"><span><b>Original</b> Äther und Relativitätstheorie</span><span><b>Vortrag</b> Reichsuniversität Leiden, 5. Mai 1920</span><span><b>Umfang</b> 16 Seiten</span></div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</section>
+
+
+<div class="wrap">
+<section class="chapter" id="medium">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">01</div>
+    <div>
+      <h2>Warum brauchte man einen Äther?</h2>
+      <p class="sub">Weil Newton Fernwirkung erlaubte — und weil Licht eine Welle war. Beides verlangte nach einem Medium.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p class="lead">Newtons Gravitation wirkt ohne Berührung. Das war seinen Zeitgenossen unheimlich. Man suchte nach einem Stoff, der die Kraft überträgt — einen Äther, der den Raum füllt.</p>
+      <p>Als im 19. Jahrhundert klar wurde, dass Licht eine Welle ist, bekam der Äther eine neue Aufgabe: Er musste das Medium sein, in dem sich Lichtwellen ausbreiten — wie Wasser für Wasserwellen. Weil Licht polarisiert ist, musste dieser Äther sogar fest sein, ein „quasi-starres“ Medium.</p>
+      <p>Maxwell und Lorentz machten den Äther zum Träger des elektromagnetischen Feldes. Er bewegte sich nicht mit den Körpern; er war der absolute Raum, in dem die Felder leben.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Welle braucht Medium?</span>
+        <span class="readout" id="mediumReadout">Wasserwelle</span>
+        <canvas id="mediumCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <button class="btn on" id="mediumWater">Wasser</button>
+        <button class="btn" id="mediumField">Feld</button>
+      </div>
+      <div class="legend"><span><i style="background:#7fb8d9"></i>Medium</span><span><i style="background:#f2d391"></i>Welle</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="michelson">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">02</div>
+    <div>
+      <h2>Der Versuch, der den Äther nicht fand</h2>
+      <p class="sub">Michelson und Morley vergleichen zwei Lichtwege. Wenn die Erde durch einen Äther fliegt, müsste sich ein Muster verschieben. Es verschiebt sich nicht.</p>
+    </div>
+  </div>
+  <div class="split wide-left">
+    <div class="prose reveal">
+      <p>Ein Lichtstrahl wird geteilt, läuft einmal parallel und einmal senkrecht zur Erdbewegung, wird reflektiert und wieder vereinigt. Die Laufzeitdifferenz erzeugt Interferenzstreifen.</p>
+      <p>Würde die Erde mit <span class="mono">v</span> durch einen ruhenden Äther fliegen, wäre die Laufzeit parallel um einen Faktor <span class="mono">1 − v²/c²</span> verändert. Das Muster müsste sich verschieben — und zwar umso mehr, je schneller die Erde relativ zum Äther ist.</p>
+      <p>Das Ergebnis von 1887: <strong>keine Verschiebung</strong>. Lorentz und FitzGerald versuchten, es mit einer Längenkontraktion zu retten. Einstein zog den radikaleren Schluss: Es gibt keinen absoluten Ruhezustand, also auch keinen Äther, an dem man ihn messen könnte.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:350px">
+        <span class="label">Michelson-Interferometer</span>
+        <span class="readout" id="mmReadout">Relativität · kein Streifenversatz</span>
+        <canvas id="mmCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Erdgeschwindigkeit <input type="range" id="mmV" min="0" max="90" value="60" data-out="mmVVal" data-format="2"><span class="val" id="mmVVal">0.60</span> c</label>
+        <button class="btn on" id="mmRel">Relativität</button>
+        <button class="btn" id="mmAether">Äther</button>
+      </div>
+      <div class="legend"><span><i style="background:#7fb8d9"></i>Lichtwege</span><span><i style="background:#f2d391"></i>Interferenz</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="abschied">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">03</div>
+    <div>
+      <h2>Der Äther verliert seine Bewegung</h2>
+      <p class="sub">Die spezielle Relativität tötet den Äther nicht. Sie nimmt ihm nur die letzte mechanische Eigenschaft: die Ruhe.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p>Man kann weiterhin von einem Medium sprechen, in dem sich Felder ausbreiten. Aber man darf ihm keinen Bewegungszustand zuschreiben. „In Ruhe“ und „bewegt“ sind keine Eigenschaften des Äthers mehr, sondern nur noch Beziehungen zwischen Beobachtern.</p>
+      <p>Ein Feld ist dann keine Bewegung von Teilchen, sondern eine eigenständige Struktur. Man kann es nicht wie einen Stoff in kleine Stücke schneiden und durch die Zeit verfolgen. In Minkowskis Sprache: Nicht jede ausgedehnte Struktur besteht aus Weltlinien.</p>
+      <p>Das ist der entscheidende Bruch mit dem mechanischen Weltbild: Der Äther bleibt als <em>Feldträger</em> denkbar, aber nicht als <em>Stoff</em>.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Stoff vs. Feld</span>
+        <span class="readout" id="fieldReadout">kein Ruhezustand</span>
+        <canvas id="fieldCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <button class="btn on" id="fieldParticles">Teilchen</button>
+        <button class="btn" id="fieldLines">Feldlinien</button>
+      </div>
+    </div>
+  </div>
+  <div class="quote reveal">„Der speziellen Relativitätstheorie zufolge darf man dem Äther keinen Bewegungszustand zuschreiben.“<cite>Einstein 1920, sinngemäß</cite></div>
+</section>
+
+<section class="chapter" id="zurueck">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">04</div>
+    <div>
+      <h2>Die Rückkehr des Äthers</h2>
+      <p class="sub">Die allgemeine Relativität gibt dem Raum physikalische Qualitäten zurück — aber einen Äther ohne Teile, ohne Bewegung, ohne Mechanik.</p>
+    </div>
+  </div>
+  <div class="split wide-right">
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Raumzeit als Feld</span>
+        <span class="readout" id="spacetimeReadout">Gravitationsfeld</span>
+        <canvas id="spacetimeCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Masse <input type="range" id="stM" min="0" max="100" value="55" data-out="stMVal" data-format="0"><span class="val" id="stMVal">55</span></label>
+      </div>
+      <div class="legend"><span><i style="background:#7fb8d9"></i>Raumzeit</span><span><i style="background:#f2d391"></i>Licht</span></div>
+    </div>
+    <div class="prose reveal">
+      <p>In der allgemeinen Relativität ist der Raum kein leerer Behälter mehr. Seine Metrik bestimmt, wie sich Maßstäbe, Uhren und Licht verhalten. Ohne diese Struktur gäbe es keine Zeitintervalle und keine Lichtausbreitung.</p>
+      <p>In diesem Sinn gibt es wieder einen Äther: das Gravitationsfeld selbst. Aber er hat keine Teile, die man verfolgen könnte, und keinen Bewegungszustand. Er ist eher eine Geometrie als ein Stoff.</p>
+      <p>Einstein hoffte, Gravitations- und elektromagnetisches Feld eines Tages als ein einziges Feld zu verstehen. Dieser Traum blieb unvollendet — aber er zeigt, wie ernst er den Feldbegriff nahm.</p>
+    </div>
+  </div>
+  <div class="grid3 mt3">
+    <div class="card reveal"><h4>Kein luminiferer Äther</h4><p>Es gibt kein Medium, das man als „Lichtstoff“ identifizieren könnte. Michelson-Morley bleibt null.</p></div>
+    <div class="card reveal"><h4>Aber Raumzeit</h4><p>Die Metrik ist physikalisch real: Sie krümmt sich, trägt Wellen und bestimmt Kausalität.</p></div>
+    <div class="card reveal"><h4>Felder sind fundamental</h4><p>Die moderne Physik beschreibt die Welt mit Feldern, nicht mit mechanischen Medien.</p></div>
+  </div>
+  <div class="quiz reveal" data-answer="1">
+    <p class="q">Was bleibt vom Äther nach der Relativitätstheorie übrig?</p>
+    <div class="quiz-option">Ein absolut ruhendes Medium, das man mit dem Interferometer nachweisen kann.</div>
+    <div class="quiz-option">Eine Feldstruktur des Raums, der man keinen Bewegungszustand zuschreiben kann.</div>
+    <div class="quiz-option">Nichts — der Raum ist vollständig leer und hat keine Eigenschaften.</div>
+    <div class="quiz-option">Ein Stoff aus Teilchen, die sich mit den Körpern bewegen.</div>
+    <p class="quiz-explain">Einstein behält die Idee eines Feldträgers, streicht aber die mechanischen Eigenschaften: keine Teile, keine Ruhe, keine Bewegung. In der allgemeinen Relativität ist diese Struktur die Metrik der Raumzeit.</p>
+  </div>
+  <div class="prevnext">
+    <a href="einstein_10_relativitaet-populaer.html"><span>Zurück</span>Die Relativität für alle</a>
+    <a class="right" href="einstein_12_geometrie-erfahrung.html"><span>Weiter</span>Geometrie ist die älteste Physik →</a>
+  </div>
+</section>
+</div>
+
+<section class="sources">
+  <div class="wrap">
+    <h3>Quelle &amp; Weiterlesen</h3>
+    <p>A. Einstein, <em>Äther und Relativitätstheorie</em>, Rede an der Reichsuniversität Leiden, Springer, Berlin 1920. Public Domain. Englische Übersetzung in <em>Sidelights on Relativity</em>: <a href="https://www.gutenberg.org/ebooks/7333" target="_blank" rel="noopener">Project Gutenberg #7333</a>.</p>
+    <p>Die Michelson-Morley-Simulation ist schematisch: Der echte Versuch nutzt Präzisionsoptik und viele Reflexionen. Die gezeigte Streifenverschiebung ist stark übertrieben.</p>
+  </div>
+</section>
+
+
+</main>
+<footer>
+  <div class="foot-inner">
+    <span>Einstein · visualisiert</span>
+    <span>Quelle: Springer, Berlin 1920 · Public Domain</span>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var EIN = window.EIN = {};
+
+  EIN.clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  EIN.lerp = function (a, b, t) { return a + (b - a) * t; };
+  EIN.ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+  EIN.TAU = Math.PI * 2;
+
+  EIN.css = function (name) {
+    return getComputedStyle(document.body).getPropertyValue(name).trim();
+  };
+
+  EIN.fit = function (canvas) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(r.width));
+    var h = Math.max(1, Math.round(r.height));
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h, dpr: dpr };
+  };
+
+  EIN.onResize = function (canvas, draw) {
+    var raf = 0;
+    function run() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
+    if (window.ResizeObserver) new ResizeObserver(run).observe(canvas);
+    window.addEventListener("resize", run);
+    return run;
+  };
+
+  EIN.loop = function (fn) {
+    var t0 = performance.now();
+    var last = t0;
+    function frame(now) {
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      fn(Math.max(0, (now - t0) / 1000), dt);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  };
+
+  EIN.visible = function (el, onEnter, onExit) {
+    if (!el || !("IntersectionObserver" in window)) { if (onEnter) onEnter(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { if (onEnter) onEnter(); }
+        else if (onExit) onExit();
+      });
+    }, { rootMargin: "140px 0px" });
+    io.observe(el);
+  };
+
+  EIN.arrow = function (ctx, x1, y1, x2, y2, color, width) {
+    var a = Math.atan2(y2 - y1, x2 - x1);
+    var s = 7;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width || 1.4;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - s * Math.cos(a - 0.38), y2 - s * Math.sin(a - 0.38));
+    ctx.lineTo(x2 - s * Math.cos(a + 0.38), y2 - s * Math.sin(a + 0.38));
+    ctx.closePath(); ctx.fill();
+  };
+
+  EIN.label = function (ctx, text, x, y, color, size, align) {
+    ctx.fillStyle = color || "#8a857c";
+    ctx.font = (size || 10) + "px ui-monospace, SFMono-Regular, Consolas, monospace";
+    ctx.textAlign = align || "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, y);
+  };
+
+  function initProgress() {
+    var bar = document.getElementById("progressBar");
+    if (!bar) return;
+    function upd() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    }
+    window.addEventListener("scroll", upd, { passive: true });
+    window.addEventListener("resize", upd);
+    upd();
+  }
+
+  function initNav() {
+    var nav = document.getElementById("sectionNav");
+    var sections = [].slice.call(document.querySelectorAll(".chapter[id]"));
+    if (!nav || !sections.length) return;
+    sections.forEach(function (s, i) {
+      var h = s.querySelector("h2");
+      var a = document.createElement("a");
+      a.href = "#" + s.id;
+      a.textContent = h ? h.textContent.replace(/\s+/g, " ").slice(0, 26) : "0" + (i + 1);
+      nav.appendChild(a);
+    });
+    var links = [].slice.call(nav.querySelectorAll("a"));
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var i = sections.indexOf(e.target);
+        links.forEach(function (l, j) { l.classList.toggle("on", i === j); });
+      });
+    }, { rootMargin: "-20% 0px -68% 0px" });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  function initReveal() {
+    var els = [].slice.call(document.querySelectorAll(".reveal"));
+    if (!els.length) return;
+    if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    els.forEach(function (e, i) { e.style.transitionDelay = (Math.min(i % 4, 3) * 55) + "ms"; io.observe(e); });
+  }
+
+  function initRanges() {
+    [].slice.call(document.querySelectorAll("input[type=range][data-out]")).forEach(function (r) {
+      var out = document.getElementById(r.getAttribute("data-out"));
+      function upd() {
+        if (!out) return;
+        var v = parseFloat(r.value);
+        var f = r.getAttribute("data-format");
+        out.textContent = f === "int" ? Math.round(v) : v.toFixed(f ? parseInt(f, 10) : 1);
+      }
+      r.addEventListener("input", upd); upd();
+    });
+  }
+
+  function initQuiz() {
+    [].slice.call(document.querySelectorAll(".quiz")).forEach(function (quiz) {
+      var ans = parseInt(quiz.getAttribute("data-answer"), 10);
+      var opts = [].slice.call(quiz.querySelectorAll(".quiz-option"));
+      var ex = quiz.querySelector(".quiz-explain");
+      opts.forEach(function (o, i) {
+        o.addEventListener("click", function () {
+          opts.forEach(function (x) { x.classList.remove("ok", "no"); x.disabled = true; });
+          if (i === ans) { o.classList.add("ok"); }
+          else { o.classList.add("no"); opts[ans].classList.add("ok"); }
+          if (ex) ex.classList.add("show");
+        });
+      });
+    });
+  }
+
+  function boot() {
+    initProgress(); initNav(); initReveal(); initRanges(); initQuiz();
+    if (window.__pageInit) window.__pageInit();
+    document.documentElement.classList.add("ready");
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+
+</script>
+<script>
+
+(function () {
+  "use strict";
+
+  
+  (function () {
+    var c = document.getElementById("heroCanvas");
+    if (!c) return;
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      
+      for (var k = 0; k < 18; k++) {
+        var y0 = h * 0.58 + k * 6;
+        ctx.beginPath();
+        for (var x = 0; x < w; x += 4) {
+          var y = y0 + Math.sin(x * .02 - t * 1.5 + k * .2) * (6 - k * .2);
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = "rgba(127,184,217," + (0.05 + k * .008) + ")"; ctx.stroke();
+      }
+      
+      for (var i = 0; i < 20; i++) {
+        var x = (i / 20) * w;
+        var y = h * 0.58 + Math.sin(x * .02 - t * 1.5) * 6;
+        ctx.fillStyle = "rgba(255,255,255,.25)"; ctx.beginPath(); ctx.arc(x, y, 1.2, 0, EIN.TAU); ctx.fill();
+      }
+      
+      for (var j = 0; j < 9; j++) {
+        var yy = h * 0.18 + j * 12;
+        ctx.beginPath();
+        for (var xx = 0; xx < w; xx += 4) {
+          var yv = yy + Math.sin(xx * .02 - t * 2 + j * .4) * 4;
+          if (xx === 0) ctx.moveTo(xx, yv); else ctx.lineTo(xx, yv);
+        }
+        ctx.strokeStyle = "rgba(242,211,145,.12)"; ctx.stroke();
+      }
+      EIN.label(ctx, "Wasser: Teilchen bewegen sich", 16, h * 0.5, "rgba(127,184,217,.6)", 9);
+      EIN.label(ctx, "Feld: keine Teilchenbahn", 16, h * 0.08, "rgba(242,211,145,.6)", 9);
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("mediumCanvas");
+    if (!c) return;
+    var water = true;
+    var wb = document.getElementById("mediumWater"), fb = document.getElementById("mediumField"), ro = document.getElementById("mediumReadout");
+    function set(m) {
+      water = m === "w";
+      wb.classList.toggle("on", water); fb.classList.toggle("on", !water);
+      ro.textContent = water ? "Wasserwelle" : "elektromagnetisches Feld";
+    }
+    wb.onclick = function () { set("w"); };
+    fb.onclick = function () { set("f"); };
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      if (water) {
+        for (var k = 0; k < 12; k++) {
+          var y0 = h * .55 + k * 9;
+          ctx.beginPath();
+          for (var x = 0; x < w; x += 3) {
+            var y = y0 + Math.sin(x * .03 - t * 2 + k * .3) * (7 - k * .3);
+            if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = "rgba(127,184,217," + (0.08 + k * .012) + ")"; ctx.stroke();
+        }
+        for (var i = 0; i < 26; i++) {
+          var x = (i / 26) * w;
+          var y = h * .55 + Math.sin(x * .03 - t * 2) * 7;
+          ctx.fillStyle = "rgba(255,255,255,.35)"; ctx.beginPath(); ctx.arc(x, y, 1.3, 0, EIN.TAU); ctx.fill();
+        }
+        EIN.label(ctx, "Medium bewegt sich", w - 16, 20, "rgba(127,184,217,.7)", 9, "right");
+      } else {
+        for (var j = 0; j < 10; j++) {
+          var yy = h * .25 + j * 22;
+          ctx.beginPath();
+          for (var xx = 0; xx < w; xx += 3) {
+            var yv = yy + Math.sin(xx * .025 - t * 2.2 + j * .5) * 9;
+            if (xx === 0) ctx.moveTo(xx, yv); else ctx.lineTo(xx, yv);
+          }
+          ctx.strokeStyle = "rgba(242,211,145," + (0.07 + j * .012) + ")"; ctx.stroke();
+        }
+        EIN.label(ctx, "Feld: keine bewegten Teile", w - 16, 20, "rgba(242,211,145,.7)", 9, "right");
+      }
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("mmCanvas");
+    if (!c) return;
+    var v = 0.6, aether = false;
+    var sv = document.getElementById("mmV"), ro = document.getElementById("mmReadout");
+    var rel = document.getElementById("mmRel"), aer = document.getElementById("mmAether");
+    sv.oninput = function () { v = +sv.value / 100; };
+    rel.onclick = function () { aether = false; rel.classList.add("on"); aer.classList.remove("on"); };
+    aer.onclick = function () { aether = true; aer.classList.add("on"); rel.classList.remove("on"); };
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * .5, cy = h * .42, arm = Math.min(w, h) * .24;
+      
+      ctx.strokeStyle = "rgba(255,255,255,.15)"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(cx - arm, cy); ctx.lineTo(cx + arm, cy); ctx.moveTo(cx, cy - arm); ctx.lineTo(cx, cy + arm); ctx.stroke();
+      
+      ctx.fillStyle = "rgba(127,184,217,.5)";
+      ctx.fillRect(cx - arm, cy - 8, 3, 16); ctx.fillRect(cx + arm - 2, cy - 8, 3, 16);
+      ctx.fillRect(cx - 8, cy - arm, 16, 3); ctx.fillRect(cx - 8, cy + arm - 2, 16, 3);
+      
+      ctx.strokeStyle = "rgba(242,211,145,.7)"; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.moveTo(cx - 8, cy + 8); ctx.lineTo(cx + 8, cy - 8); ctx.stroke();
+      
+      ctx.strokeStyle = "rgba(127,184,217,.85)"; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + arm, cy);
+      ctx.moveTo(cx, cy); ctx.lineTo(cx, cy - arm); ctx.stroke();
+      
+      var pp = (t * .5) % 1;
+      ctx.fillStyle = "rgba(255,245,210,.9)";
+      ctx.beginPath(); ctx.arc(cx + pp * arm, cy, 3, 0, EIN.TAU); ctx.fill();
+      ctx.beginPath(); ctx.arc(cx, cy - pp * arm, 3, 0, EIN.TAU); ctx.fill();
+      
+      var sy = h * .82;
+      ctx.fillStyle = "rgba(255,255,255,.05)"; ctx.fillRect(w * .18, sy, w * .64, 24);
+      var shift = aether ? (v * v) * 4 : 0;
+      for (var i = 0; i < 70; i++) {
+        var x = w * .18 + i / 70 * w * .64;
+        var s = Math.sin((i / 4) + shift) * .5 + .5;
+        ctx.fillStyle = "rgba(242,211,145," + (s * .55) + ")";
+        ctx.fillRect(x, sy + 2, w * .64 / 70 + .5, 20);
+      }
+      EIN.label(ctx, aether ? "Äther: Streifen verschoben" : "Relativität: kein Versatz", cx, sy - 12, aether ? "rgba(255,143,107,.85)" : "rgba(127,184,217,.85)", 10, "center");
+      ro.textContent = (aether ? "Äther" : "Relativität") + " · v = " + v.toFixed(2) + " c";
+      document.getElementById("mmVVal").textContent = v.toFixed(2);
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("fieldCanvas");
+    if (!c) return;
+    var particles = true;
+    var pb = document.getElementById("fieldParticles"), lb = document.getElementById("fieldLines"), ro = document.getElementById("fieldReadout");
+    function set(m) {
+      particles = m === "p";
+      pb.classList.toggle("on", particles); lb.classList.toggle("on", !particles);
+      ro.textContent = particles ? "Teilchen mit Bahnen" : "Feld ohne Bahnen";
+    }
+    pb.onclick = function () { set("p"); };
+    lb.onclick = function () { set("l"); };
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      if (particles) {
+        for (var i = 0; i < 28; i++) {
+          var x = (i * 47 + t * 30) % w, y = h * .5 + Math.sin(i * 1.7 + t) * h * .22;
+          ctx.fillStyle = "rgba(127,184,217,.7)"; ctx.beginPath(); ctx.arc(x, y, 2, 0, EIN.TAU); ctx.fill();
+          ctx.strokeStyle = "rgba(127,184,217,.25)"; ctx.beginPath(); ctx.moveTo(x - 8, y); ctx.lineTo(x, y); ctx.stroke();
+        }
+        EIN.label(ctx, "Teilchen: man kann sie verfolgen", 16, 20, "rgba(127,184,217,.65)", 9);
+      } else {
+        for (var k = 0; k < 12; k++) {
+          ctx.beginPath();
+          for (var x2 = 0; x2 < w; x2 += 4) {
+            var y2 = h * .5 + Math.sin(x2 * .018 + k * .6 - t * 1.4) * 40;
+            if (x2 === 0) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2);
+          }
+          ctx.strokeStyle = "rgba(242,211,145," + (0.08 + k * .01) + ")"; ctx.stroke();
+        }
+        EIN.label(ctx, "Feld: keine Teilchenbahn", 16, 20, "rgba(242,211,145,.65)", 9);
+      }
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("spacetimeCanvas");
+    if (!c) return;
+    var M = 55;
+    var sv = document.getElementById("stM"), ro = document.getElementById("spacetimeReadout");
+    sv.oninput = function () { M = +sv.value; draw(); };
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * .5, cy = h * .5, strength = 1200 + M * 18;
+      function warp(x, y) {
+        var dx = x - cx, dy = y - cy, r = Math.hypot(dx, dy) + 30;
+        var pull = strength / (r * 1.3);
+        return [x - dx / r * pull, y - dy / r * pull];
+      }
+      for (var i = -10; i <= 10; i++) {
+        ctx.beginPath();
+        for (var j = -8; j <= 8; j++) {
+          var p = warp(cx + i * (w / 22), cy + j * (h / 18));
+          if (j === -8) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+        }
+        ctx.strokeStyle = "rgba(127,184,217,.18)"; ctx.stroke();
+      }
+      for (var k = -8; k <= 8; k++) {
+        ctx.beginPath();
+        for (var m = -10; m <= 10; m++) {
+          var p2 = warp(cx + m * (w / 22), cy + k * (h / 18));
+          if (m === -10) ctx.moveTo(p2[0], p2[1]); else ctx.lineTo(p2[0], p2[1]);
+        }
+        ctx.strokeStyle = "rgba(127,184,217,.18)"; ctx.stroke();
+      }
+      var rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 30 + M * .2);
+      rg.addColorStop(0, "rgba(255,250,220,.9)"); rg.addColorStop(.4, "rgba(242,211,145,.45)"); rg.addColorStop(1, "rgba(127,184,217,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, cy, 30 + M * .2, 0, EIN.TAU); ctx.fill();
+      
+      ctx.beginPath();
+      for (var x = 0; x <= w; x += 3) {
+        var y = cy - 70 + 40 * Math.exp(-Math.pow((x - cx) / 70, 2)) + x * .02;
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = "rgba(242,211,145,.65)"; ctx.lineWidth = 1.2; ctx.stroke();
+      ro.textContent = "Gravitationsfeld · M = " + (M / 55).toFixed(2);
+      document.getElementById("stMVal").textContent = M;
+    }
+    EIN.onResize(c, draw); draw();
+  })();
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Masse ist geronnene Energie — Einstein, visualisiert</title>
+<meta name="description" content="Drei Seiten, ein Gedankenexperiment mit zwei Lichtblitzen — und die vielleicht berühmteste Gleichung der Physik. Einstein schreibt sie 1905 noch als m = L/c².">
+<style>
+:root{
+  --bg:#07070b;
+  --bg-2:#0b0b12;
+  --panel:rgba(255,255,255,.038);
+  --panel-2:rgba(255,255,255,.026);
+  --ink:#ece9e1;
+  --muted:#a8a397;
+  --dim:#6f6b63;
+  --line:rgba(255,255,255,.085);
+  --line-strong:rgba(255,255,255,.16);
+  --accent:#e8b45a;
+  --accent-soft:rgba(232,180,90,.16);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  --math:"Latin Modern Math","STIX Two Math","Cambria Math",Cambria,Georgia,serif;
+  --col:72ch;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:17px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(900px 620px at 78% -8%,var(--accent-soft),transparent 62%),
+    radial-gradient(700px 500px at 8% 18%,rgba(120,140,255,.055),transparent 65%),
+    linear-gradient(180deg,#08080d 0%,#07070b 45%,#06060a 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+::selection{background:var(--accent);color:#111}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:rgba(255,255,255,.05)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#fff6d8);box-shadow:0 0 14px var(--accent);transition:width .08s linear}
+.topbar{
+  position:fixed;top:2px;left:0;right:0;z-index:55;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:12px clamp(16px,3vw,38px);
+  background:linear-gradient(180deg,rgba(7,7,11,.92),rgba(7,7,11,.55) 70%,transparent);
+  backdrop-filter:blur(10px);
+}
+.brand{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--muted);
+  white-space:nowrap;text-transform:uppercase;
+}
+.brand:hover{color:var(--ink);text-decoration:none}
+#sectionNav{display:flex;gap:4px;overflow:auto;scrollbar-width:none;mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
+#sectionNav::-webkit-scrollbar{display:none}
+#sectionNav a{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);
+  padding:5px 8px;border-radius:99px;white-space:nowrap;transition:.25s var(--ease);
+}
+#sectionNav a:hover{color:var(--ink);text-decoration:none;background:rgba(255,255,255,.05)}
+#sectionNav a.on{color:var(--accent);background:var(--accent-soft)}
+main{position:relative}
+.hero{
+  position:relative;min-height:clamp(520px,82vh,820px);display:flex;align-items:flex-end;
+  padding:120px clamp(20px,5vw,64px) clamp(48px,8vh,90px);
+  overflow:hidden;
+}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:18px;
+}
+.kicker::before{content:"";width:28px;height:1px;background:var(--accent);opacity:.7}
+h1{
+  font-family:var(--serif);font-weight:400;font-size:clamp(2.35rem,6.2vw,5.6rem);
+  line-height:1.02;letter-spacing:-.025em;margin:0 0 22px;max-width:17ch;
+  text-wrap:balance;
+}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{font-size:clamp(1.02rem,1.7vw,1.28rem);line-height:1.55;color:#cfcac0;max-width:56ch;margin:0 0 18px}
+.epigraph{
+  font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--muted);
+  max-width:52ch;margin:0 0 22px;padding-left:16px;border-left:1px solid var(--line-strong);
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.meta b{color:var(--muted);font-weight:400}
+.scroll-hint{
+  position:absolute;right:clamp(20px,5vw,64px);bottom:28px;z-index:2;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--dim);
+  writing-mode:vertical-rl;display:flex;align-items:center;gap:10px;
+}
+.scroll-hint::after{content:"";width:1px;height:38px;background:linear-gradient(var(--accent),transparent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.chapter{padding:clamp(58px,9vh,110px) 0;border-top:1px solid var(--line);position:relative}
+.chapter-head{display:grid;grid-template-columns:64px minmax(0,1fr);gap:clamp(10px,2vw,26px);margin-bottom:clamp(26px,4vw,44px);align-items:start}
+.chapter-num{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--accent);
+  padding-top:9px;border-top:1px solid var(--accent);
+}
+.chapter h2{
+  font-family:var(--serif);font-weight:400;font-size:clamp(1.65rem,3.1vw,2.65rem);
+  line-height:1.12;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;
+}
+.chapter h3{font-family:var(--serif);font-weight:400;font-size:1.32rem;margin:0 0 10px;letter-spacing:-.01em}
+.chapter .sub{color:var(--muted);max-width:62ch;margin:0;font-size:1rem}
+.prose{max-width:var(--col);color:#cfcac0}
+.prose p{margin:0 0 1.05em}
+.prose p:last-child{margin-bottom:0}
+.prose strong{color:var(--ink);font-weight:600}
+.prose em{color:#e3ded4}
+.prose ul,.prose ol{margin:.2em 0 1.1em;padding-left:1.25em}
+.prose li{margin:.32em 0}
+.prose code{font-family:var(--mono);font-size:.86em;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px}
+.lead{font-size:1.12rem;line-height:1.62;color:#dcd7cd}
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,56px);align-items:center}
+.split.wide-left{grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr)}
+.split.wide-right{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:16px;padding:22px;
+  position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.35}
+.card h4{font-family:var(--sans);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:0 0 9px;font-weight:600}
+.card p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.58}
+.card .big{font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.2;margin-bottom:8px}
+.stage{
+  position:relative;background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.stage canvas{display:block;width:100%;height:100%}
+.stage .label{
+  position:absolute;left:14px;top:12px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);pointer-events:none;
+}
+.stage .readout{
+  position:absolute;right:14px;top:12px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.06em;color:var(--accent);pointer-events:none;
+}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:14px 0 0}
+.control{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--muted)}
+.control input[type=range]{
+  -webkit-appearance:none;appearance:none;width:clamp(110px,18vw,190px);height:2px;background:var(--line-strong);outline:none;border-radius:2px;
+}
+.control input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--accent);border:2px solid #111;box-shadow:0 0 0 3px var(--accent-soft);cursor:pointer;
+}
+.control input[type=range]::-moz-range-thumb{width:11px;height:11px;border:2px solid #111;border-radius:50%;background:var(--accent);cursor:pointer}
+.control .val{min-width:52px;color:var(--ink);font-variant-numeric:tabular-nums}
+.btn{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 14px;border-radius:99px;border:1px solid var(--line-strong);
+  background:transparent;color:var(--ink);cursor:pointer;transition:.2s var(--ease);
+}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.btn.on{background:var(--accent);color:#111;border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:0}
+.formula{
+  font-family:var(--math);font-size:clamp(1.05rem,2vw,1.38rem);line-height:1.85;
+  color:#f1ede4;background:rgba(255,255,255,.028);border:1px solid var(--line);
+  border-left:2px solid var(--accent);border-radius:0 12px 12px 0;
+  padding:18px 22px;margin:18px 0;overflow-x:auto;
+}
+.formula .small{font-size:.62em;color:var(--muted)}
+.formula-note{font-family:var(--sans);font-size:.78rem;color:var(--dim);margin-top:8px;letter-spacing:0}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .18em;line-height:1.15}
+.frac .num{border-bottom:1px solid currentColor;padding:0 .18em}
+.frac .den{padding:.08em .18em 0}
+.sqrt{border-top:1px solid currentColor;padding:0 .12em}
+.takeaways{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:26px}
+.takeaway{
+  background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.015));
+  border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+  border-radius:14px;padding:18px 18px 16px;position:relative;
+}
+.takeaway .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:7px}
+.takeaway p{margin:0;font-size:.9rem;line-height:1.55;color:#d8d3c9}
+.quote{
+  font-family:var(--serif);font-style:italic;font-size:clamp(1.15rem,2.1vw,1.45rem);
+  line-height:1.5;color:#e6e1d6;margin:28px 0;padding:0 0 0 22px;border-left:1px solid var(--accent);
+  max-width:60ch;
+}
+.quote cite{display:block;font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:12px}
+.timeline{position:relative;margin:20px 0;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:1px;background:linear-gradient(var(--accent),var(--line))}
+.timeline .t{position:relative;padding:0 0 20px}
+.timeline .t::before{content:"";position:absolute;left:-22px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.timeline .y{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent);display:block}
+.timeline .t p{margin:2px 0 0;font-size:.92rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);padding:4px 9px;border-radius:99px;margin:0 6px 6px 0}
+.quiz{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel);margin-top:26px}
+.quiz .q{font-family:var(--serif);font-size:1.1rem;margin:0 0 14px;color:var(--ink)}
+.quiz-options{display:grid;gap:8px}
+.quiz-option{
+  text-align:left;font-family:var(--sans);font-size:.9rem;color:#cfcac0;
+  padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:transparent;cursor:pointer;transition:.2s var(--ease);
+}
+.quiz-option:hover{border-color:var(--line-strong);background:rgba(255,255,255,.04)}
+.quiz-option.ok{border-color:#57c785;background:rgba(87,199,133,.12);color:#d8ffe8}
+.quiz-option.no{border-color:#e26868;background:rgba(226,104,104,.1);color:#ffdada}
+.quiz-explain{font-size:.86rem;color:var(--muted);margin:12px 0 0;display:none;line-height:1.55}
+.quiz-explain.show{display:block}
+.sources{border-top:1px solid var(--line);padding:34px 0 60px;color:var(--dim);font-size:.83rem}
+.sources h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.sources p{margin:0 0 8px;max-width:80ch}
+.sources a{color:var(--muted);border-bottom:1px solid var(--line-strong)}
+.sources a:hover{color:var(--accent);text-decoration:none}
+.prevnext{display:flex;justify-content:space-between;gap:16px;padding:26px 0 0;border-top:1px solid var(--line);margin-top:34px}
+.prevnext a{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);display:flex;flex-direction:column;gap:3px;max-width:45%}
+.prevnext a:hover{color:var(--accent);text-decoration:none}
+.prevnext a span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.prevnext .right{text-align:right;margin-left:auto}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.mono{font-family:var(--mono);font-size:.82em;letter-spacing:.02em}
+.dim{color:var(--dim)}
+.accent{color:var(--accent)}
+.center{text-align:center}
+.mt0{margin-top:0}.mt1{margin-top:10px}.mt2{margin-top:20px}.mt3{margin-top:34px}
+.hr{height:1px;background:var(--line);border:0;margin:30px 0}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+footer{color:var(--dim);font-size:.78rem}
+.foot-inner{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 50px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:900px){
+  .split,.split.wide-left,.split.wide-right,.grid2,.grid3{grid-template-columns:1fr}
+  .chapter-head{grid-template-columns:40px minmax(0,1fr)}
+  .topbar{gap:10px}
+  #sectionNav{display:none}
+  h1{max-width:20ch}
+}
+@media(max-width:560px){
+  body{font-size:16px}
+  .hero{min-height:620px;padding-top:96px}
+  .chapter-head{grid-template-columns:1fr;gap:8px}
+  .chapter-num{border-top:0;padding:0}
+  .controls{gap:10px 14px}
+  .scroll-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  .topbar,.progress,#heroCanvas,.scroll-hint{display:none}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#111}
+  .card,.stage,.formula{border-color:#ddd}
+}
+
+/* index work cards */
+.work{display:block;color:var(--ink);text-decoration:none;transition:transform .35s var(--ease),border-color .35s var(--ease),background .35s var(--ease)}
+.work:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--accent) 55%,transparent);text-decoration:none;background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.02))}
+.work-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim)}
+.work-no{color:var(--accent)}
+.work-year{border:1px solid var(--line);padding:3px 7px;border-radius:99px}
+.work h4{color:var(--accent);margin-bottom:6px}
+.work .work-title{font-family:var(--serif);font-size:1.28rem;line-height:1.18;color:var(--ink);margin:0 0 9px;letter-spacing:-.01em}
+.work p{font-size:.88rem;color:var(--muted);line-height:1.55}
+.work-go{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+</style>
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body style="--accent:#e07a9a;--accent-soft:rgba(224,122,154,.16)">
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <a class="brand" href="einstein_index.html">Einstein · visualisiert</a>
+  <nav id="sectionNav" aria-label="Abschnitte"></nav>
+</header>
+<main>
+<section class="hero" id="top">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">Annus Mirabilis · 1905 · Annalen der Physik 18</div>
+    <h1>Masse ist <em>geronnene Energie</em></h1>
+    <p class="lede">Drei Seiten, ein Gedankenexperiment mit zwei Lichtblitzen — und die vielleicht berühmteste Gleichung der Physik. Einstein schreibt sie 1905 noch als m = L/c².</p>
+    <p class="epigraph">„Die Masse eines Körpers ist ein Maß für dessen Energieinhalt.“</p>
+    <div class="meta"><span><b>Original</b> Ist die Trägheit eines Körpers von seinem Energieinhalt abhängig?</span><span><b>Empfangen</b> 27. September 1905</span><span><b>Umfang</b> 3 Seiten</span></div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</section>
+
+
+<div class="wrap">
+<section class="chapter" id="gedanke">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">01</div>
+    <div>
+      <h2>Zwei Lichtblitze</h2>
+      <p class="sub">Ein Körper sendet Licht in zwei entgegengesetzte Richtungen. Im Ruhesystem bleibt er stehen. Im bewegten System verliert er kinetische Energie — und damit Masse.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p class="lead">Einstein braucht keine Kernphysik. Er braucht nur die spezielle Relativität, die er wenige Monate zuvor formuliert hat, und ein symmetrisches Gedankenexperiment.</p>
+      <p>Ein Körper ruht im System <span class="mono">(x, y, z)</span>. Er sendet zwei gleich große Lichtmengen in entgegengesetzte Richtungen aus. Wegen der Symmetrie bleibt er in Ruhe. Seine Energie sinkt um <span class="mono">L</span>, sein Impuls bleibt null.</p>
+      <p>Nun betrachtet man denselben Vorgang aus einem System, das sich mit <span class="mono">v</span> bewegt. Dort haben die beiden Lichtblitze wegen des Doppler-Effekts unterschiedliche Energien. Die Bilanz geht nur auf, wenn sich die <strong>träge Masse</strong> des Körpers geändert hat.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:320px">
+        <span class="label">Körper sendet zwei Lichtblitze</span>
+        <span class="readout" id="emitReadout">Δm = L / c²</span>
+        <canvas id="emitCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Geschwindigkeit v <input type="range" id="emitV" min="0" max="90" value="55" data-out="emitVVal" data-format="2"><span class="val" id="emitVVal">0.55</span> c</label>
+        <button class="btn" id="emitAgain">Blitze senden</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="herleitung">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">02</div>
+    <div>
+      <h2>Die Herleitung in vier Zeilen</h2>
+      <p class="sub">Kein neues Gesetz. Nur Energieerhaltung, Relativität und die Transformation des Lichts.</p>
+    </div>
+  </div>
+  <div class="split wide-left">
+    <div class="prose reveal">
+      <p>Im Ruhesystem gilt <span class="mono">E₀ = E₁ + L</span>. Im bewegten System gilt <span class="mono">H₀ = H₁ + L′</span>. Die Differenz <span class="mono">H − E</span> ist die kinetische Energie plus eine additive Konstante, die sich nicht ändert.</p>
+      <p>Für die beiden Lichtblitze transformiert sich die Energie mit dem Faktor <span class="mono">γ(1 ± v/c)</span>. Addiert man beide, bleibt von den Richtungen nur <span class="mono">γ</span> übrig:</p>
+      <div class="formula">K₀ − K₁ = L (γ − 1)
+        <div class="formula-note">Die kinetische Energie nimmt um einen Betrag ab, der nur von L und v abhängt — nicht von der Natur des Körpers.</div>
+      </div>
+      <p>Für kleine <span class="mono">v</span> ist <span class="mono">γ − 1 ≈ v²/2c²</span>. Andererseits ist <span class="mono">K = ½mv²</span>. Der Vergleich liefert:</p>
+      <div class="formula">Δm = <span class="frac"><span class="num">L</span><span class="den">c²</span></span>
+        <div class="formula-note">In Einsteins Original: L/V². Die moderne Schreibweise E = mc² fasst den Ruhezustand zusammen.</div>
+      </div>
+      <p>Das ist alles. Keine Materietheorie, kein Äther, keine Atomstruktur. Nur die Buchhaltung der Energie in zwei Bezugssystemen.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:340px">
+        <span class="label">Energiebilanz in zwei Systemen</span>
+        <span class="readout" id="balanceReadout">γ = 1.20</span>
+        <canvas id="balanceCanvas"></canvas>
+      </div>
+      <div class="legend"><span><i style="background:#e07a9a"></i>Ruheenergie</span><span><i style="background:#f2d391"></i>kinetisch</span><span><i style="background:#8a857c"></i>Strahlung</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="formel">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">03</div>
+    <div>
+      <h2>E = mc²</h2>
+      <p class="sub">c² ist kein Detail. Es ist der Grund, warum kleine Massen gewaltige Energien bedeuten.</p>
+    </div>
+  </div>
+  <div class="split wide-right">
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Masse-Energie-Rechner</span>
+        <span class="readout" id="convReadout">1 g → 9.0 · 10¹³ J</span>
+        <canvas id="convCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Masse <input type="range" id="convM" min="0" max="1000" value="100" data-out="convMVal" data-format="0"><span class="val" id="convMVal">100</span> mg</label>
+      </div>
+      <div class="legend"><span><i style="background:#e07a9a"></i>Masse</span><span><i style="background:#f2d391"></i>Energie</span></div>
+    </div>
+    <div class="prose reveal">
+      <p>Die Formel sagt nicht, dass Masse „in Energie umgewandelt“ wird wie Eis in Wasser. Sie sagt: Masse <em>ist</em> eine Form von Energie. Jeder Körper trägt seine Ruheenergie <span class="mono">E₀ = mc²</span> mit sich, auch wenn er still liegt.</p>
+      <div class="formula">E₀ = m c² &nbsp;&nbsp;&nbsp; c² = 8,99 · 10<sup>16</sup> m²/s²
+        <div class="formula-note">1 Gramm entspricht 9 · 10¹³ Joule — etwa der Energie von 21 Kilotonnen TNT.</div>
+      </div>
+      <p>Deshalb ist die Formel in der Kernphysik so mächtig: Dort werden Bindungsenergien frei, die als kleine Massendifferenzen messbar sind. Bei chemischen Reaktionen ist der Massendefekt dagegen so winzig, dass er lange unentdeckt blieb.</p>
+      <p>Einstein selbst schreibt 1905 noch vorsichtig von „Radiumsalzen“ als möglichem Testfall. Die erste klare Bestätigung kam aus der Kernphysik — Jahrzehnte später.</p>
+    </div>
+  </div>
+  <div class="grid3 mt3">
+    <div class="card reveal"><h4>1 Gramm</h4><p class="big">9 · 10¹³ J</p><p>So viel wie 21 kt TNT. Würde ein Gramm vollständig zerstrahlen, könnte es eine Kleinstadt versorgen.</p></div>
+    <div class="card reveal"><h4>Sonne</h4><p class="big">4,3 Mio. t / s</p><p>Die Sonne verliert pro Sekunde etwa 4,3 Millionen Tonnen Masse — als Strahlung.</p></div>
+    <div class="card reveal"><h4>Mensch</h4><p class="big">≈ 6 · 10¹⁸ J</p><p>Die Ruheenergie eines 70-kg-Menschen. Zum Glück ist sie nicht ohne Weiteres abrufbar.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="kern">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">04</div>
+    <div>
+      <h2>Wo die Masse wirklich fehlt</h2>
+      <p class="sub">Kernfusion, Kernspaltung und Paarvernichtung sind Buchhaltungen von E = mc².</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p>Vier Wasserstoffkerne wiegen zusammen mehr als ein Heliumkern. Die Differenz ist Bindungsenergie — sie wird bei der Fusion als Licht und Wärme frei. In der Sonne passiert genau das.</p>
+      <p>Bei der Spaltung von Uran wird ein schwerer Kern in zwei mittlere Kerne zerlegt. Auch hier ist das Produkt leichter als der Ausgangskern. Die fehlende Masse erscheint als Bewegungsenergie der Bruchstücke.</p>
+      <p>Bei der Paarvernichtung von Elektron und Positron verschwindet die gesamte Masse in Strahlung. Das ist die reinste Form der Formel — und heute Alltag in Teilchenbeschleunigern und PET-Scannern.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:340px">
+        <span class="label">Bindungsenergie pro Nukleon</span>
+        <span class="readout" id="bindingReadout">Maximum bei Eisen-56</span>
+        <canvas id="bindingCanvas"></canvas>
+      </div>
+      <div class="legend"><span><i style="background:#e07a9a"></i>Fusion</span><span><i style="background:#f2d391"></i>Spaltung</span><span><i style="background:#fff"></i>Eisen</span></div>
+    </div>
+  </div>
+  <div class="quote reveal">„Wenn die Theorie den Tatsachen entspricht, so überträgt die Strahlung Trägheit zwischen den emittierenden und absorbierenden Körpern.“<cite>Einstein 1905, Schluss</cite></div>
+</section>
+
+<section class="chapter" id="mitnehmen">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">05</div>
+    <div>
+      <h2>Was du mitnimmst</h2>
+      <p class="sub">Drei Konsequenzen, die aus drei Seiten Physik folgen.</p>
+    </div>
+  </div>
+  <div class="takeaways">
+    <div class="takeaway reveal"><span class="n">01 · MASSE IST ENERGIE</span><p>Masse ist keine Substanz, die unveränderlich wäre. Sie ist der Energieinhalt eines Systems, gemessen in Masseneinheiten.</p></div>
+    <div class="takeaway reveal"><span class="n">02 · C² IST EIN UMRECHNER</span><p>Die Lichtgeschwindigkeit ist so groß, dass schon winzige Massen enorme Energien bedeuten. Deshalb ist Kernenergie möglich.</p></div>
+    <div class="takeaway reveal"><span class="n">03 · SYMMETRIE ZWINGT DIE FORMEL</span><p>Einstein erfindet nichts. Er verlangt nur, dass zwei Beobachter dieselbe Energiebilanz sehen — und die Masse muss sich anpassen.</p></div>
+  </div>
+  <div class="quiz reveal" data-answer="2">
+    <p class="q">Warum reicht die Formel allein nicht, um ein Kernkraftwerk zu bauen?</p>
+    <div class="quiz-option">Weil E = mc² nur für Licht gilt, nicht für Materie.</div>
+    <div class="quiz-option">Weil die Lichtgeschwindigkeit im Kraftwerk kleiner ist als im Vakuum.</div>
+    <div class="quiz-option">Weil man zusätzlich wissen muss, welche Kernreaktionen tatsächlich ablaufen und wie man sie steuert.</div>
+    <div class="quiz-option">Weil die Formel nur die Masse, nicht die frei werdende Wärme beschreibt.</div>
+    <p class="quiz-explain">E = mc² sagt, wie viel Energie zu einer Massendifferenz gehört. Ob und wie eine Reaktion abläuft, beschreiben Kern- und Quantenphysik. Die Formel ist die Bilanz, nicht der Reaktor.</p>
+  </div>
+  <div class="prevnext">
+    <a href="einstein_03_spezielle-relativitaet.html"><span>Zurück</span>Raum und Zeit sind verhandelbar</a>
+    <a class="right" href="einstein_05_molekueldimensionen.html"><span>Weiter</span>Die Vermessung eines Moleküls →</a>
+  </div>
+</section>
+</div>
+
+<section class="sources">
+  <div class="wrap">
+    <h3>Quelle &amp; Weiterlesen</h3>
+    <p>A. Einstein, <em>Ist die Trägheit eines Körpers von seinem Energieinhalt abhängig?</em>, Annalen der Physik 18 (1905), 639–641. Public Domain. Faksimile: <a href="https://archive.org/details/annalenderphysi143unkngoog" target="_blank" rel="noopener">archive.org</a>.</p>
+    <p>Die Zahlen sind gerundete Lehrbuchwerte: c = 2,998·10⁸ m/s, 1 kt TNT = 4,184·10¹² J, Sonnenmasseverlust ≈ 4,3·10⁹ kg/s.</p>
+  </div>
+</section>
+
+
+</main>
+<footer>
+  <div class="foot-inner">
+    <span>Einstein · visualisiert</span>
+    <span>Quelle: Annalen der Physik 18 (1905), 639–641 · Public Domain</span>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var EIN = window.EIN = {};
+
+  EIN.clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  EIN.lerp = function (a, b, t) { return a + (b - a) * t; };
+  EIN.ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+  EIN.TAU = Math.PI * 2;
+
+  EIN.css = function (name) {
+    return getComputedStyle(document.body).getPropertyValue(name).trim();
+  };
+
+  EIN.fit = function (canvas) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(r.width));
+    var h = Math.max(1, Math.round(r.height));
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h, dpr: dpr };
+  };
+
+  EIN.onResize = function (canvas, draw) {
+    var raf = 0;
+    function run() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
+    if (window.ResizeObserver) new ResizeObserver(run).observe(canvas);
+    window.addEventListener("resize", run);
+    return run;
+  };
+
+  EIN.loop = function (fn) {
+    var t0 = performance.now();
+    var last = t0;
+    function frame(now) {
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      fn(Math.max(0, (now - t0) / 1000), dt);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  };
+
+  EIN.visible = function (el, onEnter, onExit) {
+    if (!el || !("IntersectionObserver" in window)) { if (onEnter) onEnter(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { if (onEnter) onEnter(); }
+        else if (onExit) onExit();
+      });
+    }, { rootMargin: "140px 0px" });
+    io.observe(el);
+  };
+
+  EIN.arrow = function (ctx, x1, y1, x2, y2, color, width) {
+    var a = Math.atan2(y2 - y1, x2 - x1);
+    var s = 7;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width || 1.4;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - s * Math.cos(a - 0.38), y2 - s * Math.sin(a - 0.38));
+    ctx.lineTo(x2 - s * Math.cos(a + 0.38), y2 - s * Math.sin(a + 0.38));
+    ctx.closePath(); ctx.fill();
+  };
+
+  EIN.label = function (ctx, text, x, y, color, size, align) {
+    ctx.fillStyle = color || "#8a857c";
+    ctx.font = (size || 10) + "px ui-monospace, SFMono-Regular, Consolas, monospace";
+    ctx.textAlign = align || "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, y);
+  };
+
+  function initProgress() {
+    var bar = document.getElementById("progressBar");
+    if (!bar) return;
+    function upd() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    }
+    window.addEventListener("scroll", upd, { passive: true });
+    window.addEventListener("resize", upd);
+    upd();
+  }
+
+  function initNav() {
+    var nav = document.getElementById("sectionNav");
+    var sections = [].slice.call(document.querySelectorAll(".chapter[id]"));
+    if (!nav || !sections.length) return;
+    sections.forEach(function (s, i) {
+      var h = s.querySelector("h2");
+      var a = document.createElement("a");
+      a.href = "#" + s.id;
+      a.textContent = h ? h.textContent.replace(/\s+/g, " ").slice(0, 26) : "0" + (i + 1);
+      nav.appendChild(a);
+    });
+    var links = [].slice.call(nav.querySelectorAll("a"));
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var i = sections.indexOf(e.target);
+        links.forEach(function (l, j) { l.classList.toggle("on", i === j); });
+      });
+    }, { rootMargin: "-20% 0px -68% 0px" });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  function initReveal() {
+    var els = [].slice.call(document.querySelectorAll(".reveal"));
+    if (!els.length) return;
+    if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    els.forEach(function (e, i) { e.style.transitionDelay = (Math.min(i % 4, 3) * 55) + "ms"; io.observe(e); });
+  }
+
+  function initRanges() {
+    [].slice.call(document.querySelectorAll("input[type=range][data-out]")).forEach(function (r) {
+      var out = document.getElementById(r.getAttribute("data-out"));
+      function upd() {
+        if (!out) return;
+        var v = parseFloat(r.value);
+        var f = r.getAttribute("data-format");
+        out.textContent = f === "int" ? Math.round(v) : v.toFixed(f ? parseInt(f, 10) : 1);
+      }
+      r.addEventListener("input", upd); upd();
+    });
+  }
+
+  function initQuiz() {
+    [].slice.call(document.querySelectorAll(".quiz")).forEach(function (quiz) {
+      var ans = parseInt(quiz.getAttribute("data-answer"), 10);
+      var opts = [].slice.call(quiz.querySelectorAll(".quiz-option"));
+      var ex = quiz.querySelector(".quiz-explain");
+      opts.forEach(function (o, i) {
+        o.addEventListener("click", function () {
+          opts.forEach(function (x) { x.classList.remove("ok", "no"); x.disabled = true; });
+          if (i === ans) { o.classList.add("ok"); }
+          else { o.classList.add("no"); opts[ans].classList.add("ok"); }
+          if (ex) ex.classList.add("show");
+        });
+      });
+    });
+  }
+
+  function boot() {
+    initProgress(); initNav(); initReveal(); initRanges(); initQuiz();
+    if (window.__pageInit) window.__pageInit();
+    document.documentElement.classList.add("ready");
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+
+</script>
+<script>
+
+(function () {
+  "use strict";
+
+  
+  (function () {
+    var c = document.getElementById("heroCanvas");
+    if (!c) return;
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * 0.62, cy = h * 0.5;
+      
+      for (var k = 0; k < 3; k++) {
+        var ph = (t * 0.35 + k / 3) % 1;
+        var r = ph * Math.min(w, h) * 0.8;
+        ctx.strokeStyle = "rgba(224,122,154," + (0.35 * (1 - ph)) + ")";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, EIN.TAU); ctx.stroke();
+        ctx.beginPath(); ctx.arc(cx, cy, r * 0.99, 0, EIN.TAU); ctx.stroke();
+      }
+      
+      var pulse = 1 + Math.sin(t * 1.4) * 0.03;
+      var R = Math.min(w, h) * 0.09 * pulse;
+      var rg = ctx.createRadialGradient(cx - R * .3, cy - R * .3, 0, cx, cy, R);
+      rg.addColorStop(0, "rgba(255,235,240,.98)");
+      rg.addColorStop(.35, "rgba(224,122,154,.95)");
+      rg.addColorStop(.8, "rgba(150,60,95,.65)");
+      rg.addColorStop(1, "rgba(80,20,45,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, cy, R, 0, EIN.TAU); ctx.fill();
+      
+      for (var i = 0; i < 30; i++) {
+        var a = i / 30 * EIN.TAU + t * 0.15;
+        var rr = R + 16 + ((i * 37 + t * 90) % (Math.min(w, h) * 0.55));
+        var x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
+        ctx.fillStyle = "rgba(255,225,160," + (0.7 * (1 - rr / (Math.min(w, h) * 0.7))) + ")";
+        ctx.beginPath(); ctx.arc(x, y, 1.5, 0, EIN.TAU); ctx.fill();
+      }
+      EIN.label(ctx, "m", cx, cy + 4, "rgba(20,5,12,.75)", 12, "center");
+      EIN.label(ctx, "E = mc²", w - 24, h - 28, "rgba(224,122,154,.55)", 11, "right");
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("emitCanvas");
+    if (!c) return;
+    var v = 0.55, last = -1;
+    var sv = document.getElementById("emitV"), ro = document.getElementById("emitReadout");
+    sv.oninput = function () { v = +sv.value / 100; };
+    document.getElementById("emitAgain").onclick = function () { last = performance.now() / 1000; };
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * 0.5, cy = h * 0.54;
+      
+      var R = 18;
+      var rg = ctx.createRadialGradient(cx - 5, cy - 5, 0, cx, cy, R);
+      rg.addColorStop(0, "rgba(255,220,230,.95)"); rg.addColorStop(.5, "rgba(224,122,154,.8)"); rg.addColorStop(1, "rgba(224,122,154,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, cy, R, 0, EIN.TAU); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(cx, cy, 3, 0, EIN.TAU); ctx.fill();
+      
+      EIN.arrow(ctx, cx - 36, cy + 44, cx + 36, cy + 44, "rgba(255,255,255,.45)", 1.2);
+      EIN.label(ctx, "v", cx + 44, cy + 44, "rgba(255,255,255,.5)", 10);
+      
+      var elapsed = t - last;
+      var on = elapsed >= 0 && elapsed < 2.4;
+      if (on) {
+        var q = elapsed / 2.4;
+        var spread = q * w * 0.46;
+        [1, -1].forEach(function (dir) {
+          var x = cx + dir * spread;
+          var g = ctx.createRadialGradient(x, cy, 0, x, cy, 26);
+          g.addColorStop(0, "rgba(255,235,190,.55)"); g.addColorStop(1, "rgba(255,235,190,0)");
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, cy, 26, 0, EIN.TAU); ctx.fill();
+          ctx.strokeStyle = "rgba(255,235,190,.55)"; ctx.beginPath(); ctx.arc(x, cy, 14, 0, EIN.TAU); ctx.stroke();
+        });
+      }
+      var gamma = 1 / Math.sqrt(1 - v * v);
+      var dm = (gamma - 1);
+      ro.textContent = "γ = " + gamma.toFixed(2) + " · Δm = " + (dm).toFixed(2) + " · L/c²";
+      EIN.label(ctx, "Ruhesystem: symmetrisch", 14, 20, "rgba(224,122,154,.6)", 9);
+      EIN.label(ctx, "bewegtes System: Doppler-Asymmetrie", w - 14, 20, "rgba(255,255,255,.4)", 9, "right");
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("balanceCanvas");
+    if (!c) return;
+    var v = 0.55;
+    var sv = document.getElementById("emitV");
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var gamma = 1 / Math.sqrt(1 - v * v);
+      var pad = 40, barW = w - pad * 2;
+      var rows = [
+        { label: "Ruhesystem", e: 1, k: 0, rad: 0.3, color: "rgba(224,122,154,.85)" },
+        { label: "bewegtes System", e: 1, k: (gamma - 1), rad: 0.3 * gamma, color: "rgba(242,211,145,.85)" }
+      ];
+      var max = Math.max(1 + (gamma - 1) + 0.3 * gamma, 1.6);
+      rows.forEach(function (r, i) {
+        var y = h * 0.3 + i * h * 0.28;
+        var x = pad;
+        EIN.label(ctx, r.label, pad, y - 16, "rgba(255,255,255,.5)", 9);
+        function seg(val, color) {
+          var ww = (val / max) * barW;
+          ctx.fillStyle = color; ctx.fillRect(x, y, ww, 22);
+          x += ww;
+        }
+        seg(r.e, "rgba(224,122,154,.7)");
+        seg(r.k, "rgba(242,211,145,.75)");
+        seg(r.rad, "rgba(138,133,124,.45)");
+        ctx.strokeStyle = "rgba(255,255,255,.1)"; ctx.strokeRect(pad, y, barW, 22);
+        EIN.label(ctx, "Ruhe", pad + 4, y + 11, "rgba(0,0,0,.55)", 8);
+      });
+      var dm = (gamma - 1) / gamma;
+      EIN.label(ctx, "Δm/m = 1 − 1/γ = " + dm.toFixed(3), pad, h - 24, "rgba(224,122,154,.8)", 10);
+      EIN.label(ctx, "γ = " + gamma.toFixed(2), w - pad, h - 24, "rgba(255,255,255,.45)", 10, "right");
+      document.getElementById("balanceReadout").textContent = "γ = " + gamma.toFixed(2);
+    }
+    sv.addEventListener("input", function () { v = +sv.value / 100; draw(); });
+    EIN.onResize(c, draw); draw();
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("convCanvas");
+    if (!c) return;
+    var mg = 100;
+    var sv = document.getElementById("convM"), ro = document.getElementById("convReadout");
+    sv.oninput = function () { mg = +sv.value; draw(); };
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var m = mg / 1000; 
+      var E = m * 1e-3 * 8.987551787368176e16; 
+      var tnt = E / 4.184e12; 
+      var pad = 34;
+      
+      EIN.label(ctx, "Masse", pad, 26, "rgba(224,122,154,.8)", 9);
+      var mw = (mg / 1000) * (w - pad * 2);
+      ctx.fillStyle = "rgba(224,122,154,.7)"; ctx.fillRect(pad, 38, mw, 14);
+      EIN.label(ctx, mg + " mg", pad + mw + 8, 45, "rgba(255,255,255,.5)", 9);
+      
+      EIN.label(ctx, "Energie", pad, 78, "rgba(242,211,145,.8)", 9);
+      var eFrac = Math.min(1, E / 9e13);
+      var ew = eFrac * (w - pad * 2);
+      var grad = ctx.createLinearGradient(pad, 0, pad + ew, 0);
+      grad.addColorStop(0, "rgba(242,211,145,.35)"); grad.addColorStop(1, "rgba(255,245,210,.95)");
+      ctx.fillStyle = grad; ctx.fillRect(pad, 90, ew, 14);
+      ctx.strokeStyle = "rgba(255,255,255,.1)"; ctx.strokeRect(pad, 90, w - pad * 2, 14);
+      
+      ctx.fillStyle = "rgba(255,255,255,.85)"; ctx.font = "13px ui-monospace, monospace"; ctx.textAlign = "left";
+      ctx.fillText(E.toExponential(2) + " J", pad, 140);
+      ctx.fillStyle = "rgba(242,211,145,.7)"; ctx.font = "10px ui-monospace, monospace";
+      ctx.fillText("≈ " + tnt.toFixed(3) + " kt TNT", pad, 158);
+      ctx.fillText("≈ " + (E / 3.6e6).toFixed(0) + " kWh", pad, 174);
+      ro.textContent = mg + " mg → " + E.toExponential(1) + " J";
+    }
+    EIN.onResize(c, draw); draw();
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("bindingCanvas");
+    if (!c) return;
+    var pts = [];
+    for (var A = 2; A <= 240; A += 2) {
+      var be;
+      if (A < 12) be = 1.1 + A * 0.55;
+      else if (A < 56) be = 7.0 + (A - 12) / 44 * 1.75;
+      else if (A < 120) be = 8.75 - (A - 56) / 64 * 0.15;
+      else be = 8.6 - (A - 120) / 120 * 1.1;
+      pts.push([A, be]);
+    }
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var pad = { l: 48, r: 20, t: 28, b: 34 };
+      function X(A) { return pad.l + (A / 240) * (w - pad.l - pad.r); }
+      function Y(b) { return h - pad.b - (b / 10) * (h - pad.t - pad.b); }
+      ctx.strokeStyle = "rgba(255,255,255,.12)";
+      ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+      EIN.label(ctx, "MeV / Nukleon", 6, pad.t - 6, "rgba(255,255,255,.35)", 9);
+      EIN.label(ctx, "Massenzahl A", w - pad.r, h - 8, "rgba(255,255,255,.35)", 9, "right");
+      for (var A = 0; A <= 240; A += 60) EIN.label(ctx, A + "", X(A), h - pad.b + 12, "rgba(255,255,255,.25)", 8, "center");
+      for (var b = 2; b <= 10; b += 2) EIN.label(ctx, b + "", 28, Y(b), "rgba(255,255,255,.25)", 8);
+      
+      ctx.beginPath();
+      pts.forEach(function (p, i) {
+        var x = X(p[0]), y = Y(p[1]);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      var grad = ctx.createLinearGradient(pad.l, 0, w - pad.r, 0);
+      grad.addColorStop(0, "rgba(242,211,145,.7)"); grad.addColorStop(.5, "rgba(255,255,255,.95)"); grad.addColorStop(1, "rgba(224,122,154,.8)");
+      ctx.strokeStyle = grad; ctx.lineWidth = 2; ctx.stroke();
+      
+      function marker(A, color, label, dy) {
+        var b = pts.find(function (p) { return p[0] >= A; })[1];
+        var x = X(A), y = Y(b);
+        ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, 4, 0, EIN.TAU); ctx.fill();
+        EIN.label(ctx, label, x, y + (dy || -14), color, 9, "center");
+      }
+      marker(4, "rgba(242,211,145,.9)", "H", -14);
+      marker(56, "#fff", "Fe", -16);
+      marker(238, "rgba(224,122,154,.9)", "U", -14);
+      EIN.label(ctx, "Fusion ↑", X(30), Y(9.4), "rgba(242,211,145,.6)", 9, "center");
+      EIN.label(ctx, "Spaltung ↓", X(200), Y(9.4), "rgba(224,122,154,.6)", 9, "center");
+    }
+    EIN.onResize(c, draw); draw();
+  })();
+})();
+
+</script>
+</body>
+</html>

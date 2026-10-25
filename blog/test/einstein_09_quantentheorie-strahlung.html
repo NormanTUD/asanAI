@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Der Laser steckt in dieser Formel — Einstein, visualisiert</title>
+<meta name="description" content="Einstein fragt, wie Moleküle Licht aufnehmen und abgeben. Seine Antwort enthält drei Prozesse — und einen davon hatte niemand zuvor ernst genommen: die stimulierte Emission.">
+<style>
+:root{
+  --bg:#07070b;
+  --bg-2:#0b0b12;
+  --panel:rgba(255,255,255,.038);
+  --panel-2:rgba(255,255,255,.026);
+  --ink:#ece9e1;
+  --muted:#a8a397;
+  --dim:#6f6b63;
+  --line:rgba(255,255,255,.085);
+  --line-strong:rgba(255,255,255,.16);
+  --accent:#e8b45a;
+  --accent-soft:rgba(232,180,90,.16);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  --math:"Latin Modern Math","STIX Two Math","Cambria Math",Cambria,Georgia,serif;
+  --col:72ch;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:17px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(900px 620px at 78% -8%,var(--accent-soft),transparent 62%),
+    radial-gradient(700px 500px at 8% 18%,rgba(120,140,255,.055),transparent 65%),
+    linear-gradient(180deg,#08080d 0%,#07070b 45%,#06060a 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+::selection{background:var(--accent);color:#111}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:rgba(255,255,255,.05)}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#fff6d8);box-shadow:0 0 14px var(--accent);transition:width .08s linear}
+.topbar{
+  position:fixed;top:2px;left:0;right:0;z-index:55;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:12px clamp(16px,3vw,38px);
+  background:linear-gradient(180deg,rgba(7,7,11,.92),rgba(7,7,11,.55) 70%,transparent);
+  backdrop-filter:blur(10px);
+}
+.brand{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--muted);
+  white-space:nowrap;text-transform:uppercase;
+}
+.brand:hover{color:var(--ink);text-decoration:none}
+#sectionNav{display:flex;gap:4px;overflow:auto;scrollbar-width:none;mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 12px),transparent)}
+#sectionNav::-webkit-scrollbar{display:none}
+#sectionNav a{
+  font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--dim);
+  padding:5px 8px;border-radius:99px;white-space:nowrap;transition:.25s var(--ease);
+}
+#sectionNav a:hover{color:var(--ink);text-decoration:none;background:rgba(255,255,255,.05)}
+#sectionNav a.on{color:var(--accent);background:var(--accent-soft)}
+main{position:relative}
+.hero{
+  position:relative;min-height:clamp(520px,82vh,820px);display:flex;align-items:flex-end;
+  padding:120px clamp(20px,5vw,64px) clamp(48px,8vh,90px);
+  overflow:hidden;
+}
+#heroCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:.9}
+.hero-inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:18px;
+}
+.kicker::before{content:"";width:28px;height:1px;background:var(--accent);opacity:.7}
+h1{
+  font-family:var(--serif);font-weight:400;font-size:clamp(2.35rem,6.2vw,5.6rem);
+  line-height:1.02;letter-spacing:-.025em;margin:0 0 22px;max-width:17ch;
+  text-wrap:balance;
+}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{font-size:clamp(1.02rem,1.7vw,1.28rem);line-height:1.55;color:#cfcac0;max-width:56ch;margin:0 0 18px}
+.epigraph{
+  font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--muted);
+  max-width:52ch;margin:0 0 22px;padding-left:16px;border-left:1px solid var(--line-strong);
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--dim);text-transform:uppercase}
+.meta b{color:var(--muted);font-weight:400}
+.scroll-hint{
+  position:absolute;right:clamp(20px,5vw,64px);bottom:28px;z-index:2;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--dim);
+  writing-mode:vertical-rl;display:flex;align-items:center;gap:10px;
+}
+.scroll-hint::after{content:"";width:1px;height:38px;background:linear-gradient(var(--accent),transparent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+.chapter{padding:clamp(58px,9vh,110px) 0;border-top:1px solid var(--line);position:relative}
+.chapter-head{display:grid;grid-template-columns:64px minmax(0,1fr);gap:clamp(10px,2vw,26px);margin-bottom:clamp(26px,4vw,44px);align-items:start}
+.chapter-num{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--accent);
+  padding-top:9px;border-top:1px solid var(--accent);
+}
+.chapter h2{
+  font-family:var(--serif);font-weight:400;font-size:clamp(1.65rem,3.1vw,2.65rem);
+  line-height:1.12;letter-spacing:-.015em;margin:0 0 12px;text-wrap:balance;
+}
+.chapter h3{font-family:var(--serif);font-weight:400;font-size:1.32rem;margin:0 0 10px;letter-spacing:-.01em}
+.chapter .sub{color:var(--muted);max-width:62ch;margin:0;font-size:1rem}
+.prose{max-width:var(--col);color:#cfcac0}
+.prose p{margin:0 0 1.05em}
+.prose p:last-child{margin-bottom:0}
+.prose strong{color:var(--ink);font-weight:600}
+.prose em{color:#e3ded4}
+.prose ul,.prose ol{margin:.2em 0 1.1em;padding-left:1.25em}
+.prose li{margin:.32em 0}
+.prose code{font-family:var(--mono);font-size:.86em;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px}
+.lead{font-size:1.12rem;line-height:1.62;color:#dcd7cd}
+.split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,56px);align-items:center}
+.split.wide-left{grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr)}
+.split.wide-right{grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:16px;padding:22px;
+  position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.35}
+.card h4{font-family:var(--sans);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:0 0 9px;font-weight:600}
+.card p{font-size:.92rem;color:var(--muted);margin:0;line-height:1.58}
+.card .big{font-family:var(--serif);font-size:1.5rem;color:var(--ink);line-height:1.2;margin-bottom:8px}
+.stage{
+  position:relative;background:linear-gradient(180deg,rgba(255,255,255,.032),rgba(255,255,255,.012));
+  border:1px solid var(--line);border-radius:18px;overflow:hidden;
+  box-shadow:0 24px 70px -30px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.stage canvas{display:block;width:100%;height:100%}
+.stage .label{
+  position:absolute;left:14px;top:12px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--dim);pointer-events:none;
+}
+.stage .readout{
+  position:absolute;right:14px;top:12px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.06em;color:var(--accent);pointer-events:none;
+}
+.controls{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin:14px 0 0}
+.control{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--muted)}
+.control input[type=range]{
+  -webkit-appearance:none;appearance:none;width:clamp(110px,18vw,190px);height:2px;background:var(--line-strong);outline:none;border-radius:2px;
+}
+.control input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:13px;height:13px;border-radius:50%;
+  background:var(--accent);border:2px solid #111;box-shadow:0 0 0 3px var(--accent-soft);cursor:pointer;
+}
+.control input[type=range]::-moz-range-thumb{width:11px;height:11px;border:2px solid #111;border-radius:50%;background:var(--accent);cursor:pointer}
+.control .val{min-width:52px;color:var(--ink);font-variant-numeric:tabular-nums}
+.btn{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 14px;border-radius:99px;border:1px solid var(--line-strong);
+  background:transparent;color:var(--ink);cursor:pointer;transition:.2s var(--ease);
+}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.btn.on{background:var(--accent);color:#111;border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:0}
+.formula{
+  font-family:var(--math);font-size:clamp(1.05rem,2vw,1.38rem);line-height:1.85;
+  color:#f1ede4;background:rgba(255,255,255,.028);border:1px solid var(--line);
+  border-left:2px solid var(--accent);border-radius:0 12px 12px 0;
+  padding:18px 22px;margin:18px 0;overflow-x:auto;
+}
+.formula .small{font-size:.62em;color:var(--muted)}
+.formula-note{font-family:var(--sans);font-size:.78rem;color:var(--dim);margin-top:8px;letter-spacing:0}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .18em;line-height:1.15}
+.frac .num{border-bottom:1px solid currentColor;padding:0 .18em}
+.frac .den{padding:.08em .18em 0}
+.sqrt{border-top:1px solid currentColor;padding:0 .12em}
+.takeaways{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:26px}
+.takeaway{
+  background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.015));
+  border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+  border-radius:14px;padding:18px 18px 16px;position:relative;
+}
+.takeaway .n{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--accent);display:block;margin-bottom:7px}
+.takeaway p{margin:0;font-size:.9rem;line-height:1.55;color:#d8d3c9}
+.quote{
+  font-family:var(--serif);font-style:italic;font-size:clamp(1.15rem,2.1vw,1.45rem);
+  line-height:1.5;color:#e6e1d6;margin:28px 0;padding:0 0 0 22px;border-left:1px solid var(--accent);
+  max-width:60ch;
+}
+.quote cite{display:block;font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-top:12px}
+.timeline{position:relative;margin:20px 0;padding-left:22px}
+.timeline::before{content:"";position:absolute;left:4px;top:4px;bottom:4px;width:1px;background:linear-gradient(var(--accent),var(--line))}
+.timeline .t{position:relative;padding:0 0 20px}
+.timeline .t::before{content:"";position:absolute;left:-22px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.timeline .y{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent);display:block}
+.timeline .t p{margin:2px 0 0;font-size:.92rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 38%,transparent);padding:4px 9px;border-radius:99px;margin:0 6px 6px 0}
+.quiz{border:1px solid var(--line);border-radius:16px;padding:22px;background:var(--panel);margin-top:26px}
+.quiz .q{font-family:var(--serif);font-size:1.1rem;margin:0 0 14px;color:var(--ink)}
+.quiz-options{display:grid;gap:8px}
+.quiz-option{
+  text-align:left;font-family:var(--sans);font-size:.9rem;color:#cfcac0;
+  padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:transparent;cursor:pointer;transition:.2s var(--ease);
+}
+.quiz-option:hover{border-color:var(--line-strong);background:rgba(255,255,255,.04)}
+.quiz-option.ok{border-color:#57c785;background:rgba(87,199,133,.12);color:#d8ffe8}
+.quiz-option.no{border-color:#e26868;background:rgba(226,104,104,.1);color:#ffdada}
+.quiz-explain{font-size:.86rem;color:var(--muted);margin:12px 0 0;display:none;line-height:1.55}
+.quiz-explain.show{display:block}
+.sources{border-top:1px solid var(--line);padding:34px 0 60px;color:var(--dim);font-size:.83rem}
+.sources h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.sources p{margin:0 0 8px;max-width:80ch}
+.sources a{color:var(--muted);border-bottom:1px solid var(--line-strong)}
+.sources a:hover{color:var(--accent);text-decoration:none}
+.prevnext{display:flex;justify-content:space-between;gap:16px;padding:26px 0 0;border-top:1px solid var(--line);margin-top:34px}
+.prevnext a{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);display:flex;flex-direction:column;gap:3px;max-width:45%}
+.prevnext a:hover{color:var(--accent);text-decoration:none}
+.prevnext a span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.prevnext .right{text-align:right;margin-left:auto}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.mono{font-family:var(--mono);font-size:.82em;letter-spacing:.02em}
+.dim{color:var(--dim)}
+.accent{color:var(--accent)}
+.center{text-align:center}
+.mt0{margin-top:0}.mt1{margin-top:10px}.mt2{margin-top:20px}.mt3{margin-top:34px}
+.hr{height:1px;background:var(--line);border:0;margin:30px 0}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+footer{color:var(--dim);font-size:.78rem}
+.foot-inner{max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 50px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:900px){
+  .split,.split.wide-left,.split.wide-right,.grid2,.grid3{grid-template-columns:1fr}
+  .chapter-head{grid-template-columns:40px minmax(0,1fr)}
+  .topbar{gap:10px}
+  #sectionNav{display:none}
+  h1{max-width:20ch}
+}
+@media(max-width:560px){
+  body{font-size:16px}
+  .hero{min-height:620px;padding-top:96px}
+  .chapter-head{grid-template-columns:1fr;gap:8px}
+  .chapter-num{border-top:0;padding:0}
+  .controls{gap:10px 14px}
+  .scroll-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+@media print{
+  .topbar,.progress,#heroCanvas,.scroll-hint{display:none}
+  .reveal{opacity:1!important;transform:none!important}
+  body{background:#fff;color:#111}
+  .card,.stage,.formula{border-color:#ddd}
+}
+
+/* index work cards */
+.work{display:block;color:var(--ink);text-decoration:none;transition:transform .35s var(--ease),border-color .35s var(--ease),background .35s var(--ease)}
+.work:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--accent) 55%,transparent);text-decoration:none;background:linear-gradient(180deg,var(--accent-soft),rgba(255,255,255,.02))}
+.work-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--dim)}
+.work-no{color:var(--accent)}
+.work-year{border:1px solid var(--line);padding:3px 7px;border-radius:99px}
+.work h4{color:var(--accent);margin-bottom:6px}
+.work .work-title{font-family:var(--serif);font-size:1.28rem;line-height:1.18;color:var(--ink);margin:0 0 9px;letter-spacing:-.01em}
+.work p{font-size:.88rem;color:var(--muted);line-height:1.55}
+.work-go{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+
+</style>
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body style="--accent:#f0a35e;--accent-soft:rgba(240,163,94,.16)">
+<div class="progress"><i id="progressBar"></i></div>
+<header class="topbar">
+  <a class="brand" href="einstein_index.html">Einstein · visualisiert</a>
+  <nav id="sectionNav" aria-label="Abschnitte"></nav>
+</header>
+<main>
+<section class="hero" id="top">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">Physikalische Zeitschrift · 1917 · 18</div>
+    <h1>Der Laser steckt in dieser <em>Formel</em></h1>
+    <p class="lede">Einstein fragt, wie Moleküle Licht aufnehmen und abgeben. Seine Antwort enthält drei Prozesse — und einen davon hatte niemand zuvor ernst genommen: die stimulierte Emission.</p>
+    <p class="epigraph">„Es entsteht die Frage: Erhält das Molekül einen Stoß, wenn es die Energie absorbiert oder emittiert?“</p>
+    <div class="meta"><span><b>Original</b> Zur Quantentheorie der Strahlung</span><span><b>Erschienen</b> 1917</span><span><b>Umfang</b> 8 Seiten</span></div>
+  </div>
+  <div class="scroll-hint">scrollen</div>
+</section>
+
+
+<div class="wrap">
+<section class="chapter" id="raetsel">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">01</div>
+    <div>
+      <h2>Die Formel funktioniert — aber warum?</h2>
+      <p class="sub">Planck hat das Strahlungsspektrum. Einstein will wissen, was dabei auf molekularer Ebene passiert.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p class="lead">1900 hatte Planck eine Formel, die jedes Schwarzkörper-Spektrum beschreibt. Aber die klassische Elektrodynamik liefert stattdessen das Rayleigh-Jeans-Gesetz, das im Ultravioletten explodiert. Die Quantenhypothese war ein Notausgang.</p>
+      <p>1917 geht Einstein einen Schritt weiter. Er fragt nicht nach dem Strahlungsfeld allein, sondern nach den <strong>Elementarprozessen</strong> zwischen Molekül und Licht. Wie wahrscheinlich ist es, dass ein Molekül ein Photon aufnimmt oder abgibt?</p>
+      <p>Seine Antwort ist erstaunlich allgemein: Drei Wahrscheinlichkeiten genügen, um Plancks Formel herzuleiten — und um zu zeigen, dass Licht Impuls trägt.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Molekül im Strahlungsfeld</span>
+        <span class="readout" id="heroReadout">drei Prozesse</span>
+        <canvas id="heroAtom"></canvas>
+      </div>
+      <div class="legend"><span><i style="background:#f0a35e"></i>Photon</span><span><i style="background:#f2d391"></i>angeregtes Niveau</span><span><i style="background:#6f8fbf"></i>Grundzustand</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="prozesse">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">02</div>
+    <div>
+      <h2>Drei Prozesse</h2>
+      <p class="sub">Spontan, absorbiert, stimuliert. Der dritte ist Einsteins eigentliche Innovation.</p>
+    </div>
+  </div>
+  <div class="split wide-left">
+    <div class="prose reveal">
+      <p><strong>Spontane Emission</strong> (A): Ein angeregtes Molekül fällt ohne äußeres Feld in den Grundzustand und sendet ein Photon aus. Die Rate ist <span class="mono">A·N₂</span>.</p>
+      <p><strong>Absorption</strong> (B): Ein Photon der Energie <span class="mono">hν</span> wird aufgenommen, das Molekül steigt auf. Die Rate ist <span class="mono">B·ρ(ν)·N₁</span>.</p>
+      <p><strong>Stimulierte Emission</strong> (B): Ein vorbeifliegendes Photon trifft ein angeregtes Molekül und löst ein zweites, <em>gleichphasiges</em> Photon aus. Die Rate ist <span class="mono">B·ρ(ν)·N₂</span>.</p>
+      <p>Der dritte Prozess ist der Kern des Lasers: Aus einem Photon werden zwei, aus zwei vier — wenn genügend Moleküle angeregt sind.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:340px">
+        <span class="label">Zwei-Niveau-System</span>
+        <span class="readout" id="levelReadout">Grundzustand</span>
+        <canvas id="levelCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <button class="btn" id="levelAbsorb">absorbieren</button>
+        <button class="btn" id="levelStim">stimulieren</button>
+        <button class="btn" id="levelSpont">spontan</button>
+        <button class="btn" id="levelReset">reset</button>
+      </div>
+    </div>
+  </div>
+  <div class="grid3 mt3">
+    <div class="card reveal"><h4>A · spontan</h4><p>Zufällige Richtung, zufällige Phase. Die Rate hängt nicht von der Strahlungsdichte ab.</p></div>
+    <div class="card reveal"><h4>B · Absorption</h4><p>Das Molekül nimmt Energie auf. Die Rate wächst mit der Strahlungsdichte ρ.</p></div>
+    <div class="card reveal"><h4>B · stimuliert</h4><p>Das neue Photon hat dieselbe Richtung, Frequenz und Phase. Kohärentes Licht.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="gleichgewicht">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">03</div>
+    <div>
+      <h2>Das Gleichgewicht erzwingt Planck</h2>
+      <p class="sub">Setzt man die drei Raten ins thermische Gleichgewicht, fällt Plancks Strahlungsformel heraus — und eine Beziehung zwischen A und B.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p>Im Gleichgewicht ist die Zahl der Auf- und Abgänge gleich. Mit der Boltzmann-Verteilung <span class="mono">N₂/N₁ = e<sup>−hν/kT</sup></span> folgt:</p>
+      <div class="formula"><span class="frac"><span class="num">A</span><span class="den">B</span></span> = <span class="frac"><span class="num">8πhν³</span><span class="den">c³</span></span>
+        <div class="formula-note">Die spontane Rate ist gegenüber der stimulierten um den Faktor 8πhν³/c³ erhöht. Bei hohen Frequenzen dominiert die spontane Emission.</div>
+      </div>
+      <p>Das ist keine Annahme — es ist die Bedingung dafür, dass das Strahlungsfeld im Gleichgewicht die Planck-Verteilung hat. Und es liefert <span class="mono">B<sub>n→m</sub> = B<sub>m→n</sub></span>: Absorption und stimulierte Emission sind symmetrisch.</p>
+      <p>Damit ist Plancks Formel zum ersten Mal aus mikroskopischen Übergangswahrscheinlichkeiten hergeleitet — ohne mechanisches Modell des Oszillators.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">A/B-Verhältnis und Spektrum</span>
+        <span class="readout" id="ratioReadout">ν = 5.0 · 10¹⁴ Hz</span>
+        <canvas id="ratioCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Frequenz <input type="range" id="ratioNu" min="10" max="100" value="50" data-out="ratioNuVal" data-format="1"><span class="val" id="ratioNuVal">5.0</span> ·10¹⁴ Hz</label>
+      </div>
+      <div class="legend"><span><i style="background:#f0a35e"></i>A/B</span><span><i style="background:#6f8fbf"></i>ρ(ν)</span></div>
+    </div>
+  </div>
+  <div class="quote reveal">„Die formale Ähnlichkeit der Kurve der chromatischen Verteilung der Temperaturstrahlung mit Maxwells Geschwindigkeits-Verteilungsgesetz ist zu frappant, als daß sie lange hätte verborgen bleiben können.“<cite>Einstein 1917, erster Satz</cite></div>
+</section>
+
+<section class="chapter" id="impuls">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">04</div>
+    <div>
+      <h2>Licht trägt Impuls</h2>
+      <p class="sub">Wenn ein Molekül ein Photon aussendet, muss es einen Rückstoß spüren. Einstein rechnet nach — und findet die Brownsche Bewegung im Strahlungsfeld.</p>
+    </div>
+  </div>
+  <div class="split wide-right">
+    <div class="reveal">
+      <div class="stage" style="height:330px">
+        <span class="label">Rückstoß bei Emission</span>
+        <span class="readout" id="recoilReadout">p = hν / c</span>
+        <canvas id="recoilCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <button class="btn" id="recoilGo">Photon senden</button>
+        <label class="control">Frequenz <input type="range" id="recoilNu" min="20" max="100" value="60" data-out="recoilNuVal" data-format="0"><span class="val" id="recoilNuVal">60</span></label>
+      </div>
+    </div>
+    <div class="prose reveal">
+      <p>Klassisch strahlt ein Dipol in alle Richtungen; im Mittel gibt es keinen Rückstoß. Einstein aber nimmt an, dass jede Emission <em>gerichtet</em> ist und den Impuls <span class="mono">hν/c</span> überträgt.</p>
+      <p>Dann führt das Strahlungsfeld zu einer Zufallsbewegung der Moleküle — genau wie eine Flüssigkeit Brownsche Bewegung erzeugt. Die Rechnung geht nur auf, wenn die Maxwell-Verteilung herauskommt. Das ist eine starke Konsistenzprüfung der Quantenhypothese.</p>
+      <p>Damit ist das Photon nicht nur ein Energiepaket, sondern ein Teilchen mit Impuls. Compton bestätigt das 1923 durch Streuung.</p>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="laser">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">05</div>
+    <div>
+      <h2>Vom Formelzeichen zum Laser</h2>
+      <p class="sub">Stimulierte Emission ist ein Verstärker. Man muss nur genügend Moleküle in den angeregten Zustand bringen.</p>
+    </div>
+  </div>
+  <div class="split">
+    <div class="prose reveal">
+      <p>Im thermischen Gleichgewicht ist der Grundzustand immer stärker besetzt als der angeregte. Dann absorbiert das Medium mehr, als es verstärkt. Für einen Laser braucht man das Gegenteil: <strong>Besetzungsinversion</strong>.</p>
+      <p>Pumpt man Energie hinein, kann man <span class="mono">N₂ &gt; N₁</span> erreichen. Ein einzelnes Photon löst dann eine Kaskade aus: Aus eins werden zwei, aus zwei vier. Zwischen zwei Spiegeln verstärkt, wird daraus ein kohärenter Strahl.</p>
+      <p>1954 baut Charles Townes den ersten Maser (Mikrowellen). 1960 folgt der Rubinlaser von Theodore Maiman. Heute steckt das Prinzip in Glasfasern, Supermärkten, Augenoperationen und Gravitationswellen-Detektoren.</p>
+    </div>
+    <div class="reveal">
+      <div class="stage" style="height:350px">
+        <span class="label">Laser-Verstärker</span>
+        <span class="readout" id="laserReadout">Verstärkung: 1.00×</span>
+        <canvas id="laserCanvas"></canvas>
+      </div>
+      <div class="controls">
+        <label class="control">Pumpe <input type="range" id="laserPump" min="0" max="100" value="55" data-out="laserPumpVal" data-format="0"><span class="val" id="laserPumpVal">55</span></label>
+        <button class="btn" id="laserFire">Photon starten</button>
+      </div>
+      <div class="legend"><span><i style="background:#f2d391"></i>angeregte Atome</span><span><i style="background:#f0a35e"></i>Photonen</span><span><i style="background:#6f8fbf"></i>Grundzustand</span></div>
+    </div>
+  </div>
+  <div class="timeline mt3">
+    <div class="t reveal"><span class="y">1917</span><p>Einstein führt die stimulierten Übergänge ein — als statistische Notwendigkeit, nicht als Technik.</p></div>
+    <div class="t reveal"><span class="y">1954</span><p>Townes, Gordon und Zeiger bauen den Ammoniak-Maser.</p></div>
+    <div class="t reveal"><span class="y">1960</span><p>Maiman realisiert den ersten Laser mit einem Rubin-Kristall.</p></div>
+    <div class="t reveal"><span class="y">Heute</span><p>Laser: Kommunikation, Medizin, Materialbearbeitung, Spektroskopie, LIGO.</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="mitnehmen">
+  <div class="chapter-head reveal">
+    <div class="chapter-num">06</div>
+    <div>
+      <h2>Was du mitnimmst</h2>
+      <p class="sub">Drei Ideen, die aus einer statistischen Ableitung Technologie machten.</p>
+    </div>
+  </div>
+  <div class="takeaways">
+    <div class="takeaway reveal"><span class="n">01 · DREI RATEN ERKLÄREN PLANCK</span><p>Spontane Emission, Absorption und stimulierte Emission genügen, um das Schwarzkörperspektrum herzuleiten.</p></div>
+    <div class="takeaway reveal"><span class="n">02 · STIMULATION IST VERSTÄRKUNG</span><p>Ein Photon kann ein zweites, identisches auslösen. Das ist die physikalische Grundlage jeder Lasertechnik.</p></div>
+    <div class="takeaway reveal"><span class="n">03 · LICHT HAT IMPULS</span><p>Die Energie- und Impulsbilanz der Elementarprozesse macht das Photon zu einem echten Teilchen — nicht nur zu einem Rechentrick.</p></div>
+  </div>
+  <div class="quiz reveal" data-answer="1">
+    <p class="q">Warum braucht ein Laser eine Besetzungsinversion?</p>
+    <div class="quiz-option">Weil sonst die Spiegel nicht reflektieren.</div>
+    <div class="quiz-option">Weil sonst die Absorption die stimulierte Emission überwiegt und das Licht nicht verstärkt wird.</div>
+    <div class="quiz-option">Weil Photonen nur bei hoher Temperatur existieren.</div>
+    <div class="quiz-option">Weil die Lichtgeschwindigkeit im Medium größer werden muss.</div>
+    <p class="quiz-explain">Im thermischen Gleichgewicht ist N₁ &gt; N₂. Dann absorbieren mehr Atome, als stimuliert emittieren, und das Medium dämpft. Erst N₂ &gt; N₁ macht aus dem Medium einen Verstärker.</p>
+  </div>
+  <div class="prevnext">
+    <a href="einstein_08_kosmologie.html"><span>Zurück</span>Die Welt als Kugel</a>
+    <a class="right" href="einstein_10_relativitaet-populaer.html"><span>Weiter</span>Die Relativität für alle →</a>
+  </div>
+</section>
+</div>
+
+<section class="sources">
+  <div class="wrap">
+    <h3>Quelle &amp; Weiterlesen</h3>
+    <p>A. Einstein, <em>Zur Quantentheorie der Strahlung</em>, Physikalische Zeitschrift 18 (1917), 121–128. Public Domain. Faksimile: <a href="https://archive.org/details/physikalische-zeitschrift-vol-18" target="_blank" rel="noopener">archive.org</a>.</p>
+    <p>Die Simulationen sind schematisch. Die Laser-Kaskade zeigt das Prinzip, nicht einen realen Resonator; die Ratengleichungen sind vereinfacht.</p>
+  </div>
+</section>
+
+
+</main>
+<footer>
+  <div class="foot-inner">
+    <span>Einstein · visualisiert</span>
+    <span>Quelle: Physikalische Zeitschrift 18 (1917), 121–128 · Public Domain</span>
+  </div>
+</footer>
+<script>
+(function () {
+  "use strict";
+
+  var EIN = window.EIN = {};
+
+  EIN.clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  EIN.lerp = function (a, b, t) { return a + (b - a) * t; };
+  EIN.ease = function (t) { return 1 - Math.pow(1 - t, 3); };
+  EIN.TAU = Math.PI * 2;
+
+  EIN.css = function (name) {
+    return getComputedStyle(document.body).getPropertyValue(name).trim();
+  };
+
+  EIN.fit = function (canvas) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = canvas.getBoundingClientRect();
+    var w = Math.max(1, Math.round(r.width));
+    var h = Math.max(1, Math.round(r.height));
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h, dpr: dpr };
+  };
+
+  EIN.onResize = function (canvas, draw) {
+    var raf = 0;
+    function run() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
+    if (window.ResizeObserver) new ResizeObserver(run).observe(canvas);
+    window.addEventListener("resize", run);
+    return run;
+  };
+
+  EIN.loop = function (fn) {
+    var t0 = performance.now();
+    var last = t0;
+    function frame(now) {
+      var dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      fn(Math.max(0, (now - t0) / 1000), dt);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  };
+
+  EIN.visible = function (el, onEnter, onExit) {
+    if (!el || !("IntersectionObserver" in window)) { if (onEnter) onEnter(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { if (onEnter) onEnter(); }
+        else if (onExit) onExit();
+      });
+    }, { rootMargin: "140px 0px" });
+    io.observe(el);
+  };
+
+  EIN.arrow = function (ctx, x1, y1, x2, y2, color, width) {
+    var a = Math.atan2(y2 - y1, x2 - x1);
+    var s = 7;
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width || 1.4;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - s * Math.cos(a - 0.38), y2 - s * Math.sin(a - 0.38));
+    ctx.lineTo(x2 - s * Math.cos(a + 0.38), y2 - s * Math.sin(a + 0.38));
+    ctx.closePath(); ctx.fill();
+  };
+
+  EIN.label = function (ctx, text, x, y, color, size, align) {
+    ctx.fillStyle = color || "#8a857c";
+    ctx.font = (size || 10) + "px ui-monospace, SFMono-Regular, Consolas, monospace";
+    ctx.textAlign = align || "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, x, y);
+  };
+
+  function initProgress() {
+    var bar = document.getElementById("progressBar");
+    if (!bar) return;
+    function upd() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    }
+    window.addEventListener("scroll", upd, { passive: true });
+    window.addEventListener("resize", upd);
+    upd();
+  }
+
+  function initNav() {
+    var nav = document.getElementById("sectionNav");
+    var sections = [].slice.call(document.querySelectorAll(".chapter[id]"));
+    if (!nav || !sections.length) return;
+    sections.forEach(function (s, i) {
+      var h = s.querySelector("h2");
+      var a = document.createElement("a");
+      a.href = "#" + s.id;
+      a.textContent = h ? h.textContent.replace(/\s+/g, " ").slice(0, 26) : "0" + (i + 1);
+      nav.appendChild(a);
+    });
+    var links = [].slice.call(nav.querySelectorAll("a"));
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var i = sections.indexOf(e.target);
+        links.forEach(function (l, j) { l.classList.toggle("on", i === j); });
+      });
+    }, { rootMargin: "-20% 0px -68% 0px" });
+    sections.forEach(function (s) { io.observe(s); });
+  }
+
+  function initReveal() {
+    var els = [].slice.call(document.querySelectorAll(".reveal"));
+    if (!els.length) return;
+    if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    els.forEach(function (e, i) { e.style.transitionDelay = (Math.min(i % 4, 3) * 55) + "ms"; io.observe(e); });
+  }
+
+  function initRanges() {
+    [].slice.call(document.querySelectorAll("input[type=range][data-out]")).forEach(function (r) {
+      var out = document.getElementById(r.getAttribute("data-out"));
+      function upd() {
+        if (!out) return;
+        var v = parseFloat(r.value);
+        var f = r.getAttribute("data-format");
+        out.textContent = f === "int" ? Math.round(v) : v.toFixed(f ? parseInt(f, 10) : 1);
+      }
+      r.addEventListener("input", upd); upd();
+    });
+  }
+
+  function initQuiz() {
+    [].slice.call(document.querySelectorAll(".quiz")).forEach(function (quiz) {
+      var ans = parseInt(quiz.getAttribute("data-answer"), 10);
+      var opts = [].slice.call(quiz.querySelectorAll(".quiz-option"));
+      var ex = quiz.querySelector(".quiz-explain");
+      opts.forEach(function (o, i) {
+        o.addEventListener("click", function () {
+          opts.forEach(function (x) { x.classList.remove("ok", "no"); x.disabled = true; });
+          if (i === ans) { o.classList.add("ok"); }
+          else { o.classList.add("no"); opts[ans].classList.add("ok"); }
+          if (ex) ex.classList.add("show");
+        });
+      });
+    });
+  }
+
+  function boot() {
+    initProgress(); initNav(); initReveal(); initRanges(); initQuiz();
+    if (window.__pageInit) window.__pageInit();
+    document.documentElement.classList.add("ready");
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+
+</script>
+<script>
+
+(function () {
+  "use strict";
+
+  
+  (function () {
+    var c = document.getElementById("heroCanvas");
+    if (!c) return;
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * .72, cy = h * .5;
+      for (var i = 0; i < 70; i++) {
+        var a = i * 2.399 + t * .12;
+        var rr = 60 + ((i * 37 + t * 55) % Math.min(w, h) * .46);
+        var x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr;
+        var al = .16 + .22 * Math.abs(Math.sin(t * 1.3 + i));
+        ctx.fillStyle = "rgba(240,163,94," + al + ")";
+        ctx.beginPath(); ctx.arc(x, y, 1.4, 0, EIN.TAU); ctx.fill();
+      }
+      var rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 90);
+      rg.addColorStop(0, "rgba(255,240,200,.22)"); rg.addColorStop(.5, "rgba(240,163,94,.06)"); rg.addColorStop(1, "rgba(240,163,94,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, cy, 90, 0, EIN.TAU); ctx.fill();
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("heroAtom");
+    if (!c) return;
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * 0.38, cy = h * 0.5;
+      
+      var rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 26);
+      rg.addColorStop(0, "rgba(255,235,200,.95)"); rg.addColorStop(.4, "rgba(240,163,94,.5)"); rg.addColorStop(1, "rgba(240,163,94,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(cx, cy, 26, 0, EIN.TAU); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(cx, cy, 3, 0, EIN.TAU); ctx.fill();
+      
+      ctx.strokeStyle = "rgba(255,255,255,.12)"; ctx.beginPath(); ctx.ellipse(cx, cy, 52, 20, 0.3, 0, EIN.TAU); ctx.stroke();
+      var ea = t * 1.2;
+      var ex = cx + Math.cos(ea) * 52, ey = cy + Math.sin(ea) * 20;
+      ctx.fillStyle = "rgba(111,143,191,.95)"; ctx.beginPath(); ctx.arc(ex, ey, 2.8, 0, EIN.TAU); ctx.fill();
+      
+      for (var i = 0; i < 26; i++) {
+        var ph = (t * 0.18 + i / 26) % 1;
+        var ang = i * 2.4;
+        var r0 = 20 + ph * w * 0.55;
+        var x = cx + Math.cos(ang) * r0, y = cy + Math.sin(ang) * r0;
+        var a = 1 - ph;
+        ctx.strokeStyle = "rgba(240,163,94," + (a * .6) + ")";
+        ctx.beginPath();
+        for (var k = 0; k < 5; k++) {
+          var xx = x + k * 4, yy = y + Math.sin(t * 8 + k + i) * 2;
+          if (k === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+        }
+        ctx.stroke();
+        ctx.fillStyle = "rgba(255,230,180," + a + ")"; ctx.beginPath(); ctx.arc(x, y, 1.6, 0, EIN.TAU); ctx.fill();
+      }
+      EIN.label(ctx, "N₁", cx - 48, cy - 34, "rgba(111,143,191,.8)", 10);
+      EIN.label(ctx, "N₂", cx - 48, cy + 34, "rgba(242,211,145,.8)", 10);
+      EIN.label(ctx, "hν", cx + 62, cy - 10, "rgba(240,163,94,.7)", 10);
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("levelCanvas");
+    if (!c) return;
+    var state = 0; 
+    var flash = -10, mode = "";
+    var ro = document.getElementById("levelReadout");
+    function act(m) {
+      mode = m; flash = performance.now() / 1000;
+      if (m === "absorb") state = 1;
+      else if (m === "stim" || m === "spont") state = 0;
+      else state = 0;
+    }
+    document.getElementById("levelAbsorb").onclick = function () { act("absorb"); };
+    document.getElementById("levelStim").onclick = function () { act("stim"); };
+    document.getElementById("levelSpont").onclick = function () { act("spont"); };
+    document.getElementById("levelReset").onclick = function () { act("reset"); };
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var left = w * 0.2, right = w * 0.8;
+      var yG = h * 0.68, yE = h * 0.28;
+      
+      ctx.strokeStyle = "rgba(111,143,191,.7)"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(left, yG); ctx.lineTo(right, yG); ctx.stroke();
+      ctx.strokeStyle = "rgba(242,211,145,.7)";
+      ctx.beginPath(); ctx.moveTo(left, yE); ctx.lineTo(right, yE); ctx.stroke();
+      EIN.label(ctx, "N₁ · Grundzustand", left, yG + 22, "rgba(111,143,191,.65)", 9);
+      EIN.label(ctx, "N₂ · angeregt", left, yE - 14, "rgba(242,211,145,.65)", 9);
+      
+      EIN.arrow(ctx, right - 10, yG, right - 10, yE + 4, "rgba(255,255,255,.2)", 1);
+      EIN.label(ctx, "hν", right - 4, (yG + yE) / 2, "rgba(255,255,255,.35)", 9);
+      
+      var ax = w * 0.5, ay = state ? yE - 18 : yG - 18;
+      var rg = ctx.createRadialGradient(ax, ay, 0, ax, ay, 18);
+      rg.addColorStop(0, "rgba(255,245,220,.95)"); rg.addColorStop(.35, "rgba(240,163,94,.6)"); rg.addColorStop(1, "rgba(240,163,94,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(ax, ay, 18, 0, EIN.TAU); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(ax, ay, 3, 0, EIN.TAU); ctx.fill();
+      
+      var dt = t - flash;
+      if (dt >= 0 && dt < 1.2) {
+        var q = dt / 1.2;
+        if (mode === "absorb") {
+          var px = w * 0.5 - 120 + q * 120, py = h * 0.5;
+          drawPhoton(ctx, px, py, 1 - q, "rgba(240,163,94,.9)");
+        } else if (mode === "stim") {
+          drawPhoton(ctx, w * 0.5 + 40 + q * 120, h * 0.5, 1 - q, "rgba(240,163,94,.95)");
+          drawPhoton(ctx, w * 0.5 + 40 + q * 120, h * 0.5 + 16, 1 - q, "rgba(240,163,94,.95)");
+        } else if (mode === "spont") {
+          var a = q * EIN.TAU;
+          drawPhoton(ctx, w * 0.5 + Math.cos(a) * 80, h * 0.5 + Math.sin(a) * 80, 1 - q, "rgba(240,163,94,.8)");
+        }
+      }
+      ro.textContent = state ? "angeregt" : "Grundzustand";
+    });
+    function drawPhoton(ctx, x, y, alpha, color) {
+      ctx.strokeStyle = color.replace(/[\d.]+\)$/, alpha + ")");
+      ctx.beginPath();
+      for (var k = 0; k < 8; k++) {
+        var xx = x + k * 4, yy = y + Math.sin(k * 1.4) * 3;
+        if (k === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+      }
+      ctx.stroke();
+    }
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("ratioCanvas");
+    if (!c) return;
+    var nu = 5.0;
+    var sv = document.getElementById("ratioNu"), ro = document.getElementById("ratioReadout");
+    sv.oninput = function () { nu = +sv.value / 10; draw(); };
+    function draw() {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var pad = { l: 48, r: 18, t: 26, b: 32 };
+      function X(n) { return pad.l + ((n - 1) / 9) * (w - pad.l - pad.r); }
+      function Y(v) { return h - pad.b - (v / 10) * (h - pad.t - pad.b); }
+      ctx.strokeStyle = "rgba(255,255,255,.12)";
+      ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, h - pad.b); ctx.lineTo(w - pad.r, h - pad.b); ctx.stroke();
+      EIN.label(ctx, "A/B (rel.)", 8, pad.t - 6, "rgba(255,255,255,.35)", 9);
+      EIN.label(ctx, "ν (10¹⁴ Hz)", w - pad.r, h - 8, "rgba(255,255,255,.35)", 9, "right");
+      for (var n = 1; n <= 10; n++) EIN.label(ctx, n + "", X(n), h - pad.b + 12, "rgba(255,255,255,.25)", 8, "center");
+      
+      ctx.beginPath();
+      for (var px = 0; px <= w - pad.l - pad.r; px += 2) {
+        var nn = 1 + (px / (w - pad.l - pad.r)) * 9;
+        var vv = Math.pow(nn / 10, 3) * 10;
+        var y = Y(vv);
+        if (px === 0) ctx.moveTo(pad.l, y); else ctx.lineTo(pad.l + px, y);
+      }
+      ctx.strokeStyle = "rgba(240,163,94,.9)"; ctx.lineWidth = 2; ctx.stroke();
+      var px2 = X(nu), py2 = Y(Math.pow(nu / 10, 3) * 10);
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(px2, py2, 4, 0, EIN.TAU); ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(px2, py2); ctx.lineTo(px2, h - pad.b); ctx.moveTo(px2, py2); ctx.lineTo(pad.l, py2); ctx.stroke(); ctx.setLineDash([]);
+      ro.textContent = "ν = " + nu.toFixed(1) + " · 10¹⁴ Hz · A/B ∝ ν³";
+      document.getElementById("ratioNuVal").textContent = nu.toFixed(1);
+    }
+    EIN.onResize(c, draw); draw();
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("recoilCanvas");
+    if (!c) return;
+    var last = -10, nu = 60;
+    var sv = document.getElementById("recoilNu"), ro = document.getElementById("recoilReadout");
+    sv.oninput = function () { nu = +sv.value; };
+    document.getElementById("recoilGo").onclick = function () { last = performance.now() / 1000; };
+    EIN.loop(function (t) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * 0.5, cy = h * 0.5;
+      var elapsed = t - last;
+      var on = elapsed >= 0 && elapsed < 1.6;
+      var shift = on ? Math.min(1, elapsed / 1.6) * 60 : 0;
+      
+      var ax = cx - shift, ay = cy;
+      var rg = ctx.createRadialGradient(ax, ay, 0, ax, ay, 22);
+      rg.addColorStop(0, "rgba(255,245,220,.95)"); rg.addColorStop(.4, "rgba(240,163,94,.55)"); rg.addColorStop(1, "rgba(240,163,94,0)");
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(ax, ay, 22, 0, EIN.TAU); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(ax, ay, 3, 0, EIN.TAU); ctx.fill();
+      
+      var px = cx + 30 + (on ? Math.min(1, elapsed / 1.6) * w * 0.35 : 0);
+      var py = cy - 30;
+      if (on) {
+        ctx.strokeStyle = "rgba(240,163,94,.9)"; ctx.beginPath();
+        for (var k = 0; k < 14; k++) {
+          var xx = px + k * 4, yy = py + Math.sin(k * 1.5 + t * 12) * 4;
+          if (k === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+        }
+        ctx.stroke();
+      }
+      
+      EIN.arrow(ctx, cx + 40, cy + 40, cx + 110, cy + 40, "rgba(240,163,94,.8)", 1.4);
+      EIN.label(ctx, "p = hν/c", cx + 112, cy + 40, "rgba(240,163,94,.8)", 9);
+      if (on) {
+        EIN.arrow(ctx, ax - 20, cy + 40, ax - 70, cy + 40, "rgba(111,143,191,.85)", 1.4);
+        EIN.label(ctx, "Rückstoß", ax - 74, cy + 40, "rgba(111,143,191,.8)", 9, "right");
+      }
+      ro.textContent = "p = hν / c · ν = " + nu + " (rel.)";
+    });
+  })();
+
+  
+  (function () {
+    var c = document.getElementById("laserCanvas");
+    if (!c) return;
+    var pump = 55, photons = [], atoms = [];
+    var sv = document.getElementById("laserPump"), ro = document.getElementById("laserReadout");
+    for (var i = 0; i < 34; i++) atoms.push({ x: 0.18 + Math.random() * 0.64, excited: Math.random() < 0.5, ph: Math.random() * 6 });
+    sv.oninput = function () { pump = +sv.value; };
+    document.getElementById("laserFire").onclick = function () { photons.push({ x: 0.5, dir: 1, life: 0 }); };
+    EIN.loop(function (t, dt) {
+      var f = EIN.fit(c), ctx = f.ctx, w = f.w, h = f.h;
+      ctx.clearRect(0, 0, w, h);
+      var top = h * 0.22, bot = h * 0.82, left = w * 0.12, right = w * 0.88;
+      
+      ctx.strokeStyle = "rgba(255,255,255,.2)"; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(left, top); ctx.lineTo(left, bot); ctx.moveTo(right, top); ctx.lineTo(right, bot); ctx.stroke();
+      ctx.strokeStyle = "rgba(240,163,94,.15)"; ctx.lineWidth = 1;
+      ctx.strokeRect(left, top, right - left, bot - top);
+      
+      for (var i = 0; i < atoms.length; i++) {
+        var a = atoms[i];
+        if (!a.excited && Math.random() < pump / 100 * 0.004) a.excited = true;
+        var ax = left + a.x * (right - left), ay = top + 20 + (i % 10) * ((bot - top - 40) / 9);
+        ctx.fillStyle = a.excited ? "rgba(242,211,145,.9)" : "rgba(111,143,191,.55)";
+        ctx.beginPath(); ctx.arc(ax, ay, a.excited ? 3 : 2.2, 0, EIN.TAU); ctx.fill();
+        a._x = ax; a._y = ay;
+      }
+      
+      for (var j = photons.length - 1; j >= 0; j--) {
+        var p = photons[j];
+        p.x += p.dir * dt * 0.55;
+        p.life += dt;
+        if (p.x > 1 || p.x < 0) p.dir *= -1;
+        
+        for (var k = 0; k < atoms.length; k++) {
+          var at = atoms[k];
+          if (at.excited && Math.abs(at.x - p.x) < 0.02 && Math.random() < 0.55) {
+            at.excited = false;
+            photons.push({ x: p.x, dir: p.dir, life: 0 });
+          }
+        }
+        var px = left + p.x * (right - left);
+        var py = top + 24 + (j % 9) * ((bot - top - 48) / 8);
+        ctx.strokeStyle = "rgba(240,163,94,.8)"; ctx.beginPath();
+        for (var q = 0; q < 6; q++) {
+          var xx = px + p.dir * q * 3, yy = py + Math.sin(q + t * 9) * 2;
+          if (q === 0) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+        }
+        ctx.stroke();
+        if (p.life > 8) photons.splice(j, 1);
+        if (photons.length > 260) photons.splice(0, 1);
+      }
+      var rate = 1 + photons.length * 0.02;
+      ro.textContent = "Photonen: " + photons.length + " · Verstärkung " + rate.toFixed(2) + "×";
+      EIN.label(ctx, "Spiegel", left - 6, bot + 16, "rgba(255,255,255,.35)", 8, "center");
+      EIN.label(ctx, "Spiegel", right + 6, bot + 16, "rgba(255,255,255,.35)", 8, "center");
+      EIN.label(ctx, "Pumpe: " + pump + "%", left, top - 8, "rgba(242,211,145,.6)", 9);
+    });
+  })();
+})();
+
+</script>
+</body>
+</html>
