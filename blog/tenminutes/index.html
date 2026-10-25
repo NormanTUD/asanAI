@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ten Minutes to See the Machine · asanAI</title>
-<meta name="description" content="A ten-minute interactive exhibit through the ideas behind modern AI: deep time, meaning as geometry, learning from error, training at scale, attention, and the next token.">
+<title>Ten-Minute AI Lessons · asanAI</title>
+<meta name="description" content="Eight ten-minute interactive lessons through the ideas behind modern AI: intuition, history, tokenization, embeddings, neural networks, training, and transformers.">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#004b6f">
 <script>
@@ -193,9 +193,10 @@ document.documentElement.classList.add('js');
   .scroll-cue i { width: 1px; height: 38px; background: linear-gradient(to bottom, var(--green), transparent); }
 
   /* hub */
-  .hub-grid { width: var(--col); margin: 0 auto; padding: 0 0 clamp(46px, 7vh, 80px); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+  .hub-grid { width: var(--col); margin: 0 auto; padding: 0 0 clamp(46px, 7vh, 80px); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; }
   .hub-card { display: flex; flex-direction: column; justify-content: space-between; gap: 18px; min-height: 186px; padding: 15px; border: 1px solid var(--line); background: var(--white); transition: border-color .2s, transform .2s, box-shadow .2s; }
   .hub-card:hover { border-color: var(--blue-bright); transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+  .hub-card.featured { border-color: color-mix(in srgb, var(--green) 55%, var(--line)); background: linear-gradient(160deg, color-mix(in srgb, var(--green) 7%, var(--white)), var(--white)); }
   .hub-card .top { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
   .hub-card .num { font-family: var(--display); font-size: 1.4rem; line-height: 1; color: var(--line-strong); }
   .hub-card .time { font-family: var(--display); font-size: 8px; line-height: 1; letter-spacing: .13em; text-transform: uppercase; color: var(--faint); }
@@ -203,6 +204,7 @@ document.documentElement.classList.add('js');
   .hub-card p { margin-top: 5px; font-size: .8rem; line-height: 1.5; color: var(--muted); }
   .hub-card .go { display: flex; justify-content: space-between; align-items: center; font-family: var(--display); font-size: 8px; letter-spacing: .12em; text-transform: uppercase; color: var(--blue-bright); }
   .hub-card .go i { font-style: normal; color: var(--green); }
+  @media (max-width: 1100px) { .hub-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @media (max-width: 900px) { .hub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 600px) { .hub-grid { grid-template-columns: 1fr; } }
 
@@ -229,7 +231,8 @@ document.documentElement.classList.add('js');
   .loop-context .made { color: var(--blue); }
   .loop-context .made:last-child { color: var(--green-deep); }
   .loop-candidates { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
-  .cand { border: 1px solid var(--line); background: var(--white); padding: 6px 9px; font-family: var(--mono); font-size: 9px; color: var(--muted); }
+  .cand { border: 1px solid var(--line); background: linear-gradient(90deg, color-mix(in srgb, var(--green) 16%, transparent) calc(var(--p, .1) * 100%), var(--white) calc(var(--p, .1) * 100%)); padding: 6px 9px; font-family: var(--mono); font-size: 9px; color: var(--muted); transition: border-color .2s, transform .2s; }
+  .cand:hover { border-color: var(--green); transform: translateY(-1px); }
   .cand:hover { border-color: var(--blue); color: var(--blue); }
   .cand b { color: var(--green-deep); font-weight: 600; }
   .loop-side { display: flex; flex-direction: column; gap: 9px; }
@@ -259,7 +262,8 @@ document.documentElement.classList.add('js');
   /* tokenizer */
   .tok-input { width: 100%; border: 1px solid var(--line); background: var(--paper); padding: 11px 12px; font-family: var(--mono); font-size: .9rem; color: var(--ink); }
   .tok-chips { display: flex; flex-wrap: wrap; gap: 4px; min-height: 74px; margin-top: 11px; padding: 11px; border: 1px solid var(--line); background: var(--paper); align-content: flex-start; }
-  .tok-chip { display: inline-flex; align-items: center; min-height: 25px; padding: 3px 7px; border: 1px solid var(--line); background: var(--white); font-family: var(--mono); font-size: 10px; color: var(--blue); white-space: pre; }
+  .tok-chip { display: inline-flex; align-items: center; min-height: 25px; padding: 3px 7px; border: 1px solid var(--line); background: var(--white); font-family: var(--mono); font-size: 10px; color: var(--blue); white-space: pre; animation: chipIn .22s ease both; }
+  @keyframes chipIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
   .tok-chip:nth-child(3n) { border-color: color-mix(in srgb, var(--green) 45%, var(--line)); }
   .tok-meta { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 8px; font-size: .76rem; color: var(--faint); }
   .tok-note { margin-top: 9px; padding: 10px 12px; border-left: 2px solid var(--gold); background: color-mix(in srgb, var(--gold) 6%, transparent); font-size: .8rem; line-height: 1.55; color: var(--muted); }
@@ -291,6 +295,8 @@ document.documentElement.classList.add('js');
   .act-body { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(250px, .7fr); gap: clamp(22px, 4vw, 52px); align-items: start; margin-top: clamp(26px, 3.5vw, 42px); }
   .prose { max-width: 65ch; color: var(--muted); font-size: 1rem; line-height: 1.72; }
   .prose strong { color: var(--ink); font-weight: 600; }
+  .prose a { color: var(--blue-bright); text-decoration: underline; text-underline-offset: 2px; }
+  .prose a:hover { color: var(--green-deep); }
   .prose em { color: var(--ink); }
   .aside { display: flex; flex-direction: column; gap: 10px; }
   .aside-card { padding: 15px 16px; border: 1px solid var(--line); background: var(--white); box-shadow: var(--shadow-soft); }
@@ -306,9 +312,11 @@ document.documentElement.classList.add('js');
   @media (max-width: 860px) { .act-head { grid-template-columns: 1fr; } .ghost-num { font-size: 3.4rem; } .act-body { grid-template-columns: 1fr; } .act-kicker .time { margin-left: 0; } }
 
   /* shared stage */
-  .stage { margin-top: clamp(24px, 3.2vw, 38px); border: 1px solid var(--line); background: var(--white); box-shadow: var(--shadow); }
+  .stage { position: relative; margin-top: clamp(24px, 3.2vw, 38px); border: 1px solid var(--line); background: var(--white); box-shadow: var(--shadow); }
+  .stage::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, var(--act, var(--blue-bright)), color-mix(in srgb, var(--act, var(--green)) 30%, transparent)); opacity: .8; }
   .stage-head { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; flex-wrap: wrap; padding: 16px 18px 0; }
-  .stage-title { font-family: var(--display); font-size: 9px; line-height: 1.3; letter-spacing: .18em; text-transform: uppercase; color: var(--act, var(--blue-bright)); }
+  .stage-title { display: flex; align-items: center; gap: 7px; font-family: var(--display); font-size: 9px; line-height: 1.3; letter-spacing: .18em; text-transform: uppercase; color: var(--act, var(--blue-bright)); }
+  .stage-title::before { content: ""; width: 5px; height: 5px; background: var(--green); box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 13%, transparent); }
   .stage-note { font-size: 10px; line-height: 1.4; color: var(--faint); text-align: right; }
   .stage-body { padding: clamp(14px, 2.2vw, 22px); }
   .micro { font-size: .76rem; line-height: 1.5; color: var(--faint); }
@@ -333,7 +341,10 @@ document.documentElement.classList.add('js');
   .stat { padding: 8px 9px; border: 1px solid var(--line); background: var(--paper); }
   .stat small { display: block; font-family: var(--display); font-size: 7px; line-height: 1.2; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
   .stat b { display: block; margin-top: 3px; font-family: var(--mono); font-size: 12px; line-height: 1.15; color: var(--blue); }
-  .canvas-wrap { position: relative; border: 1px solid var(--line); background: var(--paper); overflow: hidden; min-height: 240px; }
+  .canvas-wrap { position: relative; border: 1px solid var(--line); background: var(--paper); overflow: hidden; min-height: 240px; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--white) 50%, transparent); }
+  .canvas-wrap::before, .canvas-wrap::after { content: ""; position: absolute; width: 14px; height: 14px; border-color: var(--act, var(--blue-bright)); border-style: solid; opacity: .55; pointer-events: none; z-index: 2; }
+  .canvas-wrap::before { left: 6px; top: 6px; border-width: 1px 0 0 1px; }
+  .canvas-wrap::after { right: 6px; bottom: 6px; border-width: 0 1px 1px 0; }
   .canvas-wrap canvas { width: 100%; height: 100%; }
   .canvas-badge { position: absolute; top: 8px; left: 8px; padding: 4px 7px; border: 1px solid var(--line); background: color-mix(in srgb, var(--paper) 90%, transparent); font-family: var(--mono); font-size: 8px; line-height: 1; color: var(--muted); }
   .legend { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 9px; font-size: 9px; line-height: 1.2; color: var(--faint); }
@@ -347,14 +358,14 @@ document.documentElement.classList.add('js');
   .track-fill { position: absolute; left: 0; top: 24px; height: 1px; width: 0; background: var(--blue-bright); }
   .tick { position: absolute; top: 24px; width: 7px; height: 7px; border: 1px solid var(--blue-bright); background: var(--white); transform: translate(-50%, -50%); z-index: 2; transition: all .2s; }
   .tick:hover { background: var(--blue-bright); transform: translate(-50%, -50%) scale(1.4); }
-  .tick.active { width: 11px; height: 11px; background: var(--green); border-color: var(--green); }
+  .tick.active { width: 11px; height: 11px; background: var(--tick, var(--green)); border-color: var(--tick, var(--green)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--tick, var(--green)) 12%, transparent); }
   #timeRange { position: absolute; left: 0; right: 0; top: 14px; width: 100%; height: 20px; opacity: .001; cursor: ew-resize; z-index: 3; }
   .time-ends { display: flex; justify-content: space-between; margin: 2px 4px 0; font-family: var(--display); font-size: 8px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
   .event-card { display: grid; grid-template-columns: minmax(105px, .24fr) minmax(0, 1fr); gap: clamp(14px, 2.5vw, 28px); align-items: start; margin-top: 18px; padding: clamp(14px, 2.2vw, 22px); border: 1px solid var(--line); background: var(--paper); transition: opacity .22s, transform .22s; }
   .event-card.swap { opacity: .25; transform: translateY(4px); }
   .event-year { font-family: var(--display); font-size: clamp(1.3rem, 2.2vw, 1.9rem); line-height: 1.05; letter-spacing: -.02em; color: var(--blue); }
   .event-year small { display: block; margin-top: 6px; font-family: var(--display); font-size: 7px; line-height: 1.3; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
-  .event-tag { display: inline-flex; margin-top: 9px; padding: 3px 6px; border: 1px solid var(--line); font-family: var(--display); font-size: 7px; line-height: 1; letter-spacing: .13em; text-transform: uppercase; color: var(--faint); }
+  .event-tag { display: inline-flex; margin-top: 9px; padding: 3px 6px; border: 1px solid var(--line); font-family: var(--display); font-size: 7px; line-height: 1; letter-spacing: .13em; text-transform: uppercase; color: var(--event, var(--faint)); border-color: color-mix(in srgb, var(--event, var(--line)) 35%, var(--line)); }
   .event-title { font-size: clamp(1.2rem, 2vw, 1.65rem); line-height: 1.16; letter-spacing: -.025em; }
   .event-text { margin-top: 6px; max-width: 68ch; font-size: .9rem; line-height: 1.6; color: var(--muted); }
   .timeline-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
@@ -415,7 +426,8 @@ document.documentElement.classList.add('js');
   .attn-labels { display: grid; gap: 2px; margin-bottom: 3px; }
   .attn-labels span { height: 20px; overflow: hidden; font-family: var(--mono); font-size: 7px; line-height: 1.1; color: var(--faint); text-align: center; white-space: nowrap; transform: rotate(-40deg); transform-origin: center; }
   .attn-grid { display: grid; gap: 2px; }
-  .attn-cell { aspect-ratio: 1; border: 1px solid transparent; background: color-mix(in srgb, var(--blue-bright) calc(var(--a) * 88%), transparent); transition: border-color .15s, opacity .15s; }
+  .attn-cell { aspect-ratio: 1; border: 1px solid transparent; border-radius: 2px; background: color-mix(in srgb, var(--blue-bright) calc(var(--a) * 88%), transparent); transition: border-color .15s, opacity .15s, box-shadow .15s; }
+  .attn-cell.row-on { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 28%, transparent); }
   .attn-cell.masked { background: repeating-linear-gradient(135deg, transparent 0 3px, var(--line) 3px 4px); opacity: .5; }
   .attn-grid.hovering .attn-cell:not(.row-on) { opacity: .24; }
   .attn-cell.row-on { border-color: var(--ink); }
@@ -428,7 +440,7 @@ document.documentElement.classList.add('js');
   .attn-caption { min-height: 2.8em; margin-top: 9px; font-size: .8rem; line-height: 1.5; color: var(--muted); }
   .attn-caption b { color: var(--ink); }
   .attn-legend { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 7px; font-size: 8px; line-height: 1.2; color: var(--faint); }
-  .attn-legend i { display: inline-block; width: 9px; height: 9px; margin-right: 4px; vertical-align: -2px; background: var(--blue-bright); }
+  .attn-legend i { display: inline-block; width: 24px; height: 5px; margin-right: 5px; vertical-align: 0; background: linear-gradient(90deg, color-mix(in srgb, var(--blue-bright) 12%, transparent), var(--blue-bright)); border-radius: 99px; }
   .attn-legend .mask { background: repeating-linear-gradient(135deg, transparent 0 2px, var(--line-strong) 2px 3px); border: 1px solid var(--line); }
 
   /* next token */
@@ -581,7 +593,7 @@ document.documentElement.classList.add('js');
   </section>
 
   <div class="hub-grid" aria-label="The eight lessons">
-    <a class="hub-card" href="#lesson-intuition">
+    <a class="hub-card featured" href="#lesson-intuition">
       <span><span class="top"><span class="num">I</span><span class="time">10 min · loop</span></span><h3>Intuition</h3><p>What an LLM actually does: predict the next token, append it, repeat. The loop behind chat, code, and translation.</p></span>
       <span class="go"><span>Open lesson</span><i>→</i></span>
     </a>
@@ -685,7 +697,7 @@ document.documentElement.classList.add('js');
       <div class="aha reveal">
         <p class="aha-kicker">The aha</p>
         <p class="aha-big">It writes by reading itself.</p>
-        <p>Every word it produces is appended to its own input and becomes the context for the next — the output <em>is</em> the input, one step later. But a single-step loop does not rule out planning: recent interpretability work has found evidence that models can form latent plans which shape many later tokens. The loop is the substrate, not the whole story.</p>
+        <p>Every word it produces is appended to its own input and becomes the context for the next — the output <em>is</em> the input, one step later. But a single-step loop does not rule out planning: <a href="https://www.anthropic.com/research/tracing-thoughts-language-model" target="_blank" rel="noopener">recent interpretability work</a> has found evidence that models can form latent plans which shape many later tokens. The loop is the substrate, not the whole story.</p>
       </div>
 
       <div class="prose reveal" style="margin-top:26px">
@@ -1860,6 +1872,7 @@ const MACHINE = [
   { pos: .90, time: "2022", short: "scale", title: "Chinchilla and ChatGPT", text: "Chinchilla says: more data per parameter. ChatGPT makes the loop feel like a conversation.", tag: "scale" },
   { pos: 1, time: "2026", short: "now", title: "The present", text: "Models are fluent, useful, fallible, and everywhere. The questions are now social as well as technical.", tag: "now" }
 ];
+const TIMELINE_COLORS = { cosmos: "var(--violet)", life: "var(--green)", symbols: "var(--gold)", machines: "var(--blue-bright)", learning: "var(--green-deep)", winter: "var(--gold)", scale: "var(--gold)", transformer: "var(--teal)", now: "var(--green)" };
 let timelineSet = DEEP;
 let timelineIndex = 0;
 let timelinePlaying = false;
@@ -1875,6 +1888,7 @@ function renderTicks() {
     tick.type = "button";
     tick.className = "tick" + (index === timelineIndex ? " active" : "");
     tick.style.left = (item.pos * 100) + "%";
+    tick.style.setProperty("--tick", TIMELINE_COLORS[item.tag] || "var(--green)");
     tick.setAttribute("aria-label", item.time + ": " + item.title);
     tick.addEventListener("click", () => { stopTimeline(); setTimelineIndex(index); timeRange.value = Math.round(item.pos * 1000); });
     timelineTrack.appendChild(tick);
@@ -1888,6 +1902,7 @@ function setTimelineIndex(index) {
     $("#eventYear").childNodes[0].nodeValue = item.time;
     $("#eventShort").textContent = item.short;
     $("#eventTag").textContent = item.tag;
+    $("#eventTag").style.setProperty("--event", TIMELINE_COLORS[item.tag] || "var(--faint)");
     $("#eventTitle").textContent = item.title;
     $("#eventText").textContent = item.text;
     $("#timelineCount").textContent = "Stop " + (timelineIndex + 1) + " of " + timelineSet.length;
@@ -1993,15 +2008,37 @@ function drawEmbed() {
   ctx.font = "8px " + getComputedStyle(document.documentElement).getPropertyValue("--display");
   ctx.fillText("a 2-D sketch of a much larger space", pad, 16);
   const pts = EMBED.map((item) => ({ item, ...embedPoint(item, w, h, pad) }));
+  // soft context halos
+  pts.forEach((p) => {
+    const color = C[embedPalette[p.item.c]] || C.bright;
+    const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 34);
+    g.addColorStop(0, hexToRgba(color, .13));
+    g.addColorStop(1, hexToRgba(color, 0));
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 34, 0, TAU); ctx.fill();
+  });
+  ctx.fillStyle = C.faint;
+  ctx.font = "7px " + getComputedStyle(document.documentElement).getPropertyValue("--mono");
+  ctx.fillText("semantic axis 1", w - pad - 74, h - 8);
+  ctx.save(); ctx.translate(12, h - pad); ctx.rotate(-Math.PI / 2); ctx.fillText("semantic axis 2", 0, 0); ctx.restore();
   if (embedSelection.length === 2) {
     const a = pts.find((p) => p.item.id === embedSelection[0]);
     const b = pts.find((p) => p.item.id === embedSelection[1]);
     if (a && b) {
+      const ca = C[embedPalette[a.item.c]] || C.bright;
+      const cb = C[embedPalette[b.item.c]] || C.bright;
+      const g = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+      g.addColorStop(0, ca); g.addColorStop(1, cb);
       ctx.save();
-      ctx.strokeStyle = C.blue;
-      ctx.globalAlpha = .55;
+      ctx.strokeStyle = g; ctx.globalAlpha = .75; ctx.lineWidth = 1.4;
       ctx.setLineDash([4, 4]);
       ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      ctx.setLineDash([]);
+      [a, b].forEach((p, i) => {
+        ctx.beginPath(); ctx.arc(p.x, p.y, 10, 0, TAU);
+        ctx.strokeStyle = i ? cb : ca; ctx.globalAlpha = .35; ctx.stroke();
+        ctx.globalAlpha = 1;
+      });
       ctx.restore();
     }
   }
@@ -2036,8 +2073,13 @@ function drawEmbed() {
       ctx.beginPath(); ctx.arc(p.x, p.y, selected ? 9 : 7, 0, TAU);
       ctx.fillStyle = color; ctx.globalAlpha = .16; ctx.fill(); ctx.globalAlpha = 1;
     }
+    ctx.save();
+    ctx.shadowColor = color; ctx.shadowBlur = selected ? 14 : 8;
     ctx.beginPath(); ctx.arc(p.x, p.y, selected ? 4.2 : 3, 0, TAU);
     ctx.fillStyle = color; ctx.fill();
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(p.x, p.y, selected ? 4.2 : 3, 0, TAU);
+    ctx.strokeStyle = C.white; ctx.lineWidth = selected ? 1.4 : 1; ctx.stroke();
     if (selected) { ctx.strokeStyle = C.blue; ctx.lineWidth = 1; ctx.stroke(); }
     ctx.font = (selected ? "600 " : "500 ") + "10px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
     ctx.textAlign = "left";
@@ -2283,16 +2325,31 @@ function drawNN() {
   ctx.fillStyle = C.blue;
   for (const p of NN_DATA) {
     ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), 2.8, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), 5.5, 0, TAU); ctx.strokeStyle = hexToRgba(C.blue, .16); ctx.stroke();
   }
-  ctx.strokeStyle = nnMode === "linear" ? C.blue : C.greenDeep;
-  ctx.lineWidth = 2.2;
-  ctx.beginPath();
+  const modelColor = nnMode === "linear" ? C.blue : C.greenDeep;
+  const curve = [];
   for (let i = 0; i <= 120; i++) {
     const x = i / 120;
-    const yy = clamp(nnPredict(x), 0, 1);
-    if (i === 0) ctx.moveTo(X(x), Y(yy)); else ctx.lineTo(X(x), Y(yy));
+    curve.push({ x: X(x), y: Y(clamp(nnPredict(x), 0, 1)) });
   }
-  ctx.stroke();
+  const area = ctx.createLinearGradient(0, m.t, 0, m.t + ph);
+  area.addColorStop(0, hexToRgba(modelColor, .20));
+  area.addColorStop(1, hexToRgba(modelColor, .01));
+  ctx.beginPath();
+  curve.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+  ctx.lineTo(X(1), m.t + ph); ctx.lineTo(X(0), m.t + ph); ctx.closePath();
+  ctx.fillStyle = area; ctx.fill();
+  ctx.save();
+  ctx.shadowColor = modelColor; ctx.shadowBlur = 10;
+  ctx.strokeStyle = modelColor; ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  curve.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+  ctx.stroke(); ctx.restore();
+  ctx.font = "7px " + getComputedStyle(document.documentElement).getPropertyValue("--display");
+  ctx.fillStyle = C.faint;
+  ctx.fillText("TARGET", m.l + 4, m.t + 10);
+  ctx.fillText("MODEL", m.l + 4, m.t + 20);
   const iw = 92, ih = 42;
   const ix = w - iw - 12, iy = 10;
   ctx.fillStyle = colorMix(C.paper, .75); ctx.fillRect(ix, iy, iw, ih);
@@ -2301,7 +2358,9 @@ function drawNN() {
   ctx.fillText("LOSS", ix + 6, iy + 10);
   if (nnHistory.length > 1) {
     const max = Math.max(...nnHistory, .001);
-    ctx.strokeStyle = C.green; ctx.lineWidth = 1;
+    const grad = ctx.createLinearGradient(ix, iy, ix + iw, iy);
+    grad.addColorStop(0, hexToRgba(C.blue, .5)); grad.addColorStop(1, C.green);
+    ctx.strokeStyle = grad; ctx.lineWidth = 1.2;
     ctx.beginPath();
     nnHistory.forEach((v, i) => {
       const px = ix + 6 + (iw - 12) * i / (nnHistory.length - 1);
@@ -2440,11 +2499,26 @@ function drawRun() {
   }
   ctx.fillText("0", 28, Y(0) + 3);
   ctx.fillText("9", 28, Y(9) + 3);
+  const warmW = pw * .10;
+  ctx.fillStyle = hexToRgba(C.gold, .055);
+  ctx.fillRect(m.l, m.t, warmW, ph);
+  ctx.save();
+  ctx.strokeStyle = hexToRgba(C.gold, .35); ctx.setLineDash([2, 4]);
+  ctx.beginPath(); ctx.moveTo(m.l + warmW, m.t); ctx.lineTo(m.l + warmW, m.t + ph); ctx.stroke();
+  ctx.restore();
+  ctx.fillStyle = C.faint;
+  ctx.font = "7px " + getComputedStyle(document.documentElement).getPropertyValue("--display");
+  ctx.fillText("WARMUP", m.l + 5, m.t + 10);
+  ctx.fillText(v.schedule.toUpperCase(), m.l + pw - 52, m.t + 10);
   const floor = runFloor(v.N, v.D);
   ctx.save();
   ctx.strokeStyle = C.gold; ctx.setLineDash([4, 4]); ctx.globalAlpha = .8;
   const fy = Y(floor);
   ctx.beginPath(); ctx.moveTo(m.l, fy); ctx.lineTo(m.l + pw, fy); ctx.stroke();
+  ctx.setLineDash([]); ctx.globalAlpha = .7;
+  ctx.fillStyle = C.gold;
+  ctx.font = "7px " + getComputedStyle(document.documentElement).getPropertyValue("--display");
+  ctx.fillText("power-law floor", m.l + pw - 76, fy - 4);
   ctx.restore();
   if (runPoints.length) {
     const grad = ctx.createLinearGradient(m.l, 0, m.l + pw, 0);
@@ -2455,12 +2529,17 @@ function drawRun() {
     runPoints.forEach((p) => ctx.lineTo(X(p.seen), Y(p.loss)));
     ctx.lineTo(X(runPoints[runPoints.length - 1].seen), m.t + ph);
     ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
+    ctx.save();
+    ctx.shadowColor = v.diverge ? C.gold : C.bright;
+    ctx.shadowBlur = 8;
     ctx.beginPath();
     runPoints.forEach((p, i) => { if (i === 0) ctx.moveTo(X(p.seen), Y(p.loss)); else ctx.lineTo(X(p.seen), Y(p.loss)); });
-    ctx.strokeStyle = v.diverge ? C.gold : C.blue; ctx.lineWidth = 2; ctx.stroke();
+    ctx.strokeStyle = v.diverge ? C.gold : C.blue; ctx.lineWidth = 2.2; ctx.stroke();
+    ctx.restore();
     const last = runPoints[runPoints.length - 1];
     ctx.fillStyle = v.diverge ? C.gold : C.green;
-    ctx.beginPath(); ctx.arc(X(last.seen), Y(last.loss), 3, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(X(last.seen), Y(last.loss), 3.4, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(X(last.seen), Y(last.loss), 8, 0, TAU); ctx.strokeStyle = hexToRgba(v.diverge ? C.gold : C.green, .25); ctx.stroke();
   } else {
     ctx.fillStyle = C.faint;
     ctx.font = "10px " + getComputedStyle(document.documentElement).getPropertyValue("--display");
@@ -2679,6 +2758,11 @@ function drawAttentionArcs(index) {
     path.setAttribute("stroke-opacity", String(.25 + item.v * .7));
     path.setAttribute("stroke-linecap", "round");
     svg.appendChild(path);
+    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    dot.setAttribute("cx", to.x); dot.setAttribute("cy", to.y); dot.setAttribute("r", String(1.4 + item.v * 2.2));
+    dot.setAttribute("fill", item.v > .25 ? C.green : C.bright);
+    dot.setAttribute("opacity", String(.45 + item.v * .5));
+    svg.appendChild(dot);
   });
 }
 function syncAttentionHead() {
@@ -2863,6 +2947,7 @@ function renderLoop() {
   step.forEach(([word, p]) => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "cand";
+    b.style.setProperty("--p", String(p));
     b.innerHTML = "";
     b.append(word + " ");
     const strong = document.createElement("b"); strong.textContent = Math.round(p * 100) + "%";

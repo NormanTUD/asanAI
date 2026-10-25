@@ -471,6 +471,8 @@ This is a guided path for a curious person, not a course for specialists. You do
 The month has six sections. The first days are the gentlest; the middle is the technical core; the last days zoom out. If a day feels heavy, read the first link and stop there. The calendar is a map, not a test -- and you can start today, not only in December.
 
 **How to use it:** each card gives a short reading path, a rough time, and how much math it uses. A "Short on time?" line points to the one article to read if you only have ten minutes. Optional deep dives are tucked away at the bottom of the card. Read one door a day, or jump to whatever you need. The last sections are a little denser; take two days for a card if you like.
+
+**Prefer ten-minute lessons?** The [31-door calendar](tenminutes/advent.html) opens one compact lesson a day in the ScaDS.AI visual style, with interactive demos and saved progress.
 </div>
 
 <div class="mn-december-meta">

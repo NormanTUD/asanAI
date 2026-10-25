@@ -124,6 +124,8 @@
   .door:hover, .door:focus-visible { border-color: var(--blue-bright); transform: translateY(-2px); box-shadow: var(--shadow-soft); outline: none; }
   .door::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent, var(--blue-bright)); opacity: .8; }
   .door.done::before { background: var(--green); }
+  .door.today { border-color: var(--green); box-shadow: 0 0 0 2px color-mix(in srgb, var(--green) 18%, transparent), var(--shadow-soft); }
+  .door.today .door-open::after { content: " · today"; color: var(--green-deep); }
   .door-top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
   .door-num { font-family: var(--display); font-size: clamp(1.5rem, 2.4vw, 2.1rem); line-height: 1; color: var(--accent, var(--blue-bright)); letter-spacing: -.02em; }
   .door-time { font-family: var(--display); font-size: 7px; line-height: 1; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
@@ -231,7 +233,7 @@
 
   <section class="how" aria-label="How the calendar works">
     <div class="how-grid">
-      <div class="how-card"><b>1 · Choose a door</b><p>Every day is a different question. The calendar works in any month; December is only an excuse.</p></div>
+      <div class="how-card"><b>1 · One door, one day</b><p>Every door is a ten-minute lesson. The calendar works in any month; December is only an excuse.</p></div>
       <div class="how-card"><b>2 · Spend ten minutes</b><p>Read the door, then open the linked lesson. Each lesson is designed to be finished in one sitting.</p></div>
       <div class="how-card"><b>3 · Mark it done</b><p>Your progress stays in this browser. Nothing is sent anywhere. Reset it whenever you like.</p></div>
     </div>
@@ -427,6 +429,7 @@ function renderCalendar() {
       const b = document.createElement("button");
       b.type = "button";
       b.className = "door";
+      if (new Date().getMonth() === 11 && new Date().getDate() === item.day) b.classList.add("today");
       b.dataset.day = String(item.day);
       b.style.setProperty("--accent", PALETTE[item.tag] || "var(--blue-bright)");
       b.setAttribute("aria-label", "Day " + item.day + ": " + item.title + ". Open the ten-minute lesson.");
