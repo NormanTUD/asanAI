@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modelling the Mind — Tara H. Abraham, 2016</title>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<link rel="stylesheet" href="mp.css">
+<script src="../temml.min.js" defer></script>
+<script src="mp.js" defer></script>
+<script src="mp_2016_modelling_the_mind.js" defer></script>
+</head>
+<body data-accent="sky">
+<div class="progress"><span></span></div>
+<header class="topbar">
+  <a class="brand" href="mp_index.html"><b>MP</b><span class="dot">·</span>Codex</a>
+  <div class="topbar-meta">
+    <span class="hide-sm">Companion · 2016 · CMAJ</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+</header>
+<div class="rail" id="rail" aria-hidden="true"></div>
+
+<main>
+<section class="hero" id="top" data-label="Opening">
+  <canvas class="hero-canvas" id="heroModelling" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Canadian Medical Association Journal · 188(13) · 2016</p>
+    <h1>Modelling the <em>Mind</em><span class="thin">The case of Warren S. McCulloch</span></h1>
+    <p class="hero-sub">A historian asks what McCulloch's career can teach us about interdisciplinary science. The answer is not a hero story. It is a precise account of the power and the cost of crossing boundaries — and of why a model can be brilliant, influential, and empirically wrong at the same time.</p>
+    <div class="hero-meta">
+      <span><b>Tara H. Abraham</b> · University of Guelph</span>
+      <span>CMAJ <b>188</b>(13), 974–975</span>
+      <span>DOI 10.1503/cmaj.160158</span>
+    </div>
+    <a class="scroll-cue" href="#thesis"><span class="line"></span> Read the companion</a>
+  </div>
+</section>
+
+<section class="section" id="thesis" data-label="The thesis">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The thesis</p>
+      <h2 class="thesis">A model can be <em>fertile</em> and <em>wrong</em> at the same time.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">Abraham's essay is a scientific biography with an argument. McCulloch is a trailblazer of the computational brain: he used logic and mathematics to model neural networks that embodied the mind in the workings of the brain. But his models were highly abstract, rhetorically loose, and only tenuously connected to psychiatric practice. They would not pass muster in current theoretical neuroscience.</p>
+      <p class="lede">That is not a debunking. It is a lesson about interdisciplinary work. Crossing boundaries produces reach and insight; it also produces vagueness, untestability, and a gap between model and clinic. McCulloch's career shows both sides at once. The question for computational psychiatry today is whether it can keep the reach while paying the price.</p>
+      <div class="note"><b>The phrase to keep:</b> disciplines, to borrow from Clifford Geertz, are “ways of being in the world.” To practise science is not just to perform technical feats; it is to take on a cultural frame.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="travels" data-label="Disciplinary travels">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory 01 · the scientific traveller</p>
+      <h2>Psychology, medicine, neurology, psychiatry, cybernetics, computation.</h2>
+      <p class="lede">McCulloch did not stay in one discipline. Move the year and follow the route: Yale psychology, Columbia medicine, Bellevue neurology, Rockland psychiatry, Yale neurophysiology, Illinois neuropsychiatry, MIT information processing. At each stop he carried something across a boundary.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>Disciplines as territories</h3>
+          <p>The path is not a career ladder; it is a sequence of borrowed methods and borrowed questions. The readout names what he carried from one world to the next.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="travelLab" aria-label="Interactive map of McCulloch's disciplinary travels"></canvas>
+      </div>
+      <div class="controls">
+        <div class="control"><label for="travelYear">year <output>t</output></label><input id="travelYear" type="range" min="1921" max="1969" step="1" value="1941"></div>
+      </div>
+      <div class="readout">
+        <div class="cell"><span>station</span><b class="small-value" id="placeVal">Illinois · 1941</b></div>
+        <div class="cell"><span>discipline</span><b class="small-value" id="discVal">Neuropsychiatry / cybernetics</b></div>
+        <div class="cell"><span>carried</span><b class="small-value" id="carriedVal">logic + physiology + psychiatry</b></div>
+      </div>
+      <p class="small" id="detailVal" style="margin-top:0.8rem">Illinois Neuropsychiatric Institute; Pitts, Meduna, insulin shock, the logical calculus.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="crossing" data-label="The cost of crossing">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory 02 · the transdisciplinary dial</p>
+      <h2>Reach rises. Testability falls.</h2>
+      <p class="lede">This is the essay's central tension in one picture. Cross boundaries and the reach of the model grows — new questions, new methods, new audiences. Cross too far and the model becomes hard to test, easy to misread, and difficult to connect to clinical practice. McCulloch lived in the far zone.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>What blurring boundaries buys — and costs</h3>
+          <p>Move the dial. The curves are schematic, not measurements: they make the trade-off visible. The shaded zone is where McCulloch's models lived.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="crossingLab" aria-label="Interactive chart of insight versus testability under boundary crossing"></canvas>
+      </div>
+      <div class="controls">
+        <div class="control"><label for="crossing">boundary crossing <output>p</output></label><input id="crossing" type="range" min="0" max="100" step="1" value="78"></div>
+      </div>
+      <div class="readout">
+        <div class="cell"><span>reach / insight</span><b class="small-value" id="insightVal">0.93</b></div>
+        <div class="cell"><span>testability / rigor</span><b class="small-value" id="testVal">0.42</b></div>
+        <div class="cell"><span>verdict</span><b class="small-value" id="verdictVal">McCulloch country</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="quotes" data-label="The voice">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The voice</p>
+      <h2>The power and the cost, in the same paragraph.</h2>
+    </div>
+    <div class="quote-grid" style="margin-top:2rem">
+      <figure class="quote wide reveal">
+        <p>“McCulloch's brand of cybernetics used logic and mathematics to develop models of neural networks that embodied the functioning of the mind in the workings of the brain.”</p>
+        <footer><b>Tara H. Abraham</b> · CMAJ 2016</footer>
+      </figure>
+      <figure class="quote reveal">
+        <p>“The model was highly mathematical and ultimately was shown not to represent reality accurately.”</p>
+        <footer><b>Abraham</b> · on the 1947 universals model</footer>
+      </figure>
+      <figure class="quote reveal delay-1">
+        <p>“Critical responses to McCulloch often centred on his deliberately loose rhetorical style, in which terms from different disciplines were used in an ambiguous way to promote a unified view.”</p>
+        <footer><b>Abraham</b> · CMAJ 2016</footer>
+      </figure>
+      <figure class="quote reveal delay-2">
+        <p>“McCulloch's models would likely not pass muster in current theoretical neurosciences, as they were highly abstract, employed vague language and had only a tenuous connection to psychiatric practice. Such were the costs of blurring disciplinary boundaries.”</p>
+        <footer><b>Abraham</b> · CMAJ 2016</footer>
+      </figure>
+      <figure class="quote wide reveal">
+        <p>“Yet, although McCulloch's models failed to incorporate sufficient empiric data, he was still judged by his peers as a brilliant and inspiring figure who raised a crop of theoretically minded brain researchers and computationalists who have shaped the field.”</p>
+        <footer><b>Abraham</b> · CMAJ 2016</footer>
+      </figure>
+      <figure class="quote reveal">
+        <p>“To practise science in a specific way is not simply to perform technical feats but to ‘take on a cultural frame that defines a great part of one's life.’”</p>
+        <footer><b>Clifford Geertz</b>, quoted by Abraham</footer>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pages" data-label="Facsimiles">
+  <div class="wrap">
+    <div class="gallery-note reveal">
+      <div>
+        <p class="eyebrow">The article itself</p>
+        <h2>Pages from 2016</h2>
+      </div>
+      <p class="tiny">click to enlarge</p>
+    </div>
+    <div class="facsimiles reveal">
+      <figure class="facsimile">
+        <img src="mp_assets/abraham_2016_modelling_the_mind.pdf_p-1.jpg" alt="First page of Modelling the Mind, with Figure 1" loading="lazy">
+        <figcaption><b>p. 974.</b> The opening argument and Figure 1: Pitts and McCulloch's 1947 model of the visual cortex, reproduced with permission.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/abraham_2016_modelling_the_mind.pdf_p-2.jpg" alt="Second page of Modelling the Mind" loading="lazy">
+        <figcaption><b>p. 975.</b> The critique, the modern parallel with computational psychiatry, and the references.</figcaption>
+      </figure>
+    </div>
+    <p class="small" style="margin-top:0.5rem">Secondary source · peer-reviewed history of science · CMAJ 2016;188(13):974–975 · DOI 10.1503/cmaj.160158 · PMCID PMC5026519.</p>
+  </div>
+</section>
+
+<section class="section" id="why" data-label="Why it matters">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">Why it matters</p>
+      <h2>A mirror for the present.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">Computational psychiatry is now a real programme, with its own funding, methods, and critics. It faces the same questions McCulloch faced: how to build a model that is both mathematically serious and clinically useful; how to test a model of a mind; how to talk across the divide between biology, engineering, and the clinic without losing precision.</p>
+      <p class="lede">Abraham's essay is valuable because it refuses both hero worship and debunking. McCulloch's models were wrong in important ways. They were also generative. The task is not to choose between those facts but to understand the practice that produced both.</p>
+      <div class="note"><b>Read next:</b> the primary plates, especially <a href="mp_1947_universals.html">How We Know Universals</a> — the 1947 model whose fate Abraham describes.</div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:2.5rem;display:grid;gap:1rem">
+    <a class="next reveal" href="mp_1947_universals.html">
+      <div>
+        <p class="eyebrow">Plate 04 · 1947</p>
+        <h3>How We Know Universals: The Perception of Auditory and Visual Forms</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+    <a class="next reveal" href="mp_index.html" style="background:linear-gradient(120deg,color-mix(in srgb,var(--panel) 92%,transparent),color-mix(in srgb,var(--accent) 8%,var(--panel)))">
+      <div>
+        <p class="eyebrow">All plates &amp; companions</p>
+        <h3>Return to the Codex</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span>Companion · <b>Modelling the mind: the case of Warren S. McCulloch</b></span>
+    <span>Source: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5026519/">PMC5026519</a> · <a href="https://doi.org/10.1503/cmaj.160158">DOI</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Facsimile viewer"><img alt=""><div class="cap"></div></div>
+</body>
+</html>
