@@ -19,6 +19,8 @@ This chapter covers every common decoding method with its mathematical formulati
 
 <div class="optional md" data-headline="Where the math comes from">
 Three of the four quantities in this chapter, **Boltzmann distributions**, **entropy**, and **KL-divergence**, were born long before language models. They appear in the <a href="statistics_ii">Statistics II chapter</a> § Boltzmann Distributions, § Entropy, § KL Divergence. If softmax + temperature looks familiar from physics, that is because it *is* physics. The softmax with temperature $T$ is exactly the **Boltzmann distribution** (\cite[Boltzmann, 1877]{boltzmann}) over the token "energy levels" $E_i = -z_i$ (the logit, negated), written in dimensionless form by absorbing the Boltzmann constant into $T$: $\;P_i = e^{z_i/T} / \sum_j e^{z_j/T}$. So $T$ is not a knob we invented — it is a **temperature** in the thermodynamic sense. $T \to 0$ is the **ground state**: the system collapses onto the single lowest-energy, highest-probability token (greedy). $T \to \infty$ is the **infinite-temperature** limit, where every state is equally populated (uniform). Raising $T$ does not make the model "creative" in any vague sense; it lets higher-energy, rarer tokens be occupied at all, the way a hotter gas puts its particles into excited states. Sampling is thermodynamics in disguise.
+
+Boltzmann's 1877 memoir gave the combinatorial derivation behind the distribution $p_i\propto e^{-E_i/kT}$ for a gas in thermal equilibrium (\cite{boltzmann}). Gibbs gave the ensemble formulation in his 1902 treatise (\cite{gibbs1902}), and the same exponential family reappears as the Gibbs distribution in statistics and image processing (\cite{geman1984gibbs}). Ackley, Hinton, and Sejnowski imported the idea into neural networks as the Boltzmann machine, where temperature controls the sharpness of the stochastic units (\cite{ackley1985boltzmann}). Softmax temperature is exactly this formula with the negative logit playing the role of energy, so the analogy is structural, not decorative.
 </div>
 
 <div class="md">
@@ -73,6 +75,8 @@ where $Z = \sum_{j \in \mathcal{V}_k} P(j)$.
 * $k = 1000+$ for creative writing.
 
 Drawback: $k$ is a fixed number, but the appropriate $k$ varies per context. Sometimes only 3 tokens have meaningful probability; sometimes 100.
+
+Fan, Lewis, and Dauphin introduced top-$k$ sampling for open-ended story generation, where pure ancestral sampling drifted into incoherence and beam search produced bland text (\cite{fan2018topk}). Their model used $k=10$ together with a temperature, and the combination was enough to keep generations on topic without collapsing to the mode. The method's weakness was visible from the start: a fixed $k$ cannot know whether the next distribution is sharp or flat, which is exactly the problem nucleus sampling later addressed.
 </div>
 
 <div class="md" data-mathlevel="55">
@@ -91,12 +95,14 @@ $$
 This adapts the effective vocabulary size to the distribution. When the distribution is sharp (one token dominates), $\mathcal{V}_p$ is small; when flat, $\mathcal{V}_p$ is large.
 
 Most production APIs default to **top-$p$ = 0.9 or 0.95**.
+
+Holtzman et al. diagnosed the failure of maximization-based decoding as a mismatch between machine and human text: greedy and beam search produce high-probability, low-surprisal strings that loop, while pure sampling occasionally goes off the rails (\cite{holtzman2020nucleus}). Nucleus sampling keeps the smallest set of tokens whose mass reaches $p$, so the candidate pool expands when the model is uncertain and contracts when it is confident. Human evaluation showed it matching or beating top-$k$ on coherence and diversity; the cost is that $p$ still has to be tuned per model.
 </div>
 
 <div class="md" data-mathlevel="50">
 ### Min-$p$ Sampling
 
-The new frontier method (\cite[Nguyen et al., 2025]{nguyen2025minp}), recommended by many open-source models (Qwen, Mistral):
+A newer dynamic-truncation method (\cite[Nguyen et al., 2025]{nguyen2025minp}), available in Hugging Face Transformers, vLLM, and llama.cpp:
 
 * Choose $m = \max_i P(i)$ (the highest probability).
 * Include all tokens with $P(i) \geq s \cdot m$ where $s \in [0, 1]$ is the min-$p$ parameter.
@@ -109,17 +115,13 @@ $$
 * $s = 0.05$: more inclusive.
 * $s = 1.0$: greedy (only the top token qualifies). $s = 0.0$ switches the filter off (keeps every token).
 
-Min-$p$ **scales with confidence**: when the model is sharp, few tokens qualify; when uncertain, more. Empirically outperforms top-$p$ on quality benchmarks.
+Min-$p$ **scales with confidence**: when the model is sharp, few tokens qualify; when uncertain, more. The authors report better quality and diversity than top-$p$, especially at higher temperatures; the evidence is strongest in that high-temperature regime.
 </div>
 
 <div class="md">
 ### Top-$n$ (Top-$N$) Sampling
 
-A simpler variant: always include exactly the top $N$ tokens. Used in some open-source models.
-
-* $N = 40$ for chat.
-
-Less common than top-$p$ or min-$p$.
+Top-$n$ is just another name for top-$k$: keep exactly the $n$ highest-probability tokens, then renormalize. The two names appear in different codebases, which can make them look like separate algorithms. They are the same filter, and the same drawback applies: $n$ does not adapt to how sharp or flat the distribution is.
 </div>
 
 <div class="md">
@@ -132,6 +134,8 @@ Discards tokens in the “tail” of the distribution where the second derivativ
 ### Eta ($\eta$) Sampling
 
 Similar to min-$p$ but with a different criterion: cut off tokens with probability below an $\eta$-dependent threshold based on entropy. Generally less popular than min-$p$.
+
+Locally typical sampling starts from an information-theoretic observation: human text keeps each word's surprisal close to the conditional entropy of its context, while high-probability machine text is too predictable and pure sampling is too noisy (\cite{meister2022typical}). The method keeps tokens whose information content $-\log p_i$ is closest to the entropy $H$, rather than the tokens with the largest probability. On summarization and story generation it reduced repetition and scored competitively with nucleus sampling. Its parameter is the mass $\tau$ of the typical set, so like top-$p$ it controls how much of the distribution survives.
 </div>
 
 <div class="md">
@@ -298,17 +302,17 @@ Every method above is a different way of answering the same question: *which can
 <div class="md" data-mathlevel="45">
 ### Repetition Penalty
 
-Reduce the logits of tokens that have already appeared in the context (\cite[Keskar et al., 2019]{keskar2019ctrl}):
+Penalize tokens that have already appeared in the context (\cite[Keskar et al., 2019]{keskar2019ctrl}). CTRL divides their logits by $\theta$ inside the softmax; most implementations use the sign-aware form, which divides positive logits and multiplies negative ones so that every repeated token really becomes less likely:
 
 $$
-z_i' = \begin{cases} z_i / \theta & \text{if } i \in \text{context} \\ z_i & \text{if } i \notin \text{context} \end{cases}
+z_i' = \begin{cases} z_i / \theta & \text{if } i \in \text{context and } z_i > 0 \\ z_i \cdot \theta & \text{if } i \in \text{context and } z_i \le 0 \\ z_i & \text{if } i \notin \text{context} \end{cases}
 $$
 
 * $\theta = 1.0$: no penalty.
 * $\theta = 1.1$: mild penalty.
 * $\theta = 1.3$: strong penalty.
 
-Useful for chat where the model might otherwise loop. **Frequency penalty** (proportional to count) and **presence penalty** (binary) are common variants.
+Useful for chat where the model might otherwise loop. OpenAI-style **frequency** and **presence** penalties are additive variants: subtract $\alpha\cdot\text{count}(i)$ or $\beta\cdot\mathbf{1}[i\in\text{context}]$ from the logit.
 </div>
 
 <div class="md">
@@ -331,15 +335,15 @@ A 2024 technique: randomly exclude the top token from sampling with some probabi
 </div>
 
 <div class="md" data-mathlevel="55">
-### Contrastive Search (Su & Collier, 2022)
+### Contrastive Search
 
-A **deterministic** decoding strategy that picks the token maximizing:
+Contrastive search (\cite[Su et al., 2022]{su2022contrastive}) is a **deterministic** decoding strategy that picks the token maximizing:
 
 $$
-\text{score}(i) = (1 - \alpha) \cdot \log P(i) - \alpha \cdot \max_{j \in \text{context}} \text{sim}(\mathbf{h}_i, \mathbf{h}_j)
+\text{score}(i) = (1 - \alpha) \cdot P(i) - \alpha \cdot \max_{j \in \text{context}} \text{sim}(\mathbf{h}_i, \mathbf{h}_j)
 $$
 
-where $\mathbf{h}_i$ is the token's hidden state and $\alpha$ controls the degeneration penalty. Produces high-quality, **non-repetitive** output without randomness. Used in some summarization systems.
+where $\mathbf{h}_i$ is the token's hidden state and $\alpha$ controls the degeneration penalty. The original objective uses the model probability $P(i)$, not its logarithm; replacing $P$ with $\log P$ changes the balance between confidence and the degeneration penalty. Produces high-quality, **non-repetitive** output without randomness.
 </div>
 
 <div class="md">
@@ -362,12 +366,14 @@ Produces output with consistent information density. Used by some LLM writers fo
 Maintain the top $B$ partial sequences at each step; expand all of them; keep the top $B$. Used in machine translation; rarely in modern LLM chat.
 
 Drawbacks: tends to produce generic, “averaged” outputs in open-ended generation.
+
+Beam search predates neural language models: speech recognizers such as Harpy pruned a tree of acoustic hypotheses with it in the 1970s (\cite{lowerre1976harpy}). Sutskever et al. brought it into sequence-to-sequence translation, where it became the default because it searches sequence likelihood more thoroughly than greedy decoding (\cite{sutskever2014seq2seq}). The catch is length: raw log-probabilities favor short outputs, so implementations divide by a length penalty. In open-ended generation, that same likelihood objective rewards generic continuations, which is why chat models moved away from beam search.
 </div>
 
 <div class="md" data-mathlevel="60">
 ### Speculative Sampling
 
-A generalization of speculative decoding: the draft model samples tokens probabilistically, the target model verifies, and corrections are sampled from the target's adjusted distribution:
+The sampling rule at the heart of speculative decoding (\cite[Leviathan et al., 2023]{leviathan2023speculative}): the draft model proposes tokens probabilistically, the target model verifies them, and rejected proposals are corrected by sampling from the target's adjusted distribution:
 
 $$
 \begin{aligned}
@@ -394,7 +400,7 @@ This guarantees the output distribution exactly matches the target model's distr
 | **Creative writing** | 1.2 | 0.95 | 0.1 | 1.2 + DRY |
 | **Summarization** | 0.5 | 0.9 | 0.0 | 1.1 |
 
-**The frontier in 2025**: most open-source models (Qwen, DeepSeek, Mistral) default to **temperature 0.7 + min-$p$ 0.05**. Closed APIs (OpenAI, Anthropic) typically default to **temperature 1.0 + top-$p$ 0.95** (though Anthropic recommends temperature 1.0 with no top-$p$).
+**Model-card defaults vary**: Qwen3 recommends temperature 0.6–0.7 with top-$p$ 0.8–0.95 and min-$p$ 0; DeepSeek-R1 recommends 0.6 with top-$p$ 0.95; Mistral cards do not set min-$p$ either. The OpenAI API defaults to temperature 1.0 and top-$p$ 1.0; Anthropic likewise applies no nucleus truncation by default. Product UIs may layer their own presets. Min-$p$ is a common optional filter, not a universal default.
 </div>
 
 <div class="md">
@@ -417,6 +423,8 @@ Not yet standardized but promising.
 * **For batch inference**: deterministic, greedy.
 
 A common mistake: using temperature 1.0 with top-$p$ 0.9 AND min-$p$ 0.05. These compound; the effective sampling becomes very restricted. **Pick one filter method** unless you know what you're doing.
+
+The choice between greedy and stochastic decoding is not a binary of correct versus creative (\cite{fan2018topk, holtzman2020nucleus}); temperature 0 removes sampling noise but not every source of variation. Floating-point reductions, GPU kernel scheduling, batching, and tensor-parallel order can change the last bits of a logit, and a near-tie can then flip the argmax. Providers that offer a seed make a best effort, not a guarantee. The practical rule is to fix sampler, seed, model version, and batch shape together; if an evaluation must be exactly repeatable, cache the generated outputs rather than regenerate them.
 </div>
 
 <div class="mn-quiz" data-quiz="samplinglab"><script type="application/json">{"title": "Temperature & sampling", "questions": [{"q": "What does decoding with temperature T → 0 turn into?", "options": ["Greedy decoding: always the single most likely token", "Uniform random sampling over the full vocabulary", "Top-k sampling with k set to zero, so nothing survives", "Beam search, keeping one beam per vocabulary item"], "answer": 0, "explain": "Dividing the logits by a tiny T blows up the gaps between them, so softmax puts essentially all probability on the largest logit."}, {"q": "Top-p = 0.9, and the most likely token alone already has 95 % probability. How many tokens remain?", "options": ["Exactly one", "All of them", "None at all", "About ten"], "answer": 0, "explain": "The nucleus is the *smallest* set whose mass reaches p. The first token alone reaches 0.95 ≥ 0.9, so the set stops there."}, {"q": "Min-p = 0.1 and the best token has probability 0.6. Which tokens survive?", "options": ["Those with probability ≥ 0.06", "Those with probability ≥ 0.10", "Those with probability ≥ 0.60", "Those with probability ≥ 0.01"], "answer": 0, "explain": "Min-p scales the cut-off with the model's confidence: threshold = s × max P = 0.1 × 0.6 = 0.06."}, {"q": "Why is top-k a poor filter when the model is very sure of one answer?", "options": ["It always keeps k tokens, even if only one is plausible", "It always drops the most likely token from the shortlist", "It raises the temperature until the distribution is flat", "It only works when k is set exactly equal to one"], "answer": 0, "explain": "k is fixed. With a sharp distribution, the extra k − 1 slots are filled with near-impossible tokens — exactly what the Decoding Studio shows on the factual prompt."}]}</script></div>
