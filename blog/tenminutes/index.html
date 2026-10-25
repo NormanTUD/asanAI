@@ -920,7 +920,7 @@ document.documentElement.classList.add('js');
 
       <div class="lesson-end reveal">
         <p>You can now name the hidden layers behind the machine — and one contributor or prerequisite usually missing from the standard story.</p>
-        <div class="nav"><a href="#lesson-history">← History</a><a href="#top">All lessons</a><a href="#lesson-embeddings">Next: Embeddings →</a></div>
+        <div class="nav"><a href="#lesson-history">← History</a><a href="#top">All lessons</a><a href="#lesson-tokenization">Next: Tokenization →</a></div>
       </div>
     </div>
   </section>
@@ -1072,7 +1072,7 @@ document.documentElement.classList.add('js');
 
       <div class="lesson-end reveal">
         <p>You can now explain tokens, vectors, cosine similarity, the famous analogy, and the difference between static and contextual embeddings.</p>
-        <div class="nav"><a href="#lesson-untold">← Untold history</a><a href="#top">All lessons</a><a href="#lesson-neural">Next: Neural networks →</a></div>
+        <div class="nav"><a href="#lesson-tokenization">← Tokenization</a><a href="#top">All lessons</a><a href="#lesson-neural">Next: Neural networks →</a></div>
       </div>
     </div>
   </section>
@@ -1153,6 +1153,11 @@ document.documentElement.classList.add('js');
       </div>
 
       <div class="takeaway reveal"><span><b>The takeaway</b>Learning is not programming rules. It is turning millions of knobs to make a number — the loss — go down.</span></div>
+
+      <div class="lesson-end reveal">
+        <p>You can now explain weights, bias, loss, gradient descent, nonlinearity, and why backpropagation is credit assignment.</p>
+        <div class="nav"><a href="#lesson-embeddings">← Embeddings</a><a href="#top">All lessons</a><a href="#lesson-training">Next: Training →</a></div>
+      </div>
     </div>
   </section>
 
@@ -1360,6 +1365,11 @@ document.documentElement.classList.add('js');
       </div>
 
       <div class="takeaway reveal"><span><b>The takeaway</b>A transformer is routing (attention) plus computation (feed-forward), wrapped in a residual stream and repeated until the next token is ready.</span></div>
+
+      <div class="lesson-end reveal">
+        <p>You can now explain Q, K, V; the causal mask; multi-head attention; the feed-forward block; and the next-token loop — and why attention is not awareness.</p>
+        <div class="nav"><a href="#lesson-training">← Training</a><a href="#top">All lessons</a><a href="#finale">The whole arc →</a></div>
+      </div>
     </div>
   </section>
 
@@ -1455,8 +1465,10 @@ document.documentElement.classList.add('js');
       <div class="callout"><strong>One rule:</strong> never mistake a fluent prediction for a verified fact. The same rule applies to this page. Follow the links, read the caveats, and check a claim before you repeat it.</div>
       <h3>Full lessons on asanAI</h3>
       <ul>
+        <li><a href="../intuition">An Intuition of How LLMs Work</a> — the next-token loop and the five steps.</li>
         <li><a href="../history">A Brief History of AI</a> — from tally bones to the transformer.</li>
         <li><a href="../untold_history">The Untold History of AI</a> — the displaced prerequisites.</li>
+        <li><a href="../tokenizerlab">Tokenization: How Words Become Numbers</a> — word-level, BPE, WordPiece, token inflation, glitch tokens.</li>
         <li><a href="../embeddinglab">Embeddings: The Geometry of Meaning</a> — the manifold, cosine similarity, and the limits of the metaphor.</li>
         <li><a href="../minimalneuron">The Smallest Neural Network</a> — one weight, one bias, gradient descent.</li>
         <li><a href="../trainingdynamics">The Training Run as a Phenomenon</a> — power laws, warmup, spikes, Chinchilla.</li>
@@ -1494,6 +1506,13 @@ function fmtBig(x) {
   if (x >= 1e6) return (x / 1e6).toFixed(x >= 1e7 ? 0 : 1).replace(/\.0$/, "") + "M";
   if (x >= 1e3) return (x / 1e3).toFixed(x >= 1e4 ? 0 : 1).replace(/\.0$/, "") + "k";
   return Math.round(x).toString();
+}
+function hexToRgba(hex, alpha) {
+  if (!hex || !hex.startsWith("#")) return hex;
+  let h = hex.slice(1);
+  if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+  if (h.length !== 6) return hex;
+  return "rgba(" + parseInt(h.slice(0, 2), 16) + "," + parseInt(h.slice(2, 4), 16) + "," + parseInt(h.slice(4, 6), 16) + "," + alpha + ")";
 }
 function themeColors() {
   const s = getComputedStyle(document.documentElement);
@@ -2960,6 +2979,86 @@ $$("[data-tok-preset]").forEach((button) => button.addEventListener("click", () 
   renderTokenizer();
 }));
 renderTokenizer();
+
+/* hero orbit */
+const orbitCanvas = $("#orbitCanvas");
+let orbitAngle = 0;
+let orbitVisible = true;
+let orbitRaf = 0;
+const ORBIT_WORDS = ["token", "vector", "attention", "loss", "next", "context", "meaning", "predict", "pattern", "gradient", "position", "residual"];
+function drawOrbit() {
+  if (!orbitCanvas) return;
+  const { ctx, w, h } = ensureCanvas(orbitCanvas);
+  const C = themeColors();
+  ctx.clearRect(0, 0, w, h);
+  const cx = w * (w < 760 ? .5 : .70);
+  const cy = h * .50;
+  const maxR = Math.min(w, h) * .43;
+  const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR * .78);
+  halo.addColorStop(0, hexToRgba(C.bright, .13));
+  halo.addColorStop(.35, hexToRgba(C.violet, .06));
+  halo.addColorStop(1, hexToRgba(C.paper, 0));
+  ctx.fillStyle = halo;
+  ctx.fillRect(0, 0, w, h);
+  ctx.save();
+  ctx.translate(cx, cy);
+  for (let i = 1; i <= 5; i++) {
+    const rx = maxR * (i / 5);
+    const ry = rx * (.42 + .06 * Math.sin(i));
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rx, ry, -.12, 0, TAU);
+    ctx.strokeStyle = hexToRgba(C.bright, .10 + i * .018);
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  ORBIT_WORDS.forEach((word, i) => {
+    const ring = 1 + (i % 4);
+    const rx = maxR * (ring / 5);
+    const ry = rx * (.42 + .06 * Math.sin(ring));
+    const a = orbitAngle * (.25 + i * .035) + i * 2.39996;
+    const x = Math.cos(a) * rx;
+    const y = Math.sin(a) * ry;
+    const color = [C.green, C.bright, C.violet, C.teal][i % 4];
+    ctx.beginPath();
+    ctx.arc(x, y, 2.1, 0, TAU);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = .8;
+    ctx.fill();
+    ctx.globalAlpha = .55;
+    ctx.font = "9px " + getComputedStyle(document.documentElement).getPropertyValue("--display");
+    ctx.fillStyle = C.muted;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(word, x, y - 10);
+    ctx.globalAlpha = 1;
+  });
+  ctx.beginPath();
+  ctx.arc(0, 0, 5, 0, TAU);
+  ctx.fillStyle = C.gold;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(0, 0, 16, 0, TAU);
+  ctx.strokeStyle = hexToRgba(C.gold, .35);
+  ctx.stroke();
+  ctx.restore();
+}
+function orbitTick() {
+  if (!orbitVisible || REDUCED) return;
+  orbitAngle += .0035;
+  drawOrbit();
+  orbitRaf = requestAnimationFrame(orbitTick);
+}
+if ("IntersectionObserver" in window && orbitCanvas) {
+  new IntersectionObserver((entries) => {
+    orbitVisible = entries[0].isIntersecting;
+    if (orbitVisible && !REDUCED) { if (!orbitRaf) orbitRaf = requestAnimationFrame(orbitTick); }
+    else if (orbitRaf) { cancelAnimationFrame(orbitRaf); orbitRaf = 0; }
+  }, { threshold: 0 }).observe($(".hero"));
+}
+new ResizeObserver(drawOrbit).observe(orbitCanvas);
+onThemeChange(drawOrbit);
+drawOrbit();
+if (!REDUCED) orbitRaf = requestAnimationFrame(orbitTick);
 
 routeFromHash();
 updateScrollUI();
