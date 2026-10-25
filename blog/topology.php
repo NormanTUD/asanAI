@@ -7,7 +7,7 @@ icon: &#128640;
 part: 3
 order: 5
 color: sky
-topics: architecture, math-iii, deep-learning, interpretability, topology
+topics: architecture, math-iii, interpretability, geometry
 tags: math-heavy, logic-heavy
 math: 60
 -->
@@ -40,18 +40,18 @@ math: 60
 
 ### Stretch, Squish — but Never Cut
 
-In the previous chapter we met feed-forward networks as **paper folders**: a ReLU layer
+In the [Origami chapter](origami) we met feed-forward networks as **paper folders**: a ReLU layer
 is a hammer-blow that creases the data into a spare, higher dimension, and depth is a
 cascade of such creases \cite{keup2022origami}. That story is about *what a layer can do
 when the activation is allowed to crush*. There is a second, cleaner story, and it starts
-from a question \citeauthor{colah2014manifolds} (\citeyear{colah2014manifolds}) asked in
-2014 \cite{colah2014manifolds}:
-
-> *What if the bend is **smooth** — a tanh, a sigmoid, a softplus instead of a ReLU? What
-> can a layer then do to the data, and what is it **forbidden** from doing?*
+from a question \citeauthor{colah2014manifolds} asked in \citeyear{colah2014manifolds}: if
+the activation is smooth and monotone — a tanh or a sigmoid rather than a ReLU — what can
+a layer do to the data, and what is it forbidden from doing?
 
 The answer is beautifully restrictive, and it is the whole reason the word *topology*
 appears in a story about neural networks.
+
+Topology began with a puzzle about a city. In 1736 Euler proved that the seven bridges of Königsberg cannot be crossed once each, and he did it by throwing away distance and angle and keeping only which land mass connects to which (\cite[Euler, 1736]{eulerbridges}). The paper's title calls the subject *geometria situs*, the geometry of position. That is exactly the move a smooth layer makes: it may stretch the plane, but it cannot change which region surrounds which. [Geometry III](geometry_iii) tells the full history; here the point is narrower — the invariant that survives a homeomorphism is precisely what a linear readout cannot repair.
 
 Start with the simplest setting. A network with only a handful of neurons per layer is
 **visualizable**. Feed every point of a fine grid through the net and you can *watch* the
@@ -61,16 +61,18 @@ flat hyperplane (a line in 2-D) and calls one side "class 0" and the other "clas
 the entire job of every hidden layer is to *reshape the data until that final flat cut
 succeeds*.
 
-And here is the surprise. With a **smooth** activation, each layer is a
+And here is the surprise. With a **smooth, strictly monotone** activation, each layer is a
 **homeomorphism** — as \cite[Morris shows in Topology Without Tears (Ch. 4, p. 75)]{morris2007topology} — it can stretch and squish space, rotate and shear it, but it can **never
 cut, tear, or fold** it. It preserves every topological property — a loop stays a loop, a
 region that surrounds another still surrounds it, connected things stay connected (\cite[Morris, Topology Without Tears, Ch. 4, p. 89]{morris2007topology}).
+
+Poincaré gave the question its modern form in *Analysis Situs* (1895): two spaces are the same when a homeomorphism carries one to the other, and the fundamental group records the loops no such map can remove (\cite[Poincaré, 1895]{poincareanalysissitus}). Brouwer supplied the fact the width argument quietly leans on: a continuous injective map from an open subset of $\mathbb{R}^n$ into $\mathbb{R}^n$ is open, so it cannot lower dimension or squash a neighbourhood to a point (\cite[Brouwer, 1911]{brouwer1911fixed}). A singular weight matrix is exactly that forbidden collapse.
 </div>
 
 <div class="optional md" data-headline="The homeomorphism theorem, proved" data-mathlevel="65">
 A feed-forward layer computes $\mathbf{h} = \underbrace{\Phi}_{\text{pointwise activation}}(\underbrace{W\,\mathbf{x}}_{\text{linear map}} + \underbrace{\mathbf{b}}_{\text{shift}})$: a linear
 map, a shift, then a pointwise activation. Olah's claim is that — with $N$ inputs and
-$N$ outputs — this is a **homeomorphism** whenever $W$ is non-singular. The proof is just
+$N$ outputs — this is a **homeomorphism onto its image** whenever $W$ is non-singular and the activation is strictly monotone. The proof is just
 "three homeomorphisms glued together":
 
 1. **$\mathbf{x} \mapsto W\,\mathbf{x}$.** If $\det W \neq 0$ then $W$ is invertible, with
@@ -81,8 +83,9 @@ $N$ outputs — this is a **homeomorphism** whenever $W$ is non-singular. The pr
    $\mathbf{b}$. Both are continuous. A homeomorphism.
 3. **$\mathbf{z} \mapsto \Phi(\mathbf{z})$ applied coordinate-wise.** tanh, sigmoid and
    softplus are continuous *and* have continuous inverses, so each is a homeomorphism of
-   the line (careful about range: tanh lands in $(-1,1)$, not $\mathbb{R}$). Applied to
-   each coordinate independently, it is a homeomorphism of $\mathbb{R}^N$.
+   the line **onto its image** (tanh lands in $(-1,1)$, sigmoid in $(0,1)$, softplus in
+   $(0,\infty)$). Applied to each coordinate independently, it is a homeomorphism of
+   $\mathbb{R}^N$ onto an open box — enough for the argument below.
 
 A composition of homeomorphisms is a homeomorphism — as \cite[Morris shows in Topology Without Tears (Ch. 4, p. 76)]{morris2007topology} — so the layer is one. **And so is any
 stack of them.** $\blacksquare$
@@ -106,7 +109,7 @@ question: *can a single flat line separate the two?* No — try dragging one and
 it plateaus, no matter how you aim it.
 
 But the homeomorphism argument goes much deeper than "a line won't do it". It says a
-**2-wide** smooth network — *any number of layers* — **cannot solve the egg at all**.
+**2-wide** smooth, strictly monotone network — *any number of layers* — **cannot solve the egg at all**.
 
 > **Claim.** Let the inner class be a disk $\underbrace{A}_{\text{inner disk}} = \{x : \|x\| < \tfrac13\}$ and the outer
 > class a ring $\underbrace{B}_{\text{outer ring}} = \{x : \tfrac23 < \|x\| < 1\}$. No network of width $\le 2$ with smooth
@@ -126,6 +129,8 @@ plane now separates them cleanly. Width — not depth — is the resource that u
 problem. This is a genuine **topological lower bound** on the width of a network, and it is
 the first time a topological property of the *data* has produced a hard statement about the
 *architecture* that is needed to solve it.
+
+Morse theory gives the smooth counterpart of the fold. For a smooth scalar function on a manifold, the topology of its sublevel sets changes only when the gradient vanishes, at a critical point (\cite[Morse, 1929]{morse1929foundations}). A layer with invertible $W$ and a strictly monotone activation has an invertible Jacobian everywhere, so it contributes no such critical point: it can move the data, but it cannot change its topology. ReLU is different — its kink at zero is a whole critical locus, and that is where a fold can be born.
 
 In the demo below, train a 2-layer tanh net on the egg with **two** hidden units and watch
 it flounder at a ceiling well short of 100%. Then switch to **three** and watch the same
@@ -166,7 +171,7 @@ Strip the picture down to a single number and the mechanism becomes impossible t
 Put one class on the middle of a line — $A = [-\tfrac13, \tfrac13]$ — and the other on the
 two ends — $B = [-1, -\tfrac23] \cup [\tfrac23, 1]$.
 
-A single neuron can only produce **one bump** of activation; its decision boundary is a
+A single neuron's activation is **monotone**; its decision boundary is a
 single threshold, so it can carve out *one interval* — never the middle-with-ends-outside
 pattern the task demands. One hidden unit is topologically doomed, for exactly the same
 reason the width-2 egg was.
@@ -252,6 +257,10 @@ direction the third dimension allows.
 	<div class="tp-out" id="tp-play-out"></div>
 </div>
 
+<div class="md">
+Noether's 1925 observation turned Betti numbers into homology groups, and that shift is what makes the shape of data computable (\cite[McLarty, 2006]{mclarty2006noether}). Once holes are group elements, they can be tracked across a growing radius: Edelsbrunner, Letscher and Zomorodian's persistence algorithm records when each hole is born and when it dies (\cite[Edelsbrunner et al., 2002]{edelsbrunner2002persistent}), and Zomorodian and Carlsson gave the efficient algebraic formulation (\cite[Zomorodian & Carlsson, 2005]{zomorodian2005}). The output is a barcode — a summary of which loops are robust structure and which are noise. [Geometry III](geometry_iii) develops the algebra; here it is the bridge from "the data is knotted" to a measurable claim.
+</div>
+
 <div class="optional md" data-headline="Links, knots, and the fourth dimension">
 The egg is a *surrounding*; a nastier tangle is a *link* — two rings threaded through each
 other like a chain, which you cannot pull apart without cutting. Colah's point is that a
@@ -261,7 +270,7 @@ separated one, the data moving smoothly and never tearing. The continuous layer-
 visualization is not just a pretty animation — it is the isotopy itself, made visible.
 
 And the dimension count returns with a vengeance: a single link of 1-D curves lives in 3-D
-but can only be *unknotted* in 4-D. In general, an $n$-dimensional manifold may need up to
+but can only be *pulled apart* in 4-D. In general, an $n$-dimensional manifold may need up to
 $2n + 2$ dimensions to untangle. Topology keeps handing the network a price tag, and the
 price is, again, **extra dimensions** — the same currency the fold-and-cut story paid with.
 </div>
@@ -304,13 +313,17 @@ directions. A network must move data through space to make a flat cut work. If t
 are homeomorphisms, topology dictates exactly how many extra dimensions the journey requires.
 If the moves are allowed to fold, the network spends those same dimensions as creases.
 
-This is the **manifold hypothesis** made mechanical \cite{manifold_wiki}: natural data sits
+The manifold hypothesis is an empirical claim, not a definition: natural data — images, sounds, word vectors — concentrates near a low-dimensional manifold inside its high-dimensional ambient space. It is testable. Fefferman, Mitter and Narayanan give statistical tests for estimating a manifold's dimension and reach from finite samples (\cite[Fefferman et al., 2016]{fefferman2016testing}). That matters here because the width argument is only as good as the premise: if the data were truly high-dimensional, there would be no low-dimensional tangle to separate.
+
+This is the **manifold hypothesis** made mechanical \cite{fefferman2016testing}: natural data sits
 on low-dimensional manifolds, and classification is the business of **separating tangled
 manifolds**. The theorem you can take away is a clean one —
 
-> A network's power is bounded by its **width**, because topology cannot be changed by
-> depth alone. To un-knot the data, a network must be allowed to think in *more dimensions
-> than the data itself has*.
+> For smooth, strictly monotone layers, a network's reach is bounded by its **width**:
+> depth can move the data, but it cannot change its topology. To un-knot the data, the
+> network must be allowed to think in *more dimensions than the data itself has*.
+
+The topology program has produced results about networks, not only metaphors. Olah's original argument is the smooth-layer case: with full width and a strictly monotone activation, every layer is a homeomorphism onto its image, so a width-two stack can never separate a disk from a surrounding ring (\cite[Olah, 2014]{colah2014manifolds}). The barrier is not about depth: adding layers cannot buy a dimension. What buys it is width, or a non-injective activation such as ReLU, whose folds are the subject of the [Origami chapter](origami) (\cite[Keup & Helias, 2022]{keup2022origami}). Neural persistence carries the same tools into trained networks (\cite[Rieck et al., 2019]{riek2019neural}).
 
 That is the geometry of thought: not a set of numbers to memorize, but a shape to be
 untangled, one reversible stretch (or one well-placed fold) at a time.
