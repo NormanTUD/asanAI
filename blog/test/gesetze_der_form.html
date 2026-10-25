@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gesetze der Form — eine visuelle Reise</title>
 <meta name="description" content="George Spencer-Browns Laws of Form, visualisiert: Unterscheidung, Marke, die zwei Gesetze, primäre Arithmetik, Algebra, Wiedereintritt und der Beobachter.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2305070c'/%3E%3Cpath d='M14 16H50V50' fill='none' stroke='%23f5b45f' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
 :root{
   --bg:#05070c;
@@ -12,7 +13,7 @@
   --ink:#f4efe4;
   --ink-2:#d9d2c4;
   --muted:#9aa1ad;
-  --faint:#6b7280;
+  --faint:#7d8593;
   --line:rgba(244,239,228,.10);
   --line-2:rgba(244,239,228,.055);
   --gold:#f5b45f;
@@ -76,7 +77,7 @@ svg{display:block}
 .dot-nav a.is-active{width:10px;height:10px;background:var(--gold);box-shadow:0 0 14px rgba(245,180,95,.7)}
 .hero{
   position:relative;min-height:100svh;display:grid;place-items:center;
-  padding:clamp(90px,12vh,150px) 24px 100px;text-align:center;overflow:hidden;isolation:isolate;
+  padding:clamp(90px,12vh,150px) 24px clamp(56px,8vh,84px);text-align:center;overflow:hidden;isolation:isolate;
 }
 #sky{position:absolute;inset:0;width:100%;height:100%;z-index:-2;opacity:.9}
 .hero::after{
@@ -120,8 +121,9 @@ svg{display:block}
 .hero-quote em{color:var(--gold-2);font-style:italic}
 .hero-quote .de{display:block;margin-top:4px;font-family:var(--sans);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
 .scroll-hint{
-  position:absolute;left:50%;bottom:30px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;
-  color:var(--faint);font-family:var(--sans);font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;
+  position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;width:max-content;
+  margin:clamp(30px,5vh,48px) auto 0;color:var(--faint);font-family:var(--sans);font-size:.6rem;
+  letter-spacing:.24em;text-transform:uppercase;text-decoration:none;
 }
 .scroll-hint i{display:block;width:1px;height:42px;background:linear-gradient(180deg,var(--gold),transparent);animation:scrollLine 2.4s var(--ease) infinite}
 @keyframes scrollLine{0%,100%{transform:scaleY(.35);transform-origin:top;opacity:.4}50%{transform:scaleY(1);opacity:1}}
@@ -229,8 +231,8 @@ main{position:relative;z-index:2}
 .void-inside.is-on{opacity:1}
 .void-label{font-family:var(--sans);font-size:13px;letter-spacing:.28em;text-transform:uppercase;opacity:0;transition:opacity .7s .2s var(--ease)}
 .void-label.is-on{opacity:1}
-.void-label.in{fill:var(--gold);opacity:.85}
-.void-label.out{fill:var(--cyan);opacity:.7}
+.void-label.in{fill:var(--gold)}
+.void-label.out{fill:var(--cyan)}
 .void-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
 .void-caption{font-family:var(--sans);font-size:.78rem;color:var(--muted);line-height:1.55;max-width:62ch}
 .void-caption strong{color:var(--ink-2);font-weight:600}
@@ -399,8 +401,8 @@ details.original[open] summary::before{content:"− "}
 .reentry-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(20px,3.4vw,38px);align-items:stretch}
 .reentry-stage{min-height:340px;position:relative;overflow:hidden}
 .reentry-svg{width:100%;height:100%;min-height:320px}
-.reentry-stage[data-state="marked"]{--re-state:var(--gold);--re-state-dim:rgba(245,180,95,.10);--re-state-soft:rgba(245,180,95,.30)}
-.reentry-stage[data-state="void"]{--re-state:var(--cyan);--re-state-dim:rgba(123,216,208,.08);--re-state-soft:rgba(123,216,208,.26)}
+.reentry-grid[data-state="marked"]{--re-state:var(--gold);--re-state-dim:rgba(245,180,95,.10);--re-state-soft:rgba(245,180,95,.30)}
+.reentry-grid[data-state="void"]{--re-state:var(--cyan);--re-state-dim:rgba(123,216,208,.08);--re-state-soft:rgba(123,216,208,.26)}
 .reentry-inside{fill:var(--re-state-dim);transition:fill .6s var(--ease)}
 .reentry-mark{fill:none;stroke:var(--re-state);stroke-width:3.3;stroke-linecap:round;transition:stroke .6s var(--ease);filter:drop-shadow(0 0 9px var(--re-state-soft))}
 .reentry-loop{fill:none;stroke:var(--re-state);stroke-width:1.6;stroke-linecap:round;stroke-dasharray:6 7;opacity:.9;transition:stroke .6s var(--ease);animation:loopFlow 2.4s linear infinite}
@@ -496,6 +498,8 @@ details.original[open] summary::before{content:"− "}
 .poster-init span.lbl{font-family:var(--sans);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-accent);min-width:26px}
 .poster-init .pm{padding:0 .28em;border-color:var(--paper-ink)}
 .poster-init .pm--double{padding:0}
+.poster-init .pm--double>.pm{padding:0}
+.poster-init .pm:empty{width:1.1em;height:1.1em;padding:0}
 .pm{display:inline-block;border-top:2px solid var(--gold);border-right:2px solid var(--gold);vertical-align:middle}
 .pm .pm{display:block;width:55%;height:55%;margin:12% 0 0 12%;border-width:1.5px}
 .pm--double{width:1.8em;height:1.8em}
@@ -520,12 +524,14 @@ footer a{color:var(--muted);text-decoration:none}
 footer a:hover{color:var(--gold)}
 .foot-mark{display:inline-block;width:18px;height:18px;border-top:2px solid var(--gold);border-right:2px solid var(--gold);vertical-align:middle;margin-right:8px}
 .noscript{margin:20px auto;max-width:800px;padding:16px 20px;border:1px solid var(--line);border-radius:12px;font-family:var(--sans);font-size:.82rem;color:var(--muted);text-align:center}
+@media (max-width:1120px){
+  .dot-nav{display:none}
+}
 @media (max-width:1020px){
   .anatomy,.lab-grid,.truth-grid,.reentry-grid{grid-template-columns:1fr}
   .resonance-grid{grid-template-columns:repeat(2,1fr)}
   .initials{grid-template-columns:1fr}
   .poster-grid{grid-template-columns:1fr}
-  .dot-nav{display:none}
 }
 @media (max-width:760px){
   .section{padding-left:18px;padding-right:18px}
@@ -547,8 +553,10 @@ footer a:hover{color:var(--gold)}
   .reveal{opacity:1;transform:none}
   .reentry-loop{animation:none}
 }
+@page{margin:14mm}
 @media print{
   body{background:#fff;color:#000}
+  .reveal{opacity:1 !important;transform:none !important}
   .grain,.progress,.dot-nav,.hero,.section:not(#mitnehmen),footer,.sources,.no-print{display:none !important}
   #mitnehmen{padding:0;max-width:none}
   .poster{box-shadow:none;border-radius:0;background:#fff}
@@ -714,14 +722,14 @@ footer a:hover{color:var(--gold)}
         </div>
         <div class="law-body">
           <h3>Das Gesetz des Kreuzens</h3>
-          <p class="law-en">The value of crossing made again is not the value of the crossing.</p>
+          <p class="law-en">The value of crossing made again is NOT the value of the crossing.</p>
           <div class="law-formula"><span class="big">( () )</span> <span>=</span> <span class="big void">·</span></div>
           <p>Eine Marke in einer Marke hebt sich auf. Zweimal kreuzen bringt dich zurück in die Leere. Das ist die <em>Aufhebung</em>.</p>
           <button class="btn" type="button" data-play="crossing">zurück in die Leere</button>
         </div>
       </article>
     </div>
-    <p class="note reveal"><strong>Die ganze Rechnung in zwei Sätzen:</strong> Eine Marke, die sich wiederholt, bleibt eine Marke. Eine Marke, die sich selbst umschließt, wird zur Leere. Alles Weitere ist Anwendung.</p>
+    <p class="note reveal"><strong>Die ganze Rechnung in zwei Sätzen:</strong> Eine Marke, die sich wiederholt, bleibt eine Marke. Eine Marke, die sich selbst umschließt, wird zur Leere. Alles Weitere ist Anwendung. Spencer-Brown nennt das den <em>Kalkül der Indikationen</em>; die primäre Arithmetik ist der Teil, der nur aus Marken besteht.</p>
   </section>
 
   <section class="section" id="arithmetik">
@@ -766,6 +774,7 @@ footer a:hover{color:var(--gold)}
     </div>
     <div class="prose reveal" style="margin-top:clamp(28px,4vw,44px)">
       <p>Die Reduktion läuft von innen nach außen. Zuerst verschwinden leere Teile, dann verschmelzen benachbarte Marken nach dem <strong>Gesetz des Rufens</strong>, dann heben sich verschachtelte Marken nach dem <strong>Gesetz des Kreuzens</strong> auf. Die Reihenfolge ist egal: Das Ergebnis ist eindeutig. Spencer-Brown beweist das als <span class="mono">T3</span>.</p>
+      <p>Die Verschachtelung nennt er die <strong>Tiefe des Raums</strong>. Und der dritte Kanon erlaubt, jede Form durch eine äquivalente zu ersetzen — genau das tut die Formwerkstatt, Schritt für Schritt.</p>
     </div>
     <p class="note reveal"><strong>Warum das wichtig ist:</strong> Eine Form ist nicht einfach ein Bild. Sie ist eine Rechenanweisung. Und jede Rechnung endet in einem von zwei Zuständen — so wie jede Aussage wahr oder falsch ist.</p>
   </section>
@@ -836,7 +845,7 @@ footer a:hover{color:var(--gold)}
       </details>
     </div>
     <div class="prose reveal" style="margin-top:clamp(28px,4vw,44px)">
-      <p>Die Lesart ist eine Wahl: <strong>Leere = falsch</strong>, <strong>Marke = nicht</strong>, <strong>Nebeneinander = oder</strong>. Dann ist <span class="mono">()</span> wahr, <span class="mono">(A)</span> ist nicht A und <span class="mono">A B</span> ist A oder B. Vertauscht man oder mit und und die beiden Werte, erhält man die <em>duale</em> Lesart. Die Formen bleiben dieselben. De Morgan ist in dieser Notation keine Regel, die man lernen muss — sie ist schon in der Syntax enthalten.</p>
+      <p>Die Lesart ist eine Wahl: <strong>Leere = falsch</strong>, <strong>Marke = nicht</strong>, <strong>Nebeneinander = oder</strong>. Dann ist <span class="mono">()</span> wahr, <span class="mono">(A)</span> ist nicht A und <span class="mono">A B</span> ist A oder B. Vertauscht man oder mit und und die beiden Werte, erhält man die <em>duale</em> Lesart. Die Formen bleiben dieselben. De Morgan ist in dieser Notation keine Regel, die man lernen muss — sie ist schon in der Syntax enthalten. Und weil die Algebra eine <em>Gleichungslogik</em> ist, beweist man, indem man eine Form in Schritten durch eine äquivalente ersetzt.</p>
     </div>
     <p class="note reveal"><strong>Vollständigkeit:</strong> Aus den Initialen lassen sich alle gültigen Gleichungen der primären Algebra ableiten. Spencer-Brown beweist das als <span class="mono">T17</span>. Dass die beiden Initiale unabhängig voneinander sind, zeigt er als <span class="mono">T18</span>. Aus zwei Gesetzen wird eine ganze Logik.</p>
   </section>
@@ -852,7 +861,7 @@ footer a:hover{color:var(--gold)}
         <div class="panel-title">Der Wiedereintritt</div>
         <div class="panel-tag">Kapitel 11 · Equations of the Second Degree</div>
       </div>
-      <div class="reentry-grid">
+      <div class="reentry-grid" data-state="marked">
         <div class="stage reentry-stage" id="reentry-stage" data-state="marked">
           <div class="reentry-eq">E = (E)</div>
           <svg class="reentry-svg" viewBox="0 0 420 320" role="img" aria-label="Eine Marke, deren Inneres durch eine Schleife in sich selbst zurückkehrt">
@@ -867,9 +876,9 @@ footer a:hover{color:var(--gold)}
             <path class="reentry-mark" d="M 280 80 V 172"/>
             <path class="reentry-mark" d="M 280 208 V 240"/>
             <path class="reentry-loop" d="M 150 195 C 230 205 315 210 335 155 C 355 100 330 52 288 40 C 258 32 236 46 240 68 C 243 84 250 100 232 124" marker-end="url(#reArrow)"/>
-            <circle cx="150" cy="195" r="3.5" fill="var(--re-state)"/>
-            <text x="24" y="306" fill="var(--re-state)" opacity=".7" font-family="var(--sans)" font-size="11" letter-spacing=".22em">INNEN</text>
-            <text x="330" y="34" fill="var(--re-state)" opacity=".55" font-family="var(--sans)" font-size="11" letter-spacing=".22em">AUSSEN</text>
+            <circle cx="150" cy="195" r="3.5" style="fill:var(--re-state)"/>
+            <text x="24" y="306" style="fill:var(--re-state);opacity:.7;font-family:var(--sans)" font-size="11" letter-spacing=".22em">INNEN</text>
+            <text x="330" y="34" style="fill:var(--re-state);opacity:.55;font-family:var(--sans)" font-size="11" letter-spacing=".22em">AUSSEN</text>
           </svg>
         </div>
         <div class="reentry-side">
@@ -885,7 +894,7 @@ footer a:hover{color:var(--gold)}
       </div>
     </div>
     <div class="prose reveal" style="margin-top:clamp(28px,4vw,44px)">
-      <p>Die Gleichung <span class="mono">E = (E)</span> hat keine Lösung in der primären Algebra. Jeder Versuch, E einen Wert zu geben, erzeugt sofort den anderen. Spencer-Brown nennt das einen <strong>imaginären Wert</strong>. Der Wiedereintritt führt die Zeit in die Form ein: Die Form ist nicht mehr ein Zustand, sondern ein Wechsel.</p>
+      <p>Die Gleichung <span class="mono">E = (E)</span> hat keine Lösung in der primären Algebra. Jeder Versuch, E einen Wert zu geben, erzeugt sofort den anderen. Spencer-Brown nennt das einen <strong>imaginären Wert</strong>. Der Wiedereintritt führt die Zeit in die Form ein: Die Form ist nicht mehr ein Zustand, sondern ein Wechsel. Zwei Beispiele aus dem Buch heißen <em>memory</em> und <em>counter</em> — Wiedereintritt kann auch Gedächtnis und Zählen beschreiben.</p>
       <p>Das ist keine Panne. Es ist die Form des <strong>Lügnersatzes</strong> — „Dieser Satz ist falsch“ — und zugleich die Form jedes Systems, das sich selbst beobachtet. Eine Schleife, die sich selbst durchläuft, hat keinen Ruhezustand. Sie hat eine Geschichte.</p>
     </div>
     <p class="note reveal"><strong>Merke:</strong> Endliche Formen haben einen Wert. Wiedereintretende Formen haben eine Zeit. Der Übergang von der einen zur anderen ist einer der tiefsten Züge der <em>Laws of Form</em>.</p>
@@ -1171,9 +1180,9 @@ footer a:hover{color:var(--gold)}
     function update(){
       const h = document.documentElement.scrollHeight - window.innerHeight;
       if (bar) bar.style.width = (h > 0 ? clamp(window.scrollY / h, 0, 1) * 100 : 0) + '%';
-      const probe = window.scrollY + window.innerHeight * 0.32;
+      const probe = window.innerHeight * 0.32;
       let current = sections[0];
-      for (const s of sections) if (s.offsetTop <= probe) current = s;
+      for (const s of sections) if (s.getBoundingClientRect().top <= probe) current = s;
       if (current) links.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === '#' + current.id));
       ticking = false;
     }
@@ -1193,19 +1202,29 @@ footer a:hover{color:var(--gold)}
   function initReveal(){
     const els = $$('.reveal');
     if (!els.length) return;
-    if (reduceMotion || !('IntersectionObserver' in window)){
+    if (reduceMotion){
       els.forEach(el => el.classList.add('is-visible'));
       return;
     }
-    const obs = new IntersectionObserver(entries => {
-      for (const entry of entries){
-        if (entry.isIntersecting){
-          entry.target.classList.add('is-visible');
-          obs.unobserve(entry.target);
+    let pending = false;
+    function check(){
+      const trigger = window.innerHeight * 0.92;
+      for (const el of els){
+        if (!el.classList.contains('is-visible') && el.getBoundingClientRect().top < trigger){
+          el.classList.add('is-visible');
         }
       }
-    }, {threshold:0.12, rootMargin:'0px 0px -6% 0px'});
-    els.forEach(el => obs.observe(el));
+      pending = false;
+    }
+    function onScroll(){
+      if (!pending){
+        pending = true;
+        window.requestAnimationFrame(check);
+      }
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('resize', onScroll);
+    check();
   }
 
   function initSky(){
@@ -1242,7 +1261,7 @@ footer a:hover{color:var(--gold)}
     }
 
     function frame(t){
-      if (!alive || !visible || document.hidden) return;
+      if (!alive || !visible || document.hidden){ raf = null; return; }
       ctx.clearRect(0, 0, w, h);
       for (const p of points){
         p.x += p.vx;
@@ -1494,7 +1513,7 @@ footer a:hover{color:var(--gold)}
         chip.textContent = lawLabel(law);
         status.appendChild(chip);
       }
-      status.appendChild(document.createTextNode(text));
+      status.appendChild(document.createTextNode(' ' + text));
     }
 
     function hideResult(){
@@ -1673,7 +1692,7 @@ footer a:hover{color:var(--gold)}
       {id:'and', label:'A und B', notation:'((A)(B))', desc:'A und B', ast:M(S(M(Var('A')), M(Var('B'))))},
       {id:'implies', label:'A → B', notation:'(A)B', desc:'wenn A, dann B', ast:S(M(Var('A')), Var('B'))},
       {id:'nor', label:'weder noch', notation:'(A B)', desc:'weder A noch B', ast:M(S(Var('A'), Var('B')))},
-      {id:'c2', label:'C2', notation:'A(AB)', desc:'A und nicht B — die Generation', ast:S(Var('A'), M(S(Var('A'), Var('B'))))}
+      {id:'c2', label:'C2', notation:'A(AB)', desc:'Generation — das A innen ist überflüssig', ast:S(Var('A'), M(S(Var('A'), Var('B'))))}
     ];
 
     let currentId = 'or';
@@ -1709,7 +1728,11 @@ footer a:hover{color:var(--gold)}
         btn.classList.toggle('is-true', on);
         btn.setAttribute('aria-pressed', String(on));
       });
-      $$('[data-form]', picker).forEach(b => b.classList.toggle('is-active', b.dataset.form === currentId));
+      $$('[data-form]', picker).forEach(b => {
+        const on = b.dataset.form === currentId;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-pressed', String(on));
+      });
       tbody.innerHTML = '';
       for (const a of [false, true]){
         for (const b of [false, true]){
@@ -1788,6 +1811,8 @@ footer a:hover{color:var(--gold)}
     function paint(){
       const marked = step % 2 === 0;
       stage.dataset.state = marked ? 'marked' : 'void';
+      const grid = stage.closest('.reentry-grid');
+      if (grid) grid.dataset.state = marked ? 'marked' : 'void';
       stateEl.textContent = marked ? 'markiert' : 'leer';
       stepEl.textContent = String(step);
       cells.forEach((c, i) => c.classList.toggle('is-now', i === step % 25));
