@@ -108,10 +108,12 @@ svg{display:block}
   font-size:clamp(3.4rem,11vw,8.4rem);text-wrap:balance;
 }
 .hero h1 .t1{display:block;color:var(--ink);text-shadow:0 20px 80px rgba(0,0,0,.45)}
-.hero h1 .t2{
-  display:block;font-style:italic;letter-spacing:-.02em;
-  background:linear-gradient(100deg,var(--gold-2) 0%,var(--gold) 38%,var(--rose) 100%);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
+.hero h1 .t2{display:block;font-style:italic;letter-spacing:-.02em;color:var(--gold)}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .hero h1 .t2{
+    background:linear-gradient(100deg,var(--gold-2) 0%,var(--gold) 38%,var(--rose) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
 }
 .hero-sub{max-width:660px;margin:clamp(20px,3.4vh,34px) auto 0;color:var(--ink-2);font-size:clamp(1rem,1.35vw,1.18rem);line-height:1.7}
 .hero-quote{
@@ -559,7 +561,7 @@ footer a:hover{color:var(--gold)}
   .reveal{opacity:1 !important;transform:none !important;transition:none !important}
   .grain,.progress,.dot-nav,.hero,.section:not(#mitnehmen),footer,.sources,.no-print{display:none !important}
   #mitnehmen{padding:0;max-width:none}
-  .poster{box-shadow:none;border-radius:0;background:#fff}
+  .poster{box-shadow:none;border-radius:0;background:#fff;break-inside:avoid}
   .poster .btn{display:none}
 }
 </style>
@@ -568,15 +570,15 @@ footer a:hover{color:var(--gold)}
 <div class="grain" aria-hidden="true"></div>
 <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
 <nav class="dot-nav" aria-label="Abschnitte">
-  <a href="#leere" data-label="Leere"></a>
-  <a href="#marke" data-label="Marke"></a>
-  <a href="#gesetze" data-label="Gesetze"></a>
-  <a href="#arithmetik" data-label="Rechnung"></a>
-  <a href="#algebra" data-label="Algebra"></a>
-  <a href="#wiedereintritt" data-label="Wiedereintritt"></a>
-  <a href="#beobachter" data-label="Beobachter"></a>
-  <a href="#resonanz" data-label="Resonanz"></a>
-  <a href="#mitnehmen" data-label="Karte"></a>
+  <a href="#leere" data-label="Leere" aria-label="Leere"></a>
+  <a href="#marke" data-label="Marke" aria-label="Marke"></a>
+  <a href="#gesetze" data-label="Gesetze" aria-label="Gesetze"></a>
+  <a href="#arithmetik" data-label="Rechnung" aria-label="Rechnung"></a>
+  <a href="#algebra" data-label="Algebra" aria-label="Algebra"></a>
+  <a href="#wiedereintritt" data-label="Wiedereintritt" aria-label="Wiedereintritt"></a>
+  <a href="#beobachter" data-label="Beobachter" aria-label="Beobachter"></a>
+  <a href="#resonanz" data-label="Resonanz" aria-label="Resonanz"></a>
+  <a href="#mitnehmen" data-label="Karte" aria-label="Karte"></a>
 </nav>
 
 <header class="hero" id="top">
@@ -584,7 +586,7 @@ footer a:hover{color:var(--gold)}
   <div class="hero-brand"><span>asanAI · Visuelle Notiz</span><span>Eine Einführung in Bildern</span></div>
   <div class="hero-inner">
     <div class="hero-mark" aria-hidden="true">
-      <svg viewBox="0 0 160 160">
+      <svg viewBox="0 0 160 160" aria-hidden="true">
         <path class="hero-mark-path" d="M 20 20 H 140 V 140"/>
         <circle class="hero-mark-dot" cx="20" cy="20" r="3.4"/>
       </svg>
@@ -799,9 +801,9 @@ footer a:hover{color:var(--gold)}
           <div class="form-picker" id="truth-picker"></div>
           <div class="stage truth-stage" id="truth-stage">
             <div class="truth-form" id="truth-form"></div>
-            <div class="truth-badge void" id="truth-badge">leer</div>
+            <div class="truth-badge void" id="truth-badge" aria-live="polite">leer</div>
           </div>
-          <div class="truth-reading" id="truth-reading"></div>
+          <div class="truth-reading" id="truth-reading" aria-live="polite"></div>
         </div>
         <div class="truth-right">
           <table class="truth-table">
@@ -1294,6 +1296,7 @@ footer a:hover{color:var(--gold)}
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
       }
+      if (reduceMotion){ raf = null; return; }
       raf = window.requestAnimationFrame(frame);
     }
 
