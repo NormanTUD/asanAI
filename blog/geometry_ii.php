@@ -98,8 +98,8 @@ The picture is always *a target, a family of allowed answers, keep the shadow.* 
 </div>
 
 <!-- ─── Interactive: Orthogonal Projection ─── -->
-<div style="background:#fff; padding:20px; border:1px solid #e2e8f0; border-radius:8px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); margin:20px 0;">
-	<p style="color:#64748b; font-size:0.9em; margin-top:0;">Move the point <b>P</b> (grey dot) and tilt the line (the subspace $S$). The <b>blue</b> arrow is P’s shadow on the line — its projection. The <b>red</b> arrow is the residual. No matter where you put P, the red arrow is always <b>perpendicular</b> to the line: that right angle is the entire proof. “Explained” is the fraction of P’s length the shadow captures — the single-point version of a regression’s $R^2$.</p>
+<div style="background:var(--mn-surface); padding:20px; border:1px solid var(--mn-border); border-radius:8px; box-shadow:var(--mn-shadow-sm, 0 4px 6px -1px rgba(0,0,0,0.1)); margin:20px 0;">
+	<p style="color:var(--mn-text-secondary); font-size:0.9em; margin-top:0;">Move the point <b>P</b> (grey dot) and tilt the line (the subspace $S$). The <b>blue</b> arrow is P’s shadow on the line — its projection. The <b>red</b> arrow is the residual. No matter where you put P, the red arrow is always <b>perpendicular</b> to the line: that right angle is the entire proof. “Explained” is the fraction of P’s length the shadow captures — the single-point version of a regression’s $R^2$.</p>
 	<div style="margin-bottom:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
 		<label><b>P x:</b></label>
 		<input type="range" id="geo2-proj-px" min="-4" max="4" step="0.1" value="3" style="width:120px; vertical-align:middle;">
@@ -112,7 +112,7 @@ The picture is always *a target, a family of allowed answers, keep the shadow.* 
 		<span id="geo2-proj-phiv" style="font-family:monospace; font-weight:bold; color:#2563eb;">35°</span>
 	</div>
 	<div id="geo2-projection" class="plot-container" style="width:100%; height:380px;"></div>
-	<div id="geo2-proj-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:#334155;"></div>
+	<div id="geo2-proj-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:var(--mn-text-secondary);"></div>
 </div>
 
 <div class="md" data-mathlevel="70">
@@ -155,8 +155,8 @@ The interactive shows the unit circle (white) and its image under a map with sin
 </div>
 
 <!-- ─── Interactive: SVD / the shape of a linear map ─── -->
-<div style="background:#fff; padding:20px; border:1px solid #e2e8f0; border-radius:8px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); margin:20px 0;">
-	<p style="color:#64748b; font-size:0.9em; margin-top:0;">The <b>white</b> circle is the unit circle $\lVert x\rVert = 1$. The colored <b>ellipse</b> is its image under a map that rotates by $\theta$, stretches by $\sigma_1$ and $\sigma_2$, and rotates back — “rotate, stretch, rotate.” The two colored arrows are the singular-vector axes; their lengths are exactly $\sigma_1$ and $\sigma_2$. Drag <b>σ₂ → 0</b> and the ellipse collapses to a line: the rank drops from 2 to 1.</p>
+<div style="background:var(--mn-surface); padding:20px; border:1px solid var(--mn-border); border-radius:8px; box-shadow:var(--mn-shadow-sm, 0 4px 6px -1px rgba(0,0,0,0.1)); margin:20px 0;">
+	<p style="color:var(--mn-text-secondary); font-size:0.9em; margin-top:0;">The <b>white</b> circle is the unit circle $\lVert x\rVert = 1$. The colored <b>ellipse</b> is its image under a map that rotates by $\theta$, stretches by $\sigma_1$ and $\sigma_2$, and rotates back — “rotate, stretch, rotate.” The two colored arrows are the singular-vector axes; their lengths are exactly $\sigma_1$ and $\sigma_2$. Drag <b>σ₂ → 0</b> and the ellipse collapses to a line: the rank drops from 2 to 1.</p>
 	<div style="margin-bottom:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
 		<label><b>σ₁ (major):</b></label>
 		<input type="range" id="geo2-svd-s1" min="0.2" max="4" step="0.1" value="3" style="width:130px; vertical-align:middle;">
@@ -169,7 +169,7 @@ The interactive shows the unit circle (white) and its image under a map with sin
 		<span id="geo2-svd-thv" style="font-family:monospace; font-weight:bold; color:#2563eb;">25°</span>
 	</div>
 	<div id="geo2-svd" class="plot-container" style="width:100%; height:380px;"></div>
-	<div id="geo2-svd-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:#334155;"></div>
+	<div id="geo2-svd-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:var(--mn-text-secondary);"></div>
 </div>
 
 <div class="md" data-mathlevel="60">
@@ -193,8 +193,8 @@ The *schedule* on top of this fact — momentum, Adam, learning-rate decay — i
 </div>
 
 <!-- ─── Interactive: Gradient = steepest = normal to the contours ─── -->
-<div style="background:#fff; padding:20px; border:1px solid #e2e8f0; border-radius:8px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); margin:20px 0;">
-	<p style="color:#64748b; font-size:0.9em; margin-top:0;">An anisotropic bowl $L(x,y)=\underbrace{\tfrac12(x^2/w + y^2 w)}_{\text{flat along } x\text{, steep along } y}$ with oval level sets. The grey dot is your position; the <b>red</b> arrow is $-\nabla L$, the steepest-descent direction. It is always <b>perpendicular</b> to the contour it crosses. Drag the point off the valley floor and the arrow points across the valley (the zig-zag); drag <b>valley width $w$</b> large and the zig-zag gets worse — the condition number is $w^2$.</p>
+<div style="background:var(--mn-surface); padding:20px; border:1px solid var(--mn-border); border-radius:8px; box-shadow:var(--mn-shadow-sm, 0 4px 6px -1px rgba(0,0,0,0.1)); margin:20px 0;">
+	<p style="color:var(--mn-text-secondary); font-size:0.9em; margin-top:0;">An anisotropic bowl $L(x,y)=\underbrace{\tfrac12(x^2/w + y^2 w)}_{\text{flat along } x\text{, steep along } y}$ with oval level sets. The grey dot is your position; the <b>red</b> arrow is $-\nabla L$, the steepest-descent direction. It is always <b>perpendicular</b> to the contour it crosses. Drag the point off the valley floor and the arrow points across the valley (the zig-zag); drag <b>valley width $w$</b> large and the zig-zag gets worse — the condition number is $w^2$.</p>
 	<div style="margin-bottom:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
 		<label><b>x:</b></label>
 		<input type="range" id="geo2-des-px" min="-3" max="3" step="0.05" value="1.5" style="width:120px; vertical-align:middle;">
@@ -207,7 +207,7 @@ The *schedule* on top of this fact — momentum, Adam, learning-rate decay — i
 		<span id="geo2-des-wv" style="font-family:monospace; font-weight:bold; color:#2563eb;">2.0</span>
 	</div>
 	<div id="geo2-descent" class="plot-container" style="width:100%; height:380px;"></div>
-	<div id="geo2-des-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:#334155;"></div>
+	<div id="geo2-des-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:var(--mn-text-secondary);"></div>
 </div>
 
 <div class="md" data-mathlevel="65">
@@ -241,8 +241,8 @@ This is not a curiosity. “Smooth the signal” means multiply its spectrum by 
 </div>
 
 <!-- ─── Interactive: Convolution = sliding dot product; DFT = its shape ─── -->
-<div style="background:#fff; padding:20px; border:1px solid #e2e8f0; border-radius:8px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); margin:20px 0;">
-	<p style="color:#64748b; font-size:0.9em; margin-top:0;">One 3-tap kernel $c = [c_{-1}, c_0, c_1]$ (drag the three taps) applied to a fixed signal $x$ (a short pulse on a wiggly baseline). <b>Left:</b> the time-domain result $y = c*x$ — the sliding dot product. <b>Right:</b> the frequency-domain reason: $|F(y)| = |F(c)|\cdot|F(x)|$, point by point. Make the taps a wide average and the output smooths (left) while the high frequencies get cancelled (right).</p>
+<div style="background:var(--mn-surface); padding:20px; border:1px solid var(--mn-border); border-radius:8px; box-shadow:var(--mn-shadow-sm, 0 4px 6px -1px rgba(0,0,0,0.1)); margin:20px 0;">
+	<p style="color:var(--mn-text-secondary); font-size:0.9em; margin-top:0;">One 3-tap kernel $c = [c_{-1}, c_0, c_1]$ (drag the three taps) applied to a fixed signal $x$ (a short pulse on a wiggly baseline). <b>Left:</b> the time-domain result $y = c*x$ — the sliding dot product. <b>Right:</b> the frequency-domain reason: $|F(y)| = |F(c)|\cdot|F(x)|$, point by point. Make the taps a wide average and the output smooths (left) while the high frequencies get cancelled (right).</p>
 	<div style="margin-bottom:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
 		<label><b>left $c_{-1}$:</b></label>
 		<input type="range" id="geo2-conv-c0" min="0" max="0.5" step="0.01" value="0.25" style="width:110px; vertical-align:middle;">
@@ -256,15 +256,15 @@ This is not a curiosity. “Smooth the signal” means multiply its spectrum by 
 	</div>
 	<div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center;">
 		<div style="flex:0 0 300px; max-width:100%; overflow:hidden;">
-			<div style="font-size:0.85em; color:#64748b; margin-bottom:4px;">time domain — $y = c * x$</div>
+			<div style="font-size:0.85em; color:var(--mn-text-secondary); margin-bottom:4px;">time domain — $y = c * x$</div>
 			<div id="geo2-conv-time" class="plot-container" style="width:100%; height:300px;"></div>
 		</div>
 		<div style="flex:0 0 300px; max-width:100%; overflow:hidden;">
-			<div style="font-size:0.85em; color:#64748b; margin-bottom:4px;">frequency domain — $|F(y)| = |F(c)|\cdot|F(x)|$</div>
+			<div style="font-size:0.85em; color:var(--mn-text-secondary); margin-bottom:4px;">frequency domain — $|F(y)| = |F(c)|\cdot|F(x)|$</div>
 			<div id="geo2-conv-freq" class="plot-container" style="width:100%; height:300px;"></div>
 		</div>
 	</div>
-	<div id="geo2-conv-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:#334155;"></div>
+	<div id="geo2-conv-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:var(--mn-text-secondary);"></div>
 </div>
 
 <div class="md" data-mathlevel="60">
@@ -312,15 +312,15 @@ The interactive holds a bag of six “tokens.” Drag the **shift** to reorder t
 </div>
 
 <!-- ─── Interactive: Invariance vs equivariance on a bag of tokens ─── -->
-<div style="background:#fff; padding:20px; border:1px solid #e2e8f0; border-radius:8px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); margin:20px 0;">
-	<p style="color:#64748b; font-size:0.9em; margin-top:0;">Six “tokens” (a bag). Drag <b>shift</b> to cyclically reorder them. The <b>blue</b> trace is the reordered input and the <b>orange</b> trace is a fixed per-item function of it — an <b>equivariant</b> output, so the two move together. The flat <b>green</b> line is the <b>invariant</b> readout (the mean), which does not move for any reorder. The grey trace is the original order, for reference.</p>
+<div style="background:var(--mn-surface); padding:20px; border:1px solid var(--mn-border); border-radius:8px; box-shadow:var(--mn-shadow-sm, 0 4px 6px -1px rgba(0,0,0,0.1)); margin:20px 0;">
+	<p style="color:var(--mn-text-secondary); font-size:0.9em; margin-top:0;">Six “tokens” (a bag). Drag <b>shift</b> to cyclically reorder them. The <b>blue</b> trace is the reordered input and the <b>orange</b> trace is a fixed per-item function of it — an <b>equivariant</b> output, so the two move together. The flat <b>green</b> line is the <b>invariant</b> readout (the mean), which does not move for any reorder. The grey trace is the original order, for reference.</p>
 	<div style="margin-bottom:10px; display:flex; gap:18px; flex-wrap:wrap; align-items:center;">
 		<label><b>shift (reorder):</b></label>
 		<input type="range" id="geo2-sym-shift" min="0" max="5" step="1" value="0" style="width:150px; vertical-align:middle;">
 		<span id="geo2-sym-shv" style="font-family:monospace; font-weight:bold; color:#2563eb;">0</span>
 	</div>
 	<div id="geo2-sym" class="plot-container" style="width:100%; height:380px;"></div>
-	<div id="geo2-sym-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:#334155;"></div>
+	<div id="geo2-sym-readout" style="margin-top:8px; font-family:monospace; font-size:0.9em; color:var(--mn-text-secondary);"></div>
 </div>
 
 <div class="md" data-mathlevel="55">
