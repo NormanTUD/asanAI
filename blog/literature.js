@@ -1716,6 +1716,14 @@ window.bibData = {
 		url: "https://en.wikipedia.org/wiki/Linking_number",
 		alternativetitle: "Linking number (Wikipedia)"
 	},
+	"hopf_link_image": {
+		title: "Hopf Link",
+		author: "Jim Belk",
+		year: 2010,
+		url: "https://commons.wikimedia.org/wiki/File:Hopf_Link.png",
+		license: "Public domain",
+		alternativetitle: "The Hopf link"
+	},
 	"nlab_topological_property": {
 		title: "topological property (homeomorphism invariant)",
 		author: "nLab contributors",
@@ -5826,6 +5834,14 @@ window.bibData = {
 		title: "An Essay towards solving a Problem in the Doctrine of Chances",
 		url: "https://bayes.wustl.edu/Manual/an.essay.pdf",
 		alternativetitle: "Bayes' Theorem"
+	},
+	"thomas_bayes_image": {
+		author: "Mark Riehl",
+		year: 2016,
+		title: "Thomas Bayes (colorized portrait)",
+		url: "https://commons.wikimedia.org/wiki/File:ThomasBayes.png",
+		license: "CC BY-SA 4.0",
+		alternativetitle: "Thomas Bayes"
 	},
 	"pearson1895correlation": {
 		author: "Karl Pearson",

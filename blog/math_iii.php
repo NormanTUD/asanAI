@@ -12,6 +12,7 @@ tags: math-heavy, logic-heavy
 math: 85
 -->
 <?php js("math_iii_hott"); ?>
+<?php js("math_iii_hott_geometry"); ?>
 
 <style>
 /* ── HoTT interactive lab (theme-aware, scoped by .hott-* prefix) ── */
@@ -55,6 +56,65 @@ math: 85
 .hott-chcell.types .body { font-family: var(--mn-font-mono); font-size: .95rem; }
 .hott-chcell .sub { color: var(--mn-text-secondary); font-size: .82rem; margin-top: .6rem; }
 @media (max-width: 800px) { .hott-grid2 { grid-template-columns: 1fr; } .hott-chview { grid-template-columns: 1fr; } }
+
+/* ── HoTT geometry demos (ported from test/gleichheit_ist_ein_weg.html) ── */
+.hott-canvas.hott-demo-canvas { height: clamp(260px, 42vw, 420px); touch-action: none; }
+.hott-canvas.hott-demo-canvas.tall { height: clamp(340px, 55vw, 540px); }
+.hott-tabs { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; margin: .7rem 0; }
+button.hott-step { border: 1px solid var(--mn-border); background: var(--mn-surface-raised); color: var(--mn-text-secondary); font: inherit; font-size: .82rem; cursor: pointer; padding: .42rem .8rem; border-radius: 8px; transition: all .15s; }
+button.hott-step:hover { border-color: var(--mn-accent); color: var(--mn-text); }
+button.hott-step.active { background: var(--mn-accent); color: #fff; border-color: var(--mn-accent); font-weight: 600; }
+.hott-btn.is-active, .hott-btn[aria-pressed="true"] { background: var(--mn-surface-raised); color: var(--mn-accent); box-shadow: inset 0 0 0 1px var(--mn-accent); }
+.hott-btn.primary { background: var(--mn-accent); color: #fff; }
+.hott-controls input[type=range] { background: linear-gradient(to right, var(--mn-accent) 0 var(--val, 50%), var(--mn-border) var(--val, 50%) 100%); }
+.hott-readout { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 1px; background: var(--mn-border); border: 1px solid var(--mn-border); border-radius: 8px; overflow: hidden; margin-top: .7rem; }
+.hott-ro { background: var(--mn-surface); padding: .65rem .8rem; }
+.hott-ro .k { display: block; font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: var(--mn-text-secondary); margin-bottom: 2px; }
+.hott-ro .v { font-size: .9rem; color: var(--mn-text); line-height: 1.45; font-variant-numeric: tabular-nums; }
+.hott-ro .v.acc { color: var(--mn-accent); }
+.hott-uv-wrap { display: grid; grid-template-columns: 1fr 104px 1fr; align-items: stretch; gap: 0; padding: .8rem 0; }
+.hott-uv-side { position: relative; border: 1px solid var(--mn-border); border-radius: 12px; padding: 1rem .9rem; background: var(--mn-bg-subtle); text-align: center; transition: transform .55s, border-color .45s, background .45s, box-shadow .45s; }
+.hott-uv-tag { font-size: .62rem; letter-spacing: .15em; text-transform: uppercase; color: var(--mn-text-secondary); }
+.hott-uv-name { font-family: var(--mn-font-heading); font-size: 1.05rem; color: var(--mn-text); margin-top: .2rem; }
+.hott-uv-state { font-family: var(--mn-font-heading); font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.15; color: var(--mn-accent); margin: .8rem 0 .2rem; min-height: 1.2em; }
+.hott-uv-sub { font-size: .72rem; color: var(--mn-text-secondary); }
+.hott-uv-toggle { margin-top: .8rem; width: 100%; justify-content: center; }
+.hott-uv-bridge { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; position: relative; }
+.hott-uv-bridge svg { width: 64px; height: 34px; overflow: visible; opacity: .75; transition: opacity .4s; }
+.hott-uv-bridge svg path { stroke: var(--mn-accent); stroke-width: 1.2; fill: none; stroke-dasharray: 3 4; }
+.hott-uv-eq { font-family: var(--mn-font-heading); font-size: 2rem; line-height: 1; color: var(--mn-accent); transition: transform .55s; text-shadow: 0 0 26px var(--mn-accent); }
+.hott-uv-eq-label { font-size: .58rem; letter-spacing: .14em; text-transform: uppercase; color: var(--mn-text-secondary); text-align: center; }
+.hott-uv-banner { margin: 0; max-height: 0; overflow: hidden; text-align: center; font-family: var(--mn-font-heading); font-size: 1rem; color: var(--mn-accent); opacity: 0; transition: max-height .45s, opacity .45s, padding .45s; }
+.hott-uv-banner.show { max-height: 60px; opacity: 1; padding: .6rem; }
+.hott-uv-wrap.is-univalent .hott-uv-side { border-color: var(--mn-accent); background: var(--mn-accent-lighter); box-shadow: 0 0 42px -14px var(--mn-accent); }
+.hott-uv-wrap.is-univalent .hott-uv-side.left { transform: translateX(16px); }
+.hott-uv-wrap.is-univalent .hott-uv-side.right { transform: translateX(-16px); }
+.hott-uv-wrap.is-univalent .hott-uv-bridge svg { opacity: 0; }
+.hott-uv-wrap.is-univalent .hott-uv-eq { transform: scale(1.5); }
+.hott-uv-hint { padding: .2rem 0 .6rem; font-size: .8rem; color: var(--mn-text-secondary); text-align: center; }
+.hott-uv-hint b { color: var(--mn-text); font-weight: 500; }
+.hott-lift-wrap, .hott-orient-wrap { padding: .7rem .2rem 0; margin-top: .4rem; }
+.hott-lift-head, .hott-orient-head { display: flex; align-items: center; justify-content: space-between; font-size: .64rem; letter-spacing: .12em; text-transform: uppercase; color: var(--mn-text-secondary); margin-bottom: .4rem; }
+.hott-lift-head b, .hott-orient-head b { font-family: var(--mn-font-mono); font-size: .72rem; letter-spacing: 0; color: var(--mn-accent); font-weight: 500; }
+.hott-lift-track { position: relative; height: 20px; margin: 0 .4rem .8rem; }
+.hott-lift-track::before { content: ""; position: absolute; left: 0; right: 0; top: 9px; height: 1px; background: var(--mn-border); }
+.hott-lift-tick { position: absolute; top: 14px; transform: translateX(-50%); font-size: .58rem; color: var(--mn-text-secondary); font-variant-numeric: tabular-nums; }
+.hott-lift-tick::before { content: ""; position: absolute; left: 50%; top: -8px; width: 1px; height: 4px; background: var(--mn-border); }
+.hott-lift-dot { position: absolute; top: 4px; left: 50%; width: 11px; height: 11px; margin-left: -5.5px; border-radius: 50%; background: var(--mn-accent); box-shadow: 0 0 0 4px var(--mn-accent-lighter), 0 0 16px var(--mn-accent); transition: left .45s cubic-bezier(.2, .8, .2, 1); }
+.hott-glue-steps { display: flex; align-items: center; justify-content: center; gap: .6rem; padding: .7rem 0 0; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--mn-text-secondary); }
+.hott-gstep { padding: .2rem .55rem; border-radius: 99px; border: 1px solid transparent; transition: all .3s; }
+.hott-gstep.is-on { color: var(--mn-accent); background: var(--mn-accent-lighter); border-color: var(--mn-accent); }
+.hott-gline { width: 34px; height: 1px; background: var(--mn-border); }
+.hott-orient-track { position: relative; height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--mn-rose), var(--mn-border) 50%, var(--mn-emerald)); overflow: hidden; }
+.hott-orient-zero { position: absolute; left: 50%; top: -3px; width: 1px; height: 12px; background: var(--mn-border); z-index: 2; }
+.hott-orient-fill { position: absolute; top: 0; left: 50%; height: 100%; background: var(--mn-accent); opacity: .8; border-radius: 99px; transition: left .15s, width .15s; }
+.hott-orient-scale { display: flex; justify-content: space-between; margin: .35rem .1rem .6rem; font-size: .58rem; letter-spacing: .06em; color: var(--mn-text-secondary); }
+@media (max-width: 800px) {
+	.hott-uv-wrap { grid-template-columns: 1fr; gap: .6rem; }
+	.hott-uv-bridge { flex-direction: row; }
+	.hott-uv-wrap.is-univalent .hott-uv-side.left { transform: translateY(5px); }
+	.hott-uv-wrap.is-univalent .hott-uv-side.right { transform: translateY(-5px); }
+}
 </style>
 
 <div class="md" data-lesson-id="math-iii">
@@ -190,7 +250,7 @@ Classical statistics warns: **as dimensionality grows, geometry breaks down**.
 
 * **Distance concentration**: in $d$ dimensions, the ratio between the nearest and farthest distance from a point to its $k$ nearest neighbors approaches 1 as $d \to \infty$. All points become roughly equidistant.
 
-* **Volume explosion**: the unit cube in $d$ dimensions has volume 1, but most of its volume is in the corners. A uniform sample from the cube is almost always close to a corner.
+* **Volume explosion**: the unit cube in $d$ dimensions has volume 1, but almost all of that volume lies in a thin shell near its surface, not in its interior. A uniform sample from the cube is therefore almost surely close to the boundary.
 
 * **Sample complexity**: to densely cover a $d$-dimensional unit cube with samples, you need exponentially many samples as $d$ grows. With $d = 100$ and 10 samples per axis, you need $10^{100}$ samples, more than atoms in the universe.
 
@@ -234,7 +294,7 @@ $$
 
 In words: as dimension $d$ grows, the probability of deviating from the mean shrinks **exponentially**. Random high-dimensional vectors are almost deterministic in their statistical properties.
 
-This is why a 70B-parameter LLM, despite the vast size of its hypothesis space, behaves reliably on novel inputs: high-dimensional concentration ensures that any new input is “close” (in cosine similarity) to many training examples.
+This concentration is one reason a 70B-parameter LLM can behave reliably on novel inputs: in high dimensions, random directions interfere far less than low-dimensional intuition suggests, and the model's representations remain comparatively stable under small perturbations. It does not by itself guarantee that a new input resembles the training data.
 </div>
 
 <div class="md" data-mathlevel="60">
@@ -242,7 +302,7 @@ This is why a 70B-parameter LLM, despite the vast size of its hypothesis space, 
 
 A corollary of the blessing: real-world data does not actually fill high-dimensional space. A photo of a face lives on a low-dimensional **manifold**, the space of all possible faces, embedded in a much higher-dimensional pixel space. The intrinsic dimensionality of “face-ness” might be ~100, even though a $1024 \times 1024$ image has over a million dimensions.
 
-Neural networks work because they learn to **parameterize these manifolds**. Each layer progressively deforms the high-dimensional space so that the manifold becomes linearly separable at the output. The “universal approximation” theorem applies to functions on compact subsets of $\mathbb{R}^d$, and a manifold is exactly such a subset.
+Neural networks work because they learn to **parameterize these manifolds**. Each layer progressively deforms the high-dimensional space so that the manifold becomes linearly separable at the output. The “universal approximation” theorem applies to functions on compact subsets of $\mathbb{R}^d$, and a compact manifold is exactly such a subset.
 
 This is why deep learning is so effective on images, audio, and text: each of these modalities has low intrinsic dimensionality, and neural networks are essentially manifold learners.
 </div>
@@ -482,6 +542,28 @@ A **type** is a set with discipline: every object has exactly one type, and the 
 </div>
 
 <div class="md" data-mathlevel="65">
+### A type is a space
+
+The slogan is easiest to believe once it is on screen. Pick a type below — a single point, the interval, a two-element type, the circle $S^1$, the sphere $S^2$, or the torus $T^2$. The drawing is not decoration: the **shape** of the type decides which equalities it can have. A point and an interval can be contracted to nothing; two separate points have no path between them at all; the circle has a loop that no continuous deformation can remove. This is the geometric reading of type theory developed in the \citetitle{hottbook} (\citeyear{hottbook}).
+</div>
+
+<div class="hott-card" id="hott-spaceDemo">
+	<div class="hott-card-title"><span class="dot"></span>Types as spaces</div>
+	<p class="hott-lead">Choose a shape. Points are values; the lines and loops are the equalities available in that type.</p>
+	<canvas id="hott-spaceCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="380"></canvas>
+	<div class="hott-tabs" id="hott-spaceTabs" role="group" aria-label="Choose a type">
+		<button class="hott-step" data-space="point" aria-pressed="false">Point</button>
+		<button class="hott-step" data-space="interval" aria-pressed="false">Interval</button>
+		<button class="hott-step" data-space="two" aria-pressed="false">Two points</button>
+		<button class="hott-step active" data-space="circle" aria-pressed="true">Circle</button>
+		<button class="hott-step" data-space="sphere" aria-pressed="false">Sphere</button>
+		<button class="hott-step" data-space="torus" aria-pressed="false">Torus</button>
+		<span class="hott-pill" id="hott-spaceLevel">1-type</span>
+	</div>
+	<div class="hott-readout" id="hott-spaceReadout"></div>
+</div>
+
+<div class="md" data-mathlevel="65">
 ### Prerequisite: homotopy — when are two paths "the same"?
 
 Recall the core slogan: **types are spaces, terms are points, equalities are paths.** But *what* is a path, really? Two routes from $a$ to $b$ count as "the same" when you can **continuously deform** one into the other without lifting the endpoints. That is a **homotopy**. The slider below deforms a blue start-path into a purple target-path; the white curve in between is the homotopy at that instant. And here is the twist that makes the subject deep: in a space with a **hole**, some paths simply cannot be deformed into each other — the hole is an obstacle the deformation would have to pass through.
@@ -524,6 +606,27 @@ Now the marriage of the two prerequisites. Instead of treating $a = b$ as a bare
 	<div class="hott-math" id="hott-idMath"></div>
 </div>
 
+<div class="md" data-mathlevel="75">
+### One equality, many proofs
+
+If a proof of $a = b$ is a path, then two different proofs are two different paths with the same endpoints. Drag $a$ or $b$, bend the path, run it backwards, or show $\mathrm{refl}$. The endpoints stay fixed while the path changes continuously — that deformation is itself a homotopy. The point of the readout is the point of the whole subject: the *object* $p : a \equiv b$ carries structure that a boolean <code>true</code> could never carry.
+</div>
+
+<div class="hott-card" id="hott-pathDemo">
+	<div class="hott-card-title"><span class="dot"></span>The path workshop</div>
+	<p class="hott-lead">Drag the endpoints. The proof-path follows them; the slider bends it without ever lifting the ends.</p>
+	<canvas id="hott-pathCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="420"></canvas>
+	<div class="hott-controls">
+		<div class="hott-control"><label>Deformation <b id="hott-pathT">0%</b></label><input type="range" id="hott-pathSlider" min="0" max="100" value="0"></div>
+		<button id="hott-pathAuto" class="hott-btn" aria-pressed="false">Breathe</button>
+		<button id="hott-pathReverse" class="hott-btn" aria-pressed="false">Reverse</button>
+		<button id="hott-pathRefl" class="hott-btn">Show refl</button>
+		<button id="hott-pathReset" class="hott-btn">Reset</button>
+	</div>
+	<div class="hott-readout" id="hott-pathReadout"></div>
+	<p class="hott-lead">Blue and purple ghosts are the two extreme paths; the bright curve is the current proof. Reversing it gives $p^{-1}$; <code>refl</code> collapses both endpoints to the same point.</p>
+</div>
+
 <div class="md">
 ### Core idea: paths between paths, all the way up
 
@@ -541,6 +644,142 @@ If paths are objects, can two paths be *equal*? Yes — by a **path between the 
 </div>
 
 <div class="hott-callout a"><b>What that buys AI.</b> "Two networks do the same thing" is a level-1 statement. "Two <em>proofs</em> that they do the same thing are equivalent" is level 2. A refactoring, a reparameterization, a fine-tune that provably changes nothing — all become things you can <em>justify formally</em>, not just hope about.</div>
+
+<div class="md" data-mathlevel="75">
+### Equality has levels
+
+Two paths $p$ and $q$ between the same endpoints can themselves be equal. A **2-path** $\alpha : p \equiv q$ is a surface between them: every horizontal slice of that surface is an intermediate path, and the surface is the proof that the proofs agree. This is the first step of the infinite tower — and it is where equality stops looking like a bit and starts looking like geometry.
+</div>
+
+<div class="hott-card" id="hott-surfaceDemo">
+	<div class="hott-card-title"><span class="dot"></span>A surface between two proofs</div>
+	<p class="hott-lead">Drag the handle to change the bulge. The highlighted slice is the current intermediate path; the whole band is the 2-path $\alpha : p \equiv q$.</p>
+	<canvas id="hott-surfaceCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="420"></canvas>
+	<div class="hott-controls">
+		<div class="hott-control"><label>Intermediate path <b id="hott-surfaceS">50%</b></label><input type="range" id="hott-surfaceSlider" min="0" max="100" value="50"></div>
+		<button id="hott-surfaceAuto" class="hott-btn is-active" aria-pressed="true">Breathe</button>
+		<button id="hott-surfaceReset" class="hott-btn">Reset</button>
+	</div>
+	<div class="hott-readout" id="hott-surfaceReadout"></div>
+</div>
+
+<div class="md" data-mathlevel="75">
+### The circle counts its loops
+
+Fix the base point of $S^1$. A loop that winds around $n$ times cannot be deformed into one that winds around $m \neq n$ times. The **winding number** is an integer, loops compose by addition, and running a loop backwards negates it. That is the fundamental group: $\pi_1(S^1) \cong \mathbb{Z}$ (\cite[HoTT Book, Ch. 6]{hottbook}). Choose two winding numbers, compose them, and watch the lift to the number line count the total.
+</div>
+
+<div class="hott-card" id="hott-loopDemo">
+	<div class="hott-card-title"><span class="dot"></span>The loop laboratory</div>
+	<p class="hott-lead">Loops on $S^1$ are classified by an integer. Composition is addition; the lift above the circle records the running total.</p>
+	<canvas id="hott-loopCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="420"></canvas>
+	<div class="hott-controls">
+		<div class="hott-control"><label>Loop a <b id="hott-loopAVal">+1</b></label><input type="range" id="hott-loopA" min="-3" max="3" step="1" value="1"></div>
+		<div class="hott-control"><label>Loop b <b id="hott-loopBVal">+1</b></label><input type="range" id="hott-loopB" min="-3" max="3" step="1" value="1"></div>
+		<button id="hott-loopPlay" class="hott-btn">Compose</button>
+		<button id="hott-loopReset" class="hott-btn">Reset</button>
+	</div>
+	<div class="hott-lift-wrap" aria-hidden="true">
+		<div class="hott-lift-head"><span>Lift to the number line</span><b id="hott-liftValue">+2</b></div>
+		<div class="hott-lift-track">
+			<span class="hott-lift-tick" style="left:0%">&minus;6</span>
+			<span class="hott-lift-tick" style="left:25%">&minus;3</span>
+			<span class="hott-lift-tick" style="left:50%">0</span>
+			<span class="hott-lift-tick" style="left:75%">+3</span>
+			<span class="hott-lift-tick" style="left:100%">+6</span>
+			<span class="hott-lift-dot" id="hott-liftDot"></span>
+		</div>
+	</div>
+	<div class="hott-readout" id="hott-loopReadout" aria-live="polite"></div>
+</div>
+
+<div class="md" data-mathlevel="80">
+### Types built from paths
+
+A higher inductive type is allowed to declare **paths** as constructors, not only points. The circle is the smallest example: one point, and one loop from that point to itself. Equivalently, take the interval and declare its two endpoints equal. The slider performs that quotient in front of you: at the end, $0$ and $1$ are the same point and the interval has become a loop (\cite[HoTT Book, Ch. 6]{hottbook}).
+</div>
+
+<div class="hott-card" id="hott-glueDemo">
+	<div class="hott-card-title"><span class="dot"></span>Gluing the interval into a circle</div>
+	<p class="hott-lead">The interval $[0,1]$ becomes $S^1$ when $0$ and $1$ are identified. Watch the ends meet.</p>
+	<canvas id="hott-glueCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="380"></canvas>
+	<div class="hott-controls">
+		<div class="hott-control"><label>Gluing <b id="hott-glueT">0%</b></label><input type="range" id="hott-glueSlider" min="0" max="100" value="0"></div>
+		<button id="hott-gluePlay" class="hott-btn">Glue once</button>
+		<button id="hott-glueReset" class="hott-btn">Reset</button>
+	</div>
+	<div class="hott-glue-steps" id="hott-glueSteps" aria-hidden="true">
+		<span class="hott-gstep is-on">Interval</span>
+		<span class="hott-gline"></span>
+		<span class="hott-gstep">Arc</span>
+		<span class="hott-gline"></span>
+		<span class="hott-gstep">Circle</span>
+	</div>
+	<div class="hott-readout" id="hott-glueReadout"></div>
+</div>
+
+<div class="md" data-mathlevel="85">
+### What is isomorphic is identical
+
+Two worlds can have exactly the same structure and still be written down differently: a switch with states off/on, and a parity type with states even/odd. They are plainly equivalent. **Univalence** upgrades that equivalence to an identity — a path between the types — and then any structure proved on one side transports to the other. What univalence does *not* do is identify types that are not equivalent: it is a sharp criterion, not a blender.
+</div>
+
+<div class="hott-card" id="hott-univalenceDemo">
+	<div class="hott-card-title"><span class="dot"></span>The identity machine</div>
+	<p class="hott-lead">Both cards describe the same two-state structure. Apply univalence to turn the equivalence into an identity.</p>
+	<div class="hott-uv-banner" id="hott-uvBanner" aria-live="polite">A &simeq; B &nbsp;&rarr;&nbsp; A = B</div>
+	<div class="hott-uv-wrap" id="hott-uvWrap">
+		<div class="hott-uv-side left">
+			<div class="hott-uv-tag">World A</div>
+			<div class="hott-uv-name">The switch</div>
+			<div class="hott-uv-state" id="hott-uvStateA">OFF</div>
+			<div class="hott-uv-sub">two states &middot; toggle</div>
+			<button class="hott-btn hott-uv-toggle" id="hott-uvBtnA" aria-pressed="false">Toggle</button>
+		</div>
+		<div class="hott-uv-bridge" aria-hidden="true">
+			<svg viewBox="0 0 64 34"><path d="M2 17 C18 2 46 2 62 17"/><path d="M62 17 C46 32 18 32 2 17"/></svg>
+			<div class="hott-uv-eq" id="hott-uvEq">&simeq;</div>
+			<div class="hott-uv-eq-label" id="hott-uvEqLabel">equivalence</div>
+		</div>
+		<div class="hott-uv-side right">
+			<div class="hott-uv-tag">World B</div>
+			<div class="hott-uv-name">The parity</div>
+			<div class="hott-uv-state" id="hott-uvStateB">EVEN</div>
+			<div class="hott-uv-sub">two states &middot; toggle</div>
+			<button class="hott-btn hott-uv-toggle" id="hott-uvBtnB" aria-pressed="false">Toggle</button>
+		</div>
+	</div>
+	<div class="hott-uv-hint" id="hott-uvHint">Both worlds have the same structure. Apply univalence to make the equivalence a path.</div>
+	<div class="hott-controls">
+		<button class="hott-btn" id="hott-uvUnivalence" aria-pressed="false">Apply univalence</button>
+		<button class="hott-btn" id="hott-uvReset">Reset</button>
+	</div>
+	<div class="hott-readout" id="hott-uvReadout" aria-live="polite"></div>
+</div>
+
+<div class="md" data-mathlevel="85">
+### A loop can change what you carry
+
+A type can depend on a point: over every point of a base space sits a fibre, and **transport** carries an element along a path in the base. If the fibres are little arrows glued with a half twist, the total space is a **Möbius strip**. Go once around the base circle and the fibre returns *reflected*. This is monodromy: the path itself matters, not only its endpoints. It is the reason dependent types are more expressive than a bare family of sets.
+</div>
+
+<div class="hott-card" id="hott-mobiusDemo">
+	<div class="hott-card-title"><span class="dot"></span>Transport along a loop</div>
+	<p class="hott-lead">Drag to turn the surface. Send the fibre once around the loop: on the Möbius strip it comes back mirrored, on the cylinder it does not.</p>
+	<canvas id="hott-mobiusCanvas" class="hott-canvas hott-demo-canvas tall" width="1000" height="520"></canvas>
+	<div class="hott-controls">
+		<button class="hott-btn is-active" id="hott-mobiusToggle" aria-pressed="true">Möbius strip</button>
+		<div class="hott-control"><label>Position <b id="hott-mobiusT">0%</b></label><input type="range" id="hott-mobiusSlider" min="0" max="100" value="0"></div>
+		<button class="hott-btn" id="hott-mobiusPlay">Once around</button>
+		<button class="hott-btn" id="hott-mobiusReset">Reset view</button>
+	</div>
+	<div class="hott-orient-wrap" aria-hidden="true">
+		<div class="hott-orient-head"><span>Fibre &middot; start fibre</span><b id="hott-mobiusDot">+1.00</b></div>
+		<div class="hott-orient-track"><span class="hott-orient-zero"></span><span class="hott-orient-fill" id="hott-mobiusGauge"></span></div>
+		<div class="hott-orient-scale"><span>&minus;1 mirrored</span><span>0</span><span>+1 unchanged</span></div>
+	</div>
+	<div class="hott-readout" id="hott-mobiusReadout"></div>
+</div>
 
 <div class="md">
 ### Application: formal verification of AI

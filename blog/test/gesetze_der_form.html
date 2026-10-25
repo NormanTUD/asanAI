@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gesetze der Form — eine visuelle Reise</title>
+<meta name="description" content="George Spencer-Browns Laws of Form, visualisiert: Unterscheidung, Marke, die zwei Gesetze, primäre Arithmetik, Algebra, Wiedereintritt und der Beobachter.">
+<style>
+:root{
+  --bg:#05070c;
+  --bg-2:#080c14;
+  --ink:#f4efe4;
+  --ink-2:#d9d2c4;
+  --muted:#9aa1ad;
+  --faint:#6b7280;
+  --line:rgba(244,239,228,.10);
+  --line-2:rgba(244,239,228,.055);
+  --gold:#f5b45f;
+  --gold-2:#ffd094;
+  --gold-dim:rgba(245,180,95,.14);
+  --cyan:#7bd8d0;
+  --cyan-dim:rgba(123,216,208,.12);
+  --violet:#b8a1ff;
+  --violet-dim:rgba(184,161,255,.12);
+  --rose:#ff9ba0;
+  --paper:#f2ecdf;
+  --paper-2:#e9e1d1;
+  --paper-ink:#1b1711;
+  --paper-muted:#6b5f4d;
+  --paper-accent:#a45b22;
+  --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Palatino,Georgia,"Times New Roman",serif;
+  --sans:"Avenir Next","Segoe UI",Inter,system-ui,-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+  --mono:"SFMono-Regular",ui-monospace,"Cascadia Code",Menlo,Consolas,monospace;
+  --r:28px;
+  --ease:cubic-bezier(.22,.8,.22,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:
+    radial-gradient(1100px 760px at 72% -8%,rgba(245,180,95,.065),transparent 62%),
+    radial-gradient(900px 680px at 8% 42%,rgba(123,216,208,.045),transparent 62%),
+    radial-gradient(800px 700px at 92% 86%,rgba(184,161,255,.04),transparent 62%),
+    var(--bg);
+  color:var(--ink);
+  font-family:var(--serif);
+  line-height:1.7;
+  overflow-x:hidden;
+}
+::selection{background:rgba(245,180,95,.28);color:#fff}
+a{color:inherit}
+button{font:inherit;color:inherit}
+svg{display:block}
+.grain{
+  position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.045;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.86' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .92  0 0 0 0 .86  0 0 0 0 .72  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  mix-blend-mode:overlay;
+}
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:70;background:rgba(255,255,255,.03)}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--gold),var(--violet));box-shadow:0 0 12px rgba(245,180,95,.5)}
+.dot-nav{
+  position:fixed;right:26px;top:50%;transform:translateY(-50%);z-index:50;
+  display:flex;flex-direction:column;gap:13px;align-items:flex-end;
+}
+.dot-nav a{
+  position:relative;display:block;width:8px;height:8px;border-radius:50%;
+  background:rgba(244,239,228,.22);text-decoration:none;transition:all .35s var(--ease);
+}
+.dot-nav a::after{
+  content:attr(data-label);position:absolute;right:18px;top:50%;transform:translateY(-50%) translateX(6px);
+  font-family:var(--sans);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);white-space:nowrap;opacity:0;pointer-events:none;transition:all .3s var(--ease);
+}
+.dot-nav a:hover{background:var(--gold)}
+.dot-nav a:hover::after{opacity:1;transform:translateY(-50%) translateX(0)}
+.dot-nav a.is-active{width:10px;height:10px;background:var(--gold);box-shadow:0 0 14px rgba(245,180,95,.7)}
+.hero{
+  position:relative;min-height:100svh;display:grid;place-items:center;
+  padding:clamp(90px,12vh,150px) 24px 100px;text-align:center;overflow:hidden;isolation:isolate;
+}
+#sky{position:absolute;inset:0;width:100%;height:100%;z-index:-2;opacity:.9}
+.hero::after{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 42%,transparent 0%,rgba(5,7,12,.18) 48%,rgba(5,7,12,.82) 100%);
+}
+.hero-inner{position:relative;z-index:1;max-width:1000px}
+.hero-brand{
+  position:absolute;top:28px;left:32px;right:32px;display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--sans);font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--faint);
+}
+.hero-brand span:last-child{color:var(--muted)}
+.hero-mark{width:clamp(84px,11vw,132px);margin:0 auto clamp(18px,4vh,34px);filter:drop-shadow(0 0 22px rgba(245,180,95,.35))}
+.hero-mark-path{
+  fill:none;stroke:var(--gold);stroke-width:3.4;stroke-linecap:round;
+  stroke-dasharray:280;stroke-dashoffset:280;animation:drawMark 2.2s .35s var(--ease) forwards;
+}
+@keyframes drawMark{to{stroke-dashoffset:0}}
+.hero-mark-dot{fill:var(--gold);opacity:0;animation:dotIn .5s 2.3s var(--ease) forwards}
+@keyframes dotIn{to{opacity:1}}
+.kicker{
+  font-family:var(--sans);font-size:.68rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--gold);display:inline-flex;align-items:center;gap:12px;
+}
+.kicker::before{content:"";width:34px;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.hero h1{
+  margin:clamp(16px,3vh,26px) 0 0;font-weight:400;letter-spacing:-.035em;line-height:.94;
+  font-size:clamp(3.4rem,11vw,8.4rem);text-wrap:balance;
+}
+.hero h1 .t1{display:block;color:var(--ink);text-shadow:0 20px 80px rgba(0,0,0,.45)}
+.hero h1 .t2{
+  display:block;font-style:italic;letter-spacing:-.02em;
+  background:linear-gradient(100deg,var(--gold-2) 0%,var(--gold) 38%,var(--rose) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero-sub{max-width:660px;margin:clamp(20px,3.4vh,34px) auto 0;color:var(--ink-2);font-size:clamp(1rem,1.35vw,1.18rem);line-height:1.7}
+.hero-quote{
+  margin:clamp(26px,4.4vh,44px) auto 0;max-width:620px;padding-top:22px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:clamp(.94rem,1.1vw,1.02rem);
+}
+.hero-quote em{color:var(--gold-2);font-style:italic}
+.hero-quote .de{display:block;margin-top:4px;font-family:var(--sans);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+.scroll-hint{
+  position:absolute;left:50%;bottom:30px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;
+  color:var(--faint);font-family:var(--sans);font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;
+}
+.scroll-hint i{display:block;width:1px;height:42px;background:linear-gradient(180deg,var(--gold),transparent);animation:scrollLine 2.4s var(--ease) infinite}
+@keyframes scrollLine{0%,100%{transform:scaleY(.35);transform-origin:top;opacity:.4}50%{transform:scaleY(1);opacity:1}}
+main{position:relative;z-index:2}
+.section{max-width:1180px;margin:0 auto;padding:clamp(84px,12vw,150px) 24px}
+.section-head{max-width:800px;margin-bottom:clamp(34px,5vw,56px)}
+.section-head h2{
+  margin:.34em 0 .42em;font-weight:400;font-size:clamp(2.15rem,5.4vw,4.4rem);line-height:1.02;
+  letter-spacing:-.03em;text-wrap:balance;
+}
+.lead{max-width:66ch;color:var(--ink-2);font-size:clamp(1.08rem,1.6vw,1.34rem);line-height:1.72}
+.prose{max-width:68ch;color:#c8c2b7;font-size:1.06rem;line-height:1.86}
+.prose p+p{margin-top:1.05em}
+.prose strong{color:var(--ink);font-weight:600}
+.prose em{color:var(--ink-2)}
+.prose a{color:var(--gold-2);text-decoration:none;border-bottom:1px solid rgba(245,180,95,.35);transition:border-color .25s}
+.prose a:hover{border-color:var(--gold)}
+.prose .mono{font-family:var(--mono);font-size:.9em;color:var(--ink);background:rgba(255,255,255,.045);padding:.1em .38em;border-radius:5px}
+.pullquote{
+  position:relative;max-width:760px;margin:clamp(36px,5vw,58px) 0;padding:6px 0 6px clamp(20px,3vw,34px);
+  border-left:2px solid var(--gold);color:var(--ink);font-size:clamp(1.2rem,2.1vw,1.6rem);font-style:italic;line-height:1.5;
+}
+.pullquote cite{
+  display:block;margin-top:16px;font-family:var(--sans);font-size:.66rem;font-style:normal;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--muted);
+}
+.note{
+  max-width:70ch;margin-top:28px;padding:18px 22px;border:1px solid var(--line-2);border-radius:16px;
+  background:rgba(255,255,255,.022);color:var(--muted);font-family:var(--sans);font-size:.88rem;line-height:1.7;
+}
+.note strong{color:var(--ink-2);font-weight:600}
+.panel{
+  position:relative;border-radius:var(--r);border:1px solid var(--line);overflow:hidden;
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012));
+  box-shadow:0 34px 90px -44px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.045);
+}
+.panel::before{
+  content:"";position:absolute;inset:-1px;pointer-events:none;
+  background:radial-gradient(640px 340px at 50% -20%,rgba(245,180,95,.11),transparent 72%);
+}
+.panel>*{position:relative;z-index:1}
+.panel-pad{padding:clamp(20px,3.6vw,38px)}
+.panel-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px 20px;margin-bottom:26px}
+.panel-title{font-size:clamp(1.1rem,1.7vw,1.34rem);letter-spacing:-.01em}
+.panel-tag{font-family:var(--sans);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.stage{
+  position:relative;border-radius:20px;border:1px solid var(--line-2);overflow:hidden;
+  background:
+    linear-gradient(rgba(255,255,255,.017) 1px,transparent 1px) 0 0/100% 34px,
+    linear-gradient(90deg,rgba(255,255,255,.017) 1px,transparent 1px) 0 0/34px 100%,
+    radial-gradient(ellipse at 50% 44%,rgba(245,180,95,.055),transparent 64%),
+    rgba(0,0,0,.18);
+  display:grid;place-items:center;
+}
+.stage::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 52%,rgba(0,0,0,.34) 100%);
+}
+.stage.is-marked{background-color:rgba(245,180,95,.03)}
+.stage.is-void{background-color:rgba(123,216,208,.025)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 17px;border-radius:999px;border:1px solid rgba(245,180,95,.34);
+  background:transparent;color:var(--gold-2);cursor:pointer;text-decoration:none;
+  font-family:var(--sans);font-size:.78rem;font-weight:600;letter-spacing:.06em;
+  transition:transform .25s var(--ease),background .25s,border-color .25s,box-shadow .25s,color .25s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn:hover{transform:translateY(-1px);background:rgba(245,180,95,.09);border-color:var(--gold);box-shadow:0 8px 26px -14px rgba(245,180,95,.8)}
+.btn:active{transform:translateY(0)}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.btn--primary{background:var(--gold);border-color:var(--gold);color:#1a1208;box-shadow:0 10px 34px -16px rgba(245,180,95,.9)}
+.btn--primary:hover{background:var(--gold-2);border-color:var(--gold-2);color:#1a1208}
+.btn--ghost{border-color:var(--line);color:var(--muted)}
+.btn--ghost:hover{color:var(--ink);border-color:rgba(244,239,228,.24);background:rgba(255,255,255,.04);box-shadow:none}
+.chip{
+  display:inline-flex;align-items:center;justify-content:center;padding:7px 12px;border-radius:999px;
+  border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.02em;transition:all .25s var(--ease);
+}
+.chip:hover{color:var(--ink);border-color:rgba(244,239,228,.25);background:rgba(255,255,255,.04)}
+.chip.is-active{color:#1a1208;background:var(--gold);border-color:var(--gold)}
+.caption{font-family:var(--sans);font-size:.72rem;letter-spacing:.06em;color:var(--faint);text-align:center;line-height:1.6}
+.caption b{color:var(--muted);font-weight:600}
+.caption-top{margin-bottom:12px}
+.caption-bottom{margin-top:14px}
+.mono{font-family:var(--mono)}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.reveal.is-visible{opacity:1;transform:none}
+.void-panel{padding:clamp(16px,2.6vw,26px)}
+.void-stage{position:relative;aspect-ratio:16/9;width:100%;border-radius:18px;overflow:hidden;cursor:crosshair;outline:none;background:rgba(0,0,0,.16)}
+.void-stage:focus-visible{box-shadow:inset 0 0 0 2px var(--gold)}
+.void-svg{position:absolute;inset:0;width:100%;height:100%}
+.void-hint{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  text-align:center;padding:24px;transition:opacity .6s var(--ease);pointer-events:none;
+}
+.void-hint strong{font-weight:400;font-size:clamp(1.15rem,2.4vw,1.6rem);color:var(--ink-2);font-style:italic}
+.void-hint span{font-family:var(--sans);font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+.void-stage.is-drawn .void-hint{opacity:0}
+.void-mark{fill:none;stroke:var(--gold);stroke-width:3.2;stroke-linecap:round;filter:drop-shadow(0 0 10px rgba(245,180,95,.5));stroke-dasharray:320;stroke-dashoffset:320}
+.void-stage.is-drawn .void-mark{animation:voidDraw .9s var(--ease) forwards}
+@keyframes voidDraw{to{stroke-dashoffset:0}}
+.void-inside{fill:url(#insideGrad);opacity:0;transition:opacity .8s var(--ease)}
+.void-inside.is-on{opacity:1}
+.void-label{font-family:var(--sans);font-size:13px;letter-spacing:.28em;text-transform:uppercase;opacity:0;transition:opacity .7s .2s var(--ease)}
+.void-label.is-on{opacity:1}
+.void-label.in{fill:var(--gold);opacity:.85}
+.void-label.out{fill:var(--cyan);opacity:.7}
+.void-controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
+.void-caption{font-family:var(--sans);font-size:.78rem;color:var(--muted);line-height:1.55;max-width:62ch}
+.void-caption strong{color:var(--ink-2);font-weight:600}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px}
+.legend-item{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:.72rem;letter-spacing:.05em;color:var(--muted)}
+.legend-item .glyph-mark{width:16px;height:16px}
+.legend-item .glyph-void{width:10px;height:10px;border-radius:50%;border:1px solid var(--cyan);opacity:.7}
+.glyph-mark{display:inline-block;border-top:2px solid var(--gold);border-right:2px solid var(--gold);vertical-align:middle}
+.anatomy{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(22px,4vw,44px);align-items:center}
+.anatomy-stage{border-radius:20px;border:1px solid var(--line-2);overflow:hidden;background:radial-gradient(ellipse at 50% 40%,rgba(245,180,95,.06),transparent 62%),rgba(0,0,0,.18)}
+.anatomy-stage svg{width:100%;height:auto}
+.part{transition:opacity .45s var(--ease),filter .45s var(--ease)}
+.part--outside{fill:rgba(123,216,208,.035)}
+.part--inside{fill:url(#insideGrad2)}
+.part--line{fill:none;stroke:var(--gold);stroke-width:3.4;stroke-linecap:round;filter:drop-shadow(0 0 8px rgba(245,180,95,.4))}
+.part--cross{fill:none;stroke:var(--cyan);stroke-width:1.6;stroke-dasharray:4 6;stroke-linecap:round}
+.part--cross-arrow{fill:var(--cyan)}
+.part--label{font-family:var(--sans);font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+.anatomy[data-active="line"] .part:not(.part--line):not(.part--label-line),
+.anatomy[data-active="inside"] .part:not(.part--inside):not(.part--label-inside),
+.anatomy[data-active="outside"] .part:not(.part--outside):not(.part--label-outside),
+.anatomy[data-active="cross"] .part:not(.part--cross):not(.part--cross-arrow):not(.part--label-cross){opacity:.14}
+.anatomy[data-active="line"] .part--line{filter:drop-shadow(0 0 16px rgba(245,180,95,.8))}
+.anatomy[data-active="inside"] .part--inside{filter:brightness(1.5)}
+.anatomy[data-active="outside"] .part--outside{filter:brightness(1.7)}
+.anatomy[data-active="cross"] .part--cross{stroke-dasharray:4 4;animation:crossFlow 1.6s linear infinite}
+@keyframes crossFlow{to{stroke-dashoffset:-20}}
+.anatomy-legend{display:flex;flex-direction:column;gap:8px}
+.anatomy-btn{
+  display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:14px;row-gap:1px;
+  text-align:left;padding:13px 15px;border-radius:14px;border:1px solid transparent;background:transparent;cursor:pointer;
+  transition:all .3s var(--ease);
+}
+.anatomy-btn span{grid-row:1/3;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);font-family:var(--sans);font-size:.58rem;letter-spacing:.06em;color:var(--faint);transition:all .3s}
+.anatomy-btn strong{font-family:var(--serif);font-weight:400;font-size:1rem;color:var(--ink-2)}
+.anatomy-btn small{font-family:var(--sans);font-size:.7rem;color:var(--faint);letter-spacing:.04em}
+.anatomy-btn:hover,.anatomy-btn.is-active{background:rgba(255,255,255,.035);border-color:var(--line)}
+.anatomy-btn:hover span,.anatomy-btn.is-active span{border-color:var(--gold);color:var(--gold);box-shadow:0 0 16px -4px rgba(245,180,95,.6)}
+.anatomy-caption{
+  grid-column:1/-1;min-height:3.2em;margin-top:4px;padding:16px 20px;border-left:1px solid var(--gold);
+  color:var(--ink-2);font-size:1rem;line-height:1.6;background:linear-gradient(90deg,rgba(245,180,95,.045),transparent);
+}
+.law-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,3vw,28px)}
+.law-card{overflow:hidden}
+.law-visual{position:relative;height:250px;display:grid;place-items:center;border-bottom:1px solid var(--line-2);background:radial-gradient(ellipse at 50% 45%,rgba(245,180,95,.06),transparent 64%)}
+.law-visual svg{width:100%;height:100%}
+.law-mark{fill:none;stroke:var(--gold);stroke-width:3.2;stroke-linecap:round;filter:drop-shadow(0 0 8px rgba(245,180,95,.38));transform-box:fill-box}
+.law-mark--two{transition:transform .85s var(--ease),opacity .6s var(--ease);transform-origin:center}
+.law-ripple{fill:none;stroke:var(--gold);stroke-width:1;opacity:0;transform-origin:center}
+.law-card.is-playing .law-mark--two{transform:translateX(-160px) scale(.72);opacity:0}
+.law-card.is-playing .law-mark--one{animation:lawPulse .85s var(--ease)}
+.law-card.is-playing .law-ripple{animation:lawRipple 1s var(--ease)}
+@keyframes lawPulse{0%,100%{filter:drop-shadow(0 0 8px rgba(245,180,95,.38))}45%{filter:drop-shadow(0 0 22px rgba(245,180,95,.95));stroke:var(--gold-2)}}
+@keyframes lawRipple{0%{opacity:.8;transform:scale(.2)}100%{opacity:0;transform:scale(2.4)}}
+.law-void{fill:none;stroke:var(--cyan);stroke-width:1.4;stroke-dasharray:3 7;opacity:0;transform-origin:center}
+.law-card.is-playing .law-void{animation:voidIn 1.2s .35s var(--ease) forwards}
+@keyframes voidIn{0%{opacity:0;transform:scale(.4)}60%{opacity:.9}100%{opacity:.6;transform:scale(1)}}
+.law-card.is-playing .law-mark--outer{animation:dissolve .9s var(--ease) forwards}
+.law-card.is-playing .law-mark--inner{animation:dissolve .9s .08s var(--ease) forwards}
+@keyframes dissolve{0%{opacity:1;transform:scale(1);filter:blur(0)}55%{opacity:.7;filter:blur(1px)}100%{opacity:0;transform:scale(.55);filter:blur(4px)}}
+.law-body{padding:clamp(20px,3vw,30px)}
+.law-body h3{font-weight:400;font-size:1.25rem;margin-bottom:6px}
+.law-body .law-en{font-family:var(--sans);font-size:.68rem;letter-spacing:.08em;color:var(--faint);margin-bottom:14px;font-style:italic}
+.law-body p{color:var(--muted);font-size:.94rem;line-height:1.7;margin-bottom:16px}
+.law-formula{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:1rem;color:var(--ink-2);margin-bottom:18px}
+.law-formula .big{font-size:1.35rem;color:var(--gold)}
+.law-formula .void{color:var(--cyan)}
+.lab-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(18px,3vw,30px)}
+.lab-stage{min-height:330px;position:relative;padding:22px}
+.lab-form{width:100%;height:100%;min-height:286px;display:grid;place-items:center}
+.lab-form .form-svg{width:100%;height:auto;max-height:300px;animation:formIn .55s var(--ease)}
+@keyframes formIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.lab-badge{
+  position:absolute;top:14px;right:14px;padding:6px 11px;border-radius:999px;
+  font-family:var(--sans);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;
+  border:1px solid var(--line);color:var(--muted);opacity:0;transform:translateY(-4px);transition:all .4s var(--ease);
+}
+.lab-badge.is-on{opacity:1;transform:none}
+.lab-badge.marked{color:var(--gold);border-color:rgba(245,180,95,.4);background:rgba(245,180,95,.08)}
+.lab-badge.void{color:var(--cyan);border-color:rgba(123,216,208,.35);background:rgba(123,216,208,.07)}
+.lab-side{display:flex;flex-direction:column;gap:14px}
+.lab-controls,.build-controls{display:flex;flex-wrap:wrap;gap:8px}
+.lab-controls .btn{flex:1 1 auto}
+.status{
+  min-height:5.4em;padding:12px 0 12px 15px;border-left:1px solid rgba(245,180,95,.45);
+  font-family:var(--sans);font-size:.82rem;line-height:1.6;color:var(--muted);
+}
+.status .law-chip{
+  display:inline-block;margin-right:7px;padding:2px 7px;border-radius:5px;border:1px solid var(--line);
+  font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);vertical-align:1px;
+}
+.status .law-chip.calling{color:var(--gold);border-color:rgba(245,180,95,.35)}
+.status .law-chip.crossing{color:var(--cyan);border-color:rgba(123,216,208,.3)}
+.status .law-chip.empty{color:var(--muted)}
+.lab-meta{display:flex;justify-content:space-between;align-items:center;font-family:var(--sans);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.presets{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding-top:12px;border-top:1px solid var(--line-2)}
+.presets .chip{font-size:.68rem}
+.preset-label{width:100%;font-family:var(--sans);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:2px}
+.form-svg{overflow:visible}
+.mn-mark{fill:none;stroke:var(--gold);stroke-width:3.1;stroke-linecap:round;filter:drop-shadow(0 0 7px rgba(245,180,95,.34))}
+.mn-var{fill:rgba(255,255,255,.025);stroke:rgba(244,239,228,.36);stroke-width:1.5;transition:all .4s var(--ease)}
+.mn-var.is-true{fill:rgba(245,180,95,.24);stroke:var(--gold);filter:drop-shadow(0 0 8px rgba(245,180,95,.4))}
+.mn-var.is-false{fill:rgba(123,216,208,.04);stroke:rgba(123,216,208,.4)}
+.mn-var-text{fill:var(--ink);font-family:var(--serif);font-size:19px;text-anchor:middle;dominant-baseline:central}
+.mn-void{fill:none;stroke:var(--cyan);stroke-width:1.2;stroke-dasharray:3 5;opacity:.4}
+.truth-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(20px,3.4vw,38px);align-items:start}
+.truth-left{display:flex;flex-direction:column;gap:14px;min-width:0}
+.var-toggles{display:flex;gap:8px;flex-wrap:wrap}
+.var-toggle{
+  display:inline-flex;align-items:center;gap:9px;padding:8px 13px;border-radius:999px;border:1px solid var(--line);
+  background:transparent;cursor:pointer;font-family:var(--sans);font-size:.78rem;color:var(--muted);transition:all .28s var(--ease);
+}
+.var-toggle .v-dot{width:9px;height:9px;border-radius:50%;border:1px solid currentColor;transition:all .28s}
+.var-toggle:hover{border-color:rgba(244,239,228,.24);color:var(--ink)}
+.var-toggle.is-true{color:var(--gold);border-color:rgba(245,180,95,.4);background:rgba(245,180,95,.07)}
+.var-toggle.is-true .v-dot{background:var(--gold);box-shadow:0 0 9px rgba(245,180,95,.8)}
+.form-picker{display:flex;flex-wrap:wrap;gap:6px}
+.form-picker .chip{font-family:var(--sans);font-size:.68rem;letter-spacing:.03em;padding:7px 11px}
+.truth-stage{min-height:260px;padding:18px}
+.truth-form{width:100%;min-height:220px;display:grid;place-items:center}
+.truth-form .form-svg{width:100%;height:auto;max-height:230px}
+.truth-badge{
+  position:absolute;top:14px;right:14px;padding:6px 11px;border-radius:999px;
+  font-family:var(--sans);font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;border:1px solid var(--line);
+  transition:all .35s var(--ease);
+}
+.truth-badge.marked{color:var(--gold);border-color:rgba(245,180,95,.4);background:rgba(245,180,95,.08)}
+.truth-badge.void{color:var(--cyan);border-color:rgba(123,216,208,.35);background:rgba(123,216,208,.07)}
+.truth-reading{
+  padding:12px 0 0 15px;border-left:1px solid var(--line);font-family:var(--sans);font-size:.78rem;
+  color:var(--muted);line-height:1.65;
+}
+.truth-reading strong{color:var(--ink-2);font-weight:600}
+.truth-table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:.76rem}
+.truth-table th{
+  padding:8px 6px;text-align:center;font-weight:600;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--faint);border-bottom:1px solid var(--line);
+}
+.truth-table td{padding:11px 6px;text-align:center;border-bottom:1px solid var(--line-2);color:var(--muted);cursor:pointer;transition:background .2s}
+.truth-table tr:hover td{background:rgba(255,255,255,.025)}
+.truth-table tr.is-current td{background:rgba(245,180,95,.075);color:var(--ink-2)}
+.truth-table tr.is-current td:first-child{box-shadow:inset 2px 0 0 var(--gold)}
+.tt-mark{display:inline-block;width:16px;height:16px;border-top:2px solid var(--gold);border-right:2px solid var(--gold);vertical-align:middle;filter:drop-shadow(0 0 4px rgba(245,180,95,.5))}
+.tt-void{display:inline-block;width:7px;height:7px;border-radius:50%;border:1px solid rgba(123,216,208,.6);vertical-align:middle}
+.initials{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:clamp(28px,4vw,44px)}
+.init-card2{padding:20px;border-radius:18px;border:1px solid var(--line-2);background:rgba(255,255,255,.018)}
+.init-card2 .init-name{font-family:var(--sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.init-eq{display:flex;align-items:center;justify-content:center;gap:14px;min-height:88px;margin-bottom:10px}
+.init-eq .init-side{display:flex;align-items:center;justify-content:center;min-width:0;max-width:44%;flex:0 1 auto}
+.init-eq .init-side .form-svg{width:100%;height:auto;max-height:86px}
+.init-eq .eq-sign{font-family:var(--serif);font-size:1.4rem;color:var(--muted);flex:0 0 auto}
+.original-card .init-eq .init-side .form-svg{max-height:108px}
+.truth-note{color:var(--faint);font-size:.92em}
+.init-card2 p{font-family:var(--sans);font-size:.76rem;line-height:1.6;color:var(--muted)}
+.init-card2 p b{color:var(--ink-2);font-weight:600}
+details.original{margin-top:26px;border-top:1px solid var(--line-2);padding-top:20px}
+details.original summary{cursor:pointer;font-family:var(--sans);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);list-style:none}
+details.original summary::-webkit-details-marker{display:none}
+details.original summary::before{content:"+ ";color:var(--gold)}
+details.original[open] summary::before{content:"− "}
+.original-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+.original-card{padding:18px;border:1px solid var(--line-2);border-radius:16px;background:rgba(255,255,255,.018)}
+.original-card .init-name{font-family:var(--sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:12px}
+.original-card .form-svg{max-height:104px;width:auto;max-width:100%}
+.original-card p{margin-top:10px;font-family:var(--sans);font-size:.74rem;line-height:1.6;color:var(--muted)}
+.reentry-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(20px,3.4vw,38px);align-items:stretch}
+.reentry-stage{min-height:340px;position:relative;overflow:hidden}
+.reentry-svg{width:100%;height:100%;min-height:320px}
+.reentry-stage[data-state="marked"]{--re-state:var(--gold);--re-state-dim:rgba(245,180,95,.10);--re-state-soft:rgba(245,180,95,.30)}
+.reentry-stage[data-state="void"]{--re-state:var(--cyan);--re-state-dim:rgba(123,216,208,.08);--re-state-soft:rgba(123,216,208,.26)}
+.reentry-inside{fill:var(--re-state-dim);transition:fill .6s var(--ease)}
+.reentry-mark{fill:none;stroke:var(--re-state);stroke-width:3.3;stroke-linecap:round;transition:stroke .6s var(--ease);filter:drop-shadow(0 0 9px var(--re-state-soft))}
+.reentry-loop{fill:none;stroke:var(--re-state);stroke-width:1.6;stroke-linecap:round;stroke-dasharray:6 7;opacity:.9;transition:stroke .6s var(--ease);animation:loopFlow 2.4s linear infinite}
+@keyframes loopFlow{to{stroke-dashoffset:-52}}
+.reentry-arrow{fill:var(--re-state);transition:fill .6s var(--ease)}
+.reentry-eq{
+  position:absolute;left:18px;top:16px;font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;
+  color:var(--muted);padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:rgba(0,0,0,.28);
+}
+.reentry-side{display:flex;flex-direction:column;gap:18px;justify-content:center}
+.reentry-readout{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding-bottom:14px;border-bottom:1px solid var(--line-2)}
+.reentry-readout .label{font-family:var(--sans);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--faint)}
+.reentry-readout strong{font-weight:400;font-size:clamp(1.4rem,3vw,2rem);color:var(--re-state,var(--gold));transition:color .4s}
+.timeline{display:flex;gap:4px;align-items:flex-end;height:54px;padding:8px 0}
+.timeline span{flex:1;height:60%;border-radius:3px 3px 0 0;background:rgba(255,255,255,.06);transition:all .25s var(--ease)}
+.timeline span.is-marked{background:rgba(245,180,95,.32)}
+.timeline span.is-void{background:rgba(123,216,208,.22)}
+.timeline span.is-now{height:100%;background:var(--gold);box-shadow:0 0 12px rgba(245,180,95,.6)}
+.timeline span.is-now.is-void{background:var(--cyan);box-shadow:0 0 12px rgba(123,216,208,.6)}
+.reentry-controls{display:flex;flex-wrap:wrap;gap:8px}
+.reentry-controls .btn{flex:1 1 auto}
+.triad-wrap{position:relative}
+.triad{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,2vw,22px);position:relative;z-index:1}
+.triad::before{
+  content:"";position:absolute;left:12%;right:12%;top:50%;height:1px;z-index:-1;
+  background:linear-gradient(90deg,transparent,rgba(245,180,95,.35),rgba(123,216,208,.3),rgba(184,161,255,.3),transparent);
+}
+.triad-node{
+  display:flex;flex-direction:column;align-items:center;gap:12px;padding:clamp(20px,3vw,32px) 14px;
+  border-radius:20px;border:1px solid var(--line-2);background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.008));
+  cursor:pointer;transition:all .35s var(--ease);text-align:center;
+}
+.triad-node:hover,.triad-node.is-active{border-color:rgba(245,180,95,.36);background:rgba(245,180,95,.045);transform:translateY(-2px)}
+.triad-node:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.triad-icon{width:52px;height:52px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--gold);transition:all .35s}
+.triad-node.is-active .triad-icon{border-color:var(--gold);box-shadow:0 0 24px -6px rgba(245,180,95,.65)}
+.triad-icon svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.triad-node strong{font-weight:400;font-size:1rem;color:var(--ink-2)}
+.triad-node small{font-family:var(--sans);font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.triad-caption{
+  max-width:760px;min-height:4.4em;margin:26px auto 0;text-align:center;color:var(--ink-2);
+  font-size:clamp(1rem,1.7vw,1.18rem);font-style:italic;line-height:1.6;
+}
+.triad-caption b{color:var(--gold);font-style:normal;font-weight:600}
+.resonance-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,2vw,18px)}
+.res-card{
+  padding:clamp(18px,2.4vw,24px);border-radius:18px;border:1px solid var(--line-2);
+  background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.008));
+  transition:transform .35s var(--ease),border-color .35s,background .35s;
+}
+.res-card:hover{transform:translateY(-4px);border-color:rgba(245,180,95,.24);background:rgba(245,180,95,.035)}
+.res-icon{width:34px;height:34px;color:var(--gold);margin-bottom:14px}
+.res-icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.res-card h3{font-weight:400;font-size:1.02rem;margin-bottom:6px;color:var(--ink)}
+.res-card p{font-family:var(--sans);font-size:.78rem;line-height:1.65;color:var(--muted)}
+.res-card p b{color:var(--ink-2);font-weight:600}
+.critique{
+  margin-top:clamp(26px,4vw,40px);padding:20px 24px;border:1px solid var(--line-2);border-radius:16px;
+  background:rgba(255,255,255,.018);font-family:var(--sans);font-size:.84rem;line-height:1.7;color:var(--muted);max-width:88ch;
+}
+.critique strong{color:var(--ink-2)}
+.poster{
+  position:relative;border-radius:32px;padding:clamp(26px,5vw,62px);overflow:hidden;
+  background:linear-gradient(145deg,var(--paper),var(--paper-2));color:var(--paper-ink);
+  box-shadow:0 44px 100px -50px rgba(0,0,0,.9);
+}
+.poster::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.4;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(27,23,17,.018) 3px,rgba(27,23,17,.018) 4px);
+}
+.poster>*{position:relative;z-index:1}
+.poster .kicker{color:var(--paper-accent)}
+.poster .kicker::before{background:linear-gradient(90deg,transparent,var(--paper-accent))}
+.poster h2{font-weight:400;font-size:clamp(2rem,5vw,3.8rem);line-height:1;letter-spacing:-.03em;margin:.3em 0 .5em;color:var(--paper-ink)}
+.poster-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+.poster-top .stamp{font-family:var(--sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--paper-muted);text-align:right;line-height:1.8}
+.poster-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:clamp(20px,3vw,38px);margin-top:clamp(28px,4vw,46px)}
+.poster-col{padding-top:18px;border-top:1px solid rgba(27,23,17,.16)}
+.poster-col h3{font-family:var(--sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--paper-muted);margin-bottom:18px;font-weight:600}
+.poster-values{display:flex;gap:20px;flex-wrap:wrap}
+.poster-value{display:flex;flex-direction:column;align-items:center;gap:10px;font-family:var(--sans);font-size:.62rem;letter-spacing:.06em;color:var(--paper-muted)}
+.poster-value .pv-box{width:64px;height:64px;display:grid;place-items:center;border:1px dashed rgba(27,23,17,.24)}
+.poster-value .pv-mark{width:64px;height:64px;display:grid;place-items:center}
+.poster-value .pv-mark .pm{width:42px;height:42px;border-width:2.4px;border-color:var(--paper-ink)}
+.poster-value b{font-family:var(--serif);font-size:.9rem;font-weight:400;color:var(--paper-ink);letter-spacing:0}
+.poster-law{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--paper-ink);margin-bottom:16px}
+.poster-law .pm{width:24px;height:24px;border-color:var(--paper-ink);border-width:1.8px}
+.poster-law .pm .pm{width:13px;height:13px;margin:3px 0 0 3px;border-width:1.4px;border-color:var(--paper-ink)}
+.poster-law .pvoid{color:var(--paper-accent);font-size:1.1rem;line-height:1}
+.poster-law small{display:block;width:100%;font-family:var(--sans);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--paper-muted);margin-top:2px}
+.poster-inits{display:flex;flex-direction:column;gap:11px;font-family:var(--mono);font-size:.78rem;color:var(--paper-ink)}
+.poster-init{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.poster-init span.lbl{font-family:var(--sans);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--paper-accent);min-width:26px}
+.poster-init .pm{padding:0 .28em;border-color:var(--paper-ink)}
+.poster-init .pm--double{padding:0}
+.pm{display:inline-block;border-top:2px solid var(--gold);border-right:2px solid var(--gold);vertical-align:middle}
+.pm .pm{display:block;width:55%;height:55%;margin:12% 0 0 12%;border-width:1.5px}
+.pm--double{width:1.8em;height:1.8em}
+.pm--double>.pm{width:60%;height:60%;margin:20% 0 0 20%;border-width:1.5px}
+.poster-bottom{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;margin-top:clamp(30px,4vw,48px);padding-top:clamp(22px,3vw,32px);border-top:1px solid rgba(27,23,17,.16)}
+.poster-loop{width:150px;height:auto}
+.poster-loop path{fill:none;stroke:var(--paper-ink);stroke-width:1.4;stroke-linecap:round}
+.poster-loop .dash{stroke:var(--paper-accent);stroke-dasharray:4 5}
+.poster-final{font-size:clamp(1.5rem,3.4vw,2.6rem);font-style:italic;line-height:1.15;letter-spacing:-.02em;color:var(--paper-ink)}
+.poster-final span{color:var(--paper-accent)}
+.poster-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.poster .btn{border-color:rgba(27,23,17,.24);color:var(--paper-ink)}
+.poster .btn:hover{background:rgba(27,23,17,.06);border-color:var(--paper-ink);box-shadow:none}
+.sources{margin-top:clamp(50px,7vw,80px);padding-top:26px;border-top:1px solid var(--line-2)}
+.sources h3{font-family:var(--sans);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+.sources ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px 28px}
+.sources li{font-family:var(--sans);font-size:.78rem;line-height:1.6;color:var(--muted)}
+.sources a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid var(--line);transition:border-color .25s,color .25s}
+.sources a:hover{color:var(--gold);border-color:rgba(245,180,95,.45)}
+footer{max-width:1180px;margin:0 auto;padding:40px 24px 70px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--sans);font-size:.7rem;color:var(--faint);line-height:1.7}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--gold)}
+.foot-mark{display:inline-block;width:18px;height:18px;border-top:2px solid var(--gold);border-right:2px solid var(--gold);vertical-align:middle;margin-right:8px}
+.noscript{margin:20px auto;max-width:800px;padding:16px 20px;border:1px solid var(--line);border-radius:12px;font-family:var(--sans);font-size:.82rem;color:var(--muted);text-align:center}
+@media (max-width:1020px){
+  .anatomy,.lab-grid,.truth-grid,.reentry-grid{grid-template-columns:1fr}
+  .resonance-grid{grid-template-columns:repeat(2,1fr)}
+  .initials{grid-template-columns:1fr}
+  .poster-grid{grid-template-columns:1fr}
+  .dot-nav{display:none}
+}
+@media (max-width:760px){
+  .section{padding-left:18px;padding-right:18px}
+  .hero-brand{left:18px;right:18px;top:18px}
+  .hero-brand span:last-child{display:none}
+  .law-grid{grid-template-columns:1fr}
+  .triad{grid-template-columns:1fr}
+  .triad::before{left:50%;right:auto;top:12%;bottom:12%;width:1px;height:auto;background:linear-gradient(180deg,transparent,rgba(245,180,95,.35),rgba(123,216,208,.3),rgba(184,161,255,.3),transparent)}
+  .poster-bottom{grid-template-columns:1fr}
+  .poster-loop{width:110px}
+  .original-grid{grid-template-columns:1fr}
+  .sources ul{grid-template-columns:1fr}
+  .resonance-grid{grid-template-columns:1fr}
+  .lab-controls .btn,.reentry-controls .btn{flex:1 1 100%}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  .reveal{opacity:1;transform:none}
+  .reentry-loop{animation:none}
+}
+@media print{
+  body{background:#fff;color:#000}
+  .grain,.progress,.dot-nav,.hero,.section:not(#mitnehmen),footer,.sources,.no-print{display:none !important}
+  #mitnehmen{padding:0;max-width:none}
+  .poster{box-shadow:none;border-radius:0;background:#fff}
+  .poster .btn{display:none}
+}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+<nav class="dot-nav" aria-label="Abschnitte">
+  <a href="#leere" data-label="Leere"></a>
+  <a href="#marke" data-label="Marke"></a>
+  <a href="#gesetze" data-label="Gesetze"></a>
+  <a href="#arithmetik" data-label="Rechnung"></a>
+  <a href="#algebra" data-label="Algebra"></a>
+  <a href="#wiedereintritt" data-label="Wiedereintritt"></a>
+  <a href="#beobachter" data-label="Beobachter"></a>
+  <a href="#resonanz" data-label="Resonanz"></a>
+  <a href="#mitnehmen" data-label="Karte"></a>
+</nav>
+
+<header class="hero" id="top">
+  <canvas id="sky" aria-hidden="true"></canvas>
+  <div class="hero-brand"><span>asanAI · Visuelle Notiz</span><span>Eine Einführung in Bildern</span></div>
+  <div class="hero-inner">
+    <div class="hero-mark" aria-hidden="true">
+      <svg viewBox="0 0 160 160">
+        <path class="hero-mark-path" d="M 20 20 H 140 V 140"/>
+        <circle class="hero-mark-dot" cx="20" cy="20" r="3.4"/>
+      </svg>
+    </div>
+    <p class="kicker">George Spencer-Brown · 1969</p>
+    <h1><span class="t1">Gesetze</span><span class="t2">der Form</span></h1>
+    <p class="hero-sub">Eine Reise durch <em>Laws of Form</em> — vom leeren Blatt zur seltsamen Schleife, in der eine Form sich selbst enthält. Alles, was du brauchst, ist eine Marke.</p>
+    <div class="hero-quote">
+      <em>„Draw a distinction.“</em>
+      <span class="de">Zeichne eine Unterscheidung</span>
+    </div>
+    <a class="scroll-hint" href="#leere"><span>Beginne mit der Leere</span><i></i></a>
+  </div>
+</header>
+
+<main>
+  <noscript><div class="noscript">Die interaktiven Teile brauchen JavaScript. Der Text und die Diagramme bleiben lesbar.</div></noscript>
+
+  <section class="section" id="leere">
+    <div class="section-head reveal">
+      <p class="kicker">§ 1 · Der Anfang</p>
+      <h2>Alles beginnt mit einem Schnitt.</h2>
+      <p class="lead">Vor der ersten Unterscheidung gibt es kein „hier“ und kein „dort“. Nur eine leere Seite. Spencer-Browns erstes Wort ist deshalb kein Satz, sondern eine Anweisung: <em>Zeichne eine Unterscheidung.</em></p>
+    </div>
+    <div class="prose reveal">
+      <p>Eine Marke ist kein Gegenstand. Sie ist die Spur einer Handlung. In dem Moment, in dem du eine Grenze ziehst, entstehen zwei Seiten: ein <strong>Innen</strong> und ein <strong>Außen</strong>. Das Innen ist das, was die Marke umschließt; das Außen ist alles andere. Mehr braucht es nicht, um eine Welt zu beginnen.</p>
+      <p>Spencer-Brown nennt die beiden Zustände <strong>unmarked</strong> und <strong>marked</strong> — unmarkiert und markiert. Die leere Seite ist der eine Zustand, die Marke der andere. Und weil die Marke den Raum vollständig teilt, gibt es keinen dritten.</p>
+    </div>
+    <div class="pullquote reveal">
+      „We take as given the idea of distinction and the idea of indication, and that we cannot make an indication without drawing a distinction.“
+      <cite>G. Spencer-Brown, Laws of Form, Kapitel 1</cite>
+    </div>
+    <div class="panel void-panel reveal">
+      <div class="void-stage" id="void-stage" role="button" tabindex="0" aria-label="Klicke oder drücke Enter, um eine Unterscheidung zu zeichnen">
+        <svg class="void-svg" viewBox="0 0 1000 562.5" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="insideGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#f5b45f" stop-opacity=".14"/>
+              <stop offset="1" stop-color="#f5b45f" stop-opacity=".015"/>
+            </linearGradient>
+          </defs>
+          <rect class="void-inside" id="void-inside" x="0" y="0" width="0" height="0"/>
+          <path class="void-mark" id="void-mark" d=""/>
+          <text class="void-label in" id="void-label-in" x="0" y="0">innen</text>
+          <text class="void-label out" id="void-label-out" x="0" y="0">außen</text>
+        </svg>
+        <div class="void-hint"><strong>Die Leere</strong><span>klicken, um zu unterscheiden</span></div>
+      </div>
+      <div class="void-controls">
+        <p class="void-caption" id="void-caption" aria-live="polite">Noch ist die Seite leer. Ein Klick genügt, und es gibt ein Innen und ein Außen.</p>
+        <button class="btn btn--ghost" id="void-reset" type="button">Zurück in die Leere</button>
+      </div>
+    </div>
+    <div class="legend reveal">
+      <div class="legend-item"><span class="glyph-mark"></span> markiert · die Marke ist gesetzt</div>
+      <div class="legend-item"><span class="glyph-void"></span> unmarkiert · die leere Seite</div>
+    </div>
+    <p class="note reveal"><strong>Merke:</strong> Die Marke ist zugleich die Grenze und die Handlung, die sie zieht. Deshalb ist sie so sparsam — und so mächtig.</p>
+  </section>
+
+  <section class="section" id="marke">
+    <div class="section-head reveal">
+      <p class="kicker">§ 2 · Die Marke</p>
+      <h2>Ein Zeichen, das drei Dinge zugleich ist.</h2>
+      <p class="lead">Das Kreuz kann man auf drei Arten lesen: als Akt des Trennens, als die Grenze selbst und als den Übergang von einer Seite zur anderen. Alle drei sind derselbe Strich.</p>
+    </div>
+    <div class="anatomy reveal" id="anatomy" data-active="line">
+      <div class="anatomy-stage">
+        <svg viewBox="0 0 420 360" role="img" aria-label="Anatomie der Marke: Grenze, Innen, Außen und Übergang">
+          <defs>
+            <linearGradient id="insideGrad2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#f5b45f" stop-opacity=".18"/>
+              <stop offset="1" stop-color="#f5b45f" stop-opacity=".02"/>
+            </linearGradient>
+            <marker id="arrowHead" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path class="part--cross-arrow" d="M0,0 L9,4.5 L0,9 z"/>
+            </marker>
+          </defs>
+          <rect class="part part--outside" x="0" y="0" width="420" height="360"/>
+          <rect class="part part--inside" x="0" y="90" width="310" height="270"/>
+          <text class="part part--label part--label-inside" x="34" y="330" fill="#f5b45f" opacity=".8">INNEN</text>
+          <text class="part part--label part--label-outside" x="330" y="34" fill="#7bd8d0" opacity=".75">AUSSEN</text>
+          <path class="part part--line" d="M 90 90 H 310 V 310"/>
+          <path class="part part--cross" d="M 360 58 L 300 118 L 250 168" marker-end="url(#arrowHead)"/>
+          <text class="part part--label part--label-cross" x="282" y="146" fill="#7bd8d0" opacity=".75">ÜBERGANG</text>
+          <text class="part part--label part--label-line" x="196" y="78" fill="#f5b45f" opacity=".9">GRENZE</text>
+        </svg>
+      </div>
+      <div class="anatomy-legend">
+        <button class="anatomy-btn is-active" type="button" data-part="line"><span>01</span><strong>Der Strich</strong><small>die Grenze, die trennt</small></button>
+        <button class="anatomy-btn" type="button" data-part="inside"><span>02</span><strong>Das Innere</strong><small>der bezeichnete Raum</small></button>
+        <button class="anatomy-btn" type="button" data-part="outside"><span>03</span><strong>Das Äußere</strong><small>alles, was nicht innen ist</small></button>
+        <button class="anatomy-btn" type="button" data-part="cross"><span>04</span><strong>Der Übergang</strong><small>von einer Seite zur anderen</small></button>
+      </div>
+      <p class="anatomy-caption" id="anatomy-caption" aria-live="polite">Die Grenze ist kein Ding, sondern ein Akt. Sie trennt, indem sie einen Raum umschließt.</p>
+    </div>
+    <div class="prose reveal" style="margin-top:clamp(30px,5vw,52px)">
+      <p>Die Marke ist <strong>Operator und Operand zugleich</strong>. Eine leere Marke <span class="mono">()</span> bezeichnet einen Wert: den markierten Zustand. Eine Marke um einen Ausdruck <span class="mono">(A)</span> bezeichnet eine Operation: die Verneinung von A. Derselbe Strich tut beides. Das ist keine Spielerei — es ist der Grund, warum aus einem einzigen Zeichen eine ganze Logik entstehen kann.</p>
+    </div>
+    <div class="pullquote reveal">
+      „Distinction is perfect continence.“
+      <cite>Die Unterscheidung ist vollkommenes Enthalten</cite>
+    </div>
+    <p class="note reveal"><strong>„Perfect continence“</strong> heißt: Die Grenze hält das Innere vollständig zusammen. Nichts von drinnen fällt nach draußen, nichts von draußen sickert hinein. Deshalb kann das Innere überhaupt als etwas Bestimmtes erscheinen.</p>
+  </section>
+
+  <section class="section" id="gesetze">
+    <div class="section-head reveal">
+      <p class="kicker">§ 3 · Die Gesetze</p>
+      <h2>Zwei Regeln. Mehr braucht es nicht.</h2>
+      <p class="lead">Die gesamte primäre Arithmetik folgt aus zwei Gleichungen. Sie sagen, was passiert, wenn man eine Marke wiederholt — und was passiert, wenn man sie noch einmal kreuzt.</p>
+    </div>
+    <div class="law-grid">
+      <article class="law-card panel reveal" id="law-calling">
+        <div class="law-visual">
+          <svg viewBox="0 0 480 250" aria-hidden="true">
+            <circle class="law-ripple" cx="190" cy="110" r="34"/>
+            <g class="law-mark law-mark--one"><path class="law-mark" d="M 110 70 H 190 V 150"/></g>
+            <g class="law-mark law-mark--two"><path class="law-mark" d="M 270 70 H 350 V 150"/></g>
+          </svg>
+        </div>
+        <div class="law-body">
+          <h3>Das Gesetz des Rufens</h3>
+          <p class="law-en">The value of a call made again is the value of the call.</p>
+          <div class="law-formula"><span class="big">() ()</span> <span>=</span> <span class="big">()</span></div>
+          <p>Zweimal rufen ist wie einmal rufen. Zwei Marken nebeneinander verschmelzen zu einer. Spencer-Brown nennt das <em>Kondensation</em>.</p>
+          <button class="btn" type="button" data-play="calling">verschmelzen</button>
+        </div>
+      </article>
+      <article class="law-card panel reveal" id="law-crossing">
+        <div class="law-visual">
+          <circle class="law-void" cx="190" cy="110" r="44"/>
+          <g class="law-mark law-mark--outer"><path class="law-mark" d="M 120 55 H 250 V 175"/></g>
+          <g class="law-mark law-mark--inner"><path class="law-mark" d="M 155 90 H 215 V 145"/></g>
+        </div>
+        <div class="law-body">
+          <h3>Das Gesetz des Kreuzens</h3>
+          <p class="law-en">The value of crossing made again is not the value of the crossing.</p>
+          <div class="law-formula"><span class="big">( () )</span> <span>=</span> <span class="big void">·</span></div>
+          <p>Eine Marke in einer Marke hebt sich auf. Zweimal kreuzen bringt dich zurück in die Leere. Das ist die <em>Aufhebung</em>.</p>
+          <button class="btn" type="button" data-play="crossing">zurück in die Leere</button>
+        </div>
+      </article>
+    </div>
+    <p class="note reveal"><strong>Die ganze Rechnung in zwei Sätzen:</strong> Eine Marke, die sich wiederholt, bleibt eine Marke. Eine Marke, die sich selbst umschließt, wird zur Leere. Alles Weitere ist Anwendung.</p>
+  </section>
+
+  <section class="section" id="arithmetik">
+    <div class="section-head reveal">
+      <p class="kicker">§ 4 · Die Rechnung</p>
+      <h2>Jede Form hat genau zwei mögliche Werte.</h2>
+      <p class="lead">Baue eine Form aus Marken. Egal, wie verschachtelt sie wird: Am Ende bleibt entweder eine Marke oder die Leere. Die zwei Gesetze genügen, um jede endliche Form zu reduzieren.</p>
+    </div>
+    <div class="panel panel-pad reveal">
+      <div class="panel-head">
+        <div class="panel-title">Die Formwerkstatt</div>
+        <div class="panel-tag">Primäre Arithmetik</div>
+      </div>
+      <div class="lab-grid">
+        <div class="stage lab-stage" id="lab-stage">
+          <div class="lab-form" id="lab-form"></div>
+          <div class="lab-badge" id="lab-badge"></div>
+        </div>
+        <div class="lab-side">
+          <div class="lab-controls">
+            <button class="btn btn--primary" type="button" data-lab="reduce">Reduzieren</button>
+            <button class="btn" type="button" data-lab="step">Schritt</button>
+            <button class="btn btn--ghost" type="button" data-lab="undo">Zurück</button>
+          </div>
+          <div class="build-controls">
+            <button class="btn" type="button" data-lab="mark">+ Marke</button>
+            <button class="btn" type="button" data-lab="wrap">umschließen</button>
+            <button class="btn btn--ghost" type="button" data-lab="reset">Leere</button>
+          </div>
+          <div class="status" id="lab-status" aria-live="polite">Baue eine Form — oder lade ein Beispiel.</div>
+          <div class="lab-meta"><span id="lab-step">Schritt 0</span><span id="lab-hint">innen nach außen</span></div>
+          <div class="presets">
+            <span class="preset-label">Beispiele</span>
+            <button class="chip" type="button" data-preset="calling">()()</button>
+            <button class="chip" type="button" data-preset="crossing">(())</button>
+            <button class="chip" type="button" data-preset="mixed">()(())</button>
+            <button class="chip" type="button" data-preset="triple">((()))</button>
+            <button class="chip" type="button" data-preset="insideCall">(()())</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prose reveal" style="margin-top:clamp(28px,4vw,44px)">
+      <p>Die Reduktion läuft von innen nach außen. Zuerst verschwinden leere Teile, dann verschmelzen benachbarte Marken nach dem <strong>Gesetz des Rufens</strong>, dann heben sich verschachtelte Marken nach dem <strong>Gesetz des Kreuzens</strong> auf. Die Reihenfolge ist egal: Das Ergebnis ist eindeutig. Spencer-Brown beweist das als <span class="mono">T3</span>.</p>
+    </div>
+    <p class="note reveal"><strong>Warum das wichtig ist:</strong> Eine Form ist nicht einfach ein Bild. Sie ist eine Rechenanweisung. Und jede Rechnung endet in einem von zwei Zuständen — so wie jede Aussage wahr oder falsch ist.</p>
+  </section>
+
+  <section class="section" id="algebra">
+    <div class="section-head reveal">
+      <p class="kicker">§ 5 · Die Algebra</p>
+      <h2>Buchstaben machen aus Formen Logik.</h2>
+      <p class="lead">Ersetze eine Marke durch einen Buchstaben, und die Form wird zu einer Aussage. A kann markiert oder unmarkiert sein. Die primäre Algebra ist im Kern die zweiwertige boolesche Algebra — nur so sparsam, dass man die Dualität mit den Händen greifen kann.</p>
+    </div>
+    <div class="panel panel-pad reveal">
+      <div class="panel-head">
+        <div class="panel-title">Die Wahrheitsmaschine</div>
+        <div class="panel-tag">Primäre Algebra</div>
+      </div>
+      <div class="truth-grid">
+        <div class="truth-left">
+          <div class="var-toggles">
+            <button class="var-toggle" type="button" data-var="A" aria-pressed="false">A <span class="v-dot"></span></button>
+            <button class="var-toggle" type="button" data-var="B" aria-pressed="false">B <span class="v-dot"></span></button>
+          </div>
+          <div class="form-picker" id="truth-picker"></div>
+          <div class="stage truth-stage" id="truth-stage">
+            <div class="truth-form" id="truth-form"></div>
+            <div class="truth-badge void" id="truth-badge">leer</div>
+          </div>
+          <div class="truth-reading" id="truth-reading"></div>
+        </div>
+        <div class="truth-right">
+          <table class="truth-table">
+            <thead><tr><th>A</th><th>B</th><th>Ausdruck</th></tr></thead>
+            <tbody id="truth-tbody"></tbody>
+          </table>
+          <p class="caption caption-bottom">Klicke eine Zeile, um die Belegung zu setzen.</p>
+        </div>
+      </div>
+      <div class="initials">
+        <article class="init-card2">
+          <div class="init-name">J0 · Identität</div>
+          <div class="init-eq" data-init-eq="j0"></div>
+          <p><b>Die doppelte Marke ist die Leere.</b> Sie ändert nichts — so wie eine doppelte Verneinung den Wert nicht ändert.</p>
+        </article>
+        <article class="init-card2">
+          <div class="init-name">J1a · Komplement</div>
+          <div class="init-eq" data-init-eq="j1a"></div>
+          <p><b>Eine Aussage und ihre Verneinung ergeben zusammen die Marke.</b> Das ist der Satz vom ausgeschlossenen Dritten, in Form gebracht.</p>
+        </article>
+        <article class="init-card2">
+          <div class="init-name">C2 · Generation</div>
+          <div class="init-eq" data-init-eq="c2"></div>
+          <p><b>Steht A schon außerhalb der Marke, ist sein Vorkommen innen überflüssig.</b> Spencer-Brown nennt das <em>Generation</em>; Bricken nennt es <em>Pervasion</em>.</p>
+        </article>
+      </div>
+      <details class="original">
+        <summary>Die ursprünglichen Initiale J1 und J2</summary>
+        <div class="original-grid">
+          <div class="original-card">
+            <div class="init-name">J1 · Aufhebung</div>
+            <div class="init-eq" data-init-eq="j1"></div>
+            <p>Die Marke um <span class="mono">(A)A</span> ist die Leere. Das ist die algebraische Fassung des Kreuzens.</p>
+          </div>
+          <div class="original-card">
+            <div class="init-name">J2 · Distributivität</div>
+            <div class="init-eq" data-init-eq="j2"></div>
+            <p>Das ist das Distributivgesetz der Aussagenlogik — nur ohne die üblichen Klammernwälder.</p>
+          </div>
+        </div>
+      </details>
+    </div>
+    <div class="prose reveal" style="margin-top:clamp(28px,4vw,44px)">
+      <p>Die Lesart ist eine Wahl: <strong>Leere = falsch</strong>, <strong>Marke = nicht</strong>, <strong>Nebeneinander = oder</strong>. Dann ist <span class="mono">()</span> wahr, <span class="mono">(A)</span> ist nicht A und <span class="mono">A B</span> ist A oder B. Vertauscht man oder mit und und die beiden Werte, erhält man die <em>duale</em> Lesart. Die Formen bleiben dieselben. De Morgan ist in dieser Notation keine Regel, die man lernen muss — sie ist schon in der Syntax enthalten.</p>
+    </div>
+    <p class="note reveal"><strong>Vollständigkeit:</strong> Aus den Initialen lassen sich alle gültigen Gleichungen der primären Algebra ableiten. Spencer-Brown beweist das als <span class="mono">T17</span>. Dass die beiden Initiale unabhängig voneinander sind, zeigt er als <span class="mono">T18</span>. Aus zwei Gesetzen wird eine ganze Logik.</p>
+  </section>
+
+  <section class="section" id="wiedereintritt">
+    <div class="section-head reveal">
+      <p class="kicker">§ 6 · Das Unendliche</p>
+      <h2>Was passiert, wenn eine Form sich selbst enthält?</h2>
+      <p class="lead">Bis hierher hatte jede Form eine endliche Tiefe und einen festen Wert. Jetzt lassen wir die Form in sich selbst zurückkehren: <span class="mono">E = (E)</span>. Auf einmal gibt es keinen festen Punkt mehr.</p>
+    </div>
+    <div class="panel panel-pad reveal">
+      <div class="panel-head">
+        <div class="panel-title">Der Wiedereintritt</div>
+        <div class="panel-tag">Kapitel 11 · Equations of the Second Degree</div>
+      </div>
+      <div class="reentry-grid">
+        <div class="stage reentry-stage" id="reentry-stage" data-state="marked">
+          <div class="reentry-eq">E = (E)</div>
+          <svg class="reentry-svg" viewBox="0 0 420 320" role="img" aria-label="Eine Marke, deren Inneres durch eine Schleife in sich selbst zurückkehrt">
+            <defs>
+              <marker id="reArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                <path class="reentry-arrow" d="M0,0 L10,5 L0,10 z"/>
+              </marker>
+            </defs>
+            <rect class="reentry-inside" x="0" y="80" width="280" height="240"/>
+            <path class="reentry-mark" d="M 100 80 H 238"/>
+            <path class="reentry-mark" d="M 270 80 H 280"/>
+            <path class="reentry-mark" d="M 280 80 V 172"/>
+            <path class="reentry-mark" d="M 280 208 V 240"/>
+            <path class="reentry-loop" d="M 150 195 C 230 205 315 210 335 155 C 355 100 330 52 288 40 C 258 32 236 46 240 68 C 243 84 250 100 232 124" marker-end="url(#reArrow)"/>
+            <circle cx="150" cy="195" r="3.5" fill="var(--re-state)"/>
+            <text x="24" y="306" fill="var(--re-state)" opacity=".7" font-family="var(--sans)" font-size="11" letter-spacing=".22em">INNEN</text>
+            <text x="330" y="34" fill="var(--re-state)" opacity=".55" font-family="var(--sans)" font-size="11" letter-spacing=".22em">AUSSEN</text>
+          </svg>
+        </div>
+        <div class="reentry-side">
+          <div class="reentry-readout"><span class="label">Schritt <span id="reentry-step">0</span></span><strong id="reentry-state">markiert</strong></div>
+          <div class="timeline" id="reentry-timeline" aria-hidden="true"></div>
+          <div class="reentry-controls">
+            <button class="btn btn--primary" type="button" id="reentry-toggle">Oszillieren</button>
+            <button class="btn" type="button" id="reentry-stepbtn">Ein Schritt</button>
+            <button class="btn btn--ghost" type="button" id="reentry-reset">Zurücksetzen</button>
+          </div>
+          <div class="status" id="reentry-status" aria-live="polite">E ist markiert. Also ist (E) leer. Also ist E leer. Also ist (E) markiert …</div>
+        </div>
+      </div>
+    </div>
+    <div class="prose reveal" style="margin-top:clamp(28px,4vw,44px)">
+      <p>Die Gleichung <span class="mono">E = (E)</span> hat keine Lösung in der primären Algebra. Jeder Versuch, E einen Wert zu geben, erzeugt sofort den anderen. Spencer-Brown nennt das einen <strong>imaginären Wert</strong>. Der Wiedereintritt führt die Zeit in die Form ein: Die Form ist nicht mehr ein Zustand, sondern ein Wechsel.</p>
+      <p>Das ist keine Panne. Es ist die Form des <strong>Lügnersatzes</strong> — „Dieser Satz ist falsch“ — und zugleich die Form jedes Systems, das sich selbst beobachtet. Eine Schleife, die sich selbst durchläuft, hat keinen Ruhezustand. Sie hat eine Geschichte.</p>
+    </div>
+    <p class="note reveal"><strong>Merke:</strong> Endliche Formen haben einen Wert. Wiedereintretende Formen haben eine Zeit. Der Übergang von der einen zur anderen ist einer der tiefsten Züge der <em>Laws of Form</em>.</p>
+  </section>
+
+  <section class="section" id="beobachter">
+    <div class="section-head reveal">
+      <p class="kicker">§ 7 · Der Beobachter</p>
+      <h2>Die Marke, die Unterscheidung und der Beobachter sind dasselbe.</h2>
+      <p class="lead">Um zu beobachten, muss man unterscheiden. Um zu unterscheiden, muss man eine Grenze ziehen. Und der Beobachter steht auf beiden Seiten dieser Grenze zugleich.</p>
+    </div>
+    <div class="triad-wrap reveal">
+      <div class="triad" id="triad" role="group" aria-label="Unterscheidung, Marke und Beobachter">
+        <button class="triad-node is-active" type="button" data-node="distinction" aria-pressed="true">
+          <span class="triad-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1.5"/><path d="M12 3v18"/></svg></span>
+          <strong>Unterscheidung</strong>
+          <small>der erste Akt</small>
+        </button>
+        <button class="triad-node" type="button" data-node="mark" aria-pressed="false">
+          <span class="triad-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16"/></svg></span>
+          <strong>Marke</strong>
+          <small>die Spur</small>
+        </button>
+        <button class="triad-node" type="button" data-node="observer" aria-pressed="false">
+          <span class="triad-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/></svg></span>
+          <strong>Beobachter</strong>
+          <small>der, der unterscheidet</small>
+        </button>
+      </div>
+      <p class="triad-caption" id="triad-caption" aria-live="polite">Eine Unterscheidung trennt ein Innen von einem Außen. Sie ist der erste Akt — und es gibt keinen Beobachter ohne sie.</p>
+    </div>
+    <div class="prose reveal" style="margin-top:clamp(30px,5vw,48px)">
+      <p>Das ist der <strong>Beobachterdilemma</strong>: Der Beobachter muss außerhalb der Welt stehen, um sie beobachten zu können — und ist doch Teil der Welt, die er beobachtet. Die <em>Laws of Form</em> lösen das nicht weg. Sie geben ihm eine Form: die Wiedereintritts-Schleife. Der Beobachter ist die Unterscheidung, die sich selbst unterscheidet.</p>
+    </div>
+    <div class="pullquote reveal">
+      „… the first distinction, the Mark and the observer are not only interchangeable, but, in the form, identical.“
+      <cite>G. Spencer-Brown, Laws of Form, Schluss</cite>
+    </div>
+  </section>
+
+  <section class="section" id="resonanz">
+    <div class="section-head reveal">
+      <p class="kicker">§ 8 · Die Resonanz</p>
+      <h2>Ein kleines Buch mit langer Wirkung.</h2>
+      <p class="lead">Die <em>Laws of Form</em> sind kein Lehrbuch der Logik im üblichen Sinn. Sie sind eine Grammatik des Unterscheidens — und genau deshalb tauchen ihre Figuren in sehr verschiedenen Feldern wieder auf.</p>
+    </div>
+    <div class="resonance-grid">
+      <article class="res-card reveal">
+        <div class="res-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h7v14H3zM14 5h7v14h-7z"/><path d="M10 12h4"/></svg></div>
+        <h3>Logik &amp; Schaltkreise</h3>
+        <p>Zwei Werte, eine Marke, Nebeneinander. Die primäre Algebra ist eine minimalistische Notation der booleschen Algebra. <b>De Morgan ist eingebaut.</b></p>
+      </article>
+      <article class="res-card reveal">
+        <div class="res-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1.5"/><circle cx="12" cy="12" r="5"/></svg></div>
+        <h3>Mengen &amp; Grenzen</h3>
+        <p>Eine Menge ist ein Inneres. Die Grenze entscheidet, was dazugehört. <b>Die Unterscheidung ist die ursprüngliche Mengenbildung.</b></p>
+      </article>
+      <article class="res-card reveal">
+        <div class="res-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/><path d="M18 6c2.5 2 4 4.5 4 6"/></svg></div>
+        <h3>Kybernetik</h3>
+        <p>Heinz von Foerster machte den Beobachter zum Teil der Beobachtung. <b>Die Form des Wissens ist die Form des Unterscheidens.</b></p>
+      </article>
+      <article class="res-card reveal">
+        <div class="res-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M5 9c3 2 5 2 7 0s4-2 7 0M5 15c3-2 5-2 7 0s4 2 7 0"/></svg></div>
+        <h3>Autopoiese</h3>
+        <p>Maturana und Varela: Lebende Systeme erzeugen die Grenze, die sie von ihrer Umwelt trennt. <b>Das Leben ist eine Unterscheidung, die sich selbst erhält.</b></p>
+      </article>
+      <article class="res-card reveal">
+        <div class="res-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="1.5"/><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M11 11h2v2h-2z"/></svg></div>
+        <h3>Systemtheorie</h3>
+        <p>Niklas Luhmann: System und Umwelt, Kommunikation als Kette von Unterscheidungen. <b>Soziale Systeme beobachten, indem sie unterscheiden.</b></p>
+      </article>
+      <article class="res-card reveal">
+        <div class="res-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M7 6h10M6.5 7.8l4.5 8.4M17.5 7.8l-4.5 8.4"/></svg></div>
+        <h3>Peirce &amp; Diagramme</h3>
+        <p>Charles Sanders Peirce dachte Logik in Flächen und Grenzen — lange vor Spencer-Brown. <b>Denken als Diagramm, nicht als Formelzeile.</b></p>
+      </article>
+      <article class="res-card reveal">
+        <div class="res-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4c5 0 5 5 10 5s2-5 2-5M7 20c5 0 5-5 10-5s2 5 2 5"/><path d="M4 12h16"/></svg></div>
+        <h3>Topologie &amp; Knoten</h3>
+        <p>Louis Kauffman arbeitet mit Grenzen, Schleifen und imaginären Werten. <b>Die Marke wird zur topologischen Figur.</b></p>
+      </article>
+      <article class="res-card reveal">
+        <div class="res-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg></div>
+        <h3>Kognition</h3>
+        <p>Die Wurzel der Erkenntnis: etwas von allem anderen unterscheiden. <b>„Dies“ entsteht nur, weil es „alles andere“ gibt.</b></p>
+      </article>
+    </div>
+    <div class="critique reveal">
+      <strong>Und die Kritik?</strong> Nicht alle teilen die Begeisterung. John Conway soll das Buch „schön geschrieben, aber inhaltsleer“ genannt haben; die später behaupteten Beweise zu Vier-Farben-Satz und Riemann-Vermutung fanden keine Anerkennung. Die formale Kernidee aber ist solide — und ihr Einfluss auf Kybernetik, Systemtheorie und Diagrammlogik ist real.
+    </div>
+  </section>
+
+  <section class="section" id="mitnehmen">
+    <div class="section-head reveal">
+      <p class="kicker">§ 9 · Die Karte</p>
+      <h2>Der ganze Kalkül auf einer Seite.</h2>
+      <p class="lead">Zum Mitnehmen: zwei Werte, zwei Gesetze, drei Initiale, eine Schleife. Mehr ist es nicht — und weniger geht nicht.</p>
+    </div>
+    <div class="poster reveal">
+      <div class="poster-top">
+        <div>
+          <p class="kicker">Laws of Form · 1969</p>
+          <h2>Gesetze der Form</h2>
+        </div>
+        <div class="stamp">George Spencer-Brown<br>Eine visuelle Zusammenfassung<br>für asanAI</div>
+      </div>
+      <div class="poster-grid">
+        <div class="poster-col">
+          <h3>Zwei Werte</h3>
+          <div class="poster-values">
+            <div class="poster-value">
+              <span class="pv-box"></span>
+              <b>Leere</b>
+              <span>0 · unmarkiert</span>
+            </div>
+            <div class="poster-value">
+              <span class="pv-mark"><span class="pm"></span></span>
+              <b>Marke</b>
+              <span>1 · markiert</span>
+            </div>
+          </div>
+        </div>
+        <div class="poster-col">
+          <h3>Zwei Gesetze</h3>
+          <div class="poster-law"><span class="pm"></span><span class="pm"></span> = <span class="pm"></span><small>Rufen · Kondensation</small></div>
+          <div class="poster-law"><span class="pm pm--double"><span class="pm"></span></span> = <span class="pvoid">·</span><small>Kreuzen · Aufhebung</small></div>
+        </div>
+        <div class="poster-col">
+          <h3>Drei Initiale</h3>
+          <div class="poster-inits">
+            <div class="poster-init"><span class="lbl">J0</span><span class="pm pm--double"><span class="pm"></span></span> A = A</div>
+            <div class="poster-init"><span class="lbl">J1a</span><span class="pm">A</span> A = <span class="pm"></span></div>
+            <div class="poster-init"><span class="lbl">C2</span>A <span class="pm">A B</span> = A <span class="pm">B</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="poster-bottom">
+        <div>
+          <p class="poster-final">Zeichne eine <span>Unterscheidung.</span></p>
+          <div class="poster-actions">
+            <button class="btn" type="button" id="poster-print">Diese Karte drucken</button>
+            <a class="btn" href="#top">Noch einmal von vorn</a>
+          </div>
+        </div>
+        <svg class="poster-loop" viewBox="0 0 160 110" aria-hidden="true">
+          <path d="M12 78 H72 V18"/>
+          <path class="dash" d="M34 82 C 90 95 132 82 132 55 C 132 30 108 14 84 22 C 66 28 62 46 74 54 C 84 61 100 54 98 40" marker-end="none"/>
+          <circle cx="98" cy="40" r="2.6" fill="var(--paper-accent)"/>
+        </svg>
+      </div>
+    </div>
+    <div class="sources reveal">
+      <h3>Quellen &amp; Weiterlesen</h3>
+      <ul>
+        <li>G. Spencer-Brown, <em>Laws of Form</em>, London: Allen &amp; Unwin, 1969. Deutsch: <em>Gesetze der Form</em>, Lübeck: Bohmeier, 1997.</li>
+        <li><a href="https://en.wikipedia.org/wiki/Laws_of_Form" target="_blank" rel="noopener">Wikipedia: Laws of Form</a> — Überblick, Axiome, Initiale, Interpretationen.</li>
+        <li><a href="https://de.wikipedia.org/wiki/Gesetze_der_Form" target="_blank" rel="noopener">Wikipedia (de): Gesetze der Form</a> — Begriffe, Axiome und Rezeption.</li>
+        <li><a href="https://en.wikipedia.org/wiki/G._Spencer-Brown" target="_blank" rel="noopener">Wikipedia: G. Spencer-Brown</a> — Biografie und Kontext.</li>
+        <li><a href="https://homepages.math.uic.edu/~kauffman/" target="_blank" rel="noopener">Louis H. Kauffman</a> — Arbeiten zu Grenzen, Knoten und Wiedereintritt.</li>
+        <li><a href="https://plato.stanford.edu/entries/peirce-logic/" target="_blank" rel="noopener">Stanford Encyclopedia of Philosophy: Peirce’s Logic</a> — Diagramme und Existential Graphs.</li>
+        <li>Heinz von Foerster, <em>Observing Systems</em>, 1981.</li>
+        <li>Humberto Maturana &amp; Francisco Varela, <em>Autopoiesis and Cognition</em>, 1980.</li>
+        <li>Niklas Luhmann, <em>Soziale Systeme</em>, 1984.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div><span class="foot-mark"></span>Eine didaktische Visualisierung für asanAI. Keine Reproduktion des Buches; alle Diagramme sind eigene Rekonstruktionen.</div>
+  <div><a href="#top">Nach oben</a> · <a href="lawsofform.html">Frühere Explorer-Version</a></div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const n = v => Math.round(v * 100) / 100;
+  const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function V(){ return {type:'void'}; }
+  function M(child){ return {type:'mark', child}; }
+  function S(...items){ return items.length === 1 ? items[0] : {type:'seq', items}; }
+  function Var(name){ return {type:'var', name}; }
+  function clone(a){ return JSON.parse(JSON.stringify(a)); }
+
+  function textOf(a){
+    if (!a) return '·';
+    if (a.type === 'void') return '·';
+    if (a.type === 'var') return a.name;
+    if (a.type === 'mark') return a.child.type === 'void' ? '()' : '(' + textOf(a.child) + ')';
+    if (a.type === 'seq') return a.items.map(textOf).join(' ');
+    return '';
+  }
+
+  function evalForm(a, env){
+    if (a.type === 'void') return false;
+    if (a.type === 'var') return !!env[a.name];
+    if (a.type === 'mark') return !evalForm(a.child, env);
+    if (a.type === 'seq') return a.items.some(x => evalForm(x, env));
+    return false;
+  }
+
+  const LAY = {pad:18, gap:30, voidW:28, varW:46, varH:54, extra:8};
+
+  function measure(a){
+    if (a.type === 'void') return {w:LAY.voidW, h:LAY.voidW, node:a, kids:[]};
+    if (a.type === 'var') return {w:LAY.varW, h:LAY.varH, node:a, kids:[]};
+    if (a.type === 'mark'){
+      const c = measure(a.child);
+      return {
+        w: c.w + LAY.pad * 2 + LAY.extra,
+        h: c.h + LAY.pad * 2,
+        node: a,
+        kids: [Object.assign({}, c, {x:LAY.pad, y:LAY.pad})]
+      };
+    }
+    if (a.type === 'seq'){
+      const items = a.items.map(measure);
+      const w = items.reduce((s, k) => s + k.w, 0) + LAY.gap * Math.max(0, items.length - 1);
+      const h = items.reduce((m, k) => Math.max(m, k.h), 0);
+      let x = 0;
+      const kids = items.map(k => {
+        const placed = Object.assign({}, k, {x, y:h - k.h});
+        x += k.w + LAY.gap;
+        return placed;
+      });
+      return {w:Math.max(w, LAY.voidW), h:Math.max(h, LAY.voidW), node:a, kids};
+    }
+    return {w:LAY.voidW, h:LAY.voidW, node:a, kids:[]};
+  }
+
+  function drawLayout(l, ox, oy, opts, parts){
+    const a = l.node;
+    if (a.type === 'mark'){
+      parts.push('<path class="mn-mark" d="M ' + n(ox) + ' ' + n(oy) + ' H ' + n(ox + l.w) + ' V ' + n(oy + l.h) + '"/>');
+      const k = l.kids[0];
+      drawLayout(k, ox + k.x, oy + k.y, opts, parts);
+    } else if (a.type === 'var'){
+      const cx = ox + l.w / 2;
+      const cy = oy + l.h / 2;
+      const r = Math.min(l.w, l.h) / 2 - 2;
+      const val = opts.env ? !!opts.env[a.name] : null;
+      const cls = val === null ? 'mn-var' : (val ? 'mn-var is-true' : 'mn-var is-false');
+      parts.push('<circle class="' + cls + '" cx="' + n(cx) + '" cy="' + n(cy) + '" r="' + n(r) + '"/>');
+      parts.push('<text class="mn-var-text" x="' + n(cx) + '" y="' + n(cy) + '">' + esc(a.name) + '</text>');
+    } else if (a.type === 'seq'){
+      for (const k of l.kids) drawLayout(k, ox + k.x, oy + k.y, opts, parts);
+    } else if (a.type === 'void' && opts.showVoid){
+      parts.push('<circle class="mn-void" cx="' + n(ox + l.w / 2) + '" cy="' + n(oy + l.h / 2) + '" r="' + n(l.w / 2 - 3) + '"/>');
+    }
+  }
+
+  function renderForm(container, ast, opts = {}){
+    if (!container) return;
+    const l = measure(ast);
+    const pad = 16;
+    const min = opts.minSize || 0;
+    const vw = Math.max(l.w + pad * 2, min);
+    const vh = Math.max(l.h + pad * 2, min);
+    const dx = (vw - l.w) / 2;
+    const dy = (vh - l.h) / 2;
+    const parts = [];
+    drawLayout(l, dx, dy, opts, parts);
+    container.innerHTML = '<svg class="form-svg" viewBox="0 0 ' + n(vw) + ' ' + n(vh) + '" role="img" aria-label="' + esc(textOf(ast)) + '">' + parts.join('') + '</svg>';
+  }
+
+  function initChrome(){
+    const bar = $('#progress-bar');
+    const sections = $$('main section[id]');
+    const links = $$('.dot-nav a');
+    let ticking = false;
+
+    function update(){
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      if (bar) bar.style.width = (h > 0 ? clamp(window.scrollY / h, 0, 1) * 100 : 0) + '%';
+      const probe = window.scrollY + window.innerHeight * 0.32;
+      let current = sections[0];
+      for (const s of sections) if (s.offsetTop <= probe) current = s;
+      if (current) links.forEach(a => a.classList.toggle('is-active', a.getAttribute('href') === '#' + current.id));
+      ticking = false;
+    }
+
+    function onScroll(){
+      if (!ticking){
+        ticking = true;
+        window.requestAnimationFrame(update);
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, {passive:true});
+    window.addEventListener('resize', onScroll);
+    update();
+  }
+
+  function initReveal(){
+    const els = $$('.reveal');
+    if (!els.length) return;
+    if (reduceMotion || !('IntersectionObserver' in window)){
+      els.forEach(el => el.classList.add('is-visible'));
+      return;
+    }
+    const obs = new IntersectionObserver(entries => {
+      for (const entry of entries){
+        if (entry.isIntersecting){
+          entry.target.classList.add('is-visible');
+          obs.unobserve(entry.target);
+        }
+      }
+    }, {threshold:0.12, rootMargin:'0px 0px -6% 0px'});
+    els.forEach(el => obs.observe(el));
+  }
+
+  function initSky(){
+    const canvas = $('#sky');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const hero = canvas.parentElement;
+    let w = 0, h = 0, dpr = 1, points = [], raf = null, alive = true, visible = true;
+    const palette = ['245,180,95', '123,216,208', '184,161,255'];
+
+    function resize(){
+      const rect = hero.getBoundingClientRect();
+      w = Math.max(1, rect.width);
+      h = Math.max(1, rect.height);
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      makePoints();
+    }
+
+    function makePoints(){
+      const count = clamp(Math.round((w * h) / 19000), 28, 92);
+      points = Array.from({length:count}, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.14,
+        vy: (Math.random() - 0.5) * 0.14,
+        r: Math.random() * 1.3 + 0.35,
+        c: palette[Math.floor(Math.random() * palette.length)],
+        tw: Math.random() * Math.PI * 2
+      }));
+    }
+
+    function frame(t){
+      if (!alive || !visible || document.hidden) return;
+      ctx.clearRect(0, 0, w, h);
+      for (const p of points){
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < -20) p.x = w + 20;
+        if (p.x > w + 20) p.x = -20;
+        if (p.y < -20) p.y = h + 20;
+        if (p.y > h + 20) p.y = -20;
+      }
+      for (let i = 0; i < points.length; i++){
+        for (let j = i + 1; j < points.length; j++){
+          const a = points[i], b = points[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < 15000){
+            const alpha = (1 - Math.sqrt(d2) / 122) * 0.14;
+            ctx.strokeStyle = 'rgba(245,180,95,' + alpha.toFixed(3) + ')';
+            ctx.lineWidth = 0.65;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+      for (const p of points){
+        const tw = 0.55 + 0.45 * Math.sin(t * 0.0009 + p.tw);
+        ctx.fillStyle = 'rgba(' + p.c + ',' + (0.32 + 0.4 * tw).toFixed(3) + ')';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      raf = window.requestAnimationFrame(frame);
+    }
+
+    function start(){
+      if (reduceMotion){ frame(0); return; }
+      if (!raf) raf = window.requestAnimationFrame(frame);
+    }
+
+    function stop(){
+      if (raf){ window.cancelAnimationFrame(raf); raf = null; }
+    }
+
+    window.addEventListener('resize', () => { resize(); if (reduceMotion) frame(0); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else start(); });
+    if ('IntersectionObserver' in window){
+      new IntersectionObserver(entries => {
+        visible = entries.some(e => e.isIntersecting);
+        if (!visible) stop();
+        else start();
+      }, {threshold:0.02}).observe(hero);
+    }
+    resize();
+    if (reduceMotion) frame(0); else start();
+    window.addEventListener('pagehide', () => { alive = false; stop(); });
+  }
+
+  function initVoidStage(){
+    const stage = $('#void-stage');
+    if (!stage) return;
+    const svgMark = $('#void-mark');
+    const inside = $('#void-inside');
+    const labelIn = $('#void-label-in');
+    const labelOut = $('#void-label-out');
+    const caption = $('#void-caption');
+    const reset = $('#void-reset');
+    const W = 1000, H = 562.5;
+    let hasMark = false;
+
+    function drawAt(x, y){
+      x = clamp(x, 150, 950);
+      y = clamp(y, 45, 430);
+      svgMark.setAttribute('d', 'M ' + n(x - 150) + ' ' + n(y) + ' H ' + n(x) + ' V ' + n(y + 132));
+      inside.setAttribute('x', '0');
+      inside.setAttribute('y', n(y));
+      inside.setAttribute('width', n(x));
+      inside.setAttribute('height', n(H - y));
+      labelIn.setAttribute('x', n(clamp(x * 0.36, 34, 400)));
+      labelIn.setAttribute('y', n(clamp(y + (H - y) * 0.62, 90, H - 22)));
+      labelOut.setAttribute('x', n(clamp(x + (W - x) * 0.42, 430, W - 90)));
+      labelOut.setAttribute('y', n(clamp(y * 0.38, 34, 160)));
+      stage.classList.remove('is-drawn');
+      void stage.offsetWidth;
+      stage.classList.add('is-drawn');
+      inside.classList.add('is-on');
+      labelIn.classList.add('is-on');
+      labelOut.classList.add('is-on');
+      hasMark = true;
+      caption.innerHTML = '<strong>Eine Marke.</strong> Das Innere liegt links unter dem Winkel, das Äußere ist alles andere.';
+    }
+
+    function clear(){
+      if (!hasMark && !stage.classList.contains('is-drawn')) return;
+      hasMark = false;
+      stage.classList.remove('is-drawn');
+      svgMark.setAttribute('d', '');
+      inside.classList.remove('is-on');
+      labelIn.classList.remove('is-on');
+      labelOut.classList.remove('is-on');
+      caption.innerHTML = 'Noch ist die Seite leer. Ein Klick genügt, und es gibt ein Innen und ein Außen.';
+    }
+
+    stage.addEventListener('click', e => {
+      const rect = stage.getBoundingClientRect();
+      drawAt((e.clientX - rect.left) / rect.width * W, (e.clientY - rect.top) / rect.height * H);
+    });
+
+    stage.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        drawAt(760, 150);
+      }
+    });
+
+    reset.addEventListener('click', e => {
+      e.stopPropagation();
+      clear();
+    });
+  }
+
+  function initAnatomy(){
+    const root = $('#anatomy');
+    if (!root) return;
+    const caption = $('#anatomy-caption');
+    const buttons = $$('.anatomy-btn', root);
+    const copy = {
+      line: 'Die Grenze ist kein Ding, sondern ein Akt. Sie trennt, indem sie einen Raum umschließt.',
+      inside: 'Das Innere ist der bezeichnete Raum: alles, was unter dem Winkel liegt. Hier gilt die Marke.',
+      outside: 'Das Äußere ist die unmarkierte Seite: alles, was nicht innen ist. Sie braucht kein Zeichen.',
+      cross: 'Der Übergang. Um von einer Seite zur anderen zu gelangen, muss man die Grenze kreuzen — das ist der Akt der Unterscheidung.'
+    };
+    let pinned = 'line';
+
+    function setActive(part){
+      root.dataset.active = part;
+      buttons.forEach(b => b.classList.toggle('is-active', b.dataset.part === part));
+      caption.textContent = copy[part] || copy.line;
+    }
+
+    buttons.forEach(btn => {
+      const part = btn.dataset.part;
+      btn.addEventListener('pointerenter', () => setActive(part));
+      btn.addEventListener('pointerleave', () => setActive(pinned));
+      btn.addEventListener('focus', () => setActive(part));
+      btn.addEventListener('blur', () => setActive(pinned));
+      btn.addEventListener('click', () => { pinned = part; setActive(part); });
+    });
+
+    setActive(pinned);
+  }
+
+  function initLaws(){
+    $$('[data-play]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const kind = btn.dataset.play;
+        const card = document.getElementById('law-' + kind);
+        if (!card) return;
+        card.classList.remove('is-playing');
+        void card.offsetWidth;
+        card.classList.add('is-playing');
+        window.setTimeout(() => { btn.textContent = 'noch einmal'; }, 900);
+      });
+    });
+  }
+
+  function rewriteOnce(node){
+    if (node.type === 'mark'){
+      const child = rewriteOnce(node.child);
+      if (child.applied){
+        if (child.node.type === 'mark'){
+          return {node:child.node.child, applied:true, law:'crossing', text:'Eine Marke in einer Marke hebt sich auf.'};
+        }
+        return {node:M(child.node), applied:true, law:child.law, text:child.text};
+      }
+      if (node.child.type === 'mark'){
+        return {node:node.child.child, applied:true, law:'crossing', text:'Eine Marke in einer Marke hebt sich auf.'};
+      }
+      return {node, applied:false};
+    }
+    if (node.type === 'seq'){
+      const items = node.items.slice();
+      for (let i = 0; i < items.length; i++){
+        const r = rewriteOnce(items[i]);
+        if (r.applied){
+          items[i] = r.node;
+          return {node:S(...items), applied:true, law:r.law, text:r.text};
+        }
+      }
+      if (items.some(x => x.type === 'seq')){
+        const flat = [];
+        for (const it of items){
+          if (it.type === 'seq') flat.push(...it.items);
+          else flat.push(it);
+        }
+        return {node:S(...flat), applied:true, law:'empty', text:'Nebeneinander wird zusammengefasst.'};
+      }
+      const nonVoid = items.filter(x => x.type !== 'void');
+      if (nonVoid.length !== items.length){
+        return {node:nonVoid.length ? S(...nonVoid) : V(), applied:true, law:'empty', text:'Die leere Form verschwindet.'};
+      }
+      if (items.length === 0) return {node:V(), applied:true, law:'empty', text:'Nichts bleibt.'};
+      if (items.length === 1) return {node:items[0], applied:true, law:'empty', text:'Eine einzelne Form braucht keine Nachbarschaft.'};
+      if (items.every(x => x.type === 'mark')){
+        return {node:items[0], applied:true, law:'calling', text:'Zwei Marken nebeneinander werden zu einer.'};
+      }
+      return {node, applied:false};
+    }
+    return {node, applied:false};
+  }
+
+  function reduceSteps(ast){
+    let form = clone(ast);
+    const steps = [{form:clone(form), law:null, text:'Ausgangsform'}];
+    for (let i = 0; i < 200; i++){
+      const r = rewriteOnce(form);
+      if (!r.applied) break;
+      form = r.node;
+      steps.push({form:clone(form), law:r.law, text:r.text});
+    }
+    return steps;
+  }
+
+  function initLab(){
+    const stage = $('#lab-stage');
+    const formEl = $('#lab-form');
+    const badge = $('#lab-badge');
+    const status = $('#lab-status');
+    const stepEl = $('#lab-step');
+    const reduceBtn = $('[data-lab="reduce"]');
+    if (!stage || !formEl || !status) return;
+
+    let ast = V();
+    let history = [];
+    let steps = null;
+    let index = 0;
+    let timer = null;
+    let playing = false;
+
+    function lawLabel(law){
+      return law === 'calling' ? 'Rufen' : law === 'crossing' ? 'Kreuzen' : law === 'empty' ? 'Leere' : '';
+    }
+
+    function setStatus(text, law){
+      status.innerHTML = '';
+      if (law){
+        const chip = document.createElement('span');
+        chip.className = 'law-chip ' + law;
+        chip.textContent = lawLabel(law);
+        status.appendChild(chip);
+      }
+      status.appendChild(document.createTextNode(text));
+    }
+
+    function hideResult(){
+      stage.classList.remove('is-marked', 'is-void');
+      badge.className = 'lab-badge';
+      badge.textContent = '';
+    }
+
+    function showResult(form){
+      const marked = form.type === 'mark';
+      stage.classList.toggle('is-marked', marked);
+      stage.classList.toggle('is-void', !marked);
+      badge.className = 'lab-badge is-on ' + (marked ? 'marked' : 'void');
+      badge.textContent = marked ? 'markiert' : 'leer';
+    }
+
+    function updateStep(){
+      if (!stepEl) return;
+      const total = steps ? Math.max(0, steps.length - 1) : 0;
+      stepEl.textContent = 'Schritt ' + index + ' / ' + total;
+    }
+
+    function render(){
+      renderForm(formEl, ast, {minSize:300, showVoid:true});
+      updateStep();
+    }
+
+    function stop(){
+      if (timer){ clearTimeout(timer); timer = null; }
+      playing = false;
+      if (reduceBtn) reduceBtn.textContent = 'Reduzieren';
+    }
+
+    function getSteps(){
+      if (!steps) steps = reduceSteps(ast);
+      return steps;
+    }
+
+    function showStep(i){
+      const all = getSteps();
+      index = clamp(i, 0, all.length - 1);
+      const s = all[index];
+      renderForm(formEl, s.form, {minSize:300, showVoid:true});
+      updateStep();
+      if (index === 0){
+        hideResult();
+        setStatus('Die Ausgangsform. Drücke „Schritt“ oder „Reduzieren“.', null);
+      } else {
+        if (index === all.length - 1) showResult(s.form);
+        else hideResult();
+        setStatus(s.text, s.law);
+      }
+    }
+
+    function build(action){
+      stop();
+      if (action === 'undo'){
+        if (!history.length){
+          setStatus('Es gibt nichts mehr zurückzunehmen.', null);
+          return;
+        }
+        ast = history.pop();
+        steps = null;
+        index = 0;
+        hideResult();
+        render();
+        setStatus('Letzten Schritt zurückgenommen.', null);
+        return;
+      }
+      history.push(clone(ast));
+      if (action === 'mark') ast = ast.type === 'void' ? M(V()) : S(ast, M(V()));
+      else if (action === 'wrap') ast = M(ast);
+      else if (action === 'reset') ast = V();
+      steps = null;
+      index = 0;
+      hideResult();
+      render();
+      if (action === 'reset') setStatus('Die Leere. Nichts ist gesetzt.', null);
+      else setStatus('Form erweitert. Drücke „Reduzieren“ oder „Schritt“.', null);
+    }
+
+    function advance(){
+      stop();
+      const all = getSteps();
+      if (all.length <= 1){
+        showResult(ast);
+        setStatus('Diese Form ist bereits ein Wert.', null);
+        return;
+      }
+      if (index >= all.length - 1){
+        index = 0;
+        showStep(0);
+        setStatus('Von vorn. Drücke „Schritt“ oder „Reduzieren“.', null);
+        return;
+      }
+      showStep(index + 1);
+    }
+
+    function play(){
+      if (playing){ stop(); setStatus('Angehalten.', null); return; }
+      const all = getSteps();
+      if (all.length <= 1){
+        showResult(ast);
+        setStatus('Diese Form ist bereits ein Wert.', null);
+        return;
+      }
+      index = 0;
+      showStep(0);
+      playing = true;
+      if (reduceBtn) reduceBtn.textContent = 'Pause';
+      const tick = () => {
+        if (!playing) return;
+        if (index < all.length - 1){
+          showStep(index + 1);
+          timer = window.setTimeout(tick, 900);
+        } else {
+          playing = false;
+          timer = null;
+          if (reduceBtn) reduceBtn.textContent = 'Noch einmal';
+        }
+      };
+      timer = window.setTimeout(tick, 700);
+    }
+
+    $$('[data-lab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const action = btn.dataset.lab;
+        if (action === 'reduce') play();
+        else if (action === 'step') advance();
+        else build(action);
+      });
+    });
+
+    const presets = {
+      calling: S(M(V()), M(V())),
+      crossing: M(M(V())),
+      mixed: S(M(V()), M(M(V()))),
+      triple: M(M(M(V()))),
+      insideCall: M(S(M(V()), M(V())))
+    };
+
+    $$('[data-preset]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        stop();
+        const p = presets[btn.dataset.preset];
+        if (!p) return;
+        ast = clone(p);
+        history = [];
+        steps = null;
+        index = 0;
+        hideResult();
+        render();
+        $$('[data-preset]').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        setStatus('Beispiel geladen. Drücke „Reduzieren“ oder „Schritt“.', null);
+      });
+    });
+
+    render();
+    setStatus('Baue eine Form — oder lade ein Beispiel.', null);
+  }
+
+  function initTruth(){
+    const picker = $('#truth-picker');
+    const formEl = $('#truth-form');
+    const stage = $('#truth-stage');
+    const badge = $('#truth-badge');
+    const reading = $('#truth-reading');
+    const tbody = $('#truth-tbody');
+    const toggles = $$('.var-toggle');
+    if (!picker || !formEl || !tbody) return;
+
+    const forms = [
+      {id:'not', label:'nicht A', notation:'(A)', desc:'nicht A', ast:M(Var('A'))},
+      {id:'or', label:'A oder B', notation:'A B', desc:'A oder B', ast:S(Var('A'), Var('B'))},
+      {id:'and', label:'A und B', notation:'((A)(B))', desc:'A und B', ast:M(S(M(Var('A')), M(Var('B'))))},
+      {id:'implies', label:'A → B', notation:'(A)B', desc:'wenn A, dann B', ast:S(M(Var('A')), Var('B'))},
+      {id:'nor', label:'weder noch', notation:'(A B)', desc:'weder A noch B', ast:M(S(Var('A'), Var('B')))},
+      {id:'c2', label:'C2', notation:'A(AB)', desc:'A und nicht B — die Generation', ast:S(Var('A'), M(S(Var('A'), Var('B'))))}
+    ];
+
+    let currentId = 'or';
+    let assign = {A:false, B:false};
+
+    forms.forEach(f => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'chip';
+      btn.dataset.form = f.id;
+      btn.textContent = f.label;
+      btn.addEventListener('click', () => { currentId = f.id; render(); });
+      picker.appendChild(btn);
+    });
+
+    function current(){ return forms.find(f => f.id === currentId) || forms[0]; }
+
+    function mini(v){
+      return v ? '<span class="tt-mark"></span>' : '<span class="tt-void"></span>';
+    }
+
+    function render(){
+      const f = current();
+      renderForm(formEl, f.ast, {minSize:230, env:assign});
+      const v = evalForm(f.ast, assign);
+      badge.className = 'truth-badge ' + (v ? 'marked' : 'void');
+      badge.textContent = v ? 'markiert' : 'leer';
+      stage.classList.toggle('is-marked', v);
+      stage.classList.toggle('is-void', !v);
+      if (reading) reading.innerHTML = '<strong>' + esc(f.notation) + '</strong> · ' + esc(f.desc) + '. <span class="truth-note">Leere = falsch, Marke = nicht, Nebeneinander = oder.</span>';
+      toggles.forEach(btn => {
+        const on = !!assign[btn.dataset.var];
+        btn.classList.toggle('is-true', on);
+        btn.setAttribute('aria-pressed', String(on));
+      });
+      $$('[data-form]', picker).forEach(b => b.classList.toggle('is-active', b.dataset.form === currentId));
+      tbody.innerHTML = '';
+      for (const a of [false, true]){
+        for (const b of [false, true]){
+          const val = evalForm(f.ast, {A:a, B:b});
+          const tr = document.createElement('tr');
+          tr.classList.toggle('is-current', a === assign.A && b === assign.B);
+          tr.innerHTML = '<td>' + mini(a) + '</td><td>' + mini(b) + '</td><td>' + mini(val) + '</td>';
+          tr.addEventListener('click', () => { assign = {A:a, B:b}; render(); });
+          tbody.appendChild(tr);
+        }
+      }
+    }
+
+    toggles.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const name = btn.dataset.var;
+        assign = Object.assign({}, assign, {[name]:!assign[name]});
+        render();
+      });
+    });
+
+    render();
+  }
+
+  function initInitCards(){
+    const forms = {
+      j0: [S(M(M(V())), Var('A')), Var('A')],
+      j1a: [S(M(Var('A')), Var('A')), M(V())],
+      c2: [S(Var('A'), M(S(Var('A'), Var('B')))), S(Var('A'), M(Var('B')))],
+      j1: [M(S(M(Var('A')), Var('A'))), V()],
+      j2: [S(M(S(M(Var('A')), M(Var('B')))), Var('C')), M(S(M(S(Var('A'), Var('C'))), M(S(Var('B'), Var('C')))))]
+    };
+
+    Object.keys(forms).forEach(name => {
+      const host = document.querySelector('[data-init-eq="' + name + '"]');
+      if (!host) return;
+      const pair = forms[name];
+      host.innerHTML = '';
+      const left = document.createElement('div');
+      left.className = 'init-side';
+      const eq = document.createElement('span');
+      eq.className = 'eq-sign';
+      eq.textContent = '=';
+      const right = document.createElement('div');
+      right.className = 'init-side';
+      host.appendChild(left);
+      host.appendChild(eq);
+      host.appendChild(right);
+      renderForm(left, pair[0], {showVoid:true});
+      renderForm(right, pair[1], {showVoid:true});
+    });
+  }
+
+  function initReentry(){
+    const stage = $('#reentry-stage');
+    const stateEl = $('#reentry-state');
+    const stepEl = $('#reentry-step');
+    const timeline = $('#reentry-timeline');
+    const toggle = $('#reentry-toggle');
+    const stepBtn = $('#reentry-stepbtn');
+    const reset = $('#reentry-reset');
+    const status = $('#reentry-status');
+    if (!stage || !stateEl || !timeline) return;
+
+    let step = 0;
+    let timer = null;
+    let running = false;
+
+    for (let i = 0; i < 25; i++){
+      const cell = document.createElement('span');
+      cell.className = i % 2 === 0 ? 'is-marked' : 'is-void';
+      timeline.appendChild(cell);
+    }
+    const cells = Array.from(timeline.children);
+
+    function paint(){
+      const marked = step % 2 === 0;
+      stage.dataset.state = marked ? 'marked' : 'void';
+      stateEl.textContent = marked ? 'markiert' : 'leer';
+      stepEl.textContent = String(step);
+      cells.forEach((c, i) => c.classList.toggle('is-now', i === step % 25));
+      if (status){
+        status.textContent = marked
+          ? 'E ist markiert. Also ist (E) leer. Also wird E im nächsten Schritt leer.'
+          : 'E ist leer. Also ist (E) markiert. Also wird E im nächsten Schritt markiert.';
+      }
+    }
+
+    function stop(){
+      running = false;
+      if (timer){ clearInterval(timer); timer = null; }
+      if (toggle) toggle.textContent = 'Oszillieren';
+    }
+
+    function start(){
+      if (running) return;
+      running = true;
+      if (toggle) toggle.textContent = 'Anhalten';
+      timer = window.setInterval(() => { step++; paint(); }, 820);
+    }
+
+    if (toggle){
+      toggle.addEventListener('click', () => { if (running) stop(); else start(); });
+    }
+    if (stepBtn){
+      stepBtn.addEventListener('click', () => { stop(); step++; paint(); });
+    }
+    if (reset){
+      reset.addEventListener('click', () => { stop(); step = 0; paint(); });
+    }
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
+
+    paint();
+  }
+
+  function initTriad(){
+    const root = $('#triad');
+    if (!root) return;
+    const caption = $('#triad-caption');
+    const buttons = $$('.triad-node', root);
+    const copy = {
+      distinction: 'Eine Unterscheidung trennt ein Innen von einem Außen. Sie ist der erste Akt — und es gibt keinen Beobachter ohne sie.',
+      mark: 'Die Marke ist die Spur der Unterscheidung: <b>Grenze, Zeichen und Übergang in einem.</b> Sie ist der kleinste sichtbare Unterschied.',
+      observer: 'Der Beobachter ist der, der die Unterscheidung trifft — und zugleich Teil der Welt, die er unterscheidet. <b>Darin liegt die Schleife.</b>'
+    };
+    let pinned = 'distinction';
+
+    function setActive(node){
+      buttons.forEach(b => {
+        const on = b.dataset.node === node;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-pressed', String(on));
+      });
+      if (caption) caption.innerHTML = copy[node] || copy.distinction;
+    }
+
+    buttons.forEach(btn => {
+      const node = btn.dataset.node;
+      btn.addEventListener('pointerenter', () => setActive(node));
+      btn.addEventListener('pointerleave', () => setActive(pinned));
+      btn.addEventListener('focus', () => setActive(node));
+      btn.addEventListener('blur', () => setActive(pinned));
+      btn.addEventListener('click', () => { pinned = node; setActive(node); });
+    });
+
+    setActive(pinned);
+  }
+
+  function initPoster(){
+    const btn = $('#poster-print');
+    if (!btn) return;
+    btn.addEventListener('click', () => window.print());
+  }
+
+  initChrome();
+  initReveal();
+  initSky();
+  initVoidStage();
+  initAnatomy();
+  initLaws();
+  initLab();
+  initTruth();
+  initInitCards();
+  initReentry();
+  initTriad();
+  initPoster();
+})();
+</script>
+</body>
+</html>

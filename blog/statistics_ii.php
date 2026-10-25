@@ -29,6 +29,11 @@ While Gauß sought the “True Path” of planets among noisy observations, the 
 
 His essay, that published posthumously in the year \citeyear{bayes1763essay}, provides the mathematical engine for **induction**. In modern AI, this is how a machine “changes its mind.” It doesn't just see a pixel; it calculates how that pixel changes its confidence in what it is looking at.
 
+<figure>
+	<img src="thomas_bayes.png" alt="Portrait of Thomas Bayes" />
+	<figcaption class="md">Thomas Bayes (1702–1761), whose posthumously published *Essay* (1763) gave Bayesian updating its name and its rule. Image: \cite[Mark Riehl]{thomas_bayes_image}, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), colorized from a public-domain portrait.</figcaption>
+</figure>
+
 ### The Anatomy of an Update
 The goal of Bayesian inference is to calculate the **Posterior**, your updated degree of belief in a hypothesis ($H$) after seeing evidence ($E$).
 
@@ -178,9 +183,11 @@ Mathematically, for a probability vector $p = (p_1, \dots, p_K)$, the density is
 $$f(p_1, \dots, p_K; \alpha_1, \dots, \alpha_K) = \frac{1}{\text{B}(\alpha)} \prod_{i=1}^{K} p_i^{\alpha_i - 1}$$
 Where $\alpha$ is the **concentration parameter**.
 
-In AI, we use this to solve the “Bag of Words” problem. Before a Transformer generates text, it is essentially sampling from a Dirichlet distribution to decide the “mixture” of the text.
-* Is this 80% “Technical Manual” and 20% “Friendly Tutorial”?
-* The $\alpha$ values represent the model's “prior knowledge” about how words group together in the training dataset.
+In topic models such as Latent Dirichlet Allocation (LDA), the Dirichlet distribution is used to model the “mixture” of topics in a document.
+* Is this document 80% “Technical Manual” and 20% “Friendly Tutorial”?
+* The $\alpha$ values encode the prior over such mixtures, learned from how words group together in the training corpus.
+
+A Transformer does not do this: it computes one deterministic distribution over the next token and, if sampling is enabled, draws from that distribution directly.
 
 When $\alpha < 1$, the distribution pushes probabilities toward the corners (the model becomes very “certain” and chooses one specific topic). When $\alpha > 1$, it pushes everything toward the center (a “vague” mixture of everything).
 </div>
@@ -217,7 +224,7 @@ The algorithm used to solve this was formalized by **Arthur Dempster, Laird, and
 2.  **Maximization (M):** Adjust the internal “weights” to favor the words that fit that topic.
 
 #### The Statistical “Vibe”
-In LLMs, this is why a prompt works. By typing “Import torch,” you are statistically forcing the model's **Hidden State** to move its “Expectation” entirely into the “Coding” cluster, making “print” infinitely more likely than “reproduction” (the biology cluster).
+By analogy, this is why a prompt works. Typing “Import torch” pushes the model's **hidden state** toward the “Coding” region, making “print” far more likely than “reproduction” (the biology cluster) — though a Transformer does not literally run EM.
 </div>
 
 <div class="statlab-interactive-zone">

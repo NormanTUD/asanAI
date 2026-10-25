@@ -1290,3 +1290,21 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
     Lokal: toby_ord_portrait.jpg (700x612)
     Genutzt in: people_of_ai.php § "Stuart Russell, Nick Bostrom, Eliezer Yudkowsky, and Toby Ord"
     Status: OK - CC BY-SA 3.0
+
+=== MATH IV (math_iv.php, Stand: Oktober 2026) ===
+1. hopf_link_image
+   URL: https://commons.wikimedia.org/wiki/File:Hopf_Link.png
+   Lizenz: Public domain (via Commons API extmetadata)
+   Autor: Jim Belk
+   Lokal: hopf_link.png (1800x1400)
+   Genutzt in: math_iv.php § "Unthreading a chain"
+   Status: OK - Public domain
+
+=== STATISTICS II (statistics_ii.php, Stand: Oktober 2026) ===
+2. thomas_bayes_image
+   URL: https://commons.wikimedia.org/wiki/File:ThomasBayes.png
+   Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+   Autor: Mark Riehl
+   Lokal: thomas_bayes.png (471x569)
+   Genutzt in: statistics_ii.php § "Bayesian Updating"
+   Status: OK - CC BY-SA 4.0

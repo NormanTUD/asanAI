@@ -3071,7 +3071,7 @@ body.feedback-view .analytics-only-inline { visibility: hidden !important; point
 .action-chip--unhelpful { color: var(--rose); border-color: rgba(251,113,133,.38); }
 .action-chip--insight { color: var(--accent); border-color: rgba(233,170,96,.4); }
 .action-chip--warn { color: var(--accent); border-color: rgba(233,170,96,.4); }
-.action-meta { color: var(--dim); font-size: 10.5px; white-space: nowrap; }
+.action-meta { color: var(--dim); font-size: 10.5px; }
 .action-side { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 .action-side .btn { padding: 5px 9px; font-size: 11px; }
 .action-subhead { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 16px 0 2px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }

@@ -83,7 +83,7 @@ Three facts we'll lean on repeatedly:
 
 - **Composition closes.** $f \circ g$ is affine again: $(M_f M_g)\mathbf{x} + (M_f\mathbf{t}_g + \mathbf{t}_f)$. Chain a hundred affine maps — still one affine map. Lang's geometric transformations close the same way: composing two isometries gives another isometry, and the composition "behaves like a multiplication" (\cite[Lang, Basic Mathematics, Ch. 6, p. 153]{lang2005basicmath}).
 - **Three points determine it.** Since lines and ratios are preserved, telling an affine map where three non-collinear points go fixes it everywhere.
-- **The determinant $|\det M|$ is the volume scale.** $=1$ preserves area/volume; $\gt 1$ expands; $\lt 1$ compresses; $\lt 0$ mirrors; $=0$ collapses a dimension. It is the same scaling law Lang proves for a dilation: stretching every length by $r$ multiplies area by $r^2$ (\cite[Lang, Basic Mathematics, Ch. 6, p. 164]{lang2005basicmath}).
+- **The determinant tells you how volume and orientation change.** $|\det M|$ is the volume scale: $=1$ preserves area/volume, $\gt 1$ expands, $\lt 1$ compresses, and $=0$ collapses a dimension. A *negative* determinant, $\det M \lt 0$, mirrors orientation. It is the same scaling law Lang proves for a dilation: stretching every length by $r$ multiplies area by $r^2$ (\cite[Lang, Basic Mathematics, Ch. 6, p. 164]{lang2005basicmath}).
 </div>
 
 <div class="optional md" data-headline="History: where the word comes from">
@@ -211,7 +211,7 @@ Same story, one dimension up: $4\times 4$ matrices, the determinant scales *volu
 
 ### The first non-affine move
 
-Every map so far is **one-to-one**: each output has exactly one input. Nothing gets glued. Such maps are called **homeomorphisms** — continuous, invertible, continuous inverse \cite[nLab, homeomorphism]{nlab_homeomorphism}; Morris's definition is exactly this — one-to-one, onto, with the topology preserved in both directions (\cite[Morris, Topology Without Tears, Ch. 4, p. 75]{morris2007topology}). By **Brouwer's invariance of domain** (~1910), any continuous one-to-one map of $\mathbb{R}^n$ onto its image is one, so this is the largest such family \cite[nLab, invariance of domain]{nlab_invariance_of_domain}. Their unbreakable rule:
+Every map so far with $\det M \neq 0$ is **one-to-one**: each output has at most one input. Nothing gets glued. Such maps are **homeomorphisms onto their image** — continuous, invertible, with a continuous inverse \cite[nLab, homeomorphism]{nlab_homeomorphism}; Morris's definition is exactly this — one-to-one, onto, with the topology preserved in both directions (\cite[Morris, Topology Without Tears, Ch. 4, p. 75]{morris2007topology}). By **Brouwer's invariance of domain** (~1910), any continuous one-to-one map of $\mathbb{R}^n$ onto its image is one, so this is the largest such family \cite[nLab, invariance of domain]{nlab_invariance_of_domain}. Their unbreakable rule:
 
 > A homeomorphism cannot change the topology of space. Lines stay lines, holes stay holes, links stay linked.
 
@@ -341,6 +341,11 @@ That is the 2-D test case of the <a href="origami">Origami</a> chapter: **fold i
 ### The move no homeomorphism can do
 
 Two rings threaded like a chain link — the **Hopf link** \cite[nLab, Hopf link]{nlab_hopf_link}\cite[Wikipedia, Hopf link]{hopf_link_wiki}. A **knot** is one closed loop; a **link** is several \cite[nLab, knot]{nlab_knot}\cite[nLab, link]{nlab_link}. The only legal way to move one link into another is an **ambient isotopy**: the whole space deformed continuously, one-to-one at every instant \cite[nLab, isotopy]{nlab_isotopy}. Two configurations connected by such a motion are the *same* link; the trivial state — two loops that are not linked — is the **unlink** \cite[nLab, unknot]{nlab_unknot}.
+
+<figure>
+	<img src="hopf_link.png" alt="The Hopf link: two circles linked once" />
+	<figcaption class="md">The Hopf link: two circles linked once, with linking number $\pm 1$. Every homeomorphism preserves that number, so no ambient isotopy can separate them; only a non-homeomorphic fold can. Image: \cite[Jim Belk]{hopf_link_image}, public domain.</figcaption>
+</figure>
 
 The certificate that says the Hopf link *cannot* be unthreaded is a single integer, the **linking number** \cite[nLab, linking number]{nlab_linking_number}:
 
