@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Logical Fiberings — eine interaktive Reise durch das Paper</title>
+  <meta name="description" content="Interaktive Erklärung von J. Pfalzgrafs Paper „Logical Fiberings and Polycontextural Systems“ (FAIR '91): Faserbündel, Polycontextural Logic, Transjunctions und die Gruppe der Negationen.">
+  <meta name="theme-color" content="#060812">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070a14'/%3E%3Cpath d='M22 48V16M32 48V16M42 48V16' stroke='%235eead4' stroke-width='3'/%3E%3Ccircle cx='22' cy='28' r='3' fill='%23fbbf24'/%3E%3Ccircle cx='32' cy='38' r='3' fill='%23c084fc'/%3E%3Ccircle cx='42' cy='24' r='3' fill='%23fb7185'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="logical_fibring.css">
+  <noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+</head>
+<body>
+  <a class="skip-link" href="#idee">Zum Inhalt springen</a>
+
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+  <nav class="chapter-nav" aria-label="Kapitelnavigation">
+    <a href="#idee" data-nav="idee" class="is-active"><span>01</span><b>Idee</b></a>
+    <a href="#mediation" data-nav="mediation"><span>02</span><b>Mediation</b></a>
+    <a href="#faser" data-nav="faser"><span>03</span><b>Faserbündel</b></a>
+    <a href="#transjunctions" data-nav="transjunctions"><span>04</span><b>Transjunctions</b></a>
+    <a href="#gruppe" data-nav="gruppe"><span>05</span><b>Gruppe</b></a>
+    <a href="#anwendung" data-nav="anwendung"><span>06</span><b>Anwendung</b></a>
+    <a href="#fazit" data-nav="fazit"><span>07</span><b>Fazit</b></a>
+  </nav>
+
+  <button class="glossary-fab" id="glossaryOpen" aria-haspopup="dialog">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 1 1 3.9 2.1c-.9.6-1.5 1.2-1.5 2.3"/><path d="M12 17.2h.01"/></svg>
+    <span>Glossar</span>
+  </button>
+
+  <main>
+    <header class="hero" id="top">
+      <canvas id="heroCanvas" class="hero__canvas" aria-hidden="true"></canvas>
+      <div class="hero__veil" aria-hidden="true"></div>
+      <div class="wrap hero__content">
+        <p class="hero__kicker reveal"><span class="pulse-dot"></span> Interaktive Paper-Erklärung · FAIR ’91</p>
+        <h1 class="reveal" style="--d:.08s">
+          <span class="hero__line">Logical</span>
+          <span class="hero__line grad">Fiberings</span>
+        </h1>
+        <p class="hero__sub reveal" style="--d:.16s">&amp; polycontexturale Systeme</p>
+        <p class="hero__lede reveal" style="--d:.24s">
+          Ein Paper von 1991 über die Frage, wie viele kleine, ganz normale Logiken
+          zu einer großen, mehrwertigen Wirklichkeit werden — und warum dabei
+          Operationen plötzlich den Ort wechseln.
+        </p>
+        <div class="hero__actions reveal" style="--d:.32s">
+          <a class="btn btn--primary" href="#idee">
+            Die Reise starten
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a class="btn" href="#transjunctions">Direkt zu den Transjunctions</a>
+        </div>
+        <div class="hero__stats reveal" style="--d:.4s">
+          <div><strong>3</strong><span>klassische Lokalwelten</span></div>
+          <div><strong>6 → 3</strong><span>lokale zu globale Werte</span></div>
+          <div><strong>48</strong><span>Symmetrien der Negation</span></div>
+        </div>
+      </div>
+      <a class="scroll-cue" href="#idee" aria-label="Nach unten scrollen">
+        <span>Entfalte das Bündel</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v14M6 12l6 6 6-6"/></svg>
+      </a>
+    </header>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>Lokus</span><i></i><span>Faser</span><i></i><span>Schnitt</span><i></i><span>Transjunktion</span><i></i><span>Morphogramm</span><i></i><span>Mediationsschema</span><i></i><span>Semidirektes Produkt</span><i></i>
+        <span>Lokus</span><i></i><span>Faser</span><i></i><span>Schnitt</span><i></i><span>Transjunktion</span><i></i><span>Morphogramm</span><i></i><span>Mediationsschema</span><i></i><span>Semidirektes Produkt</span><i></i>
+      </div>
+    </div>
+
+    <section class="chapter" id="idee" data-section>
+      <div class="wrap">
+        <div class="chapter__head reveal">
+          <p class="kicker">01 · Die Idee</p>
+          <h2>Wahrheit hat einen <em>Standort</em>.</h2>
+          <p class="lead">
+            Polycontextural Logic ist keine neue Wahrheitstafel. Sie ist ein Verbund
+            aus mehreren klassischen, zweiwertigen Logiken — sogenannten Loci — an
+            verschiedenen Orten.
+          </p>
+        </div>
+
+        <div class="split split--story">
+          <div class="prose reveal">
+            <p>
+              Jeder Lokus ist für sich völlig normal: wahr oder falsch, keine Paradoxien.
+              Aber welcher Lokus gerade rechnet, verändert, was global als wahr gilt.
+              Das System ist mehrwertig, obwohl jede einzelne Faser zweiwertig bleibt.
+            </p>
+            <p>
+              Bei <code>m = 3</code> globalen Werten besteht das System aus
+              <code>n = C(3,2) = 3</code> klassischen Zweigen. Jedes <code>Lᵢ</code>
+              gehört zu einer zweielementigen Teilmenge von <code>{1, 2, 3}</code>.
+              Pfalzgrafs entscheidender Schritt: Er übersetzt diese philosophische Idee
+              in die Sprache der Faserbündel. Jeder Lokus wird zur Faser über einem
+              Index. Damit wird PCL zu einem Spezialfall einer sehr allgemeinen
+              mathematischen Konstruktion — und plötzlich formal behandelbar.
+            </p>
+            <blockquote class="pullquote">
+              <p>“Each individual subobject conceives the world through the same logic, but from a different place in the system.”</p>
+              <footer>J. Pfalzgraf, <cite>Logical Fiberings and Polycontextural Systems</cite></footer>
+            </blockquote>
+          </div>
+          <aside class="timeline reveal" style="--d:.12s" aria-label="Kurze Ideengeschichte">
+            <div class="timeline__item">
+              <span class="timeline__year">1960s</span>
+              <div>
+                <h3>Biological Computer Laboratory</h3>
+                <p>Gotthard Günthers „Cybernetic Ontology“ und transjunktionale Operationen in Urbana, Illinois.</p>
+              </div>
+            </div>
+            <div class="timeline__item">
+              <span class="timeline__year">1970s–80s</span>
+              <div>
+                <h3>Morphogrammatik</h3>
+                <p>R. Kaehr und die PCL-Gruppe formalisieren polycontexturale Logik und ihre Schemata.</p>
+              </div>
+            </div>
+            <div class="timeline__item">
+              <span class="timeline__year">1991</span>
+              <div>
+                <h3>Faserbündel statt Metaphysik</h3>
+                <p>Pfalzgraf zeigt auf der FAIR ’91: PCL-Systeme sind eine spezielle Klasse logischer Faserungen.</p>
+              </div>
+            </div>
+            <p class="timeline__note">Das Paper ist ausdrücklich ein erster Zugang — kein Lehrbuch, sondern ein Werkzeugkasten.</p>
+          </aside>
+        </div>
+
+        <div class="loci panel reveal" id="loci" data-mode="local" data-focus="">
+          <div class="panel__top">
+            <div class="segmented" role="group" aria-label="Sicht auf die lokalen Werte">
+              <button type="button" class="is-active" data-loci-mode="local" aria-pressed="true">Lokale Sicht</button>
+              <button type="button" data-loci-mode="global" aria-pressed="false">Globale Sicht</button>
+            </div>
+            <div class="global-legend" aria-label="Globale Werte fokussieren">
+              <span>Global:</span>
+              <button type="button" class="gdot g1" data-global-focus="1" aria-label="Globale Wahrheit 1 hervorheben">1</button>
+              <button type="button" class="gdot g2" data-global-focus="2" aria-label="Globale Wahrheit 2 hervorheben">2</button>
+              <button type="button" class="gdot g3" data-global-focus="3" aria-label="Globale Wahrheit 3 hervorheben">3</button>
+            </div>
+          </div>
+
+          <div class="loci__grid">
+            <article class="locus locus--1">
+              <header>
+                <div><span class="locus__name">L₁</span><span class="locus__tag">Faser über 1</span></div>
+                <span class="locus__type">2-wertig</span>
+              </header>
+              <div class="locus__values">
+                <button type="button" class="vchip g1" data-global="1" aria-label="T1, global 1">
+                  <span class="vchip__local">T₁</span>
+                  <span class="vchip__global">1</span>
+                  <span class="vchip__members">T₁ = T₃</span>
+                </button>
+                <button type="button" class="vchip g2" data-global="2" aria-label="F1, global 2">
+                  <span class="vchip__local">F₁</span>
+                  <span class="vchip__global">2</span>
+                  <span class="vchip__members">F₁ = T₂</span>
+                </button>
+              </div>
+              <p class="locus__caption">wahr / falsch, ganz klassisch</p>
+            </article>
+
+            <article class="locus locus--2">
+              <header>
+                <div><span class="locus__name">L₂</span><span class="locus__tag">Faser über 2</span></div>
+                <span class="locus__type">2-wertig</span>
+              </header>
+              <div class="locus__values">
+                <button type="button" class="vchip g2" data-global="2" aria-label="T2, global 2">
+                  <span class="vchip__local">T₂</span>
+                  <span class="vchip__global">2</span>
+                  <span class="vchip__members">F₁ = T₂</span>
+                </button>
+                <button type="button" class="vchip g3" data-global="3" aria-label="F2, global 3">
+                  <span class="vchip__local">F₂</span>
+                  <span class="vchip__global">3</span>
+                  <span class="vchip__members">F₂ = F₃</span>
+                </button>
+              </div>
+              <p class="locus__caption">dieselbe Logik, anderer Ort</p>
+            </article>
+
+            <article class="locus locus--3">
+              <header>
+                <div><span class="locus__name">L₃</span><span class="locus__tag">Faser über 3</span></div>
+                <span class="locus__type">2-wertig</span>
+              </header>
+              <div class="locus__values">
+                <button type="button" class="vchip g1" data-global="1" aria-label="T3, global 1">
+                  <span class="vchip__local">T₃</span>
+                  <span class="vchip__global">1</span>
+                  <span class="vchip__members">T₁ = T₃</span>
+                </button>
+                <button type="button" class="vchip g3" data-global="3" aria-label="F3, global 3">
+                  <span class="vchip__local">F₃</span>
+                  <span class="vchip__global">3</span>
+                  <span class="vchip__members">F₂ = F₃</span>
+                </button>
+              </div>
+              <p class="locus__caption">vermittelt zwischen den Welten</p>
+            </article>
+          </div>
+
+          <div class="loci__footer">
+            <p id="lociInfo">Sechs lokale Werte, drei globale Klassen. Klicke auf einen globalen Wert, um seine Spuren zu sehen.</p>
+            <div class="value-count"><span>lokal</span><strong>6</strong><span>global</span><strong>3</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" id="mediation" data-section>
+      <div class="wrap">
+        <div class="chapter__head reveal">
+          <p class="kicker">02 · Das Klebeband</p>
+          <h2>Drei Welten, <em>drei Klebestellen</em>.</h2>
+          <p class="lead">
+            Das Mediationsschema legt fest, welche lokalen Wahrheiten global identisch
+            sind. Es ist das eigentliche Gedächtnis des Systems — und der Grund, warum
+            aus sechs lokalen Werten plötzlich drei globale werden.
+          </p>
+        </div>
+
+        <div class="mediation panel reveal" id="mediationPanel" data-focus="">
+          <div class="panel__top panel__top--soft">
+            <div>
+              <span class="mono-label">MS₃</span>
+              <strong>Mediationsschema für m = 3</strong>
+            </div>
+            <div class="global-legend" aria-label="Globale Klassen fokussieren">
+              <span>Klasse:</span>
+              <button type="button" class="gdot g1" data-global-focus="1" aria-label="Klasse 1 hervorheben">1</button>
+              <button type="button" class="gdot g2" data-global-focus="2" aria-label="Klasse 2 hervorheben">2</button>
+              <button type="button" class="gdot g3" data-global-focus="3" aria-label="Klasse 3 hervorheben">3</button>
+            </div>
+          </div>
+
+          <div class="mediation__canvas">
+            <svg viewBox="0 0 1040 600" role="img" aria-labelledby="mediationTitle mediationDesc">
+              <title id="mediationTitle">Mediationsschema MS3</title>
+              <desc id="mediationDesc">Drei lokale Logiken mit den Werten T1, F1, T2, F2, T3, F3 werden über drei Identifikationen zu den globalen Werten 1, 2 und 3 verklebt.</desc>
+              <defs>
+                <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%">
+                  <feGaussianBlur stdDeviation="5" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <marker id="arrowHead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0 0 10 5 0 10z" fill="rgba(255,255,255,.45)"/>
+                </marker>
+              </defs>
+
+              <g class="mlabels" aria-hidden="true">
+                <text x="46" y="112" class="mlabel">L₁</text>
+                <text x="46" y="282" class="mlabel">L₂</text>
+                <text x="46" y="452" class="mlabel">L₃</text>
+                <text x="118" y="38" class="mtiny">lokal</text>
+                <text x="824" y="38" class="mtiny">global</text>
+                <text x="466" y="552" class="mtiny">Identifikationen = globale Klassen</text>
+              </g>
+
+              <g class="morders" aria-hidden="true">
+                <path d="M286 120 H 404" marker-end="url(#arrowHead)"/>
+                <path d="M286 290 H 404" marker-end="url(#arrowHead)"/>
+                <path d="M286 460 H 404" marker-end="url(#arrowHead)"/>
+                <text x="292" y="104" class="mtiny">Ordnung</text>
+              </g>
+
+              <path class="mpath g1" pathLength="1" style="--i:0" d="M286 120 C 480 120, 620 160, 812 160"/>
+              <path class="mpath g1" pathLength="1" style="--i:1" d="M286 460 C 500 460, 610 160, 812 160"/>
+              <path class="mpath g2" pathLength="1" style="--i:2" d="M470 120 C 600 120, 660 300, 812 300"/>
+              <path class="mpath g2" pathLength="1" style="--i:3" d="M286 290 C 500 290, 620 300, 812 300"/>
+              <path class="mpath g3" pathLength="1" style="--i:4" d="M470 290 C 610 290, 670 440, 812 440"/>
+              <path class="mpath g3" pathLength="1" style="--i:5" d="M470 460 C 600 460, 680 440, 812 440"/>
+
+              <g class="mnode g1" data-global="1" tabindex="0" role="button" aria-label="Lokaler Wert T1, global 1">
+                <circle cx="260" cy="120" r="26"/><text x="260" y="128">T₁</text>
+              </g>
+              <g class="mnode g2" data-global="2" tabindex="0" role="button" aria-label="Lokaler Wert F1, global 2">
+                <circle cx="444" cy="120" r="26"/><text x="444" y="128">F₁</text>
+              </g>
+              <g class="mnode g2" data-global="2" tabindex="0" role="button" aria-label="Lokaler Wert T2, global 2">
+                <circle cx="260" cy="290" r="26"/><text x="260" y="298">T₂</text>
+              </g>
+              <g class="mnode g3" data-global="3" tabindex="0" role="button" aria-label="Lokaler Wert F2, global 3">
+                <circle cx="444" cy="290" r="26"/><text x="444" y="298">F₂</text>
+              </g>
+              <g class="mnode g1" data-global="1" tabindex="0" role="button" aria-label="Lokaler Wert T3, global 1">
+                <circle cx="260" cy="460" r="26"/><text x="260" y="468">T₃</text>
+              </g>
+              <g class="mnode g3" data-global="3" tabindex="0" role="button" aria-label="Lokaler Wert F3, global 3">
+                <circle cx="444" cy="460" r="26"/><text x="444" y="468">F₃</text>
+              </g>
+
+              <g class="mnode mnode--big g1" data-global="1" tabindex="0" role="button" aria-label="Globale Klasse 1">
+                <circle cx="868" cy="160" r="46"/><text x="868" y="172">1</text>
+              </g>
+              <g class="mnode mnode--big g2" data-global="2" tabindex="0" role="button" aria-label="Globale Klasse 2">
+                <circle cx="868" cy="300" r="46"/><text x="868" y="312">2</text>
+              </g>
+              <g class="mnode mnode--big g3" data-global="3" tabindex="0" role="button" aria-label="Globale Klasse 3">
+                <circle cx="868" cy="440" r="46"/><text x="868" y="452">3</text>
+              </g>
+            </svg>
+          </div>
+
+          <div class="mediation__equations">
+            <button type="button" class="eqcard g1" data-global-focus="1">
+              <span class="eqcard__num">1</span>
+              <span class="eqcard__math">[T₁] = [T₃]</span>
+              <span class="eqcard__text">dieselbe globale Wahrheit</span>
+            </button>
+            <button type="button" class="eqcard g2" data-global-focus="2">
+              <span class="eqcard__num">2</span>
+              <span class="eqcard__math">[F₁] = [T₂]</span>
+              <span class="eqcard__text">falsch hier, wahr dort — semantischer Wechsel</span>
+            </button>
+            <button type="button" class="eqcard g3" data-global-focus="3">
+              <span class="eqcard__num">3</span>
+              <span class="eqcard__math">[F₂] = [F₃]</span>
+              <span class="eqcard__text">dieselbe globale Falschheit</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="callout reveal">
+          <span class="callout__mark">!</span>
+          <p><strong>Der stille Trick:</strong> Es werden keine neuen Wahrheitswerte erfunden. Die globale Mehrwertigkeit entsteht allein durch die Art, wie lokale Werte identifiziert werden. Lokal bleibt alles klassisch.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" id="faser" data-section>
+      <div class="wrap">
+        <div class="chapter__head reveal">
+          <p class="kicker">03 · Die Maschine</p>
+          <h2>Ein Bündel aus <em>Logiken</em>.</h2>
+          <p class="lead">
+            Nimm ein Faserbündel aus der Topologie und ersetze die typische Faser
+            durch eine klassische Logik. Schon hast du eine formale Sprache für das
+            Zusammenspiel von lokalem und globalem Wissen.
+          </p>
+        </div>
+
+        <div class="bundle panel reveal" id="bundle" data-glued="false" data-section="false">
+          <div class="panel__top">
+            <div class="segmented" role="group" aria-label="Bündel-Darstellung">
+              <button type="button" class="is-active" data-bundle-mode="free" aria-pressed="true">Freies Bündel</button>
+              <button type="button" data-bundle-mode="glued" aria-pressed="false">PCL-Verklebung</button>
+            </div>
+            <button type="button" class="toggle" id="bundleSectionToggle" aria-pressed="false">
+              <span class="toggle__dot"></span> Schnitt zeigen
+            </button>
+          </div>
+
+          <div class="bundle__canvas">
+            <svg id="bundleSvg" viewBox="0 0 1100 620" role="img" aria-labelledby="bundleTitle bundleDesc">
+              <title id="bundleTitle">Faserbündel aus drei klassischen Logiken</title>
+              <desc id="bundleDesc">Über den Basispunkten 1, 2 und 3 liegen die Fasern L1, L2 und L3 mit den lokalen Wahrheitswerten T und F. Die PCL-Verklebung identifiziert T1 mit T3, F1 mit T2 und F2 mit F3.</desc>
+              <defs>
+                <linearGradient id="baseGrad" x1="0" x2="1">
+                  <stop offset="0" stop-color="rgba(94,234,212,0)"/>
+                  <stop offset=".25" stop-color="rgba(94,234,212,.7)"/>
+                  <stop offset=".5" stop-color="rgba(251,191,36,.7)"/>
+                  <stop offset=".75" stop-color="rgba(192,132,252,.7)"/>
+                  <stop offset="1" stop-color="rgba(192,132,252,0)"/>
+                </linearGradient>
+                <filter id="nodeGlow" x="-200%" y="-200%" width="500%" height="500%">
+                  <feGaussianBlur stdDeviation="7" result="b"/>
+                  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+
+              <g class="bundle__grid" aria-hidden="true">
+                <line x1="70" y1="510" x2="1030" y2="510"/>
+                <text x="70" y="470" class="mtiny">Totalraum E</text>
+                <text x="70" y="540" class="mtiny">Basis B = I</text>
+              </g>
+
+              <g class="base">
+                <rect x="70" y="506" width="960" height="8" rx="4" fill="url(#baseGrad)"/>
+                <g class="base__point" data-locus="1"><circle cx="300" cy="510" r="6"/><text x="300" y="552">1</text></g>
+                <g class="base__point" data-locus="2"><circle cx="550" cy="510" r="6"/><text x="550" y="552">2</text></g>
+                <g class="base__point" data-locus="3"><circle cx="800" cy="510" r="6"/><text x="800" y="552">3</text></g>
+              </g>
+
+              <path class="projection" d="M 980 300 V 480" marker-end="url(#projArrow)"/>
+              <defs>
+                <marker id="projArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0 0 10 5 0 10z" fill="rgba(255,255,255,.35)"/>
+                </marker>
+              </defs>
+              <text x="994" y="392" class="mtiny projection__label">π</text>
+
+              <path class="glue-path g1" pathLength="1" d="M300 230 C 450 120, 650 120, 800 230"/>
+              <path class="glue-path g2" pathLength="1" d="M300 360 C 400 360, 450 230, 550 230"/>
+              <path class="glue-path g3" pathLength="1" d="M550 360 C 650 360, 700 360, 800 360"/>
+
+              <path id="sectionPath" class="section-path" d="M300 230 C 380 230, 470 230, 550 230 C 630 230, 720 230, 800 230"/>
+
+              <g class="fiber fiber--1" data-locus="1" data-name="L₁" data-index="1">
+                <line class="fiber__line" x1="300" y1="510" x2="300" y2="90"/>
+                <text class="fiber__label" x="300" y="70">L₁</text>
+                <text class="fiber__sub" x="300" y="575">klassische Logik</text>
+                <g class="bnode g1" data-locus="1" data-value="T" tabindex="0" role="button" aria-label="Wähle T1 für den Schnitt">
+                  <circle class="bnode__halo" cx="300" cy="230" r="23"/>
+                  <circle class="bnode__dot" cx="300" cy="230" r="12"/>
+                  <text class="bnode__label" x="300" y="235">T₁</text>
+                  <text class="bnode__class" x="300" y="194">1</text>
+                </g>
+                <g class="bnode g2" data-locus="1" data-value="F" tabindex="0" role="button" aria-label="Wähle F1 für den Schnitt">
+                  <circle class="bnode__halo" cx="300" cy="360" r="23"/>
+                  <circle class="bnode__dot" cx="300" cy="360" r="12"/>
+                  <text class="bnode__label" x="300" y="365">F₁</text>
+                  <text class="bnode__class" x="300" y="324">2</text>
+                </g>
+              </g>
+
+              <g class="fiber fiber--2" data-locus="2" data-name="L₂" data-index="2">
+                <line class="fiber__line" x1="550" y1="510" x2="550" y2="90"/>
+                <text class="fiber__label" x="550" y="70">L₂</text>
+                <text class="fiber__sub" x="550" y="575">klassische Logik</text>
+                <g class="bnode g2" data-locus="2" data-value="T" tabindex="0" role="button" aria-label="Wähle T2 für den Schnitt">
+                  <circle class="bnode__halo" cx="550" cy="230" r="23"/>
+                  <circle class="bnode__dot" cx="550" cy="230" r="12"/>
+                  <text class="bnode__label" x="550" y="235">T₂</text>
+                  <text class="bnode__class" x="550" y="194">2</text>
+                </g>
+                <g class="bnode g3" data-locus="2" data-value="F" tabindex="0" role="button" aria-label="Wähle F2 für den Schnitt">
+                  <circle class="bnode__halo" cx="550" cy="360" r="23"/>
+                  <circle class="bnode__dot" cx="550" cy="360" r="12"/>
+                  <text class="bnode__label" x="550" y="365">F₂</text>
+                  <text class="bnode__class" x="550" y="324">3</text>
+                </g>
+              </g>
+
+              <g class="fiber fiber--3" data-locus="3" data-name="L₃" data-index="3">
+                <line class="fiber__line" x1="800" y1="510" x2="800" y2="90"/>
+                <text class="fiber__label" x="800" y="70">L₃</text>
+                <text class="fiber__sub" x="800" y="575">klassische Logik</text>
+                <g class="bnode g1" data-locus="3" data-value="T" tabindex="0" role="button" aria-label="Wähle T3 für den Schnitt">
+                  <circle class="bnode__halo" cx="800" cy="230" r="23"/>
+                  <circle class="bnode__dot" cx="800" cy="230" r="12"/>
+                  <text class="bnode__label" x="800" y="235">T₃</text>
+                  <text class="bnode__class" x="800" y="194">1</text>
+                </g>
+                <g class="bnode g3" data-locus="3" data-value="F" tabindex="0" role="button" aria-label="Wähle F3 für den Schnitt">
+                  <circle class="bnode__halo" cx="800" cy="360" r="23"/>
+                  <circle class="bnode__dot" cx="800" cy="360" r="12"/>
+                  <text class="bnode__label" x="800" y="365">F₃</text>
+                  <text class="bnode__class" x="800" y="324">3</text>
+                </g>
+              </g>
+            </svg>
+          </div>
+
+          <div class="bundle__readout">
+            <div>
+              <span class="mono-label">Ein Schnitt = eine globale Aussage</span>
+              <div class="bundle__vector" id="bundleVector" aria-live="polite"></div>
+            </div>
+            <p id="bundleInfo">Berühre eine Faser oder klicke auf einen Wert. Jede Faser ist für sich klassisch — der Schnitt wählt in jeder Faser genau einen Punkt.</p>
+          </div>
+
+          <div class="bundle__legend">
+            <span><i class="legend-dot"></i> T = wahr</span>
+            <span><i class="legend-dot legend-dot--hollow"></i> F = falsch</span>
+            <span><i class="legend-line"></i> Klebung = globale Identifikation</span>
+          </div>
+        </div>
+
+        <div class="math-grid reveal">
+          <div class="math-card"><code>B = I</code><span>die Basis: der Indexraum der Orte</span></div>
+          <div class="math-card"><code>π⁻¹(i) = Lᵢ</code><span>die Faser: eine klassische Logik</span></div>
+          <div class="math-card"><code>E = ⊔ Lᵢ</code><span>der Totalraum: alles disjunkt vereinigt</span></div>
+          <div class="math-card"><code>π : E → I</code><span>die Projektion: welcher Ort?</span></div>
+        </div>
+
+        <div class="split split--notes">
+          <div class="note-card reveal">
+            <h3>Lokal trivial, global spannend</h3>
+            <p>Jede Faser sieht aus wie dieselbe typische Faser <code>F = L</code>. Der Witz liegt nicht in den Fasern, sondern in den Übergängen und Identifikationen zwischen ihnen. Morphismen zwischen Faserungen lesen sich als Transport von Information zwischen den Räumen.</p>
+          </div>
+          <div class="note-card reveal" style="--d:.1s">
+            <h3>Der Schnitt als Sprache</h3>
+            <p>Eine globale Aussage ist eine Familie <code>X = (x₁, x₂, x₃)</code> — oder, geometrisch, ein Schnitt <code>s : I → E</code> mit <code>π ∘ s = id</code>. Jede Koordinate lebt in ihrer eigenen Faser.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" id="transjunctions" data-section>
+      <div class="wrap">
+        <div class="chapter__head reveal">
+          <p class="kicker">04 · Der wilde Teil</p>
+          <h2>Operationen, die <em>umziehen</em>.</h2>
+          <p class="lead">
+            Eine gewöhnliche Verknüpfung liefert einen Wert im selben System. Eine
+            Transjunktion darf ihre vier Ausgabewerte auf verschiedene Fasern verteilen.
+            Genau dadurch wird es knifflig — und genau dafür ist die Faser-Sprache da.
+          </p>
+        </div>
+
+        <div class="tj panel reveal" id="tj">
+          <div class="tj__presets">
+            <span class="mono-label">Presets</span>
+            <button type="button" class="preset is-active" data-preset="consistent"><b>∧ · ∨ · ∧</b><span>funktioniert</span></button>
+            <button type="button" class="preset" data-preset="conflict"><b>∧ · ∨ · →</b><span>bricht</span></button>
+            <button type="button" class="preset" data-preset="surprise"><b>Überraschen</b><span>zufällig mischen</span></button>
+          </div>
+
+          <div class="tj__locals" id="tjLocals" aria-live="polite"></div>
+
+          <div class="tj__result">
+            <div class="tj__global-wrap">
+              <div class="tj__label-row">
+                <span class="mono-label">Global verklebt</span>
+                <span class="tj__hint">3 × 3 Wahrheitstabelle auf dem Quotienten</span>
+              </div>
+              <div id="tjGlobal"></div>
+            </div>
+            <div id="tjVerdict" class="tj__verdict" aria-live="polite"></div>
+          </div>
+
+          <div class="tj__footnote">
+            <p><strong>Die Regel:</strong> Wenn zwei lokale Eingabepaare durch die Mediation dieselbe globale Klasse bekommen, müssen ihre Ausgaben ebenfalls dieselbe globale Klasse haben. Sonst ist die Operation auf dem verklebten Raum nicht wohldefiniert. Formal liegt der Definitionsbereich im Faserprodukt (Pullback) <code>E ×<sub>I</sub> E</code>: nur Paare über demselben Index. Im Projekt wurden die Regeln zur Bildung solcher PCL-Formeln außerdem in Prolog implementiert.</p>
+          </div>
+        </div>
+
+        <div class="recipe reveal">
+          <div class="recipe__step">
+            <span class="recipe__num">01</span>
+            <div>
+              <h3>Klassisches Muster</h3>
+              <p>Wähle eine der <strong>16</strong> zweiwertigen Operationen. Ihr 2 × 2-Muster ist das Morphogramm.</p>
+              <div class="mini-matrix" aria-hidden="true">
+                <i>T</i><i>F</i><i>F</i><i>F</i>
+              </div>
+            </div>
+          </div>
+          <span class="recipe__arrow" aria-hidden="true">→</span>
+          <div class="recipe__step">
+            <span class="recipe__num">02</span>
+            <div>
+              <h3>Ausgaben färben</h3>
+              <p>Jede der vier Ausgaben bekommt eine Ziel-Faser — hier sichtbar als globale Farbe.</p>
+              <div class="color-dots" aria-hidden="true"><i class="g1"></i><i class="g2"></i><i class="g3"></i><i class="g1"></i></div>
+            </div>
+          </div>
+          <span class="recipe__arrow" aria-hidden="true">→</span>
+          <div class="recipe__step">
+            <span class="recipe__num">03</span>
+            <div>
+              <h3>Verteilen</h3>
+              <p>Die Bilder landen in bis zu vier verschiedenen Wertemengen. Das ist eine Transjunktion — je nach Muster konjunktional, disjunktional, implikational.</p>
+              <div class="fiber-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout--violet reveal">
+          <span class="callout__mark">↯</span>
+          <p><strong>Warum das Paper das liebt:</strong> Transjunctions sind zunächst exotische PCL-Operationen. Im Faserbild werden sie plötzlich systematisch definierbar und klassifizierbar: klassisches Muster plus Verteilung der vier Ausgaben.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" id="gruppe" data-section>
+      <div class="wrap">
+        <div class="chapter__head reveal">
+          <p class="kicker">05 · Symmetrie</p>
+          <h2>Negieren ist ein <em>Ortswechsel</em>.</h2>
+          <p class="lead">
+            In der PCL negiert man nicht einfach. Man negiert in einem Lokus und
+            tauscht dann die Plätze. Diese Operationen erzeugen eine Gruppe — und die
+            ist erstaunlich groß.
+          </p>
+        </div>
+
+        <div class="group-layout">
+          <div class="group-machine panel reveal" id="groupMachine">
+            <div class="group-machine__top">
+              <span class="mono-label">Operationslabor</span>
+              <button type="button" class="mini-btn" id="gmReset">Zurücksetzen</button>
+            </div>
+
+            <div class="gm__stage" id="gmStage">
+              <div class="gm__slot" data-slot="1">
+                <span class="gm__label">L₁</span>
+                <div class="gm__token is-true" id="gmToken1">T</div>
+                <span class="gm__sub">Faser 1</span>
+              </div>
+              <div class="gm__slot" data-slot="2">
+                <span class="gm__label">L₂</span>
+                <div class="gm__token is-true" id="gmToken2">T</div>
+                <span class="gm__sub">Faser 2</span>
+              </div>
+              <div class="gm__slot" data-slot="3">
+                <span class="gm__label">L₃</span>
+                <div class="gm__token is-false" id="gmToken3">F</div>
+                <span class="gm__sub">Faser 3</span>
+              </div>
+            </div>
+
+            <div class="gm__readout">
+              <span class="mono-label">Aktueller Zustand</span>
+              <div id="gmReadout" class="gm__vector" aria-live="polite"></div>
+              <p id="gmLog">Startzustand: X = (T, T, F). Wähle eine Operation.</p>
+            </div>
+
+            <div class="gm__controls">
+              <div class="gm__control-row">
+                <span>Lokale Negation</span>
+                <div class="gm__buttons">
+                  <button type="button" data-op="n1">n₁</button>
+                  <button type="button" data-op="n2">n₂</button>
+                  <button type="button" data-op="n3">n₃</button>
+                </div>
+              </div>
+              <div class="gm__control-row">
+                <span>Systemwechsel</span>
+                <div class="gm__buttons">
+                  <button type="button" data-op="t12">(12)</button>
+                  <button type="button" data-op="t13">(13)</button>
+                  <button type="button" data-op="t23">(23)</button>
+                </div>
+              </div>
+              <div class="gm__control-row gm__control-row--accent">
+                <span>PCL-Negationen</span>
+                <div class="gm__buttons">
+                  <button type="button" data-op="N1">N₁</button>
+                  <button type="button" data-op="N2">N₂</button>
+                </div>
+              </div>
+            </div>
+
+            <p class="gm__note"><strong>N₁ = τ₂₃ ∘ n₁</strong> — erst in L₁ negieren, dann die Inhalte von L₂ und L₃ tauschen. <strong>N₂ = τ₁₃ ∘ n₂</strong> funktioniert analog. Die weiteren Negationen N₃–N₅ des Papers sind Kompositionen dieser Bausteine.</p>
+          </div>
+
+          <aside class="group-facts reveal" style="--d:.12s">
+            <div class="group-facts__intro">
+              <h3>Die Gruppe dahinter</h3>
+              <p>Die lokalen Negationen kommutieren, sind selbstinvers und erzeugen acht Zustände. Die Transpositionen erzeugen die volle Permutationsgruppe S₃. Zusammen ergibt das ein semidirektes Produkt.</p>
+            </div>
+            <div class="group-eq">
+              <div class="group-eq__box">
+                <strong>8</strong>
+                <span>lokale Negationen</span>
+                <code>(ℤ/2)³</code>
+              </div>
+              <span class="group-eq__op">×</span>
+              <div class="group-eq__box">
+                <strong>6</strong>
+                <span>Systemwechsel</span>
+                <code>S₃</code>
+              </div>
+              <span class="group-eq__op">=</span>
+              <div class="group-eq__box group-eq__box--accent">
+                <strong>48</strong>
+                <span>globale Negationen</span>
+                <code>N ⋊ S₃</code>
+              </div>
+            </div>
+            <ul class="formula-list">
+              <li><code>nᵢ ∘ nᵢ = id</code><span>zweimal negieren ist nichts tun</span></li>
+              <li><code>nᵢ ∘ nⱼ = nⱼ ∘ nᵢ</code><span>die lokalen Negationen kommutieren</span></li>
+              <li><code>τ ∘ nᵢ ∘ τ = n<sub>τ(i)</sub></code><span>Permutationen konjugieren die Negationen</span></li>
+            </ul>
+            <p class="group-facts__foot">Das Paper zeigt das am Beispiel <code>Σ⁽³⁾</code>; die Konstruktion lässt sich auf allgemeine logische Faserungen übertragen.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter" id="anwendung" data-section>
+      <div class="wrap">
+        <div class="chapter__head reveal">
+          <p class="kicker">06 · Wozu?</p>
+          <h2>Roboter mit <em>mehreren Logiken</em>.</h2>
+          <p class="lead">
+            Pfalzgraf schlägt Robotik-Szenarien vor: Eine Roboterzelle besteht aus
+            Regionen, in denen jeweils eine eigene Logik gilt. Beim Übergang wechselt
+            die Logik — lokal trivial, global interessant.
+          </p>
+        </div>
+
+        <div class="robot-demo panel reveal">
+          <div class="robot-demo__stage" id="robotStage">
+            <svg id="robotSvg" viewBox="0 0 900 520" role="img" aria-labelledby="robotTitle robotDesc">
+              <title id="robotTitle">Roboterzelle mit drei logischen Zonen</title>
+              <desc id="robotDesc">Ein Roboter fährt durch drei Zonen. Jede Zone hat ihre eigene klassische Logik; beim Übergang findet ein Systemwechsel statt.</desc>
+              <defs>
+                <radialGradient id="zoneA" cx="50%" cy="50%" r="50%">
+                  <stop offset="0" stop-color="rgba(34,211,238,.28)"/>
+                  <stop offset="1" stop-color="rgba(34,211,238,0)"/>
+                </radialGradient>
+                <radialGradient id="zoneB" cx="50%" cy="50%" r="50%">
+                  <stop offset="0" stop-color="rgba(251,191,36,.24)"/>
+                  <stop offset="1" stop-color="rgba(251,191,36,0)"/>
+                </radialGradient>
+                <radialGradient id="zoneC" cx="50%" cy="50%" r="50%">
+                  <stop offset="0" stop-color="rgba(251,113,133,.24)"/>
+                  <stop offset="1" stop-color="rgba(251,113,133,0)"/>
+                </radialGradient>
+              </defs>
+
+              <g class="robot-grid" aria-hidden="true">
+                <path d="M0 80H900M0 160H900M0 240H900M0 320H900M0 400H900M0 480H900"/>
+                <path d="M90 0V520M180 0V520M270 0V520M360 0V520M450 0V520M540 0V520M630 0V520M720 0V520M810 0V520"/>
+              </g>
+
+              <g class="zones">
+                <circle class="zone zone--1" cx="230" cy="190" r="150" fill="url(#zoneA)"/>
+                <circle class="zone zone--2" cx="660" cy="190" r="150" fill="url(#zoneB)"/>
+                <circle class="zone zone--3" cx="450" cy="400" r="155" fill="url(#zoneC)"/>
+              </g>
+
+              <g class="zone-labels" aria-hidden="true">
+                <text x="230" y="160">Zone A</text>
+                <text x="230" y="186" class="zone-labels__logic">L₁ · ∧</text>
+                <text x="660" y="160">Zone B</text>
+                <text x="660" y="186" class="zone-labels__logic">L₂ · ∨</text>
+                <text x="450" y="385">Zone C</text>
+                <text x="450" y="411" class="zone-labels__logic">L₃ · →</text>
+              </g>
+
+              <path id="robotPath" class="robot-path" d="M230 190 C 380 90, 520 90, 660 190 C 790 320, 600 450, 450 400 C 270 360, 130 300, 230 190"/>
+
+              <g id="robot" class="robot" transform="translate(230 190)">
+                <circle class="robot__glow" r="30"/>
+                <circle class="robot__ring" r="16"/>
+                <circle class="robot__body" r="8"/>
+                <circle class="robot__eye" cx="3" cy="-2" r="2"/>
+              </g>
+            </svg>
+
+            <div class="robot-demo__hud">
+              <div>
+                <span class="mono-label">Aktive Zone</span>
+                <strong id="robotZone">Zone A</strong>
+              </div>
+              <div>
+                <span class="mono-label">Lokale Logik</span>
+                <strong id="robotLogic">L₁ · Konjunktion</strong>
+              </div>
+            </div>
+            <div class="robot-demo__toast" id="robotToast" aria-live="polite"></div>
+          </div>
+
+          <div class="robot-demo__side">
+            <div class="robot-demo__status">
+              <span class="mono-label">Systemstatus</span>
+              <p id="robotStatus">Der Roboter steht in Zone A. Lokal gilt eine klassische Konjunktion. Beim Verlassen der Zone wechselt die aktive Faser.</p>
+            </div>
+            <button type="button" class="btn btn--primary" id="robotStart">
+              Route starten
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg>
+            </button>
+            <p class="robot-demo__hint">Die Zonen sind die offenen Mengen einer Überdeckung. Jede hat ihre eigene typische Faser — das ist lokale Trivialität im Alltag.</p>
+          </div>
+        </div>
+
+        <div class="app-grid">
+          <article class="app-card reveal">
+            <span class="app-card__icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/><path d="M12 3v4M8 19v2M16 19v2"/></svg>
+            </span>
+            <h3>Robotik</h3>
+            <p>Kooperierende Roboter in einer Zelle, Regionen mit eigener Logik, Übergänge als Systemwechsel. Genau das Szenario, das Pfalzgraf im MEDLAR-Umfeld motiviert.</p>
+          </article>
+          <article class="app-card reveal" style="--d:.08s">
+            <span class="app-card__icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="m3 12 9 5 9-5M3 16l9 5 9-5"/></svg>
+            </span>
+            <h3>Logik zerlegen</h3>
+            <p>Rückwärts gelesen wird aus der Konstruktion eine Methode, mehrwertige Operationen in zweiwertige Komponenten zu zerlegen — eine Art Parallelisierung von Logik.</p>
+          </article>
+          <article class="app-card reveal" style="--d:.16s">
+            <span class="app-card__icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8.5 6h7M7.2 8.3l3.6 7.4M16.8 8.3l-3.6 7.4"/></svg>
+            </span>
+            <h3>Formale Brücke</h3>
+            <p>Garben, Topoi, indexed categories und labelled deductive systems werden als mögliche Nachbarn genannt. Das Faserbild ist eine gemeinsame Sprache für lokale Daten und globale Konsistenz.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="chapter chapter--fazit" id="fazit" data-section>
+      <div class="wrap">
+        <div class="chapter__head reveal">
+          <p class="kicker">07 · Was bleibt</p>
+          <h2>Lokal konsistent. <em>Global</em> nicht.</h2>
+          <p class="lead">
+            Dieser eine Satz aus dem Paper ist der ganze Film in drei Worten. Die
+            Faser-Sprache macht sichtbar, wann lokale Wahrheiten zusammenpassen —
+            und wann nicht.
+          </p>
+        </div>
+
+        <div class="takeaway-grid">
+          <article class="takeaway reveal">
+            <span class="takeaway__num">01</span>
+            <h3>PCL ist ein Faserbündel</h3>
+            <p>Polycontexturale Systeme sind eine spezielle Klasse logischer Faserungen. Die Philosophie bekommt eine präzise geometrische Grammatik.</p>
+          </article>
+          <article class="takeaway reveal" style="--d:.08s">
+            <span class="takeaway__num">02</span>
+            <h3>Transjunctions werden klassifizierbar</h3>
+            <p>Ein klassisches 2 × 2-Muster plus eine Verteilung der vier Ausgaben auf Fasern: mehr braucht es nicht, um den exotischen Operationstyp zu beschreiben.</p>
+          </article>
+          <article class="takeaway reveal" style="--d:.16s">
+            <span class="takeaway__num">03</span>
+            <h3>Mehrwertigkeit lässt sich zerlegen</h3>
+            <p>Die Konstruktion läuft auch rückwärts: Eine mehrwertige Logik kann in zweiwertige Komponenten parallelisiert werden. Das ist der Ausblick des Papers.</p>
+          </article>
+        </div>
+
+        <div class="fazit-panel panel reveal">
+          <div class="fazit-panel__quote">
+            <span class="quote-mark">“</span>
+            <p>Locally consistent, but not globally.</p>
+            <span class="fazit-panel__translation">Lokal konsistent, aber nicht global.</span>
+          </div>
+          <div class="fazit-panel__body">
+            <p>Das Beispiel <code>X ∧∨→ Y</code> zeigt den Bruch: In L₂ und L₃ wird derselbe globale Input <code>(3,3)</code> verschieden beantwortet. Keine lokale Faser ist kaputt. Aber die Klebung macht die Operation unmöglich.</p>
+            <p>Das ist keine Schwäche, sondern der Punkt: Konsistenz ist keine Eigenschaft einer einzelnen Logik. Sie ist eine Eigenschaft des Bündels.</p>
+          </div>
+        </div>
+
+        <div class="open-questions reveal">
+          <div>
+            <h3>Was das Paper offen lässt</h3>
+            <p>Der Autor nennt es selbst einen ersten Zugang: nicht überall rigoros, mit vielen Anknüpfungspunkten zu Topoi, Garben und indexed categories, aber ohne diese systematisch auszubauen.</p>
+          </div>
+          <ul>
+            <li>Welche Basisräume sind wirklich nützlich? Posets, Netze, Ultrametriken?</li>
+            <li>Wie weit trägt die Zerlegung mehrwertiger Logiken?</li>
+            <li>Lassen sich Transjunctions in echten Roboterszenarien einsetzen?</li>
+            <li>Wie sauber ist der Anschluss an labelled deductive systems?</li>
+            <li>Was leisten Faserungen, die durch eine Gruppenwirkung auf der Wertemenge entstehen?</li>
+          </ul>
+        </div>
+
+        <div class="citation reveal">
+          <div class="citation__meta">
+            <span class="mono-label">Original</span>
+            <span>FAIR ’91 · Smolenice · Springer</span>
+          </div>
+          <p class="citation__title">J. Pfalzgraf, <cite>Logical Fiberings and Polycontextural Systems</cite></p>
+          <p class="citation__sub">In: Fundamentals of Artificial Intelligence Research, International Workshop FAIR ’91, Lecture Notes in Artificial Intelligence 535, Springer, 1991.</p>
+          <p class="citation__note">Diese Seite ist eine interaktive Lesehilfe, keine Originalpublikation. Alle Diagramme sind Nachzeichnungen und didaktische Rekonstruktionen.</p>
+          <a class="citation__link" href="j-pfalzgraf_logical-fibrings_OCR.pdf" target="_blank" rel="noopener">
+            Original-PDF öffnen
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <div>
+        <span class="footer__mark">LF</span>
+        <p>Gebaut, um ein dichtes Paper von 1991 zum Anfassen zu machen.</p>
+      </div>
+      <div class="footer__links">
+        <a href="#top">Nach oben</a>
+        <button type="button" id="glossaryOpenFooter">Glossar</button>
+      </div>
+    </div>
+  </footer>
+
+  <dialog id="glossary" class="glossary" aria-labelledby="glossaryTitle">
+    <div class="glossary__head">
+      <div>
+        <span class="mono-label">Nachschlagen</span>
+        <h2 id="glossaryTitle">Glossar</h2>
+      </div>
+      <button type="button" class="glossary__close" id="glossaryClose" aria-label="Glossar schließen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <dl class="glossary__list">
+      <div><dt>Lokus</dt><dd>Eine klassische zweiwertige Logik an einem bestimmten Index. Lokal völlig normal, global nur ein Teil des Bündels.</dd></div>
+      <div><dt>Faser</dt><dd>Die Menge <code>π⁻¹(i)</code> über einem Basispunkt. Im Paper ist sie eine ganze klassische Logik <code>Lᵢ</code>.</dd></div>
+      <div><dt>Basis</dt><dd>Der Indexraum <code>I</code>: die Orte, über denen die Fasern liegen.</dd></div>
+      <div><dt>Totalraum</dt><dd>Die disjunkte Vereinigung <code>E = ⊔ Lᵢ</code> aller Fasern.</dd></div>
+      <div><dt>Schnitt</dt><dd>Eine Wahl von genau einer lokalen Aussage pro Faser. Geometrisch eine Abbildung <code>s : I → E</code> mit <code>π ∘ s = id</code>.</dd></div>
+      <div><dt>Mediationsschema</dt><dd>Die Vorschrift, welche lokalen Wahrheitswerte global identifiziert werden — hier <code>T₁ = T₃</code>, <code>F₁ = T₂</code>, <code>F₂ = F₃</code>.</dd></div>
+      <div><dt>Morphogramm</dt><dd>Das 2 × 2-Muster einer zweiwertigen Operation, also die Anordnung der vier Ausgabewerte T/F.</dd></div>
+      <div><dt>Transjunktion</dt><dd>Eine bivariate Operation, deren vier Ausgabewerte auf verschiedene Fasern verteilt sein dürfen.</dd></div>
+      <div><dt>Semidirektes Produkt</dt><dd>Eine Gruppe, die aus einem Normalteiler und einer darauf wirkenden Permutationsgruppe gebaut ist — hier <code>N ⋊ S₃</code>.</dd></div>
+    </dl>
+  </dialog>
+
+  <script src="logical_fibring.js"></script>
+</body>
+</html>
