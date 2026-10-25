@@ -225,6 +225,12 @@
     ctx.restore();
     MP.label(ctx, "bug", bx, by + 26, c.accent, 8, "center");
 
+    ctx.save();
+    ctx.globalAlpha = st.dim * 0.55;
+    ctx.fillStyle = "#000000";
+    MP.rr(ctx, ar.x, ar.y, ar.w, ar.h, 12);
+    ctx.fill();
+    ctx.restore();
     MP.label(ctx, "visual field", ar.x + 10, ar.y + 14, c.faint, 9);
     MP.label(ctx, "drag the bug", ar.x + ar.w - 10, ar.y + ar.h - 12, c.faint, 8, "right");
 

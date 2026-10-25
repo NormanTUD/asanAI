@@ -228,8 +228,8 @@
           [pts.B, pts.C],
           [pts.C, pts.A]
         ];
-        var seg = Math.floor(prog * 3);
-        var f = prog * 3 - seg;
+        var seg = Math.floor(prog * 3) % 3;
+        var f = prog * 3 - Math.floor(prog * 3);
         var q = path[seg];
         var px = MP.lerp(q[0].x, q[1].x, f);
         var py = MP.lerp(q[0].y, q[1].y, f);

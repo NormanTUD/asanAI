@@ -199,6 +199,7 @@
     var gaze = { x: 0, y: 0 };
     var target = { x: 0, y: 0 };
     var drag = -1;
+    var autoReflex = true;
     var errorEl = document.getElementById("gazeErr");
     var cogEl = document.getElementById("cogVal");
     var gazeEl = document.getElementById("gazeVal");
@@ -244,10 +245,19 @@
     reflexCanvas.addEventListener("pointerup", function () { drag = -1; });
     MP.on("centerGaze", "click", function () {
       var cg = cog();
+      autoReflex = true;
       target.x = cg.x; target.y = cg.y;
+      gaze.x = cg.x; gaze.y = cg.y;
+      var b = document.getElementById("centerGaze");
+      if (b) b.textContent = "Reflex on";
+      updateReadout();
     });
     MP.on("resetGaze", "click", function () {
-      gaze.x = 0; gaze.y = 0; target.x = 0; target.y = 0; updateReadout();
+      autoReflex = false;
+      gaze.x = 0; gaze.y = 0; target.x = 0; target.y = 0;
+      var b = document.getElementById("centerGaze");
+      if (b) b.textContent = "Enable reflex";
+      updateReadout();
     });
     MP.bindRange("bright0", function (v) { spots[0].b = v; updateReadout(); });
     MP.bindRange("bright1", function (v) { spots[1].b = v; updateReadout(); });
@@ -257,7 +267,7 @@
     MP.canvas(reflexCanvas, function (ctx, w, h, t, dt) {
       var c = MP.colors();
       var cg = cog();
-      if (target.x !== cg.x || target.y !== cg.y) { target.x = cg.x; target.y = cg.y; }
+      if (autoReflex && (target.x !== cg.x || target.y !== cg.y)) { target.x = cg.x; target.y = cg.y; }
       var k = MP.reduced ? 1 : 1 - Math.exp(-(dt || 0.016) * 3.2);
       gaze.x += (target.x - gaze.x) * k;
       gaze.y += (target.y - gaze.y) * k;
