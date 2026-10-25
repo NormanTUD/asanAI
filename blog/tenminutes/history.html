@@ -48,17 +48,6 @@
 						<span class="pill">Recap</span>
 					</div>
 				</div>
-				<div class="dial-wrap" aria-hidden="true">
-					<div class="dial">
-						<div class="dial-ticks" data-ticks></div>
-						<div class="dial-orbit"><span style="--a:40deg"></span><span style="--a:160deg"></span><span style="--a:280deg"></span></div>
-						<div class="dial-inner">
-							<span class="dial-time">10′</span>
-							<span class="dial-label">one idea per visit</span>
-							<span class="dial-sub">read · play · explain</span>
-						</div>
-					</div>
-				</div>
 			</section>
 
 			<div class="lesson-layout">
@@ -259,13 +248,6 @@
 	<script>
 	(function () {
 		"use strict";
-		document.querySelectorAll("[data-ticks]").forEach(function (box) {
-			for (var i = 0; i < 30; i++) {
-				var t = document.createElement("i");
-				t.style.transform = "rotate(" + (i * 12) + "deg) translateY(calc(min(330px, 76vw) * -0.44))";
-				box.appendChild(t);
-			}
-		});
 
 		/* ── timeline ────────────────────────────────────────── */
 		var points = [

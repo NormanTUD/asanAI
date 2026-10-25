@@ -338,11 +338,12 @@ main { position: relative; z-index: 1; }
 /* ── hero ────────────────────────────────────────────────── */
 
 .hero {
+	position: relative;
 	display: grid;
-	grid-template-columns: minmax(0, 1.24fr) minmax(320px, 0.76fr);
-	gap: clamp(28px, 5vw, 70px);
+	grid-template-columns: minmax(0, 1fr);
 	align-items: center;
 	padding: clamp(58px, 8vw, 112px) 0 clamp(46px, 6vw, 78px);
+	max-width: 980px;
 }
 
 .hero--lesson { padding-bottom: clamp(34px, 4vw, 54px); }
@@ -467,114 +468,6 @@ html[data-theme="dark"] .kicker { color: var(--tm-green); }
 html[data-theme="dark"] .pill--green { color: var(--tm-green); }
 html[data-theme="dark"] .pill--blue { color: var(--tm-sky); }
 
-/* dial */
-
-.dial-wrap {
-	position: relative;
-	display: grid;
-	place-items: center;
-	min-height: 340px;
-}
-.dial {
-	position: relative;
-	width: min(330px, 76vw);
-	aspect-ratio: 1;
-	display: grid;
-	place-items: center;
-}
-.dial::before,
-.dial::after {
-	content: "";
-	position: absolute;
-	border-radius: 50%;
-	pointer-events: none;
-}
-.dial::before {
-	inset: 6%;
-	border: 1px solid var(--tm-line);
-	background:
-		radial-gradient(circle at 32% 24%, rgba(113, 189, 86, 0.18), transparent 42%),
-		radial-gradient(circle at 72% 70%, rgba(0, 116, 172, 0.2), transparent 46%),
-		color-mix(in srgb, var(--tm-card) 72%, transparent);
-	box-shadow: inset 0 0 60px rgba(0, 75, 111, 0.06), var(--tm-shadow);
-}
-.dial::after {
-	inset: 18%;
-	border: 1px dashed var(--tm-line-strong);
-	animation: slowspin 44s linear infinite;
-}
-@keyframes slowspin { to { transform: rotate(360deg); } }
-
-.dial-inner {
-	position: relative;
-	z-index: 2;
-	text-align: center;
-	padding: 0 20px;
-}
-.dial-time {
-	display: block;
-	font-family: var(--tm-display);
-	font-weight: 700;
-	font-size: clamp(4.3rem, 9vw, 6.4rem);
-	line-height: 0.8;
-	letter-spacing: -0.04em;
-	color: var(--tm-petrol);
-	font-variant-numeric: tabular-nums;
-}
-html[data-theme="dark"] .dial-time { color: var(--tm-sky); }
-.dial-label {
-	display: block;
-	margin-top: 12px;
-	font-size: 0.66rem;
-	font-weight: 700;
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
-	color: var(--tm-muted);
-}
-.dial-sub {
-	display: block;
-	margin-top: 8px;
-	font-family: var(--tm-prose);
-	font-size: 0.88rem;
-	font-style: italic;
-	color: var(--tm-faint);
-}
-
-.dial-ticks {
-	position: absolute;
-	inset: 0;
-	z-index: 1;
-}
-.dial-ticks i {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 2px;
-	height: 8px;
-	margin: -4px 0 0 -1px;
-	background: var(--tm-line-strong);
-	transform-origin: center center;
-	border-radius: 2px;
-}
-
-.dial-orbit {
-	position: absolute;
-	inset: 12%;
-	animation: slowspin 30s linear infinite reverse;
-}
-.dial-orbit span {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 9px;
-	height: 9px;
-	margin: -4.5px;
-	border-radius: 50%;
-	background: var(--tm-green);
-	box-shadow: 0 0 0 5px rgba(113, 189, 86, 0.16), 0 0 22px rgba(113, 189, 86, 0.6);
-	transform: rotate(var(--a, 0deg)) translateY(calc(min(330px, 76vw) * -0.38));
-}
-
 /* hero constellation variant */
 
 .constellation {
@@ -584,6 +477,7 @@ html[data-theme="dark"] .dial-time { color: var(--tm-sky); }
 	height: 100%;
 	z-index: 0;
 	opacity: 0.85;
+	pointer-events: none;
 }
 
 /* ── home sections ───────────────────────────────────────── */
@@ -2136,8 +2030,6 @@ html[data-theme="dark"] .week-label { color: var(--tm-green); }
 	.lesson-layout { grid-template-columns: minmax(0, 1fr); }
 	.rail { display: none; }
 	.hero { grid-template-columns: minmax(0, 1fr); }
-	.dial-wrap { min-height: 280px; order: -1; }
-	.dial { width: min(250px, 66vw); }
 	.hero h1 { font-size: clamp(2.7rem, 8vw, 4.6rem); }
 	.path-grid, .lesson-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.feature-strip { grid-template-columns: 1fr; }

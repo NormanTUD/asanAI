@@ -56,17 +56,6 @@
 						<span class="pill pill--blue">Progress saved locally</span>
 					</div>
 				</div>
-				<div class="dial-wrap" aria-hidden="true">
-					<div class="dial">
-						<div class="dial-ticks" id="dial-ticks"></div>
-						<div class="dial-orbit"><span style="--a:0deg"></span><span style="--a:120deg"></span><span style="--a:240deg"></span></div>
-						<div class="dial-inner">
-							<span class="dial-time">10′</span>
-							<span class="dial-label">one idea per visit</span>
-							<span class="dial-sub">read · play · explain</span>
-						</div>
-					</div>
-				</div>
 			</section>
 
 			<section class="section section--tight" id="start">
@@ -274,15 +263,6 @@
 	<script>
 	(function () {
 		"use strict";
-		var ticks = document.getElementById("dial-ticks");
-		if (ticks) {
-			for (var i = 0; i < 30; i++) {
-				var t = document.createElement("i");
-				t.style.transform = "rotate(" + (i * 12) + "deg) translateY(calc(min(330px, 76vw) * -0.44))";
-				ticks.appendChild(t);
-			}
-		}
-
 		var canvas = document.getElementById("constellation");
 		if (canvas) {
 			var pts = [];
