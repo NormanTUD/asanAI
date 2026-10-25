@@ -2789,3 +2789,43 @@ html[data-theme="dark"] .person-card .pc-years { color: var(--tm-green); }
 @media (max-width: 560px) {
 	.people-grid, .machine-grid { grid-template-columns: 1fr; }
 }
+
+/* ── demo takeaway ──────────────────────────────────────── */
+.demo-insight {
+	display: flex;
+	gap: 12px;
+	align-items: flex-start;
+	margin: 0 24px 18px;
+	padding: 12px 14px;
+	border: 1px solid rgba(185, 223, 106, 0.26);
+	border-left: 3px solid var(--tm-lime);
+	border-radius: 0 9px 9px 0;
+	background: rgba(185, 223, 106, 0.08);
+}
+.demo-insight b {
+	flex: 0 0 auto;
+	font-family: var(--tm-mono);
+	font-size: 0.56rem;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--tm-lime);
+	padding-top: 2px;
+}
+.demo-insight span {
+	font-family: var(--tm-prose);
+	font-size: 0.85rem;
+	line-height: 1.5;
+	color: rgba(238, 247, 244, 0.82);
+}
+html[data-theme="light"] .demo-insight {
+	border-color: color-mix(in srgb, var(--tm-green) 38%, var(--tm-line));
+	border-left-color: var(--tm-green);
+	background: rgba(113, 189, 86, 0.08);
+}
+html[data-theme="light"] .demo-insight b { color: var(--tm-green-deep); }
+html[data-theme="light"] .demo-insight span { color: var(--tm-ink-soft); }
+.demo--paper .demo-insight { border-left-color: var(--tm-green); }
+
+.bar-row.is-cut { opacity: 0.28; }
+.bar-row.is-cut .bar-fill { background: var(--tm-muted); }

@@ -98,6 +98,7 @@
 								<div class="prediction">
 									<div class="prediction-sentence" id="nt-sentence" aria-live="polite"></div>
 									<div class="bars" id="nt-bars" role="group" aria-label="Next token probabilities"></div>
+									<p class="meadow-caption" id="nt-why" style="color:var(--tm-muted)">Sampling draws from the whole distribution; temperature controls how concentrated it is.</p>
 								</div>
 								<div class="demo-controls">
 									<span style="font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tm-muted)">Decoder</span>
@@ -122,6 +123,7 @@
 									<div><b>Decoder</b><span id="nt-mode">sample</span></div>
 								</div>
 							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>The distribution is the model; the decoder is the choice. Greedy, sampling, and top-p all read the same probabilities differently.</span></div>
 							<div class="demo-foot">
 								Toy logits, not a real model. The mechanism is real: a distribution over the
 								vocabulary, a decoding rule, append, repeat. This demo lets you switch
@@ -200,6 +202,7 @@
 								</div>
 								<p class="meadow-caption" id="md-caption">The meadow is a finite vocabulary laid over an infinite space of meaning.</p>
 							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Words tile the space of thoughts. Certainty is being deep inside a cell; uncertainty is standing on a seam.</span></div>
 							<div class="demo-foot">
 								In a real model the space has thousands of dimensions and the vocabulary has
 								tens of thousands of tokens. The geometry is the same; only the scale changes.
@@ -386,10 +389,21 @@
 			var probs = softmax(options.map(function (o) { return o.l; }), temp);
 			var top = 0;
 			probs.forEach(function (p, i) { if (p > probs[top]) top = i; });
+			var kept = null;
+			if (decodeMode === "topp") {
+				var order = probs.map(function (p, i) { return { i: i, p: p }; }).sort(function (a, b) { return b.p - a.p; });
+				var cumulative = 0;
+				kept = [];
+				for (var k = 0; k < order.length; k++) {
+					kept.push(order[k].i);
+					cumulative += order[k].p;
+					if (cumulative >= 0.9) break;
+				}
+			}
 			options.forEach(function (opt, i) {
 				var row = document.createElement("button");
 				row.type = "button";
-				row.className = "bar-row" + (i === top ? " is-top" : "");
+				row.className = "bar-row" + (i === top ? " is-top" : "") + (kept && kept.indexOf(i) === -1 ? " is-cut" : "");
 				row.setAttribute("aria-label", "Choose " + opt.t + ", probability " + Math.round(probs[i] * 100) + " percent");
 				row.innerHTML = '<span class="bar-name">' + escapeHtml(opt.t === " " ? "␣" : opt.t) + '</span>'
 					+ '<span class="bar-track"><span class="bar-fill" style="width:' + (probs[i] * 100).toFixed(2) + '%"></span></span>'
@@ -398,6 +412,7 @@
 				barsEl.appendChild(row);
 			});
 			if (topEl) topEl.textContent = options[top].t === " " ? "␣ (space)" : options[top].t;
+			updateWhy();
 		}
 		function choose(token) {
 			if (stage >= stages.length) return;
@@ -436,6 +451,13 @@
 			}
 			choose(options[pool[pool.length - 1].i].t);
 		}
+		function updateWhy() {
+			var why = document.getElementById("nt-why");
+			if (!why) return;
+			if (decodeMode === "greedy") why.textContent = "Greedy always takes the highest-probability token. Temperature has no effect; the text is deterministic and often repetitive.";
+			else if (decodeMode === "topp") why.textContent = "Top-p keeps the smallest set of tokens whose probabilities reach 90%, then samples among them. The faded bars are outside the nucleus.";
+			else why.textContent = "Sampling draws from the whole distribution; temperature controls how concentrated it is. Low values behave almost greedily, high values trade coherence for surprise.";
+		}
 		function setDecodeMode(mode) {
 			decodeMode = mode;
 			var modeEl = document.getElementById("nt-mode");
@@ -443,6 +465,8 @@
 			document.querySelectorAll("[data-decode]").forEach(function (b) {
 				b.classList.toggle("is-on", b.getAttribute("data-decode") === mode);
 			});
+			updateWhy();
+			renderBars();
 		}
 		function updateReadout() {
 			if (stepCount) stepCount.textContent = Math.min(stage, stages.length) + " / " + stages.length;

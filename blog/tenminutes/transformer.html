@@ -107,6 +107,7 @@
 									<span class="pipe-note" id="pipe-counter" style="margin:0">Stage 1 of 6</span>
 								</div>
 							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Attention mixes across positions; the feed-forward network computes per position; the residual stream carries everything forward.</span></div>
 							<div class="demo-foot">
 								The pipeline is the GPT-style decoder route. An encoder such as BERT keeps the
 								same block but removes the causal mask and trains with masked tokens instead
@@ -169,6 +170,7 @@
 								</div>
 								<p class="meadow-caption" id="layer-caption" style="color:var(--tm-muted)">At the input, “bank” sits between the clusters. Context has not pulled it yet.</p>
 							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Depth assembles context. The word is not looked up in a dictionary; it is moved by the evidence in the sentence.</span></div>
 							<div class="demo-foot">
 								This is a 2-D cartoon of a high-dimensional residual stream. The real lesson is
 								in the architecture: every layer reads the stream, computes an update, and adds
