@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Julie Smiths emotionaler Werkzeugkasten in 5–10 Minuten: Angstschleife, Motivation, Trauer, Werte, Selbstmitgefühl und die Grenzen der Selbsthilfe.">
+<meta name="color-scheme" content="dark light">
+<title>Why Has Nobody Told Me This Before? · Die interaktive Essenz</title>
+<style>
+:root{--accent:#c9b8ff;--accent-2:#ffb59e;--accent-3:#8fdcc4;}
+/* ============================================================
+   SHARED SHELL — book explainers
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --bg:#080b10; --bg-soft:#0c1118; --panel:#101720; --panel-2:#141c26;
+  --ink:#f1eee6; --muted:#9aa7b4; --faint:#67737f;
+  --line:rgba(255,255,255,.10); --line-strong:rgba(255,255,255,.18);
+  --accent:#7dd3fc; --accent-2:#f5b04c; --accent-3:#9b8cff;
+  --good:#5ee0a0; --bad:#ff6b7a; --warn:#ffc861;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:"Inter","Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:18px; --r-lg:26px; --max:1180px; --ease:cubic-bezier(.22,1,.36,1);
+  --shadow:0 30px 80px -35px rgba(0,0,0,.9);
+  --glow:0 0 50px -18px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+html.light{
+  --bg:#f3efe4; --bg-soft:#ece6d8; --panel:#fbf8f0; --panel-2:#f4efe3;
+  --ink:#151b21; --muted:#5e6a75; --faint:#87919a;
+  --line:rgba(20,28,36,.12); --line-strong:rgba(20,28,36,.22);
+  --shadow:0 30px 80px -35px rgba(38,32,20,.30);
+}
+html{scroll-behavior:smooth;scroll-padding-top:92px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:16.5px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.20;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(900px 540px at 8% -8%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 62%),
+    radial-gradient(760px 520px at 96% 4%, color-mix(in srgb, var(--accent-2) 10%, transparent), transparent 62%),
+    radial-gradient(900px 680px at 50% 108%, color-mix(in srgb, var(--accent-3) 8%, transparent), transparent 64%);
+}
+img,svg,canvas{display:block;max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent);text-decoration-thickness:.08em;text-underline-offset:.18em}
+a:hover{color:var(--accent-2)}
+::selection{background:var(--accent);color:#061018}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+h1,h2,h3,h4{font-family:var(--serif);line-height:1.04;letter-spacing:-.025em;margin:0;font-weight:700}
+p{margin:0 0 1em}
+.wrap{position:relative;z-index:2}
+.container{max-width:var(--max);margin:0 auto;padding:0 26px}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.faint{color:var(--faint)}
+.small{font-size:.82rem}
+.tiny{font-size:.72rem;letter-spacing:.06em}
+.center{text-align:center}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* progress + theme */
+#progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:200;background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 16px var(--accent)}
+.theme-toggle{
+  position:fixed;right:18px;top:16px;z-index:210;width:42px;height:42px;border-radius:50%;
+  border:1px solid var(--line-strong);background:color-mix(in srgb,var(--panel) 80%,transparent);
+  backdrop-filter:blur(14px);display:grid;place-items:center;font-size:17px;
+  transition:transform .25s var(--ease), border-color .25s;
+}
+.theme-toggle:hover{transform:rotate(18deg) scale(1.06);border-color:var(--accent)}
+
+/* hero */
+.hero{position:relative;min-height:92vh;display:flex;align-items:center;padding:110px 0 70px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center;width:100%}
+.kicker{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.70rem;letter-spacing:.23em;text-transform:uppercase;color:var(--accent);margin-bottom:26px}
+.kicker::before{content:"";width:34px;height:1px;background:currentColor;display:inline-block}
+.hero h1{font-size:clamp(3.2rem,8.6vw,7.4rem);letter-spacing:-.055em;line-height:.88;text-wrap:balance}
+.hero h1 em{font-style:italic;color:var(--accent);font-weight:400}
+.hero .subtitle{font-family:var(--serif);font-size:clamp(1.2rem,2.2vw,1.65rem);line-height:1.28;color:var(--muted);margin:26px 0 0;max-width:30ch}
+.hero .author{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:26px}
+.thesis{font-size:clamp(1.02rem,1.55vw,1.22rem);line-height:1.55;color:var(--ink);max-width:54ch;margin:26px 0 0;padding-left:18px;border-left:2px solid var(--accent)}
+.meta-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:30px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--panel) 55%,transparent)}
+.chip b{color:var(--ink);font-weight:600}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;
+  padding:13px 20px;border-radius:999px;background:var(--accent);color:#061018;font-weight:700;
+  font-size:.88rem;letter-spacing:.01em;transition:transform .2s var(--ease),box-shadow .2s,background .2s;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -12px var(--accent);color:#061018}
+.btn.ghost{background:transparent;border-color:var(--line-strong);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--accent);box-shadow:none;background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.btn.small{padding:9px 14px;font-size:.78rem}
+.hero-visual{position:relative;min-height:430px;display:grid;place-items:center}
+.hero-orbit{position:relative;width:min(390px,80vw);aspect-ratio:1;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center}
+.hero-orbit::before,.hero-orbit::after{content:"";position:absolute;border-radius:50%;border:1px dashed var(--line)}
+.hero-orbit::before{inset:13%}
+.hero-orbit::after{inset:27%}
+.hero-core{width:38%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--accent),color-mix(in srgb,var(--accent) 25%,#000));box-shadow:var(--glow);position:relative;z-index:2}
+.orbit-dot{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 24px var(--accent-2);animation:orbit 16s linear infinite;transform-origin:0 0}
+.orbit-dot:nth-child(2){background:var(--accent-3);box-shadow:0 0 24px var(--accent-3);animation-duration:23s;animation-direction:reverse}
+.orbit-dot:nth-child(3){background:var(--good);box-shadow:0 0 24px var(--good);animation-duration:31s;width:9px;height:9px}
+@keyframes orbit{from{transform:rotate(0) translateX(48%)}to{transform:rotate(360deg) translateX(48%)}}
+.hero-caption{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);white-space:nowrap}
+.scroll-cue{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--faint)}
+.scroll-cue span{display:block;width:1px;height:34px;background:linear-gradient(var(--accent),transparent);animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{opacity:.25;transform:scaleY(.7)}50%{opacity:1;transform:scaleY(1)}}
+
+/* dock */
+.dock{position:sticky;top:0;z-index:150;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(18px)}
+.dock-inner{max-width:var(--max);margin:0 auto;padding:10px 26px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.dock-inner::-webkit-scrollbar{display:none}
+.dock a{flex:0 0 auto;padding:8px 12px;border-radius:999px;font-family:var(--mono);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid transparent;transition:.2s}
+.dock a:hover{color:var(--ink);border-color:var(--line)}
+.dock a.active{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,transparent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+
+/* sections */
+.panel{padding:92px 0;border-top:1px solid var(--line);position:relative}
+.panel:first-of-type{border-top:0}
+.section-head{display:grid;grid-template-columns:120px 1fr;gap:26px;margin-bottom:42px;align-items:start}
+.section-num{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;color:var(--accent);padding-top:12px}
+.section-head h2{font-size:clamp(2rem,4.4vw,3.5rem);line-height:.98;text-wrap:balance}
+.section-head .lede{font-size:1.05rem;line-height:1.6;color:var(--muted);max-width:62ch;margin-top:16px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:linear-gradient(145deg,color-mix(in srgb,var(--panel) 88%,transparent),color-mix(in srgb,var(--panel-2) 72%,transparent));border:1px solid var(--line);border-radius:var(--r);padding:24px;position:relative;transition:transform .28s var(--ease),border-color .28s,background .28s}
+.card:hover{transform:translateY(-4px);border-color:var(--line-strong)}
+.card h3{font-size:1.28rem;line-height:1.12;margin-bottom:9px}
+.card p{color:var(--muted);font-size:.93rem;line-height:1.62;margin:0}
+.card .tag{display:inline-block;font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);padding:4px 8px;border-radius:999px;margin-bottom:14px}
+.card-number{font-family:var(--serif);font-size:3.2rem;line-height:.8;color:var(--accent);opacity:.9;margin-bottom:16px;letter-spacing:-.06em}
+.big-stat{font-family:var(--serif);font-size:clamp(2.5rem,6vw,4.4rem);line-height:.85;letter-spacing:-.055em;color:var(--accent)}
+.stat-label{font-size:.88rem;color:var(--muted);margin-top:10px;line-height:1.45}
+.quote{border-left:2px solid var(--accent);padding:4px 0 4px 20px;font-family:var(--serif);font-size:1.3rem;line-height:1.4;color:var(--ink);margin:28px 0}
+.quote cite{display:block;font-family:var(--mono);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-style:normal;margin-top:12px}
+
+/* interactive shell */
+.interactive{background:linear-gradient(160deg,color-mix(in srgb,var(--panel) 92%,transparent),color-mix(in srgb,var(--bg-soft) 90%,transparent));border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:28px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.interactive::before{content:"";position:absolute;inset:0;background:radial-gradient(500px 240px at 100% 0%,color-mix(in srgb,var(--accent) 9%,transparent),transparent 65%);pointer-events:none}
+.interactive-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px;position:relative;z-index:1}
+.interactive-title{font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.interactive-hint{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:var(--faint);text-align:right}
+.stage{position:relative;z-index:1}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:18px 0}
+.segmented{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--bg) 40%,transparent)}
+.segmented button{border:0;background:transparent;color:var(--muted);padding:7px 12px;border-radius:999px;font-size:.75rem;font-family:var(--mono);letter-spacing:.04em;transition:.2s}
+.segmented button:hover{color:var(--ink)}
+.segmented button.on{background:var(--accent);color:#061018;font-weight:700}
+label.range-label{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;color:var(--muted);flex-wrap:wrap}
+input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:var(--line-strong);outline:none;min-width:160px;flex:1}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);box-shadow:0 0 0 1px var(--accent);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);cursor:pointer}
+.meter{height:10px;border-radius:99px;background:color-mix(in srgb,var(--line) 80%,transparent);overflow:hidden}
+.meter>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:99px;transition:width .5s var(--ease)}
+.meter-label{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:.63rem;letter-spacing:.07em;color:var(--faint);margin:8px 0 4px}
+.note{border:1px solid var(--line);border-left:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 5%,transparent);border-radius:0 12px 12px 0;padding:16px 18px;font-size:.9rem;color:var(--muted);line-height:1.6}
+.note strong{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 6%,transparent)}
+.note.bad{border-left-color:var(--bad);background:color-mix(in srgb,var(--bad) 7%,transparent)}
+.note.good{border-left-color:var(--good);background:color-mix(in srgb,var(--good) 6%,transparent)}
+.tag-row{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}
+.tag{display:inline-flex;align-items:center;padding:4px 8px;border:1px solid var(--line);border-radius:999px;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tag.good{color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent)}
+.tag.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+.tag.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+
+/* accordion / toggle cards */
+.toggle-card{border:1px solid var(--line);border-radius:var(--r);background:color-mix(in srgb,var(--panel) 70%,transparent);overflow:hidden;transition:border-color .2s}
+.toggle-card.open{border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+.toggle-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;border:0;background:transparent;text-align:left;color:var(--ink);font-weight:600;font-size:.96rem}
+.toggle-btn .sign{font-family:var(--mono);color:var(--accent);font-size:1.1rem;transition:transform .25s}
+.toggle-card.open .sign{transform:rotate(45deg)}
+.toggle-body{max-height:0;overflow:hidden;transition:max-height .35s var(--ease);}
+.toggle-body-inner{padding:0 20px 20px;color:var(--muted);font-size:.9rem;line-height:1.65}
+.toggle-body-inner strong{color:var(--ink)}
+
+/* quiz */
+.quiz{background:linear-gradient(160deg,color-mix(in srgb,var(--panel) 95%,transparent),color-mix(in srgb,var(--bg-soft) 92%,transparent));border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:28px;box-shadow:var(--shadow)}
+.quiz-top{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+.quiz-count{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+.quiz-score{font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+.quiz-dots{display:flex;gap:5px;margin-bottom:22px}
+.quiz-dots i{width:100%;height:3px;border-radius:99px;background:var(--line);transition:.3s}
+.quiz-dots i.done{background:var(--accent)}
+.quiz-q{font-family:var(--serif);font-size:clamp(1.25rem,2.2vw,1.6rem);line-height:1.25;margin:0 0 18px}
+.quiz-options{display:grid;gap:9px}
+.quiz-opt{display:flex;gap:12px;align-items:flex-start;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--bg) 30%,transparent);color:var(--ink);text-align:left;font-size:.9rem;line-height:1.45;transition:.18s}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,transparent);transform:translateX(3px)}
+.quiz-opt .key{font-family:var(--mono);font-size:.7rem;color:var(--faint);border:1px solid var(--line);border-radius:5px;width:22px;height:22px;display:grid;place-items:center;flex:0 0 auto;margin-top:1px}
+.quiz-opt.correct{border-color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent)}
+.quiz-opt.correct .key{border-color:var(--good);color:var(--good)}
+.quiz-opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent)}
+.quiz-opt.wrong .key{border-color:var(--bad);color:var(--bad)}
+.quiz-opt:disabled{cursor:default;opacity:.7}
+.quiz-opt.correct:disabled,.quiz-opt.wrong:disabled{opacity:1}
+.quiz-feedback{margin-top:16px;font-size:.9rem;line-height:1.6;color:var(--muted);min-height:24px}
+.quiz-feedback strong{color:var(--ink)}
+.quiz-actions{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-top:20px;flex-wrap:wrap}
+.quiz-end{text-align:center;padding:18px 0}
+.quiz-end .big-stat{font-size:5rem}
+.quiz-end p{max-width:48ch;margin:10px auto 0;color:var(--muted)}
+.quiz-end .btn{margin-top:22px}
+
+/* remember */
+.remember{counter-reset:r;display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--line)}
+.remember li{list-style:none;display:grid;grid-template-columns:44px 1fr;gap:12px;padding:18px 18px 18px 0;border-bottom:1px solid var(--line);font-size:.92rem;line-height:1.55}
+.remember li::before{counter-increment:r;content:counter(r,decimal-leading-zero);font-family:var(--mono);font-size:.65rem;color:var(--accent);padding-top:4px}
+.remember li:nth-child(odd){padding-right:28px}
+.remember li:nth-child(even){padding-left:28px;border-left:1px solid var(--line)}
+.remember-list{padding:0;margin:0}
+
+/* footer */
+.footer{padding:60px 0 80px;border-top:1px solid var(--line);color:var(--faint);font-size:.8rem;line-height:1.65}
+.footer .row{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap}
+.footer a{color:var(--muted)}
+.footer strong{color:var(--muted);font-weight:600}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* generic page bits */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+.kpi{padding:18px;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--panel) 55%,transparent)}
+.kpi b{display:block;font-family:var(--serif);font-size:2rem;line-height:.9;color:var(--accent);letter-spacing:-.04em}
+.kpi span{display:block;margin-top:7px;font-size:.78rem;color:var(--muted);line-height:1.4}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.split.tight{gap:18px}
+.stack{display:grid;gap:12px}
+.hr{height:1px;background:var(--line);border:0;margin:26px 0}
+.mini-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:7px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-family:var(--mono);font-size:.62rem;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+
+@media(max-width:900px){
+  .hero{min-height:auto;padding:100px 0 70px}
+  .hero-grid{grid-template-columns:1fr;gap:36px}
+  .hero-visual{min-height:300px;order:-1}
+  .hero .subtitle{max-width:44ch}
+  .section-head{grid-template-columns:1fr;gap:8px}
+  .section-num{padding-top:0}
+  .grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}
+  .remember{grid-template-columns:1fr}
+  .remember li:nth-child(odd),.remember li:nth-child(even){padding:18px 0;border-left:0}
+  .kpi-row{grid-template-columns:1fr 1fr}
+}
+@media(max-width:620px){
+  body{font-size:15.5px}
+  .container{padding:0 18px}
+  .dock-inner{padding:9px 18px}
+  .panel{padding:68px 0}
+  .grid-2,.grid-3,.grid-4,.split{grid-template-columns:1fr}
+  .interactive,.quiz{padding:18px;border-radius:20px}
+  .theme-toggle{top:12px;right:12px;width:38px;height:38px}
+  .kpi-row{grid-template-columns:1fr}
+  .remember li{border-left:0!important}
+  .hero h1{font-size:clamp(3rem,15vw,5rem)}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+
+
+.calm-art{position:relative;width:min(430px,86vw);aspect-ratio:1;display:grid;place-items:center}
+.calm-orb{width:56%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 36% 30%,color-mix(in srgb,var(--accent) 92%,#fff),color-mix(in srgb,var(--accent) 28%,#111));box-shadow:0 0 100px -12px var(--accent);animation:breathe 8s ease-in-out infinite;display:grid;place-items:center;color:#10151c;font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-align:center;line-height:1.7;font-weight:700}
+.calm-ring{position:absolute;border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);border-radius:50%;animation:breathe 8s ease-in-out infinite}
+.calm-ring.r1{inset:9%}.calm-ring.r2{inset:22%;animation-delay:.4s}.calm-ring.r3{inset:35%;animation-delay:.8s}
+@keyframes breathe{0%,100%{transform:scale(.94);opacity:.72}50%{transform:scale(1.04);opacity:1}}
+.whn-hero h1{font-size:clamp(2.8rem,7.2vw,6.4rem)}
+
+.loop-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.loop-road{border:1px solid var(--line);border-radius:16px;padding:18px;background:color-mix(in srgb,var(--panel) 55%,transparent);min-height:150px;position:relative;overflow:hidden}
+.loop-road h4{font-size:1.35rem;margin-bottom:6px}
+.loop-road p{font-size:.84rem;color:var(--muted);line-height:1.55;margin:0}
+.loop-road.avoid{background:linear-gradient(160deg,color-mix(in srgb,var(--bad) 8%,transparent),transparent)}
+.loop-road.approach{background:linear-gradient(160deg,color-mix(in srgb,var(--good) 8%,transparent),transparent)}
+.loop-road .trail{position:absolute;right:-20px;bottom:-24px;width:120px;height:120px;border-radius:50%;border:1px solid color-mix(in srgb,var(--bad) 25%,transparent)}
+.loop-road.approach .trail{border-color:color-mix(in srgb,var(--good) 25%,transparent)}
+.bars{display:flex;align-items:flex-end;gap:6px;height:150px;border-bottom:1px solid var(--line);padding:10px 4px 0;margin-top:18px}
+.bars i{flex:1;min-width:8px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--bad),color-mix(in srgb,var(--bad) 35%,transparent));transition:height .5s var(--ease);height:5%}
+.bars i.approach{background:linear-gradient(180deg,var(--good),color-mix(in srgb,var(--good) 35%,transparent))}
+.bars i.current{outline:1px solid var(--ink);outline-offset:2px}
+.loop-read{display:flex;gap:26px;flex-wrap:wrap;margin-top:14px;font-family:var(--mono);font-size:.64rem;color:var(--muted)}
+.loop-read b{display:block;font-family:var(--serif);font-size:1.8rem;color:var(--ink);line-height:1;margin-top:2px}
+.loop-verdict{font-size:.9rem;color:var(--muted);line-height:1.6;margin-top:14px;min-height:52px}
+
+.fly-wrap{display:grid;grid-template-columns:300px 1fr;gap:34px;align-items:center}
+.flywheel{width:min(300px,72vw);aspect-ratio:1;border-radius:50%;position:relative;display:grid;place-items:center;background:conic-gradient(from 0deg,color-mix(in srgb,var(--accent) 18%,transparent),color-mix(in srgb,var(--accent-2) 22%,transparent),color-mix(in srgb,var(--accent) 18%,transparent));border:1px solid var(--line);transition:transform 1s var(--ease)}
+.flywheel::before{content:"";position:absolute;inset:15%;border-radius:50%;background:var(--bg);border:1px solid var(--line)}
+.flywheel .hub{position:relative;text-align:center;z-index:2}
+.flywheel .hub b{display:block;font-family:var(--serif);font-size:2.4rem;line-height:.9;color:var(--accent)}
+.flywheel .hub span{font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;color:var(--faint);text-transform:uppercase}
+.flywheel .spoke{position:absolute;inset:4%;border-radius:50%;border:1px dashed color-mix(in srgb,var(--accent) 30%,transparent);animation:spin 30s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fly-bars{display:grid;gap:16px}
+.fly-bar .meter-label{margin-top:0;margin-bottom:7px}
+.fly-msg{font-size:.9rem;color:var(--muted);line-height:1.6;min-height:52px}
+
+.grief-stage{display:grid;grid-template-columns:1.2fr .8fr;gap:26px;align-items:center}
+#grief-canvas{width:100%;height:280px;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--bg) 32%,transparent)}
+.grief-note{font-size:.88rem;color:var(--muted);line-height:1.6;margin-top:12px}
+
+.compass-wrap{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}
+.compass{width:100%;max-width:380px;margin:0 auto;aspect-ratio:1}
+.compass .grid-line{stroke:color-mix(in srgb,var(--line) 90%,transparent);stroke-width:1}
+.compass .axis-label{font-family:var(--mono);font-size:9px;fill:var(--faint);letter-spacing:.08em;text-anchor:middle}
+.compass .shape{fill:color-mix(in srgb,var(--accent) 20%,transparent);stroke:var(--accent);stroke-width:2;transition:d .4s}
+.compass .vertex{fill:var(--accent)}
+.value-sliders{display:grid;gap:14px}
+.value-sliders label{display:grid;gap:6px;font-family:var(--mono);font-size:.68rem;color:var(--muted);letter-spacing:.04em}
+.value-sliders input{width:100%}
+.value-action{border:1px solid var(--line);border-left:3px solid var(--accent-2);border-radius:0 12px 12px 0;padding:16px 18px;background:color-mix(in srgb,var(--accent-2) 5%,transparent);font-size:.9rem;line-height:1.6;color:var(--muted);margin-top:16px;min-height:86px}
+.value-action strong{color:var(--ink)}
+
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.myth-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.myth{border:1px solid var(--line);border-radius:14px;padding:18px;background:color-mix(in srgb,var(--panel) 50%,transparent)}
+.myth .m{font-family:var(--mono);font-size:.58rem;letter-spacing:.13em;text-transform:uppercase;color:var(--bad);margin-bottom:8px}
+.myth b{font-family:var(--serif);font-size:1.1rem;display:block;line-height:1.2;margin-bottom:7px}
+.myth p{font-size:.84rem;color:var(--muted);margin:0;line-height:1.55}
+.help-card{border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:18px;padding:26px;background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.help-card h3{font-size:1.7rem;margin-bottom:10px}
+.help-card p{color:var(--muted);font-size:.93rem;line-height:1.65}
+.help-card .numbers{display:flex;gap:22px;flex-wrap:wrap;margin-top:16px;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.help-card .numbers b{display:block;font-family:var(--serif);font-size:1.5rem;color:var(--ink);margin-top:3px}
+@media(max-width:900px){.loop-grid,.grief-stage,.compass-wrap,.tool-grid,.myth-grid{grid-template-columns:1fr}.fly-wrap{grid-template-columns:1fr}.flywheel{margin:0 auto}}
+
+</style>
+</head>
+<body>
+<a class="sr-only" href="#kurz">Zum Inhalt springen</a>
+<div id="progress"></div>
+<button class="theme-toggle" type="button" aria-label="Design wechseln"></button>
+<div class="wrap">
+
+<header class="hero whn-hero"><div class="container"><div class="hero-grid">
+<div>
+<div class="kicker">Julie Smith · Psychologie · Buchsummary</div>
+<h1>Why Has Nobody Told Me This Before?</h1>
+<p class="subtitle">Du bist nicht kaputt. Du hast nur nie gelernt, wie Gefühle funktionieren.</p>
+<div class="author">Practical advice for navigating life’s emotional challenges</div>
+<p class="thesis">Niedergeschlagenheit, Angst, Trauer und Selbstzweifel sind keine Beweise für einen Defekt. Es sind Signale, die man lesen und beeinflussen kann – mit kleinen Handlungen, Akzeptanz und Selbstmitgefühl.</p>
+<div class="meta-row"><span class="chip"><b>5–7</b> Min</span><span class="chip"><b>8</b> Kapitel</span><span class="chip"><b>6</b> Werkzeuge</span><span class="chip">Summary-basiert</span></div>
+<div class="hero-actions"><a class="btn" href="#angst">Angstschleife</a><a class="btn ghost" href="#werkzeug">Sofort-Hilfe</a></div>
+</div>
+<div class="hero-visual"><div class="calm-art" aria-hidden="true">
+<div class="calm-ring r1"></div><div class="calm-ring r2"></div><div class="calm-ring r3"></div>
+<div class="calm-orb">ATME<br>LANGSAM</div>
+</div><div class="hero-caption">Gefühle sind Wetter, nicht Identität</div></div>
+</div></div><div class="scroll-cue">Scrollen<span></span></div></header>
+
+<nav class="dock" aria-label="Kapitel"><div class="dock-inner"><a href="#kurz" data-target="kurz">60 Sek</a><a href="#angst" data-target="angst">Angstschleife</a><a href="#motivation" data-target="motivation">Motivation</a><a href="#trauer" data-target="trauer">Trauer</a><a href="#werte" data-target="werte">Werte</a><a href="#werkzeug" data-target="werkzeug">Werkzeuge</a><a href="#mythen" data-target="mythen">Mythen</a><a href="#hilfe" data-target="hilfe">Hilfe</a><a href="#quiz" data-target="quiz">Quiz</a><a href="#merken" data-target="merken">Merken</a></div></nav>
+<main>
+
+<section id="kurz" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">01 / KURZ</div><div><h2>In 60 Sekunden</h2><p class="lede">Das Buch ist ein Werkzeugkasten, keine Diagnose. Die Grundidee: Du musst dich nicht anders fühlen, um anders zu handeln – oft kommt das Gefühl nach der Handlung.</p></div></div>
+<div class="grid-3">
+<div class="card"><div class="big-stat">≈</div><div class="stat-label"><strong>Stimmung ist ein Sensorwert.</strong> Schlaf, Körper, Ereignisse, Gedanken und Umgebung fließen ein. Sie ist keine Charakterbeurteilung.</div></div>
+<div class="card"><div class="big-stat">→</div><div class="stat-label"><strong>Handlung vor Motivation.</strong> Auf „Lust“ zu warten dreht die Kausalität um. Die 2-Minuten-Version startet den Motor.</div></div>
+<div class="card"><div class="big-stat">↺</div><div class="stat-label"><strong>Vermeidung verkauft Angst.</strong> Kurzfristig beruhigt sie, langfristig lehrt sie das Gehirn: „Diese Situation ist gefährlich.“</div></div>
+</div>
+<div class="grid-2" style="margin-top:18px">
+<div class="card"><span class="tag">Grundhaltung</span><h3>Gefühle sind Perspektiven</h3><p>Sie sind Interpretationen von Körper und Kontext, keine Fakten und keine Befehle. Man kann sie anerkennen, ohne ihnen automatisch zu folgen.</p></div>
+<div class="card"><span class="tag">Richtung</span><h3>Werte statt Perfektion</h3><p>Werte sind Richtungen, keine Checklisten. Die Frage lautet nicht „Bin ich glücklich?“, sondern „Bewege ich mich auf das zu, was mir wichtig ist?“</p></div>
+</div>
+<div class="note" style="margin-top:18px"><strong>Wichtig:</strong> Diese Datei basiert auf einer Bookey-Zusammenfassung, nicht auf dem vollständigen Buch. Die Werkzeuge sind mit etabliertem CBT-/ACT-/DBT-Wissen eingeordnet; Zitate und Kapitel folgen der Zusammenfassung.</div>
+</div></section>
+
+<section id="angst" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">02 / ANGST</div><div class="lede">Die Angstschleife ist ein Lernprozess. Vermeidung gibt sofort Erleichterung und erhöht langfristig die Angst. Annäherung ist unbequem und senkt sie. Klicke dich durch acht Begegnungen.</div><h2>Vermeidung oder Annäherung?</h2></div></div>
+<div class="interactive"><div class="interactive-head"><div class="interactive-title">Expositions-Simulator</div><div class="interactive-hint">schematisch · keine Therapie</div></div>
+<div class="loop-grid">
+<div class="loop-road avoid" id="whn-road-avoid"><h4>Vermeiden</h4><p>Du gehst der Situation aus dem Weg. Die Angst fällt sofort – und steigt beim nächsten Mal stärker zurück.</p><div class="trail"></div></div>
+<div class="loop-road approach" id="whn-road-approach"><h4>Annähern</h4><p>Du bleibst, bis die Angst von selbst sinkt. Das Gehirn lernt: Die Situation ist nicht tödlich.</p><div class="trail"></div></div>
+</div>
+<div class="segmented" id="whn-mode" style="margin-top:16px"><button class="on" data-mode="avoid">Vermeiden</button><button data-mode="approach">Annähern</button></div>
+<div class="controls"><label class="range-label" style="cursor:pointer"><input type="checkbox" id="whn-safety" style="accent-color:var(--accent);width:16px;height:16px"> Sicherheitsverhalten erlaubt</label><button class="btn small" id="whn-next">Nächste Begegnung</button><button class="btn ghost small" id="whn-reset">Zurücksetzen</button></div>
+<div class="bars" id="whn-bars"></div>
+<div class="loop-read"><div>Angst jetzt<b id="whn-anxiety">85</b></div><div>Begegnung<b id="whn-round">0 / 8</b></div><div>Lernsignal<b id="whn-learn">—</b></div></div>
+<div class="loop-verdict" id="whn-verdict">Starte mit „Vermeiden“ und beobachte, was mit der Angst über die Runden passiert. Dann wechsle zu „Annähern“.</div>
+</div></div>
+</div></section>
+
+<section id="motivation" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">03 / MOTIVATION</div><div><h2>Das Schwungrad</h2><p class="lede">Motivation ist kein Vorrat, den man vorher braucht. Sie entsteht oft erst, wenn man angefangen hat. Jeder Klick ist eine kleine Handlung – und die macht den nächsten Schritt leichter.</p></div></div>
+<div class="interactive"><div class="interactive-head"><div class="interactive-title">Action-first-Maschine</div><div class="interactive-hint">2 Minuten reichen</div></div>
+<div class="fly-wrap">
+<div class="flywheel" id="whn-wheel"><div class="spoke"></div><div class="hub"><b id="whn-wheel-num">0</b><span>Starts</span></div></div>
+<div>
+<div class="fly-bars">
+<div class="fly-bar"><div class="meter-label"><span>Handlung</span><span id="whn-action-num">20 / 100</span></div><div class="meter"><i id="whn-action-bar" style="width:20%"></i></div></div>
+<div class="fly-bar"><div class="meter-label"><span>Motivation</span><span id="whn-mot-num">10 / 100</span></div><div class="meter"><i id="whn-mot-bar" style="width:10%;background:linear-gradient(90deg,var(--accent-2),var(--accent))"></i></div></div>
+</div>
+<div class="controls"><button class="btn small" id="whn-start">2-Minuten-Version starten</button><button class="btn ghost small" id="whn-fly-reset">Zurücksetzen</button></div>
+<div class="fly-msg" id="whn-fly-msg">Noch nicht gestartet. Genau das ist der Punkt: Warten fühlt sich wie Vorbereitung an, ist aber oft nur Vermeidung.</div>
+</div>
+</div></div>
+</div></section>
+
+<section id="trauer" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">04 / TRAUER</div><div><h2>Die Welle</h2><p class="lede">Trauer ist nicht linear und hat keine fünf sauberen Stufen. Sie kommt in Wellen. Unterdrücken macht die nächste Welle oft steiler; Zulassen und Pausen wechseln sich ab.</p></div></div>
+<div class="interactive"><div class="interactive-head"><div class="interactive-title">Trauer-Wellen</div><div class="interactive-hint">didaktisch · keine Prognose</div></div>
+<div class="grief-stage">
+<div><canvas id="grief-canvas"></canvas><div class="grief-note" id="grief-note">Die Kurve zeigt keinen „richtigen“ Verlauf. Sie zeigt nur den Unterschied zwischen Unterdrücken und Integrieren.</div></div>
+<div class="stack">
+<div class="segmented" id="whn-grief-mode"><button class="on" data-g="suppress">Unterdrücken</button><button data-g="allow">Zulassen</button></div>
+<label class="range-label">Zeit <input type="range" id="whn-grief-time" min="1" max="12" value="6"><b id="whn-grief-time-out">6</b></label>
+<div class="note" id="whn-grief-copy"><strong>Unterdrücken:</strong> Kurzfristig funktioniert es. Der Schmerz wird weggedrückt – und kommt später oft stärker zurück.</div>
+</div>
+</div></div>
+<div class="note" style="margin-top:18px"><strong>Weiterleben heißt nicht vergessen.</strong> Die Bindung an den Menschen bleibt; sie verändert ihre Form. Trauerarbeit heißt nicht, den Verlust zu löschen, sondern einen Ort dafür zu finden.</div>
+</div></section>
+
+<section id="werte" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">05 / WERTE</div><div><h2>Der Wertekompass</h2><p class="lede">Werte sind Richtungen, keine Ziele. Schieb die Regler – und erzeuge eine kleine Wochenaktion, die zu deinem wichtigsten Wert passt.</p></div></div>
+<div class="interactive"><div class="interactive-head"><div class="interactive-title">Werte-Radar</div><div class="interactive-hint">keine Messung · nur ein Denkwerkzeug</div></div>
+<div class="compass-wrap">
+<svg class="compass" id="whn-compass" viewBox="0 0 320 320" aria-label="Werte-Radar">
+<g class="grid-line"><circle cx="160" cy="160" r="40"/><circle cx="160" cy="160" r="80"/><circle cx="160" cy="160" r="120"/><line x1="160" y1="40" x2="160" y2="280"/><line x1="40" y1="160" x2="280" y2="160"/></g>
+<polygon class="shape" id="whn-shape" points="160,80 240,160 160,240 80,160"/>
+<circle class="vertex" id="whn-v1" cx="160" cy="80" r="4"/><circle class="vertex" id="whn-v2" cx="240" cy="160" r="4"/><circle class="vertex" id="whn-v3" cx="160" cy="240" r="4"/><circle class="vertex" id="whn-v4" cx="80" cy="160" r="4"/>
+<text class="axis-label" x="160" y="28">FREUNDLICHKEIT</text><text class="axis-label" x="292" y="164">MUT</text><text class="axis-label" x="160" y="300">NEUGIER</text><text class="axis-label" x="28" y="164">VERBUNDENHEIT</text>
+</svg>
+<div>
+<div class="value-sliders">
+<label>Freundlichkeit <input type="range" id="whn-v-friend" min="0" max="100" value="70"></label>
+<label>Mut <input type="range" id="whn-v-courage" min="0" max="100" value="55"></label>
+<label>Neugier <input type="range" id="whn-v-curious" min="0" max="100" value="60"></label>
+<label>Verbundenheit <input type="range" id="whn-v-connect" min="0" max="100" value="80"></label>
+</div>
+<button class="btn small" id="whn-make-action" style="margin-top:16px">Wochenaktion erzeugen</button>
+<div class="value-action" id="whn-value-action">Noch keine Aktion. Der wichtigste Wert ist nicht der höchste Regler – sondern der, für den du diese Woche einen kleinen Beweis liefern willst.</div>
+</div>
+</div></div>
+</div></section>
+
+<section id="werkzeug" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">06 / WERKZEUG</div><div><h2>Der Sofort-Werkzeugkasten</h2><p class="lede">Kein Werkzeug passt immer. Aufklappen für einen kleinen Ablauf, den man in schlechten Momenten tatsächlich erinnern kann.</p></div></div>
+<div class="tool-grid">
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>Ein schlechter Tag</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>1. Benennen:</strong> „Das ist ein Tief, nicht mein ganzes Leben.“ <strong>2. Körper:</strong> Schlaf, Essen, Licht, Bewegung checken. <strong>3. Handlung:</strong> eine winzige, wertekonforme Sache. <strong>4. Barriere:</strong> Aufgabe halbieren, nicht das Ziel.</p><p><strong>Warum:</strong> Das unterbricht den Rückzug, bevor er sich selbst verstärkt.</p></div></div></div>
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>Angst & Panik</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>1. Label:</strong> „Das ist eine Angstreaktion, keine Prophezeiung.“ <strong>2. Atem:</strong> länger ausatmen als einatmen. <strong>3. Bleiben:</strong> wenn sicher, die Situation nicht sofort verlassen. <strong>4. Sicherheitsverhalten:</strong> eines nach dem anderen abbauen.</p><p><strong>Warum:</strong> Der Körper lernt Sicherheit durch Erfahrung, nicht durch Vermeidung.</p></div></div></div>
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>Keine Motivation</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>1. Verkleinern:</strong> zwei Minuten, eine Zeile, ein Schuh. <strong>2. Gegenhandeln:</strong> das Gegenteil des Impulses, wenn er gegen deine Werte arbeitet. <strong>3. Reibung:</strong> Hindernisse entfernen, Versuchung wegräumen. <strong>4. Koppeln:</strong> an eine bestehende Gewohnheit hängen.</p><p><strong>Warum:</strong> Handlung erzeugt Motivation; Willenskraft ist ein schlechter Dauermotor.</p></div></div></div>
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>Trauer</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>1. Akzeptieren:</strong> der Verlust ist real. <strong>2. Wechseln:</strong> Schmerz zulassen, dann Pause, dann Alltag. <strong>3. Bindung:</strong> Erinnerungen, Rituale, Gespräche weiterführen. <strong>4. Struktur:</strong> Schlaf, Essen, kleine Verpflichtungen schützen.</p><p><strong>Warum:</strong> Integration statt Löschung. Es gibt keinen Zeitplan.</p></div></div></div>
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>Selbstkritik</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>1. Fangen:</strong> den Satz bemerken. <strong>2. Trennen:</strong> Verhalten ist nicht Identität. <strong>3. Prüfen:</strong> Welche Evidenz gibt es? <strong>4. Stimme:</strong> Was würdest du einer Freundin sagen? <strong>5. Reparieren:</strong> eine kleine Wiedergutmachung.</p><p><strong>Warum:</strong> Scham verengt; Selbstmitgefühl hält Lernfähigkeit offen.</p></div></div></div>
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>Stress</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>1. Unterscheiden:</strong> Stress ist nicht automatisch Angst. <strong>2. Bewerten:</strong> Aktivierung kann Vorbereitung sein. <strong>3. Erholen:</strong> Schlaf, Pausen, Natur, Bewegung. <strong>4. Verbinden:</strong> Kontakt und Beitrag senken das Gefühl von Bedrohung.</p><p><strong>Warum:</strong> Kurzfristiger Stress kann helfen; chronischer Stress ohne Erholung schadet.</p></div></div></div>
+</div>
+</div></section>
+
+<section id="mythen" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">07 / MYTHEN</div><div><h2>Was das Buch korrigiert</h2></div></div>
+<div class="myth-grid">
+<div class="myth"><div class="m">Mythos</div><b>„Erst Motivation, dann Handlung.“</b><p>Meist ist es umgekehrt. Der Start erzeugt den Schwung – nicht der perfekte Gefühlszustand.</p></div>
+<div class="myth"><div class="m">Mythos</div><b>„Gefühle sagen die Wahrheit.“</b><p>Gefühle sind Interpretationen. Sie können wichtig sein und trotzdem falsch liegen.</p></div>
+<div class="myth"><div class="m">Mythos</div><b>„Trauer hat fünf Stufen.“</b><p>Kübler-Ross beschrieb häufige Reaktionen, keine Reihenfolge. Trauer ist individuell und nicht linear.</p></div>
+<div class="myth"><div class="m">Mythos</div><b>„Hohes Selbstwertgefühl ist das Ziel.“</b><p>Vergleichsbasiertes Selbstwertgefühl ist fragil. Selbstakzeptanz ist stabiler – und nicht dasselbe wie Bequemlichkeit.</p></div>
+<div class="myth"><div class="m">Mythos</div><b>„Vermeidung reduziert Angst.“</b><p>Sie reduziert sie für Minuten und verstärkt sie für Monate. Annäherung ist der eigentliche Lernweg.</p></div>
+<div class="myth"><div class="m">Mythos</div><b>„Stress ist immer schlecht.“</b><p>Kurzfristiger Stress kann fokussieren. Gefährlich wird chronischer Stress ohne Erholung.</p></div>
+</div>
+</div></section>
+
+<section id="hilfe" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">08 / HILFE</div><div><h2>Wann Selbsthilfe nicht reicht</h2></div></div>
+<div class="help-card">
+<h3>Hilfe ist kein Scheitern.</h3>
+<p>Suizidgedanken, Selbstverletzung, Psychose, Manie, schwere Essstörung, Sucht, Trauma oder eine Trauer, die nach etwa einem Jahr den Alltag blockiert: Das ist kein Fall für ein Buch allein. Auch wenn Symptome über Wochen anhalten und Schlaf, Arbeit oder Beziehungen zusammenbrechen, ist professionelle Unterstützung sinnvoll – früher ist meist leichter.</p>
+<div class="numbers"><div>Telefonseelsorge<b>0800 111 0 111</b></div><div>Notruf<b>112</b></div><div>Psychotherapie-Suche<b>116 117</b></div></div>
+<p style="margin-top:14px;font-size:.8rem">Die Nummern sind Deutschland. In anderen Ländern gelten lokale Notruf- und Krisendienste. Bei akuter Gefahr: 112.</p>
+</div>
+</div></section>
+
+<section id="quiz" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">09 / QUIZ</div><div><h2>Prüf dich</h2><p class="lede">Zwölf Fragen zu den Werkzeugen – nicht zu Diagnosen.</p></div></div>
+<div class="quiz" id="whn-quiz"></div>
+</div></section>
+
+<section id="merken" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">10 / MERKEN</div><div><h2>Acht Dinge, die bleiben</h2></div></div>
+<ol class="remember remember-list">
+<li>Stimmung ist ein Sensorwert, nicht deine Identität.</li>
+<li>Handlung kommt meist vor Motivation.</li>
+<li>Gefühle sind Perspektiven, keine Befehle.</li>
+<li>Vermeidung kauft Erleichterung und verkauft Angst.</li>
+<li>Trauer ist nicht linear; die Bindung darf weiterleben.</li>
+<li>Selbstmitgefühl ist stabiler als vergleichsbasiertes Selbstwertgefühl.</li>
+<li>Werte sind Richtungen, Ziele sind Meilensteine.</li>
+<li>Etwas Stress ist nützlich; chronischer Stress braucht Erholung – und Hilfe ist für jeden Zeitpunkt.</li>
+</ol>
+</div></section>
+
+</main>
+<footer class="footer"><div class="container"><div class="row">
+<div><strong>Why Has Nobody Told Me This Before? · Die interaktive Essenz</strong><br>Interaktive Essenz · 5–10 Minuten · aus dem extrahierten Text erarbeitet.</div>
+<div>Keine Seitenzahlen: Zitate und Kapitelangaben folgen der Textdatei.<br>Kritische Einordnung ist Teil der Zusammenfassung.</div>
+</div></div></footer>
+</div>
+<script>
+/* shared shell */
+(function(){
+  "use strict";
+  const root = document.documentElement;
+  const saved = localStorage.getItem("ex-theme");
+  if(saved === "light") root.classList.add("light");
+  const toggle = document.querySelector(".theme-toggle");
+  if(toggle){
+    const paint = () => {
+      toggle.setAttribute("aria-label", root.classList.contains("light") ? "Dunkles Design" : "Helles Design");
+      toggle.innerHTML = root.classList.contains("light")
+        ? '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M19.1 4.9l-1.6 1.6M6.5 17.5l-1.6 1.6"/></svg>'
+        : '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.2 15.2A8.4 8.4 0 1 1 8.8 3.8a6.8 6.8 0 0 0 11.4 11.4Z"/></svg>';
+    };
+    paint();
+    toggle.addEventListener("click", () => {
+      root.classList.toggle("light");
+      localStorage.setItem("ex-theme", root.classList.contains("light") ? "light" : "dark");
+      paint();
+      document.dispatchEvent(new CustomEvent("ex-theme-change"));
+    });
+  }
+
+  const bar = document.getElementById("progress");
+  const onScroll = () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    if(bar) bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    const links = document.querySelectorAll(".dock a[data-target]");
+    let current = "";
+    document.querySelectorAll("[data-nav]").forEach(sec => {
+      if(sec.getBoundingClientRect().top < window.innerHeight * 0.34) current = sec.id;
+    });
+    links.forEach(a => a.classList.toggle("active", a.dataset.target === current));
+  };
+  window.addEventListener("scroll", onScroll, {passive:true});
+  window.addEventListener("resize", onScroll);
+  onScroll();
+
+  const reveal = document.querySelectorAll(".reveal");
+  if("IntersectionObserver" in window){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, {threshold:.08, rootMargin:"0px 0px -8% 0px"});
+    reveal.forEach(el => io.observe(el));
+  } else reveal.forEach(el => el.classList.add("in"));
+
+  document.querySelectorAll(".toggle-card").forEach(card => {
+    const btn = card.querySelector(".toggle-btn");
+    const body = card.querySelector(".toggle-body");
+    if(!btn || !body) return;
+    btn.addEventListener("click", () => {
+      const open = card.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      body.style.maxHeight = open ? body.scrollHeight + "px" : "0px";
+    });
+  });
+
+  function makeQuiz(rootId, questions){
+    const root = document.getElementById(rootId);
+    if(!root) return;
+    let index = 0, score = 0, locked = false;
+    function render(){
+      if(index >= questions.length){
+        const pct = Math.round(score / questions.length * 100);
+        let verdict = "Nochmal lesen lohnt sich.";
+        if(pct >= 90) verdict = "Du hast die Kernideen wirklich sitzen.";
+        else if(pct >= 70) verdict = "Solide. Die wichtigsten Muster sind da.";
+        else if(pct >= 50) verdict = "Die Hälfte sitzt – geh noch einmal über die visuellen Modelle.";
+        root.innerHTML = '<div class="quiz-end">' +
+          '<div class="quiz-count">Ergebnis</div>' +
+          '<div class="big-stat">' + score + '/' + questions.length + '</div>' +
+          '<p><strong>' + verdict + '</strong> Jede Frage hatte eine kurze Erklärung – die falschen Antworten sind die eigentlichen Lernpunkte.</p>' +
+          '<button class="btn" id="' + rootId + '-restart">Noch einmal</button></div>';
+        const r = document.getElementById(rootId + '-restart');
+        if(r) r.addEventListener("click", () => { index = 0; score = 0; locked = false; render(); });
+        return;
+      }
+      const q = questions[index];
+      const dots = questions.map((_, i) => '<i class="' + (i < index ? "done" : "") + '"></i>').join("");
+      const opts = q.options.map((text, i) =>
+        '<button class="quiz-opt" data-i="' + i + '"><span class="key">' + "ABCD"[i] + '</span><span>' + text + '</span></button>'
+      ).join("");
+      root.innerHTML = '<div class="quiz-top"><div class="quiz-count">Frage ' + (index + 1) + ' von ' + questions.length + '</div>' +
+        '<div class="quiz-score">Punkte ' + score + '</div></div>' +
+        '<div class="quiz-dots">' + dots + '</div>' +
+        '<h3 class="quiz-q">' + q.q + '</h3>' +
+        '<div class="quiz-options">' + opts + '</div>' +
+        '<div class="quiz-feedback" aria-live="polite"></div>' +
+        '<div class="quiz-actions"><span class="tiny muted">Eine Antwort – dann erklären wir sie.</span>' +
+        '<button class="btn small" id="' + rootId + '-next" disabled>Weiter</button></div>';
+      const next = document.getElementById(rootId + '-next');
+      const feedback = root.querySelector(".quiz-feedback");
+      root.querySelectorAll(".quiz-opt").forEach(btn => {
+        btn.addEventListener("click", () => {
+          if(locked) return;
+          locked = true;
+          const pick = Number(btn.dataset.i);
+          const correct = pick === q.a;
+          if(correct) score++;
+          root.querySelectorAll(".quiz-opt").forEach(b => {
+            b.disabled = true;
+            const i = Number(b.dataset.i);
+            if(i === q.a) b.classList.add("correct");
+            if(i === pick && !correct) b.classList.add("wrong");
+          });
+          feedback.innerHTML = '<strong>' + (correct ? "Richtig." : "Nicht ganz – richtig ist " + "ABCD"[q.a] + ".") + '</strong> ' + q.e;
+          next.disabled = false;
+          root.querySelector(".quiz-score").textContent = "Punkte " + score;
+        });
+      });
+      next.addEventListener("click", () => { index++; locked = false; render(); });
+    }
+    render();
+  }
+  window.makeQuiz = makeQuiz;
+
+  window.ex = {
+    clamp:(v,a,b)=>Math.max(a,Math.min(b,v)),
+    fmt:(n,d=0)=>Number(n).toLocaleString("de-DE",{maximumFractionDigits:d,minimumFractionDigits:d}),
+    css:(name)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim(),
+    themeColor(name, fallback){
+      const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fallback;
+    }
+  };
+})();
+
+
+(function(){
+  "use strict";
+  let mode="avoid", round=0, safety=false, values=[85,85,85,85,85,85,85,85];
+  const bars=document.getElementById("whn-bars"), anx=document.getElementById("whn-anxiety"),
+        rnd=document.getElementById("whn-round"), learn=document.getElementById("whn-learn"),
+        verdict=document.getElementById("whn-verdict");
+  function calc(){
+    const out=[];
+    for(let i=0;i<8;i++){
+      if(mode==="avoid") out.push(Math.min(98,82+i*2));
+      else if(safety) out.push(Math.round(82*Math.pow(.94,i)));
+      else out.push(Math.round(82*Math.pow(.72,i)));
+    }
+    return out;
+  }
+  function paint(){
+    const data=calc(); bars.innerHTML="";
+    data.forEach((v,i)=>{const b=document.createElement("i"); b.style.height=v+"%"; if(mode==="approach")b.classList.add("approach"); if(i===round)b.classList.add("current"); bars.appendChild(b);});
+    anx.textContent=round<8?data[Math.min(round,7)]:data[7]; rnd.textContent=round+" / 8";
+    if(mode==="avoid"){learn.textContent="Angst steigt";learn.style.color="var(--bad)";}
+    else {learn.textContent=safety?"lernt langsam":"lernt";learn.style.color="var(--good)";}
+    if(round===0) verdict.textContent="Starte mit „Vermeiden“ und beobachte, was mit der Angst über die Runden passiert. Dann wechsle zu „Annähern“.";
+    else if(mode==="avoid") verdict.innerHTML="<strong>Vermeidung.</strong> Die Erleichterung ist sofort da – aber die Baseline steigt. Das Gehirn lernt: „Diese Situation muss ich meiden.“";
+    else if(safety) verdict.innerHTML="<strong>Annäherung mit Sicherheitsverhalten.</strong> Besser als nichts, aber das Lernen ist langsam: Der Körper schreibt die Sicherheit dem Ritual zu, nicht der Situation.";
+    else verdict.innerHTML="<strong>Annäherung.</strong> Die Angst sinkt, weil du bleibst. Genau das ist die Erfahrung, die Vermeidung verhindert.";
+  }
+  document.querySelectorAll("#whn-mode button").forEach(b=>b.addEventListener("click",()=>{
+    mode=b.dataset.mode; round=0;
+    document.querySelectorAll("#whn-mode button").forEach(x=>x.classList.toggle("on",x===b));
+    paint();
+  }));
+  document.getElementById("whn-safety").addEventListener("change",e=>{safety=e.target.checked;paint();});
+  document.getElementById("whn-next").addEventListener("click",()=>{round=Math.min(8,round+1);paint();});
+  document.getElementById("whn-reset").addEventListener("click",()=>{round=0;paint();});
+  paint();
+
+  let action=20, mot=10, starts=0;
+  const wheel=document.getElementById("whn-wheel"), wnum=document.getElementById("whn-wheel-num"),
+        anum=document.getElementById("whn-action-num"), mnum=document.getElementById("whn-mot-num"),
+        abar=document.getElementById("whn-action-bar"), mbar=document.getElementById("whn-mot-bar"),
+        msg=document.getElementById("whn-fly-msg");
+  function paintFly(){
+    wnum.textContent=starts; anum.textContent=Math.round(action)+" / 100"; mnum.textContent=Math.round(mot)+" / 100";
+    abar.style.width=action+"%"; mbar.style.width=mot+"%";
+    wheel.style.transform="rotate("+starts*45+"deg)";
+    if(starts===0) msg.textContent="Noch nicht gestartet. Genau das ist der Punkt: Warten fühlt sich wie Vorbereitung an, ist aber oft nur Vermeidung.";
+    else if(starts<3) msg.innerHTML="<strong>Es bewegt sich.</strong> Die Handlung ist noch klein, aber sie ist real. Motivation folgt oft mit Verzögerung – nicht vorher.";
+    else msg.innerHTML="<strong>Das Schwungrad dreht.</strong> Jetzt hilft nicht „mehr wollen“, sondern die nächste kleine Handlung und weniger Reibung.";
+  }
+  document.getElementById("whn-start").addEventListener("click",()=>{
+    starts++; action=Math.min(100,action+24); mot=Math.min(100,mot+17); paintFly();
+  });
+  document.getElementById("whn-fly-reset").addEventListener("click",()=>{starts=0;action=20;mot=10;paintFly();});
+  paintFly();
+
+  const gc=document.getElementById("grief-canvas");
+  let griefMode="suppress", griefTime=6;
+  function drawGrief(){
+    const dpr=window.devicePixelRatio||1, w=gc.clientWidth||600, h=gc.clientHeight||280;
+    gc.width=w*dpr; gc.height=h*dpr; const c=gc.getContext("2d"); c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,w,h);
+    const accent=ex.css("--accent")||"#c4b5fd", bad=ex.css("--bad")||"#ff6b7a", good=ex.css("--good")||"#5ee0a0";
+    const line=ex.css("--line")||"#333", faint=ex.css("--faint")||"#777";
+    c.strokeStyle=line;c.lineWidth=1;for(let i=0;i<=4;i++){const y=20+(h-60)*i/4;c.beginPath();c.moveTo(40,y);c.lineTo(w-14,y);c.stroke();}
+    c.fillStyle=faint;c.font="10px ui-monospace,monospace";c.fillText("Intensität",6,18);c.fillText("Zeit →",w-48,h-12);
+    c.beginPath();
+    for(let x=0;x<=griefTime;x+=.05){
+      const t=x/griefTime;
+      let v;
+      if(griefMode==="suppress") v=54+16*Math.sin(x*3.1)+9*Math.sin(x*9.7);
+      else v=22+48*Math.exp(-x/5)+12*Math.sin(x*1.7)+6*Math.sin(x*4.1);
+      const px=40+(w-54)*t, py=h-40-(h-70)*(v/100);
+      x===0?c.moveTo(px,py):c.lineTo(px,py);
+    }
+    c.strokeStyle=griefMode==="suppress"?bad:good;c.lineWidth=2.5;c.stroke();
+    c.fillStyle=faint;c.fillText("0",40,h-22);c.fillText(griefTime+" Monate",w-84,h-22);
+  }
+  document.querySelectorAll("#whn-grief-mode button").forEach(b=>b.addEventListener("click",()=>{
+    griefMode=b.dataset.g;
+    document.querySelectorAll("#whn-grief-mode button").forEach(x=>x.classList.toggle("on",x===b));
+    document.getElementById("whn-grief-copy").innerHTML=griefMode==="suppress"
+      ? "<strong>Unterdrücken:</strong> Kurzfristig funktioniert es. Der Schmerz wird weggedrückt – und kommt später oft stärker zurück."
+      : "<strong>Zulassen:</strong> Die Welle darf kommen und gehen. Mit der Zeit wird der Grundpegel ruhiger, ohne dass die Bindung verschwindet.";
+    drawGrief();
+  }));
+  document.getElementById("whn-grief-time").addEventListener("input",e=>{
+    griefTime=Number(e.target.value); document.getElementById("whn-grief-time-out").textContent=griefTime; drawGrief();
+  });
+  drawGrief(); window.addEventListener("resize",drawGrief);
+
+  const vals={friend:70,courage:55,curious:60,connect:80};
+  const sliders={friend:document.getElementById("whn-v-friend"),courage:document.getElementById("whn-v-courage"),curious:document.getElementById("whn-v-curious"),connect:document.getElementById("whn-v-connect")};
+  const shape=document.getElementById("whn-shape"), actionBox=document.getElementById("whn-value-action");
+  const acts={
+    friend:"Ein ehrliches Kompliment oder eine kleine Hilfe, die niemand von dir erwartet.",
+    courage:"Eine unangenehme Sache, die du seit Tagen aufschiebst, für zehn Minuten anfangen.",
+    curious:"Dreißig Minuten etwas lernen, das dich fachlich nicht weiterbringt – nur weil es dich interessiert.",
+    connect:"Jemandem schreiben, den du vermisst, ohne einen Grund außer dem Kontakt."
+  };
+  const names={friend:"Freundlichkeit",courage:"Mut",curious:"Neugier",connect:"Verbundenheit"};
+  function paintCompass(){
+    Object.keys(sliders).forEach(k=>vals[k]=Number(sliders[k].value));
+    const cx=160,cy=160,R=120;
+    const pts=[ [cx,cy-R*vals.friend/100], [cx+R*vals.courage/100,cy], [cx,cy+R*vals.curious/100], [cx-R*vals.connect/100,cy] ];
+    shape.setAttribute("points",pts.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" "));
+    const ids=["whn-v1","whn-v2","whn-v3","whn-v4"]; ids.forEach((id,i)=>{const v=document.getElementById(id);v.setAttribute("cx",pts[i][0]);v.setAttribute("cy",pts[i][1]);});
+  }
+  Object.values(sliders).forEach(s=>s.addEventListener("input",paintCompass)); paintCompass();
+  document.getElementById("whn-make-action").addEventListener("click",()=>{
+    const top=Object.keys(vals).sort((a,b)=>vals[b]-vals[a])[0];
+    actionBox.innerHTML="<strong>Wochenaktion · "+names[top]+":</strong> "+acts[top]+" <span class='muted'>Klein genug, um es tatsächlich zu tun.</span>";
+  });
+
+  makeQuiz("whn-quiz",[
+    {q:"Was ist Niedergeschlagenheit im Buch?",options:["Ein fester Charakterzug, der sich nicht ändert.","Ein Sensorwert, der von vielen Faktoren beeinflusst wird.","Eine rein genetische Fehlfunktion ohne Kontext.","Ein Beweis für einen dauerhaften persönlichen Defekt."],a:1,e:"Stimmung schwankt mit Schlaf, Körper, Ereignissen und Gedanken. Sie beschreibt einen Zustand, keine Identität."},
+    {q:"Wann kommt Motivation meist?",options:["Vor der Aufgabe, wenn man nur lange genug wartet.","Nur nach einer großen Lebensveränderung.","Als Nebenprodukt, nachdem man angefangen hat.","Wenn der Wille am stärksten unter Druck steht."],a:2,e:"Handlung erzeugt Motivation – nicht umgekehrt. Die 2-Minuten-Version ist deshalb ein zentrales Werkzeug."},
+    {q:"Was ist Anhedonie?",options:["Der Verlust von Freude an Dingen, die früher Freude machten.","Das Aufschieben von Aufgaben aus Stress.","Das Arbeiten bis spät in die Nacht aus Gewohnheit.","Das Fehlen klarer Ziele im Moment."],a:0,e:"Anhedonie ist etwas anderes als Prokrastination und kann ein Signal für Depression sein. Deshalb ist die Unterscheidung wichtig."},
+    {q:"Wie sollte man Gefühle behandeln?",options:["Als Fakten, denen man folgen muss.","Als Feinde, die man bekämpfen muss.","Als Rätsel mit genau einer richtigen Antwort.","Als Wellen, die kommen und gehen, wenn man sie zulässt."],a:3,e:"Gefühle sind Perspektiven, keine Befehle. Unterdrücken verstärkt sie oft; Zulassen und Beobachten verändert die Beziehung zu ihnen."},
+    {q:"Was stimmt über die Kübler-Ross-Stufen?",options:["Sie sind eine feste Reihenfolge, die jeder Trauernde durchläuft.","Sie beschreiben häufige Gefühle, die ungeordnet wiederkehren.","Sie sind fünf Aufgaben, die man nacheinander erledigt.","Sie gelten nur bei Todesfällen, nicht bei anderen Verlusten."],a:1,e:"Die Stufen sind keine Landkarte. Trauer ist individuell und nicht linear – das Buch korrigiert genau diesen Mythos."},
+    {q:"Was gehört zu Wordens Traueraufgaben?",options:["Den Verlust vergessen und schnell weitermachen.","Den Schmerz unterdrücken, bis er von selbst verschwindet.","Den Verlust akzeptieren und das Leben anpassen.","Den Verlust sofort durch etwas Neues ersetzen."],a:2,e:"Es geht um Integration, nicht um Löschung: Realität akzeptieren, Schmerz verarbeiten, anpassen und die Bindung weiterführen."},
+    {q:"Wie wirken Sicherheitsverhalten meist?",options:["Sie bauen sofort dauerhaftes Vertrauen auf.","Sie machen Exposition überflüssig.","Sie machen die gefürchtete Situation dauerhaft sicher.","Sie senken die Angst nur kurzfristig und halten die Angst aufrecht."],a:3,e:"Das Gehirn schreibt die Erleichterung dem Ritual zu, nicht der Situation. Deshalb muss man sie schrittweise abbauen."},
+    {q:"Warum hilft längeres Ausatmen?",options:["Es erhöht die Wachheit vor einer Prüfung.","Es lenkt von den Angstgedanken ab.","Es aktiviert die körpereigene Beruhigungsreaktion.","Es stärkt das Zwerchfell für Sport."],a:2,e:"Ein langer Ausatemzug signalisiert dem Nervensystem Sicherheit. Das ist ein schneller, körperlicher Hebel – keine Lösung für alles."},
+    {q:"Warum ist vergleichsbasiertes Selbstwertgefühl riskant?",options:["Es ist eine verlässliche, stabile Grundlage für Selbstvertrauen.","Es ist identisch mit Selbstakzeptanz.","Es lässt sich am besten mit Affirmationen aufbauen.","Es hängt von äußeren Vergleichen ab und schwankt stark."],a:3,e:"Selbstwert, der ständig verglichen wird, ist fragil. Selbstakzeptanz ist stabiler – ohne Bequemlichkeit zu bedeuten."},
+    {q:"Was unterscheidet Werte von Zielen?",options:["Werte sind endliche Ergebnisse, die man abschließen kann.","Werte sind Erwartungen anderer an dich.","Werte sind Gefühle, die täglich wechseln.","Werte sind Richtungen, Ziele sind Meilensteine."],a:3,e:"Ein Ziel kann man erreichen; ein Wert bleibt eine Richtung. Deshalb fragt man besser: Bewege ich mich darauf zu?"},
+    {q:"Wodurch unterscheidet sich nützlicher von chronischem Stress?",options:["Chronischer Stress bleibt ohne ausreichende Erholung bestehen.","Nützlicher Stress hat überhaupt keine körperlichen Symptome.","Stress entsteht ausschließlich vor öffentlichen Auftritten.","Stress und Angst sind immer genau dasselbe."],a:0,e:"Kurzfristige Aktivierung kann helfen. Ohne Erholung wird sie zur Dauerbelastung für Schlaf, Stimmung und Immunsystem."},
+    {q:"Wann sollte man professionelle Hilfe suchen?",options:["Erst wenn die Funktion vollständig zusammengebrochen ist.","Erst wenn die Symptome ein Jahr andauern.","Sobald man sich darüber Sorgen macht.","Erst nachdem Selbsthilfe nachweislich versagt hat."],a:2,e:"Früher ist meist leichter. Bei Suizidgedanken, Selbstverletzung, Psychose, Manie oder schwerer Beeinträchtigung sofort Hilfe holen."}
+  ]);
+})();
+
+</script>
+</body>
+</html>

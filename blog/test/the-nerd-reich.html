@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Gil Duráns Tech-Faschismus-These in 5–10 Minuten: Ideengeschichte, Akteursnetzwerk, Exit-vs-Stimme und eine saubere Trennung von Beleg und Interpretation.">
+<meta name="color-scheme" content="dark light">
+<title>The Nerd Reich · Die interaktive Essenz</title>
+<style>
+:root{--accent:#ff5a5f;--accent-2:#f2d7a0;--accent-3:#8ea7ff;}
+/* ============================================================
+   SHARED SHELL — book explainers
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --bg:#080b10; --bg-soft:#0c1118; --panel:#101720; --panel-2:#141c26;
+  --ink:#f1eee6; --muted:#9aa7b4; --faint:#67737f;
+  --line:rgba(255,255,255,.10); --line-strong:rgba(255,255,255,.18);
+  --accent:#7dd3fc; --accent-2:#f5b04c; --accent-3:#9b8cff;
+  --good:#5ee0a0; --bad:#ff6b7a; --warn:#ffc861;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:"Inter","Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:18px; --r-lg:26px; --max:1180px; --ease:cubic-bezier(.22,1,.36,1);
+  --shadow:0 30px 80px -35px rgba(0,0,0,.9);
+  --glow:0 0 50px -18px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+html.light{
+  --bg:#f3efe4; --bg-soft:#ece6d8; --panel:#fbf8f0; --panel-2:#f4efe3;
+  --ink:#151b21; --muted:#5e6a75; --faint:#87919a;
+  --line:rgba(20,28,36,.12); --line-strong:rgba(20,28,36,.22);
+  --shadow:0 30px 80px -35px rgba(38,32,20,.30);
+}
+html{scroll-behavior:smooth;scroll-padding-top:92px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:16.5px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.20;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(900px 540px at 8% -8%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 62%),
+    radial-gradient(760px 520px at 96% 4%, color-mix(in srgb, var(--accent-2) 10%, transparent), transparent 62%),
+    radial-gradient(900px 680px at 50% 108%, color-mix(in srgb, var(--accent-3) 8%, transparent), transparent 64%);
+}
+img,svg,canvas{display:block;max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent);text-decoration-thickness:.08em;text-underline-offset:.18em}
+a:hover{color:var(--accent-2)}
+::selection{background:var(--accent);color:#061018}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+h1,h2,h3,h4{font-family:var(--serif);line-height:1.04;letter-spacing:-.025em;margin:0;font-weight:700}
+p{margin:0 0 1em}
+.wrap{position:relative;z-index:2}
+.container{max-width:var(--max);margin:0 auto;padding:0 26px}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.faint{color:var(--faint)}
+.small{font-size:.82rem}
+.tiny{font-size:.72rem;letter-spacing:.06em}
+.center{text-align:center}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* progress + theme */
+#progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:200;background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 16px var(--accent)}
+.theme-toggle{
+  position:fixed;right:18px;top:16px;z-index:210;width:42px;height:42px;border-radius:50%;
+  border:1px solid var(--line-strong);background:color-mix(in srgb,var(--panel) 80%,transparent);
+  backdrop-filter:blur(14px);display:grid;place-items:center;font-size:17px;
+  transition:transform .25s var(--ease), border-color .25s;
+}
+.theme-toggle:hover{transform:rotate(18deg) scale(1.06);border-color:var(--accent)}
+
+/* hero */
+.hero{position:relative;min-height:92vh;display:flex;align-items:center;padding:110px 0 70px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center;width:100%}
+.kicker{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.70rem;letter-spacing:.23em;text-transform:uppercase;color:var(--accent);margin-bottom:26px}
+.kicker::before{content:"";width:34px;height:1px;background:currentColor;display:inline-block}
+.hero h1{font-size:clamp(3.2rem,8.6vw,7.4rem);letter-spacing:-.055em;line-height:.88;text-wrap:balance}
+.hero h1 em{font-style:italic;color:var(--accent);font-weight:400}
+.hero .subtitle{font-family:var(--serif);font-size:clamp(1.2rem,2.2vw,1.65rem);line-height:1.28;color:var(--muted);margin:26px 0 0;max-width:30ch}
+.hero .author{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:26px}
+.thesis{font-size:clamp(1.02rem,1.55vw,1.22rem);line-height:1.55;color:var(--ink);max-width:54ch;margin:26px 0 0;padding-left:18px;border-left:2px solid var(--accent)}
+.meta-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:30px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--panel) 55%,transparent)}
+.chip b{color:var(--ink);font-weight:600}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;
+  padding:13px 20px;border-radius:999px;background:var(--accent);color:#061018;font-weight:700;
+  font-size:.88rem;letter-spacing:.01em;transition:transform .2s var(--ease),box-shadow .2s,background .2s;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -12px var(--accent);color:#061018}
+.btn.ghost{background:transparent;border-color:var(--line-strong);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--accent);box-shadow:none;background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.btn.small{padding:9px 14px;font-size:.78rem}
+.hero-visual{position:relative;min-height:430px;display:grid;place-items:center}
+.hero-orbit{position:relative;width:min(390px,80vw);aspect-ratio:1;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center}
+.hero-orbit::before,.hero-orbit::after{content:"";position:absolute;border-radius:50%;border:1px dashed var(--line)}
+.hero-orbit::before{inset:13%}
+.hero-orbit::after{inset:27%}
+.hero-core{width:38%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--accent),color-mix(in srgb,var(--accent) 25%,#000));box-shadow:var(--glow);position:relative;z-index:2}
+.orbit-dot{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 24px var(--accent-2);animation:orbit 16s linear infinite;transform-origin:0 0}
+.orbit-dot:nth-child(2){background:var(--accent-3);box-shadow:0 0 24px var(--accent-3);animation-duration:23s;animation-direction:reverse}
+.orbit-dot:nth-child(3){background:var(--good);box-shadow:0 0 24px var(--good);animation-duration:31s;width:9px;height:9px}
+@keyframes orbit{from{transform:rotate(0) translateX(48%)}to{transform:rotate(360deg) translateX(48%)}}
+.hero-caption{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);white-space:nowrap}
+.scroll-cue{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--faint)}
+.scroll-cue span{display:block;width:1px;height:34px;background:linear-gradient(var(--accent),transparent);animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{opacity:.25;transform:scaleY(.7)}50%{opacity:1;transform:scaleY(1)}}
+
+/* dock */
+.dock{position:sticky;top:0;z-index:150;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(18px)}
+.dock-inner{max-width:var(--max);margin:0 auto;padding:10px 26px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.dock-inner::-webkit-scrollbar{display:none}
+.dock a{flex:0 0 auto;padding:8px 12px;border-radius:999px;font-family:var(--mono);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid transparent;transition:.2s}
+.dock a:hover{color:var(--ink);border-color:var(--line)}
+.dock a.active{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,transparent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+
+/* sections */
+.panel{padding:92px 0;border-top:1px solid var(--line);position:relative}
+.panel:first-of-type{border-top:0}
+.section-head{display:grid;grid-template-columns:120px 1fr;gap:26px;margin-bottom:42px;align-items:start}
+.section-num{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;color:var(--accent);padding-top:12px}
+.section-head h2{font-size:clamp(2rem,4.4vw,3.5rem);line-height:.98;text-wrap:balance}
+.section-head .lede{font-size:1.05rem;line-height:1.6;color:var(--muted);max-width:62ch;margin-top:16px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:linear-gradient(145deg,color-mix(in srgb,var(--panel) 88%,transparent),color-mix(in srgb,var(--panel-2) 72%,transparent));border:1px solid var(--line);border-radius:var(--r);padding:24px;position:relative;transition:transform .28s var(--ease),border-color .28s,background .28s}
+.card:hover{transform:translateY(-4px);border-color:var(--line-strong)}
+.card h3{font-size:1.28rem;line-height:1.12;margin-bottom:9px}
+.card p{color:var(--muted);font-size:.93rem;line-height:1.62;margin:0}
+.card .tag{display:inline-block;font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);padding:4px 8px;border-radius:999px;margin-bottom:14px}
+.card-number{font-family:var(--serif);font-size:3.2rem;line-height:.8;color:var(--accent);opacity:.9;margin-bottom:16px;letter-spacing:-.06em}
+.big-stat{font-family:var(--serif);font-size:clamp(2.5rem,6vw,4.4rem);line-height:.85;letter-spacing:-.055em;color:var(--accent)}
+.stat-label{font-size:.88rem;color:var(--muted);margin-top:10px;line-height:1.45}
+.quote{border-left:2px solid var(--accent);padding:4px 0 4px 20px;font-family:var(--serif);font-size:1.3rem;line-height:1.4;color:var(--ink);margin:28px 0}
+.quote cite{display:block;font-family:var(--mono);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-style:normal;margin-top:12px}
+
+/* interactive shell */
+.interactive{background:linear-gradient(160deg,color-mix(in srgb,var(--panel) 92%,transparent),color-mix(in srgb,var(--bg-soft) 90%,transparent));border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:28px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.interactive::before{content:"";position:absolute;inset:0;background:radial-gradient(500px 240px at 100% 0%,color-mix(in srgb,var(--accent) 9%,transparent),transparent 65%);pointer-events:none}
+.interactive-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px;position:relative;z-index:1}
+.interactive-title{font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.interactive-hint{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:var(--faint);text-align:right}
+.stage{position:relative;z-index:1}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:18px 0}
+.segmented{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--bg) 40%,transparent)}
+.segmented button{border:0;background:transparent;color:var(--muted);padding:7px 12px;border-radius:999px;font-size:.75rem;font-family:var(--mono);letter-spacing:.04em;transition:.2s}
+.segmented button:hover{color:var(--ink)}
+.segmented button.on{background:var(--accent);color:#061018;font-weight:700}
+label.range-label{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;color:var(--muted);flex-wrap:wrap}
+input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:var(--line-strong);outline:none;min-width:160px;flex:1}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);box-shadow:0 0 0 1px var(--accent);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);cursor:pointer}
+.meter{height:10px;border-radius:99px;background:color-mix(in srgb,var(--line) 80%,transparent);overflow:hidden}
+.meter>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:99px;transition:width .5s var(--ease)}
+.meter-label{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:.63rem;letter-spacing:.07em;color:var(--faint);margin:8px 0 4px}
+.note{border:1px solid var(--line);border-left:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 5%,transparent);border-radius:0 12px 12px 0;padding:16px 18px;font-size:.9rem;color:var(--muted);line-height:1.6}
+.note strong{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 6%,transparent)}
+.note.bad{border-left-color:var(--bad);background:color-mix(in srgb,var(--bad) 7%,transparent)}
+.note.good{border-left-color:var(--good);background:color-mix(in srgb,var(--good) 6%,transparent)}
+.tag-row{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}
+.tag{display:inline-flex;align-items:center;padding:4px 8px;border:1px solid var(--line);border-radius:999px;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tag.good{color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent)}
+.tag.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+.tag.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+
+/* accordion / toggle cards */
+.toggle-card{border:1px solid var(--line);border-radius:var(--r);background:color-mix(in srgb,var(--panel) 70%,transparent);overflow:hidden;transition:border-color .2s}
+.toggle-card.open{border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+.toggle-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;border:0;background:transparent;text-align:left;color:var(--ink);font-weight:600;font-size:.96rem}
+.toggle-btn .sign{font-family:var(--mono);color:var(--accent);font-size:1.1rem;transition:transform .25s}
+.toggle-card.open .sign{transform:rotate(45deg)}
+.toggle-body{max-height:0;overflow:hidden;transition:max-height .35s var(--ease);}
+.toggle-body-inner{padding:0 20px 20px;color:var(--muted);font-size:.9rem;line-height:1.65}
+.toggle-body-inner strong{color:var(--ink)}
+
+/* quiz */
+.quiz{background:linear-gradient(160deg,color-mix(in srgb,var(--panel) 95%,transparent),color-mix(in srgb,var(--bg-soft) 92%,transparent));border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:28px;box-shadow:var(--shadow)}
+.quiz-top{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+.quiz-count{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+.quiz-score{font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+.quiz-dots{display:flex;gap:5px;margin-bottom:22px}
+.quiz-dots i{width:100%;height:3px;border-radius:99px;background:var(--line);transition:.3s}
+.quiz-dots i.done{background:var(--accent)}
+.quiz-q{font-family:var(--serif);font-size:clamp(1.25rem,2.2vw,1.6rem);line-height:1.25;margin:0 0 18px}
+.quiz-options{display:grid;gap:9px}
+.quiz-opt{display:flex;gap:12px;align-items:flex-start;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--bg) 30%,transparent);color:var(--ink);text-align:left;font-size:.9rem;line-height:1.45;transition:.18s}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,transparent);transform:translateX(3px)}
+.quiz-opt .key{font-family:var(--mono);font-size:.7rem;color:var(--faint);border:1px solid var(--line);border-radius:5px;width:22px;height:22px;display:grid;place-items:center;flex:0 0 auto;margin-top:1px}
+.quiz-opt.correct{border-color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent)}
+.quiz-opt.correct .key{border-color:var(--good);color:var(--good)}
+.quiz-opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent)}
+.quiz-opt.wrong .key{border-color:var(--bad);color:var(--bad)}
+.quiz-opt:disabled{cursor:default;opacity:.7}
+.quiz-opt.correct:disabled,.quiz-opt.wrong:disabled{opacity:1}
+.quiz-feedback{margin-top:16px;font-size:.9rem;line-height:1.6;color:var(--muted);min-height:24px}
+.quiz-feedback strong{color:var(--ink)}
+.quiz-actions{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-top:20px;flex-wrap:wrap}
+.quiz-end{text-align:center;padding:18px 0}
+.quiz-end .big-stat{font-size:5rem}
+.quiz-end p{max-width:48ch;margin:10px auto 0;color:var(--muted)}
+.quiz-end .btn{margin-top:22px}
+
+/* remember */
+.remember{counter-reset:r;display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--line)}
+.remember li{list-style:none;display:grid;grid-template-columns:44px 1fr;gap:12px;padding:18px 18px 18px 0;border-bottom:1px solid var(--line);font-size:.92rem;line-height:1.55}
+.remember li::before{counter-increment:r;content:counter(r,decimal-leading-zero);font-family:var(--mono);font-size:.65rem;color:var(--accent);padding-top:4px}
+.remember li:nth-child(odd){padding-right:28px}
+.remember li:nth-child(even){padding-left:28px;border-left:1px solid var(--line)}
+.remember-list{padding:0;margin:0}
+
+/* footer */
+.footer{padding:60px 0 80px;border-top:1px solid var(--line);color:var(--faint);font-size:.8rem;line-height:1.65}
+.footer .row{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap}
+.footer a{color:var(--muted)}
+.footer strong{color:var(--muted);font-weight:600}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* generic page bits */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+.kpi{padding:18px;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--panel) 55%,transparent)}
+.kpi b{display:block;font-family:var(--serif);font-size:2rem;line-height:.9;color:var(--accent);letter-spacing:-.04em}
+.kpi span{display:block;margin-top:7px;font-size:.78rem;color:var(--muted);line-height:1.4}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.split.tight{gap:18px}
+.stack{display:grid;gap:12px}
+.hr{height:1px;background:var(--line);border:0;margin:26px 0}
+.mini-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:7px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-family:var(--mono);font-size:.62rem;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+
+@media(max-width:900px){
+  .hero{min-height:auto;padding:100px 0 70px}
+  .hero-grid{grid-template-columns:1fr;gap:36px}
+  .hero-visual{min-height:300px;order:-1}
+  .hero .subtitle{max-width:44ch}
+  .section-head{grid-template-columns:1fr;gap:8px}
+  .section-num{padding-top:0}
+  .grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}
+  .remember{grid-template-columns:1fr}
+  .remember li:nth-child(odd),.remember li:nth-child(even){padding:18px 0;border-left:0}
+  .kpi-row{grid-template-columns:1fr 1fr}
+}
+@media(max-width:620px){
+  body{font-size:15.5px}
+  .container{padding:0 18px}
+  .dock-inner{padding:9px 18px}
+  .panel{padding:68px 0}
+  .grid-2,.grid-3,.grid-4,.split{grid-template-columns:1fr}
+  .interactive,.quiz{padding:18px;border-radius:20px}
+  .theme-toggle{top:12px;right:12px;width:38px;height:38px}
+  .kpi-row{grid-template-columns:1fr}
+  .remember li{border-left:0!important}
+  .hero h1{font-size:clamp(3rem,15vw,5rem)}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+
+
+body{background-image:linear-gradient(color-mix(in srgb,var(--line) 22%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--line) 22%,transparent) 1px,transparent 1px);background-size:80px 80px;background-position:center top}
+.nr-art{position:relative;width:min(470px,92vw);aspect-ratio:1;display:grid;place-items:center}
+.nr-art svg{width:100%;height:auto;overflow:visible}
+.nr-art .edge{stroke:color-mix(in srgb,var(--accent) 45%,transparent);stroke-width:1;stroke-dasharray:3 4;animation:dash 22s linear infinite}
+.nr-art .node{fill:var(--panel);stroke:color-mix(in srgb,var(--accent) 55%,transparent);stroke-width:1.2}
+.nr-art .node.big{fill:color-mix(in srgb,var(--accent) 22%,var(--panel));stroke:var(--accent);stroke-width:2}
+.nr-art text{font-family:var(--mono);font-size:8px;fill:var(--muted);text-anchor:middle;letter-spacing:.08em}
+.nr-art .pulse{fill:var(--accent);animation:pulse2 3s infinite}
+@keyframes dash{to{stroke-dashoffset:-160}}
+@keyframes pulse2{0%,100%{opacity:.25;r:3}50%{opacity:1;r:5}}
+.nr-stamp{display:inline-flex;align-items:center;gap:8px;border:1px solid color-mix(in srgb,var(--accent) 50%,transparent);color:var(--accent);padding:6px 10px;border-radius:4px;font-family:var(--mono);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;transform:rotate(-2deg);margin-top:24px}
+.hero h1{text-transform:uppercase;font-size:clamp(3rem,8vw,7rem);letter-spacing:-.065em}
+.hero h1 em{color:var(--accent);font-style:normal;text-shadow:0 0 40px color-mix(in srgb,var(--accent) 30%,transparent)}
+
+.timeline-rail{display:flex;gap:10px;overflow-x:auto;padding:4px 4px 18px;scroll-snap-type:x mandatory}
+.timeline-rail::-webkit-scrollbar{height:8px}.timeline-rail::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:9px}
+.tl{flex:0 0 190px;scroll-snap-align:start;border:1px solid var(--line);border-radius:12px;padding:14px;background:color-mix(in srgb,var(--panel) 58%,transparent);text-align:left;color:var(--ink);transition:.2s;position:relative}
+.tl::before{content:"";position:absolute;left:14px;top:0;width:1px;height:100%;background:linear-gradient(var(--accent),transparent);opacity:.35}
+.tl:hover,.tl.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,transparent);transform:translateY(-2px)}
+.tl b{display:block;font-family:var(--mono);font-size:.8rem;color:var(--accent);margin-bottom:7px}
+.tl strong{display:block;font-family:var(--serif);font-size:1.02rem;line-height:1.15;margin-bottom:5px}
+.tl span{display:block;font-size:.7rem;line-height:1.4;color:var(--muted)}
+.tl-detail{border:1px solid var(--line-strong);border-left:3px solid var(--accent);border-radius:0 16px 16px 0;padding:22px;background:color-mix(in srgb,var(--bg) 35%,transparent);margin-top:8px;min-height:160px}
+.tl-detail h3{font-size:1.7rem;margin-bottom:7px}
+.tl-detail p{color:var(--muted);font-size:.94rem;line-height:1.62;margin:0 0 12px}
+.tl-detail .who{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;color:var(--accent);text-transform:uppercase}
+.network-layout{display:grid;grid-template-columns:1.3fr .7fr;gap:24px;align-items:start}
+.network-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--accent) 6%,transparent),transparent 65%)}
+.network-scroll svg{min-width:620px;width:100%;height:auto}
+.network-scroll .edge{stroke:color-mix(in srgb,var(--accent) 36%,transparent);stroke-width:1.4;transition:.25s}
+.network-scroll .edge.reported{stroke-dasharray:5 5;stroke:color-mix(in srgb,var(--accent-2) 42%,transparent)}
+.network-scroll .edge.inferred{stroke-dasharray:2 7;stroke:color-mix(in srgb,var(--accent-3) 38%,transparent)}
+.network-scroll .edge.dim{opacity:.08}
+.network-scroll .node{cursor:pointer}
+.network-scroll .node circle{fill:var(--panel);stroke:var(--line-strong);stroke-width:1.4;transition:.2s}
+.network-scroll .node text{font-family:var(--mono);font-size:9px;fill:var(--muted);text-anchor:middle;letter-spacing:.04em;pointer-events:none}
+.network-scroll .node:hover circle,.network-scroll .node.on circle{fill:color-mix(in srgb,var(--accent) 22%,var(--panel));stroke:var(--accent);filter:drop-shadow(0 0 10px color-mix(in srgb,var(--accent) 40%,transparent))}
+.network-scroll .node.on text{fill:var(--ink)}
+.node-panel{border:1px solid var(--line);border-radius:16px;padding:22px;background:color-mix(in srgb,var(--panel) 55%,transparent);min-height:300px}
+.node-panel h4{font-size:1.8rem;margin-bottom:4px}
+.node-panel .role{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+.node-panel p{font-size:.9rem;color:var(--muted);line-height:1.62;margin:0 0 10px}
+.node-panel .links{font-family:var(--mono);font-size:.62rem;color:var(--faint);line-height:1.7;border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.voice-stage{position:relative;aspect-ratio:1;max-width:520px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(90deg,transparent 49.8%,var(--line) 49.8%,var(--line) 50.2%,transparent 50.2%),linear-gradient(transparent 49.8%,var(--line) 49.8%,var(--line) 50.2%,transparent 50.2%);overflow:hidden;margin:0 auto}
+.voice-stage .q{position:absolute;font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.voice-stage .q.tl{left:12px;top:10px}.voice-stage .q.tr{right:12px;top:10px}.voice-stage .q.bl{left:12px;bottom:10px}.voice-stage .q.br{right:12px;bottom:10px}
+.voice-dot{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);transform:translate(-50%,-50%);transition:left .55s var(--ease),top .55s var(--ease);box-shadow:0 0 24px var(--accent);z-index:2}
+.voice-dot::after{content:"";position:absolute;inset:-12px;border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);border-radius:50%;animation:pulse2 2.4s infinite}
+.voice-list{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.voice-list button{border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);padding:7px 10px;font-size:.72rem;transition:.2s}
+.voice-list button:hover,.voice-list button.on{border-color:var(--accent);color:var(--ink);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.voice-verdict{font-size:.9rem;line-height:1.62;color:var(--muted);min-height:90px}
+.voice-verdict strong{color:var(--ink)}
+.concept-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.claim-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.claim{border:1px solid var(--line);border-radius:14px;padding:16px;background:color-mix(in srgb,var(--panel) 52%,transparent)}
+.claim .tag{margin-bottom:8px}
+.claim b{display:block;font-family:var(--serif);font-size:1.04rem;line-height:1.2;margin-bottom:6px}
+.claim p{font-size:.82rem;line-height:1.55;color:var(--muted);margin:0}
+.claim .ev{font-family:var(--mono);font-size:.58rem;color:var(--faint);margin-top:8px;line-height:1.5}
+@media(max-width:900px){.network-layout{grid-template-columns:1fr}.concept-grid{grid-template-columns:1fr 1fr}.claim-grid{grid-template-columns:1fr}.hero h1{font-size:clamp(2.8rem,14vw,5rem)}}
+@media(max-width:620px){.concept-grid{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<a class="sr-only" href="#kurz">Zum Inhalt springen</a>
+<div id="progress"></div>
+<button class="theme-toggle" type="button" aria-label="Design wechseln"></button>
+<div class="wrap">
+
+<header class="hero"><div class="container"><div class="hero-grid">
+<div>
+<div class="kicker">Gil Durán · Tech & Politik · kritisch lesen</div>
+<h1>The<br>Nerd<br><em>Reich</em></h1>
+<p class="subtitle">Exit statt Demokratie: Wie Tech-Geld den Staat übernehmen will.</p>
+<div class="author">Silicon Valley, Fascism, and the War on Democracy</div>
+<p class="thesis">Duráns These: Der Libertarianismus des Silicon Valley war eine Tarnung. Ein kleines Netzwerk um Peter Thiel habe aus „Exit“-Ideologie, Neoreaktion und Accelarationismus eine Regierungsform gemacht – Tech-Oligarchie, die den Staat kontrolliert und behauptet, ihn zu verlassen.</p>
+<div class="meta-row"><span class="chip"><b>7–9</b> Min</span><span class="chip"><b>8</b> Kapitel</span><span class="chip"><b>1</b> Netzwerk</span><span class="chip">Polemik · Belege getrennt</span></div>
+<div class="hero-actions"><a class="btn" href="#kette">Ideengeschichte</a><a class="btn ghost" href="#belege">Was ist belegt?</a></div>
+<div class="nr-stamp">Achtung: politische Streitschrift</div>
+</div>
+<div class="hero-visual"><div class="nr-art" aria-hidden="true">
+<svg viewBox="0 0 420 420">
+<g class="edges">
+<path class="edge" d="M210 210 L120 90"/><path class="edge" d="M210 210 L90 300"/><path class="edge" d="M210 210 L320 90"/><path class="edge" d="M210 210 L340 290"/><path class="edge" d="M210 210 L210 340"/><path class="edge" d="M320 90 L340 290"/><path class="edge" d="M120 90 L210 340"/>
+</g>
+<circle class="node big" cx="210" cy="210" r="34"/><text x="210" y="214">THIEL</text>
+<circle class="node" cx="120" cy="90" r="24"/><text x="120" y="93">YARVIN</text>
+<circle class="node" cx="90" cy="300" r="24"/><text x="90" y="303">SRINI</text>
+<circle class="node" cx="320" cy="90" r="24"/><text x="320" y="93">A16Z</text>
+<circle class="node" cx="340" cy="290" r="24"/><text x="340" y="293">MUSK</text>
+<circle class="node" cx="210" cy="340" r="24"/><text x="210" y="343">VANCE</text>
+<circle class="pulse" cx="280" cy="160" r="4"/><circle class="pulse" cx="160" cy="270" r="4" style="animation-delay:1.2s"/><circle class="pulse" cx="250" cy="110" r="4" style="animation-delay:2s"/>
+</svg>
+</div><div class="hero-caption">Funds · Mentorship · Ideen · Staatsmacht</div></div>
+</div></div><div class="scroll-cue">Scrollen<span></span></div></header>
+
+<nav class="dock" aria-label="Kapitel"><div class="dock-inner"><a href="#kurz" data-target="kurz">60 Sek</a><a href="#kette" data-target="kette">Ideengeschichte</a><a href="#netzwerk" data-target="netzwerk">Netzwerk</a><a href="#voice" data-target="voice">Exit vs. Stimme</a><a href="#begriffe" data-target="begriffe">Begriffe</a><a href="#belege" data-target="belege">Belege</a><a href="#kritik" data-target="kritik">Kritik</a><a href="#quiz" data-target="quiz">Quiz</a><a href="#merken" data-target="merken">Merken</a></div></nav>
+<main>
+
+<section id="kurz" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">01 / KURZ</div><div><h2>Die These in 60 Sekunden</h2><p class="lede">Das Buch ist keine neutrale Geschichte, sondern eine Anklage. Es verfolgt eine Idee – „verlasse die Demokratie“ – von libertären Texten über Thiel, Yarvin und Srinivasan bis in die Regierung Trump/Vance.</p></div></div>
+<div class="grid-3">
+<div class="card"><div class="big-stat">15 Mio.</div><div class="stat-label">Dollar soll Thiel in Vances Senatswahl 2022 gesteckt haben – laut Buch der größte Einzelspender in einem Senatsrennen.</div></div>
+<div class="card"><div class="big-stat">291 Mio.</div><div class="stat-label">Dollar gab Musk laut Buch im Wahljahr 2024 aus. Dazu kamen Krypto-PACs mit dreistelligen Millionenbeträgen.</div></div>
+<div class="card"><div class="big-stat">16</div><div class="stat-label">Thiel-nahe Männer zählte Bloomberg im März 2025 in der Trump-Regierung. Die Zahl hängt davon ab, was „nahe“ heißt.</div></div>
+</div>
+<div class="split" style="margin-top:18px">
+<div class="card"><span class="tag">Der Urtext</span><h3>The Sovereign Individual</h3><p>1997 sagten Davidson und Rees-Mogg den Zerfall des Nationalstaats voraus. Eine „kognitive Elite“ sollte als souveräne Individuen jenseits von Steuern und Gesetzen leben. Thiel schrieb das Vorwort zur Neuausgabe.</p></div>
+<div class="card"><span class="tag">Die Pointe</span><h3>Exit als Regierungsform</h3><p>Erst „verlasse den Staat“, dann „übernimm den Staat“: Durán sieht darin keinen Widerspruch, sondern die Logik – wer Exit predigt, aber Staatsaufträge nimmt, will beides.</p></div>
+</div>
+<div class="note bad" style="margin-top:18px"><strong>Lesehinweis:</strong> „Tech-Faschismus“ ist Duráns Kampfbegriff, keine neutrale Kategorie. Das Buch zeigt echte Finanzströme, Zitate und personelle Verbindungen – aber es neigt zu Schuld durch Nähe und kausaler Überdehnung. Belege und Interpretation sind unten getrennt.</div>
+</div></section>
+
+<section id="kette" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">02 / KETTE</div><div><h2>Die Ahnenkette</h2><p class="lede">Durán erzählt keine Verschwörung mit einem Plan, sondern eine Ideengeschichte mit einem Netzwerk. Klicke die Stationen – jede hat einen Text, einen Akteur und eine Verbindung.</p></div></div>
+<div class="timeline-rail" id="nr-timeline">
+<button class="tl" data-tl="0"><b>1997</b><strong>Sovereign Individual</strong><span>Nationalstaat verschwindet, Cyber-Elite regiert.</span></button>
+<button class="tl" data-tl="1"><b>2007</b><strong>Moldbug-Blog</strong><span>Yarvin erfindet „Cathedral“ und „Patchwork“.</span></button>
+<button class="tl" data-tl="2"><b>2009</b><strong>Thiels Cato-Essay</strong><span>„Freiheit und Demokratie sind unvereinbar.“</span></button>
+<button class="tl" data-tl="3"><b>2012</b><strong>RAGE</strong><span>Yarvin: alle Staatsangestellten entlassen, CEO-Diktator.</span></button>
+<button class="tl" data-tl="4"><b>2013</b><strong>Ultimate Exit</strong><span>Srinivasan: Stimme vs. Exit als Startup-Pitch.</span></button>
+<button class="tl" data-tl="5"><b>2022</b><strong>Network State</strong><span>Online-Community kauft Land, wird Staat.</span></button>
+<button class="tl" data-tl="6"><b>2023</b><strong>e/acc & TESCREAL</strong><span>Accelerationismus als Erlösungsnarrativ.</span></button>
+<button class="tl" data-tl="7"><b>2024</b><strong>Reboot & Wahl</strong><span>Musk, Krypto-PACs, Tech-Rechte an der Macht.</span></button>
+<button class="tl" data-tl="8"><b>2025</b><strong>DOGE & Antichrist</strong><span>Staatsabbau, Apokálypsis, Katechon.</span></button>
+</div>
+<div class="tl-detail" id="nr-tl-detail"></div>
+</div></section>
+
+<section id="netzwerk" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">03 / NETZWERK</div><div><h2>Wer mit wem – und wie belegt</h2><p class="lede">Die Grafik zeigt Finanzierung, Mentorship und Ideen-Echos. Klicke einen Knoten. Wichtig: Eine Kante beweist noch keine gemeinsame Absicht.</p></div></div>
+<div class="controls"><div class="segmented" id="nr-filter"><button class="on" data-f="all">Alle Kanten</button><button data-f="documented">Dokumentiert</button><button data-f="reported">Berichtet</button></div><span class="tiny muted">Knoten anklicken · Legende: durchgezogen = dokumentiert, gestrichelt = berichtet, gepunktet = spekulativ</span></div>
+<div class="network-layout">
+<div class="network-scroll"><svg viewBox="0 0 640 400" id="nr-network">
+<g>
+<line class="edge documented" data-s="documented" x1="320" y1="200" x2="190" y2="90"/>
+<line class="edge documented" data-s="documented" x1="320" y1="200" x2="150" y2="300"/>
+<line class="edge reported" data-s="reported" x1="320" y1="200" x2="470" y2="90"/>
+<line class="edge reported" data-s="reported" x1="320" y1="200" x2="520" y2="270"/>
+<line class="edge documented" data-s="documented" x1="320" y1="200" x2="320" y2="340"/>
+<line class="edge reported" data-s="reported" x1="190" y1="90" x2="470" y2="90"/>
+<line class="edge inferred" data-s="inferred" x1="520" y1="270" x2="320" y2="340"/>
+<line class="edge reported" data-s="reported" x1="320" y1="340" x2="600" y2="340"/>
+<line class="edge documented" data-s="documented" x1="320" y1="200" x2="90" y2="210"/>
+<line class="edge reported" data-s="reported" x1="320" y1="200" x2="150" y2="300"/>
+</g>
+<g class="node on" data-n="thiel"><circle cx="320" cy="200" r="42"/><text x="320" y="203">THIEL</text></g>
+<g class="node" data-n="yarvin"><circle cx="190" cy="90" r="30"/><text x="190" y="93">YARVIN</text></g>
+<g class="node" data-n="srini"><circle cx="150" cy="300" r="30"/><text x="150" y="303">SRINI</text></g>
+<g class="node" data-n="a16z"><circle cx="470" cy="90" r="30"/><text x="470" y="93">A16Z</text></g>
+<g class="node" data-n="musk"><circle cx="520" cy="270" r="30"/><text x="520" y="273">MUSK</text></g>
+<g class="node" data-n="vance"><circle cx="320" cy="340" r="30"/><text x="320" y="343">VANCE</text></g>
+<g class="node" data-n="trump"><circle cx="600" cy="340" r="28"/><text x="600" y="343">TRUMP</text></g>
+<g class="node" data-n="armstrong"><circle cx="90" cy="210" r="28"/><text x="90" y="213">COINBASE</text></g>
+</svg></div>
+<div class="node-panel" id="nr-node-panel"></div>
+</div>
+</div></section>
+
+<section id="voice" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">04 / EXIT</div><div><h2>Stimme oder Ausgang?</h2><p class="lede">Albert Hirschman unterscheidet „voice“ (reformieren) und „exit“ (gehen). Duráns entscheidende Beobachtung: Dieselben Akteure predigen Exit und greifen gleichzeitig nach staatlicher Macht.</p></div></div>
+<div class="split">
+<div class="voice-stage" id="nr-voice-stage"><div class="voice-dot" id="nr-voice-dot" style="left:20%;top:80%"></div>
+<div class="q tl">Exit hoch</div><div class="q tr">Exit hoch · Stimme hoch</div><div class="q bl">Rückzug</div><div class="q br">Stimme hoch</div></div>
+<div><div class="voice-list" id="nr-voice-list"></div><div class="voice-verdict" id="nr-voice-verdict">Wähle ein Projekt. Die Position zeigt, ob es innerhalb oder außerhalb der Institutionen wirkt – und wie viel Staatsmacht es dabei will.</div>
+<div class="note" style="margin-top:16px"><strong>Die Spannung:</strong> Seasteading und Network States sind reine Exit-Projekte. DOGE und Palantir-Aufträge sind das Gegenteil: tiefe Staatlichkeit. Beides zugleich ist nicht unbedingt Heuchelei – aber es widerlegt die Erzählung, man wolle „nur raus“.</div></div>
+</div>
+</div></section>
+
+<section id="begriffe" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">05 / BEGRIFFE</div><div><h2>Die Ideologie in sechs Begriffen</h2><p class="lede">Ohne diese Vokabeln bleibt das Buch ein Sammelsurium aus Namen. Aufklappen für die Kurzdefinition und den Haken.</p></div></div>
+<div class="concept-grid">
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>Sovereign Individual</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>Idee:</strong> Technologie zerstört den Nationalstaat; eine kognitive Elite lebt als souveräne Individuen in privaten Rechtsräumen.</p><p><strong>Haken:</strong> Die Hierarchie ist explizit – nicht alle werden souverän, viele werden Dienstleister. Durán liest das als feudale Fantasie.</p></div></div></div>
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>Cathedral</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>Idee:</strong> Yarvin nennt Universitäten, Medien, Stiftungen und Behörden die „Kathedrale“, die Konsens herstellt und Demokratie unmöglich macht.</p><p><strong>Haken:</strong> Die Theorie ist kaum falsifizierbar – jeder Widerspruch wird zur Bestätigung ihrer Macht.</p></div></div></div>
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>Patchwork & RAGE</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>Idee:</strong> Tausende private Mini-Staaten als „Patchwork“; RAGE = „Retire All Government Employees“, ein CEO-Diktator statt Demokratie.</p><p><strong>Haken:</strong> Das ist keine Randnotiz, sondern ein explizites anti-demokratisches Programm.</p></div></div></div>
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>Network State</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>Idee:</strong> Eine online vernetzte Community crowdfundet Territorium, baut parallele Medien und Schulen und erlangt diplomatische Anerkennung.</p><p><strong>Haken:</strong> „Society-as-a-Service“ klingt neutral; die Frage ist, wer die AGB schreibt und wer gehen kann.</p></div></div></div>
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>e/acc</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>Idee:</strong> Effective Accelerationism will Technologie maximieren; Regulierung ist „decel“, also Verrat am Fortschritt.</p><p><strong>Haken:</strong> Die Bewegung ist ein loses Meme-Netzwerk, keine einheitliche Doktrin. Durán behandelt sie als Kultur, die Politik möglich macht.</p></div></div></div>
+<div class="toggle-card"><button class="toggle-btn" aria-expanded="false"><span>Apokálypsis</span><span class="sign">+</span></button><div class="toggle-body"><div class="toggle-body-inner"><p><strong>Idee:</strong> Thiels griechisches Wort für „Enthüllung“: Trump 2025 als Offenbarung der Verbrechen des „Deep State“.</p><p><strong>Haken:</strong> Das ist politische Theologie, keine empirische Behauptung. Der Antichrist-Vortrag bleibt deutungsoffen.</p></div></div></div>
+</div>
+</div></section>
+
+<section id="belege" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">06 / BELEGE</div><div><h2>Was ist belegt – und was nicht?</h2><p class="lede">Die stärksten Teile des Buchs sind Primärquellen und Finanzströme. Die schwächsten sind Absichtsunterstellungen und sehr junge Ereignisse. Klicke für die Einordnung.</p></div></div>
+<div class="claim-grid" id="nr-claims">
+<div class="claim"><span class="tag good">dokumentiert</span><b>Thiel schrieb 2009, Freiheit und Demokratie seien unvereinbar.</b><p>Der Cato-Unbound-Essay „The Education of a Libertarian“ ist eine Primärquelle. Das Zitat ist nicht erfunden.</p><div class="ev">Quelle: Cato Unbound, 2009 · Primärtext</div></div>
+<div class="claim"><span class="tag good">dokumentiert</span><b>Thiel investierte 500.000 Dollar in Facebook.</b><p>Die 2004er-Investition und der spätere Börsengang sind gut dokumentiert. Der „Billionär“-Effekt ist eine Bewertungsfrage, keine Legende.</p><div class="ev">Quelle: SEC-Filing, Presse · gut belegt</div></div>
+<div class="claim"><span class="tag warn">berichtet</span><b>Yarvins Tlon erhielt 1,1 Mio. von Founders Fund und a16z.</b><p>Die Runde wird in Corey Peins Buch und in der Presse berichtet. Sie ist plausibel, aber keine offizielle Primärquelle.</p><div class="ev">Quelle: Corey Pein, Presse · sekundär</div></div>
+<div class="claim"><span class="tag good">dokumentiert</span><b>Srinivasan forderte 2013 den „Ultimate Exit“.</b><p>Der Y-Combinator-Talk ist als Video und in zeitgenössischer Berichterstattung erhalten.</p><div class="ev">Quelle: YC-Video, 2013 · Primärquelle</div></div>
+<div class="claim"><span class="tag warn">berichtet</span><b>16 Thiel-nahe Männer saßen 2025 in der Regierung.</b><p>Bloomberg zählte sie. Die Zahl ist ein Snapshot und hängt stark von der Definition „nahe“ ab.</p><div class="ev">Quelle: Bloomberg, März 2025 · Zählung</div></div>
+<div class="claim"><span class="tag good">dokumentiert</span><b>Musk gab 291 Mio. im Wahljahr 2024 aus.</b><p>Die Summe ist in Wahlkampffinanzierungs-Berichten dokumentiert; Krypto-PACs kommen je nach Methodik auf 175–245 Mio.</p><div class="ev">Quelle: FEC, Presse · gut belegt</div></div>
+<div class="claim"><span class="tag bad">umstritten</span><b>DOGE entließ bis Mai 2025 etwa 260.000 Staatsbedienstete.</b><p>Reuters zählte diese Größenordnung; Behörden und Gewerkschaften bestreiten Details. Es ist eine Schätzung, keine amtliche Endzahl.</p><div class="ev">Quelle: Reuters · Schätzung</div></div>
+<div class="claim"><span class="tag bad">spekulativ</span><b>Die USAID-Kürzungen könnten bis 2030 14 Mio. Menschen töten.</b><p>Das ist eine modellabhängige Projektion, keine beobachtete Zahl. Sie sollte als Szenario, nicht als Fakt gelesen werden.</p><div class="ev">Quelle: Studie/Projektion · umstritten</div></div>
+<div class="claim"><span class="tag warn">berichtet</span><b>Epstein investierte 40 Mio. in Thiel-nahe Valar-Fonds.</b><p>Die NYT berichtete 2025 über die Investition; die Beziehung ist dokumentiert, ihre Bedeutung interpretierbar.</p><div class="ev">Quelle: New York Times, 2025 · Bericht</div></div>
+<div class="claim"><span class="tag good">dokumentiert</span><b>Vance erhielt 15 Mio. von Thiel für seinen Senatswahlkampf.</b><p>Die Zahl ist in Wahlkampffinanzierungsdaten gut belegt; der „Rekord“-Anspruch ist eine Einordnung, keine amtliche Kategorie.</p><div class="ev">Quelle: FEC/Presse · gut belegt</div></div>
+</div>
+<div class="note warn" style="margin-top:18px"><strong>Die Methode des Buchs:</strong> Netzwerke aus Geld, Mentorship und Zitaten. Das zeigt Nähe und Einflusswege – aber nicht automatisch gemeinsame Absicht. Für die starken Thesen braucht es Primärtexte, FEC-Daten, Verträge und Gerichtsakten.</div>
+</div></section>
+
+<section id="kritik" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">07 / KRITIK</div><div><h2>Wo die Anklage überzieht</h2><p class="lede">Man kann die Belege ernst nehmen und die Schlussfolgerung trotzdem für überzogen halten. Genau diese Trennung ist hier das Ziel.</p></div></div>
+<div class="grid-2">
+<div class="note bad"><strong>„Faschismus“ ist ein Kampfbegriff:</strong> Durán unterscheidet nicht systematisch zwischen Faschismus, Autoritarismus, Oligarchie und Patrimonialkapitalismus. Die Bezeichnung arbeitet auch durch Assoziation.</div>
+<div class="note warn"><strong>Schuld durch Nähe:</strong> Eine Finanzierung oder ein Zitat beweist keine gemeinsame Ideologie. Manche Kanten sind direkt und belastbar, andere nur adjazent.</div>
+<div class="note warn"><strong>Kausale Überdehnung:</strong> Das Buch zentriert ein kleines Valley-Netzwerk und unterschätzt Trumps eigene Koalition, Wähler, christliche Nationalisten, die konservative Rechtsbewegung und den Kongress.</div>
+<div class="note"><strong>Sehr junge Ereignisse:</strong> Vieles spielt 2025/2026. Manche Zahlen und Rollen sind vorläufig. Wer die These prüfen will, sollte Primärdokumente und unabhängige Berichte nachziehen.</div>
+</div>
+<div class="quote">„Wir können Milliardäre haben oder Demokratie. Beides zugleich geht nicht.“<cite>Durán, Kap. 8 – sinngemäß</cite></div>
+</div></section>
+
+<section id="quiz" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">08 / QUIZ</div><div><h2>Prüf dich</h2><p class="lede">Zwölf Fragen, die Argument, Akteure und Belegstatus trennen.</p></div></div>
+<div class="quiz" id="nr-quiz"></div>
+</div></section>
+
+<section id="merken" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">09 / MERKEN</div><div><h2>Acht Dinge, die bleiben</h2></div></div>
+<ol class="remember remember-list">
+<li>Autor ist Gil Durán; das Buch ist eine politische Streitschrift, keine neutrale Geschichte.</li>
+<li>Der Urtext ist „The Sovereign Individual“ (1997); Thiel schrieb das Vorwort zur Neuausgabe.</li>
+<li>Curtis Yarvin lieferte das Vokabular: Cathedral, Patchwork, RAGE, CEO-Diktator.</li>
+<li>Balaji Srinivasan verpackte Exit als „Network State“ und „Society-as-a-Service“.</li>
+<li>JD Vance ist das „politische Unicorn“: Thiels 15-Mio.-Wette, dann Vizepräsident.</li>
+<li>Die Wende 2024/25 läuft über Musk, Krypto-PACs, DOGE und Thiel-nahe Personalien.</li>
+<li>Apokálypsis und Antichrist verbinden politische Theologie mit Tech-Macht.</li>
+<li>Duráns Schluss: Milliardäre oder Demokratie – Accountability, Antitrust, Krypto-Bann.</li>
+</ol>
+</div></section>
+
+</main>
+<footer class="footer"><div class="container"><div class="row">
+<div><strong>The Nerd Reich · Die interaktive Essenz</strong><br>Interaktive Essenz · 5–10 Minuten · aus dem extrahierten Text erarbeitet.</div>
+<div>Keine Seitenzahlen: Zitate und Kapitelangaben folgen der Textdatei.<br>Kritische Einordnung ist Teil der Zusammenfassung.</div>
+</div></div></footer>
+</div>
+<script>
+/* shared shell */
+(function(){
+  "use strict";
+  const root = document.documentElement;
+  const saved = localStorage.getItem("ex-theme");
+  if(saved === "light") root.classList.add("light");
+  const toggle = document.querySelector(".theme-toggle");
+  if(toggle){
+    const paint = () => {
+      toggle.setAttribute("aria-label", root.classList.contains("light") ? "Dunkles Design" : "Helles Design");
+      toggle.innerHTML = root.classList.contains("light")
+        ? '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M19.1 4.9l-1.6 1.6M6.5 17.5l-1.6 1.6"/></svg>'
+        : '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.2 15.2A8.4 8.4 0 1 1 8.8 3.8a6.8 6.8 0 0 0 11.4 11.4Z"/></svg>';
+    };
+    paint();
+    toggle.addEventListener("click", () => {
+      root.classList.toggle("light");
+      localStorage.setItem("ex-theme", root.classList.contains("light") ? "light" : "dark");
+      paint();
+      document.dispatchEvent(new CustomEvent("ex-theme-change"));
+    });
+  }
+
+  const bar = document.getElementById("progress");
+  const onScroll = () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    if(bar) bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    const links = document.querySelectorAll(".dock a[data-target]");
+    let current = "";
+    document.querySelectorAll("[data-nav]").forEach(sec => {
+      if(sec.getBoundingClientRect().top < window.innerHeight * 0.34) current = sec.id;
+    });
+    links.forEach(a => a.classList.toggle("active", a.dataset.target === current));
+  };
+  window.addEventListener("scroll", onScroll, {passive:true});
+  window.addEventListener("resize", onScroll);
+  onScroll();
+
+  const reveal = document.querySelectorAll(".reveal");
+  if("IntersectionObserver" in window){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, {threshold:.08, rootMargin:"0px 0px -8% 0px"});
+    reveal.forEach(el => io.observe(el));
+  } else reveal.forEach(el => el.classList.add("in"));
+
+  document.querySelectorAll(".toggle-card").forEach(card => {
+    const btn = card.querySelector(".toggle-btn");
+    const body = card.querySelector(".toggle-body");
+    if(!btn || !body) return;
+    btn.addEventListener("click", () => {
+      const open = card.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      body.style.maxHeight = open ? body.scrollHeight + "px" : "0px";
+    });
+  });
+
+  function makeQuiz(rootId, questions){
+    const root = document.getElementById(rootId);
+    if(!root) return;
+    let index = 0, score = 0, locked = false;
+    function render(){
+      if(index >= questions.length){
+        const pct = Math.round(score / questions.length * 100);
+        let verdict = "Nochmal lesen lohnt sich.";
+        if(pct >= 90) verdict = "Du hast die Kernideen wirklich sitzen.";
+        else if(pct >= 70) verdict = "Solide. Die wichtigsten Muster sind da.";
+        else if(pct >= 50) verdict = "Die Hälfte sitzt – geh noch einmal über die visuellen Modelle.";
+        root.innerHTML = '<div class="quiz-end">' +
+          '<div class="quiz-count">Ergebnis</div>' +
+          '<div class="big-stat">' + score + '/' + questions.length + '</div>' +
+          '<p><strong>' + verdict + '</strong> Jede Frage hatte eine kurze Erklärung – die falschen Antworten sind die eigentlichen Lernpunkte.</p>' +
+          '<button class="btn" id="' + rootId + '-restart">Noch einmal</button></div>';
+        const r = document.getElementById(rootId + '-restart');
+        if(r) r.addEventListener("click", () => { index = 0; score = 0; locked = false; render(); });
+        return;
+      }
+      const q = questions[index];
+      const dots = questions.map((_, i) => '<i class="' + (i < index ? "done" : "") + '"></i>').join("");
+      const opts = q.options.map((text, i) =>
+        '<button class="quiz-opt" data-i="' + i + '"><span class="key">' + "ABCD"[i] + '</span><span>' + text + '</span></button>'
+      ).join("");
+      root.innerHTML = '<div class="quiz-top"><div class="quiz-count">Frage ' + (index + 1) + ' von ' + questions.length + '</div>' +
+        '<div class="quiz-score">Punkte ' + score + '</div></div>' +
+        '<div class="quiz-dots">' + dots + '</div>' +
+        '<h3 class="quiz-q">' + q.q + '</h3>' +
+        '<div class="quiz-options">' + opts + '</div>' +
+        '<div class="quiz-feedback" aria-live="polite"></div>' +
+        '<div class="quiz-actions"><span class="tiny muted">Eine Antwort – dann erklären wir sie.</span>' +
+        '<button class="btn small" id="' + rootId + '-next" disabled>Weiter</button></div>';
+      const next = document.getElementById(rootId + '-next');
+      const feedback = root.querySelector(".quiz-feedback");
+      root.querySelectorAll(".quiz-opt").forEach(btn => {
+        btn.addEventListener("click", () => {
+          if(locked) return;
+          locked = true;
+          const pick = Number(btn.dataset.i);
+          const correct = pick === q.a;
+          if(correct) score++;
+          root.querySelectorAll(".quiz-opt").forEach(b => {
+            b.disabled = true;
+            const i = Number(b.dataset.i);
+            if(i === q.a) b.classList.add("correct");
+            if(i === pick && !correct) b.classList.add("wrong");
+          });
+          feedback.innerHTML = '<strong>' + (correct ? "Richtig." : "Nicht ganz – richtig ist " + "ABCD"[q.a] + ".") + '</strong> ' + q.e;
+          next.disabled = false;
+          root.querySelector(".quiz-score").textContent = "Punkte " + score;
+        });
+      });
+      next.addEventListener("click", () => { index++; locked = false; render(); });
+    }
+    render();
+  }
+  window.makeQuiz = makeQuiz;
+
+  window.ex = {
+    clamp:(v,a,b)=>Math.max(a,Math.min(b,v)),
+    fmt:(n,d=0)=>Number(n).toLocaleString("de-DE",{maximumFractionDigits:d,minimumFractionDigits:d}),
+    css:(name)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim(),
+    themeColor(name, fallback){
+      const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fallback;
+    }
+  };
+})();
+
+
+(function(){
+  "use strict";
+  const tl=[
+    {y:"1997",t:"The Sovereign Individual",who:"James Dale Davidson & William Rees-Mogg",p:"Das Buch prognostiziert den Zerfall des Nationalstaats, die Herrschaft einer „kognitiven Elite“ und private Cyberwährungen. Thiel nennt es prägend, schrieb das Vorwort zur Neuausgabe und übernahm die Rede vom souveränen Individuum.",link:"Idee → Thiel → PayPal/Founders Fund"},
+    {y:"2007",t:"Moldbug und die Cathedral",who:"Curtis Yarvin",p:"Yarvin schreibt als „Mencius Moldbug“ auf Unqualified Reservations. Die „Cathedral“ aus Universitäten, Medien und Behörden erzeuge Konsens; Demokratie sei eine Illusion. Die Theorie ist mächtig, weil sie jeden Widerspruch als Beweis ihrer selbst lesen kann.",link:"Yarvin → Thiel/Andreessen → Tlon"},
+    {y:"2009",t:"Freiheit und Demokratie",who:"Peter Thiel",p:"Im Cato-Unbound-Essay „The Education of a Libertarian“ schreibt Thiel, er glaube nicht mehr, dass Freiheit und Demokratie vereinbar seien. Die Fluchtwege: Cyberspace, Weltraum, Seasteading.",link:"Thiel → Politik → Exit"},
+    {y:"2012",t:"RAGE",who:"Curtis Yarvin",p:"„Retire All Government Employees“: alle Staatsbediensteten entlassen, Verwaltung an die Tech-Industrie, ein CEO als nationaler Diktator. Durán liest das als Blaupause für spätere „de-Baathification“-Rhetorik.",link:"Yarvin → Vance → DOGE"},
+    {y:"2013",t:"Silicon Valley’s Ultimate Exit",who:"Balaji Srinivasan",p:"Srinivasan übersetzt Hirschmans „voice/exit“ in einen Startup-Pitch: Statt den Staat zu reformieren, baut man einen Konkurrenten. Später wird daraus „The Network State“.",link:"Srinivasan → Network State → Próspera"},
+    {y:"2022",t:"The Network State",who:"Balaji Srinivasan",p:"Eine online alignierte Community crowdfundet Territorium, baut parallele Institutionen und sucht diplomatische Anerkennung. Die Idee ist „Society-as-a-Service“ – mit dem Gründer als AGB-Autor.",link:"Network State → Próspera, California Forever"},
+    {y:"2023",t:"e/acc und TESCREAL",who:"Andreessen, Beff Jezos, Gebru/Torres",p:"Andreessens „Techno-Optimist Manifesto“ und der Accelerationismus machen Fortschritt zur Erlösung; Regulierung wird zu „decel“. TESCREAL bündelt Transhumanismus, Longtermism und Rationalismus als Glaubensfamilie.",link:"a16z → Founder-Kultur → Politik"},
+    {y:"2024",t:"Reboot, Musk, Krypto",who:"Musk, Sacks, Armstrong, Thiel-Netzwerk",p:"Musk gibt hunderte Millionen aus, Krypto-PACs fluten Rennen, Tech-Rechte feiern in San Francisco und auf Reboot. Die Wahl wird zum Proof of Concept für politisches Kapital.",link:"Geld → Personal → Policy"},
+    {y:"2025",t:"DOGE und der Antichrist",who:"Trump, Musk, Thiel, Vance",p:"DOGE baut Staat ab, Thiel-nahe Personen besetzen Posten, Thiel hält Vorträge über den Antichrist als Accelerationisten und die Tech-Meister als Katechon. Durán sieht darin die „Enthüllung“ der Tech-Herrschaft.",link:"Staatsmacht + politische Theologie"}
+  ];
+  const td=document.getElementById("nr-tl-detail");
+  function paintTL(i){
+    document.querySelectorAll("#nr-timeline .tl").forEach(b=>b.classList.toggle("on",Number(b.dataset.tl)===i));
+    const x=tl[i]; td.innerHTML="<h3>"+x.t+"</h3><p>"+x.p+"</p><div class='who'>"+x.y+" · "+x.who+" · "+x.link+"</div>";
+  }
+  document.querySelectorAll("#nr-timeline .tl").forEach(b=>b.addEventListener("click",()=>paintTL(Number(b.dataset.tl))));
+  paintTL(0);
+
+  const nodes={
+    thiel:{n:"Peter Thiel",r:"Venture Capital · PayPal · Palantir",p:"Der zentrale Knoten: PayPal-Mitgründer, früher Facebook-Investor, Palantir-Mitgründer, Founders Fund. Finanzierte Vances Senatswahl, schrieb das Vorwort zu „The Sovereign Individual“, formulierte 2009 die Unvereinbarkeit von Freiheit und Demokratie.",l:"Kanten: Vance (dokumentiert), Yarvin/Tlon (berichtet), Andreessen/a16z (berichtet), Musk (berichtet)"},
+    yarvin:{n:"Curtis Yarvin",r:"Blogger · Neoreaktion",p:"Als „Mencius Moldbug“ lieferte er die Begriffe Cathedral, Patchwork und RAGE. Kein Massenführer, sondern ein Ideenlieferant – dessen Vokabular in Tech- und Rechtskreisen zirkuliert.",l:"Kanten: Thiel/Andreessen (berichtet), Tlon-Funding"},
+    srini:{n:"Balaji Srinivasan",r:"Investor · Network State",p:"Der ehemalige Coinbase-CTO und Andreessen-Partner machte aus „Exit“ ein Produkt: online Community, gekauftes Territorium, parallele Institutionen, diplomatische Anerkennung.",l:"Kanten: Thiel (dokumentiert), a16z (berichtet)"},
+    a16z:{n:"Andreessen Horowitz",r:"VC · American Dynamism",p:"Die Firma investierte in Coinbase, Tlon und viele Tech-Rechte-Projekte. Andreessens „Techno-Optimist Manifesto“ ist der affirmative Text des Accelerationismus.",l:"Kanten: Thiel (berichtet), Yarvin/Tlon (berichtet), Musk (berichtet)"},
+    musk:{n:"Elon Musk",r:"Tesla · SpaceX · X · DOGE",p:"Der sichtbarste Akteur der Wende: 291 Mio. Wahlausgaben, X als Megafon, Regierungsrolle. Durán sieht ihn als Beweis, dass Tech-Rechte nicht mehr nur Exit wollen, sondern den Staat selbst.",l:"Kanten: Trump (dokumentiert), Thiel (berichtet), Vance (spekulativ)"},
+    vance:{n:"JD Vance",r:"Vizepräsident · Autor",p:"Thiel traf Vance in Yale, finanzierte seinen Weg in VC und den Senatswahlkampf (15 Mio.). Durán nennt ihn das „Unicorn“: eine VC-Wette, die als Vizepräsidentschaft zurückkam.",l:"Kanten: Thiel (dokumentiert), Trump (dokumentiert)"},
+    trump:{n:"Donald Trump",r:"Präsident 2025",p:"Der politische Empfänger des Netzwerks. Duráns Buch behandelt ihn als Katalysator, nicht als Erfinder: Die Ideen und das Geld waren vor ihm da.",l:"Kanten: Musk, Vance, Tech-Kabinett"},
+    armstrong:{n:"Coinbase / Krypto",r:"Börse · Politik",p:"Brian Armstrong und die Krypto-Industrie finanzierten PACs in dreistelliger Millionenhöhe. Durán sieht darin einen eigenen Machtblock, der Regulierung kaufen will.",l:"Kanten: Thiel (dokumentiert), Wahlkampf (dokumentiert)"}
+  };
+  const np=document.getElementById("nr-node-panel");
+  function paintNode(id){
+    document.querySelectorAll("#nr-network .node").forEach(n=>n.classList.toggle("on",n.dataset.n===id));
+    const x=nodes[id]; np.innerHTML="<h4>"+x.n+"</h4><div class='role'>"+x.r+"</div><p>"+x.p+"</p><div class='links'>"+x.l+"</div>";
+  }
+  document.querySelectorAll("#nr-network .node").forEach(n=>n.addEventListener("click",()=>paintNode(n.dataset.n)));
+  paintNode("thiel");
+
+  document.querySelectorAll("#nr-filter button").forEach(b=>b.addEventListener("click",()=>{
+    document.querySelectorAll("#nr-filter button").forEach(x=>x.classList.toggle("on",x===b));
+    const f=b.dataset.f;
+    document.querySelectorAll("#nr-network .edge").forEach(e=>{
+      e.classList.toggle("dim", f!=="all" && e.dataset.s!==f);
+    });
+  }));
+
+  const voice=[
+    {id:"seasteading",n:"Seasteading",x:8,y:88,p:"Schwimmende Privatstädte auf See: maximaler Exit, minimaler Staat. Das Projekt scheiterte praktisch, blieb aber als Fantasie mächtig."},
+    {id:"network",n:"Network State",x:18,y:82,p:"Eine Online-Community kauft Land und baut parallele Institutionen. Exit hoch, Stimme niedrig – der Staat wird als Konkurrenzprodukt gedacht."},
+    {id:"crypto",n:"Krypto-Jurisdiktion",x:14,y:70,p:"Regulierung durch Code und Offshore-Strukturen umgehen. Exit hoch, aber der Anspruch, die bestehende Ordnung zu ersetzen, bleibt."},
+    {id:"elections",n:"Wahlen gewinnen",x:78,y:28,p:"Klassische Stimme: innerhalb der Institutionen Macht gewinnen. Genau das tat das Tech-Rechte-Netzwerk 2024 – ein Bruch mit der reinen Exit-Erzählung."},
+    {id:"doge",n:"DOGE",x:86,y:18,p:"Staatsabbau von innen: maximale Stimme/Staatsmacht, minimaler Exit. Der Widerspruch zur Exit-Rhetorik ist hier am größten."},
+    {id:"palantir",n:"Palantir-Aufträge",x:92,y:12,p:"Staatsverträge, Verteidigung, Überwachung: tiefe Staatlichkeit statt Rückzug. Das ist kein Seasteading – das ist der Staat als Kunde."},
+    {id:"antitrust",n:"Antitrust",x:82,y:22,p:"Demokratische Stimme gegen Tech-Monopole. Durán fordert sie; sie ist das Gegenmittel zur privaten Machtkonzentration."},
+    {id:"antichrist",n:"Antichrist-Vorträge",x:38,y:62,p:"Politische Theologie als kulturelle Macht: nicht Exit, nicht klassische Stimme, sondern Deutungshoheit über die Krise."}
+  ];
+  const vl=document.getElementById("nr-voice-list"), vd=document.getElementById("nr-voice-dot"), vv=document.getElementById("nr-voice-verdict");
+  voice.forEach((v,i)=>{
+    const b=document.createElement("button"); b.textContent=v.n; b.dataset.i=i; vl.appendChild(b);
+    b.addEventListener("click",()=>{
+      document.querySelectorAll("#nr-voice-list button").forEach(x=>x.classList.toggle("on",x===b));
+      vd.style.left=v.x+"%"; vd.style.top=v.y+"%";
+      vv.innerHTML="<strong>"+v.n+":</strong> "+v.p;
+    });
+  });
+  document.querySelector("#nr-voice-list button").click();
+
+  makeQuiz("nr-quiz",[
+    {q:"Wer schrieb „The Sovereign Individual“ (1997)?",options:["Curtis Yarvin und Peter Thiel","Balaji Srinivasan und Marc Andreessen","James Dale Davidson und William Rees-Mogg","Nick Land und Mencius Moldbug"],a:2,e:"Thiel schrieb das Vorwort zur Neuausgabe und nannte das Buch prägend – aber die Autoren sind Davidson und Rees-Mogg."},
+    {q:"Was bedeutet „Exit“ bei Srinivasan?",options:["Ein sinkendes System durch Wahlen reformieren","Ein sinkendes System verlassen und einen Konkurrenten bauen","Geld abschaffen und auf Tauschhandel setzen","Eine Monarchie durch einen Militärputsch wiederherstellen"],a:1,e:"Er übernimmt Hirschmans Begriffspaar: voice = reformieren, exit = gehen und woanders bauen. Seasteading und Network States sind Exit-Projekte."},
+    {q:"Was ist Yarvins „Cathedral“?",options:["Ein Netzwerk aus Universitäten, Medien, Stiftungen und Behörden","Ein Zusammenschluss von Kirchen für eine Theokratie","Eine geheime Gruppe von Zentralbankern in London","Ein Blockchain-Protokoll für dezentrale Regierung"],a:0,e:"Yarvin beschreibt die „Kathedrale“ als konsensproduzierende Macht. Die Ivy League und die New York Times seien ihre „Spitzen“."},
+    {q:"Wofür steht RAGE?",options:["Rebuild American Government Efficiency","Restore Authority and Global Empire","Reform Agencies for Growth and Enterprise","Retire All Government Employees"],a:3,e:"Yarvins Programm: alle Staatsbediensteten entlassen, Verwaltung an Tech-Unternehmen, ein CEO als Diktator."},
+    {q:"Was schrieb Thiel 2009 im Cato-Essay?",options:["Demokratie müsse in jedes Land exportiert werden","Monarchie sei die einzig legitime Regierungsform","Freiheit und Demokratie seien nicht mehr vereinbar","Technologie habe keine politischen Folgen"],a:2,e:"Der Essay „The Education of a Libertarian“ ist eine Primärquelle. Thiel suchte Auswege in Cyberspace, Weltraum und Seasteading."},
+    {q:"Worauf bezieht sich „The Unicorn“ in Kapitel 5?",options:["Vance als politische Rendite von Thiels Investment","Ein mythisches KI-Modell, das Unsterblichkeit verspricht","Ein Krypto-Token von World Liberty Financial","Eine geheime Netzwerkstadt in Honduras"],a:0,e:"Durán überträgt die VC-Logik auf Vances Karriere: Thiel scouted, finanzierte und bekam als „Return“ einen Vizepräsidenten."},
+    {q:"Was bedeutet „Apokálypsis“ bei Thiel?",options:["Zusammenbruch oder Ruin","Enthüllung oder Offenbarung","Auferstehung oder Wiedergeburt","Gericht oder Strafe"],a:1,e:"Das griechische Wort bedeutet „Enthüllung“. Thiel rahmte Trumps Rückkehr 2025 als Offenbarung der Verbrechen des „Deep State“."},
+    {q:"Wie behandelt e/acc Regulierung?",options:["Als „Safety“, den Kern des Programms","Als „Voice“, eine demokratische Pflicht","Als „Exit“, eine Form der Sezession","Als „Decel“, einen Verrat am Fortschritt"],a:3,e:"Effective Accelerationism will maximale technologische Beschleunigung. Regulierung wird als Bremse und Verrat gerahmt."},
+    {q:"Was bündelt TESCREAL?",options:["Transhumanismus, Extropianismus, Singularitarismus, Kosmismus, Rationalismus, EA, Longtermism","Transhumanismus, Feudalismus, Monarchismus, Korporatismus, Nationalismus, Merkantilismus","Extropianismus, Anarchismus, Sozialismus, Kommunismus, Syndikalismus, Mutualismus","Singularitarismus, Umweltbewegung, Feminismus, Pazifismus, Liberalismus, Säkularismus"],a:0,e:"Gebru und Torres prägten den Begriff für überlappende Tech-Ideologien, die Durán als Erlösungsnarrative liest."},
+    {q:"Wie beschreibt Thiel 2025 den Antichristen?",options:["Ein buchstäbliches Tier, das aus dem Meer steigt","Eine KI, die alles biologische Leben zerstört","Eine verführerische Figur, die mit Armageddon-Angst Technologie kontrolliert","Einen Papst, der den Nationalstaat abschafft"],a:2,e:"Thiel zeichnet den Antichristen als Accelerationisten, der Angst vor dem Weltende nutzt, um Wissenschaft und Technik zu kontrollieren. Durán findet, die Beschreibung passe auf Thiel selbst."},
+    {q:"Wie viel Geld steckte Thiel laut Buch in Vances Senatswahl?",options:["1,5 Mio. – ein bescheidener Betrag","15 Mio. – ein Rekord für ein Senatsrennen","150 Mio. – ein nationaler Rekord","500.000 – vor allem kleine Spenden"],a:1,e:"Die 15 Mio. sind gut dokumentiert; der „Rekord“-Anspruch ist eine Einordnung. Durán nutzt die Zahl, um die VC-Logik zu illustrieren."},
+    {q:"Was fordert Durán am Ende?",options:["Einen Network State unter Tech-CEOs","Ein bedingungsloses Grundeinkommen aus Krypto","Eine Weltmonarchie mit Theologenrat","Eine Welt ohne Milliardäre, mit Demokratie und Accountability"],a:3,e:"Sein Schluss ist normativ: „Wir können Milliardäre haben oder Demokratie.“ Das ist eine politische Forderung, kein empirischer Befund."}
+  ]);
+})();
+
+</script>
+</body>
+</html>
