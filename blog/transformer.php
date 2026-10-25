@@ -42,6 +42,10 @@ by one step and the change shows up, visibly, in the equations and plots that fo
 </div>
 
 <div class="md">
+## Before the Transformer
+
+Long before the Transformer, sequence models were recurrent. An encoder read a sentence one token at a time into a single fixed-length vector, and a decoder generated the translation from that vector alone. \cite[Bahdanau et al. (2014)]{bahdanau2014} attacked that bottleneck: their decoder could look back at every encoder state and learn a soft alignment, so the relevant source words changed at each output step (\cite[Bahdanau et al., 2014]{bahdanau2014}). This was attention before it had a Transformer to live in.
+
 ## Hyperparameters for this demo
 
 A **hyperparameter** is a number you choose *before* training starts; the model learns everything else — its weights — from the data. This demo exposes four of them:
@@ -92,7 +96,7 @@ Each slider below carries a short note on why its constraint exists. What hyperp
 	    <span id="context-val" style="font-weight: bold; color: #3b82f6;">128</span>
 	    <p style="font-size: 0.75rem; color: #64748b; margin: 2px 0;">
 		<b>Effect:</b> Sets the maximum number of tokens the model can “see” at once during training and inference.<br>
-		<b>Reason:</b> A larger context window allows the model to capture longer-range dependencies between words, but increases memory and computation cost quadratically due to the attention matrix being of size $\text{Context}^2$ (this can be mitigated through the <i>KV-Cache</i>).
+		<b>Reason:</b> A larger context window lets the model capture longer-range dependencies, but the attention score matrix has size $\text{Context}^2$, so a full forward pass costs quadratically in context length. A <i>KV-Cache</i> avoids recomputing past keys and values during generation — it lowers per-step work and trades it for linear memory — but it does not make attention sub-quadratic.
 	    </p>
 	    <input type="range" id="transformer-context-size" min="2" max="256" step="1" value="128"
 		style="width: 100%;" oninput="document.getElementById('context-val').innerText = this.value; debounced_run_transformer_demo();">
@@ -241,7 +245,7 @@ The batch size "2" passes through the multiplication untouched. Each neuron sees
 
 $$\begin{aligned} &\underbrace{(\,\underbrace{t}_{\text{sequence length (repetition)}} \times \underbrace{768}_{\text{model dim (features)}}\,)}_{\text{input: } t \text{ token-vectors stacked}} \\[6pt] &\cdot\; \underbrace{(\,\underbrace{768}_{\text{features (must match)}} \times \underbrace{d_{\text{out}}}_{\text{output dim}}\,)}_{\text{weight, fixed after training}} \\[6pt] &=\; \underbrace{(\,\underbrace{t}_{\text{passes through unchanged}} \times \underbrace{d_{\text{out}}}_{\text{new feature dim}}\,)}_{\text{output: one row per token}} \end{aligned}$$
 
-The inner dimensions (768) cancel. The sequence length $t$ passes through without interacting with the weight. Whether $t = 1$ or $t = 1024$, the weight matrix has the same shape and the neurons see the same number of inputs (\cite[Paszke et al., 2019]{pytorch}). This is why variable-length input requires no architectural change or retraining (\cite[Vaswani et al., 2017]{vaswani2017attention}). Running one set of weights once per position is the same move a **fold** makes in functional programming, and reusing a single structure across every position is what Olah calls **weight tying** — the neural-network analogue of writing a function once and calling it many times (\cite[Olah, 2015]{colah2015types}).
+The inner dimensions (768) cancel. The sequence length $t$ passes through without interacting with the weight. Whether $t = 1$ or $t = 1024$, the weight matrix has the same shape and the neurons see the same number of inputs (\cite[Paszke et al., 2019]{pytorch}). This is why variable-length input requires no architectural change or retraining (\cite[Vaswani et al., 2017]{vaswani2017attention}). Running one set of weights once per position is the same move a **fold** makes in functional programming, and reusing a single structure across every position is **weight sharing** — the neural-network analogue of writing a function once and calling it many times (\cite[Olah, 2015]{colah2015types}). Weight *tying* is a different trick: sharing the input embedding matrix with the output unembedding matrix, which saves parameters and often improves the language model (\cite[Press & Wolf, 2017]{press2017tying}).
 
 **What is variable, what is fixed.** The full input tensor after embedding has shape $(b, t, d)$. Of these three dimensions:
 
@@ -341,7 +345,7 @@ $$PE_{(\text{pos}, 2i)} = \sin\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}
 
 $$PE_{(\text{pos}, 2i+1)} = \cos\left(\frac{\text{pos}}{10000^{2i/d_\text{model}}}\right)$$
 
-These functions were chosen because they create unique, continuous patterns for each position, enabling the model to infer both absolute and relative positions. The periodicity of sine and cosine ensures that the encodings generalize to sequences longer than those seen during training. Additionally, their multi-frequency nature allows the model to capture both local and global positional relationships. The network's layers learn to interpret these fixed “geometric fingerprints” by adjusting their weights, enabling the model to apply position-specific logic and reason about sequence structure effectively.
+These functions were chosen because they create unique, continuous patterns for each position, enabling the model to infer both absolute and relative positions. Because the formula is defined for any position, the encoding can be *computed* beyond the training length; whether the trained model actually generalizes there is a separate empirical question, and in practice it often does not. Additionally, their multi-frequency nature allows the model to capture both local and global positional relationships. The network's layers learn to interpret these fixed “geometric fingerprints” by adjusting their weights, enabling the model to apply position-specific logic and reason about sequence structure effectively.
 
 The key to how the model infers relative positions lies in the mathematical properties of sine and cosine. For any fixed offset $k$, the positional encoding at position $\text{pos} + k$ can be expressed as a linear transformation of the encoding at position $\text{pos}$. This linearity is what lets the attention mechanism — through its $\mathbf{q}\cdot\mathbf{k}$ dot products — score a relative offset in a position-invariant way, so a head can learn to “attend $k$ steps back” regardless of the absolute location. (The FFN, being a pointwise operation, operates on the features that attention has already mixed; the relative-position geometry itself comes from the sinusoidal encodings interacting inside attention.) Over multiple layers, the network entangles positional and semantic information, enabling it to reason about sequence structure and relationships. This is what lets the model generalize to unseen sequences and retain positional understanding even when tokens are shifted or reordered.
 
@@ -369,7 +373,7 @@ When you add “random” values to a vector, you change its location in the mul
 <div class="optional md" data-headline="The Decoder-Only Architecture">
 Here, we do **not** use the original Encoder-Decoder architecture from Vaswani et al. (\citeyear{vaswani2017attention}). Instead, this example implements a **Decoder-only** Transformer with **Pre-Layer Normalization**, the same structural family that powers today's leading LLMs (GPT, Claude, Gemini and so on). The entire model is a stack of identical Decoder (with different weights) blocks, each containing:
 
-1. **Pre-LN**: Layer Normalization is applied *before* each sublayer (attention and FFN), rather than after. This is a more modern convention (see \citetitle{xiong2020}) that improves gradient flow and training stability through deep stacks.
+1. **Pre-LN**: Layer Normalization is applied *before* each sublayer (attention and FFN), rather than after. The arrangement was used in deep Transformers by \cite[Wang et al. (2019)]{wang2019preln} and analyzed by \cite[Xiong et al. (2020)]{xiong2020}, who showed that it keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up.
 2. **Masked (Causal) Self-Attention**: Every token can only attend to itself and the tokens that came before it. This is enforced by setting the upper triangle of the attention score matrix to $-\infty$ before the SoftMax. This causal constraint is what makes the model **autoregressive**: to predict token $t_{n+1}$, the model processes $[t_1, t_2, \ldots, t_n]$ and prevents any token from “cheating” by looking at future positions.
 3. **A Feed-Forward Network (FFN)** with GELU activation and its own Pre-LN and residual connection.
 
@@ -397,6 +401,8 @@ This architecture is governed by the \cite[Information Bottleneck principle]{tis
 
 Attention is the heart of the transformer — the one place where one token's information can flow into another. This part builds it up from a single head to the full multi-head mechanism.
 
+Attention was not invented for translation alone. In 2014 \cite[Graves et al. (2014)]{graves2014ntm} gave a recurrent network a differentiable read/write head over an external memory — the Neural Turing Machine — so that where to look became a learned, end-to-end operation (\cite[Graves et al., 2014]{graves2014ntm}). Memory networks made the same move for question answering: a query retrieves relevant stored facts by similarity, and a controller reasons over them (\cite[Weston et al., 2015]{weston2015memnn}; \cite[Sukhbaatar et al., 2015]{sukhbaatar2015memnn}). By 2015, soft attention over a set of vectors was a general computational primitive.
+
 ### Masked Self-Attention
 
 To ensure the model learns to generate text autoregressively, we prevent it from “looking into the future” during training. For any token $i$, we restrict its focus to itself and preceding tokens $\{1, \dots, i\}$.
@@ -413,7 +419,7 @@ $$\text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^\top}{\sqrt{d_k}} +
 
 Since $e^{-\infty}$ approaches $0$, the Softmax function nullifies the weights for all “future” positions ($i < j$), effectively neutralizing those connections.
 
-The causal mask creates an **information gradient** across the sequence. Because later tokens attend to more preceding context, their representations are richer than those of earlier, “impoverished” tokens. This **information funnel** makes the last token uniquely privileged, as it is the only position that has “seen” the entire context, which is why its hidden state is used for next-token prediction.
+The causal mask creates an **information gradient** across the sequence. Because later tokens attend to more preceding context, their representations are richer than those of earlier, “impoverished” tokens. This **information funnel** makes the last token uniquely privileged: it is the only position that has “seen” the entire context, so at inference its hidden state is the one used for the next-token prediction. During training, by contrast, every position predicts its own next token in parallel.
 
 This is also important for **prompt engineering**:
 * **Position matters:** Token position acts as a form of informational privilege.
@@ -479,7 +485,7 @@ $$\underbrace{\text{head}_{i+1}}_{(B, T, d_v)} = \text{Attention}(\underbrace{h_
 <div class="md" data-mathlevel="45">
 Which transforms the input in the shape of $(B, T, h \cdot d_v)$ to $(B, T, d_{\text{model}})$.
 
-The association between *Query* and *Key* and concrete tokens is only true in the first layer, where it is taken from the concrete embeddings. In further layers, it works on the abstract feature space instead.
+The *Query* and *Key* rows still correspond to token positions in every layer; what changes is the content of those rows. In the first layer they are projected from the concrete token embeddings; in later layers they are projected from contextual, abstract features, so a head's query and key no longer mean “this word” so much as “this position's current role in the sentence”.
 
 In this stage, it is already abstracted away from the concrete Embedding Space (for example, by positional encoding).
 </div>
@@ -587,12 +593,13 @@ During each step of inference:
 4. The result is used to weigh the cached Values, producing the next
    hidden state without re-calculating the past.
 
-This reduces the computational complexity of the projection phase from
-quadratic to $\mathcal{O}(T)$ relative to sequence length $T$.
+This reduces the per-step attention computation from quadratic to $\mathcal{O}(T)$ in the sequence length $T$: the new query is compared with the cached keys instead of rebuilding and rescoring the whole prefix. Across a full generation of $T$ tokens the total cost falls from $\mathcal{O}(T^3)$ to $\mathcal{O}(T^2)$, at the price of storing the cache.
 
 ## The Transformer Block
 
 Attention and the feed-forward network are the two halves of a single block; a transformer is just that one block stacked $N$ times.
+
+The other route to parallelism was convolution. \cite[Gehring et al. (2017)]{gehring2017convs2s} replaced the recurrent encoder–decoder with stacked convolutions and attention, so every position could be computed in parallel (\cite[Gehring et al., 2017]{gehring2017convs2s}). ByteNet went further, using dilated convolutions to shorten the path between distant tokens (\cite[van den Oord et al., 2016]{bytnet2016}). Both still needed depth proportional to distance. The Transformer made that path length one: every token attends to every other in a single layer, a computation that fills a GPU instead of serializing along the sequence (\cite[Vaswani et al., 2017]{vaswani2017attention}).
 
 ### The Feed-Forward Network
 While self-attention enables information exchange across the sequence, the Feed-Forward Network (FFN) applies a learned, non-linear transformation independently to each token's representation. In this sense, it functions as the model's primary per-token computational stage, complementing attention's role in information routing and aggregation.
@@ -636,6 +643,8 @@ As $h$ progresses from $h_0$ to $h_{N}$, the vector for “apple” might move f
 
 The equations above describe the 2017 Transformer. Open a 2025 open-weight model, however, and the same two sublayers are wired slightly differently. None of these changes alters the big picture — attention mixes, the FFN computes, residuals carry — but together they define the “LLaMA-style” block that most open models now share.
 
+The years after 2017 split the family in two. \cite[Devlin et al. (2019)]{bert} kept the encoder and trained it bidirectionally with a masked-token objective, making fine-tuning on downstream tasks the default (\cite[Devlin et al., 2019]{bert}). \cite[Radford et al. (2019)]{gpt2} kept the decoder, scaled it, and showed that one autoregressive model could perform tasks zero-shot from its prompt (\cite[Radford et al., 2019]{gpt2}). The split matters for this chapter: the causal mask you see here is the GPT branch, while BERT's bidirectional attention is the encoder branch.
+
 **Pre-norm, not post-norm.** The 2017 paper normalized *after* each residual addition. Modern stacks move the normalization *inside* the branch, so the residual stream itself is an unbroken identity path:
 
 $$
@@ -645,6 +654,8 @@ $$
 $$
 
 \citeauthor{xiong2020} showed that this arrangement keeps gradients well behaved at initialization and removes the need for a long learning-rate warm-up (\cite[Xiong et al., 2020]{xiong2020}). The price is that the residual stream is no longer normalized; a final normalization before the output projection carries that burden.
+
+Layer normalization is younger than the Transformer. \cite[Ba et al. (2016)]{ba2016layernorm} introduced it in 2016 as a batch-independent alternative to BatchNorm for recurrent networks, normalizing each example's features rather than a batch statistic (\cite[Ba et al., 2016]{ba2016layernorm}). The residual connection is older still, imported from ResNet's identity shortcuts (\cite[He et al., 2015]{he2015resnet}); it gives gradients a path that bypasses the sublayer. The 2017 Transformer used both, but placed the normalization after each residual add — the post-LN arrangement that later deep stacks reversed.
 
 **RMSNorm instead of LayerNorm.** Most open-weight families replace LayerNorm with RMSNorm, which rescales each token by its root mean square but does not subtract the mean. It is cheaper, drops the learned shift, and matches LayerNorm's stability in practice (\cite[Zhang & Sennrich, 2019]{zhang2019rmsnorm}). The [normalization lab](normalizationlab.php) derives both and works through the arithmetic.
 
@@ -661,6 +672,8 @@ with a third matrix $W_g$ whose output multiplies the activated branch elementwi
 **Fewer key/value heads.** Multi-head attention gives every query head its own key and value head. Multi-query attention (MQA) shares one K/V head across all query heads, and grouped-query attention (GQA) shares one per group. The attention computation is nearly unchanged, but the **KV cache** — the memory that dominates long-context serving — shrinks by the sharing factor (\cite[Shazeer, 2019]{shazeer2019mqa}; \cite[Ainslie et al., 2023]{ainslie2023gqa}). DeepSeek-V2 went further with **multi-head latent attention** (MLA), caching a low-rank compressed latent instead of full per-head keys and values, and reconstructing them on the fly (\cite[DeepSeek-AI, 2024]{deepseek2024v2}). By 2025 the choice among MHA, GQA, and MLA had become one of the few architecture decisions still visibly separating frontier models.
 
 **The parameter budget is mostly FFN.** For a LLaMA-class layer with $d_{\text{model}} = 4096$ and $d_{\text{ff}} = 11008$, the three SwiGLU matrices hold $3 \times 4096 \times 11008 \approx 1.35 \times 10^{8}$ parameters. Across 32 layers that is roughly $4.3 \times 10^{9}$ of the model's $6.7 \times 10^{9}$ parameters — near two thirds. This is why the FFN is the main target of mixture-of-experts sparsity (see [Mixture of Experts](mixture_of_experts.php)) and of weight quantization.
+
+Scaling became a science in 2020. \cite[Kaplan et al. (2020)]{kaplan2020scaling} measured how language-model loss falls as parameters, data and compute grow, and found smooth power laws across several orders of magnitude (\cite[Kaplan et al., 2020]{kaplan2020scaling}). That turned “make it bigger” from a hunch into a budget line: spend compute where the curve says the next unit buys the most loss. GPT-3 followed the curve to 175 billion parameters and showed that scale alone produced usable few-shot behaviour (\cite[Brown et al., 2020]{brown2020gpt3}).
 
 The modern block, in one line: **normalize the branch, rotate positions, gate the FFN, and share the KV heads.**
 </div>
@@ -920,7 +933,7 @@ Meaning emerges not from words themselves, but from how vectors **move, align, a
 
 ### The model as a machine that learns *inside* its forward pass
 
-The most startling recent result is that a trained Transformer does not merely *predict* from its context — it **runs gradient descent on the examples in its prompt, right inside the forward pass**. (\cite[von Oswald et al., 2022]{vonoswald2022indc}) showed that the data transformation performed by a single linear self-attention layer is, to first order, *one step of gradient descent* on a squared-error regression loss: the attention weights are, to first order, the very gradient of that error with respect to the in-context examples. A trained model has learned to become a <span class="glossary-term" data-tooltip-id="tt-mesa-optimizer">mesa-optimizer</span>: hand it a few input/output pairs in its context and its forward pass takes a handful of gradient steps over them and reads off the answer. That reinterprets **in-context learning** — the ability to "learn" a brand-new task from a handful of examples in the prompt, with no weight updates at all — as nothing mysterious: it is the same optimizer the model uses to *train itself*, reused at inference time on the prompt's own examples.
+The most startling recent result is that a trained Transformer does not merely *predict* from its context — it **runs gradient descent on the examples in its prompt, right inside the forward pass**. (\cite[von Oswald et al., 2022]{vonoswald2022indc}) showed that the data transformation performed by a single linear self-attention layer is, to first order, *one step of gradient descent* on a squared-error regression loss: the attention weights play the role of a preconditioner, and the value vectors carry the residuals that the step moves along. A trained model has learned to become a <span class="glossary-term" data-tooltip-id="tt-mesa-optimizer">mesa-optimizer</span>: hand it a few input/output pairs in its context and its forward pass takes a handful of gradient steps over them and reads off the answer. That reinterprets **in-context learning** — the ability to "learn" a brand-new task from a handful of examples in the prompt, with no weight updates at all — as nothing mysterious: it is the same optimizer the model uses to *train itself*, reused at inference time on the prompt's own examples.
 
 ### Inference vs. Training: Two Modes of Operation
 
