@@ -103,7 +103,7 @@ The earliest known mention of the differing frequencies of dice sums appears in 
 
 ##### The Gambler's Manual: Gerolamo Cardano (1564)
 
-The first systematic treatment came from **Gerolamo Cardano**, a physician and an inveterate gambler who also described the cardan shaft. In his book *\citetitle{liberludo}* (chapter 13, *On Composite Numbers Up to Six and Beyond and for Two and Three Dice*), he was probably the first to treat the **36** outcomes of two dice as equally likely, and he used this to calculate the odds for the lucky throw.
+The first systematic treatment came from **Gerolamo Cardano**, a physician and an inveterate gambler who also described the three-ring gimbal (Cardan suspension), not the universal joint/Cardan shaft named after him (\cite{cardano_wiki}). In *\citetitle{liberludo}* (written c. 1564, published in the 1663 *Opera Omnia*; chapter 13, *On Composite Numbers Up to Six and Beyond and for Two and Three Dice*), he was probably the first to treat the **36** outcomes of two dice as equally likely, and he used this to calculate the odds for the lucky throw (\cite{liberludo}).
 
 ##### The Great Correspondence: Pascal & Fermat (1654)
 
@@ -510,7 +510,7 @@ As $n$ grows large, the Binomial Distribution itself approaches the Normal Distr
 
 Gauß solved the probable position of Ceres by treating every measurement as a composite of a “True Path” and random error. He realized that the problem was “more than determined” ($n > v$); when you have more observations than variables, a perfect fit is impossible because human observation is never free from error.
 
-For this, he developed the **Method of Least Squares**: instead of a line passing through every noisy data point, he sought the most probable path — the one that minimizes the sum of the squares of the errors.
+For this, he used the **Method of Least Squares**: instead of a line passing through every noisy data point, he sought the most probable path — the one that minimizes the sum of the squares of the errors. Legendre had published the method first in 1805; Gauss maintained he had used it since 1795 and published his account in *Theoria motus* (1809) (\cite{legendre1805}; \cite{gauss1809}).
 </div>
 
 <div class="statlab-interactive-zone">
@@ -715,7 +715,7 @@ In 1801, \citeauthor{gauss1809} used least squares to find a planet; in 1895, \c
 
 **The “Scale” Problem:** Pearson noticed that while a father's height clearly influenced his son's, the raw data was messy. If you measured the father in inches and the son in centimeters, the **Covariance** (the shared direction) would change purely because of the units. 
 
-Pearson solved this by creating the **Correlation Coefficient ($r$)**. By dividing the covariance by the product of both standard deviations ($\sigma_X \sigma_Y$), he “standardized” the relationship. This creates a pure number, independent of units, between **-1.0 and +1.0**.
+Pearson formalized the **Correlation Coefficient ($r$)**; the coefficient itself had been derived by Bravais (1846) and correlation developed by Galton (1888) (\cite{karl_pearson_wiki}; \cite{pearson1895correlation}). By dividing the covariance by the product of both standard deviations ($\sigma_X \sigma_Y$), he “standardized” the relationship. This creates a pure number, independent of units, between **-1.0 and +1.0**.
 
 * **The Shared Signal**: He found a correlation of **$r \approx 0.5$** for height: a strong link, but not a 1:1 “perfect” copy.
 * **Regression to the Mean**: He observed that exceptionally tall fathers often had sons who were slightly shorter (closer to the average), and vice versa. 
@@ -873,11 +873,11 @@ The pseudonym had a commercial reason: after one of the lab's papers revealed de
 
 Testing a difference is only half the discipline. The other half — the one that actually *creates* trustworthy evidence — is **designing an experiment** that produces a difference you can trust. That design was invented in three stages, and each is a direct ancestor of something you do in ML.
 
-The first stage was the **control group**. In 1747, the Royal Navy surgeon James Lind split twelve scorbutic sailors on the warship *Salisbury* into pairs, each pair given a different treatment — one pair took two oranges and a lemon a day. Within days, one of them was fit for duty and the other "almost recovered"; the pair on cider also improved, but the four pairs given vitriol, vinegar, and sea-water showed no improvement at all \cite[Lind, *A Treatise of the Scurvy* (1753)]{lind1747scurvy}. Nobody *proved* citrus cured scurvy (the sample was tiny), but the **design** — pair the patients, give different treatments, compare — is the exact shape of a control group.
+The first stage was the **control group**. In 1747, the Royal Navy surgeon James Lind split twelve scorbutic sailors on the warship *Salisbury* into pairs, each pair given a different treatment — one pair took two oranges and a lemon a day. Within days, one of them was fit for duty and the other "almost recovered"; the pair on cider also improved, but the four other pairs — vitriol, vinegar, sea-water, and a balsam-of-Peru/garlic/myrrh/mustard/radish mixture — showed no improvement at all \cite[Lind, *A Treatise of the Scurvy* (1753)]{lind1747scurvy} \cite{scurvy_wiki}. Nobody *proved* citrus cured scurvy (the sample was tiny), but the **design** — pair the patients, give different treatments, compare — is the exact shape of a control group.
 
 \marginfig{james_lind.jpg}{James Lind (1716–1794), whose 1747 scurvy trial was among the first controlled trials. Public domain (Chalmers, 1783).}
 
-The second stage, and the one that matters most, was **randomization**, and it came from \cite[Ronald Fisher, *The Design of Experiments* (1935)]{fisher1935design}. The problem Lind faced but could not fully solve: even with pairs, the two patients might differ in age, diet, or constitution, so *who* receives which treatment leaks into the comparison. Fisher's answer was to **assign treatments by chance**. Randomization does not remove hidden confounders; it *distributes* them across the groups on average, so the only systematic difference between the groups is the treatment itself. In the same book he introduced the null hypothesis, replication, and factorial designs — the entire grammar of the modern experiment.
+The second stage, and the one that matters most, was **randomization**, and it came from \cite[Ronald Fisher, *The Design of Experiments* (1935)]{fisher1935design}. The problem Lind faced but could not fully solve: even with pairs, the two patients might differ in age, diet, or constitution, so *who* receives which treatment leaks into the comparison. Fisher's answer was to **assign treatments by chance**. Randomization does not remove hidden confounders; it *distributes* them across the groups on average, so the only systematic difference between the groups is the treatment itself. The book gave the null hypothesis its canonical exposition; randomization had already appeared in *Statistical Methods for Research Workers* (1925) and "The Arrangement of Field Experiments" (1926), and replication and factorial design were not new in 1935 (\cite{design_of_experiments_wiki}).
 
 The third stage was the **double-blind** procedure: neither the person giving the treatment nor the one receiving it knows who is in the control group, so that expectation — the experimenter's *or* the subject's — cannot tint the result \cite[the double-blind study]{doubleblind}. It matured alongside the first large **randomized controlled trials**, the 1948 streptomycin studies that set the template for medical evidence \cite[randomized controlled trial]{rct1948}.
 
@@ -907,7 +907,7 @@ In any natural-language corpus, the $k$-th most frequent word has frequency appr
 
 $$f(k) \propto \frac{1}{k^s}$$
 
-with $s \approx 1$. This is **Zipf's Law** (George Kingsley Zipf, 1949). For English, “the” appears ~7% of the time, “of” ~3.5%, “and” ~2.5%, and the 100th most common word ~0.05%.
+with $s \approx 1$. This is **Zipf's Law**, which Zipf had already described in 1932 (crediting Estoup, 1916); 1949 is the date of *Human Behavior and the Principle of Least Effort*, and Auerbach (1913) had noted the analogous city-size regularity (\cite{zipf_law_wiki}; \cite{zipf1949human}). For English, “the” appears ~7% of the time, “of” ~3.5%, “and” ~2.5%, and the 100th most common word ~0.05%.
 
 Zipf's law is observed in many seemingly unrelated domains: city populations, income, web traffic, and more. The mathematical reason is debated; competing theories include preferential attachment (“the rich get richer”), information-theoretic optimization, and self-organized criticality.
 
@@ -936,5 +936,6 @@ The **Dirichlet distribution** (next chapter) is a natural prior over categorica
 
 </div>
 </div>
+
 
 <div class="mn-quiz" data-quiz="statistics_i"><script type="application/json">{"title": "Distributions and inference", "questions": [{"q": "Why must a model be tested on data it was not trained on?", "options": ["Otherwise memorisation looks like skill and the score is too optimistic", "Because the training data is noisy and cannot reflect genuinely new inputs", "Because a larger test set gives a much more reliable performance score", "Because the model should not be evaluated on the task it was trained for"], "answer": 0, "explain": "A held-out test set estimates performance on new data; reusing training data hides overfitting."}, {"q": "A value is x = 130, the mean is 100 and the standard deviation 15. What is its z-score?", "options": ["2.0", "1.3", "3.0", "6.7"], "answer": 0, "explain": "z = (x − μ) / σ = (130 − 100) / 15 = 2: two standard deviations above the mean."}, {"q": "The t-test was developed by William Sealy Gosset to handle…", "options": ["small samples, at the Guinness brewery", "large samples, at a university laboratory", "small samples, at a government census office", "large samples, at the Guinness brewery"], "answer": 0, "explain": "Gosset, publishing as “Student”, needed reliable conclusions from few measurements of barley and beer."}, {"q": "What does Zipf's law say about word frequencies?", "options": ["A word's frequency is roughly inversely proportional to its rank", "A word's frequency is roughly proportional to the square of its rank", "Common words appear roughly equally often, whatever their rank", "Word frequencies follow a bell curve around the average word"], "answer": 0, "explain": "The 2nd most common word appears about half as often as the 1st, the 3rd about a third as often, and so on."}]}</script></div>
