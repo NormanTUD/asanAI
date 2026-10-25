@@ -47,12 +47,22 @@ bracketed [Author, Year] and is exempt.
                         between words. Narrative subjects use the year in
                         parens: \\cite[Zhou et al. (2022)]{…} is fine.
 
+Blog-wide quiz guard (every top-level lesson .php):
+
+  Q1 quiz-option-balance  the four options of every .mn-quiz question must be
+                        roughly equal in length, and the correct option must
+                        not be the unique longest or shortest — otherwise the
+                        answer is guessable from its character count alone.
+                        Short answers (<=12 chars): spread <=5. Otherwise:
+                        shortest >=70% of longest, spread <=22.
+
 Usage:
     uv run blog/tests/lesson_guard.py [blog/]
 
 Exit code 0 = all guards pass, 1 = at least one guard failed.
 """
 
+import json
 import os
 import re
 import sys
@@ -295,6 +305,61 @@ CITE_GUARDS = [
 
 
 # ---------------------------------------------------------------------------
+# Q1 — quiz option-length balance, blog-wide (AGENTS.md "lesson authoring")
+# ---------------------------------------------------------------------------
+QUIZ_BLOCK = re.compile(
+    r'<div class="mn-quiz[^"]*"[^>]*>\s*<script type="application/json">'
+    r"(.*?)</script>",
+    re.S,
+)
+
+
+def guard_quiz_option_balance(php: str) -> list[str]:
+    issues = []
+    for bi, m in enumerate(QUIZ_BLOCK.finditer(php)):
+        try:
+            data = json.loads(m.group(1))
+        except json.JSONDecodeError:
+            continue
+        for qi, q in enumerate(data.get("questions", [])):
+            opts, ans = q.get("options"), q.get("answer")
+            if not isinstance(opts, list) or not isinstance(ans, int):
+                continue
+            if not 0 <= ans < len(opts):
+                continue
+            lens = [len(o) for o in opts]
+            mx, mn, right = max(lens), min(lens), lens[ans]
+            if mx <= 12:
+                if mx - mn > 5:
+                    issues.append(
+                        f"quiz {bi} q {qi}: short-answer spread {mx - mn} > 5 "
+                        f"(lens {lens}) — the option text reveals the answer"
+                    )
+            else:
+                if mn < 0.7 * mx:
+                    issues.append(
+                        f"quiz {bi} q {qi}: shortest option {mn} is under 70% "
+                        f"of longest {mx} (lens {lens})"
+                    )
+                if mx - mn > 22:
+                    issues.append(
+                        f"quiz {bi} q {qi}: spread {mx - mn} > 22 (lens {lens}) "
+                        f"— balance all four options"
+                    )
+            if right == mx and lens.count(right) == 1:
+                issues.append(
+                    f"quiz {bi} q {qi}: correct option is the unique longest "
+                    f"(lens {lens}) — length alone gives it away"
+                )
+            if right == mn and lens.count(right) == 1:
+                issues.append(
+                    f"quiz {bi} q {qi}: correct option is the unique shortest "
+                    f"(lens {lens}) — length alone gives it away"
+                )
+    return issues
+
+
+# ---------------------------------------------------------------------------
 # Driver
 # ---------------------------------------------------------------------------
 GUARDS_PHP = [
@@ -322,6 +387,7 @@ def main() -> None:
 
     total_fail = 0
     cite_fail = 0
+    quiz_fail = 0
     cite_checked = 0
     for path in sorted(root.glob("*.php")):
         if path.name in CITE_SKIP:
@@ -337,6 +403,15 @@ def main() -> None:
             print(f"Cites: {path.name}")
             print("=" * 64)
             for i in issues:
+                print(f"  ✗ {i}")
+
+        quiz_issues = guard_quiz_option_balance(php)
+        if quiz_issues:
+            quiz_fail += len(quiz_issues)
+            print("=" * 64)
+            print(f"Quiz: {path.name}")
+            print("=" * 64)
+            for i in quiz_issues:
                 print(f"  ✗ {i}")
 
     for php_name, js_name in LESSONS:
@@ -375,7 +450,9 @@ def main() -> None:
     print("=" * 64)
     print(f"Citation guards: {cite_checked} file(s) checked, "
           f"{cite_fail} issue(s)")
-    total_fail += cite_fail
+    print(f"Quiz balance guard: {cite_checked} file(s) checked, "
+          f"{quiz_fail} issue(s)")
+    total_fail += cite_fail + quiz_fail
     if total_fail:
         print(f"[FAIL] {total_fail} guard violation(s) found → exit code 1")
         sys.exit(1)
