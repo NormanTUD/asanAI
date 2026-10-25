@@ -2640,7 +2640,19 @@ function mn_admin_session_start(): void {
 }
 
 function mn_admin_is_authed(): bool {
-	return !empty($_SESSION['stats_auth']);
+	if (!empty($_SESSION['stats_auth'])) {
+		return true;
+	}
+	// PHP session files are garbage-collected by the server (often with a much
+	// shorter lifetime than our 30-day cookie), so restore access from the
+	// signed admin cookie instead of forcing another password entry.
+	if (session_status() !== PHP_SESSION_ACTIVE || !mn_analytics_is_admin_visitor()) {
+		return false;
+	}
+	$_SESSION['stats_auth'] = true;
+	$_SESSION['stats_fail'] = 0;
+	$_SESSION['stats_lock_until'] = 0;
+	return true;
 }
 
 function mn_admin_verify_password(string $input): bool {

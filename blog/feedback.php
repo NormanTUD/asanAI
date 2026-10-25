@@ -1115,7 +1115,7 @@ html[data-embed="1"] .table-wrap {
 		<h1><a class="brand" href="index">Reader feedback</a></h1>
 		<p class="sub">The same password as the analytics dashboard.</p>
 		<?php if ($loginError !== ''): ?><div class="error"><?php echo feedback_h($loginError); ?></div><?php endif; ?>
-		<form method="post" action="" autocomplete="off">
+		<form method="post" action="" autocomplete="on">
 			<input type="hidden" name="action" value="login">
 			<input type="hidden" name="csrf" value="<?php echo feedback_h(mn_admin_csrf()); ?>">
 			<label for="password">Password</label>

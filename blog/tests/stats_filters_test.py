@@ -133,6 +133,13 @@ def main() -> int:
 			check(session_cookie is not None and session_cookie.expires >= cookie_now + 29 * 86400, "session cookie lasts about one month")
 			check(admin_cookie is not None and admin_cookie.expires is not None and admin_cookie.expires >= cookie_now + 29 * 86400, "admin indicator cookie lasts about one month")
 
+			for cookie in list(session.cookies):
+				if cookie.name == "mnstats":
+					session.cookies.clear(cookie.domain, cookie.path, cookie.name)
+			restored = session.get(base, timeout=15)
+			check('id="hero"' in restored.text, "signed admin cookie restores access after the session is gone")
+			check(any(cookie.name == "mnstats" for cookie in session.cookies), "restored login issues a fresh session cookie")
+
 			now = int(time.time())
 			day = time.strftime("%Y-%m-%d", time.localtime(now))
 			with sqlite3.connect(db_path) as db:

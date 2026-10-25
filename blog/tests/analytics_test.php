@@ -23,6 +23,12 @@ putenv('BLOG_STATS_PASSWORD_FILE=' . $passwordFile);
 
 require_once __DIR__ . '/../lib/analytics.php';
 
+$sessionDir = $tmpDir . '/sessions';
+mkdir($sessionDir, 0700, true);
+session_save_path($sessionDir);
+session_id('asanai-analytics-test-' . bin2hex(random_bytes(4)));
+session_start();
+
 $checks = 0;
 $failures = 0;
 
@@ -443,7 +449,13 @@ $adminToken = mn_analytics_admin_token();
 check(preg_match('/^[a-f0-9]{64}$/', $adminToken) === 1, 'admin token shape');
 $_COOKIE['mn_stats_admin'] = $adminToken;
 check(mn_analytics_is_admin_visitor(), 'valid admin cookie is accepted');
+$_SESSION = [];
+check(mn_admin_is_authed(), 'valid admin cookie restores an expired session');
+check(!empty($_SESSION['stats_auth']), 'restored session is marked authenticated');
+$_SESSION = [];
 $_COOKIE['mn_stats_admin'] = str_repeat('0', 64);
+check(!mn_admin_is_authed(), 'invalid admin cookie does not restore the session');
+check(empty($_SESSION['stats_auth']), 'rejected cookie leaves the session unauthenticated');
 check(!mn_analytics_is_admin_visitor(), 'wrong admin cookie is rejected');
 unset($_COOKIE['mn_stats_admin']);
 check(!mn_analytics_is_admin_visitor(), 'missing admin cookie is rejected');
@@ -452,6 +464,13 @@ check(mn_analytics_alert_html() === '', 'non-admin gets no alert HTML');
 // ---------------------------------------------------------------------------
 // Cleanup
 // ---------------------------------------------------------------------------
+session_destroy();
+if (is_array(glob($sessionDir . '/*'))) {
+	foreach (glob($sessionDir . '/*') as $file) {
+		@unlink($file);
+	}
+}
+@rmdir($sessionDir);
 if (is_array(glob($tmpDir . '/*'))) {
 	foreach (glob($tmpDir . '/*') as $file) {
 		@unlink($file);

@@ -126,7 +126,7 @@ function stats_verify_password(string $input): bool {
 }
 
 function stats_is_authed(): bool {
-	return !empty($_SESSION['stats_auth']);
+	return mn_admin_is_authed();
 }
 
 function stats_login_wait(): int {
@@ -3529,14 +3529,14 @@ body.light .login-card, body.light .bot-dialog { box-shadow: var(--shadow); }
 			<div class="login-error"><?php echo stats_h($loginError); ?></div>
 		<?php endif; ?>
 		<?php if ($passwordStatus['ok']): ?>
-			<form method="post" action="" autocomplete="off">
+			<form method="post" action="" autocomplete="on">
 				<input type="hidden" name="action" value="login">
 				<input type="hidden" name="csrf" value="<?php echo stats_h(stats_csrf()); ?>">
 				<label for="password">Password</label>
-				<input id="password" name="password" type="password" autocomplete="new-password" autocapitalize="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-bwignore="true" autofocus required>
+				<input id="password" name="password" type="password" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" autofocus required>
 				<button type="submit">Sign in</button>
 			</form>
-			<p class="login-note">The password is checked server-side; this page does not write it to browser storage. Only technically necessary cookies are used (session, signed admin indicator, optional visit exclusion). No tracking cookies.</p>
+			<p class="login-note">The password is checked server-side. Only technically necessary cookies are used (session, signed admin indicator, optional visit exclusion). No tracking cookies.</p>
 		<?php else: ?>
 			<div class="setup">
 				<strong>Login is not configured yet.</strong>
