@@ -1812,7 +1812,7 @@ window.bibData = {
 	},
 	"cuevadelasmanos_image": {
 		title: "Cueva de las Manos (6811931046)",
-		author: "Wikimedia Commons",
+		author: "Pablo A. Gimenez",
 		year: 2012,
 		url: "https://commons.wikimedia.org/wiki/File:Cueva_de_las_Manos_(6811931046).jpg",
 		license: "CC BY-SA 2.0",
@@ -6072,7 +6072,7 @@ window.bibData = {
 		url: "https://commons.wikimedia.org/wiki/File:330-PSA-80-60_(USN_710739)_(20897323365).jpg",
 		title: "Experimental Machine Able To Identify Letters of Alphabet Announced By Navy",
 		alternativetitle: "The Mark I Perceptron",
-		author: "Unknown Photographer",
+		author: "U.S. Navy",
 		license: "Public domain",
 	},
 	"perceptronimagewiring": {
