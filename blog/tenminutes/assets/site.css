@@ -2829,3 +2829,23 @@ html[data-theme="light"] .demo-insight span { color: var(--tm-ink-soft); }
 
 .bar-row.is-cut { opacity: 0.28; }
 .bar-row.is-cut .bar-fill { background: var(--tm-muted); }
+
+.image-trio {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 10px;
+	margin: 26px 0;
+}
+.image-trio figure { margin: 0; }
+.image-trio img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 4 / 5;
+	object-fit: cover;
+	object-position: center top;
+	border-radius: 10px;
+	border: 1px solid var(--tm-line);
+	filter: saturate(0.9) contrast(1.02);
+}
+.image-trio figcaption { margin-top: 7px; }
+@media (max-width: 720px) { .image-trio { grid-template-columns: 1fr; } .image-trio img { aspect-ratio: 16/10; object-position: center; } }
