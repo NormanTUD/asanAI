@@ -61,7 +61,7 @@ a:hover{color:var(--accent-2)}
 h1,h2,h3,h4{font-family:var(--serif);line-height:1.04;letter-spacing:-.025em;margin:0;font-weight:700}
 p{margin:0 0 1em}
 .wrap{position:relative;z-index:2}
-.container{max-width:var(--max);margin:0 auto;padding:0 26px}
+.container{width:100%;max-width:var(--max);margin:0 auto;padding:0 26px}
 .mono{font-family:var(--mono)}
 .muted{color:var(--muted)}
 .faint{color:var(--faint)}
@@ -340,7 +340,7 @@ html.light{--accent:#c2410c;--accent-2:#0f766e;--accent-3:#a16207}
 .clock-meta{display:flex;gap:18px;flex-wrap:wrap;font-family:var(--mono);font-size:.6rem;color:var(--faint);letter-spacing:.08em;text-transform:uppercase}
 .clock-meta b{display:block;color:var(--ink);font-size:.86rem;margin-top:3px}
 @media(max-width:900px){.game-grid{grid-template-columns:1fr}.payoff-grid{grid-template-columns:1fr 1fr}.clock-wrap{grid-template-columns:1fr}.tx-selectors{grid-template-columns:1fr}}
-@media(max-width:620px){.payoff-grid{grid-template-columns:1fr}.tx-stage{aspect-ratio:600/390}.clock button{font-size:.48rem;padding:4px 6px}}
+@media(max-width:620px){.payoff-grid{grid-template-columns:1fr}.tx-stage{aspect-ratio:600/390}.clock button{font-size:.48rem;padding:4px 6px}.tx-node small{display:none}}
 
 </style>
 <noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>
