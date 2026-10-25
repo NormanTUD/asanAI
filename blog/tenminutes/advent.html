@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Thirty-one doors into AI: a guided calendar of ten-minute, interactive lessons.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>The 31-Door Calendar — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-page="advent">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<header class="topbar">
+		<a class="brand" href="index.html" aria-label="Ten Minutes, home">
+			<span class="brand-mark">10<sup>′</sup></span>
+			<span class="brand-name"><b>Ten</b> Minutes</span>
+			<span class="brand-by">ScaDS.AI</span>
+		</a>
+		<nav class="topnav" aria-label="Main">
+			<a href="index.html">Home</a>
+			<a href="advent.html" aria-current="page"><span class="nav-long">Advent </span>Calendar</a>
+			<a href="index.html#library">Library</a>
+			<button class="icon-btn" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Dark mode">
+				<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.7 6.7 0 0 0 9.8 9.8z"/></svg>
+				<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+			</button>
+		</nav>
+	</header>
+
+	<main id="main">
+		<div class="shell">
+			<section class="advent-hero">
+				<div>
+					<p class="kicker">The December Calendar · compact edition</p>
+					<h1 style="margin:0;font-family:var(--tm-display);font-weight:600;font-size:clamp(2.7rem,6vw,5.2rem);line-height:0.95;letter-spacing:-0.025em">
+						Thirty-one doors.<br><em style="font-style:normal;color:var(--tm-petrol)">One idea each.</em>
+					</h1>
+					<p class="hero-deck">
+						A guided month for a curious person, not a course for specialists. Six questions,
+						ten minutes per door, a demo you can touch, and a way back into the full chapter.
+						Start at Day 1 or jump to whatever you need.
+					</p>
+					<div class="hero-actions">
+						<a class="btn btn--green" href="#day-1">Start with Day 1</a>
+						<a class="btn btn--ghost" href="index.html#library">See the open lessons</a>
+					</div>
+					<div class="hero-meta">
+						<span class="pill pill--green"><b id="advent-done">0</b> of 31 completed</span>
+						<span class="pill">Six sections</span>
+						<span class="pill pill--blue">Progress saved locally</span>
+					</div>
+				</div>
+				<div style="padding:8px 0">
+					<div class="keypoints" style="grid-template-columns:1fr;margin:0">
+						<div class="keypoint">
+							<b>If you only have ten minutes</b>
+							<span>Open Day 1. It contains the one idea the rest of the year rests on.</span>
+						</div>
+						<div class="keypoint">
+							<b>If you want the technical core</b>
+							<span>Start at Day 16 (tokens) and read through Day 19 (sampling).</span>
+						</div>
+						<div class="keypoint">
+							<b>If you want the big picture</b>
+							<span>Days 27–31 zoom out to the ecosystem, the mind, the law, and the people.</span>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="section section--tight">
+				<div class="section-head">
+					<div>
+						<p class="kicker">How to use it</p>
+						<h2>Read one door a day — or follow the thread.</h2>
+					</div>
+					<p>The compact version is shorter than the full chapter, not a replacement for it. Every card keeps the link to the original lesson.</p>
+				</div>
+
+				<p class="week-label">Section 1 · First Questions · Days 1–5</p>
+				<div class="advent-grid">
+					<a class="day-card is-available" id="day-1" href="intuition.html" data-day="1" data-slug="intuition">
+						<span class="dc-today" hidden>Today</span>
+						<div class="dc-top"><span class="dc-num">01</span><span class="dc-part">Part 1</span></div>
+						<h3>One Word at a Time</h3>
+						<p>A model is a next-word predictor. Chat, code, translation: one trick repeated at scale.</p>
+						<div class="dc-foot"><span class="dc-tag">10 min</span><span class="dc-tag">No math</span><span class="dc-tag dc-open">Open compact →</span></div>
+					</a>
+					<a class="day-card is-available" id="day-2" href="history.html" data-day="2" data-slug="history">
+						<span class="dc-today" hidden>Today</span>
+						<div class="dc-top"><span class="dc-num">02</span><span class="dc-part">Part 1</span></div>
+						<h3>Where AI Came From</h3>
+						<p>Tally bones, gears, logic, and the long convergence that produced the transformer.</p>
+						<div class="dc-foot"><span class="dc-tag">10 min</span><span class="dc-tag">No math</span><span class="dc-tag dc-open">Open compact →</span></div>
+					</a>
+					<a class="day-card" id="day-3" href="../math_i.php" data-day="3">
+						<div class="dc-top"><span class="dc-num">03</span><span class="dc-part">Part 1</span></div>
+						<h3>The Math You Actually Need</h3>
+						<p>Sums, functions, vectors, matrices: a feel for what the numbers and arrows do.</p>
+						<div class="dc-foot"><span class="dc-tag">35–45 min</span><span class="dc-tag">Light math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-4" href="../geometry_ii.php" data-day="4">
+						<div class="dc-top"><span class="dc-num">04</span><span class="dc-part">Part 1</span></div>
+						<h3>Space, Meaning, and Language</h3>
+						<p>Meaning as position, language as the human space a model tries to learn.</p>
+						<div class="dc-foot"><span class="dc-tag">35–45 min</span><span class="dc-tag">Some math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-5" href="../statistics_i.php" data-day="5">
+						<div class="dc-top"><span class="dc-num">05</span><span class="dc-part">Part 1</span></div>
+						<h3>Thinking in Probabilities</h3>
+						<p>Distributions, Bayes, entropy: how a model reasons under uncertainty.</p>
+						<div class="dc-foot"><span class="dc-tag">35–45 min</span><span class="dc-tag">Some math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+				</div>
+
+				<p class="week-label">Section 2 · How a Network Learns · Days 6–11</p>
+				<div class="advent-grid">
+					<a class="day-card" id="day-6" href="../losslab.php" data-day="6">
+						<div class="dc-top"><span class="dc-num">06</span><span class="dc-part">Part 2</span></div>
+						<h3>Learning by Being Wrong</h3>
+						<p>Guess, measure the error, nudge the settings. The smallest possible network.</p>
+						<div class="dc-foot"><span class="dc-tag">25–35 min</span><span class="dc-tag">Light math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-7" href="../derivativelab.php" data-day="7">
+						<div class="dc-top"><span class="dc-num">07</span><span class="dc-part">Part 2</span></div>
+						<h3>The Chain Rule That Trains Everything</h3>
+						<p>Backpropagation is the chain rule, applied backward to assign credit and blame.</p>
+						<div class="dc-foot"><span class="dc-tag">30–40 min</span><span class="dc-tag">Math helps</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-8" href="../autodiff.php" data-day="8">
+						<div class="dc-top"><span class="dc-num">08</span><span class="dc-part">Part 2</span></div>
+						<h3>Gradients on Autopilot</h3>
+						<p>Automatic differentiation computes the slope; the optimizer decides the step.</p>
+						<div class="dc-foot"><span class="dc-tag">30–40 min</span><span class="dc-tag">Math helps</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-9" href="../activationlab.php" data-day="9">
+						<div class="dc-top"><span class="dc-num">09</span><span class="dc-part">Part 2</span></div>
+						<h3>Why Nonlinearity Matters</h3>
+						<p>Stacking linear layers is still a line. Nonlinear gates let a network bend.</p>
+						<div class="dc-foot"><span class="dc-tag">30–40 min</span><span class="dc-tag">Some math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-10" href="../deeplearninglab.php" data-day="10">
+						<div class="dc-top"><span class="dc-num">10</span><span class="dc-part">Part 3</span></div>
+						<h3>Depth, Memory, and Overfitting</h3>
+						<p>Depth builds features on features. Overfitting learns the noise instead.</p>
+						<div class="dc-foot"><span class="dc-tag">30–40 min</span><span class="dc-tag">Light math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-11" href="../resnetlab.php" data-day="11">
+						<div class="dc-top"><span class="dc-num">11</span><span class="dc-part">Part 3</span></div>
+						<h3>Deep Networks That Stay Trainable</h3>
+						<p>Residual connections and layer norm: the plumbing inside every transformer block.</p>
+						<div class="dc-foot"><span class="dc-tag">30–40 min</span><span class="dc-tag">Some math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+				</div>
+
+				<p class="week-label">Section 3 · Signals, Senses, and Software · Days 12–16</p>
+				<div class="advent-grid">
+					<a class="day-card" id="day-12" href="../computer_vision.php" data-day="12">
+						<div class="dc-top"><span class="dc-num">12</span><span class="dc-part">Part 3</span></div>
+						<h3>How Machines See</h3>
+						<p>A computer sees a grid of numbers. Convolution learns edges, parts, objects.</p>
+						<div class="dc-foot"><span class="dc-tag">30–40 min</span><span class="dc-tag">Light math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-13" href="../multimodal.php" data-day="13">
+						<div class="dc-top"><span class="dc-num">13</span><span class="dc-part">Part 4</span></div>
+						<h3>Connecting Images and Words</h3>
+						<p>Image-text alignment and diffusion generation: two tricks, one idea.</p>
+						<div class="dc-foot"><span class="dc-tag">30–40 min</span><span class="dc-tag">Some math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-14" href="../speech_audio.php" data-day="14">
+						<div class="dc-top"><span class="dc-num">14</span><span class="dc-part">Part 4</span></div>
+						<h3>Sound, Music, and Video</h3>
+						<p>Waveforms into pieces, frames into sequences, prediction into generation.</p>
+						<div class="dc-foot"><span class="dc-tag">30–40 min</span><span class="dc-tag">Light math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-15" href="../software.php" data-day="15">
+						<div class="dc-top"><span class="dc-num">15</span><span class="dc-part">Part 6</span></div>
+						<h3>The Stack Underneath</h3>
+						<p>Operating systems, languages, libraries: the ordinary software under the magic.</p>
+						<div class="dc-foot"><span class="dc-tag">15–20 min</span><span class="dc-tag">No math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card is-available" id="day-16" href="tokenizerlab.html" data-day="16" data-slug="tokenizerlab">
+						<span class="dc-today" hidden>Today</span>
+						<div class="dc-top"><span class="dc-num">16</span><span class="dc-part">Part 4</span></div>
+						<h3>Chopping Text into Tokens</h3>
+						<p>Why “strawberry” is not one token, and what an embedding actually is.</p>
+						<div class="dc-foot"><span class="dc-tag">10 min</span><span class="dc-tag">Light math</span><span class="dc-tag dc-open">Open compact →</span></div>
+					</a>
+				</div>
+
+				<p class="week-label">Section 4 · The Transformer and Its Mind · Days 17–22</p>
+				<div class="advent-grid">
+					<a class="day-card is-available" id="day-17" href="attentionlab.html" data-day="17" data-slug="attentionlab">
+						<span class="dc-today" hidden>Today</span>
+						<div class="dc-top"><span class="dc-num">17</span><span class="dc-part">Part 4</span></div>
+						<h3>Memory and Attention</h3>
+						<p>Recurrence read one step at a time. Attention let every token look at once.</p>
+						<div class="dc-foot"><span class="dc-tag">10 min</span><span class="dc-tag">Some math</span><span class="dc-tag dc-open">Open compact →</span></div>
+					</a>
+					<a class="day-card is-available" id="day-18" href="transformer.html" data-day="18" data-slug="transformer">
+						<span class="dc-today" hidden>Today</span>
+						<div class="dc-top"><span class="dc-num">18</span><span class="dc-part">Part 4</span></div>
+						<h3>Position and the Transformer</h3>
+						<p>Attention has no order. Position plus attention plus FFN gives the block.</p>
+						<div class="dc-foot"><span class="dc-tag">10 min</span><span class="dc-tag">Some math</span><span class="dc-tag dc-open">Open compact →</span></div>
+					</a>
+					<a class="day-card" id="day-19" href="../samplinglab.php" data-day="19">
+						<div class="dc-top"><span class="dc-num">19</span><span class="dc-part">Part 4</span></div>
+						<h3>Choosing the Next Token</h3>
+						<p>Temperature, top-p, sampling — and the circuits that make the choice.</p>
+						<div class="dc-foot"><span class="dc-tag">35–45 min</span><span class="dc-tag">Some math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-20" href="../fact_lookup.php" data-day="20">
+						<div class="dc-top"><span class="dc-num">20</span><span class="dc-part">Part 4</span></div>
+						<h3>Where Facts Live</h3>
+						<p>A stored fact in the weights, an algorithm run in the prompt.</p>
+						<div class="dc-foot"><span class="dc-tag">30–40 min</span><span class="dc-tag">Light math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-21" href="../contextwindows.php" data-day="21">
+						<div class="dc-top"><span class="dc-num">21</span><span class="dc-part">Part 5</span></div>
+						<h3>Context, Memory, and Search</h3>
+						<p>The context window is working memory. Vector search finds what falls outside it.</p>
+						<div class="dc-foot"><span class="dc-tag">30–40 min</span><span class="dc-tag">Light math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-22" href="../finetuninglab.php" data-day="22">
+						<div class="dc-top"><span class="dc-num">22</span><span class="dc-part">Part 5</span></div>
+						<h3>Turning a Model into an Assistant</h3>
+						<p>Post-training teaches a raw predictor to follow instructions. Data decides what it learns.</p>
+						<div class="dc-foot"><span class="dc-tag">30–40 min</span><span class="dc-tag">Light math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+				</div>
+
+				<p class="week-label">Section 5 · Using AI Without Being Fooled · Days 23–26</p>
+				<div class="advent-grid">
+					<a class="day-card" id="day-23" href="../hallucinations.php" data-day="23">
+						<div class="dc-top"><span class="dc-num">23</span><span class="dc-part">Part 5</span></div>
+						<h3>When the Model Does Not Know</h3>
+						<p>Plausible is not true. RAG and web search ground the answer in documents.</p>
+						<div class="dc-foot"><span class="dc-tag">35–45 min</span><span class="dc-tag">Light math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card is-available" id="day-24" href="agents.html" data-day="24" data-slug="agents">
+						<span class="dc-today" hidden>Today</span>
+						<div class="dc-top"><span class="dc-num">24</span><span class="dc-part">Part 5</span></div>
+						<h3>Agents, Tools, and Risks</h3>
+						<p>A model in a loop with tools, a plan, and memory — plus a new attack surface.</p>
+						<div class="dc-foot"><span class="dc-tag">10 min</span><span class="dc-tag">No math</span><span class="dc-tag dc-open">Open compact →</span></div>
+					</a>
+					<a class="day-card" id="day-25" href="../reasoning.php" data-day="25">
+						<div class="dc-top"><span class="dc-num">25</span><span class="dc-part">Part 5</span></div>
+						<h3>Reasoning and Evaluation</h3>
+						<p>Think longer before answering. Then ask whether the benchmark measured understanding.</p>
+						<div class="dc-foot"><span class="dc-tag">35–45 min</span><span class="dc-tag">Light math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-26" href="../promptengineering.php" data-day="26">
+						<div class="dc-top"><span class="dc-num">26</span><span class="dc-part">Part 5</span></div>
+						<h3>The Craft and the Cost</h3>
+						<p>Clear prompting is communication. A token has a price because serving is real computation.</p>
+						<div class="dc-foot"><span class="dc-tag">35–45 min</span><span class="dc-tag">Light math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+				</div>
+
+				<p class="week-label">Section 6 · The Larger Questions · Days 27–31</p>
+				<div class="advent-grid">
+					<a class="day-card" id="day-27" href="../global_ai_ecosystem.php" data-day="27">
+						<div class="dc-top"><span class="dc-num">27</span><span class="dc-part">Part 6</span></div>
+						<h3>The Global Map</h3>
+						<p>Compute, data, talent, regulation: AI is not only a Silicon Valley story.</p>
+						<div class="dc-foot"><span class="dc-tag">35–45 min</span><span class="dc-tag">Light math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-28" href="../human_mind.php" data-day="28">
+						<div class="dc-top"><span class="dc-num">28</span><span class="dc-part">Part 6</span></div>
+						<h3>Minds and Mirrors</h3>
+						<p>The brain is not a computer, and a model is not a brain. The comparison still helps.</p>
+						<div class="dc-foot"><span class="dc-tag">35–45 min</span><span class="dc-tag">Light math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-29" href="../frontier.php" data-day="29">
+						<div class="dc-top"><span class="dc-num">29</span><span class="dc-part">Part 6</span></div>
+						<h3>The Frontier and the Rules</h3>
+						<p>New architectures, the alignment problem, and law trying to catch up.</p>
+						<div class="dc-foot"><span class="dc-tag">35–45 min</span><span class="dc-tag">Light math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-30" href="../ai_for_science.php" data-day="30">
+						<div class="dc-top"><span class="dc-num">30</span><span class="dc-part">Part 6</span></div>
+						<h3>Science, Society, and Risk</h3>
+						<p>Prediction becomes discovery; culture and work change; risk needs honest uncertainty.</p>
+						<div class="dc-foot"><span class="dc-tag">35–45 min</span><span class="dc-tag">No math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+					<a class="day-card" id="day-31" href="../people_of_ai.php" data-day="31">
+						<div class="dc-top"><span class="dc-num">31</span><span class="dc-part">Part 6</span></div>
+						<h3>The People and the Map</h3>
+						<p>Ideas arrive through people and institutions. Close the year by zooming out.</p>
+						<div class="dc-foot"><span class="dc-tag">35–45 min</span><span class="dc-tag">No math</span><span class="dc-tag">Full lesson</span></div>
+					</a>
+				</div>
+			</section>
+
+			<section class="section section--tight">
+				<div class="feature-strip" data-reveal>
+					<div class="feature-main">
+						<p class="kicker">After December</p>
+						<h2>Use the calendar as a route, not a fence.</h2>
+						<p>
+							If a side question grabs you, follow it. The full course has specialist doors
+							outside this path: distributed training, serving, inference kernels, topology,
+							and the deepest excursions into category theory.
+						</p>
+						<a class="btn" href="../index.php">Open the full course
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+						</a>
+					</div>
+					<div class="feature-second">
+						<div>
+							<h3>The map of everything</h3>
+							<p>The Atlas places every person, place, institution, and event in the course on one interactive globe, with threads between them.</p>
+						</div>
+						<a class="btn btn--ghost" href="../atlas.php">Explore the Atlas</a>
+					</div>
+				</div>
+			</section>
+		</div>
+	</main>
+
+	<footer class="footer">
+		<div class="shell footer-grid">
+			<div>
+				<div class="footer-brand">10<sup>′</sup> Minutes</div>
+				<p>A compact companion to <a href="../index.php">From Nothing to ChatGPT</a>. Cards without a compact version link to the full original lesson.</p>
+			</div>
+			<div>
+				<nav aria-label="Footer">
+					<a href="index.html">Home</a>
+					<a href="index.html#library">Library</a>
+					<a href="../december.php">The long December Calendar</a>
+					<a href="../atlas.php">The Atlas</a>
+				</nav>
+				<p style="margin-top:10px">Progress stays in your browser. No account, no tracking.</p>
+			</div>
+		</div>
+	</footer>
+
+	<script src="assets/site.js"></script>
+	<script>
+	(function () {
+		"use strict";
+		var cards = Array.prototype.slice.call(document.querySelectorAll(".day-card"));
+		var done = TM.done();
+		var doneCount = 0;
+		cards.forEach(function (card) {
+			var slug = card.getAttribute("data-slug");
+			if (slug && done.indexOf(slug) !== -1) {
+				card.classList.add("is-done");
+				doneCount++;
+			}
+		});
+		var counter = document.getElementById("advent-done");
+		if (counter) counter.textContent = doneCount;
+
+		var now = new Date();
+		if (now.getMonth() === 11) {
+			var today = now.getDate();
+			var card = document.getElementById("day-" + today);
+			if (card) {
+				card.classList.add("is-today");
+				var badge = card.querySelector(".dc-today");
+				if (badge) badge.hidden = false;
+			}
+		}
+
+		var last = TM.storage.get("tm_last", null);
+		if (last && last.slug) {
+			var path = last.slug + ".html";
+			var heroActions = document.querySelector(".hero-actions");
+			if (heroActions && document.querySelector('a[href="' + path + '"]')) {
+				var cont = document.createElement("a");
+				cont.className = "btn";
+				cont.href = path;
+				cont.textContent = "Continue: " + (last.title || path).replace(" — Ten Minutes", "");
+				heroActions.appendChild(cont);
+			}
+		}
+	})();
+	</script>
+</body>
+</html>

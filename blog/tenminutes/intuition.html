@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="A ten-minute interactive introduction to next-token prediction, the loop behind large language models.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>One Word at a Time — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="intuition" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<header class="topbar">
+		<a class="brand" href="index.html" aria-label="Ten Minutes, home">
+			<span class="brand-mark">10<sup>′</sup></span>
+			<span class="brand-name"><b>Ten</b> Minutes</span>
+			<span class="brand-by">ScaDS.AI</span>
+		</a>
+		<nav class="topnav" aria-label="Main">
+			<a href="index.html">Home</a>
+			<a href="advent.html">Calendar</a>
+			<a href="index.html#library">Library</a>
+			<button class="icon-btn" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Dark mode">
+				<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.7 6.7 0 0 0 9.8 9.8z"/></svg>
+				<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+			</button>
+		</nav>
+	</header>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<p class="kicker">Day 1 · Part 1 · Foundations</p>
+					<h1>One word<br><em>at a time.</em></h1>
+					<p class="hero-deck">
+						A large language model is a next-token predictor. <strong>Chat, code, translation,
+						reasoning</strong> — everything else is that one trick repeated in a loop, at
+						enormous scale. Follow a sentence through the loop and see why next-token prediction
+						can look like understanding.
+					</p>
+					<div class="hero-meta">
+						<span class="pill pill--green">10 minutes</span>
+						<span class="pill">No math</span>
+						<span class="pill pill--blue">2 interactive demos</span>
+						<span class="pill">Self-check</span>
+					</div>
+				</div>
+				<div class="dial-wrap" aria-hidden="true">
+					<div class="dial">
+						<div class="dial-ticks" data-ticks></div>
+						<div class="dial-orbit"><span style="--a:20deg"></span><span style="--a:140deg"></span><span style="--a:260deg"></span></div>
+						<div class="dial-inner">
+							<span class="dial-time" data-timer-display>10:00</span>
+							<span class="dial-label">your ten minutes</span>
+							<span class="dial-sub">starts when you scroll</span>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
+						<h2 class="section-title">The only trick it knows.</h2>
+						<div class="prose">
+							<p>
+								There is no “understanding” module inside a language model, no grammar
+								checker, no shelf of stored facts. The model reads a sequence of tokens and
+								returns a <strong>probability for every possible next token</strong>. One
+								token is chosen, appended to the input, and the whole thing runs again.
+							</p>
+							<p>
+								That is the <strong>autoregressive loop</strong>: output becomes input, one
+								step later. A conversation, a poem, a Python function — all of it is this
+								loop, writing one piece at a time.
+							</p>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">It outputs a distribution, not a single answer.</p>
+							<p class="aha-sub">A decoder turns that distribution into text: greedy decoding always takes the top token, while temperature and top-p add controlled randomness. Novelty is not the same as creativity — and randomness alone usually produces noise, not insight.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="loop">
+						<div class="section-kicker"><span class="sk-num">02</span> Play the loop</div>
+						<h2 class="section-title">Write a sentence, one token at a time.</h2>
+						<div class="prose">
+							<p>
+								Below is a deliberately tiny toy model. It knows a handful of continuations.
+								Pick a token or let it draw one; the new token becomes part of the context,
+								and the next distribution is computed from everything so far.
+							</p>
+						</div>
+
+						<div class="demo" id="next-token-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The autoregressive loop <span>· demo 01</span></p>
+									<p class="demo-sub">Click a candidate or let the toy model choose. Change the temperature to make it predictable or surprising.</p>
+								</div>
+								<span class="demo-badge">live</span>
+							</div>
+							<div class="demo-body">
+								<div class="prediction">
+									<div class="prediction-sentence" id="nt-sentence" aria-live="polite"></div>
+									<div class="bars" id="nt-bars" role="group" aria-label="Next token probabilities"></div>
+								</div>
+								<div class="demo-controls">
+									<button class="btn-demo btn-demo--green" type="button" id="nt-step">Let it choose →</button>
+									<button class="btn-demo" type="button" id="nt-reset">Reset</button>
+									<label>Temperature
+										<input type="range" id="nt-temp" min="0.2" max="1.8" step="0.05" value="0.8">
+										<output id="nt-temp-out">0.80</output>
+									</label>
+								</div>
+								<div class="demo-readout">
+									<div><b>Step</b><span id="nt-step-count">0 / 4</span></div>
+									<div><b>Context length</b><span id="nt-len">5 tokens</span></div>
+									<div><b>Top choice</b><span id="nt-top">Paris</span></div>
+								</div>
+							</div>
+							<div class="demo-foot">
+								Toy logits, not a real model. The mechanism is real: a distribution over the
+								vocabulary, a decoding rule, append, repeat. This demo always samples;
+								production systems may use greedy or beam search instead. Try temperature
+								0.2, then 1.8.
+							</div>
+						</div>
+
+						<div class="prose">
+							<p>
+								Temperature is only one decoding choice, and it does not change what the model
+								knows. At temperature zero — greedy decoding — the top candidate is taken every
+								time: deterministic, often repetitive, but still a freshly computed
+								distribution rather than a lookup. Above zero, sampling draws from the
+								distribution. Low temperature concentrates on likely tokens; high temperature
+								flattens the distribution and can produce incoherence. Top-k and top-p restrict
+								the pool before drawing.
+							</p>
+							<p>
+								The competence lives in the learned distribution; the decoder only selects from
+								it. Sampling can make output more varied, but variation is not creativity:
+								useful novelty depends on structure, context, and the quality of the
+								distribution, and raising the temperature usually trades coherence for
+								surprise.
+							</p>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">Prediction and compression are the same goal.</p>
+							<p class="aha-sub">To predict the next token well, a model must find the shortest description of the data — and the shortest description of language keeps requiring a model of the world that produced it.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="meadow">
+						<div class="section-kicker"><span class="sk-num">03</span> The geometry</div>
+						<h2 class="section-title">A finite vocabulary over an infinite space.</h2>
+						<div class="prose">
+							<p>
+								Under the hood, the model does not choose from a list. It arrives at a
+								<strong>point in a continuous space of possible next-thoughts</strong>. Every
+								word in the vocabulary owns the region of that space closest to it — like
+								pins in a meadow, each with its own territory. The thought falls into the
+								cell of the nearest word.
+							</p>
+							<p>
+								The boundaries between cells are <strong>seams</strong>: places where two
+								words are equally near and the choice could tip either way. Move the thought
+								around and watch the model become certain, then undecided, then certain again.
+							</p>
+						</div>
+
+						<div class="demo" id="meadow-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The meadow of words <span>· demo 02</span></p>
+									<p class="demo-sub">Move the pointer across the field. Each pin owns the thoughts closest to it; the margin tells you how close you are to a seam.</p>
+								</div>
+								<span class="demo-badge">move me</span>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas" id="meadow-canvas" style="height:340px" aria-label="A Voronoi field of words. Move the pointer to place a thought."></canvas>
+								<div class="demo-readout">
+									<div><b>Thought falls into</b><span id="md-word">Paris</span></div>
+									<div><b>Winning chance</b><span id="md-chance">—</span></div>
+									<div><b>Margin to seam</b><span id="md-margin">—</span></div>
+								</div>
+								<div class="demo-controls">
+									<label>Temperature
+										<input type="range" id="md-temp" min="0.2" max="1.8" step="0.05" value="0.8">
+										<output id="md-temp-out">0.80</output>
+									</label>
+									<button class="btn-demo" type="button" id="md-seam">Place on a seam</button>
+									<button class="btn-demo" type="button" id="md-reset">Reset thought</button>
+								</div>
+								<p class="meadow-caption" id="md-caption">The meadow is a finite vocabulary laid over an infinite space of meaning.</p>
+							</div>
+							<div class="demo-foot">
+								In a real model the space has thousands of dimensions and the vocabulary has
+								tens of thousands of tokens. The geometry is the same; only the scale changes.
+							</div>
+						</div>
+					</section>
+
+					<section class="section-block" id="whole">
+						<div class="section-kicker"><span class="sk-num">04</span> The whole loop</div>
+						<h2 class="section-title">Text in, geometry, one word out.</h2>
+						<div class="prose">
+							<p>
+								Put the pieces in order and the machine is almost disappointingly simple:
+								text is cut into <strong>tokens</strong>; each token becomes a
+								<strong>vector</strong>; a <strong>position</strong> signal is added;
+								layer after layer, <strong>attention</strong> lets every vector look at its
+								neighbours while a <strong>residual stream</strong> carries earlier
+								findings forward; the final vector is scored against the vocabulary and
+								turned into a distribution; one token is drawn and appended.
+							</p>
+							<p>
+								No step stores a fact; no step “understands” in the human sense. Meaning
+								lives in the <strong>geometry</strong> — directions, distances, regions —
+								and the model’s only job at each step is to place the next thought somewhere
+								in that space. The meadow is that last step, seen up close.
+							</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>What it is</b><span>A next-token predictor: one distribution, one draw, one append, repeated.</span></div>
+							<div class="keypoint"><b>Why it scales</b><span>Prediction is compression; better compression needs more of the world’s structure.</span></div>
+							<div class="keypoint"><b>What it is not</b><span>A database, a planner, or a guaranteed truth machine. It predicts plausible text.</span></div>
+							<div class="keypoint"><b>The contested part</b><span>Whether fluent prediction is genuine world knowledge or “stochastic parroting” is not settled.</span></div>
+						</div>
+						<div class="prose">
+							<p>
+								That last point matters. The compression-as-intelligence view is a productive
+								working hypothesis, not a proved identity. Solomonoff’s theorem is about
+								prediction, not understanding; it does not settle whether a particular model
+								has world knowledge. The honest position is that the empirical evidence is
+								still catching up to the philosophy — and that both the awe and the scepticism
+								are responses to the same remarkable fact: a loop this simple gets this far.
+							</p>
+						</div>
+						<div class="pullquote">
+							A large language model is a finite vocabulary laid over an infinite space of
+							meaning — and a loop that keeps falling from one point in that space to the next word.
+							<cite>From the full chapter</cite>
+						</div>
+					</section>
+
+					<section class="quiz" data-quiz="intuition" aria-label="Self-check"></section>
+
+					<nav class="lesson-nav" aria-label="Lesson navigation">
+						<a href="intro.html"><span class="ln-label">Previous</span><span class="ln-title">What this course is</span></a>
+						<a href="history.html"><span class="ln-label">Next</span><span class="ln-title">A very long fuse</span></a>
+					</nav>
+
+					<div class="lesson-footer">
+						Condensed from <a href="../intuition.php">An Intuition of how Large Language Models work</a>
+						(Part 1, Lesson 1). The full chapter adds tokenization, embeddings, positional
+						encoding, attention, the truth tunnel, and the mathematics of compression.
+						All demos here are small, honest toys built for this page.
+					</div>
+				</article>
+
+				<aside class="rail" aria-label="On this page">
+					<div class="rail-timer">
+						<div>
+							<div class="rt-num" data-timer-display>10:00</div>
+							<div class="rt-label">ten-minute timer</div>
+						</div>
+						<button type="button" data-timer-toggle aria-label="Start the ten-minute timer" title="Start timer"></button>
+					</div>
+					<nav class="rail-nav">
+						<a href="#idea"><i></i>The only trick</a>
+						<a href="#loop"><i></i>Play the loop</a>
+						<a href="#meadow"><i></i>The meadow</a>
+						<a href="#whole"><i></i>The whole loop</a>
+					</nav>
+					<div class="rail-source">
+						Read the original:<br>
+						<a href="../intuition.php">An Intuition of how LLMs work</a>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</main>
+
+	<footer class="footer">
+		<div class="shell footer-grid">
+			<div>
+				<div class="footer-brand">10<sup>′</sup> Minutes</div>
+				<p>A compact companion to <a href="../index.php">From Nothing to ChatGPT</a>. Full sources and citations live in the long course.</p>
+			</div>
+			<nav aria-label="Footer">
+				<a href="index.html">Home</a>
+				<a href="advent.html">Calendar</a>
+				<a href="history.html">Next: History</a>
+				<a href="../intuition.php">Full chapter</a>
+			</nav>
+		</div>
+	</footer>
+
+	<script type="application/json" id="quiz-data">
+	{
+		"title": "How an LLM writes",
+		"questions": [
+			{
+				"q": "At its core, what does a large language model do at every step?",
+				"options": [
+					"Assign a probability to every token, then sample one",
+					"Look up the likely answer in a large text database",
+					"Plan the entire reply before writing the first word",
+					"Translate the prompt into formal logic, then solve it"
+				],
+				"answer": 0,
+				"explain": "It is a next-token predictor: a distribution over the vocabulary, one sampled token, then the loop repeats."
+			},
+			{
+				"q": "What happens to a token right after the model has produced it?",
+				"options": [
+					"It is appended to the context for the next step",
+					"It is discarded once the next token is chosen",
+					"It is checked against a dictionary of meanings",
+					"It is sent back into training for an update"
+				],
+				"answer": 0,
+				"explain": "This is the autoregressive loop: the output becomes part of the input one step later."
+			},
+			{
+				"q": "What is the relationship between prediction and compression here?",
+				"options": [
+					"Compression and prediction are deeply linked",
+					"Compression and prediction are unrelated goals",
+					"Compression is only used to store the weights",
+					"Compression replaces the need for training data"
+				],
+				"answer": 0,
+				"explain": "A better predictor is a better compressor of the data. The stronger claim — that this means the model understands — remains contested."
+			}
+		]
+	}
+	</script>
+	<script src="assets/site.js"></script>
+	<script>
+	(function () {
+		"use strict";
+		document.querySelectorAll("[data-ticks]").forEach(function (box) {
+			for (var i = 0; i < 30; i++) {
+				var t = document.createElement("i");
+				t.style.transform = "rotate(" + (i * 12) + "deg) translateY(calc(min(330px, 76vw) * -0.44))";
+				box.appendChild(t);
+			}
+		});
+
+		/* ── demo 1: the autoregressive loop ─────────────────── */
+		var stages = [
+			[
+				{ t: "Paris", l: 3.2 }, { t: "Lyon", l: 0.8 }, { t: "the", l: 0.6 }, { t: "a", l: 0.4 }, { t: "home", l: 0.2 }
+			],
+			[
+				{ t: ".", l: 2.6 }, { t: ",", l: 2.2 }, { t: "and", l: 1.7 }, { t: "which", l: 0.9 }, { t: "where", l: 0.6 }
+			],
+			[
+				{ t: "It", l: 2.7 }, { t: "The", l: 2.2 }, { t: "This", l: 1.8 }, { t: "A", l: 0.9 }, { t: "France", l: 0.4 }
+			],
+			[
+				{ t: "is", l: 3.1 }, { t: "was", l: 1.2 }, { t: "remains", l: 0.8 }, { t: "has", l: 0.5 }, { t: "became", l: 0.3 }
+			]
+		];
+		var base = ["The", "capital", "of", "France", "is"];
+		var generated = [];
+		var stage = 0;
+		var temp = 0.8;
+		var sentenceEl = document.getElementById("nt-sentence");
+		var barsEl = document.getElementById("nt-bars");
+		var stepBtn = document.getElementById("nt-step");
+		var resetBtn = document.getElementById("nt-reset");
+		var tempEl = document.getElementById("nt-temp");
+		var tempOut = document.getElementById("nt-temp-out");
+		var stepCount = document.getElementById("nt-step-count");
+		var lenEl = document.getElementById("nt-len");
+		var topEl = document.getElementById("nt-top");
+
+		function softmax(logits, t) {
+			var max = Math.max.apply(null, logits);
+			var exps = logits.map(function (l) { return Math.exp((l - max) / Math.max(0.05, t)); });
+			var sum = exps.reduce(function (a, b) { return a + b; }, 0);
+			return exps.map(function (e) { return e / sum; });
+		}
+		function join(tokens) {
+			var out = "";
+			tokens.forEach(function (tok, i) {
+				var noSpace = /^[.,!?;:)\]]/.test(tok);
+				if (i && !noSpace) out += " ";
+				out += tok;
+			});
+			return out;
+		}
+		function renderSentence() {
+			if (!sentenceEl) return;
+			var html = "";
+			base.forEach(function (tok) { html += '<span class="given">' + escapeHtml(tok) + "</span> "; });
+			generated.forEach(function (tok) { html += '<span class="pred">' + escapeHtml(tok) + "</span> "; });
+			if (stage >= stages.length) {
+				html += '<span class="given" style="opacity:.55">— end of sequence</span>';
+			} else {
+				html += '<span class="cursor" aria-hidden="true"></span>';
+			}
+			sentenceEl.innerHTML = html;
+		}
+		function escapeHtml(s) {
+			return s.replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
+		}
+		function renderBars() {
+			if (!barsEl) return;
+			barsEl.innerHTML = "";
+			if (stage >= stages.length) {
+				var done = document.createElement("p");
+				done.style.cssText = "margin:0;color:rgba(238,247,244,.62);font-family:var(--tm-prose);font-size:.9rem";
+				done.textContent = "The model would now emit an end-of-sequence token, or keep going if the context invited it.";
+				barsEl.appendChild(done);
+				if (stepBtn) { stepBtn.disabled = true; stepBtn.style.opacity = ".45"; }
+				return;
+			}
+			if (stepBtn) { stepBtn.disabled = false; stepBtn.style.opacity = "1"; }
+			var options = stages[stage];
+			var probs = softmax(options.map(function (o) { return o.l; }), temp);
+			var top = 0;
+			probs.forEach(function (p, i) { if (p > probs[top]) top = i; });
+			options.forEach(function (opt, i) {
+				var row = document.createElement("button");
+				row.type = "button";
+				row.className = "bar-row" + (i === top ? " is-top" : "");
+				row.setAttribute("aria-label", "Choose " + opt.t + ", probability " + Math.round(probs[i] * 100) + " percent");
+				row.innerHTML = '<span class="bar-name">' + escapeHtml(opt.t === " " ? "␣" : opt.t) + '</span>'
+					+ '<span class="bar-track"><span class="bar-fill" style="width:' + (probs[i] * 100).toFixed(2) + '%"></span></span>'
+					+ '<span class="bar-pct">' + Math.round(probs[i] * 100) + '%</span>';
+				row.addEventListener("click", function () { choose(opt.t); });
+				barsEl.appendChild(row);
+			});
+			if (topEl) topEl.textContent = options[top].t === " " ? "␣ (space)" : options[top].t;
+		}
+		function choose(token) {
+			if (stage >= stages.length) return;
+			generated.push(token);
+			stage++;
+			renderSentence();
+			renderBars();
+			updateReadout();
+		}
+		function sample() {
+			if (stage >= stages.length) return;
+			var options = stages[stage];
+			var probs = softmax(options.map(function (o) { return o.l; }), temp);
+			var r = Math.random();
+			var acc = 0;
+			for (var i = 0; i < probs.length; i++) {
+				acc += probs[i];
+				if (r <= acc) { choose(options[i].t); return; }
+			}
+			choose(options[probs.length - 1].t);
+		}
+		function updateReadout() {
+			if (stepCount) stepCount.textContent = Math.min(stage, stages.length) + " / " + stages.length;
+			if (lenEl) lenEl.textContent = (base.length + generated.length) + " tokens";
+		}
+		function reset() {
+			generated = [];
+			stage = 0;
+			renderSentence();
+			renderBars();
+			updateReadout();
+		}
+		if (stepBtn) stepBtn.addEventListener("click", sample);
+		if (resetBtn) resetBtn.addEventListener("click", reset);
+		if (tempEl) {
+			tempEl.addEventListener("input", function () {
+				temp = parseFloat(tempEl.value);
+				if (tempOut) tempOut.textContent = temp.toFixed(2);
+				renderBars();
+			});
+		}
+		reset();
+
+		/* ── demo 2: the meadow ──────────────────────────────── */
+		var canvas = document.getElementById("meadow-canvas");
+		if (!canvas) return;
+		var words = [
+			{ name: "Paris", x: 0.52, y: 0.40, c: "#71bd56" },
+			{ name: "Lyon", x: 0.23, y: 0.28, c: "#39a9d6" },
+			{ name: "France", x: 0.74, y: 0.63, c: "#d4a13c" },
+			{ name: "city", x: 0.39, y: 0.73, c: "#df785f" },
+			{ name: "capital", x: 0.63, y: 0.22, c: "#b9df6a" },
+			{ name: "river", x: 0.16, y: 0.64, c: "#6fd0f2" },
+			{ name: "bank", x: 0.83, y: 0.34, c: "#e6bd63" },
+			{ name: "cake", x: 0.33, y: 0.48, c: "#f0957f" }
+		];
+		var thought = { x: 0.46, y: 0.5 };
+		var meadowTemp = 0.8;
+		var off = document.createElement("canvas");
+		var api = null;
+		var mdWord = document.getElementById("md-word");
+		var mdChance = document.getElementById("md-chance");
+		var mdMargin = document.getElementById("md-margin");
+		var mdCaption = document.getElementById("md-caption");
+		var mdTemp = document.getElementById("md-temp");
+		var mdTempOut = document.getElementById("md-temp-out");
+		var mdSeam = document.getElementById("md-seam");
+		var mdReset = document.getElementById("md-reset");
+
+		function nearestPair(x, y) {
+			var d = words.map(function (w) { return Math.hypot((x - w.x), (y - w.y)); });
+			var order = d.map(function (v, i) { return { i: i, d: v }; }).sort(function (a, b) { return a.d - b.d; });
+			return { first: order[0], second: order[1] };
+		}
+		function drawMeadow(ctx, w, h) {
+			var c = TM.colors();
+			ctx.clearRect(0, 0, w, h);
+			var step = 3;
+			off.width = Math.max(1, Math.ceil(w / step));
+			off.height = Math.max(1, Math.ceil(h / step));
+			var octx = off.getContext("2d");
+			var img = octx.createImageData(off.width, off.height);
+			var data = img.data;
+			for (var py = 0; py < off.height; py++) {
+				for (var px = 0; px < off.width; px++) {
+					var u = (px * step + step / 2) / w;
+					var v = (py * step + step / 2) / h;
+					var pair = nearestPair(u, v);
+					var first = words[pair.first.i];
+					var second = words[pair.second.i];
+					var margin = pair.second.d - pair.first.d;
+					var rgb = hexToRgb(first.c);
+					var idx = (py * off.width + px) * 4;
+					var alpha = 0.055 + Math.max(0, 0.1 - margin) * 0.9;
+					data[idx] = rgb[0];
+					data[idx + 1] = rgb[1];
+					data[idx + 2] = rgb[2];
+					data[idx + 3] = Math.min(70, alpha * 255);
+					if (margin < 0.006) {
+						data[idx] = 220;
+						data[idx + 1] = 240;
+						data[idx + 2] = 220;
+						data[idx + 3] = 78;
+					}
+				}
+			}
+			octx.putImageData(img, 0, 0);
+			ctx.imageSmoothingEnabled = true;
+			ctx.drawImage(off, 0, 0, off.width, off.height, 0, 0, w, h);
+
+			var pairT = nearestPair(thought.x, thought.y);
+			var winner = words[pairT.first.i];
+			var marginT = pairT.second.d - pairT.first.d;
+			var T = Math.max(0.08, meadowTemp);
+			var probs = softmax(words.map(function (word) { return -Math.hypot(thought.x - word.x, thought.y - word.y) / T; }), 1);
+			var chance = probs[pairT.first.i];
+
+			ctx.strokeStyle = "rgba(238,247,244,.08)";
+			ctx.lineWidth = 1;
+			for (var gx = 0; gx < w; gx += 40) {
+				ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+			}
+			for (var gy = 0; gy < h; gy += 40) {
+				ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+			}
+
+			words.forEach(function (word) {
+				var x = word.x * w;
+				var y = word.y * h;
+				ctx.beginPath();
+				ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+				ctx.fillStyle = word.c;
+				ctx.fill();
+				ctx.strokeStyle = "rgba(4,30,40,.7)";
+				ctx.lineWidth = 2;
+				ctx.stroke();
+				ctx.font = "600 12px Barlow, system-ui, sans-serif";
+				ctx.fillStyle = "rgba(238,247,244,.82)";
+				ctx.textAlign = "center";
+				ctx.fillText(word.name, x, y - 12);
+				ctx.font = "500 10px ui-monospace, monospace";
+				ctx.fillStyle = "rgba(238,247,244,.38)";
+				ctx.fillText(Math.round(probs[words.indexOf(word)] * 100) + "%", x, y + 20);
+			});
+
+			var tx = thought.x * w;
+			var ty = thought.y * h;
+			var halo = 16 + 26 * meadowTemp;
+			var grad = ctx.createRadialGradient(tx, ty, 2, tx, ty, halo);
+			grad.addColorStop(0, "rgba(238,247,244,.9)");
+			grad.addColorStop(0.35, "rgba(185,223,106,.4)");
+			grad.addColorStop(1, "rgba(185,223,106,0)");
+			ctx.beginPath();
+			ctx.arc(tx, ty, halo, 0, Math.PI * 2);
+			ctx.fillStyle = grad;
+			ctx.fill();
+			ctx.beginPath();
+			ctx.arc(tx, ty, 5.5, 0, Math.PI * 2);
+			ctx.fillStyle = "#f4fbf7";
+			ctx.fill();
+			ctx.strokeStyle = winner.c;
+			ctx.lineWidth = 3;
+			ctx.stroke();
+
+			if (mdWord) mdWord.textContent = winner.name;
+			if (mdChance) mdChance.textContent = Math.round(chance * 100) + "%";
+			if (mdMargin) mdMargin.textContent = marginT < 0.008 ? "on the seam" : (marginT * 100).toFixed(1) + " units";
+			if (mdCaption) {
+				if (marginT < 0.012) {
+					mdCaption.textContent = "You are on a seam: “" + winner.name + "” and “" + words[pairT.second.i].name + "” are almost equally near. This is where the model is genuinely undecided.";
+				} else if (chance > 0.8) {
+					mdCaption.textContent = "Deep inside the cell of “" + winner.name + "”. The nearest seam is still far away, so the choice is stable.";
+				} else {
+					mdCaption.textContent = "Near the territory of “" + winner.name + "”, but “" + words[pairT.second.i].name + "” is close. The margin measures how close the thought is to tipping.";
+				}
+			}
+		}
+		function hexToRgb(hex) {
+			var v = hex.replace("#", "");
+			return [parseInt(v.slice(0, 2), 16), parseInt(v.slice(2, 4), 16), parseInt(v.slice(4, 6), 16)];
+		}
+		function setThoughtFromEvent(ev) {
+			var rect = canvas.getBoundingClientRect();
+			var clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
+			var clientY = ev.touches ? ev.touches[0].clientY : ev.clientY;
+			thought.x = TM.clamp((clientX - rect.left) / rect.width, 0.02, 0.98);
+			thought.y = TM.clamp((clientY - rect.top) / rect.height, 0.04, 0.96);
+			if (api) api.redraw();
+		}
+		if (canvas) {
+			api = TM.initCanvas(canvas, drawMeadow);
+			canvas.addEventListener("pointermove", setThoughtFromEvent);
+			canvas.addEventListener("pointerdown", setThoughtFromEvent);
+		}
+		if (mdTemp) {
+			mdTemp.addEventListener("input", function () {
+				meadowTemp = parseFloat(mdTemp.value);
+				if (mdTempOut) mdTempOut.textContent = meadowTemp.toFixed(2);
+				if (api) api.redraw();
+			});
+		}
+		if (mdSeam) {
+			mdSeam.addEventListener("click", function () {
+				var pair = nearestPair(thought.x, thought.y);
+				var a = words[pair.first.i];
+				var b = words[pair.second.i];
+				thought.x = TM.clamp((a.x + b.x) / 2, 0.02, 0.98);
+				thought.y = TM.clamp((a.y + b.y) / 2, 0.04, 0.96);
+				if (api) api.redraw();
+			});
+		}
+		if (mdReset) {
+			mdReset.addEventListener("click", function () {
+				thought.x = 0.46;
+				thought.y = 0.5;
+				if (api) api.redraw();
+			});
+		}
+		window.addEventListener("tm:theme", function () { if (api) api.redraw(); });
+	})();
+	</script>
+</body>
+</html>

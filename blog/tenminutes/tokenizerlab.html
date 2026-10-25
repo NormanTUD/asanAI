@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Type anything and watch a toy tokenizer split it. See why spelling, numbers, and languages pay different token costs.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>Chopping Text into Tokens — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="tokenizerlab" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<header class="topbar">
+		<a class="brand" href="index.html" aria-label="Ten Minutes, home">
+			<span class="brand-mark">10<sup>′</sup></span>
+			<span class="brand-name"><b>Ten</b> Minutes</span>
+			<span class="brand-by">ScaDS.AI</span>
+		</a>
+		<nav class="topnav" aria-label="Main">
+			<a href="index.html">Home</a>
+			<a href="advent.html">Calendar</a>
+			<a href="index.html#library">Library</a>
+			<button class="icon-btn" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Dark mode">
+				<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.7 6.7 0 0 0 9.8 9.8z"/></svg>
+				<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+			</button>
+		</nav>
+	</header>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<p class="kicker">Day 16 · Part 4 · Language</p>
+					<h1>Chopping text<br><em>into tokens.</em></h1>
+					<p class="hero-deck">
+						A model never sees words. It sees <strong>tokens</strong> — chunks of text — and
+						turns each one into a vector. That single decision explains why models struggle
+						to count letters, why some languages cost more, and why a vocabulary entry is
+						not the same thing as a learned concept.
+					</p>
+					<div class="hero-meta">
+						<span class="pill pill--green">10 minutes</span>
+						<span class="pill">Light math</span>
+						<span class="pill pill--blue">Live tokenizer</span>
+						<span class="pill">Self-check</span>
+					</div>
+				</div>
+				<div class="dial-wrap" aria-hidden="true">
+					<div class="dial">
+						<div class="dial-ticks" data-ticks></div>
+						<div class="dial-orbit"><span style="--a:10deg"></span><span style="--a:130deg"></span><span style="--a:250deg"></span></div>
+						<div class="dial-inner">
+							<span class="dial-time" data-timer-display>10:00</span>
+							<span class="dial-label">your ten minutes</span>
+							<span class="dial-sub">starts when you scroll</span>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="why">
+						<div class="section-kicker"><span class="sk-num">01</span> The first cut</div>
+						<h2 class="section-title">Computers need numbers. Text is not numbers.</h2>
+						<div class="prose">
+							<p>
+								The very first thing a language model does is <strong>chop the input into
+								small pieces called tokens</strong>. We can first think of these as words, but
+								they do not have to be. A token can be a whole word, a sub-word, a number, a
+								punctuation mark, or a single byte. Humans think in words; the model thinks
+								in tokens.
+							</p>
+							<p>
+								Most tokens are common words or word fragments. <code>understanding</code> can
+								split into <code>under</code> + <code>stand</code> + <code>ing</code>. That is
+								the quiet genius of the design: a word the model has never seen can still be
+								assembled from pieces it knows by heart. The vocabulary never has to grow, and
+								<code>transformer</code> is just <code>trans</code> + <code>form</code> +
+								<code>er</code>.
+							</p>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">It can read words it has never seen.</p>
+							<p class="aha-sub">Break every unfamiliar word into familiar pieces and nothing is truly new. The trade-off is that the model never sees the word as a single object — it sees a sequence of pieces.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="lab">
+						<div class="section-kicker"><span class="sk-num">02</span> Try it</div>
+						<h2 class="section-title">A live, deliberately tiny tokenizer.</h2>
+						<div class="prose">
+							<p>
+								The box below uses a hand-built toy vocabulary, not the tokenizer of a real
+								model. It behaves the same way in principle: greedily match the longest
+								known piece, split the rest into smaller pieces, and count every space and
+								punctuation mark as its own token.
+							</p>
+						</div>
+
+						<div class="demo" id="tokenizer-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Tokenize this <span>· demo 01</span></p>
+									<p class="demo-sub">Type a word, a sentence, a number, or a script the vocabulary has never seen.</p>
+								</div>
+								<span class="demo-badge">toy vocab</span>
+							</div>
+							<div class="demo-body">
+								<label for="tok-input" style="position:absolute;left:-9999px">Text to tokenize</label>
+								<input class="demo-input" id="tok-input" type="text" value="The transformer is playing greatly." autocomplete="off" spellcheck="false">
+								<div class="chip-row" style="margin-top:10px">
+									<button class="chip" type="button" data-preset="strawberry">strawberry</button>
+									<button class="chip" type="button" data-preset="understanding">understanding</button>
+									<button class="chip" type="button" data-preset="transformer">transformer</button>
+									<button class="chip" type="button" data-preset="1234.56">1234.56</button>
+									<button class="chip" type="button" data-preset="Once upon a time, there was a tokenizer.">a sentence</button>
+									<button class="chip" type="button" data-preset="Bonjour le monde">Bonjour</button>
+								</div>
+								<div class="token-stream" id="tok-stream" style="margin-top:12px" aria-live="polite"></div>
+								<div class="demo-readout">
+									<div><b>Tokens</b><span id="tok-count">0</span></div>
+									<div><b>Characters</b><span id="tok-chars">0</span></div>
+									<div><b>Characters / token</b><span id="tok-ratio">0</span></div>
+								</div>
+								<p class="meadow-caption" id="tok-caption" style="color:rgba(238,247,244,.55)">The model never sees the spaces you see; each one is a token too.</p>
+							</div>
+							<div class="demo-foot">
+								Toy vocabulary: common English words, a few subword pieces, and a
+								character fallback. A real tokenizer has tens of thousands of learned
+								merges; the mechanism, not the exact count, is the point.
+							</div>
+						</div>
+					</section>
+
+					<section class="section-block" id="bias">
+						<div class="section-kicker"><span class="sk-num">03</span> The consequence</div>
+						<h2 class="section-title">Tokenization is a bias, not a preprocessing detail.</h2>
+						<div class="prose">
+							<p>
+								A tokenizer is fixed before a single weight is trained, and it prices every
+								language differently. A word that is one high-frequency subword in the
+								dominant language may need several tokens in another. For many lower-resource
+								and non-Latin scripts, the result is routinely <strong>several times more
+								tokens per word</strong> than English. The same meaning is longer at the token
+								layer.
+							</p>
+							<p>
+								That compounds in three places at once: <strong>cost</strong> (tokens are
+								billed per token), <strong>context</strong> (a longer tokenization fills the
+								window sooner), and <strong>capacity</strong> (fewer words fit in the same
+								attention budget). A language is partly priced by a vocabulary trained on a
+								corpus that was, in practice, not that language.
+							</p>
+						</div>
+
+						<div class="demo" id="language-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The same sentence, different tax <span>· demo 02</span></p>
+									<p class="demo-sub">The toy vocabulary is English-heavy. Watch what that does to other languages.</p>
+								</div>
+								<span class="demo-badge">illustrative</span>
+							</div>
+							<div class="demo-body">
+								<div class="lang-compare" id="lang-compare"></div>
+								<p class="lang-note">
+									These counts come from the same toy vocabulary, so the German and Hindi
+									numbers are exaggerated. Real tokenizers are trained multilingually and the
+									gap is smaller — but it does not disappear, and it is measured in cost,
+									context, and capacity.
+								</p>
+							</div>
+							<div class="demo-foot">
+								Try the input above with a non-English sentence and watch the character
+								fallback take over. Then ask: who pays for the missing vocabulary?
+							</div>
+						</div>
+
+						<div class="prose">
+							<p>
+								The stranger failure is qualitative. Sometimes a string becomes a single token
+								during tokenizer training, but the model almost never sees that token during
+								pretraining. It exists in the vocabulary, has an ID and an embedding row, but
+								its parameters are barely trained. The result is a <strong>glitch token</strong>:
+								an input the tokenizer handles perfectly and the model has no learned meaning
+								for.
+							</p>
+							<p>
+								The canonical examples come from the GPT-2/GPT-3 tokenizer:
+								<code>SolidGoldMagikarp</code>, <code>petertodd</code>, <code>externalToEVA</code>.
+								The likely cause is a mismatch between the corpus used to <em>train the
+								tokenizer</em> and the corpus used to <em>train the model</em>. A token can be
+								frequent in one and absent from the other, leaving its embedding close to random
+								initialization. The lesson is not “avoid one weird string”; it is that
+								<strong>a vocabulary entry is not a learned concept</strong>.
+							</p>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">A token is a slot, not a meaning.</p>
+							<p class="aha-sub">The tokenizer decides which slots exist; the training data decides which slots get filled. When the two disagree, the model can talk fluently about a string it has never learned.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="bestiary">
+						<div class="section-kicker"><span class="sk-num">04</span> The bestiary</div>
+						<h2 class="section-title">What else the cut breaks.</h2>
+						<div class="prose">
+							<p>
+								Once you look at text as tokens rather than characters, several ordinary
+								failures become visible. None is exotic; all follow from cutting at
+								statistically convenient boundaries.
+							</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Numbers</b><span><code>1234</code> and <code>1235</code> may split differently. Arithmetic then runs across pieces that do not line up with digits.</span></div>
+							<div class="keypoint"><b>Spaces</b><span>A prompt ending in “is” and one ending in “is ” can have different next-token distributions. Whitespace is content.</span></div>
+							<div class="keypoint"><b>Unicode</b><span>The same visible “é” can be one code point or two. Emoji, flags, and combining marks multiply the cases.</span></div>
+							<div class="keypoint"><b>Portability</b><span>Token IDs are not portable. A different model family has a different vocabulary; its token counts are not a budget for another.</span></div>
+						</div>
+						<div class="prose">
+							<p>
+								<strong>Byte-level BPE</strong> removes the worst failure: if the alphabet is
+								all 256 bytes, every possible input has a tokenization and nothing is ever
+								unknown. But it does not remove the inflation — a Thai sentence is still more
+								bytes, hence more tokens, than the same sentence in English. Byte-level is the
+								floor, not the fix. The frontier is to shrink or remove the discrete
+								bottleneck altogether: byte-to-byte models and continuous “pre-token” spaces.
+								Whether that closes the gap or merely moves the bias is an open question.
+							</p>
+							<p>
+								The engineering checklist is short: measure tokens per word for every language
+								you serve; audit the vocabulary against the model’s data; test spelling,
+								numbers, whitespace, emoji, combining marks, rare names, and mixed scripts;
+								treat the tokenizer as a versioned contract.
+							</p>
+						</div>
+						<div class="pullquote">
+							A tokenizer is a lossy interface between text and thought. The loss is not
+							random: it is a set of decisions about which distinctions matter, made before
+							the model sees a single example.
+							<cite>From the full chapter</cite>
+						</div>
+					</section>
+
+					<section class="quiz" data-quiz="tokenizerlab" aria-label="Self-check"></section>
+
+					<nav class="lesson-nav" aria-label="Lesson navigation">
+						<a href="history.html"><span class="ln-label">Previous</span><span class="ln-title">A very long fuse</span></a>
+						<a href="embeddinglab.html"><span class="ln-label">Next</span><span class="ln-title">Meaning as geometry</span></a>
+					</nav>
+
+					<div class="lesson-footer">
+						Condensed from <a href="../tokenizerlab.php">Tokenization: How Words become Numbers</a>
+						(Part 4, Lesson 1). The full chapter adds the BPE/unigram spectrum, the full
+						glitch-token taxonomy, adversarial tokenization, and the engineering checklist.
+					</div>
+				</article>
+
+				<aside class="rail" aria-label="On this page">
+					<div class="rail-timer">
+						<div>
+							<div class="rt-num" data-timer-display>10:00</div>
+							<div class="rt-label">ten-minute timer</div>
+						</div>
+						<button type="button" data-timer-toggle aria-label="Start the ten-minute timer" title="Start timer"></button>
+					</div>
+					<nav class="rail-nav">
+						<a href="#why"><i></i>The first cut</a>
+						<a href="#lab"><i></i>Try it</a>
+						<a href="#bias"><i></i>The consequence</a>
+						<a href="#bestiary"><i></i>The bestiary</a>
+					</nav>
+					<div class="rail-source">
+						Read the original:<br>
+						<a href="../tokenizerlab.php">Tokenization: How Words become Numbers</a>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</main>
+
+	<footer class="footer">
+		<div class="shell footer-grid">
+			<div>
+				<div class="footer-brand">10<sup>′</sup> Minutes</div>
+				<p>A compact companion to <a href="../index.php">From Nothing to ChatGPT</a>. Full sources and citations live in the long course.</p>
+			</div>
+			<nav aria-label="Footer">
+				<a href="index.html">Home</a>
+				<a href="advent.html">Calendar</a>
+				<a href="embeddinglab.html">Next: Embeddings</a>
+				<a href="../tokenizerlab.php">Full chapter</a>
+			</nav>
+		</div>
+	</footer>
+
+	<script type="application/json" id="quiz-data">
+	{
+		"title": "The first cut",
+		"questions": [
+			{
+				"q": "Why can a model read a word it has never seen before?",
+				"options": [
+					"Because unknown words are split into familiar subword pieces",
+					"Because the model stores a dictionary of every known word",
+					"Because the tokenizer asks the user to define new words",
+					"Because a special unknown token contains its meaning"
+				],
+				"answer": 0,
+				"explain": "The vocabulary is fixed, but unfamiliar words are assembled from pieces the model already knows."
+			},
+			{
+				"q": "What is a glitch token?",
+				"options": [
+					"A vocabulary entry the model barely saw during training",
+					"A token that crashes the tokenizer before any model runs",
+					"A punctuation mark that the model cannot represent",
+					"A word that appears too often in the training corpus"
+				],
+				"answer": 0,
+				"explain": "The tokenizer created a slot, but the model's training data did not fill it with learned meaning."
+			},
+			{
+				"q": "Why does token inflation matter for a deployed model?",
+				"options": [
+					"It raises cost and shortens the effective context",
+					"It makes the model's vocabulary permanently smaller",
+					"It removes the need for byte-level fallback tokens",
+					"It guarantees better translation for rare languages"
+				],
+				"answer": 0,
+				"explain": "More tokens per meaning means higher bills, a context window that fills sooner, and less content per attention budget."
+			},
+			{
+				"q": "What does byte-level BPE actually solve?",
+				"options": [
+					"Every input can be represented, but cost gaps remain",
+					"Every language costs exactly the same per sentence",
+					"Every word becomes a single token in every script",
+					"Every model becomes multilingual without training"
+				],
+				"answer": 0,
+				"explain": "A 256-byte alphabet guarantees coverage. It does not equalise how many tokens a language needs."
+			}
+		]
+	}
+	</script>
+	<script src="assets/site.js"></script>
+	<script>
+	(function () {
+		"use strict";
+		document.querySelectorAll("[data-ticks]").forEach(function (box) {
+			for (var i = 0; i < 30; i++) {
+				var t = document.createElement("i");
+				t.style.transform = "rotate(" + (i * 12) + "deg) translateY(calc(min(330px, 76vw) * -0.44))";
+				box.appendChild(t);
+			}
+		});
+
+		var PIECES = [
+			"transformer", "attention", "understanding", "unbreakable", "strawberry", "language",
+			"capital", "playing", "greatly", "once", "upon", "time", "tokenization", "token",
+			"model", "number", "machine", "learning", "network", "vector", "meaning", "space",
+			"trans", "form", "er", "atten", "tion", "under", "stand", "ing", "un", "believ", "ably",
+			"straw", "berry", "play", "great", "ly", "token", "iz", "ation", "quick", "brown",
+			"jumps", "over", "lazy", "dog", "cat", "run", "run", "ning", "the", "a", "an", "is",
+			"are", "was", "be", "of", "to", "in", "on", "and", "or", "but", "for", "with", "as",
+			"at", "by", "from", "that", "this", "it", "we", "you", "they", "he", "she", "i",
+			"once", "upon", "time", "there", "here", "world", "words", "word", "data", "facts",
+			"fact", "human", "humans", "machine", "machines", "learn", "learns", "learning",
+			"france", "paris", "city", "river", "bank", "cake", "king", "queen", "man", "woman"
+		].sort(function (a, b) { return b.length - a.length; });
+		var COLORS = ["#71bd56", "#39a9d6", "#d4a13c", "#df785f", "#b9df6a", "#6fd0f2", "#e6bd63", "#f0957f"];
+
+		function hash(s) {
+			var h = 2166136261;
+			for (var i = 0; i < s.length; i++) {
+				h ^= s.charCodeAt(i);
+				h = Math.imul(h, 16777619);
+			}
+			return Math.abs(h);
+		}
+		function pushToken(out, text, type, sub) {
+			if (!text) return;
+			out.push({
+				text: text,
+				type: type,
+				sub: !!sub,
+				id: 1000 + (hash(text) % 48000),
+				color: COLORS[out.length % COLORS.length]
+			});
+		}
+		function tokenize(text) {
+			var out = [];
+			var chunks = text.match(/\s+|[A-Za-z]+|[0-9]+|[^\sA-Za-z0-9]/g) || [];
+			chunks.forEach(function (chunk) {
+				if (/^\s+$/.test(chunk)) {
+					var label = "␣";
+					if (chunk.length > 1) label = new Array(Math.min(4, chunk.length) + 1).join("␣");
+					pushToken(out, chunk, "space", false);
+					return;
+				}
+				if (/^[0-9]+$/.test(chunk)) {
+					var groups = chunk.match(/\d{1,3}/g) || [chunk];
+					groups.forEach(function (g) { pushToken(out, g, "number", g.length < chunk.length); });
+					return;
+				}
+				if (/^[A-Za-z]+$/.test(chunk)) {
+					var lower = chunk.toLowerCase();
+					var pos = 0;
+					while (pos < lower.length) {
+						var found = null;
+						for (var i = 0; i < PIECES.length; i++) {
+							var piece = PIECES[i];
+							if (piece.length <= lower.length - pos && lower.slice(pos, pos + piece.length) === piece) {
+								found = piece;
+								break;
+							}
+						}
+						if (found) {
+							var original = chunk.slice(pos, pos + found.length);
+							pushToken(out, original, "word", found.length < chunk.length);
+							pos += found.length;
+						} else {
+							pushToken(out, chunk.charAt(pos), "char", true);
+							pos++;
+						}
+					}
+					return;
+				}
+				pushToken(out, chunk, "punct", false);
+			});
+			return out;
+		}
+
+		var input = document.getElementById("tok-input");
+		var stream = document.getElementById("tok-stream");
+		var countEl = document.getElementById("tok-count");
+		var charsEl = document.getElementById("tok-chars");
+		var ratioEl = document.getElementById("tok-ratio");
+		var caption = document.getElementById("tok-caption");
+
+		function render() {
+			if (!input || !stream) return;
+			var text = input.value;
+			var tokens = tokenize(text);
+			stream.innerHTML = "";
+			tokens.forEach(function (tok, i) {
+				var el = document.createElement("span");
+				el.className = "token" + (tok.sub ? " token--sub" : "") + (tok.type === "space" ? " token--space" : "");
+				el.style.setProperty("--tok", tok.color);
+				el.setAttribute("title", (tok.type === "space" ? "whitespace" : tok.text) + " · id " + tok.id);
+				var label = tok.type === "space" ? "␣" : tok.text;
+				el.innerHTML = escapeHtml(label) + "<small>" + tok.id + "</small>";
+				stream.appendChild(el);
+			});
+			if (countEl) countEl.textContent = tokens.length;
+			if (charsEl) charsEl.textContent = text.length;
+			if (ratioEl) ratioEl.textContent = tokens.length ? (text.length / tokens.length).toFixed(2) : "0";
+			if (caption) {
+				var spaces = tokens.filter(function (t) { return t.type === "space"; }).length;
+				var sub = tokens.filter(function (t) { return t.sub; }).length;
+				if (!text) caption.textContent = "Type something to see the model's first cut.";
+				else if (spaces > 0 && sub > 0) caption.textContent = tokens.length + " tokens, including " + spaces + " whitespace and " + sub + " subword/character pieces. The model sees all of them.";
+				else caption.textContent = tokens.length + " tokens. Every space and punctuation mark is a slot the model has to pay for.";
+			}
+			updateLanguageDemo();
+		}
+		function escapeHtml(s) {
+			return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; });
+		}
+		if (input) {
+			input.addEventListener("input", render);
+			document.querySelectorAll("[data-preset]").forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					input.value = btn.getAttribute("data-preset");
+					input.focus();
+					render();
+				});
+			});
+			render();
+		}
+
+		/* ── language tax ────────────────────────────────────── */
+		var samples = [
+			{ name: "English", text: "The quick brown fox jumps over the lazy dog." },
+			{ name: "German", text: "Der schnelle braune Fuchs springt über den faulen Hund." },
+			{ name: "Hindi", text: "तेज़ भूरी लोमड़ी आलसी कुत्ते के ऊपर कूदती है।" }
+		];
+		var compare = document.getElementById("lang-compare");
+		function updateLanguageDemo() {
+			if (!compare) return;
+			var counts = samples.map(function (s) { return tokenize(s.text).length; });
+			var max = Math.max.apply(null, counts.concat([1]));
+			compare.innerHTML = "";
+			samples.forEach(function (s, i) {
+				var row = document.createElement("div");
+				row.className = "lang-row" + (counts[i] > max * 0.6 ? " is-big" : "");
+				row.innerHTML = '<span class="lang-name">' + s.name + '</span>'
+					+ '<span class="lang-track"><span class="lang-fill" style="width:' + (counts[i] / max * 100).toFixed(1) + '%"></span></span>'
+					+ '<span class="lang-count">' + counts[i] + " tok</span>";
+				row.title = s.text;
+				compare.appendChild(row);
+			});
+		}
+		updateLanguageDemo();
+	})();
+	</script>
+</body>
+</html>

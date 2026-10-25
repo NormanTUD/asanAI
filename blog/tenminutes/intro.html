@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="What From Nothing to ChatGPT is, what it is not, and the ladder of abstraction that holds it together.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>What This Course Is — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="intro" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<header class="topbar">
+		<a class="brand" href="index.html" aria-label="Ten Minutes, home">
+			<span class="brand-mark">10<sup>′</sup></span>
+			<span class="brand-name"><b>Ten</b> Minutes</span>
+			<span class="brand-by">ScaDS.AI</span>
+		</a>
+		<nav class="topnav" aria-label="Main">
+			<a href="index.html">Home</a>
+			<a href="advent.html">Calendar</a>
+			<a href="index.html#library">Library</a>
+			<button class="icon-btn" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Dark mode">
+				<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.7 6.7 0 0 0 9.8 9.8z"/></svg>
+				<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+			</button>
+		</nav>
+	</header>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<p class="kicker">Part 0 · Orientation</p>
+					<h1>The whole picture.<br><em>Honestly framed.</em></h1>
+					<p class="hero-deck">
+						<strong>From Nothing to ChatGPT</strong> is an attempt to understand AI by following
+						every question back to its source: the history of counting, the mathematics of
+						change, the engineering of chips, and the strange loop that turns next-token
+						prediction into something that looks like thought. This page is the frame around
+						the picture.
+					</p>
+					<div class="hero-meta">
+						<span class="pill pill--green">10 minutes</span>
+						<span class="pill">No math</span>
+						<span class="pill pill--blue">1 interactive demo</span>
+						<span class="pill">The map</span>
+					</div>
+				</div>
+				<div class="dial-wrap" aria-hidden="true">
+					<div class="dial">
+						<div class="dial-ticks" data-ticks></div>
+						<div class="dial-orbit"><span style="--a:30deg"></span><span style="--a:150deg"></span><span style="--a:270deg"></span></div>
+						<div class="dial-inner">
+							<span class="dial-time" data-timer-display>10:00</span>
+							<span class="dial-label">your ten minutes</span>
+							<span class="dial-sub">starts when you scroll</span>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="wager">
+						<div class="section-kicker"><span class="sk-num">01</span> The wager</div>
+						<h2 class="section-title">Reality is one.</h2>
+						<div class="prose">
+							<p>
+								The course began with a personal experiment: try to understand AI using AI,
+								and follow every question to its source. It moves through astronomy, number
+								theory, logic, materials science, linguistics, philosophy, and computer
+								engineering — not because the author is a polymath, but because those are
+								the places the threads actually go.
+							</p>
+							<p>
+								The working assumption is Whitehead’s: reality is a process, and everything
+								is connected to everything else. Often the connections appear where you did
+								not expect them. Those are the connections worth finding.
+							</p>
+						</div>
+						<div class="pullquote">
+							The universe is a process of reaching out into the multi-colored world, and
+							drawing it together into a single, new unity.
+							<cite>Alfred North Whitehead, quoted in the course</cite>
+						</div>
+						<div class="split-figure">
+							<figure>
+								<img src="../cave_hands.jpg" alt="Hand stencils at Cueva de las Manos, Argentina" loading="lazy">
+								<figcaption>Hand stencils at Cueva de las Manos, Argentina (c. 7300 BC – AD 700). Photo: Pablo A. Gimenez, <a href="https://creativecommons.org/licenses/by-sa/2.0/" rel="noopener">CC BY-SA 2.0</a>.</figcaption>
+							</figure>
+							<figure>
+								<img src="../perceptron2.jpg" alt="The Mark I Perceptron" loading="lazy">
+								<figcaption>The Mark I Perceptron, an experimental letter-recognising machine announced by the U.S. Navy. Photo: U.S. Navy, public domain.</figcaption>
+							</figure>
+						</div>
+					</section>
+
+					<section class="section-block" id="is-isnt">
+						<div class="section-kicker"><span class="sk-num">02</span> The contract</div>
+						<h2 class="section-title">What this course is — and what it is not.</h2>
+						<div class="prose">
+							<p>
+								<strong>This is</strong> a long, free, interactive digital textbook that traces
+								the ideas behind modern AI from Stone Age tools and the history of mathematics
+								all the way to how large language models work inside. It is hands-on and often
+								mathematically demanding: you build intuition by doing, and by the end you
+								understand the <em>why</em> and the <em>how</em>, not just the <em>what</em>.
+							</p>
+							<p>
+								<strong>This is not</strong> a programming tutorial, a “five quick tips”
+								article, or a passive overview you can skim in one evening. It is a library,
+								not a ladder with a single speed. The ten-minute edition exists because most
+								people need a doorway before they commit to the library.
+							</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>For the curious</b><span>Start with the idea, play with the demo, skip the equations on the first pass.</span></div>
+							<div class="keypoint"><b>For the specialist</b><span>The full chapters carry the derivations, sources, and open questions.</span></div>
+							<div class="keypoint"><b>For the sceptic</b><span>Claims are cited, uncertainty is marked, and the demos are labelled as toys.</span></div>
+							<div class="keypoint"><b>For the human</b><span>The technology is treated as a cultural mirror, not only as a machine.</span></div>
+						</div>
+					</section>
+
+					<section class="section-block" id="threads">
+						<div class="section-kicker"><span class="sk-num">03</span> The threads</div>
+						<h2 class="section-title">Two histories, one convergence.</h2>
+						<div class="prose">
+							<p>
+								[<a href="history.html">The Brief History of AI</a>] is the direct intellectual
+								lineage: from the first tally marks and the Antikythera mechanism through
+								Babbage, Boole, the first neural networks, and the transformers. The
+								[<a href="../untold_history_i.php">Untold History of AI</a>] goes further back:
+								the Big Bang, the forging of the elements, the first cells, and the long
+								material chain that made computation physically possible.
+							</p>
+							<p>
+								The most consequential sidetracks are worth naming. <strong>Astronomy and
+								precision:</strong> astronomers mapping the stars with imperfect data built
+								the optimization tools that let modern models learn from the internet.
+								<strong>Technical and philosophical:</strong> concepts of logic, language, and
+								Geist migrate from philosophy into billions of trainable parameters.
+								<strong>Number and token:</strong> the token a transformer predicts is a
+								descendant of Babylonian place value, the Indian zero, the Chinese minus
+								sign, and Leibniz’s binary.
+							</p>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">AI is not a sudden invention. It is a convergence.</p>
+							<p class="aha-sub">Statistical methods from astronomy, geometry from land surveying, logic from law and theology, hardware from video games: none were built for AI, and all of them ended up inside it.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="ladder">
+						<div class="section-kicker"><span class="sk-num">04</span> The ladder</div>
+						<h2 class="section-title">Climb up and down the ladder of abstraction.</h2>
+						<div class="prose">
+							<p>
+								The course moves constantly between levels. At the bottom are raw bits and
+								weight values. In the middle are operations with names: attention,
+								backpropagation, gradient descent. At the top are broad ideas: topology,
+								meaning, intelligence, ethics. Fluency means being able to move between them
+								without getting lost.
+							</p>
+							<p>
+								Click a rung below. Each one gives you the same object seen from a different
+								distance — and a reminder of why the level above is not a replacement for the
+								level below.
+							</p>
+						</div>
+
+						<div class="demo demo--paper" id="ladder-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The ladder of abstraction <span>· demo 01</span></p>
+									<p class="demo-sub">One machine, five descriptions. Choose a rung.</p>
+								</div>
+								<span class="demo-badge">click a rung</span>
+							</div>
+							<div class="demo-body">
+								<div class="ladder" id="ladder" role="group" aria-label="Levels of abstraction">
+									<button type="button" class="ladder-step is-active" data-rung="0">
+										<span class="ls-num">01</span>
+										<span><b>The concrete base</b><span>bits · weights · matrix entries</span></span>
+										<span class="ls-arrow">↑</span>
+									</button>
+									<button type="button" class="ladder-step" data-rung="1">
+										<span class="ls-num">02</span>
+										<span><b>Tokens and vectors</b><span>text → numbers → positions in space</span></span>
+										<span class="ls-arrow">↑</span>
+									</button>
+									<button type="button" class="ladder-step" data-rung="2">
+										<span class="ls-num">03</span>
+										<span><b>Features and operations</b><span>attention · activation · residual stream</span></span>
+										<span class="ls-arrow">↑</span>
+									</button>
+									<button type="button" class="ladder-step" data-rung="3">
+										<span class="ls-num">04</span>
+										<span><b>Structures</b><span>layers · blocks · the transformer</span></span>
+										<span class="ls-arrow">↑</span>
+									</button>
+									<button type="button" class="ladder-step" data-rung="4">
+										<span class="ls-num">05</span>
+										<span><b>Concepts</b><span>gradient descent · topology · meaning</span></span>
+										<span class="ls-arrow">↑</span>
+									</button>
+									<button type="button" class="ladder-step" data-rung="5">
+										<span class="ls-num">06</span>
+										<span><b>The abstract</b><span>intelligence · ethics · society</span></span>
+										<span class="ls-arrow">↑</span>
+									</button>
+								</div>
+								<div class="flow-detail" id="ladder-detail" style="border-color:var(--tm-line);background:var(--tm-paper-2);margin-top:14px">
+									<h4 id="ladder-title" style="color:var(--tm-petrol)">The concrete base</h4>
+									<p id="ladder-body" style="color:var(--tm-muted)">A model is, at bottom, a very large pile of numbers. Nothing here means anything; the meaning is in the pattern of numbers, and the pattern only appears when you climb a level.</p>
+								</div>
+							</div>
+							<div class="demo-foot">
+								The ladder is not a hierarchy of truth. Each level is a compression of the one
+								below, and every compression loses something. The skill is knowing which loss
+								does not matter for the question you are asking.
+							</div>
+						</div>
+						<div class="prose">
+							<p>
+								This is the movement the textbook practices on every page: from a philosophical
+								“why” down to a mathematical “how”, and back up again without pretending the
+								lower rung explains everything or that the higher rung is mere decoration.
+							</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="playground">
+						<div class="section-kicker"><span class="sk-num">05</span> The playground</div>
+						<h2 class="section-title">The course adapts to you.</h2>
+						<div class="prose">
+							<p>
+								The full course is too long to consume in one shape, so it adapts. A
+								<strong>topic picker</strong> dims or tucks sections that do not match your
+								interests. A <strong>math-comfort dial</strong> decides how much formalism
+								stays visible. A <strong>history-depth dial</strong> decides how far back the
+								textbook should reach — from “just AI” to the Big Bang. A cluster of reader
+								types (Curious, Student, Engineer, Researcher) and classic types (the
+								mathematician, the builder, the historian, the philosopher, the polymath)
+								load curated paths.
+							</p>
+							<p>
+								The interactive layer is the point: move the sliders, draw your own data, break
+								the demo, and watch the idea fail or hold. The <a href="../atlas.php">Atlas</a>
+								places every person, place, institution, and event in the course on one 3-D
+								globe, with threads between them. Curiosity is the primary engine.
+							</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>The scale</b><span>96 lessons across six parts, from prehistory to frontier research.</span></div>
+							<div class="keypoint"><b>The access</b><span>Free, no sign-up, no tracking. Progress and preferences stay in your browser.</span></div>
+							<div class="keypoint"><b>The invitation</b><span>Skip what does not interest you. Return when a thread pulls you back.</span></div>
+							<div class="keypoint"><b>The honesty</b><span>The textbook was built with LLM help; the author asks you to verify before production use.</span></div>
+						</div>
+					</section>
+
+					<section class="section-block" id="achieve">
+						<div class="section-kicker"><span class="sk-num">06</span> The payoff</div>
+						<h2 class="section-title">What you will be able to do.</h2>
+						<div class="prose">
+							<p>
+								By the end of the long course you should be able to <strong>explain the inner
+								workings</strong> of neural networks, from the first perceptron to the
+								transformer architectures behind ChatGPT; <strong>manipulate and optimize</strong>
+								data models with the same mathematical principles researchers use; and
+								<strong>critically evaluate</strong> the societal and philosophical
+								implications, understanding both the technical brilliance and the inherent
+								limitations.
+							</p>
+							<p>
+								The ten-minute edition has a smaller promise: after one page, you can explain
+								one idea correctly to someone else, and you know where the full argument
+								continues. That is enough for a first visit.
+							</p>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">The ladder is the lesson.</p>
+							<p class="aha-sub">Most confusion about AI comes from answering a high-level question with a low-level fact, or the reverse. Knowing which rung you are on is half the understanding.</p>
+						</div>
+					</section>
+
+					<section class="quiz" data-quiz="intro" aria-label="Self-check"></section>
+
+					<nav class="lesson-nav" aria-label="Lesson navigation">
+						<a href="index.html"><span class="ln-label">Back to</span><span class="ln-title">The library</span></a>
+						<a href="intuition.html"><span class="ln-label">Next</span><span class="ln-title">One word at a time</span></a>
+					</nav>
+
+					<div class="lesson-footer">
+						Condensed from <a href="../intro.php">From Nothing to ChatGPT: A Peek inside the Black Box</a>
+						(Part 0). The full page adds the course-adaptation controls, the personal note in
+						full, and the reporting invitation.
+					</div>
+				</article>
+
+				<aside class="rail" aria-label="On this page">
+					<div class="rail-timer">
+						<div>
+							<div class="rt-num" data-timer-display>10:00</div>
+							<div class="rt-label">ten-minute timer</div>
+						</div>
+						<button type="button" data-timer-toggle aria-label="Start the ten-minute timer" title="Start timer"></button>
+					</div>
+					<nav class="rail-nav">
+						<a href="#wager"><i></i>The wager</a>
+						<a href="#is-isnt"><i></i>Is / is not</a>
+						<a href="#threads"><i></i>The threads</a>
+						<a href="#ladder"><i></i>The ladder</a>
+						<a href="#playground"><i></i>The playground</a>
+						<a href="#achieve"><i></i>The payoff</a>
+					</nav>
+					<div class="rail-source">
+						Read the original:<br>
+						<a href="../intro.php">A Peek inside the Black Box</a>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</main>
+
+	<footer class="footer">
+		<div class="shell footer-grid">
+			<div>
+				<div class="footer-brand">10<sup>′</sup> Minutes</div>
+				<p>A compact companion to <a href="../index.php">From Nothing to ChatGPT</a>. Full sources and citations live in the long course.</p>
+			</div>
+			<nav aria-label="Footer">
+				<a href="index.html">Home</a>
+				<a href="advent.html">Calendar</a>
+				<a href="intuition.html">Next: Intuition</a>
+				<a href="../intro.php">Full chapter</a>
+			</nav>
+		</div>
+	</footer>
+
+	<script type="application/json" id="quiz-data">
+	{
+		"title": "The frame",
+		"questions": [
+			{
+				"q": "What is the course trying to do, in one sentence?",
+				"options": [
+					"Trace how ideas from many fields converged into modern AI",
+					"Teach readers to train a frontier model from scratch",
+					"Collect prompt-engineering tricks for everyday use",
+					"Replace mathematics with intuitive storytelling only"
+				],
+				"answer": 0,
+				"explain": "The course is a synthesis: history, mathematics, and machines, with every thread followed to its source."
+			},
+			{
+				"q": "What does the ladder of abstraction ask you to do?",
+				"options": [
+					"Move between levels without confusing one for another",
+					"Stay on the highest level to avoid unnecessary detail",
+					"Stay on the lowest level to avoid philosophical claims",
+					"Choose one level and ignore the rest permanently"
+				],
+				"answer": 0,
+				"explain": "Each level compresses the one below. The skill is knowing which level your question belongs to."
+			},
+			{
+				"q": "How should you treat this interactive textbook?",
+				"options": [
+					"Play, skip, re-read, and verify before production use",
+					"Read it once linearly and never return to a chapter",
+					"Trust every claim because it was generated with AI",
+					"Avoid the demos and only memorise the definitions"
+				],
+				"answer": 0,
+				"explain": "The course invites exploration and is explicit that it was built with LLM help and may contain errors."
+			}
+		]
+	}
+	</script>
+	<script src="assets/site.js"></script>
+	<script>
+	(function () {
+		"use strict";
+		document.querySelectorAll("[data-ticks]").forEach(function (box) {
+			for (var i = 0; i < 30; i++) {
+				var t = document.createElement("i");
+				t.style.transform = "rotate(" + (i * 12) + "deg) translateY(calc(min(330px, 76vw) * -0.44))";
+				box.appendChild(t);
+			}
+		});
+
+		var rungs = [
+			{
+				t: "The concrete base",
+				b: "A model is, at bottom, a very large pile of numbers. Nothing here means anything; the meaning is in the pattern of numbers, and the pattern only appears when you climb a level."
+			},
+			{
+				t: "Tokens and vectors",
+				b: "Text is cut into tokens, and every token becomes a vector — a long list of numbers. Similar meanings end up near each other in this space, but no single number carries a concept."
+			},
+			{
+				t: "Features and operations",
+				b: "Attention lets a token gather information from other tokens. The feed-forward network transforms each position. The residual stream carries earlier findings forward. These are the verbs of the machine."
+			},
+			{
+				t: "Structures",
+				b: "A transformer block is attention plus feed-forward plus residual connections plus normalization. Stack the block N times and you have the architecture. The structure is simple; the learned weights are not."
+			},
+			{
+				t: "Concepts",
+				b: "Backpropagation, gradient descent, loss landscapes, topology, representation. These are names for patterns across many concrete operations — useful, but never a substitute for the operations themselves."
+			},
+			{
+				t: "The abstract",
+				b: "Intelligence, meaning, agency, ethics, society. These are the words we use to argue about what the machine is for. They are real questions, but they are not answered by pointing at a matrix."
+			}
+		];
+		var rungButtons = Array.prototype.slice.call(document.querySelectorAll("[data-rung]"));
+		var title = document.getElementById("ladder-title");
+		var body = document.getElementById("ladder-body");
+		rungButtons.forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				var i = parseInt(btn.getAttribute("data-rung"), 10);
+				rungButtons.forEach(function (b) { b.classList.remove("is-active"); });
+				btn.classList.add("is-active");
+				if (title) title.textContent = rungs[i].t;
+				if (body) body.textContent = rungs[i].b;
+			});
+		});
+	})();
+	</script>
+</body>
+</html>

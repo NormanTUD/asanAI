@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="A ten-minute timeline of the ideas that converged into modern AI, from tally bones to transformers.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>A Very Long Fuse — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="history" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<header class="topbar">
+		<a class="brand" href="index.html" aria-label="Ten Minutes, home">
+			<span class="brand-mark">10<sup>′</sup></span>
+			<span class="brand-name"><b>Ten</b> Minutes</span>
+			<span class="brand-by">ScaDS.AI</span>
+		</a>
+		<nav class="topnav" aria-label="Main">
+			<a href="index.html">Home</a>
+			<a href="advent.html">Calendar</a>
+			<a href="index.html#library">Library</a>
+			<button class="icon-btn" type="button" data-theme-toggle aria-label="Switch to dark mode" title="Dark mode">
+				<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.7 6.7 0 0 0 9.8 9.8z"/></svg>
+				<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+			</button>
+		</nav>
+	</header>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<p class="kicker">Day 2 · Part 1 · History</p>
+					<h1>A very<br><em>long fuse.</em></h1>
+					<p class="hero-deck">
+						Modern AI did not appear in 2022. It grew out of counting bones, geared
+						astronomical models, formal logic, a failed neural network, two winters, and a
+						crowd of contributors who are usually left out of the story. <strong>This is the
+						lineage, not the legend.</strong>
+					</p>
+					<div class="hero-meta">
+						<span class="pill pill--green">10 minutes</span>
+						<span class="pill">No math</span>
+						<span class="pill pill--blue">Timeline + convergence</span>
+						<span class="pill">Self-check</span>
+					</div>
+				</div>
+				<div class="dial-wrap" aria-hidden="true">
+					<div class="dial">
+						<div class="dial-ticks" data-ticks></div>
+						<div class="dial-orbit"><span style="--a:40deg"></span><span style="--a:160deg"></span><span style="--a:280deg"></span></div>
+						<div class="dial-inner">
+							<span class="dial-time" data-timer-display>10:00</span>
+							<span class="dial-label">your ten minutes</span>
+							<span class="dial-sub">starts when you scroll</span>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="fuse">
+						<div class="section-kicker"><span class="sk-num">01</span> The long fuse</div>
+						<h2 class="section-title">History is convergence, not a conveyor belt.</h2>
+						<div class="prose">
+							<p>
+								The history of AI is not a straight line leading inevitably to the large
+								language model. It is a convergence of ideas from unrelated fields that were
+								never intended to meet. Statistical methods developed by astronomers to map
+								the stars now weigh the next word in a sequence. GPU architectures designed
+								for video games provide the parallel computation that neural networks need.
+							</p>
+							<p>
+								The deeper history is a history of <strong>abstraction</strong>: human effort
+								drawn away from the direct task and handed to a mechanism. It begins roughly
+								3.3 million years ago with the first stone tools, continues through the wheel
+								and Heron of Alexandria’s programmable cart, and crosses from the physical to
+								the cognitive when thought itself becomes a formal calculus a machine can run.
+							</p>
+						</div>
+						<div class="pullquote">
+							We can solve any problem by introducing an extra level of indirection.
+							<cite>David Wheeler, quoted in the full chapter</cite>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">The machine is the ultimate indirection.</p>
+							<p class="aha-sub">The wheel abstracts movement; the computer abstracts thought. Both remove the human from the raw labour while keeping the human in charge of the mechanism.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="timeline">
+						<div class="section-kicker"><span class="sk-num">02</span> Ten turning points</div>
+						<h2 class="section-title">Follow the fuse.</h2>
+						<div class="prose">
+							<p>
+								Click a point on the line. The selection is not “the most important moment” —
+								it is a thread worth pulling. The dates are approximate where the evidence is.
+							</p>
+						</div>
+
+						<div class="demo demo--paper timeline-shell" id="timeline-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Ten turning points <span>· demo 01</span></p>
+									<p class="demo-sub">Scroll the line sideways if needed. Click a node for the detail.</p>
+								</div>
+								<span class="demo-badge">43,000 BCE → today</span>
+							</div>
+							<div class="demo-body">
+								<div class="timeline-track" id="timeline-track" role="group" aria-label="Timeline of turning points"></div>
+								<div class="tl-panel" id="timeline-panel" aria-live="polite"></div>
+							</div>
+							<div class="demo-foot">
+								A compressed route through a much longer chapter. The full lesson has the
+								receipts: primary sources, contested dates, and the contributors the standard
+								story forgets.
+							</div>
+						</div>
+					</section>
+
+					<section class="section-block" id="currents">
+						<div class="section-kicker"><span class="sk-num">03</span> Three currents</div>
+						<h2 class="section-title">Logic, machines, and minds.</h2>
+						<div class="prose">
+							<p>
+								Three currents feed the modern model. <strong>Formal thought</strong> — place
+								value, zero, syllogisms, Pāṇini’s grammar, Boole’s algebra — supplies the
+								symbol manipulation. <strong>Machines</strong> — gears, relays, vacuum tubes,
+								transistors, GPUs — supply the physical substrate. <strong>Minds</strong> —
+								neurons, cybernetics, learning, reward — supply the metaphor and, eventually,
+								the method.
+							</p>
+							<p>
+								None of them was sufficient alone. The transformer is what happens when a
+								statistical learning idea meets a parallel piece of hardware and a formal
+								language for representing meaning as vectors.
+							</p>
+						</div>
+
+						<div class="demo" id="convergence-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The convergence <span>· demo 02</span></p>
+									<p class="demo-sub">Select a current to see what it contributed — and where it would have stalled alone.</p>
+								</div>
+								<span class="demo-badge">three → one</span>
+							</div>
+							<div class="demo-body">
+								<canvas class="demo-canvas" id="convergence-canvas" style="height:300px" aria-label="Three streams merging into one machine"></canvas>
+								<div class="demo-controls" style="margin-top:14px">
+									<div class="chip-row" id="current-chips">
+										<button class="chip is-on" type="button" data-current="0">Formal thought</button>
+										<button class="chip" type="button" data-current="1">Machines</button>
+										<button class="chip" type="button" data-current="2">Minds</button>
+										<button class="chip" type="button" data-current="all">All three</button>
+									</div>
+								</div>
+								<p class="meadow-caption" id="current-caption" style="color:var(--tm-muted)">Formal thought gave the machine a language: place value, zero, logic, grammar, and algebra.</p>
+							</div>
+							<div class="demo-foot">
+								The drawing is a metaphor, not a causal model. It is meant to make one point
+								visible: the arrow of any single field does not reach the transformer alone.
+							</div>
+						</div>
+					</section>
+
+					<section class="section-block" id="lessons">
+						<div class="section-kicker"><span class="sk-num">04</span> What the history teaches</div>
+						<h2 class="section-title">No inevitability, no lone genius.</h2>
+						<div class="prose">
+							<p>
+								The standard story is a parade of famous names and sudden breakthroughs. The
+								actual history is slower and more collective. Counting devices appear
+								independently in southern Africa, central Europe, and central Africa. The
+								first neural network paper lands in a biophysics journal, not a computer
+								science one. The perceptron is announced by the U.S. Navy, criticised, and
+								survives in the margins until the hardware and the data catch up.
+							</p>
+							<p>
+								There were winters: periods when the promises outran the results and the money
+								left. There were also quiet accumulations — the stored-program idea, the
+								transistor, the GPU, the dataset, the optimizer — without which the same
+								algorithm would be a curiosity. The transformer did not end history; it
+								condensed a very long fuse.
+							</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Abstraction</b><span>Each layer hides the layer below. That is the source of both power and confusion.</span></div>
+							<div class="keypoint"><b>External memory</b><span>Notches, tablets, punched cards, caches: thought stored outside the skull.</span></div>
+							<div class="keypoint"><b>Convergence</b><span>Ideas from astronomy, logic, biology, and games met by accident, not by plan.</span></div>
+							<div class="keypoint"><b>The missing names</b><span>The full “untold history” follows the materials, labour, and contributors the parade forgets.</span></div>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">The past was not trying to become ChatGPT.</p>
+							<p class="aha-sub">The people who built tally bones, gears, logic, and perceptrons were solving their own problems. The convergence is real, but it is retrospective — which is exactly why it is worth studying.</p>
+						</div>
+					</section>
+
+					<section class="quiz" data-quiz="history" aria-label="Self-check"></section>
+
+					<nav class="lesson-nav" aria-label="Lesson navigation">
+						<a href="intuition.html"><span class="ln-label">Previous</span><span class="ln-title">One word at a time</span></a>
+						<a href="tokenizerlab.html"><span class="ln-label">Next</span><span class="ln-title">Chopping text into tokens</span></a>
+					</nav>
+
+					<div class="lesson-footer">
+						Condensed from <a href="../history.php">Brief History of AI</a> (Part 1, Lesson 2).
+						The full chapter continues through the cyberneticians, the AI winters, the
+						connectionist revival, and the people usually left out. Source images are credited
+						in the timeline panel.
+					</div>
+				</article>
+
+				<aside class="rail" aria-label="On this page">
+					<div class="rail-timer">
+						<div>
+							<div class="rt-num" data-timer-display>10:00</div>
+							<div class="rt-label">ten-minute timer</div>
+						</div>
+						<button type="button" data-timer-toggle aria-label="Start the ten-minute timer" title="Start timer"></button>
+					</div>
+					<nav class="rail-nav">
+						<a href="#fuse"><i></i>The long fuse</a>
+						<a href="#timeline"><i></i>Ten turning points</a>
+						<a href="#currents"><i></i>Three currents</a>
+						<a href="#lessons"><i></i>What it teaches</a>
+					</nav>
+					<div class="rail-source">
+						Read the original:<br>
+						<a href="../history.php">Brief History of AI</a>
+					</div>
+				</aside>
+			</div>
+		</div>
+	</main>
+
+	<footer class="footer">
+		<div class="shell footer-grid">
+			<div>
+				<div class="footer-brand">10<sup>′</sup> Minutes</div>
+				<p>A compact companion to <a href="../index.php">From Nothing to ChatGPT</a>. Full sources and citations live in the long course.</p>
+			</div>
+			<nav aria-label="Footer">
+				<a href="index.html">Home</a>
+				<a href="advent.html">Calendar</a>
+				<a href="tokenizerlab.html">Next: Tokens</a>
+				<a href="../history.php">Full chapter</a>
+			</nav>
+		</div>
+	</footer>
+
+	<script type="application/json" id="quiz-data">
+	{
+		"title": "The long fuse",
+		"questions": [
+			{
+				"q": "Where was the Antikythera mechanism discovered?",
+				"options": [
+					"In a shipwreck off the Greek island of Antikythera",
+					"In a sunken Egyptian temple near Alexandria",
+					"In a Roman library buried under volcanic ash",
+					"In a medieval monastery in southern France"
+				],
+				"answer": 0,
+				"explain": "It was recovered in 1901 from a 1st-century BCE shipwreck and contains at least 30 meshing bronze gears."
+			},
+			{
+				"q": "What did the 1943 McCulloch–Pitts paper model?",
+				"options": [
+					"A neuron as a simple logical threshold unit",
+					"A transformer as a stack of attention blocks",
+					"A perceptron trained by backpropagation",
+					"A language model trained on internet text"
+				],
+				"answer": 0,
+				"explain": "Their artificial neuron was a threshold unit, linking the logic of propositions to the biology of nerve cells."
+			},
+			{
+				"q": "Why is the history of AI not a straight line?",
+				"options": [
+					"Ideas from many fields converged, with winters and detours",
+					"One inventor planned the transformer in the nineteenth century",
+					"Progress stopped until the internet supplied all the answers",
+					"The mathematics was complete before any machine existed"
+				],
+				"answer": 0,
+				"explain": "The convergence was retrospective. Each field was solving its own problems; the fusion required hardware, data, and time."
+			}
+		]
+	}
+	</script>
+	<script src="assets/site.js"></script>
+	<script>
+	(function () {
+		"use strict";
+		document.querySelectorAll("[data-ticks]").forEach(function (box) {
+			for (var i = 0; i < 30; i++) {
+				var t = document.createElement("i");
+				t.style.transform = "rotate(" + (i * 12) + "deg) translateY(calc(min(330px, 76vw) * -0.44))";
+				box.appendChild(t);
+			}
+		});
+
+		/* ── timeline ────────────────────────────────────────── */
+		var points = [
+			{
+				date: "c. 43,000 BCE",
+				name: "Tally bones",
+				era: "Prehistory · external memory",
+				title: "Counting becomes an object",
+				text: "The Lebombo bone (c. 43,000–42,000 years ago) carries 29 notches; the Dolní Věstonice wolf bone (c. 27,000) carries 55 in two groups; the Ishango bone (c. 18,000 BCE) carries grouped notches with disputed mathematical structure. The same impulse — outsource counting to a physical object — appears independently in Africa and Europe. It is the earliest surviving external mathematical memory.",
+				img: "../ishango.jpg",
+				alt: "The Ishango bone, a baboon fibula with grouped notches",
+				cap: "The Ishango bone. Image: Ben2, CC BY-SA 3.0."
+			},
+			{
+				date: "c. 300 BCE",
+				name: "Counting boards",
+				era: "Antiquity · spatial abstraction",
+				title: "The grid becomes a machine",
+				text: "The Salamis Tablet (c. 300 BCE) is the oldest surviving counting board: a marble slab with etched lines and pebbles (calculi). It maps numbers to grid coordinates, uses a rule-based physical system for arithmetic, and stores intermediate sums outside the head. The word calculus comes from the pebbles.",
+				img: "../salamic_table.jpg",
+				alt: "The Salamis Tablet counting board",
+				cap: "The Salamis Tablet (c. 300 BCE). Image: Wilhelm Kubitschek, public domain."
+			},
+			{
+				date: "c. 350 BCE–600 CE",
+				name: "Logic & grammar",
+				era: "Antiquity · formal rules",
+				title: "Reason and speech become calculi",
+				text: "Aristotle’s syllogism separates the structure of an argument from its content: all M are P; S is M; therefore S is P. In India, Pāṇini’s Aṣṭādhyāyī gives Sanskrit a fully generative grammar of metarules, transformations, and recursion — a compiler-like contract centuries before Aristotle. Reasoning and speech both become formal systems that can, in principle, be executed.",
+				img: null,
+				alt: "",
+				cap: ""
+			},
+			{
+				date: "c. 200–60 BCE",
+				name: "Antikythera",
+				era: "Antiquity · analog computation",
+				title: "Gears that model the sky",
+				text: "Recovered in 1901 from a shipwreck, the Antikythera mechanism is a hand-powered orrery with at least 30 meshing bronze gears. It predicted astronomical positions and eclipses decades in advance, and tracked the four-year cycle of the games. For over a millennium, no equally complex geared technology is known in the West. Computation has roots in mechanical simulation, not only in arithmetic.",
+				img: "../antikythera.jpg",
+				alt: "Fragments of the Antikythera mechanism",
+				cap: "Fragments of the Antikythera mechanism. Image: Therese Clutario, CC BY 2.0."
+			},
+			{
+				date: "1305",
+				name: "Llull’s wheels",
+				era: "Medieval · mechanical combination",
+				title: "Thought on rotating discs",
+				text: "Ramon Llull’s Ars Magna uses concentric paper discs inscribed with letters for fundamental concepts. Turn the wheels and every logically possible combination is generated. It looks like mysticism and combinatorics, but it is the first documented attempt to create a universal logical language that produces new knowledge through mechanical operations — a direct ancestor of the symbol-manipulation view of intelligence.",
+				img: "../FigurScheiben.jpg",
+				alt: "A Llull volvelle with rotating concentric discs",
+				cap: "A Llull volvelle from the Ars Magna tradition. Image: public domain."
+			},
+			{
+				date: "1642–1843",
+				name: "Engines & Ada",
+				era: "Industrial · programmability",
+				title: "From calculation to a program",
+				text: "Leibniz built a calculating machine and formalised binary notation. Babbage designed the Analytical Engine, with a store, a mill, and punched-card input. Ada Lovelace saw further than the machine’s builder: the Engine could manipulate symbols, not only numbers, and she wrote the first published algorithm intended for it. The separation of hardware from a stored program is the hinge on which the rest turns.",
+				img: "../babbage.jpg",
+				alt: "Babbage's Analytical Engine",
+				cap: "Babbage’s Analytical Engine. Image: John Cummings, CC BY-SA 2.0."
+			},
+			{
+				date: "1943–1958",
+				name: "Neurons",
+				era: "Cybernetics · learning machines",
+				title: "The first artificial neurons",
+				text: "McCulloch and Pitts model a neuron as a logical threshold unit. Wiener’s cybernetics, Ashby’s homeostat, and Grey Walter’s tortoise explore feedback and adaptation. The SNARC (1951) is the first physical neural network; Rosenblatt’s perceptron (1958) learns weights from examples and is announced by the U.S. Navy. The idea that a machine could learn from data enters the room.",
+				img: "../perceptron2.jpg",
+				alt: "The Mark I Perceptron",
+				cap: "The Mark I Perceptron. Image: U.S. Navy, public domain."
+			},
+			{
+				date: "1956–2011",
+				name: "Winters & narrow AI",
+				era: "Cold War · promises and detours",
+				title: "The name, the winters, the slow climb",
+				text: "The Dartmouth workshop of 1956 names the field. Symbolic AI builds expert systems, planners, and microworlds such as SHRDLU, then hits the frame problem and the limits of hand-coded rules. Funding freezes in the first AI winter; connectionism returns in the 1980s; a second winter follows. Deep Blue beats Kasparov in 1997, but it is still a narrow, hand-tuned system. The pattern is repeated: promise, disappointment, quiet accumulation.",
+				img: null,
+				alt: "",
+				cap: ""
+			},
+			{
+				date: "2012–2017",
+				name: "Deep learning",
+				era: "GPU era · scale",
+				title: "The convergence becomes visible",
+				text: "AlexNet (2012) wins ImageNet with a deep convolutional network trained on GPUs — hardware built for games. AlphaGo defeats Lee Sedol in 2016. In 2017, “Attention Is All You Need” replaces recurrence with self-attention: every token can look at every other token in parallel. The transformer is not a single breakthrough but a condensation of statistics, hardware, and the geometry of vectors.",
+				img: "../alphago_leesedol.jpg",
+				alt: "The AlphaGo versus Lee Sedol match in Seoul, 2016",
+				cap: "Lee Sedol and AlphaGo, Game 4, 2016. Image: Korea Baduk Association, CC BY-SA 4.0."
+			},
+			{
+				date: "2022–today",
+				name: "The LLM era",
+				era: "Scaling · assistants",
+				title: "A loop that got good enough to talk",
+				text: "ChatGPT makes the next-token loop a public interface. The ingredients are not new: tokens, vectors, attention, gradient descent, and enormous curated data. What changed is the scale and the post-training that turns a raw predictor into an assistant. The history is still being written — and the same convergence that produced the model also produced its limitations, its costs, and the arguments about what it means.",
+				img: null,
+				alt: "",
+				cap: ""
+			}
+		];
+
+		var track = document.getElementById("timeline-track");
+		var panel = document.getElementById("timeline-panel");
+		if (track && panel) {
+			points.forEach(function (p, i) {
+				var b = document.createElement("button");
+				b.type = "button";
+				b.className = "tl-node" + (i === 0 ? " is-active" : "");
+				b.setAttribute("data-i", i);
+				b.innerHTML = '<span class="tl-dot"></span><span class="tl-date">' + p.date + '</span><span class="tl-name">' + p.name + "</span>";
+				b.addEventListener("click", function () { select(i); });
+				track.appendChild(b);
+			});
+			function select(i) {
+				var p = points[i];
+				track.querySelectorAll(".tl-node").forEach(function (n) { n.classList.remove("is-active"); });
+				var node = track.querySelector('[data-i="' + i + '"]');
+				if (node) node.classList.add("is-active");
+				var html = '<div><span class="tl-era">' + p.era + '</span><h3>' + p.title + "</h3><p>" + p.text + "</p></div>";
+				if (p.img) {
+					html += '<figure><img src="' + p.img + '" alt="' + p.alt + '" loading="lazy"><figcaption>' + p.cap + "</figcaption></figure>";
+				}
+				panel.className = "tl-panel" + (p.img ? "" : " no-figure");
+				panel.innerHTML = html;
+			}
+			select(0);
+		}
+
+		/* ── convergence ─────────────────────────────────────── */
+		var canvas = document.getElementById("convergence-canvas");
+		var chips = Array.prototype.slice.call(document.querySelectorAll("[data-current]"));
+		var caption = document.getElementById("current-caption");
+		var selected = 0;
+		var currentData = [
+			{ name: "Formal thought", color: "#71bd56", caption: "Formal thought gave the machine a language: place value, zero, logic, grammar, algebra, and the stored program." },
+			{ name: "Machines", color: "#39a9d6", caption: "Machines gave it a body: gears, relays, vacuum tubes, transistors, and finally the parallel GPU." },
+			{ name: "Minds", color: "#d4a13c", caption: "Minds gave it a method: neurons, feedback, learning from examples, reward, and the metaphor of representation." },
+			{ name: "All three", color: "#b9df6a", caption: "The transformer is not the child of one field. It is what the three currents look like when they finally meet." }
+		];
+		var t0 = performance.now();
+		var reduce = TM.prefersReduced();
+		var api = null;
+		if (canvas) {
+			api = TM.initCanvas(canvas, function (ctx, w, h) {
+				var c = TM.colors();
+				ctx.clearRect(0, 0, w, h);
+				var midY = h / 2;
+				var mergeX = w * 0.74;
+				var startX = w * 0.06;
+				var labels = ["FORMAL THOUGHT", "MACHINES", "MINDS"];
+				var ys = [h * 0.22, h * 0.5, h * 0.78];
+				for (var s = 0; s < 3; s++) {
+					var active = selected === 3 || selected === s;
+					var col = currentData[s].color;
+					var alpha = active ? 0.95 : 0.2;
+					ctx.strokeStyle = hexA(col, active ? 0.75 : 0.16);
+					ctx.lineWidth = active ? 2.2 : 1.2;
+					ctx.beginPath();
+					ctx.moveTo(startX, ys[s]);
+					ctx.bezierCurveTo(w * 0.34, ys[s], w * 0.56, midY, mergeX, midY);
+					ctx.stroke();
+
+					var nDots = reduce ? 8 : 18;
+					for (var d = 0; d < nDots; d++) {
+						var prog = ((d / nDots) + (reduce ? 0 : ((performance.now() - t0) / 9000))) % 1;
+						var pt = bezierPoint(startX, ys[s], w * 0.34, ys[s], w * 0.56, midY, mergeX, midY, prog);
+						ctx.beginPath();
+						ctx.arc(pt.x, pt.y, active ? 2.2 : 1.4, 0, Math.PI * 2);
+						ctx.fillStyle = hexA(col, active ? 0.9 : 0.2);
+						ctx.fill();
+					}
+
+					ctx.font = "600 10px Barlow, system-ui, sans-serif";
+					ctx.textAlign = "left";
+					ctx.fillStyle = hexA(col, active ? 0.95 : 0.28);
+					ctx.fillText(labels[s], startX, ys[s] - 10);
+				}
+
+				var pulse = reduce ? 0.5 : (0.5 + 0.5 * Math.sin((performance.now() - t0) / 800));
+				var grad = ctx.createRadialGradient(mergeX, midY, 2, mergeX, midY, 56 + pulse * 10);
+				grad.addColorStop(0, "rgba(244,251,247,.95)");
+				grad.addColorStop(0.3, "rgba(185,223,106,.55)");
+				grad.addColorStop(1, "rgba(185,223,106,0)");
+				ctx.beginPath();
+				ctx.arc(mergeX, midY, 66, 0, Math.PI * 2);
+				ctx.fillStyle = grad;
+				ctx.fill();
+				ctx.beginPath();
+				ctx.arc(mergeX, midY, 22, 0, Math.PI * 2);
+				ctx.fillStyle = "#f4fbf7";
+				ctx.fill();
+				ctx.fillStyle = "#052b3b";
+				ctx.font = "700 10px Barlow, system-ui, sans-serif";
+				ctx.textAlign = "center";
+				ctx.fillText("AI", mergeX, midY + 3.5);
+
+				ctx.strokeStyle = "rgba(238,247,244,.3)";
+				ctx.lineWidth = 1;
+				ctx.beginPath();
+				ctx.moveTo(mergeX + 36, midY);
+				ctx.lineTo(w - 10, midY);
+				ctx.stroke();
+				ctx.font = "600 9px ui-monospace, monospace";
+				ctx.textAlign = "right";
+				ctx.fillStyle = "rgba(238,247,244,.55)";
+				ctx.fillText("TRANSFORMER", w - 12, midY - 8);
+			});
+			function animate() {
+				if (!reduce && api) api.redraw();
+				if (!reduce) requestAnimationFrame(animate);
+			}
+			if (!reduce) requestAnimationFrame(animate);
+			chips.forEach(function (chip) {
+				chip.addEventListener("click", function () {
+					chips.forEach(function (x) { x.classList.remove("is-on"); });
+					chip.classList.add("is-on");
+					var val = chip.getAttribute("data-current");
+					selected = val === "all" ? 3 : parseInt(val, 10);
+					if (caption) caption.textContent = currentData[selected].caption;
+					if (api) api.redraw();
+				});
+			});
+			window.addEventListener("tm:theme", function () { if (api) api.redraw(); });
+		}
+		function bezierPoint(x0, y0, x1, y1, x2, y2, x3, y3, t) {
+			var u = 1 - t;
+			var x = u * u * u * x0 + 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t * x3;
+			var y = u * u * u * y0 + 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t * y3;
+			return { x: x, y: y };
+		}
+		function hexA(hex, a) {
+			var v = hex.replace("#", "");
+			return "rgba(" + parseInt(v.slice(0, 2), 16) + "," + parseInt(v.slice(2, 4), 16) + "," + parseInt(v.slice(4, 6), 16) + "," + a + ")";
+		}
+	})();
+	</script>
+</body>
+</html>
