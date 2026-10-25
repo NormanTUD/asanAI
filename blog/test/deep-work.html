@@ -505,13 +505,23 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   window.addEventListener("resize", onScroll);
   onScroll();
 
-  const reveal = document.querySelectorAll(".reveal");
+  const reveal = [...document.querySelectorAll(".reveal")];
+  const revealCheck = () => {
+    reveal.forEach(el => {
+      if(el.classList.contains("in")) return;
+      const r = el.getBoundingClientRect();
+      if(r.top < window.innerHeight * 0.94 && r.bottom > 0) el.classList.add("in");
+    });
+  };
   if("IntersectionObserver" in window){
     const io = new IntersectionObserver((entries) => {
       entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
     }, {threshold:.08, rootMargin:"0px 0px -8% 0px"});
     reveal.forEach(el => io.observe(el));
   } else reveal.forEach(el => el.classList.add("in"));
+  window.addEventListener("scroll", revealCheck, {passive:true});
+  window.addEventListener("hashchange", () => setTimeout(revealCheck, 60));
+  setTimeout(revealCheck, 80);
 
   document.querySelectorAll(".toggle-card").forEach(card => {
     const btn = card.querySelector(".toggle-btn");

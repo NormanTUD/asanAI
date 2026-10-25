@@ -543,13 +543,23 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   window.addEventListener("resize", onScroll);
   onScroll();
 
-  const reveal = document.querySelectorAll(".reveal");
+  const reveal = [...document.querySelectorAll(".reveal")];
+  const revealCheck = () => {
+    reveal.forEach(el => {
+      if(el.classList.contains("in")) return;
+      const r = el.getBoundingClientRect();
+      if(r.top < window.innerHeight * 0.94 && r.bottom > 0) el.classList.add("in");
+    });
+  };
   if("IntersectionObserver" in window){
     const io = new IntersectionObserver((entries) => {
       entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
     }, {threshold:.08, rootMargin:"0px 0px -8% 0px"});
     reveal.forEach(el => io.observe(el));
   } else reveal.forEach(el => el.classList.add("in"));
+  window.addEventListener("scroll", revealCheck, {passive:true});
+  window.addEventListener("hashchange", () => setTimeout(revealCheck, 60));
+  setTimeout(revealCheck, 80);
 
   document.querySelectorAll(".toggle-card").forEach(card => {
     const btn = card.querySelector(".toggle-btn");
@@ -640,7 +650,10 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   const lineA=document.getElementById("tx-line-a"), lineB=document.getElementById("tx-line-b"),
         lineH=document.getElementById("tx-line-hidden"), verdict=document.getElementById("tx-verdict-text");
   function paintTx(){
-    document.querySelectorAll(".tx-node").forEach(n=>n.classList.toggle("on", tx[n.dataset.side]===n.dataset.state));
+    document.querySelectorAll(".tx-node").forEach(n=>{
+      const key=n.dataset.side==="a"?"from":"response";
+      n.classList.toggle("on", tx[key]===n.dataset.state);
+    });
     document.querySelectorAll("[data-group]").forEach(g=>{
       const key=g.dataset.group;
       g.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.v===tx[key]));
@@ -661,7 +674,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     }
   }
   document.querySelectorAll(".tx-node").forEach(n=>n.addEventListener("click",()=>{
-    tx[n.dataset.side]=n.dataset.state; paintTx();
+    if(n.dataset.side==="a") tx.from=n.dataset.state; else tx.response=n.dataset.state;
+    paintTx();
   }));
   document.querySelectorAll("[data-group]").forEach(g=>{
     g.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{tx[g.dataset.group]=b.dataset.v; paintTx();}));
