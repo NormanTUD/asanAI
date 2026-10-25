@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wiener-Prozess &amp; Nonlinear Problems in Random Theory — Die Geometrie des Zufalls · Wiener Archive</title>
+<meta name="description" content="Brownsche Bewegung, Wiener-Prozess, Wiener-Maß und Wiener-Chaos interaktiv: Pfade, Selbstähnlichkeit, weißes Rauschen und nichtlineare Funktionale.">
+<script>
+  try { var t = localStorage.getItem("wiener-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+</script>
+<link rel="icon" type="image/svg+xml" href="wiener_assets/favicon.svg">
+<link rel="stylesheet" href="wiener_assets/wiener.css">
+<style>
+  .brown-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); gap: 14px; }
+  .brown-grid .stage { height: 300px; }
+  .chaos-terms { display: flex; flex-wrap: wrap; gap: 6px; }
+  .rms { font-family: var(--mono); font-size: 10px; color: var(--accent); }
+  @media (max-width: 900px) { .brown-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body data-accent="sky" data-motif="brownian" data-page="05">
+<div class="progress"><i id="progressBar"></i></div>
+
+<header class="topbar">
+  <a class="brand" href="wiener_index.html"><b>W</b><span class="sep">·</span> Wiener Archive</a>
+  <nav class="topnav" aria-label="Werke"></nav>
+  <div class="top-tools">
+    <button class="theme-toggle" id="themeToggle" aria-label="Design wechseln"></button>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="top">
+  <canvas class="hero-canvas" data-motif="brownian" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="kicker">Differential Space · 1923 · Nonlinear Problems in Random Theory · 1958</p>
+    <h1>Die Geometrie<br>des <em>Zufalls</em>.</h1>
+    <p class="lede">Ein Partikel wird von Molekülen gestoßen. Der Pfad ist stetig — und trotzdem an keiner Stelle glatt. Wiener hat diesem Zufall eine exakte Mathematik gegeben: ein Maß auf dem Raum der Pfade.</p>
+    <p class="epigraph">Ein Pfad, der stetig ist und nirgends eine Steigung hat: Das ist keine Paradoxie, sondern eine neue Geometrie.<br><span class="mono" style="font-style:normal;font-size:9px;letter-spacing:.1em;color:var(--dim)">MERKSATZ · DER WIENER-PROZESS</span></p>
+    <div class="hero-meta">
+      <span><b>1923</b> Differential Space</span>
+      <span><b>1938</b> The Homogeneous Chaos</span>
+      <span><b>1958</b> Nonlinear Problems</span>
+      <span>Pfad · Maß · Chaos</span>
+    </div>
+  </div>
+  <div class="scroll-hint">Pfad</div>
+</section>
+
+<section class="chapter" id="pfad">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">01</div>
+      <div>
+        <h2>Stetig, aber nirgends glatt</h2>
+        <p class="sub">Zoom beliebig weit hinein: Der Wiener-Pfad sieht statistisch immer gleich aus. Diese Selbstähnlichkeit ist kein Trick der Zeichnung, sondern eine Eigenschaft des Prozesses.</p>
+      </div>
+    </div>
+
+    <div class="lab reveal d1">
+      <div class="brown-grid">
+        <div class="stage">
+          <span class="stage-label">16 Pfade · einer hervorgehoben</span>
+          <span class="stage-readout" id="brownReadout">16 Pfade · 4096 Schritte</span>
+          <canvas id="brownFull"></canvas>
+          <div class="stage-foot"><span>Zeit 0 → 1</span><span>Var(W<sub>t</sub>) = t</span></div>
+        </div>
+        <div class="stage">
+          <span class="stage-label">Zoom · derselbe Pfad</span>
+          <span class="stage-readout" id="zoomReadout">Fenster 0.50 · ×1</span>
+          <canvas id="brownZoom"></canvas>
+          <div class="stage-foot"><span>y × √zoom</span><span>selbstähnlich</span></div>
+        </div>
+      </div>
+      <div class="controls">
+        <label class="control">Feinheit <input type="range" id="resolution" min="32" max="4096" step="32" value="4096" data-out="resV" data-format="int"><span class="val" id="resV">4096</span></label>
+        <label class="control">Fenster <input type="range" id="windowPos" min="0" max="1" step="0.01" value="0.5" data-out="windowV" data-format="2"><span class="val" id="windowV">0.50</span></label>
+        <div class="btn-group">
+          <button class="btn on" data-zoom="1">×1</button>
+          <button class="btn" data-zoom="4">×4</button>
+          <button class="btn" data-zoom="16">×16</button>
+          <button class="btn ghost" id="brownNew">Neuer Pfad</button>
+        </div>
+      </div>
+      <div class="readouts">
+        <div class="readout"><span class="k">Pfad</span><span class="v">stetig</span></div>
+        <div class="readout"><span class="k">Steigung</span><span class="v">nirgends</span></div>
+        <div class="readout"><span class="k">Varianz</span><span class="v">E[W²] = t</span></div>
+      </div>
+    </div>
+    <div class="note reveal d2"><b>Warum das wichtig ist:</b> Klassische Analysis braucht differenzierbare Funktionen. Brownsche Pfade sind es fast sicher nicht. Wiener konstruiert deshalb ein <em>Maß</em> auf einem Funktionenraum — den Wiener-Raum. Damit werden „typische Pfade“ rigoros.</div>
+  </div>
+</section>
+
+<section class="chapter" id="rauschen">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">02</div>
+      <div>
+        <h2>Weißes Rauschen ist die Ableitung</h2>
+        <p class="sub">Nicht im klassischen Sinn — aber im Sinne der Distributionen. Weißes Rauschen ist der unendlich schnelle Zuwachs, dessen Integral der Wiener-Pfad ist.</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p>Weißes Rauschen <span class="mono">ξ(t)</span> hat keine Erinnerung: <span class="mono">E[ξ(t)ξ(s)] = δ(t−s)</span>. Es ist über alle Frequenzen gleich stark. Integriert man es, entsteht ein Pfad, der langsamer wandert — und dessen Spektrum wie <span class="mono">1/f²</span> abfällt.</p>
+        <div class="formula">W<sub>t</sub> = ∫<sub>0</sub><sup>t</sup> ξ(s) ds
+          <div class="formula-note">Informell: Brownsche Bewegung ist das Integral von weißem Rauschen. Formal ist ξ keine Funktion, sondern ein verallgemeinerter Prozess.</div>
+        </div>
+        <p>Damit wird der Zufall zum Baustein für Modelle: Finanzmärkte, Diffusion, Sensoren, Regelkreise. Immer wenn ein System von unzähligen kleinen, unabhängigen Stößen getrieben wird, taucht der Wiener-Pfad auf.</p>
+      </div>
+      <div class="visual reveal d1">
+        <div class="stage" style="padding:14px">
+          <span class="stage-label">Rauschen → Integration → Pfad</span>
+          <span class="stage-readout">ξ → W</span>
+          <canvas id="noiseIntegral" style="height:280px"></canvas>
+        </div>
+        <div class="controls">
+          <button class="btn ghost" id="noiseNew">Neues Rauschen</button>
+          <span class="axis-note">Weißes Rauschen hat ein flaches Spektrum; der integrierte Pfad hat ein 1/f²-Spektrum.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="chaos">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">03</div>
+      <div>
+        <h2>Wiener-Chaos: Nichtlinearität zerlegen</h2>
+        <p class="sub">Was, wenn das Ausgangssignal keine lineare Funktion des Rauschens ist? Wiener zerlegt es in orthogonale Bausteine: erst linear, dann quadratisch, dann kubisch — ein „Chaos“ aus Hermite-Polynomen.</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p>Ein lineares Filter kann nur lineare Funktionen des Eingangs bilden. Ein reales System — ein Neuron, ein Verstärker, ein Markt — ist oft nichtlinear. Die Antwort ist eine <strong>Funktionalentwicklung</strong>:</p>
+        <div class="formula">Y(t) = c<sub>0</sub>H<sub>0</sub> + c<sub>1</sub>H<sub>1</sub>(W<sub>t</sub>) + c<sub>2</sub>H<sub>2</sub>(W<sub>t</sub>) + c<sub>3</sub>H<sub>3</sub>(W<sub>t</sub>) + …
+          <div class="formula-note">H<sub>1</sub> = W<sub>t</sub>, H<sub>2</sub> = W<sub>t</sub>² − t, H<sub>3</sub> = W<sub>t</sub>³ − 3tW<sub>t</sub>. Die Terme sind orthogonal: Sie „sprechen“ nicht miteinander.</div>
+        </div>
+        <p>Das ist die Grundlage der <strong>Wiener-Chaos-Entwicklung</strong> (1938) und des Buches <em>Nonlinear Problems in Random Theory</em> (1958). Nichtlineare Systeme werden durch Rauschen charakterisiert — nicht durch einen einzelnen Sinus, sondern durch die Statistik vieler Eingaben.</p>
+      </div>
+      <div class="visual reveal d1">
+        <div class="stage" style="height:330px">
+          <span class="stage-label">Ziel vs. Rekonstruktion</span>
+          <span class="stage-readout" id="chaosReadout">3 Terme · Rest 0.0</span>
+          <canvas id="chaosPlot"></canvas>
+          <div class="stage-foot"><span>hell: Ziel · gestrichelt: Näherung</span><span class="rms" id="chaosRms">RMS</span></div>
+        </div>
+        <div class="controls">
+          <div class="btn-group">
+            <button class="btn" data-terms="1">1 Term</button>
+            <button class="btn" data-terms="2">2 Terme</button>
+            <button class="btn on" data-terms="3">3 Terme</button>
+          </div>
+        </div>
+        <p class="axis-note" style="margin-top:8px">Die unteren Spuren zeigen die drei Bausteine H<sub>1</sub>, H<sub>2</sub>, H<sub>3</sub>; oben siehst du, wie viel davon die Näherung schon einfängt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="mitnehmen">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">04</div>
+      <div>
+        <h2>Was du mitnimmst</h2>
+        <p class="sub">Drei Sätze über Zufall, die man nicht mit „Chaos“ verwechseln sollte.</p>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaway reveal"><span class="n">01 · ZUFALL HAT EINE GEOMETRIE</span><p>Der Wiener-Pfad ist nicht beliebig. Er hat eine exakte Varianz, eine Selbstähnlichkeit und ein Maß.</p></div>
+      <div class="takeaway reveal d1"><span class="n">02 · RAUSCHEN IST EIN SIGNAL</span><p>Weißes Rauschen ist kein Fehler, sondern ein Testsignal. Man kann ein System damit identifizieren.</p></div>
+      <div class="takeaway reveal d2"><span class="n">03 · NICHTLINEARES BRAUCHT ORDNUNG</span><p>Wiener-Chaos zerlegt nichtlineare Antworten in orthogonale Bausteine — Ordnung im scheinbar Unordentlichen.</p></div>
+    </div>
+    <div class="note reveal"><b>Denkwerkzeug:</b> Frage: Auf welcher Zeitskala betrachte ich den Zufall? Ist der Pfad stetig, glatt, selbstähnlich? Welche Nichtlinearität steckt im System — und welche Chaos-Terme brauche ich?</div>
+    <div class="quiz reveal" data-answer="1">
+      <p class="q">Warum ist der Wiener-Pfad „nirgends differenzierbar“, obwohl er stetig ist?</p>
+      <div class="quiz-options">
+        <button class="quiz-option">Weil er aus endlich vielen geraden Liniensegmenten besteht.</button>
+        <button class="quiz-option">Weil die typischen Zuwächse über jedes noch so kleine Intervall unendlich oft das Vorzeichen wechseln.</button>
+        <button class="quiz-option">Weil seine Varianz mit der Zeit abnimmt und die Steigung dadurch verschwindet.</button>
+        <button class="quiz-option">Weil das Wiener-Maß nur auf glatten Funktionen definiert ist.</button>
+      </div>
+      <p class="quiz-explain">Die Zuwächse skalieren mit √Δt, nicht mit Δt. Der Differenzenquotient ΔW/Δt verhält sich wie 1/√Δt und divergiert für Δt → 0. Stetig heißt also nicht glatt.</p>
+    </div>
+    <div class="prevnext">
+      <a href="wiener_04_harmonische-analyse.html"><span>Zurück</span>← Der verborgene Rhythmus</a>
+      <a class="right" href="wiener_06_gott-und-golem.html"><span>Weiter</span>Die drei Flammen →</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>Quellen: Wiener, Differential Space (1923); The Homogeneous Chaos (1938); Nonlinear Problems in Random Theory (1958)</span>
+    <span>Wiener-Maß auf C([0,1])</span>
+  </div>
+</footer>
+
+<script src="wiener_assets/wiener.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Brownian paths ---------- */
+  (function () {
+    var N = 4096, P = 16;
+    var paths = [];
+    var seed = 1234567;
+    var state = { res: 4096, zoom: 1, window: .5 };
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    function gauss() { var u = 0, v = 0; while (u === 0) u = rnd(); while (v === 0) v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+    function build() {
+      paths = [];
+      for (var p = 0; p < P; p++) {
+        var w = new Float64Array(N);
+        var acc = 0;
+        for (var i = 0; i < N; i++) {
+          acc += gauss() / Math.sqrt(N);
+          w[i] = acc;
+        }
+        paths.push(w);
+      }
+    }
+    build();
+    function drawFull(ctx, w, h) {
+      var accent = W.cssVar("--accent"), accent2 = W.cssVar("--accent-2");
+      var padL = 28, padR = 14, padT = 24, padB = 24;
+      var iw = w - padL - padR, ih = h - padT - padB;
+      var step = Math.max(1, Math.floor(N / state.res));
+      ctx.clearRect(0, 0, w, h);
+      W.grid(ctx, w, h, accent, 34);
+      ctx.strokeStyle = W.alpha("#ffffff", .08);
+      ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + ih); ctx.lineTo(padL + iw, padT + ih); ctx.stroke();
+      var scale = ih * .38 / 2.2;
+      for (var p = 0; p < P; p++) {
+        var ww = paths[p];
+        ctx.strokeStyle = W.alpha(accent, p === 0 ? .82 : .09);
+        ctx.lineWidth = p === 0 ? 1.5 : .7;
+        ctx.beginPath();
+        for (var i = 0; i < N; i += step) {
+          var x = padL + i / (N - 1) * iw;
+          var y = padT + ih / 2 - ww[i] * scale;
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        if (p === 0) {
+          var yEnd = padT + ih / 2 - ww[N - 1] * scale;
+          ctx.fillStyle = accent2;
+          ctx.shadowColor = accent; ctx.shadowBlur = 14;
+          ctx.beginPath(); ctx.arc(padL + iw, yEnd, 3.3, 0, W.TAU); ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      }
+      W.label(ctx, "W(t)", padL + 3, padT + 10, W.alpha(accent, .5), 8.5);
+      W.label(ctx, "t →", padL + iw, padT + ih + 16, W.alpha(accent, .28), 8, "right");
+      var ro = document.getElementById("brownReadout");
+      if (ro) ro.textContent = "16 Pfade · " + state.res + " Schritte";
+    }
+    function drawZoom(ctx, w, h) {
+      var accent = W.cssVar("--accent"), accent2 = W.cssVar("--accent-2");
+      var padL = 28, padR = 14, padT = 24, padB = 24;
+      var iw = w - padL - padR, ih = h - padT - padB;
+      var ww = paths[0];
+      var half = .5 / state.zoom;
+      var t0 = W.clamp(state.window - half, 0, 1 - 2 * half);
+      var i0 = Math.floor(t0 * (N - 1));
+      var i1 = Math.floor((t0 + 2 * half) * (N - 1));
+      var base = ww[i0];
+      var scale = ih * .38 / 2.2 * Math.sqrt(state.zoom);
+      ctx.clearRect(0, 0, w, h);
+      W.grid(ctx, w, h, accent, 34);
+      ctx.strokeStyle = W.alpha("#ffffff", .08);
+      ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + ih); ctx.lineTo(padL + iw, padT + ih); ctx.stroke();
+      ctx.strokeStyle = W.alpha(accent, .85);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      var count = 0;
+      for (var i = i0; i <= i1; i++) {
+        var x = padL + (i - i0) / Math.max(1, i1 - i0) * iw;
+        var y = padT + ih / 2 - (ww[i] - base) * scale;
+        if (count++ === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      W.label(ctx, "t = " + t0.toFixed(2) + " … " + (t0 + 2 * half).toFixed(2), padL + 3, padT + 10, W.alpha(accent, .5), 8);
+      var zr = document.getElementById("zoomReadout");
+      if (zr) zr.textContent = "Fenster " + state.window.toFixed(2) + " · ×" + state.zoom;
+    }
+    var full = W.stage(document.getElementById("brownFull"), drawFull, { animate: false });
+    var zoom = W.stage(document.getElementById("brownZoom"), drawZoom, { animate: false });
+    function refresh() { full.redraw(); zoom.redraw(); }
+    W.bindRange("resolution", function (v) { state.res = Math.round(v); refresh(); });
+    W.bindRange("windowPos", function (v) { state.window = v; refresh(); });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-zoom]"), function (b) {
+      b.addEventListener("click", function () {
+        document.querySelectorAll("[data-zoom]").forEach(function (x) { x.classList.remove("on"); });
+        b.classList.add("on");
+        state.zoom = parseInt(b.getAttribute("data-zoom"), 10);
+        refresh();
+      });
+    });
+    document.getElementById("brownNew").addEventListener("click", function () {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      build(); refresh();
+    });
+  })();
+
+  /* ---------- white noise -> path ---------- */
+  (function () {
+    var canvas = document.getElementById("noiseIntegral");
+    if (!canvas) return;
+    var n = 220;
+    var noise = new Float64Array(n);
+    var seed = 4242;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    function build() {
+      for (var i = 0; i < n; i++) noise[i] = (rnd() - .5) * 2;
+    }
+    build();
+    var stage = W.stage(canvas, function (ctx, w, h) {
+      var accent = W.cssVar("--accent"), accent2 = W.cssVar("--accent-2"), bad = W.cssVar("--bad");
+      var padL = 32, padR = 14, mid = h * .46, topH = h * .26, botH = h * .36;
+      var iw = w - padL - padR;
+      ctx.clearRect(0, 0, w, h);
+      W.grid(ctx, w, h, accent, 30);
+      ctx.strokeStyle = W.alpha("#ffffff", .08);
+      ctx.beginPath(); ctx.moveTo(padL, 18); ctx.lineTo(padL, 18 + topH); ctx.lineTo(padL + iw, 18 + topH); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL, mid + 10); ctx.lineTo(padL, mid + 10 + botH); ctx.lineTo(padL + iw, mid + 10 + botH); ctx.stroke();
+      var bw = iw / n;
+      for (var i = 0; i < n; i++) {
+        var hh = noise[i] * topH * .42;
+        ctx.fillStyle = W.alpha(bad, .55);
+        ctx.fillRect(padL + i * bw, 18 + topH / 2 - hh, Math.max(1, bw - 1), Math.abs(hh) * 2);
+      }
+      var acc = 0, pts = [];
+      for (var j = 0; j < n; j++) {
+        acc += noise[j] * .12;
+        pts.push([padL + j / (n - 1) * iw, mid + 10 + botH * .5 - acc * botH * .25]);
+      }
+      W.line(ctx, pts, accent, 1.6);
+      W.label(ctx, "ξ(t) · weißes Rauschen", padL + 3, 30, W.alpha(bad, .7), 8.5);
+      W.label(ctx, "W(t) = ∫ ξ ds", padL + 3, mid + 24, W.alpha(accent, .7), 8.5);
+      W.label(ctx, "∫", w * .5, h * .5, W.alpha(accent2, .6), 22, "center");
+    }, { animate: false });
+    document.getElementById("noiseNew").addEventListener("click", function () { build(); stage.redraw(); });
+  })();
+
+  /* ---------- Wiener chaos ---------- */
+  (function () {
+    var canvas = document.getElementById("chaosPlot");
+    if (!canvas) return;
+    var n = 320;
+    var Wt = new Float64Array(n);
+    var h1 = new Float64Array(n), h2 = new Float64Array(n), h3 = new Float64Array(n);
+    var target = new Float64Array(n);
+    var targetScale = 1;
+    var terms = 3;
+    var seed = 8080;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    function gauss() { var u = 0, v = 0; while (u === 0) u = rnd(); while (v === 0) v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+    (function build() {
+      var acc = 0;
+      for (var i = 0; i < n; i++) {
+        acc += gauss() / Math.sqrt(n);
+        Wt[i] = acc;
+        var t = i / (n - 1);
+        h1[i] = Wt[i];
+        h2[i] = Wt[i] * Wt[i] - t;
+        h3[i] = Wt[i] * Wt[i] * Wt[i] - 3 * t * Wt[i];
+      }
+      function norm(arr) {
+        var m = 0;
+        for (var j = 0; j < n; j++) m = Math.max(m, Math.abs(arr[j]));
+        for (var k = 0; k < n; k++) arr[k] /= (m || 1);
+      }
+      norm(h1); norm(h2); norm(h3);
+      for (var q = 0; q < n; q++) target[q] = .55 * h1[q] + .8 * h2[q] + .35 * h3[q];
+      var m = 0;
+      for (var r = 0; r < n; r++) m = Math.max(m, Math.abs(target[r]));
+      targetScale = m || 1;
+      for (var s = 0; s < n; s++) target[s] /= targetScale;
+    })();
+    function draw(ctx, w, h) {
+      var accent = W.cssVar("--accent"), accent2 = W.cssVar("--accent-2"), bad = W.cssVar("--bad");
+      var padL = 30, padR = 14, padT = 24, padB = 18;
+      var topH = (h - padT - padB) * .64;
+      var midY = padT + topH + 16;
+      var botH = h - padB - midY;
+      var iw = w - padL - padR;
+      ctx.clearRect(0, 0, w, h);
+      W.grid(ctx, w, h, accent, 32);
+      ctx.strokeStyle = W.alpha("#ffffff", .08);
+      ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + topH); ctx.lineTo(padL + iw, padT + topH); ctx.stroke();
+      var approx = new Float64Array(n);
+      for (var i = 0; i < n; i++) approx[i] = .55 * h1[i] + (terms >= 2 ? .8 * h2[i] : 0) + (terms >= 3 ? .35 * h3[i] : 0);
+      for (var k = 0; k < n; k++) approx[k] /= targetScale;
+      var tp = [], ap = [];
+      for (var q = 0; q < n; q++) {
+        var x = padL + q / (n - 1) * iw;
+        tp.push([x, padT + topH * .5 - target[q] * topH * .44]);
+        ap.push([x, padT + topH * .5 - approx[q] * topH * .44]);
+      }
+      W.line(ctx, tp, W.alpha(accent, .78), 1.5);
+      W.line(ctx, ap, W.alpha(accent2, .9), 1.2, [4, 5]);
+      W.label(ctx, "Y(t) · Ziel", padL + 3, padT + 11, W.alpha(accent, .65), 8.5);
+      W.label(ctx, "Näherung", padL + 70, padT + 11, W.alpha(accent2, .7), 8.5);
+
+      var comps = [[h1, accent, "H₁"], [h2, accent2, "H₂"], [h3, bad, "H₃"]];
+      comps.forEach(function (c, idx) {
+        var pts = [];
+        var yy = midY + botH * (idx + .5) / 3;
+        for (var z = 0; z < n; z++) {
+          var xx = padL + z / (n - 1) * iw;
+          pts.push([xx, yy - c[0][z] * botH * .14]);
+        }
+        W.line(ctx, pts, W.alpha(c[1], .45), .9);
+        W.label(ctx, c[2], padL - 16, yy, W.alpha(c[1], .6), 8, "right");
+      });
+      var rms = 0;
+      for (var r = 0; r < n; r++) rms += Math.pow(target[r] - approx[r], 2);
+      rms = Math.sqrt(rms / n);
+      var ro = document.getElementById("chaosReadout");
+      if (ro) ro.textContent = terms + (terms === 1 ? " Term" : " Terme") + " · Rest " + rms.toFixed(3);
+      var rr = document.getElementById("chaosRms");
+      if (rr) rr.textContent = "RMS " + rms.toFixed(3);
+    }
+    var stage = W.stage(canvas, draw, { animate: false });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-terms]"), function (b) {
+      b.addEventListener("click", function () {
+        document.querySelectorAll("[data-terms]").forEach(function (x) { x.classList.remove("on"); });
+        b.classList.add("on");
+        terms = parseInt(b.getAttribute("data-terms"), 10);
+        stage.redraw();
+      });
+    });
+  })();
+})();
+</script>
+</body>
+</html>

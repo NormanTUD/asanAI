@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ex-Prodigy &amp; I Am a Mathematician — Das Wunderkind und die Schleife · Wiener Archive</title>
+<meta name="description" content="Norbert Wieners Leben visuell: Zeitleiste, Einflussnetz, zwei Autobiografien, der Roman The Tempter und die ethischen Jahre.">
+<script>
+  try { var t = localStorage.getItem("wiener-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+</script>
+<link rel="icon" type="image/svg+xml" href="wiener_assets/favicon.svg">
+<link rel="stylesheet" href="wiener_assets/wiener.css">
+<style>
+  .tl-btn { flex: 1 1 0; min-width: 86px; padding: 0 7px; border: 0; background: transparent; text-align: left; cursor: pointer; color: inherit; position: relative; }
+  .tl-btn::before { content: ""; position: absolute; left: 7px; top: 15px; width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); box-shadow: 0 0 0 4px transparent; transition: .2s var(--ease); }
+  .tl-btn:hover::before, .tl-btn.on::before { background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+  .tl-btn .yr { font-family: var(--mono); font-size: 9px; letter-spacing: .08em; color: var(--accent); display: block; }
+  .tl-btn .lb { font-size: .75rem; line-height: 1.35; color: var(--muted); margin-top: 21px; display: block; max-width: 12ch; }
+  .tl-btn:hover .lb, .tl-btn.on .lb { color: var(--ink); }
+  .tl-detail { min-height: 104px; margin-top: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); padding: 16px 18px; }
+  .tl-detail .y { font-family: var(--mono); font-size: 9px; letter-spacing: .12em; color: var(--accent); }
+  .tl-detail h4 { font-family: var(--serif); font-weight: 400; font-size: 1.2rem; margin: 5px 0 6px; }
+  .tl-detail p { font-size: .9rem; line-height: 1.55; color: var(--muted); margin: 0; max-width: 72ch; }
+  .net-wrap { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, .5fr); gap: 14px; align-items: stretch; }
+  .net-svg { width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--radius); background: radial-gradient(600px 300px at 50% 50%, var(--accent-soft), transparent 70%), var(--panel-2); }
+  .net-svg text { font-family: var(--mono); font-size: 9px; fill: var(--muted); pointer-events: none; }
+  .net-svg .name { font-family: var(--sans); font-size: 10px; fill: var(--ink); }
+  .net-svg .edge { stroke: var(--line-strong); stroke-width: 1; }
+  .net-svg .edge.hot { stroke: var(--accent); stroke-width: 1.6; }
+  .net-svg .dot { stroke-width: 1.2; transition: .2s var(--ease); }
+  .net-svg .node { cursor: pointer; }
+  .net-svg .node:hover .dot { filter: drop-shadow(0 0 8px var(--accent)); }
+  .net-svg .node.dim { opacity: .25; }
+  .net-detail { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); padding: 18px; }
+  .net-detail .k { font-family: var(--mono); font-size: 8.5px; letter-spacing: .12em; color: var(--accent); text-transform: uppercase; }
+  .net-detail h4 { font-family: var(--serif); font-weight: 400; font-size: 1.25rem; margin: 6px 0 8px; }
+  .net-detail p { font-size: .87rem; line-height: 1.55; color: var(--muted); margin: 0; }
+  .net-detail .pills { margin-top: 12px; }
+  .two-register { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .register { display: grid; gap: 10px; }
+  .register h3 { font-family: var(--mono); font-size: 9.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin: 0 0 4px; }
+  @media (max-width: 900px) { .net-wrap { grid-template-columns: 1fr; } .two-register { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body data-accent="rose" data-motif="life" data-page="07">
+<div class="progress"><i id="progressBar"></i></div>
+
+<header class="topbar">
+  <a class="brand" href="wiener_index.html"><b>W</b><span class="sep">·</span> Wiener Archive</a>
+  <nav class="topnav" aria-label="Werke"></nav>
+  <div class="top-tools">
+    <button class="theme-toggle" id="themeToggle" aria-label="Design wechseln"></button>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="top">
+  <canvas class="hero-canvas" data-motif="life" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="kicker">Ex-Prodigy · 1953 · I Am a Mathematician · 1956</p>
+    <h1>Das Wunderkind<br>und die <em>Schleife</em>.</h1>
+    <p class="lede">Norbert Wiener war mit elf auf der High School, mit vierzehn mit dem Bachelor fertig, mit neunzehn promoviert. Doch die wichtigere Geschichte ist, wie aus dem kindlichen Rechner ein Denker der Rückkopplung wurde.</p>
+    <p class="epigraph">„To the memory of my father LEO WIENER … My closest mentor and dearest antagonist.“<br><span class="mono" style="font-style:normal;font-size:9px;letter-spacing:.1em;color:var(--dim)">WIDMUNG IN THE HUMAN USE OF HUMAN BEINGS, 1950</span></p>
+    <div class="hero-meta">
+      <span><b>1894</b> Columbia, Missouri</span>
+      <span><b>1913</b> PhD, Harvard</span>
+      <span><b>1919–1964</b> MIT</span>
+      <span><b>1964</b> Stockholm</span>
+    </div>
+  </div>
+  <figure class="hero-portrait">
+    <img src="wiener_assets/img/wiener-1963.png" alt="Porträt von Norbert Wiener, 1963">
+    <figcaption>Norbert Wiener, 1963 · CC0</figcaption>
+  </figure>
+  <div class="scroll-hint">Leben</div>
+</section>
+
+<section class="chapter" id="zeit">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">01</div>
+      <div>
+        <h2>Eine Biografie in Stationen</h2>
+        <p class="sub">Klicke oder fahre über die Jahre. Die Details erscheinen unten — kein Lebenslauf zum Auswendiglernen, sondern eine Karte der Wendepunkte.</p>
+      </div>
+    </div>
+    <div class="timeline-h reveal d1" style="padding-top:4px">
+      <div class="timeline-track" id="lifeTrack"></div>
+    </div>
+    <div class="tl-detail reveal d2" id="lifeDetail">
+      <span class="y">1894</span>
+      <h4>Geburt in Columbia, Missouri</h4>
+      <p>Norbert Wiener wird am 26. November als erstes Kind von Leo Wiener und Bertha Kahn geboren. Der Vater, ein Philologe und Übersetzer, unterrichtet ihn zu Hause — intensiv, ehrgeizig und nicht immer sanft.</p>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="netz">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">02</div>
+      <div>
+        <h2>Das Netz</h2>
+        <p class="sub">Wiener war kein Solitär. Seine Ideen entstanden zwischen Cambridge, Göttingen, MIT, Mexiko und den Macy-Konferenzen. Fahre über einen Knoten, um die Beziehung zu sehen.</p>
+      </div>
+    </div>
+    <div class="net-wrap reveal d1">
+      <svg class="net-svg" id="influenceNet" viewBox="0 0 900 520" role="img" aria-label="Einflussnetz von Norbert Wiener"></svg>
+      <div class="net-detail" id="netDetail">
+        <span class="k">Auswahl</span>
+        <h4>Norbert Wiener</h4>
+        <p>Mathematiker, Kybernetiker, öffentlicher Intellektueller. Das Netz zeigt keine vollständige Genealogie, sondern die wichtigsten Achsen: Familie, Lehrer, Kollegen, Institutionen.</p>
+        <div class="pills"><span class="pill">MIT</span><span class="pill">Kybernetik</span><span class="pill">Macy</span></div>
+      </div>
+    </div>
+    <p class="axis-note" style="margin-top:10px">Auswahl, keine vollständige Genealogie. Der Bruch mit McCulloch und Pitts 1951 ist Teil der Geschichte — Erfolg und Verletzlichkeit liegen bei Wiener nah beieinander.</p>
+  </div>
+</section>
+
+<section class="chapter" id="register">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">03</div>
+      <div>
+        <h2>Zwei Register, ein Mensch</h2>
+        <p class="sub">Der Mathematiker und der Bürger sind keine getrennten Personen. Dieselbe Denkbewegung — vom Formalismus zur Verantwortung — zieht sich durch beide.</p>
+      </div>
+    </div>
+    <div class="two-register">
+      <div class="register reveal">
+        <h3>Der Mathematiker</h3>
+        <div class="book-card"><span class="spine"></span><div class="inner"><span class="yr">1930 · 1931 · 1932</span><h4>Harmonische Analyse, Wiener–Hopf, Tauberian</h4><p>Spektren, Filter, Asymptotik. Die Werkzeuge, mit denen Rauschen und Zeitreihen überhaupt beschreibbar werden.</p><div class="why">„My work was the earliest attempt to put the harmonic analysis of continuing processes on a firm mathematical basis.“ (Cybernetics, S. 254)</div></div></div>
+        <div class="book-card"><span class="spine"></span><div class="inner"><span class="yr">1923 · 1938 · 1958</span><h4>Differential Space, Homogeneous Chaos, Nonlinear Problems</h4><p>Der Wiener-Prozess, das Wiener-Maß und die Zerlegung nichtlinearer Funktionale in orthogonale Chaos-Terme.</p><div class="why">Zufall wird zu einem mathematischen Objekt mit Geometrie.</div></div></div>
+      </div>
+      <div class="register reveal d1">
+        <h3>Der Bürger</h3>
+        <div class="book-card"><span class="spine"></span><div class="inner"><span class="yr">1947 · 1950 · 1964</span><h4>A Scientist Rebels, Human Use, God &amp; Golem</h4><p>Die ethische Achse: Wissenschaft als Verantwortung, Automation als soziale Frage, Kybernetik als religiöses Problem.</p><div class="why">Wiener lehnte nach dem Krieg militärische Forschungsgelder ab — eine Konsequenz, die seine Karriere verlangsamte.</div></div></div>
+        <div class="book-card"><span class="spine"></span><div class="inner"><span class="yr">1959</span><h4>The Tempter</h4><p>Ein Roman. Kein technisches Werk, sondern ein Seitenweg, der zeigt, dass Wiener die Erzählung als ernstes Medium nahm.</p><div class="why">Nicht als Beweis für eine These lesen — als Zeugnis einer doppelten Begabung.</div></div></div>
+      </div>
+    </div>
+    <div class="quote reveal">„I had long been aware that my social development was far behind my intellectual progress.“<cite>Ex-Prodigy, S. 138</cite></div>
+  </div>
+</section>
+
+<section class="chapter" id="mitnehmen">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">04</div>
+      <div>
+        <h2>Was du mitnimmst</h2>
+        <p class="sub">Drei Sätze über ein Leben, das die Kybernetik nicht nur erfunden, sondern auch gelebt hat.</p>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaway reveal"><span class="n">01 · FRÜHE BEGABUNG IST KEIN SELBSTLÄUFER</span><p>Wieners Kindheit war ein pädagogisches Experiment mit hohem Preis. Die Autobiografien sind auch eine Warnung vor der Instrumentalisierung von Kindern.</p></div>
+      <div class="takeaway reveal d1"><span class="n">02 · DENKEN IST SOZIAL</span><p>Cambridge, Göttingen, Mexiko, MIT, Macy: Die Kybernetik entstand aus Gesprächen, nicht aus einem einsamen Geistesblitz.</p></div>
+      <div class="takeaway reveal d2"><span class="n">03 · VERANTWORTUNG IST TEIL DER THEORIE</span><p>Wiener hörte nicht bei der Formel auf. Er fragte, was sie mit Menschen macht — und zog persönliche Konsequenzen.</p></div>
+    </div>
+    <div class="note reveal"><b>Denkwerkzeug:</b> Frage: Wer lehrte ihn? Welche Institution gab ihm Freiheit? Wo brach das Netz? Welche Idee wanderte von der Mathematik in die Gesellschaft?</div>
+    <div class="quiz reveal" data-answer="2">
+      <p class="q">Was zeigt der Bruch mit McCulloch und Pitts im Jahr 1951 über die Geschichte der Kybernetik?</p>
+      <div class="quiz-options">
+        <button class="quiz-option">Dass Kybernetik von Anfang an nur eine militärische Technologie war.</button>
+        <button class="quiz-option">Dass McCulloch und Pitts die eigentlichen Erfinder der Kybernetik waren.</button>
+        <button class="quiz-option">Dass wissenschaftliche Netzwerke auch persönlich verletzlich sind und Brüche reale Folgen haben.</button>
+        <button class="quiz-option">Dass Wiener nach 1951 keine Mathematik mehr betrieb.</button>
+      </div>
+      <p class="quiz-explain">Die Episode zeigt, dass Ideengeschichte nicht nur aus Ideen besteht. Wieners Misstrauen, seine Familiengeschichte und die Dynamik am MIT hatten Folgen für das ganze Feld — und für Pitts’ Karriere.</p>
+    </div>
+    <div class="prevnext">
+      <a href="wiener_06_gott-und-golem.html"><span>Zurück</span>← Die drei Flammen</a>
+      <a class="right" href="wiener_08_regal.html"><span>Weiter</span>Der Rest des Regals →</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>Quellen: Ex-Prodigy (1953); I Am a Mathematician (1956); MIT Press Open Access</span>
+    <span>Biografische Daten: Wiener, MIT, National Medal of Science</span>
+  </div>
+</footer>
+
+<script src="wiener_assets/wiener.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- life timeline ---------- */
+  (function () {
+    var events = [
+      { y: 1894, t: "Geburt", d: "Norbert Wiener wird am 26. November in Columbia, Missouri, als Sohn des Philologen Leo Wiener und Bertha Kahns geboren. Der Vater unterrichtet ihn zu Hause — mit einem Tempo, das Kindheit und Leistung dauerhaft überschreibt." },
+      { y: 1906, t: "High School mit 11", d: "Er schließt die Ayer High School mit elf ab und geht ans Tufts College. Schon hier zeigt sich die doppelte Signatur seines Lebens: außergewöhnliche formale Begabung, prekäre soziale Passung." },
+      { y: 1909, t: "Tufts BA mit 14", d: "Bachelor in Mathematik mit vierzehn. Danach beginnt er ein Zoologiestudium in Harvard und wechselt nach Cornell in die Philosophie — ein Umweg, der seine spätere Interdisziplinarität vorwegnimmt." },
+      { y: 1913, t: "Harvard-PhD mit 19", d: "Promotion über die Algebra der Relationen bei Schröder, Whitehead und Russell. In der Dissertation steht bereits die heute übliche Definition des geordneten Paars — ein früher Beitrag zur Mengenlehre." },
+      { y: 1914, t: "Cambridge & Göttingen", d: "Bei Bertrand Russell und G. H. Hardy in Cambridge, bei David Hilbert und Edmund Landau in Göttingen. Wiener nennt Hardy später seinen eigentlichen mathematischen Lehrer." },
+      { y: 1919, t: "MIT", d: "Nach Stationen in Harvard, bei General Electric und in Aberdeen wird er Instructor am MIT. Dort bleibt er bis zu seinem Tod — und findet die institutionelle Freiheit, zwischen reiner Mathematik und Ingenieurwesen zu pendeln." },
+      { y: 1923, t: "Differential Space", d: "Wiener konstruiert ein Maß auf dem Raum der stetigen Funktionen: den Wiener-Prozess. Brownsche Bewegung wird damit zu einem rigorosen mathematischen Objekt, nicht nur zu einem physikalischen Bild." },
+      { y: 1926, t: "Heirat & Guggenheim", d: "Er heiratet Margaret Engemann und reist als Guggenheim-Stipendiat nach Europa. Aus der Verbindung gehen zwei Töchter hervor. Die Ehe prägt auch seine Arbeitsweise und seine späteren Konflikte." },
+      { y: 1930, t: "Generalized Harmonic Analysis", d: "In der Acta Mathematica erscheint die verallgemeinerte harmonische Analyse. Autokorrelation und Leistungsspektrum werden zu den zentralen Werkzeugen für stationäre Prozesse — die mathematische Grundlage der späteren Filter." },
+      { y: 1931, t: "Wiener–Hopf", d: "Mit Eberhard Hopf löst er eine Klasse von Integralgleichungen, die bei kausalen Filtern und Randwertproblemen auftreten. Die Faktorisierung in Vergangenheit und Zukunft wird zum Werkzeug der Filtertheorie." },
+      { y: 1941, t: "NDRC Fire Control", d: "Wiener arbeitet im Zweiten Weltkrieg an der Feuerleitung von Flugabwehrgeschützen. Aus der Frage, wohin ein Flugzeug in den nächsten Sekunden fliegt, entsteht der Wiener-Filter und ein neuer Blick auf Information." },
+      { y: 1943, t: "Behavior, Purpose and Teleology", d: "Mit Arturo Rosenblueth und Julian Bigelow erscheint der kurze Aufsatz, der zielgerichtetes Verhalten als Rückkopplung beschreibt. Er ist ein Gründungstext der Kybernetik — und ein Angriff auf die Grenze zwischen Lebendigem und Maschinellem." },
+      { y: 1947, t: "A Scientist Rebels", d: "Im Atlantic Monthly fordert Wiener Wissenschaftler auf, die ethischen Folgen ihrer Arbeit zu bedenken. Danach lehnt er militärische Forschungsgelder ab — eine Entscheidung mit realen Karrierekosten." },
+      { y: 1948, t: "Cybernetics", d: "Das Buch erscheint bei MIT Press. Es verbindet Regelungstechnik, Kommunikation, Neurophysiologie und Statistik. Der Begriff „Kybernetik“ wird öffentlich — und das Buch unerwartet zum Bestseller." },
+      { y: 1950, t: "Human Use", d: "Für ein breites Publikum schreibt er The Human Use of Human Beings. Information als negative Entropie, Gesellschaft als Kommunikationsnetz, Automation als soziale und ethische Frage." },
+      { y: 1953, t: "Ex-Prodigy", d: "Die erste Autobiografie erzählt die Kindheit und Jugend. Sie ist kein Erfolgsnarrativ, sondern eine Abrechnung mit dem pädagogischen Experiment seines Vaters — und mit der eigenen sozialen Ungleichzeitigkeit." },
+      { y: 1956, t: "I Am a Mathematician", d: "Die zweite Autobiografie führt durch die Jahre in Cambridge, Göttingen, MIT und Mexiko. Sie zeigt, wie aus einem Logiker ein Kybernetiker wurde — und wie stark die Institutionen und Gesprächspartner daran beteiligt waren." },
+      { y: 1958, t: "Nonlinear Problems", d: "Nonlinear Problems in Random Theory sammelt seine Arbeiten zum Wiener-Chaos: nichtlineare Funktionale von Brownscher Bewegung, zerlegt in orthogonale Hermite-Terme." },
+      { y: 1959, t: "The Tempter", d: "Wiener veröffentlicht einen Roman. Er bleibt eine Nebenlinie seines Werks, ist aber ein Zeichen dafür, dass er die erzählerische Form nicht nur als Verpackung wissenschaftlicher Ideen verstand." },
+      { y: 1963, t: "National Medal of Science", d: "Wiener erhält die höchste wissenschaftliche Auszeichnung der USA. Die Ehrung kommt spät — und zu einem Zeitpunkt, an dem seine Gesundheit bereits angegriffen ist." },
+      { y: 1964, t: "God & Golem / Tod", d: "God & Golem, Inc. erscheint. Am 18. März stirbt Norbert Wiener in Stockholm. Die Kybernetik hat zu diesem Zeitpunkt bereits begonnen, sich in Informatik, Regelungstechnik, Biologie und Sozialwissenschaften aufzulösen — und weiterzuwirken." }
+    ];
+    var track = document.getElementById("lifeTrack");
+    var detail = document.getElementById("lifeDetail");
+    events.forEach(function (e, i) {
+      var b = document.createElement("button");
+      b.className = "tl-btn" + (i === 0 ? " on" : "");
+      b.innerHTML = '<span class="yr">' + e.y + '</span><span class="lb">' + e.t + "</span>";
+      b.addEventListener("mouseenter", function () { show(e, b); });
+      b.addEventListener("focus", function () { show(e, b); });
+      b.addEventListener("click", function () { show(e, b); });
+      track.appendChild(b);
+    });
+    function show(e, b) {
+      Array.prototype.forEach.call(track.children, function (x) { x.classList.remove("on"); });
+      b.classList.add("on");
+      detail.innerHTML = '<span class="y">' + e.y + "</span><h4>" + e.t + "</h4><p>" + e.d + "</p>";
+    }
+  })();
+
+  /* ---------- influence network ---------- */
+  (function () {
+    var svg = document.getElementById("influenceNet");
+    if (!svg) return;
+    var nodes = [
+      { id: "wiener", name: "Norbert Wiener", x: 450, y: 250, r: 38, c: "#f18aa0", kind: "self", d: "Der Knoten: Mathematiker, Kybernetiker, öffentlicher Intellektueller. Die anderen Punkte sind keine Dekoration, sondern die Bedingungen seiner Arbeit." },
+      { id: "leo", name: "Leo Wiener", x: 190, y: 92, r: 24, c: "#f18aa0", kind: "Familie", d: "Vater, Philologe, Hauslehrer. Er trieb Norbert mit einem eigenen Lehrplan an — „my closest mentor and dearest antagonist“, wie die Widmung sagt." },
+      { id: "russell", name: "Bertrand Russell", x: 330, y: 66, r: 22, c: "#b49bff", kind: "Lehrer", d: "Lehrte Wiener 1914 in Cambridge mathematische Logik und Philosophie. Wiener bewunderte die Klarheit, blieb aber philosophisch anderer Meinung." },
+      { id: "hardy", name: "G. H. Hardy", x: 180, y: 214, r: 22, c: "#b49bff", kind: "Lehrer", d: "Wiener nennt Hardy den besten Lehrer seiner mathematischen Ausbildung: „I have never heard the equal of Hardy for clarity.“" },
+      { id: "hilbert", name: "David Hilbert", x: 120, y: 344, r: 22, c: "#b49bff", kind: "Lehrer", d: "Göttingen 1914: Hilbert und Landau gehörten zu den prägenden mathematischen Eindrücken. Die Göttinger Tradition der Strenge blieb in Wieners Arbeit spürbar." },
+      { id: "mit", name: "MIT", x: 410, y: 444, r: 24, c: "#6fdf9d", kind: "Institution", d: "Ab 1919 Instructor, später Professor. Das MIT gab ihm die institutionelle Freiheit, reine Mathematik und Ingenieurprobleme zu verbinden — die Basis der Kybernetik." },
+      { id: "rosenblueth", name: "Arturo Rosenblueth", x: 664, y: 88, r: 23, c: "#62d8d0", kind: "Kollege", d: "Physiologe in Mexiko, enger Freund und Co-Autor von Behavior, Purpose and Teleology (1943). Ein großer Teil von Cybernetics entstand in Mexiko." },
+      { id: "bigelow", name: "Julian Bigelow", x: 786, y: 164, r: 21, c: "#62d8d0", kind: "Kollege", d: "Ingenieur und Co-Autor des Teleologie-Aufsatzes. Die Zusammenarbeit verband Regelungstechnik mit Physiologie." },
+      { id: "mcculloch", name: "Warren McCulloch", x: 806, y: 300, r: 23, c: "#62d8d0", kind: "Kollege", d: "Neurophysiologe und Pionier der neuronalen Netze. Wiener arbeitete mit ihm und Pitts zusammen; 1951 brach der Kontakt abrupt ab." },
+      { id: "pitts", name: "Walter Pitts", x: 700, y: 430, r: 21, c: "#62d8d0", kind: "Kollege", d: "Logiker und McCullochs Co-Autor. Der Bruch mit Wiener traf ihn schwer und wird in der Geschichte der Kybernetik oft als warnendes Beispiel erzählt." },
+      { id: "shannon", name: "Claude Shannon", x: 838, y: 240, r: 21, c: "#74bdff", kind: "parallel", d: "Entwickelte 1948 unabhängig die mathematische Informationstheorie. Wiener und Shannon kannten sich; ihre Begriffe überlappen, ihre Stile sind verschieden." },
+      { id: "vonneumann", name: "John von Neumann", x: 828, y: 92, r: 22, c: "#74bdff", kind: "Kollege", d: "Spieltheorie, Rechnerarchitektur, selbstreproduzierende Automaten. Ein Gesprächspartner und Kontrast: Wiener war pazifistisch, von Neumann militärisch engagiert." },
+      { id: "macy", name: "Macy Conferences", x: 620, y: 250, r: 22, c: "#6fdf9d", kind: "Forum", d: "Die interdisziplinären Macy-Konferenzen (ab 1946) waren ein Geburtsort der Kybernetik. Wiener war Teil des Kreises um McCulloch, Pitts, Mead, Bateson und andere." }
+    ];
+    var edges = [
+      ["wiener", "leo"], ["wiener", "russell"], ["wiener", "hardy"], ["wiener", "hilbert"],
+      ["wiener", "mit"], ["wiener", "rosenblueth"], ["rosenblueth", "bigelow"],
+      ["wiener", "mcculloch"], ["mcculloch", "pitts"], ["wiener", "shannon"],
+      ["wiener", "vonneumann"], ["wiener", "macy"], ["mcculloch", "macy"], ["pitts", "macy"]
+    ];
+    var byId = {};
+    nodes.forEach(function (n) { byId[n.id] = n; });
+    var ns = "http://www.w3.org/2000/svg";
+    var edgeLayer = document.createElementNS(ns, "g");
+    var nodeLayer = document.createElementNS(ns, "g");
+    svg.appendChild(edgeLayer); svg.appendChild(nodeLayer);
+    var edgeEls = edges.map(function (e) {
+      var a = byId[e[0]], b = byId[e[1]];
+      var line = document.createElementNS(ns, "line");
+      line.setAttribute("x1", a.x); line.setAttribute("y1", a.y);
+      line.setAttribute("x2", b.x); line.setAttribute("y2", b.y);
+      line.setAttribute("class", "edge");
+      edgeLayer.appendChild(line);
+      return { el: line, a: e[0], b: e[1] };
+    });
+    var detail = document.getElementById("netDetail");
+    function showNode(n, nodeEl) {
+      Array.prototype.forEach.call(nodeLayer.children, function (g) {
+        var id = g.getAttribute("data-id");
+        var related = id === n.id || edges.some(function (e) { return (e[0] === id && e[1] === n.id) || (e[1] === id && e[0] === n.id); });
+        g.classList.toggle("dim", !related);
+      });
+      edgeEls.forEach(function (e) {
+        e.el.classList.toggle("hot", e.a === n.id || e.b === n.id);
+      });
+      detail.innerHTML = '<span class="k">' + n.kind + '</span><h4>' + n.name + "</h4><p>" + n.d + "</p><div class=\"pills\"><span class=\"pill\">" + n.kind + "</span></div>";
+    }
+    nodes.forEach(function (n) {
+      var g = document.createElementNS(ns, "g");
+      g.setAttribute("class", "node");
+      g.setAttribute("data-id", n.id);
+      var circle = document.createElementNS(ns, "circle");
+      circle.setAttribute("cx", n.x); circle.setAttribute("cy", n.y); circle.setAttribute("r", n.r);
+      circle.setAttribute("fill", n.c); circle.setAttribute("fill-opacity", n.kind === "self" ? ".28" : ".12");
+      circle.setAttribute("stroke", n.c); circle.setAttribute("stroke-opacity", n.kind === "self" ? ".95" : ".55");
+      circle.setAttribute("class", "dot");
+      var label = document.createElementNS(ns, "text");
+      label.setAttribute("x", n.x); label.setAttribute("y", n.y + n.r + 14);
+      label.setAttribute("text-anchor", "middle");
+      label.setAttribute("class", "name");
+      label.textContent = n.name;
+      var title = document.createElementNS(ns, "title");
+      title.textContent = n.name;
+      g.appendChild(circle); g.appendChild(label); g.appendChild(title);
+      g.addEventListener("mouseenter", function () { showNode(n, g); });
+      g.addEventListener("click", function () { showNode(n, g); });
+      nodeLayer.appendChild(g);
+    });
+    showNode(nodes[0]);
+  })();
+})();
+</script>
+</body>
+</html>

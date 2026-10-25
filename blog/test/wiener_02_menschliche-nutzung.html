@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Human Use of Human Beings (1950) — Information gegen Entropie · Wiener Archive</title>
+<meta name="description" content="Wiener für die Gesellschaft: Information als negative Entropie, Kommunikationsnetze, Automation und die zweite industrielle Revolution.">
+<script>
+  try { var t = localStorage.getItem("wiener-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+</script>
+<link rel="icon" type="image/svg+xml" href="wiener_assets/favicon.svg">
+<link rel="stylesheet" href="wiener_assets/wiener.css">
+<style>
+  .order-rig { display: grid; gap: 10px; }
+  .meter { height: 8px; border-radius: 99px; background: rgba(255,255,255,.06); overflow: hidden; border: 1px solid var(--line); }
+  .meter > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--ok), var(--accent)); transition: width .2s linear; }
+  .meter.bad > i { background: linear-gradient(90deg, var(--accent), var(--bad)); }
+  .channel { display: grid; gap: 10px; }
+  .channel-row { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 10px; align-items: center; }
+  .channel-row .rl { font-family: var(--mono); font-size: 8.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+  .bitrow { display: flex; flex-wrap: wrap; gap: 3px; }
+  .bit { width: 17px; height: 21px; display: grid; place-items: center; font-family: var(--mono); font-size: 8.5px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); background: rgba(255,255,255,.02); }
+  .bit.one { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 38%, transparent); background: var(--accent-soft); }
+  .bit.err { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 16%, transparent); color: var(--bad); }
+  .bit.ok { border-color: color-mix(in srgb, var(--ok) 36%, transparent); color: var(--ok); }
+  .venn { width: 100%; height: auto; max-width: 390px; margin: 0 auto; }
+  .venn text { font-family: var(--mono); font-size: 9px; fill: var(--muted); }
+  .venn .lbl { font-family: var(--serif); font-size: 14px; fill: var(--ink); }
+</style>
+</head>
+<body data-accent="emerald" data-motif="entropy" data-page="02">
+<div class="progress"><i id="progressBar"></i></div>
+
+<header class="topbar">
+  <a class="brand" href="wiener_index.html"><b>W</b><span class="sep">·</span> Wiener Archive</a>
+  <nav class="topnav" aria-label="Werke"></nav>
+  <div class="top-tools">
+    <button class="theme-toggle" id="themeToggle" aria-label="Design wechseln"></button>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="top">
+  <canvas class="hero-canvas" data-motif="entropy" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="kicker">The Human Use of Human Beings · 1950</p>
+    <h1>Information<br>gegen <em>Entropie</em>.</h1>
+    <p class="lede">Die Welt zerfällt in Unordnung. Leben, Sprache und Gesellschaft halten dagegen — nicht mit Zauberei, sondern mit Nachrichten, die den Unterschied zwischen Soll und Ist weitertragen.</p>
+    <p class="epigraph">„The message of this book as well as its title is the human use of human beings.“<br><span class="mono" style="font-style:normal;font-size:9px;letter-spacing:.1em;color:var(--dim)">THE HUMAN USE OF HUMAN BEINGS, S. 2</span></p>
+    <div class="hero-meta">
+      <span><b>1950</b> Houghton Mifflin</span>
+      <span><b>1954</b> überarbeitet</span>
+      <span>Gesellschaft · Automation · Ethik</span>
+    </div>
+  </div>
+  <div class="scroll-hint">Ordnung</div>
+</section>
+
+<section class="chapter" id="ordnung">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">01</div>
+      <div>
+        <h2>Ordnung ist unwahrscheinlich</h2>
+        <p class="sub">Ein Muster kann sich beim Übertragen leicht verlieren. Es kann sich aber nicht von selbst zurückgewinnen. Genau darin liegt der Zusammenhang von Information und Entropie.</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p class="lead">Wiener übernimmt den Gedanken aus der statistischen Mechanik: <strong>Entropie ist ein Maß für Unordnung.</strong> In einem isolierten System nimmt sie fast immer zu. Ordnung ist der seltene Fall — und sie muss aktiv erhalten werden.</p>
+        <p>Eine Nachricht ist ebenfalls ein Muster. Beim Senden kann sie durch Rauschen zerfallen; sie kann aber nicht durch Rauschen ordentlicher werden. Deshalb nennt Wiener Information eine <strong>negative Entropie</strong>: Sie ist ein Maß dafür, wie unwahrscheinlich ein Zustand ist.</p>
+        <div class="formula">Information = − Entropie
+          <div class="formula-note">Genauer: Ein unwahrscheinlicheres Muster trägt mehr Information. Gleichverteiltes Rauschen trägt keine Struktur.</div>
+        </div>
+        <p>Für die Gesellschaft heißt das: Kommunikation ist keine Dekoration. Sie ist die Substanz, aus der Koordination entsteht. Fällt sie aus, zerfällt die Ordnung — nicht weil jemand böse ist, sondern weil die Schleife keine Nachrichten mehr bekommt.</p>
+      </div>
+      <div class="visual reveal d1">
+        <div class="stage" style="padding:14px">
+          <span class="stage-label">Ordnung unter Rauschen</span>
+          <span class="stage-readout" id="orderState">Muster intakt</span>
+          <canvas id="orderGrid" style="height:300px"></canvas>
+        </div>
+        <div class="controls">
+          <label class="control">Reparatur / Information <input type="range" id="repair" min="0" max="100" step="1" value="62" data-out="repairV" data-format="int"><span class="val" id="repairV">62</span>%</label>
+          <button class="btn ghost" id="orderReset">Muster wiederherstellen</button>
+        </div>
+        <div class="meter" id="orderMeter"><i></i></div>
+        <div class="legend"><span><i style="background:var(--accent)"></i>Ist-Muster</span><span><i style="background:var(--accent-2)"></i>verloren</span><span><i style="background:var(--bad)"></i>Rauschen</span><span id="orderPct" class="mono">0 % unordnung</span></div>
+      </div>
+    </div>
+    <div class="note reveal d2"><b>Modell, nicht Thermodynamik:</b> Das Gitter zeigt den abstrakten Punkt — Ordnung braucht laufende Korrektur. Die physikalische Entropie eines Gases ist damit nicht identisch; der Zusammenhang ist Wieners Analogie und ihr mathematischer Kern.</div>
+  </div>
+</section>
+
+<section class="chapter" id="kanal">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">02</div>
+      <div>
+        <h2>Durch das Rauschen sprechen</h2>
+        <p class="sub">Jeder Kanal ist unzuverlässig. Redundanz macht Nachrichten robuster — aber sie kostet Bandbreite. Das ist der Handel, den jede Kommunikation eingeht.</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p>Wiener und Shannon haben unabhängig voneinander verstanden, dass <strong>Rauschen</strong> kein Betriebsunfall ist, sondern die Grundbedingung jeder Übertragung. Ein Bit, das ankommt, ist nie völlig sicher.</p>
+        <p>Die einfachste Gegenmaßnahme: jedes Bit dreimal senden und die Mehrheit nehmen. Das ist <strong>Redundanz</strong>. Sie repariert nicht jedes Bit, aber sie senkt die Fehlerwahrscheinlichkeit drastisch — von <span class="mono">p</span> auf etwa <span class="mono">3p² − 2p³</span>.</p>
+        <p>Genau das meint Wiener mit „Kommunikation“: nicht nur senden, sondern eine Nachricht so kodieren, dass sie den Kanal überlebt.</p>
+      </div>
+      <div class="visual reveal d1">
+        <div class="stage" style="padding:16px">
+          <span class="stage-label">Binärkanal · live</span>
+          <span class="stage-readout" id="chanReadout">0 Fehler</span>
+          <div class="channel">
+            <div class="channel-row"><span class="rl">Gesendet</span><div class="bitrow" id="rowSent"></div></div>
+            <div class="channel-row"><span class="rl">Empfangen</span><div class="bitrow" id="rowRecv"></div></div>
+            <div class="channel-row"><span class="rl">Korrigiert</span><div class="bitrow" id="rowFixed"></div></div>
+          </div>
+          <div class="controls" style="margin-top:14px">
+            <label class="control">Rauschen <input type="range" id="noise" min="0" max="35" step="1" value="12" data-out="noiseV" data-format="int"><span class="val" id="noiseV">12</span>%</label>
+            <button class="btn" id="redundantBtn">Redundanz ×3</button>
+            <button class="btn ghost" id="newMsg">Neu senden</button>
+          </div>
+          <div class="readouts" style="margin-top:12px">
+            <div class="readout"><span class="k">Rohfehler</span><span class="v" id="rawErr">0 / 12</span></div>
+            <div class="readout"><span class="k">Nach Korrektur</span><span class="v" id="fixedErr">0 / 12</span></div>
+            <div class="readout"><span class="k">Redundanz</span><span class="v" id="redMode">aus</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="automation">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">03</div>
+      <div>
+        <h2>Die zweite industrielle Revolution</h2>
+        <p class="sub">Die erste ersetzte Muskeln. Die zweite ersetzt Routinen — auch geistige. Wiener sah darin eine Chance und eine Gefahr, die man nicht dem Markt allein überlassen darf.</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p>Wiener nennt die Automatisierung der Industrie die <strong>zweite industrielle Revolution</strong>. Sie betrifft nicht nur Fabrikarbeit, sondern zunehmend Büro, Verwaltung und Entscheidungen. Der Gewinn ist real: weniger stumpfsinnige Arbeit, mehr Zeit für Kultur und Wissenschaft.</p>
+        <p>Der Preis ist ebenfalls real: Wer nur als „menschlicher Ersatzteil“ für eine Maschine behandelt wird, verliert mehr als seinen Job. Wiener nennt es eine <em>Degradierung</em>, einen Menschen auf eine Aufgabe zu reduzieren, die weniger als seinen vollen Status verlangt.</p>
+        <div class="quote" style="font-size:1.1rem;margin:18px 0">„Any use of a human being in which less is demanded of him and less is attributed to him than his full status is a degradation and a waste.“<cite>Human Use, S. 17</cite></div>
+        <p>Die Frage ist deshalb nicht: <em>Was kann automatisiert werden?</em> Sondern: <em>Welche Entscheidungen dürfen wir an Maschinen delegieren, und wer trägt die Verantwortung, wenn die Schleife falsch schließt?</em></p>
+      </div>
+      <div class="visual reveal d1">
+        <div class="stage" style="padding:18px">
+          <span class="stage-label">Was automatisiert werden soll</span>
+          <span class="stage-readout">drei Achsen</span>
+          <svg class="venn" viewBox="0 0 360 320" role="img" aria-label="Drei Achsen der Automatisierungsentscheidung: Wirtschaft, Mensch, Ethik">
+            <circle cx="180" cy="112" r="86" fill="rgba(98,216,208,.08)" stroke="#62d8d0" stroke-opacity=".5"></circle>
+            <circle cx="132" cy="196" r="86" fill="rgba(231,179,90,.08)" stroke="#e7b35a" stroke-opacity=".5"></circle>
+            <circle cx="228" cy="196" r="86" fill="rgba(241,138,160,.08)" stroke="#f18aa0" stroke-opacity=".5"></circle>
+            <text x="180" y="86" text-anchor="middle" class="lbl">Wirtschaft</text>
+            <text x="180" y="104" text-anchor="middle">Effizienz, Kosten, Tempo</text>
+            <text x="108" y="236" text-anchor="middle" class="lbl">Mensch</text>
+            <text x="108" y="254" text-anchor="middle">Sinn, Status, Autonomie</text>
+            <text x="252" y="236" text-anchor="middle" class="lbl">Ethik</text>
+            <text x="252" y="254" text-anchor="middle">Verantwortung, Macht</text>
+            <text x="180" y="168" text-anchor="middle" fill="#eef0e7" font-family="serif" font-size="15">Entscheidung</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="grid3 mt3">
+      <div class="card reveal"><h4>Erste Revolution</h4><p class="big">Muskel → Dampf</p><p>Maschinen ersetzen körperliche Kraft. Der Mensch wird zum Bediener der Maschine.</p></div>
+      <div class="card reveal d1"><h4>Zweite Revolution</h4><p class="big">Routine → Rechner</p><p>Maschinen übernehmen Wiederholung, Berechnung, Mustererkennung. Der Mensch wird zum Programmierer — oder zum Zuschauer.</p></div>
+      <div class="card reveal d2"><h4>Die offene Frage</h4><p class="big">Wer schließt die Schleife?</p><p>Wenn das System selbst entscheidet, braucht es eine Instanz, die die Ziele setzt und die Folgen verantwortet.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="mitnehmen">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">04</div>
+      <div>
+        <h2>Was du mitnimmst</h2>
+        <p class="sub">Drei Sätze über Information, Gesellschaft und die Grenze der Automatisierung.</p>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaway reveal"><span class="n">01 · INFORMATION IST NEGENTROPIE</span><p>Ein Muster ist unwahrscheinlich. Es zu erhalten kostet Nachrichten und Arbeit — nicht nur Energie.</p></div>
+      <div class="takeaway reveal d1"><span class="n">02 · REDUNDANZ IST KEIN FEHLER</span><p>Wiederholung wirkt verschwenderisch, ist aber der Preis dafür, dass eine Nachricht durch Rauschen kommt.</p></div>
+      <div class="takeaway reveal d2"><span class="n">03 · AUTOMATISIERUNG IST EINE ETHISCHE FRAGE</span><p>Nicht alles, was technisch geht, ist menschlich gut. Die Entscheidung darüber darf nicht selbst automatisiert werden.</p></div>
+    </div>
+    <div class="note reveal"><b>Denkwerkzeug:</b> Frage: Wo entsteht Ordnung? Welche Nachricht hält sie aufrecht? Was kostet Redundanz? Und wer entscheidet, was automatisiert wird — nach welchem Maßstab?</div>
+    <div class="quiz reveal" data-answer="2">
+      <p class="q">Warum senkt das dreifache Senden und Mehrheitsentscheiden die Fehlerrate so stark?</p>
+      <div class="quiz-options">
+        <button class="quiz-option">Weil jedes Bit dadurch physikalisch langsamer und damit stabiler übertragen wird.</button>
+        <button class="quiz-option">Weil der Empfänger bei drei Kopien automatisch das erste Bit auswählt.</button>
+        <button class="quiz-option">Weil ein Fehler nur dann bleibt, wenn mindestens zwei der drei Kopien falsch sind.</button>
+        <button class="quiz-option">Weil Rauschen bei wiederholter Übertragung seine Richtung umkehrt.</button>
+      </div>
+      <p class="quiz-explain">Die Mehrheit gewinnt. Bei kleiner Fehlerwahrscheinlichkeit p ist die Wahrscheinlichkeit für zwei oder drei falsche Kopien etwa 3p² − 2p³. Aus p = 0,12 werden so rund 4 % — ohne die Nachricht zu verändern.</p>
+    </div>
+    <div class="prevnext">
+      <a href="wiener_01_cybernetik.html"><span>Zurück</span>← Die Schleife, die denkt</a>
+      <a class="right" href="wiener_03_wiener-filter.html"><span>Weiter</span>Das Signal im Rauschen →</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>Quelle: Norbert Wiener, The Human Use of Human Beings, 1950/1954</span>
+    <span>Seitenzahlen nach der Houghton-Mifflin-Ausgabe</span>
+  </div>
+</footer>
+
+<script src="wiener_assets/wiener.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- order / entropy grid ---------- */
+  (function () {
+    var canvas = document.getElementById("orderGrid");
+    if (!canvas) return;
+    var cols = 29, rows = 17;
+    var target = new Uint8Array(cols * rows);
+    var grid = new Uint8Array(cols * rows);
+    var segs = [[.14, .2, .3, .8], [.3, .8, .5, .34], [.5, .34, .7, .8], [.7, .8, .86, .2]];
+    function segDist(px, py, x1, y1, x2, y2) {
+      var dx = x2 - x1, dy = y2 - y1;
+      var l2 = dx * dx + dy * dy;
+      var t = l2 ? ((px - x1) * dx + (py - y1) * dy) / l2 : 0;
+      t = W.clamp(t, 0, 1);
+      var qx = x1 + t * dx, qy = y1 + t * dy;
+      return Math.hypot(px - qx, py - qy);
+    }
+    function build() {
+      for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+          var x = c / (cols - 1), y = r / (rows - 1);
+          var d = Math.min.apply(null, segs.map(function (s) { return segDist(x, y, s[0], s[1], s[2], s[3]); }));
+          target[r * cols + c] = d < .052 ? 1 : 0;
+        }
+      }
+      grid.set(target);
+    }
+    build();
+    var repair = .62;
+    var lastDom = 0;
+
+    function update(dt) {
+      var n = Math.min(520, Math.floor(dt * 900));
+      for (var i = 0; i < n; i++) {
+        var k = Math.floor(Math.random() * grid.length);
+        if (Math.random() < .55) grid[k] = grid[k] ? 0 : 1;
+        if (Math.random() < repair) grid[k] = target[k];
+      }
+    }
+    function draw(ctx, w, h, t, dt) {
+      if (dt > 0) update(dt);
+      var accent = W.cssVar("--accent");
+      var accent2 = W.cssVar("--accent-2");
+      var bad = W.cssVar("--bad");
+      var cell = Math.floor(Math.min((w - 10) / cols, (h - 28) / rows));
+      var ox = (w - cols * cell) / 2;
+      var oy = 14;
+      ctx.clearRect(0, 0, w, h);
+      var mismatch = 0;
+      for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+          var i = r * cols + c;
+          var x = ox + c * cell, y = oy + r * cell;
+          var cur = grid[i], tgt = target[i];
+          if (cur !== tgt) mismatch++;
+          ctx.fillStyle = cur ? W.alpha(accent, .82) : W.alpha("#ffffff", .025);
+          ctx.fillRect(x + 1, y + 1, cell - 2, cell - 2);
+          if (tgt && !cur) {
+            ctx.strokeStyle = W.alpha(accent2, .7);
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x + 2.5, y + 2.5, cell - 5, cell - 5);
+          } else if (!tgt && cur) {
+            ctx.fillStyle = W.alpha(bad, .6);
+            ctx.fillRect(x + cell * .32, y + cell * .32, cell * .36, cell * .36);
+          }
+        }
+      }
+      var pct = mismatch / grid.length;
+      var now = performance.now();
+      if (now - lastDom > 120) {
+        lastDom = now;
+        var bar = document.querySelector("#orderMeter > i");
+        var meter = document.getElementById("orderMeter");
+        if (bar) bar.style.width = (pct * 100).toFixed(1) + "%";
+        if (meter) meter.classList.toggle("bad", pct > .3);
+        var p = document.getElementById("orderPct");
+        if (p) p.textContent = Math.round(pct * 100) + " % unordnung";
+        var s = document.getElementById("orderState");
+        if (s) s.textContent = pct < .05 ? "Muster intakt" : pct < .3 ? "Muster hält" : "Muster zerfällt";
+      }
+    }
+    W.stage(canvas, draw, { animate: true });
+    W.bindRange("repair", function (v) { repair = v / 100; });
+    document.getElementById("orderReset").addEventListener("click", function () { grid.set(target); });
+  })();
+
+  /* ---------- binary channel ---------- */
+  (function () {
+    var N = 12;
+    var msg = [];
+    var redundant = false;
+    var noise = .12;
+    function randomMsg() {
+      msg = [];
+      for (var i = 0; i < N; i++) msg.push(Math.random() < .5 ? 1 : 0);
+    }
+    function majority(triples) {
+      var out = [];
+      for (var i = 0; i < triples.length; i += 3) {
+        var s = triples[i] + triples[i + 1] + triples[i + 2];
+        out.push(s >= 2 ? 1 : 0);
+      }
+      return out;
+    }
+    function bitEl(v, extra) {
+      var b = document.createElement("span");
+      b.className = "bit" + (v ? " one" : "") + (extra ? " " + extra : "");
+      b.textContent = String(v);
+      return b;
+    }
+    function fill(row, bits, errs, group) {
+      row.innerHTML = "";
+      bits.forEach(function (v, i) {
+        var extra = errs && errs[i] ? "err" : "";
+        var b = bitEl(v, extra);
+        if (group && (i + 1) % 3 === 0 && i < bits.length - 1) b.style.marginRight = "6px";
+        row.appendChild(b);
+      });
+    }
+    function render() {
+      var sent = msg.slice();
+      var recv, fixed, rawErr = 0, fixedErr = 0;
+      if (redundant) {
+        var triples = [];
+        msg.forEach(function (b) { triples.push(b, b, b); });
+        recv = triples.map(function (b) { return Math.random() < noise ? 1 - b : b; });
+        fixed = majority(recv);
+        for (var i = 0; i < N * 3; i++) if (recv[i] !== triples[i]) rawErr++;
+        for (var j = 0; j < N; j++) if (fixed[j] !== sent[j]) fixedErr++;
+        fill(document.getElementById("rowSent"), triples, null, true);
+        fill(document.getElementById("rowRecv"), recv, null, true);
+        fill(document.getElementById("rowFixed"), fixed, fixed.map(function (b, j) { return b !== sent[j]; }));
+      } else {
+        recv = sent.map(function (b) { return Math.random() < noise ? 1 - b : b; });
+        fixed = recv.slice();
+        recv.forEach(function (b, j) { if (b !== sent[j]) { rawErr++; fixedErr++; } });
+        fill(document.getElementById("rowSent"), sent, null, false);
+        fill(document.getElementById("rowRecv"), recv, recv.map(function (b, j) { return b !== sent[j]; }), false);
+        fill(document.getElementById("rowFixed"), fixed, fixed.map(function (b, j) { return b !== sent[j]; }), false);
+      }
+      var ro = document.getElementById("chanReadout");
+      if (ro) ro.textContent = (redundant ? "×3 · " : "") + fixedErr + " Fehler nach Korrektur";
+      var re = document.getElementById("rawErr");
+      if (re) re.textContent = rawErr + " / " + (redundant ? N * 3 : N);
+      var fe = document.getElementById("fixedErr");
+      if (fe) fe.textContent = fixedErr + " / " + N;
+      var rm = document.getElementById("redMode");
+      if (rm) rm.textContent = redundant ? "×3" : "aus";
+    }
+    randomMsg();
+    render();
+    W.bindRange("noise", function (v) { noise = v / 100; render(); });
+    var btn = document.getElementById("redundantBtn");
+    btn.addEventListener("click", function () {
+      redundant = !redundant;
+      btn.classList.toggle("on", redundant);
+      btn.textContent = redundant ? "Redundanz ×3 · an" : "Redundanz ×3";
+      render();
+    });
+    document.getElementById("newMsg").addEventListener("click", function () {
+      randomMsg(); render();
+    });
+  })();
+})();
+</script>
+</body>
+</html>

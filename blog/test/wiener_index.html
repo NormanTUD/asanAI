@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Norbert Wiener — The Wiener Archive</title>
+<meta name="description" content="Norbert Wiener, visuell erklärt: Feedback, Information, Filter, Zufall, Lernen und Ethik — sieben interaktive Türen in das Werk des Begründers der Kybernetik.">
+<script>
+  try { var t = localStorage.getItem("wiener-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+</script>
+<link rel="icon" type="image/svg+xml" href="wiener_assets/favicon.svg">
+<link rel="stylesheet" href="wiener_assets/wiener.css">
+</head>
+<body data-accent="gold" data-motif="loop" data-page="index">
+<div class="progress"><i id="progressBar"></i></div>
+
+<header class="topbar">
+  <a class="brand" href="wiener_index.html"><b>W</b><span class="sep">·</span> Wiener Archive</a>
+  <nav class="topnav" aria-label="Werke"></nav>
+  <div class="top-tools">
+    <button class="theme-toggle" id="themeToggle" aria-label="Design wechseln"></button>
+  </div>
+</header>
+
+<main>
+<section class="hero hero-index" id="top">
+  <canvas class="hero-canvas" id="heroCanvas" data-motif="loop" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="kicker">Norbert Wiener · 1894–1964 · Kybernetik</p>
+    <h1>Die Schleife,<br>die <em>denkt</em>.</h1>
+    <p class="lede">Wiener hat Kontrolle und Kommunikation zu einer einzigen Wissenschaft gemacht: der Rückkopplung. Sieben interaktive Türen führen von der Thermostat-Schleife bis zur Ethik der lernenden Maschine.</p>
+    <p class="epigraph">„We are not stuff that abides, but patterns that perpetuate themselves.“<br><span class="mono" style="font-style:normal;font-size:9px;letter-spacing:.1em;color:var(--dim)">NORBERT WIENER, THE HUMAN USE OF HUMAN BEINGS, 1950</span></p>
+    <div class="hero-meta">
+      <span><b>7</b> Werke</span>
+      <span><b>1</b> Idee</span>
+      <span><b>1948–1964</b> Hauptschriften</span>
+      <span>Interaktiv · visuell · zitierbar</span>
+    </div>
+  </div>
+  <div class="scroll-hint">Eintreten</div>
+</section>
+
+<section class="thesis-band" id="idee">
+  <div class="wrap split top">
+    <div class="reveal">
+      <p class="kicker">Die eine Idee</p>
+      <h2 class="thesis">Regeln heißt <em>kommunizieren</em>. Kommunizieren heißt <em>regeln</em>.</h2>
+    </div>
+    <div class="reveal d1">
+      <p class="lede">Ein Thermostat, ein Flugabwehrgeschütz, ein Nervensystem, eine Gesellschaft: Alle vergleichen einen Ist-Zustand mit einem Soll-Zustand und schicken die Differenz als Nachricht zurück. Diese Nachricht ist der Fehler. Die Korrektur ist die Information.</p>
+      <p class="lede">Wiener hat daraus keine Metapher gemacht, sondern eine Sprache: <strong>Regelkreis, Signal, Rauschen, Entropie, Lernen.</strong> Wer diese fünf Begriffe beherrscht, versteht den Rest.</p>
+      <div class="takeaways" style="margin-top:20px">
+        <div class="takeaway"><span class="n">01 · RÜCKKOPPLUNG</span><p>Der Output wird zur nächsten Eingabe. Das System korrigiert sich selbst.</p></div>
+        <div class="takeaway"><span class="n">02 · INFORMATION</span><p>Ordnung ist unwahrscheinlich. Kommunikation hält sie gegen die Entropie aufrecht.</p></div>
+        <div class="takeaway"><span class="n">03 · VORHERSAGE</span><p>Wer das Rauschen vom Signal trennt, kann in die Zukunft extrapolieren.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="werke">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">01</div>
+      <div>
+        <h2>Die sieben Türen</h2>
+        <p class="sub">Jede Seite ist um eine bewegliche Maschine gebaut: Du kannst den Regelkreis instabil machen, Ordnung zerfallen lassen, Rauschen wegfiltern, einen Zufallspfad zoomen oder eine Maschine lernen lassen.</p>
+      </div>
+    </div>
+
+    <div class="works-grid">
+      <a class="work-card reveal" href="wiener_01_cybernetik.html" style="--c:#e7b35a">
+        <div>
+          <span class="n">01 · CYBERNETICS · 1948</span>
+          <h3>Die Schleife, die denkt</h3>
+          <p>Feedback, Homöostase, Black Box: warum Kontrolle und Kommunikation dasselbe sind.</p>
+        </div>
+        <div class="meta"><span>Control &amp; Communication</span><span class="go">→</span></div>
+        <span class="glyph">↻</span>
+      </a>
+      <a class="work-card reveal d1" href="wiener_02_menschliche-nutzung.html" style="--c:#6fdf9d">
+        <div>
+          <span class="n">02 · HUMAN USE · 1950</span>
+          <h3>Information gegen Entropie</h3>
+          <p>Gesellschaft als Kommunikationsnetz — und die Warnung vor der zweiten industriellen Revolution.</p>
+        </div>
+        <div class="meta"><span>Cybernetics &amp; Society</span><span class="go">→</span></div>
+        <span class="glyph">S</span>
+      </a>
+      <a class="work-card reveal d2" href="wiener_03_wiener-filter.html" style="--c:#62d8d0">
+        <div>
+          <span class="n">03 · FILTER · 1949</span>
+          <h3>Das Signal im Rauschen</h3>
+          <p>Die optimale lineare Schätzung: Frequenzen mit gutem Signal-Rausch-Verhältnis dürfen durch.</p>
+        </div>
+        <div class="meta"><span>Extrapolation &amp; Smoothing</span><span class="go">→</span></div>
+        <span class="glyph">∿</span>
+      </a>
+      <a class="work-card reveal" href="wiener_04_harmonische-analyse.html" style="--c:#b49bff">
+        <div>
+          <span class="n">04 · SPEKTRUM · 1930</span>
+          <h3>Der verborgene Rhythmus</h3>
+          <p>Autokorrelation und Leistungsspektrum sind Fourier-Partner. Das ist der Schlüssel zu Wieners Filtern.</p>
+        </div>
+        <div class="meta"><span>Generalized Harmonic Analysis</span><span class="go">→</span></div>
+        <span class="glyph">◌</span>
+      </a>
+      <a class="work-card reveal d1" href="wiener_05_brownsche-bewegung.html" style="--c:#74bdff">
+        <div>
+          <span class="n">05 · ZUFALL · 1923 / 1958</span>
+          <h3>Die Geometrie des Zufalls</h3>
+          <p>Der Wiener-Prozess: stetig, nirgends differenzierbar, selbstähnlich. Dazu das Wiener-Chaos.</p>
+        </div>
+        <div class="meta"><span>Differential Space</span><span class="go">→</span></div>
+        <span class="glyph">≈</span>
+      </a>
+      <a class="work-card reveal d2" href="wiener_06_gott-und-golem.html" style="--c:#ff9a72">
+        <div>
+          <span class="n">06 · GOLEM · 1964</span>
+          <h3>Die drei Flammen</h3>
+          <p>Lernende Maschinen, Selbstreproduktion und die Wörtlichkeit der Wünsche: Wo Kybernetik die Ethik berührt.</p>
+        </div>
+        <div class="meta"><span>God &amp; Golem, Inc.</span><span class="go">→</span></div>
+        <span class="glyph">✶</span>
+      </a>
+      <a class="work-card reveal wide" href="wiener_07_leben.html" style="--c:#f18aa0">
+        <div>
+          <span class="n">07 · LEBEN · 1953 / 1956</span>
+          <h3>Das Wunderkind und die Schleife</h3>
+          <p>Ex-Prodigy und I Am a Mathematician: Kindheit, Cambridge, MIT, Mexiko, die Macy-Konferenzen — und der Roman <em>The Tempter</em>.</p>
+        </div>
+        <div class="meta"><span>Zwei Autobiografien · eine Intellektuellen-Genealogie</span><span class="go">→</span></div>
+        <span class="glyph">∴</span>
+      </a>
+      <a class="work-card reveal d1 wide" href="wiener_08_regal.html" style="--c:#e7b35a">
+        <div>
+          <span class="n">08 · REGAL · 1932–1993</span>
+          <h3>Der Rest des Regals</h3>
+          <p>Tauberian Theorems, The Fourier Integral, Behavior, Purpose and Teleology, A Scientist Rebels, The Tempter, Invention — die Nebenwege.</p>
+        </div>
+        <div class="meta"><span>Die kleine Bibliothek</span><span class="go">→</span></div>
+        <span class="glyph">▤</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="karte">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">02</div>
+      <div>
+        <h2>Die Begriffe hängen zusammen</h2>
+        <p class="sub">Keine Liste, ein Netz. Klicke einen Knoten an — jeder führt zu der Seite, auf der er beweglich wird.</p>
+      </div>
+    </div>
+    <div class="constellation reveal d1">
+      <svg viewBox="0 0 900 430" role="img" aria-label="Begriffsnetz der Wienerschen Kybernetik">
+        <defs>
+          <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#e7b35a" stop-opacity=".28"/>
+            <stop offset="100%" stop-color="#e7b35a" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <g stroke="rgba(238,240,231,.12)" stroke-width="1">
+          <line x1="450" y1="215" x2="190" y2="110"/>
+          <line x1="450" y1="215" x2="178" y2="316"/>
+          <line x1="450" y1="215" x2="430" y2="72"/>
+          <line x1="450" y1="215" x2="690" y2="88"/>
+          <line x1="450" y1="215" x2="738" y2="224"/>
+          <line x1="450" y1="215" x2="690" y2="350"/>
+          <line x1="450" y1="215" x2="425" y2="358"/>
+          <line x1="450" y1="215" x2="196" y2="215"/>
+          <line x1="190" y1="110" x2="178" y2="316" stroke="rgba(238,240,231,.05)"/>
+          <line x1="690" y1="88" x2="738" y2="224" stroke="rgba(238,240,231,.05)"/>
+          <line x1="690" y1="350" x2="425" y2="358" stroke="rgba(238,240,231,.05)"/>
+        </g>
+        <circle cx="450" cy="215" r="145" fill="url(#coreGlow)"/>
+        <circle cx="450" cy="215" r="67" fill="none" stroke="rgba(231,179,90,.45)" stroke-width="1"/>
+        <circle cx="450" cy="215" r="58" fill="rgba(231,179,90,.07)" stroke="rgba(231,179,90,.22)" stroke-width="1"/>
+        <text x="450" y="211" text-anchor="middle" font-family="Iowan Old Style, Palatino, Georgia, serif" font-size="17" fill="#eef0e7">Wiener</text>
+        <text x="450" y="230" text-anchor="middle" font-family="monospace" font-size="8" letter-spacing="2" fill="#e7b35a">CYBERNETICS</text>
+
+        <a href="wiener_01_cybernetik.html">
+          <g class="node"><circle cx="190" cy="110" r="30" fill="rgba(231,179,90,.10)" stroke="#e7b35a" stroke-opacity=".65"/><text x="190" y="114" text-anchor="middle" font-family="monospace" font-size="9" fill="#e7b35a">FEEDBACK</text><text x="190" y="155" text-anchor="middle" font-family="serif" font-size="14" fill="#eef0e7">Regelkreis</text></g>
+        </a>
+        <a href="wiener_02_menschliche-nutzung.html">
+          <g class="node"><circle cx="178" cy="316" r="30" fill="rgba(111,223,157,.09)" stroke="#6fdf9d" stroke-opacity=".6"/><text x="178" y="320" text-anchor="middle" font-family="monospace" font-size="9" fill="#6fdf9d">ENTROPIE</text><text x="178" y="361" text-anchor="middle" font-family="serif" font-size="14" fill="#eef0e7">Gesellschaft</text></g>
+        </a>
+        <a href="wiener_04_harmonische-analyse.html">
+          <g class="node"><circle cx="430" cy="72" r="28" fill="rgba(180,155,255,.09)" stroke="#b49bff" stroke-opacity=".6"/><text x="430" y="76" text-anchor="middle" font-family="monospace" font-size="8.5" fill="#b49bff">SPEKTRUM</text><text x="430" y="113" text-anchor="middle" font-family="serif" font-size="14" fill="#eef0e7">Rhythmus</text></g>
+        </a>
+        <a href="wiener_03_wiener-filter.html">
+          <g class="node"><circle cx="690" cy="88" r="29" fill="rgba(98,216,208,.09)" stroke="#62d8d0" stroke-opacity=".6"/><text x="690" y="92" text-anchor="middle" font-family="monospace" font-size="9" fill="#62d8d0">FILTER</text><text x="690" y="130" text-anchor="middle" font-family="serif" font-size="14" fill="#eef0e7">Schätzung</text></g>
+        </a>
+        <a href="wiener_05_brownsche-bewegung.html">
+          <g class="node"><circle cx="738" cy="224" r="29" fill="rgba(116,189,255,.09)" stroke="#74bdff" stroke-opacity=".6"/><text x="738" y="228" text-anchor="middle" font-family="monospace" font-size="9" fill="#74bdff">ZUFALL</text><text x="738" y="266" text-anchor="middle" font-family="serif" font-size="14" fill="#eef0e7">Prozess</text></g>
+        </a>
+        <a href="wiener_06_gott-und-golem.html">
+          <g class="node"><circle cx="690" cy="350" r="29" fill="rgba(255,154,114,.09)" stroke="#ff9a72" stroke-opacity=".6"/><text x="690" y="354" text-anchor="middle" font-family="monospace" font-size="8.5" fill="#ff9a72">ETHIK</text><text x="690" y="392" text-anchor="middle" font-family="serif" font-size="14" fill="#eef0e7">Golem</text></g>
+        </a>
+        <a href="wiener_06_gott-und-golem.html">
+          <g class="node"><circle cx="425" cy="358" r="29" fill="rgba(255,154,114,.09)" stroke="#ff9a72" stroke-opacity=".55"/><text x="425" y="362" text-anchor="middle" font-family="monospace" font-size="8.5" fill="#ff9a72">LERNEN</text><text x="425" y="400" text-anchor="middle" font-family="serif" font-size="14" fill="#eef0e7">Maschine</text></g>
+        </a>
+        <a href="wiener_07_leben.html">
+          <g class="node"><circle cx="196" cy="215" r="27" fill="rgba(241,138,160,.09)" stroke="#f18aa0" stroke-opacity=".55"/><text x="196" y="219" text-anchor="middle" font-family="monospace" font-size="8.5" fill="#f18aa0">LEBEN</text><text x="196" y="255" text-anchor="middle" font-family="serif" font-size="14" fill="#eef0e7">Prodigy</text></g>
+        </a>
+      </svg>
+      <span class="hint">Knoten anklicken</span>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="zeit">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">03</div>
+      <div>
+        <h2>Eine Biografie in Rückkopplungen</h2>
+        <p class="sub">Vom Wunderkind über die Anti-Flugzeug-Geschütze bis zur Warnung vor der automatisierten Gesellschaft. Scrolle seitwärts.</p>
+      </div>
+    </div>
+    <div class="timeline-h reveal d1">
+      <div class="timeline-track">
+        <div class="tl-item"><span class="yr">1894</span><span class="lb">Geboren in Columbia, Missouri</span></div>
+        <div class="tl-item"><span class="yr">1909</span><span class="lb">Tufts-Abschluss mit 14</span></div>
+        <div class="tl-item"><span class="yr">1913</span><span class="lb">Harvard-PhD mit 19</span></div>
+        <div class="tl-item"><span class="yr">1923</span><span class="lb">Differential Space: Wiener-Prozess</span></div>
+        <div class="tl-item big"><span class="yr">1930</span><span class="lb">Generalized Harmonic Analysis</span></div>
+        <div class="tl-item"><span class="yr">1931</span><span class="lb">Wiener–Hopf-Gleichung</span></div>
+        <div class="tl-item"><span class="yr">1942</span><span class="lb">Anti-Flugzeug-Prädiktor</span></div>
+        <div class="tl-item big"><span class="yr">1948</span><span class="lb">Cybernetics</span></div>
+        <div class="tl-item"><span class="yr">1949</span><span class="lb">The Yellow Peril: Filter</span></div>
+        <div class="tl-item"><span class="yr">1950</span><span class="lb">The Human Use of Human Beings</span></div>
+        <div class="tl-item"><span class="yr">1958</span><span class="lb">Nonlinear Problems in Random Theory</span></div>
+        <div class="tl-item big"><span class="yr">1964</span><span class="lb">God &amp; Golem · Tod in Stockholm</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="lesen">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">04</div>
+      <div>
+        <h2>Wie diese Seite funktioniert</h2>
+        <p class="sub">Wenig lesen. Viel schieben. Ein Satz bleibt.</p>
+      </div>
+    </div>
+    <div class="howto">
+      <div class="card reveal"><h4>01 · Erst das Bild</h4><p class="big">Sieh die Schleife</p><p>Jedes Kapitel beginnt mit einer beweglichen Visualisierung. Sie ist nicht Illustration, sondern das Argument.</p></div>
+      <div class="card reveal d1"><h4>02 · Dann der Griff</h4><p class="big">Bewege den Regler</p><p>Verstärkung, Rauschen, Zeitauflösung, Lernrate: Du veränderst die Ursache und siehst die Folge.</p></div>
+      <div class="card reveal d2"><h4>03 · Dann der Satz</h4><p class="big">Nimm einen Merksatz</p><p>Am Ende jeder Seite stehen drei Sätze, die du behalten kannst — und eine Frage, die prüft, ob es sitzt.</p></div>
+    </div>
+    <div class="note reveal d3"><b>Ehrlich bleiben:</b> Die Visualisierungen sind Modelle, keine Originalinstrumente. Wo eine Animation vereinfacht, steht es daneben. Die Zitate und Seitenzahlen stammen aus den unten verlinkten Ausgaben; die Open-Access-Bände liegen zusätzlich im Ordner <span class="mono">~/ebooks/wiener/quellen/</span>.</div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>The Wiener Archive · ein visuelles Lesebuch</span>
+    <span>Quellen: MIT Press Open Access · Internet Archive · Primärtexte</span>
+  </div>
+</footer>
+
+<script src="wiener_assets/wiener.js"></script>
+</body>
+</html>

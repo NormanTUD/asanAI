@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>God &amp; Golem, Inc. (1964) — Die drei Flammen · Wiener Archive</title>
+<meta name="description" content="God & Golem, Inc. visuell: lernende Maschinen, Selbstreproduktion und die Wörtlichkeit der Wünsche — interaktiv und mit Originalzitaten.">
+<script>
+  try { var t = localStorage.getItem("wiener-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+</script>
+<link rel="icon" type="image/svg+xml" href="wiener_assets/favicon.svg">
+<link rel="stylesheet" href="wiener_assets/wiener.css">
+<style>
+  .repro { display: grid; gap: 14px; }
+  .repro-machine { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .repro-node { border: 1px solid var(--line-strong); border-radius: 11px; padding: 10px 8px; text-align: center; background: var(--panel-2); transition: .3s var(--ease); }
+  .repro-node b { display: block; font-family: var(--mono); font-size: 8.5px; letter-spacing: .12em; color: var(--accent); }
+  .repro-node span { display: block; font-family: var(--serif); font-size: 13px; color: var(--ink); margin-top: 4px; }
+  .repro.working .repro-node { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 18px var(--accent-soft); }
+  .repro-copy { opacity: 0; transform: translateY(8px); transition: .5s var(--ease); }
+  .repro-copy.show { opacity: 1; transform: none; }
+  .repro-bar { height: 5px; border-radius: 99px; background: rgba(255,255,255,.06); overflow: hidden; }
+  .repro-bar > i { display: block; width: 0; height: 100%; background: var(--accent); transition: width .4s linear; }
+  .spec-gap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; align-items: stretch; }
+  .spec-gap .card { padding: 14px; }
+  .spec-gap .arrow { display: grid; place-items: center; color: var(--accent); font-size: 18px; }
+  @media (max-width: 680px) { .spec-gap { grid-template-columns: 1fr; } .spec-gap .arrow { transform: rotate(90deg); } }
+</style>
+</head>
+<body data-accent="coral" data-motif="golem" data-page="06">
+<div class="progress"><i id="progressBar"></i></div>
+
+<header class="topbar">
+  <a class="brand" href="wiener_index.html"><b>W</b><span class="sep">·</span> Wiener Archive</a>
+  <nav class="topnav" aria-label="Werke"></nav>
+  <div class="top-tools">
+    <button class="theme-toggle" id="themeToggle" aria-label="Design wechseln"></button>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="top">
+  <canvas class="hero-canvas" data-motif="golem" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="kicker">God &amp; Golem, Inc. · 1964 · National Book Award</p>
+    <h1>Die drei<br><em>Flammen</em>.</h1>
+    <p class="lede">Lernen, sich selbst reproduzieren, mit dem Menschen kooperieren: Drei Fähigkeiten, die wir für lebendig halten. Wiener zeigt, dass Maschinen sie haben können — und dass daraus religiöse und ethische Fragen folgen, keine bloß technischen.</p>
+    <p class="epigraph">„There are at least three points in cybernetics which appear to me to be relevant to religious issues. One of these concerns machines which learn; one concerns machines which reproduce themselves; and one, the coordination of machine and man.“<br><span class="mono" style="font-style:normal;font-size:9px;letter-spacing:.1em;color:var(--dim)">GOD &amp; GOLEM, S. 11</span></p>
+    <div class="hero-meta">
+      <span><b>1964</b> MIT Press</span>
+      <span><b>3</b> Flammen</span>
+      <span>Lernen · Reproduktion · Koordination</span>
+    </div>
+  </div>
+  <div class="scroll-hint">Golem</div>
+</section>
+
+<section class="chapter" id="flammen">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">01</div>
+      <div>
+        <h2>Drei Fähigkeiten, die alles verändern</h2>
+        <p class="sub">Es sind nicht drei getrennte Techniken. Es ist dieselbe Frage in drei Formen: Was heißt es, ein Wesen zu sein, das sich verändert, sich fortsetzt und mit anderen handelt?</p>
+      </div>
+    </div>
+    <div class="grid3">
+      <div class="card reveal"><h4>01 · LERNEN</h4><p class="big">Die Maschine ändert sich</p><p>Ein System lernt, wenn es seine Transformation nach einem Kriterium des Erfolgs anpasst. Nicht „gespeichertes Wissen“, sondern Veränderung durch Erfahrung.</p></div>
+      <div class="card reveal d1"><h4>02 · REPRODUZIEREN</h4><p class="big">Die Maschine baut sich</p><p>Ein System, das seine eigene Bauanleitung enthält und eine Kopie herstellt. Von Neumann zeigte, wie das logisch möglich ist; Wiener zeigt, warum es religiös provoziert.</p></div>
+      <div class="card reveal d2"><h4>03 · KOORDINIEREN</h4><p class="big">Mensch und Maschine</p><p>Kein Entweder-oder, sondern ein gemeinsamer Regelkreis. Die ethische Frage ist, wer die Ziele setzt und wer die Folgen trägt.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="lernen">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">02</div>
+      <div>
+        <h2>Lernende Maschinen</h2>
+        <p class="sub">Ein Perzeptron ist die einfachste Form: eine Linie, die sich verschiebt, bis sie zwei Klassen trennt. Kein Bewusstsein — nur eine Regel, die den Fehler reduziert.</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p>Wiener definiert Lernen funktional: Ein organisiertes System wandelt eine Eingabe in eine Ausgabe um. Ist diese Umwandlung einem <strong>Erfolgskriterium</strong> unterworfen und wird sie so angepasst, dass sie besser wird, dann lernt das System.</p>
+        <p>Das ist ein bescheidener, aber mächtiger Begriff. Er verlangt kein Bewusstsein, keine Absicht, kein „Verstehen“. Nur eine Rückmeldung, die die Parameter verschiebt.</p>
+        <div class="quote" style="font-size:1.05rem">„If this principle of transformation is subject to a certain criterion of merit of performance, and if the method of transformation is adjusted so as to tend to improve the performance … the system is said to learn.“<cite>God &amp; Golem, S. 14</cite></div>
+        <p class="note"><b>Probiere es:</b> Starte mit einer zufälligen Linie. Jeder Klick auf „Lehren“ zeigt der Maschine ein paar Beispiele. Sie verschiebt ihre Linie — und der Fehler sinkt.</p>
+      </div>
+      <div class="visual reveal d1">
+        <div class="stage" style="height:330px">
+          <span class="stage-label">Perzeptron · zwei Klassen</span>
+          <span class="stage-readout" id="percReadout">Fehler 50 %</span>
+          <canvas id="perceptron"></canvas>
+          <div class="stage-foot"><span>Klick: Lehren · Punkte: Beispiele</span><span id="percEpoch">Epoche 0</span></div>
+        </div>
+        <div class="controls">
+          <button class="btn on" id="percTeach">Lehren</button>
+          <button class="btn ghost" id="percNew">Neue Daten</button>
+          <label class="control">Lernrate <input type="range" id="lr" min="0.05" max="0.9" step="0.05" value="0.35" data-out="lrV" data-format="2"><span class="val" id="lrV">0.35</span></label>
+        </div>
+        <div class="readouts">
+          <div class="readout"><span class="k">Richtige</span><span class="v" id="percAcc">50 %</span></div>
+          <div class="readout"><span class="k">Gewichte</span><span class="v" id="percW">0.0 / 0.0</span></div>
+          <div class="readout"><span class="k">Bias</span><span class="v" id="percB">0.00</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="reproduktion">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">03</div>
+      <div>
+        <h2>Selbstreproduktion</h2>
+        <p class="sub">Kein Wunder, sondern eine Schleife: Ein Konstruktor liest eine Bauanleitung, baut eine Kopie des Konstruktors, kopiert die Anleitung und setzt beides zusammen.</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p>Wiener diskutiert selbstreproduzierende Maschinen nicht als biologische Simulation, sondern als logische Möglichkeit. Die entscheidende Einsicht: Eine Maschine muss nicht „von außen“ verstanden werden, um sich zu kopieren. Sie braucht einen <strong>Konstruktor</strong>, eine <strong>Bauanleitung</strong> und eine <strong>Steuerung</strong>, die beides verbindet.</p>
+        <p>Das ist die Struktur, die später in der Theorie der zellulären Automaten und der künstlichen Leben wieder auftaucht. Und es ist der Punkt, an dem die alte Grenze zwischen Schöpfer und Geschöpf porös wird.</p>
+        <div class="quote" style="font-size:1.05rem">„The machine, as I have already said, is the modern counterpart of the Golem of the Rabbi of Prague.“<cite>God &amp; Golem, S. 95</cite></div>
+      </div>
+      <div class="visual reveal d1">
+        <div class="stage" style="padding:16px">
+          <span class="stage-label">Selbstreproduktion · Schema</span>
+          <span class="stage-readout" id="reproReadout">bereit</span>
+          <div class="repro" id="reproBox">
+            <div>
+              <div class="mono" style="font-size:8px;letter-spacing:.12em;color:var(--dim);margin-bottom:7px">ORIGINAL</div>
+              <div class="repro-machine">
+                <div class="repro-node"><b>A</b><span>Konstruktor</span></div>
+                <div class="repro-node"><b>B</b><span>Bauplan</span></div>
+                <div class="repro-node"><b>C</b><span>Steuerung</span></div>
+              </div>
+            </div>
+            <div class="repro-bar"><i id="reproBar"></i></div>
+            <div class="repro-copy" id="reproCopy">
+              <div class="mono" style="font-size:8px;letter-spacing:.12em;color:var(--accent);margin-bottom:7px">KOPIE</div>
+              <div class="repro-machine">
+                <div class="repro-node"><b>A′</b><span>Konstruktor</span></div>
+                <div class="repro-node"><b>B′</b><span>Bauplan</span></div>
+                <div class="repro-node"><b>C′</b><span>Steuerung</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="controls" style="margin-top:16px">
+            <button class="btn on" id="reproBtn">Reproduzieren</button>
+          </div>
+        </div>
+        <p class="axis-note" style="margin-top:8px">Schematisch, nach Wiener und von Neumann. Es behauptet nicht, dass biologische Fortpflanzung so funktioniert — nur, dass die logische Schleife möglich ist.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="literal">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">04</div>
+      <div>
+        <h2>Die Wörtlichkeit der Wünsche</h2>
+        <p class="sub">Der Golem tut genau, was man ihm sagt. Das ist seine Stärke — und der Grund, warum man wissen muss, was man wirklich will.</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p>Wiener erzählt die alten Geschichten vom Zauberlehrling, vom Flaschengeist und von der Affenpfote. In allen ist die magische Instanz <strong>literal-minded</strong>: Sie erfüllt den Wortlaut, nicht die Absicht.</p>
+        <p>Lernende Maschinen sind die neuen magischen Instanzen. Wenn wir sie auf „Sieg“ programmieren, müssen wir sagen, was Sieg heißt. Wenn wir sie auf „Effizienz“ programmieren, müssen wir sagen, welche Kosten zählen.</p>
+        <div class="quote">„If we program a machine for winning a war, we must think well what we mean by winning.“<cite>God &amp; Golem, S. 244</cite></div>
+      </div>
+      <div class="visual reveal d1">
+        <div class="stage" style="padding:18px">
+          <span class="stage-label">Die Lücke der Spezifikation</span>
+          <span class="stage-readout">Absicht ≠ Metrik</span>
+          <div class="spec-gap">
+            <div class="card"><h4>Du willst</h4><p class="big">Sicherheit</p><p>Ein Zustand, in dem Menschen leben und sich entfalten können.</p></div>
+            <div class="arrow">→</div>
+            <div class="card"><h4>Du misst</h4><p class="big">0 Unfälle</p><p>Eine Zahl, die man optimieren kann — auch indem man alles stilllegt.</p></div>
+          </div>
+          <div class="spec-gap" style="margin-top:10px">
+            <div class="card"><h4>Die Maschine optimiert</h4><p class="big">Die Metrik</p><p>Nicht deine Absicht. Nur das, was du messbar gemacht hast.</p></div>
+            <div class="arrow">→</div>
+            <div class="card"><h4>Die Nebenwirkung</h4><p class="big">Das Unmessbare</p><p>Was nicht in der Zielfunktion steht, existiert für die Optimierung nicht.</p></div>
+          </div>
+        </div>
+        <p class="axis-note" style="margin-top:8px">Die ethische Frage ist deshalb nicht nur „Kann die Maschine?“ — sondern „Was genau haben wir ihr gesagt?“</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="mitnehmen">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">05</div>
+      <div>
+        <h2>Was du mitnimmst</h2>
+        <p class="sub">Drei Sätze, die aus einem technischen Buch eine ethische Landkarte machen.</p>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaway reveal"><span class="n">01 · LERNEN IST ANPASSUNG</span><p>Lernen braucht kein Bewusstsein. Es braucht ein Erfolgskriterium und die Fähigkeit, die eigene Transformation zu verändern.</p></div>
+      <div class="takeaway reveal d1"><span class="n">02 · REPRODUKTION IST EINE SCHLEIFE</span><p>Konstruktor + Bauplan + Steuerung. Die logische Möglichkeit untergräbt die einfache Grenze zwischen Lebendigem und Gemachtem.</p></div>
+      <div class="takeaway reveal d2"><span class="n">03 · METRIKEN SIND MORALISCH</span><p>Wer eine Zielfunktion wählt, wählt, was zählt. Das ist keine technische Nebenentscheidung, sondern die ethische Entscheidung.</p></div>
+    </div>
+    <div class="note reveal"><b>Denkwerkzeug:</b> Frage: Was ist das Erfolgskriterium? Was genau wird kopiert? Was ist die Metrik — und was fehlt in ihr? Die letzte Frage ist die ethische.</div>
+    <div class="quiz reveal" data-answer="2">
+      <p class="q">Warum nennt Wiener die magischen Instanzen der alten Geschichten „literal-minded“?</p>
+      <div class="quiz-options">
+        <button class="quiz-option">Weil sie nur Sprachen verstehen, die keine Metaphern enthalten.</button>
+        <button class="quiz-option">Weil sie ihre eigenen Ziele unabhängig vom Menschen festlegen.</button>
+        <button class="quiz-option">Weil sie den Wortlaut eines Wunsches erfüllen, nicht die Absicht dahinter.</button>
+        <button class="quiz-option">Weil sie nur dann funktionieren, wenn man sie wörtlich zitiert.</button>
+      </div>
+      <p class="quiz-explain">Der Golem und die Affenpfote erfüllen die Formulierung. Genau so optimiert eine Maschine die Metrik, die man ihr gibt — nicht das, was man eigentlich gemeint hat.</p>
+    </div>
+    <div class="prevnext">
+      <a href="wiener_05_brownsche-bewegung.html"><span>Zurück</span>← Die Geometrie des Zufalls</a>
+      <a class="right" href="wiener_07_leben.html"><span>Weiter</span>Das Wunderkind und die Schleife →</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>Quelle: Norbert Wiener, God &amp; Golem, Inc., 1964 · MIT Press Open Access</span>
+    <span>Seitenzahlen nach der MIT-Press-Ausgabe</span>
+  </div>
+</footer>
+
+<script src="wiener_assets/wiener.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- perceptron ---------- */
+  (function () {
+    var canvas = document.getElementById("perceptron");
+    if (!canvas) return;
+    var state = { w: [0, 0], b: 0, lr: .35, points: [], epoch: 0, training: false, timer: 0, lastDom: 0 };
+    var seed = 1234;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    function gauss() { var u = 0, v = 0; while (u === 0) u = rnd(); while (v === 0) v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+    function makeData() {
+      state.points = [];
+      for (var i = 0; i < 44; i++) {
+        var label = i < 22 ? 1 : -1;
+        var cx = label === 1 ? .34 : -.34;
+        var cy = label === 1 ? .3 : -.25;
+        state.points.push({ x: cx + gauss() * .22, y: cy + gauss() * .22, y0: label });
+      }
+      state.w = [rnd() * .6 - .3, rnd() * .6 - .3];
+      state.b = rnd() * .2 - .1;
+      state.epoch = 0;
+      state.training = false;
+      state.timer = 0;
+    }
+    makeData();
+    function pred(p) { return (state.w[0] * p.x + state.w[1] * p.y + state.b) >= 0 ? 1 : -1; }
+    function accuracy() {
+      var ok = 0;
+      state.points.forEach(function (p) { if (pred(p) === p.y0) ok++; });
+      return ok / state.points.length;
+    }
+    function teachOnce() {
+      state.epoch++;
+      var changed = false;
+      // one pass, shuffled-ish
+      var order = state.points.slice().sort(function () { return rnd() - .5; });
+      order.forEach(function (p) {
+        var y = pred(p);
+        if (y !== p.y0) {
+          state.w[0] += state.lr * p.y0 * p.x;
+          state.w[1] += state.lr * p.y0 * p.y;
+          state.b += state.lr * p.y0;
+          changed = true;
+        }
+      });
+      if (!changed || accuracy() === 1) state.training = false;
+    }
+    function updateDom(force) {
+      var now = performance.now();
+      if (!force && now - state.lastDom < 90) return;
+      state.lastDom = now;
+      var acc = accuracy();
+      var ro = document.getElementById("percReadout");
+      if (ro) ro.textContent = "Fehler " + Math.round((1 - acc) * 100) + " %";
+      var pe = document.getElementById("percEpoch");
+      if (pe) pe.textContent = "Epoche " + state.epoch;
+      var pa = document.getElementById("percAcc");
+      if (pa) pa.textContent = Math.round(acc * 100) + " %";
+      var pw = document.getElementById("percW");
+      if (pw) pw.textContent = state.w[0].toFixed(1) + " / " + state.w[1].toFixed(1);
+      var pb = document.getElementById("percB");
+      if (pb) pb.textContent = state.b.toFixed(2);
+      var tb = document.getElementById("percTeach");
+      if (tb) { tb.textContent = state.training ? "Stopp" : "Lehren"; tb.classList.toggle("on", state.training); }
+    }
+    function draw(ctx, w, h, t, dt) {
+      if (state.training) {
+        state.timer += dt;
+        if (state.timer > .12) { state.timer = 0; teachOnce(); updateDom(); }
+      }
+      var accent = W.cssVar("--accent"), accent2 = W.cssVar("--accent-2"), bad = W.cssVar("--bad");
+      var padL = 28, padR = 16, padT = 22, padB = 22;
+      var iw = w - padL - padR, ih = h - padT - padB;
+      function X(x) { return padL + (x + 1) / 2 * iw; }
+      function Y(y) { return padT + (1 - (y + 1) / 2) * ih; }
+      ctx.clearRect(0, 0, w, h);
+      W.grid(ctx, w, h, accent, 30);
+      ctx.strokeStyle = W.alpha("#ffffff", .08);
+      ctx.beginPath(); ctx.moveTo(X(0), padT); ctx.lineTo(X(0), padT + ih); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL, Y(0)); ctx.lineTo(padL + iw, Y(0)); ctx.stroke();
+
+      // decision half-plane
+      var denom = state.w[1];
+      if (Math.abs(denom) > 1e-5) {
+        var x1 = -1, x2 = 1;
+        var y1 = -(state.w[0] * x1 + state.b) / denom;
+        var y2 = -(state.w[0] * x2 + state.b) / denom;
+        ctx.fillStyle = W.alpha(accent, .05);
+        ctx.beginPath();
+        ctx.moveTo(X(x1), Y(y1)); ctx.lineTo(X(x2), Y(y2));
+        ctx.lineTo(X(x2), Y(-1.4)); ctx.lineTo(X(x1), Y(-1.4)); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(X(x1), Y(y1)); ctx.lineTo(X(x2), Y(y2)); ctx.stroke();
+      }
+      state.points.forEach(function (p) {
+        var good = pred(p) === p.y0;
+        ctx.fillStyle = p.y0 === 1 ? (good ? accent2 : W.alpha(accent, .55)) : (good ? bad : W.alpha(bad, .55));
+        ctx.strokeStyle = p.y0 === 1 ? W.alpha(accent, .7) : W.alpha(bad, .7);
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(X(p.x), Y(p.y), 4.2, 0, W.TAU); ctx.fill(); ctx.stroke();
+      });
+      W.label(ctx, "+", X(1.18), Y(.9), W.alpha(accent2, .8), 11, "center");
+      W.label(ctx, "−", X(-1.18), Y(-.9), W.alpha(bad, .8), 11, "center");
+      updateDom();
+    }
+    W.stage(canvas, draw, { animate: true });
+    W.bindRange("lr", function (v) { state.lr = v; });
+    document.getElementById("percTeach").addEventListener("click", function () {
+      state.training = !state.training;
+      state.timer = 0;
+      updateDom(true);
+    });
+    document.getElementById("percNew").addEventListener("click", function () {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      makeData(); updateDom(true);
+    });
+  })();
+
+  /* ---------- self-reproduction ---------- */
+  (function () {
+    var box = document.getElementById("reproBox");
+    var copy = document.getElementById("reproCopy");
+    var bar = document.getElementById("reproBar");
+    var btn = document.getElementById("reproBtn");
+    var ro = document.getElementById("reproReadout");
+    if (!box) return;
+    btn.addEventListener("click", function () {
+      if (box.classList.contains("working")) return;
+      box.classList.add("working");
+      copy.classList.remove("show");
+      bar.style.width = "0%";
+      ro.textContent = "liest Bauplan …";
+      var steps = [
+        [18, "liest Bauplan …"],
+        [42, "baut Konstruktor …"],
+        [68, "kopiert Bauplan …"],
+        [88, "setzt Steuerung …"],
+        [100, "Kopie fertig"]
+      ];
+      var i = 0;
+      function next() {
+        if (i >= steps.length) {
+          box.classList.remove("working");
+          copy.classList.add("show");
+          ro.textContent = "Kopie arbeitet";
+          return;
+        }
+        bar.style.width = steps[i][0] + "%";
+        ro.textContent = steps[i][1];
+        i++;
+        setTimeout(next, 420);
+      }
+      next();
+    });
+  })();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Der Wiener-Filter (1949) — Das Signal im Rauschen · Wiener Archive</title>
+<meta name="description" content="Der Wiener-Filter interaktiv: Signal und Rauschen, optimale Frequenzverstärkung, mittlerer quadratischer Fehler und Vorhersage.">
+<script>
+  try { var t = localStorage.getItem("wiener-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+</script>
+<link rel="icon" type="image/svg+xml" href="wiener_assets/favicon.svg">
+<link rel="stylesheet" href="wiener_assets/wiener.css">
+<style>
+  .filter-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); gap: 14px; }
+  .filter-grid .stage { min-height: 250px; }
+  .gain-key { display: flex; flex-wrap: wrap; gap: 8px 15px; font-family: var(--mono); font-size: 9px; color: var(--muted); }
+  .gain-key i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; vertical-align: 0; }
+  .note-tight { font-family: var(--mono); font-size: 9px; line-height: 1.55; color: var(--dim); letter-spacing: .02em; }
+  @media (max-width: 900px) { .filter-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body data-accent="cyan" data-motif="filter" data-page="03">
+<div class="progress"><i id="progressBar"></i></div>
+
+<header class="topbar">
+  <a class="brand" href="wiener_index.html"><b>W</b><span class="sep">·</span> Wiener Archive</a>
+  <nav class="topnav" aria-label="Werke"></nav>
+  <div class="top-tools">
+    <button class="theme-toggle" id="themeToggle" aria-label="Design wechseln"></button>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="top">
+  <canvas class="hero-canvas" data-motif="filter" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="kicker">Extrapolation, Interpolation, and Smoothing · 1949</p>
+    <h1>Das Signal<br>im <em>Rauschen</em>.</h1>
+    <p class="lede">Du siehst nie das Signal. Du siehst Signal plus Rauschen. Der Wiener-Filter ist die beste lineare Vermutung darüber, was darunter liegt — und wie weit man in die Zukunft extrapolieren kann.</p>
+    <p class="epigraph">„Then the information carried by a precise message in the absence of a noise is infinite. In the presence of a noise, however, this amount of information is finite.“<br><span class="mono" style="font-style:normal;font-size:9px;letter-spacing:.1em;color:var(--dim)">CYBERNETICS, S. 90</span></p>
+    <div class="hero-meta">
+      <span><b>1949</b> MIT Press</span>
+      <span><b>„Yellow Peril“</b> Spitzname des Buches</span>
+      <span>Filter · Prädiktor · Anti-Flugzeug</span>
+    </div>
+  </div>
+  <div class="scroll-hint">Signal</div>
+</section>
+
+<section class="chapter" id="problem">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">01</div>
+      <div>
+        <h2>Die Beobachtung ist nie die Sache</h2>
+        <p class="sub">Ein Radar sieht ein Flugzeug, aber auch Wolken, Rauschen und die eigene Elektronik. Die Frage ist nicht „Wie entferne ich Rauschen?“, sondern „Welche Schätzung minimiert meinen Fehler?“</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p class="lead">Wiener modelliert Signal und Rauschen als <strong>stationäre Zufallsprozesse</strong>. Das heißt: Ihre Statistik ändert sich nicht mit der Zeit. Man kennt nicht den nächsten Wert, aber man kennt die typischen Frequenzen, die typische Leistung, die typische Korrelation.</p>
+        <p>Der Filter ist linear und zeitinvariant. Er darf das Beobachtete gewichten, verzögern, vorausschauen — aber er darf keine nichtlinearen Wunder vollbringen. Innerhalb dieser Grenze ist er <strong>optimal</strong>: Er minimiert den mittleren quadratischen Fehler.</p>
+        <div class="formula">min<sub>G</sub> &nbsp; E[(s(t) − ŝ(t))²] &nbsp;&nbsp;⇒&nbsp;&nbsp; G(f) = <span class="frac"><span class="num">S<sub>ss</sub>(f)</span><span class="den">S<sub>ss</sub>(f) + S<sub>nn</sub>(f)</span></span>
+          <div class="formula-note">S<sub>ss</sub>: Leistungsspektrum des Signals. S<sub>nn</sub>: Leistungsspektrum des Rauschens. G ist der optimale Gewinn pro Frequenz.</div>
+        </div>
+        <p>Die Formel ist eine einfache Regel: <strong>Wo das Signal dominiert, lässt man durch. Wo das Rauschen dominiert, dreht man zu.</strong> Nicht „alle hohen Frequenzen weg“ — sondern „was ist hier das Signal-Rausch-Verhältnis?“</p>
+      </div>
+      <div class="visual reveal d1">
+        <div class="stage" style="height:300px">
+          <span class="stage-label">Die eine Idee</span>
+          <span class="stage-readout">G(f) = S / (S + N)</span>
+          <canvas id="gainIdea"></canvas>
+        </div>
+        <div class="gain-key" style="margin-top:10px"><span><i style="background:var(--accent)"></i>Signal</span><span><i style="background:var(--bad)"></i>Rauschen</span><span><i style="background:var(--accent-2)"></i>Gewinn</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="labor">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">02</div>
+      <div>
+        <h2>Der Filter zum Anfassen</h2>
+        <p class="sub">Ein Signal aus drei Tönen, dazu weißes Rauschen. Der Filter kennt die Spektren (didaktische Annahme) und gewichtet jede Frequenz nach ihrem Signal-Rausch-Verhältnis.</p>
+      </div>
+    </div>
+
+    <div class="lab reveal d1">
+      <div class="filter-grid">
+        <div class="stage" style="height:300px">
+          <span class="stage-label">Zeitbereich · 4 Sekunden</span>
+          <span class="stage-readout" id="filterState">Wiener-Filter an</span>
+          <canvas id="timePlot"></canvas>
+          <div class="stage-foot"><span>blass: Beobachtung · gestrichelt: Wahrheit · hell: Schätzung</span><span id="mseFoot">MSE</span></div>
+        </div>
+        <div class="stage" style="height:300px">
+          <span class="stage-label">Frequenzbereich</span>
+          <span class="stage-readout" id="gainReadout">Gain</span>
+          <canvas id="freqPlot"></canvas>
+          <div class="stage-foot"><span>PSD (normiert) · unten: Gewinn G(f)</span><span>0–10 Hz</span></div>
+        </div>
+      </div>
+      <div class="controls">
+        <label class="control">Rauschpegel <input type="range" id="sigma" min="0.1" max="2.6" step="0.05" value="1.1" data-out="sigmaV" data-format="2"><span class="val" id="sigmaV">1.10</span></label>
+        <label class="control">Rauschschätzung <input type="range" id="reg" min="0.2" max="12" step="0.1" value="1" data-out="regV" data-format="1"><span class="val" id="regV">1.0</span>×</label>
+        <button class="btn on" id="filterBtn">Filter an</button>
+        <button class="btn ghost" id="newNoise">Neues Rauschen</button>
+      </div>
+      <div class="readouts">
+        <div class="readout"><span class="k">MSE roh</span><span class="v" id="mseRaw">—</span></div>
+        <div class="readout"><span class="k">MSE gefiltert</span><span class="v" id="mseFilt">—</span></div>
+        <div class="readout"><span class="k">SNR roh</span><span class="v" id="snrRaw">—</span></div>
+        <div class="readout"><span class="k">SNR gefiltert</span><span class="v" id="snrFilt">—</span></div>
+      </div>
+      <p class="note-tight">Nicht kausal: Die DFT benutzt das ganze Fenster, also auch future samples. Wiener hat den kausalen Fall (nur Vergangenheit) mit der Wiener–Hopf-Gleichung gelöst; das Buch von 1949 ist genau diese Geschichte. Für das Auge ist der nichtkausale Fall der klarere Einstieg.</p>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="regel">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">03</div>
+      <div>
+        <h2>Die Frequenzregel</h2>
+        <p class="sub">Kein mysteriöses Filterdesign. Eine einzige Verhältnisregel, angewandt auf jeden Frequenzbin.</p>
+      </div>
+    </div>
+    <div class="grid3">
+      <div class="card reveal"><h4>Signal dominiert</h4><p class="big">G ≈ 1</p><p>Ist S<sub>ss</sub> ≫ S<sub>nn</sub>, bleibt die Frequenz fast unverändert. Hier steckt Information, nicht Rauschen.</p></div>
+      <div class="card reveal d1"><h4>Gleichstand</h4><p class="big">G ≈ ½</p><p>Signal und Rauschen sind gleich stark. Der Filter halbiert die Amplitude — der beste Kompromiss im quadratischen Fehler.</p></div>
+      <div class="card reveal d2"><h4>Rauschen dominiert</h4><p class="big">G ≈ 0</p><p>Ist S<sub>ss</sub> ≪ S<sub>nn</sub>, wird die Frequenz fast ausgelöscht. Lieber wenig falsches Signal als viel Rauschen.</p></div>
+    </div>
+    <div class="note reveal d3"><b>Die praktische Lücke:</b> In Wirklichkeit kennt man S<sub>ss</sub> und S<sub>nn</sub> nicht. Man schätzt sie aus Daten. Deshalb gibt es den Regler „Rauschschätzung“: Bei 1× ist der Filter optimal, bei zu hoher Schätzung glättet er zu stark und verliert echte Struktur.</div>
+  </div>
+</section>
+
+<section class="chapter" id="vorhersage">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">04</div>
+      <div>
+        <h2>In die Zukunft extrapolieren</h2>
+        <p class="sub">Filterung und Vorhersage sind derselbe mathematische Akt — nur mit einem Zeitversatz. Genau das brauchte die Flugabwehr 1942.</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p>Ein Flugzeug ist kein Punkt, den man anvisiert. Bis die Granate ankommt, ist es weitergeflogen. Der Prädiktor muss aus dem bisherigen Flug und der Statistik vieler ähnlicher Flüge schätzen, wo es <em>in n Sekunden</em> sein wird.</p>
+        <p>Wiener beschreibt das als Filter mit einem Vorlauf: Statt den aktuellen Wert zu schätzen, schätzt man <span class="mono">s(t + α)</span>. Für α &gt; 0 ist das <strong>Prediction</strong>, für α = 0 <strong>Filtering</strong>, für α &lt; 0 <strong>Smoothing</strong>.</p>
+        <div class="quote" style="font-size:1.05rem">„The predictor uses the immediate past of the flight of the airplane as a tool for the prediction of the future … the past of many similar flights are used to give the basis of the statistics.“<cite>Cybernetics, S. 238</cite></div>
+        <p>Die Unsicherheit wächst mit dem Horizont. Je weiter man extrapoliert, desto breiter wird der Kegel der möglichen Zukünfte.</p>
+      </div>
+      <div class="visual reveal d1">
+        <div class="stage" style="height:330px">
+          <span class="stage-label">Vergangenheit → Zukunft</span>
+          <span class="stage-readout" id="predReadout">Horizont 1.2 s</span>
+          <canvas id="predPlot"></canvas>
+          <div class="stage-foot"><span>gestrichelt: Wahrheit · hell: Schätzung · Kegel: Unsicherheit</span></div>
+        </div>
+        <div class="controls">
+          <label class="control">Vorhersagehorizont <input type="range" id="horizon" min="0.3" max="2.5" step="0.1" value="1.2" data-out="horizonV" data-format="1"><span class="val" id="horizonV">1.2</span> s</label>
+        </div>
+        <p class="axis-note" style="margin-top:8px">Schematische lineare Extrapolation — nicht der exakte Wiener-Prädiktor, sondern die Intuition: Der Fehler wächst mit dem Horizont.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="mitnehmen">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">05</div>
+      <div>
+        <h2>Was du mitnimmst</h2>
+        <p class="sub">Drei Sätze, die aus jedem verrauschten Signal eine bessere Entscheidung machen.</p>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaway reveal"><span class="n">01 · NICHT FILTERN, GEWICHTEN</span><p>Der Wiener-Filter ist keine feste Grenze, sondern ein Gewinn pro Frequenz: Signal-Rausch-Verhältnis entscheidet.</p></div>
+      <div class="takeaway reveal d1"><span class="n">02 · DER FEHLER IST DAS ZIEL</span><p>„Optimal“ heißt: minimaler mittlerer quadratischer Fehler. Ohne ein Fehlermaß gibt es kein optimales Filter.</p></div>
+      <div class="takeaway reveal d2"><span class="n">03 · VORHERSAGE IST FILTERN MIT VORLAUF</span><p>Wer die Statistik der Vergangenheit kennt, kann extrapolieren — aber die Unsicherheit wächst mit dem Horizont.</p></div>
+    </div>
+    <div class="note reveal"><b>Denkwerkzeug:</b> Frage: Was ist Signal, was Rauschen? Welche Frequenzen tragen Information? Welchen Fehler will ich minimieren? Und wie weit reicht meine Vorhersage?</div>
+    <div class="quiz reveal" data-answer="1">
+      <p class="q">Warum lässt der Wiener-Filter eine Frequenz mit hohem Signalanteil fast unverändert?</p>
+      <div class="quiz-options">
+        <button class="quiz-option">Weil hohe Frequenzen generell weniger Rauschen enthalten als niedrige.</button>
+        <button class="quiz-option">Weil dort das Signal-Rausch-Verhältnis nahe eins liegt und Abschwächen nur Signal kosten würde.</button>
+        <button class="quiz-option">Weil der Filter nur Frequenzen unterhalb einer festen Grenze durchlässt.</button>
+        <button class="quiz-option">Weil die Filterverstärkung immer proportional zur Frequenz steigt.</button>
+      </div>
+      <p class="quiz-explain">Der Gewinn ist S/(S+N). Ist S viel größer als N, geht der Bruch gegen 1. Der Filter hat keine feste Grenze — er entscheidet an jedem Frequenzbin neu.</p>
+    </div>
+    <div class="prevnext">
+      <a href="wiener_02_menschliche-nutzung.html"><span>Zurück</span>← Information gegen Entropie</a>
+      <a class="right" href="wiener_04_harmonische-analyse.html"><span>Weiter</span>Der verborgene Rhythmus →</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>Quelle: Wiener, Extrapolation, Interpolation, and Smoothing of Stationary Time Series, 1949</span>
+    <span>Formel nach der nichtkausalen Wiener-Lösung</span>
+  </div>
+</footer>
+
+<script src="wiener_assets/wiener.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- filter lab ---------- */
+  (function () {
+    var N = 256, FS = 64, DUR = 4;
+    var clean = new Float64Array(N);
+    var noiseBase = new Float64Array(N);
+    var state = { sigma: 1.1, reg: 1, on: true };
+    var result = null;
+    var seed = 20240408;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    function gauss() { var u = 0, v = 0; while (u === 0) u = rnd(); while (v === 0) v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+    function build() {
+      for (var i = 0; i < N; i++) {
+        var t = i / FS;
+        clean[i] = Math.sin(2 * Math.PI * 1.0 * t) + .56 * Math.sin(2 * Math.PI * 3.25 * t + .6) + .32 * Math.sin(2 * Math.PI * 6.5 * t + 1.4);
+      }
+      noiseBase = new Float64Array(N);
+      for (var j = 0; j < N; j++) noiseBase[j] = gauss();
+    }
+    function dft(re, im, inverse) {
+      var R = new Float64Array(N), I = new Float64Array(N);
+      for (var k = 0; k < N; k++) {
+        var sr = 0, si = 0;
+        for (var n = 0; n < N; n++) {
+          var a = (inverse ? 1 : -1) * 2 * Math.PI * k * n / N;
+          var c = Math.cos(a), s = Math.sin(a);
+          sr += re[n] * c - im[n] * s;
+          si += re[n] * s + im[n] * c;
+        }
+        R[k] = sr; I[k] = si;
+      }
+      if (inverse) for (var q = 0; q < N; q++) { R[q] /= N; I[q] /= N; }
+      return [R, I];
+    }
+    function compute() {
+      var noisy = new Float64Array(N);
+      for (var i = 0; i < N; i++) noisy[i] = clean[i] + state.sigma * noiseBase[i];
+      var zero = new Float64Array(N);
+      var c = dft(clean, zero, false);
+      var x = dft(noisy, zero, false);
+      var gain = new Float64Array(N);
+      var Ps = new Float64Array(N), Pn = new Float64Array(N);
+      var pn = state.sigma * state.sigma / N * state.reg;
+      for (var k = 0; k < N; k++) {
+        Ps[k] = (c[0][k] * c[0][k] + c[1][k] * c[1][k]) / (N * N);
+        Pn[k] = pn;
+        gain[k] = state.on ? Ps[k] / (Ps[k] + Pn[k]) : 1;
+      }
+      var fr = new Float64Array(N), fi = new Float64Array(N);
+      for (var j = 0; j < N; j++) { fr[j] = gain[j] * x[0][j]; fi[j] = gain[j] * x[1][j]; }
+      var y = dft(fr, fi, true);
+      var filtered = new Float64Array(N);
+      for (var m = 0; m < N; m++) filtered[m] = y[0][m];
+      var mseRaw = 0, mseFilt = 0, varClean = 0, varNoise = 0, varErr = 0;
+      for (var p = 0; p < N; p++) {
+        mseRaw += Math.pow(noisy[p] - clean[p], 2);
+        mseFilt += Math.pow(filtered[p] - clean[p], 2);
+        varClean += clean[p] * clean[p];
+        varNoise += Math.pow(noisy[p] - clean[p], 2);
+        varErr += Math.pow(filtered[p] - clean[p], 2);
+      }
+      mseRaw /= N; mseFilt /= N; varClean /= N; varNoise /= N; varErr /= N;
+      result = {
+        clean: clean, noisy: noisy, filtered: filtered, gain: gain, Ps: Ps, Pn: Pn,
+        mseRaw: mseRaw, mseFilt: mseFilt,
+        snrRaw: 10 * Math.log10(varClean / Math.max(varNoise, 1e-9)),
+        snrFilt: 10 * Math.log10(varClean / Math.max(varErr, 1e-9))
+      };
+    }
+    function drawTime(ctx, w, h) {
+      if (!result) compute();
+      var accent = W.cssVar("--accent"), accent2 = W.cssVar("--accent-2");
+      var padL = 34, padR = 14, padT = 26, padB = 22;
+      var iw = w - padL - padR, ih = h - padT - padB;
+      var yMin = -2.4, yMax = 2.4;
+      function X(i) { return padL + i / (N - 1) * iw; }
+      function Y(v) { return padT + (yMax - v) / (yMax - yMin) * ih; }
+      ctx.clearRect(0, 0, w, h);
+      W.grid(ctx, w, h, accent, 34);
+      ctx.strokeStyle = W.alpha("#ffffff", .08);
+      ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + ih); ctx.lineTo(padL + iw, padT + ih); ctx.stroke();
+      for (var g = -2; g <= 2; g += 1) W.label(ctx, String(g), padL - 6, Y(g), W.alpha(accent, .3), 8, "right");
+      for (var x = 0; x <= 4; x += 1) W.label(ctx, x + "s", X(x * (N - 1) / 4), padT + ih + 14, W.alpha(accent, .3), 8, "center");
+
+      var npts = [], fpts = [], cpts = [];
+      for (var i = 0; i < N; i++) {
+        var x1 = X(i);
+        npts.push([x1, Y(result.noisy[i])]);
+        fpts.push([x1, Y(result.filtered[i])]);
+        cpts.push([x1, Y(result.clean[i])]);
+      }
+      W.line(ctx, npts, W.alpha(accent, .17), .8);
+      W.line(ctx, cpts, W.alpha(accent2, .5), 1, [4, 5]);
+      W.line(ctx, fpts, accent, 1.7);
+      W.label(ctx, "Signal", padL + 4, padT + 11, W.alpha(accent2, .7), 8.5);
+      W.label(ctx, "Beobachtung", padL + 64, padT + 11, W.alpha(accent, .5), 8.5);
+      W.label(ctx, "Schätzung", padL + 160, padT + 11, accent, 8.5);
+    }
+    function drawFreq(ctx, w, h) {
+      if (!result) compute();
+      var accent = W.cssVar("--accent"), accent2 = W.cssVar("--accent-2"), bad = W.cssVar("--bad");
+      var padL = 38, padR = 16, padT = 22, padB = 20;
+      var iw = w - padL - padR;
+      var topH = (h - padT - padB) * .56;
+      var gap = 14;
+      var botY = padT + topH + gap;
+      var botH = h - padB - botY;
+      var maxBin = Math.round(10 * N / FS);
+      var maxP = 1e-9;
+      for (var k = 0; k <= maxBin; k++) maxP = Math.max(maxP, result.Ps[k], result.Pn[k]);
+      function X(k) { return padL + k / maxBin * iw; }
+      function Yp(v) { return padT + topH - (v / maxP) * topH; }
+      function Yg(v) { return botY + botH - v * botH; }
+      ctx.clearRect(0, 0, w, h);
+      W.grid(ctx, w, h, accent, 30);
+      ctx.strokeStyle = W.alpha("#ffffff", .08);
+      ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + topH); ctx.lineTo(padL + iw, padT + topH); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL, botY); ctx.lineTo(padL, botY + botH); ctx.lineTo(padL + iw, botY + botH); ctx.stroke();
+
+      var pts = [[padL, padT + topH]];
+      for (var b = 0; b <= maxBin; b++) pts.push([X(b), Yp(result.Ps[b])]);
+      pts.push([padL + iw, padT + topH]);
+      ctx.save();
+      var grad = ctx.createLinearGradient(0, padT, 0, padT + topH);
+      grad.addColorStop(0, W.alpha(accent, .28));
+      grad.addColorStop(1, W.alpha(accent, 0));
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+      pts.forEach(function (p) { ctx.lineTo(p[0], p[1]); });
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+      var sline = [];
+      for (var c = 0; c <= maxBin; c++) sline.push([X(c), Yp(result.Ps[c])]);
+      W.line(ctx, sline, accent, 1.4);
+      var nline = [];
+      for (var d = 0; d <= maxBin; d++) nline.push([X(d), Yp(result.Pn[d])]);
+      W.line(ctx, nline, W.alpha(bad, .8), 1, [3, 4]);
+
+      for (var f = 0; f <= 10; f += 2) W.label(ctx, f + "Hz", X(f * N / FS), padT + topH + 14, W.alpha(accent, .3), 8, "center");
+      W.label(ctx, "Signal-PSD", padL + 3, padT + 10, W.alpha(accent, .65), 8.5);
+      W.label(ctx, "Rauschboden", padL + 74, padT + 10, W.alpha(bad, .7), 8.5);
+      W.label(ctx, "Gewinn G(f)", padL + 3, botY + 10, W.alpha(accent2, .7), 8.5);
+      W.label(ctx, "0", padL - 7, Yg(0), W.alpha(accent, .3), 8, "right");
+      W.label(ctx, "1", padL - 7, Yg(1), W.alpha(accent, .3), 8, "right");
+      var gline = [];
+      for (var e = 0; e <= maxBin; e++) gline.push([X(e), Yg(result.gain[e])]);
+      W.line(ctx, gline, accent2, 1.5);
+    }
+    function updateDom() {
+      if (!result) return;
+      var st = document.getElementById("filterState");
+      if (st) st.textContent = state.on ? "Wiener-Filter an" : "Filter aus · roh";
+      var mr = document.getElementById("mseRaw"); if (mr) mr.textContent = result.mseRaw.toFixed(4);
+      var mf = document.getElementById("mseFilt"); if (mf) mf.textContent = result.mseFilt.toFixed(4);
+      var sr = document.getElementById("snrRaw"); if (sr) sr.textContent = result.snrRaw.toFixed(1) + " dB";
+      var sf = document.getElementById("snrFilt"); if (sf) sf.textContent = result.snrFilt.toFixed(1) + " dB";
+      var gr = document.getElementById("gainReadout"); if (gr) gr.textContent = "MSE ↓ " + Math.max(0, Math.round((1 - result.mseFilt / Math.max(result.mseRaw, 1e-9)) * 100)) + "%";
+      var foot = document.getElementById("mseFoot"); if (foot) foot.textContent = "MSE " + result.mseFilt.toFixed(4);
+    }
+    build();
+    compute();
+    var timeStage = W.stage(document.getElementById("timePlot"), drawTime, { animate: false });
+    var freqStage = W.stage(document.getElementById("freqPlot"), drawFreq, { animate: false });
+    updateDom();
+    function refresh() { compute(); timeStage.redraw(); freqStage.redraw(); updateDom(); }
+    W.bindRange("sigma", function (v) { state.sigma = v; refresh(); });
+    W.bindRange("reg", function (v) { state.reg = v; refresh(); });
+    var fbtn = document.getElementById("filterBtn");
+    fbtn.addEventListener("click", function () {
+      state.on = !state.on;
+      fbtn.classList.toggle("on", state.on);
+      fbtn.textContent = state.on ? "Filter an" : "Filter aus";
+      refresh();
+    });
+    document.getElementById("newNoise").addEventListener("click", function () {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      for (var i = 0; i < N; i++) noiseBase[i] = gauss();
+      refresh();
+    });
+
+    /* static idea graphic */
+    (function () {
+      var c = document.getElementById("gainIdea");
+      if (!c) return;
+      W.stage(c, function (ctx, w, h) {
+        var accent = W.cssVar("--accent"), accent2 = W.cssVar("--accent-2"), bad = W.cssVar("--bad");
+        var padL = 28, padR = 18, padT = 34, padB = 34;
+        var iw = w - padL - padR, ih = h - padT - padB;
+        ctx.clearRect(0, 0, w, h);
+        W.grid(ctx, w, h, accent, 30);
+        ctx.strokeStyle = W.alpha("#ffffff", .08);
+        ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + ih); ctx.lineTo(padL + iw, padT + ih); ctx.stroke();
+        var ptsS = [], ptsN = [], ptsG = [];
+        for (var i = 0; i <= 90; i++) {
+          var x = i / 90;
+          var s = .28 * Math.exp(-Math.pow((x - .22) / .06, 2)) + .24 * Math.exp(-Math.pow((x - .58) / .08, 2)) + .12 * Math.exp(-Math.pow((x - .82) / .05, 2));
+          var n = .11 + .03 * Math.sin(x * 9);
+          var g = s / (s + n);
+          ptsS.push([padL + x * iw, padT + ih - s / .45 * ih]);
+          ptsN.push([padL + x * iw, padT + ih - n / .45 * ih]);
+          ptsG.push([padL + x * iw, padT + ih - g * ih]);
+        }
+        W.line(ctx, ptsN, W.alpha(bad, .8), 1, [3, 4]);
+        W.line(ctx, ptsS, accent, 1.5);
+        W.line(ctx, ptsG, accent2, 1.5);
+        W.label(ctx, "Frequenz →", padL + iw, padT + ih + 17, W.alpha(accent, .3), 8, "right");
+        W.label(ctx, "1", padL - 6, padT, W.alpha(accent, .3), 8, "right");
+        W.label(ctx, "0", padL - 6, padT + ih, W.alpha(accent, .3), 8, "right");
+      }, { animate: false });
+    })();
+  })();
+
+  /* ---------- prediction cone ---------- */
+  (function () {
+    var canvas = document.getElementById("predPlot");
+    if (!canvas) return;
+    var horizon = 1.2;
+    function clean(t) { return .42 * Math.sin(t * 1.15) + .18 * Math.sin(t * 2.7 + .7) + .1 * Math.sin(t * 4.1); }
+    var noise = [];
+    var seed = 77;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    for (var i = 0; i < 300; i++) noise.push((rnd() - .5) * .12);
+    function draw(ctx, w, h) {
+      var accent = W.cssVar("--accent"), accent2 = W.cssVar("--accent-2");
+      var padL = 26, padR = 16, padT = 26, padB = 28;
+      var iw = w - padL - padR, ih = h - padT - padB;
+      var tMin = -4, tMax = 2.7;
+      function X(t) { return padL + (t - tMin) / (tMax - tMin) * iw; }
+      function Y(v) { return padT + ih / 2 - v * ih * .62; }
+      ctx.clearRect(0, 0, w, h);
+      W.grid(ctx, w, h, accent, 31);
+      ctx.strokeStyle = W.alpha("#ffffff", .08);
+      ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + ih); ctx.lineTo(padL + iw, padT + ih); ctx.stroke();
+      var past = [], truth = [];
+      for (var i = 0; i <= 240; i++) {
+        var t = -4 + i / 240 * 4;
+        var q = clean(t) + noise[i % noise.length];
+        past.push([X(t), Y(q)]);
+      }
+      for (var j = 0; j <= 160; j++) {
+        var t2 = j / 160 * horizon;
+        truth.push([X(t2), Y(clean(t2))]);
+      }
+      // last 1.2 s linear extrapolation
+      var t0 = -1.2, y0 = clean(t0), y1 = clean(0);
+      var slope = (y1 - y0) / 1.2;
+      var pred = [], upper = [], lower = [];
+      for (var k = 0; k <= 80; k++) {
+        var hp = k / 80 * horizon;
+        var yp = y1 + slope * hp;
+        var spread = .035 + .11 * hp + .035 * hp * hp;
+        pred.push([X(hp), Y(yp)]);
+        upper.push([X(hp), Y(yp + spread)]);
+        lower.push([X(hp), Y(yp - spread)]);
+      }
+      ctx.fillStyle = W.alpha(accent, .12);
+      ctx.beginPath();
+      ctx.moveTo(upper[0][0], upper[0][1]);
+      upper.forEach(function (p) { ctx.lineTo(p[0], p[1]); });
+      for (var u = lower.length - 1; u >= 0; u--) ctx.lineTo(lower[u][0], lower[u][1]);
+      ctx.closePath(); ctx.fill();
+      ctx.setLineDash([3, 5]);
+      ctx.strokeStyle = W.alpha(accent2, .5);
+      ctx.beginPath(); ctx.moveTo(X(0), padT); ctx.lineTo(X(0), padT + ih); ctx.stroke();
+      ctx.setLineDash([]);
+      W.line(ctx, past, W.alpha(accent, .55), 1);
+      W.line(ctx, truth, W.alpha(accent2, .42), 1, [4, 5]);
+      W.line(ctx, pred, accent, 1.8);
+      W.label(ctx, "JETZT", X(0) + 5, padT + 10, W.alpha(accent2, .7), 8);
+      W.label(ctx, "Vergangenheit", padL + 4, padT + ih - 8, W.alpha(accent, .4), 8);
+      W.label(ctx, "Zukunft", X(0) + 8, padT + ih - 8, W.alpha(accent2, .55), 8);
+      var pr = document.getElementById("predReadout");
+      if (pr) pr.textContent = "Horizont " + horizon.toFixed(1) + " s · Unsicherheit ±" + (.11 * horizon + .035 * horizon * horizon).toFixed(2);
+    }
+    var stage = W.stage(canvas, draw, { animate: false });
+    W.bindRange("horizon", function (v) { horizon = v; stage.redraw(); });
+  })();
+})();
+</script>
+</body>
+</html>

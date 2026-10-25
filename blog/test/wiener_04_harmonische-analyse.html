@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generalized Harmonic Analysis (1930) — Der verborgene Rhythmus · Wiener Archive</title>
+<meta name="description" content="Wiener–Khinchin visualisiert: Autokorrelation und Leistungsspektrum als Fourier-Paar, interaktiver Signalsynthesizer, Generalized Harmonic Analysis.">
+<script>
+  try { var t = localStorage.getItem("wiener-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+</script>
+<link rel="icon" type="image/svg+xml" href="wiener_assets/favicon.svg">
+<link rel="stylesheet" href="wiener_assets/wiener.css">
+<style>
+  .synth { display: grid; gap: 7px; margin-top: 12px; }
+  .synth-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; align-items: center; }
+  .synth-row .control { justify-content: space-between; }
+  .synth-row .control input[type="range"] { width: 100%; }
+  .synth-tag { font-family: var(--mono); font-size: 8.5px; letter-spacing: .1em; color: var(--accent); }
+  .pair-note { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 9px; color: var(--dim); margin-top: 8px; }
+  .pair-note b { color: var(--accent); font-weight: 400; }
+  @media (max-width: 680px) { .synth-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body data-accent="violet" data-motif="spectrum" data-page="04">
+<div class="progress"><i id="progressBar"></i></div>
+
+<header class="topbar">
+  <a class="brand" href="wiener_index.html"><b>W</b><span class="sep">·</span> Wiener Archive</a>
+  <nav class="topnav" aria-label="Werke"></nav>
+  <div class="top-tools">
+    <button class="theme-toggle" id="themeToggle" aria-label="Design wechseln"></button>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="top">
+  <canvas class="hero-canvas" data-motif="spectrum" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="kicker">Generalized Harmonic Analysis · 1930 · Acta Mathematica 55</p>
+    <h1>Der verborgene<br><em>Rhythmus</em>.</h1>
+    <p class="lede">Ein Signal kann aussehen wie Zufall und trotzdem ein Gedächtnis haben. Die Autokorrelation zeigt, wie stark es mit sich selbst nachhinkt. Das Leistungsspektrum zeigt, aus welchen Frequenzen es gebaut ist. Beide sind dasselbe — nur in zwei Sprachen.</p>
+    <p class="epigraph">„In this, I found that the fundamental notion was that of autocorrelation … the power spectrum of f(t) is given by the Fourier transform of the autocorrelation.“<br><span class="mono" style="font-style:normal;font-size:9px;letter-spacing:.1em;color:var(--dim)">CYBERNETICS, S. 254</span></p>
+    <div class="hero-meta">
+      <span><b>1930</b> Acta Mathematica</span>
+      <span><b>1931</b> Wiener–Hopf</span>
+      <span><b>1932</b> Tauberian Theorems</span>
+      <span>Autokorrelation ↔ Spektrum</span>
+    </div>
+  </div>
+  <div class="scroll-hint">Spektrum</div>
+</section>
+
+<section class="chapter" id="gedaechtnis">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">01</div>
+      <div>
+        <h2>Das Gedächtnis des Signals</h2>
+        <p class="sub">Autokorrelation fragt: Wenn ich den Wert jetzt kenne, wie viel weiß ich dann über den Wert in τ Sekunden? Das ist die einfachste Form von „Struktur“ in einem zufälligen Verlauf.</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p class="lead">Ein reines Rauschen hat kein Gedächtnis: Der nächste Wert ist vom aktuellen unabhängig. Ein periodischer Ton hat ein perfektes Gedächtnis: Nach einer Periode ist alles wieder da. Reale Signale liegen dazwischen.</p>
+        <p>Die <strong>Autokorrelation</strong> misst diesen Zusammenhang: <span class="mono">R(τ) = E[x(t)·x(t+τ)]</span>. Bei τ = 0 ist sie maximal (die Leistung). Bei τ → ∞ fällt sie auf null, wenn das Signal sein Gedächtnis verliert.</p>
+        <p>Die <strong>Leistungsdichte</strong> <span class="mono">S(f)</span> sagt, wie viel Energie in jeder Frequenz steckt. Der Satz von Wiener–Khinchin verbindet beides: Sie sind Fourier-Transformierte voneinander.</p>
+      </div>
+      <div class="visual reveal d1">
+        <div class="stage" style="height:250px">
+          <span class="stage-label">Zwei Ansichten desselben Signals</span>
+          <span class="stage-readout">R(τ) ↔ S(f)</span>
+          <canvas id="pairMini"></canvas>
+        </div>
+        <div class="pair-note"><b>Zeit</b> ⇄ <b>Frequenz</b><span style="margin-left:auto">Fourier-Paar</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="labor">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">02</div>
+      <div>
+        <h2>Baue dein eigenes Spektrum</h2>
+        <p class="sub">Drei Töne, ein Rauschanteil. Ändere Frequenzen und Amplituden und sieh zu, wie die Autokorrelation und das Spektrum gemeinsam antworten.</p>
+      </div>
+    </div>
+
+    <div class="lab reveal d1">
+      <div class="stage" style="height:470px">
+        <span class="stage-label">Signal · Autokorrelation · Leistungsspektrum</span>
+        <span class="stage-readout" id="specReadout">dominant: 1.0 Hz</span>
+        <canvas id="specLab"></canvas>
+        <div class="stage-foot"><span>8 s Signal · ACF bis 4 s · PSD 0–10 Hz</span><span id="acfZero">R(0)=1.00</span></div>
+      </div>
+      <div class="synth">
+        <div class="synth-row">
+          <label class="control"><span class="synth-tag">TON 1</span> f <input type="range" id="f1" min="0.4" max="9" step="0.1" value="1.0" data-out="f1V" data-format="1"><span class="val" id="f1V">1.0</span> Hz</label>
+          <label class="control"><span class="synth-tag">A1</span> <input type="range" id="a1" min="0" max="1" step="0.01" value="1" data-out="a1V" data-format="2"><span class="val" id="a1V">1.00</span></label>
+        </div>
+        <div class="synth-row">
+          <label class="control"><span class="synth-tag">TON 2</span> f <input type="range" id="f2" min="0.4" max="9" step="0.1" value="3.3" data-out="f2V" data-format="1"><span class="val" id="f2V">3.3</span> Hz</label>
+          <label class="control"><span class="synth-tag">A2</span> <input type="range" id="a2" min="0" max="1" step="0.01" value="0.55" data-out="a2V" data-format="2"><span class="val" id="a2V">0.55</span></label>
+        </div>
+        <div class="synth-row">
+          <label class="control"><span class="synth-tag">TON 3</span> f <input type="range" id="f3" min="0.4" max="9" step="0.1" value="6.5" data-out="f3V" data-format="1"><span class="val" id="f3V">6.5</span> Hz</label>
+          <label class="control"><span class="synth-tag">A3</span> <input type="range" id="a3" min="0" max="1" step="0.01" value="0.32" data-out="a3V" data-format="2"><span class="val" id="a3V">0.32</span></label>
+        </div>
+        <div class="synth-row">
+          <label class="control"><span class="synth-tag">RAUSCHEN</span> <input type="range" id="snoise" min="0" max="35" step="1" value="4" data-out="snoiseV" data-format="int"><span class="val" id="snoiseV">4</span>%</label>
+          <div class="btn-group" style="justify-content:flex-end;margin-top:4px">
+            <button class="btn ghost" id="periodic">periodisch</button>
+            <button class="btn ghost" id="aperiodic">nicht-periodisch</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note reveal d2"><b>Was du siehst:</b> Ein Peak im Spektrum ist eine Frequenz, die im Signal steckt. Ein langsamer Abfall der Autokorrelation heißt: Das Signal vergisst schnell. Ein hoher Rauschanteil hebt den Boden im Spektrum und drückt die ACF bei großen τ gegen null.</div>
+  </div>
+</section>
+
+<section class="chapter" id="theorem">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">03</div>
+      <div>
+        <h2>Der Satz von Wiener–Khinchin</h2>
+        <p class="sub">Ein einziges Fourier-Paar verbindet Gedächtnis und Frequenzrezept. Es ist die Brücke zwischen Zeitreihenanalyse, Filtertheorie und Physik.</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p>Für einen <strong>wide-sense-stationären</strong> Prozess — Mittelwert konstant, Autokorrelation nur vom Abstand τ abhängig — gilt:</p>
+        <div class="formula">S<sub>xx</sub>(f) = ∫<sub>−∞</sub><sup>∞</sup> R<sub>xx</sub>(τ) e<sup>−i2πfτ</sup> dτ
+          <div class="formula-note">Und umgekehrt: R<sub>xx</sub>(τ) = ∫ S<sub>xx</sub>(f) e<sup>i2πfτ</sup> df. Der Filter von 1949 ist im Grunde eine Anwendung dieses Paares.</div>
+        </div>
+        <p>Die Intuition: <strong>R(τ)</strong> beschreibt, wie das Signal über die Zeit mit sich selbst verwandt ist. <strong>S(f)</strong> beschreibt, welche Frequenzen diese Verwandtschaft erzeugen. Es sind zwei Koordinaten desselben Objekts.</p>
+        <p>Der Satz gilt auch für Signale, die nie periodisch sind. Genau dafür brauchte Wiener die <em>verallgemeinerte</em> harmonische Analyse: keine diskreten Fourier-Reihen, sondern ein kontinuierliches Spektralmaß.</p>
+      </div>
+      <div class="visual reveal d1">
+        <div class="stage" style="padding:18px">
+          <span class="stage-label">Drei Ergebnisse, ein Programm</span>
+          <span class="stage-readout">1930–1932</span>
+          <div class="timeline" style="margin:6px 0 0">
+            <div class="t"><span class="y">1930 · GENERALIZED HARMONIC ANALYSIS</span><p>Stationäre Prozesse bekommen ein kontinuierliches Spektrum. Die Autokorrelation wird zur zentralen Größe.</p></div>
+            <div class="t"><span class="y">1931 · WIENER–HOPF</span><p>Die Faktorisierung in kausale und antikausale Teile löst Filterprobleme, bei denen nur die Vergangenheit erlaubt ist.</p></div>
+            <div class="t"><span class="y">1932 · TAUBERIAN THEOREMS</span><p>Aus Mittelwerten einer Funktion lassen sich Aussagen über ihr Verhalten im Unendlichen gewinnen — ein Werkzeug für Asymptotik.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="grid3 mt3">
+      <div class="card reveal"><h4>Autokorrelation</h4><p class="big">Das Gedächtnis</p><p>Wie lange bleibt ein Wert mit seinem späteren Ich verwandt? Ein Peak bei τ = 0 ist trivial; interessant sind die Nebenpeaks und das Abklingen.</p></div>
+      <div class="card reveal d1"><h4>Leistungsspektrum</h4><p class="big">Das Rezept</p><p>Welche Frequenzen sind wie stark vertreten? Ein Peak ist ein Ton; ein breiter Hügel ist ein Rauschband; ein flacher Boden ist weißes Rauschen.</p></div>
+      <div class="card reveal d2"><h4>Fourier-Paar</h4><p class="big">Zwei Sprachen</p><p>Zeit und Frequenz sind keine Alternativen. Sie sind dieselbe Information in zwei Basen. Wiener–Khinchin macht die Übersetzung exakt.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="mitnehmen">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">04</div>
+      <div>
+        <h2>Was du mitnimmst</h2>
+        <p class="sub">Drei Sätze, die aus einem zufälligen Verlauf ein analysierbares Objekt machen.</p>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaway reveal"><span class="n">01 · ZUFALL HAT STRUKTUR</span><p>Ein stationärer Prozess ist nicht „unvorhersehbar“. Er hat eine stabile Statistik — und oft ein Gedächtnis.</p></div>
+      <div class="takeaway reveal d1"><span class="n">02 · ACF UND PSD SIND EINS</span><p>Autokorrelation und Leistungsspektrum sind Fourier-Transformierte. Wer das eine sieht, kann das andere lesen.</p></div>
+      <div class="takeaway reveal d2"><span class="n">03 · SPEKTRUM IST EIN WERKZEUG</span><p>Filter, Prädiktor, Rauschunterdrückung: Alles beginnt mit der Frage, welche Frequenzen wie viel Signal tragen.</p></div>
+    </div>
+    <div class="note reveal"><b>Denkwerkzeug:</b> Frage: Wie lange erinnert sich das Signal? Welche Frequenzen tragen Leistung? Und welche Größe ist die Fourier-Partnerin der anderen?</div>
+    <div class="quiz reveal" data-answer="2">
+      <p class="q">Was bedeutet ein scharfer Peak im Leistungsspektrum?</p>
+      <div class="quiz-options">
+        <button class="quiz-option">Dass das Signal an dieser Stelle besonders viele zufällige Ausreißer hat.</button>
+        <button class="quiz-option">Dass die Autokorrelation bei großen Zeitabständen nicht abklingt.</button>
+        <button class="quiz-option">Dass eine schmale Frequenz besonders viel Leistung trägt.</button>
+        <button class="quiz-option">Dass das Signal dort vollständig rauschfrei ist.</button>
+      </div>
+      <p class="quiz-explain">Ein Peak ist eine Konzentration von Leistung bei einer Frequenz. Je schärfer der Peak, desto periodischer der entsprechende Anteil — und desto langsamer klingt die Autokorrelation ab.</p>
+    </div>
+    <div class="prevnext">
+      <a href="wiener_03_wiener-filter.html"><span>Zurück</span>← Das Signal im Rauschen</a>
+      <a class="right" href="wiener_05_brownsche-bewegung.html"><span>Weiter</span>Die Geometrie des Zufalls →</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>Quellen: Wiener, Generalized Harmonic Analysis (1930); Cybernetics, Kap. III &amp; X</span>
+    <span>Wiener–Khinchin: PSD = Fourier-Transformierte der Autokorrelation</span>
+  </div>
+</footer>
+
+<script src="wiener_assets/wiener.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- mini pair graphic ---------- */
+  (function () {
+    var c = document.getElementById("pairMini");
+    if (!c) return;
+    W.stage(c, function (ctx, w, h, t) {
+      var accent = W.cssVar("--accent"), accent2 = W.cssVar("--accent-2");
+      var y = h * .5;
+      ctx.clearRect(0, 0, w, h);
+      W.grid(ctx, w, h, accent, 32);
+      var sig = [];
+      for (var i = 0; i <= 140; i++) {
+        var u = i / 140;
+        sig.push([w * .07 + u * w * .38, y - (Math.sin(u * 31 + t * .8) * .22 + Math.sin(u * 73) * .08) * h * .45]);
+      }
+      W.line(ctx, sig, W.alpha(accent, .7), 1.2);
+      W.label(ctx, "x(t)", w * .07, h * .16, W.alpha(accent, .55), 8.5);
+      var acf = [];
+      for (var j = 0; j <= 140; j++) {
+        var v = j / 140;
+        acf.push([w * .54 + v * w * .18, y - Math.cos(v * 22) * Math.exp(-v * 1.4) * h * .24]);
+      }
+      W.line(ctx, acf, W.alpha(accent2, .8), 1.2);
+      W.label(ctx, "R(τ)", w * .54, h * .26, W.alpha(accent2, .7), 8.5);
+      var psd = [];
+      for (var k = 0; k <= 60; k++) {
+        var u2 = k / 60;
+        var amp = .1 + .8 * Math.exp(-Math.pow((u2 - .28) / .055, 2)) + .45 * Math.exp(-Math.pow((u2 - .62) / .045, 2));
+        psd.push([w * .80 + u2 * w * .13, y + h * .22 - amp * h * .36]);
+      }
+      W.line(ctx, psd, accent, 1.4);
+      W.label(ctx, "S(f)", w * .80, h * .26, W.alpha(accent, .7), 8.5);
+      ctx.strokeStyle = W.alpha(accent, .25);
+      ctx.setLineDash([3, 5]);
+      ctx.beginPath(); ctx.moveTo(w * .505, h * .2); ctx.lineTo(w * .505, h * .8); ctx.stroke();
+      ctx.setLineDash([]);
+      W.label(ctx, "ℱ", w * .50, h * .5, W.alpha(accent2, .7), 15, "center");
+    }, { animate: true });
+  })();
+
+  /* ---------- main spectrum lab ---------- */
+  (function () {
+    var N = 512, FS = 64, L = 256;
+    var state = { f: [1.0, 3.3, 6.5], a: [1, .55, .32], noise: .04 };
+    var clean = new Float64Array(N);
+    var noiseBase = new Float64Array(N);
+    var result = null;
+    var seed = 991;
+    function rnd() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+    function gauss() { var u = 0, v = 0; while (u === 0) u = rnd(); while (v === 0) v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+    for (var i = 0; i < N; i++) noiseBase[i] = gauss();
+    function build() {
+      for (var i = 0; i < N; i++) {
+        var t = i / FS;
+        clean[i] = state.a[0] * Math.sin(2 * Math.PI * state.f[0] * t)
+          + state.a[1] * Math.sin(2 * Math.PI * state.f[1] * t + .7)
+          + state.a[2] * Math.sin(2 * Math.PI * state.f[2] * t + 1.3);
+      }
+      var x = new Float64Array(N);
+      for (var j = 0; j < N; j++) x[j] = clean[j] + state.noise * noiseBase[j];
+      var mean = 0;
+      for (var m = 0; m < N; m++) mean += x[m];
+      mean /= N;
+      for (var q = 0; q < N; q++) x[q] -= mean;
+      var r0 = 0;
+      for (var p = 0; p < N; p++) r0 += x[p] * x[p];
+      r0 /= N;
+      var acf = new Float64Array(L);
+      for (var lag = 0; lag < L; lag++) {
+        var s = 0;
+        for (var n = 0; n + lag < N; n++) s += x[n] * x[n + lag];
+        acf[lag] = (s / (N - lag)) / (r0 || 1);
+      }
+      var psd = new Float64Array(N / 2);
+      var max = 0;
+      for (var k = 0; k < N / 2; k++) {
+        var val = acf[0];
+        for (var tau = 1; tau < L; tau++) val += 2 * acf[tau] * Math.cos(2 * Math.PI * k * tau / N);
+        psd[k] = Math.max(0, val);
+        max = Math.max(max, psd[k]);
+      }
+      for (var z = 0; z < psd.length; z++) psd[z] /= (max || 1);
+      var sigMax = 0;
+      for (var o = 0; o < N; o++) sigMax = Math.max(sigMax, Math.abs(x[o]));
+      result = { x: x, acf: acf, psd: psd, sigMax: sigMax || 1 };
+    }
+    function draw(ctx, w, h) {
+      if (!result) build();
+      var accent = W.cssVar("--accent"), accent2 = W.cssVar("--accent-2"), bad = W.cssVar("--bad");
+      var padL = 38, padR = 18;
+      var top = 26, mid = h * .30, bot = h * .62;
+      var panel = h * .28;
+      var iw = w - padL - padR;
+      ctx.clearRect(0, 0, w, h);
+      W.grid(ctx, w, h, accent, 34);
+      ctx.strokeStyle = W.alpha("#ffffff", .08);
+      [top, mid, bot].forEach(function (yy) {
+        ctx.beginPath(); ctx.moveTo(padL, yy); ctx.lineTo(padL, yy + panel); ctx.lineTo(padL + iw, yy + panel); ctx.stroke();
+      });
+
+      // signal
+      var sig = [];
+      for (var i = 0; i < N; i++) {
+        sig.push([padL + i / (N - 1) * iw, top + panel * .5 - result.x[i] / result.sigMax * panel * .42]);
+      }
+      W.line(ctx, sig, accent, 1.3);
+      W.label(ctx, "SIGNAL x(t) · 8 s", padL + 3, top + 11, W.alpha(accent, .58), 8.5);
+      for (var s = 0; s <= 4; s++) W.label(ctx, (s * 2) + "s", padL + s * iw / 4, top + panel + 14, W.alpha(accent, .28), 8, "center");
+
+      // ACF
+      var acf = [];
+      for (var j = 0; j < L; j++) {
+        acf.push([padL + j / (L - 1) * iw, mid + panel * .5 - result.acf[j] * panel * .44]);
+      }
+      ctx.setLineDash([4, 5]);
+      ctx.strokeStyle = W.alpha(accent, .2);
+      ctx.beginPath(); ctx.moveTo(padL, mid + panel * .5); ctx.lineTo(padL + iw, mid + panel * .5); ctx.stroke();
+      ctx.setLineDash([]);
+      W.line(ctx, acf, accent2, 1.4);
+      W.label(ctx, "AUTOKORRELATION R(τ)", padL + 3, mid + 11, W.alpha(accent2, .7), 8.5);
+      for (var a = 0; a <= 4; a++) W.label(ctx, a + "s", padL + a * iw / 4, mid + panel + 14, W.alpha(accent, .28), 8, "center");
+
+      // PSD
+      var maxBin = Math.round(10 * N / FS);
+      var psd = [];
+      psd.push([padL, bot + panel]);
+      for (var k = 0; k <= maxBin; k++) psd.push([padL + k / maxBin * iw, bot + panel - result.psd[k] * panel * .88]);
+      psd.push([padL + iw, bot + panel]);
+      var grad = ctx.createLinearGradient(0, bot, 0, bot + panel);
+      grad.addColorStop(0, W.alpha(accent, .3));
+      grad.addColorStop(1, W.alpha(accent, 0));
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.moveTo(psd[0][0], psd[0][1]);
+      psd.forEach(function (p) { ctx.lineTo(p[0], p[1]); });
+      ctx.closePath(); ctx.fill();
+      var line = [];
+      for (var q = 0; q <= maxBin; q++) line.push([padL + q / maxBin * iw, bot + panel - result.psd[q] * panel * .88]);
+      W.line(ctx, line, accent, 1.5);
+      W.label(ctx, "LEISTUNGSSPEKTRUM S(f)", padL + 3, bot + 11, W.alpha(accent, .6), 8.5);
+      for (var f = 0; f <= 10; f += 2) W.label(ctx, f + "Hz", padL + f / 10 * iw, bot + panel + 14, W.alpha(accent, .28), 8, "center");
+
+      // dominant frequency
+      var best = 0, bestV = -1;
+      for (var b = 0; b <= maxBin; b++) if (result.psd[b] > bestV) { bestV = result.psd[b]; best = b; }
+      var ro = document.getElementById("specReadout");
+      if (ro) ro.textContent = "dominant: " + (best * FS / N).toFixed(1) + " Hz";
+      var az = document.getElementById("acfZero");
+      if (az) az.textContent = "R(0)=" + result.acf[0].toFixed(2);
+    }
+    build();
+    var stage = W.stage(document.getElementById("specLab"), draw, { animate: false });
+    function refresh() { build(); stage.redraw(); }
+    ["f1", "f2", "f3"].forEach(function (id, idx) {
+      W.bindRange(id, function (v) { state.f[idx] = v; refresh(); });
+    });
+    ["a1", "a2", "a3"].forEach(function (id, idx) {
+      W.bindRange(id, function (v) { state.a[idx] = v; refresh(); });
+    });
+    W.bindRange("snoise", function (v) { state.noise = v / 100; refresh(); });
+    function setAll(freqs, amps) {
+      freqs.forEach(function (f, i) { var el = document.getElementById("f" + (i + 1)); el.value = f; });
+      amps.forEach(function (a, i) { var el = document.getElementById("a" + (i + 1)); el.value = a; });
+      ["f1", "f2", "f3", "a1", "a2", "a3"].forEach(function (id) {
+        var el = document.getElementById(id);
+        el.dispatchEvent(new Event("input", { bubbles: true }));
+      });
+    }
+    document.getElementById("periodic").addEventListener("click", function () { setAll([1, 2, 3], [1, .55, .32]); });
+    document.getElementById("aperiodic").addEventListener("click", function () { setAll([1.3, 2.7, 5.1], [1, .55, .32]); });
+  })();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cybernetics (1948) — Die Schleife, die denkt · Wiener Archive</title>
+<meta name="description" content="Cybernetics visuell: Rückkopplung, Regelkreis, Homöostase und Black Box — interaktiv erklärt.">
+<script>
+  try { var t = localStorage.getItem("wiener-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+</script>
+<link rel="icon" type="image/svg+xml" href="wiener_assets/favicon.svg">
+<link rel="stylesheet" href="wiener_assets/wiener.css">
+<style>
+  .loop-wrap { display: grid; gap: 12px; }
+  .loopmap { width: 100%; height: auto; }
+  .loopmap .nodebox { fill: rgba(255,255,255,.03); stroke: var(--line-strong); }
+  .loopmap .nodebox.hot { fill: var(--accent-soft); stroke: var(--accent); }
+  .loopmap .wire { stroke: var(--line-strong); fill: none; stroke-width: 1.2; }
+  .loopmap .flow { stroke: var(--accent); fill: none; stroke-width: 1.4; stroke-dasharray: 4 8; animation: dash 1.8s linear infinite; }
+  .loopmap text { font-family: var(--mono); font-size: 9px; fill: var(--muted); letter-spacing: .04em; }
+  .loopmap .val { fill: var(--accent); font-size: 10px; }
+  .loopmap .tiny { fill: var(--dim); font-size: 8px; }
+  .status { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
+  .status i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px currentColor; }
+  .status.warn i { background: var(--accent); }
+  .status.bad i { background: var(--bad); }
+  .bb { display: grid; grid-template-columns: minmax(0, 1fr) 110px; gap: 14px; align-items: stretch; }
+  .bb-in { display: flex; flex-wrap: wrap; gap: 7px; align-content: flex-start; }
+  .bb-key { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; padding: 9px 12px; border: 1px solid var(--line-strong); background: transparent; border-radius: 9px; cursor: pointer; color: var(--muted); }
+  .bb-key:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+  .bb-out { display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 14px; background: radial-gradient(circle at 50% 35%, var(--accent-soft), transparent 65%), var(--panel-2); }
+  .lamp { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; border: 1px solid var(--line-strong); font-family: var(--mono); font-size: 22px; color: var(--dim); background: rgba(255,255,255,.02); transition: .25s var(--ease); }
+  .lamp.on { color: var(--bg); background: var(--accent); border-color: var(--accent); box-shadow: 0 0 26px var(--accent), 0 0 60px var(--accent-soft); }
+  .bb-probes { display: flex; flex-wrap: wrap; gap: 5px; min-height: 24px; margin-top: 10px; }
+  .bb-probes span { font-family: var(--mono); font-size: 9px; padding: 3px 7px; border-radius: 99px; border: 1px solid var(--line); color: var(--dim); }
+  .bb-rule { font-family: var(--mono); font-size: 10px; color: var(--accent); min-height: 18px; }
+  @media (max-width: 680px) {
+    .bb { grid-template-columns: 1fr; }
+    .bb-out { min-height: 90px; }
+  }
+</style>
+</head>
+<body data-accent="gold" data-motif="loop" data-page="01">
+<div class="progress"><i id="progressBar"></i></div>
+
+<header class="topbar">
+  <a class="brand" href="wiener_index.html"><b>W</b><span class="sep">·</span> Wiener Archive</a>
+  <nav class="topnav" aria-label="Werke"></nav>
+  <div class="top-tools">
+    <button class="theme-toggle" id="themeToggle" aria-label="Design wechseln"></button>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="top">
+  <canvas class="hero-canvas" data-motif="loop" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="kicker">Cybernetics · 1948 · Control and Communication</p>
+    <h1>Die Schleife,<br>die <em>denkt</em>.</h1>
+    <p class="lede">Ein Thermostat tut es. Ein Nervensystem tut es. Ein Flugabwehrgeschütz tut es. Sie alle messen, was sie getan haben, und benutzen die Differenz als nächste Anweisung.</p>
+    <p class="epigraph">„We have decided to call the entire field of control and communication theory, whether in the machine or in the animal, by the name Cybernetics.“<br><span class="mono" style="font-style:normal;font-size:9px;letter-spacing:.1em;color:var(--dim)">CYBERNETICS, S. 18</span></p>
+    <div class="hero-meta">
+      <span><b>1948</b> MIT Press</span>
+      <span><b>1</b> Schleife</span>
+      <span><b>3</b> Zutaten</span>
+      <span>Regler bewegen · Störung auslösen</span>
+    </div>
+  </div>
+  <div class="scroll-hint">Regelkreis</div>
+</section>
+
+<section class="chapter" id="schleife">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">01</div>
+      <div>
+        <h2>Der Kreis ist die Erklärung</h2>
+        <p class="sub">Nicht ein Ding, das steuert, sondern eine Beziehung, die sich selbst korrigiert. Das ist der ganze Trick — und die ganze Schwierigkeit.</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p class="lead">Wiener interessiert sich nicht für den einzelnen Muskel, das einzelne Relais oder das einzelne Neuron. Ihn interessiert, was zwischen ihnen passiert: Eine Nachricht geht hinaus, eine Nachricht kommt zurück, und die zweite verändert die erste.</p>
+        <p>Das nennen wir <strong>Rückkopplung</strong> (feedback). Ist sie negativ, wirkt sie der Abweichung entgegen: Der Fehler wird kleiner. Ist sie zu stark oder zu spät, kann sie das System in Schwingung versetzen — der Thermostat klappert, das Mikrofon pfeift, die Maschine rast.</p>
+        <div class="formula">x(t) &nbsp;→&nbsp; Sensor &nbsp;→&nbsp; Fehler e = Soll − Ist &nbsp;→&nbsp; Regler &nbsp;→&nbsp; x(t+Δt)
+          <div class="formula-note">Die Zukunft des Systems hängt von der Rückmeldung über seine Vergangenheit ab. Nichts Mystisches — nur eine Schleife.</div>
+        </div>
+        <p>Deshalb ist „Kybernetik“ keine Lehre von Robotern. Sie ist eine Lehre von <em>Mustern</em>, die sich durch Rückmeldung erhalten. Ein Organismus, eine Maschine und eine Gesellschaft können dieselbe formale Struktur haben, obwohl ihre Materie völlig verschieden ist.</p>
+      </div>
+      <div class="visual reveal d1">
+        <div class="stage" style="height:260px">
+          <span class="stage-label">Der kleinste Regelkreis</span>
+          <span class="stage-readout">Soll → Ist</span>
+          <canvas id="miniLoop"></canvas>
+        </div>
+        <div class="controls">
+          <span class="pill">Soll</span><span class="pill">Fehler</span><span class="pill">Korrektur</span><span class="pill">Rückmeldung</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="labor">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">02</div>
+      <div>
+        <h2>Mach die Schleife instabil</h2>
+        <p class="sub">Ein zweiter Ordnungssystem mit proportionalem Regler. Erhöhe die Verstärkung, senke die Dämpfung, füge Verzögerung hinzu — und sieh, wann Korrektur in Schwingung kippt.</p>
+      </div>
+    </div>
+
+    <div class="lab reveal d1">
+      <div class="lab-grid">
+        <div class="loop-wrap">
+          <div class="stage" style="padding:12px 10px 6px">
+            <span class="stage-label">Regelkreis · live</span>
+            <span class="stage-readout" id="lmStatus">stabil</span>
+            <svg class="loopmap" viewBox="0 0 640 270" role="img" aria-label="Regelkreis mit Sollwert, Regler, Strecke, Sensor und Rückkopplung">
+              <defs>
+                <marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#e7b35a"></path>
+                </marker>
+              </defs>
+              <line class="wire" x1="28" y1="52" x2="86" y2="52" marker-end="url(#arw)"></line>
+              <text x="28" y="43" class="tiny">SOLL</text>
+              <text id="lmTarget" x="28" y="70" class="val">1.00</text>
+
+              <circle cx="108" cy="128" r="23" fill="rgba(231,179,90,.08)" stroke="#e7b35a" stroke-opacity=".65"></circle>
+              <text x="108" y="131" text-anchor="middle" style="font-size:16px;fill:#e7b35a">Σ</text>
+              <line class="wire" x1="108" y1="52" x2="108" y2="105" marker-end="url(#arw)"></line>
+              <text x="118" y="70" class="tiny">+</text>
+              <text x="118" y="225" class="tiny">−</text>
+
+              <line class="flow" x1="131" y1="128" x2="228" y2="128" marker-end="url(#arw)"></line>
+              <rect class="nodebox" x="230" y="93" width="120" height="70" rx="12"></rect>
+              <text x="290" y="118" text-anchor="middle">REGLER</text>
+              <text x="290" y="134" text-anchor="middle" class="tiny">u = Soll + K·e</text>
+              <text id="lmGain" x="290" y="151" text-anchor="middle" class="val">K = 2.2</text>
+
+              <line class="flow" x1="350" y1="128" x2="448" y2="128" marker-end="url(#arw)"></line>
+              <rect class="nodebox" x="450" y="93" width="120" height="70" rx="12"></rect>
+              <text x="510" y="118" text-anchor="middle">STRECKE</text>
+              <text x="510" y="134" text-anchor="middle" class="tiny">träge, gedämpft</text>
+              <text id="lmOut" x="510" y="151" text-anchor="middle" class="val">x = 0.00</text>
+
+              <line class="wire" x1="570" y1="128" x2="614" y2="128" marker-end="url(#arw)"></line>
+              <text x="596" y="118" class="tiny">IST</text>
+
+              <line class="wire" x1="600" y1="128" x2="600" y2="230" marker-end="url(#arw)"></line>
+              <line class="wire" x1="600" y1="230" x2="410" y2="230" marker-end="url(#arw)"></line>
+              <rect class="nodebox" x="300" y="205" width="108" height="50" rx="10"></rect>
+              <text x="354" y="225" text-anchor="middle">SENSOR</text>
+              <text x="354" y="241" text-anchor="middle" class="tiny">misst Ist</text>
+              <line class="wire" x1="300" y1="230" x2="131" y2="230" marker-end="url(#arw)"></line>
+              <line class="wire" x1="108" y1="230" x2="108" y2="152" marker-end="url(#arw)"></line>
+              <text id="lmErr" x="120" y="196" class="val">e = 1.00</text>
+              <text x="430" y="258" class="tiny">RÜCKKOPPLUNG</text>
+            </svg>
+          </div>
+          <div class="readouts">
+            <div class="readout"><span class="k">Fehler (RMS, 1 s)</span><span class="v" id="rms">0.00</span></div>
+            <div class="readout"><span class="k">Überschwingen</span><span class="v" id="overshoot">0 %</span></div>
+            <div class="readout"><span class="k">Zustand</span><span class="v" id="stateText">stabil</span></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="stage" style="height:330px">
+            <span class="stage-label">Antwort über 8 Sekunden</span>
+            <span class="stage-readout" id="plotReadout">Soll 1.00 · Ist 0.00</span>
+            <canvas id="response"></canvas>
+            <div class="stage-foot"><span>Zeit →</span><span>grau: Soll · hell: Ist</span></div>
+          </div>
+          <div class="controls">
+            <label class="control">Verstärkung <input type="range" id="gain" min="0.4" max="9" step="0.1" value="2.2" data-out="gainV" data-format="1"><span class="val" id="gainV">2.2</span></label>
+            <label class="control">Dämpfung <input type="range" id="damp" min="0.15" max="1.4" step="0.05" value="0.55" data-out="dampV" data-format="2"><span class="val" id="dampV">0.55</span></label>
+            <label class="control">Verzögerung <input type="range" id="delay" min="0" max="0.35" step="0.01" value="0" data-out="delayV" data-format="2"><span class="val" id="delayV">0.00</span> s</label>
+          </div>
+          <div class="controls">
+            <button class="btn on" id="closedBtn">Kreis geschlossen</button>
+            <button class="btn" id="distBtn">Störung</button>
+            <button class="btn ghost" id="resetBtn">Reset</button>
+          </div>
+          <p class="axis-note" style="margin-top:10px">Offener Kreis: Der Regler vertraut auf eine falsche Kalibrierung (72 %). Geschlossen: Er korrigiert den bleibenden Fehler — bis K, Dämpfung und Verzögerung zu viel werden.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="zutaten">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">03</div>
+      <div>
+        <h2>Drei Zutaten, ein Muster</h2>
+        <p class="sub">Kybernetik ist kein Gegenstand. Sie ist eine Art, Gegenstände zu beschreiben.</p>
+      </div>
+    </div>
+    <div class="grid3">
+      <div class="card reveal"><h4>01 · Negative Rückkopplung</h4><p class="big">Der Fehler arbeitet gegen sich selbst</p><p>„The feedback tends to oppose what the system is already doing, and is thus negative.“ (S. 132) Das ist Stabilität — wenn die Schleife schnell und schwach genug ist.</p></div>
+      <div class="card reveal d1"><h4>02 · Zirkuläre Kausalität</h4><p class="big">Die Wirkung ist Teil der Ursache</p><p>Nicht A → B, sondern A → B → A. Der Ausgang wird zur nächsten Eingabe. Deshalb reicht eine lineare Ursache-Wirkungs-Kette nicht.</p></div>
+      <div class="card reveal d2"><h4>03 · Homöostase</h4><p class="big">Ordnung als aktive Leistung</p><p>Lebewesen halten Temperatur, Blutzucker, Gleichgewicht. Nicht weil sie stillstehen, sondern weil sie permanent gegen Abweichungen regeln.</p></div>
+    </div>
+    <div class="quote reveal">„Notice that the feedback tends to oppose what the system is already doing, and is thus negative.“<cite>Cybernetics, Kapitel IV, S. 132</cite></div>
+  </div>
+</section>
+
+<section class="chapter" id="blackbox">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">04</div>
+      <div>
+        <h2>Die Black Box</h2>
+        <p class="sub">Du siehst nur Eingänge und Ausgänge. Die Regel im Inneren musst du erschließen. Genau so behandelt Wiener unbekannte Systeme — und genau so arbeitet moderne Wissenschaft an Gehirnen, Modellen, Märkten.</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p>Wiener nennt ein System eine <strong>Black Box</strong>, wenn man zwar die Ein- und Ausgänge beobachten kann, aber nicht die innere Struktur. Der Kybernetiker probiert Eingaben, beobachtet Ausgaben und baut ein Modell, das dasselbe tut.</p>
+        <p>Das ist keine Verlegenheit. Es ist eine Methode. Ob das Innere aus Neuronen, Relais oder Menschen besteht, ist für das beobachtbare Verhalten zunächst egal.</p>
+        <p class="note"><b>Probiere es:</b> Vier Eingaben, eine versteckte Wahrheitsfunktion. Klicke die Eingänge, beobachte die Lampe, rate die Regel. Danach kannst du eine neue Regel ziehen.</p>
+      </div>
+      <div class="visual reveal d1">
+        <div class="stage" style="padding:18px">
+          <span class="stage-label">Black Box · Wahrheitsfunktion</span>
+          <span class="stage-readout" id="bbCount">0 Proben</span>
+          <div class="bb">
+            <div>
+              <div class="bb-in" id="bbInputs">
+                <button class="bb-key" data-a="0" data-b="0">00</button>
+                <button class="bb-key" data-a="0" data-b="1">01</button>
+                <button class="bb-key" data-a="1" data-b="0">10</button>
+                <button class="bb-key" data-a="1" data-b="1">11</button>
+              </div>
+              <div class="bb-probes" id="bbProbes"></div>
+              <div class="controls" style="margin-top:14px">
+                <button class="btn ghost" id="bbReveal">Regel aufdecken</button>
+                <button class="btn" id="bbNew">Neue Regel</button>
+              </div>
+              <div class="bb-rule" id="bbRule">&nbsp;</div>
+            </div>
+            <div class="bb-out">
+              <span class="lamp" id="bbLamp">?</span>
+              <span class="mono" style="font-size:8px;letter-spacing:.12em;color:var(--dim);margin-top:8px">AUSGANG</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="mitnehmen">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">05</div>
+      <div>
+        <h2>Was du mitnimmst</h2>
+        <p class="sub">Drei Sätze, die du auf jedes System anwenden kannst — auf Technik, Körper, Organisationen.</p>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaway reveal"><span class="n">01 · DIE SCHLEIFE SCHLÄGT DIE TEILE</span><p>Du verstehst ein System nicht, wenn du seine Teile kennst. Du verstehst es, wenn du seine <strong>Rückmeldungen</strong> kennst.</p></div>
+      <div class="takeaway reveal d1"><span class="n">02 · ZU VIEL KORREKTUR IST INSTABIL</span><p>Ein Regler, der zu stark oder zu spät reagiert, erzeugt genau die Schwingung, die er verhindern soll. Verstärkung ist keine Tugend an sich.</p></div>
+      <div class="takeaway reveal d2"><span class="n">03 · ORDNUNG IST ARBEIT</span><p>Homöostase ist kein Ruhezustand. Sie ist ein fortlaufender Energie- und Informationsaufwand gegen die Abweichung.</p></div>
+    </div>
+    <div class="note reveal"><b>Denkwerkzeug:</b> Frage bei jedem System: Was ist der Sollwert? Was misst der Sensor? Wie stark und wie schnell korrigiert der Regler? Und was passiert, wenn die Rückmeldung ausfällt oder zu spät kommt?</div>
+    <div class="quiz reveal" data-answer="1">
+      <p class="q">Warum kann ein Regelkreis mit zu hoher Verstärkung instabil werden, obwohl er doch „mehr korrigiert“?</p>
+      <div class="quiz-options">
+        <button class="quiz-option">Weil der Sensor bei hoher Verstärkung weniger genau misst.</button>
+        <button class="quiz-option">Weil die Korrektur zu spät kommt und die Abweichung überkompensiert.</button>
+        <button class="quiz-option">Weil negative Rückkopplung grundsätzlich nur für Temperatur funktioniert.</button>
+        <button class="quiz-option">Weil der Motor bei hoher Verstärkung dauerhaft mit voller Leistung läuft.</button>
+      </div>
+      <p class="quiz-explain">Die Schleife hat eine Laufzeit. Bei hoher Verstärkung wirkt die Korrektur auf einen Zustand, der schon vorbei ist. Sie schießt über das Ziel hinaus, der Fehler wechselt das Vorzeichen, und das Spiel wiederholt sich mit wachsender Amplitude.</p>
+    </div>
+    <div class="prevnext">
+      <a href="wiener_index.html"><span>Übersicht</span>Alle Werke</a>
+      <a class="right" href="wiener_02_menschliche-nutzung.html"><span>Weiter</span>Information gegen Entropie →</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>Quelle: Norbert Wiener, Cybernetics, 1948/1961 · MIT Press Open Access</span>
+    <span>Seitenzahlen nach der 2. Auflage</span>
+  </div>
+</footer>
+
+<script src="wiener_assets/wiener.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- small hero loop illustration ---------- */
+  (function () {
+    var canvas = document.getElementById("miniLoop");
+    if (!canvas) return;
+    W.stage(canvas, function (ctx, w, h, t) {
+      var accent = W.cssVar("--accent");
+      var accent2 = W.cssVar("--accent-2");
+      ctx.clearRect(0, 0, w, h);
+      var cx = w * .5, cy = h * .5;
+      var R = Math.min(w, h) * .33;
+      ctx.strokeStyle = W.alpha(accent, .18);
+      ctx.lineWidth = 1;
+      for (var i = 0; i < 3; i++) {
+        ctx.beginPath(); ctx.arc(cx, cy, R * (.7 + i * .22), 0, W.TAU); ctx.stroke();
+      }
+      var pts = [];
+      for (var k = 0; k <= 90; k++) {
+        var a = k / 90 * W.TAU;
+        var rr = R * (1 + .06 * Math.sin(a * 5 + t * 2));
+        pts.push([cx + Math.cos(a) * rr * 1.35, cy + Math.sin(a) * rr * .78]);
+      }
+      W.line(ctx, pts, W.alpha(accent, .55), 1.6);
+      for (var j = 0; j < 4; j++) {
+        var u = (t * .12 + j / 4) % 1;
+        var a2 = u * W.TAU;
+        var rr2 = R * (1 + .06 * Math.sin(a2 * 5 + t * 2));
+        ctx.fillStyle = accent2;
+        ctx.shadowColor = accent; ctx.shadowBlur = 14;
+        ctx.beginPath(); ctx.arc(cx + Math.cos(a2) * rr2 * 1.35, cy + Math.sin(a2) * rr2 * .78, 3.2, 0, W.TAU); ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+      W.label(ctx, "e(t) = Soll − Ist", cx, cy + 4, W.alpha(accent, .8), 10, "center");
+    }, { animate: true });
+  })();
+
+  /* ---------- feedback lab ---------- */
+  (function () {
+    var canvas = document.getElementById("response");
+    if (!canvas) return;
+    var state = {
+      x: 0, v: 0, target: 1, K: 2.2, zeta: .55, delay: 0, closed: true,
+      time: 0, hist: [], series: [], distUntil: -1, lastDom: 0, maxX: 1
+    };
+    var FIXED = 1 / 120;
+    var W0 = Math.PI * 2 * .9;
+    var acc = 0;
+
+    function sampleAt(when) {
+      var h = state.hist;
+      if (!h.length) return state.x;
+      for (var i = h.length - 1; i >= 0; i--) {
+        if (h[i].t <= when) return h[i].x;
+      }
+      return h[0].x;
+    }
+
+    function push(t, x) {
+      state.hist.push({ t: t, x: x });
+      while (state.hist.length > 400) state.hist.shift();
+    }
+
+    function physics(dt) {
+      acc += dt;
+      var guard = 0;
+      while (acc >= FIXED && guard++ < 20) {
+        acc -= FIXED;
+        state.time += FIXED;
+        var xd = sampleAt(state.time - state.delay);
+        var e = state.target - xd;
+        var u = state.closed ? state.target + state.K * e : state.target * .72;
+        var a = W0 * W0 * (u - state.x) - 2 * state.zeta * W0 * state.v;
+        if (state.time < state.distUntil) a += 7.5;
+        state.v += a * FIXED;
+        state.x += state.v * FIXED;
+        if (Math.abs(state.x) > 9) state.x = Math.sign(state.x) * 9;
+        if (Math.abs(state.v) > 18) state.v = Math.sign(state.v) * 18;
+        push(state.time, state.x);
+        state.series.push({ t: state.time, x: state.x });
+        while (state.series.length && state.series[0].t < state.time - 8) state.series.shift();
+        state.maxX = Math.max(1.25, state.x);
+      }
+    }
+
+    function draw(ctx, w, h, t, dt) {
+      if (dt > 0) physics(dt);
+      ctx.clearRect(0, 0, w, h);
+      var accent = W.cssVar("--accent");
+      var accent2 = W.cssVar("--accent-2");
+      var bad = W.cssVar("--bad");
+      var padL = 42, padR = 16, padT = 26, padB = 28;
+      var iw = w - padL - padR, ih = h - padT - padB;
+      var yMin = Math.min(-.25, Math.min.apply(null, state.series.map(function (p) { return p.x; })) - .1);
+      var yMax = Math.max(1.35, Math.max.apply(null, state.series.map(function (p) { return p.x; })) + .1);
+      function X(tt) { return padL + (tt - (state.time - 8)) / 8 * iw; }
+      function Y(v) { return padT + (yMax - v) / (yMax - yMin) * ih; }
+
+      W.grid(ctx, w, h, accent, 38);
+      ctx.strokeStyle = W.alpha("#ffffff", .08);
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, padT + ih); ctx.lineTo(padL + iw, padT + ih); ctx.stroke();
+      for (var g = 0; g <= 4; g++) {
+        var v = yMin + (yMax - yMin) * g / 4;
+        W.label(ctx, v.toFixed(1), padL - 7, Y(v), W.alpha(accent, .35), 8, "right");
+      }
+      ctx.setLineDash([4, 5]);
+      ctx.strokeStyle = W.alpha(accent2, .45);
+      ctx.beginPath(); ctx.moveTo(padL, Y(state.target)); ctx.lineTo(padL + iw, Y(state.target)); ctx.stroke();
+      ctx.setLineDash([]);
+
+      var pts = state.series.filter(function (p) { return p.t >= state.time - 8; })
+        .map(function (p) { return [X(p.t), Y(p.x)]; });
+      if (pts.length > 1) {
+        var grad = ctx.createLinearGradient(0, padT, 0, padT + ih);
+        grad.addColorStop(0, W.alpha(accent, .18));
+        grad.addColorStop(1, W.alpha(accent, 0));
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(pts[0][0], Y(state.target));
+        pts.forEach(function (p) { ctx.lineTo(p[0], p[1]); });
+        ctx.lineTo(pts[pts.length - 1][0], Y(state.target));
+        ctx.closePath(); ctx.fill();
+        W.line(ctx, pts, accent, 1.8);
+      }
+      var last = state.series[state.series.length - 1];
+      if (last) {
+        ctx.fillStyle = accent2;
+        ctx.shadowColor = accent; ctx.shadowBlur = 12;
+        ctx.beginPath(); ctx.arc(X(last.t), Y(last.x), 3.2, 0, W.TAU); ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+      W.label(ctx, "Soll", padL + 4, padT + 10, W.alpha(accent2, .55), 8.5);
+      W.label(ctx, "Ist", padL + 4, padT + 24, W.alpha(accent, .7), 8.5);
+      W.label(ctx, "t →", padL + iw, padT + ih + 17, W.alpha(accent, .32), 8, "right");
+
+      updateDom();
+    }
+
+    function updateDom() {
+      var now = performance.now();
+      if (now - state.lastDom < 90) return;
+      state.lastDom = now;
+      var recent = state.series.filter(function (p) { return p.t >= state.time - 1; });
+      var rms = 0, over = 0;
+      recent.forEach(function (p) { rms += Math.pow(state.target - p.x, 2); over = Math.max(over, p.x - state.target); });
+      rms = Math.sqrt(rms / Math.max(1, recent.length));
+      var status = "stabil";
+      var cls = "ok";
+      if (!state.closed) { status = "offen · Restfehler"; cls = "warn"; }
+      else if (Math.abs(state.x) > 4 || Math.abs(state.v) > 10) { status = "instabil"; cls = "bad"; }
+      else if (rms > .28) { status = "schwingt"; cls = "warn"; }
+      var st = document.getElementById("stateText");
+      if (st) st.textContent = status;
+      var lm = document.getElementById("lmStatus");
+      if (lm) { lm.textContent = status; lm.className = "stage-readout status " + (cls === "bad" ? "bad" : cls === "warn" ? "warn" : ""); }
+      var rmsEl = document.getElementById("rms");
+      if (rmsEl) rmsEl.textContent = rms.toFixed(3);
+      var osEl = document.getElementById("overshoot");
+      if (osEl) osEl.textContent = Math.round(Math.max(0, over) * 100) + " %";
+      var pr = document.getElementById("plotReadout");
+      if (pr) pr.textContent = "Soll 1.00 · Ist " + state.x.toFixed(2);
+      var tEl = document.getElementById("lmTarget"); if (tEl) tEl.textContent = state.target.toFixed(2);
+      var oEl = document.getElementById("lmOut"); if (oEl) oEl.textContent = "x = " + state.x.toFixed(2);
+      var eEl = document.getElementById("lmErr"); if (eEl) eEl.textContent = "e = " + (state.target - state.x).toFixed(2);
+      var gEl = document.getElementById("lmGain"); if (gEl) gEl.textContent = "K = " + state.K.toFixed(1);
+      var box = document.querySelector(".loopmap .nodebox");
+      if (box) box.classList.toggle("hot", !state.closed || rms > .1);
+    }
+
+    W.stage(canvas, draw, { animate: true });
+
+    W.bindRange("gain", function (v) { state.K = v; });
+    W.bindRange("damp", function (v) { state.zeta = v; });
+    W.bindRange("delay", function (v) { state.delay = v; });
+
+    document.getElementById("distBtn").addEventListener("click", function () {
+      state.distUntil = state.time + .18;
+    });
+    document.getElementById("resetBtn").addEventListener("click", function () {
+      state.x = 0; state.v = 0; state.time = 0; state.hist = []; state.series = []; state.distUntil = -1;
+      state.maxX = 1;
+    });
+    var closedBtn = document.getElementById("closedBtn");
+    closedBtn.addEventListener("click", function () {
+      state.closed = !state.closed;
+      closedBtn.textContent = state.closed ? "Kreis geschlossen" : "Kreis offen";
+      closedBtn.classList.toggle("on", state.closed);
+    });
+  })();
+
+  /* ---------- black box ---------- */
+  (function () {
+    var rules = [
+      { name: "AND", fn: function (a, b) { return a && b; }, expr: "A · B" },
+      { name: "OR", fn: function (a, b) { return a || b; }, expr: "A + B" },
+      { name: "XOR", fn: function (a, b) { return a !== b; }, expr: "A ⊕ B" },
+      { name: "NAND", fn: function (a, b) { return !(a && b); }, expr: "¬(A · B)" },
+      { name: "A", fn: function (a, b) { return a; }, expr: "A" },
+      { name: "B", fn: function (a, b) { return b; }, expr: "B" }
+    ];
+    var rule = rules[0];
+    var count = 0;
+    var lamp = document.getElementById("bbLamp");
+    var probes = document.getElementById("bbProbes");
+    var ruleEl = document.getElementById("bbRule");
+    var countEl = document.getElementById("bbCount");
+    function reset(newRule) {
+      rule = newRule || rules[Math.floor(Math.random() * rules.length)];
+      count = 0;
+      lamp.textContent = "?"; lamp.classList.remove("on");
+      probes.innerHTML = ""; ruleEl.textContent = "\u00a0"; countEl.textContent = "0 Proben";
+    }
+    reset(rules[0]);
+    Array.prototype.forEach.call(document.querySelectorAll(".bb-key"), function (b) {
+      b.addEventListener("click", function () {
+        var a = parseInt(b.getAttribute("data-a"), 10);
+        var c = parseInt(b.getAttribute("data-b"), 10);
+        var out = rule.fn(a, c) ? 1 : 0;
+        count++;
+        lamp.textContent = String(out);
+        lamp.classList.toggle("on", out === 1);
+        var s = document.createElement("span");
+        s.textContent = "[" + a + c + "] → " + out;
+        probes.appendChild(s);
+        countEl.textContent = count + (count === 1 ? " Probe" : " Proben");
+      });
+    });
+    document.getElementById("bbReveal").addEventListener("click", function () {
+      ruleEl.textContent = "Regel: " + rule.name + "  ·  " + rule.expr;
+    });
+    document.getElementById("bbNew").addEventListener("click", function () {
+      reset(null);
+    });
+  })();
+})();
+</script>
+</body>
+</html>

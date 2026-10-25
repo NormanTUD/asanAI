@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Der Rest des Regals — weitere Werke von Norbert Wiener · Wiener Archive</title>
+<meta name="description" content="Norbert Wieners weitere Werke: Tauberian Theorems, The Fourier Integral, Behavior Purpose and Teleology, A Scientist Rebels, The Tempter, Invention — mit Lesepfad und Quellen.">
+<script>
+  try { var t = localStorage.getItem("wiener-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+</script>
+<link rel="icon" type="image/svg+xml" href="wiener_assets/favicon.svg">
+<link rel="stylesheet" href="wiener_assets/wiener.css">
+<style>
+  .shelf-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .shelf-grid .book-card { min-height: 190px; }
+  .shelf-grid .book-card[data-cat] { transition: .25s var(--ease); }
+  .shelf-grid .book-card.hide { display: none; }
+  .entrance { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+  .entrance button { border: 1px solid var(--line); border-radius: 12px; background: var(--panel-2); padding: 13px 12px; text-align: left; cursor: pointer; color: var(--muted); font-size: .84rem; line-height: 1.4; transition: .2s var(--ease); }
+  .entrance button:hover, .entrance button.on { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); }
+  .entrance button b { display: block; font-family: var(--mono); font-size: 8.5px; letter-spacing: .12em; color: var(--accent); margin-bottom: 5px; }
+  .pick { margin-top: 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); padding: 16px 18px; }
+  .pick h4 { font-family: var(--serif); font-weight: 400; font-size: 1.2rem; margin: 0 0 6px; }
+  .pick p { font-size: .9rem; line-height: 1.55; color: var(--muted); margin: 0 0 10px; }
+  .pick a { font-family: var(--mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; }
+  .src-list { display: grid; gap: 7px; }
+  .src-list a { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: baseline; padding: 7px 0; border-bottom: 1px solid var(--line); color: var(--muted); font-size: .85rem; }
+  .src-list a:hover { color: var(--accent); text-decoration: none; }
+  .src-list a span:last-child { font-family: var(--mono); font-size: 8.5px; color: var(--dim); }
+  @media (max-width: 900px) { .shelf-grid { grid-template-columns: 1fr 1fr; } .entrance { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 620px) { .shelf-grid { grid-template-columns: 1fr; } .entrance { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body data-accent="gold" data-motif="shelf" data-page="08">
+<div class="progress"><i id="progressBar"></i></div>
+
+<header class="topbar">
+  <a class="brand" href="wiener_index.html"><b>W</b><span class="sep">·</span> Wiener Archive</a>
+  <nav class="topnav" aria-label="Werke"></nav>
+  <div class="top-tools">
+    <button class="theme-toggle" id="themeToggle" aria-label="Design wechseln"></button>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="top">
+  <canvas class="hero-canvas" data-motif="shelf" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="kicker">Die kleine Bibliothek · 1923–1993</p>
+    <h1>Der Rest des<br><em>Regals</em>.</h1>
+    <p class="lede">Die großen Türen sind Cybernetics, Human Use, Filter, Spektrum, Zufall, Golem und das Leben. Hier stehen die Werkzeuge, die kurzen Texte und die Seitenwege — vom frühen Fourier-Buch bis zum Roman.</p>
+    <p class="epigraph">„The machine, as I have already said, is the modern counterpart of the Golem of the Rabbi of Prague.“<br><span class="mono" style="font-style:normal;font-size:9px;letter-spacing:.1em;color:var(--dim)">GOD &amp; GOLEM, S. 95</span></p>
+    <div class="hero-meta">
+      <span><b>12+</b> Titel</span>
+      <span><b>1932–1993</b></span>
+      <span>Mathematik · Essays · Erzählung</span>
+    </div>
+  </div>
+  <div class="scroll-hint">Regal</div>
+</section>
+
+<section class="chapter" id="shelf">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">01</div>
+      <div>
+        <h2>Die Nebenwege</h2>
+        <p class="sub">Nicht alles, was Wiener schrieb, ist ein Bestseller geworden. Manches ist ein Werkzeugkasten, manches ein Ethiktext, manches eine Erzählung.</p>
+      </div>
+    </div>
+    <div class="tabs reveal" id="shelfTabs">
+      <button class="tab on" data-cat="all">Alle</button>
+      <button class="tab" data-cat="math">Mathematik</button>
+      <button class="tab" data-cat="essay">Essays &amp; Kybernetik</button>
+      <button class="tab" data-cat="story">Erzählung &amp; Ideen</button>
+    </div>
+    <div class="shelf-grid">
+      <a class="book-card reveal" data-cat="math" href="https://archive.org/details/fourierintegralc0000norb" target="_blank" rel="noopener">
+        <span class="spine"></span><div class="inner"><span class="yr">1933 · CAMBRIDGE</span><h4>The Fourier Integral and Certain of Its Applications</h4><p>Das analytische Fundament: Fourier-Integrale, komplexe Analysis, Operatoren. Für Leser, die Wieners Mathematik nicht nur als Motiv wollen.</p><div class="why">Warum es zählt: Hier wird die Fourier-Maschine gebaut, die später Filter und Spektren antreibt.</div></div>
+      </a>
+      <a class="book-card reveal d1" data-cat="math" href="https://archive.org/details/selectedpapersof0000norb" target="_blank" rel="noopener">
+        <span class="spine"></span><div class="inner"><span class="yr">1932 · ANNALS OF MATHEMATICS</span><h4>Tauberian Theorems</h4><p>Ein Werkzeug der Asymptotik: Aus Mittelwerten einer Funktion auf ihr Verhalten im Unendlichen schließen.</p><div class="why">Warum es zählt: Es zeigt Wieners Stil — harte Analysis als Instrument für konkrete Grenzprozesse.</div></div>
+      </a>
+      <a class="book-card reveal d2" data-cat="math" href="https://archive.org/details/selectedpapersof0000norb" target="_blank" rel="noopener">
+        <span class="spine"></span><div class="inner"><span class="yr">1964 · MIT PRESS</span><h4>Selected Papers</h4><p>Enthält Generalized Harmonic Analysis und Tauberian Theorems in einem Band. Die bequemste Tür in die mathematische Werkstatt.</p><div class="why">Warum es zählt: Zwei Gründungstexte, die sonst in Zeitschriften verstreut sind.</div></div>
+      </a>
+      <a class="book-card reveal" data-cat="essay" href="https://archive.org/details/behavior-purpose-and-teleology-nortbert-wiener-arturo-rosenblueth-y-julian-bigelow" target="_blank" rel="noopener">
+        <span class="spine"></span><div class="inner"><span class="yr">1943 · PHILOSOPHY OF SCIENCE</span><h4>Behavior, Purpose and Teleology</h4><p>Der kurze Aufsatz, der zielgerichtetes Verhalten als Rückkopplung beschreibt — bei Tieren und Maschinen.</p><div class="why">Warum es zählt: Der intellektuelle Funke, aus dem Cybernetics wurde.</div></div>
+      </a>
+      <a class="book-card reveal d1" data-cat="essay" href="https://books.google.com/books?id=6gsAAAAAMBAJ&amp;pg=PA31" target="_blank" rel="noopener">
+        <span class="spine"></span><div class="inner"><span class="yr">1947 · THE ATLANTIC</span><h4>A Scientist Rebels</h4><p>Wiener fordert Wissenschaftler auf, die Folgen ihrer Arbeit zu bedenken. Ein kurzer, scharfer Text gegen die Militarisierung der Forschung.</p><div class="why">Warum es zählt: Die ethische Entscheidung, die seine Biografie prägt.</div></div>
+      </a>
+      <a class="book-card reveal d2" data-cat="essay" href="https://archive.org/details/mit_press_book_9780262355902" target="_blank" rel="noopener">
+        <span class="spine"></span><div class="inner"><span class="yr">1948 / 1961 · MIT PRESS</span><h4>Cybernetics · 2. Auflage</h4><p>Die zweite Auflage ergänzt Kapitel über lernende, selbstreproduzierende Maschinen und Hirnwellen.</p><div class="why">Warum es zählt: Der vollständige Text — und der Weg von der Regelung zur Selbstorganisation.</div></div>
+      </a>
+      <a class="book-card reveal" data-cat="story" href="https://archive.org/details/temper0000norb" target="_blank" rel="noopener">
+        <span class="spine"></span><div class="inner"><span class="yr">1959 · RANDOM HOUSE</span><h4>The Tempter</h4><p>Ein Roman. Kein technisches Werk — ein Seitenweg, der zeigt, dass Wiener die erzählerische Form ernst nahm.</p><div class="why">Warum es zählt: Als Zeugnis einer doppelten Begabung, nicht als Beweis einer These.</div></div>
+      </a>
+      <a class="book-card reveal d1" data-cat="story" href="https://archive.org/details/inventioncarefee0000wien" target="_blank" rel="noopener">
+        <span class="spine"></span><div class="inner"><span class="yr">1993 · MIT PRESS (POSTHUM)</span><h4>Invention: The Care and Feeding of Ideas</h4><p>Eine Geschichte und Theorie der Erfindung — mit einer Einführung von Steve Joshua Heims.</p><div class="why">Warum es zählt: Wiener über Kreativität, Institutionen und die Bedingungen neuer Ideen.</div></div>
+      </a>
+      <a class="book-card reveal d2" data-cat="math" href="https://archive.org/details/differentialspac0000etal" target="_blank" rel="noopener">
+        <span class="spine"></span><div class="inner"><span class="yr">1923 / 1966</span><h4>Differential Space, Quantum Systems, and Prediction</h4><p>Die spätere Sammlung um Wieners Differential-Space-Arbeit und ihre Verbindungen zu Quanten und Vorhersage.</p><div class="why">Warum es zählt: Der mathematische Unterbau des Wiener-Prozesses.</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="einstieg">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">02</div>
+      <div>
+        <h2>Wo willst du einsteigen?</h2>
+        <p class="sub">Vier Eingänge, vier Temperamente. Klicke den Satz, der am ehesten zu dir passt.</p>
+      </div>
+    </div>
+    <div class="entrance reveal d1" id="entrance">
+      <button data-pick="control"><b>ICH WILL REGELN</b>Wie funktioniert Feedback — und wann wird es instabil?</button>
+      <button data-pick="math"><b>ICH WILL RECHNEN</b>Spektren, Filter, Autokorrelation — die Mathematik dahinter.</button>
+      <button data-pick="ethics"><b>ICH WILL ETHIK</b>Was macht Automation mit Menschen — und was dürfen Maschinen entscheiden?</button>
+      <button data-pick="life"><b>ICH WILL DIE PERSON</b>Wie wurde aus dem Wunderkind der Kybernetiker?</button>
+    </div>
+    <div class="pick reveal d2" id="pick">
+      <h4>Die Schleife, die denkt</h4>
+      <p>Beginne mit Cybernetics. Du siehst einen Regelkreis, machst ihn instabil und verstehst, warum Kontrolle und Kommunikation dasselbe sind.</p>
+      <a href="wiener_01_cybernetik.html">→ Seite 01 öffnen</a>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="quellen">
+  <div class="wrap">
+    <div class="chapter-head reveal">
+      <div class="chapter-num">03</div>
+      <div>
+        <h2>Quellen &amp; Zugang</h2>
+        <p class="sub">Drei Bände liegen als Open-Access-PDF/EPUB lokal im Ordner <span class="mono">~/ebooks/wiener/quellen/</span>. Die übrigen Titel sind verlinkt; manche sind nur über eine Bibliothek ausleihbar.</p>
+      </div>
+    </div>
+    <div class="split top">
+      <div class="prose reveal">
+        <p><strong>Lokal gespeichert:</strong> Cybernetics (MIT Press OA, 2019), A Life in Cybernetics (Ex-Prodigy + I Am a Mathematician, MIT Press OA, 2018), God &amp; Golem (MIT Press OA), Behavior, Purpose and Teleology (PDF) und der Text von The Human Use of Human Beings.</p>
+        <p><strong>Nur verlinkt:</strong> Extrapolation … (1949), Nonlinear Problems in Random Theory (1958), The Fourier Integral (1933), Selected Papers (1964), The Tempter (1959), Invention (1993). Diese Ausgaben sind urheberrechtlich geschützt oder nur als Ausleihe verfügbar.</p>
+        <p class="note"><b>Zitierhinweis:</b> Seitenzahlen in diesem Archiv beziehen sich, wenn nicht anders angegeben, auf die im Quellenordner liegenden MIT-Press-Ausgaben bzw. auf die Houghton-Mifflin-Ausgabe von 1950.</p>
+      </div>
+      <div class="visual reveal d1">
+        <div class="src-list">
+          <a href="https://archive.org/details/mit_press_book_9780262355902" target="_blank" rel="noopener"><span>Cybernetics · MIT Press OA</span><span>PDF / EPUB</span></a>
+          <a href="https://archive.org/details/mit_press_book_9780262347051" target="_blank" rel="noopener"><span>Ex-Prodigy + I Am a Mathematician · MIT Press OA</span><span>PDF / EPUB</span></a>
+          <a href="https://archive.org/details/mit_press_book_9780262286152" target="_blank" rel="noopener"><span>God &amp; Golem · MIT Press OA</span><span>PDF / EPUB</span></a>
+          <a href="https://archive.org/details/the-human-use-of-human-beings" target="_blank" rel="noopener"><span>The Human Use of Human Beings</span><span>Text</span></a>
+          <a href="https://archive.org/details/behavior-purpose-and-teleology-nortbert-wiener-arturo-rosenblueth-y-julian-bigelow" target="_blank" rel="noopener"><span>Behavior, Purpose and Teleology</span><span>PDF</span></a>
+          <a href="https://archive.org/details/extrapolationint0000norb" target="_blank" rel="noopener"><span>Extrapolation, Interpolation, and Smoothing</span><span>Ausleihe</span></a>
+          <a href="https://archive.org/details/nonlinearproblem0000wien" target="_blank" rel="noopener"><span>Nonlinear Problems in Random Theory</span><span>Ausleihe</span></a>
+          <a href="https://archive.org/details/fourierintegralc0000norb" target="_blank" rel="noopener"><span>The Fourier Integral</span><span>Ausleihe</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="note reveal"><b>Denkwerkzeug:</b> Frage: Brauche ich ein Werkzeug, einen Ethiktext oder eine Erzählung? Was ist der kürzeste Pfad zu meiner Frage — und welches Buch öffnet ihn?</div>
+    <div class="prevnext">
+      <a href="wiener_07_leben.html"><span>Zurück</span>← Das Wunderkind und die Schleife</a>
+      <a class="right" href="wiener_index.html"><span>Zur Übersicht</span>Alle Werke →</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>The Wiener Archive · Quellen und Lesepfad</span>
+    <span>Open Access: MIT Press · Internet Archive</span>
+  </div>
+</footer>
+
+<script src="wiener_assets/wiener.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* shelf filter */
+  (function () {
+    var tabs = document.querySelectorAll("#shelfTabs .tab");
+    var cards = document.querySelectorAll(".shelf-grid .book-card");
+    Array.prototype.forEach.call(tabs, function (t) {
+      t.addEventListener("click", function () {
+        tabs.forEach(function (x) { x.classList.remove("on"); });
+        t.classList.add("on");
+        var cat = t.getAttribute("data-cat");
+        cards.forEach(function (c) {
+          var show = cat === "all" || c.getAttribute("data-cat") === cat;
+          c.classList.toggle("hide", !show);
+        });
+      });
+    });
+  })();
+
+  /* entrance picker */
+  (function () {
+    var picks = {
+      control: ["Die Schleife, die denkt", "Beginne mit Cybernetics. Du siehst einen Regelkreis, machst ihn instabil und verstehst, warum Kontrolle und Kommunikation dasselbe sind.", "wiener_01_cybernetik.html", "→ Seite 01 öffnen"],
+      math: ["Der verborgene Rhythmus", "Beginne mit der harmonischen Analyse. Autokorrelation und Spektrum sind ein Fourier-Paar — der Schlüssel zu Filtern und Zufall.", "wiener_04_harmonische-analyse.html", "→ Seite 04 öffnen"],
+      ethics: ["Die drei Flammen", "Beginne mit God & Golem. Lernen, Selbstreproduktion und die Wörtlichkeit der Wünsche — die ethische Achse des Werks.", "wiener_06_gott-und-golem.html", "→ Seite 06 öffnen"],
+      life: ["Das Wunderkind und die Schleife", "Beginne mit der Biografie. Cambridge, Göttingen, MIT, Mexiko — und die Frage, wie aus einem Rechner ein Denker der Rückkopplung wurde.", "wiener_07_leben.html", "→ Seite 07 öffnen"]
+    };
+    var buttons = document.querySelectorAll("#entrance button");
+    var pick = document.getElementById("pick");
+    Array.prototype.forEach.call(buttons, function (b) {
+      b.addEventListener("click", function () {
+        buttons.forEach(function (x) { x.classList.remove("on"); });
+        b.classList.add("on");
+        var p = picks[b.getAttribute("data-pick")];
+        pick.innerHTML = "<h4>" + p[0] + "</h4><p>" + p[1] + '</p><a href="' + p[2] + '">' + p[3] + "</a>";
+      });
+    });
+  })();
+})();
+</script>
+</body>
+</html>
