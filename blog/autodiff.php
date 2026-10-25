@@ -16,14 +16,18 @@ math: 60
 At the heart of every modern neural network lies a deceptively simple question: *“How much did each weight contribute to the error?”* The answer is computed by a technique called **Automatic Differentiation (AD)**, specifically its *reverse mode*, which underpins the backpropagation algorithm used to train virtually every deep learning model today.
 
 Automatic differentiation is neither symbolic differentiation (manipulating algebraic expressions like a CAS) nor numerical differentiation (using finite differences like $\frac{f(x+h) - f(x)}{h}$). Instead, it is an *exact* method that computes derivatives by systematically applying the **chain rule** to elementary operations recorded on a computational graph, often called a **tape**. A widely-read visual walkthrough of exactly this reading — backpropagation as reverse-mode differentiation on a computational graph — is \citetitle{colah2015backprop} \cite{colah2015backprop}.
+
+Long before any machine, the chain rule was a notational achievement. Leibniz's *Nova Methodus* of 1684 introduced the differentials $dx$ and $dy$; his calculus treated $dy/dx$ as a quotient of infinitesimals and supplied the operational rules—including the chain rule—that AD still uses \cite{leibniz1684nova}. AD inherits that formalism almost unchanged: each elementary operation contributes a local derivative, and the derivative of the whole is their product.
 </div>
 
 <div class="optional md" data-headline="Historical Origins">
-The earliest work on what we now call automatic differentiation dates to \citeauthor{wengert1964} in \citeyear{wengert1964}. In his paper \citetitle{wengert1964}, Wengert described a procedure for the automatic evaluation of total and partial derivatives of arbitrary algebraic functions by decomposing them into sequences of elementary expressions, without ever developing symbolic derivative formulas. This forward-mode technique laid the conceptual groundwork for all later AD systems.
+The first published algorithm for what we now call automatic differentiation is usually credited to \citeauthor{wengert1964} in \citeyear{wengert1964}. In his paper \citetitle{wengert1964}, Wengert described a procedure for the automatic evaluation of total and partial derivatives of arbitrary algebraic functions by decomposing them into sequences of elementary expressions, without ever developing symbolic derivative formulas. This forward-mode technique laid the conceptual groundwork for all later AD systems.
 
-The critical extension to **reverse mode** was made by \citeauthor{linnainmaa1970} in his \citeyear{linnainmaa1970} \cite[master's thesis]{linnainmaa1970}. Linnainmaa's original motivation was not neural networks at all, he sought an efficient way to track how rounding errors accumulate through long chains of floating-point computations. His key insight was that by recording each elementary operation and then traversing that record in reverse, one could compute the partial derivatives of the final result with respect to *every* intermediate variable in a single backward pass. Where Wengert's forward mode required one pass per input variable, Linnainmaa's reverse mode required only one pass per *output*, an asymmetry that would prove decisive for training neural networks with millions of parameters and a single scalar loss.
+The critical extension to **reverse mode** was made by \citeauthor{linnainmaa1970} in his \citeyear{linnainmaa1970} \cite[master's thesis]{linnainmaa1970}; the English version appeared in 1976 \cite{linnainmaa1976}. Linnainmaa's original motivation was not neural networks at all, he sought an efficient way to track how rounding errors accumulate through long chains of floating-point computations. His key insight was that by recording each elementary operation and then traversing that record in reverse, one could compute the partial derivatives of the final result with respect to *every* intermediate variable in a single backward pass. Where Wengert's forward mode required one pass per input variable, Linnainmaa's reverse mode required only one pass per *output*, an asymmetry that would prove decisive for training neural networks with millions of parameters and a single scalar loss.
 
 This technique was later independently rediscovered and applied to neural network training by \citeauthor{werbos1974} in his \citeyear{werbos1974} \cite[doctoral thesis]{werbos1974}, where he proposed using reverse-mode AD to compute gradients for multi-layer networks. However, it was the landmark \citeyear{rumelhart1986} paper by \cite[Rumelhart et al.]{rumelhart1986}, that popularized the method under the name **backpropagation** and demonstrated its practical effectiveness, reigniting interest in connectionist models after the first AI winter.
+
+The line did not end with Rumelhart et al. Linnainmaa's Finnish thesis reached a wider audience only in 1976 \cite{linnainmaa1976}, and in 1980 \citeauthor{speelpenning1980} turned reverse mode into a compiler technique for functions of many variables \cite{speelpenning1980}. Speelpenning's reverse sweep over a recorded computation is one of the direct ancestors of modern AD compilers; the same idea later reappears as the gradient tape.
 </div>
 
 <div class="md" data-mathlevel="45">
@@ -78,6 +82,8 @@ $$\text{Reverse mode cost:} \quad \mathcal{O}(m) \text{ passes for } m \text{ ou
 
 Since training always reduces to minimizing a single scalar loss $L$, reverse mode requires only **one** backward pass to get $\frac{\partial L}{\partial w_i}$ for every weight $w_i$. This is why reverse-mode AD (backpropagation) is the universal choice for deep learning.
 
+Reverse mode's bargain has a price: it must retain intermediate values from the forward pass, so memory grows with the length of the tape. \citeauthor{griewank1989} clarified the arithmetic cost of the reverse sweep, and the book that grew out of that work, *Evaluating Derivatives* (2000; 2nd ed. 2008), developed the memory-versus-recomputation trade-off—including checkpointing—that modern frameworks use \cite{griewank1989,griewank2008}. Checkpointing stores a few states and recomputes the rest, which is what lets a deep network's gradient fit in memory.
+
 </div>
 
 <div class="md">
@@ -85,7 +91,7 @@ Since training always reduces to minimizing a single scalar loss $L$, reverse mo
 
 ### Before the name existed: a machine that differentiated
 
-The idea of carrying local derivative information along with a computation is older than the name. In the 1820s **Charles Babbage** designed the **Difference Engine**, a steam-era machine that tabulated polynomial functions by the **method of finite differences** \cite[Babbage's Difference Engine]{differenceengine}. You loaded it with a function's value and its successive differences at one starting point, and then cranked it forward: each turn produced the next value purely by *adding* the stored differences, with no multiplication and no formula at all. The engine was **not** an automatic-differentiation machine: it evaluated a polynomial from stored finite differences, not the derivatives of an arbitrary program. But the underlying move — carry a local state forward and read the next value from it — is an ancestor of forward-mode AD, which records exact local derivatives instead of finite differences and applies the chain rule to them.
+The idea of carrying local derivative information along with a computation is older than the name. In the 1820s **Charles Babbage** designed the **Difference Engine**, a steam-era machine that tabulated polynomial functions by the **method of finite differences** \cite[Babbage's Difference Engine]{differenceengine}. You loaded it with a function's value and its successive differences at one starting point, and then cranked it forward: each turn produced the next value purely by *adding* the stored differences, with no multiplication and no formula at all. The engine was **not** an automatic-differentiation machine: it evaluated a polynomial from stored finite differences, not the derivatives of an arbitrary program. But the underlying move — carry a local state forward and read the next value from it — is a cousin of forward-mode AD, which records exact local derivatives instead of finite differences and applies the chain rule to them.
 
 </div>
 
@@ -290,6 +296,10 @@ render_gem_tabs($autodiffcodetabs, "autodiff");
 
 Both frameworks produce mathematically identical gradients. The choice is primarily about API ergonomics and ecosystem preferences.
 
+#### JAX: Transformations Instead of a Tape
+
+\citeauthor{jax2018}'s JAX takes a third route: rather than recording a mutable tape, it composes function transformations. `grad` turns a scalar-valued function into its gradient, `jacfwd` and `jacrev` build Jacobians in forward or reverse mode, and `vmap` and `jit` compile the result for accelerators \cite{jax2018}. The same reverse-mode chain rule is underneath, but the API exposes *which* mode is used—a useful reminder that forward and reverse are two schedules for the same derivative, not two different calculi.
+
 ### Building a Minimal Autograd Engine
 
 To truly understand tape-based Automatic Differentiation, it helps to build one from scratch. The following is a minimal but complete implementation of a reverse-mode autograd engine in pure Python. It supports addition, multiplication, and the sine function, enough to differentiate our example $f(x, y) = (x + y) \cdot \sin(x)$.
@@ -307,7 +317,7 @@ This minimal engine implements the exact same algorithm that PyTorch and TensorF
 
 ### The Vanishing and Exploding Gradient Problem
 
-One critical consequence of tape-based Automatic Differentiation in deep networks is the **vanishing gradient problem**, first identified by \citeauthor{hochreiter1991vanishing} in \citeyear{hochreiter1991vanishing} and further analyzed by \citeauthor{bengio1994learning} in \citeyear{bengio1994learning}.
+One critical consequence of tape-based Automatic Differentiation in deep networks is the **vanishing gradient problem**, systematically analyzed by \citeauthor{hochreiter1991vanishing} in \citeyear{hochreiter1991vanishing} and formalized for recurrent networks by \citeauthor{bengio1994learning} in \citeyear{bengio1994learning}.
 
 When the chain rule is applied through many layers, the gradient is a product of many local derivatives:
 
@@ -339,7 +349,7 @@ Several architectural innovations have been developed to combat these problems:
 
 2. **Residual Connections** (\citeauthor{he2015resnet}, \citeyear{he2015resnet}): Skip connections add the input of a block directly to its output: $\mathbf{y} = F(\mathbf{x}) + \mathbf{x}$. This creates a “gradient highway” that allows gradients to bypass problematic layers entirely.
 
-3. **Layer Normalization** (\citeauthor{ba2016layernorm}, \citeyear{ba2016layernorm}): Normalizing activations at each layer keeps values in a well-behaved range, preventing both vanishing and exploding gradients.
+3. **Layer Normalization** (\citeauthor{ba2016layernorm}, \citeyear{ba2016layernorm}): Normalizing activations at each layer keeps their scale stable and makes optimization less sensitive to initialization; it helps with vanishing gradients but is not a guarantee against either failure mode.
 
 4. **Gradient Clipping**: A simple but effective technique that caps the gradient norm at a maximum value, preventing explosions while preserving direction.
 
@@ -383,7 +393,7 @@ An important distinction in modern AD frameworks is whether the computational gr
 
 **Dynamic Graphs** (PyTorch, TensorFlow 2.x eager mode): The graph is built on-the-fly as operations execute. Each forward pass constructs a fresh tape, which is then consumed during the backward pass. This “define-by-run” approach is more intuitive and Pythonic, allowing standard control flow (`if`, `for`, `while`) to be used naturally within the model.
 
-The Transformer architecture, released in \citeyear{vaswani2017attention}, which powers modern LLMs like GPT, relies heavily on dynamic computation patterns (variable-length sequences, masked attention), making dynamic graphs the natural choice. This is one reason PyTorch became the dominant framework in research.
+The Transformer architecture, released in \citeyear{vaswani2017attention}, made variable-length sequences and masked attention central to language modeling. Its operations do not *require* a dynamic graph—padded or bucketed batches can be compiled statically—but define-by-run frameworks made such models easier to prototype and debug, which helped PyTorch become the dominant framework in research.
 
 <div class="optional md" data-headline="Backpropagation as a Chain of Jacobian Matrices">
 Backpropagation through a deep network is really just multiplying a chain of <i>Jacobian matrices</i>. Each layer's local derivative is a Jacobian matrix $J^{(\ell)}$ containing the partial derivatives of every output of layer $\ell$ with respect to every input. The chain rule for a network with $L$ layers is simply matrix multiplication:
@@ -392,7 +402,7 @@ $$\frac{\partial \mathcal{L}}{\partial x^{(0)}} = \frac{\partial \mathcal{L}}{\p
 
 The vanishing gradient problem becomes immediately obvious from this perspective: if every Jacobian has singular values less than 1 (i.e., it is a contraction mapping), the product of $L$ such matrices shrinks exponentially with depth. ResNets ease this because their Jacobian is $I + J_F$: the product of $L$ such factors contains the identity term $I$, which provides a direct path for the gradient and keeps it from being multiplied by a small factor at every layer. That mitigates vanishing, though it does not by itself guarantee that the full gradient stays large.
 
-This matrix-chain perspective also reveals why the choice of activation function matters so much for trainability. Sigmoid and tanh activations squash their inputs into a small range, producing Jacobians with singular values well below 1. ReLU, by contrast, has a Jacobian that is either 1 (for positive inputs) or 0 (for negative inputs). While ReLU avoids vanishing gradients for active neurons, it introduces the “dying ReLU” problem where neurons can get permanently stuck in the zero regime. Modern architectures like GPT use variants such as GELU or SwiGLU, which are smooth: their gradients taper off gradually for large negative inputs instead of snapping abruptly to zero the way ReLU's do.
+This matrix-chain perspective also reveals why the choice of activation function matters so much for trainability. Sigmoid and tanh activations squash their inputs into a small range, producing Jacobians with singular values well below 1. ReLU, by contrast, has a Jacobian that is either 1 (for positive inputs) or 0 (for negative inputs). While ReLU avoids vanishing gradients for active neurons, it introduces the “dying ReLU” problem where neurons can get permanently stuck in the zero regime. Modern architectures like GPT use smooth activation variants such as GELU, or gated units such as SwiGLU built on the smooth Swish function: their gradients taper off gradually for large negative inputs instead of snapping abruptly to zero the way ReLU's do.
 </div>
 
 ## Summary
