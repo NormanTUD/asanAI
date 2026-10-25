@@ -448,7 +448,7 @@
 				ctx.textAlign = "center";
 				ctx.fillText("AI", mergeX, midY + 3.5);
 
-				ctx.strokeStyle = "rgba(238,247,244,.3)";
+				ctx.strokeStyle = c.dark ? "rgba(238,247,244,.3)" : "rgba(0,75,111,.3)";
 				ctx.lineWidth = 1;
 				ctx.beginPath();
 				ctx.moveTo(mergeX + 36, midY);
@@ -456,7 +456,7 @@
 				ctx.stroke();
 				ctx.font = "600 9px ui-monospace, monospace";
 				ctx.textAlign = "right";
-				ctx.fillStyle = "rgba(238,247,244,.55)";
+				ctx.fillStyle = c.dark ? "rgba(238,247,244,.55)" : "rgba(18,38,45,.55)";
 				ctx.fillText("TRANSFORMER", w - 12, midY - 8);
 			});
 			function animate() {

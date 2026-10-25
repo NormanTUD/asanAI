@@ -472,7 +472,7 @@ The month has six sections. The first days are the gentlest; the middle is the t
 
 **How to use it:** each card gives a short reading path, a rough time, and how much math it uses. A "Short on time?" line points to the one article to read if you only have ten minutes. Optional deep dives are tucked away at the bottom of the card. Read one door a day, or jump to whatever you need. The last sections are a little denser; take two days for a card if you like.
 
-**Prefer ten-minute lessons?** The [31-door calendar](tenminutes/advent.html) opens one compact lesson a day in the ScaDS.AI visual style, with interactive demos and saved progress.
+**Prefer ten-minute lessons?** The [31-door calendar](tenminutes/advent.html) opens the compact lessons in the ScaDS.AI visual style, with interactive demos and saved progress. Doors that are not distilled yet link to the full chapter.
 </div>
 
 <div class="mn-december-meta">

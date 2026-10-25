@@ -116,7 +116,7 @@
 									</label>
 								</div>
 								<div class="demo-readout demo-readout--4">
-									<div><b>Step</b><span id="nt-step-count">0 / 4</span></div>
+									<div><b>Step</b><span id="nt-step-count">0 / 6</span></div>
 									<div><b>Context length</b><span id="nt-len">5 tokens</span></div>
 									<div><b>Top choice</b><span id="nt-top">Paris</span></div>
 									<div><b>Decoder</b><span id="nt-mode">sample</span></div>
@@ -311,16 +311,22 @@
 		/* ── demo 1: the autoregressive loop ─────────────────── */
 		var stages = [
 			[
-				{ t: "Paris", l: 3.2 }, { t: "Lyon", l: 0.8 }, { t: "the", l: 0.6 }, { t: "a", l: 0.4 }, { t: "home", l: 0.2 }
+				{ t: "Paris", l: 3.2 }, { t: "Lyon", l: 0.8 }, { t: "beautiful", l: 0.6 }, { t: "cold", l: 0.4 }, { t: "home", l: 0.2 }
 			],
 			[
-				{ t: ".", l: 2.6 }, { t: ",", l: 2.2 }, { t: "and", l: 1.7 }, { t: "which", l: 0.9 }, { t: "where", l: 0.6 }
+				{ t: ".", l: 2.6 }, { t: "—", l: 1.2 }, { t: "…", l: 0.9 }, { t: "!", l: 0.6 }, { t: "?", l: 0.4 }
 			],
 			[
-				{ t: "It", l: 2.7 }, { t: "The", l: 2.2 }, { t: "This", l: 1.8 }, { t: "A", l: 0.9 }, { t: "France", l: 0.4 }
+				{ t: "It", l: 2.7 }, { t: "This city", l: 2.2 }, { t: "The city", l: 1.8 }, { t: "Paris", l: 0.9 }, { t: "France", l: 0.4 }
 			],
 			[
 				{ t: "is", l: 3.1 }, { t: "was", l: 1.2 }, { t: "remains", l: 0.8 }, { t: "has", l: 0.5 }, { t: "became", l: 0.3 }
+			],
+			[
+				{ t: "a city", l: 3.2 }, { t: "the capital", l: 2.1 }, { t: "a place", l: 1.6 }, { t: "a home", l: 0.9 }, { t: "an answer", l: 0.4 }
+			],
+			[
+				{ t: ".", l: 3.0 }, { t: "!", l: 1.4 }, { t: "…", l: 0.8 }, { t: "—", l: 0.5 }, { t: "?", l: 0.3 }
 			]
 		];
 		var base = ["The", "capital", "of", "France", "is"];
@@ -344,22 +350,18 @@
 			var sum = exps.reduce(function (a, b) { return a + b; }, 0);
 			return exps.map(function (e) { return e / sum; });
 		}
-		function join(tokens) {
-			var out = "";
-			tokens.forEach(function (tok, i) {
-				var noSpace = /^[.,!?;:)\]]/.test(tok);
-				if (i && !noSpace) out += " ";
-				out += tok;
-			});
-			return out;
-		}
 		function renderSentence() {
 			if (!sentenceEl) return;
 			var html = "";
-			base.forEach(function (tok) { html += '<span class="given">' + escapeHtml(tok) + "</span> "; });
-			generated.forEach(function (tok) { html += '<span class="pred">' + escapeHtml(tok) + "</span> "; });
+			var all = base.map(function (tok) { return { tok: tok, cls: "given" }; })
+				.concat(generated.map(function (tok) { return { tok: tok, cls: "pred" }; }));
+			all.forEach(function (item, i) {
+				var noSpace = /^[.,!?;:)\]]|^…/.test(item.tok);
+				if (i && !noSpace) html += " ";
+				html += '<span class="' + item.cls + '">' + escapeHtml(item.tok) + "</span>";
+			});
 			if (stage >= stages.length) {
-				html += '<span class="given" style="opacity:.55">— end of sequence</span>';
+				html += ' <span class="given" style="opacity:.55">— end of sequence</span>';
 			} else {
 				html += '<span class="cursor" aria-hidden="true"></span>';
 			}
@@ -399,7 +401,7 @@
 		}
 		function choose(token) {
 			if (stage >= stages.length) return;
-			generated.push(token);
+			token.split(" ").forEach(function (piece) { generated.push(piece); });
 			stage++;
 			renderSentence();
 			renderBars();
@@ -541,7 +543,7 @@
 			var probs = softmax(words.map(function (word) { return -Math.hypot(thought.x - word.x, thought.y - word.y) / T; }), 1);
 			var chance = probs[pairT.first.i];
 
-			ctx.strokeStyle = "rgba(238,247,244,.08)";
+			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.08)" : "rgba(0,75,111,.09)";
 			ctx.lineWidth = 1;
 			for (var gx = 0; gx < w; gx += 40) {
 				ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
@@ -561,11 +563,11 @@
 				ctx.lineWidth = 2;
 				ctx.stroke();
 				ctx.font = "600 12px Barlow, system-ui, sans-serif";
-				ctx.fillStyle = "rgba(238,247,244,.82)";
+				ctx.fillStyle = c.dark ? "rgba(238,247,244,.82)" : "rgba(18,38,45,.82)";
 				ctx.textAlign = "center";
 				ctx.fillText(word.name, x, y - 12);
 				ctx.font = "500 10px ui-monospace, monospace";
-				ctx.fillStyle = "rgba(238,247,244,.38)";
+				ctx.fillStyle = c.dark ? "rgba(238,247,244,.38)" : "rgba(18,38,45,.45)";
 				ctx.fillText(Math.round(probs[words.indexOf(word)] * 100) + "%", x, y + 20);
 			});
 
@@ -573,7 +575,7 @@
 			var ty = thought.y * h;
 			var halo = 16 + 26 * meadowTemp;
 			var grad = ctx.createRadialGradient(tx, ty, 2, tx, ty, halo);
-			grad.addColorStop(0, "rgba(238,247,244,.9)");
+			grad.addColorStop(0, c.dark ? "rgba(238,247,244,.9)" : "rgba(255,253,247,.95)");
 			grad.addColorStop(0.35, "rgba(185,223,106,.4)");
 			grad.addColorStop(1, "rgba(185,223,106,0)");
 			ctx.beginPath();
@@ -582,7 +584,7 @@
 			ctx.fill();
 			ctx.beginPath();
 			ctx.arc(tx, ty, 5.5, 0, Math.PI * 2);
-			ctx.fillStyle = "#f4fbf7";
+			ctx.fillStyle = c.dark ? "#f4fbf7" : "#fffdf7";
 			ctx.fill();
 			ctx.strokeStyle = winner.c;
 			ctx.lineWidth = 3;
