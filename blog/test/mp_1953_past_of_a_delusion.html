@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Past of a Delusion — McCulloch, 1953</title>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<link rel="stylesheet" href="mp.css">
+<script src="../temml.min.js" defer></script>
+<script src="mp.js" defer></script>
+<script src="mp_1953_past_of_a_delusion.js" defer></script>
+</head>
+<body data-accent="crimson">
+<div class="progress"><span></span></div>
+<header class="topbar">
+  <a class="brand" href="mp_index.html"><b>MP</b><span class="dot">·</span>Codex</a>
+  <div class="topbar-meta">
+    <span class="hide-sm">Companion 03 · 1953</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+</header>
+<div class="rail" id="rail" aria-hidden="true"></div>
+
+<main>
+<section class="hero" id="top" data-label="Opening">
+  <canvas class="hero-canvas" id="heroDelusion" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Chicago Literary Club · 1953 · collected in <i>Embodiments of Mind</i></p>
+    <h1>The <em>Past</em> of a Delusion</h1>
+    <p class="hero-sub">McCulloch's most polemical essay: a psychiatrist's attack on psychoanalysis, written as a mirror for Freud's <i>The Future of an Illusion</i>. Its target is not the patient but the theory — a system that can explain every resistance and therefore risks confirming itself.</p>
+    <div class="hero-meta">
+      <span><b>Warren S. McCulloch</b></span>
+      <span>Chicago Literary Club · 1953</span>
+      <span>a historical document, not a verdict</span>
+    </div>
+    <a class="scroll-cue" href="#thesis"><span class="line"></span> Read the companion</a>
+  </div>
+</section>
+
+<section class="section" id="thesis" data-label="The thesis">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The thesis</p>
+      <h2 class="thesis">A theory that explains every resistance can no longer be <em>tested</em> by resistance.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">The essay begins with aging brains and the burden of mental illness, then turns on the profession that claims to treat it. McCulloch's charge is epistemological: psychoanalysis, as he presents it, turns the patient's disagreement into further evidence for the theory. The loop is closed. The theory cannot lose.</p>
+      <p class="lede">The title is a deliberate inversion of Freud's <i>The Future of an Illusion</i>. Where Freud criticized religion as an illusion, McCulloch criticizes psychoanalysis as a delusion — and, in the same breath, accuses it of the religious structure it diagnoses. The essay is angry, witty, and often unfair. It is also an early and vivid statement of the problem of unfalsifiability.</p>
+      <div class="note"><b>Read it historically:</b> this is a primary document of the American reception of psychoanalysis, not a neutral history. Psychoanalysis has its own evidence base, internal disagreements, and clinical traditions. The page presents McCulloch's argument, not an endorsement of its caricature.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="loop" data-label="The loop">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory · the self-sealing loop</p>
+      <h2>When confirmation is built into the circuit.</h2>
+      <p class="lede">This is a schematic of McCulloch's charge, not a model of every analysis. A symptom is interpreted; the interpretation meets resistance; the resistance is read as confirmation; the confirmation strengthens the interpretation. Increase the gain and the loop closes. Admit an external test and it opens.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>Symptom → interpretation → resistance → confirmation</h3>
+          <p>The loop is not evidence of fraud; it is a structural risk of any theory that treats disagreement as data. The question is whether something outside the loop can still count against it.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="loopLab" aria-label="Interactive self-reference loop of interpretation and confirmation"></canvas>
+      </div>
+      <div class="controls">
+        <div class="control"><label for="loopGain">loop gain <output id="gainVal">0.78</output></label><input id="loopGain" type="range" min="0" max="1" step="0.01" value="0.78"></div>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <button class="btn ghost" id="externalTest">Admit an external test</button>
+        <button class="btn ghost" id="resetLoop">Reset</button>
+      </div>
+      <div class="readout">
+        <div class="cell"><span>loop</span><b class="small-value" id="loopVal">self-sealing</b></div>
+        <div class="cell" style="grid-column:span 2"><span>status</span><b class="small-value" id="loopStatus">the loop confirms itself</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="quotes" data-label="The voice">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The voice</p>
+      <h2>The physician's anger.</h2>
+    </div>
+    <div class="quote-grid" style="margin-top:2rem">
+      <figure class="quote wide reveal">
+        <p>“We are not now the men we were a quarter of a century ago. Our brains are failing.”</p>
+        <footer><b>McCulloch</b> · opening</footer>
+      </figure>
+      <figure class="quote reveal">
+        <p>“Half the patients in all hospitals in the United States are there for trouble in their brains.”</p>
+        <footer><b>McCulloch</b> · 1953</footer>
+      </figure>
+      <figure class="quote reveal delay-1">
+        <p>“…they defined psychoanalysis as that disease of which it fancies itself the cure.”</p>
+        <footer><b>McCulloch</b> · 1953</footer>
+      </figure>
+      <figure class="quote reveal delay-2">
+        <p>“Most psychoanalysts are too clever to attempt to help the insane.”</p>
+        <footer><b>McCulloch</b> · 1953</footer>
+      </figure>
+      <figure class="quote wide reveal">
+        <p>“The orthodox believer says Freud's method is inapplicable to them, so he handles only neurotics…”</p>
+        <footer><b>McCulloch</b> · 1953</footer>
+      </figure>
+    </div>
+    <div class="note reveal" style="margin-top:1.5rem"><b>Context:</b> the essay was written for the Chicago Literary Club and collected in <i>Embodiments of Mind</i>. The Vordenker edition includes a German translation and an editorial note on the title's wordplay. It is a polemic; read it alongside the history of psychoanalysis, not instead of it.</div>
+  </div>
+</section>
+
+<section class="section" id="pages" data-label="Facsimiles">
+  <div class="wrap">
+    <div class="gallery-note reveal">
+      <div>
+        <p class="eyebrow">The essay itself</p>
+        <h2>Pages from 1953</h2>
+      </div>
+      <p class="tiny">click to enlarge</p>
+    </div>
+    <div class="facsimiles reveal">
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_the_past_of_a_delusion_vordenker.pdf_p1-01.jpg" alt="First page of The Past of a Delusion" loading="lazy">
+        <figcaption><b>p. 1.</b> The bilingual Vordenker edition: the editorial framing and the opening on aging brains.</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_the_past_of_a_delusion_vordenker.pdf_p3-03.jpg" alt="English opening of The Past of a Delusion" loading="lazy">
+        <figcaption><b>p. 3.</b> The English text begins: “We are not now the men we were a quarter of a century ago.”</figcaption>
+      </figure>
+      <figure class="facsimile">
+        <img src="mp_assets/mcculloch_the_past_of_a_delusion_vordenker.pdf_p8-08.jpg" alt="Page on psychoanalysis as a disease" loading="lazy">
+        <figcaption><b>p. 8.</b> The charge of self-reference: psychoanalysis as the disease of which it fancies itself the cure.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why" data-label="Why it matters">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">Why it matters</p>
+      <h2>A mirror for every self-confirming theory.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">The essay is a period piece, but its structure is not. Every field has theories that can absorb their own failures: the market is efficient except when it isn't; the model is right except when the data are noisy; the patient resists because the interpretation is true. McCulloch's loop is a warning about all of them.</p>
+      <p class="lede">It also shows the other McCulloch: not the calm logician of the 1943 calculus, but the physician who spent years with psychotic patients and had no patience for explanations that did not help. The anger is part of the evidence.</p>
+      <div class="note"><b>Read next:</b> <a href="mp_1955_mysterium.html">Mysterium Iniquitatis</a>, where McCulloch turns the same suspicion on pseudo-explanations in biology and on the limits of mechanistic knowledge.</div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:2.5rem;display:grid;gap:1rem">
+    <a class="next reveal" href="mp_1955_mysterium.html">
+      <div>
+        <p class="eyebrow">Plate 08 · 1955</p>
+        <h3>Mysterium Iniquitatis of Sinful Man Aspiring into the Place of God</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+    <a class="next reveal" href="mp_index.html">
+      <div>
+        <p class="eyebrow">All plates &amp; companions</p>
+        <h3>Return to the Codex</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span>Companion 03 · <b>The Past of a Delusion</b></span>
+    <span>Source: <a href="https://www.vordenker.de/ggphilosophy/mcculloch_past_delusion.pdf">Vordenker bilingual edition</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Facsimile viewer"><img alt=""><div class="cap"></div></div>
+</body>
+</html>
