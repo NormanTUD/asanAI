@@ -18,7 +18,7 @@ tags: interested-layman
 	</figure>
 	<figure>
 		<img src="image.php?f=perceptron2.jpg&amp;ar-base=cave_hands.jpg" alt="Perceptron Wiring" />
-		<figcaption class="md">The Mark I Perceptron, the experimental letter-recognising machine announced by the U.S. Navy in 1960. Photo: \cite[U.S. Navy]{perceptronimagedetection}, public domain.</figcaption>
+		<figcaption class="md">The Mark I Perceptron, the experimental letter-recognising machine built by Frank Rosenblatt's group and announced by the U.S. Navy. Photo: \cite[U.S. Navy]{perceptronimagedetection}, public domain.</figcaption>
 	</figure>
 </div>
 

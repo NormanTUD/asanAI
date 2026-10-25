@@ -702,7 +702,7 @@ This project was funded by the *Office of Naval Research*, under the codename *P
 	</figure>
 	<figure>
 		<img src="perceptron2.jpg" alt="Perceptron Detection" />
-		<figcaption class="md">The Mark I Perceptron, the experimental letter-recognising machine announced by the U.S. Navy in 1960. Photo: \cite[U.S. Navy]{perceptronimagedetection}, public domain.</figcaption>
+		<figcaption class="md">The Mark I Perceptron, the experimental letter-recognising machine built by Frank Rosenblatt's group and announced by the U.S. Navy. Photo: \cite[U.S. Navy]{perceptronimagedetection}, public domain.</figcaption>
 	</figure>
 </div>
 

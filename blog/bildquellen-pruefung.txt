@@ -1308,3 +1308,20 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lokal: thomas_bayes.png (471x569)
    Genutzt in: statistics_ii.php § "Bayesian Updating"
    Status: OK - CC BY-SA 4.0
+
+=== INTRO / HISTORY / LANGUAGE (Stand: Oktober 2026) ===
+3. cuevadelasmanos_image
+   URL: https://commons.wikimedia.org/wiki/File:Cueva_de_las_Manos_(6811931046).jpg
+   Lizenz: CC BY-SA 2.0 (via Commons API extmetadata)
+   Autor: Pablo A. Gimenez
+   Lokal: cave_hands.jpg (4000x2248)
+   Genutzt in: intro.php; language.php § "Writing as technology"
+   Status: OK - CC BY-SA 2.0
+
+4. perceptronimagedetection
+   URL: https://commons.wikimedia.org/wiki/File:330-PSA-80-60_(USN_710739)_(20897323365).jpg
+   Lizenz: Public domain (via Commons API extmetadata)
+   Autor: U.S. Navy / National Museum of the U.S. Navy
+   Lokal: perceptron2.jpg (2836x2220)
+   Genutzt in: intro.php; history.php
+   Status: OK - Public domain
