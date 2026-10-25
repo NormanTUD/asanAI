@@ -1,0 +1,4132 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faserbündel — Die Geometrie von Ort und Zustand</title>
+<meta name="description" content="Eine interaktive Reise durch Faserbündel: Zylinder, Möbiusband, Tangentialbündel, Holonomie, Hopf-Faserung, Eichfeld, Berry-Phase und gauge-äquivariante Netze.">
+<link rel="stylesheet" href="../Temml-Local.css">
+<script src="../temml.min.js"></script>
+<style>
+@font-face{
+  font-family:'LinguaFranca';
+  src:url('../fonts/LinguaFranca-Regular.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'LinguaFranca';
+  src:url('../fonts/LinguaFranca-Bold.woff2') format('woff2');
+  font-weight:700;font-style:normal;font-display:swap;
+}
+@font-face{
+  font-family:'LinguaFranca';
+  src:url('../fonts/LinguaFranca-Italic.woff2') format('woff2');
+  font-weight:400;font-style:italic;font-display:swap;
+}
+@font-face{
+  font-family:'LinguaFranca';
+  src:url('../fonts/LinguaFranca-BoldItalic.woff2') format('woff2');
+  font-weight:700;font-style:italic;font-display:swap;
+}
+
+:root{
+  color-scheme:dark;
+  --bg:#05060b;
+  --bg2:#090b12;
+  --panel:rgba(17,21,31,.74);
+  --panel2:rgba(23,28,41,.62);
+  --line:rgba(255,255,255,.09);
+  --line2:rgba(255,255,255,.16);
+  --txt:#e9edf5;
+  --dim:#a1aabd;
+  --dimmer:#6f7a8e;
+  --base:#ffb454;
+  --fiber:#5eead4;
+  --total:#c084fc;
+  --pink:#ff7aa2;
+  --blue:#7aa2ff;
+  --yellow:#ffd166;
+  --serif:'LinguaFranca',Georgia,'Times New Roman',serif;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+  --rad:18px;
+  --max:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:28px}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.72;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(1000px 700px at 8% 4%, rgba(94,234,212,.075), transparent 62%),
+    radial-gradient(900px 800px at 92% 18%, rgba(192,132,252,.075), transparent 64%),
+    radial-gradient(800px 700px at 46% 86%, rgba(255,180,84,.055), transparent 62%),
+    linear-gradient(180deg,#05060b,#080a11 42%,#05060b);
+}
+body::after{
+  content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.65'/%3E%3C/svg%3E");
+}
+::selection{background:rgba(94,234,212,.28);color:#fff}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:#070910}
+::-webkit-scrollbar-thumb{background:#26303f;border-radius:8px;border:2px solid #070910}
+::-webkit-scrollbar-thumb:hover{background:#3a475b}
+
+#prog{
+  position:fixed;top:0;left:0;height:3px;width:0;z-index:200;
+  background:linear-gradient(90deg,var(--base),var(--fiber),var(--total));
+  box-shadow:0 0 16px rgba(94,234,212,.65);
+  transition:width .1s linear;
+}
+#dots{
+  position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:90;
+  display:flex;flex-direction:column;gap:11px;align-items:flex-end;
+}
+#dots a{
+  position:relative;display:block;
+  width:9px;height:9px;border-radius:50%;
+  background:rgba(255,255,255,.17);
+  transition:background .22s,transform .22s,box-shadow .22s;
+}
+#dots a:hover{background:var(--dim);transform:scale(1.15)}
+#dots a.on{background:var(--fiber);box-shadow:0 0 13px rgba(94,234,212,.9);transform:scale(1.35)}
+#dots a span{
+  position:absolute;right:18px;top:50%;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--dim);background:rgba(8,10,17,.92);border:1px solid var(--line);
+  padding:3px 8px;border-radius:999px;white-space:nowrap;
+  opacity:0;transform:translate(7px,-50%);transition:.22s;pointer-events:none;
+}
+#dots a:hover span,#dots a.on span{opacity:1;transform:translate(0,-50%)}
+
+.wrap{max-width:var(--max);margin:0 auto;padding:0 26px}
+.sec{padding:96px 0;position:relative}
+.sec + .sec{border-top:1px solid rgba(255,255,255,.045)}
+.kicker{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--fiber);margin-bottom:13px;display:flex;align-items:center;gap:10px;
+}
+.kicker::before{content:'';width:26px;height:1px;background:linear-gradient(90deg,var(--fiber),transparent)}
+h1{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(3.7rem,11vw,8.2rem);line-height:.88;letter-spacing:-.045em;
+  background:linear-gradient(115deg,#fff 8%,var(--fiber) 38%,var(--blue) 64%,var(--total) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+h1 span{display:block;font-style:italic;font-weight:400;letter-spacing:-.05em;padding-left:.08em}
+h2{
+  font-family:var(--serif);font-weight:700;
+  font-size:clamp(2.05rem,4.6vw,3.5rem);line-height:1.04;letter-spacing:-.025em;
+  margin-bottom:16px;max-width:20ch;
+}
+h3{
+  font-family:var(--sans);font-weight:700;font-size:1.16rem;line-height:1.3;
+  margin:24px 0 8px;color:#fff;
+}
+h4{
+  font-weight:600;font-size:.98rem;color:var(--fiber);margin:16px 0 6px;letter-spacing:.01em;
+}
+p{color:var(--dim);font-size:1.02rem;max-width:76ch;margin-bottom:13px}
+p.lead{font-size:1.18rem;line-height:1.66;color:#c8d0df;max-width:68ch}
+strong{color:#fff;font-weight:600}
+em{color:var(--fiber);font-style:normal;font-weight:500}
+a{color:var(--fiber)}
+.m{font-family:var(--serif);font-style:italic;color:#edf2fb;white-space:nowrap}
+.m b,.m .up{font-style:normal}
+.small{font-size:.86rem;color:var(--dimmer)}
+.hint{font-size:.8rem;color:var(--dimmer);font-style:italic;margin-top:8px}
+.tag{
+  display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);
+  font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--dim);border:1px solid var(--line2);border-radius:999px;padding:4px 9px;
+}
+.tag.base{color:var(--base);border-color:rgba(255,180,84,.34);background:rgba(255,180,84,.06)}
+.tag.fiber{color:var(--fiber);border-color:rgba(94,234,212,.34);background:rgba(94,234,212,.06)}
+.tag.total{color:var(--total);border-color:rgba(192,132,252,.34);background:rgba(192,132,252,.06)}
+.tag.pink{color:var(--pink);border-color:rgba(255,122,162,.34);background:rgba(255,122,162,.06)}
+.hero{
+  min-height:100vh;min-height:100svh;position:relative;display:flex;align-items:center;
+  padding:70px 0 54px;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;z-index:-1;
+  background:
+    radial-gradient(800px 600px at 72% 38%, rgba(94,234,212,.09), transparent 65%),
+    radial-gradient(700px 700px at 28% 72%, rgba(192,132,252,.08), transparent 65%);
+}
+.hero-inner{
+  display:grid;grid-template-columns:1.02fr .98fr;gap:42px;align-items:center;width:100%;
+}
+.hero-copy{position:relative;z-index:2}
+.hero-sub{
+  font-size:clamp(1.03rem,1.5vw,1.22rem);line-height:1.62;color:#c2ccdc;
+  max-width:55ch;margin-top:24px;
+}
+.hero-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:24px}
+.scroll-cue{
+  display:inline-flex;align-items:center;gap:11px;margin-top:34px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--dim);text-decoration:none;
+}
+.scroll-cue i{
+  width:24px;height:38px;border:1px solid var(--line2);border-radius:14px;
+  display:flex;justify-content:center;padding-top:7px;
+}
+.scroll-cue i::after{
+  content:'';width:3px;height:7px;border-radius:3px;background:var(--fiber);
+  animation:cue 1.8s ease-in-out infinite;
+}
+@keyframes cue{0%,100%{transform:translateY(0);opacity:.35}50%{transform:translateY(11px);opacity:1}}
+.hero-stage{position:relative;z-index:1}
+.hero-cv{aspect-ratio:1/1;border-radius:calc(var(--rad) + 8px)}
+.hero-cv canvas{cursor:grab}
+.hero-stage .stage-cap{margin-top:12px}
+.stage{
+  position:relative;background:linear-gradient(180deg,rgba(16,20,30,.92),rgba(7,9,15,.94));
+  border:1px solid var(--line);border-radius:calc(var(--rad) + 5px);
+  padding:13px;box-shadow:0 34px 90px rgba(0,0,0,.48);
+  overflow:hidden;
+}
+.stage::before{
+  content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(700px 260px at 18% 0%, rgba(94,234,212,.1), transparent 65%),
+             radial-gradient(600px 260px at 88% 100%, rgba(192,132,252,.09), transparent 65%);
+  mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);
+  -webkit-mask-composite:xor;mask-composite:exclude;padding:1px;
+}
+.stage-top{
+  display:flex;justify-content:space-between;align-items:center;gap:14px;
+  padding:3px 6px 12px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--dimmer);
+}
+.stage-top .live{color:var(--fiber);display:inline-flex;align-items:center;gap:6px}
+.stage-top .live::before{
+  content:'';width:6px;height:6px;border-radius:50%;background:var(--fiber);
+  box-shadow:0 0 8px var(--fiber);animation:pulse 2.2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+.cv{
+  position:relative;width:100%;aspect-ratio:16/10;border-radius:14px;overflow:hidden;
+  background:
+    radial-gradient(900px 480px at 50% 18%, rgba(94,234,212,.055), transparent 62%),
+    radial-gradient(700px 500px at 85% 90%, rgba(192,132,252,.045), transparent 62%),
+    #06080e;
+  border:1px solid rgba(255,255,255,.055);
+  isolation:isolate;
+}
+.cv::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 52%,rgba(0,0,0,.32) 100%);
+  z-index:2;
+}
+.cv canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;z-index:1}
+.cv canvas:active{cursor:grabbing}
+.cv.tall{aspect-ratio:1/1}
+.cv.wide{aspect-ratio:16/9}
+.cv.flat{aspect-ratio:16/8}
+.stage-cap{
+  display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  padding:11px 6px 2px;font-size:.79rem;color:var(--dimmer);line-height:1.45;
+}
+.stage-cap .drag{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--dimmer);opacity:.8}
+
+.controls{
+  display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;
+  padding:15px 6px 4px;
+}
+.ctl{display:flex;align-items:center;gap:9px;min-height:28px}
+.ctl label{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--dimmer);white-space:nowrap;
+}
+.ctl output{
+  font-family:var(--mono);font-size:10.5px;color:var(--fiber);
+  min-width:40px;text-align:right;letter-spacing:.03em;
+}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:150px;height:4px;border-radius:4px;
+  background:linear-gradient(90deg,rgba(94,234,212,.8),rgba(192,132,252,.75));
+  outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:#f4f8ff;
+  border:0;cursor:pointer;box-shadow:0 0 0 4px rgba(94,234,212,.18),0 2px 8px rgba(0,0,0,.55);
+}
+input[type=range]::-moz-range-thumb{
+  width:15px;height:15px;border-radius:50%;background:#f4f8ff;border:0;cursor:pointer;
+  box-shadow:0 0 0 4px rgba(94,234,212,.18);
+}
+.btn{
+  appearance:none;border:1px solid rgba(122,162,255,.3);
+  background:rgba(122,162,255,.08);color:#dce5ff;
+  padding:7px 12px;border-radius:9px;cursor:pointer;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+  transition:.18s;line-height:1;
+}
+.btn:hover{background:rgba(122,162,255,.17);transform:translateY(-1px)}
+.btn.active,.btn.on{
+  background:var(--fiber);border-color:var(--fiber);color:#03110e;font-weight:700;
+  box-shadow:0 0 18px rgba(94,234,212,.25);
+}
+.btn.ghost{background:transparent;border-color:var(--line2);color:var(--dim)}
+.btn.ghost:hover{color:#fff;border-color:var(--dim)}
+.btn.small{padding:5px 9px;font-size:8.5px}
+.readout{
+  display:flex;flex-wrap:wrap;gap:7px;padding:10px 6px 0;
+}
+.chip{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--dim);
+  background:rgba(255,255,255,.035);border:1px solid var(--line);
+  border-radius:7px;padding:5px 8px;line-height:1.25;
+}
+.chip b{color:var(--fiber);font-weight:600}
+.chip.base b{color:var(--base)}
+.chip.total b{color:var(--total)}
+.chip.pink b{color:var(--pink)}
+.sec-head{max-width:820px;margin-bottom:34px}
+.prose-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px 42px;align-items:start}
+.split{display:grid;grid-template-columns:1.02fr .98fr;gap:36px;align-items:start}
+.split.rev{grid-template-columns:.98fr 1.02fr}
+.split .stage{position:sticky;top:28px}
+.hopf-grid{display:grid;grid-template-columns:.78fr 1.22fr;gap:18px;align-items:stretch}
+.hopf-grid .stage{height:100%}
+.hopf-grid .cv{height:calc(100% - 26px);aspect-ratio:auto;min-height:320px}
+@media(max-width:980px){
+  .hero-inner,.split,.split.rev,.prose-grid,.hopf-grid{grid-template-columns:1fr}
+  .split .stage{position:relative;top:0}
+  .hopf-grid .cv{aspect-ratio:1/1;height:auto;min-height:0}
+  #dots{display:none}
+}
+@media(max-width:620px){
+  .wrap{padding:0 17px}
+  .sec{padding:70px 0}
+  .hero{padding-top:48px}
+  .stage{padding:9px}
+  .cv{aspect-ratio:4/3}
+  input[type=range]{width:118px}
+  .controls{gap:10px 12px}
+  .acc-body .formula .tex{font-size:.74rem}
+}
+.vocab{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:26px 0}
+.vocab-item{
+  background:linear-gradient(180deg,rgba(22,27,40,.7),rgba(11,14,22,.7));
+  border:1px solid var(--line);border-radius:14px;padding:16px 17px;
+}
+.vocab-item .dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:8px}
+.vocab-item h4{margin:0 0 4px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt)}
+.vocab-item p{font-size:.88rem;line-height:1.55;margin:0;color:var(--dim)}
+.vocab-item.base .dot{background:var(--base);box-shadow:0 0 9px var(--base)}
+.vocab-item.fiber .dot{background:var(--fiber);box-shadow:0 0 9px var(--fiber)}
+.vocab-item.total .dot{background:var(--total);box-shadow:0 0 9px var(--total)}
+.vocab-item.proj .dot{background:var(--pink);box-shadow:0 0 9px var(--pink)}
+@media(max-width:620px){.vocab{grid-template-columns:1fr}}
+
+.note{
+  border-left:2px solid var(--fiber);background:linear-gradient(90deg,rgba(94,234,212,.06),transparent 75%);
+  padding:15px 18px;border-radius:0 12px 12px 0;margin:22px 0;
+}
+.note.base{border-color:var(--base);background:linear-gradient(90deg,rgba(255,180,84,.06),transparent 75%)}
+.note.total{border-color:var(--total);background:linear-gradient(90deg,rgba(192,132,252,.06),transparent 75%)}
+.note.pink{border-color:var(--pink);background:linear-gradient(90deg,rgba(255,122,162,.06),transparent 75%)}
+.note p{margin:0;font-size:.95rem;color:#c4cddd}
+.note strong{color:#fff}
+.formula{
+  position:relative;background:linear-gradient(180deg,rgba(19,24,36,.9),rgba(10,13,21,.92));
+  border:1px solid var(--line);border-radius:var(--rad);
+  padding:22px 24px;margin:20px 0;overflow:hidden;
+}
+.formula::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(650px 230px at 0% 0%, rgba(94,234,212,.075), transparent 68%),
+             radial-gradient(500px 200px at 100% 100%, rgba(192,132,252,.065), transparent 68%);
+}
+.formula-label{
+  position:relative;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--fiber);margin-bottom:10px;
+}
+.formula .tex{
+  position:relative;overflow-x:auto;overflow-y:hidden;padding:6px 0 3px;
+  font-size:clamp(.82rem,1.55vw,1.1rem);color:#eef3fc;
+}
+.formula .tex math{font-size:1.06em}
+.formula-grid .formula .tex{font-size:clamp(.74rem,1.3vw,.98rem)}
+.split .formula .tex{font-size:clamp(.76rem,1.35vw,1.02rem)}
+.formula .plain{
+  position:relative;font-size:.9rem;line-height:1.58;color:var(--dim);
+  margin:10px 0 0;max-width:82ch;
+}
+.formula-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.formula-grid .formula{margin:0}
+@media(max-width:900px){.formula-grid{grid-template-columns:1fr}}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:rgba(12,15,23,.6)}
+.dict{width:100%;border-collapse:collapse;font-size:.88rem;min-width:640px}
+.dict th,.dict td{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left;vertical-align:top;line-height:1.45}
+.dict tr:last-child td{border-bottom:0}
+.dict th{
+  font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dimmer);background:rgba(255,255,255,.025);
+}
+.dict td:first-child{color:var(--base);font-weight:600;white-space:nowrap}
+.dict td:nth-child(2){color:var(--fiber)}
+.dict td:nth-child(3){color:var(--dim)}
+.dict tr:hover td{background:rgba(94,234,212,.035)}
+.model-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:22px 0}
+.model{
+  border:1px solid var(--line);border-radius:14px;padding:16px;
+  background:linear-gradient(180deg,rgba(22,27,40,.72),rgba(10,13,21,.72));
+}
+.model .big{font-family:var(--serif);font-size:1.9rem;line-height:1;margin-bottom:6px}
+.model.u1 .big{color:var(--base)}
+.model.su2 .big{color:var(--fiber)}
+.model.su3 .big{color:var(--total)}
+.model p{font-size:.83rem;line-height:1.5;margin:0;color:var(--dim)}
+@media(max-width:720px){.model-grid{grid-template-columns:1fr}}
+.zoo{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:26px}
+.zoo-card{
+  position:relative;display:block;text-decoration:none;color:inherit;
+  border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(19,24,36,.75),rgba(8,10,17,.85));
+  transition:transform .25s,border-color .25s,box-shadow .25s;
+}
+.zoo-card:hover{transform:translateY(-3px);border-color:rgba(94,234,212,.28);box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.zoo-card svg{display:block;width:100%;height:148px}
+.zoo-card .zoo-txt{padding:12px 15px 15px}
+.zoo-card h4{margin:0 0 3px;color:#fff;font-size:.95rem}
+.zoo-card p{font-size:.8rem;line-height:1.45;margin:0;color:var(--dimmer)}
+.zoo-card .zoo-tag{
+  position:absolute;top:10px;right:10px;font-family:var(--mono);font-size:8px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--dim);
+  background:rgba(5,7,12,.65);border:1px solid var(--line);border-radius:999px;padding:3px 7px;
+}
+@media(max-width:900px){.zoo{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.zoo{grid-template-columns:1fr}}
+details.acc{
+  border:1px solid var(--line);border-radius:14px;background:rgba(12,15,23,.62);
+  margin:10px 0;overflow:hidden;
+}
+details.acc summary{
+  cursor:pointer;list-style:none;padding:15px 18px;
+  font-family:var(--mono);font-size:10pt;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--dim);display:flex;justify-content:space-between;gap:14px;align-items:center;
+}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary::after{content:'+';font-size:18px;color:var(--fiber);line-height:1}
+details.acc[open] summary::after{content:'−'}
+details.acc[open] summary{color:var(--fiber);border-bottom:1px solid var(--line)}
+details.acc .acc-body{padding:4px 18px 16px}
+details.acc .formula{margin:12px 0 0;background:rgba(0,0,0,.16)}
+.source-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px}
+.source-card{
+  border:1px solid var(--line);border-radius:16px;padding:19px 20px;
+  background:linear-gradient(180deg,rgba(19,24,36,.7),rgba(9,11,18,.7));
+}
+.source-card h4{margin:0 0 10px;color:var(--fiber);font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase}
+.source-card ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+.source-card li{font-size:.84rem;line-height:1.45;color:var(--dim);padding-left:13px;position:relative}
+.source-card li::before{content:'';position:absolute;left:0;top:.62em;width:4px;height:4px;border-radius:50%;background:var(--dimmer)}
+.source-card a{color:#dbe4f2;text-decoration:none;border-bottom:1px solid rgba(94,234,212,.22);transition:.18s}
+.source-card a:hover{color:var(--fiber);border-bottom-color:var(--fiber)}
+.source-card .src-meta{display:block;font-family:var(--mono);font-size:8.5px;color:var(--dimmer);letter-spacing:.04em;margin-top:2px}
+@media(max-width:820px){.source-grid{grid-template-columns:1fr}}
+footer{
+  padding:70px 0 46px;border-top:1px solid var(--line);
+  background:linear-gradient(180deg,transparent,rgba(94,234,212,.025));
+}
+.footer-inner{display:flex;justify-content:space-between;gap:28px;flex-wrap:wrap;align-items:flex-end}
+.footer-inner p{font-size:.83rem;margin:0;color:var(--dimmer);max-width:56ch}
+.footer-inner .mark{font-family:var(--serif);font-size:1.5rem;color:var(--fiber);font-style:italic}
+.top-link{
+  font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--dim);text-decoration:none;border:1px solid var(--line2);border-radius:999px;
+  padding:8px 13px;transition:.18s;
+}
+.top-link:hover{color:var(--fiber);border-color:var(--fiber)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.hero-cv{aspect-ratio:1/1}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  .scroll-cue i::after,.stage-top .live::before{animation:none}
+}
+</style>
+</head>
+<body>
+<noscript><style>.reveal{opacity:1;transform:none}.stage-top .live::before,.scroll-cue i::after{animation:none}</style></noscript>
+<div id="prog"></div>
+<nav id="dots" aria-label="Abschnitte">
+  <a href="#idee"><span>Die Idee</span></a>
+  <a href="#definition"><span>Definition</span></a>
+  <a href="#schnitte"><span>Schnitte</span></a>
+  <a href="#tangential"><span>Tangential</span></a>
+  <a href="#rahmen"><span>Rahmen</span></a>
+  <a href="#verbindung"><span>Verbindung</span></a>
+  <a href="#hopf"><span>Hopf</span></a>
+  <a href="#physik"><span>Physik</span></a>
+  <a href="#chemie"><span>Chemie</span></a>
+  <a href="#materialien"><span>Materialien</span></a>
+  <a href="#informatik"><span>Informatik</span></a>
+  <a href="#klassifikation"><span>Klassifikation</span></a>
+  <a href="#zoo"><span>Zoo</span></a>
+  <a href="#formeln"><span>Formeln</span></a>
+  <a href="#quellen"><span>Quellen</span></a>
+</nav>
+
+<header class="hero" id="anfang">
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <div class="kicker">Interaktives Essay · Geometrie</div>
+      <h1>Faser<span>bündel</span></h1>
+      <p class="hero-sub">
+        Ort und Zustand, getrennt und doch untrennbar. Über jedem Punkt eines Raumes
+        kann ein eigener Raum liegen. Lokal sieht das harmlos aus wie ein Produkt.
+        Global entsteht daraus die gesamte Geschichte der modernen Geometrie —
+        und dieselbe Idee taucht plötzlich in Physik, Chemie und Informatik auf.
+      </p>
+      <div class="hero-tags">
+        <span class="tag fiber">interaktiv</span>
+        <span class="tag base">Topologie</span>
+        <span class="tag total">Eichfeld</span>
+        <span class="tag pink">Hopf</span>
+      </div>
+      <a class="scroll-cue" href="#idee"><i></i> langsam eintauchen</a>
+    </div>
+    <div class="hero-stage stage">
+      <div class="cv hero-cv"><canvas id="heroCanvas" role="img" aria-label="Rotierende Faserbündel-Skulptur aus leuchtenden Fasern über einem Kreis"></canvas></div>
+      <div class="stage-cap">
+        <span>Eine Faser über jedem Punkt, zu einer leuchtenden Skulptur verdreht. Ziehen zum Drehen.</span>
+        <span class="drag">drag · rotate</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="sec" id="idee">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">01 · Die Idee</div>
+      <h2>Ein Raum über jedem Punkt.</h2>
+      <p class="lead">
+        Ein Faserbündel ist kein Gegenstand, den man in die Hand nimmt. Es ist eine
+        <em>Art, Räume übereinanderzulegen</em>: unten die Basis, oben der Gesamtraum,
+        und über jedem Basispunkt eine Faser — der Raum der Zustände, die an diesem
+        Ort möglich sind.
+      </p>
+    </div>
+
+    <div class="prose-grid reveal">
+      <div>
+        <p>
+          Stell dir eine Landkarte vor. An jedem Ort kannst du die Temperatur messen.
+          Der Ort ist ein Punkt der Basis; die Temperatur ist ein Punkt der Faser.
+          Alle Messungen zusammen bilden eine Fläche über der Karte — einen
+          <strong>Schnitt</strong> im Bündel. Die Faser sagt nicht, <em>wo</em> du bist.
+          Sie sagt, <em>was dort möglich ist</em>.
+        </p>
+        <p>
+          Das Entscheidende ist die Projektion <span class="m">π: E → B</span>. Sie
+          vergisst den Zustand und behält den Ort. Jeder Punkt des Gesamtraums
+          <span class="m">E</span> kennt seinen Fußpunkt <span class="m">π(e) ∈ B</span>.
+          Die Faser über <span class="m">b</span> ist alles, was über diesem Fußpunkt liegt:
+          <span class="m">E<sub>b</sub> = π<sup>−1</sup>(b)</span>.
+        </p>
+      </div>
+      <div>
+        <p>
+          Lokal ist ein Faserbündel so unspektakulär wie ein Produkt:
+          über einer kleinen offenen Menge <span class="m">U</span> sieht es aus wie
+          <span class="m">U × F</span>. Man kann ein Koordinatensystem wählen, in dem
+          Ort und Zustand sauber getrennt sind. Das ist die
+          <strong>lokale Trivialität</strong>.
+        </p>
+        <p>
+          Global kann diese Trennung scheitern. Dann gibt es keinen einzigen
+          koordinatenfreien Blick, der Ort und Zustand im ganzen Raum zugleich
+          auseinandernimmt. Genau diese <em>Verdrehung</em> ist die Topologie des
+          Bündels — und der Grund, warum Faserbündel mehr sind als Produkte.
+        </p>
+      </div>
+    </div>
+
+    <div class="stage reveal" style="margin-top:30px">
+      <div class="stage-top">
+        <span>Das Bündel-Theater</span>
+        <span class="live">live · interaktiv</span>
+      </div>
+      <div class="cv core-cv"><canvas id="coreCanvas" role="img" aria-label="Interaktives Faserbündel: Zylinder, Möbiusband oder Torus mit markierter Faser und Projektion"></canvas></div>
+      <div class="controls">
+        <div class="ctl">
+          <button class="btn active" data-core-mode="cylinder">Zylinder</button>
+          <button class="btn" data-core-mode="mobius">Möbius</button>
+          <button class="btn" data-core-mode="torus">Torus</button>
+        </div>
+        <div class="ctl" id="coreTwistCtl">
+          <label for="coreTwist">Twist</label>
+          <input type="range" id="coreTwist" min="0" max="1" step="0.01" value="0">
+          <output id="coreTwistOut">0.00</output>
+        </div>
+        <div class="ctl">
+          <label for="corePhase">Faser</label>
+          <input type="range" id="corePhase" min="0" max="1" step="0.001" value="0.18">
+          <output id="corePhaseOut">0.18</output>
+        </div>
+        <div class="ctl">
+          <button class="btn ghost" id="coreProj">Projektion</button>
+          <button class="btn ghost" id="coreSpin">Rotation</button>
+        </div>
+      </div>
+      <div class="readout" id="coreReadout">
+        <span class="chip base">Basis <b>S¹</b></span>
+        <span class="chip">Faser <b>ℝ</b></span>
+        <span class="chip total">Gesamtraum <b>Zylinder</b></span>
+        <span class="chip pink">lokal <b>U × F</b></span>
+      </div>
+      <div class="stage-cap">
+        <span>Der goldene Kreis ist die Basis. Die türkise Linie ist eine einzelne Faser (gezeigt: ein endliches Stück der Faser ℝ). Die gestrichelte Linie ist die Projektion.</span>
+        <span class="drag">drag · rotate · wheel · zoom</span>
+      </div>
+      <p class="hint" style="padding:8px 6px 0">Nur ganzzahlige Twists schließen das Band. 0 ergibt den Zylinder, 1 das Möbiusband; Zwischenwerte zeigen die Naht, an der die Faser nicht mehr zusammenpasst.</p>
+    </div>
+
+    <div class="formula reveal">
+      <div class="formula-label">Die Projektion</div>
+      <script type="text/x-tex">
+\underbrace{\pi:E\longrightarrow B}_{\substack{\text{jeder Punkt des Gesamtraums}\\\text{kennt seinen Fußpunkt in der Basis}}}
+\qquad
+\underbrace{E_b=\pi^{-1}(b)}_{\substack{\text{die Faser über }b:\ \text{alles,}\\\text{was über demselben Ort liegt}}}
+      </script>
+      <div class="tex"></div>
+      <p class="plain">
+        Die Projektion ist absichtlich vergesslich. Sie ist die einzige Abbildung,
+        die ein Bündel strukturell zusammenhält: Ohne <span class="m">π</span> wäre
+        <span class="m">E</span> nur ein großer Raum ohne Bezug zur Basis.
+      </p>
+    </div>
+
+    <div class="note reveal">
+      <p><strong>Merksatz.</strong> Ein Produkt ist ein Bündel, in dem man den Ort und den
+      Zustand global sauber trennen kann. Ein echtes Bündel ist ein Produkt, das
+      <em>lokal</em> so aussieht — aber global eine Drehung trägt, die man nicht
+      wegkoordinatisieren kann.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="definition">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">02 · Definition</div>
+      <h2>Die Definition, ohne Nebel.</h2>
+      <p class="lead">
+        Vier Wörter reichen: Gesamtraum, Basis, Projektion, typische Faser. Der Rest
+        ist die Frage, wie diese vier Teile <em>lokal</em> zusammenpassen — und was
+        passiert, wenn sie global nicht mehr zusammenpassen wollen.
+      </p>
+    </div>
+
+    <div class="vocab reveal">
+      <div class="vocab-item base">
+        <h4><span class="dot"></span>Basis <span class="m">B</span></h4>
+        <p>Der Ort. Die Menge der Punkte, über denen Fasern liegen. Im Bild: der goldene Kreis.</p>
+      </div>
+      <div class="vocab-item fiber">
+        <h4><span class="dot"></span>Faser <span class="m">F</span></h4>
+        <p>Der Zustandsraum über einem einzelnen Punkt. Im Bild: die türkise Linie oder der kleine Kreis.</p>
+      </div>
+      <div class="vocab-item total">
+        <h4><span class="dot"></span>Gesamtraum <span class="m">E</span></h4>
+        <p>Alle Fasern zusammen. Im Bild: die gesamte Fläche, das Band, der Torus.</p>
+      </div>
+      <div class="vocab-item proj">
+        <h4><span class="dot"></span>Projektion <span class="m">π</span></h4>
+        <p>Die Vergessensabbildung <span class="m">E → B</span>. Sie sagt jedem Zustand, zu welchem Ort er gehört.</p>
+      </div>
+    </div>
+
+    <div class="split reveal">
+      <div>
+        <p>
+          Die formale Definition ist erstaunlich bescheiden. Ein Faserbündel ist ein
+          Quadrupel <span class="m">(E, B, π, F)</span> mit einer surjektiven stetigen
+          Abbildung <span class="m">π: E → B</span>, sodass jeder Punkt von
+          <span class="m">B</span> eine offene Umgebung <span class="m">U</span> besitzt,
+          über der <span class="m">E</span> wie ein Produkt aussieht.
+        </p>
+        <p>
+          „Wie ein Produkt“ heißt: Es gibt einen Homöomorphismus
+          <span class="m">φ: π<sup>−1</sup>(U) → U × F</span>, der mit der Projektion
+          verträglich ist. Man nennt <span class="m">φ</span> eine
+          <strong>lokale Trivialisierung</strong>. Sie ist eine Brille, durch die das
+          Bündel über <span class="m">U</span> plötzlich langweilig wird.
+        </p>
+        <p>
+          Auf Überlappungen <span class="m">U<sub>i</sub> ∩ U<sub>j</sub></span> hat man
+          zwei solcher Brillen. Der Vergleich der beiden ist die
+          <strong>Übergangsfunktion</strong> <span class="m">g<sub>ij</sub></span>.
+          Sie sagt genau, wie die Faser verdreht wird, wenn man von einer Karte zur
+          anderen geht.
+        </p>
+      </div>
+      <div>
+        <p>
+          Für ein Vektorbündel ist <span class="m">F ≅ ℝ<sup>k</sup></span> und jedes
+          <span class="m">g<sub>ij</sub>(b)</span> ist eine lineare Abbildung, also eine
+          Matrix. Für ein komplexes Geradenbündel ist <span class="m">F ≅ ℂ</span> und
+          <span class="m">g<sub>ij</sub>(b)</span> ist eine komplexe Zahl ungleich null,
+          also eine Drehung und Streckung.
+        </p>
+        <p>
+          Die Übergangsfunktionen dürfen nicht beliebig sein. Auf dreifachen
+          Überlappungen müssen sie sich konsistent verketten. Das ist die
+          <strong>Kozykelbedingung</strong> — die mathematische Form von „zweimal
+          umdrehen ist wieder gerade“.
+        </p>
+        <p class="small">
+          <span class="tag base">Basis</span>
+          <span class="tag fiber">Faser</span>
+          <span class="tag total">Gesamtraum</span>
+          <span class="tag pink">Klebedatum</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="stage reveal">
+      <div class="stage-top">
+        <span>Zwei Karten, ein Übergang</span>
+        <span class="live">live · interaktiv</span>
+      </div>
+      <div class="cv flat"><canvas id="glueCanvas" role="img" aria-label="Schematische Darstellung zweier lokaler Karten eines Faserbündels mit Übergangsfunktion"></canvas></div>
+      <div class="controls">
+        <div class="ctl">
+          <button class="btn active" data-glue-mode="cylinder">trivial</button>
+          <button class="btn" data-glue-mode="mobius">verdreht</button>
+        </div>
+        <div class="ctl">
+          <label for="glueTwist">Übergang</label>
+          <input type="range" id="glueTwist" min="0" max="1" step="0.01" value="0">
+          <output id="glueTwistOut">+1</output>
+        </div>
+        <div class="ctl">
+          <button class="btn ghost" id="gluePlay">Umlauf</button>
+        </div>
+      </div>
+      <div class="readout">
+        <span class="chip base">Karte <b>U<sub>i</sub></b></span>
+        <span class="chip">Karte <b>U<sub>j</sub></b></span>
+        <span class="chip total">Übergang <b id="glueSign">g<sub>ij</sub> = +1</b></span>
+      </div>
+      <div class="stage-cap">
+        <span>Der Punkt wandert um die Basis. In der Überlappung entscheidet <span class="m">g<sub>ij</sub></span>, ob die Faser unverändert bleibt oder gespiegelt wird.</span>
+        <span class="drag">play · drag the slider</span>
+      </div>
+      <p class="hint" style="padding:8px 6px 0">Zwischenwerte sind eine Deformation. Ein echtes reelles Geradenbündel hat <span class="m">g<sub>ij</sub> = ±1</span>; bei <span class="m">g<sub>ij</sub> = 0</span> kollabiert die Faser und das Bündel ist entartet.</p>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula reveal">
+        <div class="formula-label">Faserbündel</div>
+        <script type="text/x-tex">
+\underbrace{(E,B,\pi,F)}_{\substack{\text{Gesamtraum, Basis,}\\\text{Projektion, typische Faser}}}
+\quad\text{heißt Faserbündel, wenn}\quad
+\underbrace{\pi^{-1}(U)\cong U\times F}_{\substack{\text{lokal ein Produkt:}\\\text{über jeder kleinen Menge }U}}
+        </script>
+        <div class="tex"></div>
+        <p class="plain">
+          Die lokale Produktstruktur ist die Erlaubnis, vor Ort so zu tun, als wäre
+          das Bündel trivial. Der globale Twist steckt nicht in einem einzelnen
+          <span class="m">U</span>, sondern in der Art, wie die lokalen Bilder
+          zusammenkleben.
+        </p>
+      </div>
+      <div class="formula reveal">
+        <div class="formula-label">Klebedatum</div>
+        <script type="text/x-tex">
+\underbrace{g_{ij}:U_i\cap U_j\to G}_{\substack{\text{wie zwei lokale}\\\text{Koordinatensysteme zusammenhängen}}}
+\qquad
+\underbrace{g_{ik}=g_{ij}\,g_{jk}}_{\text{Kozykelbedingung auf dreifachen Überlappungen}}
+        </script>
+        <div class="tex"></div>
+        <p class="plain">
+          <span class="m">G</span> ist die Strukturgruppe: die erlaubten Verformungen
+          der Faser. Für ein Vektorbündel ist das <span class="m">GL(k)</span>, für
+          ein orientiertes euklidisches Bündel <span class="m">SO(k)</span>, für ein
+          komplexes Geradenbündel <span class="m">U(1)</span>.
+        </p>
+      </div>
+    </div>
+
+    <div class="note total reveal">
+      <p><strong>Die entscheidende Frage.</strong> Kann man alle lokalen Brillen so
+      wählen, dass sie global zusammenpassen? Wenn ja, ist das Bündel trivial:
+      <span class="m">E ≅ B × F</span>. Wenn nein, liegt die Behinderung in der
+      Topologie der Basis und der Strukturgruppe — und wird zu einer
+      charakteristischen Klasse.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="schnitte">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">03 · Schnitte</div>
+      <h2>Ein Schnitt ist eine Wahl.</h2>
+      <p class="lead">
+        Ein Schnitt wählt über jedem Punkt der Basis einen Zustand — stetig, ohne
+        Sprünge. Auf dem Zylinder geht das mit einer konstanten Wahl. Auf dem
+        Möbiusband muss jede stetige Wahl irgendwo null werden. Das ist der ganze
+        Unterschied zwischen „trivial“ und „verdreht“.
+      </p>
+    </div>
+
+    <div class="split rev reveal">
+      <div class="stage">
+        <div class="stage-top">
+          <span>Der aufgeschnittene Raum</span>
+          <span class="live">live</span>
+        </div>
+        <div class="cv flat"><canvas id="sectionCanvas" role="img" aria-label="Aufgeschnittenes Faserbündel mit Schnittkurve; beim Möbiusband wechselt das Vorzeichen"></canvas></div>
+        <div class="controls">
+          <div class="ctl">
+            <button class="btn active" data-section-mode="cylinder">Zylinder</button>
+            <button class="btn" data-section-mode="mobius">Möbius</button>
+          </div>
+          <div class="ctl">
+            <label for="sectionAmp">Amplitude</label>
+            <input type="range" id="sectionAmp" min="0" max="1.2" step="0.01" value="0.78">
+            <output id="sectionAmpOut">0.78</output>
+          </div>
+          <div class="ctl">
+            <button class="btn ghost" id="sectionPlay">Umlauf</button>
+          </div>
+        </div>
+        <div class="readout">
+          <span class="chip base">Basis <b>S¹</b></span>
+          <span class="chip">Schnitt <b id="sectionValue">v = 0.78</b></span>
+          <span class="chip total">Randbedingung <b id="sectionBC">v(1) = v(0)</b></span>
+        </div>
+        <div class="stage-cap">
+          <span>Rechts ist die Basis aufgeschnitten. Die linke und rechte Kante sind derselbe Punkt. Beim Möbiusband ist die rechte Faser gespiegelt.</span>
+          <span class="drag">drag the slider</span>
+        </div>
+      </div>
+      <div>
+        <p>
+          Ein Schnitt ist eine Abbildung <span class="m">s: B → E</span> mit
+          <span class="m">π ∘ s = id<sub>B</sub></span>. Für jeden Ort
+          <span class="m">b</span> liefert sie einen Punkt <span class="m">s(b)</span>
+          genau über <span class="m">b</span>. In der Physik ist fast jedes Feld ein
+          Schnitt: ein Vektorfeld ist ein Schnitt des Tangentialbündels, ein
+          Elektronspinorfeld ein Schnitt eines Spinorbündels, ein Higgsfeld ein
+          Schnitt eines assoziierten Bündels.
+        </p>
+        <p>
+          Der <strong>Nullschnitt</strong> <span class="m">s(b) = 0</span> existiert in
+          jedem Vektorbündel. Die interessante Frage ist, ob es einen Schnitt gibt,
+          der <em>nirgends</em> null wird. Auf dem Zylinder ja: eine konstante Höhe
+          ungleich null. Auf dem Möbiusband nein. Der Grund ist die
+          Randbedingung: Ein Umlauf kehrt die Faser um, also müsste
+          <span class="m">v(1) = −v(0)</span> gelten. Eine stetige Funktion, die am
+          Ende ihr Vorzeichen wechselt, muss dazwischen null werden.
+        </p>
+        <p>
+          Das ist kein Artefakt der Zeichnung, sondern die erste
+          <strong>charakteristische Klasse</strong>: die erste Stiefel-Whitney-Klasse
+          <span class="m">w<sub>1</sub></span>. Für das Möbiusband ist
+          <span class="m">w<sub>1</sub> ≠ 0</span>. Sie misst, ob das reelle
+          Geradenbündel verdreht ist.
+        </p>
+        <div class="note base">
+          <p><strong>Physik-Übersetzung.</strong> Ein Feld ist ein Schnitt. Ein
+          nirgends verschwindendes Feld ist ein globaler, stetiger Zustand. Dass es
+          ihn manchmal nicht gibt, ist keine Unfähigkeit der Physiker, sondern eine
+          topologische Aussage über den Raum.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula reveal">
+        <div class="formula-label">Schnitt</div>
+        <script type="text/x-tex">
+\underbrace{s:B\to E}_{\text{eine stetige Wahl}}\qquad
+\underbrace{\pi\circ s=\mathrm{id}_B}_{\substack{\text{über jedem Punkt }b\\\text{liegt genau }s(b)}}
+        </script>
+        <div class="tex"></div>
+        <p class="plain">
+          Die zweite Gleichung ist die eigentliche Bedingung: Der gewählte Zustand
+          darf seinen Ort nicht verlassen. Ohne sie wäre <span class="m">s</span>
+          nur eine beliebige Kurve im Gesamtraum.
+        </p>
+      </div>
+      <div class="formula reveal">
+        <div class="formula-label">Möbiusband</div>
+        <script type="text/x-tex">
+\underbrace{v(1)=-v(0)}_{\text{anti-periodische Randbedingung}}
+\quad\Longrightarrow\quad
+\underbrace{\exists\,u\in[0,1]:\ v(u)=0}_{\text{jeder stetige Schnitt hat eine Nullstelle}}
+        </script>
+        <div class="tex"></div>
+        <p class="plain">
+          Der Zwischenwertsatz erledigt den Rest. Ein anti-periodischer Schnitt kann
+          nicht überall ungleich null sein. Genau deshalb ist das Möbiusband das
+          Standardbild für ein nichttriviales reelles Geradenbündel.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="tangential">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">04 · Tangentialbündel</div>
+      <h2>Der Raum, der an jedem Punkt klebt.</h2>
+      <p class="lead">
+        An jedem Punkt einer Fläche gibt es eine Tangentialebene. Alle diese Ebenen
+        zusammen bilden das Tangentialbündel. Ein Vektorfeld ist ein Schnitt darin.
+        Und die Sphäre ist der berühmteste Beweis dafür, dass ein Bündel global
+        verdreht sein kann.
+      </p>
+    </div>
+
+    <div class="stage reveal">
+      <div class="stage-top">
+        <span>Tangentialbündel der Sphäre</span>
+        <span class="live">live · interaktiv</span>
+      </div>
+      <div class="cv"><canvas id="tangentCanvas" role="img" aria-label="Sphäre mit Tangentialebene, Normalenvektor und Vektorfeld; an den Polen verschwindet das Feld"></canvas></div>
+      <div class="controls">
+        <div class="ctl">
+          <label for="tanTheta">Breite</label>
+          <input type="range" id="tanTheta" min="0.08" max="3.06" step="0.01" value="0.85">
+          <output id="tanThetaOut">0.85</output>
+        </div>
+        <div class="ctl">
+          <label for="tanPhi">Länge</label>
+          <input type="range" id="tanPhi" min="0" max="6.283" step="0.01" value="0.7">
+          <output id="tanPhiOut">0.70</output>
+        </div>
+        <div class="ctl">
+          <button class="btn active" id="tanField">Vektorfeld</button>
+          <button class="btn ghost" id="tanPlanes">alle Ebenen</button>
+        </div>
+      </div>
+      <div class="readout">
+        <span class="chip base">Basis <b>S²</b></span>
+        <span class="chip">Faser <b>T<sub>p</sub>S² ≅ ℝ²</b></span>
+        <span class="chip total">Gesamtraum <b>TS²</b></span>
+        <span class="chip pink">χ(S²) <b>2</b></span>
+      </div>
+      <div class="stage-cap">
+        <span>Die violett schimmernde Ebene ist die Faser über dem markierten Punkt. Die kleinen türkisen Pfeile sind ein Vektorfeld — an den Polen werden sie zu Null.</span>
+        <span class="drag">drag · rotate</span>
+      </div>
+    </div>
+
+    <div class="split reveal" style="margin-top:30px">
+      <div>
+        <p>
+          Das Tangentialbündel <span class="m">TM</span> ist die Vereinigung aller
+          Tangentialräume <span class="m">T<sub>p</sub>M</span>. Als Menge ist das
+          einfach <span class="m">{(p,v) : p ∈ M, v ∈ T<sub>p</sub>M}</span>. Die
+          Projektion ist <span class="m">π(p,v) = p</span>; die Faser über
+          <span class="m">p</span> ist der Vektorraum <span class="m">T<sub>p</sub>M</span>.
+        </p>
+        <p>
+          Auf einer Fläche ist jede Faser eine Ebene, also <span class="m">ℝ²</span>.
+          Lokal sieht <span class="m">TM</span> aus wie
+          <span class="m">U × ℝ²</span>. Global kann es das nicht immer sein. Für die
+          Sphäre <span class="m">S²</span> ist <span class="m">TS²</span> nicht
+          trivial. Der Grund ist der <strong>Hairy-Ball-Satz</strong>: Jedes stetige
+          Tangentialvektorfeld auf <span class="m">S²</span> hat mindestens eine
+          Nullstelle.
+        </p>
+        <p>
+          Man kann sich das wie das Kämmen eines haarigen Balls vorstellen. Egal wie
+          du kämmst, irgendwo bleibt ein Wirbel oder eine Glatze. Die Summe der
+          Indizes dieser Nullstellen ist die Euler-Charakteristik
+          <span class="m">χ(S²) = 2</span>. Sie ist topologisch und ändert sich nicht
+          unter stetigen Verformungen.
+        </p>
+      </div>
+      <div>
+        <div class="formula">
+          <div class="formula-label">Tangentialbündel</div>
+          <script type="text/x-tex">
+\underbrace{TM=\bigsqcup_{p\in M}T_pM}_{\substack{\text{alle Tangentialräume}\\\text{zu einem Bündel verklebt}}}
+\qquad
+\underbrace{X:M\to TM,\quad p\mapsto X_p\in T_pM}_{\text{ein Vektorfeld ist ein Schnitt}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="formula">
+          <div class="formula-label">Hairy Ball</div>
+          <script type="text/x-tex">
+\underbrace{\chi(S^2)=2}_{\text{Euler-Zahl}}
+\quad\Longrightarrow\quad
+\underbrace{\text{jedes stetige Vektorfeld hat eine Nullstelle}}_{\text{nicht glatt kämmbar}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="note pink">
+          <p><strong>Warum das zählt.</strong> <span class="m">TS²</span> ist das
+          einfachste Tangentialbündel, das man nicht global trivialisieren kann. Es
+          ist der Einstieg in charakteristische Klassen, Euler-Klassen und den
+          Satz von Gauss–Bonnet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="rahmen">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">05 · Rahmenbündel</div>
+      <h2>Die Faser ist eine Gruppe.</h2>
+      <p class="lead">
+        Manchmal ist der Zustand über einem Punkt keine Zahl und kein Vektor, sondern
+        eine <em>Wahl von Koordinaten</em>. Ein Rahmen ist eine Basis des
+        Tangentialraums. Alle Rahmen über einem Punkt bilden eine Kopie von
+        <span class="m">SO(n)</span>. Das ist ein Hauptbündel — die Mutter aller
+        Eichfeldtheorien.
+      </p>
+    </div>
+
+    <div class="split reveal">
+      <div>
+        <p>
+          Ein <strong>Hauptbündel</strong> <span class="m">P → B</span> mit Gruppe
+          <span class="m">G</span> hat als Faser eine Kopie von <span class="m">G</span>.
+          Die Gruppe wirkt frei und transitiv von rechts auf jeder Faser. „Frei“
+          heißt: Nur das neutrale Element fixiert einen Punkt. „Transitiv“ heißt: Von
+          jedem Punkt der Faser kommt man zu jedem anderen durch ein eindeutiges
+          Gruppenelement.
+        </p>
+        <p>
+          Der Quotient <span class="m">P/G</span> ist die Basis. Genau das macht ein
+          Hauptbündel so nützlich: Es vergisst die Wahl des Rahmens und behält nur den
+          Ort. Ein <strong>Schnitt</strong> in <span class="m">P</span> ist eine
+          stetige Wahl eines Rahmens an jedem Punkt — eine <em>Eichung</em>.
+        </p>
+        <p>
+          Eine <strong>Eichtransformation</strong> ist ein Bündelautomorphismus, der
+          jeden Punkt der Basis festhält und nur innerhalb der Faser dreht. Sie ändert
+          nicht, wo du bist, sondern nur, wie du deine internen Achsen ausrichtest.
+          Deshalb ist Eichfreiheit keine physikalische Willkür, sondern die Freiheit
+          der lokalen Beschreibung.
+        </p>
+      </div>
+      <div class="stage">
+        <div class="stage-top">
+          <span>Rahmen über einer Basis</span>
+          <span class="live">live</span>
+        </div>
+        <div class="cv tall"><canvas id="frameCanvas" role="img" aria-label="Ring von Basispunkten, an jedem eine Faser aus Rahmen; eine Eichung wählt einen Rahmen pro Punkt"></canvas></div>
+        <div class="controls">
+          <div class="ctl">
+            <label for="frameGauge">Eichung</label>
+            <input type="range" id="frameGauge" min="0" max="1" step="0.01" value="0.25">
+            <output id="frameGaugeOut">0.25</output>
+          </div>
+          <div class="ctl">
+            <button class="btn active" id="frameFibers">Fasern</button>
+            <button class="btn ghost" id="frameSection">Schnitt</button>
+          </div>
+        </div>
+        <div class="readout">
+          <span class="chip base">Basis <b>S¹</b></span>
+          <span class="chip">Faser <b>SO(2) ≅ S¹</b></span>
+          <span class="chip total">Schnitt <b>Eichung</b></span>
+        </div>
+        <div class="stage-cap">
+          <span>Jeder kleine Kreis ist eine Faser. Der türkise Rahmen ist der gewählte Schnitt. Die Eichung dreht ihn lokal — der Basispunkt bleibt unberührt.</span>
+          <span class="drag">drag the slider</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="formula-grid">
+      <div class="formula reveal">
+        <div class="formula-label">Hauptbündel</div>
+        <script type="text/x-tex">
+\underbrace{P\times G\to P,\quad (p,g)\mapsto p\cdot g}_{\substack{\text{freie, transitive}\\\text{Rechtswirkung der Gruppe }G}}
+\qquad
+\underbrace{P/G\cong B}_{\text{die Bahnen sind genau die Fasern}}
+        </script>
+        <div class="tex"></div>
+        <p class="plain">
+          Die Gruppe ist kein Zusatz, sondern die Faser selbst. Ein Hauptbündel ist
+          ein Raum, der lokal wie <span class="m">U × G</span> aussieht, wobei die
+          Gruppenwirkung nur auf dem zweiten Faktor lebt.
+        </p>
+      </div>
+      <div class="formula reveal">
+        <div class="formula-label">Assoziiertes Bündel</div>
+        <script type="text/x-tex">
+\underbrace{P\times_G F=(P\times F)/G}_{\substack{\text{die Faser }F\\\text{wird an }P\text{ geklebt}}}
+        </script>
+        <div class="tex"></div>
+        <p class="plain">
+          Wenn <span class="m">G</span> auf einem Raum <span class="m">F</span> wirkt,
+          kann man aus einem Hauptbündel ein Bündel mit Faser <span class="m">F</span>
+          bauen. So entstehen Vektorbündel, Spinorbündel und alle Materiefelder der
+          Physik aus einem einzigen Prinzip.
+        </p>
+      </div>
+    </div>
+
+    <div class="note reveal">
+      <p><strong>Eichfreiheit, klar gesagt.</strong> Eine Eichung ist die Wahl einer
+      lokalen Trivialisierung. Zwei Eichungen unterscheiden sich durch eine
+      <span class="m">G</span>-wertige Funktion auf der Basis. Physikalisch beobachtbar
+      sind nur Größen, die unter dieser Wahl unverändert bleiben — zum Beispiel
+      Krümmung, Holonomie und Wilson-Schleifen.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="verbindung">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">06 · Verbindung</div>
+      <h2>Wie man Fasern vergleicht.</h2>
+      <p class="lead">
+        Ein Bündel allein sagt nicht, welcher Zustand über dem einen Punkt dem
+        Zustand über dem anderen „entspricht“. Eine Verbindung ist die Regel, die
+        das entscheidet. Trägt man einen Vektor um eine Schleife, kommt er im
+        Allgemeinen gedreht zurück. Diese Drehung ist die Holonomie.
+      </p>
+    </div>
+
+    <div class="stage reveal">
+      <div class="stage-top">
+        <span>Paralleltransport auf der Sphäre</span>
+        <span class="live">live · interaktiv</span>
+      </div>
+      <div class="cv wide"><canvas id="holoCanvas" role="img" aria-label="Sphäre mit Breitenkreis; ein Vektor wird parallel um den Kreis transportiert und kommt gedreht zurück"></canvas></div>
+      <div class="controls">
+        <div class="ctl">
+          <label for="holoLat">Breite</label>
+          <input type="range" id="holoLat" min="0" max="82" step="1" value="30">
+          <output id="holoLatOut">30°</output>
+        </div>
+        <div class="ctl">
+          <label for="holoT">Umlauf</label>
+          <input type="range" id="holoT" min="0" max="1" step="0.001" value="0">
+          <output id="holoTOut">0%</output>
+        </div>
+        <div class="ctl">
+          <button class="btn active" id="holoPlay">Play</button>
+          <button class="btn ghost" id="holoReset">Reset</button>
+        </div>
+      </div>
+      <div class="readout">
+        <span class="chip base">Schleife <b>Breitenkreis</b></span>
+        <span class="chip">Raumwinkel <b id="holoOmega">180°</b></span>
+        <span class="chip total">Holonomie <b id="holoAngle">180°</b></span>
+        <span class="chip pink">Krümmung <b>da</b></span>
+      </div>
+      <div class="stage-cap">
+        <span>Der goldene Pfeil ist der Startvektor. Der türkise Pfeil wird parallel transportiert. Nach einem Umlauf ist er um den eingeschlossenen Raumwinkel gedreht.</span>
+        <span class="drag">drag · rotate</span>
+      </div>
+    </div>
+
+    <div class="split reveal" style="margin-top:30px">
+      <div>
+        <p>
+          Eine <strong>Verbindung</strong> kann man auf drei äquivalente Arten
+          beschreiben: als Regel für Paralleltransport, als kovariante Ableitung oder
+          als horizontale Verteilung im Tangentialraum von <span class="m">E</span>.
+          Die letzte Sicht ist die geometrisch klarste: Der Tangentialraum
+          <span class="m">TE</span> zerfällt in vertikale Richtungen (entlang der
+          Faser) und horizontale Richtungen (über die Basis). Eine Verbindung wählt
+          die horizontalen Richtungen.
+        </p>
+        <p>
+          Auf der Sphäre ist der Levi-Civita-Zusammenhang die natürliche Verbindung.
+          Transportiert man einen Tangentialvektor entlang eines Breitenkreises, so
+          dreht er sich um den <strong>Raumwinkel</strong> der eingeschlossenen
+          Kappe. Auf dem Äquator ist der Raumwinkel <span class="m">2π</span>, also
+          eine volle Drehung — im Bild unsichtbar. Nahe am Pol ist die Drehung klein;
+          in mittleren Breiten ist sie deutlich.
+        </p>
+        <p>
+          Die <strong>Krümmung</strong> ist die infinitesimale Version davon: die
+          Holonomie um eine unendlich kleine Schleife, geteilt durch ihre Fläche. Im
+          U(1)-Fall ist die Krümmung genau das elektromagnetische Feld
+          <span class="m">F = dA</span>. Die Holonomie um eine Schleife ist
+          <span class="m">exp(i∮A)</span> — der magnetische Fluss durch die Schleife.
+        </p>
+      </div>
+      <div>
+        <div class="formula">
+          <div class="formula-label">Verbindung</div>
+          <script type="text/x-tex">
+\underbrace{\omega\in\Omega^1(P;\mathfrak g)}_{\text{Verbindungs-1-Form}}
+\quad\text{mit}\quad
+\underbrace{\omega(X^\#)=X}_{\text{vertikale Richtungen}}
+\quad
+\underbrace{R_g^*\omega=\mathrm{Ad}_{g^{-1}}\omega}_{\text{Äquivarianz}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="formula">
+          <div class="formula-label">Krümmung & Holonomie</div>
+          <script type="text/x-tex">
+\underbrace{\Omega=d\omega+\tfrac12[\omega,\omega]}_{\text{Krümmung}}
+\qquad
+\underbrace{\mathrm{Hol}_\gamma=\mathcal P\exp\!\left(-\int_\gamma\omega\right)}_{\text{Paralleltransport um }\gamma}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="formula">
+          <div class="formula-label">U(1)-Fall</div>
+          <script type="text/x-tex">
+\underbrace{\mathrm{Hol}_\gamma=\exp\!\left(i\oint_\gamma A\right)}_{\text{Phase }=\text{ magnetischer Fluss}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="note base">
+          <p><strong>Die Pointe.</strong> Der Vektor wird nie „gedreht“. Er wird
+          parallel transportiert — so gerade wie möglich. Die Drehung entsteht
+          ausschließlich daraus, dass der Raum gekrümmt ist. Holonomie ist die
+          Krümmung, die man sehen kann.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="hopf">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">07 · Hopf-Faserung</div>
+      <h2>Die schönste Faserung.</h2>
+      <p class="lead">
+        Die 3-Sphäre <span class="m">S³</span> ist ein Bündel über der gewöhnlichen
+        2-Sphäre <span class="m">S²</span>, und jede Faser ist ein Kreis. Klingt
+        unscheinbar. Ist aber eines der schönsten Objekte der Mathematik: Die Kreise
+        sind paarweise miteinander verschlungen, und man kann sie in drei Dimensionen
+        sichtbar machen.
+      </p>
+    </div>
+
+    <div class="hopf-grid reveal">
+      <div class="stage">
+        <div class="stage-top">
+          <span>Basis S²</span>
+          <span class="live">klickbar</span>
+        </div>
+        <div class="cv tall"><canvas id="hopfBaseCanvas" role="img" aria-label="Basis-Sphäre der Hopf-Faserung mit farbigen markierten Punkten"></canvas></div>
+        <div class="stage-cap">
+          <span>Klicke einen Punkt. Die zugehörige Faser leuchtet rechts auf.</span>
+          <span class="drag">click · drag</span>
+        </div>
+      </div>
+      <div class="stage">
+        <div class="stage-top">
+          <span>Gesamtraum S³ → ℝ³</span>
+          <span class="live">stereografisch</span>
+        </div>
+        <div class="cv"><canvas id="hopfTotalCanvas" role="img" aria-label="Stereografische Projektion der Hopf-Faserung: verschlungene Kreise im dreidimensionalen Raum"></canvas></div>
+        <div class="controls">
+          <div class="ctl">
+            <label for="hopfN">Fasern</label>
+            <input type="range" id="hopfN" min="4" max="16" step="1" value="10">
+            <output id="hopfNOut">10</output>
+          </div>
+          <div class="ctl">
+            <button class="btn active" data-hopf-mode="all">alle</button>
+            <button class="btn" data-hopf-mode="one">eine</button>
+            <button class="btn" data-hopf-mode="link">Hopf-Link</button>
+          </div>
+        </div>
+        <div class="readout">
+          <span class="chip base">Basis <b>S²</b></span>
+          <span class="chip">Faser <b>S¹</b></span>
+          <span class="chip total">Gesamtraum <b>S³</b></span>
+          <span class="chip pink">verschlungen <b>ja</b></span>
+        </div>
+        <div class="stage-cap">
+          <span>Jeder Kreis ist eine Faser. Zwei verschiedene Fasern sind immer ineinander verschlungen — der Hopf-Link.</span>
+          <span class="drag">drag · rotate · wheel · zoom</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="formula-grid" style="margin-top:22px">
+      <div class="formula reveal">
+        <div class="formula-label">Die Abbildung</div>
+        <script type="text/x-tex">
+\underbrace{\pi:S^3\to S^2}_{\text{Hopf-Faserung}}
+\qquad
+\underbrace{\pi^{-1}(p)\cong S^1}_{\text{jede Faser ist ein Kreis}}
+        </script>
+        <div class="tex"></div>
+        <p class="plain">
+          <span class="m">S³</span> ist die Einheitssphäre in <span class="m">ℂ²</span>.
+          Die Hopf-Abbildung schickt ein Paar komplexer Zahlen auf einen Punkt der
+          gewöhnlichen Sphäre. Der Kern dieser Abbildung ist genau die diagonale
+          Phasendrehung — ein Kreis.
+        </p>
+      </div>
+      <div class="formula reveal">
+        <div class="formula-label">In Koordinaten</div>
+        <script type="text/x-tex">
+\underbrace{\pi(z_1,z_2)=\bigl(2\operatorname{Re}(z_1\bar z_2),\,2\operatorname{Im}(z_1\bar z_2),\,|z_1|^2-|z_2|^2\bigr)}_{\text{drei reelle Zahlen mit }x^2+y^2+z^2=1}
+        </script>
+        <div class="tex"></div>
+        <p class="plain">
+          Die drei Komponenten sind reelle Zahlen. Die Identität
+          <span class="m">x² + y² + z² = (|z₁|² + |z₂|²)² = 1</span> zeigt, dass das
+          Bild tatsächlich auf der Einheitssphäre liegt.
+        </p>
+      </div>
+      <div class="formula reveal">
+        <div class="formula-label">Die Faser</div>
+        <script type="text/x-tex">
+\underbrace{\pi^{-1}(p)=\{(e^{i\theta}z_1,e^{i\theta}z_2):\theta\in[0,2\pi)\}}_{\text{die ganze Faser entsteht durch einen einzigen Phasendreh}}
+        </script>
+        <div class="tex"></div>
+        <p class="plain">
+          Multipliziert man beide komplexen Koordinaten mit derselben Phase, ändert
+          sich das Bild unter <span class="m">π</span> nicht. Die Faser ist also die
+          Bahn dieser <span class="m">U(1)</span>-Wirkung — ein Kreis.
+        </p>
+      </div>
+      <div class="formula reveal">
+        <div class="formula-label">Verschlingung</div>
+        <script type="text/x-tex">
+\underbrace{\operatorname{lk}(\pi^{-1}(p),\pi^{-1}(q))=1}_{\substack{\text{zwei verschiedene Fasern}\\\text{sind einmal ineinander verschlungen}}}
+        </script>
+        <div class="tex"></div>
+        <p class="plain">
+          Das ist die geometrische Pointe: Die Fasern sind keine braven,
+          nebeneinanderliegenden Kreise. Sie winden sich umeinander. In der
+          stereografischen Projektion wird daraus das Bild, das rechts leuchtet.
+        </p>
+      </div>
+    </div>
+
+    <div class="note pink reveal">
+      <p><strong>Hopf, 1931.</strong> Heinz Hopf zeigte in „Über die Abbildungen der
+      dreidimensionalen Sphäre auf die Kugelfläche“, dass es eine Abbildung
+      <span class="m">S³ → S²</span> gibt, deren Fasern Kreise sind und die nicht
+      trivial ist. Die Hopf-Faserung ist seitdem das Standardbeispiel für ein
+      nichttriviales Faserbündel, für den ersten nichtverschwindenden Homotopie-
+      Vertreter in <span class="m">π₃(S²)</span> und für die Verbindung zwischen
+      Topologie und Quantenmechanik.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="physik">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">08 · Physik</div>
+      <h2>Das Universum als Bündel.</h2>
+      <p class="lead">
+        In der modernen Physik ist die Raumzeit die Basis und der interne
+        Symmetrieraum die Faser. Ein Elektron ist ein Schnitt eines Bündels. Das
+        elektromagnetische Potenzial ist eine Verbindung. Die Krümmung dieser
+        Verbindung ist das Feld. Das ist keine Metapher — es ist die präzise Sprache
+        des Standardmodells.
+      </p>
+    </div>
+
+    <div class="table-wrap reveal">
+      <table class="dict">
+        <thead>
+          <tr><th>Geometrie</th><th>Physik</th><th>Was es bedeutet</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Basis B</td><td>Raumzeit</td><td>Der Ort, an dem das Feld lebt.</td></tr>
+          <tr><td>Faser F</td><td>interner Raum</td><td>Die Symmetrie- oder Ladungsrichtung über jedem Punkt.</td></tr>
+          <tr><td>Gesamtraum E</td><td>Zustandsraum des Feldes</td><td>Ort plus interner Zustand, untrennbar verbunden.</td></tr>
+          <tr><td>Schnitt s</td><td>Materiefeld</td><td>Elektron, Quark, Higgs — eine Wahl pro Raumzeitpunkt.</td></tr>
+          <tr><td>Verbindung A</td><td>Eichpotenzial</td><td>Die Regel, wie benachbarte Fasern verglichen werden.</td></tr>
+          <tr><td>Krümmung F</td><td>Feldstärke</td><td>Elektrisches und magnetisches Feld; bei Yang–Mills die Kraft.</td></tr>
+          <tr><td>Eichtransformation</td><td>Wechsel der Trivialisierung</td><td>Dreht die internen Achsen, ohne den Ort zu ändern.</td></tr>
+          <tr><td>Holonomie</td><td>Wilson-Schleife</td><td>Die Phase, die ein Teilchen auf einem geschlossenen Weg sammelt.</td></tr>
+          <tr><td>Chern-Zahl</td><td>topologische Ladung</td><td>Monopol, Instanton, Quanten-Hall-Plateau.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="stage reveal" style="margin-top:28px">
+      <div class="stage-top">
+        <span>Aharonov–Bohm: die Faser wird sichtbar</span>
+        <span class="live">live · interaktiv</span>
+      </div>
+      <div class="cv wide"><canvas id="abCanvas" role="img" aria-label="Elektronenstrahlen um eine Spule; der magnetische Fluss verschiebt das Interferenzmuster"></canvas></div>
+      <div class="controls">
+        <div class="ctl">
+          <label for="abFlux">Fluss Φ</label>
+          <input type="range" id="abFlux" min="0" max="1" step="0.005" value="0.25">
+          <output id="abFluxOut">0.25</output>
+        </div>
+        <div class="ctl">
+          <button class="btn active" id="abPlay">Play</button>
+          <button class="btn ghost" id="abReset">Reset</button>
+        </div>
+      </div>
+      <div class="readout">
+        <span class="chip base">Spule <b>B ≠ 0 innen</b></span>
+        <span class="chip">Elektron <b>B = 0 außen</b></span>
+        <span class="chip total">Phase <b id="abPhase">0.25 · 2π</b></span>
+        <span class="chip pink">Muster <b>verschoben</b></span>
+      </div>
+      <div class="stage-cap">
+        <span>Die Elektronen berühren das Magnetfeld nie. Trotzdem verschiebt der Fluss im Inneren der Spule das Interferenzmuster. Der Grund ist die Holonomie der U(1)-Verbindung.</span>
+        <span class="drag">drag the slider</span>
+      </div>
+    </div>
+
+    <div class="split reveal" style="margin-top:30px">
+      <div>
+        <p>
+          Im Standardmodell ist die Eichgruppe
+          <span class="m">SU(3) × SU(2) × U(1)</span>. Jeder Faktor entspricht einem
+          Hauptbündel über der Raumzeit. Die Materiefelder sind Schnitte assoziierter
+          Vektorbündel in bestimmten Darstellungen dieser Gruppe. Die Eichbosonen
+          sind die Verbindungen; ihre Krümmungen sind die Feldstärken.
+        </p>
+        <p>
+          Das <strong>Dirac-Monopol</strong> ist das einfachste Beispiel für eine
+          topologische Ladung. Ein magnetischer Monopol wäre eine Quelle, deren
+          U(1)-Bündel über einer Sphäre um den Monopol die erste Chern-Zahl
+          <span class="m">n ≠ 0</span> trägt. Dirac zeigte 1931, dass Quantenmechanik
+          nur dann konsistent ist, wenn die elektrische Ladung quantisiert ist —
+          eine topologische Aussage, lange bevor man Bündel so nannte.
+        </p>
+        <p>
+          In der Gravitation ist die Basis die Raumzeit und die Faser der Raum der
+          lokalen Rahmen. Das <strong>Rahmenbündel</strong> ist ein
+          <span class="m">GL(4)</span>-Hauptbündel; die Levi-Civita-Verbindung ist
+          eine Verbindung darin. Fermionen brauchen zusätzlich eine
+          <strong>Spin-Struktur</strong>, also eine Lift des Rahmenbündels von
+          <span class="m">SO(3,1)</span> zu <span class="m">Spin(3,1)</span>. Kaluza
+          und Klein versuchten, Elektromagnetismus als Krümmung einer zusätzlichen
+          Kreisrichtung zu lesen — ein frühes U(1)-Bündel über der vierdimensionalen
+          Raumzeit.
+        </p>
+      </div>
+      <div>
+        <div class="model-grid">
+          <div class="model u1">
+            <div class="big">U(1)</div>
+            <p>Elektromagnetismus. Faser: ein Kreis. Verbindung: das Potenzial A. Krümmung: E und B.</p>
+          </div>
+          <div class="model su2">
+            <div class="big">SU(2)</div>
+            <p>Schwache Kraft. Faser: die 3-Sphäre. Drei Eichbosonen: W⁺, W⁻, Z⁰.</p>
+          </div>
+          <div class="model su3">
+            <div class="big">SU(3)</div>
+            <p>Starke Kraft. Faser: acht Dimensionen. Acht Gluonen; Quarks in der Fundamentaldarstellung.</p>
+          </div>
+        </div>
+        <div class="formula">
+          <div class="formula-label">Kovariante Ableitung</div>
+          <script type="text/x-tex">
+\underbrace{D_\mu=\partial_\mu+ieA_\mu}_{\substack{\text{misst die Änderung}\\\text{relativ zur Eichung}}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="formula">
+          <div class="formula-label">Feldstärke</div>
+          <script type="text/x-tex">
+\underbrace{F_{\mu\nu}=\partial_\mu A_\nu-\partial_\nu A_\mu}_{\text{Krümmung der Verbindung}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="formula">
+          <div class="formula-label">Wilson-Schleife</div>
+          <script type="text/x-tex">
+\underbrace{W_\gamma=\operatorname{tr}\mathcal P\exp\!\left(i\oint_\gamma A\right)}_{\text{die beobachtbare Holonomie}}
+          </script>
+          <div class="tex"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note reveal">
+      <p><strong>Die Eichfreiheit ist keine Willkür.</strong> Sie ist die Freiheit,
+      die lokale Trivialisierung zu wählen. Physikalisch beobachtbar sind nur
+      eichinvariante Größen: Krümmung, Holonomie, Wilson-Schleifen, Chern-Zahlen.
+      Alles andere ist die Brille, durch die wir schauen.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="chemie">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">09 · Chemie</div>
+      <h2>Moleküle als Bündel.</h2>
+      <p class="lead">
+        In der Born–Oppenheimer-Näherung bewegen sich die Kerne langsam und die
+        Elektronen schnell. Über jeder Kerngeometrie liegt ein elektronischer
+        Zustandsraum. Bewegt man die Kerne, so werden diese Zustände zu einem Bündel
+        — und an einer konischen Durchschneidung wird es nichttrivial.
+      </p>
+    </div>
+
+    <div class="stage reveal">
+      <div class="stage-top">
+        <span>Konische Durchschneidung</span>
+        <span class="live">live · interaktiv</span>
+      </div>
+      <div class="cv"><canvas id="chemCanvas" role="img" aria-label="Zwei Potentialflächen, die sich in einem Punkt berühren; eine Schleife um den Punkt zeigt den Vorzeichenwechsel der Wellenfunktion"></canvas></div>
+      <div class="controls">
+        <div class="ctl">
+          <label for="chemR">Radius</label>
+          <input type="range" id="chemR" min="0.25" max="1.35" step="0.01" value="0.85">
+          <output id="chemROut">0.85</output>
+        </div>
+        <div class="ctl">
+          <label for="chemT">Umlauf</label>
+          <input type="range" id="chemT" min="0" max="1" step="0.001" value="0">
+          <output id="chemTOut">0%</output>
+        </div>
+        <div class="ctl">
+          <button class="btn active" id="chemPlay">Play</button>
+          <button class="btn ghost" id="chemReset">Reset</button>
+        </div>
+      </div>
+      <div class="readout">
+        <span class="chip base">Kernkoordinaten <b>R</b></span>
+        <span class="chip">Zustand <b>|ψ<sub>n</sub>(R)⟩</b></span>
+        <span class="chip total">Berry-Phase <b id="chemPhase">0</b></span>
+        <span class="chip pink">Vorzeichen <b id="chemSign">+1</b></span>
+      </div>
+      <div class="stage-cap">
+        <span>Die beiden Flächen berühren sich an der Kegelspitze. Ein Umlauf um die Kegelspitze dreht die elektronische Wellenfunktion um π — sie kommt mit umgekehrtem Vorzeichen zurück.</span>
+        <span class="drag">drag · rotate</span>
+      </div>
+    </div>
+
+    <div class="split reveal" style="margin-top:30px">
+      <div>
+        <p>
+          Die elektronische Schrödinger-Gleichung hängt parametrisch von den
+          Kernkoordinaten <span class="m">R</span> ab:
+          <span class="m">Ĥ<sub>el</sub>(R)|ψ<sub>n</sub>(R)⟩ = E<sub>n</sub>(R)|ψ<sub>n</sub>(R)⟩</span>.
+          Für jeden Wert von <span class="m">R</span> gibt es einen Hilbertraum und
+          darin die Eigenzustände. Lässt man <span class="m">R</span> variieren,
+          entsteht ein Bündel über dem Raum der Kerngeometrien. Die Fasern sind die
+          Eigenräume; die Wellenfunktionen sind Schnitte.
+        </p>
+        <p>
+          An einer <strong>konischen Durchschneidung</strong> treffen sich zwei
+          Potentialflächen. Die elektronische Entartung ist nicht zufällig: Sie ist
+          ein Punkt, an dem zwei Zustände ihre Rollen tauschen. Umläuft man diesen
+          Punkt, so wechselt die Wellenfunktion das Vorzeichen. Das ist die
+          <strong>geometrische Phase</strong> oder Berry-Phase — ein Effekt der
+          Verbindung, nicht der Dynamik.
+        </p>
+        <p>
+          Die Phase ist messbar: Sie beeinflusst Schwingungsspektren, Reaktionsraten
+          und die Dynamik nach einem elektronischen Übergang. In der chemischen
+          Literatur heißt sie oft <em>geometric phase</em> oder
+          <em>Berry phase</em>; mathematisch ist sie die Holonomie des
+          Quantenzustandsbündels.
+        </p>
+      </div>
+      <div>
+        <div class="formula">
+          <div class="formula-label">Born–Oppenheimer</div>
+          <script type="text/x-tex">
+\underbrace{\hat H_{\mathrm{el}}(\mathbf R)\,|\psi_n(\mathbf R)\rangle=E_n(\mathbf R)\,|\psi_n(\mathbf R)\rangle}_{\substack{\text{elektronische Zustände hängen}\\\text{von den Kernkoordinaten }\mathbf R\text{ ab}}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="formula">
+          <div class="formula-label">Berry-Zusammenhang</div>
+          <script type="text/x-tex">
+\underbrace{\mathbf A_n(\mathbf R)=i\langle\psi_n(\mathbf R)|\nabla_{\mathbf R}|\psi_n(\mathbf R)\rangle}_{\text{eine Verbindung im Quantenzustandsbündel}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="formula">
+          <div class="formula-label">Geometrische Phase</div>
+          <script type="text/x-tex">
+\underbrace{\gamma_n=\oint_{\mathcal C}\mathbf A_n(\mathbf R)\cdot d\mathbf R}_{\text{geometrische Phase}}
+\qquad
+\underbrace{\gamma_n=\pi\pmod{2\pi}}_{\text{um die konische Durchschneidung: Vorzeichenwechsel}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="note base">
+          <p><strong>Die Intuition.</strong> Die Wellenfunktion ist kein globales
+          Objekt über allen Kerngeometrien. Sie ist ein Schnitt eines Bündels, dessen
+          Twist man erst bemerkt, wenn man eine Schleife läuft. Die konische
+          Durchschneidung ist der Punkt, an dem der Twist sitzt.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="materialien">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">10 · Materialien</div>
+      <h2>Warum Topologie ganze Zahlen liefert.</h2>
+      <p class="lead">
+        In einem Kristall bilden die besetzten elektronischen Zustände ein Bündel über
+        der Brillouin-Zone. Die Krümmung dieses Bündels lässt sich über die ganze
+        Zone integrieren — und das Ergebnis ist eine ganze Zahl. Deshalb ist der
+        Quanten-Hall-Effekt auf so präzise Plateaus quantisiert.
+      </p>
+    </div>
+
+    <div class="stage reveal">
+      <div class="stage-top">
+        <span>Windungszahl als topologische Ladung</span>
+        <span class="live">live · interaktiv</span>
+      </div>
+      <div class="cv wide"><canvas id="chernCanvas" role="img" aria-label="Feld von Phasenpfeilen mit einem Vortex; die Windungszahl ist eine ganze Zahl"></canvas></div>
+      <div class="controls">
+        <div class="ctl">
+          <label for="chernN">Ladung n</label>
+          <input type="range" id="chernN" min="-3" max="3" step="1" value="1">
+          <output id="chernNOut">1</output>
+        </div>
+        <div class="ctl">
+          <button class="btn ghost" id="chernPerturb">Störung</button>
+          <button class="btn ghost" id="chernReset">Reset</button>
+        </div>
+      </div>
+      <div class="readout">
+        <span class="chip base">Basis <b>Brillouin-Zone</b></span>
+        <span class="chip">Faser <b>besetzte Zustände</b></span>
+        <span class="chip total">Chern-Zahl <b id="chernOut">1</b></span>
+        <span class="chip pink">Leitfähigkeit <b>quantisiert</b></span>
+      </div>
+      <div class="stage-cap">
+        <span>Die Phase der Bloch-Zustände windet sich um das Zentrum. Die Windungszahl ist ganzzahlig und kann sich nur ändern, wenn die Bandlücke schließt.</span>
+        <span class="drag">drag the slider</span>
+      </div>
+    </div>
+
+    <div class="split reveal" style="margin-top:30px">
+      <div>
+        <p>
+          Für einen zweidimensionalen Kristall ist die Brillouin-Zone ein Torus. Die
+          Wellenfunktionen der besetzten Bänder bilden ein komplexes Vektorbündel über
+          diesem Torus. Die <strong>Berry-Krümmung</strong> ist die Krümmung der
+          Berry-Verbindung; ihr Integral über die Zone ist die
+          <strong>Chern-Zahl</strong> <span class="m">C</span>.
+        </p>
+        <p>
+          <span class="m">C</span> ist immer eine ganze Zahl. Das ist keine
+          Näherung, sondern Topologie: Eine stetige Deformation des Hamiltonoperators
+          kann <span class="m">C</span> nur ändern, wenn die Bandlücke schließt und
+          die Zustände ihre Identität verlieren. Solange die Lücke offen bleibt, ist
+          die Zahl geschützt.
+        </p>
+        <p>
+          Der Quanten-Hall-Effekt zeigt das direkt: Die Hall-Leitfähigkeit ist
+          <span class="m">σ<sub>xy</sub> = (e²/h) Σ C<sub>n</sub></span>. Die
+          Plateaus sind so präzise, dass man sie als Widerstandsnormal verwendet.
+          Topologische Isolatoren und topologische Supraleiter beruhen auf demselben
+          Prinzip; bei zeitumkehrinvarianten Systemen tritt an die Stelle der
+          Chern-Zahl oft eine <span class="m">ℤ₂</span>-Invariante.
+        </p>
+        <p>
+          Dasselbe Muster erscheint in weicher Materie und in Kristallen: Der
+          Ordnungsparameter eines nematischen Flüssigkristalls lebt im projektiven
+          Raum <span class="m">ℝP²</span>; topologische Defekte werden durch
+          <span class="m">π₁(ℝP²) ≅ ℤ₂</span> klassifiziert. In einem Kristall ist
+          der Ordnungsparameter ein Torus <span class="m">T³</span>, und
+          Versetzungen tragen einen Burgers-Vektor aus
+          <span class="m">π₁(T³) ≅ ℤ³</span>. Auch hier entscheidet nicht die lokale
+          Form, sondern die globale Windung.
+        </p>
+      </div>
+      <div>
+        <div class="formula">
+          <div class="formula-label">Chern-Zahl</div>
+          <script type="text/x-tex">
+\underbrace{C_n=\frac{1}{2\pi}\int_{\mathrm{BZ}}F_n}_{\substack{\text{ganzzahlige Windung}\\\text{der Berry-Krümmung}}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="formula">
+          <div class="formula-label">Quanten-Hall</div>
+          <script type="text/x-tex">
+\underbrace{\sigma_{xy}=\frac{e^2}{h}\sum_n C_n}_{\text{quantisierte Hall-Leitfähigkeit}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="note total">
+          <p><strong>Die Lücke schließt, die Zahl springt.</strong> Topologische
+          Ladungen sind robust, weil man sie nicht durch kleine Störungen entfernen
+          kann. Man muss die Bandlücke schließen — also das Material wirklich
+          verändern.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="informatik">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">11 · Informatik</div>
+      <h2>Bündel in der Informatik.</h2>
+      <p class="lead">
+        Auch neuronale Netze sprechen diese Sprache. Ein Feature-Feld ist ein Schnitt
+        eines Bündels; eine Rotation der Eingabe wirkt auf die Faser. Wer das
+        berücksichtigt, bekommt Architekturen, die von Symmetrie profitieren, statt
+        sie mühsam aus Daten zu lernen.
+      </p>
+    </div>
+
+    <div class="stage reveal">
+      <div class="stage-top">
+        <span>Naiv vs. äquivariant</span>
+        <span class="live">live · interaktiv</span>
+      </div>
+      <div class="cv wide"><canvas id="equivCanvas" role="img" aria-label="Zwei Feature-Felder: naiv bleibt fest, äquivariant dreht sich mit der Eingabe"></canvas></div>
+      <div class="controls">
+        <div class="ctl">
+          <label for="equivAngle">Drehung</label>
+          <input type="range" id="equivAngle" min="0" max="360" step="1" value="0">
+          <output id="equivAngleOut">0°</output>
+        </div>
+        <div class="ctl">
+          <button class="btn active" id="equivPlay">Play</button>
+        </div>
+      </div>
+      <div class="readout">
+        <span class="chip base">Basis <b>Bild</b></span>
+        <span class="chip">Faser <b>Feature-Richtung</b></span>
+        <span class="chip total">Regel <b>f(g·x) = ρ(g)f(x)</b></span>
+        <span class="chip pink">Symmetrie <b>eingebaut</b></span>
+      </div>
+      <div class="stage-cap">
+        <span>Links: die Features bleiben starr, obwohl sich das Bild dreht. Rechts: die Features drehen sich mit. Das ist der Unterschied zwischen „gelernt“ und „architektonisch garantiert“.</span>
+        <span class="drag">drag the slider</span>
+      </div>
+    </div>
+
+    <div class="split reveal" style="margin-top:30px">
+      <div>
+        <p>
+          In einem <strong>gauge-äquivarianten</strong> Netz ist der Merkmalsraum
+          über jedem Ort eine Faser, auf der die Symmetriegruppe wirkt. Ein
+          Feature-Feld ist ein Schnitt des zugehörigen Bündels. Die entscheidende
+          Bedingung ist die <strong>Äquivarianz</strong>: Transformiert man die
+          Eingabe, so transformieren sich die Features auf dieselbe Weise.
+        </p>
+        <p>
+          Für globale Rotationen ist das die Idee der Gruppen-äquivarianten CNNs
+          (G-CNNs). Für gekrümmte Flächen oder allgemeine Mannigfaltigkeiten wird die
+          Transformation ortsabhängig: Man braucht eine <em>Eichung</em> in jedem
+          Tangentialraum und eine Regel, wie benachbarte Fasern verglichen werden.
+          Genau das ist eine gauge-äquivariante Faltung.
+        </p>
+        <p>
+          Verwandt, aber nicht dasselbe, ist die <strong>Garbentheorie</strong>. Eine
+          Garbe beschreibt, wie lokale Daten zu globalen Daten zusammengeklebt
+          werden; ein Bündel beschreibt einen Raum, der lokal ein Produkt ist. Beide
+          sind Werkzeuge gegen dieselbe Krankheit: die naive Annahme, lokal
+          zusammenpassende Daten müssten auch global zusammenpassen.
+        </p>
+      </div>
+      <div>
+        <div class="formula">
+          <div class="formula-label">Äquivarianz</div>
+          <script type="text/x-tex">
+\underbrace{f(g\cdot x)=\rho(g)\,f(x)}_{\substack{\text{erst transformieren, dann rechnen}\\\text{= erst rechnen, dann transformieren}}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="model-grid" style="grid-template-columns:1fr">
+          <div class="model">
+            <div class="big" style="font-size:1.15rem;color:var(--fiber)">Gauge-äquivariante Netze</div>
+            <p>Cohen &amp; Welling 2016; Weiler et al. 2018; Cohen et al. 2019. Feature-Felder als Schnitte assoziierter Bündel; Faltungen mit Paralleltransport.</p>
+          </div>
+          <div class="model">
+            <div class="big" style="font-size:1.15rem;color:var(--base)">Robotik: rollende Kugel</div>
+            <p>Die Konfiguration einer rollenden Kugel ist ein Hauptbündel über der Ebene. Nach einem geschlossenen Weg ist die Kugel gedreht — eine Holonomie, die man beim Einparken und bei Robotern wiederfindet.</p>
+          </div>
+          <div class="model">
+            <div class="big" style="font-size:1.15rem;color:var(--total)">Typentheorie: Pfadfaserung</div>
+            <p>In der Homotopie-Typentheorie werden Identitätstypen kategorisch als Faserungen modelliert. Der Pfadraum projiziert auf den Endpunkt; die Faser über einem Punkt ist der Raum der Schleifen.</p>
+          </div>
+        </div>
+        <div class="note pink">
+          <p><strong>Warum Informatiker das mögen.</strong> Symmetrie ist eine
+          Datenkompressionsmaschine. Wer weiß, dass eine Rotation die Antwort nur
+          mitdreht, muss sie nicht aus Beispielen lernen. Das Bündel sagt, welche
+          Transformationen erlaubt sind — und welche nicht.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="klassifikation">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">12 · Klassifikation</div>
+      <h2>Nur ganze Zahlen.</h2>
+      <p class="lead">
+        Faserbündel über einem Raum zu klassifizieren heißt, ihre möglichen Twists zu
+        zählen. Oft ist das Ergebnis erstaunlich diskret: zwei Möglichkeiten, oder
+        eine ganze Zahl, oder eine Kohomologieklasse. Die Topologie der Basis und die
+        Homotopie der Strukturgruppe entscheiden.
+      </p>
+    </div>
+
+    <div class="stage reveal">
+      <div class="stage-top">
+        <span>Clutching: der Twist als Windungszahl</span>
+        <span class="live">live · interaktiv</span>
+      </div>
+      <div class="cv wide"><canvas id="clutchCanvas" role="img" aria-label="Kreis mit Übergangsfunktion; die Phase windet sich n-mal um den Kreis"></canvas></div>
+      <div class="controls">
+        <div class="ctl">
+          <label for="clutchN">Windung n</label>
+          <input type="range" id="clutchN" min="-4" max="4" step="1" value="1">
+          <output id="clutchNOut">1</output>
+        </div>
+        <div class="ctl">
+          <button class="btn ghost" id="clutchPlay">Umlauf</button>
+        </div>
+      </div>
+      <div class="readout">
+        <span class="chip base">Basis <b>S¹</b></span>
+        <span class="chip">Übergang <b>e<sup>inθ</sup></b></span>
+        <span class="chip total">Klasse <b id="clutchOut">n = 1</b></span>
+        <span class="chip pink">diskret <b>ℤ</b></span>
+      </div>
+      <div class="stage-cap">
+        <span>Die Übergangsfunktion läuft einmal um die Basis und windet sich dabei n-mal um die Faser. n ist die topologische Ladung.</span>
+        <span class="drag">drag the slider</span>
+      </div>
+    </div>
+
+    <div class="formula-grid" style="margin-top:26px">
+      <div class="formula reveal">
+        <div class="formula-label">Reelle Geradenbündel über S¹</div>
+        <script type="text/x-tex">
+\underbrace{\mathrm{Vect}^1_{\mathbb R}(S^1)\cong\pi_0(GL(1,\mathbb R))\cong\mathbb Z/2}_{\text{trivial oder Möbius}}
+        </script>
+        <div class="tex"></div>
+        <p class="plain">
+          Über dem Kreis gibt es nur zwei reelle Geradenbündel: das Zylinderbündel und
+          das Möbiusband. Höhere Twists sind topologisch äquivalent zu einem der
+          beiden; nur die Parität zählt.
+        </p>
+      </div>
+      <div class="formula reveal">
+        <div class="formula-label">Komplexe Geradenbündel über S²</div>
+        <script type="text/x-tex">
+\underbrace{\mathrm{Vect}^1_{\mathbb C}(S^2)\cong\pi_1(U(1))\cong\mathbb Z}_{\text{eine ganze Ladung}}
+        </script>
+        <div class="tex"></div>
+        <p class="plain">
+          Über der Sphäre gibt es unendlich viele komplexe Geradenbündel, nummeriert
+          durch die erste Chern-Zahl. Physikalisch ist das die magnetische
+          Monopolladung.
+        </p>
+      </div>
+      <div class="formula reveal">
+        <div class="formula-label">Clutching</div>
+        <script type="text/x-tex">
+\underbrace{g_{12}:S^1\to G}_{\text{Übergangsfunktion}}
+\quad\longmapsto\quad
+\underbrace{[g_{12}]\in\pi_1(G)}_{\substack{\text{Homotopieklasse}\\\text{= Bündelklasse (abelsches }G\text{)}}}
+        </script>
+        <div class="tex"></div>
+        <p class="plain">
+          Die Konstruktion heißt Clutching: Man zerschneidet die Basis in zwei
+          Hemisphären, trivialisiert das Bündel über jeder und klebt sie mit einer
+          Übergangsfunktion auf dem Äquator zusammen. Die Homotopieklasse dieser
+          Funktion ist die Bündelklasse.
+        </p>
+      </div>
+      <div class="formula reveal">
+        <div class="formula-label">Allgemein</div>
+        <script type="text/x-tex">
+\underbrace{\mathrm{Prin}_G(B)\cong[B,BG]}_{\substack{\text{G-Hauptbündel über }B\\\text{= Abbildungen nach }BG\text{ bis Homotopie}}}
+        </script>
+        <div class="tex"></div>
+        <p class="plain">
+          Für jede topologische Gruppe <span class="m">G</span> gibt es einen
+          klassifizierenden Raum <span class="m">BG</span>. Ein
+          <span class="m">G</span>-Bündel über <span class="m">B</span> ist dasselbe
+          wie eine Homotopieklasse von Abbildungen <span class="m">B → BG</span>.
+          Das ist die tiefste Form der Klassifikation.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="zoo">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">13 · Der Zoo</div>
+      <h2>Sechs Räume, eine Idee.</h2>
+      <p class="lead">
+        Jedes Bild ist ein Faserbündel. Die Unterschiede liegen nicht in der
+        Definition, sondern in der Faser, der Basis und dem Twist. Klicke dich durch
+        die Sammlung — jeder Eintrag führt zurück zu seiner Geschichte.
+      </p>
+    </div>
+
+    <div class="zoo reveal">
+      <a class="zoo-card" href="#idee">
+        <svg viewBox="0 0 220 148" aria-hidden="true">
+          <defs>
+            <linearGradient id="zg1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#5eead4" stop-opacity=".9"/>
+              <stop offset="1" stop-color="#c084fc" stop-opacity=".55"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="110" cy="38" rx="55" ry="17" fill="none" stroke="url(#zg1)" stroke-width="1.4" opacity=".8"/>
+          <ellipse cx="110" cy="110" rx="55" ry="17" fill="none" stroke="#ffb454" stroke-width="1.6" opacity=".9"/>
+          <path d="M55 38 L55 110 M79 45 L79 117 M103 49 L103 121 M127 49 L127 121 M151 45 L151 117 M165 38 L165 110" stroke="#5eead4" stroke-width="1" opacity=".35"/>
+          <path d="M55 38 C55 52 79 52 79 45 M103 49 C103 62 127 62 127 49 M151 45 C151 58 165 58 165 38" fill="none" stroke="#ffb454" stroke-width="1.2" opacity=".7"/>
+          <circle cx="110" cy="110" r="3" fill="#ffb454"/>
+        </svg>
+        <div class="zoo-txt"><h4>Zylinder</h4><p>Das triviale Geradenbündel über S¹. Basis × Faser, global.</p></div>
+        <span class="zoo-tag">trivial</span>
+      </a>
+
+      <a class="zoo-card" href="#schnitte">
+        <svg viewBox="0 0 220 148" aria-hidden="true">
+          <defs>
+            <linearGradient id="zg2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ffb454"/>
+              <stop offset=".5" stop-color="#5eead4"/>
+              <stop offset="1" stop-color="#c084fc"/>
+            </linearGradient>
+          </defs>
+          <path d="M40 50 C70 20 150 20 180 50 C196 64 190 84 170 92 C140 104 80 104 50 92 C30 84 24 64 40 50 Z" fill="none" stroke="url(#zg2)" stroke-width="2"/>
+          <path d="M40 50 C70 92 150 92 180 50" fill="none" stroke="#5eead4" stroke-width="1" opacity=".4"/>
+          <path d="M52 42 L168 106 M58 38 L174 102" stroke="#c084fc" stroke-width="1" opacity=".3"/>
+          <path d="M40 50 C90 70 130 30 180 50" fill="none" stroke="#ffb454" stroke-width="1.2" stroke-dasharray="4 4" opacity=".8"/>
+          <circle cx="110" cy="50" r="2.5" fill="#ffb454"/>
+        </svg>
+        <div class="zoo-txt"><h4>Möbiusband</h4><p>Das nichttriviale reelle Geradenbündel über S¹. Ein halber Twist.</p></div>
+        <span class="zoo-tag">w₁ ≠ 0</span>
+      </a>
+
+      <a class="zoo-card" href="#idee">
+        <svg viewBox="0 0 220 148" aria-hidden="true">
+          <defs>
+            <linearGradient id="zg3" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#5eead4"/>
+              <stop offset="1" stop-color="#7aa2ff"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="110" cy="74" rx="70" ry="34" fill="none" stroke="url(#zg3)" stroke-width="1.6" opacity=".85"/>
+          <ellipse cx="110" cy="74" rx="28" ry="13" fill="none" stroke="#c084fc" stroke-width="1.4" opacity=".8"/>
+          <path d="M40 74 C63 54 157 54 180 74 C157 94 63 94 40 74 Z" fill="none" stroke="#ffb454" stroke-width="1" opacity=".45"/>
+          <path d="M82 61 C98 54 122 54 138 61 M82 87 C98 94 122 94 138 87" fill="none" stroke="#5eead4" stroke-width="1" opacity=".4"/>
+        </svg>
+        <div class="zoo-txt"><h4>Torus</h4><p>Ein Kreisbündel über S¹. Faser S¹, Gesamtraum T².</p></div>
+        <span class="zoo-tag">S¹ → T² → S¹</span>
+      </a>
+
+      <a class="zoo-card" href="#verbindung">
+        <svg viewBox="0 0 220 148" aria-hidden="true">
+          <defs>
+            <linearGradient id="zg4" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ff7aa2"/>
+              <stop offset="1" stop-color="#c084fc"/>
+            </linearGradient>
+          </defs>
+          <path d="M70 34 C70 10 150 10 150 34 C150 50 130 54 120 62 C110 70 110 78 120 86 C130 94 150 98 150 114 C150 138 70 138 70 114 C70 98 90 94 100 86 C110 78 110 70 100 62 C90 54 70 50 70 34 Z" fill="none" stroke="url(#zg4)" stroke-width="2"/>
+          <path d="M88 34 C88 22 132 22 132 34 C132 44 118 47 110 54 C102 61 102 87 110 94 C118 101 132 104 132 114 C132 126 88 126 88 114 C88 104 102 101 110 94" fill="none" stroke="#5eead4" stroke-width="1" opacity=".35"/>
+          <circle cx="110" cy="74" r="2.5" fill="#ff7aa2"/>
+        </svg>
+        <div class="zoo-txt"><h4>Kleinsche Flasche</h4><p>Ein Kreisbündel über S¹ mit einer Spiegelung. Nur im ℝ⁴ ohne Selbstschnitt.</p></div>
+        <span class="zoo-tag">nicht orientierbar</span>
+      </a>
+
+      <a class="zoo-card" href="#tangential">
+        <svg viewBox="0 0 220 148" aria-hidden="true">
+          <defs>
+            <radialGradient id="zg5" cx="40%" cy="32%" r="70%">
+              <stop offset="0" stop-color="#2a3448"/>
+              <stop offset="1" stop-color="#0a0d16"/>
+            </radialGradient>
+          </defs>
+          <circle cx="110" cy="72" r="48" fill="url(#zg5)" stroke="#7aa2ff" stroke-width="1.2" opacity=".8"/>
+          <ellipse cx="110" cy="72" rx="48" ry="15" fill="none" stroke="#7aa2ff" stroke-width=".8" opacity=".3"/>
+          <ellipse cx="110" cy="72" rx="15" ry="48" fill="none" stroke="#7aa2ff" stroke-width=".8" opacity=".3"/>
+          <path d="M126 56 L160 40 M126 56 L152 66" stroke="#5eead4" stroke-width="1.6"/>
+          <path d="M76 84 L42 100 M76 84 L50 74" stroke="#ffb454" stroke-width="1.6"/>
+          <path d="M110 24 L110 48" stroke="#ff7aa2" stroke-width="1.2" stroke-dasharray="3 3"/>
+          <circle cx="126" cy="56" r="3" fill="#5eead4"/>
+          <circle cx="76" cy="84" r="3" fill="#ffb454"/>
+        </svg>
+        <div class="zoo-txt"><h4>Tangentialbündel</h4><p>An jedem Punkt eine Ebene. TS² ist nicht trivial — Hairy Ball.</p></div>
+        <span class="zoo-tag">χ = 2</span>
+      </a>
+
+      <a class="zoo-card" href="#hopf">
+        <svg viewBox="0 0 220 148" aria-hidden="true">
+          <defs>
+            <linearGradient id="zg6" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#5eead4"/>
+              <stop offset=".5" stop-color="#7aa2ff"/>
+              <stop offset="1" stop-color="#c084fc"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="94" cy="62" rx="42" ry="18" fill="none" stroke="url(#zg6)" stroke-width="1.6" transform="rotate(-24 94 62)"/>
+          <ellipse cx="128" cy="82" rx="42" ry="18" fill="none" stroke="#ffb454" stroke-width="1.6" transform="rotate(30 128 82)" opacity=".85"/>
+          <ellipse cx="112" cy="74" rx="18" ry="8" fill="none" stroke="#ff7aa2" stroke-width="1.2" transform="rotate(80 112 74)" opacity=".8"/>
+          <circle cx="94" cy="62" r="2.5" fill="#5eead4"/>
+          <circle cx="128" cy="82" r="2.5" fill="#ffb454"/>
+        </svg>
+        <div class="zoo-txt"><h4>Hopf-Faserung</h4><p>S³ → S² mit Faser S¹. Die Kreise sind paarweise verschlungen.</p></div>
+        <span class="zoo-tag">S¹ → S³ → S²</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="formeln">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">14 · Formelsammlung</div>
+      <h2>Die Formeln, ehrlich.</h2>
+      <p class="lead">
+        Hier stehen die Definitionen noch einmal kompakt — jede Formel mit
+        Unterklammerungen, die sagen, was sie in einfachem Deutsch bedeutet. Öffne
+        nur, was du brauchst.
+      </p>
+    </div>
+
+    <details class="acc reveal">
+      <summary>Topologisches Faserbündel</summary>
+      <div class="acc-body">
+        <div class="formula">
+          <script type="text/x-tex">
+\underbrace{(E,B,\pi,F)}_{\substack{\text{Gesamtraum, Basis,}\\\text{Projektion, typische Faser}}}
+\quad\text{heißt Faserbündel, wenn}\quad
+\underbrace{\pi^{-1}(U)\cong U\times F}_{\substack{\text{lokal ein Produkt}\\\text{über jeder kleinen Menge }U}}
+          </script>
+          <div class="tex"></div>
+          <p class="plain">Die lokale Trivialisierung ist Teil der Struktur, nicht eine optionale Zusatzannahme. Ohne sie wäre ein Bündel nur eine beliebige surjektive Abbildung.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="acc reveal">
+      <summary>Vektorbündel</summary>
+      <div class="acc-body">
+        <div class="formula">
+          <script type="text/x-tex">
+\underbrace{E\overset{\pi}{\longrightarrow}B}_{\text{Vektorbündel vom Rang }k}
+\qquad
+\underbrace{\pi^{-1}(b)\cong\mathbb R^k}_{\text{jede Faser ist ein Vektorraum}}
+          </script>
+          <div class="tex"></div>
+          <p class="plain">Die Übergangsfunktionen sind lineare Abbildungen. Deshalb kann man Schnitte addieren und mit Funktionen multiplizieren — Vektorbündel sind die natürliche Heimat von Feldern.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="acc reveal">
+      <summary>Hauptbündel und assoziiertes Bündel</summary>
+      <div class="acc-body">
+        <div class="formula">
+          <script type="text/x-tex">
+\underbrace{P\times G\to P,\quad (p,g)\mapsto p\cdot g}_{\substack{\text{freie, transitive}\\\text{Rechtswirkung}}}
+\qquad
+\underbrace{P/G\cong B}_{\text{Bahnen = Fasern}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="formula">
+          <script type="text/x-tex">
+\underbrace{P\times_G F=(P\times F)/G}_{\text{assoziiertes Bündel}}
+          </script>
+          <div class="tex"></div>
+          <p class="plain">Ein Hauptbündel ist die „nackte“ Eichstruktur. Alle Materiefelder entstehen daraus, indem man eine Darstellung <span class="m">F</span> der Gruppe wählt.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="acc reveal">
+      <summary>Verbindung und Krümmung</summary>
+      <div class="acc-body">
+        <div class="formula">
+          <script type="text/x-tex">
+\underbrace{\omega\in\Omega^1(P;\mathfrak g)}_{\text{Verbindungs-1-Form}}
+\quad\text{mit}\quad
+\underbrace{\omega(X^\#)=X}_{\text{vertikale Richtungen}}
+\quad
+\underbrace{R_g^*\omega=\mathrm{Ad}_{g^{-1}}\omega}_{\text{Äquivarianz}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="formula">
+          <script type="text/x-tex">
+\underbrace{\Omega=d\omega+\tfrac12[\omega,\omega]}_{\text{Krümmung}}
+\qquad
+\underbrace{\mathrm{Hol}_\gamma=\mathcal P\exp\!\left(-\int_\gamma\omega\right)}_{\text{Holonomie}}
+          </script>
+          <div class="tex"></div>
+          <p class="plain">Die Krümmung misst, wie sehr der Paralleltransport um benachbarte Wege scheitert. Die Holonomie ist die endliche Version davon.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="acc reveal">
+      <summary>Hopf-Faserung</summary>
+      <div class="acc-body">
+        <div class="formula">
+          <script type="text/x-tex">
+\underbrace{\pi:S^3\to S^2}_{\text{Hopf-Faserung}}
+\qquad
+\underbrace{\pi^{-1}(p)\cong S^1}_{\text{Faser}}
+\qquad
+\underbrace{\operatorname{lk}(\pi^{-1}(p),\pi^{-1}(q))=1}_{\text{paarweise verschlungen}}
+          </script>
+          <div class="tex"></div>
+          <p class="plain">Die Hopf-Faserung ist das erste nichttriviale Beispiel einer Faserung mit Sphären und der Erzeuger von <span class="m">π₃(S²) ≅ ℤ</span>.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="acc reveal">
+      <summary>Hairy Ball und Euler-Charakteristik</summary>
+      <div class="acc-body">
+        <div class="formula">
+          <script type="text/x-tex">
+\underbrace{\chi(S^2)=2}_{\text{Euler-Zahl}}
+\quad\Longrightarrow\quad
+\underbrace{\text{jedes stetige Vektorfeld hat eine Nullstelle}}_{\text{Hairy-Ball-Theorem}}
+          </script>
+          <div class="tex"></div>
+          <p class="plain">Die Summe der Indizes der Nullstellen ist <span class="m">χ(S²)</span>. Sie ist topologisch, also unabhängig von der gewählten Kämming.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="acc reveal">
+      <summary>Berry-Phase in der Chemie</summary>
+      <div class="acc-body">
+        <div class="formula">
+          <script type="text/x-tex">
+\underbrace{\mathbf A_n(\mathbf R)=i\langle\psi_n(\mathbf R)|\nabla_{\mathbf R}|\psi_n(\mathbf R)\rangle}_{\text{Berry-Zusammenhang}}
+\qquad
+\underbrace{\gamma_n=\oint_{\mathcal C}\mathbf A_n\cdot d\mathbf R}_{\text{geometrische Phase}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="formula">
+          <script type="text/x-tex">
+\underbrace{\gamma_n=\pi\pmod{2\pi}}_{\text{um eine konische Durchschneidung}}
+          </script>
+          <div class="tex"></div>
+          <p class="plain">Die Phase hängt nicht von der Geschwindigkeit ab, mit der man die Kerne bewegt — nur von der Schleife im Raum der Kerngeometrien.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="acc reveal">
+      <summary>Chern-Zahl und Quanten-Hall</summary>
+      <div class="acc-body">
+        <div class="formula">
+          <script type="text/x-tex">
+\underbrace{C_n=\frac{1}{2\pi}\int_{\mathrm{BZ}}F_n}_{\text{ganzzahlige Windung}}
+\qquad
+\underbrace{\sigma_{xy}=\frac{e^2}{h}\sum_n C_n}_{\text{quantisierte Hall-Leitfähigkeit}}
+          </script>
+          <div class="tex"></div>
+          <p class="plain">Die Chern-Zahl ist eine topologische Invariante des Bloch-Bündels. Sie kann sich nur ändern, wenn die Bandlücke schließt.</p>
+        </div>
+      </div>
+    </details>
+
+    <details class="acc reveal">
+      <summary>Klassifikation</summary>
+      <div class="acc-body">
+        <div class="formula">
+          <script type="text/x-tex">
+\underbrace{\mathrm{Prin}_G(B)\cong[B,BG]}_{\substack{\text{G-Hauptbündel über }B\\\text{= Abbildungen nach }BG\text{ bis Homotopie}}}
+          </script>
+          <div class="tex"></div>
+        </div>
+        <div class="formula">
+          <script type="text/x-tex">
+\underbrace{\mathrm{Vect}^1_{\mathbb R}(S^1)\cong\mathbb Z/2}_{\text{trivial oder Möbius}}
+\qquad
+\underbrace{\mathrm{Vect}^1_{\mathbb C}(S^2)\cong\mathbb Z}_{\text{ganze Ladung}}
+          </script>
+          <div class="tex"></div>
+          <p class="plain">Die erste Aussage ist die einfachste Klassifikation überhaupt; die zweite ist der Dirac-Monopol. Beide sind Spezialfälle desselben Musters.</p>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section class="sec" id="quellen">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="kicker">15 · Quellen</div>
+      <h2>Weiterlesen, weiterschauen.</h2>
+      <p class="lead">
+        Die Visualisierungen sind didaktische Modelle, keine Messdaten. Die
+        mathematischen Aussagen und die historischen Bezüge stützen sich auf die
+        folgenden Quellen — von den Originalarbeiten bis zu modernen Lehrbüchern.
+      </p>
+    </div>
+
+    <div class="source-grid reveal">
+      <div class="source-card">
+        <h4>nLab</h4>
+        <ul>
+          <li><a href="https://ncatlab.org/nlab/show/fiber+bundle" target="_blank" rel="noopener">fiber bundle</a><span class="src-meta">Definition, lokale Trivialität, Übergangsfunktionen</span></li>
+          <li><a href="https://ncatlab.org/nlab/show/principal+bundle" target="_blank" rel="noopener">principal bundle</a><span class="src-meta">Gruppenwirkung, assoziierte Bündel, klassifizierender Raum</span></li>
+          <li><a href="https://ncatlab.org/nlab/show/connection+on+a+bundle" target="_blank" rel="noopener">connection on a bundle</a><span class="src-meta">Paralleltransport, kovariante Ableitung, Holonomie</span></li>
+          <li><a href="https://ncatlab.org/nlab/show/gauge+theory" target="_blank" rel="noopener">gauge theory</a><span class="src-meta">Eichfelder als Bündel mit Verbindung</span></li>
+          <li><a href="https://ncatlab.org/nlab/show/Hopf+fibration" target="_blank" rel="noopener">Hopf fibration</a><span class="src-meta">S³ → S², Faser S¹, Verschlingung</span></li>
+          <li><a href="https://ncatlab.org/nlab/show/associated+bundle" target="_blank" rel="noopener">associated bundle</a><span class="src-meta">P ×<sub>G</sub> F</span></li>
+          <li><a href="https://ncatlab.org/nlab/show/characteristic+class" target="_blank" rel="noopener">characteristic class</a><span class="src-meta">Chern-, Stiefel-Whitney-, Euler-Klassen</span></li>
+        </ul>
+      </div>
+
+      <div class="source-card">
+        <h4>Originalarbeiten</h4>
+        <ul>
+          <li><a href="https://doi.org/10.1007/BF01457962" target="_blank" rel="noopener">Hopf, Über die Abbildungen der dreidimensionalen Sphäre auf die Kugelfläche</a><span class="src-meta">Math. Ann. 104 (1931)</span></li>
+          <li><a href="https://doi.org/10.1073/pnas.21.7.464" target="_blank" rel="noopener">Whitney, Sphere-Spaces</a><span class="src-meta">Proc. Natl. Acad. Sci. USA 21 (1935)</span></li>
+          <li><a href="https://ncatlab.org/nlab/show/Ehresmann+connection" target="_blank" rel="noopener">Ehresmann, Les connexions infinitésimales dans un espace fibré différentiable</a><span class="src-meta">Colloque de topologie, Bruxelles (1950) · via nLab</span></li>
+          <li><a href="https://doi.org/10.1103/PhysRev.96.191" target="_blank" rel="noopener">Yang &amp; Mills, Conservation of Isotopic Spin and Isotopic Gauge Invariance</a><span class="src-meta">Phys. Rev. 96 (1954)</span></li>
+          <li><a href="https://doi.org/10.1098/rspa.1931.0130" target="_blank" rel="noopener">Dirac, Quantised singularities in the electromagnetic field</a><span class="src-meta">Proc. R. Soc. A 133 (1931)</span></li>
+          <li><a href="https://doi.org/10.1103/PhysRev.115.485" target="_blank" rel="noopener">Aharonov &amp; Bohm, Significance of Electromagnetic Potentials in the Quantum Theory</a><span class="src-meta">Phys. Rev. 115 (1959)</span></li>
+          <li><a href="https://doi.org/10.1098/rspa.1984.0023" target="_blank" rel="noopener">Berry, Quantal phase factors accompanying adiabatic changes</a><span class="src-meta">Proc. R. Soc. A 392 (1984)</span></li>
+          <li><a href="https://doi.org/10.1039/DF9633500077" target="_blank" rel="noopener">Herzberg &amp; Longuet-Higgins, Intersection of potential energy surfaces in polyatomic molecules</a><span class="src-meta">Discuss. Faraday Soc. 35 (1963)</span></li>
+          <li><a href="https://doi.org/10.1103/RevModPhys.64.51" target="_blank" rel="noopener">Mead, The geometric phase in molecular systems</a><span class="src-meta">Rev. Mod. Phys. 64 (1992)</span></li>
+          <li><a href="https://doi.org/10.1103/PhysRevLett.49.405" target="_blank" rel="noopener">Thouless, Kohmoto, Nightingale &amp; den Nijs, Quantized Hall Conductance in a Two-Dimensional Periodic Potential</a><span class="src-meta">Phys. Rev. Lett. 49 (1982)</span></li>
+          <li>Kaluza, <em>Zum Unitätsproblem der Physik</em>, Sitzungsber. Preuss. Akad. Wiss. Berlin (1921), 966–972.<span class="src-meta">U(1)-Bündel über der Raumzeit, Vorläufer der Kaluza–Klein-Theorie</span></li>
+          <li><a href="https://doi.org/10.1007/BF01397481" target="_blank" rel="noopener">Klein, Quantentheorie und fünfdimensionale Relativitätstheorie</a><span class="src-meta">Z. Phys. 37 (1926)</span></li>
+          <li><a href="https://doi.org/10.1103/PhysRevLett.95.226801" target="_blank" rel="noopener">Kane &amp; Mele, Quantum Spin Hall Effect in Graphene</a><span class="src-meta">Phys. Rev. Lett. 95 (2005)</span></li>
+          <li><a href="https://doi.org/10.1103/RevModPhys.82.3045" target="_blank" rel="noopener">Hasan &amp; Kane, Colloquium: Topological insulators</a><span class="src-meta">Rev. Mod. Phys. 82 (2010)</span></li>
+        </ul>
+      </div>
+
+      <div class="source-card">
+        <h4>Lehrbücher</h4>
+        <ul>
+          <li>Milnor &amp; Stasheff, <em>Characteristic Classes</em>, Princeton University Press, 1974.</li>
+          <li>Husemöller, <em>Fibre Bundles</em>, Graduate Texts in Mathematics, Springer, 1994.</li>
+          <li>Kobayashi &amp; Nomizu, <em>Foundations of Differential Geometry</em>, Wiley, 1963/1969.</li>
+          <li>Steenrod, <em>The Topology of Fibre Bundles</em>, Princeton University Press, 1951.</li>
+          <li>Nakahara, <em>Geometry, Topology and Physics</em>, Taylor &amp; Francis, 2003.</li>
+          <li>Baez &amp; Muniain, <em>Gauge Fields, Knots and Gravity</em>, World Scientific, 1994.</li>
+          <li>Frankel, <em>The Geometry of Physics</em>, Cambridge University Press, 2011.</li>
+          <li>Lee, <em>Introduction to Smooth Manifolds</em>, Springer, 2012.</li>
+          <li>Hatcher, <em>Vector Bundles and K-Theory</em>, online, 2009.</li>
+        </ul>
+      </div>
+
+      <div class="source-card">
+        <h4>Informatik &amp; geometrisches Lernen</h4>
+        <ul>
+          <li><a href="https://arxiv.org/abs/1602.07576" target="_blank" rel="noopener">Cohen &amp; Welling, Group Equivariant Convolutional Networks</a><span class="src-meta">ICML 2016 · arXiv:1602.07576</span></li>
+          <li><a href="https://arxiv.org/abs/1807.02547" target="_blank" rel="noopener">Weiler et al., 3D Steerable CNNs</a><span class="src-meta">NeurIPS 2018 · arXiv:1807.02547</span></li>
+          <li><a href="https://arxiv.org/abs/1902.04615" target="_blank" rel="noopener">Cohen et al., Gauge Equivariant Convolutional Networks and the Icosahedral CNN</a><span class="src-meta">ICML 2019 · arXiv:1902.04615</span></li>
+          <li><a href="https://arxiv.org/abs/2104.13478" target="_blank" rel="noopener">Bronstein et al., Geometric Deep Learning: Grids, Groups, Graphs, Geodesics, and Gauges</a><span class="src-meta">arXiv:2104.13478</span></li>
+          <li><a href="https://arxiv.org/abs/0709.0248" target="_blank" rel="noopener">Awodey &amp; Warren, Homotopy theoretic models of identity types</a><span class="src-meta">Math. Proc. Cambridge Philos. Soc. 146 (2009)</span></li>
+          <li>Robinson, <em>Topological Signal Processing</em>, Springer, 2014.<span class="src-meta">Garben und lokale Konsistenz in der Signalverarbeitung</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note total reveal" style="margin-top:28px">
+      <p><strong>Eine Ehrlichkeitsnotiz.</strong> Die Seite ist ein Essay, kein
+      Lehrbuch. Die Bilder sind bewusst schematisch; sie zeigen die Idee, nicht einen
+      Maßstab. Die Formeln sind so gewählt, dass sie in der jeweiligen Disziplin
+      korrekt sind — aber jede Disziplin hat ihre eigenen Konventionen
+      (Vorzeichen, Metriken, Faserlinks/rechts). Wenn du eine Formel in einem
+      Fachbuch nachschlägst, kann sie deshalb anders aussehen und trotzdem dasselbe
+      meinen.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div>
+      <div class="mark">Faserbündel</div>
+      <p>Ein interaktives Essay über Ort und Zustand. Keine Cookies, kein Tracking, keine externen Skripte — nur Mathematik, Canvas und ein wenig Licht.</p>
+    </div>
+    <a class="top-link" href="#anfang">↑ zurück nach oben</a>
+  </div>
+</footer>
+</main>
+
+<script>
+(() => {
+'use strict';
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const TAU = Math.PI * 2;
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, t) => a + (b - a) * t;
+const rad = d => d * Math.PI / 180;
+const deg = r => r * 180 / Math.PI;
+const REDUCE = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const P = {
+  base: '#ffb454',
+  fiber: '#5eead4',
+  total: '#c084fc',
+  pink: '#ff7aa2',
+  blue: '#7aa2ff',
+  yellow: '#ffd166',
+  ink: '#e9edf5',
+  dim: '#a1aabd',
+  bg: '#06080e'
+};
+
+function rgba(hex, a) {
+  let h = hex.replace('#', '');
+  if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  const n = parseInt(h, 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+}
+function hsl(h, s, l, a = 1) {
+  return `hsla(${((h % 360) + 360) % 360},${s}%,${l}%,${a})`;
+}
+
+function renderFormulas() {
+  const sources = $$('script[type="text/x-tex"]');
+  if (!window.temml) {
+    sources.forEach(src => {
+      const out = src.parentElement ? src.parentElement.querySelector('.tex') : null;
+      if (out) out.textContent = src.textContent.trim();
+    });
+    return;
+  }
+  sources.forEach(src => {
+    const host = src.parentElement;
+    const out = host ? host.querySelector('.tex') : null;
+    if (!out) return;
+    const tex = src.textContent.trim();
+    try {
+      out.innerHTML = temml.renderToString(tex, { displayMode: true });
+    } catch (e) {
+      out.textContent = tex;
+    }
+  });
+}
+
+const STAGES = [];
+
+class Stage3D {
+  constructor(canvas, opts = {}) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.rotX = opts.rotX ?? -0.32;
+    this.rotY = opts.rotY ?? 0.6;
+    this.zoom = opts.zoom ?? 1;
+    this.yShift = opts.yShift ?? 0;
+    this.auto = opts.auto ?? 0;
+    this.drag = false;
+    this.moved = 0;
+    this.px = 0;
+    this.py = 0;
+    this.visible = true;
+    this.w = 0;
+    this.h = 0;
+    this.cx = 0;
+    this.cy = 0;
+    this.base = 1;
+    this.scale = 1;
+    this.cmds = [];
+    this.onClick = null;
+    this.resize();
+    this.bind();
+    this.ro = new ResizeObserver(() => this.resize());
+    this.ro.observe(canvas);
+    this.io = new IntersectionObserver(es => { this.visible = es[0].isIntersecting; }, { threshold: 0.01 });
+    this.io.observe(canvas);
+    STAGES.push(this);
+  }
+  resize() {
+    const r = this.canvas.getBoundingClientRect();
+    if (r.width < 4 || r.height < 4) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.canvas.width = Math.round(r.width * dpr);
+    this.canvas.height = Math.round(r.height * dpr);
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.w = r.width;
+    this.h = r.height;
+    this.cx = r.width / 2;
+    this.cy = r.height / 2 + this.yShift * r.height;
+    this.base = Math.min(r.width, r.height);
+    this.scale = this.base * 0.26 * this.zoom;
+  }
+  bind() {
+    const c = this.canvas;
+    c.style.touchAction = 'none';
+    c.addEventListener('pointerdown', e => {
+      this.drag = true;
+      this.moved = 0;
+      this.px = e.clientX;
+      this.py = e.clientY;
+      try { c.setPointerCapture(e.pointerId); } catch (e) {}
+    });
+    c.addEventListener('pointermove', e => {
+      if (!this.drag) return;
+      const dx = e.clientX - this.px;
+      const dy = e.clientY - this.py;
+      this.px = e.clientX;
+      this.py = e.clientY;
+      this.moved += Math.abs(dx) + Math.abs(dy);
+      this.rotY += dx * 0.0075;
+      this.rotX = clamp(this.rotX + dy * 0.0075, -1.45, 1.45);
+    });
+    const end = e => {
+      if (this.drag && this.moved < 6 && this.onClick) {
+        const r = c.getBoundingClientRect();
+        this.onClick(e.clientX - r.left, e.clientY - r.top);
+      }
+      this.drag = false;
+    };
+    c.addEventListener('pointerup', end);
+    c.addEventListener('pointercancel', () => { this.drag = false; });
+    c.addEventListener('wheel', e => {
+      e.preventDefault();
+      this.zoom = clamp(this.zoom * Math.exp(-e.deltaY * 0.0012), 0.55, 2.4);
+      this.scale = this.base * 0.26 * this.zoom;
+    }, { passive: false });
+  }
+  addRot(dt) {
+    if (this.auto && !this.drag && !REDUCE) this.rotY += this.auto * dt;
+  }
+  project(p) {
+    const cy = Math.cos(this.rotY);
+    const sy = Math.sin(this.rotY);
+    const x1 = p[0] * cy + p[2] * sy;
+    const z1 = -p[0] * sy + p[2] * cy;
+    const cx = Math.cos(this.rotX);
+    const sx = Math.sin(this.rotX);
+    const y1 = p[1] * cx - z1 * sx;
+    const z2 = p[1] * sx + z1 * cx;
+    const den = Math.max(0.7, 6.5 + z2);
+    const f = 6.5 / den;
+    return { x: this.cx + x1 * this.scale * f, y: this.cy - y1 * this.scale * f, z: z2, f };
+  }
+  begin() { this.cmds.length = 0; this.ctx.clearRect(0, 0, this.w, this.h); }
+  line(a, b, o = {}) {
+    const A = this.project(a);
+    const B = this.project(b);
+    this.cmds.push({ k: 0, a: A, b: B, z: (A.z + B.z) / 2 - (o.zBias || 0), o });
+  }
+  polyline(pts, o = {}) {
+    for (let i = 0; i < pts.length - 1; i++) this.line(pts[i], pts[i + 1], o);
+  }
+  poly(pts, o = {}) {
+    const ps = pts.map(p => this.project(p));
+    const z = ps.reduce((s, p) => s + p.z, 0) / ps.length - (o.zBias || 0);
+    this.cmds.push({ k: 1, ps, z, o });
+  }
+  point(p, o = {}) {
+    const A = this.project(p);
+    this.cmds.push({ k: 2, a: A, z: A.z - (o.zBias || 0), o });
+  }
+  label(p, text, o = {}) {
+    const A = this.project(p);
+    this.cmds.push({ k: 3, a: A, z: A.z - (o.zBias || 0), o, text });
+  }
+  arrow(a, b, o = {}) {
+    this.line(a, b, o);
+    const A = this.project(a);
+    const B = this.project(b);
+    const dx = B.x - A.x;
+    const dy = B.y - A.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const ux = dx / len;
+    const uy = dy / len;
+    const s = o.head || 7;
+    const hx = B.x - ux * s;
+    const hy = B.y - uy * s;
+    const z = B.z - (o.zBias || 0) - 0.01;
+    this.cmds.push({ k: 0, a: { x: hx - uy * s * 0.55, y: hy + ux * s * 0.55 }, b: B, z, o });
+    this.cmds.push({ k: 0, a: { x: hx + uy * s * 0.55, y: hy - ux * s * 0.55 }, b: B, z, o });
+  }
+  flush() {
+    this.cmds.sort((a, b) => b.z - a.z);
+    const ctx = this.ctx;
+    for (const c of this.cmds) {
+      const o = c.o;
+      ctx.save();
+      ctx.globalAlpha = o.alpha ?? 1;
+      ctx.lineCap = o.cap || 'round';
+      ctx.lineJoin = 'round';
+      if (o.blur) {
+        ctx.shadowColor = o.glow || o.color || P.fiber;
+        ctx.shadowBlur = o.blur;
+      }
+      if (c.k === 0) {
+        ctx.beginPath();
+        ctx.moveTo(c.a.x, c.a.y);
+        ctx.lineTo(c.b.x, c.b.y);
+        ctx.strokeStyle = o.color || P.fiber;
+        ctx.lineWidth = o.width || 1;
+        if (o.dash) ctx.setLineDash(o.dash);
+        ctx.stroke();
+      } else if (c.k === 1) {
+        ctx.beginPath();
+        ctx.moveTo(c.ps[0].x, c.ps[0].y);
+        for (let i = 1; i < c.ps.length; i++) ctx.lineTo(c.ps[i].x, c.ps[i].y);
+        if (o.fill) { ctx.fillStyle = o.fill; ctx.fill(); }
+        if (o.color) {
+          ctx.strokeStyle = o.color;
+          ctx.lineWidth = o.width || 1;
+          ctx.stroke();
+        }
+      } else if (c.k === 2) {
+        const r = (o.r || 2.5) * (c.a.f || 1);
+        ctx.beginPath();
+        ctx.arc(c.a.x, c.a.y, r, 0, TAU);
+        ctx.fillStyle = o.color || P.fiber;
+        ctx.fill();
+        if (o.ring) {
+          ctx.strokeStyle = o.ring;
+          ctx.lineWidth = o.ringWidth || 1;
+          ctx.stroke();
+        }
+      } else if (c.k === 3) {
+        ctx.font = `${o.fs || 10}px ui-monospace, monospace`;
+        ctx.textAlign = o.align || 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = o.color || P.dim;
+        ctx.fillText(c.text, c.a.x, c.a.y);
+      }
+      ctx.restore();
+    }
+  }
+}
+
+class Stage2D {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.w = 0;
+    this.h = 0;
+    this.visible = true;
+    this.resize();
+    this.ro = new ResizeObserver(() => this.resize());
+    this.ro.observe(canvas);
+    this.io = new IntersectionObserver(es => { this.visible = es[0].isIntersecting; }, { threshold: 0.01 });
+    this.io.observe(canvas);
+    STAGES.push(this);
+  }
+  resize() {
+    const r = this.canvas.getBoundingClientRect();
+    if (r.width < 4 || r.height < 4) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.canvas.width = Math.round(r.width * dpr);
+    this.canvas.height = Math.round(r.height * dpr);
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.w = r.width;
+    this.h = r.height;
+  }
+  clear() { this.ctx.clearRect(0, 0, this.w, this.h); }
+  addRot() {}
+}
+
+function wireSphere(stage, r, color, alpha, opts = {}) {
+  const segs = opts.segs ?? 30;
+  const rings = opts.rings ?? 16;
+  const width = opts.width ?? 0.7;
+  for (let j = 1; j < rings; j++) {
+    const th = Math.PI * j / rings;
+    const pts = [];
+    for (let i = 0; i <= segs; i++) {
+      const ph = TAU * i / segs;
+      pts.push([r * Math.sin(th) * Math.cos(ph), r * Math.cos(th), r * Math.sin(th) * Math.sin(ph)]);
+    }
+    stage.polyline(pts, { color, width, alpha });
+  }
+  for (let i = 0; i < segs; i++) {
+    const ph = TAU * i / segs;
+    const pts = [];
+    for (let j = 0; j <= rings; j++) {
+      const th = Math.PI * j / rings;
+      pts.push([r * Math.sin(th) * Math.cos(ph), r * Math.cos(th), r * Math.sin(th) * Math.sin(ph)]);
+    }
+    stage.polyline(pts, { color, width, alpha });
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  const rr = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + rr, y);
+  ctx.arcTo(x + w, y, x + w, y + h, rr);
+  ctx.arcTo(x + w, y + h, x, y + h, rr);
+  ctx.arcTo(x, y + h, x, y, rr);
+  ctx.arcTo(x, y, x + w, y, rr);
+  ctx.closePath();
+}
+
+function glowDot(ctx, x, y, r, color, blur = 12) {
+  ctx.save();
+  ctx.shadowColor = color;
+  ctx.shadowBlur = blur;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, TAU);
+  ctx.fill();
+  ctx.restore();
+}
+
+function label2d(ctx, text, x, y, color, size = 9, align = 'left') {
+  ctx.save();
+  ctx.font = `${size}px ui-monospace, monospace`;
+  ctx.textAlign = align;
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = color;
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
+const hero = new Stage3D($('#heroCanvas'), { rotX: -0.34, rotY: 0.65, auto: 0.11, zoom: 0.9 });
+hero.frame = (t) => {
+  const time = REDUCE ? 0 : t;
+  hero.begin();
+  const twist = 0.62;
+  const N = 64;
+  const M = 12;
+  const base = [];
+  for (let i = 0; i < N; i++) {
+    const u = i / N * TAU;
+    base.push([Math.cos(u), 0, Math.sin(u)]);
+  }
+  for (let i = 0; i < N; i++) {
+    const u = i / N * TAU;
+    const a = Math.PI * twist * (u / TAU);
+    const d = [Math.sin(a) * Math.cos(u), Math.cos(a), Math.sin(a) * Math.sin(u)];
+    const c = [Math.cos(u), 0, Math.sin(u)];
+    if (i % 2 === 0) {
+      for (let j = 0; j < M; j++) {
+        const w0 = -0.9 + 1.8 * j / M;
+        const w1 = -0.9 + 1.8 * (j + 1) / M;
+        const p0 = [c[0] + w0 * d[0], c[1] + w0 * d[1], c[2] + w0 * d[2]];
+        const p1 = [c[0] + w1 * d[0], c[1] + w1 * d[1], c[2] + w1 * d[2]];
+        const col = j < M / 2 ? rgba(P.fiber, 0.28) : rgba(P.total, 0.28);
+        hero.line(p0, p1, { color: col, width: 0.8, alpha: 0.9 });
+      }
+    }
+    if (i < N - 1) {
+      const u2 = (i + 1) / N * TAU;
+      const a2 = Math.PI * twist * (u2 / TAU);
+      const d2 = [Math.sin(a2) * Math.cos(u2), Math.cos(a2), Math.sin(a2) * Math.sin(u2)];
+      const c2 = [Math.cos(u2), 0, Math.sin(u2)];
+      for (const w of [-0.9, -0.55, -0.2, 0.2, 0.55, 0.9]) {
+        const p0 = [c[0] + w * d[0], c[1] + w * d[1], c[2] + w * d[2]];
+        const p1 = [c2[0] + w * d2[0], c2[1] + w * d2[1], c2[2] + w * d2[2]];
+        hero.line(p0, p1, { color: rgba(P.blue, 0.20), width: 0.9, alpha: 0.85 });
+      }
+    }
+  }
+  for (let i = 0; i < N; i++) {
+    hero.line(base[i], base[(i + 1) % N], { color: P.base, width: 2.6, alpha: 0.9, blur: 16 });
+  }
+  for (let k = 0; k < 70; k++) {
+    const u = (k / 70 * TAU + time * 0.07) % TAU;
+    const v = Math.sin(time * 0.9 + k * 1.7) * 0.92;
+    const a = Math.PI * twist * (u / TAU);
+    const d = [Math.sin(a) * Math.cos(u), Math.cos(a), Math.sin(a) * Math.sin(u)];
+    const c = [Math.cos(u), 0, Math.sin(u)];
+    const p = [c[0] + v * d[0], c[1] + v * d[1], c[2] + v * d[2]];
+    hero.point(p, { r: 2.0, color: k % 3 ? P.fiber : P.total, blur: 12, alpha: 0.9 });
+  }
+  hero.flush();
+};
+const core = new Stage3D($('#coreCanvas'), { rotX: -0.42, rotY: 0.55, auto: 0.055, zoom: 1.12 });
+const coreS = { mode: 'cylinder', twist: 0, phase: 0.18, proj: true, spin: true };
+
+function bandPoint(u, w, twist) {
+  const a = Math.PI * twist * (u / TAU);
+  const c = [Math.cos(u), 0, Math.sin(u)];
+  const d = [Math.sin(a) * Math.cos(u), Math.cos(a), Math.sin(a) * Math.sin(u)];
+  return [c[0] + w * d[0], c[1] + w * d[1], c[2] + w * d[2]];
+}
+function basePoint(u, r = 1) {
+  return [r * Math.cos(u), 0, r * Math.sin(u)];
+}
+function torusPoint(u, v, R = 1.1, r = 0.32) {
+  const c = [R * Math.cos(u), 0, R * Math.sin(u)];
+  const radv = [Math.cos(u), 0, Math.sin(u)];
+  return [c[0] + r * Math.cos(v) * radv[0], r * Math.sin(v), c[2] + r * Math.cos(v) * radv[2]];
+}
+
+core.frame = (t) => {
+  core.begin();
+  const u0 = coreS.phase * TAU;
+  if (coreS.mode === 'torus') {
+    const R = 1.1;
+    const r = 0.32;
+    const N = 40;
+    const M = 18;
+    for (let i = 0; i < N; i++) {
+      const u = i / N * TAU;
+      const pts = [];
+      for (let j = 0; j <= M; j++) pts.push(torusPoint(u, j / M * TAU, R, r));
+      core.polyline(pts, { color: rgba(P.total, 0.24), width: 0.85, alpha: 0.9 });
+    }
+    for (let j = 0; j < M; j++) {
+      const v = j / M * TAU;
+      const pts = [];
+      for (let i = 0; i <= N; i++) pts.push(torusPoint(i / N * TAU, v, R, r));
+      core.polyline(pts, { color: rgba(P.blue, 0.18), width: 0.85, alpha: 0.85 });
+    }
+    const fib = [];
+    for (let j = 0; j <= 72; j++) fib.push(torusPoint(u0, j / 72 * TAU, R, r));
+    core.polyline(fib, { color: P.fiber, width: 2.3, alpha: 0.95, blur: 12, zBias: 8 });
+    const p = torusPoint(u0, 0.35, R, r);
+    const bp = basePoint(u0, R);
+    if (coreS.proj) {
+      core.line(p, bp, { color: P.pink, width: 1.4, alpha: 0.85, dash: [4, 5], zBias: 9 });
+      core.point(bp, { r: 3.2, color: P.base, blur: 10, zBias: 10 });
+    }
+    core.point(p, { r: 4, color: P.fiber, ring: 'rgba(255,255,255,.5)', blur: 12, zBias: 11 });
+    core.label([p[0] * 1.16, p[1] + 0.28, p[2] * 1.16], 'Faser ≅ S¹', { color: P.fiber, fs: 9, zBias: 12 });
+    core.label([bp[0] * 1.25, -0.18, bp[2] * 1.25], 'Basis S¹', { color: P.base, fs: 9, zBias: 12 });
+    const bpts = [];
+    for (let i = 0; i <= 80; i++) bpts.push(basePoint(i / 80 * TAU, R));
+    core.polyline(bpts, { color: P.base, width: 2.4, alpha: 0.9, blur: 14, zBias: 7 });
+  } else {
+    const N = 56;
+    const M = 14;
+    const twist = coreS.mode === 'cylinder' ? 0 : coreS.mode === 'mobius' ? 1 : coreS.twist;
+    for (let i = 0; i < N; i++) {
+      const u = i / N * TAU;
+      const pts = [];
+      for (let j = 0; j <= M; j++) pts.push(bandPoint(u, -1 + 2 * j / M, twist));
+      core.polyline(pts, { color: rgba(P.total, 0.28), width: 1.0, alpha: 0.9 });
+    }
+    for (let j = 0; j <= M; j++) {
+      const w = -1 + 2 * j / M;
+      const pts = [];
+      for (let i = 0; i <= N; i++) pts.push(bandPoint(i / N * TAU, w, twist));
+      core.polyline(pts, { color: w === 0 ? rgba(P.base, 0.65) : rgba(P.blue, 0.20), width: w === 0 ? 1.6 : 0.9, alpha: w === 0 ? 1 : 0.9 });
+    }
+    const fib = [];
+    for (let j = 0; j <= 40; j++) fib.push(bandPoint(u0, -1 + 2 * j / 40, twist));
+    core.polyline(fib, { color: P.fiber, width: 2.7, alpha: 0.95, blur: 12, zBias: 8 });
+    const wp = 0.55;
+    const p = bandPoint(u0, wp, twist);
+    const bp = basePoint(u0);
+    if (coreS.proj) {
+      core.line(p, bp, { color: P.pink, width: 1.5, alpha: 0.85, dash: [4, 5], zBias: 9 });
+      core.point(bp, { r: 3.4, color: P.base, blur: 10, zBias: 10 });
+    }
+    core.point(p, { r: 4.2, color: P.fiber, ring: 'rgba(255,255,255,.5)', blur: 12, zBias: 11 });
+    core.label([p[0] * 1.14, p[1] + 0.3, p[2] * 1.14], 'Faser ≅ ℝ', { color: P.fiber, fs: 9, zBias: 12 });
+    core.label([bp[0] * 1.25, -0.18, bp[2] * 1.25], 'Basis S¹', { color: P.base, fs: 9, zBias: 12 });
+    const bpts = [];
+    for (let i = 0; i <= 100; i++) bpts.push(basePoint(i / 100 * TAU));
+    core.polyline(bpts, { color: P.base, width: 2.4, alpha: 0.9, blur: 14, zBias: 7 });
+  }
+  core.flush();
+};
+
+function coreUpdate() {
+  const twistOut = $('#coreTwistOut');
+  const phaseOut = $('#corePhaseOut');
+  if (twistOut) twistOut.textContent = coreS.twist.toFixed(2);
+  if (phaseOut) phaseOut.textContent = coreS.phase.toFixed(2);
+  const twistCtl = $('#coreTwistCtl');
+  if (twistCtl) twistCtl.style.display = coreS.mode === 'torus' ? 'none' : 'flex';
+  const read = $('#coreReadout');
+  if (read) {
+    const total = coreS.mode === 'torus' ? 'Torus' : (coreS.mode === 'cylinder' ? 'Zylinder' : coreS.mode === 'mobius' ? 'Möbiusband' : 'verdrehtes Band');
+    const fiber = coreS.mode === 'torus' ? 'S¹' : 'ℝ';
+    read.innerHTML = `<span class="chip base">Basis <b>S¹</b></span><span class="chip">Faser <b>${fiber}</b></span><span class="chip total">Gesamtraum <b>${total}</b></span><span class="chip pink">lokal <b>U × F</b></span>`;
+  }
+}
+
+$$('[data-core-mode]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    coreS.mode = btn.dataset.coreMode;
+    $$('[data-core-mode]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (coreS.mode === 'cylinder') coreS.twist = 0;
+    if (coreS.mode === 'mobius') coreS.twist = 1;
+    const tw = $('#coreTwist');
+    if (tw) tw.value = coreS.twist;
+    coreUpdate();
+  });
+});
+$('#coreTwist')?.addEventListener('input', e => {
+  coreS.twist = parseFloat(e.target.value);
+  coreS.mode = 'custom';
+  $$('[data-core-mode]').forEach(b => b.classList.remove('active'));
+  coreUpdate();
+});
+$('#corePhase')?.addEventListener('input', e => {
+  coreS.phase = parseFloat(e.target.value);
+  coreUpdate();
+});
+$('#coreProj')?.addEventListener('click', e => {
+  coreS.proj = !coreS.proj;
+  e.currentTarget.classList.toggle('active', coreS.proj);
+  e.currentTarget.classList.toggle('ghost', !coreS.proj);
+});
+$('#coreSpin')?.addEventListener('click', e => {
+  coreS.spin = !coreS.spin;
+  core.auto = coreS.spin ? 0.055 : 0;
+  e.currentTarget.classList.toggle('active', coreS.spin);
+  e.currentTarget.classList.toggle('ghost', !coreS.spin);
+});
+const glue = new Stage2D($('#glueCanvas'));
+const glueS = { mode: 'cylinder', twist: 0, play: true, u: 0.12 };
+glue.frame = (t, dt) => {
+  if (!glue.w || !glue.h) return;
+  const ctx = glue.ctx;
+  const w = glue.w;
+  const h = glue.h;
+  glue.clear();
+  const x0 = w * 0.08;
+  const x1 = w * 0.92;
+  const yb = h * 0.76;
+  const yt = h * 0.16;
+  const n = 34;
+  for (let i = 0; i <= n; i++) {
+    const x = lerp(x0, x1, i / n);
+    const col = i / n < 0.38 || i / n > 0.62 ? rgba(P.fiber, 0.10) : rgba(P.base, 0.13);
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, yt);
+    ctx.lineTo(x, yb);
+    ctx.stroke();
+  }
+  ctx.strokeStyle = rgba(P.base, 0.65);
+  ctx.lineWidth = 2.4;
+  ctx.beginPath();
+  ctx.moveTo(x0, yb);
+  ctx.lineTo(x1, yb);
+  ctx.stroke();
+  const uiA = 0.12, uiB = 0.62;
+  const ujA = 0.38, ujB = 0.88;
+  ctx.fillStyle = rgba(P.base, 0.09);
+  ctx.fillRect(lerp(x0, x1, uiA), yt, lerp(x0, x1, uiB) - lerp(x0, x1, uiA), yb - yt);
+  ctx.fillStyle = rgba(P.total, 0.09);
+  ctx.fillRect(lerp(x0, x1, ujA), yt, lerp(x0, x1, ujB) - lerp(x0, x1, ujA), yb - yt);
+  ctx.strokeStyle = rgba(P.base, 0.35);
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(lerp(x0, x1, uiB), yt);
+  ctx.lineTo(lerp(x0, x1, uiB), yb);
+  ctx.moveTo(lerp(x0, x1, ujA), yt);
+  ctx.lineTo(lerp(x0, x1, ujA), yb);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  label2d(ctx, 'Karte Uᵢ', lerp(x0, x1, uiA) + 8, yt - 9, P.base, 9);
+  label2d(ctx, 'Karte Uⱼ', lerp(x0, x1, ujB) - 54, yt - 9, P.total, 9);
+  label2d(ctx, 'Überlappung', lerp(x0, x1, 0.5) - 35, yb + 16, P.dim, 8);
+  if (glueS.play && !REDUCE) {
+    glueS.u += dt * 0.12;
+    if (glueS.u > 1) glueS.u -= 1;
+  }
+  const u = glueS.u;
+  const px = lerp(x0, x1, u);
+  const yMid = (yt + yb) / 2;
+  const fiberTop = yt + 10;
+  const fiberBot = yb - 10;
+  const gy = Math.cos(Math.PI * glueS.twist);
+  const inOverlap = u > 0.38 && u < 0.62;
+  ctx.strokeStyle = rgba(P.fiber, 0.9);
+  ctx.lineWidth = 2.4;
+  ctx.beginPath();
+  ctx.moveTo(px, fiberTop);
+  ctx.lineTo(px, fiberBot);
+  ctx.stroke();
+  const yFib = yMid - (fiberBot - fiberTop) * 0.22;
+  glowDot(ctx, px, yFib, 4, P.fiber, 14);
+  if (inOverlap) {
+    const px2 = px + 4;
+    ctx.strokeStyle = rgba(P.total, 0.85);
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(px2, fiberTop);
+    ctx.lineTo(px2, fiberBot);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    const y2 = yMid + (yFib - yMid) * gy;
+    const signTxt = Math.abs(gy) < 0.02 ? '0' : gy > 0 ? '+1' : '−1';
+    glowDot(ctx, px2, y2, 3.2, P.total, 12);
+    label2d(ctx, `gᵢⱼ = ${signTxt}`, px2 + 10, y2, P.total, 9);
+  }
+  const pcol = u < 0.48 ? P.base : P.total;
+  glowDot(ctx, px, yb, 5, pcol, 16);
+  label2d(ctx, 'u', px + 9, yb + 15, pcol, 8);
+  ctx.strokeStyle = rgba(P.dim, 0.22);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x0, yb + 34);
+  ctx.lineTo(x0 + 16, yb + 34);
+  ctx.lineTo(x0 + 16, yb + 28);
+  ctx.moveTo(x0 + 28, yb + 34);
+  ctx.lineTo(x0 + 44, yb + 34);
+  ctx.stroke();
+  label2d(ctx, 'S¹', x0 + 20, yb + 50, P.dim, 8, 'center');
+};
+$('#glueTwist')?.addEventListener('input', e => {
+  glueS.twist = parseFloat(e.target.value);
+  const gy = Math.cos(Math.PI * glueS.twist);
+  const sign = Math.abs(gy) < 0.02 ? '0' : gy > 0 ? '+1' : '−1';
+  const out = $('#glueTwistOut');
+  if (out) out.textContent = sign;
+  const g = $('#glueSign');
+  if (g) g.innerHTML = `g<sub>ij</sub> = ${sign}`;
+});
+$$('[data-glue-mode]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    glueS.mode = btn.dataset.glueMode;
+    glueS.twist = glueS.mode === 'mobius' ? 1 : 0;
+    $$('[data-glue-mode]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const tw = $('#glueTwist');
+    if (tw) tw.value = glueS.twist;
+    const sign = glueS.twist ? '−1' : '+1';
+    const out = $('#glueTwistOut');
+    if (out) out.textContent = sign;
+    const g = $('#glueSign');
+    if (g) g.innerHTML = `g<sub>ij</sub> = ${sign}`;
+  });
+});
+$('#gluePlay')?.addEventListener('click', e => {
+  glueS.play = !glueS.play;
+  e.currentTarget.classList.toggle('active', glueS.play);
+  e.currentTarget.classList.toggle('ghost', !glueS.play);
+});
+const sec = new Stage2D($('#sectionCanvas'));
+const secS = { mode: 'cylinder', amp: 0.78, play: true, u: 0.12 };
+sec.frame = (t, dt) => {
+  if (!sec.w || !sec.h) return;
+  const ctx = sec.ctx;
+  const w = sec.w;
+  const h = sec.h;
+  sec.clear();
+  const x0 = w * 0.1;
+  const x1 = w * 0.9;
+  const yb = h * 0.78;
+  const yt = h * 0.14;
+  const mid = (yt + yb) / 2;
+  const half = (yb - yt) / 2;
+  const n = 30;
+  for (let i = 0; i <= n; i++) {
+    const x = lerp(x0, x1, i / n);
+    ctx.strokeStyle = rgba(P.fiber, 0.10);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, yt);
+    ctx.lineTo(x, yb);
+    ctx.stroke();
+  }
+  ctx.strokeStyle = rgba(P.base, 0.7);
+  ctx.lineWidth = 2.4;
+  ctx.beginPath();
+  ctx.moveTo(x0, yb);
+  ctx.lineTo(x1, yb);
+  ctx.stroke();
+  ctx.strokeStyle = rgba(P.base, 0.25);
+  ctx.beginPath();
+  ctx.moveTo(x0, mid);
+  ctx.lineTo(x1, mid);
+  ctx.stroke();
+  ctx.strokeStyle = rgba(P.dim, 0.35);
+  ctx.setLineDash([3, 5]);
+  ctx.beginPath();
+  ctx.moveTo(x0, yt);
+  ctx.lineTo(x0, yb);
+  ctx.moveTo(x1, yt);
+  ctx.lineTo(x1, yb);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  if (secS.mode === 'mobius') {
+    ctx.strokeStyle = rgba(P.pink, 0.7);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x1 - 8, yt + 8);
+    ctx.lineTo(x1 - 8, yb - 8);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x1 - 12, yt + 14);
+    ctx.lineTo(x1 - 8, yt + 8);
+    ctx.lineTo(x1 - 4, yt + 14);
+    ctx.moveTo(x1 - 12, yb - 14);
+    ctx.lineTo(x1 - 8, yb - 8);
+    ctx.lineTo(x1 - 4, yb - 14);
+    ctx.stroke();
+    label2d(ctx, 'v ↦ −v', x1 - 14, mid - 16, P.pink, 8, 'right');
+  } else {
+    label2d(ctx, 'v ↦ v', x1 - 14, mid - 16, P.fiber, 8, 'right');
+  }
+  const pts = [];
+  const steps = 220;
+  for (let i = 0; i <= steps; i++) {
+    const u = i / steps;
+    let v;
+    if (secS.mode === 'mobius') {
+      v = secS.amp * Math.cos(Math.PI * u);
+    } else {
+      v = 0.58 + 0.35 * secS.amp * Math.sin(TAU * u);
+    }
+    const x = lerp(x0, x1, u);
+    const y = mid - v * half * 0.82;
+    pts.push([x, y]);
+  }
+  ctx.strokeStyle = rgba(P.fiber, 0.25);
+  ctx.lineWidth = 7;
+  ctx.beginPath();
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+  ctx.stroke();
+  ctx.strokeStyle = P.fiber;
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+  ctx.stroke();
+  if (secS.play && !REDUCE) {
+    secS.u += dt * 0.16;
+    if (secS.u > 1) secS.u -= 1;
+  }
+  const u = secS.u;
+  const vi = Math.round(u * steps);
+  const p = pts[vi];
+  glowDot(ctx, p[0], p[1], 4.5, P.fiber, 16);
+  const val = secS.mode === 'mobius' ? secS.amp * Math.cos(Math.PI * u) : 0.58 + 0.35 * secS.amp * Math.sin(TAU * u);
+  const valueEl = $('#sectionValue');
+  if (valueEl) valueEl.textContent = `v = ${val.toFixed(2)}`;
+  if (secS.mode === 'mobius') {
+    const zeroIdx = Math.round(0.5 * steps);
+    const zp = pts[zeroIdx];
+    glowDot(ctx, zp[0], zp[1], 4, P.pink, 12);
+    label2d(ctx, 'Nullstelle', zp[0] + 8, zp[1] - 9, P.pink, 8);
+  } else {
+    label2d(ctx, 'nirgends null', x0 + 8, yt + 12, P.fiber, 8);
+  }
+  label2d(ctx, 'Basis S¹ (aufgeschnitten)', (x0 + x1) / 2, yb + 18, P.dim, 8, 'center');
+  label2d(ctx, 'Faser', x0 - 4, yt + 6, P.dim, 8, 'right');
+  label2d(ctx, '+1', x0 - 2, yt + 2, P.dim, 8, 'right');
+  label2d(ctx, '−1', x0 - 2, yb - 2, P.dim, 8, 'right');
+  const bc = $('#sectionBC');
+  if (bc) bc.textContent = secS.mode === 'mobius' ? 'v(1) = −v(0)' : 'v(1) = v(0)';
+};
+$('#sectionAmp')?.addEventListener('input', e => {
+  secS.amp = parseFloat(e.target.value);
+  const out = $('#sectionAmpOut');
+  if (out) out.textContent = secS.amp.toFixed(2);
+});
+$$('[data-section-mode]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    secS.mode = btn.dataset.sectionMode;
+    $$('[data-section-mode]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+$('#sectionPlay')?.addEventListener('click', e => {
+  secS.play = !secS.play;
+  e.currentTarget.classList.toggle('active', secS.play);
+  e.currentTarget.classList.toggle('ghost', !secS.play);
+});
+const tangent = new Stage3D($('#tangentCanvas'), { rotX: -0.22, rotY: 0.55, auto: 0.045, zoom: 1.2 });
+const tanS = { theta: 0.85, phi: 0.7, field: true, planes: false };
+tangent.frame = (t) => {
+  tangent.begin();
+  wireSphere(tangent, 1, rgba(P.blue, 0.45), 0.9, { segs: 34, rings: 18, width: 1.0 });
+  const th = tanS.theta;
+  const ph = tanS.phi;
+  const p = [Math.sin(th) * Math.cos(ph), Math.cos(th), Math.sin(th) * Math.sin(ph)];
+  const et = [Math.cos(th) * Math.cos(ph), -Math.sin(th), Math.cos(th) * Math.sin(ph)];
+  const ep = [-Math.sin(ph), 0, Math.cos(ph)];
+  const n = p;
+  const add = (a, b, s = 1) => [a[0] + b[0] * s, a[1] + b[1] * s, a[2] + b[2] * s];
+  if (tanS.planes) {
+    for (const tt of [0.45, 0.95, 1.45, 1.95, 2.45]) {
+      for (const pp of [0.2, 1.7, 3.2, 4.7, 6.2]) {
+        const q = [Math.sin(tt) * Math.cos(pp), Math.cos(tt), Math.sin(tt) * Math.sin(pp)];
+        const at = [Math.cos(tt) * Math.cos(pp), -Math.sin(tt), Math.cos(tt) * Math.sin(pp)];
+        const ap = [-Math.sin(pp), 0, Math.cos(pp)];
+        const s = 0.22;
+        const quad = [
+          add(add(q, at, s), ap, s),
+          add(add(q, at, -s), ap, s),
+          add(add(q, at, -s), ap, -s),
+          add(add(q, at, s), ap, -s)
+        ];
+        tangent.poly(quad, { fill: rgba(P.total, 0.055), color: rgba(P.total, 0.22), width: 0.8 });
+      }
+    }
+  }
+  if (tanS.field) {
+    for (let i = 1; i < 10; i++) {
+      const tt = Math.PI * i / 10;
+      for (let j = 0; j < 18; j++) {
+        const pp = TAU * j / 18;
+        const q = [Math.sin(tt) * Math.cos(pp), Math.cos(tt), Math.sin(tt) * Math.sin(pp)];
+        const ap = [-Math.sin(pp), 0, Math.cos(pp)];
+        const len = 0.15 * Math.sin(tt);
+        if (len > 0.006) {
+          tangent.line(q, add(q, ap, len), { color: rgba(P.fiber, 0.28), width: 1.1, alpha: 0.9 });
+        }
+      }
+    }
+    for (const sgn of [1, -1]) {
+      const q = [0, sgn, 0];
+      tangent.point(q, { r: 5, color: P.pink, blur: 14, zBias: 10 });
+      tangent.label([0, sgn * 1.22, 0], 'Nullstelle', { color: P.pink, fs: 8, zBias: 12 });
+    }
+  }
+  const s = 0.58;
+  const quad = [
+    add(add(p, et, s), ep, s),
+    add(add(p, et, -s), ep, s),
+    add(add(p, et, -s), ep, -s),
+    add(add(p, et, s), ep, -s)
+  ];
+  tangent.poly(quad, { fill: rgba(P.total, 0.18), color: rgba(P.total, 0.9), width: 1.4, zBias: 6 });
+  tangent.arrow(p, add(p, n, 0.55), { color: P.pink, width: 1.4, alpha: 0.8, head: 6, zBias: 8, dash: [3, 4] });
+  const psi = REDUCE ? 0.8 : t * 0.35;
+  const v = [
+    et[0] * Math.cos(psi) + ep[0] * Math.sin(psi),
+    et[1] * Math.cos(psi) + ep[1] * Math.sin(psi),
+    et[2] * Math.cos(psi) + ep[2] * Math.sin(psi)
+  ];
+  tangent.arrow(p, add(p, v, 0.62), { color: P.fiber, width: 2.4, blur: 10, head: 8, zBias: 9 });
+  tangent.point(p, { r: 5, color: '#fff', ring: rgba(P.fiber, 0.9), ringWidth: 1.5, blur: 12, zBias: 10 });
+  tangent.label(add(p, n, 0.16), 'p', { color: '#fff', fs: 9, zBias: 12 });
+  tangent.label(add(add(p, et, 0.72), ep, 0.35), 'TₚS²', { color: P.total, fs: 9, zBias: 12 });
+  tangent.label(add(p, v, 0.9), 'Xₚ', { color: P.fiber, fs: 9, zBias: 12 });
+  tangent.flush();
+};
+$('#tanTheta')?.addEventListener('input', e => {
+  tanS.theta = parseFloat(e.target.value);
+  const out = $('#tanThetaOut');
+  if (out) out.textContent = tanS.theta.toFixed(2);
+});
+$('#tanPhi')?.addEventListener('input', e => {
+  tanS.phi = parseFloat(e.target.value);
+  const out = $('#tanPhiOut');
+  if (out) out.textContent = tanS.phi.toFixed(2);
+});
+$('#tanField')?.addEventListener('click', e => {
+  tanS.field = !tanS.field;
+  e.currentTarget.classList.toggle('active', tanS.field);
+  e.currentTarget.classList.toggle('ghost', !tanS.field);
+});
+$('#tanPlanes')?.addEventListener('click', e => {
+  tanS.planes = !tanS.planes;
+  e.currentTarget.classList.toggle('active', tanS.planes);
+  e.currentTarget.classList.toggle('ghost', !tanS.planes);
+});
+const frame = new Stage2D($('#frameCanvas'));
+const frameS = { gauge: 0.25, fibers: true, section: true };
+frame.frame = (t) => {
+  if (!frame.w || !frame.h) return;
+  const ctx = frame.ctx;
+  const w = frame.w;
+  const h = frame.h;
+  frame.clear();
+  const cx = w / 2;
+  const cy = h / 2;
+  const R = Math.min(w, h) * 0.3;
+  const n = 14;
+  ctx.strokeStyle = rgba(P.base, 0.82);
+  ctx.lineWidth = 2.4;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, TAU);
+  ctx.stroke();
+  label2d(ctx, 'Basis S¹', cx, cy + R + 24, P.base, 9, 'center');
+  label2d(ctx, 'Faser ≅ SO(2)', cx, cy - R - 26, P.fiber, 9, 'center');
+  const tips = [];
+  for (let i = 0; i < n; i++) {
+    const u = i / n * TAU;
+    const bx = cx + R * Math.cos(u);
+    const by = cy + R * Math.sin(u);
+    if (frameS.fibers) {
+      ctx.strokeStyle = rgba(P.fiber, 0.22);
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(bx, by, 20, 0, TAU);
+      ctx.stroke();
+    }
+    const lam = frameS.gauge * (1.35 * Math.sin(3 * u + 0.7) + 0.9 * u);
+    const a = u + Math.PI / 2 + lam;
+    const ax = Math.cos(a);
+    const ay = Math.sin(a);
+    const px = Math.cos(a + Math.PI / 2);
+    const py = Math.sin(a + Math.PI / 2);
+    if (frameS.section) {
+      ctx.strokeStyle = rgba(P.fiber, 0.98);
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(bx - ax * 11, by - ay * 11);
+      ctx.lineTo(bx + ax * 11, by + ay * 11);
+      ctx.moveTo(bx - px * 7, by - py * 7);
+      ctx.lineTo(bx + px * 7, by + py * 7);
+      ctx.stroke();
+      glowDot(ctx, bx + ax * 11, by + ay * 11, 2.4, P.fiber, 8);
+      tips.push([bx + ax * 11, by + ay * 11]);
+    }
+    glowDot(ctx, bx, by, 2.6, P.base, 8);
+  }
+  if (frameS.section && tips.length > 1) {
+    ctx.strokeStyle = rgba(P.fiber, 0.22);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(tips[0][0], tips[0][1]);
+    for (let i = 1; i < tips.length; i++) ctx.lineTo(tips[i][0], tips[i][1]);
+    ctx.closePath();
+    ctx.stroke();
+  }
+  label2d(ctx, `λ(u) = ${frameS.gauge.toFixed(2)}·(sin 3u + u)`, w - 14, h - 14, P.dimmer, 8, 'right');
+};
+$('#frameGauge')?.addEventListener('input', e => {
+  frameS.gauge = parseFloat(e.target.value);
+  const out = $('#frameGaugeOut');
+  if (out) out.textContent = frameS.gauge.toFixed(2);
+});
+$('#frameFibers')?.addEventListener('click', e => {
+  frameS.fibers = !frameS.fibers;
+  e.currentTarget.classList.toggle('active', frameS.fibers);
+  e.currentTarget.classList.toggle('ghost', !frameS.fibers);
+});
+$('#frameSection')?.addEventListener('click', e => {
+  frameS.section = !frameS.section;
+  e.currentTarget.classList.toggle('active', frameS.section);
+  e.currentTarget.classList.toggle('ghost', !frameS.section);
+});
+const holo = new Stage3D($('#holoCanvas'), { rotX: -0.18, rotY: 0.55, auto: 0.035, zoom: 1.08 });
+const holoS = { lat: 30, t: 0, play: true };
+holo.frame = (t, dt) => {
+  holo.begin();
+  wireSphere(holo, 1, rgba(P.blue, 0.40), 0.9, { segs: 36, rings: 18, width: 1.0 });
+  const phi = rad(holoS.lat);
+  const sinf = Math.sin(phi);
+  const cosf = Math.cos(phi);
+  const N = 180;
+  const loop = [];
+  for (let i = 0; i <= N; i++) {
+    const lam = TAU * i / N;
+    loop.push([cosf * Math.cos(lam), sinf, cosf * Math.sin(lam)]);
+  }
+  const north = [0, 1, 0];
+  for (let i = 0; i < N; i++) {
+    holo.poly([north, loop[i], loop[i + 1]], { fill: rgba(P.base, 0.045) });
+  }
+  for (let i = 0; i < N; i += 10) {
+    holo.line(north, loop[i], { color: rgba(P.base, 0.14), width: 0.7 });
+  }
+  holo.polyline(loop, { color: P.base, width: 2.6, alpha: 0.95, blur: 14, zBias: 8 });
+  if (holoS.play && !REDUCE) {
+    holoS.t += dt * 0.18;
+    if (holoS.t > 1) holoS.t = 0;
+  }
+  const tv = holoS.t;
+  const lam = TAU * tv;
+  const p = [cosf * Math.cos(lam), sinf, cosf * Math.sin(lam)];
+  const el = [-Math.sin(lam), 0, Math.cos(lam)];
+  const ef = [-sinf * Math.cos(lam), cosf, -sinf * Math.sin(lam)];
+  const ang = TAU * tv * sinf;
+  const a = Math.cos(ang);
+  const b = -Math.sin(ang);
+  const v = [el[0] * a + ef[0] * b, el[1] * a + ef[1] * b, el[2] * a + ef[2] * b];
+  const p0 = [cosf, sinf, 0];
+  const v0 = [0, 0, 1];
+  const ef0 = [-sinf, cosf, 0];
+  const angF = TAU * sinf;
+  const aF = Math.cos(angF);
+  const bF = -Math.sin(angF);
+  const vF = [
+    v0[0] * aF + ef0[0] * bF,
+    v0[1] * aF + ef0[1] * bF,
+    v0[2] * aF + ef0[2] * bF
+  ];
+  const add = (x, y, s = 1) => [x[0] + y[0] * s, x[1] + y[1] * s, x[2] + y[2] * s];
+  holo.arrow(p0, add(p0, v0, 0.42), { color: P.base, width: 2.2, glow: 10, head: 7, zBias: 9 });
+  holo.arrow(p0, add(p0, vF, 0.42), { color: P.pink, width: 1.8, alpha: 0.42, dash: [4, 4], head: 6, zBias: 9 });
+  holo.arrow(p, add(p, v, 0.42), { color: P.fiber, width: 2.6, glow: 14, head: 8, zBias: 10 });
+  holo.point(p, { r: 4.6, color: '#fff', ring: rgba(P.fiber, 0.9), ringWidth: 1.4, blur: 12, zBias: 11 });
+  holo.point(p0, { r: 3.4, color: P.base, blur: 10, zBias: 10 });
+  holo.label(add(p, v, 0.64), 'v(t)', { color: P.fiber, fs: 9, zBias: 12 });
+  holo.label(add(p0, [0, 0.15, 0]), 'Start', { color: P.base, fs: 8, zBias: 12 });
+  holo.flush();
+  const ctx = holo.ctx;
+  const w = holo.w;
+  const dx = w - 58;
+  const dy = 54;
+  const rr = 23;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(dx, dy, rr, 0, TAU);
+  ctx.fillStyle = 'rgba(6,8,14,.72)';
+  ctx.fill();
+  ctx.strokeStyle = rgba(P.dim, 0.28);
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  const hand = (angle, color, width) => {
+    ctx.beginPath();
+    ctx.moveTo(dx, dy);
+    ctx.lineTo(dx + Math.cos(angle - Math.PI / 2) * rr * 0.78, dy + Math.sin(angle - Math.PI / 2) * rr * 0.78);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.stroke();
+  };
+  hand(0, P.base, 2);
+  hand(-angF, P.pink, 2);
+  ctx.beginPath();
+  ctx.arc(dx, dy, rr * 0.56, -Math.PI / 2, -Math.PI / 2 - angF, angF > 0);
+  ctx.strokeStyle = rgba(P.fiber, 0.35);
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+  ctx.fillStyle = P.dimmer;
+  ctx.font = '9px ui-monospace, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Ω', dx, dy - 31);
+  ctx.restore();
+  const omega = TAU * (1 - sinf);
+  const omegaDeg = ((deg(omega) % 360) + 360) % 360;
+  const o1 = $('#holoOmega');
+  const o2 = $('#holoAngle');
+  const o3 = $('#holoTOut');
+  const o4 = $('#holoLatOut');
+  if (o1) o1.textContent = `${Math.round(omegaDeg)}°`;
+  if (o2) o2.textContent = `${Math.round(omegaDeg)}°`;
+  if (o3) o3.textContent = `${Math.round(tv * 100)}%`;
+  if (o4) o4.textContent = `${holoS.lat}°`;
+  const sl = $('#holoT');
+  if (sl && document.activeElement !== sl && Math.abs(parseFloat(sl.value) - tv) > 0.002) sl.value = tv;
+};
+$('#holoLat')?.addEventListener('input', e => {
+  holoS.lat = parseFloat(e.target.value);
+  const out = $('#holoLatOut');
+  if (out) out.textContent = `${holoS.lat}°`;
+});
+$('#holoT')?.addEventListener('input', e => {
+  holoS.play = false;
+  holoS.t = parseFloat(e.target.value);
+  const p = $('#holoPlay');
+  if (p) {
+    p.classList.remove('active');
+    p.classList.add('ghost');
+  }
+});
+$('#holoPlay')?.addEventListener('click', e => {
+  holoS.play = !holoS.play;
+  e.currentTarget.classList.toggle('active', holoS.play);
+  e.currentTarget.classList.toggle('ghost', !holoS.play);
+});
+$('#holoReset')?.addEventListener('click', () => {
+  holoS.t = 0;
+  holoS.play = true;
+  const p = $('#holoPlay');
+  if (p) {
+    p.classList.add('active');
+    p.classList.remove('ghost');
+  }
+});
+function makeHopfSamples() {
+  const arr = [];
+  const rows = 3;
+  const cols = 6;
+  for (let r = 0; r < rows; r++) {
+    const th = lerp(0.6, 1.75, r / (rows - 1));
+    for (let c = 0; c < cols; c++) {
+      const ph = TAU * c / cols + 0.22;
+      arr.push({ theta: th, phi: ph, hue: (ph / TAU) * 360 });
+    }
+  }
+  return arr;
+}
+function hopfPoint(theta, phi, psi) {
+  const c = Math.cos(theta / 2);
+  const s = Math.sin(theta / 2);
+  const x1 = c * Math.cos(phi + psi);
+  const y1 = c * Math.sin(phi + psi);
+  const x2 = s * Math.cos(psi);
+  const y2 = s * Math.sin(psi);
+  const den = Math.max(0.22, 1 - y2);
+  const k = 0.62;
+  return [x1 / den * k, x2 / den * k, y1 / den * k];
+}
+function hopfBasePoint(s) {
+  return [
+    Math.sin(s.theta) * Math.cos(s.phi),
+    Math.cos(s.theta),
+    Math.sin(s.theta) * Math.sin(s.phi)
+  ];
+}
+const hopfBase = new Stage3D($('#hopfBaseCanvas'), { rotX: -0.2, rotY: 0.5, auto: 0.045, zoom: 1.12 });
+const hopfTotal = new Stage3D($('#hopfTotalCanvas'), { rotX: -0.25, rotY: 0.6, auto: 0.028, zoom: 1.55 });
+const hopfS = { n: 10, mode: 'all', selected: null, samples: makeHopfSamples(), basePts: [] };
+hopfS.selected = hopfS.samples[7];
+hopfBase.frame = () => {
+  hopfBase.begin();
+  wireSphere(hopfBase, 1, rgba(P.blue, 0.40), 0.9, { segs: 32, rings: 16, width: 1.0 });
+  hopfS.basePts = [];
+  for (const s of hopfS.samples) {
+    const p = hopfBasePoint(s);
+    const pr = hopfBase.project(p);
+    hopfS.basePts.push({ ...s, p, sx: pr.x, sy: pr.y });
+    hopfBase.point(p, { r: 3.2, color: hsl(s.hue, 85, 65), blur: 8, zBias: 6 });
+  }
+  if (hopfS.selected) {
+    const s = hopfS.selected;
+    const p = hopfBasePoint(s);
+    hopfBase.point(p, { r: 6.5, color: '#fff', ring: hsl(s.hue, 85, 65), ringWidth: 2, blur: 15, zBias: 10 });
+    hopfBase.label([p[0] * 1.2, p[1] * 1.2, p[2] * 1.2], 'p', { color: '#fff', fs: 9, zBias: 12 });
+  }
+  hopfBase.flush();
+};
+hopfBase.onClick = (x, y) => {
+  let best = null;
+  let bestD = 40 * 40;
+  for (const s of hopfS.basePts) {
+    const d = (s.sx - x) ** 2 + (s.sy - y) ** 2;
+    if (d < bestD) {
+      bestD = d;
+      best = s;
+    }
+  }
+  if (best) hopfS.selected = best;
+};
+hopfTotal.frame = () => {
+  hopfTotal.begin();
+  const sel = hopfS.selected || hopfS.samples[0];
+  const anti = {
+    theta: Math.PI - sel.theta,
+    phi: sel.phi + Math.PI,
+    hue: (sel.hue + 180) % 360
+  };
+  const fibers = hopfS.samples.slice(0, Math.min(hopfS.n, hopfS.samples.length));
+  const drawFiber = (s, highlight, antiFlag) => {
+    const pts = [];
+    for (let i = 0; i <= 90; i++) pts.push(hopfPoint(s.theta, s.phi, i / 90 * TAU));
+    if (highlight) {
+      const col = antiFlag ? P.pink : P.fiber;
+      hopfTotal.polyline(pts, { color: col, width: 2.8, alpha: 1, blur: 14, zBias: 10 });
+    } else {
+      hopfTotal.polyline(pts, { color: hsl(s.hue, 85, 65), width: 1.3, alpha: hopfS.mode === 'link' ? 0.12 : 0.55 });
+    }
+  };
+  for (const s of fibers) {
+    const isSel = s === sel;
+    const isAnti = hopfS.mode === 'link' && Math.abs(s.theta - anti.theta) < 1e-6 && Math.abs(((s.phi - anti.phi) % TAU + TAU) % TAU) < 1e-6;
+    if (hopfS.mode === 'one' && !isSel) continue;
+    drawFiber(s, isSel || isAnti, isAnti);
+  }
+  if (hopfS.mode === 'link') {
+    const pts = [];
+    for (let i = 0; i <= 90; i++) pts.push(hopfPoint(anti.theta, anti.phi, i / 90 * TAU));
+    hopfTotal.polyline(pts, { color: P.pink, width: 2.3, alpha: 0.98, blur: 12, zBias: 10 });
+  }
+  hopfTotal.point([0, 0, 0], { r: 2.4, color: rgba(P.ink, 0.7), blur: 10, zBias: 11 });
+  hopfTotal.flush();
+};
+$('#hopfN')?.addEventListener('input', e => {
+  hopfS.n = parseInt(e.target.value, 10);
+  const out = $('#hopfNOut');
+  if (out) out.textContent = hopfS.n;
+});
+$$('[data-hopf-mode]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    hopfS.mode = btn.dataset.hopfMode;
+    $$('[data-hopf-mode]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+const ab = new Stage2D($('#abCanvas'));
+const abS = { flux: 0.25, play: true, t: 0 };
+ab.frame = (t, dt) => {
+  if (!ab.w || !ab.h) return;
+  const ctx = ab.ctx;
+  const w = ab.w;
+  const h = ab.h;
+  ab.clear();
+  const sx = w * 0.08;
+  const sy = h * 0.5;
+  const ex = w * 0.58;
+  const ey = h * 0.5;
+  const cx = w * 0.33;
+  const cy = h * 0.5;
+  const r = Math.min(w, h) * 0.075;
+  const bezier = (u, p1y) => {
+    const v = 1 - u;
+    return [
+      v * v * sx + 2 * v * u * cx + u * u * ex,
+      v * v * sy + 2 * v * u * p1y + u * u * ey
+    ];
+  };
+  const upper = u => bezier(u, h * 0.17);
+  const lower = u => bezier(u, h * 0.83);
+  const drawPath = (fn, color) => {
+    ctx.beginPath();
+    for (let i = 0; i <= 72; i++) {
+      const p = fn(i / 72);
+      if (i === 0) ctx.moveTo(p[0], p[1]);
+      else ctx.lineTo(p[0], p[1]);
+    }
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.0;
+    ctx.stroke();
+  };
+  drawPath(upper, rgba(P.fiber, 0.7));
+  drawPath(lower, rgba(P.pink, 0.7));
+  if (abS.play && !REDUCE) {
+    abS.t += dt * 0.16;
+    if (abS.t > 1) abS.t -= 1;
+  }
+  const u = (abS.t * 0.72 + 0.12) % 1;
+  const pu = upper(u);
+  const pl = lower(u);
+  glowDot(ctx, pu[0], pu[1], 3.6, P.fiber, 14);
+  glowDot(ctx, pl[0], pl[1], 3.6, P.pink, 14);
+  ctx.save();
+  ctx.shadowColor = P.base;
+  ctx.shadowBlur = 22;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, TAU);
+  ctx.fillStyle = 'rgba(7,10,17,.95)';
+  ctx.fill();
+  ctx.strokeStyle = P.base;
+  ctx.lineWidth = 1.8;
+  ctx.stroke();
+  ctx.restore();
+  ctx.strokeStyle = rgba(P.base, 0.35);
+  ctx.lineWidth = 1;
+  for (let i = 1; i <= 3; i++) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * (0.25 + i * 0.18), 0, TAU);
+    ctx.stroke();
+  }
+  glowDot(ctx, cx, cy, 2.5, P.base, 10);
+  label2d(ctx, 'B', cx + r + 7, cy - 3, P.base, 9);
+  glowDot(ctx, sx, sy, 4, P.fiber, 14);
+  label2d(ctx, 'Quelle', sx - 4, sy + 18, P.dim, 8, 'center');
+  label2d(ctx, 'Spule', cx, cy + r + 17, P.base, 8, 'center');
+  ctx.strokeStyle = rgba(P.dim, 0.55);
+  ctx.lineWidth = 2.0;
+  ctx.beginPath();
+  ctx.moveTo(ex, h * 0.16);
+  ctx.lineTo(ex, h * 0.84);
+  ctx.stroke();
+  label2d(ctx, 'Schirm', ex, h * 0.12, P.dim, 8, 'center');
+  const delta = TAU * abS.flux;
+  const x0 = ex + 12;
+  const x1 = w * 0.9;
+  for (let yy = h * 0.18; yy <= h * 0.82; yy += 4) {
+    const I = 0.5 + 0.5 * Math.cos(delta + 14 * Math.PI * (yy / h - 0.5));
+    ctx.fillStyle = rgba(P.fiber, 0.08 + 0.72 * I);
+    ctx.fillRect(x0, yy, 48, 2.6);
+    ctx.fillStyle = rgba(P.base, 0.1 + 0.5 * I);
+    ctx.fillRect(x1 - 4, yy, 4, 2.6);
+  }
+  label2d(ctx, 'Interferenz', (x0 + x1) / 2, h * 0.13, P.fiber, 8, 'center');
+  ctx.strokeStyle = rgba(P.fiber, 0.4);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  let firstPoint = true;
+  for (let yy = h * 0.18; yy <= h * 0.82; yy += 2) {
+    const I = 0.5 + 0.5 * Math.cos(delta + 14 * Math.PI * (yy / h - 0.5));
+    const xx = x1 - 8 + I * 10;
+    if (firstPoint) {
+      ctx.moveTo(xx, yy);
+      firstPoint = false;
+    } else {
+      ctx.lineTo(xx, yy);
+    }
+  }
+  ctx.stroke();
+  const dx = w - 58;
+  const dy = h - 54;
+  const rr = 22;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(dx, dy, rr, 0, TAU);
+  ctx.fillStyle = 'rgba(6,8,14,.7)';
+  ctx.fill();
+  ctx.strokeStyle = rgba(P.dim, 0.3);
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  const hand = (angle, color, width) => {
+    ctx.beginPath();
+    ctx.moveTo(dx, dy);
+    ctx.lineTo(dx + Math.cos(angle - Math.PI / 2) * rr * 0.75, dy + Math.sin(angle - Math.PI / 2) * rr * 0.75);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.stroke();
+  };
+  hand(0, P.fiber, 2);
+  hand(delta, P.pink, 2);
+  ctx.fillStyle = P.dimmer;
+  ctx.font = '9px ui-monospace, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('Δφ', dx, dy - 30);
+  ctx.restore();
+  const phaseEl = $('#abPhase');
+  if (phaseEl) phaseEl.textContent = `${abS.flux.toFixed(2)} · 2π`;
+};
+$('#abFlux')?.addEventListener('input', e => {
+  abS.flux = parseFloat(e.target.value);
+  const out = $('#abFluxOut');
+  if (out) out.textContent = abS.flux.toFixed(2);
+});
+$('#abPlay')?.addEventListener('click', e => {
+  abS.play = !abS.play;
+  e.currentTarget.classList.toggle('active', abS.play);
+  e.currentTarget.classList.toggle('ghost', !abS.play);
+});
+$('#abReset')?.addEventListener('click', () => {
+  abS.flux = 0.25;
+  abS.t = 0;
+  abS.play = true;
+  const f = $('#abFlux');
+  if (f) f.value = abS.flux;
+  const fo = $('#abFluxOut');
+  if (fo) fo.textContent = abS.flux.toFixed(2);
+  const p = $('#abPlay');
+  if (p) {
+    p.classList.add('active');
+    p.classList.remove('ghost');
+  }
+});
+const chem = new Stage3D($('#chemCanvas'), { rotX: -0.34, rotY: 0.58, auto: 0.03, zoom: 0.75, yShift: -0.08 });
+const chemS = { r: 0.85, t: 0, play: true };
+chem.frame = (t, dt) => {
+  chem.begin();
+  const ext = 1.35;
+  const n = 16;
+  const energy = (x, z, sign) => sign * 0.86 * Math.hypot(x, z);
+  for (let i = 0; i <= n; i++) {
+    const x = -ext + 2 * ext * i / n;
+    for (const sign of [1, -1]) {
+      const pts = [];
+      for (let j = 0; j <= n; j++) {
+        const z = -ext + 2 * ext * j / n;
+        pts.push([x, energy(x, z, sign), z]);
+      }
+      chem.polyline(pts, { color: sign > 0 ? rgba(P.pink, 0.30) : rgba(P.fiber, 0.30), width: 1.0 });
+    }
+  }
+  for (let j = 0; j <= n; j++) {
+    const z = -ext + 2 * ext * j / n;
+    for (const sign of [1, -1]) {
+      const pts = [];
+      for (let i = 0; i <= n; i++) {
+        const x = -ext + 2 * ext * i / n;
+        pts.push([x, energy(x, z, sign), z]);
+      }
+      chem.polyline(pts, { color: sign > 0 ? rgba(P.pink, 0.30) : rgba(P.fiber, 0.30), width: 1.0 });
+    }
+  }
+  chem.point([0, 0, 0], { r: 5.5, color: P.yellow, blur: 18, zBias: 12 });
+  chem.label([0, 0.26, 0], 'konische Durchschneidung', { color: P.yellow, fs: 8, zBias: 14 });
+  if (chemS.play && !REDUCE) {
+    chemS.t += dt * 0.15;
+    if (chemS.t > 1) chemS.t = 0;
+  }
+  const tv = chemS.t;
+  const R = chemS.r;
+  const N = 140;
+  let prev = null;
+  for (let i = 0; i <= N; i++) {
+    const lam = TAU * i / N;
+    const p = [R * Math.cos(lam), 0, R * Math.sin(lam)];
+    const hue = 180 + 150 * (0.5 + 0.5 * Math.cos(lam / 2));
+    if (prev) {
+      chem.line(prev, p, { color: hsl(hue, 85, 65), width: 3.2, alpha: 0.98, blur: 12, zBias: 9 });
+    }
+    prev = p;
+  }
+  const lam = TAU * tv;
+  const p = [R * Math.cos(lam), 0, R * Math.sin(lam)];
+  const hue = 180 + 150 * (0.5 + 0.5 * Math.cos(lam / 2));
+  chem.point(p, { r: 5, color: hsl(hue, 85, 65), ring: 'rgba(255,255,255,.75)', ringWidth: 1.3, blur: 14, zBias: 11 });
+  const phase = Math.PI * tv;
+  const sign = Math.cos(phase);
+  const signTxt = Math.abs(sign) < 0.02 ? '0' : sign > 0 ? '+1' : '−1';
+  chem.label([p[0] * 1.12, 0.22, p[2] * 1.12], signTxt, { color: sign >= 0 ? P.fiber : P.pink, fs: 15, zBias: 13 });
+  chem.flush();
+  const phEl = $('#chemPhase');
+  const sgEl = $('#chemSign');
+  const tEl = $('#chemTOut');
+  const rEl = $('#chemROut');
+  if (phEl) phEl.textContent = `${Math.round(deg(phase))}°`;
+  if (sgEl) sgEl.textContent = signTxt;
+  if (tEl) tEl.textContent = `${Math.round(tv * 100)}%`;
+  if (rEl) rEl.textContent = chemS.r.toFixed(2);
+  const sl = $('#chemT');
+  if (sl && document.activeElement !== sl && Math.abs(parseFloat(sl.value) - tv) > 0.002) sl.value = tv;
+};
+$('#chemR')?.addEventListener('input', e => {
+  chemS.r = parseFloat(e.target.value);
+  const out = $('#chemROut');
+  if (out) out.textContent = chemS.r.toFixed(2);
+});
+$('#chemT')?.addEventListener('input', e => {
+  chemS.play = false;
+  chemS.t = parseFloat(e.target.value);
+  const p = $('#chemPlay');
+  if (p) {
+    p.classList.remove('active');
+    p.classList.add('ghost');
+  }
+});
+$('#chemPlay')?.addEventListener('click', e => {
+  chemS.play = !chemS.play;
+  e.currentTarget.classList.toggle('active', chemS.play);
+  e.currentTarget.classList.toggle('ghost', !chemS.play);
+});
+$('#chemReset')?.addEventListener('click', () => {
+  chemS.t = 0;
+  chemS.play = true;
+  const p = $('#chemPlay');
+  if (p) {
+    p.classList.add('active');
+    p.classList.remove('ghost');
+  }
+});
+const chern = new Stage2D($('#chernCanvas'));
+const chernS = { n: 1, perturb: false, t: 0 };
+chern.frame = (t, dt) => {
+  if (!chern.w || !chern.h) return;
+  const ctx = chern.ctx;
+  const w = chern.w;
+  const h = chern.h;
+  chern.clear();
+  const cx = w * 0.5;
+  const cy = h * 0.53;
+  const R = Math.min(w, h) * 0.37;
+  const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.25);
+  bg.addColorStop(0, 'rgba(192,132,252,.13)');
+  bg.addColorStop(0.55, 'rgba(94,234,212,.05)');
+  bg.addColorStop(1, 'rgba(5,6,11,0)');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = 'rgba(255,255,255,.045)';
+  ctx.lineWidth = 1;
+  for (let i = -6; i <= 6; i++) {
+    const gx = cx + i / 6 * R;
+    const gy = cy + i / 6 * R;
+    ctx.beginPath();
+    ctx.moveTo(gx, cy - R);
+    ctx.lineTo(gx, cy + R);
+    ctx.moveTo(cx - R, gy);
+    ctx.lineTo(cx + R, gy);
+    ctx.stroke();
+  }
+  const grid = 6;
+  const perturbAt = (x, y) => chernS.perturb ? (0.5 * Math.sin(2 * x + 0.4) + 0.35 * Math.cos(2 * y - 0.3)) : 0;
+  const phaseAt = (x, y) => chernS.n * Math.atan2(y, x) + perturbAt(x, y);
+  ctx.strokeStyle = rgba(P.dim, 0.12);
+  ctx.lineWidth = 1;
+  ctx.strokeRect(cx - R, cy - R, 2 * R, 2 * R);
+  for (let i = -grid; i <= grid; i++) {
+    for (let j = -grid; j <= grid; j++) {
+      const x = i / grid;
+      const y = j / grid;
+      const rr = Math.hypot(x, y);
+      if (rr < 0.16) continue;
+      const px = cx + x * R;
+      const py = cy - y * R;
+      const th = phaseAt(x, y);
+      const col = hsl(th / TAU * 360, 85, 65, 0.9);
+      const len = 0.07 * R * (0.55 + 0.45 * Math.min(1, rr));
+      const ex = px + Math.cos(th) * len;
+      const ey = py - Math.sin(th) * len;
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 2.0;
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(ex, ey);
+      ctx.stroke();
+      const ux = (ex - px) / len;
+      const uy = (ey - py) / len;
+      const hx = ex - ux * 3.6;
+      const hy = ey - uy * 3.6;
+      ctx.beginPath();
+      ctx.moveTo(hx - uy * 2.2, hy + ux * 2.2);
+      ctx.lineTo(ex, ey);
+      ctx.lineTo(hx + uy * 2.2, hy - ux * 2.2);
+      ctx.stroke();
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(px, py, 1.5, 0, TAU);
+      ctx.fill();
+    }
+  }
+  ctx.strokeStyle = rgba(P.pink, 0.6);
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 0.55 * R, 0, TAU);
+  ctx.stroke();
+  glowDot(ctx, cx, cy, 4, P.pink, 16);
+  let sum = 0;
+  let prev = null;
+  for (let i = 0; i <= 240; i++) {
+    const a = TAU * i / 240;
+    const th = phaseAt(Math.cos(a) * 0.55, Math.sin(a) * 0.55);
+    if (prev !== null) {
+      let d = th - prev;
+      d = Math.atan2(Math.sin(d), Math.cos(d));
+      sum += d;
+    }
+    prev = th;
+  }
+  const wind = Math.round(sum / TAU);
+  if (chernS.t === 0) chernS.t = 0;
+  if (!REDUCE) chernS.t += dt * 0.4;
+  const ma = chernS.t % TAU;
+  const mx = cx + Math.cos(ma) * 0.55 * R;
+  const my = cy - Math.sin(ma) * 0.55 * R;
+  glowDot(ctx, mx, my, 3.5, P.fiber, 12);
+  label2d(ctx, 'Brillouin-Zone', cx - R, cy - R - 12, P.dim, 8);
+  label2d(ctx, `n = ${chernS.n}`, cx, cy - R - 26, P.total, 11, 'center');
+  label2d(ctx, 'Phase 0 → 2π', w - 18, h - 14, P.dimmer, 8, 'right');
+  const lx = w - 150;
+  for (let i = 0; i < 60; i++) {
+    ctx.fillStyle = hsl(i / 60 * 360, 85, 65, 0.85);
+    ctx.fillRect(lx + i * 2.1, h - 32, 2.1, 5);
+  }
+  const out = $('#chernOut');
+  if (out) out.textContent = wind;
+};
+$('#chernN')?.addEventListener('input', e => {
+  chernS.n = parseInt(e.target.value, 10);
+  const out = $('#chernNOut');
+  if (out) out.textContent = chernS.n;
+});
+$('#chernPerturb')?.addEventListener('click', e => {
+  chernS.perturb = !chernS.perturb;
+  e.currentTarget.classList.toggle('active', chernS.perturb);
+  e.currentTarget.classList.toggle('ghost', !chernS.perturb);
+});
+$('#chernReset')?.addEventListener('click', () => {
+  chernS.n = 1;
+  chernS.perturb = false;
+  const n = $('#chernN');
+  if (n) n.value = 1;
+  const no = $('#chernNOut');
+  if (no) no.textContent = '1';
+  const p = $('#chernPerturb');
+  if (p) {
+    p.classList.remove('active');
+    p.classList.add('ghost');
+  }
+});
+const equiv = new Stage2D($('#equivCanvas'));
+const eqS = { angle: 0, play: true };
+function drawScene(ctx, cx, cy, R, angle) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(angle);
+  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, R);
+  g.addColorStop(0, 'rgba(94,234,212,.12)');
+  g.addColorStop(1, 'rgba(7,10,17,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(0, 0, R, 0, TAU);
+  ctx.fill();
+  for (let i = 0; i < 6; i++) {
+    const a = i / 6 * TAU + 0.3;
+    const len = R * (0.42 + 0.08 * Math.sin(i * 1.7));
+    ctx.strokeStyle = hsl(i * 60 + 15, 82, 64, 0.72);
+    ctx.lineWidth = Math.max(2.5, R * 0.035);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(Math.cos(a) * len, Math.sin(a) * len);
+    ctx.stroke();
+    glowDot(ctx, Math.cos(a) * len, Math.sin(a) * len, 2.2, hsl(i * 60 + 15, 82, 64), 8);
+  }
+  ctx.fillStyle = 'rgba(255,255,255,.9)';
+  ctx.beginPath();
+  ctx.arc(0, 0, R * 0.055, 0, TAU);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(94,234,212,.35)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.arc(0, 0, R * 0.62, 0, TAU);
+  ctx.stroke();
+  ctx.restore();
+}
+function drawPanel(ctx, x, y, w, h, angle, equivariant) {
+  ctx.save();
+  roundRect(ctx, x, y, w, h, 14);
+  ctx.fillStyle = 'rgba(6,9,15,.72)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.08)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.clip();
+  const cx = x + w / 2;
+  const cy = y + h / 2;
+  const R = Math.min(w, h) * 0.35;
+  drawScene(ctx, cx, cy, R, angle);
+  const cols = 7;
+  const rows = 5;
+  for (let i = 0; i < cols; i++) {
+    for (let j = 0; j < rows; j++) {
+      const gx = x + w * (0.16 + 0.68 * i / (cols - 1));
+      const gy = y + h * (0.18 + 0.64 * j / (rows - 1));
+      const dx = gx - cx;
+      const dy = gy - cy;
+      const rr = Math.hypot(dx, dy) / R;
+      if (rr < 0.12) continue;
+      const baseAng = Math.atan2(dy, dx) + Math.PI / 2;
+      const a = equivariant ? baseAng + angle : baseAng;
+      const len = 7 + 6 * Math.min(1, rr);
+      const col = equivariant ? rgba(P.fiber, 0.8) : rgba(P.pink, 0.8);
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(gx - Math.cos(a) * len / 2, gy - Math.sin(a) * len / 2);
+      ctx.lineTo(gx + Math.cos(a) * len / 2, gy + Math.sin(a) * len / 2);
+      ctx.stroke();
+      const hx = gx + Math.cos(a) * len / 2;
+      const hy = gy + Math.sin(a) * len / 2;
+      ctx.beginPath();
+      ctx.moveTo(hx - Math.cos(a - 0.5) * 3.5, hy - Math.sin(a - 0.5) * 3.5);
+      ctx.lineTo(hx, hy);
+      ctx.lineTo(hx - Math.cos(a + 0.5) * 3.5, hy - Math.sin(a + 0.5) * 3.5);
+      ctx.stroke();
+    }
+  }
+  ctx.fillStyle = equivariant ? P.fiber : P.pink;
+  ctx.font = '10px ui-monospace, monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText(equivariant ? 'äquivariant' : 'naiv', x + 14, y + 22);
+  ctx.fillStyle = 'rgba(161,170,189,.7)';
+  ctx.font = '8px ui-monospace, monospace';
+  ctx.fillText(equivariant ? 'ρ(g) wirkt' : 'ρ(g) fehlt', x + 14, y + 36);
+  ctx.restore();
+}
+equiv.frame = (t, dt) => {
+  if (!equiv.w || !equiv.h) return;
+  const ctx = equiv.ctx;
+  const w = equiv.w;
+  const h = equiv.h;
+  equiv.clear();
+  const gap = Math.max(12, w * 0.02);
+  const pw = (w - 3 * gap) / 2;
+  const ph = h * 0.8;
+  const py = h * 0.1;
+  if (eqS.play && !REDUCE) {
+    eqS.angle += dt * 0.5;
+    if (eqS.angle > TAU) eqS.angle -= TAU;
+    const sl = $('#equivAngle');
+    if (sl && document.activeElement !== sl) sl.value = Math.round(deg(eqS.angle)) % 360;
+  }
+  drawPanel(ctx, gap, py, pw, ph, eqS.angle, false);
+  drawPanel(ctx, gap * 2 + pw, py, pw, ph, eqS.angle, true);
+  const out = $('#equivAngleOut');
+  if (out) out.textContent = `${Math.round(deg(eqS.angle)) % 360}°`;
+};
+$('#equivAngle')?.addEventListener('input', e => {
+  eqS.play = false;
+  eqS.angle = rad(parseFloat(e.target.value));
+  const p = $('#equivPlay');
+  if (p) {
+    p.classList.remove('active');
+    p.classList.add('ghost');
+  }
+});
+$('#equivPlay')?.addEventListener('click', e => {
+  eqS.play = !eqS.play;
+  e.currentTarget.classList.toggle('active', eqS.play);
+  e.currentTarget.classList.toggle('ghost', !eqS.play);
+});
+const clutch = new Stage2D($('#clutchCanvas'));
+const clutchS = { n: 1, t: 0, play: true };
+clutch.frame = (t, dt) => {
+  if (!clutch.w || !clutch.h) return;
+  const ctx = clutch.ctx;
+  const w = clutch.w;
+  const h = clutch.h;
+  clutch.clear();
+  const cx = w * 0.27;
+  const cy = h * 0.52;
+  const R = Math.min(w, h) * 0.23;
+  const x0 = w * 0.52;
+  const x1 = w * 0.94;
+  const midY = h * 0.52;
+  const amp = h * 0.22;
+  const bgA = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 2.6);
+  bgA.addColorStop(0, 'rgba(255,180,84,.12)');
+  bgA.addColorStop(1, 'rgba(5,6,11,0)');
+  ctx.fillStyle = bgA;
+  ctx.fillRect(0, 0, w, h);
+  const bgB = ctx.createRadialGradient((x0 + x1) / 2, midY, 0, (x0 + x1) / 2, midY, (x1 - x0) * 0.6);
+  bgB.addColorStop(0, 'rgba(94,234,212,.07)');
+  bgB.addColorStop(1, 'rgba(5,6,11,0)');
+  ctx.fillStyle = bgB;
+  ctx.fillRect(0, 0, w, h);
+  if (clutchS.play && !REDUCE) {
+    clutchS.t += dt * 0.18;
+    if (clutchS.t > 1) clutchS.t -= 1;
+  }
+  const theta = TAU * clutchS.t;
+  ctx.strokeStyle = rgba(P.base, 0.7);
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, TAU);
+  ctx.stroke();
+  for (let i = 0; i < 90; i++) {
+    const a = TAU * i / 90;
+    const a2 = TAU * (i + 1) / 90;
+    const hue = (clutchS.n * a / TAU) * 360;
+    ctx.strokeStyle = hsl(hue, 85, 65, 0.55);
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R * 1.09, a, a2);
+    ctx.stroke();
+  }
+  const bx = cx + Math.cos(theta) * R;
+  const by = cy + Math.sin(theta) * R;
+  glowDot(ctx, bx, by, 4.5, P.base, 14);
+  const handAng = clutchS.n * theta;
+  ctx.strokeStyle = P.fiber;
+  ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  ctx.moveTo(bx, by);
+  ctx.lineTo(bx + Math.cos(handAng) * 18, by - Math.sin(handAng) * 18);
+  ctx.stroke();
+  label2d(ctx, 'g(θ)', bx + Math.cos(handAng) * 24, by - Math.sin(handAng) * 24, P.fiber, 8);
+  label2d(ctx, 'Basis S¹', cx, cy + R + 24, P.base, 8, 'center');
+  label2d(ctx, 'Faser U(1)', cx, cy - R - 22, P.fiber, 8, 'center');
+  ctx.strokeStyle = rgba(P.dim, 0.25);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x0, midY);
+  ctx.lineTo(x1, midY);
+  ctx.stroke();
+  for (let i = 0; i <= 8; i++) {
+    const xx = lerp(x0, x1, i / 8);
+    ctx.strokeStyle = rgba(P.dim, 0.13);
+    ctx.beginPath();
+    ctx.moveTo(xx, midY - amp - 8);
+    ctx.lineTo(xx, midY + amp + 8);
+    ctx.stroke();
+  }
+  const N = 240;
+  let prev = null;
+  for (let i = 0; i <= N; i++) {
+    const th = TAU * i / N;
+    const xx = lerp(x0, x1, i / N);
+    const yy = midY - amp * Math.sin(clutchS.n * th);
+    const hue = (clutchS.n * th / TAU) * 360;
+    if (prev) {
+      ctx.strokeStyle = hsl(hue, 85, 65, 0.95);
+      ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      ctx.moveTo(prev[0], prev[1]);
+      ctx.lineTo(xx, yy);
+      ctx.stroke();
+    }
+    prev = [xx, yy];
+  }
+  const mx = lerp(x0, x1, clutchS.t);
+  const my = midY - amp * Math.sin(clutchS.n * theta);
+  glowDot(ctx, mx, my, 4, P.fiber, 14);
+  label2d(ctx, 'g(θ) = e^{inθ}', (x0 + x1) / 2, midY - amp - 22, P.fiber, 9, 'center');
+  label2d(ctx, 'θ', x1 + 8, midY + 4, P.dim, 8);
+  label2d(ctx, '0', x0, midY + 16, P.dim, 8, 'center');
+  label2d(ctx, '2π', x1, midY + 16, P.dim, 8, 'center');
+  const out = $('#clutchOut');
+  if (out) out.textContent = `n = ${clutchS.n}`;
+};
+$('#clutchN')?.addEventListener('input', e => {
+  clutchS.n = parseInt(e.target.value, 10);
+  const out = $('#clutchNOut');
+  if (out) out.textContent = clutchS.n;
+});
+$('#clutchPlay')?.addEventListener('click', e => {
+  clutchS.play = !clutchS.play;
+  e.currentTarget.classList.toggle('active', clutchS.play);
+  e.currentTarget.classList.toggle('ghost', !clutchS.play);
+});
+function boot() {
+  renderFormulas();
+  coreUpdate();
+
+  const revealIO = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        revealIO.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+  $$('.reveal').forEach(el => revealIO.observe(el));
+  $$('.hero .reveal').forEach(el => el.classList.add('in'));
+
+  const dots = $$('#dots a');
+  const sections = dots.map(a => $(a.getAttribute('href'))).filter(Boolean);
+  const dotIO = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const idx = sections.indexOf(entry.target);
+      if (idx < 0) return;
+      dots.forEach((d, i) => d.classList.toggle('on', i === idx));
+    });
+  }, { rootMargin: '-42% 0px -52% 0px', threshold: 0 });
+  sections.forEach(s => dotIO.observe(s));
+
+  const prog = $('#prog');
+  const onScroll = () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    if (prog) prog.style.width = `${max > 0 ? clamp(window.scrollY / max, 0, 1) * 100 : 0}%`;
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  let last = 0;
+  const tick = (now) => {
+    const dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016;
+    last = now;
+    for (const s of STAGES) {
+      if (!s.visible) continue;
+      if (s.addRot) s.addRot(dt);
+      if (s.frame) s.frame(now / 1000, dt);
+    }
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
+
+})();
+</script>
+</body>
+</html>

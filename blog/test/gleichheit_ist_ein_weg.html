@@ -1,0 +1,3451 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gleichheit ist ein Weg — Homotopy Type Theory interaktiv</title>
+<meta name="description" content="Eine interaktive Reise durch Homotopy Type Theory: Typen als Räume, Gleichheit als Weg, Univalenz und Transport — Schritt für Schritt erklärt.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='32' fill='%23070a12'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='38' text-anchor='middle' fill='%23f4b860'%3E%E2%89%A1%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#070a12;
+    --bg2:#0b1020;
+    --panel:rgba(255,255,255,.045);
+    --panel2:rgba(255,255,255,.075);
+    --line:rgba(255,255,255,.10);
+    --line2:rgba(255,255,255,.19);
+    --text:#e9e4d8;
+    --muted:#a3aabf;
+    --dim:#7d859b;
+    --cream:#f4ecdc;
+    --amber:#f4b860;
+    --teal:#5bd6c4;
+    --violet:#a78bfa;
+    --rose:#fb7185;
+    --sky:#7dd3fc;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+    --acc:var(--amber);
+    --acc-soft:rgba(244,184,96,.13);
+    --acc-glow:rgba(244,184,96,.32);
+    --topbar:62px;
+  }
+  .acc-amber{--acc:var(--amber);--acc-soft:rgba(244,184,96,.13);--acc-glow:rgba(244,184,96,.32)}
+  .acc-teal{--acc:var(--teal);--acc-soft:rgba(91,214,196,.12);--acc-glow:rgba(91,214,196,.30)}
+  .acc-violet{--acc:var(--violet);--acc-soft:rgba(167,139,250,.14);--acc-glow:rgba(167,139,250,.34)}
+  .acc-rose{--acc:var(--rose);--acc-soft:rgba(251,113,133,.12);--acc-glow:rgba(251,113,133,.30)}
+  .acc-sky{--acc:var(--sky);--acc-soft:rgba(125,211,252,.12);--acc-glow:rgba(125,211,252,.30)}
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(1100px 780px at 12% -8%, rgba(167,139,250,.16), transparent 62%),
+      radial-gradient(1000px 720px at 102% 8%, rgba(91,214,196,.13), transparent 58%),
+      radial-gradient(900px 900px at 50% 112%, rgba(244,184,96,.09), transparent 62%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.7;
+    overflow-x:clip;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    pointer-events:none;
+    opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode:overlay;
+  }
+  ::selection{background:rgba(244,184,96,.28);color:#fff}
+  a{color:var(--acc);text-decoration:none}
+  a:hover{text-decoration:underline;text-underline-offset:3px}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:4px}
+
+  .topbar{
+    position:fixed;
+    inset:0 0 auto 0;
+    height:var(--topbar);
+    display:flex;
+    align-items:center;
+    gap:clamp(14px,3vw,34px);
+    padding:0 clamp(14px,4vw,38px);
+    z-index:80;
+    background:rgba(7,10,18,.72);
+    backdrop-filter:blur(18px) saturate(1.25);
+    -webkit-backdrop-filter:blur(18px) saturate(1.25);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{
+    display:flex;align-items:center;gap:11px;
+    color:var(--cream);font-family:var(--serif);
+    font-size:1.02rem;letter-spacing:.01em;white-space:nowrap;
+  }
+  .brand:hover{text-decoration:none}
+  .brand-mark{
+    width:30px;height:30px;flex:0 0 30px;border-radius:50%;
+    display:grid;place-items:center;
+    font-family:var(--serif);font-size:1.15rem;color:#0b0f18;
+    background:linear-gradient(135deg,var(--amber),var(--rose) 52%,var(--violet));
+    box-shadow:0 0 26px rgba(244,184,96,.25);
+  }
+  .brand small{display:block;font-family:var(--sans);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);line-height:1.2}
+  .chapters{display:flex;align-items:center;gap:2px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+  .chapters::-webkit-scrollbar{display:none}
+  .chapters a{
+    color:var(--muted);font-size:.78rem;letter-spacing:.02em;
+    padding:7px 10px;border-radius:999px;white-space:nowrap;
+    transition:color .25s,background .25s;
+  }
+  .chapters a:hover{color:var(--cream);background:rgba(255,255,255,.06);text-decoration:none}
+  .chapters a.active{color:var(--acc);background:var(--acc-soft)}
+  .nav-toggle{
+    display:none;appearance:none;border:1px solid var(--line2);background:rgba(255,255,255,.04);
+    color:var(--cream);font:inherit;font-size:.78rem;padding:7px 13px;border-radius:999px;
+    margin-left:auto;cursor:pointer;
+  }
+  .progress{position:absolute;left:0;right:0;bottom:-1px;height:2px;background:rgba(255,255,255,.05);overflow:hidden}
+  .progress span{display:block;height:100%;width:100%;transform:scaleX(0);transform-origin:0 50%;
+    background:linear-gradient(90deg,var(--amber),var(--rose),var(--violet),var(--teal));
+    box-shadow:0 0 14px rgba(244,184,96,.6);
+  }
+
+  .hero{
+    position:relative;min-height:100svh;
+    display:flex;align-items:center;
+    padding:calc(var(--topbar) + 70px) clamp(20px,6vw,86px) 74px;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  #heroCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+  .hero-spot{
+    position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(460px 460px at var(--mx,72%) var(--my,38%),rgba(244,184,96,.10),transparent 66%);
+    transition:background .25s ease-out;
+  }
+  .hero::after{
+    content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(90deg,rgba(7,10,18,.90) 0%,rgba(7,10,18,.58) 40%,rgba(7,10,18,.05) 74%,transparent 100%);
+  }
+  .hero-content{position:relative;z-index:2;max-width:760px}
+  .eyebrow{
+    display:flex;align-items:center;gap:12px;
+    color:var(--amber);font-size:.72rem;font-weight:600;
+    letter-spacing:.19em;text-transform:uppercase;margin-bottom:22px;
+  }
+  .eyebrow::before{content:"";width:34px;height:1px;background:linear-gradient(90deg,transparent,var(--amber))}
+  .hero h1{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(3.2rem,8.2vw,7.3rem);
+    line-height:.94;letter-spacing:-.042em;
+    color:var(--cream);margin-bottom:28px;
+    text-wrap:balance;
+  }
+  .hero h1 em{
+    font-style:italic;
+    background:linear-gradient(100deg,var(--amber) 4%,var(--rose) 42%,var(--violet) 74%,var(--teal) 100%);
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+    padding-right:.06em;
+  }
+  .hero-lede{
+    font-size:clamp(1.05rem,1.55vw,1.22rem);line-height:1.72;
+    color:#c7c4bb;max-width:57ch;margin-bottom:32px;
+  }
+  .hero-lede strong{color:var(--cream);font-weight:600}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:30px}
+  .btn{
+    appearance:none;border:1px solid var(--line2);
+    background:rgba(255,255,255,.045);color:var(--cream);
+    font:inherit;font-size:.84rem;letter-spacing:.01em;
+    padding:10px 17px;border-radius:999px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;
+    transition:transform .2s,background .25s,border-color .25s,box-shadow .25s,color .25s;
+    white-space:nowrap;
+  }
+  .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.08);border-color:var(--line2);text-decoration:none}
+  .btn:active{transform:translateY(0) scale(.985)}
+  .btn.primary{
+    background:linear-gradient(135deg,var(--amber),#f7c97e 46%,#f2a967);
+    color:#140f08;border-color:transparent;font-weight:650;
+    box-shadow:0 10px 34px -10px rgba(244,184,96,.55);
+  }
+  .btn.primary:hover{box-shadow:0 14px 42px -10px rgba(244,184,96,.72);background:linear-gradient(135deg,#f7c46e,#ffd79a 46%,#f4b860)}
+  .btn.ghost{background:transparent}
+  .btn[aria-pressed="true"],.btn.is-active{
+    background:var(--acc);color:#0b0f18;border-color:transparent;
+    box-shadow:0 8px 28px -8px var(--acc-glow);font-weight:600;
+  }
+  .hero-meta{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--dim);font-size:.74rem;letter-spacing:.03em}
+  .hero-meta span{display:flex;align-items:center;gap:7px}
+  .hero-meta b{color:var(--muted);font-weight:500}
+  .hero-symbols{
+    position:absolute;left:clamp(20px,6vw,86px);bottom:26px;z-index:2;
+    display:flex;gap:clamp(14px,2.4vw,30px);
+    font-family:var(--serif);font-size:1.15rem;color:rgba(255,255,255,.22);
+    letter-spacing:.02em;
+  }
+  .scroll-cue{
+    position:absolute;right:clamp(18px,4vw,48px);bottom:30px;z-index:2;
+    display:flex;align-items:center;gap:10px;
+    color:var(--dim);font-size:.66rem;letter-spacing:.17em;text-transform:uppercase;
+    writing-mode:vertical-rl;
+  }
+  .scroll-cue::after{content:"";width:1px;height:52px;background:linear-gradient(var(--dim),transparent);animation:cue 2.4s ease-in-out infinite}
+  @keyframes cue{0%,100%{transform:scaleY(.55);opacity:.5;transform-origin:top}50%{transform:scaleY(1);opacity:1;transform-origin:top}}
+
+  .chapter{
+    position:relative;
+    padding:clamp(84px,10vw,144px) clamp(20px,5vw,42px);
+    scroll-margin-top:calc(var(--topbar) + 12px);
+    isolation:isolate;
+  }
+  .chapter::before{
+    content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+    background:radial-gradient(680px 520px at 84% 8%,var(--acc-soft),transparent 70%);
+    opacity:.7;
+  }
+  .chapter-inner{max-width:1120px;margin:0 auto;position:relative}
+  .chapter-head{position:relative;margin:0 auto 38px;max-width:1120px}
+  .big-num{
+    position:absolute;right:0;top:-.38em;
+    font-family:var(--serif);font-size:clamp(7rem,17vw,14rem);line-height:1;
+    color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.075);
+    pointer-events:none;user-select:none;
+  }
+  .kicker{
+    display:flex;align-items:center;gap:12px;
+    color:var(--acc);font-size:.7rem;font-weight:600;
+    letter-spacing:.19em;text-transform:uppercase;margin-bottom:18px;
+  }
+  .kicker::before{content:"";width:26px;height:1px;background:var(--acc)}
+  h2{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(2.15rem,4.7vw,4.05rem);
+    line-height:1.04;letter-spacing:-.026em;
+    color:var(--cream);max-width:19ch;margin-bottom:18px;text-wrap:balance;
+  }
+  .lede{
+    font-size:clamp(1.04rem,1.45vw,1.24rem);
+    line-height:1.68;color:var(--muted);max-width:62ch;
+  }
+  .lede em{color:var(--cream);font-style:italic}
+  .prose{
+    max-width:68ch;margin:0 auto;
+    font-size:1.065rem;line-height:1.87;color:#d6d2c7;
+  }
+  .prose p{margin:0 0 1.18em}
+  .prose p:last-child{margin-bottom:0}
+  .prose strong{color:var(--cream);font-weight:600}
+  .prose em{color:#e9dfc9;font-style:italic}
+  .prose h3{
+    font-family:var(--serif);font-weight:400;font-size:1.5rem;
+    color:var(--cream);letter-spacing:-.01em;line-height:1.2;
+    margin:2.1em 0 .62em;
+  }
+  .prose code,.term{
+    font-family:var(--mono);font-size:.86em;
+    color:var(--cream);background:rgba(255,255,255,.055);
+    border:1px solid var(--line);border-radius:5px;padding:.1em .38em;
+    white-space:nowrap;
+  }
+  .term{cursor:help;border-bottom-style:dotted;border-bottom-color:var(--line2)}
+  .math{font-family:var(--serif);font-style:italic;color:var(--cream);white-space:nowrap}
+  .eq{
+    margin:1.7em 0;padding:1.15em 1em;text-align:center;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    font-family:var(--serif);font-size:clamp(1.22rem,2.3vw,1.7rem);
+    color:var(--cream);line-height:1.45;letter-spacing:.005em;
+  }
+  .eq small{
+    display:block;margin-top:.65em;
+    font-family:var(--sans);font-style:normal;font-size:.66rem;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
+  }
+  .eq .hl{color:var(--acc);font-style:normal}
+
+  .stage{
+    position:relative;margin:48px auto 0;max-width:1060px;
+    border:1px solid var(--line);border-radius:24px;overflow:hidden;
+    background:linear-gradient(158deg,rgba(255,255,255,.055),rgba(255,255,255,.018) 58%,rgba(255,255,255,.03));
+    box-shadow:0 36px 100px -42px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.075);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+  }
+  .stage::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:1px;z-index:3;
+    background:linear-gradient(90deg,transparent,var(--acc),transparent);opacity:.75;
+  }
+  .stage-bar{
+    display:flex;align-items:center;gap:11px;
+    padding:12px 18px;border-bottom:1px solid var(--line);
+    background:rgba(6,9,16,.35);
+  }
+  .stage-dots{display:flex;gap:5px}
+  .stage-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.17);display:block}
+  .stage-dots i:first-child{background:var(--acc);box-shadow:0 0 10px var(--acc-glow)}
+  .stage-label{font-size:.66rem;letter-spacing:.17em;text-transform:uppercase;color:var(--muted)}
+  .stage-hint{margin-left:auto;font-size:.67rem;color:var(--dim);letter-spacing:.03em}
+  .stage-hint b{color:var(--acc);font-weight:500}
+  .stage-body{position:relative;background:radial-gradient(ellipse at 50% 45%,rgba(255,255,255,.035),transparent 68%)}
+  .stage-body canvas{display:block;width:100%;height:clamp(286px,45vw,460px);touch-action:none}
+  .stage-body.tall canvas{height:clamp(350px,55vw,560px)}
+  .stage-body::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    box-shadow:inset 0 0 120px rgba(0,0,0,.35);
+  }
+  .stage-controls{
+    display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;
+    padding:15px 18px;border-top:1px solid var(--line);
+    background:rgba(5,8,14,.28);
+  }
+  .control{display:flex;align-items:center;gap:9px;font-size:.78rem;color:var(--muted);white-space:nowrap}
+  .control b{color:var(--cream);font-weight:600;font-variant-numeric:tabular-nums;min-width:2ch;text-align:right}
+  .spacer{flex:1 1 20px}
+  input[type="range"]{
+    appearance:none;-webkit-appearance:none;
+    width:clamp(104px,17vw,210px);height:22px;background:transparent;cursor:pointer;
+  }
+  input[type="range"]::-webkit-slider-runnable-track{
+    height:4px;border-radius:99px;
+    background:linear-gradient(to right,var(--acc) 0 var(--val,50%),rgba(255,255,255,.13) var(--val,50%) 100%);
+  }
+  input[type="range"]::-moz-range-track{height:4px;border-radius:99px;background:rgba(255,255,255,.13)}
+  input[type="range"]::-moz-range-progress{height:4px;border-radius:99px;background:var(--acc)}
+  input[type="range"]::-webkit-slider-thumb{
+    appearance:none;-webkit-appearance:none;width:15px;height:15px;border-radius:50%;
+    background:var(--acc);margin-top:-5.5px;
+    box-shadow:0 0 0 4px var(--acc-soft),0 0 18px var(--acc-glow);
+    transition:transform .15s;
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:15px;height:15px;border:none;border-radius:50%;background:var(--acc);
+    box-shadow:0 0 0 4px var(--acc-soft),0 0 18px var(--acc-glow);
+  }
+  input[type="range"]:active::-webkit-slider-thumb{transform:scale(1.18)}
+  .readout{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:1px;
+    background:var(--line);border-top:1px solid var(--line);
+  }
+  .ro{background:rgba(8,12,21,.92);padding:13px 17px}
+  .ro .k{display:block;font-size:.61rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+  .ro .v{font-size:.92rem;color:var(--cream);line-height:1.45;font-variant-numeric:tabular-nums}
+  .ro .v.acc{color:var(--acc)}
+  .ro .v small{font-size:.72rem;color:var(--muted)}
+  .stage-caption{
+    padding:13px 18px 16px;border-top:1px solid var(--line);
+    background:rgba(4,7,13,.24);font-size:.86rem;color:var(--muted);line-height:1.65;
+  }
+  .stage-caption b{color:var(--cream);font-weight:600}
+  .stage-caption .tag{
+    display:inline-block;margin-right:9px;padding:2px 8px;border-radius:99px;
+    background:var(--acc-soft);border:1px solid var(--acc-glow);
+    color:var(--acc);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
+    vertical-align:1px;
+  }
+
+  .pullquote{
+    max-width:64ch;margin:62px auto 0;padding:26px 0 26px 30px;
+    border-left:1px solid var(--acc);
+    font-family:var(--serif);font-size:clamp(1.2rem,2vw,1.48rem);
+    line-height:1.55;color:var(--cream);letter-spacing:-.005em;
+    background:linear-gradient(90deg,var(--acc-soft),transparent 80%);
+  }
+  .pullquote em{color:var(--acc);font-style:italic}
+  .pullquote cite{
+    display:block;margin-top:15px;font-family:var(--sans);font-style:normal;
+    font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);
+  }
+
+  .uv-wrap{
+    display:grid;grid-template-columns:1fr 104px 1fr;align-items:stretch;
+    gap:0;padding:clamp(16px,3vw,30px);
+    transition:gap .55s cubic-bezier(.2,.8,.2,1);
+  }
+  .uv-side{
+    position:relative;border:1px solid var(--line2);border-radius:18px;
+    padding:22px 18px;background:rgba(255,255,255,.028);text-align:center;
+    transition:transform .6s cubic-bezier(.2,.8,.2,1),border-color .45s,background .45s,box-shadow .45s;
+  }
+  .uv-side .uv-tag{font-size:.61rem;letter-spacing:.17em;text-transform:uppercase;color:var(--dim)}
+  .uv-side .uv-name{font-family:var(--serif);font-size:1.16rem;color:var(--cream);margin-top:3px}
+  .uv-state{
+    font-family:var(--serif);font-size:clamp(1.7rem,3.3vw,2.6rem);line-height:1.1;
+    color:var(--acc);margin:16px 0 4px;letter-spacing:.02em;min-height:1.2em;
+  }
+  .uv-sub{font-size:.72rem;color:var(--dim);letter-spacing:.03em}
+  .uv-toggle{margin-top:16px;width:100%;justify-content:center}
+  .uv-bridge{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;gap:6px}
+  .uv-bridge svg{width:64px;height:34px;overflow:visible;opacity:.75;transition:opacity .4s}
+  .uv-bridge svg path{stroke:var(--acc);stroke-width:1.2;fill:none;stroke-dasharray:3 4;animation:flow 1.4s linear infinite}
+  @keyframes flow{to{stroke-dashoffset:-14}}
+  .uv-eq{
+    font-family:var(--serif);font-size:2.1rem;line-height:1;color:var(--acc);
+    transition:transform .55s cubic-bezier(.2,.8,.2,1),text-shadow .45s;
+    text-shadow:0 0 26px var(--acc-glow);
+  }
+  .uv-eq-label{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);text-align:center}
+  .uv-banner{
+    margin:0 clamp(16px,3vw,30px);padding:0 14px;height:0;overflow:hidden;
+    text-align:center;font-family:var(--serif);font-size:1rem;color:var(--acc);
+    opacity:0;transition:height .45s,opacity .45s,padding .45s;
+  }
+  .uv-wrap.is-univalent .uv-side{
+    border-color:var(--acc);background:linear-gradient(160deg,var(--acc-soft),rgba(255,255,255,.025));
+    box-shadow:0 0 54px -12px var(--acc-glow),inset 0 0 40px -20px var(--acc-glow);
+  }
+  .uv-wrap.is-univalent .uv-side.left{transform:translateX(16px)}
+  .uv-wrap.is-univalent .uv-side.right{transform:translateX(-16px)}
+  .uv-wrap.is-univalent .uv-bridge svg{opacity:0}
+  .uv-wrap.is-univalent .uv-eq{transform:scale(1.55)}
+  .uv-wrap.is-univalent + .uv-banner,.uv-banner.show{height:auto;opacity:1;padding:14px}
+  .uv-hint{padding:0 clamp(18px,3vw,30px) 20px;font-size:.8rem;color:var(--dim);text-align:center}
+  .uv-hint b{color:var(--muted);font-weight:500}
+
+  .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:13px;margin:40px auto 0;max-width:1060px}
+  .feature{
+    border:1px solid var(--line);border-radius:16px;padding:20px 20px 18px;
+    background:linear-gradient(160deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
+    transition:transform .3s,border-color .3s,background .3s;
+  }
+  .feature:hover{transform:translateY(-3px);border-color:var(--line2);background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02))}
+  .feature .fi{
+    display:grid;place-items:center;width:34px;height:34px;border-radius:9px;
+    background:var(--acc-soft);border:1px solid var(--acc-glow);
+    color:var(--acc);font-family:var(--serif);font-size:1.05rem;margin-bottom:13px;
+  }
+  .feature h3{font-family:var(--serif);font-weight:400;font-size:1.14rem;color:var(--cream);margin-bottom:7px;letter-spacing:-.01em}
+  .feature p{font-size:.84rem;line-height:1.65;color:var(--muted)}
+
+  .code-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin:26px auto 0;max-width:1060px}
+  .code-card{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#080c15}
+  .code-head{display:flex;align-items:center;gap:7px;padding:10px 15px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}
+  .code-head i{width:5px;height:5px;border-radius:50%;background:var(--acc);display:block}
+  .code-head span{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .code-head em{margin-left:auto;font-style:normal;font-family:var(--mono);font-size:.62rem;color:var(--dim)}
+  .code-card pre{margin:0;padding:16px 18px;overflow-x:auto;font-family:var(--mono);font-size:.79rem;line-height:1.78;color:#cbd3e4;tab-size:2}
+  .kw{color:var(--violet)}
+  .fn{color:var(--teal)}
+  .op{color:var(--amber)}
+  .ty{color:#8fd3ff}
+  .cm{color:#68718a;font-style:italic}
+
+  .quiz-top{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);background:rgba(5,8,14,.28)}
+  .quiz-score{font-size:.76rem;color:var(--muted)}
+  .quiz-score b{color:var(--acc);font-variant-numeric:tabular-nums}
+  .quiz-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:14px}
+  .quiz-card{
+    border:1px solid var(--line);border-radius:15px;padding:15px;
+    background:rgba(255,255,255,.022);
+    transition:border-color .35s,background .35s,transform .25s;
+  }
+  .quiz-card:hover{background:rgba(255,255,255,.04)}
+  .quiz-title{font-size:.8rem;color:var(--muted);text-align:center;margin-bottom:6px;letter-spacing:.01em}
+  .quiz-visual{display:flex;align-items:center;justify-content:center;gap:10px;height:92px}
+  .quiz-visual svg{width:78px;height:78px;overflow:visible}
+  .quiz-visual svg *{vector-effect:non-scaling-stroke}
+  .quiz-vs{font-family:var(--serif);font-style:italic;color:var(--dim);font-size:1rem}
+  .quiz-actions{display:flex;gap:8px;justify-content:center;margin-top:8px}
+  .quiz-actions .btn{padding:6px 13px;font-size:.75rem}
+  .quiz-explain{
+    max-height:0;opacity:0;overflow:hidden;
+    transition:max-height .5s ease,opacity .4s ease,margin .4s;
+    font-size:.79rem;line-height:1.6;color:var(--muted);
+  }
+  .quiz-card.revealed .quiz-explain{max-height:230px;opacity:1;margin-top:12px}
+  .quiz-explain b{color:var(--cream);font-weight:600}
+  .quiz-card.correct{border-color:rgba(91,214,196,.5);background:rgba(91,214,196,.05)}
+  .quiz-card.wrong{border-color:rgba(251,113,133,.5);background:rgba(251,113,133,.045)}
+  .quiz-card .badge{display:none;margin-top:9px;font-size:.62rem;letter-spacing:.13em;text-transform:uppercase}
+  .quiz-card.correct .badge{display:block;color:var(--teal)}
+  .quiz-card.wrong .badge{display:block;color:var(--rose)}
+
+  .ladder{position:relative;max-width:780px;margin:54px auto 0;padding-left:40px}
+  .ladder::before{content:"";position:absolute;left:14px;top:7px;bottom:7px;width:1px;
+    background:linear-gradient(var(--amber),var(--rose),var(--violet),var(--teal));opacity:.45}
+  .step{position:relative;padding:0 0 32px 18px}
+  .step:last-child{padding-bottom:0}
+  .step::before{
+    content:"";position:absolute;left:-31px;top:7px;width:9px;height:9px;border-radius:50%;
+    background:var(--bg);border:1px solid var(--acc);box-shadow:0 0 18px var(--acc-glow);
+  }
+  .step .lv{font-size:.62rem;letter-spacing:.17em;text-transform:uppercase;color:var(--acc);margin-bottom:3px}
+  .step h3{font-family:var(--serif);font-weight:400;font-size:1.3rem;color:var(--cream);line-height:1.25;margin-bottom:5px}
+  .step p{font-size:.9rem;color:var(--muted);line-height:1.65;max-width:58ch}
+
+  .next-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:13px;margin:44px auto 0;max-width:1060px}
+  .next-card{
+    display:flex;flex-direction:column;gap:5px;
+    border:1px solid var(--line);border-radius:15px;padding:17px 18px;
+    background:rgba(255,255,255,.025);transition:transform .3s,border-color .3s,background .3s;
+  }
+  .next-card:hover{transform:translateY(-3px);border-color:var(--acc-glow);background:rgba(255,255,255,.05);text-decoration:none}
+  .next-card .nk{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+  .next-card .nt{font-family:var(--serif);font-size:1.08rem;color:var(--cream);line-height:1.35}
+  .next-card .nd{font-size:.76rem;color:var(--muted);line-height:1.55}
+  .next-card .na{margin-top:auto;padding-top:9px;font-size:.72rem;color:var(--acc)}
+
+  .final-line{
+    max-width:52ch;margin:56px auto 0;text-align:center;
+    font-family:var(--serif);font-size:clamp(1.5rem,3.2vw,2.35rem);
+    line-height:1.35;color:var(--cream);letter-spacing:-.015em;text-wrap:balance;
+  }
+  .final-line em{font-style:italic;color:var(--acc)}
+  .colophon{
+    max-width:64ch;margin:54px auto 0;padding-top:24px;border-top:1px solid var(--line);
+    font-size:.78rem;color:var(--dim);line-height:1.75;text-align:center;
+  }
+  .colophon a{color:var(--muted)}
+
+  footer{
+    padding:40px clamp(20px,5vw,42px) 54px;border-top:1px solid var(--line);
+    background:rgba(4,7,13,.5);
+  }
+  .footer-inner{
+    max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;gap:18px 30px;
+    align-items:center;justify-content:space-between;font-size:.73rem;color:var(--dim);
+  }
+  .footer-inner .fmark{display:flex;align-items:center;gap:9px;color:var(--muted)}
+  .footer-inner .fmark b{font-family:var(--serif);font-weight:400;font-size:1rem;color:var(--cream)}
+  .footer-links{display:flex;flex-wrap:wrap;gap:14px}
+  .footer-links a{color:var(--dim)}
+  .footer-links a:hover{color:var(--acc)}
+
+  .js-reveal .reveal{opacity:0;transform:translateY(20px);transition:opacity .85s ease,transform .85s cubic-bezier(.2,.8,.2,1)}
+  .js-reveal .reveal.in{opacity:1;transform:none}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  @media (max-width:900px){
+    .nav-toggle{display:inline-flex}
+    .chapters{
+      position:fixed;top:calc(var(--topbar) + 6px);left:12px;right:12px;
+      display:none;flex-direction:column;align-items:stretch;gap:2px;
+      padding:9px;border:1px solid var(--line2);border-radius:16px;
+      background:rgba(9,13,23,.985);box-shadow:0 30px 80px rgba(0,0,0,.6);
+      z-index:79;margin:0;
+    }
+    .topbar.nav-open .chapters{display:flex}
+    .chapters a{padding:10px 12px;font-size:.84rem}
+    .brand small{display:none}
+    .big-num{top:-.3em;opacity:.65}
+    .hero::after{background:linear-gradient(180deg,rgba(7,10,18,.36) 0%,rgba(7,10,18,.72) 46%,rgba(7,10,18,.92) 100%)}
+    .hero{padding-top:calc(var(--topbar) + 54px);align-items:flex-end;padding-bottom:82px}
+    .hero-content{max-width:100%}
+    .hero h1{font-size:clamp(2.9rem,13vw,4.4rem)}
+    .hero-symbols{display:none}
+    .scroll-cue{display:none}
+    .stage-hint{display:none}
+    .uv-wrap{grid-template-columns:1fr 76px 1fr}
+    .uv-side{padding:16px 10px}
+    .uv-bridge svg{width:48px}
+    .quiz-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:560px){
+    .hero-actions{align-items:stretch}
+    .hero-actions .btn{flex:1 1 auto;justify-content:center}
+    .stage-controls{gap:9px}
+    .stage-controls .btn{padding:8px 12px;font-size:.78rem}
+    .control{font-size:.74rem}
+    input[type="range"]{width:100%;min-width:120px;flex:1}
+    .control{flex:1 1 100%;justify-content:space-between}
+    .uv-wrap{grid-template-columns:1fr;gap:10px}
+    .uv-bridge{flex-direction:row;gap:9px;padding:2px 0}
+    .uv-bridge svg{width:38px;height:22px}
+    .uv-eq{font-size:1.55rem}
+    .uv-eq-label{white-space:nowrap}
+    .uv-wrap.is-univalent .uv-side.left{transform:translateY(5px)}
+    .uv-wrap.is-univalent .uv-side.right{transform:translateY(-5px)}
+    .readout{grid-template-columns:repeat(2,1fr)}
+    .stage-body canvas{height:clamp(250px,70vw,340px)}
+    .stage-body.tall canvas{height:clamp(300px,84vw,400px)}
+    .prose{font-size:1.01rem}
+    .pullquote{padding-left:20px}
+    .brand{font-size:.92rem}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .js-reveal .reveal{opacity:1;transform:none;transition:none}
+    .scroll-cue::after{animation:none}
+    .uv-bridge svg path{animation:none}
+    *{scroll-behavior:auto!important}
+  }
+
+  .lift-wrap{padding:14px 18px 6px;border-top:1px solid var(--line);background:rgba(5,8,14,.18)}
+  .lift-head,.orient-head{display:flex;align-items:center;justify-content:space-between;font-size:.64rem;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+  .lift-head b,.orient-head b{font-family:var(--mono);font-size:.72rem;letter-spacing:0;color:var(--acc);font-weight:500}
+  .lift-track{position:relative;height:20px;margin:0 6px 14px}
+  .lift-track::before{content:"";position:absolute;left:0;right:0;top:9px;height:1px;background:rgba(255,255,255,.16)}
+  .lift-tick{position:absolute;top:14px;transform:translateX(-50%);font-size:.58rem;color:var(--dim);font-variant-numeric:tabular-nums}
+  .lift-tick::before{content:"";position:absolute;left:50%;top:-8px;width:1px;height:4px;background:rgba(255,255,255,.25)}
+  .lift-dot{position:absolute;top:4px;left:50%;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 4px var(--acc-soft),0 0 18px var(--acc-glow);transition:left .45s cubic-bezier(.2,.8,.2,1)}
+  .glue-steps{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 18px 4px;border-top:1px solid var(--line);background:rgba(5,8,14,.18);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .gstep{padding:3px 9px;border-radius:99px;border:1px solid transparent;transition:all .3s}
+  .gstep.is-on{color:var(--acc);background:var(--acc-soft);border-color:var(--acc-glow)}
+  .gline{width:34px;height:1px;background:rgba(255,255,255,.14)}
+  .orient-wrap{padding:14px 18px 6px;border-top:1px solid var(--line);background:rgba(5,8,14,.18)}
+  .orient-track{position:relative;height:6px;border-radius:99px;background:linear-gradient(90deg,rgba(251,113,133,.55),rgba(255,255,255,.10) 50%,rgba(91,214,196,.55));overflow:hidden}
+  .orient-zero{position:absolute;left:50%;top:-3px;width:1px;height:12px;background:rgba(255,255,255,.3);z-index:2}
+  .orient-fill{position:absolute;top:0;left:50%;height:100%;background:var(--acc);opacity:.8;border-radius:99px;transition:left .15s,width .15s}
+  .orient-scale{display:flex;justify-content:space-between;margin:7px 2px 12px;font-size:.56rem;letter-spacing:.08em;color:var(--dim)}
+</style>
+</head>
+<body id="top">
+
+<header class="topbar" id="topbar">
+  <a class="brand" href="#top" aria-label="Zum Anfang">
+    <span class="brand-mark" aria-hidden="true">≡</span>
+    <span>Gleichheit ist ein Weg<small>Homotopy Type Theory</small></span>
+  </a>
+  <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="chapterNav">Inhalt</button>
+  <nav class="chapters" id="chapterNav" aria-label="Kapitel">
+    <a href="#raum">01 Raum</a>
+    <a href="#weg">02 Weg</a>
+    <a href="#flaeche">03 Fläche</a>
+    <a href="#schleife">04 Schleife</a>
+    <a href="#bauplan">05 Bauplan</a>
+    <a href="#univalenz">06 Univalenz</a>
+    <a href="#transport">07 Transport</a>
+    <a href="#wozu">08 Wozu</a>
+    <a href="#turm">09 Turm</a>
+  </nav>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+</header>
+
+<main>
+  <section class="hero" id="hero">
+    <canvas id="heroCanvas" aria-hidden="true"></canvas>
+    <div class="hero-spot" id="heroSpot" aria-hidden="true"></div>
+    <div class="hero-content">
+      <p class="eyebrow reveal">arXiv:1308.0729 · Das HoTT-Buch, interaktiv</p>
+      <h1 class="reveal">Gleichheit<br><em>ist ein Weg.</em></h1>
+      <p class="hero-lede reveal">
+        Stell dir vor, Mathematik wäre keine Liste von Wahrheiten, sondern eine Landschaft aus Räumen.
+        Punkte sind Werte. Beweise sind Wege. Und zwei Dinge sind genau dann gleich, wenn man
+        vom einen zum anderen wandern kann. <strong>Das ist Homotopy Type Theory</strong> —
+        und sie verändert, was ein Beweis überhaupt ist.
+      </p>
+      <div class="hero-actions reveal">
+        <a class="btn primary" href="#raum">Losgehen <span aria-hidden="true">→</span></a>
+        <a class="btn ghost" href="#univalenz">Direkt zur Univalenz</a>
+      </div>
+      <div class="hero-meta reveal">
+        <span><b>9</b> Kapitel</span>
+        <span><b>7</b> interaktive Labore</span>
+        <span><b>0</b> Vorkenntnisse nötig</span>
+      </div>
+    </div>
+    <div class="hero-symbols" aria-hidden="true"><span>•</span><span>—</span><span>S¹</span><span>≃</span><span>π₁</span><span>ℤ</span><span>∞</span></div>
+    <a class="scroll-cue" href="#raum">Scrollen</a>
+  </section>
+
+  <section class="chapter acc-amber" id="raum">
+    <div class="chapter-inner">
+      <div class="chapter-head reveal">
+        <span class="big-num" aria-hidden="true">01</span>
+        <p class="kicker">Kapitel 01 · Die Grundidee</p>
+        <h2>Ein Typ ist ein Raum.</h2>
+        <p class="lede">
+          In der Schule ist eine Menge ein Sack voller Dinge. Die Typentheorie geht weiter:
+          Ein Typ hat eine <em>Form</em>. Er kann Löcher haben, Schleifen, Kammern — und genau
+          diese Form entscheidet, was in ihm gleich sein kann.
+        </p>
+      </div>
+
+      <div class="prose reveal">
+        <p>
+          Wenn du in der Schule eine Menge aufschreibst, schreibst du ihre Elemente auf:
+          <span class="math">{1, 2, 3}</span>. Mehr gibt es nicht zu sagen. Ein Typ ist anders.
+          Ein Typ beschreibt, <em>wie man in ihn hineinkommt</em> und <em>wie seine Punkte
+          zusammenhängen</em>. Der Typ <code>Bool</code> hat zwei Punkte. Der Typ
+          <span class="math">ℕ</span> hat unendlich viele, fein säuberlich getrennt. Der Typ
+          <span class="math">S¹</span> ist ein Kreis: unendlich viele Punkte, aber sie liegen
+          auf einer Schleife.
+        </p>
+        <p>
+          Ein <strong>Wert</strong> eines Typs ist ein Punkt in diesem Raum. Ein
+          <strong>Beweis</strong> ist ein Weg. Das klingt zunächst nur nach einer hübschen
+          Metapher. Es ist aber die Grundlage einer ganzen mathematischen Sprache: der
+          <span class="term" title="Homotopy Type Theory: Typentheorie, gelesen mit der Brille der Homotopie-Theorie.">Homotopy Type Theory</span>.
+        </p>
+        <p>
+          Warum Räume? Weil Räume mehr Struktur haben als „wie viele Punkte“. Ein Kreis und eine
+          Gerade haben beide unendlich viele Punkte. Trotzdem kann man den einen nicht ohne Reißen
+          in den anderen verwandeln. Ein Kreis hat ein Loch, eine Gerade nicht. Diese Art von
+          Unterschied ist es, die Typen sichtbar machen — und die in der klassischen Mengenlehre
+          unsichtbar bleibt, solange man nur Elemente zählt.
+        </p>
+        <p>
+          Die zweite große Idee kommt aus der Logik: <strong>Typen sind auch Aussagen</strong>.
+          Ein Typ ist „wahr“, wenn er einen Punkt hat. Ein Beweis ist dann einfach ein Punkt
+          dieses Typs. Diese doppelte Lesart — <em>Typ = Raum</em> und <em>Typ = Aussage</em> —
+          ist der Trick, mit dem Geometrie und Logik dieselbe Sprache sprechen.
+        </p>
+      </div>
+
+      <div class="stage reveal" id="spaceStage">
+        <div class="stage-bar">
+          <div class="stage-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="stage-label">Raumlabor</span>
+          <span class="stage-hint">Form wählen · <b>Punkte, Schleifen, Löcher</b></span>
+        </div>
+        <div class="stage-body">
+          <canvas id="spaceCanvas" role="img" aria-label="Interaktive Darstellung verschiedener Räume: Punkt, Strecke, zwei Punkte, Kreis, Kugel und Torus. Die Form kann gewechselt werden."></canvas>
+        </div>
+        <div class="stage-controls" id="spaceTabs" role="group" aria-label="Raum auswählen">
+          <button class="btn" data-space="point" aria-pressed="false">Punkt</button>
+          <button class="btn" data-space="interval" aria-pressed="false">Strecke</button>
+          <button class="btn" data-space="two" aria-pressed="false">Zwei Punkte</button>
+          <button class="btn is-active" data-space="circle" aria-pressed="true">Kreis</button>
+          <button class="btn" data-space="sphere" aria-pressed="false">Kugel</button>
+          <button class="btn" data-space="torus" aria-pressed="false">Torus</button>
+          <span class="spacer"></span>
+          <span class="control"><b id="spaceLevel">kontrahierbar</b></span>
+        </div>
+        <div class="readout" id="spaceReadout" aria-live="polite"></div>
+        <div class="stage-caption">
+          <span class="tag">Idee</span>
+          Jede Form ist ein Typ. Die Punkte sind Werte, die Linien sind mögliche Gleichheiten.
+          Ein <b>Loch</b> ist keine Lücke im Papier, sondern eine Schleife, die sich nicht auf
+          einen Punkt zusammenziehen lässt.
+        </div>
+      </div>
+
+      <blockquote class="pullquote reveal">
+        Typen sind Räume, Terme sind Punkte. Diese eine Verschiebung macht aus Logik Geometrie.
+        <cite>Die Grundidee der homotopischen Semantik</cite>
+      </blockquote>
+    </div>
+  </section>
+
+  <section class="chapter acc-teal" id="weg">
+    <div class="chapter-inner">
+      <div class="chapter-head reveal">
+        <span class="big-num" aria-hidden="true">02</span>
+        <p class="kicker">Kapitel 02 · Der Kern</p>
+        <h2>a = b ist keine Ja/Nein-Frage.</h2>
+        <p class="lede">
+          Klassisch ist „a = b“ wahr oder falsch. In der Typentheorie ist „a = b“ selbst ein
+          Raum: der Raum aller Wege von a nach b. Ein Beweis der Gleichheit ist ein Weg.
+        </p>
+      </div>
+
+      <div class="prose reveal">
+        <p>
+          Wenn zwei Städte auf einer Karte liegen, ist die Frage „Sind sie verbunden?“ nicht mit
+          einem bloßen Ja beantwortet. Es gibt <em>Routen</em>: die direkte, die landschaftlich
+          schöne, die Umleitung. Genauso ist eine Gleichheit in HoTT kein Wahrheitswert, sondern
+          ein Typ voller Pfade. Wir schreiben:
+        </p>
+        <div class="eq">
+          p : a ≡<sub>A</sub> b
+          <small>p ist ein Weg im Typ A vom Punkt a zum Punkt b</small>
+        </div>
+        <p>
+          Der einfachste Weg ist der, der stehen bleibt: <code>refl : a ≡ a</code>. Man nennt ihn
+          <strong>Reflexivität</strong>. Es gibt auch das Rückwärtsgehen, <code>sym p : b ≡ a</code>,
+          und das Hintereinandergehen, <code>trans p q : a ≡ c</code>. Das sind genau die Regeln,
+          die Gleichheit haben sollte — nur dass sie jetzt eine <em>Geometrie</em> bekommen:
+          Wege kann man umdrehen, verketten, verbiegen.
+        </p>
+        <p>
+          Wichtig ist: Es kann mehrere verschiedene Wege zwischen denselben Punkten geben. Das
+          heißt nicht, dass die Gleichheit „unsicher“ wäre. Alle diese Wege beweisen dieselbe
+          Gleichheit — so wie alle Routen von A nach B beweisen, dass A und B verbunden sind.
+          Aber die Wege selbst sind unterschiedliche Objekte. In der Typentheorie nennt man das
+          <span class="term" title="Proof relevance: Der konkrete Beweis ist ein Objekt, nicht nur ein Häkchen.">Proof relevance</span>.
+        </p>
+      </div>
+
+      <div class="stage reveal">
+        <div class="stage-bar">
+          <div class="stage-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="stage-label">Pfadwerkstatt</span>
+          <span class="stage-hint">Punkte ziehen · <b>Wege verbiegen</b></span>
+        </div>
+        <div class="stage-body">
+          <canvas id="pathCanvas" role="img" aria-label="Zwei Punkte a und b, die sich ziehen lassen. Zwischen ihnen verläuft ein Weg, der sich stetig von einer direkten Route in eine gewundene Route deformieren lässt."></canvas>
+        </div>
+        <div class="stage-controls">
+          <label class="control" for="pathSlider">Deformation <input type="range" id="pathSlider" min="0" max="100" value="0" aria-label="Deformation des Weges"><b id="pathT">0%</b></label>
+          <button class="btn" id="pathAuto" aria-pressed="false">Atmen</button>
+          <button class="btn" id="pathReverse" aria-pressed="false">Umkehren</button>
+          <button class="btn" id="pathRefl">refl zeigen</button>
+          <span class="spacer"></span>
+          <button class="btn" id="pathReset">Zurücksetzen</button>
+        </div>
+        <div class="readout" id="pathReadout"></div>
+        <div class="stage-caption">
+          <span class="tag">Beweis</span>
+          Ziehe <b>a</b> oder <b>b</b>. Der Weg passt sich an. Mit dem Regler verbiegst du ihn
+          stetig — genau das ist eine <b>Homotopie</b>: eine Verformung, die die Endpunkte festhält.
+        </div>
+      </div>
+
+      <blockquote class="pullquote reveal">
+        Merksatz: Gleichheit ist kein Häkchen, sondern ein Objekt — eines, das man anfassen,
+        umdrehen und verketten kann.
+        <cite>Die zentrale Verschiebung gegenüber der klassischen Mengenlehre</cite>
+      </blockquote>
+    </div>
+  </section>
+
+  <section class="chapter acc-violet" id="flaeche">
+    <div class="chapter-inner">
+      <div class="chapter-head reveal">
+        <span class="big-num" aria-hidden="true">03</span>
+        <p class="kicker">Kapitel 03 · Die höhere Struktur</p>
+        <h2>Gleichheit hat Ebenen.</h2>
+        <p class="lede">
+          Wenn p und q zwei Wege von a nach b sind, kann man fragen, ob p und q gleich sind.
+          Die Antwort ist wieder ein Raum: eine Fläche zwischen den Wegen. Und dann geht es
+          weiter — nach oben, ohne Ende.
+        </p>
+      </div>
+
+      <div class="prose reveal">
+        <p>
+          Stelle dir zwei Wege als zwei Gummibänder zwischen denselben zwei Nägeln vor. Kann man
+          das eine in das andere verbiegen, ohne es von den Nägeln zu lösen? Wenn ja, gibt es
+          eine <strong>Homotopie</strong> zwischen ihnen — einen Weg im Raum der Wege. In HoTT
+          ist das ein <strong>2-Pfad</strong>:
+        </p>
+        <div class="eq">
+          α : p ≡ q
+          <small>α ist eine Fläche: ein Weg zwischen den Wegen p und q</small>
+        </div>
+        <p>
+          Und weil α selbst wieder ein Punkt in einem Typ ist, kann man auch zwischen zwei
+          Flächen einen Weg suchen — einen 3-Pfad. Dann einen 4-Pfad. Diese unendliche Leiter
+          nennt man einen <span class="term" title="∞-Gruppoid: Ein Raum, dessen Punkte, Wege, Wege zwischen Wegen usw. alle eine Gruppenstruktur tragen.">∞-Gruppoid</span>.
+          Jeder Typ hat so eine Struktur. Manche Typen sind dabei langweilig: Bei einer Menge
+          gibt es zwischen zwei Punkten höchstens einen Weg bis auf Homotopie, und zwischen
+          zwei Wegen nur den trivialen. Man sagt, sie sind <strong>Sets</strong> (h-Level 0 in
+          der Zählweise des Buches). Ein Kreis ist interessanter: Seine Schleifen bilden eine
+          unendliche Gruppe.
+        </p>
+        <p>
+          Das ist der Punkt, an dem HoTT die gewohnte Mathematik verändert. Normalerweise
+          behandelt man „gleich“ als platt: zwei Dinge sind gleich oder nicht. HoTT behält die
+          <em>Art und Weise</em> der Gleichheit. Es fragt nicht nur, <em>ob</em> zwei Dinge
+          identifiziert werden können, sondern <em>wie</em> — und ob verschiedene Arten der
+          Identifikation selbst wieder zusammenhängen.
+        </p>
+      </div>
+
+      <div class="stage reveal">
+        <div class="stage-bar">
+          <div class="stage-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="stage-label">Deformationsstudio</span>
+          <span class="stage-hint">Griff ziehen · <b>Fläche zwischen Wegen</b></span>
+        </div>
+        <div class="stage-body">
+          <canvas id="homotopyCanvas" role="img" aria-label="Zwei Wege p und q zwischen denselben Endpunkten, gefüllt mit einer Fläche aus Zwischenwegen. Ein Griff verändert die Wölbung, ein Regler hebt einen Zwischenweg hervor."></canvas>
+        </div>
+        <div class="stage-controls">
+          <label class="control" for="homotopySlider">Zwischenweg <input type="range" id="homotopySlider" min="0" max="100" value="50" aria-label="Zwischenweg auswählen"><b id="homotopyS">50%</b></label>
+          <button class="btn is-active" id="homotopyAuto" aria-pressed="true">Atmen</button>
+          <span class="spacer"></span>
+          <button class="btn" id="homotopyReset">Zurücksetzen</button>
+        </div>
+        <div class="readout" id="homotopyReadout"></div>
+        <div class="stage-caption">
+          <span class="tag">Stufe 2</span>
+          Die Fläche ist kein Schmuck. Jede waagerechte Linie ist ein eigener Zwischenweg.
+          Ein 2-Pfad <b>α : p ≡ q</b> ist ein Beweis dafür, dass zwei Gleichheitsbeweise
+          gleich sind — und damit ein Objekt auf der nächsten Ebene.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter acc-rose" id="schleife">
+    <div class="chapter-inner">
+      <div class="chapter-head reveal">
+        <span class="big-num" aria-hidden="true">04</span>
+        <p class="kicker">Kapitel 04 · Ein erstes echtes Ergebnis</p>
+        <h2>Der Kreis zählt seine Schleifen.</h2>
+        <p class="lede">
+          Fixiere einen Punkt auf dem Kreis. Ein Weg, der dort startet und endet, ist eine
+          Schleife. Manche lassen sich zusammenziehen, andere nicht. Wie oft eine Schleife
+          herumläuft, kann man nicht wegdeformieren.
+        </p>
+      </div>
+
+      <div class="prose reveal">
+        <p>
+          Auf einem Kreis gibt es Schleifen, die einmal herumlaufen, zweimal, dreimal — oder
+          rückwärts. Die <strong>Windungszahl</strong> ist eine ganze Zahl. Sie ändert sich nicht,
+          wenn man die Schleife stetig verformt, solange man den Basispunkt festhält. Eine
+          Schleife mit Windungszahl 0 kann man auf den Basispunkt zusammenziehen; eine mit
+          Windungszahl 1 nicht.
+        </p>
+        <p>
+          Zwei Schleifen kann man <strong>verketten</strong>: erst die eine laufen, dann die
+          andere. Die Windungszahlen addieren sich. Rückwärts laufen gibt das Negative. Die
+          Schleifen am Basispunkt bilden deshalb die Gruppe der ganzen Zahlen
+          <span class="math">ℤ</span> unter Addition. Das ist die
+          <span class="term" title="Fundamentalgruppe: die Gruppe der Schleifen an einem Basispunkt, bis auf Homotopie.">Fundamentalgruppe</span>
+          des Kreises:
+        </p>
+        <div class="eq">
+          π₁(S¹) ≅ ℤ
+          <small>Die Schleifen des Kreises sind die ganzen Zahlen — mit Addition als Verkettung</small>
+        </div>
+        <p>
+          In der klassischen Topologie beweist man das mit Überlagerungsräumen und allerhand
+          Apparatur. In HoTT geht es direkt: Man definiert den Kreis als einen Typ mit einem
+          Punkt und einer Schleife, und rechnet mit Gleichheiten. Das nennt man
+          <strong>synthetische Homotopie-Theorie</strong>: Topologie, betrieben mit den Regeln
+          der Typentheorie. Der Beweis lässt sich als Programm schreiben, das ein Computer
+          prüfen kann.
+        </p>
+      </div>
+
+      <div class="stage reveal">
+        <div class="stage-bar">
+          <div class="stage-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="stage-label">Schleifenlabor</span>
+          <span class="stage-hint">a und b wählen · <b>verketten</b></span>
+        </div>
+        <div class="stage-body">
+          <canvas id="loopCanvas" role="img" aria-label="Ein Kreis mit Basispunkt. Zwei Schleifen mit wählbaren Windungszahlen werden in verschiedenen Farben gezeichnet und lassen sich zu einer gemeinsamen Schleife verketten."></canvas>
+        </div>
+        <div class="stage-controls">
+          <label class="control" for="loopA">Schleife a <input type="range" id="loopA" min="-3" max="3" step="1" value="1" aria-label="Windungszahl von Schleife a"><b id="loopAVal">+1</b></label>
+          <label class="control" for="loopB">Schleife b <input type="range" id="loopB" min="-3" max="3" step="1" value="1" aria-label="Windungszahl von Schleife b"><b id="loopBVal">+1</b></label>
+          <button class="btn" id="loopPlay">Verknüpfen</button>
+          <span class="spacer"></span>
+          <button class="btn" id="loopReset">Zurücksetzen</button>
+        </div>
+        <div class="lift-wrap" id="liftWrap" aria-hidden="true">
+          <div class="lift-head"><span>Hochheben auf die Zahlengerade</span><b id="liftValue">+2</b></div>
+          <div class="lift-track">
+            <span class="lift-tick" style="left:0%">−6</span>
+            <span class="lift-tick" style="left:25%">−3</span>
+            <span class="lift-tick" style="left:50%">0</span>
+            <span class="lift-tick" style="left:75%">+3</span>
+            <span class="lift-tick" style="left:100%">+6</span>
+            <span class="lift-dot" id="liftDot"></span>
+          </div>
+        </div>
+        <div class="readout" id="loopReadout" aria-live="polite"></div>
+        <div class="stage-caption">
+          <span class="tag">Gruppe</span>
+          Verketten heißt addieren: <b>a · b</b> hat die Windungszahl <b>a + b</b>. Die
+          Zahlengerade darüber ist der sogenannte <b>Lift</b>: Sie zählt mit, wie oft du den
+          Kreis umrundet hast. Die Schleifen sind schematisch nach innen gefächert, damit man
+          die Windungen sieht — im Raum liegen sie alle auf dem Kreis.
+        </div>
+      </div>
+
+      <blockquote class="pullquote reveal">
+        Der Kreis ist nicht nur ein Bild, sondern ein Typ — und seine Schleifen sind beweisbar
+        die ganzen Zahlen.
+        <cite>Synthetische Homotopie-Theorie, wie sie das HoTT-Buch entwickelt</cite>
+      </blockquote>
+    </div>
+  </section>
+
+  <section class="chapter acc-sky" id="bauplan">
+    <div class="chapter-inner">
+      <div class="chapter-head reveal">
+        <span class="big-num" aria-hidden="true">05</span>
+        <p class="kicker">Kapitel 05 · Höhere induktive Typen</p>
+        <h2>Typen, die man aus Wegen baut.</h2>
+        <p class="lede">
+          Normalerweise definiert man einen Typ durch seine Punkte. Ein höherer induktiver Typ
+          erlaubt zusätzlich, Wege und Flächen als Konstruktoren zu deklarieren. Der Kreis ist
+          dann erstaunlich kurz.
+        </p>
+      </div>
+
+      <div class="prose reveal">
+        <p>
+          Ein gewöhnlicher induktiver Typ sagt: „Diese Punkte gibt es, und das war’s.“
+          <code>Bool</code> hat die Konstruktoren <code>true</code> und <code>false</code>.
+          Ein <strong>höherer induktiver Typ</strong> (HIT) sagt zusätzlich: „Und diese Wege
+          gibt es auch.“ Der Kreis besteht aus genau zwei Konstruktoren:
+        </p>
+        <div class="code-grid" style="margin-top:22px;margin-bottom:26px">
+          <div class="code-card">
+            <div class="code-head"><i></i><span>Der Kreis als HIT</span><em>Agda-Syntax</em></div>
+            <pre><code><span class="kw">data</span> <span class="ty">S¹</span> : <span class="ty">Set</span> <span class="kw">where</span>
+  <span class="fn">base</span> : <span class="ty">S¹</span>
+  <span class="fn">loop</span> : base <span class="op">≡</span> base</code></pre>
+          </div>
+          <div class="code-card">
+            <div class="code-head"><i></i><span>Die Strecke mit verklebten Enden</span><em>Agda-Syntax</em></div>
+            <pre><code><span class="kw">data</span> <span class="ty">S¹′</span> : <span class="ty">Set</span> <span class="kw">where</span>
+  <span class="fn">mk</span> : <span class="ty">Bool</span> <span class="op">→</span> <span class="ty">S¹′</span>
+  <span class="fn">glue</span> : mk true <span class="op">≡</span> mk false</code></pre>
+          </div>
+        </div>
+        <p>
+          Der erste Block ist der Bauplan: ein Punkt, und ein Weg von diesem Punkt zu sich
+          selbst. Mehr braucht es nicht, um den Kreis zu charakterisieren. Der zweite Block
+          zeigt dieselbe Idee als <strong>Quotient</strong>: Nimm eine Strecke mit zwei Enden
+          und identifiziere die Enden. Was übrig bleibt, ist ein Kreis.
+        </p>
+        <p>
+          Höhere induktive Typen sind das zweite Standbein des Buches. Mit ihnen bekommt man
+          Quotienten, Sphären, Aufhängungen und sogenannte <strong>Truncations</strong> —
+          Operationen, die einen Typ so lange mit Wegen auffüllen, bis er eine gewöhnliche
+          Menge ist — ein Set. Kurz: Die Typentheorie kann über Räume reden, ohne sie erst
+          mühsam als Mengen mit Zusatzstruktur zu verkleiden.
+        </p>
+      </div>
+
+      <div class="stage reveal">
+        <div class="stage-bar">
+          <div class="stage-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="stage-label">Klebelabor</span>
+          <span class="stage-hint">Regler ziehen · <b>Enden identifizieren</b></span>
+        </div>
+        <div class="stage-body">
+          <canvas id="glueCanvas" role="img" aria-label="Eine Strecke mit den Enden 0 und 1 wird durch einen Regler zunehmend zu einem Kreis gebogen, bis die Enden zusammenfallen und eine Schleife entsteht."></canvas>
+        </div>
+        <div class="stage-controls">
+          <label class="control" for="glueSlider">Kleben <input type="range" id="glueSlider" min="0" max="100" value="0" aria-label="Fortschritt des Klebens"><b id="glueT">0%</b></label>
+          <button class="btn" id="gluePlay">Einmal kleben</button>
+          <span class="spacer"></span>
+          <button class="btn" id="glueReset">Zurücksetzen</button>
+        </div>
+        <div class="glue-steps" id="glueSteps" aria-hidden="true">
+          <span class="gstep is-on">Strecke</span>
+          <span class="gline"></span>
+          <span class="gstep">Bogen</span>
+          <span class="gline"></span>
+          <span class="gstep">Kreis</span>
+        </div>
+        <div class="readout" id="glueReadout"></div>
+        <div class="stage-caption">
+          <span class="tag">Quotient</span>
+          Aus der Strecke <b>[0,1]</b> wird ein Kreis, indem man <b>0</b> und <b>1</b> als
+          denselben Punkt behandelt. Genau das ist der höhere induktive Typ
+          <b>S¹ = [0,1] / (0 ~ 1)</b>.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter acc-teal" id="univalenz">
+    <div class="chapter-inner">
+      <div class="chapter-head reveal">
+        <span class="big-num" aria-hidden="true">06</span>
+        <p class="kicker">Kapitel 06 · Der Quantensprung</p>
+        <h2>Was isomorph ist, ist gleich.</h2>
+        <p class="lede">
+          In der Mengenlehre sind zwei isomorphe Strukturen verschieden — sie sehen nur gleich
+          aus. Voevodskys Univalenz-Axiom macht daraus eine Identität: Jede Äquivalenz ist ein
+          Weg. Isomorphe Dinge darf man buchstäblich gleichsetzen.
+        </p>
+      </div>
+
+      <div class="prose reveal">
+        <p>
+          Zwei Gruppen können dieselbe Struktur haben, ohne dieselben Elemente zu besitzen.
+          Die eine hat Elemente <span class="math">{0, 1}</span> mit Addition modulo 2, die
+          andere hat <span class="math">{gerade, ungerade}</span> mit derselben Verknüpfung.
+          Ein Mathematiker sagt: „Sie sind isomorph, also im Wesentlichen dieselbe Gruppe.“
+          Aber im Fundament sind es zwei verschiedene Objekte. Man muss Sätze für beide
+          beweisen oder „ohne Beschränkung der Allgemeinheit“ sagen.
+        </p>
+        <p>
+          Die <strong>Univalenz</strong> sagt: Der Typ der Äquivalenzen zwischen A und B ist
+          selbst äquivalent zum Typ der Gleichheiten zwischen A und B. Anders gesagt: Eine
+          Äquivalenz ist ein Weg, und jeder Weg ist eine Äquivalenz.
+        </p>
+        <div class="eq">
+          (A ≃ B) ≃ (A ≡ B)
+          <small>Univalenz: Äquivalenz und Identität sind dasselbe — vermittelt durch ua</small>
+        </div>
+        <p>
+          Das ist kein bloßer Sprachgebrauch. Es hat Konsequenzen: Ein Satz über A gilt
+          automatisch für jedes B, das zu A äquivalent ist, weil man ihn entlang des
+          Gleichheitsweges <strong>transportieren</strong> kann. Strukturerhalt wird Teil der
+          Logik. Und es erklärt, warum Mathematiker isomorphe Objekte schon immer „identifiziert“
+          haben — HoTT gibt dieser Praxis ein Fundament.
+        </p>
+        <p>
+          Univalenz ist ein <em>Axiom</em>: In der einfachen Martin-Löf-Typentheorie ist sie
+          nicht beweisbar. Aber sie ist konsistent — es gibt Modelle in simplizialen Mengen —
+          und in der <strong>kubischen Typentheorie</strong> bekommt sie sogar eine
+          berechenbare Form. Aus dem Axiom wird ein Programm.
+        </p>
+      </div>
+
+      <div class="stage reveal">
+        <div class="stage-bar">
+          <div class="stage-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="stage-label">Identitätsmaschine</span>
+          <span class="stage-hint">Umschalten · <b>Univalenz anwenden</b></span>
+        </div>
+        <div class="uv-banner" id="uvBanner" aria-live="polite">A ≃ B &nbsp;→&nbsp; A = B</div>
+        <div class="uv-wrap" id="uvWrap">
+          <div class="uv-side left">
+            <div class="uv-tag">Welt A</div>
+            <div class="uv-name">Der Schalter</div>
+            <div class="uv-state" id="uvStateA">AUS</div>
+            <div class="uv-sub">zwei Zustände · Umschalten</div>
+            <button class="btn uv-toggle" id="uvBtnA" aria-pressed="false">Umschalten</button>
+          </div>
+          <div class="uv-bridge" aria-hidden="true">
+            <svg viewBox="0 0 64 34"><path d="M2 17 C18 2 46 2 62 17"/><path d="M62 17 C46 32 18 32 2 17"/></svg>
+            <div class="uv-eq" id="uvEq">≃</div>
+            <div class="uv-eq-label" id="uvEqLabel">Äquivalenz</div>
+          </div>
+          <div class="uv-side right">
+            <div class="uv-tag">Welt B</div>
+            <div class="uv-name">Die Parität</div>
+            <div class="uv-state" id="uvStateB">GERADE</div>
+            <div class="uv-sub">zwei Zustände · Umschalten</div>
+            <button class="btn uv-toggle" id="uvBtnB" aria-pressed="false">Umschalten</button>
+          </div>
+        </div>
+        <div class="uv-hint" id="uvHint">
+          Beide Welten haben dieselbe Struktur. Klicke auf <b>Univalenz anwenden</b>, um aus
+          der Äquivalenz eine Identität zu machen.
+        </div>
+        <div class="stage-controls">
+          <button class="btn primary" id="uvUnivalence" aria-pressed="false">Univalenz anwenden</button>
+          <span class="spacer"></span>
+          <button class="btn" id="uvReset">Zurücksetzen</button>
+        </div>
+        <div class="readout" id="uvReadout" aria-live="polite"></div>
+        <div class="stage-caption">
+          <span class="tag">Axiom</span>
+          Die Bijektion <b>AUS ↔ GERADE</b>, <b>AN ↔ UNGERADE</b> erhält die Struktur. Mit
+          Univalenz wird sie zu einem Gleichheitsbeweis. Die beiden Karten sind von nun an
+          zwei Namen für denselben Typ.
+        </div>
+      </div>
+
+      <blockquote class="pullquote reveal">
+        „Voevodsky’s subtle and beautiful univalence axiom implies that isomorphic structures
+        can be identified.“
+        <cite>Abstract des HoTT-Buches, arXiv:1308.0729</cite>
+      </blockquote>
+
+      <div class="prose reveal">
+        <p style="margin-top:42px">
+          Eine Gegenprobe: <span class="math">{0, 1}</span> und
+          <span class="math">{0, 1, 2}</span> sind nicht äquivalent — es gibt keine Bijektion.
+          Also sind sie auch nicht gleich. Univalenz ist keine Zauberei, die alles verschmilzt;
+          sie sagt nur: <em>genau dann</em>, wenn eine Äquivalenz existiert.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter acc-rose" id="transport">
+    <div class="chapter-inner">
+      <div class="chapter-head reveal">
+        <span class="big-num" aria-hidden="true">07</span>
+        <p class="kicker">Kapitel 07 · Abhängige Typen</p>
+        <h2>Eine Schleife kann dich verändern.</h2>
+        <p class="lede">
+          Typen können von Punkten abhängen: Über jedem Punkt eines Raumes liegt eine Faser.
+          Ein Weg im Raum erlaubt es, einen Punkt von einer Faser in die nächste zu tragen.
+          Manchmal kommt man verändert zurück.
+        </p>
+      </div>
+
+      <div class="prose reveal">
+        <p>
+          Ein <strong>abhängiger Typ</strong> ist eine Familie von Typen über einem Grundraum:
+          <span class="math">P : A → Set</span>. Für jeden Punkt
+          <span class="math">a : A</span> gibt es einen Typ <span class="math">P(a)</span>.
+          Man kann sich das als Stapel von Fasern über der Grundfläche vorstellen. Ein Weg
+          <span class="math">p : a ≡ b</span> im Grundraum erlaubt nun eine Operation
+          <strong>Transport</strong>: Sie nimmt einen Punkt aus <span class="math">P(a)</span>
+          und bringt ihn nach <span class="math">P(b)</span>.
+        </p>
+        <p>
+          Jetzt der Clou: Wenn der Grundraum ein Kreis ist und die Fasern kleine Pfeile sind,
+          kann man sie mit einer halben Drehung verkleben. Das Ergebnis ist ein
+          <strong>Möbiusband</strong>. Läufst du einmal um den Kreis, kommst du am selben
+          Basispunkt an — aber der Pfeil zeigt in die entgegengesetzte Richtung. Der Transport
+          entlang der Schleife ist nicht die Identität.
+        </p>
+        <p>
+          Dieses Phänomen heißt <span class="term" title="Monodromie: Das Verhalten einer Faser, wenn man eine Schleife im Grundraum durchläuft.">Monodromie</span>.
+          Es zeigt, dass Gleichheit nicht nur „derselbe Wert“ bedeutet: Der <em>Weg</em> zählt.
+          In der Physik begegnet dir dieselbe Idee als Holonomie in Eichtheorien; in der
+          Typentheorie ist sie der Grund, warum abhängige Typen so ausdrucksstark sind.
+        </p>
+      </div>
+
+      <div class="stage reveal">
+        <div class="stage-bar">
+          <div class="stage-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="stage-label">Transportlabor</span>
+          <span class="stage-hint">Ziehen zum Drehen · <b>Möbius vs. Zylinder</b></span>
+        </div>
+        <div class="stage-body tall">
+          <canvas id="mobiusCanvas" role="img" aria-label="Ein dreidimensionales Möbiusband. Ein Pfeil wandert entlang des Bandes. Nach einem Umlauf ist er im Möbiusband gespiegelt, im Zylinder nicht. Das Band lässt sich mit der Maus drehen."></canvas>
+        </div>
+        <div class="stage-controls">
+          <button class="btn is-active" id="mobiusToggle" aria-pressed="true">Möbiusband</button>
+          <label class="control" for="mobiusSlider">Position <input type="range" id="mobiusSlider" min="0" max="100" value="0" aria-label="Position der Faser auf dem Band"><b id="mobiusT">0%</b></label>
+          <button class="btn" id="mobiusPlay">Einmal herum</button>
+          <span class="spacer"></span>
+          <button class="btn" id="mobiusReset">Ansicht zurücksetzen</button>
+        </div>
+        <div class="orient-wrap" aria-hidden="true">
+          <div class="orient-head"><span>Faser · Startfaser</span><b id="mobiusDot">+1.00</b></div>
+          <div class="orient-track"><span class="orient-zero"></span><span class="orient-fill" id="mobiusGauge"></span></div>
+          <div class="orient-scale"><span>−1 gespiegelt</span><span>0</span><span>+1 gleich</span></div>
+        </div>
+        <div class="readout" id="mobiusReadout"></div>
+        <div class="stage-caption">
+          <span class="tag">Transport</span>
+          Im Zylinder kommt die Faser unverändert zurück. Im Möbiusband ist sie nach einem
+          Umlauf gespiegelt. Genau das ist der Unterschied, den <b>transport P loop</b> sieht.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter acc-amber" id="wozu">
+    <div class="chapter-inner">
+      <div class="chapter-head reveal">
+        <span class="big-num" aria-hidden="true">08</span>
+        <p class="kicker">Kapitel 08 · Wozu das Ganze?</p>
+        <h2>Mehr als schöne Bilder.</h2>
+        <p class="lede">
+          HoTT ist kein Selbstzweck. Sie verbindet Logik, Geometrie und Programmierung — und
+          sie macht Dinge beweisbar, die vorher nur Konvention waren. Hier sind die
+          Versprechen, die wirklich tragen.
+        </p>
+      </div>
+
+      <div class="feature-grid reveal">
+        <div class="feature">
+          <div class="fi">✓</div>
+          <h3>Beweise, die ein Rechner prüft</h3>
+          <p>In Agda, Coq/Rocq, Lean und Cubical Agda ist ein Beweis ein Programm. Der
+          Typechecker sagt, ob er stimmt. Kein „das sieht richtig aus“ — ein Ja oder Nein.</p>
+        </div>
+        <div class="feature">
+          <div class="fi">≃</div>
+          <h3>Einmal beweisen, überall transportieren</h3>
+          <p>Univalenz macht Äquivalenzen zu Gleichheiten. Ein Satz über eine Struktur gilt
+          automatisch für jede isomorphe Kopie — ohne Copy-and-paste.</p>
+        </div>
+        <div class="feature">
+          <div class="fi">S¹</div>
+          <h3>Topologie, synthetisch</h3>
+          <p>Räume werden durch Punkte und Wege definiert. Sätze über Schleifen, Sphären und
+          Faserungen werden zu Rechnungen mit Gleichheiten.</p>
+        </div>
+        <div class="feature">
+          <div class="fi">λ</div>
+          <h3>Software mit Versprechen</h3>
+          <p>Typen sind Spezifikationen. Eine Funktion mit dem Typ „für alle Eingaben gibt es
+          eine Ausgabe mit Eigenschaft X“ ist ein Programm plus Beweis.</p>
+        </div>
+        <div class="feature">
+          <div class="fi">∞</div>
+          <h3>Ein neues Fundament</h3>
+          <p>Das Buch schlägt univalente Grundlagen als Alternative zur Mengenlehre vor. Nicht
+          als Ersatz über Nacht, sondern als lebendiges Forschungsprogramm.</p>
+        </div>
+        <div class="feature">
+          <div class="fi">✶</div>
+          <h3>Ein offenes Kollektiv</h3>
+          <p>Das Buch von 2013 wurde von einer ganzen Gemeinschaft geschrieben und offen
+          diskutiert. Mathematik als gemeinsames Bauen — nicht als einsames Genie.</p>
+        </div>
+      </div>
+
+      <div class="prose reveal" style="margin-top:46px">
+        <h3>Die Probe: gleich oder nur ähnlich?</h3>
+        <p>
+          Teste dein neues Auge. In jeder Karte stehen zwei Typen. Sind sie unter Univalenz
+          <em>gleich</em> — gibt es also eine Äquivalenz — oder nicht? Die Auflösung erklärt,
+          was dahintersteckt.
+        </p>
+      </div>
+
+      <div class="stage reveal">
+        <div class="stage-bar">
+          <div class="stage-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+          <span class="stage-label">Gleich oder nur ähnlich?</span>
+          <span class="stage-hint">4 Paare · <b>ohne Zeitdruck</b></span>
+        </div>
+        <div class="quiz-top">
+          <span class="quiz-score" aria-live="polite">Richtig: <b id="quizScore">0</b> / 4</span>
+          <span class="spacer"></span>
+          <button class="btn" id="quizReset">Nochmal</button>
+        </div>
+        <div class="quiz-grid" id="quizGrid"></div>
+        <div class="stage-caption">
+          <span class="tag">Univalenz</span>
+          „Gleich“ heißt hier: äquivalent als Homotopie-Typ. Zwei Räume dürfen dabei ganz
+          verschieden aussehen — solange man den einen stetig in den anderen verwandeln kann.
+        </div>
+      </div>
+
+      <div class="prose reveal" style="margin-top:46px">
+        <h3>Wie das in echt aussieht</h3>
+        <p>
+          Zwei winzige Ausschnitte aus dem Maschinenraum. Du musst sie nicht lesen können —
+          es reicht, die Form zu erkennen: Links stehen die Grundbausteine, rechts die
+          Operationen, die aus Gleichheit Geometrie machen.
+        </p>
+      </div>
+
+      <div class="code-grid reveal">
+        <div class="code-card">
+          <div class="code-head"><i></i><span>Der Kreis und seine Schleife</span><em>Agda-Skizze</em></div>
+          <pre><code><span class="kw">data</span> <span class="ty">S¹</span> : <span class="ty">Set</span> <span class="kw">where</span>
+  <span class="fn">base</span> : <span class="ty">S¹</span>
+  <span class="fn">loop</span> : base <span class="op">≡</span> base
+
+<span class="cm">-- positive Windungen; rückwärts mit sym</span>
+<span class="fn">wind</span> : <span class="ty">ℕ</span> <span class="op">→</span> base <span class="op">≡</span> base
+<span class="fn">wind</span> zero    = <span class="fn">refl</span>
+<span class="fn">wind</span> (suc n) = <span class="fn">wind</span> n <span class="op">∙</span> loop</code></pre>
+        </div>
+        <div class="code-card">
+          <div class="code-head"><i></i><span>Univalenz und Transport</span><em>Agda</em></div>
+          <pre><code><span class="cm">-- Aus Äquivalenz wird Identität</span>
+<span class="fn">ua</span> : {A B : <span class="ty">Set</span>} <span class="op">→</span> A <span class="op">≃</span> B <span class="op">→</span> A <span class="op">≡</span> B
+
+<span class="cm">-- Entlang eines Weges mitnehmen</span>
+<span class="fn">transport</span> : {A : <span class="ty">Set</span>} (P : A <span class="op">→</span> <span class="ty">Set</span>)
+          {a b : A} <span class="op">→</span> a <span class="op">≡</span> b <span class="op">→</span> P a <span class="op">→</span> P b</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="chapter acc-violet" id="turm">
+    <div class="chapter-inner">
+      <div class="chapter-head reveal">
+        <span class="big-num" aria-hidden="true">09</span>
+        <p class="kicker">Kapitel 09 · Zusammenfassung</p>
+        <h2>Der Turm der Gleichheit.</h2>
+        <p class="lede">
+          Wenn du nur eine Sache mitnimmst, dann diese: Gleichheit ist keine platte
+          Ja/Nein-Frage. Sie ist ein Weg — und manchmal ein ganzer Raum voller Wege.
+        </p>
+      </div>
+
+      <div class="ladder">
+        <div class="step reveal acc-amber">
+          <div class="lv">Stufe 0</div>
+          <h3>Punkt</h3>
+          <p>Ein Wert ist ein Punkt in einem Typ. Ein Typ ist ein Raum mit einer Form.</p>
+        </div>
+        <div class="step reveal acc-teal">
+          <div class="lv">Stufe 1</div>
+          <h3>Weg</h3>
+          <p>Eine Gleichheit ist ein Weg zwischen zwei Punkten. Ein Beweis ist dieser Weg.</p>
+        </div>
+        <div class="step reveal acc-violet">
+          <div class="lv">Stufe 2</div>
+          <h3>Fläche</h3>
+          <p>Zwei Gleichheitsbeweise können selbst gleich sein — durch eine Homotopie, eine Fläche.</p>
+        </div>
+        <div class="step reveal acc-rose">
+          <div class="lv">Stufe 3</div>
+          <h3>Höhere Wege</h3>
+          <p>Flächen zwischen Flächen, und so weiter. Jeder Typ trägt einen unendlichen Turm.</p>
+        </div>
+        <div class="step reveal acc-sky">
+          <div class="lv">Stufe ∞</div>
+          <h3>∞-Gruppoid</h3>
+          <p>Das Ganze ist ein Raum, in dem Gleichheit auf allen Ebenen strukturiert ist. Das ist der Kern von HoTT.</p>
+        </div>
+      </div>
+
+      <div class="prose reveal" style="margin-top:58px">
+        <p>
+          <strong>Typen sind Räume. Werte sind Punkte. Gleichheit ist ein Weg.</strong> Wege
+          zwischen Wegen sind Flächen. Alles zusammen ist ein ∞-Gruppoid. <strong>Univalenz</strong>
+          sagt: Äquivalenz ist Identität. <strong>Transport</strong> sagt: Entlang eines Weges
+          kannst du Strukturen mitnehmen. Und <strong>höhere induktive Typen</strong> geben dir
+          die Baupläne für Räume, die diese Gleichheit wirklich besitzen.
+        </p>
+        <p>
+          Das ist die Wette des Buches: Mathematik wird klarer, wenn man Gleichheit nicht
+          plattdrückt, sondern ihr Raum gibt. Vielleicht ist das der Grund, warum die Idee
+          nach 2013 nicht verschwunden ist, sondern in Beweisassistenten, in der
+          Homotopie-Theorie und in der Informatik weiterlebt.
+        </p>
+      </div>
+
+      <p class="final-line reveal">
+        Gleichheit ist kein Häkchen.<br>
+        Sie ist ein <em>Weg</em>.
+      </p>
+
+      <div class="next-grid reveal">
+        <a class="next-card" href="https://homotopytypetheory.org/book/" target="_blank" rel="noopener">
+          <span class="nk">Das Buch</span>
+          <span class="nt">Homotopy Type Theory: Univalent Foundations of Mathematics</span>
+          <span class="nd">Die kostenlose Online-Ausgabe von 2013 — 465 Seiten, von einem offenen Kollektiv geschrieben.</span>
+          <span class="na">homotopytypetheory.org/book ↗</span>
+        </a>
+        <a class="next-card" href="https://arxiv.org/abs/1308.0729" target="_blank" rel="noopener">
+          <span class="nk">Der Preprint</span>
+          <span class="nt">arXiv:1308.0729</span>
+          <span class="nd">Die Version, auf der diese Seite basiert. Abstract, PDF und TeX-Quelle.</span>
+          <span class="na">arxiv.org ↗</span>
+        </a>
+        <a class="next-card" href="https://wiki.portal.chalmers.se/agda/" target="_blank" rel="noopener">
+          <span class="nk">Ausprobieren</span>
+          <span class="nt">Agda</span>
+          <span class="nd">Ein Beweisassistent, in dem man HoTT direkt schreiben und vom Rechner prüfen lassen kann.</span>
+          <span class="na">agda ↗</span>
+        </a>
+        <a class="next-card" href="https://1lab.dev/" target="_blank" rel="noopener">
+          <span class="nk">Weiterdenken</span>
+          <span class="nt">1lab</span>
+          <span class="nd">Ein interaktives Lehrbuch der univalenten Mathematik — mit Beweisen, die im Browser laufen.</span>
+          <span class="na">1lab.dev ↗</span>
+        </a>
+      </div>
+
+      <p class="colophon">
+        Gebaut als eigenständige, offline laufende Erkundung des HoTT-Buches.
+        Alle Visualisierungen sind von Hand gebaut — mit Canvas 2D, SVG und CSS.
+        Keine externen Bibliotheken, keine Tracker, keine Daten verlassen deinen Browser.
+        Die Inhalte sind eine didaktische Annäherung, keine formale Einführung;
+        für die präzisen Definitionen und Beweise lohnt sich das Buch.
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="fmark"><span class="brand-mark" aria-hidden="true">≡</span><b>Gleichheit ist ein Weg</b></div>
+    <div class="footer-links">
+      <a href="#top">Nach oben</a>
+      <a href="https://arxiv.org/abs/1308.0729" target="_blank" rel="noopener">arXiv:1308.0729</a>
+      <a href="https://homotopytypetheory.org/book/" target="_blank" rel="noopener">HoTT-Buch</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const TAU = Math.PI * 2;
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const smooth = t => t * t * (3 - 2 * t);
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const C = {
+    amber: '#f4b860',
+    teal: '#5bd6c4',
+    violet: '#a78bfa',
+    rose: '#fb7185',
+    sky: '#7dd3fc',
+    cream: '#f4ecdc',
+    dim: '#7d859b'
+  };
+
+  function rgba(hex, a) {
+    const n = Number.parseInt(hex.slice(1), 16);
+    return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+  }
+
+  function setRangeFill(input) {
+    if (!input) return;
+    const min = Number(input.min || 0);
+    const max = Number(input.max || 100);
+    const value = Number(input.value);
+    const pct = max === min ? 0 : ((value - min) / (max - min)) * 100;
+    input.style.setProperty('--val', `${pct}%`);
+  }
+
+  function makeStage(canvas, draw) {
+    const ctx = canvas.getContext('2d');
+    const state = {
+      canvas, ctx, w: 1, h: 1, dpr: 1,
+      time: 0, visible: false, raf: 0, last: 0, draw
+    };
+    const render = time => {
+      ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
+      ctx.clearRect(0, 0, state.w, state.h);
+      draw(ctx, state.w, state.h, time, state);
+    };
+    state.render = render;
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      state.w = Math.max(1, rect.width);
+      state.h = Math.max(1, rect.height);
+      state.dpr = Math.min(2, window.devicePixelRatio || 1);
+      canvas.width = Math.round(state.w * state.dpr);
+      canvas.height = Math.round(state.h * state.dpr);
+      render(state.time);
+    };
+    state.resize = resize;
+    const tick = ts => {
+      state.raf = requestAnimationFrame(tick);
+      if (!state.visible) { state.last = ts; return; }
+      if (!state.last) state.last = ts;
+      const dt = Math.min(64, ts - state.last);
+      state.last = ts;
+      state.time += dt;
+      render(state.time);
+    };
+    new ResizeObserver(resize).observe(canvas.parentElement || canvas);
+    new IntersectionObserver(entries => {
+      state.visible = entries[0].isIntersecting;
+      if (state.visible) state.last = 0;
+    }, { rootMargin: '180px 0px' }).observe(canvas);
+    resize();
+    state.raf = requestAnimationFrame(tick);
+    return state;
+  }
+
+  function canvasPos(canvas, e) {
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  function dotGrid(ctx, w, h, color, alpha = 0.06, gap = 34) {
+    ctx.save();
+    ctx.fillStyle = rgba(color, alpha);
+    for (let x = gap / 2; x < w; x += gap) {
+      for (let y = gap / 2; y < h; y += gap) {
+        ctx.beginPath();
+        ctx.arc(x, y, 0.9, 0, TAU);
+        ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+
+  function glowOrb(ctx, x, y, r, color, intensity = 1) {
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r * 5.2);
+    g.addColorStop(0, rgba(color, 0.55 * intensity));
+    g.addColorStop(0.28, rgba(color, 0.20 * intensity));
+    g.addColorStop(1, rgba(color, 0));
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(x, y, r * 5.2, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = C.cream;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = rgba(color, 0.9);
+    ctx.beginPath();
+    ctx.arc(x, y, r * 0.62, 0, TAU);
+    ctx.fill();
+  }
+
+  function rotate3(x, y, z, ax, ay) {
+    const cy = Math.cos(ay), sy = Math.sin(ay);
+    const x1 = x * cy + z * sy;
+    const z1 = -x * sy + z * cy;
+    const cx = Math.cos(ax), sx = Math.sin(ax);
+    const y1 = y * cx - z1 * sx;
+    const z2 = y * sx + z1 * cx;
+    return { x: x1, y: y1, z: z2 };
+  }
+
+  function project3(p, cx, cy, scale, cam) {
+    const z = p.z + cam;
+    const k = cam / Math.max(0.2, z);
+    return { x: cx + p.x * scale * k, y: cy - p.y * scale * k, z, k };
+  }
+
+  function drawWireTorus(ctx, time, opts) {
+    const { cx, cy, scale, color = C.amber, alpha = 0.55, ax, ay, R = 1.35, r = 0.5, nu = 38, nv = 15 } = opts;
+    const cam = 3.7;
+    const baseAx = ax + Math.sin(time * 0.00014) * 0.05;
+    const baseAy = ay + time * 0.00011;
+    const point = (u, v) => {
+      const cu = Math.cos(u), su = Math.sin(u), cv = Math.cos(v), sv = Math.sin(v);
+      const p = rotate3((R + r * cv) * cu, r * sv, (R + r * cv) * su, baseAx, baseAy);
+      return project3(p, cx, cy, scale, cam);
+    };
+    ctx.save();
+    ctx.lineCap = 'round';
+    for (let j = 0; j <= nv; j++) {
+      const v = (j / nv) * TAU;
+      for (let i = 0; i < nu; i++) {
+        const a = point((i / nu) * TAU, v);
+        const b = point(((i + 1) / nu) * TAU, v);
+        const depth = clamp((1.9 - (a.z - cam)) / 3.8, 0, 1);
+        ctx.strokeStyle = rgba(color, alpha * (0.16 + 0.84 * depth));
+        ctx.lineWidth = 0.7 + depth * 0.5;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+    for (let i = 0; i < nu; i += 2) {
+      const u = (i / nu) * TAU;
+      for (let j = 0; j < nv; j++) {
+        const a = point(u, (j / nv) * TAU);
+        const b = point(u, ((j + 1) / nv) * TAU);
+        const depth = clamp((1.9 - (a.z - cam)) / 3.8, 0, 1);
+        ctx.strokeStyle = rgba(color, alpha * 0.55 * (0.2 + 0.8 * depth));
+        ctx.lineWidth = 0.55;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+    return { point };
+  }
+
+  function drawWireSphere(ctx, time, opts) {
+    const { cx, cy, scale, color = C.violet, alpha = 0.55, ax, ay, R = 1.45, nu = 26, nv = 15 } = opts;
+    const cam = 3.6;
+    const baseAx = ax + Math.sin(time * 0.00013) * 0.05;
+    const baseAy = ay + time * 0.0001;
+    const point = (theta, phi) => {
+      const p = rotate3(
+        R * Math.sin(theta) * Math.cos(phi),
+        R * Math.cos(theta),
+        R * Math.sin(theta) * Math.sin(phi),
+        baseAx, baseAy
+      );
+      return project3(p, cx, cy, scale, cam);
+    };
+    ctx.save();
+    ctx.lineCap = 'round';
+    for (let j = 1; j < nv; j++) {
+      const theta = (j / nv) * Math.PI;
+      for (let i = 0; i < nu * 2; i++) {
+        const a = point(theta, (i / (nu * 2)) * TAU);
+        const b = point(theta, ((i + 1) / (nu * 2)) * TAU);
+        const depth = clamp((1.5 - (a.z - cam)) / 3.2, 0, 1);
+        ctx.strokeStyle = rgba(color, alpha * (0.14 + 0.8 * depth));
+        ctx.lineWidth = 0.65;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+    for (let i = 0; i < nu; i++) {
+      const phi = (i / nu) * TAU;
+      for (let j = 0; j < nv * 2; j++) {
+        const a = point((j / (nv * 2)) * Math.PI, phi);
+        const b = point(((j + 1) / (nv * 2)) * Math.PI, phi);
+        const depth = clamp((1.5 - (a.z - cam)) / 3.2, 0, 1);
+        ctx.strokeStyle = rgba(color, alpha * 0.55 * (0.15 + 0.8 * depth));
+        ctx.lineWidth = 0.55;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+    return { point };
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Hero                                                                */
+  /* ------------------------------------------------------------------ */
+  const heroPointer = { x: 0.5, y: 0.5 };
+  const heroStars = Array.from({ length: 72 }, () => ({
+    x: Math.random(),
+    y: Math.random(),
+    r: 0.4 + Math.random() * 1.4,
+    a: 0.12 + Math.random() * 0.45,
+    p: Math.random() * TAU
+  }));
+
+  function initHero() {
+    const canvas = $('#heroCanvas');
+    if (!canvas) return;
+    const hero = $('#hero');
+    const spot = $('#heroSpot');
+    makeStage(canvas, (ctx, w, h, time) => {
+      const t = REDUCED ? 0 : time;
+      const narrow = w < 780;
+      const cx = narrow ? w * 0.63 : w * 0.73;
+      const cy = narrow ? h * 0.32 : h * 0.5;
+      const scale = Math.min(w, h) * (narrow ? 0.24 : 0.28);
+
+      const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * 0.6);
+      bg.addColorStop(0, 'rgba(244,184,96,.075)');
+      bg.addColorStop(0.34, 'rgba(167,139,250,.045)');
+      bg.addColorStop(1, 'rgba(7,10,18,0)');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      for (const s of heroStars) {
+        const twinkle = 0.55 + 0.45 * Math.sin(t * 0.0008 + s.p);
+        ctx.fillStyle = `rgba(236,231,219,${s.a * twinkle})`;
+        ctx.beginPath();
+        ctx.arc(s.x * w, s.y * h, s.r, 0, TAU);
+        ctx.fill();
+      }
+
+      const ax = -0.64 + (heroPointer.y - 0.5) * 0.22 + Math.sin(t * 0.00017) * 0.06;
+      const ay = 0.62 + (heroPointer.x - 0.5) * 0.42 + t * 0.00012;
+      const torus = drawWireTorus(ctx, t, {
+        cx, cy, scale, color: C.amber, alpha: 0.36, ax, ay, R: 1.38, r: 0.53, nu: 44, nv: 16
+      });
+
+      const cam = 3.7;
+      const curve = [];
+      for (let i = 0; i <= 110; i++) {
+        const u = (i / 110) * TAU;
+        const v = 0.76;
+        const cu = Math.cos(u), su = Math.sin(u), cv = Math.cos(v), sv = Math.sin(v);
+        const p = rotate3((1.38 + 0.53 * cv) * cu, 0.53 * sv, (1.38 + 0.53 * cv) * su, ax, ay);
+        curve.push(project3(p, cx, cy, scale, cam));
+      }
+      ctx.save();
+      ctx.strokeStyle = rgba(C.amber, 0.9);
+      ctx.lineWidth = 1.7;
+      ctx.shadowColor = rgba(C.amber, 0.85);
+      ctx.shadowBlur = 16;
+      ctx.beginPath();
+      curve.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+      ctx.stroke();
+      ctx.restore();
+
+      const orbCount = 3;
+      for (let k = 0; k < orbCount; k++) {
+        const u = (t * 0.00013 + k / orbCount) * TAU;
+        const v = 0.76;
+        const cu = Math.cos(u), su = Math.sin(u), cv = Math.cos(v), sv = Math.sin(v);
+        const p = rotate3((1.38 + 0.53 * cv) * cu, 0.53 * sv, (1.38 + 0.53 * cv) * su, ax, ay);
+        const s = project3(p, cx, cy, scale, cam);
+        glowOrb(ctx, s.x, s.y, 1.6, k === 0 ? C.cream : C.amber, 0.65);
+      }
+
+      const vCurve = [];
+      for (let i = 0; i <= 90; i++) {
+        const u = (i / 90) * TAU;
+        const cu = Math.cos(u), su = Math.sin(u);
+        const p = rotate3(1.38 * cu, 0, 1.38 * su, ax, ay);
+        vCurve.push(project3(p, cx, cy, scale, cam));
+      }
+      ctx.save();
+      ctx.strokeStyle = rgba(C.teal, 0.22);
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 7]);
+      ctx.beginPath();
+      vCurve.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+      ctx.stroke();
+      ctx.restore();
+    });
+
+    if (hero && spot) {
+      hero.addEventListener('pointermove', e => {
+        const r = hero.getBoundingClientRect();
+        heroPointer.x = clamp((e.clientX - r.left) / r.width, 0, 1);
+        heroPointer.y = clamp((e.clientY - r.top) / r.height, 0, 1);
+        spot.style.setProperty('--mx', `${heroPointer.x * 100}%`);
+        spot.style.setProperty('--my', `${heroPointer.y * 100}%`);
+      }, { passive: true });
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 01 — Raumlabor                                                      */
+  /* ------------------------------------------------------------------ */
+  const SPACE_DATA = {
+    point: {
+      name: 'Punkt', symbol: '•', points: '1', loops: 'keine', holes: '0',
+      level: 'kontrahierbar',
+      note: 'Ein einziger Punkt. Alles lässt sich dorthin zusammenziehen.'
+    },
+    interval: {
+      name: 'Strecke', symbol: '[0,1]', points: 'unendlich', loops: 'keine', holes: '0',
+      level: 'kontrahierbar',
+      note: 'Zwei Enden, aber ein Weg dazwischen. Die Strecke schrumpft zu einem Punkt.'
+    },
+    two: {
+      name: 'Zwei Punkte', symbol: 'Bool', points: '2', loops: 'keine', holes: '—',
+      level: 'diskret',
+      note: 'Getrennte Punkte: Es gibt keinen Weg, also keine Gleichheit.'
+    },
+    circle: {
+      name: 'Kreis', symbol: 'S¹', points: 'unendlich', loops: 'ℤ', holes: '1',
+      level: '1-Typ',
+      note: 'Eine Schleife lässt sich nicht auf einen Punkt ziehen. Das ist das Loch.'
+    },
+    sphere: {
+      name: 'Kugel', symbol: 'S²', points: 'unendlich', loops: 'keine (π₁)', holes: '1 Blase',
+      level: '2-Typ',
+      note: 'Keine Schleifen, aber eine hohle Fläche: π₂ = ℤ.'
+    },
+    torus: {
+      name: 'Torus', symbol: 'T²', points: 'unendlich', loops: 'ℤ × ℤ', holes: '1',
+      level: '1-Typ',
+      note: 'Zwei unabhängige Schleifen: einmal längs, einmal quer.'
+    }
+  };
+
+  function initSpaceLab() {
+    const canvas = $('#spaceCanvas');
+    if (!canvas) return;
+    const tabs = $('#spaceTabs');
+    const readout = $('#spaceReadout');
+    const level = $('#spaceLevel');
+    let mode = 'circle';
+
+    const stage = makeStage(canvas, (ctx, w, h, time) => {
+      const t = REDUCED ? 0 : time;
+      const cx = w * 0.5;
+      const cy = h * 0.52;
+      const unit = Math.min(w, h);
+
+      const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, unit * 0.7);
+      bg.addColorStop(0, 'rgba(255,255,255,.035)');
+      bg.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      if (mode === 'point') {
+        const pulse = 1 + 0.12 * Math.sin(t * 0.0022);
+        for (let i = 0; i < 3; i++) {
+          const rr = unit * (0.09 + i * 0.055) * pulse;
+          ctx.strokeStyle = rgba(C.amber, 0.16 - i * 0.04);
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(cx, cy, rr, 0, TAU);
+          ctx.stroke();
+        }
+        glowOrb(ctx, cx, cy, 5.5, C.amber, 1.1);
+        ctx.font = 'italic 15px Georgia, serif';
+        ctx.fillStyle = rgba(C.cream, 0.55);
+        ctx.textAlign = 'center';
+        ctx.fillText('•', cx, cy + unit * 0.16);
+      } else if (mode === 'interval') {
+        const x0 = w * 0.22, x1 = w * 0.78;
+        const g = ctx.createLinearGradient(x0, cy, x1, cy);
+        g.addColorStop(0, rgba(C.amber, 0.22));
+        g.addColorStop(0.5, rgba(C.amber, 0.95));
+        g.addColorStop(1, rgba(C.amber, 0.22));
+        ctx.strokeStyle = g;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.shadowColor = rgba(C.amber, 0.6);
+        ctx.shadowBlur = 18;
+        ctx.beginPath();
+        ctx.moveTo(x0, cy);
+        ctx.lineTo(x1, cy);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        glowOrb(ctx, x0, cy, 3.5, C.amber, 0.7);
+        glowOrb(ctx, x1, cy, 3.5, C.amber, 0.7);
+        const mx = lerp(x0, x1, (Math.sin(t * 0.0011) + 1) / 2);
+        glowOrb(ctx, mx, cy, 2.4, C.cream, 0.8);
+        ctx.font = 'italic 16px Georgia, serif';
+        ctx.fillStyle = rgba(C.cream, 0.6);
+        ctx.textAlign = 'center';
+        ctx.fillText('0', x0, cy + 34);
+        ctx.fillText('1', x1, cy + 34);
+        ctx.fillStyle = rgba(C.amber, 0.82);
+        ctx.fillText('≈', lerp(x0, x1, 0.5), cy - 20);
+      } else if (mode === 'two') {
+        const x0 = w * 0.35, x1 = w * 0.65;
+        glowOrb(ctx, x0, cy, 4, C.rose, 0.85);
+        glowOrb(ctx, x1, cy, 4, C.teal, 0.85);
+        ctx.save();
+        ctx.strokeStyle = rgba(C.cream, 0.18);
+        ctx.setLineDash([3, 10]);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x0 + 18, cy);
+        ctx.lineTo(x1 - 18, cy);
+        ctx.stroke();
+        ctx.restore();
+        ctx.font = 'italic 16px Georgia, serif';
+        ctx.fillStyle = rgba(C.cream, 0.55);
+        ctx.textAlign = 'center';
+        ctx.fillText('true', x0, cy + 34);
+        ctx.fillText('false', x1, cy + 34);
+      } else if (mode === 'circle') {
+        const R = unit * 0.28;
+        ctx.strokeStyle = rgba(C.rose, 0.65);
+        ctx.lineWidth = 2;
+        ctx.shadowColor = rgba(C.rose, 0.45);
+        ctx.shadowBlur = 16;
+        ctx.beginPath();
+        ctx.arc(cx, cy, R, 0, TAU);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        const u = (t * 0.00055) % TAU;
+        const bx = cx + R * Math.cos(-Math.PI / 2 + u);
+        const by = cy + R * Math.sin(-Math.PI / 2 + u);
+        glowOrb(ctx, bx, by, 2.6, C.rose, 0.9);
+        const baseX = cx, baseY = cy - R;
+        glowOrb(ctx, baseX, baseY, 4.2, C.amber, 1);
+        ctx.font = 'italic 15px Georgia, serif';
+        ctx.fillStyle = rgba(C.cream, 0.6);
+        ctx.textAlign = 'center';
+        ctx.fillText('base', baseX, baseY - 18);
+        ctx.fillStyle = rgba(C.rose, 0.85);
+        ctx.fillText('S¹', cx, cy + R + 34);
+      } else if (mode === 'sphere') {
+        drawWireSphere(ctx, t, {
+          cx, cy, scale: unit * 0.28, color: C.sky, alpha: 0.55,
+          ax: -0.38, ay: 0.7, R: 1.42, nu: 24, nv: 14
+        });
+        const p = rotate3(0, 1.42, 0, -0.38, 0.7);
+        const s = project3(p, cx, cy, unit * 0.28, 3.6);
+        glowOrb(ctx, s.x, s.y, 2.8, C.amber, 0.9);
+        ctx.font = 'italic 15px Georgia, serif';
+        ctx.fillStyle = rgba(C.sky, 0.85);
+        ctx.textAlign = 'center';
+        ctx.fillText('S²', cx, cy + unit * 0.36);
+      } else if (mode === 'torus') {
+        drawWireTorus(ctx, t, {
+          cx, cy, scale: unit * 0.245, color: C.amber, alpha: 0.5,
+          ax: -0.62, ay: 0.45, R: 1.35, r: 0.5, nu: 38, nv: 15
+        });
+        const ax = -0.62 + Math.sin(t * 0.00014) * 0.05;
+        const ay = 0.45 + t * 0.00011;
+        const cam = 3.7;
+        const scale = unit * 0.245;
+        const drawLoop = (fixV, color) => {
+          const pts = [];
+          for (let i = 0; i <= 100; i++) {
+            const u = (i / 100) * TAU;
+            let p;
+            if (fixV === 'u') {
+              const cu = Math.cos(u), su = Math.sin(u), cv = Math.cos(0.55), sv = Math.sin(0.55);
+              p = rotate3((1.35 + 0.5 * cv) * cu, 0.5 * sv, (1.35 + 0.5 * cv) * su, ax, ay);
+            } else {
+              const cu = Math.cos(0.4), su = Math.sin(0.4), cv = Math.cos(u), sv = Math.sin(u);
+              p = rotate3((1.35 + 0.5 * cv) * cu, 0.5 * sv, (1.35 + 0.5 * cv) * su, ax, ay);
+            }
+            pts.push(project3(p, cx, cy, scale, cam));
+          }
+          ctx.save();
+          ctx.strokeStyle = rgba(color, 0.9);
+          ctx.lineWidth = 2;
+          ctx.shadowColor = rgba(color, 0.7);
+          ctx.shadowBlur = 12;
+          ctx.beginPath();
+          pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+          ctx.stroke();
+          ctx.restore();
+        };
+        drawLoop('u', C.rose);
+        drawLoop('v', C.teal);
+        ctx.font = 'italic 15px Georgia, serif';
+        ctx.fillStyle = rgba(C.amber, 0.85);
+        ctx.textAlign = 'center';
+        ctx.fillText('T²', cx, cy + unit * 0.36);
+      }
+
+      if (mode === 'point' || mode === 'interval' || mode === 'two') {
+        ctx.strokeStyle = rgba(C.cream, 0.09);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(w * 0.18, h * 0.2);
+        ctx.lineTo(w * 0.82, h * 0.2);
+        ctx.stroke();
+      }
+    });
+
+    function update() {
+      const d = SPACE_DATA[mode];
+      level.textContent = d.level;
+      readout.innerHTML = `
+        <div class="ro"><span class="k">Typ</span><span class="v acc">${d.symbol} · ${d.name}</span></div>
+        <div class="ro"><span class="k">Punkte</span><span class="v">${d.points}</span></div>
+        <div class="ro"><span class="k">Schleifen</span><span class="v">${d.loops}</span></div>
+        <div class="ro"><span class="k">Löcher</span><span class="v">${d.holes}</span></div>
+        <div class="ro" style="grid-column:span 2"><span class="k">Was du siehst</span><span class="v">${d.note}</span></div>
+      `;
+    }
+
+    tabs.addEventListener('click', e => {
+      const btn = e.target.closest('button[data-space]');
+      if (!btn) return;
+      mode = btn.dataset.space;
+      $$('button[data-space]', tabs).forEach(b => {
+        const on = b === btn;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      update();
+    });
+
+    update();
+    stage.render(0);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 02 — Pfadwerkstatt                                                  */
+  /* ------------------------------------------------------------------ */
+  function cubicPoint(p0, p1, p2, p3, u) {
+    const m = 1 - u;
+    return {
+      x: m * m * m * p0.x + 3 * m * m * u * p1.x + 3 * m * u * u * p2.x + u * u * u * p3.x,
+      y: m * m * m * p0.y + 3 * m * m * u * p1.y + 3 * m * u * u * p2.y + u * u * u * p3.y
+    };
+  }
+
+  function cubicTangent(p0, p1, p2, p3, u) {
+    const m = 1 - u;
+    return {
+      x: 3 * m * m * (p1.x - p0.x) + 6 * m * u * (p2.x - p1.x) + 3 * u * u * (p3.x - p2.x),
+      y: 3 * m * m * (p1.y - p0.y) + 6 * m * u * (p2.y - p1.y) + 3 * u * u * (p3.y - p2.y)
+    };
+  }
+
+  function pathControls(A, B, t) {
+    const dx = B.x - A.x, dy = B.y - A.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const nx = -dy / len, ny = dx / len;
+    const bend = lerp(0.045 * len, 0.34 * len, smooth(clamp(t, 0, 1)));
+    const wobble = lerp(0.045 * len, -0.34 * len, smooth(clamp(t, 0, 1)));
+    return {
+      c1: { x: A.x + dx * 0.3 + nx * bend, y: A.y + dy * 0.3 + ny * bend },
+      c2: { x: A.x + dx * 0.7 + nx * wobble, y: A.y + dy * 0.7 + ny * wobble }
+    };
+  }
+
+  function initPathLab() {
+    const canvas = $('#pathCanvas');
+    if (!canvas) return;
+    const slider = $('#pathSlider');
+    const sliderVal = $('#pathT');
+    const autoBtn = $('#pathAuto');
+    const revBtn = $('#pathReverse');
+    const reflBtn = $('#pathRefl');
+    const resetBtn = $('#pathReset');
+    const readout = $('#pathReadout');
+
+    const sim = {
+      A: { x: 0.2, y: 0.58 },
+      B: { x: 0.8, y: 0.58 },
+      t: 0,
+      auto: false,
+      autoT0: 0,
+      rev: false,
+      drag: null,
+      reflUntil: 0
+    };
+
+    let lastReadout = performance.now();
+    const stage = makeStage(canvas, (ctx, w, h, time) => {
+      const now = performance.now();
+      if (sim.auto) {
+        sim.t = 0.5 - 0.5 * Math.cos((now - sim.autoT0) * 0.00115);
+        const v = Math.round(sim.t * 100);
+        if (slider.value !== String(v)) {
+          slider.value = String(v);
+          setRangeFill(slider);
+        }
+      }
+      sliderVal.textContent = `${Math.round(sim.t * 100)}%`;
+
+      dotGrid(ctx, w, h, C.teal, 0.055, 34);
+
+      const A = { x: sim.A.x * w, y: sim.A.y * h };
+      const B = { x: sim.B.x * w, y: sim.B.y * h };
+      const { c1, c2 } = pathControls(A, B, sim.t);
+
+      const ghost = (tt, color, dash) => {
+        const c = pathControls(A, B, tt);
+        ctx.save();
+        ctx.strokeStyle = rgba(color, 0.16);
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash(dash);
+        ctx.beginPath();
+        ctx.moveTo(A.x, A.y);
+        ctx.bezierCurveTo(c.c1.x, c.c1.y, c.c2.x, c.c2.y, B.x, B.y);
+        ctx.stroke();
+        ctx.restore();
+      };
+      ghost(0, C.amber, [3, 7]);
+      ghost(1, C.violet, [3, 7]);
+
+      const refl = now < sim.reflUntil;
+      ctx.save();
+      if (refl) ctx.globalAlpha = 0.16;
+
+      const grad = ctx.createLinearGradient(A.x, A.y, B.x, B.y);
+      grad.addColorStop(0, C.amber);
+      grad.addColorStop(0.52, C.rose);
+      grad.addColorStop(1, C.teal);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 3.4;
+      ctx.lineCap = 'round';
+      ctx.shadowColor = rgba(C.amber, 0.55);
+      ctx.shadowBlur = 16;
+      ctx.beginPath();
+      ctx.moveTo(A.x, A.y);
+      ctx.bezierCurveTo(c1.x, c1.y, c2.x, c2.y, B.x, B.y);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      for (const u of [0.18, 0.5, 0.82]) {
+        const p = cubicPoint(A, c1, c2, B, sim.rev ? 1 - u : u);
+        const tan = cubicTangent(A, c1, c2, B, sim.rev ? 1 - u : u);
+        const ang = Math.atan2(tan.y, tan.x) + (sim.rev ? Math.PI : 0);
+        arrow(ctx, p.x, p.y, ang, rgba(C.cream, 0.75), 5.5);
+      }
+
+      const mu = REDUCED ? 0.5 : (sim.rev
+        ? 1 - ((time * 0.00009) % 1)
+        : (time * 0.00009) % 1);
+      const mp = cubicPoint(A, c1, c2, B, mu);
+      glowOrb(ctx, mp.x, mp.y, 2.4, C.cream, 0.75);
+
+      const mid = cubicPoint(A, c1, c2, B, 0.5);
+      ctx.font = 'italic 17px Georgia, serif';
+      ctx.fillStyle = rgba(C.cream, 0.7);
+      ctx.textAlign = 'center';
+      ctx.fillText(sim.rev ? 'p⁻¹' : 'p', mid.x, mid.y - 16);
+      ctx.restore();
+
+      if (refl) {
+        const pulse = 0.5 + 0.5 * Math.sin(now * 0.008);
+        ctx.strokeStyle = rgba(C.amber, 0.4 + pulse * 0.4);
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.arc(A.x, A.y, 22 + pulse * 9, 0, TAU);
+        ctx.stroke();
+        ctx.font = 'italic 16px Georgia, serif';
+        ctx.fillStyle = rgba(C.cream, 0.85);
+        const right = A.x > w * 0.7;
+        ctx.textAlign = right ? 'right' : 'left';
+        ctx.fillText('refl : a ≡ a', A.x + (right ? -34 : 34), A.y - 20);
+      }
+
+      glowOrb(ctx, A.x, A.y, 5, C.amber, 1);
+      glowOrb(ctx, B.x, B.y, 5, C.teal, 1);
+      ctx.font = 'italic 19px Georgia, serif';
+      ctx.fillStyle = rgba(C.cream, 0.82);
+      ctx.textAlign = 'center';
+      ctx.fillText('a', A.x, A.y + 36);
+      ctx.fillText('b', B.x, B.y + 36);
+
+      if (sim.drag) {
+        const P = sim.drag === 'A' ? A : B;
+        ctx.strokeStyle = rgba(C.cream, 0.24);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(P.x, P.y, 16, 0, TAU);
+        ctx.stroke();
+      }
+
+      if (now - lastReadout > 180) {
+        lastReadout = now;
+        updatePathReadout();
+      }
+    });
+
+    function arrow(ctx, x, y, ang, color, size) {
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.translate(x, y);
+      ctx.rotate(ang);
+      ctx.beginPath();
+      ctx.moveTo(size, 0);
+      ctx.lineTo(-size * 0.7, size * 0.55);
+      ctx.lineTo(-size * 0.7, -size * 0.55);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function updatePathReadout() {
+      const A = { x: sim.A.x * stage.w, y: sim.A.y * stage.h };
+      const B = { x: sim.B.x * stage.w, y: sim.B.y * stage.h };
+      const { c1, c2 } = pathControls(A, B, sim.t);
+      let len = 0;
+      let prev = A;
+      for (let i = 1; i <= 30; i++) {
+        const p = cubicPoint(A, c1, c2, B, i / 30);
+        len += Math.hypot(p.x - prev.x, p.y - prev.y);
+        prev = p;
+      }
+      const direct = Math.max(1, Math.hypot(B.x - A.x, B.y - A.y));
+      readout.innerHTML = `
+        <div class="ro"><span class="k">Beweis</span><span class="v acc">p : a ≡ b</span></div>
+        <div class="ro"><span class="k">Wegform</span><span class="v">${Math.round(sim.t * 100)}% gewunden</span></div>
+        <div class="ro"><span class="k">Richtung</span><span class="v">${sim.rev ? 'p⁻¹ (rückwärts)' : 'vorwärts'}</span></div>
+        <div class="ro"><span class="k">Länge</span><span class="v">${(len / direct).toFixed(2)} × direkt</span></div>
+        <div class="ro"><span class="k">Abstand</span><span class="v">${(direct / Math.max(1, stage.w)).toFixed(2)} × Breite</span></div>
+      `;
+    }
+
+    slider.addEventListener('input', () => {
+      sim.auto = false;
+      autoBtn.classList.remove('is-active');
+      autoBtn.setAttribute('aria-pressed', 'false');
+      sim.t = Number(slider.value) / 100;
+      setRangeFill(slider);
+      sliderVal.textContent = `${slider.value}%`;
+      updatePathReadout();
+    });
+
+    autoBtn.addEventListener('click', () => {
+      sim.auto = !sim.auto;
+      autoBtn.classList.toggle('is-active', sim.auto);
+      autoBtn.setAttribute('aria-pressed', sim.auto ? 'true' : 'false');
+      if (sim.auto) sim.autoT0 = performance.now() - Math.acos(1 - 2 * sim.t) / 0.00115;
+    });
+
+    revBtn.addEventListener('click', () => {
+      sim.rev = !sim.rev;
+      revBtn.classList.toggle('is-active', sim.rev);
+      revBtn.setAttribute('aria-pressed', sim.rev ? 'true' : 'false');
+      updatePathReadout();
+    });
+
+    reflBtn.addEventListener('click', () => {
+      sim.reflUntil = performance.now() + 2300;
+    });
+
+    resetBtn.addEventListener('click', () => {
+      sim.A = { x: 0.2, y: 0.58 };
+      sim.B = { x: 0.8, y: 0.58 };
+      sim.t = 0;
+      sim.rev = false;
+      sim.auto = false;
+      sim.reflUntil = 0;
+      slider.value = '0';
+      setRangeFill(slider);
+      sliderVal.textContent = '0%';
+      autoBtn.classList.remove('is-active');
+      autoBtn.setAttribute('aria-pressed', 'false');
+      revBtn.classList.remove('is-active');
+      revBtn.setAttribute('aria-pressed', 'false');
+      updatePathReadout();
+    });
+
+    canvas.addEventListener('pointerdown', e => {
+      const p = canvasPos(canvas, e);
+      const A = { x: sim.A.x * stage.w, y: sim.A.y * stage.h };
+      const B = { x: sim.B.x * stage.w, y: sim.B.y * stage.h };
+      const dA = Math.hypot(p.x - A.x, p.y - A.y);
+      const dB = Math.hypot(p.x - B.x, p.y - B.y);
+      if (Math.min(dA, dB) < 38) {
+        sim.drag = dA < dB ? 'A' : 'B';
+        try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+        canvas.style.cursor = 'grabbing';
+      }
+    });
+
+    canvas.addEventListener('pointermove', e => {
+      const p = canvasPos(canvas, e);
+      const A = { x: sim.A.x * stage.w, y: sim.A.y * stage.h };
+      const B = { x: sim.B.x * stage.w, y: sim.B.y * stage.h };
+      if (sim.drag) {
+        const f = {
+          x: clamp(p.x / stage.w, 0.07, 0.93),
+          y: clamp(p.y / stage.h, 0.16, 0.84)
+        };
+        sim[sim.drag] = f;
+        updatePathReadout();
+      } else {
+        const near = Math.min(
+          Math.hypot(p.x - A.x, p.y - A.y),
+          Math.hypot(p.x - B.x, p.y - B.y)
+        ) < 38;
+        canvas.style.cursor = near ? 'grab' : 'default';
+      }
+    });
+
+    const endDrag = () => {
+      sim.drag = null;
+      canvas.style.cursor = 'default';
+    };
+    canvas.addEventListener('pointerup', endDrag);
+    canvas.addEventListener('pointercancel', endDrag);
+
+    setRangeFill(slider);
+    updatePathReadout();
+    stage.render(0);
+  }
+
+  function arrowHead(ctx, x, y, ang, color, size = 6) {
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.translate(x, y);
+    ctx.rotate(ang);
+    ctx.beginPath();
+    ctx.moveTo(size, 0);
+    ctx.lineTo(-size * 0.72, size * 0.55);
+    ctx.lineTo(-size * 0.72, -size * 0.55);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 03 — Deformationsstudio                                             */
+  /* ------------------------------------------------------------------ */
+  function initHomotopyLab() {
+    const canvas = $('#homotopyCanvas');
+    if (!canvas) return;
+    const slider = $('#homotopySlider');
+    const sVal = $('#homotopyS');
+    const autoBtn = $('#homotopyAuto');
+    const resetBtn = $('#homotopyReset');
+    const readout = $('#homotopyReadout');
+    if (REDUCED) {
+      autoBtn.classList.remove('is-active');
+      autoBtn.setAttribute('aria-pressed', 'false');
+    }
+
+    const sim = {
+      bulge: 0.55,
+      s: 0.5,
+      auto: !REDUCED,
+      autoT0: performance.now(),
+      drag: false
+    };
+    let lastRO = performance.now();
+
+    const stage = makeStage(canvas, (ctx, w, h, time) => {
+      const now = performance.now();
+      if (sim.auto) {
+        sim.s = 0.5 - 0.5 * Math.cos((now - sim.autoT0) * 0.00105);
+        const v = Math.round(sim.s * 100);
+        if (slider.value !== String(v)) {
+          slider.value = String(v);
+          setRangeFill(slider);
+        }
+      }
+      sVal.textContent = `${Math.round(sim.s * 100)}%`;
+
+      dotGrid(ctx, w, h, C.violet, 0.05, 36);
+
+      const A = { x: w * 0.12, y: h * 0.76 };
+      const B = { x: w * 0.88, y: h * 0.76 };
+      const pB = h * 0.11;
+      const qB = h * (0.16 + 0.32 * sim.bulge);
+      const pY = u => A.y - Math.sin(Math.PI * u) * pB;
+      const qY = u => A.y - Math.sin(Math.PI * u) * qB;
+
+      ctx.beginPath();
+      for (let i = 0; i <= 120; i++) {
+        const u = i / 120;
+        const x = lerp(A.x, B.x, u);
+        const y = pY(u);
+        if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+      }
+      for (let i = 120; i >= 0; i--) {
+        const u = i / 120;
+        ctx.lineTo(lerp(A.x, B.x, u), qY(u));
+      }
+      ctx.closePath();
+      const fill = ctx.createLinearGradient(0, A.y, 0, qY(0.5));
+      fill.addColorStop(0, rgba(C.violet, 0.045));
+      fill.addColorStop(1, rgba(C.violet, 0.22));
+      ctx.fillStyle = fill;
+      ctx.fill();
+
+      for (let k = 1; k < 12; k++) {
+        const f = k / 12;
+        ctx.beginPath();
+        for (let i = 0; i <= 100; i++) {
+          const u = i / 100;
+          const x = lerp(A.x, B.x, u);
+          const y = lerp(pY(u), qY(u), f);
+          if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+        }
+        ctx.strokeStyle = rgba(C.violet, 0.15);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      ctx.save();
+      ctx.beginPath();
+      for (let i = 0; i <= 150; i++) {
+        const u = i / 150;
+        const x = lerp(A.x, B.x, u);
+        const y = lerp(pY(u), qY(u), sim.s);
+        if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+      }
+      ctx.strokeStyle = rgba(C.cream, 0.92);
+      ctx.lineWidth = 2.3;
+      ctx.shadowColor = rgba(C.violet, 0.9);
+      ctx.shadowBlur = 16;
+      ctx.stroke();
+      ctx.restore();
+
+      const mu = REDUCED ? 0.5 : (time * 0.00013) % 1;
+      glowOrb(ctx, lerp(A.x, B.x, mu), lerp(pY(mu), qY(mu), sim.s), 2.2, C.cream, 0.7);
+
+      const drawCurve = (fn, color, label, labelU) => {
+        ctx.beginPath();
+        for (let i = 0; i <= 140; i++) {
+          const u = i / 140;
+          const x = lerp(A.x, B.x, u);
+          if (i) ctx.lineTo(x, fn(u)); else ctx.moveTo(x, fn(u));
+        }
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.2;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 11;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.font = 'italic 18px Georgia, serif';
+        ctx.fillStyle = rgba(C.cream, 0.82);
+        ctx.textAlign = 'center';
+        ctx.fillText(label, lerp(A.x, B.x, labelU), fn(labelU) - 13);
+      };
+      drawCurve(pY, rgba(C.amber, 0.9), 'p', 0.1);
+      drawCurve(qY, rgba(C.teal, 0.9), 'q', 0.9);
+
+      glowOrb(ctx, A.x, A.y, 4, C.cream, 0.8);
+      glowOrb(ctx, B.x, B.y, 4, C.cream, 0.8);
+      ctx.font = 'italic 18px Georgia, serif';
+      ctx.fillStyle = rgba(C.cream, 0.7);
+      ctx.textAlign = 'center';
+      ctx.fillText('a', A.x, A.y + 34);
+      ctx.fillText('b', B.x, B.y + 34);
+
+      const cx = lerp(A.x, B.x, 0.5);
+      const yP = pY(0.5), yQ = qY(0.5);
+      ctx.save();
+      ctx.strokeStyle = rgba(C.violet, 0.55);
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([3, 4]);
+      ctx.beginPath();
+      ctx.moveTo(cx, yP - 9);
+      ctx.lineTo(cx, yQ + 14);
+      ctx.stroke();
+      ctx.restore();
+      arrowHead(ctx, cx, yQ + 8, -Math.PI / 2, rgba(C.violet, 0.82), 5);
+      ctx.font = 'italic 17px Georgia, serif';
+      ctx.fillStyle = rgba(C.violet, 0.95);
+      ctx.textAlign = 'left';
+      ctx.fillText('α', cx + 12, (yP + yQ) / 2);
+
+      ctx.strokeStyle = rgba(C.teal, 0.5);
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(cx, yQ, 9, 0, TAU);
+      ctx.stroke();
+      ctx.fillStyle = rgba(C.teal, 0.9);
+      ctx.beginPath();
+      ctx.arc(cx, yQ, 3.2, 0, TAU);
+      ctx.fill();
+
+      if (now - lastRO > 170) {
+        lastRO = now;
+        update();
+      }
+    });
+
+    function update() {
+      const depth = Math.round(20 + sim.bulge * 70);
+      readout.innerHTML = `
+        <div class="ro"><span class="k">2-Pfad</span><span class="v acc">α : p ≡ q</span></div>
+        <div class="ro"><span class="k">Zwischenweg</span><span class="v">s = ${sim.s.toFixed(2)}</span></div>
+        <div class="ro"><span class="k">Fläche</span><span class="v">Homotopie</span></div>
+        <div class="ro"><span class="k">Ebene</span><span class="v">2 · ${depth}% gewölbt</span></div>
+      `;
+    }
+
+    slider.addEventListener('input', () => {
+      sim.auto = false;
+      autoBtn.classList.remove('is-active');
+      autoBtn.setAttribute('aria-pressed', 'false');
+      sim.s = Number(slider.value) / 100;
+      setRangeFill(slider);
+      sVal.textContent = `${slider.value}%`;
+      update();
+    });
+
+    autoBtn.addEventListener('click', () => {
+      sim.auto = !sim.auto;
+      autoBtn.classList.toggle('is-active', sim.auto);
+      autoBtn.setAttribute('aria-pressed', sim.auto ? 'true' : 'false');
+      if (sim.auto) sim.autoT0 = performance.now() - Math.acos(1 - 2 * sim.s) / 0.00105;
+    });
+
+    resetBtn.addEventListener('click', () => {
+      sim.bulge = 0.55;
+      sim.s = 0.5;
+      sim.auto = !REDUCED;
+      sim.autoT0 = performance.now();
+      slider.value = '50';
+      setRangeFill(slider);
+      sVal.textContent = '50%';
+      autoBtn.classList.toggle('is-active', sim.auto);
+      autoBtn.setAttribute('aria-pressed', sim.auto ? 'true' : 'false');
+      update();
+    });
+
+    canvas.addEventListener('pointerdown', e => {
+      const p = canvasPos(canvas, e);
+      const A = { x: stage.w * 0.12, y: stage.h * 0.76 };
+      const qB = stage.h * (0.16 + 0.32 * sim.bulge);
+      const hx = stage.w * 0.5;
+      const hy = A.y - qB;
+      if (Math.hypot(p.x - hx, p.y - hy) < 32) {
+        sim.drag = true;
+        sim.auto = false;
+        autoBtn.classList.remove('is-active');
+        autoBtn.setAttribute('aria-pressed', 'false');
+        try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+        canvas.style.cursor = 'grabbing';
+      }
+    });
+
+    canvas.addEventListener('pointermove', e => {
+      const p = canvasPos(canvas, e);
+      const A = { x: stage.w * 0.12, y: stage.h * 0.76 };
+      const qB = stage.h * (0.16 + 0.32 * sim.bulge);
+      const hx = stage.w * 0.5;
+      const hy = A.y - qB;
+      if (sim.drag) {
+        const raw = (A.y - p.y) / stage.h;
+        sim.bulge = clamp((raw - 0.16) / 0.32, 0, 1);
+        update();
+      } else {
+        canvas.style.cursor = Math.hypot(p.x - hx, p.y - hy) < 32 ? 'grab' : 'default';
+      }
+    });
+
+    const end = () => {
+      sim.drag = false;
+      canvas.style.cursor = 'default';
+    };
+    canvas.addEventListener('pointerup', end);
+    canvas.addEventListener('pointercancel', end);
+
+    setRangeFill(slider);
+    update();
+    stage.render(0);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 04 — Schleifenlabor                                                 */
+  /* ------------------------------------------------------------------ */
+  function signed(n) {
+    return n > 0 ? `+${n}` : `${n}`;
+  }
+
+  function loopPoint(n, u, cx, cy, R, offset = 0) {
+    if (n === 0) return { x: cx, y: cy - R };
+    const m = Math.abs(n);
+    const dir = n < 0 ? -1 : 1;
+    const ang = -Math.PI / 2 + dir * TAU * m * u;
+    const dip = Math.min(22 * m, R * 0.44);
+    const rad = R - dip * Math.sin(Math.PI * u) - offset * Math.sin(Math.PI * u);
+    return { x: cx + rad * Math.cos(ang), y: cy + rad * Math.sin(ang) };
+  }
+
+  function initLoopLab() {
+    const canvas = $('#loopCanvas');
+    if (!canvas) return;
+    const sliderA = $('#loopA');
+    const sliderB = $('#loopB');
+    const valA = $('#loopAVal');
+    const valB = $('#loopBVal');
+    const playBtn = $('#loopPlay');
+    const resetBtn = $('#loopReset');
+    const readout = $('#loopReadout');
+    const liftDot = $('#liftDot');
+    const liftValue = $('#liftValue');
+
+    const sim = {
+      a: 1,
+      b: 1,
+      playing: false,
+      playT0: 0,
+      didPlay: false
+    };
+
+    const stage = makeStage(canvas, (ctx, w, h, time) => {
+      const now = performance.now();
+      const R = Math.min(w, h) * 0.28;
+      const cx = w * 0.5;
+      const cy = h * 0.53;
+      const off = Math.min(w, h) * 0.055;
+
+      const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(w, h) * 0.66);
+      bg.addColorStop(0, 'rgba(251,113,133,.05)');
+      bg.addColorStop(1, 'rgba(251,113,133,0)');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.save();
+      ctx.strokeStyle = rgba(C.cream, 0.15);
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 8]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, TAU);
+      ctx.stroke();
+      ctx.restore();
+
+      let progA = 1, progB = 1, phase = 'idle';
+      if (sim.playing) {
+        const elapsed = now - sim.playT0;
+        const durA = sim.a === 0 ? 380 : 720 + 260 * Math.abs(sim.a);
+        const durB = sim.b === 0 ? 380 : 720 + 260 * Math.abs(sim.b);
+        if (elapsed < durA) {
+          phase = 'a';
+          progA = clamp(elapsed / durA, 0, 1);
+          progB = 0;
+        } else if (elapsed < durA + durB) {
+          phase = 'b';
+          progA = 1;
+          progB = clamp((elapsed - durA) / durB, 0, 1);
+        } else {
+          sim.playing = false;
+          sim.didPlay = true;
+          update();
+        }
+      }
+
+      const drawLoop = (n, prog, color, offset, width) => {
+        if (n === 0 || prog <= 0) return;
+        const steps = Math.max(100, Math.round(180 * Math.abs(n)));
+        ctx.save();
+        ctx.beginPath();
+        for (let i = 0; i <= steps; i++) {
+          const u = (i / steps) * prog;
+          const p = loopPoint(n, u, cx, cy, R, offset);
+          if (i) ctx.lineTo(p.x, p.y); else ctx.moveTo(p.x, p.y);
+        }
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.lineCap = 'round';
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 18;
+        ctx.stroke();
+        ctx.restore();
+
+        const arrows = 3;
+        for (let k = 1; k <= arrows; k++) {
+          const u = (k / (arrows + 1)) * prog;
+          const p1 = loopPoint(n, clamp(u - 0.004, 0, 1), cx, cy, R, offset);
+          const p2 = loopPoint(n, clamp(u + 0.004, 0, 1), cx, cy, R, offset);
+          arrowHead(ctx, p2.x, p2.y, Math.atan2(p2.y - p1.y, p2.x - p1.x), rgba(C.cream, 0.7), 5);
+        }
+      };
+
+      drawLoop(sim.a, progA, C.amber, 0, 3.4);
+      drawLoop(sim.b, progB, C.teal, off, 3.4);
+
+      const labelLoop = (n, color, offset, text, u) => {
+        if (n === 0) return;
+        const p = loopPoint(n, u, cx, cy, R, offset);
+        ctx.font = 'italic 19px Georgia, serif';
+        ctx.fillStyle = color;
+        ctx.textAlign = 'center';
+        ctx.fillText(text, p.x, p.y - 13);
+      };
+      labelLoop(sim.a, rgba(C.amber, 0.95), 0, 'a', 0.3);
+      labelLoop(sim.b, rgba(C.teal, 0.95), off, 'b', 0.3);
+
+      glowOrb(ctx, cx, cy - R, 5, C.cream, 1);
+      ctx.font = 'italic 14px Georgia, serif';
+      ctx.fillStyle = rgba(C.cream, 0.55);
+      ctx.textAlign = 'center';
+      ctx.fillText('base', cx, cy - R - 20);
+
+      if (sim.a === 0 && !sim.playing) {
+        ctx.font = 'italic 14px Georgia, serif';
+        ctx.fillStyle = rgba(C.amber, 0.85);
+        ctx.textAlign = 'right';
+        ctx.fillText('a = refl', cx - 14, cy - R + 24);
+      }
+      if (sim.b === 0 && !sim.playing) {
+        ctx.font = 'italic 14px Georgia, serif';
+        ctx.fillStyle = rgba(C.teal, 0.85);
+        ctx.textAlign = 'left';
+        ctx.fillText('b = refl', cx + 14, cy - R + 24);
+      }
+
+      if (sim.playing) {
+        const n = phase === 'b' ? sim.b : sim.a;
+        const prog = phase === 'b' ? progB : progA;
+        const offset = phase === 'b' ? off : 0;
+        const p = n === 0 ? { x: cx, y: cy - R } : loopPoint(n, prog, cx, cy, R, offset);
+        glowOrb(ctx, p.x, p.y, 3.2, phase === 'b' ? C.teal : C.amber, 1);
+      } else {
+        const pulse = REDUCED ? 0.5 : 0.5 + 0.5 * Math.sin(time * 0.003);
+        ctx.strokeStyle = rgba(C.cream, 0.12 + pulse * 0.1);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(cx, cy - R, 11 + pulse * 3, 0, TAU);
+        ctx.stroke();
+      }
+
+      if (sim.didPlay && !sim.playing) {
+        const s = sim.a + sim.b;
+        ctx.font = 'italic 16px Georgia, serif';
+        ctx.fillStyle = rgba(C.cream, 0.82);
+        ctx.textAlign = 'center';
+        ctx.fillText(`a · b  ≃  ${signed(s)} Umläufe`, cx, h - 22);
+      }
+    });
+
+    function update() {
+      const sum = sim.a + sim.b;
+      valA.textContent = signed(sim.a);
+      valB.textContent = signed(sim.b);
+      liftValue.textContent = signed(sum);
+      liftDot.style.left = `${clamp(((sum + 6) / 12) * 100, 0, 100)}%`;
+      let meaning;
+      if (sum === 0) meaning = 'zusammenziehbar · refl';
+      else if (Math.abs(sum) === 1) meaning = sum > 0 ? 'einmal vorwärts' : 'einmal rückwärts';
+      else meaning = `${Math.abs(sum)} Umläufe ${sum > 0 ? 'vorwärts' : 'rückwärts'}`;
+      const action = sim.playing ? 'verketten…' : (sim.didPlay ? 'verkettet' : 'bereit');
+      readout.innerHTML = `
+        <div class="ro"><span class="k">Schleife a</span><span class="v">${signed(sim.a)}</span></div>
+        <div class="ro"><span class="k">Schleife b</span><span class="v">${signed(sim.b)}</span></div>
+        <div class="ro"><span class="k">a + b</span><span class="v acc">${signed(sum)}</span></div>
+        <div class="ro"><span class="k">Deutung</span><span class="v">${meaning}</span></div>
+        <div class="ro"><span class="k">Aktion</span><span class="v">${action}</span></div>
+        <div class="ro"><span class="k">Gruppe</span><span class="v">π₁(S¹) ≅ ℤ</span></div>
+      `;
+    }
+
+    sliderA.addEventListener('input', () => {
+      sim.a = Number(sliderA.value);
+      sim.playing = false;
+      sim.didPlay = false;
+      setRangeFill(sliderA);
+      update();
+    });
+    sliderB.addEventListener('input', () => {
+      sim.b = Number(sliderB.value);
+      sim.playing = false;
+      sim.didPlay = false;
+      setRangeFill(sliderB);
+      update();
+    });
+
+    playBtn.addEventListener('click', () => {
+      sim.playing = true;
+      sim.didPlay = false;
+      sim.playT0 = performance.now();
+      update();
+    });
+
+    resetBtn.addEventListener('click', () => {
+      sim.a = 1;
+      sim.b = 1;
+      sim.playing = false;
+      sim.didPlay = false;
+      sliderA.value = '1';
+      sliderB.value = '1';
+      setRangeFill(sliderA);
+      setRangeFill(sliderB);
+      update();
+    });
+
+    setRangeFill(sliderA);
+    setRangeFill(sliderB);
+    update();
+    stage.render(0);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 05 — Klebelabor                                                     */
+  /* ------------------------------------------------------------------ */
+  function initGlueLab() {
+    const canvas = $('#glueCanvas');
+    if (!canvas) return;
+    const slider = $('#glueSlider');
+    const tVal = $('#glueT');
+    const playBtn = $('#gluePlay');
+    const resetBtn = $('#glueReset');
+    const readout = $('#glueReadout');
+    const steps = $$('.gstep', $('#glueSteps'));
+
+    const sim = { t: 0, playing: false, t0: 0 };
+    let lastRO = performance.now();
+
+    const stage = makeStage(canvas, (ctx, w, h, time) => {
+      const now = performance.now();
+      if (sim.playing) {
+        sim.t = clamp((now - sim.t0) / 2600, 0, 1);
+        const v = Math.round(sim.t * 100);
+        if (slider.value !== String(v)) {
+          slider.value = String(v);
+          setRangeFill(slider);
+        }
+        if (sim.t >= 1) sim.playing = false;
+      }
+      tVal.textContent = `${Math.round(sim.t * 100)}%`;
+
+      dotGrid(ctx, w, h, C.sky, 0.05, 36);
+
+      const L = Math.min(w * 0.64, 530);
+      const y0 = h * 0.56;
+      const R1 = L / TAU;
+      const cx = w * 0.5;
+      const theta = TAU * Math.max(sim.t, 0.0002);
+      const R = L / theta;
+      const pt = s => {
+        if (sim.t < 1e-4) return { x: cx + L * (s - 0.5), y: y0 };
+        const phi = theta * (s - 0.5);
+        return {
+          x: cx + R * Math.sin(phi),
+          y: y0 + R * (1 - Math.cos(phi))
+        };
+      };
+
+      ctx.save();
+      ctx.strokeStyle = rgba(C.cream, 0.10);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx - L * 0.55, y0);
+      ctx.lineTo(cx + L * 0.55, y0);
+      ctx.stroke();
+
+      ctx.strokeStyle = rgba(C.sky, 0.18);
+      ctx.setLineDash([3, 7]);
+      ctx.beginPath();
+      ctx.arc(cx, y0 + R1, R1, 0, TAU);
+      ctx.stroke();
+      ctx.restore();
+
+      const pts = [];
+      for (let i = 0; i <= 240; i++) pts.push(pt(i / 240));
+      const grad = ctx.createLinearGradient(cx - L / 2, 0, cx + L / 2, 0);
+      grad.addColorStop(0, C.amber);
+      grad.addColorStop(0.48, C.rose);
+      grad.addColorStop(1, C.teal);
+      ctx.save();
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 3.4;
+      ctx.lineCap = 'round';
+      ctx.shadowColor = rgba(C.sky, 0.55);
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+      ctx.stroke();
+      ctx.restore();
+
+      for (const s of [0.2, 0.5, 0.8]) {
+        const a = pt(s - 0.003), b = pt(s + 0.003);
+        if (Math.hypot(b.x - a.x, b.y - a.y) > 1) {
+          arrowHead(ctx, b.x, b.y, Math.atan2(b.y - a.y, b.x - a.x), rgba(C.cream, 0.6), 4.5);
+        }
+      }
+
+      const p0 = pt(0), p1 = pt(1);
+      const dist = Math.hypot(p1.x - p0.x, p1.y - p0.y);
+      if (dist < 16) {
+        const mx = (p0.x + p1.x) / 2;
+        const my = (p0.y + p1.y) / 2;
+        const pulse = 0.5 + 0.5 * Math.sin(now * 0.006);
+        ctx.strokeStyle = rgba(C.amber, 0.35 + pulse * 0.3);
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.arc(mx, my, 16 + pulse * 6, 0, TAU);
+        ctx.stroke();
+        glowOrb(ctx, mx, my, 4.5, C.amber, 1);
+        ctx.font = 'italic 16px Georgia, serif';
+        ctx.fillStyle = rgba(C.cream, 0.85);
+        ctx.textAlign = 'center';
+        ctx.fillText('base', mx, my - 22);
+      } else {
+        glowOrb(ctx, p0.x, p0.y, 3.8, C.amber, 0.9);
+        glowOrb(ctx, p1.x, p1.y, 3.8, C.teal, 0.9);
+        ctx.font = 'italic 16px Georgia, serif';
+        ctx.fillStyle = rgba(C.cream, 0.7);
+        ctx.textAlign = 'center';
+        ctx.fillText('0', p0.x, p0.y + 30);
+        ctx.fillText('1', p1.x, p1.y + 30);
+      }
+
+      if (sim.t > 0.78) {
+        const alpha = clamp((sim.t - 0.78) / 0.22, 0, 1);
+        const q = pt(0.86);
+        const q2 = pt(0.9);
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        arrowHead(ctx, q2.x, q2.y, Math.atan2(q2.y - q.y, q2.x - q.x), rgba(C.teal, 0.9), 6);
+        ctx.font = 'italic 16px Georgia, serif';
+        ctx.fillStyle = rgba(C.teal, 0.9);
+        ctx.textAlign = 'left';
+        ctx.fillText('loop', q2.x + 10, q2.y - 6);
+        ctx.restore();
+      }
+
+      if (now - lastRO > 160) {
+        lastRO = now;
+        update();
+      }
+    });
+
+    function update() {
+      const t = sim.t;
+      steps.forEach((el, i) => {
+        const on = (i === 0 && t < 0.22) || (i === 1 && t >= 0.22 && t < 0.78) || (i === 2 && t >= 0.78);
+        el.classList.toggle('is-on', on);
+      });
+      const merged = t >= 0.9;
+      readout.innerHTML = `
+        <div class="ro"><span class="k">Typ</span><span class="v acc">S¹ = [0,1] / (0 ~ 1)</span></div>
+        <div class="ro"><span class="k">Kleben</span><span class="v">${Math.round(t * 100)}%</span></div>
+        <div class="ro"><span class="k">Enden</span><span class="v">${merged ? 'identifiziert' : 'getrennt'}</span></div>
+        <div class="ro"><span class="k">Schleife</span><span class="v">${merged ? 'geschlossen' : 'im Entstehen'}</span></div>
+      `;
+    }
+
+    slider.addEventListener('input', () => {
+      sim.playing = false;
+      sim.t = Number(slider.value) / 100;
+      setRangeFill(slider);
+      tVal.textContent = `${slider.value}%`;
+      update();
+    });
+    playBtn.addEventListener('click', () => {
+      sim.t = 0;
+      slider.value = '0';
+      setRangeFill(slider);
+      sim.playing = true;
+      sim.t0 = performance.now();
+      update();
+    });
+    resetBtn.addEventListener('click', () => {
+      sim.playing = false;
+      sim.t = 0;
+      slider.value = '0';
+      setRangeFill(slider);
+      tVal.textContent = '0%';
+      update();
+    });
+
+    setRangeFill(slider);
+    update();
+    stage.render(0);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 06 — Identitätsmaschine                                             */
+  /* ------------------------------------------------------------------ */
+  function initUnivalence() {
+    const wrap = $('#uvWrap');
+    if (!wrap) return;
+    const stateA = $('#uvStateA');
+    const stateB = $('#uvStateB');
+    const btnA = $('#uvBtnA');
+    const btnB = $('#uvBtnB');
+    const eq = $('#uvEq');
+    const eqLabel = $('#uvEqLabel');
+    const apply = $('#uvUnivalence');
+    const reset = $('#uvReset');
+    const banner = $('#uvBanner');
+    const hint = $('#uvHint');
+    const readout = $('#uvReadout');
+
+    let on = false;
+    let univalent = false;
+
+    function render() {
+      stateA.textContent = on ? 'AN' : 'AUS';
+      stateB.textContent = on ? 'UNGERADE' : 'GERADE';
+      btnA.setAttribute('aria-pressed', on ? 'true' : 'false');
+      btnB.setAttribute('aria-pressed', on ? 'true' : 'false');
+      wrap.classList.toggle('is-univalent', univalent);
+      banner.classList.toggle('show', univalent);
+      eq.textContent = univalent ? '=' : '≃';
+      eqLabel.textContent = univalent ? 'Identität' : 'Äquivalenz';
+      apply.textContent = univalent ? 'Univalenz zurücknehmen' : 'Univalenz anwenden';
+      apply.setAttribute('aria-pressed', univalent ? 'true' : 'false');
+      apply.classList.toggle('primary', !univalent);
+      hint.innerHTML = univalent
+        ? 'Jetzt ist die Äquivalenz eine Identität. Beide Karten sind zwei Namen für denselben Typ — der Zustand bleibt synchron, weil es nur noch einen Typ gibt.'
+        : 'Beide Welten haben dieselbe Struktur. Klicke auf <b>Univalenz anwenden</b>, um aus der Äquivalenz eine Identität zu machen.';
+      readout.innerHTML = `
+        <div class="ro"><span class="k">Welt A</span><span class="v">${on ? 'AN' : 'AUS'}</span></div>
+        <div class="ro"><span class="k">Welt B</span><span class="v">${on ? 'UNGERADE' : 'GERADE'}</span></div>
+        <div class="ro"><span class="k">Beziehung</span><span class="v acc">${univalent ? 'A = B (ua)' : 'A ≃ B'}</span></div>
+        <div class="ro"><span class="k">Transport</span><span class="v">${univalent ? 'Struktur bleibt erhalten' : 'Bijektion f'}</span></div>
+      `;
+    }
+
+    function flip() {
+      on = !on;
+      render();
+    }
+
+    btnA.addEventListener('click', flip);
+    btnB.addEventListener('click', flip);
+    apply.addEventListener('click', () => {
+      univalent = !univalent;
+      render();
+    });
+    reset.addEventListener('click', () => {
+      on = false;
+      univalent = false;
+      render();
+    });
+
+    render();
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 07 — Möbius / Transport                                             */
+  /* ------------------------------------------------------------------ */
+  function initMobiusLab() {
+    const canvas = $('#mobiusCanvas');
+    if (!canvas) return;
+    const toggle = $('#mobiusToggle');
+    const slider = $('#mobiusSlider');
+    const tVal = $('#mobiusT');
+    const playBtn = $('#mobiusPlay');
+    const resetBtn = $('#mobiusReset');
+    const dotEl = $('#mobiusDot');
+    const gauge = $('#mobiusGauge');
+    const readout = $('#mobiusReadout');
+
+    const sim = {
+      twist: true,
+      u: 0,
+      playing: false,
+      t0: 0,
+      rotX: -1.02,
+      rotY: 0.35,
+      drag: null,
+      dragX: 0,
+      dragY: 0
+    };
+    const R = 1.55;
+    const WIDTH = 0.56;
+    let lastRO = performance.now();
+
+    const stage = makeStage(canvas, (ctx, w, h, time) => {
+      const now = performance.now();
+      if (sim.playing) {
+        sim.u = clamp((now - sim.t0) / 6200, 0, 1);
+        const v = Math.round(sim.u * 100);
+        if (slider.value !== String(v)) {
+          slider.value = String(v);
+          setRangeFill(slider);
+        }
+        if (sim.u >= 1) sim.playing = false;
+      }
+      tVal.textContent = `${Math.round(sim.u * 100)}%`;
+
+      const cx = w * 0.5;
+      const cy = h * 0.5;
+      const scale = Math.min(w, h) * 0.33;
+      const cam = 4.35;
+      const ax = -1.02 + sim.dragY;
+      const ay = 0.35 + sim.dragX + (REDUCED ? 0 : time * 0.000045);
+
+      const surf = (uu, vv) => {
+        const a = uu * TAU;
+        const half = sim.twist ? a / 2 : 0;
+        const rr = R + vv * WIDTH * Math.cos(half);
+        return rotate3(
+          rr * Math.cos(a),
+          rr * Math.sin(a),
+          vv * WIDTH * Math.sin(half),
+          ax, ay
+        );
+      };
+      const proj = p => project3(p, cx, cy, scale, cam);
+
+      const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(w, h) * 0.72);
+      bg.addColorStop(0, 'rgba(251,113,133,.07)');
+      bg.addColorStop(0.5, 'rgba(167,139,250,.035)');
+      bg.addColorStop(1, 'rgba(7,10,18,0)');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      const NU = 122;
+      const NV = 4;
+      const grid = [];
+      for (let i = 0; i <= NU; i++) {
+        const row = [];
+        for (let j = 0; j <= NV; j++) {
+          const uu = i / NU;
+          const vv = (j / NV) * 2 - 1;
+          row.push({ p: surf(uu, vv), uu, vv });
+        }
+        grid.push(row);
+      }
+      const quads = [];
+      for (let i = 0; i < NU; i++) {
+        for (let j = 0; j < NV; j++) {
+          const a = grid[i][j], b = grid[i + 1][j], c = grid[i + 1][j + 1], d = grid[i][j + 1];
+          const pts = [a, b, c, d].map(q => proj(q.p));
+          const z = (pts[0].z + pts[1].z + pts[2].z + pts[3].z) / 4;
+          quads.push({ pts, z, u: (i + 0.5) / NU, v: (j + 0.5) / NV });
+        }
+      }
+      quads.sort((p, q) => q.z - p.z);
+
+      for (const q of quads) {
+        const depth = clamp(1.16 - (q.z - cam) * 0.16, 0.42, 1.12);
+        const hue = 22 + q.u * 162;
+        const light = clamp(43 + depth * 16, 38, 66);
+        ctx.fillStyle = `hsla(${hue},70%,${light}%,.9)`;
+        ctx.beginPath();
+        ctx.moveTo(q.pts[0].x, q.pts[0].y);
+        ctx.lineTo(q.pts[1].x, q.pts[1].y);
+        ctx.lineTo(q.pts[2].x, q.pts[2].y);
+        ctx.lineTo(q.pts[3].x, q.pts[3].y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = `hsla(${hue},76%,${light + 9}%,.22)`;
+        ctx.lineWidth = 0.55;
+        ctx.stroke();
+      }
+
+      const edge = (vv, color, alpha, width) => {
+        const list = [];
+        for (let i = 0; i <= 180; i++) list.push(proj(surf(i / 180, vv)));
+        ctx.save();
+        ctx.strokeStyle = rgba(color, alpha);
+        ctx.lineWidth = width;
+        ctx.beginPath();
+        list.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+        ctx.stroke();
+        ctx.restore();
+      };
+      edge(-1, C.cream, 0.35, 1.2);
+      edge(1, C.cream, 0.35, 1.2);
+      edge(0, C.cream, 0.18, 0.8);
+
+      const fiber = (uu, vv) => proj(surf(uu, vv));
+      const drawFiber = (uu, color, alpha, dashed) => {
+        const a = fiber(uu, -1.14);
+        const b = fiber(uu, 1.14);
+        const t0 = fiber(uu, 0);
+        const t1 = fiber(uu, 0.88);
+        ctx.save();
+        ctx.strokeStyle = rgba(color, alpha);
+        ctx.lineWidth = dashed ? 1.2 : 2.2;
+        if (dashed) ctx.setLineDash([3, 5]);
+        ctx.shadowColor = rgba(color, dashed ? 0 : 0.8);
+        ctx.shadowBlur = dashed ? 0 : 14;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+        if (!dashed) {
+          arrowHead(ctx, t1.x, t1.y, Math.atan2(t1.y - t0.y, t1.x - t0.x), rgba(color, 0.95), 6.5);
+        }
+        ctx.restore();
+      };
+
+      drawFiber(0, C.cream, 0.34, true);
+      drawFiber(sim.u, C.amber, 0.95, false);
+      const s0p = fiber(0, 0);
+      const s1p = fiber(0, 0.88);
+      arrowHead(ctx, s1p.x, s1p.y, Math.atan2(s1p.y - s0p.y, s1p.x - s0p.x), rgba(C.cream, 0.5), 5.5);
+
+      const startP = fiber(0, 1.14);
+      if (sim.u > 0.03) {
+        ctx.font = 'italic 13px Georgia, serif';
+        ctx.fillStyle = rgba(C.cream, 0.38);
+        ctx.textAlign = 'center';
+        ctx.fillText('Start', startP.x, startP.y + 18);
+      }
+      const curP = fiber(sim.u, 1.18);
+      ctx.font = 'italic 14px Georgia, serif';
+      ctx.fillStyle = rgba(C.cream, 0.8);
+      ctx.textAlign = 'center';
+      ctx.fillText('Faser', curP.x, curP.y - 10);
+
+      const vecAt = uu => {
+        const a = surf(uu, 0);
+        const b = surf(uu, 0.18);
+        const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
+        const len = Math.hypot(dx, dy, dz) || 1;
+        return { x: dx / len, y: dy / len, z: dz / len };
+      };
+      const v0 = vecAt(0);
+      const v1 = vecAt(sim.u);
+      const dot = clamp(v0.x * v1.x + v0.y * v1.y + v0.z * v1.z, -1, 1);
+
+      if (now - lastRO > 120) {
+        lastRO = now;
+        dotEl.textContent = `${dot >= 0 ? '+' : ''}${dot.toFixed(2)}`;
+        gauge.style.left = `${50 + Math.min(0, dot) * 50}%`;
+        gauge.style.width = `${Math.abs(dot) * 50}%`;
+        const flipped = sim.twist && dot < -0.9;
+        const status = flipped
+          ? 'gespiegelt'
+          : (sim.twist ? (sim.u > 0.85 ? 'fast gespiegelt' : 'unterwegs') : 'unverändert');
+        readout.innerHTML = `
+          <div class="ro"><span class="k">Fläche</span><span class="v acc">${sim.twist ? 'Möbiusband' : 'Zylinder'}</span></div>
+          <div class="ro"><span class="k">Position</span><span class="v">${Math.round(sim.u * 100)}%</span></div>
+          <div class="ro"><span class="k">Faser · Start</span><span class="v">${dot >= 0 ? '+' : ''}${dot.toFixed(2)}</span></div>
+          <div class="ro"><span class="k">Status</span><span class="v">${status}</span></div>
+        `;
+      }
+    });
+
+    function updateControls() {
+      toggle.classList.toggle('is-active', sim.twist);
+      toggle.textContent = sim.twist ? 'Möbiusband' : 'Zylinder';
+      toggle.setAttribute('aria-pressed', sim.twist ? 'true' : 'false');
+      tVal.textContent = `${Math.round(sim.u * 100)}%`;
+    }
+
+    toggle.addEventListener('click', () => {
+      sim.twist = !sim.twist;
+      updateControls();
+    });
+
+    slider.addEventListener('input', () => {
+      sim.playing = false;
+      sim.u = Number(slider.value) / 100;
+      setRangeFill(slider);
+      updateControls();
+    });
+
+    playBtn.addEventListener('click', () => {
+      sim.u = 0;
+      slider.value = '0';
+      setRangeFill(slider);
+      sim.playing = true;
+      sim.t0 = performance.now();
+      updateControls();
+    });
+
+    resetBtn.addEventListener('click', () => {
+      sim.playing = false;
+      sim.u = 0;
+      sim.dragX = 0;
+      sim.dragY = 0;
+      slider.value = '0';
+      setRangeFill(slider);
+      updateControls();
+    });
+
+    canvas.addEventListener('pointerdown', e => {
+      sim.drag = { x: e.clientX, y: e.clientY };
+      try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+      canvas.style.cursor = 'grabbing';
+    });
+    canvas.addEventListener('pointermove', e => {
+      if (!sim.drag) return;
+      const dx = e.clientX - sim.drag.x;
+      const dy = e.clientY - sim.drag.y;
+      sim.drag.x = e.clientX;
+      sim.drag.y = e.clientY;
+      sim.dragX = clamp(sim.dragX + dx * 0.007, -1.2, 1.2);
+      sim.dragY = clamp(sim.dragY + dy * 0.006, -0.55, 0.55);
+    });
+    const endDrag = () => {
+      sim.drag = null;
+      canvas.style.cursor = 'grab';
+    };
+    canvas.addEventListener('pointerup', endDrag);
+    canvas.addEventListener('pointercancel', endDrag);
+    canvas.style.cursor = 'grab';
+
+    setRangeFill(slider);
+    updateControls();
+    stage.render(0);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* 08 — Quiz                                                           */
+  /* ------------------------------------------------------------------ */
+  function qIcon(kind, color) {
+    const open = `<svg viewBox="0 0 100 100" style="color:${color}" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">`;
+    let inner = '';
+    if (kind === 'twoA' || kind === 'twoB') {
+      const l1 = kind === 'twoA' ? 'a' : 'x';
+      const l2 = kind === 'twoA' ? 'b' : 'y';
+      inner = `
+        <circle cx="32" cy="42" r="8"/>
+        <circle cx="68" cy="42" r="8"/>
+        <text x="32" y="72" fill="currentColor" stroke="none" font-family="Georgia, serif" font-size="16" font-style="italic" text-anchor="middle">${l1}</text>
+        <text x="68" y="72" fill="currentColor" stroke="none" font-family="Georgia, serif" font-size="16" font-style="italic" text-anchor="middle">${l2}</text>`;
+    } else if (kind === 'circle') {
+      inner = `<circle cx="50" cy="50" r="30"/><circle cx="50" cy="20" r="3.2" fill="currentColor" stroke="none"/>`;
+    } else if (kind === 'square') {
+      inner = `<rect x="20" y="20" width="60" height="60" rx="3"/>`;
+    } else if (kind === 'eight') {
+      inner = `<path d="M50 50 C50 27 27 27 27 50 C27 73 50 73 50 50 C50 27 73 27 73 50 C73 73 50 73 50 50"/>`;
+    } else if (kind === 'interval') {
+      inner = `<line x1="17" y1="50" x2="83" y2="50"/><circle cx="17" cy="50" r="4" fill="currentColor" stroke="none"/><circle cx="83" cy="50" r="4" fill="currentColor" stroke="none"/>`;
+    } else if (kind === 'point') {
+      inner = `<circle cx="50" cy="50" r="5" fill="currentColor" stroke="none"/><circle cx="50" cy="50" r="17" opacity=".35"/>`;
+    }
+    return open + inner + '</g></svg>';
+  }
+
+  const QUIZ = [
+    {
+      a: 'twoA', b: 'twoB', title: 'Zwei Zwei-Elemente-Mengen',
+      answer: 'same',
+      explain: '<b>Gleich.</b> Es gibt eine Bijektion (a ↔ x, b ↔ y). Nach Univalenz ist diese Äquivalenz eine Identität: dieselbe Struktur, andere Namen.'
+    },
+    {
+      a: 'circle', b: 'square', title: 'Kreis und Quadrat-Rand',
+      answer: 'same',
+      explain: '<b>Gleich.</b> Der Rand eines Quadrats lässt sich stetig zum Kreis verbiegen (Homöomorphie). Also gibt es eine Äquivalenz — und damit eine Gleichheit.'
+    },
+    {
+      a: 'circle', b: 'eight', title: 'Kreis und Acht',
+      answer: 'diff',
+      explain: '<b>Verschieden.</b> Der Kreis hat Fundamentalgruppe ℤ. Die Acht hat zwei unabhängige Schleifen — ihre Fundamentalgruppe ist die freie Gruppe auf zwei Erzeugern. Keine Äquivalenz, keine Gleichheit.'
+    },
+    {
+      a: 'interval', b: 'point', title: 'Strecke und Punkt',
+      answer: 'same',
+      explain: '<b>Gleich — im homotopischen Sinn.</b> Beide sind kontrahierbar: Die Strecke lässt sich auf einen Punkt zusammenziehen. HoTT fragt nach der Homotopie-Gestalt, nicht nach der konkreten Einbettung.'
+    }
+  ];
+
+  function initQuiz() {
+    const grid = $('#quizGrid');
+    if (!grid) return;
+    const scoreEl = $('#quizScore');
+    const reset = $('#quizReset');
+    let score = 0;
+    let answered = 0;
+
+    function render() {
+      score = 0;
+      answered = 0;
+      scoreEl.textContent = '0';
+      grid.innerHTML = QUIZ.map((q, i) => `
+        <article class="quiz-card" data-index="${i}">
+          <div class="quiz-title">${q.title}</div>
+          <div class="quiz-visual">
+            ${qIcon(q.a, 'var(--amber)')}
+            <span class="quiz-vs">vs</span>
+            ${qIcon(q.b, 'var(--teal)')}
+          </div>
+          <div class="quiz-actions">
+            <button class="btn" data-ans="same">gleich</button>
+            <button class="btn" data-ans="diff">verschieden</button>
+          </div>
+          <div class="badge"></div>
+          <div class="quiz-explain"></div>
+        </article>
+      `).join('');
+    }
+
+    grid.addEventListener('click', e => {
+      const btn = e.target.closest('button[data-ans]');
+      if (!btn) return;
+      const card = btn.closest('.quiz-card');
+      if (!card || card.classList.contains('revealed')) return;
+      const index = Number(card.dataset.index);
+      const q = QUIZ[index];
+      const correct = btn.dataset.ans === q.answer;
+      card.classList.add('revealed', correct ? 'correct' : 'wrong');
+      const badge = $('.badge', card);
+      badge.textContent = correct ? 'Richtig' : `Nicht ganz — richtig ist „${q.answer === 'same' ? 'gleich' : 'verschieden'}“`;
+      $('.quiz-explain', card).innerHTML = q.explain;
+      $$('button[data-ans]', card).forEach(b => { b.disabled = true; });
+      if (correct) score++;
+      answered++;
+      scoreEl.textContent = String(score);
+    });
+
+    reset.addEventListener('click', render);
+    render();
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Chrome                                                              */
+  /* ------------------------------------------------------------------ */
+  function initChrome() {
+    const topbar = $('#topbar');
+    const navToggle = $('#navToggle');
+    const nav = $('#chapterNav');
+    const progress = $('#progressBar');
+
+    if (navToggle && topbar) {
+      navToggle.addEventListener('click', () => {
+        const open = topbar.classList.toggle('nav-open');
+        navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    }
+    if (nav && topbar) {
+      nav.addEventListener('click', e => {
+        if (e.target.closest('a')) {
+          topbar.classList.remove('nav-open');
+          if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+    document.addEventListener('click', e => {
+      if (!topbar || !topbar.classList.contains('nav-open')) return;
+      if (!topbar.contains(e.target)) {
+        topbar.classList.remove('nav-open');
+        if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    const onScroll = () => {
+      if (!progress) return;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const p = max > 0 ? clamp(window.scrollY / max, 0, 1) : 0;
+      progress.style.transform = `scaleX(${p})`;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    onScroll();
+
+    const sections = $$('main section[id]');
+    const links = new Map($$('#chapterNav a').map(a => [a.getAttribute('href').slice(1), a]));
+    if ('IntersectionObserver' in window) {
+      const spy = new IntersectionObserver(entries => {
+        entries.forEach(en => {
+          if (!en.isIntersecting) return;
+          links.forEach(a => a.classList.remove('active'));
+          const a = links.get(en.target.id);
+          if (a) a.classList.add('active');
+        });
+      }, { rootMargin: '-42% 0px -52% 0px', threshold: 0 });
+      sections.forEach(s => spy.observe(s));
+
+      const reveal = new IntersectionObserver(entries => {
+        entries.forEach(en => {
+          if (!en.isIntersecting) return;
+          en.target.classList.add('in');
+          reveal.unobserve(en.target);
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.06 });
+      $$('.reveal').forEach(el => reveal.observe(el));
+    } else {
+      $$('.reveal').forEach(el => el.classList.add('in'));
+    }
+
+    setTimeout(() => $$('.reveal').forEach(el => el.classList.add('in')), 3400);
+  }
+
+  document.documentElement.classList.add('js-reveal');
+  window.addEventListener('error', () => {
+    document.documentElement.classList.remove('js-reveal');
+  });
+
+  $$('input[type="range"]').forEach(setRangeFill);
+
+  initChrome();
+  initHero();
+  initSpaceLab();
+  initPathLab();
+  initHomotopyLab();
+  initLoopLab();
+  initGlueLab();
+  initUnivalence();
+  initMobiusLab();
+  initQuiz();
+
+})();
+</script>
+
+</body>
+</html>
