@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Eine kritische, interaktive Aufarbeitung der Dark-Psychology-7-in-1-Kompilation: Red Flags, Evidenzcheck, Cialdini, Gaslighting und die Ethik-Falle.">
+<meta name="color-scheme" content="dark light">
+<title>Dark Psychology 7 in 1 · Die kritische Akte</title>
+<style>
+:root{--accent:#b6ff3b;--accent-2:#ff4d5e;--accent-3:#ffd166;}
+/* ============================================================
+   SHARED SHELL — book explainers
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --bg:#080b10; --bg-soft:#0c1118; --panel:#101720; --panel-2:#141c26;
+  --ink:#f1eee6; --muted:#9aa7b4; --faint:#67737f;
+  --line:rgba(255,255,255,.10); --line-strong:rgba(255,255,255,.18);
+  --accent:#7dd3fc; --accent-2:#f5b04c; --accent-3:#9b8cff;
+  --good:#5ee0a0; --bad:#ff6b7a; --warn:#ffc861;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:"Inter","Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:18px; --r-lg:26px; --max:1180px; --ease:cubic-bezier(.22,1,.36,1);
+  --shadow:0 30px 80px -35px rgba(0,0,0,.9);
+  --glow:0 0 50px -18px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+html.light{
+  --bg:#f3efe4; --bg-soft:#ece6d8; --panel:#fbf8f0; --panel-2:#f4efe3;
+  --ink:#151b21; --muted:#5e6a75; --faint:#87919a;
+  --line:rgba(20,28,36,.12); --line-strong:rgba(20,28,36,.22);
+  --shadow:0 30px 80px -35px rgba(38,32,20,.30);
+}
+html{scroll-behavior:smooth;scroll-padding-top:92px}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-size:16.5px;line-height:1.68;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.20;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(900px 540px at 8% -8%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 62%),
+    radial-gradient(760px 520px at 96% 4%, color-mix(in srgb, var(--accent-2) 10%, transparent), transparent 62%),
+    radial-gradient(900px 680px at 50% 108%, color-mix(in srgb, var(--accent-3) 8%, transparent), transparent 64%);
+}
+img,svg,canvas{display:block;max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent);text-decoration-thickness:.08em;text-underline-offset:.18em}
+a:hover{color:var(--accent-2)}
+::selection{background:var(--accent);color:#061018}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+h1,h2,h3,h4{font-family:var(--serif);line-height:1.04;letter-spacing:-.025em;margin:0;font-weight:700}
+p{margin:0 0 1em}
+.wrap{position:relative;z-index:2}
+.container{max-width:var(--max);margin:0 auto;padding:0 26px}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.faint{color:var(--faint)}
+.small{font-size:.82rem}
+.tiny{font-size:.72rem;letter-spacing:.06em}
+.center{text-align:center}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* progress + theme */
+#progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:200;background:linear-gradient(90deg,var(--accent),var(--accent-2));box-shadow:0 0 16px var(--accent)}
+.theme-toggle{
+  position:fixed;right:18px;top:16px;z-index:210;width:42px;height:42px;border-radius:50%;
+  border:1px solid var(--line-strong);background:color-mix(in srgb,var(--panel) 80%,transparent);
+  backdrop-filter:blur(14px);display:grid;place-items:center;font-size:17px;
+  transition:transform .25s var(--ease), border-color .25s;
+}
+.theme-toggle:hover{transform:rotate(18deg) scale(1.06);border-color:var(--accent)}
+
+/* hero */
+.hero{position:relative;min-height:92vh;display:flex;align-items:center;padding:110px 0 70px;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center;width:100%}
+.kicker{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.70rem;letter-spacing:.23em;text-transform:uppercase;color:var(--accent);margin-bottom:26px}
+.kicker::before{content:"";width:34px;height:1px;background:currentColor;display:inline-block}
+.hero h1{font-size:clamp(3.2rem,8.6vw,7.4rem);letter-spacing:-.055em;line-height:.88;text-wrap:balance}
+.hero h1 em{font-style:italic;color:var(--accent);font-weight:400}
+.hero .subtitle{font-family:var(--serif);font-size:clamp(1.2rem,2.2vw,1.65rem);line-height:1.28;color:var(--muted);margin:26px 0 0;max-width:30ch}
+.hero .author{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:26px}
+.thesis{font-size:clamp(1.02rem,1.55vw,1.22rem);line-height:1.55;color:var(--ink);max-width:54ch;margin:26px 0 0;padding-left:18px;border-left:2px solid var(--accent)}
+.meta-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:30px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid var(--line);border-radius:999px;font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--panel) 55%,transparent)}
+.chip b{color:var(--ink);font-weight:600}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid transparent;
+  padding:13px 20px;border-radius:999px;background:var(--accent);color:#061018;font-weight:700;
+  font-size:.88rem;letter-spacing:.01em;transition:transform .2s var(--ease),box-shadow .2s,background .2s;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -12px var(--accent);color:#061018}
+.btn.ghost{background:transparent;border-color:var(--line-strong);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--accent);box-shadow:none;background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.btn.small{padding:9px 14px;font-size:.78rem}
+.hero-visual{position:relative;min-height:430px;display:grid;place-items:center}
+.hero-orbit{position:relative;width:min(390px,80vw);aspect-ratio:1;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center}
+.hero-orbit::before,.hero-orbit::after{content:"";position:absolute;border-radius:50%;border:1px dashed var(--line)}
+.hero-orbit::before{inset:13%}
+.hero-orbit::after{inset:27%}
+.hero-core{width:38%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--accent),color-mix(in srgb,var(--accent) 25%,#000));box-shadow:var(--glow);position:relative;z-index:2}
+.orbit-dot{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 24px var(--accent-2);animation:orbit 16s linear infinite;transform-origin:0 0}
+.orbit-dot:nth-child(2){background:var(--accent-3);box-shadow:0 0 24px var(--accent-3);animation-duration:23s;animation-direction:reverse}
+.orbit-dot:nth-child(3){background:var(--good);box-shadow:0 0 24px var(--good);animation-duration:31s;width:9px;height:9px}
+@keyframes orbit{from{transform:rotate(0) translateX(48%)}to{transform:rotate(360deg) translateX(48%)}}
+.hero-caption{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);white-space:nowrap}
+.scroll-cue{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--faint)}
+.scroll-cue span{display:block;width:1px;height:34px;background:linear-gradient(var(--accent),transparent);animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{opacity:.25;transform:scaleY(.7)}50%{opacity:1;transform:scaleY(1)}}
+
+/* dock */
+.dock{position:sticky;top:0;z-index:150;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(18px)}
+.dock-inner{max-width:var(--max);margin:0 auto;padding:10px 26px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.dock-inner::-webkit-scrollbar{display:none}
+.dock a{flex:0 0 auto;padding:8px 12px;border-radius:999px;font-family:var(--mono);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid transparent;transition:.2s}
+.dock a:hover{color:var(--ink);border-color:var(--line)}
+.dock a.active{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 40%,transparent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+
+/* sections */
+.panel{padding:92px 0;border-top:1px solid var(--line);position:relative}
+.panel:first-of-type{border-top:0}
+.section-head{display:grid;grid-template-columns:120px 1fr;gap:26px;margin-bottom:42px;align-items:start}
+.section-num{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;color:var(--accent);padding-top:12px}
+.section-head h2{font-size:clamp(2rem,4.4vw,3.5rem);line-height:.98;text-wrap:balance}
+.section-head .lede{font-size:1.05rem;line-height:1.6;color:var(--muted);max-width:62ch;margin-top:16px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.card{background:linear-gradient(145deg,color-mix(in srgb,var(--panel) 88%,transparent),color-mix(in srgb,var(--panel-2) 72%,transparent));border:1px solid var(--line);border-radius:var(--r);padding:24px;position:relative;transition:transform .28s var(--ease),border-color .28s,background .28s}
+.card:hover{transform:translateY(-4px);border-color:var(--line-strong)}
+.card h3{font-size:1.28rem;line-height:1.12;margin-bottom:9px}
+.card p{color:var(--muted);font-size:.93rem;line-height:1.62;margin:0}
+.card .tag{display:inline-block;font-family:var(--mono);font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);padding:4px 8px;border-radius:999px;margin-bottom:14px}
+.card-number{font-family:var(--serif);font-size:3.2rem;line-height:.8;color:var(--accent);opacity:.9;margin-bottom:16px;letter-spacing:-.06em}
+.big-stat{font-family:var(--serif);font-size:clamp(2.5rem,6vw,4.4rem);line-height:.85;letter-spacing:-.055em;color:var(--accent)}
+.stat-label{font-size:.88rem;color:var(--muted);margin-top:10px;line-height:1.45}
+.quote{border-left:2px solid var(--accent);padding:4px 0 4px 20px;font-family:var(--serif);font-size:1.3rem;line-height:1.4;color:var(--ink);margin:28px 0}
+.quote cite{display:block;font-family:var(--mono);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-style:normal;margin-top:12px}
+
+/* interactive shell */
+.interactive{background:linear-gradient(160deg,color-mix(in srgb,var(--panel) 92%,transparent),color-mix(in srgb,var(--bg-soft) 90%,transparent));border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:28px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.interactive::before{content:"";position:absolute;inset:0;background:radial-gradient(500px 240px at 100% 0%,color-mix(in srgb,var(--accent) 9%,transparent),transparent 65%);pointer-events:none}
+.interactive-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px;position:relative;z-index:1}
+.interactive-title{font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.interactive-hint{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;color:var(--faint);text-align:right}
+.stage{position:relative;z-index:1}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:18px 0}
+.segmented{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--bg) 40%,transparent)}
+.segmented button{border:0;background:transparent;color:var(--muted);padding:7px 12px;border-radius:999px;font-size:.75rem;font-family:var(--mono);letter-spacing:.04em;transition:.2s}
+.segmented button:hover{color:var(--ink)}
+.segmented button.on{background:var(--accent);color:#061018;font-weight:700}
+label.range-label{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;color:var(--muted);flex-wrap:wrap}
+input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:var(--line-strong);outline:none;min-width:160px;flex:1}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);box-shadow:0 0 0 1px var(--accent);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--accent);border:3px solid var(--bg);cursor:pointer}
+.meter{height:10px;border-radius:99px;background:color-mix(in srgb,var(--line) 80%,transparent);overflow:hidden}
+.meter>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:99px;transition:width .5s var(--ease)}
+.meter-label{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:.63rem;letter-spacing:.07em;color:var(--faint);margin:8px 0 4px}
+.note{border:1px solid var(--line);border-left:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 5%,transparent);border-radius:0 12px 12px 0;padding:16px 18px;font-size:.9rem;color:var(--muted);line-height:1.6}
+.note strong{color:var(--ink)}
+.note.warn{border-left-color:var(--warn);background:color-mix(in srgb,var(--warn) 6%,transparent)}
+.note.bad{border-left-color:var(--bad);background:color-mix(in srgb,var(--bad) 7%,transparent)}
+.note.good{border-left-color:var(--good);background:color-mix(in srgb,var(--good) 6%,transparent)}
+.tag-row{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}
+.tag{display:inline-flex;align-items:center;padding:4px 8px;border:1px solid var(--line);border-radius:999px;font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tag.good{color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent)}
+.tag.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+.tag.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+
+/* accordion / toggle cards */
+.toggle-card{border:1px solid var(--line);border-radius:var(--r);background:color-mix(in srgb,var(--panel) 70%,transparent);overflow:hidden;transition:border-color .2s}
+.toggle-card.open{border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+.toggle-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;border:0;background:transparent;text-align:left;color:var(--ink);font-weight:600;font-size:.96rem}
+.toggle-btn .sign{font-family:var(--mono);color:var(--accent);font-size:1.1rem;transition:transform .25s}
+.toggle-card.open .sign{transform:rotate(45deg)}
+.toggle-body{max-height:0;overflow:hidden;transition:max-height .35s var(--ease);}
+.toggle-body-inner{padding:0 20px 20px;color:var(--muted);font-size:.9rem;line-height:1.65}
+.toggle-body-inner strong{color:var(--ink)}
+
+/* quiz */
+.quiz{background:linear-gradient(160deg,color-mix(in srgb,var(--panel) 95%,transparent),color-mix(in srgb,var(--bg-soft) 92%,transparent));border:1px solid var(--line-strong);border-radius:var(--r-lg);padding:28px;box-shadow:var(--shadow)}
+.quiz-top{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+.quiz-count{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+.quiz-score{font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+.quiz-dots{display:flex;gap:5px;margin-bottom:22px}
+.quiz-dots i{width:100%;height:3px;border-radius:99px;background:var(--line);transition:.3s}
+.quiz-dots i.done{background:var(--accent)}
+.quiz-q{font-family:var(--serif);font-size:clamp(1.25rem,2.2vw,1.6rem);line-height:1.25;margin:0 0 18px}
+.quiz-options{display:grid;gap:9px}
+.quiz-opt{display:flex;gap:12px;align-items:flex-start;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--bg) 30%,transparent);color:var(--ink);text-align:left;font-size:.9rem;line-height:1.45;transition:.18s}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,transparent);transform:translateX(3px)}
+.quiz-opt .key{font-family:var(--mono);font-size:.7rem;color:var(--faint);border:1px solid var(--line);border-radius:5px;width:22px;height:22px;display:grid;place-items:center;flex:0 0 auto;margin-top:1px}
+.quiz-opt.correct{border-color:var(--good);background:color-mix(in srgb,var(--good) 10%,transparent)}
+.quiz-opt.correct .key{border-color:var(--good);color:var(--good)}
+.quiz-opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent)}
+.quiz-opt.wrong .key{border-color:var(--bad);color:var(--bad)}
+.quiz-opt:disabled{cursor:default;opacity:.7}
+.quiz-opt.correct:disabled,.quiz-opt.wrong:disabled{opacity:1}
+.quiz-feedback{margin-top:16px;font-size:.9rem;line-height:1.6;color:var(--muted);min-height:24px}
+.quiz-feedback strong{color:var(--ink)}
+.quiz-actions{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-top:20px;flex-wrap:wrap}
+.quiz-end{text-align:center;padding:18px 0}
+.quiz-end .big-stat{font-size:5rem}
+.quiz-end p{max-width:48ch;margin:10px auto 0;color:var(--muted)}
+.quiz-end .btn{margin-top:22px}
+
+/* remember */
+.remember{counter-reset:r;display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--line)}
+.remember li{list-style:none;display:grid;grid-template-columns:44px 1fr;gap:12px;padding:18px 18px 18px 0;border-bottom:1px solid var(--line);font-size:.92rem;line-height:1.55}
+.remember li::before{counter-increment:r;content:counter(r,decimal-leading-zero);font-family:var(--mono);font-size:.65rem;color:var(--accent);padding-top:4px}
+.remember li:nth-child(odd){padding-right:28px}
+.remember li:nth-child(even){padding-left:28px;border-left:1px solid var(--line)}
+.remember-list{padding:0;margin:0}
+
+/* footer */
+.footer{padding:60px 0 80px;border-top:1px solid var(--line);color:var(--faint);font-size:.8rem;line-height:1.65}
+.footer .row{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap}
+.footer a{color:var(--muted)}
+.footer strong{color:var(--muted);font-weight:600}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* generic page bits */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+.kpi{padding:18px;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--panel) 55%,transparent)}
+.kpi b{display:block;font-family:var(--serif);font-size:2rem;line-height:.9;color:var(--accent);letter-spacing:-.04em}
+.kpi span{display:block;margin-top:7px;font-size:.78rem;color:var(--muted);line-height:1.4}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.split.tight{gap:18px}
+.stack{display:grid;gap:12px}
+.hr{height:1px;background:var(--line);border:0;margin:26px 0}
+.mini-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:7px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-family:var(--mono);font-size:.62rem;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+
+@media(max-width:900px){
+  .hero{min-height:auto;padding:100px 0 70px}
+  .hero-grid{grid-template-columns:1fr;gap:36px}
+  .hero-visual{min-height:300px;order:-1}
+  .hero .subtitle{max-width:44ch}
+  .section-head{grid-template-columns:1fr;gap:8px}
+  .section-num{padding-top:0}
+  .grid-3,.grid-4{grid-template-columns:repeat(2,1fr)}
+  .remember{grid-template-columns:1fr}
+  .remember li:nth-child(odd),.remember li:nth-child(even){padding:18px 0;border-left:0}
+  .kpi-row{grid-template-columns:1fr 1fr}
+}
+@media(max-width:620px){
+  body{font-size:15.5px}
+  .container{padding:0 18px}
+  .dock-inner{padding:9px 18px}
+  .panel{padding:68px 0}
+  .grid-2,.grid-3,.grid-4,.split{grid-template-columns:1fr}
+  .interactive,.quiz{padding:18px;border-radius:20px}
+  .theme-toggle{top:12px;right:12px;width:38px;height:38px}
+  .kpi-row{grid-template-columns:1fr}
+  .remember li{border-left:0!important}
+  .hero h1{font-size:clamp(3rem,15vw,5rem)}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+
+
+body{background-image:repeating-linear-gradient(135deg,transparent 0 26px,color-mix(in srgb,var(--accent) 3%,transparent) 26px 27px)}
+.dp7-art{position:relative;width:min(430px,88vw);aspect-ratio:1;display:grid;place-items:center}
+.doc{position:relative;width:66%;aspect-ratio:.72;background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line-strong);border-radius:6px;transform:rotate(-4deg);box-shadow:var(--shadow);padding:22px;overflow:hidden}
+.doc::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,transparent 0 18px,color-mix(in srgb,var(--ink) 7%,transparent) 18px 19px);pointer-events:none}
+.doc h4{font-family:var(--serif);font-size:1.25rem;line-height:1.05;margin-bottom:14px;position:relative}
+.doc .line{height:5px;background:color-mix(in srgb,var(--muted) 28%,transparent);border-radius:2px;margin:9px 0;position:relative}
+.doc .line.short{width:58%}.doc .line.med{width:78%}
+.doc .redact{background:var(--ink);color:transparent;padding:0 3px}
+.doc .stamp{position:absolute;right:12px;bottom:16px;border:2px solid var(--accent-2);color:var(--accent-2);font-family:var(--mono);font-size:.56rem;letter-spacing:.18em;padding:5px 8px;transform:rotate(-9deg);text-transform:uppercase;opacity:.9}
+.doc .seal{position:absolute;left:-8px;top:16px;background:var(--accent);color:#0a1204;font-family:var(--mono);font-size:.5rem;letter-spacing:.1em;padding:4px 8px;transform:rotate(-90deg);transform-origin:left top}
+.dp7-hero h1{font-size:clamp(2.8rem,7.4vw,6.4rem);text-transform:uppercase;letter-spacing:-.06em}
+.dp7-hero h1 em{color:var(--accent);font-style:normal}
+.warning-tape{display:inline-flex;align-items:center;gap:8px;margin-top:22px;background:repeating-linear-gradient(90deg,var(--accent) 0 12px,#0a1204 12px 24px);color:transparent;border:1px solid var(--accent);padding:7px 12px;font-family:var(--mono);font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;border-radius:2px}
+.warning-tape span{background:#0a1204;color:var(--accent);padding:0 4px}
+
+.book-map{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.book{ border:1px solid var(--line);border-radius:9px;padding:11px;background:color-mix(in srgb,var(--panel) 50%,transparent);font-size:.72rem;line-height:1.4;color:var(--muted)}
+.book b{display:block;font-family:var(--mono);font-size:.55rem;color:var(--accent);letter-spacing:.1em;margin-bottom:4px}
+.book strong{display:block;font-family:var(--serif);font-size:.86rem;line-height:1.15;color:var(--ink);margin-bottom:3px}
+.flag-stage{display:grid;grid-template-columns:1.1fr .9fr;gap:26px;align-items:start}
+.flag-list{display:grid;gap:7px}
+.flag{display:flex;align-items:flex-start;gap:10px;border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:color-mix(in srgb,var(--bg) 25%,transparent);font-size:.82rem;line-height:1.45;color:var(--muted);cursor:pointer;transition:.2s;text-align:left}
+.flag:hover{border-color:var(--accent)}
+.flag input{accent-color:var(--accent);width:15px;height:15px;margin-top:2px;flex:0 0 auto}
+.flag.on{border-color:var(--accent);color:var(--ink);background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.flag-meter{border:1px solid var(--line);border-radius:16px;padding:22px;background:color-mix(in srgb,var(--panel) 55%,transparent)}
+.flag-score{font-family:var(--serif);font-size:4.5rem;line-height:.8;color:var(--accent);letter-spacing:-.05em}
+.flag-score small{font-family:var(--mono);font-size:.6rem;letter-spacing:.1em;color:var(--faint);display:block;margin-top:8px}
+.flag-verdict{font-size:.88rem;line-height:1.6;color:var(--muted);margin-top:14px;min-height:86px}
+.flag-script{border-left:2px solid var(--accent-2);padding-left:12px;margin-top:14px;font-size:.82rem;line-height:1.55;color:var(--muted)}
+.flag-script b{color:var(--ink)}
+.claim-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.claim{border:1px solid var(--line);border-radius:14px;padding:16px;background:color-mix(in srgb,var(--panel) 52%,transparent)}
+.claim .tag{margin-bottom:8px}
+.claim b{display:block;font-family:var(--serif);font-size:1.02rem;line-height:1.2;margin-bottom:6px}
+.claim p{font-size:.82rem;line-height:1.55;color:var(--muted);margin:0}
+.evidence{display:flex;gap:4px;margin:8px 0 4px}
+.evidence i{width:7px;height:7px;border-radius:50%;background:var(--line-strong)}
+.evidence i.on{background:var(--accent)}
+.evidence i.bad{background:var(--bad)}
+.claim .src{font-family:var(--mono);font-size:.56rem;color:var(--faint);line-height:1.45;margin-top:7px}
+.cialdini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.cial{border:1px solid var(--line);border-radius:12px;padding:14px;background:color-mix(in srgb,var(--panel) 55%,transparent);text-align:left;color:var(--ink);transition:.2s}
+.cial:hover{border-color:var(--accent);transform:translateY(-2px)}
+.cial b{display:block;font-family:var(--serif);font-size:1.04rem;margin-bottom:4px}
+.cial span{font-size:.72rem;color:var(--muted);line-height:1.4;display:block}
+.cial .stars{font-family:var(--mono);font-size:.56rem;color:var(--accent);letter-spacing:.1em;margin-bottom:6px}
+.cial-detail{margin-top:14px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;padding:16px 18px;background:color-mix(in srgb,var(--bg) 30%,transparent);font-size:.88rem;line-height:1.6;color:var(--muted);min-height:90px}
+.cial-detail strong{color:var(--ink)}
+.gas-wrap{display:grid;grid-template-columns:340px 1fr;gap:34px;align-items:center}
+.gas-loop{position:relative;width:min(340px,82vw);aspect-ratio:1;margin:0 auto}
+.gas-loop svg{width:100%;height:100%}
+.gas-loop .ring{fill:none;stroke:color-mix(in srgb,var(--line-strong) 80%,transparent);stroke-width:1;stroke-dasharray:4 5}
+.gas-node{position:absolute;transform:translate(-50%,-50%);border:1px solid var(--line-strong);background:color-mix(in srgb,var(--bg) 82%,transparent);color:var(--muted);border-radius:999px;padding:8px 10px;font-family:var(--mono);font-size:.56rem;letter-spacing:.04em;line-height:1.2;white-space:nowrap;transition:.2s;z-index:2}
+.gas-node:hover,.gas-node.on{border-color:var(--accent-2);color:var(--ink);background:var(--panel)}
+.gas-detail{border:1px solid var(--line);border-radius:16px;padding:22px;background:color-mix(in srgb,var(--panel) 55%,transparent);min-height:240px}
+.gas-detail h4{font-size:1.7rem;margin-bottom:8px}
+.gas-detail p{font-size:.9rem;line-height:1.62;color:var(--muted);margin:0 0 12px}
+.gas-detail .phrase{font-family:var(--serif);font-size:1.05rem;color:var(--ink);border-left:2px solid var(--accent-2);padding-left:12px;margin:12px 0}
+.gas-detail .counter{font-size:.84rem;color:var(--good);line-height:1.55}
+.ethics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.eth{border:1px solid var(--line);border-radius:14px;padding:18px;background:color-mix(in srgb,var(--panel) 50%,transparent)}
+.eth h4{font-size:1.25rem;margin-bottom:8px}
+.eth p{font-size:.82rem;line-height:1.55;color:var(--muted);margin:0}
+.eth.good{border-color:color-mix(in srgb,var(--good) 30%,transparent)}.eth.good h4{color:var(--good)}
+.eth.bad{border-color:color-mix(in srgb,var(--bad) 30%,transparent)}.eth.bad h4{color:var(--bad)}
+.eth.warn{border-color:color-mix(in srgb,var(--warn) 30%,transparent)}.eth.warn h4{color:var(--warn)}
+@media(max-width:900px){.book-map{grid-template-columns:1fr 1fr}.flag-stage,.gas-wrap{grid-template-columns:1fr}.claim-grid{grid-template-columns:1fr}.cialdini-grid{grid-template-columns:1fr 1fr}.ethics-grid{grid-template-columns:1fr}}
+@media(max-width:620px){.book-map,.cialdini-grid{grid-template-columns:1fr}}
+
+</style>
+</head>
+<body>
+<a class="sr-only" href="#kurz">Zum Inhalt springen</a>
+<div id="progress"></div>
+<button class="theme-toggle" type="button" aria-label="Design wechseln"></button>
+<div class="wrap">
+
+<header class="hero dp7-hero"><div class="container"><div class="hero-grid">
+<div>
+<div class="kicker">7-in-1-Kompilation · kritische Akte</div>
+<h1>Dark<br>Psychology<br><em>7 in 1</em></h1>
+<p class="subtitle">Ein Warnhinweis in Buchform.</p>
+<div class="author">Was davon Psychologie ist – und was Marketing</div>
+<p class="thesis">Das Buch verkauft die Krankheit und die Heilung zugleich: Es beschreibt Manipulation, um sie angeblich abzuwehren – und liefert dabei selbst Anleitungen. Diese Seite liest es als Fallstudie, nicht als Ratgeber.</p>
+<div class="meta-row"><span class="chip"><b>6–8</b> Min</span><span class="chip"><b>7</b> Bücher</span><span class="chip"><b>0</b> Quellen</span><span class="chip">kritisch</span></div>
+<div class="hero-actions"><a class="btn" href="#muster">Muster prüfen</a><a class="btn ghost" href="#claims">Behauptungen prüfen</a></div>
+<div class="warning-tape"><span>Vorsicht · keine Therapie · keine Evidenz</span></div>
+</div>
+<div class="hero-visual"><div class="dp7-art" aria-hidden="true"><div class="doc"><span class="seal">CONFIDENTIAL</span><h4>DARK PSYCHOLOGY<br>7 BOOKS IN 1</h4><div class="line med"></div><div class="line"></div><div class="line short"></div><div class="line"></div><div class="line med"></div><div class="line short"></div><div class="stamp">Unverified</div></div></div><div class="hero-caption">8 Namen · 7 Bücher · 0 Fußnoten</div></div>
+</div></div><div class="scroll-cue">Scrollen<span></span></div></header>
+
+<nav class="dock" aria-label="Kapitel"><div class="dock-inner"><a href="#kurz" data-target="kurz">60 Sek</a><a href="#datei" data-target="datei">Akte</a><a href="#muster" data-target="muster">Muster</a><a href="#claims" data-target="claims">Claims</a><a href="#cialdini" data-target="cialdini">Influence</a><a href="#gaslighting" data-target="gaslighting">Gaslighting</a><a href="#ethik" data-target="ethik">Ethik</a><a href="#quiz" data-target="quiz">Quiz</a><a href="#merken" data-target="merken">Merken</a></div></nav>
+<main>
+
+<section id="kurz" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">01 / KURZ</div><div><h2>Das Urteil in 60 Sekunden</h2><p class="lede">Kein peer-reviewtes Buch, kein Verlag, keine Bibliografie. Eine selbst publizierte Kompilation, deren Autorennamen echte Bestseller-Autoren nachahmen. Nützlich ist nur der generische Selbstschutz – der Rest ist oft Pop-Psychologie mit gefährlichen Beigaben.</p></div></div>
+<div class="grid-3">
+<div class="card"><div class="big-stat">7</div><div class="stat-label">Bücher in einem Dateiband. Die Kapitel wiederholen sich, widersprechen sich und wechseln die Stimme.</div></div>
+<div class="card"><div class="big-stat">8</div><div class="stat-label">Namen auf dem Cover – Komposite aus Goleman, Bradberry, Carnegie und Greene. Die Copyright-Angaben widersprechen sich.</div></div>
+<div class="card"><div class="big-stat">0</div><div class="stat-label">Quellenangaben für die vielen „Studien“. Keine Autorin, kein Journal, kein Jahr, kein Link.</div></div>
+</div>
+<div class="note bad" style="margin-top:18px"><strong>Die wichtigste Warnung:</strong> Das Buch mischt Selbstschutz mit Anleitungen zu Coercive Control – „teste es an deinem Partner“, „nutze Angst und Erleichterung“, „lass sie glauben, es sei ihre Idee“. Diese Seite erklärt die Muster, aber nicht als Rezept.</div>
+</div></section>
+
+<section id="datei" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">02 / AKTE</div><div><h2>Was hier eigentlich vorliegt</h2><p class="lede">Dieformalen Red Flags sind nicht Nebensache. Sie entscheiden, ob man das Buch als Quelle, als Unterhaltung oder als Warnung liest.</p></div></div>
+<div class="grid-2">
+<div><div class="book-map">
+<div class="book"><b>BUCH 1</b><strong>Dark Psychology V.1</strong>Überblick, Manipulation, NLP, Hypnose, Prävention.</div>
+<div class="book"><b>BUCH 2</b><strong>Dark Psychology V.2</strong>Dark Triad, „undetected mind control“, Schattenarbeit.</div>
+<div class="book"><b>BUCH 3</b><strong>How to Influence</strong>Körperlanguage, Influence, teils fremde Workplace-Kapitel.</div>
+<div class="book"><b>BUCH 4</b><strong>Emotional Intelligence 2.0</strong>EI, Mythen, Arbeit, Gesundheit, Beziehungen.</div>
+<div class="book"><b>BUCH 5</b><strong>Gaslighting</strong>Filmgeschichte, Taktiken, Skripte, NPD, Recovery.</div>
+<div class="book"><b>BUCH 6</b><strong>Master Your Emotions</strong>CBT-nahe Techniken plus Herz-Hirn-Pseudoscience.</div>
+<div class="book"><b>BUCH 7</b><strong>Difficult People</strong>Big Five, Typen, Coping, Verhandlung.</div>
+<div class="book"><b>RED FLAG</b><strong>Kopieren & Einfügen</strong>Ein Kapitel aus Buch 1 erscheint fast wörtlich in Buch 3.</div>
+</div></div>
+<div class="stack">
+<div class="note warn"><strong>Namens-Baukasten:</strong> „Robert Dale Goleman“ kombiniert Robert Greene, Dale Carnegie und Daniel Goleman. „Daniel Brandon Bradberry“ kombiniert Goleman und Travis Bradberry. Das ist Keyword-Engineering, keine stabile Autorschaft.</div>
+<div class="note"><strong>Übersetzungsartefakte:</strong> „Understudies“ für Schüler, „associate degree“ für „a“, „visual correspondence“ für nonverbale Kommunikation. Ein klarer Hinweis auf maschinelle oder billige Produktion.</div>
+<div class="note bad"><strong>Inhaltliche Fehler:</strong> Psychopathie wird mit Psychose verwechselt; „alle Soziopathen sind Narzissten“ ist falsch; niedrige Gewissenhaftigkeit wird als Ursache für *bessere* Impulskontrolle dargestellt.</div>
+</div>
+</div>
+</div></section>
+
+<section id="muster" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">03 / MUSTER</div><div><h2>Muster erkennen, nicht Menschen diagnostizieren</h2><p class="lede">Ein einzelnes Warnsignal ist kein Urteil. Problematisch wird es, wenn mehrere Verhaltensweisen über Zeit zusammenkommen – mit Machtgefälle, Angst und hohen Exit-Kosten. Klicke an, was du wiederholt erlebst.</p></div></div>
+<div class="interactive"><div class="interactive-head"><div class="interactive-title">Red-Flag-Check</div><div class="interactive-hint">kein Diagnose-Tool · Muster, keine Person</div></div>
+<div class="flag-stage">
+<div class="flag-list" id="dp7-flags">
+<label class="flag"><input type="checkbox" value="1"> Schnelle Intimität, Love Bombing, Tempo, das keine Bedenkzeit lässt.</label>
+<label class="flag"><input type="checkbox" value="2"> Isolation von Freunden, Familie oder Unterstützungsnetz.</label>
+<label class="flag"><input type="checkbox" value="3"> Schuld, Scham oder Liebesentzug als Steuerungsmittel.</label>
+<label class="flag"><input type="checkbox" value="4"> Das Ziel verschiebt sich ständig; nichts ist je genug.</label>
+<label class="flag"><input type="checkbox" value="5"> Ereignisse werden geleugnet, obwohl du sie dokumentiert hast.</label>
+<label class="flag"><input type="checkbox" value="6"> Künstliche Dringlichkeit, die verhindert, dass du nachdenkst.</label>
+<label class="flag"><input type="checkbox" value="7"> „Nein“ wird bestraft – mit Wut, Rückzug oder Strafe.</label>
+<label class="flag"><input type="checkbox" value="8"> Kontrolle über Geld, Handy, Standort oder Kontakte.</label>
+<label class="flag"><input type="checkbox" value="9"> Bekannte Verletzlichkeiten werden gezielt gegen dich verwendet.</label>
+<label class="flag"><input type="checkbox" value="10"> DARVO: leugnen, angreifen, Opfer und Täter vertauschen.</label>
+</div>
+<div class="flag-meter"><div class="flag-score" id="dp7-score">0</div><small>von 10 Mustern markiert</small><div class="flag-verdict" id="dp7-verdict">Noch nichts markiert. Einzelne schlechte Tage sind kein Muster.</div><div class="flag-script" id="dp7-script"><b>Ein Satz, der immer geht:</b> „Ich brauche Bedenkzeit und entscheide das nicht jetzt.“</div><div class="tag-row"><span class="tag">Muster ≠ Diagnose</span><span class="tag">Kontext prüfen</span><span class="tag">Sicherheit zuerst</span></div></div>
+</div></div>
+<div class="note" style="margin-top:18px"><strong>Der Unterschied:</strong> Normaler Konflikt erlaubt beiden Seiten Gehör, Verantwortung und Reparatur. Coercive Control ist wiederholt, angstgetrieben und auf Kontrolle ausgerichtet. Bei Gewalt oder Drohungen: Sicherheitsplan, lokale Hilfe, nicht allein konfrontieren.</div>
+</div></section>
+
+<section id="claims" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">04 / CLAIMS</div><div><h2>Claim-Autopsie</h2><p class="lede">Acht Behauptungen aus dem Buch, daneben der Forschungsstand. Die Punktleiste zeigt nicht „wahr/falsch“, sondern wie belastbar die Aussage ist.</p></div></div>
+<div class="claim-grid">
+<div class="claim"><span class="tag bad">Mythos</span><b>„90 % der Kommunikation sind nonverbal.“</b><p>Mehrabians 7-38-55-Formel untersuchte Gefühle und Einstellungen in widersprüchlichen Botschaften – nicht jede Kommunikation. Die Verallgemeinerung ist falsch.</p><div class="evidence"><i class="bad on"></i><i></i><i></i><i></i></div><div class="src">Evidenz: schwach · Quelle: Mehrabian, 1967</div></div>
+<div class="claim"><span class="tag bad">Pseudowissenschaft</span><b>NLP-Augenbewegungen verraten Lügen.</b><p>Kontrollierte Tests finden keinen zuverlässigen Zusammenhang zwischen Blickrichtung und Täuschung. NLP als Paket ist nicht evidenzbasiert.</p><div class="evidence"><i class="bad on"></i><i></i><i></i><i></i></div><div class="src">Evidenz: schwach · Reviews zu NLP</div></div>
+<div class="claim"><span class="tag bad">Falsch</span><b>Hypnose kann ohne Wissen des Opfers als Mind Control wirken.</b><p>Hypnose ist real und kann bei Schmerz oder Angst helfen, aber sie setzt Kooperation und Erwartung voraus. Menschen können widerstehen; sie ist kein Schalter.</p><div class="evidence"><i class="bad on"></i><i></i><i></i><i></i></div><div class="src">Evidenz: gut für klinische Hypnose, nicht für Mind Control</div></div>
+<div class="claim"><span class="tag bad">Vereinfacht</span><b>Die Dark-Triad-Eigenschaften sind genetisch.</b><p>Narzissmus, Machiavellismus und Psychopathie sind teils erblich, aber polygen und stark umweltabhängig. Gene sind keine Bestimmung.</p><div class="evidence"><i class="on"></i><i class="on"></i><i></i><i></i></div><div class="src">Evidenz: mittel · Verhaltensgenetik</div></div>
+<div class="claim"><span class="tag bad">Marketing</span><b>90 % der Top-Performer haben hohe emotionale Intelligenz.</b><p>EI ist ein umstrittenes Konstrukt; der inkrementelle Nutzen über IQ und Persönlichkeit hinaus ist bescheiden. Die 90-%-Zahl ist nicht belegt.</p><div class="evidence"><i class="bad on"></i><i></i><i></i><i></i></div><div class="src">Evidenz: schwach · EI-Forschung</div></div>
+<div class="claim"><span class="tag bad">Begriffsfehler</span><b>Psychopathie, Soziopathie und Psychose sind austauschbar.</b><p>Psychopathie ist ein Persönlichkeitskonstrukt, Psychose ein Verlust des Realitätsbezugs. Das ist kein Detail, sondern ein fundamentales Missverständnis.</p><div class="evidence"><i class="bad on"></i><i></i><i></i><i></i></div><div class="src">Evidenz: klar falsch · klinische Terminologie</div></div>
+<div class="claim"><span class="tag bad">Spekulativ</span><b>Brainwashing hinterlässt „starre neuronale Bahnen“.</b><p>Coercive Persuasion in Kulten und abusive Relationships ist real. Ein dauerhaftes neuronales Umschreiben durch „Mind Control“ ist nicht belegt.</p><div class="evidence"><i class="on"></i><i></i><i></i><i></i></div><div class="src">Evidenz: gemischt · Kultforschung, keine Neurowissenschaft</div></div>
+<div class="claim"><span class="tag bad">Victim-Blaming</span><b>Manipulation funktioniert nur, wenn das Opfer es zulässt.</b><p>Das verschiebt Verantwortung auf die Zielperson. Coercive Control nutzt Macht, Abhängigkeit, Angst und Isolation – nicht die „Dummheit“ des Opfers.</p><div class="evidence"><i class="bad on"></i><i></i><i></i><i></i></div><div class="src">Evidenz: normativ falsch · Missbrauchsforschung</div></div>
+</div>
+</div></section>
+
+<section id="cialdini" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">05 / INFLUENCE</div><div><h2>Was wirklich wirkt – und seinen Schatten</h2><p class="lede">Diese sieben Prinzipien stammen nicht aus dem Buch, sondern aus Cialdinis Forschung. Sie funktionieren – was sie nicht tun: eine Garantie geben. Jedes hat einen ethischen und einen dunklen Gebrauch.</p></div></div>
+<div class="cialdini-grid" id="dp7-cialdini"></div>
+<div class="cial-detail" id="dp7-cial-detail">Klicke eine Karte. Die Sterne sind eine grobe Evidenz-Einordnung, keine Präzisionsmessung.</div>
+</div></section>
+
+<section id="gaslighting" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">06 / GASLIGHT</div><div><h2>Die Gaslighting-Schleife</h2><p class="lede">Gaslighting ist kein einzelner Widerspruch. Es ist ein Muster, das die Wahrnehmung einer Person systematisch untergräbt – meist mit Machtgefälle. Klicke die Stationen.</p></div></div>
+<div class="gas-wrap">
+<div class="gas-loop"><svg viewBox="0 0 320 320" aria-hidden="true"><circle class="ring" cx="160" cy="160" r="126"/><circle class="ring" cx="160" cy="160" r="92" style="opacity:.4"/></svg>
+<button class="gas-node on" data-gas="0" style="left:50%;top:8%">Leugnen</button>
+<button class="gas-node" data-gas="1" style="left:84%;top:30%">Verwirren</button>
+<button class="gas-node" data-gas="2" style="left:84%;top:72%">Isolieren</button>
+<button class="gas-node" data-gas="3" style="left:50%;top:92%">Beschuldigen</button>
+<button class="gas-node" data-gas="4" style="left:16%;top:72%">Scheinreparatur</button>
+<button class="gas-node" data-gas="5" style="left:16%;top:30%">Wiederholen</button>
+</div>
+<div class="gas-detail" id="dp7-gas-detail"></div>
+</div>
+<div class="note bad" style="margin-top:18px"><strong>Nicht jede Meinungsverschiedenheit ist Gaslighting.</strong> Menschen erinnern sich unterschiedlich und können sich irren. Gaslighting ist wiederholt, absichtlich oder grob fahrlässig, mit dem Effekt, dass du deiner Wahrnehmung nicht mehr traust – oft kombiniert mit Isolation und Kontrolle.</div>
+</div></section>
+
+<section id="ethik" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">07 / ETHIK</div><div><h2>Die Ethik-Falle</h2><p class="lede">Das Buch sagt, es wolle schützen. Gleichzeitig trainiert es Techniken, die nur funktionieren, wenn die andere Person getäuscht wird. Das ist kein kleiner Widerspruch.</p></div></div>
+<div class="ethics-grid">
+<div class="eth good"><h4>Was tatsächlich hilft</h4><p>Grenzen, Dokumentation, Unterstützung, Abstand, klare Sprache, Sicherheitsplanung. Diese Dinge brauchen keine Menschenkenntnis-Magie.</p></div>
+<div class="eth warn"><h4>Was gemischt ist</h4><p>Körpersprache lesen, Rapport, Verhandlung, Selbstvertrauen. Nützlich – aber kontextabhängig und kein Lügendetektor.</p></div>
+<div class="eth bad"><h4>Was schadet</h4><p>Angst-Erleichterungs-Zyklen, Isolation, Verwirrung, „teste es an deinem Partner“, Schuld auf das Opfer schieben. Das ist Missbrauch, nicht Selbstschutz.</p></div>
+</div>
+<div class="quote">„Der beste Schutz ist nicht, Menschen zu ‚lesen‘. Es ist, Muster zu erkennen, Entscheidungen zu verlangsamen und Support zu holen.“<cite>Kritische Zusammenfassung</cite></div>
+</div></section>
+
+<section id="quiz" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">08 / QUIZ</div><div><h2>Prüf dich</h2><p class="lede">Zwölf Fragen, die Buchbehauptungen von Evidenz trennen.</p></div></div>
+<div class="quiz" id="dp7-quiz"></div>
+</div></section>
+
+<section id="merken" class="panel" data-nav><div class="container reveal">
+<div class="section-head"><div class="section-num">09 / MERKEN</div><div><h2>Acht Dinge, die bleiben</h2></div></div>
+<ol class="remember remember-list">
+<li>Das ist eine selbst publizierte Kompilation, keine verlässliche Psychologie-Quelle.</li>
+<li>Die Autorennamen sind Komposite; die internen Credits widersprechen sich.</li>
+<li>Die Dark Triad ist ein Traits-Cluster – keine Diagnose und kein Seduktions-Superkraft.</li>
+<li>Cialdinis Prinzipien haben Evidenz; NLP als Paket nicht.</li>
+<li>Hypnose ist kein Mind Control; Menschen behalten Agency und können widerstehen.</li>
+<li>Körpersprache ist kontextabhängig; es gibt keinen zuverlässigen Lügen-Cue.</li>
+<li>Gaslighting ist ein Missbrauchsmuster, keine Checklisten-Diagnose.</li>
+<li>Die „Abwehr“-Tipps sind mit offensiven Manipulationstechniken vermischt – nutze Grenzen, Dokumentation, Support.</li>
+</ol>
+</div></section>
+
+</main>
+<footer class="footer"><div class="container"><div class="row">
+<div><strong>Dark Psychology 7 in 1 · Die kritische Akte</strong><br>Interaktive Essenz · 5–10 Minuten · aus dem extrahierten Text erarbeitet.</div>
+<div>Keine Seitenzahlen: Zitate und Kapitelangaben folgen der Textdatei.<br>Kritische Einordnung ist Teil der Zusammenfassung.</div>
+</div></div></footer>
+</div>
+<script>
+/* shared shell */
+(function(){
+  "use strict";
+  const root = document.documentElement;
+  const saved = localStorage.getItem("ex-theme");
+  if(saved === "light") root.classList.add("light");
+  const toggle = document.querySelector(".theme-toggle");
+  if(toggle){
+    const paint = () => {
+      toggle.setAttribute("aria-label", root.classList.contains("light") ? "Dunkles Design" : "Helles Design");
+      toggle.innerHTML = root.classList.contains("light")
+        ? '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.2M12 19.8V22M2 12h2.2M19.8 12H22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M19.1 4.9l-1.6 1.6M6.5 17.5l-1.6 1.6"/></svg>'
+        : '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.2 15.2A8.4 8.4 0 1 1 8.8 3.8a6.8 6.8 0 0 0 11.4 11.4Z"/></svg>';
+    };
+    paint();
+    toggle.addEventListener("click", () => {
+      root.classList.toggle("light");
+      localStorage.setItem("ex-theme", root.classList.contains("light") ? "light" : "dark");
+      paint();
+      document.dispatchEvent(new CustomEvent("ex-theme-change"));
+    });
+  }
+
+  const bar = document.getElementById("progress");
+  const onScroll = () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    if(bar) bar.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + "%";
+    const links = document.querySelectorAll(".dock a[data-target]");
+    let current = "";
+    document.querySelectorAll("[data-nav]").forEach(sec => {
+      if(sec.getBoundingClientRect().top < window.innerHeight * 0.34) current = sec.id;
+    });
+    links.forEach(a => a.classList.toggle("active", a.dataset.target === current));
+  };
+  window.addEventListener("scroll", onScroll, {passive:true});
+  window.addEventListener("resize", onScroll);
+  onScroll();
+
+  const reveal = document.querySelectorAll(".reveal");
+  if("IntersectionObserver" in window){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, {threshold:.08, rootMargin:"0px 0px -8% 0px"});
+    reveal.forEach(el => io.observe(el));
+  } else reveal.forEach(el => el.classList.add("in"));
+
+  document.querySelectorAll(".toggle-card").forEach(card => {
+    const btn = card.querySelector(".toggle-btn");
+    const body = card.querySelector(".toggle-body");
+    if(!btn || !body) return;
+    btn.addEventListener("click", () => {
+      const open = card.classList.toggle("open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      body.style.maxHeight = open ? body.scrollHeight + "px" : "0px";
+    });
+  });
+
+  function makeQuiz(rootId, questions){
+    const root = document.getElementById(rootId);
+    if(!root) return;
+    let index = 0, score = 0, locked = false;
+    function render(){
+      if(index >= questions.length){
+        const pct = Math.round(score / questions.length * 100);
+        let verdict = "Nochmal lesen lohnt sich.";
+        if(pct >= 90) verdict = "Du hast die Kernideen wirklich sitzen.";
+        else if(pct >= 70) verdict = "Solide. Die wichtigsten Muster sind da.";
+        else if(pct >= 50) verdict = "Die Hälfte sitzt – geh noch einmal über die visuellen Modelle.";
+        root.innerHTML = '<div class="quiz-end">' +
+          '<div class="quiz-count">Ergebnis</div>' +
+          '<div class="big-stat">' + score + '/' + questions.length + '</div>' +
+          '<p><strong>' + verdict + '</strong> Jede Frage hatte eine kurze Erklärung – die falschen Antworten sind die eigentlichen Lernpunkte.</p>' +
+          '<button class="btn" id="' + rootId + '-restart">Noch einmal</button></div>';
+        const r = document.getElementById(rootId + '-restart');
+        if(r) r.addEventListener("click", () => { index = 0; score = 0; locked = false; render(); });
+        return;
+      }
+      const q = questions[index];
+      const dots = questions.map((_, i) => '<i class="' + (i < index ? "done" : "") + '"></i>').join("");
+      const opts = q.options.map((text, i) =>
+        '<button class="quiz-opt" data-i="' + i + '"><span class="key">' + "ABCD"[i] + '</span><span>' + text + '</span></button>'
+      ).join("");
+      root.innerHTML = '<div class="quiz-top"><div class="quiz-count">Frage ' + (index + 1) + ' von ' + questions.length + '</div>' +
+        '<div class="quiz-score">Punkte ' + score + '</div></div>' +
+        '<div class="quiz-dots">' + dots + '</div>' +
+        '<h3 class="quiz-q">' + q.q + '</h3>' +
+        '<div class="quiz-options">' + opts + '</div>' +
+        '<div class="quiz-feedback" aria-live="polite"></div>' +
+        '<div class="quiz-actions"><span class="tiny muted">Eine Antwort – dann erklären wir sie.</span>' +
+        '<button class="btn small" id="' + rootId + '-next" disabled>Weiter</button></div>';
+      const next = document.getElementById(rootId + '-next');
+      const feedback = root.querySelector(".quiz-feedback");
+      root.querySelectorAll(".quiz-opt").forEach(btn => {
+        btn.addEventListener("click", () => {
+          if(locked) return;
+          locked = true;
+          const pick = Number(btn.dataset.i);
+          const correct = pick === q.a;
+          if(correct) score++;
+          root.querySelectorAll(".quiz-opt").forEach(b => {
+            b.disabled = true;
+            const i = Number(b.dataset.i);
+            if(i === q.a) b.classList.add("correct");
+            if(i === pick && !correct) b.classList.add("wrong");
+          });
+          feedback.innerHTML = '<strong>' + (correct ? "Richtig." : "Nicht ganz – richtig ist " + "ABCD"[q.a] + ".") + '</strong> ' + q.e;
+          next.disabled = false;
+          root.querySelector(".quiz-score").textContent = "Punkte " + score;
+        });
+      });
+      next.addEventListener("click", () => { index++; locked = false; render(); });
+    }
+    render();
+  }
+  window.makeQuiz = makeQuiz;
+
+  window.ex = {
+    clamp:(v,a,b)=>Math.max(a,Math.min(b,v)),
+    fmt:(n,d=0)=>Number(n).toLocaleString("de-DE",{maximumFractionDigits:d,minimumFractionDigits:d}),
+    css:(name)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim(),
+    themeColor(name, fallback){
+      const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fallback;
+    }
+  };
+})();
+
+
+(function(){
+  "use strict";
+  const flags=[...document.querySelectorAll("#dp7-flags .flag")];
+  const score=document.getElementById("dp7-score"), verdict=document.getElementById("dp7-verdict"), script=document.getElementById("dp7-script");
+  function paintFlags(){
+    let n=0; flags.forEach(f=>{const on=f.querySelector("input").checked;f.classList.toggle("on",on);if(on)n++;});
+    score.textContent=n;
+    if(n===0){verdict.textContent="Noch nichts markiert. Einzelne schlechte Tage sind kein Muster.";script.innerHTML="<b>Ein Satz, der immer geht:</b> „Ich brauche Bedenkzeit und entscheide das nicht jetzt.“";}
+    else if(n<3){verdict.innerHTML="<strong>Einzelne Warnsignale.</strong> Das ist noch kein Muster. Prüfe, ob es wiederholt passiert, ob du dich sicher fühlst und ob du Nein sagen kannst.";script.innerHTML="<b>Nächster Schritt:</b> Beobachten, dokumentieren, mit einer vertrauten Person sprechen – ohne die andere Person zu diagnostizieren.";}
+    else if(n<6){verdict.innerHTML="<strong>Muster prüfen.</strong> Mehrere Punkte zusammen sind ein Grund, genauer hinzuschauen. Frage dich: Darf ich widersprechen? Werde ich für Nein bestraft? Bin ich isoliert?";script.innerHTML="<b>Grenze setzen:</b> „Ich entscheide das nicht unter Druck. Wenn du weiter drängst, beende ich das Gespräch.“";}
+    else {verdict.innerHTML="<strong>Starkes Muster.</strong> Das heißt nicht automatisch, dass die Person eine Störung hat. Aber die Kombination aus Kontrolle, Angst und fehlenden Exit-Optionen ist ernst. Priorisiere Sicherheit und Unterstützung.";script.innerHTML="<b>Sicherheit:</b> Dokumentieren, vertrauenswürdige Menschen einbeziehen, lokale Beratungsstelle kontaktieren. Bei Drohungen oder Gewalt nicht allein konfrontieren.";}
+  }
+  flags.forEach(f=>f.querySelector("input").addEventListener("change",paintFlags)); paintFlags();
+
+  const cialdini=[
+    {n:"Reziprozität",s:"★★★",d:"Menschen fühlen sich verpflichtet, eine Gabe zu erwidern.",e:"Ehrlich geben, ohne eine Schuld zu konstruieren.",dark:"Ein Geschenk als Köder, um eine Gegenleistung zu erzwingen."},
+    {n:"Commitment",s:"★★★",d:"Kleine öffentliche Zusagen erhöhen die Wahrscheinlichkeit, konsistent zu bleiben.",e:"Freiwillige, reversible Schritte anbieten.",dark:"Eine winzige Zusage als Falle nutzen, aus der man nicht mehr herauskommt."},
+    {n:"Social Proof",s:"★★★",d:"Bei Unsicherheit orientieren wir uns an ähnlichen anderen.",e:"Ehrliche Normen und echte Erfahrungen zeigen.",dark:"Konsens fälschen oder eine Mehrheit erfinden."},
+    {n:"Autorität",s:"★★★",d:"Expertise und Glaubwürdigkeit sind starke Abkürzungen.",e:"Echte Qualifikation transparent machen.",dark:"Titel, Kleidung oder Celebrity als Ersatz für Kompetenz."},
+    {n:"Sympathie",s:"★★",d:"Ähnlichkeit, Lob und Kooperation erhöhen Zustimmung.",e:"Echten Rapport aufbauen.",dark:"Falsche Nähe, Love Bombing, Manipulation von Gemeinsamkeiten."},
+    {n:"Knappheit",s:"★★",d:"Begrenzte Verfügbarkeit erhöht den wahrgenommenen Wert.",e:"Reale Grenzen klar benennen.",dark:"Künstliche Deadline, um Nachdenken zu verhindern."},
+    {n:"Einheit",s:"★★",d:"Geteilte Identität und „wir“ erhöhen Einfluss.",e:"Ehrliche Gemeinschaft und Zugehörigkeit.",dark:"Tribalismus und Feindbilder instrumentalisieren."}
+  ];
+  const cg=document.getElementById("dp7-cialdini"), cd=document.getElementById("dp7-cial-detail");
+  cialdini.forEach((c,i)=>{
+    const b=document.createElement("button"); b.className="cial"; b.innerHTML="<div class='stars'>"+c.s+"</div><b>"+c.n+"</b><span>"+c.d+"</span>";
+    b.addEventListener("click",()=>{document.querySelectorAll(".cial").forEach(x=>x.classList.remove("on"));b.classList.add("on");cd.innerHTML="<strong>"+c.n+":</strong> "+c.d+"<br><br><strong>Ethisch:</strong> "+c.e+"<br><strong>Dunkler Zwilling:</strong> "+c.dark;});
+    cg.appendChild(b);
+  });
+
+  const gas=[
+    {t:"Leugnen",p:"Die Realität des anderen wird bestritten: „Das ist nie passiert.“ Dokumentierte Fakten werden umgedeutet.",phrase:"„Das hast du dir eingebildet.“",c:"Beweise sichern, nicht in eine Beweisdebatte über jedes Detail gehen."},
+    {t:"Verwirren",p:"Widersprüchliche Aussagen, Themenwechsel und Gaslighting-Sätze erzeugen das Gefühl, verrückt zu werden.",phrase:"„Du erinnerst dich falsch; ich habe das nie gesagt.“",c:"Aufschreiben, Daten und Zitate festhalten; eine vertraute Person einbeziehen."},
+    {t:"Isolieren",p:"Kontakte werden schlechtgeredet, überwacht oder abgeschnitten. Ohne Außenperspektive wird die Version des Täters alternativlos.",phrase:"„Niemand glaubt dir; die wollen uns nur auseinanderbringen.“",c:"Kontakte bewusst halten; Unterstützung außerhalb der Beziehung."},
+    {t:"Beschuldigen",p:"Die eigene Reaktion wird zum Beweis für die Schuld des Opfers: „Du bist zu empfindlich, du provozierst das.“",phrase:"„Du bist hysterisch; wegen dir müssen wir streiten.“",c:"Verantwortung nicht übernehmen, die nicht deine ist; Grenzen benennen."},
+    {t:"Scheinreparatur",p:"Eine Entschuldigung, die sofort eine neue Schuldzuweisung enthält oder Nähe als Belohnung einsetzt – der Zyklus beginnt neu.",phrase:"„Es tut mir leid, aber du hast mich dazu gebracht.“",c:"Muster statt einzelne Entschuldigung bewerten; Veränderung braucht Verhalten, nicht Worte."},
+    {t:"Wiederholen",p:"Der Zyklus wiederholt sich. Die intermittierende Verstärkung macht ihn besonders bindend – wie bei einer Glücksspielmaschine.",phrase:"„Diesmal wird alles anders.“",c:"Externe Hilfe, Sicherheitsplan, Abstand. Bei Gewalt: lokale Services, nicht allein konfrontieren."}
+  ];
+  const gd=document.getElementById("dp7-gas-detail");
+  function paintGas(i){
+    document.querySelectorAll(".gas-node").forEach(b=>b.classList.toggle("on",Number(b.dataset.gas)===i));
+    const x=gas[i]; gd.innerHTML="<h4>"+x.t+"</h4><p>"+x.p+"</p><div class='phrase'>"+x.phrase+"</div><div class='counter'><strong>Gegenbewegung:</strong> "+x.c+"</div>";
+  }
+  document.querySelectorAll(".gas-node").forEach(b=>b.addEventListener("click",()=>paintGas(Number(b.dataset.gas))));
+  paintGas(0);
+
+  makeQuiz("dp7-quiz",[
+    {q:"Was ist diese Datei?",options:["Eine peer-reviewte Anthologie mit acht akademischen Autoren.","Ein Verlagswerk mit ISBN, Index und Quellenapparat.","Eine selbst publizierte Kompilation mit widersprüchlichen Credits.","Eine einzige Autobiografie unter acht transparenten Pseudonymen."],a:2,e:"Kein Verlag, kein Jahr, keine Bibliografie. Die Titelblätter widersprechen sich, die Namen sind Komposite."},
+    {q:"Welche echten Autoren klingen in den Covernamen an?",options:["Goleman, Bradberry, Carnegie und Greene.","Freud, Jung, Adler und Skinner.","Cialdini, Festinger, Milgram und Zimbardo.","Bandler, Grinder, Erickson und Satir."],a:0,e:"Die Namen kombinieren Bestseller-Autoren für emotionale Intelligenz, Selbsthilfe und Macht – ein Marketing-Muster."},
+    {q:"Wie ist „90 % der Kommunikation sind nonverbal“ einzuordnen?",options:["Als robustes Ergebnis großer Kommunikationsstudien.","Als Mythos aus enger Forschung über Gefühle und Einstellungen.","Als präzise Schätzung der Lügen-Erkennung.","Als Befund, der nur für geschriebene Nachrichten gilt."],a:1,e:"Mehrabian untersuchte widersprüchliche Botschaften zu Gefühlen. Die Zahl beschreibt nicht alle Kommunikation."},
+    {q:"Was sagt die Forschung zu NLP?",options:["Augenbewegungen erkennen Lügen zuverlässig.","NLP ist eine anerkannte Psychosetherapie.","Systematische Reviews finden wenig Belege für den Kern.","NLP ist im Wesentlichen identisch mit CBT."],a:2,e:"Einzelne Techniken wie Rapport können nützlich sein, aber das NLP-Paket – besonders Eye-Accessing Cues – ist nicht evidenzbasiert."},
+    {q:"Was stimmt über Hypnose?",options:["Sie kann Menschen gegen ihre stärksten moralischen Werte zwingen.","Sie kann bei Schmerz und Angst helfen, ist aber kein Mind Control.","Sie ruft zuverlässig korrekte Erinnerungen an Trauma hervor.","Sie funktioniert nur, wenn die Person schläft."],a:1,e:"Klinische Hypnose hat Evidenz für einige Anwendungen. Sie setzt Kooperation voraus und löscht die Agency nicht aus."},
+    {q:"Woraus besteht die Dark Triad?",options:["Narzissmus, Machiavellismus und Psychopathie.","Narzissmus, Neurotizismus und Psychopathie.","Machiavellismus, Sadismus und Soziopathie.","Psychopathie, Psychose und Narzissmus."],a:0,e:"Sadismus wird manchmal als „Dark Tetrad“ ergänzt. Psychose gehört nicht dazu."},
+    {q:"Welches ist ein echtes Cialdini-Prinzip?",options:["Subliminale Botschaften.","Eye-Accessing Cues.","Angst-und-Erleichterung.","Knappheit."],a:3,e:"Cialdinis Prinzipien sind Reziprozität, Commitment, Social Proof, Autorität, Sympathie, Knappheit und Einheit."},
+    {q:"Welche Aussage über emotionale Intelligenz ist am besten belegt?",options:["Sie erklärt über 90 % der Leistung von Top-Performern.","Sie ist umstritten und hat bescheidene inkrementelle Validität.","Sie ist identisch mit den Big Five.","Sie lässt sich nicht trainieren."],a:1,e:"EI überlappt mit Persönlichkeit und IQ. Der Zusatznutzen ist real, aber begrenzt – die 90-%-Zahl ist Marketing."},
+    {q:"Wofür ist eine Gaslighting-Checkliste geeignet?",options:["Um eine narzisstische Persönlichkeitsstörung zu diagnostizieren.","Um jede Ablehnung als Beweis für Gaslighting zu werten.","Um ein Muster zu bemerken und Unterstützung zu suchen.","Um einen Streit durch ein Etikett zu gewinnen."],a:2,e:"Checklisten sind Reflexionshilfen, keine Diagnosen. Einzelne Widersprüche sind normal; das Muster und die Machtverhältnisse zählen."},
+    {q:"Was ist das Hauptproblem von Körper-sprache-Lügendetektion?",options:["Nonverbale Signale sind immer absichtlich und leicht zu lesen.","Nur Psychopathen können ihre Mimik kontrollieren.","Lügenerkennung ist unter allen Bedingungen unmöglich.","Cues sind kontextabhängig und nur schwach mit Täuschung verbunden."],a:3,e:"Es gibt keine „Pinocchio-Nase“. Die durchschnittliche Trefferquote liegt nahe der Zufallswahrscheinlichkeit."},
+    {q:"Welches ist ein defensives Boundary-Skript?",options:["„Du machst das immer; du bist eindeutig ein Narzisst.“","„Wenn du mich liebst, stimmst du mir zu.“","„Ich muss darüber nachdenken; ich entscheide das nicht heute.“","„Alle finden, dass du das Problem bist.“"],a:2,e:"Es ist kurz, konkret und wahrt die eigene Entscheidungsfreiheit, ohne die andere Person zu diagnostizieren."},
+    {q:"Was ist das Problem der „Defense“-Rahmung des Buchs?",options:["Es mischt Sicherheitstipps mit offensiven Manipulationsanleitungen.","Es lehrt ausschließlich Opferschutz und keine Taktiken.","Es lehnt jede Persuasion als unethisch ab.","Es zitiert durchgehend Cialdini und Peer-Review-Studien."],a:0,e:"Dieselben Kapitel, die vor Manipulation warnen, erklären, wie man sie anwendet. Das ist der zentrale ethische Widerspruch."}
+  ]);
+})();
+
+</script>
+</body>
+</html>
