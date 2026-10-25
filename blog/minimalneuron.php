@@ -22,11 +22,15 @@ $$y = f(x) = ax + b$$
 
 $$ \begin{pmatrix} y_1 \\ y_2 \end{pmatrix} = \begin{pmatrix} 0.5 & -0.2 & 0.1 \\ 0.8 & 0.4 & -0.9 \end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \\ x_3 \end{pmatrix} + \begin{pmatrix} 0.1 \\ -0.5 \end{pmatrix}. $$
 
-But since normal numbers are tensors as well, this holds true. Historically, the earliest activation function layered on top of $ax + b$ was the **Heaviside step function** $H(x) = \mathbf{1}_{x > 0}$, which fires $1$ when the affine map is positive and $0$ otherwise. With it, the neuron becomes $\hat{y} = H(ax + b)$ — and this is the exact mathematical structure of the \citealternativetitle{rosenblatt1958perceptron}.
+But since normal numbers are tensors as well, this holds true. Historically, the threshold unit predates the Perceptron. \citeauthor{mccullochpitts1943} modelled the neuron in \citeyear{mccullochpitts1943} as an all-or-none element: a weighted sum is compared with a threshold, and the unit fires $1$ when the affine map is positive and $0$ otherwise. With the Heaviside step $H(x)=\mathbf{1}_{x>0}$, that neuron computes $\hat{y}=H(ax+b)$. \citeauthor{rosenblatt1958perceptron} turned the idea into a trainable classifier in \citeyear{rosenblatt1958perceptron}; its output unit used the same threshold, but the full Perceptron also had fixed association units and a discrete learning rule.
+
+The paper \citeauthor{mccullochpitts1943} published in \citeyear{mccullochpitts1943} was not yet a learning machine. They modelled the neuron as an **all-or-none** threshold unit: a weighted sum of excitatory and inhibitory inputs is compared with a threshold, and the unit fires only if that threshold is crossed. Because such units can implement AND, OR and NOT, the paper showed that networks of them can realise any propositional formula — a *logical calculus* of nervous activity. What it did not contain was a rule for *changing* the weights. That step — learning from examples — is the contribution of the next decade.
 
 In AI terminology, we give these parameters specific names:
 * **Weight ($a$):** This determines the “tilt” of the line. It defines how much the input $x$ influences the output $y$.
 * **Bias ($b$):** This allows the model to shift the line up or down, regardless of the input.
+
+\citeauthor{hebb1949organizationofbehaviour}'s *The Organization of Behavior* (\citeyear{hebb1949organizationofbehaviour}) proposed that learning is a change in synaptic strength: when one neuron repeatedly helps to fire another, the connection between them is strengthened. The slogan "cells that fire together, wire together" is a later summary, but the idea is his: memory is not a stored symbol but a stable pattern of weights. Rosenblatt's Perceptron learning rule \cite{rosenblatt1958perceptron} can be read as a supervised, error-correcting cousin of Hebb's principle — the weight moves only when the output is wrong.
 
 Instead of us moving the sliders to find $a$ and $b$, the computer will search for these values itself.
 
@@ -39,11 +43,15 @@ To help the computer find the right values, we provide a **Dataset** (a set of �
 
 Our goal is for the computer to find a function where $f(1) \approx 2$, $f(2) \approx 4$, and so on. You might notice the “perfect” rule here is $y = 2x + 0$.
 
+Rosenblatt's first report appeared in 1957 as *The Perceptron: A Perceiving and Recognizing Automaton* \cite{rosenblattperceptron}; the better-known paper followed in 1958 \cite{rosenblatt1958perceptron}. The machine was not a thought experiment: the Mark I Perceptron used a 20×20 grid of photocells, a layer of fixed association units and a layer of trainable response units, with weights adjusted by motor-driven potentiometers \cite{rosenblatt1962neurodynamics}. In 1958 the *New York Times* reported that the Navy had demonstrated a device that "learns by doing" — a public claim of a machine that improved with experience \cite{newyorktimesperceptron}.
+
 When you click **🚀 Start Training**, the computer performs a loop:
 
 1.  **Prediction:** The model takes an input $x$ and calculates a guess using its current $a$ and $b$.
 2.  **Loss Calculation:** The computer calculates the **Loss** (the error). If the model guesses $5$ but the real answer is $6$, the loss tells the AI “you are off by 1”.
 3.  **Optimization:** The AI uses a math trick called *Gradient Descent* to slightly nudge $a$ and $b$ in the direction that makes the Loss smaller.
+
+The linear neuron in this demo has a direct ancestor: the **ADALINE** (Adaptive Linear Neuron) of \citeauthor{widrow1960adaline}, built at Stanford in \citeyear{widrow1960adaline}. Unlike the Perceptron, its output unit was *linear*, not a step, and its weights were updated by the **delta rule** — move each weight in proportion to the error times the input. That is exactly the gradient-descent update used here, derived from the mean-squared-error loss. In other words, the single-neuron lab below is a 1960 ADALINE with a modern optimiser and a plot.
 
 Watch it in real time:
 
@@ -51,9 +59,13 @@ Watch it in real time:
 * **Linear Regression:** Watch the orange line. It starts at a random position and gradually “tilts” until it passes through the blue data points.
 * **Math Monitor:** This shows the internal state of the neuron. Watch how $a$ (weight) and $b$ (bias) change as the AI fits the data!
 
-A single neuron can only learn a straight line. However, complex AI systems group many of these neurons together into **Layers**. By stacking these layers, where the output of one neuron becomes the input for the next, the model evolves into a **Neural Network** capable of recognizing complex patterns far beyond a simple line. But this will come later on, in this example we'll deal with the simplest form of neural networks (one layer, one neuron).
+A single **linear** neuron can only fit a straight line. However, complex AI systems group many of these neurons into **Layers**, and — crucially — place a non-linear activation between the layers. Stacking linear layers alone would collapse back into one affine map; with a non-linearity in between, the composition becomes a **Neural Network** capable of representing patterns far beyond a simple line. But this will come later on, in this example we'll deal with the simplest form of neural networks (one layer, one neuron).
 
-The statistical framework of linear regression was famously formalized by \citeauthor{galton} in \citeyear{galton}. He applied this mathematical framework to heredity, demonstrating that children of exceptionally tall or exceptionally short parents tend to have heights closer to the population average than their parents did. By proving that these extreme traits “regress” toward mediocrity, Galton established the statistical foundation for predicting a dependent variable from an independent one, effectively creating the first functional application of the linear model that serves as the basis for modern neurons.
+The limits of the single unit were made precise by \citeauthor{minskyperceptrons} in *Perceptrons* (\citeyear{minskyperceptrons}). They proved that a linear threshold unit cannot compute exclusive-or, and that many simple geometric predicates are beyond a one-layer perceptron. The book is often remembered as the cause of an "AI winter", but its argument was specifically about the limits of *linear* threshold units, not about multilayer networks with hidden, non-linear units. The constructive answer — hidden layers with non-linear units — is exactly the architecture the next chapter builds.
+
+The gradient-descent loop above trains one neuron. Training a *deep* network needed one more idea: **backpropagation**, the chain rule applied layer by layer. \cite[Werbos (1974)]{werbos1974} worked it out in his doctoral thesis, but the result became famous only when \citeauthor{rumelhart1986} showed in \citeyear{rumelhart1986} that it could learn useful internal representations. Their paper, together with the parallel-distributed-processing volumes of the same year \cite{rumelhart1986pdp}, made multilayer networks trainable and turned the "hidden layer" from a theoretical possibility into a practical tool.
+
+The statistical idea behind this neuron is older than the neuron itself. The method of least squares — choosing parameters that minimise the sum of squared errors — was published by \citeauthor{legendre1805} in \citeyear{legendre1805} and given its probabilistic justification by \citeauthor{gauss1809} in \citeyear{gauss1809}. \citeauthor{galton} later gave the fitted line its name: studying hereditary stature in \citeyear{galton}, he observed that children of very tall or very short parents tended toward the population average, and called the phenomenon **regression toward mediocrity**. The modern single neuron is, in effect, a least-squares line with a learning algorithm attached.
 </div>
 
 <div class="controls-bar">
@@ -103,7 +115,7 @@ In this “toy” network equation:
 One must have chaos in one's self to give birth to a dancing star.
 </div>
 
-If we were to initialize every weight and bias at the exact same value, such as $0$, the network would suffer from perfect symmetry. In this state, every neuron would calculate the exact same gradient during training, and the model would be unable to differentiate between different features. 
+If we were to initialize every weight and bias at the exact same value, such as $0$, the network would suffer from perfect symmetry. In this state, every neuron would calculate the exact same gradient during training, and the model would be unable to differentiate between different features. (For the **one-neuron** model in this lesson the situation is different: its loss is convex, and $a=b=0$ is a harmless starting point; symmetry breaking matters once a layer has more than one unit.) 
 
 To solve this, we use **Random Initialization**. By scattering the starting values of $a$ and $b$ across a distribution, we ensure that:
 * **Unique Starting Points**: Each path in the network begins at a different location in the coordinate space.
@@ -154,7 +166,7 @@ If the output layer's dimensions do not match the target data's dimensions, the 
 
 **The Golden Rule:** Your model's output layer must be a mirror of your data's constraints. If the data cannot be negative, your activation function must prevent negative numbers. If the data is categorical, your output activation must produce a probability distribution (i.e., softmax), paired with a cross-entropy loss.
 
-**The mirror rule is a theorem, not just a convention.** In 1970, Conant and Ashby proved the **Good Regulator Theorem**: *every good regulator of a system must be a model of that system* \cite{conantashby1970}. The controller that best tames a system must internally carry a structure-preserving image of it — and no amount of tuning closes the gap when the controller's structure cannot represent the thing it controls. The output layer is the sharpest place this shows up in a network: its shape is a one-to-one image of the target it is to regulate — a thermostat "models" a room insofar as it carries a one-parameter image of its temperature, a classifier "models" its label set insofar as its output is a one-hot image of the categories. When the mirror is wrong, training cannot fix it, which is why the Golden Rule is a *structural* requirement rather than a stylistic one.
+**The mirror rule is a design consequence of a theorem, not just a convention.** In 1970, Conant and Ashby proved the **Good Regulator Theorem**: *every good regulator of a system must be a model of that system* \cite{conantashby1970}. The theorem does not dictate a particular output encoding; it says that whatever encoding the regulator uses must be rich enough to distinguish the states it has to regulate. The controller that best tames a system must internally carry a structure-preserving image of it — and no amount of tuning closes the gap when the controller's structure cannot represent the thing it controls. The output layer is the sharpest place this shows up in a network: its shape is a one-to-one image of the target it is to regulate — a thermostat "models" a room insofar as it carries a one-parameter image of its temperature, a classifier "models" its label set insofar as its output is a one-hot image of the categories. When the mirror is wrong, training cannot fix it, which is why the Golden Rule is a *structural* requirement rather than a stylistic one.
 
 </div>
 
@@ -169,7 +181,7 @@ In the **Normal Distribution** part of the **Statistics** section, we learned ab
 This relies on the **Law of Large Numbers**:
 $$ \bar{X}_n \xrightarrow{n \to \infty} \mu $$
 
-Or, in plain English: **“As the number of times you repeat an experiment ($n$) grows towards real number of cases (which may be $\infty$), the average of your actual results ($\bar{X}_n$) will eventually settle down and equal the true theoretical average ($\mu$).”**
+Or, in plain English: **“As the number of repetitions $n$ grows, the sample average $\bar{X}_n$ converges to the population mean $\mu$: for any small tolerance, the probability that the sample average lies farther than that tolerance from $\mu$ tends to zero.”**
 
 In simpler terms:
 * **The Left Side ($\bar{X}_n$):** This is the “Sample Average.” It represents what you actually observed in your data (e.g., the average height of 100 people you measured).
