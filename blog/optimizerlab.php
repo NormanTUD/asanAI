@@ -387,7 +387,7 @@ Adam has a quiet problem with weight decay. In the original paper, $L_2$ regular
 
 $$\theta_{t+1} = \theta_t - \eta\!\left( \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon} + \lambda\, \theta_t \right)$$
 
-It's a one-line change, but it makes weight decay behave the way every other optimizer's weight decay does, and it decouples the optimal $\lambda$ from the learning rate. **AdamW is now the default optimizer for training transformers** in practice — every modern recipe for GPT, BERT, Llama, or Stable Diffusion uses AdamW, not Adam.
+It's a one-line change, but it makes weight decay behave the way every other optimizer's weight decay does, and it decouples the optimal $\lambda$ from the learning rate. **AdamW is now the default optimizer for training transformers** in practice — most modern recipes for GPT, BERT, Llama, or Stable Diffusion use AdamW, not Adam.
 
 #### When Adam Doesn't Win
 

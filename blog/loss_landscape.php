@@ -22,7 +22,7 @@ $$\mathcal{L}(\theta) \;=\; \frac{1}{m}\sum_{i=1}^{m}\ell\!\left(f(x_i;\theta),\
 
 the average per-example error $\ell$ over the training set. Think of $\theta$ as one point in a $d$-dimensional space. The value $\mathcal{L}(\theta)$ is the *height* of a landscape above that point. Training is rolling a ball downhill on this landscape until it settles into a low valley. The whole question of "why does deep learning work?" reduces to the geometry of this landscape: how many valleys it has, how steep they are, how they connect, and which ones generalize.
 
-The phrase "loss landscape" was popularised by \citeauthor{li2018losslandscape} (\citeyear{li2018losslandscape}), who gave the field its first systematic visualizations. The underlying mathematics, non-convex optimization in $10^7$ dimensions, goes back further: \citeauthor{rumelhart1986learning} noted in \citeyear{rumelhart1986learning} that although the error surface may contain local minima, experience showed the network "very rarely gets stuck in poor local minima", and \citeauthor{hochreiter1991vanishing} (\citeyear{hochreiter1991vanishing}) had already linked the geometry to trainability.
+The systematic visualization of loss landscapes was popularised by \citeauthor{li2018losslandscape} (\citeyear{li2018losslandscape}). The underlying mathematics, non-convex optimization in $10^7$ dimensions, goes back further: \citeauthor{rumelhart1986learning} noted in \citeyear{rumelhart1986learning} that although the error surface may contain local minima, experience showed the network "very rarely gets stuck in poor local minima", and \citeauthor{hochreiter1991vanishing} (\citeyear{hochreiter1991vanishing}) had already linked the geometry to trainability.
 
 </div>
 
@@ -575,7 +575,7 @@ The hyperbolic paraboloid $z = x^2 - y^2$: a surface that goes up in one directi
 
 ### Sharp minima, flat minima, and the oldest debate in deep learning
 
-The intuition goes back to \citeauthor{hochreiter1991vanishing}'s \citeyear{hochreiter1991vanishing} diploma thesis: a minimum inside a wide, flat basin should generalize, because small perturbations of $\theta$ keep the loss low. A narrow, sharp minimum memorizes the training set but blows up on test.
+The intuition is old: a minimum inside a wide, flat basin should generalize, because small perturbations of $\theta$ keep the loss low. A narrow, sharp minimum memorizes the training set but blows up on test.
 
 \citetitle{keskar2016largebatch} (\citeyear{keskar2016largebatch}) sharpened this empirically: large-batch SGD finds sharper minima than small-batch SGD, and the sharp-minimum runs generalize *worse* on CIFAR-10, CIFAR-100, MNIST, and TIMIT. The story is not so clean once \citeauthor{dinh2017sharpness} (\citeyear{dinh2017sharpness}) is added. Because of the ReLU and BatchNorm rescaling symmetry above, every sharp minimum can be reparameterized into an equivalent flat one. "Sharp" was not a property of the minimum. It was an artifact of the parameterization. \citeauthor{smithle2018bayesian} (\citeyear{smithle2018bayesian}) reframed SGD as approximate Bayesian inference: small-batch noise is not a bug but a prior that biases the trajectory toward wide valleys.
 
@@ -635,7 +635,7 @@ This is why \citeauthor{garipov2018mode} (\citeyear{garipov2018mode}) had to ali
 
 ### SGD travels in an almost one-dimensional subspace
 
-To plot an optimizer's trajectory, you would naturally project it onto a 2-D plane of random directions. \citeauthor{li2018losslandscape}'s section 7 shows this fails almost completely: the trajectory sits in a subspace that random directions do not span. Two random Gaussian vectors in $d$ dimensions are nearly orthogonal; their expected cosine similarity is $\sqrt{2/(\pi d)}$, roughly $10^{-4}$ for a 10-million-parameter model. Projecting onto them collapses the trajectory to a single dot.
+To plot an optimizer's trajectory, you would naturally project it onto a 2-D plane of random directions. \citeauthor{li2018losslandscape}'s section 7 shows this fails almost completely: the trajectory sits in a subspace that random directions do not span. Two random Gaussian vectors in $d$ dimensions are nearly orthogonal; the expected *magnitude* of their cosine similarity is $\sqrt{2/(\pi d)}$, roughly $10^{-4}$ for a 10-million-parameter model. Projecting onto them collapses the trajectory to a single dot.
 
 PCA on the iterates $\theta_0, \theta_1, \ldots, \theta_T$ recovers what is actually happening. For both SGD and Adam on VGG-9, the first **two** PCA directions capture between **40% and 90%** of the variation in the descent path; the remaining directions are nearly silent. Gradient descent is effectively low-dimensional.
 

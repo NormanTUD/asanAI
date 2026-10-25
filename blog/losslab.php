@@ -234,9 +234,9 @@ By minimizing this function under the constraint of a fixed compute budget $C \a
 </div>
 
 <div class="md" data-mathlevel="60">
-## The Deepest Insight: Cross-Entropy Is Shannon Entropy
+## The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy
 
-The connection between cross-entropy loss and information theory is not a superficial analogy, it is an **identity**. The loss function used to train every LLM is mathematically identical to Shannon's measure of surprise.
+The connection between cross-entropy loss and information theory is not a superficial analogy: cross-entropy is Shannon's measure of surprise plus the price of using the wrong distribution. The loss that trains every LLM is built directly from it.
 
 Shannon's cross-entropy $H(P, Q)$ between a true distribution $P$ and a predicted distribution $Q$ is defined as:
 

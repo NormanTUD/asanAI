@@ -187,9 +187,11 @@ There is a name for this matching requirement, and it comes from cybernetics. \c
 We previously mentioned initializing weights “randomly.” But “random” is a dangerous word in engineering. If we pick weights from a **Uniform Distribution** between $-1000$ and $1000$, the signal will explode towards infinity (NaN). If we pick them between $-0.0001$ and $0.0001$, the signal will vanish to zero.
 
 To solve this, we use the **Normal Distribution** ($\mathcal{N}$) we saw in the **Statistics** part.
-Modern networks use “Xavier” or “He” initialization, which are just fancy ways of saying: *pick random numbers from a Gaussian Bell Curve where the width ($\sigma$) is carefully calculated based on the size of the network.*
+Modern networks use “Xavier” (Glorot) or “He” initialization: *pick random numbers from a Gaussian Bell Curve whose width is set by the size of the layer.* He initialization, designed for ReLU, uses variance $2/n_\text{inputs}$:
 
 $$ W \sim \mathcal{N}\left(0, \frac{2}{n_\text{inputs}}\right) \quad \text{(std } \sqrt{2/n_\text{inputs}}\text{)} $$
+
+Xavier initialization, designed for tanh and sigmoid, also takes the number of outputs into account, typically with variance $2/(n_\text{inputs}+n_\text{outputs})$.
 
 This ensures that the “energy” (variance) of the data stays constant as it flows through the network, preventing the math from breaking before learning even begins.
 

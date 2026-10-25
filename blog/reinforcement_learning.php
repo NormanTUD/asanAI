@@ -158,7 +158,7 @@ PPO is simple, stable, and the default choice for **RLHF** and many robotics tas
 2. **Train a reward model** $R_\phi(x, y)$ that predicts the human's preference score.
 3. **Fine-tune the LLM** with PPO, using $R_\phi$ as the reward signal.
 
-The full PPO loss combines three terms:
+The core RLHF objective combines the reward with a KL penalty:
 
 $$
 L^{\text{RLHF}}(\theta) = -\mathbb{E}_{(x, y) \sim \pi_\theta}\!\Big[\,R_\phi(x, y)\,\Big] + \beta\, \text{KL}\!\big(\pi_\theta \,\|\, \pi_{\text{ref}}\big)

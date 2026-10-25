@@ -33,11 +33,11 @@ You have already set several of these: the learning rate and optimizer in the [O
 
 The boundary is not perfectly clean. A learning-rate *schedule* is a function you choose whose value changes over time, and every optimizer carries its own hyperparameters (Adam's $\beta_1$, $\beta_2$, $\epsilon$), so choices nest inside other choices.
 
-The `optimizer` slot itself hides a sub-family of choices. The names you have seen in the [Optimizer chapter](optimizerlab.php) — SGD and Adam — are just two of more than a dozen in active use: SGD with Momentum, Nesterov accelerated gradient, Adagrad, Adadelta, RMSprop, Adam, AdaMax, Nadam, AMSGrad, and AdamW each fix a concrete failure of the previous one. \citeauthor{ruder2016overview}'s 2016 overview article (\citeyear{ruder2016overview}) is the canonical practitioner survey of the family, with derivations of each rule and a discussion of which to reach for when.
+The `optimizer` slot itself hides a sub-family of choices. The names you have seen in the [Optimizer chapter](optimizerlab.php) — SGD and Adam — are just two of more than a dozen in active use: SGD with Momentum, Nesterov accelerated gradient, Adagrad, Adadelta, RMSprop, Adam, AdaMax, Nadam, AMSGrad, and AdamW each address a limitation of earlier methods. \citeauthor{ruder2016overview}'s 2016 overview article (\citeyear{ruder2016overview}) is the canonical practitioner survey of the family, with derivations of each rule and a discussion of which to reach for when.
 
 ### Why a Hyperparameter Is Not a Constant
 
-A constant of a model (say, the base $e$ of the exponential in a softmax) changes neither the model nor its training. A hyperparameter does both:
+A constant that cancels out (say, an additive constant in the loss) changes neither the gradients nor the model. A hyperparameter does both:
 
 * **Architecture hyperparameters change the model itself.** $d_{\text{model}} = 768$ and $d_{\text{model}} = 128$ are not two settings of the same model; they are two different function classes with different weight-matrix shapes. Choosing $d_{\text{model}}$ is the choice of *which* set of functions the optimizer may search over.
 * **Optimization hyperparameters change the process, not just its speed.** The learning rate does not merely pace the descent: gradient descent with a different step size follows a different trajectory and can settle in a different minimum. Two runs that differ only in learning rate are different experiments, not one experiment at two speeds.
