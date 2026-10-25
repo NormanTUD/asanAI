@@ -20,13 +20,15 @@ A Loss Function is a mathematical way of measuring *“how wrong”* the AI is. 
 <div class="md" data-mathlevel="50">
 ## Regression: Mean Squared Error (MSE)
 
-When we want the AI to predict a specific number, like the price of a house or the temperature tomorrow, we use **Regression**. The most common tool here is **Mean Squared Error (MSE)**, first published by \citeauthor{legendre1805} in \citeyear{legendre1805} (for fitting celestial orbits) and independently developed by \citeauthor{gauss1809} in \citeyear{gauss1809} (§ 179, 213).
+When we want the AI to predict a specific number, like the price of a house or the temperature tomorrow, we use **Regression**. The most common tool here is **Mean Squared Error (MSE)**. The underlying method of least squares — minimizing the sum of squared errors that MSE averages — was published by \citeauthor{legendre1805} in \citeyear{legendre1805} for fitting comet orbits; \citeauthor{gauss1809} claimed to have used it since 1795, published it in \citeyear{gauss1809} (§ 179), and connected it to the normal law of error, which led to a priority dispute.
 
 For a single example the error is $(y_{\text{target}} - \hat{y}_{\text{pred}})^2$; the **mean** squared error averages this over the whole batch:
 
 $$\text{MSE} = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2$$
 
 (Textbooks and the Backpropagation chapter sometimes scale the sum by an extra factor $\frac{1}{2}$ for algebraic convenience; the location of the minimum is unchanged.)
+
+Legendre published the method in 1805 \cite{legendre1805}; Gauss replied that he had used it since 1795, and the priority dispute never quite died \cite{gauss1809}. Gauss's deeper contribution was probabilistic: if the errors are independent and normally distributed, least squares is the maximum-likelihood fit, which is why the squared error and the bell curve are inseparable. Laplace then used the central limit theorem to justify the method for large samples \cite{laplace1810clt}. The “mean” in MSE is the modern averaging step; the “square” is the inheritance from astronomical error theory.
 
 In the plot below, the loss creates a “bowl” shape. To train the AI, we calculate the **slope** (the derivative). If the slope is negative, the AI needs to increase its guess. If the slope is positive, it needs to decrease it.
 </div>
@@ -117,6 +119,10 @@ In the plot below, the loss creates a “bowl” shape. To train the AI, we calc
 	<div class="mnlab-note" data-ml="note" aria-live="polite"></div>
 </div>
 
+<div class="md">
+Absolute error has the older pedigree. Boscovich, fitting the figure of the Earth, minimized the sum of the absolute residuals \cite{boscovich_mactutor}; Laplace took up the same criterion in his error theory \cite{laplace1812analytic}. Squared error won for two reasons: it is differentiable everywhere, so the gradient is a clean $2(\hat y-y)$, and under Gaussian noise it is the maximum-likelihood estimate. Absolute error is more robust to outliers, but its gradient is only $\pm1$ and undefined at zero; Huber's 1964 compromise is quadratic near zero and linear in the tails \cite{huber1964}.
+</div>
+
 <div class="md" data-mathlevel="48">
 ## Classification: Cross-Entropy
 
@@ -197,23 +203,27 @@ The math uses a *logarithm* ($-\ln(P)$), which creates a steep “wall” as con
 </div>
 
 <div class="md">
+Cross-entropy is not the only classification loss. The support-vector machine of \citeauthor{cortes1995svm} (\citeyear{cortes1995svm}) uses the **hinge loss** $\max(0, 1-y\,f(x))$: it charges nothing once a point is on the correct side of the margin, and a linear penalty for points inside it. That “zero zone” makes the SVM sparse — only the support vectors matter — and it is the ancestor of the margin-based losses used in modern detectors. Cross-entropy, by contrast, never stops pushing a correct prediction toward probability one.
+
+Modern detectors face a different imbalance: thousands of easy background examples drown out a few hard objects. \citeauthor{lin2017focal} (\citeyear{lin2017focal}) introduced **focal loss**, which multiplies cross-entropy by $(1-p_t)^\gamma$. When an example is already classified confidently ($p_t\to1$), the factor vanishes and the easy example stops contributing; when the model is wrong ($p_t$ small), the factor stays near one and the hard example dominates. The focusing parameter $\gamma$ is a dial between ordinary cross-entropy ($\gamma=0$) and a loss that concentrates on mistakes.
+
 ## Beware of Goodhart's Law
 
-\citealternativetitle{goodhartslaw} (p. 116) states that every measure which becomes a target becomes a bad measure. That is, 
+\citeauthor{goodhartslaw} warned in \citeyear{goodhartslaw} that “any observed statistical regularity will tend to collapse once pressure is placed upon it for control purposes” (p. 116). The familiar paraphrase — “when a measure becomes a target, it ceases to be a good measure” — is \citeauthor{strathern1997}’s (\citeyear{strathern1997}). That is, 
 when we focus solely on optimizing a single metric, we often lose sight of the actual goal. 
 In the context of Language Models, this manifests as the gap between “Loss” and “True Intelligence.”
 
 While a model is trained to minimize **Loss** (predicting the next token), a low loss doesn't 
 inherently mean the model is “smart” or “truthful.” If we only optimize for mathematical 
-probability, we risk creating a “Stochastic Parrot”, a model that is statistically perfect 
+probability, we risk creating a “Stochastic Parrot” (\cite{bender2021stochasticparrots}), a model that is statistically perfect 
 but logically hollow, or worse, one that learns to “game” the benchmarks.
 
 To truly evaluate success, we must look beyond the loss curve and use diverse benchmarks:
 * **Perplexity:** Measures how well the model predicts a sample, but it can be misleadingly low 
-if the model just memorizes data.
+on the training set if the model just memorizes it; on held-out text, memorization does not help.
 * **Benchmarks (MMLU, HumanEval):** Tests for reasoning and coding, though even these can
 fall victim to Goodhart's Law if the test data “leaks” into the training set.
-* **Human Evaluation:** Ultimately, the best version of an Language Models is determined by whether
+* **Human Evaluation:** Ultimately, the best version of a language model is determined by whether
 it is actually helpful, safe, and accurate in real-world use.
 </div>
 
@@ -236,13 +246,15 @@ By minimizing this function under the constraint of a fixed compute budget $C \a
 <div class="md" data-mathlevel="60">
 ## The Deepest Insight: Cross-Entropy Is Built from Shannon Entropy
 
-The connection between cross-entropy loss and information theory is not a superficial analogy: cross-entropy is Shannon's measure of surprise plus the price of using the wrong distribution. The loss that trains every LLM is built directly from it.
+The connection between cross-entropy loss and information theory is not a superficial analogy: cross-entropy is the expected surprise under the true distribution plus the price of using the wrong distribution. The loss that trains every LLM is built directly from it.
 
-Shannon's cross-entropy $H(P, Q)$ between a true distribution $P$ and a predicted distribution $Q$ is defined as:
+The cross-entropy $H(P, Q)$ between a true distribution $P$ and a predicted distribution $Q$ is defined as:
 
 $$H(P, Q) = -\sum_{x} P(x) \log Q(x)$$
 
 With base-2 logarithms this measures how many **bits** are needed to encode events from $P$ using a code optimized for $Q$; with the natural logarithm (as in $-\ln(P)$ above) it measures the same quantity in *nats*, which differ from bits only by the constant factor $\ln 2$. When $P$ and $Q$ match perfectly, $H(P, Q) = H(P)$, the minimal possible number of bits (the true entropy). When they diverge, you waste extra bits.
+
+Shannon's 1948 paper defined the entropy $H(P)=-\sum P\log P$ as the irreducible cost of coding messages from $P$ \cite{shannon1948communication}. Cross-entropy extends the idea to a code built for the wrong distribution $Q$; Kullback and Leibler's 1951 “information for discrimination” is exactly the extra cost $H(P,Q)-H(P)$ \cite{kullback1951information}. For a one-hot label the true entropy is zero, so minimizing cross-entropy is minimizing the KL divergence — the model's wasted bits — with no constant left over.
 
 The same fact is the heart of \citetitle{colah2015visualinfo} (\citeyear{colah2015visualinfo}): cross-entropy counts the bits you *waste* when you code the world with the wrong model of it. Entropy is the cost of the *right* code, cross-entropy is the cost of *your* code, and their difference is the KL divergence — the model's regret, paid in bits \cite{colah2015visualinfo}.
 
@@ -250,11 +262,11 @@ Cross-entropy loss for a classification task is:
 
 $$\mathcal{L} = -\frac{1}{N} \sum_{i=1}^{N} \sum_{c=1}^{C} y_{i,c} \log \hat{y}_{i,c}$$
 
-where $y$ is the one-hot true label (the “true distribution” for a single example) and $\hat{y}$ is the predicted probability. This is **exactly** the per-example Shannon cross-entropy.
+where $y$ is the one-hot true label (the “true distribution” for a single example) and $\hat{y}$ is the predicted probability. This is **exactly** the per-example cross-entropy.
 
 The “aha-moment”: training an LLM is equivalent to building the world's best text compression algorithm. Every time the model computes cross-entropy loss, it is measuring how many extra bits it would need to encode the training text using its current beliefs. Reducing the loss means finding a shorter description of the data. This is why scaling works: more parameters allow more compression (finding more patterns in the data), which requires more accurate world models (because the best compression of natural language requires modeling physics, psychology, and causality), which produces more “intelligent” behavior.
 
-Intelligence, from this perspective, is not a separate objective, it is a side effect of optimal compression. The connection to Hutter's prize (\cite{hutter2006universal}) and the “intelligence is compression” thesis is direct: a model that achieves the minimal possible cross-entropy on human text has implicitly learned the causal structure of the world that generates that text.
+Intelligence, from this perspective, is not a separate objective, it is a side effect of optimal compression. The connection to the Hutter Prize (\cite{hutterprize}) — Marcus Hutter's 2006 competition for compressing a 1 GB text file — and the “intelligence is compression” thesis is direct: a model that achieves the minimal possible cross-entropy on human text has implicitly learned the causal structure of the world that generates that text.
 
 ### Why Cross-Entropy Pairs Perfectly with Softmax
 

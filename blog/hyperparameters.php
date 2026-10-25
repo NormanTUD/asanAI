@@ -33,7 +33,7 @@ You have already set several of these: the learning rate and optimizer in the [O
 
 The boundary is not perfectly clean. A learning-rate *schedule* is a function you choose whose value changes over time, and every optimizer carries its own hyperparameters (Adam's $\beta_1$, $\beta_2$, $\epsilon$), so choices nest inside other choices.
 
-The `optimizer` slot itself hides a sub-family of choices. The names you have seen in the [Optimizer chapter](optimizerlab.php) — SGD and Adam — are just two of more than a dozen in active use: SGD with Momentum, Nesterov accelerated gradient, Adagrad, Adadelta, RMSprop, Adam, AdaMax, Nadam, AMSGrad, and AdamW each address a limitation of earlier methods. \citeauthor{ruder2016overview}'s 2016 overview article (\citeyear{ruder2016overview}) is the canonical practitioner survey of the family, with derivations of each rule and a discussion of which to reach for when.
+The `optimizer` slot itself hides a sub-family of choices. The names you have seen in the [Optimizer chapter](optimizerlab.php) — SGD and Adam — are just two of about a dozen in active use: SGD with Momentum, Nesterov accelerated gradient, Adagrad, Adadelta, RMSprop, AdaMax, Nadam, AMSGrad, and AdamW each address a limitation of earlier methods. \citeauthor{ruder2016overview}'s 2016 overview article (\citeyear{ruder2016overview}) is the canonical practitioner survey of the family, with derivations of each rule and a discussion of which to reach for when.
 
 ### Why a Hyperparameter Is Not a Constant
 
@@ -43,16 +43,16 @@ A constant that cancels out (say, an additive constant in the loss) changes neit
 * **Optimization hyperparameters change the process, not just its speed.** The learning rate does not merely pace the descent: gradient descent with a different step size follows a different trajectory and can settle in a different minimum. Two runs that differ only in learning rate are different experiments, not one experiment at two speeds.
 * **Data hyperparameters change the objective.** A different context length or a different tokenizer changes the loss the model is actually minimizing.
 
-Consequence: there is no equation of the form $\text{hyperparameter} = f(\text{task})$ that you can solve. The only way to know what a choice is worth is to run a training and measure the result.
+Consequence: there is no closed-form equation of the form $\text{hyperparameter} = f(\text{task})$ that you can solve. The only way to know what a choice is worth is to run trainings and measure the result — or to fit a statistical model to the results of earlier runs.
 
 ## Searching the space
 
 ### Why the Search Is Hard
 
-1. **Evaluation is expensive.** One point in the search space costs one full training run. At real scale that means days on thousands of GPUs; even the in-browser demo costs seconds per point.
+1. **Evaluation is expensive.** One point in the search space costs one full training run. At real scale that means days on thousands of GPUs; even a small model on one GPU costs minutes per point.
 2. **The objective is noisy.** Two runs with the same hyperparameters but different random seeds land at slightly different losses. A search must average over noise or it optimizes luck.
 3. **The space is mixed and constrained.** Discrete values ($N$, $h$), continuous values (learning rate, best explored on a log scale), categorical choices (optimizer), plus constraints such as $d_{\text{model}} \bmod h = 0$. A method that only handles one of these cannot handle the whole space.
-4. **Hyperparameters interact.** Learning rate and batch size must be chosen together: doubling the batch size typically invalidates the learning rate that worked before. The search space is not a grid of independent dials.
+4. **Hyperparameters interact.** Learning rate and batch size must be chosen together: doubling the batch size usually requires rescaling the learning rate — the linear scaling rule doubles it, up to a limit \cite{goyal2017largebatch}. The search space is not a grid of independent dials.
 
 ### How Hyperparameters Are Actually Found
 
@@ -60,9 +60,13 @@ Consequence: there is no equation of the form $\text{hyperparameter} = f(\text{t
 
 Most published models ship with a hyperparameter table whose values were inherited from the previous model with a few adjustments. Transfer works because architectures and objectives change slowly between papers — and it fails silently when the task or scale changes, because nothing tells you the inherited value is no longer good.
 
+Before search became automatic, tuning was a craft with a short list of rules. \cite[Bengio (2012)]{bengio2012practical} codified them for deep networks: the initial learning rate is “often the single most important hyperparameter” and should be tuned on a log scale; the batch size is mostly a computational choice; and random search is preferable to grid search when only a few axes matter. The advice sounds modest, but it encodes the empirical fact that one hyperparameter dominates the others, which is why even a large Bayesian search usually starts by mapping that axis.
+
 #### Scaling laws
 
 At the frontier, search is partly replaced by *fitted laws*. (\cite[Kaplan et al., 2020]{kaplan2020scaling}) showed that the loss of a language model depends on the number of parameters $N$, the number of training tokens $D$ and the compute $C$ as smooth power laws. Fit the laws on cheap small models and you can extrapolate the target size for a fixed budget. (\cite[Hoffmann et al., 2022]{hoffmann2022chinchilla}) redid the analysis on a larger scale and found that for a fixed compute budget, models should be trained on roughly 20 times as many tokens as they have parameters — far more than the then-standard practice, which had been copied between papers for years. A fitted law can thus overturn a prior belief that no single experiment would have questioned.
+
+Scaling laws changed what search is for. If the loss follows a power law in parameters and tokens, a handful of small runs can predict the compute-optimal frontier, and some hyperparameters can be transferred rather than re-searched at every scale. \cite[Yang et al. (2022)]{yang2022mup} made this concrete with maximal-update parametrization (muP): many optimal hyperparameters — including the learning rate — stay stable as the model grows, so tuning a small model can be reused zero-shot on a large one. The practical consequence is a shift from per-model search to a few scaled reference runs.
 
 #### Grid search
 
@@ -76,10 +80,18 @@ Draw configurations at random (uniformly for discrete values, log-uniformly for 
 
 Build a probabilistic *surrogate model* of $\text{config} \mapsto \text{loss}$ from the evaluations already performed, and choose the next configuration by balancing **exploitation** (where the surrogate predicts a good loss) against **exploration** (where it is still uncertain). Two standard instantiations:
 
-* **Gaussian-process surrogates** (\cite[Snoek et al., 2012]{snoek2012practical}): a Gaussian process is placed over the loss function; an acquisition function (e.g. expected improvement) picks the next point from the balance of predicted quality and uncertainty.
-* **TPE (Tree-structured Parzen Estimators)** (\cite[Bergstra et al., 2013]{bergstra2013science}): instead of a full process, the observed configurations are split into those that gave a *good* loss and those that gave a *bad* one; each group is modeled by its own density, and the next configuration is sampled where the good density is high relative to the bad one.
+* **Gaussian-process surrogates** — the classical form, introduced by \cite[Močkus (1975)]{mockus1978bo} and made practical for ML by \cite[Snoek et al. (2012)]{snoek2012practical}: a Gaussian process is placed over the loss function; an acquisition function (e.g. expected improvement) picks the next point from the balance of predicted quality and uncertainty.
+* **TPE (Tree-structured Parzen Estimators)** — introduced by \cite[Bergstra et al. (2011)]{bergstra2011algorithms} and applied at scale by \cite[Bergstra et al. (2013)]{bergstra2013science}: instead of a full process, the observed configurations are split into those that gave a *good* loss and those that gave a *bad* one; each group is modeled by its own density, and the next configuration is sampled where the good density is high relative to the bad one.
 
-\cite[Hyperopt]{hyperopt} is the open-source implementation this family is usually run with. The defining property of the whole approach: *every evaluation makes the next one smarter*, so the search is sequential and budget-aware rather than exhaustive.
+Bayesian optimization treats the search as a sequential decision problem: maintain a belief about the objective, choose the point that maximizes expected improvement, observe, update. \cite[Močkus (1975)]{mockus1978bo} gave the Bayesian formulation; \cite[Jones et al. (1998)]{jones1998ego} made Gaussian-process surrogates and expected improvement practical under the name “efficient global optimization”; \cite[Snoek et al. (2012)]{snoek2012practical} then adapted the machinery to ML models — a CIFAR-10 convolutional network, online LDA, and a structured SVM — and to the cost of each run. The modern tooling descends from that line.
+
+\cite[Hyperopt]{hyperopt} is the open-source implementation that popularised TPE; \cite[Optuna]{akiba2019optuna} and \cite[Ax]{olson2025ax} are the modern alternatives. The defining property of the whole approach: *every evaluation makes the next one smarter*, so the search is sequential and budget-aware rather than exhaustive.
+
+\cite[Li et al. (2016)]{li2016hyperband} turned this observation into an algorithm. Hyperband runs successive-halving brackets: start many configurations with a tiny budget, keep the best fraction, and multiply the survivors' budget; a bracket repeats this until one configuration remains. Running several brackets at different aggressiveness levels makes the method robust to the unknown cost of a full training run, and the whole procedure is a bandit-style allocation of trials rather than a surrogate model. It remains the reference point for modern multi-fidelity schedulers.
+
+#### Population-based training
+
+\cite[Jaderberg et al. (2017)]{jaderberg2017pbt} pushed the idea further with population-based training. A population of workers trains in parallel; at intervals, poorly performing workers copy the weights and hyperparameters of better ones and then perturb them, so the hyperparameters are *evolved* during training rather than fixed beforehand. The method was demonstrated on deep reinforcement learning, machine translation and GANs — settings where schedules and exploration constants matter and runs are long — but it applies whenever a training run can be paused and forked. It is search and training in one loop.
 
 #### Multi-fidelity search
 
