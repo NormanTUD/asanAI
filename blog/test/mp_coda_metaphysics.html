@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coda — The Metaphysics of an Experimental Epistemologist</title>
+<link rel="stylesheet" href="../Temml-Local.min.css">
+<link rel="stylesheet" href="mp.css">
+<script src="../temml.min.js" defer></script>
+<script src="mp.js" defer></script>
+<script src="mp_coda_metaphysics.js" defer></script>
+</head>
+<body data-accent="gold">
+<div class="progress"><span></span></div>
+<header class="topbar">
+  <a class="brand" href="mp_index.html"><b>MP</b><span class="dot">·</span>Codex</a>
+  <div class="topbar-meta">
+    <span class="hide-sm">Coda · von Foerster on McCulloch</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+  </div>
+</header>
+<div class="rail" id="rail" aria-hidden="true"></div>
+
+<main>
+<section class="hero" id="top" data-label="Opening">
+  <canvas class="hero-canvas" id="heroCoda" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">Coda · vordenker.de · Metaphysics of an Experimental Epistemologist</p>
+    <h1>The <em>Metaphysics</em> of an Experimental Epistemologist</h1>
+    <p class="hero-sub">Heinz von Foerster's essay on Warren McCulloch is not a summary but a portrait of a method: point, decide, take responsibility. Its centre is the distinction between questions that are already decided by their framework and questions that are in principle undecidable — and therefore ours to decide.</p>
+    <div class="hero-meta">
+      <span><b>Heinz von Foerster</b> · on Warren S. McCulloch</span>
+      <span>vordenker.de</span>
+      <span>a coda to the twelve plates</span>
+    </div>
+    <a class="scroll-cue" href="#thesis"><span class="line"></span> Read the coda</a>
+  </div>
+</section>
+
+<section class="section" id="thesis" data-label="The thesis">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The thesis</p>
+      <h2 class="thesis">We become metaphysicians whenever we decide upon <em>in principle undecidable</em> questions.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">Von Foerster begins with Seymour Papert's favourite teaching aid: “Don't bite my finger, look where I am pointing.” McCulloch, he says, is pointing at pointing. The essay follows that gesture through causality, inclusion, the pre-Socratics, Günther's non-Aristotelian logic, Don Juan, and Wittgenstein.</p>
+      <p class="lede">The decisive move is a distinction. A decidable question is already decided by the framework in which it is asked; it may take eight years, but logic will return a definite yes or no. An undecidable question is not like that. We are free to decide it, and then we have to take responsibility for the decision. That freedom is the metaphysical act.</p>
+      <div class="note"><b>The two answers:</b> “Am I apart from the Universe?” or “Am I part of the Universe?” Both are decisions on an undecidable question. McCulloch chooses to include himself in the world he constructs.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="lab" data-label="Apart / part">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">Laboratory · the undecidable stance</p>
+      <h2>Peephole or participation?</h2>
+      <p class="lede">Move the dial. At one end, the knower looks through a peephole at a universe that is already finished. At the other, the knower is inside the universe, and every act changes both the world and the actor. Neither end is forced by the evidence. The dial is a decision.</p>
+    </div>
+    <div class="lab reveal delay-1" style="margin-top:2rem">
+      <div class="lab-head">
+        <div>
+          <h3>Two undecidables, one dial</h3>
+          <p>The wall, the eye, the actor, and the liar's loop. The loop is the ultimate logical perpetual motion machine: from false it generates true, from true false, and so on.</p>
+        </div>
+        <span class="pill"><i></i> live</span>
+      </div>
+      <div class="lab-canvas-wrap wide">
+        <canvas id="codaLab" aria-label="Interactive peephole versus participation with the liar paradox loop"></canvas>
+      </div>
+      <div class="controls">
+        <div class="control"><label for="participation">participation <output>p</output></label><input id="participation" type="range" min="0" max="100" step="1" value="50"></div>
+      </div>
+      <div class="readout">
+        <div class="cell"><span>stance</span><b class="small-value" id="stanceVal">between the two</b></div>
+        <div class="cell"><span>consequence</span><b class="small-value" id="responsibilityVal">a decision is required</b></div>
+      </div>
+      <p class="note" id="stanceQuote" style="margin-top:1.2rem">“We become metaphysicians … whenever we decide upon in principle undecidable questions.”</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="decidable" data-label="Decidable / undecidable">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The distinction</p>
+      <h2>Why the undecidable is where freedom lives.</h2>
+      <p class="lede">“Only those questions that are in principle undecidable we can decide.” The sentence sounds paradoxical until one sees the point: a decidable question is already constrained by its framework. The answer is not free; it is forced. An undecidable question leaves the choice open, and with the choice comes responsibility.</p>
+      <p class="lede">Von Foerster's examples run from the squaring of the circle to the origin of the universe, from “what is consciousness?” to “am I apart from the universe?”. The list is not a list of mysteries to be solved. It is a list of places where the knower must take a stand.</p>
+    </div>
+    <div class="reveal delay-1 stack">
+      <div class="formula-card">
+        <div class="tex" data-tex="\text{decidable}\;\Longrightarrow\;\text{forced by the framework}" data-display></div>
+        <p class="formula-note"><b>The compulsion of logic.</b> “Ultimately — thanks to the inescapable force of logic — we shall be rewarded with a definite ‘Yes’ or a definite ‘No.’”</p>
+      </div>
+      <div class="formula-card">
+        <div class="tex" data-tex="\text{undecidable}\;\Longrightarrow\;\text{a decision, and a responsibility}" data-display></div>
+        <p class="formula-note"><b>The freedom of the act.</b> “We are under no compulsion … which way to decide: we are free to decide in this or that way, and then we have to take the responsibility for our decision.”</p>
+      </div>
+      <div class="formula-card">
+        <div class="tex" data-tex="\text{liar}:\quad \text{false}\to\text{true}\to\text{false}\to\cdots" data-display></div>
+        <p class="formula-note"><b>The perpetual motion machine.</b> The liar's paradox is not a bug in logic but a machine for generating the next truth-value forever.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="quotes" data-label="The voice">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow">The voice</p>
+      <h2>Pointing at pointing.</h2>
+    </div>
+    <div class="quote-grid" style="margin-top:2rem">
+      <figure class="quote wide reveal">
+        <p>“Most likely, everything that could be said about Warren McCulloch has been said already and, most likely, everything that McCulloch ever said, had never been said before.”</p>
+        <footer><b>Heinz von Foerster</b> · opening</footer>
+      </figure>
+      <figure class="quote reveal">
+        <p>“Don't bite my finger, look where I am pointing.”</p>
+        <footer><b>Seymour Papert</b>, quoted by von Foerster</footer>
+      </figure>
+      <figure class="quote reveal delay-1">
+        <p>“We become metaphysicians, whether or not we call ourselves such, whenever we decide upon in principle undecidable questions.”</p>
+        <footer><b>von Foerster</b> · § metaphysics</footer>
+      </figure>
+      <figure class="quote reveal delay-2">
+        <p>“Only those questions that are in principle undecidable we can decide.”</p>
+        <footer><b>von Foerster</b> · § metaphysics</footer>
+      </figure>
+      <figure class="quote wide reveal">
+        <p>“Your logic is not rich enough to discuss all this and still keep hoping it will make sense!”</p>
+        <footer><b>Gotthard Günther</b>, quoted by von Foerster</footer>
+      </figure>
+      <figure class="quote reveal">
+        <p>“Let us peacefully answer the first half of this question ‘Yes’, the second half ‘No’, and then proceed serenely.”</p>
+        <footer><b>McCulloch</b>, quoted by von Foerster</footer>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="return" data-label="Return">
+  <div class="wrap split">
+    <div class="reveal">
+      <p class="eyebrow">The coda's place</p>
+      <h2>The method behind the plates.</h2>
+    </div>
+    <div class="reveal delay-1">
+      <p class="lede">This essay is the best gloss on the whole codex because it names the intellectual virtue the plates try to practise: do not pretend that an undecidable question has been settled by evidence; decide it, say that you have decided it, and take responsibility. McCulloch's answer — include yourself in the world you describe — is one such decision.</p>
+      <p class="lede">It also explains why the codex ends with a memoir rather than a theorem. The sources are not decoration. They are the framework within which the questions became askable.</p>
+      <div class="note"><b>Return:</b> the twelve plates, or the beginning.</div>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:2.5rem;display:grid;gap:1rem">
+    <a class="next reveal" href="mp_index.html">
+      <div>
+        <p class="eyebrow">All plates</p>
+        <h3>Return to the Codex</h3>
+      </div>
+      <span class="arrow">→</span>
+    </a>
+    <a class="next reveal" href="mp_1943_logical_calculus.html" style="background:linear-gradient(120deg,color-mix(in srgb,var(--panel) 92%,transparent),color-mix(in srgb,var(--accent) 8%,var(--panel)))">
+      <div>
+        <p class="eyebrow">Plate 01 · 1943</p>
+        <h3>A Logical Calculus of the Ideas Immanent in Nervous Activity</h3>
+      </div>
+      <span class="arrow">↺</span>
+    </a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span>Coda · <b>The Metaphysics of an Experimental Epistemologist</b></span>
+    <span>Source: <a href="https://www.vordenker.de/metaphysics/metaphysics.htm">vordenker.de</a></span>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Facsimile viewer"><img alt=""><div class="cap"></div></div>
+</body>
+</html>
