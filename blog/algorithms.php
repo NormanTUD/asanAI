@@ -32,9 +32,9 @@ A procedure that has both is an algorithm. The rest of this half is the story of
 </div>
 
 <div class="md">
-### The first non-trivial algorithm: Euclid (c. 300 BC)
+### Euclid's algorithm (c. 300 BC): the first with a surviving proof
 
-The oldest algorithm still in use every day sits in Euclid's *Elements*, Book VII \cite[Euclidean algorithm]{euclideanalgorithm} \cite[The Elements]{euclidelements}. Given two whole numbers, find their **greatest common divisor** — the largest number that divides both. The procedure:
+One of the oldest algorithms still in use every day sits in Euclid's *Elements*, Book VII (\cite[Euclidean algorithm]{euclideanalgorithm}; \cite[The Elements]{euclidelements}); Babylonian scribes were already writing step-by-step procedures a millennium and a half earlier (\cite[Knuth, 1972]{knuth1972babylonian}). Given two whole numbers, find their **greatest common divisor** — the largest number that divides both. The procedure:
 
 > Divide the larger by the smaller. Replace the pair by *(the smaller, the remainder)*. Repeat until the remainder is zero. The last non-zero remainder is the answer.
 
@@ -61,7 +61,7 @@ For the next two thousand years, this was just *the way you found a common divis
 <div class="md">
 #### Another shape of algorithm: the Sieve of Eratosthenes (c. 240 BC)
 
-A little later, and a little further east, the same two millennia-old craft produced a different *shape* of procedure: the \cite[Sieve of Eratosthenes]{sieveoferatosthenes}. Given a limit $n$, list every number from 2 to $n$, then cross off every multiple of 2, then every multiple of 3, then 5, and so on. What is left standing is exactly the set of primes.
+A few decades later, in Alexandria, the same two millennia-old craft produced a different *shape* of procedure: the \cite[Sieve of Eratosthenes]{sieveoferatosthenes}. Given a limit $n$, list every number from 2 to $n$, then cross off every multiple of 2, then every multiple of 3, then 5, and so on. What is left standing is exactly the set of primes.
 
 Where Euclid's algorithm *reduces* a problem step by step, the sieve **filters** a finite set. It is still an algorithm, for the same two reasons: it *terminates* (once the smallest number you have not crossed off, $p$, satisfies $p^2 > n$, nothing below $n$ can still be composite, so you are done), and it is *correct by construction* (a number survives the sieve only if none of the primes below it divide it, which is precisely what being prime means). Two algorithms, separated by a few decades and a city, both defined long before the word *computer* existed, both pinned down by the identical pair: **it stops, and it is right.**
 
@@ -78,9 +78,15 @@ The name is itself a fossil of that gap. *Algorithm* is the Latinized form of th
 > Is there a **general, universal** procedure? Can one machine, running one rule, decide the answer to *any* problem in a class — not just *this* gcd, or *this* sieve, but *any* instance, for all time?
 
 Naming a class of things is not the same as asking whether the class has a single procedure that handles all of it. That question — and it is *the* question — sat unasked until the twentieth century.
+
+Al-Khwarizmi's *al-Kitab al-jabr* (c. 820) is the bridge between the Babylonian recipe and the modern algorithm: it states a general procedure for solving quadratics and then demonstrates it on every case, with a geometric proof for each. The Latin translation of his name became *algorismus*, the medieval name for the Hindu-Arabic calculation method, and eventually "algorithm" (\cite[al-Khwarizmi, c. 820]{alkhwarizmi820algebra}; \cite[history of mathematics]{historyofmath_wikipedia}). What he still lacked was the question of whether one procedure could decide an entire class of problems -- the question Hilbert would pose in 1928.
 </div>
 
 <div class="md">
+### The long middle: from method to program
+
+Two very different algorithms mark the long middle. Newton's method, circulated in the 1670s and published in his *Method of Fluxions*, finds a root by repeatedly replacing a guess $x$ with $x - f(x)/f'(x)$; its convergence can be proved, and its descendants still solve equations inside every numerical library (\cite[Newton, 1736]{newton1736fluxions}). In 1843 Ada Lovelace published a step-by-step program for Babbage's Analytical Engine to compute Bernoulli numbers -- the first published program for a general-purpose machine -- and argued that such a machine could manipulate symbols, not only numbers (\cite[Menabrea & Lovelace, 1843]{menabrea_lovelace1843}; \cite[Ada Lovelace]{ada_lovelace_wiki}).
+
 ### The question that built everything: the Entscheidungsproblem (1928)
 
 In 1928 the mathematician David Hilbert (\cite[Hilbert & Ackermann, 1928]{hilbert1928entscheidung}) posed a question that had been waiting, unasked, for two thousand years. In German it is the **Entscheidungsproblem**, the decision problem:
@@ -97,16 +103,16 @@ The answer, delivered eight years later by two independent mathematicians wieldi
 <div class="md">
 ### 1936: two machines, one answer
 
-Kurt Gödel had already delivered the first blow in 1931 with his incompleteness theorems \cite[Gödel's incompleteness theorems (1931)]{godel1931incompleteness}: no consistent system strong enough for arithmetic can prove every true statement in it. But incompleteness left a door open — it says some truths escape *proof*, not that no *procedure* could still decide which statements are decidable. The decision problem was still, as far as anyone could tell, on the table.
+Kurt Gödel had already delivered the first blow in 1931 with his incompleteness theorems \cite[Gödel's incompleteness theorems (1931)]{godel1931incompleteness}: no consistent, effectively axiomatized system that can express basic arithmetic can prove every true statement in it. But incompleteness left a door open — it says some truths escape *proof*, not that no *procedure* could still decide which statements are decidable. The decision problem was still, as far as anyone could tell, on the table.
 
-In 1936, independently, and to the best of our knowledge unaware of each other's work, **Alonzo Church** and **Alan Turing** each wrote down a rigorous formalism for "mechanical procedure," and each used it to answer the 1928 question with a proof that the answer is **no** \cite[The Church–Turing Thesis (SEP)]{churchturing1936}.
+In 1936, working independently, **Alonzo Church** and **Alan Turing** each wrote down a rigorous formalism for "mechanical procedure," and each used it to answer the 1928 question with a proof that the answer is **no** \cite[The Church–Turing Thesis (SEP)]{churchturing1936}. Turing learned of Church's result while his own paper was in press, and added an appendix proving the two formalisms equivalent.
 
 * **Church** worked with the λ-calculus: pure rewriting of symbols, a formalism that reads like algebra.
 * **Turing** built a *machine* — a finite controller that reads one symbol at a time from, and writes symbols to, an infinite strip of tape, moving left or right according to its current state \cite[Turing, On Computable Numbers (1936)]{turing1937}.
 
 The two formalisms look nothing alike. One is a calculus; the other is a physical picture of a head on a tape. And yet they compute *exactly* the same set of functions — every problem one can solve, the other can solve too. That coincidence is so load-bearing that it has its own name: the \cite[Church–Turing thesis (SEP)]{churchturing1936}.
 
-And the upshot for the 1928 question: within this shared class of "what a machine can do," there are true statements of arithmetic for which **no** decision procedure exists. The Entscheidungsproblem has *no solution* — not because no one was clever enough to find the procedure, but because the procedure is provably *not there*. The question itself has no "yes."
+And the upshot for the 1928 question: within this shared class of "what a machine can do," the validity of a first-order formula is not decidable in general. The Entscheidungsproblem has *no solution* — not because no one was clever enough to find the procedure, but because the procedure is provably *not there*. The question itself has no "yes."
 
 <figure>
 	<img style="max-width: 100%; width: 100%; height: auto; display: block; margin: 0 auto;" src="turing_machine_2a.svg" alt="A Turing machine: states reading and writing symbols on a tape" />
@@ -160,6 +166,16 @@ GCD = {
 </script>
 
 <div class="md">
+## What an algorithm costs
+
+The mid-twentieth century made algorithms into engineering objects. Binary search -- repeatedly halving a sorted interval -- was described by John Mauchly in 1946 and analyzed in the early 1960s; Knuth's *Sorting and Searching* gave its exact comparison count and a canonical correct formulation (\cite[Binary search]{binarysearch_wiki}; \cite[Knuth]{taocp3}). Dijkstra's 1968 letter against the `goto` statement argued that programs should be built from structured control flow so their progress can be reasoned about, and Hoare's 1969 axioms gave a formal logic for assignments and while-loops -- the beginning of program verification (\cite[Dijkstra, 1968]{dijkstra1968goto}; \cite[Hoare, 1969]{hoare1969axiomatic}).
+
+Two questions turned algorithms into a mathematical theory. Cook (1971) and Levin (1973) showed that a single problem -- Boolean satisfiability -- is complete for the class NP: if it had a polynomial-time algorithm, so would every problem whose solution can be checked in polynomial time (\cite[Cook, 1971]{cook1971complexity}; \cite[Cook-Levin theorem]{cooklevin_wiki}). Bellman's *Dynamic Programming* (1957) gave the complementary positive technique: break a problem into overlapping subproblems, store each answer once, and build the optimum from optimal subproblems (\cite[Bellman, 1957]{bellman1957book}). Together they defined the modern question -- not just can it be computed, but at what cost.
+
+Two algorithms from the same decades made whole industries computable. Dantzig's simplex method (1947; book 1963) solved linear programs by walking along the vertices of a polyhedron, turning logistics, scheduling, and resource allocation into routine calculation (\cite[Dantzig, 1963]{dantzig1963linear}). The fast Fourier transform, rediscovered by Cooley and Tukey in 1965, reduced the cost of a discrete Fourier transform from $O(n^2)$ to $O(n\log n)$; Gauss had used the same idea in 1805, but the 1965 paper made it a standard tool (\cite[Cooley & Tukey, 1965]{cooley1965fft}; \cite[FFT history]{fft_history_wiki}).
+
+Modern algorithms increasingly search rather than calculate. PageRank (1998) treated the web as a Markov chain and ranked pages by the stationary distribution of a random surfer, turning a graph into a single global importance score (\cite[Brin & Page, 1998]{brin1998pagerank}). AlphaGo (2016) combined a policy network, a value network, and Monte Carlo tree search to beat Lee Sedol at Go -- a game whose branching factor had defeated pure search (\cite[Silver et al., 2016]{silver2016go}). Both are algorithms in the old sense -- they terminate and are correct relative to a model -- but their guarantee is statistical or empirical, not a proof of optimality.
+
 ## A transformer executes algorithms
 
 ### How a Transformer Executes Algorithms
@@ -573,7 +589,7 @@ Each generated token advances the computation by one micro-step. The model doesn
 
 #### Why Ambiguity Kills: The Algorithmic Prompting Discovery
 
-\cite[Zhou et al. (2022)]{zhou2022algorithmic} proved something crucial: **how you describe the algorithm determines whether the model can execute it.**
+\cite[Zhou et al. (2022)]{zhou2022algorithmic} showed something crucial: **how you describe the algorithm determines whether the model can execute it.**
 
 Consider teaching addition. A scratchpad-style prompt shows:
 ```
@@ -608,7 +624,7 @@ This is in stark contrast to chain-of-thought prompting, where providing wrong r
 
 #### The Mechanism: Layer by Layer
 
-Combining insights from both papers, here's what happens during a single forward pass when the model encounters “Execute: add(128, 367)” after seeing the algorithm:
+Combining insights from both papers, here is a schematic of what happens during a single forward pass when the model encounters “Execute: add(128, 367)” after seeing the algorithm; the layer ranges below are illustrative, not measured:
 
 **Layers 1–4 (Algorithm Parsing):**
 Attention heads identify the structure of the algorithm in the prompt. Key patterns recognized:

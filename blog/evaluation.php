@@ -95,7 +95,7 @@ $$
 \text{pass@k} = \mathbb{E}\!\left[1 - \frac{\binom{n-c}{k}}{\binom{n}{k}}\right]
 $$
 
-where $n$ is the number of samples and $c$ is the number that pass. This unbiased estimator handles low $k$ correctly. For $k=1$, it's the unbiased greedy accuracy.
+where $n$ is the number of samples and $c$ is the number that pass. This unbiased estimator handles low $k$ correctly. For $k=1$ it reduces to $c/n$, the fraction of samples that pass.
 </div>
 
 <div class="md">
@@ -129,26 +129,32 @@ where $Q$ is true quality and $T$ is “judge noise”. Empirical agreement with
 
 #### MT-Bench / AlpacaEval
 
-MT-Bench / AlpacaEval (\cite[Zheng et al., 2023]{zheng2023lmsys}) — **MT-Bench**: 80 high-quality multi-turn questions across 8 categories, judged by GPT-4. Reported as a 1-10 score.
+MT-Bench (\cite[Zheng et al., 2023]{zheng2023lmsys}) and AlpacaEval (\cite[Dubois et al., 2024]{dubois2024alpacaeval}) — **MT-Bench**: 80 high-quality multi-turn questions across 8 categories, judged by GPT-4. Reported as a 1-10 score.
 
 AlpacaEval: 805 questions, judged by GPT-4 Turbo, reports win-rate against GPT-4 baseline.
 
 #### LMSYS
 
-LMSYS (\cite[Zheng et al., 2023]{zheng2023lmsys}) is the gold standard for human preference. Real users chat with two anonymous models side-by-side, then vote which they prefer. The Elo ranking:
+LMSYS (\cite[Zheng et al., 2023]{zheng2023lmsys}) is the gold standard for human preference. Real users chat with two anonymous models side-by-side, then vote which they prefer. The original Elo ranking:
 
 $$
 E_A^{\text{new}} = E_A + K \cdot \left(S_{AB} - \frac{1}{1 + 10^{(E_B - E_A)/400}}\right)
 $$
 
-with $K=32$, $S_{AB} = 1$ if A wins. Updated continuously with hundreds of thousands of votes.
+with $K=32$, $S_{AB} = 1$ if A wins. The original leaderboard updated this online; the current Arena fits a Bradley–Terry model to the same pairwise votes, which has the same logistic form but supports confidence intervals (\cite[Chiang et al., 2024]{chiang2024arena}).
 
-A critical finding: **arena Elo and academic benchmarks correlate only weakly** ($r \approx 0.5$). Models optimized for benchmarks often underperform on real user preference.
+Arena preference and static benchmarks answer different questions, so their rankings can diverge: a model that leads on MMLU need not lead on chat quality, and the Arena's confidence intervals are wide enough that small rank gaps are not meaningful (\cite[Chiang et al., 2024]{chiang2024arena}).
 </div>
 
 <div id="arena-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
 
 <div class="md">
+The lifecycle is old. GLUE packaged nine language-understanding tasks into one score; within a year, models had passed the estimated non-expert human baseline, so the benchmark lost its headroom (\cite[Wang et al., 2018]{wang2018glue}). SuperGLUE raised the difficulty with harder tasks and a stricter format, and it too was largely solved within a few years (\cite[Wang et al., 2019]{wang2019superglue}). MMLU repeated the pattern at larger scale: broad knowledge, 57 subjects, then saturation and a harder successor in MMLU-Pro (\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}; \cite[Wang et al., 2024]{wang2024mmlupro}). Saturation is success and failure at once.
+
+BIG-bench was built to resist that fate: 204 tasks from 450 authors, deliberately selected to be beyond then-current models (\cite[Srivastava et al., 2022]{srivastava2022bigbench}). Its aggregate score is hard to interpret because the tasks use different metrics, and the suite already contains many items that later models can solve. GPQA then took the opposite route: 448 expert-written, Google-proof science questions on which PhD-level experts score about 65% and skilled non-experts about 34% (\cite[Rein et al., 2024]{rein2024gpqa}). ARC-AGI adds a private evaluation set and a format that resists memorisation (\cite[Chollet et al., 2024]{chollet2024arcagi}). Hardness alone is not enough; the items must also be unseen.
+
+Contamination is a spectrum, not a binary. At one end is verbatim leakage, which extraction attacks can demonstrate directly (\cite[Carlini et al., 2021]{carlini2021extracting}). In the middle is statistical evidence: Min-K% Prob flags a passage when even its least likely tokens are unusually likely under the model, a signal that needs no access to the training corpus (\cite[Shi et al., 2024]{shi2024mink}). At the other end is the slow decay of a fixed test set. LiveBench responds by refreshing questions from recent competitions, papers and news, and scoring them automatically against ground truth rather than by an LLM judge (\cite[White et al., 2024]{white2024livebench}). No single check proves cleanliness; the design has to assume leakage and make it expensive.
+
 ## Benchmark problems
 
 ### Benchmark Contamination: The Crisis
@@ -161,13 +167,13 @@ Evidence of contamination:
 
 * **Exact-match memorization**: models regurgitate benchmark items verbatim.
 * **Ordering effects**: models perform anomalously well on benchmark-internal “Question 17” but badly on a shuffled version.
-* **Min-checksum tests** (\cite[Carlini et al., 2021]{carlini2021extracting}): if a model can complete the second half of a passage, it has probably seen the first half.
+* **Min-K% Prob** (\cite[Shi et al., 2024]{shi2024mink}): a passage is likelier to be memorized when even its least likely tokens have comparatively high probability under the model. The older extraction attacks showed the complementary failure directly: verbatim regurgitation (\cite[Carlini et al., 2021]{carlini2021extracting}).
 * **Test-set perplexity**: a model that has seen the test set has lower perplexity than a fresh one.
 
 #### Mitigations
 
-* **Dynamic benchmarks**: questions are generated fresh each test (e.g., LiveBench, MMLU-Pro (\cite[Wang et al., 2024]{wang2024mmlupro})).
-* **Held-out private benchmarks**: ARC-AGI (Chollet), FrontierMath (Epoch AI), SEAL (Scale AI). These cost money and are not public.
+* **Dynamic benchmarks**: questions are refreshed on a schedule from recent sources, as in LiveBench (\cite[White et al., 2024]{white2024livebench}). MMLU-Pro is harder but still static (\cite[Wang et al., 2024]{wang2024mmlupro}).
+* **Held-out or private evaluation sets**: the private ARC-AGI eval set (\cite[Chollet et al., 2024]{chollet2024arcagi}), FrontierMath (Epoch AI), and SEAL (Scale AI). The questions are withheld rather than merely copyrighted, which makes contamination much harder, at the price of limited public scrutiny.
 * **Time-shifted benchmarks**: questions created after the model's training cutoff, then benchmarked in real-time.
 * **Adversarial filtering**: maintain a “contaminated” list of items that appear in pretraining corpora (ProxiMix, D-Clean).
 * **Canary strings**: a unique token injected into benchmark items; if it appears in model output, the model has been trained on the benchmark.
@@ -202,7 +208,7 @@ The community is moving towards:
 
 #### HELM: Holistic Evaluation of Language Models
 
-The Holistic Evaluation of Language Models benchmark suite (\cite[Liang et al., 2022]{liang2023helm}) evaluates models across **42 scenarios × 7 metrics** (accuracy, calibration, robustness, fairness, bias, toxicity, efficiency). It pioneered the multi-axis, transparent reporting standard.
+The Holistic Evaluation of Language Models benchmark suite (\cite[Liang et al., 2022]{liang2023helm}) scores **16 core scenarios on 7 metrics** (accuracy, calibration, robustness, fairness, bias, toxicity, efficiency), plus 26 targeted scenarios for a total of 42. It pioneered the multi-axis, transparent reporting standard.
 
 #### The State of Evaluation in 2025
 
@@ -363,8 +369,8 @@ Two corollaries that bite in practice:
 		marker: { size: 14, color: '#3b82f6' },
 		hovertemplate: '%{text}<br>Elo: %{x}<br>(\cite[Hendrycks et al., 2021]{hendrycks2021mmlu}): %{y}%<extra></extra>'
 	}], {
-		title: { text: 'LMSYS Arena Elo vs MMLU (correlation only ~0.5)', font: { size: 13 } },
-		xaxis: { title: 'Arena Elo (Jan 2025)' },
+		title: { text: 'Chatbot Arena score vs MMLU: different questions', font: { size: 13 } },
+		xaxis: { title: 'Arena score (Jan 2025)' },
 		yaxis: { title: 'MMLU accuracy (%)', range: [80, 95] },
 		margin: { t: 50, b: 50, l: 60, r: 20 },
 		paper_bgcolor: 'rgba(0,0,0,0)',

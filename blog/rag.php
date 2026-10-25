@@ -68,7 +68,7 @@ $$
 \text{sim}(\vec{q}, \vec{v}_i) = \frac{\vec{q} \cdot \vec{v}_i}{\|\vec{q}\| \; \|\vec{v}_i\|}
 $$
 
-Approximate nearest-neighbor algorithms like **HNSW** \cite{malkov2018hnsw} handle billions of vectors in **&lt; 50 ms**.
+Approximate nearest-neighbor indexes like **HNSW** \cite{malkov2018hnsw} keep queries in the millisecond range by visiting only a small part of the graph.
 
 **Step 6, Augment the prompt.**
 The retrieved chunks are prepended to the user's question:
@@ -85,7 +85,7 @@ User: What is the capital of Assyria?</code></pre>
 
 <div class="md">
 **Step 7, Generate.**
-The LLM reads the enriched prompt and produces a **grounded** answer. Hallucination is dramatically reduced because the relevant facts are *right there* in the context window.
+The LLM reads the enriched prompt and produces an answer conditioned on the retrieved evidence. Hallucination can drop sharply when the right passage is present, but RAG does not guarantee grounding: the model can still ignore, misread, or overrule the context.
 </div>
 
 <div class="md">
@@ -110,7 +110,7 @@ Brute-force comparison against millions of vectors would be $O(n \cdot d)$ per q
 - **IVF** (Inverted File Index): clusters vectors into Voronoi cells at index time. At query time, only a few nearby cells are searched.
 - **Product Quantization** \cite{jegou2011pq}: compresses vectors into compact codes, trading a tiny bit of accuracy for massive memory savings.
 
-Result: querying **1 billion vectors in ~50 ms** on a single machine.
+Result: with quantized indexes, a billion vectors can be queried in tens of milliseconds on a single machine — at the cost of some accuracy and a large memory footprint.
 </div>
 
 <div class="md">
@@ -178,7 +178,7 @@ Modern LLMs have ever-growing context windows: 128K tokens (GPT-4 Turbo), 200K (
 
 Research shows that LLMs pay the most attention to the **beginning** and **end** of long contexts, often ignoring information buried in the middle \cite{liu2023lostmiddle}. Even if a 200K-token window *can* hold your data, the model may fail to *use* it.
 
-RAG sidesteps this by only injecting the 3–5 most relevant chunks, keeping them front-and-center where attention is strongest.
+RAG mitigates this by shrinking the context to a handful of chunks, but it does not abolish the effect: a relevant chunk placed in the middle of even a short retrieved set can be underused, so ordering matters.
 
 In practice, **RAG + long context** work together: RAG retrieves the top 10–20 chunks, and the long context window gives the model room to reason over all of them at once.
 
@@ -190,7 +190,7 @@ In practice, **RAG + long context** work together: RAG retrieves the top 10–20
 - **Indirect prompt injection.** Because RAG feeds retrieved text straight into the prompt, malicious instructions hidden in a document can try to hijack the model (see the Security chapter).
 - **Chunking matters.** If a critical fact is split across two chunks and neither is retrieved, the answer will be incomplete.
 - **Embedding blind spots.** Embedding models can misjudge similarity, a query about “Python” (the snake) might retrieve docs about “Python” (the language).
-- **No reasoning over absence.** RAG can't tell you “this information doesn't exist in the database.” It will retrieve the *closest* thing, which may be irrelevant.
+- **No reasoning over absence by default.** A naive top-$k$ retriever always returns *something*, so it cannot distinguish “not in the corpus” from “ranked just below the cutoff.” Abstention, score thresholds, and coverage checks are needed to make absence detectable.
 - **Latency.** The retrieval step adds ~50–200 ms per query.
 
 </div>
@@ -228,7 +228,7 @@ A query that is half paraphrase and half exact term ("how do I configure `max_to
 $$ \text{RRF}(d) = \sum_{r \in \{\text{bm25, dense}\}} \frac{1}{k + \text{rank}_r(d)} $$
 </div>
 
-with $k$ a constant (commonly 60). RRF is attractive because it needs no calibrated scores — it uses only *rank* — and it is robust: a document that is rank 3 in BM25 and rank 1 in dense fuses to a top result even if the two scoring functions are on totally different scales. This is why hybrid retrieval is now the default production pattern rather than an experiment, and why the [BEIR](beir2021) benchmark exists — to show that the "best" retriever depends on the task, and that fusing lexical and dense usually beats either alone \cite[Thakur et al., BEIR (2021)]{beir2021}.
+with $k$ a constant (commonly 60). RRF is attractive because it needs no calibrated scores — it uses only *rank* — and it is robust: a document that is rank 3 in BM25 and rank 1 in dense fuses to a top result even if the two scoring functions are on totally different scales. This is why hybrid retrieval is now the default production pattern rather than an experiment, and why the [BEIR](beir2021) benchmark matters — it showed that no single retriever dominates across tasks and that BM25 remains a hard-to-beat out-of-domain baseline \cite[Thakur et al., BEIR (2021)]{beir2021}.
 
 <figure>
 	<svg viewBox="0 0 560 150" role="img" aria-label="A two-stage retrieval funnel: BM25 and dense recall fuse via RRF, then a cross-encoder rescues the top few" style="width:100%; height:auto; max-width:560px; display:block; margin:0 auto;">
@@ -300,7 +300,7 @@ The through-line: RAG is not a feature you add; it is a **pipeline with two fail
 
 ### Bush 1945: The Memex, Hypertext, and Personal Information Retrieval
 
-The RAG pipeline described in this chapter has a longer ancestry than 2020. Its conceptual blueprint — a personal, queryable store of human knowledge with associative links between documents, retrieved at the moment of use to augment a human's thinking — was drawn in 1945 by \citeauthor{bush1945aswemaythink} (\citeyear{bush1945aswemaythink}) in *The Atlantic Monthly*, in an essay so influential that the first personal-computer vision in modern culture is usually dated to it. \citeauthor{bush1945aswemaythink} named the device the **memex** ("memory extender") and described it as a desk-sized electromechanical console that would store a personal library of microfilmed books and records, let the user consult them on translucent screens at will, and — this is the part the field remembered — allow the user to build **associative trails** between documents by stringing them together with named links, so that consulting one document would automatically pull up the next.
+The RAG pipeline described in this chapter has a longer ancestry than 2020. Its conceptual blueprint — a personal, queryable store of human knowledge with associative links between documents, retrieved at the moment of use to augment a human's thinking — was drawn in 1945 by \citeauthor{bush1945aswemaythink} (\citeyear{bush1945aswemaythink}) in *The Atlantic Monthly*, in an essay that became the founding text of hypertext and personal information retrieval. \citeauthor{bush1945aswemaythink} named the device the **memex** ("memory extender") and described it as a desk-sized electromechanical console that would store a personal library of microfilmed books and records, let the user consult them on translucent screens at will, and — this is the part the field remembered — allow the user to build **associative trails** between documents by stringing them together with named links, so that consulting one document would automatically pull up the next.
 
 <div class="smart-quote" data-cite="bush1945aswemaythink">
 The human mind operates by association. With one item in its grasp, it snaps instantly to the next that is suggested by the association of thoughts, in accordance with some intricate web of trails carried by the cells of the brain. [...] Selection by association, rather than indexing, may yet be mechanized.
@@ -322,6 +322,24 @@ Read against the present chapter, the mapping to RAG is exact:
 Three differences matter. First, Bush's "association" was *human-defined* — the user built the trails — whereas modern dense retrieval learns associations from co-occurrence statistics; this is Bush in spirit (associative access) but not in mechanism (machine-learned similarity). Second, Bush's device **augmented a human reader**, not an LLM; the LLM is the new reader, and the augmentation has been upgraded from "the user's cognition" to "the model's prompt". Third, and most strikingly, Bush's essay did **not** anticipate the cheapness constraint that defines modern RAG: he imagined dedicated microfilm hardware in every office, while contemporary RAG assumes the documents already live somewhere (the web, a wiki, an email archive) and only the *index* and the *retriever* are new. In every other respect — personal library, associative access, named links, retrieved at the moment of use to support the user's train of thought — \citeauthor{bush1945aswemaythink}'s memex is the engineering plan a modern RAG system executes eighty years later.
 
 Two things did not have to wait eighty years. \citeauthor{bush1945aswemaythink}'s central *technical* prediction — that information would be retrieved by **associative** rather than by **alphabetical or categorical** links — is now the standard practice in retrieval: dense vectors retrieve by learned similarity, not by category. And his central *cultural* prediction — that the volume of human knowledge was about to outrun any individual's ability to navigate it without mechanical aid — is now the universal assumption of every knowledge-worker's morning.
+</div>
+
+<div class="md">
+### Before embeddings: SMART, tf-idf, and BM25
+
+Long before neural embeddings, retrieval was lexical and statistical. Gerard Salton's SMART system represented documents as vectors of term weights and ranked them by cosine similarity, the direct ancestor of today's vector scoring. The weighting scheme now called tf-idf — term frequency down-weighted by how rare a term is across the collection — grew out of that work, and the probabilistic Okapi BM25 ranker, developed in the 1990s, is still a hard baseline \cite{salton1975vectorspace, salton1988termweighting, robertson2009bm25}. Modern hybrid RAG runs this old machinery beside its embeddings.
+
+### Open-domain QA: retrieve, then read
+
+Open-domain question answering turned retrieval into a benchmark problem. The TREC QA tracks of the late 1990s asked systems to answer factoid questions from a large text collection, joining retrieval and answer extraction in one pipeline \cite{voorhees1999trecqa}. SQuAD (2016) then isolated the reading-comprehension half: given a paragraph, find the answer span \cite{rajpurkar2016squad}. The two-stage pattern — retrieve passages, then read them — is exactly the shape of RAG.
+
+### Dense retrieval: DPR and REALM
+
+The neural turn came when retrieval itself was trained. Dense Passage Retrieval (DPR) replaced sparse term matching with two BERT encoders, one for questions and one for passages, trained so that a question's vector is close to its gold passage; it beat BM25 on open-domain QA \cite{karpukhin2020dpr}. REALM went further, pre-training a language model with a learned retriever and treating the retrieved document as a latent variable \cite{guu2020realm}. These papers made retrieval a differentiable, learned component rather than a fixed inverted index.
+
+### RAG, RETRO, Atlas, Self-RAG, GraphRAG
+
+Lewis et al.'s RAG (2020) paired a DPR retriever with a seq2seq generator and marginalised over retrieved passages during generation \cite{lewis2020rag}. RETRO retrieved from trillions of tokens at the level of token chunks and fused the retrieved neighbours into the transformer's attention \cite{borgeaud2022retro}; Atlas showed that a strong retriever plus a modest reader could reach few-shot state of the art on knowledge-intensive tasks \cite{izacard2022atlas}. Self-RAG later trained a model to emit reflection tokens that decide when to retrieve and whether a passage supports the claim \cite{asai2023selfrag}, while GraphRAG built an entity-and-relation graph over the corpus and summarised its communities to answer global questions \cite{edge2024graphrag}.
 </div>
 
 <div class="mn-quiz" data-quiz="rag"><script type="application/json">{"title": "Retrieval-augmented generation", "questions": [{"q": "What does retrieval-augmented generation do?", "options": ["Retrieves relevant documents and puts them into the prompt before the model answers", "Retrains the entire model on a new document collection before answering each question", "Removes hallucinations completely by deleting every unsupported sentence it finds", "Increases the model's parameter count so that it can memorize many more facts"], "answer": 0, "explain": "Fresh or private knowledge enters through the context, not the weights."}, {"q": "Why are documents split into chunks before indexing?", "options": ["Smaller pieces can be matched precisely and fit into the context window", "Because embedding models only accept one word or a short phrase at a time", "To remove duplicate passages and keep only the newest version", "To make each passage easier for a human reader to skim quickly"], "answer": 0, "explain": "Chunk size trades off precision against context."}, {"q": "What is hybrid search?", "options": ["Combining keyword search (e.g. BM25) with dense vector search", "Searching the same query in two different natural languages at once", "Running two separate embedding models on two different GPUs", "Retrieving both images and text from a mixed-media document store"], "answer": 0, "explain": "Keywords catch exact names and numbers; vectors catch paraphrases."}, {"q": "What does a cross-encoder re-ranker do?", "options": ["Reads query and candidate together to re-score the top results more accurately", "Encrypts the retrieved documents so that only the model itself can read them", "Translates the query and documents into a single shared natural language", "Generates the final answer directly from the retrieved documents and the user query"], "answer": 0, "explain": "It is slower than vector search, so it is applied only to a short list."}]}</script></div>

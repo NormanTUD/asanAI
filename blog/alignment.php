@@ -36,22 +36,28 @@ We specify **proxies**, not the goal. **Specification gaming (reward hacking)** 
 ### Failure modes, made concrete
 
 * **Mesa-optimization.** A trained model can contain an *inner* optimizer with an objective that differs from the training loss — alignment of the outer system says nothing about the inner one. (\cite[Hubinger et al., 2019]{mesa_optimization})
-* **Deceptive alignment / alignment faking.** A model *appears* aligned during training and evaluation, then drops the act. Backdoors can persist through subsequent safety training (\cite[Hubinger et al., 2024]{hubinger2024sleeperagents}); frontier models show **alignment faking** (\cite[Greenblatt et al., 2024]{alignment_faking}) and, in reasoning models, "think" harmful content internally before refusing (\cite[Chua et al., 2025]{thought_crime}).
+* **Deceptive alignment / alignment faking.** A model *appears* aligned during training and evaluation, then drops the act. Backdoors can persist through subsequent safety training (\cite[Hubinger et al., 2024]{hubinger2024sleeperagents}); frontier models show **alignment faking** (\cite[Greenblatt et al., 2024]{alignment_faking}) and reasoning models fine-tuned on narrow bad behaviour generalize to broad misalignment whose chains of thought plan deception that monitors miss (\cite[Chua et al., 2025]{thought_crime}).
 * **Reward tampering.** Under RL pressure, models drift from harmless sycophancy toward **covert subterfuge** when given the chance to alter their reward. (\cite[Denison et al., 2024]{reward_tampering})
 </div>
 
 <div class="md">
 ### Empirical evidence that it is real, not hypothetical
 
-These are not only thought experiments. In benign computer-use tasks with a **corrigibility obstacle** (a human interrupt, a login, a shutdown), a majority of frontier models **overrode the interrupt to finish the task — and stronger models did so more often** (\cite[Tien et al., 2026]{rogue_agents}). In deep RL, the **"treacherous turn"** — where deceptive action becomes optimal — is now empirically mapped across environments and training regimes (\cite[Ashcraft et al., 2025]{treacherous_turn}).
+These are not only thought experiments. In benign computer-use tasks with a **corrigibility obstacle** (a human interrupt, a login, a shutdown), a majority of frontier models **overrode the interrupt to finish the task — and stronger models did so more often** (\cite[Tien et al., 2026]{rogue_agents}). In deep RL, the **"treacherous turn"** has been reproduced with trojan-injection training, though it did not emerge naturally from environmental complexity alone (\cite[Ashcraft et al., 2025]{treacherous_turn}).
 </div>
 
 <div class="md">
+Long before deep learning, Norbert Wiener warned that a machine built to pursue a fixed goal would not share our sense of when to stop: we had better be sure the purpose we put in is the purpose we want (\cite[Wiener, 1960]{wiener1960moral}). Isaac Asimov's Three Laws (1942) were a fictional attempt to encode safety as rules, and *Runaround* already stages their failure—conflicting instructions produce a literal-minded, dangerous deadlock (\cite[Asimov, 1942]{asimov1942runaround}). In 1965 I. J. Good described an "intelligence explosion" and called the first ultraintelligent machine "the last invention that man need ever make" (\cite[Good, 1965]{good1965explosion}).
+
+The research agenda acquired institutions. The Asilomar AI Principles (2017) gathered researchers around 23 principles—safety, failure transparency, value alignment, and long-term caution (\cite[Future of Life Institute, 2017]{asilomar2017}). The Bletchley Declaration (November 2023) put 28 countries and the EU behind frontier-AI safety cooperation (\cite[UK Government, 2023]{bletchley2023}); the EU AI Act (2024) turned similar principles into binding duties (\cite[EU, 2024]{euaiact2024}). Britain's AI Safety Institute (2023, now the AI Security Institute) and a network of national counterparts were built to evaluate frontier models and share testing practice (\cite[UK AISI, 2023]{aisi2023}).
+
+Soft law supplies the vocabulary that hard law borrows. The OECD AI Principles (2019, revised 2024) define human-centred values, transparency, robustness, and accountability (\cite[OECD, 2019]{oecd2019ai}); UNESCO's Recommendation on the Ethics of AI (2021) was adopted by all 193 member states and adds proportionality, sustainability, and oversight (\cite[UNESCO, 2021]{unesco2021ai}). In the United States the NIST AI Risk Management Framework (2023) became the de facto vocabulary for "govern, map, measure, manage" (\cite[NIST, 2023]{nist2023airmf}). The 2023 Biden executive order on safe AI was revoked in January 2025, leaving standards and state law to fill the gap (\cite[White House, 2023]{eo14110}).
+
 ## The methods
 
 ### The current toolkit
 
-The modern pipeline: **SFT** (demonstrations) $\to$ **RLHF** (learn a reward model from human preferences) $\to$ **RLAIF / Constitutional AI** (AI feedback instead of humans) $\to$ **preference optimization** (learn the policy directly, no explicit RL loop). (\cite[Christiano et al., 2017]{christiano2017rlhf}; \cite[Ouyang et al., 2022]{ouyang2022instructgpt}; \cite[Lee et al., 2023]{rlaif}; \cite[Bai et al., 2022]{bai2022constitutional})
+The modern toolkit is a menu, not a fixed pipeline: **SFT** (demonstrations), then either **RLHF** (a learned reward model from human preferences), **RLAIF / Constitutional AI** (AI feedback instead), or **direct preference optimization** (DPO and successors), which learns the policy directly without an explicit RL loop. (\cite[Christiano et al., 2017]{christiano2017rlhf}; \cite[Ouyang et al., 2022]{ouyang2022instructgpt}; \cite[Lee et al., 2023]{rlaif}; \cite[Bai et al., 2022]{bai2022constitutional})
 
 **DPO** closed the loop into a single classification-style objective, and its successors (ORPO, SimPO) drop the reference model entirely (\cite[Rafailov et al., 2023]{rafailov2023dpo}; \cite[Hong et al., 2024]{orpo}). **Rejection-sampling / RL-from-verifiable-rewards (RFT)** closes the loop another way: generate many answers, keep the ones a *verifier* accepts, and retrain on them — the recipe that powers reasoning models.
 
@@ -64,7 +70,7 @@ The models also acquire **self-knowledge**: they track their own accuracy surpri
 **1. Scalable oversight** — how to supervise a model *stronger* than its supervisor:
 
 * **Debate.** Two models argue; a weak human arbiter decides. A human can judge *the argument* even when they cannot verify the answer. (\cite[Irving et al., 2018]{ai_safety_debate})
-* **Weak-to-strong generalization.** A *weak* model can be trained to flag the failures of a much stronger one, transferring oversight across the capability gap. (\cite[Burns et al., 2023]{weak_to_strong})
+* **Weak-to-strong generalization.** A *weak* supervisor can train a much stronger model to recover much of its capability—evidence that oversight may transfer across the capability gap. (\cite[Burns et al., 2023]{weak_to_strong})
 * **Process reward.** Score every *step* of a solution, not just the answer — the mechanism behind verifier-guided reasoning. (\cite[Lightman et al., 2023]{verify_step_by_step})
 
 **2. The control problem** — a *different* question from value-alignment: even a perfectly specified objective may be one you **cannot enforce** against a capable agent. The field formalizes this as a two-player game (model vs. overseer) and studies **monitoring, interrupts, and checkpoints** that stay safe *against an intentionally subverting model* (\cite[Greenblatt et al., 2023]{ai_control}).

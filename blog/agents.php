@@ -48,13 +48,13 @@ The concept of an autonomous reasoning agent long predates LLMs. Understanding t
 
 ### 0. Man-Computer Symbiosis (1960) — the Vision Before the Tech
 
-The deepest historical root of the modern AI agent is not from AI research at all but from a *psychology*-oriented network engineer asking what computers were actually *for*. \citeauthor{licklider1960symbiosis} (\citeyear{licklider1960symbiosis}) published "Man-Computer Symbiosis" in the IRE Transactions on Human Factors in Electronics while at Bolt, Beranek and Newman, twelve years before he would go on to fund ARPANET at ARPA and shape what became the internet. The paper argues, against the prevailing orthodoxy of the day (which held that computers would automate human decision-making by replacing humans), that the right relation between human and computer is not *replacement* but *symbiosis* — a tight, real-time, two-way coupling in which each partner does what it does best.
+The deepest historical root of the modern AI agent is not from AI research at all but from a *psychology*-oriented network engineer asking what computers were actually *for*. \citeauthor{licklider1960symbiosis} (\citeyear{licklider1960symbiosis}) published "Man-Computer Symbiosis" in the IRE Transactions on Human Factors in Electronics while at Bolt, Beranek and Newman, two years before he took charge of ARPA's Information Processing Techniques Office, where he funded the time-sharing and networking research that led to the ARPANET and helped shape what became the internet. The paper argues, against the prevailing orthodoxy of the day (which held that computers would automate human decision-making by replacing humans), that the right relation between human and computer is not *replacement* but *symbiosis* — a tight, real-time, two-way coupling in which each partner does what it does best.
 
 <div class="smart-quote" data-cite="licklider1960symbiosis">
 The hope is that, in not too many years, human brains and computing machines will be coupled together very tightly, and that the resulting partnership will think as no human brain has ever thought and process data in a way not approached by the information-handling machines we know today.
 </div>
 
-The paper's bet is that *men* and *computers* are complementary, not competing: humans set the goals, anticipate, evaluate, and supply the ethical and aesthetic frame; computers do the routinizable clerical, bookkeeping, and search work. The interaction is **time-sharing** (one computer, many simultaneous human partners), **interactive** (the computer responds within seconds to the human's query), and **cooperative** (the human and the computer iterate toward a goal). The paper even names four classes of "men-computer problem" that the symbiosis should address, each of which a modern LLM agent solves today:
+The paper's bet is that *men* and *computers* are complementary, not competing: humans set the goals, anticipate, evaluate, and supply the ethical and aesthetic frame; computers do the routinizable clerical, bookkeeping, and search work. The interaction is **time-sharing** (one computer, many simultaneous human partners), **interactive** (the computer responds within seconds to the human's query), and **cooperative** (the human and the computer iterate toward a goal). The paper's time-and-motion study of his own technical work found that most “thinking” time went into clerical and mechanical operations — searching, calculating, plotting, transforming, and tracing logical consequences — which map onto what a modern LLM agent does with tools:
 
 * **Routine clerical and bookkeeping work** — exactly what an LLM agent with a `read_file` / `write_file` tool handles.
 * **Decision making and planning** — exactly what an LLM agent does inside its ReAct loop.
@@ -63,7 +63,7 @@ The paper's bet is that *men* and *computers* are complementary, not competing: 
 
 Read sixty-five years later, \citeauthor{licklider1960symbiosis}'s *man-computer symbiosis* is a one-paragraph specification for the modern AI agent. He even predicts the cooperative architecture from first principles: the human handles "the creative thinking" — goals, evaluation, judgement; the machine handles "the routine work" — bookkeeping, search, mechanical inference; the partnership iterates in real time. The only thing \citeauthor{licklider1960symbiosis} got wrong was timing — he predicted it would happen "in not too many years" from 1960, and it actually happened in roughly 2022, once the LLM that could *reason about which tool to call* arrived. The LLM is the long-expected *seam* between the human's question and the computer's action that Licklider's essay was describing.
 
-The historical line from Licklider to the present agent loop runs through three pieces of infrastructure he personally pushed into existence: time-sharing operating systems (which made interactive computer use possible at all, beginning at MIT's Project MAC in the early 1960s), packet-switched networks (which became ARPANET in 1969, then the internet, and gave the symbiosis its *distributed* substrate), and finally the natural-language interface (the missing piece — for sixty years after Licklider, the computer side of the symbiosis still could not understand English). When the LLM arrived, every precondition for the symbiosis was already in place; all that was missing was the *natural-language seam*, and the seam is the agent.
+The historical line from Licklider to the present agent loop runs through infrastructure he helped fund and imagine: time-sharing (MIT's CTSS was running by 1961, and Licklider funded Project MAC from 1963), packet-switched networking (the ARPANET, built in 1969 by others on the institutional groundwork he laid, and later the internet), and finally the natural-language interface — not restricted command grammars like SHRDLU's blocks world, but a general interface that could map open-ended English onto arbitrary tools, which is what LLMs supplied. When the LLM arrived, every precondition for the symbiosis was already in place; all that was missing was the *natural-language seam*, and the seam is the agent.
 
 ### 1. Classical AI: Symbolic Agents (1950s–1990s)
 
@@ -76,7 +76,7 @@ The earliest AI agents were purely symbolic. \cite[McCarthy and Hayes (1969)]{mc
 <tr><td>STRIPS</td><td>1971</td><td>Formal action schemas with preconditions and effects</td></tr>
 <tr><td>SHRDLU</td><td>1972</td><td>Natural language commands to manipulate a blocks world</td></tr>
 <tr><td>Soar</td><td>1983</td><td>Universal cognitive architecture with chunking and learning</td></tr>
-<tr><td>BDI (Belief-Desire-Intention)</td><td>1987</td><td>Agents with explicit beliefs, desires, and committed intentions</td></tr>
+<tr><td>BDI (Belief-Desire-Intention)</td><td>1995</td><td>Agents with explicit beliefs, desires, and committed intentions (after Bratman's 1987 theory)</td></tr>
 </tbody>
 </table>
 
@@ -97,7 +97,7 @@ The RL paradigm formalized agents mathematically. An agent interacts with an env
 
 $$\pi^* = \arg\max_\pi \; \mathbb{E}\left[\sum_{t=0}^{\infty} \gamma^t r_t\right]$$
 
-This gave us game-playing agents (TD-Gammon, AlphaGo) but required millions of interactions and hand-designed reward functions. The agent couldn't use natural language or generalize across tasks.
+This gave us game-playing agents (TD-Gammon, AlphaGo), but they were trained for one game at a time, needed enormous experience, and could not carry their skill into a new task.
 
 <div class="md">
 <figure>
@@ -161,6 +161,18 @@ $$
 </div>
 
 <div class="md">
+<div class="md">
+### SHRDLU and the architecture tradition
+
+SHRDLU was a high-water mark of the early symbolic approach. Terry Winograd's program parsed English commands, planned in a blocks world, and answered questions about its own actions; it was a genuine natural-language system, but only inside a hand-built microworld whose vocabulary, planner, and objects were all fixed \cite{winograd1972understanding}. A decade later Rodney Brooks drew the opposite lesson: his subsumption architecture built robots from layers of simple reactive behaviours, each suppressing the one below, with no central world model and no planner \cite{brooks1986layered}. “Elephants Don't Play Chess” added the slogan — the world is its own best model \cite{brooks1990elephants}.
+
+In parallel with robotics, cognitive science built unified architectures. Soar modelled problem solving as search through a problem space, with impasses triggering subgoals and “chunking” compiling the result of a subgoal into a new rule \cite{laird1987soar}. ACT-R partitioned cognition into modules — declarative memory, production rules, buffers — and calibrated their timing against human behaviour \cite{anderson2004actr}. The BDI tradition gave agents an explicit practical-reasoning vocabulary: beliefs model the world, desires are goals, and intentions are the goals the agent has committed to pursue \cite{rao1995bdi}. The modern LLM agent's scratchpad, memory store, and control loop are a loose, learned reimplementation of this functional list.
+
+### Toolformer: learning when to call
+
+ReAct taught a model to call tools in its text; Toolformer asked whether a model could learn when to call them. Schick et al. let GPT-J annotate its own corpus by trying API calls — a calculator, a search engine, a translator — and kept only calls whose result lowered the model's perplexity on the following tokens, then fine-tuned on that self-labelled data \cite{schick2023toolformer}. The model learned to insert calls without being told which calls were useful. Toolformer is the bridge between prompt-level ReAct and today's function-calling APIs: both make tool use a learned, token-level decision rather than an external orchestration rule.
+</div>
+
 ## The Agent Loop: Internal Architecture
 
 Every LLM agent, regardless of framework, implements a variant of this loop:
@@ -400,13 +412,23 @@ In practice, sub-agents are often just another tool. The opencode agent, for exa
 </div>
 
 <div class="md">
+<div class="md">
+### AutoGPT, Voyager, MCP, and multi-agent systems
+
+The 2023 autonomous-agent wave turned ReAct into a product. AutoGPT, released in March 2023, gave GPT-4 a goal, a set of tools, and a loop that decomposed the goal into tasks, executed them, and wrote results to memory; it went viral as the first widely seen “fully autonomous” agent, though in practice it often looped, drifted, or burned tokens \cite{autogpt2023}. Voyager went the other way, embedding an LLM agent in Minecraft with an automatic curriculum and a skill library, so that successful programs could be stored and reused \cite{wang2023voyager}.
+
+For years every agent framework invented its own tool schema. The Model Context Protocol (MCP), announced by Anthropic in November 2024, tried to standardise the interface: an MCP server exposes resources, prompts, and tools over JSON-RPC, and any MCP-capable client can discover and call them \cite{anthropic2024mcp}. The design separates the tool provider from the agent runtime, so a database, a file system, or a SaaS product can be written once and used by many agents.
+
+Multi-agent systems are older than LLMs: blackboard architectures, contract-net protocols, and BDI teams were studied through the 1980s and 1990s. The LLM version keeps the coordination patterns but replaces hand-written protocols with natural-language messages. Du et al. showed that several model instances debating across rounds can improve factuality and reasoning over a single pass \cite{du2023multiagent}, while AutoGen framed the whole application as a conversation between configurable agents \cite{wu2023autogen}. The open question is whether the gains come from genuine division of labour or simply from more samples and more test-time compute.
+</div>
+
 ## Planning: How Agents Decompose Complex Tasks
 
 Naive agents attempt tasks step-by-step without foresight. More sophisticated agents **plan** before acting, decomposing complex goals into subtasks.
 
 ### Plan-and-Execute
 
-The agent first generates a complete plan, then executes each step (\cite[Wang et al., 2023]{wang2023planandexecute}):
+The agent first generates a complete plan, then executes each step; plan-and-solve prompting showed that asking a model to plan before solving improves zero-shot reasoning (\cite[Wang et al., 2023]{wang2023planandexecute}):
 </div>
 
 <pre class="wslab-code-block"><code>User: Write a blog post comparing the environmental impact of
@@ -455,7 +477,7 @@ An agent that can act on the world (send emails, execute code, make purchases) m
 </tbody>
 </table>
 
-### The Alignment Tax
+### The Autonomy–Safety Trade-off
 
 Every safety measure (confirmations, sandboxing, human review) adds latency and reduces autonomy. This creates a fundamental tension:
 

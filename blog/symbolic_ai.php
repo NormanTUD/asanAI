@@ -18,11 +18,17 @@ This chapter traces the other branch of AI and shows how it complements neural n
 </div>
 
 <div class="md">
+## Before the program: logic and its limits
+
+Symbolic AI begins with the logicist dream that all of mathematics could be derived from logic. Frege's *Begriffsschrift* (1879) invented modern quantifier notation and tried to reduce arithmetic to logical laws; Russell and Whitehead's *Principia Mathematica* (1910-13) carried the project through, after Russell's paradox exposed its foundations (\cite[Frege, 1879]{frege1879}; \cite[Russell & Whitehead, 1910]{russell1910pm}; \cite[Russell's paradox]{russell_paradox_sep}). Hilbert's programme then asked for a finitary consistency proof and a decision procedure for first-order logic (\cite[Hilbert & Ackermann, 1928]{hilbert1928entscheidung}). Gödel's 1931 theorems ended the dream in its strong form: any consistent, effectively axiomatized system strong enough for arithmetic is incomplete and cannot prove its own consistency (\cite[Gödel, 1931]{godel1931incompleteness}; \cite[SEP]{sep_godel_incompleteness}).
+
 ## Foundations
+
+Turing's 1936 paper supplied the missing negative answer: no mechanical procedure can decide, for every first-order formula, whether it is provable (\cite[Turing, 1936]{turing1936}). In 1950 he replaced the question of mechanism with an operational test -- can a machine's text replies be distinguished from a person's? -- and made "Can machines think?" an empirical question (\cite[Turing, 1950]{turing1950computing}). Six years later, the 1956 Dartmouth Summer Research Project named the field and set its agenda: language, neural nets, abstraction, creativity, and the conjecture that every feature of intelligence can be described precisely enough for a machine to simulate it (\cite[McCarthy et al., 1955]{mccarthy1955dartmouth}).
 
 ### Newell & Simon 1976: The Philosophy of Computer Science as Empirical Inquiry
 
-Before the technical material, it is worth pausing on the philosophical manifesto that grounded the entire symbolic-AI tradition in a defence of itself as a *science*. \citeauthor{newell1976empirical} (\citeyear{newell1976empirical}) — Allen Newell and Herbert A. Simon, in the second of the Turing Award lectures' "Computer Science as Empirical Inquiry" papers (the first was given by Newell alone in 1975, and the joint paper is the canonical published form) — make a sustained case that computer science is not *applied mathematics* and not *engineering*, but an *empirical* science on a par with physics or biology, whose natural objects are **symbol systems** and whose characteristic method is the construction of *symbols and search*.
+Before the technical material, it is worth pausing on the philosophical manifesto that grounded the entire symbolic-AI tradition in a defence of itself as a *science*. \citeauthor{newell1976empirical} (\citeyear{newell1976empirical}) — Allen Newell and Herbert A. Simon, in the ACM Turing Award lecture "Computer Science as Empirical Inquiry" (the 1975 award was given to Newell and Simon jointly, and the published paper is the joint form) — make a sustained case that computer science is not *applied mathematics* and not *engineering*, but an *empirical* science on a par with physics or biology, whose natural objects are **symbol systems** and whose characteristic method is the construction of *symbols and search*.
 
 <div class="smart-quote" data-cite="newell1976empirical">
 Computer science is an empirical discipline. [...] We build computers and programs for two reasons: (a) to provide a human service (the computer as servant), and (b) to experiment with symbolic processes (the computer as simulation chamber). [...] The urge to make computers more and more intelligent is, therefore, an urge to provide a tool for the empirical study of intelligence.
@@ -32,10 +38,12 @@ Three claims in this passage do the heavy lifting for the rest of the chapter. F
 
 The substantive section of the paper is a defence of that hypothesis on three grounds — behavioural, neural, and psychological — using the 1956 Logic Theory Machine (the first program to prove theorems in Principia Mathematica), the General Problem Solver (means-ends analysis over state spaces), and the chess and perception programs as data points. The methodological lesson is that *each new layer of complexity* the AI field tackles — from logic to problem solving to perception to language — extends the same pattern: design a symbol system, run it, observe its behaviour, debug it against a held-out set of problems, publish the result. This is the research methodology that produced the symbolic-AI tradition in this chapter.
 
-Read against the modern course, two things stand out. First, Newell and Simon are explicit that the **symbol system** and the **neural substrate** are not rivals; the physical-symbol-system hypothesis is silent about whether the substrate is silicon, vacuum tubes, or neurons, and is silent about whether the symbols are *implemented* by distributed subsymbolic representations or by explicit pointers. The symbolic/connectionist split that haunts the field for sixty years after the paper is not the split the paper makes; the paper makes the split *between* *systems that exhibit intelligent behaviour by manipulating symbols* and *systems that exhibit intelligent behaviour without doing so*, and it argues that the first kind is the easier one to engineer and study. The neural revolution of the 2010s changed the cost calculus but not the philosophical point: a Transformer *is* a physical symbol system in Newell and Simon's sense — it designates tokens, interprets them by rule, and acts on them by emitting other tokens — implemented in a sub-symbolic substrate. Second, the **empirical methodology** of the paper is the same methodology the rest of this course uses: build a system, run it on a benchmark, publish the score, debug, iterate. Every chapter that ends with a benchmark plot (Perplexity on text, BLEU on translation, accuracy on MMLU, success rate on agent tasks) is the 2020s continuation of the empirical-research program Newell and Simon proposed for computer science in 1976. The disagreement is about what *kind* of symbol system best buys the score; the *agreement* on what counts as evidence for an answer is the paper's lasting contribution.
+Read against the modern course, two things stand out. First, Newell and Simon are explicit that the **symbol system** and the **neural substrate** are not rivals; the physical-symbol-system hypothesis is silent about whether the substrate is silicon, vacuum tubes, or neurons, and is silent about whether the symbols are *implemented* by distributed subsymbolic representations or by explicit pointers. The symbolic/connectionist split that haunts the field for half a century after the paper is not the split the paper makes; the paper makes the split *between* *systems that exhibit intelligent behaviour by manipulating symbols* and *systems that exhibit intelligent behaviour without doing so*, and it argues that the first kind is the easier one to engineer and study. The neural revolution of the 2010s changed the cost calculus but not the philosophical point: a Transformer *is* a physical symbol system in Newell and Simon's sense — it designates tokens, interprets them by rule, and acts on them by emitting other tokens — implemented in a sub-symbolic substrate. Second, the **empirical methodology** of the paper is the same methodology the rest of this course uses: build a system, run it on a benchmark, publish the score, debug, iterate. Every chapter that ends with a benchmark plot (Perplexity on text, BLEU on translation, accuracy on MMLU, success rate on agent tasks) is the 2020s continuation of the empirical-research program Newell and Simon proposed for computer science in 1976. The disagreement is about what *kind* of symbol system best buys the score; the *agreement* on what counts as evidence for an answer is the paper's lasting contribution.
 
 The clearest way to see what Newell and Simon are doing is to read the paper *against* \citeauthor{brooks1990elephants} (\citeyear{brooks1990elephants}), added in the philosophy chapter. \citeauthor{brooks1990elephants}'s manifesto is a *rejection* of the "cognition as symbol manipulation" programme on engineering grounds: he argues that the symbol-manipulation programme fails to produce robots that work in the real world, and that *subsumption-style* layered sensorimotor loops work better. \citeauthor{newell1976empirical} are committed to the opposite programme but, ironically, *on the same empirical ground*: they argue that the symbol-manipulation programme *does* produce systems that exhibit intelligent behaviour, and that no other programme has yet produced systems with comparable breadth. The 2020s answer is that both are partly right: modern AI is best modelled as a *hybrid*, with a sub-symbolic substrate implementing a symbolic policy (a Transformer), surrounded by tools and verifiers that act as explicit symbolic primitives. The hybrid is, in a sense, what Newell and Simon would have predicted if they had known what 2026 hardware looks like; the hybrid is also, in a different sense, what Brooks would have predicted if he had known what 2026 software looks like.
 </div>
+
+The first implementations followed quickly. Newell, Shaw, and Simon's Logic Theory Machine (1956) proved 38 of the first 52 theorems in Chapter 2 of *Principia Mathematica*, and found a shorter proof than Russell and Whitehead's for one of them (\cite[Newell & Simon, 1956]{newell1956logictheorist}). Their General Problem Solver (1957) generalized the trick into means-ends analysis: compare current and goal states, find the difference, and apply an operator that reduces it (\cite[Newell, Shaw & Simon, 1957]{newell1957gps}). McCarthy's LISP (1960) then gave symbolic AI its own language -- programs and data both lists, recursion as the basic control structure (\cite[McCarthy, 1960]{mccarthy1960lisp}; \cite[Lisp]{lisp_wiki}).
 
 <div class="optional md" data-headline="Neuro-symbolic isn't new — it's old friends meeting again">
 The synthesis below happens naturally once you read three other chapters: <a href="reasoning">Reasoning</a> (CoT is *implicit* logic the network learned), <a href="mechanistic_interpretability">Mechanistic Interpretability</a> (the circuits you find inside a Transformer often look like AND/OR/NOT gates), and <a href="agents">AI Agents</a> (ReAct-style tool use is symbolic reasoning wrapped around a neural policy). The “neuro-symbolic” framing just makes the marriage explicit.
@@ -91,7 +99,7 @@ A fragment of FOL designed to be **decidable** while still expressive. Foundatio
 * **Individuals**: Socrates, Plato
 * **Constructors**: $\sqcap$ (intersection), $\sqcup$ (union), $\neg$ (negation), $\exists R.C$ (exists role filler)
 
-The standard **SROIQ** description logic underlies **OWL 2** (Web Ontology Language).
+The standard **SROIQ** description logic underlies **OWL 2 DL** (the description-logic profile of the Web Ontology Language).
 </div>
 
 <div class="md">
@@ -144,6 +152,8 @@ Reasoners (Pellet, HermiT, FaCT++) implement **tableau-based** algorithms that c
 * **Realization**: find the most specific class for an individual.
 
 For **rule-based reasoning** beyond OWL, **Datalog** and **Prolog** are used. Modern graph databases (Neo4j, Amazon Neptune, Stardog, TigerGraph) add **property graphs**: nodes and edges with arbitrary attributes.
+
+Resolution gave symbolic reasoning its industrial engine. Robinson's 1965 rule -- resolve two clauses on a complementary literal, with unification handling variables -- made first-order theorem proving a single uniform inference step (\cite[Robinson, 1965]{robinson1965resolution}). Kowalski's 1974 "Predicate Logic as a Programming Language" turned resolution into computation: a logic program is a set of Horn clauses, and answering a query is proof search (\cite[Kowalski, 1974]{kowalski1974prolog}). Colmerauer and Roussel's Prolog (1972-73) implemented that idea and became the language of expert systems, natural-language parsers, and later Datalog engines (\cite[Colmerauer & Roussel, 1973]{colmerauer1973prolog}).
 </div>
 
 <div class="md" data-mathlevel="55">
@@ -152,7 +162,7 @@ For **rule-based reasoning** beyond OWL, **Datalog** and **Prolog** are used. Mo
 To bridge symbolic KGs with neural methods, several **KG embedding** methods learn vector representations of entities and relations:
 
 * **TransE** \cite{bordes2013transe}: $\mathbf{h} + \mathbf{r} \approx \mathbf{t}$ (translation in embedding space).
-* **DistMult** \cite{ning2016distmult}: bilinear $\langle \mathbf{h}, \mathbf{r}, \mathbf{t} \rangle$ score.
+* **DistMult** \cite{yang2015distmult}: bilinear $\langle \mathbf{h}, \mathbf{r}, \mathbf{t} \rangle$ score.
 * **ComplEx**: extends to complex-valued embeddings for asymmetric relations.
 * **RotatE** \cite{sun2019rotate}: rotation in complex space, captures composition.
 * **GraphSAGE** \cite{hamilton2017graphsage} / **R-GCN** \cite{schlichtkrull2018rgcn}: graph neural networks over the KG structure.
@@ -161,6 +171,12 @@ These enable **link prediction**: given $(h, r, ?)$, predict $t$, completing mis
 </div>
 
 <div class="md">
+## The knowledge-engineering cycle
+
+Symbolic AI's first commercial wave was knowledge engineering. DENDRAL inferred molecular structures from mass spectra, MYCIN recommended antibiotics from hundreds of if-then rules, and both showed that hand-coded expertise could beat general search in a narrow domain (\cite[Feigenbaum et al., 1969]{feigenbaum1965dendral}; \cite[Shortliffe & Buchanan, 1976]{shortliffe1976mycin}). Winograd's SHRDLU (1972) embedded language in a tiny blocks world, so every word had a referent (\cite[Winograd, 1972]{winograd1972understanding}). McCarthy and Hayes had already named the obstacle: the frame problem, deciding what stays unchanged when an action occurs (\cite[McCarthy & Hayes, 1969]{mccarthy1969some}). Cyc, begun in 1984, was the maximalist response -- a hand-built common-sense ontology and inference engine -- but knowledge acquisition did not scale (\cite[Cyc]{cyc_wiki}).
+
+The semantic web was the attempt to make that knowledge public and composable: RDF triples, OWL ontologies, and SPARQL queries, standardized by the W3C and promoted in Berners-Lee, Hendler, and Lassila's 2001 *Scientific American* article (\cite[Berners-Lee et al., 2001]{berners2001sw}). Google's 2012 Knowledge Graph showed the industrial version -- a proprietary graph of entities and relations behind search answers (\cite[Singhal, 2012]{singhal2012knowledge}). The current revival is neuro-symbolic: neural networks handle perception and ambiguity, while symbolic engines supply exact inference and verification, as in DeepProbLog and AlphaGeometry (\cite[Manhaeve et al., 2018]{manhaeve2018deepproblog}; \cite[Trinh et al., 2024]{trinh2024alphageometry}; \cite[Garcez & Lamb, 2020]{garcez2020neurosymbolic}).
+
 ## Hybrid systems
 
 ### Symbolic Reasoning in 2025: LLMs + Tools
@@ -186,7 +202,7 @@ Symbolic AI is critical for **provable correctness**:
 * **Lean, Coq, Isabelle, Agda**: interactive theorem provers. Used in mathematics (Liquid Tensor Experiment), cryptography (zk-SNARKs), and verified software (CompCert, seL4).
 * **SAT solvers** (CaDiCaL, Kissat, CryptoMiniSat): scale to millions of variables. Industry-standard for hardware verification, planning, scheduling.
 * **SMT solvers** (Z3, CVC5): extend SAT with theories (arithmetic, arrays, bit-vectors).
-* **Model checkers** (SPIN, TLA+, Isabelle): verify state machines, distributed systems, protocols.
+* **Model checkers** (SPIN, TLC for TLA+): verify state machines, distributed systems, protocols.
 
 #### LLM + Theorem Proving (the 2024 frontier)
 
@@ -197,7 +213,7 @@ The Lean-based **“AI for math”** initiative (DeepMind, 2024; OpenAI, 2024) h
 3. If verification fails, refine using the error message.
 4. Iterate.
 
-AlphaProof (\cite[DeepMind, 2024]{deepmind2024alphaproof}) reached silver-medal level on IMO problems. Subsequent work has solved IMO 2025 problems. The combination of **neural intuition** + **symbolic verification** is the most promising path to provably correct mathematical reasoning.
+The combined AlphaProof and AlphaGeometry system (\cite[DeepMind, 2024]{deepmind2024alphaproof}) reached silver-medal level at IMO 2024, solving four of the six problems. Subsequent work has solved IMO 2025 problems. The combination of **neural intuition** + **symbolic verification** is the most promising path to provably correct mathematical reasoning.
 </div>
 
 <div class="md">
@@ -216,7 +232,7 @@ The synthesis takes several forms:
 
 #### AlphaGeometry (DeepMind, 2024)
 
-Solves IMO (\cite[Trinh et al., 2024]{trinh2024alphageometry}) problems: a Transformer generates candidate constructions, a symbolic DDAR (deductive database) verifies. Solved 25/30 IMO 2024 problems, near gold-medal level.
+Solves IMO (\cite[Trinh et al., 2024]{trinh2024alphageometry}) problems: a Transformer generates candidate constructions, a symbolic DDAR (deductive database) verifies. Solved 25 of the 30 IMO geometry problems from 2000–2022, close to the average human gold medallist.
 
 #### Toolformer
 

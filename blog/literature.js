@@ -1953,7 +1953,7 @@ window.bibData = {
 	},
 	"jegou2011pq": {
 	    title: "Product Quantization for Nearest Neighbor Search",
-	    author: "Télemaque Jégou, Matthijs Douze, Cordelia Schmid",
+	    author: "Hervé Jégou, Matthijs Douze, Cordelia Schmid",
 	    year: 2011,
 	    url: "https://ieeexplore.ieee.org/document/5633486",
 	    alternativetitle: "Product Quantization (Jégou et al., 2011)"
@@ -8353,7 +8353,7 @@ window.bibData = {
 		alternativetitle: "AlphaGeometry"
 	},
 	"deepmind2024alphaproof": {
-		url: "https://deepmind.google/discover/blog/alphaproof-and-ai-paris-our-new-frontier-for-mathematical-reasoning/",
+		url: "https://deepmind.google/discover/blog/ai-solves-imo-problems-at-silver-medal-level/",
 		title: "AlphaProof and AI Paris: our new frontier for mathematical reasoning",
 		author: "DeepMind",
 		year: 2024,
@@ -18851,7 +18851,7 @@ window.bibData = {
 		alternativetitle: "BM25 (Robertson & Zaragoza, 2009)"
 	},
 	"beir2021": {
-		title: "BEIR: A Heterogenous Benchmark for Zero-shot Evaluation of Information Retrieval Models",
+		title: "BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models",
 		author: "Thakur et al.",
 		year: 2021,
 		url: "https://arxiv.org/abs/2104.08663",
@@ -23466,5 +23466,185 @@ window.bibData = {
 		url: "https://arxiv.org/abs/1206.5533",
 		alternativetitle: "Bengio, 2012"
 	},
+
+	/* Round-4 sources: algorithms, symbolic AI, retrieval and agents. */
+	"cook1971complexity": {
+		title: "The Complexity of Theorem-Proving Procedures",
+		author: "Stephen A. Cook",
+		year: 1971,
+		url: "https://www.cs.toronto.edu/~sacook/homepage/1971.pdf",
+		alternativetitle: "Cook (1971) — NP-completeness"
+	},
+	"cooklevin_wiki": {
+		title: "Cook–Levin theorem",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Cook%E2%80%93Levin_theorem",
+		alternativetitle: "Cook–Levin theorem (Wikipedia)"
+	},
+	"hoare1969axiomatic": {
+		title: "An Axiomatic Basis for Computer Programming",
+		author: "C. A. R. Hoare",
+		year: 1969,
+		url: "https://www.cs.cmu.edu/~crary/819-f09/Hoare69.pdf",
+		alternativetitle: "Hoare (1969) — axiomatic semantics"
+	},
+	"binarysearch_wiki": {
+		title: "Binary search algorithm",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Binary_search_algorithm",
+		alternativetitle: "Binary search (Wikipedia)"
+	},
+	"yang2015distmult": {
+		title: "Embedding Entities and Relations for Learning and Inference in Knowledge Bases",
+		author: "Bishan Yang, Wen-tau Yih, Xiaodong He, Jianfeng Gao, Li Deng",
+		year: 2015,
+		url: "https://arxiv.org/abs/1412.6575",
+		alternativetitle: "DistMult (Yang et al., 2015)"
+	},
+	"cyc_wiki": {
+		title: "Cyc",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Cyc",
+		alternativetitle: "Cyc (Wikipedia)"
+	},
+	"garcez2020neurosymbolic": {
+		title: "Neurosymbolic AI: The 3rd Wave",
+		author: "Artur d'Avila Garcez, Luis C. Lamb",
+		year: 2020,
+		url: "https://arxiv.org/abs/2012.05876",
+		alternativetitle: "Garcez & Lamb (2020) — neurosymbolic AI"
+	},
+	"singhal2012knowledge": {
+		title: "Introducing the Knowledge Graph: things, not strings",
+		author: "Amit Singhal",
+		year: 2012,
+		url: "https://blog.google/products/search/introducing-knowledge-graph-things-not/",
+		alternativetitle: "Google Knowledge Graph (2012)"
+	},
+	"voorhees1999trecqa": {
+		title: "The TREC-8 Question Answering Track Report",
+		author: "Ellen M. Voorhees",
+		year: 1999,
+		url: "https://trec.nist.gov/pubs/trec8/papers/qa_report.pdf",
+		alternativetitle: "TREC-8 QA (Voorhees, 1999)"
+	},
+	"salton1988termweighting": {
+		title: "Term-weighting approaches in automatic text retrieval",
+		author: "Gerard Salton, Christopher Buckley",
+		year: 1988,
+		url: "https://doi.org/10.1016/0306-4573(88)90021-0",
+		alternativetitle: "tf-idf (Salton & Buckley, 1988)"
+	},
+	"karpukhin2020dpr": {
+		title: "Dense Passage Retrieval for Open-Domain Question Answering",
+		author: "Vladimir Karpukhin, Barlas Oğuz, Sewon Min, Patrick Lewis, Ledell Wu, Sergey Edunov, Danqi Chen, Wen-tau Yih",
+		year: 2020,
+		url: "https://arxiv.org/abs/2004.04906",
+		alternativetitle: "DPR (Karpukhin et al., 2020)"
+	},
+	"guu2020realm": {
+		title: "REALM: Retrieval-Augmented Language Model Pre-Training",
+		author: "Kelvin Guu, Kenton Lee, Zora Tung, Panupong Pasupat, Ming-Wei Chang",
+		year: 2020,
+		url: "https://arxiv.org/abs/2002.08909",
+		alternativetitle: "REALM (Guu et al., 2020)"
+	},
+	"borgeaud2022retro": {
+		title: "Improving Language Models by Retrieving from Trillions of Tokens",
+		author: "Sebastian Borgeaud, Arthur Mensch, Jordan Hoffmann, et al.",
+		year: 2022,
+		url: "https://arxiv.org/abs/2112.04426",
+		alternativetitle: "RETRO (Borgeaud et al., 2022)"
+	},
+	"izacard2022atlas": {
+		title: "Few-shot Learning with Retrieval Augmented Language Models",
+		author: "Gautier Izacard, Patrick Lewis, Maria Lomeli, et al.",
+		year: 2022,
+		url: "https://arxiv.org/abs/2208.03299",
+		alternativetitle: "Atlas (Izacard et al., 2022)"
+	},
+	"asai2023selfrag": {
+		title: "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection",
+		author: "Akari Asai, Zeqiu Wu, Yizhong Wang, Avirup Sil, Hannaneh Hajishirzi",
+		year: 2023,
+		url: "https://arxiv.org/abs/2310.11511",
+		alternativetitle: "Self-RAG (Asai et al., 2023)"
+	},
+	"edge2024graphrag": {
+		title: "From Local to Global: A Graph RAG Approach to Query-Focused Summarization",
+		author: "Darren Edge, Ha Trinh, Newman Cheng, et al.",
+		year: 2024,
+		url: "https://arxiv.org/abs/2404.16130",
+		alternativetitle: "GraphRAG (Edge et al., 2024)"
+	},
+	"laird1987soar": {
+		title: "SOAR: An Architecture for General Intelligence",
+		author: "John E. Laird, Allen Newell, Paul S. Rosenbloom",
+		year: 1987,
+		url: "https://doi.org/10.1016/0004-3702(87)90050-6",
+		alternativetitle: "Soar (Laird, Newell & Rosenbloom, 1987)"
+	},
+	"anderson2004actr": {
+		title: "An integrated theory of the mind",
+		author: "John R. Anderson, Daniel Bothell, Michael D. Byrne, Scott Douglass, Christian Lebiere, Yulin Qin",
+		year: 2004,
+		url: "https://api.crossref.org/works/10.1037/0033-295X.111.4.1036",
+		alternativetitle: "ACT-R (Anderson et al., 2004)"
+	},
+	"autogpt2023": {
+		title: "AutoGPT",
+		author: "Significant Gravitas",
+		year: 2023,
+		url: "https://github.com/Significant-Gravitas/AutoGPT",
+		alternativetitle: "AutoGPT (Significant Gravitas, 2023)"
+	},
+	"wang2023voyager": {
+		title: "Voyager: An Open-Ended Embodied Agent with Large Language Models",
+		author: "Guanzhi Wang, Yuqi Xie, Yunfan Jiang, et al.",
+		year: 2023,
+		url: "https://arxiv.org/abs/2305.16291",
+		alternativetitle: "Voyager (Wang et al., 2023)"
+	},
+	"wu2023autogen": {
+		title: "AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation",
+		author: "Qingyun Wu, Gagan Bansal, Jieyu Zhang, et al.",
+		year: 2023,
+		url: "https://arxiv.org/abs/2308.08155",
+		alternativetitle: "AutoGen (Wu et al., 2023)"
+	},
+
+
+	/* Round-4 sources: alignment, law, evaluation and reliability. */
+	"wiener1960moral": {"title":"Some Moral and Technical Consequences of Automation","author":"Norbert Wiener","year":1960,"journal":"Science","url":"https://pubmed.ncbi.nlm.nih.gov/17841602/","alternativetitle":"Wiener, Some Moral and Technical Consequences of Automation (1960)"},
+	"asilomar2017": {"title":"Asilomar AI Principles","author":"Future of Life Institute","year":2017,"url":"https://futureoflife.org/open-letter/ai-principles/","alternativetitle":"Asilomar AI Principles (2017)"},
+	"bletchley2023": {"title":"The Bletchley Declaration by Countries Attending the AI Safety Summit, 1-2 November 2023","author":"UK Government","year":2023,"url":"https://www.gov.uk/government/publications/ai-safety-summit-2023-the-bletchley-declaration/the-bletchley-declaration-by-countries-attending-the-ai-safety-summit-1-2-november-2023","alternativetitle":"Bletchley Declaration (2023)"},
+	"aisi2023": {"title":"The AI Security Institute (AISI)","author":"UK Department for Science, Innovation and Technology","year":2023,"url":"https://www.aisi.gov.uk/","alternativetitle":"UK AI Security Institute (formerly AI Safety Institute)"},
+	"nist2023airmf": {"title":"Artificial Intelligence Risk Management Framework (AI RMF 1.0)","author":"National Institute of Standards and Technology","year":2023,"url":"https://www.nist.gov/itl/ai-risk-management-framework","alternativetitle":"NIST AI RMF"},
+	"unesco2021ai": {"title":"Recommendation on the Ethics of Artificial Intelligence","author":"UNESCO","year":2021,"url":"https://www.unesco.org/en/artificial-intelligence/recommendation-ethics","alternativetitle":"UNESCO AI Ethics Recommendation"},
+	"oecd2019ai": {"title":"Recommendation of the Council on Artificial Intelligence","author":"OECD","year":2019,"url":"https://oecd.ai/en/ai-principles","alternativetitle":"OECD AI Principles"},
+	"eo14110": {"title":"Executive Order 14110: Safe, Secure, and Trustworthy Development and Use of Artificial Intelligence","author":"The White House","year":2023,"url":"https://bidenwhitehouse.archives.gov/briefing-room/presidential-actions/2023/10/30/executive-order-on-the-safe-secure-and-trustworthy-development-and-use-of-artificial-intelligence/","alternativetitle":"EO 14110"},
+	"pld2024": {"title":"Directive (EU) 2024/2853 on liability for defective products","author":"European Parliament and Council of the European Union","year":2024,"url":"https://eur-lex.europa.eu/eli/dir/2024/2853/oj","alternativetitle":"EU Product Liability Directive 2024/2853"},
+	"edpb2024ai": {"title":"Opinion 28/2024 on certain data protection aspects related to the processing of personal data in the context of AI models","author":"European Data Protection Board","year":2024,"url":"https://www.edpb.europa.eu/system/files/2024-12/edpb_opinion_202428_ai-models_en.pdf","alternativetitle":"EDPB Opinion 28/2024"},
+	"ai_copyright_wiki": {"title":"Artificial intelligence and copyright","author":"Wikipedia contributors","year":2026,"url":"https://en.wikipedia.org/wiki/Artificial_intelligence_and_copyright","alternativetitle":"AI and copyright (overview)"},
+	"china2025labelling": {"title":"Measures for the Labelling of Artificial Intelligence-Generated Synthetic Content","author":"Cyberspace Administration of China et al.","year":2025,"url":"https://www.cac.gov.cn/2025-03/14/c_1743654684782215.htm","alternativetitle":"China AI content labelling measures (2025)"},
+	"colorado2024ai": {"title":"Colorado AI Act","author":"Wikipedia contributors","year":2024,"url":"https://en.wikipedia.org/wiki/Colorado_AI_Act","alternativetitle":"Colorado AI Act (SB 24-205)"},
+	"sb53cal2025": {"title":"Transparency in Frontier Artificial Intelligence Act (SB 53)","author":"Office of the Governor of California","year":2025,"url":"https://www.gov.ca.gov/2025/09/29/governor-newsom-signs-sb-53-advancing-californias-world-leading-artificial-intelligence-industry/","alternativetitle":"California SB 53"},
+	"coe2024ai": {"title":"Framework Convention on Artificial Intelligence and Human Rights, Democracy and the Rule of Law","author":"Wikipedia contributors","year":2024,"url":"https://en.wikipedia.org/wiki/Framework_Convention_on_Artificial_Intelligence","alternativetitle":"Council of Europe AI Convention (2024)"},
+	"aiact_timeline": {"title":"AI Act Implementation Timeline","author":"Future of Life Institute","year":2026,"url":"https://artificialintelligenceact.eu/implementation-timeline/","alternativetitle":"AI Act timeline (updated 2026)"},
+	"shi2024mink": {"title":"Detecting Pretraining Data from Large Language Models","author":"Weijia Shi, Anirudh Ajith, Mengzhou Xia, et al.","year":2024,"url":"https://arxiv.org/abs/2310.16789","alternativetitle":"Min-K% Prob (Shi et al., 2024)"},
+	"white2024livebench": {"title":"LiveBench: A Challenging, Contamination-Limited LLM Benchmark","author":"Colin White, Samuel Dooley, Manley Roberts, et al.","year":2024,"url":"https://arxiv.org/abs/2406.19314","alternativetitle":"LiveBench (White et al., 2024)"},
+	"dubois2024alpacaeval": {"title":"Length-Controlled AlpacaEval: A Simple Way to Debias Automatic Evaluators","author":"Yann Dubois, Balázs Galambosi, Percy Liang, Tatsunori B. Hashimoto","year":2024,"url":"https://arxiv.org/abs/2404.04475","alternativetitle":"AlpacaEval (Dubois et al., 2024)"},
+	"miller2024errorbars": {"title":"Adding Error Bars to Evals: A Statistical Approach to Language Model Evaluations","author":"Evan Miller","year":2024,"url":"https://arxiv.org/abs/2411.00640","alternativetitle":"Error bars for evals (Miller, 2024)"},
+	"platt1999probabilistic": {"title":"Probabilistic Outputs for Support Vector Machines and Comparisons to Regularized Likelihood Methods","author":"John C. Platt","year":1999,"url":"https://web.archive.org/web/20201105231806/http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.41.1639&rep=rep1&type=pdf","alternativetitle":"Platt scaling (1999)"},
+	"vovk2005algorithmic": {"title":"Algorithmic Learning in a Random World","author":"Vladimir Vovk, Alexander Gammerman, Glenn Shafer","year":2005,"url":"https://link.springer.com/book/10.1007/b106715","alternativetitle":"Conformal prediction (Vovk et al., 2005)"},
+	"geifman2017selective": {"title":"Selective Classification for Deep Neural Networks","author":"Yonatan Geifman, Ran El-Yaniv","year":2017,"url":"https://arxiv.org/abs/1705.08500","alternativetitle":"Selective classification (Geifman & El-Yaniv, 2017)"},
+	"farquhar2024semantic": {"title":"Detecting hallucinations in large language models using semantic entropy","author":"Sebastian Farquhar, Jannik Kossen, Lorenz Kuhn, Yarin Gal","year":2024,"url":"https://www.nature.com/articles/s41586-024-07421-0","alternativetitle":"Semantic entropy (Farquhar et al., 2024)"},
+	"perez2022redteaming": {"title":"Red Teaming Language Models with Language Models","author":"Ethan Perez, Saffron Huang, Francis Song, et al.","year":2022,"url":"https://arxiv.org/abs/2202.03286","alternativetitle":"LM red-teaming (Perez et al., 2022)"},
+	"wang2019superglue": {"title":"SuperGLUE: A Stickier Benchmark for General-Purpose Language Understanding Systems","author":"Alex Wang, Yada Pruksachatkun, Nikita Nangia, et al.","year":2019,"url":"https://arxiv.org/abs/1905.00537","alternativetitle":"SuperGLUE (Wang et al., 2019)"},
+	"quach2023conformal": {"title":"Conformal Language Modeling","author":"Victor Quach, Adam Fisch, Tal Schuster, et al.","year":2023,"url":"https://arxiv.org/abs/2306.10193","alternativetitle":"Conformal language modeling (Quach et al., 2023)"},
+	"weidinger2023sociotechnical": {"title":"Sociotechnical Safety Evaluation of Generative AI Systems","author":"Laura Weidinger, Maribeth Rauh, Nahema Marchal, et al.","year":2023,"url":"https://arxiv.org/abs/2310.11986","alternativetitle":"Sociotechnical safety evaluation (Weidinger et al., 2023)"},
 
 };
