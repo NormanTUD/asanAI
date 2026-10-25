@@ -405,11 +405,14 @@
 				var el = document.createElement("span");
 				el.className = "token" + (tok.sub ? " token--sub" : "") + (tok.type === "space" ? " token--space" : "");
 				el.style.setProperty("--tok", tok.color);
-				el.setAttribute("title", (tok.type === "space" ? "whitespace" : tok.text) + " · id " + tok.id);
+				el.setAttribute("data-token-index", i);
+				el.setAttribute("title", (tok.type === "space" ? "whitespace" : tok.text) + " · id " + tok.id + " · click to inspect");
 				var label = tok.type === "space" ? "␣" : tok.text;
 				el.innerHTML = escapeHtml(label) + "<small>" + tok.id + "</small>";
 				stream.appendChild(el);
 			});
+			var piecesEl = document.getElementById("tok-pieces");
+			if (piecesEl) piecesEl.textContent = tokens.filter(function (t) { return t.sub; }).length;
 			if (countEl) countEl.textContent = tokens.length;
 			if (charsEl) charsEl.textContent = text.length;
 			if (ratioEl) ratioEl.textContent = tokens.length ? (text.length / tokens.length).toFixed(2) : "0";
