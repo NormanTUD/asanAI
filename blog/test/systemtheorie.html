@@ -400,6 +400,9 @@ html[data-theme="light"] .hero::after{background:linear-gradient(180deg,rgba(247
 
 .orbit-wrap{position:relative;padding:8px 0}
 .orbit-wrap svg{width:100%;height:auto;overflow:visible}
+.svg-scroll{overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+.svg-scroll::-webkit-scrollbar{height:4px}
+.svg-scroll::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:4px}
 .orbit-node{cursor:pointer}
 .orbit-node circle{transition:r .25s var(--ease),filter .25s}
 .orbit-node:hover circle{filter:drop-shadow(0 0 10px currentColor)}
@@ -417,7 +420,7 @@ html[data-theme="light"] .hero::after{background:linear-gradient(180deg,rgba(247
 .diff-form h5{font-family:var(--display);font-size:1rem;margin:0 0 4px;font-weight:400}
 .diff-form p{font-size:.8rem;color:var(--muted);margin:0;line-height:1.5}
 .diff-form svg{width:100%;height:64px;margin-bottom:8px}
-@media(max-width:700px){.diff-forms{grid-template-columns:1fr}}
+@media(max-width:700px){.diff-forms{grid-template-columns:1fr}#orbit-svg{min-width:620px}#meaning-svg{min-width:560px}#map-svg{min-width:760px}.orbit-wrap,.meaning-wrap,.map-wrap{overflow:hidden}}
 
 .strata{display:flex;flex-direction:column;gap:6px;perspective:1000px;padding:4px 0}
 .stratum{
@@ -1324,7 +1327,7 @@ html[data-theme="light"] .hero::after{background:linear-gradient(180deg,rgba(247
           <div class="lab-hint">Klicke einen Knoten. Jede Wahl aktualisiert einen Pfad — und lässt einen Horizont stehen.</div>
         </div>
         <div class="meaning-wrap">
-          <svg id="meaning-svg" viewBox="0 0 900 560" role="img" aria-label="Radialer Baum der Möglichkeiten"></svg>
+          <div class="svg-scroll"><svg id="meaning-svg" viewBox="0 0 900 560" role="img" aria-label="Radialer Baum der Möglichkeiten"></svg></div>
           <div class="meaning-panel">
             <div class="big" id="meaning-count">27</div>
             <div>
@@ -1385,7 +1388,7 @@ html[data-theme="light"] .hero::after{background:linear-gradient(180deg,rgba(247
           <div class="lab-title"><b>Die Gesellschaft als Orbit</b><span>Labor 11 · Funktionssysteme</span></div>
           <div class="lab-hint">Klicke ein Funktionssystem. Sieh seinen Code, sein Medium und sein Programm.</div>
         </div>
-        <div class="orbit-wrap"><svg id="orbit-svg" viewBox="0 0 760 500" role="img" aria-label="Funktionssysteme der Gesellschaft"></svg></div>
+        <div class="orbit-wrap"><div class="svg-scroll"><svg id="orbit-svg" viewBox="0 0 760 500" role="img" aria-label="Funktionssysteme der Gesellschaft"></svg></div></div>
         <div class="system-panel" id="system-panel"></div>
       </div>
 
@@ -1632,7 +1635,7 @@ html[data-theme="light"] .hero::after{background:linear-gradient(180deg,rgba(247
         </div>
       </header>
       <div class="map-wrap reveal" id="map-wrap">
-        <svg id="map-svg" viewBox="0 0 1000 660" role="img" aria-label="Konzeptkarte der Systemtheorie"></svg>
+        <div class="svg-scroll"><svg id="map-svg" viewBox="0 0 1000 660" role="img" aria-label="Konzeptkarte der Systemtheorie"></svg></div>
         <div class="map-legend">
           <span><i style="background:var(--violet)"></i>Allgemeine Systemtheorie</span>
           <span><i style="background:var(--cyan)"></i>Kybernetik</span>
