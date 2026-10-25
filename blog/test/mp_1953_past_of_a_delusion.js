@@ -101,7 +101,8 @@
     });
 
     var prog = (t * (0.25 + st.gain * 0.6)) % 4;
-    var seg = Math.floor(prog);
+    if (!isFinite(prog)) prog = 0;
+    var seg = ((Math.floor(prog) % 4) + 4) % 4;
     var f = prog - seg;
     var a1 = pts[seg], b1 = pts[(seg + 1) % 4];
     var px = MP.lerp(a1.x, b1.x, f);

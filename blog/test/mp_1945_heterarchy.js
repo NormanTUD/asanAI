@@ -223,6 +223,7 @@
 
       if (cyc) {
         var prog = (t * 0.35) % 1;
+        if (!isFinite(prog)) prog = 0;
         var path = [
           [pts.A, pts.B],
           [pts.B, pts.C],
@@ -230,7 +231,7 @@
         ];
         var seg = Math.floor(prog * 3) % 3;
         var f = prog * 3 - Math.floor(prog * 3);
-        var q = path[seg];
+        var q = path[seg] || path[0];
         var px = MP.lerp(q[0].x, q[1].x, f);
         var py = MP.lerp(q[0].y, q[1].y, f);
         MP.glowDot(ctx, px, py, 5, c.accent2, c.accent);
