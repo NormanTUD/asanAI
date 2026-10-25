@@ -14,11 +14,11 @@ tags: interested-layman
 <div class="image-row md">
 	<figure>
 		<img src="cave_hands.jpg" alt="Hand stencils at Cueva de las Manos, Argentina" />
-		<figcaption class="md">Hand stencils at \cite[Cueva de las Manos]{cuevadelasmanos_image}, Argentina (c. 7300 BC - 700 AD). Paint was sprayed through bone pipes onto hands pressed against the rock wall.</figcaption>
+		<figcaption class="md">Hand stencils at Cueva de las Manos, Argentina (c. 7300 BC - AD 700). Paint was sprayed through bone pipes onto hands pressed against the rock wall. Photo: \cite[Pablo A. Gimenez]{cuevadelasmanos_image}, [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/).</figcaption>
 	</figure>
 	<figure>
 		<img src="image.php?f=perceptron2.jpg&amp;ar-base=cave_hands.jpg" alt="Perceptron Wiring" />
-		<figcaption>\citealternativetitle{perceptronimagedetection} detecting letters, showing engineer Perceptron project engineer Charles Wightman</figcaption>
+		<figcaption class="md">The Mark I Perceptron, the experimental letter-recognising machine announced by the U.S. Navy in 1960. Photo: \cite[U.S. Navy]{perceptronimagedetection}, public domain.</figcaption>
 	</figure>
 </div>
 
