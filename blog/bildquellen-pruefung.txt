@@ -1325,3 +1325,28 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lokal: perceptron2.jpg (2836x2220)
    Genutzt in: intro.php; history.php
    Status: OK - Public domain
+
+=== TEN MINUTES: HISTORY / ROSENBLATT PHOTO ESSAY (tenminutes/history.html, Stand: Oktober 2026) ===
+Die Seite nutzt ausschließlich bereits im Blog vorhandene, oben geprüfte Dateien. Verwendungsnachweis:
+
+1. ishango.jpg — Ben2, CC BY-SA 3.0 — Timeline "Tally bones"
+2. salamic_table.jpg — Wilhelm Kubitschek, Public domain — Timeline "Counting boards"
+3. antikythera.jpg — Therese Clutario, CC BY 2.0 — Timeline "Antikythera"
+4. FigurScheiben.jpg — Ramon Llull, Public domain — Timeline "Llull's wheels"
+5. babbage.jpg — John Cummings, CC BY-SA 2.0 — Timeline "Engines & Ada"
+6. perceptron2.jpg — U.S. Navy, Public domain — Timeline "Neurons"; Machines "Mark I Perceptron"
+7. alphago_leesedol.jpg — Korea Baduk Association, CC BY-SA 4.0 — Timeline "Deep learning"; Machines "AlphaGo"
+8. frank_rosenblatt_portrait.jpg — Anonymous / Heinz Nixdorf MuseumsForum, CC BY-SA 4.0 — Spotlight Rosenblatt
+9. ada_lovelace_portrait.jpg — Alfred Edward Chalon, Public domain — People
+10. alan_turing_1951.jpg — Elliott & Fry, Public domain — People
+11. claude_shannon_portrait.jpg — Tekniska Museet, CC BY 2.0 — People
+12. wiener.jpg — Konrad Jacobs / Oberwolfach Photo Collection, CC BY-SA 2.0 DE — People
+13. ashby.jpg — W. Ross Ashby Digital Archive, Public domain — People
+14. aiken_portrait.jpeg — Unknown photographer / MacTutor, Public domain — People
+15. geoffrey_hinton_portrait.jpg — Arthur Petron, CC BY-SA 4.0 — People
+16. yann_lecun_portrait.jpg — Jérémy Barande, CC BY-SA 2.0 — People
+17. yoshua_bengio_portrait.jpg — Maryse Boyce, CC BY 4.0 — People
+18. mark_i_perceptron_manual.png — John C. Hay & Albert E. Murray, Public domain — Machines "Inside the perceptron"
+19. homeostat.jpg — Mick Ashby / Estate of W. Ross Ashby, CC BY-SA 4.0 — Machines "Homeostat"
+20. grey_walter_tortoise.jpg — Ank Kumar, CC BY-SA 4.0 — Machines "Tortoise"
+21. deep_blue_kasparov.jpg — Stan Honda / The Guardian, CC BY 2.0 — Machines "Deep Blue"

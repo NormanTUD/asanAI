@@ -2616,3 +2616,176 @@ html[data-theme="dark"] .shelf-card .sc-tag--compact { color: var(--tm-green); }
 .part-jump a { font-size: .68rem; font-weight: 700; letter-spacing: .04em; padding: 5px 9px; border: 1px solid var(--tm-line); border-radius: 999px; color: var(--tm-muted); text-decoration: none; }
 .part-jump a:hover { border-color: var(--tm-green); color: var(--tm-ink); }
 @media (max-width: 720px) { .shelf-grid { grid-template-columns: 1fr; } }
+
+/* ── people & machines photo essay ───────────────────────── */
+.profile-spotlight {
+	display: grid;
+	grid-template-columns: minmax(220px, 0.8fr) minmax(0, 1.2fr);
+	gap: clamp(22px, 4vw, 42px);
+	align-items: center;
+	margin: 24px 0 34px;
+	padding: clamp(20px, 3vw, 30px);
+	border: 1px solid var(--tm-line);
+	border-radius: calc(var(--tm-radius) + 2px);
+	background:
+		radial-gradient(600px 260px at 8% 0%, rgba(0, 116, 172, 0.08), transparent 65%),
+		color-mix(in srgb, var(--tm-card) 80%, transparent);
+}
+.profile-spotlight figure { margin: 0; }
+.profile-spotlight img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 4 / 5;
+	object-fit: cover;
+	object-position: center top;
+	border-radius: 12px;
+	border: 1px solid var(--tm-line);
+	filter: saturate(0.9) contrast(1.02);
+}
+.profile-spotlight .ps-kicker {
+	display: block;
+	margin-bottom: 7px;
+	font-family: var(--tm-mono);
+	font-size: 0.61rem;
+	font-weight: 700;
+	letter-spacing: 0.13em;
+	text-transform: uppercase;
+	color: var(--tm-green-deep);
+}
+html[data-theme="dark"] .profile-spotlight .ps-kicker { color: var(--tm-green); }
+.profile-spotlight h3 {
+	margin: 0 0 12px;
+	font-family: var(--tm-display);
+	font-weight: 600;
+	font-size: clamp(1.7rem, 3vw, 2.5rem);
+	line-height: 1.0;
+	letter-spacing: -0.01em;
+}
+.profile-spotlight p {
+	margin: 0 0 10px;
+	font-family: var(--tm-prose);
+	font-size: 0.96rem;
+	line-height: 1.6;
+	color: var(--tm-ink-soft);
+}
+.profile-spotlight p:last-child { margin-bottom: 0; }
+.profile-spotlight .ps-credit {
+	font-family: var(--tm-ui);
+	font-size: 0.68rem;
+	color: var(--tm-faint);
+}
+
+.people-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+	margin-top: 18px;
+}
+.person-card {
+	margin: 0;
+	border: 1px solid var(--tm-line);
+	border-radius: 12px;
+	background: var(--tm-card);
+	overflow: hidden;
+	transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.person-card:hover { transform: translateY(-2px); box-shadow: var(--tm-shadow); border-color: var(--tm-line-strong); }
+.person-card img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 4 / 5;
+	object-fit: cover;
+	object-position: center top;
+	filter: saturate(0.9) contrast(1.02);
+}
+.person-card figcaption { padding: 12px 13px 13px; }
+.person-card .pc-name {
+	display: block;
+	font-family: var(--tm-display);
+	font-weight: 600;
+	font-size: 1.18rem;
+	line-height: 1.05;
+	color: var(--tm-ink);
+}
+.person-card .pc-years {
+	display: block;
+	margin-top: 2px;
+	font-family: var(--tm-mono);
+	font-size: 0.56rem;
+	letter-spacing: 0.06em;
+	color: var(--tm-green-deep);
+}
+html[data-theme="dark"] .person-card .pc-years { color: var(--tm-green); }
+.person-card .pc-note {
+	display: block;
+	margin-top: 7px;
+	font-family: var(--tm-prose);
+	font-size: 0.78rem;
+	line-height: 1.45;
+	color: var(--tm-muted);
+}
+.person-card .pc-credit {
+	display: block;
+	margin-top: 7px;
+	font-family: var(--tm-ui);
+	font-size: 0.57rem;
+	line-height: 1.35;
+	color: var(--tm-faint);
+}
+.person-card .pc-credit a { color: var(--tm-faint); }
+
+.machine-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 14px;
+	margin-top: 18px;
+}
+.machine-card {
+	margin: 0;
+	border: 1px solid var(--tm-line);
+	border-radius: 13px;
+	background: var(--tm-card);
+	overflow: hidden;
+}
+.machine-card img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 16 / 10;
+	object-fit: cover;
+	object-position: center;
+	filter: saturate(0.9) contrast(1.02);
+}
+.machine-card figcaption { padding: 12px 14px 14px; }
+.machine-card .mc-name {
+	display: block;
+	font-family: var(--tm-display);
+	font-weight: 600;
+	font-size: 1.08rem;
+	line-height: 1.05;
+}
+.machine-card .mc-note {
+	display: block;
+	margin-top: 4px;
+	font-family: var(--tm-prose);
+	font-size: 0.78rem;
+	line-height: 1.45;
+	color: var(--tm-muted);
+}
+.machine-card .mc-credit {
+	display: block;
+	margin-top: 6px;
+	font-family: var(--tm-ui);
+	font-size: 0.57rem;
+	line-height: 1.35;
+	color: var(--tm-faint);
+}
+.machine-card .mc-credit a { color: var(--tm-faint); }
+
+@media (max-width: 900px) {
+	.profile-spotlight { grid-template-columns: 1fr; }
+	.profile-spotlight figure { max-width: 320px; }
+	.people-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+	.people-grid, .machine-grid { grid-template-columns: 1fr; }
+}
