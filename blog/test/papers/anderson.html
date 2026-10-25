@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="P. W. Andersons More Is Different interaktiv: Ising-Modell, gebrochene Symmetrie, Emergenz und die Hierarchie der Wissenschaften.">
+  <title>Anderson · Mehr ist anders</title>
+  <script src="assets/boot.js"></script>
+  <link rel="stylesheet" href="../../Temml-Local.css">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="../../temml.min.js" defer></script>
+  <script src="assets/app.js" defer></script>
+  <script src="anderson.js" defer></script>
+</head>
+<body data-paper="anderson" style="--accent:#6ea8ff; --accent-2:#78f0c5; --accent-3:#f8c56b;">
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+  <div class="scroll-progress" aria-hidden="true"><div class="scroll-progress__bar"></div></div>
+
+  <header class="site-head">
+    <div class="site-head__inner">
+      <a class="brand" href="index.html" aria-label="Fünf Klassiker, Übersicht">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span>Denkraum · Fünf Klassiker</span>
+      </a>
+      <nav class="head-nav" aria-label="Hauptnavigation">
+        <a href="index.html">Übersicht</a>
+        <a href="quellen.html">Quellen</a>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Helles Leselicht einschalten" aria-pressed="false">
+          <span class="theme-toggle__dot" aria-hidden="true"></span>
+          <span data-theme-label>Leselicht</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="page-shell">
+      <section class="hero">
+        <div class="hero__copy">
+          <p class="kicker">Etappe 02 · Physik &amp; Emergenz</p>
+          <h1>Mehr ist <span class="thin">anders.</span></h1>
+          <p class="hero__sub">P. W. Anderson schrieb 1972 einen der kürzesten und folgenreichsten Texte über Emergenz. Seine Pointe: Wer die Mikrogesetze kennt, hat noch lange nicht die Gesetze des Kollektivs.</p>
+          <div class="hero__meta">
+            <span class="pill pill--accent"><strong>1972</strong> Science 177</span>
+            <span class="pill"><strong>2</strong> Labs</span>
+            <span class="pill"><span data-reading-time>14 Min.</span></span>
+            <span class="pill">Emergenz</span>
+          </div>
+          <a class="hero__begin" href="#mehr">Den Satz ernst nehmen <span aria-hidden="true">→</span></a>
+        </div>
+        <aside class="hero__aside" aria-hidden="true">
+          <div class="paper-emblem">
+            <span class="paper-emblem__number">02</span>
+            <span class="paper-emblem__label">Anderson · 1972</span>
+          </div>
+        </aside>
+      </section>
+    </div>
+
+    <nav class="chapter-nav" aria-label="Etappen dieser Seite">
+      <div class="chapter-nav__inner">
+        <a href="#mehr">Mehr ist anders</a>
+        <a href="#symmetrie">Symmetrie brechen</a>
+        <a href="#hierarchie">Hierarchie</a>
+        <a href="#einordnung">Einordnung</a>
+      </div>
+    </nav>
+
+    <div class="page-shell">
+      <section class="section" id="mehr">
+        <div class="section__head">
+          <span class="section__num">01</span>
+          <div>
+            <h2>Der Satz, der die Physik sortiert.</h2>
+            <p>Anderson verteidigt nicht die Mystik. Er verteidigt die Eigenständigkeit einer Ebene. Und er tut es mit einem Modell, das du selbst zum Kippen bringen kannst.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p class="lead">Ein einzelnes Wassermolekül hat keine Temperatur. Ein einzelnes Eisenatom hat keine Magnetisierung. Ein einzelnes Neuron hat kein Bewusstsein. Das sind keine poetischen Gemeinplätze, sondern Hinweise auf eine Struktur: Bestimmte Begriffe existieren erst, wenn sehr viele Dinge zusammenkommen.</p>
+
+          <p>Anderson beginnt mit einer Unterscheidung, die leicht zu übersehen ist. <strong>Reduktionismus</strong> ist die These, dass sich alles aus fundamentalen Gesetzen zusammensetzen lässt. <strong>Konstruktionismus</strong> ist die viel stärkere These, dass man aus diesen Gesetzen auch alles wieder aufbauen kann. Anderson sagt: Die erste These kann man vertreten. Die zweite folgt daraus nicht.</p>
+
+          <div class="thesis">
+            <p class="thesis__quote">„The ability to reduce everything to simple fundamental laws does not imply the ability to start from those laws and reconstruct the universe.“</p>
+            <span class="thesis__by">P. W. Anderson, More Is Different, 1972</span>
+          </div>
+
+          <p>Das ist der Kern. Die Quantenmechanik erklärt, warum Atome stabil sind. Sie sagt dir nicht, warum ein Supraleiter seinen elektrischen Widerstand verliert. Dafür brauchst du neue Begriffe: Phasen, Ordnungsparameter, kollektive Anregungen. Diese Begriffe sind nicht „weniger fundamental“. Sie sind auf einer anderen Ebene fundamental.</p>
+
+          <div class="math-card">
+            <span class="math-card__label">Die Kurzfassung als Denkfigur</span>
+            <div class="math-display" data-display data-tex="\underbrace{\text{Mikrogesetze}}_{\text{eine Ebene}}\ \not\Rightarrow\ \underbrace{\text{Kollektivgesetze}}_{\text{nächste Ebene}}"></div>
+            <p class="math-card__note">Der Pfeil ist keine Behauptung, dass Mikrogesetze falsch wären. Er ist die Behauptung, dass aus ihnen nicht automatisch die richtige <em>Beschreibung</em> der nächsten Ebene folgt. Die neue Beschreibung kann sogar einfacher sein als die Mikrobeschreibung.</p>
+          </div>
+
+          <h3>Das Ising-Modell: der einfachste Kipppunkt</h3>
+          <p>Stell dir ein Gitter aus winzigen Magneten vor. Jeder kann nur nach oben oder unten zeigen. Nachbarn wollen gleich ausgerichtet sein. Bei hoher Temperatur mischt die Wärme alles durch; bei niedriger Temperatur gewinnt die Kopplung. Unterhalb einer kritischen Temperatur entsteht eine <strong>Magnetisierung</strong> – eine kollektive Ausrichtung, die kein einzelner Spin besitzt.</p>
+
+          <div class="math-card">
+            <span class="math-card__label">Das Ising-Modell</span>
+            <div class="math-display" data-display data-tex="H(\{s\})=-\underbrace{J\underbrace{\sum_{\langle i,j\rangle}s_i s_j}_{\text{Nachbarpaare}}-h\underbrace{\sum_i s_i}_{\text{alle Spins}}}_{\text{Energie: niedrig heißt geordnet}}"></div>
+            <p class="math-card__note">Jeder Spin <span class="tex-inline" data-tex="s_i"></span> ist <span class="tex-inline" data-tex="+1"></span> oder <span class="tex-inline" data-tex="-1"></span>. <span class="tex-inline" data-tex="J"></span> ist die Kopplungsstärke, <span class="tex-inline" data-tex="h"></span> ein äußeres Feld. Die Summe läuft über benachbarte Paare. Das Modell ist absichtlich minimal – und zeigt trotzdem einen echten Phasenübergang.</p>
+          </div>
+
+          <p>Der Ordnungsparameter ist die mittlere Ausrichtung:</p>
+
+          <div class="math-card">
+            <span class="math-card__label">Magnetisierung</span>
+            <div class="math-display" data-display data-tex="M=\underbrace{\frac{1}{N}\sum_i\underbrace{s_i}_{\pm1}}_{\text{mittlere Ausrichtung aller Spins}}"></div>
+            <p class="math-card__note">Bei hoher Temperatur pendelt <span class="tex-inline" data-tex="M"></span> um null. Bei niedriger Temperatur bleibt es bei einem von zwei Werten hängen: fast alle Spins zeigen nach oben oder fast alle nach unten. Beide Zustände sind energetisch gleich gut.</p>
+          </div>
+
+          <article class="lab" id="ising-lab">
+            <div class="lab__head">
+              <span class="lab__num">01</span>
+              <div class="lab__title">
+                <h3>Der Magnet kippt.</h3>
+                <p>Drehe die Temperatur durch den kritischen Punkt und beobachte, wie aus Rauschen Domänen werden – und wieder verschwinden.</p>
+              </div>
+            </div>
+            <div class="lab__body">
+              <div class="lab__stage">
+                <div class="canvas-wrap">
+                  <canvas id="ising-canvas" width="900" height="600" aria-label="Ising-Gitter mit 64 mal 64 Spins und Magnetisierungskurve"></canvas>
+                </div>
+                <div class="controls">
+                  <label class="control">
+                    <span class="control__top"><span>Temperatur T</span><span class="control__value" id="ising-t-val">2,27</span></span>
+                    <input id="ising-t" type="range" min="0.6" max="4" step="0.01" value="2.27">
+                  </label>
+                  <label class="control">
+                    <span class="control__top"><span>Simulation</span><span class="control__value" id="ising-state">läuft</span></span>
+                    <input id="ising-speed" type="range" min="1" max="3" step="1" value="2">
+                  </label>
+                </div>
+                <div class="stage-caption">
+                  <span><strong>Blau / Rosa:</strong> Spin hoch / runter.</span>
+                  <span><strong>Rechts:</strong> Magnetisierungskurve, Punkt = aktuelle Temperatur.</span>
+                </div>
+              </div>
+              <aside class="lab__side">
+                <div class="stat-stack">
+                  <div class="stat"><span class="stat__label">T / T<sub>c</sub></span><span class="stat__value" id="ising-ratio">1,00</span></div>
+                  <div class="stat"><span class="stat__label">Magnetisierung |M|</span><span class="stat__value stat__value--accent" id="ising-m">0,00</span></div>
+                  <div class="stat"><span class="stat__label">Energie pro Spin</span><span class="stat__value" id="ising-energy">–</span></div>
+                  <div class="stat"><span class="stat__label">Phase</span><span class="stat__value" id="ising-phase">ungebrochen</span></div>
+                </div>
+                <div class="toggle-row">
+                  <button class="btn btn--primary" id="ising-shock" type="button">Störung einbauen</button>
+                  <button class="btn" id="ising-reset" type="button">Neu mischen</button>
+                  <button class="btn" id="ising-pause" type="button">Pause</button>
+                </div>
+                <p class="status-line" id="ising-status" aria-live="polite">T = 2,27 liegt fast genau am kritischen Punkt. Hier sind Domänen groß, aber nicht stabil – der interessanteste Bereich.</p>
+                <ul class="instructions">
+                  <li>Gehe auf T = 1,2. Die Domänen wachsen, die Magnetisierung bleibt.</li>
+                  <li>Gehe auf T = 3,5. Die Ordnung löst sich auf, |M| pendelt um null.</li>
+                  <li>Baue bei T = 1,5 eine Störung ein. Heilt sie oder bleibt sie?</li>
+                </ul>
+              </aside>
+            </div>
+          </article>
+
+          <p>Der entscheidende Punkt ist nicht, dass das Gitter „mehr Spins“ hat. Entscheidend ist, dass bei genügend großer Zahl und genügend niedriger Temperatur ein <strong>neuer Zustand</strong> existiert, der nicht in der Sprache eines einzelnen Spins beschrieben werden kann. Genau das meint Anderson mit „more is different“.</p>
+
+          <div class="checkpoint" data-right="Genau. Die Mikrogesetze bleiben gültig, aber die kollektive Ordnung braucht eine eigene Beschreibung – zum Beispiel eine Magnetisierung." data-wrong="Nicht ganz. Anderson bestreitet nicht die Mikrogesetze. Er bestreitet, dass man aus ihnen automatisch die passende Beschreibung der nächsten Ebene bekommt.">
+            <span class="checkpoint__label">Selbstcheck</span>
+            <h3>Was heißt „more is different“ bei Anderson?</h3>
+            <div class="choices">
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Mikrogesetze werden falsch, sobald viele Teilchen im Spiel sind.</button>
+              <button class="choice" type="button" data-correct="true"><span class="choice__mark">○</span> Kollektive Systeme haben eigene Gesetze und Begriffe, die nicht einfach aus der Mikrobeschreibung ablesbar sind.</button>
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Emergenz ist eine mysteriöse Kraft, die Materie von außen steuert.</button>
+            </div>
+            <p class="checkpoint__feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="source-strip">
+            <span>Quelle: Anderson 1972, Science 177(4047), 393–396.</span>
+            <a href="_sources/anderson_more_is_different.pdf" target="_blank" rel="noopener">Lokales PDF</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="symmetrie">
+        <div class="section__head">
+          <span class="section__num">02</span>
+          <div>
+            <h2>Die Gesetze sind symmetrisch. Der Zustand nicht.</h2>
+            <p>Der schönste Mechanismus hinter „more is different“ ist die gebrochene Symmetrie. Sie erklärt, wie aus einer völlig symmetrischen Regel eine gerichtete Welt wird.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>Ein Ferromagnet hat keinen eingebauten Unterschied zwischen „oben“ und „unten“. Die Hamilton-Funktion behandelt beide Richtungen gleich. Trotzdem zeigt ein realer Magnet nach dem Abkühlen in <em>eine</em> Richtung. Der Zustand hat weniger Symmetrie als das Gesetz. Das nennt man <strong>spontane Symmetriebrechung</strong>.</p>
+
+          <p>Das ist kein Randfall der Physik. Es ist ein Muster, das von der Elementarteilchenphysik bis zur Biologie auftaucht: Die Regeln lassen mehrere Möglichkeiten zu, aber die Realisierung wählt eine aus. Welche, ist oft historisch oder zufällig – und genau deshalb können zwei Systeme mit denselben Gesetzen verschieden aussehen.</p>
+
+          <div class="math-card">
+            <span class="math-card__label">Landau-Potential: die Form der Entscheidung</span>
+            <div class="math-display" data-display data-tex="F(M)=\underbrace{\underbrace{\frac{a}{2}M^2}_{\text{Kosten für Ordnung}}+\underbrace{\frac{b}{4}M^4}_{\text{begrenzt Ausreißer}}}_{\text{effektives Potential}}"></div>
+            <p class="math-card__note">Für <span class="tex-inline" data-tex="a>0"></span> hat das Potential ein Minimum bei <span class="tex-inline" data-tex="M=0"></span>. Für <span class="tex-inline" data-tex="a<0"></span> entstehen zwei Minima bei <span class="tex-inline" data-tex="\pm M_0"></span>. Der Übergang von einem zum anderen ist der Phasenübergang. Die Form ist eine Näherung, aber sie macht den Mechanismus sichtbar.</p>
+          </div>
+
+          <article class="lab" id="landau-lab">
+            <div class="lab__head">
+              <span class="lab__num">02</span>
+              <div class="lab__title">
+                <h3>Die Kugel wählt eine Seite.</h3>
+                <p>Kühle das System. Aus einem einzigen Tal werden zwei. Die Kugel muss sich entscheiden – obwohl beide Seiten gleich gut sind.</p>
+              </div>
+            </div>
+            <div class="lab__body">
+              <div class="lab__stage">
+                <div class="canvas-wrap">
+                  <canvas id="landau-canvas" width="900" height="520" aria-label="Landau-Potential mit einer Kugel im Minimum und Temperaturregler"></canvas>
+                </div>
+                <div class="controls">
+                  <label class="control">
+                    <span class="control__top"><span>Temperatur T</span><span class="control__value" id="landau-t-val">1,20</span></span>
+                    <input id="landau-t" type="range" min="0.5" max="3" step="0.01" value="1.2">
+                  </label>
+                </div>
+                <div class="stage-caption">
+                  <span><strong>Die Kurve</strong> ist das effektive Potential F(M).</span>
+                  <span>Die Kugel ist der aktuelle Ordnungsparameter.</span>
+                </div>
+              </div>
+              <aside class="lab__side">
+                <div class="stat-stack">
+                  <div class="stat"><span class="stat__label">T / T<sub>c</sub></span><span class="stat__value" id="landau-ratio">0,53</span></div>
+                  <div class="stat"><span class="stat__label">Ordnungsparameter M</span><span class="stat__value stat__value--accent" id="landau-m">0,00</span></div>
+                  <div class="stat"><span class="stat__label">Symmetrie</span><span class="stat__value" id="landau-phase">gebrochen</span></div>
+                  <div class="stat"><span class="stat__label">Barriere</span><span class="stat__value" id="landau-barrier">–</span></div>
+                </div>
+                <div class="toggle-row">
+                  <button class="btn btn--primary" id="landau-flip" type="button">Seite wechseln</button>
+                  <button class="btn" id="landau-warm" type="button">Warm werden</button>
+                </div>
+                <p class="status-line" id="landau-status" aria-live="polite">Unter T<sub>c</sub> gibt es zwei gleich gute Minima. Die Kugel sitzt in einem davon – das ist die gebrochene Symmetrie.</p>
+                <ul class="instructions">
+                  <li>Kühle von T = 3 auf T = 1. Beobachte, wie aus einem Tal zwei werden.</li>
+                  <li>Drücke „Seite wechseln“. Beide Seiten sind gleich gut.</li>
+                  <li>Wärme wieder auf. Die Kugel fällt in die Mitte zurück.</li>
+                </ul>
+              </aside>
+            </div>
+          </article>
+
+          <p>Das Lab zeigt eine Näherung, nicht die volle Statistische Mechanik. Aber die entscheidende Struktur ist echt: Die Symmetrie der Energie ist nicht die Symmetrie des Gleichgewichtszustands. Genau das meint Anderson, wenn er sagt, dass auf einer neuen Ebene neue Begriffe entstehen – hier: Ordnungsparameter, Phase, Symmetriebrechung.</p>
+
+          <div class="callout">
+            <span class="callout__label">Wichtig für die Interpretation</span>
+            <p>Gebrochene Symmetrie ist kein Beweis für starke Emergenz im philosophischen Sinn. Sie ist ein physikalischer Mechanismus. Ob man daraus eine allgemeine Metaphysik macht, ist eine andere Frage. Anderson selbst bleibt Physiker: Die neuen Gesetze sind Gesetze über Kollektive, nicht über Geister.</p>
+          </div>
+
+          <div class="source-strip">
+            <span>Quelle: Anderson 1972, Abschnitt über broken symmetry und Phasenübergänge.</span>
+            <a href="_sources/anderson_more_is_different.pdf" target="_blank" rel="noopener">Lokales PDF</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="hierarchie">
+        <div class="section__head">
+          <span class="section__num">03</span>
+          <div>
+            <h2>Die Leiter der Ebenen.</h2>
+            <p>Anderson spricht von einer Hierarchie der Wissenschaften. Klick dich durch die Ebenen und achte darauf, was jeweils neu ist.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>Die Leiter ist kein Turm, bei dem die unterste Sprosse „am wahrsten“ ist. Sie ist eine Ordnung von Beschreibungen. Jede Ebene hat ihre eigenen Einheiten, Gesetze und Erklärungsziele. Die untere Ebene liefert den Stoff; die obere liefert die Organisation.</p>
+
+          <div class="ladder" data-ladder>
+            <div class="ladder__level">
+              <button type="button" aria-expanded="false">Ebene 0</button>
+              <div class="ladder__body">
+                <strong>Quantenfelder</strong>
+                <span>Neue Begriffe: Feld, Anregung, Wechselwirkung. Was hier nicht vorkommt: „Proton“ als stabiles Objekt mit eigener Masse.</span>
+                <div class="ladder__detail">Die Quantenchromodynamik beschreibt Quarks und Gluonen. Ein Proton ist eine gebundene kollektive Struktur. Seine Stabilität und Masse sind emergent – nicht als mystische Zutat, sondern als Konsequenz der Dynamik.</div>
+              </div>
+            </div>
+            <div class="ladder__level">
+              <button type="button" aria-expanded="false">Ebene 1</button>
+              <div class="ladder__body">
+                <strong>Atome</strong>
+                <span>Neue Begriffe: Orbital, Bindung, Periodensystem. Was hier nicht vorkommt: „Temperatur“ eines einzelnen Atoms.</span>
+                <div class="ladder__detail">Atome sind keine kleinen Billardkugeln. Die Quantenmechanik liefert diskrete Zustände und Bindungen. Chemie ist nicht einfach angewandte Quantenmechanik – sie hat eigene Regeln und Begriffe.</div>
+              </div>
+            </div>
+            <div class="ladder__level">
+              <button type="button" aria-expanded="false">Ebene 2</button>
+              <div class="ladder__body">
+                <strong>Moleküle und Materialien</strong>
+                <span>Neue Begriffe: chemische Reaktion, Kristall, Phasenübergang. Was hier nicht vorkommt: „Supraleitung“ in einem einzelnen Atom.</span>
+                <div class="ladder__detail">Materialeigenschaften entstehen aus dem Kollektiv. Supraleitung, Ferromagnetismus und Elastizität sind Beispiele für Ordnung, die erst mit vielen Teilchen und Wechselwirkungen Sinn ergibt.</div>
+              </div>
+            </div>
+            <div class="ladder__level">
+              <button type="button" aria-expanded="false">Ebene 3</button>
+              <div class="ladder__body">
+                <strong>Zellen</strong>
+                <span>Neue Begriffe: Stoffwechsel, Regulation, Rückkopplung. Was hier nicht vorkommt: „einzelnes Molekül als Lebewesen“.</span>
+                <div class="ladder__detail">Eine Zelle ist ein offenes System, das sich selbst erhält. Stoffwechsel und Regulation sind systemische Leistungen. Die Moleküle sind nötig, aber die Regelung ist nicht in einem einzelnen Molekül lokalisiert.</div>
+              </div>
+            </div>
+            <div class="ladder__level">
+              <button type="button" aria-expanded="false">Ebene 4</button>
+              <div class="ladder__body">
+                <strong>Gehirne und Gesellschaften</strong>
+                <span>Neue Begriffe: Repräsentation, Gedächtnis, Kommunikation. Was hier nicht vorkommt: „Bedeutung“ in einem einzelnen Neuron.</span>
+                <div class="ladder__detail">Auf dieser Ebene werden Beschreibungen noch schwieriger, weil die Systeme historisch, verteilt und oft nicht sauber abgrenzbar sind. Vorsicht vor der Annahme, jede Ebene müsse dieselbe Art von Gesetz haben.</div>
+              </div>
+            </div>
+          </div>
+
+          <p>Die Pointe ist nicht, dass die Ebenen voneinander isoliert sind. Sie sind gekoppelt. Die Pointe ist, dass Kopplung nicht dasselbe ist wie Übersetzbarkeit. Man kann ein Gehirn nicht vollständig verstehen, indem man nur die Atompositionen liest – auch wenn die Atompositionen alles festlegen, was da ist.</p>
+
+          <div class="math-card">
+            <span class="math-card__label">Die Hierarchie als Forschungsauftrag</span>
+            <div class="math-display" data-display data-tex="\underbrace{\text{fundamental}}_{\text{welche Ebene?}}\neq\underbrace{\text{erschöpfend}}_{\text{welche Erklärung?}}"></div>
+            <p class="math-card__note">„Fundamental“ beantwortet die Frage nach der untersten Bausteinebene. „Erschöpfend“ beantwortet die Frage, ob eine Beschreibung alles Relevante sagt. Anderson trennt diese Fragen. Genau darin liegt die Provokation seines Textes.</p>
+          </div>
+
+          <div class="checkpoint" data-right="Richtig. Anderson bestreitet nicht, dass alles aus Mikroteilen besteht. Er bestreitet, dass die Mikrobeschreibung automatisch die richtige Erklärung für kollektive Phänomene liefert." data-wrong="Nicht ganz. „Fundamental“ und „erschöpfend“ sind zwei verschiedene Fragen. Anderson hält die Mikroebene für fundamental, aber nicht für die einzige sinnvolle Beschreibung.">
+            <span class="checkpoint__label">Selbstcheck</span>
+            <h3>Was folgt aus Andersons Unterscheidung?</h3>
+            <div class="choices">
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Die Mikroebene ist unwichtig, weil nur das Kollektiv zählt.</button>
+              <button class="choice" type="button" data-correct="true"><span class="choice__mark">○</span> Eine Ebene kann fundamental sein, ohne die passende Erklärung für die nächste Ebene zu liefern.</button>
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Jede Ebene braucht eine eigene, unabhängige Substanz.</button>
+            </div>
+            <p class="checkpoint__feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="source-strip">
+            <span>Quelle: Anderson 1972, Abschnitte zur Hierarchie der Wissenschaften.</span>
+            <a href="_sources/anderson_more_is_different.pdf" target="_blank" rel="noopener">Lokales PDF</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="einordnung">
+        <div class="section__head">
+          <span class="section__num">04</span>
+          <div>
+            <h2>Was bleibt – und was überdreht.</h2>
+            <p>„More is different“ ist ein präziser Satz über Beschreibungen. Er wird oft zu einer vagen Beschwörung von Emergenz umgebaut.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>Die bleibende Einsicht ist methodisch: <strong>Jede Ebene braucht ihre eigenen Begriffe und Experimente.</strong> Wer nur nach unten schaut, verwechselt die Bausteine mit der Architektur. Das ist keine Esoterik, sondern gute Wissenschaftspraxis.</p>
+          <p>Die Überdrehung beginnt bei der Behauptung, Emergenz sei grundsätzlich nicht erklärbar oder entziehe sich der Physik. Anderson sagt das nicht. Im Gegenteil: Die kollektiven Gesetze sind Teil der Physik. Sie sind oft sogar mathematisch präzise – man denke an Phasenübergänge, Renormierung oder Suprafluidität.</p>
+
+          <div class="callout callout--warn">
+            <span class="callout__label">Die ehrliche Kurzfassung</span>
+            <p>Reduktionismus kann richtig sein, ohne dass Konstruktionismus funktioniert. Das Ganze ist aus seinen Teilen – aber die Beschreibung des Ganzen ist nicht einfach die Beschreibung der Teile in Großbuchstaben.</p>
+          </div>
+
+          <h3>Drei Sätze, die du mitnehmen kannst</h3>
+          <ul class="takeaways">
+            <li><strong>Neue Ebene, neue Größe.</strong> Temperatur, Magnetisierung und Druck sind keine Eigenschaften einzelner Teilchen.</li>
+            <li><strong>Symmetriebrechung erzeugt Richtung.</strong> Die Gesetze können symmetrisch sein, während der Zustand eine Seite wählt.</li>
+            <li><strong>Fundamental ist nicht erschöpfend.</strong> Die Mikroebene erklärt, woraus etwas besteht, nicht automatisch, wie es als Ganzes funktioniert.</li>
+          </ul>
+
+          <div class="source-strip">
+            <span>Zum Weiterlesen: Anderson 1972; zur Kritik an starken Emergenzbegriffen die Philosophie der Physik.</span>
+            <a href="quellen.html">Quellen &amp; Einordnung</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="end-card">
+        <div>
+          <p class="kicker">Etappe 02 abgeschlossen?</p>
+          <h2>Jetzt kommt der Fluss.</h2>
+          <p>Anderson zeigt, wie Kollektive eigene Gesetze bekommen. Bertalanffy fragt, wie Systeme sich als offene, geregelte Gebilde am Leben halten.</p>
+        </div>
+        <div class="end-card__actions">
+          <button class="btn btn--primary complete-btn" type="button" data-complete-paper="anderson">Etappe abschließen</button>
+          <a class="btn" href="bertalanffy.html">Weiter zu Bertalanffy <span aria-hidden="true">→</span></a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-foot">
+    <div class="site-foot__inner">
+      <span>Etappe 02 von 05 · Anderson</span>
+      <div class="site-foot__links">
+        <a href="index.html">Übersicht</a>
+        <a href="quellen.html">Quellen</a>
+        <a href="#main">Nach oben</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

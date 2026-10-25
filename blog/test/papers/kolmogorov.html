@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Kolmogorovs Foundations of the Theory of Probability interaktiv: Ereignisse als Mengen, Axiome, Galton-Brett und der Satz von Bayes.">
+  <title>Kolmogorov · Zufall bekommt Regeln</title>
+  <script src="assets/boot.js"></script>
+  <link rel="stylesheet" href="../../Temml-Local.css">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="../../temml.min.js" defer></script>
+  <script src="assets/app.js" defer></script>
+  <script src="kolmogorov.js" defer></script>
+</head>
+<body data-paper="kolmogorov" style="--accent:#b79bff; --accent-2:#6ea8ff; --accent-3:#f8c56b;">
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+  <div class="scroll-progress" aria-hidden="true"><div class="scroll-progress__bar"></div></div>
+
+  <header class="site-head">
+    <div class="site-head__inner">
+      <a class="brand" href="index.html" aria-label="Fünf Klassiker, Übersicht">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span>Denkraum · Fünf Klassiker</span>
+      </a>
+      <nav class="head-nav" aria-label="Hauptnavigation">
+        <a href="index.html">Übersicht</a>
+        <a href="quellen.html">Quellen</a>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Helles Leselicht einschalten" aria-pressed="false">
+          <span class="theme-toggle__dot" aria-hidden="true"></span>
+          <span data-theme-label>Leselicht</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="page-shell">
+      <section class="hero">
+        <div class="hero__copy">
+          <p class="kicker">Etappe 04 · Mathematik &amp; Wahrscheinlichkeit</p>
+          <h1>Zufall bekommt <span class="thin">Regeln.</span></h1>
+          <p class="hero__sub">Bevor Kolmogorov 1933 seine Axiome veröffentlichte, war Wahrscheinlichkeit ein mächtiges, aber schillerndes Werkzeug. Er machte sie zu einem Maß – und damit zu einem Teil der modernen Mathematik.</p>
+          <div class="hero__meta">
+            <span class="pill pill--accent"><strong>1933</strong> Grundbegriffe</span>
+            <span class="pill"><strong>3</strong> Labs</span>
+            <span class="pill"><span data-reading-time>17 Min.</span></span>
+            <span class="pill">Axiome</span>
+          </div>
+          <a class="hero__begin" href="#ereignisse">Ereignisse malen <span aria-hidden="true">→</span></a>
+        </div>
+        <aside class="hero__aside" aria-hidden="true">
+          <div class="paper-emblem">
+            <span class="paper-emblem__number">04</span>
+            <span class="paper-emblem__label">Kolmogorov · 1933</span>
+          </div>
+        </aside>
+      </section>
+    </div>
+
+    <nav class="chapter-nav" aria-label="Etappen dieser Seite">
+      <div class="chapter-nav__inner">
+        <a href="#ereignisse">Ereignisse als Mengen</a>
+        <a href="#axiome">Die Axiome</a>
+        <a href="#zufallsvariablen">Zufallsvariablen</a>
+        <a href="#bedingt">Bedingte Wahrscheinlichkeit</a>
+        <a href="#grenzen">Grenzen</a>
+      </div>
+    </nav>
+
+    <div class="page-shell">
+      <section class="section" id="ereignisse">
+        <div class="section__head">
+          <span class="section__num">01</span>
+          <div>
+            <h2>Ereignisse sind Mengen.</h2>
+            <p>Der erste gedankliche Schritt ist verblüffend unspektakulär: Man tut so, als wären mögliche Ausgänge Punkte in einer Menge. Ein Ereignis ist dann eine Teilmenge.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p class="lead">Kolmogorovs Grundidee ist keine neue Wahrscheinlichkeitsformel. Es ist eine neue <em>Sprache</em>. Statt zu fragen, was Wahrscheinlichkeit „eigentlich ist“, fragt er, welche Struktur eine Menge von Ereignissen haben muss, damit man konsistent mit ihr rechnen kann.</p>
+
+          <p>Der Raum <span class="tex-inline" data-tex="\Omega"></span> enthält alle möglichen Ausgänge. Ein Ereignis <span class="tex-inline" data-tex="A\subseteq\Omega"></span> ist eine Menge von Ausgängen, bei denen das Ereignis eintritt. „Gerade Zahl“ ist die Menge {2, 4, 6}. „Summe größer als 8“ ist eine Teilmenge der 36 möglichen Würfelpaare. Die Mengensprache macht sichtbar, was vorher oft verschwamm.</p>
+
+          <div class="math-card">
+            <span class="math-card__label">Die Grundobjekte</span>
+            <div class="math-display" data-display data-tex="P:\underbrace{\mathcal F}_{\text{Ereignisse}}\to\underbrace{[0,1]}_{\text{Werte zwischen 0 und 1}}"></div>
+            <p class="math-card__note">Nicht jede denkbare Teilmenge von <span class="tex-inline" data-tex="\Omega"></span> muss ein Ereignis sein. Man wählt eine Familie <span class="tex-inline" data-tex="\mathcal F"></span> von Mengen, für die eine Wahrscheinlichkeit definiert ist. Diese Familie heißt <span class="tex-inline" data-tex="\sigma"></span>-Algebra.</p>
+          </div>
+
+          <p>Das folgende Lab ist bewusst endlich: 36 gleich wahrscheinliche Würfelpaare. Du malst zwei Ereignisse A und B und siehst die Mengenoperationen als Wahrscheinlichkeiten. Genau das ist der Kern der Kolmogorovschen Übersetzung.</p>
+
+          <article class="lab" id="event-lab">
+            <div class="lab__head">
+              <span class="lab__num">01</span>
+              <div class="lab__title">
+                <h3>Mengen malen, Wahrscheinlichkeiten zählen</h3>
+                <p>Wähle A oder B und klicke Zellen an. Beobachte, wie Vereinigung, Schnitt und bedingte Wahrscheinlichkeit entstehen.</p>
+              </div>
+            </div>
+            <div class="lab__body">
+              <div class="lab__stage">
+                <div class="canvas-wrap">
+                  <canvas id="event-canvas" width="900" height="560" aria-label="Sechs mal sechs Würfelpaare als Zellen, die den Ereignissen A und B zugeordnet werden"></canvas>
+                </div>
+                <div class="controls">
+                  <button class="btn btn--primary" id="event-a" type="button" aria-pressed="true">A malen</button>
+                  <button class="btn" id="event-b" type="button" aria-pressed="false">B malen</button>
+                  <button class="btn" id="event-erase" type="button">Radieren</button>
+                  <button class="btn" id="event-reset" type="button">Beispiel</button>
+                </div>
+                <div class="stage-caption">
+                  <span><strong>Jede Zelle</strong> = ein Würfelpaar, Wahrscheinlichkeit 1/36.</span>
+                  <span><strong>Gelb</strong> = A und B.</span>
+                </div>
+              </div>
+              <aside class="lab__side">
+                <div class="stat-stack">
+                  <div class="stat"><span class="stat__label">P(A)</span><span class="stat__value stat__value--accent" id="event-pa">0,50</span></div>
+                  <div class="stat"><span class="stat__label">P(B)</span><span class="stat__value" id="event-pb">0,28</span></div>
+                  <div class="stat"><span class="stat__label">P(A ∩ B)</span><span class="stat__value" id="event-pab">0,17</span></div>
+                  <div class="stat"><span class="stat__label">P(A ∪ B)</span><span class="stat__value" id="event-punion">0,61</span></div>
+                  <div class="stat"><span class="stat__label">P(A | B)</span><span class="stat__value" id="event-pcond">0,60</span></div>
+                </div>
+                <p class="status-line" id="event-status" aria-live="polite">Male A und B. Die Vereinigung ist „A oder B“, der Schnitt ist „A und B“.</p>
+                <ul class="instructions">
+                  <li>Male A als „erste Zahl gerade“ und B als „Summe größer als 8“.</li>
+                  <li>Beobachte: P(A ∪ B) ist nicht einfach P(A) + P(B).</li>
+                  <li>Verschiebe die Überlappung. Was passiert mit P(A | B)?</li>
+                </ul>
+              </aside>
+            </div>
+          </article>
+
+          <div class="math-card">
+            <span class="math-card__label">Die Additionsregel</span>
+            <div class="math-display" data-display data-tex="\underbrace{P(A\cup B)}_{\text{A oder B}}=\underbrace{P(A)+P(B)-P(A\cap B)}_{\text{sonst zählen wir den Schnitt doppelt}}"></div>
+            <p class="math-card__note">Das ist keine neue Axiom-Regel, sondern eine Konsequenz der Mengenlogik. Der Schnitt wird zweimal gezählt, also zieht man ihn einmal ab. Für disjunkte Ereignisse fällt der letzte Term weg.</p>
+          </div>
+
+          <div class="checkpoint" data-right="Genau. Der Schnitt wird in P(A) und P(B) jeweils mitgezählt. Deshalb zieht man ihn einmal ab." data-wrong="Nicht ganz. Die Formel korrigiert eine Doppelzählung: A ∩ B steckt sowohl in A als auch in B.">
+            <span class="checkpoint__label">Selbstcheck</span>
+            <h3>Warum steht in P(A ∪ B) ein Minus vor P(A ∩ B)?</h3>
+            <div class="choices">
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Weil der Schnitt verboten ist.</button>
+              <button class="choice" type="button" data-correct="true"><span class="choice__mark">○</span> Weil der Schnitt sonst doppelt gezählt würde.</button>
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Weil Wahrscheinlichkeiten immer negativ werden müssen.</button>
+            </div>
+            <p class="checkpoint__feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="source-strip">
+            <span>Quelle: Kolmogorov 1933, Kap. I, „Elementary Theory of Probability“.</span>
+            <a href="_sources/kolmogorov_foundations_probability.pdf" target="_blank" rel="noopener">Lokales PDF</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="axiome">
+        <div class="section__head">
+          <span class="section__num">02</span>
+          <div>
+            <h2>Die Axiome: eine Grammatik der Konsistenz.</h2>
+            <p>Kolmogorovs Axiome sagen nicht, welche Wahrscheinlichkeiten du wählen sollst. Sie sagen, wann deine Wahl mit sich selbst verträglich ist.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>Ein Wahrscheinlichkeitsmaß <span class="tex-inline" data-tex="P"></span> ordnet jedem Ereignis eine Zahl zwischen 0 und 1 zu. Die leere Menge bekommt 0, der ganze Raum bekommt 1. Und wenn sich Ereignisse nicht überschneiden, addieren sich ihre Wahrscheinlichkeiten. Das ist die Grundintuition.</p>
+
+          <p>Der entscheidende Zusatz ist die <strong>abzählbare Additivität</strong>. Sie erlaubt unendliche Folgen von Ereignissen. Ohne sie könnte man keine Grenzwerte bilden, keine stetigen Verteilungen sauber definieren und keine Gesetze der großen Zahlen beweisen. Genau hier wird aus einer endlichen Rechenregel eine mathematische Theorie.</p>
+
+          <div class="math-card">
+            <span class="math-card__label">Abzählbare Additivität</span>
+            <div class="math-display" data-display data-tex="\underbrace{P\left(\bigcup_{n=1}^{\infty}A_n\right)}_{\text{Wahrscheinlichkeit von „irgendeins“}}=\underbrace{\sum_{n=1}^{\infty}P(A_n)}_{\text{Summe der Einzelteile}}\quad\text{für disjunkte }A_n"></div>
+            <p class="math-card__note">Disjunkt heißt: Die Ereignisse überschneiden sich nicht. Dann ist die Wahrscheinlichkeit der Vereinigung genau die Summe der Einzelwahrscheinlichkeiten. Für endlich viele Ereignisse ist das anschaulich; die unendliche Version ist der technische Kern, der Analysis und Wahrscheinlichkeit verbindet.</p>
+          </div>
+
+          <div class="math-card">
+            <span class="math-card__label">Die σ-Algebra: welche Fragen sind erlaubt?</span>
+            <div class="math-display" data-display data-tex="\underbrace{\mathcal F}_{\text{wählbare Ereignisse}}\ \text{ist eine }\sigma\text{-Algebra, wenn}\ \underbrace{\Omega\in\mathcal F,\ A\in\mathcal F\Rightarrow A^c\in\mathcal F,\ \bigcup_n A_n\in\mathcal F}_{\text{abgeschlossen gegen Komplement und abzählbare Vereinigung}}"></div>
+            <p class="math-card__note">Manchmal kann man nicht jeder Teilmenge von <span class="tex-inline" data-tex="\Omega"></span> sinnvoll eine Wahrscheinlichkeit geben, ohne Widersprüche zu erzeugen. Die <span class="tex-inline" data-tex="\sigma"></span>-Algebra ist der Bereich der „messbaren“ Ereignisse. Sie ist keine Spitzfindigkeit: Sie sagt, welche Fragen die Theorie überhaupt beantworten darf.</p>
+          </div>
+
+          <p>Die drei Axiome lauten, in moderner Kurzform:</p>
+          <ul>
+            <li><strong>Nichtnegativität:</strong> <span class="tex-inline" data-tex="P(A)\ge 0"></span> für jedes Ereignis.</li>
+            <li><strong>Normierung:</strong> <span class="tex-inline" data-tex="P(\Omega)=1"></span>.</li>
+            <li><strong>Additivität:</strong> Für disjunkte <span class="tex-inline" data-tex="A_1,A_2,\dots"></span> gilt die Summenregel oben.</li>
+          </ul>
+
+          <div class="callout">
+            <span class="callout__label">Der wichtige Punkt</span>
+            <p>Die Axiome sind ein <em>Filter für Konsistenz</em>, keine Anleitung zum Modellieren. Zwei Menschen können dieselben Axiome akzeptieren und völlig verschiedene Wahrscheinlichkeiten für dieselbe Frage wählen. Die Axiome sagen nur, dass ihre Zahlen zusammenpassen müssen.</p>
+          </div>
+
+          <div class="checkpoint" data-right="Richtig. Die Axiome legen fest, welche Zuweisungen konsistent sind. Welche Wahrscheinlichkeiten inhaltlich richtig sind, ist eine Modellierungsfrage." data-wrong="Nicht ganz. Kolmogorovs Axiome sind eine Grammatik, kein Orakel. Sie sagen nicht, welche Wahrscheinlichkeit du für eine konkrete Situation wählen sollst.">
+            <span class="checkpoint__label">Selbstcheck</span>
+            <h3>Was leisten die Axiome nicht?</h3>
+            <div class="choices">
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Sie legen fest, welche Zuweisungen konsistent sind.</button>
+              <button class="choice" type="button" data-correct="true"><span class="choice__mark">○</span> Sie sagen dir, welche Wahrscheinlichkeiten in der realen Welt richtig sind.</button>
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Sie erlauben unendliche Ereignisfolgen.</button>
+            </div>
+            <p class="checkpoint__feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="source-strip">
+            <span>Quelle: Kolmogorov 1933, Kap. I und II; zur σ-Algebra die mengentheoretischen Grundlagen.</span>
+            <a href="_sources/kolmogorov_foundations_probability.pdf" target="_blank" rel="noopener">Lokales PDF</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="zufallsvariablen">
+        <div class="section__head">
+          <span class="section__num">03</span>
+          <div>
+            <h2>Zufallsvariablen sind Funktionen.</h2>
+            <p>Das klingt technisch, ist aber befreiend: Eine Zufallsvariable ist einfach eine Messvorschrift. Sie ordnet jedem Ausgang eine Zahl zu.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>„Augensumme“ ist eine Zufallsvariable. Sie nimmt ein Würfelpaar und liefert eine Zahl zwischen 2 und 12. „Anzahl Kopf bei 12 Münzwürfen“ ist eine Zufallsvariable. Sie nimmt eine Folge von Wurfergebnissen und zählt die Treffer. Die Zufälligkeit steckt im Ausgang, nicht in der Funktion.</p>
+
+          <div class="math-card">
+            <span class="math-card__label">Zufallsvariable</span>
+            <div class="math-display" data-display data-tex="X:\underbrace{\Omega}_{\text{was passieren kann}}\to\underbrace{\mathbb R}_{\text{was wir messen}}"></div>
+            <p class="math-card__note">Damit <span class="tex-inline" data-tex="X"></span> eine Zufallsvariable ist, muss sie <em>messbar</em> sein: Für jede sinnvolle Menge von Zahlen muss das Urbild ein Ereignis in <span class="tex-inline" data-tex="\mathcal F"></span> sein. Das ist die technische Brücke zwischen Mengen und Zahlen.</p>
+          </div>
+
+          <div class="math-card">
+            <span class="math-card__label">Erwartungswert als Integral</span>
+            <div class="math-display" data-display data-tex="\mathbb E[X]=\underbrace{\int_\Omega\underbrace{X(\omega)}_{\text{Zahl pro Ausgang}}\,d\underbrace{P(\omega)}_{\text{Gewicht}}}_{\text{gewichteter Durchschnitt}}"></div>
+            <p class="math-card__note">Für endliche Räume ist das einfach eine Summe: Wert mal Wahrscheinlichkeit. Für allgemeine Räume wird daraus ein Lebesgue-Integral. Die Idee bleibt dieselbe: ein Durchschnitt, bei dem wahrscheinlichere Ausgänge stärker zählen.</p>
+          </div>
+
+          <p>Das Galton-Brett macht die Verteilung einer Zufallsvariablen sichtbar. Jeder Ball fällt durch Reihen von Hindernissen und landet in einem Fach. Die Anzahl der Rechts-Abzweigungen ist binomialverteilt. Einzelne Bälle sind unvorhersehbar; die Form der Verteilung ist es nicht.</p>
+
+          <article class="lab" id="galton-lab">
+            <div class="lab__head">
+              <span class="lab__num">02</span>
+              <div class="lab__title">
+                <h3>Vom Einzelball zur Glocke</h3>
+                <p>Lass Bälle fallen. Jeder einzelne ist zufällig. Die Verteilung wird mit jedem Ball stabiler.</p>
+              </div>
+            </div>
+            <div class="lab__body">
+              <div class="lab__stage">
+                <div class="canvas-wrap">
+                  <canvas id="galton-canvas" width="900" height="560" aria-label="Galton-Brett mit fallenden Bällen und Histogramm der Binomialverteilung"></canvas>
+                </div>
+                <div class="controls">
+                  <button class="btn btn--primary" id="galton-100" type="button">100 Bälle</button>
+                  <button class="btn" id="galton-1000" type="button">1000 Bälle</button>
+                  <button class="btn" id="galton-reset" type="button">Zurücksetzen</button>
+                </div>
+                <div class="stage-caption">
+                  <span><strong>12 Reihen</strong> · p = 0,5 · jede Rechts-Abzweigung zählt.</span>
+                  <span>Rechts: Anzahl der Bälle pro Fach.</span>
+                </div>
+              </div>
+              <aside class="lab__side">
+                <div class="stat-stack">
+                  <div class="stat"><span class="stat__label">Gefallene Bälle</span><span class="stat__value stat__value--accent" id="galton-count">0</span></div>
+                  <div class="stat"><span class="stat__label">Mittelwert</span><span class="stat__value" id="galton-mean">–</span></div>
+                  <div class="stat"><span class="stat__label">Standardabweichung</span><span class="stat__value" id="galton-sd">–</span></div>
+                  <div class="stat"><span class="stat__label">Theorie</span><span class="stat__value">μ = 6 · σ = 1,73</span></div>
+                </div>
+                <p class="status-line" id="galton-status" aria-live="polite">Starte mit 100 Bällen. Die Verteilung wird schon sichtbar, aber noch rau. Bei 1000 wird sie glatter.</p>
+                <ul class="instructions">
+                  <li>Klicke „100 Bälle“. Beobachte die ersten Fächer.</li>
+                  <li>Klicke „1000 Bälle“. Vergleiche die Form mit der Theorie.</li>
+                  <li>Ein einzelner Ball bleibt unvorhersehbar. Die Verteilung nicht.</li>
+                </ul>
+              </aside>
+            </div>
+          </article>
+
+          <p>Das Galton-Brett ist kein Beweis der Axiome. Es ist eine Illustration des Zusammenspiels von Zufall und Struktur: Jeder einzelne Pfad ist kontingent, die Verteilung über viele Pfade ist stabil. Genau diese Trennung macht Wahrscheinlichkeit so nützlich – und so leicht missverständlich.</p>
+
+          <div class="checkpoint" data-right="Genau. Eine Zufallsvariable ist eine messbare Funktion vom Ausgangsraum in die reellen Zahlen. Die Zufälligkeit liegt im Ausgang, nicht in der Funktion." data-wrong="Nicht ganz. Eine Zufallsvariable ist keine mysteriöse Zahl, sondern eine Messvorschrift: Sie ordnet jedem Ausgang eine Zahl zu.">
+            <span class="checkpoint__label">Selbstcheck</span>
+            <h3>Was ist eine Zufallsvariable?</h3>
+            <div class="choices">
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Eine Zahl, die sich von selbst ändert.</button>
+              <button class="choice" type="button" data-correct="true"><span class="choice__mark">○</span> Eine messbare Funktion, die jedem Ausgang eine Zahl zuordnet.</button>
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Ein Ereignis mit Wahrscheinlichkeit 1.</button>
+            </div>
+            <p class="checkpoint__feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="source-strip">
+            <span>Quelle: Kolmogorov 1933, Kap. I und III; zum Gesetz der großen Zahlen Kap. VI.</span>
+            <a href="_sources/kolmogorov_foundations_probability.pdf" target="_blank" rel="noopener">Lokales PDF</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="bedingt">
+        <div class="section__head">
+          <span class="section__num">04</span>
+          <div>
+            <h2>Bedingte Wahrscheinlichkeit: Information verändert den Raum.</h2>
+            <p>Wenn du weißt, dass B eingetreten ist, schrumpft der relevante Raum auf B. Alles andere wird zum Hintergrund.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>Die bedingte Wahrscheinlichkeit <span class="tex-inline" data-tex="P(A\mid B)"></span> ist der Anteil von B, der auch in A liegt. Formal teilt man den Schnitt durch die Wahrscheinlichkeit von B. Anschaulich: Man zoomt auf B und fragt, wie viel von B zu A gehört.</p>
+
+          <div class="math-card">
+            <span class="math-card__label">Bedingte Wahrscheinlichkeit</span>
+            <div class="math-display" data-display data-tex="P(A\mid B)=\underbrace{\frac{P(A\cap B)}{P(B)}}_{\text{Anteil von B, der auch A ist}}"></div>
+            <p class="math-card__note">Das gilt für <span class="tex-inline" data-tex="P(B)>0"></span>. Die Bedingung ist keine neue Wahrscheinlichkeit, sondern eine neue Perspektive auf dieselbe Wahrscheinlichkeitsverteilung. Aus ihr folgt der Satz von Bayes.</p>
+          </div>
+
+          <p>Bayes ist berühmt, weil er zeigt, wie stark die <strong>Basisrate</strong> das Ergebnis verändert. Ein sehr guter Test kann bei einer seltenen Krankheit trotzdem viele falsche Positive produzieren. Das ist kein Fehler des Tests, sondern Mathematik.</p>
+
+          <article class="lab" id="bayes-lab">
+            <div class="lab__head">
+              <span class="lab__num">03</span>
+              <div class="lab__title">
+                <h3>Der Test, der die Basisrate vergisst</h3>
+                <p>Stelle Prävalenz, Sensitivität und Spezifität ein. Sieh, wie viele der positiven Tests wirklich krank sind.</p>
+              </div>
+            </div>
+            <div class="lab__body">
+              <div class="lab__stage">
+                <div class="canvas-wrap">
+                  <canvas id="bayes-canvas" width="900" height="560" aria-label="Tausend Personen als Raster, eingefärbt nach Krankheit und Testergebnis, plus Balkendiagramm"></canvas>
+                </div>
+                <div class="controls">
+                  <label class="control">
+                    <span class="control__top"><span>Prävalenz</span><span class="control__value" id="bayes-prev-val">1,0 %</span></span>
+                    <input id="bayes-prev" type="range" min="0.1" max="10" step="0.1" value="1">
+                  </label>
+                  <label class="control">
+                    <span class="control__top"><span>Sensitivität</span><span class="control__value" id="bayes-sens-val">90 %</span></span>
+                    <input id="bayes-sens" type="range" min="50" max="99" step="1" value="90">
+                  </label>
+                  <label class="control">
+                    <span class="control__top"><span>Spezifität</span><span class="control__value" id="bayes-spec-val">90 %</span></span>
+                    <input id="bayes-spec" type="range" min="50" max="99" step="1" value="90">
+                  </label>
+                </div>
+                <div class="stage-caption">
+                  <span><strong>Gelb:</strong> krank und positiv. <strong>Rosa:</strong> krank und negativ.</span>
+                  <span><strong>Violett:</strong> gesund und falsch positiv. <strong>Blau:</strong> gesund und negativ.</span>
+                </div>
+              </div>
+              <aside class="lab__side">
+                <div class="stat-stack">
+                  <div class="stat"><span class="stat__label">P(krank)</span><span class="stat__value" id="bayes-prior">1,0 %</span></div>
+                  <div class="stat"><span class="stat__label">P(positiv | krank)</span><span class="stat__value" id="bayes-sens">90 %</span></div>
+                  <div class="stat"><span class="stat__label">P(krank | positiv)</span><span class="stat__value stat__value--accent" id="bayes-posterior">8,3 %</span></div>
+                  <div class="stat"><span class="stat__label">Positive Tests</span><span class="stat__value" id="bayes-positives">108</span></div>
+                </div>
+                <p class="status-line" id="bayes-status" aria-live="polite">Bei 1 % Prävalenz und 90 % Spezifität sind die meisten positiven Tests falsch. Das ist der Basisraten-Effekt.</p>
+                <ul class="instructions">
+                  <li>Starte bei 1 % Prävalenz. Überrascht dich der posterior?</li>
+                  <li>Erhöhe die Spezifität auf 99 %. Der posterior steigt deutlich.</li>
+                  <li>Erhöhe die Prävalenz auf 10 %. Noch einmal vergleichen.</li>
+                </ul>
+              </aside>
+            </div>
+          </article>
+
+          <div class="math-card">
+            <span class="math-card__label">Der Satz von Bayes</span>
+            <div class="math-display" data-display data-tex="P(K\mid +)=\underbrace{\frac{\underbrace{P(+\mid K)}_{\text{Sensitivität}}\underbrace{P(K)}_{\text{Prävalenz}}}{\underbrace{P(+)}_{\text{alle Positiven}}}}_{\text{Anteil der Kranken unter den Positiven}}"></div>
+            <p class="math-card__note">Der Nenner zählt alle positiven Tests: wahre Positive plus falsche Positive. Wenn die Krankheit selten ist, dominieren die falschen Positive, selbst bei einem guten Test. Die Formel ist keine Meinung – sie ist eine Konsequenz der Definition der bedingten Wahrscheinlichkeit.</p>
+          </div>
+
+          <div class="checkpoint" data-right="Genau. Bei seltener Krankheit sind viele Positive falsch, selbst wenn Sensitivität und Spezifität hoch sind. Die Basisrate zählt." data-wrong="Nicht ganz. Der Test kann gut sein und trotzdem viele falsche Positive liefern, wenn die Krankheit sehr selten ist.">
+            <span class="checkpoint__label">Selbstcheck</span>
+            <h3>Warum kann ein guter Test bei einer seltenen Krankheit viele falsche Positive liefern?</h3>
+            <div class="choices">
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Weil die Sensitivität dann automatisch sinkt.</button>
+              <button class="choice" type="button" data-correct="true"><span class="choice__mark">○</span> Weil es viel mehr Gesunde als Kranke gibt, also auch mehr Gelegenheiten für falsche Positive.</button>
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Weil der Satz von Bayes nur für Münzen gilt.</button>
+            </div>
+            <p class="checkpoint__feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="source-strip">
+            <span>Quelle: Kolmogorov 1933, Kap. I und V zur bedingten Wahrscheinlichkeit.</span>
+            <a href="_sources/kolmogorov_foundations_probability.pdf" target="_blank" rel="noopener">Lokales PDF</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="grenzen">
+        <div class="section__head">
+          <span class="section__num">05</span>
+          <div>
+            <h2>Was die Axiome nicht entscheiden.</h2>
+            <p>Kolmogorov hat die Grammatik geklärt, nicht die Weltanschauung. Das ist der Grund, warum seine Axiome so lange halten.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>Die Axiome sagen nicht, ob Wahrscheinlichkeit eine relative Häufigkeit, ein Grad von Überzeugung oder eine objektive Tendenz ist. Sie sagen auch nicht, welches Modell zur Situation passt. Das ist keine Schwäche, sondern eine bewusste Arbeitsteilung: Mathematik liefert die Struktur, Modellierung liefert den Inhalt.</p>
+
+          <p>Deshalb kann dieselbe formale Theorie in Physik, Medizin, Versicherung, Machine Learning und Philosophie verwendet werden. Der Preis ist, dass die Axiome allein keine inhaltliche Frage beantworten. Wer aus ihnen ableiten will, ob eine Impfung wirkt oder ein Test sinnvoll ist, sucht am falschen Ort.</p>
+
+          <div class="callout callout--warn">
+            <span class="callout__label">Die ehrliche Kurzfassung</span>
+            <p>Kolmogorov macht Wahrscheinlichkeit konsistent berechenbar. Er macht sie nicht automatisch richtig. Die Wahl des Wahrscheinlichkeitsraums und der Verteilung bleibt eine Modellierungsentscheidung – mit Annahmen, die man prüfen muss.</p>
+          </div>
+
+          <h3>Drei Sätze, die du mitnehmen kannst</h3>
+          <ul class="takeaways">
+            <li><strong>Ereignisse sind Mengen.</strong> Vereinigung, Schnitt und Komplement werden zu „oder“, „und“ und „nicht“.</li>
+            <li><strong>Wahrscheinlichkeit ist ein Maß.</strong> Die Axiome garantieren Konsistenz, nicht inhaltliche Wahrheit.</li>
+            <li><strong>Bedingung verändert den Raum.</strong> P(A | B) zoomt auf B – und kann die Intuition über Basisraten kippen.</li>
+          </ul>
+
+          <div class="source-strip">
+            <span>Zum Weiterlesen: Kolmogorov 1933, Preface und Kap. I–VI; zur Interpretation die Grundlagen der Statistik.</span>
+            <a href="quellen.html">Quellen &amp; Einordnung</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="end-card">
+        <div>
+          <p class="kicker">Etappe 04 abgeschlossen?</p>
+          <h2>Jetzt wird es räumlich.</h2>
+          <p>Kolmogorov gibt dem Zufall eine Struktur. Alexander zeigt, wie Struktur in gebauten Räumen entsteht – als Sprache aus Mustern und Kräften.</p>
+        </div>
+        <div class="end-card__actions">
+          <button class="btn btn--primary complete-btn" type="button" data-complete-paper="kolmogorov">Etappe abschließen</button>
+          <a class="btn" href="alexander.html">Weiter zu Alexander <span aria-hidden="true">→</span></a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-foot">
+    <div class="site-foot__inner">
+      <span>Etappe 04 von 05 · Kolmogorov</span>
+      <div class="site-foot__links">
+        <a href="index.html">Übersicht</a>
+        <a href="quellen.html">Quellen</a>
+        <a href="#main">Nach oben</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

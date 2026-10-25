@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ludwig von Bertalanffys General System Theory interaktiv: offene Systeme, Fließgleichgewicht, Equifinalität und Rückkopplung.">
+  <title>Bertalanffy · Das Ganze hat seine eigene Logik</title>
+  <script src="assets/boot.js"></script>
+  <link rel="stylesheet" href="../../Temml-Local.css">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="../../temml.min.js" defer></script>
+  <script src="assets/app.js" defer></script>
+  <script src="bertalanffy.js" defer></script>
+</head>
+<body data-paper="bertalanffy" style="--accent:#f8c56b; --accent-2:#78f0c5; --accent-3:#ff9fb2;">
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+  <div class="scroll-progress" aria-hidden="true"><div class="scroll-progress__bar"></div></div>
+
+  <header class="site-head">
+    <div class="site-head__inner">
+      <a class="brand" href="index.html" aria-label="Fünf Klassiker, Übersicht">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span>Denkraum · Fünf Klassiker</span>
+      </a>
+      <nav class="head-nav" aria-label="Hauptnavigation">
+        <a href="index.html">Übersicht</a>
+        <a href="quellen.html">Quellen</a>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Helles Leselicht einschalten" aria-pressed="false">
+          <span class="theme-toggle__dot" aria-hidden="true"></span>
+          <span data-theme-label>Leselicht</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="page-shell">
+      <section class="hero">
+        <div class="hero__copy">
+          <p class="kicker">Etappe 03 · Biologie &amp; Systemtheorie</p>
+          <h1>Das Ganze hat seine <span class="thin">eigene Logik.</span></h1>
+          <p class="hero__sub">Ludwig von Bertalanffy wollte den Organismus nicht als Maschine und nicht als geheimnisvolle Lebenskraft verstehen. Sein Vorschlag: Systeme, die offen sind, sich selbst regulieren und aus verschiedenen Starts dasselbe Ziel erreichen.</p>
+          <div class="hero__meta">
+            <span class="pill pill--accent"><strong>1968</strong> George Braziller</span>
+            <span class="pill"><strong>3</strong> Labs</span>
+            <span class="pill"><span data-reading-time>16 Min.</span></span>
+            <span class="pill">Offene Systeme</span>
+          </div>
+          <a class="hero__begin" href="#system">Das System öffnen <span aria-hidden="true">→</span></a>
+        </div>
+        <aside class="hero__aside" aria-hidden="true">
+          <div class="paper-emblem">
+            <span class="paper-emblem__number">03</span>
+            <span class="paper-emblem__label">Bertalanffy · 1968</span>
+          </div>
+        </aside>
+      </section>
+    </div>
+
+    <nav class="chapter-nav" aria-label="Etappen dieser Seite">
+      <div class="chapter-nav__inner">
+        <a href="#system">Offene Systeme</a>
+        <a href="#equifinal">Equifinalität</a>
+        <a href="#rueckkopplung">Rückkopplung</a>
+        <a href="#einordnung">Einordnung</a>
+      </div>
+    </nav>
+
+    <div class="page-shell">
+      <section class="section" id="system">
+        <div class="section__head">
+          <span class="section__num">01</span>
+          <div>
+            <h2>Systeme sind keine Dinge. Sie sind Beziehungen.</h2>
+            <p>Ein System ist eine Menge von Elementen, die durch Beziehungen so verbunden sind, dass sie als Ganzes etwas tun. Das klingt abstrakt. Ein Aquarium macht es konkret.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p class="lead">Bertalanffy begann als Biologe und ärgerte sich über zwei Extreme: den Mechanismus, der den Organismus wie eine Maschine behandelt, und den Vitalismus, der eine besondere Lebenskraft erfindet. Sein dritter Weg war der Organismus als <strong>offenes System</strong> – ein Gebilde, das Materie und Energie austauscht und sich dabei selbst erhält.</p>
+
+          <p>Der Unterschied ist grundlegend. Ein geschlossenes System ohne Zufluss läuft auf ein statisches Gleichgewicht zu. Ein offenes System kann einen <strong>Fließgleichgewicht</strong> erreichen: Es sieht von außen stabil aus, obwohl ständig etwas hinein- und hinausfließt. Der Zustand ist stabil, nicht die Materie.</p>
+
+          <div class="math-card">
+            <span class="math-card__label">Das einfachste offene System</span>
+            <div class="math-display" data-display data-tex="\dot V=\underbrace{\underbrace{I}_{\text{Zufluss}}-\underbrace{kV}_{\text{Abfluss}}}_{\text{Änderung des Bestands}}"></div>
+            <p class="math-card__note">Der Bestand <span class="tex-inline" data-tex="V"></span> ändert sich durch Zufluss <span class="tex-inline" data-tex="I"></span> und Abfluss <span class="tex-inline" data-tex="kV"></span>. Der Abfluss wächst mit dem Bestand: Je voller das System, desto mehr läuft heraus. Das ist ein minimales Modell für ein Fließgleichgewicht.</p>
+          </div>
+
+          <div class="math-card">
+            <span class="math-card__label">Gleichgewicht mit Durchfluss</span>
+            <div class="math-display" data-display data-tex="V^*=\underbrace{\frac{I}{k}}_{\text{Zufluss = Abfluss}}"></div>
+            <p class="math-card__note">Im Gleichgewicht ist <span class="tex-inline" data-tex="\dot V=0"></span>. Der Pegel bleibt konstant, obwohl weiter Wasser hinein- und hinausfließt. Genau das meint „Fließgleichgewicht“: Stabilität durch Austausch, nicht durch Stillstand.</p>
+          </div>
+
+          <p>Das Modell ist linear und deshalb sehr freundlich. Es zeigt trotzdem den Kern: Ein System kann einen stabilen Zustand haben, der ohne den ständigen Durchfluss nicht existieren würde. Ein Organismus ist kein Gleichgewicht im thermodynamischen Sinn. Er ist ein Muster im Fluss.</p>
+
+          <article class="lab" id="open-lab">
+            <div class="lab__head">
+              <span class="lab__num">01</span>
+              <div class="lab__title">
+                <h3>Der Pegel, der sich selbst hält</h3>
+                <p>Verändere Zufluss und Abfluss. Beobachte, wie sich ein neuer Gleichgewichtspegel einstellt – und wie das System nach einer Störung zurückfindet.</p>
+              </div>
+            </div>
+            <div class="lab__body">
+              <div class="lab__stage">
+                <div class="canvas-wrap">
+                  <canvas id="open-canvas" width="900" height="560" aria-label="Offenes System als Wasserbehälter mit Zufluss, Abfluss und Gleichgewichtskurven"></canvas>
+                </div>
+                <div class="controls">
+                  <label class="control">
+                    <span class="control__top"><span>Zufluss I</span><span class="control__value" id="open-i-val">1,00</span></span>
+                    <input id="open-i" type="range" min="0.2" max="2" step="0.05" value="1">
+                  </label>
+                  <label class="control">
+                    <span class="control__top"><span>Abflussrate k</span><span class="control__value" id="open-k-val">0,50</span></span>
+                    <input id="open-k" type="range" min="0.1" max="1" step="0.01" value="0.5">
+                  </label>
+                </div>
+                <div class="stage-caption">
+                  <span><strong>Links:</strong> der Behälter. <strong>Rechts:</strong> viele Startwerte, ein Ziel.</span>
+                  <span>Die grauen Kurven sind verschiedene Anfangspegel.</span>
+                </div>
+              </div>
+              <aside class="lab__side">
+                <div class="stat-stack">
+                  <div class="stat"><span class="stat__label">Gleichgewicht V*</span><span class="stat__value stat__value--accent" id="open-vstar">2,00</span></div>
+                  <div class="stat"><span class="stat__label">Zeitkonstante τ</span><span class="stat__value" id="open-tau">2,00</span></div>
+                  <div class="stat"><span class="stat__label">Aktueller Pegel</span><span class="stat__value" id="open-v">0,40</span></div>
+                  <div class="stat"><span class="stat__label">Abweichung</span><span class="stat__value" id="open-gap">1,60</span></div>
+                </div>
+                <div class="toggle-row">
+                  <button class="btn btn--primary" id="open-shock" type="button">Störung</button>
+                  <button class="btn" id="open-reset" type="button">Zurücksetzen</button>
+                </div>
+                <p class="status-line" id="open-status" aria-live="polite">Zufluss und Abfluss sind im Gleichgewicht. Der Pegel bleibt – obwohl ständig Wasser durch das System fließt.</p>
+                <ul class="instructions">
+                  <li>Erhöhe den Zufluss. Der Pegel steigt auf ein neues Gleichgewicht.</li>
+                  <li>Erhöhe die Abflussrate. Der Pegel sinkt, die Zeitkonstante wird kürzer.</li>
+                  <li>Drücke „Störung“. Beobachte, wie das System zurückfindet.</li>
+                </ul>
+              </aside>
+            </div>
+          </article>
+
+          <p>Dieses kleine Modell erklärt noch keinen Organismus. Aber es macht eine Denkfigur sichtbar, die Bertalanffy wichtig war: <strong>Stabilität muss nicht aus Abschließung kommen.</strong> Sie kann aus geregeltem Austausch entstehen. Ein Lebewesen ist ständig am Zerfallen und ständig am Reparieren; seine Identität ist ein Muster, kein fester Stoff.</p>
+
+          <div class="checkpoint" data-right="Richtig. Im Fließgleichgewicht bleiben die Bestände konstant, obwohl Materie und Energie ständig durch das System hindurchgehen." data-wrong="Nicht ganz. Fließgleichgewicht heißt nicht Stillstand. Es heißt: Zufluss und Abfluss sind im Gleichgewicht, der Durchfluss läuft weiter.">
+            <span class="checkpoint__label">Selbstcheck</span>
+            <h3>Was ist ein Fließgleichgewicht?</h3>
+            <div class="choices">
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Ein Zustand, in dem nichts mehr fließt.</button>
+              <button class="choice" type="button" data-correct="true"><span class="choice__mark">○</span> Ein stabiler Zustand mit ständigem Zu- und Abfluss.</button>
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Ein Gleichgewicht, das nur in geschlossenen Systemen möglich ist.</button>
+            </div>
+            <p class="checkpoint__feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="source-strip">
+            <span>Quelle: Bertalanffy 1968, Kap. 5, „The Organism as Open System“ (ursprünglich 1940).</span>
+            <a href="_sources/bertalanffy_general_system_theory.pdf" target="_blank" rel="noopener">Lokales PDF</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="equifinal">
+        <div class="section__head">
+          <span class="section__num">02</span>
+          <div>
+            <h2>Verschiedene Wege, dasselbe Ziel.</h2>
+            <p>Equifinalität ist der vielleicht schönste Begriff aus Bertalanffys Theorie. Er beschreibt, was offene Systeme können und geschlossene nicht.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>In einem geschlossenen System hängt der Endzustand empfindlich vom Anfangszustand ab. Ein Pendel mit unterschiedlicher Startenergie endet anders. Ein offenes, reguliertes System kann dagegen von verschiedenen Startwerten aus denselben stabilen Zustand erreichen. Das nennt Bertalanffy <strong>Equifinalität</strong>: gleiches Ende, verschiedene Wege.</p>
+
+          <p>Das ist kein metaphysischer Trick. Es ist eine Eigenschaft der Dynamik. Wenn ein System eine Rückkopplung hat, die Abweichungen korrigiert, dann „vergisst“ es einen Teil seiner Anfangsbedingungen. Der Zielzustand wird durch die Regelung bestimmt, nicht durch den Startpunkt.</p>
+
+          <div class="math-card">
+            <span class="math-card__label">Logistisches Wachstum mit Kapazitätsgrenze</span>
+            <div class="math-display" data-display data-tex="\dot N=\underbrace{\underbrace{rN}_{\text{mehr werden}}\underbrace{\left(1-\frac{N}{K}\right)}_{\text{Bremse bei Sättigung}}}_{\text{Wachstum mit Kapazitätsgrenze}}"></div>
+            <p class="math-card__note">Für kleine <span class="tex-inline" data-tex="N"></span> wächst die Population fast exponentiell. Je näher sie an <span class="tex-inline" data-tex="K"></span> kommt, desto stärker bremst der Faktor in Klammern. Für jeden Startwert <span class="tex-inline" data-tex="N(0)>0"></span> gilt: <span class="tex-inline" data-tex="N(t)\to K"></span>. Das ist ein Standardmodell für Sättigung, nicht Bertalanffys einzige Wachstumsgleichung – aber es zeigt die Idee der Zielgerichtetheit sehr klar.</p>
+          </div>
+
+          <div class="math-card">
+            <span class="math-card__label">Equifinalität</span>
+            <div class="math-display" data-display data-tex="\underbrace{N(t)\to K\quad\text{für alle }N(0)>0}_{\text{verschiedene Starts, ein Ziel}}"></div>
+            <p class="math-card__note">Das ist die formale Kurzfassung. In echten Organismen ist Equifinalität nie perfekt: Störungen, Geschichte und multiple Gleichgewichte bleiben möglich. Bertalanffys Punkt ist, dass offene Systeme eine <em>Tendenz</em> zur Zielerreichung haben können, die nicht einfach im Anfangszustand steckt.</p>
+          </div>
+
+          <article class="lab" id="logistic-lab">
+            <div class="lab__head">
+              <span class="lab__num">02</span>
+              <div class="lab__title">
+                <h3>Alle Wege führen zu K</h3>
+                <p>Starte Populationen bei verschiedenen Werten. Ändere Wachstumsrate und Kapazität. Beobachte, wie die Kurven zusammenlaufen.</p>
+              </div>
+            </div>
+            <div class="lab__body">
+              <div class="lab__stage">
+                <div class="canvas-wrap">
+                  <canvas id="logistic-canvas" width="900" height="500" aria-label="Logistische Wachstumskurven aus verschiedenen Startwerten, die gegen dieselbe Kapazität K laufen"></canvas>
+                </div>
+                <div class="controls">
+                  <label class="control">
+                    <span class="control__top"><span>Wachstumsrate r</span><span class="control__value" id="logistic-r-val">0,80</span></span>
+                    <input id="logistic-r" type="range" min="0.2" max="1.5" step="0.01" value="0.8">
+                  </label>
+                  <label class="control">
+                    <span class="control__top"><span>Kapazität K</span><span class="control__value" id="logistic-k-val">1,00</span></span>
+                    <input id="logistic-k" type="range" min="0.6" max="2" step="0.01" value="1">
+                  </label>
+                </div>
+                <div class="stage-caption">
+                  <span><strong>Farbe:</strong> verschiedene Startwerte. <strong>Gestrichelt:</strong> die Kapazität K.</span>
+                  <span>Alle positiven Starts laufen gegen dasselbe Ziel.</span>
+                </div>
+              </div>
+              <aside class="lab__side">
+                <div class="stat-stack">
+                  <div class="stat"><span class="stat__label">Kapazität K</span><span class="stat__value stat__value--accent" id="logistic-k">1,00</span></div>
+                  <div class="stat"><span class="stat__label">Wachstumsrate r</span><span class="stat__value" id="logistic-r">0,80</span></div>
+                  <div class="stat"><span class="stat__label">Zeit bis 90 % von K</span><span class="stat__value" id="logistic-t90">5,49</span></div>
+                  <div class="stat"><span class="stat__label">Startwerte</span><span class="stat__value">5</span></div>
+                </div>
+                <div class="toggle-row">
+                  <button class="btn" id="logistic-slow" type="button">Langsamer</button>
+                  <button class="btn" id="logistic-fast" type="button">Schneller</button>
+                </div>
+                <p class="status-line" id="logistic-status" aria-live="polite">Equifinalität: Die Startwerte sind verschieden, das Ziel ist gleich. Die Kurven laufen zusammen, ohne sich abzusprechen.</p>
+                <ul class="instructions">
+                  <li>Vergleiche einen kleinen und einen großen Startwert. Beide enden bei K.</li>
+                  <li>Erhöhe r. Die Annäherung wird schneller, das Ziel bleibt gleich.</li>
+                  <li>Verschiebe K. Alle Kurven wandern gemeinsam mit.</li>
+                </ul>
+              </aside>
+            </div>
+          </article>
+
+          <p>Wichtig: Equifinalität ist kein Beweis für eine verborgene Absicht. Sie ist eine Konsequenz der Regelung. Das System „will“ nicht zum Ziel; die Dynamik führt dorthin. Genau diese Entzauberung ist Bertalanffys Stil: Er sucht keine Lebenskraft, sondern eine <strong>formale Struktur</strong>, die in vielen Systemen wiederkehrt.</p>
+
+          <div class="checkpoint" data-right="Genau. Equifinalität heißt: verschiedene Anfangsbedingungen, gleicher stabiler Endzustand – typisch für offene, regulierte Systeme." data-wrong="Nicht ganz. Equifinalität ist nicht die Abwesenheit von Dynamik, sondern das Gegenteil: verschiedene Wege führen zu einem stabilen Ziel.">
+            <span class="checkpoint__label">Selbstcheck</span>
+            <h3>Was beschreibt Equifinalität?</h3>
+            <div class="choices">
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Dass der Endzustand immer vom Startzustand abhängt.</button>
+              <button class="choice" type="button" data-correct="true"><span class="choice__mark">○</span> Dass verschiedene Startzustände denselben stabilen Endzustand erreichen können.</button>
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Dass ein System ohne äußere Einflüsse geschlossen bleibt.</button>
+            </div>
+            <p class="checkpoint__feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="source-strip">
+            <span>Quelle: Bertalanffy 1968, Kap. 5 und 6; zum Wachstum Kap. 7.</span>
+            <a href="_sources/bertalanffy_general_system_theory.pdf" target="_blank" rel="noopener">Lokales PDF</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="rueckkopplung">
+        <div class="section__head">
+          <span class="section__num">03</span>
+          <div>
+            <h2>Rückkopplung: der Unterschied zwischen Stabilisieren und Aufschaukeln.</h2>
+            <p>Systeme reagieren auf ihren eigenen Zustand. Das ist die Grundlage von Regulation – und von Instabilität.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>Ein Thermostat ist das einfachste Beispiel: Wird es zu kalt, heizt er. Wird es warm genug, schaltet er ab. Die Abweichung vom Ziel wird zur Information, die den nächsten Schritt steuert. Das nennt man <strong>negative Rückkopplung</strong>: Der Effekt wirkt der Ursache entgegen.</p>
+
+          <p><strong>Positive Rückkopplung</strong> macht das Gegenteil: Eine kleine Abweichung verstärkt sich selbst. Das kann nützlich sein – etwa bei der Blutgerinnung, die schnell zu einem Pfropfen führen muss – oder gefährlich, wenn ein System außer Kontrolle gerät. Die Rückkopplung ist nicht „gut“ oder „böse“. Sie entscheidet nur, ob ein System stabilisiert oder aufschaukelt.</p>
+
+          <article class="lab" id="feedback-lab">
+            <div class="lab__head">
+              <span class="lab__num">03</span>
+              <div class="lab__title">
+                <h3>Der Regelkreis kippt</h3>
+                <p>Wechsle zwischen negativer und positiver Rückkopplung. Drehe die Verstärkung und beobachte, was mit dem Signal passiert.</p>
+              </div>
+            </div>
+            <div class="lab__body">
+              <div class="lab__stage">
+                <div class="canvas-wrap">
+                  <canvas id="feedback-canvas" width="900" height="500" aria-label="Zeitverlauf eines Signals mit negativer und positiver Rückkopplung"></canvas>
+                </div>
+                <div class="controls">
+                  <label class="control">
+                    <span class="control__top"><span>Verstärkung g</span><span class="control__value" id="feedback-g-val">0,25</span></span>
+                    <input id="feedback-g" type="range" min="0.05" max="0.6" step="0.01" value="0.25">
+                  </label>
+                </div>
+                <div class="stage-caption">
+                  <span><strong>Ziellinie:</strong> der Sollwert. <strong>Signal:</strong> der aktuelle Zustand.</span>
+                  <span>Negativ = gegen die Abweichung. Positiv = mit der Abweichung.</span>
+                </div>
+              </div>
+              <aside class="lab__side">
+                <div class="stat-stack">
+                  <div class="stat"><span class="stat__label">Modus</span><span class="stat__value stat__value--accent" id="feedback-mode">negativ</span></div>
+                  <div class="stat"><span class="stat__label">Verstärkung g</span><span class="stat__value" id="feedback-g">0,25</span></div>
+                  <div class="stat"><span class="stat__label">Endwert</span><span class="stat__value" id="feedback-end">1,00</span></div>
+                  <div class="stat"><span class="stat__label">Verhalten</span><span class="stat__value" id="feedback-behavior">stabil</span></div>
+                </div>
+                <div class="toggle-row">
+                  <button class="btn btn--primary" id="feedback-neg" type="button" aria-pressed="true">Negativ</button>
+                  <button class="btn" id="feedback-pos" type="button" aria-pressed="false">Positiv</button>
+                </div>
+                <p class="status-line" id="feedback-status" aria-live="polite">Negative Rückkopplung zieht das Signal zum Sollwert. Das ist Regulation.</p>
+                <ul class="instructions">
+                  <li>Starte negativ. Das Signal beruhigt sich auf der Ziellinie.</li>
+                  <li>Wechsle auf positiv. Die kleine Abweichung wächst.</li>
+                  <li>Erhöhe g. Positive Rückkopplung wird schneller instabil.</li>
+                </ul>
+              </aside>
+            </div>
+          </article>
+
+          <p>Rückkopplung ist der Grund, warum ein System „von innen“ reagieren kann, ohne dass jemand von außen ständig eingreift. Bertalanffy teilt diesen Gedanken mit der Kybernetik, auch wenn seine Systemtheorie breiter und biologischer angelegt ist. Die gemeinsame Idee: <strong>Regulation ist eine Struktur, keine Substanz.</strong></p>
+
+          <div class="checkpoint" data-right="Richtig. Negative Rückkopplung wirkt der Abweichung entgegen und stabilisiert. Positive Rückkopplung verstärkt sie." data-wrong="Nicht ganz. Entscheidend ist die Richtung: negativ = gegen die Abweichung, positiv = mit der Abweichung.">
+            <span class="checkpoint__label">Selbstcheck</span>
+            <h3>Was macht negative Rückkopplung?</h3>
+            <div class="choices">
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Sie verstärkt jede Abweichung, bis das System kippt.</button>
+              <button class="choice" type="button" data-correct="true"><span class="choice__mark">○</span> Sie wirkt einer Abweichung entgegen und stabilisiert das System.</button>
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Sie schaltet das System dauerhaft ab.</button>
+            </div>
+            <p class="checkpoint__feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="source-strip">
+            <span>Quelle: Bertalanffy 1968, Kap. 1 und 4 zur Regelung und Systemtheorie.</span>
+            <a href="_sources/bertalanffy_general_system_theory.pdf" target="_blank" rel="noopener">Lokales PDF</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="einordnung">
+        <div class="section__head">
+          <span class="section__num">04</span>
+          <div>
+            <h2>Was die Systemtheorie kann – und was nicht.</h2>
+            <p>Bertalanffy ist kein Zauberer. Seine Theorie ist ein Programm, kein fertiges Gesetzesbuch.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>Die bleibende Einsicht ist eine Perspektive: <strong>Frage nach Grenzen, Beziehungen, Rückkopplungen und Zielzuständen.</strong> Wer ein Phänomen verstehen will, sollte nicht nur die Teile auflisten, sondern auch die Organisation der Teile. Das klingt banal, ist aber in der Praxis oft der Unterschied zwischen einer Liste und einer Erklärung.</p>
+
+          <p>Bertalanffy suchte nach <strong>Isomorphien</strong>: formalen Ähnlichkeiten zwischen Systemen in Biologie, Psychologie, Soziologie und Technik. Wachstum, Konkurrenz, Rückkopplung und Differenzierung tauchen in vielen Feldern auf. Diese Ähnlichkeiten können Denkwerkzeuge sein. Sie sind aber keine automatischen Beweise, dass die Systeme wirklich gleich funktionieren.</p>
+
+          <div class="callout callout--warn">
+            <span class="callout__label">Die ehrliche Kurzfassung</span>
+            <p>Die allgemeine Systemtheorie ist oft zu allgemein, um konkrete Vorhersagen zu machen. Ihr Wert liegt im <em>Fragenkatalog</em>: Wo ist die Grenze? Was fließt? Was regelt? Was ist das Ziel? Welche Rückkopplung stabilisiert, welche verstärkt? Das ist weniger als eine Weltformel – und mehr als eine Metapher.</p>
+          </div>
+
+          <p>Die Kritik ist berechtigt: Ein Begriff wie „System“ kann fast alles umfassen und dadurch nichts erklären. Die Stärke entsteht erst, wenn man ihn mit einem konkreten Modell verbindet – mit einer Bilanz, einer Differentialgleichung, einem Regelkreis. Dann wird aus der Perspektive ein Werkzeug.</p>
+
+          <h3>Drei Sätze, die du mitnehmen kannst</h3>
+          <ul class="takeaways">
+            <li><strong>Stabilität kann durch Durchfluss entstehen.</strong> Fließgleichgewicht ist kein Stillstand, sondern ein Muster im Austausch.</li>
+            <li><strong>Equifinalität ist eine Eigenschaft der Dynamik.</strong> Verschiedene Starts können dasselbe Ziel erreichen, wenn das System reguliert.</li>
+            <li><strong>Rückkopplung entscheidet über Stabilität.</strong> Negativ stabilisiert, positiv schaukelt auf – die Richtung ist entscheidend.</li>
+          </ul>
+
+          <div class="source-strip">
+            <span>Zum Weiterlesen: Bertalanffy 1968, Introduction und Kap. 1–4; zur Kritik an der GST die Systemwissenschaften.</span>
+            <a href="quellen.html">Quellen &amp; Einordnung</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="end-card">
+        <div>
+          <p class="kicker">Etappe 03 abgeschlossen?</p>
+          <h2>Jetzt wird es formal.</h2>
+          <p>Bertalanffy beschreibt Systeme mit Fluss und Rückkopplung. Kolmogorov gibt der Wahrscheinlichkeit ein Fundament, auf dem diese Dynamik messbar wird.</p>
+        </div>
+        <div class="end-card__actions">
+          <button class="btn btn--primary complete-btn" type="button" data-complete-paper="bertalanffy">Etappe abschließen</button>
+          <a class="btn" href="kolmogorov.html">Weiter zu Kolmogorov <span aria-hidden="true">→</span></a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-foot">
+    <div class="site-foot__inner">
+      <span>Etappe 03 von 05 · Bertalanffy</span>
+      <div class="site-foot__links">
+        <a href="index.html">Übersicht</a>
+        <a href="quellen.html">Quellen</a>
+        <a href="#main">Nach oben</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

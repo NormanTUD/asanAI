@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Fünf Klassiker der Komplexität, interaktiv erklärt: Kauffman, Anderson, Bertalanffy, Kolmogorov und Alexander.">
+  <title>Fünf Klassiker · Wie Ordnung entsteht</title>
+  <script src="assets/boot.js"></script>
+  <link rel="stylesheet" href="../../Temml-Local.css">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="../../temml.min.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</head>
+<body data-paper="hub">
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+  <div class="scroll-progress" aria-hidden="true"><div class="scroll-progress__bar"></div></div>
+
+  <header class="site-head">
+    <div class="site-head__inner">
+      <a class="brand" href="index.html" aria-label="Fünf Klassiker, Übersicht">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span>Denkraum · Fünf Klassiker</span>
+      </a>
+      <nav class="head-nav" aria-label="Hauptnavigation">
+        <a href="index.html" aria-current="page">Übersicht</a>
+        <a href="quellen.html">Quellen</a>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Helles Leselicht einschalten" aria-pressed="false">
+          <span class="theme-toggle__dot" aria-hidden="true"></span>
+          <span data-theme-label>Leselicht</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="page-shell">
+      <section class="hub-hero">
+        <div class="hub-hero__copy">
+          <p class="kicker">Eine interaktive Lese-Reise</p>
+          <div class="hub-hero__title">
+            <h1>Wie aus Regeln <em>Ordnung</em> wird.</h1>
+          </div>
+          <p class="hub-hero__sub">Fünf Klassiker über Selbstorganisation, Emergenz, Systeme, Wahrscheinlichkeit und Muster. Nicht als Zusammenfassung zum Überfliegen, sondern als Werkstatt: Du drehst an Reglern, stößt Systeme an und siehst zu, wie das Ganze mehr wird als die Summe seiner Teile.</p>
+          <div class="hero__meta">
+            <span class="pill pill--accent"><strong>5</strong> Etappen</span>
+            <span class="pill"><strong>13</strong> interaktive Labs</span>
+            <span class="pill"><strong>~75</strong> Minuten</span>
+            <span class="pill">Deutsch · ohne Tracking</span>
+          </div>
+          <a class="hero__begin" href="kauffman.html">Mit Kauffman beginnen <span aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="hub-orbit" aria-label="Die fünf Etappen als Orbit">
+          <span class="hub-orbit__core">Ordnung<br>verstehen</span>
+          <a class="hub-orbit__node" style="left:50%; top:13%;" href="kauffman.html" aria-label="Etappe 1: Kauffman">01<small>Kauffman</small></a>
+          <a class="hub-orbit__node" style="left:85%; top:38.5%;" href="anderson.html" aria-label="Etappe 2: Anderson">02<small>Anderson</small></a>
+          <a class="hub-orbit__node" style="left:71.7%; top:79.9%;" href="bertalanffy.html" aria-label="Etappe 3: Bertalanffy">03<small>System</small></a>
+          <a class="hub-orbit__node" style="left:28.3%; top:79.9%;" href="kolmogorov.html" aria-label="Etappe 4: Kolmogorov">04<small>Zufall</small></a>
+          <a class="hub-orbit__node" style="left:14.8%; top:38.5%;" href="alexander.html" aria-label="Etappe 5: Alexander">05<small>Muster</small></a>
+        </div>
+      </section>
+    </div>
+
+    <div class="page-shell">
+      <section class="hub-section">
+        <div class="progress-card">
+          <div class="progress-ring" aria-hidden="true">
+            <svg viewBox="0 0 76 76">
+              <circle class="progress-ring__track" cx="38" cy="38" r="32"></circle>
+              <circle class="progress-ring__fill" cx="38" cy="38" r="32" data-progress-ring data-radius="32"></circle>
+            </svg>
+            <span class="progress-ring__num"><span data-progress-count>0 / 5</span></span>
+          </div>
+          <div>
+            <h3>Dein Fortschritt</h3>
+            <p>Jede Etappe endet mit einem Selbstcheck. Wenn du ihn bestanden hast, kannst du die Seite abschließen. Dein Fortschritt bleibt nur in diesem Browser.</p>
+          </div>
+        </div>
+
+        <div class="thread" aria-label="Der gedankliche Faden">
+          <div class="thread__step">
+            <small>01 · Kauffman</small>
+            <strong>Ordnung für lau</strong>
+            <span>Systeme bringen eigene Struktur mit. Selektion arbeitet damit, nicht auf einer leeren Tafel.</span>
+          </div>
+          <div class="thread__step">
+            <small>02 · Anderson</small>
+            <strong>Mehr ist anders</strong>
+            <span>Auf jeder Ebene entstehen neue Gesetze. Die Mikroebene erklärt nicht automatisch das Kollektiv.</span>
+          </div>
+          <div class="thread__step">
+            <small>03 · Bertalanffy</small>
+            <strong>Systeme atmen</strong>
+            <span>Offene Systeme halten sich im Fließgleichgewicht. Dasselbe Ziel ist von verschiedenen Starts erreichbar.</span>
+          </div>
+          <div class="thread__step">
+            <small>04 · Kolmogorov</small>
+            <strong>Zufall wird Maß</strong>
+            <span>Wahrscheinlichkeit bekommt Axiome. Ereignisse werden Mengen, Erwartungen werden Integrale.</span>
+          </div>
+          <div class="thread__step">
+            <small>05 · Alexander</small>
+            <strong>Muster als Sprache</strong>
+            <span>Gute Lösungen wiederholen sich nicht als Kopie, sondern als Beziehung zwischen Kräften.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="hub-section" id="etappen">
+        <div class="hub-section__head">
+          <div>
+            <p class="kicker">Die fünf Etappen</p>
+            <h2>Von der Zelle zur Stadt.</h2>
+          </div>
+          <p>Du kannst der Reihe folgen oder direkt dort einsteigen, wo deine Neugier zieht. Jede Seite steht für sich, aber zusammen ergeben sie einen Denkfaden.</p>
+        </div>
+
+        <div class="paper-grid">
+          <a class="paper-card" style="--card-accent:#78f0c5;" href="kauffman.html">
+            <div class="paper-card__top">
+              <span class="paper-card__num">Etappe 01</span>
+              <span class="paper-card__year">1993</span>
+            </div>
+            <h3>Ordnung ist nicht nur Auswahl.</h3>
+            <p class="paper-card__author">Stuart A. Kauffman · The Origins of Order</p>
+            <p class="paper-card__desc">Fitnesslandschaften, Boolesche Netze und der Rand des Chaos. Warum Evolution mit einer Landschaft arbeitet, die sie nicht vollständig gebaut hat.</p>
+            <div class="paper-card__foot">
+              <span class="pill">Selbstorganisation</span>
+              <span class="pill">NK-Modell</span>
+              <span class="paper-card__status" data-paper-status="kauffman">offen</span>
+            </div>
+          </a>
+
+          <a class="paper-card" style="--card-accent:#6ea8ff;" href="anderson.html">
+            <div class="paper-card__top">
+              <span class="paper-card__num">Etappe 02</span>
+              <span class="paper-card__year">1972</span>
+            </div>
+            <h3>Mehr ist anders.</h3>
+            <p class="paper-card__author">P. W. Anderson · More Is Different</p>
+            <p class="paper-card__desc">Phasenübergänge, gebrochene Symmetrie und die Hierarchie der Wissenschaften. Warum Wasser nicht wie ein einzelnes Molekül ist.</p>
+            <div class="paper-card__foot">
+              <span class="pill">Emergenz</span>
+              <span class="pill">Ising-Modell</span>
+              <span class="paper-card__status" data-paper-status="anderson">offen</span>
+            </div>
+          </a>
+
+          <a class="paper-card" style="--card-accent:#f8c56b;" href="bertalanffy.html">
+            <div class="paper-card__top">
+              <span class="paper-card__num">Etappe 03</span>
+              <span class="paper-card__year">1968</span>
+            </div>
+            <h3>Das Ganze hat seine eigene Logik.</h3>
+            <p class="paper-card__author">Ludwig von Bertalanffy · General System Theory</p>
+            <p class="paper-card__desc">Offene Systeme, Fließgleichgewicht und Equifinalität. Ein Werkzeugkasten für Systeme, die nicht stillstehen, sondern sich ständig neu halten.</p>
+            <div class="paper-card__foot">
+              <span class="pill">Systemtheorie</span>
+              <span class="pill">Rückkopplung</span>
+              <span class="paper-card__status" data-paper-status="bertalanffy">offen</span>
+            </div>
+          </a>
+
+          <a class="paper-card" style="--card-accent:#b79bff;" href="kolmogorov.html">
+            <div class="paper-card__top">
+              <span class="paper-card__num">Etappe 04</span>
+              <span class="paper-card__year">1933</span>
+            </div>
+            <h3>Zufall bekommt Regeln.</h3>
+            <p class="paper-card__author">A. N. Kolmogorov · Foundations of the Theory of Probability</p>
+            <p class="paper-card__desc">Ereignisse als Mengen, Wahrscheinlichkeit als Maß, Zufallsvariablen als Funktionen. Die Grammatik, auf der moderne Statistik und ML aufbauen.</p>
+            <div class="paper-card__foot">
+              <span class="pill">Axiome</span>
+              <span class="pill">Maßtheorie</span>
+              <span class="paper-card__status" data-paper-status="kolmogorov">offen</span>
+            </div>
+          </a>
+
+          <a class="paper-card" style="--card-accent:#ff9fb2;" href="alexander.html">
+            <div class="paper-card__top">
+              <span class="paper-card__num">Etappe 05</span>
+              <span class="paper-card__year">1977</span>
+            </div>
+            <h3>Eine Sprache für gute Orte.</h3>
+            <p class="paper-card__author">Christopher Alexander · A Pattern Language</p>
+            <p class="paper-card__desc">253 Muster, die Räume, Häuser und Städte miteinander verweben. Keine Rezepte, sondern Lösungen für wiederkehrende Kräfte.</p>
+            <div class="paper-card__foot">
+              <span class="pill">Muster</span>
+              <span class="pill">Design</span>
+              <span class="paper-card__status" data-paper-status="alexander">offen</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <section class="hub-section">
+        <div class="hub-section__head">
+          <div>
+            <p class="kicker">So funktioniert es</p>
+            <h2>Erst spielen, dann verstehen.</h2>
+          </div>
+          <p>Die Demos sind keine Illustrationen hinterher. Sie sind der Ort, an dem die Begriffe entstehen. Lies langsam, verändere einen Regler und schau, was kippt.</p>
+        </div>
+        <div class="howto">
+          <div class="howto__item">
+            <b>01 · Anstoßen</b>
+            <p>Starte jedes Lab mit der ruhigen Einstellung. Beobachte, was von allein passiert, bevor du eingreifst.</p>
+          </div>
+          <div class="howto__item">
+            <b>02 · Vergleichen</b>
+            <p>Verändere genau eine Größe. Der Unterschied zwischen zwei Zuständen ist die eigentliche Erklärung.</p>
+          </div>
+          <div class="howto__item">
+            <b>03 · In Worte fassen</b>
+            <p>Beantworte den Selbstcheck, ohne zurückzuscrollen. Wenn es hakt, ist das kein Test, sondern ein Wegweiser.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="hub-section">
+        <div class="hub-section__head">
+          <div>
+            <p class="kicker">Unter der Haube</p>
+            <h2>Echte Modelle, klar begrenzt.</h2>
+          </div>
+          <p>Die Labs sind didaktische Modelle, keine Messgeräte. Wo ein Modell etwas nicht zeigen kann, steht es auf der Seite. Genau diese Grenze ist Teil des Verstehens.</p>
+        </div>
+        <div class="prose prose--wide">
+          <p>Die NK-Landschaft ist ein Spielzeugmodell für Fitness, das Ising-Modell ein Minimalmodell für kollektive Ordnung, das offene System eine lineare Bilanz, die Axiome Kolmogorovs eine mathematische Grammatik, die Musterkarte ein kuratierter Auszug aus Alexanders Netz. Jede Seite nennt die Quelle und die Vereinfachung.</p>
+          <p class="small">Die Originaltexte liegen lokal im Ordner <code>_sources/</code>. Öffne die <a href="quellen.html">Quellenübersicht</a>, wenn du nachlesen oder die PDFs direkt ansehen willst.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-foot">
+    <div class="site-foot__inner">
+      <span>Gebaut als interaktive Lese-Reise. Keine Cookies, kein Tracking, alles bleibt im Browser.</span>
+      <div class="site-foot__links">
+        <a href="quellen.html">Quellen &amp; Lizenzen</a>
+        <a href="kauffman.html">Erste Etappe</a>
+        <a href="#main">Nach oben</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

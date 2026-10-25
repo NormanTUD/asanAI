@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Stuart Kauffmans Origins of Order interaktiv: NK-Fitnesslandschaften, Boolesche Netze am Rand des Chaos und autokatalytische Mengen.">
+  <title>Kauffman · Ordnung ist nicht nur Auswahl</title>
+  <script src="assets/boot.js"></script>
+  <link rel="stylesheet" href="../../Temml-Local.css">
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="../../temml.min.js" defer></script>
+  <script src="assets/app.js" defer></script>
+  <script src="kauffman.js" defer></script>
+</head>
+<body data-paper="kauffman" style="--accent:#78f0c5; --accent-2:#6ea8ff; --accent-3:#f8c56b;">
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+  <div class="scroll-progress" aria-hidden="true"><div class="scroll-progress__bar"></div></div>
+
+  <header class="site-head">
+    <div class="site-head__inner">
+      <a class="brand" href="index.html" aria-label="Fünf Klassiker, Übersicht">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span>Denkraum · Fünf Klassiker</span>
+      </a>
+      <nav class="head-nav" aria-label="Hauptnavigation">
+        <a href="index.html">Übersicht</a>
+        <a href="quellen.html">Quellen</a>
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Helles Leselicht einschalten" aria-pressed="false">
+          <span class="theme-toggle__dot" aria-hidden="true"></span>
+          <span data-theme-label>Leselicht</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="page-shell">
+      <section class="hero">
+        <div class="hero__copy">
+          <p class="kicker">Etappe 01 · Biologie &amp; Komplexität</p>
+          <h1>Ordnung ist nicht nur <span class="thin">Auswahl.</span></h1>
+          <p class="hero__sub">Stuart Kauffmans <em>Origins of Order</em> dreht eine vertraute Frage um: Was, wenn Evolution nicht auf einer leeren Tafel bastelt? Wenn Systeme ihre eigene Ordnung mitbringen – und Selektion diese Ordnung nur noch formt?</p>
+          <div class="hero__meta">
+            <span class="pill pill--accent"><strong>1993</strong> Oxford University Press</span>
+            <span class="pill"><strong>3</strong> Labs</span>
+            <span class="pill"><span data-reading-time>15 Min.</span></span>
+            <span class="pill">Selbstorganisation</span>
+          </div>
+          <a class="hero__begin" href="#landkarte">Die Landschaft betreten <span aria-hidden="true">→</span></a>
+        </div>
+        <aside class="hero__aside" aria-hidden="true">
+          <div class="paper-emblem">
+            <span class="paper-emblem__number">01</span>
+            <span class="paper-emblem__label">Kauffman · 1993</span>
+          </div>
+        </aside>
+      </section>
+    </div>
+
+    <nav class="chapter-nav" aria-label="Etappen dieser Seite">
+      <div class="chapter-nav__inner">
+        <a href="#landkarte">Fitnesslandschaften</a>
+        <a href="#chaos">Rand des Chaos</a>
+        <a href="#katalyse">Autokatalyse</a>
+        <a href="#einordnung">Einordnung</a>
+      </div>
+    </nav>
+
+    <div class="page-shell">
+      <section class="section" id="landkarte">
+        <div class="section__head">
+          <span class="section__num">01</span>
+          <div>
+            <h2>Die Landschaft, die niemand gebaut hat.</h2>
+            <p>Kauffmans zentrale Metapher ist einfach und mächtig: Gene leben in einem Raum möglicher Kombinationen. Fitness ist eine Höhe über diesem Raum. Selektion ist ein Kletterer.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p class="lead">Die neodarwinistische Standardgeschichte klingt sauber: Mutation erzeugt Varianten, Selektion behält die besseren. Kauffman bestreitet das nicht. Er fragt nur, was passiert, wenn die Fitnesslandschaft selbst schon Struktur hat – wenn nicht jede Kombination gleich weit von jeder anderen entfernt ist, wenn Gene miteinander reden, wenn es viele Gipfel gibt.</p>
+
+          <p>Der Punkt ist nicht, dass Selektion unwichtig wäre. Der Punkt ist, dass Selektion nicht mit beliebigem Material arbeiten kann. Ein System, das zu stark vernetzt ist, ist so zerklüftet, dass jede kleine Änderung alles kaputt macht. Ein System ohne Vernetzung ist so flach, dass es nur einen einzigen Gipfel gibt. Dazwischen liegt der Bereich, in dem Anpassung interessant wird.</p>
+
+          <div class="thesis">
+            <p class="thesis__quote">„Order for free“ heißt nicht: Ordnung ohne Ursache. Es heißt: Ordnung, die nicht von der Selektion erzeugt werden musste.</p>
+            <span class="thesis__by">Die Kernthese, in eigenen Worten</span>
+          </div>
+
+          <h3>Was der NK-Parameter K wirklich macht</h3>
+          <p>Im NK-Modell hat ein Genom <span class="tex-inline" data-tex="N"></span> Gene. Der Beitrag jedes Gens zur Fitness hängt nicht nur von seinem eigenen Zustand ab, sondern von <span class="tex-inline" data-tex="K"></span> anderen Genen. Ist <span class="tex-inline" data-tex="K=0"></span>, addieren sich die Beiträge: Die Landschaft ist glatt, es gibt einen klaren Gipfel. Wächst <span class="tex-inline" data-tex="K"></span>, greifen immer mehr Gene ineinander. Die Landschaft wird zerklüftet, lokale Gipfel vermehren sich, und der Kletterer bleibt stehen, obwohl es woanders höher wäre.</p>
+
+          <div class="math-card">
+            <span class="math-card__label">Das NK-Modell</span>
+            <div class="math-display" data-display data-tex="F(s)=\underbrace{\frac{1}{N}\sum_{i=1}^{N}\underbrace{f_i\left(s_i,s_{i_1},\dots,s_{i_K}\right)}_{\text{lokaler Beitrag von Gen }i}}_{\text{Gesamtfitness: Mittel über alle Gene}}"></div>
+            <p class="math-card__note">Die Fitness eines Genotyps <span class="tex-inline" data-tex="s"></span> ist das Mittel seiner lokalen Beiträge. <span class="tex-inline" data-tex="K"></span> steuert, wie viele andere Gene in einen Beitrag hineinreden. Die Beiträge selbst sind im Modell zufällig gewählt – das ist die entscheidende didaktische Vereinfachung.</p>
+          </div>
+
+          <p>Die Landschaft ist deshalb kein Bild von „der Evolution“. Sie ist ein Instrument, um eine Frage scharf zu stellen: Wie viel Interaktion verträgt ein System, bevor Anpassung zur Lotterie wird? Kauffman nennt die zerklüftete Variante <em>rugged</em>. Der Begriff ist gut gewählt: Es geht nicht um zufälliges Rauschen, sondern um eine Landschaft mit vielen Tälern und Gipfeln, in der der Weg vom Start abhängt.</p>
+
+          <article class="lab" id="nk-lab">
+            <div class="lab__head">
+              <span class="lab__num">01</span>
+              <div class="lab__title">
+                <h3>Der Kletterer in der Fitnesslandschaft</h3>
+                <p>Verändere K, starte acht Kletterer und beobachte, wie viele Gipfel sie finden – und wie oft sie stecken bleiben.</p>
+              </div>
+            </div>
+            <div class="lab__body">
+              <div class="lab__stage">
+                <div class="canvas-wrap">
+                  <canvas id="nk-canvas" width="900" height="600" aria-label="Fitnesslandschaft über 1024 Genotypen mit Kletterern und lokalen Gipfeln"></canvas>
+                </div>
+                <div class="controls">
+                  <label class="control">
+                    <span class="control__top"><span>Interaktionen K</span><span class="control__value" id="nk-k-val">0</span></span>
+                    <input id="nk-k" type="range" min="0" max="5" step="1" value="0">
+                  </label>
+                  <label class="control">
+                    <span class="control__top"><span>Tempo</span><span class="control__value" id="nk-speed-val">mittel</span></span>
+                    <input id="nk-speed" type="range" min="1" max="3" step="1" value="2">
+                  </label>
+                </div>
+                <div class="stage-caption">
+                  <span><strong>Jede Zelle</strong> ist ein Genotyp aus 10 Bits. Helligkeit = Fitness.</span>
+                  <span>Kreise = lokale Gipfel</span>
+                </div>
+              </div>
+              <aside class="lab__side">
+                <div class="stat-stack">
+                  <div class="stat"><span class="stat__label">Lokale Gipfel</span><span class="stat__value" id="nk-peaks">1</span></div>
+                  <div class="stat"><span class="stat__label">Anteil der Landschaft</span><span class="stat__value" id="nk-peak-share">0,1 %</span></div>
+                  <div class="stat"><span class="stat__label">Beste Kletterer</span><span class="stat__value stat__value--accent" id="nk-best">–</span></div>
+                  <div class="stat"><span class="stat__label">Aktive Kletterer</span><span class="stat__value" id="nk-active">0 / 8</span></div>
+                </div>
+                <div class="toggle-row">
+                  <button class="btn btn--primary" id="nk-run" type="button">Kletterer starten</button>
+                  <button class="btn" id="nk-new" type="button">Neue Landschaft</button>
+                </div>
+                <p class="status-line" id="nk-status" aria-live="polite">K = 0: additive Welt, ein klarer Gipfel. Starte die Kletterer und beobachte, wie direkt sie ihn finden.</p>
+                <ul class="instructions">
+                  <li>Starte bei K = 0. Die Kletterer finden fast immer denselben Gipfel.</li>
+                  <li>Stelle K auf 3 oder 4. Neue Landschaft, neue Kletterer.</li>
+                  <li>Vergleiche: Wie viele kommen an, wie viele bleiben in einem lokalen Tal hängen?</li>
+                </ul>
+              </aside>
+            </div>
+          </article>
+
+          <p>Was du hier siehst, ist kein Beweis, dass echte Genome so aussehen. Es ist ein <strong>Gedankenexperiment mit Zahlen</strong>. Der Wert liegt darin, dass du die Konsequenz einer Annahme direkt erfährst: Mehr Interaktion erzeugt mehr lokale Optima. Und lokale Optima erzeugen historische Kontingenz – der Weg, der zum Gipfel führt, hängt davon ab, wo man gestartet ist.</p>
+
+          <div class="checkpoint" data-right="Genau. Mehr K bedeutet mehr wechselseitige Abhängigkeiten, also mehr lokale Gipfel und eine zerklüftetere Landschaft." data-wrong="Nicht ganz. K verändert nicht die Mutationsrate, sondern die Zahl der Gene, die in einen Fitnessbeitrag hineinreden.">
+            <span class="checkpoint__label">Selbstcheck</span>
+            <h3>Was passiert mit der Landschaft, wenn K wächst?</h3>
+            <div class="choices">
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Sie wird flacher, weil mehr Gene beteiligt sind.</button>
+              <button class="choice" type="button" data-correct="true"><span class="choice__mark">○</span> Sie wird zerklüfteter, weil lokale Beiträge stärker voneinander abhängen.</button>
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Sie bleibt gleich, nur die Mutationsrate ändert sich.</button>
+            </div>
+            <p class="checkpoint__feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="source-strip">
+            <span>Quelle: Kauffman 1993, Kap. 2, „The Structure of Rugged Fitness Landscapes“.</span>
+            <a href="_sources/kauffman_origins_of_order.pdf" target="_blank" rel="noopener">Lokales PDF</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="chaos">
+        <div class="section__head">
+          <span class="section__num">02</span>
+          <div>
+            <h2>Am Rand des Chaos.</h2>
+            <p>Wenn Gene ein Netz bilden, stellt sich nicht nur die Frage nach der Fitness. Es stellt sich die Frage, wie sich Störungen durch das Netz bewegen.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>Kauffman modelliert Zellen nicht als Liste von Genen, sondern als <strong>Boolesches Netz</strong>: Jedes Gen ist an oder aus. Sein nächster Zustand hängt von einigen Eingängen ab. Bei jedem Zeitschritt lesen alle Gene gleichzeitig ihre Eingänge und aktualisieren sich. Das ist eine grobe Vereinfachung, aber sie macht einen wichtigen Unterschied sichtbar: <em>Wie viele Eingänge</em> hat ein Gen?</p>
+
+          <p>Bei <span class="tex-inline" data-tex="K=1"></span> hat jede Störung gute Chancen, einfach auszusterben. Das Netz ist <strong>geordnet</strong>: Es fällt in wenige stabile Muster. Bei sehr großem <span class="tex-inline" data-tex="K"></span> pflanzt sich eine kleine Änderung immer weiter fort. Das Netz ist <strong>chaotisch</strong>: Zwei fast gleiche Zustände laufen auseinander. Dazwischen liegt der kritische Punkt, an dem die mittlere Zahl der gekippten Nachfahren genau eins ist.</p>
+
+          <div class="math-card">
+            <span class="math-card__label">Die Sensitivität eines Zufallsnetzes</span>
+            <div class="math-display" data-display data-tex="\lambda=\underbrace{K\cdot\underbrace{2p(1-p)}_{\text{Flips pro Eingang}}}_{\text{erwartete Zahl gekippter Nachfahren}}"></div>
+            <p class="math-card__note">Für faire Zufallstabellen mit <span class="tex-inline" data-tex="p=0{,}5"></span> ist <span class="tex-inline" data-tex="2p(1-p)=0{,}5"></span> und damit <span class="tex-inline" data-tex="\lambda=K/2"></span>. Bei <span class="tex-inline" data-tex="K=2"></span> ist <span class="tex-inline" data-tex="\lambda=1"></span>: Eine Störung erzeugt im Mittel genau eine neue Störung. Das ist der kritische Punkt. <span class="tex-inline" data-tex="\lambda<1"></span> heißt geordnet, <span class="tex-inline" data-tex="\lambda>1"></span> chaotisch.</p>
+          </div>
+
+          <p>Der „Rand des Chaos“ ist Kauffmans Vermutung, dass lebendige Systeme bevorzugt in der Nähe dieses kritischen Punktes liegen: flexibel genug, um sich anzupassen, stabil genug, um nicht auseinanderzufallen. Das ist eine schöne Hypothese. Sie ist aber kein Naturgesetz. Reale Genregulationsnetze haben Struktur, Module, Hierarchien und keine fairen Münzwürfe. Die Simulation zeigt den Mechanismus, nicht die Biologie.</p>
+
+          <article class="lab" id="bn-lab">
+            <div class="lab__head">
+              <span class="lab__num">02</span>
+              <div class="lab__title">
+                <h3>Wie weit wandert eine Störung?</h3>
+                <p>Ein Bit wird gekippt. Beobachte, ob der Schaden ausstirbt, gerade eben überlebt oder das ganze Netz erfasst.</p>
+              </div>
+            </div>
+            <div class="lab__body">
+              <div class="lab__stage">
+                <div class="canvas-wrap">
+                  <canvas id="bn-canvas" width="900" height="560" aria-label="Boolesches Netz mit 24 Knoten und Ausbreitung einer Störung über 28 Schritte"></canvas>
+                </div>
+                <div class="controls">
+                  <label class="control">
+                    <span class="control__top"><span>Eingänge pro Gen K</span><span class="control__value" id="bn-k-val">2</span></span>
+                    <input id="bn-k" type="range" min="1" max="4" step="1" value="2">
+                  </label>
+                  <label class="control">
+                    <span class="control__top"><span>Tempo</span><span class="control__value" id="bn-speed-val">mittel</span></span>
+                    <input id="bn-speed" type="range" min="1" max="3" step="1" value="2">
+                  </label>
+                </div>
+                <div class="stage-caption">
+                  <span><strong>Links:</strong> das Netz. Gefüllt = an, Ring = durch die Störung anders.</span>
+                  <span><strong>Rechts:</strong> Hamming-Abstand über die Zeit.</span>
+                </div>
+              </div>
+              <aside class="lab__side">
+                <div class="stat-stack">
+                  <div class="stat"><span class="stat__label">Gemessene Sensitivität λ</span><span class="stat__value" id="bn-lambda">1,00</span></div>
+                  <div class="stat"><span class="stat__label">Regime</span><span class="stat__value stat__value--accent" id="bn-regime">kritisch</span></div>
+                  <div class="stat"><span class="stat__label">Schaden jetzt</span><span class="stat__value" id="bn-damage">0,0 %</span></div>
+                  <div class="stat"><span class="stat__label">Störungen überleben</span><span class="stat__value" id="bn-survive">–</span></div>
+                </div>
+                <div class="toggle-row">
+                  <button class="btn btn--primary" id="bn-run" type="button">Stören &amp; laufen</button>
+                  <button class="btn" id="bn-new" type="button">Netz neu</button>
+                </div>
+                <p class="status-line" id="bn-status" aria-live="polite">K = 2, λ = 1: Der kritische Fall. Manche Störungen sterben, manche bleiben. Genau diese Grenze macht das Netz interessant.</p>
+                <ul class="instructions">
+                  <li>Starte mit K = 1. Die Störung sollte meist schnell verschwinden.</li>
+                  <li>Gehe auf K = 4. Beobachte, wie der Schaden fast das ganze Netz erreicht.</li>
+                  <li>Probiere K = 2 mehrfach. Nicht jeder Lauf ist gleich – kritisch heißt nicht deterministisch.</li>
+                </ul>
+              </aside>
+            </div>
+          </article>
+
+          <div class="checkpoint" data-right="Richtig. Bei p = 0,5 ist die mittlere Sensitivität K/2. λ = 1 bedeutet K = 2." data-wrong="Denk an die Formel: λ = K mal 2p(1−p). Bei p = 0,5 ist das K/2. Welches K macht daraus 1?">
+            <span class="checkpoint__label">Selbstcheck</span>
+            <h3>Warum gilt K = 2 bei fairen Zufallstabellen als kritisch?</h3>
+            <div class="choices">
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Weil zwei Eingänge immer zu zwei stabilen Attraktoren führen.</button>
+              <button class="choice" type="button" data-correct="true"><span class="choice__mark">○</span> Weil dann die erwartete Zahl der gekippten Nachfahren genau eins ist: 2 · 2 · 0,5 · 0,5 = 1.</button>
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Weil K = 2 die einzige Zahl ist, die in einem Booleschen Netz vorkommt.</button>
+            </div>
+            <p class="checkpoint__feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="source-strip">
+            <span>Quelle: Kauffman 1993, Kap. 5, „Self-Organization and Adaptation in Complex Systems“.</span>
+            <a href="_sources/kauffman_origins_of_order.pdf" target="_blank" rel="noopener">Lokales PDF</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="katalyse">
+        <div class="section__head">
+          <span class="section__num">03</span>
+          <div>
+            <h2>Ordnung für lau – und ihre Grenzen.</h2>
+            <p>Die dritte große Idee: Leben könnte mit einem Netz von Reaktionen beginnen, das sich selbst am Laufen hält. Kein zentraler Bauplan nötig.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>Ein autokatalytischer Satz ist eine Menge von Molekülen, in der jedes Mitglied durch Reaktionen erzeugt wird, die von Mitgliedern derselben Menge katalysiert werden. Das ist kein einzelnes „egoistisches Molekül“. Es ist ein <strong>geschlossener Kreis von Abhängigkeiten</strong>. Kauffman argumentiert, dass solche Mengen ab einer gewissen Vielfalt und Reaktionsdichte fast zwangsläufig entstehen – ein Phasenübergang der kollektiven Selbstproduktion.</p>
+
+          <div class="math-card">
+            <span class="math-card__label">Die Idee der kollektiven Schließung</span>
+            <div class="math-display" data-display data-tex="S\ \text{ist autokatalytisch}\iff\underbrace{\forall x\in S:\ \exists R\subseteq S}_{\text{keine externe Zutat nötig}}\ \text{mit}\ x\in\operatorname{Prod}(R)"></div>
+            <p class="math-card__note">Jedes Molekül in <span class="tex-inline" data-tex="S"></span> muss durch mindestens eine Reaktion entstehen können, deren Katalysatoren wiederum in <span class="tex-inline" data-tex="S"></span> liegen. Die formale Definition ist in Kauffmans Buch deutlich reicher; hier steht nur der Kern.</p>
+          </div>
+
+          <p>Das folgende Mini-Lab ist eine bewusst grobe Übersetzung: Moleküle sind Knoten, katalytische Abhängigkeiten sind gerichtete Kanten. Ab einer kritischen Dichte entsteht eine große gegenseitig erreichbare Gruppe. Das ist <em>nicht</em> Kauffmans Polymerchemie, aber es zeigt dieselbe Art von Schwellenwert: Unterhalb der Schwelle zerfällt das Netz in kleine Inseln, oberhalb trägt es sich kollektiv.</p>
+
+          <article class="lab" id="cat-lab">
+            <div class="lab__head">
+              <span class="lab__num">03</span>
+              <div class="lab__title">
+                <h3>Der Katalyse-Kern</h3>
+                <p>Erhöhe die Reaktionsdichte und beobachte, wann aus vielen kleinen Inseln ein zusammenhängender Kern wird.</p>
+              </div>
+            </div>
+            <div class="lab__body">
+              <div class="lab__stage">
+                <div class="canvas-wrap">
+                  <canvas id="cat-canvas" width="900" height="520" aria-label="Gerichtetes Katalysenetz mit hervorgehobenem größten stark zusammenhängenden Kern"></canvas>
+                </div>
+                <div class="controls">
+                  <label class="control">
+                    <span class="control__top"><span>Reaktionsdichte p</span><span class="control__value" id="cat-p-val">0,020</span></span>
+                    <input id="cat-p" type="range" min="5" max="80" step="1" value="20">
+                  </label>
+                </div>
+                <div class="stage-caption">
+                  <span><strong>Grün:</strong> der größte geschlossene Kern. <strong>Grau:</strong> isolierte Inseln.</span>
+                  <span>Faustregel für dieses Spielzeugmodell: p ≈ 1/N.</span>
+                </div>
+              </div>
+              <aside class="lab__side">
+                <div class="stat-stack">
+                  <div class="stat"><span class="stat__label">Knoten im Kern</span><span class="stat__value" id="cat-size">1</span></div>
+                  <div class="stat"><span class="stat__label">Anteil</span><span class="stat__value" id="cat-share">1,9 %</span></div>
+                  <div class="stat"><span class="stat__label">Kanten</span><span class="stat__value" id="cat-edges">0</span></div>
+                </div>
+                <div class="toggle-row">
+                  <button class="btn" id="cat-new" type="button">Neues Netz</button>
+                </div>
+                <p class="status-line" id="cat-status" aria-live="polite">Unterhalb der Schwelle bleibt der Kern klein. Erhöhe p langsam und beobachte den Sprung.</p>
+                <ul class="instructions">
+                  <li>Starte bei p = 0,005. Die meisten Knoten sind isoliert.</li>
+                  <li>Erhöhe p in kleinen Schritten. Ab etwa 1/54 kippt das Netz.</li>
+                  <li>Vergleiche den Sprung mit dem Rand des Chaos: Beides sind Schwellen, aber nicht dieselbe Theorie.</li>
+                </ul>
+              </aside>
+            </div>
+          </article>
+
+          <div class="checkpoint" data-right="Genau. Ein autokatalytischer Satz ist eine kollektive Schließung: Die Mitglieder erzeugen sich gegenseitig, ohne dass ein externer Bauplan nötig ist." data-wrong="Nicht ganz. Es geht nicht um ein einzelnes Molekül, sondern um ein Netz von Reaktionen, das sich als Ganzes trägt.">
+            <span class="checkpoint__label">Selbstcheck</span>
+            <h3>Was macht eine Menge von Molekülen „autokatalytisch“?</h3>
+            <div class="choices">
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Ein Molekül kopiert sich selbst immer schneller.</button>
+              <button class="choice" type="button" data-correct="true"><span class="choice__mark">○</span> Die Mitglieder erzeugen sich gegenseitig durch Reaktionen innerhalb der Menge.</button>
+              <button class="choice" type="button" data-correct="false"><span class="choice__mark">○</span> Alle Moleküle haben dieselbe chemische Struktur.</button>
+            </div>
+            <p class="checkpoint__feedback" aria-live="polite"></p>
+          </div>
+
+          <div class="source-strip">
+            <span>Quelle: Kauffman 1993, Kap. 7, „The Origins of Life: A New View“.</span>
+            <a href="_sources/kauffman_origins_of_order.pdf" target="_blank" rel="noopener">Lokales PDF</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="einordnung">
+        <div class="section__head">
+          <span class="section__num">04</span>
+          <div>
+            <h2>Was bleibt – und was überdreht.</h2>
+            <p>Kauffman ist ein großer Erzähler. Das macht das Buch anregend und angreifbar. Beides gehört dazu.</p>
+          </div>
+        </div>
+
+        <div class="prose">
+          <p>Die bleibende Einsicht ist bescheiden und stark zugleich: <strong>Anpassung findet nicht in einem Vakuum statt.</strong> Die Struktur des Möglichkeitsraums ist Teil des Erklärungsobjekts. Wer nur Mutation und Selektion betrachtet, übersieht, dass manche Systeme leichter adaptierbar sind als andere, weil ihre Landschaft freundlicher ist.</p>
+          <p>Die Überdrehung beginnt dort, wo aus einem modellhaften Befund eine Weltformel wird. „Order for free“ ist ein heuristischer Slogan, kein allgemeines Naturgesetz. Die Behauptung, lebendige Systeme lägen universell am Rand des Chaos, ist empirisch umstritten. Und die NK-Landschaft ist ein synthetisches Modell, dessen Zufallsbeiträge absichtlich nichts über konkrete Genetik sagen.</p>
+
+          <div class="callout callout--warn">
+            <span class="callout__label">Die ehrliche Kurzfassung</span>
+            <p>Selbstorganisation ist ein realer Faktor, aber kein Ersatz für Selektion. Kauffmans Verdienst ist, die Frage nach der <em>Architektur des Anpassbaren</em> gestellt zu haben. Seine Antworten sind ein Forschungsprogramm, kein fertiges Lehrgebäude.</p>
+          </div>
+
+          <h3>Drei Sätze, die du mitnehmen kannst</h3>
+          <ul class="takeaways">
+            <li><strong>Ruggedness erzeugt Kontingenz.</strong> Je mehr Interaktionen, desto mehr lokale Gipfel – und desto stärker hängt das Ergebnis vom Startpunkt ab.</li>
+            <li><strong>Kritikalität ist ein Gleichgewicht, kein Ort.</strong> Am Rand des Chaos ist eine Störung weder automatisch tödlich noch automatisch harmlos.</li>
+            <li><strong>Ordnung kann ohne zentrale Steuerung entstehen.</strong> Aber „ohne Steuerung“ heißt nicht „ohne Struktur“ – die Struktur steckt in den Regeln und der Vernetzung.</li>
+          </ul>
+
+          <div class="source-strip">
+            <span>Zum Weiterlesen: Kauffman 1993, Preface und Kap. 1; kritische Rezensionen zur Edge-of-Chaos-Debatte.</span>
+            <a href="quellen.html">Quellen &amp; Einordnung</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="end-card">
+        <div>
+          <p class="kicker">Etappe 01 abgeschlossen?</p>
+          <h2>Jetzt wird es kollektiv.</h2>
+          <p>Kauffman zeigt, wie Ordnung aus Regeln entsteht. Anderson fragt, warum diese Ordnung auf einer neuen Ebene eigene Gesetze bekommt.</p>
+        </div>
+        <div class="end-card__actions">
+          <button class="btn btn--primary complete-btn" type="button" data-complete-paper="kauffman">Etappe abschließen</button>
+          <a class="btn" href="anderson.html">Weiter zu Anderson <span aria-hidden="true">→</span></a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-foot">
+    <div class="site-foot__inner">
+      <span>Etappe 01 von 05 · Kauffman</span>
+      <div class="site-foot__links">
+        <a href="index.html">Übersicht</a>
+        <a href="quellen.html">Quellen</a>
+        <a href="#main">Nach oben</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

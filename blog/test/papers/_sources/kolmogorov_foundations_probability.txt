@@ -1,0 +1,4432 @@
+NaN Kanapre 
+
+
+FOUNDATIONS 
+OF 
+THE 
+THEORY 
+
+
+OF 
+PROBABIBITY 
+
+
+
+
+
+
+
+
+FOUNDATIONS 
+
+
+OF THE 
+
+
+THEORY OF PROBABILITY 
+
+
+BY 
+
+
+A. N. KOLMOGOROV 
+
+
+TRANSLATION EDITED BY 
+NATHAN MORRISON 
+
+
+CHELSEA PUBLISHING COMPANY 
+NEW YORK 
+
+
+1950 
+
+
+COPYRIGHT 1950 BY 
+CHELSEA PUBLISHING COMPANY 
+
+
+PRINTED IN U.S.A. 
+
+
+EDITOR’S NOTE 
+
+
+In the preparation of this English translation of Professor 
+Kolmogorov’s fundamental work, the original German monograph 
+Grundbegriffe der Wahrscheinlichkeitrechnung which appeared 
+in the Ergebnisse Der Mathematik in 1933, and also a Russian 
+translation by G. M. Bavli published in 1936 have been used. 
+
+It is a pleasure to acknowledge the invaluable assistance of 
+two friends and former colleagues, Mrs. Ida Rhodes and Mr. 
+D. V. Varley, and also of my niece, Gizella Gross. 
+
+Thanks are also due to Mr. Roy Kuebler who made available 
+for comparison purposes his independent English translation of 
+the original German monograph. 
+
+
+Nathan Morrison 
+
+
+PREFACE 
+
+
+The purpose of this monograph is to give an axiomatic 
+foundation for the theory of probability. The author set himself 
+the task of putting in their natural place, among the general 
+notions of modern mathematics, the basic concepts of probability 
+theory—concepts which until recently were considered to be quite 
+peculiar. . 
+
+This task would have been a rather hopeless one before the 
+introduction of Lebesgue’s theories of measure and integration. 
+However, after Lebesgue’s publication of his investigations, the 
+analogies between measure of a set and probability of an event, 
+and between integral of a function and mathematical expectation 
+of a random variable, became apparent. These analogies allowed 
+of further extensions; thus, for example, various properties of 
+independent random variables were seen to be in complete analogy 
+with the corresponding properties of orthogonal functions. But 
+if probability theory was to be based on the above analogies, it 
+still was necessary to make the theories of measure and integra- 
+tion independent of the geometric elements which were in the 
+foreground with Lebesgue. This has been done by Fréchet. 
+
+While a conception of probability theory based on the above 
+general viewpoints has been current for some time among certain 
+mathematicians, there was lacking a complete exposition of the 
+whole system, free of extraneous complications. (Cf., however, 
+the book by Fréchet, [2] in the bibliography.) 
+
+I wish to call attention to those points of the present exposition 
+which are outside the above-mentioned range of ideas familiar to 
+the specialist. They are the following: Probability distributions 
+in infinite-dimensional spaces (Chapter III, § 4) ; differentiation 
+and integration of mathematical expectations with respect to a 
+parameter (Chapter IV, § 5) ; and especially the theory of condi- 
+tional probabilities and conditional expectations (Chapter V). 
+It should be emphasized that these new problems arose, of neces- 
+sity, from some perfectly concrete physical problems. 
+
+
+* Cf., e.g., the paper by M. Leontovich quoted in footnote 6 on p. 46; also the 
+joint paper by the author and M. Leontovich, Zur Statistik der kontinuier- 
+lichen Systeme und des zeitlichen Verlaufes der physikalischen Vorgdnge. 
+Phys. Jour. of the USSR, Vol. 3, 1983, pp. 35-63. 
+
+
+Vv 
+
+
+vi Preface 
+
+
+The sixth chapter contains a survey, without proofs, of some 
+results of A. Khinchine and the author of the limitations on the 
+applicability of the ordinary and of the strong law of large num- 
+bers. The bibliography contains some recent works which should 
+be of interest from the point of view of the foundations of the 
+subject. 
+
+I wish to express my warm thanks to Mr. Khinchine, who 
+has read carefully the whole manuscript and proposed several 
+improvements. 
+
+
+Kljasma near Moscow, Easter 1933. 
+
+
+A. Kolmogorov 
+
+
+CONTENTS 
+
+
+Page 
+EDITOR'S NOTE hiivd.c cogs eiees sieeve eos VE e Maes te eGo Add 
+PREFACE: ao o:0se65 6004. Gd a eG ea MEO ee wos awe Dk ee Vv 
+I, ELEMENTARY THEORY OF PROBABILITY 
+Sh AXIOMS! isedee hee Secs ets Os SU eee adie wees 2 
+§ 2. The relation to experimental data................... 3 
+§ 3. Notes on terminology............ ccc cee cece ene eees 5 
+§ 4. Immediate corollaries of the axioms; conditional proba- 
+bilities; Theorem of BayesS..........cc ec ce eee ecces 6 
+§5. Independence .......... ccc ccc eee tee eee eee ne ees 8 
+§6. Conditional probabilities as random variables; Markov 
+CHAINS 540 Se ee See 8 Re ee eet oe OE SS 12 
+II. INFINITE PROBABILITY FIELDS 
+§1. Axiom of Continuity........0.... 0... cece ee ees 14 
+§2. Borel fields of probability. ............... 00. cee eee 16 
+§ 3. Examples of infinite fields of probability............. 18 
+HI. RANDOM VARIABLES 
+§1. Probability functions ......... 0.0.0... cee cee eee eee 21 
+§ 2. Definition of random variables and of distribution func- 
+TIONS eek Arte ae ee RY ie ash cictg ees ee 22 
+§ 3. Multi-dimensional distribution functions.............. 24 
+§ 4. Probabilities in infinite-dimensional spaces............ 27 
+§5. Equivalent random variables; various kinds of converg- 
+
+
+ONCE Aira, Sadcacerte.teted eosin lgracts arctens alee asda is es ln Wa ees 33 
+
+
+IV. MATHEMATICAL EXPECTATIONS 
+
+
+§1. Abstract Lebesgue integrals ............0cc ce eec ees 37 
+§ 2. Absolute and conditional mathematical expectations.... 39 
+§ 3. The Tchebycheff inequality ........ 0... cc cc eee eee ees 42 
+§ 4. Some criteria for convergence....... ti avd a banavacteaetiie doa gta’ 43 
+§ 5. Differentiation and integration of mathematical expecta- 
+
+
+tions with respect to a parameter 
+
+
+vii 
+
+
+viii Contents 
+
+
+V. CONDITIONAL PROBABILITIES AND MATHEMATICAL 
+
+
+EXPECTATIONS 
+§ 1. Conditional probabilities ........... 0... cee ee ees 47 
+§2. Explanation of a Borel paradox.............000eeees 50 
+§ 8. Conditional probabilities with respect to a random vari- 
+£2112) (Se eR eo ee er 51 
+§ 4. Conditional mathematical expectations............... 52 
+
+
+VI. INDEPENDENCE; THE Law oF LARGE NUMBERS 
+
+
+§1. Independence ............. cece eee ee eee ee eens 57 
+§ 2. Independent random variables.................00000. 58 
+§ 3. The Law of Large Numbers............... 0.0 ee eaee 61 
+§ 4. Notes on the concept of mathematical expectation...... 64 
+§5. The Strong Law of Large Numbers; convergence of a 
+SCTICS: ace es tliciw ota tee awd ida heb 66 
+APPENDIX—Zero-or-one law in the theory of probability..... 69 
+
+
+BIBLIOGRAPHY .acccecs cede ea cw et te eee eee eee eee ees 71 
+
+
+Chapter I 
+
+
+ELEMENTARY THEORY OF PROBABILITY 
+
+
+We define as elementary theory of probability that part of 
+the theory in which we have to deal with probabilities of only a 
+finite number of events. The theorems which we derive here can 
+be applied also to the problems connected with an infinite number 
+of random events. However, when the latter are studied, essen- 
+tially new principles are used. Therefore the only axiom of the 
+mathematical theory of probability which deals particularly with 
+the case of an infinite number of random events is not introduced 
+until the beginning of Chapter II (Axiom VI). 
+
+The theory of probability, as a mathematical discipline, can 
+and should be developed from axioms in exactly the same way 
+as Geometry and Algebra. This means that after we have defined 
+the elements to be studied and their basic relations, and have 
+stated the axioms by which these relations are to be governed, 
+all further exposition must be based exclusively on these axioms, 
+independent of the usual concrete meaning of these elements and 
+their relations. j 
+
+In accordance with the above, in §1 the concept of a field of 
+probabilities is defined as a system of sets which satisfies certain 
+conditions. What the elements of this set represent is of no im- 
+portance in the purely mathematical development of the theory 
+of probability (cf. the introduction of basic geometric concepts 
+in the Foundations of Geometry by Hilbert, or the definitions of 
+groups, rings and fields in abstract algebra). 
+
+Every axiomatic (abstract) theory admits, as is well known, 
+of an unlimited number of concrete interpretations besides those 
+from which it was derived. Thus we find applications in fields of 
+science which have no relation to the concepts of random event 
+and of probability in the precise meaning of these words. 
+
+The postulational basis of the theory of probability can be 
+established by different methods in respect to the selection of 
+axioms as well as in the selection of basic concepts and relations. 
+However, if our aim is to pemene the utmost simplicity both in 
+
+
+2 I. Elementary Theory of Probability 
+
+
+the system of axioms and in the further development of the 
+theory, then the postulational concepts of a random event and 
+its probability seem the most suitable. There are other postula- 
+tional systems of the theory of probability, particularly those in 
+which the concept of probability is not treated as one of the basic 
+concepts, but is itself expressed by means of other concepts.! 
+However, in that case, the aim is different, namely, to tie up as 
+closely as possible the mathematical theory with the empirical 
+development of the theory of probability. 
+
+
+§ 1. Axioms? 
+
+
+Let % be a collection of elements ¢, y, £,..., which we shall call 
+elementary events, and } a set of subsets of E'; the elements of 
+the set $ will be called random events. 
+
+
+I. § is a field? of sets. 
+II. & contains the set E. 
+III. To each set A in § is assigned a non-negative real number 
+P(A). This number P(A) is called the probability of the event A. 
+IV. P(E) equals 1. 
+V. If A and B have no element in common, then 
+
+
+P(A+B) =P(A) +P(B) 
+
+
+A system of sets, $, together with a definite assignment of 
+numbers P(A), satisfying Axioms I-V, is called a field of prob- 
+ability. 
+
+Our system of Axioms I-V is consistent. This is proved by the 
+following example. Let E consist of the single element é and let $ 
+consist of E' and the null set 0. P(E) is then set equal to 1 and 
+P(0) equals 0. 
+
+
+* For example, R. von Mises[{1]and [2] and S. Bernstein [1]. 
+
+? The reader who wishes from the outset to give a concrete meaning to the 
+following axioms, is referred to § 2. 
+
+* Cf. HausporFr, Mengenlehre, 1927, p. 78. A system of sets is called a field 
+if the sum, product, and difference of two sets of the system also belong to the 
+same system. Every non-empty field contains the null set 0. Using Hausdorff’s 
+notation, we designate the product of A and B by AB; the sum by A+B in 
+the case where AB=0; and in the general case by A + B; the difference of 
+A and B by A-B. The set E-A, which is the complement of A, will be denoted 
+by A. We shall assume that the reader is familiar with the fundamental rules 
+of operations of sets and their sums, products, and differences. All subsets 
+of § will be designated by Latin capitals. 
+
+
+§ 2. The Relation to Experimental Data 3 
+
+
+Our system of axioms is not, however, complete, for in various 
+problems in the theory of probability different fields of proba- 
+bility have’ to be examined. 
+
+
+The Construction of Fields of Probability. The simplest fields 
+of probability are constructed as follows. We take an arbitrary 
+finite set F= {£,,&,..., 6} and an arbitrary set {,, p2,-- + Pe} 
+of non-negative numbers with the sum p, + p, +... +p, = 1. 
+% is taken as the set of all subsets in E’, and we put 
+
+
+P{é,, és se &i,} = Pi, + Pi, +: oe + Pin. 
+
+
+In such cases, 71, ~2,.:., p, are called the probabilities of the 
+elementary events &, &,..., & or simply elementary probabili- 
+ties. In this way are derived all possible finite fields of probability 
+in which % consists of the set of all subsets of E. (The field of 
+probability is called finite if the set E is finite.) For further 
+examples see Chap. II, § 3. 
+
+
+§ 2. The Relation to Experimental Data‘ 
+
+
+We apply the theory of probability to the actual world of 
+experiments in the following manner: 
+
+
+1) There is assumed a complex of conditions, €, which allows 
+of any number of repetitions. 
+
+
+2) We study a definite set of events which could take place as 
+a result of the establishment of the conditions G. In individual 
+cases where the conditions are realized, the events occur, gener- 
+ally, in different ways. Let E be the set of all possible variants 
+é,, &,... of the outcome of the given events. Some of these vari- 
+ants might in general not occur. We include in set E all the vari- 
+ants which we regard a priori as possible. 
+
+
+3) If the variant of the events which has actually occurred 
+
+
+‘The reader who is interested in the purely mathematical development of 
+the theory only, need not read this section, since the work following it is based 
+only upon the axioms in § 1 and makes no use of the present discussion. Here 
+we limit ourselves to a simple explanation of how the axioms of the theory of 
+probability arose and disregard the deep philosophical dissertations on the 
+concept of probability in the experimental world. In establishing the premises 
+necessary for the applicability of the theory of probability to the world of 
+he pee the author has used, in large measure, the work of R. v. Mises, 
+
+pp. 41-27. 
+
+
+4 I. Elementary Theory of Probability 
+
+
+upon realization of conditions G belongs to the set A (defined in 
+any way), then we say that the event A has taken place. 
+
+
+Example: Let the complex © of conditions be the tossing of a 
+coin two times. The set of events mentioned in Paragraph 2)con- 
+sists of the fact that at each toss either a head or tail may come up. 
+From this it follows that only four different variants (elementary 
+events) are possible, namely: HH, HT, TH, TT. If the “event A”’ 
+connotes the occurrence of a repetition, then it will consist of a 
+happening of either of the first or fourth of the four elementary 
+events. In this manner, every event may be regarded as a set of 
+elementary events. 
+
+
+4) Under certain conditions, which we shall not discuss here, 
+we may assume that to an event A which may or may not occur 
+under conditions G, is assigned a real number P(A) which has 
+the following characteristics: 
+
+
+(a) One can be practically certain that if the complex of con- 
+ditions S is repeated a large number of times, 7, then if m be the 
+number of occurrences of event A, the ratio m/n will differ very 
+slightly from P(A). 
+
+
+(b) If P(A) is very small, one can be practically certain that 
+when conditions S are realized only once, the event A would not 
+occur at all. 
+
+
+The Empirical Deduction of the Axioms. In general, one may, 
+assume that the system # of the observed events A, B, C,... to 
+which are assigned definite probabilities, form a field containing 
+as an element the set E (Axioms I, II, and the first part of 
+III, postulating the existence of probabilities). It is clear that 
+0<m/nS1 so that the second part of Axiom III is quite natural. 
+For the event E, m is always equal to n, so that it is natural to 
+postulate P(Z) =1 (Axiom IV). If, finally, A and B are non- 
+intersecting (incompatible), then m = m, + m, where m, m,, m2 
+are respectively the number of experiments in which the events 
+A + B, A, and B occur. From this it follows that 
+
+m m mm. 
+
+ie ere 
+It therefore seems appropriate to postulate that P(A + B) = 
+P(A) + P(B) (Axiom V). 
+
+
+§3. Notes on Terminology 5 
+
+
+Remark 1. If two separate statements are each practically 
+reliable, then we may say that simultaneously they are both reli- 
+able, although the degree of reliability is somewhat lowered in the 
+process. If, however, the number of such statements is very large, 
+then from the practical reliability of each, one cannot deduce any- 
+thing about the simultaneous correctness of all of them. Therefore 
+from the principle stated in (a) it does not follow that in a very 
+large number of series of n tests each, in each the ratio m/n will 
+differ only slightly from P(A). 
+
+Remark 2. To an impossible event (an empty set) corre- 
+sponds, in accordance with our axioms, the probability P(0) = 05, 
+but the converse is not true: P(A) = 0 does not imply the im- 
+possibility of A. When P(A) = 0, from principle (b) all we can 
+assert is that when the conditions © are realized but once, event 
+A is practically impossible. It does not at all assert, however, that 
+in a sufficiently long series of tests the event A will not occur. On 
+the other hand, one can deduce from the principle(a) merely that 
+when P(A) = 0 and n is very large, the ratio m/n will be very 
+small (it might, for example, be equal to 1/n). 
+
+
+§ 3. Notes on Terminology 
+
+
+We have defined the objects of our future study, random 
+events, as sets. However, in the theory of probability many set- 
+theoretic concepts are designated by other terms. We shall give 
+here a brief list of such concepts. 
+
+
+Theory of Sets Random Events 
+1. A and B do not intersect, 1. Events A and B are in- 
+ie, AB = 0. compatible. 
+2. AB...N=0. 2. Events A, B,..., N are 
+incompatible. 
+38. AB...N=X. 3. Event X is defined as the 
+
+
+simultaneous occurrence of 
+events A, B,...,N. 
+
+
+4, A+ B+...4N=X. 4. Event X is defined as the 
+occurrence of at least one of 
+the events A, B,..., N. 
+
+
+°Cf. § 4, Formula (3). 
+
+
+6 J. Elementary Theory of Probability 
+
+
+Theory of Sets 
+5. The complementary set 
+A. 
+
+
+6. A=0. 
+
+1A=E. 
+
+8. The system & of the sets 
+A,, A2,..., A, forms a de- 
+composition of the set E if 
+A,tA,+...+A,=E. 
+
+(This assumes that the 
+sets A; do not intersect,in 
+pairs.) 
+
+
+9. Bisasubset of A: BCA. 
+
+
+Random Events 
+
+
+5. The opposite event A 
+consisting of the non-occur- 
+ence of event A. 
+
+
+6. Event A is impossible. 
+7. Event A must occur. 
+
+
+8. Experiment Y consists of 
+determining which of the 
+events A,, A.,..., A, occurs. 
+We therefore call A, A.,..., 
+A, the possible results of ex- 
+periment YY. 
+
+
+9. From the occurrence of 
+event B follows the inevitable 
+occurrence of A. 
+
+
+§ 4. Immediate Corollaries of the Axioms; Conditional 
+
+
+Probabilities; Theorem of Bayes 
+
+
+From A + A = E and the Axioms IV and V it follows that 
+
+
+P(A) + P(A) =1 (1) 
+P(A) =1— P(A) . (2) 
+Since E = 0, then, in particular, 
+P(0)=0. (3) 
+If A, B,...,N are incompatible, then from Axiom V follows 
+
+
+the formula (the Addition Theorem) - 
+P(A+B+H+... + N)=P(A) + P(B)+...4+ P(N). (4) 
+
+
+If P(A) >0, then the quotient . 
+
+
+
+
+
+P,(B) = 448) (5) 
+
+
+P(A) 
+
+
+is defined to be the conditional probability of the event B under 
+
+
+the condition A. 
+
+
+From (5) it follows immediately that 
+
+
+§ 4. Immediate Corollaries of the Axioms 7 
+P(AB) =P(A)P,(B). (6) 
+And by induction we obtain the general formula (the Multi- 
+plication Theorem) 
+P(A, Ag... An) = P (Ay) Pa, (Ae) Paya, (Aa) --- Paras... dn- (An) (7) 
+The following theorems follow easily: 
+
+
+PAE) = 1, (9) 
+P,(B + C)= P,(B) + P,(C). (10) 
+
+
+Comparing formulae (8)—(10) with axioms III—V, we find that 
+
+the system % of sets together with the set function P,(B) (pro- 
+
+vided A is a fixed set), form a field of probability and therefore, 
+
+all the above general theorems concerning P(B) hold true for the 
+
+conditional probability P,(B) (provided the event A is fixed). 
+It is also easy to see that 
+
+
+P«(A)= 1. (11) 
+From (6) and the analogous formula 
+P (AB) = P(B) P3(A) 
+
+
+we obtain the important formula: 
+P,(A) = ae wel , 
+which contains, in essence, the Theorem of Bayes. 
+THE THEOREM ON TOTAL PROBABILITY: Let A, + A, +... + 
+A, = E (this assumes that the events A,, A2,..., A, are mutually 
+exclusive) and let X be arbitrary. Then 
+
+
+P(X) = P(A,) Pa,(X) + P(Ag) Pa, (X) + ++» + P(A,) Pa, (X).. (18) 
+Proof: 
+
+
+(12) 
+
+
+
+
+
+X=A,iX+AX4+...4+ AX; 
+using (4) we have 
+P(X) = P(A, X)+P(A,X)+...+ P(A, X) 
+and according to (6) we have at the same time 
+P(A,X) = P(A;) Pa, (X). 
+
+
+THE THEOREM OF BAYES: Let 4, + A,+...+A, =E and 
+X be arbitrary, then 
+P(A,) Pa (X) 
+
+
+pia PURIFY PUA Pas + = EPA aval 
+3, 
+
+
+i= 
+
+
+
+
+
+(14) 
+
+
+8 I. Elementary Theory of Probability 
+
+
+A,, Ao, ..., An are often called “hypotheses” and formula 
+(14) is considered as the probability Px(A;) of the hypothesis 
+A, after the occurrence of event X. [P(A;) then denotes the 
+a priori probability of A;.] 
+
+Proof: From (12) we have 
+P(A) Pai(X) | 
+
+
+Pr(A) = “Boy 
+
+
+To obtain the formula (14) it only remains to substitute for the 
+probability P(X) its value derived from (13) by applying the 
+theorem on total probability. 
+
+
+§ 5. Independence 
+
+
+The concept of mutual independence of two or more experi- 
+ments holds, in a certain sense, a central position in the theory of 
+probability. Indeed, as we have already seen, the theory of 
+probability can be regarded from the mathematical point of view 
+as a special application of the general theory of additive set func- 
+tions. One naturally asks, how did it happen that the theory of 
+probability developed into a large individual science possessing 
+its own methods? 
+
+In order to answer this question, we must point out the spe- 
+cialization undergone by general problems in the theory of addi- 
+tive set functions when they are proposed in the theory of 
+probability. 
+
+The fact that our additive set function P(A) is non-negative 
+and satisfies the condition P(#) = 1, does not in itself cause new 
+difficulties. Random variables (see Chap. III) from a mathe- 
+matical point of view represent merely functions measurable with 
+respect to P(A), while their mathematical expectations are 
+abstract Lebesgue integrals. (This analogy was explained fully 
+for the first time in the work of Fréchet*.) The mere introduction 
+of the above concepts, therefore, would not be sufficient to pro- 
+duce a basis for the development of a large new theory. 
+
+Historically, the independence of experiments and random 
+variables represents the very mathematical concept that has given 
+the theory of probability its peculiar stamp. The classical work 
+or LaPlace, Poisson, Tchebychev, Markov, Liapounov, Mises, and 
+
+
+* See Fréchet [1] and [2]. 
+
+
+§5. Independence 9 
+
+
+Bernstein is actually dedicated to the fundamental investigation 
+of series of independent random variables. Though the latest 
+dissertations (Markov, Bernstein and others) frequently fail to 
+assume complete independence, they nevertheless reveal the 
+necessity of introducing analogous, weaker, conditions, in order 
+to obtain sufficiently significant results (see in this chapter § 6, 
+Markov chains). 
+
+We thus see,in the concept of independence, at least the germ 
+of the peculiar type of problem in probability theory. In this 
+book, however, we shall not stress that fact, for here we are 
+interested mainly in the logical foundation for the specialized 
+investigations of the theory of probability. 
+
+In consequence, one of the most important problems in the 
+philosophy of the natural sciences is—in addition to the well- 
+known one regarding the essence of the concept of probability 
+itself—to make precise the premises which would make it possible 
+to regard any given real events as independent. This question, 
+however, is beyond the scope of this book. 
+
+
+Let us turn to the definition of independence. Given 7 experi- 
+ments A, YW, ..., WU, that is, 2 decompositions 
+E=A®4+AP4.--4 42 i=1,2,...,% 
+
+
+of the basic set EH. It is then possible to assign r = 1172. . .7, proba- 
+bilities (in the general case) 
+
+
+Portm...an = P(g Age. Age’) 0 
+
+
+which are entirely arbitrary except for the single condition’ that 
+
+
+> Pats...42 = 1 ” (1) 
+
+Wry Qzy seer Un 
+DEFINITION I. ” experiments YA, YW, ..., W~ are called 
+mutually independent, if for any q:, g2,..-, Qn the following 
+
+
+equation holds true: 
+
+
+P(AW AR... AM) = P(A) P(A®) 2. P(A) (2) 
+
+
+an 
+
+
+One may construct a field of probability with arbitrary probabilities sub- 
+ject only to the above-mentioned conditions, as follows: EF is composed of r 
+elements &g4...g,- Let the corresponding elementary probabilities be 
+Pad...q» and finally let A? be the set of all &,9,...9, for which 
+i= 4q- 
+
+
+10 I. Elementary Theory of Probability 
+
+
+Among the r equations in (2), there are only r-7,-7r2.-...-—7,+ 
+n—1 independent equations®. 
+
+THEOREM I. If m experiments U0, A, ..., WH are mutu- 
+ally independent, then any m of them (m<n), 2, UO, 2. ., Yim, 
+are also independent?. 
+
+In the case of independence we then have the equations: 
+
+P(AQ?Ag. -.. Age) = P(A?) P(4g?)...P(AGD) (8) 
+(all 7,, must be different.) 
+
+DEFINITION II. n events Ai, A.,...,A, are mutually indepen- 
+dent, if the decompositions (trials) 
+
+E=A,+ A, (k = 1,2,...,”) 
+are independent. 
+
+In this caser, = 7, =... = 7%, = 2,7 = 2"; therefore, of the 2” 
+equations in (2) only 2*-n-1 are independent. The necessary 
+and sufficient conditions for the independence of the events A,, A, 
+..., A, are the following 2" - »- 1 equations": 
+
+
+P(A;, Aj,..-Ai,) = P(A;) P(A;,)-. -P(Aj,), (4) 
+m—1,2,...,%, 
+1S4,<4<---<ysn. 
+
+
+All of these equations are mutually independent. 
+In the case n = 2 we obtain from (4) only one condition (2? -2- 
+
+
+® Actually, in the case of independence, one may choose arbitrarily only 
+rmitwnt...t+4, probabilities p = P(4) so as to comply with the n 
+conditions % 7 
+
+
+Therefore, in the general case, we have r—1 degrees of freedom, but in the 
+case of independence only m+7:+...+7,—n. 
+
+
+*To prove this it is sufficient to show that from the mutua] independence 
+of n decompositions follows the mutual independence of the first n-1. Let us 
+assume that the equations (2) hold. Then 
+
+
+P{AL ARs AC?) = 2P (4g) Ay Ay) 
+= P(Aq) P(Ay)... P(Ap") 2P (As,) = P(A?) P(A®)...P(Ag7'), 
+- Q.E.D. 
+
+
+* See S. N. Bernstein [1] pp. 47-57. However, the reader can easily prove 
+this himself (using mathematical induction). 
+
+
+§5. Independence 11 
+
+
+1 = 1) for the independence of two events A, and A,: 
+P(A,A2) = P(A,)P(A2). (5) 
+
+
+The system of equations (2) reduces itself,in this case, to three 
+equations, besides (5): 
+
+P(A,A,) = P(A,)P(A2) 
+
+P(A,A,) = P(A,)P(A2) 
+
+P(A, A.) = P(A,)P(A2) ’ 
+
+
+which obviously follow from (5).™ 
+It need hardly be remarked that from the independence of 
+the events A,, Ao,..., A, in pairs, i.e. from the relations 
+
+
+P(A.A;) = P(A.) P(A,) “# 
+
+
+it does not at all follow that when »>2 these events are inde- 
+pendent?*. (For that we need the existence of all equations (4).) 
+
+In introducing the concept of independence,no use was made 
+of conditional probability. Our aim has been to explain as clearly 
+as possible,in a purely mathematical manner, the meaning of this 
+concept. Its applications, however, generally depend upon the 
+properties of certain conditional probabilities. 
+
+If we assume that all probabilities P(A,“) are positive, then 
+from the equations (3) it follows* that 
+
+
+Pogts ain (ASD) = PAD) (6) 
+M1 % Gm-1 
+From the fact that formulas (6) hold, and from the Multiplica- 
+
+
+tion Theorem (Formula (7), § 4), follow the formulas (2). We 
+obtain, therefore, 
+
+
+THEOREM II: A necessary and sufficient condition for inde- 
+pendence of experiments AU, W2,... , UM in the case of posi- 
+
+
+* P(A, Ag) = P(Ay) — P(A, Ap) = P(A) — P(Ay) P(Ad) = PAY) {4 — PlAd)} 
+= P(A)) P(A,) , ete. 
+
+“This can be shown by the following simple example (S. N. Bernstein) : 
+Let set E' be composed of four elements é,, &, &,, &; the corresponding elemen- 
+tary probabilities p:, p2, ps, p, are each assumed to be % and 
+
+
+A={6,,6}, B={E, Es}, C= (8, &}. 
+It is easy to compute that 
+P(A) =P(B) =P(C) = %, 
+P(AB)=P(BC) =P(AC) =%=(%)’, 
+P(ABC)=% #(%)*. 
+*To prove it, one must keep in mind the definition of conditional proba- 
+
+
+bility (Formula (5), § 4) and substitute for the probabilities of products the 
+products of probabilities according to formula (3). 
+
+
+12 I. Elementary Theory of Probability 
+
+
+tive probabilities P(A‘) is that the conditional probability of 
+the results A, of experiments U® under the hypothesis that 
+several other tests A, 4, ... 4%) have had definite results 
+A AP AO psa Aw is equal to the absolute probability 
+P(A,). 
+
+On the basis of formulas (4) we can prove in an analogous 
+manner the following theorem: 
+
+THEOREM III. If all probabilities P(A;) are positive, then a 
+necessary and sufficient condition for mutual independence of 
+the events A,, A.,..., An is the satisfaction of the equations 
+
+
+Paz, Ai, +++ Ai (Ai) = P(A) (7) 
+for any pairwise different %,, 12, ... 5 Uy 1. 
+In the case nm = 2 the conditions (7) reduce to two equations: 
+P4, (Ay) = P(A), 
+P4,(A,) = P(A,). 
+It is easy to see that the first equation in (8) alone is a necessary 
+
+
+and sufficient condition for the independence of A, and A, pro- 
+vided P(A,) > 0. 
+
+
+(8) 
+
+
+§ 6. Conditional Probabilities as Random Variables, 
+Markov Chains 
+
+
+Let 2 be a decomposition of the fundamental set E: 
+E=A,+A,+...+A4A, 
+
+
+and x a real function of the elementary event é,which for every 
+set A, is equal to a corresponding constant a,. x is then called a 
+random variable, and the sum 
+
+
+E(2) = 2 agP (Aq) 
+
+
+is called the mathematical expectation of the variable x. The 
+theory of random variables will be developed in Chaps. III and IV. 
+We shall not limit ourselves there merely to those random vari- 
+ables which can assume only a finite number of different values. 
+A random variable which for every set A, assumes the value 
+Pa,,(B), we shall call the conditional probability of the event B 
+after the given experiment U and shall designate it by Py(B). Two 
+experiments 9“) and Y®) are independent if, and only if, 
+
+
+§ 6. Conditional Probabilities as Random Variables, Markov Chains 13 
+
+
+Py (A?) = P(A?) 9 = 1,2, 2.6) Tae 
+
+
+Given any decompositions (experiments) A, A, ..., Wo, we 
+we shall represent by 
+
+
+MOM... Yoo 
+the decomposition of set EF into the products 
+AgMAg® ... A? 
+Experiments %), 9), ..., & are mutually independent when 
+and only when 
+Poy) gras, . , e—) (A?) =P (A?) > 
+k and q being arbitrary™. 
+
+
+DEFINITION: The sequence WO, MW, ..., UM, ... forms 
+a Markov chain if for arbitrary n and q 
+
+
+Pagan gga)... ote - 1 (AZ") = Poyn 0 (Ay). 
+
+
+Thus, Markov chains form a natural generalization of se- 
+quences of mutually independent experiments. If we set 
+
+
+Paman (M2) = Pim (Ai) mon, 
+
+
+then the basic formula of the theory of Markov chains will assume 
+the form: 
+
+
+Pacan(*, 2) = 2 Param (#,™) Doman sm), kim<n. (1) 
+
+
+If we denote the matrix ||,.9,(m,m)|| by p(m, ), (1) can be 
+written as: 
+p(k,n) = p(kym) p(m,n) k<im<n. (2) 
+
+
+“The necessity of these conditions follows from Theorem II, § 5; that they 
+are also sufficient follows immediately from the Multiplication Theorem 
+(Formula (7) of § 4). 
+
+* For further development of the theory of Markov chains, see R. v. Mises 
+[1], §16, and B. Hostinsky, Méthodes générales du calcul des probabilités, 
+“Mem. Sci. Math.” V. 52, Paris 1981. 
+
+
+Chapter II 
+
+
+INFINITE PROBABILITY FIELDS 
+§ 1. Axiom of Continuity 
+We denote by D An as is customary, the product of the sets 
+A, (whether finite or infinite in number) and their sum by G4,,. 
+Only in the case of disjoint sets A,, is the form >'A,, used instead 
+of GAy. Consequently, " 
+GAn = A, + Ay ina 
+aAn SA; Ay, 
+DAy = Ay Ag>-, 
+In all future investigations, we shall assume that besides Axioms 
+I-V, still another holds true: 
+VI. For a decreasing sequence of events 
+A, 2A, D--- DA, >>: (1) 
+of %, for which 
+DA,=0 , (2) 
+the following equation holds: 
+lim P(A,) = 0. n -> co (3) 
+
+
+In the future we shall designate by probability field only a 
+field of probability as outlined in the first chapter, which also 
+satisfies Axiom VI. The fields of probability as defined in the first 
+chapter without Axiom VI might be called generalized fields of 
+probability. 
+
+If the system % of sets is finite, Axiom VI follows from Axioms 
+I-V. For actually, in that case there exist only a finite number 
+of different sets in the sequence (1). Let A; be the smallest 
+among them, then all sets Ay, coincide with A, and we obtain then 
+
+
+14 
+
+
+§1. Axiom of Continuity 15 
+Ay = Atip = D4, = 0, 
+limP (A,) = P(o) =0. 
+
+
+All examples of finite fields of probability, in the first chapter, 
+satisfy, therefore, Axiom VI. The system of Axioms I - VI then 
+proves to be consistent and incomplete. 
+
+
+For infinite fields, on the other hand, the Axiom of Continuity, 
+VI, proved to be independent of Axioms I - V. Since the new axiom 
+is essential for infinite fields of probability only, it is almost im- 
+possible to elucidate its empirical meaning, as has been done, for 
+example, in the case of Axioms I- V in § 2 of the first chapter. 
+For, in describing any observable random process we can obtain 
+only finite fields of probability. Infinite fields of probability occur 
+only as idealized models of real random processes. We limit our- 
+selves, arbitrarily, to only those models which satisfy Axiom VI. 
+This limitation has been found expedient in researches of the 
+most diverse sort. 
+
+
+GENERALIZED ADDITION THEOREM: If A,, Az,...,A,,... and 
+A belong to %, then from ‘ 
+A=A, (4) 
+n 
+follows the equation 
+P(A) = D'P(A,). (5) 
+Proof: Let 
+f R,=DdAn- 
+m>n 
+Then, obviously D(R,) = 0, 
+
+
+and, therefore, according to Axiom VI 
+lim P(R,) =0 noo. (6) 
+On the other hand, by the addition theorem 
+P(A) = P(A.) + P(A) +...+P(An) +P(R,). (7) 
+From (6) and (7) we immediately obtain (5). 
+
+
+We have shown, then, that the probability P(A) is a com- 
+pletely additive set function on %. Conversely, Axioms V and VI 
+hold true for every completely additive set function defined on 
+
+
+16 II. Infinite Probability Fields 
+
+
+any field %.* We can, therefore, define the concept of a field of 
+probability in the following way: Let E be an arbitrary set, § a 
+field of subsets of E, containing E, and P(A) a non-negative com- 
+pletely additive set function defined on %; the field % together 
+with the set function P(A) forms a field of probability. 
+
+
+A COVERING THEOREM: If A, Ai, Az,...,An,... belong to § 
+and 
+ACGA, » (8) 
+then 
+P(A) = > P(A,). (9) 
+Proof: : 
+
+
+A = AG(Ay) = AA, + A(Ay — 4p 4,) + A(Ag — Ag — AA) + 
+P(A) = P(AA,) + P{A(A, — A,A,)} + «++ S&S P(A,) + P(A) + +>. 
+
+
+§ 2. Borel Fields of Probability 
+
+
+The field $ is called a Borel field, if all countable sums>,4n 
+of the sets A, from % belong to %. Borel fields are also called com- 
+pletely additive systems of sets. From the formula 
+
+
+© Ay = Ay + (Ay — AA) + (4g — AA, — AZ Ai) + ::- (1) 
+we can deduce that a Borel field contains also all the sums 6 A, 
+n 
+
+
+composed of a countable number of sets A, belonging to it. From 
+the formula 
+
+
+DA, =E-—GA, (2) 
+
+
+the same can be said for the product of sets. 
+
+A field of probability is a Borel field of probability if the 
+corresponding field % is a Borel field. Only in the case of Borel 
+fields of probability do we obtain full freedom of action, without 
+danger of the occurrence of events having no probability. We 
+shall now prove that we may limit ourselves to the investigation 
+of Borel fields of probability. This will follow from the so-called 
+extension theorem, to which we shall now turn. 
+
+Given a field of probability (%, P). As is known’, there exists 
+a smallest Borel field B} containing %. And we have the 
+
+
+* See, for example, O. NIKopYM, Sur une généralisation des intégrales de 
+M. J. Radon, Fund. Math. v. 15, 1930, p. 136. 
+
+
+* HausporrFr, Mengenlehre, 1927, p. 85. 
+
+
+§ 2. Borel Fields of Probability 17 
+
+
+EXTENSION THEOREM: It is always possible to extend a non- 
+negative completely additive set function P(A), defined in %, 
+to all sets of BY} without losing either of its properties (non- 
+negativeness and complete additivity) and this can be done in 
+only one way. 
+
+The extended field B& forms with the extended set func- 
+tion P(A) a field of probability (B%, P). This field of probability 
+(BY, P) we shall call the Borel extension of the field (3, P). 
+
+The proof of this theorem, which belongs to the theory of 
+additive set functions and which sometimes appears in other 
+forms, can be given as follows: 
+
+Let A be any subset of F; we shall denote by P*(A) the lower 
+limit of the sums 
+
+
+>P{An) 
+for all coverings 
+Ac GA, 
+
+
+of the set A by a finite or countable number of sets A, of %. It is 
+easy to prove that P*(A) is then an outer measure in the 
+Carathéodory sense?. In accordance with the Covering Theorem 
+(§ 1), P*(A) coincides with P(A) for all sets of %. It can be fur- 
+ther shown that all sets of § are measurable in the Carathéodory 
+sense. Since all measurable sets form a Borel field, all sets of BY 
+are consequently measurable. The set function P*(A) is, there- 
+fore, completely additive on BY, and on BY} we may set 
+
+
+P(A) = P*(A). 
+
+
+We have thus shown the existence of the extension. The unique- 
+ness of this extension follows immediately from the minimal 
+property of the field BY. 
+
+Remark: Even if the sets (events) A of § can be interpreted 
+as actual and (perhaps only approximately) observable events, 
+it does not, of course, follow from this that the sets of the extended 
+field BY reasonably admit of such an interpretation. 
+
+Thus there is the possibility that while a field of probability 
+(%, P) may be regarded as the image (idealized, however) of 
+
+
+> CARATHEODORY, Vorlesungen iiber reelle Funktionen, pp.237-258. (New 
+York, Chelsea Publishing Company). 
+
+
+18 II. Infinite Probability Fields 
+
+
+actual random events, the extended field of probability (BY, P) 
+will still remain merely a mathematical structure. 
+
+Thus sets of B§ are generally merely ideal events to which 
+nothing corresponds in the outside world. However, if reasoning 
+which utilizes the probabilities of such ideal events leads us to a 
+determination of the probability of an actual event of %, then, 
+from an empirical point of view also, this determination will 
+automatically fail to be contradictory. 
+
+
+§ 3. Examples of Infinite Fields of Probability 
+
+
+I. In §1 of the first chapter, we have constructed various 
+finite probability fields. 
+
+Let now E = {&,, &,..., én,...} be a countable set, and let $ 
+coincide with the aggregate of the subsets of E. 
+
+All possible probability fields with such an aggregate are 
+obtained in the following manner: 
+
+We take a sequence of non-negative numbers p,, such that 
+
+
+Dit pet... + pat...-=1 
+and for each set A put 
+P(A) = Sh. 
+
+
+where the summation >’ extends to all the indices n for which 
+é, belongs to A. These fields of probability are obviously Borel 
+fields. 
+
+II. In this example, we shall assume that E' represents the 
+real number axis. At first, let % be formed of all possible finite 
+sums of half-open intervals [a; b) = {as&<} (taking into 
+consideration not only the proper intervals, with finite a and b, 
+but also the improper intervals [- ~©; a), [a; + oo) and [-a0; 
++oo)). is then a field. By means of the extension theorem, how- 
+ever, each field of probability on $ can be extended to a similar 
+field on BY. The system of sets BF is, therefore, in our case 
+nothing but the system of all Borel point sets on a line. Let us 
+turn now to the following case. 
+
+III. Again suppose E to be the real number axis, while % is 
+composed of all Borel point sets of this line. In order to construct 
+a field of prcbability with the given field %, it is sufficient to 
+define an arbitrary non-negative completely additive set-function 
+
+
+§ 8. Examples of Infinite Fields of Probability 19 
+
+
+P(A) on % which satisfies the condition P(E) =1. As is well 
+known:, such a function is uniquely determined by its values 
+
+
+P[-co; x) = F(x) (1) 
+
+
+for the special intervals [-0o; x). The function F'(x) is called the 
+distribution function of & Further on (Chap. III, § 2) we shall 
+shown that F(x) is non-decreasing, continuous on the left, and 
+has the following limiting values: 
+
+lim F(x) = F(—oc) = 0, lim F(x) = F(+00) =1 . (2) 
+
+t—-> -00 z—-> +00 
+
+Conversely, if a given function F(z) satisfies these conditions, 
+then it always determines a non-negative completely additive set- 
+function P(A) for which P(E) = 14. 
+
+IV. Let us now consider the basic set FE’ as an n-dimensional 
+Euclidian space R’, i.e., the set of all ordered n-tuples é = {2%1, x2, 
+...,%n} of real numbers. Let $ consist, in this case, of all Borel 
+point-sets® of the space R*. On the basis of reasoning analogous 
+to that used in Example II, we need not investigate narrower sys- 
+tems of sets, for example the systems of n-dimensional] intervals. 
+
+The role of probability function P(A) will be played here, 
+as always, by any non-negative and completely additive set- 
+function defined on $ and satisfying the condition P(E) = 1. Such 
+a set-function is determined uniquely if we assign its values 
+
+
+P (Lg,as...¢n) = F (ay, dg, -- +> Gn) (3) 
+
+
+for the special sets L,,4,...c, , Where Lyc,...a, Yrepresents the 
+aggregate of all é for which 7;< a; ({=1,2,..., 7). 
+
+For our function F (a, a2,...,@,) we may choose any function 
+which for each variable is non-decreasing and continuous on the 
+left, and which satisfies the following conditions: 
+
+lim F(a, Agyraes an) ar) F(a, veep Ait, ~C, Ait eeey a) = 0, 
+a— —oo _ 
+4=1,2,...,%” (4) 
+lim F(ay, az, we +) Qn) = F(+00, +o, eee +00) = 1. 
+
+
+@,; —> +00, ay —> +00,..., on —> +00 
+F'(a,, d2,...,@n,) is called the distribution function of the vari- 
+ables x1, %2,..., Ln 
+
+
+*Cf., for example, LesEscur, Lecons sur V'intégration, 1928, p. 152-156. 
+*See the previous note. 
+
+
+"For a definition of Borel sets in R* see HAUsSpoRFF, Mengenlehre, 1927, 
+pp. 177-181. 
+
+
+20 II. Infinite Probability Fields 
+
+
+The investigation of fields of probability of the above type 
+is sufficient for all classical problems in the theory of probability®. 
+In particular, a probability function in R* can be defined thus: 
+
+We take any non-negative point function f (21, 2, ..., 2n) 
+defined in R*, such that 
+
+
++00 +0 + 
+
+
+i [oe feet vtdda dey dmg 
+
+
+and set 
+PA) ff cee f He episccpxe) aadayscdxy 5. (6) 
+A 
+f(a, 22, ..., L,) is, in this case, the probability density at the 
+point (2,, %2,...,2,) (ef. Chap. ITI, § 2). 
+
+
+Another type of probability function in R* is obtained in the 
+following manner: Let {é,} be a sequence of points of R*, and 
+let {p;} be a sequence of non-negative real numbers, such that 
+
+p; = 1; we then set, as we did in Example I, 
+
+P(A) =D’ pi 
+where the summation >” extends over all indices i for which é 
+belongs to A. The two types of probability functions in R* men- 
+tioned here do not exhaust all possibilities, but are usually con- 
+sidered sufficient for applications of the theory of probability. 
+Nevertheless, we can imagine problems of interest for applica- 
+tions outside of this classical region in which elementary events 
+are defined by means of an infinite number of coordinates. The 
+corresponding fields of probability we shall study more closely 
+
+
+after introducing several concepts needed for this purpose. (Cf. 
+Chap. III, § 3). 
+
+
+*Cf., for example, R. v. Mises [1], pp. 13-19. Here the existence of proba- 
+ee “all practically possible” sets of an n-dimensional space is 
+required. 
+
+
+Chapter III 
+
+
+RANDOM VARIABLES 
+
+
+§ 1. Probability Functions 
+
+
+Given a mapping of the set E into a set E”’ consisting of any 
+type of elements, i.e., a single-valued function «u(é) defined on EF, 
+whose values belong to E’. To each subset A’ of E’ we shall put 
+into correspondence, as its pre-image in E, the set u-!(A’) of all 
+elements of E which map onto elements of A’. Let %™ be the 
+system of all subsets A’ of E’, whose pre-images belong to the 
+field %. }™ will then also be a field. If § happens to be a Borel 
+field, the same will be true of #“). We now set 
+
+
+P(A’) =P {u-¥(A)}. (1) 
+
+
+Since this set-function P™, defined on ¥™, satisfies with respect 
+to the field %™ all of our Axioms I - VI, it represents a proba- 
+bility function on %“™. Before turning to the proof of all the facts 
+just stated, we shall formulate the following definition. 
+
+DEFINITION. Given a single-valued function «u(é) of a random 
+event é. The function P(A’), defined by (1), is then called the 
+probability function of u. 
+
+Remark 1: In studying fields of probability ($, P), we call the 
+function P(A) simply the probability function, but P(A’) is 
+called the probability function of u. In the case u(é) = é, P(A’) 
+coincides with P(A). 
+
+Remark 2: The event u(A’) consists of the fact that u(é) 
+belongs to A’. Therefore, P(A’) is the probability of u(é) c A’. 
+
+We still have to prove the above-mentioned properties of ¥™ 
+and P“), They follow, however, from a single fact, namely: 
+
+LEMMA. The sum, product, and difference of any pre-image 
+sets u-1(A’) are the pre-images of the corresponding sums, prod- 
+ucts, and differences of the original sets A’. 
+
+The proof of this lemma is left for the reader. 
+
+
+21 
+
+
+22 III. Random Variables 
+
+
+Let A’ and B’ be two sets of ¥™. Their pre-images A and B 
+belong then to #. Since % is a field, the sets AB, A + B, and A-B 
+also belong to }; but these sets are the pre-images of the sets A’B’, 
+A’ + B’, and A’ —B’, which thus belong to ¥™. This proves that 
+%™ is a field. In the same manner it can be shown that if } is a 
+Borel field, so is }™. 
+
+Furthermore, it is clear that 
+
+P(E’) = P{u-3(E)} = P(E) =1. 
+That P“™ is always non-negative, is self-evident. It remains only 
+to be shown, therefore, that P™ is completely additive (cf. the 
+end of § 1, Chap. II). 
+
+Let us assume that the sets A’,, and therefore their pre-images 
+u*(A’,), are disjoint. It follows that 
+
+
+PO (S) Ay) = P{u-t(S As)} = PS u-(s)} 
+= TP {ut(As)} =F PAs) 
+
+
+which proves the complete additivity of P™. 
+
+In conclusion let us also note the following. Let u,(é) be a 
+function mapping EF on E’, and u,(é’) be another function, map- 
+ping E’ on E”. The product function u.u,(¢) maps E on E”. We 
+shall now study the probability functions P“(A’) and P(A”) 
+for the functions u,(é) and u(é) = uu, (€). It is easy to show 
+that these two probability functions are connected by the follow- 
+ing relation: 
+
+PM) (A”) = PO {ust (A”)} (2) 
+
+
+§ 2. Definition of Random Variables and of 
+Distribution Functions 
+
+
+DEFINITION. A real single-valued function x(é), defined on the 
+basic set EZ, is called a random variable if for each choice of a real 
+number a the set {x < a} of all é for which the inequality x<a 
+holds true, belongs to the system of sets >. 
+
+This function x(é) maps the basic set E' into the set RF’ of all 
+real numbers. This function determines, as in § 1, a field }“™ of 
+subsets of the set R?. We may formulate our definition of random 
+variable in this manner: A real function z(€) is a random variable 
+if and only if #“) contains every interval of the form (—oo; a). 
+
+
+§ 2. Definition of Random Variables and of Distribution Functions 23 
+
+
+Since ¥“) is a field, then along with the intervals (—oo; a) it 
+contains all possible finite sums of half-open intervals [a; b). If 
+our field of probability is a Borel field, then § and } are Borel 
+fields; therefore, in this case }) contains all Borel sets of R'. 
+
+
+The probability function of a random variable we shall denote 
+in the future by P“) (A’). It is defined for all sets of the field }™. 
+In particular, for the most important case, the Borel field of 
+probability, P“ is defined for all Borel sets of R’. 
+
+
+DEFINITION. The function 
+F(a) = P@(-0o0,a) =P {x<a}, 
+
+
+where —oo and + co are allowable values of a, is called the distri- 
+bution function of the random variable x. 
+
+
+From the definition it follows at once that 
+F®(-00) = 0, F® (+0) =1 . (1) 
+
+
+The probability of the realization of both inequalities a=x<b, 
+is obviously given by the formula 
+
+
+P{x c [a; b)} = F(b) — F® (a) (2) 
+From this, we have, for a< b, 
+F® (a) =F (b) 
+
+
+which means that F'*) (a) is a non-decreasing function. Now let 
+<a. ...<O,<...< 6; then 
+
+
+D(x [an; Y}= 0 
+Therefore, in accordance with the continuity axiom, 
+F@)(b) — F® (a,) = P{x € [ay, b)} 
+approaches zero asn->+ oo. From this it is clear that F(a) is 
+continuous on the left. 
+In an analogous way we can prove the formulae: 
+lim F™ (a) = F@ (-c) =0, a-+—oo, (3) 
+lim F(a) = F( +00) =1, a—-+oo- (4) 
+If the field of probability (%, P) is a Borel field, the values of 
+
+
+the probability function P“)(A) for all Borel sets A of FR are 
+uniquely determined by knowledge of the distribution function 
+
+
+24 III. Random Variables 
+
+
+F© (a) (cf. § 3, III in Chap. II). Since our main interest lies in 
+these values of P“)(A), the distribution function plays a most 
+significant role in all our future work. 
+
+
+If the distribution function F“™ (a) is differentiable, then we 
+call its derivative with respect to a, 
+
+
+f(a) = Fa) » 
+the probability density of x at the point a. 
+If also F™ (a) = if f(a) da for each a, then we may ex- 
+
+
+press the probability function P‘)(A) for each Borel set A in 
+terms of f(a) in the following manner: 
+
+
+P@)(4) = [ f(a) da. (5) 
+A 
+In this case we call the distribution of x continuous. And in the 
+
+
+general case, we write, analogously 
+P(A) = faFe(a). (6) 
+A 
+All the concepts just introduced are capable of generalization 
+for conditional probabilities. The set function 
+P(A) = Pa(x c A) 
+is the conditional probability function of x under hypothesis B. 
+The non-decreasing function 
+F§ (a) = Pa(x < a) 
+is the corresponding distribution function, and, finally (in the 
+case where F¥’(a2) is differentiable) 
+d 
+(9 (a) = J F#(a) 
+
+
+is the conditional probability density of z at the point a under 
+hypothesis B. 
+
+
+§ 3. Multi-dimensional Distribution Functions 
+
+
+Let now ” random variables x,, 22,..., %, be given. The point 
+x= (X1, t,..., 2.) of the n-dimensional space R* is a function 
+of the elementary event & Therefore, according to the general 
+rules in §1, we have a field Glee Tay vee En) consisting of 
+
+
+§ 3. Multi-dimensional Distribution Functions 25 
+
+
+subsets of space R* and a probability function P@»>*)---»7)(4’) 
+defined on $’. This probability function is called the n-dimensional 
+probability function of the random va: iables x1, %2,..., Ln 
+
+As follows directly from the definition of a random variable, 
+the field } contains, for each choice of i and a, (i= 1,2,...,n), 
+the set of all points in R* for which x, < a,. Therefore %’ also con- 
+tains the intersection of the above sets, i.e. the set Lug... ap 
+of all points of R" for which all the inequalities x, < a, hold 
+(«= 1,2,...,n)%. 
+
+If we now denote as the n-dimensional half-open interval 
+
+
+[@1, @o,..-, An; Di, b2,..., Dn) , 
+
+
+the set of all points in R*, for which a,=2;,< b,, then we see at 
+once that each such interval belongs to the field %’ since 
+[a,, dg, .++, Gy; By, By, ..-5 Dn) 
+
+== Dy, yscte — Leahy sc. be — Ldjanbs nbn — 7°" — Lb.be ss. bn-ien® 
+
+The Borel extension of the system of all n-dimensional half- 
+open intervals consists of all Borel sets in R*. From this it follows 
+that in the case of a Borel field of probability,the field § contains 
+all the Borel sets in the space R*. 
+
+THEOREM : In the case of a Borel field of probability each Borel 
+function x = f (21, %2,..., tn) of a finite number of random vari- 
+ables x1, X2,..., 4, is also a random variable. 
+
+All we need to prove this is to point out that the set of all 
+points (x1, %2,..-,2n) in R* for which x = f(2,, X2,...,2n) <a, 
+is a Borel set. In particular, all finite sums and products of random 
+variables are also random variables. : 
+
+DEFINITION: The function 
+
+
+Fr@u 1, +++) Zn) (@y, dy, - ++, Ay) = Pls» ta, +++) en) fae an) 
+is called the n-dimensional distribution. function of the random 
+variables x1, %2,..., Xn 
+
+
+As in the one-dimensional case, we prove that the n-dimensional 
+distribution function F'*»%)--»7)(q,@a,,...,@,) is non-decreas- 
+ing and continuous on the left in each variable. In analogy to 
+equations (3) and (4) in § 2, we here have 
+
+
++The a¢ may also assume the infinite values +” . 
+
+
+26 III. Random Variables 
+
+
+sl Eee, Gg, +++, Gq) = Flay, ..-, Qj 1, —00, Ay, ---,@,) =0, (7) 
+lim F(a, ay, ..., @,) = F(-00, +00, ..., 4-00) = 1. (8) 
+@, —> +00, a, > +00.,.., dn > +O 
+
+
+The distribution function F:™-..2.) gives directly the values 
+of P28 ----2*) only for the special setsL, ,,...4,- If our field, how- 
+ever, is a Borel field, then? P@.2:. ---. 7") ig uniquely determined for 
+
+
+all Borel sets in R by knowledge of the distribution function 
+Ft, 2%, veep Tn) 
+
+
+If there exists the derivative 
+, Ca Zi, 72, -40. In 
+Kay dg. -- ++ On) = S555 oa, F ) (ay, dy,» ++, Gp) 
+
+
+we call this derivative the n-dimensional probability density of 
+
+
+the random variables x,, %,..., #, at the point ai, d2,..., Qn. If 
+also for every point (a,, d2,..., @,) 
+
+ay a, an 
+FG tee) (A) ag... dy) =| iE : [Hay ay, - ++, Qn) da, day... day, 
+then the distribution of 2,, 2%, ..., 2, is called continuous. For 
+
+
+every Borel set Ac R*, we have the equality 
+Plz, 22.---4 0) (A) =f. [Hay as, vie, Qy)da,da,...da,. (9) 
+4 
+
+
+In closing this section we shall make one more remark about 
+the relationships between the various probability functions and 
+distribution functions. 
+
+
+Given the substitution 
+oe 
+tye tay veer Onl y 
+and let +,denote the transformation 
+m= (k = 1,2,...,”) 
+of space R* into itself. It is then obvious that 
+PlTins Fine = Zim) (4) — Plans tay +p tm fy ot (A)}. (10) 
+
+
+Now let x’ = p,(x) be the “projection” of the space R* on the 
+space R* (k<n), so that the point (x, x2,..., 2,) is mapped onto 
+the point (%,, %2,...,%,). Then, as a result of Formula (2) in § 1, 
+
+
+* Cf. § 3, IV in the Second Chapter. 
+
+
+§ 4. Probabilities in Infinite-dimensional Spaces 27 
+
+
+Plz. 2, ++» £k) (A) = Pin, 7, “+1 E0) fH71( A) ; (11) 
+
+
+For the corresponding distribution functions, we obtain from 
+(10) and (11) the equations: 
+
+
+Fein Mi Fie) Qe as.) oo oy Qj) = FEU tt) (ay, dg... Qn), (12) 
+
+
+F@.m, st) (ay, Qo, weer QA) = Fite. t (gy, ee Ayy +00, .., +00).(13) 
+
+
+§ 4. Probabilities in Infinite-dimensional Spaces 
+
+
+In § 3 of the second chapter we have seen how to construct 
+various fields of probability common in the theory of probability. 
+We can imagine, however, interesting problems in which the 
+elementary events are defined by means of an infinite number 
+of coordinates. Let us take a set M of indices » (indexing set) of 
+arbitrary cardinality m. The totality of all systems 
+
+
+f= {xu} 
+of real numbers x, , where » runs through the entire set M, we 
+shall call the space R” (in order to define an element é in space 
+R™, we must put each element » in set M in correspondence with 
+a real number x, or, equivalently, assign a real single-valued 
+function x, of the element p, defined on M)°. If the set M consists 
+of the first m natural numbers 1, 2,...,7, then R™” is the ordinary 
+n-dimensional space FR”. If we choose for the set M all real num- 
+bers R?, then the corresponding space R” = R®' will consist of 
+all real functions 
+
+é(p) =%Xy 
+of the real variable xz. 
+
+We now take the set R” (with an arbitrary set M) as the 
+basic set E. Let § = {x,} be an element in E; we shall denote by 
+Paris. a,(€) the point (%p,)%s)++-»% 4) Of the n-dimensional 
+space R. A subset A of FE we shall call a cylinder set if it can 
+be represented in the form 
+
+
+A= Bias Dele pp, (A!) 
+
+
+where A’ is a subset of R*. The class of all cylinder sets coincides, 
+therefore, with the class of all sets which can be defined by rela- 
+tions of the form 
+
+
+* Cf. HausporFF, Mengenlehre, 1927, p. 23. 
+
+
+28 III. Random Variables 
+
+
+lagi hae IE OF (1) 
+
+
+In order to determine an arbitrary cylinder set Py,u,...4,(4’) by 
+such a relation, we need only take as f a function which equals 0 
+on A’, but outside of A’ equals unity. 
+
+A cylinder set is a Borel cylinder set if the corresponding set 
+A’ is a Borel set. All Borel cylinder sets of the space R™ forma 
+field, which we shall henceforth denote by %™+. 
+
+
+The Borel extension of the field }” we shall denote, as always, 
+by BY”. Sets in BY” we shall call Borel sets of the space R™. 
+
+
+Later on we shall give a method of constructing and operating 
+with probability functions on $”, and consequently, by means of 
+the Extension Theorem, on BF” also. We obtain in this manner 
+fields of probability sufficient for all purposes in the case that the 
+set M is denumerable. We can therefore handle all questions 
+touching upon a denumerable sequence of random variables. But 
+if M is not denumerable, many simple and interesting subsets of 
+R™ remain outside of B§”. For example, the set of all elements é 
+for which x, remains smaller than a fixed constant for all 
+indices », does not belong to the system BY” if the set M is 
+non-denumerable. 
+
+It is therefore desirable to try whenever possible to put each 
+problem in such a form that the space of all elementary events 
+has only a denumerable set of coordinates. 
+
+
+Let a probability function P(A) be defined on }”“. We may 
+then regard every coordinate x, of the elementary event ¢ 
+as a random variable. In consequence, every finite group 
+(Xu,»%,»+++1%y,) Of these coordinates has an n-dimensional 
+probability function P,.,,...2,(4) and a corresponding distribu- 
+
+
+‘From the above it follows that Borel cylinder sets are Borel sets definable 
+by relations of type (1). Now let A and B be two Borel cylinder sets defined 
+by the relations 
+
+
+T(¥ p> Xpge oer Xun) =O, E(%Ay» Faye veer Ma) = Oe 
+Then we can define the sets A + B, AB, and A-B respectively by the relations 
+f-g=o0, 
+P + e =0, 
+P+ (ge) =0, 
+
+
+where w(x) =0 for x +0 and (0) =1 If f and g are Borel functions, so 
+also are f.g, fi+g? and f?+ w(g); therefore, A + B, AB and‘A—B are Borel 
+cylinder sets. Thus we have shown that the system of sets 3” is a field. 
+
+
+§ 4, Probabilities in Infinite-dimensional Spaces 29 
+
+
+tion function = Fyu,...un(@i, G2, »- +, An). It is obvious that for 
+every Borel cylinder set 
+
+
+A = Pros sunlA) 5 
+
+
+the following equation holds: 
+P (A) = Pane seein (A’) ’ 
+
+
+where A’ is a Borel set of R*. In this manner, the probability 
+function P is uniquely determined on the field %” of all cylinder sets 
+by means of the values of all finite probability functions Py,y,... un 
+for all Borel sets of the corresponding spaces R”. However, for 
+Borel sets, the values of the probability functions P,,,....2, are 
+uniquely determined by means of the corresponding distribution 
+functions. We have thus proved the following theorem: 
+
+
+The set of all finite-dimensional distribution functions 
+Fyiu,...nn Uniquely determines the probability function P(A) for 
+all sets in %™”. If P(A) is defined on %™, then (according to the 
+extension theorem) it is uniquely determined on BR” by the 
+values of the distribution functions Fu... un - 
+
+We may now ask the following. Under what conditions does a 
+system of distribution functions F,.,,...%, given @ prior? define 
+a field of probability on %¥” (and, consequently, on BY”) ? 
+
+We must first note that every distribution function Fy... us 
+must satisfy the conditions given in § 8, III of the second chap- 
+ter; indeed this is contained in the very concept of distribution 
+function. Besides, as a result of formulas (13) and (14) in § 2, 
+
+
+we have also the following relations: 
+
+
+Fy, ts, mi (Fin a,, sey ai,) = Prjpa.cpn(@> ag peers ap) , (2) 
+
+
+| en Ce a, Rue oep a) =Fryiuy..cun (45 Ag, veep apy +00, aeey +o) , (3) 
+1, 2, ..., m\ . : ‘ 
+where k < 1 and 6 i 5) is an arbitrary permutation. 
+. ’ 2? Lend 2 Ty 
+
+These necessary conditions prove also to be sufficient, as will 
+
+
+appear from the following theorem. 
+
+FUNDAMENTAL THEOREM: Every system of distribution func- 
+tions Fyiusy...un, Satisfying the conditions (2) and (3), defines a 
+probability function P(A) on 3”, which satisfies Axioms I - VI. 
+This probability function P(A) can be extended (by the exten- 
+sion theorem) to BY” also. 
+
+
+30 HI. Random Variables 
+
+
+Proof. Given the distribution functions F,,,,...., Satisfying 
+the general conditions of Chap. II, § 3, III and also conditions (2) 
+and (3). Every distribution function F,,,,...,, defines uniquely 
+a corresponding probability function P,,,,...., for all Borel sets 
+of R* (cf. §3). We shall deal in the future only with Borel sets 
+of R* and with Borel cylinder sets in E. 
+
+For every cylinder set 
+
+
+A= pr vepnl4’) ’ 
+
+
+Mifta- 
+we set 
+
+
+P(A) = Pu, tty. -pen(A’) : (4) 
+
+
+Since the same cylinder set A can be defined by various sets A’, 
+we must first show that formula (4) yields always the same 
+value for P(A). 
+
+Let (%,,,*,,»+++,%,,) be a finite system of random variables 
+*,- Proceeding from the probability function P,,,,....4, of these 
+random variables, we can, in accordance with the rules in § 3, 
+define the probability function Py, 4,...4;, of each subsystem 
+nc 7 From equations (2) and (3) it follows that 
+this probability function defined according to § 3 is the same as 
+the function Py, u;,...4;, given a priort. We shall now suppose that 
+the cylinder set A is defined by means of 
+
+
+A= Pras ig ig (4) 
+and simultaneously by means of 
+A= pr ie (A”) 
+
+
+MiMi 
+where all random variables x,, and aes belong to the system 
+(Xp) %uy» +++, %,,) » Which is obviously not an essential restriction. 
+
+
++> Xan 
+
+
+The conditions 
+
+
+, 
+(Fug. Bagge eer Xu) CA 
+and 
+” 
+(*u,» Kyr veer Xu.) cA 
+are equivalent. Therefore 
+’ , 
+Pras, mi, + May (A )= Pris pense ten {(% ne, Mugrceee Xu.) cA } 
+
+
+= Pras pe oe tim { (1,2 * uj,» eee Xin) cA} = Pr tigre Mim (A) ? 
+
+
+which proves our statement concerning the uniqueness of the 
+definition of P(A). 
+
+
+§ 4. Probabilities in Infinite-dimensional Spaces 31 
+
+
+Let us now prove that the field of probability (3, P) satisfies 
+all the Axioms I - VI. Axiom I requires mérely that }™ be a field. 
+This fact has already been proven above. Moreover, for an arbi- 
+trary p: 
+
+E= p7}(R)), 
+P(E) =P,(R) =4, 
+
+
+which proves that Axioms II and IV apply in this case. Finally, 
+from the definition of P(A) it follows at once that P(A) is non- 
+negative (Axiom ITI). 
+It is only slightly more complicated to prove that Axiom V 
+is also satisfied. In order to doso, we investigatetwo cylinder sets 
+A= Bae nis os wig(A) 
+and B=p7} (B’). 
+
+
+Hj Pe Him 
+
+
+We shall assume that all variables x,, and x,, belong to one inclu- 
+
+
+sive finite system (x,,,%,,,---,%,,) - If the sets A and B do not 
+intersect, the relations : 
+; (Xue, Bg 5 Xui,) cA 
+an . 
+(aj, Majyr «++» May) CB 
+
+
+are incompatible. Therefore 
+
+
+P(A+ B)= Phos ts --n{ (% pg, Magy vos Xui,) cA’ 
+or (Fuj.> uj? +++) %uz,) © BY 
+= Pray ser es tin { (Fiej,2 Fuge «+» Xug,) © AY 
+
+
+F Ps tee sin (igs Fajr + ig) © BY = P(A) + P(B), 
+
+
+which concludes our proof. 
+Only Axiom VI remains. Let 
+A, > 4, > +++ D Ap D>: 
+
+
+be a decreasing sequence of cylinder sets satisfying the condition 
+lim P(A,) =L>0. 
+
+
+We shall prove that the product of all sets A, is not empty. We 
+may assume, without essentially restricting the problem, that in 
+the definition of the first » cylinder sets A;, only the first n co- 
+ordinates x,, in the sequence 
+
+
+Bpgy Rays over Kage ees 
+
+
+32 III. Random Variables 
+
+
+occur, i.e. 
+A, = ea. se un (Bn) - 
+For brevity we set 
+Pus us... wn(B) = P,(B); 
+then, obviously 
+P,(Bx) = P(A,) 2L > 0. 
+
+
+In each set B, it is possible to find a closed bounded set U, such 
+that 
+P,(B, - U,) = = 
+
+
+From this inequality we have for the set 
+Vin = Pinon oes tn On) 
+
+
+the inequality 
+
+
+P(A.AV)S 2 (5) 
+Let, morever, 
+
+
+W, = ViV.... Wn. 
+From (5) it follows that 
+P(A,-W,) Se. 
+Since W,cV,CA, , it follows that 
+P(W,) = P(A,) —e=L—e. 
+
+
+If « is sufficiently small, P(W,) > 0 and W, is not empty. We 
+shall now choose in each set W,, a point é“ with the coordinates 
+
+
+xm. Every point é“+?), » = 0, 1, 2,... , belongs to the set V,; 
+therefore 
+Coeer mete eae xint?)) ‘a alent?) cU,. 
+
+
+Since the sets U, are bounded we may (by the diagonal method) 
+choose from the sequence {&} a subsequence 
+
+
+&(m) , E(m) , pte: E(ni) ’ ot 
+
+
+for which the corresponding coordinates ann tend for any k to 
+a definite limit x,. Let, finally, é be a point in set FE with the 
+coordinates 
+
+Xp = %> ; 
+
+%p=0, b+. k=1,2,3,... 
+
+
+§ 5. Equivalent Random Variables; Various Kinds of Convergence 33 
+
+
+As the limit of the sequence (x\", x, ..., x), i = 1, 2, 8,..., the 
+point (21, %2,..., 2) belongs to the set U,,. Therefore, é belongs to 
+
+
+A, CV, = p,,. U;) 
+
+
+| 
+for any k and therefore to the product 
+A = DA, 7 
+
+
+§ 5. Equivalent Random Variables; Various Kinds of Convergence 
+
+
+Starting with this paragraph, we deal exclusively with Borel 
+fields of probability. As we have already explained in § 2 of the 
+second chapter, this does not constitute any essential restriction 
+on our investigations. 
+
+Two random variables x and y are called equivalent, if the 
+probability of the relation x+y is equal to zero. It is obvious that 
+two equivalent random variables have the same probability func- 
+tion: 
+
+P=) (A) = PO) (A). 
+
+
+Therefore, the distribution functions F“™) and F™ are also 
+identical. In many problems in the theory of probability we may 
+substitute for any random variable any equivalent variable. 
+
+Now let 
+yd} ok ak ng Go (1) 
+
+
+be a sequence of random variables. Let us study the set A of all 
+elementary events é¢ for which the sequence (1) converges. If we 
+denote by A® the sets of é for which all the following inequalities 
+hold 
+
+lense — ta] <2 i Jee ae ee) 
+
+
+then we obtain at once 
+A=D6DAN. (2) 
+mn p 
+
+
+According to § 3, the set A‘) always belongs to the field $. The 
+relation (2) shows that A, too, belongs to }. We may, therefore, 
+speak of the probability of convergence of a sequence of random 
+variables, for it always has a perfectly definite meaning. 
+
+Now let the probability P(A) of the convergence set A be 
+equal to unity. We may then state that the sequence (1) con- 
+verges with the probability one to a random variable x, where 
+
+
+34 III. Random Variables 
+
+
+the random variable x is uniquely defined except for equivalence. 
+To determine such a random variable we set 
+
+
+= lim x, n= co 
+
+
+on A, and x = 0 outside of A. We have to show that x is a random 
+variable, in other words, that the set A(a) of the elements é for 
+which x < a, belongs to ¥. But 
+
+A(a)=A SD{xn+p <a} 
+in case a = 0,and 
+
+
+A(a) = AGD%nep <a} t+ A 
+
+
+in the opposite case, from which our statement follows at once. 
+
+
+If the probability of convergence of the sequence (1) to x 
+equals one, then we say that the sequence (1) converges almost 
+surely to x. However, for the theory of probability, another con- 
+ception of convergence is possibly more important. 
+
+
+DEFINITION. The sequence 21, %2,.-.., 2»... Of random vari- 
+ables converges in probability (converge en probabilité) to the 
+random variable x, if for any ¢ >0, the probability 
+
+
+P{|xn — x| > €} 
+tends toward zero as n=+w®, 
+
+
+I. If the sequence (1) converges in probability to x and also 
+to x’, then x and x’ are equivalent. In fact 
+
+
+, 1 1 
+Pix —x| > thepils,—xj> 214 P {im — x1 >}; 
+since the last probabilities are as small as we please for a suffici- 
+ently large n it follows that 
+P{iz—x|> =o 
+and we obtain at once that 
+
+
+f Ys 1 
+Pletxe}x > Pilz —2|>Ah=o. 
+™ 
+Il. If the sequence (1) almost surely converges to x, then it 
+
+
+*This concept is due to Bernoulli; its completely general treatment was 
+introduced by E. E. Slutsky (see [1]). 
+
+
+§ 5. Equivalent Random Variables; Various Kinds of Convergence 35 
+
+
+also converges to x in probability. Let A be the convergence set 
+of the sequence (1); then 
+
+
+1 =P(A) <limP {|x,4,—x|<¢,p =0,1,2,...} s limP{|x, —x|]<e}, 
+
+
+from which the convergence in probability follows. 
+
+
+III. For the convergence in probability of the sequence (1) 
+the following condition is both necessary and sufficient: For any 
+é> 0 there exists ann such that,for every p > 0, the following 
+inequality holds: 
+
+P{\xnap — %nl >e}<e. 
+
+
+Let F, (a), F.(a),..., F,(a),..., F(a) be the distribution 
+functions of the random variables 1, 1.,...,%n,..., 4%. If the 
+sequence «x, converges in probability to x, the distribution func- 
+tion F(a) is uniquely determined by knowledge of the functions 
+F(a). We have, in fact, 
+
+
+THEOREM: If the sequence x, %2,..., Un... converges in 
+probability to x, the corresponding sequence of distribution func- 
+tions F,,(a) converges at each point of continuity of F(a) to the 
+distribution function F(a) of x. 
+
+
+That F(a) is really determined by the F(a) follows from the 
+fact that F(a), being a monotone function, continuous on the left, 
+is uniquely determined by its values at the points of continuity*. To 
+prove the theorem we assume that F is continuous at the point 
+a. Let a’ <a; then in case x <a’, x, 2a it is necessary that 
+| %,-x| >a-a’. Therefore 
+
+limP (x<a’, x,2a)=0, 
+F(a’) =P (x<a’) <P(x,<a)+P(x<a’, x, =a) =F, (a) + P(x<a',x,24), 
+F(a’) & lim infF, (a) + limP(x <a’, x, 2a), 
+
+
+F(a’) < liminfF, (a) . (3) 
+In an analogous manner, we can prove that from a” > a there 
+follows the relation 
+
+
+F(a”) = lim sup F,(a). (4) 
+
+
+‘In fact, it has at most only a countable set of discontinuities (see LEBESGUE, 
+Legons sur l'intégration, 1928, p. 50. Therefore, the points of continuity are 
+everywhere dense, and the value of the function F(a) at a point of discon- 
+ae a determined as the limit of its values at the points of continuity 
+on its left. 
+
+
+36 III. Random Variables 
+
+
+Since F(a’) and F(a”) converge to F(a) for a’ +a anda” —a, 
+it follows from (3) and (4) that , 
+
+
+lim F,,(a) = F(a), 
+
+
+which proves our theorem. 
+
+
+Chapter IV 
+
+
+MATHEMATICAL EXPECTATIONS‘ 
+
+
+§ 1. Abstract Lebesgue Integrals 
+
+
+Let x be a random variable and A a set of }. Let us form, for a 
+positive A, the sum 
+
+
+k= +00 ew 
+Si, =D RIPkRAsS ¥< (R+1)1,ECA}. (1) 
+k= —oo 
+
+
+If this series converges absolutely for every A, then as A = 0, S, 
+tends toward a definite limit, which is by definition the integral 
+
+
+[xP (aE) . (2) 
+
+A 
+In this abstract form the concept of an integral was introduced 
+by Fréchet?; it is indispensable for the theory of probability. 
+(The reader will see in the following paragraphs that the usual 
+definition for the conditional mathematical expectation of the 
+variable x under hypothesis A coincides with the definition of 
+the integral (2) except for a constant factor.) 
+
+We shall give here a brief survey of the most important 
+properties of the integrals of form (2). The reader will find their 
+proofs in every textbook on real variables, although the proofs 
+are usually carried out only in the case where P(A) is the Lebesgue 
+measure of sets in R®. The extension of these proofs to the general 
+case does not entail any new mathematical problem; for the most 
+part they remain word for word the same. 
+
+I. If a random variable z is integrable on A, then it is in- 
+tegrable on each subset A’ of A belonging to #. 
+
+
+II. If x is integrable on A and A is decomposed into no 
+
+
+* As was stated in § 5 of the third chapter, we are considering in this, as well 
+as in the following chapters, Borel fields of probability only. 
+
+
+* FRECHET, Sur Vintégrale d’une functionnelle étendue @ un ensemble 
+abstrait, Bull. Soc. Math. France v. 43, 1915, p. 248. 
+
+
+37 
+
+
+38 IV. Mathematical Expectations 
+
+
+more than a countable number of non-intersecting sets A, of , 
+
+
+— fri dE) = S [xP (ae). 
+
+
+nAn 
+
+
+III. If x is integrable,| x | is also integrable, and in that case 
+[[=P@z) |< flx|P (az). 
+A 4 
+IV. If in each event é, the inequalities 0 = y = x hold, then 
+along with x, y is also integrable?, and in that case 
+
+
+[yP(az) <[{xP(dz). 
+A A 
+
+
+V. If m= 2=M where m and M are two constants, then 
+
+
+mP(A) <[xP(dE) < MP(A). 
+A 
+
+
+VI. If « and y are integrable, and K and L are two real con- 
+stants,then Kx + Ly is also integrable, and in this case 
+
+
+[(Kx + Ly) P(dE) = K{xP(dE) +LfyP(@de). 
+A A. A 
+
+
+VII. If the series 
+> | lxl P(@E) 
+naA 
+converges, then the series 
+Pa L,=2 
+
+
+converges at each point of set A with the exception of a certain 
+set B for which P(B) = 0. If we set x = 0 everywhere except on 
+
+
+A-B, then 
+[xP (aE) = > [xP (dz). 
+A naA 
+
+
+VIII. If x and y are equivalent (P{x + y}=0), then for 
+every set A of § 
+
+
+[=P (aE) = [yP(aE). (3) 
+A A 
+
+
+"It is assumed that y is a random variable, i.e., in the terminology of the 
+general theory of integration, measurable with respect to §. 
+
+
+§ 2. Absolute and Conditional Mathematical Expectations 39 
+
+
+IX. If (3) holds for every set A of %, then x and y are 
+equivalent. 
+
+From the foregoing definition of an integral we also obtain 
+the following property, which is not found in the usual Lebesgue 
+theory. 
+
+X. Let P,(A) and P,(A) be two probability functions defined 
+on the same field §, P(A) = Pi(A) + P,(A),and let x be integrable 
+on A relative to P,(A) and P,(A). Then 
+
+
+[xP @E) = [xP (dE) + [xP, (dE). 
+A A A 
+XI. Every bounded random variable is integrable. 
+
+
+§ 2. Absolute and Conditional Mathematical Expectations 
+Let x be a random variable. The integral 
+
+
+E(x) = | «P(dE) 
+
+
+E 
+
+
+is called in the theory of probability the mathematical expectation 
+of the variable x. From the properties III, IV, V, VI, VII, VIII, 
+XI, it follows that 
+
+
+I. |E(x)| S E({2|); 
+II. E(y) =SE(x) if 0O= y= x everywhere; 
+III. inf (x) = E(x) = sup (2); 
+IV. E(Ka + Ly) = KE(x) + LE(y); 
+V.€E (2x) = = E(x,), if the series ZE (nl) converges ; 
+
+
+VI. If x and y are equivalent then 
+E(x) = E(y). 
+
+
+VII. Every bounded random variable has a mathematical 
+expectation. 
+
+
+From the definition of the integral, we have 
+k= +00 
+E(x) = lim > km P{km <x < (k +1) m} 
+
+
+= tim Sk {F (C + 1)m) — F(km)}. 
+
+
+40 IV. Mathematical Expectations 
+
+
+The second line is nothing more than the usual definition of the 
+Stieltjes integral 
+
++00 
+
+[aaFo (a) = E(x). (1) 
+Formula (1) may therefore serve as a definition of the mathe- 
+matical expectation E(x). 
+
+Now let u be a function of the elementary event é, and x be a 
+
+random variable defined as a single-valued function x = x(u) 
+of u. Then 
+
+
+Plkm <x < (k+1)m}=PO{km = x(u) < (k+1)m}, 
+
+
+where P(A) is the probability function of uw. It then follows 
+from the definition of the integral that 
+[<P (a) = [xP (dE) 
+E Ew 
+and, therefore, 
+E (2) = [x(u) P“ (dE) (2) 
+2) 
+where E'™ denotes the set of all possible values of w. 
+In particular, when wu itself is a random variable we have 
+
+
+E(x) = [xP (2B) = fx(u) PO(ARY) = [ x(a) dFO (a). (3) 
+E R —00 
+
+When x (uz) is continuous, the last integral in (3) is the ordinary 
+Stieltjes integral. We must note, however, that the integral 
+
++00 
+
+[ x (a) dF (a) 
+can exist even when the mathematical expectation E(x) does not. 
+For the existence of E(x), it is necessary and sufficient that the 
+integral uy 
+
+flx@|aFo (a) 
+be finite’. os 
+
+
+If wis a point (wu, %,..., Un) of the space A” then as a result 
+of (2): 
+
+
+‘Cf. V. GLivENKo, Sur les valeurs probables de fonctions, Rend. Accad. 
+Lincei v. 8, 1928, pp. 480-483. 
+
+
+§ 2. Absolute and Conditional Mathematical Expectations 41 
+E (x) =[f- feta, Mags veer Un) Plus, we, -.., tn) (a R*) ; (4) 
+Rr 
+
+
+We have already seen that the conditional probability P, (A) 
+possesses all the properties of a probability function. The corres- 
+ponding integral 
+Ex(x) = [xPp (dB) (5) 
+E 
+
+
+we call the conditional mathematical expectation of the random 
+variable x with respect to the event B. Since 
+
+
+P,(B) =0, [=Po(@E) =0, 
+
+
+B 
+
+
+we obtain from (5) the equation 
+
+
+Ep (x) =x Pp (dE) = fx P,(dE) +x P, (dE) = fx P, (dE). 
+E B B B 
+
+
+We recall that in case A cB, 
+
+
+
+
+
+we thus obtain 
+
+
+Ep(x) = pis [= P(E). (6) 
+B 
+
+[xP (@E) = P(B) Ey (x). (7) 
+
+B 
+
+
+From (6) and the equality 
+[xP (ak) = [*P (dE) + [xP (dE) 
+A+B A B 
+
+
+we obtain at last 
+P(A)E P(B)E 
+Easy = ) eee 2 (*) (8) 
+and, in particular, we have the formula 
+
+
+E(x) = P(A) Ea(x) + P(A) Ea(z). (9) 
+
+
+42 IV. Mathematical Expectations 
+
+
+§3. The Tchebycheff Inequality 
+
+
+Let f(x) be a non-negative function of a real argument z, 
+which for x = a never becomes smaller than b > 0. Then for any 
+random variable x : 
+
+
+P(xza) < EVE) | (1) 
+
+
+provided the mathematical expectation E{/(x)} exists. For, 
+E{f(x)} = f(x) P(dE) = [ f(x) P(E) = bP (x=a), 
+E {z= a} 
+
+
+from which (1) follows at once. 
+For example, for every positive c , 
+
+
+Pizza) = EE, (2) 
+
+
+ect 
+
+
+
+
+
+Now let f(x) be non-negative, even, and, for positive x, non- 
+decreasing. Then for every random variable x and for any choice 
+of the constant a > 0 the following inequality holds 
+
+
+P(|x|za) = =D (3). 
+In particular, 
+P(x — Ets)| = a) = #4 Se) (4) 
+
+
+Especially important is the case f(x) = x”. We then obtain from 
+(3) and (4) 
+
+
+P(jz|ea) <2), (5) 
+P(|x — E(x)| 2a) = SH — FO _ (6) 
+
+
+where 
+0° (x) = E{x — E(x)}? 
+
+
+is called the variance of the variable zx. It is easy to calculate that 
+o? (x) = E(x?) — {E(x)}*. 
+
+
+If f(x) is bounded: 
+|f(z)|SK, 
+
+
+then a lower bound for P(|z| =a) can be found. For 
+
+
+§ 4. Some Criteria for Convergence 43 
+
+
+E(f(x)) = [f(*) P(@E) = i] f(x) P(E) + fl) P(@E) 
+E {I z]<a} {lz}e a} 
+< f(a) P(|x| <a) + KP()x| 2a) </f(a) + KP(\x| Sa) 
+
+
+and therefore 
+
+
+P (|x| 2 a) = Oh He) | (7) 
+If instead of f(x) the random variable z itself is bounded, 
+|e|=M, 
+then f(x) = f(M), and instead of (7), we have the formula 
+E (ftx)) — f(a) 
+P(x] 2a) => — Say (8) 
+
+
+In the case f(x) = x”, we have from (8) 
+
+
+, P(|x|2a)= ee (9) 
+§ 4. Some Criteria for Convergence 
+Let 
+Lay Vay ey Layee (1) 
+
+
+be a sequence of random variables and f(x) be a non-negative, 
+even, and for positive x a monotonically increasing function’. 
+Then the following theorems are true: 
+
+
+I. In order that the sequence (1) converge in probability the 
+following condition is sufficient: For each e > 0 there exists an n 
+such that for every p > 0, the following inequality holds: 
+
+
+E {f(%nep = Xn)} <eé. (2) 
+
+
+II. In order that the sequence (1) converge in probability to 
+the random variable x, the following condition is sufficient: 
+
+
+lim Eff(x, — x)} = 0. (8) 
+n>+o0 
+III. If f(z) is bounded and continuous and f(0) = 0, then 
+conditions I and II are also necessary. 
+
+
+IV. If f(x) is continuous, f(0) = 0,and the totality of all 
+Li, L2,.-.,Xn,..., 2 iS bounded,then conditions I and II are also 
+necessary. 
+
+
+* Therefore f(z) > 0 if « +0. 
+
+
+44 IV. Mathematical Expectations 
+
+
+From II and IV, we obtain in particular 
+V. In order that sequence (1) converge in probability to z, 
+it is sufficient that 
+lim E(v%,-2)? =0. (4) 
+
+
+If also the totality of all 7, 2.,...,%n,..., x is bounded, then the 
+condition is also necessary. 
+
+For proofs of I-IV see Slutsky [1] and Fréchet [1]. How- 
+ever, these theorems follow almost immediately from formulas 
+(3) and (8) of the preceding section. 
+
+
+§ 5. Differentiation and Integration of Mathematical Expectations 
+with Respect to a Parameter 
+
+
+Let us put each elementary event é into correspondence with a 
+definite real function x(t) of a real variable ¢t. We say that x(t) 
+is a random function if for every fixed t, the variable x(t) is a 
+random variable. The question now arises, under what conditions 
+can the mathematical expectation sign be interchanged with the 
+integration and differentiation signs. The two following theorems, 
+though they do not exhaust the problem, can nevertheless give a 
+satisfactory answer to this question in many simple cases. 
+
+
+THEOREM I: If the mathematical expectation E[z(t) ] is finite 
+for any t, and x(t) is always differentiable for any t, while the 
+derivative «'(t) of x(t) with respect to t is always less in abso- 
+lute value than some constant M, then 
+
+
+2 E(x(t)) = E(x (0). 
+
+
+THEOREM II: If x(t) always remains less, in absolute value, 
+than some constant K and is integrable in the Riemann sense, then 
+
+
+fece) dt = e| ft ad 
+
+
+a a 
+provided E[x(t)] is integrable in the Riemann sense. 
+
+
+Proof of Theorem I. Let us first note that x’(t) as the limit of 
+the random variables 
+
+
+
+
+
+x(t+h) — x(t) _ 1 1 
+oe ne ee 
+
+
+is also a random variable. Since z’(t) is bounded, the mathe- 
+
+
+§ 5. Differentiation and Integration of Mathematical Expectations 45 
+
+
+matical expectation E[x’(t)] exists (Property VII of mathe- 
+matical expectation, in§2). Let us choose a fixed ¢ and denote 
+by A the event 
+
+
+Bere ae A ¥()|>e. 
+
+
+The probability P(A) tends to zero as h = 0 for every ¢ > 0. Since 
+Ut #0) 2m, |x ()\< M 
+
+
+
+
+
+holds everywhere, and moreover in the case A 
+
+
+[pea _ | <e, 
+
+
+then 
+
+
+
+
+
+ae ME) _exiy | Z p HN aa —x(p| 
+
+
+*C+ 4 — x(t) 
+
+
+= P(aye,| Et 0 _ (| + P(A) Ej | — x) | 
+
+
+<2MP(A) +e. 
+
+We may choose the « > 0 arbitrarily, and P(A) is arbitrarily 
+
+small for any sufficiently small h. Therefore 
+
+Ex(t+h) —Ex(t) 
+h 
+
+
+4 E x(t) = lim 
+
+
+at rae =Ex'(t), 
+
+
+which was to be proved. 
+Proof of Theorem II. Let 
+
+
+k=n 
+1 be 
+Sa= FD, tle t+ Rh), k= — 
+k=1 
+
+
+Since S, converges to J = fet) dt, we can choose for any 
+a 
+
+
+é>0anWN such that from n= N there follows the inequality 
+P(A) = P{|S, -—J| >eh<e. 
+
+
+
+
+
+If we set : 
+=n 
+= 5 > Exit kh) = E(S,), 
+k=1 
+then 
+
+
+= P(A)E,|S, — J| + P(A)EA|Sp — Ji < 2K P(A) + € < (2K + 1)e. 
+
+
+46 IV. Mathematical Expectations 
+
+
+Therefore, S* converges to E(J), from which results the equation 
+
+
+b i 
+fEx@ dt =lims; = E(J). 
+
+
+Theorem II can easily be generalized for double and triple 
+and higher order multiple integrals. We shall give an application 
+of this theorem to one example in geometric probability. Let G bea 
+measurable region of the plane whose shape depends on chance; 
+in other words, let us assign to every elementary event é of a field 
+of probability a definite measurable plane region G. We shall 
+denote by J the area of the region G, and by P(z, y) the prob- 
+ability that the point (x, y) belongs to the region G. Then 
+
+
+E(J) =f{[P(x,y)dxdy. 
+To prove this it is sufficient to note that 
+J=J[tx,y)dedy, 
+P(x,y) = Ef(x,y) , 
+where f(x,y) is the characteristic function of the region G 
+
+
+(f(z, y) = 1 on G and f(z, y) = 0 outside of G)*. 
+
+
+*Cf. A. KoLMocorov and M. LEONTovICH, Zur Berechnung der mittleren 
+Brownschen Fldache, Physik. Zeitschr. d. Sovietunion, v. 4, 1933 
+
+
+Chapter V 
+
+
+CONDITIONAL PROBABILITIES AND 
+MATHEMATICAL EXPECTATIONS 
+
+
+§ 1. Conditional Probabilities 
+
+
+In § 6, Chapter I, we defined the conditional probability, Py (B), 
+of the event B with respect to trial 9. It was there assumed that 
+allows of only a finite number of different possible results. We 
+can, however, define Py(B) also for the case of an YU with an infinite 
+set of possible results, i.e. the case in which the set E is partitioned 
+into an infinite number of non-intersecting subsets. In particular, 
+we obtain such a partitioning if we consider an arbitrary function 
+u of € and define as elements of the partition W, the sets u = con- 
+stant. The conditional probability Py, (B) we also denote by P,(B). 
+Any partitioning %& of the set E' can be defined as the partitioning 
+Wf, which is “induced” by a function wu of é, if one assigns to every é, 
+as u(é), that set of the partitioning Y of E which contains é. 
+
+Two functions u and uw’ of é¢ determine the same partitioning 
+W, = W, of the set EF, if and only if there exists a one-to-one cor- 
+respondence uw’ = f(u) between their domains }#™ and %™ such 
+that uv’ (é) is identical with fu(é). The reader can easily show that 
+the random variables P,(B) and P,(B), defined below, are in this 
+case the same. They are thus determined, in fact, by the partition 
+Wf, = Ay itself. 
+
+To define P,(B) we may use the following equation: 
+
+
+Pyue 4}(B) = EqucayP.(B)- (1) 
+
+
+It is easy to prove that if the set FE“ of all possible values of u is 
+finite, equation (1) holds true for any choice of A (when P,(B) 
+is defined as in § 6, Chap. I). In the general case (in which P,(B) 
+is not yet defined) we shall prove that there always exists one 
+and only one random variable P,,(B) (except for the matter of 
+equivalence) which is defined as a function of u and which satis- 
+fies equation (1) for every choice of A from }™ such that 
+
+
+47 
+
+
+48 V. Conditional Probabilities and Mathematical Expectations 
+
+
+P(A) > 0. The function P,(B) of u thus determined to within 
+equivalence, we call the conditional probability of B with respect 
+to u (or, for a given x). The value of P,(B) when u = a we shall 
+designate by P,(a; B). 
+
+The proof of the existence and uniqueness of P,(B). If we 
+multiply (1) by P{~#c A} = P(A), we obtain, on the left, 
+
+
+P {uc A}Py.4(B) = P(B{uc A}) = P(Bu-'(A)) 
+and, on the right, 
+
+
+P{u c A} Ewe ay P,(B) = { P.(B) P (dE) = [P.(B) P) (dE) , 
+{uc A} A 
+
+
+leading to the formula 
+
+
+P(Bu-(A)) = [ P,(B) PO (aE) (2) 
+A 
+
+
+and conversely (1) follows from (2). In the case P(A) = 0, 
+in which case (1) is meaningless, equation (2) becomes trivially 
+true. Condition (2) is thus equivalent to (1). In accordance with 
+Property IX of the integral (§ 1, Chap. IV) the random variable 
+x is uniquely defined (except for equivalence) by means of the 
+values of the integral 
+
+| xPd(E) 
+
+A 
+for all sets of %. Since P,(B) is a random variable determined 
+on the probability field (}™, P™), it follows that formula (2) 
+uniquely determines this variable P,(B) except for equivalence. 
+
+We must still prove the existence of P,(B). We shall apply 
+here the following theorem of Nikodym!: 
+
+Let % be a Borel field, P(A) a non-negative completely additive 
+set function defined on % (in the terminology of the probability 
+theory, a random variable on (%, P)), and let Q(A) be another 
+completely additive set function defined on %, such that from 
+Q(A)=+ 0 follows the inequality P(A) > 0. Then there exists a 
+function f(é) (in the terminology of the theory of probability, 
+a random variable) which is measurable with respect to }, and 
+which satisfies, for each set A of %, the equation 
+
+
+0. NikopyM, Sur une généralisation des intégrales de M. J. Ra- don, Fund. 
+Math. v. 15, 1930 p. 168 (Theorem III). 
+
+
+§ 1. Conditional Probabilities 49 
+
+
+Q(A) = [f(s P (dE). 
+A 
+
+
+In order to apply this theorem to our case, we need to prove 
+1° that 
+Q(A) = P(Bu-*(A)) 
+
+
+is a completely additive function on $™, 2° that from Q(A) +0 
+follows the inequality P(A) > 0. 
+Firstly, 2° follows from 
+
+
+0 <P(Bu-'(A)) = P(u-'(A)) = P(A). 
+For the proof of 1° we set 
+
+
+A= SA. 
+
+
+u~"(A) Salas) 
+
+
+then 
+
+
+and Bu-*(A) = SBu-}(A,). 
+
+
+Since P is completely additive, it follows that 
+P(B u-1(A,)) = > P(Bu-'(A,)) , 
+n 
+
+which was to be proved. 
+
+From the equation (1) follows an important formula (if we 
+set A= EF); 
+
+P(B) = E(P,(B)). (3) 
+
+Now we shall prove the following two fundamental properties 
+of conditional probability. 
+
+THEOREM I. It is almost sure that 
+
+
+O=P.(B) S1. (4) 
+
+
+THEOREM II. If B is decomposed into at most a countable 
+number of sets B, : 
+
+
+B= D> Be , 
+n 
+then the following equality holds almost surely: , 
+P..(B) = >’ P.(B,) . (5) 
+
+
+These two properties of P,(B) correspond to the two char- 
+acteristic properties of the probability function P(B): that 
+0 = P(B) <= 1 always, and that P(B) is completely additive. These 
+
+
+50 V. Conditional Probabilities and Mathematical Expectations 
+
+
+allow us to carry over many other basic properties of the absolute 
+probability P(B) to the conditional probability P,(B). However, 
+we must not forget that P,(B) is,for a fixed set B, a random vari- 
+able determined uniquely only to within equivalence. 
+
+Proof of Theorem I. If we assume—contrary to the assertion 
+to be proved—that on a set Mc E™ with P“™(M) > 0, the in- 
+equality P,(B) 21+¢6, «> 0, holds true, then according to for- 
+mula (1) 
+
+Pwemy(B) = EuemyPu(B) =1t+e, 
+
+
+which is obviously impossible. In the same way we prove that 
+almost surely P,(B) = 0. 
+
+
+Proof of Theorem II. From the convergence of the series 
+
+
+it follows from Property V of mathematical expectation (Chap. 
+IV, §2) that the series 7 
+> Pu(Ba) 
+
+
+almost surely converges. Since the series 
+2 Ege 4} P,,(B,) | = BA Egue 4} (Pu(Br)) => Pre 4}(Bn) = Prue ay(B) 
+
+
+converges for every choice of the set A such that P(A) > 0, 
+then from Property V of mathematical expectation just referred 
+to it follows that for each A of the above kind we have the relation 
+
+
+Emue A} (= Pu(Ba)) — & Etuc 4} (Pu(Bn)) a Pec a} (B) = Eguc A} (P.(B,)), 
+
+
+and from this, equation (5) immediately follows. 
+
+To close this section we shall point out two particular cases. 
+If, ‘first, w(é) =e (a constant), then P,(A) = P(A) almost 
+surely. If, however, we set u(é) = é, thenwe obtain at once 
+that P:(A) is almost surely equal to one on A and is almost surely 
+equal to zero on A. P;(A) is thus revealed to be the characteristic 
+function of set A. 
+
+
+§ 2. Explanation of a Borel Paradox 
+
+
+Let us choose for our basic set E' the set of all points on a 
+spherical surface. Our $ will be the aggregate of all Borel sets 
+of the spherical surface. And finally, our P(A) is to be propor- 
+tional to the measure of set A. Let us now choose two diametrically 
+
+
+§ 8. Conditional Probabilities with Respect to a Random Variable 51 
+
+
+opposite points for our poles, so that each meridian circle will be 
+uniquely defined by the longitude y,Ox<y<2. Since y varies 
+from 0 only tox, — in other words, we are considering complete 
+meridian circles (and not merely semicircles) — the latitude 0 
+must vary from —z to +2 (and not from —> to +3) . Borel set 
+the following problem: Required to determine “the conditional 
+probability distribution” of latitude 96, -—x=xO< +2, fora 
+given longitude », 
+It is easy to calculate that 
+
+
+O, 
+P,{0,<0< 0) = 4 |cos0| a0 
+oO 
+
+
+The probability distribution of © for a given ¥ is not uniform. 
+If we assume that the conditional probability distribution of 
+
+© “with the hypothesis that é lies on the given meridian circle” 
+
+must be uniform, then we have arrived at a contradiction. 
+
+This shows that the concept of a conditional probability with 
+regard to an isolated given hypothesis whose probability equals 0 
+is inadmissible. For we can obtain a probability distribution 
+for @ on the meridian circle only if we regard this circle as an 
+element of the decomposition of the entire spherical surface into 
+meridian circles with the given poles. 
+
+
+§ 3. Conditional Probabilities with Respect to a Random Variable 
+
+
+If x is a random variable and P,(B) as a function of z is 
+measurable in the Borel sense, then P,(B) can be defined in an 
+elementary way. For we can rewrite formula (2) in §1, to look 
+as follows: 
+
+
+P(B) P(A) = [ P,(B) P® (dE). (1) 
+A 
+
+
+In this case we obtain from (1) at once that 
+a 
+
+
+P(B) F?(a) = { P.(a; B) dF@(a) . (2) 
+
+
+In accordance with a theorem of Lebesgue? it follows from (2) 
+that 
+F(a +h) — F(a 
+which is always true except for a set H of points a for which 
+P()(H) = 0. 
+
+> Lebesgue, I. c., 1928, pp. 801-302. 
+
+
+P, (a; B) = P(B) lim 
+
+
+52 V. Conditional Probabilities and Mathematical Expectations 
+
+
+P.(a@;B) was defined in §1 except on a set G, which is 
+such that P“)(G) = 0. If we now regard formula (3) as the defi- 
+nition of P,(a; B) (setting P,(a; B) = 0 when the limit in the 
+right hand side of (3) fails to exist), then this new variable 
+satisfies all requirements of § 1. 
+
+If, besides, the probability densities f‘)(a) and f% (a) exist 
+and if f(a) > 0, then formula (3) becomes 
+
+P,(a; B) = P(B) el (4) 
+Moreover, from formula (3) it follows that the existence of a 
+limit in (8) and of a probability density f(a) results in the 
+existence of /% (a). In that case 
+
+
+P(B) f3 (2) = f(a). (5) 
+If P(B) > 0, then from (4) we have 
+
+
+1p (a) = (6) 
+In case f‘*)(a) = 0, then according to (5) f(a) = 0 and there- 
+fore (6) also holds. If, besides, the distribution of x is continuous, 
+we have 
+
+
++00 +00 
+P(B) = E(P,(B)) = | P,(a; B)dF@(a) = | P,(a;B) f(a) da. (7) 
+
+
+From (6) and (7) we obtain 
+1 (a) = Es BPC) (8) 
+
+
+-+oo 
+SPs (a; B) ayaa. 
+
+
+
+
+
+This equation gives us the so-called Bayes’ Theorem for continu- 
+ous distributions. The assumptions under which this theorem is 
+proved are these: P,(B) is measurable in the Borel sense and at 
+the point a is defined by formula (3), the distribution of x is con- 
+tinuous, and at the point a there exists a probability density 
+
+
+f(a). 
+
+
+§ 4. Conditional Mathematical Expectations 
+
+
+Let u be an arbitrary function of £, and y a random variable. 
+The random variable E,(y), representable as a function of u and 
+satisfying, for any set A of }™ with P“(A) > 0, the condition 
+
+
+§ 4. Conditional Mathematical Expectations 53 
+
+
+Ewes} (y) a Ege a} E. (y) ’ (1) 
+
+
+is called (if it exists) the conditional mathematical expectation of 
+the variable y for known value of u. 
+If we multiply (1) by P™ (A), we obtain 
+
+
+[yP@E) = feu) PO WE). (2) 
+{uc A} A 
+Conversely from (2) follows formula (1). In case P(A) = 0, 
+in which case (1) is meaningless, (2) becomes trivial. In the 
+same manner as in the case of conditional probability (§ 1) we 
+can prove that E,(y) is determined uniquely—except for equiva- 
+lence—by (2). 
+
+The value of E,(y) for u = a we shall denote by E,(a; y). Let 
+us also note that E,(y), as well as P,,(y), depends only upon the 
+partition 9%, and may be designated by Ey, (y) . 
+
+The existence of E(y) is implied in the definition of E,(y) (if 
+we set A = E™), then Eweay(y) = E(y)). 
+
+We shall now prove that the existence of E(y) is also sufficient 
+for the existence of E,(y). For this we only need to prove that by 
+the theorem of Nikodym (§ 1), the set function 
+
+
+Q(4) = fy P(aE) 
+{uc A} 
+
+is completely additive on ¥“™ and absolutely continuous with 
+respect to P“™) (A). The first property is proved verbatim as in 
+the case of conditional probability (§ 1). The second property— 
+absolute continuity—is contained in the fact that from Q(A)+0 
+the inequality P“(A) >0 must follow. If we assume that 
+P(A) =P {uc A} = 0, it is clear that 
+
+
+Q(4) = [yP(@E) =0, 
+{uc A} 
+
+
+and our second requirement is thus fulfilled. 
+If in equation (1) we set A = E™), we obtain the formula 
+
+
+E(y) =EEv(y) - (3) 
+We can show further that almost surely 
+E,(ay + bz) = aE,(y) + bE,(z) , (4) 
+
+
+where a and b are two arbitrary constants. (The proof is left to 
+the reader.) 
+
+
+54 V. Conditional Probabilities and Mathematica] Expectations 
+
+
+If u and v are two functions of the elementary event é, then 
+the couple (u, v) can always be regarded as a function of é. The 
+following important equation then holds: 
+
+
+E, Ew,» (y) = E, (y) . (5) 
+For,E,(y) is defined by the relation 
+Egue a} (y) = Ewe 4} E, (y) . 
+
+
+Therefore we must show that E,E:.,.)(y) satisfies the equation 
+
+
+Ege A}(Y) = Ege A} E, Evu,») (y) . (6) 
+From the definition of E,,,)(y) it follows that 
+Egue a} (Y) = Egue a} Eq») (9) - (7) 
+From the definition of E,E(..)(y) it follows, moreover, that 
+Ene A} Ew,» (y) = Ege A} Ey Ew») (y) ° (8) 
+
+
+Equation (6) results from equations (7) and (8) and thus proves 
+our statement. 
+If we set y = P,,(B) equal to one on B and to zero outside of B, 
+then E,(y) = P,(B), 
+Eww,» (¥) = Pou,» (B). 
+In this case,from formula (5) we obtain the formula 
+E, Pw,» (B) = Py (B). (9) 
+
+
+The conditional mathematical expectation E,(y) may also be 
+defined directly by means of the corresponding conditional prob- 
+abilities. To do this we consider the following sums: 
+
+
+Si(u) = = FRAP LAR cy <( (R+4 )A}= Re. (10) 
+Eso eS 
+
+
+If E(y) exists, the series (10) almost certainly* converges. For 
+we have from formula (8), of §1, 
+
+
+E|Rz| = [RA] P {kl ws y < (hk + 1) a}, 
+
+
+and the convergence of the series 
+
+
+k= +00 
+2 MIP (Ry < (b+ 1)4} = DELR 
+
+
+* We use almost certainly interchangeably with almost surely. 
+
+
+§ 4, Conditional Mathematical Expectations 55 
+
+
+is the necessary condition for the existence of E(y) (see Chap. IV, 
+§ 1). From this convergence it follows that the series (10) con- 
+verges almost certainly (see Chap. IV, §2, V). We can further 
+show, exactly as in the theory of the Lebesgue integral, that from 
+the convergence of (10) for some A, its convergence for every A 
+follows, and that in the case where series (10) converges, S, (%) 
+tends to a definite limit as \ —» 0°. We can then define 
+
+
+Eu(y) = limS,(u) . (11) 
+
+
+To prove that the conditional expectation E,(y) defined by rela- 
+tion (11) satisfies the requirements set forth above, we need only 
+convince ourselves that E,(y), as determined by (11), satisfies 
+equation (1). We prove this fact thus: 
+
+
+Ege A} E,(y) = lim Ete A} S1(u) 
+
+
++00 
+=lim SRAPwea {hd Sy <(R+1)a} = Ewe aly): 
+
+
+470 k=- 
+
+
+The interchange of the mathematical expectation sign with the 
+limit sign is admissible in this computation, since S, (uw) con- 
+verges uniformly to E,(y) as\ — 0 (a simple result of Property V 
+of mathematical expectation in §2). The interchange of the 
+mathematical expectation sign and the summation sign is also 
+admissible since the series 
+
+
+k=+00 
+
+
+Equeay{|Ra] Palka Sy < (& + 1) 4)} 
+
+
++ 
+k= 
+
+
+= kA| PueaslkA Sy < (k+1)Aj 
+
+
+converges (an immediate result of Property V of mathematical 
+expectation). 
+Instead of (11) we may write 
+
+
+Eu(y) = fy Pu(@E) . (12) 
+E 
+We must not forget here, however, that (12) is not an integral 
+
+
+*In this case we consider only a countable sequence of values of 2; then 
+all probabilities P, {AAs y < (k + 1)4} are almost certainly defined for all 
+these valuesof A. 
+
+
+56 V. Conditional Probabilities and Mathematical Expectations 
+
+
+in the sense of §1, Chap. IV, so that (12) is only a symbolic 
+expression. 
+If z is a random variable then we call the function of z and a 
+
+
+FP (a) = Pz(y <a) 
+
+
+the conditional distribution function of y for known x. 
+
+
+F,©) (a) is almost certainly defined for every a. If a < b then 
+almost certainly 
+FY (a) s FY (b). 
+
+
+From (11) and (10) it follows‘ that almost certainly 
+
+
+k= Fae) 
+E,(y) =lim” SRF (k +198) — FY RD]. (18) 
+
+
+A>0k=- 
+
+
+This fact can be expressed symbolically by the formula 
++0 
+
+
+E, (y) =fa dF¥ (a) (14) 
+
+
+By means of the new definition of mathematical expectation {(10) 
+and (11)] it is easy to prove that,for a real function of u, 
+
+
+Eulf(™) y] = /(u) Evy) . (15) 
+
+
+‘Cf. footnote 3. 
+
+
+Chapter VI 
+
+
+INDEPENDENCE; THE LAW OF LARGE NUMBERS 
+
+
+§ 1. Independence 
+DEFINITION 1: Two functions, u and v of é, are mutually inde- 
+pendent if for any two sets, A of #, and B of ¥™, the follow- 
+ing equation holds: 
+
+P(uc A, vc B) =P(uc A) P(vc B) = P(A) PO(B). = (1) 
+If the sets E™ and E'™ consist of only a finite number of elements, 
+
+BM) = UW tut: +, 
+
+E® = vy + 0, + cee Ht Un» 
+
+
+then our definition of independence of u and v is identical with 
+the definition of independence of the partitions 
+
+
+E = eta 
+E =o = v,} 
+
+
+as in § 5, Chap. I. 
+
+For the independence of u and v, the following condition is 
+necessary and sufficient. For any choice of set A in ¥™ the 
+following equation holds almost certainly: 
+
+
+P,(uc A) =P(ucA), (2) 
+
+
+In the case P® (B) = 0,both equations (1) and (2) are satisfied, 
+and therefore we need only prove their equivalence in the case 
+P)(B) > 0. In this case (1) is equivalent to the relation 
+
+
+Proc ny(u CA) = P(u cA) (3) 
+and therefore to the relation 
+Ege pyPy(u c A) =P(ucA). (4) 
+
+
+On the other hand, it is obvious that equation (4) follows from 
+
+
+57 
+
+
+58 VI. Independence; The Law of Large Numbers 
+
+
+(2). Conversely since P,(u cA) is uniquely determined by (4) 
+to within probability zero, then equation (2) follows from (4) 
+almost certainly. 
+
+DEFINITION 2: Let M be a set of functions u, (é) of These 
+functions are called mutually independent in their totality if the 
+following condition is satisfied. Let M’ and M” be two non- 
+intersecting subsets of M, and let A’ (or A”) be a set from $ 
+defined by a relation among u, from M’ (or M”) ; then we have 
+
+
+P(A’A”) = P(A’) P(A”). 
+
+
+The aggregate of all'u, of M’ (or of M’’) can be regarded as 
+coordinates of some function w’ (or w”’). Definition 2 requires 
+only the independence of w’ and uw” in the sense of Definition 1 for 
+each choice of non-intersecting sets M’ and M”. 
+
+
+If wu, u2,..., U, are mutually independent, then in all cases 
+Ps, OA,, te Ag, ..., Hp © Ag} 5 
+= P(u,c A,) P(u,c A,)...P(u, CA,), (5) 
+
+
+provided the sets A, belong to the corresponding 3%" (proved 
+by induction). This equation is not in general, however, at all 
+sufficient for the mutual independence of u, tt, ... , Un 
+
+Equation (5) is easily generalized for the case of a countably 
+infinite product. 
+
+From the mutual independence of u,, in each finite group 
+(4uj> %yzyr +++» %,,) it does not necessarily follow that all «, are 
+mutually independent. 
+
+Finally, it is easy to note that the mutual independence of the 
+functions 4“, is in reality a property of the corresponding parti- 
+tions U.,,. Further, if , are single-valued functions of the cor- 
+responding Uys then from the mutual independence of Uy follows 
+that of w/),. 
+
+
+§ 2. Independent Random Variables 
+
+
+If 21, %2,..., 2, are mutually independent random variables 
+then from equation (2) of the foregoing paragraph follows, in 
+particular, the formula 
+
+
+Flt 2-1-1 29) (ay, ay, 06-5 Gq) = FOO (ay) F@ (ay)... F(a). (1) 
+
+
+If in this case the field G% %.--,2=) consists only of Borel sets of 
+
+
+§ 2. Independent Random Variables 59 
+
+
+the space R", then condition (1) is also sufficient for the mutual 
+
+
+independence of the variables x,, %2,..., Un. 
+Proof. Let x’ = (x4, %j,.-++5%,) amd x” = (x;,,%;,...,%;,) be 
+two non-intersecting subsystems of the variables 2, %2,..., Xp. 
+
+
+We must show, on the basis of formula (1), that for every two 
+Borel sets A’ and A” of R* (or R) the following equation holds: 
+
+
+P(x’ co 4’, x” CA") = P(x’ CA) P(x” CA’). (2) 
+This follows at once from (1) for the sets of the form 
+A! = (Ki, < ay, Hi <q, 0 Kye Ka), 
+AM = {ey By aj Xe Oy cosy Re Days 
+
+
+It can be shown that this property of the sets A’ and A” is pre- 
+served under formation of sums and differences, from which 
+equation (2) follows for all Borel sets. 
+
+Now let x = {x} be an arbitrary (in general infinite) aggre- 
+gate of random variables. If the field % coincides with the field 
+BR” (M is the set of all »), the aggregate of equations 
+
+
+Fey ps... pen (4p» Qa» -+ ++ Gn) = Fry, (41) Fy, (42) ---Fun(@n) (3) 
+
+
+is necessary and sufficient for the mutual independence of the 
+variables x, . 
+
+The necessity of this condition follows at once from formula 
+(1). We shall now prove that it is also sufficient. Let M’ and M” 
+be two non-intersecting subsets of the set M of all indices », and 
+let A’ (or A”) bea set of BY” defined by a relation among the x, 
+
+
+with indices » from M’ (or M”). We must show that we then have 
+P(A’A”) = P(A’) P(A”) . (4) 
+
+
+If A’ and A” are cylinder sets then we are dealing with rela- 
+tions among a finite set of variables x,, equation (4) represents 
+in that case a simple consequence of previous results (Formula 
+(2)). And since relation (4) holds for sums and differences of 
+sets A’ (or A”) also, we have proved (4) for all sets of BR” 
+as well. 
+
+Now for every » of a set M let there be given a priori a distri- 
+bution function F,, (a); in that case we can construct a field of 
+probability such that certain random variables x, in that field 
+(unassuming all values in M) will be mutually independent, where 
+x, will have for its distribution function the F, (a) given a priori. 
+
+
+60 VI. Independence; The Law of Large Numbers 
+
+
+In order to show this it is enough to take R” for the basic set EF 
+and By” for the field 3, and to define the distribution functions 
+Fism...un (See Chap. III, § 4) by equation (3). 
+
+Let us also note that from the mutual independence of each 
+finite group of variables x, (equation (3)) there follows, as we 
+have seen above, the mutual independence of all x, on BY. In 
+more inclusive fields of probability this property may be lost. 
+
+To conclude this section, we shall give a few more criteria for 
+the independence of two random variables. 
+
+If two random variables x and y are mutually independent 
+and if E(x) and E(y) are finite then almost certainly 
+
+
+E,(y) = E(y), | 
+
+
+E, (x) = E(x). (5) 
+
+
+These formulas represent an immediate consequence of the 
+second definition of conditional mathematical expectation (For- 
+mulas (10) and (11) of Chap. V, § 4). Therefore, in the case of 
+independence both 
+
+
+paFY-EO)F and ge — ERE)" 
+a? (y) o? (x) 
+
+
+are equal to zero (provided o?(z) > 0 and o?(y) > 0). The num- 
+ber f? is called the correlation ratio of y with respect to x, and g? 
+the same for x with respect to y (Pearson). 
+
+
+From (5) it further follows that 
+E(xy) =E(x) E(y) - (6) 
+To prove this we apply Formula (15) of § 4, Chap. V: 
+
+
+E(xy) = EE, (xy) = E[xE,(y)] = E[vE(y)] = E(y) E(x). 
+Therefore, in the case of independence 
+
+
+_ E@.y) — E(x) EQ) 
+
+
+is 0 (ao (y) 
+
+
+is also equal to zero; 7, as is well known, is the correlation co- 
+efficient of x and y. 
+
+If two random variables x and y satisfy equation (6), then 
+they are called uncorrelated. For the sum 
+
+
+S=a,t+at¢+...¢+% 
+
+
+$3. The Law of Large Numbers G1 
+
+where the 2, %2,..., 2%, are uncorrelated in pairs, we can easily 
+compute that 
+
+07 (s) = 07 (x4) + 0? (x2) +--+ + 0? (xq) « (7) 
+
+
+In particular, equation (7) holds for the independent variables x,.- 
+
+
+§ 3. The Law of Large Numbers 
+Random variables s of a sequence 
+Say Say.0.0 ey Saye oe 
+are called stable, if there exists a numerical sequence 
+dy, d2,...,dn,.-- 
+such that for any positive « 
+P{|s, — dq| = €} 
+converges to zero as n = oo. If all E(s,) exist and if we may set 
+d, = E(s,), 
+
+
+then the stability is normal. 
+If all s, are uniformly bounded, then from 
+
+
+P{|s, —d,|=e}>+0 n +> +00 (1) 
+we obtain the relation 
+|E(s,) — d,| > 0 n > +00 
+and therefore 
+P{|s, — E(s,)| =e} 0. n> +00 (2) 
+
+
+The stability of a bounded stable sequence is thus necessarily 
+normal. 
+Let 
+
+
+E(s, = E(s,))? = o*(s,) = o;, ‘ 
+According to the Tchebycheff inequality, 
+2 
+P{|s, — E(s,)| ze} =. 
+Therefore, the Markov Condition 
+G, > 0 n> +00 (3) 
+
+
+is sufficient for normal stability. 
+
+
+62 VI. Independence; The Law of Large Numbers 
+
+
+If s,-E(s,) are uniformly bounded: 
+| s,-E(s,) |= M, 
+then from the inequality (9) in §3, Chap. IV, 
+o2 — g? 
+M2 
+
+Therefore, in this case the Markov condition (3) is also necessary 
+for the stability of the s,. 
+
+If 
+
+
+P{|s, — E(s,)| =e}= 
+
+
+
+
+
+matador ts, 
+
+
+AY 
+Me n 
+
+
+
+
+
+and the variables x, are uncorrelated in pairs, we have 
+8 = {0?(xy) + o%(%) +--+ + 0% (%,)}. 
+
+
+Therefore, in this case, the following condition is sufticient for 
+the normal stability of the arithmetical means s;,: 
+
+
+G5, = 07 (x,) + 0 (x%,) + --- + o(x,) = 0 (n?) (4) 
+
+(Theorem of Tchebycheff). In particular, condition (4) is ful- 
+filled if all variables x, are uniformly bounded. 
+
+This theorem can be generalized for the case of weakly cor- 
+
+
+related variables x,. If we assume that the coefficient of correla- 
+tion 7mni of x, and x, satisfies the inequality 
+
+
+Ina S c(|n as m|) 
+
+
+and that 
+k=n-1 
+Cy = pe (R) ’ 
+k=0 
+then a sufficient condition for norma] stability of the arithmetic 
+means s is? 
+Cao = oli). (5) 
+In the case of independent summands «, we can state a neces- 
+sary and sufficient condition for the stability of the arithmetic 
+means s,. For every x, there exists a constant m, (the median of 
+x,) which satisfies the following conditions: 
+P(%,< m,) S34, 
+P (x%q_ > My) Sh. 
+
+
+‘It is obvious that r,, = 1 always. 
+
+
+> Cf. A. KHINTCHINE, Sur la loi fortedes grandes nombres. C. R. de \’acad. 
+sci. Paris v. 186, 1928, p. 285. 
+
+
+§ 3. The Law of Large Numbers 63 
+
+
+We set 
+Ln = ty if | r—-m,| Sn, 
+tnx = 0 otherwise, 
+
+
+s* = Bait A%agte- + Ban 
+) Fe ge en . 
+Then the relations 
+
+
+k=n k=n 
+& Piles — my] > mh =X Pltae + mi) > 0, n + +00 (6) 
+k=1 =1 
+
+
+k=n 
+0? (sz) = 2 0? (%nz) = 0(n?) (7) 
+are necessary and sufficient for the stability of variables s,’. 
+
+
+We may here assume the constants d, to be equal to the E(s,*) 
+so that in the case where 
+
+
+E(st) — E(s,) +0 n — +00 
+(and only in this case) the stability is normal. 
+
+
+A further generalization of Tchebycheff’s theorem is obtained 
+if we assume that the s, depend in some way upon the results of 
+any 7 trials, 
+
+W,,%,...,%,5 
+
+
+so that after each definite outcome of all these 7 trials s,, assumes 
+a definite value. The general idea of all these theorems known as 
+the law of large numbers, consists in the fact that if the depend- 
+ence of variables s, upon each separate trial M, (k = 1, 2,...,n) 
+is very small for a large n, then the variables s, are stable. If we 
+regard 
+
+
+Br, = EE, or... o(Sn) — Eon ots... ote 1 (Sn) J? 
+
+
+as a reasonable measure of the dependence of variables s, upon 
+the trial %,, then the above-mentioned general idea of the law of 
+large numbers can be made concrete by the following considera- 
+tions‘. 
+
+
+Let Zak = Egy... a (Se) — Egos... fe—1 (Sn) « 
+
+
+“Cf. AL KoLMocoroy . Uber die Summen durch den Zufall bestimmter 
+unabhdngiger Grossen, Math. Ann. v. 99, 1928, pp. 309-319 (corrections and 
+notes Sag) study, v. 102, 1929 pp. 484-488, Theorem VIII and a supplement 
+on p. . 
+
+“Cf. A. KotmMogoroy. Sur la loi des grandes nombres. Rend. Accad. Lincei 
+v. 9, 1929 pp. 470-474. 
+
+
+64 VI. Independence; The Law of Large Numbers 
+
+
+Then 
+Sp ~ E(s,) = 4 +2z+--- +a, 
+
+
+E(Znu) = EEw, a, ... ot (Sp) — EEg, a, ... o¢—1(Sn) = E(s,) — E(s,) =0. 
+
+
+07 (Zaz) = E (zis) = Bar: 
+
+
+We can easily compute also that the random variables z,, (k = 
+
+
+1,2,...,%) are uncorrelated. For let i < k; then 
+Eo, ot, ... e—1 (ne 2nd) = 2ne Eon ot... Oe - 1 (Zn) 
+= 2n¢ Ey. o,... oe —1 [Eo a... (Sa) — Eats ote... ote 1 (Sn) ] 
+= ZncLEa, of... 94-1 (Sn) = Er, of, ... Ue—1 (Sn) =0 
+and therefore 
+
+
+E(2ni2nx) = 0. 
+We thus have 
+
+
+0°(5,) = 08 (Zq1) + 08 (eqs) + +++ + 6° (Znn) = Bi + Bla + ++ + Bane 
+
+
+Therefore, the condition 
+
+
+Bit Bet--- +f, 7-0 n —+ +00 
+
+
+is sufficient for the normal stability of the variables s,. 
+
+
+§ 4. Notes on the Concept of Mathematical Expectation 
+
+
+We have defined the mathematical expectation of a random 
+
+
+variable x as 
++co 
+E(x) = [xP (dE) = [adF® (a) , 
+
+
+E —oco 
+
+
+where the integral on the right is understood as 
+
+
++00 e 
+= fadF@(a) = li @) smal 
+E(x) = jaar (a) tim (2) eee 
+
+
+The idea suggests itself to consider the expression 
+
+
++b 
+E* (x) = lim [adF® (a) b > +00 
+—b 
+
+
+* Application of Formula (15) in § 4, Chap. V. 
+
+
+(1) 
+
+
+(2) 
+
+
+§ 4. Notes on the Concept of Mathematical Expectation 65 
+
+
+as a generalized mathematical expectation. We lose in this case, 
+of course, several simple properties of mathematical expectation. 
+For example, in this case the formula 
+
+
+E(x + y) = E(x) + E(y) 
+
+
+is not always true. In this form the generalization is hardly 
+admissible. We may add however that, with some restrictive 
+supplementary conditions,definition (2) becomes entirely natural 
+and useful. 
+
+We can discuss the problem as follows. I.et 
+
+
+Xi, Loy oa ey Lny- 
+be a sequence of mutually independent variables, having the same 
+distribution function F(a) =F@ (a), (n= 1, 2,...) as x. 
+Let further 
+
+
+y+ Xt t+ 4a 
+ee 
+
+
+We now ask whether there exists a constant E*(xz) such that 
+for every « > 0 
+
+
+limP(|s, — E*(x)| >e)=0, n>++00. (3) 
+
+
+The answer is : If such a constant E* (x) exists, it is expressed by 
+Formula (2). The necessary and sufficient condition that Formula 
+(3) hold consists in the existence of limit (2) and the relation 
+
+
+P(|x|>n) = o(4). (4) 
+
+
+To prove this we apply the theorem that condition (4) is 
+necessary and sufficient for the stability of the arithmetic means 
+Sn, where, in the case of stability, we may set® 
+
+
++n 
+d, =| adF® (a). 
+f 
+
+
+If there exists a mathematical expectation in the former sense 
+(Formula (1)), then condition (4) is always fulfilled’. Since in 
+this case E(x) = E*(x), the condition (3) actually does define a 
+generalization of the concept of mathematical expectation. For 
+the generalized mathematical expectation, Properties I - VII 
+
+
+°Cf. A. KotmMocorov , Bemerkungen zu meiner Arbeit, “Uber die Summen 
+zufdlliger Gréssen.” Math. Ann. v. 102, 1929, pp. 484-488, Theorem XII. 
+‘Ibid, Theorem XIII. 
+
+
+66 VI. Independence; The Law of Large Numbers 
+
+
+(Chap. IV, § 2) still hold; in general, however, the existence of 
+E*| x | does not follow from the existence of E* (x). 
+
+To prove that the new concept of mathematical expectation 
+is really more general than the previous one, -it is sufficient to 
+give the following example. Set the probability density f@ (a) 
+
+
+equal to 
+Cc 
+
+
+~ (Jal + 2)? In(Ja] + 2)’ 
+where the constant C is determined by 
+
+
+fr@ da=1. 
+
+
+#2) (a) 
+
+
+It is easy to compute that in this case condition (4) is fulfilled. 
+Formula (2) gives the value 
+
+
+E*(x) = 0, 
+but the integral 
+
+
++00 +00 
+[\alaFo (a) = [lal /(a) da 
+
+
+diverges. 
+
+
+§ 5. Strong Law of Large Numbers; Convergence of Series 
+The random variables s, of the sequence 
+Sis Sos. cen Saye ss 
+are strongly stable if there exists a sequence of numbers 
+di, de, ..., Any ss 
+such that the random variables 
+Sn — On 
+
+
+almost certainly tend to zero as > +oo. From strong stability 
+follows, obviously, ordinary stability. If we can choose 
+
+
+d, = E(s,) , 
+then the strong stability is normal. 
+In the Tchebycheff case, 
+
+
+ga Met tte 
+
+
+n n id 
+
+
+§ 5. Strong Law of Large Numbers; Convergence of Series 67 
+
+
+where the variables x, are mutually independent. A sufficient® 
+condition for the normal strong stability of the arithmetic means 
+S, is the convergence of the series 
+
+
+fa =] 
+
+
+az 
+>. (1) 
+n=1 
+
+
+This condition is the best in the sense that for any series of con- 
+stants b, such that 
+
+
+co b, 
+Pr a +00 , 
+n=1 
+we can build a series of mutually independent random variables 
+x, Such that 
+a (xq) = bn 
+and the corresponding arithmetic means s, will not be strongly 
+stable. 
+If all z, have the same distribution function F“) (a), then the 
+existence of the mathematical expectation 
++o 
+E(x) = f adF©®)(a) 
+is necessary and sufficient for the strong stability of s,; the sta- 
+bility in this case is always normal’. 
+Again, let 
+Diy Coen geneei 
+
+
+be mutually independent random variables. Then the probability 
+of convergence of the series 
+
+
+ke (2) 
+n=1 
+is equal either to one or to zero. In particular, this probability 
+
+
+equals one when both series 
+
+
+co oo 
+DE(xn) and So? (x,) 
+n=1 n=1 
+converge. Let us further assume 
+Yn = L, incase [{z,| <1, 
+Yn = Oin case | x, | > 1. 
+* Cf. A. KoLMocorov,’ Sur la loi forte des grandes nombres, C. R. Acad. Sci. 
+
+
+Paris v. 191, 1930, pp. 910-911. 
+° The proof of this statement has not yet been published. 
+
+
+68 VI. Independence; The Law of Large Numbers 
+
+
+Then in order that series (1) converge with the probability one, 
+it is necessary and sufficient’® that the following series converge 
+simultaneously : 
+
+
+> Pflal >A}, SE On) and Sor(y) : 
+
+
+* Cf. A. KHINTCHINE and A. KoLMoGorov, On the Convergence of Series, 
+Rec. Math. Soc. Moscow, v. 32, 1925, p. 668-677. 
+
+
+Appendix 
+
+
+ZERO-OR-ONE LAW IN THE THEORY 
+OF PROBABILITY 
+
+
+We have noticed several cases in which certain limiting 
+probabilities are necessarily equal to zero or one. For example, 
+the probability of convergence of a series of independent random 
+variables may assume only these two values'. We shall prove now 
+a general theorem including many such cases. 
+
+
+THEOREM: Let x, 22,...,Xn,... be any random variables and 
+let f(a, %2,..., XLn,...-) be a Baire function? of the variables 
+Ui, Vo. . +, Ln... SUCH that the conditional probability 
+
+
+Ps. Beyncesy tal (x) = 0} 
+of the relation 
+
+
+Tie %er oi Kav cee) =O 
+remains, when the first n variables x, X2,..., 2, are known, equal 
+to the absolute probability 
+P{/(x) = 0} (1) 
+
+
+for every n. Under these conditions the probability (1) equals 
+zero or one. 
+
+In particular, the assumptions of this theorem are fulfilled if 
+the variables x, are mutually independent and if the value of the 
+function f(x) remains unchanged when only a finite number of 
+variables are changed. 
+
+Proof of the Theorem: Let us denote by A the event 
+
+
+f(x) =0. 
+
+
+We shall also investigate the field & of all events which can be 
+defined through some relations among a finite number of vari- 
+
+
+*Cf. Chap. VI, § 5. The seme thing is true of the probability 
+Sn — dq 0 
+in the strong law of large numbers; at least, when the variables x, are mutu- 
+ally independent. 
+* A Baire function is one which can be obtained by successive passages to 
+the limit, of sequences of functions, starting with polynomials. 
+
+
+69 
+
+
+70 Appendix 
+
+
+ables x,. If event B belongs to R, then,according to the conditions’ 
+of the theorem, 
+
+
+Pa(A) = P(A). (2) 
+
+
+In the case P(A) =O our theorem is already true. Let now 
+P(A) > 0. Then from (2) follows the formula 
+
+
+= P,(A)P(B) = 
+
+
+Pa(B) = Pater 
+
+
+P(B), (3) 
+and therefore P(B) and P,(B) are two completely additive set 
+functions, coinciding on &; therefore they must remain equal to 
+each other on every set of the Borel extension BR of the field &. 
+Therefore, in particular, 
+
+
+which proves our theorem. 
+
+Several other cases in which we can state that certain prob- 
+abilities can assume only the values one and zero, were discovered 
+by P. Lévy. See P. LEvy, Sur un théoréme de M. Khintchine, Bull. 
+des Sci. Math. v. 55, 1931, pp. 145-160, Theorem II. 
+
+
+[1]. 
+[2]. 
+[1]. 
+[2). 
+
+
+[3]. 
+
+
+[1]. 
+
+
+[2]. 
+[3]. 
+
+
+[1]. 
+[1]. 
+[1]. 
+[2]. 
+[1]. 
+[2]. 
+[1]. 
+[1]. 
+[1]. 
+[2]. 
+[3]. 
+
+
+3’). 
+
+
+[1]. 
+[1]. 
+[2]. 
+[1]. 
+[1). 
+[2]. 
+
+
+BIBLIOGRAPHY 
+
+
+BERNSTEIN, S.: On the axiomatic foundation of the theory of proba- 
+bility. (In Russian). Mitt. Math. Ges. Charkov, 1917, Pp. 209-274. 
+
+— Theory of probability, 2nd edition. (In Russian). Moscow, 1927. 
+Government publication RSFSR. 
+
+BorEL, E.: Les probabilités dénombrables et leurs applications arith- 
+métiques. Rend. Circ. mat. Palermo Vol. 27 (1909) Pp. 247-271. 
+
+— Principes et formules classiques, fasc. 1 du tome I du Traité des 
+probabilités par E. BorEL et divers auteurs. Paris: Gauthier-Villars 
+1925. 
+
+— Applications & Varithmétique et a la théorie des fonctions, fasc. 1 du 
+tome II du Traité des probabilités par E. BorEL et divers auteurs. 
+Paris: Gauthier-Villars 1926. 
+
+CANTELLI, F. P.: Una teoria astratta del Calcolo delle probabilita. Giorn. 
+Ist. Ital. Attuari Vol. 3 (1932) pp. 257-265. 
+
+— Sulla legge dei grandi numeri. Mem. Acad. Lincei Vol. 11 (1916). 
+
+— Sulla probabilita come limite della frequenza. Rend. Accad. Lincei 
+Vol. 26 (1917) Pp. 39-45. 
+
+CorpELAND. H.: The theory of probability from the point of view of 
+admissible numbers. Ann. Math. Statist. Vol. 3 (1932) Pp. 143-156. 
+
+DGrce, K.: Zu der von R. von M*ses gegebenen Begriindung der Wahr- 
+scheinlichkeitsrechnung. Math. Z. Vol. 32 (1930) Pp. 232-258. 
+
+FRECHET, M.: Sur la convergence en probabilité. Metron Vol. 8 (1980) 
+Pp. 1-48. 
+
+— Recherches théoriques modernes, fasc. 3 du tome I du Traité des 
+probabilités par E. BoREL et divers auteurs. Paris: Gauthier-Villars. 
+
+Kotmocorov, A.: Uber die analytischen Methoden in der Wahrschein- 
+lichkeitsrechnung. Math. Ann. Vol. 104 (1931) Pp. 415-458. 
+
+— The general theory of measure and the theory of probability. (In 
+Russian). Sbornik trudow sektii totshnych nauk K. A., Vol. 1 (1929) 
+pp. 8-21. 
+
+Lévy, P.: Calcul des probabilités. Paris: Gauthier-Villars. 
+
+Lomnickt, A.: Nouveaux fondements du calcul des probabilités. Fun- 
+dam. Math. Vol. 4 (1923) Pp. 34-71. 
+
+Mises, R. v.: Wahrscheinlichkeitsrechnung. Leipzig u. Wien: Fr. 
+Deuticke 1931. 
+
+— Grundlagen der Wahrscheinlichkeitsrechnung. Math. Z. Vol. 5 
+(1919) pp. 52-99. 
+
+— Wahrscheinlichkeitsrechnung, Statistik und Wahrheit. Wien: Julius 
+Springer 1928. 
+
+— Probability, Statistics and Truth (translation of above). New York: 
+The MacMillan Company 1939. 
+
+
+REICHENBACH, H.: Axiomatik der Wahrscheinlichkeitsrechnung. Math. 
+Z. Vol. 34 (1932) Pp. 568-619. 
+
+
+Stutsxy, E.: Uber stochastische Asymptoten und Grenzwerte. Metron 
+Vol. 5 (1925) Pp. 8-89. 
+
+
+— On the question of the logical foundation of the theory of proba- 
+bility. (In Russian). Westnik Statistiki, Vol. 12 (1922), pp. 18-21. 
+
+
+STEINHAUS, H.: Les probabilités dénombrables et leur rapport a la 
+théorie de la mesure. Fundam. Math. Vol. 4 (1923) Pp. 286-810. 
+
+
+TORNIER, E.: Wahrscheinlichkeitsrechnung und Zahlentheorie. J. reine 
+angew. Math. Vol. 160 (1929) Pp. 177-198. 
+
+
+— Grundlagen der Wahrscheinlichkeitsrechnung. Acta math. Vol. 60 
+(1933) Pp. 239-380. 
+
+
+71 
+
+
