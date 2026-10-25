@@ -531,7 +531,7 @@ The **Central Limit Theorem** is the bridge between randomness and order. It exp
 
 The first version of the CLT came out of the eighteenth-century analysis of games of chance; **\citeauthor{laplace1810clt}** generalized it in \citeyear{laplace1810clt}, in the context of the “Problem of Errors” in astronomy.
 
-Astronomers of the era faced a dilemma: every measurement taken via telescope or pendulum was slightly “noisy” due to atmospheric disturbances or human imperfection. Laplace proved that the **average** of these independent errors follows a bell curve, regardless of the shape of the individual error distribution. By aggregating many imprecise data points, one can mathematically “filter” the noise to recover the true position of a celestial body — a method that remains the foundation for how machines learn from “imperfect” real-world data.
+Astronomers of the era faced a dilemma: every measurement taken via telescope or pendulum was slightly “noisy” due to atmospheric disturbances or human imperfection. Laplace proved that the **average** of these independent errors follows a bell curve, whatever the shape of the individual error distribution, provided its variance is finite. By aggregating many imprecise data points, one can mathematically “filter” the noise to recover the true position of a celestial body — a method that remains the foundation for how machines learn from “imperfect” real-world data.
 
 #### The Mechanics of the Simulation
 1.  **Individual Randomness**: A single die follows a **Uniform Distribution**; every face ($1$ to $6$) has an equal $1/6$ probability.
@@ -770,7 +770,7 @@ Pearson solved this by creating the **Correlation Coefficient ($r$)**. By dividi
 
 $$\text{cosine similarity} = \frac{\vec{A} \cdot \vec{B}}{|\vec{A}| \cdot |\vec{B}|}$$
 
-This is structurally identical to Pearson's $r$: the dot product in the numerator captures the “shared signal” (covariance), while dividing by the magnitudes (standard deviations) removes the effect of scale. A cosine similarity of $1.0$ means the vectors point in the same direction (semantically identical), $0$ means orthogonal (unrelated), and $-1$ means opposite. This is why “king” and “monarch” score high similarity despite being different strings: their embedding vectors, shaped by billions of training examples, point in nearly the same direction. Pearson's standardization now underlies every RAG pipeline, recommendation engine, and vector database in modern AI.
+This is the same idea as Pearson's $r$, applied without centering: the dot product in the numerator captures the “shared signal”, while dividing by the magnitudes removes the effect of scale. Pearson's $r$ is the cosine of the *mean-centered* vectors; cosine similarity is the cosine of the raw vectors. A cosine similarity of $1.0$ means the vectors point in the same direction (semantically identical), $0$ means orthogonal (unrelated), and $-1$ means opposite. This is why “king” and “monarch” score high similarity despite being different strings: their embedding vectors, shaped by billions of training examples, point in nearly the same direction. Pearson's standardization now underlies every RAG pipeline, recommendation engine, and vector database in modern AI.
         </div>
     </div>
 </div>
@@ -916,7 +916,7 @@ For LLMs, Zipf's law has two practical consequences:
 * **Token imbalance**: a few tokens dominate training. Effective sampling and loss weighting must account for this.
 * **Long tail of rare words**: the model rarely sees most words. Performance on the long tail is consistently worse.
 
-The **Dirichlet distribution** (next chapter) is the natural probability distribution for Zipfian categorical data.
+The **Dirichlet distribution** (next chapter) is a natural prior over categorical distributions; on its own it does not reproduce a Zipfian tail.
 </div>
 
 <div class="statlab-interactive-zone">

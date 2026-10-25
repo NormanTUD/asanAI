@@ -550,7 +550,7 @@ The slogan is easiest to believe once it is on screen. Pick a type below — a s
 <div class="hott-card" id="hott-spaceDemo">
 	<div class="hott-card-title"><span class="dot"></span>Types as spaces</div>
 	<p class="hott-lead">Choose a shape. Points are values; the lines and loops are the equalities available in that type.</p>
-	<canvas id="hott-spaceCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="380"></canvas>
+	<canvas id="hott-spaceCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="380" role="img" aria-label="Six types drawn as spaces: a point, an interval, two points, a circle, a sphere and a torus."></canvas>
 	<div class="hott-tabs" id="hott-spaceTabs" role="group" aria-label="Choose a type">
 		<button class="hott-step" data-space="point" aria-pressed="false">Point</button>
 		<button class="hott-step" data-space="interval" aria-pressed="false">Interval</button>
@@ -615,7 +615,7 @@ If a proof of $a = b$ is a path, then two different proofs are two different pat
 <div class="hott-card" id="hott-pathDemo">
 	<div class="hott-card-title"><span class="dot"></span>The path workshop</div>
 	<p class="hott-lead">Drag the endpoints. The proof-path follows them; the slider bends it without ever lifting the ends.</p>
-	<canvas id="hott-pathCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="420"></canvas>
+	<canvas id="hott-pathCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="420" role="img" aria-label="Two points a and b joined by a proof path that can be dragged and deformed."></canvas>
 	<div class="hott-controls">
 		<div class="hott-control"><label>Deformation <b id="hott-pathT">0%</b></label><input type="range" id="hott-pathSlider" min="0" max="100" value="0"></div>
 		<button id="hott-pathAuto" class="hott-btn" aria-pressed="false">Breathe</button>
@@ -654,7 +654,7 @@ Two paths $p$ and $q$ between the same endpoints can themselves be equal. A **2-
 <div class="hott-card" id="hott-surfaceDemo">
 	<div class="hott-card-title"><span class="dot"></span>A surface between two proofs</div>
 	<p class="hott-lead">Drag the handle to change the bulge. The highlighted slice is the current intermediate path; the whole band is the 2-path $\alpha : p \equiv q$.</p>
-	<canvas id="hott-surfaceCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="420"></canvas>
+	<canvas id="hott-surfaceCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="420" role="img" aria-label="A surface of intermediate paths between the two proofs p and q."></canvas>
 	<div class="hott-controls">
 		<div class="hott-control"><label>Intermediate path <b id="hott-surfaceS">50%</b></label><input type="range" id="hott-surfaceSlider" min="0" max="100" value="50"></div>
 		<button id="hott-surfaceAuto" class="hott-btn is-active" aria-pressed="true">Breathe</button>
@@ -672,7 +672,7 @@ Fix the base point of $S^1$. A loop that winds around $n$ times cannot be deform
 <div class="hott-card" id="hott-loopDemo">
 	<div class="hott-card-title"><span class="dot"></span>The loop laboratory</div>
 	<p class="hott-lead">Loops on $S^1$ are classified by an integer. Composition is addition; the lift above the circle records the running total.</p>
-	<canvas id="hott-loopCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="420"></canvas>
+	<canvas id="hott-loopCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="420" role="img" aria-label="The circle S1 with two loops of chosen winding number."></canvas>
 	<div class="hott-controls">
 		<div class="hott-control"><label>Loop a <b id="hott-loopAVal">+1</b></label><input type="range" id="hott-loopA" min="-3" max="3" step="1" value="1"></div>
 		<div class="hott-control"><label>Loop b <b id="hott-loopBVal">+1</b></label><input type="range" id="hott-loopB" min="-3" max="3" step="1" value="1"></div>
@@ -702,7 +702,7 @@ A higher inductive type is allowed to declare **paths** as constructors, not onl
 <div class="hott-card" id="hott-glueDemo">
 	<div class="hott-card-title"><span class="dot"></span>Gluing the interval into a circle</div>
 	<p class="hott-lead">The interval $[0,1]$ becomes $S^1$ when $0$ and $1$ are identified. Watch the ends meet.</p>
-	<canvas id="hott-glueCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="380"></canvas>
+	<canvas id="hott-glueCanvas" class="hott-canvas hott-demo-canvas" width="1000" height="380" role="img" aria-label="An interval being bent until its endpoints meet and form a circle."></canvas>
 	<div class="hott-controls">
 		<div class="hott-control"><label>Gluing <b id="hott-glueT">0%</b></label><input type="range" id="hott-glueSlider" min="0" max="100" value="0"></div>
 		<button id="hott-gluePlay" class="hott-btn">Glue once</button>
@@ -766,7 +766,7 @@ A type can depend on a point: over every point of a base space sits a fibre, and
 <div class="hott-card" id="hott-mobiusDemo">
 	<div class="hott-card-title"><span class="dot"></span>Transport along a loop</div>
 	<p class="hott-lead">Drag to turn the surface. Send the fibre once around the loop: on the Möbius strip it comes back mirrored, on the cylinder it does not.</p>
-	<canvas id="hott-mobiusCanvas" class="hott-canvas hott-demo-canvas tall" width="1000" height="520"></canvas>
+	<canvas id="hott-mobiusCanvas" class="hott-canvas hott-demo-canvas tall" width="1000" height="520" role="img" aria-label="A Möbius strip with a fibre carried once around the loop; drag to rotate the surface."></canvas>
 	<div class="hott-controls">
 		<button class="hott-btn is-active" id="hott-mobiusToggle" aria-pressed="true">Möbius strip</button>
 		<div class="hott-control"><label>Position <b id="hott-mobiusT">0%</b></label><input type="range" id="hott-mobiusSlider" min="0" max="100" value="0"></div>
