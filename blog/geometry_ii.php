@@ -45,6 +45,14 @@ The third form is what matters. The inner product splits into *how long* each ve
 This fact drives the whole field. A neuron’s weighted sum $w \cdot x + b$ is an inner product plus a shift. Similarity search finds the vector with the largest inner product. Attention is a weighted average whose *weights* are normalized inner products (see [Attention](attentionlab)). Cosine similarity — the inner product with the lengths divided out — powers retrieval \citeauthor{mikolov2013word2vec} (\citeyear{mikolov2013word2vec}).
 </div>
 
+<div class="optional md" data-headline="Where the inner product came from">
+The word *inner* is Grassmann's: in the *Ausdehnungslehre* of 1844 he coined *inneres Produkt* for exactly this pairing (\cite[Grassmann, 1844]{grassmann1844ausdehnungslehre}). Hamilton arrived from the other side. For pure quaternions $pq=-p\cdot q+p\times q$: the scalar part is (up to sign) the dot product and the vector part the cross product (\cite[Hamilton, 1853]{hamilton1853lectures}; \cite[Hamilton's Broom Bridge letter]{hamilton1865letter}). Gibbs and Heaviside then stripped the quaternions down to the vector calculus every network inherits (\cite[Gibbs \& Wilson, 1901]{gibbs_wilson1901}; \cite[Heaviside, 1893]{heaviside1893electromagnetic}); the quarrel is chronicled by \citeauthor{crowe1967vectoranalysis} (\citeyear{crowe1967vectoranalysis}).
+</div>
+
+<div class="md" data-lesson-id="geometry-ii">
+> **The dot product has two parents.** Grassmann named the inner product in 1844; Hamilton hid it inside quaternion multiplication in 1843–46; Gibbs and Heaviside made it the dot product of vector calculus in the 1880s–1901.
+</div>
+
 <div class="md" data-mathlevel="70">
 ### The Gram matrix: where similarity lives
 
@@ -65,6 +73,8 @@ $$
 Rotate the whole point cloud and nothing in $G$ moves — a coordinate-free description. Even more rigid: the **eigenvalues** of $G$ are invariant under *any* orthogonal change of basis (\cite[Axler, Linear Algebra Done Right, Ch. 7, §7B, p. 243]{axler2024linearalgebra}), so they capture the data’s shape independent of coordinates.
 
 That is the seed of the chapter. Everything that follows is a geometric operation on those vectors: **projection** picks out a subspace, the **SVD** diagonalizes the stretch, **descent** walks across a level set, **convolution** is a sliding dot product that commutes with shifts, and **symmetry** is the set of transformations a network respects.
+
+The matrix of all pairwise inner products is named for Jørgen Pedersen Gram, whose 1879/1883 work on least-squares series expansions used the determinant of such a matrix to test whether functions were linearly dependent (\cite[Gram, 1879/1883]{gram1883}). Gram was not the first to orthogonalise — Laplace and Cauchy had used the procedure earlier — but his name stuck to the object that records a set's geometry. In modern language $G$ is the covariance of the data up to centring, and its rank is the number of independent directions in the cloud.
 </div>
 
 <div class="md" data-mathlevel="65">
@@ -81,6 +91,8 @@ $$
 where $p_S$ is the projection of $p$ onto $S$. The cross term vanishes because $p - p_S$ is *perpendicular to* $S$ while $s - p_S$ lies *in* it. The first term does not depend on $s$; the second is non-negative and zero only when $s = p_S$. So the closest point is **the shadow $p_S$**, and the error $p - p_S$ is the part of $p$ sticking out, perpendicular to $S$.
 
 “The error is perpendicular to the model” is a *working diagnostic*. It is the whole of least squares: a fit is optimal exactly when the residual is orthogonal to every direction the model can move in (\cite[Boyd & Vandenberghe, Applied Linear Algebra, Ch. 12, §12.3, p. 231]{boyd2018appliedlinearalgebra}) \cite{legendre1805} \cite{gauss1809} (see [Loss](losslab)). It is the whole of low-rank approximation: truncating to a few directions gives the best shadow of the data in that subspace \cite{svd_wiki} (see [Beyond LLMs](beyond_llms)). And it reads a single neuron: its output $\langle w, x \rangle$ is how much of the input $x$ points along $w$. Attention does the same move in reverse — project each key onto the query for a similarity, then recombine the values (see [Attention](attentionlab)).
+
+The method has a celebrated priority dispute. Legendre published it first, in 1805, as a practical rule for fitting comet orbits; Gauss published it in 1809 and claimed he had used it since 1795 (\cite[Legendre, 1805]{legendre1805}; \cite[Gauss, 1809]{gauss1809}). What Gauss added was the probabilistic justification: under normally distributed errors, least squares is the maximum-likelihood estimate. The geometry in this section — the residual perpendicular to the model — is the coordinate-free content both men were exploiting.
 
 The picture is always *a target, a family of allowed answers, keep the shadow.* In the interactive, move the target and tilt the subspace. The residual stays perpendicular — that right angle *is* the proof — and “explained” behaves like a regression’s $R^2$.
 </div>
@@ -124,12 +136,18 @@ Read the factorisation as a story about a circle:
 
 So *every* linear map is **rotate, stretch, rotate**. The circle $\lVert x\rVert = 1$ becomes an **ellipse**, and the singular values are its **semi-axis lengths** \cite{svd_wiki}. The right singular vectors (columns of $V$) are the axes of the circle that get stretched; the left singular vectors (columns of $U$) are where those stretched axes end up.
 
-\marginfig{jacobi.jpg}{Carl Gustav Jacobi (1804–1851). In 1842 he gave the theory of *reducing a quadratic form to its principal axes by successive linear substitutions* \cite{jacobi1842} — the “Jacobi rotations” that, in various descendants, are still the workhorse behind computing eigenvalues and the SVD today.}
+More precisely, it is simple in a *pair* of coordinate systems — one chosen in the input space and one in the output space; a rectangular map has different dimensions on the two sides. And "orthogonal" means length-preserving, which includes reflections: for strict rotations require $\det U=\det V=+1$.
+
+The factorization was not found in one stroke. Beltrami (1873) and Jordan (1874) independently showed that the singular values of a bilinear form are complete invariants under independent orthogonal changes of the two spaces; Sylvester (1889) called them *canonical multipliers* (\cite[Stewart, 1993]{stewart1993svd}). Schmidt (1907) carried the idea to integral operators (\cite[Schmidt, 1907]{schmidt1907}), and Weyl (1912) proved the eigenvalue–singular-value inequalities that brought it into spectral theory (\cite[Weyl, 1912]{weyl1912singular}). The letters $U$, $\Sigma$, $V$ arrived only with the numerical age.
+
+\marginfig{jacobi.jpg}{Carl Gustav Jacobi (1804–1851). In 1842 he gave the theory of *reducing a quadratic form to its principal axes by successive linear substitutions* \cite{jacobi1842} — the “Jacobi rotations” that, in various descendants, are still the workhorse behind computing eigenvalues and the SVD today. The published rotation method is Jacobi's 1846 paper in Crelle's Journal 30 (pp. 51–94); 1842 is not the date of the algorithm (\cite[Jacobi, 1846]{jacobi1846}).}
 
 Two facts turn the picture into engineering:
 
 * **Rank is the number of non-zero singular values.** If $\sigma_2 = 0$ the ellipse collapses to a line and the map forgets an input dimension — its image is lower-dimensional. Keeping only the top $r$ terms, $A \approx \sum_{i\le r}\sigma_i\, u_i v_i^{\top}$, is the *best* rank-$r$ approximation: it keeps the biggest stretches and drops the smallest \cite{svd_wiki}.
 * **Singular values are the “true sizes.”** Unlike eigenvalues, they are always real and non-negative and are defined for *any* rectangular matrix. The ratio $\kappa = \sigma_{\max}/\sigma_{\min}$, the **condition number**, measures how much more one direction is stretched than another — it controls how ill-conditioned the map is, and how sensitive its output is to noise.
+
+That truncation is optimal in a precise sense: among all matrices of rank at most $r$, the truncated SVD is closest in both the spectral and Frobenius norms. The finite-dimensional theorem is due to Eckart and Young (1936) (\cite[Eckart \& Young, 1936]{eckartyoung1936}); Schmidt had already proved the integral-operator version in 1907 (\cite[Schmidt, 1907]{schmidt1907}). The algorithm that made the SVD routine — bidiagonalisation followed by QR iteration — is Golub and Reinsch's (1970) (\cite[Golub \& Reinsch, 1970]{golubreinsch1970}), the ancestor of the LAPACK routines behind `numpy.linalg.svd`.
 
 That is why the SVD appears across this course under different names. **PCA** is the singular vectors of the data matrix, ordered by the variance they explain. **Low-rank compression** is “keep the top singular values.” **LoRA** fine-tunes a weight matrix by learning only a *low-rank* correction $\Delta W = BA$ \cite{hu2021lora} — the bet that the useful change lives in a few directions. And a layer’s “effective rank” (how fast its singular values decay) proxies how much of its capacity it actually uses. Applied to an attention head, the same “keep the top singular directions” idea becomes an interpretability tool: an SVD of a head’s query–key or value–output matrix isolates the one or two directions that carry the real signal when that head talks to a head several layers later — the **communication channels** that can be read straight off the weights (\cite[Merullo et al., 2024]{merullo2024talkingheads}) (see [Mechanistic Interpretability](mechanistic_interpretability)). See [Beyond LLMs](beyond_llms) for PCA and factorisation as algorithms.
 
@@ -164,6 +182,8 @@ $$
 $$
 
 So $\langle \nabla L, d\rangle$ is largest when $d$ points *along* $\nabla L$ and most negative when $d$ points *against* it. Steepest ascent is $+\nabla L$ and steepest descent is $-\nabla L$ — not by choice, but because the inner product *forces* the steepest direction to be the gradient. Cauchy wrote this down in 1847 as the method of steepest descent, a century before neural networks \cite{cauchy1847}.
+
+Strictly, Cauchy's 1847 note treats simultaneous equations by minimising a sum of squares; it is not a general nonlinear-descent method. The name "steepest descent" and the convergence theory came later, with Hadamard's 1907–08 method (\cite[Hadamard, 1908]{hadamard1908}) and the mid-20th-century optimisation literature. The constrained version — project the gradient back onto the feasible set — is Rosen's gradient-projection method (1960) (\cite[Rosen, 1960]{rosen1960}), the direct ancestor of the projection step in modern constrained optimisers.
 
 \marginfig{cauchy.jpg}{Augustin-Louis Cauchy (1789–1857). In 1847 he proposed moving a point *against the gradient* to solve systems of equations and to fit by least squares \cite{cauchy1847} — the move later christened the **method of steepest descent**, and the same move every gradient-based optimizer makes on a loss landscape.}
 
@@ -201,7 +221,11 @@ $$
 
 That is all a convolution is: an inner product, repeated at every offset $t$ — the same alignment measurement from the inner product. This is why a CNN filter works: each filter is a kernel, and applying it to an image is taking the dot product with every patch, so it *detects* the local pattern it is shaped like (see [Computer Vision](computer_vision)).
 
-\marginfig{fourier.jpg}{Jean-Baptiste Joseph Fourier (1768–1830). In his 1822 *Théorie analytique de la chaleur* he argued that any signal is a sum of sines \cite{fourier1822} — the Fourier idea that makes the next paragraph possible.}
+In deep-learning libraries the operation is usually *cross-correlation*: the kernel is slid without flipping. A learned filter can absorb the reflection, but the convolution theorem applies to the flipped version. Written as a matrix, the repeated inner product is a **Toeplitz matrix**: each row is the previous row shifted by one, $A_{ij}=c_{i-j}$, so the whole operator is determined by a single kernel (\cite[Toeplitz, 1911]{toeplitz1911}). This is also why convolution is cheap to describe but not cheap to compute naively: an $n$-point output costs $O(nk)$, and the FFT later reduces the whole operator to pointwise multiplication.
+
+\marginfig{fourier.jpg}{Jean-Baptiste Joseph Fourier (1768–1830). In his 1822 *Théorie analytique de la chaleur* he argued that any signal is a sum of sines \cite{fourier1822} — the Fourier idea that makes the next paragraph possible. Fourier's claim was about functions (heat distributions), not "signals", and it was not a proof for arbitrary functions: convergence conditions were clarified later, notably by Dirichlet in 1829.}
+
+The idea that a vibrating string is a sum of simple modes is older than Fourier. D'Alembert solved the one-dimensional wave equation in 1747 and wrote the solution as two travelling waves (\cite[d'Alembert, 1747]{dalembert1747}); contemporaries such as Daniel Bernoulli argued for the sine-series superposition, and Fourier's 1807 memoir on heat — expanded into the 1822 *Théorie* — made the general claim (\cite[Fourier, 1822]{fourier1822}).
 
 The payoff is the **Fourier transform** $\mathcal{F}$ — a *change of coordinates*. It sends a signal to the list of sine-wave ingredients that build it. Write the signal and kernel in the basis of pure sine waves (“frequency” coordinates) instead of time. In that system the sliding sum becomes **ordinary multiplication**, point by point,
 
@@ -210,6 +234,8 @@ $$
 $$
 
 Convolution in time is multiplication in frequency \cite{fourier1822}. The reason: the sines are the directions in which the *slide* is normal. Shifting a sine in time only rotates its phase, so in the sine basis a shift is a rotation, and a sliding dot product of rotations is a product. The DFT finds those directions; the FFT is the fast way to compute them \cite{cooley1965fft}.
+
+The fast algorithm is older than the computer. Gauss used a radix-2 decomposition around 1805 to interpolate asteroid orbits, but left it unpublished (\cite[FFT history]{fft_history_wiki}). Runge's 1903 trigonometric-interpolation work supplied a precursor, and Danielson and Lanczos used the doubling trick for X-ray crystallography in 1942. Cooley and Tukey's 1965 paper supplied the general composite-length algorithm and the $O(n\log n)$ analysis that made it famous (\cite[Cooley \& Tukey, 1965]{cooley1965fft}). The history is a warning: the same idea can wait a century for its application.
 
 This is not a curiosity. “Smooth the signal” means multiply its spectrum by a low-pass; “detect an edge” means the output lights up at high frequency; “a periodic hum” means energy piled up at one frequency. In audio the short-time Fourier view of sound is this identity (see [Speech & Audio](speech_audio)); in vision it underlies frequency filtering and the DFT tricks behind positional encoding and grokking (see [Positional Embeddings](positionalembeddingslab) and [The Shape of Space](geometry_i)). The two interactives share one kernel: drag its three taps and the time-domain output smooths (left) while the frequency-domain reason — pointwise multiplication — appears at the same time (right).
 </div>
@@ -259,6 +285,8 @@ $$
 
 The commuting square is the whole idea of equivariance, and it is *geometric*: $f$ and the symmetry $\sigma$ are two motions of space that get along.
 
+The modern definition is Klein's. In the *Erlangen Programme* of 1872 he proposed that a geometry *is* the study of what a group of transformations leaves invariant (\cite[Klein, 1872]{klein1872erlangen}). Read backwards, that is the neural-network question: choose the group — translations, permutations, rotations — and the architecture is the family of functions that respect it. Noether's 1918 theorem is the physicist's cousin: every continuous symmetry of an action yields a conserved quantity (\cite[Noether, 1918]{noether1918}). Weyl's *Classical Groups* (1939) catalogued the invariants themselves (\cite[Weyl, 1939]{weyl1939classicalgroups}).
+
 These are not exotic — they are *forced*. **Deep Sets** \cite{zaheer2017deepsets} proved that any function of a *set* of inputs that is permutation-invariant must factor as “map each item, add them up, then pool”:
 
 $$
@@ -267,14 +295,20 @@ $$
 
 and it gives the matching condition for equivariance. “Map, sum, pool” is not a design choice — it is *the* shape any invariant or equivariant function on a set must have.
 
-This matters because **weight sharing is equivariance in disguise**, and attention is a *symmetric* operation:
+The theorem's hypothesis matters: for a countable universe the sum decomposition is exact; for uncountable domains the paper proves it only for sets of fixed size and conjectures the general case (\cite[Zaheer et al., 2017]{zaheer2017deepsets}). The equivariant form is different: for a linear layer it forces weight sharing, $\Theta=\lambda I+\gamma\mathbf{1}\mathbf{1}^{\top}$.
+
+This matters because **weight sharing is equivariance in disguise**, and attention is *permutation-equivariant* rather than symmetric:
 
 * A **CNN** shares one kernel across every location — translation-equivariance: shift the input and the feature map shifts the same way (see [Computer Vision](computer_vision)). The convolution section’s “sliding dot product” is the *mechanism*; this section is the *reason it is allowed*.
 * **Pooling** (mean, max) is the invariant readout: reorder what you pool over and the number does not move.
 * **Attention** is permutation-equivariant over the token set: shuffle the tokens and every output token and attention weight shuffles along. Order is not something attention knows, which is why position must be *added in explicitly* (see [Positional Embeddings](positionalembeddingslab)).
 * The same logic reaches **graphs**: a GNN is equivariant under re-labeling the vertices, which is why its basic form is message-passing — a sum over neighbors (the broader program is **geometric deep learning** \cite{bronstein2021geometric}).
 
+A caution on the word "symmetric": attention is permutation-equivariant, not symmetric. $A=\operatorname{softmax}(QK^{\top}/\sqrt{d_k})$ is normalised row by row, so $A^{\top}\neq A$ in general; swapping queries and keys changes the map (\cite[Vaswani et al., 2017]{vaswani2017attention}).
+
 The interactive holds a bag of six “tokens.” Drag the **shift** to reorder them. The <b>blue</b> (input) and <b>orange</b> (per-item equivariant output) traces rotate *together* — equivariance, the commutative square closing. The flat <b>green</b> line is the invariant readout (the mean), which does not move no matter how you reorder.
+
+> **A geometry is a group.** Klein (1872) defined a geometry by the transformations it leaves invariant; Noether (1918) turned continuous symmetry into conservation laws; Weyl (1939) catalogued the invariants. A CNN, a pooling layer and a GNN are three answers to Klein's question, written in weights.
 </div>
 
 <!-- ─── Interactive: Invariance vs equivariance on a bag of tokens ─── -->

@@ -22256,4 +22256,639 @@ window.bibData = {
 		alternativetitle: "Kim and Yegge 2025 — Vibe Coding (IT Revolution; ISBN 978-1-966280-02-6)"
 	},
 
+	/* ─────────────────────────────────────────────────────────────────────
+	 *  Deep-history sources for the foundational math chapters
+	 *  (math_i–iv, geometry_ii). Dates and quotations are checked against
+	 *  MacTutor, archive.org scans and the original works; every URL was
+	 *  verified to return HTTP 200.
+	 * ───────────────────────────────────────────────────────────────────── */
+
+	/* Math I — numbers, functions, infinity, e, logarithms */
+	"macTutorZero": {
+		title: "A History of Zero",
+		author: "J. J. O'Connor and E. F. Robertson",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/HistTopics/Zero/",
+		alternativetitle: "MacTutor, A History of Zero"
+	},
+	"macTutorBabylonianNumerals": {
+		title: "Babylonian Numerals",
+		author: "J. J. O'Connor and E. F. Robertson",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/HistTopics/Babylonian_numerals/",
+		alternativetitle: "MacTutor, Babylonian Numerals"
+	},
+	"macTutorBabylonianMathematics": {
+		title: "An Overview of Babylonian Mathematics",
+		author: "J. J. O'Connor and E. F. Robertson",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/HistTopics/Babylonian_mathematics/",
+		alternativetitle: "MacTutor, Babylonian Mathematics"
+	},
+	"macTutorEgyptianNumerals": {
+		title: "Egyptian Numerals",
+		author: "J. J. O'Connor and E. F. Robertson",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/HistTopics/Egyptian_numerals/",
+		alternativetitle: "MacTutor, Egyptian Numerals"
+	},
+	"macTutorRealNumbers": {
+		title: "Real Numbers: Pythagoras to Stevin",
+		author: "J. J. O'Connor and E. F. Robertson",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/HistTopics/Real_numbers_1/",
+		alternativetitle: "MacTutor, Real Numbers: Pythagoras to Stevin"
+	},
+	"macTutorFunctions": {
+		title: "The Function Concept",
+		author: "J. J. O'Connor and E. F. Robertson",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/HistTopics/Functions/",
+		alternativetitle: "MacTutor, The Function Concept"
+	},
+	"macTutorInfinity": {
+		title: "Infinity",
+		author: "J. J. O'Connor and E. F. Robertson",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/HistTopics/Infinity/",
+		alternativetitle: "MacTutor, Infinity"
+	},
+	"macTutorE": {
+		title: "The Number e",
+		author: "J. J. O'Connor and E. F. Robertson",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/HistTopics/e/",
+		alternativetitle: "MacTutor, The Number e"
+	},
+	"macTutorSetTheory": {
+		title: "A History of Set Theory",
+		author: "J. J. O'Connor and E. F. Robertson",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/HistTopics/Beginnings_of_set_theory/",
+		alternativetitle: "MacTutor, A History of Set Theory"
+	},
+	"macTutorNapier": {
+		title: "John Napier",
+		author: "J. J. O'Connor and E. F. Robertson",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/Biographies/Napier/",
+		alternativetitle: "MacTutor, John Napier"
+	},
+	"macTutorBurgi": {
+		title: "Jost Bürgi",
+		author: "J. J. O'Connor and E. F. Robertson",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/Biographies/Burgi/",
+		alternativetitle: "MacTutor, Jost Bürgi"
+	},
+	"macTutorKepler": {
+		title: "Johannes Kepler",
+		author: "J. J. O'Connor and E. F. Robertson",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/Biographies/Kepler/",
+		alternativetitle: "MacTutor, Johannes Kepler"
+	},
+	"macTutorTaylor": {
+		title: "Brook Taylor",
+		author: "J. J. O'Connor and E. F. Robertson",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/Biographies/Taylor/",
+		alternativetitle: "MacTutor, Brook Taylor"
+	},
+	"macTutorMaclaurin": {
+		title: "Colin Maclaurin",
+		author: "J. J. O'Connor and E. F. Robertson",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/Biographies/Maclaurin/",
+		alternativetitle: "MacTutor, Colin Maclaurin"
+	},
+	"brahmagupta_colebrooke": {
+		title: "Algebra, with Arithmetic and Mensuration, from the Sanscrit of Brahmegupta and Bháscara (Colebrooke translation)",
+		author: "Brahmagupta; Henry Thomas Colebrooke (trans.)",
+		year: "628 (trans. 1817)",
+		url: "https://archive.org/details/algebrawitharith00brahuoft",
+		alternativetitle: "Brahmagupta, Brāhmasphuṭasiddhānta (Colebrooke trans., 1817)"
+	},
+	"dedekind1872": {
+		title: "Stetigkeit und irrationale Zahlen",
+		author: "Richard Dedekind",
+		year: "1872 (2nd ed. 1892)",
+		url: "https://archive.org/details/stetigkeitundir00dedegoog",
+		alternativetitle: "Dedekind, Continuity and Irrational Numbers (1872)"
+	},
+	"cantor1895": {
+		title: "Beiträge zur Begründung der transfiniten Mengenlehre (Erster Artikel)",
+		author: "Georg Cantor",
+		year: "1895",
+		url: "https://archive.org/details/sim_mathematische-annalen_1895_46",
+		alternativetitle: "Cantor, Beiträge zur Begründung der transfiniten Mengenlehre (1895)"
+	},
+	"grosseteste_on_light": {
+		title: "On Light (De Luce), translated by Clare C. Riedl",
+		author: "Robert Grosseteste",
+		year: "c. 1225 (trans. 1942)",
+		url: "https://web.archive.org/web/20121102034606/http://web.mit.edu/jwk/www/docs/Riedel%201942%20Grosseteste%20On%20Light.pdf",
+		alternativetitle: "Grosseteste, On Light (c. 1225)"
+	},
+	"millerOperation": {
+		title: "Earliest Uses of Symbols of Operation",
+		author: "Jeff Miller",
+		year: "n.d.",
+		url: "https://mathshistory.st-andrews.ac.uk/Miller/mathsym/operation/",
+		alternativetitle: "Miller, Earliest Uses of Symbols of Operation"
+	},
+	"kepler1624chilias": {
+		title: "Chilias logarithmorum ad totidem numeros rotundos",
+		author: "Johannes Kepler",
+		year: "1624",
+		url: "https://archive.org/details/10053567bsb",
+		alternativetitle: "Kepler, Chilias logarithmorum (1624)"
+	},
+
+	/* Math II — vectors, matrices, tensors, softmax, cross-entropy */
+	"hamilton1844quaternions": {
+		title: "On Quaternions; or on a new System of Imaginaries in Algebra",
+		author: "William Rowan Hamilton",
+		year: 1844,
+		publisher: "Philosophical Magazine 25: 10–13",
+		url: "https://archive.org/details/londonedinburghp25lond",
+		alternativetitle: "Hamilton (1844) — the published quaternion calculus, with i² = j² = k² = ijk = −1"
+	},
+	"hamilton1846quaternions": {
+		title: "On Quaternions; or on a new System of Imaginaries in Algebra",
+		author: "William Rowan Hamilton",
+		year: 1846,
+		publisher: "Philosophical Magazine 29: 26–31",
+		url: "https://archive.org/details/londonedinburghp29lond",
+		alternativetitle: "Hamilton (1846) — defines the scalar and vector parts of a quaternion, and the tensor as its modulus (pp. 26–27)"
+	},
+	"grassmann1844ausdehnungslehre": {
+		title: "Die Wissenschaft der extensiven Grösse oder die Ausdehnungslehre, eine neue mathematische Disciplin. Erster Theil: Die lineale Ausdehnungslehre",
+		author: "Hermann Grassmann",
+		year: 1844,
+		publisher: "Otto Wigand, Leipzig",
+		url: "https://archive.org/details/10081845bsb",
+		alternativetitle: "Grassmann (1844) — n-dimensional extension theory, subspaces, bases and exterior algebra"
+	},
+	"mactutor_matrices_determinants": {
+		title: "Matrices and determinants",
+		author: "J. J. O'Connor; E. F. Robertson",
+		year: 2026,
+		url: "https://mathshistory.st-andrews.ac.uk/HistTopics/Matrices_and_determinants/",
+		alternativetitle: "MacTutor — Seki 1683, Leibniz 1693, Cramer 1750, Sylvester 1850, Cayley 1858, Frobenius 1878, Sylvester nullity 1884"
+	},
+	"cramer1750introduction": {
+		title: "Introduction à l'analyse des lignes courbes algébriques",
+		author: "Gabriel Cramer",
+		year: 1750,
+		publisher: "Frères Cramer & Cl. Philibert, Geneva",
+		url: "https://archive.org/details/bub_gb_HzcVAAAAQAAJ",
+		alternativetitle: "Cramer (1750) — the general rule for n linear equations, stated without proof in the Appendix"
+	},
+	"frobenius1878linear": {
+		title: "Ueber lineare Substitutionen und bilineare Formen",
+		author: "Ferdinand Georg Frobenius",
+		year: 1878,
+		publisher: "Journal für die reine und angewandte Mathematik 84: 1–63",
+		url: "https://gdz.sub.uni-goettingen.de/id/PPN243919689_0084",
+		alternativetitle: "Frobenius (1878) — defines the rank of a matrix in the theory of linear substitutions"
+	},
+	"frobenius1879differential": {
+		title: "Über homogene totale Differentialgleichungen",
+		author: "Ferdinand Georg Frobenius",
+		year: 1879,
+		publisher: "Journal für die reine und angewandte Mathematik 86: 1–19",
+		url: "https://gdz.sub.uni-goettingen.de/id/PPN243919689_0086",
+		alternativetitle: "Frobenius (1879) — uses the German word Rang for the rank of a matrix"
+	},
+	"schur1911bilinear": {
+		title: "Bemerkungen zur Theorie der beschränkten Bilinearformen mit unendlich vielen Veränderlichen",
+		author: "Issai Schur",
+		year: 1911,
+		publisher: "Journal für die reine und angewandte Mathematik 140: 1–28",
+		url: "https://gdz.sub.uni-goettingen.de/id/PPN243919689_0140",
+		alternativetitle: "Schur (1911) — Theorem VII: the Hadamard product of positive-semidefinite matrices is positive-semidefinite"
+	},
+	"hadamard1899series": {
+		title: "Théorème sur les séries entières",
+		author: "Jacques Hadamard",
+		year: 1899,
+		publisher: "Acta Mathematica 22: 55–63",
+		url: "https://doi.org/10.1007/BF02417870",
+		alternativetitle: "Hadamard (1899) — the term-by-term product of power series and the Hadamard multiplication theorem"
+	},
+	"hadamard_product_wiki": {
+		title: "Hadamard product (matrices)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Hadamard_product_(matrices)",
+		alternativetitle: "Hadamard product — history (Hadamard 1899; Schur 1911) and the name popularised by Halmos"
+	},
+	"kullback1951information": {
+		title: "On Information and Sufficiency",
+		author: "Solomon Kullback; Richard Leibler",
+		year: 1951,
+		publisher: "Annals of Mathematical Statistics 22(1): 79–86",
+		url: "https://doi.org/10.1214/aoms/1177729694",
+		alternativetitle: "Kullback & Leibler (1951) — the mean information for discrimination between two distributions"
+	},
+	"good1952rational": {
+		title: "Rational Decisions",
+		author: "Irving John Good",
+		year: 1952,
+		publisher: "Journal of the Royal Statistical Society, Series B 14(1): 107–114",
+		url: "https://www.jstor.org/stable/2984087",
+		alternativetitle: "Good (1952) — probability, rational behaviour and information, with a generalisation of Wald's decision theory"
+	},
+	"luce1959individualchoice": {
+		title: "Individual Choice Behavior: A Theoretical Analysis",
+		author: "R. Duncan Luce",
+		year: 1959,
+		publisher: "John Wiley & Sons, New York",
+		url: "https://archive.org/details/dli.scoerat.3346ndividualchoicebehavior",
+		alternativetitle: "Luce (1959) — the choice axiom and the softmax/relative-preference formula"
+	},
+	"bridle1990softmax": {
+		title: "Training Stochastic Model Recognition Algorithms as Networks can Lead to Maximum Mutual Information Estimation of Parameters",
+		author: "John S. Bridle",
+		year: 1990,
+		publisher: "Advances in Neural Information Processing Systems 2 (NIPS 1989), Morgan-Kaufmann",
+		url: "https://proceedings.neurips.cc/paper/1989/hash/0336dcbab05b9d5ad24f4333c7658a0e-Abstract.html",
+		alternativetitle: "Bridle (1990) — names the normalised exponential 'softmax'"
+	},
+	"miller_functionsymbols": {
+		title: "Earliest Uses of Function Symbols",
+		author: "Jeff Miller",
+		year: 2026,
+		url: "https://mathshistory.st-andrews.ac.uk/Miller/mathsym/functions/",
+		alternativetitle: "Miller — Euler first used f(x) in 1734 in the Commentarii Academiae Scientiarum Petropolitanae"
+	},
+	"miller_tensor": {
+		title: "Earliest Known Uses of Some of the Words of Mathematics (T)",
+		author: "Jeff Miller",
+		year: 2026,
+		url: "https://mathshistory.st-andrews.ac.uk/Miller/mathword/t/",
+		alternativetitle: "Miller — Hamilton's tensor (1846), Voigt's Tensoren (1898), and the absence of 'tensor' in Ricci & Levi-Civita (1900)"
+	},
+	"miller_vector": {
+		title: "Earliest Known Uses of Some of the Words of Mathematics (V)",
+		author: "Jeff Miller",
+		year: 2026,
+		url: "https://mathshistory.st-andrews.ac.uk/Miller/mathword/v/",
+		alternativetitle: "Miller — vector and scalar introduced by Hamilton (RIA 1844; Phil. Mag. 1846), and the older astronomical 'radius vector'"
+	},
+
+	/* Math III — approximation, integration, high dimensions, type theory */
+	"eudoxus_mactutor": {
+		title: "Eudoxus of Cnidus",
+		author: "J. J. O'Connor and E. F. Robertson, MacTutor History of Mathematics Archive",
+		year: "accessed 2026",
+		url: "https://mathshistory.st-andrews.ac.uk/Biographies/Eudoxus/",
+		alternativetitle: "Eudoxus of Cnidus (MacTutor)"
+	},
+	"archimedes_works_heath": {
+		title: "The Works of Archimedes",
+		author: "Archimedes; T. L. Heath (translator)",
+		year: 1897,
+		publisher: "Cambridge University Press",
+		url: "https://archive.org/details/worksofarchimede029517mbp",
+		alternativetitle: "Archimedes, Works (Heath trans., 1897)"
+	},
+	"liuhui_pi_wiki": {
+		title: "Liu Hui's π algorithm",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Liu_Hui%27s_%CF%80_algorithm",
+		alternativetitle: "Liu Hui's π algorithm (Wikipedia)"
+	},
+	"zuchongzhi_mactutor": {
+		title: "Zu Chongzhi",
+		author: "J. J. O'Connor and E. F. Robertson, MacTutor History of Mathematics Archive",
+		year: "accessed 2026",
+		url: "https://mathshistory.st-andrews.ac.uk/Biographies/Zu_Chongzhi/",
+		alternativetitle: "Zu Chongzhi (MacTutor)"
+	},
+	"newton1736fluxions": {
+		title: "The Method of Fluxions and Infinite Series",
+		author: "Isaac Newton; John Colson (translator)",
+		year: 1736,
+		url: "https://archive.org/details/methodoffluxions00newt",
+		alternativetitle: "Newton, Method of Fluxions (1736)"
+	},
+	"euler1768integralis": {
+		title: "Institutionum calculi integralis, Vol. 1",
+		author: "Leonhard Euler",
+		year: 1768,
+		url: "https://archive.org/details/bub_gb_5mAI9xJ4XEEC",
+		alternativetitle: "Euler, Institutiones calculi integralis (1768)"
+	},
+	"cavalieri1635geometria": {
+		title: "Geometria indivisibilibus continuorum nova quadam ratione promota",
+		author: "Bonaventura Cavalieri",
+		year: 1635,
+		url: "https://archive.org/details/ita-bnc-mag-00001345-001",
+		alternativetitle: "Cavalieri, Geometria indivisibilibus (1635)"
+	},
+	"cauchy1825memoire": {
+		title: "Mémoire sur les intégrales définies, prises entre des limites imaginaires",
+		author: "Augustin-Louis Cauchy",
+		year: 1825,
+		url: "https://archive.org/details/mmoiresurlesin00cauc",
+		alternativetitle: "Cauchy, Mémoire sur les intégrales définies (1825)"
+	},
+	"riemann1854trig": {
+		title: "Ueber die Darstellbarkeit einer Function durch eine trigonometrische Reihe",
+		author: "Bernhard Riemann",
+		year: 1854,
+		url: "https://www.maths.tcd.ie/pub/HistMath/People/Riemann/Trig/",
+		alternativetitle: "Riemann's Habilitationsschrift (1854; published posthumously)"
+	},
+	"lebesgue1902integrale": {
+		title: "Intégrale, longueur, aire",
+		author: "Henri Lebesgue",
+		year: 1902,
+		journal: "Annali di Matematica Pura ed Applicata",
+		volume: 7,
+		pages: "231–359",
+		url: "https://doi.org/10.1007/BF02420592",
+		alternativetitle: "Lebesgue, Intégrale, longueur, aire (1902)"
+	},
+	"bellman1957book": {
+		title: "Dynamic Programming",
+		author: "Richard Bellman",
+		year: 1957,
+		publisher: "Princeton University Press",
+		url: "https://archive.org/details/dynamicprogrammi0000bell",
+		alternativetitle: "Bellman, Dynamic Programming (1957; Dover reprint)"
+	},
+	"bellman1961adaptive": {
+		title: "Adaptive Control Processes: A Guided Tour",
+		author: "Richard Bellman",
+		year: 1961,
+		publisher: "Princeton University Press",
+		url: "https://archive.org/details/adaptivecontrolp0000rich",
+		alternativetitle: "Bellman, Adaptive Control Processes (1961)"
+	},
+	"gorban2018blessing": {
+		title: "Blessing of dimensionality: mathematical foundations of the statistical physics of data",
+		author: "Alexander N. Gorban, Ivan Y. Tyukin",
+		year: 2018,
+		journal: "Philosophical Transactions of the Royal Society A",
+		volume: 376,
+		number: 2118,
+		pages: "20170237",
+		url: "https://arxiv.org/abs/1801.03421",
+		alternativetitle: "Gorban & Tyukin, Blessing of dimensionality (2018)"
+	},
+	"gromov1983isoperimetric": {
+		title: "A Topological Application of the Isoperimetric Inequality",
+		author: "Mikhail Gromov, Vitali D. Milman",
+		year: 1983,
+		journal: "American Journal of Mathematics",
+		volume: 105,
+		number: 4,
+		pages: "843–854",
+		url: "https://doi.org/10.2307/2374298",
+		alternativetitle: "Gromov & Milman, isoperimetric inequality (1983)"
+	},
+	"talagrand1995concentration": {
+		title: "Concentration of measure and isoperimetric inequalities in product spaces",
+		author: "Michel Talagrand",
+		year: 1995,
+		journal: "Publications Mathématiques de l'IHÉS",
+		volume: 81,
+		pages: "73–205",
+		url: "https://www.numdam.org/item/PMIHES_1995__81__73_0/",
+		alternativetitle: "Talagrand, concentration in product spaces (1995)"
+	},
+	"cayton2005manifold": {
+		title: "Algorithms for Manifold Learning",
+		author: "Lawrence Cayton",
+		year: 2005,
+		publisher: "University of California, San Diego",
+		url: "https://www.lcayton.com/resexam.pdf",
+		alternativetitle: "Cayton, Algorithms for Manifold Learning (2005)"
+	},
+	"beyer1999nearest": {
+		title: "When Is 'Nearest Neighbor' Meaningful?",
+		author: "Kevin Beyer, Jonathan Goldstein, Raghu Ramakrishnan, Uri Shaft",
+		year: 1999,
+		journal: "Database Theory — ICDT'99",
+		volume: 1540,
+		pages: "217–235",
+		url: "https://digital.library.wisc.edu/1793/60174",
+		alternativetitle: "Beyer et al., When Is Nearest Neighbor Meaningful? (1999)"
+	},
+	"jcgm2012vim": {
+		title: "International Vocabulary of Metrology – Basic and General Concepts and Associated Terms (VIM)",
+		author: "Joint Committee for Guides in Metrology (JCGM)",
+		year: 2012,
+		edition: "3rd",
+		publisher: "Bureau International des Poids et Mesures",
+		url: "https://www.bipm.org/documents/20126/2071204/JCGM_200_2012.pdf",
+		alternativetitle: "JCGM 200:2012, International Vocabulary of Metrology"
+	},
+	"russell1903principles": {
+		title: "The Principles of Mathematics",
+		author: "Bertrand Russell",
+		year: 1903,
+		publisher: "Cambridge University Press",
+		url: "https://archive.org/details/principlesofmath01russ",
+		alternativetitle: "Russell, The Principles of Mathematics (1903)"
+	},
+	"russell_paradox_sep": {
+		title: "Russell's Paradox",
+		author: "Harry Deutsch, Oliver Marshall, Andrew David Irvine",
+		year: 1995,
+		publisher: "Stanford Encyclopedia of Philosophy",
+		url: "https://plato.stanford.edu/entries/russell-paradox/",
+		alternativetitle: "Russell's Paradox (SEP)"
+	},
+	"martinlof1984intuitionistic": {
+		title: "Intuitionistic Type Theory",
+		author: "Per Martin-Löf",
+		year: 1984,
+		publisher: "Bibliopolis",
+		url: "https://archive-pml.github.io/martin-lof/pdfs/Bibliopolis-Book-retypeset-1984.pdf",
+		alternativetitle: "Martin-Löf, Intuitionistic Type Theory (1984)"
+	},
+	"intuitionistic_type_theory_sep": {
+		title: "Intuitionistic Type Theory",
+		author: "Peter Dybjer, Erik Palmgren",
+		year: 2016,
+		publisher: "Stanford Encyclopedia of Philosophy",
+		url: "https://plato.stanford.edu/entries/type-theory-intuitionistic/",
+		alternativetitle: "Intuitionistic Type Theory (SEP)"
+	},
+	"voevodsky2006hlambda": {
+		title: "A Very Short Note on Homotopy λ-Calculus",
+		author: "Vladimir Voevodsky",
+		year: 2006,
+		url: "https://www.math.ias.edu/~vladimir/Site3/Univalent_Foundations_files/Hlambda_short_current.pdf",
+		alternativetitle: "Voevodsky, homotopy λ-calculus (2006)"
+	},
+	"voevodsky2010equivalence": {
+		title: "The Equivalence Axiom and Univalent Models of Type Theory",
+		author: "Vladimir Voevodsky",
+		year: 2010,
+		url: "https://arxiv.org/abs/1402.5556",
+		alternativetitle: "Voevodsky, equivalence axiom and univalent models (talk, CMU 2010)"
+	},
+	"turning_number_wiki": {
+		title: "Winding number",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Winding_number",
+		alternativetitle: "Winding number (Wikipedia)"
+	},
+	"zhang2017rethinking": {
+		title: "Understanding deep learning requires rethinking generalization",
+		author: "Chiyuan Zhang, Samy Bengio, Moritz Hardt, Benjamin Recht, Oriol Vinyals",
+		year: 2017,
+		url: "https://arxiv.org/abs/1611.03530",
+		alternativetitle: "Zhang et al., rethinking generalization (2017)"
+	},
+
+	/* Geometry II — inner product, Gram, SVD, descent, convolution, symmetry */
+	"dalembert1747": {
+		title: "Recherches sur la courbe que forme une corde tenduë mise en vibration",
+		author: "Jean le Rond d'Alembert",
+		year: 1747,
+		url: "https://books.google.com/books?id=lJQDAAAAMAAJ&pg=PA214",
+		alternativetitle: "d'Alembert, the vibrating string (1747)"
+	},
+	"fft_history_wiki": {
+		title: "Fast Fourier transform — history",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Fast_Fourier_transform",
+		alternativetitle: "FFT history: Gauss (1805), Runge (1903), Cooley–Tukey (1965)"
+	},
+	"hamilton1865letter": {
+		title: "Letter to Rev. Archibald H. Hamilton describing the discovery of quaternions",
+		author: "William Rowan Hamilton",
+		year: 1865,
+		url: "https://www.maths.tcd.ie/pub/HistMath/People/Hamilton/Letters/BroomeBridge.html",
+		alternativetitle: "Hamilton's Broom Bridge letter (recounts 16 October 1843)"
+	},
+	"hamilton1853lectures": {
+		title: "Lectures on Quaternions",
+		author: "William Rowan Hamilton",
+		year: 1853,
+		url: "https://archive.org/details/lecturesonquater00hami",
+		alternativetitle: "Hamilton, Lectures on Quaternions (1853)"
+	},
+	"gram1883": {
+		title: "Jørgen Pedersen Gram — biography and the Gram determinant",
+		author: "J. J. O'Connor and E. F. Robertson, MacTutor History of Mathematics Archive",
+		year: "accessed 2026",
+		url: "https://mathshistory.st-andrews.ac.uk/Biographies/Gram/",
+		alternativetitle: "Gram, least-squares series and the Gram determinant (1879/1883; biography source)"
+	},
+	"gibbs_wilson1901": {
+		title: "Vector Analysis: A Text-book for the Use of Students of Mathematics and Physics, Founded upon the Lectures of J. Willard Gibbs",
+		author: "Edwin Bidwell Wilson, J. Willard Gibbs",
+		year: 1901,
+		url: "https://archive.org/details/vectoranalysiste00gibbiala",
+		alternativetitle: "Gibbs & Wilson, Vector Analysis (1901)"
+	},
+	"heaviside1893electromagnetic": {
+		title: "Electromagnetic Theory",
+		author: "Oliver Heaviside",
+		year: 1893,
+		url: "https://archive.org/details/electromagnetict01heav",
+		alternativetitle: "Heaviside, Electromagnetic Theory (1893)"
+	},
+	"crowe1967vectoranalysis": {
+		title: "A History of Vector Analysis: The Evolution of the Idea of a Vectorial System",
+		author: "Michael J. Crowe",
+		year: 1967,
+		url: "https://archive.org/details/historyofvectora0000crow",
+		alternativetitle: "Crowe, A History of Vector Analysis (1967)"
+	},
+	"stewart1993svd": {
+		title: "On the Early History of the Singular Value Decomposition",
+		author: "G. W. Stewart",
+		year: 1993,
+		url: "https://www.jstor.org/stable/2132786",
+		alternativetitle: "Stewart, the early history of the SVD (1993)"
+	},
+	"schmidt1907": {
+		title: "Zur Theorie der linearen und nichtlinearen Integralgleichungen",
+		author: "Erhard Schmidt",
+		year: 1907,
+		url: "https://link.springer.com/article/10.1007/BF01449770",
+		alternativetitle: "Schmidt, integral equations and singular values (1907)"
+	},
+	"weyl1912singular": {
+		title: "Das asymptotische Verteilungsgesetz der Eigenwerte linearer partieller Differentialgleichungen (mit einer Anwendung auf die Theorie der Hohlraumstrahlung)",
+		author: "Hermann Weyl",
+		year: 1912,
+		url: "https://link.springer.com/article/10.1007/BF01456804",
+		alternativetitle: "Weyl, eigenvalue asymptotics (1912)"
+	},
+	"eckartyoung1936": {
+		title: "The Approximation of One Matrix by Another of Lower Rank",
+		author: "Carl Eckart, Gale J. Young",
+		year: 1936,
+		url: "https://link.springer.com/article/10.1007/BF02288367",
+		alternativetitle: "Eckart & Young, low-rank approximation (1936)"
+	},
+	"golubreinsch1970": {
+		title: "Singular value decomposition and least squares solutions",
+		author: "Gene H. Golub, Christian Reinsch",
+		year: 1970,
+		url: "https://link.springer.com/article/10.1007/BF02163027",
+		alternativetitle: "Golub & Reinsch, SVD and least squares (1970)"
+	},
+	"hadamard1908": {
+		title: "Gradient descent — history (Hadamard's 1908 steepest-descent method)",
+		author: "Wikipedia contributors",
+		year: 2026,
+		url: "https://en.wikipedia.org/wiki/Gradient_descent",
+		alternativetitle: "Gradient descent — Hadamard 1908 (Wikipedia)"
+	},
+	"rosen1960": {
+		title: "The Gradient Projection Method for Nonlinear Programming. Part I. Linear Constraints",
+		author: "J. B. Rosen",
+		year: 1960,
+		url: "https://openalex.org/W2143101939",
+		alternativetitle: "Rosen, gradient projection (1960)"
+	},
+	"toeplitz1911": {
+		title: "Zur Theorie der quadratischen und bilinearen Formen von unendlichvielen Veränderlichen",
+		author: "Otto Toeplitz",
+		year: 1911,
+		url: "https://link.springer.com/article/10.1007/BF01564502",
+		alternativetitle: "Toeplitz, infinite quadratic forms (1911)"
+	},
+	"klein1872erlangen": {
+		title: "Vergleichende Betrachtungen über neuere geometrische Forschungen",
+		author: "Felix Klein",
+		year: 1872,
+		url: "https://archive.org/details/vergleichendebet38033gut",
+		alternativetitle: "Klein, Erlangen Programme (1872)"
+	},
+	"noether1918": {
+		title: "Invariante Variationsprobleme",
+		author: "Emmy Noether",
+		year: 1918,
+		url: "https://eudml.org/doc/59024",
+		alternativetitle: "Noether, Invariante Variationsprobleme (1918)"
+	},
+	"weyl1939classicalgroups": {
+		title: "The Classical Groups: Their Invariants and Representations",
+		author: "Hermann Weyl",
+		year: 1939,
+		url: "https://archive.org/details/classicalgroupst0000weyl",
+		alternativetitle: "Weyl, The Classical Groups (1939)"
+	},
+	"jacobi1846": {
+		title: "Über ein leichtes Verfahren, die in der Theorie der Säkularstörungen vorkommenden Gleichungen numerisch aufzulösen",
+		author: "Carl Gustav Jacob Jacobi",
+		year: 1846,
+		url: "https://en.wikipedia.org/wiki/Jacobi_eigenvalue_algorithm",
+		alternativetitle: "Jacobi, the rotation method for eigenvalues (1846)"
+	},
+
 };

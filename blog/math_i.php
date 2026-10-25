@@ -17,6 +17,14 @@ Before we can understand a Neural Network, we have to understand the language it
 By the end, you will be comfortable with the sum symbol $\sum$, Euler's number $e$, logarithms, and the way a computer represents “infinity” without crashing.
 </div>
 
+<div class="optional md" data-headline="Counting before writing: the first data structures">
+Long before anyone wrote a numeral, people counted by making marks. The **Lebombo bone**, a baboon fibula from Border Cave, carries a row of incised notches and is dated to roughly 42,000–43,000 years ago by 24 radiocarbon measurements; it is plausibly a tally stick, though that reading is not certain (\cite[Bruderer, 2024]{lebombobone}). The **Ishango bone** from the Congo, about 20,000 years old, has 168 marks arranged in three columns; proposed readings range from a base-12 counting aid to a lunar calendar (\cite[de Heinzelin, 1957]{ishangobone}; \cite[Pletser, 2012]{ishango12}). Neither bone proves arithmetic, but both externalise number as a spatial pattern — the move every array, tensor and embedding still makes.
+</div>
+
+<div class="optional md" data-headline="Where place-value comes from">
+The first **place-value** systems grew out of accounting, not pure mathematics. Sumerian scribes were counting in base 60 before 3500 BCE, and the Old Babylonians turned that inheritance into a positional sexagesimal system around 2000 BCE, using just two wedge symbols for the digits 1–59 (\cite[MacTutor: Babylonian Mathematics]{macTutorBabylonianMathematics}; \cite[MacTutor: Babylonian Numerals]{macTutorBabylonianNumerals}). Egypt went the other way: its hieroglyphs were decimal but **not** positional, with separate signs for 1, 10, 100 and so on, and the Rhind Papyrus (c. 1650 BCE) works in unit fractions (\cite[MacTutor: Egyptian Numerals]{macTutorEgyptianNumerals}; \cite[Ahmes, c. 1650 BCE]{rhindpapyrus}).
+</div>
+
 <div class="md" data-lesson-id="math-i">
 ## Programming
 
@@ -49,6 +57,10 @@ print(y)
 
 <div class="md" data-lesson-id="math-i">
 Let's now introduce **functions**. A function is something that accepts inputs and calculates an output, where the rules are specified from how to get from the inputs to the outputs. Functions are useful, as they model reality.
+</div>
+
+<div class="optional md" data-headline="From Euler's formula to Dirichlet's rule">
+The word "function" enters mathematics through Leibniz, who used it in 1673 for a line "performing some function" in a figure, but the modern concept is Euler's. In the *Introductio* (1748) Euler defines a function as an analytic expression; in the *Institutiones* (1755) he widens this to "quantities which depend on" others (\cite[MacTutor: The Function Concept]{macTutorFunctions}; \cite[Euler, 1748]{euler1748introductio}; \cite[Euler, 1755]{euler1755}). Euler also gave the symbol $f(x)$ its modern life in 1734 (\cite[Miller: Function Symbols]{miller_functionsymbols}). Dirichlet's 1837 definition drops the formula requirement altogether: a function is any rule assigning one value to each input (\cite[MacTutor: The Function Concept]{macTutorFunctions}). That is the sense in which a neural network *is* a function: a rule, not a formula.
 </div>
 
 <pre><code class="language-python">def identity(x):
@@ -154,6 +166,26 @@ Some books define the natural numbers as $\{1, 2, 3, \ldots\}$ (excluding $0$). 
 We can say that an element $x$ is part of a set $S$, like $3$ is in the set $\mathbb{N}$ by writing: $x \in S$, for example, saying that 3 is in the set of natural numbers, we can write $3 \in \mathbb{N}$. We can also negate it by saying $\pi=3.14159265\dots$ is *not* in the natural numbers: $\pi \not\in \mathbb{N}$.
 </div>
 
+<div class="optional md" data-headline="Zero is two different inventions">
+Zero entered mathematics twice, and the two entries are easy to confuse. Babylonian scribes used a pair of wedges as an **empty-place marker** from about 400 BCE, but they did not treat it as a number, and they did not use it at the right-hand end of a numeral (\cite[MacTutor: A History of Zero]{macTutorZero}). The decisive step is Brahmagupta's *Brāhmasphuṭasiddhānta* (628 CE), which gives rules for calculating with zero and negatives; his rule for a finite number divided by zero survives in Colebrooke's translation as "A definite quantity divided by cipher, is the submultiple of nought" (\cite[Colebrooke trans., 1817]{brahmagupta_colebrooke}).
+</div>
+
+<div class="optional md" data-headline="Negative numbers begin as debts">
+Negative numbers appear first as **bookkeeping**, not as abstract objects. The Chinese *Nine Chapters on the Mathematical Art*, compiled in the Han dynasty, uses positive and negative quantities in systems of linear equations, and Liu Hui (3rd century CE) states rules for adding and subtracting them (\cite[Han-dynasty compilers, 1st c. BCE]{jiuzhangsuanshu}). Brahmagupta then gives the rule in words that still sound modern: "the difference of an affirmative and a negative quantity is their addition" (\cite[Colebrooke trans., 1817]{brahmagupta_colebrooke}).
+</div>
+
+<div class="optional md" data-headline="Why √2 forced a new kind of number">
+The discovery that a square's diagonal is **incommensurable** with its side broke the Pythagorean programme that "all is number". The proof is traditionally attributed to Hippasus (5th century BCE); Theodorus of Cyrene extended it to surds up to √17, and Eudoxus of Cnidus (c. 408–355 BCE) rebuilt proportion so that incommensurable magnitudes could be handled without pretending they were ratios of integers (\cite[MacTutor: Real Numbers]{macTutorRealNumbers}). Euclid's *Elements* Book X organises the result (\cite{euclidelements}). Only in 1872 did Dedekind give the modern definition: an irrational is a **cut** in the rationals (\cite[Dedekind, 1872]{dedekind1872}).
+</div>
+
+<div class="optional md" data-headline="Where the set notation comes from">
+Cantor's 1895 definition is the source of the modern notation: "Unter einer 'Menge' verstehen wir jede Zusammenfassung M von bestimmten wohlunterschiedenen Objecten m unsrer Anschauung oder unseres Denkens ... zu einem Ganzen" — a set is any collection of definite, distinct objects of our intuition or thought into a whole (\cite[Cantor, 1895]{cantor1895}). The symbol $\in$ is younger: Peano introduced it in 1889, taking the first letter of the Greek *esti* ("is") (\cite[MacTutor: Set Theory]{macTutorSetTheory}). Cantor's unrestricted "any collection" later forced axiomatisation after Russell's 1902 paradox (\cite[MacTutor: Set Theory]{macTutorSetTheory}).
+</div>
+
+<div class="md" data-lesson-id="math-i">
+> **The number line was not given; it was built.** Tally marks (c. 42,000 BP) externalised counting; Babylon added place-value (c. 2000 BCE); Brahmagupta made zero a number (628 CE); Dedekind made the irrationals rigorous (1872). Each step turned a practical trick into an object mathematics could calculate with.
+</div>
+
 <div class="md" data-lesson-id="math-i">
 ## Classical programming vs. AI
 
@@ -174,6 +206,17 @@ Throughout this course, we will look into these building blocks and how the comp
 ### The Sum Symbol $ \sum $
 
 In AI, we often deal with thousands or even millions of numbers at once. If we wanted to describe adding them all up, writing $x_1 + x_2 + x_3 + \dots$ would take up too much space. To solve this, mathematicians use the Greek letter **Sigma** ($\sum$) as a shorthand for “summation” (\cite[Lang, Basic Mathematics, Ch. 16, §1, p. 384]{lang2005basicmath}). This symbol for summation was introduced by \citeauthor{euler1755} in \citeyear{euler1755} (see p. 61, § 438, \citetitle{historyofmathematicalnotation}, Volume 2).
+
+<div class="optional md" data-headline="The history of Σ, ∏ and n!">
+Euler introduced $\Sigma$ in the *Institutiones calculi differentialis* (1755) with a sentence that names the analogy: "Quemadmodum ad differentiam denotandam vsi sumus signo Δ, ita summam indicabimus signo Σ" — just as we use Δ for the difference, we shall denote the sum by Σ (\cite[Euler, 1755]{euler1755}; \cite[Miller: Symbols of Operation]{millerOperation}). His $\Sigma$ was an indefinite-sum sign; the definite form with lower and upper limits is a 19th-century development, documented in Fourier's 1820 paper (\cite[Cajori, 1928]{historyofmathematicalnotation}). The product sign $\prod$ is credited by Cajori to Gauss in 1812, and the factorial sign $n!$ to Kramp in 1808 (\cite[Miller: Symbols of Operation]{millerOperation}; \cite[Kramp, 1808]{kramp1808}).
+
+> Euler's Σ (1755) was an indefinite sum; the definite Σ with limits is 19th-century (Fourier, 1820). Cajori credits Gauss with ∏ (1812), Kramp with n! (1808).
+</div>
+
+<div class="smart-quote" data-cite="euler1755" data-page="61">
+<div class="full-quote">Quemadmodum ad differentiam denotandam vsi sumus signo Δ, ita summam indicabimus signo Σ.</div>
+<div class="short-quote">Just as we use Δ for the difference, we shall denote the sum by Σ.</div>
+</div>
 
 Think of $\sum$ as a **“for-loop”** for addition.
 
@@ -236,7 +279,7 @@ Factorials ($n!$) are the product of all positive integers up to $n$ (\cite[Lang
 
 $$n! = \prod_{k=1}^{n} k = 1 \cdot 2 \cdot 3 \cdot \dots \cdot n$$
 
-According to \citeauthor{historyofmathematicalnotation} (Vol. 2, p. 71, § 448), the familiar exclamation point notation $n!$ was introduced by \citeauthor{kramp1808} in his work \citetitle{kramp1808} (\citeyear{kramp1808}). Before this, mathematicians often used a L-shaped symbol to denote the same operation.
+According to \citeauthor{historyofmathematicalnotation} (Vol. 2, p. 71, § 448), the familiar exclamation point notation $n!$ was introduced by \citeauthor{kramp1808} in his work \citetitle{kramp1808} (\citeyear{kramp1808}). Before this, mathematicians often used a L-shaped symbol to denote the same operation. More precisely, the half-box notation became popular *later*, chiefly in Britain and America, and fell out of favour because it was hard to typeset (\cite[Cajori, 1928]{historyofmathematicalnotation}).
 
 In programming, we can define this function using **recursion**, where a function calls itself to solve smaller versions of the same problem:
 </div>
@@ -281,6 +324,7 @@ In the floating-point math used by AI models, infinity follows specific rules th
 	The exponential of negative infinity is exactly zero. This is useful in machine learning: it lets us “mask” certain pieces of data by assigning them a value of $-\infty$, which makes them effectively ignored. This becomes important later in the chapter on Transformers.
 * $\infty$ is not a normal *number*, though (\cite[Lang, Basic Mathematics, Ch. 16, §3, p. 397]{lang2005basicmath}). $\infty - \infty$ is $\text{NaN}$: *Not a Number*.
 * Similarly, $\frac{\infty}{\infty}$ is $\text{NaN}$.
+* More precisely, `NaN` is an IEEE 754 floating-point value, not a mathematical number. Mathematically, $\infty-\infty$ and $\infty/\infty$ are **indeterminate forms**; the hardware turns them into NaN so that a computation can continue without a crash.
 
 </div>
 
@@ -316,6 +360,10 @@ $$e = \lim_{n \to \infty} \left(1 + \underbrace{\frac{1}{n}}_\text{interest per 
 The $\lim$ looks at what happens as $n$ grows without bound. Some quantities grow larger, some shrink, and some approach a specific fixed value; this approach is called convergence. This expression converges: the larger $n$ gets, the closer the value comes to the irrational number $e$.
 
 The formula $e = \lim_{n \to \infty} \left(1 + \frac{1}{n}\right)^n$ wasn't just invented; it was discovered through the logic of **compound interest**.
+
+<div class="optional md" data-headline="Bernoulli, Euler and the letter e">
+Euler's number has a history separate from logarithms. Jacob Bernoulli met it in 1683 while studying continuous compound interest: he showed that $(1+1/n)^n$ is trapped between 2 and 3 as $n$ grows, the first number defined by a limiting process (\cite[MacTutor: The Number e]{macTutorE}). Euler first wrote the letter $e$ in a letter to Goldbach in 1731, then gave the full treatment in the *Introductio* (1748), including $e=\sum_{k=0}^{\infty}1/k!$ and a value to 18 decimals (\cite[Euler, 1748]{euler1748introductio}). Hermite proved in 1873 that $e$ is **transcendental**, not merely irrational (\cite[MacTutor: The Number e]{macTutorE}). More precisely, $e$ is the limit of the sequence, approached from below; it is not a largest member, and the claim applies to the 100%-continuous-compounding model.
+</div>
 
 Imagine you have 1.00 Euro in a bank that gives you 100% interest per year.
 
@@ -392,6 +440,8 @@ Logarithms were introduced in \citeyear{napier1614} by the Scottish mathematicia
 
 **The Practical Problem:** During the Renaissance, scientists, especially astronomers like Johannes Kepler, were drowning in data. To calculate the orbits of planets, they had to multiply and divide massive numbers with many decimal places. For example, calculating the position of Mars required multiplying long sines and cosines of angles. Doing this by hand took months and a single tiny error could ruin the calculations.
 
+Napier was not alone. Jost Bürgi reached logarithms independently around 1588 and published them in 1620; Kepler wrote that Bürgi had them "many years before Napier's system appeared" (\cite[MacTutor: Jost Bürgi]{macTutorBurgi}). Kepler's *Chilias logarithmorum* (1624) supplied the first proof of why the method works, based on Euclid's Book V (\cite[Kepler, 1624]{kepler1624chilias}).
+
 Napier's breakthrough allowed researchers to perform **multiplication by simply adding**:
 
 $$\log(A \times B) = \log(A) + \log(B)$$
@@ -442,6 +492,14 @@ While logarithms were born from the needs of 17th-century astronomers, they are 
 ## The Mathematical Concept: The Role of $\infty$
 
 While we often view infinity as an endless loop or an impossibly large number, in the context of computer science and Large Language Models (LLMs), it acts as a functional tool. It allows systems to handle “impossible” states or “hidden” information without crashing the underlying logic. The use of the symbol $\infty$ for the concept of infinity dates back to \citeyear{wallis1655}, according to \citeauthor{historyofmathematicalnotation} (Vol. 1, p. 214).
+</div>
+
+<div class="optional md" data-headline="Potential infinity, infinite multiplication, and the symbol ∞">
+Wallis introduced the **symbol**, not the concept. Aristotle denied the **actual infinite** and allowed only the **potential infinite**: the natural numbers can always be extended, but never completed (*Physics* III.4–8) (\cite[MacTutor: Infinity]{macTutorInfinity}; \cite[Physics]{aristotlephysics}). Grosseteste's *De luce* (c. 1225) takes the opposite risk: light "multiplied itself by its very nature an infinite number of times on all sides", and "the multiplication of a simple being an infinite number of times must produce a finite quantity" (\cite[Grosseteste, trans. 1942]{grosseteste_on_light}). Wallis gave the concept its symbol: he introduced $\infty$ in 1655 and used it again in the *Arithmetica infinitorum* (1656) (\cite[Wallis, 1655]{wallis1655}; \cite[MacTutor: Infinity]{macTutorInfinity}).
+</div>
+
+<div class="md" data-lesson-id="math-i">
+> **Potential, actual, symbolic.** Aristotle allowed only a potential infinite; Grosseteste argued that infinite multiplication produces a finite magnitude; Wallis gave the result its symbol, ∞ (1655). Mathematics kept all three ideas and learned to distinguish them.
 </div>
 
 <script>

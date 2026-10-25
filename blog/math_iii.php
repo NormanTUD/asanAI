@@ -146,16 +146,42 @@ Most tasks we want AI to solve, like recognizing a face, translating a language,
 
 When we talk about models being “good enough,” we are looking at the balance of error.
 
+The words are often used interchangeably, but metrology separates them. **Accuracy** is closeness to the true value; **precision** is closeness of repeated readings to one another. A thermometer can be precise and biased (all readings agree, all wrong), or accurate on average but noisy. In statistical language, mean squared error separates the two:
+
+<div>
+$$
+\underbrace{
+  \underbrace{\mathbb{E}[(\hat\theta-\theta)^2]}_{\text{mean squared error}}
+  =
+  \underbrace{(\mathbb{E}\hat\theta-\theta)^2}_{\text{bias}^2}
+  +
+  \underbrace{\operatorname{Var}(\hat\theta)}_{\text{variance}}
+}_{\substack{\text{the error splits into}\\\text{a systematic and a random part}}}
+$$
+</div>
+
+The vocabulary is standardized in the VIM (\cite[JCGM 200:2012]{jcgm2012vim}); it is not a property of a single number.
+
 * **A “Perfect” Model:** Would have 0% error but is often impossible to build for complex data.
 * **An “Approximate” Model:** Might be 98% accurate. While it may occasionally mistake a fluffy pillow for a cat, its ability to process millions of images in seconds makes it incredibly valuable anyways.
 
 **Key takeaway:** AI doesn't “know” what a cat is in the way humans do. It has simply built a very sophisticated mathematical approximation of “cat-ness.”
 </div>
 
+<div class="optional md" data-headline="The long prehistory of 'close enough'">
+Eudoxus of Cnidus (c. 408–355 BCE) turned Antiphon's polygon approximation into a proof technique: inscribe and circumscribe polygons until the gap is smaller than any assigned magnitude (\cite[Eudoxus, MacTutor]{eudoxus_mactutor}). Archimedes used the same exhaustion engine to prove that a circle's area equals that of a right triangle whose legs are the radius and the circumference, and his 96-gons gave $3\tfrac{10}{71}\lt\pi\lt3\tfrac{1}{7}$ (\cite[Archimedes, Measurement of a Circle]{archimedes_works_heath}). In China, Liu Hui's 263 CE commentary used inscribed polygons to squeeze $\pi$, recording $157/50$ and, with a 3072-gon, $3.14159$; Zu Chongzhi sharpened the bound to $3.1415926\lt\pi\lt3.1415927$ with $355/113$ (\cite[Liu Hui]{liuhui_pi_wiki}; \cite[Zu Chongzhi, MacTutor]{zuchongzhi_mactutor}). The bound is the oldest form of "good enough".
+</div>
+
+<div class="md" data-lesson-id="math-iii">
+> **Approximation is not a modern compromise.** Eudoxus and Archimedes squeezed unknown areas between polygons; Liu Hui and Zu Chongzhi squeezed π; Newton and Euler turned the squeeze into an algorithm; Riemann and Lebesgue turned the algorithm into a definition. AI inherits all three moves: the bound, the iteration, and the measure.
+</div>
+
 <div class="md" data-mathlevel="55">
 ### The Mathematical Toolkit of Approximation
 
 AI leans on three families of approximation:
+
+Approximation became an algorithm in the seventeenth and eighteenth centuries. Newton's method, in its modern form, replaces $f(x)=0$ by the tangent at $x_n$ and iterates $x_{n+1}=x_n-f(x_n)/f'(x_n)$; Newton used the idea in *De analysi* (1669) and *Method of Fluxions* (written 1671, published 1736) (\cite[Newton, Method of Fluxions]{newton1736fluxions}). Euler's method for $y'=f(t,y)$ is the same bargain in time, $y_{n+1}=y_n+h f(t_n,y_n)$ (\cite[Euler, Institutiones calculi integralis]{euler1768integralis}). Each step is wrong by a controlled amount; the new question is how those errors accumulate.
 
 #### 1. Numerical Approximation
 
@@ -199,6 +225,8 @@ $$\int_a^b f(x)\,\mathrm{d}x = \underbrace{F(b) - F(a)}_{\text{endpoint values}}
 
 So you rarely take the limit by hand: find *any* antiderivative $F$ of $f$, then subtract its value at the lower limit from its value at the upper limit.
 
+The definition behind that shortcut took two more centuries. Cavalieri's *Geometria indivisibilibus continuorum* (1635) treated an area as a sum of parallel line segments and a volume as a sum of parallel sections, so that equal sections imply equal content (\cite[Cavalieri, Geometria]{cavalieri1635geometria}). Riemann's 1854 habilitation lecture replaced indivisibles by a finite partition and a mesh: the integral exists when every tagged Riemann sum whose mesh tends to zero approaches the same number (\cite[Riemann, 1854]{riemann1854trig}). Lebesgue's 1902 thesis then changed the unit of summation from the domain to the measure of the values, partitioning the codomain into level sets and integrating simple functions (\cite[Lebesgue, 1902]{lebesgue1902integrale}). The limit became a measure.
+
 **Worked example.** Let $f(x) = 2x$ on $[0,3]$. An antiderivative is $F(x) = x^2$, since $(x^2)' = 2x$. Applying the general formula at the two endpoints,
 
 $$\int_0^3 2x\,\mathrm{d}x = \big[\,x^2\,\big]_{0}^{3} = 3^{2} - 0^{2} = 9 - 0 = 9 .$$
@@ -207,13 +235,15 @@ $$\int_0^3 2x\,\mathrm{d}x = \big[\,x^2\,\big]_{0}^{3} = 3^{2} - 0^{2} = 9 - 0 =
 
 The ordinary integral $\int_a^b$ adds a quantity up along a line that has a start, $a$, and an end, $b$. The **closed integral** $\oint$ adds up the same kind of thing, but along a line that has **no start and no end** — a loop that comes all the way back to where it began. The dot in the middle is only a reminder that the line is closed.
 
+The loop integral has its own history. Cauchy's 1825 memoir on definite integrals "between imaginary limits" made integration along a complex contour a subject in its own right: for a function holomorphic inside a simple closed curve $C$, $\oint_C f(z)\,\mathrm{d}z=0$ (\cite[Cauchy, 1825]{cauchy1825memoire}). The little circle in $\oint$ is not decoration: it records that the path is closed and that the value may depend on what the loop encloses, which is exactly what the residue calculus would later exploit.
+
 Here is what that actually looks like. Walk around the boundary of a shape, one full lap. Let $s$ be the distance you have walked along the boundary, so one tiny step is $ds$ — a small piece of the path. As you walk, add up all those little pieces $ds$. When you get back to where you started, the total is just the **perimeter** of the shape,
 
 $$\oint_{C} ds = \text{the perimeter of } C .$$
 
 Two things to notice. First, why there is **no upper limit**: the curve $C$ under the sign *is* the "from … to …" — $\oint_C$ means "add up all the way around $C$." Because the loop is closed you finish where you began, so there is no separate start- and end-number to write down. Second, $ds$ is not a mystery variable: it is one tiny piece of length along the curve, playing exactly the role that $\Delta x$ played in the Riemann sum above. The only difference is that the thing you would normally write between the sign and the $ds$ (the "height") is just the number $1$, and a lone $1$ is left out by convention — exactly as $\int_a^b dx$ really means $\int_a^b 1\,dx$. So here you are adding up pure length.
 
-Now do the same idea with *turning* instead of distance. As you walk all the way around a closed loop, keep a running total of how much you have turned. When you reach the start again you are facing the way you began, so the total turning is exactly one full turn, $2\pi$ (\cite[Lang, Basic Mathematics, Ch. 11, p. 250]{lang2005basicmath}, that is $360^\circ$), no matter what shape the loop is.
+Now do the same idea with *turning* instead of distance. As you walk all the way around a closed loop, keep a running total of how much you have turned. When you reach the start again you are facing the way you began, so the total turning is exactly one full turn, $2\pi$ (\cite[Lang, Basic Mathematics, Ch. 11, p. 250]{lang2005basicmath}, that is $360^\circ$), no matter what shape the loop is. More precisely, for a **simple** closed curve the **signed** total turning is $+2\pi$ or $-2\pi$ (Hopf's *Umlaufsatz*); a self-intersecting loop can have turning number $k\in\mathbb{Z}$ (\cite[Winding number]{turning_number_wiki}).
 
 You will meet the same idea again in physics and in [Geometry III](geometry_iii): add up a quantity all the way round a closed loop — or across a closed surface, like the total amount that flows out of a box — and the single number you get at the end describes the whole closed shape, not just one point on it.
 </div>
@@ -255,6 +285,8 @@ Classical statistics warns: **as dimensionality grows, geometry breaks down**.
 * **Sample complexity**: to densely cover a $d$-dimensional unit cube with samples, you need exponentially many samples as $d$ grows. With $d = 100$ and 10 samples per axis, you need $10^{100}$ samples, more than atoms in the universe.
 
 These are real problems for classical statistical methods. Naïve nearest-neighbor classifiers, density estimators, and clustering algorithms all degrade as $d$ grows.
+
+The phrase "curse of dimensionality" comes from dynamic programming, not from a theorem about all high-dimensional data. Bellman used it for the explosion of state spaces: a grid with ten points per axis needs $10^d$ points in $d$ dimensions (\cite[Bellman, 1957]{bellman1957book}; \cite[Bellman, 1961]{bellman1961adaptive}). The geometric symptoms are real but distribution-dependent: for i.i.d. samples from a broad class of distributions, nearest and farthest distances concentrate, but correlated or clustered data can retain contrast (\cite[Beyer et al., 1999]{beyer1999nearest}).
 </div>
 
 <div id="curse-viz" style="width:100%; max-width:var(--mn-col-width); margin:1em auto;"></div>
@@ -274,9 +306,13 @@ This means the model can store thousands of **nearly-independent features** beca
 
 The key idea: the same property that makes high dimensions difficult for classical statistics, the concentration of measure, is what makes neural networks powerful. In low dimensions, features compete for the same axes. In high dimensions, every feature can have its own private direction with minimal interference. The curse and the blessing are two sides of the same coin.
 
+The "blessing" is the same concentration read in the other direction. For random unit vectors in $\mathbb{R}^d$, $\mathbb{E}[\cos]=0$ and $\operatorname{Var}(\cos)\approx1/d$, so $P(|\cos|>0.1)$ is about $0.6\%$ at $d=768$ and negligible at $d=10^4$ (\cite[Gorban \& Tyukin, 2018]{gorban2018blessing}). The term was introduced in the late 1990s; the mathematics is concentration of measure. High dimension is not uniformly hostile: it destroys some kinds of contrast and creates others.
+
 #### Superposition
 
 Mechanistic interpretability research (Anthropic, 2024) has shown that LLMs represent **more features than they have dimensions**. A 768-dimensional model might encode tens of thousands of interpretable features by letting each feature occupy a *combination* of dimensions.
+
+Superposition is the name for a model's habit of encoding more features than it has dimensions. The toy-model paper showed that a network with $d$ hidden units can represent $n>d$ sparse features by assigning them overlapping, nearly orthogonal directions, paying for the crowding with interference (\cite[Elhage et al., 2022]{elhage2022superposition}). The 2024 Claude 3 Sonnet study then extracted millions of interpretable features from a model whose residual stream is far smaller than that count (\cite[Templeton et al., 2024]{templeton2024scaling}). "768 dimensions, tens of thousands of features" is a toy-model scale, not a measured law.
 
 This is possible precisely because high-dimensional space has exponentially many “almost-orthogonal” directions. The cost: features interfere slightly, leading to hallucinations and brittle reasoning when the model is pushed out of distribution.
 </div>
@@ -295,6 +331,8 @@ $$
 In words: as dimension $d$ grows, the probability of deviating from the mean shrinks **exponentially**. Random high-dimensional vectors are almost deterministic in their statistical properties.
 
 This concentration is one reason a 70B-parameter LLM can behave reliably on novel inputs: in high dimensions, random directions interfere far less than low-dimensional intuition suggests, and the model's representations remain comparatively stable under small perturbations. It does not by itself guarantee that a new input resembles the training data.
+
+Concentration of measure is older than its name. Lévy observed that a Lipschitz function on a high-dimensional sphere is almost constant; Gromov and Milman turned the spherical isoperimetric inequality into a general concentration argument and used it to reprove Dvoretzky's theorem (\cite[Gromov \& Milman, 1983]{gromov1983isoperimetric}; \cite[Concentration of measure]{concentration_of_measure_wiki}). Talagrand extended the phenomenon to product spaces, where it becomes a toolbox of exponential inequalities (\cite[Talagrand, 1995]{talagrand1995concentration}). The schematic form is always the same: $P(|f-\mathbb{E}f|>t)\le 2e^{-c d t^2/L^2}$.
 </div>
 
 <div class="md" data-mathlevel="60">
@@ -305,6 +343,8 @@ A corollary of the blessing: real-world data does not actually fill high-dimensi
 Neural networks work because they learn to **parameterize these manifolds**. Each layer progressively deforms the high-dimensional space so that the manifold becomes linearly separable at the output. The “universal approximation” theorem applies to functions on compact subsets of $\mathbb{R}^d$, and a compact manifold is exactly such a subset.
 
 This is why deep learning is so effective on images, audio, and text: each of these modalities has low intrinsic dimensionality, and neural networks are essentially manifold learners.
+
+The manifold hypothesis is a hypothesis, not a theorem. It says that natural data concentrate near a low-dimensional manifold $\mathcal{M}^m\subset\mathbb{R}^d$ with $m\ll d$; learning then becomes recovery of coordinates on $\mathcal{M}$ rather than filling $\mathbb{R}^d$ (\cite[Cayton, 2005]{cayton2005manifold}). Olah's visual essay made the picture concrete for neural networks (\cite[Olah, 2014]{olah2014manifolds}), and later work treats the hypothesis as a testable modelling assumption rather than a fact (\cite[Loaiza-Ganem et al., 2024]{loaizaganem2024manifoldsurvey}). The intrinsic dimension is estimated, not observed; "~100" for faces is a guess, not a measurement. Strictly, the universal approximation theorem applies after choosing a chart or an embedding: a compact $m$-manifold embeds in some $\mathbb{R}^N$ (Whitney), and on each chart the network approximates the coordinate functions (\cite[Whitney, 1936]{whitney1936manifolds}).
 </div>
 
 <div class="md" data-mathlevel="65">
@@ -317,6 +357,8 @@ A surprising property of well-behaved approximations: errors don't necessarily c
 * **Forward stability** (numerical analysis): small perturbations in input cause bounded perturbations in output.
 * **Generalization bounds** (statistical learning theory): with $n$ samples and a network of $V$ parameters, the gap between training and test loss scales as $O\!\left(\sqrt{V / n}\right)$. More data reduces the bound; more parameters increases it. The derivation proceeds via **covering numbers**: one bounds how many $\varepsilon$-balls are needed to cover the set of all functions a $V$-parameter network can compute, then applies a uniform-concentration inequality. The full derivation is in \citeauthor{petersen2024mathdl} (\citeyear{petersen2024mathdl}), Ch.\ 14.
 * **Smoothness priors**: most natural signals are smooth, adjacent pixels in an image, adjacent tokens in text, are correlated. Neural networks encode this prior through their architecture.
+
+This is a uniform worst-case bound, and $V$ is a capacity measure, not literally the parameter count; it does not predict the test error of an overparameterized network (\cite[Zhang et al., 2017]{zhang2017rethinking}).
 
 These guarantees are why training a 70B model on 15T tokens can produce a model that generalizes to novel inputs, even though the model has never seen them before.
 </div>
@@ -346,6 +388,10 @@ In most of this textbook we write types informally (“$x$ is a vector, $w$ is a
 
 <div class="optional md" data-headline="Type Theory and Homotopy Type Theory (for the curious)" data-mathlevel="85">
 **Type theory** is a foundation for mathematics where the basic objects are *types* (think: sets with structure) and the basic maps are *functions* between them. Most modern proof assistants (Lean, Coq, Agda) are built on type theory for the same reason Tensor notation is built on tensors: once you commit, the compiler / kernel checks every step.
+
+Type theory begins as a response to a paradox in Frege's logic. Frege's *Begriffsschrift* (1879) had given logic quantifiers and a formal notation; his *Grundgesetze* then added Basic Law V, which admits $R=\{w\mid w\notin w\}$, so $R\in R$ iff $R\notin R$ (\cite[Frege, 1879]{frege1879}; \cite[Russell's paradox]{russell_paradox_sep}). Russell's *Principles of Mathematics* (1903) and *Principia Mathematica* (1910–13) answered with a ramified hierarchy of types (\cite[Russell, 1903]{russell1903principles}; \cite[Whitehead \& Russell, 1910]{russell1910principia}), and Church's 1940 simple theory of types replaced the hierarchy with a typed $\lambda$-calculus (\cite[Church, 1940]{churchsimplytyped}).
+
+Martin-Löf's 1972 system made types depend on terms; identity types followed in the 1973/75 version, and the 1984 Bibliopolis lectures became the standard exposition (\cite[Martin-Löf, 1984]{martinlof1984intuitionistic}; \cite[SEP, Intuitionistic Type Theory]{intuitionistic_type_theory_sep}). Voevodsky's 2006 note called his homotopy $\lambda$-calculus "a hypothetical (at the moment) type system"; by 2009 he had the univalence axiom, and the 2012–13 IAS special year produced the HoTT Book (\cite[Voevodsky, 2006]{voevodsky2006hlambda}; \cite[Voevodsky, 2010]{voevodsky2010equivalence}; \cite[HoTT Book, 2013]{hottbook}).
 
 ### What a type actually is
 

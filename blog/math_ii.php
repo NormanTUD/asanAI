@@ -1137,6 +1137,10 @@ $$ \vec{v}_{\text{color}} = \begin{pmatrix} r \\ g \\ b \end{pmatrix} \qquad \te
 
 </div>
 
+<div class="optional md" data-headline="Two births: Hamilton's quaternions and Grassmann's spaces">
+Two independent births stand behind that picture. In 1843 William Rowan Hamilton found the rule $i^2=j^2=k^2=ijk=-1$ and reported it to the Royal Irish Academy that November; the four-part objects he called *quaternions* multiplied non-commutatively, so $ab \neq ba$ (\cite[Hamilton, 1844]{hamilton1844quaternions}). A year later Hermann Grassmann's *Ausdehnungslehre* built a coordinate-free algebra of $n$-dimensional extensions, complete with subspaces, bases and exterior products (\cite[Grassmann, 1844]{grassmann1844ausdehnungslehre}). Hamilton's vectors lived inside a 4-D algebra; Grassmann's lived in a space of any dimension. Modern linear algebra inherits from both.
+</div>
+
 <div id="vector-plot" style="width:100%; max-width:400px; height:400px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px;"></div>
 
 <div class="md">
@@ -1171,6 +1175,8 @@ A **Matrix** is a grid of numbers (like a spreadsheet).
 A **Black & White photo** is just a Matrix. Each spot in the grid tells the computer how bright that specific pixel is, when we say $0$ means “black”, $255$ means white and everything inbetween are different shades of gray.
 
 $$M = \begin{pmatrix} 255 & 0 \\ 0 & 255 \end{pmatrix}$$
+
+Historically, a matrix began as a *bookkeeping device*: Sylvester's oblong array existed so that one could pick square sub-arrays and form determinants from them (\cite[Sylvester, 1850]{sylvester1850matrix}). Cayley's 1858 memoir changed its status. He defined addition, multiplication and inversion of matrices, checked that a $2\times2$ matrix satisfies its own characteristic equation, and introduced the "transposed matrix" (\cite[Cayley, 1858]{cayleymemoirmatrices}). A grid of numbers became an object with an algebra — the step that lets a neural network's weight matrix be multiplied, inverted and differentiated.
 
 </div>
 
@@ -1217,6 +1223,8 @@ If you go on to read physics or differential geometry, you will encounter:
 * a *type* $(p, q)$, meaning $p$ contravariant slots and $q$ covariant slots.
 
 In that language, a vector field is a $(1, 0)$-tensor, a one-form (linear functional) is a $(0, 1)$-tensor, and a metric tensor is a symmetric $(0, 2)$-tensor. None of this matters for the ML sense above — but it is why the word was tempting to borrow.
+
+One warning about the word *rank*. In this chapter, "rank 2" for a matrix means **tensor order** — the number of axes — not the matrix rank of linear algebra. The matrix rank is the dimension of the column space, the size of the largest non-vanishing minor. Frobenius isolated that invariant in his 1878 memoir on linear substitutions and used the German word *Rang* in an 1879 paper (\cite[Frobenius, 1878]{frobenius1878linear}; \cite[Frobenius, 1879]{frobenius1879differential}); Sylvester supplied the complementary notion of *nullity* in 1884 (\cite[MacTutor: Matrices and determinants]{mactutor_matrices_determinants}). A $3\times5$ matrix can have matrix rank 3, even though it is a rank-2 tensor.
 
 <div class="optional md" data-headline="Convention">
 
@@ -1431,13 +1439,23 @@ Each word is old, and each was coined to solve a concrete problem.
 
 - **Matrix** — from Latin *mātrix*, "womb or mold," ultimately *māter*, "mother" \cite[matrix, Etymonline]{etymonline_matrix}. Sylvester's problem was bookkeeping: building the invariant theory of eliminants, he needed a way to line up a determinant's terms so he could juggle them, and in 1850 he called the result a *matrix* — "a Matrix out of which we may form various systems of determinants" (\cite[Sylvester, 1850]{sylvester1850matrix}). Cayley's problem was different: he wanted linear transformations to behave like numbers you can multiply and compose, and his 1858 "arithmetic of matrices" gave them exactly that (\cite[Cayley, 1858]{cayleymemoirmatrices}).
 
+- **Determinant** — the object the matrix was invented to organise is older than the matrix itself. Seki Takakazu computed determinants in Japan by 1683, and Leibniz sent determinant-like "resultants" to l'Hôpital in a letter of 1693 (\cite[MacTutor: Matrices and determinants]{mactutor_matrices_determinants}). Gabriel Cramer stated the general rule for solving $n$ linear equations with determinants in 1750, without proof (\cite[Cramer, 1750]{cramer1750introduction}); Cauchy gave the word its modern sense only in 1812.
+
 - **Vector** — from Latin *vĕctōr*, "a carrier," from *vĕhĕre*, "to carry" \cite[vector, Etymonline]{etymonline_vector}. Hamilton wanted to do 3-D geometry the way complex numbers do 2-D: a "calculus of direction" that adds and rotates directed line segments in space without writing out every component (\cite[Hamilton, 1854]{hamiltonextensionsquaternions}).
 
 - **Scalar** — from Latin *scalaris*, "of a ladder" (*scala*, a single step) \cite[scalar, Etymonline]{etymonline_scalar}. It is Hamilton's word for the direction-free *amount* of a quantity — the part you can add and multiply like an ordinary number, split off from the direction a *vector* carries (\cite[Hamilton, 1854]{hamiltonextensionsquaternions}).
 
+- **A note on the dates** — Hamilton pairs *scalar* and *vector* explicitly in his 1846 *Philosophical Magazine* paper: "the algebraically real part ... we shall call ... the scalar" and the imaginary part "may be called the vector part" (\cite[Hamilton, 1846]{hamilton1846quaternions}). The word *vector* itself is older — astronomers spoke of a *radius vector* — but Hamilton gave it the algebraic sense used here (\cite[Miller: vector]{miller_vector}).
+
 - **Tensor** — the English word dates to 1704, a Modern Latin agent noun from *tendere*, "to stretch" \cite[tensor, Etymonline]{etymonline_tensor}. Hamilton gave it a mathematical life, using it for the length of a quaternion. The modern object had to solve Voigt's problem: a crystal's properties depend on the direction you probe them (stiffness, light, heat flow), and he needed one object to hold all those directional couplings — his "Tensoren," 1898 (\cite[Voigt, 1898]{voigt1898krystalle}). Ricci-Curbastro and Levi-Civita then built the calculus that makes tensors work, 1900, so that the laws of geometry could be written with no privileged coordinate system — the language Einstein inherited for relativity (\cite[Ricci-Curbastro & Levi-Civita, 1900]{riccilevicivita1900}; \cite[Einstein, 1916]{einstein1916annalen}).
 
 - **Summation convention** — Einstein's 1916 answer to the tedium of long sums in his new tensor equations: an index that appears twice is summed over and then vanishes from the page (\cite[Einstein, 1916]{einstein1916annalen}).
+
+Two details sharpen that story. Voigt's word is not a definition of the modern tensor: he writes that he will call "die für sie charakteristischen physikalischen Grössen aber Tensoren" — the physical quantities characteristic of anisotropic crystals, "tensors" (\cite[Voigt, 1898]{voigt1898krystalle}). And Ricci-Curbastro and Levi-Civita's 1900 memoir does not use the noun at all; it speaks of *systèmes* with covariant and contravariant components (\cite[Ricci-Curbastro & Levi-Civita, 1900]{riccilevicivita1900}; \cite[Miller: tensor]{miller_tensor}). The noun travelled from Voigt's crystallography into Einstein's relativity; the calculus came from the Italians.
+</div>
+
+<div class="md" data-lesson-id="math-ii">
+> **One idea, many names.** Determinants came first (Seki 1683, Leibniz 1693), matrices were named for bookkeeping (Sylvester 1850), matrix algebra arrived in 1858 (Cayley), and tensors travelled from quaternions (Hamilton 1846) through crystallography (Voigt 1898) into relativity (Einstein 1916). The array is the modern container; the history is the set of problems it was built to hold.
 </div>
 
 <script>
@@ -1449,6 +1467,8 @@ Each word is old, and each was coined to solve a concrete problem.
 ## Chaining Functions (Composition)
 
 In programming and math, we often want to take the result of one function and plug it directly into another. This is called **composition**. If we have a function $f$ and a function $g$, applying $f$ first and then $g$ is written as $(g \circ f)(x)$, which is just a shorthand for $g(f(x))$. A deep network is built exactly this way: each layer is a function acting on the previous layer's output, so the whole network is a **chain of composed functions**, and — in Olah's framing — the role that *types* play in programming is played by *representations*: two layers can be composed only when the output representation of one matches the input the next expects (\cite[Olah, 2015]{colah2015types}).
+
+The word *function* is older than the notation. Leibniz used it in a 1673 manuscript for a line that "performs some function" in a figure; Johann Bernoulli described it in 1694 as "a quantity somehow formed from indeterminate and constant quantities" (\cite[MacTutor: The Function Concept]{macTutorFunctions}). Euler introduced the symbol $f(x)$ in 1734 and made the function the central object of analysis in his 1748 *Introductio* (\cite[Miller: Function Symbols]{miller_functionsymbols}). Once a function has a name, composition is just substitution: write $g(\;)$ and put $f(x)$ inside.
 
 You can experiment with how two linear functions combine. Adjust the sliders to see how the “inner” function $f$ and the “outer” function $g$ create a new, composed result.
 </div>
@@ -1486,6 +1506,8 @@ We can visualize these relationships using a triangle diagram. It shows that the
 ## The Hadamard Product ($\odot$)
 
 The **Hadamard Product** ($\odot$) was introduced by \citeauthor{hadamardproduct} to study **singularities** in complex power series: it first appears in his \citeyear{hadamardproduct} paper \citetitle{hadamardproduct}, and the related **Hadamard multiplication theorem** dates from 1899. It is defined for vectors as $\vec{a} \odot \vec{b} = (a_1 b_1, \dots, a_n b_n)^T$ — the coefficients are multiplied term by term — which is exactly what lets one predict the analytic continuation and boundaries of functions derived from known ones.
+
+The history is a little more tangled than the name suggests. Hadamard's 1892 thesis was about Taylor series and analytic continuation; the term-by-term product and its multiplication theorem belong to his 1899 *Acta Mathematica* paper (\cite[Hadamard, 1899]{hadamard1899series}). For matrices the key result is Schur's: the Hadamard product of two positive-semidefinite matrices is positive-semidefinite, proved as Theorem VII of his 1911 paper (\cite[Schur, 1911]{schur1911bilinear}). The name "Hadamard product" for the matrix operation was popularised by Paul Halmos, who recalled that John von Neumann suggested it (\cite[Hadamard product, Wikipedia]{hadamard_product_wiki}).
 
 While standard matrix multiplication follows the “row-by-column” rule, the **Hadamard Product** (also known as the *element-wise product*) is much more straightforward. It takes two matrices or vectors of the **same dimensions** and multiplies the elements that occupy the same position.
 
@@ -1534,7 +1556,11 @@ A^T = \begin{pmatrix} 1 & 4 \\ 2 & 5 \\ 3 & 6 \end{pmatrix}$$
 </div>
 
 <div class="optional md" data-headline="History of Matrix Transposition">
-The idea of matrix transposition was introduced in 1858 by the British mathematician \citeauthor{cayleymemoirmatrices} in his paper \citetitle{cayleymemoirmatrices}. It arose from the study of bilinear and quadratic forms, where swapping rows and columns was needed to express symmetry properties.
+The idea of matrix transposition was introduced in 1858 by the British mathematician \citeauthor{cayleymemoirmatrices} in his paper \citetitle{cayleymemoirmatrices}. It arose from the study of bilinear and quadratic forms, where swapping rows and columns was needed to express symmetry properties. Cayley's own wording is precise: "A matrix compounded with the transposed matrix gives rise to a symmetrical matrix" (\cite[Cayley, 1858]{cayleymemoirmatrices}). The operation was thus born with matrix algebra, not added later: $A^T A$ and $AA^T$ are the symmetric Gram matrices of the rows and columns of $A$. Cayley wrote the operation out in words; the modern superscript notation is later.
+</div>
+
+<div class="smart-quote" data-cite="cayleymemoirmatrices">
+A matrix compounded with the transposed matrix gives rise to a symmetrical matrix.
 </div>
 
 <div class="md" data-mathlevel="65">
@@ -1552,6 +1578,8 @@ $$
 
 The exponential emphasises differences: a logit gap of $1$ becomes a ratio of $e \approx 2.7$, a gap of $2$ becomes $e^2 \approx 7.4$. This is the operation behind the output layer of a classification network and behind every next-token probability in an LLM (see the Attention chapter).
 
+The formula is older than machine learning. It is the **Boltzmann distribution** of statistical mechanics — Boltzmann's 1868 paper, Gibbs's textbook of 1902 — with the logits playing the role of negative energies (\cite[Boltzmann distribution]{boltzmann_distribution_wiki}). R. Duncan Luce derived it from his choice axiom in 1959 (\cite[Luce, 1959]{luce1959individualchoice}). The name "softmax" is John Bridle's; he used it for a normalised exponential in a 1989 conference paper published in 1990 (\cite[Bridle, 1990]{bridle1990softmax}).
+
 ### Cross-entropy: measuring the gap between two distributions
 
 Given a true probability distribution $\vec{y}$ (one-hot for a single correct class) and a predicted distribution $\hat{\vec{y}}$ (the model's softmax output), the **cross-entropy** is
@@ -1559,6 +1587,8 @@ Given a true probability distribution $\vec{y}$ (one-hot for a single correct cl
 $$
 H(\vec{y}, \hat{\vec{y}}) = -\sum_{i=1}^{K} y_i \, \log \hat{y}_i
 $$
+
+Shannon's 1948 paper defined the entropy $H(p)=-\sum_i p_i\log p_i$ as the cost of coding data from $p$ (\cite[Shannon, 1948]{shannon1948communication}). Kullback and Leibler's 1951 "mean information for discrimination" is the extra cost of coding with the wrong distribution $q$: $D_{\mathrm{KL}}(p\Vert q)=\sum_i p_i\log(p_i/q_i)$ (\cite[Kullback & Leibler, 1951]{kullback1951information}). Adding the two gives the cross-entropy, $H(p,q)=H(p)+D_{\mathrm{KL}}(p\Vert q)=-\sum_i p_i\log q_i$. Good's 1952 "Rational Decisions" connected probability, rational behaviour and information, and generalised Wald's decision theory (\cite[Good, 1952]{good1952rational}).
 
 For a one-hot true label where $y_c = 1$ for the correct class $c$, this collapses to
 
