@@ -258,12 +258,12 @@
 									<div class="step-stage">
 										<div class="step-pane-head">
 											<span class="sp-kicker">Step 5 · Feed-forward</span>
-											<h3 class="sp-title">A key matches, a value gets written</h3>
+											<h3 class="sp-title">A pattern matches, a value is written</h3>
 										</div>
 										<div class="step-toolbar">
 											<div class="step-chips" id="iffn-scenarios">
-												<button class="chip is-on" type="button" data-ffn="fruit">Context: eating an apple</button>
-												<button class="chip" type="button" data-ffn="tech">Context: buying an apple</button>
+												<button class="chip is-on" type="button" data-ffn="fruit">I ate the apple</button>
+												<button class="chip" type="button" data-ffn="tech">I bought an Apple laptop</button>
 											</div>
 										</div>
 										<div class="ffn-grid">
@@ -272,11 +272,11 @@
 												<div class="ffn-pill is-fire">“Apple” + context</div>
 											</div>
 											<div class="ffn-col">
-												<div class="ffn-col-head">Keys · patterns in W₁</div>
+												<div class="ffn-col-head">Patterns in W₁</div>
 												<div class="ffn-list" id="iffn-keys"></div>
 											</div>
 											<div class="ffn-col">
-												<div class="ffn-col-head">Values · next-token hints</div>
+												<div class="ffn-col-head">Next-token pull in W₂</div>
 												<div class="ffn-list" id="iffn-values"></div>
 											</div>
 											<div class="ffn-col">
@@ -285,8 +285,44 @@
 											</div>
 										</div>
 										<div class="step-out" id="iffn-out"></div>
+										<p class="step-note ffn-caveat"><b>What is simplified:</b> a real FFN has no labelled keys or values. The “patterns” are learned directions in W₁; the “pull” is a learned direction in W₂ that changes the next-token distribution. The labels are a reading aid, not stored rules.</p>
 									</div>
-									<p class="step-note">Attention moves information <b>between</b> positions. The feed-forward network works on each position <b>alone</b>: it matches patterns and writes back a distribution over likely next tokens. This is where much of the model's stored knowledge lives.</p>
+									<div class="step-stage">
+										<div class="step-pane-head">
+											<span class="sp-kicker">The whole layer</span>
+											<h3 class="sp-title">The nonlinearity bends the space</h3>
+										</div>
+										<p class="step-note curve-intro">The FFN above works on one token. The same layer, seen geometrically, bends the whole representation space. A linear classifier can only draw a straight boundary. Some arrangements of data cannot be separated by any straight line. A layer with a nonlinearity changes that without moving the boundary: it bends the space itself.</p>
+										<div class="curve-stage">
+											<canvas id="curve-canvas" aria-label="A point cloud being lifted into an egg-shaped surface, then projected onto a line"></canvas>
+											<div class="curve-caption" aria-live="polite">
+												<span class="cc-step" id="curve-step">1 / 7</span>
+												<h4 id="curve-title">Two classes, no straight line</h4>
+												<p id="curve-body">An inner cloud and an outer ring. No single straight line separates coral from blue.</p>
+											</div>
+											<div class="curve-points" id="curve-points">
+												<div class="cp-head">Example points <span>· symbolic</span></div>
+												<table>
+													<thead><tr><th></th><th>x</th><th class="cp-y">y</th><th class="cp-z">z</th></tr></thead>
+													<tbody id="curve-points-body"></tbody>
+												</table>
+											</div>
+										</div>
+										<div class="curve-legend" aria-hidden="true">
+											<span><i class="cl-inner"></i>inner class</span>
+											<span><i class="cl-outer"></i>outer class</span>
+											<span><i class="cl-plane"></i>separating plane</span>
+										</div>
+										<div class="demo-controls">
+											<button class="btn-demo" type="button" id="curve-prev">← Prev</button>
+											<button class="btn-demo btn-demo--green" type="button" id="curve-play">▶ Play</button>
+											<button class="btn-demo" type="button" id="curve-next">Next →</button>
+											<button class="btn-demo" type="button" id="curve-reset">Reset</button>
+											<span class="curve-dots" id="curve-dots" aria-hidden="true"></span>
+										</div>
+										<div class="step-out">A layer does not have to cut the data. It can bend the space until a simple plane fits between the classes.</div>
+										<p class="step-note curve-source">Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>). The animation is an illustration, not a proof.</p>
+									</div>
 								</div>
 
 								<div class="step-pane" id="step-residual">
@@ -315,66 +351,8 @@
 						</div>
 					</section>
 
-					<section class="section-block" id="curvature">
-						<div class="section-kicker"><span class="sk-num">04</span> The layer as geometry</div>
-						<h2 class="section-title">A layer bends the space.</h2>
-						<div class="prose">
-							<p>
-								A linear classifier can only draw a straight boundary. Some arrangements of
-								data cannot be separated by any straight line. A layer with a nonlinearity
-								can change that without moving the boundary: it bends the space itself. The
-								demo follows that idea from a flat plane to an egg-shaped surface, then down
-								to a single line.
-							</p>
-						</div>
-						<div class="demo" id="curvature-demo">
-							<div class="demo-head">
-								<div>
-									<p class="demo-title">Layer as space curvature <span>· demo 08</span></p>
-									<p class="demo-sub">Step through the bend, drag the canvas to rotate, or press Play.</p>
-								</div>
-								<span class="demo-badge">7 steps</span>
-							</div>
-							<div class="demo-body">
-								<div class="curve-stage">
-									<canvas id="curve-canvas" aria-label="A point cloud being lifted into an egg-shaped surface, then projected onto a line"></canvas>
-									<div class="curve-caption" aria-live="polite">
-										<span class="cc-step" id="curve-step">1 / 7</span>
-										<h4 id="curve-title">Two classes, no straight line</h4>
-										<p id="curve-body">An inner cloud and an outer ring. No single straight line separates coral from blue.</p>
-									</div>
-									<div class="curve-points" id="curve-points">
-										<div class="cp-head">Example points <span>· symbolic</span></div>
-										<table>
-											<thead><tr><th></th><th>x</th><th class="cp-y">y</th><th class="cp-z">z</th></tr></thead>
-											<tbody id="curve-points-body"></tbody>
-										</table>
-									</div>
-								</div>
-								<div class="curve-legend" aria-hidden="true">
-									<span><i class="cl-inner"></i>inner class</span>
-									<span><i class="cl-outer"></i>outer class</span>
-									<span><i class="cl-plane"></i>separating plane</span>
-								</div>
-								<div class="demo-controls">
-									<button class="btn-demo" type="button" id="curve-prev">← Prev</button>
-									<button class="btn-demo btn-demo--green" type="button" id="curve-play">▶ Play</button>
-									<button class="btn-demo" type="button" id="curve-next">Next →</button>
-									<button class="btn-demo" type="button" id="curve-reset">Reset</button>
-									<span class="curve-dots" id="curve-dots" aria-hidden="true"></span>
-								</div>
-							</div>
-							<div class="demo-insight"><b>Takeaway</b><span>A layer does not have to cut the data. It can bend the space until a simple plane fits between the classes.</span></div>
-							<div class="demo-foot">
-								Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em>
-								(<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>).
-								The animation is an illustration, not a proof.
-							</div>
-						</div>
-					</section>
-
 					<section class="section-block" id="meadow">
-						<div class="section-kicker"><span class="sk-num">05</span> The geometry</div>
+						<div class="section-kicker"><span class="sk-num">04</span> The geometry</div>
 						<h2 class="section-title">A finite vocabulary over an infinite space.</h2>
 						<div class="prose">
 							<p>
@@ -394,7 +372,7 @@
 						<div class="demo" id="meadow-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">The meadow of words <span>· demo 09</span></p>
+									<p class="demo-title">The meadow of words <span>· demo 08</span></p>
 									<p class="demo-sub">Move the pointer across the field. Each pin owns the thoughts closest to it; the margin tells you how close you are to a seam.</p>
 								</div>
 								<span class="demo-badge">move me</span>
@@ -425,7 +403,7 @@
 					</section>
 
 					<section class="section-block" id="whole">
-						<div class="section-kicker"><span class="sk-num">06</span> The whole loop</div>
+						<div class="section-kicker"><span class="sk-num">05</span> The whole loop</div>
 						<h2 class="section-title">Text in, geometry, one word out.</h2>
 						<div class="prose">
 							<p>

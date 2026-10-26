@@ -10,6 +10,7 @@ color: accent
 topics: history, philosophy, society
 tags: interested-layman
 -->
+<?php js("intuition_space_morph"); ?>
 <style>
 #autoregressive-viz .ar-sentence { padding:14px 16px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0; min-height:48px; display:flex; align-items:center; flex-wrap:wrap; }
 #autoregressive-viz .ar-word { padding:1px 4px; border-radius:3px; margin-right:6px; }
@@ -981,6 +982,132 @@ And crucially, neither the attention heads nor the feed-forward network are conf
 
 <div class="mn-thread">
 	<a class="mn-thread-item mn-thread-fwd" target="_blank" rel="noopener" href="transformer.php"><span class="mn-thread-label">Go deeper</span>The Architecture of Meaning: A Deep Dive into Transformers</a>
+</div>
+
+<div class="md" data-mathlevel="55">
+#### 4d: A layer is a bend in space
+
+The residual stream shows *what* a layer writes. It leaves open *where* it writes it. Read the layer's output as a new coordinate system and the operation looks like a bend of the whole space: a smooth, reversible map that lifts the inside of a ring and lowers its outside, opening a gap for a flat classifier. This is the geometric picture behind the "origami" view of feed-forward layers \cite{keup2022origami} — except that here the bend is smooth, so no point is torn or glued. The hard ReLU crease is the subject of [Origami in N dimensions](origami.php).
+
+The demo starts with a red core inside a blue ring, a configuration no straight line can separate. Step through it: add a dimension, bend the plane into a bowl, slide a flat plane into the gap, then squash the whole picture onto a one-dimensional score.
+</div>
+
+<style>
+.ism-copy {
+	max-width: 640px;
+	min-height: 5.6em;
+	margin: 0 auto 14px;
+	text-align: center;
+}
+.ism-title {
+	font: 700 1rem/1.3 var(--mn-font-heading);
+	color: var(--mn-heading);
+	margin-bottom: 4px;
+}
+.ism-body {
+	font-size: .84rem;
+	line-height: 1.55;
+	color: var(--mn-text-secondary);
+}
+.ism-wrap {
+	position: relative;
+	height: 480px;
+	overflow: hidden;
+	border: 1px solid var(--mn-border);
+	border-radius: var(--mn-radius-md);
+	background: var(--mn-bg);
+}
+#ism-canvas {
+	display: block;
+	width: 100%;
+	height: 100%;
+	cursor: grab;
+	touch-action: none;
+}
+#ism-canvas.is-dragging { cursor: grabbing; }
+.ism-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 12px;
+}
+.ism-btn {
+	padding: 6px 12px;
+	border: 1px solid var(--mn-border);
+	border-radius: var(--mn-radius-sm);
+	background: var(--mn-bg-subtle);
+	color: var(--mn-text);
+	font: 600 .78rem/1.2 inherit;
+	cursor: pointer;
+	transition: border-color .15s ease, background .15s ease;
+}
+.ism-btn:hover {
+	border-color: var(--mn-accent);
+	background: color-mix(in srgb, var(--mn-accent) 10%, var(--mn-bg-subtle));
+}
+.ism-play { margin-left: 4px; }
+.ism-dots {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 0 4px;
+}
+.ism-dot {
+	width: 9px;
+	height: 9px;
+	padding: 0;
+	border: 1px solid var(--mn-border);
+	border-radius: 50%;
+	background: transparent;
+	cursor: pointer;
+	transition: transform .15s ease, background .15s ease, border-color .15s ease;
+}
+.ism-dot:hover { border-color: var(--mn-accent); }
+.ism-dot.is-active {
+	background: var(--mn-accent);
+	border-color: var(--mn-accent);
+	transform: scale(1.3);
+}
+.ism-counter {
+	min-width: 3.2em;
+	color: var(--mn-text-muted);
+	font: 600 .72rem/1 var(--mn-font-mono);
+	text-align: center;
+}
+@media (max-width: 640px) {
+	.ism-wrap { height: 360px; }
+	.ism-copy { min-height: 6.8em; }
+}
+</style>
+
+<div class="mn-demo-panel ism-panel">
+	<div class="mn-demo-title">A layer bends the space it writes into</div>
+	<div class="mn-demo-sub">Seven steps from an inseparable ring to a single threshold on a one-dimensional score.</div>
+
+	<div id="ism-copy" class="ism-copy" aria-live="polite">
+		<div id="ism-title" class="ism-title"></div>
+		<div id="ism-body" class="ism-body"></div>
+	</div>
+
+	<div id="ism-wrap" class="ism-wrap">
+		<canvas id="ism-canvas" aria-label="An animated point cloud: a red core inside a blue ring is lifted into a curved shell until a flat plane separates the two classes">An animated point cloud shows a red core inside a blue ring being bent into a curved shell until a flat plane separates them.</canvas>
+	</div>
+
+	<div class="ism-controls">
+		<button type="button" id="ism-prev" class="ism-btn" aria-label="Previous step">←</button>
+		<div id="ism-dots" class="ism-dots" role="group" aria-label="Walkthrough steps"></div>
+		<button type="button" id="ism-next" class="ism-btn" aria-label="Next step">→</button>
+		<button type="button" id="ism-play" class="ism-btn ism-play" aria-label="Play the walkthrough">▶ Play</button>
+		<span id="ism-counter" class="ism-counter">1 / 7</span>
+	</div>
+
+	<div class="mn-demo-hint">Drag the canvas to rotate. <b>Play</b> runs through all seven steps.</div>
+</div>
+
+<div class="md">
+The important shift is not that the layer moves points. It changes the coordinate system the next layer reads. Stack many such bends and the representation can be arranged so that a final linear readout — one flat cut — is enough. That is the trick behind deep networks: depth buys a sequence of space bends, and the last layer gets to stay simple.
 </div>
 
 <div class="mn-hook">
