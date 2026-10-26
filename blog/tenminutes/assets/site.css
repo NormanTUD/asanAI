@@ -4093,10 +4093,61 @@ html[data-theme="dark"] .curve-points {
 	padding: 8px 12px;
 	border-left: 3px solid var(--tm-gold);
 	border-radius: 0 8px 8px 0;
-	background: rgba(159, 151, 0, 0.12);
+	background: var(--tm-paper-2);
 	font-family: var(--tm-mono);
 	font-size: 0.7rem;
 	line-height: 1.4;
-	color: rgba(238, 247, 244, 0.8);
+	color: var(--tm-ink);
 }
-.pipe-prediction b { color: var(--tm-lime); }
+.pipe-prediction b { color: var(--tm-petrol); }
+.demo .pipe-token {
+	background: rgba(238, 247, 244, 0.08);
+	border-color: rgba(238, 247, 244, 0.18);
+	color: #eef7f4;
+}
+.demo .pipe-token.is-active { background: var(--tm-green); border-color: var(--tm-green); color: #000000; }
+.demo .pipe-token.is-new { background: var(--tm-gold); border-color: var(--tm-gold); color: #000000; }
+
+.flow-repeat {
+	margin: 10px 0 0;
+	font-family: var(--tm-mono);
+	font-size: 0.62rem;
+	letter-spacing: 0.04em;
+	color: var(--tm-gold);
+	text-align: center;
+}
+.flow-step.is-loop { border-color: rgba(159, 151, 0, 0.38); background: rgba(159, 151, 0, 0.06); }
+.flow-step.is-loop .fs-num { color: var(--tm-gold); }
+.flow-step .fs-repeat {
+	display: inline-block;
+	margin-top: 4px;
+	padding: 1px 5px;
+	border-radius: 999px;
+	background: rgba(159, 151, 0, 0.16);
+	color: var(--tm-gold);
+	font-family: var(--tm-mono);
+	font-size: 0.5rem;
+	letter-spacing: 0.06em;
+}
+
+/* ── stable demo boxes: no layout shift on state change ─── */
+
+#pipe-detail { height: 180px; overflow-y: auto; }
+#ladder-detail { height: 250px; overflow-y: auto; }
+.pipe-tokens { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; padding-bottom: 3px; }
+.pipe-prediction { height: 3.2em; overflow-y: auto; }
+.tl-panel { height: 240px; overflow-y: auto; }
+body[data-lesson="history"] .tl-panel { height: 480px; }
+.pref-card { min-height: 130px; }
+.myth[data-myth] { min-height: 210px; }
+
+@media (max-width: 720px) {
+	#pipe-detail { height: 260px; }
+	#ladder-detail { height: 340px; }
+	.tl-panel { height: 300px; }
+	body[data-lesson="history"] .tl-panel { height: 520px; }
+	.pref-card { min-height: 150px; }
+}
+
+.ds-history { flex-wrap: nowrap; height: 26px; overflow-x: auto; overflow-y: hidden; }
+.mix-note { min-height: 3.2em; }

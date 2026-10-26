@@ -82,13 +82,14 @@
 							<div class="demo-head">
 								<div>
 									<p class="demo-title">The transformer pipeline <span>· demo 01</span></p>
-									<p class="demo-sub">Start with “the cat sat”. Step through the six stages, predict the next token, append it, and run the loop again: on → the → mat → .</p>
+									<p class="demo-sub">Start with “the cat sat”. Step through the six stages, predict the next token, append it, and run the loop again: on → the → mat → . Stages 04–05 are the transformer block; real models stack that block dozens to hundreds of times.</p>
 								</div>
 								<span class="demo-badge">click / step</span>
 							</div>
 							<div class="demo-body">
 								<div class="pipe-tokens" id="pipe-tokens"></div>
 								<div class="flow flow--six" id="pipe-flow" role="group" aria-label="Transformer stages"></div>
+								<div class="flow-repeat">04 + 05 repeat × N blocks · often 32–100+ layers</div>
 								<div class="flow-detail" id="pipe-detail">
 									<h4 id="pipe-title">Tokenize</h4>
 									<p id="pipe-text"></p>
@@ -117,8 +118,8 @@
 
 						<div class="aha">
 							<span class="aha-kicker">The aha</span>
-							<p class="aha-big">Coherence is what a sequence of local bets looks like from the outside.</p>
-							<p class="aha-sub">The model does not plan the paragraph. It predicts one token, appends it, and predicts again. Each choice becomes part of the next question — so small errors can compound, and so can a good line of thought.</p>
+							<p class="aha-big">It predicts locally — and can still build a world model.</p>
+							<p class="aha-sub">The model has no explicit paragraph plan: it predicts one token, appends it, and predicts again. But next-token prediction can require a structured internal state. In the Othello (Reversi) experiment, a transformer trained only on legal moves — with no board and no rules — spontaneously represented the board; intervening on that representation changed its next move. Coherence can therefore come from a learned world model in the residual stream, not only from a chain of surface bets. The model is still fallible: that world model is partial, and small errors can compound.</p>
 						</div>
 
 						<div class="trythis">
@@ -393,14 +394,16 @@
 			},
 			{
 				name: "Attention",
+				repeat: true,
 				title: "Attention + residual",
-				text: "Each token projects to a query, key, and value. Scaled dot products decide who attends to whom; softmax normalizes the weights; values are averaged. A causal mask in a decoder hides the future. The result is added back to the residual stream. N layers repeat this.",
+				text: "Each token projects to a query, key, and value. Scaled dot products decide who attends to whom; softmax normalizes the weights; values are averaged. A causal mask in a decoder hides the future. The result is added back to the residual stream. This is one block in a stack of N blocks; real models repeat that block dozens to hundreds of times, often 32–100+ layers.",
 				shape: "[T, d_model] → [T, d_model] · mixed across positions"
 			},
 			{
 				name: "Feed-forward",
+				repeat: true,
 				title: "Feed-forward + residual",
-				text: "A per-token MLP expands the vector (usually 4×), applies a nonlinearity such as GELU or SwiGLU, and contracts it back. Attention routes information; the FFN computes with it. The result is added to the stream again.",
+				text: "A per-token MLP expands the vector (usually 4×), applies a nonlinearity such as GELU or SwiGLU, and contracts it back. Attention routes information; the FFN computes with it. The result is added to the stream again. The attention + feed-forward block repeats N times; the demo shows one pass.",
 				shape: "[T, d_model] → [T, 4·d_model] → [T, d_model]"
 			},
 			{
@@ -511,9 +514,9 @@
 			stages.forEach(function (stage, i) {
 				var b = document.createElement("button");
 				b.type = "button";
-				b.className = "flow-step" + (i === 0 ? " is-active" : "");
+				b.className = "flow-step" + (i === 0 ? " is-active" : "") + (stage.repeat ? " is-loop" : "");
 				b.setAttribute("data-stage", i);
-				b.innerHTML = '<span class="fs-num">0' + (i + 1) + "</span><b>" + stage.name + "</b>";
+				b.innerHTML = '<span class="fs-num">0' + (i + 1) + "</span><b>" + stage.name + "</b>" + (stage.repeat ? '<span class="fs-repeat">× N</span>' : "");
 				b.addEventListener("click", function () { stopRun(); selectStage(i); });
 				flow.appendChild(b);
 			});
