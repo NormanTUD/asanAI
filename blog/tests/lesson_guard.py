@@ -57,6 +57,14 @@ Blog-wide quiz guard (every top-level lesson .php):
                         answers (<=12 chars): spread <=5. Otherwise: shortest
                         >=70% of longest, spread <=22.
 
+Blog-wide site-footer guard:
+
+  F1 site-footer       every page rendered through the shared shell ends
+                        with the legal/accessibility footer, and the home
+                        pages call it explicitly. The footer must link the
+                        ScaDS.AI imprint, privacy and accessibility pages
+                        in a new tab.
+
 Usage:
     uv run blog/tests/lesson_guard.py [blog/]
 
@@ -306,6 +314,30 @@ CITE_GUARDS = [
 
 
 # ---------------------------------------------------------------------------
+# F1 — legal/accessibility footer on every page, blog-wide
+SITE_FOOTER_URLS = [
+    "https://scads.ai/imprint/",
+    "https://scads.ai/privacy/",
+    "https://scads.ai/accessibility/",
+]
+
+
+def guard_site_footer(root: Path) -> list[str]:
+    issues = []
+    functions = _read(root / "functions.php")
+    if "function render_site_footer(" not in functions:
+        issues.append("functions.php has no render_site_footer() helper")
+    for url in SITE_FOOTER_URLS:
+        if f'href="{url}"' not in functions:
+            issues.append(f"footer does not link {url}")
+    if "register_shutdown_function" not in functions or "render_site_footer();" not in functions:
+        issues.append("shared shell does not append the footer at the end of the page")
+    for home in ("index.php", "index_full.php"):
+        if "render_site_footer();" not in _read(root / home):
+            issues.append(f"{home} does not call render_site_footer()")
+    return issues
+
+
 # Q1 — quiz option-length balance, blog-wide (AGENTS.md "lesson authoring")
 # ---------------------------------------------------------------------------
 QUIZ_BLOCK = re.compile(
@@ -402,6 +434,16 @@ def main() -> None:
     cite_fail = 0
     quiz_fail = 0
     cite_checked = 0
+
+    footer_issues = guard_site_footer(root)
+    if footer_issues:
+        print("=" * 64)
+        print("Site footer")
+        print("=" * 64)
+        for i in footer_issues:
+            print(f"  ✗ {i}")
+    else:
+        print("Site footer: shared shell + home pages OK")
     for path in sorted(root.glob("*.php")):
         if path.name in CITE_SKIP:
             continue
@@ -465,7 +507,8 @@ def main() -> None:
           f"{cite_fail} issue(s)")
     print(f"Quiz balance guard: {cite_checked} file(s) checked, "
           f"{quiz_fail} issue(s)")
-    total_fail += cite_fail + quiz_fail
+    print(f"Site footer guard: {len(footer_issues)} issue(s)")
+    total_fail += cite_fail + quiz_fail + len(footer_issues)
     if total_fail:
         print(f"[FAIL] {total_fail} guard violation(s) found → exit code 1")
         sys.exit(1)
