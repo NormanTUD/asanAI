@@ -1315,7 +1315,7 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lizenz: CC BY-SA 2.0 (via Commons API extmetadata)
    Autor: Pablo A. Gimenez
    Lokal: cave_hands.jpg (4000x2248)
-   Genutzt in: intro.php; language.php § "Writing as technology"
+   Genutzt in: intro.php; language.php § "Writing as technology"; tenminutes/language.html § "Cave Paintings and Symbolic Art"
    Status: OK - CC BY-SA 2.0
 
 4. perceptronimagedetection
@@ -1325,6 +1325,38 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lokal: perceptron2.jpg (2836x2220)
    Genutzt in: intro.php; history.php
    Status: OK - Public domain
+
+5. blombosochre_image
+   URL: https://www.donsmaps.com/blombos.html
+   Lizenz: CC BY 2.5
+   Autor: Chris Henshilwood
+   Lokal: blombosochre.jpg (1670x1058)
+   Genutzt in: language.php § "The Cognitive Ignition"; tenminutes/language.html § "Cave Paintings and Symbolic Art"
+   Status: OK - CC BY 2.5
+
+6. cuneiform_image
+   URL: https://commons.wikimedia.org/wiki/File:Clay_tablet_mentioning_the_name_of_Eannatum,_prince_of_Lagash._From_Iraq,_c._2470_BCE._Iraq_Museum.jpg
+   Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
+   Autor: Osama Shukir Muhammed Amin
+   Lokal: cuneiform.jpg (1645x2649)
+   Genutzt in: language.php § "Cuneiform and Formal Grammar"; tenminutes/language.html § "Counting Stones and Tokens"
+   Status: OK - CC BY-SA 4.0
+
+7. wadielhol_inscription_i_image
+   URL: https://commons.wikimedia.org/wiki/File:Wadi_el-Hol_inscriptions_I_drawing.jpg
+   Lizenz: Public domain (via Commons API extmetadata)
+   Autor: Marilyn Lundberg, West Semitic Research
+   Lokal: wadielhol_inscription_i.jpg (720x253)
+   Genutzt in: language.php § "Proto-Sinaitic Script"; tenminutes/language.html § "Counting Stones and Tokens"
+   Status: OK - Public domain
+
+8. history_of_a_image
+   URL: https://en.wikipedia.org/wiki/A
+   Lizenz: CC BY-SA 4.0
+   Autor: Wikipedia contributors
+   Lokal: history_of_a.png (398x749)
+   Genutzt in: language.php § "The Phoenician Alphabet"; tenminutes/language.html § "From Pictogram to Alphabet"
+   Status: OK - CC BY-SA 4.0
 
 === TEN MINUTES: HISTORY / ROSENBLATT PHOTO ESSAY (tenminutes/history.html, Stand: Oktober 2026) ===
 Die Seite nutzt ausschließlich bereits im Blog vorhandene, oben geprüfte Dateien. Verwendungsnachweis:
