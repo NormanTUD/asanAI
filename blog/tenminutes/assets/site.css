@@ -2868,46 +2868,104 @@ html[data-theme="dark"] .layer-formula {
 	background: rgba(15, 23, 42, 0.5);
 	color: #eef7f4;
 }
-.relu-card {
-	display: flex;
-	align-items: center;
-	gap: 14px;
-	margin-top: 10px;
-	padding: 10px 14px;
+.collapse-card {
+	margin-top: 12px;
+	padding: 12px 14px;
 	border: 1px solid var(--tm-line);
-	border-radius: 10px;
+	border-left: 3px solid var(--tm-coral);
+	border-radius: 0 10px 10px 0;
 	background: color-mix(in srgb, var(--tm-card) 60%, transparent);
 }
-html[data-theme="dark"] .relu-card {
+html[data-theme="dark"] .collapse-card {
 	border-color: rgba(148, 163, 184, 0.24);
+	border-left-color: var(--tm-coral);
 	background: rgba(15, 23, 42, 0.5);
 }
-.relu-card svg {
-	flex: 0 0 120px;
-	width: 120px;
-	height: 70px;
+.cc-line {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 4px 12px;
+	margin: 3px 0;
+	font-family: var(--tm-prose);
+	font-size: 0.92rem;
+	line-height: 1.5;
+	color: var(--tm-ink);
 }
-.relu-card .rl-axis { stroke: var(--tm-line-strong); stroke-width: 1.3; }
-.relu-card .rl-curve {
-	fill: none;
-	stroke: var(--tm-sky);
-	stroke-width: 2.6;
-	stroke-linecap: round;
-	stroke-linejoin: round;
-}
-.relu-card .rl-label {
-	fill: var(--tm-muted);
+.cc-line > span:first-child {
+	min-width: 8.5em;
 	font-family: var(--tm-ui);
-	font-size: 8px;
+	font-size: 0.6rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--tm-faint);
 }
-.relu-card p {
-	margin: 0;
+.cc-math { color: var(--tm-petrol); }
+html[data-theme="dark"] .cc-math { color: var(--tm-sky); }
+.collapse-card p {
+	margin: 8px 0 0;
 	font-family: var(--tm-prose);
 	font-size: 0.86rem;
 	line-height: 1.5;
 	color: var(--tm-muted);
 }
-.relu-card p b { color: var(--tm-ink); }
+.collapse-card p b { color: var(--tm-ink); }
+
+.activation-card {
+	display: grid;
+	grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+	gap: 16px;
+	align-items: center;
+	margin-top: 10px;
+	padding: 12px 14px;
+	border: 1px solid var(--tm-line);
+	border-radius: 10px;
+	background: color-mix(in srgb, var(--tm-card) 60%, transparent);
+}
+html[data-theme="dark"] .activation-card {
+	border-color: rgba(148, 163, 184, 0.24);
+	background: rgba(15, 23, 42, 0.5);
+}
+.activation-copy p {
+	margin: 0 0 8px;
+	font-family: var(--tm-prose);
+	font-size: 0.86rem;
+	line-height: 1.55;
+	color: var(--tm-muted);
+}
+.activation-copy p:last-child { margin-bottom: 0; }
+.activation-copy b { color: var(--tm-ink); }
+.activation-plots {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 8px;
+}
+.activation-plots .ap { margin: 0; }
+.activation-plots svg { display: block; width: 100%; height: auto; }
+.ap-axis { stroke: var(--tm-line-strong); stroke-width: 1.2; }
+.ap-curve {
+	fill: none;
+	stroke: var(--tm-sky);
+	stroke-width: 2.4;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+.ap-label { fill: var(--tm-muted); font-family: var(--tm-ui); font-size: 8px; }
+.ap figcaption {
+	margin-top: 4px;
+	font-family: var(--tm-ui);
+	font-size: 0.56rem;
+	line-height: 1.3;
+	color: var(--tm-muted);
+	text-align: center;
+}
+.ap figcaption b {
+	display: block;
+	font-size: 0.62rem;
+	color: var(--tm-ink);
+}
+.ap figcaption span { display: block; }
 
 .ffn-caveat { margin-top: 10px; font-size: 0.8rem; }
 .curve-intro { margin: 0 0 12px; }
@@ -3758,7 +3816,7 @@ html[data-theme="dark"] .curve-points {
 		pointer-events: auto;
 	}
 	.curve-points { display: none; }
-	.relu-card { flex-direction: column; align-items: flex-start; }
+	.activation-card { grid-template-columns: 1fr; }
 	.big-quote { padding: 20px 18px 18px 44px; }
 	.big-quote::before { left: 10px; font-size: 3.4rem; }
 	.big-quote::after { right: 10px; font-size: 3.4rem; }
