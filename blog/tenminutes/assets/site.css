@@ -2881,19 +2881,8 @@ html[data-theme="dark"] .collapse-card {
 	border-left-color: var(--tm-coral);
 	background: rgba(15, 23, 42, 0.5);
 }
-.cc-line {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	gap: 4px 12px;
-	margin: 3px 0;
-	font-family: var(--tm-prose);
-	font-size: 0.92rem;
-	line-height: 1.5;
-	color: var(--tm-ink);
-}
-.cc-line > span:first-child {
-	min-width: 8.5em;
+.cc-label {
+	margin: 0 0 6px;
 	font-family: var(--tm-ui);
 	font-size: 0.6rem;
 	font-weight: 700;
@@ -2901,8 +2890,18 @@ html[data-theme="dark"] .collapse-card {
 	text-transform: uppercase;
 	color: var(--tm-faint);
 }
-.cc-math { color: var(--tm-petrol); }
-html[data-theme="dark"] .cc-math { color: var(--tm-sky); }
+.collapse-math {
+	margin: 0;
+	color: var(--tm-ink);
+	overflow-x: auto;
+	text-align: left;
+}
+.collapse-math math {
+	display: block;
+	margin: 0;
+	font-size: 1.05rem;
+}
+html[data-theme="dark"] .collapse-math { color: #eef7f4; }
 .collapse-card p {
 	margin: 8px 0 0;
 	font-family: var(--tm-prose);

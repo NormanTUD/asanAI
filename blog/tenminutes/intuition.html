@@ -7,6 +7,7 @@
 	<meta name="theme-color" content="#f7f3e8">
 	<title>One Word at a Time — Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="../Temml-Local.min.css">
 </head>
 <body data-lesson="intuition" data-page="lesson">
 	<a class="skip" href="#main">Skip to content</a>
@@ -300,9 +301,8 @@
 										<p class="step-note curve-intro">The FFN above works on one token. A dense layer computes an affine projection, <b>Ax + b</b>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines.</p>
 										<div class="layer-formula">layer(x) = activation(Ax + b)</div>
 										<div class="collapse-card">
-											<div class="cc-line"><span>two dense layers</span><span class="cc-math">dense₂(dense₁(x)) = W₂(W₁x + b₁) + b₂</span></div>
-											<div class="cc-line"><span>=</span><span class="cc-math">(W₂W₁)x + (W₂b₁ + b₂)</span></div>
-											<div class="cc-line"><span>=</span><span class="cc-math">one dense layer</span></div>
+											<div class="cc-label">two dense layers</div>
+											<div class="collapse-math" id="collapse-math">dense₂(dense₁(x)) = W₂(W₁x + b₁) + b₂ = (W₂W₁)x + (W₂b₁ + b₂) = one dense layer</div>
 											<p>Without a nonlinearity, the whole stack is one affine map. Depth adds no expressive power; the activation is what breaks the collapse.</p>
 										</div>
 										<div class="activation-card">
@@ -473,6 +473,7 @@
 		</div>
 	</main>
 
+	<script src="../temml.min.js"></script>
 	<script src="assets/site.js"></script>
 	<script>
 	(function () {
@@ -1558,6 +1559,15 @@
 				'<path d="' + pts.join(" ") + '" class="ap-curve"/>' +
 				'<text x="' + (W - padR - 2) + '" y="' + (H - 4) + '" class="ap-label" text-anchor="end">z</text>' +
 				'</svg><figcaption><b>' + label + '</b><span>' + formula + '</span></figcaption></figure>';
+		}
+		var collapseMath = document.getElementById("collapse-math");
+		if (collapseMath && window.temml) {
+			var collapseTex = '\\begin{aligned}' +
+				'\\text{dense}_2(\\text{dense}_1(x)) &= W_2(W_1x + b_1) + b_2 \\\\' +
+				'&= (W_2W_1)x + (W_2b_1 + b_2) \\\\' +
+				'&= \\text{one dense layer}' +
+				'\\end{aligned}';
+			try { collapseMath.innerHTML = temml.renderToString(collapseTex, { displayMode: true }); } catch (e) {}
 		}
 		var activationPlots = document.getElementById("activation-plots");
 		if (activationPlots) {
