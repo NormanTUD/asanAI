@@ -1518,6 +1518,42 @@
 				L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 1, fail: 0, lab: 0, pr: 1, box: 0
 			}
 		];
+		function erf(x) {
+			var sign = x < 0 ? -1 : 1;
+			x = Math.abs(x);
+			var t = 1 / (1 + 0.3275911 * x);
+			var y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+			return sign * y;
+		}
+		function gelu(z) { return 0.5 * z * (1 + erf(z / Math.SQRT2)); }
+		function activationPlot(fn, label, formula, yMin, yMax, variant) {
+			var W = 140, H = 86, padL = 10, padR = 8, padT = 8, padB = 18;
+			var x0 = -3, x1 = 3;
+			var pts = [];
+			for (var i = 0; i <= 80; i++) {
+				var z = x0 + (x1 - x0) * i / 80;
+				var v = fn(z);
+				var px = padL + (z - x0) / (x1 - x0) * (W - padL - padR);
+				var py = padT + (yMax - v) / (yMax - yMin) * (H - padT - padB);
+				pts.push((i ? "L" : "M") + px.toFixed(1) + " " + py.toFixed(1));
+			}
+			var zeroY = padT + (yMax - 0) / (yMax - yMin) * (H - padT - padB);
+			var zeroX = padL + (0 - x0) / (x1 - x0) * (W - padL - padR);
+			return '<figure class="ap ap-' + variant + '">' +
+				'<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + label + ' activation plot">' +
+				'<line x1="' + padL + '" y1="' + zeroY.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + zeroY.toFixed(1) + '" class="ap-axis"/>' +
+				'<line x1="' + zeroX.toFixed(1) + '" y1="' + padT + '" x2="' + zeroX.toFixed(1) + '" y2="' + (H - padB) + '" class="ap-axis"/>' +
+				'<path d="' + pts.join(" ") + '" class="ap-curve"/>' +
+				'<text x="' + (W - padR - 2) + '" y="' + (H - 4) + '" class="ap-label" text-anchor="end">z</text>' +
+				'</svg><figcaption><b>' + label + '</b><span>' + formula + '</span></figcaption></figure>';
+		}
+		var activationPlots = document.getElementById("activation-plots");
+		if (activationPlots) {
+			activationPlots.innerHTML =
+				activationPlot(function (z) { return Math.max(0, z); }, "ReLU", "max(0, z)", -0.5, 3.2, "relu") +
+				activationPlot(function (z) { return 1 / (1 + Math.exp(-z)); }, "Sigmoid", "1 / (1 + e⁻ᶻ)", -0.2, 1.2, "sigmoid") +
+				activationPlot(gelu, "GELU", "z · Φ(z)", -0.6, 3.2, "gelu");
+		}
 		var curveRng = 42;
 		function curveRandom() {
 			curveRng = (curveRng * 1103515245 + 12345) & 0x7fffffff;

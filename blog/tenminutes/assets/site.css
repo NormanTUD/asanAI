@@ -2951,6 +2951,9 @@ html[data-theme="dark"] .activation-card {
 	stroke-linecap: round;
 	stroke-linejoin: round;
 }
+.ap-relu .ap-curve { stroke: var(--tm-green); }
+.ap-sigmoid .ap-curve { stroke: var(--tm-sky); }
+.ap-gelu .ap-curve { stroke: var(--tm-gold); }
 .ap-label { fill: var(--tm-muted); font-family: var(--tm-ui); font-size: 8px; }
 .ap figcaption {
 	margin-top: 4px;
