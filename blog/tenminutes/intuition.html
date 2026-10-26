@@ -19,10 +19,10 @@
 				<div>
 					<h1>One word <em>at a time.</em></h1>
 					<p class="hero-deck">
-						A large language model is a next-token predictor. <strong>Chat, code, translation,
-						reasoning</strong> — everything else is that one trick repeated in a loop, at
-						enormous scale. Follow a sentence through the loop and see why next-token prediction
-						can look like understanding.
+						Start with the smallest honest picture: a language model predicts the next token
+						from the text so far. <strong>Chat, code, translation, reasoning</strong> — much of
+						what looks like understanding is built on that loop. This page gives you a first
+						intuition for it, not the complete account of how a frontier LLM works.
 					</p>
 				</div>
 			</section>
@@ -31,18 +31,24 @@
 				<article class="lesson-main">
 					<section class="section-block" id="idea">
 						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
-						<h2 class="section-title">The only trick it knows.</h2>
+						<h2 class="section-title">A first intuition: predict the next token.</h2>
 						<div class="prose">
 							<p>
-								There is no “understanding” module inside a language model, no grammar
-								checker, no shelf of stored facts. The model reads a sequence of tokens and
-								returns a <strong>probability for every possible next token</strong>. One
-								token is chosen, appended to the input, and the whole thing runs again.
+								Here is the smallest honest picture. A language model reads a sequence of
+								tokens and returns a <strong>probability for every possible next token</strong>.
+								One token is chosen, appended to the input, and the whole thing runs again.
+								That is the <strong>autoregressive loop</strong>.
 							</p>
 							<p>
-								That is the <strong>autoregressive loop</strong>: output becomes input, one
-								step later. A conversation, a poem, a Python function — all of it is this
-								loop, writing one piece at a time.
+								This picture is deliberately incomplete. A real model has many layers
+								of attention, a feed-forward network, positional information, training data,
+								and post-training. This page starts with the loop because almost everything
+								else can be read as machinery that makes this one prediction better; the later
+								sections add those pieces.
+							</p>
+							<p>
+								A conversation, a poem, a Python function — all of it is this loop, writing
+								one piece at a time.
 							</p>
 						</div>
 						<div class="aha">
@@ -285,14 +291,14 @@
 										<div class="layer-formula">layer(x) = activation(Ax + b)</div>
 										<div class="collapse-card">
 											<div class="cc-label">two dense layers</div>
-											<div class="collapse-math" id="collapse-math">dense₂(dense₁(x)) = W₂(W₁x + b₁) + b₂ = (W₂W₁)x + (W₂b₁ + b₂) = one dense layer</div>
-											<p>Without a nonlinearity, the whole stack is one affine map. Depth adds no expressive power; the activation is what breaks the collapse.</p>
+											<div class="collapse-math" id="collapse-math">dense₂(dense₁(x)) = W₂(W₁x + b₁) + b₂ = (W₂W₁)x + (W₂b₁ + b₂) = Wx + b<br>W = W₂W₁ &nbsp;&nbsp; b = W₂b₁ + b₂</div>
+											<p>The product <b>W₂W₁</b> is itself a new single weight matrix: every row of W₁ is mixed through the columns of W₂. If the first layer maps d inputs to h hidden units and the second maps h to k outputs, the combined <b>W</b> maps d inputs directly to k outputs — the hidden layer has disappeared. The biases also merge into <b>W₂b₁ + b₂</b>. So without a nonlinearity, two dense layers are exactly one dense layer with a combined <b>W</b>; depth adds no expressive power. The activation is what breaks the collapse.</p>
 										</div>
 										<div class="activation-card">
 											<div class="activation-copy">
 												<p>The term <b>activation</b> means the activation function: it is applied to each coordinate after the projection. It was introduced to add the nonlinearity that a stack of dense layers otherwise lacks.</p>
 												<p><b>ReLU(z) = max(0, z)</b> passes positive values unchanged and sends the entire negative half-space to zero. The graph is flat, then a straight rise: a hard fold at <b>z = 0</b>. Because many inputs become the same output, ReLU is not injective; it can change the topology of the representation.</p>
-												<p><b>Sigmoid</b> and <b>tanh</b> are strictly increasing, so they bend smoothly without identifying points. <b>GELU</b> is smooth but not monotonic: it dips slightly below zero, so it is also many-to-one. Other choices include SiLU/Swish, ELU, and gated variants such as SwiGLU.</p>
+												<p><b>Sigmoid</b> and <b>tanh</b> are strictly increasing, so they bend smoothly without mapping distinct inputs to the same output. <b>GELU</b> is smooth but not monotonic: it dips slightly below zero, so it is also many-to-one. Other choices include SiLU/Swish, ELU, and gated variants such as SwiGLU.</p>
 											</div>
 											<div class="activation-plots" id="activation-plots"></div>
 										</div>
@@ -324,6 +330,7 @@
 											<span class="curve-dots" id="curve-dots" aria-hidden="true"></span>
 										</div>
 										<div class="step-out">The cut still happens. The layer changes the space so that a straight cut in the new space separates the classes in the old one. ReLU is the sharp version: a fold along a crease.</div>
+										<p class="step-note">Real models do this in thousands of dimensions, not two. Each layer mixes the coordinates, adds a bias, and bends the result through a nonlinearity; stacking many of these transformations lets the network turn a tangled, high-dimensional relationship into something closer to a simple threshold. That is the sense in which depth helps: it changes the geometry in which the final decision is made.</p>
 										<p class="step-note curve-source">Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em> (<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>). The animation is an illustration, not a proof.</p>
 									</div>
 								</div>
@@ -410,19 +417,21 @@
 						<h2 class="section-title">Text in, geometry, one word out.</h2>
 						<div class="prose">
 							<p>
-								Put the pieces in order and the machine is almost disappointingly simple:
-								text is cut into <strong>tokens</strong>; each token becomes a
-								<strong>vector</strong>; a <strong>position</strong> signal is added;
-								layer after layer, <strong>attention</strong> lets every vector look at its
-								neighbours while a <strong>residual stream</strong> carries earlier
-								findings forward; the final vector is scored against the vocabulary and
-								turned into a distribution; one token is drawn and appended.
+								Put the pieces in order and the outline is simple — though the real model
+								is much larger, and the remaining pages fill in the details: text is cut
+								into <strong>tokens</strong>; each token becomes a <strong>vector</strong>;
+								a <strong>position</strong> signal is added; layer after layer,
+								<strong>attention</strong> lets every vector look at its neighbours while a
+								<strong>residual stream</strong> carries earlier findings forward; the
+								final vector is scored against the vocabulary and turned into a
+								distribution; one token is drawn and appended.
 							</p>
 							<p>
-								No step stores a fact; no step “understands” in the human sense. Meaning
-								lives in the <strong>geometry</strong> — directions, distances, regions —
-								and the model’s only job at each step is to place the next thought somewhere
-								in that space. The meadow is that last step, seen up close.
+								No step has a tidy fact database, and no step “understands” in the human
+								sense. Knowledge is distributed across the weights; meaning lives in the
+								<strong>geometry</strong> — directions, distances, regions — and at each
+								step the model places the next thought somewhere in that space. The meadow
+								is that last step, seen up close.
 							</p>
 						</div>
 						<div class="keypoints">
@@ -1495,13 +1504,13 @@
 				L: 0, A: 0, B: -Math.PI / 2, P: 0, pl: 0, sq: 0, fail: 1, lab: 0, pr: 0, box: 0
 			},
 			{
-				t: "One more dimension of room",
+				t: "One more dimension of space",
 				b: "The old picture becomes the floor. A new axis, z, opens above it. A layer can fold data into an unused dimension, provided it is wider than the data.",
 				L: 0, A: 0.38, B: -0.62, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 1
 			},
 			{
 				t: "The layer bends the space",
-				b: "The grid lifts into a shell: the centre sinks and the ring rises. The deformation is smooth and injective, so it tears nothing and identifies no points. The ring is lifted above the cloud.",
+				b: "The grid lifts into a shell: the centre sinks and the ring rises. The deformation is smooth and injective, so it tears nothing and collapses no distinct points. The ring is lifted above the cloud.",
 				L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0
 			},
 			{
@@ -1658,28 +1667,7 @@
 			ctx.clearRect(0, 0, W, H);
 
 			if (p.box > 0.01) {
-				var E = 1.12, G = 10, ZT = 1.35;
-				ctx.globalAlpha = p.box * 0.40;
-				ctx.strokeStyle = c.muted;
-				ctx.lineWidth = 0.9;
-				for (var i = 0; i <= G; i++) {
-					var v = -E + 2 * E * i / G;
-					var a1 = proj({ x: -E, y: v, z: 0 }), b1 = proj({ x: E, y: v, z: 0 });
-					ctx.beginPath(); ctx.moveTo(a1.X, a1.Y); ctx.lineTo(b1.X, b1.Y); ctx.stroke();
-					var a2 = proj({ x: v, y: -E, z: 0 }), b2 = proj({ x: v, y: E, z: 0 });
-					ctx.beginPath(); ctx.moveTo(a2.X, a2.Y); ctx.lineTo(b2.X, b2.Y); ctx.stroke();
-				}
-				ctx.globalAlpha = p.box * 0.35;
-				ctx.setLineDash([2, 6]);
-				[0.45, 0.90].forEach(function (zv) {
-					var s = 0.42;
-					var r = [proj({ x: -s, y: -s, z: zv }), proj({ x: s, y: -s, z: zv }),
-						proj({ x: s, y: s, z: zv }), proj({ x: -s, y: s, z: zv })];
-					ctx.beginPath(); ctx.moveTo(r[0].X, r[0].Y);
-					for (var q = 1; q < 4; q++) ctx.lineTo(r[q].X, r[q].Y);
-					ctx.closePath(); ctx.stroke();
-				});
-				ctx.setLineDash([]);
+				var ZT = 1.35;
 				ctx.globalAlpha = p.box * 0.85;
 				ctx.strokeStyle = c.muted;
 				ctx.lineWidth = 1.6;

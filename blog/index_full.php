@@ -7,7 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="referrer" content="strict-origin-when-cross-origin">
 	<meta name="theme-color" content="<?php echo $themeClass === 'dark' ? '#0f172a' : '#FAF8F1'; ?>">
-	<title>From Nothing to ChatGPT</title>
+	<title>From Nothing to Large Language Models</title>
 	<script>
 	function toggleTheme() {
 		var html = document.documentElement;
@@ -69,7 +69,7 @@
 
 <div id="contents" style="display: none">
 <?php
-	incl("From Nothing to ChatGPT: Beyond the Black Box", "intro");
+	incl("From Nothing to Large Language Models: Beyond the Black Box", "intro");
 	foreach (parse_course_metadata() as $part => $modules) {
 		foreach ($modules as $module) {
 			incl($module['title'], $module['slug']);

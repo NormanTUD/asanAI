@@ -1,7 +1,7 @@
 <?php include_once("functions.php"); ?>
 <!--
 COURSE_METADATA:
-title: From Nothing to ChatGPT: A Peek inside the Black Box
+title: From Nothing to Large Language Models: A Peek inside the Black Box
 description: The big picture: what this course is about and how it connects human history to modern AI.
 icon: &#127758;
 part: 0

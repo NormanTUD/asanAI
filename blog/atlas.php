@@ -308,7 +308,7 @@ html:not(.dark) #atlas-stage {
 		<canvas id="atlas-canvas" aria-label="Interactive atlas of the history of AI"></canvas>
 
 		<div class="atlas-top">
-			<div class="atlas-title">The Atlas<small>From Nothing to ChatGPT</small></div>
+			<div class="atlas-title">The Atlas<small>From Nothing to Large Language Models</small></div>
 			<div class="atlas-spacer"></div>
 			<button class="atlas-btn primary" id="atlas-journey" type="button">&#9656; Cosmic journey</button>
 			<button class="atlas-btn" id="atlas-reset" type="button" title="Reset to Earth view">&#8982;</button>

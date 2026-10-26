@@ -5492,7 +5492,7 @@ $presentationTitleInsight = mn_analytics_format_number($views) . ' views across 
 	<div class="mn-pres-progress"></div>
 	<div class="mn-pres-stage">
 		<section class="mn-pres-slide" data-title="Title" style="--slide-accent: var(--accent);">
-			<div class="mn-pres-kicker">asanAI · From Nothing to ChatGPT</div>
+			<div class="mn-pres-kicker">asanAI · From Nothing to Large Language Models</div>
 			<h1>What readers do — and <em>what they tell us</em></h1>
 			<p class="mn-pres-lead">Live course analytics and reader feedback: reach, reading time, discovery, reactions, and the ideas that should shape the next revision.</p>
 			<div class="mn-pres-meta"><?php echo stats_h($nowLabel); ?> · Berlin · anonymous, no visitor profiles</div>

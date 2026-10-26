@@ -1,7 +1,7 @@
 # history_todo.md — the displaced prerequisites the textbook is still missing
 
 Working document. Tracks the ten **historical / concept-origin** blind spots in the
-*From Nothing to ChatGPT* course — the "Vorgeschichte" gaps where the narrative jumps
+*From Nothing to Large Language Models* course — the "Vorgeschichte" gaps where the narrative jumps
 from artefact to concept without explaining *how a mind came to be able to do this*.
 Each item is a self-contained brief: an agent (or a person) should be able to execute
 it end-to-end from this file alone.

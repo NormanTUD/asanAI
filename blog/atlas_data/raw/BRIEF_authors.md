@@ -2,7 +2,7 @@
 
 You are placing **authors from a bibliography** (3,403 unique names parsed from
 /home/norman/websites/asanai/blog/literature.js) onto a world map for the course
-"From Nothing to ChatGPT". Your input is a JSON chunk:
+"From Nothing to Large Language Models". Your input is a JSON chunk:
 /tmp/opencode/atlas_data/authors_chunk_N.json — an array of
 {name, works, yearMin, yearMax, keys, titles}.
 

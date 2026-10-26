@@ -64,7 +64,7 @@ PHP, no build step, no server-side compute.
    toolkit. Design a network, train it (TensorFlow.js), inspect it, export
    Python. Entry point: `index.php`. Live: `asanai.scads.ai`.
    Reference: `arXiv:2501.06226`.
-2. **The Blog** (`blog/`) — *"From Nothing to ChatGPT"*: a free digital
+2. **The Blog** (`blog/`) — *"From Nothing to Large Language Models"*: a free digital
    textbook taking the reader from Stone Age tools through the history of math
    and machines, the math of deep learning, to how modern LLMs work. Prose
    lessons interleave interactive in-browser visualizations. Most writing work

@@ -1,4 +1,4 @@
-# From Nothing to ChatGPT
+# From Nothing to Large Language Models
 
 *A free digital textbook that follows one thread — from the first tools and the
 history of mathematics and machines, through the math of deep learning, to how modern

@@ -77,7 +77,7 @@
 
 				var head = document.createElement('span');
 				head.className = 'intro-head';
-				var HEADLINE = 'From Nothing to ChatGPT';
+				var HEADLINE = 'From Nothing to Large Language Models';
 				// Plain-text twin for the glow pseudo-element (see style.css).
 				head.setAttribute('data-text', HEADLINE);
 				var li = 0;

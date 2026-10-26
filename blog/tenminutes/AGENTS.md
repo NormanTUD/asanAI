@@ -1,9 +1,9 @@
 # Ten Minutes — local agent notes
 
 Scope: `blog/tenminutes/` is a standalone static companion to *From Nothing to
-ChatGPT*. It is plain HTML + shared CSS/JS, with no PHP include, no build step,
-and no package manager. The root `AGENTS.md` still applies; this file records
-choices that are specific to this directory.
+Large Language Models*. It is plain HTML + shared CSS/JS, with no PHP include,
+no build step, and no package manager. The root `AGENTS.md` still applies; this
+file records choices that are specific to this directory.
 
 ## Branding and page chrome
 
@@ -101,6 +101,9 @@ Notes:
   entries, use eight different palette colours rather than repeating one.
   Current useful set: Green, Light Blue, Yellow, Lilac, Light Green, Blue,
   Teal, Grey.
+- `intuition.html` 3D scene: the floor grid is drawn once by the warped grid
+  loop. Do not add a second flat grid or dashed back rectangles; they double
+  the lines and clutter the view.
 - No CDN colours, no external font/colour services, no build step.
 
 ## Calendar conventions (`advent.html`)
