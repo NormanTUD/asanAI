@@ -1117,15 +1117,25 @@ figcaption a { color: var(--tm-muted); }
 
 .aside-figure {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(150px, 220px);
+	grid-template-columns: minmax(0, 1fr) minmax(140px, 180px);
 	gap: clamp(16px, 3vw, 28px);
-	align-items: start;
-	margin: 22px 0;
+	align-items: center;
+	margin: 16px 0;
+}
+.aside-figure--pair {
+	grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
 }
 .aside-figure > .prose { min-width: 0; }
 .aside-figure-media { display: grid; gap: 10px; }
+.aside-figure--pair .aside-figure-media { grid-template-columns: 1fr 1fr; }
 .aside-figure figure { margin: 0; }
-.aside-figure img { width: 100%; height: auto; }
+.aside-figure img {
+	width: 100%;
+	height: auto;
+	aspect-ratio: 4 / 3;
+	object-fit: cover;
+	object-position: center top;
+}
 .aside-figure figcaption { font-size: 0.66rem; line-height: 1.35; }
 @media (max-width: 720px) {
 	.aside-figure { grid-template-columns: 1fr; }
