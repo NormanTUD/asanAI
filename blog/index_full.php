@@ -77,5 +77,6 @@
 	}
  ?>
 </div>
+<?php render_site_footer(); ?>
 </body>
 </html>

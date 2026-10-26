@@ -710,6 +710,14 @@ if(!server_php_self_ends_with_index_php()) {
 		print_dynamic_title("h1");
 		$navData = get_module_nav_data();
 		echo '<script>window.__moduleNavData = ' . json_encode($navData) . ';</script>';
+
+		// Close #contents and append the footer at the very end of the page.
+		// The source templates never close #contents themselves; doing it here
+		// keeps the footer after the sources/footnotes that JS appends inside it.
+		register_shutdown_function(static function (): void {
+			echo '</div>' . "\n";
+			render_site_footer();
+		});
 }
 
 
@@ -839,6 +847,20 @@ function render_home_link(): void {
 		. '<svg class="lesson-home-ico" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
 		. '<path d="m3 10 9-7 9 7"/><path d="M5 9.5V20a1 1 0 0 0 1 1h3.5v-5.5h5V21H18a1 1 0 0 0 1-1V9.5"/>'
 		. '</svg><span>Home</span></a>';
+}
+
+/** Legal and accessibility links shown at the end of every page. The
+    links point at the ScaDS.AI site and open in a new tab so a reader
+    never loses their place in the course. */
+function render_site_footer(): void {
+	echo '<footer class="site-footer">'
+		. '<nav class="site-footer-links" aria-label="Legal and accessibility">'
+		. '<a href="https://scads.ai/imprint/" target="_blank" rel="noopener noreferrer">Imprint</a>'
+		. '<span class="site-footer-sep" aria-hidden="true">&middot;</span>'
+		. '<a href="https://scads.ai/privacy/" target="_blank" rel="noopener noreferrer">Privacy policy</a>'
+		. '<span class="site-footer-sep" aria-hidden="true">&middot;</span>'
+		. '<a href="https://scads.ai/accessibility/" target="_blank" rel="noopener noreferrer">Accessibility</a>'
+		. '</nav></footer>' . "\n";
 }
 
 function render_drawer(): void {

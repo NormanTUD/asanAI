@@ -114,7 +114,8 @@ foreach ($parts as $partNum => $modules):
 <?php endforeach; ?>
 
 </div>
-
 </div>
+
+<?php render_site_footer(); ?>
 </body>
 </html>
