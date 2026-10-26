@@ -452,6 +452,22 @@ async function plot_model_plot(force=false) {
 
 	clearTimeout(_plot_timer);
 	_plot_timer = setTimeout(function(){
+		trigger_plot_when_visible(el, force);
+	}, 150);
+}
+
+function trigger_plot_when_visible (el, force) {
+	if (el.__plot_visibility_observer) {
+		el.__plot_visibility_observer.disconnect();
+		el.__plot_visibility_observer = null;
+	}
+
+	if (_plot_interval) {
+		clearInterval(_plot_interval);
+		_plot_interval = null;
+	}
+
+	if (typeof ResizeObserver === "undefined") {
 		if (check_visible(el)) {
 			trigger_plot(force);
 			return;
@@ -466,7 +482,29 @@ async function plot_model_plot(force=false) {
 				}
 			}, 100);
 		}
-	}, 150);
+		return;
+	}
+
+	var observer = new ResizeObserver(function(entries) {
+		var entry = entries[entries.length - 1];
+		if (!entry) return;
+
+		var box = entry.borderBoxSize;
+		if (Array.isArray(box)) box = box[0];
+		var width = box ? box.inlineSize : entry.contentRect.width;
+		var height = box ? box.blockSize : entry.contentRect.height;
+
+		if (width <= 0 || height <= 0) return;
+
+		observer.disconnect();
+		if (el.__plot_visibility_observer === observer) {
+			el.__plot_visibility_observer = null;
+		}
+		trigger_plot(force);
+	});
+
+	el.__plot_visibility_observer = observer;
+	observer.observe(el);
 }
 
 function check_visible(el) {
