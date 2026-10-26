@@ -50,6 +50,7 @@
 	var closeTimer = 0;
 	var started = false;
 	var lastSelectionEvent = 0;
+	var pointerActive = false;
 	var keyboardSelection = false;
 	var lastFocus = null;
 	var closedSelection = null;
@@ -318,6 +319,7 @@
 
 	function bind() {
 		document.addEventListener("mouseup", function (event) {
+			pointerActive = false;
 			if (event.button !== 0) {
 				return;
 			}
@@ -325,7 +327,11 @@
 			lastSelectionEvent = Date.now();
 			setTimeout(checkSelection, 0);
 		}, true);
+		document.addEventListener("touchstart", function () {
+			pointerActive = true;
+		}, true);
 		document.addEventListener("touchend", function () {
+			pointerActive = false;
 			keyboardSelection = false;
 			lastSelectionEvent = Date.now();
 			setTimeout(checkSelection, 380);
@@ -338,6 +344,9 @@
 			}
 		}, true);
 		document.addEventListener("selectionchange", function () {
+			if (!pointerActive) {
+				return;
+			}
 			if (Date.now() - lastSelectionEvent < 120) {
 				return;
 			}
@@ -346,6 +355,7 @@
 		});
 
 		document.addEventListener("mousedown", function (event) {
+			pointerActive = true;
 			if (!open || !panel) {
 				return;
 			}
@@ -375,6 +385,9 @@
 
 		window.addEventListener("scroll", schedulePosition, { passive: true });
 		window.addEventListener("resize", schedulePosition);
+		window.addEventListener("blur", function () {
+			pointerActive = false;
+		});
 		if (window.visualViewport) {
 			window.visualViewport.addEventListener("resize", schedulePosition);
 			window.visualViewport.addEventListener("scroll", schedulePosition);
