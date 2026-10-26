@@ -1450,3 +1450,9 @@ Autor, Lizenz und Quellenlink direkt in der Abbildung.
     Autor: Arthur Petron (2024)
     Lizenz: CC BY-SA 4.0
     Verwendet in: tenminutes/people_of_ai.html
+
+13. stop_sign.jpg
+    Autor: Matthew Paul Argall (2012)
+    Lizenz: CC0
+    Verwendet in: tenminutes/computer_vision.html (Convolution-Demo)
+    Quelle: https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg

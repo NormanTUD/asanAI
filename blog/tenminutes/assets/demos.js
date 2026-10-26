@@ -664,6 +664,8 @@
 	function initConvolution(root) {
 		var canvas = $("[data-conv-canvas]", root);
 		var chips = $$("[data-kernel]", root);
+		var inputSizeEl = $("[data-conv-input-size]", root);
+		var outputSizeEl = $("[data-conv-output-size]", root);
 		if (!canvas) return;
 		var size = 14;
 		var input = [];
@@ -675,11 +677,15 @@
 			}
 		}
 		var kernels = {
-			edge: [[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]],
-			blur: [[1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9]],
-			sharpen: [[0, -1, 0], [-1, 5, -1], [0, -1, 0]]
+			edge: [ [-1, -1, -1], [-1, 8, -1], [-1, -1, -1] ],
+			blur: [ [1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9] ],
+			sharpen: [ [0, -1, 0], [-1, 5, -1], [0, -1, 0] ],
+			"sobel-h": [ [-1, -2, -1], [0, 0, 0], [1, 2, 1] ],
+			"sobel-v": [ [-1, 0, 1], [-2, 0, 2], [-1, 0, 1] ],
+			emboss: [ [-2, -1, 0], [-1, 1, 1], [0, 1, 2] ]
 		};
 		var current = "edge";
+		var imageLoaded = false;
 		function conv(kernel) {
 			var out = [];
 			for (var y = 1; y < size - 1; y++) {
@@ -703,11 +709,12 @@
 			ctx.clearRect(0, 0, W, H);
 			ctx.font = "600 11px Barlow, system-ui, sans-serif";
 			ctx.fillStyle = c.muted;
-			ctx.fillText("input", ox, pad + 4);
+			ctx.fillText(imageLoaded ? "input · stop sign" : "input", ox, pad + 4);
 			ctx.fillText("feature map · " + current, ox + size * cell + gap, pad + 4);
 			for (var y = 0; y < size; y++) {
 				for (var x = 0; x < size; x++) {
-					ctx.fillStyle = input[y][x] ? c.petrol : c.paper2;
+					var v = clamp(input[y][x], 0, 1);
+					ctx.fillStyle = rgb(mix(hexToRgb(c.petrol), hexToRgb(c.card), v));
 					ctx.fillRect(ox + x * cell, oy + y * cell, cell - 1, cell - 1);
 				}
 			}
@@ -719,14 +726,38 @@
 			for (var yy = 0; yy < out.length; yy++) {
 				for (var xx = 0; xx < out[yy].length; xx++) {
 					var t = Math.abs(out[yy][xx] - mn) / span;
-					var col = mix(hexToRgb(c.paper2), hexToRgb(c.green), t);
-					ctx.fillStyle = rgb(col);
+					ctx.fillStyle = rgb(mix(hexToRgb(c.paper2), hexToRgb(c.green), t));
 					ctx.fillRect(ox2 + xx * cell, oy + yy * cell, cell - 1, cell - 1);
 				}
 			}
+			if (inputSizeEl) inputSizeEl.textContent = size + " × " + size;
+			if (outputSizeEl) outputSizeEl.textContent = (size - 2) + " × " + (size - 2);
 		}
 		var api = canvasDemo(canvas, draw);
 		if (!api) return;
+		var img = new Image();
+		img.onload = function () {
+			var n = 32;
+			var off = document.createElement("canvas");
+			off.width = n; off.height = n;
+			var octx = off.getContext("2d");
+			try { octx.drawImage(img, 0, 0, n, n); } catch (err) { return; }
+			var data;
+			try { data = octx.getImageData(0, 0, n, n).data; } catch (err) { return; }
+			var grid = [];
+			for (var y = 0; y < n; y++) {
+				grid.push([]);
+				for (var x = 0; x < n; x++) {
+					var i = (y * n + x) * 4;
+					grid[y].push((data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114) / 255);
+				}
+			}
+			input = grid;
+			size = n;
+			imageLoaded = true;
+			api.redraw();
+		};
+		img.src = "../stop_sign.jpg";
 		chips.forEach(function (chip) {
 			chip.addEventListener("click", function () {
 				chips.forEach(function (x) { x.classList.remove("is-on"); });
@@ -1424,6 +1455,46 @@
 		render();
 	}
 
+
+	/* ── residual stream ────────────────────────────────────── */
+
+	function initResidual(root) {
+		var layersEl = $("[data-res-layers]", root);
+		var barsEl = $("[data-res-bars]", root);
+		var noteEl = $("[data-res-note]", root);
+		if (!layersEl || !barsEl) return;
+		var base = [ 0.35, 0.5, 0.28, 0.62, 0.44, 0.3, 0.55, 0.4, 0.33, 0.48 ];
+		var updates = [
+			{ label: "Embedding", note: "The token becomes a vector.", add: [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] },
+			{ label: "+ Attention 1", note: "Attention reads the context and adds what it found.", add: [ 0.18, 0.24, 0.12, 0.2, 0.16, 0.22, 0.1, 0.18, 0.2, 0.16 ] },
+			{ label: "+ MLP 1", note: "The feed-forward layer computes and writes a new feature.", add: [ 0.12, 0.16, 0.22, 0.14, 0.18, 0.12, 0.2, 0.16, 0.14, 0.12 ] },
+			{ label: "+ Attention 2", note: "A second head routes a longer-range clue.", add: [ 0.1, 0.14, 0.1, 0.16, 0.12, 0.18, 0.14, 0.1, 0.14, 0.16 ] },
+			{ label: "+ MLP 2", note: "More features combine; the stream becomes richer.", add: [ 0.08, 0.12, 0.16, 0.1, 0.14, 0.1, 0.12, 0.18, 0.1, 0.08 ] }
+		];
+		var step = 0;
+		function render() {
+			layersEl.innerHTML = updates.map(function (u, i) {
+				return '<button class="res-layer' + (i === step ? " is-on" : "") + '" type="button" data-res="' + i + '">' + u.label + '</button>';
+			}).join("");
+			$$("[data-res]", layersEl).forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					step = parseInt(btn.getAttribute("data-res"), 10);
+					render();
+				});
+			});
+			var cum = base.slice();
+			for (var i = 1; i <= step; i++) {
+				for (var j = 0; j < cum.length; j++) cum[j] += updates[i].add[j];
+			}
+			var max = Math.max.apply(null, cum) * 1.1;
+			barsEl.innerHTML = cum.map(function (v) {
+				return '<span class="res-bar" style="height:' + Math.max(6, v / max * 100) + '%"></span>';
+			}).join("");
+			if (noteEl) noteEl.textContent = updates[step].note;
+		}
+		render();
+	}
+
 	/* ── boot ───────────────────────────────────────────────── */
 
 	function boot() {
@@ -1454,6 +1525,7 @@
 			else if (type === "logitlens") initLogitLens(root);
 			else if (type === "visionlayers") initVisionLayers(root);
 			else if (type === "filter") initFilter(root);
+			else if (type === "residual") initResidual(root);
 		});
 	}
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

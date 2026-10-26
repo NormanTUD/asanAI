@@ -377,6 +377,9 @@
 		var prediction = document.getElementById("pipe-prediction");
 		var runBtn = document.getElementById("pipe-run");
 
+		function sentence() {
+			return tokens.map(function (t) { return t.w; }).join(" ").replace(/ ([.,!?])/g, "$1");
+		}
 		function renderTokens(stage) {
 			if (!pipeTokens) return;
 			pipeTokens.innerHTML = "";
@@ -395,7 +398,7 @@
 				if (genIndex < continuation.length) {
 					prediction.innerHTML = 'Next token: <b>' + continuation[genIndex].w + '</b> · predict to append and loop';
 				} else {
-					prediction.innerHTML = 'Sequence complete: <b>' + tokens.map(function (t) { return t.w; }).join(" ") + '</b>';
+					prediction.innerHTML = 'Sequence complete: <b>' + sentence() + '</b>';
 				}
 			} else {
 				prediction.innerHTML = 'Next token: <b>—</b> · run to Unembed to predict';
@@ -429,9 +432,14 @@
 			tokens.forEach(function (t) { t.isNew = false; });
 			tokens.push({ w: next.w, id: next.id, isNew: true });
 			genIndex++;
+			if (genIndex >= continuation.length) {
+				selectStage(stages.length - 1);
+				stopRun();
+				return;
+			}
 			currentStage = 0;
 			selectStage(0);
-			if (prediction) prediction.innerHTML = 'Appended: <b>' + next.w + '</b>. Run the loop again.';
+			if (prediction) prediction.innerHTML = 'Appended: <b>' + next.w + '</b> · run the loop again';
 		}
 		function resetLoop() {
 			stopRun();
@@ -512,6 +520,7 @@
 			finance: { x: 0.76, y: 0.34, label: "finance / money", color: "#9f9700" }
 		};
 		var start = { x: 0.5, y: 0.5 };
+		var maxPull = 0.8;
 		var api = TM.initCanvas(canvas, function (ctx, w, h) {
 			var c = TM.colors();
 			ctx.clearRect(0, 0, w, h);
@@ -536,7 +545,7 @@
 			for (var i = 0; i <= 11; i++) {
 				var t = i / 11;
 				var target = context === "river" ? clusters.river : context === "loan" ? clusters.finance : start;
-				var curve = context === "none" ? 0 : (1 - Math.cos(t * Math.PI)) / 2;
+				var curve = context === "none" ? 0 : maxPull * (1 - Math.cos(t * Math.PI)) / 2;
 				path.push({
 					x: TM.lerp(start.x, target.x, curve),
 					y: TM.lerp(start.y, target.y, curve * (1 + 0.18 * Math.sin(t * Math.PI)))
@@ -570,12 +579,12 @@
 			ctx.fillText("bank", cur.x * w, cur.y * h - 12);
 			if (layerNum) layerNum.textContent = layer + " / 11";
 			if (layerContext) layerContext.textContent = context === "river" ? "river bank" : context === "loan" ? "bank loan" : "no context";
-			var pull = context === "river" ? layer / 11 : context === "loan" ? layer / 11 : 0;
+			var pull = context === "none" ? 0 : maxPull * (1 - Math.cos((layer / 11) * Math.PI)) / 2;
 			if (layerPull) layerPull.textContent = context === "none" ? "neutral" : Math.round(pull * 100) + "% " + (context === "river" ? "water" : "finance");
 			if (layerCaption) {
 				if (layer === 0) layerCaption.textContent = "At the input, “bank” sits between the clusters. Context has not pulled it yet.";
-				else if (context === "none") layerCaption.textContent = "Without context, the word drifts only slightly. The sentence is what gives it a target.";
-				else if (layer > 7) layerCaption.textContent = "Deep in the stack, the contextual pull is strong: the residual stream has accumulated evidence from the sentence.";
+				else if (context === "none") layerCaption.textContent = "Without context, the word has no target to move toward. The sentence is what gives it one.";
+				else if (layer > 7) layerCaption.textContent = "Deep in the stack, the pull is strong — but “bank” still keeps its lexical sense; it approaches the " + (context === "river" ? "river" : "finance") + " cluster without becoming that prototype.";
 				else layerCaption.textContent = "Each layer reads the residual stream, computes an update, and adds it back. The meaning is being assembled, not looked up.";
 			}
 		});

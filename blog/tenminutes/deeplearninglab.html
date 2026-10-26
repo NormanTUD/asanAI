@@ -124,6 +124,34 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="residual">
+						<div class="section-kicker">The residual stream</div>
+						<h2 class="section-title">Depth is a shared scratchpad.</h2>
+						<div class="prose">
+							<p>A residual connection is simple: a layer computes an update and adds it to its input, <strong>x → x + f(x)</strong>. The signal does not have to pass through every transformation; it has a direct path. That makes deep networks easier to train because gradients can flow through the addition.</p>
+							<p>In a transformer, the same idea becomes the <strong>residual stream</strong>: one vector per token that every attention head and every MLP reads and writes. Nothing is overwritten. Each block adds its contribution, and the final layer reads the sum.</p>
+						</div>
+						<div class="demo demo--paper" data-demo="residual">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The residual stream <span>· demo</span></p>
+									<p class="demo-sub">Each block reads the same running vector, computes an update, and adds it back. Nothing is overwritten.</p>
+								</div>
+								<span class="demo-badge">live</span>
+							</div>
+							<div class="demo-body">
+								<div class="res-stream">
+									<div class="res-layers" data-res-layers></div>
+									<div class="res-panel">
+										<div class="res-bars" data-res-bars></div>
+										<div class="res-legend"><span><i></i> running stream</span><span data-res-note></span></div>
+									</div>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Residual connections make depth trainable. In a transformer, the residual stream is the shared vector that attention and the MLP read and update.</span></div>
+						</div>
+					</section>
+
 					<section class="section-block" id="takeaway">
 						<div class="section-kicker"><span class="sk-num">04</span> Takeaway</div>
 						<h2 class="section-title">The short version.</h2>

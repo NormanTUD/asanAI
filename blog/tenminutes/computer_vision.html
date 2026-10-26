@@ -76,14 +76,18 @@
 								<button class="chip is-on" type="button" data-kernel="edge">edge</button>
 								<button class="chip" type="button" data-kernel="blur">blur</button>
 								<button class="chip" type="button" data-kernel="sharpen">sharpen</button>
+								<button class="chip" type="button" data-kernel="sobel-h">Sobel H</button>
+								<button class="chip" type="button" data-kernel="sobel-v">Sobel V</button>
+								<button class="chip" type="button" data-kernel="emboss">emboss</button>
 							</div>
 							<div class="demo-readout">
-								<div><b>Input</b><span>14 × 14</span></div>
+								<div><b>Input</b><span data-conv-input-size>14 × 14</span></div>
 								<div><b>Kernel</b><span>3 × 3</span></div>
-								<div><b>Feature map</b><span>12 × 12</span></div>
+								<div><b>Feature map</b><span data-conv-output-size>12 × 12</span></div>
 							</div>
 						</div>
 						<div class="demo-insight"><b>Takeaway</b><span>A convolution shares one small filter across the whole image. Depth stacks those filters into a hierarchy: edges, parts, objects.</span></div>
+						<div class="demo-foot">Source image: a stop sign in Victoria, Australia. Photo: Matthew Paul Argall, <a href="https://commons.wikimedia.org/wiki/File:Stop_Sign_in_Australia_(cropped).jpg" rel="noopener">CC0</a>.</div>
 					</div>
 
 					<div class="demo demo--paper" data-demo="visionlayers">
