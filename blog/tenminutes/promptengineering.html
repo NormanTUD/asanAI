@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Roles, specificity, delimiters, examples, and the practical craft of communicating with an LLM.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>The Craft of Asking — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="promptengineering" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>Prompting is <em>communication.</em></h1>
+					<p class="hero-deck">You are not programming the model; you are creating a linguistic environment. Every role, example, and constraint narrows the space of plausible answers.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> Set the environment</div>
+						<h2 class="section-title">Role, specificity, structure.</h2>
+						<div class="prose">
+							<p>A role primes the model with a style and a body of knowledge. Specific instructions reduce ambiguity. Delimiters separate instructions from data. Examples show the format you want better than a description often can.</p>
+							<p>Negations are weak: telling a model not to think of a white bear can make the bear more likely. Say what you want, not only what you do not want.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> Keep it lean and testable</div>
+						<h2 class="section-title">Iterate, do not decorate.</h2>
+						<div class="prose">
+							<p>Long prompts are not automatically better. Every irrelevant sentence adds noise and costs tokens. Canonicalise the input, remove boilerplate, and make the task easy to verify.</p>
+							<p>Prompting is empirical. Change one thing, test it, and keep what works. A prompt that is clear to a human is usually a good starting point for a model.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Role</b><span>A persona primes style and knowledge.</span></div>
+							<div class="keypoint"><b>Specificity</b><span>Concrete instructions reduce ambiguity.</span></div>
+							<div class="keypoint"><b>Structure</b><span>Delimiters and examples show the shape of the answer.</span></div>
+							<div class="keypoint"><b>Iteration</b><span>Test prompts; do not assume a longer prompt is better.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="entropy">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Constrain the space <span>· demo</span></p>
+								<p class="demo-sub">Turn on a constraint and watch the space of plausible answers shrink. A prompt is a brief, not a magic spell.</p>
+							</div>
+							<span class="demo-badge">live</span>
+						</div>
+						<div class="demo-body">
+							<div class="chip-row">
+								<button class="chip is-on" type="button" data-entropy="role">Role</button>
+								<button class="chip" type="button" data-entropy="format">Format</button>
+								<button class="chip" type="button" data-entropy="examples">Examples</button>
+								<button class="chip" type="button" data-entropy="constraints">Constraints</button>
+							</div>
+							<div class="demo-controls">
+								<span style="font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--tm-muted)">Output space</span>
+								<div class="entropy-track"><span class="entropy-fill" data-entropy-bar></span></div>
+								<output data-entropy-value>78%</output>
+							</div>
+							<p class="entropy-preview" data-entropy-prompt></p>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Specificity reduces entropy. The model is not obeying a command; it is choosing from a smaller set of plausible continuations.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">Every constraint reduces the space of plausible outputs.</p>
+							<p class="aha-sub">A good prompt is a clear brief, not a magic spell.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../promptengineering.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../promptengineering.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Why attention needs positional information, and how sine, cosine, and RoPE encode order.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>How Order Survives — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="positionalembeddingslab" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>Attention is <em>order-blind.</em></h1>
+					<p class="hero-deck">A transformer processes tokens in parallel. Without a position signal, 'dog bites man' and 'man bites dog' would be the same bag of vectors.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> The missing coordinate</div>
+						<h2 class="section-title">Where is the token?</h2>
+						<div class="prose">
+							<p>Attention compares tokens by content. It has no built-in notion of first, second, or last. Positional encodings add a signature to each token's vector so that the model can tell where it sits in the sequence.</p>
+							<p>The original transformer used sine and cosine functions at different frequencies. Modern models often use rotary position embeddings (RoPE), which rotate the query and key vectors by an amount that depends on position.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> Absolute and relative</div>
+						<h2 class="section-title">Distance often matters more.</h2>
+						<div class="prose">
+							<p>Some schemes encode absolute position; others encode relative distance. Relative information is often more useful: what matters is not only where a word is, but how far it is from the words it relates to.</p>
+							<p>The details are mathematical, but the intuition is simple: position turns an unordered set of tokens into a sequence. Without it, the model loses syntax and word order.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Order</b><span>Attention needs an extra signal to know which token came first.</span></div>
+							<div class="keypoint"><b>Sine and cosine</b><span>The original transformer used waves at different frequencies.</span></div>
+							<div class="keypoint"><b>Relative position</b><span>Distance between tokens can matter more than absolute index.</span></div>
+							<div class="keypoint"><b>RoPE</b><span>Modern models rotate vectors by position.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="position">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">A fingerprint for every position <span>· demo</span></p>
+								<p class="demo-sub">Rows are positions, columns are dimensions. Each row is a unique pattern of waves; the highlighted row is the current token.</p>
+							</div>
+							<span class="demo-badge">live</span>
+						</div>
+						<div class="demo-body">
+							<canvas class="demo-canvas demo-canvas--md" data-position-canvas aria-label="Positional encoding heatmap"></canvas>
+							<div class="demo-controls">
+								<label>Position <input type="range" data-position-row min="0" max="31" step="1" value="8"><output data-position-row-out>position 8</output></label>
+							</div>
+							<div class="demo-readout">
+								<div><b>Rows</b><span>positions</span></div>
+								<div><b>Columns</b><span>dimensions</span></div>
+								<div><b>Pattern</b><span>sin / cos</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Attention has no order. Positional encodings give every token a coordinate, so the model can tell what came first.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">Position is the coordinate that turns a bag of words into a sentence.</p>
+							<p class="aha-sub">Attention supplies the relationships; position supplies the order.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../positionalembeddingslab.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../positionalembeddingslab.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

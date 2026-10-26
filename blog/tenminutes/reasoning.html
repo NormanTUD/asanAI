@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Chain-of-thought, self-consistency, test-time compute, and the shift from bigger training to longer inference.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>Thinking Longer — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="reasoning" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>The model can <em>think longer.</em></h1>
+					<p class="hero-deck">For years, scaling meant training a bigger model. Reasoning models add another axis: give the model more computation at inference time and let it explore, check, and revise.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> Thinking in the open</div>
+						<h2 class="section-title">Use the context as a scratchpad.</h2>
+						<div class="prose">
+							<p>Chain-of-thought prompting asks the model to write intermediate steps instead of jumping to an answer. On arithmetic and logic, this often improves accuracy because the model can use the context as a scratchpad.</p>
+							<p>Self-consistency samples several reasoning paths and takes the majority answer. Tree of thoughts explores branches and evaluates them. These methods trade more computation for better answers.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> Learning to reason</div>
+						<h2 class="section-title">More compute, more checking.</h2>
+						<div class="prose">
+							<p>The o1/R1 generation goes further: the model is trained with reinforcement learning on problems that can be checked, so it learns when to think longer, backtrack, and verify. The reasoning process can be much longer than the final answer.</p>
+							<p>More thinking is not always better. The model can reason confidently in the wrong direction, and long chains are expensive. The useful question is whether the extra computation buys a real improvement on the task.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Chain-of-thought</b><span>Write intermediate steps instead of jumping to an answer.</span></div>
+							<div class="keypoint"><b>Self-consistency</b><span>Sample multiple paths and compare answers.</span></div>
+							<div class="keypoint"><b>Test-time compute</b><span>Spend more computation during inference.</span></div>
+							<div class="keypoint"><b>Verification</b><span>Checking is as important as generating.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="cot">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Answer, or think first <span>· demo</span></p>
+								<p class="demo-sub">The same model can jump to an answer or write the intermediate steps. Switch modes and watch the reasoning appear.</p>
+							</div>
+							<span class="demo-badge">live</span>
+						</div>
+						<div class="demo-body">
+							<div class="chip-row">
+								<button class="chip is-on" type="button" data-cot-mode="answer">Answer only</button>
+								<button class="chip" type="button" data-cot-mode="steps">Think step by step</button>
+							</div>
+							<div class="prose" style="margin-top:12px"><p><strong>Problem:</strong> A bat and a ball cost $1.10. The bat costs $1.00 more than the ball. How much does the ball cost?</p></div>
+							<div class="cot-steps">
+								<div class="cot-step" data-cot-step>Let the ball cost x. Then the bat costs x + $1.00.</div>
+								<div class="cot-step" data-cot-step>x + (x + $1.00) = $1.10.</div>
+								<div class="cot-step" data-cot-step>2x = $0.10, so x = $0.05.</div>
+								<div class="cot-step" data-cot-step>The ball costs $0.05; the bat costs $1.05.</div>
+							</div>
+							<p class="cot-answer" data-cot-answer>Answer: $0.05.</p>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Writing the steps gives the model a scratchpad. More computation can help — but only if the steps are checked.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">Intelligence can be bought at inference time, not only at training time.</p>
+							<p class="aha-sub">Thinking longer helps when the extra steps can be checked; otherwise it just costs more.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../reasoning.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../reasoning.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

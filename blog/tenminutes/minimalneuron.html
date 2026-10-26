@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="One input, one output, two numbers to adjust: the smallest possible learner and the loop behind every neural network.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>The Smallest Network That Learns — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="minimalneuron" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>The smallest network <em>that learns.</em></h1>
+					<p class="hero-deck">Before attention and transformers, there is a line. A single neuron learns by adjusting two numbers until its guess is less wrong.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
+						<h2 class="section-title">A line with two knobs.</h2>
+						<div class="prose">
+							<p>Take one input x, multiply it by a weight a, add a bias b, and you have a prediction y = ax + b. The weight decides the slope; the bias shifts the line. That is the entire model.</p>
+							<p>Learning is the search for better a and b. Show the model an example, compare its prediction with the target, and measure the error. The error is a number; the learning algorithm uses it to nudge the two knobs.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> From one line to a network</div>
+						<h2 class="section-title">The loop repeats.</h2>
+						<div class="prose">
+							<p>A single affine map is not yet a full neural network. Stack many of these maps, put a nonlinearity between them, and you get a network that can bend. Without the nonlinearity, the stack collapses back into one line.</p>
+							<p>The smallest learner is still the right place to start. Every larger model repeats the same loop at a different scale: predict, measure the error, adjust the parameters.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Affine map</b><span>One weight and one bias define a line.</span></div>
+							<div class="keypoint"><b>Loss</b><span>The error turns a guess into a learning signal.</span></div>
+							<div class="keypoint"><b>Gradient</b><span>The slope of the loss tells the knobs which way to move.</span></div>
+							<div class="keypoint"><b>Nonlinearity</b><span>Without a bend, stacked layers collapse into one.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="linefit">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Fit one line <span>· demo</span></p>
+								<p class="demo-sub">Drag the weight and the bias. The green line is the current prediction; the dashed gold line is a good fit. The readout is the mean squared error.</p>
+							</div>
+							<span class="demo-badge">live</span>
+						</div>
+						<div class="demo-body">
+							<canvas class="demo-canvas demo-canvas--md" data-linefit-canvas aria-label="Points and a line fitted by weight and bias"></canvas>
+							<div class="demo-controls">
+								<label>Weight a <input type="range" data-linefit-w min="-1" max="2.5" step="0.05" value="0.40"><output data-linefit-w-out>0.40</output></label>
+								<label>Bias b <input type="range" data-linefit-b min="-1" max="1.5" step="0.05" value="0.20"><output data-linefit-b-out>0.20</output></label>
+								<button class="btn-demo btn-demo--green" type="button" data-linefit-best>Find a good line</button>
+							</div>
+							<div class="demo-readout">
+								<div><b>Model</b><span>y = ax + b</span></div>
+								<div><b>Training error</b><span data-linefit-loss>—</span></div>
+								<div><b>Good fit</b><span data-linefit-best-val>—</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Learning is the search for a and b that make the error smaller. A larger network repeats this loop with many more numbers.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">Learning is adjusting numbers to make the error smaller.</p>
+							<p class="aha-sub">A transformer is this loop repeated billions of times, with a much richer representation.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../minimalneuron.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../minimalneuron.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

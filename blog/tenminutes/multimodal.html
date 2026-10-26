@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="How CLIP and multimodal LLMs align pixels with language, and what that alignment can and cannot do.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>Connecting Images and Words — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="multimodal" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>Two worlds, <em>one space.</em></h1>
+					<p class="hero-deck">A text model lives in a language space; a vision model lives in a visual space. Multimodal models learn to put them in the same room.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> The alignment problem</div>
+						<h2 class="section-title">Pull matching pairs together.</h2>
+						<div class="prose">
+							<p>An image encoder turns a picture into a vector; a text encoder turns a caption into another vector. The two spaces are different, so you cannot compare them directly. Contrastive learning pulls matched image-caption pairs together and pushes mismatched pairs apart.</p>
+							<p>CLIP made this practical at scale. After alignment, a picture of a dog and the word 'dog' are close in a shared space, and the model can do zero-shot classification by comparing an image with candidate captions.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> From alignment to conversation</div>
+						<h2 class="section-title">Pixels become tokens.</h2>
+						<div class="prose">
+							<p>A multimodal LLM goes further. Pixels are turned into visual tokens, projected into the language model's embedding space, and then processed together with text tokens. The model can answer questions about an image, describe it, or use it as context.</p>
+							<p>The alignment is not perfect. The model can miss small details, misread text in images, or inherit biases from its training data. Multimodality adds a new input, not a guarantee of understanding.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Two encoders</b><span>Images and text are embedded separately before they can be compared.</span></div>
+							<div class="keypoint"><b>Contrastive learning</b><span>Matched pairs are pulled together; mismatched pairs are pushed apart.</span></div>
+							<div class="keypoint"><b>Visual tokens</b><span>Pixels can be projected into the language model's token space.</span></div>
+							<div class="keypoint"><b>Limits</b><span>Alignment is statistical and can miss details or inherit bias.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper timeline-shell" data-demo="timeline">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Two towers, one answer <span>· demo</span></p>
+								<p class="demo-sub">Multimodal models align separate spaces and then use them together. Select a stage.</p>
+							</div>
+							<span class="demo-badge">step through</span>
+						</div>
+						<div class="demo-body">
+							<div class="timeline-scroller">
+								<button class="tl-scroll-btn" type="button" data-timeline-prev aria-label="Scroll left">‹</button>
+								<div class="timeline-track" data-timeline-track role="group" aria-label="Two towers, one answer">
+									<button class="tl-node is-active" type="button" data-meta="01 · Image" data-title="Image encoder" data-body="A vision model turns pixels into a vector in a visual embedding space."><span class="tl-dot"></span><span class="tl-date">01</span><span class="tl-name">Image</span></button>
+									<button class="tl-node" type="button" data-meta="02 · Text" data-title="Text encoder" data-body="A language model turns a caption into a vector in a different space."><span class="tl-dot"></span><span class="tl-date">02</span><span class="tl-name">Text</span></button>
+									<button class="tl-node" type="button" data-meta="03 · Align" data-title="Contrastive alignment" data-body="Matched image-text pairs are pulled together; mismatched pairs are pushed apart."><span class="tl-dot"></span><span class="tl-date">03</span><span class="tl-name">Align</span></button>
+									<button class="tl-node" type="button" data-meta="04 · Tokens" data-title="Visual tokens" data-body="Pixels are projected into the language model's token space, where they can be read with text."><span class="tl-dot"></span><span class="tl-date">04</span><span class="tl-name">Tokens</span></button>
+									<button class="tl-node" type="button" data-meta="05 · Answer" data-title="Multimodal answer" data-body="The model answers from the image and the question together. Alignment is statistical, not a guarantee."><span class="tl-dot"></span><span class="tl-date">05</span><span class="tl-name">Answer</span></button>
+								</div>
+								<button class="tl-scroll-btn" type="button" data-timeline-next aria-label="Scroll right">›</button>
+							</div>
+							<div class="tl-panel no-figure" data-timeline-panel aria-live="polite"></div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>The bridge between seeing and speaking is a shared embedding space.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">The bridge between seeing and speaking is a shared embedding space.</p>
+							<p class="aha-sub">Once an image becomes tokens, the language model can treat it as context.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../multimodal.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../multimodal.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Why a model can fit the training data perfectly and still fail on the next example.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>Pattern or Memorization? — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="overandunderfittinglab" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>Fit the pattern, <em>not the noise.</em></h1>
+					<p class="hero-deck">A model can be too simple to see the rule or so flexible that it memorizes every accident. Generalization lives between those two failures.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> The two failures</div>
+						<h2 class="section-title">Too simple or too flexible.</h2>
+						<div class="prose">
+							<p>Underfitting is a model that is too simple. It misses the real pattern and performs badly on both training and new data. Overfitting is the opposite: the model is flexible enough to memorize the training examples, including their noise, and then fails when the noise changes.</p>
+							<p>The classic demonstration is a polynomial fit. A straight line underfits a sine wave; a very high-degree polynomial can pass through every training point and still oscillate wildly between them.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> How to tell the difference</div>
+						<h2 class="section-title">Test on what it has not seen.</h2>
+						<div class="prose">
+							<p>Measure performance on data the model did not train on. If training improves while validation gets worse, you are overfitting. If both stay bad, you are underfitting.</p>
+							<p>The fix is not always 'more data' or 'a bigger model'. It can be a simpler model, regularization, early stopping, or a training set that better represents the world. The goal is not to fit the past; it is to generalize to the future.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Underfitting</b><span>Too simple: the model misses the pattern.</span></div>
+							<div class="keypoint"><b>Overfitting</b><span>Too flexible: the model memorizes the noise.</span></div>
+							<div class="keypoint"><b>Validation</b><span>Only held-out data tells you whether the model generalizes.</span></div>
+							<div class="keypoint"><b>Extrapolation</b><span>A model can look excellent inside its data and fail outside it.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="polyfit">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Fit the pattern, not the noise <span>· demo</span></p>
+								<p class="demo-sub">Raise the polynomial degree. Green points are training data, blue points are held-out data. Watch the curve fit the training set while the test error tells a different story.</p>
+							</div>
+							<span class="demo-badge">live</span>
+						</div>
+						<div class="demo-body">
+							<canvas class="demo-canvas demo-canvas--md" data-polyfit-canvas aria-label="Polynomial fits to training and test points"></canvas>
+							<div class="demo-controls">
+								<label>Degree <input type="range" data-polyfit-degree min="1" max="11" step="1" value="2"><output data-polyfit-degree-out>2</output></label>
+							</div>
+							<div class="demo-readout">
+								<div><b>Training error</b><span data-polyfit-train>—</span></div>
+								<div><b>Test error</b><span data-polyfit-test>—</span></div>
+								<div><b>What to watch</b><span>the gap</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>A perfect training fit can be a warning sign. The useful question is how the model behaves on data it has never seen.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">A perfect training score can be a warning sign.</p>
+							<p class="aha-sub">What matters is performance on examples the model has never seen.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../overandunderfittinglab.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../overandunderfittinglab.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

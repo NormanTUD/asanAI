@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="How retrieval-augmented generation grounds an LLM in documents instead of memory.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>Giving It a Search Engine — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="rag" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>Give the model <em>a library card.</em></h1>
+					<p class="hero-deck">An LLM can only use what it memorized or what is in its context. RAG adds a search step: find the relevant passages, put them in the prompt, and answer from them.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> The pipeline</div>
+						<h2 class="section-title">Index, retrieve, generate.</h2>
+						<div class="prose">
+							<p>Documents are split into chunks and embedded into vectors. At query time, the question is embedded too, and a vector search finds the most similar chunks. Those chunks are inserted into the prompt, and the model generates an answer grounded in them.</p>
+							<p>The naive pipeline is only the beginning. Real systems mix keyword search with dense retrieval, rerank the candidates, and add context around each chunk so the model sees enough to answer.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> Why RAG still fails</div>
+						<h2 class="section-title">Retrieval is not truth.</h2>
+						<div class="prose">
+							<p>Retrieval can miss the right passage, return a misleading one, or find text that is outdated. The model can ignore the retrieved context or blend it with its own memorized errors. Chunking and ranking are design decisions, not details.</p>
+							<p>RAG is not a truth machine. It is a way to make the model's answer depend on documents you can inspect. Citations and evaluation are what make that useful.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Chunking</b><span>Documents are split into passages that can be retrieved.</span></div>
+							<div class="keypoint"><b>Embeddings</b><span>Chunks and queries become vectors for similarity search.</span></div>
+							<div class="keypoint"><b>Grounding</b><span>Retrieved passages are placed in the context window.</span></div>
+							<div class="keypoint"><b>Failure modes</b><span>Retrieval can miss, mislead, or be ignored.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="retrieval">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Retrieve before you generate <span>· demo</span></p>
+								<p class="demo-sub">Pick a question. The retriever ranks the chunks by keyword overlap and puts the best one in the prompt.</p>
+							</div>
+							<span class="demo-badge">live</span>
+						</div>
+						<div class="demo-body">
+							<div class="chip-row">
+								<button class="chip is-on" type="button" data-retrieval-query="Eiffel Tower height">Eiffel Tower height</button>
+								<button class="chip" type="button" data-retrieval-query="RAG pipeline">RAG pipeline</button>
+								<button class="chip" type="button" data-retrieval-query="vector database">vector database</button>
+							</div>
+							<div class="demo-controls">
+								<button class="btn-demo btn-demo--green" type="button" data-retrieval-run>Retrieve</button>
+							</div>
+							<div class="retrieval-list" data-retrieval-list></div>
+							<div class="demo-readout">
+								<div><b>Top result</b><span data-retrieval-top>—</span></div>
+								<div><b>Input</b><span>question + chunks</span></div>
+								<div><b>Output</b><span>grounded prompt</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>RAG is only as good as its retrieval. The model still writes the answer, but the documents decide what it is allowed to see.</span></div>
+						<div class="demo-foot">A keyword-overlap toy, not a real embedding search. The original lesson shows the full pipeline.</div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">RAG replaces memorization with a search step.</p>
+							<p class="aha-sub">The model still writes the answer; retrieval decides what it is allowed to see.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../rag.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../rag.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

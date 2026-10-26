@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="What a context window is, why it is not human memory, and how attention cost shapes long conversations.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>The Memory It Can Hold — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="contextwindows" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>The model only knows <em>what is in the window.</em></h1>
+					<p class="hero-deck">A context window is not a persistent memory. It is the entire input the model can see in one forward pass: system prompt, history, documents, and your new question.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> A fixed input buffer</div>
+						<h2 class="section-title">Everything competes for space.</h2>
+						<div class="prose">
+							<p>Every token in the conversation occupies space in the context window. When the window is full, something has to be dropped, summarised, or moved outside the model. The model does not remember earlier turns unless they are still in the window.</p>
+							<p>Window sizes have grown from a thousand tokens to hundreds of thousands or more, but bigger is not automatically better. The model still has to find the relevant part, and attention over a long sequence is expensive.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> Why long context is hard</div>
+						<h2 class="section-title">Attention has a cost.</h2>
+						<div class="prose">
+							<p>Self-attention compares every token with every other token, so the cost grows roughly quadratically with length. Techniques such as KV caching and FlashAttention make long context practical, but they do not make the model infinitely attentive.</p>
+							<p>For knowledge outside the window, systems use retrieval: search a document store and inject the relevant passages. That is why context and RAG are close cousins.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Input buffer</b><span>The context window is the model's entire view for one inference.</span></div>
+							<div class="keypoint"><b>Token budget</b><span>System prompt, history, documents, and query all compete for space.</span></div>
+							<div class="keypoint"><b>Attention cost</b><span>Longer sequences make attention more expensive.</span></div>
+							<div class="keypoint"><b>Retrieval</b><span>External search extends what the model can use.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="budget">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">The context budget <span>· demo</span></p>
+								<p class="demo-sub">Everything the model sees competes for one budget. Shrink the window and watch history and documents fall out.</p>
+							</div>
+							<span class="demo-badge">live</span>
+						</div>
+						<div class="demo-body">
+							<div class="budget-stack">
+								<div class="budget-row" data-budget-block data-tokens="800" data-required="1">
+									<span class="budget-label">System prompt</span>
+									<span class="budget-track"><span class="budget-fill"></span></span>
+									<span class="budget-tokens">800</span>
+								</div>
+								<div class="budget-row" data-budget-block data-tokens="120" data-required="1">
+									<span class="budget-label">Your question</span>
+									<span class="budget-track"><span class="budget-fill"></span></span>
+									<span class="budget-tokens">120</span>
+								</div>
+								<div class="budget-row" data-budget-block data-tokens="1600">
+									<span class="budget-label">Conversation</span>
+									<span class="budget-track"><span class="budget-fill"></span></span>
+									<span class="budget-tokens">1,600</span>
+								</div>
+								<div class="budget-row" data-budget-block data-tokens="2400">
+									<span class="budget-label">Documents</span>
+									<span class="budget-track"><span class="budget-fill"></span></span>
+									<span class="budget-tokens">2,400</span>
+								</div>
+							</div>
+							<div class="demo-controls">
+								<label>Window <input type="range" data-budget-window min="2" max="8" step="1" value="4"><output data-budget-window-out>4k tokens</output></label>
+							</div>
+							<div class="demo-readout">
+								<div><b>Window</b><span>2–8k</span></div>
+								<div><b>Free</b><span data-budget-free>—</span></div>
+								<div><b>What falls out</b><span>history / docs</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>A bigger window helps, but it is still a budget. Retrieval exists because the model cannot keep everything in view.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">A context window is working memory, not a database.</p>
+							<p class="aha-sub">If it is not in the window, the model cannot use it — unless a retrieval system puts it there.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../contextwindows.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../contextwindows.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Pretraining, SFT, preference optimization, and the post-training stack that makes a model helpful.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>Turning a Predictor into an Assistant — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="finetuninglab" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>The assistant is <em>made after pretraining.</em></h1>
+					<p class="hero-deck">A pretrained model is a very good internet simulator. It does not yet follow instructions, refuse harmful requests, or hold a conversation. Post-training is how it becomes an assistant.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> From raw text to instructions</div>
+						<h2 class="section-title">Teaching the format.</h2>
+						<div class="prose">
+							<p>Pretraining teaches next-token prediction on a huge corpus. The result is fluent but uncontrolled. Supervised fine-tuning then shows the model examples of instructions and good answers, teaching it the format of a conversation.</p>
+							<p>Fine-tuning is not only about facts. It changes behaviour: when to answer, when to refuse, how to structure a response, and which tone to use.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> Preferences and reasoning</div>
+						<h2 class="section-title">Aligning behaviour.</h2>
+						<div class="prose">
+							<p>Preference optimization goes further. Humans (or a model) compare answers, and the model is trained to prefer the better one. RLHF uses a reward model; DPO-style methods learn directly from preference pairs.</p>
+							<p>Reasoning models add another stage: reinforcement learning on problems with verifiable answers, so the model learns to think longer and check its work. The total post-training cost is small compared with pretraining, but it shapes most of what users experience.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Pretraining</b><span>Next-token prediction on a large corpus creates a raw model.</span></div>
+							<div class="keypoint"><b>SFT</b><span>Instruction examples teach the assistant format.</span></div>
+							<div class="keypoint"><b>Preferences</b><span>Comparing answers aligns the model with human judgments.</span></div>
+							<div class="keypoint"><b>Reasoning RL</b><span>Verifiable tasks can teach the model to think longer.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper timeline-shell" data-demo="timeline">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">From raw model to assistant <span>· demo</span></p>
+								<p class="demo-sub">Post-training is a pipeline. Select a stage to see what it adds.</p>
+							</div>
+							<span class="demo-badge">step through</span>
+						</div>
+						<div class="demo-body">
+							<div class="timeline-scroller">
+								<button class="tl-scroll-btn" type="button" data-timeline-prev aria-label="Scroll left">‹</button>
+								<div class="timeline-track" data-timeline-track role="group" aria-label="From raw model to assistant">
+									<button class="tl-node is-active" type="button" data-meta="01 · Base" data-title="Pretraining" data-body="Next-token prediction on a huge corpus creates a fluent but uncontrolled model."><span class="tl-dot"></span><span class="tl-date">01</span><span class="tl-name">Base</span></button>
+									<button class="tl-node" type="button" data-meta="02 · SFT" data-title="Supervised fine-tuning" data-body="Instruction-and-answer examples teach the format of a conversation and the shape of a helpful response."><span class="tl-dot"></span><span class="tl-date">02</span><span class="tl-name">SFT</span></button>
+									<button class="tl-node" type="button" data-meta="03 · Prefs" data-title="Preference optimization" data-body="Humans or a model compare answers. The model learns to prefer the better one, using RLHF or DPO-style methods."><span class="tl-dot"></span><span class="tl-date">03</span><span class="tl-name">Prefs</span></button>
+									<button class="tl-node" type="button" data-meta="04 · Reason" data-title="Reasoning RL" data-body="Verifiable problems teach the model to think longer, backtrack, and check its work."><span class="tl-dot"></span><span class="tl-date">04</span><span class="tl-name">Reason</span></button>
+								</div>
+								<button class="tl-scroll-btn" type="button" data-timeline-next aria-label="Scroll right">›</button>
+							</div>
+							<div class="tl-panel no-figure" data-timeline-panel aria-live="polite"></div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Most of the assistant's behaviour is learned after pretraining.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">Most of the assistant's personality is learned after pretraining.</p>
+							<p class="aha-sub">The base model supplies the language; post-training supplies the behaviour.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../finetuninglab.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../finetuninglab.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

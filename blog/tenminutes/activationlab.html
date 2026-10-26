@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Activation functions are the gates that make depth meaningful — from ReLU to softmax.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>Why Networks Can Bend — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="activationlab" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>The bend <em>makes depth meaningful.</em></h1>
+					<p class="hero-deck">A dense layer can only stretch, rotate, and shift. The activation function after it is what lets a network learn curves, folds, and decisions.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> The gate after the projection</div>
+						<h2 class="section-title">A nonlinearity per coordinate.</h2>
+						<div class="prose">
+							<p>A dense layer computes an affine map, Ax + b. On its own it maps straight lines to straight lines. A nonlinear activation is applied to each coordinate after the projection and breaks that linearity.</p>
+							<p>ReLU passes positive values and sends everything negative to zero. Sigmoid and tanh squash the output into a bounded range. GELU is a smooth variant used in many transformers.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> Why the choice matters</div>
+						<h2 class="section-title">Gradients and probabilities.</h2>
+						<div class="prose">
+							<p>The activation decides how information flows and how gradients behave. ReLU is cheap but can produce dead units; sigmoid and tanh saturate; GELU is smooth and works well in deep transformers.</p>
+							<p>At the output, softmax turns a vector of scores into a probability distribution. It is not just a normalisation: it is the gate that turns the model's internal scores into a choice over the vocabulary.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Nonlinearity</b><span>The activation is what a stack of dense layers otherwise lacks.</span></div>
+							<div class="keypoint"><b>ReLU</b><span>A hard fold: positive values pass, negative values become zero.</span></div>
+							<div class="keypoint"><b>Smoothness</b><span>Sigmoid, tanh, and GELU trade sharpness for different gradient behaviour.</span></div>
+							<div class="keypoint"><b>Softmax</b><span>Turns scores into a probability distribution over choices.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="activation">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">The gate after the projection <span>· demo</span></p>
+								<p class="demo-sub">Pick an activation. The curve is what the network applies to each coordinate after the linear layer.</p>
+							</div>
+							<span class="demo-badge">live</span>
+						</div>
+						<div class="demo-body">
+							<canvas class="demo-canvas demo-canvas--md" data-activation-canvas aria-label="Activation function plot"></canvas>
+							<div class="chip-row" style="margin-top:12px">
+								<button class="chip is-on" type="button" data-activation="relu">ReLU</button>
+								<button class="chip" type="button" data-activation="tanh">tanh</button>
+								<button class="chip" type="button" data-activation="sigmoid">sigmoid</button>
+								<button class="chip" type="button" data-activation="gelu">GELU</button>
+							</div>
+							<div class="demo-readout">
+								<div><b>Function</b><span data-activation-name>RELU</span></div>
+								<div><b>Range</b><span data-activation-range>—</span></div>
+								<div><b>Shape</b><span data-activation-shape>—</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>The activation is what lets a stack of dense layers bend. Without it, depth collapses into one linear map.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">Without a bend, a deep network is just one big linear map.</p>
+							<p class="aha-sub">The activation is the smallest ingredient that makes depth more than decoration.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../activationlab.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../activationlab.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

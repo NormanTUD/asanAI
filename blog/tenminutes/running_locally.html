@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Quantization, GGUF, llama.cpp, and what it takes to run a capable model on a laptop.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>Running a Model Yourself — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="running_locally" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>You do not need <em>a data centre.</em></h1>
+					<p class="hero-deck">A quantized model can run on a laptop, a phone, or a single consumer GPU. The trade-off is capability and speed against control and privacy.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> Compression makes it fit</div>
+						<h2 class="section-title">Fewer bits, smaller footprint.</h2>
+						<div class="prose">
+							<p>A large model is too big to fit in ordinary memory at full precision. Quantization stores the weights in fewer bits, which shrinks the model and speeds up inference at the cost of some quality.</p>
+							<p>GGUF is a common file format for quantized models. Engines such as llama.cpp run it efficiently on CPUs and consumer GPUs; Ollama and LM Studio wrap the engine in a friendlier interface.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> What local gives you</div>
+						<h2 class="section-title">Privacy, control, and a trade-off.</h2>
+						<div class="prose">
+							<p>Local inference keeps your data on your machine. It works offline, has no per-token bill, and lets you experiment without an API. On Apple Silicon, unified memory makes larger models practical on a laptop.</p>
+							<p>The trade-off is real: a local model is usually smaller or more compressed than a frontier API model. For many tasks that is enough; for the hardest ones it is not.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Quantization</b><span>Store weights in fewer bits to fit the model into memory.</span></div>
+							<div class="keypoint"><b>GGUF</b><span>A common format for local, quantized models.</span></div>
+							<div class="keypoint"><b>Engines</b><span>llama.cpp, Ollama, and LM Studio run the model.</span></div>
+							<div class="keypoint"><b>Trade-offs</b><span>Local means privacy and control, but often less capability.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="vram">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Will it fit? <span>· demo</span></p>
+								<p class="demo-sub">Choose a model, a precision, and a device. The estimate is a rough starting point, not a benchmark.</p>
+							</div>
+							<span class="demo-badge">estimate</span>
+						</div>
+						<div class="demo-body">
+							<div class="calc-grid">
+								<div class="calc-field">
+									<label for="vram-model">Parameters</label>
+									<select id="vram-model" data-vram-model>
+										<option value="7">7B</option>
+										<option value="13">13B</option>
+										<option value="70">70B</option>
+										<option value="120">120B</option>
+									</select>
+								</div>
+								<div class="calc-field">
+									<label for="vram-bits">Weight precision</label>
+									<select id="vram-bits" data-vram-bits>
+										<option value="4">4-bit</option>
+										<option value="8">8-bit</option>
+										<option value="16">16-bit</option>
+									</select>
+								</div>
+								<div class="calc-field">
+									<label for="vram-device">Device memory</label>
+									<select id="vram-device" data-vram-device>
+										<option value="8">Phone · 8 GB</option>
+										<option value="16">Laptop · 16 GB</option>
+										<option value="24">GPU · 24 GB</option>
+										<option value="64">Mac · 64 GB</option>
+										<option value="320">Server · 320 GB</option>
+									</select>
+								</div>
+							</div>
+							<div class="demo-readout">
+								<div><b>Weights + overhead</b><span data-vram-mem>—</span></div>
+								<div><b>Fit</b><span data-vram-fit>—</span></div>
+								<div><b>Precision</b><span>quantized</span></div>
+							</div>
+							<p class="mix-note" data-vram-note>Weights plus rough runtime overhead. Context length and KV cache can add several more gigabytes.</p>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Local AI is a trade-off between capability, speed, and control. The same model can be a phone toy or a laptop workhorse depending on precision.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">Local AI trades some capability for ownership.</p>
+							<p class="aha-sub">The question is not 'can it run?' but 'is it good enough, fast enough, and private enough for this task?'</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../running_locally.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../running_locally.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

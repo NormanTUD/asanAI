@@ -1,0 +1,869 @@
+/* TEN MINUTES — compact-page demos. Depends on assets/site.js (TM.*). */
+(function () {
+	"use strict";
+
+	function $(sel, root) { return (root || document).querySelector(sel); }
+	function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+	function colors() { return window.TM && TM.colors ? TM.colors() : {}; }
+	function escapeHtml(s) {
+		return String(s).replace(/[&<>"]/g, function (c) {
+			return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+		});
+	}
+	function canvasDemo(canvas, draw) {
+		if (!canvas || !window.TM || !TM.initCanvas) return null;
+		var api = TM.initCanvas(canvas, draw);
+		window.addEventListener("tm:theme", function () { api.redraw(); });
+		return api;
+	}
+	function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+	function lerp(a, b, t) { return a + (b - a) * t; }
+	function mix(c1, c2, t) {
+		return [
+			Math.round(lerp(c1[0], c2[0], t)),
+			Math.round(lerp(c1[1], c2[1], t)),
+			Math.round(lerp(c1[2], c2[2], t))
+		];
+	}
+	function rgb(a) { return "rgb(" + a[0] + "," + a[1] + "," + a[2] + ")"; }
+	function hexToRgb(h) {
+		h = String(h || "").replace("#", "");
+		if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+		return [parseInt(h.slice(0, 2), 16) || 0, parseInt(h.slice(2, 4), 16) || 0, parseInt(h.slice(4, 6), 16) || 0];
+	}
+
+	/* ── sampling ───────────────────────────────────────────── */
+
+	function initSampling(root) {
+		var bars = $("[data-sampling-bars]", root);
+		var temp = $("[data-sampling-temp]", root);
+		var tempOut = $("[data-sampling-temp-out]", root);
+		var topP = $("[data-sampling-topp]", root);
+		var topPOut = $("[data-sampling-topp-out]", root);
+		var choice = $("[data-sampling-choice]", root);
+		var count = $("[data-sampling-count]", root);
+		var entropy = $("[data-sampling-entropy]", root);
+		if (!bars) return;
+		var tokens = [
+			{ t: "Paris", z: 2.9, c: "var(--tm-green)" },
+			{ t: "Lyon", z: 1.1, c: "var(--tm-sky)" },
+			{ t: "Berlin", z: 0.7, c: "var(--tm-gold)" },
+			{ t: "Frog", z: -0.4, c: "var(--tm-coral)" },
+			{ t: "the", z: -1.1, c: "var(--tm-faint)" }
+		];
+		function render() {
+			var T = clamp(parseFloat(temp && temp.value) || 0.8, 0.05, 3);
+			var P = clamp(parseFloat(topP && topP.value) || 1, 0.05, 1);
+			if (tempOut) tempOut.textContent = T.toFixed(2);
+			if (topPOut) topPOut.textContent = P.toFixed(2);
+			var exps = tokens.map(function (x) { return Math.exp(x.z / T); });
+			var sum = exps.reduce(function (a, b) { return a + b; }, 0);
+			var probs = exps.map(function (e) { return e / sum; });
+			var order = probs.map(function (p, i) { return i; }).sort(function (a, b) { return probs[b] - probs[a]; });
+			var cum = 0, keep = {};
+			order.forEach(function (i) {
+				if (cum < P) { keep[i] = true; cum += probs[i]; }
+			});
+			var kept = order.filter(function (i) { return keep[i]; });
+			var ent = -probs.reduce(function (a, p) { return a + (p > 0 ? p * Math.log(p) / Math.LN2 : 0); }, 0);
+			bars.innerHTML = tokens.map(function (tok, i) {
+				var pct = probs[i] * 100;
+				return '<div class="dist-row' + (keep[i] ? "" : " is-cut") + '">' +
+					'<span class="dist-label">' + escapeHtml(tok.t) + '</span>' +
+					'<span class="dist-track"><span class="dist-fill" style="width:' + pct.toFixed(1) + '%;background:' + tok.c + '"></span></span>' +
+					'<span class="dist-val">' + pct.toFixed(0) + '%</span></div>';
+			}).join("");
+			if (choice) choice.textContent = tokens[kept[0]].t;
+			if (count) count.textContent = kept.length + " / " + tokens.length;
+			if (entropy) entropy.textContent = ent.toFixed(2) + " bits";
+		}
+		if (temp) temp.addEventListener("input", render);
+		if (topP) topP.addEventListener("input", render);
+		render();
+	}
+
+	/* ── line fit ───────────────────────────────────────────── */
+
+	function initLineFit(root) {
+		var canvas = $("[data-linefit-canvas]", root);
+		var w = $("[data-linefit-w]", root);
+		var b = $("[data-linefit-b]", root);
+		var wOut = $("[data-linefit-w-out]", root);
+		var bOut = $("[data-linefit-b-out]", root);
+		var loss = $("[data-linefit-loss]", root);
+		var best = $("[data-linefit-best-val]", root);
+		var bestBtn = $("[data-linefit-best]", root);
+		if (!canvas) return;
+		var noise = [0.04, -0.03, 0.02, -0.05, 0.01, 0.06, -0.02, 0.03, -0.04, 0.05, 0.0, -0.01, 0.04, -0.02, 0.02, -0.03, 0.05, -0.04, 0.01, 0.03];
+		var pts = noise.map(function (n, i) {
+			var x = 0.06 + i * 0.88 / (noise.length - 1);
+			return { x: x, y: 0.75 * x + 0.18 + n };
+		});
+		var target = { a: 0.75, b: 0.18 };
+		function val(el, fallback) { return parseFloat(el && el.value) || fallback; }
+		function draw(ctx, W, H) {
+			var c = colors();
+			var a = val(w, 0.4), bb = val(b, 0.2);
+			var pad = 30, xmin = -0.05, xmax = 1.05, ymin = -0.15, ymax = 1.15;
+			function px(x) { return pad + (x - xmin) / (xmax - xmin) * (W - pad * 2); }
+			function py(y) { return H - pad - (y - ymin) / (ymax - ymin) * (H - pad * 2); }
+			ctx.clearRect(0, 0, W, H);
+			ctx.strokeStyle = c.lineStrong;
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(px(xmin), py(0)); ctx.lineTo(px(xmax), py(0));
+			ctx.moveTo(px(0), py(ymin)); ctx.lineTo(px(0), py(ymax));
+			ctx.stroke();
+			ctx.strokeStyle = c.gold;
+			ctx.setLineDash([5, 5]);
+			ctx.beginPath();
+			ctx.moveTo(px(0), py(target.b)); ctx.lineTo(px(1), py(target.a + target.b));
+			ctx.stroke();
+			ctx.setLineDash([]);
+			ctx.strokeStyle = c.green;
+			ctx.lineWidth = 3;
+			ctx.beginPath();
+			ctx.moveTo(px(0), py(bb)); ctx.lineTo(px(1), py(a + bb));
+			ctx.stroke();
+			pts.forEach(function (p) {
+				ctx.beginPath();
+				ctx.arc(px(p.x), py(p.y), 4.5, 0, Math.PI * 2);
+				ctx.fillStyle = c.sky;
+				ctx.fill();
+				ctx.strokeStyle = c.card;
+				ctx.lineWidth = 1.5;
+				ctx.stroke();
+			});
+			var mse = pts.reduce(function (s, p) {
+				var d = (a * p.x + bb) - p.y;
+				return s + d * d;
+			}, 0) / pts.length;
+			if (wOut) wOut.textContent = a.toFixed(2);
+			if (bOut) bOut.textContent = bb.toFixed(2);
+			if (loss) loss.textContent = mse.toFixed(3);
+			if (best) best.textContent = "a " + target.a.toFixed(2) + " · b " + target.b.toFixed(2);
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		function redraw() { api.redraw(); }
+		if (w) w.addEventListener("input", redraw);
+		if (b) b.addEventListener("input", redraw);
+		if (bestBtn) bestBtn.addEventListener("click", function () {
+			if (w) w.value = target.a.toFixed(2);
+			if (b) b.value = target.b.toFixed(2);
+			redraw();
+		});
+		redraw();
+	}
+
+	/* ── dream ──────────────────────────────────────────────── */
+
+	function initDream(root) {
+		var canvas = $("[data-dream-canvas]", root);
+		var strength = $("[data-dream-strength]", root);
+		var out = $("[data-dream-strength-out]", root);
+		var label = $("[data-dream-label]", root);
+		var chips = $$("[data-dream-class]", root);
+		var current = "banana";
+		if (!canvas) return;
+		function rnd(i) {
+			var x = Math.sin(i * 12.9898) * 43758.5453;
+			return x - Math.floor(x);
+		}
+		function drawShape(ctx, W, H, kind, alpha) {
+			ctx.save();
+			ctx.globalAlpha = alpha;
+			var cx = W / 2, cy = H / 2;
+			if (kind === "banana") {
+				ctx.fillStyle = "#9f9700";
+				ctx.strokeStyle = "#004b6f";
+				ctx.lineWidth = 2;
+				ctx.beginPath();
+				ctx.moveTo(cx - 95, cy + 35);
+				ctx.bezierCurveTo(cx - 70, cy - 55, cx + 45, cy - 75, cx + 100, cy - 25);
+				ctx.bezierCurveTo(cx + 55, cy + 5, cx - 25, cy + 40, cx - 95, cy + 35);
+				ctx.closePath();
+				ctx.fill();
+				ctx.stroke();
+			} else if (kind === "dumbbell") {
+				ctx.fillStyle = "#5c9baf";
+				ctx.strokeStyle = "#004b6f";
+				ctx.lineWidth = 2;
+				ctx.fillRect(cx - 55, cy - 7, 110, 14);
+				ctx.strokeRect(cx - 55, cy - 7, 110, 14);
+				[-1, 1].forEach(function (s) {
+					ctx.beginPath();
+					ctx.arc(cx + s * 72, cy, 25, 0, Math.PI * 2);
+					ctx.fill();
+					ctx.stroke();
+				});
+			} else {
+				ctx.fillStyle = "#9185be";
+				ctx.strokeStyle = "#004b6f";
+				ctx.lineWidth = 2;
+				var widths = [90, 64, 110];
+				var y = cy - 50;
+				widths.forEach(function (w) {
+					ctx.fillRect(cx - w / 2, y, w, 24);
+					ctx.strokeRect(cx - w / 2, y, w, 24);
+					y += 32;
+				});
+			}
+			ctx.restore();
+		}
+		function draw(ctx, W, H) {
+			var c = colors();
+			var t = clamp(parseFloat(strength && strength.value) || 0.6, 0, 1);
+			if (out) out.textContent = t.toFixed(2);
+			if (label) label.textContent = "class: " + current;
+			ctx.clearRect(0, 0, W, H);
+			var cols = 82, rows = Math.max(24, Math.round(cols * H / W));
+			var cw = W / cols, ch = H / rows;
+			for (var y = 0; y < rows; y++) {
+				for (var x = 0; x < cols; x++) {
+					var v = rnd(x * 97 + y * 131);
+					var g = Math.round(30 + v * 150);
+					ctx.fillStyle = c.dark
+						? "rgba(" + g + "," + (g + 20) + "," + (g + 30) + ",0.75)"
+						: "rgba(" + (235 - Math.round(v * 70)) + "," + (240 - Math.round(v * 70)) + "," + (238 - Math.round(v * 70)) + ",0.8)";
+					ctx.fillRect(x * cw, y * ch, cw + 1, ch + 1);
+				}
+			}
+			drawShape(ctx, W, H, current, 0.08 + t * 0.82);
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 11px Barlow, system-ui, sans-serif";
+			ctx.fillText("network noise + learned template", 12, H - 12);
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		if (strength) strength.addEventListener("input", function () { api.redraw(); });
+		chips.forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				chips.forEach(function (x) { x.classList.remove("is-on"); });
+				chip.classList.add("is-on");
+				current = chip.getAttribute("data-dream-class");
+				api.redraw();
+			});
+		});
+		api.redraw();
+	}
+
+	/* ── polynomial fit ─────────────────────────────────────── */
+
+	function solve(A, b) {
+		var n = b.length;
+		for (var i = 0; i < n; i++) {
+			var p = i;
+			for (var r = i + 1; r < n; r++) if (Math.abs(A[r][i]) > Math.abs(A[p][i])) p = r;
+			var tmp = A[i]; A[i] = A[p]; A[p] = tmp;
+			var tb = b[i]; b[i] = b[p]; b[p] = tb;
+			var piv = A[i][i];
+			if (Math.abs(piv) < 1e-12) continue;
+			for (var j = i; j < n; j++) A[i][j] /= piv;
+			b[i] /= piv;
+			for (var r2 = 0; r2 < n; r2++) {
+				if (r2 === i) continue;
+				var f = A[r2][i];
+				if (!f) continue;
+				for (var j2 = i; j2 < n; j2++) A[r2][j2] -= f * A[i][j2];
+				b[r2] -= f * b[i];
+			}
+		}
+		return b;
+	}
+	function polyFit(xs, ys, degree) {
+		var n = degree + 1;
+		var A = [], b = [];
+		for (var i = 0; i < n; i++) { A.push([]); b.push(0); }
+		for (var k = 0; k < xs.length; k++) {
+			var powers = [1];
+			for (var p = 1; p < 2 * n; p++) powers.push(powers[p - 1] * xs[k]);
+			for (var r = 0; r < n; r++) {
+				for (var c2 = 0; c2 < n; c2++) A[r][c2] = (A[r][c2] || 0) + powers[r + c2];
+				b[r] += powers[r] * ys[k];
+			}
+		}
+		for (var d = 0; d < n; d++) A[d][d] += 1e-7;
+		return solve(A, b);
+	}
+	function evalPoly(coef, x) {
+		var y = 0;
+		for (var i = coef.length - 1; i >= 0; i--) y = y * x + coef[i];
+		return y;
+	}
+	function initPolyFit(root) {
+		var canvas = $("[data-polyfit-canvas]", root);
+		var degree = $("[data-polyfit-degree]", root);
+		var degreeOut = $("[data-polyfit-degree-out]", root);
+		var trainOut = $("[data-polyfit-train]", root);
+		var testOut = $("[data-polyfit-test]", root);
+		if (!canvas) return;
+		var train = [], test = [];
+		for (var i = 0; i < 12; i++) {
+			var x = -1 + 2 * i / 11;
+			train.push({ x: x, y: Math.sin(2.2 * x) + 0.15 * x + Math.sin(i * 13.7) * 0.20 });
+		}
+		for (var j = 0; j < 40; j++) {
+			var xt = -1 + 2 * j / 39;
+			test.push({ x: xt, y: Math.sin(2.2 * xt) + 0.15 * xt + Math.sin(j * 7.3 + 2) * 0.05 });
+		}
+		function draw(ctx, W, H) {
+			var c = colors();
+			var d = parseInt(degree && degree.value, 10) || 1;
+			if (degreeOut) degreeOut.textContent = d;
+			var coef = polyFit(train.map(function (p) { return p.x; }), train.map(function (p) { return p.y; }), d);
+			var pad = 28, xmin = -1.05, xmax = 1.05, ymin = -1.7, ymax = 1.7;
+			function px(x) { return pad + (x - xmin) / (xmax - xmin) * (W - pad * 2); }
+			function py(y) { return H - pad - (y - ymin) / (ymax - ymin) * (H - pad * 2); }
+			ctx.clearRect(0, 0, W, H);
+			ctx.strokeStyle = c.lineStrong;
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(px(xmin), py(0)); ctx.lineTo(px(xmax), py(0));
+			ctx.moveTo(px(0), py(ymin)); ctx.lineTo(px(0), py(ymax));
+			ctx.stroke();
+			ctx.strokeStyle = c.gold;
+			ctx.lineWidth = 2.5;
+			ctx.beginPath();
+			for (var s = 0; s <= 200; s++) {
+				var xv = xmin + (xmax - xmin) * s / 200;
+				var yv = clamp(evalPoly(coef, xv), ymin, ymax);
+				if (s) ctx.lineTo(px(xv), py(yv)); else ctx.moveTo(px(xv), py(yv));
+			}
+			ctx.stroke();
+			test.forEach(function (p) {
+				ctx.beginPath();
+				ctx.arc(px(p.x), py(p.y), 2.3, 0, Math.PI * 2);
+				ctx.fillStyle = c.sky;
+				ctx.globalAlpha = 0.65;
+				ctx.fill();
+				ctx.globalAlpha = 1;
+			});
+			train.forEach(function (p) {
+				ctx.beginPath();
+				ctx.arc(px(p.x), py(p.y), 4.2, 0, Math.PI * 2);
+				ctx.fillStyle = c.green;
+				ctx.fill();
+				ctx.strokeStyle = c.card;
+				ctx.lineWidth = 1.4;
+				ctx.stroke();
+			});
+			var tr = train.reduce(function (a, p) { var e = evalPoly(coef, p.x) - p.y; return a + e * e; }, 0) / train.length;
+			var te = test.reduce(function (a, p) { var e = evalPoly(coef, p.x) - p.y; return a + e * e; }, 0) / test.length;
+			if (trainOut) trainOut.textContent = tr.toFixed(3);
+			if (testOut) testOut.textContent = te.toFixed(3);
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		if (degree) degree.addEventListener("input", function () { api.redraw(); });
+		api.redraw();
+	}
+
+	/* ── activation ─────────────────────────────────────────── */
+
+	function erf(x) {
+		var sign = x < 0 ? -1 : 1;
+		x = Math.abs(x);
+		var t = 1 / (1 + 0.3275911 * x);
+		var y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+		return sign * y;
+	}
+	function initActivation(root) {
+		var canvas = $("[data-activation-canvas]", root);
+		var chips = $$("[data-activation]", root);
+		var name = $("[data-activation-name]", root);
+		var range = $("[data-activation-range]", root);
+		var shape = $("[data-activation-shape]", root);
+		if (!canvas) return;
+		var fns = {
+			relu: { fn: function (z) { return Math.max(0, z); }, ymin: -0.6, ymax: 4.2, range: "0 … ∞", shape: "not injective" },
+			tanh: { fn: Math.tanh, ymin: -1.2, ymax: 1.2, range: "−1 … 1", shape: "strictly increasing" },
+			sigmoid: { fn: function (z) { return 1 / (1 + Math.exp(-z)); }, ymin: -0.15, ymax: 1.15, range: "0 … 1", shape: "strictly increasing" },
+			gelu: { fn: function (z) { return 0.5 * z * (1 + erf(z / Math.SQRT2)); }, ymin: -0.6, ymax: 4.2, range: "≈ −0.17 … ∞", shape: "not monotonic" }
+		};
+		var current = "relu";
+		function draw(ctx, W, H) {
+			var c = colors();
+			var spec = fns[current];
+			var pad = 28, xmin = -4, xmax = 4;
+			function px(x) { return pad + (x - xmin) / (xmax - xmin) * (W - pad * 2); }
+			function py(y) { return H - pad - (y - spec.ymin) / (spec.ymax - spec.ymin) * (H - pad * 2); }
+			ctx.clearRect(0, 0, W, H);
+			ctx.strokeStyle = c.lineStrong;
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.moveTo(px(xmin), py(0)); ctx.lineTo(px(xmax), py(0));
+			ctx.moveTo(px(0), py(spec.ymin)); ctx.lineTo(px(0), py(spec.ymax));
+			ctx.stroke();
+			ctx.strokeStyle = c.green;
+			ctx.lineWidth = 3;
+			ctx.beginPath();
+			for (var i = 0; i <= 160; i++) {
+				var x = xmin + (xmax - xmin) * i / 160;
+				var y = spec.fn(x);
+				if (i) ctx.lineTo(px(x), py(y)); else ctx.moveTo(px(x), py(y));
+			}
+			ctx.stroke();
+			ctx.fillStyle = c.faint;
+			ctx.font = "11px Barlow, system-ui, sans-serif";
+			ctx.fillText("z", W - 18, py(0) - 8);
+			ctx.fillText("f(z)", px(0) + 8, 16);
+			if (name) name.textContent = current.toUpperCase();
+			if (range) range.textContent = spec.range;
+			if (shape) shape.textContent = spec.shape;
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		chips.forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				chips.forEach(function (x) { x.classList.remove("is-on"); });
+				chip.classList.add("is-on");
+				current = chip.getAttribute("data-activation");
+				api.redraw();
+			});
+		});
+		api.redraw();
+	}
+
+	/* ── data mix ───────────────────────────────────────────── */
+
+	function initDataMix(root) {
+		var bar = $("[data-mix-bar]", root);
+		var legend = $("[data-mix-legend]", root);
+		var note = $("[data-mix-note]", root);
+		if (!bar || !legend) return;
+		var data = [
+			{ name: "Web", pct: 56, c: "var(--tm-sky)", note: "Common Crawl and similar: huge, noisy, heavily filtered." },
+			{ name: "Code", pct: 14, c: "var(--tm-green)", note: "GitHub and similar: crucial for programming and structured reasoning." },
+			{ name: "Books", pct: 9, c: "var(--tm-gold)", note: "Long-form text: structure, argument, and narrative." },
+			{ name: "Papers", pct: 5, c: "var(--tm-coral)", note: "Scientific writing: precise claims and references." },
+			{ name: "Reference", pct: 3, c: "var(--tm-petrol)", note: "Wikipedia and dictionaries: compact factual prose." },
+			{ name: "Math", pct: 4, c: "var(--tm-lime)", note: "Synthetic and curated problems: symbolic reasoning." },
+			{ name: "Other", pct: 9, c: "var(--tm-faint)", note: "Forums, subtitles, legal text, and other sources." }
+		];
+		bar.innerHTML = data.map(function (d, i) {
+			return '<span class="mix-seg" data-mix-i="' + i + '" style="flex:' + d.pct + ';background:' + d.c + '" title="' + escapeHtml(d.name + " · " + d.pct + "%") + '"></span>';
+		}).join("");
+		legend.innerHTML = data.map(function (d, i) {
+			return '<button type="button" data-mix-i="' + i + '"><i style="background:' + d.c + '"></i>' + escapeHtml(d.name) + ' · ' + d.pct + '%</button>';
+		}).join("");
+		var chosen = -1;
+		function select(i) {
+			chosen = chosen === i ? -1 : i;
+			$$(".mix-seg", bar).forEach(function (seg, j) { seg.classList.toggle("is-dim", chosen !== -1 && j !== chosen); });
+			$$("button", legend).forEach(function (btn, j) { btn.classList.toggle("is-on", j === chosen); });
+			if (note) note.textContent = chosen === -1 ? "Hover or tap a source to see what it contributes. The mix is approximate; labs differ." : data[chosen].note;
+		}
+		$$("[data-mix-i]", bar).concat($$("[data-mix-i]", legend)).forEach(function (el) {
+			el.addEventListener("click", function () { select(parseInt(el.getAttribute("data-mix-i"), 10)); });
+		});
+		select(-1);
+	}
+
+	/* ── convolution ────────────────────────────────────────── */
+
+	function initConvolution(root) {
+		var canvas = $("[data-conv-canvas]", root);
+		var chips = $$("[data-kernel]", root);
+		if (!canvas) return;
+		var size = 14;
+		var input = [];
+		for (var y = 0; y < size; y++) {
+			input.push([]);
+			for (var x = 0; x < size; x++) {
+				var dx = x - (size - 1) / 2, dy = y - (size - 1) / 2;
+				input[y].push(dx * dx + dy * dy < 18 ? 1 : 0);
+			}
+		}
+		var kernels = {
+			edge: [[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]],
+			blur: [[1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9], [1 / 9, 1 / 9, 1 / 9]],
+			sharpen: [[0, -1, 0], [-1, 5, -1], [0, -1, 0]]
+		};
+		var current = "edge";
+		function conv(kernel) {
+			var out = [];
+			for (var y = 1; y < size - 1; y++) {
+				out.push([]);
+				for (var x = 1; x < size - 1; x++) {
+					var s = 0;
+					for (var ky = -1; ky <= 1; ky++) for (var kx = -1; kx <= 1; kx++) {
+						s += input[y + ky][x + kx] * kernel[ky + 1][kx + 1];
+					}
+					out[y - 1].push(s);
+				}
+			}
+			return out;
+		}
+		function draw(ctx, W, H) {
+			var c = colors();
+			var out = conv(kernels[current]);
+			var pad = 18, gap = 36;
+			var cell = Math.min((W - pad * 2 - gap) / (size + size - 2), (H - pad * 2 - 26) / size);
+			var ox = pad, oy = pad + 18;
+			ctx.clearRect(0, 0, W, H);
+			ctx.font = "600 11px Barlow, system-ui, sans-serif";
+			ctx.fillStyle = c.muted;
+			ctx.fillText("input", ox, pad + 4);
+			ctx.fillText("feature map · " + current, ox + size * cell + gap, pad + 4);
+			for (var y = 0; y < size; y++) {
+				for (var x = 0; x < size; x++) {
+					ctx.fillStyle = input[y][x] ? c.petrol : c.paper2;
+					ctx.fillRect(ox + x * cell, oy + y * cell, cell - 1, cell - 1);
+				}
+			}
+			var flat = [];
+			out.forEach(function (row) { row.forEach(function (v) { flat.push(v); }); });
+			var mn = Math.min.apply(null, flat), mx = Math.max.apply(null, flat);
+			var span = mx - mn || 1;
+			var ox2 = ox + size * cell + gap;
+			for (var yy = 0; yy < out.length; yy++) {
+				for (var xx = 0; xx < out[yy].length; xx++) {
+					var t = Math.abs(out[yy][xx] - mn) / span;
+					var col = mix(hexToRgb(c.paper2), hexToRgb(c.green), t);
+					ctx.fillStyle = rgb(col);
+					ctx.fillRect(ox2 + xx * cell, oy + yy * cell, cell - 1, cell - 1);
+				}
+			}
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		chips.forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				chips.forEach(function (x) { x.classList.remove("is-on"); });
+				chip.classList.add("is-on");
+				current = chip.getAttribute("data-kernel");
+				api.redraw();
+			});
+		});
+		api.redraw();
+	}
+
+	/* ── vram calculator ────────────────────────────────────── */
+
+	function initVram(root) {
+		var model = $("[data-vram-model]", root);
+		var bits = $("[data-vram-bits]", root);
+		var device = $("[data-vram-device]", root);
+		var mem = $("[data-vram-mem]", root);
+		var fit = $("[data-vram-fit]", root);
+		var note = $("[data-vram-note]", root);
+		if (!model || !bits || !device) return;
+		function render() {
+			var p = parseFloat(model.value) || 7;
+			var b = parseFloat(bits.value) || 4;
+			var cap = parseFloat(device.value) || 16;
+			var gb = p * b / 8 * 1.2;
+			if (mem) mem.textContent = gb.toFixed(1) + " GB";
+			var ok = gb <= cap * 0.85 ? "fits comfortably" : (gb <= cap ? "tight fit" : "does not fit");
+			if (fit) {
+				fit.textContent = ok;
+				fit.className = gb <= cap ? "fits-yes" : "fits-no";
+			}
+			if (note) note.textContent = "Weights plus rough runtime overhead. Context length and KV cache can add several more gigabytes.";
+		}
+		[model, bits, device].forEach(function (el) { el.addEventListener("change", render); });
+		render();
+	}
+
+	/* ── context budget ─────────────────────────────────────── */
+
+	function initBudget(root) {
+		var range = $("[data-budget-window]", root);
+		var out = $("[data-budget-window-out]", root);
+		var rows = $$("[data-budget-block]", root);
+		var free = $("[data-budget-free]", root);
+		if (!range || !rows.length) return;
+		function render() {
+			var win = parseInt(range.value, 10) * 1000;
+			if (out) out.textContent = (win / 1000) + "k tokens";
+			var used = 0;
+			rows.forEach(function (row) {
+				var tokens = parseInt(row.getAttribute("data-tokens"), 10) || 0;
+				var required = row.getAttribute("data-required") === "1";
+				var fits = required || used + tokens <= win;
+				if (fits) used += tokens;
+				row.classList.toggle("is-dropped", !fits);
+				var fill = $(".budget-fill", row);
+				var track = $(".budget-track", row);
+				if (fill && track) fill.style.width = Math.min(100, tokens / win * 100) + "%";
+			});
+			if (free) free.textContent = Math.max(0, win - used).toLocaleString() + " tokens free";
+		}
+		range.addEventListener("input", render);
+		render();
+	}
+
+	/* ── retrieval ──────────────────────────────────────────── */
+
+	function initRetrieval(root) {
+		var list = $("[data-retrieval-list]", root);
+		var run = $("[data-retrieval-run]", root);
+		var queryChips = $$("[data-retrieval-query]", root);
+		var top = $("[data-retrieval-top]", root);
+		var query = "Eiffel Tower height";
+		if (!list) return;
+		var chunks = [
+			{ title: "Eiffel Tower", text: "The Eiffel Tower in Paris is 330 metres tall and was completed in 1889 for the World's Fair." },
+			{ title: "Paris tourism", text: "Paris attracts millions of visitors; the tower is one of the most visited monuments in the world." },
+			{ title: "RAG pipeline", text: "Retrieval-augmented generation chunks documents, embeds them, retrieves passages, and puts them in the prompt." },
+			{ title: "Vector databases", text: "Vector databases store embeddings and support approximate nearest-neighbour search over them." },
+			{ title: "Prompt engineering", text: "A clear role, specific constraints, and examples reduce ambiguity in a language-model prompt." }
+		];
+		function score(text, q) {
+			var words = q.toLowerCase().split(/[^a-z0-9]+/).filter(function (w) { return w.length > 2; });
+			var lower = text.toLowerCase();
+			return words.reduce(function (s, w) { return s + (lower.indexOf(w) !== -1 ? 1 : 0); }, 0);
+		}
+		function render() {
+			var ranked = chunks.map(function (c) {
+				return { c: c, s: score(c.title + " " + c.text, query) };
+			}).sort(function (a, b) { return b.s - a.s; });
+			list.innerHTML = ranked.slice(0, 4).map(function (r, i) {
+				return '<div class="retrieval-item' + (i === 0 ? " is-hit" : "") + '">' +
+					'<div><b>' + escapeHtml(r.c.title) + '</b><p>' + escapeHtml(r.c.text) + '</p></div>' +
+					'<span class="retrieval-score">' + r.s + ' hits</span></div>';
+			}).join("");
+			if (top) top.textContent = ranked[0].c.title;
+		}
+		queryChips.forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				queryChips.forEach(function (x) { x.classList.remove("is-on"); });
+				chip.classList.add("is-on");
+				query = chip.getAttribute("data-retrieval-query");
+				render();
+			});
+		});
+		if (run) run.addEventListener("click", render);
+		render();
+	}
+
+	/* ── prompt entropy ─────────────────────────────────────── */
+
+	function initEntropy(root) {
+		var chips = $$("[data-entropy]", root);
+		var bar = $("[data-entropy-bar]", root);
+		var value = $("[data-entropy-value]", root);
+		var preview = $("[data-entropy-prompt]", root);
+		if (!chips.length || !bar) return;
+		var labels = { role: "You are a patient tutor.", format: "Answer in three bullet points.", examples: "Example: ...", constraints: "Do not invent sources." };
+		function render() {
+			var on = chips.filter(function (c) { return c.classList.contains("is-on"); }).map(function (c) { return c.getAttribute("data-entropy"); });
+			var left = Math.max(8, 100 - on.length * 22);
+			bar.style.width = left + "%";
+			if (value) value.textContent = left + "%";
+			if (preview) preview.textContent = on.length ? on.map(function (k) { return labels[k]; }).join(" ") : "Tell me about AI.";
+		}
+		chips.forEach(function (chip) {
+			chip.addEventListener("click", function () {
+				chip.classList.toggle("is-on");
+				render();
+			});
+		});
+		render();
+	}
+
+	/* ── chain of thought ───────────────────────────────────── */
+
+	function initCot(root) {
+		var chips = $$("[data-cot-mode]", root);
+		var steps = $$("[data-cot-step]", root);
+		var answer = $("[data-cot-answer]", root);
+		if (!chips.length || !steps.length) return;
+		function render() {
+			var stepMode = chips[1] && chips[1].classList.contains("is-on");
+			steps.forEach(function (step, i) {
+				step.classList.toggle("is-on", stepMode ? i <= 3 : false);
+			});
+			if (answer) answer.textContent = stepMode ? "Answer: $0.05." : "Answer: $0.05.";
+		}
+		chips.forEach(function (chip, i) {
+			chip.addEventListener("click", function () {
+				chips.forEach(function (x) { x.classList.remove("is-on"); });
+				chip.classList.add("is-on");
+				render();
+			});
+		});
+		render();
+	}
+
+	/* ── timeline / stepper ─────────────────────────────────── */
+
+	function initTimeline(root) {
+		var track = $("[data-timeline-track]", root);
+		var panel = $("[data-timeline-panel]", root);
+		var prev = $("[data-timeline-prev]", root);
+		var next = $("[data-timeline-next]", root);
+		if (!track || !panel) return;
+		var nodes = $$(".tl-node", track);
+		function select(i) {
+			nodes.forEach(function (n, j) { n.classList.toggle("is-active", i === j); });
+			var n = nodes[i];
+			if (!n) return;
+			panel.innerHTML = '<div class="tl-era">' + escapeHtml(n.getAttribute("data-meta") || "") + '</div>' +
+				'<h3>' + escapeHtml(n.getAttribute("data-title") || "") + '</h3>' +
+				'<p>' + escapeHtml(n.getAttribute("data-body") || "") + '</p>';
+		}
+		nodes.forEach(function (n, i) {
+			n.addEventListener("click", function () { select(i); n.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" }); });
+		});
+		if (prev) prev.addEventListener("click", function () { track.scrollBy({ left: -160, behavior: "smooth" }); });
+		if (next) next.addEventListener("click", function () { track.scrollBy({ left: 160, behavior: "smooth" }); });
+		select(0);
+	}
+
+	/* ── contamination ──────────────────────────────────────── */
+
+	function initContamination(root) {
+		var range = $("[data-contam]", root);
+		var out = $("[data-contam-out]", root);
+		var score = $("[data-contam-score]", root);
+		var scoreVal = $("[data-contam-score-val]", root);
+		var skill = $("[data-contam-skill]", root);
+		var skillVal = $("[data-contam-skill-val]", root);
+		if (!range || !score || !skill) return;
+		function render() {
+			var t = parseInt(range.value, 10) / 100;
+			var trueSkill = 55;
+			var reported = Math.min(100, trueSkill + t * 45);
+			if (out) out.textContent = Math.round(t * 100) + "%";
+			score.style.width = reported + "%";
+			skill.style.width = trueSkill + "%";
+			if (scoreVal) scoreVal.textContent = Math.round(reported) + "%";
+			if (skillVal) skillVal.textContent = trueSkill + "%";
+		}
+		range.addEventListener("input", render);
+		render();
+	}
+
+	/* ── position heatmap ───────────────────────────────────── */
+
+	function initPosition(root) {
+		var canvas = $("[data-position-canvas]", root);
+		var range = $("[data-position-row]", root);
+		var out = $("[data-position-row-out]", root);
+		if (!canvas) return;
+		var P = 32, D = 32;
+		function value(pos, dim) {
+			var pair = Math.floor(dim / 2);
+			var angle = pos / Math.pow(10000, (2 * pair) / D);
+			return dim % 2 === 0 ? Math.sin(angle) : Math.cos(angle);
+		}
+		function draw(ctx, W, H) {
+			var c = colors();
+			var row = parseInt(range && range.value, 10) || 0;
+			if (out) out.textContent = "position " + row;
+			var pad = 22, cell = Math.min((W - pad * 2) / D, (H - pad * 2) / P);
+			var ox = (W - cell * D) / 2, oy = (H - cell * P) / 2;
+			ctx.clearRect(0, 0, W, H);
+			var cold = hexToRgb(c.sky), zero = hexToRgb(c.paper2), hot = hexToRgb(c.green);
+			for (var y = 0; y < P; y++) {
+				for (var x = 0; x < D; x++) {
+					var v = value(y, x);
+					var t = Math.abs(v);
+					var col = v >= 0 ? mix(zero, hot, t) : mix(zero, cold, t);
+					ctx.fillStyle = rgb(col);
+					ctx.fillRect(ox + x * cell, oy + y * cell, cell - 0.5, cell - 0.5);
+				}
+			}
+			ctx.strokeStyle = c.petrol;
+			ctx.lineWidth = 2;
+			ctx.strokeRect(ox, oy + row * cell, cell * D, cell);
+			ctx.fillStyle = c.muted;
+			ctx.font = "11px Barlow, system-ui, sans-serif";
+			ctx.fillText("dimension →", ox, H - 4);
+			ctx.save();
+			ctx.translate(10, oy + cell * P / 2);
+			ctx.rotate(-Math.PI / 2);
+			ctx.fillText("position →", 0, 0);
+			ctx.restore();
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		if (range) range.addEventListener("input", function () { api.redraw(); });
+		api.redraw();
+	}
+
+	/* ── waveform ───────────────────────────────────────────── */
+
+	function initWaveform(root) {
+		var canvas = $("[data-wave-canvas]", root);
+		var range = $("[data-wave-tokens]", root);
+		var out = $("[data-wave-tokens-out]", root);
+		if (!canvas) return;
+		function draw(ctx, W, H) {
+			var c = colors();
+			var n = parseInt(range && range.value, 10) || 32;
+			if (out) out.textContent = n + " tokens";
+			ctx.clearRect(0, 0, W, H);
+			var mid = H * 0.34, amp = H * 0.23;
+			ctx.strokeStyle = c.petrol;
+			ctx.lineWidth = 2;
+			ctx.beginPath();
+			for (var i = 0; i <= 300; i++) {
+				var t = i / 300;
+				var y = Math.sin(t * 38) * 0.55 + Math.sin(t * 91) * 0.25 + Math.sin(t * 13) * 0.2;
+				var px = 16 + t * (W - 32);
+				ctx.lineTo(px, mid - y * amp);
+			}
+			ctx.stroke();
+			var y0 = H * 0.66, h = 22;
+			var gap = 3, w = (W - 32 - gap * (n - 1)) / n;
+			var cols = [c.green, c.sky, c.gold, c.coral, c.lime, c.petrol];
+			for (var k = 0; k < n; k++) {
+				ctx.fillStyle = cols[k % cols.length];
+				ctx.fillRect(16 + k * (w + gap), y0, Math.max(2, w), h);
+			}
+			ctx.fillStyle = c.muted;
+			ctx.font = "11px Barlow, system-ui, sans-serif";
+			ctx.fillText("waveform", 16, 16);
+			ctx.fillText("tokens", 16, y0 - 8);
+		}
+		var api = canvasDemo(canvas, draw);
+		if (!api) return;
+		if (range) range.addEventListener("input", function () { api.redraw(); });
+		api.redraw();
+	}
+
+	/* ── myth cards ─────────────────────────────────────────── */
+
+	function initMyths(root) {
+		$$("[data-myth-toggle]", root).forEach(function (btn) {
+			btn.addEventListener("click", function () {
+				var card = btn.closest("[data-myth]");
+				if (!card) return;
+				var open = card.classList.toggle("is-open");
+				var more = $(".myth-more", card);
+				if (more) more.hidden = !open;
+				btn.textContent = open ? "Hide the better frame" : "Show the better frame";
+			});
+		});
+	}
+
+	/* ── boot ───────────────────────────────────────────────── */
+
+	function boot() {
+		$$("[data-demo]").forEach(function (root) {
+			var type = root.getAttribute("data-demo");
+			if (type === "sampling") initSampling(root);
+			else if (type === "linefit") initLineFit(root);
+			else if (type === "dream") initDream(root);
+			else if (type === "polyfit") initPolyFit(root);
+			else if (type === "activation") initActivation(root);
+			else if (type === "datamix") initDataMix(root);
+			else if (type === "convolution") initConvolution(root);
+			else if (type === "vram") initVram(root);
+			else if (type === "budget") initBudget(root);
+			else if (type === "retrieval") initRetrieval(root);
+			else if (type === "entropy") initEntropy(root);
+			else if (type === "cot") initCot(root);
+			else if (type === "timeline") initTimeline(root);
+			else if (type === "contamination") initContamination(root);
+			else if (type === "position") initPosition(root);
+			else if (type === "waveform") initWaveform(root);
+			else if (type === "myths") initMyths(root);
+		});
+	}
+	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+	else boot();
+})();

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Benchmarks, contamination, judge bias, and how to measure an LLM without fooling yourself.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>Measuring What It Can Do — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="evaluation" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>A score is <em>not understanding.</em></h1>
+					<p class="hero-deck">Benchmarks are useful, but they shape what models optimize for. The hardest part of evaluation is knowing whether you measured the thing you care about.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> Four families of tests</div>
+						<h2 class="section-title">Different tests, different blind spots.</h2>
+						<div class="prose">
+							<p>Multiple-choice benchmarks measure recognition. Exact-match benchmarks check a verifiable answer. LLM-as-judge benchmarks score open-ended text. Human preference tests ask people which answer they prefer.</p>
+							<p>Each family has failure modes. Multiple choice can be gamed by guessing patterns; exact match can miss a correct answer in a different form; judges inherit biases; human ratings are noisy and expensive.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> Contamination and the real task</div>
+						<h2 class="section-title">Measure your problem.</h2>
+						<div class="prose">
+							<p>Benchmark contamination is the central problem: if the test data appeared in training, a high score may measure memorization rather than capability. Deduplication helps, but it is hard to prove a negative.</p>
+							<p>For your own use case, build a small evaluation that reflects the real task. Define a rubric, collect examples, measure agreement, and check whether the difference you see is larger than the noise. A general benchmark is a starting point, not a verdict.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Benchmark types</b><span>Recognition, exact match, judged quality, and human preference measure different things.</span></div>
+							<div class="keypoint"><b>Contamination</b><span>Training on the test set inflates scores.</span></div>
+							<div class="keypoint"><b>Judge bias</b><span>An LLM judge can prefer style over correctness.</span></div>
+							<div class="keypoint"><b>Your task</b><span>The most useful evaluation is the one built for your problem.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="contamination">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">A score can be contaminated <span>· demo</span></p>
+								<p class="demo-sub">Slide the contamination up. The reported score rises while the true skill stays the same — the benchmark starts measuring memory.</p>
+							</div>
+							<span class="demo-badge">illustrative</span>
+						</div>
+						<div class="demo-body">
+							<div class="dist-bars">
+								<div class="dist-row" style="grid-template-columns:92px minmax(0,1fr)">
+									<span class="dist-label">Reported</span>
+									<span class="dist-track"><span class="dist-fill" data-contam-score style="background:var(--tm-coral)"></span></span>
+								</div>
+								<div class="dist-row" style="grid-template-columns:92px minmax(0,1fr)">
+									<span class="dist-label">True skill</span>
+									<span class="dist-track"><span class="dist-fill" data-contam-skill style="background:var(--tm-green)"></span></span>
+								</div>
+							</div>
+							<div class="demo-controls">
+								<label>Contamination <input type="range" data-contam min="0" max="100" step="1" value="0"><output data-contam-out>0%</output></label>
+							</div>
+							<div class="demo-readout">
+								<div><b>Lesson</b><span>check the data</span></div>
+								<div><b>Reported</b><span data-contam-score-val>—</span></div>
+								<div><b>True skill</b><span data-contam-skill-val>—</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>A benchmark is a proxy. If the test data leaked into training, a high score may measure memory rather than capability.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">Measure the task you care about, not just the leaderboard.</p>
+							<p class="aha-sub">A benchmark is a proxy; it becomes dangerous when you forget what it is a proxy for.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../evaluation.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../evaluation.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

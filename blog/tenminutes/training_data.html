@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="The text diet behind a frontier model: web, code, books, papers, filtering, deduplication, and contamination.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>What a Model Reads — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="training_data" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>A model is <em>what it reads.</em></h1>
+					<p class="hero-deck">Architecture gets the headlines; data decides much of the behaviour. The mixture, quality, and cleanliness of the training corpus are half the secret.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> The scale and the mix</div>
+						<h2 class="section-title">Trillions of tokens.</h2>
+						<div class="prose">
+							<p>Frontier models are trained on trillions of tokens. The bulk comes from the web, with code, books, scientific papers, and reference text mixed in. Each source brings a different style and a different kind of knowledge.</p>
+							<p>The mixture is a design choice. Too much web text and the model learns noise and spam; too little code and it cannot program; too little long-form text and it struggles with structure.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> Cleaning is part of the model</div>
+						<h2 class="section-title">Quality, dedupe, decontamination.</h2>
+						<div class="prose">
+							<p>Raw web text is messy. Pipelines filter for quality, remove duplicates, and try to remove test sets that would contaminate later benchmarks. Deduplication matters because repeated text can make a model memorize instead of generalize.</p>
+							<p>Data recipes are closely guarded. The same architecture trained on a better corpus can outperform a larger model trained on a worse one. When a model behaves strangely, the training data is often part of the explanation.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Scale</b><span>Modern corpora are measured in trillions of tokens.</span></div>
+							<div class="keypoint"><b>Mixture</b><span>Web, code, books, papers, and reference text each add something different.</span></div>
+							<div class="keypoint"><b>Quality filtering</b><span>Cleaning removes spam, boilerplate, and low-value text.</span></div>
+							<div class="keypoint"><b>Contamination</b><span>Test data leaking into training makes benchmarks less trustworthy.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="datamix">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">The training mix <span>· demo</span></p>
+								<p class="demo-sub">A frontier corpus is a designed mixture, not a random dump. Tap a source to see what it contributes.</p>
+							</div>
+							<span class="demo-badge">approximate</span>
+						</div>
+						<div class="demo-body">
+							<div class="mix-bar" data-mix-bar></div>
+							<div class="mix-legend" data-mix-legend></div>
+							<p class="mix-note" data-mix-note>Hover or tap a source to see what it contributes. The mix is approximate; labs differ.</p>
+							<div class="demo-readout">
+								<div><b>Scale</b><span>10–15T tokens</span></div>
+								<div><b>Sources</b><span>web · code · books</span></div>
+								<div><b>Key step</b><span>filtering</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>The same architecture trained on a better mixture can beat a larger model trained on a worse one. Data is part of the model.</span></div>
+						<div class="demo-foot">Percentages are illustrative and vary by lab. The original lesson has the pipeline details.</div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">A model is a compressed reflection of its data.</p>
+							<p class="aha-sub">Architecture sets the shape; data fills it with the world.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../training_data.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../training_data.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

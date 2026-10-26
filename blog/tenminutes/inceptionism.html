@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Freeze the weights, tune the image, and watch the network's learned features appear in the noise.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>What the Network Dreams — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="inceptionism" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>Turn the network <em>around.</em></h1>
+					<p class="hero-deck">Normally we adjust the weights to fit an image. Inceptionism flips the direction: freeze the weights and adjust the image until it becomes what the network recognizes.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
+						<h2 class="section-title">The reverse direction.</h2>
+						<div class="prose">
+							<p>A classifier is trained to map an image to a label. If you freeze its weights and run gradient ascent on a class score, the pixels change instead of the parameters. Start from noise, ask for 'banana', and the noise slowly organizes into banana-like shapes.</p>
+							<p>The result looks surreal because the network is not drawing a photograph. It is projecting its learned features back into pixel space. Low layers produce edges and strokes; higher layers assemble whole objects.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> What the dreams reveal</div>
+						<h2 class="section-title">A window into learned features.</h2>
+						<div class="prose">
+							<p>Inceptionism is a simple interpretability tool. It shows that the network's knowledge is distributed across layers and can be visualized by optimizing the input. It also explains pareidolia: like a child seeing animals in clouds, the network finds its templates in noise.</p>
+							<p>The images are not evidence that the model is conscious or dreaming in the human sense. They are a picture of what the weights have learned to respond to.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Freeze the weights</b><span>The parameters stay fixed; the input becomes the variable.</span></div>
+							<div class="keypoint"><b>Gradient ascent</b><span>Optimize the image toward a chosen class score.</span></div>
+							<div class="keypoint"><b>Layer hierarchy</b><span>Early layers see edges; later layers see objects.</span></div>
+							<div class="keypoint"><b>Interpretability</b><span>The dreams are a window into learned features.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="dream">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Turn the network around <span>· demo</span></p>
+								<p class="demo-sub">Choose a class and turn up the strength. The pixels start as noise; the network's learned template slowly emerges.</p>
+							</div>
+							<span class="demo-badge">illustrative</span>
+						</div>
+						<div class="demo-body">
+							<canvas class="demo-canvas demo-canvas--md" data-dream-canvas aria-label="Noise with a learned class template emerging"></canvas>
+							<div class="chip-row" style="margin-top:12px">
+								<button class="chip is-on" type="button" data-dream-class="banana">banana</button>
+								<button class="chip" type="button" data-dream-class="dumbbell">dumbbell</button>
+								<button class="chip" type="button" data-dream-class="tower">tower</button>
+							</div>
+							<div class="demo-controls">
+								<label>Strength <input type="range" data-dream-strength min="0" max="1" step="0.01" value="0.6"><output data-dream-strength-out>0.60</output></label>
+							</div>
+							<div class="demo-readout">
+								<div><b>Class</b><span data-dream-label>class: banana</span></div>
+								<div><b>Input</b><span>noise</span></div>
+								<div><b>Direction</b><span>gradient ascent</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Inceptionism freezes the weights and optimizes the image. What appears is the network's learned template, not a photograph.</span></div>
+						<div class="demo-foot">A stylized illustration of the idea, not a real network run. The original lesson has the actual Inceptionism images and method.</div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">A network's knowledge can be turned into an image.</p>
+							<p class="aha-sub">The dream is not imagination; it is the network's learned templates projected onto noise.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../inceptionism.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../inceptionism.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

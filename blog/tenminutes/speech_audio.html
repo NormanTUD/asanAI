@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Waveforms, spectrograms, neural codecs, and how audio becomes tokens a transformer can read.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>Sound, Music, and Video — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="speech_audio" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>Sound becomes <em>tokens.</em></h1>
+					<p class="hero-deck">A waveform is too dense to feed directly into a language model. Audio systems compress it into representations that a transformer can treat like a sequence.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> Three ways to represent sound</div>
+						<h2 class="section-title">From waveform to codec.</h2>
+						<div class="prose">
+							<p>The raw waveform is a long list of numbers: tens of thousands of samples per second. A spectrogram turns it into a picture of frequency over time. A neural audio codec compresses it into discrete tokens; self-supervised models learn representations without labels.</p>
+							<p>Modern systems often use codec tokens because they behave like a vocabulary. Once sound is a sequence of tokens, the same transformer machinery that handles text can listen, transcribe, and generate.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> Listening and speaking</div>
+						<h2 class="section-title">The same machinery, a different front end.</h2>
+						<div class="prose">
+							<p>Speech recognition maps audio tokens to text tokens. Text-to-speech goes the other way. Music generation predicts audio tokens with a model that has learned long-range structure.</p>
+							<p>The hard part is not only the architecture. Audio is noisy, speakers vary, and timing matters. The model needs a representation that preserves the information people actually use.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Waveform</b><span>Audio is a dense one-dimensional signal.</span></div>
+							<div class="keypoint"><b>Spectrogram</b><span>Frequency over time is a more compact representation.</span></div>
+							<div class="keypoint"><b>Codec</b><span>Neural codecs turn audio into discrete tokens.</span></div>
+							<div class="keypoint"><b>Sequence</b><span>Once audio is tokens, transformers can model it.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="waveform">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">From waveform to tokens <span>· demo</span></p>
+								<p class="demo-sub">A raw waveform is too dense to feed directly. Audio systems compress it into pieces; the slider shows the trade-off.</p>
+							</div>
+							<span class="demo-badge">illustrative</span>
+						</div>
+						<div class="demo-body">
+							<canvas class="demo-canvas demo-canvas--md" data-wave-canvas aria-label="A waveform and its token blocks"></canvas>
+							<div class="demo-controls">
+								<label>Tokens <input type="range" data-wave-tokens min="8" max="64" step="8" value="32"><output data-wave-tokens-out>32 tokens</output></label>
+							</div>
+							<div class="demo-readout">
+								<div><b>Input</b><span>waveform</span></div>
+								<div><b>Compression</b><span>codec</span></div>
+								<div><b>Output</b><span>tokens</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Once sound is a sequence of tokens, the same transformer machinery can listen, transcribe, and generate.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">The same trick works for sound: turn it into tokens, then predict.</p>
+							<p class="aha-sub">Audio models are language models with a different front end.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../speech_audio.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../speech_audio.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

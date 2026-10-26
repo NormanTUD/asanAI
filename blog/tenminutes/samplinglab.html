@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Temperature, top-k, top-p, and the decoding choices that turn a probability distribution into a voice.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>Choosing the Next Token — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="samplinglab" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>The distribution is not <em>the answer.</em></h1>
+					<p class="hero-deck">A language model ends with a probability for every token. Decoding is the rule that picks one. Change the rule and the same model sounds focused, repetitive, or wild.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> Temperature and greedy</div>
+						<h2 class="section-title">Sharp or flat.</h2>
+						<div class="prose">
+							<p>Temperature rescales the logits before softmax. Near zero, the most likely token dominates and decoding becomes greedy and deterministic. Above one, the distribution flattens and the model takes more risks.</p>
+							<p>Greedy decoding is not 'the truth'; it is just the highest-probability continuation. It can be repetitive and can miss a better sentence that starts with a less likely token.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> Filters and trade-offs</div>
+						<h2 class="section-title">No single best setting.</h2>
+						<div class="prose">
+							<p>Top-k keeps only the k most likely tokens. Top-p keeps the smallest set whose probabilities sum to p. Min-p uses a threshold relative to the top token. Repetition penalties discourage loops.</p>
+							<p>There is no single best setting. Code and facts often want low temperature; brainstorming wants more diversity. The right choice depends on the task, and every choice is a trade-off between coherence and surprise.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Distribution</b><span>The model outputs probabilities; decoding picks one token.</span></div>
+							<div class="keypoint"><b>Temperature</b><span>Low is focused, high is random.</span></div>
+							<div class="keypoint"><b>Top-p</b><span>Keep the smallest set of tokens that covers p probability.</span></div>
+							<div class="keypoint"><b>Trade-off</b><span>Coherence and creativity pull in different directions.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="sampling">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Decoding the next token <span>· demo</span></p>
+								<p class="demo-sub">The model gives a probability for every token. Temperature and top-p decide which candidates survive and how the choice is made.</p>
+							</div>
+							<span class="demo-badge">live</span>
+						</div>
+						<div class="demo-body">
+							<div class="dist-bars" data-sampling-bars></div>
+							<div class="demo-controls">
+								<label>Temperature <input type="range" data-sampling-temp min="0.1" max="2" step="0.05" value="0.8"><output data-sampling-temp-out>0.80</output></label>
+								<label>Top-p <input type="range" data-sampling-topp min="0.1" max="1" step="0.05" value="1"><output data-sampling-topp-out>1.00</output></label>
+							</div>
+							<div class="demo-readout">
+								<div><b>Likely choice</b><span data-sampling-choice>Paris</span></div>
+								<div><b>Surviving tokens</b><span data-sampling-count>5 / 5</span></div>
+								<div><b>Entropy</b><span data-sampling-entropy>—</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Decoding is a separate layer of choice. The model supplies a distribution; the decoder decides how adventurous to be.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">Generation is a sequence of choices, not a single answer.</p>
+							<p class="aha-sub">The model supplies the distribution; the decoder supplies the personality.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../samplinglab.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../samplinglab.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

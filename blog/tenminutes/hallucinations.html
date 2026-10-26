@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Why a next-token predictor can sound certain and still be wrong — and how to use it without trusting it blindly.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>When the Model Does Not Know — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="hallucinations" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>Plausible is <em>not the same as true.</em></h1>
+					<p class="hero-deck">A language model is a pattern completion engine, not a database. That is the source of its fluency and the source of its most dangerous failure.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
+						<h2 class="section-title">It completes patterns.</h2>
+						<div class="prose">
+							<p>The model does not look up facts in a table. It has learned, from a very large amount of text, which continuations usually follow which contexts. Ask for a medical study and it knows what a study title looks like; it can produce a convincing one that does not exist.</p>
+							<p>This is not lying in the human sense. The model has no intention to deceive and no internal fact-checker. It is doing the only thing it was trained to do: assigning probability to the next token.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> Why it sounds confident</div>
+						<h2 class="section-title">Confidence is not evidence.</h2>
+						<div class="prose">
+							<p>Confidence is a property of the text, not of the model's knowledge. A fluent answer with a plausible citation can be wrong in every detail. Temperature makes this worse: a higher temperature flattens the distribution and can push the model toward less likely, more inventive continuations.</p>
+							<p>Use the model as a draft, a tutor, or a search aid — not as an oracle. Verify names, numbers, quotes, and citations. Give it documents with retrieval, ask it to show its sources, and keep a human in the loop for anything that matters.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Pattern completion</b><span>The model predicts plausible text; it does not consult a truth database.</span></div>
+							<div class="keypoint"><b>Fluency</b><span>Confident tone is a property of the writing, not evidence of correctness.</span></div>
+							<div class="keypoint"><b>Temperature</b><span>More randomness can increase invention and error.</span></div>
+							<div class="keypoint"><b>Verification</b><span>Check claims and sources; use retrieval and tools for grounding.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="sampling">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">The distribution behind the sentence <span>· demo</span></p>
+								<p class="demo-sub">The model has just read “The capital of France is”. Change the temperature and the candidate filter; the bars show how the next-token probabilities move.</p>
+							</div>
+							<span class="demo-badge">live</span>
+						</div>
+						<div class="demo-body">
+							<div class="dist-bars" data-sampling-bars></div>
+							<div class="demo-controls">
+								<label>Temperature <input type="range" data-sampling-temp min="0.1" max="2" step="0.05" value="0.8"><output data-sampling-temp-out>0.80</output></label>
+								<label>Top-p <input type="range" data-sampling-topp min="0.1" max="1" step="0.05" value="1"><output data-sampling-topp-out>1.00</output></label>
+							</div>
+							<div class="demo-readout">
+								<div><b>Likely choice</b><span data-sampling-choice>Paris</span></div>
+								<div><b>Surviving tokens</b><span data-sampling-count>5 / 5</span></div>
+								<div><b>Entropy</b><span data-sampling-entropy>—</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>A confident tone is just a sharp distribution. Lower temperature makes the likely token dominate; top-p removes the long tail. Neither makes the answer true.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">The model is not lying. It is completing a pattern.</p>
+							<p class="aha-sub">Truth is a property of your workflow, not a promise from the model.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../hallucinations.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../hallucinations.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

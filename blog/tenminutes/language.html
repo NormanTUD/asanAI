@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="From the human vocal tract to writing, grammar, and Shannon's information theory: the long prehistory of text that a language model learns from.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>Language as a Very Old Technology — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="language" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>Language is a <em>very old technology.</em></h1>
+					<p class="hero-deck">Before text could become training data, humans had to build the machinery for it: a vocal tract, symbols, writing, and a way to measure information. This is the long fuse behind every token.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
+						<h2 class="section-title">Speech came first.</h2>
+						<div class="prose">
+							<p>Every language model is downstream of a biological accident: the human vocal tract can make a much wider range of sounds than those of other primates. That made spoken language possible, and spoken language made culture cumulative.</p>
+							<p>But speech is evanescent. Writing turned it into something that could survive the speaker, travel across distance, and be re-read. Oral tradition already used rhythm and story as memory technology; writing made memory external and inspectable.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> The long fuse</div>
+						<h2 class="section-title">From grammar to information.</h2>
+						<div class="prose">
+							<p>Grammar was studied long before machines. Pāṇini's Sanskrit grammar described language as a system of rules more than two thousand years ago. Later, printing, dictionaries, and standardised spelling made text abundant and comparable.</p>
+							<p>In the twentieth century, Shannon separated the message from its meaning and measured information in bits. That move made language computable. A model does not need to understand a sentence to predict the next token; it needs a representation and a lot of text.</p>
+							<p>The last step is geometric: tokens become vectors, and meaning becomes a pattern of distances and directions. The model inherits the whole stack — body, symbol, writing, information — and compresses it into weights.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Vocal tract</b><span>A biological upgrade made a wide range of speech sounds possible.</span></div>
+							<div class="keypoint"><b>External memory</b><span>Writing and oral tradition store language outside the speaker.</span></div>
+							<div class="keypoint"><b>Grammar</b><span>Pāṇini treated language as a rule system long before computing.</span></div>
+							<div class="keypoint"><b>Information</b><span>Shannon made messages measurable; that made them computable.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper timeline-shell" data-demo="timeline">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">Six layers of language technology <span>· demo</span></p>
+								<p class="demo-sub">Follow the long fuse from speech to tokens. Each step made text more durable, more comparable, or more computable.</p>
+							</div>
+							<span class="demo-badge">step through</span>
+						</div>
+						<div class="demo-body">
+							<div class="timeline-scroller">
+								<button class="tl-scroll-btn" type="button" data-timeline-prev aria-label="Scroll left">‹</button>
+								<div class="timeline-track" data-timeline-track role="group" aria-label="Six layers of language technology">
+									<button class="tl-node is-active" type="button" data-meta="01 · Speech" data-title="Speech" data-body="The human vocal tract made a wide range of sounds possible. Spoken language turned a social primate into a cumulative culture."><span class="tl-dot"></span><span class="tl-date">01</span><span class="tl-name">Speech</span></button>
+									<button class="tl-node" type="button" data-meta="02 · Writing" data-title="Writing" data-body="Writing stored language outside the speaker. It could travel, survive, and be inspected long after the conversation ended."><span class="tl-dot"></span><span class="tl-date">02</span><span class="tl-name">Writing</span></button>
+									<button class="tl-node" type="button" data-meta="03 · Grammar" data-title="Grammar" data-body="Pāṇini described Sanskrit as a rule system more than two thousand years ago. Language became an object that could be analysed."><span class="tl-dot"></span><span class="tl-date">03</span><span class="tl-name">Grammar</span></button>
+									<button class="tl-node" type="button" data-meta="04 · Printing" data-title="Printing" data-body="Print, dictionaries, and standard spelling made text abundant and comparable. A model needs scale before it can learn patterns."><span class="tl-dot"></span><span class="tl-date">04</span><span class="tl-name">Printing</span></button>
+									<button class="tl-node" type="button" data-meta="05 · Information" data-title="Information" data-body="Shannon separated the message from its meaning and measured information in bits. That made language computable."><span class="tl-dot"></span><span class="tl-date">05</span><span class="tl-name">Information</span></button>
+									<button class="tl-node" type="button" data-meta="06 · Tokens" data-title="Tokens" data-body="Text became tokens, tokens became vectors, and meaning became geometry. The model inherits the whole stack."><span class="tl-dot"></span><span class="tl-date">06</span><span class="tl-name">Tokens</span></button>
+								</div>
+								<button class="tl-scroll-btn" type="button" data-timeline-next aria-label="Scroll right">›</button>
+							</div>
+							<div class="tl-panel no-figure" data-timeline-panel aria-live="polite"></div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>An LLM is the newest layer in a very old stack.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">An LLM is the newest layer in a very old stack.</p>
+							<p class="aha-sub">Body, symbol, writing, grammar, and information theory all had to exist before text could become training data.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../language.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../language.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

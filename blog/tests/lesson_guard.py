@@ -328,8 +328,13 @@ def guard_site_footer(root: Path) -> list[str]:
     if "function render_site_footer(" not in functions:
         issues.append("functions.php has no render_site_footer() helper")
     for url in SITE_FOOTER_URLS:
-        if f'href="{url}"' not in functions:
+        match = re.search(rf'<a href="{re.escape(url)}"[^>]*>', functions)
+        if not match:
             issues.append(f"footer does not link {url}")
+            continue
+        tag = match.group(0)
+        if 'target="_blank"' not in tag or 'rel="noopener noreferrer"' not in tag:
+            issues.append(f"footer link {url} does not open safely in a new tab")
     if "register_shutdown_function" not in functions or "render_site_footer();" not in functions:
         issues.append("shared shell does not append the footer at the end of the page")
     for home in ("index.php", "index_full.php"):

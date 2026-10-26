@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Images as grids of numbers, convolutions as sliding filters, and the hierarchy from edges to objects.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>How Machines See — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="computer_vision" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>Seeing is <em>layered pattern detection.</em></h1>
+					<p class="hero-deck">A computer does not see a cat. It sees a grid of numbers. Convolution learns small local patterns, and depth combines them into edges, parts, and objects.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> A filter that slides</div>
+						<h2 class="section-title">Local patterns, shared weights.</h2>
+						<div class="prose">
+							<p>A convolution applies a small kernel to every local patch of the image. The kernel is a set of learned weights; it responds strongly to a particular pattern, such as a vertical edge or a patch of colour.</p>
+							<p>Stack convolutions and the hierarchy grows. Early layers detect edges and textures; middle layers combine them into parts; later layers respond to whole objects. That is the feature hierarchy behind modern vision.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> From classification to space</div>
+						<h2 class="section-title">The task stack.</h2>
+						<div class="prose">
+							<p>The basic task is classification: what is in the image? Detection asks where; segmentation asks which pixels belong to which object; 3D understanding adds depth and geometry. Each task needs a different output, but the feature extractor is often shared.</p>
+							<p>Vision Transformers replace the sliding kernel with attention over image patches, but the idea is similar: turn the image into tokens and let the model learn relationships between them.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Pixels</b><span>An image is a grid of numbers, not a picture of a cat.</span></div>
+							<div class="keypoint"><b>Convolution</b><span>A small learned filter slides over the image and detects local patterns.</span></div>
+							<div class="keypoint"><b>Hierarchy</b><span>Edges become parts; parts become objects.</span></div>
+							<div class="keypoint"><b>Task stack</b><span>Classification, detection, segmentation, and 3D ask progressively harder questions.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper" data-demo="convolution">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">A filter that slides <span>· demo</span></p>
+								<p class="demo-sub">The kernel is a tiny learned pattern. Pick one and watch it turn the input into a feature map.</p>
+							</div>
+							<span class="demo-badge">live</span>
+						</div>
+						<div class="demo-body">
+							<canvas class="demo-canvas demo-canvas--md" data-conv-canvas aria-label="A convolution applied to a small grid"></canvas>
+							<div class="chip-row" style="margin-top:12px">
+								<button class="chip is-on" type="button" data-kernel="edge">edge</button>
+								<button class="chip" type="button" data-kernel="blur">blur</button>
+								<button class="chip" type="button" data-kernel="sharpen">sharpen</button>
+							</div>
+							<div class="demo-readout">
+								<div><b>Input</b><span>14 × 14</span></div>
+								<div><b>Kernel</b><span>3 × 3</span></div>
+								<div><b>Feature map</b><span>12 × 12</span></div>
+							</div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>A convolution shares one small filter across the whole image. Depth stacks those filters into a hierarchy: edges, parts, objects.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">A machine sees by building patterns on top of patterns.</p>
+							<p class="aha-sub">The cat is never in the pixels; it is in the hierarchy the network learns.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../computer_vision.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../computer_vision.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

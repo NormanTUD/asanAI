@@ -156,6 +156,10 @@ Durable consequences:
   and restored); currency like `$100` is left alone (no letters/backslash rule).
 - Sidenote extraction runs **exactly once** (guard `window._sidenotesExtracted`);
   a second `extract()` resets the store and loses markers.
+- Every page rendered through the shared shell ends with the legal footer
+  (`render_site_footer()`): `functions.php` closes `#contents` in a shutdown
+  handler so the footer stays *after* the sources/footnotes JS appends inside
+  it. `index.php` / `index_full.php` call the helper explicitly.
 
 **Base JS** — `load_base_js()` loads the same core on every page:
 temml, bpe (`BPETokenizer` class), start.js (`updateLoadingStatus`,
@@ -761,7 +765,7 @@ dependency in a header won't resolve for a few days).
 | `uv run blog/tests/stats_ui_test.py` | stats UI regression: briefing/explore, lazy charts, compare, saved views, present/light, overflow | any failed check | `blog/**` (render job) |
 | `uv run blog/tests/admin_ui_test.py` | admin regression: global search, presentation slides/cards/URL state, reader-feedback tabs/search/accept/edit/done/bug/delete | any failed check | `blog/**` (render job) |
 | `uv run blog/tests/js_validator.py blog/` | bracket/brace balance, unclosed strings/comments, `debugger`/`alert`/`eval`, duplicate function names, DOM-API typos, TODO comments, BOM/line-endings | **critical issues only** (warnings don't block) | `blog/**` |
-| `uv run blog/tests/lesson_guard.py blog/` | per-lesson static regression guards (currently `math_iv.php`: headings-in-md, citation keys, 3D wiring) — extend the `LESSONS` list per lesson — plus blog-wide citation-integration and quiz-option-balance guards | any guard | `blog/**` |
+| `uv run blog/tests/lesson_guard.py blog/` | per-lesson static regression guards (currently `math_iv.php`: headings-in-md, citation keys, 3D wiring) — extend the `LESSONS` list per lesson — plus blog-wide citation-integration, quiz-option-balance and site-footer guards | any guard | `blog/**` |
 | `uv run blog/tests/link_checker.py blog/` | every `url:` in `literature.js` returns 2xx; PDFs must start `%PDF`; TLS/bot-block soft-passes never fail | real failures | `blog/**` + weekly cron |
 | `uv run blog/tests/literature_dup_keys.py blog/` | every top-level key in `literature.js` appears exactly once (JS object last-wins would silently hide a duplicate) | **any duplicate** | `blog/**` |
 | `node blog/tests/{topics,math_alt,keypoint,search_js}_test.js` | DOM-stubbed unit tests of BlogTopics (interests, math dial, learned), math-alts, keypoints, search | any failed check | `blog/**` |

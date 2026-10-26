@@ -106,6 +106,35 @@ Notes:
   the lines and clutter the view.
 - No CDN colours, no external font/colour services, no build step.
 
+## Compact-page demos
+
+Shared demo code lives in `assets/demos.js`; pages with a demo include it
+after `assets/site.js`. The markup is keyed by `data-demo`:
+
+- `sampling` — temperature / top-p probability bars
+- `linefit` — weight/bias line fitting
+- `dream` — stylized Inceptionism noise reveal
+- `polyfit` — polynomial degree and overfitting
+- `activation` — ReLU / tanh / sigmoid / GELU plots
+- `datamix` — training-corpus composition
+- `convolution` — kernel / feature-map grid
+- `vram` — model-size / precision / device calculator
+- `budget` — context-window budget
+- `retrieval` — keyword-overlap RAG ranking
+- `entropy` — prompt constraints shrinking the output space
+- `cot` — answer-only vs step-by-step reasoning
+- `timeline` — generic clickable timeline / stepper (`.tl-node` + `.tl-panel`)
+- `contamination` — benchmark score vs true skill
+- `position` — positional-encoding heatmap
+- `waveform` — audio waveform and token blocks
+- `myths` — click-to-reveal myth cards
+
+Use the existing `.demo demo--paper` shell: `demo-head`, `demo-body`,
+`demo-controls`, `demo-readout`, `demo-insight`, `demo-foot`. Canvas demos use
+`.demo-canvas` plus `.demo-canvas--sm|md|lg` for height, read colors through
+`TM.colors()`, and re-render on `tm:theme`. Keep every demo inside the paper
+theme unless there is a specific reason not to.
+
 ## Calendar conventions (`advent.html`)
 
 - The calendar has exactly **31 doors**: `id="day-1"` … `id="day-31"`.
@@ -138,6 +167,16 @@ Notes:
   - `agents.html` exists but is intentionally not in the calendar.
 - If the compact-door count changes, update the “x of 31 doors” and
   “compact lessons open” pills in `index.html`.
+- Every calendar door now has a compact `.html` page. Each compact page ends
+  with a “full lesson” link to `../<slug>.php`; keep that back-link when
+  editing a page.
+- A compact page uses the shared lesson skeleton: `data-lesson="<slug>"`,
+  `data-page="lesson"`, a `hero--lesson`, `section-block`s with
+  `section-kicker`/`section-title`/`prose`, a `keypoints` grid, an `aha` box,
+  and the CTA. No topbar.
+- `library.html` marks every compact page with `is-compact` and
+  `data-compact="1"`, and links to the `.html` version. Update the library
+  card when adding or removing a compact page.
 
 ## Validation
 

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Stack simple features into complex ones: how composition turns a deep network into a hierarchy.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>Why Depth Helps — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="deeplearninglab" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>Depth is <em>composition.</em></h1>
+					<p class="hero-deck">One layer can draw a line. Stack layers and each one can build on the features of the layer below: edges become parts, parts become objects, objects become concepts.</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="idea">
+						<div class="section-kicker"><span class="sk-num">01</span> The idea</div>
+						<h2 class="section-title">A stack of functions.</h2>
+						<div class="prose">
+							<p>A deep network is not a wider network. It is a stack of functions: the output of one layer becomes the input of the next. Each layer can reuse and recombine the features it receives.</p>
+							<p>That is why depth is powerful. A feature that took many simple operations to build can be reused by later layers instead of being relearned from scratch. The network builds a hierarchy, not a pile of independent detectors.</p>
+						</div>
+					</section>
+
+					<section class="section-block" id="detail">
+						<div class="section-kicker"><span class="sk-num">02</span> Why nonlinearity is essential</div>
+						<h2 class="section-title">The bend prevents the collapse.</h2>
+						<div class="prose">
+							<p>If every layer is affine, the whole stack collapses into one affine map. The nonlinearity between layers is what prevents the collapse and allows the composition to create new, curved features.</p>
+							<p>Deep learning is not magic. It is function composition plus a lot of data, a good loss, and an optimizer that can find useful parameters. Training is the hard part.</p>
+						</div>
+						<div class="keypoints">
+							<div class="keypoint"><b>Composition</b><span>Each layer feeds the next; the whole is a nested function.</span></div>
+							<div class="keypoint"><b>Hierarchy</b><span>Simple features are reused to build complex ones.</span></div>
+							<div class="keypoint"><b>Nonlinearity</b><span>Without a bend, depth collapses into one linear map.</span></div>
+							<div class="keypoint"><b>Reuse</b><span>Depth saves the network from relearning the same feature.</span></div>
+						</div>
+					</section>
+
+					<div class="demo demo--paper timeline-shell" data-demo="timeline">
+						<div class="demo-head">
+							<div>
+								<p class="demo-title">From one neuron to a hierarchy <span>· demo</span></p>
+								<p class="demo-sub">Depth is composition. Select a step to see what the stack adds.</p>
+							</div>
+							<span class="demo-badge">step through</span>
+						</div>
+						<div class="demo-body">
+							<div class="timeline-scroller">
+								<button class="tl-scroll-btn" type="button" data-timeline-prev aria-label="Scroll left">‹</button>
+								<div class="timeline-track" data-timeline-track role="group" aria-label="From one neuron to a hierarchy">
+									<button class="tl-node is-active" type="button" data-meta="01 · Neuron" data-title="One neuron" data-body="A weight, a bias, and a bend. A single unit can draw one line."><span class="tl-dot"></span><span class="tl-date">01</span><span class="tl-name">Neuron</span></button>
+									<button class="tl-node" type="button" data-meta="02 · Layer" data-title="A layer" data-body="Many neurons in parallel learn many simple features. The output is a new representation."><span class="tl-dot"></span><span class="tl-date">02</span><span class="tl-name">Layer</span></button>
+									<button class="tl-node" type="button" data-meta="03 · Stack" data-title="Composition" data-body="Each layer feeds the next. The whole network is a nested function, not a pile of independent detectors."><span class="tl-dot"></span><span class="tl-date">03</span><span class="tl-name">Stack</span></button>
+									<button class="tl-node" type="button" data-meta="04 · Hierarchy" data-title="Hierarchy" data-body="Simple features are reused to build complex ones. Depth turns edges into parts and parts into objects."><span class="tl-dot"></span><span class="tl-date">04</span><span class="tl-name">Hierarchy</span></button>
+								</div>
+								<button class="tl-scroll-btn" type="button" data-timeline-next aria-label="Scroll right">›</button>
+							</div>
+							<div class="tl-panel no-figure" data-timeline-panel aria-live="polite"></div>
+						</div>
+						<div class="demo-insight"><b>Takeaway</b><span>Depth is not repetition; it is composition.</span></div>
+					</div>
+
+					<section class="section-block" id="takeaway">
+						<div class="section-kicker"><span class="sk-num">03</span> Takeaway</div>
+						<h2 class="section-title">The short version.</h2>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">Depth is not repetition. It is composition.</p>
+							<p class="aha-sub">The power comes from building features on top of features, not from adding more of the same.</p>
+						</div>
+						<div class="prose">
+							<p>This is the ten-minute version. The <a href="../deeplearninglab.php">full lesson</a> goes deeper: more detail, sources, and (where it exists) an interactive model.</p>
+							<p><a class="btn btn--green" href="../deeplearninglab.php">Open the full lesson <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>
