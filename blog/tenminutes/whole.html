@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="How the whole compact course fits together: prediction, tokens, attention, training, assistants, and the larger questions.">
+	<meta name="theme-color" content="#f7f3e8">
+	<title>The Whole Arc — Ten Minutes</title>
+	<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-lesson="whole" data-page="lesson">
+	<a class="skip" href="#main">Skip to content</a>
+	<div class="readbar" aria-hidden="true"><span></span></div>
+
+	<main id="main">
+		<div class="shell">
+			<section class="hero hero--lesson">
+				<div>
+					<h1>One prediction, <em>a whole stack.</em></h1>
+					<p class="hero-deck">
+						The compact course is not a list of isolated tricks. It is one arc: text becomes tokens,
+						tokens become vectors, attention mixes them, training shapes the weights, post-training
+						makes an assistant, and society decides what it is for.
+					</p>
+				</div>
+			</section>
+
+			<div class="lesson-layout">
+				<article class="lesson-main">
+					<section class="section-block" id="arc">
+						<div class="section-kicker"><span class="sk-num">01</span> The arc</div>
+						<h2 class="section-title">Six movements, one machine.</h2>
+						<div class="prose">
+							<p>
+								Start with the engine: given a context, predict a distribution over the next token.
+								Everything else is a choice about how to represent that context, how to compute with
+								it, and how to turn a distribution into a sequence.
+							</p>
+							<p>
+								The compact course follows that dependency chain. Select a movement to see what it
+								contributes and where to enter it.
+							</p>
+						</div>
+						<div class="demo demo--paper timeline-shell" data-demo="timeline">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">The whole arc <span>· demo</span></p>
+									<p class="demo-sub">Six movements from one prediction to a society of models. Select a node to see the thread and where to start.</p>
+								</div>
+								<span class="demo-badge">course map</span>
+							</div>
+							<div class="demo-body">
+								<div class="timeline-scroller">
+									<button class="tl-scroll-btn" type="button" data-timeline-prev aria-label="Scroll left">‹</button>
+									<div class="timeline-track" data-timeline-track role="group" aria-label="The six movements of the compact course">
+										<button class="tl-node is-active" type="button" data-meta="01 · The Idea" data-title="The Idea" data-body="Prediction, history, language, tokens, embeddings. The model turns text into a sequence of numbers and a distribution over the next token." data-href="intuition.html" data-href-label="Start with intuition"><span class="tl-dot"></span><span class="tl-date">01</span><span class="tl-name">The Idea</span></button>
+										<button class="tl-node" type="button" data-meta="02 · Failure and Learning" data-title="Failure and Learning" data-body="Where prediction goes wrong, the smallest learner, training, overfitting, depth, and nonlinearity. This is how the numbers get better." data-href="hallucinations.html" data-href-label="Start with failure"><span class="tl-dot"></span><span class="tl-date">02</span><span class="tl-name">Learning</span></button>
+										<button class="tl-node" type="button" data-meta="03 · Data, Senses, and Practice" data-title="Data, Senses, and Practice" data-body="Training data, vision, multimodal input, audio, local models, evaluation. The model is shaped by what it reads and measured by what it can do." data-href="training_data.html" data-href-label="Start with data"><span class="tl-dot"></span><span class="tl-date">03</span><span class="tl-name">Data &amp; Senses</span></button>
+										<button class="tl-node" type="button" data-meta="04 · Inside the Transformer" data-title="Inside the Transformer" data-body="Attention, context, position, facts, and the whole block. This is the architecture that makes the prediction scale." data-href="attentionlab.html" data-href-label="Start with attention"><span class="tl-dot"></span><span class="tl-date">04</span><span class="tl-name">Transformer</span></button>
+										<button class="tl-node" type="button" data-meta="05 · From Model to Assistant" data-title="From Model to Assistant" data-body="Sampling, fine-tuning, retrieval, prompting, reasoning. The base model becomes a usable assistant through a second stack of choices." data-href="samplinglab.html" data-href-label="Start with sampling"><span class="tl-dot"></span><span class="tl-date">05</span><span class="tl-name">Assistant</span></button>
+										<button class="tl-node" type="button" data-meta="06 · The Larger Questions" data-title="The Larger Questions" data-body="Society, philosophy, myths, and the people behind the machine. The technical stack is also a social artefact." data-href="ai_and_society.html" data-href-label="Start with society"><span class="tl-dot"></span><span class="tl-date">06</span><span class="tl-name">Big Questions</span></button>
+									</div>
+									<button class="tl-scroll-btn" type="button" data-timeline-next aria-label="Scroll right">›</button>
+								</div>
+								<div class="tl-panel no-figure" data-timeline-panel aria-live="polite"></div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>The chapters are not a list. They are a dependency graph with a spine: prediction needs representation, representation needs computation, computation needs training, and the result needs a society to decide what it is for.</span></div>
+						</div>
+					</section>
+
+					<section class="section-block" id="map">
+						<div class="section-kicker"><span class="sk-num">02</span> The map</div>
+						<h2 class="section-title">Where each door belongs.</h2>
+						<div class="prose">
+							<p>
+								The calendar is one route through this map. Follow it in order, or enter wherever
+								your question is. The links below are all compact pages; the whole point is to move
+								between them and assemble the picture yourself.
+							</p>
+						</div>
+						<div class="arc-grid">
+							<div class="arc-card">
+								<b>The Idea</b>
+								<p>What prediction is, where the idea came from, and how text becomes numbers.</p>
+								<div class="arc-links">
+									<a href="intuition.html">Intuition</a>
+									<a href="history.html">History</a>
+									<a href="language.html">Language</a>
+									<a href="tokenizerlab.html">Tokens</a>
+									<a href="embeddinglab.html">Embeddings</a>
+								</div>
+							</div>
+							<div class="arc-card">
+								<b>Failure and Learning</b>
+								<p>Why prediction fails, and how error becomes a learning signal.</p>
+								<div class="arc-links">
+									<a href="hallucinations.html">Failure</a>
+									<a href="minimalneuron.html">Tiny network</a>
+									<a href="inceptionism.html">Dreams</a>
+									<a href="overandunderfittinglab.html">Overfitting</a>
+									<a href="deeplearninglab.html">Depth</a>
+									<a href="activationlab.html">Nonlinearity</a>
+								</div>
+							</div>
+							<div class="arc-card">
+								<b>Data, Senses, and Practice</b>
+								<p>What the model reads, sees, and hears, and how we measure it.</p>
+								<div class="arc-links">
+									<a href="training_data.html">Training data</a>
+									<a href="computer_vision.html">Vision</a>
+									<a href="multimodal.html">Multimodal</a>
+									<a href="speech_audio.html">Audio</a>
+									<a href="running_locally.html">Local models</a>
+									<a href="evaluation.html">Evaluation</a>
+								</div>
+							</div>
+							<div class="arc-card">
+								<b>Inside the Transformer</b>
+								<p>The architecture that turns a sequence into a context-aware prediction.</p>
+								<div class="arc-links">
+									<a href="attentionlab.html">Attention</a>
+									<a href="contextwindows.html">Context</a>
+									<a href="positionalembeddingslab.html">Position</a>
+									<a href="fact_lookup.html">Facts</a>
+									<a href="transformer.html">Whole block</a>
+								</div>
+							</div>
+							<div class="arc-card">
+								<b>From Model to Assistant</b>
+								<p>How a raw predictor becomes a usable, grounded, reasoning assistant.</p>
+								<div class="arc-links">
+									<a href="samplinglab.html">Sampling</a>
+									<a href="finetuninglab.html">Fine-tuning</a>
+									<a href="rag.html">Retrieval</a>
+									<a href="promptengineering.html">Prompting</a>
+									<a href="reasoning.html">Reasoning</a>
+								</div>
+							</div>
+							<div class="arc-card">
+								<b>The Larger Questions</b>
+								<p>What the machine does to us, what it means, and who is accountable.</p>
+								<div class="arc-links">
+									<a href="ai_and_society.html">Society</a>
+									<a href="philosophy.html">Philosophy</a>
+									<a href="myths.html">Myths</a>
+									<a href="people_of_ai.html">People</a>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<section class="section-block" id="synthesis">
+						<div class="section-kicker"><span class="sk-num">03</span> The synthesis</div>
+						<h2 class="section-title">How the pieces fit.</h2>
+						<div class="prose">
+							<p>
+								<strong>The engine.</strong> A language model does one thing: given a context, it
+								produces a distribution over the next token. Training makes that distribution better
+								at predicting text; decoding turns it into a sequence; post-training turns the
+								sequence into an assistant. Everything else is a choice about representation,
+								computation, data, or control.
+							</p>
+							<p>
+								<strong>The representation stack.</strong> Text is cut into tokens. Tokens become
+								vectors. Position adds order. Attention mixes information across positions. The
+								residual stream carries a running state. The MLP transforms each position. A
+								transformer block repeats attention and MLP; the final vector is unembedded into a
+								distribution. The same geometry appears in embeddings, retrieval, and the residual
+								stream.
+							</p>
+							<p>
+								<strong>The behaviour stack.</strong> Pretraining data decides what the model has
+								seen. The objective decides what it optimises. Post-training decides how it behaves
+								as an assistant. Sampling decides how adventurous it is. Retrieval and tools decide
+								what it can use beyond its weights. None of these layers is the whole model; the
+								assistant is the pipeline.
+							</p>
+							<p>
+								<strong>The human stack.</strong> Evaluation asks whether it works. Safety asks what
+								can go wrong. Society, philosophy, and the people behind the machine ask what it is
+								for and who is accountable. A model is a stack of choices, not a single trick — and
+								the choices at one layer change what the next layer can do.
+							</p>
+						</div>
+						<div class="aha">
+							<span class="aha-kicker">The aha</span>
+							<p class="aha-big">A model is not one trick. It is a stack of choices.</p>
+							<p class="aha-sub">Prediction is the engine, but representation, training, decoding, tools, and governance decide what the engine can actually do.</p>
+						</div>
+						<div class="prose">
+							<p>
+								<a class="btn btn--green" href="advent.html">Open the 31-door calendar</a>
+								<a class="btn btn--ghost" href="library.html">Browse the compact library</a>
+							</p>
+						</div>
+					</section>
+				</article>
+			</div>
+		</div>
+	</main>
+
+	<script src="assets/site.js"></script>
+	<script src="assets/demos.js"></script>
+</body>
+</html>

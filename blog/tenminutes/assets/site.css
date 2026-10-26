@@ -4153,3 +4153,21 @@ body[data-lesson="history"] .tl-panel { height: 480px; }
 
 .ds-history { flex-wrap: nowrap; height: 26px; overflow-x: auto; overflow-y: hidden; }
 .mix-note { min-height: 3.2em; }
+
+.tl-link { margin: 14px 0 0; }
+
+.arc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 16px; }
+.arc-card { padding: 16px; border: 1px solid var(--tm-line); border-radius: 12px; background: var(--tm-card); }
+.arc-card b { display: block; font-family: var(--tm-display); font-size: 1.15rem; line-height: 1.05; color: var(--tm-ink); }
+.arc-card p { margin: 6px 0 0; font-size: 0.8rem; line-height: 1.5; color: var(--tm-muted); }
+.arc-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.arc-links a {
+	display: inline-block;
+	padding: 3px 8px;
+	border: 1px solid var(--tm-line);
+	border-radius: 999px;
+	color: var(--tm-petrol);
+	font-size: 0.68rem;
+	text-decoration: none;
+}
+.arc-links a:hover { border-color: var(--tm-green); background: var(--tm-wash); }

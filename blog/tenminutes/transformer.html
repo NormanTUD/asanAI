@@ -7,6 +7,7 @@
 	<meta name="theme-color" content="#f7f3e8">
 	<title>The Whole Machine — Ten Minutes</title>
 	<link rel="stylesheet" href="assets/site.css">
+	<link rel="stylesheet" href="../Temml-Local.min.css">
 </head>
 <body data-lesson="transformer" data-page="lesson">
 	<a class="skip" href="#main">Skip to content</a>
@@ -363,13 +364,27 @@
 					</section>
 
 
-					</article>
+						<section class="section-block" id="fits">
+						<div class="section-kicker">Where this fits</div>
+						<h2 class="section-title">One piece of the arc.</h2>
+						<div class="prose">
+							<p>This page is one door in the compact course. The thread continues; the whole arc shows how the pieces connect.</p>
+						</div>
+						<div class="keypoints">
+							<a class="keypoint" href="fact_lookup.html"><b>Previous · Where a Fact Lives</b><span>A walk through the forward pass: how “Paris” surfaces from the weights, and where the story is still uncertain.</span></a>
+							<a class="keypoint" href="samplinglab.html"><b>Next · Choosing the Next Token</b><span>Temperature, top-p, sampling: the knobs that turn a probability distribution into a voice.</span></a>
+							<a class="keypoint" href="whole.html"><b>The whole arc</b><span>Prediction, tokens, attention, training, assistants, and society in one picture.</span></a>
+						</div>
+					</section>
+
+				</article>
 			</div>
 		</div>
 	</main>
 
 
 	<script src="assets/site.js"></script>
+	<script src="../temml.min.js"></script>
 	<script>
 	(function () {
 		"use strict";
@@ -380,39 +395,39 @@
 				name: "Tokenize",
 				title: "Tokenize",
 				text: "Text is cut into subword tokens and mapped to integer IDs. The vocabulary is fixed before training. In GPT-2 byte-level BPE, “the cat sat” becomes [262, 3797, 3332].",
-				shape: "text → [T] token IDs"
+				shape: "\\text{text} \\to [T]"
 			},
 			{
 				name: "Embed",
 				title: "Embed",
 				text: "Each token ID indexes a row of the embedding matrix W_E, producing a dense vector of dimension d_model. Similar meanings end up near each other in this space — but this is only the first layer.",
-				shape: "[T] → [T, d_model]"
+				shape: "[T] \\to [T, d_{\\text{model}}]"
 			},
 			{
 				name: "Position",
 				title: "Add position",
 				text: "A position signal is added to each embedding (sinusoidal in the original; modern models often use rotary/RoPE, which rotates queries and keys instead). Without it, “dog bites man” and “man bites dog” would be an unordered bag of the same vectors.",
-				shape: "[T, d_model] + [T, d_model] → [T, d_model]"
+				shape: "[T, d_{\\text{model}}] + [T, d_{\\text{model}}] \\to [T, d_{\\text{model}}]"
 			},
 			{
 				name: "Attention",
 				repeat: true,
 				title: "Attention + residual",
 				text: "Each token projects to a query, key, and value. Scaled dot products decide who attends to whom; softmax normalizes the weights; values are averaged. A causal mask in a decoder hides the future. The result is added back to the residual stream. This is one block in a stack of N blocks; real models repeat that block dozens to hundreds of times, often 32–100+ layers.",
-				shape: "[T, d_model] → [T, d_model] · mixed across positions"
+				shape: "[T, d_{\\text{model}}] \\to [T, d_{\\text{model}}]"
 			},
 			{
 				name: "Feed-forward",
 				repeat: true,
 				title: "Feed-forward + residual",
 				text: "A per-token MLP expands the vector (usually 4×), applies a nonlinearity such as GELU or SwiGLU, and contracts it back. Attention routes information; the FFN computes with it. The result is added to the stream again. The attention + feed-forward block repeats N times; the demo shows one pass.",
-				shape: "[T, d_model] → [T, 4·d_model] → [T, d_model]"
+				shape: "[T, d_{\\text{model}}] \\to [T, 4d_{\\text{model}}] \\to [T, d_{\\text{model}}]"
 			},
 			{
 				name: "Unembed",
 				title: "Unembed + sample",
 				text: "The final hidden state is multiplied by an unembedding matrix, giving a logit for every vocabulary token. Softmax turns logits into probabilities; a decoding rule samples or takes the argmax; the token is appended and the loop repeats until EOS.",
-				shape: "[T, d_model] → [T, vocab] → one distribution"
+				shape: "[T, d_{\\text{model}}] \\to [T, |V|] \\to \\text{one distribution}"
 			}
 		];
 		var flow = document.getElementById("pipe-flow");
@@ -473,7 +488,14 @@
 			var stage = stages[currentStage];
 			if (detailTitle) detailTitle.textContent = stage.title;
 			if (detailText) detailText.textContent = stage.text;
-			if (detailShape) detailShape.textContent = "Shape: " + stage.shape;
+			if (detailShape) {
+				if (window.temml) {
+					try { detailShape.innerHTML = "Shape: " + temml.renderToString(stage.shape, { displayMode: false }); }
+					catch (e) { detailShape.textContent = "Shape: " + stage.shape; }
+				} else {
+					detailShape.textContent = "Shape: " + stage.shape;
+				}
+			}
 			if (counter) counter.textContent = "Stage " + (currentStage + 1) + " of " + stages.length;
 			flow.querySelectorAll(".flow-step").forEach(function (b) {
 				b.classList.toggle("is-active", parseInt(b.getAttribute("data-stage"), 10) === currentStage);

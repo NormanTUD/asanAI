@@ -930,9 +930,12 @@
 			nodes.forEach(function (n, j) { n.classList.toggle("is-active", i === j); });
 			var n = nodes[i];
 			if (!n) return;
+			var href = n.getAttribute("data-href");
+			var hrefLabel = n.getAttribute("data-href-label") || "Explore this section";
+			var link = href ? '<p class="tl-link"><a class="btn btn--green" href="' + href + '">' + escapeHtml(hrefLabel) + ' →</a></p>' : "";
 			panel.innerHTML = '<div class="tl-era">' + escapeHtml(n.getAttribute("data-meta") || "") + '</div>' +
 				'<h3>' + escapeHtml(n.getAttribute("data-title") || "") + '</h3>' +
-				'<p>' + escapeHtml(n.getAttribute("data-body") || "") + '</p>';
+				'<p>' + escapeHtml(n.getAttribute("data-body") || "") + '</p>' + link;
 		}
 		nodes.forEach(function (n, i) {
 			n.addEventListener("click", function () { select(i); n.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" }); });
