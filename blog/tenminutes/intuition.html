@@ -467,7 +467,7 @@
 				{ t: "dragon", l: 3.4 }, { t: "princess", l: 1.1 }, { t: "robot", l: 0.7 }, { t: "castle", l: 0.4 }, { t: "river", l: 0.2 }
 			],
 			[
-				{ t: "who", l: 3.1 }, { t: "that", l: 1.4 }, { t: "with", l: 0.8 }, { t: "whose", l: 0.5 }, { t: "and", l: 0.3 }
+				{ t: "who", l: 3.1 }, { t: "that", l: 1.4 }, { t: "which", l: 0.8 }, { t: "whose", l: 0.5 }, { t: "and", l: 0.3 }
 			],
 			[
 				{ t: "could", l: 3.0 }, { t: "would", l: 1.3 }, { t: "loved", l: 0.9 }, { t: "tried", l: 0.6 }, { t: "had", l: 0.3 }
@@ -1186,13 +1186,24 @@
 			var heatW = w - padL - padR;
 			var cw = heatW / positions;
 			var ch = heatH / posDims;
+			var stats = [];
+			for (var sd = 0; sd < posDims; sd++) {
+				var vals = [];
+				for (var sp = 0; sp < positions; sp++) vals.push(peValue(sp, sd, posDims));
+				var mean = vals.reduce(function (a, b) { return a + b; }, 0) / positions;
+				var maxDev = Math.max.apply(null, vals.map(function (v) { return Math.abs(v - mean); })) || 1;
+				stats.push({ mean: mean, maxDev: maxDev });
+			}
+			function cellT(pos, dim) {
+				return (peValue(pos, dim, posDims) - stats[dim].mean) / stats[dim].maxDev;
+			}
 			ctx.clearRect(0, 0, w, h);
 			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.18)" : "rgba(0,75,111,.18)";
 			ctx.lineWidth = 1;
 			ctx.strokeRect(padL, padT, heatW, heatH);
 			for (var p = 0; p < positions; p++) {
 				for (var d = 0; d < posDims; d++) {
-					var v = peValue(p, d, posDims);
+					var v = cellT(p, d);
 					var x = padL + p * cw;
 					var y = padT + d * ch;
 					ctx.fillStyle = posColor(v, c);
@@ -1224,7 +1235,7 @@
 				ctx.fillText("pos " + pos, padL - 6, y + stripH - 2);
 				ctx.textAlign = "left";
 				for (var d3 = 0; d3 < posDims; d3++) {
-					var v3 = peValue(pos, d3, posDims);
+					var v3 = cellT(pos, d3);
 					var xx = padL + d3 * (stripW + gap);
 					ctx.fillStyle = posColor(v3, c);
 					ctx.fillRect(xx, y, stripW, stripH);
@@ -1236,7 +1247,7 @@
 					p0.push(peValue(0, k, posDims).toFixed(2));
 					p5.push(peValue(5, k, posDims).toFixed(2));
 				}
-				posOut.innerHTML = 'Position 0: <b>[' + p0.join(", ") + ']</b> · Position 5: <b>[' + p5.join(", ") + ']</b>';
+				posOut.innerHTML = 'Position 0: <b>[' + p0.join(", ") + ']</b> · Position 5: <b>[' + p5.join(", ") + ']</b> <span class="pos-note">· rows scaled to their own range</span>';
 			}
 		}
 		if (posCanvas) {

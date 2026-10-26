@@ -3298,6 +3298,7 @@ html[data-theme="light"] .step-pane .aw-money { color: #9a6f13; }
 .pos-legend .pl-neg { background: var(--tm-coral); }
 .pos-legend .pl-zero { background: #e2e8f0; }
 .pos-legend .pl-pos { background: var(--tm-green); }
+.pos-note { opacity: 0.65; }
 html[data-theme="dark"] .pos-legend .pl-zero { background: #1e3a4a; }
 
 .ffn-list { display: flex; flex-direction: column; gap: 7px; }
