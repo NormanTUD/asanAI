@@ -1586,8 +1586,12 @@ input[type="range"]::-moz-range-thumb {
 @keyframes pop { from { transform: scale(0.9); opacity: 0.2; } }
 @keyframes blink { 50% { opacity: 0; } }
 
+#nt-sentence { min-height: 56px; }
+#nt-bars { min-height: 102px; }
+#nt-why { min-height: 38px; }
 .nt-tree {
 	margin-top: 10px;
+	min-height: 62px;
 	padding: 9px 11px;
 	border: 1px solid rgba(238, 247, 244, 0.12);
 	border-radius: 10px;
@@ -1615,6 +1619,22 @@ input[type="range"]::-moz-range-thumb {
 	color: rgba(238, 247, 244, 0.86);
 }
 .nt-tree-end { color: rgba(238, 247, 244, 0.42); font-style: italic; }
+.nt-temp-note { margin: 8px 0 0; max-width: 72ch; }
+.nt-temp-note b { color: var(--tm-ink-soft); }
+.nt-formula { font-family: var(--tm-mono); font-size: .95em; color: var(--tm-ink-soft); white-space: nowrap; }
+.bars-note {
+	margin: 2px 0 0;
+	font-family: var(--tm-prose);
+	font-size: 0.76rem;
+	line-height: 1.45;
+	color: var(--tm-muted);
+}
+.demo-controls label.is-disabled { opacity: 0.55; }
+.demo input[type="range"]:disabled { opacity: 0.5; cursor: not-allowed; }
+@media (max-width: 900px) {
+	.nt-tree { min-height: 88px; }
+	#nt-why { min-height: 60px; }
+}
 html[data-theme="light"] .nt-tree {
 	background: var(--tm-paper-2);
 	border-color: var(--tm-line);

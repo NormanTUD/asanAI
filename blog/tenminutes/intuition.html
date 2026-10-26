@@ -19,12 +19,14 @@
 				<div>
 					<h1>One word <em>at a time.</em></h1>
 					<p class="hero-deck">
-						This page is part of an end-of-year calendar: one compact topic about large
-						language models is released each day, from the first intuition to the larger
-						questions. Today starts with the simplest picture: a language model predicts the
-						next token from the text so far. <strong>Chat, code, translation, reasoning</strong>
-						— much of what looks like understanding is built on that loop. This page gives you
-						a first intuition for it, not the complete account of how a frontier LLM works.
+						This page is part of a December end-of-year calendar: one compact topic about
+						large language models is released each day, from the first intuition to the larger
+						questions. Read the daily sections through December and you will gain a good
+						intuitive understanding of how LLMs work and how they came to be. Today starts
+						with the simplest picture: a language model predicts the next token from the text
+						so far. <strong>Chat, code, translation, reasoning</strong> — much of what looks like
+						understanding is built on that loop. This page gives you a first intuition for it,
+						not the complete account of how a frontier LLM works.
 					</p>
 				</div>
 			</section>
@@ -99,10 +101,17 @@
 									<button class="btn-demo btn-demo--green" type="button" id="nt-step">Let it choose →</button>
 									<button class="btn-demo" type="button" id="nt-reset">Reset</button>
 									<label>Temperature
-										<input type="range" id="nt-temp" min="0.2" max="1.8" step="0.05" value="0.8">
+										<input type="range" id="nt-temp" min="0.05" max="1.8" step="0.05" value="0.8" aria-describedby="nt-temp-note">
 										<output id="nt-temp-out">0.80</output>
 									</label>
 								</div>
+								<p class="meadow-caption nt-temp-note" id="nt-temp-note">
+									<b>Why "temperature"?</b> In a gas, temperature sets how widely molecular
+									speeds are spread (Maxwell–Boltzmann). Here it plays the same role for
+									logits: <span class="nt-formula">pᵢ ∝ exp(zᵢ / T)</span>. High T flattens the
+									distribution; low T sharpens it; greedy is the limit T → 0. The name is a
+									metaphor — there is no gas inside the model.
+								</p>
 								<div class="demo-readout demo-readout--4">
 									<div><b>Step</b><span id="nt-step-count">0 / 6</span></div>
 									<div><b>Context length</b><span id="nt-len">7 tokens</span></div>
@@ -518,6 +527,7 @@
 		var generated = [];
 		var stage = 0;
 		var temp = 0.8;
+		var preGreedyTemp = 0.8;
 		var decodeMode = "sample";
 		var sentenceEl = document.getElementById("nt-sentence");
 		var treeEl = document.getElementById("nt-tree");
@@ -613,6 +623,14 @@
 				row.addEventListener("click", function () { choose(opt.t); });
 				barsEl.appendChild(row);
 			});
+			if (options.length < 5) {
+				var note = document.createElement("p");
+				note.className = "bars-note";
+				note.textContent = options.length === 1
+					? "Only one branch makes sense from this point."
+					: "Branches that would be ungrammatical here are omitted.";
+				barsEl.appendChild(note);
+			}
 			if (topEl) topEl.textContent = options[top].t === " " ? "␣ (space)" : options[top].t;
 			updateWhy();
 		}
@@ -661,12 +679,34 @@
 				why.textContent = "Only one continuation makes sense here: “" + opts[0].t + "”. The tree has narrowed to a single branch.";
 				return;
 			}
-			if (decodeMode === "greedy") why.textContent = "Greedy always takes the highest-probability token. Temperature has no effect; the text is deterministic and often repetitive.";
-			else if (decodeMode === "topp") why.textContent = "Top-p keeps the smallest set of tokens whose probabilities reach 90%, then samples among them. The faded bars are outside the nucleus.";
-			else why.textContent = "Sampling draws from the whole distribution; temperature controls how concentrated it is. Low values behave almost greedily, high values trade coherence for surprise.";
+			if (decodeMode === "greedy") why.textContent = "Greedy is the limit T → 0: it always takes the highest-probability token, so the temperature slider is pinned at 0.05. The text is deterministic and often repetitive.";
+			else if (decodeMode === "topp") why.textContent = "Temperature reshapes the distribution first; top-p then keeps the smallest set of tokens whose probabilities reach 90% and samples among them. The faded bars are outside the nucleus.";
+			else why.textContent = "Sampling draws from the whole temperature-shaped distribution. Low T behaves almost greedily; high T flattens the distribution and trades coherence for surprise.";
+		}
+		function setTemp(value) {
+			temp = Math.max(0.05, Math.min(1.8, value));
+			if (tempEl) tempEl.value = temp;
+			if (tempOut) tempOut.textContent = temp.toFixed(2);
+		}
+		function setTempEnabled(enabled) {
+			if (!tempEl) return;
+			tempEl.disabled = !enabled;
+			if (enabled) tempEl.removeAttribute("aria-disabled");
+			else tempEl.setAttribute("aria-disabled", "true");
+			var label = tempEl.closest("label");
+			if (label) label.classList.toggle("is-disabled", !enabled);
 		}
 		function setDecodeMode(mode) {
+			var prev = decodeMode;
 			decodeMode = mode;
+			if (mode === "greedy") {
+				if (prev !== "greedy") preGreedyTemp = temp;
+				setTemp(0.05);
+				setTempEnabled(false);
+			} else {
+				if (prev === "greedy") setTemp(preGreedyTemp);
+				setTempEnabled(true);
+			}
 			var modeEl = document.getElementById("nt-mode");
 			if (modeEl) modeEl.textContent = mode === "topp" ? "top-p 0.9" : mode;
 			document.querySelectorAll("[data-decode]").forEach(function (b) {
@@ -693,11 +733,12 @@
 		});
 		if (tempEl) {
 			tempEl.addEventListener("input", function () {
-				temp = parseFloat(tempEl.value);
-				if (tempOut) tempOut.textContent = temp.toFixed(2);
+				setTemp(parseFloat(tempEl.value));
 				renderBars();
 			});
 		}
+		setTemp(temp);
+		setTempEnabled(true);
 		reset();
 
 		/* ── demo 2: the meadow ──────────────────────────────── */
