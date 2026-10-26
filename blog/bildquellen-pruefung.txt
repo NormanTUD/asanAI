@@ -1315,7 +1315,7 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lizenz: CC BY-SA 2.0 (via Commons API extmetadata)
    Autor: Pablo A. Gimenez
    Lokal: cave_hands.jpg (4000x2248)
-   Genutzt in: intro.php; language.php § "Writing as technology"; tenminutes/language.html § "Cave Paintings and Symbolic Art"
+   Genutzt in: intro.php; language.php § "Writing as technology"; tenminutes/language.html § "Cave Paintings and Symbolic Art" (image.php w=900)
    Status: OK - CC BY-SA 2.0
 
 4. perceptronimagedetection
@@ -1339,7 +1339,7 @@ Alle Bilder via Commons-API geprüft (Feld LicenseShortName), Stand Oktober 2026
    Lizenz: CC BY-SA 4.0 (via Commons API extmetadata)
    Autor: Osama Shukir Muhammed Amin
    Lokal: cuneiform.jpg (1645x2649)
-   Genutzt in: language.php § "Cuneiform and Formal Grammar"; tenminutes/language.html § "Counting Stones and Tokens"
+   Genutzt in: language.php § "Cuneiform and Formal Grammar"; tenminutes/language.html § "Counting Stones and Tokens" (image.php w=700)
    Status: OK - CC BY-SA 4.0
 
 7. wadielhol_inscription_i_image
