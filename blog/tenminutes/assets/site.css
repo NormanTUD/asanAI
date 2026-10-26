@@ -3453,11 +3453,182 @@ html[data-theme="light"] .res-legend { color: var(--tm-faint); }
 }
 .formula-card p b { color: var(--tm-ink); }
 
+/* ── layer as space curvature ───────────────────────────── */
+
+.curve-stage {
+	position: relative;
+	border: 1px solid var(--tm-line);
+	border-radius: 12px;
+	overflow: hidden;
+	background:
+		radial-gradient(720px 340px at 18% 0%, rgba(57, 169, 214, 0.12), transparent 62%),
+		radial-gradient(600px 320px at 88% 100%, rgba(113, 189, 86, 0.10), transparent 62%),
+		var(--tm-paper-2);
+}
+html[data-theme="dark"] .curve-stage {
+	border-color: rgba(238, 247, 244, 0.14);
+	background:
+		radial-gradient(720px 340px at 18% 0%, rgba(57, 169, 214, 0.16), transparent 62%),
+		radial-gradient(600px 320px at 88% 100%, rgba(113, 189, 86, 0.12), transparent 62%),
+		rgba(3, 25, 34, 0.5);
+}
+#curve-canvas {
+	display: block;
+	width: 100%;
+	height: 460px;
+	touch-action: none;
+	cursor: grab;
+}
+#curve-canvas.is-dragging { cursor: grabbing; }
+.curve-caption {
+	position: absolute;
+	left: 18px;
+	top: 16px;
+	width: min(340px, calc(100% - 36px));
+	padding: 13px 15px;
+	border: 1px solid var(--tm-line);
+	border-radius: 10px;
+	background: color-mix(in srgb, var(--tm-card) 84%, transparent);
+	box-shadow: 0 12px 30px -20px rgba(0, 0, 0, 0.45);
+	backdrop-filter: blur(9px);
+	-webkit-backdrop-filter: blur(9px);
+	pointer-events: none;
+}
+html[data-theme="dark"] .curve-caption {
+	border-color: rgba(148, 163, 184, 0.24);
+	background: rgba(15, 23, 42, 0.72);
+}
+.curve-caption .cc-step {
+	display: block;
+	font-family: var(--tm-mono);
+	font-size: 0.56rem;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--tm-green-deep);
+}
+html[data-theme="dark"] .curve-caption .cc-step { color: var(--tm-green); }
+.curve-caption h4 {
+	margin: 4px 0 5px;
+	font-family: var(--tm-display);
+	font-size: 1.16rem;
+	font-weight: 600;
+	line-height: 1.08;
+	color: var(--tm-ink);
+}
+.curve-caption p {
+	margin: 0;
+	font-family: var(--tm-prose);
+	font-size: 0.82rem;
+	line-height: 1.5;
+	color: var(--tm-muted);
+}
+html[data-theme="dark"] .curve-caption h4 { color: #eef7f4; }
+html[data-theme="dark"] .curve-caption p { color: rgba(238, 247, 244, 0.72); }
+.curve-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 18px;
+	margin: 10px 2px 0;
+	font-family: var(--tm-mono);
+	font-size: 0.58rem;
+	color: var(--tm-faint);
+}
+.curve-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.curve-legend i {
+	display: inline-block;
+	width: 9px;
+	height: 9px;
+	border-radius: 50%;
+}
+.curve-legend .cl-inner { background: var(--tm-coral); }
+.curve-legend .cl-outer { background: var(--tm-sky); }
+.curve-legend .cl-plane { background: var(--tm-gold); border-radius: 2px; }
+.curve-dots {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	margin-left: auto;
+}
+.curve-dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--tm-line-strong);
+	transition: background 0.18s ease, transform 0.18s ease;
+}
+.curve-dot.is-on {
+	background: var(--tm-green);
+	transform: scale(1.35);
+}
+.curve-points {
+	position: absolute;
+	left: 18px;
+	bottom: 16px;
+	padding: 8px 10px 7px;
+	border: 1px solid var(--tm-line);
+	border-radius: 9px;
+	background: color-mix(in srgb, var(--tm-card) 84%, transparent);
+	box-shadow: 0 12px 30px -22px rgba(0, 0, 0, 0.45);
+	backdrop-filter: blur(9px);
+	-webkit-backdrop-filter: blur(9px);
+	font-family: var(--tm-mono);
+	font-size: 0.62rem;
+	line-height: 1.35;
+	color: var(--tm-muted);
+	pointer-events: none;
+}
+html[data-theme="dark"] .curve-points {
+	border-color: rgba(148, 163, 184, 0.24);
+	background: rgba(15, 23, 42, 0.72);
+}
+.curve-points .cp-head {
+	margin-bottom: 4px;
+	font-size: 0.52rem;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--tm-faint);
+}
+.curve-points .cp-head span {
+	font-weight: 400;
+	letter-spacing: 0;
+	text-transform: none;
+}
+.curve-points table { border-collapse: collapse; }
+.curve-points th,
+.curve-points td {
+	padding: 2px 7px;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+.curve-points th:first-child,
+.curve-points td:first-child {
+	padding-left: 0;
+	text-align: left;
+	font-weight: 700;
+}
+.curve-points tr.cp-inner td:first-child { color: var(--tm-coral); }
+.curve-points tr.cp-outer td:first-child { color: var(--tm-sky); }
+.curve-points.hide-y .cp-y,
+.curve-points.hide-z .cp-z { display: none; }
+.curve-points.is-hidden { display: none; }
+
 @media (max-width: 900px) {
 	.formula-grid { grid-template-columns: 1fr; }
 	.ffn-grid { grid-template-columns: 1fr 1fr; }
 	.res-stream { grid-template-columns: 1fr; }
 	.res-layers { flex-direction: row; flex-wrap: wrap; }
+}
+@media (max-width: 720px) {
+	#curve-canvas { height: 360px; }
+	.curve-caption {
+		position: static;
+		width: auto;
+		margin: 12px;
+		pointer-events: auto;
+	}
+	.curve-points { display: none; }
 }
 @media (max-width: 620px) {
 	.timeline-scroller { gap: 4px; }

@@ -315,8 +315,66 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="curvature">
+						<div class="section-kicker"><span class="sk-num">04</span> The layer as geometry</div>
+						<h2 class="section-title">A layer bends the space.</h2>
+						<div class="prose">
+							<p>
+								A linear classifier can only draw a straight boundary. Some arrangements of
+								data cannot be separated by any straight line. A layer with a nonlinearity
+								can change that without moving the boundary: it bends the space itself. The
+								demo follows that idea from a flat plane to an egg-shaped surface, then down
+								to a single line.
+							</p>
+						</div>
+						<div class="demo" id="curvature-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Layer as space curvature <span>· demo 08</span></p>
+									<p class="demo-sub">Step through the bend, drag the canvas to rotate, or press Play.</p>
+								</div>
+								<span class="demo-badge">7 steps</span>
+							</div>
+							<div class="demo-body">
+								<div class="curve-stage">
+									<canvas id="curve-canvas" aria-label="A point cloud being lifted into an egg-shaped surface, then projected onto a line"></canvas>
+									<div class="curve-caption" aria-live="polite">
+										<span class="cc-step" id="curve-step">1 / 7</span>
+										<h4 id="curve-title">Two classes, no straight line</h4>
+										<p id="curve-body">An inner cloud and an outer ring. No single straight line separates coral from blue.</p>
+									</div>
+									<div class="curve-points" id="curve-points">
+										<div class="cp-head">Example points <span>· symbolic</span></div>
+										<table>
+											<thead><tr><th></th><th>x</th><th class="cp-y">y</th><th class="cp-z">z</th></tr></thead>
+											<tbody id="curve-points-body"></tbody>
+										</table>
+									</div>
+								</div>
+								<div class="curve-legend" aria-hidden="true">
+									<span><i class="cl-inner"></i>inner class</span>
+									<span><i class="cl-outer"></i>outer class</span>
+									<span><i class="cl-plane"></i>separating plane</span>
+								</div>
+								<div class="demo-controls">
+									<button class="btn-demo" type="button" id="curve-prev">← Prev</button>
+									<button class="btn-demo btn-demo--green" type="button" id="curve-play">▶ Play</button>
+									<button class="btn-demo" type="button" id="curve-next">Next →</button>
+									<button class="btn-demo" type="button" id="curve-reset">Reset</button>
+									<span class="curve-dots" id="curve-dots" aria-hidden="true"></span>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>A layer does not have to cut the data. It can bend the space until a simple plane fits between the classes.</span></div>
+							<div class="demo-foot">
+								Visual idea after C. Keup &amp; M. Helias, <em>Origami in N dimensions</em>
+								(<a href="https://arxiv.org/abs/2203.11355" rel="noopener">arXiv:2203.11355</a>).
+								The animation is an illustration, not a proof.
+							</div>
+						</div>
+					</section>
+
 					<section class="section-block" id="meadow">
-						<div class="section-kicker"><span class="sk-num">04</span> The geometry</div>
+						<div class="section-kicker"><span class="sk-num">05</span> The geometry</div>
 						<h2 class="section-title">A finite vocabulary over an infinite space.</h2>
 						<div class="prose">
 							<p>
@@ -336,7 +394,7 @@
 						<div class="demo" id="meadow-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">The meadow of words <span>· demo 08</span></p>
+									<p class="demo-title">The meadow of words <span>· demo 09</span></p>
 									<p class="demo-sub">Move the pointer across the field. Each pin owns the thoughts closest to it; the margin tells you how close you are to a seam.</p>
 								</div>
 								<span class="demo-badge">move me</span>
@@ -367,7 +425,7 @@
 					</section>
 
 					<section class="section-block" id="whole">
-						<div class="section-kicker"><span class="sk-num">05</span> The whole loop</div>
+						<div class="section-kicker"><span class="sk-num">06</span> The whole loop</div>
 						<h2 class="section-title">Text in, geometry, one word out.</h2>
 						<div class="prose">
 							<p>
@@ -1362,11 +1420,443 @@
 		}
 		renderRes();
 
+		/* ── layer as space curvature ────────────────────────── */
+		var curveCanvas = document.getElementById("curve-canvas");
+		var curveStepEl = document.getElementById("curve-step");
+		var curveTitleEl = document.getElementById("curve-title");
+		var curveBodyEl = document.getElementById("curve-body");
+		var curveDotsEl = document.getElementById("curve-dots");
+		var curvePrevBtn = document.getElementById("curve-prev");
+		var curveNextBtn = document.getElementById("curve-next");
+		var curvePlayBtn = document.getElementById("curve-play");
+		var curveResetBtn = document.getElementById("curve-reset");
+		var curveIdx = 0, curvePrev = 0, curveT0 = performance.now() - 2000;
+		var curveDur = 850;
+		var curveDragA = 0, curveDragB = 0;
+		var curveDragging = false, curveLastX = 0, curveLastY = 0;
+		var curvePlayTimer = null;
+		var curveApi = null;
+		var curvePointsEl = document.getElementById("curve-points");
+		var curvePointsBody = document.getElementById("curve-points-body");
+		var curveExamples = [
+			{ label: "inner₁", x: 0.20, y: 0, c: 0 },
+			{ label: "inner₂", x: 0, y: 0.25, c: 0 },
+			{ label: "outer₁", x: 0.90, y: 0, c: 1 },
+			{ label: "outer₂", x: 0, y: 0.95, c: 1 }
+		];
+		var KZ = 1.15, KB = 0.40, PLANE_Z = 0.18;
+		var SMIN = -0.62, SMAX = 1.05;
+		var curveSteps = [
+			{
+				t: "Two classes, no straight line",
+				b: "An inner cloud and an outer ring. No single straight line separates coral from blue.",
+				L: 0, A: 0, B: -Math.PI / 2, P: 0, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0
+			},
+			{
+				t: "Every attempt fails",
+				b: "A linear classifier draws a straight line. The ring wraps around the cloud, so every line cuts through it. A flat cut cannot open a closed ring.",
+				L: 0, A: 0, B: -Math.PI / 2, P: 0, pl: 0, sq: 0, fail: 1, lab: 0, pr: 0, box: 0
+			},
+			{
+				t: "One more dimension of room",
+				b: "The old picture becomes the floor. A new axis, z, opens above it. A layer can fold data into an unused dimension, provided it is wider than the data.",
+				L: 0, A: 0.38, B: -0.62, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 1
+			},
+			{
+				t: "The layer bends the space",
+				b: "The grid lifts into a shell: the centre sinks and the ring rises. The deformation is smooth and injective, so it tears nothing and identifies no points. The ring is lifted above the cloud.",
+				L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 0, fail: 0, lab: 0, pr: 0, box: 0
+			},
+			{
+				t: "A plane fits between",
+				b: "A flat plane slides between the two classes. In the new geometry, a linear cut works.",
+				L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 0, fail: 0, lab: 0, pr: 0, box: 0
+			},
+			{
+				t: "The plane becomes a line",
+				b: "We squash the plane along the viewing direction until only a line remains.",
+				L: 1, A: 0, B: 0, P: 1, pl: 1, sq: 1, fail: 0, lab: 1, pr: 0, box: 0
+			},
+			{
+				t: "The space becomes a line",
+				b: "Points and grid move together. The inner cloud and the outer ring land on opposite sides of s = 0. A single threshold now separates them.",
+				L: 1, A: 0, B: 0, P: 1, pl: 0, sq: 1, fail: 0, lab: 0, pr: 1, box: 0
+			}
+		];
+		var curveRng = 42;
+		function curveRandom() {
+			curveRng = (curveRng * 1103515245 + 12345) & 0x7fffffff;
+			return curveRng / 0x7fffffff;
+		}
+		var curvePts = [];
+		for (var ci = 0; ci < 140; ci++) {
+			var ca = curveRandom() * 6.2832, cr = Math.sqrt(curveRandom()) * 0.40;
+			curvePts.push({ x: Math.cos(ca) * cr, y: Math.sin(ca) * cr, c: 0 });
+		}
+		for (var cj = 0; cj < 220; cj++) {
+			var ca2 = curveRandom() * 6.2832, cr2 = 0.82 + Math.sqrt(curveRandom()) * 0.26;
+			curvePts.push({ x: Math.cos(ca2) * cr2, y: Math.sin(ca2) * cr2, c: 1 });
+		}
+		function curveScore(x, y) { return (x * x + y * y) * KZ - KB - PLANE_Z; }
+		function curveLift(x, y, t) {
+			var r2 = x * x + y * y;
+			return {
+				x: x * (1 - 0.12 * t * r2),
+				y: y * (1 - 0.12 * t * r2),
+				z: (r2 * KZ - KB) * t
+			};
+		}
+		function curveEase(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+		if (curvePointsBody) {
+			curvePointsBody.innerHTML = curveExamples.map(function (ex) {
+				return '<tr class="' + (ex.c ? "cp-outer" : "cp-inner") + '">' +
+					'<td>' + ex.label + '</td>' +
+					'<td class="cp-x">' + ex.x.toFixed(2) + '</td>' +
+					'<td class="cp-y">' + ex.y.toFixed(2) + '</td>' +
+					'<td class="cp-z">0.00</td></tr>';
+			}).join("");
+		}
+		function curveFmt(v) { return Math.abs(v) < 0.005 ? "0" : v.toFixed(2); }
+		function curveUpdateTable() {
+			var step = curveSteps[curveIdx];
+			var is1D = curveIdx === 6;
+			var showZ = curveIdx >= 2 && curveIdx < 6;
+			if (curvePointsEl) {
+				curvePointsEl.classList.toggle("hide-y", is1D);
+				curvePointsEl.classList.toggle("hide-z", !showZ);
+				curvePointsEl.classList.toggle("is-hidden", curveIdx === 6);
+			}
+			if (!curvePointsBody) return;
+			curveExamples.forEach(function (ex, i) {
+				var row = curvePointsBody.rows[i];
+				if (!row) return;
+				var score = ex.x * ex.x + ex.y * ex.y;
+				var xv = is1D ? score : ex.x;
+				row.querySelector(".cp-x").textContent = curveFmt(xv);
+				row.querySelector(".cp-y").textContent = curveFmt(ex.y);
+				row.querySelector(".cp-z").textContent = curveFmt(score * (step.L || 0));
+			});
+		}
+		function curveParams() {
+			var raw = TM.clamp((performance.now() - curveT0) / curveDur, 0, 1);
+			var u = curveEase(raw);
+			var a = curveSteps[curvePrev], b = curveSteps[curveIdx];
+			function pick(key) { return TM.lerp(a[key] || 0, b[key] || 0, u); }
+			return {
+				L: pick("L"), A: pick("A"), B: pick("B"), P: pick("P"),
+				pl: pick("pl"), sq: pick("sq"), fail: pick("fail"),
+				lab: pick("lab"), pr: pick("pr"), box: pick("box")
+			};
+		}
+		function drawCurve(ctx, W, H) {
+			var c = TM.colors();
+			var p = curveParams();
+			var dark = c.dark;
+			var S0 = Math.min(W, H) * 0.30;
+			var camA = p.A + curveDragA;
+			var camB = p.B + curveDragB;
+			var flat = 1 - TM.clamp(Math.abs(camB) / 1.5708, 0, 1);
+			var FIT = TM.lerp(1.0, 0.34, flat);
+			var YOFF = TM.lerp(0, H * 0.10, flat);
+			var AX_Y = H * 0.80, AX_L = W / 2 - S0 * 1.05, AX_R = W / 2 + S0 * 1.05;
+			function proj(pt) {
+				var x = pt.x * Math.cos(camA) - pt.y * Math.sin(camA);
+				var y = pt.x * Math.sin(camA) + pt.y * Math.cos(camA);
+				var y2 = -y * Math.sin(camB) + pt.z * Math.cos(camB);
+				var z2 = y * Math.cos(camB) + pt.z * Math.sin(camB);
+				var d = 4.6;
+				var k = p.P < 0.02 ? 1 : d / (d + z2 * 0.80 * p.P);
+				return { X: W / 2 + x * S0 * FIT * k, Y: H / 2 - y2 * S0 * FIT * k + YOFF, d: z2, k: k };
+			}
+			function sx(s) {
+				return AX_L + (AX_R - AX_L) * TM.clamp((s - SMIN) / (SMAX - SMIN), 0, 1);
+			}
+			function warp(x, y, L, t) {
+				var P = proj(curveLift(x, y, L));
+				if (t < 0.0005) return P;
+				var tx = sx(curveScore(x, y)), ty = AX_Y - 46 * (1 - t);
+				var hop = Math.sin(t * Math.PI) * 34;
+				return { X: TM.lerp(P.X, tx, t), Y: TM.lerp(P.Y, ty, t) - hop, k: TM.lerp(P.k, 1, t) };
+			}
+			ctx.clearRect(0, 0, W, H);
+
+			if (p.box > 0.01) {
+				var E = 1.12, G = 10, ZT = 1.35;
+				ctx.globalAlpha = p.box * 0.40;
+				ctx.strokeStyle = c.muted;
+				ctx.lineWidth = 0.9;
+				for (var i = 0; i <= G; i++) {
+					var v = -E + 2 * E * i / G;
+					var a1 = proj({ x: -E, y: v, z: 0 }), b1 = proj({ x: E, y: v, z: 0 });
+					ctx.beginPath(); ctx.moveTo(a1.X, a1.Y); ctx.lineTo(b1.X, b1.Y); ctx.stroke();
+					var a2 = proj({ x: v, y: -E, z: 0 }), b2 = proj({ x: v, y: E, z: 0 });
+					ctx.beginPath(); ctx.moveTo(a2.X, a2.Y); ctx.lineTo(b2.X, b2.Y); ctx.stroke();
+				}
+				ctx.globalAlpha = p.box * 0.35;
+				ctx.setLineDash([2, 6]);
+				[0.45, 0.90].forEach(function (zv) {
+					var s = 0.42;
+					var r = [proj({ x: -s, y: -s, z: zv }), proj({ x: s, y: -s, z: zv }),
+						proj({ x: s, y: s, z: zv }), proj({ x: -s, y: s, z: zv })];
+					ctx.beginPath(); ctx.moveTo(r[0].X, r[0].Y);
+					for (var q = 1; q < 4; q++) ctx.lineTo(r[q].X, r[q].Y);
+					ctx.closePath(); ctx.stroke();
+				});
+				ctx.setLineDash([]);
+				ctx.globalAlpha = p.box * 0.85;
+				ctx.strokeStyle = c.muted;
+				ctx.lineWidth = 1.6;
+				var o = proj({ x: 0, y: 0, z: 0 }), tp = proj({ x: 0, y: 0, z: ZT });
+				ctx.beginPath(); ctx.moveTo(o.X, o.Y); ctx.lineTo(tp.X, tp.Y); ctx.stroke();
+				ctx.fillStyle = c.muted;
+				ctx.beginPath();
+				ctx.moveTo(tp.X, tp.Y - 1);
+				ctx.lineTo(tp.X - 4.5, tp.Y + 11);
+				ctx.lineTo(tp.X + 4.5, tp.Y + 11);
+				ctx.closePath(); ctx.fill();
+				ctx.font = "italic 15px Georgia, serif";
+				ctx.fillText("z", tp.X + 12, tp.Y + 5);
+				ctx.globalAlpha = 1;
+			}
+
+			if (p.pr > 0.01) {
+				ctx.globalAlpha = p.pr;
+				ctx.strokeStyle = c.muted;
+				ctx.lineWidth = 1.6;
+				ctx.beginPath(); ctx.moveTo(AX_L, AX_Y); ctx.lineTo(AX_R, AX_Y); ctx.stroke();
+				for (var ti = 0; ti <= 10; ti++) {
+					var TX = TM.lerp(AX_L, AX_R, ti / 10);
+					ctx.beginPath(); ctx.moveTo(TX, AX_Y - 4); ctx.lineTo(TX, AX_Y + 4); ctx.stroke();
+				}
+				var zero = sx(0);
+				ctx.strokeStyle = c.gold;
+				ctx.lineWidth = 2.6;
+				ctx.beginPath(); ctx.moveTo(zero, AX_Y - 36); ctx.lineTo(zero, AX_Y + 36); ctx.stroke();
+				ctx.textAlign = "center";
+				ctx.fillStyle = c.gold;
+				ctx.font = "13px Georgia, serif";
+				ctx.fillText("s = 0", zero, AX_Y + 56);
+				ctx.font = "600 12px Barlow, system-ui, sans-serif";
+				ctx.fillStyle = c.coral;
+				ctx.fillText("s < 0 · inner core", TM.lerp(AX_L, zero, 0.42), AX_Y + 56);
+				ctx.fillStyle = c.sky;
+				ctx.fillText("s > 0 · outer ring", TM.lerp(zero, AX_R, 0.58), AX_Y + 56);
+				ctx.textAlign = "left";
+				ctx.globalAlpha = 1;
+			}
+
+			var gA = (0.22 + 0.24 * p.L) * (1 - p.pr * 0.35);
+			ctx.strokeStyle = dark ? "rgba(148,163,184," + gA + ")" : "rgba(100,116,139," + gA + ")";
+			ctx.lineWidth = 1;
+			var N = 14, EXT = 1.12, RES = 64;
+			for (var gi = 0; gi <= N; gi++) {
+				var gv = -EXT + 2 * EXT * gi / N;
+				for (var sw = 0; sw < 2; sw++) {
+					ctx.beginPath();
+					for (var gj = 0; gj <= RES; gj++) {
+						var gu = -EXT + 2 * EXT * gj / RES;
+						var q = warp(sw ? gv : gu, sw ? gu : gv, p.L, p.pr);
+						if (gj) ctx.lineTo(q.X, q.Y); else ctx.moveTo(q.X, q.Y);
+					}
+					ctx.stroke();
+				}
+			}
+
+			if (p.fail > 0.01) {
+				ctx.globalAlpha = p.fail * 0.7;
+				ctx.lineWidth = 1.6;
+				ctx.strokeStyle = c.muted;
+				ctx.setLineDash([5, 5]);
+				for (var fk = 0; fk < 5; fk++) {
+					var fa = fk * 0.63 + 0.2;
+					var fp = proj({ x: Math.cos(fa) * -1.2, y: Math.sin(fa) * -1.2, z: 0 });
+					var fq = proj({ x: Math.cos(fa) * 1.2, y: Math.sin(fa) * 1.2, z: 0 });
+					ctx.beginPath(); ctx.moveTo(fp.X, fp.Y); ctx.lineTo(fq.X, fq.Y); ctx.stroke();
+				}
+				ctx.setLineDash([]);
+				ctx.globalAlpha = 1;
+			}
+
+			var items = [];
+			curvePts.forEach(function (pt) {
+				var P = warp(pt.x, pt.y, p.L, p.pr);
+				var dep = proj(curveLift(pt.x, pt.y, p.L)).d;
+				items.push({ d: dep, s: P, c: pt.c });
+			});
+
+			if (p.pl > 0.01) {
+				var PE = 0.92, PM = 7, rows = [];
+				for (var pi = 0; pi <= PM; pi++) {
+					var yv = (-PE + 2 * PE * pi / PM) * (1 - p.sq);
+					var row = [];
+					for (var pj = 0; pj <= PM; pj++) {
+						row.push(proj({ x: -PE + 2 * PE * pj / PM, y: yv, z: PLANE_Z }));
+					}
+					rows.push(row);
+				}
+				items.push({ d: PLANE_Z, type: "plane", rows: rows, a: p.pl, sq: p.sq });
+			}
+
+			items.sort(function (a, b) { return a.d - b.d; });
+			items.forEach(function (it) {
+				if (it.type === "plane") {
+					var R = it.rows, M = R.length - 1;
+					ctx.globalAlpha = it.a * 0.17 * (1 - it.sq);
+					ctx.fillStyle = c.gold;
+					ctx.beginPath();
+					ctx.moveTo(R[0][0].X, R[0][0].Y);
+					for (var pj2 = 1; pj2 <= M; pj2++) ctx.lineTo(R[0][pj2].X, R[0][pj2].Y);
+					for (var pj3 = M; pj3 >= 0; pj3--) ctx.lineTo(R[M][pj3].X, R[M][pj3].Y);
+					ctx.closePath(); ctx.fill();
+					ctx.globalAlpha = it.a * 0.45 * (1 - it.sq);
+					ctx.strokeStyle = c.gold;
+					ctx.lineWidth = 1;
+					for (var ri = 0; ri <= M; ri++) {
+						ctx.beginPath();
+						R[ri].forEach(function (rp, rj) { if (rj) ctx.lineTo(rp.X, rp.Y); else ctx.moveTo(rp.X, rp.Y); });
+						ctx.stroke();
+					}
+					for (var rj2 = 0; rj2 <= M; rj2++) {
+						ctx.beginPath();
+						for (var ri2 = 0; ri2 <= M; ri2++) {
+							var rp2 = R[ri2][rj2];
+							if (ri2) ctx.lineTo(rp2.X, rp2.Y); else ctx.moveTo(rp2.X, rp2.Y);
+						}
+						ctx.stroke();
+					}
+					var mid = R[Math.floor(M / 2)];
+					ctx.globalAlpha = it.a * (0.45 + 0.55 * it.sq);
+					ctx.lineWidth = 1.4 + 2.4 * it.sq;
+					ctx.strokeStyle = c.gold;
+					ctx.beginPath();
+					mid.forEach(function (mp, mi) { if (mi) ctx.lineTo(mp.X, mp.Y); else ctx.moveTo(mp.X, mp.Y); });
+					ctx.stroke();
+					ctx.globalAlpha = 1;
+				} else {
+					var rr = (2.8 + 0.7 * it.s.k) * it.s.k;
+					ctx.beginPath();
+					ctx.arc(it.s.X, it.s.Y, rr, 0, Math.PI * 2);
+					ctx.fillStyle = it.c ? c.sky : c.coral;
+					ctx.globalAlpha = 0.55 + 0.45 * it.s.k;
+					ctx.fill();
+					ctx.globalAlpha = 1;
+				}
+			});
+
+			if (p.lab > 0.01) {
+				ctx.globalAlpha = p.lab;
+				ctx.font = "600 13px Barlow, system-ui, sans-serif";
+				ctx.fillStyle = c.sky;
+				ctx.fillText("outer ring", W * 0.76, H * 0.30);
+				ctx.fillStyle = c.coral;
+				ctx.fillText("inner core", W * 0.76, H * 0.38);
+				ctx.fillStyle = c.gold;
+				ctx.font = "13px Georgia, serif";
+				ctx.fillText("separating plane", W * 0.76, H * 0.34);
+				ctx.globalAlpha = 1;
+			}
+		}
+		if (curveCanvas) {
+			curveApi = TM.initCanvas(curveCanvas, drawCurve);
+			var curveDots = [];
+			if (curveDotsEl) {
+				curveSteps.forEach(function (s, i) {
+					var d = document.createElement("span");
+					d.className = "curve-dot" + (i === 0 ? " is-on" : "");
+					curveDotsEl.appendChild(d);
+					curveDots.push(d);
+				});
+			}
+			function curveStopPlay() {
+				if (curvePlayTimer) {
+					clearInterval(curvePlayTimer);
+					curvePlayTimer = null;
+				}
+				if (curvePlayBtn) {
+					curvePlayBtn.textContent = "▶ Play";
+					curvePlayBtn.setAttribute("aria-pressed", "false");
+				}
+			}
+			function curveUpdateUI() {
+				var s = curveSteps[curveIdx];
+				if (curveStepEl) curveStepEl.textContent = (curveIdx + 1) + " / " + curveSteps.length;
+				if (curveTitleEl) curveTitleEl.textContent = s.t;
+				if (curveBodyEl) curveBodyEl.textContent = s.b;
+				curveDots.forEach(function (d, i) { d.classList.toggle("is-on", i === curveIdx); });
+				if (curvePrevBtn) curvePrevBtn.disabled = curveIdx === 0;
+				if (curveNextBtn) curveNextBtn.disabled = curveIdx === curveSteps.length - 1;
+				curveUpdateTable();
+			}
+			function curveLoop() {
+				if (curveApi) curveApi.redraw();
+				if (performance.now() - curveT0 < curveDur + 120) requestAnimationFrame(curveLoop);
+			}
+			function curveSet(i, animate) {
+				i = TM.clamp(i, 0, curveSteps.length - 1);
+				if (i === curveIdx && animate !== false) return;
+				curvePrev = curveIdx;
+				curveIdx = i;
+				curveT0 = performance.now() - (animate === false ? curveDur + 200 : 0);
+				curveDragA = 0;
+				curveDragB = 0;
+				curveUpdateUI();
+				if (animate === false) {
+					if (curveApi) curveApi.redraw();
+				} else {
+					curveLoop();
+				}
+			}
+			function curvePlay() {
+				if (curvePlayTimer) { curveStopPlay(); return; }
+				if (curveIdx >= curveSteps.length - 1) curveSet(0, true);
+				if (curvePlayBtn) {
+					curvePlayBtn.textContent = "⏸ Pause";
+					curvePlayBtn.setAttribute("aria-pressed", "true");
+				}
+				curvePlayTimer = setInterval(function () {
+					if (curveIdx >= curveSteps.length - 1) { curveStopPlay(); return; }
+					curveSet(curveIdx + 1, true);
+				}, 3200);
+			}
+			if (curvePrevBtn) curvePrevBtn.addEventListener("click", function () { curveStopPlay(); curveSet(curveIdx - 1, true); });
+			if (curveNextBtn) curveNextBtn.addEventListener("click", function () { curveStopPlay(); curveSet(curveIdx + 1, true); });
+			if (curvePlayBtn) curvePlayBtn.addEventListener("click", curvePlay);
+			if (curveResetBtn) curveResetBtn.addEventListener("click", function () { curveStopPlay(); curveSet(0, true); });
+			curveCanvas.addEventListener("pointerdown", function (e) {
+				curveDragging = true;
+				curveLastX = e.clientX;
+				curveLastY = e.clientY;
+				curveCanvas.classList.add("is-dragging");
+				if (curveCanvas.setPointerCapture) curveCanvas.setPointerCapture(e.pointerId);
+			});
+			curveCanvas.addEventListener("pointermove", function (e) {
+				if (!curveDragging) return;
+				curveDragA += (e.clientX - curveLastX) * 0.008;
+				curveDragB = TM.clamp(curveDragB - (e.clientY - curveLastY) * 0.006, -0.9, 0.9);
+				curveLastX = e.clientX;
+				curveLastY = e.clientY;
+				if (curveApi) curveApi.redraw();
+			});
+			function curveEndDrag(e) {
+				if (!curveDragging) return;
+				curveDragging = false;
+				curveCanvas.classList.remove("is-dragging");
+				if (curveCanvas.releasePointerCapture && e && e.pointerId != null) {
+					try { curveCanvas.releasePointerCapture(e.pointerId); } catch (err) {}
+				}
+			}
+			curveCanvas.addEventListener("pointerup", curveEndDrag);
+			curveCanvas.addEventListener("pointercancel", curveEndDrag);
+			curveCanvas.addEventListener("pointerleave", curveEndDrag);
+			curveUpdateUI();
+		}
+
 		window.addEventListener("tm:theme", function () {
 			if (api) api.redraw();
 			if (embApi) embApi.redraw();
 			if (posApi) posApi.redraw();
 			if (attApi) attApi.redraw();
+			if (curveApi) curveApi.redraw();
 		});
 	})();
 	</script>
