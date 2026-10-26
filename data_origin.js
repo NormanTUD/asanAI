@@ -765,6 +765,15 @@ function add_label_sidebar() {
 	});
 
 	// Sichtbarkeitsprüfung
+	// Die Sidebar gehört zum Tab "Eigene Bilder". Beim Wechsel in einen
+	// anderen Tab (z. B. Training) wird das Panel versteckt; da die Sidebar
+	// am <body> hängt, muss sie dann explizit ausgeblendet werden.
+	function own_images_tab_is_active() {
+		if (get_data_origin() != "image") return false;
+		var tab = document.getElementById("own_images_tab");
+		return !!tab && !is_hidden_or_has_hidden_parent(tab);
+	}
+
 	function update_sidebar_visibility() {
 		var visibleCount = 0;
 		Array.prototype.forEach.call(labels, function(el, idx){
@@ -775,7 +784,7 @@ function add_label_sidebar() {
 			}
 			if (!hidden) visibleCount++;
 		});
-		var bar_display = visibleCount ? '' : 'none';
+		var bar_display = (visibleCount && own_images_tab_is_active()) ? '' : 'none';
 		if (bar.style.display !== bar_display) {
 			bar.style.display = bar_display;
 		}
@@ -821,5 +830,9 @@ function add_label_sidebar() {
 	Array.prototype.forEach.call(labels, function(el){
 		labelSidebarObserver.observe(el, {attributes:true, attributeFilter:['style','class','hidden']});
 	});
+	var own_images_tab = document.getElementById("own_images_tab");
+	if (own_images_tab) {
+		labelSidebarObserver.observe(own_images_tab, {attributes:true, attributeFilter:['style','class','hidden']});
+	}
 	labelSidebarObserver.observe(document.body, {childList:true, subtree:true});
 }
