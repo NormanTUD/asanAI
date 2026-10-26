@@ -1097,22 +1097,6 @@
 		api.redraw();
 	}
 
-	/* ── myth cards ─────────────────────────────────────────── */
-
-	function initMyths(root) {
-		$$("[data-myth-toggle]", root).forEach(function (btn) {
-			btn.addEventListener("click", function () {
-				var card = btn.closest("[data-myth]");
-				if (!card) return;
-				var open = card.classList.toggle("is-open");
-				var more = $(".myth-more", card);
-				if (more) more.hidden = !open;
-				btn.textContent = open ? "Hide the better frame" : "Show the better frame";
-			});
-		});
-	}
-
-
 	/* ── retrieval space ───────────────────────────────────── */
 
 	function initRagSpace(root) {
@@ -1537,6 +1521,192 @@
 		render();
 	}
 
+	/* ── AI for science: pLDDT + contact map ────────────────── */
+
+	function initScience(root) {
+		var canvas = $("[data-science-canvas]", root);
+		if (!canvas) return;
+		var slider = $("[data-science-threshold]", root);
+		var out = $("[data-science-threshold-out]", root);
+		var keptEl = $("[data-science-kept]", root);
+		var meanEl = $("[data-science-mean]", root);
+		var selEl = $("[data-science-selected]", root);
+		var confEl = $("[data-science-confidence]", root);
+		var noteEl = $("[data-science-note]", root);
+		var N = 40;
+		var conf = [];
+		var contacts = [];
+		var i, j;
+		for (i = 0; i < N; i++) {
+			var core = i >= 8 && i <= 31;
+			var base = core ? 84 + 7 * Math.sin(i * 0.7) : 38 + 12 * Math.sin(i * 1.1);
+			conf.push(clamp(Math.round(base + 3 * Math.sin(i * 2.3)), 25, 97));
+			var row = [];
+			for (j = 0; j < N; j++) row.push(0);
+			contacts.push(row);
+		}
+		function setC(a, b, s) {
+			if (a < 0 || b < 0 || a >= N || b >= N || a === b) return;
+			contacts[a][b] = Math.max(contacts[a][b], s);
+			contacts[b][a] = Math.max(contacts[b][a], s);
+		}
+		for (i = 0; i < N - 1; i++) {
+			setC(i, i + 1, 1.0);
+			if (i + 2 < N) setC(i, i + 2, 0.6);
+			if (i + 3 < N) setC(i, i + 3, 0.35);
+		}
+		var longRange = [
+			[10, 24, 0.9], [12, 27, 0.85], [14, 22, 0.75], [16, 30, 0.8],
+			[18, 28, 0.7], [20, 26, 0.65], [9, 30, 0.6], [11, 20, 0.55]
+		];
+		longRange.forEach(function (p) { setC(p[0], p[1], p[2]); });
+		for (i = 0; i < 8; i++) {
+			if (i + 1 < 8) setC(i, i + 1, 0.45);
+			if (i + 2 < 8) setC(i, i + 2, 0.25);
+		}
+		for (i = 32; i < N; i++) {
+			if (i + 1 < N) setC(i, i + 1, 0.4);
+			if (i + 2 < N) setC(i, i + 2, 0.2);
+		}
+		var threshold = 70;
+		var selected = 16;
+
+		function draw(ctx, w, h) {
+			var c = colors();
+			ctx.clearRect(0, 0, w, h);
+			var pad = 24;
+			var maxMatrix = Math.min(h - 40, w * 0.58);
+			var cell = maxMatrix / N;
+			var ox = pad;
+			var oy = pad + 10;
+			var barsX = ox + maxMatrix + 30;
+			var barsW = Math.max(40, w - barsX - pad);
+			var barW = barsW / N;
+			var barsBottom = oy + maxMatrix;
+			var barsTop = oy + 10;
+
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.fillStyle = c.muted;
+			ctx.textAlign = "left";
+			ctx.fillText("contact map", ox, oy - 8);
+			ctx.fillText("per-residue confidence (pLDDT)", barsX, oy - 8);
+
+			for (i = 0; i < N; i++) {
+				for (j = 0; j < N; j++) {
+					var strength = contacts[i][j];
+					if (!strength) continue;
+					var passed = conf[i] >= threshold && conf[j] >= threshold;
+					var alpha = strength * (Math.min(conf[i], conf[j]) / 100) * (passed ? 0.9 : 0.1);
+					if (i === selected || j === selected) alpha *= 1.25;
+					ctx.fillStyle = "rgba(92,155,175," + Math.min(0.9, alpha).toFixed(3) + ")";
+					ctx.fillRect(ox + j * cell, oy + i * cell, Math.max(1, cell - 1), Math.max(1, cell - 1));
+				}
+			}
+
+			ctx.strokeStyle = c.line;
+			ctx.lineWidth = 1;
+			ctx.strokeRect(ox, oy, maxMatrix, maxMatrix);
+			ctx.font = "500 9px ui-monospace, monospace";
+			ctx.fillStyle = c.faint;
+			ctx.textAlign = "center";
+			for (var k = 0; k <= N; k += 10) {
+				ctx.fillText(String(k), ox + k * cell, oy + maxMatrix + 12);
+			}
+			ctx.textAlign = "right";
+			for (var k2 = 0; k2 <= N; k2 += 10) {
+				ctx.fillText(String(k2), ox - 4, oy + k2 * cell + 3);
+			}
+
+			ctx.strokeStyle = c.green;
+			ctx.lineWidth = 1.2;
+			ctx.strokeRect(ox, oy + selected * cell, maxMatrix, Math.max(1, cell));
+			ctx.strokeRect(ox + selected * cell, oy, Math.max(1, cell), maxMatrix);
+
+			var barH = barsBottom - barsTop;
+			for (i = 0; i < N; i++) {
+				var v = conf[i];
+				var bh = v / 100 * barH;
+				var pass = v >= threshold;
+				var col = v >= 80 ? c.green : v >= 65 ? c.sky : v >= 50 ? c.gold : c.coral;
+				ctx.globalAlpha = pass ? 1 : 0.25;
+				ctx.fillStyle = col;
+				ctx.fillRect(barsX + i * barW, barsBottom - bh, Math.max(1, barW - 1), bh);
+				ctx.globalAlpha = 1;
+				if (i === selected) {
+					ctx.strokeStyle = c.ink;
+					ctx.lineWidth = 1.2;
+					ctx.strokeRect(barsX + i * barW, barsTop, Math.max(1, barW - 1), barH);
+				}
+			}
+
+			var ty = barsBottom - threshold / 100 * barH;
+			ctx.setLineDash([4, 4]);
+			ctx.strokeStyle = c.coral;
+			ctx.lineWidth = 1.2;
+			ctx.beginPath();
+			ctx.moveTo(barsX, ty);
+			ctx.lineTo(barsX + barsW, ty);
+			ctx.stroke();
+			ctx.setLineDash([]);
+			ctx.strokeStyle = c.lineStrong;
+			ctx.beginPath();
+			ctx.moveTo(barsX, barsBottom);
+			ctx.lineTo(barsX + barsW, barsBottom);
+			ctx.stroke();
+
+			ctx.font = "500 9px ui-monospace, monospace";
+			ctx.fillStyle = c.faint;
+			ctx.textAlign = "center";
+			ctx.fillText("0", barsX, barsBottom + 12);
+			ctx.fillText("40", barsX + barsW, barsBottom + 12);
+
+			var kept = conf.filter(function (v) { return v >= threshold; }).length;
+			var mean = Math.round(conf.reduce(function (a, b) { return a + b; }, 0) / N);
+			if (keptEl) keptEl.textContent = kept + " / " + N;
+			if (meanEl) meanEl.textContent = mean + " / 100";
+			if (selEl) selEl.textContent = "residue " + (selected + 1);
+			if (confEl) confEl.textContent = conf[selected] + " / 100";
+			if (noteEl) {
+				noteEl.textContent = conf[selected] >= threshold
+					? "Residue " + (selected + 1) + " passes the threshold; its contacts are drawn bright."
+					: "Residue " + (selected + 1) + " is below the threshold; treat its contacts as uncertain.";
+			}
+		}
+
+		var api = canvasDemo(canvas, draw);
+		function setThreshold(v) {
+			threshold = clamp(Math.round(v), 0, 100);
+			if (slider) slider.value = threshold;
+			if (out) out.textContent = threshold;
+			if (api) api.redraw();
+		}
+		if (slider) slider.addEventListener("input", function () { setThreshold(parseFloat(slider.value)); });
+		canvas.addEventListener("click", function (ev) {
+			var rect = canvas.getBoundingClientRect();
+			var x = ev.clientX - rect.left;
+			var y = ev.clientY - rect.top;
+			var pad = 24;
+			var maxMatrix = Math.min(rect.height - 40, rect.width * 0.58);
+			var cell = maxMatrix / N;
+			var ox = pad;
+			var oy = pad + 10;
+			var barsX = ox + maxMatrix + 30;
+			var barsW = Math.max(40, rect.width - barsX - pad);
+			var barW = barsW / N;
+			var next = selected;
+			if (x >= ox && x <= ox + maxMatrix && y >= oy && y <= oy + maxMatrix) {
+				next = clamp(Math.floor((y - oy) / cell), 0, N - 1);
+			} else if (x >= barsX && x <= barsX + barsW && y >= oy && y <= oy + maxMatrix + 20) {
+				next = clamp(Math.floor((x - barsX) / barW), 0, N - 1);
+			}
+			if (next !== selected) {
+				selected = next;
+				if (api) api.redraw();
+			}
+		});
+		setThreshold(threshold);
+	}
+
 	/* ── boot ───────────────────────────────────────────────── */
 
 	function boot() {
@@ -1559,7 +1729,6 @@
 			else if (type === "contamination") initContamination(root);
 			else if (type === "position") initPosition(root);
 			else if (type === "waveform") initWaveform(root);
-			else if (type === "myths") initMyths(root);
 			else if (type === "ragspace") initRagSpace(root);
 			else if (type === "align") initAlign(root);
 			else if (type === "preference") initPreference(root);
@@ -1568,6 +1737,7 @@
 			else if (type === "visionlayers") initVisionLayers(root);
 			else if (type === "filter") initFilter(root);
 			else if (type === "residual") initResidual(root);
+			else if (type === "science") initScience(root);
 		});
 	}
 	if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
