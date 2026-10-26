@@ -593,22 +593,21 @@
 								The standard story is a parade of famous names and sudden breakthroughs. The
 								actual history is slower and more collective. Counting devices appear
 								independently in southern Africa, central Europe, and central Africa. The first
-								neural network paper lands in a biophysics journal, not a computer science one.
-								The perceptron is announced by the U.S. Navy, criticised, and survives in the
-								margins until the hardware and the data catch up.
+								neural network paper lands in a biophysics journal. The perceptron is announced
+								by the U.S. Navy, criticised, and survives in the margins until the hardware
+								and the data catch up.
 							</p>
 							<p>
 								There were winters: periods when the promises outran the results and the money
 								left. There were also quiet accumulations — the stored-program idea, the
 								transistor, the GPU, the dataset, the optimizer — without which the same
-								algorithm would be a curiosity. The transformer did not end history; it
-								condensed a very long fuse.
+								algorithm would be a curiosity. The transformer condensed a very long fuse.
 							</p>
 						</div>
 						<div class="keypoints">
 							<div class="keypoint"><b>Abstraction</b><span>Each layer hides the layer below. That is the source of both power and confusion.</span></div>
 							<div class="keypoint"><b>External memory</b><span>Notches, tablets, punched cards, caches: thought stored outside the skull.</span></div>
-							<div class="keypoint"><b>Convergence</b><span>Ideas from astronomy, logic, biology, and games met by accident, not by plan.</span></div>
+							<div class="keypoint"><b>Convergence</b><span>Ideas from astronomy, logic, biology, and games met by accident and circumstance.</span></div>
 							<div class="keypoint"><b>The missing names</b><span>The full “untold history” follows the materials, labour, and contributors the parade forgets.</span></div>
 						</div>
 						<div class="myth-grid">
@@ -737,7 +736,7 @@
 				name: "Antikythera",
 				era: "Antiquity · analog computation",
 				title: "Gears that model the sky",
-				text: "Recovered in 1901 from a shipwreck, the Antikythera mechanism is a hand-powered orrery with at least 30 meshing bronze gears. It predicted astronomical positions and eclipses decades in advance, and tracked the four-year cycle of the games. For over a millennium, no equally complex geared technology is known in the West. Computation has roots in mechanical simulation, not only in arithmetic.",
+				text: "Recovered in 1901 from a shipwreck, the Antikythera mechanism is a hand-powered orrery with at least 30 meshing bronze gears. It predicted astronomical positions and eclipses decades in advance, and tracked the four-year cycle of the games. For over a millennium, no equally complex geared technology is known in the West. Computation also has roots in mechanical simulation.",
 				img: "../antikythera.jpg",
 				alt: "Fragments of the Antikythera mechanism",
 				cap: "Fragments of the Antikythera mechanism. Image: Therese Clutario, CC BY 2.0."
@@ -767,7 +766,7 @@
 				name: "Neurons",
 				era: "Cybernetics · learning machines",
 				title: "The first artificial neurons",
-				text: "McCulloch and Pitts model a neuron as a logical threshold unit. Wiener’s cybernetics, Ashby’s homeostat, and Grey Walter’s tortoise explore feedback and adaptation. The SNARC (1951) is the first physical neural network; Rosenblatt’s perceptron (1958) learns weights from examples and is announced by the U.S. Navy. The idea that a machine could learn from data enters the room.",
+				text: "McCulloch and Pitts (1943) model a neuron as a logical threshold unit. Their networks without loops compute Boolean functions; networks with loops can hold a state, and von Neumann used those loops as memory in the stored-program computer. Wiener’s cybernetics, Ashby’s homeostat, and Grey Walter’s tortoise explore feedback and adaptation. The SNARC (1951) is the first physical neural network; Rosenblatt’s perceptron (1958) learns weights from examples and is announced by the U.S. Navy. The idea that a machine could learn from data enters the room.",
 				img: "../perceptron2.jpg",
 				alt: "The Mark I Perceptron",
 				cap: "The Mark I Perceptron. Image: U.S. Navy, public domain."
@@ -783,21 +782,41 @@
 				cap: ""
 			},
 			{
-				date: "2012–2017",
+				date: "2012–2016",
 				name: "Deep learning",
 				era: "GPU era · scale",
 				title: "The convergence becomes visible",
-				text: "AlexNet (2012) wins ImageNet with a deep convolutional network trained on GPUs — hardware built for games. AlphaGo defeats Lee Sedol in 2016. In 2017, “Attention Is All You Need” replaces recurrence with self-attention: every token can look at every other token in parallel. The transformer is not a single breakthrough but a condensation of statistics, hardware, and the geometry of vectors.",
+				text: "AlexNet (2012) wins ImageNet with a deep convolutional network trained on GPUs — hardware built for games. ReLU activations and dropout let it train more layers end-to-end on raw pixels. AlphaGo defeats Lee Sedol in 2016. The ingredients are now in place: bigger models, more data, and parallel hardware.",
 				img: "../alphago_leesedol.jpg",
 				alt: "The AlphaGo versus Lee Sedol match in Seoul, 2016",
 				cap: "Lee Sedol and AlphaGo, Game 4, 2016. Image: Korea Baduk Association, CC BY-SA 4.0."
+			},
+			{
+				date: "2017–2018",
+				name: "Transformer & BERT",
+				era: "Attention · pretraining",
+				title: "Context becomes parallel",
+				text: "“Attention Is All You Need” (Vaswani et al., 2017) replaces recurrence with self-attention: every token can look at every other token in one layer, and the whole sequence is processed in parallel. Positional encodings keep order. BERT (Devlin et al., 2018) keeps the encoder, masks random tokens, and trains bidirectionally; after pretraining, a small fine-tuning set sets new records. The recipe becomes pretrain, then fine-tune.",
+				img: "../transformer_attention_heads.png",
+				alt: "Attention heads from the original Transformer paper",
+				cap: "Two attention heads from layer 5 of 6 in the original Transformer. Image: Google, CC BY-SA 4.0."
+			},
+			{
+				date: "2020–2022",
+				name: "Scale & alignment",
+				era: "LLMs · post-training",
+				title: "Scale, then steer",
+				text: "GPT-3 (Brown et al., 2020) shows that a 175-billion-parameter decoder can learn from a handful of examples in the prompt. Chinchilla (Hoffmann et al., 2022) shows that many models were too large for their training data: for the same compute, a smaller model on more tokens does better. LLaMA brings that lesson to open weights. RLHF and InstructGPT shape the next-token distribution toward answers people find helpful.",
+				img: null,
+				alt: "",
+				cap: ""
 			},
 			{
 				date: "2022–today",
 				name: "The LLM era",
 				era: "Scaling · assistants",
 				title: "A loop that got good enough to talk",
-				text: "ChatGPT makes the next-token loop a public interface. The ingredients are not new: tokens, vectors, attention, gradient descent, and enormous curated data. What changed is the scale and the post-training that turns a raw predictor into an assistant. The history is still being written — and the same convergence that produced the model also produced its limitations, its costs, and the arguments about what it means.",
+				text: "ChatGPT makes the next-token loop a public interface. The ingredients were already in place: tokens, vectors, attention, gradient descent, more data, and post-training. The history is still being written — and the same convergence that produced the model also produced its limitations, its costs, and the arguments about what it means.",
 				img: null,
 				alt: "",
 				cap: ""
@@ -806,6 +825,8 @@
 
 		var track = document.getElementById("timeline-track");
 		var panel = document.getElementById("timeline-panel");
+		var prevBtn = document.getElementById("tl-prev");
+		var nextBtn = document.getElementById("tl-next");
 		if (track && panel) {
 			points.forEach(function (p, i) {
 				var b = document.createElement("button");
@@ -816,6 +837,17 @@
 				b.addEventListener("click", function () { select(i); });
 				track.appendChild(b);
 			});
+			function updateArrows() {
+				var max = track.scrollWidth - track.clientWidth - 1;
+				if (prevBtn) prevBtn.disabled = track.scrollLeft <= 1;
+				if (nextBtn) nextBtn.disabled = track.scrollLeft >= max;
+			}
+			function scrollByStep(dir) {
+				track.scrollBy({
+					left: dir * Math.max(180, track.clientWidth * 0.55),
+					behavior: "smooth"
+				});
+			}
 			function select(i) {
 				var p = points[i];
 				track.querySelectorAll(".tl-node").forEach(function (n) { n.classList.remove("is-active"); });
@@ -827,8 +859,50 @@
 				}
 				panel.className = "tl-panel" + (p.img ? "" : " no-figure");
 				panel.innerHTML = html;
+				updateArrows();
 			}
+			if (prevBtn) prevBtn.addEventListener("click", function () { scrollByStep(-1); });
+			if (nextBtn) nextBtn.addEventListener("click", function () { scrollByStep(1); });
+			track.addEventListener("scroll", updateArrows, { passive: true });
+			window.addEventListener("resize", updateArrows);
+			track.addEventListener("keydown", function (e) {
+				if (e.key === "ArrowRight") { e.preventDefault(); scrollByStep(1); }
+				else if (e.key === "ArrowLeft") { e.preventDefault(); scrollByStep(-1); }
+				else if (e.key === "Home") { e.preventDefault(); track.scrollTo({ left: 0, behavior: "smooth" }); }
+				else if (e.key === "End") { e.preventDefault(); track.scrollTo({ left: track.scrollWidth, behavior: "smooth" }); }
+			});
+			var down = false, startX = 0, startScroll = 0, moved = false;
+			track.addEventListener("pointerdown", function (e) {
+				down = true;
+				moved = false;
+				startX = e.clientX;
+				startScroll = track.scrollLeft;
+				track.classList.add("is-dragging");
+				if (track.setPointerCapture) track.setPointerCapture(e.pointerId);
+			});
+			track.addEventListener("pointermove", function (e) {
+				if (!down) return;
+				var dx = e.clientX - startX;
+				if (Math.abs(dx) > 3) moved = true;
+				if (moved) track.scrollLeft = startScroll - dx;
+			});
+			function endDrag(e) {
+				if (!down) return;
+				down = false;
+				track.classList.remove("is-dragging");
+				if (track.releasePointerCapture && e && e.pointerId != null) {
+					try { track.releasePointerCapture(e.pointerId); } catch (err) {}
+				}
+			}
+			track.addEventListener("pointerup", endDrag);
+			track.addEventListener("pointercancel", endDrag);
+			track.addEventListener("pointerleave", endDrag);
+			track.addEventListener("click", function (e) {
+				if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
+			}, true);
 			select(0);
+			updateArrows();
+			setTimeout(updateArrows, 200);
 		}
 	})();
 	</script>

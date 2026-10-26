@@ -44,7 +44,7 @@
 					<div class="hero-meta">
 						<span class="pill pill--green">10 minutes</span>
 						<span class="pill">No math</span>
-						<span class="pill pill--blue">2 interactive demos</span>
+						<span class="pill pill--blue">8 interactive demos</span>
 						<span class="pill">Recap</span>
 					</div>
 				</div>
@@ -80,9 +80,10 @@
 						<h2 class="section-title">Write a sentence, one token at a time.</h2>
 						<div class="prose">
 							<p>
-								Below is a deliberately tiny toy model. It knows a handful of continuations.
-								Pick a token or let it draw one; the new token becomes part of the context,
-								and the next distribution is computed from everything so far.
+								Below is a deliberately tiny toy model. It knows a handful of continuations
+								for a small story. Pick a token or let it draw one; the new token becomes
+								part of the context, and the next distribution is computed from everything
+								so far.
 							</p>
 						</div>
 
@@ -118,8 +119,8 @@
 								</div>
 								<div class="demo-readout demo-readout--4">
 									<div><b>Step</b><span id="nt-step-count">0 / 6</span></div>
-									<div><b>Context length</b><span id="nt-len">5 tokens</span></div>
-									<div><b>Top choice</b><span id="nt-top">Paris</span></div>
+									<div><b>Context length</b><span id="nt-len">7 tokens</span></div>
+									<div><b>Top choice</b><span id="nt-top">dragon</span></div>
 									<div><b>Decoder</b><span id="nt-mode">sample</span></div>
 								</div>
 							</div>
@@ -159,8 +160,143 @@
 						</div>
 					</section>
 
+					<section class="section-block" id="inside">
+						<div class="section-kicker"><span class="sk-num">03</span> Inside the model</div>
+						<h2 class="section-title">Six steps, one running vector.</h2>
+						<div class="prose">
+							<p>
+								The loop is the outside view. Inside, one token passes through a fixed
+								pipeline. Each step changes the representation in a different way, and each
+								is a small idea you can play with. The tabs follow the order of a real
+								transformer pass.
+							</p>
+						</div>
+
+						<div class="demo" id="inside-demo">
+							<div class="demo-head">
+								<div>
+									<p class="demo-title">Inside the model <span>· demos 02–07</span></p>
+									<p class="demo-sub">Switch tabs to follow one token from text to a running vector. Every tab is a toy, but the shape is the real architecture.</p>
+								</div>
+								<span class="demo-badge">six steps</span>
+							</div>
+							<div class="demo-body">
+								<div class="step-tabs" role="tablist" aria-label="Steps inside the model">
+									<button class="step-tab is-on" type="button" role="tab" aria-selected="true" aria-controls="step-tokenize" id="tab-tokenize" data-step="tokenize">1 · Tokens</button>
+									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-embed" id="tab-embed" data-step="embed">2 · Embedding</button>
+									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-position" id="tab-position" data-step="position">3 · Position</button>
+									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-attention" id="tab-attention" data-step="attention">4 · Attention</button>
+									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-ffn" id="tab-ffn" data-step="ffn">5 · Feed-forward</button>
+									<button class="step-tab" type="button" role="tab" aria-selected="false" aria-controls="step-residual" id="tab-residual" data-step="residual">6 · Residual stream</button>
+								</div>
+
+								<div class="step-pane is-on" id="step-tokenize" role="tabpanel" aria-labelledby="tab-tokenize">
+									<div class="step-toolbar">
+										<input class="step-input" type="text" id="itok-input" aria-label="Text to tokenize" value="The transformer is playing greatly">
+										<div class="step-chips">
+											<button class="chip" type="button" data-tok="understanding">understanding</button>
+											<button class="chip" type="button" data-tok="unbreakable">unbreakable</button>
+											<button class="chip" type="button" data-tok="The transformer is playing greatly">a full sentence</button>
+										</div>
+									</div>
+									<div class="token-chips" id="itok-out" aria-live="polite"></div>
+									<div class="step-out" id="itok-stats"></div>
+									<p class="step-note">A model does not read words. It reads <b>tokens</b>: common words, word fragments, punctuation, and whitespace, each with a fixed numeric id. Rare words split into pieces the vocabulary already knows.</p>
+								</div>
+
+								<div class="step-pane" id="step-embed" role="tabpanel" aria-labelledby="tab-embed" hidden>
+									<div class="step-toolbar">
+										<input class="step-input" type="text" id="iemb-input" aria-label="Words to highlight" value="Man Woman Prince King">
+										<div class="step-chips">
+											<button class="chip" type="button" data-emb="King - Man + Woman">King − Man + Woman</button>
+											<button class="chip" type="button" data-emb="Man + Power">Man + Power</button>
+											<button class="chip" type="button" data-emb="Prince + Power">Prince + Power</button>
+											<button class="chip" type="button" data-emb="directions">↗ directions</button>
+										</div>
+									</div>
+									<canvas class="step-canvas" id="iemb-canvas" aria-label="A two-dimensional embedding space with power and gender axes"></canvas>
+									<div class="step-out" id="iemb-out">The space has two semantic axes in this toy: <b>power</b> and <b>gender</b>. Change the expression or the highlighted words.</div>
+									<p class="step-note">Meaning becomes geometry. Similar words sit close together, and a <b>direction</b> can carry a relationship: the arrow from man to woman is the same arrow as king to queen. Real embeddings use thousands of dimensions; this toy uses two so you can see the idea.</p>
+								</div>
+
+								<div class="step-pane" id="step-position" role="tabpanel" aria-labelledby="tab-position" hidden>
+									<div class="step-toolbar">
+										<label>Dimensions
+											<input type="range" id="ipe-dims" min="2" max="12" step="1" value="8">
+											<output id="ipe-dims-out">8</output>
+										</label>
+									</div>
+									<canvas class="step-canvas" id="ipe-canvas" aria-label="A heatmap of positional encodings for twenty positions"></canvas>
+									<div class="step-out" id="ipe-out">Each row is one position. Each column is one dimension of the position signal.</div>
+									<p class="step-note">Attention has no built-in sense of order. A <b>positional encoding</b> adds a unique fingerprint to every position, so “dog bites man” and “man bites dog” stop looking like the same bag of vectors.</p>
+								</div>
+
+								<div class="step-pane" id="step-attention" role="tabpanel" aria-labelledby="tab-attention" hidden>
+									<div class="step-toolbar">
+										<div class="step-chips" id="iatt-examples">
+											<button class="chip is-on" type="button" data-att="0">no context</button>
+											<button class="chip" type="button" data-att="1">river nearby</button>
+											<button class="chip" type="button" data-att="2">money nearby</button>
+											<button class="chip" type="button" data-att="3">both nearby</button>
+										</div>
+									</div>
+									<div class="attn-sentence" id="iatt-sentence">I walk to the <span class="aw-bank">bank</span>.</div>
+									<canvas class="step-canvas" id="iatt-canvas" aria-label="Attention moving the embedding of bank toward the context"></canvas>
+									<div class="step-out" id="iatt-out">No context: bank stays in the middle, ambiguous.</div>
+									<p class="step-note">An <b>attention head</b> compares a token with the other tokens and moves its representation toward the evidence. The same word can end up in a different place depending on the company it keeps.</p>
+								</div>
+
+								<div class="step-pane" id="step-ffn" role="tabpanel" aria-labelledby="tab-ffn" hidden>
+									<div class="step-toolbar">
+										<div class="step-chips" id="iffn-scenarios">
+											<button class="chip is-on" type="button" data-ffn="fruit">Context: eating an apple</button>
+											<button class="chip" type="button" data-ffn="tech">Context: buying an apple</button>
+										</div>
+									</div>
+									<div class="ffn-grid">
+										<div class="ffn-col">
+											<div class="ffn-col-head">Residual stream</div>
+											<div class="ffn-pill is-fire">“Apple” + context</div>
+										</div>
+										<div class="ffn-col">
+											<div class="ffn-col-head">Keys · patterns in W₁</div>
+											<div class="ffn-list" id="iffn-keys"></div>
+										</div>
+										<div class="ffn-col">
+											<div class="ffn-col-head">Values · next-token hints</div>
+											<div class="ffn-list" id="iffn-values"></div>
+										</div>
+										<div class="ffn-col">
+											<div class="ffn-col-head">Written back</div>
+											<div class="ffn-pill is-fire">richer vector</div>
+										</div>
+									</div>
+									<div class="step-out" id="iffn-out"></div>
+									<p class="step-note">Attention moves information <b>between</b> positions. The feed-forward network works on each position <b>alone</b>: it matches patterns and writes back a distribution over likely next tokens. This is where much of the model's stored knowledge lives.</p>
+								</div>
+
+								<div class="step-pane" id="step-residual" role="tabpanel" aria-labelledby="tab-residual" hidden>
+									<div class="res-stream">
+										<div class="res-layers" id="ires-layers"></div>
+										<div class="res-panel">
+											<div class="res-bars" id="ires-bars"></div>
+											<div class="res-legend"><span><i></i> running stream</span><span id="ires-out"></span></div>
+										</div>
+									</div>
+									<p class="step-note">Every layer reads the same running vector, computes an update, and <b>adds</b> it back. Nothing is overwritten. The stream is a shared notebook that carries what the sentence means so far.</p>
+								</div>
+							</div>
+							<div class="demo-insight"><b>Takeaway</b><span>Tokens become vectors, positions add order, attention mixes context, the feed-forward network computes, and the residual stream carries everything forward.</span></div>
+							<div class="demo-foot">
+								The tabs are deliberately small models. The real pipeline uses thousands of
+								dimensions, many heads, and dozens of layers. The order and the division of
+								labour stay the same.
+							</div>
+						</div>
+					</section>
+
 					<section class="section-block" id="meadow">
-						<div class="section-kicker"><span class="sk-num">03</span> The geometry</div>
+						<div class="section-kicker"><span class="sk-num">04</span> The geometry</div>
 						<h2 class="section-title">A finite vocabulary over an infinite space.</h2>
 						<div class="prose">
 							<p>
@@ -180,7 +316,7 @@
 						<div class="demo" id="meadow-demo">
 							<div class="demo-head">
 								<div>
-									<p class="demo-title">The meadow of words <span>· demo 02</span></p>
+									<p class="demo-title">The meadow of words <span>· demo 08</span></p>
 									<p class="demo-sub">Move the pointer across the field. Each pin owns the thoughts closest to it; the margin tells you how close you are to a seam.</p>
 								</div>
 								<span class="demo-badge">move me</span>
@@ -188,7 +324,7 @@
 							<div class="demo-body">
 								<canvas class="demo-canvas" id="meadow-canvas" style="height:340px" aria-label="A Voronoi field of words. Move the pointer to place a thought."></canvas>
 								<div class="demo-readout">
-									<div><b>Thought falls into</b><span id="md-word">Paris</span></div>
+									<div><b>Thought falls into</b><span id="md-word">dragon</span></div>
 									<div><b>Winning chance</b><span id="md-chance">—</span></div>
 									<div><b>Margin to seam</b><span id="md-margin">—</span></div>
 								</div>
@@ -211,7 +347,7 @@
 					</section>
 
 					<section class="section-block" id="whole">
-						<div class="section-kicker"><span class="sk-num">04</span> The whole loop</div>
+						<div class="section-kicker"><span class="sk-num">05</span> The whole loop</div>
 						<h2 class="section-title">Text in, geometry, one word out.</h2>
 						<div class="prose">
 							<p>
@@ -253,15 +389,6 @@
 						</div>
 					</section>
 
-
-					<div class="explain-back">
-						<b>Explain it back</b>
-						<p>A friend says: “The model just looks up the answer.” Correct that in three sentences.</p>
-						<details>
-							<summary>Compare with a model answer</summary>
-							<p>It does not look anything up. At each step it computes a probability distribution over the next token, and a decoder chooses one — greedily, or by sampling with temperature or top-p. The chosen token is appended to the context and the whole loop runs again, which is why a conversation is built one piece at a time.</p>
-						</details>
-					</div>
 
 					<nav class="lesson-nav" aria-label="Lesson navigation">
 						<a href="intro.html"><span class="ln-label">Previous</span><span class="ln-title">What this course is</span></a>
@@ -314,25 +441,25 @@
 		/* ── demo 1: the autoregressive loop ─────────────────── */
 		var stages = [
 			[
-				{ t: "Paris", l: 3.2 }, { t: "Lyon", l: 0.8 }, { t: "beautiful", l: 0.6 }, { t: "cold", l: 0.4 }, { t: "home", l: 0.2 }
+				{ t: "dragon", l: 3.4 }, { t: "princess", l: 1.1 }, { t: "robot", l: 0.7 }, { t: "castle", l: 0.4 }, { t: "river", l: 0.2 }
 			],
 			[
-				{ t: ".", l: 2.6 }, { t: "—", l: 1.2 }, { t: "…", l: 0.9 }, { t: "!", l: 0.6 }, { t: "?", l: 0.4 }
+				{ t: "who", l: 3.1 }, { t: "that", l: 1.4 }, { t: "with", l: 0.8 }, { t: "whose", l: 0.5 }, { t: "and", l: 0.3 }
 			],
 			[
-				{ t: "It", l: 2.7 }, { t: "This city", l: 2.2 }, { t: "The city", l: 1.8 }, { t: "Paris", l: 0.9 }, { t: "France", l: 0.4 }
+				{ t: "could", l: 3.0 }, { t: "would", l: 1.3 }, { t: "loved", l: 0.9 }, { t: "tried", l: 0.6 }, { t: "had", l: 0.3 }
 			],
 			[
-				{ t: "is", l: 3.1 }, { t: "was", l: 1.2 }, { t: "remains", l: 0.8 }, { t: "has", l: 0.5 }, { t: "became", l: 0.3 }
+				{ t: "not", l: 3.3 }, { t: "never", l: 1.2 }, { t: "only", l: 0.8 }, { t: "still", l: 0.5 }, { t: "always", l: 0.3 }
 			],
 			[
-				{ t: "a city", l: 3.2 }, { t: "the capital", l: 2.1 }, { t: "a place", l: 1.6 }, { t: "a home", l: 0.9 }, { t: "an answer", l: 0.4 }
+				{ t: "fly", l: 3.5 }, { t: "sing", l: 1.0 }, { t: "sleep", l: 0.7 }, { t: "roar", l: 0.4 }, { t: "swim", l: 0.2 }
 			],
 			[
-				{ t: ".", l: 3.0 }, { t: "!", l: 1.4 }, { t: "…", l: 0.8 }, { t: "—", l: 0.5 }, { t: "?", l: 0.3 }
+				{ t: ".", l: 3.2 }, { t: "!", l: 1.1 }, { t: "…", l: 0.7 }, { t: "—", l: 0.4 }, { t: "?", l: 0.2 }
 			]
 		];
-		var base = ["The", "capital", "of", "France", "is"];
+		var base = ["Once", "upon", "a", "time", "there", "was", "a"];
 		var generated = [];
 		var stage = 0;
 		var temp = 0.8;
@@ -497,14 +624,14 @@
 		var canvas = document.getElementById("meadow-canvas");
 		if (!canvas) return;
 		var words = [
-			{ name: "Paris", x: 0.52, y: 0.40, c: "#71bd56" },
-			{ name: "Lyon", x: 0.23, y: 0.28, c: "#39a9d6" },
-			{ name: "France", x: 0.74, y: 0.63, c: "#d4a13c" },
-			{ name: "city", x: 0.39, y: 0.73, c: "#df785f" },
-			{ name: "capital", x: 0.63, y: 0.22, c: "#b9df6a" },
+			{ name: "dragon", x: 0.52, y: 0.40, c: "#71bd56" },
+			{ name: "castle", x: 0.23, y: 0.28, c: "#39a9d6" },
+			{ name: "forest", x: 0.74, y: 0.63, c: "#d4a13c" },
+			{ name: "princess", x: 0.39, y: 0.73, c: "#df785f" },
+			{ name: "knight", x: 0.63, y: 0.22, c: "#b9df6a" },
 			{ name: "river", x: 0.16, y: 0.64, c: "#6fd0f2" },
-			{ name: "bank", x: 0.83, y: 0.34, c: "#e6bd63" },
-			{ name: "cake", x: 0.33, y: 0.48, c: "#f0957f" }
+			{ name: "wing", x: 0.83, y: 0.34, c: "#e6bd63" },
+			{ name: "mountain", x: 0.33, y: 0.48, c: "#f0957f" }
 		];
 		var thought = { x: 0.46, y: 0.5 };
 		var meadowTemp = 0.8;
@@ -668,7 +795,616 @@
 				if (api) api.redraw();
 			});
 		}
-		window.addEventListener("tm:theme", function () { if (api) api.redraw(); });
+		/* ── inside-the-model tabs ───────────────────────────── */
+		var stepTabs = document.querySelectorAll(".step-tab");
+		var stepPanes = document.querySelectorAll(".step-pane");
+		stepTabs.forEach(function (tab) {
+			tab.addEventListener("click", function () {
+				var step = tab.getAttribute("data-step");
+				stepTabs.forEach(function (t) {
+					var on = t === tab;
+					t.classList.toggle("is-on", on);
+					t.setAttribute("aria-selected", on ? "true" : "false");
+				});
+				stepPanes.forEach(function (pane) {
+					var on = pane.id === "step-" + step;
+					pane.classList.toggle("is-on", on);
+					pane.hidden = !on;
+				});
+				if (step === "embed" && embApi) embApi.redraw();
+				if (step === "position" && posApi) posApi.redraw();
+				if (step === "attention" && attApi) attApi.redraw();
+			});
+		});
+
+		/* ── tokens ──────────────────────────────────────────── */
+		var tokVocab = {
+			once: 1024, upon: 2048, a: 64, time: 3072, the: 128, there: 2560,
+			was: 512, dragon: 5120, under: 6001, standing: 6002, un: 7001,
+			break: 7002, able: 7003, hello: 8001, world: 8002, cat: 9001,
+			sat: 9002, on: 9003, mat: 9004, is: 256, good: 3500, great: 3501,
+			big: 3502, small: 3503, happy: 3600, sad: 3601, love: 3700,
+			play: 7010, ing: 7011, ed: 7012, er: 7013, ly: 7014, pre: 7020,
+			dict: 7021, ion: 7022, trans: 7030, form: 7031, i: 40, you: 41,
+			he: 42, she: 43, it: 44, we: 45, they: 46, my: 47, your: 48,
+			his: 49, her: 50, this: 51, that: 52, with: 53, for: 54, not: 55,
+			but: 56, and: 57, or: 58, in: 59, to: 60, of: 61, at: 62,
+			by: 63, from: 65, up: 66, about: 67, into: 68, over: 69, after: 70
+		};
+		var tokSplit = {
+			understanding: ["under", "standing"],
+			unbreakable: ["un", "break", "able"],
+			prediction: ["pre", "dict", "ion"],
+			transformer: ["trans", "form", "er"],
+			playing: ["play", "ing"],
+			played: ["play", "ed"],
+			player: ["play", "er"],
+			greatly: ["great", "ly"]
+		};
+		var tokColors = ["#71bd56", "#39a9d6", "#d4a13c", "#df785f", "#b9df6a", "#8b5cf6", "#06b6d4", "#f59e0b"];
+		function idFor(word) {
+			var h = 0;
+			for (var i = 0; i < word.length; i++) h = (h * 31 + word.charCodeAt(i)) % 50000;
+			return 10000 + h;
+		}
+		function greedyPieces(word) {
+			var out = [];
+			var i = 0;
+			while (i < word.length) {
+				var best = null;
+				for (var len = Math.min(8, word.length - i); len >= 2; len--) {
+					var sub = word.slice(i, i + len);
+					if (tokVocab[sub] != null) { best = sub; break; }
+				}
+				if (!best) best = word.charAt(i);
+				out.push(best);
+				i += best.length;
+			}
+			return out;
+		}
+		function tokenize(text) {
+			var pieces = text.split(/(\s+|[.,!?;:])/).filter(function (p) { return p.length; });
+			var tokens = [];
+			pieces.forEach(function (piece) {
+				if (/^\s+$/.test(piece)) {
+					tokens.push({ word: "␣".repeat(Math.min(3, piece.length)), id: 220, space: true });
+					return;
+				}
+				if (/^[.,!?;:]$/.test(piece)) {
+					tokens.push({ word: piece, id: tokVocab[piece] || idFor(piece) });
+					return;
+				}
+				var word = piece.toLowerCase();
+				var parts = tokSplit[word] || (tokVocab[word] != null ? [word] : greedyPieces(word));
+				parts.forEach(function (part, idx) {
+					tokens.push({
+						word: part,
+						id: tokVocab[part] != null ? tokVocab[part] : idFor(part),
+						sub: idx > 0
+					});
+				});
+			});
+			return tokens;
+		}
+		function renderTokens() {
+			var input = document.getElementById("itok-input");
+			var out = document.getElementById("itok-out");
+			var stats = document.getElementById("itok-stats");
+			if (!input || !out) return;
+			var tokens = tokenize(input.value || "");
+			out.innerHTML = tokens.map(function (tok, i) {
+				return '<div class="token-chip' + (tok.sub ? " is-sub" : "") + (tok.space ? " is-space" : "") +
+					'" style="border-left-color:' + tokColors[i % tokColors.length] + '">' +
+					'<span class="tc-word">' + escapeHtml(tok.word) + '</span>' +
+					'<span class="tc-id">id ' + tok.id + '</span></div>';
+			}).join("");
+			if (stats) {
+				var spaces = tokens.filter(function (t) { return t.space; }).length;
+				var subs = tokens.filter(function (t) { return t.sub; }).length;
+				var words = tokens.length - spaces;
+				stats.innerHTML = '<b>' + tokens.length + '</b> tokens · <b>' + words + '</b> pieces · <b>' +
+					subs + '</b> subword splits' + (spaces ? ' · <b>' + spaces + '</b> whitespace' : '');
+			}
+		}
+		var tokInput = document.getElementById("itok-input");
+		if (tokInput) {
+			tokInput.addEventListener("input", renderTokens);
+			document.querySelectorAll("[data-tok]").forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					tokInput.value = btn.getAttribute("data-tok");
+					renderTokens();
+				});
+			});
+			renderTokens();
+		}
+
+		/* ── embedding ───────────────────────────────────────── */
+		var embSpace = {
+			Man: [5, -10], Woman: [5, 10], Male: [0, -20], Female: [0, 20],
+			Prince: [15, -10], Princess: [15, 10], King: [25, -10], Queen: [25, 10],
+			Power: [10, 0]
+		};
+		var embRange = { x0: -5, x1: 40, y0: -30, y1: 30 };
+		var embCanvas = document.getElementById("iemb-canvas");
+		var embOut = document.getElementById("iemb-out");
+		var embDirections = false;
+		var embResult = null;
+		var embApi = null;
+		function evalEmb(expr) {
+			var toks = expr.match(/[A-Za-z]+|\d+|[+\-*()/]/g) || [];
+			var i = 0;
+			function factor() {
+				var t = toks[i++];
+				if (t === "(") { var v = expression(); if (toks[i] === ")") i++; return v; }
+				if (/^\d+$/.test(t)) return { kind: "num", n: parseInt(t, 10) };
+				var norm = Object.keys(embSpace).find(function (w) { return w.toLowerCase() === t.toLowerCase(); });
+				if (norm) return { kind: "vec", v: embSpace[norm].slice() };
+				return { kind: "num", n: 0 };
+			}
+			function term() {
+				var left = factor();
+				while (toks[i] === "*" || toks[i] === "/") {
+					var op = toks[i++];
+					var right = factor();
+					if (left.kind === "num" && right.kind === "num") {
+						left.n = op === "*" ? left.n * right.n : (right.n ? left.n / right.n : 0);
+					} else if (left.kind === "vec" && right.kind === "num") {
+						var s = op === "*" ? right.n : (right.n ? 1 / right.n : 0);
+						left.v = left.v.map(function (x) { return x * s; });
+					} else if (left.kind === "num" && right.kind === "vec" && op === "*") {
+						left = { kind: "vec", v: right.v.map(function (x) { return x * left.n; }) };
+					}
+				}
+				return left;
+			}
+			function expression() {
+				var sign = 1;
+				if (toks[i] === "+") i++;
+				else if (toks[i] === "-") { i++; sign = -1; }
+				var left = term();
+				if (left.kind === "num") left.n *= sign;
+				else left.v = left.v.map(function (x) { return x * sign; });
+				while (toks[i] === "+" || toks[i] === "-") {
+					var op = toks[i++];
+					var right = term();
+					if (op === "-") {
+						if (right.kind === "num") right.n = -right.n;
+						else right.v = right.v.map(function (x) { return -x; });
+					}
+					if (left.kind === "num" && right.kind === "num") left.n += right.n;
+					else if (left.kind === "vec" && right.kind === "vec") left.v = [left.v[0] + right.v[0], left.v[1] + right.v[1]];
+					else if (left.kind === "vec" && right.kind === "num") left.v = left.v.map(function (x) { return x + right.n; });
+					else if (left.kind === "num" && right.kind === "vec") left = { kind: "vec", v: right.v.map(function (x) { return x + left.n; }) };
+				}
+				return left;
+			}
+			return expression();
+		}
+		function embSteps(expr) {
+			var toks = expr.match(/[A-Za-z]+|\d+|[+\-*()/]/g) || [];
+			var pos = null, sign = 1, mult = 1, steps = [];
+			toks.forEach(function (t) {
+				if (t === "+") { sign = 1; return; }
+				if (t === "-") { sign = -1; return; }
+				if (t === "*") return;
+				if (/^\d+$/.test(t)) { mult = parseInt(t, 10); return; }
+				var norm = Object.keys(embSpace).find(function (w) { return w.toLowerCase() === t.toLowerCase(); });
+				if (!norm) return;
+				var v = embSpace[norm];
+				var next = pos
+					? [pos[0] + sign * mult * v[0], pos[1] + sign * mult * v[1]]
+					: [sign * mult * v[0], sign * mult * v[1]];
+				if (pos) steps.push({ from: pos.slice(), to: next.slice(), label: (sign > 0 ? "+ " : "− ") + norm });
+				pos = next;
+				sign = 1;
+				mult = 1;
+			});
+			return { pos: pos, steps: steps };
+		}
+		function embNearest(pos) {
+			var best = null, bd = Infinity;
+			Object.keys(embSpace).forEach(function (w) {
+				var v = embSpace[w];
+				var d = Math.hypot(pos[0] - v[0], pos[1] - v[1]);
+				if (d < bd) { bd = d; best = w; }
+			});
+			return { word: best, dist: bd };
+		}
+		function drawEmb(ctx, w, h) {
+			var c = TM.colors();
+			var pad = 44;
+			function mx(x) { return pad + (x - embRange.x0) / (embRange.x1 - embRange.x0) * (w - pad * 2); }
+			function my(y) { return h - pad - (y - embRange.y0) / (embRange.y1 - embRange.y0) * (h - pad * 2); }
+			ctx.clearRect(0, 0, w, h);
+			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.08)" : "rgba(0,75,111,.09)";
+			ctx.lineWidth = 1;
+			for (var gx = -0; gx <= 40; gx += 10) {
+				ctx.beginPath(); ctx.moveTo(mx(gx), my(embRange.y0)); ctx.lineTo(mx(gx), my(embRange.y1)); ctx.stroke();
+			}
+			for (var gy = -30; gy <= 30; gy += 10) {
+				ctx.beginPath(); ctx.moveTo(mx(embRange.x0), my(gy)); ctx.lineTo(mx(embRange.x1), my(gy)); ctx.stroke();
+			}
+			ctx.fillStyle = c.muted;
+			ctx.font = "600 10px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "left";
+			ctx.fillText("Power →", mx(embRange.x1) - 52, my(0) - 8);
+			ctx.save();
+			ctx.translate(mx(0) - 8, my(embRange.y0) + 40);
+			ctx.rotate(-Math.PI / 2);
+			ctx.fillText("Gender →", 0, 0);
+			ctx.restore();
+
+			var input = document.getElementById("iemb-input");
+			var highlighted = input ? input.value.split(/[\s,]+/).filter(Boolean) : [];
+			var palette = ["#71bd56", "#39a9d6", "#d4a13c", "#df785f", "#8b5cf6", "#06b6d4"];
+			Object.keys(embSpace).forEach(function (word) {
+				var v = embSpace[word];
+				var hi = highlighted.indexOf(word) !== -1;
+				var idx = highlighted.indexOf(word);
+				var color = hi ? palette[idx % palette.length] : (c.dark ? "rgba(238,247,244,.35)" : "rgba(18,38,45,.32)");
+				var x = mx(v[0]), y = my(v[1]);
+				ctx.beginPath();
+				ctx.arc(x, y, hi ? 6 : 3.5, 0, Math.PI * 2);
+				ctx.fillStyle = color;
+				ctx.fill();
+				if (hi) {
+					ctx.strokeStyle = c.card;
+					ctx.lineWidth = 2;
+					ctx.stroke();
+				}
+				ctx.font = (hi ? "700 12px" : "500 10px") + " Barlow, system-ui, sans-serif";
+				ctx.fillStyle = hi ? color : (c.dark ? "rgba(238,247,244,.42)" : "rgba(18,38,45,.45)");
+				ctx.textAlign = "center";
+				ctx.fillText(word, x, y - 11);
+			});
+
+			if (embDirections) {
+				function arrow(a, b, color) {
+					ctx.beginPath();
+					ctx.moveTo(mx(a[0]), my(a[1]));
+					ctx.lineTo(mx(b[0]), my(b[1]));
+					ctx.strokeStyle = color;
+					ctx.lineWidth = 2;
+					ctx.stroke();
+					var ang = Math.atan2(my(b[1]) - my(a[1]), mx(b[0]) - mx(a[0]));
+					ctx.beginPath();
+					ctx.moveTo(mx(b[0]), my(b[1]));
+					ctx.lineTo(mx(b[0]) - 7 * Math.cos(ang - 0.4), my(b[1]) - 7 * Math.sin(ang - 0.4));
+					ctx.lineTo(mx(b[0]) - 7 * Math.cos(ang + 0.4), my(b[1]) - 7 * Math.sin(ang + 0.4));
+					ctx.closePath();
+					ctx.fillStyle = color;
+					ctx.fill();
+				}
+				var green = c.dark ? "#86efac" : "#2f7d4f";
+				var gold = c.dark ? "#fcd34d" : "#9a6f13";
+				arrow(embSpace.Man, embSpace.Woman, green);
+				arrow(embSpace.King, embSpace.Queen, green);
+				arrow(embSpace.Man, embSpace.Prince, gold);
+				arrow(embSpace.Prince, embSpace.King, gold);
+				arrow(embSpace.Woman, embSpace.Princess, gold);
+				arrow(embSpace.Princess, embSpace.Queen, gold);
+				if (embOut) embOut.innerHTML = 'The <b>gender</b> arrow (green) is the same from man to woman and from king to queen. The <b>power</b> arrow (gold) is the same along man → prince → king. Meaning lives in positions and in directions.';
+				return;
+			}
+
+			if (embResult) {
+				embResult.steps.forEach(function (step) {
+					ctx.setLineDash([4, 4]);
+					ctx.beginPath();
+					ctx.moveTo(mx(step.from[0]), my(step.from[1]));
+					ctx.lineTo(mx(step.to[0]), my(step.to[1]));
+					ctx.strokeStyle = c.dark ? "rgba(185,223,106,.55)" : "rgba(63,140,47,.55)";
+					ctx.lineWidth = 1.6;
+					ctx.stroke();
+					ctx.setLineDash([]);
+				});
+				var p = embResult.pos;
+				ctx.beginPath();
+				ctx.moveTo(mx(p[0]) - 6, my(p[1]));
+				ctx.lineTo(mx(p[0]), my(p[1]) - 6);
+				ctx.lineTo(mx(p[0]) + 6, my(p[1]));
+				ctx.lineTo(mx(p[0]), my(p[1]) + 6);
+				ctx.closePath();
+				ctx.fillStyle = c.dark ? "#fca5a5" : "#b91c1c";
+				ctx.fill();
+				ctx.strokeStyle = c.card;
+				ctx.lineWidth = 2;
+				ctx.stroke();
+				ctx.font = "700 11px Barlow, system-ui, sans-serif";
+				ctx.fillStyle = c.dark ? "#fecaca" : "#991b1b";
+				ctx.textAlign = "center";
+				ctx.fillText("≈ " + embResult.nearest, mx(p[0]), my(p[1]) + 20);
+			}
+		}
+		function updateEmb(expr) {
+			var ev = evalEmb(expr);
+			var input = document.getElementById("iemb-input");
+			if (!ev || ev.kind !== "vec") {
+				embResult = null;
+				if (embOut) embOut.innerHTML = '<b>Invalid expression.</b> Try “King − Man + Woman”.';
+			} else {
+				var near = embNearest(ev.v);
+				var steps = embSteps(expr);
+				embResult = { pos: ev.v, nearest: near.word, steps: steps.steps };
+				if (embOut) embOut.innerHTML = '→ <b>(' + ev.v[0].toFixed(1) + ', ' + ev.v[1].toFixed(1) + ')</b> · nearest word: <b>' + near.word + '</b> (distance ' + near.dist.toFixed(2) + ')';
+			}
+			if (input) embDirections = false;
+			if (embApi) embApi.redraw();
+		}
+		if (embCanvas) {
+			embApi = TM.initCanvas(embCanvas, drawEmb);
+			var embInput = document.getElementById("iemb-input");
+			if (embInput) embInput.addEventListener("input", function () {
+				embDirections = false;
+				if (embApi) embApi.redraw();
+			});
+			document.querySelectorAll("[data-emb]").forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					var expr = btn.getAttribute("data-emb");
+					document.querySelectorAll("[data-emb]").forEach(function (b) { b.classList.remove("is-on"); });
+					btn.classList.add("is-on");
+					if (expr === "directions") {
+						embDirections = true;
+						embResult = null;
+						if (embApi) embApi.redraw();
+					} else {
+						updateEmb(expr);
+					}
+				});
+			});
+			updateEmb("King - Man + Woman");
+		}
+
+		/* ── positions ───────────────────────────────────────── */
+		var posCanvas = document.getElementById("ipe-canvas");
+		var posOut = document.getElementById("ipe-out");
+		var posApi = null;
+		var posDims = 8;
+		function peValue(pos, dim, dims) {
+			var pair = Math.floor(dim / 2) * 2;
+			var denom = Math.pow(10000, pair / dims);
+			return dim % 2 === 0 ? Math.sin(pos / denom) : Math.cos(pos / denom);
+		}
+		function drawPos(ctx, w, h) {
+			var c = TM.colors();
+			var positions = 24;
+			var padL = 34, padB = 26, padT = 10, padR = 10;
+			var cw = (w - padL - padR) / positions;
+			var ch = (h - padT - padB) / posDims;
+			ctx.clearRect(0, 0, w, h);
+			for (var p = 0; p < positions; p++) {
+				for (var d = 0; d < posDims; d++) {
+					var v = peValue(p, d, posDims);
+					var x = padL + p * cw;
+					var y = padT + d * ch;
+					if (v >= 0) {
+						ctx.fillStyle = "rgba(113,189,86," + (0.08 + v * 0.72) + ")";
+					} else {
+						ctx.fillStyle = "rgba(57,169,214," + (0.08 + (-v) * 0.72) + ")";
+					}
+					ctx.fillRect(x + 1, y + 1, Math.max(1, cw - 2), Math.max(1, ch - 2));
+				}
+			}
+			ctx.fillStyle = c.muted;
+			ctx.font = "500 9px Barlow, system-ui, sans-serif";
+			ctx.textAlign = "center";
+			for (var p2 = 0; p2 < positions; p2 += 4) {
+				ctx.fillText(String(p2), padL + p2 * cw + cw / 2, h - 8);
+			}
+			ctx.textAlign = "right";
+			for (var d2 = 0; d2 < posDims; d2 += 2) {
+				ctx.fillText("d" + d2, padL - 6, padT + d2 * ch + ch * 0.7);
+			}
+			if (posOut) {
+				var p0 = [], p5 = [];
+				for (var k = 0; k < Math.min(4, posDims); k++) {
+					p0.push(peValue(0, k, posDims).toFixed(2));
+					p5.push(peValue(5, k, posDims).toFixed(2));
+				}
+				posOut.innerHTML = 'Position 0: <b>[' + p0.join(", ") + ']</b> · Position 5: <b>[' + p5.join(", ") + ']</b>';
+			}
+		}
+		if (posCanvas) {
+			posApi = TM.initCanvas(posCanvas, drawPos);
+			var posSlider = document.getElementById("ipe-dims");
+			var posDimsOut = document.getElementById("ipe-dims-out");
+			if (posSlider) {
+				posSlider.addEventListener("input", function () {
+					posDims = parseInt(posSlider.value, 10);
+					if (posDimsOut) posDimsOut.textContent = String(posDims);
+					if (posApi) posApi.redraw();
+				});
+			}
+		}
+
+		/* ── attention ───────────────────────────────────────── */
+		var attCanvas = document.getElementById("iatt-canvas");
+		var attSentence = document.getElementById("iatt-sentence");
+		var attOut = document.getElementById("iatt-out");
+		var attApi = null;
+		var attIndex = 0;
+		var attExamples = [
+			{ sentence: 'I walk to the <span class="aw-bank">bank</span>.', contexts: [], shift: [5, 5], caption: 'No context: <b>bank</b> stays in the middle, ambiguous.' },
+			{ sentence: 'I sit by the <span class="aw-river">river</span> on the <span class="aw-bank">bank</span>.', contexts: ['river'], shift: [3.2, 6.8], caption: '<b>River</b> is the neighbour → bank moves toward the water sense.' },
+			{ sentence: 'I bring my <span class="aw-money">money</span> to the <span class="aw-bank">bank</span>.', contexts: ['money'], shift: [7.2, 3.2], caption: '<b>Money</b> is the neighbour → bank moves toward finance.' },
+			{ sentence: 'After the walk by the <span class="aw-river">river</span> I go to the <span class="aw-bank">bank</span> to deposit my <span class="aw-money">money</span>.', contexts: ['river', 'money'], shift: [6.6, 3.9], caption: 'Both neighbours compete; <b>money</b> wins by a hair, so bank tilts toward finance.' }
+		];
+		var attPos = { bank: [5, 5], river: [0.5, 9.5], money: [10.5, 0.5] };
+		var attColors = { bank: "#71bd56", river: "#39a9d6", money: "#d4a13c" };
+		function drawAtt(ctx, w, h) {
+			var c = TM.colors();
+			var pad = 36;
+			var x0 = -1, x1 = 12, y0 = -1, y1 = 11;
+			function mx(x) { return pad + (x - x0) / (x1 - x0) * (w - pad * 2); }
+			function my(y) { return h - pad - (y - y0) / (y1 - y0) * (h - pad * 2); }
+			ctx.clearRect(0, 0, w, h);
+			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.08)" : "rgba(0,75,111,.09)";
+			ctx.lineWidth = 1;
+			for (var gx = 0; gx <= 12; gx += 2) { ctx.beginPath(); ctx.moveTo(mx(gx), my(y0)); ctx.lineTo(mx(gx), my(y1)); ctx.stroke(); }
+			for (var gy = 0; gy <= 10; gy += 2) { ctx.beginPath(); ctx.moveTo(mx(x0), my(gy)); ctx.lineTo(mx(x1), my(gy)); ctx.stroke(); }
+			var ex = attExamples[attIndex];
+			Object.keys(attPos).forEach(function (word) {
+				var p = attPos[word];
+				ctx.beginPath();
+				ctx.arc(mx(p[0]), my(p[1]), 5, 0, Math.PI * 2);
+				ctx.fillStyle = attColors[word];
+				ctx.fill();
+				ctx.font = "600 11px Barlow, system-ui, sans-serif";
+				ctx.fillStyle = c.dark ? "rgba(238,247,244,.72)" : "rgba(18,38,45,.7)";
+				ctx.textAlign = "center";
+				ctx.fillText(word, mx(p[0]), my(p[1]) - 11);
+			});
+			var bank = attPos.bank;
+			ex.contexts.forEach(function (word) {
+				var p = attPos[word];
+				if (!p) return;
+				ctx.setLineDash([3, 4]);
+				ctx.beginPath();
+				ctx.moveTo(mx(bank[0]), my(bank[1]));
+				ctx.lineTo(mx(p[0]), my(p[1]));
+				ctx.strokeStyle = c.dark ? "rgba(249,115,22,.55)" : "rgba(180,83,9,.5)";
+				ctx.lineWidth = 1.8;
+				ctx.stroke();
+				ctx.setLineDash([]);
+			});
+			ctx.beginPath();
+			ctx.moveTo(mx(bank[0]), my(bank[1]));
+			ctx.lineTo(mx(ex.shift[0]), my(ex.shift[1]));
+			ctx.strokeStyle = c.dark ? "rgba(238,247,244,.6)" : "rgba(0,75,111,.55)";
+			ctx.lineWidth = 2;
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(mx(ex.shift[0]) - 6, my(ex.shift[1]));
+			ctx.lineTo(mx(ex.shift[0]), my(ex.shift[1]) - 6);
+			ctx.lineTo(mx(ex.shift[0]) + 6, my(ex.shift[1]));
+			ctx.lineTo(mx(ex.shift[0]), my(ex.shift[1]) + 6);
+			ctx.closePath();
+			ctx.fillStyle = c.dark ? "#fca5a5" : "#b91c1c";
+			ctx.fill();
+			ctx.strokeStyle = c.card;
+			ctx.lineWidth = 2;
+			ctx.stroke();
+			ctx.font = "700 11px Barlow, system-ui, sans-serif";
+			ctx.fillStyle = c.dark ? "#fecaca" : "#991b1b";
+			ctx.textAlign = "center";
+			ctx.fillText("bank in context", mx(ex.shift[0]), my(ex.shift[1]) - 12);
+		}
+		function renderAtt() {
+			var ex = attExamples[attIndex];
+			if (attSentence) attSentence.innerHTML = ex.sentence;
+			if (attOut) attOut.innerHTML = ex.caption;
+			document.querySelectorAll("[data-att]").forEach(function (b) {
+				b.classList.toggle("is-on", parseInt(b.getAttribute("data-att"), 10) === attIndex);
+			});
+			if (attApi) attApi.redraw();
+		}
+		if (attCanvas) {
+			attApi = TM.initCanvas(attCanvas, drawAtt);
+			document.querySelectorAll("[data-att]").forEach(function (btn) {
+				btn.addEventListener("click", function () {
+					attIndex = parseInt(btn.getAttribute("data-att"), 10);
+					renderAtt();
+				});
+			});
+			renderAtt();
+		}
+
+		/* ── feed-forward ────────────────────────────────────── */
+		var ffnScenarios = {
+			fruit: {
+				keys: [
+					{ label: "Key: tech company?", on: false },
+					{ label: "Key: edible fruit?", on: true },
+					{ label: "Key: tree / orchard?", on: true }
+				],
+				values: [
+					{ label: "→ pie · juice · sugar", on: true },
+					{ label: "→ Mac · iPhone · Cupertino", on: false },
+					{ label: "→ orchard · green · tree", on: true }
+				],
+				desc: 'The context is <b>eating</b>, so the food and orchard keys match. The tech key stays silent. Each matching key writes a value that raises the odds of tokens such as “pie”, “juice”, and “crunchy”.'
+			},
+			tech: {
+				keys: [
+					{ label: "Key: tech company?", on: true },
+					{ label: "Key: edible fruit?", on: false },
+					{ label: "Key: tree / orchard?", on: false }
+				],
+				values: [
+					{ label: "→ pie · juice · sugar", on: false },
+					{ label: "→ Mac · iPhone · stock", on: true },
+					{ label: "→ orchard · green · tree", on: false }
+				],
+				desc: 'The context is <b>buying</b>, so the tech key matches. That value raises the odds of tokens such as “Mac”, “iPhone”, and “stock”. The fruit and orchard keys stay silent.'
+			}
+		};
+		function renderFFN(mode) {
+			var data = ffnScenarios[mode];
+			var keysEl = document.getElementById("iffn-keys");
+			var valuesEl = document.getElementById("iffn-values");
+			var out = document.getElementById("iffn-out");
+			if (keysEl) keysEl.innerHTML = data.keys.map(function (k) {
+				return '<div class="ffn-pill ' + (k.on ? "is-fire" : "is-idle") + '">' + k.label + '<small>' + (k.on ? "matches" : "gated out") + '</small></div>';
+			}).join("");
+			if (valuesEl) valuesEl.innerHTML = data.values.map(function (v) {
+				return '<div class="ffn-pill ' + (v.on ? (mode === "tech" ? "is-fire-tech" : "is-fire") : "is-idle") + '">' + v.label + '</div>';
+			}).join("");
+			if (out) out.innerHTML = data.desc;
+			document.querySelectorAll("[data-ffn]").forEach(function (b) {
+				b.classList.toggle("is-on", b.getAttribute("data-ffn") === mode);
+			});
+		}
+		document.querySelectorAll("[data-ffn]").forEach(function (btn) {
+			btn.addEventListener("click", function () { renderFFN(btn.getAttribute("data-ffn")); });
+		});
+		renderFFN("fruit");
+
+		/* ── residual stream ─────────────────────────────────── */
+		var resBase = [0.35, 0.5, 0.28, 0.62, 0.44, 0.3, 0.55, 0.4, 0.33, 0.48];
+		var resUpdates = [
+			{ label: "Embedding", note: "The token becomes a vector.", add: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+			{ label: "+ Attention 1", note: "The token reads its neighbours and adds what it found.", add: [0.24, 0.32, 0.14, 0.28, 0.2, 0.36, 0.12, 0.2, 0.26, 0.22] },
+			{ label: "+ FFN 1", note: "A pattern match writes a next-token hint into the stream.", add: [0.18, 0.12, 0.3, 0.16, 0.24, 0.1, 0.28, 0.22, 0.14, 0.18] },
+			{ label: "+ Attention 2", note: "A second head connects a longer-range clue.", add: [0.16, 0.22, 0.18, 0.26, 0.14, 0.2, 0.24, 0.12, 0.2, 0.16] },
+			{ label: "+ FFN 2", note: "More features combine; the representation sharpens.", add: [0.12, 0.18, 0.22, 0.12, 0.2, 0.16, 0.14, 0.24, 0.18, 0.1] },
+			{ label: "+ Attention 3", note: "The last layer routes the remaining context before the output.", add: [0.1, 0.14, 0.12, 0.18, 0.16, 0.12, 0.2, 0.14, 0.12, 0.2] }
+		];
+		var resStep = 0;
+		var resBars = document.getElementById("ires-bars");
+		var resLayers = document.getElementById("ires-layers");
+		var resOut = document.getElementById("ires-out");
+		function renderRes() {
+			if (resLayers) {
+				resLayers.innerHTML = resUpdates.map(function (u, i) {
+					return '<button class="res-layer' + (i === resStep ? " is-on" : "") + '" type="button" data-res="' + i + '">' + u.label + '</button>';
+				}).join("");
+				resLayers.querySelectorAll("[data-res]").forEach(function (btn) {
+					btn.addEventListener("click", function () {
+						resStep = parseInt(btn.getAttribute("data-res"), 10);
+						renderRes();
+					});
+				});
+			}
+			var cum = resBase.slice();
+			for (var i = 1; i <= resStep; i++) {
+				for (var j = 0; j < cum.length; j++) cum[j] += resUpdates[i].add[j];
+			}
+			var max = Math.max.apply(null, cum) * 1.12;
+			if (resBars) {
+				resBars.innerHTML = cum.map(function (v) {
+					return '<span class="res-bar" style="height:' + Math.max(6, v / max * 100) + '%"></span>';
+				}).join("");
+			}
+			if (resOut) resOut.innerHTML = resUpdates[resStep].note;
+		}
+		renderRes();
+
+		window.addEventListener("tm:theme", function () {
+			if (api) api.redraw();
+			if (embApi) embApi.redraw();
+			if (posApi) posApi.redraw();
+			if (attApi) attApi.redraw();
+		});
 	})();
 	</script>
 </body>

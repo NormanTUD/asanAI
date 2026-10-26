@@ -3209,6 +3209,32 @@ html[data-theme="light"] .step-out { background: var(--tm-wash); color: var(--tm
 .step-out b { color: var(--tm-lime); }
 html[data-theme="light"] .step-out b { color: var(--tm-green-deep); }
 
+.step-pane .attn-sentence {
+	margin: 0 0 12px;
+	padding: 12px 16px;
+	border: 1px solid rgba(238, 247, 244, 0.16);
+	border-radius: 9px;
+	background: rgba(3, 25, 34, 0.4);
+	font-family: var(--tm-prose);
+	font-size: 1rem;
+	line-height: 1.7;
+	text-align: center;
+	color: rgba(238, 247, 244, 0.86);
+}
+.step-pane .aw-bank { color: var(--tm-green); font-weight: 700; }
+.step-pane .aw-river { color: var(--tm-sky); font-weight: 700; }
+.step-pane .aw-money { color: var(--tm-gold); font-weight: 700; }
+html[data-theme="light"] .step-pane .attn-sentence {
+	border-color: var(--tm-line);
+	background: var(--tm-paper-2);
+	color: var(--tm-ink-soft);
+}
+html[data-theme="light"] .step-pane .aw-bank { color: var(--tm-green-deep); }
+html[data-theme="light"] .step-pane .aw-river { color: var(--tm-blue); }
+html[data-theme="light"] .step-pane .aw-money { color: #9a6f13; }
+
+.ffn-list { display: flex; flex-direction: column; gap: 7px; }
+
 .token-chips {
 	display: flex;
 	flex-wrap: wrap;

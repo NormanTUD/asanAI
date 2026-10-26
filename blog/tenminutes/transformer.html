@@ -190,27 +190,63 @@
 						<h2 class="section-title">Two sublayers, one residual stream.</h2>
 						<div class="prose">
 							<p>
-								<strong>Attention</strong> mixes information across positions. <strong>Feed-forward</strong>
-								transforms each position independently: expand to a wider hidden dimension,
-								apply a nonlinearity, contract back. Attention decides <em>what to look at</em>;
-								the FFN decides <em>what to do with it</em>. The FFN is also a major locus of
-								memorized associations and factual patterns, though knowledge is distributed
-								across the network rather than sitting in one place.
+								<strong>Attention</strong> mixes information across positions. Each token is
+								projected into a <strong>query</strong>, a <strong>key</strong>, and a
+								<strong>value</strong>. The query asks “what am I looking for?”, the key says
+								“what do I contain?”, and the value carries the content that gets moved. The
+								dot product of a query and a key is a similarity score. Softmax turns the
+								scores into weights that sum to one, and the output is a weighted average of
+								the values.
 							</p>
 							<p>
-								<strong>Residual connections</strong> give the gradient an identity path around
-								each sublayer. Without them, very deep stacks suffer vanishing or exploding
-								gradients. <strong>Layer normalization</strong> keeps activations in a healthy
-								range. In the 2017 block, normalization sat after the residual addition;
-								modern stacks usually normalize <em>inside</em> the branch (pre-norm), leaving
-								the residual stream unbroken, and often replace LayerNorm with RMSNorm, which
-								rescales by the root mean square without subtracting the mean.
+								That is why attention works as a routing operation. It follows no fixed tree
+								and no hand-written grammar; it learns which positions should exchange
+								information. The scaling factor <code>1/√d_k</code> keeps the scores from
+								growing too large as the head dimension grows, which would make the softmax
+								saturate and the gradients tiny. Several heads run in parallel in
+								lower-dimensional subspaces, so one head can track a pronoun while another
+								tracks a verb or a nearby adjective.
+							</p>
+							<p>
+								<strong>Feed-forward</strong> transforms each position independently: expand
+								to a wider hidden dimension, apply a nonlinearity, contract back. Attention
+								decides <em>what to look at</em>; the FFN decides <em>what to do with it</em>.
+								The wide hidden layer gives the network room to combine features, and the FFN
+								is a major locus of memorized associations and factual patterns. Knowledge is
+								distributed across the network, yet this block holds a large share of the
+								parameters.
+							</p>
+							<p>
+								<strong>Residual connections</strong> give the gradient an identity path
+								around each sublayer, so a deep stack can still learn. They also make the
+								block additive: the branch computes an update, and the update is added to the
+								running stream. Nothing is overwritten. <strong>Layer normalization</strong>
+								keeps activations in a healthy range. The 2017 block normalized after the
+								residual addition; modern stacks usually normalize <em>inside</em> the branch
+								(pre-norm), leaving the stream unbroken, and often replace LayerNorm with
+								RMSNorm, which rescales by the root mean square without subtracting the mean.
 							</p>
 						</div>
-						<div class="formula">
-							<code>z = x + Attention(Norm(x))<br>
-							y = z + FeedForward(Norm(z))<br>
-							Attention(Q,K,V) = softmax(QK<sup>T</sup>/√d<sub>k</sub>) V</code>
+						<div class="formula-grid">
+							<div class="formula-card">
+								<div class="fc-kicker">Attention · what it does</div>
+								<div class="fc-formula">Attention(Q, K, V) = softmax(QK<sup>T</sup> / √d<sub>k</sub>) V</div>
+								<p><b>Q</b> is what a token is looking for, <b>K</b> is what each token offers, and <b>V</b> is the content that travels. The dot product scores every pair, softmax turns the row into weights, and the output is a weighted mix of values. The <code>√d<sub>k</sub></code> keeps the scores from exploding as heads get wider.</p>
+							</div>
+							<div class="formula-card">
+								<div class="fc-kicker">Residual · why depth works</div>
+								<div class="fc-formula">z = x + Attention(Norm(x))<br>y = z + FeedForward(Norm(z))</div>
+								<p>The plus sign is the residual stream. Each sublayer computes an <b>update</b> and adds it to what is already there. The identity path carries gradients backwards and gives every layer a shared workspace. Pre-norm moves the normalization into the branch so the main stream stays clean.</p>
+							</div>
+							<div class="formula-card">
+								<div class="fc-kicker">Feed-forward · what it computes</div>
+								<div class="fc-formula">FFN(x) = W<sub>2</sub> · act(W<sub>1</sub>x + b<sub>1</sub>) + b<sub>2</sub></div>
+								<p>The first matrix expands the vector, the nonlinearity lets the model combine features, and the second matrix contracts it back. This is per-token computation: no information moves between positions here. Much of the model’s stored association memory lives in these weights.</p>
+							</div>
+						</div>
+						<div class="fieldnotes">
+							<h4>Why the block works at all</h4>
+							<p>The block is a division of labour. Attention supplies content-based routing; the FFN supplies per-token computation; the residual stream supplies a shared, additive workspace; normalization keeps the scale stable. The causal mask turns the same machinery into an autoregressive predictor. These pieces work because they compose, and because the whole stack is trained end-to-end on next-token prediction.</p>
 						</div>
 						<div class="fieldnotes">
 							<h4>Decoder only, or encoder too?</h4>
