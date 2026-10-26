@@ -297,8 +297,19 @@
 											<span class="sp-kicker">The whole layer</span>
 											<h3 class="sp-title">The nonlinearity bends the space</h3>
 										</div>
-										<p class="step-note curve-intro">The FFN above works on one token. A dense layer computes an affine projection, <b>Ax + b</b>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines. The nonlinearity is what bends or folds the new space. A smooth activation produces the egg-shaped surface below; ReLU is the sharp version, a crease that maps every negative value to zero. The cut still happens — the layer changes the space in which the cut is made.</p>
-										<div class="layer-formula">layer(x) = act(Ax + b)</div>
+										<p class="step-note curve-intro">The FFN above works on one token. A dense layer computes an affine projection, <b>Ax + b</b>, which moves the data into another vector space. The projection can rotate, scale, shear, or collapse dimensions, but on its own it maps straight lines to straight lines.</p>
+										<div class="layer-formula">layer(x) = activation(Ax + b)</div>
+										<div class="relu-card">
+											<svg viewBox="0 0 120 70" role="img" aria-label="ReLU plot: flat at zero for negative inputs, rising for positive inputs">
+												<line x1="10" y1="60" x2="110" y2="60" class="rl-axis"/>
+												<line x1="60" y1="8" x2="60" y2="64" class="rl-axis"/>
+												<path d="M10 60 H60 L105 15" class="rl-curve"/>
+												<text x="102" y="69" class="rl-label">z</text>
+												<text x="66" y="16" class="rl-label">ReLU(z)</text>
+											</svg>
+											<p>The term <b>activation</b> means the activation function: it is applied to each coordinate after the projection. <b>ReLU(z) = max(0, z)</b> passes positive values unchanged and sends negative values to zero. The graph is flat, then a straight rise: a hard fold at <b>z = 0</b>. Sigmoid and GELU bend smoothly instead.</p>
+										</div>
+										<p class="step-note curve-intro">The demo below uses a smooth bend so you can see the shape. The cut still happens — the layer changes the space in which the cut is made.</p>
 										<div class="curve-stage">
 											<canvas id="curve-canvas" aria-label="A point cloud being lifted into an egg-shaped surface, then projected onto a line"></canvas>
 											<div class="curve-caption" aria-live="polite">
