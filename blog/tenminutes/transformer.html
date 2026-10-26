@@ -106,7 +106,7 @@
 								</div>
 								<div class="causal-mask" id="pipe-mask" hidden>
 									<div class="cm-grid" id="cm-grid" aria-label="Causal attention mask: rows are queries, columns are keys"></div>
-									<p>Rows are queries, columns are keys. A decoder may attend only to itself and the past; the future is masked. That is what makes next-token prediction honest during training.</p>
+									<p>Rows are queries, columns are keys. A decoder may attend only to itself and the past; the future is masked. That is what makes next-token prediction causal during training.</p>
 								</div>
 							</div>
 							<div class="demo-insight"><b>Takeaway</b><span>Attention mixes across positions; the feed-forward network computes per position; the residual stream carries everything forward.</span></div>
