@@ -387,6 +387,14 @@ html[data-theme="dark"] .kicker { color: var(--tm-green); }
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
+.hero h1 .very {
+	font-style: italic;
+	color: var(--tm-petrol);
+	background: linear-gradient(100deg, var(--tm-petrol) 0%, var(--tm-blue) 55%, var(--tm-green-deep) 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+}
 .hero--lesson h1 { font-size: clamp(2.5rem, 5.4vw, 4.8rem); line-height: 0.98; }
 
 .hero-deck {
