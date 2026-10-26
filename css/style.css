@@ -659,6 +659,10 @@ button:disabled:hover {
 	white-space: nowrap;
 }
 
+#status_bar_log[title] {
+	cursor: help;
+}
+
 #model_status_chip {
 	margin-left: 1em;
 	opacity: 0.7;

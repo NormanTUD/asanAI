@@ -502,6 +502,7 @@ module.exports = {
 		"trm": "readonly",
 		"hashwasm": "readonly",
 		"l": "readonly",
+		"update_status_bar_log_tooltip": "readonly",
 		"col_contains_string": "writable",
 		"set_imgcat": "readonly",
 		"download_shown_flags": "readonly",

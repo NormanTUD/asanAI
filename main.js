@@ -864,6 +864,9 @@ function _update_mobile_bottom_nav() {
 function show_website_and_hide_loader() {
 	$("#mainsite").show();
 	$("#status_bar").show();
+	if (typeof update_status_bar_log_tooltip === "function") {
+		update_status_bar_log_tooltip();
+	}
 	var loader = document.getElementById("loading_icon_wrapper");
 	if(loader) {
 		loader.classList.add("is-settled");
